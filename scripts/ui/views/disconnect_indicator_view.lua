@@ -1,143 +1,141 @@
-﻿-- chunkname: @scripts/ui/views/disconnect_indicator_view.lua
+-- chunkname: @scripts/ui/views/disconnect_indicator_view.lua
 
 require("foundation/scripts/util/local_require")
 require("scripts/ui/ui_renderer")
 require("scripts/ui/ui_elements")
 require("scripts/ui/ui_widgets")
 
-local definitions = require("scripts/ui/views/disconnect_indicator_view_definitions")
-local test_ui = false
+local var_0_0 = require("scripts/ui/views/disconnect_indicator_view_definitions")
+local var_0_1 = false
 
 DisconnectIndicatorView = class(DisconnectIndicatorView)
 DisconnectIndicatorView.FLASH_CYCLE = 0.5
 DisconnectIndicatorView.SILENCE_THRESHOLD = GameSettingsDevelopment.network_silence_warning_delay or 3
 
-DisconnectIndicatorView.init = function (self, world)
-	self._world = world
-	self._ui_renderer = UIRenderer.create(world, "material", "materials/ui/ui_1080p_loading", "material", "materials/fonts/gw_fonts")
-	self._render_settings = {
-		snap_pixel_positions = true,
+function DisconnectIndicatorView.init(arg_1_0, arg_1_1)
+	arg_1_0._world = arg_1_1
+	arg_1_0._ui_renderer = UIRenderer.create(arg_1_1, "material", "materials/ui/ui_1080p_loading", "material", "materials/fonts/gw_fonts")
+	arg_1_0._render_settings = {
+		snap_pixel_positions = true
 	}
-	self._flash_counter = 0
-	self._recalc_text_width = true
-	self._text_width = 0
+	arg_1_0._flash_counter = 0
+	arg_1_0._recalc_text_width = true
+	arg_1_0._text_width = 0
 end
 
-DisconnectIndicatorView.destroy = function (self)
-	UIRenderer.destroy(self._ui_renderer, self._world)
+function DisconnectIndicatorView.destroy(arg_2_0)
+	UIRenderer.destroy(arg_2_0._ui_renderer, arg_2_0._world)
 
-	self._ui_renderer = nil
+	arg_2_0._ui_renderer = nil
 	DO_RELOAD = true
 end
 
-local DO_RELOAD = true
+local var_0_2 = true
 
-DisconnectIndicatorView.update = function (self, dt)
-	if DO_RELOAD then
-		DO_RELOAD = false
-		self._recalc_text_width = true
+function DisconnectIndicatorView.update(arg_3_0, arg_3_1)
+	if var_0_2 then
+		var_0_2 = false
+		arg_3_0._recalc_text_width = true
 
-		self:_create_ui_elements()
+		arg_3_0:_create_ui_elements()
 	end
 
-	if not self:_is_visible() then
-		self._flash_counter = 0
+	if not arg_3_0:_is_visible() then
+		arg_3_0._flash_counter = 0
 
 		return
 	end
 
-	self._flash_counter = self._flash_counter + dt
+	arg_3_0._flash_counter = arg_3_0._flash_counter + arg_3_1
 
-	while self._flash_counter > DisconnectIndicatorView.FLASH_CYCLE do
-		self._flash_counter = self._flash_counter - DisconnectIndicatorView.FLASH_CYCLE
+	while arg_3_0._flash_counter > DisconnectIndicatorView.FLASH_CYCLE do
+		arg_3_0._flash_counter = arg_3_0._flash_counter - DisconnectIndicatorView.FLASH_CYCLE
 	end
 
-	local mechanism_name = Managers.level_transition_handler:get_current_mechanism()
-	local is_in_inn = Managers.level_transition_handler:in_hub_level()
+	local var_3_0 = Managers.level_transition_handler:get_current_mechanism()
+	local var_3_1 = Managers.level_transition_handler:in_hub_level()
 
-	if self._current_mechanism ~= mechanism_name or self._is_in_inn ~= is_in_inn then
-		self._current_mechanism = mechanism_name
-		self._is_in_inn = is_in_inn
+	if arg_3_0._current_mechanism ~= var_3_0 or arg_3_0._is_in_inn ~= var_3_1 then
+		arg_3_0._current_mechanism = var_3_0
+		arg_3_0._is_in_inn = var_3_1
 
-		if mechanism_name == "versus" and not is_in_inn then
-			self._icon_text_widget.content.text = Localize("lost_contact_with_server")
+		if var_3_0 == "versus" and not var_3_1 then
+			arg_3_0._icon_text_widget.content.text = Localize("lost_contact_with_server")
 		else
-			self._icon_text_widget.content.text = Localize("lost_contact_with_host")
+			arg_3_0._icon_text_widget.content.text = Localize("lost_contact_with_host")
 		end
 	end
 
-	self:_draw(dt)
+	arg_3_0:_draw(arg_3_1)
 end
 
-DisconnectIndicatorView._create_ui_elements = function (self)
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
-	definitions.icon_text.content.text = Localize("lost_contact_with_host")
-	self._icon_text_widget = UIWidget.init(definitions.icon_text)
+function DisconnectIndicatorView._create_ui_elements(arg_4_0)
+	arg_4_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	var_0_0.icon_text.content.text = Localize("lost_contact_with_host")
+	arg_4_0._icon_text_widget = UIWidget.init(var_0_0.icon_text)
 end
 
-DisconnectIndicatorView._is_visible = function (self)
+function DisconnectIndicatorView._is_visible(arg_5_0)
 	if DEDICATED_SERVER then
 		return false
 	end
 
-	if test_ui then
+	if var_0_1 then
 		return true
 	end
 
-	local manager = Managers.state.network
+	local var_5_0 = Managers.state.network
 
-	if manager == nil then
+	if var_5_0 == nil then
 		return false
 	end
 
-	local lobby = manager:lobby()
+	local var_5_1 = var_5_0:lobby()
 
-	if lobby == nil then
+	if var_5_1 == nil then
 		return false
 	end
 
-	local lobby_host = lobby:lobby_host()
+	local var_5_2 = var_5_1:lobby_host()
 
-	if lobby_host == nil then
+	if var_5_2 == nil then
 		return false
 	end
 
-	local silence = Network.time_since_receive(lobby_host)
-
-	return silence > DisconnectIndicatorView.SILENCE_THRESHOLD
+	return Network.time_since_receive(var_5_2) > DisconnectIndicatorView.SILENCE_THRESHOLD
 end
 
-DisconnectIndicatorView._set_transparency = function (self, alpha)
-	local widget = self._icon_text_widget
+function DisconnectIndicatorView._set_transparency(arg_6_0, arg_6_1)
+	local var_6_0 = arg_6_0._icon_text_widget
 
-	widget.style.text.text_color[1] = 255 * alpha
-	widget.style.texture_id.color[1] = 255 * alpha
+	var_6_0.style.text.text_color[1] = 255 * arg_6_1
+	var_6_0.style.texture_id.color[1] = 255 * arg_6_1
 end
 
-DisconnectIndicatorView._draw = function (self, dt)
-	local ui_renderer = self._ui_renderer
-	local ui_scenegraph = self._ui_scenegraph
+function DisconnectIndicatorView._draw(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_0._ui_renderer
+	local var_7_1 = arg_7_0._ui_scenegraph
 
-	self._recalc_text_width = self._recalc_text_width or RESOLUTION_LOOKUP.modified
+	arg_7_0._recalc_text_width = arg_7_0._recalc_text_width or RESOLUTION_LOOKUP.modified
 
-	if self._recalc_text_width then
-		self._recalc_text_width = false
+	if arg_7_0._recalc_text_width then
+		arg_7_0._recalc_text_width = false
 
-		local text_style = definitions.icon_text.style.text
-		local font, scaled_font_size = UIFontByResolution(text_style)
-		local text = definitions.icon_text.content.text
-		local text_box_size = definitions.max_text_width / 1920 * RESOLUTION_LOOKUP.res_w
+		local var_7_2 = var_0_0.icon_text.style.text
+		local var_7_3, var_7_4 = UIFontByResolution(var_7_2)
+		local var_7_5 = var_0_0.icon_text.content.text
+		local var_7_6 = var_0_0.max_text_width / 1920 * RESOLUTION_LOOKUP.res_w
 
-		self._text_width = math.min(UIRenderer.text_size(ui_renderer, text, font[1], scaled_font_size), text_box_size)
+		arg_7_0._text_width = math.min(UIRenderer.text_size(var_7_0, var_7_5, var_7_3[1], var_7_4), var_7_6)
 	end
 
-	ui_scenegraph.indicator.local_position[1] = -((self._text_width + definitions.padding) / 2)
+	var_7_1.indicator.local_position[1] = -((arg_7_0._text_width + var_0_0.padding) / 2)
 
-	local angle = self._flash_counter / DisconnectIndicatorView.FLASH_CYCLE * 2 * math.pi
-	local alpha = math.abs(math.sin(angle))
+	local var_7_7 = arg_7_0._flash_counter / DisconnectIndicatorView.FLASH_CYCLE * 2 * math.pi
+	local var_7_8 = math.abs(math.sin(var_7_7))
 
-	self:_set_transparency(alpha)
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, FAKE_INPUT_SERVICE, dt, nil, self._render_settings)
-	UIRenderer.draw_widget(ui_renderer, self._icon_text_widget)
-	UIRenderer.end_pass(ui_renderer)
+	arg_7_0:_set_transparency(var_7_8)
+	UIRenderer.begin_pass(var_7_0, var_7_1, FAKE_INPUT_SERVICE, arg_7_1, nil, arg_7_0._render_settings)
+	UIRenderer.draw_widget(var_7_0, arg_7_0._icon_text_widget)
+	UIRenderer.end_pass(var_7_0)
 end

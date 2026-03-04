@@ -1,65 +1,65 @@
-﻿-- chunkname: @scripts/ui/views/menu_input_description_ui.lua
+-- chunkname: @scripts/ui/views/menu_input_description_ui.lua
 
-local scenegraph_definition = {
+local var_0_0 = {
 	screen = {
-		horizontal_alignment = "center",
-		scale = "fit",
 		vertical_alignment = "center",
+		scale = "fit",
+		horizontal_alignment = "center",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			UILayer.controller_description,
-		},
+			UILayer.controller_description
+		}
 	},
 	input_description_field = {
-		horizontal_alignment = "center",
-		parent = "screen",
 		vertical_alignment = "bottom",
+		parent = "screen",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			0,
-			2,
+			2
 		},
 		size = {
 			1800,
-			70,
-		},
+			70
+		}
 	},
 	background = {
-		horizontal_alignment = "center",
-		parent = "screen",
 		vertical_alignment = "bottom",
+		parent = "screen",
+		horizontal_alignment = "center"
 	},
 	fullscreen_background = {
-		scale = "fit_width",
 		vertical_alignment = "bottom",
+		scale = "fit_width",
 		size = {
 			1920,
-			79,
+			79
 		},
 		position = {
 			0,
 			0,
-			UILayer.default + 1,
-		},
-	},
+			UILayer.default + 1
+		}
+	}
 }
 
 if not IS_WINDOWS then
-	scenegraph_definition.screen.scale = "hud_fit"
+	var_0_0.screen.scale = "hud_fit"
 end
 
-local function sort_input_actions(a, b)
-	return a.priority < b.priority
+local function var_0_1(arg_1_0, arg_1_1)
+	return arg_1_0.priority < arg_1_1.priority
 end
 
-local texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name("tab_menu_bg_02")
+local var_0_2 = UIAtlasHelper.get_atlas_settings_by_texture_name("tab_menu_bg_02")
 
-local function create_background_widget(num_elements)
+local function var_0_3(arg_2_0)
 	return {
 		scenegraph_id = "background",
 		element = {
@@ -67,488 +67,482 @@ local function create_background_widget(num_elements)
 				{
 					pass_type = "texture",
 					style_id = "background",
-					texture_id = "background_id",
-				},
-			},
+					texture_id = "background_id"
+				}
+			}
 		},
 		content = {
-			background_id = "tab_menu_bg_02",
+			background_id = "tab_menu_bg_02"
 		},
 		style = {
 			background = {
-				horizontal_alignment = "center",
 				vertical_alignment = "bottom",
+				horizontal_alignment = "center",
 				texture_size = {
-					texture_settings.size[1] * num_elements,
-					texture_settings.size[2] * 1.2,
-				},
-			},
-		},
+					var_0_2.size[1] * arg_2_0,
+					var_0_2.size[2] * 1.2
+				}
+			}
+		}
 	}
 end
 
-local function create_fullscreen_background_widget()
+local function var_0_4()
 	return UIWidgets.create_simple_uv_texture("menu_panel_bg", {
 		{
 			0,
-			1,
+			1
 		},
 		{
 			1,
-			0,
-		},
+			0
+		}
 	}, "fullscreen_background", nil, nil, {
 		200,
 		10,
 		10,
-		10,
+		10
 	})
 end
 
-local function create_input_description_widgets(amount)
-	local input_description_widgets = {}
+local function var_0_5(arg_4_0)
+	local var_4_0 = {}
 
-	for i = 1, amount do
-		local scenegraph_root_id = "input_description_root_" .. i
-		local scenegraph_id = "input_description_" .. i
-		local scenegraph_icon_id = "input_description_icon_" .. i
-		local scenegraph_text_id = "input_description_text_" .. i
+	for iter_4_0 = 1, arg_4_0 do
+		local var_4_1 = "input_description_root_" .. iter_4_0
+		local var_4_2 = "input_description_" .. iter_4_0
+		local var_4_3 = "input_description_icon_" .. iter_4_0
+		local var_4_4 = "input_description_text_" .. iter_4_0
 
-		scenegraph_definition[scenegraph_root_id] = {
-			horizontal_alignment = "left",
-			parent = "input_description_field",
+		var_0_0[var_4_1] = {
 			vertical_alignment = "center",
+			parent = "input_description_field",
+			horizontal_alignment = "left",
 			size = {
 				1,
-				1,
+				1
 			},
 			position = {
 				0,
 				0,
-				1,
-			},
+				1
+			}
 		}
-		scenegraph_definition[scenegraph_id] = {
-			horizontal_alignment = "left",
+		var_0_0[var_4_2] = {
 			vertical_alignment = "center",
-			parent = scenegraph_root_id,
+			horizontal_alignment = "left",
+			parent = var_4_1,
 			size = {
 				200,
-				40,
+				40
 			},
 			position = {
 				0,
 				0,
-				1,
-			},
+				1
+			}
 		}
-		scenegraph_definition[scenegraph_icon_id] = {
-			horizontal_alignment = "left",
+		var_0_0[var_4_3] = {
 			vertical_alignment = "center",
-			parent = scenegraph_id,
+			horizontal_alignment = "left",
+			parent = var_4_2,
 			size = {
 				40,
-				40,
+				40
 			},
 			position = {
 				0,
 				0,
-				1,
-			},
+				1
+			}
 		}
-		scenegraph_definition[scenegraph_text_id] = {
-			horizontal_alignment = "left",
+		var_0_0[var_4_4] = {
 			vertical_alignment = "center",
-			parent = scenegraph_icon_id,
+			horizontal_alignment = "left",
+			parent = var_4_3,
 			size = {
 				500,
-				40,
+				40
 			},
 			position = {
 				40,
 				1,
-				1,
-			},
+				1
+			}
 		}
 
-		local widget_definition = {
+		local var_4_5 = {
 			element = {
 				passes = {
 					{
-						pass_type = "text",
 						style_id = "text",
-						text_id = "text",
+						pass_type = "text",
+						text_id = "text"
 					},
 					{
-						pass_type = "text",
 						style_id = "text_shadow",
-						text_id = "text",
+						pass_type = "text",
+						text_id = "text"
 					},
 					{
 						pass_type = "texture",
 						style_id = "icon",
-						texture_id = "icon",
-					},
-				},
+						texture_id = "icon"
+					}
+				}
 			},
 			content = {
-				icon = "xbone_button_icon_a",
 				text = "",
+				icon = "xbone_button_icon_a"
 			},
 			style = {
 				text = {
-					dynamic_font = true,
 					font_size = 24,
-					font_type = "hell_shark",
-					horizontal_alignment = "left",
-					pixel_perfect = true,
-					vertical_alignment = "center",
 					word_wrap = true,
+					pixel_perfect = true,
+					horizontal_alignment = "left",
+					vertical_alignment = "center",
+					dynamic_font = true,
+					font_type = "hell_shark",
 					text_color = Colors.get_color_table_with_alpha("white", 255),
 					offset = {
 						0,
 						0,
-						2,
+						2
 					},
-					scenegraph_id = scenegraph_text_id,
+					scenegraph_id = var_4_4
 				},
 				text_shadow = {
-					dynamic_font = true,
 					font_size = 24,
-					font_type = "hell_shark",
-					horizontal_alignment = "left",
-					pixel_perfect = true,
-					vertical_alignment = "center",
 					word_wrap = true,
+					pixel_perfect = true,
+					horizontal_alignment = "left",
+					vertical_alignment = "center",
+					dynamic_font = true,
+					font_type = "hell_shark",
 					text_color = Colors.get_color_table_with_alpha("black", 255),
 					offset = {
 						2,
 						-2,
-						1,
+						1
 					},
-					scenegraph_id = scenegraph_text_id,
+					scenegraph_id = var_4_4
 				},
 				icon = {
-					scenegraph_id = scenegraph_icon_id,
-				},
+					scenegraph_id = var_4_3
+				}
 			},
-			scenegraph_id = scenegraph_id,
+			scenegraph_id = var_4_2
 		}
 
-		input_description_widgets[#input_description_widgets + 1] = UIWidget.init(widget_definition)
+		var_4_0[#var_4_0 + 1] = UIWidget.init(var_4_5)
 	end
 
-	return input_description_widgets
+	return var_4_0
 end
 
 MenuInputDescriptionUI = class(MenuInputDescriptionUI)
 
-MenuInputDescriptionUI.init = function (self, ingame_ui_context, ui_renderer, input_service, number_of_elements, layer, generic_actions, use_fullscreen_layout, optional_max_width)
-	self:clear_input_descriptions()
+function MenuInputDescriptionUI.init(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8)
+	arg_5_0:clear_input_descriptions()
 
-	self.input_service = input_service
-	self.ui_renderer = ui_renderer
-	self.generic_actions = generic_actions
-	self.render_settings = {
-		snap_pixel_positions = true,
+	arg_5_0.input_service = arg_5_3
+	arg_5_0.ui_renderer = arg_5_2
+	arg_5_0.generic_actions = arg_5_6
+	arg_5_0.render_settings = {
+		snap_pixel_positions = true
 	}
-	self._max_width = optional_max_width or math.huge
-	self._use_fullscreen_layout = use_fullscreen_layout
-	scenegraph_definition.screen.position[3] = layer and layer + 10 or UILayer.controller_description
+	arg_5_0._max_width = arg_5_8 or math.huge
+	arg_5_0._use_fullscreen_layout = arg_5_7
+	var_0_0.screen.position[3] = arg_5_5 and arg_5_5 + 10 or UILayer.controller_description
 
-	self:create_ui_elements(ui_renderer, number_of_elements, use_fullscreen_layout)
+	arg_5_0:create_ui_elements(arg_5_2, arg_5_4, arg_5_7)
 end
 
-MenuInputDescriptionUI.create_ui_elements = function (self, ui_renderer, number_of_elements, use_fullscreen_layout)
-	self.console_input_description_widgets = create_input_description_widgets(number_of_elements or 5)
+function MenuInputDescriptionUI.create_ui_elements(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	arg_6_0.console_input_description_widgets = var_0_5(arg_6_2 or 5)
 
-	if use_fullscreen_layout then
-		self.background_widget = nil
+	if arg_6_3 then
+		arg_6_0.background_widget = nil
 	else
-		self.background_widget = UIWidget.init(create_background_widget(number_of_elements or 3))
+		arg_6_0.background_widget = UIWidget.init(var_0_3(arg_6_2 or 3))
 	end
 
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	arg_6_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0)
 
-	UIRenderer.clear_scenegraph_queue(ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_6_1)
 end
 
-MenuInputDescriptionUI._verify_input = function (self)
-	local most_recent_device = Managers.input:get_most_recent_device()
-
-	if most_recent_device ~= self._most_recent_device then
-		self:set_input_description(self.current_console_selection_data)
+function MenuInputDescriptionUI._verify_input(arg_7_0)
+	if Managers.input:get_most_recent_device() ~= arg_7_0._most_recent_device then
+		arg_7_0:set_input_description(arg_7_0.current_console_selection_data)
 	end
 end
 
-MenuInputDescriptionUI.draw = function (self, ui_renderer, dt)
-	self:_verify_input()
+function MenuInputDescriptionUI.draw(arg_8_0, arg_8_1, arg_8_2)
+	arg_8_0:_verify_input()
 
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self.input_service
-	local ui_renderer = self.ui_renderer
+	local var_8_0 = arg_8_0.ui_scenegraph
+	local var_8_1 = arg_8_0.input_service
+	local var_8_2 = arg_8_0.ui_renderer
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
+	UIRenderer.begin_pass(var_8_2, var_8_0, var_8_1, arg_8_2, nil, arg_8_0.render_settings)
 
-	local number_of_descriptions_in_use = self.number_of_descriptions_in_use
-	local console_description_widgets = self.console_input_description_widgets
+	local var_8_3 = arg_8_0.number_of_descriptions_in_use
+	local var_8_4 = arg_8_0.console_input_description_widgets
 
-	if number_of_descriptions_in_use then
-		for i = 1, number_of_descriptions_in_use do
-			UIRenderer.draw_widget(ui_renderer, console_description_widgets[i])
+	if var_8_3 then
+		for iter_8_0 = 1, var_8_3 do
+			UIRenderer.draw_widget(var_8_2, var_8_4[iter_8_0])
 		end
 
-		if self.background_widget then
-			UIRenderer.draw_widget(ui_renderer, self.background_widget)
+		if arg_8_0.background_widget then
+			UIRenderer.draw_widget(var_8_2, arg_8_0.background_widget)
 		end
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_8_2)
 end
 
-MenuInputDescriptionUI.destroy = function (self)
+function MenuInputDescriptionUI.destroy(arg_9_0)
 	return
 end
 
-MenuInputDescriptionUI.change_generic_actions = function (self, new_generic_actions)
-	self.generic_actions = new_generic_actions
+function MenuInputDescriptionUI.change_generic_actions(arg_10_0, arg_10_1)
+	arg_10_0.generic_actions = arg_10_1
 
-	self:set_input_description(self.current_console_selection_data)
+	arg_10_0:set_input_description(arg_10_0.current_console_selection_data)
 end
 
-MenuInputDescriptionUI.setup_console_widget_selections = function (self)
-	local steppers = self.steppers
-	local console_widget_selections = {
+function MenuInputDescriptionUI.setup_console_widget_selections(arg_11_0)
+	local var_11_0 = arg_11_0.steppers
+
+	return {
 		{
-			gamepad_support = true,
 			name = "difficulty",
-			widget = steppers.difficulty.widget,
+			gamepad_support = true,
+			widget = var_11_0.difficulty.widget,
 			actions = {
 				{
-					description_text = "input_description_previous",
 					hotspot_id = "left_button_hotspot",
 					input_action = "move_left",
+					description_text = "input_description_previous"
 				},
 				{
-					description_text = "input_description_next",
 					hotspot_id = "right_button_hotspot",
 					input_action = "move_right",
-				},
-			},
+					description_text = "input_description_next"
+				}
+			}
 		},
 		{
-			gamepad_support = true,
 			name = "privacy",
-			widget = steppers.privacy.widget,
-			actions = {
-				{
-					description_text = "input_description_previous",
-					hotspot_id = "left_button_hotspot",
-					input_action = "move_left",
-				},
-				{
-					description_text = "input_description_next",
-					hotspot_id = "right_button_hotspot",
-					input_action = "move_right",
-				},
-			},
-		},
-		{
 			gamepad_support = true,
-			name = "level",
-			widget = steppers.level.widget,
+			widget = var_11_0.privacy.widget,
 			actions = {
 				{
-					description_text = "input_description_previous",
 					hotspot_id = "left_button_hotspot",
 					input_action = "move_left",
+					description_text = "input_description_previous"
 				},
 				{
-					description_text = "input_description_next",
 					hotspot_id = "right_button_hotspot",
 					input_action = "move_right",
-				},
-			},
+					description_text = "input_description_next"
+				}
+			}
 		},
 		{
-			gamepad_support = false,
+			name = "level",
+			gamepad_support = true,
+			widget = var_11_0.level.widget,
+			actions = {
+				{
+					hotspot_id = "left_button_hotspot",
+					input_action = "move_left",
+					description_text = "input_description_previous"
+				},
+				{
+					hotspot_id = "right_button_hotspot",
+					input_action = "move_right",
+					description_text = "input_description_next"
+				}
+			}
+		},
+		{
 			name = "play_button",
-			widget = self.play_button_console_widget,
+			gamepad_support = false,
+			widget = arg_11_0.play_button_console_widget,
 			actions = {
 				{
-					description_text = "input_description_confirm",
 					hotspot_id = "button_hotspot",
 					input_action = "confirm",
-				},
-			},
+					description_text = "input_description_confirm"
+				}
+			}
 		},
 		{
-			gamepad_support = false,
 			name = "quickmatch_button",
-			widget = self.quickmatch_button_console_widget,
+			gamepad_support = false,
+			widget = arg_11_0.quickmatch_button_console_widget,
 			actions = {
 				{
-					description_text = "input_description_confirm",
 					hotspot_id = "button_hotspot",
 					input_action = "confirm",
-				},
-			},
-		},
+					description_text = "input_description_confirm"
+				}
+			}
+		}
 	}
-
-	return console_widget_selections
 end
 
-MenuInputDescriptionUI.set_input_description = function (self, console_selection_data, optional_scale)
-	self:clear_input_descriptions()
+function MenuInputDescriptionUI.set_input_description(arg_12_0, arg_12_1, arg_12_2)
+	arg_12_0:clear_input_descriptions()
 
-	local scale = optional_scale or 1
-	local ui_renderer = self.ui_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local console_input_description_widgets = self.console_input_description_widgets
-	local spacing = 30 * scale
-	local widgets_width_list = {}
-	local total_width = 0
-	local widget_use_index = 0
+	local var_12_0 = arg_12_2 or 1
+	local var_12_1 = arg_12_0.ui_renderer
+	local var_12_2 = arg_12_0.ui_scenegraph
+	local var_12_3 = arg_12_0.console_input_description_widgets
+	local var_12_4 = 30 * var_12_0
+	local var_12_5 = {}
+	local var_12_6 = 0
+	local var_12_7 = 0
 
-	self.current_console_selection_data = console_selection_data
+	arg_12_0.current_console_selection_data = arg_12_1
 
-	local actions_to_add = console_selection_data and console_selection_data.actions and table.clone(console_selection_data.actions) or {}
-	local ignore_generic_actions = console_selection_data and console_selection_data.ignore_generic_actions
-	local actions = {}
+	local var_12_8 = arg_12_1 and arg_12_1.actions and table.clone(arg_12_1.actions) or {}
+	local var_12_9 = arg_12_1 and arg_12_1.ignore_generic_actions
+	local var_12_10 = {}
 
-	if not ignore_generic_actions then
-		local generic_actions = self.generic_actions
+	if not var_12_9 then
+		local var_12_11 = arg_12_0.generic_actions
 
-		if generic_actions then
-			for _, action_data in ipairs(generic_actions) do
-				if not action_data.content_check_function or action_data.content_check_function() then
-					actions[#actions + 1] = action_data
+		if var_12_11 then
+			for iter_12_0, iter_12_1 in ipairs(var_12_11) do
+				if not iter_12_1.content_check_function or iter_12_1.content_check_function() then
+					var_12_10[#var_12_10 + 1] = iter_12_1
 				end
 			end
 		end
 	end
 
-	for _, action_data in pairs(actions_to_add) do
-		if not action_data.content_check_function or action_data.content_check_function() then
-			actions[#actions + 1] = action_data
+	for iter_12_2, iter_12_3 in pairs(var_12_8) do
+		if not iter_12_3.content_check_function or iter_12_3.content_check_function() then
+			var_12_10[#var_12_10 + 1] = iter_12_3
 		end
 	end
 
-	table.sort(actions, sort_input_actions)
+	table.sort(var_12_10, var_0_1)
 
-	for _, action_data in pairs(actions) do
-		local input_action = action_data.input_action
-		local description_text = action_data.description_text
-		local ignore_keybinding = action_data.ignore_keybinding
+	for iter_12_4, iter_12_5 in pairs(var_12_10) do
+		local var_12_12 = iter_12_5.input_action
+		local var_12_13 = iter_12_5.description_text
+		local var_12_14 = iter_12_5.ignore_keybinding
 
-		if description_text then
-			widget_use_index = widget_use_index + 1
-			description_text = action_data.ignore_localization and description_text or Localize(description_text)
+		if var_12_13 then
+			var_12_7 = var_12_7 + 1
+			var_12_13 = iter_12_5.ignore_localization and var_12_13 or Localize(var_12_13)
 
-			local action_texture_data = self:get_gamepad_input_texture_data(input_action, ignore_keybinding)
-			local description_widget = console_input_description_widgets[widget_use_index]
-			local widget_content = description_widget.content
-			local widget_style = description_widget.style
-			local scenegraph_id = "input_description_" .. widget_use_index
-			local scenegraph_icon_id = "input_description_icon_" .. widget_use_index
-			local scenegraph_text_id = "input_description_text_" .. widget_use_index
-			local action_texture_size = table.shallow_copy(action_texture_data.size)
+			local var_12_15 = arg_12_0:get_gamepad_input_texture_data(var_12_12, var_12_14)
+			local var_12_16 = var_12_3[var_12_7]
+			local var_12_17 = var_12_16.content
+			local var_12_18 = var_12_16.style
+			local var_12_19 = "input_description_" .. var_12_7
+			local var_12_20 = "input_description_icon_" .. var_12_7
+			local var_12_21 = "input_description_text_" .. var_12_7
+			local var_12_22 = table.shallow_copy(var_12_15.size)
 
-			action_texture_size[1] = action_texture_size[1] * scale
-			action_texture_size[2] = action_texture_size[2] * scale
-			ui_scenegraph[scenegraph_icon_id].size = action_texture_size
-			ui_scenegraph[scenegraph_text_id].local_position[1] = action_texture_size[1]
-			widget_content.icon = action_texture_data.texture
-			description_text = " " .. description_text
-			widget_content.text = description_text
+			var_12_22[1] = var_12_22[1] * var_12_0
+			var_12_22[2] = var_12_22[2] * var_12_0
+			var_12_2[var_12_20].size = var_12_22
+			var_12_2[var_12_21].local_position[1] = var_12_22[1]
+			var_12_17.icon = var_12_15.texture
 
-			local text_style = widget_style.text
+			local var_12_23 = " " .. var_12_13
 
-			text_style._original_font_size = text_style._original_font_size or text_style.font_size
-			text_style.font_size = text_style._original_font_size * scale
+			var_12_17.text = var_12_23
 
-			local font, scaled_font_size = UIFontByResolution(text_style)
-			local text_width = UIRenderer.text_size(ui_renderer, description_text, font[1], scaled_font_size)
-			local widget_length = action_texture_size[1] + text_width
+			local var_12_24 = var_12_18.text
 
-			if self._use_fullscreen_layout then
-				ui_scenegraph[scenegraph_id].local_position[1] = 0
+			var_12_24._original_font_size = var_12_24._original_font_size or var_12_24.font_size
+			var_12_24.font_size = var_12_24._original_font_size * var_12_0
+
+			local var_12_25, var_12_26 = UIFontByResolution(var_12_24)
+			local var_12_27 = UIRenderer.text_size(var_12_1, var_12_23, var_12_25[1], var_12_26)
+			local var_12_28 = var_12_22[1] + var_12_27
+
+			if arg_12_0._use_fullscreen_layout then
+				var_12_2[var_12_19].local_position[1] = 0
 			else
-				ui_scenegraph[scenegraph_id].local_position[1] = -widget_length / 2
+				var_12_2[var_12_19].local_position[1] = -var_12_28 / 2
 			end
 
-			local text_shadow_style = widget_style.text_shadow
-
-			text_shadow_style.font_size = text_style._original_font_size * scale
-			total_width = total_width + widget_length + spacing
-			widgets_width_list[widget_use_index] = widget_length
+			var_12_18.text_shadow.font_size = var_12_24._original_font_size * var_12_0
+			var_12_6 = var_12_6 + var_12_28 + var_12_4
+			var_12_5[var_12_7] = var_12_28
 		end
 	end
 
-	if not optional_scale and total_width > self._max_width then
-		return self:set_input_description(console_selection_data, self._max_width / total_width)
+	if not arg_12_2 and var_12_6 > arg_12_0._max_width then
+		return arg_12_0:set_input_description(arg_12_1, arg_12_0._max_width / var_12_6)
 	end
 
-	self.number_of_descriptions_in_use = widget_use_index ~= 0 and widget_use_index or nil
+	arg_12_0.number_of_descriptions_in_use = var_12_7 ~= 0 and var_12_7 or nil
 
-	self:_align_inputs(total_width, spacing, widgets_width_list)
+	arg_12_0:_align_inputs(var_12_6, var_12_4, var_12_5)
 
-	self._most_recent_device = Managers.input:get_most_recent_device()
+	arg_12_0._most_recent_device = Managers.input:get_most_recent_device()
 end
 
-MenuInputDescriptionUI.clear_input_descriptions = function (self)
-	self.number_of_descriptions_in_use = nil
+function MenuInputDescriptionUI.clear_input_descriptions(arg_13_0)
+	arg_13_0.number_of_descriptions_in_use = nil
 end
 
-MenuInputDescriptionUI.get_gamepad_input_texture_data = function (self, input_action, ignore_keybinding)
-	local platform = PLATFORM
+function MenuInputDescriptionUI.get_gamepad_input_texture_data(arg_14_0, arg_14_1, arg_14_2)
+	local var_14_0 = PLATFORM
 
 	if IS_WINDOWS then
-		platform = "xb1"
+		var_14_0 = "xb1"
 	end
 
-	if ignore_keybinding then
-		return ButtonTextureByName(input_action, platform)
+	if arg_14_2 then
+		return ButtonTextureByName(arg_14_1, var_14_0)
 	else
-		local input_service = self.input_service
+		local var_14_1 = arg_14_0.input_service
 
-		return UISettings.get_gamepad_input_texture_data(input_service, input_action, true)
+		return UISettings.get_gamepad_input_texture_data(var_14_1, arg_14_1, true)
 	end
 end
 
-MenuInputDescriptionUI._align_inputs = function (self, total_width, spacing, widgets_width_list)
-	local ui_scenegraph = self.ui_scenegraph
+function MenuInputDescriptionUI._align_inputs(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+	local var_15_0 = arg_15_0.ui_scenegraph
 
-	total_width = total_width - spacing
+	arg_15_1 = arg_15_1 - arg_15_2
 
-	local parent_width = ui_scenegraph.input_description_field.size[1]
-	local widget_use_index = self.number_of_descriptions_in_use
+	local var_15_1 = var_15_0.input_description_field.size[1]
+	local var_15_2 = arg_15_0.number_of_descriptions_in_use
 
-	if widget_use_index then
-		if self._use_fullscreen_layout then
-			local widget_start_position = 50
-			local max_width = math.min(self._max_width, parent_width)
+	if var_15_2 then
+		if arg_15_0._use_fullscreen_layout then
+			local var_15_3 = 50
+			local var_15_4 = math.min(arg_15_0._max_width, var_15_1)
+			local var_15_5 = math.clamp(var_15_4 - (arg_15_1 + var_15_3 * 2), 0, var_15_3)
 
-			widget_start_position = math.clamp(max_width - (total_width + widget_start_position * 2), 0, widget_start_position)
+			for iter_15_0 = 1, var_15_2 do
+				local var_15_6 = arg_15_3[iter_15_0]
 
-			for i = 1, widget_use_index do
-				local widget_width = widgets_width_list[i]
-				local scenegraph_root_id = "input_description_root_" .. i
-
-				ui_scenegraph[scenegraph_root_id].local_position[1] = widget_start_position
-				widget_start_position = widget_start_position + widget_width + spacing
+				var_15_0["input_description_root_" .. iter_15_0].local_position[1] = var_15_5
+				var_15_5 = var_15_5 + var_15_6 + arg_15_2
 			end
 		else
-			local widget_start_position = parent_width / 2 - total_width / 2
+			local var_15_7 = var_15_1 / 2 - arg_15_1 / 2
 
-			for i = 1, widget_use_index do
-				local widget_width = widgets_width_list[i]
-				local new_x = widget_start_position + widget_width / 2
-				local scenegraph_root_id = "input_description_root_" .. i
+			for iter_15_1 = 1, var_15_2 do
+				local var_15_8 = arg_15_3[iter_15_1]
+				local var_15_9 = var_15_7 + var_15_8 / 2
 
-				ui_scenegraph[scenegraph_root_id].local_position[1] = new_x
-				widget_start_position = new_x + widget_width / 2 + spacing
+				var_15_0["input_description_root_" .. iter_15_1].local_position[1] = var_15_9
+				var_15_7 = var_15_9 + var_15_8 / 2 + arg_15_2
 			end
 		end
 	end

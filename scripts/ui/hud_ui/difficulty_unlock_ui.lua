@@ -1,362 +1,350 @@
-﻿-- chunkname: @scripts/ui/hud_ui/difficulty_unlock_ui.lua
+-- chunkname: @scripts/ui/hud_ui/difficulty_unlock_ui.lua
 
 require("scripts/settings/difficulty_settings")
 
-local definitions = local_require("scripts/ui/hud_ui/difficulty_unlock_ui_definitions")
-local scenegraph_definition = definitions.scenegraph_definition
-local animation_definitions = definitions.animations
-local survival_start_wave_by_difficulty = SurvivalStartWaveByDifficulty
+local var_0_0 = local_require("scripts/ui/hud_ui/difficulty_unlock_ui_definitions")
+local var_0_1 = var_0_0.scenegraph_definition
+local var_0_2 = var_0_0.animations
+local var_0_3 = SurvivalStartWaveByDifficulty
 
 DifficultyUnlockUI = class(DifficultyUnlockUI)
 
-local DO_RELOAD = false
+local var_0_4 = false
 
-DifficultyUnlockUI.init = function (self, parent, ingame_ui_context)
-	self._parent = parent
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self.ingame_ui = ingame_ui_context.ingame_ui
-	self.input_manager = ingame_ui_context.input_manager
-	self.world = ingame_ui_context.world_manager:world("level_world")
-	self.wwise_world = Managers.world:wwise_world(self.world)
-	self.difficulty_manager = Managers.state.difficulty
-	self.statistics_db = ingame_ui_context.statistics_db
-	self.ui_animations = {}
+function DifficultyUnlockUI.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0._parent = arg_1_1
+	arg_1_0.ui_renderer = arg_1_2.ui_renderer
+	arg_1_0.ingame_ui = arg_1_2.ingame_ui
+	arg_1_0.input_manager = arg_1_2.input_manager
+	arg_1_0.world = arg_1_2.world_manager:world("level_world")
+	arg_1_0.wwise_world = Managers.world:wwise_world(arg_1_0.world)
+	arg_1_0.difficulty_manager = Managers.state.difficulty
+	arg_1_0.statistics_db = arg_1_2.statistics_db
+	arg_1_0.ui_animations = {}
 
-	self:create_ui_elements()
-	self:difficulty_set()
-	Managers.state.event:register(self, "difficulty_synced", "difficulty_set")
+	arg_1_0:create_ui_elements()
+	arg_1_0:difficulty_set()
+	Managers.state.event:register(arg_1_0, "difficulty_synced", "difficulty_set")
 end
 
-DifficultyUnlockUI.create_ui_elements = function (self)
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+function DifficultyUnlockUI.create_ui_elements(arg_2_0)
+	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 
-	local widget_definitions = definitions.widget_definitions
-	local icon_widgets = {}
+	local var_2_0 = var_0_0.widget_definitions
+	local var_2_1 = {}
 
-	for i = 1, 5 do
-		local definition_name = "difficulty_icon_" .. i
+	for iter_2_0 = 1, 5 do
+		local var_2_2 = "difficulty_icon_" .. iter_2_0
 
-		icon_widgets[i] = UIWidget.init(widget_definitions[definition_name])
+		var_2_1[iter_2_0] = UIWidget.init(var_2_0[var_2_2])
 	end
 
-	self.icon_widgets = icon_widgets
-	self.background_top_widget = UIWidget.init(widget_definitions.background_top)
-	self.background_center_widget = UIWidget.init(widget_definitions.background_center)
-	self.background_bottom_widget = UIWidget.init(widget_definitions.background_bottom)
-	self.background_glow_widget = UIWidget.init(widget_definitions.background_glow)
-	self.difficulty_text_widget = UIWidget.init(widget_definitions.difficulty_text)
-	self.difficulty_title_text_widget = UIWidget.init(widget_definitions.difficulty_title_text)
+	arg_2_0.icon_widgets = var_2_1
+	arg_2_0.background_top_widget = UIWidget.init(var_2_0.background_top)
+	arg_2_0.background_center_widget = UIWidget.init(var_2_0.background_center)
+	arg_2_0.background_bottom_widget = UIWidget.init(var_2_0.background_bottom)
+	arg_2_0.background_glow_widget = UIWidget.init(var_2_0.background_glow)
+	arg_2_0.difficulty_text_widget = UIWidget.init(var_2_0.difficulty_text)
+	arg_2_0.difficulty_title_text_widget = UIWidget.init(var_2_0.difficulty_title_text)
 
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_renderer)
 
-	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
-	self.is_visible = true
+	arg_2_0.ui_animator = UIAnimator:new(arg_2_0.ui_scenegraph, var_0_2)
+	arg_2_0.is_visible = true
 end
 
-DifficultyUnlockUI.difficulty_set = function (self)
-	local statistics_db = self.statistics_db
-	local player = Managers.player:local_player()
-	local player_stats_id = player:stats_id()
-	local level_key = Managers.state.game_mode:level_key()
-	local level_settings = LevelSettings[level_key]
-	local level_difficulties = self.difficulty_manager:get_default_difficulties()
-	local mirrored_level_difficulties = table.mirror_table(level_difficulties)
-	local current_difficulty = self.difficulty_manager:get_difficulty()
-	local start_index = table.find(mirrored_level_difficulties, current_difficulty)
-	local highest_completed_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(statistics_db, player_stats_id, level_key) or 0
+function DifficultyUnlockUI.difficulty_set(arg_3_0)
+	local var_3_0 = arg_3_0.statistics_db
+	local var_3_1 = Managers.player:local_player():stats_id()
+	local var_3_2 = Managers.state.game_mode:level_key()
+	local var_3_3 = LevelSettings[var_3_2]
+	local var_3_4 = arg_3_0.difficulty_manager:get_default_difficulties()
+	local var_3_5 = table.mirror_table(var_3_4)
+	local var_3_6 = arg_3_0.difficulty_manager:get_difficulty()
+	local var_3_7 = table.find(var_3_5, var_3_6)
+	local var_3_8 = (LevelUnlockUtils.completed_level_difficulty_index(var_3_0, var_3_1, var_3_2) or 0) + 1
 
-	highest_completed_difficulty_index = highest_completed_difficulty_index + 1
+	if var_3_7 and var_3_6 ~= var_3_4[#var_3_4] then
+		local var_3_9 = var_0_3[var_3_6]
+		local var_3_10 = {}
+		local var_3_11 = {}
 
-	if start_index and current_difficulty ~= level_difficulties[#level_difficulties] then
-		local original_start_wave = survival_start_wave_by_difficulty[current_difficulty]
-		local persentation_wave_list = {}
-		local persentation_wave_difficulty_list = {}
+		for iter_3_0 = var_3_7, #var_3_4 do
+			local var_3_12 = var_3_4[iter_3_0]
 
-		for i = start_index, #level_difficulties do
-			local difficulty = level_difficulties[i]
+			if var_3_12 ~= var_3_6 and var_3_8 < iter_3_0 then
+				local var_3_13 = var_0_3[var_3_12]
 
-			if difficulty ~= current_difficulty and highest_completed_difficulty_index < i then
-				local wave_by_difficulty = survival_start_wave_by_difficulty[difficulty]
-
-				persentation_wave_list[#persentation_wave_list + 1] = wave_by_difficulty - original_start_wave
-				persentation_wave_difficulty_list[#persentation_wave_difficulty_list + 1] = difficulty
+				var_3_10[#var_3_10 + 1] = var_3_13 - var_3_9
+				var_3_11[#var_3_11 + 1] = var_3_12
 			end
 		end
 
-		self.next_presentation_wave = persentation_wave_list[1]
-		self.persentation_wave_list = persentation_wave_list
-		self.persentation_wave_difficulty_list = persentation_wave_difficulty_list
+		arg_3_0.next_presentation_wave = var_3_10[1]
+		arg_3_0.persentation_wave_list = var_3_10
+		arg_3_0.persentation_wave_difficulty_list = var_3_11
 	end
 end
 
-DifficultyUnlockUI.align_icon_widgets = function (self)
-	local icon_draw_count = self.icon_draw_count
-	local icon_widgets = self.icon_widgets
-	local widget_width = 50
-	local draw_position_x = -(icon_draw_count / 2 * widget_width) + widget_width * 0.5
+function DifficultyUnlockUI.align_icon_widgets(arg_4_0)
+	local var_4_0 = arg_4_0.icon_draw_count
+	local var_4_1 = arg_4_0.icon_widgets
+	local var_4_2 = 50
+	local var_4_3 = -(var_4_0 / 2 * var_4_2) + var_4_2 * 0.5
 
-	if icon_widgets then
-		local ui_scenegraph = self.ui_scenegraph
-		local spacing = 0
+	if var_4_1 then
+		local var_4_4 = arg_4_0.ui_scenegraph
+		local var_4_5 = 0
 
-		for i = 1, icon_draw_count do
-			local widget = icon_widgets[i]
-			local scenegraph_id = widget.scenegraph_id
-			local widget_scenegraph = ui_scenegraph[scenegraph_id]
-			local local_position = widget_scenegraph.local_position
+		for iter_4_0 = 1, var_4_0 do
+			local var_4_6 = var_4_1[iter_4_0]
 
-			local_position[1] = draw_position_x
-			draw_position_x = draw_position_x + widget_width
-			widget.element.dirty = true
+			var_4_4[var_4_6.scenegraph_id].local_position[1] = var_4_3
+			var_4_3 = var_4_3 + var_4_2
+			var_4_6.element.dirty = true
 		end
 	end
 end
 
-DifficultyUnlockUI.destroy = function (self)
-	self.ui_animator = nil
+function DifficultyUnlockUI.destroy(arg_5_0)
+	arg_5_0.ui_animator = nil
 
-	self:set_visible(false)
+	arg_5_0:set_visible(false)
 end
 
-DifficultyUnlockUI.set_visible = function (self, visible)
-	self.is_visible = visible
+function DifficultyUnlockUI.set_visible(arg_6_0, arg_6_1)
+	arg_6_0.is_visible = arg_6_1
 
-	local ui_renderer = self.ui_renderer
-	local icon_widgets = self.icon_widgets
+	local var_6_0 = arg_6_0.ui_renderer
+	local var_6_1 = arg_6_0.icon_widgets
 
-	if icon_widgets then
-		for index, widget in ipairs(icon_widgets) do
-			UIRenderer.set_element_visible(ui_renderer, widget.element, visible)
+	if var_6_1 then
+		for iter_6_0, iter_6_1 in ipairs(var_6_1) do
+			UIRenderer.set_element_visible(var_6_0, iter_6_1.element, arg_6_1)
 		end
 	end
 end
 
-DifficultyUnlockUI._check_for_presentation_start = function (self, mission_data)
-	local previous_wave_completed = self.previous_wave_completed or 0
-	local wave_completed = mission_data.wave_completed - mission_data.starting_wave
+function DifficultyUnlockUI._check_for_presentation_start(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_0.previous_wave_completed or 0
+	local var_7_1 = arg_7_1.wave_completed - arg_7_1.starting_wave
 
-	if wave_completed <= previous_wave_completed then
+	if var_7_1 <= var_7_0 then
 		return
 	end
 
-	local next_presentation_wave = self.next_presentation_wave
+	if arg_7_0.next_presentation_wave == var_7_1 then
+		table.remove(arg_7_0.persentation_wave_list, 1)
 
-	if next_presentation_wave == wave_completed then
-		table.remove(self.persentation_wave_list, 1)
+		arg_7_0.next_presentation_wave = arg_7_0.persentation_wave_list[1]
+		arg_7_0.display_presentation_difficulty = arg_7_0.persentation_wave_difficulty_list[1]
 
-		self.next_presentation_wave = self.persentation_wave_list[1]
-		self.display_presentation_difficulty = self.persentation_wave_difficulty_list[1]
+		table.remove(arg_7_0.persentation_wave_difficulty_list, 1)
 
-		table.remove(self.persentation_wave_difficulty_list, 1)
-
-		self.presentation_start_time = 0
+		arg_7_0.presentation_start_time = 0
 	end
 
-	self.previous_wave_completed = wave_completed
+	arg_7_0.previous_wave_completed = var_7_1
 end
 
-DifficultyUnlockUI._update_start_timer = function (self, dt)
-	local time = self.presentation_start_time
+function DifficultyUnlockUI._update_start_timer(arg_8_0, arg_8_1)
+	local var_8_0 = arg_8_0.presentation_start_time
 
-	if time then
-		local end_time = 10
+	if var_8_0 then
+		local var_8_1 = 10
 
-		if time == end_time then
-			self:display_unlock(nil, self.display_presentation_difficulty)
+		if var_8_0 == var_8_1 then
+			arg_8_0:display_unlock(nil, arg_8_0.display_presentation_difficulty)
 
-			self.display_presentation_difficulty = nil
-			time = nil
+			arg_8_0.display_presentation_difficulty = nil
+			var_8_0 = nil
 		else
-			time = math.min(time + dt, end_time)
+			var_8_0 = math.min(var_8_0 + arg_8_1, var_8_1)
 		end
 
-		self.presentation_start_time = time
+		arg_8_0.presentation_start_time = var_8_0
 	end
 end
 
-DifficultyUnlockUI.update = function (self, dt, mission_data)
-	if DO_RELOAD then
-		DO_RELOAD = false
+function DifficultyUnlockUI.update(arg_9_0, arg_9_1, arg_9_2)
+	if var_0_4 then
+		var_0_4 = false
 
-		self:create_ui_elements()
+		arg_9_0:create_ui_elements()
 	end
 
-	if self.next_presentation_wave then
-		self:_check_for_presentation_start(mission_data)
+	if arg_9_0.next_presentation_wave then
+		arg_9_0:_check_for_presentation_start(arg_9_2)
 	end
 
-	self:_update_start_timer(dt)
+	arg_9_0:_update_start_timer(arg_9_1)
 
-	if not self.is_visible or not self.draw_widgets then
+	if not arg_9_0.is_visible or not arg_9_0.draw_widgets then
 		return
 	end
 
-	local is_dirty
-	local ui_animations = self.ui_animations
+	local var_9_0
+	local var_9_1 = arg_9_0.ui_animations
 
-	if ui_animations then
-		for name, animation in pairs(ui_animations) do
-			is_dirty = true
+	if var_9_1 then
+		for iter_9_0, iter_9_1 in pairs(var_9_1) do
+			var_9_0 = true
 
-			UIAnimation.update(animation, dt)
+			UIAnimation.update(iter_9_1, arg_9_1)
 
-			if UIAnimation.completed(animation) then
-				self.ui_animations[name] = nil
+			if UIAnimation.completed(iter_9_1) then
+				arg_9_0.ui_animations[iter_9_0] = nil
 			end
 		end
 	end
 
-	local ui_animator = self.ui_animator
+	local var_9_2 = arg_9_0.ui_animator
 
-	ui_animator:update(dt)
+	var_9_2:update(arg_9_1)
 
-	local presentation_anim_id = self.presentation_anim_id
+	local var_9_3 = arg_9_0.presentation_anim_id
 
-	if presentation_anim_id then
-		if ui_animator:is_animation_completed(presentation_anim_id) then
-			ui_animator:stop_animation(presentation_anim_id)
+	if var_9_3 then
+		if var_9_2:is_animation_completed(var_9_3) then
+			var_9_2:stop_animation(var_9_3)
 
-			self.presentation_anim_id = nil
+			arg_9_0.presentation_anim_id = nil
 
-			self:start_explode_animation()
+			arg_9_0:start_explode_animation()
 		end
 
-		is_dirty = true
+		var_9_0 = true
 	end
 
-	local explode_anim_id = self.explode_anim_id
+	local var_9_4 = arg_9_0.explode_anim_id
 
-	if explode_anim_id then
-		if ui_animator:is_animation_completed(explode_anim_id) then
-			ui_animator:stop_animation(explode_anim_id)
+	if var_9_4 then
+		if var_9_2:is_animation_completed(var_9_4) then
+			var_9_2:stop_animation(var_9_4)
 
-			self.explode_anim_id = nil
+			arg_9_0.explode_anim_id = nil
 
-			self:on_presentation_complete()
+			arg_9_0:on_presentation_complete()
 		end
 
-		is_dirty = true
+		var_9_0 = true
 	end
 
-	if not is_dirty then
-		local resolution_modified = RESOLUTION_LOOKUP.modified
-
-		if resolution_modified then
-			is_dirty = true
-		end
+	if not var_9_0 and RESOLUTION_LOOKUP.modified then
+		var_9_0 = true
 	end
 
-	if is_dirty then
-		local icon_widgets = self.icon_widgets
+	if var_9_0 then
+		local var_9_5 = arg_9_0.icon_widgets
 
-		if icon_widgets then
-			for index, widget in ipairs(icon_widgets) do
-				widget.element.dirty = true
+		if var_9_5 then
+			for iter_9_2, iter_9_3 in ipairs(var_9_5) do
+				iter_9_3.element.dirty = true
 			end
 		end
 	end
 
-	self:draw(dt)
+	arg_9_0:draw(arg_9_1)
 end
 
-DifficultyUnlockUI.draw = function (self, dt)
-	local ui_renderer = self.ui_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self.input_manager:get_service("ingame_menu")
+function DifficultyUnlockUI.draw(arg_10_0, arg_10_1)
+	local var_10_0 = arg_10_0.ui_renderer
+	local var_10_1 = arg_10_0.ui_scenegraph
+	local var_10_2 = arg_10_0.input_manager:get_service("ingame_menu")
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt)
+	UIRenderer.begin_pass(var_10_0, var_10_1, var_10_2, arg_10_1)
 
-	local icon_draw_count = self.icon_draw_count
+	local var_10_3 = arg_10_0.icon_draw_count
 
-	if icon_draw_count then
-		local icon_widgets = self.icon_widgets
+	if var_10_3 then
+		local var_10_4 = arg_10_0.icon_widgets
 
-		if icon_widgets then
-			for i = 1, icon_draw_count do
-				local widget = icon_widgets[i]
+		if var_10_4 then
+			for iter_10_0 = 1, var_10_3 do
+				local var_10_5 = var_10_4[iter_10_0]
 
-				UIRenderer.draw_widget(ui_renderer, widget)
+				UIRenderer.draw_widget(var_10_0, var_10_5)
 			end
 		end
 	end
 
-	UIRenderer.draw_widget(ui_renderer, self.background_top_widget)
-	UIRenderer.draw_widget(ui_renderer, self.background_center_widget)
-	UIRenderer.draw_widget(ui_renderer, self.background_bottom_widget)
-	UIRenderer.draw_widget(ui_renderer, self.background_glow_widget)
-	UIRenderer.draw_widget(ui_renderer, self.difficulty_text_widget)
-	UIRenderer.draw_widget(ui_renderer, self.difficulty_title_text_widget)
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.draw_widget(var_10_0, arg_10_0.background_top_widget)
+	UIRenderer.draw_widget(var_10_0, arg_10_0.background_center_widget)
+	UIRenderer.draw_widget(var_10_0, arg_10_0.background_bottom_widget)
+	UIRenderer.draw_widget(var_10_0, arg_10_0.background_glow_widget)
+	UIRenderer.draw_widget(var_10_0, arg_10_0.difficulty_text_widget)
+	UIRenderer.draw_widget(var_10_0, arg_10_0.difficulty_title_text_widget)
+	UIRenderer.end_pass(var_10_0)
 end
 
-DifficultyUnlockUI.set_difficulty_amount = function (self, amount)
-	self.icon_draw_count = amount
+function DifficultyUnlockUI.set_difficulty_amount(arg_11_0, arg_11_1)
+	arg_11_0.icon_draw_count = arg_11_1
 
-	self:align_icon_widgets()
+	arg_11_0:align_icon_widgets()
 end
 
-DifficultyUnlockUI.display_unlock = function (self, level_key, difficulty)
-	local difficulty_settings = DifficultySettings[difficulty]
-	local rank = difficulty_settings.rank
-	local display_name = difficulty_settings.display_name
+function DifficultyUnlockUI.display_unlock(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = DifficultySettings[arg_12_2]
+	local var_12_1 = var_12_0.rank
+	local var_12_2 = var_12_0.display_name
 
-	self.difficulty_text_widget.content.text = display_name
+	arg_12_0.difficulty_text_widget.content.text = var_12_2
 
-	self:set_difficulty_amount(rank)
-	self:start_presentation_animation()
+	arg_12_0:set_difficulty_amount(var_12_1)
+	arg_12_0:start_presentation_animation()
 
-	self.draw_widgets = true
+	arg_12_0.draw_widgets = true
 end
 
-DifficultyUnlockUI.on_presentation_complete = function (self)
-	self.draw_widgets = false
+function DifficultyUnlockUI.on_presentation_complete(arg_13_0)
+	arg_13_0.draw_widgets = false
 end
 
-DifficultyUnlockUI.start_presentation_animation = function (self)
-	local params = {
-		wwise_world = self.wwise_world,
+function DifficultyUnlockUI.start_presentation_animation(arg_14_0)
+	local var_14_0 = {
+		wwise_world = arg_14_0.wwise_world
 	}
-	local widgets = {}
-	local icon_draw_count = self.icon_draw_count
-	local icon_widgets = self.icon_widgets
-	local icons = {}
+	local var_14_1 = {}
+	local var_14_2 = arg_14_0.icon_draw_count
+	local var_14_3 = arg_14_0.icon_widgets
+	local var_14_4 = {}
 
-	for i = 1, icon_draw_count do
-		icons[i] = icon_widgets[i]
+	for iter_14_0 = 1, var_14_2 do
+		var_14_4[iter_14_0] = var_14_3[iter_14_0]
 	end
 
-	widgets.icons = icons
-	widgets.background_top = self.background_top_widget
-	widgets.background_center = self.background_center_widget
-	widgets.background_bottom = self.background_bottom_widget
-	widgets.background_glow = self.background_glow_widget
-	widgets.difficulty_text = self.difficulty_text_widget
-	widgets.difficulty_title_text = self.difficulty_title_text_widget
-	self.presentation_anim_id = self.ui_animator:start_animation("presentation", widgets, scenegraph_definition, params)
+	var_14_1.icons = var_14_4
+	var_14_1.background_top = arg_14_0.background_top_widget
+	var_14_1.background_center = arg_14_0.background_center_widget
+	var_14_1.background_bottom = arg_14_0.background_bottom_widget
+	var_14_1.background_glow = arg_14_0.background_glow_widget
+	var_14_1.difficulty_text = arg_14_0.difficulty_text_widget
+	var_14_1.difficulty_title_text = arg_14_0.difficulty_title_text_widget
+	arg_14_0.presentation_anim_id = arg_14_0.ui_animator:start_animation("presentation", var_14_1, var_0_1, var_14_0)
 end
 
-DifficultyUnlockUI.start_explode_animation = function (self)
-	local params = {
-		wwise_world = self.wwise_world,
+function DifficultyUnlockUI.start_explode_animation(arg_15_0)
+	local var_15_0 = {
+		wwise_world = arg_15_0.wwise_world
 	}
-	local widgets = {}
-	local icon_draw_count = self.icon_draw_count
-	local icon_widgets = self.icon_widgets
-	local icons = {}
+	local var_15_1 = {}
+	local var_15_2 = arg_15_0.icon_draw_count
+	local var_15_3 = arg_15_0.icon_widgets
+	local var_15_4 = {}
 
-	for i = 1, icon_draw_count do
-		icons[i] = icon_widgets[i]
+	for iter_15_0 = 1, var_15_2 do
+		var_15_4[iter_15_0] = var_15_3[iter_15_0]
 	end
 
-	widgets.icons = icons
-	widgets.background_top = self.background_top_widget
-	widgets.background_center = self.background_center_widget
-	widgets.background_bottom = self.background_bottom_widget
-	widgets.background_glow = self.background_glow_widget
-	widgets.difficulty_text = self.difficulty_text_widget
-	widgets.difficulty_title_text = self.difficulty_title_text_widget
+	var_15_1.icons = var_15_4
+	var_15_1.background_top = arg_15_0.background_top_widget
+	var_15_1.background_center = arg_15_0.background_center_widget
+	var_15_1.background_bottom = arg_15_0.background_bottom_widget
+	var_15_1.background_glow = arg_15_0.background_glow_widget
+	var_15_1.difficulty_text = arg_15_0.difficulty_text_widget
+	var_15_1.difficulty_title_text = arg_15_0.difficulty_title_text_widget
 
-	local animation_name = icon_draw_count == 4 and "explode_parts_4" or "explode_parts_5"
+	local var_15_5 = var_15_2 == 4 and "explode_parts_4" or "explode_parts_5"
 
-	self.explode_anim_id = self.ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
+	arg_15_0.explode_anim_id = arg_15_0.ui_animator:start_animation(var_15_5, var_15_1, var_0_1, var_15_0)
 end

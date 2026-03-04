@@ -1,213 +1,200 @@
-﻿-- chunkname: @scripts/managers/backend/data_server_queue.lua
+-- chunkname: @scripts/managers/backend/data_server_queue.lua
 
 BEQueueItem = class(BEQueueItem)
 
-BEQueueItem.init = function (self, caller, queue_id, script_name, ...)
-	fassert(caller and caller == "DataServerQueue", "Only poll BEQueueItem from DataServerQueue")
+function BEQueueItem.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, ...)
+	fassert(arg_1_1 and arg_1_1 == "DataServerQueue", "Only poll BEQueueItem from DataServerQueue")
 
-	self._queue_id = queue_id
-	self._script_name = script_name
-	self._data = {
-		...,
+	arg_1_0._queue_id = arg_1_2
+	arg_1_0._script_name = arg_1_3
+	arg_1_0._data = {
+		...
 	}
 end
 
-BEQueueItem.disable_registered_commands = function (self)
-	self._disable_registered_commands = true
+function BEQueueItem.disable_registered_commands(arg_2_0)
+	arg_2_0._disable_registered_commands = true
 end
 
-BEQueueItem.submit_request = function (self, caller)
-	fassert(caller and caller == "DataServerQueue", "Only poll BEQueueItem from DataServerQueue")
-	BackendSession.item_server_script(self._script_name, "queue_id", self._queue_id, unpack(self._data))
+function BEQueueItem.submit_request(arg_3_0, arg_3_1)
+	fassert(arg_3_1 and arg_3_1 == "DataServerQueue", "Only poll BEQueueItem from DataServerQueue")
+	BackendSession.item_server_script(arg_3_0._script_name, "queue_id", arg_3_0._queue_id, unpack(arg_3_0._data))
 end
 
-BEQueueItem.poll_backend = function (self, caller)
-	fassert(caller and caller == "DataServerQueue", "Only poll BEQueueItem from DataServerQueue")
+function BEQueueItem.poll_backend(arg_4_0, arg_4_1)
+	fassert(arg_4_1 and arg_4_1 == "DataServerQueue", "Only poll BEQueueItem from DataServerQueue")
 
-	local items, parameters, error_message = BackendSession.poll_item_server()
+	local var_4_0, var_4_1, var_4_2 = BackendSession.poll_item_server()
 
-	if items then
-		if error_message or parameters.queue_id ~= self._queue_id then
-			local error_string = "Backend data server error"
+	if var_4_0 then
+		if var_4_2 or var_4_1.queue_id ~= arg_4_0._queue_id then
+			local var_4_3 = ((((("Backend data server error" .. "\n script: " .. arg_4_0._script_name) .. "\n error_message.details : " .. tostring(var_4_2.details)) .. "\n error_message.reason : " .. tostring(var_4_2.reason)) .. "\n queue_id: " .. tostring(arg_4_0._queue_id) .. " (expected)") .. "\n queue_id: " .. tostring(var_4_1.queue_id) .. " (actual)") .. "\n parameters:"
+			local var_4_4 = #arg_4_0._data
 
-			error_string = error_string .. "\n script: " .. self._script_name
-			error_string = error_string .. "\n error_message.details : " .. tostring(error_message.details)
-			error_string = error_string .. "\n error_message.reason : " .. tostring(error_message.reason)
-			error_string = error_string .. "\n queue_id: " .. tostring(self._queue_id) .. " (expected)"
-			error_string = error_string .. "\n queue_id: " .. tostring(parameters.queue_id) .. " (actual)"
-			error_string = error_string .. "\n parameters:"
+			if var_4_4 > 0 then
+				for iter_4_0 = 1, 2, var_4_4 do
+					local var_4_5 = arg_4_0._data[iter_4_0]
+					local var_4_6 = arg_4_0._data[iter_4_0 + 1]
 
-			local num_parameters = #self._data
-
-			if num_parameters > 0 then
-				for ii = 1, 2, num_parameters do
-					local key = self._data[ii]
-					local value = self._data[ii + 1]
-
-					error_string = error_string .. "\n  " .. tostring(key) .. ": " .. tostring(value)
+					var_4_3 = var_4_3 .. "\n  " .. tostring(var_4_5) .. ": " .. tostring(var_4_6)
 				end
 			end
 
-			Crashify.print_exception("DataServerQueue", error_string)
+			Crashify.print_exception("DataServerQueue", var_4_3)
 		end
 
-		self._is_done = true
-		self._items = items
-		self._parameters = parameters
-		self._error_message = error_message
+		arg_4_0._is_done = true
+		arg_4_0._items = var_4_0
+		arg_4_0._parameters = var_4_1
+		arg_4_0._error_message = var_4_2
 
-		for backend_id, _ in pairs(items) do
-			ItemHelper.mark_backend_id_as_new(backend_id)
+		for iter_4_1, iter_4_2 in pairs(var_4_0) do
+			ItemHelper.mark_backend_id_as_new(iter_4_1)
 		end
 
-		local backend_items = Managers.backend:get_interface("items")
-
-		backend_items:__dirtify()
+		Managers.backend:get_interface("items"):__dirtify()
 	end
 end
 
-BEQueueItem.items = function (self)
-	fassert(self._is_done, "Request hasn't completed yet")
+function BEQueueItem.items(arg_5_0)
+	fassert(arg_5_0._is_done, "Request hasn't completed yet")
 
-	return self._items
+	return arg_5_0._items
 end
 
-BEQueueItem.parameters = function (self)
-	fassert(self._is_done, "Request hasn't completed yet")
+function BEQueueItem.parameters(arg_6_0)
+	fassert(arg_6_0._is_done, "Request hasn't completed yet")
 
-	return self._parameters
+	return arg_6_0._parameters
 end
 
-BEQueueItem.error_message = function (self)
-	fassert(self._is_done, "Request hasn't completed yet")
+function BEQueueItem.error_message(arg_7_0)
+	fassert(arg_7_0._is_done, "Request hasn't completed yet")
 
-	return self._error_message
+	return arg_7_0._error_message
 end
 
-BEQueueItem.use_registered_commands = function (self)
-	return not self._disable_registered_commands
+function BEQueueItem.use_registered_commands(arg_8_0)
+	return not arg_8_0._disable_registered_commands
 end
 
-BEQueueItem.is_done = function (self)
-	return self._is_done
+function BEQueueItem.is_done(arg_9_0)
+	return arg_9_0._is_done
 end
 
 BECommands = class(BECommands)
 
-BECommands.init = function (self)
-	self._executors = {}
+function BECommands.init(arg_10_0)
+	arg_10_0._executors = {}
 
-	self:register_executor("command_group", callback(self, "_command_group_executor"))
+	arg_10_0:register_executor("command_group", callback(arg_10_0, "_command_group_executor"))
 end
 
-BECommands.register_executor = function (self, executor_name, executor)
-	self._executors[executor_name] = executor
+function BECommands.register_executor(arg_11_0, arg_11_1, arg_11_2)
+	arg_11_0._executors[arg_11_1] = arg_11_2
 end
 
-BECommands.unregister_executor = function (self, executor_name)
-	self._executors[executor_name] = nil
+function BECommands.unregister_executor(arg_12_0, arg_12_1)
+	arg_12_0._executors[arg_12_1] = nil
 end
 
-BECommands.execute = function (self, queue_item)
-	local commands = queue_item:parameters()
+function BECommands.execute(arg_13_0, arg_13_1)
+	local var_13_0 = arg_13_1:parameters()
 
-	for command, json_data in pairs(commands) do
-		if command ~= "queue_id" then
-			local data = cjson.decode(json_data)
+	for iter_13_0, iter_13_1 in pairs(var_13_0) do
+		if iter_13_0 ~= "queue_id" then
+			local var_13_1 = cjson.decode(iter_13_1)
 
-			self:_execute(command, data)
+			arg_13_0:_execute(iter_13_0, var_13_1)
 		end
 	end
 end
 
-BECommands._execute = function (self, command, data)
-	local executor = self._executors[command]
-
-	executor(data)
+function BECommands._execute(arg_14_0, arg_14_1, arg_14_2)
+	arg_14_0._executors[arg_14_1](arg_14_2)
 end
 
-BECommands._command_group_executor = function (self, commands)
-	for command, data in pairs(commands) do
-		self:_execute(command, data)
+function BECommands._command_group_executor(arg_15_0, arg_15_1)
+	for iter_15_0, iter_15_1 in pairs(arg_15_1) do
+		arg_15_0:_execute(iter_15_0, iter_15_1)
 	end
 end
 
 DataServerQueue = class(DataServerQueue)
 
-DataServerQueue.init = function (self)
-	self._queue_id = 0
-	self._queue = {}
-	self._error_items = {}
-	self._command_executors = BECommands:new()
+function DataServerQueue.init(arg_16_0)
+	arg_16_0._queue_id = 0
+	arg_16_0._queue = {}
+	arg_16_0._error_items = {}
+	arg_16_0._command_executors = BECommands:new()
 end
 
-DataServerQueue._next_queue_id = function (self)
-	self._queue_id = self._queue_id + 1
+function DataServerQueue._next_queue_id(arg_17_0)
+	arg_17_0._queue_id = arg_17_0._queue_id + 1
 
-	return tostring(self._queue_id)
+	return tostring(arg_17_0._queue_id)
 end
 
-DataServerQueue.add_item = function (self, script_name, ...)
-	local queue_id = self:_next_queue_id()
-	local item = BEQueueItem:new("DataServerQueue", queue_id, script_name, ...)
+function DataServerQueue.add_item(arg_18_0, arg_18_1, ...)
+	local var_18_0 = arg_18_0:_next_queue_id()
+	local var_18_1 = BEQueueItem:new("DataServerQueue", var_18_0, arg_18_1, ...)
 
-	if #self._queue == 0 then
-		item:submit_request("DataServerQueue")
+	if #arg_18_0._queue == 0 then
+		var_18_1:submit_request("DataServerQueue")
 	end
 
-	table.insert(self._queue, item)
+	table.insert(arg_18_0._queue, var_18_1)
 
-	return item
+	return var_18_1
 end
 
-DataServerQueue.register_executor = function (self, executor_name, executor)
-	self._command_executors:register_executor(executor_name, executor)
+function DataServerQueue.register_executor(arg_19_0, arg_19_1, arg_19_2)
+	arg_19_0._command_executors:register_executor(arg_19_1, arg_19_2)
 end
 
-DataServerQueue.unregister_executor = function (self, executor_name)
-	self._command_executors:unregister_executor(executor_name)
+function DataServerQueue.unregister_executor(arg_20_0, arg_20_1)
+	arg_20_0._command_executors:unregister_executor(arg_20_1)
 end
 
-DataServerQueue.clear = function (self)
-	self._queue = {}
+function DataServerQueue.clear(arg_21_0)
+	arg_21_0._queue = {}
 end
 
-DataServerQueue.update = function (self)
-	local current = self._queue[1]
+function DataServerQueue.update(arg_22_0)
+	local var_22_0 = arg_22_0._queue[1]
 
-	if current then
-		current:poll_backend("DataServerQueue")
+	if var_22_0 then
+		var_22_0:poll_backend("DataServerQueue")
 
-		if current:is_done() then
-			if current:error_message() then
-				table.insert(self._error_items, current)
-			elseif current:use_registered_commands() then
-				self._command_executors:execute(current)
+		if var_22_0:is_done() then
+			if var_22_0:error_message() then
+				table.insert(arg_22_0._error_items, var_22_0)
+			elseif var_22_0:use_registered_commands() then
+				arg_22_0._command_executors:execute(var_22_0)
 			end
 
-			table.remove(self._queue, 1)
+			table.remove(arg_22_0._queue, 1)
 
-			local new_item = self._queue[1]
+			local var_22_1 = arg_22_0._queue[1]
 
-			if new_item then
-				new_item:submit_request("DataServerQueue")
+			if var_22_1 then
+				var_22_1:submit_request("DataServerQueue")
 			end
 		end
 	end
 end
 
-DataServerQueue.check_for_errors = function (self)
-	if #self._error_items > 0 then
-		local error_item = table.remove(self._error_items, 1)
-		local error_message = error_item:error_message()
+function DataServerQueue.check_for_errors(arg_23_0)
+	if #arg_23_0._error_items > 0 then
+		local var_23_0 = table.remove(arg_23_0._error_items, 1):error_message()
 
 		return {
 			reason = "data_server_error",
-			details = error_message.details,
+			details = var_23_0.details
 		}
 	end
 end
 
-DataServerQueue.num_current_requests = function (self)
-	return #self._queue
+function DataServerQueue.num_current_requests(arg_24_0)
+	return #arg_24_0._queue
 end

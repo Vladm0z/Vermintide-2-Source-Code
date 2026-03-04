@@ -1,53 +1,53 @@
-﻿-- chunkname: @scripts/managers/unlock/always_unlocked.lua
+-- chunkname: @scripts/managers/unlock/always_unlocked.lua
 
 AlwaysUnlocked = class(AlwaysUnlocked)
 
-AlwaysUnlocked.init = function (self, name, app_id, backend_reward_id, cosmetic, fallback_id, requires_restart, is_legacy_console_dlc)
-	self._name = name
-	self._is_legacy_console_dlc = is_legacy_console_dlc
-	self._id = app_id or "0"
+function AlwaysUnlocked.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
+	arg_1_0._name = arg_1_1
+	arg_1_0._is_legacy_console_dlc = arg_1_7
+	arg_1_0._id = arg_1_2 or "0"
 end
 
-AlwaysUnlocked.ready = function (self)
+function AlwaysUnlocked.ready(arg_2_0)
 	return true
 end
 
-AlwaysUnlocked.is_legacy_console_dlc = function (self)
-	return self._is_legacy_console_dlc
+function AlwaysUnlocked.is_legacy_console_dlc(arg_3_0)
+	return arg_3_0._is_legacy_console_dlc
 end
 
-AlwaysUnlocked.has_error = function (self)
+function AlwaysUnlocked.has_error(arg_4_0)
 	return false
 end
 
-AlwaysUnlocked.id = function (self)
-	return self._id
+function AlwaysUnlocked.id(arg_5_0)
+	return arg_5_0._id
 end
 
-AlwaysUnlocked.set_status_changed = function (self, value)
+function AlwaysUnlocked.set_status_changed(arg_6_0, arg_6_1)
 	return
 end
 
-AlwaysUnlocked.backend_reward_id = function (self)
+function AlwaysUnlocked.backend_reward_id(arg_7_0)
 	return
 end
 
-AlwaysUnlocked.remove_backend_reward_id = function (self)
+function AlwaysUnlocked.remove_backend_reward_id(arg_8_0)
 	return
 end
 
-AlwaysUnlocked.unlocked = function (self)
+function AlwaysUnlocked.unlocked(arg_9_0)
 	return true
 end
 
-AlwaysUnlocked.installed = function (self)
+function AlwaysUnlocked.installed(arg_10_0)
 	return true
 end
 
-AlwaysUnlocked.is_cosmetic = function (self)
+function AlwaysUnlocked.is_cosmetic(arg_11_0)
 	return true
 end
 
-AlwaysUnlocked.requires_restart = function (self)
+function AlwaysUnlocked.requires_restart(arg_12_0)
 	return false
 end

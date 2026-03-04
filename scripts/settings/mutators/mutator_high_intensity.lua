@@ -1,10 +1,10 @@
-﻿-- chunkname: @scripts/settings/mutators/mutator_high_intensity.lua
+-- chunkname: @scripts/settings/mutators/mutator_high_intensity.lua
 
 return {
 	description = "description_mutator_high_intensity",
-	display_name = "display_name_mutator_high_intensity",
 	icon = "mutator_icon_powerful_elites",
-	update_conflict_settings = function (context, data)
+	display_name = "display_name_mutator_high_intensity",
+	update_conflict_settings = function(arg_1_0, arg_1_1)
 		CurrentIntensitySettings.max_intensity = 200
 		CurrentIntensitySettings.decay_per_second = 10
 		CurrentIntensitySettings.decay_delay = 0.5
@@ -12,5 +12,5 @@ return {
 		CurrentPacing.delay_horde_threat_value = 200
 		CurrentPacing.delay_specials_threat_value = 200
 		CurrentPacing.delay_mini_patrol_threat_value = 200
-	end,
+	end
 }

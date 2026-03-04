@@ -1,19 +1,19 @@
-﻿-- chunkname: @scripts/imgui/imgui_ui_debug.lua
+-- chunkname: @scripts/imgui/imgui_ui_debug.lua
 
 ImguiUIDebug = class(ImguiUIDebug)
 
-ImguiUIDebug.init = function (self)
+function ImguiUIDebug.init(arg_1_0)
 	return
 end
 
-ImguiUIDebug.update = function (self, dt)
+function ImguiUIDebug.update(arg_2_0, arg_2_1)
 	return
 end
 
-ImguiUIDebug.draw = function (self)
+function ImguiUIDebug.draw(arg_3_0)
 	return
 end
 
-ImguiUIDebug.is_persistent = function (self)
+function ImguiUIDebug.is_persistent(arg_4_0)
 	return false
 end

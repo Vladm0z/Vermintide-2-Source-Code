@@ -1,120 +1,117 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/actions/action_block.lua
+-- chunkname: @scripts/unit_extensions/weapons/actions/action_block.lua
 
 ActionBlock = class(ActionBlock, ActionBase)
 
-ActionBlock.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	self.world = world
-	self.owner_unit = owner_unit
-	self.first_person_unit = first_person_unit
-	self.weapon_unit = weapon_unit
-	self.is_server = is_server
-	self.item_name = item_name
-	self._blocked_flag = false
-	self._blocked_time = 0
-	self._status_extension = ScriptUnit.extension(owner_unit, "status_system")
-	self._ammo_extension = ScriptUnit.has_extension(weapon_unit, "ammo_system")
+function ActionBlock.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	arg_1_0.world = arg_1_1
+	arg_1_0.owner_unit = arg_1_4
+	arg_1_0.first_person_unit = arg_1_6
+	arg_1_0.weapon_unit = arg_1_7
+	arg_1_0.is_server = arg_1_3
+	arg_1_0.item_name = arg_1_2
+	arg_1_0._blocked_flag = false
+	arg_1_0._blocked_time = 0
+	arg_1_0._status_extension = ScriptUnit.extension(arg_1_4, "status_system")
+	arg_1_0._ammo_extension = ScriptUnit.has_extension(arg_1_7, "ammo_system")
 end
 
-ActionBlock.client_owner_start_action = function (self, new_action, t)
-	ActionBlock.super.client_owner_start_action(self, new_action, t)
+function ActionBlock.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
+	ActionBlock.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
 
-	self.current_action = new_action
-	self.action_time_started = t
+	arg_2_0.current_action = arg_2_1
+	arg_2_0.action_time_started = arg_2_2
 
-	local input_extension = ScriptUnit.extension(self.owner_unit, "input_system")
+	ScriptUnit.extension(arg_2_0.owner_unit, "input_system"):reset_input_buffer()
 
-	input_extension:reset_input_buffer()
-
-	local owner_unit = self.owner_unit
-	local go_id = Managers.state.unit_storage:go_id(owner_unit)
+	local var_2_0 = arg_2_0.owner_unit
+	local var_2_1 = Managers.state.unit_storage:go_id(var_2_0)
 
 	if not LEVEL_EDITOR_TEST then
-		if self.is_server then
-			Managers.state.network.network_transmit:send_rpc_clients("rpc_set_blocking", go_id, true)
+		if arg_2_0.is_server then
+			Managers.state.network.network_transmit:send_rpc_clients("rpc_set_blocking", var_2_1, true)
 		else
-			Managers.state.network.network_transmit:send_rpc_server("rpc_set_blocking", go_id, true)
+			Managers.state.network.network_transmit:send_rpc_server("rpc_set_blocking", var_2_1, true)
 		end
 	end
 
-	Unit.flow_event(self.first_person_unit, "sfx_block_started")
+	Unit.flow_event(arg_2_0.first_person_unit, "sfx_block_started")
 
-	local status_extension = self._status_extension
+	local var_2_2 = arg_2_0._status_extension
 
-	status_extension:set_blocking(true)
+	var_2_2:set_blocking(true)
 
-	status_extension.timed_block = t + 0.5
+	var_2_2.timed_block = arg_2_2 + 0.5
 end
 
-ActionBlock.client_owner_post_update = function (self, dt, t, world, can_damage)
-	local status_extension = self._status_extension
+function ActionBlock.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local var_3_0 = arg_3_0._status_extension
 
-	if status_extension:has_blocked() then
-		self._blocked_flag = true
-		self._blocked_time = t - self.action_time_started
+	if var_3_0:has_blocked() then
+		arg_3_0._blocked_flag = true
+		arg_3_0._blocked_time = arg_3_2 - arg_3_0.action_time_started
 
-		status_extension:set_has_blocked(false)
+		var_3_0:set_has_blocked(false)
 	end
 end
 
-ActionBlock.finish = function (self, reason, data)
-	local stop_blocking = true
-	local new_action_settings = data and data.new_action_settings
+function ActionBlock.finish(arg_4_0, arg_4_1, arg_4_2)
+	local var_4_0 = true
+	local var_4_1 = arg_4_2 and arg_4_2.new_action_settings
 
-	if new_action_settings and new_action_settings.keep_block then
-		stop_blocking = false
+	if var_4_1 and var_4_1.keep_block then
+		var_4_0 = false
 	end
 
-	local owner_unit = self.owner_unit
+	local var_4_2 = arg_4_0.owner_unit
 
-	if reason ~= "new_interupting_action" then
-		local ammo_extension = self._ammo_extension
-		local current_action = self.current_action
-		local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
-		local do_out_of_ammo_reload = not reload_when_out_of_ammo_condition_func and true or reload_when_out_of_ammo_condition_func(owner_unit, reason)
+	if arg_4_1 ~= "new_interupting_action" then
+		local var_4_3 = arg_4_0._ammo_extension
+		local var_4_4 = arg_4_0.current_action
+		local var_4_5 = var_4_4.reload_when_out_of_ammo_condition_func
+		local var_4_6 = not var_4_5 and true or var_4_5(var_4_2, arg_4_1)
 
-		if ammo_extension and current_action.reload_when_out_of_ammo and do_out_of_ammo_reload and ammo_extension:ammo_count() == 0 and ammo_extension:can_reload() then
-			local play_reload_animation = true
+		if var_4_3 and var_4_4.reload_when_out_of_ammo and var_4_6 and var_4_3:ammo_count() == 0 and var_4_3:can_reload() then
+			local var_4_7 = true
 
-			ammo_extension:start_reload(play_reload_animation)
+			var_4_3:start_reload(var_4_7)
 		end
 	end
 
-	if stop_blocking then
+	if var_4_0 then
 		if not LEVEL_EDITOR_TEST then
-			local go_id = Managers.state.unit_storage:go_id(owner_unit)
+			local var_4_8 = Managers.state.unit_storage:go_id(var_4_2)
 
-			if self.is_server then
-				Managers.state.network.network_transmit:send_rpc_clients("rpc_set_blocking", go_id, false)
+			if arg_4_0.is_server then
+				Managers.state.network.network_transmit:send_rpc_clients("rpc_set_blocking", var_4_8, false)
 			else
-				Managers.state.network.network_transmit:send_rpc_server("rpc_set_blocking", go_id, false)
+				Managers.state.network.network_transmit:send_rpc_server("rpc_set_blocking", var_4_8, false)
 			end
 		end
 
-		local status_extension = self._status_extension
+		local var_4_9 = arg_4_0._status_extension
 
-		status_extension:set_blocking(false)
-		status_extension:set_has_blocked(false)
+		var_4_9:set_blocking(false)
+		var_4_9:set_has_blocked(false)
 	end
 
-	self._blocked_flag = false
+	arg_4_0._blocked_flag = false
 end
 
-ActionBlock.streak_available = function (self, t, streak_action)
-	local relative_start = streak_action and streak_action.relative_start_time
-	local relative_end = streak_action and streak_action.relative_end_time
+function ActionBlock.streak_available(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = arg_5_2 and arg_5_2.relative_start_time
+	local var_5_1 = arg_5_2 and arg_5_2.relative_end_time
 
-	if not self._blocked_flag or not relative_start or not relative_end then
+	if not arg_5_0._blocked_flag or not var_5_0 or not var_5_1 then
 		return false
 	end
 
-	local blocked_time = self._blocked_time
-	local start_time = relative_start + blocked_time
-	local end_time = relative_end + blocked_time
+	local var_5_2 = arg_5_0._blocked_time
+	local var_5_3 = var_5_0 + var_5_2
 
-	if end_time < t then
-		self._blocked_flag = false
-		self._blocked_time = 0
-	elseif start_time <= t then
+	if arg_5_1 > var_5_1 + var_5_2 then
+		arg_5_0._blocked_flag = false
+		arg_5_0._blocked_time = 0
+	elseif var_5_3 <= arg_5_1 then
 		return true
 	end
 

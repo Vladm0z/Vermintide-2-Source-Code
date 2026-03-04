@@ -1,64 +1,61 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_teleport_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_teleport_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTTeleportAction = class(BTTeleportAction, BTNode)
 
-BTTeleportAction.init = function (self, ...)
-	BTTeleportAction.super.init(self, ...)
+function BTTeleportAction.init(arg_1_0, ...)
+	BTTeleportAction.super.init(arg_1_0, ...)
 end
 
 BTTeleportAction.name = "BTTeleportAction"
 
-BTTeleportAction.enter = function (self, unit, blackboard, t)
-	local unit_position = POSITION_LOOKUP[unit]
-	local next_smart_object_data = blackboard.next_smart_object_data
-	local entrance_pos = next_smart_object_data.entrance_pos:unbox()
-	local exit_pos = next_smart_object_data.exit_pos:unbox()
-	local smart_object_data = next_smart_object_data.smart_object_data
+function BTTeleportAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = POSITION_LOOKUP[arg_2_1]
+	local var_2_1 = arg_2_2.next_smart_object_data
+	local var_2_2 = var_2_1.entrance_pos:unbox()
+	local var_2_3 = var_2_1.exit_pos:unbox()
 
-	blackboard.smart_object_data = smart_object_data
-	blackboard.teleport_position = Vector3Box(exit_pos)
-	blackboard.entrance_position = Vector3Box(entrance_pos)
+	arg_2_2.smart_object_data = var_2_1.smart_object_data
+	arg_2_2.teleport_position = Vector3Box(var_2_3)
+	arg_2_2.entrance_position = Vector3Box(var_2_2)
 end
 
-BTTeleportAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	blackboard.teleport_position = nil
-	blackboard.entrance_position = nil
-	blackboard.teleport_timeout = nil
+function BTTeleportAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	arg_3_2.teleport_position = nil
+	arg_3_2.entrance_position = nil
+	arg_3_2.teleport_timeout = nil
 
-	local navigation_extension = blackboard.navigation_extension
+	local var_3_0 = arg_3_2.navigation_extension
 
-	if navigation_extension:is_using_smart_object() then
-		local success = navigation_extension:use_smart_object(false)
+	if var_3_0:is_using_smart_object() then
+		local var_3_1 = var_3_0:use_smart_object(false)
 	end
 end
 
-BTTeleportAction.run = function (self, unit, blackboard, t, dt)
-	if blackboard.smart_object_data ~= blackboard.next_smart_object_data.smart_object_data then
+function BTTeleportAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	if arg_4_2.smart_object_data ~= arg_4_2.next_smart_object_data.smart_object_data then
 		return "failed"
 	end
 
-	local navigation_extension = blackboard.navigation_extension
-	local locomotion_extension = blackboard.locomotion_extension
-	local unit_position = POSITION_LOOKUP[unit]
-	local target_offset = blackboard.entrance_position:unbox() - unit_position
-	local target_dir = Vector3.normalize(navigation_extension:desired_velocity())
+	local var_4_0 = arg_4_2.navigation_extension
+	local var_4_1 = arg_4_2.locomotion_extension
+	local var_4_2 = POSITION_LOOKUP[arg_4_1]
+	local var_4_3 = arg_4_2.entrance_position:unbox() - var_4_2
+	local var_4_4 = Vector3.normalize(var_4_0:desired_velocity())
 
-	if Vector3.length(Vector3.flat(target_dir)) < 0.05 and Vector3.dot(target_dir, Vector3.normalize(target_offset)) > 0.99 then
-		blackboard.teleport_timeout = blackboard.teleport_timeout or t + 0.3
+	if Vector3.length(Vector3.flat(var_4_4)) < 0.05 and Vector3.dot(var_4_4, Vector3.normalize(var_4_3)) > 0.99 then
+		arg_4_2.teleport_timeout = arg_4_2.teleport_timeout or arg_4_3 + 0.3
 	else
-		blackboard.teleport_timeout = nil
+		arg_4_2.teleport_timeout = nil
 	end
 
-	local dist_sq = target_offset.x + target_offset.y + target_offset.z
+	if var_4_3.x + var_4_3.y + var_4_3.z < 1 or arg_4_2.teleport_timeout and arg_4_3 > arg_4_2.teleport_timeout then
+		local var_4_5 = arg_4_2.teleport_position:unbox()
 
-	if dist_sq < 1 or blackboard.teleport_timeout and t > blackboard.teleport_timeout then
-		local teleport_position = blackboard.teleport_position:unbox()
-
-		navigation_extension:set_navbot_position(teleport_position)
-		locomotion_extension:teleport_to(teleport_position)
-		locomotion_extension:set_wanted_velocity(Vector3.zero())
+		var_4_0:set_navbot_position(var_4_5)
+		var_4_1:teleport_to(var_4_5)
+		var_4_1:set_wanted_velocity(Vector3.zero())
 
 		return "done"
 	else

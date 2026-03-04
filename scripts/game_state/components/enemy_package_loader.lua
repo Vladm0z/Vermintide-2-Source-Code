@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/game_state/components/enemy_package_loader.lua
+-- chunkname: @scripts/game_state/components/enemy_package_loader.lua
 
 require("scripts/settings/enemy_package_loader_settings")
 require("scripts/managers/conflict_director/main_path_spawning_generator")
@@ -6,176 +6,174 @@ require("scripts/managers/conflict_director/conflict_utils")
 
 EnemyPackageLoader = class(EnemyPackageLoader)
 
-local PACKAGE_REFERENCE_NAME = "EnemyPackageLoader"
-local BREED_PATH = EnemyPackageLoaderSettings.breed_path
-local ALIAS_TO_BREED = EnemyPackageLoaderSettings.alias_to_breed
-local BREED_TO_ALIASES = EnemyPackageLoaderSettings.breed_to_aliases
-local OPT_LOOKUP_BREED_NAMES = EnemyPackageLoaderSettings.opt_lookup_breed_names
+local var_0_0 = "EnemyPackageLoader"
+local var_0_1 = EnemyPackageLoaderSettings.breed_path
+local var_0_2 = EnemyPackageLoaderSettings.alias_to_breed
+local var_0_3 = EnemyPackageLoaderSettings.breed_to_aliases
+local var_0_4 = EnemyPackageLoaderSettings.opt_lookup_breed_names
 
-local function get_weighted_random_index(random, entries, entry_weight_map)
-	local range_start = 0
-	local num_entries = #entries
+local function var_0_5(arg_1_0, arg_1_1, arg_1_2)
+	local var_1_0 = 0
+	local var_1_1 = #arg_1_1
 
-	for i = 1, num_entries do
-		local entry = entries[i]
-		local weight = entry_weight_map[entry]
-		local range_end = range_start + weight
+	for iter_1_0 = 1, var_1_1 do
+		local var_1_2 = var_1_0 + arg_1_2[arg_1_1[iter_1_0]]
 
-		if range_start <= random and random < range_end then
-			return i
+		if var_1_0 <= arg_1_0 and arg_1_0 < var_1_2 then
+			return iter_1_0
 		end
 
-		range_start = range_end
+		var_1_0 = var_1_2
 	end
 
-	return num_entries
+	return var_1_1
 end
 
-local function normalize_weight_map(list, list_weight_map, default_weight)
-	local total_weight = 0
+local function var_0_6(arg_2_0, arg_2_1, arg_2_2)
+	local var_2_0 = 0
 
-	for director_id = 1, #list do
-		local director = list[director_id]
+	for iter_2_0 = 1, #arg_2_0 do
+		local var_2_1 = arg_2_0[iter_2_0]
 
-		if not list_weight_map[director] then
-			list_weight_map[director] = default_weight
+		if not arg_2_1[var_2_1] then
+			arg_2_1[var_2_1] = arg_2_2
 		end
 
-		total_weight = total_weight + list_weight_map[director]
+		var_2_0 = var_2_0 + arg_2_1[var_2_1]
 	end
 
-	for entry, weight in pairs(list_weight_map) do
-		list_weight_map[entry] = weight / total_weight
+	for iter_2_1, iter_2_2 in pairs(arg_2_1) do
+		arg_2_1[iter_2_1] = iter_2_2 / var_2_0
 	end
 
 	print("Updated list weights for random:")
 
-	local last_weight = 0
+	local var_2_2 = 0
 
-	for i = 1, #list do
-		local current_entry = list[i]
-		local current_weight = list_weight_map[current_entry]
+	for iter_2_3 = 1, #arg_2_0 do
+		local var_2_3 = arg_2_0[iter_2_3]
+		local var_2_4 = arg_2_1[var_2_3]
 
-		printf("\t %s, %.2f (%.2f-%.2f)", current_entry, current_weight, last_weight, last_weight + current_weight)
+		printf("\t %s, %.2f (%.2f-%.2f)", var_2_3, var_2_4, var_2_2, var_2_2 + var_2_4)
 
-		last_weight = last_weight + current_weight
+		var_2_2 = var_2_2 + var_2_4
 	end
 end
 
-EnemyPackageLoader.init = function (self)
-	self._use_optimized = script_data.use_optimized_breed_units
-	self._breed_to_package_name_cache = {}
-	self._locked_breeds = {}
-	self._random_director_list = nil
-	self._breed_category_loaded_packages = {}
-	self._breed_category_lookup = {}
-	self._loaded_breed_map = {}
+function EnemyPackageLoader.init(arg_3_0)
+	arg_3_0._use_optimized = script_data.use_optimized_breed_units
+	arg_3_0._breed_to_package_name_cache = {}
+	arg_3_0._locked_breeds = {}
+	arg_3_0._random_director_list = nil
+	arg_3_0._breed_category_loaded_packages = {}
+	arg_3_0._breed_category_lookup = {}
+	arg_3_0._loaded_breed_map = {}
 end
 
-local rpcs = {}
+local var_0_7 = {}
 
-EnemyPackageLoader.register_rpcs = function (self, network_event_delegate)
-	self.network_event_delegate = network_event_delegate
+function EnemyPackageLoader.register_rpcs(arg_4_0, arg_4_1)
+	arg_4_0.network_event_delegate = arg_4_1
 
-	network_event_delegate:register(self, unpack(rpcs))
+	arg_4_1:register(arg_4_0, unpack(var_0_7))
 end
 
-EnemyPackageLoader.unregister_rpcs = function (self)
-	self.network_event_delegate:unregister(self)
+function EnemyPackageLoader.unregister_rpcs(arg_5_0)
+	arg_5_0.network_event_delegate:unregister(arg_5_0)
 
-	self.network_event_delegate = nil
+	arg_5_0.network_event_delegate = nil
 end
 
-EnemyPackageLoader.set_unit_spawner = function (self, unit_spawner)
-	self._unit_spawner = unit_spawner
+function EnemyPackageLoader.set_unit_spawner(arg_6_0, arg_6_1)
+	arg_6_0._unit_spawner = arg_6_1
 end
 
-EnemyPackageLoader.network_context_created = function (self, lobby, server_peer_id, own_peer_id, network_handler)
-	printf("[EnemyPackageLoader] network_context_created (server_peer_id=%s, own_peer_id=%s)", server_peer_id, own_peer_id)
+function EnemyPackageLoader.network_context_created(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	printf("[EnemyPackageLoader] network_context_created (server_peer_id=%s, own_peer_id=%s)", arg_7_2, arg_7_3)
 
-	self._lobby = lobby
-	self._server_peer_id = server_peer_id
-	self._peer_id = own_peer_id
+	arg_7_0._lobby = arg_7_1
+	arg_7_0._server_peer_id = arg_7_2
+	arg_7_0._peer_id = arg_7_3
 
-	local is_server = server_peer_id == own_peer_id
+	local var_7_0 = arg_7_2 == arg_7_3
 
-	self._is_server = is_server
+	arg_7_0._is_server = var_7_0
 
-	if is_server then
-		self._breeds_to_load_at_startup = {}
-		self._session_breed_map = {}
+	if var_7_0 then
+		arg_7_0._breeds_to_load_at_startup = {}
+		arg_7_0._session_breed_map = {}
 	end
 
-	self._network_handler = network_handler
+	arg_7_0._network_handler = arg_7_4
 end
 
-EnemyPackageLoader.matching_session = function (self, network_handler)
-	return self._network_handler == network_handler
+function EnemyPackageLoader.matching_session(arg_8_0, arg_8_1)
+	return arg_8_0._network_handler == arg_8_1
 end
 
-EnemyPackageLoader.network_context_destroyed = function (self)
+function EnemyPackageLoader.network_context_destroyed(arg_9_0)
 	print("[EnemyPackageLoader] network_context_destroyed")
 
-	self._lobby = nil
-	self._server_peer_id = nil
-	self._peer_id = nil
-	self._network_handler = nil
+	arg_9_0._lobby = nil
+	arg_9_0._server_peer_id = nil
+	arg_9_0._peer_id = nil
+	arg_9_0._network_handler = nil
 
-	if self._is_server then
-		self._session_breed_map = nil
+	if arg_9_0._is_server then
+		arg_9_0._session_breed_map = nil
 	end
 
-	self._is_server = nil
+	arg_9_0._is_server = nil
 end
 
-EnemyPackageLoader._find_unused_breed_to_unload = function (self, loaded_breeds)
-	local conflict_director = Managers.state.conflict
-	local num_spawned_by_breed = conflict_director.num_spawned_by_breed
-	local num_queued_spawn_by_breed = conflict_director.num_queued_spawn_by_breed
-	local unit_spawner = self._unit_spawner
-	local locked_breeds = self._locked_breeds
-	local package_manager = Managers.package
+function EnemyPackageLoader._find_unused_breed_to_unload(arg_10_0, arg_10_1)
+	local var_10_0 = Managers.state.conflict
+	local var_10_1 = var_10_0.num_spawned_by_breed
+	local var_10_2 = var_10_0.num_queued_spawn_by_breed
+	local var_10_3 = arg_10_0._unit_spawner
+	local var_10_4 = arg_10_0._locked_breeds
+	local var_10_5 = Managers.package
 
-	for breed_name, state in pairs(loaded_breeds) do
-		if not locked_breeds[breed_name] and num_queued_spawn_by_breed[breed_name] <= 0 and num_spawned_by_breed[breed_name] <= 0 and not unit_spawner:breed_in_death_watch(breed_name) then
-			local aliases = BREED_TO_ALIASES[breed_name]
-			local alias_breed_used = false
+	for iter_10_0, iter_10_1 in pairs(arg_10_1) do
+		if not var_10_4[iter_10_0] and var_10_2[iter_10_0] <= 0 and var_10_1[iter_10_0] <= 0 and not var_10_3:breed_in_death_watch(iter_10_0) then
+			local var_10_6 = var_0_3[iter_10_0]
+			local var_10_7 = false
 
-			if aliases then
-				local num_aliases = #aliases
+			if var_10_6 then
+				local var_10_8 = #var_10_6
 
-				for i = 1, num_aliases do
-					local alias = aliases[i]
+				for iter_10_2 = 1, var_10_8 do
+					local var_10_9 = var_10_6[iter_10_2]
 
-					if num_queued_spawn_by_breed[alias] > 0 or num_spawned_by_breed[alias] > 0 or unit_spawner:breed_in_death_watch(alias) then
-						alias_breed_used = true
+					if var_10_2[var_10_9] > 0 or var_10_1[var_10_9] > 0 or var_10_3:breed_in_death_watch(var_10_9) then
+						var_10_7 = true
 
 						break
 					end
 				end
 			end
 
-			if not alias_breed_used and package_manager:can_unload(self:_breed_package_name(breed_name)) then
-				return breed_name
+			if not var_10_7 and var_10_5:can_unload(arg_10_0:_breed_package_name(iter_10_0)) then
+				return iter_10_0
 			end
 		end
 	end
 end
 
-EnemyPackageLoader._pick_breed_from_processed_breeds = function (self, breeds, limit)
-	local session_breed_map = self._network_handler:get_session_breed_map()
-	local wanted_index = math.random(1, limit)
-	local j = 0
-	local num_breeds = #breeds
+function EnemyPackageLoader._pick_breed_from_processed_breeds(arg_11_0, arg_11_1, arg_11_2)
+	local var_11_0 = arg_11_0._network_handler:get_session_breed_map()
+	local var_11_1 = math.random(1, arg_11_2)
+	local var_11_2 = 0
+	local var_11_3 = #arg_11_1
 
-	for i = 1, num_breeds do
-		local breed_name = breeds[i]
+	for iter_11_0 = 1, var_11_3 do
+		local var_11_4 = arg_11_1[iter_11_0]
 
-		if session_breed_map[breed_name] then
-			j = j + 1
+		if var_11_0[var_11_4] then
+			var_11_2 = var_11_2 + 1
 
-			if wanted_index <= j then
-				return breed_name
+			if var_11_1 <= var_11_2 then
+				return var_11_4
 			end
 		end
 	end
@@ -183,227 +181,223 @@ EnemyPackageLoader._pick_breed_from_processed_breeds = function (self, breeds, l
 	ferror("[EnemyPackageLoader:_pick_breed_from_processed_breeds] No breed found, this should not happen!")
 end
 
-EnemyPackageLoader.request_breed = function (self, breed_name, ignore_breed_limits, spawn_category)
-	assert(self._is_server, "[EnemyPackageLoader] 'request_breed' is a server only function")
+function EnemyPackageLoader.request_breed(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	assert(arg_12_0._is_server, "[EnemyPackageLoader] 'request_breed' is a server only function")
 
-	breed_name = ALIAS_TO_BREED[breed_name] or breed_name
+	arg_12_1 = var_0_2[arg_12_1] or arg_12_1
 
-	local breed_category_data = self:_category(breed_name)
-	local current_packages = breed_category_data.current
-	local package_limit = breed_category_data.limit
+	local var_12_0 = arg_12_0:_category(arg_12_1)
+	local var_12_1 = var_12_0.current
+	local var_12_2 = var_12_0.limit
 
-	if not ignore_breed_limits and package_limit <= current_packages then
-		local loaded_breeds = breed_category_data.loaded_breeds
-		local unused_breed_name = self:_find_unused_breed_to_unload(loaded_breeds)
+	if not arg_12_2 and var_12_2 <= var_12_1 then
+		local var_12_3 = var_12_0.loaded_breeds
+		local var_12_4 = arg_12_0:_find_unused_breed_to_unload(var_12_3)
 
-		if unused_breed_name then
-			self:_unload_package(unused_breed_name)
+		if var_12_4 then
+			arg_12_0:_unload_package(var_12_4)
 		else
-			local replacement_breed_override_func = breed_category_data.replacement_breed_override_funcs and breed_category_data.replacement_breed_override_funcs[spawn_category]
+			local var_12_5 = var_12_0.replacement_breed_override_funcs and var_12_0.replacement_breed_override_funcs[arg_12_3]
 
-			if replacement_breed_override_func then
-				local replacement_breed_name = self[replacement_breed_override_func](self)
+			if var_12_5 then
+				local var_12_6 = arg_12_0[var_12_5](arg_12_0)
 
-				return false, replacement_breed_name
+				return false, var_12_6
 			else
-				local breeds = breed_category_data.breeds
-				local replacement_breed_name = self:_pick_breed_from_processed_breeds(breeds, package_limit)
+				local var_12_7 = var_12_0.breeds
+				local var_12_8 = arg_12_0:_pick_breed_from_processed_breeds(var_12_7, var_12_2)
 
-				return false, replacement_breed_name
+				return false, var_12_8
 			end
 		end
 	end
 
-	self:_load_package(breed_name, breed_category_data)
+	arg_12_0:_load_package(arg_12_1, var_12_0)
 
 	return true
 end
 
-local ELITE_REPLACEMENTS = {}
-local FALLBACK_REPLACEMENTS = {}
+local var_0_8 = {}
+local var_0_9 = {}
 
-EnemyPackageLoader.find_patrol_replacement = function (self)
-	table.clear(ELITE_REPLACEMENTS)
-	table.clear(FALLBACK_REPLACEMENTS)
+function EnemyPackageLoader.find_patrol_replacement(arg_13_0)
+	table.clear(var_0_8)
+	table.clear(var_0_9)
 
-	local startup_breeds = self._breeds_to_load_at_startup
+	local var_13_0 = arg_13_0._breeds_to_load_at_startup
 
-	for _, breed_name in ipairs(startup_breeds) do
-		local potential_breed = Breeds[breed_name]
+	for iter_13_0, iter_13_1 in ipairs(var_13_0) do
+		local var_13_1 = Breeds[iter_13_1]
 
-		if potential_breed.patrol_passive_perception and potential_breed.patrol_passive_target_selection then
-			if potential_breed.elite then
-				ELITE_REPLACEMENTS[#ELITE_REPLACEMENTS + 1] = breed_name
-			elseif not potential_breed.boss and not potential_breed.special then
-				FALLBACK_REPLACEMENTS[#FALLBACK_REPLACEMENTS + 1] = breed_name
+		if var_13_1.patrol_passive_perception and var_13_1.patrol_passive_target_selection then
+			if var_13_1.elite then
+				var_0_8[#var_0_8 + 1] = iter_13_1
+			elseif not var_13_1.boss and not var_13_1.special then
+				var_0_9[#var_0_9 + 1] = iter_13_1
 			end
 		end
 	end
 
 	print("### REPLACING BREED IN PATROL")
 
-	local replacement_breed_name
+	local var_13_2
 
-	if table.size(ELITE_REPLACEMENTS) > 0 then
-		local elite_index = Math.random(#ELITE_REPLACEMENTS)
+	if table.size(var_0_8) > 0 then
+		local var_13_3 = Math.random(#var_0_8)
 
-		replacement_breed_name = ELITE_REPLACEMENTS[elite_index]
+		var_13_2 = var_0_8[var_13_3]
 	else
-		local fallback_index = Math.random(#FALLBACK_REPLACEMENTS)
+		local var_13_4 = Math.random(#var_0_9)
 
-		replacement_breed_name = FALLBACK_REPLACEMENTS[fallback_index]
+		var_13_2 = var_0_9[var_13_4]
 	end
 
-	print(string.format(" - Replacement breed name %q", replacement_breed_name))
+	print(string.format(" - Replacement breed name %q", var_13_2))
 
-	return replacement_breed_name
+	return var_13_2
 end
 
-EnemyPackageLoader.is_breed_processed = function (self, breed_name)
-	breed_name = ALIAS_TO_BREED[breed_name] or breed_name
+function EnemyPackageLoader.is_breed_processed(arg_14_0, arg_14_1)
+	arg_14_1 = var_0_2[arg_14_1] or arg_14_1
 
-	local session_breed_map = self._network_handler:get_session_breed_map()
-
-	return session_breed_map[breed_name]
+	return arg_14_0._network_handler:get_session_breed_map()[arg_14_1]
 end
 
-EnemyPackageLoader.processed_breeds = function (self)
-	return self._network_handler:get_session_breed_map()
+function EnemyPackageLoader.processed_breeds(arg_15_0)
+	return arg_15_0._network_handler:get_session_breed_map()
 end
 
-EnemyPackageLoader._set_breed_package_lock = function (self, breed_name, locked)
-	local modifier = locked and 1 or -1
-	local locked_breeds = self._locked_breeds
-	local aliases = BREED_TO_ALIASES[breed_name]
+function EnemyPackageLoader._set_breed_package_lock(arg_16_0, arg_16_1, arg_16_2)
+	local var_16_0 = arg_16_2 and 1 or -1
+	local var_16_1 = arg_16_0._locked_breeds
+	local var_16_2 = var_0_3[arg_16_1]
 
-	if aliases then
-		local num_aliases = #aliases
+	if var_16_2 then
+		local var_16_3 = #var_16_2
 
-		for i = 1, num_aliases do
-			local alias = aliases[i]
+		for iter_16_0 = 1, var_16_3 do
+			local var_16_4 = var_16_2[iter_16_0]
 
-			locked_breeds[alias] = (locked_breeds[alias] or 0) + modifier
+			var_16_1[var_16_4] = (var_16_1[var_16_4] or 0) + var_16_0
 
-			if locked_breeds[alias] == 0 then
-				locked_breeds[alias] = nil
+			if var_16_1[var_16_4] == 0 then
+				var_16_1[var_16_4] = nil
 			end
 		end
 	end
 
-	locked_breeds[breed_name] = (locked_breeds[breed_name] or 0) + modifier
+	var_16_1[arg_16_1] = (var_16_1[arg_16_1] or 0) + var_16_0
 
-	if locked_breeds[breed_name] == 0 then
-		locked_breeds[breed_name] = nil
+	if var_16_1[arg_16_1] == 0 then
+		var_16_1[arg_16_1] = nil
 	end
 
-	fassert(not locked_breeds[breed_name] or locked_breeds[breed_name] > 0, "EnemyPackageLoader: Called unlock breed package more times than lock!")
+	fassert(not var_16_1[arg_16_1] or var_16_1[arg_16_1] > 0, "EnemyPackageLoader: Called unlock breed package more times than lock!")
 end
 
-EnemyPackageLoader.lock_breed_package = function (self, breed_name)
-	self:_set_breed_package_lock(breed_name, true)
+function EnemyPackageLoader.lock_breed_package(arg_17_0, arg_17_1)
+	arg_17_0:_set_breed_package_lock(arg_17_1, true)
 end
 
-EnemyPackageLoader.unlock_breed_package = function (self, breed_name)
-	self:_set_breed_package_lock(breed_name, false)
+function EnemyPackageLoader.unlock_breed_package(arg_18_0, arg_18_1)
+	arg_18_0:_set_breed_package_lock(arg_18_1, false)
 end
 
-EnemyPackageLoader._load_package = function (self, breed_name, breed_category_data)
-	assert(self._is_server, "[EnemyPackageLoader] '_load_package' is a server only function.")
+function EnemyPackageLoader._load_package(arg_19_0, arg_19_1, arg_19_2)
+	assert(arg_19_0._is_server, "[EnemyPackageLoader] '_load_package' is a server only function.")
 
-	breed_category_data.current = breed_category_data.current + 1
+	arg_19_2.current = arg_19_2.current + 1
 
-	assert(not self._session_breed_map[breed_name], "[EnemyPackageLoader] Attempted to load same breed twice")
+	assert(not arg_19_0._session_breed_map[arg_19_1], "[EnemyPackageLoader] Attempted to load same breed twice")
 
-	self._session_breed_map[breed_name] = true
+	arg_19_0._session_breed_map[arg_19_1] = true
 
-	self._network_handler:set_session_breed_map(table.shallow_copy(self._session_breed_map))
-	self:_update_package_diffs()
+	arg_19_0._network_handler:set_session_breed_map(table.shallow_copy(arg_19_0._session_breed_map))
+	arg_19_0:_update_package_diffs()
 end
 
-EnemyPackageLoader._unload_package = function (self, breed_name)
-	assert(self._is_server, "[EnemyPackageLoader] '_unload_package' is a server only function.")
+function EnemyPackageLoader._unload_package(arg_20_0, arg_20_1)
+	assert(arg_20_0._is_server, "[EnemyPackageLoader] '_unload_package' is a server only function.")
 
-	local is_startup_breed = self._breeds_to_load_at_startup[breed_name]
+	local var_20_0 = arg_20_0._breeds_to_load_at_startup[arg_20_1]
 
-	fassert(not is_startup_breed, "EnemyPackageLoader:_unload_package: Trying to unload a startup breed!")
+	fassert(not var_20_0, "EnemyPackageLoader:_unload_package: Trying to unload a startup breed!")
 
-	local is_locked_breed = self._locked_breeds[breed_name]
+	local var_20_1 = arg_20_0._locked_breeds[arg_20_1]
 
-	fassert(not is_locked_breed, "EnemyPackageLoader:_unload_package: Trying to unload a locked breed!")
+	fassert(not var_20_1, "EnemyPackageLoader:_unload_package: Trying to unload a locked breed!")
 
-	self._session_breed_map[breed_name] = nil
+	arg_20_0._session_breed_map[arg_20_1] = nil
 
-	self._network_handler:set_session_breed_map(table.shallow_copy(self._session_breed_map))
-	self:_update_package_diffs()
+	arg_20_0._network_handler:set_session_breed_map(table.shallow_copy(arg_20_0._session_breed_map))
+	arg_20_0:_update_package_diffs()
 end
 
-EnemyPackageLoader.update = function (self)
-	self:_update_package_diffs()
+function EnemyPackageLoader.update(arg_21_0)
+	arg_21_0:_update_package_diffs()
 end
 
-EnemyPackageLoader._update_package_diffs = function (self)
-	if not self._network_handler or not self._network_handler:is_fully_synced() then
+function EnemyPackageLoader._update_package_diffs(arg_22_0)
+	if not arg_22_0._network_handler or not arg_22_0._network_handler:is_fully_synced() then
 		return
 	end
 
-	local async = true
-	local prioritize = true
-	local package_manager = Managers.package
-	local loaded_breed_map = self._loaded_breed_map
-	local session_breed_map = self._session_breed_map or self._network_handler:get_session_breed_map()
-	local synced_loaded_breed_map = self._network_handler:get_own_loaded_session_breed_map()
+	local var_22_0 = true
+	local var_22_1 = true
+	local var_22_2 = Managers.package
+	local var_22_3 = arg_22_0._loaded_breed_map
+	local var_22_4 = arg_22_0._session_breed_map or arg_22_0._network_handler:get_session_breed_map()
+	local var_22_5 = arg_22_0._network_handler:get_own_loaded_session_breed_map()
 
-	for breed_name, status in pairs(loaded_breed_map) do
-		if not session_breed_map[breed_name] then
-			local package_name = self:_breed_package_name(breed_name)
+	for iter_22_0, iter_22_1 in pairs(var_22_3) do
+		if not var_22_4[iter_22_0] then
+			local var_22_6 = arg_22_0:_breed_package_name(iter_22_0)
 
-			package_manager:unload(package_name, PACKAGE_REFERENCE_NAME)
+			var_22_2:unload(var_22_6, var_0_0)
 
-			local category = self:_category(breed_name)
+			local var_22_7 = arg_22_0:_category(iter_22_0)
 
-			category.current = category.current - 1
-			category.loaded_breeds[breed_name] = nil
-			loaded_breed_map[breed_name] = nil
+			var_22_7.current = var_22_7.current - 1
+			var_22_7.loaded_breeds[iter_22_0] = nil
+			var_22_3[iter_22_0] = nil
 		end
 	end
 
-	for breed_name in pairs(session_breed_map) do
-		local package_name = self:_breed_package_name(breed_name)
-		local has_loaded = package_manager:has_loaded(package_name, PACKAGE_REFERENCE_NAME)
+	for iter_22_2 in pairs(var_22_4) do
+		local var_22_8 = arg_22_0:_breed_package_name(iter_22_2)
+		local var_22_9 = var_22_2:has_loaded(var_22_8, var_0_0)
 
-		if not has_loaded and not package_manager:is_loading(package_name, PACKAGE_REFERENCE_NAME) then
-			package_manager:load(package_name, PACKAGE_REFERENCE_NAME, nil, async, prioritize)
-		elseif has_loaded and not loaded_breed_map[breed_name] then
-			local breed_category_data = self:_category(breed_name)
-
-			breed_category_data.loaded_breeds[breed_name] = true
-			loaded_breed_map[breed_name] = true
+		if not var_22_9 and not var_22_2:is_loading(var_22_8, var_0_0) then
+			var_22_2:load(var_22_8, var_0_0, nil, var_22_0, var_22_1)
+		elseif var_22_9 and not var_22_3[iter_22_2] then
+			arg_22_0:_category(iter_22_2).loaded_breeds[iter_22_2] = true
+			var_22_3[iter_22_2] = true
 		end
 	end
 
-	if not table.shallow_equal(loaded_breed_map, synced_loaded_breed_map) then
-		self._network_handler:set_own_loaded_session_breeds(table.shallow_copy(loaded_breed_map))
+	if not table.shallow_equal(var_22_3, var_22_5) then
+		arg_22_0._network_handler:set_own_loaded_session_breeds(table.shallow_copy(var_22_3))
 	end
 
-	if self._is_server then
-		local synced_session_breed_map = self._network_handler:get_session_breed_map()
+	if arg_22_0._is_server then
+		local var_22_10 = arg_22_0._network_handler:get_session_breed_map()
 
-		if not table.shallow_equal(session_breed_map, synced_session_breed_map) then
-			self._network_handler:set_session_breed_map(table.shallow_copy(session_breed_map))
+		if not table.shallow_equal(var_22_4, var_22_10) then
+			arg_22_0._network_handler:set_session_breed_map(table.shallow_copy(var_22_4))
 		end
 	end
 end
 
-EnemyPackageLoader.load_sync_done_for_peer = function (self, peer_id)
-	if not self._network_handler or not self._network_handler:is_fully_synced() then
+function EnemyPackageLoader.load_sync_done_for_peer(arg_23_0, arg_23_1)
+	if not arg_23_0._network_handler or not arg_23_0._network_handler:is_fully_synced() then
 		return false
 	end
 
-	local session_breed_map = self._network_handler:get_session_breed_map()
-	local loaded_breed_map = self._network_handler:get_loaded_session_breeds(peer_id)
+	local var_23_0 = arg_23_0._network_handler:get_session_breed_map()
+	local var_23_1 = arg_23_0._network_handler:get_loaded_session_breeds(arg_23_1)
 
-	for breed_name in pairs(session_breed_map) do
-		if not loaded_breed_map[breed_name] then
+	for iter_23_0 in pairs(var_23_0) do
+		if not var_23_1[iter_23_0] then
 			return false
 		end
 	end
@@ -411,142 +405,141 @@ EnemyPackageLoader.load_sync_done_for_peer = function (self, peer_id)
 	return true
 end
 
-EnemyPackageLoader._breed_package_name = function (self, breed_name)
-	local cache = self._breed_to_package_name_cache
-	local cached = cache[breed_name]
+function EnemyPackageLoader._breed_package_name(arg_24_0, arg_24_1)
+	local var_24_0 = arg_24_0._breed_to_package_name_cache
+	local var_24_1 = var_24_0[arg_24_1]
 
-	if not cached then
-		cached = BREED_PATH .. (self._use_optimized and OPT_LOOKUP_BREED_NAMES[breed_name] or breed_name)
-		cache[breed_name] = cached
+	if not var_24_1 then
+		var_24_1 = var_0_1 .. (arg_24_0._use_optimized and var_0_4[arg_24_1] or arg_24_1)
+		var_24_0[arg_24_1] = var_24_1
 	end
 
-	return cached
+	return var_24_1
 end
 
-EnemyPackageLoader._category = function (self, breed_name)
-	local category_lookup = self._breed_category_lookup
-	local category = category_lookup[breed_name]
+function EnemyPackageLoader._category(arg_25_0, arg_25_1)
+	local var_25_0 = arg_25_0._breed_category_lookup
+	local var_25_1 = var_25_0[arg_25_1]
 
-	if category then
-		return category
+	if var_25_1 then
+		return var_25_1
 	end
 
-	local category_by_name = self._breed_category_loaded_packages
-	local breed_categories = EnemyPackageLoaderSettings.categories
+	local var_25_2 = arg_25_0._breed_category_loaded_packages
+	local var_25_3 = EnemyPackageLoaderSettings.categories
 
-	for i = 1, #breed_categories do
-		local data = breed_categories[i]
+	for iter_25_0 = 1, #var_25_3 do
+		local var_25_4 = var_25_3[iter_25_0]
 
-		if BUILD ~= data.forbidden_in_build and table.find(data.breeds, breed_name) then
-			category_by_name[data.id] = category_by_name[data.id] or {
+		if BUILD ~= var_25_4.forbidden_in_build and table.find(var_25_4.breeds, arg_25_1) then
+			var_25_2[var_25_4.id] = var_25_2[var_25_4.id] or {
 				current = 0,
-				name = data.id,
-				dynamic_loading = data.dynamic_loading,
-				limit = data.limit,
+				name = var_25_4.id,
+				dynamic_loading = var_25_4.dynamic_loading,
+				limit = var_25_4.limit,
 				loaded_breeds = {},
 				breeds = {},
-				replacement_breed_override_funcs = data.replacement_breed_override_funcs,
+				replacement_breed_override_funcs = var_25_4.replacement_breed_override_funcs
 			}
 		end
 	end
 
-	category_by_name.dynamic_breeds = category_by_name.dynamic_breeds or {
+	var_25_2.dynamic_breeds = var_25_2.dynamic_breeds or {
+		name = "dynamic_breeds",
+		is_generated_category = true,
 		current = 0,
 		dynamic_loading = true,
-		is_generated_category = true,
-		name = "dynamic_breeds",
 		limit = math.huge,
 		loaded_breeds = {},
-		breeds = {},
+		breeds = {}
 	}
 
-	table.insert(category_by_name.dynamic_breeds.breeds, breed_name)
+	table.insert(var_25_2.dynamic_breeds.breeds, arg_25_1)
 
-	category_lookup[breed_name] = category_by_name.dynamic_breeds
+	var_25_0[arg_25_1] = var_25_2.dynamic_breeds
 
-	return category_lookup[breed_name]
+	return var_25_0[arg_25_1]
 end
 
-function print_breed_hash(t, desc)
-	local s = desc or ""
+function print_breed_hash(arg_26_0, arg_26_1)
+	local var_26_0 = arg_26_1 or ""
 
-	for k, v in pairs(t) do
-		s = s .. k .. " "
+	for iter_26_0, iter_26_1 in pairs(arg_26_0) do
+		var_26_0 = var_26_0 .. iter_26_0 .. " "
 	end
 
-	print(s)
+	print(var_26_0)
 end
 
-EnemyPackageLoader._remove_locked_directors = function (self, director_list, failed_locked_functions)
+function EnemyPackageLoader._remove_locked_directors(arg_27_0, arg_27_1, arg_27_2)
 	print("checking dlc's against conflict directors")
 
-	for i = #director_list, 1, -1 do
-		local director_name = director_list[i]
-		local conflict_director = ConflictDirectors[director_name]
-		local locked_func_name = conflict_director.locked_func_name
+	for iter_27_0 = #arg_27_1, 1, -1 do
+		local var_27_0 = arg_27_1[iter_27_0]
+		local var_27_1 = ConflictDirectors[var_27_0]
+		local var_27_2 = var_27_1.locked_func_name
 
-		if locked_func_name and table.find(failed_locked_functions, locked_func_name) then
-			table.swap_delete(director_list, i)
-			printf("- removing conflict director '%s'", conflict_director.name)
+		if var_27_2 and table.find(arg_27_2, var_27_2) then
+			table.swap_delete(arg_27_1, iter_27_0)
+			printf("- removing conflict director '%s'", var_27_1.name)
 		end
 	end
 end
 
-EnemyPackageLoader._get_directors_from_breed_budget = function (self, spawn_breed_hash, num_needed_directors, director_list, breed_cap, difficulty_name, non_random_conflict_directors, seed)
-	local num_used_breeds = table.size(spawn_breed_hash)
-	local num_free = breed_cap - num_used_breeds
+function EnemyPackageLoader._get_directors_from_breed_budget(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6, arg_28_7)
+	local var_28_0 = arg_28_4 - table.size(arg_28_1)
 
-	fassert(num_free >= 0, "Fail, too many breeds! ")
+	fassert(var_28_0 >= 0, "Fail, too many breeds! ")
 
-	local approved_directors = {}
-	local new_breeds
-	local new_breed_list = {}
-	local success
+	local var_28_1 = {}
+	local var_28_2
+	local var_28_3 = {}
+	local var_28_4
 
 	printf("--- --- ---")
-	printf("Starting... difficulty '%s'", difficulty_name)
+	printf("Starting... difficulty '%s'", arg_28_5)
 
-	if table.is_empty(non_random_conflict_directors) then
+	if table.is_empty(arg_28_6) then
 		printf("There are no starting conflict directors!")
 	else
 		printf("These are the starting conflict directors:")
 
-		for director_name, _ in pairs(non_random_conflict_directors) do
-			printf("\t %s", director_name)
+		for iter_28_0, iter_28_1 in pairs(arg_28_6) do
+			printf("\t %s", iter_28_0)
 		end
 	end
 
 	printf("--- --- ---\n")
 
-	for i = 1, num_needed_directors do
+	for iter_28_2 = 1, arg_28_2 do
 		print("")
 		print("Looking for a new director:")
-		print_breed_hash(spawn_breed_hash, sprintf("(free: %s) master hash is: ", num_free))
+		print_breed_hash(arg_28_1, sprintf("(free: %s) master hash is: ", var_28_0))
 
-		seed = table.shuffle(director_list, seed)
+		arg_28_7 = table.shuffle(arg_28_3, arg_28_7)
 
-		while #director_list > 0 do
-			new_breeds = 0
+		while #arg_28_3 > 0 do
+			local var_28_5 = 0
 
-			table.clear(new_breed_list)
+			table.clear(var_28_3)
 
-			local director_name = director_list[1]
-			local director = ConflictDirectors[director_name]
-			local breed_hash = director.contained_breeds[difficulty_name]
+			local var_28_6 = arg_28_3[1]
+			local var_28_7 = ConflictDirectors[var_28_6]
+			local var_28_8 = var_28_7.contained_breeds[arg_28_5]
 
-			print("->trying director:", director.name)
+			print("->trying director:", var_28_7.name)
 
-			success = true
+			var_28_4 = true
 
-			for breed_name, breed in pairs(breed_hash) do
-				if not spawn_breed_hash[breed_name] then
-					new_breeds = new_breeds + 1
-					new_breed_list[breed_name] = breed
+			for iter_28_3, iter_28_4 in pairs(var_28_8) do
+				if not arg_28_1[iter_28_3] then
+					var_28_5 = var_28_5 + 1
+					var_28_3[iter_28_3] = iter_28_4
 
-					if num_free < new_breeds then
-						success = false
+					if var_28_0 < var_28_5 then
+						var_28_4 = false
 
-						table.swap_delete(director_list, 1)
+						table.swap_delete(arg_28_3, 1)
 						print("\t--> fail!")
 
 						break
@@ -554,20 +547,20 @@ EnemyPackageLoader._get_directors_from_breed_budget = function (self, spawn_bree
 				end
 			end
 
-			if success then
+			if var_28_4 then
 				print("\t--> success!")
 
-				for breed_name, breed in pairs(breed_hash) do
-					if not spawn_breed_hash[breed_name] then
-						spawn_breed_hash[breed_name] = true
-						num_free = num_free - 1
+				for iter_28_5, iter_28_6 in pairs(var_28_8) do
+					if not arg_28_1[iter_28_5] then
+						arg_28_1[iter_28_5] = true
+						var_28_0 = var_28_0 - 1
 					end
 				end
 
-				approved_directors[#approved_directors + 1] = director
+				var_28_1[#var_28_1 + 1] = var_28_7
 
-				if new_breeds > 0 then
-					print_breed_hash(new_breed_list, "\t--> Added these breeds: ")
+				if var_28_5 > 0 then
+					print_breed_hash(var_28_3, "\t--> Added these breeds: ")
 
 					break
 				end
@@ -578,41 +571,40 @@ EnemyPackageLoader._get_directors_from_breed_budget = function (self, spawn_bree
 			end
 		end
 
-		fassert(success, "---> failed to find a director with matching breeds")
+		fassert(var_28_4, "---> failed to find a director with matching breeds")
 	end
 
 	print("")
 	print("DONE! Found the following directors:")
 
-	for i = 1, #approved_directors do
-		local director = approved_directors[i]
+	for iter_28_7 = 1, #var_28_1 do
+		local var_28_9 = var_28_1[iter_28_7]
 
-		printf("\t %s", director.name)
+		printf("\t %s", var_28_9.name)
 	end
 
-	print_breed_hash(spawn_breed_hash, sprintf("(free: %s), Master hash is: ", num_free))
+	print_breed_hash(arg_28_1, sprintf("(free: %s), Master hash is: ", var_28_0))
 
-	return approved_directors
+	return var_28_1
 end
 
-EnemyPackageLoader._remove_directors_by_breed_budget = function (self, director_names_list, breeds_in_use, difficulty_name, breed_cap)
-	local new_breed_list = {}
+function EnemyPackageLoader._remove_directors_by_breed_budget(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+	local var_29_0 = {}
 
-	for i = #director_names_list, 1, -1 do
-		local director_name = director_names_list[i]
-		local director = ConflictDirectors[director_name]
-		local breed_hash = director.contained_breeds[difficulty_name]
-		local new_breeds = 0
+	for iter_29_0 = #arg_29_1, 1, -1 do
+		local var_29_1 = arg_29_1[iter_29_0]
+		local var_29_2 = ConflictDirectors[var_29_1].contained_breeds[arg_29_3]
+		local var_29_3 = 0
 
-		table.clear(new_breed_list)
+		table.clear(var_29_0)
 
-		for breed_name, breed in pairs(breed_hash) do
-			if not breeds_in_use[breed_name] then
-				new_breeds = new_breeds + 1
-				new_breed_list[breed_name] = breed
+		for iter_29_1, iter_29_2 in pairs(var_29_2) do
+			if not arg_29_2[iter_29_1] then
+				var_29_3 = var_29_3 + 1
+				var_29_0[iter_29_1] = iter_29_2
 
-				if breed_cap < new_breeds then
-					table.swap_delete(director_names_list, i)
+				if arg_29_4 < var_29_3 then
+					table.swap_delete(arg_29_1, iter_29_0)
 
 					break
 				end
@@ -621,77 +613,78 @@ EnemyPackageLoader._remove_directors_by_breed_budget = function (self, director_
 	end
 end
 
-EnemyPackageLoader._get_factions_from_directors = function (self, director_names_list)
-	local factions = {}
+function EnemyPackageLoader._get_factions_from_directors(arg_30_0, arg_30_1)
+	local var_30_0 = {}
 
-	for director_name_id = 1, #director_names_list do
-		local director_name = director_names_list[director_name_id]
-		local director = ConflictDirectors[director_name]
-		local director_factions = director and director.factions
+	for iter_30_0 = 1, #arg_30_1 do
+		local var_30_1 = arg_30_1[iter_30_0]
+		local var_30_2 = ConflictDirectors[var_30_1]
+		local var_30_3 = var_30_2 and var_30_2.factions
 
-		if director_factions then
-			for faction_id = 1, #director_factions do
-				local faction_to_add = director_factions[faction_id]
+		if var_30_3 then
+			for iter_30_1 = 1, #var_30_3 do
+				local var_30_4 = var_30_3[iter_30_1]
 
-				if table.index_of(factions, faction_to_add) == -1 then
-					table.insert(factions, faction_to_add)
+				if table.index_of(var_30_0, var_30_4) == -1 then
+					table.insert(var_30_0, var_30_4)
 				end
 			end
 		end
 	end
 
-	return factions
+	return var_30_0
 end
 
-EnemyPackageLoader._make_faction_list = function (self, available_factions, mandatory_factions, faction_weights, seed, preferred_num_faction)
-	local faction_list
+function EnemyPackageLoader._make_faction_list(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5)
+	local var_31_0
 
-	print("number of factions to include", preferred_num_faction)
+	print("number of factions to include", arg_31_5)
 
-	if preferred_num_faction < #available_factions then
-		faction_list = table.shallow_copy(mandatory_factions)
+	if arg_31_5 < #arg_31_1 then
+		var_31_0 = table.shallow_copy(arg_31_2)
 
-		table.array_remove_if(available_factions, function (faction)
-			return table.index_of(faction_list, faction) > 0
+		table.array_remove_if(arg_31_1, function(arg_32_0)
+			return table.index_of(var_31_0, arg_32_0) > 0
 		end)
 
-		local num_selected_factions = #faction_list
+		local var_31_1 = #var_31_0
 
-		while num_selected_factions < preferred_num_faction do
-			normalize_weight_map(available_factions, faction_weights, DefaultConflictFactionWeight)
+		while var_31_1 < arg_31_5 do
+			var_0_6(arg_31_1, arg_31_3, DefaultConflictFactionWeight)
 
-			local random
+			local var_31_2
+			local var_31_3
 
-			seed, random = Math.next_random(seed)
+			arg_31_4, var_31_3 = Math.next_random(arg_31_4)
 
-			local random_faction_id = get_weighted_random_index(random, available_factions, faction_weights)
-			local faction_to_add = available_factions[random_faction_id]
+			local var_31_4 = var_0_5(var_31_3, arg_31_1, arg_31_3)
+			local var_31_5 = arg_31_1[var_31_4]
 
-			print("Rolled random faction:", random, faction_to_add)
-			table.swap_delete(available_factions, random_faction_id)
-			table.insert(faction_list, faction_to_add)
+			print("Rolled random faction:", var_31_3, var_31_5)
+			table.swap_delete(arg_31_1, var_31_4)
+			table.insert(var_31_0, var_31_5)
 
-			num_selected_factions = num_selected_factions + 1
+			var_31_1 = var_31_1 + 1
 		end
 	else
-		faction_list = table.shallow_copy(available_factions)
+		var_31_0 = table.shallow_copy(arg_31_1)
 	end
 
-	print("number of factions added", #faction_list)
+	print("number of factions added", #var_31_0)
 
-	return seed, faction_list
+	return arg_31_4, var_31_0
 end
 
-EnemyPackageLoader._remove_directors_not_in_factions = function (self, director_names_list, faction_list)
-	table.array_remove_if(director_names_list, function (director_name)
-		local director = ConflictDirectors[director_name]
-		local director_factions = director and director.factions
+function EnemyPackageLoader._remove_directors_not_in_factions(arg_33_0, arg_33_1, arg_33_2)
+	table.array_remove_if(arg_33_1, function(arg_34_0)
+		local var_34_0 = ConflictDirectors[arg_34_0]
+		local var_34_1 = var_34_0 and var_34_0.factions
 
-		if director_factions then
-			for faction_id = 1, #director_factions do
-				local director_faction_name = director_factions[faction_id]
+		if var_34_1 then
+			for iter_34_0 = 1, #var_34_1 do
+				local var_34_2 = var_34_1[iter_34_0]
 
-				if table.index_of(faction_list, director_faction_name) == -1 then
+				if table.index_of(arg_33_2, var_34_2) == -1 then
 					return true
 				end
 			end
@@ -701,108 +694,111 @@ EnemyPackageLoader._remove_directors_not_in_factions = function (self, director_
 	end)
 end
 
-EnemyPackageLoader._get_startup_breeds = function (self, level_key, level_seed, failed_locked_functions, use_random_directors, conflict_director_name, difficulty, difficulty_tweak)
-	local level_settings = LevelSettings[level_key]
-	local level_name = level_settings.level_name
-	local num_nested_levels = LevelResource.nested_level_count(level_name)
+function EnemyPackageLoader._get_startup_breeds(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6, arg_35_7)
+	local var_35_0 = LevelSettings[arg_35_1]
+	local var_35_1 = var_35_0.level_name
 
-	if num_nested_levels > 0 then
-		level_name = LevelResource.nested_level_resource_name(level_name, 0)
+	if LevelResource.nested_level_count(var_35_1) > 0 then
+		var_35_1 = LevelResource.nested_level_resource_name(var_35_1, 0)
 	end
 
-	local spawn_zone_path = level_name .. "_spawn_zones"
+	local var_35_2 = var_35_1 .. "_spawn_zones"
 
-	if not Application.can_get("lua", spawn_zone_path) then
-		ferror("Cant get %s, make sure this is added to the \\resource_packages\\level_scripts.package file. Or have you forgotten to run generate_resource_packages.bat? If it only crashes when running from a bundle, it might be that this level needs to be whitelisted.", spawn_zone_path)
+	if not Application.can_get("lua", var_35_2) then
+		ferror("Cant get %s, make sure this is added to the \\resource_packages\\level_scripts.package file. Or have you forgotten to run generate_resource_packages.bat? If it only crashes when running from a bundle, it might be that this level needs to be whitelisted.", var_35_2)
 	end
 
-	local breed_lookup = {}
-	local composition_difficulty = DifficultyTweak.converters.composition(difficulty, difficulty_tweak)
-	local composition_difficulty_rank = DifficultySettings[composition_difficulty].rank
-	local terror_events = TerrorEventBlueprints[level_key]
+	local var_35_3 = {}
+	local var_35_4 = DifficultyTweak.converters.composition(arg_35_6, arg_35_7)
+	local var_35_5 = DifficultySettings[var_35_4].rank
+	local var_35_6 = TerrorEventBlueprints[arg_35_1]
 
-	if terror_events then
-		for event_name, event in pairs(terror_events) do
-			ConflictUtils.add_breeds_from_event(event_name, event, composition_difficulty, composition_difficulty_rank, breed_lookup, terror_events)
+	if var_35_6 then
+		for iter_35_0, iter_35_1 in pairs(var_35_6) do
+			ConflictUtils.add_breeds_from_event(iter_35_0, iter_35_1, var_35_4, var_35_5, var_35_3, var_35_6)
 		end
 	end
 
-	local spawn_zone_data = table.clone(MainPathSpawningGenerator.load_spawn_zone_data(spawn_zone_path))
-	local crossroads, main_paths, zones, num_main_zones, path_markers = spawn_zone_data.crossroads, spawn_zone_data.main_paths, spawn_zone_data.zones, spawn_zone_data.num_main_zones, spawn_zone_data.path_markers
-	local chosen_crossroads = MainPathSpawningGenerator.generate_crossroad_path_choices(crossroads, level_seed)
-	local main_path_was_changed, altered_amount_num_main_zones, _ = MainPathSpawningGenerator.remove_crossroads_extra_path_branches(crossroads, chosen_crossroads, main_paths, zones, num_main_zones, path_markers, level_seed)
+	local var_35_7 = table.clone(MainPathSpawningGenerator.load_spawn_zone_data(var_35_2))
+	local var_35_8 = var_35_7.crossroads
+	local var_35_9 = var_35_7.main_paths
+	local var_35_10 = var_35_7.zones
+	local var_35_11 = var_35_7.num_main_zones
+	local var_35_12 = var_35_7.path_markers
+	local var_35_13 = MainPathSpawningGenerator.generate_crossroad_path_choices(var_35_8, arg_35_2)
+	local var_35_14, var_35_15, var_35_16 = MainPathSpawningGenerator.remove_crossroads_extra_path_branches(var_35_8, var_35_13, var_35_9, var_35_10, var_35_11, var_35_12, arg_35_2)
 
-	if main_path_was_changed then
-		num_main_zones = altered_amount_num_main_zones
+	if var_35_14 then
+		var_35_11 = var_35_15
 	end
 
-	local non_random_conflict_directors, num_random_conflict_directors
+	local var_35_17
+	local var_35_18
+	local var_35_19, var_35_20
 
-	non_random_conflict_directors, num_random_conflict_directors, level_seed = MainPathSpawningGenerator.process_conflict_directors_zones(conflict_director_name, zones, num_main_zones, level_seed)
+	var_35_19, var_35_20, arg_35_2 = MainPathSpawningGenerator.process_conflict_directors_zones(arg_35_5, var_35_10, var_35_11, arg_35_2)
 
-	for conflict_settings_name, _ in pairs(non_random_conflict_directors) do
-		local conflict_setting = ConflictDirectors[conflict_settings_name]
-		local contained_breeds = conflict_setting.contained_breeds[composition_difficulty]
+	for iter_35_2, iter_35_3 in pairs(var_35_19) do
+		local var_35_21 = ConflictDirectors[iter_35_2].contained_breeds[var_35_4]
 
-		table.merge(breed_lookup, contained_breeds)
+		table.merge(var_35_3, var_35_21)
 	end
 
-	if use_random_directors then
-		local director_list = table.shallow_copy(level_settings.conflict_director_set or DefaultConflictDirectorSet)
-		local faction_weights = table.shallow_copy(level_settings.conflict_faction_weights or DefaultConflictFactionSetWeights)
-		local breed_cap = level_settings.breed_cap_override or EnemyPackageLoaderSettings.max_loaded_breed_cap
-		local faction_count_roll
+	if arg_35_4 then
+		local var_35_22 = table.shallow_copy(var_35_0.conflict_director_set or DefaultConflictDirectorSet)
+		local var_35_23 = table.shallow_copy(var_35_0.conflict_faction_weights or DefaultConflictFactionSetWeights)
+		local var_35_24 = var_35_0.breed_cap_override or EnemyPackageLoaderSettings.max_loaded_breed_cap
+		local var_35_25
+		local var_35_26
 
-		level_seed, faction_count_roll = Math.next_random(level_seed)
+		arg_35_2, var_35_26 = Math.next_random(arg_35_2)
 
-		local num_faction_chances = DefaultConflictPreferredFactionCountChances
-		local preferred_num_faction = 0
+		local var_35_27 = DefaultConflictPreferredFactionCountChances
+		local var_35_28 = 0
 
-		for i = 1, #num_faction_chances do
-			local required_roll = num_faction_chances[i]
-
-			if faction_count_roll <= required_roll then
-				preferred_num_faction = i
+		for iter_35_4 = 1, #var_35_27 do
+			if var_35_26 <= var_35_27[iter_35_4] then
+				var_35_28 = iter_35_4
 			end
 		end
 
 		if not DEDICATED_SERVER then
-			self:_remove_locked_directors(director_list, failed_locked_functions)
+			arg_35_0:_remove_locked_directors(var_35_22, arg_35_3)
 		end
 
-		self:_remove_directors_by_breed_budget(director_list, breed_lookup, composition_difficulty, breed_cap)
+		arg_35_0:_remove_directors_by_breed_budget(var_35_22, var_35_3, var_35_4, var_35_24)
 
-		local non_random_director_list = table.keys(non_random_conflict_directors)
-		local mandatory_factions = self:_get_factions_from_directors(non_random_director_list)
-		local available_factions = self:_get_factions_from_directors(director_list)
-		local faction_list
+		local var_35_29 = table.keys(var_35_19)
+		local var_35_30 = arg_35_0:_get_factions_from_directors(var_35_29)
+		local var_35_31 = arg_35_0:_get_factions_from_directors(var_35_22)
+		local var_35_32
+		local var_35_33
 
-		level_seed, faction_list = self:_make_faction_list(available_factions, mandatory_factions, faction_weights, level_seed, preferred_num_faction)
+		arg_35_2, var_35_33 = arg_35_0:_make_faction_list(var_35_31, var_35_30, var_35_23, arg_35_2, var_35_28)
 
-		self:_remove_directors_not_in_factions(director_list, faction_list)
+		arg_35_0:_remove_directors_not_in_factions(var_35_22, var_35_33)
 
-		self._random_director_list = self:_get_directors_from_breed_budget(breed_lookup, num_random_conflict_directors, director_list, breed_cap, composition_difficulty, non_random_conflict_directors, level_seed, failed_locked_functions)
+		arg_35_0._random_director_list = arg_35_0:_get_directors_from_breed_budget(var_35_3, var_35_20, var_35_22, var_35_24, var_35_4, var_35_19, arg_35_2, arg_35_3)
 	end
 
-	local loop_breeds = true
+	local var_35_34 = true
 
-	while loop_breeds do
-		loop_breeds = false
+	while var_35_34 do
+		var_35_34 = false
 
-		for breed_name, _ in pairs(breed_lookup) do
-			local breed_data = Breeds[breed_name]
+		for iter_35_5, iter_35_6 in pairs(var_35_3) do
+			local var_35_35 = Breeds[iter_35_5]
 
-			if breed_data.additional_breed_packages_to_load then
-				local additional_breeds = breed_data.additional_breed_packages_to_load(composition_difficulty)
+			if var_35_35.additional_breed_packages_to_load then
+				local var_35_36 = var_35_35.additional_breed_packages_to_load(var_35_4)
 
-				if additional_breeds then
-					for i = 1, #additional_breeds do
-						local additional_breed_name = additional_breeds[i]
-						local breed_added = breed_lookup[additional_breed_name]
+				if var_35_36 then
+					for iter_35_7 = 1, #var_35_36 do
+						local var_35_37 = var_35_36[iter_35_7]
 
-						if not breed_added and table.size(breed_lookup) < EnemyPackageLoaderSettings.max_loaded_breed_cap then
-							breed_lookup[additional_breed_name] = true
-							loop_breeds = true
+						if not var_35_3[var_35_37] and table.size(var_35_3) < EnemyPackageLoaderSettings.max_loaded_breed_cap then
+							var_35_3[var_35_37] = true
+							var_35_34 = true
 						end
 					end
 				end
@@ -810,98 +806,98 @@ EnemyPackageLoader._get_startup_breeds = function (self, level_key, level_seed, 
 		end
 	end
 
-	print("[EnemyPackageLoader] breed_lookup: " .. table.tostring(breed_lookup))
+	print("[EnemyPackageLoader] breed_lookup: " .. table.tostring(var_35_3))
 
-	return breed_lookup
+	return var_35_3
 end
 
-EnemyPackageLoader.setup_startup_enemies = function (self, level_key, level_seed, failed_locked_functions, use_random_directors, conflict_director_name, difficulty, difficulty_tweak)
-	fassert(self._is_server, "[EnemyPackageLoader] 'setup_startup_enemies' is a server only function")
-	fassert(level_seed, "Cannot setup_startup_enemies without level_seed!")
-	print("[EnemyPackageLoader] setup_startup_enemies - level_key:", level_key, "- level_seed:", level_seed, "- use_random_directors:", use_random_directors, "- conflict_director_name:", conflict_director_name)
+function EnemyPackageLoader.setup_startup_enemies(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6, arg_36_7)
+	fassert(arg_36_0._is_server, "[EnemyPackageLoader] 'setup_startup_enemies' is a server only function")
+	fassert(arg_36_2, "Cannot setup_startup_enemies without level_seed!")
+	print("[EnemyPackageLoader] setup_startup_enemies - level_key:", arg_36_1, "- level_seed:", arg_36_2, "- use_random_directors:", arg_36_4, "- conflict_director_name:", arg_36_5)
 
-	if not LevelHelper:should_load_enemies(level_key) then
+	if not LevelHelper:should_load_enemies(arg_36_1) then
 		print("[EnemyPackageLoader] Load no enemies on this level")
 	else
-		local previous_startup_breeds = self._breeds_to_load_at_startup
-		local breeds_to_load_at_startup = {}
+		local var_36_0 = arg_36_0._breeds_to_load_at_startup
+		local var_36_1 = {}
 
-		self._breeds_to_load_at_startup = breeds_to_load_at_startup
+		arg_36_0._breeds_to_load_at_startup = var_36_1
 
-		local startup_breeds = self:_get_startup_breeds(level_key, level_seed, failed_locked_functions, use_random_directors, conflict_director_name, difficulty, difficulty_tweak)
-		local handled_breeds = {}
-		local breed_categories = EnemyPackageLoaderSettings.categories
-		local num_breed_categories = #breed_categories
+		local var_36_2 = arg_36_0:_get_startup_breeds(arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6, arg_36_7)
+		local var_36_3 = {}
+		local var_36_4 = EnemyPackageLoaderSettings.categories
+		local var_36_5 = #var_36_4
 
-		for i = 1, num_breed_categories do
-			local data = breed_categories[i]
+		for iter_36_0 = 1, var_36_5 do
+			local var_36_6 = var_36_4[iter_36_0]
 
-			if BUILD ~= data.forbidden_in_build then
-				local breeds = data.breeds
-				local num_breeds = #breeds
+			if BUILD ~= var_36_6.forbidden_in_build then
+				local var_36_7 = var_36_6.breeds
+				local var_36_8 = #var_36_7
 
-				for j = 1, num_breeds do
-					local breed_name = breeds[j]
+				for iter_36_1 = 1, var_36_8 do
+					local var_36_9 = var_36_7[iter_36_1]
 
-					handled_breeds[breed_name] = breed_name
+					var_36_3[var_36_9] = var_36_9
 
-					if not data.dynamic_loading then
-						breeds_to_load_at_startup[breed_name] = true
+					if not var_36_6.dynamic_loading then
+						var_36_1[var_36_9] = true
 					end
 				end
 			end
 		end
 
-		for breed_name, _ in pairs(startup_breeds) do
-			breed_name = ALIAS_TO_BREED[breed_name] or breed_name
+		for iter_36_2, iter_36_3 in pairs(var_36_2) do
+			iter_36_2 = var_0_2[iter_36_2] or iter_36_2
 
-			if not handled_breeds[breed_name] then
-				handled_breeds[breed_name] = breed_name
+			if not var_36_3[iter_36_2] then
+				var_36_3[iter_36_2] = iter_36_2
 
-				local breed_category = self:_category(breed_name)
-				local is_dynamic = breed_category.dynamic_loading
-				local is_generated_category = breed_category.is_generated_category
+				local var_36_10 = arg_36_0:_category(iter_36_2)
+				local var_36_11 = var_36_10.dynamic_loading
+				local var_36_12 = var_36_10.is_generated_category
 
-				if not is_dynamic or is_generated_category then
-					breeds_to_load_at_startup[breed_name] = true
+				if not var_36_11 or var_36_12 then
+					var_36_1[iter_36_2] = true
 				end
 			end
 		end
 
-		self:_load_startup_enemy_packages(previous_startup_breeds)
+		arg_36_0:_load_startup_enemy_packages(var_36_0)
 	end
 end
 
-EnemyPackageLoader._load_startup_enemy_packages = function (self, previous_startup_breeds)
-	assert(self._is_server, "[EnemyPackageLoader] '_load_startup_enemy_packages' is a server only function.")
+function EnemyPackageLoader._load_startup_enemy_packages(arg_37_0, arg_37_1)
+	assert(arg_37_0._is_server, "[EnemyPackageLoader] '_load_startup_enemy_packages' is a server only function.")
 
-	local session_breed_map = self._session_breed_map
-	local breeds_to_load_at_startup = self._breeds_to_load_at_startup
+	local var_37_0 = arg_37_0._session_breed_map
+	local var_37_1 = arg_37_0._breeds_to_load_at_startup
 
-	for breed_name in pairs(breeds_to_load_at_startup) do
-		session_breed_map[breed_name] = true
+	for iter_37_0 in pairs(var_37_1) do
+		var_37_0[iter_37_0] = true
 	end
 
-	for breed_name in pairs(previous_startup_breeds) do
-		if not breeds_to_load_at_startup[breed_name] then
-			session_breed_map[breed_name] = nil
+	for iter_37_1 in pairs(arg_37_1) do
+		if not var_37_1[iter_37_1] then
+			var_37_0[iter_37_1] = nil
 		end
 	end
 
-	self._network_handler:set_startup_breeds(table.shallow_copy(breeds_to_load_at_startup))
-	self:_update_package_diffs()
+	arg_37_0._network_handler:set_startup_breeds(table.shallow_copy(var_37_1))
+	arg_37_0:_update_package_diffs()
 end
 
-EnemyPackageLoader.loading_completed = function (self)
-	if not self._network_handler or not self._network_handler:is_fully_synced() then
+function EnemyPackageLoader.loading_completed(arg_38_0)
+	if not arg_38_0._network_handler or not arg_38_0._network_handler:is_fully_synced() then
 		return false
 	end
 
-	local session_breed_map = self._network_handler:get_session_breed_map()
-	local loaded_breed_map = self._loaded_breed_map
+	local var_38_0 = arg_38_0._network_handler:get_session_breed_map()
+	local var_38_1 = arg_38_0._loaded_breed_map
 
-	for breed_name in pairs(session_breed_map) do
-		if loaded_breed_map[breed_name] ~= true then
+	for iter_38_0 in pairs(var_38_0) do
+		if var_38_1[iter_38_0] ~= true then
 			return false
 		end
 	end
@@ -909,57 +905,55 @@ EnemyPackageLoader.loading_completed = function (self)
 	return true
 end
 
-EnemyPackageLoader.random_director_list = function (self)
-	return self._random_director_list
+function EnemyPackageLoader.random_director_list(arg_39_0)
+	return arg_39_0._random_director_list
 end
 
-EnemyPackageLoader.on_application_shutdown = function (self)
+function EnemyPackageLoader.on_application_shutdown(arg_40_0)
 	printf("[EnemyPackageLoader] unload_enemy_packages")
 
-	local locked_breeds = self._locked_breeds
-	local loaded_breed_map = self._loaded_breed_map
-	local session_breed_map = self._session_breed_map
+	local var_40_0 = arg_40_0._locked_breeds
+	local var_40_1 = arg_40_0._loaded_breed_map
+	local var_40_2 = arg_40_0._session_breed_map
 
-	for breed_name, status in pairs(loaded_breed_map) do
-		fassert(not locked_breeds[breed_name], "EnemyPackageLoader:on_application_shutdown: Trying to unload a locked breed, remember to unlock breed on shutdown! If you are locking packages via level flow, use unload_enemy_packages external in event to unload.")
+	for iter_40_0, iter_40_1 in pairs(var_40_1) do
+		fassert(not var_40_0[iter_40_0], "EnemyPackageLoader:on_application_shutdown: Trying to unload a locked breed, remember to unlock breed on shutdown! If you are locking packages via level flow, use unload_enemy_packages external in event to unload.")
 
-		local package_name = self:_breed_package_name(breed_name)
+		local var_40_3 = arg_40_0:_breed_package_name(iter_40_0)
 
-		Managers.package:unload(package_name, PACKAGE_REFERENCE_NAME)
+		Managers.package:unload(var_40_3, var_0_0)
 
-		if self._is_server then
-			session_breed_map[breed_name] = nil
+		if arg_40_0._is_server then
+			var_40_2[iter_40_0] = nil
 		end
 
-		loaded_breed_map[breed_name] = nil
+		var_40_1[iter_40_0] = nil
 	end
 end
 
-EnemyPackageLoader.get_startup_breeds = function (self)
-	if self._is_server then
-		return self._breeds_to_load_at_startup
+function EnemyPackageLoader.get_startup_breeds(arg_41_0)
+	if arg_41_0._is_server then
+		return arg_41_0._breeds_to_load_at_startup
 	else
-		return self._network_handler:get_startup_breeds()
+		return arg_41_0._network_handler:get_startup_breeds()
 	end
 end
 
-EnemyPackageLoader.client_connected = function (self, peer_id)
+function EnemyPackageLoader.client_connected(arg_42_0, arg_42_1)
 	return
 end
 
-EnemyPackageLoader.client_disconnected = function (self, peer_id)
+function EnemyPackageLoader.client_disconnected(arg_43_0, arg_43_1)
 	return
 end
 
-EnemyPackageLoader.is_breed_loaded_on_all_peers = function (self, breed_name)
-	breed_name = ALIAS_TO_BREED[breed_name] or breed_name
+function EnemyPackageLoader.is_breed_loaded_on_all_peers(arg_44_0, arg_44_1)
+	arg_44_1 = var_0_2[arg_44_1] or arg_44_1
 
-	local peers = self._network_handler:hot_join_synced_peers()
+	local var_44_0 = arg_44_0._network_handler:hot_join_synced_peers()
 
-	for peer_id in pairs(peers) do
-		local loaded_session_breeds = self._network_handler:get_loaded_session_breeds(peer_id)
-
-		if not loaded_session_breeds[breed_name] then
+	for iter_44_0 in pairs(var_44_0) do
+		if not arg_44_0._network_handler:get_loaded_session_breeds(iter_44_0)[arg_44_1] then
 			return false
 		end
 	end
@@ -967,68 +961,66 @@ EnemyPackageLoader.is_breed_loaded_on_all_peers = function (self, breed_name)
 	return true
 end
 
-EnemyPackageLoader.debug_loaded_breeds = function (self)
-	if not self._is_server then
+function EnemyPackageLoader.debug_loaded_breeds(arg_45_0)
+	if not arg_45_0._is_server then
 		Debug.text("[EnemyPackageLoader] no client debug support. need to fetch peers some other way")
 
 		return
 	end
 
-	if not self._network_handler then
+	if not arg_45_0._network_handler then
 		Debug.text("[EnemyPackageLoader] network handler not avaiable")
 
 		return
 	end
 
-	local num_spawned_by_breed = Managers.state.conflict.num_spawned_by_breed
-	local breed_category_loaded_packages = self._breed_category_loaded_packages
-	local locked_breeds = self._locked_breeds
-	local peers = self._network_handler and self._network_handler:hot_join_synced_peers() or {}
+	local var_45_0 = Managers.state.conflict.num_spawned_by_breed
+	local var_45_1 = arg_45_0._breed_category_loaded_packages
+	local var_45_2 = arg_45_0._locked_breeds
+	local var_45_3 = arg_45_0._network_handler and arg_45_0._network_handler:hot_join_synced_peers() or {}
 
 	Debug.text("EnemyPackageLoader Policy=%s", EnemyPackageLoaderSettings.policy)
 
-	for current_category, _ in pairs(breed_category_loaded_packages) do
-		Debug.text("Loaded %s:", current_category)
+	for iter_45_0, iter_45_1 in pairs(var_45_1) do
+		Debug.text("Loaded %s:", iter_45_0)
 
-		for breed_name, state in pairs(self._loaded_breed_map) do
+		for iter_45_2, iter_45_3 in pairs(arg_45_0._loaded_breed_map) do
 			repeat
-				local category_data = self:_category(breed_name)
-
-				if category_data.name ~= current_category then
+				if arg_45_0:_category(iter_45_2).name ~= iter_45_0 then
 					break
 				end
 
-				local num_alive = ""
-				local breed_in_death_watch = false
+				local var_45_4 = ""
+				local var_45_5 = false
 
-				if self._is_server then
-					breed_in_death_watch = self._unit_spawner:breed_in_death_watch(breed_name)
-					num_alive = num_spawned_by_breed[breed_name]
+				if arg_45_0._is_server then
+					var_45_5 = arg_45_0._unit_spawner:breed_in_death_watch(iter_45_2)
+					var_45_4 = var_45_0[iter_45_2]
 
-					local aliases = BREED_TO_ALIASES[breed_name]
+					local var_45_6 = var_0_3[iter_45_2]
 
-					if aliases then
-						local num_aliases = #aliases
+					if var_45_6 then
+						local var_45_7 = #var_45_6
 
-						for i = 1, num_aliases do
-							local alias = aliases[i]
+						for iter_45_4 = 1, var_45_7 do
+							local var_45_8 = var_45_6[iter_45_4]
 
-							num_alive = num_alive + num_spawned_by_breed[alias]
-							breed_in_death_watch = breed_in_death_watch or self._unit_spawner:breed_in_death_watch(alias)
+							var_45_4 = var_45_4 + var_45_0[var_45_8]
+							var_45_5 = var_45_5 or arg_45_0._unit_spawner:breed_in_death_watch(var_45_8)
 						end
 					end
 				end
 
-				local is_locked_string = locked_breeds[breed_name] and "[LOCKED]" or ""
+				local var_45_9 = var_45_2[iter_45_2] and "[LOCKED]" or ""
 
-				Debug.text("   %s=%s %s %s %s", breed_name, state, breed_in_death_watch and "DL" or "", tostring(num_alive), is_locked_string)
+				Debug.text("   %s=%s %s %s %s", iter_45_2, iter_45_3, var_45_5 and "DL" or "", tostring(var_45_4), var_45_9)
 
-				if self._is_server and not self:is_breed_loaded_on_all_peers(breed_name) then
+				if arg_45_0._is_server and not arg_45_0:is_breed_loaded_on_all_peers(iter_45_2) then
 					Debug.text("         --Waiting on Peer(s) to Load--")
 
-					for peer_id, _ in pairs(peers) do
-						if not self._network_handler:get_loaded_session_breeds(peer_id)[breed_name] then
-							Debug.text("         %s", peer_id)
+					for iter_45_5, iter_45_6 in pairs(var_45_3) do
+						if not arg_45_0._network_handler:get_loaded_session_breeds(iter_45_5)[iter_45_2] then
+							Debug.text("         %s", iter_45_5)
 						end
 					end
 				end
@@ -1036,15 +1028,15 @@ EnemyPackageLoader.debug_loaded_breeds = function (self)
 		end
 	end
 
-	if self._is_server then
-		Debug.text("Server=%s", self._peer_id)
+	if arg_45_0._is_server then
+		Debug.text("Server=%s", arg_45_0._peer_id)
 
-		if self._unique_connections then
-			for peer_id, connection_key in pairs(self._unique_connections) do
-				Debug.text("   Peer=%s | Key=%s", peer_id, connection_key)
+		if arg_45_0._unique_connections then
+			for iter_45_7, iter_45_8 in pairs(arg_45_0._unique_connections) do
+				Debug.text("   Peer=%s | Key=%s", iter_45_7, iter_45_8)
 			end
 		end
 	else
-		Debug.text("Peer=%s | Server=%s | Key=%s", self._peer_id, self._server_peer_id or "nil", self._unique_connection_key or "nil")
+		Debug.text("Peer=%s | Server=%s | Key=%s", arg_45_0._peer_id, arg_45_0._server_peer_id or "nil", arg_45_0._unique_connection_key or "nil")
 	end
 end

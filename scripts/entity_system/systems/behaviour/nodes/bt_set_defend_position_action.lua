@@ -1,62 +1,60 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_set_defend_position_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_set_defend_position_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTSetDefendPositionAction = class(BTSetDefendPositionAction, BTNode)
 
-BTSetDefendPositionAction.init = function (self, ...)
-	BTSetDefendPositionAction.super.init(self, ...)
+function BTSetDefendPositionAction.init(arg_1_0, ...)
+	BTSetDefendPositionAction.super.init(arg_1_0, ...)
 end
 
 BTSetDefendPositionAction.name = "BTSetDefendPositionAction"
 
-BTSetDefendPositionAction.enter = function (self, unit, blackboard, t)
-	blackboard.action = self._tree_node.action_data
+function BTSetDefendPositionAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	arg_2_2.action = arg_2_0._tree_node.action_data
 
-	blackboard.navigation_extension:set_max_speed(blackboard.breed.run_speed)
+	arg_2_2.navigation_extension:set_max_speed(arg_2_2.breed.run_speed)
 
-	blackboard.next_check = t
+	arg_2_2.next_check = arg_2_3
 end
 
-BTSetDefendPositionAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	blackboard.defend_get_in_position = nil
+function BTSetDefendPositionAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	arg_3_2.defend_get_in_position = nil
 end
 
-BTSetDefendPositionAction.run = function (self, unit, blackboard, t)
-	if t < blackboard.next_check then
+function BTSetDefendPositionAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	if arg_4_3 < arg_4_2.next_check then
 		return "running"
 	end
 
-	local action = blackboard.action
-	local move_pos = self:find_move_pos(blackboard, action)
+	local var_4_0 = arg_4_2.action
+	local var_4_1 = arg_4_0:find_move_pos(arg_4_2, var_4_0)
 
-	blackboard.next_check = t + action.function_call_interval
+	arg_4_2.next_check = arg_4_3 + var_4_0.function_call_interval
 
-	if not move_pos then
+	if not var_4_1 then
 		return "running"
-	elseif self:has_overlap_at_pos(move_pos, blackboard, action) then
+	elseif arg_4_0:has_overlap_at_pos(var_4_1, arg_4_2, var_4_0) then
 		return "running"
 	end
 
-	blackboard.goal_destination = Vector3Box(move_pos)
+	arg_4_2.goal_destination = Vector3Box(var_4_1)
 
 	return "done"
 end
 
-BTSetDefendPositionAction.find_move_pos = function (self, blackboard, action)
-	local nav_world = blackboard.nav_world
-	local data = action.find_move_pos
-	local center_pos = blackboard.destructible_pos:unbox()
-	local pos = ConflictUtils.get_spawn_pos_on_circle(nav_world, center_pos, data.radius, data.spread, data.tries, false, nil, nil, data.max_above, data.below)
+function BTSetDefendPositionAction.find_move_pos(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = arg_5_1.nav_world
+	local var_5_1 = arg_5_2.find_move_pos
+	local var_5_2 = arg_5_1.destructible_pos:unbox()
 
-	return pos
+	return (ConflictUtils.get_spawn_pos_on_circle(var_5_0, var_5_2, var_5_1.radius, var_5_1.spread, var_5_1.tries, false, nil, nil, var_5_1.max_above, var_5_1.below))
 end
 
-local broadphase_query_result = {}
+local var_0_0 = {}
 
-BTSetDefendPositionAction.has_overlap_at_pos = function (self, position, blackboard, action)
-	local radius = action.has_overlap_at_pos.radius
-	local num_results = Broadphase.query(blackboard.group_blackboard.broadphase, position, radius, broadphase_query_result)
+function BTSetDefendPositionAction.has_overlap_at_pos(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	local var_6_0 = arg_6_3.has_overlap_at_pos.radius
 
-	return num_results > 0
+	return Broadphase.query(arg_6_2.group_blackboard.broadphase, arg_6_1, var_6_0, var_0_0) > 0
 end

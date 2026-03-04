@@ -1,8 +1,8 @@
-﻿-- chunkname: @scripts/ui/hud_ui/component_list_definitions/hud_component_list_map_deus.lua
+-- chunkname: @scripts/ui/hud_ui/component_list_definitions/hud_component_list_map_deus.lua
 
-local adventure_settings = local_require("scripts/ui/hud_ui/component_list_definitions/hud_component_list_adventure")
-local common_settings = require("scripts/ui/hud_ui/component_list_definitions/hud_component_list_deus_common")
-local components = {
+local var_0_0 = local_require("scripts/ui/hud_ui/component_list_definitions/hud_component_list_adventure")
+local var_0_1 = require("scripts/ui/hud_ui/component_list_definitions/hud_component_list_deus_common")
+local var_0_2 = {
 	{
 		class_name = "IngameNewsTickerUI",
 		filename = "scripts/ui/hud_ui/ingame_news_ticker_ui",
@@ -14,28 +14,24 @@ local components = {
 			"cutscene",
 			"realism",
 			"dead",
-			"alive",
+			"alive"
 		},
-		validation_function = function (context, is_in_inn)
-			local disable_news_ticker = script_data.disable_news_ticker
-
-			return not disable_news_ticker
-		end,
+		validation_function = function(arg_1_0, arg_1_1)
+			return not script_data.disable_news_ticker
+		end
 	},
 	{
+		use_hud_scale = true,
 		class_name = "TwitchVoteUI",
 		filename = "scripts/ui/hud_ui/twitch_vote_ui",
-		use_hud_scale = true,
 		visibility_groups = {
 			"realism",
 			"alive",
-			"dead",
+			"dead"
 		},
-		validation_function = function (context, is_in_inn)
-			local use_twitch_ui = true
-
-			return use_twitch_ui
-		end,
+		validation_function = function(arg_2_0, arg_2_1)
+			return true
+		end
 	},
 	{
 		class_name = "IngamePlayerListUI",
@@ -45,53 +41,49 @@ local components = {
 			"realism",
 			"game_mode_disable_hud",
 			"dead",
-			"alive",
-		},
+			"alive"
+		}
 	},
 	{
+		use_hud_scale = true,
 		class_name = "SubtitleGui",
 		filename = "scripts/ui/views/subtitle_gui",
-		use_hud_scale = true,
 		visibility_groups = {
 			"cutscene",
 			"realism",
 			"dead",
-			"alive",
+			"alive"
 		},
-		validation_function = function (context, is_in_inn)
-			if is_in_inn then
+		validation_function = function(arg_3_0, arg_3_1)
+			if arg_3_1 then
 				return true
-			else
-				local use_twitch_ui = Managers.twitch and (Managers.twitch:is_connected() or Managers.twitch:is_activated())
-
-				if not use_twitch_ui then
-					return true
-				end
+			elseif not (Managers.twitch and (Managers.twitch:is_connected() or Managers.twitch:is_activated())) then
+				return true
 			end
-		end,
+		end
 	},
 	{
+		use_hud_scale = true,
 		class_name = "DeusRunStatsView",
 		filename = "scripts/ui/views/deus_menu/deus_run_stats_view",
-		use_hud_scale = true,
 		visibility_groups = {
 			"deus_run_stats",
 			"game_mode_disable_hud",
 			"dead",
-			"alive",
-		},
-	},
+			"alive"
+		}
+	}
 }
 
-DLCUtils.append("ingame_hud_components", components)
-table.append(components, common_settings.components)
+DLCUtils.append("ingame_hud_components", var_0_2)
+table.append(var_0_2, var_0_1.components)
 
-local visibility_groups = {}
+local var_0_3 = {}
 
-table.append(visibility_groups, common_settings.visibility_groups)
-table.append(visibility_groups, adventure_settings.visibility_groups)
+table.append(var_0_3, var_0_1.visibility_groups)
+table.append(var_0_3, var_0_0.visibility_groups)
 
 return {
-	components = components,
-	visibility_groups = visibility_groups,
+	components = var_0_2,
+	visibility_groups = var_0_3
 }

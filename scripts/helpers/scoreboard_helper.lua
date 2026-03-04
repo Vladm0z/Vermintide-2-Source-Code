@@ -1,190 +1,190 @@
-﻿-- chunkname: @scripts/helpers/scoreboard_helper.lua
+-- chunkname: @scripts/helpers/scoreboard_helper.lua
 
 ScoreboardHelper = ScoreboardHelper or {}
 ScoreboardHelper.scoreboard_topic_stats = {
 	{
-		display_text = "scoreboard_topic_kills_elites",
 		name = "kills_elites",
+		display_text = "scoreboard_topic_kills_elites",
 		stat_types = {
 			{
 				"kills_per_breed",
-				"skaven_storm_vermin",
+				"skaven_storm_vermin"
 			},
 			{
 				"kills_per_breed",
-				"skaven_storm_vermin_commander",
+				"skaven_storm_vermin_commander"
 			},
 			{
 				"kills_per_breed",
-				"skaven_storm_vermin_with_shield",
+				"skaven_storm_vermin_with_shield"
 			},
 			{
 				"kills_per_breed",
-				"skaven_plague_monk",
+				"skaven_plague_monk"
 			},
 			{
 				"kills_per_breed",
-				"chaos_warrior",
+				"chaos_warrior"
 			},
 			{
 				"kills_per_breed",
-				"chaos_bulwark",
+				"chaos_bulwark"
 			},
 			{
 				"kills_per_breed",
-				"chaos_berzerker",
+				"chaos_berzerker"
 			},
 			{
 				"kills_per_breed",
-				"chaos_raider",
+				"chaos_raider"
 			},
 			{
 				"kills_per_breed",
-				"beastmen_bestigor",
-			},
+				"beastmen_bestigor"
+			}
 		},
-		sort_function = function (a, b)
-			return a.score > b.score
-		end,
+		sort_function = function(arg_1_0, arg_1_1)
+			return arg_1_0.score > arg_1_1.score
+		end
 	},
 	{
-		display_text = "scoreboard_topic_kills_specials",
 		name = "kills_specials",
+		display_text = "scoreboard_topic_kills_specials",
 		stat_types = {
 			{
 				"kills_per_breed",
-				"skaven_gutter_runner",
+				"skaven_gutter_runner"
 			},
 			{
 				"kills_per_breed",
-				"skaven_poison_wind_globadier",
+				"skaven_poison_wind_globadier"
 			},
 			{
 				"kills_per_breed",
-				"skaven_pack_master",
+				"skaven_pack_master"
 			},
 			{
 				"kills_per_breed",
-				"skaven_ratling_gunner",
+				"skaven_ratling_gunner"
 			},
 			{
 				"kills_per_breed",
-				"skaven_warpfire_thrower",
+				"skaven_warpfire_thrower"
 			},
 			{
 				"kills_per_breed",
-				"chaos_corruptor_sorcerer",
+				"chaos_corruptor_sorcerer"
 			},
 			{
 				"kills_per_breed",
-				"chaos_vortex_sorcerer",
+				"chaos_vortex_sorcerer"
 			},
 			{
 				"kills_per_breed",
-				"beastmen_standard_bearer",
-			},
+				"beastmen_standard_bearer"
+			}
 		},
-		sort_function = function (a, b)
-			return a.score > b.score
-		end,
+		sort_function = function(arg_2_0, arg_2_1)
+			return arg_2_0.score > arg_2_1.score
+		end
 	},
 	{
-		display_text = "scoreboard_topic_kills_total",
 		name = "kills_total",
 		stat_type = "kills_total",
-		sort_function = function (a, b)
-			return a.score > b.score
-		end,
+		display_text = "scoreboard_topic_kills_total",
+		sort_function = function(arg_3_0, arg_3_1)
+			return arg_3_0.score > arg_3_1.score
+		end
 	},
 	{
-		display_text = "scoreboard_topic_kills_melee",
 		name = "kills_melee",
 		stat_type = "kills_melee",
-		sort_function = function (a, b)
-			return a.score > b.score
-		end,
+		display_text = "scoreboard_topic_kills_melee",
+		sort_function = function(arg_4_0, arg_4_1)
+			return arg_4_0.score > arg_4_1.score
+		end
 	},
 	{
-		display_text = "scoreboard_topic_kills_ranged",
 		name = "kills_ranged",
 		stat_type = "kills_ranged",
-		sort_function = function (a, b)
-			return a.score > b.score
-		end,
+		display_text = "scoreboard_topic_kills_ranged",
+		sort_function = function(arg_5_0, arg_5_1)
+			return arg_5_0.score > arg_5_1.score
+		end
 	},
 	{
-		display_text = "scoreboard_topic_damage_taken",
 		name = "damage_taken",
 		stat_type = "damage_taken",
-		sort_function = function (a, b)
-			return a.score < b.score
-		end,
+		display_text = "scoreboard_topic_damage_taken",
+		sort_function = function(arg_6_0, arg_6_1)
+			return arg_6_0.score < arg_6_1.score
+		end
 	},
 	{
-		display_text = "scoreboard_topic_damage_dealt",
 		name = "damage_dealt",
 		stat_type = "damage_dealt",
-		sort_function = function (a, b)
-			return a.score > b.score
-		end,
+		display_text = "scoreboard_topic_damage_dealt",
+		sort_function = function(arg_7_0, arg_7_1)
+			return arg_7_0.score > arg_7_1.score
+		end
 	},
 	{
-		display_text = "scoreboard_topic_damage_dealt_bosses",
 		name = "damage_dealt_bosses",
+		display_text = "scoreboard_topic_damage_dealt_bosses",
 		stat_types = {
 			{
 				"damage_dealt_per_breed",
-				"skaven_rat_ogre",
+				"skaven_rat_ogre"
 			},
 			{
 				"damage_dealt_per_breed",
-				"skaven_stormfiend",
+				"skaven_stormfiend"
 			},
 			{
 				"damage_dealt_per_breed",
-				"chaos_spawn",
+				"chaos_spawn"
 			},
 			{
 				"damage_dealt_per_breed",
-				"chaos_troll",
+				"chaos_troll"
 			},
 			{
 				"damage_dealt_per_breed",
-				"chaos_troll_chief",
+				"chaos_troll_chief"
 			},
 			{
 				"damage_dealt_per_breed",
-				"beastmen_minotaur",
-			},
+				"beastmen_minotaur"
+			}
 		},
-		sort_function = function (a, b)
-			return a.score > b.score
-		end,
+		sort_function = function(arg_8_0, arg_8_1)
+			return arg_8_0.score > arg_8_1.score
+		end
 	},
 	{
-		display_text = "scoreboard_topic_headshots",
 		name = "headshots",
 		stat_type = "headshots",
-		sort_function = function (a, b)
-			return a.score > b.score
-		end,
+		display_text = "scoreboard_topic_headshots",
+		sort_function = function(arg_9_0, arg_9_1)
+			return arg_9_0.score > arg_9_1.score
+		end
 	},
 	{
-		display_text = "scoreboard_topic_saves",
 		name = "saves",
 		stat_type = "saves",
-		sort_function = function (a, b)
-			return a.score > b.score
-		end,
+		display_text = "scoreboard_topic_saves",
+		sort_function = function(arg_10_0, arg_10_1)
+			return arg_10_0.score > arg_10_1.score
+		end
 	},
 	{
-		display_text = "scoreboard_topic_revives",
 		name = "revives",
 		stat_type = "revives",
-		sort_function = function (a, b)
-			return a.score > b.score
-		end,
-	},
+		display_text = "scoreboard_topic_revives",
+		sort_function = function(arg_11_0, arg_11_1)
+			return arg_11_0.score > arg_11_1.score
+		end
+	}
 }
 ScoreboardHelper.scoreboard_grouped_topic_stats = {
 	{
@@ -200,756 +200,747 @@ ScoreboardHelper.scoreboard_grouped_topic_stats = {
 			"damage_taken",
 			"headshots",
 			"saves",
-			"revives",
-		},
+			"revives"
+		}
 	},
 	{
 		group_name = "defense",
-		stats = {},
-	},
+		stats = {}
+	}
 }
 
-local score_count_per_player = 0
+local var_0_0 = 0
 
-for _, group_settings in ipairs(ScoreboardHelper.scoreboard_grouped_topic_stats) do
-	score_count_per_player = score_count_per_player + #group_settings.stats
+for iter_0_0, iter_0_1 in ipairs(ScoreboardHelper.scoreboard_grouped_topic_stats) do
+	var_0_0 = var_0_0 + #iter_0_1.stats
 end
 
-ScoreboardHelper.num_stats_per_player = score_count_per_player
+ScoreboardHelper.num_stats_per_player = var_0_0
 
-local TEMP_TABLE = {}
+local var_0_1 = {}
 
-local function get_score(statistics_db, stats_id, stat_type)
-	if type(stat_type) == "table" then
-		return statistics_db:get_stat(stats_id, unpack(stat_type))
+local function var_0_2(arg_12_0, arg_12_1, arg_12_2)
+	if type(arg_12_2) == "table" then
+		return arg_12_0:get_stat(arg_12_1, unpack(arg_12_2))
 	else
-		return statistics_db:get_stat(stats_id, stat_type)
+		return arg_12_0:get_stat(arg_12_1, arg_12_2)
 	end
 end
 
-local function get_score_by_name(statistics_db, stats_id, stat_name, saved_scoreboard_data)
-	local topic
+local function var_0_3(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	local var_13_0
 
-	for _, topic_data in ipairs(ScoreboardHelper.scoreboard_topic_stats) do
-		if topic_data.name == stat_name then
-			topic = topic_data
+	for iter_13_0, iter_13_1 in ipairs(ScoreboardHelper.scoreboard_topic_stats) do
+		if iter_13_1.name == arg_13_2 then
+			var_13_0 = iter_13_1
 
 			break
 		end
 	end
 
-	assert(topic, "Could not find stats topic with name: %s", stat_name)
+	assert(var_13_0, "Could not find stats topic with name: %s", arg_13_2)
 
-	local score_amount
-	local stat_types = topic.stat_types
+	local var_13_1
+	local var_13_2 = var_13_0.stat_types
 
-	if stat_types ~= nil then
-		local stat_types_n = #stat_types
-		local score = 0
+	if var_13_2 ~= nil then
+		local var_13_3 = #var_13_2
+		local var_13_4 = 0
 
-		for i = 1, stat_types_n do
-			local stat_type = stat_types[i]
+		for iter_13_2 = 1, var_13_3 do
+			local var_13_5 = var_13_2[iter_13_2]
 
-			score = score + get_score(statistics_db, stats_id, stat_type)
+			var_13_4 = var_13_4 + var_0_2(arg_13_0, arg_13_1, var_13_5)
 		end
 
-		score_amount = score
+		var_13_1 = var_13_4
 	else
-		local stat_type = topic.stat_type
-		local score = get_score(statistics_db, stats_id, stat_type)
+		local var_13_6 = var_13_0.stat_type
 
-		score_amount = score
+		var_13_1 = var_0_2(arg_13_0, arg_13_1, var_13_6)
 	end
 
-	if saved_scoreboard_data then
-		table.clear(TEMP_TABLE)
+	if arg_13_3 then
+		table.clear(var_0_1)
 
-		local player_data = saved_scoreboard_data[stats_id]
-		local player_data_scores = player_data and player_data.scores or TEMP_TABLE
-		local saved_score_amount = player_data_scores[stat_name] or 0
+		local var_13_7 = arg_13_3[arg_13_1]
+		local var_13_8 = (var_13_7 and var_13_7.scores or var_0_1)[arg_13_2] or 0
 
-		if saved_score_amount > 0 then
-			print(string.format("### Adding saved score for %q: %i ID: %s", stat_name, saved_score_amount, stats_id))
+		if var_13_8 > 0 then
+			print(string.format("### Adding saved score for %q: %i ID: %s", arg_13_2, var_13_8, arg_13_1))
 		end
 
-		score_amount = score_amount + saved_score_amount
+		var_13_1 = var_13_1 + var_13_8
 	end
 
-	assert(score_amount ~= nil, "Couldn't find scoreboard statistic for '%s'", topic.name)
+	assert(var_13_1 ~= nil, "Couldn't find scoreboard statistic for '%s'", var_13_0.name)
 
 	return {
-		score = score_amount,
-		stat_name = stat_name,
-		display_text = topic.display_text,
+		score = var_13_1,
+		stat_name = arg_13_2,
+		display_text = var_13_0.display_text
 	}
 end
 
-ScoreboardHelper.get_weave_stats = function (statistics_db, profile_synchronizer)
-	assert(statistics_db, "Missing statistics_database reference.")
-	assert(profile_synchronizer, "Missing profile_synchronizer reference.")
+function ScoreboardHelper.get_weave_stats(arg_14_0, arg_14_1)
+	assert(arg_14_0, "Missing statistics_database reference.")
+	assert(arg_14_1, "Missing profile_synchronizer reference.")
 
-	local bots_and_players = ScoreboardHelper.get_current_players()
-	local player_list = {}
+	local var_14_0 = ScoreboardHelper.get_current_players()
+	local var_14_1 = {}
 
-	for _, player in pairs(bots_and_players) do
-		local player_peer_id = player:network_id()
-		local player_name = player:name()
-		local stats_id = player:stats_id()
-		local profile_index = profile_synchronizer:profile_by_peer(player_peer_id, player:local_player_id())
-		local is_player_controlled = player:is_player_controlled()
+	for iter_14_0, iter_14_1 in pairs(var_14_0) do
+		local var_14_2 = iter_14_1:network_id()
+		local var_14_3 = iter_14_1:name()
+		local var_14_4 = iter_14_1:stats_id()
+		local var_14_5 = arg_14_1:profile_by_peer(var_14_2, iter_14_1:local_player_id())
+		local var_14_6 = iter_14_1:is_player_controlled()
 
-		player_list[stats_id] = {
-			name = player_name,
-			peer_id = player_peer_id,
-			local_player_id = player:local_player_id(),
-			stats_id = stats_id,
-			profile_index = profile_index,
-			is_player_controlled = is_player_controlled,
-			scores = {},
+		var_14_1[var_14_4] = {
+			name = var_14_3,
+			peer_id = var_14_2,
+			local_player_id = iter_14_1:local_player_id(),
+			stats_id = var_14_4,
+			profile_index = var_14_5,
+			is_player_controlled = var_14_6,
+			scores = {}
 		}
 	end
 
-	local scoreboard_topic_stats = ScoreboardHelper.scoreboard_topic_stats
+	local var_14_7 = ScoreboardHelper.scoreboard_topic_stats
 
-	for i, topic in ipairs(scoreboard_topic_stats) do
-		local stat_types = topic.stat_types
+	for iter_14_2, iter_14_3 in ipairs(var_14_7) do
+		local var_14_8 = iter_14_3.stat_types
 
-		for stats_id, player_data in pairs(player_list) do
-			if stat_types ~= nil then
-				local stat_types_n = #stat_types
-				local score = 0
+		for iter_14_4, iter_14_5 in pairs(var_14_1) do
+			if var_14_8 ~= nil then
+				local var_14_9 = #var_14_8
+				local var_14_10 = 0
 
-				for i = 1, stat_types_n do
-					local stat_type = stat_types[i]
+				for iter_14_6 = 1, var_14_9 do
+					local var_14_11 = var_14_8[iter_14_6]
 
-					score = score + get_score(statistics_db, player_data.stats_id, stat_type)
+					var_14_10 = var_14_10 + var_0_2(arg_14_0, iter_14_5.stats_id, var_14_11)
 				end
 
-				local data = player_list[stats_id]
-
-				data.scores[topic.name] = score
+				var_14_1[iter_14_4].scores[iter_14_3.name] = var_14_10
 			else
-				local stat_type = topic.stat_type
-				local score = get_score(statistics_db, player_data.stats_id, stat_type)
-				local data = player_list[stats_id]
+				local var_14_12 = iter_14_3.stat_type
+				local var_14_13 = var_0_2(arg_14_0, iter_14_5.stats_id, var_14_12)
 
-				data.scores[topic.name] = score
+				var_14_1[iter_14_4].scores[iter_14_3.name] = var_14_13
 			end
 		end
 	end
 
-	return player_list
+	return var_14_1
 end
 
-ScoreboardHelper.get_grouped_topic_statistics = function (statistics_db, profile_synchronizer, saved_scoreboard_data)
-	assert(statistics_db, "Missing statistics_database reference.")
-	assert(profile_synchronizer, "Missing profile_synchronizer reference.")
+function ScoreboardHelper.get_grouped_topic_statistics(arg_15_0, arg_15_1, arg_15_2)
+	assert(arg_15_0, "Missing statistics_database reference.")
+	assert(arg_15_1, "Missing profile_synchronizer reference.")
 
-	local bots_and_players = ScoreboardHelper.get_current_players()
-	local player_list = {}
+	local var_15_0 = ScoreboardHelper.get_current_players()
+	local var_15_1 = {}
 
-	for _, player in pairs(bots_and_players) do
-		local player_peer_id = player:network_id()
-		local player_name = player:name()
-		local stats_id = player:stats_id()
-		local profile_index = profile_synchronizer:profile_by_peer(player_peer_id, player:local_player_id())
-		local player_unit = player.player_unit
-		local unit_alive = Unit.alive(player_unit)
-		local career_extension = unit_alive and ScriptUnit.extension(player_unit, "career_system")
-		local career_index = career_extension and career_extension:career_index() or player:career_index()
-		local is_player_controlled = player:is_player_controlled()
-		local player_level = ExperienceSettings.get_player_level(player)
-		local versus_player_level = is_player_controlled and ExperienceSettings.get_versus_player_level(player) or 0
-		local profile = SPProfiles[profile_index]
-		local careers = profile.careers
-		local career_settings = careers[career_index]
-		local preview_wield_slot_type = career_settings.preview_wield_slot
-		local preview_wield_slot = InventorySettings.slot_names_by_type[preview_wield_slot_type]
-		local preview_wield_slot_name = preview_wield_slot[1]
-		local portrait_frame = CosmeticUtils.get_cosmetic_slot(player, "slot_frame")
-		local hero_skin = CosmeticUtils.get_cosmetic_slot(player, "slot_skin")
-		local hat = CosmeticUtils.get_cosmetic_slot(player, "slot_hat")
-		local weapon = CosmeticUtils.get_cosmetic_slot(player, preview_wield_slot_name)
-		local weapon_pose = CosmeticUtils.get_cosmetic_slot(player, "slot_pose")
+	for iter_15_0, iter_15_1 in pairs(var_15_0) do
+		local var_15_2 = iter_15_1:network_id()
+		local var_15_3 = iter_15_1:name()
+		local var_15_4 = iter_15_1:stats_id()
+		local var_15_5 = arg_15_1:profile_by_peer(var_15_2, iter_15_1:local_player_id())
+		local var_15_6 = iter_15_1.player_unit
+		local var_15_7 = Unit.alive(var_15_6) and ScriptUnit.extension(var_15_6, "career_system")
+		local var_15_8 = var_15_7 and var_15_7:career_index() or iter_15_1:career_index()
+		local var_15_9 = iter_15_1:is_player_controlled()
+		local var_15_10 = ExperienceSettings.get_player_level(iter_15_1)
+		local var_15_11 = var_15_9 and ExperienceSettings.get_versus_player_level(iter_15_1) or 0
+		local var_15_12 = SPProfiles[var_15_5].careers[var_15_8]
+		local var_15_13 = var_15_12.preview_wield_slot
+		local var_15_14 = InventorySettings.slot_names_by_type[var_15_13][1]
+		local var_15_15 = CosmeticUtils.get_cosmetic_slot(iter_15_1, "slot_frame")
+		local var_15_16 = CosmeticUtils.get_cosmetic_slot(iter_15_1, "slot_skin")
+		local var_15_17 = CosmeticUtils.get_cosmetic_slot(iter_15_1, "slot_hat")
+		local var_15_18 = CosmeticUtils.get_cosmetic_slot(iter_15_1, var_15_14)
+		local var_15_19 = CosmeticUtils.get_cosmetic_slot(iter_15_1, "slot_pose")
 
-		if not CosmeticUtils.is_valid(hero_skin) then
-			hero_skin = CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_skin")
+		if not CosmeticUtils.is_valid(var_15_16) then
+			var_15_16 = CosmeticUtils.get_default_cosmetic_slot(var_15_12, "slot_skin")
 		end
 
-		if not CosmeticUtils.is_valid(hat) then
-			hat = CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_hat")
+		if not CosmeticUtils.is_valid(var_15_17) then
+			var_15_17 = CosmeticUtils.get_default_cosmetic_slot(var_15_12, "slot_hat")
 		end
 
-		if not CosmeticUtils.is_valid(weapon) then
-			weapon = CosmeticUtils.get_default_cosmetic_slot(career_settings, preview_wield_slot_name)
+		if not CosmeticUtils.is_valid(var_15_18) then
+			var_15_18 = CosmeticUtils.get_default_cosmetic_slot(var_15_12, var_15_14)
 		end
 
-		if not CosmeticUtils.is_valid(weapon_pose) then
-			weapon_pose = CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_pose")
+		if not CosmeticUtils.is_valid(var_15_19) then
+			var_15_19 = CosmeticUtils.get_default_cosmetic_slot(var_15_12, "slot_pose")
 		end
 
-		player_list[stats_id] = {
-			name = player_name,
-			peer_id = player_peer_id,
-			local_player_id = player:local_player_id(),
-			career_index = career_index,
-			stats_id = stats_id,
-			profile_index = profile_index,
-			is_player_controlled = is_player_controlled,
-			player_level = player_level,
-			versus_player_level = versus_player_level,
-			portrait_frame = portrait_frame and portrait_frame.item_name,
-			hero_skin = hero_skin and hero_skin.item_name,
-			weapon = weapon,
-			weapon_pose = weapon_pose,
-			hat = hat,
+		var_15_1[var_15_4] = {
+			name = var_15_3,
+			peer_id = var_15_2,
+			local_player_id = iter_15_1:local_player_id(),
+			career_index = var_15_8,
+			stats_id = var_15_4,
+			profile_index = var_15_5,
+			is_player_controlled = var_15_9,
+			player_level = var_15_10,
+			versus_player_level = var_15_11,
+			portrait_frame = var_15_15 and var_15_15.item_name,
+			hero_skin = var_15_16 and var_15_16.item_name,
+			weapon = var_15_18,
+			weapon_pose = var_15_19,
+			hat = var_15_17
 		}
 	end
 
-	for stats_id, player_data in pairs(player_list) do
-		local scores = {}
+	for iter_15_2, iter_15_3 in pairs(var_15_1) do
+		local var_15_20 = {}
 
-		for _, grouped_stat_data in ipairs(ScoreboardHelper.scoreboard_grouped_topic_stats) do
-			local group_name = grouped_stat_data.group_name
-			local stats = grouped_stat_data.stats
+		for iter_15_4, iter_15_5 in ipairs(ScoreboardHelper.scoreboard_grouped_topic_stats) do
+			local var_15_21 = iter_15_5.group_name
+			local var_15_22 = iter_15_5.stats
 
-			scores[group_name] = {}
+			var_15_20[var_15_21] = {}
 
-			local group_scores = scores[group_name]
+			local var_15_23 = var_15_20[var_15_21]
 
-			for _, stat_name in pairs(stats) do
-				local score_data = get_score_by_name(statistics_db, stats_id, stat_name, saved_scoreboard_data)
+			for iter_15_6, iter_15_7 in pairs(var_15_22) do
+				local var_15_24 = var_0_3(arg_15_0, iter_15_2, iter_15_7, arg_15_2)
 
-				group_scores[#group_scores + 1] = score_data
+				var_15_23[#var_15_23 + 1] = var_15_24
 			end
 		end
 
-		player_data.group_scores = scores
+		iter_15_3.group_scores = var_15_20
 	end
 
-	return player_list
+	return var_15_1
 end
 
-local PLAYERS = {}
-local OCCUPIED_SLOTS = {}
+local var_0_4 = {}
+local var_0_5 = {}
 
-ScoreboardHelper.get_current_players = function (optional_profile_synchronizer)
-	local max_members = Managers.mechanism:max_instance_members()
-	local human_and_bot_players = Managers.player:human_and_bot_players()
+function ScoreboardHelper.get_current_players(arg_16_0)
+	local var_16_0 = Managers.mechanism:max_instance_members()
+	local var_16_1 = Managers.player:human_and_bot_players()
 
-	if max_members >= table.size(human_and_bot_players) then
-		return human_and_bot_players
+	if var_16_0 >= table.size(var_16_1) then
+		return var_16_1
 	else
-		table.clear(PLAYERS)
-		table.clear(OCCUPIED_SLOTS)
+		table.clear(var_0_4)
+		table.clear(var_0_5)
 
-		local gathered_players = PLAYERS
-		local human_players = Managers.player:human_players()
-		local bot_players = Managers.player:bots()
+		local var_16_2 = var_0_4
+		local var_16_3 = Managers.player:human_players()
+		local var_16_4 = Managers.player:bots()
 
-		for _, player in pairs(human_players) do
-			local player_profile_index
+		for iter_16_0, iter_16_1 in pairs(var_16_3) do
+			local var_16_5
 
-			if optional_profile_synchronizer then
-				local player_peer_id = player:network_id()
-				local local_player_id = player:local_player_id()
+			if arg_16_0 then
+				local var_16_6 = iter_16_1:network_id()
+				local var_16_7 = iter_16_1:local_player_id()
 
-				player_profile_index = optional_profile_synchronizer:profile_by_peer(player_peer_id, local_player_id)
+				var_16_5 = arg_16_0:profile_by_peer(var_16_6, var_16_7)
 			else
-				player_profile_index = player:profile_index()
+				var_16_5 = iter_16_1:profile_index()
 			end
 
-			if not OCCUPIED_SLOTS[player_profile_index] then
-				gathered_players[#gathered_players + 1] = player
-				OCCUPIED_SLOTS[player_profile_index] = true
+			if not var_0_5[var_16_5] then
+				var_16_2[#var_16_2 + 1] = iter_16_1
+				var_0_5[var_16_5] = true
 			end
 
-			if max_members <= #gathered_players then
+			if var_16_0 <= #var_16_2 then
 				break
 			end
 		end
 
-		for _, bot_player in pairs(bot_players) do
-			if max_members <= #gathered_players then
+		for iter_16_2, iter_16_3 in pairs(var_16_4) do
+			if var_16_0 <= #var_16_2 then
 				break
 			end
 
-			local bot_profile_index = bot_player:profile_index()
+			local var_16_8 = iter_16_3:profile_index()
 
-			if not OCCUPIED_SLOTS[bot_profile_index] then
-				gathered_players[#gathered_players + 1] = bot_player
+			if not var_0_5[var_16_8] then
+				var_16_2[#var_16_2 + 1] = iter_16_3
 			end
 		end
 
-		return gathered_players
+		return var_16_2
 	end
 end
 
-ScoreboardHelper.debug_get_grouped_topic_statistics = function ()
-	local player_list = {}
+function ScoreboardHelper.debug_get_grouped_topic_statistics()
+	local var_17_0 = {}
 
-	for i = 1, 4 do
-		player_list[i] = {
+	for iter_17_0 = 1, 4 do
+		var_17_0[iter_17_0] = {
 			career_index = 1,
-			player_level = 1,
 			portrait_frame = "default",
-			name = "player_name_" .. tostring(i),
-			peer_id = "fake_peer_id_" .. tostring(i),
-			local_player_id = i,
-			stats_id = i,
-			profile_index = i,
-			is_player_controlled = i == 1 and true or false,
+			player_level = 1,
+			name = "player_name_" .. tostring(iter_17_0),
+			peer_id = "fake_peer_id_" .. tostring(iter_17_0),
+			local_player_id = iter_17_0,
+			stats_id = iter_17_0,
+			profile_index = iter_17_0,
+			is_player_controlled = iter_17_0 == 1 and true or false
 		}
 	end
 
-	for stats_id, player_data in pairs(player_list) do
-		local scores = {}
+	for iter_17_1, iter_17_2 in pairs(var_17_0) do
+		local var_17_1 = {}
 
-		for _, grouped_stat_data in ipairs(ScoreboardHelper.scoreboard_grouped_topic_stats) do
-			local group_name = grouped_stat_data.group_name
-			local stats = grouped_stat_data.stats
+		for iter_17_3, iter_17_4 in ipairs(ScoreboardHelper.scoreboard_grouped_topic_stats) do
+			local var_17_2 = iter_17_4.group_name
+			local var_17_3 = iter_17_4.stats
 
-			scores[group_name] = {}
+			var_17_1[var_17_2] = {}
 
-			local group_scores = scores[group_name]
+			local var_17_4 = var_17_1[var_17_2]
 
-			for _, stat_name in pairs(stats) do
-				local score_data = {
-					display_text = "display_text!",
+			for iter_17_5, iter_17_6 in pairs(var_17_3) do
+				local var_17_5 = {
 					score = 10,
-					stat_name = "stat_name_" .. tostring(_),
+					display_text = "display_text!",
+					stat_name = "stat_name_" .. tostring(iter_17_5)
 				}
 
-				group_scores[#group_scores + 1] = score_data
+				var_17_4[#var_17_4 + 1] = var_17_5
 			end
 		end
 
-		player_data.group_scores = scores
+		iter_17_2.group_scores = var_17_1
 	end
 
-	return player_list
+	return var_17_0
 end
 
 ScoreboardHelper.scoreboard_topic_stats_versus = {
 	{
-		display_text = "scoreboard_topic_kills_specials",
 		name = "kills_specials",
+		display_text = "scoreboard_topic_kills_specials",
 		stat_types = {
 			{
 				"kills_per_breed",
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"kills_per_breed",
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"kills_per_breed",
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"kills_per_breed",
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"kills_per_breed",
-				"vs_warpfire_thrower",
-			},
+				"vs_warpfire_thrower"
+			}
 		},
-		sort_function = function (a, b)
-			return a.score > b.score
-		end,
+		sort_function = function(arg_18_0, arg_18_1)
+			return arg_18_0.score > arg_18_1.score
+		end
 	},
 	{
-		display_text = "scoreboard_topic_kills_heroes",
 		name = "kills_heroes",
+		display_text = "scoreboard_topic_kills_heroes",
 		stat_types = {
 			{
 				"kills_per_breed",
-				"hero_wh_captain",
+				"hero_wh_captain"
 			},
 			{
 				"kills_per_breed",
-				"hero_dr_slayer",
+				"hero_dr_slayer"
 			},
 			{
 				"kills_per_breed",
-				"hero_wh_priest",
+				"hero_wh_priest"
 			},
 			{
 				"kills_per_breed",
-				"hero_dr_ironbreaker",
+				"hero_dr_ironbreaker"
 			},
 			{
 				"kills_per_breed",
-				"hero_we_maidenguard",
+				"hero_we_maidenguard"
 			},
 			{
 				"kills_per_breed",
-				"hero_bw_necromancer",
+				"hero_bw_necromancer"
 			},
 			{
 				"kills_per_breed",
-				"hero_es_questingknight",
+				"hero_es_questingknight"
 			},
 			{
 				"kills_per_breed",
-				"hero_we_thornsister",
+				"hero_we_thornsister"
 			},
 			{
 				"kills_per_breed",
-				"hero_es_knight",
+				"hero_es_knight"
 			},
 			{
 				"kills_per_breed",
-				"hero_es_huntsman",
+				"hero_es_huntsman"
 			},
 			{
 				"kills_per_breed",
-				"hero_wh_bountyhunter",
+				"hero_wh_bountyhunter"
 			},
 			{
 				"kills_per_breed",
-				"hero_dr_ranger",
+				"hero_dr_ranger"
 			},
 			{
 				"kills_per_breed",
-				"hero_dr_engineer",
+				"hero_dr_engineer"
 			},
 			{
 				"kills_per_breed",
-				"hero_es_mercenary",
+				"hero_es_mercenary"
 			},
 			{
 				"kills_per_breed",
-				"hero_bw_scholar",
+				"hero_bw_scholar"
 			},
 			{
 				"kills_per_breed",
-				"hero_bw_unchained",
+				"hero_bw_unchained"
 			},
 			{
 				"kills_per_breed",
-				"hero_bw_adept",
+				"hero_bw_adept"
 			},
 			{
 				"kills_per_breed",
-				"hero_wh_zealot",
+				"hero_wh_zealot"
 			},
 			{
 				"kills_per_breed",
-				"hero_we_shade",
+				"hero_we_shade"
 			},
 			{
 				"kills_per_breed",
-				"hero_we_waywatcher",
+				"hero_we_waywatcher"
 			},
 			{
 				"vs_knockdowns_per_breed",
-				"hero_wh_captain",
+				"hero_wh_captain"
 			},
 			{
 				"vs_knockdowns_per_breed",
-				"hero_dr_slayer",
+				"hero_dr_slayer"
 			},
 			{
 				"vs_knockdowns_per_breed",
-				"hero_wh_priest",
+				"hero_wh_priest"
 			},
 			{
 				"vs_knockdowns_per_breed",
-				"hero_dr_ironbreaker",
+				"hero_dr_ironbreaker"
 			},
 			{
 				"vs_knockdowns_per_breed",
-				"hero_we_maidenguard",
+				"hero_we_maidenguard"
 			},
 			{
 				"vs_knockdowns_per_breed",
-				"hero_bw_necromancer",
+				"hero_bw_necromancer"
 			},
 			{
 				"vs_knockdowns_per_breed",
-				"hero_es_questingknight",
+				"hero_es_questingknight"
 			},
 			{
 				"vs_knockdowns_per_breed",
-				"hero_we_thornsister",
+				"hero_we_thornsister"
 			},
 			{
 				"vs_knockdowns_per_breed",
-				"hero_es_knight",
+				"hero_es_knight"
 			},
 			{
 				"vs_knockdowns_per_breed",
-				"hero_es_huntsman",
+				"hero_es_huntsman"
 			},
 			{
 				"vs_knockdowns_per_breed",
-				"hero_wh_bountyhunter",
+				"hero_wh_bountyhunter"
 			},
 			{
 				"vs_knockdowns_per_breed",
-				"hero_dr_ranger",
+				"hero_dr_ranger"
 			},
 			{
 				"vs_knockdowns_per_breed",
-				"hero_dr_engineer",
+				"hero_dr_engineer"
 			},
 			{
 				"vs_knockdowns_per_breed",
-				"hero_es_mercenary",
+				"hero_es_mercenary"
 			},
 			{
 				"vs_knockdowns_per_breed",
-				"hero_bw_scholar",
+				"hero_bw_scholar"
 			},
 			{
 				"vs_knockdowns_per_breed",
-				"hero_bw_unchained",
+				"hero_bw_unchained"
 			},
 			{
 				"vs_knockdowns_per_breed",
-				"hero_bw_adept",
+				"hero_bw_adept"
 			},
 			{
 				"vs_knockdowns_per_breed",
-				"hero_wh_zealot",
+				"hero_wh_zealot"
 			},
 			{
 				"vs_knockdowns_per_breed",
-				"hero_we_shade",
+				"hero_we_shade"
 			},
 			{
 				"vs_knockdowns_per_breed",
-				"hero_we_waywatcher",
-			},
+				"hero_we_waywatcher"
+			}
 		},
-		sort_function = function (a, b)
-			return a.score > b.score
-		end,
+		sort_function = function(arg_19_0, arg_19_1)
+			return arg_19_0.score > arg_19_1.score
+		end
 	},
 	{
-		display_text = "scoreboard_topic_damage_dealt_heroes",
 		name = "damage_dealt_heroes",
+		display_text = "scoreboard_topic_damage_dealt_heroes",
 		stat_types = {
 			{
 				"damage_dealt_per_breed",
-				"hero_wh_captain",
+				"hero_wh_captain"
 			},
 			{
 				"damage_dealt_per_breed",
-				"hero_dr_slayer",
+				"hero_dr_slayer"
 			},
 			{
 				"damage_dealt_per_breed",
-				"hero_wh_priest",
+				"hero_wh_priest"
 			},
 			{
 				"damage_dealt_per_breed",
-				"hero_dr_ironbreaker",
+				"hero_dr_ironbreaker"
 			},
 			{
 				"damage_dealt_per_breed",
-				"hero_we_maidenguard",
+				"hero_we_maidenguard"
 			},
 			{
 				"damage_dealt_per_breed",
-				"hero_bw_necromancer",
+				"hero_bw_necromancer"
 			},
 			{
 				"damage_dealt_per_breed",
-				"hero_es_questingknight",
+				"hero_es_questingknight"
 			},
 			{
 				"damage_dealt_per_breed",
-				"hero_we_thornsister",
+				"hero_we_thornsister"
 			},
 			{
 				"damage_dealt_per_breed",
-				"hero_es_knight",
+				"hero_es_knight"
 			},
 			{
 				"damage_dealt_per_breed",
-				"hero_es_huntsman",
+				"hero_es_huntsman"
 			},
 			{
 				"damage_dealt_per_breed",
-				"hero_wh_bountyhunter",
+				"hero_wh_bountyhunter"
 			},
 			{
 				"damage_dealt_per_breed",
-				"hero_dr_ranger",
+				"hero_dr_ranger"
 			},
 			{
 				"damage_dealt_per_breed",
-				"hero_dr_engineer",
+				"hero_dr_engineer"
 			},
 			{
 				"damage_dealt_per_breed",
-				"hero_es_mercenary",
+				"hero_es_mercenary"
 			},
 			{
 				"damage_dealt_per_breed",
-				"hero_bw_scholar",
+				"hero_bw_scholar"
 			},
 			{
 				"damage_dealt_per_breed",
-				"hero_bw_unchained",
+				"hero_bw_unchained"
 			},
 			{
 				"damage_dealt_per_breed",
-				"hero_bw_adept",
+				"hero_bw_adept"
 			},
 			{
 				"damage_dealt_per_breed",
-				"hero_wh_zealot",
+				"hero_wh_zealot"
 			},
 			{
 				"damage_dealt_per_breed",
-				"hero_we_shade",
+				"hero_we_shade"
 			},
 			{
 				"damage_dealt_per_breed",
-				"hero_we_waywatcher",
-			},
+				"hero_we_waywatcher"
+			}
 		},
-		sort_function = function (a, b)
-			return a.score > b.score
-		end,
+		sort_function = function(arg_20_0, arg_20_1)
+			return arg_20_0.score > arg_20_1.score
+		end
 	},
 	{
-		display_text = "scoreboard_topic_damage_dealt_pactsworn",
 		name = "vs_damage_dealt_to_pactsworn",
 		stat_type = "vs_damage_dealt_to_pactsworn",
-		sort_function = function (a, b)
-			return a.score > b.score
-		end,
+		display_text = "scoreboard_topic_damage_dealt_pactsworn",
+		sort_function = function(arg_21_0, arg_21_1)
+			return arg_21_0.score > arg_21_1.score
+		end
 	},
 	{
-		display_text = "scoreboard_topic_saves",
 		name = "saves",
 		stat_type = "saves",
-		sort_function = function (a, b)
-			return a.score > b.score
-		end,
+		display_text = "scoreboard_topic_saves",
+		sort_function = function(arg_22_0, arg_22_1)
+			return arg_22_0.score > arg_22_1.score
+		end
 	},
 	{
-		display_text = "scoreboard_topic_revives",
 		name = "revives",
 		stat_type = "revives",
-		sort_function = function (a, b)
-			return a.score > b.score
-		end,
+		display_text = "scoreboard_topic_revives",
+		sort_function = function(arg_23_0, arg_23_1)
+			return arg_23_0.score > arg_23_1.score
+		end
 	},
 	{
-		display_text = "scoreboard_topic_disables",
 		name = "disables",
 		stat_type = "vs_disables_per_breed",
+		display_text = "scoreboard_topic_disables",
 		stat_types = {
 			{
 				"vs_disables_per_breed",
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"vs_disables_per_breed",
-				"vs_packmaster",
-			},
+				"vs_packmaster"
+			}
 		},
-		sort_function = function (a, b)
-			return a.score > b.score
-		end,
+		sort_function = function(arg_24_0, arg_24_1)
+			return arg_24_0.score > arg_24_1.score
+		end
 	},
 	{
-		display_text = "scoreboard_topic_gutter_runner_disables",
 		name = "gutter_runner_disables",
 		stat_type = "vs_disables_per_breed",
+		display_text = "scoreboard_topic_gutter_runner_disables",
 		stat_types = {
 			{
 				"vs_disables_per_breed",
-				"vs_gutter_runner",
-			},
+				"vs_gutter_runner"
+			}
 		},
-		sort_function = function (a, b)
-			return a.score > b.score
-		end,
+		sort_function = function(arg_25_0, arg_25_1)
+			return arg_25_0.score > arg_25_1.score
+		end
 	},
 	{
-		display_text = "scoreboard_topic_packmaster_disables",
 		name = "packmaster_disables",
 		stat_type = "vs_disables_per_breed",
+		display_text = "scoreboard_topic_packmaster_disables",
 		stat_types = {
 			{
 				"vs_disables_per_breed",
-				"vs_packmaster",
-			},
+				"vs_packmaster"
+			}
 		},
-		sort_function = function (a, b)
-			return a.score > b.score
-		end,
+		sort_function = function(arg_26_0, arg_26_1)
+			return arg_26_0.score > arg_26_1.score
+		end
 	},
 	{
-		display_text = "scoreboard_topic_kills_total",
 		name = "kills_total",
 		stat_type = "kills_total",
-		sort_function = function (a, b)
-			return a.score > b.score
-		end,
+		display_text = "scoreboard_topic_kills_total",
+		sort_function = function(arg_27_0, arg_27_1)
+			return arg_27_0.score > arg_27_1.score
+		end
 	},
 	{
-		display_text = "scoreboard_topic_damage_dealt_by_monster",
 		name = "monster_damage",
+		display_text = "scoreboard_topic_damage_dealt_by_monster",
 		stat_types = {
 			{
 				"state_damage_dealt_as_pactsworn_breed",
-				"vs_chaos_troll",
+				"vs_chaos_troll"
 			},
 			{
 				"state_damage_dealt_as_pactsworn_breed",
-				"vs_rat_ogre",
-			},
+				"vs_rat_ogre"
+			}
 		},
-		sort_function = function (a, b)
-			return a.score > b.score
-		end,
+		sort_function = function(arg_28_0, arg_28_1)
+			return arg_28_0.score > arg_28_1.score
+		end
 	},
 	{
 		name = "troll_damage",
 		stat_types = {
 			{
 				"state_damage_dealt_as_pactsworn_breed",
-				"vs_chaos_troll",
-			},
+				"vs_chaos_troll"
+			}
 		},
-		sort_function = function (a, b)
-			return a.score > b.score
-		end,
+		sort_function = function(arg_29_0, arg_29_1)
+			return arg_29_0.score > arg_29_1.score
+		end
 	},
 	{
 		name = "rat_ogre_damage",
 		stat_types = {
 			{
 				"state_damage_dealt_as_pactsworn_breed",
-				"vs_rat_ogre",
-			},
+				"vs_rat_ogre"
+			}
 		},
-		sort_function = function (a, b)
-			return a.score > b.score
-		end,
+		sort_function = function(arg_30_0, arg_30_1)
+			return arg_30_0.score > arg_30_1.score
+		end
 	},
 	{
-		display_text = "scoreboard_topic_damage_dealt_to_monster",
 		name = "damage_to_monster",
+		display_text = "scoreboard_topic_damage_dealt_to_monster",
 		stat_types = {
 			{
 				"damage_dealt_per_breed",
-				"vs_chaos_troll",
-			},
+				"vs_chaos_troll"
+			}
 		},
-		sort_function = function (a, b)
-			return a.score > b.score
-		end,
-	},
+		sort_function = function(arg_31_0, arg_31_1)
+			return arg_31_0.score > arg_31_1.score
+		end
+	}
 }
 ScoreboardHelper.scoreboard_grouped_topic_stats_versus = {
 	{
@@ -958,101 +949,100 @@ ScoreboardHelper.scoreboard_grouped_topic_stats_versus = {
 			"kills_specials",
 			"vs_damage_dealt_to_pactsworn",
 			"saves",
-			"revives",
-		},
+			"revives"
+		}
 	},
 	{
 		group_name = "pactsworn",
 		stats = {
 			"kills_heroes",
 			"damage_dealt_heroes",
-			"disables",
-		},
-	},
+			"disables"
+		}
+	}
 }
 
-ScoreboardHelper.get_versus_stats = function (statistics_db, saved_scoreboard_stats)
-	assert(statistics_db, "Missing statistics_database reference.")
+function ScoreboardHelper.get_versus_stats(arg_32_0, arg_32_1)
+	assert(arg_32_0, "Missing statistics_database reference.")
 
-	local human_players = Managers.player:human_players()
-	local mechanism = Managers.mechanism:game_mechanism()
-	local party_manager = Managers.party
-	local player_list = {}
+	local var_32_0 = Managers.player:human_players()
+	local var_32_1 = Managers.mechanism:game_mechanism()
+	local var_32_2 = Managers.party
+	local var_32_3 = {}
 
-	for _, player in pairs(human_players) do
+	for iter_32_0, iter_32_1 in pairs(var_32_0) do
 		repeat
-			local player_peer_id = player:network_id()
-			local profile_index, career_index = Managers.mechanism:get_persistent_profile_index_reservation(player_peer_id)
+			local var_32_4 = iter_32_1:network_id()
+			local var_32_5, var_32_6 = Managers.mechanism:get_persistent_profile_index_reservation(var_32_4)
 
-			if profile_index == 0 or career_index == 0 then
+			if var_32_5 == 0 or var_32_6 == 0 then
 				break
 			end
 
-			local player_name = player:name()
-			local stats_id = player:stats_id()
-			local local_player_id = player:local_player_id()
-			local player_level = ExperienceSettings.get_player_level(player)
-			local is_player_controlled = player:is_player_controlled()
-			local versus_player_level = is_player_controlled and ExperienceSettings.get_versus_player_level(player) or 0
-			local weapon, weapon_pose, weapon_pose_skin, hero_skin, hat, portrait_frame, pactsworn_cosmetics = mechanism:get_hero_cosmetics(player_peer_id, local_player_id)
+			local var_32_7 = iter_32_1:name()
+			local var_32_8 = iter_32_1:stats_id()
+			local var_32_9 = iter_32_1:local_player_id()
+			local var_32_10 = ExperienceSettings.get_player_level(iter_32_1)
+			local var_32_11 = iter_32_1:is_player_controlled() and ExperienceSettings.get_versus_player_level(iter_32_1) or 0
+			local var_32_12, var_32_13, var_32_14, var_32_15, var_32_16, var_32_17, var_32_18 = var_32_1:get_hero_cosmetics(var_32_4, var_32_9)
 
-			player_list[stats_id] = {
-				name = player_name,
-				peer_id = player_peer_id,
-				local_player_id = local_player_id,
-				stats_id = stats_id,
-				profile_index = profile_index,
-				career_index = career_index,
-				player_level = player_level,
-				versus_player_level = versus_player_level,
-				portrait_frame = portrait_frame,
-				hero_skin = hero_skin,
+			var_32_3[var_32_8] = {
+				name = var_32_7,
+				peer_id = var_32_4,
+				local_player_id = var_32_9,
+				stats_id = var_32_8,
+				profile_index = var_32_5,
+				career_index = var_32_6,
+				player_level = var_32_10,
+				versus_player_level = var_32_11,
+				portrait_frame = var_32_17,
+				hero_skin = var_32_15,
 				weapon = {
-					item_name = weapon,
+					item_name = var_32_12
 				},
 				weapon_pose = {
-					item_name = weapon_pose,
-					skin_name = weapon_pose_skin,
+					item_name = var_32_13,
+					skin_name = var_32_14
 				},
 				hat = {
-					item_name = hat,
+					item_name = var_32_16
 				},
-				pactsworn_cosmetics = pactsworn_cosmetics,
-				scores = {},
+				pactsworn_cosmetics = var_32_18,
+				scores = {}
 			}
 		until true
 	end
 
-	local scoreboard_topic_stats = ScoreboardHelper.scoreboard_topic_stats_versus
+	local var_32_19 = ScoreboardHelper.scoreboard_topic_stats_versus
 
-	for i, topic in ipairs(scoreboard_topic_stats) do
-		local stat_types = topic.stat_types
+	for iter_32_2, iter_32_3 in ipairs(var_32_19) do
+		local var_32_20 = iter_32_3.stat_types
 
-		for stats_id, player_data in pairs(player_list) do
-			if stat_types ~= nil then
-				local stat_types_n = #stat_types
-				local score = 0
+		for iter_32_4, iter_32_5 in pairs(var_32_3) do
+			if var_32_20 ~= nil then
+				local var_32_21 = #var_32_20
+				local var_32_22 = 0
 
-				for i = 1, stat_types_n do
-					local stat_type = stat_types[i]
+				for iter_32_6 = 1, var_32_21 do
+					local var_32_23 = var_32_20[iter_32_6]
 
-					score = score + get_score(statistics_db, player_data.stats_id, stat_type)
+					var_32_22 = var_32_22 + var_0_2(arg_32_0, iter_32_5.stats_id, var_32_23)
 				end
 
-				local data = player_list[stats_id]
-				local saved_data = saved_scoreboard_stats and saved_scoreboard_stats[stats_id]
+				local var_32_24 = var_32_3[iter_32_4]
+				local var_32_25 = arg_32_1 and arg_32_1[iter_32_4]
 
-				data.scores[topic.name] = score + (saved_data and saved_data.scores and saved_data.scores[topic.name] or 0)
+				var_32_24.scores[iter_32_3.name] = var_32_22 + (var_32_25 and var_32_25.scores and var_32_25.scores[iter_32_3.name] or 0)
 			else
-				local stat_type = topic.stat_type
-				local score = get_score(statistics_db, player_data.stats_id, stat_type)
-				local data = player_list[stats_id]
-				local saved_data = saved_scoreboard_stats and saved_scoreboard_stats[stats_id]
+				local var_32_26 = iter_32_3.stat_type
+				local var_32_27 = var_0_2(arg_32_0, iter_32_5.stats_id, var_32_26)
+				local var_32_28 = var_32_3[iter_32_4]
+				local var_32_29 = arg_32_1 and arg_32_1[iter_32_4]
 
-				data.scores[topic.name] = score + (saved_data and saved_data.scores and saved_data.scores[topic.name] or 0)
+				var_32_28.scores[iter_32_3.name] = var_32_27 + (var_32_29 and var_32_29.scores and var_32_29.scores[iter_32_3.name] or 0)
 			end
 		end
 	end
 
-	return player_list, #scoreboard_topic_stats
+	return var_32_3, #var_32_19
 end

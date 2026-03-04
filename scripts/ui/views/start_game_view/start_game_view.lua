@@ -1,448 +1,427 @@
-﻿-- chunkname: @scripts/ui/views/start_game_view/start_game_view.lua
+-- chunkname: @scripts/ui/views/start_game_view/start_game_view.lua
 
 require("scripts/ui/views/hero_view/item_grid_ui")
 require("scripts/ui/views/start_game_view/states/start_game_state_settings_overview")
 require("scripts/ui/views/start_game_view/states/start_game_state_weave_leaderboard")
 
-local definitions = local_require("scripts/ui/views/start_game_view/start_game_view_definitions")
-local widget_definitions = definitions.widgets_definitions
-local scenegraph_definition = definitions.scenegraph_definition
-local settings_by_screen = definitions.settings_by_screen
-local attachments = definitions.attachments
-local flow_events = definitions.flow_events
+local var_0_0 = local_require("scripts/ui/views/start_game_view/start_game_view_definitions")
+local var_0_1 = var_0_0.widgets_definitions
+local var_0_2 = var_0_0.scenegraph_definition
+local var_0_3 = var_0_0.settings_by_screen
+local var_0_4 = var_0_0.attachments
+local var_0_5 = var_0_0.flow_events
 
-local function dprint(...)
+local function var_0_6(...)
 	print("[StartGameView]", ...)
 end
 
-local DO_RELOAD = true
-local debug_draw_scenegraph = false
-local debug_menu = true
-local menu_functions = {}
+local var_0_7 = true
+local var_0_8 = false
+local var_0_9 = true
+local var_0_10 = {}
 
 if not IS_WINDOWS then
-	menu_functions.console_friends_menu = function (this)
-		local input_manager = Managers.input
-
-		input_manager:block_device_except_service("console_friends_menu", "gamepad")
-		this:_activate_view("console_friends_view")
+	function var_0_10.console_friends_menu(arg_2_0)
+		Managers.input:block_device_except_service("console_friends_menu", "gamepad")
+		arg_2_0:_activate_view("console_friends_view")
 	end
 end
 
 StartGameView = class(StartGameView)
 
-StartGameView.init = function (self, ingame_ui_context)
-	self.world = ingame_ui_context.world
-	self.player_manager = ingame_ui_context.player_manager
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self.ingame_ui = ingame_ui_context.ingame_ui
-	self.voting_manager = ingame_ui_context.voting_manager
-	self.profile_synchronizer = ingame_ui_context.profile_synchronizer
-	self.peer_id = ingame_ui_context.peer_id
-	self.local_player_id = ingame_ui_context.local_player_id
-	self.is_server = ingame_ui_context.is_server
-	self.is_in_inn = ingame_ui_context.is_in_inn
-	self.world_manager = ingame_ui_context.world_manager
+function StartGameView.init(arg_3_0, arg_3_1)
+	arg_3_0.world = arg_3_1.world
+	arg_3_0.player_manager = arg_3_1.player_manager
+	arg_3_0.ui_renderer = arg_3_1.ui_renderer
+	arg_3_0.ui_top_renderer = arg_3_1.ui_top_renderer
+	arg_3_0.ingame_ui = arg_3_1.ingame_ui
+	arg_3_0.voting_manager = arg_3_1.voting_manager
+	arg_3_0.profile_synchronizer = arg_3_1.profile_synchronizer
+	arg_3_0.peer_id = arg_3_1.peer_id
+	arg_3_0.local_player_id = arg_3_1.local_player_id
+	arg_3_0.is_server = arg_3_1.is_server
+	arg_3_0.is_in_inn = arg_3_1.is_in_inn
+	arg_3_0.world_manager = arg_3_1.world_manager
 
-	local world = self.world_manager:world("level_world")
+	local var_3_0 = arg_3_0.world_manager:world("level_world")
 
-	self.wwise_world = Managers.world:wwise_world(world)
+	arg_3_0.wwise_world = Managers.world:wwise_world(var_3_0)
 
-	local input_manager = ingame_ui_context.input_manager
+	local var_3_1 = arg_3_1.input_manager
 
-	self.input_manager = input_manager
+	arg_3_0.input_manager = var_3_1
 
-	input_manager:create_input_service("start_game_view", "IngameMenuKeymaps", "IngameMenuFilters")
-	input_manager:map_device_to_service("start_game_view", "keyboard")
-	input_manager:map_device_to_service("start_game_view", "mouse")
-	input_manager:map_device_to_service("start_game_view", "gamepad")
+	var_3_1:create_input_service("start_game_view", "IngameMenuKeymaps", "IngameMenuFilters")
+	var_3_1:map_device_to_service("start_game_view", "keyboard")
+	var_3_1:map_device_to_service("start_game_view", "mouse")
+	var_3_1:map_device_to_service("start_game_view", "gamepad")
 
-	local state_machine_params = {
-		wwise_world = self.wwise_world,
-		ingame_ui_context = ingame_ui_context,
-		parent = self,
-		settings_by_screen = settings_by_screen,
-		input_service = FAKE_INPUT_SERVICE,
+	arg_3_0._state_machine_params = {
+		wwise_world = arg_3_0.wwise_world,
+		ingame_ui_context = arg_3_1,
+		parent = arg_3_0,
+		settings_by_screen = var_0_3,
+		input_service = FAKE_INPUT_SERVICE
 	}
-
-	self._state_machine_params = state_machine_params
-	self.units = {}
-	self.attachment_units = {}
-	self.unit_states = {}
-	self.ui_animations = {}
-	self.ingame_ui_context = ingame_ui_context
-	DO_RELOAD = false
+	arg_3_0.units = {}
+	arg_3_0.attachment_units = {}
+	arg_3_0.unit_states = {}
+	arg_3_0.ui_animations = {}
+	arg_3_0.ingame_ui_context = arg_3_1
+	var_0_7 = false
 end
 
-StartGameView._init_menu_views = function (self)
-	local ingame_ui_context = self.ingame_ui_context
+function StartGameView._init_menu_views(arg_4_0)
+	local var_4_0 = arg_4_0.ingame_ui_context
 
-	self._views = {
-		console_friends_view = ingame_ui_context.ingame_ui.views.console_friends_view,
+	arg_4_0._views = {
+		console_friends_view = var_4_0.ingame_ui.views.console_friends_view
 	}
 
-	for name, view in pairs(self._views) do
-		view.exit = function ()
-			self:exit_current_view()
+	for iter_4_0, iter_4_1 in pairs(arg_4_0._views) do
+		function iter_4_1.exit()
+			arg_4_0:exit_current_view()
 		end
 	end
 end
 
-StartGameView._activate_view = function (self, new_view)
-	self._active_view = new_view
+function StartGameView._activate_view(arg_6_0, arg_6_1)
+	arg_6_0._active_view = arg_6_1
 
-	local views = self._views
+	local var_6_0 = arg_6_0._views
 
-	assert(views[new_view])
+	assert(var_6_0[arg_6_1])
 
-	if new_view and views[new_view] and views[new_view].on_enter then
-		views[new_view]:on_enter()
+	if arg_6_1 and var_6_0[arg_6_1] and var_6_0[arg_6_1].on_enter then
+		var_6_0[arg_6_1]:on_enter()
 	end
 end
 
-StartGameView.active_view = function (self)
-	return self._active_view
+function StartGameView.active_view(arg_7_0)
+	return arg_7_0._active_view
 end
 
-StartGameView.exit_current_view = function (self)
-	local active_view = self._active_view
-	local views = self._views
+function StartGameView.exit_current_view(arg_8_0)
+	local var_8_0 = arg_8_0._active_view
+	local var_8_1 = arg_8_0._views
 
-	assert(active_view)
+	assert(var_8_0)
 
-	if views[active_view] and views[active_view].on_exit then
-		views[active_view]:on_exit()
+	if var_8_1[var_8_0] and var_8_1[var_8_0].on_exit then
+		var_8_1[var_8_0]:on_exit()
 	end
 
-	self._active_view = nil
+	arg_8_0._active_view = nil
 
-	local input_service = Managers.input:get_service("start_game_view")
-	local input_service_name = input_service.name
-	local input_manager = Managers.input
+	local var_8_2 = Managers.input:get_service("start_game_view").name
+	local var_8_3 = Managers.input
 
-	input_manager:block_device_except_service(input_service_name, "keyboard")
-	input_manager:block_device_except_service(input_service_name, "mouse")
-	input_manager:block_device_except_service(input_service_name, "gamepad")
-	input_manager:disable_gamepad_cursor()
+	var_8_3:block_device_except_service(var_8_2, "keyboard")
+	var_8_3:block_device_except_service(var_8_2, "mouse")
+	var_8_3:block_device_except_service(var_8_2, "gamepad")
+	var_8_3:disable_gamepad_cursor()
 end
 
-StartGameView.initial_profile_view = function (self)
-	return self.ingame_ui.initial_profile_view
+function StartGameView.initial_profile_view(arg_9_0)
+	return arg_9_0.ingame_ui.initial_profile_view
 end
 
-StartGameView._setup_state_machine = function (self, state_machine_params, optional_start_state, optional_start_sub_state, optional_params)
-	if self._machine then
-		self._machine:destroy()
+function StartGameView._setup_state_machine(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	if arg_10_0._machine then
+		arg_10_0._machine:destroy()
 
-		self._machine = nil
+		arg_10_0._machine = nil
 	end
 
-	local start_state = optional_start_state or StartGameStateSettingsOverview
-	local profiling_debugging_enabled = false
+	local var_10_0 = arg_10_2 or StartGameStateSettingsOverview
+	local var_10_1 = false
 
-	state_machine_params.start_state = optional_start_sub_state
-	state_machine_params.state_params = optional_params
-	self._machine = GameStateMachine:new(self, start_state, state_machine_params, profiling_debugging_enabled)
-	self._state_machine_params = state_machine_params
-	state_machine_params.state_params = nil
+	arg_10_1.start_state = arg_10_3
+	arg_10_1.state_params = arg_10_4
+	arg_10_0._machine = GameStateMachine:new(arg_10_0, var_10_0, arg_10_1, var_10_1)
+	arg_10_0._state_machine_params = arg_10_1
+	arg_10_1.state_params = nil
 end
 
-StartGameView.wanted_state = function (self)
-	return self._wanted_state
+function StartGameView.wanted_state(arg_11_0)
+	return arg_11_0._wanted_state
 end
 
-StartGameView.clear_wanted_state = function (self)
-	self._wanted_state = nil
+function StartGameView.clear_wanted_state(arg_12_0)
+	arg_12_0._wanted_state = nil
 end
 
-StartGameView.input_service = function (self)
-	return self._draw_loading and FAKE_INPUT_SERVICE or self.input_manager:get_service("start_game_view")
+function StartGameView.input_service(arg_13_0)
+	return arg_13_0._draw_loading and FAKE_INPUT_SERVICE or arg_13_0.input_manager:get_service("start_game_view")
 end
 
-StartGameView.set_input_blocked = function (self, blocked)
-	self._input_blocked = blocked
+function StartGameView.set_input_blocked(arg_14_0, arg_14_1)
+	arg_14_0._input_blocked = arg_14_1
 end
 
-StartGameView.input_blocked = function (self)
-	return self._input_blocked
+function StartGameView.input_blocked(arg_15_0)
+	return arg_15_0._input_blocked
 end
 
-StartGameView.play_sound = function (self, event)
-	WwiseWorld.trigger_event(self.wwise_world, event)
+function StartGameView.play_sound(arg_16_0, arg_16_1)
+	WwiseWorld.trigger_event(arg_16_0.wwise_world, arg_16_1)
 end
 
-StartGameView.play_mechanism_sound = function (self, event_setting_name, default_event)
-	local sound_event = Managers.mechanism:mechanism_setting(event_setting_name) or default_event
+function StartGameView.play_mechanism_sound(arg_17_0, arg_17_1, arg_17_2)
+	local var_17_0 = Managers.mechanism:mechanism_setting(arg_17_1) or arg_17_2
 
-	if sound_event then
-		self:play_sound(sound_event)
+	if var_17_0 then
+		arg_17_0:play_sound(var_17_0)
 	end
 end
 
-StartGameView.create_ui_elements = function (self)
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-	self._static_widgets = {}
-	self._loading_widgets = {
-		background = UIWidget.init(widget_definitions.loading_bg),
-		text = UIWidget.init(widget_definitions.loading_text),
+function StartGameView.create_ui_elements(arg_18_0)
+	arg_18_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
+	arg_18_0._static_widgets = {}
+	arg_18_0._loading_widgets = {
+		background = UIWidget.init(var_0_1.loading_bg),
+		text = UIWidget.init(var_0_1.loading_text)
 	}
-	self._console_cursor_widget = UIWidget.init(widget_definitions.console_cursor)
+	arg_18_0._console_cursor_widget = UIWidget.init(var_0_1.console_cursor)
 
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_18_0.ui_renderer)
 
-	self.ui_animator = UIAnimator:new(self.ui_scenegraph, definitions.animations)
+	arg_18_0.ui_animator = UIAnimator:new(arg_18_0.ui_scenegraph, var_0_0.animations)
 end
 
-StartGameView.draw = function (self, dt, input_service)
-	local ui_renderer = self.ui_renderer
-	local ui_top_renderer = self.ui_top_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_manager = self.input_manager
-	local gamepad_active = input_manager:is_device_active("gamepad")
+function StartGameView.draw(arg_19_0, arg_19_1, arg_19_2)
+	local var_19_0 = arg_19_0.ui_renderer
+	local var_19_1 = arg_19_0.ui_top_renderer
+	local var_19_2 = arg_19_0.ui_scenegraph
+	local var_19_3 = arg_19_0.input_manager:is_device_active("gamepad")
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt)
+	UIRenderer.begin_pass(var_19_0, var_19_2, arg_19_2, arg_19_1)
 
-	if debug_draw_scenegraph then
-		UISceneGraph.debug_render_scenegraph(ui_renderer, ui_scenegraph)
+	if var_0_8 then
+		UISceneGraph.debug_render_scenegraph(var_19_0, var_19_2)
 	end
 
-	for _, widget in ipairs(self._static_widgets) do
-		UIRenderer.draw_widget(ui_renderer, widget)
+	for iter_19_0, iter_19_1 in ipairs(arg_19_0._static_widgets) do
+		UIRenderer.draw_widget(var_19_0, iter_19_1)
 	end
 
-	UIRenderer.draw_widget(ui_renderer, self._console_cursor_widget)
+	UIRenderer.draw_widget(var_19_0, arg_19_0._console_cursor_widget)
 
-	if self._draw_loading then
-		UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt)
+	if arg_19_0._draw_loading then
+		UIRenderer.begin_pass(var_19_1, var_19_2, arg_19_2, arg_19_1)
 
-		for _, widget in pairs(self._loading_widgets) do
-			UIRenderer.draw_widget(ui_top_renderer, widget)
+		for iter_19_2, iter_19_3 in pairs(arg_19_0._loading_widgets) do
+			UIRenderer.draw_widget(var_19_1, iter_19_3)
 		end
 
-		UIRenderer.end_pass(ui_top_renderer)
+		UIRenderer.end_pass(var_19_1)
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_19_0)
 end
 
-StartGameView.post_update = function (self, dt, t)
-	if self._machine then
-		self._machine:post_update(dt, t)
+function StartGameView.post_update(arg_20_0, arg_20_1, arg_20_2)
+	if arg_20_0._machine then
+		arg_20_0._machine:post_update(arg_20_1, arg_20_2)
 	end
 end
 
-StartGameView.update = function (self, dt, t)
-	if self.suspended or self.waiting_for_post_update_enter then
+function StartGameView.update(arg_21_0, arg_21_1, arg_21_2)
+	if arg_21_0.suspended or arg_21_0.waiting_for_post_update_enter then
 		return
 	end
 
-	if self:_has_active_level_vote() then
-		self:close_menu(nil, true)
+	if arg_21_0:_has_active_level_vote() then
+		arg_21_0:close_menu(nil, true)
 	end
 
-	local requested_screen_change_data = self._requested_screen_change_data
+	local var_21_0 = arg_21_0._requested_screen_change_data
 
-	if requested_screen_change_data then
-		local screen_name = requested_screen_change_data.screen_name
-		local sub_screen_name = requested_screen_change_data.sub_screen_name
+	if var_21_0 then
+		local var_21_1 = var_21_0.screen_name
+		local var_21_2 = var_21_0.sub_screen_name
 
-		self:_change_screen_by_name(screen_name, sub_screen_name)
+		arg_21_0:_change_screen_by_name(var_21_1, var_21_2)
 
-		self._requested_screen_change_data = nil
+		arg_21_0._requested_screen_change_data = nil
 	end
 
-	local is_sub_menu = true
-	local input_manager = self.input_manager
-	local gamepad_active = input_manager:is_device_active("gamepad")
-	local input_blocked = self:input_blocked()
-	local input_service = input_blocked and FAKE_INPUT_SERVICE or self:input_service()
+	local var_21_3 = true
+	local var_21_4 = arg_21_0.input_manager:is_device_active("gamepad")
+	local var_21_5 = arg_21_0:input_blocked() and FAKE_INPUT_SERVICE or arg_21_0:input_service()
 
-	self._state_machine_params.input_service = input_service
+	arg_21_0._state_machine_params.input_service = var_21_5
 
-	local transitioning = self:transitioning()
+	local var_21_6 = arg_21_0:transitioning()
 
-	self.ui_animator:update(dt)
+	arg_21_0.ui_animator:update(arg_21_1)
 
-	for name, ui_animation in pairs(self.ui_animations) do
-		UIAnimation.update(ui_animation, dt)
+	for iter_21_0, iter_21_1 in pairs(arg_21_0.ui_animations) do
+		UIAnimation.update(iter_21_1, arg_21_1)
 
-		if UIAnimation.completed(ui_animation) then
-			self.ui_animations[name] = nil
+		if UIAnimation.completed(iter_21_1) then
+			arg_21_0.ui_animations[iter_21_0] = nil
 		end
 	end
 
-	if not transitioning then
-		self:_handle_mouse_input(dt, t, input_service)
+	if not var_21_6 then
+		arg_21_0:_handle_mouse_input(arg_21_1, arg_21_2, var_21_5)
 
-		local active_view = self._active_view
+		local var_21_7 = arg_21_0._active_view
 
-		if active_view then
-			self._views[active_view]:update(dt, t)
+		if var_21_7 then
+			arg_21_0._views[var_21_7]:update(arg_21_1, arg_21_2)
 		else
-			self:_handle_input(dt, t)
+			arg_21_0:_handle_input(arg_21_1, arg_21_2)
 		end
 	end
 
-	if self._machine then
-		self._machine:update(dt, t)
+	if arg_21_0._machine then
+		arg_21_0._machine:update(arg_21_1, arg_21_2)
 	end
 
-	self:draw(dt, input_service)
+	arg_21_0:draw(arg_21_1, var_21_5)
 end
 
-StartGameView.on_enter = function (self, params)
+function StartGameView.on_enter(arg_22_0, arg_22_1)
 	ShowCursorStack.show("StartGameView")
 
-	local input_manager = self.input_manager
+	local var_22_0 = arg_22_0.input_manager
 
-	input_manager:block_device_except_service("start_game_view", "keyboard", 1)
-	input_manager:block_device_except_service("start_game_view", "mouse", 1)
-	input_manager:block_device_except_service("start_game_view", "gamepad", 1)
+	var_22_0:block_device_except_service("start_game_view", "keyboard", 1)
+	var_22_0:block_device_except_service("start_game_view", "mouse", 1)
+	var_22_0:block_device_except_service("start_game_view", "gamepad", 1)
 
-	local state_machine_params = self._state_machine_params
+	arg_22_0._state_machine_params.initial_state = true
 
-	state_machine_params.initial_state = true
+	arg_22_0:create_ui_elements()
 
-	self:create_ui_elements()
+	local var_22_1 = arg_22_0.profile_synchronizer:profile_by_peer(arg_22_0.peer_id, arg_22_0.local_player_id)
 
-	local profile_index = self.profile_synchronizer:profile_by_peer(self.peer_id, self.local_player_id)
+	arg_22_0:set_current_hero(var_22_1)
 
-	self:set_current_hero(profile_index)
+	arg_22_0.waiting_for_post_update_enter = true
+	arg_22_0._on_enter_transition_params = arg_22_1
+	arg_22_0._on_enter_sub_state = arg_22_1.menu_sub_state_name
 
-	self.waiting_for_post_update_enter = true
-	self._on_enter_transition_params = params
-	self._on_enter_sub_state = params.menu_sub_state_name
-
-	self:play_mechanism_sound("start_game_open_sound_event")
+	arg_22_0:play_mechanism_sound("start_game_open_sound_event")
 	Managers.music:duck_sounds()
 
-	self._draw_loading = false
+	arg_22_0._draw_loading = false
 
-	self:_init_menu_views()
-	self:_handle_new_ui_disclaimer()
+	arg_22_0:_init_menu_views()
+	arg_22_0:_handle_new_ui_disclaimer()
 end
 
-StartGameView._handle_new_ui_disclaimer = function (self)
-	local mechanism_name = Managers.mechanism:current_mechanism_name()
-	local global_disclaimer_states = {
+function StartGameView._handle_new_ui_disclaimer(arg_23_0)
+	local var_23_0 = Managers.mechanism:current_mechanism_name()
+	local var_23_1 = {
 		deus = {
-			default = false,
 			play = false,
+			default = false
 		},
 		adventure = {
 			default = true,
-			leaderboard = false,
+			leaderboard = false
 		},
 		default = {
 			default = true,
-			leaderboard = false,
-		},
+			leaderboard = false
+		}
 	}
-	local disclaimer_states = global_disclaimer_states[mechanism_name] or global_disclaimer_states.default
-	local on_enter_transition_params = self._on_enter_transition_params
-	local menu_state_name = on_enter_transition_params and on_enter_transition_params.menu_state_name or "default"
+	local var_23_2 = var_23_1[var_23_0] or var_23_1.default
+	local var_23_3 = arg_23_0._on_enter_transition_params
+	local var_23_4 = var_23_3 and var_23_3.menu_state_name or "default"
 
-	Managers.ui:handle_new_ui_disclaimer(disclaimer_states, menu_state_name)
+	Managers.ui:handle_new_ui_disclaimer(var_23_2, var_23_4)
 end
 
-StartGameView.on_enter_sub_state = function (self)
-	return self._on_enter_sub_state
+function StartGameView.on_enter_sub_state(arg_24_0)
+	return arg_24_0._on_enter_sub_state
 end
 
-StartGameView.set_current_hero = function (self, profile_index)
-	local profile_settings = SPProfiles[profile_index]
-	local display_name = profile_settings.display_name
-	local character_name = profile_settings.character_name
+function StartGameView.set_current_hero(arg_25_0, arg_25_1)
+	local var_25_0 = SPProfiles[arg_25_1]
+	local var_25_1 = var_25_0.display_name
+	local var_25_2 = var_25_0.character_name
 
-	self._hero_name = display_name
-
-	local state_machine_params = self._state_machine_params
-
-	state_machine_params.hero_name = display_name
+	arg_25_0._hero_name = var_25_1
+	arg_25_0._state_machine_params.hero_name = var_25_1
 end
 
-StartGameView._get_sorted_players = function (self)
-	local human_players = self.player_manager:human_players()
-	local player_order = {}
+function StartGameView._get_sorted_players(arg_26_0)
+	local var_26_0 = arg_26_0.player_manager:human_players()
+	local var_26_1 = {}
 
-	for _, player in pairs(human_players) do
-		player_order[#player_order + 1] = player
+	for iter_26_0, iter_26_1 in pairs(var_26_0) do
+		var_26_1[#var_26_1 + 1] = iter_26_1
 	end
 
-	table.sort(player_order, function (a, b)
-		return a.local_player and not b.local_player
+	table.sort(var_26_1, function(arg_27_0, arg_27_1)
+		return arg_27_0.local_player and not arg_27_1.local_player
 	end)
 
-	return player_order
+	return var_26_1
 end
 
-StartGameView._handle_mouse_input = function (self, dt, t, input_service)
+function StartGameView._handle_mouse_input(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 	return
 end
 
-StartGameView._handle_input = function (self, dt, t)
+function StartGameView._handle_input(arg_29_0, arg_29_1, arg_29_2)
 	if Managers.account:offline_mode() then
 		return
 	end
 
-	local input_service = self:input_service()
+	if arg_29_0:input_service():get("show_gamercard") and var_0_10.console_friends_menu then
+		local var_29_0 = arg_29_0._machine:state()
 
-	if input_service:get("show_gamercard") and menu_functions.console_friends_menu then
-		local state = self._machine:state()
-
-		if state.disable_input and state:disable_input("show_gamercard") then
+		if var_29_0.disable_input and var_29_0:disable_input("show_gamercard") then
 			return
 		end
 
-		menu_functions.console_friends_menu(self)
+		var_0_10.console_friends_menu(arg_29_0)
 	end
 end
 
-StartGameView._is_selection_widget_pressed = function (self, widget)
-	local content = widget.content
-	local steps = content.steps
+function StartGameView._is_selection_widget_pressed(arg_30_0, arg_30_1)
+	local var_30_0 = arg_30_1.content
+	local var_30_1 = var_30_0.steps
 
-	for i = 1, steps do
-		local hotspot_name = "hotspot_" .. i
-		local hotspot = content[hotspot_name]
-
-		if hotspot.on_release then
-			return true, i
+	for iter_30_0 = 1, var_30_1 do
+		if var_30_0["hotspot_" .. iter_30_0].on_release then
+			return true, iter_30_0
 		end
 	end
 end
 
-StartGameView.hotkey_allowed = function (self, input, mapping_data)
-	if self:input_blocked() then
+function StartGameView.hotkey_allowed(arg_31_0, arg_31_1, arg_31_2)
+	if arg_31_0:input_blocked() then
 		return false
 	end
 
-	local transition_state = mapping_data.transition_state
-	local transition_sub_state = mapping_data.transition_sub_state
-	local state_machine = self._machine
+	local var_31_0 = arg_31_2.transition_state
+	local var_31_1 = arg_31_2.transition_sub_state
+	local var_31_2 = arg_31_0._machine
 
-	if state_machine then
-		local current_state = state_machine:state()
-		local current_state_name = current_state.NAME
+	if var_31_2 then
+		local var_31_3 = var_31_2:state()
+		local var_31_4 = var_31_3.NAME
 
-		if current_state.hotkey_allowed and not current_state:hotkey_allowed(input, mapping_data) then
+		if var_31_3.hotkey_allowed and not var_31_3:hotkey_allowed(arg_31_1, arg_31_2) then
 			return false
 		end
 
-		local current_screen_settings = self:_get_screen_settings_by_state_name(current_state_name)
-		local name = current_screen_settings.name
+		if arg_31_0:_get_screen_settings_by_state_name(var_31_4).name == var_31_0 then
+			local var_31_5 = var_31_3.get_selected_layout_name and var_31_3:get_selected_layout_name()
 
-		if name == transition_state then
-			local active_sub_settings_name = current_state.get_selected_layout_name and current_state:get_selected_layout_name()
-
-			if not transition_sub_state or transition_sub_state == active_sub_settings_name then
+			if not var_31_1 or var_31_1 == var_31_5 then
 				return true
-			elseif transition_sub_state then
+			elseif var_31_1 then
 				return true
 			end
-		elseif transition_state then
-			self:requested_screen_change_by_name(transition_state, transition_sub_state)
+		elseif var_31_0 then
+			arg_31_0:requested_screen_change_by_name(var_31_0, var_31_1)
 		else
 			return true
 		end
@@ -451,214 +430,209 @@ StartGameView.hotkey_allowed = function (self, input, mapping_data)
 	return false
 end
 
-StartGameView._get_screen_settings_by_state_name = function (self, state_name)
-	for index, screen_settings in ipairs(settings_by_screen) do
-		if screen_settings.state_name == state_name then
-			return screen_settings
+function StartGameView._get_screen_settings_by_state_name(arg_32_0, arg_32_1)
+	for iter_32_0, iter_32_1 in ipairs(var_0_3) do
+		if iter_32_1.state_name == arg_32_1 then
+			return iter_32_1
 		end
 	end
 end
 
-StartGameView.requested_screen_change_by_name = function (self, screen_name, sub_screen_name)
-	self._requested_screen_change_data = {
-		screen_name = screen_name,
-		sub_screen_name = sub_screen_name,
+function StartGameView.requested_screen_change_by_name(arg_33_0, arg_33_1, arg_33_2)
+	arg_33_0._requested_screen_change_data = {
+		screen_name = arg_33_1,
+		sub_screen_name = arg_33_2
 	}
 end
 
-StartGameView._change_screen_by_name = function (self, screen_name, sub_screen_name, optional_params)
-	local settings, settings_index
+function StartGameView._change_screen_by_name(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+	local var_34_0
+	local var_34_1
 
-	for index, screen_settings in ipairs(settings_by_screen) do
-		if screen_settings.name == screen_name then
-			settings = screen_settings
-			settings_index = index
+	for iter_34_0, iter_34_1 in ipairs(var_0_3) do
+		if iter_34_1.name == arg_34_1 then
+			var_34_0 = iter_34_1
+			var_34_1 = iter_34_0
 
 			break
 		end
 	end
 
-	assert(settings_index, "[StartGameView] - Could not find state by name: %s", screen_name)
+	assert(var_34_1, "[StartGameView] - Could not find state by name: %s", arg_34_1)
 
-	local state_name = settings.state_name
-	local state = rawget(_G, state_name)
+	local var_34_2 = var_34_0.state_name
+	local var_34_3 = rawget(_G, var_34_2)
 
-	if self._machine and not sub_screen_name then
-		self._wanted_state = state
+	if arg_34_0._machine and not arg_34_2 then
+		arg_34_0._wanted_state = var_34_3
 	else
-		self:_setup_state_machine(self._state_machine_params, state, sub_screen_name, optional_params)
+		arg_34_0:_setup_state_machine(arg_34_0._state_machine_params, var_34_3, arg_34_2, arg_34_3)
 	end
 end
 
-StartGameView._change_screen_by_index = function (self, index)
-	local screen_settings = settings_by_screen[index]
-	local settings_name = screen_settings.name
+function StartGameView._change_screen_by_index(arg_35_0, arg_35_1)
+	local var_35_0 = var_0_3[arg_35_1].name
 
-	self:_change_screen_by_name(settings_name)
+	arg_35_0:_change_screen_by_name(var_35_0)
 end
 
-StartGameView.post_update_on_enter = function (self)
-	self.waiting_for_post_update_enter = nil
+function StartGameView.post_update_on_enter(arg_36_0)
+	arg_36_0.waiting_for_post_update_enter = nil
 
-	local on_enter_transition_params = self._on_enter_transition_params
+	local var_36_0 = arg_36_0._on_enter_transition_params
 
-	if on_enter_transition_params and on_enter_transition_params.menu_state_name then
-		local menu_state_name = on_enter_transition_params.menu_state_name
-		local menu_sub_state_name = on_enter_transition_params.menu_sub_state_name
+	if var_36_0 and var_36_0.menu_state_name then
+		local var_36_1 = var_36_0.menu_state_name
+		local var_36_2 = var_36_0.menu_sub_state_name
 
-		self:_change_screen_by_name(menu_state_name, menu_sub_state_name, on_enter_transition_params)
+		arg_36_0:_change_screen_by_name(var_36_1, var_36_2, var_36_0)
 
-		self._on_enter_transition_params = nil
+		arg_36_0._on_enter_transition_params = nil
 	else
-		self:_change_screen_by_index(1)
+		arg_36_0:_change_screen_by_index(1)
 	end
 end
 
-StartGameView.post_update_on_exit = function (self)
+function StartGameView.post_update_on_exit(arg_37_0)
 	return
 end
 
-StartGameView.on_exit = function (self)
-	self.input_manager:device_unblock_all_services("keyboard", 1)
-	self.input_manager:device_unblock_all_services("mouse", 1)
-	self.input_manager:device_unblock_all_services("gamepad", 1)
+function StartGameView.on_exit(arg_38_0)
+	arg_38_0.input_manager:device_unblock_all_services("keyboard", 1)
+	arg_38_0.input_manager:device_unblock_all_services("mouse", 1)
+	arg_38_0.input_manager:device_unblock_all_services("gamepad", 1)
 	ShowCursorStack.hide("StartGameView")
 
-	self.exiting = nil
+	arg_38_0.exiting = nil
 
-	if self._machine then
-		self._machine:destroy()
+	if arg_38_0._machine then
+		arg_38_0._machine:destroy()
 
-		self._machine = nil
+		arg_38_0._machine = nil
 	end
 
-	local active_view = self._active_view
-	local views = self._views
+	local var_38_0 = arg_38_0._active_view
+	local var_38_1 = arg_38_0._views
 
-	if views[active_view] and views[active_view].on_exit then
-		views[active_view]:on_exit()
+	if var_38_1[var_38_0] and var_38_1[var_38_0].on_exit then
+		var_38_1[var_38_0]:on_exit()
 	end
 
-	self._active_view = nil
+	arg_38_0._active_view = nil
 
-	self:play_mechanism_sound("start_game_close_sound_event")
+	arg_38_0:play_mechanism_sound("start_game_close_sound_event")
 	Managers.music:unduck_sounds()
 
-	self._draw_loading = false
+	arg_38_0._draw_loading = false
 end
 
-StartGameView.exit = function (self, return_to_game, ignore_sound)
-	local exit_transition = return_to_game and "exit_menu" or "ingame_menu"
+function StartGameView.exit(arg_39_0, arg_39_1, arg_39_2)
+	local var_39_0 = arg_39_1 and "exit_menu" or "ingame_menu"
 
-	self.ingame_ui:transition_with_fade(exit_transition)
+	arg_39_0.ingame_ui:transition_with_fade(var_39_0)
 
-	if self._active_view then
-		self:exit_current_view()
+	if arg_39_0._active_view then
+		arg_39_0:exit_current_view()
 	end
 
-	if not ignore_sound then
-		self:play_mechanism_sound("close_start_menu_sound_event", "Play_hud_button_close")
+	if not arg_39_2 then
+		arg_39_0:play_mechanism_sound("close_start_menu_sound_event", "Play_hud_button_close")
 	end
 
-	self.exiting = true
+	arg_39_0.exiting = true
 end
 
-StartGameView.transitioning = function (self)
-	if self.exiting then
+function StartGameView.transitioning(arg_40_0)
+	if arg_40_0.exiting then
 		return true
 	else
 		return false
 	end
 end
 
-StartGameView.suspend = function (self)
-	self.input_manager:device_unblock_all_services("keyboard", 1)
-	self.input_manager:device_unblock_all_services("mouse", 1)
-	self.input_manager:device_unblock_all_services("gamepad", 1)
+function StartGameView.suspend(arg_41_0)
+	arg_41_0.input_manager:device_unblock_all_services("keyboard", 1)
+	arg_41_0.input_manager:device_unblock_all_services("mouse", 1)
+	arg_41_0.input_manager:device_unblock_all_services("gamepad", 1)
 
-	self.suspended = true
+	arg_41_0.suspended = true
 end
 
-StartGameView.unsuspend = function (self)
-	self.input_manager:block_device_except_service("start_game_view", "keyboard", 1)
-	self.input_manager:block_device_except_service("start_game_view", "mouse", 1)
-	self.input_manager:block_device_except_service("start_game_view", "gamepad", 1)
+function StartGameView.unsuspend(arg_42_0)
+	arg_42_0.input_manager:block_device_except_service("start_game_view", "keyboard", 1)
+	arg_42_0.input_manager:block_device_except_service("start_game_view", "mouse", 1)
+	arg_42_0.input_manager:block_device_except_service("start_game_view", "gamepad", 1)
 
-	self.suspended = nil
+	arg_42_0.suspended = nil
 end
 
-StartGameView.close_menu = function (self, return_to_main_screen, ignore_sound)
-	local return_to_game = not return_to_main_screen
+function StartGameView.close_menu(arg_43_0, arg_43_1, arg_43_2)
+	local var_43_0 = not arg_43_1
 
-	self:exit(return_to_game, ignore_sound)
+	arg_43_0:exit(var_43_0, arg_43_2)
 end
 
-StartGameView.destroy = function (self)
-	self.ingame_ui_context = nil
-	self.ui_animator = nil
+function StartGameView.destroy(arg_44_0)
+	arg_44_0.ingame_ui_context = nil
+	arg_44_0.ui_animator = nil
 
-	if self._machine then
-		self._machine:destroy()
+	if arg_44_0._machine then
+		arg_44_0._machine:destroy()
 
-		self._machine = nil
+		arg_44_0._machine = nil
 	end
 end
 
-StartGameView._is_button_pressed = function (self, widget)
-	local button_hotspot = widget.content.button_hotspot
+function StartGameView._is_button_pressed(arg_45_0, arg_45_1)
+	local var_45_0 = arg_45_1.content.button_hotspot
 
-	if button_hotspot.on_release then
-		button_hotspot.on_release = false
+	if var_45_0.on_release then
+		var_45_0.on_release = false
 
 		return true
 	end
 end
 
-StartGameView._has_active_level_vote = function (self)
-	local voting_manager = self.voting_manager
-	local is_mission_vote = voting_manager:vote_in_progress() and voting_manager:is_mission_vote()
+function StartGameView._has_active_level_vote(arg_46_0)
+	local var_46_0 = arg_46_0.voting_manager
 
-	return is_mission_vote and not voting_manager:has_voted(Network.peer_id())
+	return var_46_0:vote_in_progress() and var_46_0:is_mission_vote() and not var_46_0:has_voted(Network.peer_id())
 end
 
-StartGameView._set_loading_overlay_enabled = function (self, enabled, message)
-	local loading_widgets = self._loading_widgets
-	local loading_text_widget = loading_widgets.text
-	local loading_bg_widget = loading_widgets.background
-	local alpha = enabled and 255 or 0
+function StartGameView._set_loading_overlay_enabled(arg_47_0, arg_47_1, arg_47_2)
+	local var_47_0 = arg_47_0._loading_widgets
+	local var_47_1 = var_47_0.text
+	local var_47_2 = var_47_0.background
+	local var_47_3 = arg_47_1 and 255 or 0
 
-	loading_bg_widget.style.color[1] = alpha
-	loading_text_widget.style.text.text_color[1] = alpha
-	loading_text_widget.content.text = message or ""
-	self._draw_loading = enabled
+	var_47_2.style.color[1] = var_47_3
+	var_47_1.style.text.text_color[1] = var_47_3
+	var_47_1.content.text = arg_47_2 or ""
+	arg_47_0._draw_loading = arg_47_1
 end
 
-StartGameView.number_of_players = function (self)
-	local player_manager = Managers.player
-
-	return player_manager:num_human_players()
+function StartGameView.number_of_players(arg_48_0)
+	return Managers.player:num_human_players()
 end
 
-StartGameView.start_game = function (self, params, skip_vote)
-	if not skip_vote then
-		local mechanism_manager = Managers.mechanism
-
-		mechanism_manager:request_vote(params)
+function StartGameView.start_game(arg_49_0, arg_49_1, arg_49_2)
+	if not arg_49_2 then
+		Managers.mechanism:request_vote(arg_49_1)
 	end
 
-	self:play_mechanism_sound("start_game_play_sound_event", "play_gui_lobby_button_play")
+	arg_49_0:play_mechanism_sound("start_game_play_sound_event", "play_gui_lobby_button_play")
 
-	if params.matchmaking_type == "custom" and params.player_hosted == true and params.mechanism == "versus" then
+	if arg_49_1.matchmaking_type == "custom" and arg_49_1.player_hosted == true and arg_49_1.mechanism == "versus" then
 		return
 	end
 
-	self:close_menu()
+	arg_49_0:close_menu()
 end
 
-StartGameView.cancel_matchmaking = function (self)
-	local matchmaking_manager = Managers.matchmaking
+function StartGameView.cancel_matchmaking(arg_50_0)
+	local var_50_0 = Managers.matchmaking
 
-	if matchmaking_manager:is_game_matchmaking() then
-		matchmaking_manager:cancel_matchmaking()
+	if var_50_0:is_game_matchmaking() then
+		var_50_0:cancel_matchmaking()
 	end
 end

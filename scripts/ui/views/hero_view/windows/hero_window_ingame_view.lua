@@ -1,515 +1,489 @@
-﻿-- chunkname: @scripts/ui/views/hero_view/windows/hero_window_ingame_view.lua
+-- chunkname: @scripts/ui/views/hero_view/windows/hero_window_ingame_view.lua
 
-local definitions = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_ingame_view_definitions")
-local layout_definitions = local_require("scripts/ui/views/ingame_view_menu_layout_console")
-local widget_definitions = definitions.widgets
-local title_button_definitions = definitions.title_button_definitions
-local scenegraph_definition = definitions.scenegraph_definition
-local animation_definitions = definitions.animation_definitions
-local generic_input_actions = definitions.generic_input_actions
-local INPUT_ACTION_NEXT = "move_down_hold_continuous"
-local INPUT_ACTION_PREVIOUS = "move_up_hold_continuous"
-local DO_RELOAD = false
-local menu_functions = {
-	options_menu = function (this)
-		local input_manager = Managers.input
-
-		input_manager:block_device_except_service("options_menu", "gamepad")
-		this:_activate_view("options_view")
+local var_0_0 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_ingame_view_definitions")
+local var_0_1 = local_require("scripts/ui/views/ingame_view_menu_layout_console")
+local var_0_2 = var_0_0.widgets
+local var_0_3 = var_0_0.title_button_definitions
+local var_0_4 = var_0_0.scenegraph_definition
+local var_0_5 = var_0_0.animation_definitions
+local var_0_6 = var_0_0.generic_input_actions
+local var_0_7 = "move_down_hold_continuous"
+local var_0_8 = "move_up_hold_continuous"
+local var_0_9 = false
+local var_0_10 = {
+	options_menu = function(arg_1_0)
+		Managers.input:block_device_except_service("options_menu", "gamepad")
+		arg_1_0:_activate_view("options_view")
 	end,
-	console_friends_menu = function (this)
-		local input_manager = Managers.input
-
-		input_manager:block_device_except_service("console_friends_menu", "gamepad")
-		this:_activate_view("console_friends_view")
-	end,
+	console_friends_menu = function(arg_2_0)
+		Managers.input:block_device_except_service("console_friends_menu", "gamepad")
+		arg_2_0:_activate_view("console_friends_view")
+	end
 }
 
 HeroWindowIngameView = class(HeroWindowIngameView)
 HeroWindowIngameView.NAME = "HeroWindowIngameView"
 
-HeroWindowIngameView.on_enter = function (self, params, offset)
+function HeroWindowIngameView.on_enter(arg_3_0, arg_3_1, arg_3_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowIngameView")
 
-	self._params = params
-	self.parent = params.parent
+	arg_3_0._params = arg_3_1
+	arg_3_0.parent = arg_3_1.parent
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_3_0 = arg_3_1.ingame_ui_context
 
-	self.ingame_ui_context = ingame_ui_context
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self.input_manager = ingame_ui_context.input_manager
-	self.statistics_db = ingame_ui_context.statistics_db
-	self.render_settings = {
-		snap_pixel_positions = true,
+	arg_3_0.ingame_ui_context = var_3_0
+	arg_3_0.ui_renderer = var_3_0.ui_renderer
+	arg_3_0.ui_top_renderer = var_3_0.ui_top_renderer
+	arg_3_0.input_manager = var_3_0.input_manager
+	arg_3_0.statistics_db = var_3_0.statistics_db
+	arg_3_0.render_settings = {
+		snap_pixel_positions = true
 	}
-	self.layout_logic = IngameViewLayoutLogic:new(ingame_ui_context, params, layout_definitions.menu_layouts, layout_definitions.full_access_layout)
+	arg_3_0.layout_logic = IngameViewLayoutLogic:new(var_3_0, arg_3_1, var_0_1.menu_layouts, var_0_1.full_access_layout)
 
-	self.layout_logic:update()
+	arg_3_0.layout_logic:update()
 
-	local player_manager = Managers.player
-	local local_player = player_manager:local_player()
+	local var_3_1 = Managers.player
 
-	self._stats_id = local_player:stats_id()
-	self.player_manager = player_manager
-	self.peer_id = ingame_ui_context.peer_id
-	self.hero_name = params.hero_name
-	self.career_index = params.career_index
-	self.profile_index = params.profile_index
+	arg_3_0._stats_id = var_3_1:local_player():stats_id()
+	arg_3_0.player_manager = var_3_1
+	arg_3_0.peer_id = var_3_0.peer_id
+	arg_3_0.hero_name = arg_3_1.hero_name
+	arg_3_0.career_index = arg_3_1.career_index
+	arg_3_0.profile_index = arg_3_1.profile_index
 
-	local hero_name = self.hero_name
-	local career_index = self.career_index
-	local profile_index = FindProfileIndex(hero_name)
-	local profile = SPProfiles[profile_index]
-	local career_data = profile.careers[career_index]
-	local career_name = career_data.name
+	local var_3_2 = arg_3_0.hero_name
+	local var_3_3 = arg_3_0.career_index
+	local var_3_4 = FindProfileIndex(var_3_2)
+	local var_3_5 = SPProfiles[var_3_4].careers[var_3_3].name
 
-	self._animations = {}
-	self._ui_animations = {}
+	arg_3_0._animations = {}
+	arg_3_0._ui_animations = {}
 
-	self:create_ui_elements(params, offset)
+	arg_3_0:create_ui_elements(arg_3_1, arg_3_2)
 
-	local ignore_sound = true
+	local var_3_6 = true
 
-	self:_on_button_selected(1, ignore_sound)
-	self:_start_transition_animation("on_enter")
-	self:_init_menu_views()
+	arg_3_0:_on_button_selected(1, var_3_6)
+	arg_3_0:_start_transition_animation("on_enter")
+	arg_3_0:_init_menu_views()
 end
 
-HeroWindowIngameView._start_transition_animation = function (self, animation_name)
-	local params = {
-		wwise_world = self.wwise_world,
-		render_settings = self.render_settings,
+function HeroWindowIngameView._start_transition_animation(arg_4_0, arg_4_1)
+	local var_4_0 = {
+		wwise_world = arg_4_0.wwise_world,
+		render_settings = arg_4_0.render_settings
 	}
-	local widgets = {}
-	local anim_id = self.ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
+	local var_4_1 = {}
+	local var_4_2 = arg_4_0.ui_animator:start_animation(arg_4_1, var_4_1, var_0_4, var_4_0)
 
-	self._animations[animation_name] = anim_id
+	arg_4_0._animations[arg_4_1] = var_4_2
 end
 
-HeroWindowIngameView._init_menu_views = function (self)
-	local ingame_ui_context = self.ingame_ui_context
+function HeroWindowIngameView._init_menu_views(arg_5_0)
+	local var_5_0 = arg_5_0.ingame_ui_context
 
-	self._views = {
-		options_view = ingame_ui_context.ingame_ui.views.options_view,
-		console_friends_view = ingame_ui_context.ingame_ui.views.console_friends_view,
+	arg_5_0._views = {
+		options_view = var_5_0.ingame_ui.views.options_view,
+		console_friends_view = var_5_0.ingame_ui.views.console_friends_view
 	}
 
-	for name, view in pairs(self._views) do
-		view.old_exit = view.exit
+	for iter_5_0, iter_5_1 in pairs(arg_5_0._views) do
+		iter_5_1.old_exit = iter_5_1.exit
 
-		view.exit = function ()
-			self:exit_current_view()
+		function iter_5_1.exit()
+			arg_5_0:exit_current_view()
 		end
 	end
 end
 
-HeroWindowIngameView._reset_menu_views = function (self)
-	for name, view in pairs(self._views) do
-		view.exit = view.old_exit
-		view.old_exit = nil
+function HeroWindowIngameView._reset_menu_views(arg_7_0)
+	for iter_7_0, iter_7_1 in pairs(arg_7_0._views) do
+		iter_7_1.exit = iter_7_1.old_exit
+		iter_7_1.old_exit = nil
 	end
 
-	self._views = nil
+	arg_7_0._views = nil
 end
 
-HeroWindowIngameView._activate_view = function (self, new_view)
-	self._active_view = new_view
+function HeroWindowIngameView._activate_view(arg_8_0, arg_8_1)
+	arg_8_0._active_view = arg_8_1
 
-	local views = self._views
+	local var_8_0 = arg_8_0._views
 
-	assert(views[new_view])
+	assert(var_8_0[arg_8_1])
 
-	if new_view and views[new_view] and views[new_view].on_enter then
-		views[new_view]:on_enter()
+	if arg_8_1 and var_8_0[arg_8_1] and var_8_0[arg_8_1].on_enter then
+		var_8_0[arg_8_1]:on_enter()
 	end
 end
 
-HeroWindowIngameView.exit_current_view = function (self)
-	local active_view = self._active_view
-	local views = self._views
+function HeroWindowIngameView.exit_current_view(arg_9_0)
+	local var_9_0 = arg_9_0._active_view
+	local var_9_1 = arg_9_0._views
 
-	assert(active_view)
+	assert(var_9_0)
 
-	if views[active_view] and views[active_view].exit_reset_params then
-		views[active_view]:exit_reset_params()
+	if var_9_1[var_9_0] and var_9_1[var_9_0].exit_reset_params then
+		var_9_1[var_9_0]:exit_reset_params()
 	end
 
-	if views[active_view] and views[active_view].on_exit then
-		views[active_view]:on_exit()
+	if var_9_1[var_9_0] and var_9_1[var_9_0].on_exit then
+		var_9_1[var_9_0]:on_exit()
 	end
 
-	self._active_view = nil
+	arg_9_0._active_view = nil
 
-	local input_service = Managers.input:get_service("hero_view")
-	local input_service_name = input_service.name
-	local input_manager = Managers.input
+	local var_9_2 = Managers.input:get_service("hero_view").name
+	local var_9_3 = Managers.input
 
-	input_manager:block_device_except_service(input_service_name, "keyboard")
-	input_manager:block_device_except_service(input_service_name, "mouse")
-	input_manager:block_device_except_service(input_service_name, "gamepad")
-	input_manager:disable_gamepad_cursor()
+	var_9_3:block_device_except_service(var_9_2, "keyboard")
+	var_9_3:block_device_except_service(var_9_2, "mouse")
+	var_9_3:block_device_except_service(var_9_2, "gamepad")
+	var_9_3:disable_gamepad_cursor()
 end
 
-HeroWindowIngameView.create_ui_elements = function (self, params, offset)
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+function HeroWindowIngameView.create_ui_elements(arg_10_0, arg_10_1, arg_10_2)
+	arg_10_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_4)
 
-	local widgets = {}
-	local widgets_by_name = {}
+	local var_10_0 = {}
+	local var_10_1 = {}
 
-	for name, widget_definition in pairs(widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_10_0, iter_10_1 in pairs(var_0_2) do
+		local var_10_2 = UIWidget.init(iter_10_1)
 
-		widgets[#widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_10_0[#var_10_0 + 1] = var_10_2
+		var_10_1[iter_10_0] = var_10_2
 	end
 
-	self._widgets = widgets
-	self._widgets_by_name = widgets_by_name
+	arg_10_0._widgets = var_10_0
+	arg_10_0._widgets_by_name = var_10_1
 
-	local title_button_widgets = {}
+	local var_10_3 = {}
 
-	for name, widget_definition in pairs(title_button_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_10_2, iter_10_3 in pairs(var_0_3) do
+		local var_10_4 = UIWidget.init(iter_10_3)
 
-		title_button_widgets[#title_button_widgets + 1] = widget
+		var_10_3[#var_10_3 + 1] = var_10_4
 	end
 
-	self._title_button_widgets = title_button_widgets
+	arg_10_0._title_button_widgets = var_10_3
 
-	UIRenderer.clear_scenegraph_queue(self.ui_top_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_10_0.ui_top_renderer)
 
-	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
+	arg_10_0.ui_animator = UIAnimator:new(arg_10_0.ui_scenegraph, var_0_5)
 
-	if offset then
-		local window_position = self.ui_scenegraph.window.local_position
+	if arg_10_2 then
+		local var_10_5 = arg_10_0.ui_scenegraph.window.local_position
 
-		window_position[1] = window_position[1] + offset[1]
-		window_position[2] = window_position[2] + offset[2]
-		window_position[3] = window_position[3] + offset[3]
+		var_10_5[1] = var_10_5[1] + arg_10_2[1]
+		var_10_5[2] = var_10_5[2] + arg_10_2[2]
+		var_10_5[3] = var_10_5[3] + arg_10_2[3]
 	end
 
-	local input_service = Managers.input:get_service("hero_view")
-	local gui_layer = UILayer.default + 300
+	local var_10_6 = Managers.input:get_service("hero_view")
+	local var_10_7 = UILayer.default + 300
 
-	self._menu_input_description = MenuInputDescriptionUI:new(nil, self.ui_top_renderer, input_service, 3, gui_layer, generic_input_actions.default, true)
+	arg_10_0._menu_input_description = MenuInputDescriptionUI:new(nil, arg_10_0.ui_top_renderer, var_10_6, 3, var_10_7, var_0_6.default, true)
 
-	self._menu_input_description:set_input_description(nil)
+	arg_10_0._menu_input_description:set_input_description(nil)
 end
 
-HeroWindowIngameView.on_exit = function (self, params)
+function HeroWindowIngameView.on_exit(arg_11_0, arg_11_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowIngameView")
 
-	self.ui_animator = nil
+	arg_11_0.ui_animator = nil
 
-	self._menu_input_description:destroy()
+	arg_11_0._menu_input_description:destroy()
 
-	self._menu_input_description = nil
+	arg_11_0._menu_input_description = nil
 
-	local layout_logic = self.layout_logic
+	local var_11_0 = arg_11_0.layout_logic
 
-	if layout_logic then
-		layout_logic:destroy()
+	if var_11_0 then
+		var_11_0:destroy()
 
-		self.layout_logic = nil
+		arg_11_0.layout_logic = nil
 	end
 
-	self:_reset_menu_views()
+	arg_11_0:_reset_menu_views()
 end
 
-HeroWindowIngameView.update = function (self, dt, t)
-	if DO_RELOAD then
-		DO_RELOAD = false
+function HeroWindowIngameView.update(arg_12_0, arg_12_1, arg_12_2)
+	if var_0_9 then
+		var_0_9 = false
 
-		self:create_ui_elements()
+		arg_12_0:create_ui_elements()
 	end
 
-	local layout_logic = self.layout_logic
+	local var_12_0 = arg_12_0.layout_logic
 
-	if layout_logic then
-		layout_logic:update(dt)
-		self:_update_presentation()
+	if var_12_0 then
+		var_12_0:update(arg_12_1)
+		arg_12_0:_update_presentation()
 	end
 
-	local active_view = self._active_view
+	local var_12_1 = arg_12_0._active_view
 
-	if active_view then
-		self._views[active_view]:update(dt, t)
+	if var_12_1 then
+		arg_12_0._views[var_12_1]:update(arg_12_1, arg_12_2)
 	else
-		self:_handle_input(dt, t)
+		arg_12_0:_handle_input(arg_12_1, arg_12_2)
 	end
 
-	self:_update_animations(dt)
-	self:draw(dt)
+	arg_12_0:_update_animations(arg_12_1)
+	arg_12_0:draw(arg_12_1)
 end
 
-HeroWindowIngameView.post_update = function (self, dt, t)
+function HeroWindowIngameView.post_update(arg_13_0, arg_13_1, arg_13_2)
 	return
 end
 
-HeroWindowIngameView._update_animations = function (self, dt)
-	local ui_animations = self._ui_animations
-	local animations = self._animations
-	local ui_animator = self.ui_animator
+function HeroWindowIngameView._update_animations(arg_14_0, arg_14_1)
+	local var_14_0 = arg_14_0._ui_animations
+	local var_14_1 = arg_14_0._animations
+	local var_14_2 = arg_14_0.ui_animator
 
-	for name, animation in pairs(self._ui_animations) do
-		UIAnimation.update(animation, dt)
+	for iter_14_0, iter_14_1 in pairs(arg_14_0._ui_animations) do
+		UIAnimation.update(iter_14_1, arg_14_1)
 
-		if UIAnimation.completed(animation) then
-			self._ui_animations[name] = nil
+		if UIAnimation.completed(iter_14_1) then
+			arg_14_0._ui_animations[iter_14_0] = nil
 		end
 	end
 
-	ui_animator:update(dt)
+	var_14_2:update(arg_14_1)
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_14_2, iter_14_3 in pairs(var_14_1) do
+		if var_14_2:is_animation_completed(iter_14_3) then
+			var_14_2:stop_animation(iter_14_3)
 
-			animations[animation_name] = nil
+			var_14_1[iter_14_2] = nil
 		end
 	end
 end
 
-HeroWindowIngameView._is_button_pressed = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot or content.button_text
+function HeroWindowIngameView._is_button_pressed(arg_15_0, arg_15_1)
+	local var_15_0 = arg_15_1.content
+	local var_15_1 = var_15_0.button_hotspot or var_15_0.button_text
 
-	if hotspot.on_release then
-		hotspot.on_release = false
+	if var_15_1.on_release then
+		var_15_1.on_release = false
 
 		return true
 	end
 end
 
-HeroWindowIngameView._is_stepper_button_pressed = function (self, widget)
-	local content = widget.content
-	local hotspot_left = content.button_hotspot_left
-	local hotspot_right = content.button_hotspot_right
+function HeroWindowIngameView._is_stepper_button_pressed(arg_16_0, arg_16_1)
+	local var_16_0 = arg_16_1.content
+	local var_16_1 = var_16_0.button_hotspot_left
+	local var_16_2 = var_16_0.button_hotspot_right
 
-	if hotspot_left.on_release then
-		hotspot_left.on_release = false
+	if var_16_1.on_release then
+		var_16_1.on_release = false
 
 		return true, -1
-	elseif hotspot_right.on_release then
-		hotspot_right.on_release = false
+	elseif var_16_2.on_release then
+		var_16_2.on_release = false
 
 		return true, 1
 	end
 end
 
-HeroWindowIngameView._is_button_hover_enter = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
+function HeroWindowIngameView._is_button_hover_enter(arg_17_0, arg_17_1)
+	local var_17_0 = arg_17_1.content.button_hotspot
 
-	return hotspot.on_hover_enter and not hotspot.is_selected
+	return var_17_0.on_hover_enter and not var_17_0.is_selected
 end
 
-HeroWindowIngameView._is_button_hover_exit = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
+function HeroWindowIngameView._is_button_hover_exit(arg_18_0, arg_18_1)
+	local var_18_0 = arg_18_1.content.button_hotspot
 
-	return hotspot.on_hover_exit and not hotspot.is_selected
+	return var_18_0.on_hover_exit and not var_18_0.is_selected
 end
 
-HeroWindowIngameView._is_button_selected = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	return hotspot.is_selected
+function HeroWindowIngameView._is_button_selected(arg_19_0, arg_19_1)
+	return arg_19_1.content.button_hotspot.is_selected
 end
 
-HeroWindowIngameView._handle_input = function (self, dt, t)
-	local parent = self.parent
-	local widgets_by_name = self._widgets_by_name
-	local input_service = parent:window_input_service()
-	local layout_logic = self.layout_logic
+function HeroWindowIngameView._handle_input(arg_20_0, arg_20_1, arg_20_2)
+	local var_20_0 = arg_20_0.parent
+	local var_20_1 = arg_20_0._widgets_by_name
+	local var_20_2 = var_20_0:window_input_service()
+	local var_20_3 = arg_20_0.layout_logic
 
-	if layout_logic then
-		local layout_data = layout_logic:layout_data()
-		local num_entries = #layout_data
-		local current_index = self._selected_button_index or 1
-		local input_made = false
-		local title_button_widgets = self._title_button_widgets
+	if var_20_3 then
+		local var_20_4 = var_20_3:layout_data()
+		local var_20_5 = #var_20_4
+		local var_20_6 = arg_20_0._selected_button_index or 1
+		local var_20_7 = false
+		local var_20_8 = arg_20_0._title_button_widgets
 
-		for i, data in ipairs(layout_data) do
-			local widget = title_button_widgets[i]
-			local disabled = data.disabled
+		for iter_20_0, iter_20_1 in ipairs(var_20_4) do
+			local var_20_9 = var_20_8[iter_20_0]
+			local var_20_10 = iter_20_1.disabled
 
-			if i ~= current_index and self:_is_button_hover_enter(widget) and not disabled then
-				self:_on_button_selected(i)
+			if iter_20_0 ~= var_20_6 and arg_20_0:_is_button_hover_enter(var_20_9) and not var_20_10 then
+				arg_20_0:_on_button_selected(iter_20_0)
 
-				input_made = true
+				var_20_7 = true
 			end
 
-			if self:_is_button_pressed(widget) and not disabled then
-				input_made = true
+			if arg_20_0:_is_button_pressed(var_20_9) and not var_20_10 then
+				var_20_7 = true
 
-				self:_on_button_pressed(i, data)
+				arg_20_0:_on_button_pressed(iter_20_0, iter_20_1)
 			end
 		end
 
-		if input_service:get("confirm_press", true) and layout_data[current_index] then
-			local data = layout_data[current_index]
+		if var_20_2:get("confirm_press", true) and var_20_4[var_20_6] then
+			local var_20_11 = var_20_4[var_20_6]
 
-			if not data.disabled then
-				self:_on_button_pressed(current_index, data)
+			if not var_20_11.disabled then
+				arg_20_0:_on_button_pressed(var_20_6, var_20_11)
 
-				input_made = true
+				var_20_7 = true
 			end
 		end
 
-		if not input_made then
-			local new_index = current_index
+		if not var_20_7 then
+			local var_20_12 = var_20_6
 
-			if input_service:get(INPUT_ACTION_PREVIOUS) then
-				new_index = self:_get_previous_available_index(current_index)
-			elseif input_service:get(INPUT_ACTION_NEXT) then
-				new_index = self:_get_next_available_index(current_index)
+			if var_20_2:get(var_0_8) then
+				var_20_12 = arg_20_0:_get_previous_available_index(var_20_6)
+			elseif var_20_2:get(var_0_7) then
+				var_20_12 = arg_20_0:_get_next_available_index(var_20_6)
 			end
 
-			if new_index ~= current_index then
-				self:_on_button_selected(new_index)
+			if var_20_12 ~= var_20_6 then
+				arg_20_0:_on_button_selected(var_20_12)
 			end
 		end
 	end
 end
 
-HeroWindowIngameView._get_next_available_index = function (self, index)
-	local layout_logic = self.layout_logic
+function HeroWindowIngameView._get_next_available_index(arg_21_0, arg_21_1)
+	local var_21_0 = arg_21_0.layout_logic
 
-	if layout_logic then
-		local layout_data = layout_logic:layout_data()
-		local num_entries = #layout_data
-		local i = index % num_entries + 1
+	if var_21_0 then
+		local var_21_1 = var_21_0:layout_data()
+		local var_21_2 = #var_21_1
+		local var_21_3 = arg_21_1 % var_21_2 + 1
 
-		while i ~= index do
-			local data = layout_data[i]
-
-			if not data.disabled then
-				return i
+		while var_21_3 ~= arg_21_1 do
+			if not var_21_1[var_21_3].disabled then
+				return var_21_3
 			end
 
-			i = i % num_entries + 1
+			var_21_3 = var_21_3 % var_21_2 + 1
 		end
 	end
 
-	return index
+	return arg_21_1
 end
 
-HeroWindowIngameView._get_previous_available_index = function (self, index)
-	local layout_logic = self.layout_logic
+function HeroWindowIngameView._get_previous_available_index(arg_22_0, arg_22_1)
+	local var_22_0 = arg_22_0.layout_logic
 
-	if layout_logic then
-		local layout_data = layout_logic:layout_data()
-		local num_entries = #layout_data
-		local i = index > 1 and index - 1 or num_entries
+	if var_22_0 then
+		local var_22_1 = var_22_0:layout_data()
+		local var_22_2 = #var_22_1
+		local var_22_3 = arg_22_1 > 1 and arg_22_1 - 1 or var_22_2
 
-		while i ~= index do
-			local data = layout_data[i]
-
-			if not data.disabled then
-				return i
+		while var_22_3 ~= arg_22_1 do
+			if not var_22_1[var_22_3].disabled then
+				return var_22_3
 			end
 
-			i = i > 1 and i - 1 or num_entries
+			var_22_3 = var_22_3 > 1 and var_22_3 - 1 or var_22_2
 		end
 	end
 
-	return index
+	return arg_22_1
 end
 
-HeroWindowIngameView._on_button_pressed = function (self, index, data)
-	self:_play_sound("play_gui_start_menu_button_click")
+function HeroWindowIngameView._on_button_pressed(arg_23_0, arg_23_1, arg_23_2)
+	arg_23_0:_play_sound("play_gui_start_menu_button_click")
 
-	local transition = data.transition
+	local var_23_0 = arg_23_2.transition
 
-	if menu_functions[transition] then
-		menu_functions[transition](self)
+	if var_0_10[var_23_0] then
+		var_0_10[var_23_0](arg_23_0)
 	else
-		self.layout_logic:execute_layout_option(index)
+		arg_23_0.layout_logic:execute_layout_option(arg_23_1)
 	end
 end
 
-HeroWindowIngameView._on_button_selected = function (self, index, ignore_sound)
-	local title_button_widgets = self._title_button_widgets
+function HeroWindowIngameView._on_button_selected(arg_24_0, arg_24_1, arg_24_2)
+	local var_24_0 = arg_24_0._title_button_widgets
 
-	for i, widget in ipairs(title_button_widgets) do
-		widget.content.button_hotspot.is_selected = i == index
+	for iter_24_0, iter_24_1 in ipairs(var_24_0) do
+		iter_24_1.content.button_hotspot.is_selected = iter_24_0 == arg_24_1
 	end
 
-	if not ignore_sound then
-		self:_play_sound("play_gui_start_menu_button_hover")
+	if not arg_24_2 then
+		arg_24_0:_play_sound("play_gui_start_menu_button_hover")
 	end
 
-	self._selected_button_index = index
+	arg_24_0._selected_button_index = arg_24_1
 end
 
-HeroWindowIngameView.draw = function (self, dt)
-	local ui_renderer = self.ui_renderer
-	local ui_top_renderer = self.ui_top_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self.parent:window_input_service()
-	local gamepad_active = Managers.input:is_device_active("gamepad")
-	local layout_logic = self.layout_logic
+function HeroWindowIngameView.draw(arg_25_0, arg_25_1)
+	local var_25_0 = arg_25_0.ui_renderer
+	local var_25_1 = arg_25_0.ui_top_renderer
+	local var_25_2 = arg_25_0.ui_scenegraph
+	local var_25_3 = arg_25_0.parent:window_input_service()
+	local var_25_4 = Managers.input:is_device_active("gamepad")
+	local var_25_5 = arg_25_0.layout_logic
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
+	UIRenderer.begin_pass(var_25_1, var_25_2, var_25_3, arg_25_1, nil, arg_25_0.render_settings)
 
-	for _, widget in ipairs(self._widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, widget)
+	for iter_25_0, iter_25_1 in ipairs(arg_25_0._widgets) do
+		UIRenderer.draw_widget(var_25_1, iter_25_1)
 	end
 
-	if layout_logic then
-		local layout_data = layout_logic:layout_data()
-		local title_button_widgets = self._title_button_widgets
+	if var_25_5 then
+		local var_25_6 = var_25_5:layout_data()
+		local var_25_7 = arg_25_0._title_button_widgets
 
-		for index, data in ipairs(layout_data) do
-			local widget = title_button_widgets[index]
-			local content = widget.content
-			local button_hotspot = content.button_hotspot
+		for iter_25_2, iter_25_3 in ipairs(var_25_6) do
+			local var_25_8 = var_25_7[iter_25_2]
+			local var_25_9 = var_25_8.content
 
-			button_hotspot.disable_button = data.disabled
-			content.text_field = data.display_name_func and data.display_name_func() or data.display_name
+			var_25_9.button_hotspot.disable_button = iter_25_3.disabled
+			var_25_9.text_field = iter_25_3.display_name_func and iter_25_3.display_name_func() or iter_25_3.display_name
 
-			UIRenderer.draw_widget(ui_top_renderer, widget)
+			UIRenderer.draw_widget(var_25_1, var_25_8)
 		end
 	end
 
-	UIRenderer.end_pass(ui_top_renderer)
+	UIRenderer.end_pass(var_25_1)
 
-	if gamepad_active and self._menu_input_description and not self._active_view then
-		self._menu_input_description:draw(ui_top_renderer, dt)
+	if var_25_4 and arg_25_0._menu_input_description and not arg_25_0._active_view then
+		arg_25_0._menu_input_description:draw(var_25_1, arg_25_1)
 	end
 end
 
-HeroWindowIngameView._play_sound = function (self, event)
-	self.parent:play_sound(event)
+function HeroWindowIngameView._play_sound(arg_26_0, arg_26_1)
+	arg_26_0.parent:play_sound(arg_26_1)
 end
 
-HeroWindowIngameView._update_presentation = function (self)
-	local layout_logic = self.layout_logic
-	local layout_data = layout_logic:layout_data()
-	local num_entries = #layout_data
+function HeroWindowIngameView._update_presentation(arg_27_0)
+	local var_27_0 = #arg_27_0.layout_logic:layout_data()
 
-	if num_entries ~= self._num_entries then
-		local title_button_widgets = self._title_button_widgets
-		local spacing = 60
-		local total_height = 0
+	if var_27_0 ~= arg_27_0._num_entries then
+		local var_27_1 = arg_27_0._title_button_widgets
+		local var_27_2 = 60
+		local var_27_3 = 0
 
-		for index = 1, num_entries do
-			local widget = title_button_widgets[index]
-			local offset = widget.offset
-
-			offset[2] = -(spacing * index - 1)
-			total_height = total_height + spacing
+		for iter_27_0 = 1, var_27_0 do
+			var_27_1[iter_27_0].offset[2] = -(var_27_2 * iter_27_0 - 1)
+			var_27_3 = var_27_3 + var_27_2
 		end
 
-		local widgets_by_name = self._widgets_by_name
-		local background_widget = widgets_by_name.background
-		local background_scenegraph_id = background_widget.scenegraph_id
-		local ui_scenegraph = self.ui_scenegraph
+		local var_27_4 = arg_27_0._widgets_by_name.background.scenegraph_id
 
-		ui_scenegraph[background_scenegraph_id].size[2] = total_height + 90
+		arg_27_0.ui_scenegraph[var_27_4].size[2] = var_27_3 + 90
 	end
 end

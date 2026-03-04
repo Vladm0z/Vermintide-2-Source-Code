@@ -1,60 +1,57 @@
-﻿-- chunkname: @scripts/freeflight.lua
+-- chunkname: @scripts/freeflight.lua
 
 FreeFlight = class(FreeFlight)
 
-FreeFlight.init = function (self, camera, unit)
-	self.camera = camera
-	self.unit = unit
-	self.translation_speed = 0.2
+function FreeFlight.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0.camera = arg_1_1
+	arg_1_0.unit = arg_1_2
+	arg_1_0.translation_speed = 0.2
 
 	if IS_WINDOWS then
-		self.rotation_speed = 0.003
+		arg_1_0.rotation_speed = 0.003
 	else
-		self.rotation_speed = 0.03
+		arg_1_0.rotation_speed = 0.03
 	end
 end
 
-FreeFlight.update = function (self, dt)
-	local input = {}
+function FreeFlight.update(arg_2_0, arg_2_1)
+	local var_2_0 = {}
 
 	if IS_WINDOWS then
-		input.pan = Mouse.axis(Mouse.axis_index("mouse"))
-		input.accelerate = Vector3.y(Mouse.axis(Mouse.axis_index("wheel")))
-		input.move = Vector3(Keyboard.button(Keyboard.button_index("d")) - Keyboard.button(Keyboard.button_index("a")), Keyboard.button(Keyboard.button_index("w")) - Keyboard.button(Keyboard.button_index("s")), Keyboard.button(Keyboard.button_index("e")) - Keyboard.button(Keyboard.button_index("q")))
+		var_2_0.pan = Mouse.axis(Mouse.axis_index("mouse"))
+		var_2_0.accelerate = Vector3.y(Mouse.axis(Mouse.axis_index("wheel")))
+		var_2_0.move = Vector3(Keyboard.button(Keyboard.button_index("d")) - Keyboard.button(Keyboard.button_index("a")), Keyboard.button(Keyboard.button_index("w")) - Keyboard.button(Keyboard.button_index("s")), Keyboard.button(Keyboard.button_index("e")) - Keyboard.button(Keyboard.button_index("q")))
 	end
 
 	if PLATFORM == "ps3" then
-		input.pan = Pad1.axis(Pad1.axis_index("right"))
+		var_2_0.pan = Pad1.axis(Pad1.axis_index("right"))
 
-		Vector3.set_y(input.pan, -input.pan.y)
+		Vector3.set_y(var_2_0.pan, -var_2_0.pan.y)
 
-		input.move = Pad1.axis(Pad1.axis_index("left"))
-		input.accelerate = Pad1.button(Pad1.button_index("r2_trigger")) - Pad1.button(Pad1.button_index("r1_trigger"))
+		var_2_0.move = Pad1.axis(Pad1.axis_index("left"))
+		var_2_0.accelerate = Pad1.button(Pad1.button_index("r2_trigger")) - Pad1.button(Pad1.button_index("r1_trigger"))
 	end
 
-	local translation_change_speed = self.translation_speed * 0.1
+	local var_2_1 = arg_2_0.translation_speed * 0.1
 
-	self.translation_speed = self.translation_speed + input.accelerate * translation_change_speed
+	arg_2_0.translation_speed = arg_2_0.translation_speed + var_2_0.accelerate * var_2_1
 
-	if self.translation_speed < 0.001 then
-		self.translation_speed = 0.001
+	if arg_2_0.translation_speed < 0.001 then
+		arg_2_0.translation_speed = 0.001
 	end
 
-	local cm = Camera.local_pose(self.camera)
-	local trans = Matrix4x4.translation(cm)
+	local var_2_2 = Camera.local_pose(arg_2_0.camera)
+	local var_2_3 = Matrix4x4.translation(var_2_2)
 
-	Matrix4x4.set_translation(cm, Vector3(0, 0, 0))
+	Matrix4x4.set_translation(var_2_2, Vector3(0, 0, 0))
 
-	local q1 = Quaternion(Vector3(0, 0, 1), -Vector3.x(input.pan) * self.rotation_speed)
-	local q2 = Quaternion(Matrix4x4.x(cm), -Vector3.y(input.pan) * self.rotation_speed)
-	local q = Quaternion.multiply(q1, q2)
+	local var_2_4 = Quaternion(Vector3(0, 0, 1), -Vector3.x(var_2_0.pan) * arg_2_0.rotation_speed)
+	local var_2_5 = Quaternion(Matrix4x4.x(var_2_2), -Vector3.y(var_2_0.pan) * arg_2_0.rotation_speed)
+	local var_2_6 = Quaternion.multiply(var_2_4, var_2_5)
+	local var_2_7 = Matrix4x4.multiply(var_2_2, Matrix4x4.from_quaternion(var_2_6))
+	local var_2_8 = Matrix4x4.transform(var_2_7, var_2_0.move * arg_2_0.translation_speed)
+	local var_2_9 = Vector3.add(var_2_3, var_2_8)
 
-	cm = Matrix4x4.multiply(cm, Matrix4x4.from_quaternion(q))
-
-	local offset = Matrix4x4.transform(cm, input.move * self.translation_speed)
-
-	trans = Vector3.add(trans, offset)
-
-	Matrix4x4.set_translation(cm, trans)
-	Camera.set_local_pose(self.camera, self.unit, cm)
+	Matrix4x4.set_translation(var_2_7, var_2_9)
+	Camera.set_local_pose(arg_2_0.camera, arg_2_0.unit, var_2_7)
 end

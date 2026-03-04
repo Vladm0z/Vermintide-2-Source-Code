@@ -1,230 +1,219 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/projectiles/projectile_impact/player_projectile_impact_unit_extension.lua
+-- chunkname: @scripts/unit_extensions/weapons/projectiles/projectile_impact/player_projectile_impact_unit_extension.lua
 
 PlayerProjectileImpactUnitExtension = class(PlayerProjectileImpactUnitExtension, ProjectileBaseImpactUnitExtension)
 
-PlayerProjectileImpactUnitExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	PlayerProjectileImpactUnitExtension.super.init(self, extension_init_context, unit, extension_init_data)
+function PlayerProjectileImpactUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	PlayerProjectileImpactUnitExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
-	self.network_manager = Managers.state.network
-	self.is_server = Managers.player.is_server
+	arg_1_0.network_manager = Managers.state.network
+	arg_1_0.is_server = Managers.player.is_server
 
-	local owner_unit = extension_init_data.owner_unit
+	local var_1_0 = arg_1_3.owner_unit
 
-	self.owner_unit = owner_unit
+	arg_1_0.owner_unit = var_1_0
 
-	local owner_player = Managers.player:owner(owner_unit)
+	local var_1_1 = Managers.player:owner(var_1_0)
 
-	self._dont_target_friendly = extension_init_data.dont_target_friendly
-	self._dont_target_patrols = extension_init_data.dont_target_patrols
+	arg_1_0._dont_target_friendly = arg_1_3.dont_target_friendly
+	arg_1_0._dont_target_patrols = arg_1_3.dont_target_patrols
 
-	local item_name = extension_init_data.item_name
-	local item_data = ItemMasterList[item_name]
-	local item_template = BackendUtils.get_item_template(item_data)
-	local item_template_name = extension_init_data.item_template_name
-	local action_name = extension_init_data.action_name
-	local sub_action_name = extension_init_data.sub_action_name
+	local var_1_2 = arg_1_3.item_name
+	local var_1_3 = ItemMasterList[var_1_2]
+	local var_1_4 = BackendUtils.get_item_template(var_1_3)
+	local var_1_5 = arg_1_3.item_template_name
+	local var_1_6 = arg_1_3.action_name
+	local var_1_7 = arg_1_3.sub_action_name
 
-	self.action_lookup_data = {
-		item_template_name = item_template_name,
-		action_name = action_name,
-		sub_action_name = sub_action_name,
+	arg_1_0.action_lookup_data = {
+		item_template_name = var_1_5,
+		action_name = var_1_6,
+		sub_action_name = var_1_7
 	}
 
-	local projectile_info = item_template.actions[action_name][sub_action_name].projectile_info
+	local var_1_8 = var_1_4.actions[var_1_6][var_1_7].projectile_info
 
-	self.impact_type = projectile_info.impact_type
-	self.static_impact_type = projectile_info.static_impact_type
+	arg_1_0.impact_type = var_1_8.impact_type
+	arg_1_0.static_impact_type = var_1_8.static_impact_type
 
-	local enemy_collision_filter = "filter_player_ray_projectile_dynamic_only"
-	local collision_filter = "filter_player_ray_projectile_no_player"
-	local static_collision_filter = "filter_player_ray_projectile_static_only"
-	local difficulty_settings = Managers.state.difficulty:get_difficulty_settings()
+	local var_1_9 = "filter_player_ray_projectile_dynamic_only"
+	local var_1_10 = "filter_player_ray_projectile_no_player"
+	local var_1_11 = "filter_player_ray_projectile_static_only"
+	local var_1_12 = Managers.state.difficulty:get_difficulty_settings()
 
-	if DamageUtils.allow_friendly_fire_ranged(difficulty_settings, owner_player) then
-		collision_filter = "filter_player_ray_projectile"
+	if DamageUtils.allow_friendly_fire_ranged(var_1_12, var_1_1) then
+		var_1_10 = "filter_player_ray_projectile"
 	end
 
-	self.enemy_collision_filter = extension_init_data.collision_filter or enemy_collision_filter
-	self.static_collision_filter = extension_init_data.collision_filter or static_collision_filter
-	self.collision_filter = extension_init_data.collision_filter or collision_filter
-	self.radius = extension_init_data.radius
-	self.scene_query_height_offset = projectile_info.scene_query_height_offset or 0
-	self.last_position = nil
-
-	local t = Managers.time:time("game")
-
-	self._friendly_fire_grace_period = t + (projectile_info.friendly_fire_grace_period or 0)
+	arg_1_0.enemy_collision_filter = arg_1_3.collision_filter or var_1_9
+	arg_1_0.static_collision_filter = arg_1_3.collision_filter or var_1_11
+	arg_1_0.collision_filter = arg_1_3.collision_filter or var_1_10
+	arg_1_0.radius = arg_1_3.radius
+	arg_1_0.scene_query_height_offset = var_1_8.scene_query_height_offset or 0
+	arg_1_0.last_position = nil
+	arg_1_0._friendly_fire_grace_period = Managers.time:time("game") + (var_1_8.friendly_fire_grace_period or 0)
 end
 
-PlayerProjectileImpactUnitExtension.extensions_ready = function (self, world, unit)
-	self.locomotion_extension = ScriptUnit.extension(unit, "projectile_locomotion_system")
+function PlayerProjectileImpactUnitExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+	arg_2_0.locomotion_extension = ScriptUnit.extension(arg_2_2, "projectile_locomotion_system")
 end
 
-PlayerProjectileImpactUnitExtension.update = function (self, unit, input, dt, context, t)
-	PlayerProjectileImpactUnitExtension.super.update(self, unit, input, dt, context, t)
+function PlayerProjectileImpactUnitExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	PlayerProjectileImpactUnitExtension.super.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 
-	local impact_type = self.impact_type
-	local static_impact_type = self.static_impact_type
+	local var_3_0 = arg_3_0.impact_type
+	local var_3_1 = arg_3_0.static_impact_type
 
-	if impact_type == "raycast" then
-		self:update_raycast(unit, input, dt, context, t)
-	elseif impact_type == "sphere_sweep" then
-		if static_impact_type == "sphere_sweep" then
-			self:update_sphere_sweep(unit, input, dt, context, t, self.radius, self.enemy_collision_filter)
-			self:update_sphere_sweep(unit, input, dt, context, t, self.radius * 0.25, self.static_collision_filter)
-		elseif static_impact_type == "raycast" then
-			self:update_sphere_sweep(unit, input, dt, context, t, self.radius, self.enemy_collision_filter)
-			self:update_raycast(unit, input, dt, context, t, self.static_collision_filter)
+	if var_3_0 == "raycast" then
+		arg_3_0:update_raycast(arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	elseif var_3_0 == "sphere_sweep" then
+		if var_3_1 == "sphere_sweep" then
+			arg_3_0:update_sphere_sweep(arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_0.radius, arg_3_0.enemy_collision_filter)
+			arg_3_0:update_sphere_sweep(arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_0.radius * 0.25, arg_3_0.static_collision_filter)
+		elseif var_3_1 == "raycast" then
+			arg_3_0:update_sphere_sweep(arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_0.radius, arg_3_0.enemy_collision_filter)
+			arg_3_0:update_raycast(arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_0.static_collision_filter)
 		else
-			self:update_sphere_sweep(unit, input, dt, context, t, self.radius, self.collision_filter)
+			arg_3_0:update_sphere_sweep(arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_0.radius, arg_3_0.collision_filter)
 		end
 	else
-		local action_lookup_data = self.action_lookup_data
-		local item_template_name = action_lookup_data.item_template_name
-		local action_name = action_lookup_data.action_name
-		local sub_action_name = action_lookup_data.sub_action_name
+		local var_3_2 = arg_3_0.action_lookup_data
+		local var_3_3 = var_3_2.item_template_name
+		local var_3_4 = var_3_2.action_name
+		local var_3_5 = var_3_2.sub_action_name
 
-		fassert(false, "Unsupported impact type %q in projectile spawned by %q - %q - %q", impact_type, item_template_name, action_name, sub_action_name)
+		fassert(false, "Unsupported impact type %q in projectile spawned by %q - %q - %q", var_3_0, var_3_3, var_3_4, var_3_5)
 	end
 end
 
-local INDEX_POSITION = 1
-local INDEX_NORMAL = 3
-local INDEX_ACTOR = 4
+local var_0_0 = 1
+local var_0_1 = 3
+local var_0_2 = 4
 
-PlayerProjectileImpactUnitExtension.update_raycast = function (self, unit, input, dt, context, t, override_collision_filter)
-	local locomotion_extension = self.locomotion_extension
+function PlayerProjectileImpactUnitExtension.update_raycast(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+	local var_4_0 = arg_4_0.locomotion_extension
 
-	if not locomotion_extension:moved_this_frame() then
+	if not var_4_0:moved_this_frame() then
 		return
 	end
 
-	local cached_position = locomotion_extension:last_position()
-	local moved_position = locomotion_extension:current_position()
-	local physics_world = self.physics_world
-	local collision_filter = override_collision_filter or self.collision_filter
-	local last_position = self.last_position
+	local var_4_1 = var_4_0:last_position()
+	local var_4_2 = var_4_0:current_position()
+	local var_4_3 = arg_4_0.physics_world
+	local var_4_4 = arg_4_6 or arg_4_0.collision_filter
+	local var_4_5 = arg_4_0.last_position
 
-	if last_position then
-		self:_do_raycast(unit, last_position:unbox(), cached_position, physics_world, collision_filter, t)
+	if var_4_5 then
+		arg_4_0:_do_raycast(arg_4_1, var_4_5:unbox(), var_4_1, var_4_3, var_4_4, arg_4_5)
 	else
-		last_position = Vector3Box()
-		self.last_position = last_position
+		var_4_5 = Vector3Box()
+		arg_4_0.last_position = var_4_5
 	end
 
-	last_position:store(cached_position)
-	self:_do_raycast(unit, cached_position, moved_position, physics_world, collision_filter, t)
+	var_4_5:store(var_4_1)
+	arg_4_0:_do_raycast(arg_4_1, var_4_1, var_4_2, var_4_3, var_4_4, arg_4_5)
 end
 
-PlayerProjectileImpactUnitExtension._do_raycast = function (self, unit, from, to, physics_world, collision_filter, t)
-	local direction = to - from
-	local length = Vector3.length(direction)
+function PlayerProjectileImpactUnitExtension._do_raycast(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
+	local var_5_0 = arg_5_3 - arg_5_2
+	local var_5_1 = Vector3.length(var_5_0)
+	local var_5_2 = Vector3.normalize(var_5_0)
 
-	direction = Vector3.normalize(direction)
+	PhysicsWorld.prepare_actors_for_raycast(arg_5_4, arg_5_2, var_5_2, 0, 1, var_5_1 * var_5_1)
 
-	PhysicsWorld.prepare_actors_for_raycast(physics_world, from, direction, 0, 1, length * length)
+	local var_5_3 = Vector3(0, 0, arg_5_0.scene_query_height_offset)
+	local var_5_4 = PhysicsWorld.immediate_raycast(arg_5_4, arg_5_2 + var_5_3, var_5_2, var_5_1, "all", "collision_filter", arg_5_5)
 
-	local offset = Vector3(0, 0, self.scene_query_height_offset)
-	local result = PhysicsWorld.immediate_raycast(physics_world, from + offset, direction, length, "all", "collision_filter", collision_filter)
-
-	if not result then
+	if not var_5_4 then
 		return
 	end
 
-	local num_hits = #result
+	local var_5_5 = #var_5_4
 
-	for i = 1, num_hits do
-		local hit = result[i]
-		local hit_position = hit[INDEX_POSITION]
-		local hit_normal = hit[INDEX_NORMAL]
-		local hit_actor = hit[INDEX_ACTOR]
-		local hit_unit = Actor.unit(hit_actor)
-		local valid = self:_valid_target(unit, hit_unit, self._owner_unit, t)
+	for iter_5_0 = 1, var_5_5 do
+		local var_5_6 = var_5_4[iter_5_0]
+		local var_5_7 = var_5_6[var_0_0]
+		local var_5_8 = var_5_6[var_0_1]
+		local var_5_9 = var_5_6[var_0_2]
+		local var_5_10 = Actor.unit(var_5_9)
 
-		if valid then
-			local num_actors = Unit.num_actors(hit_unit)
-			local actor_index
+		if arg_5_0:_valid_target(arg_5_1, var_5_10, arg_5_0._owner_unit, arg_5_6) then
+			local var_5_11 = Unit.num_actors(var_5_10)
+			local var_5_12
 
-			for j = 0, num_actors - 1 do
-				local actor = Unit.actor(hit_unit, j)
-
-				if hit_actor == actor then
-					actor_index = j
+			for iter_5_1 = 0, var_5_11 - 1 do
+				if var_5_9 == Unit.actor(var_5_10, iter_5_1) then
+					var_5_12 = iter_5_1
 
 					break
 				end
 			end
 
-			fassert(actor_index, "No actor index found for unit [\"%s\"] that was hit on actor [\"%s\"]", hit_unit, hit_actor)
-			self:impact(hit_unit, hit_position, direction, hit_normal, actor_index)
+			fassert(var_5_12, "No actor index found for unit [\"%s\"] that was hit on actor [\"%s\"]", var_5_10, var_5_9)
+			arg_5_0:impact(var_5_10, var_5_7, var_5_2, var_5_8, var_5_12)
 		end
 	end
 end
 
-PlayerProjectileImpactUnitExtension.update_sphere_sweep = function (self, unit, input, dt, context, t, radius, collision_filter)
-	local locomotion_extension = self.locomotion_extension
+function PlayerProjectileImpactUnitExtension.update_sphere_sweep(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7)
+	local var_6_0 = arg_6_0.locomotion_extension
 
-	if not locomotion_extension:moved_this_frame() then
+	if not var_6_0:moved_this_frame() then
 		return
 	end
 
-	local offset = Vector3(0, 0, self.scene_query_height_offset)
-	local cached_position = locomotion_extension:last_position() + offset
-	local moved_position = locomotion_extension:current_position() + offset
-	local physics_world = self.physics_world
+	local var_6_1 = Vector3(0, 0, arg_6_0.scene_query_height_offset)
+	local var_6_2 = var_6_0:last_position() + var_6_1
+	local var_6_3 = var_6_0:current_position() + var_6_1
+	local var_6_4 = arg_6_0.physics_world
 
-	PhysicsWorld.prepare_actors_for_raycast(physics_world, cached_position, Vector3.normalize(moved_position - cached_position), 0, 1, Vector3.length_squared(moved_position - cached_position))
+	PhysicsWorld.prepare_actors_for_raycast(var_6_4, var_6_2, Vector3.normalize(var_6_3 - var_6_2), 0, 1, Vector3.length_squared(var_6_3 - var_6_2))
 
-	local result = PhysicsWorld.linear_sphere_sweep(physics_world, cached_position, moved_position, radius, 100, "collision_filter", collision_filter, "report_initial_overlap")
+	local var_6_5 = PhysicsWorld.linear_sphere_sweep(var_6_4, var_6_2, var_6_3, arg_6_6, 100, "collision_filter", arg_6_7, "report_initial_overlap")
 
-	if result then
-		local direction = Vector3.normalize(moved_position - cached_position)
-		local num_hits = #result
+	if var_6_5 then
+		local var_6_6 = Vector3.normalize(var_6_3 - var_6_2)
+		local var_6_7 = #var_6_5
 
-		for i = 1, num_hits do
-			local hit = result[i]
-			local hit_position = hit.position
-			local hit_normal = hit.normal
-			local hit_actor = hit.actor
-			local hit_unit = Actor.unit(hit_actor)
-			local valid = self:_valid_target(unit, hit_unit, self.owner_unit, t)
+		for iter_6_0 = 1, var_6_7 do
+			local var_6_8 = var_6_5[iter_6_0]
+			local var_6_9 = var_6_8.position
+			local var_6_10 = var_6_8.normal
+			local var_6_11 = var_6_8.actor
+			local var_6_12 = Actor.unit(var_6_11)
 
-			if valid then
-				local num_actors = Unit.num_actors(hit_unit)
-				local actor_index
+			if arg_6_0:_valid_target(arg_6_1, var_6_12, arg_6_0.owner_unit, arg_6_5) then
+				local var_6_13 = Unit.num_actors(var_6_12)
+				local var_6_14
 
-				for j = 0, num_actors - 1 do
-					local actor = Unit.actor(hit_unit, j)
-
-					if hit_actor == actor then
-						actor_index = j
+				for iter_6_1 = 0, var_6_13 - 1 do
+					if var_6_11 == Unit.actor(var_6_12, iter_6_1) then
+						var_6_14 = iter_6_1
 
 						break
 					end
 				end
 
-				fassert(actor_index, "No actor index found for unit [\"%s\"] that was hit on actor [\"%s\"]", hit_unit, hit_actor)
-				self:impact(hit_unit, hit_position, direction, hit_normal, actor_index)
+				fassert(var_6_14, "No actor index found for unit [\"%s\"] that was hit on actor [\"%s\"]", var_6_12, var_6_11)
+				arg_6_0:impact(var_6_12, var_6_9, var_6_6, var_6_10, var_6_14)
 			end
 		end
 	end
 end
 
-PlayerProjectileImpactUnitExtension._valid_target = function (self, unit, hit_unit, owner_unit, t)
-	if unit == hit_unit or owner_unit == hit_unit or Unit.is_frozen(hit_unit) then
+function PlayerProjectileImpactUnitExtension._valid_target(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	if arg_7_1 == arg_7_2 or arg_7_3 == arg_7_2 or Unit.is_frozen(arg_7_2) then
 		return false
 	end
 
-	if self._dont_target_friendly or t < self._friendly_fire_grace_period then
-		local side_manager = Managers.state.side
-		local has_side = side_manager.side_by_unit[hit_unit]
+	if arg_7_0._dont_target_friendly or arg_7_4 < arg_7_0._friendly_fire_grace_period then
+		local var_7_0 = Managers.state.side
 
-		if has_side and not side_manager:is_enemy(self.owner_unit, hit_unit) then
+		if var_7_0.side_by_unit[arg_7_2] and not var_7_0:is_enemy(arg_7_0.owner_unit, arg_7_2) then
 			return false
 		end
 	end
 
-	if self._dont_target_patrols and AiUtils.is_part_of_patrol(unit) and not AiUtils.is_aggroed(unit) then
+	if arg_7_0._dont_target_patrols and AiUtils.is_part_of_patrol(arg_7_1) and not AiUtils.is_aggroed(arg_7_1) then
 		return false
 	end
 

@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/settings/profanity_list.lua
+-- chunkname: @scripts/settings/profanity_list.lua
 
 return {
 	"4r5e",
@@ -451,5 +451,5 @@ return {
 	"willies",
 	"willy",
 	"xrated",
-	"xxx",
+	"xxx"
 }

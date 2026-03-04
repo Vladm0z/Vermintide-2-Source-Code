@@ -1,890 +1,893 @@
-﻿-- chunkname: @scripts/utils/debug_keymap.lua
+-- chunkname: @scripts/utils/debug_keymap.lua
 
 require("scripts/utils/input_helper")
 
 DebugKeymap = {}
 DebugInputFilters = {}
 
-local valid_debug_build = BUILD == "dev" or BUILD == "debug"
-local keyboard_device = "keyboard"
-local keyboard_keymaps = {
+local var_0_0
+
+var_0_0 = BUILD == "dev" or BUILD == "debug"
+
+local var_0_1 = "keyboard"
+local var_0_2 = {
 	f1 = {
-		keyboard_device,
+		var_0_1,
 		"f1",
-		"pressed",
+		"pressed"
 	},
 	f2 = {
-		keyboard_device,
+		var_0_1,
 		"f2",
-		"pressed",
+		"pressed"
 	},
 	f3 = {
-		keyboard_device,
+		var_0_1,
 		"f3",
-		"pressed",
+		"pressed"
 	},
 	f4 = {
-		keyboard_device,
+		var_0_1,
 		"f4",
-		"pressed",
+		"pressed"
 	},
 	f5 = {
-		keyboard_device,
+		var_0_1,
 		"f5",
-		"pressed",
+		"pressed"
 	},
 	f6 = {
-		keyboard_device,
+		var_0_1,
 		"f6",
-		"pressed",
+		"pressed"
 	},
 	f7 = {
-		keyboard_device,
+		var_0_1,
 		"f7",
-		"pressed",
+		"pressed"
 	},
 	f8 = {
-		keyboard_device,
+		var_0_1,
 		"f8",
-		"pressed",
+		"pressed"
 	},
 	f9 = {
-		keyboard_device,
+		var_0_1,
 		"f9",
-		"pressed",
+		"pressed"
 	},
 	f10 = {
-		keyboard_device,
+		var_0_1,
 		"f10",
-		"pressed",
+		"pressed"
 	},
 	f11 = {
-		keyboard_device,
+		var_0_1,
 		"f11",
-		"pressed",
+		"pressed"
 	},
 	f12 = {
-		keyboard_device,
+		var_0_1,
 		"f12",
-		"pressed",
+		"pressed"
 	},
 	["page up"] = {
-		keyboard_device,
+		var_0_1,
 		"page up",
-		"pressed",
+		"pressed"
 	},
 	["page down"] = {
-		keyboard_device,
+		var_0_1,
 		"page down",
-		"pressed",
+		"pressed"
 	},
 	home = {
-		keyboard_device,
+		var_0_1,
 		"home",
-		"pressed",
+		"pressed"
 	},
 	["end"] = {
-		keyboard_device,
+		var_0_1,
 		"end",
-		"pressed",
+		"pressed"
 	},
 	["left ctrl"] = {
-		keyboard_device,
+		var_0_1,
 		"left ctrl",
-		"held",
+		"held"
 	},
 	["left shift"] = {
-		keyboard_device,
+		var_0_1,
 		"left shift",
-		"held",
+		"held"
 	},
 	["right ctrl"] = {
-		keyboard_device,
+		var_0_1,
 		"right ctrl",
-		"held",
+		"held"
 	},
 	["left alt"] = {
-		keyboard_device,
+		var_0_1,
 		"left alt",
-		"held",
+		"held"
 	},
 	right_key = {
-		keyboard_device,
+		var_0_1,
 		"right",
-		"pressed",
+		"pressed"
 	},
 	left_key = {
-		keyboard_device,
+		var_0_1,
 		"left",
-		"pressed",
+		"pressed"
 	},
 	up_key = {
-		keyboard_device,
+		var_0_1,
 		"up",
-		"held",
+		"held"
 	},
 	down_key = {
-		keyboard_device,
+		var_0_1,
 		"down",
-		"held",
+		"held"
 	},
 	enter_key = {
-		keyboard_device,
+		var_0_1,
 		"enter",
-		"pressed",
+		"pressed"
 	},
 	backspace = {
-		keyboard_device,
+		var_0_1,
 		"backspace",
-		"pressed",
+		"pressed"
 	},
 	numpad_plus = {
-		keyboard_device,
+		var_0_1,
 		"numpad +",
-		"pressed",
+		"pressed"
 	},
 	numpad_minus = {
-		keyboard_device,
+		var_0_1,
 		"num -",
-		"pressed",
+		"pressed"
 	},
 	a = {
-		keyboard_device,
+		var_0_1,
 		"a",
-		"pressed",
+		"pressed"
 	},
 	b = {
-		keyboard_device,
+		var_0_1,
 		"b",
-		"pressed",
+		"pressed"
 	},
 	c = {
-		keyboard_device,
+		var_0_1,
 		"c",
-		"pressed",
+		"pressed"
 	},
 	d = {
-		keyboard_device,
+		var_0_1,
 		"d",
-		"pressed",
+		"pressed"
 	},
 	e = {
-		keyboard_device,
+		var_0_1,
 		"e",
-		"pressed",
+		"pressed"
 	},
 	f = {
-		keyboard_device,
+		var_0_1,
 		"f",
-		"pressed",
+		"pressed"
 	},
 	g = {
-		keyboard_device,
+		var_0_1,
 		"g",
-		"pressed",
+		"pressed"
 	},
 	h = {
-		keyboard_device,
+		var_0_1,
 		"h",
-		"pressed",
+		"pressed"
 	},
 	h_held = {
-		keyboard_device,
+		var_0_1,
 		"h",
-		"held",
+		"held"
 	},
 	i = {
-		keyboard_device,
+		var_0_1,
 		"i",
-		"pressed",
+		"pressed"
 	},
 	j = {
-		keyboard_device,
+		var_0_1,
 		"j",
-		"pressed",
+		"pressed"
 	},
 	k = {
-		keyboard_device,
+		var_0_1,
 		"k",
-		"pressed",
+		"pressed"
 	},
 	l = {
-		keyboard_device,
+		var_0_1,
 		"l",
-		"pressed",
+		"pressed"
 	},
 	m = {
-		keyboard_device,
+		var_0_1,
 		"m",
-		"pressed",
+		"pressed"
 	},
 	n = {
-		keyboard_device,
+		var_0_1,
 		"n",
-		"pressed",
+		"pressed"
 	},
 	o = {
-		keyboard_device,
+		var_0_1,
 		"o",
-		"pressed",
+		"pressed"
 	},
 	p = {
-		keyboard_device,
+		var_0_1,
 		"p",
-		"pressed",
+		"pressed"
 	},
 	q = {
-		keyboard_device,
+		var_0_1,
 		"q",
-		"pressed",
+		"pressed"
 	},
 	r = {
-		keyboard_device,
+		var_0_1,
 		"r",
-		"pressed",
+		"pressed"
 	},
 	s = {
-		keyboard_device,
+		var_0_1,
 		"s",
-		"pressed",
+		"pressed"
 	},
 	t = {
-		keyboard_device,
+		var_0_1,
 		"t",
-		"pressed",
+		"pressed"
 	},
 	u = {
-		keyboard_device,
+		var_0_1,
 		"u",
-		"pressed",
+		"pressed"
 	},
 	v = {
-		keyboard_device,
+		var_0_1,
 		"v",
-		"pressed",
+		"pressed"
 	},
 	w = {
-		keyboard_device,
+		var_0_1,
 		"w",
-		"pressed",
+		"pressed"
 	},
 	x = {
-		keyboard_device,
+		var_0_1,
 		"x",
-		"pressed",
+		"pressed"
 	},
 	y = {
-		keyboard_device,
+		var_0_1,
 		"y",
-		"pressed",
+		"pressed"
 	},
 	z = {
-		keyboard_device,
+		var_0_1,
 		"z",
-		"pressed",
+		"pressed"
 	},
 	esc = {
-		keyboard_device,
+		var_0_1,
 		"esc",
-		"pressed",
+		"pressed"
 	},
 	activate_chat_input = {
-		keyboard_device,
+		var_0_1,
 		"y",
-		"pressed",
+		"pressed"
 	},
 	console_open_key = {
-		keyboard_device,
+		var_0_1,
 		"end",
-		"pressed",
+		"pressed"
 	},
 	console_favorite_key = {
-		keyboard_device,
+		var_0_1,
 		"f",
-		"pressed",
+		"pressed"
 	},
 	console_search_key = {
-		keyboard_device,
+		var_0_1,
 		"backspace",
-		"pressed",
+		"pressed"
 	},
 	cursor = {
 		"mouse",
 		"cursor",
-		"axis",
+		"axis"
 	},
 	look = {
 		"mouse",
 		"mouse",
-		"axis",
+		"axis"
 	},
 	mouse_left_held = {
 		"mouse",
 		"left",
-		"held",
+		"held"
 	},
 	mouse_middle_held = {
 		"mouse",
 		"middle",
-		"held",
+		"held"
 	},
 	mouse_right_held = {
 		"mouse",
 		"right",
-		"held",
-	},
+		"held"
+	}
 }
 
-DebugKeymap.win32 = InputUtils.keymaps_key_approved("win32") and keyboard_keymaps
+DebugKeymap.win32 = InputUtils.keymaps_key_approved("win32") and var_0_2
 DebugInputFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 	console_mod_key = {
 		filter_type = "or",
 		input_mappings = {
 			["left ctrl"] = "left ctrl",
-			["right ctrl"] = "right ctrl",
-		},
-	},
+			["right ctrl"] = "right ctrl"
+		}
+	}
 }
 DebugKeymap.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	left_thumb = {
 		"gamepad",
 		"left_thumb",
-		"held",
+		"held"
 	},
 	right_thumb = {
 		"gamepad",
 		"right_thumb",
-		"held",
+		"held"
 	},
 	right_trigger = {
 		"gamepad",
 		"right_trigger",
-		"held",
+		"held"
 	},
 	right_trigger_soft = {
 		"gamepad",
 		"right_trigger",
-		"soft_button",
+		"soft_button"
 	},
 	right_shoulder = {
 		"gamepad",
 		"right_shoulder",
-		"held",
+		"held"
 	},
 	left_trigger = {
 		"gamepad",
 		"left_trigger",
-		"held",
+		"held"
 	},
 	left_trigger_soft = {
 		"gamepad",
 		"left_trigger",
-		"soft_button",
+		"soft_button"
 	},
 	left_shoulder = {
 		"gamepad",
 		"left_shoulder",
-		"held",
+		"held"
 	},
 	d_down = {
 		"gamepad",
 		"d_down",
-		"pressed",
+		"pressed"
 	},
 	d_left = {
 		"gamepad",
 		"d_left",
-		"pressed",
+		"pressed"
 	},
 	d_right = {
 		"gamepad",
 		"d_right",
-		"pressed",
+		"pressed"
 	},
 	d_up = {
 		"gamepad",
 		"d_up",
-		"pressed",
+		"pressed"
 	},
 	x = {
 		"gamepad",
 		"x",
-		"pressed",
+		"pressed"
 	},
 	y = {
 		"gamepad",
 		"y",
-		"pressed",
+		"pressed"
 	},
 	b = {
 		"gamepad",
 		"b",
-		"pressed",
+		"pressed"
 	},
 	exclusive_right_key = {
 		"gamepad",
 		"d_right",
-		"pressed",
+		"pressed"
 	},
 	left_key = {
 		"gamepad",
 		"d_left",
-		"pressed",
+		"pressed"
 	},
 	up_key = {
 		"gamepad",
 		"d_up",
-		"held",
+		"held"
 	},
 	down_key = {
 		"gamepad",
 		"d_down",
-		"held",
+		"held"
 	},
 	right_shoulder_held = {
 		"gamepad",
 		"right_shoulder",
-		"held",
+		"held"
 	},
 	look_raw = {
 		"gamepad",
 		"right",
-		"axis",
+		"axis"
 	},
 	console_favorite_key = {
 		"gamepad",
 		"y",
-		"pressed",
+		"pressed"
 	},
 	["left ctrl"] = {},
-	["left shift"] = {},
+	["left shift"] = {}
 }
 DebugInputFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	n_switch = {
 		filter_type = "and",
 		input_mappings = {
-			d_left = "d_left",
-			left_thumb = "left_thumb",
 			right_trigger = "right_trigger",
-		},
+			d_left = "d_left",
+			left_thumb = "left_thumb"
+		}
 	},
 	n = {
 		filter_type = "and",
 		input_mappings = {
-			d_up = "d_up",
-			left_thumb = "left_thumb",
 			right_trigger = "right_trigger",
-		},
+			d_up = "d_up",
+			left_thumb = "left_thumb"
+		}
 	},
 	o = {
 		filter_type = "and",
 		input_mappings = {
-			d_left = "d_left",
-			left_thumb = "left_thumb",
 			left_trigger = "left_trigger",
-		},
+			d_left = "d_left",
+			left_thumb = "left_thumb"
+		}
 	},
 	p = {
 		filter_type = "and",
 		input_mappings = {
 			d_up = "d_up",
-			left_thumb = "left_thumb",
 			left_trigger = "left_trigger",
-		},
+			left_thumb = "left_thumb"
+		}
 	},
 	l = {
 		filter_type = "and",
 		input_mappings = {
 			d_down = "d_down",
-			left_thumb = "left_thumb",
-		},
+			left_thumb = "left_thumb"
+		}
 	},
 	u = {
 		filter_type = "and",
 		input_mappings = {
-			d_down = "d_down",
-			left_thumb = "left_thumb",
 			left_trigger = "left_trigger",
-		},
+			d_down = "d_down",
+			left_thumb = "left_thumb"
+		}
 	},
 	c = {
 		filter_type = "and",
 		input_mappings = {
 			d_up = "d_up",
-			left_thumb = "left_thumb",
-		},
+			left_thumb = "left_thumb"
+		}
 	},
 	home = {
 		filter_type = "and",
 		input_mappings = {
-			right_thumb = "right_thumb",
 			x = "x",
-		},
+			right_thumb = "right_thumb"
+		}
 	},
 	v = {
 		filter_type = "and",
 		input_mappings = {
-			right_thumb = "right_thumb",
 			y = "y",
-		},
+			right_thumb = "right_thumb"
+		}
 	},
 	show_behaviour = {
 		filter_type = "and",
 		input_mappings = {
 			b = "b",
-			right_thumb = "right_thumb",
-		},
+			right_thumb = "right_thumb"
+		}
 	},
 	right_key = {
 		filter_type = "and",
 		input_mappings = {
 			d_right = "d_right",
-			left_thumb = "left_thumb",
-		},
+			left_thumb = "left_thumb"
+		}
 	},
 	time_scale = {
 		filter_type = "and",
 		input_mappings = {
-			left_thumb = "left_thumb",
 			right_thumb = "right_thumb",
-		},
+			left_thumb = "left_thumb"
+		}
 	},
 	time_scale_axis = {
 		filter_type = "sub",
 		input_mappings = {
-			left_trigger_soft = "left_trigger_soft",
 			right_trigger_soft = "right_trigger_soft",
-		},
-	},
+			left_trigger_soft = "left_trigger_soft"
+		}
+	}
 }
 DebugKeymap.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 	l3 = {
 		"gamepad",
 		"l3",
-		"held",
+		"held"
 	},
 	r3 = {
 		"gamepad",
 		"r3",
-		"held",
+		"held"
 	},
 	l2 = {
 		"gamepad",
 		"l2",
-		"held",
+		"held"
 	},
 	r2 = {
 		"gamepad",
 		"r2",
-		"held",
+		"held"
 	},
 	l1 = {
 		"gamepad",
 		"l1",
-		"held",
+		"held"
 	},
 	r1 = {
 		"gamepad",
 		"r1",
-		"held",
+		"held"
 	},
 	l2_soft = {
 		"gamepad",
 		"l2",
-		"soft_button",
+		"soft_button"
 	},
 	r2_soft = {
 		"gamepad",
 		"r2",
-		"soft_button",
+		"soft_button"
 	},
 	left = {
 		"gamepad",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	right = {
 		"gamepad",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	up = {
 		"gamepad",
 		"up",
-		"pressed",
+		"pressed"
 	},
 	down = {
 		"gamepad",
 		"down",
-		"pressed",
+		"pressed"
 	},
 	circle = {
 		"gamepad",
 		"circle",
-		"pressed",
+		"pressed"
 	},
 	b = {
 		"gamepad",
 		"b",
-		"pressed",
+		"pressed"
 	},
 	mouse_middle_held = {
 		"gamepad",
 		"l2",
-		"held",
+		"held"
 	},
 	exclusive_right_key = {
 		"gamepad",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	left_key = {
 		"gamepad",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	up_key = {
 		"gamepad",
 		"up",
-		"held",
+		"held"
 	},
 	down_key = {
 		"gamepad",
 		"down",
-		"held",
+		"held"
 	},
 	right_shoulder_held = {
 		"gamepad",
 		"right_shoulder",
-		"held",
+		"held"
 	},
 	look_raw = {
 		"gamepad",
 		"right",
-		"axis",
+		"axis"
 	},
 	console_favorite_key = {
 		"gamepad",
 		"triangle",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 DebugKeymap.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 	l3 = {
 		"ps_pad",
 		"l3",
-		"held",
+		"held"
 	},
 	r3 = {
 		"ps_pad",
 		"r3",
-		"held",
+		"held"
 	},
 	l2 = {
 		"ps_pad",
 		"l2",
-		"held",
+		"held"
 	},
 	r2 = {
 		"ps_pad",
 		"r2",
-		"held",
+		"held"
 	},
 	l1 = {
 		"ps_pad",
 		"l1",
-		"held",
+		"held"
 	},
 	r1 = {
 		"ps_pad",
 		"r1",
-		"held",
+		"held"
 	},
 	l2_soft = {
 		"ps_pad",
 		"l2",
-		"soft_button",
+		"soft_button"
 	},
 	r2_soft = {
 		"ps_pad",
 		"r2",
-		"soft_button",
+		"soft_button"
 	},
 	left = {
 		"ps_pad",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	right = {
 		"ps_pad",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	up = {
 		"ps_pad",
 		"up",
-		"pressed",
+		"pressed"
 	},
 	down = {
 		"ps_pad",
 		"down",
-		"pressed",
+		"pressed"
 	},
 	circle = {
 		"ps_pad",
 		"circle",
-		"pressed",
+		"pressed"
 	},
 	b = {
 		"ps_pad",
 		"circle",
-		"pressed",
+		"pressed"
 	},
 	mouse_middle_held = {
 		"ps_pad",
 		"l2",
-		"held",
+		"held"
 	},
 	exclusive_right_key = {
 		"ps_pad",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	left_key = {
 		"ps_pad",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	up_key = {
 		"ps_pad",
 		"up",
-		"held",
+		"held"
 	},
 	down_key = {
 		"ps_pad",
 		"down",
-		"held",
+		"held"
 	},
 	right_shoulder_held = {
 		"ps_pad",
 		"r1",
-		"held",
+		"held"
 	},
 	look_raw = {
 		"ps_pad",
 		"right",
-		"axis",
+		"axis"
 	},
 	console_favorite_key = {
 		"ps_pad",
 		"triangle",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 
-local DebugInputFilters_ps4 = {
+local var_0_3 = {
 	n_switch = {
 		filter_type = "and",
 		input_mappings = {
 			l3 = "l3",
-			left = "left",
 			r2 = "r2",
-		},
+			left = "left"
+		}
 	},
 	n = {
 		filter_type = "and",
 		input_mappings = {
 			l3 = "l3",
 			r2 = "r2",
-			up = "up",
-		},
+			up = "up"
+		}
 	},
 	o = {
 		filter_type = "and",
 		input_mappings = {
-			l2 = "l2",
 			l3 = "l3",
 			left = "left",
-		},
+			l2 = "l2"
+		}
 	},
 	p = {
 		filter_type = "and",
 		input_mappings = {
-			l2 = "l2",
 			l3 = "l3",
 			up = "up",
-		},
+			l2 = "l2"
+		}
 	},
 	l = {
 		filter_type = "and",
 		input_mappings = {
-			down = "down",
 			l3 = "l3",
-		},
+			down = "down"
+		}
 	},
 	u = {
 		filter_type = "and",
 		input_mappings = {
-			down = "down",
-			l2 = "l2",
 			l3 = "l3",
-		},
+			down = "down",
+			l2 = "l2"
+		}
 	},
 	c = {
 		filter_type = "and",
 		input_mappings = {
 			l3 = "l3",
-			up = "up",
-		},
+			up = "up"
+		}
 	},
 	v = {
 		filter_type = "or",
 		input_mappings = {
-			r3 = "r3",
-		},
+			r3 = "r3"
+		}
 	},
 	b = {
 		filter_type = "and",
 		input_mappings = {
-			l2 = "l2",
 			left = "left",
-		},
+			l2 = "l2"
+		}
 	},
 	h = {
 		filter_type = "and",
 		input_mappings = {
-			circle = "circle",
 			l3 = "l3",
-			r3 = "r3",
-		},
+			circle = "circle",
+			r3 = "r3"
+		}
 	},
 	right_key = {
 		filter_type = "and",
 		input_mappings = {
 			l3 = "l3",
-			right = "right",
-		},
+			right = "right"
+		}
 	},
 	time_scale = {
 		filter_type = "and",
 		input_mappings = {
 			l3 = "l3",
-			r3 = "r3",
-		},
+			r3 = "r3"
+		}
 	},
 	time_scale_axis = {
 		filter_type = "sub",
 		input_mappings = {
 			l2_soft = "l2_soft",
-			r2_soft = "r2_soft",
-		},
+			r2_soft = "r2_soft"
+		}
 	},
 	look = {
 		filter_type = "scale_vector3",
-		input_mapping = "look_raw",
 		multiplier = 10,
-	},
+		input_mapping = "look_raw"
+	}
 }
 
-DebugInputFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and DebugInputFilters_ps4
-DebugInputFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and DebugInputFilters_ps4
+DebugInputFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and var_0_3
+DebugInputFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and var_0_3

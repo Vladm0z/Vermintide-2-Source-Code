@@ -1,139 +1,136 @@
-﻿-- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_event_summary_console.lua
+-- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_event_summary_console.lua
 
-local definitions = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_event_summary_console_definitions")
-local widget_definitions = definitions.widgets
-local scenegraph_definition = definitions.scenegraph_definition
-local animation_definitions = definitions.animation_definitions
+local var_0_0 = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_event_summary_console_definitions")
+local var_0_1 = var_0_0.widgets
+local var_0_2 = var_0_0.scenegraph_definition
+local var_0_3 = var_0_0.animation_definitions
 
 StartGameWindowEventSummaryConsole = class(StartGameWindowEventSummaryConsole)
 StartGameWindowEventSummaryConsole.NAME = "StartGameWindowEventSummaryConsole"
 
-StartGameWindowEventSummaryConsole.on_enter = function (self, params, offset)
+function StartGameWindowEventSummaryConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowEventSummaryConsole")
 
-	self.parent = params.parent
+	arg_1_0.parent = arg_1_1.parent
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_1_0 = arg_1_1.ingame_ui_context
 
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self.input_manager = ingame_ui_context.input_manager
-	self.statistics_db = ingame_ui_context.statistics_db
-	self.render_settings = {
-		snap_pixel_positions = true,
+	arg_1_0.ui_renderer = var_1_0.ui_renderer
+	arg_1_0._ui_top_renderer = var_1_0.ui_top_renderer
+	arg_1_0.input_manager = var_1_0.input_manager
+	arg_1_0.statistics_db = var_1_0.statistics_db
+	arg_1_0.render_settings = {
+		snap_pixel_positions = true
 	}
 
-	local player_manager = Managers.player
-	local local_player = player_manager:local_player()
+	local var_1_1 = Managers.player
 
-	self._stats_id = local_player:stats_id()
-	self.player_manager = player_manager
-	self.peer_id = ingame_ui_context.peer_id
-	self._animations = {}
+	arg_1_0._stats_id = var_1_1:local_player():stats_id()
+	arg_1_0.player_manager = var_1_1
+	arg_1_0.peer_id = var_1_0.peer_id
+	arg_1_0._animations = {}
 
-	self:create_ui_elements(params, offset)
+	arg_1_0:create_ui_elements(arg_1_1, arg_1_2)
 end
 
-StartGameWindowEventSummaryConsole._start_transition_animation = function (self, animation_name)
-	local params = {
-		render_settings = self.render_settings,
+function StartGameWindowEventSummaryConsole._start_transition_animation(arg_2_0, arg_2_1)
+	local var_2_0 = {
+		render_settings = arg_2_0.render_settings
 	}
-	local widgets = {}
-	local anim_id = self.ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
+	local var_2_1 = {}
+	local var_2_2 = arg_2_0.ui_animator:start_animation(arg_2_1, var_2_1, var_0_2, var_2_0)
 
-	self._animations[animation_name] = anim_id
+	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-StartGameWindowEventSummaryConsole.create_ui_elements = function (self, params, offset)
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+function StartGameWindowEventSummaryConsole.create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 
-	local widgets = {}
-	local widgets_by_name = {}
+	local var_3_0 = {}
+	local var_3_1 = {}
 
-	for name, widget_definition in pairs(widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_3_0, iter_3_1 in pairs(var_0_1) do
+		local var_3_2 = UIWidget.init(iter_3_1)
 
-		widgets[#widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_3_0[#var_3_0 + 1] = var_3_2
+		var_3_1[iter_3_0] = var_3_2
 	end
 
-	self._widgets = widgets
-	self._widgets_by_name = widgets_by_name
+	arg_3_0._widgets = var_3_0
+	arg_3_0._widgets_by_name = var_3_1
 
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_3_0.ui_renderer)
 
-	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
+	arg_3_0.ui_animator = UIAnimator:new(arg_3_0.ui_scenegraph, var_0_3)
 
-	if offset then
-		local window_position = self.ui_scenegraph.window.local_position
+	if arg_3_2 then
+		local var_3_3 = arg_3_0.ui_scenegraph.window.local_position
 
-		window_position[1] = window_position[1] + offset[1]
-		window_position[2] = window_position[2] + offset[2]
-		window_position[3] = window_position[3] + offset[3]
+		var_3_3[1] = var_3_3[1] + arg_3_2[1]
+		var_3_3[2] = var_3_3[2] + arg_3_2[2]
+		var_3_3[3] = var_3_3[3] + arg_3_2[3]
 	end
 
-	self:_setup_content_from_backend()
+	arg_3_0:_setup_content_from_backend()
 end
 
-StartGameWindowEventSummaryConsole._setup_content_from_backend = function (self)
-	local live_event_interface = Managers.backend:get_interface("live_events")
-	local game_mode_data = live_event_interface:get_weekly_events_game_mode_data()
-	local widgets_by_name = self._widgets_by_name
-	local event_summary_widget = widgets_by_name.event_summary
-	local level_key = game_mode_data.level_key
-	local mutators = game_mode_data.mutators
+function StartGameWindowEventSummaryConsole._setup_content_from_backend(arg_4_0)
+	local var_4_0 = Managers.backend:get_interface("live_events"):get_weekly_events_game_mode_data()
+	local var_4_1 = arg_4_0._widgets_by_name.event_summary
+	local var_4_2 = var_4_0.level_key
+	local var_4_3 = var_4_0.mutators
 
-	event_summary_widget.content.item = {
-		level_key = level_key,
-		mutators = mutators,
+	var_4_1.content.item = {
+		level_key = var_4_2,
+		mutators = var_4_3
 	}
 end
 
-StartGameWindowEventSummaryConsole.on_exit = function (self, params)
+function StartGameWindowEventSummaryConsole.on_exit(arg_5_0, arg_5_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowEventSummaryConsole")
 
-	self.ui_animator = nil
+	arg_5_0.ui_animator = nil
 end
 
-StartGameWindowEventSummaryConsole.update = function (self, dt, t)
-	self:_update_animations(dt)
-	self:draw(dt)
+function StartGameWindowEventSummaryConsole.update(arg_6_0, arg_6_1, arg_6_2)
+	arg_6_0:_update_animations(arg_6_1)
+	arg_6_0:draw(arg_6_1)
 end
 
-StartGameWindowEventSummaryConsole.post_update = function (self, dt, t)
+function StartGameWindowEventSummaryConsole.post_update(arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-StartGameWindowEventSummaryConsole._update_animations = function (self, dt)
-	local ui_animator = self.ui_animator
+function StartGameWindowEventSummaryConsole._update_animations(arg_8_0, arg_8_1)
+	local var_8_0 = arg_8_0.ui_animator
 
-	ui_animator:update(dt)
+	var_8_0:update(arg_8_1)
 
-	local animations = self._animations
+	local var_8_1 = arg_8_0._animations
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_8_0, iter_8_1 in pairs(var_8_1) do
+		if var_8_0:is_animation_completed(iter_8_1) then
+			var_8_0:stop_animation(iter_8_1)
 
-			animations[animation_name] = nil
+			var_8_1[iter_8_0] = nil
 		end
 	end
 end
 
-StartGameWindowEventSummaryConsole.draw = function (self, dt)
-	local ui_top_renderer = self._ui_top_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self.parent:window_input_service()
+function StartGameWindowEventSummaryConsole.draw(arg_9_0, arg_9_1)
+	local var_9_0 = arg_9_0._ui_top_renderer
+	local var_9_1 = arg_9_0.ui_scenegraph
+	local var_9_2 = arg_9_0.parent:window_input_service()
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
+	UIRenderer.begin_pass(var_9_0, var_9_1, var_9_2, arg_9_1, nil, arg_9_0.render_settings)
 
-	local widgets = self._widgets
+	local var_9_3 = arg_9_0._widgets
 
-	for i = 1, #widgets do
-		local widget = widgets[i]
+	for iter_9_0 = 1, #var_9_3 do
+		local var_9_4 = var_9_3[iter_9_0]
 
-		UIRenderer.draw_widget(ui_top_renderer, widget)
+		UIRenderer.draw_widget(var_9_0, var_9_4)
 	end
 
-	UIRenderer.end_pass(ui_top_renderer)
+	UIRenderer.end_pass(var_9_0)
 end

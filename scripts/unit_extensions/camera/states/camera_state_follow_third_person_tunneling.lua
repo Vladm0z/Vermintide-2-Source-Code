@@ -1,101 +1,100 @@
-﻿-- chunkname: @scripts/unit_extensions/camera/states/camera_state_follow_third_person_tunneling.lua
+-- chunkname: @scripts/unit_extensions/camera/states/camera_state_follow_third_person_tunneling.lua
 
 CameraStateFollowThirdPersonTunneling = class(CameraStateFollowThirdPersonTunneling, CameraState)
 
-CameraStateFollowThirdPersonTunneling.init = function (self, camera_state_init_context)
-	CameraState.init(self, camera_state_init_context, "follow_third_person_tunneling")
+function CameraStateFollowThirdPersonTunneling.init(arg_1_0, arg_1_1)
+	CameraState.init(arg_1_0, arg_1_1, "follow_third_person_tunneling")
 end
 
-CameraStateFollowThirdPersonTunneling.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
-	local camera_extension = self.camera_extension
-	local follow_unit, follow_node = camera_extension:get_follow_data()
-	local viewport_name = camera_extension.viewport_name
+function CameraStateFollowThirdPersonTunneling.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	local var_2_0 = arg_2_0.camera_extension
+	local var_2_1, var_2_2 = var_2_0:get_follow_data()
+	local var_2_3 = var_2_0.viewport_name
 
-	self._follow_unit = follow_unit
-	self._follow_node = follow_node
-	self._unit = unit
+	arg_2_0._follow_unit = var_2_1
+	arg_2_0._follow_node = var_2_2
+	arg_2_0._unit = arg_2_1
 
-	local camera_manager = Managers.state.camera
-	local root_look_dir = Vector3.normalize(Vector3.flat(Quaternion.forward(Unit.local_rotation(follow_unit, 0))))
-	local yaw = math.atan2(root_look_dir.y, root_look_dir.x)
+	local var_2_4 = Managers.state.camera
+	local var_2_5 = Vector3.normalize(Vector3.flat(Quaternion.forward(Unit.local_rotation(var_2_1, 0))))
+	local var_2_6 = math.atan2(var_2_5.y, var_2_5.x)
 
-	camera_manager:set_pitch_yaw(viewport_name, -0.6, yaw)
-	Unit.set_data(unit, "camera", "settings_node", "tunneling")
+	var_2_4:set_pitch_yaw(var_2_3, -0.6, var_2_6)
+	Unit.set_data(arg_2_1, "camera", "settings_node", "tunneling")
 
-	self.total_lerp_time = 2
-	self.lerp_time = 0
-	self.progress = 0
-	self.calculate_lerp = true
-	self.camera_start_pose = Matrix4x4Box(Unit.local_pose(unit, 0))
+	arg_2_0.total_lerp_time = 2
+	arg_2_0.lerp_time = 0
+	arg_2_0.progress = 0
+	arg_2_0.calculate_lerp = true
+	arg_2_0.camera_start_pose = Matrix4x4Box(Unit.local_pose(arg_2_1, 0))
 end
 
-CameraStateFollowThirdPersonTunneling.on_exit = function (self, unit, input, dt, context, t, next_state)
-	self._follow_unit = nil
+function CameraStateFollowThirdPersonTunneling.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	arg_3_0._follow_unit = nil
 end
 
-CameraStateFollowThirdPersonTunneling.update_tunnel_camera_position = function (self, position)
-	local unit = self._unit
+function CameraStateFollowThirdPersonTunneling.update_tunnel_camera_position(arg_4_0, arg_4_1)
+	local var_4_0 = arg_4_0._unit
 
-	Unit.set_local_position(unit, 0, position)
+	Unit.set_local_position(var_4_0, 0, arg_4_1)
 
-	local follow_unit = self._follow_unit
-	local follow_unit_pos = Unit.local_position(follow_unit, 0)
-	local direction = follow_unit_pos - position
-	local look_rotation = Quaternion.look(direction)
+	local var_4_1 = arg_4_0._follow_unit
+	local var_4_2 = Unit.local_position(var_4_1, 0) - arg_4_1
+	local var_4_3 = Quaternion.look(var_4_2)
 
-	Unit.set_local_rotation(unit, 0, look_rotation)
+	Unit.set_local_rotation(var_4_0, 0, var_4_3)
 
-	self.calculate_lerp = true
-	self.total_lerp_time = 2
-	self.lerp_time = 0
-	self.progress = 0
-	self.calculate_lerp = true
-	self.camera_start_pose = Matrix4x4Box(Unit.local_pose(unit, 0))
+	arg_4_0.calculate_lerp = true
+	arg_4_0.total_lerp_time = 2
+	arg_4_0.lerp_time = 0
+	arg_4_0.progress = 0
+	arg_4_0.calculate_lerp = true
+	arg_4_0.camera_start_pose = Matrix4x4Box(Unit.local_pose(var_4_0, 0))
 end
 
-CameraStateFollowThirdPersonTunneling.update = function (self, unit, input, dt, context, t)
-	local csm = self.csm
-	local camera_extension = self.camera_extension
-	local follow_unit = self._follow_unit
+function CameraStateFollowThirdPersonTunneling.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	local var_5_0 = arg_5_0.csm
+	local var_5_1 = arg_5_0.camera_extension
+	local var_5_2 = arg_5_0._follow_unit
 
-	if not Unit.alive(follow_unit) then
-		csm:change_state("idle")
+	if not Unit.alive(var_5_2) then
+		var_5_0:change_state("idle")
 
 		return
 	end
 
-	local external_state_change = camera_extension.external_state_change
-	local external_state_change_params = camera_extension.external_state_change_params
+	local var_5_3 = var_5_1.external_state_change
+	local var_5_4 = var_5_1.external_state_change_params
 
-	if external_state_change and external_state_change ~= self.name then
-		csm:change_state(external_state_change, external_state_change_params)
-		camera_extension:set_external_state_change(nil)
+	if var_5_3 and var_5_3 ~= arg_5_0.name then
+		var_5_0:change_state(var_5_3, var_5_4)
+		var_5_1:set_external_state_change(nil)
 
 		return
 	end
 
-	if self.calculate_lerp then
-		local total_lerp_time = self.total_lerp_time
-		local lerp_time = self.lerp_time
-		local progress = self.progress
-		local current_lerp_time = math.min(lerp_time + dt, total_lerp_time)
-		local current_progress = current_lerp_time / total_lerp_time
-		local smoothstep = math.smoothstep(current_progress, 0, 1)
-		local camera_target_pose = Unit.local_pose(follow_unit, 0)
-		local camera_pose = self.camera_start_pose:unbox()
-		local lerp_pose = Matrix4x4.lerp(camera_pose, camera_target_pose, smoothstep)
+	if arg_5_0.calculate_lerp then
+		local var_5_5 = arg_5_0.total_lerp_time
+		local var_5_6 = arg_5_0.lerp_time
+		local var_5_7 = arg_5_0.progress
+		local var_5_8 = math.min(var_5_6 + arg_5_3, var_5_5)
+		local var_5_9 = var_5_8 / var_5_5
+		local var_5_10 = math.smoothstep(var_5_9, 0, 1)
+		local var_5_11 = Unit.local_pose(var_5_2, 0)
+		local var_5_12 = arg_5_0.camera_start_pose:unbox()
+		local var_5_13 = Matrix4x4.lerp(var_5_12, var_5_11, var_5_10)
 
-		Unit.set_local_pose(unit, 0, lerp_pose)
+		Unit.set_local_pose(arg_5_1, 0, var_5_13)
 
-		if progress == 1 then
-			self.calculate_lerp = nil
-			self.camera_start_pose = nil
-			self.total_lerp_time = nil
-			self.lerp_time = nil
-			self.progress = nil
+		if var_5_7 == 1 then
+			arg_5_0.calculate_lerp = nil
+			arg_5_0.camera_start_pose = nil
+			arg_5_0.total_lerp_time = nil
+			arg_5_0.lerp_time = nil
+			arg_5_0.progress = nil
 		else
-			self.progress = current_progress
-			self.lerp_time = current_lerp_time
+			arg_5_0.progress = var_5_9
+			arg_5_0.lerp_time = var_5_8
 		end
 	end
 end

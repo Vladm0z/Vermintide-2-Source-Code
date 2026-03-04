@@ -1,17 +1,17 @@
-﻿-- chunkname: @scripts/settings/dlcs/carousel/carousel_badge_definitions.lua
+-- chunkname: @scripts/settings/dlcs/carousel/carousel_badge_definitions.lua
 
 BadgeDefinitions = BadgeDefinitions or {}
 
-local function random_badge()
+local function var_0_0()
 	return string.format("badge_generic_%02d", math.random(7))
 end
 
-local function random_color()
+local function var_0_1()
 	return {
 		255,
 		math.random(255),
 		math.random(255),
-		math.random(255),
+		math.random(255)
 	}
 end
 
@@ -22,14 +22,14 @@ BadgeDefinitions.kill_hero = {
 		255,
 		139,
 		0,
-		0,
+		0
 	},
 	victim_text_color = {
 		255,
 		139,
 		0,
-		0,
-	},
+		0
+	}
 }
 BadgeDefinitions.knock_down_hero = {
 	text = "vs_kill_notification_knockdown",
@@ -38,14 +38,14 @@ BadgeDefinitions.knock_down_hero = {
 		255,
 		173,
 		133,
-		0,
+		0
 	},
 	victim_text_color = {
 		255,
 		139,
 		0,
-		0,
-	},
+		0
+	}
 }
 BadgeDefinitions.kill_pactsworn = {
 	text = "vs_kill_notification_elimination",
@@ -54,12 +54,12 @@ BadgeDefinitions.kill_pactsworn = {
 		255,
 		139,
 		0,
-		0,
+		0
 	},
 	victim_text_color = {
 		255,
 		139,
 		0,
-		0,
-	},
+		0
+	}
 }

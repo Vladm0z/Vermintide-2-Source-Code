@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/ui/views/start_game_view/states/start_game_state_settings_overview.lua
+-- chunkname: @scripts/ui/views/start_game_view/states/start_game_state_settings_overview.lua
 
 require("scripts/ui/views/start_game_view/windows/start_game_window_adventure")
 require("scripts/ui/views/start_game_view/windows/start_game_window_adventure_settings")
@@ -32,1483 +32,1431 @@ require("scripts/ui/views/start_game_view/windows/start_game_window_additional_s
 require("scripts/ui/views/start_game_view/windows/start_game_window_lobby_browser_console")
 DLCUtils.require_list("start_game_windows")
 
-local definitions = local_require("scripts/ui/views/start_game_view/states/definitions/start_game_state_settings_overview_definitions")
-local widget_definitions = definitions.widgets
-local scenegraph_definition = definitions.scenegraph_definition
-local animation_definitions = definitions.animation_definitions
-local DO_RELOAD = false
-local STREAMING_PLACEHOLDER_TEXTURE_PATH = "gui/1080p/single_textures/generic/transparent_placeholder_texture"
+local var_0_0 = local_require("scripts/ui/views/start_game_view/states/definitions/start_game_state_settings_overview_definitions")
+local var_0_1 = var_0_0.widgets
+local var_0_2 = var_0_0.scenegraph_definition
+local var_0_3 = var_0_0.animation_definitions
+local var_0_4 = false
+local var_0_5 = "gui/1080p/single_textures/generic/transparent_placeholder_texture"
 
 StartGameStateSettingsOverview = class(StartGameStateSettingsOverview)
 StartGameStateSettingsOverview.NAME = "StartGameStateSettingsOverview"
 
-StartGameStateSettingsOverview.on_enter = function (self, params)
+function StartGameStateSettingsOverview.on_enter(arg_1_0, arg_1_1)
 	print("[StartGameState] Enter Substate StartGameStateSettingsOverview")
 
-	self.parent = params.parent
-	self._mechanism_name = Managers.mechanism:current_mechanism_name()
+	arg_1_0.parent = arg_1_1.parent
+	arg_1_0._mechanism_name = Managers.mechanism:current_mechanism_name()
 
-	self:_setup_menu_layout(self._mechanism_name)
+	arg_1_0:_setup_menu_layout(arg_1_0._mechanism_name)
 
-	self._wwise_world = params.wwise_world
-	self._hero_name = params.hero_name
+	arg_1_0._wwise_world = arg_1_1.wwise_world
+	arg_1_0._hero_name = arg_1_1.hero_name
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_1_0 = arg_1_1.ingame_ui_context
 
-	self._ingame_ui_context = ingame_ui_context
-	self._ui_renderer = ingame_ui_context.ui_renderer
-	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self._input_manager = ingame_ui_context.input_manager
-	self._statistics_db = ingame_ui_context.statistics_db
-	self._render_settings = {
-		snap_pixel_positions = true,
+	arg_1_0._ingame_ui_context = var_1_0
+	arg_1_0._ui_renderer = var_1_0.ui_renderer
+	arg_1_0._ui_top_renderer = var_1_0.ui_top_renderer
+	arg_1_0._input_manager = var_1_0.input_manager
+	arg_1_0._statistics_db = var_1_0.statistics_db
+	arg_1_0._render_settings = {
+		snap_pixel_positions = true
 	}
-	self._network_lobby = ingame_ui_context.network_lobby
-	self._is_in_inn = ingame_ui_context.is_in_inn
-	self._ingame_ui = ingame_ui_context.ingame_ui
+	arg_1_0._network_lobby = var_1_0.network_lobby
+	arg_1_0._is_in_inn = var_1_0.is_in_inn
+	arg_1_0._ingame_ui = var_1_0.ingame_ui
+	arg_1_0._stats_id = Managers.player:local_player():stats_id()
+	arg_1_0._animations = {}
+	arg_1_0._ui_animations = {}
+	arg_1_0._cloned_materials_by_reference = {}
+	arg_1_0._gui_by_cloned_material_reference = {}
+	arg_1_0._material_references_to_unload = {}
+	arg_1_0._is_game_private = false
+	arg_1_0._always_host = false
+	arg_1_0._use_strict_matchmaking = true
+	arg_1_0._is_open = true
+	arg_1_0._selected_weave_objective_index = 1
 
-	local player_manager = Managers.player
-	local local_player = player_manager:local_player()
+	arg_1_0:_create_ui_elements(arg_1_1)
+	arg_1_0:_create_hdr_gui()
 
-	self._stats_id = local_player:stats_id()
-	self._animations = {}
-	self._ui_animations = {}
-	self._cloned_materials_by_reference = {}
-	self._gui_by_cloned_material_reference = {}
-	self._material_references_to_unload = {}
-	self._is_game_private = false
-	self._always_host = false
-	self._use_strict_matchmaking = true
-	self._is_open = true
-	self._selected_weave_objective_index = 1
+	if arg_1_1.initial_state then
+		arg_1_1.initial_state = nil
 
-	self:_create_ui_elements(params)
-	self:_create_hdr_gui()
-
-	if params.initial_state then
-		params.initial_state = nil
-
-		self:_start_transition_animation("on_enter", "on_enter")
+		arg_1_0:_start_transition_animation("on_enter", "on_enter")
 	end
 
-	local window_params = {
-		wwise_world = self._wwise_world,
-		ingame_ui_context = ingame_ui_context,
-		parent = self,
-		windows_settings = self._windows_settings,
+	local var_1_1 = {
+		wwise_world = arg_1_0._wwise_world,
+		ingame_ui_context = var_1_0,
+		parent = arg_1_0,
+		windows_settings = arg_1_0._windows_settings,
 		input_service = FAKE_INPUT_SERVICE,
-		layout_settings = self._layout_settings,
-		start_state = params.start_state,
-		use_gamepad_layout = self._gamepad_style_active,
-		mechanism_name = self._mechanism_name,
+		layout_settings = arg_1_0._layout_settings,
+		start_state = arg_1_1.start_state,
+		use_gamepad_layout = arg_1_0._gamepad_style_active,
+		mechanism_name = arg_1_0._mechanism_name
 	}
 
-	self:set_confirm_button_visibility(false)
+	arg_1_0:set_confirm_button_visibility(false)
 
-	if self._gamepad_style_active then
-		self:_setup_gamepad_gui()
-		self:disable_player_world()
+	if arg_1_0._gamepad_style_active then
+		arg_1_0:_setup_gamepad_gui()
+		arg_1_0:disable_player_world()
 	end
 
-	self:_initial_windows_setups(window_params)
-	self:_calculate_current_weave()
+	arg_1_0:_initial_windows_setups(var_1_1)
+	arg_1_0:_calculate_current_weave()
 
-	self._input_paused = false
+	arg_1_0._input_paused = false
 
 	Managers.state.event:trigger("tutorial_trigger", "start_game_menu_opened")
 end
 
-StartGameStateSettingsOverview._calculate_current_weave = function (self)
-	local ignore_dlc_check = false
-	local weave_templates = WeaveSettings.templates_ordered
-	local num_entries = #weave_templates
-	local statistics_db = Managers.player:statistics_db()
-	local stats_id = Managers.player:local_player():stats_id()
-	local highest_consecutive_unlocked_weave = 1
-	local highest_consecutive_unlocked_weave_found = false
+function StartGameStateSettingsOverview._calculate_current_weave(arg_2_0)
+	local var_2_0 = false
+	local var_2_1 = WeaveSettings.templates_ordered
+	local var_2_2 = #var_2_1
+	local var_2_3 = Managers.player:statistics_db()
+	local var_2_4 = Managers.player:local_player():stats_id()
+	local var_2_5 = 1
+	local var_2_6 = false
 
-	for i = 1, num_entries do
-		local template = weave_templates[i]
-		local weave_completed = LevelUnlockUtils.weave_unlocked(statistics_db, stats_id, template.name, ignore_dlc_check)
+	for iter_2_0 = 1, var_2_2 do
+		local var_2_7 = var_2_1[iter_2_0]
+		local var_2_8 = LevelUnlockUtils.weave_unlocked(var_2_3, var_2_4, var_2_7.name, var_2_0)
 
-		if (weave_completed or highest_consecutive_unlocked_weave == i) and not LevelUnlockUtils.weave_disabled(template.name) then
-			if weave_completed and not highest_consecutive_unlocked_weave_found then
-				if weave_templates[i + 1] then
-					highest_consecutive_unlocked_weave = i + 1
+		if (var_2_8 or var_2_5 == iter_2_0) and not LevelUnlockUtils.weave_disabled(var_2_7.name) then
+			if var_2_8 and not var_2_6 then
+				if var_2_1[iter_2_0 + 1] then
+					var_2_5 = iter_2_0 + 1
 				end
 			else
-				highest_consecutive_unlocked_weave_found = true
+				var_2_6 = true
 			end
 		end
 	end
 
-	local weave_template = highest_consecutive_unlocked_weave and weave_templates[highest_consecutive_unlocked_weave] or weave_templates[1]
-	local weave_name = weave_template.name
+	arg_2_0._next_weave = (var_2_5 and var_2_1[var_2_5] or var_2_1[1]).name
 
-	self._next_weave = weave_name
-
-	if not self._selected_weave_id then
-		self:set_selected_weave_id(self._next_weave)
-		self:set_selected_weave_objective_index(1)
+	if not arg_2_0._selected_weave_id then
+		arg_2_0:set_selected_weave_id(arg_2_0._next_weave)
+		arg_2_0:set_selected_weave_objective_index(1)
 	end
 end
 
-StartGameStateSettingsOverview._setup_menu_layout = function (self, mechanism_name)
-	local layout_settings
-	local use_gamepad_layout = IS_CONSOLE or Managers.input:is_device_active("gamepad") or not UISettings.use_pc_menu_layout or MechanismSettings[mechanism_name].use_gamepad_layout
+function StartGameStateSettingsOverview._setup_menu_layout(arg_3_0, arg_3_1)
+	local var_3_0
+	local var_3_1 = IS_CONSOLE or Managers.input:is_device_active("gamepad") or not UISettings.use_pc_menu_layout or MechanismSettings[arg_3_1].use_gamepad_layout
 
-	if use_gamepad_layout then
-		layout_settings = local_require("scripts/ui/views/start_game_view/states/start_game_window_layout_console")
+	if var_3_1 then
+		var_3_0 = local_require("scripts/ui/views/start_game_view/states/start_game_window_layout_console")
 	else
-		layout_settings = local_require("scripts/ui/views/start_game_view/states/start_game_window_layout")
+		var_3_0 = local_require("scripts/ui/views/start_game_view/states/start_game_window_layout")
 	end
 
-	self._generic_input_actions = layout_settings.generic_input_actions
-	self._video_resources = layout_settings.video_resources
-	self._windows_settings = layout_settings.windows
-	self._max_active_windows = layout_settings.max_active_windows
-	self._max_alignment_windows = layout_settings.max_alignment_windows
-	self._gamepad_style_active = use_gamepad_layout
-	self._layout_settings = layout_settings
-	self._window_layouts = layout_settings.window_layouts
-	self._mechanism_quickplay_settings = layout_settings.mechanism_quickplay_settings
-	self._mechanism_custom_game_settings = layout_settings.mechanism_custom_game_settings
-	self._mechanism_twitch_settings = layout_settings.mechanism_twitch_settings
-	self._save_data_table_maps = layout_settings.save_data_table_maps
+	arg_3_0._generic_input_actions = var_3_0.generic_input_actions
+	arg_3_0._video_resources = var_3_0.video_resources
+	arg_3_0._windows_settings = var_3_0.windows
+	arg_3_0._max_active_windows = var_3_0.max_active_windows
+	arg_3_0._max_alignment_windows = var_3_0.max_alignment_windows
+	arg_3_0._gamepad_style_active = var_3_1
+	arg_3_0._layout_settings = var_3_0
+	arg_3_0._window_layouts = var_3_0.window_layouts
+	arg_3_0._mechanism_quickplay_settings = var_3_0.mechanism_quickplay_settings
+	arg_3_0._mechanism_custom_game_settings = var_3_0.mechanism_custom_game_settings
+	arg_3_0._mechanism_twitch_settings = var_3_0.mechanism_twitch_settings
+	arg_3_0._save_data_table_maps = var_3_0.save_data_table_maps
 end
 
-StartGameStateSettingsOverview._create_ui_elements = function (self, params)
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+function StartGameStateSettingsOverview._create_ui_elements(arg_4_0, arg_4_1)
+	arg_4_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 
-	local widgets = {}
-	local widgets_by_name = {}
+	local var_4_0 = {}
+	local var_4_1 = {}
 
-	for name, widget_definition in pairs(widget_definitions) do
-		if widget_definition then
-			local widget = UIWidget.init(widget_definition)
+	for iter_4_0, iter_4_1 in pairs(var_0_1) do
+		if iter_4_1 then
+			local var_4_2 = UIWidget.init(iter_4_1)
 
-			widgets[#widgets + 1] = widget
-			widgets_by_name[name] = widget
+			var_4_0[#var_4_0 + 1] = var_4_2
+			var_4_1[iter_4_0] = var_4_2
 		end
 	end
 
-	self._widgets = widgets
-	self._widgets_by_name = widgets_by_name
+	arg_4_0._widgets = var_4_0
+	arg_4_0._widgets_by_name = var_4_1
 
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_4_0._ui_renderer)
 
-	self.ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
+	arg_4_0.ui_animator = UIAnimator:new(arg_4_0._ui_scenegraph, var_0_3)
 
-	local gui_layer = UILayer.default + 30
-	local input_service = self:input_service()
-	local use_fullscreen_layout = self._gamepad_style_active
+	local var_4_3 = UILayer.default + 30
+	local var_4_4 = arg_4_0:input_service()
+	local var_4_5 = arg_4_0._gamepad_style_active
 
-	if self._generic_input_actions then
-		self._menu_input_description = MenuInputDescriptionUI:new(nil, self._ui_top_renderer, input_service, 8, gui_layer, self._generic_input_actions.default, use_fullscreen_layout)
+	if arg_4_0._generic_input_actions then
+		arg_4_0._menu_input_description = MenuInputDescriptionUI:new(nil, arg_4_0._ui_top_renderer, var_4_4, 8, var_4_3, arg_4_0._generic_input_actions.default, var_4_5)
 
-		self._menu_input_description:set_input_description(nil)
+		arg_4_0._menu_input_description:set_input_description(nil)
 	end
 
-	self:_create_video_players()
+	arg_4_0:_create_video_players()
 end
 
-StartGameStateSettingsOverview._create_hdr_gui = function (self)
-	local world_flags = {
+function StartGameStateSettingsOverview._create_hdr_gui(arg_5_0)
+	local var_5_0 = {
 		Application.DISABLE_SOUND,
-		Application.DISABLE_ESRAM,
+		Application.DISABLE_ESRAM
 	}
-	local layer = 800
-	local world_name = "start_game_menu_hdr_view"
-	local viewport_name = "start_game_menu_hdr_view"
-	local shading_environment = "environment/ui_hdr"
-	local world = Managers.world:create_world(world_name, shading_environment, nil, layer, unpack(world_flags))
-	local viewport_type = "overlay"
-	local viewport = ScriptWorld.create_viewport(world, viewport_name, viewport_type, layer)
+	local var_5_1 = 800
+	local var_5_2 = "start_game_menu_hdr_view"
+	local var_5_3 = "start_game_menu_hdr_view"
+	local var_5_4 = "environment/ui_hdr"
+	local var_5_5 = Managers.world:create_world(var_5_2, var_5_4, nil, var_5_1, unpack(var_5_0))
+	local var_5_6 = "overlay"
+	local var_5_7 = ScriptWorld.create_viewport(var_5_5, var_5_3, var_5_6, var_5_1)
 
-	self._ui_hdr_viewport_name = viewport_name
-	self._ui_hdr_world_name = world_name
-	self._ui_hdr_world = world
-	self._ui_hdr_renderer = self._ingame_ui:create_ui_renderer(world, false, self._is_in_inn)
+	arg_5_0._ui_hdr_viewport_name = var_5_3
+	arg_5_0._ui_hdr_world_name = var_5_2
+	arg_5_0._ui_hdr_world = var_5_5
+	arg_5_0._ui_hdr_renderer = arg_5_0._ingame_ui:create_ui_renderer(var_5_5, false, arg_5_0._is_in_inn)
 end
 
-StartGameStateSettingsOverview.hdr_renderer = function (self)
-	return self._ui_hdr_renderer
+function StartGameStateSettingsOverview.hdr_renderer(arg_6_0)
+	return arg_6_0._ui_hdr_renderer
 end
 
-StartGameStateSettingsOverview.ui_renderer = function (self)
-	if self._gamepad_style_active then
-		return self._gui_data.bottom.renderer
+function StartGameStateSettingsOverview.ui_renderer(arg_7_0)
+	if arg_7_0._gamepad_style_active then
+		return arg_7_0._gui_data.bottom.renderer
 	else
-		return self.ui_renderer
+		return arg_7_0.ui_renderer
 	end
 end
 
-StartGameStateSettingsOverview._create_video_players = function (self)
-	self:_destroy_video_players()
+function StartGameStateSettingsOverview._create_video_players(arg_8_0)
+	arg_8_0:_destroy_video_players()
 
-	local video_players = {}
+	local var_8_0 = {}
 
-	if self._video_resources then
-		local world = self._ui_top_renderer.world
+	if arg_8_0._video_resources then
+		local var_8_1 = arg_8_0._ui_top_renderer.world
 
-		for name, settings in pairs(self._video_resources) do
-			local resource = settings.resource
-			local video_player = World.create_video_player(world, resource, true, false)
+		for iter_8_0, iter_8_1 in pairs(arg_8_0._video_resources) do
+			local var_8_2 = iter_8_1.resource
 
-			video_players[name] = video_player
+			var_8_0[iter_8_0] = World.create_video_player(var_8_1, var_8_2, true, false)
 		end
 	end
 
-	self._video_players = video_players
+	arg_8_0._video_players = var_8_0
 end
 
-StartGameStateSettingsOverview._destroy_video_players = function (self)
-	local video_players = self._video_players
+function StartGameStateSettingsOverview._destroy_video_players(arg_9_0)
+	local var_9_0 = arg_9_0._video_players
 
-	if video_players then
-		local world = self._ui_top_renderer.world
+	if var_9_0 then
+		local var_9_1 = arg_9_0._ui_top_renderer.world
 
-		for name, video_player in pairs(video_players) do
-			World.destroy_video_player(world, video_player)
+		for iter_9_0, iter_9_1 in pairs(var_9_0) do
+			World.destroy_video_player(var_9_1, iter_9_1)
 		end
 	end
 
-	self._video_players = nil
+	arg_9_0._video_players = nil
 end
 
-StartGameStateSettingsOverview.get_video_player_by_name = function (self, name)
-	return self._video_players[name]
+function StartGameStateSettingsOverview.get_video_player_by_name(arg_10_0, arg_10_1)
+	return arg_10_0._video_players[arg_10_1]
 end
 
-StartGameStateSettingsOverview._setup_gamepad_gui = function (self)
-	if self._is_in_inn then
-		local gui_data = {}
-		local world_name = "start_weave_gamepad"
-		local renderer, world, viewport_name = self:_setup_gamepad_renderer(world_name, 1, GameSettingsDevelopment.default_environment)
+function StartGameStateSettingsOverview._setup_gamepad_gui(arg_11_0)
+	if arg_11_0._is_in_inn then
+		local var_11_0 = {}
+		local var_11_1 = "start_weave_gamepad"
+		local var_11_2, var_11_3, var_11_4 = arg_11_0:_setup_gamepad_renderer(var_11_1, 1, GameSettingsDevelopment.default_environment)
 
-		gui_data.bottom = {
-			renderer = renderer,
-			world = world,
-			viewport_name = viewport_name,
+		var_11_0.bottom = {
+			renderer = var_11_2,
+			world = var_11_3,
+			viewport_name = var_11_4
 		}
-		self._gui_data = gui_data
+		arg_11_0._gui_data = var_11_0
 	end
 end
 
-StartGameStateSettingsOverview._setup_gamepad_renderer = function (self, name, layer, shading_environment)
-	local world_flags = {
+function StartGameStateSettingsOverview._setup_gamepad_renderer(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	local var_12_0 = {
 		Application.DISABLE_SOUND,
-		Application.DISABLE_ESRAM,
+		Application.DISABLE_ESRAM
 	}
-	local world_name = name
-	local viewport_name = name
-	local world = Managers.world:create_world(world_name, shading_environment, nil, layer, unpack(world_flags))
-	local viewport_type = "overlay"
-	local viewport = ScriptWorld.create_viewport(world, viewport_name, viewport_type, 999)
-	local renderer = self._ingame_ui:create_ui_renderer(world, false, self._is_in_inn)
+	local var_12_1 = arg_12_1
+	local var_12_2 = arg_12_1
+	local var_12_3 = Managers.world:create_world(var_12_1, arg_12_3, nil, arg_12_2, unpack(var_12_0))
+	local var_12_4 = "overlay"
+	local var_12_5 = ScriptWorld.create_viewport(var_12_3, var_12_2, var_12_4, 999)
 
-	return renderer, world, viewport_name
+	return arg_12_0._ingame_ui:create_ui_renderer(var_12_3, false, arg_12_0._is_in_inn), var_12_3, var_12_2
 end
 
-StartGameStateSettingsOverview._destroy_gamepad_gui = function (self)
-	local gui_data = self._gui_data
+function StartGameStateSettingsOverview._destroy_gamepad_gui(arg_13_0)
+	local var_13_0 = arg_13_0._gui_data
 
-	if gui_data then
-		for _, data in pairs(gui_data) do
-			local renderer = data.renderer
-			local world = data.world
-			local viewport_name = data.viewport_name
+	if var_13_0 then
+		for iter_13_0, iter_13_1 in pairs(var_13_0) do
+			local var_13_1 = iter_13_1.renderer
+			local var_13_2 = iter_13_1.world
+			local var_13_3 = iter_13_1.viewport_name
 
-			UIRenderer.destroy(renderer, world)
-			ScriptWorld.destroy_viewport(world, viewport_name)
-			Managers.world:destroy_world(world)
+			UIRenderer.destroy(var_13_1, var_13_2)
+			ScriptWorld.destroy_viewport(var_13_2, var_13_3)
+			Managers.world:destroy_world(var_13_2)
 		end
 
-		self._gui_data = nil
+		arg_13_0._gui_data = nil
 	end
 end
 
-StartGameStateSettingsOverview.disable_player_world = function (self)
-	if not self._player_world_disabled then
-		self._player_world_disabled = true
+function StartGameStateSettingsOverview.disable_player_world(arg_14_0)
+	if not arg_14_0._player_world_disabled then
+		arg_14_0._player_world_disabled = true
 
-		local viewport_name = "player_1"
-		local world = Managers.world:world("level_world")
-		local viewport = ScriptWorld.viewport(world, viewport_name)
+		local var_14_0 = "player_1"
+		local var_14_1 = Managers.world:world("level_world")
+		local var_14_2 = ScriptWorld.viewport(var_14_1, var_14_0)
 
-		ScriptWorld.deactivate_viewport(world, viewport)
+		ScriptWorld.deactivate_viewport(var_14_1, var_14_2)
 	end
 end
 
-StartGameStateSettingsOverview.enable_player_world = function (self)
-	if self._player_world_disabled then
-		self._player_world_disabled = false
+function StartGameStateSettingsOverview.enable_player_world(arg_15_0)
+	if arg_15_0._player_world_disabled then
+		arg_15_0._player_world_disabled = false
 
-		local viewport_name = "player_1"
-		local world = Managers.world:world("level_world")
-		local viewport = ScriptWorld.viewport(world, viewport_name)
+		local var_15_0 = "player_1"
+		local var_15_1 = Managers.world:world("level_world")
+		local var_15_2 = ScriptWorld.viewport(var_15_1, var_15_0)
 
-		ScriptWorld.activate_viewport(world, viewport)
+		ScriptWorld.activate_viewport(var_15_1, var_15_2)
 	end
 end
 
-StartGameStateSettingsOverview._start_layout_name = function (self)
-	local start_layout_name = PlayerData.mission_selection.start_layout
-	local layout_setting = self:get_layout_setting_by_name(start_layout_name)
+function StartGameStateSettingsOverview._start_layout_name(arg_16_0)
+	local var_16_0 = PlayerData.mission_selection.start_layout
+	local var_16_1 = arg_16_0:get_layout_setting_by_name(var_16_0)
 
-	if layout_setting and self:can_add_layout(layout_setting) then
-		return start_layout_name
+	if var_16_1 and arg_16_0:can_add_layout(var_16_1) then
+		return var_16_0
 	else
-		return self:_get_first_game_mode_option_layout()
+		return arg_16_0:_get_first_game_mode_option_layout()
 	end
 end
 
-StartGameStateSettingsOverview.can_add_layout = function (self, layout_setting)
-	local can_add_function = layout_setting.can_add_function
+function StartGameStateSettingsOverview.can_add_layout(arg_17_0, arg_17_1)
+	local var_17_0 = arg_17_1.can_add_function
 
-	return can_add_function and can_add_function(self)
+	return var_17_0 and var_17_0(arg_17_0)
 end
 
-StartGameStateSettingsOverview._initial_windows_setups = function (self, params)
-	local active_windows = {}
+function StartGameStateSettingsOverview._initial_windows_setups(arg_18_0, arg_18_1)
+	arg_18_0._active_windows = {}
+	arg_18_0._window_params = arg_18_1
 
-	self._active_windows = active_windows
-	self._window_params = params
+	local var_18_0
+	local var_18_1 = Managers.twitch and (Managers.twitch:is_connecting() or Managers.twitch:is_connected()) and (Managers.mechanism:current_mechanism_name() == "deus" and "deus_twitch" or "twitch") or arg_18_1.start_state or arg_18_0:_start_layout_name()
 
-	local start_layout_name
-
-	start_layout_name = Managers.twitch and (Managers.twitch:is_connecting() or Managers.twitch:is_connected()) and (Managers.mechanism:current_mechanism_name() == "deus" and "deus_twitch" or "twitch") or params.start_state or self:_start_layout_name()
-
-	self:set_layout_by_name(start_layout_name)
-	self:set_top_level_layout_name(start_layout_name)
+	arg_18_0:set_layout_by_name(var_18_1)
+	arg_18_0:set_top_level_layout_name(var_18_1)
 end
 
-StartGameStateSettingsOverview.window_input_service = function (self)
-	return self._show_difficulty_option and FAKE_INPUT_SERVICE or self:input_service()
+function StartGameStateSettingsOverview.window_input_service(arg_19_0)
+	return arg_19_0._show_difficulty_option and FAKE_INPUT_SERVICE or arg_19_0:input_service()
 end
 
-StartGameStateSettingsOverview._close_window_at_index = function (self, window_index)
-	local active_windows = self._active_windows
-	local params = self._window_params
-	local current_window = active_windows[window_index]
+function StartGameStateSettingsOverview._close_window_at_index(arg_20_0, arg_20_1)
+	local var_20_0 = arg_20_0._active_windows
+	local var_20_1 = arg_20_0._window_params
+	local var_20_2 = var_20_0[arg_20_1]
 
-	if current_window and current_window.on_exit then
-		current_window:on_exit(params)
+	if var_20_2 and var_20_2.on_exit then
+		var_20_2:on_exit(var_20_1)
 	end
 
-	active_windows[window_index] = nil
+	var_20_0[arg_20_1] = nil
 end
 
-StartGameStateSettingsOverview._change_window = function (self, window_index, window_name)
-	local active_windows = self._active_windows
-	local new_window_settings = self._windows_settings[window_name]
-	local window_class_name = new_window_settings.class_name
-	local current_window = active_windows[window_index]
+function StartGameStateSettingsOverview._change_window(arg_21_0, arg_21_1, arg_21_2)
+	local var_21_0 = arg_21_0._active_windows
+	local var_21_1 = arg_21_0._windows_settings[arg_21_2]
+	local var_21_2 = var_21_1.class_name
+	local var_21_3 = var_21_0[arg_21_1]
 
-	if current_window then
-		if current_window.NAME == window_class_name then
+	if var_21_3 then
+		if var_21_3.NAME == var_21_2 then
 			return
 		end
 
-		self:_close_window_at_index(window_index)
+		arg_21_0:_close_window_at_index(arg_21_1)
 	end
 
-	local window_class = rawget(_G, window_class_name)
-	local window = window_class:new()
-	local ignore_alignment = new_window_settings.ignore_alignment
-	local parent_window_name = new_window_settings.parent_window_name
-	local window_offset
+	local var_21_4 = rawget(_G, var_21_2):new()
+	local var_21_5 = var_21_1.ignore_alignment
+	local var_21_6 = var_21_1.parent_window_name
+	local var_21_7
 
-	if not ignore_alignment then
-		local window_default_settings = UISettings.game_start_windows
-		local window_size = window_default_settings.size
-		local window_spacing = window_default_settings.spacing or 10
-		local window_width = window_size[1]
-		local max_active_windows = self._max_alignment_windows or self._max_active_windows
-		local total_spacing = window_spacing * (max_active_windows - 1)
-		local total_windows_width = max_active_windows * window_width
-		local start_width_offset = -(total_windows_width / 2 + window_width / 2) - (total_spacing / 2 + window_spacing)
-		local window_width_offset = start_width_offset + window_index * window_width + window_index * window_spacing
+	if not var_21_5 then
+		local var_21_8 = UISettings.game_start_windows
+		local var_21_9 = var_21_8.size
+		local var_21_10 = var_21_8.spacing or 10
+		local var_21_11 = var_21_9[1]
+		local var_21_12 = arg_21_0._max_alignment_windows or arg_21_0._max_active_windows
+		local var_21_13 = var_21_10 * (var_21_12 - 1)
+		local var_21_14 = -(var_21_12 * var_21_11 / 2 + var_21_11 / 2) - (var_21_13 / 2 + var_21_10) + arg_21_1 * var_21_11 + arg_21_1 * var_21_10
 
-		window_offset = {
-			window_width_offset,
+		var_21_7 = {
+			var_21_14,
 			0,
-			3,
+			3
 		}
 	end
 
-	if window.on_enter then
-		local params = self._window_params
+	if var_21_4.on_enter then
+		local var_21_15 = arg_21_0._window_params
 
-		window:on_enter(params, window_offset, parent_window_name)
+		var_21_4:on_enter(var_21_15, var_21_7, var_21_6)
 	end
 
-	active_windows[window_index] = window
+	var_21_0[arg_21_1] = var_21_4
 end
 
-StartGameStateSettingsOverview._set_new_save_data_table = function (self, table_name)
-	if table_name then
-		local mission_selection_save_data = PlayerData.mission_selection
-		local mission_select_data = mission_selection_save_data[table_name]
+function StartGameStateSettingsOverview._set_new_save_data_table(arg_22_0, arg_22_1)
+	if arg_22_1 then
+		local var_22_0 = PlayerData.mission_selection
+		local var_22_1 = var_22_0[arg_22_1]
 
-		if not mission_select_data or not self:_validate_mission_save_data(mission_select_data) then
-			mission_selection_save_data[table_name] = {}
+		if not var_22_1 or not arg_22_0:_validate_mission_save_data(var_22_1) then
+			var_22_0[arg_22_1] = {}
 		end
 
-		local table = mission_selection_save_data[table_name]
+		local var_22_2 = var_22_0[arg_22_1]
 
-		self._layout_save_settings = table
+		arg_22_0._layout_save_settings = var_22_2
 
-		self:set_private_option_enabled(table.is_private)
-		self:set_always_host_option_enabled(table.always_host)
-		self:set_strict_matchmaking_option_enabled(table.use_strict_matchmaking)
-		self:set_selected_level_id(table.level_id)
-		self:set_difficulty_option(table.difficulty_key)
-		self:set_selected_weave_id(table.weave_id)
-		self:set_dedicated_or_player_hosted_search(table.use_dedicated_win_servers, table.use_dedicated_aws_servers, table.use_player_hosted)
+		arg_22_0:set_private_option_enabled(var_22_2.is_private)
+		arg_22_0:set_always_host_option_enabled(var_22_2.always_host)
+		arg_22_0:set_strict_matchmaking_option_enabled(var_22_2.use_strict_matchmaking)
+		arg_22_0:set_selected_level_id(var_22_2.level_id)
+		arg_22_0:set_difficulty_option(var_22_2.difficulty_key)
+		arg_22_0:set_selected_weave_id(var_22_2.weave_id)
+		arg_22_0:set_dedicated_or_player_hosted_search(var_22_2.use_dedicated_win_servers, var_22_2.use_dedicated_aws_servers, var_22_2.use_player_hosted)
 	else
-		self._layout_save_settings = nil
+		arg_22_0._layout_save_settings = nil
 	end
 end
 
-StartGameStateSettingsOverview._validate_mission_save_data = function (self, mission_save_data)
-	local level_id = mission_save_data and mission_save_data.level_id
+function StartGameStateSettingsOverview._validate_mission_save_data(arg_23_0, arg_23_1)
+	local var_23_0 = arg_23_1 and arg_23_1.level_id
 
-	if not level_id then
+	if not var_23_0 then
 		return true
-	elseif not rawget(LevelSettings, level_id) then
+	elseif not rawget(LevelSettings, var_23_0) then
 		return false
 	end
 
-	local stats_id = self._stats_id
-	local statistics_db = self._statistics_db
+	local var_23_1 = arg_23_0._stats_id
+	local var_23_2 = arg_23_0._statistics_db
 
-	return LevelUnlockUtils.level_unlocked(statistics_db, stats_id, level_id)
+	return LevelUnlockUtils.level_unlocked(var_23_2, var_23_1, var_23_0)
 end
 
-StartGameStateSettingsOverview.close_on_exit = function (self)
-	return self._close_on_exit
+function StartGameStateSettingsOverview.close_on_exit(arg_24_0)
+	return arg_24_0._close_on_exit
 end
 
-StartGameStateSettingsOverview.set_hide_panel_title_butttons = function (self, bool)
-	self._panel_title_buttons_hidden = bool
+function StartGameStateSettingsOverview.set_hide_panel_title_butttons(arg_25_0, arg_25_1)
+	arg_25_0._panel_title_buttons_hidden = arg_25_1
 end
 
-StartGameStateSettingsOverview.panel_title_buttons_hidden = function (self)
-	return self._panel_title_buttons_hidden
+function StartGameStateSettingsOverview.panel_title_buttons_hidden(arg_26_0)
+	return arg_26_0._panel_title_buttons_hidden
 end
 
-StartGameStateSettingsOverview.get_current_window_layout_settings = function (self)
-	for index, layout_setting in ipairs(self._window_layouts) do
-		if layout_setting.name == self._selected_layout_name then
-			return layout_setting
+function StartGameStateSettingsOverview.get_current_window_layout_settings(arg_27_0)
+	for iter_27_0, iter_27_1 in ipairs(arg_27_0._window_layouts) do
+		if iter_27_1.name == arg_27_0._selected_layout_name then
+			return iter_27_1
 		end
 	end
 end
 
-StartGameStateSettingsOverview.set_layout_by_name = function (self, name)
-	printf("[StartGameStateSettingsOverview]:set_layout_by_name() - %s", name)
+function StartGameStateSettingsOverview.set_layout_by_name(arg_28_0, arg_28_1)
+	printf("[StartGameStateSettingsOverview]:set_layout_by_name() - %s", arg_28_1)
 
-	local index = table.find_by_key(self._window_layouts, "name", name)
+	local var_28_0 = table.find_by_key(arg_28_0._window_layouts, "name", arg_28_1)
 
-	if not index then
-		ferror("[StartGameStateSettingsOverview]:set_layout_by_name() - Could not find a layout with name %s. Layouts: (%s)", name, table.concat(table.select_array(self._window_layouts, function (_, l)
-			return l.name
+	if not var_28_0 then
+		ferror("[StartGameStateSettingsOverview]:set_layout_by_name() - Could not find a layout with name %s. Layouts: (%s)", arg_28_1, table.concat(table.select_array(arg_28_0._window_layouts, function(arg_29_0, arg_29_1)
+			return arg_29_1.name
 		end), ", "))
 	end
 
-	self:set_layout(index)
+	arg_28_0:set_layout(var_28_0)
 end
 
-StartGameStateSettingsOverview.get_mechanism_name = function (self)
-	return self._mechanism_name
+function StartGameStateSettingsOverview.get_mechanism_name(arg_30_0)
+	return arg_30_0._mechanism_name
 end
 
-StartGameStateSettingsOverview.is_in_mechanism = function (self, mechanism_name)
-	local is_in_weave_menu = self.parent:on_enter_sub_state() == "weave_quickplay"
+function StartGameStateSettingsOverview.is_in_mechanism(arg_31_0, arg_31_1)
+	local var_31_0 = arg_31_0.parent:on_enter_sub_state() == "weave_quickplay"
 
-	if mechanism_name == "weave" then
-		return self._mechanism_name == "adventure" and is_in_weave_menu
+	if arg_31_1 == "weave" then
+		return arg_31_0._mechanism_name == "adventure" and var_31_0
 	else
-		return self._mechanism_name == mechanism_name and not is_in_weave_menu
+		return arg_31_0._mechanism_name == arg_31_1 and not var_31_0
 	end
 end
 
-StartGameStateSettingsOverview.is_weekly_event_active = function (self)
-	local live_event_interface = Managers.backend:get_interface("live_events")
-	local game_mode_data = live_event_interface:get_weekly_events_game_mode_data()
-
-	return game_mode_data ~= nil
+function StartGameStateSettingsOverview.is_weekly_event_active(arg_32_0)
+	return Managers.backend:get_interface("live_events"):get_weekly_events_game_mode_data() ~= nil
 end
 
-StartGameStateSettingsOverview.get_quickplay_settings = function (self, mechanism_name)
-	return self._mechanism_quickplay_settings[mechanism_name or self._mechanism_name]
+function StartGameStateSettingsOverview.get_quickplay_settings(arg_33_0, arg_33_1)
+	return arg_33_0._mechanism_quickplay_settings[arg_33_1 or arg_33_0._mechanism_name]
 end
 
-StartGameStateSettingsOverview.get_custom_game_settings = function (self, mechanism_name)
-	return self._mechanism_custom_game_settings[mechanism_name or self._mechanism_name]
+function StartGameStateSettingsOverview.get_custom_game_settings(arg_34_0, arg_34_1)
+	return arg_34_0._mechanism_custom_game_settings[arg_34_1 or arg_34_0._mechanism_name]
 end
 
-StartGameStateSettingsOverview.get_twitch_settings = function (self, mechanism_name)
-	return self._mechanism_twitch_settings[mechanism_name or self._mechanism_name]
+function StartGameStateSettingsOverview.get_twitch_settings(arg_35_0, arg_35_1)
+	return arg_35_0._mechanism_twitch_settings[arg_35_1 or arg_35_0._mechanism_name]
 end
 
-StartGameStateSettingsOverview.get_save_data_table_map = function (self, mechanism_name)
-	return self._save_data_table_maps[mechanism_name or self._mechanism_name]
+function StartGameStateSettingsOverview.get_save_data_table_map(arg_36_0, arg_36_1)
+	return arg_36_0._save_data_table_maps[arg_36_1 or arg_36_0._mechanism_name]
 end
 
-StartGameStateSettingsOverview.set_layout = function (self, index)
-	local layout_setting = self:get_layout_setting(index)
-	local sound_event_enter = layout_setting.sound_event_enter
+function StartGameStateSettingsOverview.set_layout(arg_37_0, arg_37_1)
+	local var_37_0 = arg_37_0:get_layout_setting(arg_37_1)
+	local var_37_1 = var_37_0.sound_event_enter
 
-	if sound_event_enter then
-		self:play_sound(sound_event_enter)
+	if var_37_1 then
+		arg_37_0:play_sound(var_37_1)
 	end
 
-	local save_data_table_name = layout_setting.save_data_table
-	local save_data_table_map = self:get_save_data_table_map(self._mechanism_name) or self:get_quickplay_settings("adventure")
+	local var_37_2 = var_37_0.save_data_table
+	local var_37_3 = arg_37_0:get_save_data_table_map(arg_37_0._mechanism_name) or arg_37_0:get_quickplay_settings("adventure")
 
-	save_data_table_name = save_data_table_map and save_data_table_map[save_data_table_name] or save_data_table_name
+	var_37_2 = var_37_3 and var_37_3[var_37_2] or var_37_2
 
-	self:_set_new_save_data_table(save_data_table_name)
+	arg_37_0:_set_new_save_data_table(var_37_2)
 
-	local close_on_exit = layout_setting.close_on_exit
-	local reset_on_exit = layout_setting.reset_on_exit
-	local var_1_0 = self._widgets_by_name.exit_button.content
+	local var_37_4 = var_37_0.close_on_exit
+	local var_37_5 = var_37_0.reset_on_exit
+	local var_37_6 = arg_37_0._widgets_by_name.exit_button.content
 
-	if reset_on_exit then
-		-- Nothing
+	if var_37_5 then
+		-- block empty
 	end
 
-	var_1_0.visible = close_on_exit
-	self._widgets_by_name.back_button.content.visible = reset_on_exit or not close_on_exit
-	self._close_on_exit = close_on_exit
-	self._reset_on_exit = reset_on_exit
+	var_37_6.visible = var_37_4
+	arg_37_0._widgets_by_name.back_button.content.visible = var_37_5 or not var_37_4
+	arg_37_0._close_on_exit = var_37_4
+	arg_37_0._reset_on_exit = var_37_5
 
-	local windows = layout_setting.windows
-	local max_active_windows = self._max_active_windows
+	local var_37_7 = var_37_0.windows
+	local var_37_8 = arg_37_0._max_active_windows
 
-	for i = 1, max_active_windows do
-		local window_changed = false
+	for iter_37_0 = 1, var_37_8 do
+		local var_37_9 = false
 
-		for window_name, window_position_index in pairs(windows) do
-			if window_position_index == i then
-				self:_change_window(window_position_index, window_name)
+		for iter_37_1, iter_37_2 in pairs(var_37_7) do
+			if iter_37_2 == iter_37_0 then
+				arg_37_0:_change_window(iter_37_2, iter_37_1)
 
-				window_changed = true
+				var_37_9 = true
 			end
 		end
 
-		if not window_changed then
-			self:_close_window_at_index(i)
+		if not var_37_9 then
+			arg_37_0:_close_window_at_index(iter_37_0)
 		end
 	end
 
-	local layout_name = layout_setting.name
-	local game_mode_option = layout_setting.game_mode_option
+	local var_37_10 = var_37_0.name
 
-	if game_mode_option then
-		if self._selected_game_mode_layout_name then
-			self._previous_selected_game_mode_layout_name = self._selected_game_mode_layout_name
+	if var_37_0.game_mode_option then
+		if arg_37_0._selected_game_mode_layout_name then
+			arg_37_0._previous_selected_game_mode_layout_name = arg_37_0._selected_game_mode_layout_name
 		end
 
-		self._selected_game_mode_layout_name = layout_name
+		arg_37_0._selected_game_mode_layout_name = var_37_10
 	end
 
-	if self._selected_layout_name then
-		self._previous_selected_layout_name = self._selected_layout_name
+	if arg_37_0._selected_layout_name then
+		arg_37_0._previous_selected_layout_name = arg_37_0._selected_layout_name
 	end
 
-	self._selected_layout_name = layout_name
+	arg_37_0._selected_layout_name = var_37_10
 
-	local input_focus_window = layout_setting.input_focus_window
+	local var_37_11 = var_37_0.input_focus_window
 
-	self:set_window_input_focus(input_focus_window)
+	arg_37_0:set_window_input_focus(var_37_11)
 end
 
-StartGameStateSettingsOverview.set_window_input_focus = function (self, window_name)
-	local window_setting = self._windows_settings[window_name]
-	local window_class_name = window_setting and window_setting.class_name
-	local window_found = false
-	local active_windows = self._active_windows
+function StartGameStateSettingsOverview.set_window_input_focus(arg_38_0, arg_38_1)
+	local var_38_0 = arg_38_0._windows_settings[arg_38_1]
+	local var_38_1 = var_38_0 and var_38_0.class_name
+	local var_38_2 = false
+	local var_38_3 = arg_38_0._active_windows
 
-	for _, window in pairs(active_windows) do
-		local name = window.NAME
-		local focused = name == window_class_name
+	for iter_38_0, iter_38_1 in pairs(var_38_3) do
+		local var_38_4 = iter_38_1.NAME == var_38_1
 
-		if window.set_focus then
-			window:set_focus(focused)
+		if iter_38_1.set_focus then
+			iter_38_1:set_focus(var_38_4)
 		end
 
-		if focused then
-			window_found = true
+		if var_38_4 then
+			var_38_2 = true
 		end
 	end
 
-	if window_name and not window_found then
-		ferror("[StartGameStateSettingsOverview] - (set_window_input_focus) Could not find a window by name: %s", window_name)
+	if arg_38_1 and not var_38_2 then
+		ferror("[StartGameStateSettingsOverview] - (set_window_input_focus) Could not find a window by name: %s", arg_38_1)
 	end
 
-	self._window_focused = window_name
+	arg_38_0._window_focused = arg_38_1
 end
 
-StartGameStateSettingsOverview.set_top_level_layout_name = function (self, layout_name)
-	self._top_level_layout_name = layout_name
+function StartGameStateSettingsOverview.set_top_level_layout_name(arg_39_0, arg_39_1)
+	arg_39_0._top_level_layout_name = arg_39_1
 end
 
-StartGameStateSettingsOverview.get_top_level_layout_name = function (self)
-	return self._top_level_layout_name
+function StartGameStateSettingsOverview.get_top_level_layout_name(arg_40_0)
+	return arg_40_0._top_level_layout_name
 end
 
-StartGameStateSettingsOverview.get_selected_game_mode_layout_name = function (self)
-	return self._selected_game_mode_layout_name
+function StartGameStateSettingsOverview.get_selected_game_mode_layout_name(arg_41_0)
+	return arg_41_0._selected_game_mode_layout_name
 end
 
-StartGameStateSettingsOverview.get_previous_selected_game_mode_layout_name = function (self)
-	return self._previous_selected_game_mode_layout_name
+function StartGameStateSettingsOverview.get_previous_selected_game_mode_layout_name(arg_42_0)
+	return arg_42_0._previous_selected_game_mode_layout_name
 end
 
-StartGameStateSettingsOverview.get_selected_layout_name = function (self)
-	return self._selected_layout_name
+function StartGameStateSettingsOverview.get_selected_layout_name(arg_43_0)
+	return arg_43_0._selected_layout_name
 end
 
-StartGameStateSettingsOverview.get_previous_selected_layout_name = function (self)
-	return self._previous_selected_layout_name
+function StartGameStateSettingsOverview.get_previous_selected_layout_name(arg_44_0)
+	return arg_44_0._previous_selected_layout_name
 end
 
-StartGameStateSettingsOverview.get_layout_setting = function (self, index)
-	return self._window_layouts[index]
+function StartGameStateSettingsOverview.get_layout_setting(arg_45_0, arg_45_1)
+	return arg_45_0._window_layouts[arg_45_1]
 end
 
-StartGameStateSettingsOverview.get_layout_setting_by_name = function (self, name)
-	local window_layouts = self._window_layouts
+function StartGameStateSettingsOverview.get_layout_setting_by_name(arg_46_0, arg_46_1)
+	local var_46_0 = arg_46_0._window_layouts
 
-	for i = 1, #window_layouts do
-		local layout_setting = window_layouts[i]
-		local layout_name = layout_setting.name
+	for iter_46_0 = 1, #var_46_0 do
+		local var_46_1 = var_46_0[iter_46_0]
 
-		if name == layout_name then
-			return layout_setting
+		if arg_46_1 == var_46_1.name then
+			return var_46_1
 		end
 	end
 end
 
-StartGameStateSettingsOverview._get_first_game_mode_option_layout = function (self)
-	local window_layouts = self._window_layouts
+function StartGameStateSettingsOverview._get_first_game_mode_option_layout(arg_47_0)
+	local var_47_0 = arg_47_0._window_layouts
 
-	for i = 1, #window_layouts do
-		local layout_setting = window_layouts[i]
+	for iter_47_0 = 1, #var_47_0 do
+		local var_47_1 = var_47_0[iter_47_0]
 
-		if self:can_add_layout(layout_setting) then
-			return layout_setting.name, layout_setting
+		if arg_47_0:can_add_layout(var_47_1) then
+			return var_47_1.name, var_47_1
 		end
 	end
 end
 
-StartGameStateSettingsOverview._windows_update = function (self, dt, t)
-	local active_windows = self._active_windows
+function StartGameStateSettingsOverview._windows_update(arg_48_0, arg_48_1, arg_48_2)
+	local var_48_0 = arg_48_0._active_windows
 
-	for _, window in pairs(active_windows) do
-		window:update(dt, t)
+	for iter_48_0, iter_48_1 in pairs(var_48_0) do
+		iter_48_1:update(arg_48_1, arg_48_2)
 	end
 end
 
-StartGameStateSettingsOverview._windows_post_update = function (self, dt, t)
-	local active_windows = self._active_windows
+function StartGameStateSettingsOverview._windows_post_update(arg_49_0, arg_49_1, arg_49_2)
+	local var_49_0 = arg_49_0._active_windows
 
-	for _, window in pairs(active_windows) do
-		window:post_update(dt, t)
+	for iter_49_0, iter_49_1 in pairs(var_49_0) do
+		iter_49_1:post_update(arg_49_1, arg_49_2)
 	end
 end
 
-StartGameStateSettingsOverview.enable_widget = function (self, active_window_index, widget_name, enable)
-	local active_windows = self._active_windows
-	local active_window = active_windows[active_window_index]
-	local widget = active_window._widgets_by_name[widget_name]
+function StartGameStateSettingsOverview.enable_widget(arg_50_0, arg_50_1, arg_50_2, arg_50_3)
+	local var_50_0 = arg_50_0._active_windows[arg_50_1]._widgets_by_name[arg_50_2]
 
-	if widget then
-		local widget_content = widget.content
-		local button_hotspot = widget_content.button_hotspot
+	if var_50_0 then
+		local var_50_1 = var_50_0.content.button_hotspot
 
-		if button_hotspot then
-			button_hotspot.disable_button = not enable
+		if var_50_1 then
+			var_50_1.disable_button = not arg_50_3
 		end
 	end
 end
 
-StartGameStateSettingsOverview.disable_input = function (self, input_name)
-	local active_windows = self._active_windows
+function StartGameStateSettingsOverview.disable_input(arg_51_0, arg_51_1)
+	local var_51_0 = arg_51_0._active_windows
 
-	for _, active_window in pairs(active_windows) do
-		if active_window.disable_input and active_window:disable_input(input_name) then
+	for iter_51_0, iter_51_1 in pairs(var_51_0) do
+		if iter_51_1.disable_input and iter_51_1:disable_input(arg_51_1) then
 			return true
 		end
 	end
 end
 
-StartGameStateSettingsOverview.transitioning = function (self)
-	if self.exiting then
+function StartGameStateSettingsOverview.transitioning(arg_52_0)
+	if arg_52_0.exiting then
 		return true
 	else
 		return false
 	end
 end
 
-StartGameStateSettingsOverview._wanted_state = function (self)
-	local new_state = self.parent:wanted_state()
-
-	return new_state
+function StartGameStateSettingsOverview._wanted_state(arg_53_0)
+	return (arg_53_0.parent:wanted_state())
 end
 
-StartGameStateSettingsOverview.wanted_menu_state = function (self)
-	return self._wanted_menu_state
+function StartGameStateSettingsOverview.wanted_menu_state(arg_54_0)
+	return arg_54_0._wanted_menu_state
 end
 
-StartGameStateSettingsOverview.clear_wanted_menu_state = function (self)
-	self._wanted_menu_state = nil
+function StartGameStateSettingsOverview.clear_wanted_menu_state(arg_55_0)
+	arg_55_0._wanted_menu_state = nil
 end
 
-StartGameStateSettingsOverview.on_exit = function (self, params)
+function StartGameStateSettingsOverview.on_exit(arg_56_0, arg_56_1)
 	print("[StartGameState] Exit Substate StartGameStateSettingsOverview")
 
-	self.ui_animator = nil
-	self._is_open = false
+	arg_56_0.ui_animator = nil
+	arg_56_0._is_open = false
 
-	if self._fullscreen_effect_enabled then
-		self:set_fullscreen_effect_enable_state(false)
+	if arg_56_0._fullscreen_effect_enabled then
+		arg_56_0:set_fullscreen_effect_enable_state(false)
 	end
 
 	Managers.save:auto_save(SaveFileName, SaveData, nil)
-	self:_close_active_windows()
-	self:_destroy_video_players()
+	arg_56_0:_close_active_windows()
+	arg_56_0:_destroy_video_players()
 
-	if self._gamepad_style_active then
-		self:_destroy_gamepad_gui()
-		self:enable_player_world()
+	if arg_56_0._gamepad_style_active then
+		arg_56_0:_destroy_gamepad_gui()
+		arg_56_0:enable_player_world()
 	end
 
-	self:_reset_cloned_materials()
+	arg_56_0:_reset_cloned_materials()
 
-	if self._ui_hdr_renderer then
-		UIRenderer.destroy(self._ui_hdr_renderer, self._ui_hdr_world)
+	if arg_56_0._ui_hdr_renderer then
+		UIRenderer.destroy(arg_56_0._ui_hdr_renderer, arg_56_0._ui_hdr_world)
 
-		self._ui_hdr_renderer = nil
+		arg_56_0._ui_hdr_renderer = nil
 	end
 
-	if self._ui_hdr_world then
-		ScriptWorld.destroy_viewport(self._ui_hdr_world, self._ui_hdr_viewport_name)
-		Managers.world:destroy_world(self._ui_hdr_world)
+	if arg_56_0._ui_hdr_world then
+		ScriptWorld.destroy_viewport(arg_56_0._ui_hdr_world, arg_56_0._ui_hdr_viewport_name)
+		Managers.world:destroy_world(arg_56_0._ui_hdr_world)
 
-		self._ui_hdr_viewport_name = nil
-		self._ui_hdr_world_name = nil
-		self._ui_hdr_world = nil
+		arg_56_0._ui_hdr_viewport_name = nil
+		arg_56_0._ui_hdr_world_name = nil
+		arg_56_0._ui_hdr_world = nil
 	end
 end
 
-StartGameStateSettingsOverview._close_active_windows = function (self)
-	local active_windows = self._active_windows
-	local params = self._window_params
+function StartGameStateSettingsOverview._close_active_windows(arg_57_0)
+	local var_57_0 = arg_57_0._active_windows
+	local var_57_1 = arg_57_0._window_params
 
-	for _, window in pairs(active_windows) do
-		if window.on_exit then
-			window:on_exit(params)
+	for iter_57_0, iter_57_1 in pairs(var_57_0) do
+		if iter_57_1.on_exit then
+			iter_57_1:on_exit(var_57_1)
 		end
 	end
 
-	table.clear(active_windows)
+	table.clear(var_57_0)
 end
 
-StartGameStateSettingsOverview._update_transition_timer = function (self, dt)
-	if not self._transition_timer then
+function StartGameStateSettingsOverview._update_transition_timer(arg_58_0, arg_58_1)
+	if not arg_58_0._transition_timer then
 		return
 	end
 
-	if self._transition_timer == 0 then
-		self._transition_timer = nil
+	if arg_58_0._transition_timer == 0 then
+		arg_58_0._transition_timer = nil
 	else
-		self._transition_timer = math.max(self._transition_timer - dt, 0)
+		arg_58_0._transition_timer = math.max(arg_58_0._transition_timer - arg_58_1, 0)
 	end
 end
 
-StartGameStateSettingsOverview.input_service = function (self)
-	return self.parent:input_service()
+function StartGameStateSettingsOverview.input_service(arg_59_0)
+	return arg_59_0.parent:input_service()
 end
 
-StartGameStateSettingsOverview.update = function (self, dt, t)
-	if DO_RELOAD then
-		DO_RELOAD = false
+function StartGameStateSettingsOverview.update(arg_60_0, arg_60_1, arg_60_2)
+	if var_0_4 then
+		var_0_4 = false
 
-		self:_create_ui_elements()
+		arg_60_0:_create_ui_elements()
 	end
 
-	if Managers.matchmaking:is_in_versus_custom_game_lobby() then
-		local network_handler = Managers.mechanism:network_handler()
-		local match_handler = network_handler:get_match_handler()
-		local is_match_host = match_handler:query_peer_data(Network.peer_id(), "is_match_owner")
+	if Managers.matchmaking:is_in_versus_custom_game_lobby() and not Managers.mechanism:network_handler():get_match_handler():query_peer_data(Network.peer_id(), "is_match_owner") then
+		local var_60_0 = arg_60_0._selected_layout_name
+		local var_60_1 = "versus_player_hosted_lobby"
 
-		if not is_match_host then
-			local current_layout = self._selected_layout_name
-			local wanted_layout = "versus_player_hosted_lobby"
-
-			if current_layout ~= wanted_layout then
-				self:set_layout_by_name(wanted_layout)
-			end
+		if var_60_0 ~= var_60_1 then
+			arg_60_0:set_layout_by_name(var_60_1)
 		end
 	end
 
-	local input_manager = self._input_manager
-	local input_service = self.parent:input_service()
+	local var_60_2 = arg_60_0._input_manager
+	local var_60_3 = arg_60_0.parent:input_service()
 
-	self:draw(input_service, dt)
-	self:_update_transition_timer(dt)
+	arg_60_0:draw(var_60_3, arg_60_1)
+	arg_60_0:_update_transition_timer(arg_60_1)
 
-	if not self._show_difficulty_option then
-		self:_windows_update(dt, t)
+	if not arg_60_0._show_difficulty_option then
+		arg_60_0:_windows_update(arg_60_1, arg_60_2)
 	end
 
-	local wanted_state = self:_wanted_state()
+	local var_60_4 = arg_60_0:_wanted_state()
 
-	if not self._transition_timer and (wanted_state or self._new_state) then
-		self.parent:clear_wanted_state()
+	if not arg_60_0._transition_timer and (var_60_4 or arg_60_0._new_state) then
+		arg_60_0.parent:clear_wanted_state()
 
-		return wanted_state or self._new_state
+		return var_60_4 or arg_60_0._new_state
 	end
 end
 
-StartGameStateSettingsOverview.post_update = function (self, dt, t)
-	self.ui_animator:update(dt)
-	self:_update_animations(dt)
+function StartGameStateSettingsOverview.post_update(arg_61_0, arg_61_1, arg_61_2)
+	arg_61_0.ui_animator:update(arg_61_1)
+	arg_61_0:_update_animations(arg_61_1)
 
-	local transitioning = self.parent:transitioning()
-
-	if not transitioning and not self._transition_timer and not self:input_paused() then
-		self:_handle_input(dt, t)
+	if not arg_61_0.parent:transitioning() and not arg_61_0._transition_timer and not arg_61_0:input_paused() then
+		arg_61_0:_handle_input(arg_61_1, arg_61_2)
 	end
 
-	self:_windows_post_update(dt, t)
+	arg_61_0:_windows_post_update(arg_61_1, arg_61_2)
 end
 
-StartGameStateSettingsOverview._update_animations = function (self, dt)
-	for name, animation in pairs(self._ui_animations) do
-		UIAnimation.update(animation, dt)
+function StartGameStateSettingsOverview._update_animations(arg_62_0, arg_62_1)
+	for iter_62_0, iter_62_1 in pairs(arg_62_0._ui_animations) do
+		UIAnimation.update(iter_62_1, arg_62_1)
 
-		if UIAnimation.completed(animation) then
-			self._ui_animations[name] = nil
+		if UIAnimation.completed(iter_62_1) then
+			arg_62_0._ui_animations[iter_62_0] = nil
 		end
 	end
 
-	local animations = self._animations
-	local ui_animator = self.ui_animator
+	local var_62_0 = arg_62_0._animations
+	local var_62_1 = arg_62_0.ui_animator
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_62_2, iter_62_3 in pairs(var_62_0) do
+		if var_62_1:is_animation_completed(iter_62_3) then
+			var_62_1:stop_animation(iter_62_3)
 
-			animations[animation_name] = nil
+			var_62_0[iter_62_2] = nil
 		end
 	end
 end
 
-StartGameStateSettingsOverview._is_button_hover_enter = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	return hotspot.on_hover_enter
+function StartGameStateSettingsOverview._is_button_hover_enter(arg_63_0, arg_63_1)
+	return arg_63_1.content.button_hotspot.on_hover_enter
 end
 
-StartGameStateSettingsOverview._handle_input = function (self, dt, t)
-	local widgets_by_name = self._widgets_by_name
-	local input_service = self.parent:input_service()
-	local input_pressed = input_service:get("toggle_menu", true)
-	local gamepad_active = Managers.input:is_device_active("gamepad")
-	local back_pressed = gamepad_active and input_service:get("back_menu", true)
-	local close_on_exit = self._close_on_exit
-	local reset_on_exit = self._reset_on_exit
-	local back_button = widgets_by_name.back_button
-	local exit_button = widgets_by_name.exit_button
+function StartGameStateSettingsOverview._handle_input(arg_64_0, arg_64_1, arg_64_2)
+	local var_64_0 = arg_64_0._widgets_by_name
+	local var_64_1 = arg_64_0.parent:input_service()
+	local var_64_2 = var_64_1:get("toggle_menu", true)
+	local var_64_3 = Managers.input:is_device_active("gamepad") and var_64_1:get("back_menu", true)
+	local var_64_4 = arg_64_0._close_on_exit
+	local var_64_5 = arg_64_0._reset_on_exit
+	local var_64_6 = var_64_0.back_button
+	local var_64_7 = var_64_0.exit_button
 
-	UIWidgetUtils.animate_default_button(back_button, dt)
-	UIWidgetUtils.animate_default_button(exit_button, dt)
+	UIWidgetUtils.animate_default_button(var_64_6, arg_64_1)
+	UIWidgetUtils.animate_default_button(var_64_7, arg_64_1)
 
-	if self:_is_button_hover_enter(back_button) or self:_is_button_hover_enter(exit_button) then
-		self:play_sound("play_gui_equipment_button_hover")
+	if arg_64_0:_is_button_hover_enter(var_64_6) or arg_64_0:_is_button_hover_enter(var_64_7) then
+		arg_64_0:play_sound("play_gui_equipment_button_hover")
 	end
 
-	if reset_on_exit and (input_pressed or back_pressed or self:_is_button_pressed(back_button)) then
-		self:play_sound("play_gui_lobby_back")
+	if var_64_5 and (var_64_2 or var_64_3 or arg_64_0:_is_button_pressed(var_64_6)) then
+		arg_64_0:play_sound("play_gui_lobby_back")
 
-		local start_layout_name = self:_start_layout_name()
+		local var_64_8 = arg_64_0:_start_layout_name()
 
-		self:set_layout_by_name(start_layout_name)
-	elseif close_on_exit and (back_pressed or input_pressed or self:_is_button_pressed(exit_button)) then
-		self:close_menu()
+		arg_64_0:set_layout_by_name(var_64_8)
+	elseif var_64_4 and (var_64_3 or var_64_2 or arg_64_0:_is_button_pressed(var_64_7)) then
+		arg_64_0:close_menu()
 
 		return
-	elseif input_pressed or back_pressed or self:_is_button_pressed(back_button) then
-		self:play_sound("Play_hud_select")
+	elseif var_64_2 or var_64_3 or arg_64_0:_is_button_pressed(var_64_6) then
+		arg_64_0:play_sound("Play_hud_select")
 
-		local return_layout_name
-		local window_params = self._window_params
+		local var_64_9
+		local var_64_10 = arg_64_0._window_params
 
-		if window_params then
-			return_layout_name = window_params.return_layout_name
-			window_params.return_layout_name = nil
+		if var_64_10 then
+			var_64_9 = var_64_10.return_layout_name
+			var_64_10.return_layout_name = nil
 		end
 
-		if not return_layout_name then
-			local layout_settings = self:get_layout_setting_by_name(self._selected_layout_name)
-
-			if layout_settings.return_to_top_level then
-				return_layout_name = self:get_top_level_layout_name() or self:get_previous_selected_layout_name()
+		if not var_64_9 then
+			if arg_64_0:get_layout_setting_by_name(arg_64_0._selected_layout_name).return_to_top_level then
+				var_64_9 = arg_64_0:get_top_level_layout_name() or arg_64_0:get_previous_selected_layout_name()
 			else
-				return_layout_name = self:get_previous_selected_layout_name()
+				var_64_9 = arg_64_0:get_previous_selected_layout_name()
 			end
 		end
 
-		if return_layout_name then
-			self:set_layout_by_name(return_layout_name)
+		if var_64_9 then
+			arg_64_0:set_layout_by_name(var_64_9)
 		end
 	end
 end
 
-StartGameStateSettingsOverview.pause_input = function (self, pause)
-	self._input_paused = pause
+function StartGameStateSettingsOverview.pause_input(arg_65_0, arg_65_1)
+	arg_65_0._input_paused = arg_65_1
 end
 
-StartGameStateSettingsOverview.input_paused = function (self)
-	return self._input_paused
+function StartGameStateSettingsOverview.input_paused(arg_66_0)
+	return arg_66_0._input_paused
 end
 
-StartGameStateSettingsOverview.close_menu = function (self, ignore_sound_on_close_menu)
-	self.parent:close_menu(nil, ignore_sound_on_close_menu)
+function StartGameStateSettingsOverview.close_menu(arg_67_0, arg_67_1)
+	arg_67_0.parent:close_menu(nil, arg_67_1)
 end
 
-StartGameStateSettingsOverview.cancel_matchmaking = function (self)
-	self.parent:cancel_matchmaking()
+function StartGameStateSettingsOverview.cancel_matchmaking(arg_68_0)
+	arg_68_0.parent:cancel_matchmaking()
 end
 
-local EMPTY_TABLE = {}
+local var_0_6 = {}
 
-StartGameStateSettingsOverview.play = function (self, t, vote_type, force_close_menu)
-	printf("[StartGameStateSettingsOverview:play() - vote_type(%s)", vote_type)
+function StartGameStateSettingsOverview.play(arg_69_0, arg_69_1, arg_69_2, arg_69_3)
+	printf("[StartGameStateSettingsOverview:play() - vote_type(%s)", arg_69_2)
 
-	local is_offline = Managers.account:offline_mode()
+	local var_69_0 = Managers.account:offline_mode()
 
-	if vote_type == "adventure_mode" then
-		local level_key = self:get_selected_level_id()
-		local difficulty = self._selected_difficulty_key
-		local is_private = true
-		local quick_game = false
-		local always_host = true
-		local strict_matchmaking = false
-		local deed_backend_id, event_data
+	if arg_69_2 == "adventure_mode" then
+		local var_69_1 = arg_69_0:get_selected_level_id()
+		local var_69_2 = arg_69_0._selected_difficulty_key
+		local var_69_3 = true
+		local var_69_4 = false
+		local var_69_5 = true
+		local var_69_6 = false
+		local var_69_7
+		local var_69_8
 
-		self.parent:start_game(level_key, difficulty, is_private, quick_game, always_host, strict_matchmaking, t, matchmaking_type, deed_backend_id, event_data)
-	elseif vote_type == "adventure" then
-		local params = {
-			matchmaking_type = "standard",
+		arg_69_0.parent:start_game(var_69_1, var_69_2, var_69_3, var_69_4, var_69_5, var_69_6, arg_69_1, matchmaking_type, var_69_7, var_69_8)
+	elseif arg_69_2 == "adventure" then
+		local var_69_9 = {
 			mechanism = "adventure",
 			quick_game = true,
 			strict_matchmaking = false,
-			difficulty = self._selected_difficulty_key,
-			private_game = is_offline,
-			always_host = is_offline,
-			request_type = vote_type,
+			matchmaking_type = "standard",
+			difficulty = arg_69_0._selected_difficulty_key,
+			private_game = var_69_0,
+			always_host = var_69_0,
+			request_type = arg_69_2
 		}
 
-		self.parent:start_game(params)
-	elseif vote_type == "weave_quick_play" then
-		local params = {
-			matchmaking_type = "standard",
-			mechanism = "weave",
+		arg_69_0.parent:start_game(var_69_9)
+	elseif arg_69_2 == "weave_quick_play" then
+		local var_69_10 = {
 			private_game = false,
+			mechanism = "weave",
 			quick_game = true,
 			strict_matchmaking = false,
-			difficulty = self._selected_difficulty_key,
-			always_host = is_offline,
-			request_type = vote_type,
+			matchmaking_type = "standard",
+			difficulty = arg_69_0._selected_difficulty_key,
+			always_host = var_69_0,
+			request_type = arg_69_2
 		}
 
-		self.parent:start_game(params)
-	elseif vote_type == "custom" then
-		local network_lobby = self._network_lobby
-		local num_members = network_lobby:members():get_member_count()
-		local is_private = self:is_private_option_enabled()
+		arg_69_0.parent:start_game(var_69_10)
+	elseif arg_69_2 == "custom" then
+		local var_69_11 = arg_69_0._network_lobby
+		local var_69_12 = var_69_11:members():get_member_count()
+		local var_69_13 = arg_69_0:is_private_option_enabled()
 
-		is_private = IS_CONSOLE and is_offline or is_private
+		var_69_13 = IS_CONSOLE and var_69_0 or var_69_13
 
-		local is_alone = num_members == 1
-		local always_host = is_private or self:is_always_host_option_enabled()
-		local params = {
-			matchmaking_type = "custom",
+		local var_69_14 = var_69_12 == 1
+		local var_69_15 = var_69_13 or arg_69_0:is_always_host_option_enabled()
+		local var_69_16 = {
 			mechanism = "adventure",
+			matchmaking_type = "custom",
 			quick_game = false,
-			network_lobby = network_lobby,
-			num_members = num_members,
-			is_alone = is_alone,
-			mission_id = self:get_selected_level_id(),
-			difficulty = self._selected_difficulty_key,
-			private_game = is_private,
-			always_host = always_host,
-			strict_matchmaking = is_alone and not is_private and not always_host and self:is_strict_matchmaking_option_enabled(),
-			request_type = vote_type,
+			network_lobby = var_69_11,
+			num_members = var_69_12,
+			is_alone = var_69_14,
+			mission_id = arg_69_0:get_selected_level_id(),
+			difficulty = arg_69_0._selected_difficulty_key,
+			private_game = var_69_13,
+			always_host = var_69_15,
+			strict_matchmaking = var_69_14 and not var_69_13 and not var_69_15 and arg_69_0:is_strict_matchmaking_option_enabled(),
+			request_type = arg_69_2
 		}
 
-		self.parent:start_game(params)
-	elseif vote_type == "deed" then
-		local params = {
-			always_host = true,
+		arg_69_0.parent:start_game(var_69_16)
+	elseif arg_69_2 == "deed" then
+		local var_69_17 = {
 			is_private = true,
-			matchmaking_type = "deed",
 			mechanism = "adventure",
 			quick_game = false,
 			strict_matchmaking = false,
-			deed_backend_id = self:get_selected_heroic_deed_backend_id(),
-			request_type = vote_type,
+			always_host = true,
+			matchmaking_type = "deed",
+			deed_backend_id = arg_69_0:get_selected_heroic_deed_backend_id(),
+			request_type = arg_69_2
 		}
 
-		self.parent:start_game(params)
-	elseif vote_type == "twitch" then
-		local params = {
+		arg_69_0.parent:start_game(var_69_17)
+	elseif arg_69_2 == "twitch" then
+		local var_69_18 = {
+			private_game = true,
+			strict_matchmaking = false,
 			always_host = true,
 			matchmaking_type = "custom",
 			mechanism = "adventure",
-			private_game = true,
 			quick_game = false,
-			strict_matchmaking = false,
 			twitch_enabled = true,
-			mission_id = self:get_selected_level_id(),
-			difficulty = self._selected_difficulty_key,
-			request_type = vote_type,
+			mission_id = arg_69_0:get_selected_level_id(),
+			difficulty = arg_69_0._selected_difficulty_key,
+			request_type = arg_69_2
 		}
 
-		self.parent:start_game(params)
-	elseif vote_type == "event" then
-		local live_event_interface = Managers.backend:get_interface("live_events")
-		local game_mode_data = live_event_interface:get_weekly_events_game_mode_data()
-		local event_data
+		arg_69_0.parent:start_game(var_69_18)
+	elseif arg_69_2 == "event" then
+		local var_69_19 = Managers.backend:get_interface("live_events"):get_weekly_events_game_mode_data()
+		local var_69_20
 
-		if game_mode_data.mutators then
-			event_data = {
-				mutators = game_mode_data.mutators,
+		if var_69_19.mutators then
+			var_69_20 = {
+				mutators = var_69_19.mutators
 			}
 		end
 
-		local params = {
+		local var_69_21 = {
+			private_game = false,
+			strict_matchmaking = false,
 			always_host = false,
 			matchmaking_type = "event",
 			mechanism = "adventure",
-			private_game = false,
 			quick_game = false,
-			strict_matchmaking = false,
-			mission_id = game_mode_data.level_key,
-			difficulty = self._selected_difficulty_key,
-			event_data = event_data,
-			excluded_level_keys = game_mode_data.excluded_level_keys,
-			request_type = vote_type,
+			mission_id = var_69_19.level_key,
+			difficulty = arg_69_0._selected_difficulty_key,
+			event_data = var_69_20,
+			excluded_level_keys = var_69_19.excluded_level_keys,
+			request_type = arg_69_2
 		}
 
-		self.parent:start_game(params)
-	elseif vote_type == "versus_quickplay" then
-		local params = {
+		arg_69_0.parent:start_game(var_69_21)
+	elseif arg_69_2 == "versus_quickplay" then
+		local var_69_22 = {
+			private_game = false,
 			dedicated_servers_aws = true,
+			player_hosted = false,
 			dedicated_servers_win = false,
-			difficulty = "versus_base",
-			join_method = "party",
 			matchmaking_type = "standard",
 			mechanism = "versus",
-			player_hosted = false,
-			private_game = false,
 			quick_game = true,
-			request_type = vote_type,
-		}
-
-		self.parent:start_game(params)
-	elseif vote_type == "versus_custom" then
-		local is_private = self:is_private_option_enabled()
-		local mission_id = self:get_selected_level_id()
-		local params = {
-			dedicated_servers_aws = false,
-			dedicated_servers_win = false,
 			difficulty = "versus_base",
 			join_method = "party",
-			matchmaking_type = "custom",
-			mechanism = "versus",
-			player_hosted = true,
-			quick_game = false,
-			mission_id = mission_id,
-			any_level = not mission_id,
-			private_game = is_private,
-			request_type = vote_type,
+			request_type = arg_69_2
 		}
 
-		self.parent:start_game(params)
-	elseif vote_type == "weave" then
-		local weave_name = self:get_selected_weave_id()
-		local weave_template = WeaveSettings.templates[weave_name]
-		local difficulty = weave_template.difficulty_key
-		local objective_index = self:get_selected_weave_objective_index()
-		local is_private = self:is_private_option_enabled()
-		local always_host = is_offline
-		local params = {
+		arg_69_0.parent:start_game(var_69_22)
+	elseif arg_69_2 == "versus_custom" then
+		local var_69_23 = arg_69_0:is_private_option_enabled()
+		local var_69_24 = arg_69_0:get_selected_level_id()
+		local var_69_25 = {
+			player_hosted = true,
+			dedicated_servers_win = false,
+			dedicated_servers_aws = false,
+			matchmaking_type = "custom",
+			mechanism = "versus",
+			quick_game = false,
+			difficulty = "versus_base",
+			join_method = "party",
+			mission_id = var_69_24,
+			any_level = not var_69_24,
+			private_game = var_69_23,
+			request_type = arg_69_2
+		}
+
+		arg_69_0.parent:start_game(var_69_25)
+	elseif arg_69_2 == "weave" then
+		local var_69_26 = arg_69_0:get_selected_weave_id()
+		local var_69_27 = WeaveSettings.templates[var_69_26].difficulty_key
+		local var_69_28 = arg_69_0:get_selected_weave_objective_index()
+		local var_69_29 = arg_69_0:is_private_option_enabled()
+		local var_69_30 = var_69_0
+		local var_69_31 = {
 			matchmaking_type = "custom",
 			mechanism = "weave",
 			quick_game = false,
-			mission_id = weave_name,
-			difficulty = difficulty,
-			objective_index = objective_index,
-			private_game = is_private,
-			always_host = is_offline,
-			request_type = vote_type,
+			mission_id = var_69_26,
+			difficulty = var_69_27,
+			objective_index = var_69_28,
+			private_game = var_69_29,
+			always_host = var_69_0,
+			request_type = arg_69_2
 		}
 
-		self.parent:start_game(params)
-	elseif vote_type == "deus_custom" then
-		local network_lobby = self._network_lobby
-		local num_members = network_lobby:members():get_member_count()
-		local is_alone = num_members == 1
-		local private_game = is_offline or self:is_private_option_enabled()
-		local always_host = private_game or self:is_always_host_option_enabled()
-		local backend_deus = Managers.backend:get_interface("deus")
-		local journey_cycle = backend_deus:get_journey_cycle()
-		local journey_name = self:get_selected_level_id()
+		arg_69_0.parent:start_game(var_69_31)
+	elseif arg_69_2 == "deus_custom" then
+		local var_69_32 = arg_69_0._network_lobby:members():get_member_count() == 1
+		local var_69_33 = var_69_0 or arg_69_0:is_private_option_enabled()
+		local var_69_34 = var_69_33 or arg_69_0:is_always_host_option_enabled()
+		local var_69_35 = Managers.backend:get_interface("deus"):get_journey_cycle()
+		local var_69_36 = arg_69_0:get_selected_level_id()
 
-		journey_name = DeusJourneySettings[journey_name] and journey_name or AvailableJourneyOrder[1]
+		var_69_36 = DeusJourneySettings[var_69_36] and var_69_36 or AvailableJourneyOrder[1]
 
-		local dominant_god = journey_cycle.journey_data[journey_name].dominant_god
-		local params = {
+		local var_69_37 = var_69_35.journey_data[var_69_36].dominant_god
+		local var_69_38 = {
 			matchmaking_type = "custom",
 			mechanism = "deus",
 			quick_game = false,
-			mission_id = journey_name,
-			difficulty = self._selected_difficulty_key,
-			private_game = private_game,
-			always_host = always_host,
-			strict_matchmaking = is_alone and not private_game and not always_host and self:is_strict_matchmaking_option_enabled(),
-			dominant_god = dominant_god,
-			request_type = vote_type,
+			mission_id = var_69_36,
+			difficulty = arg_69_0._selected_difficulty_key,
+			private_game = var_69_33,
+			always_host = var_69_34,
+			strict_matchmaking = var_69_32 and not var_69_33 and not var_69_34 and arg_69_0:is_strict_matchmaking_option_enabled(),
+			dominant_god = var_69_37,
+			request_type = arg_69_2
 		}
 
-		self.parent:start_game(params)
-	elseif vote_type == "deus_twitch" then
-		local backend_deus = Managers.backend:get_interface("deus")
-		local journey_cycle = backend_deus:get_journey_cycle()
-		local journey_name = self:get_selected_level_id()
+		arg_69_0.parent:start_game(var_69_38)
+	elseif arg_69_2 == "deus_twitch" then
+		local var_69_39 = Managers.backend:get_interface("deus"):get_journey_cycle()
+		local var_69_40 = arg_69_0:get_selected_level_id()
 
-		journey_name = DeusJourneySettings[journey_name] and journey_name or AvailableJourneyOrder[1]
+		var_69_40 = DeusJourneySettings[var_69_40] and var_69_40 or AvailableJourneyOrder[1]
 
-		local dominant_god = journey_cycle.journey_data[journey_name].dominant_god
-		local params = {
+		local var_69_41 = var_69_39.journey_data[var_69_40].dominant_god
+		local var_69_42 = {
+			private_game = true,
+			mechanism = "deus",
+			strict_matchmaking = false,
 			always_host = true,
 			matchmaking_type = "custom",
-			mechanism = "deus",
-			private_game = true,
 			quick_game = false,
-			strict_matchmaking = false,
 			twitch_enabled = true,
-			mission_id = journey_name,
-			difficulty = self._selected_difficulty_key,
-			dominant_god = dominant_god,
-			request_type = vote_type,
+			mission_id = var_69_40,
+			difficulty = arg_69_0._selected_difficulty_key,
+			dominant_god = var_69_41,
+			request_type = arg_69_2
 		}
 
-		self.parent:start_game(params)
-	elseif vote_type == "deus_quickplay" then
-		local params = {
-			matchmaking_type = "standard",
+		arg_69_0.parent:start_game(var_69_42)
+	elseif arg_69_2 == "deus_quickplay" then
+		local var_69_43 = {
 			mechanism = "deus",
 			quick_game = true,
 			strict_matchmaking = false,
-			difficulty = self._selected_difficulty_key,
-			private_game = is_offline,
-			always_host = is_offline,
-			request_type = vote_type,
+			matchmaking_type = "standard",
+			difficulty = arg_69_0._selected_difficulty_key,
+			private_game = var_69_0,
+			always_host = var_69_0,
+			request_type = arg_69_2
 		}
 
-		self.parent:start_game(params)
-	elseif vote_type == "deus_weekly" then
-		local live_event_interface = Managers.backend:get_interface("live_events")
-		local game_mode_data = live_event_interface:get_weekly_chaos_wastes_game_mode_data() or EMPTY_TABLE
-		local event_data
+		arg_69_0.parent:start_game(var_69_43)
+	elseif arg_69_2 == "deus_weekly" then
+		local var_69_44 = Managers.backend:get_interface("live_events"):get_weekly_chaos_wastes_game_mode_data() or var_0_6
+		local var_69_45
 
-		if game_mode_data.mutators then
-			event_data = event_data or {}
-			event_data.mutators = game_mode_data.mutators
+		if var_69_44.mutators then
+			var_69_45 = var_69_45 or {}
+			var_69_45.mutators = var_69_44.mutators
 		end
 
-		if game_mode_data.boons then
-			event_data = event_data or {}
-			event_data.boons = game_mode_data.boons
+		if var_69_44.boons then
+			var_69_45 = var_69_45 or {}
+			var_69_45.boons = var_69_44.boons
 		end
 
-		local mission_id = game_mode_data.journey_name
-		local backend_deus = Managers.backend:get_interface("deus")
-		local journey_cycle = backend_deus:get_journey_cycle()
-		local journey_data = journey_cycle.journey_data
-		local journey_settings = journey_data[mission_id]
-		local dominant_god = journey_settings.dominant_god
-		local params = {
+		local var_69_46 = var_69_44.journey_name
+		local var_69_47 = Managers.backend:get_interface("deus"):get_journey_cycle().journey_data[var_69_46].dominant_god
+		local var_69_48 = {
+			private_game = false,
+			strict_matchmaking = false,
 			always_host = false,
 			matchmaking_type = "event",
 			mechanism = "deus",
-			private_game = false,
 			quick_game = false,
-			strict_matchmaking = false,
-			mission_id = mission_id,
-			difficulty = self._selected_difficulty_key,
-			dominant_god = dominant_god,
-			event_data = event_data,
-			excluded_level_keys = game_mode_data.excluded_level_keys,
-			request_type = vote_type,
+			mission_id = var_69_46,
+			difficulty = arg_69_0._selected_difficulty_key,
+			dominant_god = var_69_47,
+			event_data = var_69_45,
+			excluded_level_keys = var_69_44.excluded_level_keys,
+			request_type = arg_69_2
 		}
 
-		self.parent:start_game(params)
+		arg_69_0.parent:start_game(var_69_48)
 	else
-		ferror("Unknown vote_type(%s)", vote_type)
+		ferror("Unknown vote_type(%s)", arg_69_2)
 	end
 end
 
-StartGameStateSettingsOverview.is_confirm_putton_pressed = function (self)
+function StartGameStateSettingsOverview.is_confirm_putton_pressed(arg_70_0)
 	return false
 end
 
-StartGameStateSettingsOverview.set_input_description = function (self, input_description)
-	if not self._menu_input_description then
+function StartGameStateSettingsOverview.set_input_description(arg_71_0, arg_71_1)
+	if not arg_71_0._menu_input_description then
 		return
 	end
 
-	fassert(not input_description or self._generic_input_actions[input_description], "[StartGameStateSettingsOverview:set_input_description] There is no such input_description (%s)", input_description)
-	self._menu_input_description:set_input_description(self._generic_input_actions[input_description])
+	fassert(not arg_71_1 or arg_71_0._generic_input_actions[arg_71_1], "[StartGameStateSettingsOverview:set_input_description] There is no such input_description (%s)", arg_71_1)
+	arg_71_0._menu_input_description:set_input_description(arg_71_0._generic_input_actions[arg_71_1])
 end
 
-StartGameStateSettingsOverview.change_generic_actions = function (self, input_description)
-	if not self._menu_input_description then
+function StartGameStateSettingsOverview.change_generic_actions(arg_72_0, arg_72_1)
+	if not arg_72_0._menu_input_description then
 		return
 	end
 
-	fassert(self._generic_input_actions[input_description], "[StartGameStateSettingsOverview:set_input_description] There is no such input_description (%s)", input_description)
-	self._menu_input_description:change_generic_actions(self._generic_input_actions[input_description])
+	fassert(arg_72_0._generic_input_actions[arg_72_1], "[StartGameStateSettingsOverview:set_input_description] There is no such input_description (%s)", arg_72_1)
+	arg_72_0._menu_input_description:change_generic_actions(arg_72_0._generic_input_actions[arg_72_1])
 end
 
-StartGameStateSettingsOverview.draw = function (self, input_service, dt)
-	local ui_renderer = self._ui_renderer
-	local ui_top_renderer = self._ui_top_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local input_manager = self._input_manager
-	local render_settings = self._render_settings
+function StartGameStateSettingsOverview.draw(arg_73_0, arg_73_1, arg_73_2)
+	local var_73_0 = arg_73_0._ui_renderer
+	local var_73_1 = arg_73_0._ui_top_renderer
+	local var_73_2 = arg_73_0._ui_scenegraph
+	local var_73_3 = arg_73_0._input_manager
+	local var_73_4 = arg_73_0._render_settings
 
-	if not self._gamepad_style_active then
-		UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+	if not arg_73_0._gamepad_style_active then
+		UIRenderer.begin_pass(var_73_0, var_73_2, arg_73_1, arg_73_2, nil, var_73_4)
 
-		local snap_pixel_positions = render_settings.snap_pixel_positions
+		local var_73_5 = var_73_4.snap_pixel_positions
 
-		for _, widget in ipairs(self._widgets) do
-			if widget.snap_pixel_positions ~= nil then
-				render_settings.snap_pixel_positions = widget.snap_pixel_positions
+		for iter_73_0, iter_73_1 in ipairs(arg_73_0._widgets) do
+			if iter_73_1.snap_pixel_positions ~= nil then
+				var_73_4.snap_pixel_positions = iter_73_1.snap_pixel_positions
 			end
 
-			UIRenderer.draw_widget(ui_renderer, widget)
+			UIRenderer.draw_widget(var_73_0, iter_73_1)
 
-			render_settings.snap_pixel_positions = snap_pixel_positions
+			var_73_4.snap_pixel_positions = var_73_5
 		end
 
-		UIRenderer.end_pass(ui_renderer)
+		UIRenderer.end_pass(var_73_0)
 	end
 
-	local gamepad_active = input_manager:is_device_active("gamepad")
-
-	if gamepad_active and self._menu_input_description and not self.parent:active_view() then
-		self._menu_input_description:draw(ui_top_renderer, dt)
+	if var_73_3:is_device_active("gamepad") and arg_73_0._menu_input_description and not arg_73_0.parent:active_view() then
+		arg_73_0._menu_input_description:draw(var_73_1, arg_73_2)
 	end
 end
 
-StartGameStateSettingsOverview.draw_menu_input_description = function (self, input_service, dt)
-	local ui_top_renderer = self._ui_top_renderer
+function StartGameStateSettingsOverview.draw_menu_input_description(arg_74_0, arg_74_1, arg_74_2)
+	local var_74_0 = arg_74_0._ui_top_renderer
 
-	self._menu_input_description:draw(ui_top_renderer, dt)
+	arg_74_0._menu_input_description:draw(var_74_0, arg_74_2)
 end
 
-StartGameStateSettingsOverview._is_button_pressed = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot or content.hotspot
+function StartGameStateSettingsOverview._is_button_pressed(arg_75_0, arg_75_1)
+	local var_75_0 = arg_75_1.content
+	local var_75_1 = var_75_0.button_hotspot or var_75_0.hotspot
 
-	if hotspot.on_release then
-		hotspot.on_release = false
+	if var_75_1.on_release then
+		var_75_1.on_release = false
 
 		return true
 	end
 end
 
-StartGameStateSettingsOverview.play_sound = function (self, event)
-	self.parent:play_sound(event)
+function StartGameStateSettingsOverview.play_sound(arg_76_0, arg_76_1)
+	arg_76_0.parent:play_sound(arg_76_1)
 end
 
-StartGameStateSettingsOverview._start_transition_animation = function (self, key, animation_name)
-	local params = {
-		wwise_world = self._wwise_world,
-		render_settings = self._render_settings,
+function StartGameStateSettingsOverview._start_transition_animation(arg_77_0, arg_77_1, arg_77_2)
+	local var_77_0 = {
+		wwise_world = arg_77_0._wwise_world,
+		render_settings = arg_77_0._render_settings
 	}
-	local widgets = {}
-	local anim_id = self.ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
+	local var_77_1 = {}
+	local var_77_2 = arg_77_0.ui_animator:start_animation(arg_77_2, var_77_1, var_0_2, var_77_0)
 
-	self._animations[key] = anim_id
+	arg_77_0._animations[arg_77_1] = var_77_2
 end
 
-StartGameStateSettingsOverview.get_selected_weave_id = function (self)
-	return self._selected_weave_id
+function StartGameStateSettingsOverview.get_selected_weave_id(arg_78_0)
+	return arg_78_0._selected_weave_id
 end
 
-StartGameStateSettingsOverview.get_selected_weave_objective_index = function (self)
-	return self._selected_weave_objective_index
+function StartGameStateSettingsOverview.get_selected_weave_objective_index(arg_79_0)
+	return arg_79_0._selected_weave_objective_index
 end
 
-StartGameStateSettingsOverview.set_next_weave = function (self)
-	if self._selected_weave_id ~= self._next_weave then
-		self:set_selected_weave_id(self._next_weave)
-		self:set_selected_weave_objective_index(1)
-		self:play_sound("play_gui_lobby_button_00_quickplay")
+function StartGameStateSettingsOverview.set_next_weave(arg_80_0)
+	if arg_80_0._selected_weave_id ~= arg_80_0._next_weave then
+		arg_80_0:set_selected_weave_id(arg_80_0._next_weave)
+		arg_80_0:set_selected_weave_objective_index(1)
+		arg_80_0:play_sound("play_gui_lobby_button_00_quickplay")
 	end
 end
 
-StartGameStateSettingsOverview.set_selected_weave_id = function (self, weave_name)
-	if self._layout_save_settings then
-		self._layout_save_settings.weave_id = weave_name
+function StartGameStateSettingsOverview.set_selected_weave_id(arg_81_0, arg_81_1)
+	if arg_81_0._layout_save_settings then
+		arg_81_0._layout_save_settings.weave_id = arg_81_1
 	end
 
-	if weave_name then
-		self._selected_weave_id = weave_name
+	if arg_81_1 then
+		arg_81_0._selected_weave_id = arg_81_1
 	end
 end
 
-StartGameStateSettingsOverview.set_selected_weave_objective_index = function (self, objective_index)
-	self._selected_weave_objective_index = objective_index
+function StartGameStateSettingsOverview.set_selected_weave_objective_index(arg_82_0, arg_82_1)
+	arg_82_0._selected_weave_objective_index = arg_82_1
 end
 
-StartGameStateSettingsOverview.get_selected_heroic_deed_backend_id = function (self)
-	return self._selected_heroic_deed_backend_id
+function StartGameStateSettingsOverview.get_selected_heroic_deed_backend_id(arg_83_0)
+	return arg_83_0._selected_heroic_deed_backend_id
 end
 
-StartGameStateSettingsOverview.set_selected_heroic_deed_backend_id = function (self, backend_id)
-	self._selected_heroic_deed_backend_id = backend_id
+function StartGameStateSettingsOverview.set_selected_heroic_deed_backend_id(arg_84_0, arg_84_1)
+	arg_84_0._selected_heroic_deed_backend_id = arg_84_1
 end
 
-StartGameStateSettingsOverview.get_selected_level_id = function (self)
-	local dlc_approved = true
-	local extra_requirements_approved = true
-	local level_settings = self._specific_level_id and LevelSettings[self._specific_level_id]
+function StartGameStateSettingsOverview.get_selected_level_id(arg_85_0)
+	local var_85_0 = true
+	local var_85_1 = true
+	local var_85_2 = arg_85_0._specific_level_id and LevelSettings[arg_85_0._specific_level_id]
 
-	if level_settings and level_settings.dlc_name then
-		dlc_approved = Managers.unlock:is_dlc_unlocked(level_settings.dlc_name)
+	if var_85_2 and var_85_2.dlc_name then
+		var_85_0 = Managers.unlock:is_dlc_unlocked(var_85_2.dlc_name)
 	end
 
-	local selected_area_name = self:get_selected_area_name()
+	local var_85_3 = arg_85_0:get_selected_area_name()
 
-	if selected_area_name then
-		local area_settings = AreaSettings[selected_area_name]
+	if var_85_3 then
+		local var_85_4 = AreaSettings[var_85_3]
 
-		if area_settings and area_settings.unlock_requirement_function then
-			extra_requirements_approved = area_settings.unlock_requirement_function(self._statistics_db, self._stats_id)
+		if var_85_4 and var_85_4.unlock_requirement_function then
+			var_85_1 = var_85_4.unlock_requirement_function(arg_85_0._statistics_db, arg_85_0._stats_id)
 		end
 	end
 
-	return dlc_approved and extra_requirements_approved and self._specific_level_id or nil
+	return var_85_0 and var_85_1 and arg_85_0._specific_level_id or nil
 end
 
-StartGameStateSettingsOverview.set_selected_level_id = function (self, level_id)
-	if self._layout_save_settings then
-		self._layout_save_settings.level_id = level_id
+function StartGameStateSettingsOverview.set_selected_level_id(arg_86_0, arg_86_1)
+	if arg_86_0._layout_save_settings then
+		arg_86_0._layout_save_settings.level_id = arg_86_1
 	end
 
-	self._specific_level_id = level_id
+	arg_86_0._specific_level_id = arg_86_1
 end
 
-StartGameStateSettingsOverview.get_selected_area_name = function (self)
-	if self._specific_area_name then
-		local specific_area_name = self._specific_area_name
+function StartGameStateSettingsOverview.get_selected_area_name(arg_87_0)
+	if arg_87_0._specific_area_name then
+		local var_87_0 = arg_87_0._specific_area_name
 
-		if AreaSettings[specific_area_name] then
-			return self._specific_area_name
+		if AreaSettings[var_87_0] then
+			return arg_87_0._specific_area_name
 		end
 	end
 
-	if self._layout_save_settings then
-		local area_name = self._layout_save_settings.area_name
+	if arg_87_0._layout_save_settings then
+		local var_87_1 = arg_87_0._layout_save_settings.area_name
 
-		if area_name and AreaSettings[area_name] then
-			return area_name
+		if var_87_1 and AreaSettings[var_87_1] then
+			return var_87_1
 		end
 	end
 
 	return "helmgart"
 end
 
-StartGameStateSettingsOverview.set_selected_area_name = function (self, area_name)
-	if self._layout_save_settings then
-		self._layout_save_settings.area_name = area_name
+function StartGameStateSettingsOverview.set_selected_area_name(arg_88_0, arg_88_1)
+	if arg_88_0._layout_save_settings then
+		arg_88_0._layout_save_settings.area_name = arg_88_1
 	end
 
-	self._specific_area_name = area_name
+	arg_88_0._specific_area_name = arg_88_1
 end
 
-StartGameStateSettingsOverview.show_difficulty_option = function (self)
-	self._show_difficulty_option = true
+function StartGameStateSettingsOverview.show_difficulty_option(arg_89_0)
+	arg_89_0._show_difficulty_option = true
 end
 
-StartGameStateSettingsOverview.hide_difficulty_option = function (self)
-	self._show_difficulty_option = false
+function StartGameStateSettingsOverview.hide_difficulty_option(arg_90_0)
+	arg_90_0._show_difficulty_option = false
 end
 
-StartGameStateSettingsOverview.set_private_option_enabled = function (self, is_private)
-	if is_private == nil then
-		is_private = false
+function StartGameStateSettingsOverview.set_private_option_enabled(arg_91_0, arg_91_1)
+	if arg_91_1 == nil then
+		arg_91_1 = false
 	end
 
-	if self._layout_save_settings then
-		self._layout_save_settings.is_private = is_private
+	if arg_91_0._layout_save_settings then
+		arg_91_0._layout_save_settings.is_private = arg_91_1
 	end
 
-	self._is_game_private = is_private
+	arg_91_0._is_game_private = arg_91_1
 end
 
-StartGameStateSettingsOverview.is_private_option_enabled = function (self)
-	return self._is_game_private
+function StartGameStateSettingsOverview.is_private_option_enabled(arg_92_0)
+	return arg_92_0._is_game_private
 end
 
-StartGameStateSettingsOverview.set_always_host_option_enabled = function (self, always_host)
-	if always_host == nil then
-		always_host = false
+function StartGameStateSettingsOverview.set_always_host_option_enabled(arg_93_0, arg_93_1)
+	if arg_93_1 == nil then
+		arg_93_1 = false
 	end
 
-	if self._layout_save_settings then
-		self._layout_save_settings.always_host = always_host
+	if arg_93_0._layout_save_settings then
+		arg_93_0._layout_save_settings.always_host = arg_93_1
 	end
 
-	self._always_host = always_host
+	arg_93_0._always_host = arg_93_1
 end
 
-StartGameStateSettingsOverview.is_always_host_option_enabled = function (self)
-	return self._always_host
+function StartGameStateSettingsOverview.is_always_host_option_enabled(arg_94_0)
+	return arg_94_0._always_host
 end
 
-StartGameStateSettingsOverview.set_strict_matchmaking_option_enabled = function (self, use_strict_matchmaking)
-	if use_strict_matchmaking == nil then
-		use_strict_matchmaking = true
+function StartGameStateSettingsOverview.set_strict_matchmaking_option_enabled(arg_95_0, arg_95_1)
+	if arg_95_1 == nil then
+		arg_95_1 = true
 	end
 
-	if self._layout_save_settings then
-		self._layout_save_settings.use_strict_matchmaking = use_strict_matchmaking
+	if arg_95_0._layout_save_settings then
+		arg_95_0._layout_save_settings.use_strict_matchmaking = arg_95_1
 	end
 
-	self._use_strict_matchmaking = use_strict_matchmaking
+	arg_95_0._use_strict_matchmaking = arg_95_1
 end
 
-StartGameStateSettingsOverview.is_strict_matchmaking_option_enabled = function (self)
-	return self._use_strict_matchmaking
+function StartGameStateSettingsOverview.is_strict_matchmaking_option_enabled(arg_96_0)
+	return arg_96_0._use_strict_matchmaking
 end
 
-local host_human_players = {}
+local var_0_7 = {}
 
-StartGameStateSettingsOverview.is_difficulty_approved = function (self, difficulty_key)
+function StartGameStateSettingsOverview.is_difficulty_approved(arg_97_0, arg_97_1)
 	if Development.parameter("unlock_all_difficulties") then
 		return true
 	end
@@ -1517,252 +1465,239 @@ StartGameStateSettingsOverview.is_difficulty_approved = function (self, difficul
 		return true
 	end
 
-	if not difficulty_key then
+	if not arg_97_1 then
 		return false
 	end
 
-	local difficulty_approved = true
-	local extra_requirement, dlc_requirement, below_power_level
-	local human_players = Managers.player:human_players()
+	local var_97_0 = true
+	local var_97_1
+	local var_97_2
+	local var_97_3
+	local var_97_4 = Managers.player:human_players()
 
-	if not self:is_private_option_enabled() then
-		local players_below_difficulty = DifficultyManager.players_below_required_power_level(difficulty_key, human_players)
-
-		if #players_below_difficulty > 0 then
-			difficulty_approved = false
-			below_power_level = true
-		end
+	if not arg_97_0:is_private_option_enabled() and #DifficultyManager.players_below_required_power_level(arg_97_1, var_97_4) > 0 then
+		var_97_0 = false
+		var_97_3 = true
 	end
 
-	local difficulty_settings = DifficultySettings[difficulty_key]
+	local var_97_5 = DifficultySettings[arg_97_1]
 
-	if difficulty_settings.extra_requirement_name then
-		local players = human_players
+	if var_97_5.extra_requirement_name then
+		local var_97_6 = var_97_4
 
 		if Managers.state.network.is_server then
-			host_human_players[1] = Managers.player:local_player()
-			players = host_human_players
+			var_0_7[1] = Managers.player:local_player()
+			var_97_6 = var_0_7
 		end
 
-		local players_not_meeting_requirements = DifficultyManager.players_locked_difficulty_rank(difficulty_key, players)
+		if #DifficultyManager.players_locked_difficulty_rank(arg_97_1, var_97_6) > 0 then
+			local var_97_7 = var_97_5.extra_requirement_name
 
-		if #players_not_meeting_requirements > 0 then
-			local extra_requirement_name = difficulty_settings.extra_requirement_name
-			local requirement_data = ExtraDifficultyRequirements[extra_requirement_name]
-
-			extra_requirement = requirement_data.description_text
-			difficulty_approved = false
+			var_97_1 = ExtraDifficultyRequirements[var_97_7].description_text
+			var_97_0 = false
 		end
 	end
 
-	if difficulty_settings.dlc_requirement then
-		local network_handler = Managers.mechanism:network_handler()
+	if var_97_5.dlc_requirement then
+		local var_97_8 = Managers.mechanism:network_handler()
 
-		if network_handler then
-			local anyone_has_unlocked_dlc = false
-			local peers = network_handler:get_peers()
+		if var_97_8 then
+			local var_97_9 = false
+			local var_97_10 = var_97_8:get_peers()
 
-			for i = 1, #peers do
-				local peer_id = peers[i]
+			for iter_97_0 = 1, #var_97_10 do
+				local var_97_11 = var_97_10[iter_97_0]
 
-				if network_handler:is_network_state_fully_synced_for_peer(peer_id) and network_handler:has_unlocked_dlc(peer_id, difficulty_settings.dlc_requirement) then
-					anyone_has_unlocked_dlc = true
+				if var_97_8:is_network_state_fully_synced_for_peer(var_97_11) and var_97_8:has_unlocked_dlc(var_97_11, var_97_5.dlc_requirement) then
+					var_97_9 = true
 				end
 			end
 
-			if not anyone_has_unlocked_dlc then
-				difficulty_approved = false
-				dlc_requirement = difficulty_settings.dlc_requirement
+			if not var_97_9 then
+				var_97_0 = false
+				var_97_2 = var_97_5.dlc_requirement
 			end
 		end
 	end
 
-	return difficulty_approved, extra_requirement, dlc_requirement, below_power_level
+	return var_97_0, var_97_1, var_97_2, var_97_3
 end
 
-StartGameStateSettingsOverview.set_difficulty_option = function (self, difficulty_key)
-	if self._layout_save_settings then
-		self._layout_save_settings.difficulty_key = difficulty_key
+function StartGameStateSettingsOverview.set_difficulty_option(arg_98_0, arg_98_1)
+	if arg_98_0._layout_save_settings then
+		arg_98_0._layout_save_settings.difficulty_key = arg_98_1
 	end
 
-	self._selected_difficulty_key = difficulty_key
+	arg_98_0._selected_difficulty_key = arg_98_1
 end
 
-StartGameStateSettingsOverview.get_difficulty_option = function (self, ignore_approval)
-	local default_mechanism_difficulty = Managers.mechanism:mechanism_setting("default_difficulty")
-	local selected_difficulty_key = self._selected_difficulty_key
-	local difficulty_index = table.find(Difficulties, selected_difficulty_key) or table.index_of(Difficulties, default_mechanism_difficulty)
+function StartGameStateSettingsOverview.get_difficulty_option(arg_99_0, arg_99_1)
+	local var_99_0 = Managers.mechanism:mechanism_setting("default_difficulty")
+	local var_99_1 = arg_99_0._selected_difficulty_key
 
-	for i = difficulty_index, 1, -1 do
-		selected_difficulty_key = Difficulties[i]
+	for iter_99_0 = table.find(Difficulties, var_99_1) or table.index_of(Difficulties, var_99_0), 1, -1 do
+		var_99_1 = Difficulties[iter_99_0]
 
-		if self:is_difficulty_approved(selected_difficulty_key) then
+		if arg_99_0:is_difficulty_approved(var_99_1) then
 			break
 		end
 	end
 
-	self:set_difficulty_option(selected_difficulty_key)
+	arg_99_0:set_difficulty_option(var_99_1)
 
-	return selected_difficulty_key
+	return var_99_1
 end
 
-StartGameStateSettingsOverview.set_dedicated_or_player_hosted_search = function (self, use_dedicated_win_servers, use_dedicated_aws_servers, use_player_hosted)
-	self._use_dedicated_win_servers = use_dedicated_win_servers == nil and true or use_dedicated_win_servers
-	self._use_dedicated_aws_servers = use_dedicated_aws_servers == nil and true or use_dedicated_aws_servers
-	self._use_player_hosted = use_player_hosted == nil and true or use_player_hosted
+function StartGameStateSettingsOverview.set_dedicated_or_player_hosted_search(arg_100_0, arg_100_1, arg_100_2, arg_100_3)
+	arg_100_0._use_dedicated_win_servers = arg_100_1 == nil and true or arg_100_1
+	arg_100_0._use_dedicated_aws_servers = arg_100_2 == nil and true or arg_100_2
+	arg_100_0._use_player_hosted = arg_100_3 == nil and true or arg_100_3
 
-	if self._layout_save_settings then
-		self._layout_save_settings.use_dedicated_win_servers = use_dedicated_win_servers
-		self._layout_save_settings.use_dedicated_aws_servers = use_dedicated_aws_servers
-		self._layout_save_settings.use_player_hosted = use_player_hosted
+	if arg_100_0._layout_save_settings then
+		arg_100_0._layout_save_settings.use_dedicated_win_servers = arg_100_1
+		arg_100_0._layout_save_settings.use_dedicated_aws_servers = arg_100_2
+		arg_100_0._layout_save_settings.use_player_hosted = arg_100_3
 	end
 end
 
-StartGameStateSettingsOverview.using_player_hosted_search = function (self)
-	return self._use_player_hosted
+function StartGameStateSettingsOverview.using_player_hosted_search(arg_101_0)
+	return arg_101_0._use_player_hosted
 end
 
-StartGameStateSettingsOverview.using_dedicated_servers_search = function (self)
-	return self._use_dedicated_win_servers, self._use_dedicated_aws_servers
+function StartGameStateSettingsOverview.using_dedicated_servers_search(arg_102_0)
+	return arg_102_0._use_dedicated_win_servers, arg_102_0._use_dedicated_aws_servers
 end
 
-StartGameStateSettingsOverview.set_play_button_enabled = function (self, enabled)
+function StartGameStateSettingsOverview.set_play_button_enabled(arg_103_0, arg_103_1)
 	return
 end
 
-StartGameStateSettingsOverview.set_confirm_button_visibility = function (self, visible)
+function StartGameStateSettingsOverview.set_confirm_button_visibility(arg_104_0, arg_104_1)
 	return
 end
 
-StartGameStateSettingsOverview.set_fullscreen_effect_enable_state = function (self, enabled)
-	local world = self._ui_renderer.world
-	local shading_env = World.get_data(world, "shading_environment")
+function StartGameStateSettingsOverview.set_fullscreen_effect_enable_state(arg_105_0, arg_105_1)
+	local var_105_0 = arg_105_0._ui_renderer.world
+	local var_105_1 = World.get_data(var_105_0, "shading_environment")
 
-	if shading_env then
-		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", enabled and 1 or 0)
-		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", enabled and 0.75 or 0)
-		ShadingEnvironment.apply(shading_env)
+	if var_105_1 then
+		ShadingEnvironment.set_scalar(var_105_1, "fullscreen_blur_enabled", arg_105_1 and 1 or 0)
+		ShadingEnvironment.set_scalar(var_105_1, "fullscreen_blur_amount", arg_105_1 and 0.75 or 0)
+		ShadingEnvironment.apply(var_105_1)
 	end
 
-	self._fullscreen_effect_enabled = enabled
+	arg_105_0._fullscreen_effect_enabled = arg_105_1
 end
 
-StartGameStateSettingsOverview.set_mutator_option = function (self, mutator_key)
-	self._selected_mutator_key = mutator_key
+function StartGameStateSettingsOverview.set_mutator_option(arg_106_0, arg_106_1)
+	arg_106_0._selected_mutator_key = arg_106_1
 end
 
-StartGameStateSettingsOverview.get_mutator_option = function (self)
-	return self._selected_mutator_key
+function StartGameStateSettingsOverview.get_mutator_option(arg_107_0)
+	return arg_107_0._selected_mutator_key
 end
 
-StartGameStateSettingsOverview.get_completed_level_difficulty_index = function (self, statistics_db, stats_id, level_id)
-	local settings = self:get_custom_game_settings(self._mechanism_name) or self:get_custom_game_settings("adventure")
-	local function_name = settings.difficulty_index_getter_name
+function StartGameStateSettingsOverview.get_completed_level_difficulty_index(arg_108_0, arg_108_1, arg_108_2, arg_108_3)
+	local var_108_0 = (arg_108_0:get_custom_game_settings(arg_108_0._mechanism_name) or arg_108_0:get_custom_game_settings("adventure")).difficulty_index_getter_name
 
-	return LevelUnlockUtils[function_name](statistics_db, stats_id, level_id)
+	return LevelUnlockUtils[var_108_0](arg_108_1, arg_108_2, arg_108_3)
 end
 
-StartGameStateSettingsOverview.can_use_streaming = function (self)
+function StartGameStateSettingsOverview.can_use_streaming(arg_109_0)
 	if IS_WINDOWS then
 		return true
 	end
 
-	local twitch_enabled = GameSettingsDevelopment.twitch_enabled
-	local is_offline = Managers.account:offline_mode()
+	local var_109_0 = GameSettingsDevelopment.twitch_enabled
+	local var_109_1 = Managers.account:offline_mode()
 
-	return twitch_enabled and not is_offline
+	return var_109_0 and not var_109_1
 end
 
-StartGameStateSettingsOverview.setup_backend_image_material = function (self, gui, reference_name, texture_name, masked)
-	local material_name = "StartGameStateSettingsOverview_" .. reference_name
-	local cloned_materials_by_reference = self._cloned_materials_by_reference
+function StartGameStateSettingsOverview.setup_backend_image_material(arg_110_0, arg_110_1, arg_110_2, arg_110_3, arg_110_4)
+	local var_110_0 = "StartGameStateSettingsOverview_" .. arg_110_2
 
-	if cloned_materials_by_reference[reference_name] then
-		return material_name
+	if arg_110_0._cloned_materials_by_reference[arg_110_2] then
+		return var_110_0
 	end
 
-	local template_material_name = masked and "template_menu_diffuse_masked" or "template_menu_diffuse"
+	local var_110_1 = arg_110_4 and "template_menu_diffuse_masked" or "template_menu_diffuse"
 
-	self:_create_material_instance(gui, material_name, template_material_name, reference_name)
+	arg_110_0:_create_material_instance(arg_110_1, var_110_0, var_110_1, arg_110_2)
 
-	local cdn = Managers.backend:get_interface("cdn")
-	local cb = callback(self, "_cb_on_backend_url_loaded", gui, reference_name, texture_name, material_name)
+	local var_110_2 = Managers.backend:get_interface("cdn")
+	local var_110_3 = callback(arg_110_0, "_cb_on_backend_url_loaded", arg_110_1, arg_110_2, arg_110_3, var_110_0)
 
-	cdn:get_resource_urls({
-		texture_name,
-	}, cb)
+	var_110_2:get_resource_urls({
+		arg_110_3
+	}, var_110_3)
 
-	return material_name
+	return var_110_0
 end
 
-StartGameStateSettingsOverview._cb_on_backend_url_loaded = function (self, gui, reference_name, texture_name, material_name, result)
-	local texture_url = result[texture_name]
+function StartGameStateSettingsOverview._cb_on_backend_url_loaded(arg_111_0, arg_111_1, arg_111_2, arg_111_3, arg_111_4, arg_111_5)
+	local var_111_0 = arg_111_5[arg_111_3]
 
-	if not texture_url then
+	if not var_111_0 then
 		return
 	end
 
-	if self._is_open == false then
+	if arg_111_0._is_open == false then
 		return
 	end
 
-	self._material_references_to_unload[reference_name] = true
+	arg_111_0._material_references_to_unload[arg_111_2] = true
 
-	local cb = callback(self, "_cb_on_backend_image_loaded", gui, reference_name, material_name)
+	local var_111_1 = callback(arg_111_0, "_cb_on_backend_image_loaded", arg_111_1, arg_111_2, arg_111_4)
 
-	Managers.url_loader:load_resource(reference_name, texture_url, cb, texture_name)
+	Managers.url_loader:load_resource(arg_111_2, var_111_0, var_111_1, arg_111_3)
 end
 
-StartGameStateSettingsOverview._cb_on_backend_image_loaded = function (self, gui, reference_name, material_name, texture_resource)
-	if not self._cloned_materials_by_reference[reference_name] then
+function StartGameStateSettingsOverview._cb_on_backend_image_loaded(arg_112_0, arg_112_1, arg_112_2, arg_112_3, arg_112_4)
+	if not arg_112_0._cloned_materials_by_reference[arg_112_2] then
 		return
 	end
 
-	if texture_resource then
-		self:_set_material_diffuse_by_resource(gui, material_name, texture_resource)
+	if arg_112_4 then
+		arg_112_0:_set_material_diffuse_by_resource(arg_112_1, arg_112_3, arg_112_4)
 	else
-		self._material_references_to_unload[reference_name] = nil
+		arg_112_0._material_references_to_unload[arg_112_2] = nil
 
-		Application.warning(string.format("[StartGameStateSettingsOverview] - Failed loading image for reference name: (%s)", reference_name))
+		Application.warning(string.format("[StartGameStateSettingsOverview] - Failed loading image for reference name: (%s)", arg_112_2))
 	end
 end
 
-StartGameStateSettingsOverview._create_material_instance = function (self, gui, new_material_name, template_material_name, reference_name)
-	local cloned_materials_by_reference = self._cloned_materials_by_reference
+function StartGameStateSettingsOverview._create_material_instance(arg_113_0, arg_113_1, arg_113_2, arg_113_3, arg_113_4)
+	arg_113_0._cloned_materials_by_reference[arg_113_4] = arg_113_2
+	arg_113_0._gui_by_cloned_material_reference[arg_113_4] = arg_113_1
 
-	cloned_materials_by_reference[reference_name] = new_material_name
-
-	local gui_by_cloned_material_reference = self._gui_by_cloned_material_reference
-
-	gui_by_cloned_material_reference[reference_name] = gui
-
-	return Gui.clone_material_from_template(gui, new_material_name, template_material_name)
+	return Gui.clone_material_from_template(arg_113_1, arg_113_2, arg_113_3)
 end
 
-StartGameStateSettingsOverview._set_material_diffuse_by_resource = function (self, gui, material_name, texture_resource)
-	local material = Gui.material(gui, material_name)
+function StartGameStateSettingsOverview._set_material_diffuse_by_resource(arg_114_0, arg_114_1, arg_114_2, arg_114_3)
+	local var_114_0 = Gui.material(arg_114_1, arg_114_2)
 
-	if material then
-		Material.set_resource(material, "diffuse_map", texture_resource)
+	if var_114_0 then
+		Material.set_resource(var_114_0, "diffuse_map", arg_114_3)
 	end
 end
 
-StartGameStateSettingsOverview._set_material_diffuse_by_path = function (self, gui, material_name, texture_path)
-	local material = Gui.material(gui, material_name)
+function StartGameStateSettingsOverview._set_material_diffuse_by_path(arg_115_0, arg_115_1, arg_115_2, arg_115_3)
+	local var_115_0 = Gui.material(arg_115_1, arg_115_2)
 
-	if material then
-		Material.set_texture(material, "diffuse_map", texture_path)
+	if var_115_0 then
+		Material.set_texture(var_115_0, "diffuse_map", arg_115_3)
 	end
 end
 
-StartGameStateSettingsOverview._is_unique_reference_to_material = function (self, reference_name)
-	local cloned_materials_by_reference = self._cloned_materials_by_reference
-	local material_name = cloned_materials_by_reference[reference_name]
+function StartGameStateSettingsOverview._is_unique_reference_to_material(arg_116_0, arg_116_1)
+	local var_116_0 = arg_116_0._cloned_materials_by_reference
+	local var_116_1 = var_116_0[arg_116_1]
 
-	fassert(material_name, "[StartGameStateSettingsOverview] - Could not find a used material for reference name: (%s)", reference_name)
+	fassert(var_116_1, "[StartGameStateSettingsOverview] - Could not find a used material for reference name: (%s)", arg_116_1)
 
-	for key, value in pairs(cloned_materials_by_reference) do
-		if material_name == value and reference_name ~= key then
+	for iter_116_0, iter_116_1 in pairs(var_116_0) do
+		if var_116_1 == iter_116_1 and arg_116_1 ~= iter_116_0 then
 			return false
 		end
 	end
@@ -1770,32 +1705,32 @@ StartGameStateSettingsOverview._is_unique_reference_to_material = function (self
 	return true
 end
 
-StartGameStateSettingsOverview.reset_cloned_material = function (self, reference_name)
-	local gui_by_cloned_material_reference = self._gui_by_cloned_material_reference
-	local cloned_materials_by_reference = self._cloned_materials_by_reference
-	local material_references_to_unload = self._material_references_to_unload
+function StartGameStateSettingsOverview.reset_cloned_material(arg_117_0, arg_117_1)
+	local var_117_0 = arg_117_0._gui_by_cloned_material_reference
+	local var_117_1 = arg_117_0._cloned_materials_by_reference
+	local var_117_2 = arg_117_0._material_references_to_unload
 
-	if material_references_to_unload[reference_name] then
-		material_references_to_unload[reference_name] = nil
+	if var_117_2[arg_117_1] then
+		var_117_2[arg_117_1] = nil
 
-		Managers.url_loader:unload_resource(reference_name)
+		Managers.url_loader:unload_resource(arg_117_1)
 	end
 
-	if self:_is_unique_reference_to_material(reference_name) then
-		local gui = gui_by_cloned_material_reference[reference_name]
-		local material_name = cloned_materials_by_reference[reference_name]
+	if arg_117_0:_is_unique_reference_to_material(arg_117_1) then
+		local var_117_3 = var_117_0[arg_117_1]
+		local var_117_4 = var_117_1[arg_117_1]
 
-		self:_set_material_diffuse_by_path(gui, material_name, STREAMING_PLACEHOLDER_TEXTURE_PATH)
+		arg_117_0:_set_material_diffuse_by_path(var_117_3, var_117_4, var_0_5)
 	end
 
-	cloned_materials_by_reference[reference_name] = nil
-	gui_by_cloned_material_reference[reference_name] = nil
+	var_117_1[arg_117_1] = nil
+	var_117_0[arg_117_1] = nil
 end
 
-StartGameStateSettingsOverview._reset_cloned_materials = function (self)
-	local cloned_materials_by_reference = self._cloned_materials_by_reference
+function StartGameStateSettingsOverview._reset_cloned_materials(arg_118_0)
+	local var_118_0 = arg_118_0._cloned_materials_by_reference
 
-	for reference_name, material_name in pairs(cloned_materials_by_reference) do
-		self:reset_cloned_material(reference_name)
+	for iter_118_0, iter_118_1 in pairs(var_118_0) do
+		arg_118_0:reset_cloned_material(iter_118_0)
 	end
 end

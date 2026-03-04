@@ -1,18 +1,18 @@
-﻿-- chunkname: @scripts/settings/mutators/mutator_elite_specials.lua
+-- chunkname: @scripts/settings/mutators/mutator_elite_specials.lua
 
 return {
 	description = "description_mutator_elite_specials",
-	display_name = "display_name_mutator_elite_specials",
 	icon = "mutator_icon_powerful_elites",
-	server_initialize_function = function (context, data)
-		MutatorUtils.store_breed_and_action_settings(context, data)
+	display_name = "display_name_mutator_elite_specials",
+	server_initialize_function = function(arg_1_0, arg_1_1)
+		MutatorUtils.store_breed_and_action_settings(arg_1_0, arg_1_1)
 
 		Breeds.skaven_gutter_runner.run_speed = 14
 		Breeds.skaven_gutter_runner.jump_speed = 40
 		Breeds.skaven_gutter_runner.jump_range = 40
 		BreedActions.skaven_ratling_gunner.shoot_ratling_gun.attack_time = {
 			12,
-			20,
+			20
 		}
 		BreedActions.skaven_ratling_gunner.shoot_ratling_gun.fire_rate_at_start = 20
 		BreedActions.skaven_ratling_gunner.shoot_ratling_gun.fire_rate_at_end = 35
@@ -22,22 +22,22 @@ return {
 			true,
 			true,
 			true,
-			true,
+			true
 		}
 		Breeds.skaven_poison_wind_globadier.armor_category = 2
 		BreedActions.skaven_poison_wind_globadier.advance_towards_players.time_until_first_throw = {
 			0,
-			1,
+			1
 		}
 		BreedActions.skaven_poison_wind_globadier.advance_towards_players.throw_at_distance = {
 			5,
-			40,
+			40
 		}
 		BreedActions.skaven_poison_wind_globadier.advance_towards_players.range = 60
 		BreedActions.skaven_poison_wind_globadier.throw_poison_globe.barrage_count = 8
 		BreedActions.skaven_poison_wind_globadier.throw_poison_globe.time_between_throws = {
 			8,
-			1,
+			1
 		}
 		Breeds.skaven_warpfire_thrower.run_speed = 6
 		BreedActions.skaven_warpfire_thrower.shoot_warpfire_thrower.ignore_staggers = {
@@ -46,7 +46,7 @@ return {
 			true,
 			true,
 			true,
-			true,
+			true
 		}
 		BreedActions.skaven_warpfire_thrower.shoot_warpfire_thrower.close_attack_range = 25
 		BreedActions.skaven_warpfire_thrower.shoot_warpfire_thrower.buff_name = "warpfire_thrower_face_base_mutator"
@@ -71,14 +71,14 @@ return {
 			true,
 			true,
 			true,
-			true,
+			true
 		}
 		BreedActions.chaos_corruptor_sorcerer.skulk_approach.min_wave_distance = 5
 		BreedActions.chaos_corruptor_sorcerer.skulk_approach.max_wave_distance = 15
 		BreedActions.chaos_corruptor_sorcerer.skulk_approach.third_wave_min_distance = 4
 		BreedActions.chaos_corruptor_sorcerer.skulk_approach.third_wave_max_distance = 15
 	end,
-	server_stop_function = function (context, data)
-		MutatorUtils.restore_breed_and_action_settings(context, data)
-	end,
+	server_stop_function = function(arg_2_0, arg_2_1)
+		MutatorUtils.restore_breed_and_action_settings(arg_2_0, arg_2_1)
+	end
 }

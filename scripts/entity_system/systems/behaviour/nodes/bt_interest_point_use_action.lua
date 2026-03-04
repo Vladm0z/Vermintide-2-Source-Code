@@ -1,108 +1,96 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_interest_point_use_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_interest_point_use_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTInterestPointUseAction = class(BTInterestPointUseAction, BTNode)
 
-BTInterestPointUseAction.init = function (self, ...)
-	BTInterestPointUseAction.super.init(self, ...)
+function BTInterestPointUseAction.init(arg_1_0, ...)
+	BTInterestPointUseAction.super.init(arg_1_0, ...)
 end
 
 BTInterestPointUseAction.name = "BTInterestPointUseAction"
 
-BTInterestPointUseAction.enter = function (self, unit, blackboard, t)
-	local interest_point_system_api = blackboard.system_api.ai_interest_point_system
-	local request = interest_point_system_api.get_claim(blackboard.ip_request_id)
-	local point = request.point
-	local animations = point.animations
-	local animations_n = point.animations_n
-	local animation_index = math.random(1, animations_n)
-	local animation = animations[animation_index]
+function BTInterestPointUseAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_2.system_api.ai_interest_point_system.get_claim(arg_2_2.ip_request_id)
+	local var_2_1 = var_2_0.point
+	local var_2_2 = var_2_1.animations
+	local var_2_3 = var_2_1.animations_n
+	local var_2_4 = var_2_2[math.random(1, var_2_3)]
 
-	Managers.state.network:anim_event(unit, animation)
+	Managers.state.network:anim_event(arg_2_1, var_2_4)
 
-	blackboard.move_state = "idle"
+	arg_2_2.move_state = "idle"
 
-	local duration = request.point_extension.duration
+	local var_2_5 = var_2_0.point_extension.duration
 
-	if duration and duration > 0 then
-		local duration_multiplier = 0.8 + math.random() * 0.4
-
-		blackboard.ip_end_time = t + duration * duration_multiplier
+	if var_2_5 and var_2_5 > 0 then
+		arg_2_2.ip_end_time = arg_2_3 + var_2_5 * (0.8 + math.random() * 0.4)
 	end
 
-	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
-
-	local navigation_extension = blackboard.navigation_extension
-
-	navigation_extension:set_enabled(false)
+	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
+	arg_2_2.navigation_extension:set_enabled(false)
 end
 
-BTInterestPointUseAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	local interest_point_system_api = blackboard.system_api.ai_interest_point_system
+function BTInterestPointUseAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	local var_3_0 = arg_3_2.system_api.ai_interest_point_system
 
-	if HEALTH_ALIVE[unit] then
-		interest_point_system_api.release_claim(blackboard.ip_request_id)
+	if HEALTH_ALIVE[arg_3_1] then
+		var_3_0.release_claim(arg_3_2.ip_request_id)
 
-		blackboard.ip_request_id = nil
+		arg_3_2.ip_request_id = nil
 	end
 
-	local navigation_extension = blackboard.navigation_extension
+	arg_3_2.navigation_extension:set_enabled(true)
 
-	navigation_extension:set_enabled(true)
+	arg_3_2.ip_end_time = nil
 
-	blackboard.ip_end_time = nil
+	if arg_3_2.ip_next_request_id ~= nil and HEALTH_ALIVE[arg_3_1] then
+		if arg_3_4 == "aborted" then
+			var_3_0.release_claim(arg_3_2.ip_next_request_id, arg_3_1)
 
-	if blackboard.ip_next_request_id ~= nil and HEALTH_ALIVE[unit] then
-		if reason == "aborted" then
-			interest_point_system_api.release_claim(blackboard.ip_next_request_id, unit)
-
-			blackboard.ip_next_request_id = nil
+			arg_3_2.ip_next_request_id = nil
 		else
-			blackboard.ip_request_id = blackboard.ip_next_request_id
+			arg_3_2.ip_request_id = arg_3_2.ip_next_request_id
 		end
 
-		blackboard.ip_next_request_id = nil
+		arg_3_2.ip_next_request_id = nil
 	end
 end
 
-BTInterestPointUseAction.run = function (self, unit, blackboard, t, dt)
+function BTInterestPointUseAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if script_data.ai_interest_point_debug then
-		Debug.text("BTInterestPointApproachAction state = %s", blackboard.ip_state)
-		QuickDrawer:circle(blackboard.ip_root_pos:unbox(), 10, Vector3.up())
+		Debug.text("BTInterestPointApproachAction state = %s", arg_4_2.ip_state)
+		QuickDrawer:circle(arg_4_2.ip_root_pos:unbox(), 10, Vector3.up())
 	end
 
-	if blackboard.ip_end_time ~= nil and t >= blackboard.ip_end_time then
-		local moving_to_ip = blackboard.group_blackboard.rats_currently_moving_to_ip
-		local max_moving = InterestPointSettings.max_rats_currently_moving_to_ip
-
-		if max_moving < moving_to_ip then
-			blackboard.ip_end_time = t + 1 + math.random() * 2
+	if arg_4_2.ip_end_time ~= nil and arg_4_3 >= arg_4_2.ip_end_time then
+		if arg_4_2.group_blackboard.rats_currently_moving_to_ip > InterestPointSettings.max_rats_currently_moving_to_ip then
+			arg_4_2.ip_end_time = arg_4_3 + 1 + math.random() * 2
 
 			return "running"
 		end
 
-		local interest_point_system_api = blackboard.system_api.ai_interest_point_system
+		local var_4_0 = arg_4_2.system_api.ai_interest_point_system
 
-		if blackboard.ip_next_request_id == nil then
-			local action = self._tree_node.action_data
+		if arg_4_2.ip_next_request_id == nil then
+			local var_4_1 = arg_4_0._tree_node.action_data
 
-			blackboard.ip_next_request_id = interest_point_system_api.start_async_claim_request(unit, blackboard.ip_root_pos:unbox(), action.min_range, action.max_range, blackboard.ip_request_id)
+			arg_4_2.ip_next_request_id = var_4_0.start_async_claim_request(arg_4_1, arg_4_2.ip_root_pos:unbox(), var_4_1.min_range, var_4_1.max_range, arg_4_2.ip_request_id)
 		else
-			local next_request = interest_point_system_api.get_claim(blackboard.ip_next_request_id)
+			local var_4_2 = var_4_0.get_claim(arg_4_2.ip_next_request_id)
 
-			if next_request.result == "success" then
+			if var_4_2.result == "success" then
 				return "done"
-			elseif next_request.result == "failed" then
-				local current_request = interest_point_system_api.get_claim(blackboard.ip_request_id)
-				local duration_multiplier = 0.8 + math.random() * 0.4
-				local duration = current_request.point_extension.duration * duration_multiplier
+			elseif var_4_2.result == "failed" then
+				local var_4_3 = var_4_0.get_claim(arg_4_2.ip_request_id)
+				local var_4_4 = 0.8 + math.random() * 0.4
+				local var_4_5 = var_4_3.point_extension.duration * var_4_4
 
-				blackboard.ip_end_time = blackboard.ip_end_time + duration
+				arg_4_2.ip_end_time = arg_4_2.ip_end_time + var_4_5
 
-				interest_point_system_api.release_claim(blackboard.ip_next_request_id)
+				var_4_0.release_claim(arg_4_2.ip_next_request_id)
 
-				blackboard.ip_next_request_id = nil
+				arg_4_2.ip_next_request_id = nil
 			end
 		end
 	end

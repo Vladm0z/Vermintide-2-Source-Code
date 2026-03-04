@@ -1,349 +1,334 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/gutter_runner/gutter_runner_state_pouncing.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/gutter_runner/gutter_runner_state_pouncing.lua
 
 GutterRunnerStatePouncing = class(GutterRunnerStatePouncing, EnemyCharacterState)
 
-GutterRunnerStatePouncing.init = function (self, character_state_init_context)
-	EnemyCharacterState.init(self, character_state_init_context, "pouncing")
+function GutterRunnerStatePouncing.init(arg_1_0, arg_1_1)
+	EnemyCharacterState.init(arg_1_0, arg_1_1, "pouncing")
 end
 
-local position_lookup = POSITION_LOOKUP
+local var_0_0 = POSITION_LOOKUP
 
-GutterRunnerStatePouncing.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
-	table.clear(self._temp_params)
+function GutterRunnerStatePouncing.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	table.clear(arg_2_0._temp_params)
 
-	local player = self._player
-	local input_extension = self._input_extension
-	local status_extension = self._status_extension
-	local locomotion_extension = self._locomotion_extension
-	local inventory_extension = self._inventory_extension
-	local first_person_extension = self._first_person_extension
-	local breed = Unit.get_data(unit, "breed")
+	local var_2_0 = arg_2_0._player
+	local var_2_1 = arg_2_0._input_extension
+	local var_2_2 = arg_2_0._status_extension
+	local var_2_3 = arg_2_0._locomotion_extension
+	local var_2_4 = arg_2_0._inventory_extension
+	local var_2_5 = arg_2_0._first_person_extension
 
-	self._breed = breed
-	self._physics_world = World.physics_world(self._world)
+	arg_2_0._breed = Unit.get_data(arg_2_1, "breed")
+	arg_2_0._physics_world = World.physics_world(arg_2_0._world)
 
-	local pounce_data = status_extension.do_pounce
+	local var_2_6 = var_2_2.do_pounce
 
-	pounce_data.starting_pos = Vector3Box(POSITION_LOOKUP[unit])
-	pounce_data.sfx_event_jump = "Play_versus_gutterrunner_jump_attack_release"
-	pounce_data.sfx_event_land = "Play_versus_pactsworn_jump_land"
-	pounce_data.sfx_event_jump_end = "Play_versus_gutterrunner_leap_stop"
-	self._pounce_data = pounce_data
-	status_extension.do_pounce = false
+	var_2_6.starting_pos = Vector3Box(POSITION_LOOKUP[arg_2_1])
+	var_2_6.sfx_event_jump = "Play_versus_gutterrunner_jump_attack_release"
+	var_2_6.sfx_event_land = "Play_versus_pactsworn_jump_land"
+	var_2_6.sfx_event_jump_end = "Play_versus_gutterrunner_leap_stop"
+	arg_2_0._pounce_data = var_2_6
+	var_2_2.do_pounce = false
 
-	local initial_velocity = pounce_data.initial_velocity:unbox()
+	local var_2_7 = var_2_6.initial_velocity:unbox()
 
-	self:_start_pounce(unit, initial_velocity, t)
-	CharacterStateHelper.ghost_mode(self._ghost_mode_extension, input_extension)
-	CharacterStateHelper.look(input_extension, player.viewport_name, first_person_extension, status_extension, self._inventory_extension)
-	CharacterStateHelper.update_weapon_actions(t, unit, input_extension, inventory_extension, self._health_extension)
+	arg_2_0:_start_pounce(arg_2_1, var_2_7, arg_2_5)
+	CharacterStateHelper.ghost_mode(arg_2_0._ghost_mode_extension, var_2_1)
+	CharacterStateHelper.look(var_2_1, var_2_0.viewport_name, var_2_5, var_2_2, arg_2_0._inventory_extension)
+	CharacterStateHelper.update_weapon_actions(arg_2_5, arg_2_1, var_2_1, var_2_4, arg_2_0._health_extension)
 
-	local position = POSITION_LOOKUP[unit]
+	local var_2_8 = POSITION_LOOKUP[arg_2_1]
 
-	ScriptUnit.extension(unit, "whereabouts_system"):set_jumped()
+	ScriptUnit.extension(arg_2_1, "whereabouts_system"):set_jumped()
 
-	local start_jump_height = position_lookup[unit].z
+	local var_2_9 = var_0_0[arg_2_1].z
 
-	status_extension:set_falling_height(start_jump_height)
-	status_extension:set_gutter_runner_leaping(true)
+	var_2_2:set_falling_height(var_2_9)
+	var_2_2:set_gutter_runner_leaping(true)
 
-	self._entered_in_ghostmode = status_extension:get_in_ghost_mode()
-	self._played_landing_event = nil
+	arg_2_0._entered_in_ghostmode = var_2_2:get_in_ghost_mode()
+	arg_2_0._played_landing_event = nil
 
-	CharacterStateHelper.play_animation_event(unit, "jump_start")
-	CharacterStateHelper.play_animation_event_first_person(first_person_extension, "jump_start")
+	CharacterStateHelper.play_animation_event(arg_2_1, "jump_start")
+	CharacterStateHelper.play_animation_event_first_person(var_2_5, "jump_start")
 
-	local blackboard = BLACKBOARDS[unit]
+	local var_2_10 = BLACKBOARDS[arg_2_1]
 
-	blackboard.starting_pos_boxed = Vector3Box(POSITION_LOOKUP[unit])
-	blackboard.pounce_start_time = t
+	var_2_10.starting_pos_boxed = Vector3Box(POSITION_LOOKUP[arg_2_1])
+	var_2_10.pounce_start_time = arg_2_5
 
-	self:set_breed_action("jump")
-	self._ghost_mode_extension:set_external_no_spawn_reason("pouncing", true)
+	arg_2_0:set_breed_action("jump")
+	arg_2_0._ghost_mode_extension:set_external_no_spawn_reason("pouncing", true)
 end
 
-GutterRunnerStatePouncing.on_exit = function (self, unit, input, dt, context, t, next_state, is_destroy)
-	local first_person_extension = self._first_person_extension
-	local locomotion_extension = self._locomotion_extension
-	local status_extension = self._status_extension
+function GutterRunnerStatePouncing.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+	local var_3_0 = arg_3_0._first_person_extension
+	local var_3_1 = arg_3_0._locomotion_extension
+	local var_3_2 = arg_3_0._status_extension
 
-	locomotion_extension:reset_maximum_upwards_velocity()
+	var_3_1:reset_maximum_upwards_velocity()
 
-	local career_extension = ScriptUnit.extension(unit, "career_system")
-	local ability_id = career_extension:ability_id("pounce")
+	local var_3_3 = ScriptUnit.extension(arg_3_1, "career_system")
+	local var_3_4 = var_3_3:ability_id("pounce")
 
-	career_extension:start_activated_ability_cooldown(ability_id)
+	var_3_3:start_activated_ability_cooldown(var_3_4)
 
-	local jump_end_sfx = self._pounce_data.sfx_event_jump_end
+	local var_3_5 = arg_3_0._pounce_data.sfx_event_jump_end
 
-	if jump_end_sfx then
-		first_person_extension:play_unit_sound_event(jump_end_sfx, unit, 0)
+	if var_3_5 then
+		var_3_0:play_unit_sound_event(var_3_5, arg_3_1, 0)
 	end
 
-	if next_state == "walking" or next_state == "standing" then
-		ScriptUnit.extension(unit, "whereabouts_system"):set_landed()
-	elseif next_state and next_state ~= "falling" then
-		ScriptUnit.extension(unit, "whereabouts_system"):set_no_landing()
+	if arg_3_6 == "walking" or arg_3_6 == "standing" then
+		ScriptUnit.extension(arg_3_1, "whereabouts_system"):set_landed()
+	elseif arg_3_6 and arg_3_6 ~= "falling" then
+		ScriptUnit.extension(arg_3_1, "whereabouts_system"):set_no_landing()
 	end
 
-	if next_state and Managers.state.network:game() then
-		if next_state == "pinning_enemy" then
-			CharacterStateHelper.play_animation_event(unit, "jump_attack")
-			CharacterStateHelper.play_animation_event_first_person(first_person_extension, "attack_finished")
+	if arg_3_6 and Managers.state.network:game() then
+		if arg_3_6 == "pinning_enemy" then
+			CharacterStateHelper.play_animation_event(arg_3_1, "jump_attack")
+			CharacterStateHelper.play_animation_event_first_person(var_3_0, "attack_finished")
 		else
-			CharacterStateHelper.play_animation_event(unit, "jump_fail")
-			CharacterStateHelper.play_animation_event(unit, "to_combat")
-			CharacterStateHelper.play_animation_event_first_person(first_person_extension, "attack_finished")
+			CharacterStateHelper.play_animation_event(arg_3_1, "jump_fail")
+			CharacterStateHelper.play_animation_event(arg_3_1, "to_combat")
+			CharacterStateHelper.play_animation_event_first_person(var_3_0, "attack_finished")
 		end
 	end
 
-	CharacterStateHelper.play_animation_event(self._unit, "to_upright")
-	CharacterStateHelper.play_animation_event_first_person(first_person_extension, "to_upright")
-	first_person_extension:set_wanted_player_height("stand", t)
-	locomotion_extension:set_active_mover("standing")
-	self:set_breed_action("n/a")
+	CharacterStateHelper.play_animation_event(arg_3_0._unit, "to_upright")
+	CharacterStateHelper.play_animation_event_first_person(var_3_0, "to_upright")
+	var_3_0:set_wanted_player_height("stand", arg_3_5)
+	var_3_1:set_active_mover("standing")
+	arg_3_0:set_breed_action("n/a")
 
-	if is_destroy then
+	if arg_3_7 then
 		return
 	end
 
-	self._ghost_mode_extension:set_external_no_spawn_reason("pouncing", nil)
-	status_extension:set_gutter_runner_leaping(false)
+	arg_3_0._ghost_mode_extension:set_external_no_spawn_reason("pouncing", nil)
+	var_3_2:set_gutter_runner_leaping(false)
 end
 
-GutterRunnerStatePouncing.update = function (self, unit, input, dt, context, t)
-	local csm = self._csm
-	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local input_extension = self._input_extension
-	local status_extension = self._status_extension
-	local first_person_extension = self._first_person_extension
-	local locomotion_extension = self._locomotion_extension
-	local inventory_extension = self._inventory_extension
-	local health_extension = self._health_extension
-	local breed = self._breed
+function GutterRunnerStatePouncing.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	local var_4_0 = arg_4_0._csm
+	local var_4_1 = PlayerUnitMovementSettings.get_movement_settings_table(arg_4_1)
+	local var_4_2 = arg_4_0._input_extension
+	local var_4_3 = arg_4_0._status_extension
+	local var_4_4 = arg_4_0._first_person_extension
+	local var_4_5 = arg_4_0._locomotion_extension
+	local var_4_6 = arg_4_0._inventory_extension
+	local var_4_7 = arg_4_0._health_extension
+	local var_4_8 = arg_4_0._breed
 
-	if CharacterStateHelper.do_common_state_transitions(status_extension, csm) then
+	if CharacterStateHelper.do_common_state_transitions(var_4_3, var_4_0) then
 		return
 	end
 
-	if CharacterStateHelper.is_using_transport(status_extension) then
-		csm:change_state("using_transport")
-
-		return
-	end
-
-	if CharacterStateHelper.is_pushed(status_extension) then
-		status_extension:set_pushed(false)
-
-		local params = movement_settings_table.stun_settings.pushed
-		local hit_react_type = status_extension:hit_react_type()
-
-		params.hit_react_type = hit_react_type .. "_push"
-
-		csm:change_state("stunned", params)
+	if CharacterStateHelper.is_using_transport(var_4_3) then
+		var_4_0:change_state("using_transport")
 
 		return
 	end
 
-	if CharacterStateHelper.is_block_broken(status_extension) then
-		status_extension:set_block_broken(false)
+	if CharacterStateHelper.is_pushed(var_4_3) then
+		var_4_3:set_pushed(false)
 
-		local params = movement_settings_table.stun_settings.parry_broken
+		local var_4_9 = var_4_1.stun_settings.pushed
 
-		params.hit_react_type = "medium_push"
+		var_4_9.hit_react_type = var_4_3:hit_react_type() .. "_push"
 
-		csm:change_state("stunned", params)
+		var_4_0:change_state("stunned", var_4_9)
 
 		return
 	end
 
-	if self:_update_movement(unit, dt, t) then
-		self:_finish(unit, t)
+	if CharacterStateHelper.is_block_broken(var_4_3) then
+		var_4_3:set_block_broken(false)
 
-		if self._pounce_target then
-			local target_unit = self._pounce_target
+		local var_4_10 = var_4_1.stun_settings.parry_broken
 
-			self._temp_params.target_unit = target_unit
+		var_4_10.hit_react_type = "medium_push"
 
-			csm:change_state("pinning_enemy", self._temp_params)
-			first_person_extension:change_state("pinning_enemy")
+		var_4_0:change_state("stunned", var_4_10)
+
+		return
+	end
+
+	if arg_4_0:_update_movement(arg_4_1, arg_4_3, arg_4_5) then
+		arg_4_0:_finish(arg_4_1, arg_4_5)
+
+		if arg_4_0._pounce_target then
+			local var_4_11 = arg_4_0._pounce_target
+
+			arg_4_0._temp_params.target_unit = var_4_11
+
+			var_4_0:change_state("pinning_enemy", arg_4_0._temp_params)
+			var_4_4:change_state("pinning_enemy")
 
 			return
 		end
 
-		if CharacterStateHelper.is_colliding_down(unit) then
-			csm:change_state("walking", self._temp_params)
-			first_person_extension:change_state("walking")
+		if CharacterStateHelper.is_colliding_down(arg_4_1) then
+			var_4_0:change_state("walking", arg_4_0._temp_params)
+			var_4_4:change_state("walking")
 
 			return
 		end
 
-		if not self._csm.state_next and locomotion_extension:current_velocity().z <= 0 then
-			csm:change_state("falling", self._temp_params)
-			first_person_extension:change_state("falling")
+		if not arg_4_0._csm.state_next and var_4_5:current_velocity().z <= 0 then
+			var_4_0:change_state("falling", arg_4_0._temp_params)
+			var_4_4:change_state("falling")
 
 			return
 		end
 	end
 
-	local look_sense_override = breed.pounce_look_sense
+	local var_4_12 = var_4_8.pounce_look_sense
 
-	CharacterStateHelper.look(input_extension, self._player.viewport_name, first_person_extension, status_extension, inventory_extension, look_sense_override)
+	CharacterStateHelper.look(var_4_2, arg_4_0._player.viewport_name, var_4_4, var_4_3, var_4_6, var_4_12)
 end
 
-GutterRunnerStatePouncing._update_movement = function (self, unit, dt, t)
-	local locomotion_extension = self._locomotion_extension
-	local previous_speed = self._previous_speed
+function GutterRunnerStatePouncing._update_movement(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	local var_5_0 = arg_5_0._locomotion_extension
+	local var_5_1 = arg_5_0._previous_speed
 
-	self._pounce_target = nil
+	arg_5_0._pounce_target = nil
 
-	if not self._entered_in_ghostmode then
-		local radius = self._breed.pounce_hit_radius
-		local nearby_hero_units = FrameTable.alloc_table()
-		local proximity_extension = Managers.state.entity:system("proximity_system")
-		local position = POSITION_LOOKUP[unit]
-		local broadphase = proximity_extension.player_units_broadphase
+	if not arg_5_0._entered_in_ghostmode then
+		local var_5_2 = arg_5_0._breed.pounce_hit_radius
+		local var_5_3 = FrameTable.alloc_table()
+		local var_5_4 = Managers.state.entity:system("proximity_system")
+		local var_5_5 = POSITION_LOOKUP[arg_5_1]
+		local var_5_6 = var_5_4.player_units_broadphase
 
-		Broadphase.query(broadphase, position, radius, nearby_hero_units)
+		Broadphase.query(var_5_6, var_5_5, var_5_2, var_5_3)
 
-		local closest_hero_distance
+		local var_5_7
 
-		for _, player_unit in pairs(nearby_hero_units) do
-			local target_status_extension = ScriptUnit.extension(player_unit, "status_system")
+		for iter_5_0, iter_5_1 in pairs(var_5_3) do
+			local var_5_8 = ScriptUnit.extension(iter_5_1, "status_system")
 
-			if player_unit ~= unit and CharacterStateHelper.is_viable_stab_target(unit, player_unit, target_status_extension) then
-				local player_unit_pos = Unit.world_position(player_unit, Unit.node(player_unit, "j_spine"))
-				local distance_to_hero = Vector3.distance(player_unit_pos, position)
+			if iter_5_1 ~= arg_5_1 and CharacterStateHelper.is_viable_stab_target(arg_5_1, iter_5_1, var_5_8) then
+				local var_5_9 = Unit.world_position(iter_5_1, Unit.node(iter_5_1, "j_spine"))
+				local var_5_10 = Vector3.distance(var_5_9, var_5_5)
 
-				if (not closest_hero_distance or distance_to_hero < closest_hero_distance) and PerceptionUtils.is_position_in_line_of_sight(nil, position, player_unit_pos, self._physics_world) then
-					closest_hero_distance = distance_to_hero
-					self._pounce_target = player_unit
+				if (not var_5_7 or var_5_10 < var_5_7) and PerceptionUtils.is_position_in_line_of_sight(nil, var_5_5, var_5_9, arg_5_0._physics_world) then
+					var_5_7 = var_5_10
+					arg_5_0._pounce_target = iter_5_1
 				end
 			end
 		end
 	end
 
-	if CharacterStateHelper.is_colliding_down(unit) or CharacterStateHelper.is_colliding_sides(unit) or self._pounce_target then
+	if CharacterStateHelper.is_colliding_down(arg_5_1) or CharacterStateHelper.is_colliding_sides(arg_5_1) or arg_5_0._pounce_target then
 		return true
 	end
 
-	local current_speed = Vector3.length(locomotion_extension:current_velocity())
+	local var_5_11 = Vector3.length(var_5_0:current_velocity())
 
-	self._previous_speed = current_speed
+	arg_5_0._previous_speed = var_5_11
 
-	local status_extension = self._status_extension
-	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local move_speed = current_speed
+	local var_5_12 = arg_5_0._status_extension
+	local var_5_13 = PlayerUnitMovementSettings.get_movement_settings_table(arg_5_1)
+	local var_5_14 = var_5_11 * var_5_13.player_air_speed_scale_pouncing
 
-	move_speed = move_speed * movement_settings_table.player_air_speed_scale_pouncing
-
-	self:_move_during_pounce(move_speed, unit, dt)
+	arg_5_0:_move_during_pounce(var_5_14, arg_5_1, arg_5_2)
 end
 
-GutterRunnerStatePouncing._move_during_pounce = function (self, speed, unit, dt)
-	local input_extension = self._input_extension
-	local movement = CharacterStateHelper.get_movement_input(input_extension)
+function GutterRunnerStatePouncing._move_during_pounce(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	local var_6_0 = arg_6_0._input_extension
+	local var_6_1 = CharacterStateHelper.get_movement_input(var_6_0)
 
-	if not movement then
+	if not var_6_1 then
 		return
 	end
 
-	local locomotion_extension = self._locomotion_extension
-	local first_person_extension = self._first_person_extension
-	local breed = self._breed
-	local move_direction = Vector3.normalize(movement)
-	local unit_rotation = first_person_extension:current_rotation()
-	local move_velocity = Vector3.normalize(Vector3.flat(Quaternion.rotate(unit_rotation, move_direction)))
-	local prev_move_velocity = Vector3.flat(locomotion_extension:current_velocity())
-	local current_velocity = locomotion_extension:current_velocity()
-	local new_move_velocity = prev_move_velocity + move_velocity * speed
-	local fall_speed = current_velocity.z
+	local var_6_2 = arg_6_0._locomotion_extension
+	local var_6_3 = arg_6_0._first_person_extension
+	local var_6_4 = arg_6_0._breed
+	local var_6_5 = Vector3.normalize(var_6_1)
+	local var_6_6 = var_6_3:current_rotation()
+	local var_6_7 = Vector3.normalize(Vector3.flat(Quaternion.rotate(var_6_6, var_6_5)))
+	local var_6_8 = Vector3.flat(var_6_2:current_velocity())
+	local var_6_9 = var_6_2:current_velocity()
+	local var_6_10 = var_6_8 + var_6_7 * arg_6_1
+	local var_6_11 = var_6_9.z - var_6_4.pounce_gravity * arg_6_3
+	local var_6_12 = Vector3.length(var_6_10)
+	local var_6_13 = math.clamp(var_6_12, 0, math.huge)
+	local var_6_14 = Vector3.normalize(var_6_10) * var_6_13
 
-	fall_speed = fall_speed - breed.pounce_gravity * dt
+	var_6_14.z = var_6_11
 
-	local new_move_speed = Vector3.length(new_move_velocity)
+	var_6_2:set_forced_velocity(var_6_14)
 
-	new_move_speed = math.clamp(new_move_speed, 0, math.huge)
+	local var_6_15 = 0.5
+	local var_6_16 = Quaternion.look(var_6_14, Vector3.up())
+	local var_6_17 = Quaternion.pitch(var_6_16)
 
-	local new_move_direction = Vector3.normalize(new_move_velocity)
-	local wanted_velocity = new_move_direction * new_move_speed
+	if var_6_17 < Quaternion.pitch(var_6_6) then
+		local var_6_18 = Quaternion.look(var_6_9, Vector3.up())
+		local var_6_19 = Quaternion.pitch(var_6_18)
+		local var_6_20 = math.radian_lerp(var_6_19, var_6_17, var_6_15)
+		local var_6_21 = Quaternion.right(var_6_6)
+		local var_6_22 = Quaternion.axis_angle(var_6_21, var_6_20 - var_6_19)
+		local var_6_23 = Quaternion.multiply(var_6_22, var_6_6)
 
-	wanted_velocity.z = fall_speed
-
-	locomotion_extension:set_forced_velocity(wanted_velocity)
-
-	local camera_tweak_str = 0.5
-	local new_vel_rot = Quaternion.look(wanted_velocity, Vector3.up())
-	local new_vel_pitch = Quaternion.pitch(new_vel_rot)
-	local current_pitch = Quaternion.pitch(unit_rotation)
-
-	if new_vel_pitch < current_pitch then
-		local old_vel_rot = Quaternion.look(current_velocity, Vector3.up())
-		local old_vel_pitch = Quaternion.pitch(old_vel_rot)
-		local new_vel_pitch_scaled = math.radian_lerp(old_vel_pitch, new_vel_pitch, camera_tweak_str)
-		local look_right = Quaternion.right(unit_rotation)
-		local new_vel_rot_clamped = Quaternion.axis_angle(look_right, new_vel_pitch_scaled - old_vel_pitch)
-		local new_rot = Quaternion.multiply(new_vel_rot_clamped, unit_rotation)
-
-		first_person_extension:set_rotation(new_rot)
+		var_6_3:set_rotation(var_6_23)
 	end
 end
 
-GutterRunnerStatePouncing._finish = function (self, unit, t)
-	local world = self._world
-	local locomotion_extension = self._locomotion_extension
-	local first_person_extension = self._first_person_extension
-	local velocity = Vector3(0, 0, 0)
+function GutterRunnerStatePouncing._finish(arg_7_0, arg_7_1, arg_7_2)
+	local var_7_0 = arg_7_0._world
+	local var_7_1 = arg_7_0._locomotion_extension
+	local var_7_2 = arg_7_0._first_person_extension
+	local var_7_3 = Vector3(0, 0, 0)
 
-	locomotion_extension:set_forced_velocity(velocity)
-	first_person_extension:play_camera_effect_sequence("landed_hard", t)
+	var_7_1:set_forced_velocity(var_7_3)
+	var_7_2:play_camera_effect_sequence("landed_hard", arg_7_2)
 
-	local land_sound_event = self._pounce_data.sfx_event_land
+	local var_7_4 = arg_7_0._pounce_data.sfx_event_land
 
-	if not self._pounce_target and land_sound_event and not self._played_landing_event then
-		first_person_extension:play_unit_sound_event(land_sound_event, unit, 0)
+	if not arg_7_0._pounce_target and var_7_4 and not arg_7_0._played_landing_event then
+		var_7_2:play_unit_sound_event(var_7_4, arg_7_1, 0)
 
-		self._played_landing_event = true
+		arg_7_0._played_landing_event = true
 	end
 
-	CharacterStateHelper.play_animation_event(unit, "jump_land")
-	CharacterStateHelper.play_animation_event_first_person(first_person_extension, "jump_land")
+	CharacterStateHelper.play_animation_event(arg_7_1, "jump_land")
+	CharacterStateHelper.play_animation_event_first_person(var_7_2, "jump_land")
 
-	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-
-	movement_settings_table.gravity_acceleration = PlayerUnitMovementSettings.gravity_acceleration
+	PlayerUnitMovementSettings.get_movement_settings_table(arg_7_1).gravity_acceleration = PlayerUnitMovementSettings.gravity_acceleration
 end
 
-GutterRunnerStatePouncing._start_pounce = function (self, unit, velocity, t)
-	local world = self._world
-	local first_person_extension = self._first_person_extension
-	local locomotion_extension = self._locomotion_extension
+function GutterRunnerStatePouncing._start_pounce(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	local var_8_0 = arg_8_0._world
+	local var_8_1 = arg_8_0._first_person_extension
+	local var_8_2 = arg_8_0._locomotion_extension
 
-	self._previous_speed = 0
+	arg_8_0._previous_speed = 0
 
-	first_person_extension:play_camera_effect_sequence("jump", t)
+	var_8_1:play_camera_effect_sequence("jump", arg_8_3)
 
-	local jump_sound_event = self._pounce_data.sfx_event_jump
+	local var_8_3 = arg_8_0._pounce_data.sfx_event_jump
 
-	if jump_sound_event then
-		first_person_extension:play_unit_sound_event(jump_sound_event, unit, 0)
+	if var_8_3 then
+		var_8_1:play_unit_sound_event(var_8_3, arg_8_1, 0)
 	end
 
-	local breed = self._breed
-	local pounce_start_forward_offset = breed.pounce_start_forward_offset
-	local pounce_start_up_offset = breed.pounce_start_up_offset
-	local pos = POSITION_LOOKUP[unit]
-	local unit_rotation = first_person_extension:current_rotation()
-	local pounce_offset = Vector3.normalize(Vector3.flat(Quaternion.forward(unit_rotation))) * pounce_start_forward_offset
+	local var_8_4 = arg_8_0._breed
+	local var_8_5 = var_8_4.pounce_start_forward_offset
+	local var_8_6 = var_8_4.pounce_start_up_offset
+	local var_8_7 = POSITION_LOOKUP[arg_8_1]
+	local var_8_8 = var_8_1:current_rotation()
+	local var_8_9 = Vector3.normalize(Vector3.flat(Quaternion.forward(var_8_8))) * var_8_5
 
-	pounce_offset.z = pounce_start_up_offset
+	var_8_9.z = var_8_6
 
-	locomotion_extension:teleport_to(pos + pounce_offset)
-	locomotion_extension:set_maximum_upwards_velocity(velocity.z)
-	locomotion_extension:set_forced_velocity(velocity)
-	locomotion_extension:set_wanted_velocity(velocity)
+	var_8_2:teleport_to(var_8_7 + var_8_9)
+	var_8_2:set_maximum_upwards_velocity(arg_8_2.z)
+	var_8_2:set_forced_velocity(arg_8_2)
+	var_8_2:set_wanted_velocity(arg_8_2)
 
-	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-
-	movement_settings_table.gravity_acceleration = PlayerUnitMovementSettings.gravity_acceleration_gutter_runner_pounce
+	PlayerUnitMovementSettings.get_movement_settings_table(arg_8_1).gravity_acceleration = PlayerUnitMovementSettings.gravity_acceleration_gutter_runner_pounce
 end

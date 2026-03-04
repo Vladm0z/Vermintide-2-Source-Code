@@ -1,27 +1,27 @@
-﻿-- chunkname: @scripts/settings/player_data.lua
+-- chunkname: @scripts/settings/player_data.lua
 
 require("scripts/settings/profiles/sp_profiles")
 
 DefaultPlayerData = {
-	bot_spawn_priority_version = 2,
 	controls_version = 18,
-	favorite_item_data_version = 1,
-	level_preferences_version = 1,
-	mission_selection_version = 3,
 	new_item_data_version = 6,
+	mission_selection_version = 3,
 	new_keep_decoration_version = 1,
-	new_sign_in_rewards_data_version = 2,
 	seen_shop_items_version = 1,
 	viewed_dialogues_version = 1,
+	level_preferences_version = 1,
+	bot_spawn_priority_version = 2,
+	new_sign_in_rewards_data_version = 2,
+	favorite_item_data_version = 1,
 	mission_selection = {
 		adventure = {
-			difficulty_key = "normal",
+			difficulty_key = "normal"
 		},
 		custom = {
 			area_name = "helmgart",
 			difficulty_key = "normal",
-			level_id = "military",
-		},
+			level_id = "military"
+		}
 	},
 	favorite_item_ids = {},
 	favorite_item_ids_by_career = {},
@@ -35,128 +35,128 @@ DefaultPlayerData = {
 	new_keep_decoration_ids = {},
 	level_preferences = {
 		{},
-		{},
+		{}
 	},
-	seen_shop_items = {},
+	seen_shop_items = {}
 }
 PlayerData = PlayerData or table.clone(DefaultPlayerData)
 
-function populate_player_data_from_save(save_data, id, version_match)
-	if not save_data.player_data then
-		save_data.player_data = {}
+function populate_player_data_from_save(arg_1_0, arg_1_1, arg_1_2)
+	if not arg_1_0.player_data then
+		arg_1_0.player_data = {}
 	end
 
-	if not save_data.player_data[id] then
-		local new_player_data = table.clone(DefaultPlayerData)
+	if not arg_1_0.player_data[arg_1_1] then
+		local var_1_0 = table.clone(DefaultPlayerData)
 
-		if save_data.controls then
-			new_player_data.controls = save_data.controls
-			save_data.controls = nil
+		if arg_1_0.controls then
+			var_1_0.controls = arg_1_0.controls
+			arg_1_0.controls = nil
 		end
 
-		if save_data.new_item_ids then
-			new_player_data.new_item_ids = save_data.new_item_ids
-			save_data.new_item_ids = nil
+		if arg_1_0.new_item_ids then
+			var_1_0.new_item_ids = arg_1_0.new_item_ids
+			arg_1_0.new_item_ids = nil
 		end
 
-		if save_data.recent_irc_channels then
-			new_player_data.recent_irc_channels = save_data.recent_irc_channels
-			save_data.recent_irc_channels = nil
+		if arg_1_0.recent_irc_channels then
+			var_1_0.recent_irc_channels = arg_1_0.recent_irc_channels
+			arg_1_0.recent_irc_channels = nil
 		end
 
-		save_data.player_data[id] = new_player_data
+		arg_1_0.player_data[arg_1_1] = var_1_0
 	end
 
-	local player_save_data = save_data.player_data[id]
+	local var_1_1 = arg_1_0.player_data[arg_1_1]
 
-	if version_match then
-		if DefaultPlayerData.mission_selection_version ~= player_save_data.mission_selection_version then
-			player_save_data.mission_selection = {}
+	if arg_1_2 then
+		if DefaultPlayerData.mission_selection_version ~= var_1_1.mission_selection_version then
+			var_1_1.mission_selection = {}
 
-			print("Wrong mission_selection_version for save file, saved: ", player_save_data.mission_selection_version, " current: ", DefaultPlayerData.mission_selection_version)
+			print("Wrong mission_selection_version for save file, saved: ", var_1_1.mission_selection_version, " current: ", DefaultPlayerData.mission_selection_version)
 
-			player_save_data.mission_selection_version = DefaultPlayerData.mission_selection_version
+			var_1_1.mission_selection_version = DefaultPlayerData.mission_selection_version
 		end
 
-		if DefaultPlayerData.controls_version ~= player_save_data.controls_version then
-			player_save_data.controls = {}
+		if DefaultPlayerData.controls_version ~= var_1_1.controls_version then
+			var_1_1.controls = {}
 
-			print("Wrong controls_version for save file, saved: ", player_save_data.controls_version, " current: ", DefaultPlayerData.controls_version)
+			print("Wrong controls_version for save file, saved: ", var_1_1.controls_version, " current: ", DefaultPlayerData.controls_version)
 
-			player_save_data.controls_version = DefaultPlayerData.controls_version
+			var_1_1.controls_version = DefaultPlayerData.controls_version
 		end
 
-		if DefaultPlayerData.new_keep_decoration_version ~= player_save_data.new_keep_decoration_version then
-			print("Wrong new_keep_decoration_version for save file, saved: ", player_save_data.new_keep_decoration_version, " current: ", DefaultPlayerData.new_keep_decoration_version)
+		if DefaultPlayerData.new_keep_decoration_version ~= var_1_1.new_keep_decoration_version then
+			print("Wrong new_keep_decoration_version for save file, saved: ", var_1_1.new_keep_decoration_version, " current: ", DefaultPlayerData.new_keep_decoration_version)
 
-			player_save_data.new_keep_decoration_ids = {}
-			player_save_data.new_keep_decoration_version = DefaultPlayerData.new_keep_decoration_version
+			var_1_1.new_keep_decoration_ids = {}
+			var_1_1.new_keep_decoration_version = DefaultPlayerData.new_keep_decoration_version
 		end
 
-		if DefaultPlayerData.favorite_item_data_version ~= player_save_data.favorite_item_data_version then
-			print("Wrong favorite_item_data_version for save file, saved: ", player_save_data.favorite_item_data_version, " current: ", DefaultPlayerData.favorite_item_data_version)
+		if DefaultPlayerData.favorite_item_data_version ~= var_1_1.favorite_item_data_version then
+			print("Wrong favorite_item_data_version for save file, saved: ", var_1_1.favorite_item_data_version, " current: ", DefaultPlayerData.favorite_item_data_version)
 
-			player_save_data.favorite_item_ids = {}
-			player_save_data.favorite_item_ids_by_career = {}
-			player_save_data.favorite_item_data_version = DefaultPlayerData.favorite_item_data_version
+			var_1_1.favorite_item_ids = {}
+			var_1_1.favorite_item_ids_by_career = {}
+			var_1_1.favorite_item_data_version = DefaultPlayerData.favorite_item_data_version
 		end
 
-		if DefaultPlayerData.new_item_data_version ~= player_save_data.new_item_data_version then
-			print("Wrong new_item_data_version for save file, saved: ", player_save_data.new_item_data_version, " current: ", DefaultPlayerData.new_item_data_version)
+		if DefaultPlayerData.new_item_data_version ~= var_1_1.new_item_data_version then
+			print("Wrong new_item_data_version for save file, saved: ", var_1_1.new_item_data_version, " current: ", DefaultPlayerData.new_item_data_version)
 
-			player_save_data.new_item_ids = {}
-			player_save_data.new_item_ids_by_career = {}
-			player_save_data.new_item_data_version = DefaultPlayerData.new_item_data_version
+			var_1_1.new_item_ids = {}
+			var_1_1.new_item_ids_by_career = {}
+			var_1_1.new_item_data_version = DefaultPlayerData.new_item_data_version
 		end
 
-		if DefaultPlayerData.new_sign_in_rewards_data_version ~= player_save_data.new_sign_in_rewards_data_version then
-			print("Wrong new_sign_in_rewards_data_version for save file, saved: ", player_save_data.new_sign_in_rewards_data_version, " current: ", DefaultPlayerData.new_sign_in_rewards_data_version)
+		if DefaultPlayerData.new_sign_in_rewards_data_version ~= var_1_1.new_sign_in_rewards_data_version then
+			print("Wrong new_sign_in_rewards_data_version for save file, saved: ", var_1_1.new_sign_in_rewards_data_version, " current: ", DefaultPlayerData.new_sign_in_rewards_data_version)
 
-			player_save_data.new_sign_in_rewards = {}
-			player_save_data.new_sign_in_rewards_data_version = DefaultPlayerData.new_sign_in_rewards_data_version
+			var_1_1.new_sign_in_rewards = {}
+			var_1_1.new_sign_in_rewards_data_version = DefaultPlayerData.new_sign_in_rewards_data_version
 		end
 
-		if DefaultPlayerData.bot_spawn_priority_version ~= player_save_data.bot_spawn_priority_version then
-			player_save_data.bot_spawn_priority = table.clone(ProfilePriority)
+		if DefaultPlayerData.bot_spawn_priority_version ~= var_1_1.bot_spawn_priority_version then
+			var_1_1.bot_spawn_priority = table.clone(ProfilePriority)
 
-			print("Wrong bot_spawn_priority_version for save file, saved: ", player_save_data.bot_spawn_priority_version, " current: ", DefaultPlayerData.bot_spawn_priority_version)
+			print("Wrong bot_spawn_priority_version for save file, saved: ", var_1_1.bot_spawn_priority_version, " current: ", DefaultPlayerData.bot_spawn_priority_version)
 
-			player_save_data.bot_spawn_priority_version = DefaultPlayerData.bot_spawn_priority_version
+			var_1_1.bot_spawn_priority_version = DefaultPlayerData.bot_spawn_priority_version
 		end
 
-		if DefaultPlayerData.viewed_dialogues_version ~= player_save_data.viewed_dialogues_version then
-			player_save_data.viewed_dialogues = {}
+		if DefaultPlayerData.viewed_dialogues_version ~= var_1_1.viewed_dialogues_version then
+			var_1_1.viewed_dialogues = {}
 
-			print("Wrong viewed_dialogues_version for save file, saved: ", player_save_data.viewed_dialogues_version, " current: ", DefaultPlayerData.viewed_dialogues_version)
+			print("Wrong viewed_dialogues_version for save file, saved: ", var_1_1.viewed_dialogues_version, " current: ", DefaultPlayerData.viewed_dialogues_version)
 
-			player_save_data.viewed_dialogues_version = DefaultPlayerData.viewed_dialogues_version
+			var_1_1.viewed_dialogues_version = DefaultPlayerData.viewed_dialogues_version
 		end
 
-		if DefaultPlayerData.level_preferences_version ~= player_save_data.level_preferences_version then
-			player_save_data.level_preferences = {
+		if DefaultPlayerData.level_preferences_version ~= var_1_1.level_preferences_version then
+			var_1_1.level_preferences = {
 				{},
-				{},
+				{}
 			}
 
-			print("Wrong level_preferences_version for save file, saved: ", tostring(player_save_data.level_preferences_version), " current: ", DefaultPlayerData.level_preferences_version)
+			print("Wrong level_preferences_version for save file, saved: ", tostring(var_1_1.level_preferences_version), " current: ", DefaultPlayerData.level_preferences_version)
 
-			player_save_data.level_preferences_version = DefaultPlayerData.level_preferences_version
+			var_1_1.level_preferences_version = DefaultPlayerData.level_preferences_version
 		end
 
-		if DefaultPlayerData.seen_shop_items_version ~= player_save_data.seen_shop_items_version then
-			player_save_data.seen_shop_items = {}
+		if DefaultPlayerData.seen_shop_items_version ~= var_1_1.seen_shop_items_version then
+			var_1_1.seen_shop_items = {}
 
-			print("Wrong seen_shop_items_version for save file, saved: ", player_save_data.seen_shop_items_version, " current: ", DefaultPlayerData.seen_shop_items_version)
+			print("Wrong seen_shop_items_version for save file, saved: ", var_1_1.seen_shop_items_version, " current: ", DefaultPlayerData.seen_shop_items_version)
 
-			player_save_data.seen_shop_items_version = DefaultPlayerData.seen_shop_items_version
+			var_1_1.seen_shop_items_version = DefaultPlayerData.seen_shop_items_version
 		end
 	end
 
-	PlayerData = player_save_data
+	PlayerData = var_1_1
 
-	local input_manager = Managers.input
+	local var_1_2 = Managers.input
 
-	if input_manager then
-		input_manager:apply_saved_keymaps()
+	if var_1_2 then
+		var_1_2:apply_saved_keymaps()
 	end
 end

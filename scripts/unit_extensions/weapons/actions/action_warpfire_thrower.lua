@@ -1,108 +1,106 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/actions/action_warpfire_thrower.lua
+-- chunkname: @scripts/unit_extensions/weapons/actions/action_warpfire_thrower.lua
 
 ActionWarpfireThrower = class(ActionWarpfireThrower, ActionBase)
 
-ActionWarpfireThrower.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionWarpfireThrower.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionWarpfireThrower.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionWarpfireThrower.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	self.overcharge_extension = ScriptUnit.extension(owner_unit, "overcharge_system")
-	self.buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
-	self.first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
-	self.targets = {}
-	self.old_targets = {}
-	self.weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
-	self.stop_sound_event = "Stop_player_combat_weapon_drakegun_flamethrower_shoot"
-	self.unit_id = Managers.state.network.unit_storage:go_id(owner_unit)
-	self.weapon_unit = weapon_unit
-	self.owner_unit = owner_unit
-	self.physics_world = World.physics_world(world)
-	self._current_flame_time = 0
+	arg_1_0.overcharge_extension = ScriptUnit.extension(arg_1_4, "overcharge_system")
+	arg_1_0.buff_extension = ScriptUnit.extension(arg_1_4, "buff_system")
+	arg_1_0.first_person_extension = ScriptUnit.extension(arg_1_4, "first_person_system")
+	arg_1_0.targets = {}
+	arg_1_0.old_targets = {}
+	arg_1_0.weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
+	arg_1_0.stop_sound_event = "Stop_player_combat_weapon_drakegun_flamethrower_shoot"
+	arg_1_0.unit_id = Managers.state.network.unit_storage:go_id(arg_1_4)
+	arg_1_0.weapon_unit = arg_1_7
+	arg_1_0.owner_unit = arg_1_4
+	arg_1_0.physics_world = World.physics_world(arg_1_1)
+	arg_1_0._current_flame_time = 0
 end
 
-ActionWarpfireThrower.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level)
-	ActionWarpfireThrower.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level)
+function ActionWarpfireThrower.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	ActionWarpfireThrower.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
-	self.current_action = new_action
-	self.state = "shooting"
-	self.overcharge_timer = 0
+	arg_2_0.current_action = arg_2_1
+	arg_2_0.state = "shooting"
+	arg_2_0.overcharge_timer = 0
 
-	local overcharge_amount = PlayerUnitStatusSettings.overcharge_values[self.current_action.overcharge_type]
+	local var_2_0 = PlayerUnitStatusSettings.overcharge_values[arg_2_0.current_action.overcharge_type]
 
-	self.overcharge_extension:add_charge(overcharge_amount)
+	arg_2_0.overcharge_extension:add_charge(var_2_0)
 end
 
-ActionWarpfireThrower.client_owner_post_update = function (self, dt, t, world, can_damage)
-	local owner_unit = self.owner_unit
-	local current_action = self.current_action
+function ActionWarpfireThrower.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local var_3_0 = arg_3_0.owner_unit
+	local var_3_1 = arg_3_0.current_action
 
-	self.overcharge_timer = self.overcharge_timer + dt
+	arg_3_0.overcharge_timer = arg_3_0.overcharge_timer + arg_3_1
 
-	if self.state == "shooting" and self.overcharge_timer >= current_action.overcharge_interval then
-		local overcharge_amount = PlayerUnitStatusSettings.overcharge_values[current_action.overcharge_type]
+	if arg_3_0.state == "shooting" and arg_3_0.overcharge_timer >= var_3_1.overcharge_interval then
+		local var_3_2 = PlayerUnitStatusSettings.overcharge_values[var_3_1.overcharge_type]
 
-		self.overcharge_extension:add_charge(overcharge_amount)
+		arg_3_0.overcharge_extension:add_charge(var_3_2)
 
-		self.overcharge_timer = 0
+		arg_3_0.overcharge_timer = 0
 	end
 
-	local max_overcharge = self.overcharge_extension.max_value - 1
-	local current_overcharge_value = self.overcharge_extension:get_overcharge_value()
-	local is_max_overcharge = max_overcharge <= current_overcharge_value
+	local var_3_3 = arg_3_0.overcharge_extension.max_value - 1 <= arg_3_0.overcharge_extension:get_overcharge_value()
 
-	if self.state == "shooting" and not is_max_overcharge then
-		self._current_flame_time = dt + self._current_flame_time or 0
+	if arg_3_0.state == "shooting" and not var_3_3 then
+		arg_3_0._current_flame_time = arg_3_1 + arg_3_0._current_flame_time or 0
 
-		if t > (self.next_fire_tick or 0) then
-			self:fire(owner_unit, current_action, t)
+		if arg_3_2 > (arg_3_0.next_fire_tick or 0) then
+			arg_3_0:fire(var_3_0, var_3_1, arg_3_2)
 
-			self.next_fire_tick = t + current_action.shoot_warpfire_close_attack_cooldown
+			arg_3_0.next_fire_tick = arg_3_2 + var_3_1.shoot_warpfire_close_attack_cooldown
 		end
-	elseif is_max_overcharge and self.state == "shooting" then
-		self.state = "shot"
+	elseif var_3_3 and arg_3_0.state == "shooting" then
+		arg_3_0.state = "shot"
 
-		self.weapon_extension:stop_action("action_complete")
+		arg_3_0.weapon_extension:stop_action("action_complete")
 	end
 end
 
-ActionWarpfireThrower.finish = function (self, reason, data)
-	if self.state ~= "shot" then
-		self:_proc_spell_used(self.buff_extension)
+function ActionWarpfireThrower.finish(arg_4_0, arg_4_1, arg_4_2)
+	if arg_4_0.state ~= "shot" then
+		arg_4_0:_proc_spell_used(arg_4_0.buff_extension)
 	end
 end
 
-ActionWarpfireThrower._stop_fx = function (self)
-	local hud_extension = ScriptUnit.has_extension(self.owner_unit, "hud_system")
+function ActionWarpfireThrower._stop_fx(arg_5_0)
+	local var_5_0 = ScriptUnit.has_extension(arg_5_0.owner_unit, "hud_system")
 
-	if hud_extension then
-		hud_extension.show_critical_indication = false
+	if var_5_0 then
+		var_5_0.show_critical_indication = false
 	end
 end
 
-ActionWarpfireThrower.destroy = function (self)
-	if self._flamethrower_effect then
-		World.destroy_particles(self.world, self._flamethrower_effect)
+function ActionWarpfireThrower.destroy(arg_6_0)
+	if arg_6_0._flamethrower_effect then
+		World.destroy_particles(arg_6_0.world, arg_6_0._flamethrower_effect)
 
-		self._flamethrower_effect = nil
+		arg_6_0._flamethrower_effect = nil
 	end
 end
 
-ActionWarpfireThrower.fire = function (self, unit, current_action, t)
-	local buff_system = Managers.state.entity:system("buff_system")
-	local enemies_in_range = EnemyCharacterStateHelper.get_enemies_in_line_of_sight(unit, self.first_person_unit, self.physics_world)
+function ActionWarpfireThrower.fire(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	local var_7_0 = Managers.state.entity:system("buff_system")
+	local var_7_1 = EnemyCharacterStateHelper.get_enemies_in_line_of_sight(arg_7_1, arg_7_0.first_person_unit, arg_7_0.physics_world)
 
-	if not enemies_in_range then
+	if not var_7_1 then
 		return
 	end
 
-	for i = 1, #enemies_in_range do
-		local enemy_data = enemies_in_range[i]
-		local hit_unit = enemy_data.unit
+	for iter_7_0 = 1, #var_7_1 do
+		local var_7_2 = var_7_1[iter_7_0]
+		local var_7_3 = var_7_2.unit
 
-		if DamageUtils.is_enemy(unit, hit_unit) then
-			local buff_name = enemy_data.distance <= current_action.shoot_warpfire_close_attack_range and current_action.buff_name_close or current_action.buff_name_far
+		if DamageUtils.is_enemy(arg_7_1, var_7_3) then
+			local var_7_4 = var_7_2.distance <= arg_7_2.shoot_warpfire_close_attack_range and arg_7_2.buff_name_close or arg_7_2.buff_name_far
 
-			buff_system:add_buff(hit_unit, buff_name, unit)
-			buff_system:add_buff(hit_unit, "warpfire_thrower_fire_slowdown", unit)
+			var_7_0:add_buff(var_7_3, var_7_4, arg_7_1)
+			var_7_0:add_buff(var_7_3, "warpfire_thrower_fire_slowdown", arg_7_1)
 		end
 	end
 end

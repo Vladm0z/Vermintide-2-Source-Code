@@ -1,11 +1,11 @@
-﻿-- chunkname: @scripts/settings/dlcs/grudge_marks/grudge_marks_sound_settings.lua
+-- chunkname: @scripts/settings/dlcs/grudge_marks/grudge_marks_sound_settings.lua
 
-local settings = DLCSettings.grudge_marks
+local var_0_0 = DLCSettings.grudge_marks
 
-settings.dialogue_lookup = {}
-settings.dialogue_settings = {}
-settings.auto_load_files = {}
-settings.network_sound_events = {
+var_0_0.dialogue_lookup = {}
+var_0_0.dialogue_settings = {}
+var_0_0.auto_load_files = {}
+var_0_0.network_sound_events = {
 	"enemy_grudge_raging",
 	"enemy_grudge_shield_start",
 	"enemy_grudge_shield_end",
@@ -17,5 +17,5 @@ settings.network_sound_events = {
 	"enemy_grudge_siren",
 	"enemy_grudge_siren_target",
 	"enemy_grudge_siren_break",
-	"enemy_grudge_intangible_destroy",
+	"enemy_grudge_intangible_destroy"
 }

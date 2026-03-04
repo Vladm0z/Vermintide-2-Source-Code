@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/game_state/state_ingame_running.lua
+-- chunkname: @scripts/game_state/state_ingame_running.lua
 
 require("scripts/settings/experience_settings")
 require("scripts/settings/progression_unlocks")
@@ -16,214 +16,210 @@ require("scripts/game_state/components/dice_keeper")
 require("scripts/ui/views/loading_view")
 require("scripts/entity_system/systems/mission/rewards")
 
-local state_ingame_running_testify = script_data.testify and require("scripts/game_state/state_ingame_running_testify")
-local RPCS = {
+local var_0_0 = script_data.testify and require("scripts/game_state/state_ingame_running_testify")
+local var_0_1 = {
 	"rpc_trigger_local_afk_system_message",
-	"rpc_follow_to_lobby",
+	"rpc_follow_to_lobby"
 }
 
 StateInGameRunning = class(StateInGameRunning)
 StateInGameRunning.NAME = "StateInGameRunning"
 
-StateInGameRunning.on_enter = function (self, params)
-	GarbageLeakDetector.register_object(self, "StateInGameRunning")
+function StateInGameRunning.on_enter(arg_1_0, arg_1_1)
+	GarbageLeakDetector.register_object(arg_1_0, "StateInGameRunning")
 
-	self.world = self.parent.world
+	arg_1_0.world = arg_1_0.parent.world
 
-	local viewport_name = params.viewport_name
+	local var_1_0 = arg_1_1.viewport_name
 
-	self.viewport_name = viewport_name
-	self.world_name = params.world_name
-	self.is_server = params.is_server
-	self._lobby_host = params.lobby.is_host and params.lobby
-	self._lobby_client = not params.lobby.is_host and params.lobby
-	self._network_options = params.network_options
-	self.statistics_db = params.statistics_db
-	self.profile_synchronizer = params.profile_synchronizer
-	self.network_server = params.network_server
-	self.network_client = params.network_client
+	arg_1_0.viewport_name = var_1_0
+	arg_1_0.world_name = arg_1_1.world_name
+	arg_1_0.is_server = arg_1_1.is_server
+	arg_1_0._lobby_host = arg_1_1.lobby.is_host and arg_1_1.lobby
+	arg_1_0._lobby_client = not arg_1_1.lobby.is_host and arg_1_1.lobby
+	arg_1_0._network_options = arg_1_1.network_options
+	arg_1_0.statistics_db = arg_1_1.statistics_db
+	arg_1_0.profile_synchronizer = arg_1_1.profile_synchronizer
+	arg_1_0.network_server = arg_1_1.network_server
+	arg_1_0.network_client = arg_1_1.network_client
 
-	local input_manager = params.input_manager
+	local var_1_1 = arg_1_1.input_manager
 
-	self.input_manager = input_manager
-	self.is_in_inn = params.is_in_inn
-	self.is_in_tutorial = params.is_in_tutorial
-	self.network_event_delegate = params.network_event_delegate
-	self.end_conditions_met = false
-	self._booted_eac_untrusted = script_data["eac-untrusted"]
+	arg_1_0.input_manager = var_1_1
+	arg_1_0.is_in_inn = arg_1_1.is_in_inn
+	arg_1_0.is_in_tutorial = arg_1_1.is_in_tutorial
+	arg_1_0.network_event_delegate = arg_1_1.network_event_delegate
+	arg_1_0.end_conditions_met = false
+	arg_1_0._booted_eac_untrusted = script_data["eac-untrusted"]
 
-	if self.is_in_tutorial then
-		input_manager:create_input_service("Tutorial", "TutorialPlayerControllerKeymaps", "TutorialPlayerControllerFilters")
-		input_manager:map_device_to_service("Tutorial", "keyboard")
-		input_manager:map_device_to_service("Tutorial", "mouse")
-		input_manager:map_device_to_service("Tutorial", "gamepad")
+	if arg_1_0.is_in_tutorial then
+		var_1_1:create_input_service("Tutorial", "TutorialPlayerControllerKeymaps", "TutorialPlayerControllerFilters")
+		var_1_1:map_device_to_service("Tutorial", "keyboard")
+		var_1_1:map_device_to_service("Tutorial", "mouse")
+		var_1_1:map_device_to_service("Tutorial", "gamepad")
 	end
 
-	input_manager:create_input_service("Player", "PlayerControllerKeymaps", "PlayerControllerFilters")
-	input_manager:map_device_to_service("Player", "keyboard")
-	input_manager:map_device_to_service("Player", "mouse")
-	input_manager:map_device_to_service("Player", "gamepad")
+	var_1_1:create_input_service("Player", "PlayerControllerKeymaps", "PlayerControllerFilters")
+	var_1_1:map_device_to_service("Player", "keyboard")
+	var_1_1:map_device_to_service("Player", "mouse")
+	var_1_1:map_device_to_service("Player", "gamepad")
 
-	self.player_index = params.player
+	arg_1_0.player_index = arg_1_1.player
 
-	local input_source = self.input_manager:get_service("Player")
-	local player_manager = Managers.player
-	local peer_id = Network.peer_id()
-	local local_player_id = params.local_player_id
-	local player = Managers.player:player(peer_id, local_player_id)
-	local stats_id = player:stats_id()
+	local var_1_2 = arg_1_0.input_manager:get_service("Player")
+	local var_1_3 = Managers.player
+	local var_1_4 = Network.peer_id()
+	local var_1_5 = arg_1_1.local_player_id
+	local var_1_6 = Managers.player:player(var_1_4, var_1_5)
+	local var_1_7 = var_1_6:stats_id()
 
-	player.input_source = input_source
-	self.local_player_id = local_player_id
-	self.player = player
+	var_1_6.input_source = var_1_2
+	arg_1_0.local_player_id = var_1_5
+	arg_1_0.player = var_1_6
 
 	if Managers.razer_chroma then
 		Managers.razer_chroma:lit_keybindings(true)
 	end
 
-	if self.is_server then
-		player:create_game_object()
+	if arg_1_0.is_server then
+		var_1_6:create_game_object()
 	end
 
-	if self.is_server and Managers.state.room and not Managers.state.room:has_room(peer_id) then
-		Managers.state.room:create_room(peer_id, 1)
+	if arg_1_0.is_server and Managers.state.room and not Managers.state.room:has_room(var_1_4) then
+		Managers.state.room:create_room(var_1_4, 1)
 	end
 
-	local entity_manager = Managers.state.entity
-	local camera_system = entity_manager:system("camera_system")
-	local outline_system = entity_manager:system("outline_system")
-	local fade_system = entity_manager:system("fade_system")
-	local sound_sector_system = entity_manager:system("sound_sector_system")
-	local sound_environment_system = entity_manager:system("sound_environment_system")
+	local var_1_8 = Managers.state.entity
+	local var_1_9 = var_1_8:system("camera_system")
+	local var_1_10 = var_1_8:system("outline_system")
+	local var_1_11 = var_1_8:system("fade_system")
+	local var_1_12 = var_1_8:system("sound_sector_system")
+	local var_1_13 = var_1_8:system("sound_environment_system")
 
-	camera_system:local_player_created(player)
-	outline_system:local_player_created(player)
-	fade_system:local_player_created(player)
-	sound_sector_system:local_player_created(player)
-	sound_environment_system:local_player_created(player)
+	var_1_9:local_player_created(var_1_6)
+	var_1_10:local_player_created(var_1_6)
+	var_1_11:local_player_created(var_1_6)
+	var_1_12:local_player_created(var_1_6)
+	var_1_13:local_player_created(var_1_6)
 
-	local event_manager = Managers.state.event
+	local var_1_14 = Managers.state.event
 
-	event_manager:register(self, "game_started", "event_game_started")
-	event_manager:register(self, "checkpoint_vote_cancelled", "on_checkpoint_vote_cancelled")
-	event_manager:register(self, "conflict_director_setup_done", "event_conflict_director_setup_done")
-	event_manager:register(self, "close_ingame_menu", "event_close_ingame_menu")
-	event_manager:register(self, "end_screen_ui_complete", "event_end_screen_ui_complete")
-	event_manager:register(self, "player_session_scores_synced", "player_session_scores_synced")
+	var_1_14:register(arg_1_0, "game_started", "event_game_started")
+	var_1_14:register(arg_1_0, "checkpoint_vote_cancelled", "on_checkpoint_vote_cancelled")
+	var_1_14:register(arg_1_0, "conflict_director_setup_done", "event_conflict_director_setup_done")
+	var_1_14:register(arg_1_0, "close_ingame_menu", "event_close_ingame_menu")
+	var_1_14:register(arg_1_0, "end_screen_ui_complete", "event_end_screen_ui_complete")
+	var_1_14:register(arg_1_0, "player_session_scores_synced", "player_session_scores_synced")
 
 	if IS_PS4 then
-		event_manager:register(self, "realtime_multiplay", "event_realtime_multiplay")
+		var_1_14:register(arg_1_0, "realtime_multiplay", "event_realtime_multiplay")
 	end
 
 	if IS_XB1 then
-		event_manager:register(self, "trigger_xbox_round_end", "event_trigger_xbox_round_end")
+		var_1_14:register(arg_1_0, "trigger_xbox_round_end", "event_trigger_xbox_round_end")
 	end
 
-	if self.is_server then
+	if arg_1_0.is_server then
 		Managers.state.event:trigger("game_started")
 	end
 
-	self.network_event_delegate:register(self, unpack(RPCS))
+	arg_1_0.network_event_delegate:register(arg_1_0, unpack(var_0_1))
 
-	local level_key = params.level_key
+	local var_1_15 = arg_1_1.level_key
 
-	self.free_flight_manager = params.free_flight_manager
+	arg_1_0.free_flight_manager = arg_1_1.free_flight_manager
 
-	self.free_flight_manager:set_teleport_override(function (pos, rot)
-		for unit, _ in pairs(self.player.owned_units) do
-			if ScriptUnit.has_extension(unit, "input_system") then
-				local locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
-
-				locomotion_extension:teleport_to(pos, rot)
+	arg_1_0.free_flight_manager:set_teleport_override(function(arg_2_0, arg_2_1)
+		for iter_2_0, iter_2_1 in pairs(arg_1_0.player.owned_units) do
+			if ScriptUnit.has_extension(iter_2_0, "input_system") then
+				ScriptUnit.extension(iter_2_0, "locomotion_system"):teleport_to(arg_2_0, arg_2_1)
 			end
 		end
 	end)
 
-	local world_manager = Managers.world
-	local world = world_manager:world("level_world")
-	local wwise_world = Managers.world:wwise_world(self.world)
-	local ingame_ui_context = {
-		player = player,
-		peer_id = peer_id,
-		local_player_id = local_player_id,
+	local var_1_16 = Managers.world
+	local var_1_17 = var_1_16:world("level_world")
+	local var_1_18 = Managers.world:wwise_world(arg_1_0.world)
+	local var_1_19 = {
+		player = var_1_6,
+		peer_id = var_1_4,
+		local_player_id = var_1_5,
 		camera_manager = Managers.state.camera,
 		chat_manager = Managers.chat,
-		input_manager = input_manager,
+		input_manager = var_1_1,
 		matchmaking_manager = Managers.matchmaking,
 		player_manager = Managers.player,
 		room_manager = Managers.state.room,
 		spawn_manager = Managers.state.spawn,
 		time_manager = Managers.time,
 		voting_manager = Managers.state.voting,
-		world_manager = world_manager,
-		is_server = params.is_server,
-		profile_synchronizer = params.profile_synchronizer,
-		network_event_delegate = self.network_event_delegate,
-		network_server = params.network_server,
-		network_client = params.network_client,
-		network_lobby = self._lobby_host or self._lobby_client,
-		voip = params.voip,
-		statistics_db = self.statistics_db,
-		stats_id = stats_id,
-		world = world,
-		wwise_world = wwise_world,
-		dialogue_system = entity_manager:system("dialogue_system"),
-		is_in_inn = params.is_in_inn,
-		is_in_tutorial = self.is_in_tutorial,
-		dice_keeper = params.dice_keeper,
+		world_manager = var_1_16,
+		is_server = arg_1_1.is_server,
+		profile_synchronizer = arg_1_1.profile_synchronizer,
+		network_event_delegate = arg_1_0.network_event_delegate,
+		network_server = arg_1_1.network_server,
+		network_client = arg_1_1.network_client,
+		network_lobby = arg_1_0._lobby_host or arg_1_0._lobby_client,
+		voip = arg_1_1.voip,
+		statistics_db = arg_1_0.statistics_db,
+		stats_id = var_1_7,
+		world = var_1_17,
+		wwise_world = var_1_18,
+		dialogue_system = var_1_8:system("dialogue_system"),
+		is_in_inn = arg_1_1.is_in_inn,
+		is_in_tutorial = arg_1_0.is_in_tutorial,
+		dice_keeper = arg_1_1.dice_keeper
 	}
 
-	DamageUtils.is_in_inn = params.is_in_inn
+	DamageUtils.is_in_inn = arg_1_1.is_in_inn
 
-	local loading_context = self.parent.parent.loading_context
+	local var_1_20 = arg_1_0.parent.parent.loading_context
 
-	self.ingame_ui_context = ingame_ui_context
+	arg_1_0.ingame_ui_context = var_1_19
 
 	if not script_data["-no-rendering"] then
-		Managers.ui:create_ingame_ui(ingame_ui_context, loading_context.subtitle_gui)
+		Managers.ui:create_ingame_ui(var_1_19, var_1_20.subtitle_gui)
 
-		loading_context.subtitle_gui = nil
+		var_1_20.subtitle_gui = nil
 	end
 
-	loading_context.play_end_of_level_game = nil
-	self.game_mode_key = Managers.state.game_mode:game_mode_key()
+	var_1_20.play_end_of_level_game = nil
+	arg_1_0.game_mode_key = Managers.state.game_mode:game_mode_key()
 
-	local quickplay_bonus = Managers.venture.quickplay:is_quick_game()
+	local var_1_21 = Managers.venture.quickplay:is_quick_game()
 
-	if not quickplay_bonus and self.game_mode_key == "weave" then
-		local lobby = self.is_server and self._lobby_host or self._lobby_client
+	if not var_1_21 and arg_1_0.game_mode_key == "weave" then
+		var_1_21 = (arg_1_0.is_server and arg_1_0._lobby_host or arg_1_0._lobby_client):lobby_data("weave_quick_game") == "true"
 
-		quickplay_bonus = lobby:lobby_data("weave_quick_game") == "true"
-
-		if quickplay_bonus then
+		if var_1_21 then
 			Managers.venture.quickplay:set_is_weave_quick_game()
 		end
 	end
 
-	if self.game_mode_key == "weave" or self.game_mode_key == "versus" then
-		self._saved_scoreboard_stats = self.parent.parent.loading_context.saved_scoreboard_stats
-		self.parent.parent.loading_context.saved_scoreboard_stats = nil
+	if arg_1_0.game_mode_key == "weave" or arg_1_0.game_mode_key == "versus" then
+		arg_1_0._saved_scoreboard_stats = arg_1_0.parent.parent.loading_context.saved_scoreboard_stats
+		arg_1_0.parent.parent.loading_context.saved_scoreboard_stats = nil
 	end
 
-	self.rewards = Rewards:new(level_key, self.game_mode_key, quickplay_bonus)
-	self.is_quickplay = quickplay_bonus
-	self._level_end_view_wrapper = params.level_end_view_wrapper
+	arg_1_0.rewards = Rewards:new(var_1_15, arg_1_0.game_mode_key, var_1_21)
+	arg_1_0.is_quickplay = var_1_21
+	arg_1_0._level_end_view_wrapper = arg_1_1.level_end_view_wrapper
 
-	if self._level_end_view_wrapper then
-		self._level_end_view_wrapper:game_state_changed()
+	if arg_1_0._level_end_view_wrapper then
+		arg_1_0._level_end_view_wrapper:game_state_changed()
 	end
 
-	params.dice_keeper = nil
-	self.mood_timers = {}
+	arg_1_1.dice_keeper = nil
+	arg_1_0.mood_timers = {}
 
-	if loading_context.loading_view then
-		self.loading_view = loading_context.loading_view
-		loading_context.loading_view = nil
-		self.show_loading_view = true
+	if var_1_20.loading_view then
+		arg_1_0.loading_view = var_1_20.loading_view
+		var_1_20.loading_view = nil
+		arg_1_0.show_loading_view = true
 	end
 
-	Managers.state.camera:apply_level_particle_effects(LevelSettings[level_key].level_particle_effects, viewport_name)
-	Managers.state.camera:apply_level_screen_effects(LevelSettings[level_key].level_screen_effects, viewport_name)
+	Managers.state.camera:apply_level_particle_effects(LevelSettings[var_1_15].level_particle_effects, var_1_0)
+	Managers.state.camera:apply_level_screen_effects(LevelSettings[var_1_15].level_screen_effects, var_1_0)
 	Managers.razer_chroma:load_packages()
 
 	if Managers.chat:chat_is_focused() then
@@ -231,12 +227,12 @@ StateInGameRunning.on_enter = function (self, params)
 	end
 
 	if Development.parameter("attract_mode") then
-		local ingame_ui = Managers.ui:temporary_get_ingame_ui_called_from_state_ingame_running()
+		local var_1_22 = Managers.ui:temporary_get_ingame_ui_called_from_state_ingame_running()
 
-		Managers.benchmark = BenchmarkHandler:new(ingame_ui, self.world)
+		Managers.benchmark = BenchmarkHandler:new(var_1_22, arg_1_0.world)
 	end
 
-	if self.is_in_inn then
+	if arg_1_0.is_in_inn then
 		Managers.state.achievement:setup_achievement_data()
 		Managers.state.quest:update_quests()
 		Managers.mechanism:clear_stored_challenge_progression_status()
@@ -244,104 +240,99 @@ StateInGameRunning.on_enter = function (self, params)
 
 	Managers.state.achievement:setup_incompleted_achievements()
 
-	self._waiting_for_peers_message_timer = Managers.time:time("game") + 10
-	self._game_started_current_frame = false
-	self._transitioned_from_black_screen = false
+	arg_1_0._waiting_for_peers_message_timer = Managers.time:time("game") + 10
+	arg_1_0._game_started_current_frame = false
+	arg_1_0._transitioned_from_black_screen = false
 
 	Managers.level_transition_handler.transient_package_loader:signal_in_game()
-	Managers.mechanism:store_challenge_progression_status(self.is_in_inn)
+	Managers.mechanism:store_challenge_progression_status(arg_1_0.is_in_inn)
 	Managers.music:on_enter_game()
 end
 
-StateInGameRunning._setup_end_of_level_UI = function (self)
+function StateInGameRunning._setup_end_of_level_UI(arg_3_0)
 	if script_data.disable_end_screens then
 		Managers.state.network.network_transmit:send_rpc_server("rpc_is_ready_for_transition")
 	elseif not Managers.state.game_mode:setting("skip_level_end_view") then
-		local game_won = not self.game_lost and not self.game_tied
-		local game_mode_key = Managers.state.game_mode:game_mode_key()
-		local mechanism_name = Managers.mechanism:current_mechanism_name()
-		local is_versus = mechanism_name == "versus"
-		local hero_name
-		local peer_id = Network.peer_id()
-		local profile_index = self.profile_synchronizer:get_persistent_profile_index_reservation(peer_id)
+		local var_3_0 = not arg_3_0.game_lost and not arg_3_0.game_tied
+		local var_3_1 = Managers.state.game_mode:game_mode_key()
+		local var_3_2 = Managers.mechanism:current_mechanism_name()
+		local var_3_3 = var_3_2 == "versus"
+		local var_3_4
+		local var_3_5 = Network.peer_id()
+		local var_3_6 = arg_3_0.profile_synchronizer:get_persistent_profile_index_reservation(var_3_5)
 
-		if profile_index and profile_index ~= 0 then
-			local profile = SPProfiles[profile_index]
-
-			hero_name = profile.display_name
+		if var_3_6 and var_3_6 ~= 0 then
+			var_3_4 = SPProfiles[var_3_6].display_name
 		end
 
-		local level_end_view_context = {}
-
-		level_end_view_context.world_manager = Managers.world
-		level_end_view_context.is_server = self.is_server
-		level_end_view_context.is_quickplay = self.is_quickplay
-		level_end_view_context.peer_id = peer_id
-		level_end_view_context.local_player_hero_name = hero_name
-		level_end_view_context.game_won = game_won
-		level_end_view_context.game_mode_key = game_mode_key
-		level_end_view_context.difficulty = Managers.state.difficulty:get_difficulty()
-		level_end_view_context.level_key = Managers.state.game_mode:level_key()
-		level_end_view_context.weave_personal_best_achieved = self._weave_personal_best_achieved
-		level_end_view_context.completed_weave = self._completed_weave
-		level_end_view_context.profile_synchronizer = self.profile_synchronizer
-		level_end_view_context.challenge_progression_status = {
-			start_progress = Managers.mechanism:get_stored_challenge_progression_status(),
-			end_progress = Managers.mechanism:get_challenge_progression_status(),
+		local var_3_7 = {
+			world_manager = Managers.world,
+			is_server = arg_3_0.is_server,
+			is_quickplay = arg_3_0.is_quickplay,
+			peer_id = var_3_5,
+			local_player_hero_name = var_3_4,
+			game_won = var_3_0,
+			game_mode_key = var_3_1,
+			difficulty = Managers.state.difficulty:get_difficulty(),
+			level_key = Managers.state.game_mode:level_key(),
+			weave_personal_best_achieved = arg_3_0._weave_personal_best_achieved,
+			completed_weave = arg_3_0._completed_weave,
+			profile_synchronizer = arg_3_0.profile_synchronizer,
+			challenge_progression_status = {
+				start_progress = Managers.mechanism:get_stored_challenge_progression_status(),
+				end_progress = Managers.mechanism:get_challenge_progression_status()
+			}
 		}
 
-		if is_versus then
-			level_end_view_context.party_composition = Managers.party:get_party_composition()
+		if var_3_3 then
+			var_3_7.party_composition = Managers.party:get_party_composition()
 		end
 
-		local players_session_score = Managers.mechanism:get_players_session_score(self.statistics_db, self.profile_synchronizer, self._saved_scoreboard_stats)
+		local var_3_8 = Managers.mechanism:get_players_session_score(arg_3_0.statistics_db, arg_3_0.profile_synchronizer, arg_3_0._saved_scoreboard_stats)
 
-		if self.is_server then
-			Managers.mechanism:sync_players_session_score(players_session_score)
+		if arg_3_0.is_server then
+			Managers.mechanism:sync_players_session_score(var_3_8)
 		end
 
-		level_end_view_context.players_session_score = players_session_score
-		self._weave_personal_best_achieved = nil
-		self._completed_weave = nil
+		var_3_7.players_session_score = var_3_8
+		arg_3_0._weave_personal_best_achieved = nil
+		arg_3_0._completed_weave = nil
 
-		local win_conditions = mechanism_name == "versus" and Managers.mechanism:game_mechanism():win_conditions()
-		local context_rewards = {
-			team_scores = win_conditions and win_conditions:get_total_scores(),
+		local var_3_9 = var_3_2 == "versus" and Managers.mechanism:game_mechanism():win_conditions()
+		local var_3_10 = {
+			team_scores = var_3_9 and var_3_9:get_total_scores()
 		}
 
-		level_end_view_context.rewards = context_rewards
+		var_3_7.rewards = var_3_10
 
-		if not self._booted_eac_untrusted then
-			local level, start_experience, start_experience_pool = self.rewards:get_level_start()
-			local versus_level, versus_start_experience = self.rewards:get_versus_level_start()
+		if not arg_3_0._booted_eac_untrusted then
+			local var_3_11, var_3_12, var_3_13 = arg_3_0.rewards:get_level_start()
+			local var_3_14, var_3_15 = arg_3_0.rewards:get_versus_level_start()
 
-			context_rewards.level_start = {
-				level,
-				start_experience,
-				start_experience_pool,
+			var_3_10.level_start = {
+				var_3_11,
+				var_3_12,
+				var_3_13
 			}
-			context_rewards.versus_level_start = {
-				versus_level,
-				versus_start_experience,
+			var_3_10.versus_level_start = {
+				var_3_14,
+				var_3_15
 			}
+			var_3_10.win_track_start_experience = arg_3_0.rewards:get_win_track_experience_start()
 
-			local win_track_start_experience = self.rewards:get_win_track_experience_start()
+			local var_3_16, var_3_17 = arg_3_0.rewards:get_rewards()
 
-			context_rewards.win_track_start_experience = win_track_start_experience
-
-			local rewards, end_of_level_rewards_arguments = self.rewards:get_rewards()
-
-			context_rewards.end_of_level_rewards = rewards and table.clone(rewards) or {}
-			context_rewards.mission_results = table.clone(self.rewards:get_mission_results())
-			level_end_view_context.end_of_level_rewards_arguments = end_of_level_rewards_arguments and table.clone(end_of_level_rewards_arguments) or {}
+			var_3_10.end_of_level_rewards = var_3_16 and table.clone(var_3_16) or {}
+			var_3_10.mission_results = table.clone(arg_3_0.rewards:get_mission_results())
+			var_3_7.end_of_level_rewards_arguments = var_3_17 and table.clone(var_3_17) or {}
 		else
-			context_rewards.end_of_level_rewards = {}
-			context_rewards.mission_results = {}
+			var_3_10.end_of_level_rewards = {}
+			var_3_10.mission_results = {}
 		end
 
-		level_end_view_context.level_end_view = Managers.mechanism:get_level_end_view()
-		level_end_view_context.level_end_view_packages = Managers.mechanism:get_level_end_view_packages()
-		self.parent.parent.loading_context.level_end_view_context = level_end_view_context
+		var_3_7.level_end_view = Managers.mechanism:get_level_end_view()
+		var_3_7.level_end_view_packages = Managers.mechanism:get_level_end_view_packages()
+		arg_3_0.parent.parent.loading_context.level_end_view_context = var_3_7
 
 		if IS_PS4 then
 			Managers.account:set_presence("dice_game")
@@ -352,154 +343,154 @@ StateInGameRunning._setup_end_of_level_UI = function (self)
 		end
 	end
 
-	self.has_setup_end_of_level = true
+	arg_3_0.has_setup_end_of_level = true
 end
 
-StateInGameRunning.level_end_view_wrapper = function (self)
-	return self._level_end_view_wrapper
+function StateInGameRunning.level_end_view_wrapper(arg_4_0)
+	return arg_4_0._level_end_view_wrapper
 end
 
-StateInGameRunning.handle_end_conditions = function (self)
-	local game_mode_manager = Managers.state.game_mode
+function StateInGameRunning.handle_end_conditions(arg_5_0)
+	local var_5_0 = Managers.state.game_mode
 
-	if game_mode_manager and game_mode_manager:is_game_mode_ended() and game_mode_manager:is_game_mode_ended() then
-		-- Nothing
+	if var_5_0 and var_5_0:is_game_mode_ended() and var_5_0:is_game_mode_ended() then
+		-- block empty
 	end
 end
 
-StateInGameRunning.check_invites = function (self)
-	if self.popup_id then
+function StateInGameRunning.check_invites(arg_6_0)
+	if arg_6_0.popup_id then
 		return
 	end
 
-	if self.network_client and not self.network_client:is_ingame() then
+	if arg_6_0.network_client and not arg_6_0.network_client:is_ingame() then
 		return
 	end
 
-	if self.network_server and not self.network_server:are_all_peers_ingame(nil, true) then
+	if arg_6_0.network_server and not arg_6_0.network_server:are_all_peers_ingame(nil, true) then
 		return
 	end
 
-	if self.parent.exit_type ~= nil then
+	if arg_6_0.parent.exit_type ~= nil then
 		return
 	end
 
-	local platform = PLATFORM
+	local var_6_0 = PLATFORM
 
 	if IS_CONSOLE and (Managers.account:offline_mode() or Managers.account:has_fatal_error()) then
 		if Managers.invite:has_invitation() then
-			self._offline_invite = true
+			arg_6_0._offline_invite = true
 		end
 
 		return
 	end
 
-	local invite_data = Managers.invite:get_invited_lobby_data()
+	local var_6_1 = Managers.invite:get_invited_lobby_data()
 
-	if invite_data then
-		local lobby_id = invite_data.id or invite_data.name
-		local current_lobby_id
+	if var_6_1 then
+		local var_6_2 = var_6_1.id or var_6_1.name
+		local var_6_3
 
 		if IS_XB1 then
-			current_lobby_id = self._lobby_host and self._lobby_host.lobby._data.session_name or self._lobby_client.lobby._data.session_name
+			var_6_3 = arg_6_0._lobby_host and arg_6_0._lobby_host.lobby._data.session_name or arg_6_0._lobby_client.lobby._data.session_name
 		else
-			current_lobby_id = self._lobby_host and self._lobby_host:id() or self._lobby_client:id()
+			var_6_3 = arg_6_0._lobby_host and arg_6_0._lobby_host:id() or arg_6_0._lobby_client:id()
 		end
 
-		local active_mission_vote = Managers.state.voting and Managers.state.voting:vote_in_progress() and Managers.state.voting:active_vote_template().mission_vote
-		local current_level = Managers.level_transition_handler:get_current_level_key()
-		local level_settings = LevelSettings[current_level]
+		local var_6_4 = Managers.state.voting and Managers.state.voting:vote_in_progress() and Managers.state.voting:active_vote_template().mission_vote
+		local var_6_5 = Managers.level_transition_handler:get_current_level_key()
+		local var_6_6 = LevelSettings[var_6_5]
 
-		if (Managers.matchmaking:is_game_matchmaking() or active_mission_vote) and self.network_server and level_settings.hub_level then
+		if (Managers.matchmaking:is_game_matchmaking() or var_6_4) and arg_6_0.network_server and var_6_6.hub_level then
 			mm_printf("Found an invite, but was matchmaking.")
 
-			self.popup_id = Managers.popup:queue_popup(Localize("popup_join_while_matchmaking"), Localize("popup_error_topic"), "ok", Localize("button_ok"))
-		elseif lobby_id == current_lobby_id then
+			arg_6_0.popup_id = Managers.popup:queue_popup(Localize("popup_join_while_matchmaking"), Localize("popup_error_topic"), "ok", Localize("button_ok"))
+		elseif var_6_2 == var_6_3 then
 			mm_printf("Found an invite, but was already in lobby.")
 
-			self.popup_id = Managers.popup:queue_popup(Localize("popup_already_in_same_lobby"), Localize("popup_error_topic"), "ok", Localize("button_ok"))
+			arg_6_0.popup_id = Managers.popup:queue_popup(Localize("popup_already_in_same_lobby"), Localize("popup_error_topic"), "ok", Localize("button_ok"))
 		elseif not Managers.play_go:installed() then
 			mm_printf("Found an invite, but game was not fully installed.")
 
-			self.popup_id = Managers.popup:queue_popup(Localize("popup_invite_not_installed"), Localize("popup_invite_not_installed_header"), "not_installed", Localize("menu_ok"))
-		elseif self.network_server and not self.network_server:are_all_peers_ingame(nil, true) then
+			arg_6_0.popup_id = Managers.popup:queue_popup(Localize("popup_invite_not_installed"), Localize("popup_invite_not_installed_header"), "not_installed", Localize("menu_ok"))
+		elseif arg_6_0.network_server and not arg_6_0.network_server:are_all_peers_ingame(nil, true) then
 			mm_printf("Found an invite, but someone is trying to join the game.")
 
-			self.popup_id = Managers.popup:queue_popup(Localize("popup_join_blocked_by_joining_player"), Localize("popup_invite_not_installed_header"), "not_installed", Localize("menu_ok"))
-		elseif invite_data.mechanism and invite_data.mechanism == "versus" and invite_data.matchmaking and invite_data.matchmaking == "searching" then
+			arg_6_0.popup_id = Managers.popup:queue_popup(Localize("popup_join_blocked_by_joining_player"), Localize("popup_invite_not_installed_header"), "not_installed", Localize("menu_ok"))
+		elseif var_6_1.mechanism and var_6_1.mechanism == "versus" and var_6_1.matchmaking and var_6_1.matchmaking == "searching" then
 			mm_printf("Inviting player is currently matchmaking into a quick play game/dedicated server lobby.")
 
-			self.popup_id = Managers.popup:queue_popup(Localize("matchmaking_status_join_game_failed_is_searching_for_dedicated_server"), Localize("popup_invite_not_installed_header"), "not_installed", Localize("menu_ok"))
-		elseif self._lobby_client or not self.is_in_inn then
-			self._invite_lobby_data = invite_data
-		elseif not self.popup_id then
-			Managers.matchmaking:request_join_lobby(invite_data, {
-				friend_join = true,
+			arg_6_0.popup_id = Managers.popup:queue_popup(Localize("matchmaking_status_join_game_failed_is_searching_for_dedicated_server"), Localize("popup_invite_not_installed_header"), "not_installed", Localize("menu_ok"))
+		elseif arg_6_0._lobby_client or not arg_6_0.is_in_inn then
+			arg_6_0._invite_lobby_data = var_6_1
+		elseif not arg_6_0.popup_id then
+			Managers.matchmaking:request_join_lobby(var_6_1, {
+				friend_join = true
 			})
 		end
 	end
 end
 
-StateInGameRunning.wanted_transition = function (self)
-	if self.popup_id then
+function StateInGameRunning.wanted_transition(arg_7_0)
+	if arg_7_0.popup_id then
 		return
 	end
 
-	if self.network_client and not self.network_client:is_ingame() then
+	if arg_7_0.network_client and not arg_7_0.network_client:is_ingame() then
 		return
 	end
 
-	if self.network_server and self.is_in_inn and not self.network_server:are_all_peers_ingame(nil, true) then
+	if arg_7_0.network_server and arg_7_0.is_in_inn and not arg_7_0.network_server:are_all_peers_ingame(nil, true) then
 		return
 	end
 
-	local wanted_transition, data = Managers.ui:get_transition()
+	local var_7_0, var_7_1 = Managers.ui:get_transition()
 
-	if wanted_transition then
-		mm_printf("Doing transition %s from UI", wanted_transition)
-	elseif self._offline_invite then
-		wanted_transition = "offline_invite"
-		self._offline_invite = nil
-	elseif self._invite_lobby_data then
-		if self._invite_lobby_data.is_server_invite then
+	if var_7_0 then
+		mm_printf("Doing transition %s from UI", var_7_0)
+	elseif arg_7_0._offline_invite then
+		var_7_0 = "offline_invite"
+		arg_7_0._offline_invite = nil
+	elseif arg_7_0._invite_lobby_data then
+		if arg_7_0._invite_lobby_data.is_server_invite then
 			mm_printf("Found a server invite, joining.")
 
-			wanted_transition = "join_server"
+			var_7_0 = "join_server"
 		else
 			mm_printf("Found a lobby invite, joining.")
 
-			wanted_transition = "join_lobby"
+			var_7_0 = "join_lobby"
 		end
 
-		data = self._invite_lobby_data
-		self._invite_lobby_data = nil
+		var_7_1 = arg_7_0._invite_lobby_data
+		arg_7_0._invite_lobby_data = nil
 	end
 
-	if not wanted_transition then
-		wanted_transition, data = Managers.matchmaking:get_transition()
+	if not var_7_0 then
+		var_7_0, var_7_1 = Managers.matchmaking:get_transition()
 
-		if wanted_transition then
-			mm_printf("Matchmaking manager returned a wanted transition %s, doing it.", wanted_transition)
+		if var_7_0 then
+			mm_printf("Matchmaking manager returned a wanted transition %s, doing it.", var_7_0)
 		end
 	end
 
-	if not wanted_transition and self.afk_kick then
-		wanted_transition = "afk_kick"
+	if not var_7_0 and arg_7_0.afk_kick then
+		var_7_0 = "afk_kick"
 	end
 
-	wanted_transition = wanted_transition or Managers.state.game_mode:wanted_transition()
+	var_7_0 = var_7_0 or Managers.state.game_mode:wanted_transition()
 
-	if not wanted_transition or not IS_XB1 or self.is_in_inn or self.is_in_tutorial or Development.parameter("auto-host-level") ~= nil then
-		-- Nothing
-	elseif not self._xbox_event_end_triggered then
+	if not var_7_0 or not IS_XB1 or arg_7_0.is_in_inn or arg_7_0.is_in_tutorial or Development.parameter("auto-host-level") ~= nil then
+		-- block empty
+	elseif not arg_7_0._xbox_event_end_triggered then
 		Application.warning("MultiplyerRoundStart was triggered without end conditions met")
-		self:_xbone_end_of_round_events(self.statistics_db)
+		arg_7_0:_xbone_end_of_round_events(arg_7_0.statistics_db)
 	end
 
-	return wanted_transition, data
+	return var_7_0, var_7_1
 end
 
-StateInGameRunning.event_end_screen_ui_complete = function (self)
+function StateInGameRunning.event_end_screen_ui_complete(arg_8_0)
 	Managers.state.conflict:destroy_all_units()
 	Managers.ui:set_ingame_ui_enabled(false)
 
@@ -508,303 +499,299 @@ StateInGameRunning.event_end_screen_ui_complete = function (self)
 	end
 end
 
-StateInGameRunning.gm_event_end_conditions_met = function (self, reason, checkpoint_available, percentages_completed)
-	if not self.is_server and self.game_mode_key == "versus" and Managers.mechanism:is_final_round() and not self._player_session_score_synced then
-		self._player_session_score_synced_cb = callback(self, "gm_event_end_conditions_met", reason, checkpoint_available, percentages_completed)
+function StateInGameRunning.gm_event_end_conditions_met(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	if not arg_9_0.is_server and arg_9_0.game_mode_key == "versus" and Managers.mechanism:is_final_round() and not arg_9_0._player_session_score_synced then
+		arg_9_0._player_session_score_synced_cb = callback(arg_9_0, "gm_event_end_conditions_met", arg_9_1, arg_9_2, arg_9_3)
 
 		return
 	end
 
-	if not self._game_has_started then
+	if not arg_9_0._game_has_started then
 		Managers.transition:hide_loading_icon()
 		Managers.transition:fade_out(GameSettings.transition_fade_in_speed)
 	end
 
-	local is_server = self.is_server
-	local player = self.player
+	local var_9_0 = arg_9_0.is_server
+	local var_9_1 = arg_9_0.player
 
-	self.end_conditions_met = true
+	arg_9_0.end_conditions_met = true
 
-	local difficulty_key = Managers.state.difficulty:get_difficulty()
-	local level_key = Managers.state.game_mode:level_key()
-	local game_mode_key = self.game_mode_key
-	local is_quickplay = self.is_quickplay
-	local game_won, game_lost = Managers.state.game_mode:evaluate_end_condition_outcome(reason, player)
-	local ingame_ui = Managers.ui:temporary_get_ingame_ui_called_from_state_ingame_running()
-	local stats_id = player:stats_id()
-	local statistics_db = self.statistics_db
-	local previous_completed_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(statistics_db, stats_id, level_key) or 0
+	local var_9_2 = Managers.state.difficulty:get_difficulty()
+	local var_9_3 = Managers.state.game_mode:level_key()
+	local var_9_4 = arg_9_0.game_mode_key
+	local var_9_5 = arg_9_0.is_quickplay
+	local var_9_6, var_9_7 = Managers.state.game_mode:evaluate_end_condition_outcome(arg_9_1, var_9_1)
+	local var_9_8 = Managers.ui:temporary_get_ingame_ui_called_from_state_ingame_running()
+	local var_9_9 = var_9_1:stats_id()
+	local var_9_10 = arg_9_0.statistics_db
 
-	ingame_ui:handle_transition("close_active")
+	if not LevelUnlockUtils.completed_level_difficulty_index(var_9_10, var_9_9, var_9_3) then
+		local var_9_11 = 0
+	end
+
+	var_9_8:handle_transition("close_active")
 
 	if Managers.twitch then
 		Managers.twitch:deactivate_twitch_game_mode()
 	end
 
-	if not self.is_in_inn then
-		DialogueSystem.stateless_global_context.last_level_played = level_key
-		DialogueSystem.stateless_global_context.last_level_won = game_won
+	if not arg_9_0.is_in_inn then
+		DialogueSystem.stateless_global_context.last_level_played = var_9_3
+		DialogueSystem.stateless_global_context.last_level_won = var_9_6
 	end
 
-	if ingame_ui.leave_game then
-		statistics_db:reset_persistant_stats()
-		StatisticsUtil.reset_mission_streak(player, statistics_db, stats_id)
+	if var_9_8.leave_game then
+		var_9_10:reset_persistant_stats()
+		StatisticsUtil.reset_mission_streak(var_9_1, var_9_10, var_9_9)
 
 		return
 	end
 
 	LoreBookHelper.save_new_pages()
 
-	local mission_system = Managers.state.entity:system("mission_system")
+	local var_9_12 = Managers.state.entity:system("mission_system")
 
-	mission_system:set_percentage_completed(percentages_completed)
+	var_9_12:set_percentage_completed(arg_9_3)
+	Managers.state.achievement:evaluate_end_of_level_achievements(var_9_10, var_9_9, var_9_3, var_9_2)
 
-	local achievement_manager = Managers.state.achievement
-
-	achievement_manager:evaluate_end_of_level_achievements(statistics_db, stats_id, level_key, difficulty_key)
-
-	local stats_interface = Managers.backend:get_interface("statistics")
-	local register_statistics = true
-	local is_final_objective = Managers.mechanism:is_final_round()
+	local var_9_13 = Managers.backend:get_interface("statistics")
+	local var_9_14 = true
+	local var_9_15 = Managers.mechanism:is_final_round()
 
 	Managers.mechanism:load_end_screen_resources()
 
-	if game_mode_key == "survival" then
-		if game_won then
+	if var_9_4 == "survival" then
+		if var_9_6 then
 			print("Game won")
-			mission_system:evaluate_level_end_missions()
-			StatisticsUtil.register_complete_survival_level(statistics_db)
-			stats_interface:save()
+			var_9_12:evaluate_level_end_missions()
+			StatisticsUtil.register_complete_survival_level(var_9_10)
+			var_9_13:save()
 		end
-	elseif game_won then
+	elseif var_9_6 then
 		print("Game won")
 
-		if game_mode_key == "weave" then
-			is_final_objective = not Managers.weave:calculate_next_objective_index()
+		if var_9_4 == "weave" then
+			var_9_15 = not Managers.weave:calculate_next_objective_index()
 
-			if is_final_objective then
-				local weave_manager = Managers.weave
-				local weave_tier = weave_manager:get_weave_tier()
-				local score = weave_manager:get_score()
-				local num_players = weave_manager:get_num_players()
-				local weave_templates = WeaveSettings.templates_ordered
-				local num_weave_templates = #weave_templates
-				local personal_best = false
+			if var_9_15 then
+				local var_9_16 = Managers.weave
+				local var_9_17 = var_9_16:get_weave_tier()
+				local var_9_18 = var_9_16:get_score()
+				local var_9_19 = var_9_16:get_num_players()
+				local var_9_20 = #WeaveSettings.templates_ordered
+				local var_9_21 = false
 
-				for i = num_weave_templates, weave_tier, -1 do
-					local stat_name = ScorpionSeasonalSettings.get_weave_score_stat(i, num_players)
-					local previous_score = statistics_db:get_persistent_stat(stats_id, ScorpionSeasonalSettings.current_season_name, stat_name)
-					local has_previous_score = previous_score and previous_score > 0
+				for iter_9_0 = var_9_20, var_9_17, -1 do
+					local var_9_22 = ScorpionSeasonalSettings.get_weave_score_stat(iter_9_0, var_9_19)
+					local var_9_23 = var_9_10:get_persistent_stat(var_9_9, ScorpionSeasonalSettings.current_season_name, var_9_22)
+					local var_9_24 = var_9_23 and var_9_23 > 0
 
-					if weave_tier == i then
-						if has_previous_score and previous_score < score or not has_previous_score then
-							personal_best = true
+					if var_9_17 == iter_9_0 then
+						if var_9_24 and var_9_23 < var_9_18 or not var_9_24 then
+							var_9_21 = true
 
 							break
 						end
-					elseif has_previous_score then
+					elseif var_9_24 then
 						break
 					end
 				end
 
-				self._weave_personal_best_achieved = personal_best
-				self._completed_weave = weave_manager:get_active_weave()
+				arg_9_0._weave_personal_best_achieved = var_9_21
+				arg_9_0._completed_weave = var_9_16:get_active_weave()
 
-				StatisticsUtil.register_weave_complete(statistics_db, player, is_quickplay, difficulty_key)
+				StatisticsUtil.register_weave_complete(var_9_10, var_9_1, var_9_5, var_9_2)
 			else
-				local saved_scoreboard_stats = ScoreboardHelper.get_weave_stats(self.statistics_db, self.profile_synchronizer)
+				local var_9_25 = ScoreboardHelper.get_weave_stats(arg_9_0.statistics_db, arg_9_0.profile_synchronizer)
 
-				self.parent.parent.loading_context.saved_scoreboard_stats = saved_scoreboard_stats
+				arg_9_0.parent.parent.loading_context.saved_scoreboard_stats = var_9_25
 			end
-		elseif game_mode_key == "versus" then
-			register_statistics = is_final_objective
+		elseif var_9_4 == "versus" then
+			var_9_14 = var_9_15
 		end
 
-		if is_final_objective then
-			self.parent.parent.loading_context.saved_scoreboard_stats = nil
+		if var_9_15 then
+			arg_9_0.parent.parent.loading_context.saved_scoreboard_stats = nil
 		end
 
-		if register_statistics then
-			if self._is_in_event_game_mode then
-				StatisticsUtil.register_played_weekly_event_level(statistics_db, player, level_key, difficulty_key)
+		if var_9_14 then
+			if arg_9_0._is_in_event_game_mode then
+				StatisticsUtil.register_played_weekly_event_level(var_9_10, var_9_1, var_9_3, var_9_2)
 			end
 
-			StatisticsUtil.register_complete_level(statistics_db, game_mode_key)
+			StatisticsUtil.register_complete_level(var_9_10, var_9_4)
 
-			if game_mode_key == "versus" and not self.is_in_inn then
-				StatisticsUtil.register_versus_game_won(statistics_db, player, game_won)
+			if var_9_4 == "versus" and not arg_9_0.is_in_inn then
+				StatisticsUtil.register_versus_game_won(var_9_10, var_9_1, var_9_6)
 			end
 		end
 
-		if is_final_objective and Managers.mechanism.on_final_round_won then
-			Managers.mechanism:on_final_round_won(statistics_db, stats_id)
+		if var_9_15 and Managers.mechanism.on_final_round_won then
+			Managers.mechanism:on_final_round_won(var_9_10, var_9_9)
 		end
 
-		stats_interface:save()
-	elseif game_lost then
-		if game_mode_key == "versus" then
-			if is_final_objective then
-				if self._is_in_event_game_mode then
-					StatisticsUtil.register_played_weekly_event_level(statistics_db, player, level_key, difficulty_key)
+		var_9_13:save()
+	elseif var_9_7 then
+		if var_9_4 == "versus" then
+			if var_9_15 then
+				if arg_9_0._is_in_event_game_mode then
+					StatisticsUtil.register_played_weekly_event_level(var_9_10, var_9_1, var_9_3, var_9_2)
 				end
 
-				StatisticsUtil.register_complete_level(statistics_db, game_mode_key)
+				StatisticsUtil.register_complete_level(var_9_10, var_9_4)
 
-				if not self.is_in_inn then
-					StatisticsUtil.register_versus_game_won(statistics_db, player, game_won)
+				if not arg_9_0.is_in_inn then
+					StatisticsUtil.register_versus_game_won(var_9_10, var_9_1, var_9_6)
 				end
 			end
 		else
-			is_final_objective = true
+			var_9_15 = true
 		end
 
-		Managers.state.game_mode:game_lost(player)
+		Managers.state.game_mode:game_lost(var_9_1)
 		print("Game lost")
 
-		self.parent.parent.loading_context.saved_scoreboard_stats = nil
-		self.checkpoint_available = checkpoint_available
+		arg_9_0.parent.parent.loading_context.saved_scoreboard_stats = nil
+		arg_9_0.checkpoint_available = arg_9_2
 
-		if game_mode_key ~= "versus" then
-			statistics_db:reset_persistant_stats()
+		if var_9_4 ~= "versus" then
+			var_9_10:reset_persistant_stats()
 		end
 
-		StatisticsUtil.reset_mission_streak(player, statistics_db, stats_id)
-		stats_interface:save()
+		StatisticsUtil.reset_mission_streak(var_9_1, var_9_10, var_9_9)
+		var_9_13:save()
 	end
 
-	if game_mode_key == "versus" then
-		if self.is_server then
-			local players_session_score = Managers.mechanism:get_players_session_score(self.statistics_db, self.profile_synchronizer, self._saved_scoreboard_stats)
+	if var_9_4 == "versus" then
+		if arg_9_0.is_server then
+			local var_9_26 = Managers.mechanism:get_players_session_score(arg_9_0.statistics_db, arg_9_0.profile_synchronizer, arg_9_0._saved_scoreboard_stats)
 
-			if is_final_objective then
-				Managers.mechanism:sync_players_session_score(players_session_score)
+			if var_9_15 then
+				Managers.mechanism:sync_players_session_score(var_9_26)
 			else
-				self.parent.parent.loading_context.saved_scoreboard_stats = players_session_score
+				arg_9_0.parent.parent.loading_context.saved_scoreboard_stats = var_9_26
 			end
 		end
 
-		stats_interface:save()
+		var_9_13:save()
 	end
 
-	local screen_name, screen_config, screen_params = Managers.state.game_mode:get_end_screen_config(game_won, game_lost, player, reason)
-	local is_booted_unstrusted = self._booted_eac_untrusted
-	local is_game_mode_weave = game_mode_key == "weave"
-	local weave_tier, score, num_players, weave_progress
+	local var_9_27, var_9_28, var_9_29 = Managers.state.game_mode:get_end_screen_config(var_9_6, var_9_7, var_9_1, arg_9_1)
+	local var_9_30 = arg_9_0._booted_eac_untrusted
+	local var_9_31 = var_9_4 == "weave"
+	local var_9_32
+	local var_9_33
+	local var_9_34
+	local var_9_35
 
-	if is_game_mode_weave then
-		weave_tier, score, num_players = self:_get_weave_scores()
-		weave_progress = Managers.weave:current_bar_score()
+	if var_9_31 then
+		var_9_32, var_9_33, var_9_34 = arg_9_0:_get_weave_scores()
+
+		local var_9_36 = Managers.weave:current_bar_score()
 
 		Managers.weave:store_saved_game_mode_data()
 	end
 
-	local function callback(status)
-		if is_game_mode_weave and not is_booted_unstrusted and game_won and is_final_objective and is_server and not self.is_quickplay then
-			self:_submit_weave_scores(weave_tier, score, num_players)
+	local function var_9_37(arg_10_0)
+		if var_9_31 and not var_9_30 and var_9_6 and var_9_15 and var_9_0 and not arg_9_0.is_quickplay then
+			arg_9_0:_submit_weave_scores(var_9_32, var_9_33, var_9_34)
 		end
 
-		if status == "commit_error" then
+		if arg_10_0 == "commit_error" then
 			Managers.backend:commit_error()
 
 			return
 		end
 
-		if ingame_ui.leave_game then
+		if var_9_8.leave_game then
 			return
 		end
 
-		if not self.parent then
+		if not arg_9_0.parent then
 			return
 		end
 
-		local game_mode_setting = GameModeSettings[game_mode_key]
-		local end_mission_rewards = game_mode_setting.end_mission_rewards
-
-		if end_mission_rewards then
-			if not is_booted_unstrusted and (game_lost or is_final_objective) then
-				self:_award_end_of_level_rewards(statistics_db, stats_id, game_won, difficulty_key, level_key)
+		if GameModeSettings[var_9_4].end_mission_rewards then
+			if not var_9_30 and (var_9_7 or var_9_15) then
+				arg_9_0:_award_end_of_level_rewards(var_9_10, var_9_9, var_9_6, var_9_2, var_9_3)
 			end
 
-			print("end screen_name:", screen_name, screen_config, screen_params)
-			ingame_ui:activate_end_screen_ui(screen_name, screen_config, screen_params)
+			print("end screen_name:", var_9_27, var_9_28, var_9_29)
+			var_9_8:activate_end_screen_ui(var_9_27, var_9_28, var_9_29)
 		end
 
-		if (game_won and is_final_objective or game_lost) and is_game_mode_weave then
+		if (var_9_6 and var_9_15 or var_9_7) and var_9_31 then
 			Managers.weave:clear_weave_name()
 		end
 	end
 
-	local backend_manager = Managers.backend
+	Managers.backend:commit(true, var_9_37)
 
-	backend_manager:commit(true, callback)
-
-	self.game_lost = game_lost
-	self.game_won = game_won
-	self.game_tied = not game_won and not game_lost
+	arg_9_0.game_lost = var_9_7
+	arg_9_0.game_won = var_9_6
+	arg_9_0.game_tied = not var_9_6 and not var_9_7
 
 	if IS_PS4 then
 		Managers.account:set_realtime_multiplay(false)
 	end
 
-	if self.is_in_inn or self.is_in_tutorial then
+	if arg_9_0.is_in_inn or arg_9_0.is_in_tutorial then
 		return
 	end
 
 	if IS_XB1 then
-		if not self._xbox_event_end_triggered then
-			self:_xbone_end_of_round_events(statistics_db)
+		if not arg_9_0._xbox_event_end_triggered then
+			arg_9_0:_xbone_end_of_round_events(var_9_10)
 		end
 
-		if not self.is_in_inn and not self.is_in_tutorial and not self.parent.hero_stats_updated then
-			Managers.xbox_stats:update_hero_stats(game_won)
+		if not arg_9_0.is_in_inn and not arg_9_0.is_in_tutorial and not arg_9_0.parent.hero_stats_updated then
+			Managers.xbox_stats:update_hero_stats(var_9_6)
 
-			self.parent.hero_stats_updated = true
+			arg_9_0.parent.hero_stats_updated = true
 		end
 	end
 end
 
-StateInGameRunning._award_end_of_level_rewards = function (self, statistics_db, stats_id, game_won, difficulty_key, level_key)
-	local peer_id = Network.peer_id()
-	local profile_index, career_index = self.profile_synchronizer:get_persistent_profile_index_reservation(peer_id)
-	local profile = SPProfiles[profile_index]
-	local hero_name = profile.display_name
-	local game_time = math.floor(Managers.time:time("game"))
-	local end_of_level_rewards_arguments = Managers.mechanism:get_end_of_level_rewards_arguments(game_won, self.is_quickplay, statistics_db, stats_id, level_key, hero_name)
-	local extra_mission_results = Managers.mechanism:get_end_of_level_extra_mission_results()
+function StateInGameRunning._award_end_of_level_rewards(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+	local var_11_0 = Network.peer_id()
+	local var_11_1, var_11_2 = arg_11_0.profile_synchronizer:get_persistent_profile_index_reservation(var_11_0)
+	local var_11_3 = SPProfiles[var_11_1]
+	local var_11_4 = var_11_3.display_name
+	local var_11_5 = math.floor(Managers.time:time("game"))
+	local var_11_6 = Managers.mechanism:get_end_of_level_rewards_arguments(arg_11_3, arg_11_0.is_quickplay, arg_11_1, arg_11_2, arg_11_5, var_11_4)
+	local var_11_7 = Managers.mechanism:get_end_of_level_extra_mission_results()
 
-	end_of_level_rewards_arguments.hero_name = hero_name
-	end_of_level_rewards_arguments.ingame_display_name = profile.ingame_display_name
+	var_11_6.hero_name = var_11_4
+	var_11_6.ingame_display_name = var_11_3.ingame_display_name
 
-	self.rewards:award_end_of_level_rewards(game_won, hero_name, self._is_in_event_game_mode, game_time, end_of_level_rewards_arguments, extra_mission_results)
+	arg_11_0.rewards:award_end_of_level_rewards(arg_11_3, var_11_4, arg_11_0._is_in_event_game_mode, var_11_5, var_11_6, var_11_7)
 
-	local chest_settings = LootChestData.chests_by_category[difficulty_key]
+	local var_11_8 = LootChestData.chests_by_category[arg_11_4]
 
-	if chest_settings then
-		local chests_package_name = chest_settings.package_name
+	if var_11_8 then
+		local var_11_9 = var_11_8.package_name
 
-		self.chests_package_name = chests_package_name
+		arg_11_0.chests_package_name = var_11_9
 
-		Managers.package:load(chests_package_name, "global")
+		Managers.package:load(var_11_9, "global")
 	end
 end
 
-StateInGameRunning._get_weave_scores = function (self)
-	local weave_manager = Managers.weave
-	local weave_tier = weave_manager:get_weave_tier()
-	local score = weave_manager:get_score()
-	local num_players = weave_manager:get_num_players()
+function StateInGameRunning._get_weave_scores(arg_12_0)
+	local var_12_0 = Managers.weave
+	local var_12_1 = var_12_0:get_weave_tier()
+	local var_12_2 = var_12_0:get_score()
+	local var_12_3 = var_12_0:get_num_players()
 
-	return weave_tier, score, num_players
+	return var_12_1, var_12_2, var_12_3
 end
 
-StateInGameRunning._submit_weave_scores = function (self, weave_tier, score, num_players)
-	local weave_interface = Managers.backend:get_interface("weaves")
-
-	weave_interface:submit_scores(weave_tier, score, num_players)
+function StateInGameRunning._submit_weave_scores(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	Managers.backend:get_interface("weaves"):submit_scores(arg_13_1, arg_13_2, arg_13_3)
 end
 
-StateInGameRunning.on_checkpoint_vote_cancelled = function (self)
-	self.checkpoint_vote_cancelled = true
+function StateInGameRunning.on_checkpoint_vote_cancelled(arg_14_0)
+	arg_14_0.checkpoint_vote_cancelled = true
 end
 
 if not IS_WINDOWS and (BUILD == "dev" or BUILD == "debug") then
@@ -814,198 +801,177 @@ if not IS_WINDOWS and (BUILD == "dev" or BUILD == "debug") then
 		Managers.input:map_device_to_service("Player", "mouse")
 		Managers.input:map_device_to_service("Player", "gamepad")
 
-		local input_source = Managers.input:get_service("Player")
-		local player = Managers.player:local_player()
+		local var_15_0 = Managers.input:get_service("Player")
+		local var_15_1 = Managers.player:local_player()
 
-		player.input_source = input_source
+		var_15_1.input_source = var_15_0
 
-		local unit = player.player_unit
-		local input_extension = ScriptUnit.extension(unit, "input_system")
+		local var_15_2 = var_15_1.player_unit
 
-		input_extension.input_service = input_source
+		ScriptUnit.extension(var_15_2, "input_system").input_service = var_15_0
 	end
 end
 
-StateInGameRunning.update = function (self, dt, t)
-	if not self._transitioned_from_black_screen then
-		local allowed_to_transition = self:_check_black_screen_transition_requirements(dt, t)
+function StateInGameRunning.update(arg_16_0, arg_16_1, arg_16_2)
+	if not arg_16_0._transitioned_from_black_screen and arg_16_0:_check_black_screen_transition_requirements(arg_16_1, arg_16_2) then
+		arg_16_0:_game_actually_starts()
 
-		if allowed_to_transition then
-			self:_game_actually_starts()
-
-			if IS_WINDOWS and not self.is_in_inn and not Window.has_focus() then
-				Window.flash_window(nil, "start", 3)
-			end
-
-			self._transitioned_from_black_screen = true
+		if IS_WINDOWS and not arg_16_0.is_in_inn and not Window.has_focus() then
+			Window.flash_window(nil, "start", 3)
 		end
+
+		arg_16_0._transitioned_from_black_screen = true
 	end
 
-	if self._waiting_for_peers_message_timer and t > self._waiting_for_peers_message_timer then
-		if self.is_server then
-			local lobby_members_class = self._lobby_host:members()
-			local lobby_members = lobby_members_class:get_members()
-
-			if #lobby_members > 1 then
+	if arg_16_0._waiting_for_peers_message_timer and arg_16_2 > arg_16_0._waiting_for_peers_message_timer then
+		if arg_16_0.is_server then
+			if #arg_16_0._lobby_host:members():get_members() > 1 then
 				Managers.transition:show_waiting_for_peers_message(true)
 
-				self._waiting_for_peers_message_timer = nil
+				arg_16_0._waiting_for_peers_message_timer = nil
 			end
 		else
 			Managers.transition:show_waiting_for_peers_message(true)
 
-			self._waiting_for_peers_message_timer = nil
+			arg_16_0._waiting_for_peers_message_timer = nil
 		end
 	end
 
-	if self.checkpoint_vote_cancelled then
-		self.checkpoint_available = nil
-		self.checkpoint_vote_cancelled = nil
+	if arg_16_0.checkpoint_vote_cancelled then
+		arg_16_0.checkpoint_available = nil
+		arg_16_0.checkpoint_vote_cancelled = nil
 	end
 
-	local ingame_ui = Managers.ui:temporary_get_ingame_ui_called_from_state_ingame_running()
+	local var_16_0 = Managers.ui:temporary_get_ingame_ui_called_from_state_ingame_running()
 
-	if ingame_ui then
-		local ui_ready = not ingame_ui.survey_active and not self.has_setup_end_of_level and ingame_ui:end_screen_active() and ingame_ui:end_screen_fade_in_complete()
-		local rewards_ready = self._booted_eac_untrusted or self.rewards:rewards_generated() and not self.rewards:consuming_deed() and self.chests_package_name and Managers.package:has_loaded(self.chests_package_name, "global")
-		local mechanism_name = Managers.mechanism:current_mechanism_name()
+	if var_16_0 then
+		local var_16_1 = not var_16_0.survey_active and not arg_16_0.has_setup_end_of_level and var_16_0:end_screen_active() and var_16_0:end_screen_fade_in_complete()
+		local var_16_2 = arg_16_0._booted_eac_untrusted or arg_16_0.rewards:rewards_generated() and not arg_16_0.rewards:consuming_deed() and arg_16_0.chests_package_name and Managers.package:has_loaded(arg_16_0.chests_package_name, "global")
+		local var_16_3 = Managers.mechanism:current_mechanism_name()
 
-		if mechanism_name == "versus" then
-			rewards_ready = true
+		if var_16_3 == "versus" then
+			var_16_2 = true
 		end
 
-		if ui_ready and mechanism_name == "versus" then
-			local mechanism_manager = Managers.mechanism
-			local is_final_round = mechanism_manager:is_final_round()
-
-			if is_final_round and rewards_ready then
-				self:_setup_end_of_level_UI()
+		if var_16_1 and var_16_3 == "versus" then
+			if Managers.mechanism:is_final_round() and var_16_2 then
+				arg_16_0:_setup_end_of_level_UI()
 			end
-		elseif ui_ready and rewards_ready then
-			self:_setup_end_of_level_UI()
+		elseif var_16_1 and var_16_2 then
+			arg_16_0:_setup_end_of_level_UI()
 		end
 	end
 
-	if self.popup_id then
-		local result = Managers.popup:query_result(self.popup_id)
+	if arg_16_0.popup_id then
+		local var_16_4 = Managers.popup:query_result(arg_16_0.popup_id)
 
-		if result then
-			if result == "not_installed" then
+		if var_16_4 then
+			if var_16_4 == "not_installed" then
 				Managers.invite:clear_invites()
 			end
 
-			self.popup_id = nil
+			arg_16_0.popup_id = nil
 		end
 	end
 
-	local main_t = Managers.time:time("main")
+	local var_16_5 = Managers.time:time("main")
 
-	self:update_player_afk_check(dt, main_t)
+	arg_16_0:update_player_afk_check(arg_16_1, var_16_5)
 
 	if Managers.benchmark then
-		Managers.benchmark:update(dt, t)
+		Managers.benchmark:update(arg_16_1, arg_16_2)
 	end
 
-	if self._fps_reporter_testify then
-		self._fps_reporter_testify:update(dt, t)
+	if arg_16_0._fps_reporter_testify then
+		arg_16_0._fps_reporter_testify:update(arg_16_1, arg_16_2)
 	end
 
 	if script_data.testify then
-		Testify:poll_requests_through_handler(state_ingame_running_testify, self)
+		Testify:poll_requests_through_handler(var_0_0, arg_16_0)
 	end
 end
 
-StateInGameRunning.check_for_new_quests_or_contracts = function (self, dt)
-	self._quest_expire_check_cooldown = self._quest_expire_check_cooldown and self._quest_expire_check_cooldown - dt or 0
+function StateInGameRunning.check_for_new_quests_or_contracts(arg_17_0, arg_17_1)
+	arg_17_0._quest_expire_check_cooldown = arg_17_0._quest_expire_check_cooldown and arg_17_0._quest_expire_check_cooldown - arg_17_1 or 0
 
-	if self._quest_expire_check_cooldown <= 0 then
-		local quest_manager = Managers.state.quest
+	if arg_17_0._quest_expire_check_cooldown <= 0 then
+		local var_17_0 = Managers.state.quest
 
-		if quest_manager:has_quests_expired() or quest_manager:has_contracts_expired() then
+		if var_17_0:has_quests_expired() or var_17_0:has_contracts_expired() then
 			Managers.chat:add_local_system_message(1, Localize("dlc1_3_1_new_quests_and_contracts_available_text"), true)
 
-			self._quest_expire_check_cooldown = QuestSettings.EXPIRE_CHECK_COOLDOWN
+			arg_17_0._quest_expire_check_cooldown = QuestSettings.EXPIRE_CHECK_COOLDOWN
 		end
 	end
 end
 
-StateInGameRunning.disable_ui = function (self)
+function StateInGameRunning.disable_ui(arg_18_0)
 	Managers.ui:set_ingame_ui_enabled(false)
 end
 
-StateInGameRunning.event_close_ingame_menu = function (self)
-	local ingame_ui = Managers.ui:temporary_get_ingame_ui_called_from_state_ingame_running()
+function StateInGameRunning.event_close_ingame_menu(arg_19_0)
+	local var_19_0 = Managers.ui:temporary_get_ingame_ui_called_from_state_ingame_running()
 
-	if ingame_ui then
-		ingame_ui:suspend_active_view()
+	if var_19_0 then
+		var_19_0:suspend_active_view()
 	end
 end
 
-StateInGameRunning.event_realtime_multiplay = function (self, active)
-	if active and (self.is_in_tutorial or self.is_in_inn) then
+function StateInGameRunning.event_realtime_multiplay(arg_20_0, arg_20_1)
+	if arg_20_1 and (arg_20_0.is_in_tutorial or arg_20_0.is_in_inn) then
 		return
 	end
 
-	Managers.account:set_realtime_multiplay(active)
+	Managers.account:set_realtime_multiplay(arg_20_1)
 end
 
-StateInGameRunning.cb_loading_view_fade_in_done = function (self)
+function StateInGameRunning.cb_loading_view_fade_in_done(arg_21_0)
 	Managers.transition:fade_out(GameSettings.transition_fade_out_speed, nil)
 
-	self.show_loading_view = false
+	arg_21_0.show_loading_view = false
 end
 
-StateInGameRunning.post_update = function (self, dt, t)
-	local level_end_view_wrapper = self._level_end_view_wrapper
-	local disable_ingame_ui = script_data.disable_ui or level_end_view_wrapper ~= nil or self.waiting_for_transition and Managers.state.network:game_session_host() ~= nil
+function StateInGameRunning.post_update(arg_22_0, arg_22_1, arg_22_2)
+	local var_22_0 = arg_22_0._level_end_view_wrapper
+	local var_22_1 = script_data.disable_ui or var_22_0 ~= nil or arg_22_0.waiting_for_transition and Managers.state.network:game_session_host() ~= nil
 
-	Managers.ui:post_update(dt, t, disable_ingame_ui)
+	Managers.ui:post_update(arg_22_1, arg_22_2, var_22_1)
 
-	if level_end_view_wrapper then
-		level_end_view_wrapper:update(dt, t)
+	if var_22_0 then
+		var_22_0:update(arg_22_1, arg_22_2)
 
-		if level_end_view_wrapper:done() then
-			level_end_view_wrapper:destroy()
+		if var_22_0:done() then
+			var_22_0:destroy()
 
-			self._level_end_view_wrapper = nil
+			arg_22_0._level_end_view_wrapper = nil
 		end
 	end
 
-	if self._game_started_current_frame then
-		if IS_PS4 then
-			local entity_manager = Managers.state.entity
-			local cutscene_system = entity_manager:system("cutscene_system")
-			local active_camera = cutscene_system.active_camera
-
-			if not active_camera then
-				self:event_realtime_multiplay(true)
-			end
+	if arg_22_0._game_started_current_frame then
+		if IS_PS4 and not Managers.state.entity:system("cutscene_system").active_camera then
+			arg_22_0:event_realtime_multiplay(true)
 		end
 
-		self._game_started_current_frame = false
+		arg_22_0._game_started_current_frame = false
 	end
 end
 
-StateInGameRunning.trigger_xbox_multiplayer_round_end_events = function (self)
-	if self.is_in_inn or self.is_in_tutorial or Development.parameter("auto-host-level") ~= nil or self._xbox_event_end_triggered then
+function StateInGameRunning.trigger_xbox_multiplayer_round_end_events(arg_23_0)
+	if arg_23_0.is_in_inn or arg_23_0.is_in_tutorial or Development.parameter("auto-host-level") ~= nil or arg_23_0._xbox_event_end_triggered then
 		return
 	end
 
-	self:_xbone_end_of_round_events(self.statistics_db)
+	arg_23_0:_xbone_end_of_round_events(arg_23_0.statistics_db)
 end
 
-StateInGameRunning.on_exit = function (self)
+function StateInGameRunning.on_exit(arg_24_0)
 	Managers.music:on_exit_game()
+	Managers.state.network.profile_synchronizer:set_own_actually_ingame(false)
+	arg_24_0.free_flight_manager:set_teleport_override(nil)
 
-	local network_manager = Managers.state.network
-	local profile_synchronizer = network_manager.profile_synchronizer
-
-	profile_synchronizer:set_own_actually_ingame(false)
-	self.free_flight_manager:set_teleport_override(nil)
-
-	self.parent = nil
-	self.free_flight_manager = nil
-	self.input_manager = nil
+	arg_24_0.parent = nil
+	arg_24_0.free_flight_manager = nil
+	arg_24_0.input_manager = nil
 
 	CLEAR_ALL_PLAYER_LISTS()
 
@@ -1015,10 +981,10 @@ StateInGameRunning.on_exit = function (self)
 		Managers.benchmark = nil
 	end
 
-	if self._level_end_view_wrapper then
-		self._level_end_view_wrapper:destroy()
+	if arg_24_0._level_end_view_wrapper then
+		arg_24_0._level_end_view_wrapper:destroy()
 
-		self._level_end_view_wrapper = nil
+		arg_24_0._level_end_view_wrapper = nil
 	end
 
 	if IS_PS4 then
@@ -1027,161 +993,159 @@ StateInGameRunning.on_exit = function (self)
 
 	Managers.ui:destroy_ingame_ui()
 
-	if self.loading_view then
-		self.loading_view:destroy()
+	if arg_24_0.loading_view then
+		arg_24_0.loading_view:destroy()
 
-		self.loading_view = nil
+		arg_24_0.loading_view = nil
 	end
 
-	if self.network_event_delegate then
-		self.network_event_delegate:unregister(self)
+	if arg_24_0.network_event_delegate then
+		arg_24_0.network_event_delegate:unregister(arg_24_0)
 
-		self.network_event_delegate = nil
+		arg_24_0.network_event_delegate = nil
 	end
 
-	self.level_end_view_context = nil
-	self.player = nil
+	arg_24_0.level_end_view_context = nil
+	arg_24_0.player = nil
 
-	self:_cancel_afk_warning()
+	arg_24_0:_cancel_afk_warning()
 end
 
-StateInGameRunning.event_game_started = function (self)
-	local world = self.parent.world
-	local level = LevelHelper:current_level(world)
+function StateInGameRunning.event_game_started(arg_25_0)
+	local var_25_0 = arg_25_0.parent.world
+	local var_25_1 = LevelHelper:current_level(var_25_0)
 
-	Level.trigger_event(level, "game_started")
+	Level.trigger_event(var_25_1, "game_started")
 
-	if self.is_server then
+	if arg_25_0.is_server then
 		Managers.state.voting:set_vote_kick_enabled(true)
 	end
 
-	self.end_conditions_met = false
+	arg_25_0.end_conditions_met = false
 
 	if Managers.matchmaking:have_game_mode_event_data() then
-		self._is_in_event_game_mode = true
+		arg_25_0._is_in_event_game_mode = true
 	end
 
-	if self.is_in_inn or self.is_in_tutorial then
+	if arg_25_0.is_in_inn or arg_25_0.is_in_tutorial then
 		return
 	end
 
 	if IS_XB1 then
-		self:_xbone_round_start_events()
+		arg_25_0:_xbone_round_start_events()
 	end
 end
 
 if IS_XB1 then
-	StateInGameRunning.event_trigger_xbox_round_end = function (self)
-		self:_xbone_end_of_round_events(self.statistics_db)
+	function StateInGameRunning.event_trigger_xbox_round_end(arg_26_0)
+		arg_26_0:_xbone_end_of_round_events(arg_26_0.statistics_db)
 	end
 
-	StateInGameRunning._xbone_round_start_events = function (self)
-		if self.is_in_inn or self.is_in_tutorial or Development.parameter("auto-host-level") ~= nil or not Managers.account:is_online() then
+	function StateInGameRunning._xbone_round_start_events(arg_27_0)
+		if arg_27_0.is_in_inn or arg_27_0.is_in_tutorial or Development.parameter("auto-host-level") ~= nil or not Managers.account:is_online() then
 			return
 		end
 
-		if not self._xbox_event_init_triggered then
-			self._xbox_event_init_triggered = true
+		if not arg_27_0._xbox_event_init_triggered then
+			arg_27_0._xbox_event_init_triggered = true
 
-			local session_id = Managers.state.network:lobby().lobby:session_id()
-			local multiplayer_round_start_table = {
+			local var_27_0 = Managers.state.network:lobby().lobby:session_id()
+			local var_27_1 = {
 				Managers.account:xbox_user_id(),
 				Managers.account:round_id(),
 				0,
 				Managers.account:player_session_id(),
-				MultiplayerSession.multiplayer_correlation_id(session_id),
+				MultiplayerSession.multiplayer_correlation_id(var_27_0),
 				0,
 				0,
-				0,
+				0
 			}
 
 			Managers.transition:set_multiplayer_values("start", {
 				xuid = Managers.account:xbox_user_id(),
 				round_id = Managers.account:round_id(),
 				player_session_id = Managers.account:player_session_id(),
-				correlation_id = MultiplayerSession.multiplayer_correlation_id(session_id),
-			}, string.format("[StateInGameRunning] Writing MultiplayerRoundStart. CorrelationID: %s. RoundID: %s", tostring(MultiplayerSession.multiplayer_correlation_id(session_id)), tostring(Managers.account:round_id())))
+				correlation_id = MultiplayerSession.multiplayer_correlation_id(var_27_0)
+			}, string.format("[StateInGameRunning] Writing MultiplayerRoundStart. CorrelationID: %s. RoundID: %s", tostring(MultiplayerSession.multiplayer_correlation_id(var_27_0)), tostring(Managers.account:round_id())))
 
-			local debug_string = string.format("[StateInGameRunning] Writing MultiplayerRoundStart. CorrelationID: %s. RoundID: %s", tostring(MultiplayerSession.multiplayer_correlation_id(session_id)), tostring(Managers.account:round_id()))
-			local debug_print_func = Application.warning
+			local var_27_2 = string.format("[StateInGameRunning] Writing MultiplayerRoundStart. CorrelationID: %s. RoundID: %s", tostring(MultiplayerSession.multiplayer_correlation_id(var_27_0)), tostring(Managers.account:round_id()))
+			local var_27_3 = Application.warning
 
-			Managers.xbox_events:write("MultiplayerRoundStart", multiplayer_round_start_table, debug_string, debug_print_func, true)
+			Managers.xbox_events:write("MultiplayerRoundStart", var_27_1, var_27_2, var_27_3, true)
 		end
 	end
 
-	StateInGameRunning._xbone_end_of_round_events = function (self, statistics_db)
-		if self.is_in_inn or self.is_in_tutorial or Development.parameter("auto-host-level") ~= nil or not Managers.account:is_online() then
+	function StateInGameRunning._xbone_end_of_round_events(arg_28_0, arg_28_1)
+		if arg_28_0.is_in_inn or arg_28_0.is_in_tutorial or Development.parameter("auto-host-level") ~= nil or not Managers.account:is_online() then
 			return
 		end
 
-		if not self._xbox_event_end_triggered then
-			self._xbox_event_end_triggered = true
+		if not arg_28_0._xbox_event_end_triggered then
+			arg_28_0._xbox_event_end_triggered = true
 
-			local session_id = Managers.state.network:lobby().lobby:session_id()
-			local multiplayer_round_end_table = {
+			local var_28_0 = Managers.state.network:lobby().lobby:session_id()
+			local var_28_1 = {
 				Managers.account:xbox_user_id(),
 				Managers.account:round_id(),
 				0,
 				Managers.account:player_session_id(),
-				MultiplayerSession.multiplayer_correlation_id(session_id),
+				MultiplayerSession.multiplayer_correlation_id(var_28_0),
 				0,
 				0,
 				0,
 				math.floor(Managers.time:time("game")),
-				0,
+				0
 			}
 
 			Managers.transition:set_multiplayer_values("end", {
 				xuid = Managers.account:xbox_user_id(),
 				round_id = Managers.account:round_id(),
 				player_session_id = Managers.account:player_session_id(),
-				correlation_id = MultiplayerSession.multiplayer_correlation_id(session_id),
-				time = Managers.time:time("game"),
-			}, string.format("[StateInGameRunning] Writing MultiplayerRoundEnd. CorrelationID: %s. RoundID: %s", tostring(MultiplayerSession.multiplayer_correlation_id(session_id)), tostring(Managers.account:round_id())))
+				correlation_id = MultiplayerSession.multiplayer_correlation_id(var_28_0),
+				time = Managers.time:time("game")
+			}, string.format("[StateInGameRunning] Writing MultiplayerRoundEnd. CorrelationID: %s. RoundID: %s", tostring(MultiplayerSession.multiplayer_correlation_id(var_28_0)), tostring(Managers.account:round_id())))
 
-			local debug_string = string.format("[StateInGameRunning] Writing MultiplayerRoundEnd. CorrelationID: %s. RoundID: %s", tostring(MultiplayerSession.multiplayer_correlation_id(session_id)), tostring(Managers.account:round_id()))
-			local debug_print_func = Application.warning
+			local var_28_2 = string.format("[StateInGameRunning] Writing MultiplayerRoundEnd. CorrelationID: %s. RoundID: %s", tostring(MultiplayerSession.multiplayer_correlation_id(var_28_0)), tostring(Managers.account:round_id()))
+			local var_28_3 = Application.warning
 
-			Managers.xbox_events:write("MultiplayerRoundEnd", multiplayer_round_end_table, debug_string, debug_print_func, true)
+			Managers.xbox_events:write("MultiplayerRoundEnd", var_28_1, var_28_2, var_28_3, true)
 			Managers.transition:dump_multiplayer_data()
 		end
 
-		if not self._gameprogress_event_triggered then
-			self._gameprogress_event_triggered = true
+		if not arg_28_0._gameprogress_event_triggered then
+			arg_28_0._gameprogress_event_triggered = true
 
-			local game_progress_table = {
+			local var_28_4 = {
 				Managers.account:xbox_user_id(),
 				Managers.account:player_session_id(),
-				StatisticsUtil.get_game_progress(statistics_db),
+				StatisticsUtil.get_game_progress(arg_28_1)
 			}
-			local debug_string = "[StateInGameRunning] Writing GameProgress"
-			local debug_print_func = Application.warning
+			local var_28_5 = "[StateInGameRunning] Writing GameProgress"
+			local var_28_6 = Application.warning
 
-			Managers.xbox_events:write("GameProgress", game_progress_table, debug_string, debug_print_func, true)
+			Managers.xbox_events:write("GameProgress", var_28_4, var_28_5, var_28_6, true)
 		end
 	end
 end
 
-StateInGameRunning._check_black_screen_transition_requirements = function (self)
-	if not self._game_mode_ready_to_start then
-		local game_mode_ready_to_start = Managers.state.game_mode:local_player_ready_to_start(self.player)
-
-		self._game_mode_ready_to_start = game_mode_ready_to_start
+function StateInGameRunning._check_black_screen_transition_requirements(arg_29_0)
+	if not arg_29_0._game_mode_ready_to_start then
+		arg_29_0._game_mode_ready_to_start = Managers.state.game_mode:local_player_ready_to_start(arg_29_0.player)
 	end
 
-	local conflict_directory_is_ready = self._conflict_directory_is_ready or not self.is_server
-	local game_mode_ready_to_start = self._game_mode_ready_to_start
+	local var_29_0 = arg_29_0._conflict_directory_is_ready or not arg_29_0.is_server
+	local var_29_1 = arg_29_0._game_mode_ready_to_start
 
-	if conflict_directory_is_ready and game_mode_ready_to_start then
-		if not self._has_started_framerate_catchup then
-			self:_catchup_framerate_before_starting()
+	if var_29_0 and var_29_1 then
+		if not arg_29_0._has_started_framerate_catchup then
+			arg_29_0:_catchup_framerate_before_starting()
 
-			self._has_started_framerate_catchup = true
+			arg_29_0._has_started_framerate_catchup = true
 		end
 
-		self:_update_catchup_framerate_before_starting()
+		arg_29_0:_update_catchup_framerate_before_starting()
 
-		if self._frame_catchup_counter == nil then
+		if arg_29_0._frame_catchup_counter == nil then
 			return true
 		end
 	end
@@ -1189,242 +1153,230 @@ StateInGameRunning._check_black_screen_transition_requirements = function (self)
 	return false
 end
 
-StateInGameRunning.event_conflict_director_setup_done = function (self)
-	self._conflict_directory_is_ready = true
+function StateInGameRunning.event_conflict_director_setup_done(arg_30_0)
+	arg_30_0._conflict_directory_is_ready = true
 end
 
-StateInGameRunning._catchup_framerate_before_starting = function (self)
+function StateInGameRunning._catchup_framerate_before_starting(arg_31_0)
 	Framerate.set_catchup()
 
-	self._frame_catchup_counter = 20
+	arg_31_0._frame_catchup_counter = 20
 end
 
-StateInGameRunning._update_catchup_framerate_before_starting = function (self)
-	if self._frame_catchup_counter == nil then
+function StateInGameRunning._update_catchup_framerate_before_starting(arg_32_0)
+	if arg_32_0._frame_catchup_counter == nil then
 		return
 	end
 
-	self._frame_catchup_counter = self._frame_catchup_counter - 1
+	arg_32_0._frame_catchup_counter = arg_32_0._frame_catchup_counter - 1
 
-	if self._frame_catchup_counter == 0 then
-		self._frame_catchup_counter = nil
+	if arg_32_0._frame_catchup_counter == 0 then
+		arg_32_0._frame_catchup_counter = nil
 
 		Framerate.set_playing()
 	end
 end
 
-StateInGameRunning._game_actually_starts = function (self)
+function StateInGameRunning._game_actually_starts(arg_33_0)
 	print("StateInGameRunning:_game_actually_starts()")
 
-	local loading_context = self.parent.parent.loading_context
+	local var_33_0 = arg_33_0.parent.parent.loading_context
 
-	Managers.state.game_mode:local_player_game_starts(self.player, loading_context)
+	Managers.state.game_mode:local_player_game_starts(arg_33_0.player, var_33_0)
 	Managers.transition:fade_out(GameSettings.transition_fade_in_speed)
 
-	self._game_started_current_frame = true
-	self._game_has_started = true
+	arg_33_0._game_started_current_frame = true
+	arg_33_0._game_has_started = true
 
 	Managers.transition:hide_loading_icon()
 	Managers.transition:show_waiting_for_peers_message(false)
 
-	self._waiting_for_peers_message_timer = nil
+	arg_33_0._waiting_for_peers_message_timer = nil
 
 	Managers.load_time:end_timer()
 
 	if Managers.twitch then
-		local level_key = Managers.level_transition_handler:get_current_level_keys()
-		local level_settings = LevelSettings[level_key]
+		local var_33_1 = Managers.level_transition_handler:get_current_level_keys()
+		local var_33_2 = LevelSettings[var_33_1]
 
-		if level_settings and not level_settings.disable_twitch_game_mode then
-			Managers.twitch:activate_twitch_game_mode(self.network_event_delegate, Managers.state.game_mode:game_mode_key())
+		if var_33_2 and not var_33_2.disable_twitch_game_mode then
+			Managers.twitch:activate_twitch_game_mode(arg_33_0.network_event_delegate, Managers.state.game_mode:game_mode_key())
 		end
 	end
 
-	local network_manager = Managers.state.network
-	local profile_synchronizer = network_manager.profile_synchronizer
+	Managers.state.network.profile_synchronizer:set_own_actually_ingame(true)
 
-	profile_synchronizer:set_own_actually_ingame(true)
-
-	self._game_started_timestamp = os.time(os.date("*t"))
+	arg_33_0._game_started_timestamp = os.time(os.date("*t"))
 
 	if IS_WINDOWS then
 		Managers.account:update_presence()
 	end
 end
 
-local afk_warn_timer = 120
-local afk_force_kick_timer = 180
+local var_0_2 = 120
+local var_0_3 = 180
 
-StateInGameRunning.update_player_afk_check = function (self, dt, t)
+function StateInGameRunning.update_player_afk_check(arg_34_0, arg_34_1, arg_34_2)
 	do return end
 
-	local cutscene_system = Managers.state.entity:system("cutscene_system")
-	local active_cutscene = cutscene_system.active_camera
-	local afk_kick_disabled = self.afk_kick or active_cutscene or self.is_server or self.is_in_inn or self.end_conditions_met or Development.parameter("debug_disable_afk_kick")
+	local var_34_0 = Managers.state.entity:system("cutscene_system").active_camera
 
-	if afk_kick_disabled then
-		if self.afk_popup_id then
-			self:_cancel_afk_warning()
+	if arg_34_0.afk_kick or var_34_0 or arg_34_0.is_server or arg_34_0.is_in_inn or arg_34_0.end_conditions_met or Development.parameter("debug_disable_afk_kick") then
+		if arg_34_0.afk_popup_id then
+			arg_34_0:_cancel_afk_warning()
 		end
 
-		self.last_active_time = nil
+		arg_34_0.last_active_time = nil
 
 		return
 	end
 
-	local last_input_time = Managers.input.last_active_time
+	local var_34_1 = Managers.input.last_active_time
 
-	if not self.last_active_time then
-		self.last_active_time = last_input_time or t
-	elseif last_input_time and last_input_time ~= self.last_active_time then
-		self.last_active_time = nil
-	elseif self.last_active_time then
-		local player = Managers.player:local_player(1)
-		local player_unit = player.player_unit
+	if not arg_34_0.last_active_time then
+		arg_34_0.last_active_time = var_34_1 or arg_34_2
+	elseif var_34_1 and var_34_1 ~= arg_34_0.last_active_time then
+		arg_34_0.last_active_time = nil
+	elseif arg_34_0.last_active_time then
+		local var_34_2 = Managers.player:local_player(1).player_unit
 
-		if not Unit.alive(player_unit) or ScriptUnit.extension(player_unit, "status_system"):is_disabled() then
-			self.last_active_time = self.last_active_time + dt
+		if not Unit.alive(var_34_2) or ScriptUnit.extension(var_34_2, "status_system"):is_disabled() then
+			arg_34_0.last_active_time = arg_34_0.last_active_time + arg_34_1
 		else
-			local time_since_active = t - self.last_active_time
-			local should_warn = time_since_active > afk_warn_timer
-			local should_kick = time_since_active > afk_force_kick_timer
+			local var_34_3 = arg_34_2 - arg_34_0.last_active_time
+			local var_34_4 = var_34_3 > var_0_2
+			local var_34_5 = var_34_3 > var_0_3
 
-			if should_warn and not self.afk_popup_id then
-				self:_show_afk_warning()
-			elseif should_kick then
-				self:_kick_afk_player()
+			if var_34_4 and not arg_34_0.afk_popup_id then
+				arg_34_0:_show_afk_warning()
+			elseif var_34_5 then
+				arg_34_0:_kick_afk_player()
 			end
 		end
 	end
 
-	self:_handle_afk_warning_result()
+	arg_34_0:_handle_afk_warning_result()
 end
 
-StateInGameRunning._show_afk_warning = function (self)
-	self.afk_popup_id = Managers.popup:queue_popup(Localize("afk_kick_warning"), Localize("popup_notice_topic"), "ok", Localize("button_ok"))
+function StateInGameRunning._show_afk_warning(arg_35_0)
+	arg_35_0.afk_popup_id = Managers.popup:queue_popup(Localize("afk_kick_warning"), Localize("popup_notice_topic"), "ok", Localize("button_ok"))
 
-	local can_flash_window = _G.Window ~= nil and Window.flash_window ~= nil and not Window.has_focus()
-
-	if can_flash_window then
+	if _G.Window ~= nil and Window.flash_window ~= nil and not Window.has_focus() then
 		Window.flash_window(nil, "start", 5)
 	end
 
-	local player = Managers.player:local_player(1)
-	local rpc = "rpc_trigger_local_afk_system_message"
-	local message_id = "chat_afk_kick_warning"
-	local peer_id = player.peer_id
+	local var_35_0 = Managers.player:local_player(1)
+	local var_35_1 = "rpc_trigger_local_afk_system_message"
+	local var_35_2 = "chat_afk_kick_warning"
+	local var_35_3 = var_35_0.peer_id
 
-	if not self.is_server then
-		Managers.state.network.network_transmit:send_rpc_server(rpc, message_id, peer_id)
+	if not arg_35_0.is_server then
+		Managers.state.network.network_transmit:send_rpc_server(var_35_1, var_35_2, var_35_3)
 	end
 
-	local channel_id = CHANNEL_TO_PEER_ID[peer_id]
+	local var_35_4 = CHANNEL_TO_PEER_ID[var_35_3]
 
-	self:rpc_trigger_local_afk_system_message(channel_id, message_id, peer_id)
+	arg_35_0:rpc_trigger_local_afk_system_message(var_35_4, var_35_2, var_35_3)
 end
 
-StateInGameRunning.rpc_trigger_local_afk_system_message = function (self, channel_id, message_id, peer_id)
-	if self.is_server then
-		Managers.state.network.network_transmit:send_rpc_clients_except(rpc, peer_id, message_id, peer_id)
+function StateInGameRunning.rpc_trigger_local_afk_system_message(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+	if arg_36_0.is_server then
+		Managers.state.network.network_transmit:send_rpc_clients_except(rpc, arg_36_3, arg_36_2, arg_36_3)
 	end
 
-	local player = Managers.player:player(peer_id, 1)
+	local var_36_0 = Managers.player:player(arg_36_3, 1)
 
-	if player then
-		local is_player_controlled = player:is_player_controlled()
-		local player_name = is_player_controlled and (rawget(_G, "Steam") and Steam.user_name(peer_id) or tostring(peer_id)) or player:name()
+	if var_36_0 then
+		local var_36_1 = var_36_0:is_player_controlled()
+		local var_36_2 = var_36_1 and (rawget(_G, "Steam") and Steam.user_name(arg_36_3) or tostring(arg_36_3)) or var_36_0:name()
 
 		if IS_CONSOLE and not Managers.account:offline_mode() then
-			local lobby = Managers.state.network:lobby()
+			local var_36_3 = Managers.state.network:lobby()
 
-			player_name = is_player_controlled and (lobby:user_name(peer_id) or tostring(peer_id)) or player:name()
+			var_36_2 = var_36_1 and (var_36_3:user_name(arg_36_3) or tostring(arg_36_3)) or var_36_0:name()
 		end
 
-		local pop_chat = true
-		local message = string.format(Localize(message_id), player_name)
+		local var_36_4 = true
+		local var_36_5 = string.format(Localize(arg_36_2), var_36_2)
 
-		Managers.chat:add_local_system_message(1, message, pop_chat)
+		Managers.chat:add_local_system_message(1, var_36_5, var_36_4)
 	end
 end
 
-StateInGameRunning._cancel_afk_warning = function (self)
-	if self.afk_popup_id then
-		Managers.popup:cancel_popup(self.afk_popup_id)
+function StateInGameRunning._cancel_afk_warning(arg_37_0)
+	if arg_37_0.afk_popup_id then
+		Managers.popup:cancel_popup(arg_37_0.afk_popup_id)
 
-		self.afk_popup_id = nil
+		arg_37_0.afk_popup_id = nil
 	end
 end
 
-StateInGameRunning._handle_afk_warning_result = function (self)
-	if self.afk_popup_id then
-		local popup_result = Managers.popup:query_result(self.afk_popup_id)
-
-		if popup_result then
-			self.afk_popup_id = nil
-		end
+function StateInGameRunning._handle_afk_warning_result(arg_38_0)
+	if arg_38_0.afk_popup_id and Managers.popup:query_result(arg_38_0.afk_popup_id) then
+		arg_38_0.afk_popup_id = nil
 	end
 end
 
-StateInGameRunning._kick_afk_player = function (self)
-	self:_cancel_afk_warning()
+function StateInGameRunning._kick_afk_player(arg_39_0)
+	arg_39_0:_cancel_afk_warning()
 
-	local player = Managers.player:local_player(1)
-	local rpc = "rpc_trigger_local_afk_system_message"
-	local message_id = "chat_afk_kick"
-	local peer_id = player.peer_id
+	local var_39_0 = Managers.player:local_player(1)
+	local var_39_1 = "rpc_trigger_local_afk_system_message"
+	local var_39_2 = "chat_afk_kick"
+	local var_39_3 = var_39_0.peer_id
 
-	if not self.is_server then
-		Managers.state.network.network_transmit:send_rpc_server(rpc, message_id, peer_id)
+	if not arg_39_0.is_server then
+		Managers.state.network.network_transmit:send_rpc_server(var_39_1, var_39_2, var_39_3)
 	end
 
-	local channel_id = CHANNEL_TO_PEER_ID[peer_id]
+	local var_39_4 = CHANNEL_TO_PEER_ID[var_39_3]
 
-	self:rpc_trigger_local_afk_system_message(channel_id, message_id, peer_id)
+	arg_39_0:rpc_trigger_local_afk_system_message(var_39_4, var_39_2, var_39_3)
 
-	self.afk_kick = true
+	arg_39_0.afk_kick = true
 end
 
-StateInGameRunning.transitioned_from_black_screen = function (self)
-	return self._transitioned_from_black_screen
+function StateInGameRunning.transitioned_from_black_screen(arg_40_0)
+	return arg_40_0._transitioned_from_black_screen
 end
 
-StateInGameRunning.rpc_follow_to_lobby = function (self, channel_id, lobby_type, lobby_to_join)
-	printf("Got message from lobby host to join %s %s", NetworkLookup.lobby_type[lobby_type], lobby_to_join)
+function StateInGameRunning.rpc_follow_to_lobby(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+	printf("Got message from lobby host to join %s %s", NetworkLookup.lobby_type[arg_41_2], arg_41_3)
 
-	local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+	local var_41_0 = CHANNEL_TO_PEER_ID[arg_41_1]
 
-	if not Managers.party:is_leader(peer_id) then
+	if not Managers.party:is_leader(var_41_0) then
 		return
 	end
 
-	local lobby_join_data = {
-		join_method = "party",
+	local var_41_1 = {
+		join_method = "party"
 	}
 
-	if NetworkLookup.lobby_type[lobby_type] == "server" then
-		lobby_join_data.is_server_invite = true
-		lobby_join_data.id = lobby_to_join
-		lobby_join_data.server_info = {
-			ip_port = lobby_to_join,
+	if NetworkLookup.lobby_type[arg_41_2] == "server" then
+		var_41_1.is_server_invite = true
+		var_41_1.id = arg_41_3
+		var_41_1.server_info = {
+			ip_port = arg_41_3
 		}
 	else
-		lobby_join_data.is_server_invite = false
-		lobby_join_data.id = lobby_to_join
+		var_41_1.is_server_invite = false
+		var_41_1.id = arg_41_3
 	end
 
-	local state_context_params = {
-		friend_join = true,
+	local var_41_2 = {
+		friend_join = true
 	}
 
-	Managers.matchmaking:request_join_lobby(lobby_join_data, state_context_params)
+	Managers.matchmaking:request_join_lobby(var_41_1, var_41_2)
 end
 
-StateInGameRunning.player_session_scores_synced = function (self)
-	self._player_session_score_synced = true
+function StateInGameRunning.player_session_scores_synced(arg_42_0)
+	arg_42_0._player_session_score_synced = true
 
-	if self._player_session_score_synced_cb then
-		self._player_session_score_synced_cb()
+	if arg_42_0._player_session_score_synced_cb then
+		arg_42_0._player_session_score_synced_cb()
 
-		self._player_session_score_synced_cb = nil
+		arg_42_0._player_session_score_synced_cb = nil
 	end
 end

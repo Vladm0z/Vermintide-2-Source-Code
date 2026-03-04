@@ -1,10 +1,10 @@
-﻿-- chunkname: @scripts/managers/backend/statistics_util_morris.lua
+-- chunkname: @scripts/managers/backend/statistics_util_morris.lua
 
-StatisticsUtil.register_open_shrine = function (shrine_type)
-	local player_manager = Managers.player
-	local player = player_manager:local_player()
-	local statistics_db = player_manager:statistics_db()
-	local stats_id = player:stats_id()
+function StatisticsUtil.register_open_shrine(arg_1_0)
+	local var_1_0 = Managers.player
+	local var_1_1 = var_1_0:local_player()
+	local var_1_2 = var_1_0:statistics_db()
+	local var_1_3 = var_1_1:stats_id()
 
-	statistics_db:increment_stat(stats_id, "opened_shrines", shrine_type)
+	var_1_2:increment_stat(var_1_3, "opened_shrines", arg_1_0)
 end

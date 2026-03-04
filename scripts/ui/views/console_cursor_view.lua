@@ -1,65 +1,65 @@
-﻿-- chunkname: @scripts/ui/views/console_cursor_view.lua
+-- chunkname: @scripts/ui/views/console_cursor_view.lua
 
 require("scripts/ui/ui_renderer")
 require("scripts/ui/ui_elements")
 require("scripts/ui/ui_widgets")
 
-local definitions = dofile("scripts/ui/views/console_cursor_view_definitions")
-local DO_RELOAD = true
+local var_0_0 = dofile("scripts/ui/views/console_cursor_view_definitions")
+local var_0_1 = true
 
 ConsoleCursorView = class(ConsoleCursorView)
 
-ConsoleCursorView.init = function (self, world)
-	self._world = world
-	self._ui_renderer = UIRenderer.create(world, "material", "materials/ui/ui_1080p_loading")
-	self._render_settings = {
-		snap_pixel_positions = false,
+function ConsoleCursorView.init(arg_1_0, arg_1_1)
+	arg_1_0._world = arg_1_1
+	arg_1_0._ui_renderer = UIRenderer.create(arg_1_1, "material", "materials/ui/ui_1080p_loading")
+	arg_1_0._render_settings = {
+		snap_pixel_positions = false
 	}
 
-	self:_create_ui_elements()
+	arg_1_0:_create_ui_elements()
 
-	DO_RELOAD = false
+	var_0_1 = false
 end
 
-ConsoleCursorView._create_ui_elements = function (self)
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
-	self._widgets = {}
+function ConsoleCursorView._create_ui_elements(arg_2_0)
+	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	arg_2_0._widgets = {}
 
-	for name, widget_definition in pairs(definitions.widgets) do
-		self._widgets[name] = UIWidget.init(widget_definition)
+	for iter_2_0, iter_2_1 in pairs(var_0_0.widgets) do
+		arg_2_0._widgets[iter_2_0] = UIWidget.init(iter_2_1)
 	end
 
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_2_0._ui_renderer)
 end
 
-ConsoleCursorView.update = function (self, dt)
-	if DO_RELOAD then
-		DO_RELOAD = false
+function ConsoleCursorView.update(arg_3_0, arg_3_1)
+	if var_0_1 then
+		var_0_1 = false
 
-		self:_create_ui_elements()
+		arg_3_0:_create_ui_elements()
 	end
 
 	if not Managers.input:is_device_active("gamepad") then
 		return
 	end
 
-	self:_update_position(dt)
-	self:_draw(dt)
+	arg_3_0:_update_position(arg_3_1)
+	arg_3_0:_draw(arg_3_1)
 end
 
-ConsoleCursorView._update_position = function (self, dt)
+function ConsoleCursorView._update_position(arg_4_0, arg_4_1)
 	return
 end
 
-ConsoleCursorView._draw = function (self, dt)
-	local ui_renderer = self._ui_renderer
-	local ui_scenegraph = self._ui_scenegraph
+function ConsoleCursorView._draw(arg_5_0, arg_5_1)
+	local var_5_0 = arg_5_0._ui_renderer
+	local var_5_1 = arg_5_0._ui_scenegraph
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, FAKE_INPUT_SERVICE, dt, nil, self._render_settings)
+	UIRenderer.begin_pass(var_5_0, var_5_1, FAKE_INPUT_SERVICE, arg_5_1, nil, arg_5_0._render_settings)
 
-	for name, widget in pairs(self._widgets) do
-		UIRenderer.draw_widget(ui_renderer, widget)
+	for iter_5_0, iter_5_1 in pairs(arg_5_0._widgets) do
+		UIRenderer.draw_widget(var_5_0, iter_5_1)
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_5_0)
 end

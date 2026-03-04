@@ -1,200 +1,199 @@
-﻿-- chunkname: @scripts/helpers/navigation_utils.lua
+-- chunkname: @scripts/helpers/navigation_utils.lua
 
 NavigationUtils = NavigationUtils or {}
 
-NavigationUtils.create_exclusive_box_obstacle_from_unit_data = function (nav_world, unit)
-	local is_exclusive = true
-	local color = Color(255, 255, 0, 0)
-	local has_layer = false
-	local layer_idx = 0
-	local has_smartobject = false
-	local smartobject_idx = 0
-	local mesh_name = Unit.get_data(unit, "navtag_volume", "mesh_name")
-	local padding_x = Unit.has_data(unit, "navtag_volume", "padding_x") and Unit.get_data(unit, "navtag_volume", "padding_x") or 0
-	local padding_y = Unit.has_data(unit, "navtag_volume", "padding_y") and Unit.get_data(unit, "navtag_volume", "padding_y") or 0
-	local padding_z = Unit.has_data(unit, "navtag_volume", "padding_z") and Unit.get_data(unit, "navtag_volume", "padding_z") or 0
+function NavigationUtils.create_exclusive_box_obstacle_from_unit_data(arg_1_0, arg_1_1)
+	local var_1_0 = true
+	local var_1_1 = Color(255, 255, 0, 0)
+	local var_1_2 = false
+	local var_1_3 = 0
+	local var_1_4 = false
+	local var_1_5 = 0
+	local var_1_6 = Unit.get_data(arg_1_1, "navtag_volume", "mesh_name")
+	local var_1_7 = Unit.has_data(arg_1_1, "navtag_volume", "padding_x") and Unit.get_data(arg_1_1, "navtag_volume", "padding_x") or 0
+	local var_1_8 = Unit.has_data(arg_1_1, "navtag_volume", "padding_y") and Unit.get_data(arg_1_1, "navtag_volume", "padding_y") or 0
+	local var_1_9 = Unit.has_data(arg_1_1, "navtag_volume", "padding_z") and Unit.get_data(arg_1_1, "navtag_volume", "padding_z") or 0
 
-	return NavigationUtils.create_exclusive_box_obstacle_from_mesh(nav_world, unit, is_exclusive, color, has_layer, layer_idx, has_smartobject, smartobject_idx, mesh_name, padding_x, padding_y, padding_z)
+	return NavigationUtils.create_exclusive_box_obstacle_from_mesh(arg_1_0, arg_1_1, var_1_0, var_1_1, var_1_2, var_1_3, var_1_4, var_1_5, var_1_6, var_1_7, var_1_8, var_1_9)
 end
 
-NavigationUtils.create_exclusive_box_obstacle_from_mesh = function (nav_world, unit, is_exclusive, color, has_layer, layer_idx, has_smartobject, smartobject_idx, mesh_name, padding_x, padding_y, padding_z)
-	local mesh = Unit.mesh(unit, mesh_name)
-	local padding = Vector3(padding_x, padding_y, padding_z)
-	local _, mesh_size = Mesh.box(mesh)
-	local size = mesh_size + padding
-	local transform = Mesh.world_pose(mesh)
-	local position = Matrix4x4.translation(transform)
-	local local_center = Vector3(0, 0, 0)
-	local obstacle = GwNavBoxObstacle.create(nav_world, position, local_center, size, is_exclusive, color, layer_idx, smartobject_idx)
+function NavigationUtils.create_exclusive_box_obstacle_from_mesh(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8, arg_2_9, arg_2_10, arg_2_11)
+	local var_2_0 = Unit.mesh(arg_2_1, arg_2_8)
+	local var_2_1 = Vector3(arg_2_9, arg_2_10, arg_2_11)
+	local var_2_2, var_2_3 = Mesh.box(var_2_0)
+	local var_2_4 = var_2_3 + var_2_1
+	local var_2_5 = Mesh.world_pose(var_2_0)
+	local var_2_6 = Matrix4x4.translation(var_2_5)
+	local var_2_7 = Vector3(0, 0, 0)
 
-	return obstacle, transform
+	return GwNavBoxObstacle.create(arg_2_0, var_2_6, var_2_7, var_2_4, arg_2_2, arg_2_3, arg_2_5, arg_2_7), var_2_5
 end
 
-NavigationUtils.debug_draw_nav_mesh = function (nav_world, nav_cost_maps_data, nav_cost_maps_count, world, line_object)
-	GwNavWorld.build_database_visual_representation(nav_world)
+function NavigationUtils.debug_draw_nav_mesh(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	GwNavWorld.build_database_visual_representation(arg_3_0)
 
-	local tile_count = GwNavWorld.database_tile_count(nav_world)
+	local var_3_0 = GwNavWorld.database_tile_count(arg_3_0)
 
-	for tile = 1, tile_count do
-		local triangle_count = GwNavWorld.database_tile_triangle_count(nav_world, tile)
+	for iter_3_0 = 1, var_3_0 do
+		local var_3_1 = GwNavWorld.database_tile_triangle_count(arg_3_0, iter_3_0)
 
-		for i = 1, triangle_count do
-			local num_vectors, num_quaternions, num_matrices = Script.temp_count()
-			local a, b, c, tri_color = GwNavWorld.database_triangle(nav_world, tile, i)
+		for iter_3_1 = 1, var_3_1 do
+			local var_3_2, var_3_3, var_3_4 = Script.temp_count()
+			local var_3_5, var_3_6, var_3_7, var_3_8 = GwNavWorld.database_triangle(arg_3_0, iter_3_0, iter_3_1)
 
-			if a then
-				LineObject.add_line(line_object, tri_color, a, b)
-				LineObject.add_line(line_object, tri_color, b, c)
-				LineObject.add_line(line_object, tri_color, c, a)
+			if var_3_5 then
+				LineObject.add_line(arg_3_4, var_3_8, var_3_5, var_3_6)
+				LineObject.add_line(arg_3_4, var_3_8, var_3_6, var_3_7)
+				LineObject.add_line(arg_3_4, var_3_8, var_3_7, var_3_5)
 			end
 
-			Script.set_temp_count(num_vectors, num_quaternions, num_matrices)
+			Script.set_temp_count(var_3_2, var_3_3, var_3_4)
 		end
 	end
 
-	if nav_cost_maps_data then
-		local tri_color = Colors.get("yellow")
+	if arg_3_1 then
+		local var_3_9 = Colors.get("yellow")
 
-		for cost_map_index = 1, nav_cost_maps_count do
-			local cost_map_data = nav_cost_maps_data[cost_map_index]
+		for iter_3_2 = 1, arg_3_2 do
+			local var_3_10 = arg_3_1[iter_3_2]
 
-			if cost_map_data then
-				local cost_map = cost_map_data.cost_map
-				local triangle_count = GwNavCostMap.get_debug_triangle_count(cost_map)
+			if var_3_10 then
+				local var_3_11 = var_3_10.cost_map
+				local var_3_12 = GwNavCostMap.get_debug_triangle_count(var_3_11)
 
-				for triangle = 1, triangle_count do
-					local num_vectors, num_quaternions, num_matrices = Script.temp_count()
-					local a, b, c = GwNavCostMap.get_debug_triangle(cost_map, triangle)
+				for iter_3_3 = 1, var_3_12 do
+					local var_3_13, var_3_14, var_3_15 = Script.temp_count()
+					local var_3_16, var_3_17, var_3_18 = GwNavCostMap.get_debug_triangle(var_3_11, iter_3_3)
 
-					if a then
-						LineObject.add_line(line_object, tri_color, a, b)
-						LineObject.add_line(line_object, tri_color, b, c)
-						LineObject.add_line(line_object, tri_color, c, a)
+					if var_3_16 then
+						LineObject.add_line(arg_3_4, var_3_9, var_3_16, var_3_17)
+						LineObject.add_line(arg_3_4, var_3_9, var_3_17, var_3_18)
+						LineObject.add_line(arg_3_4, var_3_9, var_3_18, var_3_16)
 					end
 
-					Script.set_temp_count(num_vectors, num_quaternions, num_matrices)
+					Script.set_temp_count(var_3_13, var_3_14, var_3_15)
 				end
 			end
 		end
 	end
 
-	LineObject.dispatch(world, line_object)
-	LineObject.reset(line_object)
+	LineObject.dispatch(arg_3_3, arg_3_4)
+	LineObject.reset(arg_3_4)
 end
 
-NavigationUtils.get_closest_index_on_spline = function (spline_curve, position)
-	local splines = spline_curve:splines()
-	local smallest_distance_sq, point, best_index = math.huge, nil, 1
-	local Vector3_distance_squared = Vector3.distance_squared
-	local num_splines = #splines
+function NavigationUtils.get_closest_index_on_spline(arg_4_0, arg_4_1)
+	local var_4_0 = arg_4_0:splines()
+	local var_4_1 = math.huge
+	local var_4_2
+	local var_4_3 = 1
+	local var_4_4 = Vector3.distance_squared
+	local var_4_5 = #var_4_0
 
-	for i = 1, num_splines do
-		local spline = splines[i]
-		local points = spline.points
-		local point_position = points[2]:unbox()
-		local distance_sq = Vector3_distance_squared(position, point_position)
+	for iter_4_0 = 1, var_4_5 do
+		local var_4_6 = var_4_0[iter_4_0].points[2]:unbox()
+		local var_4_7 = var_4_4(arg_4_1, var_4_6)
 
-		if distance_sq < smallest_distance_sq then
-			smallest_distance_sq = distance_sq
-			point = point_position
-			best_index = i
+		if var_4_7 < var_4_1 then
+			var_4_1 = var_4_7
+			var_4_2 = var_4_6
+			var_4_3 = iter_4_0
 		end
 	end
 
-	return best_index, point
+	return var_4_3, var_4_2
 end
 
-NavigationUtils.get_position_on_interpolated_spline = function (spline_curve, position)
-	local Vector3_distance_squared = Vector3.distance_squared
-	local splines = spline_curve:splines()
-	local num_splines = #splines
-	local best_distance_sq, best_spline_index, best_subdivision_index = math.huge
+function NavigationUtils.get_position_on_interpolated_spline(arg_5_0, arg_5_1)
+	local var_5_0 = Vector3.distance_squared
+	local var_5_1 = arg_5_0:splines()
+	local var_5_2 = #var_5_1
+	local var_5_3 = math.huge
+	local var_5_4
+	local var_5_5
 
-	for j = 1, num_splines do
-		local spline = splines[j]
-		local subdivisions = spline.subdivisions
-		local num_subdivisions = #subdivisions
+	for iter_5_0 = 1, var_5_2 do
+		local var_5_6 = var_5_1[iter_5_0].subdivisions
+		local var_5_7 = #var_5_6
 
-		for k = 1, num_subdivisions do
-			local subdivision = subdivisions[k]
-			local subdivision_position = subdivision.points[2]:unbox()
-			local distance_sq = Vector3_distance_squared(position, subdivision_position)
+		for iter_5_1 = 1, var_5_7 do
+			local var_5_8 = var_5_6[iter_5_1].points[2]:unbox()
+			local var_5_9 = var_5_0(arg_5_1, var_5_8)
 
-			if distance_sq < best_distance_sq then
-				best_distance_sq = distance_sq
-				best_spline_index = j
-				best_subdivision_index = k
+			if var_5_9 < var_5_3 then
+				var_5_3 = var_5_9
+				var_5_4 = iter_5_0
+				var_5_5 = iter_5_1
 			end
 		end
 	end
 
-	local closest_subdivisions = splines[best_spline_index].subdivisions
-	local closest_subdivision = closest_subdivisions[best_subdivision_index]
-	local closest_subdivision_position = closest_subdivision.points[2]:unbox()
-	local previous_subdivision_index, previous_spline_index, previous_subdivision, previous_subdivision_position, next_subdivision_position, final_spline_index, final_subdivision_index, t
+	local var_5_10 = var_5_1[var_5_4].subdivisions
+	local var_5_11 = var_5_10[var_5_5]
+	local var_5_12 = var_5_11.points[2]:unbox()
+	local var_5_13
+	local var_5_14
+	local var_5_15
+	local var_5_16
+	local var_5_17
+	local var_5_18
+	local var_5_19
+	local var_5_20
 
-	if best_subdivision_index > 1 then
-		previous_subdivision_index = best_subdivision_index - 1
-		previous_subdivision = closest_subdivisions[previous_subdivision_index]
-		previous_subdivision_position = previous_subdivision.points[2]:unbox()
-	elseif best_spline_index > 1 then
-		previous_spline_index = best_spline_index - 1
+	if var_5_5 > 1 then
+		var_5_13 = var_5_5 - 1
+		var_5_15 = var_5_10[var_5_13]
+		var_5_16 = var_5_15.points[2]:unbox()
+	elseif var_5_4 > 1 then
+		var_5_14 = var_5_4 - 1
 
-		local previous_spline = splines[previous_spline_index]
-		local previous_spline_subdivisions = previous_spline.subdivisions
+		local var_5_21 = var_5_1[var_5_14].subdivisions
 
-		previous_subdivision_index = #previous_spline_subdivisions
-		previous_subdivision = previous_spline_subdivisions[previous_subdivision_index]
-		previous_subdivision_position = previous_subdivision.points[2]:unbox()
+		var_5_13 = #var_5_21
+		var_5_15 = var_5_21[var_5_13]
+		var_5_16 = var_5_15.points[2]:unbox()
 	end
 
-	if best_subdivision_index < #closest_subdivisions then
-		local next_subdivision = closest_subdivisions[best_subdivision_index + 1]
-
-		next_subdivision_position = next_subdivision.points[2]:unbox()
-	elseif best_spline_index < num_splines then
-		local next_spline = splines[best_spline_index + 1]
-		local next_spline_subdivisions = next_spline.subdivisions
-		local next_subdivision = next_spline_subdivisions[1]
-
-		next_subdivision_position = next_subdivision.points[2]:unbox()
+	if var_5_5 < #var_5_10 then
+		var_5_17 = var_5_10[var_5_5 + 1].points[2]:unbox()
+	elseif var_5_4 < var_5_2 then
+		var_5_17 = var_5_1[var_5_4 + 1].subdivisions[1].points[2]:unbox()
 	else
-		local spline_points = splines[num_splines].points
+		local var_5_22 = var_5_1[var_5_2].points
 
-		next_subdivision_position = spline_points[#spline_points]:unbox()
+		var_5_17 = var_5_22[#var_5_22]:unbox()
 	end
 
-	if previous_subdivision_position then
-		local previous_to_position = position - previous_subdivision_position
-		local previous_to_closest = Vector3.normalize(closest_subdivision_position - previous_subdivision_position)
-		local previous_subdivision_length = previous_subdivision.length
-		local dot = Vector3.dot(previous_to_position, previous_to_closest)
+	if var_5_16 then
+		local var_5_23 = arg_5_1 - var_5_16
+		local var_5_24 = Vector3.normalize(var_5_12 - var_5_16)
+		local var_5_25 = var_5_15.length
+		local var_5_26 = Vector3.dot(var_5_23, var_5_24)
 
-		if dot >= 0 and dot <= previous_subdivision_length then
-			t = dot / previous_subdivision_length
-		elseif next_subdivision_position == nil then
-			t = math.clamp(dot, 0, 1)
+		if var_5_26 >= 0 and var_5_26 <= var_5_25 then
+			var_5_20 = var_5_26 / var_5_25
+		elseif var_5_17 == nil then
+			var_5_20 = math.clamp(var_5_26, 0, 1)
 		end
 	end
 
-	if t then
-		final_spline_index = previous_spline_index or best_spline_index
-		final_subdivision_index = previous_subdivision_index
+	if var_5_20 then
+		var_5_18 = var_5_14 or var_5_4
+		var_5_19 = var_5_13
 	else
-		local closest_to_position = position - closest_subdivision_position
-		local closest_to_next = Vector3.normalize(next_subdivision_position - closest_subdivision_position)
-		local next_subdivision_length = closest_subdivision.length
-		local dot = Vector3.dot(closest_to_position, closest_to_next)
+		local var_5_27 = arg_5_1 - var_5_12
+		local var_5_28 = Vector3.normalize(var_5_17 - var_5_12)
+		local var_5_29 = var_5_11.length
+		local var_5_30 = Vector3.dot(var_5_27, var_5_28)
 
-		if dot >= 0 and dot <= next_subdivision_length then
-			t = dot / next_subdivision_length
+		if var_5_30 >= 0 and var_5_30 <= var_5_29 then
+			var_5_20 = var_5_30 / var_5_29
 		else
-			t = math.clamp(dot, 0, 1)
+			var_5_20 = math.clamp(var_5_30, 0, 1)
 		end
 
-		final_spline_index = best_spline_index
-		final_subdivision_index = best_subdivision_index
+		var_5_18 = var_5_4
+		var_5_19 = var_5_5
 	end
 
-	return final_spline_index, final_subdivision_index, t
+	return var_5_18, var_5_19, var_5_20
 end

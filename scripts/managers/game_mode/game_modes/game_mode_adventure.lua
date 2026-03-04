@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/managers/game_mode/game_modes/game_mode_adventure.lua
+-- chunkname: @scripts/managers/game_mode/game_modes/game_mode_adventure.lua
 
 require("scripts/managers/game_mode/game_modes/game_mode_base")
 require("scripts/managers/game_mode/spawning_components/adventure_spawning")
@@ -7,121 +7,119 @@ require("scripts/managers/game_mode/adventure_profile_rules")
 script_data.disable_gamemode_end = script_data.disable_gamemode_end or Development.parameter("disable_gamemode_end")
 GameModeAdventure = class(GameModeAdventure, GameModeBase)
 
-GameModeAdventure.init = function (self, settings, world, ...)
-	GameModeAdventure.super.init(self, settings, world, ...)
+function GameModeAdventure.init(arg_1_0, arg_1_1, arg_1_2, ...)
+	GameModeAdventure.super.init(arg_1_0, arg_1_1, arg_1_2, ...)
 
-	self._lost_condition_timer = nil
-	self._adventure_profile_rules = AdventureProfileRules:new(self._profile_synchronizer, self._network_server)
+	arg_1_0._lost_condition_timer = nil
+	arg_1_0._adventure_profile_rules = AdventureProfileRules:new(arg_1_0._profile_synchronizer, arg_1_0._network_server)
 
-	local hero_side = Managers.state.side:get_side_from_name("heroes")
+	local var_1_0 = Managers.state.side:get_side_from_name("heroes")
 
-	self._adventure_spawning = AdventureSpawning:new(self._profile_synchronizer, hero_side, self._is_server, self._network_server)
+	arg_1_0._adventure_spawning = AdventureSpawning:new(arg_1_0._profile_synchronizer, var_1_0, arg_1_0._is_server, arg_1_0._network_server)
 
-	self:_register_player_spawner(self._adventure_spawning)
+	arg_1_0:_register_player_spawner(arg_1_0._adventure_spawning)
 
-	self._bot_players = {}
+	arg_1_0._bot_players = {}
 
-	self:_setup_bot_spawn_priority_lookup()
+	arg_1_0:_setup_bot_spawn_priority_lookup()
 
-	self._available_profiles = table.clone(PROFILES_BY_AFFILIATION.heroes)
+	arg_1_0._available_profiles = table.clone(PROFILES_BY_AFFILIATION.heroes)
 
-	local event_manager = Managers.state.event
-
-	event_manager:register(self, "level_start_local_player_spawned", "event_local_player_spawned")
+	Managers.state.event:register(arg_1_0, "level_start_local_player_spawned", "event_local_player_spawned")
 
 	if LAUNCH_MODE == "attract_benchmark" then
-		local peer_id = Network.peer_id()
-		local local_player_id = 1
-		local profile_name = PROFILES_BY_AFFILIATION.tutorial[1]
-		local profile_index = FindProfileIndex(profile_name)
-		local career_index = 1
-		local is_bot = false
-		local success = Managers.mechanism:try_reserve_profile_for_peer_by_mechanism(peer_id, profile_index, career_index, false)
+		local var_1_1 = Network.peer_id()
+		local var_1_2 = 1
+		local var_1_3 = PROFILES_BY_AFFILIATION.tutorial[1]
+		local var_1_4 = FindProfileIndex(var_1_3)
+		local var_1_5 = 1
+		local var_1_6 = false
+		local var_1_7 = Managers.mechanism:try_reserve_profile_for_peer_by_mechanism(var_1_1, var_1_4, var_1_5, false)
 
-		fassert(success, "this should never happen in this particular situation")
+		fassert(var_1_7, "this should never happen in this particular situation")
 
-		local party_id = Managers.mechanism:reserved_party_id_by_peer(peer_id)
+		local var_1_8 = Managers.mechanism:reserved_party_id_by_peer(var_1_1)
 
-		self._profile_synchronizer:assign_full_profile(peer_id, local_player_id, profile_index, career_index, is_bot)
-		Managers.party:request_join_party(peer_id, local_player_id, party_id)
+		arg_1_0._profile_synchronizer:assign_full_profile(var_1_1, var_1_2, var_1_4, var_1_5, var_1_6)
+		Managers.party:request_join_party(var_1_1, var_1_2, var_1_8)
 	end
 
-	self._local_player_spawned = false
+	arg_1_0._local_player_spawned = false
 end
 
-GameModeAdventure.destroy = function (self)
+function GameModeAdventure.destroy(arg_2_0)
 	return
 end
 
-GameModeAdventure.cleanup_game_mode_units = function (self)
-	local update_safe = false
+function GameModeAdventure.cleanup_game_mode_units(arg_3_0)
+	local var_3_0 = false
 
-	self:_clear_bots(update_safe)
+	arg_3_0:_clear_bots(var_3_0)
 end
 
-GameModeAdventure.register_rpcs = function (self, network_event_delegate, network_transmit)
-	GameModeAdventure.super.register_rpcs(self, network_event_delegate, network_transmit)
-	self._adventure_spawning:register_rpcs(network_event_delegate, network_transmit)
+function GameModeAdventure.register_rpcs(arg_4_0, arg_4_1, arg_4_2)
+	GameModeAdventure.super.register_rpcs(arg_4_0, arg_4_1, arg_4_2)
+	arg_4_0._adventure_spawning:register_rpcs(arg_4_1, arg_4_2)
 end
 
-GameModeAdventure.unregister_rpcs = function (self)
-	self._adventure_spawning:unregister_rpcs()
-	GameModeAdventure.super.unregister_rpcs(self)
+function GameModeAdventure.unregister_rpcs(arg_5_0)
+	arg_5_0._adventure_spawning:unregister_rpcs()
+	GameModeAdventure.super.unregister_rpcs(arg_5_0)
 end
 
-GameModeAdventure.event_local_player_spawned = function (self, is_initial_spawn)
-	self._local_player_spawned = true
-	self._is_initial_spawn = is_initial_spawn
+function GameModeAdventure.event_local_player_spawned(arg_6_0, arg_6_1)
+	arg_6_0._local_player_spawned = true
+	arg_6_0._is_initial_spawn = arg_6_1
 end
 
-GameModeAdventure.update = function (self, t, dt)
-	self._adventure_spawning:update(t, dt)
+function GameModeAdventure.update(arg_7_0, arg_7_1, arg_7_2)
+	arg_7_0._adventure_spawning:update(arg_7_1, arg_7_2)
 end
 
-GameModeAdventure.server_update = function (self, t, dt)
-	GameModeAdventure.super.server_update(self, t, dt)
-	self:_handle_bots(t, dt)
-	self._adventure_spawning:server_update(t, dt)
+function GameModeAdventure.server_update(arg_8_0, arg_8_1, arg_8_2)
+	GameModeAdventure.super.server_update(arg_8_0, arg_8_1, arg_8_2)
+	arg_8_0:_handle_bots(arg_8_1, arg_8_2)
+	arg_8_0._adventure_spawning:server_update(arg_8_1, arg_8_2)
 end
 
-GameModeAdventure.evaluate_end_conditions = function (self, round_started, dt, t, mutator_handler)
+function GameModeAdventure.evaluate_end_conditions(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	if script_data.disable_gamemode_end then
 		return false
 	end
 
-	local ignore_bots = true
-	local humans_dead = GameModeHelper.side_is_dead("heroes", ignore_bots)
-	local players_disabled = GameModeHelper.side_is_disabled("heroes") and not GameModeHelper.side_delaying_loss("heroes")
-	local mutator_lost, mutator_lost_delay = mutator_handler:evaluate_lose_conditions()
-	local lost = not self._lose_condition_disabled and self._local_player_spawned and (mutator_lost or humans_dead or players_disabled or self._level_failed or self:_is_time_up())
+	local var_9_0 = true
+	local var_9_1 = GameModeHelper.side_is_dead("heroes", var_9_0)
+	local var_9_2 = GameModeHelper.side_is_disabled("heroes") and not GameModeHelper.side_delaying_loss("heroes")
+	local var_9_3, var_9_4 = arg_9_4:evaluate_lose_conditions()
+	local var_9_5 = not arg_9_0._lose_condition_disabled and arg_9_0._local_player_spawned and (var_9_3 or var_9_1 or var_9_2 or arg_9_0._level_failed or arg_9_0:_is_time_up())
 
-	if self:is_about_to_end_game_early() then
-		if lost then
-			if t > self._lost_condition_timer then
+	if arg_9_0:is_about_to_end_game_early() then
+		if var_9_5 then
+			if arg_9_3 > arg_9_0._lost_condition_timer then
 				return true, "lost"
 			else
 				return false
 			end
 		else
-			self:set_about_to_end_game_early(false)
+			arg_9_0:set_about_to_end_game_early(false)
 
-			self._lost_condition_timer = nil
+			arg_9_0._lost_condition_timer = nil
 		end
 	end
 
-	if lost then
-		self:set_about_to_end_game_early(true)
+	if var_9_5 then
+		arg_9_0:set_about_to_end_game_early(true)
 
-		if mutator_lost and mutator_lost_delay then
-			self._lost_condition_timer = t + mutator_lost_delay
-		elseif humans_dead then
-			self._lost_condition_timer = t + GameModeSettings.adventure.lose_condition_time_dead
+		if var_9_3 and var_9_4 then
+			arg_9_0._lost_condition_timer = arg_9_3 + var_9_4
+		elseif var_9_1 then
+			arg_9_0._lost_condition_timer = arg_9_3 + GameModeSettings.adventure.lose_condition_time_dead
 		else
-			self._lost_condition_timer = t + GameModeSettings.adventure.lose_condition_time
+			arg_9_0._lost_condition_timer = arg_9_3 + GameModeSettings.adventure.lose_condition_time
 		end
-	elseif self:update_end_level_areas() then
+	elseif arg_9_0:update_end_level_areas() then
 		return true, "won"
-	elseif self._level_completed then
+	elseif arg_9_0._level_completed then
 		if Managers.deed:has_deed() and Managers.deed:is_session_faulty() then
 			return true, "lost"
 		else
@@ -132,369 +130,354 @@ GameModeAdventure.evaluate_end_conditions = function (self, round_started, dt, t
 	end
 end
 
-GameModeAdventure.player_entered_game_session = function (self, peer_id, local_player_id, requested_party_index)
-	GameModeAdventure.super.player_entered_game_session(self, peer_id, local_player_id, requested_party_index)
+function GameModeAdventure.player_entered_game_session(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	GameModeAdventure.super.player_entered_game_session(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 
 	if LAUNCH_MODE ~= "attract_benchmark" then
-		self._adventure_profile_rules:handle_profile_delegation_for_joining_player(peer_id, local_player_id)
+		arg_10_0._adventure_profile_rules:handle_profile_delegation_for_joining_player(arg_10_1, arg_10_2)
 	end
 
-	if Network.peer_id() == peer_id then
-		local party_id = 1
+	if Network.peer_id() == arg_10_1 then
+		local var_10_0 = 1
 
-		self:remove_bot(party_id, peer_id, local_player_id)
+		arg_10_0:remove_bot(var_10_0, arg_10_1, arg_10_2)
 
-		local status = Managers.party:get_player_status(peer_id, local_player_id)
-
-		if status.party_id ~= party_id then
-			Managers.party:request_join_party(peer_id, local_player_id, party_id)
+		if Managers.party:get_player_status(arg_10_1, arg_10_2).party_id ~= var_10_0 then
+			Managers.party:request_join_party(arg_10_1, arg_10_2, var_10_0)
 		end
 	else
-		self._adventure_spawning:add_delayed_client(peer_id, local_player_id)
+		arg_10_0._adventure_spawning:add_delayed_client(arg_10_1, arg_10_2)
 	end
 end
 
-GameModeAdventure.player_left_game_session = function (self, peer_id, local_player_id)
-	GameModeAdventure.super.player_left_game_session(self, peer_id, local_player_id)
-	self._adventure_spawning:remove_delayed_client(peer_id, local_player_id)
+function GameModeAdventure.player_left_game_session(arg_11_0, arg_11_1, arg_11_2)
+	GameModeAdventure.super.player_left_game_session(arg_11_0, arg_11_1, arg_11_2)
+	arg_11_0._adventure_spawning:remove_delayed_client(arg_11_1, arg_11_2)
 end
 
-GameModeAdventure.remove_bot = function (self, party_id, peer_id, local_player_id, update_safe)
-	if #self._bot_players > 0 then
-		local profile_index = self._profile_synchronizer:profile_by_peer(peer_id, local_player_id)
-		local removed, bot_player = self:_remove_bot_by_profile(profile_index, update_safe)
+function GameModeAdventure.remove_bot(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+	if #arg_12_0._bot_players > 0 then
+		local var_12_0 = arg_12_0._profile_synchronizer:profile_by_peer(arg_12_2, arg_12_3)
+		local var_12_1, var_12_2 = arg_12_0:_remove_bot_by_profile(var_12_0, arg_12_4)
 
-		if not removed then
-			update_safe = update_safe or false
-			bot_player = self._bot_players[#self._bot_players]
+		if not var_12_1 then
+			arg_12_4 = arg_12_4 or false
+			var_12_2 = arg_12_0._bot_players[#arg_12_0._bot_players]
 
-			self:_remove_bot(bot_player, update_safe)
+			arg_12_0:_remove_bot(var_12_2, arg_12_4)
 		end
 
-		return bot_player
+		return var_12_2
 	end
 end
 
-GameModeAdventure.get_end_screen_config = function (self, game_won, game_lost, player)
-	local screen_name
-	local screen_config = {}
+function GameModeAdventure.get_end_screen_config(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	local var_13_0
+	local var_13_1 = {}
 
-	if game_won then
-		screen_name = "victory"
+	if arg_13_1 then
+		var_13_0 = "victory"
 
-		local stats_id = player:stats_id()
-		local statistics_db = self._statistics_db
-		local level_key = self._level_key
-		local previous_completed_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(statistics_db, stats_id, level_key) or 0
+		local var_13_2 = arg_13_3:stats_id()
+		local var_13_3 = arg_13_0._statistics_db
+		local var_13_4 = arg_13_0._level_key
+		local var_13_5 = LevelUnlockUtils.completed_level_difficulty_index(var_13_3, var_13_2, var_13_4) or 0
 
-		screen_config = {
+		var_13_1 = {
 			show_act_presentation = true,
-			level_key = level_key,
-			previous_completed_difficulty_index = previous_completed_difficulty_index,
+			level_key = var_13_4,
+			previous_completed_difficulty_index = var_13_5
 		}
 	else
-		screen_name = "defeat"
+		var_13_0 = "defeat"
 	end
 
-	return screen_name, screen_config
+	return var_13_0, var_13_1
 end
 
-GameModeAdventure.ended = function (self, reason)
-	local all_peers_ingame = self._network_server:are_all_peers_ingame()
-
-	if not all_peers_ingame then
-		self._network_server:disconnect_joining_peers()
+function GameModeAdventure.ended(arg_14_0, arg_14_1)
+	if not arg_14_0._network_server:are_all_peers_ingame() then
+		arg_14_0._network_server:disconnect_joining_peers()
 	end
 end
 
-GameModeAdventure.local_player_ready_to_start = function (self, player)
-	if not self._local_player_spawned then
+function GameModeAdventure.local_player_ready_to_start(arg_15_0, arg_15_1)
+	if not arg_15_0._local_player_spawned then
 		return false
 	end
 
 	return true
 end
 
-GameModeAdventure.local_player_game_starts = function (self, player, loading_context)
-	if self._is_initial_spawn then
-		LevelHelper:flow_event(self._world, "local_player_spawned")
+function GameModeAdventure.local_player_game_starts(arg_16_0, arg_16_1, arg_16_2)
+	if arg_16_0._is_initial_spawn then
+		LevelHelper:flow_event(arg_16_0._world, "local_player_spawned")
 
 		if Development.parameter("attract_mode") then
-			LevelHelper:flow_event(self._world, "start_benchmark")
+			LevelHelper:flow_event(arg_16_0._world, "start_benchmark")
 		else
-			LevelHelper:flow_event(self._world, "level_start_local_player_spawned")
+			LevelHelper:flow_event(arg_16_0._world, "level_start_local_player_spawned")
 		end
 	end
 end
 
-GameModeAdventure.disable_player_spawning = function (self)
-	self._adventure_spawning:set_spawning_disabled(true)
+function GameModeAdventure.disable_player_spawning(arg_17_0)
+	arg_17_0._adventure_spawning:set_spawning_disabled(true)
 end
 
-GameModeAdventure.enable_player_spawning = function (self, safe_position, safe_rotation)
-	self._adventure_spawning:set_spawning_disabled(false)
-	self._adventure_spawning:force_update_spawn_positions(safe_position, safe_rotation)
+function GameModeAdventure.enable_player_spawning(arg_18_0, arg_18_1, arg_18_2)
+	arg_18_0._adventure_spawning:set_spawning_disabled(false)
+	arg_18_0._adventure_spawning:force_update_spawn_positions(arg_18_1, arg_18_2)
 end
 
-GameModeAdventure.teleport_despawned_players = function (self, position)
-	self._adventure_spawning:teleport_despawned_players(position)
+function GameModeAdventure.teleport_despawned_players(arg_19_0, arg_19_1)
+	arg_19_0._adventure_spawning:teleport_despawned_players(arg_19_1)
 end
 
-GameModeAdventure.flow_callback_add_spawn_point = function (self, unit)
-	self._adventure_spawning:add_spawn_point(unit)
+function GameModeAdventure.flow_callback_add_spawn_point(arg_20_0, arg_20_1)
+	arg_20_0._adventure_spawning:add_spawn_point(arg_20_1)
 end
 
-GameModeAdventure.set_override_respawn_group = function (self, respawn_group_name, active)
-	self._adventure_spawning:set_override_respawn_group(respawn_group_name, active)
+function GameModeAdventure.set_override_respawn_group(arg_21_0, arg_21_1, arg_21_2)
+	arg_21_0._adventure_spawning:set_override_respawn_group(arg_21_1, arg_21_2)
 end
 
-GameModeAdventure.set_respawn_group_enabled = function (self, respawn_group_name, enabled)
-	self._adventure_spawning:set_respawn_group_enabled(respawn_group_name, enabled)
+function GameModeAdventure.set_respawn_group_enabled(arg_22_0, arg_22_1, arg_22_2)
+	arg_22_0._adventure_spawning:set_respawn_group_enabled(arg_22_1, arg_22_2)
 end
 
-GameModeAdventure.set_respawn_gate_enabled = function (self, respawn_gate_unit, enabled)
-	self._adventure_spawning:set_respawn_gate_enabled(respawn_gate_unit, enabled)
+function GameModeAdventure.set_respawn_gate_enabled(arg_23_0, arg_23_1, arg_23_2)
+	arg_23_0._adventure_spawning:set_respawn_gate_enabled(arg_23_1, arg_23_2)
 end
 
-GameModeAdventure.respawn_unit_spawned = function (self, unit)
-	self._adventure_spawning:respawn_unit_spawned(unit)
+function GameModeAdventure.respawn_unit_spawned(arg_24_0, arg_24_1)
+	arg_24_0._adventure_spawning:respawn_unit_spawned(arg_24_1)
 end
 
-GameModeAdventure.respawn_gate_unit_spawned = function (self, unit)
-	self._adventure_spawning:respawn_gate_unit_spawned(unit)
+function GameModeAdventure.respawn_gate_unit_spawned(arg_25_0, arg_25_1)
+	arg_25_0._adventure_spawning:respawn_gate_unit_spawned(arg_25_1)
 end
 
-GameModeAdventure.get_respawn_handler = function (self)
-	return self._adventure_spawning:get_respawn_handler()
+function GameModeAdventure.get_respawn_handler(arg_26_0)
+	return arg_26_0._adventure_spawning:get_respawn_handler()
 end
 
-GameModeAdventure.set_respawning_enabled = function (self, enabled)
-	self._adventure_spawning:set_respawning_enabled(enabled)
+function GameModeAdventure.set_respawning_enabled(arg_27_0, arg_27_1)
+	arg_27_0._adventure_spawning:set_respawning_enabled(arg_27_1)
 end
 
-GameModeAdventure.remove_respawn_units_due_to_crossroads = function (self, removed_path_distances, total_main_path_length)
-	self._adventure_spawning:remove_respawn_units_due_to_crossroads(removed_path_distances, total_main_path_length)
+function GameModeAdventure.remove_respawn_units_due_to_crossroads(arg_28_0, arg_28_1, arg_28_2)
+	arg_28_0._adventure_spawning:remove_respawn_units_due_to_crossroads(arg_28_1, arg_28_2)
 end
 
-GameModeAdventure.recalc_respawner_dist_due_to_crossroads = function (self)
-	self._adventure_spawning:recalc_respawner_dist_due_to_crossroads()
+function GameModeAdventure.recalc_respawner_dist_due_to_crossroads(arg_29_0)
+	arg_29_0._adventure_spawning:recalc_respawner_dist_due_to_crossroads()
 end
 
-GameModeAdventure.force_respawn = function (self, peer_id, local_player_id)
-	local status = Managers.party:get_player_status(peer_id, local_player_id)
+function GameModeAdventure.force_respawn(arg_30_0, arg_30_1, arg_30_2)
+	if Managers.party:get_player_status(arg_30_1, arg_30_2).party_id == 0 then
+		local var_30_0 = 1
 
-	if status.party_id == 0 then
-		local party_id = 1
-
-		Managers.party:assign_peer_to_party(peer_id, local_player_id, party_id)
+		Managers.party:assign_peer_to_party(arg_30_1, arg_30_2, var_30_0)
 	end
 
-	self._adventure_spawning:force_respawn(peer_id, local_player_id)
+	arg_30_0._adventure_spawning:force_respawn(arg_30_1, arg_30_2)
 end
 
-GameModeAdventure.force_respawn_dead_players = function (self)
-	self._adventure_spawning:force_respawn_dead_players()
+function GameModeAdventure.force_respawn_dead_players(arg_31_0)
+	arg_31_0._adventure_spawning:force_respawn_dead_players()
 end
 
-GameModeAdventure._get_first_available_bot_profile = function (self)
-	local available_profiles = self._available_profiles
-	local profile_synchronizer = self._profile_synchronizer
-	local available_profile_by_priority = {}
+function GameModeAdventure._get_first_available_bot_profile(arg_32_0)
+	local var_32_0 = arg_32_0._available_profiles
+	local var_32_1 = arg_32_0._profile_synchronizer
+	local var_32_2 = {}
 
-	for i = 1, #available_profiles do
-		local profile_name = available_profiles[i]
-		local profile_index = FindProfileIndex(profile_name)
+	for iter_32_0 = 1, #var_32_0 do
+		local var_32_3 = var_32_0[iter_32_0]
+		local var_32_4 = FindProfileIndex(var_32_3)
 
-		if not profile_synchronizer:is_profile_in_use(profile_index) then
-			available_profile_by_priority[#available_profile_by_priority + 1] = profile_index
+		if not var_32_1:is_profile_in_use(var_32_4) then
+			var_32_2[#var_32_2 + 1] = var_32_4
 		end
 	end
 
-	local bot_profile_id_to_priority_id = self._bot_profile_id_to_priority_id
+	local var_32_5 = arg_32_0._bot_profile_id_to_priority_id
 
-	table.sort(available_profile_by_priority, function (a, b)
-		return (bot_profile_id_to_priority_id[a] or math.huge) < (bot_profile_id_to_priority_id[b] or math.huge)
+	table.sort(var_32_2, function(arg_33_0, arg_33_1)
+		return (var_32_5[arg_33_0] or math.huge) < (var_32_5[arg_33_1] or math.huge)
 	end)
 
-	local profile_index = available_profile_by_priority[1]
-	local profile = SPProfiles[profile_index]
-	local display_name = profile.display_name
-	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-	local career_index = hero_attributes:get(display_name, "career")
-	local bot_career_index = hero_attributes:get(display_name, "bot_career") or career_index or 1
-	local career = profile.careers[bot_career_index]
-	local hero_experience = hero_attributes:get(display_name, "experience") or 0
-	local hero_level = ExperienceSettings.get_level(hero_experience)
+	local var_32_6 = var_32_2[1]
+	local var_32_7 = SPProfiles[var_32_6]
+	local var_32_8 = var_32_7.display_name
+	local var_32_9 = Managers.backend:get_interface("hero_attributes")
+	local var_32_10 = var_32_9:get(var_32_8, "career")
+	local var_32_11 = var_32_9:get(var_32_8, "bot_career") or var_32_10 or 1
+	local var_32_12 = var_32_7.careers[var_32_11]
+	local var_32_13 = var_32_9:get(var_32_8, "experience") or 0
+	local var_32_14 = ExperienceSettings.get_level(var_32_13)
 
-	if not career and not career:is_unlocked_function(display_name, hero_level) then
-		career_index = 1
-		bot_career_index = 1
-		career = profile.careers[career_index]
+	if not var_32_12 and not var_32_12:is_unlocked_function(var_32_8, var_32_14) then
+		local var_32_15 = 1
 
-		hero_attributes:set(display_name, "career", career_index)
-		hero_attributes:set(display_name, "bot_career", bot_career_index)
+		var_32_11 = 1
+
+		local var_32_16 = var_32_7.careers[var_32_15]
+
+		var_32_9:set(var_32_8, "career", var_32_15)
+		var_32_9:set(var_32_8, "bot_career", var_32_11)
 	end
 
-	return profile_index, bot_career_index
+	return var_32_6, var_32_11
 end
 
-GameModeAdventure._setup_bot_spawn_priority_lookup = function (self)
-	local saved_priority = PlayerData.bot_spawn_priority
-	local num_saved_priority = #saved_priority
+function GameModeAdventure._setup_bot_spawn_priority_lookup(arg_34_0)
+	local var_34_0 = PlayerData.bot_spawn_priority
+	local var_34_1 = #var_34_0
 
 	if LAUNCH_MODE == "game" then
-		if num_saved_priority > 0 then
-			self._bot_profile_id_to_priority_id = {}
+		if var_34_1 > 0 then
+			arg_34_0._bot_profile_id_to_priority_id = {}
 
-			for i = 1, num_saved_priority do
-				local profile_id = saved_priority[i]
+			for iter_34_0 = 1, var_34_1 do
+				local var_34_2 = var_34_0[iter_34_0]
 
-				self._bot_profile_id_to_priority_id[profile_id] = i
+				arg_34_0._bot_profile_id_to_priority_id[var_34_2] = iter_34_0
 			end
 		else
-			self._bot_profile_id_to_priority_id = ProfileIndexToPriorityIndex
+			arg_34_0._bot_profile_id_to_priority_id = ProfileIndexToPriorityIndex
 		end
 	elseif LAUNCH_MODE == "attract_benchmark" then
-		self._bot_profile_id_to_priority_id = ProfileIndexToPriorityIndex
+		arg_34_0._bot_profile_id_to_priority_id = ProfileIndexToPriorityIndex
 	else
-		self._bot_profile_id_to_priority_id = ProfileIndexToPriorityIndex
+		arg_34_0._bot_profile_id_to_priority_id = ProfileIndexToPriorityIndex
 	end
 end
 
-GameModeAdventure._handle_bots = function (self, t, dt)
-	local in_session = Managers.state.network ~= nil and not Managers.state.network.game_session_shutdown
-
-	if not in_session then
+function GameModeAdventure._handle_bots(arg_35_0, arg_35_1, arg_35_2)
+	if not (Managers.state.network ~= nil and not Managers.state.network.game_session_shutdown) then
 		return
 	end
 
 	if script_data.ai_bots_disabled then
-		if #self._bot_players > 0 then
-			local update_safe = true
+		if #arg_35_0._bot_players > 0 then
+			local var_35_0 = true
 
-			self:_clear_bots(update_safe)
+			arg_35_0:_clear_bots(var_35_0)
 		end
 
 		return
 	end
 
-	local party = Managers.party:get_party(1)
-	local num_slots = party.num_slots
-	local max_bots = num_slots
+	local var_35_1 = Managers.party:get_party(1)
+	local var_35_2 = var_35_1.num_slots
+	local var_35_3 = var_35_2
 
 	if script_data.cap_num_bots then
-		max_bots = math.min(max_bots, script_data.cap_num_bots)
+		var_35_3 = math.min(var_35_3, script_data.cap_num_bots)
 	end
 
-	local bot_players = self._bot_players
-	local num_bot_players = #bot_players
-	local delta = max_bots - num_bot_players
+	local var_35_4 = arg_35_0._bot_players
+	local var_35_5 = var_35_3 - #var_35_4
 
-	if delta > 0 then
-		local num_used_slots = party.num_used_slots
-		local open_slots = num_slots - num_used_slots
-		local num_bots_to_add = math.min(delta, open_slots)
+	if var_35_5 > 0 then
+		local var_35_6 = var_35_2 - var_35_1.num_used_slots
+		local var_35_7 = math.min(var_35_5, var_35_6)
 
-		for i = 1, num_bots_to_add do
-			self:_add_bot()
+		for iter_35_0 = 1, var_35_7 do
+			arg_35_0:_add_bot()
 		end
-	elseif delta < 0 then
-		local num_bots_to_remove = math.abs(delta)
+	elseif var_35_5 < 0 then
+		local var_35_8 = math.abs(var_35_5)
 
-		for i = 1, num_bots_to_remove do
-			local update_safe = true
+		for iter_35_1 = 1, var_35_8 do
+			local var_35_9 = true
 
-			self:_remove_bot(bot_players[#bot_players], update_safe)
+			arg_35_0:_remove_bot(var_35_4[#var_35_4], var_35_9)
 		end
 	end
 end
 
-GameModeAdventure._add_bot = function (self)
-	local bot_players = self._bot_players
-	local party_id = 1
-	local party = Managers.party:get_party(party_id)
-	local profile_index, career_index = self:_get_first_available_bot_profile(party)
+function GameModeAdventure._add_bot(arg_36_0)
+	local var_36_0 = arg_36_0._bot_players
+	local var_36_1 = 1
+	local var_36_2 = Managers.party:get_party(var_36_1)
+	local var_36_3, var_36_4 = arg_36_0:_get_first_available_bot_profile(var_36_2)
 
 	if LAUNCH_MODE == "attract_benchmark" then
-		career_index = 1
+		var_36_4 = 1
 	end
 
-	local bot_player = self:_add_bot_to_party(party_id, profile_index, career_index)
+	local var_36_5 = arg_36_0:_add_bot_to_party(var_36_1, var_36_3, var_36_4)
 
-	bot_players[#bot_players + 1] = bot_player
+	var_36_0[#var_36_0 + 1] = var_36_5
 end
 
-GameModeAdventure._remove_bot = function (self, bot_player, update_safe)
-	local bot_players = self._bot_players
-	local index = table.index_of(self._bot_players, bot_player)
+function GameModeAdventure._remove_bot(arg_37_0, arg_37_1, arg_37_2)
+	local var_37_0 = arg_37_0._bot_players
+	local var_37_1 = table.index_of(arg_37_0._bot_players, arg_37_1)
 
-	if update_safe then
-		self:_remove_bot_update_safe(bot_player)
+	if arg_37_2 then
+		arg_37_0:_remove_bot_update_safe(arg_37_1)
 	else
-		self:_remove_bot_instant(bot_player)
+		arg_37_0:_remove_bot_instant(arg_37_1)
 	end
 
-	local last = #bot_players
+	local var_37_2 = #var_37_0
 
-	bot_players[index] = bot_players[last]
-	bot_players[last] = nil
+	var_37_0[var_37_1] = var_37_0[var_37_2]
+	var_37_0[var_37_2] = nil
 end
 
-GameModeAdventure._remove_bot_by_profile = function (self, profile_index, update_safe)
-	local bot_players = self._bot_players
-	local bot_index
-	local num_current_bots = #bot_players
+function GameModeAdventure._remove_bot_by_profile(arg_38_0, arg_38_1, arg_38_2)
+	local var_38_0 = arg_38_0._bot_players
+	local var_38_1
+	local var_38_2 = #var_38_0
 
-	for i = 1, num_current_bots do
-		local bot_player = bot_players[i]
-		local bot_profile_index = bot_player:profile_index()
-
-		if bot_profile_index == profile_index then
-			bot_index = i
+	for iter_38_0 = 1, var_38_2 do
+		if var_38_0[iter_38_0]:profile_index() == arg_38_1 then
+			var_38_1 = iter_38_0
 
 			break
 		end
 	end
 
-	local bot_player
-	local removed = false
+	local var_38_3
+	local var_38_4 = false
 
-	if bot_index then
-		bot_player = bot_players[bot_index]
-		update_safe = update_safe or false
+	if var_38_1 then
+		var_38_3 = var_38_0[var_38_1]
+		arg_38_2 = arg_38_2 or false
 
-		self:_remove_bot(bot_player, update_safe)
+		arg_38_0:_remove_bot(var_38_3, arg_38_2)
 
-		removed = true
+		var_38_4 = true
 	end
 
-	return removed, bot_player
+	return var_38_4, var_38_3
 end
 
-GameModeAdventure._clear_bots = function (self, update_safe)
-	local bot_players = self._bot_players
-	local num_bot_players = #bot_players
+function GameModeAdventure._clear_bots(arg_39_0, arg_39_1)
+	local var_39_0 = arg_39_0._bot_players
 
-	for i = num_bot_players, 1, -1 do
-		self:_remove_bot(bot_players[i], update_safe)
+	for iter_39_0 = #var_39_0, 1, -1 do
+		arg_39_0:_remove_bot(var_39_0[iter_39_0], arg_39_1)
 	end
 end
 
-GameModeAdventure.get_active_respawn_units = function (self)
-	return self._adventure_spawning:get_active_respawn_units()
+function GameModeAdventure.get_active_respawn_units(arg_40_0)
+	return arg_40_0._adventure_spawning:get_active_respawn_units()
 end
 
-GameModeAdventure.get_available_and_active_respawn_units = function (self)
-	return self._adventure_spawning:get_available_and_active_respawn_units()
+function GameModeAdventure.get_available_and_active_respawn_units(arg_41_0)
+	return arg_41_0._adventure_spawning:get_available_and_active_respawn_units()
 end
 
-GameModeAdventure.get_player_wounds = function (self, profile)
+function GameModeAdventure.get_player_wounds(arg_42_0, arg_42_1)
 	if Managers.state.game_mode:has_activated_mutator("instant_death") then
 		return 1
 	end
 
-	local difficulty_manager = Managers.state.difficulty
-	local difficulty_settings = difficulty_manager:get_difficulty_settings()
-
-	return difficulty_settings.wounds
+	return Managers.state.difficulty:get_difficulty_settings().wounds
 end

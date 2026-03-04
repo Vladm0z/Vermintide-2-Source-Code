@@ -1,8 +1,8 @@
-﻿-- chunkname: @scripts/settings/dlcs/scorpion/scorpion_sound_settings.lua
+-- chunkname: @scripts/settings/dlcs/scorpion/scorpion_sound_settings.lua
 
-local settings = DLCSettings.scorpion
+local var_0_0 = DLCSettings.scorpion
 
-settings.dialogue_lookup = {
+var_0_0.dialogue_lookup = {
 	"dialogues/generated/lookup_winds_intro_metal",
 	"dialogues/generated/lookup_winds_intro_shadow",
 	"dialogues/generated/lookup_winds_intro_beasts",
@@ -10,9 +10,9 @@ settings.dialogue_lookup = {
 	"dialogues/generated/lookup_winds_intro_fire",
 	"dialogues/generated/lookup_winds_intro_heavens",
 	"dialogues/generated/lookup_winds_intro_life",
-	"dialogues/generated/lookup_winds_intro_light",
+	"dialogues/generated/lookup_winds_intro_light"
 }
-settings.network_sound_events = {
+var_0_0.network_sound_events = {
 	"Play_winds_heavens_gameplay_spawn",
 	"Play_winds_heavens_gameplay_lock",
 	"Play_winds_heavens_gamepay_charge",
@@ -46,10 +46,10 @@ settings.network_sound_events = {
 	"Play_winds_gameplay_capture_success",
 	"Play_hud_wind_objectives_complete",
 	"emitter_rune_activate",
-	"hud_text_reveal",
+	"hud_text_reveal"
 }
 
-local levels = {
+local var_0_1 = {
 	"alleys",
 	"canyon",
 	"crater",
@@ -61,9 +61,9 @@ local levels = {
 	"rubble",
 	"swamp",
 	"wall",
-	"woods",
+	"woods"
 }
-local winds = {
+local var_0_2 = {
 	"beasts",
 	"death",
 	"fire",
@@ -71,20 +71,20 @@ local winds = {
 	"life",
 	"light",
 	"metal",
-	"shadow",
+	"shadow"
 }
-local key_prefix = "dlc_scorpion_"
-local file_name_prefix = "dialogues/generated/winds_intro_"
+local var_0_3 = "dlc_scorpion_"
+local var_0_4 = "dialogues/generated/winds_intro_"
 
-settings.dialogue_settings = {}
+var_0_0.dialogue_settings = {}
 
-for _, level_name in ipairs(levels) do
-	for _, wind_name in ipairs(winds) do
-		local key = string.format("%s%s_%s", key_prefix, level_name, wind_name)
-		local file_name = string.format("%s%s", file_name_prefix, wind_name)
+for iter_0_0, iter_0_1 in ipairs(var_0_1) do
+	for iter_0_2, iter_0_3 in ipairs(var_0_2) do
+		local var_0_5 = string.format("%s%s_%s", var_0_3, iter_0_1, iter_0_3)
+		local var_0_6 = string.format("%s%s", var_0_4, iter_0_3)
 
-		settings.dialogue_settings[key] = {
-			file_name,
+		var_0_0.dialogue_settings[var_0_5] = {
+			var_0_6
 		}
 	end
 end

@@ -1,67 +1,67 @@
-﻿-- chunkname: @scripts/utils/function_call_stats.lua
+-- chunkname: @scripts/utils/function_call_stats.lua
 
-local CALL_LIST = {}
-local COUNTER = 0
-local CALL_DATA = {}
+local var_0_0 = {}
+local var_0_1 = 0
+local var_0_2 = {}
 
-local function on_function_call(event)
-	local res = debug.getinfo(2)
+local function var_0_3(arg_1_0)
+	local var_1_0 = debug.getinfo(2)
 
-	if res then
-		COUNTER = COUNTER + 1
+	if var_1_0 then
+		var_0_1 = var_0_1 + 1
 
-		local func_name = tostring(res.name)
-		local currentline = res.currentline
-		local name
+		local var_1_1 = tostring(var_1_0.name)
+		local var_1_2 = var_1_0.currentline
+		local var_1_3
 
-		if currentline ~= -1 then
-			name = res.short_src .. ":" .. tostring(currentline) .. " " .. func_name .. "()"
+		if var_1_2 ~= -1 then
+			var_1_3 = var_1_0.short_src .. ":" .. tostring(var_1_2) .. " " .. var_1_1 .. "()"
 		else
-			name = res.short_src .. " " .. func_name .. "()"
+			var_1_3 = var_1_0.short_src .. " " .. var_1_1 .. "()"
 		end
 
-		local index = CALL_LIST[name]
+		local var_1_4 = var_0_0[var_1_3]
 
-		if not index then
-			index = #CALL_LIST + 1
-			CALL_LIST[index] = name
-			CALL_LIST[name] = index
-			CALL_DATA[index] = {
+		if not var_1_4 then
+			var_1_4 = #var_0_0 + 1
+			var_0_0[var_1_4] = var_1_3
+			var_0_0[var_1_3] = var_1_4
+			var_0_2[var_1_4] = {
 				num = 1,
-				position = name,
+				position = var_1_3
 			}
 		end
 
-		CALL_DATA[index].num = CALL_DATA[index].num + 1
+		var_0_2[var_1_4].num = var_0_2[var_1_4].num + 1
 	end
 end
 
-local function compare(e1, e2)
-	return e1.num > e2.num
+local function var_0_4(arg_2_0, arg_2_1)
+	return arg_2_0.num > arg_2_1.num
 end
 
 function start_function_call_collection()
-	debug.sethook(on_function_call, "c")
+	debug.sethook(var_0_3, "c")
 end
 
 function end_function_call_collection()
-	if COUNTER > 0 then
+	if var_0_1 > 0 then
 		debug.sethook()
-		print("Counter", COUNTER)
-		table.sort(CALL_DATA, compare)
+		print("Counter", var_0_1)
+		table.sort(var_0_2, var_0_4)
 
-		for ii = 1, 100 do
-			local elem = CALL_DATA[ii]
+		for iter_4_0 = 1, 100 do
+			local var_4_0 = var_0_2[iter_4_0]
 
-			if not elem then
+			if not var_4_0 then
 				break
 			end
 
-			print(elem.num, elem.position)
+			print(var_4_0.num, var_4_0.position)
 		end
 
-		CALL_LIST = {}
-		COUNTER = 0
-		CALL_DATA = {}
+		var_0_0 = {}
+		var_0_1 = 0
+		var_0_2 = {}
 	end
 end

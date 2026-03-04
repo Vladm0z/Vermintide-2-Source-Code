@@ -1,2261 +1,2175 @@
-﻿-- chunkname: @scripts/helpers/damage_utils.lua
+-- chunkname: @scripts/helpers/damage_utils.lua
 
-local stagger_types = require("scripts/utils/stagger_types")
-local buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local var_0_0 = require("scripts/utils/stagger_types")
+local var_0_1 = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
 
 DamageUtils = DamageUtils or {}
 
-local BLACKBOARDS = BLACKBOARDS
-local PLAYER_TARGET_ARMOR = 4
-local POSITION_LOOKUP = POSITION_LOOKUP
-local unit_get_data = Unit.get_data
-local unit_alive = Unit.alive
-local unit_local_position = Unit.local_position
-local unit_local_rotation = Unit.local_rotation
-local unit_world_position = Unit.world_position
-local unit_set_flow_variable = Unit.set_flow_variable
-local unit_flow_event = Unit.flow_event
-local unit_actor = Unit.actor
-local unit_has_animation_state_machine = Unit.has_animation_state_machine
-local unit_animation_event = Unit.animation_event
-local unit_has_animation_event = Unit.has_animation_event
-local vector3_distance_squared = Vector3.distance_squared
-local actor_position = Actor.position
-local actor_unit = Actor.unit
-local actor_node = Actor.node
-local POISON_DAMAGE_TYPES = {
+local var_0_2 = BLACKBOARDS
+local var_0_3 = 4
+local var_0_4 = POSITION_LOOKUP
+local var_0_5 = Unit.get_data
+local var_0_6 = Unit.alive
+local var_0_7 = Unit.local_position
+local var_0_8 = Unit.local_rotation
+local var_0_9 = Unit.world_position
+local var_0_10 = Unit.set_flow_variable
+local var_0_11 = Unit.flow_event
+local var_0_12 = Unit.actor
+local var_0_13 = Unit.has_animation_state_machine
+local var_0_14 = Unit.animation_event
+local var_0_15 = Unit.has_animation_event
+local var_0_16 = Vector3.distance_squared
+local var_0_17 = Actor.position
+local var_0_18 = Actor.unit
+local var_0_19 = Actor.node
+local var_0_20 = {
 	aoe_poison_dot = true,
-	arrow_poison = true,
-	arrow_poison_dot = true,
 	poison = true,
+	arrow_poison = true,
+	arrow_poison_dot = true
 }
-local POISON_DAMAGE_SOURCES = {
-	poison_dot = true,
+local var_0_21 = {
 	skaven_poison_wind_globadier = true,
+	poison_dot = true
 }
 
-local function is_immune_to_damage(attacked_unit, damage_type, damage_source, charge_value)
-	local victim_buff_extension = ScriptUnit.has_extension(attacked_unit, "buff_system")
+local function var_0_22(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	local var_1_0 = ScriptUnit.has_extension(arg_1_0, "buff_system")
 
-	if victim_buff_extension then
-		if victim_buff_extension:has_buff_perk("invulnerable") or RangedAttackTypes[charge_value] and victim_buff_extension:has_buff_perk("invulnerable_ranged") then
+	if var_1_0 then
+		if var_1_0:has_buff_perk("invulnerable") or RangedAttackTypes[arg_1_3] and var_1_0:has_buff_perk("invulnerable_ranged") then
 			return true
 		end
 
-		local is_poison_damage = POISON_DAMAGE_TYPES[damage_type] or POISON_DAMAGE_SOURCES[damage_source]
-		local poison_proof = victim_buff_extension:has_buff_perk("poison_proof")
+		local var_1_1 = var_0_20[arg_1_1] or var_0_21[arg_1_2]
+		local var_1_2 = var_1_0:has_buff_perk("poison_proof")
 
-		return is_poison_damage and poison_proof
+		return var_1_1 and var_1_2
 	end
 
 	return false
 end
 
-DamageUtils.get_breed_damage_multiplier_type = function (breed, hit_zone_name)
-	local multiplier_type
+function DamageUtils.get_breed_damage_multiplier_type(arg_2_0, arg_2_1)
+	local var_2_0
 
-	if breed and breed.hitzone_multiplier_types then
-		multiplier_type = breed.hitzone_multiplier_types[hit_zone_name]
+	if arg_2_0 and arg_2_0.hitzone_multiplier_types then
+		var_2_0 = arg_2_0.hitzone_multiplier_types[arg_2_1]
 	end
 
-	return multiplier_type
+	return var_2_0
 end
 
-local function get_clamped_curve_value(curve, index)
-	if index < 1 then
-		return curve[1]
-	elseif index >= #curve then
-		return curve[#curve]
+local function var_0_23(arg_3_0, arg_3_1)
+	if arg_3_1 < 1 then
+		return arg_3_0[1]
+	elseif arg_3_1 >= #arg_3_0 then
+		return arg_3_0[#arg_3_0]
 	else
-		return curve[index]
+		return arg_3_0[arg_3_1]
 	end
 end
 
-DamageUtils.get_boost_curve_multiplier = function (curve, percent)
-	local x = (#curve - 1) * percent
-	local index = math.floor(x) + 1
-	local t = x - math.floor(x)
-	local p0 = get_clamped_curve_value(curve, index - 1)
-	local p1 = get_clamped_curve_value(curve, index + 0)
-	local p2 = get_clamped_curve_value(curve, index + 1)
-	local p3 = get_clamped_curve_value(curve, index + 2)
-	local a = -p0 / 2 + 3 * p1 / 2 - 3 * p2 / 2 + p3 / 2
-	local b = p0 - 5 * p1 / 2 + 2 * p2 - p3 / 2
-	local c = -p0 / 2 + p2 / 2
-	local d = p1
-	local value = a * t * t * t + b * t * t + c * t + d
+function DamageUtils.get_boost_curve_multiplier(arg_4_0, arg_4_1)
+	local var_4_0 = (#arg_4_0 - 1) * arg_4_1
+	local var_4_1 = math.floor(var_4_0) + 1
+	local var_4_2 = var_4_0 - math.floor(var_4_0)
+	local var_4_3 = var_0_23(arg_4_0, var_4_1 - 1)
+	local var_4_4 = var_0_23(arg_4_0, var_4_1 + 0)
+	local var_4_5 = var_0_23(arg_4_0, var_4_1 + 1)
+	local var_4_6 = var_0_23(arg_4_0, var_4_1 + 2)
+	local var_4_7 = -var_4_3 / 2 + 3 * var_4_4 / 2 - 3 * var_4_5 / 2 + var_4_6 / 2
+	local var_4_8 = var_4_3 - 5 * var_4_4 / 2 + 2 * var_4_5 - var_4_6 / 2
+	local var_4_9 = -var_4_3 / 2 + var_4_5 / 2
+	local var_4_10 = var_4_4
 
-	return value
+	return var_4_7 * var_4_2 * var_4_2 * var_4_2 + var_4_8 * var_4_2 * var_4_2 + var_4_9 * var_4_2 + var_4_10
 end
 
-local function get_head_shot_boost_amount(target_settings, damage_profile, is_finesse_hit, multiplier_type, will_deal_damage, target_unit_armor, target_unit_primary_armor)
-	local head_shot_boost_amount = 0
+local function var_0_24(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
+	local var_5_0 = 0
 
-	if is_finesse_hit then
-		if will_deal_damage then
-			if target_unit_armor == 3 then
-				head_shot_boost_amount = target_settings and (target_settings.headshot_boost_boss or target_settings.headshot_boost) or 0.25
+	if arg_5_2 then
+		if arg_5_4 then
+			if arg_5_5 == 3 then
+				var_5_0 = arg_5_0 and (arg_5_0.headshot_boost_boss or arg_5_0.headshot_boost) or 0.25
 			else
-				head_shot_boost_amount = target_settings and target_settings.headshot_boost or 0.5
+				var_5_0 = arg_5_0 and arg_5_0.headshot_boost or 0.5
 			end
-		elseif target_unit_primary_armor == 6 and not will_deal_damage then
-			head_shot_boost_amount = target_settings and target_settings.headshot_boost_heavy_armor or 0.25
-		elseif target_unit_armor == 2 and not will_deal_damage then
-			head_shot_boost_amount = target_settings and (target_settings.headshot_boost_armor or target_settings.headshot_boost) or 0.5
+		elseif arg_5_6 == 6 and not arg_5_4 then
+			var_5_0 = arg_5_0 and arg_5_0.headshot_boost_heavy_armor or 0.25
+		elseif arg_5_5 == 2 and not arg_5_4 then
+			var_5_0 = arg_5_0 and (arg_5_0.headshot_boost_armor or arg_5_0.headshot_boost) or 0.5
 		end
 
-		if multiplier_type == "protected_weakspot" then
-			head_shot_boost_amount = head_shot_boost_amount * 0.25
+		if arg_5_3 == "protected_weakspot" then
+			var_5_0 = var_5_0 * 0.25
 		end
 	end
 
-	if multiplier_type == "protected_spot" then
-		head_shot_boost_amount = head_shot_boost_amount - 0.5
+	if arg_5_3 == "protected_spot" then
+		var_5_0 = var_5_0 - 0.5
 	end
 
-	return head_shot_boost_amount
+	return var_5_0
 end
 
-local function do_damage_calculation(attacker_unit, damage_source, original_power_level, damage_output, hit_zone_name, damage_profile, target_index, boost_curve, boost_damage_multiplier, is_critical_strike, backstab_multiplier, breed, range_scalar_multiplier, static_base_damage, is_friendly_fire, has_power_boost, difficulty_level, target_unit_armor, target_unit_primary_armor, has_crit_head_shot_killing_blow_perk, has_crit_backstab_killing_blow_perk, target_max_health, optional_target_unit)
-	if damage_profile and damage_profile.no_damage then
+local function var_0_25(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10, arg_6_11, arg_6_12, arg_6_13, arg_6_14, arg_6_15, arg_6_16, arg_6_17, arg_6_18, arg_6_19, arg_6_20, arg_6_21, arg_6_22)
+	if arg_6_5 and arg_6_5.no_damage then
 		return 0
 	end
 
-	local difficulty_settings = DifficultySettings[difficulty_level]
-	local power_boost_damage = 0
-	local head_shot_boost_damage = 0
-	local head_shot_min_damage = 1
-	local power_boost_min_damage = 1
-	local multiplier_type = DamageUtils.get_breed_damage_multiplier_type(breed, hit_zone_name)
-	local is_finesse_hit = multiplier_type == "headshot" or multiplier_type == "weakspot" or multiplier_type == "protected_weakspot"
+	local var_6_0 = DifficultySettings[arg_6_16]
+	local var_6_1 = 0
+	local var_6_2 = 0
+	local var_6_3 = 1
+	local var_6_4 = 1
+	local var_6_5 = DamageUtils.get_breed_damage_multiplier_type(arg_6_11, arg_6_4)
+	local var_6_6 = var_6_5 == "headshot" or var_6_5 == "weakspot" or var_6_5 == "protected_weakspot"
 
-	if is_finesse_hit or is_critical_strike or has_power_boost or boost_damage_multiplier and boost_damage_multiplier > 0 then
-		local power_boost_armor
+	if var_6_6 or arg_6_9 or arg_6_15 or arg_6_8 and arg_6_8 > 0 then
+		local var_6_7
+		local var_6_8 = (arg_6_17 == 2 or arg_6_17 == 5 or arg_6_17 == 6) and 1 or arg_6_17
+		local var_6_9 = arg_6_3[var_6_8] or var_6_8 == 0 and 0 or arg_6_3[1]
+		local var_6_10
 
-		power_boost_armor = (target_unit_armor == 2 or target_unit_armor == 5 or target_unit_armor == 6) and 1 or target_unit_armor
+		if type(var_6_9) == "table" then
+			local var_6_11 = var_6_9.max - var_6_9.min
+			local var_6_12, var_6_13 = ActionUtils.get_power_level_for_target(arg_6_22, arg_6_2, arg_6_5, arg_6_6, arg_6_9, arg_6_0, arg_6_4, var_6_8, arg_6_1, arg_6_11, arg_6_12, arg_6_16, arg_6_17, arg_6_18)
+			local var_6_14 = ActionUtils.get_power_level_percentage(var_6_12)
 
-		local power_boost_target_damages = damage_output[power_boost_armor] or power_boost_armor == 0 and 0 or damage_output[1]
-		local preliminary_boost_damage
-
-		if type(power_boost_target_damages) == "table" then
-			local power_boost_damage_range = power_boost_target_damages.max - power_boost_target_damages.min
-			local power_boost_attack_power, _ = ActionUtils.get_power_level_for_target(optional_target_unit, original_power_level, damage_profile, target_index, is_critical_strike, attacker_unit, hit_zone_name, power_boost_armor, damage_source, breed, range_scalar_multiplier, difficulty_level, target_unit_armor, target_unit_primary_armor)
-			local power_boost_percentage = ActionUtils.get_power_level_percentage(power_boost_attack_power)
-
-			preliminary_boost_damage = power_boost_target_damages.min + power_boost_damage_range * power_boost_percentage
+			var_6_10 = var_6_9.min + var_6_11 * var_6_14
 		else
-			preliminary_boost_damage = power_boost_target_damages
+			var_6_10 = var_6_9
 		end
 
-		if is_finesse_hit then
-			head_shot_min_damage = preliminary_boost_damage * 0.5
+		if var_6_6 then
+			var_6_3 = var_6_10 * 0.5
 		end
 
-		if is_critical_strike then
-			head_shot_min_damage = preliminary_boost_damage * 0.5
+		if arg_6_9 then
+			var_6_3 = var_6_10 * 0.5
 		end
 
-		if has_power_boost or boost_damage_multiplier and boost_damage_multiplier > 0 then
-			power_boost_damage = preliminary_boost_damage
+		if arg_6_15 or arg_6_8 and arg_6_8 > 0 then
+			var_6_1 = var_6_10
 		end
 	end
 
-	local damage, target_damages
+	local var_6_15
+	local var_6_16
 
-	if type(damage_output) == "table" then
-		local armor_type = target_unit_primary_armor or target_unit_armor
+	if type(arg_6_3) == "table" then
+		local var_6_17 = arg_6_18 or arg_6_17
 
-		target_damages = damage_output[armor_type] or armor_type == 0 and 0 or damage_output[1]
+		var_6_16 = arg_6_3[var_6_17] or var_6_17 == 0 and 0 or arg_6_3[1]
 	else
-		target_damages = damage_output
+		var_6_16 = arg_6_3
 	end
 
-	if type(target_damages) == "table" then
-		local damage_range = target_damages.max - target_damages.min
-		local percentage = 0
+	if type(var_6_16) == "table" then
+		local var_6_18 = var_6_16.max - var_6_16.min
+		local var_6_19 = 0
 
-		if damage_profile then
-			local attack_power, _ = ActionUtils.get_power_level_for_target(optional_target_unit, original_power_level, damage_profile, target_index, is_critical_strike, attacker_unit, hit_zone_name, nil, damage_source, breed, range_scalar_multiplier, difficulty_level, target_unit_armor, target_unit_primary_armor)
+		if arg_6_5 then
+			local var_6_20, var_6_21 = ActionUtils.get_power_level_for_target(arg_6_22, arg_6_2, arg_6_5, arg_6_6, arg_6_9, arg_6_0, arg_6_4, nil, arg_6_1, arg_6_11, arg_6_12, arg_6_16, arg_6_17, arg_6_18)
 
-			percentage = ActionUtils.get_power_level_percentage(attack_power)
+			var_6_19 = ActionUtils.get_power_level_percentage(var_6_20)
 		end
 
-		damage = target_damages.min + damage_range * percentage
+		var_6_15 = var_6_16.min + var_6_18 * var_6_19
 	else
-		damage = target_damages
+		var_6_15 = var_6_16
 	end
 
-	local backstab_damage
+	local var_6_22
 
-	if backstab_multiplier then
-		backstab_damage = power_boost_damage and damage < power_boost_damage and power_boost_damage * (backstab_multiplier - 1) or damage * (backstab_multiplier - 1)
+	if arg_6_10 then
+		var_6_22 = var_6_1 and var_6_15 < var_6_1 and var_6_1 * (arg_6_10 - 1) or var_6_15 * (arg_6_10 - 1)
 	end
 
-	if not static_base_damage then
-		local target_settings = damage_profile and (damage_profile.targets and damage_profile.targets[target_index] or damage_profile.default_target)
-		local power_boost_amount = 0
-		local head_shot_boost_amount = get_head_shot_boost_amount(target_settings, damage_profile, is_finesse_hit, multiplier_type, damage > 0, target_unit_armor, target_unit_primary_armor)
+	if not arg_6_13 then
+		local var_6_23 = arg_6_5 and (arg_6_5.targets and arg_6_5.targets[arg_6_6] or arg_6_5.default_target)
+		local var_6_24 = 0
+		local var_6_25 = var_0_24(var_6_23, arg_6_5, var_6_6, var_6_5, var_6_15 > 0, arg_6_17, arg_6_18)
 
-		if has_power_boost then
-			if target_unit_armor == 1 then
-				power_boost_amount = power_boost_amount + 0.75
-			elseif target_unit_armor == 2 then
-				power_boost_amount = power_boost_amount + 0.6
-			elseif target_unit_armor == 3 then
-				power_boost_amount = power_boost_amount + 0.5
-			elseif target_unit_armor == 4 then
-				power_boost_amount = power_boost_amount + 0.5
-			elseif target_unit_armor == 5 then
-				power_boost_amount = power_boost_amount + 0.5
-			elseif target_unit_armor == 6 then
-				power_boost_amount = power_boost_amount + 0.3
+		if arg_6_15 then
+			if arg_6_17 == 1 then
+				var_6_24 = var_6_24 + 0.75
+			elseif arg_6_17 == 2 then
+				var_6_24 = var_6_24 + 0.6
+			elseif arg_6_17 == 3 then
+				var_6_24 = var_6_24 + 0.5
+			elseif arg_6_17 == 4 then
+				var_6_24 = var_6_24 + 0.5
+			elseif arg_6_17 == 5 then
+				var_6_24 = var_6_24 + 0.5
+			elseif arg_6_17 == 6 then
+				var_6_24 = var_6_24 + 0.3
 			else
-				power_boost_amount = power_boost_amount + 0.5
+				var_6_24 = var_6_24 + 0.5
 			end
 		end
 
-		if boost_damage_multiplier and boost_damage_multiplier > 0 then
-			if target_unit_armor == 1 then
-				power_boost_amount = power_boost_amount + 0.75
-			elseif target_unit_armor == 2 then
-				power_boost_amount = power_boost_amount + 0.3
-			elseif target_unit_armor == 3 then
-				power_boost_amount = power_boost_amount + 0.75
-			elseif target_unit_armor == 4 then
-				power_boost_amount = power_boost_amount + 0.5
-			elseif target_unit_armor == 5 then
-				power_boost_amount = power_boost_amount + 0.5
-			elseif target_unit_armor == 6 then
-				power_boost_amount = power_boost_amount + 0.2
+		if arg_6_8 and arg_6_8 > 0 then
+			if arg_6_17 == 1 then
+				var_6_24 = var_6_24 + 0.75
+			elseif arg_6_17 == 2 then
+				var_6_24 = var_6_24 + 0.3
+			elseif arg_6_17 == 3 then
+				var_6_24 = var_6_24 + 0.75
+			elseif arg_6_17 == 4 then
+				var_6_24 = var_6_24 + 0.5
+			elseif arg_6_17 == 5 then
+				var_6_24 = var_6_24 + 0.5
+			elseif arg_6_17 == 6 then
+				var_6_24 = var_6_24 + 0.2
 			else
-				power_boost_amount = power_boost_amount + 0.5
+				var_6_24 = var_6_24 + 0.5
 			end
 		end
 
-		if multiplier_type == "protected_spot" then
-			power_boost_amount = power_boost_amount - 0.5
+		if var_6_5 == "protected_spot" then
+			var_6_24 = var_6_24 - 0.5
 		end
 
-		if damage_profile and damage_profile.no_headshot_boost then
-			head_shot_boost_amount = 0
+		if arg_6_5 and arg_6_5.no_headshot_boost then
+			var_6_25 = 0
 		end
 
-		local attacker_buff_extension = attacker_unit and ScriptUnit.has_extension(attacker_unit, "buff_system")
-		local crit_boost = 0
+		local var_6_26 = arg_6_0 and ScriptUnit.has_extension(arg_6_0, "buff_system")
+		local var_6_27 = 0
 
-		if is_critical_strike then
-			crit_boost = damage_profile and damage_profile.crit_boost or 0.5
+		if arg_6_9 then
+			var_6_27 = arg_6_5 and arg_6_5.crit_boost or 0.5
 
-			if damage_profile and damage_profile.no_crit_boost then
-				crit_boost = 0
+			if arg_6_5 and arg_6_5.no_crit_boost then
+				var_6_27 = 0
 			end
 
-			if attacker_buff_extension and attacker_buff_extension:has_buff_perk("no_crit_damage") then
-				crit_boost = 0
+			if var_6_26 and var_6_26:has_buff_perk("no_crit_damage") then
+				var_6_27 = 0
 			end
 		end
 
-		if boost_curve and (power_boost_amount > 0 or head_shot_boost_amount > 0 or crit_boost > 0) then
-			local modified_boost_curve, modified_boost_curve_head_shot
-			local boost_coefficient = target_settings and target_settings.boost_curve_coefficient or DefaultBoostCurveCoefficient
-			local boost_coefficient_headshot = target_settings and target_settings.boost_curve_coefficient_headshot or DefaultBoostCurveCoefficient
+		if arg_6_7 and (var_6_24 > 0 or var_6_25 > 0 or var_6_27 > 0) then
+			local var_6_28
+			local var_6_29
+			local var_6_30 = var_6_23 and var_6_23.boost_curve_coefficient or DefaultBoostCurveCoefficient
+			local var_6_31 = var_6_23 and var_6_23.boost_curve_coefficient_headshot or DefaultBoostCurveCoefficient
 
-			if boost_damage_multiplier and boost_damage_multiplier > 0 then
-				if breed and breed.boost_curve_multiplier_override then
-					boost_damage_multiplier = math.clamp(boost_damage_multiplier, 0, breed.boost_curve_multiplier_override)
+			if arg_6_8 and arg_6_8 > 0 then
+				if arg_6_11 and arg_6_11.boost_curve_multiplier_override then
+					arg_6_8 = math.clamp(arg_6_8, 0, arg_6_11.boost_curve_multiplier_override)
 				end
 
-				boost_coefficient = boost_coefficient * boost_damage_multiplier
-				boost_coefficient_headshot = boost_coefficient_headshot * boost_damage_multiplier
+				var_6_30 = var_6_30 * arg_6_8
+				var_6_31 = var_6_31 * arg_6_8
 			end
 
-			if power_boost_amount > 0 then
-				modified_boost_curve = DamageUtils.get_modified_boost_curve(boost_curve, boost_coefficient)
-				power_boost_amount = math.clamp(power_boost_amount, 0, 1)
+			if var_6_24 > 0 then
+				local var_6_32 = DamageUtils.get_modified_boost_curve(arg_6_7, var_6_30)
+				local var_6_33 = math.clamp(var_6_24, 0, 1)
+				local var_6_34 = DamageUtils.get_boost_curve_multiplier(var_6_32 or arg_6_7, var_6_33)
 
-				local boost_multiplier = DamageUtils.get_boost_curve_multiplier(modified_boost_curve or boost_curve, power_boost_amount)
-
-				power_boost_damage = math.max(math.max(power_boost_damage, damage), power_boost_min_damage) * boost_multiplier
+				var_6_1 = math.max(math.max(var_6_1, var_6_15), var_6_4) * var_6_34
 			end
 
-			if head_shot_boost_amount > 0 or crit_boost > 0 then
-				modified_boost_curve_head_shot = DamageUtils.get_modified_boost_curve(boost_curve, boost_coefficient_headshot)
-				head_shot_boost_amount = math.clamp(head_shot_boost_amount + crit_boost, 0, 1)
+			if var_6_25 > 0 or var_6_27 > 0 then
+				local var_6_35 = DamageUtils.get_modified_boost_curve(arg_6_7, var_6_31)
+				local var_6_36 = math.clamp(var_6_25 + var_6_27, 0, 1)
+				local var_6_37 = DamageUtils.get_boost_curve_multiplier(var_6_35 or arg_6_7, var_6_36)
 
-				local head_shot_boost_multiplier = DamageUtils.get_boost_curve_multiplier(modified_boost_curve_head_shot or boost_curve, head_shot_boost_amount)
+				var_6_2 = math.max(math.max(var_6_1, var_6_15), var_6_3) * var_6_37
 
-				head_shot_boost_damage = math.max(math.max(power_boost_damage, damage), head_shot_min_damage) * head_shot_boost_multiplier
-
-				if attacker_buff_extension and is_critical_strike then
-					head_shot_boost_damage = head_shot_boost_damage * attacker_buff_extension:apply_buffs_to_value(1, "critical_strike_effectiveness")
+				if var_6_26 and arg_6_9 then
+					var_6_2 = var_6_2 * var_6_26:apply_buffs_to_value(1, "critical_strike_effectiveness")
 				end
 
-				if attacker_buff_extension and is_finesse_hit then
-					head_shot_boost_damage = head_shot_boost_damage * attacker_buff_extension:apply_buffs_to_value(1, "headshot_multiplier")
+				if var_6_26 and var_6_6 then
+					var_6_2 = var_6_2 * var_6_26:apply_buffs_to_value(1, "headshot_multiplier")
 				end
 
-				local target_unit_buff_extension = ScriptUnit.has_extension(optional_target_unit, "buff_system")
+				local var_6_38 = ScriptUnit.has_extension(arg_6_22, "buff_system")
 
-				if target_unit_buff_extension and is_finesse_hit then
-					head_shot_boost_damage = head_shot_boost_damage * target_unit_buff_extension:apply_buffs_to_value(1, "headshot_vulnerability")
+				if var_6_38 and var_6_6 then
+					var_6_2 = var_6_2 * var_6_38:apply_buffs_to_value(1, "headshot_vulnerability")
 				end
 			end
 		end
 
-		if breed and breed.armored_boss_damage_reduction then
-			damage = damage * 0.8
-			power_boost_damage = power_boost_damage * 0.5
-			backstab_damage = backstab_damage and backstab_damage * 0.75
+		if arg_6_11 and arg_6_11.armored_boss_damage_reduction then
+			var_6_15 = var_6_15 * 0.8
+			var_6_1 = var_6_1 * 0.5
+			var_6_22 = var_6_22 and var_6_22 * 0.75
 		end
 
-		if breed and breed.boss_damage_reduction then
-			damage = damage * 0.45
-			power_boost_damage = power_boost_damage * 0.5
-			head_shot_boost_damage = head_shot_boost_damage * 0.5
-			backstab_damage = backstab_damage and backstab_damage * 0.75
+		if arg_6_11 and arg_6_11.boss_damage_reduction then
+			var_6_15 = var_6_15 * 0.45
+			var_6_1 = var_6_1 * 0.5
+			var_6_2 = var_6_2 * 0.5
+			var_6_22 = var_6_22 and var_6_22 * 0.75
 		end
 
-		if breed and breed.lord_damage_reduction then
-			damage = damage * 0.2
-			power_boost_damage = power_boost_damage * 0.25
-			head_shot_boost_damage = head_shot_boost_damage * 0.25
-			backstab_damage = backstab_damage and backstab_damage * 0.5
+		if arg_6_11 and arg_6_11.lord_damage_reduction then
+			var_6_15 = var_6_15 * 0.2
+			var_6_1 = var_6_1 * 0.25
+			var_6_2 = var_6_2 * 0.25
+			var_6_22 = var_6_22 and var_6_22 * 0.5
 		end
 
-		damage = damage + power_boost_damage + head_shot_boost_damage
+		var_6_15 = var_6_15 + var_6_1 + var_6_2
 
-		if backstab_damage then
-			damage = damage + backstab_damage
+		if var_6_22 then
+			var_6_15 = var_6_15 + var_6_22
 		end
 
-		if attacker_buff_extension then
-			if multiplier_type == "headshot" then
-				damage = attacker_buff_extension:apply_buffs_to_value(damage, "headshot_damage")
+		if var_6_26 then
+			if var_6_5 == "headshot" then
+				var_6_15 = var_6_26:apply_buffs_to_value(var_6_15, "headshot_damage")
 			else
-				damage = attacker_buff_extension:apply_buffs_to_value(damage, "non_headshot_damage")
+				var_6_15 = var_6_26:apply_buffs_to_value(var_6_15, "non_headshot_damage")
 			end
 		end
 
-		local killing_blow_triggered
+		local var_6_39
 
-		if is_critical_strike then
-			if hit_zone_name == "head" and has_crit_head_shot_killing_blow_perk then
-				killing_blow_triggered = true
-			elseif backstab_multiplier and backstab_multiplier > 1 and has_crit_backstab_killing_blow_perk and damage_profile.charge_value == "heavy_attack" then
-				killing_blow_triggered = true
+		if arg_6_9 then
+			if arg_6_4 == "head" and arg_6_19 then
+				var_6_39 = true
+			elseif arg_6_10 and arg_6_10 > 1 and arg_6_20 and arg_6_5.charge_value == "heavy_attack" then
+				var_6_39 = true
 			end
 		end
 
-		if killing_blow_triggered and breed then
-			local boss = breed.boss
-			local primary_armor = breed.primary_armor_category
+		if var_6_39 and arg_6_11 then
+			local var_6_40 = arg_6_11.boss
+			local var_6_41 = arg_6_11.primary_armor_category
 
-			if not boss and not primary_armor then
-				if target_max_health then
-					damage = target_max_health
+			if not var_6_40 and not var_6_41 then
+				if arg_6_21 then
+					var_6_15 = arg_6_21
 				else
-					local breed_health_table = breed.max_health
-					local difficulty_rank = difficulty_settings.rank
-					local breed_health = breed_health_table[difficulty_rank] or breed_health_table[2]
+					local var_6_42 = arg_6_11.max_health
 
-					damage = breed_health
+					var_6_15 = var_6_42[var_6_0.rank] or var_6_42[2]
 				end
 			end
 		end
 	end
 
-	if is_friendly_fire then
-		local friendly_fire_multiplier = difficulty_settings.friendly_fire_multiplier or 0
-		local mechanism_ok, custom_setting_difficulty_override, custom_settings_enabled = Managers.mechanism:mechanism_try_call("get_custom_game_setting", "friendly_fire")
+	if arg_6_14 then
+		local var_6_43 = var_6_0.friendly_fire_multiplier or 0
+		local var_6_44, var_6_45, var_6_46 = Managers.mechanism:mechanism_try_call("get_custom_game_setting", "friendly_fire")
 
-		if mechanism_ok and custom_settings_enabled and custom_setting_difficulty_override then
-			local is_dark_pact_attacker = Managers.state.side:versus_is_dark_pact(attacker_unit) or Managers.state.side:versus_is_dark_pact(damage_source)
+		if var_6_44 and var_6_46 and var_6_45 and not (Managers.state.side:versus_is_dark_pact(arg_6_0) or Managers.state.side:versus_is_dark_pact(arg_6_1)) then
+			local var_6_47 = DifficultySettings[var_6_45]
 
-			if not is_dark_pact_attacker then
-				difficulty_settings = DifficultySettings[custom_setting_difficulty_override]
-				friendly_fire_multiplier = difficulty_settings and difficulty_settings.friendly_fire_multiplier or 0
-			end
+			var_6_43 = var_6_47 and var_6_47.friendly_fire_multiplier or 0
 		end
 
-		if damage_profile and damage_profile.friendly_fire_multiplier then
-			friendly_fire_multiplier = friendly_fire_multiplier * damage_profile.friendly_fire_multiplier
+		if arg_6_5 and arg_6_5.friendly_fire_multiplier then
+			var_6_43 = var_6_43 * arg_6_5.friendly_fire_multiplier
 		end
 
-		damage = damage * friendly_fire_multiplier
+		var_6_15 = var_6_15 * var_6_43
 	end
 
-	local heavy_armor_damage = false
+	local var_6_48 = false
 
-	return damage, heavy_armor_damage
+	return var_6_15, var_6_48
 end
 
-local function apply_buffs_to_stagger_damage(attacker_unit, target_index, hit_zone, is_critical_strike, stagger_number)
-	local attacker_buff_extension = ScriptUnit.has_extension(attacker_unit, "buff_system")
-	local new_stagger_number = stagger_number
+local function var_0_26(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	local var_7_0 = ScriptUnit.has_extension(arg_7_0, "buff_system")
+	local var_7_1 = arg_7_4
 
-	if attacker_buff_extension then
-		local finesse_perk = attacker_buff_extension:has_buff_perk("finesse_stagger_damage")
-		local smiter_perk = attacker_buff_extension:has_buff_perk("smiter_stagger_damage")
-		local mainstay_perk = attacker_buff_extension:has_buff_perk("linesman_stagger_damage")
+	if var_7_0 then
+		local var_7_2 = var_7_0:has_buff_perk("finesse_stagger_damage")
+		local var_7_3 = var_7_0:has_buff_perk("smiter_stagger_damage")
 
-		if mainstay_perk and new_stagger_number > 0 then
-			new_stagger_number = new_stagger_number + 1
-		elseif (is_critical_strike or hit_zone == "head" or hit_zone == "neck") and finesse_perk then
-			new_stagger_number = 2
-		elseif smiter_perk then
-			if target_index and target_index <= 1 then
-				new_stagger_number = math.max(1, new_stagger_number)
+		if var_7_0:has_buff_perk("linesman_stagger_damage") and var_7_1 > 0 then
+			var_7_1 = var_7_1 + 1
+		elseif (arg_7_3 or arg_7_2 == "head" or arg_7_2 == "neck") and var_7_2 then
+			var_7_1 = 2
+		elseif var_7_3 then
+			if arg_7_1 and arg_7_1 <= 1 then
+				var_7_1 = math.max(1, var_7_1)
 			else
-				new_stagger_number = stagger_number
+				var_7_1 = arg_7_4
 			end
 		end
 	end
 
-	return new_stagger_number
+	return var_7_1
 end
 
-DamageUtils.calculate_damage_tooltip = function (attacker_unit, damage_source, original_power_level, hit_zone_name, damage_profile, target_index, boost_curve, boost_damage_multiplier, is_critical_strike, backstab_multiplier, breed, range_scalar_multiplier, has_power_boost, difficulty_level, target_unit_armor, target_unit_primary_armor)
-	local damage_output = DamageOutput
-	local static_base_damage = false
-	local is_friendly_fire = false
-	local has_crit_head_shot_killing_blow_perk = false
-	local has_crit_backstab_killing_blow_perk = false
-	local calculated_damage = do_damage_calculation(attacker_unit, damage_source, original_power_level, damage_output, hit_zone_name, damage_profile, target_index, boost_curve, boost_damage_multiplier, is_critical_strike, backstab_multiplier, breed, range_scalar_multiplier, static_base_damage, is_friendly_fire, has_power_boost, difficulty_level, target_unit_armor, target_unit_primary_armor, has_crit_head_shot_killing_blow_perk, has_crit_backstab_killing_blow_perk)
+function DamageUtils.calculate_damage_tooltip(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8, arg_8_9, arg_8_10, arg_8_11, arg_8_12, arg_8_13, arg_8_14, arg_8_15)
+	local var_8_0 = DamageOutput
+	local var_8_1 = false
+	local var_8_2 = false
+	local var_8_3 = false
+	local var_8_4 = false
+	local var_8_5 = var_0_25(arg_8_0, arg_8_1, arg_8_2, var_8_0, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8, arg_8_9, arg_8_10, arg_8_11, var_8_1, var_8_2, arg_8_12, arg_8_13, arg_8_14, arg_8_15, var_8_3, var_8_4)
 
-	calculated_damage = DamageUtils.networkify_damage(calculated_damage)
-
-	return calculated_damage
+	return (DamageUtils.networkify_damage(var_8_5))
 end
 
-DamageUtils.calculate_dot_buff_damage = function (target_unit, attacker_unit, hit_zone, damage_source, power_level, damage_profile_name, template)
-	hit_zone = hit_zone or "full"
+function DamageUtils.calculate_dot_buff_damage(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
+	arg_9_2 = arg_9_2 or "full"
 
-	local power_level = power_level or DefaultPowerLevel
-	local is_critical_strike = false
+	local var_9_0 = arg_9_4 or DefaultPowerLevel
+	local var_9_1 = false
 
-	damage_profile_name = damage_profile_name or "default"
+	arg_9_5 = arg_9_5 or "default"
 
-	local damage_profile = DamageProfileTemplates[damage_profile_name]
-	local boost_curve_type = damage_profile.default_target.boost_curve_type
-	local boost_curve = BoostCurves[boost_curve_type]
-	local boost_curve_multiplier = 0
-	local target_index, backstab_multiplier
+	local var_9_2 = DamageProfileTemplates[arg_9_5]
+	local var_9_3 = var_9_2.default_target.boost_curve_type
+	local var_9_4 = BoostCurves[var_9_3]
+	local var_9_5 = 0
+	local var_9_6
+	local var_9_7
 
-	damage_source = damage_source or "dot_debuff"
+	arg_9_3 = arg_9_3 or "dot_debuff"
 
-	return DamageUtils.calculate_damage(DamageOutput, target_unit, attacker_unit, hit_zone, power_level, boost_curve, boost_curve_multiplier, is_critical_strike, damage_profile, target_index, backstab_multiplier, damage_source)
+	return DamageUtils.calculate_damage(DamageOutput, arg_9_0, arg_9_1, arg_9_2, var_9_0, var_9_4, var_9_5, var_9_1, var_9_2, var_9_6, var_9_7, arg_9_3)
 end
 
-DamageUtils.calculate_damage = function (damage_output, target_unit, attacker_unit, hit_zone_name, original_power_level, boost_curve, boost_damage_multiplier, is_critical_strike, damage_profile, target_index, backstab_multiplier, damage_source)
-	local difficulty_settings = Managers.state.difficulty:get_difficulty_settings()
-	local breed, armor_override, unit_max_health
+function DamageUtils.calculate_damage(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7, arg_10_8, arg_10_9, arg_10_10, arg_10_11)
+	local var_10_0 = Managers.state.difficulty:get_difficulty_settings()
+	local var_10_1
+	local var_10_2
+	local var_10_3
 
-	if target_unit then
-		breed = AiUtils.unit_breed(target_unit)
-		armor_override = unit_get_data(target_unit, "armor")
+	if arg_10_1 then
+		var_10_1 = AiUtils.unit_breed(arg_10_1)
+		var_10_2 = var_0_5(arg_10_1, "armor")
 
-		local target_unit_health_extension = ScriptUnit.has_extension(target_unit, "health_system")
-		local target_buff_extension = ScriptUnit.has_extension(target_unit, "buff_system")
-		local is_invincible = target_unit_health_extension and target_unit_health_extension:get_is_invincible()
+		local var_10_4 = ScriptUnit.has_extension(arg_10_1, "health_system")
+		local var_10_5 = ScriptUnit.has_extension(arg_10_1, "buff_system")
+		local var_10_6 = var_10_4 and var_10_4:get_is_invincible()
 
-		if not is_invincible and target_buff_extension then
-			if target_buff_extension:has_buff_perk("invulnerable") then
-				is_invincible = true
-			elseif target_buff_extension:has_buff_perk("invulnerable_ranged") then
-				local charge_value = damage_profile and damage_profile.charge_value
+		if not var_10_6 and var_10_5 then
+			if var_10_5:has_buff_perk("invulnerable") then
+				var_10_6 = true
+			elseif var_10_5:has_buff_perk("invulnerable_ranged") then
+				local var_10_7 = arg_10_8 and arg_10_8.charge_value
 
-				is_invincible = RangedAttackTypes[charge_value]
+				var_10_6 = RangedAttackTypes[var_10_7]
 			end
 		end
 
-		if is_invincible then
-			return 0, is_invincible
+		if var_10_6 then
+			return 0, var_10_6
 		end
 
-		if target_unit_health_extension then
-			unit_max_health = target_unit_health_extension:get_max_health()
-		elseif breed then
-			local breed_health_table = breed.max_health
-			local difficulty_rank = difficulty_settings.rank
-			local breed_health = breed_health_table[difficulty_rank] or breed_health_table[2]
+		if var_10_4 then
+			var_10_3 = var_10_4:get_max_health()
+		elseif var_10_1 then
+			local var_10_8 = var_10_1.max_health
 
-			unit_max_health = breed_health
+			var_10_3 = var_10_8[var_10_0.rank] or var_10_8[2]
 		end
 	end
 
-	local attacker_breed
+	local var_10_9
 
-	if attacker_unit then
-		attacker_breed = Unit.get_data(attacker_unit, "breed")
+	if arg_10_2 then
+		var_10_9 = Unit.get_data(arg_10_2, "breed")
 	end
 
-	local static_base_damage = not attacker_breed or not attacker_breed.is_player
-	local is_friendly_fire = not static_base_damage and Managers.state.side:is_ally(attacker_unit, target_unit)
-	local target_is_hero = breed and breed.is_hero
-	local range_scalar_multiplier = 0
+	local var_10_10 = not var_10_9 or not var_10_9.is_player
+	local var_10_11 = not var_10_10 and Managers.state.side:is_ally(arg_10_2, arg_10_1)
+	local var_10_12 = var_10_1 and var_10_1.is_hero
+	local var_10_13 = 0
 
-	if damage_profile and not static_base_damage then
-		local target_settings = damage_profile.targets and damage_profile.targets[target_index] or damage_profile.default_target
+	if arg_10_8 and not var_10_10 then
+		local var_10_14 = arg_10_8.targets and arg_10_8.targets[arg_10_9] or arg_10_8.default_target
 
-		range_scalar_multiplier = ActionUtils.get_range_scalar_multiplier(damage_profile, target_settings, attacker_unit, target_unit)
+		var_10_13 = ActionUtils.get_range_scalar_multiplier(arg_10_8, var_10_14, arg_10_2, arg_10_1)
 	end
 
-	local buff_extension = attacker_unit and ScriptUnit.has_extension(attacker_unit, "buff_system")
-	local has_power_boost = false
-	local has_crit_head_shot_killing_blow_perk = false
-	local has_crit_backstab_killing_blow_perk = false
+	local var_10_15 = arg_10_2 and ScriptUnit.has_extension(arg_10_2, "buff_system")
+	local var_10_16 = false
+	local var_10_17 = false
+	local var_10_18 = false
 
-	if buff_extension then
-		has_power_boost = buff_extension:has_buff_perk("potion_armor_penetration")
-		has_crit_head_shot_killing_blow_perk = buff_extension:has_buff_perk("crit_headshot_killing_blow")
-		has_crit_backstab_killing_blow_perk = buff_extension:has_buff_perk("crit_backstab_killing_blow")
+	if var_10_15 then
+		var_10_16 = var_10_15:has_buff_perk("potion_armor_penetration")
+		var_10_17 = var_10_15:has_buff_perk("crit_headshot_killing_blow")
+		var_10_18 = var_10_15:has_buff_perk("crit_backstab_killing_blow")
 	end
 
-	local difficulty_level = Managers.state.difficulty:get_difficulty()
-	local target_unit_armor, target_unit_primary_armor, _
+	local var_10_19 = Managers.state.difficulty:get_difficulty()
+	local var_10_20
+	local var_10_21
+	local var_10_22
 
-	if target_is_hero then
-		target_unit_armor = PLAYER_TARGET_ARMOR
+	if var_10_12 then
+		var_10_20 = var_0_3
 	else
-		target_unit_armor, _, target_unit_primary_armor, _ = ActionUtils.get_target_armor(hit_zone_name, breed, armor_override)
+		local var_10_23, var_10_24
+
+		var_10_20, var_10_23, var_10_21, var_10_24 = ActionUtils.get_target_armor(arg_10_3, var_10_1, var_10_2)
 	end
 
-	local calculated_damage = do_damage_calculation(attacker_unit, damage_source, original_power_level, damage_output, hit_zone_name, damage_profile, target_index, boost_curve, boost_damage_multiplier, is_critical_strike, backstab_multiplier, breed, range_scalar_multiplier, static_base_damage, is_friendly_fire, has_power_boost, difficulty_level, target_unit_armor, target_unit_primary_armor, has_crit_head_shot_killing_blow_perk, has_crit_backstab_killing_blow_perk, unit_max_health, target_unit)
+	local var_10_25 = var_0_25(arg_10_2, arg_10_11, arg_10_4, arg_10_0, arg_10_3, arg_10_8, arg_10_9, arg_10_5, arg_10_6, arg_10_7, arg_10_10, var_10_1, var_10_13, var_10_10, var_10_11, var_10_16, var_10_19, var_10_20, var_10_21, var_10_17, var_10_18, var_10_3, arg_10_1)
 
-	if damage_profile and not damage_profile.is_dot then
-		local blackboard = BLACKBOARDS[target_unit]
-		local stagger_number = 0
+	if arg_10_8 and not arg_10_8.is_dot then
+		local var_10_26 = var_0_2[arg_10_1]
+		local var_10_27 = 0
 
-		if blackboard then
-			local ignore_stagger_damage_reduction = damage_profile.no_stagger_damage_reduction or breed.no_stagger_damage_reduction
-			local min_stagger_number = 0
-			local max_stagger_number = 2
-
-			stagger_number = blackboard.is_climbing and 2 or math.min(blackboard.stagger or min_stagger_number, max_stagger_number)
-
-			if damage_profile.no_stagger_damage_reduction_ranged then
-				local stagger_number_override = 1
-
-				stagger_number = math.max(stagger_number_override, stagger_number)
+		if var_10_26 then
+			if not arg_10_8.no_stagger_damage_reduction then
+				local var_10_28 = var_10_1.no_stagger_damage_reduction
 			end
 
-			if not damage_profile.no_stagger_damage_reduction_ranged then
-				stagger_number = apply_buffs_to_stagger_damage(attacker_unit, target_index, hit_zone_name, is_critical_strike, stagger_number)
+			local var_10_29 = 0
+			local var_10_30 = 2
+
+			var_10_27 = var_10_26.is_climbing and 2 or math.min(var_10_26.stagger or var_10_29, var_10_30)
+
+			if arg_10_8.no_stagger_damage_reduction_ranged then
+				local var_10_31 = 1
+
+				var_10_27 = math.max(var_10_31, var_10_27)
+			end
+
+			if not arg_10_8.no_stagger_damage_reduction_ranged then
+				var_10_27 = var_0_26(arg_10_2, arg_10_9, arg_10_3, arg_10_7, var_10_27)
 			end
 		end
 
-		local min_stagger_damage_coefficient = difficulty_settings.min_stagger_damage_coefficient
-		local stagger_damage_multiplier = difficulty_settings.stagger_damage_multiplier
+		local var_10_32 = var_10_0.min_stagger_damage_coefficient
+		local var_10_33 = var_10_0.stagger_damage_multiplier
 
-		if stagger_damage_multiplier then
-			local bonus_damage_percentage = stagger_number * stagger_damage_multiplier
-			local target_buff_extension = ScriptUnit.has_extension(target_unit, "buff_system")
+		if var_10_33 then
+			local var_10_34 = var_10_27 * var_10_33
+			local var_10_35 = ScriptUnit.has_extension(arg_10_1, "buff_system")
 
-			if target_buff_extension and not damage_profile.no_stagger_damage_reduction_ranged then
-				bonus_damage_percentage = target_buff_extension:apply_buffs_to_value(bonus_damage_percentage, "unbalanced_damage_taken")
+			if var_10_35 and not arg_10_8.no_stagger_damage_reduction_ranged then
+				var_10_34 = var_10_35:apply_buffs_to_value(var_10_34, "unbalanced_damage_taken")
 			end
 
-			local stagger_damage = calculated_damage * (min_stagger_damage_coefficient + bonus_damage_percentage)
-
-			calculated_damage = stagger_damage
+			var_10_25 = var_10_25 * (var_10_32 + var_10_34)
 		end
 	end
 
-	local weave_manager = Managers.weave
+	local var_10_36 = Managers.weave
 
-	if target_is_hero and static_base_damage and weave_manager:get_active_weave() then
-		local scaling_value = weave_manager:get_scaling_value("enemy_damage")
-
-		calculated_damage = calculated_damage * (1 + scaling_value)
+	if var_10_12 and var_10_10 and var_10_36:get_active_weave() then
+		var_10_25 = var_10_25 * (1 + var_10_36:get_scaling_value("enemy_damage"))
 	end
 
-	return calculated_damage
+	return var_10_25
 end
 
-local function do_stagger_calculation(stagger_table, breed, blackboard, attacker_unit, target_unit, hit_zone_name, original_power_level, boost_curve_multiplier, is_critical_strike, damage_profile, target_index, blocked, damage_source, range_scalar_multiplier, ai_shield_extension, difficulty_level, shield_user, has_power_boost, override_target_armor)
-	local target_unit_armor = override_target_armor or breed.stagger_armor_category or breed.armor_category or 1
-	local stagger_type = stagger_types.none
-	local stagger_strength = 0
-	local duration = 1
-	local distance = 1
-	local attacker_buff_extension = attacker_unit and ScriptUnit.has_extension(attacker_unit, "buff_system")
+local function var_0_27(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8, arg_11_9, arg_11_10, arg_11_11, arg_11_12, arg_11_13, arg_11_14, arg_11_15, arg_11_16, arg_11_17, arg_11_18)
+	local var_11_0 = arg_11_18 or arg_11_1.stagger_armor_category or arg_11_1.armor_category or 1
+	local var_11_1 = var_0_0.none
+	local var_11_2 = 0
+	local var_11_3 = 1
+	local var_11_4 = 1
+	local var_11_5 = arg_11_3 and ScriptUnit.has_extension(arg_11_3, "buff_system")
 
-	if attacker_buff_extension then
-		attacker_buff_extension:trigger_procs("stagger_calculation_started", target_unit)
+	if var_11_5 then
+		var_11_5:trigger_procs("stagger_calculation_started", arg_11_4)
 	end
 
-	local target_buff_extension = target_unit and ScriptUnit.has_extension(target_unit, "buff_system")
-	local target_settings = damage_profile.targets and damage_profile.targets[target_index] or damage_profile.default_target
-	local attack_template_name = target_settings.attack_template
-	local attack_template = DamageUtils.get_attack_template(attack_template_name)
-	local ai_extension = ScriptUnit.has_extension(target_unit, "ai_system")
-	local status_extension = ScriptUnit.has_extension(target_unit, "status_system")
-	local is_player = blackboard.is_player and not ai_extension
-	local is_ranged
-	local optional_modifier_data = FrameTable.alloc_table()
+	local var_11_6 = arg_11_4 and ScriptUnit.has_extension(arg_11_4, "buff_system")
+	local var_11_7 = arg_11_9.targets and arg_11_9.targets[arg_11_10] or arg_11_9.default_target
+	local var_11_8 = var_11_7.attack_template
+	local var_11_9 = DamageUtils.get_attack_template(var_11_8)
+	local var_11_10 = ScriptUnit.has_extension(arg_11_4, "ai_system")
+	local var_11_11 = ScriptUnit.has_extension(arg_11_4, "status_system")
+	local var_11_12 = arg_11_2.is_player and not var_11_10
+	local var_11_13
+	local var_11_14 = FrameTable.alloc_table()
 
-	optional_modifier_data.damage_profile = damage_profile
+	var_11_14.damage_profile = arg_11_9
 
-	if breed then
-		local item_data = rawget(ItemMasterList, damage_source)
-		local weapon_template_name = item_data and item_data.template
+	if arg_11_1 then
+		local var_11_15 = rawget(ItemMasterList, arg_11_12)
+		local var_11_16 = var_11_15 and var_11_15.template
 
-		if weapon_template_name then
-			local weapon_template = WeaponUtils.get_weapon_template(weapon_template_name)
-			local buff_type = weapon_template and weapon_template.buff_type
+		if var_11_16 then
+			local var_11_17 = WeaponUtils.get_weapon_template(var_11_16)
+			local var_11_18 = var_11_17 and var_11_17.buff_type
 
-			is_ranged = buff_type and RangedBuffTypes[buff_type]
-			optional_modifier_data.is_ranged = is_ranged
-		end
-	end
-
-	optional_modifier_data.is_ranged = is_ranged
-
-	local custom_setting_dark_pact_stagger_immunity = false
-	local mechanism_ok, custom_setting_pactsworn_stagger_immunity, custom_settings_enabled = Managers.mechanism:mechanism_try_call("get_custom_game_setting", "pactsworn_stagger_immunity")
-
-	if mechanism_ok and custom_settings_enabled and custom_setting_pactsworn_stagger_immunity then
-		local career_extension = ScriptUnit.has_extension(target_unit, "career_system")
-
-		if career_extension then
-			local profile_index = career_extension:profile_index()
-			local profile = SPProfiles[profile_index]
-
-			if profile.affiliation == "dark_pact" then
-				custom_setting_dark_pact_stagger_immunity = true
-			end
+			var_11_13 = var_11_18 and RangedBuffTypes[var_11_18]
+			var_11_14.is_ranged = var_11_13
 		end
 	end
 
-	local stagger_count = is_player and status_extension and status_extension:stagger_count() or blackboard.stagger_count or 0
+	var_11_14.is_ranged = var_11_13
 
-	if hit_zone_name == "weakspot" and stagger_count == 0 and (not blackboard.stagger or blackboard.stagger_anim_done or is_player and not status_extension:accumulated_stagger()) then
-		stagger_type = stagger_types.weakspot
-	elseif stagger_table and not breed.stagger_immune and not custom_setting_dark_pact_stagger_immunity then
-		local stagger_settings = stagger_table[target_unit_armor]
-		local stagger_range = stagger_settings.max - stagger_settings.min
-		local _, impact_power = ActionUtils.get_power_level_for_target(target_unit, original_power_level, damage_profile, target_index, is_critical_strike, attacker_unit, hit_zone_name, nil, damage_source, breed, range_scalar_multiplier, difficulty_level, target_unit_armor, nil)
+	local var_11_19 = false
+	local var_11_20, var_11_21, var_11_22 = Managers.mechanism:mechanism_try_call("get_custom_game_setting", "pactsworn_stagger_immunity")
 
-		if attacker_unit and unit_alive(attacker_unit) and attacker_buff_extension then
-			impact_power = attacker_buff_extension:apply_buffs_to_value(impact_power, "push_power")
+	if var_11_20 and var_11_22 and var_11_21 then
+		local var_11_23 = ScriptUnit.has_extension(arg_11_4, "career_system")
 
-			local blackboard_action = is_player and status_extension:breed_action() or blackboard.action
+		if var_11_23 then
+			local var_11_24 = var_11_23:profile_index()
 
-			if blackboard_action and blackboard_action.damage then
-				impact_power = attacker_buff_extension:apply_buffs_to_value(impact_power, "counter_push_power")
+			if SPProfiles[var_11_24].affiliation == "dark_pact" then
+				var_11_19 = true
+			end
+		end
+	end
+
+	local var_11_25 = var_11_12 and var_11_11 and var_11_11:stagger_count() or arg_11_2.stagger_count or 0
+
+	if arg_11_5 == "weakspot" and var_11_25 == 0 and (not arg_11_2.stagger or arg_11_2.stagger_anim_done or var_11_12 and not var_11_11:accumulated_stagger()) then
+		var_11_1 = var_0_0.weakspot
+	elseif arg_11_0 and not arg_11_1.stagger_immune and not var_11_19 then
+		local var_11_26 = arg_11_0[var_11_0]
+		local var_11_27 = var_11_26.max - var_11_26.min
+		local var_11_28, var_11_29 = ActionUtils.get_power_level_for_target(arg_11_4, arg_11_6, arg_11_9, arg_11_10, arg_11_8, arg_11_3, arg_11_5, nil, arg_11_12, arg_11_1, arg_11_13, arg_11_15, var_11_0, nil)
+
+		if arg_11_3 and var_0_6(arg_11_3) and var_11_5 then
+			var_11_29 = var_11_5:apply_buffs_to_value(var_11_29, "push_power")
+
+			local var_11_30 = var_11_12 and var_11_11:breed_action() or arg_11_2.action
+
+			if var_11_30 and var_11_30.damage then
+				var_11_29 = var_11_5:apply_buffs_to_value(var_11_29, "counter_push_power")
 			end
 		end
 
-		if attacker_buff_extension then
-			impact_power = attacker_buff_extension:apply_buffs_to_value(impact_power, "power_level_impact")
+		if var_11_5 then
+			var_11_29 = var_11_5:apply_buffs_to_value(var_11_29, "power_level_impact")
 		end
 
-		if target_buff_extension then
-			impact_power = target_buff_extension:apply_buffs_to_value(impact_power, "impact_vulnerability")
+		if var_11_6 then
+			var_11_29 = var_11_6:apply_buffs_to_value(var_11_29, "impact_vulnerability")
 		end
 
-		local percentage = ActionUtils.get_power_level_percentage(impact_power)
+		var_11_2 = var_11_27 * ActionUtils.get_power_level_percentage(var_11_29)
 
-		stagger_strength = stagger_range * percentage
+		local var_11_31 = arg_11_8 or arg_11_5 == "head" or arg_11_5 == "neck"
 
-		local finesse_hit = is_critical_strike or hit_zone_name == "head" or hit_zone_name == "neck"
+		var_11_2 = var_11_26.min + var_11_2
 
-		stagger_strength = stagger_settings.min + stagger_strength
-
-		if has_power_boost then
-			stagger_strength = stagger_strength * 2
+		if arg_11_17 then
+			var_11_2 = var_11_2 * 2
 		end
 
-		if breed then
-			local difficulty_rank = DifficultySettings[difficulty_level].rank
-			local stagger_resistance = breed.diff_stagger_resist and (breed.diff_stagger_resist[difficulty_rank] or breed.diff_stagger_resist[2]) or is_ranged and breed.stagger_resistance_ranged or breed.stagger_resistance or 2
+		if arg_11_1 then
+			local var_11_32 = DifficultySettings[arg_11_15].rank
+			local var_11_33 = arg_11_1.diff_stagger_resist and (arg_11_1.diff_stagger_resist[var_11_32] or arg_11_1.diff_stagger_resist[2]) or var_11_13 and arg_11_1.stagger_resistance_ranged or arg_11_1.stagger_resistance or 2
 
-			if target_buff_extension then
-				stagger_resistance = target_buff_extension:apply_buffs_to_value(stagger_resistance, "stagger_resistance")
+			if var_11_6 then
+				var_11_33 = var_11_6:apply_buffs_to_value(var_11_33, "stagger_resistance")
 			end
 
-			local enemy_current_action = is_player and status_extension:breed_action() or blackboard.action
-			local action_stagger_reduction = enemy_current_action and enemy_current_action.stagger_reduction
-			local stagger_reduction = not finesse_hit and not damage_profile.ignore_stagger_reduction and (action_stagger_reduction or breed.stagger_reduction)
+			local var_11_34 = var_11_12 and var_11_11:breed_action() or arg_11_2.action
+			local var_11_35 = var_11_34 and var_11_34.stagger_reduction
+			local var_11_36 = not var_11_31 and not arg_11_9.ignore_stagger_reduction and (var_11_35 or arg_11_1.stagger_reduction)
 
-			if stagger_reduction and type(stagger_reduction) == "table" then
-				stagger_reduction = stagger_reduction[difficulty_rank] or stagger_reduction[2]
+			if var_11_36 and type(var_11_36) == "table" then
+				var_11_36 = var_11_36[var_11_32] or var_11_36[2]
 			end
 
-			if stagger_reduction then
-				stagger_strength = math.clamp(stagger_strength - stagger_reduction, 0, stagger_strength)
+			if var_11_36 then
+				var_11_2 = math.clamp(var_11_2 - var_11_36, 0, var_11_2)
 			end
 
-			local first_push = false
+			local var_11_37 = false
 
-			if blackboard.stagger then
-				local stagger_bonus = math.clamp(blackboard.stagger * (breed.stagger_multiplier or 0.5) * stagger_strength, 0, stagger_strength)
+			if arg_11_2.stagger then
+				var_11_2 = var_11_2 + math.clamp(arg_11_2.stagger * (arg_11_1.stagger_multiplier or 0.5) * var_11_2, 0, var_11_2)
+			elseif var_11_12 and var_11_11 and var_11_11:accumulated_stagger() > 0 then
+				local var_11_38 = var_11_11:accumulated_stagger()
 
-				stagger_strength = stagger_strength + stagger_bonus
-			elseif is_player and status_extension and status_extension:accumulated_stagger() > 0 then
-				local stagger_tmp = status_extension:accumulated_stagger()
-				local stagger_bonus = math.clamp(stagger_tmp * (breed.stagger_multiplier or 0.5) * stagger_strength, 0, stagger_strength)
-
-				stagger_strength = stagger_strength + stagger_bonus
-			elseif damage_profile.is_push then
-				first_push = true
+				var_11_2 = var_11_2 + math.clamp(var_11_38 * (arg_11_1.stagger_multiplier or 0.5) * var_11_2, 0, var_11_2)
+			elseif arg_11_9.is_push then
+				var_11_37 = true
 			end
 
-			if stagger_strength > 0 then
-				local no_light_threshold = finesse_hit
-				local stagger_threshold_light = breed.stagger_threshold_light and breed.stagger_threshold_light * stagger_resistance or 0.25 * stagger_resistance
-				local stagger_threshold_medium = breed.stagger_threshold_medium and breed.stagger_threshold_medium * stagger_resistance or 1 * stagger_resistance
-				local stagger_threshold_heavy = breed.stagger_threshold_heavy and breed.stagger_threshold_heavy * stagger_resistance or 2.5 * stagger_resistance
+			if var_11_2 > 0 then
+				local var_11_39 = var_11_31
+				local var_11_40 = arg_11_1.stagger_threshold_light and arg_11_1.stagger_threshold_light * var_11_33 or 0.25 * var_11_33
+				local var_11_41 = arg_11_1.stagger_threshold_medium and arg_11_1.stagger_threshold_medium * var_11_33 or 1 * var_11_33
+				local var_11_42 = arg_11_1.stagger_threshold_heavy and arg_11_1.stagger_threshold_heavy * var_11_33 or 2.5 * var_11_33
 
-				if first_push then
-					stagger_threshold_heavy = stagger_threshold_heavy * 2
+				if var_11_37 then
+					var_11_42 = var_11_42 * 2
 				end
 
-				local stagger_threshold_explosion = breed.stagger_threshold_explosion and breed.stagger_threshold_explosion * stagger_resistance or 10 * stagger_resistance
-				local excessive_force = 0
-				local scale
-				local impact_modifier = 1
+				local var_11_43 = arg_11_1.stagger_threshold_explosion and arg_11_1.stagger_threshold_explosion * var_11_33 or 10 * var_11_33
+				local var_11_44 = 0
+				local var_11_45
+				local var_11_46 = 1
 
-				if stagger_strength < stagger_threshold_light then
-					stagger_type = stagger_types.none
-				elseif stagger_strength < stagger_threshold_medium then
-					stagger_type = stagger_types.weak
-					excessive_force = stagger_strength
-					scale = excessive_force > 0 and excessive_force / stagger_resistance or 0
-					impact_modifier = 0.5 + 0.5 * math.clamp(scale, 0, 1)
-				elseif stagger_strength < stagger_threshold_heavy then
-					stagger_type = stagger_types.medium
-					excessive_force = stagger_strength - stagger_threshold_medium
-					scale = excessive_force > 0 and excessive_force / stagger_resistance or 0
-					impact_modifier = 0.5 + 0.5 * math.clamp(scale, 0, 1)
-				elseif stagger_strength < stagger_threshold_explosion then
-					stagger_type = stagger_types.heavy
-					excessive_force = stagger_strength - stagger_threshold_heavy
-					scale = excessive_force > 0 and excessive_force / stagger_resistance or 0
-					impact_modifier = 0.5 + 0.5 * math.clamp(scale, 0, 1)
-				elseif damage_profile.is_explosion then
-					stagger_type = stagger_types.explosion
-				elseif damage_profile.is_pull then
-					stagger_type = stagger_types.pulling
+				if var_11_2 < var_11_40 then
+					var_11_1 = var_0_0.none
+				elseif var_11_2 < var_11_41 then
+					var_11_1 = var_0_0.weak
+					var_11_44 = var_11_2
+
+					local var_11_47 = var_11_44 > 0 and var_11_44 / var_11_33 or 0
+
+					var_11_46 = 0.5 + 0.5 * math.clamp(var_11_47, 0, 1)
+				elseif var_11_2 < var_11_42 then
+					var_11_1 = var_0_0.medium
+					var_11_44 = var_11_2 - var_11_41
+
+					local var_11_48 = var_11_44 > 0 and var_11_44 / var_11_33 or 0
+
+					var_11_46 = 0.5 + 0.5 * math.clamp(var_11_48, 0, 1)
+				elseif var_11_2 < var_11_43 then
+					var_11_1 = var_0_0.heavy
+					var_11_44 = var_11_2 - var_11_42
+
+					local var_11_49 = var_11_44 > 0 and var_11_44 / var_11_33 or 0
+
+					var_11_46 = 0.5 + 0.5 * math.clamp(var_11_49, 0, 1)
+				elseif arg_11_9.is_explosion then
+					var_11_1 = var_0_0.explosion
+				elseif arg_11_9.is_pull then
+					var_11_1 = var_0_0.pulling
 				else
-					stagger_type = stagger_types.heavy
+					var_11_1 = var_0_0.heavy
 				end
 
-				if breed.stagger_duration_difficulty_mod then
-					local stagger_duration_difficulty_table = breed.stagger_duration_difficulty_mod
-					local breed_duration_modifier = stagger_duration_difficulty_table[difficulty_rank] or stagger_duration_difficulty_table[2] or 1
+				if arg_11_1.stagger_duration_difficulty_mod then
+					local var_11_50 = arg_11_1.stagger_duration_difficulty_mod
 
-					duration = duration * breed_duration_modifier
+					var_11_3 = var_11_3 * (var_11_50[var_11_32] or var_11_50[2] or 1)
 				end
 
-				local time_modifier = 0.75 + 0.25 * math.clamp(excessive_force / stagger_resistance, 0, 2)
-
-				duration = duration * time_modifier
-				distance = math.clamp(distance * impact_modifier, 0.5, 1)
+				var_11_3 = var_11_3 * (0.75 + 0.25 * math.clamp(var_11_44 / var_11_33, 0, 2))
+				var_11_4 = math.clamp(var_11_4 * var_11_46, 0.5, 1)
 			end
 		end
 	end
 
-	if damage_profile.is_pull and stagger_type <= stagger_types.heavy then
-		stagger_type = stagger_types.pulling
+	if arg_11_9.is_pull and var_11_1 <= var_0_0.heavy then
+		var_11_1 = var_0_0.pulling
 	end
 
-	if attack_template.ranged_stagger then
-		if stagger_type == stagger_types.weak then
-			stagger_type = stagger_types.ranged_weak
-		elseif stagger_type == stagger_types.medium then
-			stagger_type = stagger_types.ranged_medium
+	if var_11_9.ranged_stagger then
+		if var_11_1 == var_0_0.weak then
+			var_11_1 = var_0_0.ranged_weak
+		elseif var_11_1 == var_0_0.medium then
+			var_11_1 = var_0_0.ranged_medium
 		end
 	end
 
-	local stagger_value = attack_template and attack_template.stagger_value or 1
+	local var_11_51 = var_11_9 and var_11_9.stagger_value or 1
 
-	optional_modifier_data.stagger_value = stagger_value
+	var_11_14.stagger_value = var_11_51
 
-	local skip_block_stagger_override
+	local var_11_52
 
-	if breed.stagger_modifier_function then
-		stagger_type, duration, distance, skip_block_stagger_override = breed.stagger_modifier_function(stagger_type, duration, distance, hit_zone_name, blackboard, breed, optional_modifier_data)
+	if arg_11_1.stagger_modifier_function then
+		var_11_1, var_11_3, var_11_4, var_11_52 = arg_11_1.stagger_modifier_function(var_11_1, var_11_3, var_11_4, arg_11_5, arg_11_2, arg_11_1, var_11_14)
 	end
 
-	if blocked then
-		if ai_shield_extension then
-			ai_shield_extension.blocked_previous_attack = true
+	if arg_11_11 then
+		if arg_11_14 then
+			arg_11_14.blocked_previous_attack = true
 		end
 
-		if stagger_type == stagger_types.none and not skip_block_stagger_override then
-			stagger_type = stagger_types.weak
-		elseif stagger_type == stagger_types.heavy and stagger_value == 1 then
-			stagger_type = stagger_types.medium
+		if var_11_1 == var_0_0.none and not var_11_52 then
+			var_11_1 = var_0_0.weak
+		elseif var_11_1 == var_0_0.heavy and var_11_51 == 1 then
+			var_11_1 = var_0_0.medium
 		end
 	end
 
-	if breed.boss_staggers and (stagger_type < stagger_types.explosion or stagger_type == stagger_types.pulling) or breed.small_boss_staggers and stagger_type == stagger_types.pulling then
-		stagger_type = stagger_types.none
+	if arg_11_1.boss_staggers and (var_11_1 < var_0_0.explosion or var_11_1 == var_0_0.pulling) or arg_11_1.small_boss_staggers and var_11_1 == var_0_0.pulling then
+		var_11_1 = var_0_0.none
 	end
 
-	local action = is_player and status_extension:breed_action() or blackboard.action
-	local ignore_staggers = action and action.ignore_staggers
+	local var_11_53 = var_11_12 and var_11_11:breed_action() or arg_11_2.action
+	local var_11_54 = var_11_53 and var_11_53.ignore_staggers
 
-	if ignore_staggers and attacker_buff_extension and attacker_buff_extension:has_buff_type("push_increase") then
-		ignore_staggers = false
+	if var_11_54 and var_11_5 and var_11_5:has_buff_type("push_increase") then
+		var_11_54 = false
 	end
 
-	if (not attack_template.always_stagger or breed.boss) and ignore_staggers and ignore_staggers[stagger_type] and (not ignore_staggers.allow_push or not attack_template or not attack_template.is_push) then
-		return stagger_types.none, 0, 0, 0, 0
+	if (not var_11_9.always_stagger or arg_11_1.boss) and var_11_54 and var_11_54[var_11_1] and (not var_11_54.allow_push or not var_11_9 or not var_11_9.is_push) then
+		return var_0_0.none, 0, 0, 0, 0
 	end
 
-	if breed.no_stagger_duration and not attack_template.always_stagger then
-		duration = duration * 0.25
+	if arg_11_1.no_stagger_duration and not var_11_9.always_stagger then
+		var_11_3 = var_11_3 * 0.25
 	end
 
-	if attacker_buff_extension and attacker_buff_extension:has_buff_perk("explosive_stagger") then
-		stagger_type = stagger_types.explosion
+	if var_11_5 and var_11_5:has_buff_perk("explosive_stagger") then
+		var_11_1 = var_0_0.explosion
 	end
 
-	local stagger_duration_modifier = target_settings.stagger_duration_modifier or damage_profile.stagger_duration_modifier or DefaultStaggerDurationModifier
-	local stagger_distance_modifier = target_settings.stagger_distance_modifier or damage_profile.stagger_distance_modifier or DefaultStaggerDistanceModifier
-	local stagger_duration_table = breed.stagger_duration and breed.stagger_duration[stagger_type] or DefaultStaggerDuration
+	local var_11_55 = var_11_7.stagger_duration_modifier or arg_11_9.stagger_duration_modifier or DefaultStaggerDurationModifier
+	local var_11_56 = var_11_7.stagger_distance_modifier or arg_11_9.stagger_distance_modifier or DefaultStaggerDistanceModifier
+	local var_11_57 = var_11_3 * (arg_11_1.stagger_duration and arg_11_1.stagger_duration[var_11_1] or DefaultStaggerDuration) * var_11_55
+	local var_11_58 = var_11_4 * var_11_56
 
-	duration = duration * stagger_duration_table * stagger_duration_modifier
-	distance = distance * stagger_distance_modifier
-
-	if target_buff_extension then
-		distance = target_buff_extension:apply_buffs_to_value(distance, "stagger_distance")
+	if var_11_6 then
+		var_11_58 = var_11_6:apply_buffs_to_value(var_11_58, "stagger_distance")
 	end
 
-	if attacker_buff_extension then
-		distance = attacker_buff_extension:apply_buffs_to_value(distance, "applied_stagger_distance")
+	if var_11_5 then
+		var_11_58 = var_11_5:apply_buffs_to_value(var_11_58, "applied_stagger_distance")
 	end
 
-	if not breed.no_random_stagger_duration then
-		duration = math.max(duration + math.random() * 0.25, 0)
+	if not arg_11_1.no_random_stagger_duration then
+		var_11_57 = math.max(var_11_57 + math.random() * 0.25, 0)
 	end
 
-	if breed.max_stagger_duration then
-		duration = math.min(duration, breed.max_stagger_duration)
+	if arg_11_1.max_stagger_duration then
+		var_11_57 = math.min(var_11_57, arg_11_1.max_stagger_duration)
 	end
 
-	if damage_profile.is_pull and target_unit then
-		local target_position = POSITION_LOOKUP[target_unit] or Unit.world_position(target_unit, 0)
-		local attacker_position = POSITION_LOOKUP[attacker_unit] or Unit.world_position(attacker_unit, 0)
-		local closest_distance = Vector3.length(target_position - attacker_position) - 2.25
+	if arg_11_9.is_pull and arg_11_4 then
+		local var_11_59 = var_0_4[arg_11_4] or Unit.world_position(arg_11_4, 0)
+		local var_11_60 = var_0_4[arg_11_3] or Unit.world_position(arg_11_3, 0)
+		local var_11_61 = Vector3.length(var_11_59 - var_11_60) - 2.25
 
-		distance = math.max(math.min(distance, closest_distance), 0)
+		var_11_58 = math.max(math.min(var_11_58, var_11_61), 0)
 	end
 
-	if attacker_buff_extension then
-		attacker_buff_extension:trigger_procs("stagger_calculation_ended", target_unit)
+	if var_11_5 then
+		var_11_5:trigger_procs("stagger_calculation_ended", arg_11_4)
 	end
 
-	return stagger_type, duration, distance, stagger_value, stagger_strength
+	return var_11_1, var_11_57, var_11_58, var_11_51, var_11_2
 end
 
-local EMPTY_TABLE = {}
+local var_0_28 = {}
 
-DamageUtils.calculate_stagger_player_tooltip = function (breed, attacker_unit, hit_zone_name, original_power_level, is_critical_strike, damage_profile, target_index, blocked, damage_source, difficulty_level, has_power_boost, range_scalar_multiplier, target_armor_type)
-	local stagger_table = ImpactTypeOutput
+function DamageUtils.calculate_stagger_player_tooltip(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7, arg_12_8, arg_12_9, arg_12_10, arg_12_11, arg_12_12)
+	local var_12_0 = ImpactTypeOutput
 
-	breed = breed or EMPTY_TABLE
+	arg_12_0 = arg_12_0 or var_0_28
 
-	local blackboard = EMPTY_TABLE
-	local target_unit
-	local shield_user = false
-	local ai_shield_extension, boost_curve_multiplier
-	local stagger_type, stagger_duration, stagger_distance, stagger_value, stagger_strength = do_stagger_calculation(stagger_table, breed, blackboard, attacker_unit, target_unit, hit_zone_name, original_power_level, boost_curve_multiplier, is_critical_strike, damage_profile, target_index, blocked, damage_source, range_scalar_multiplier, ai_shield_extension, difficulty_level, shield_user, has_power_boost, target_armor_type)
+	local var_12_1 = var_0_28
+	local var_12_2
+	local var_12_3 = false
+	local var_12_4
+	local var_12_5
+	local var_12_6, var_12_7, var_12_8, var_12_9, var_12_10 = var_0_27(var_12_0, arg_12_0, var_12_1, arg_12_1, var_12_2, arg_12_2, arg_12_3, var_12_5, arg_12_4, arg_12_5, arg_12_6, arg_12_7, arg_12_8, arg_12_11, var_12_4, arg_12_9, var_12_3, arg_12_10, arg_12_12)
 
-	return stagger_type, stagger_duration, stagger_distance, stagger_value, stagger_strength
+	return var_12_6, var_12_7, var_12_8, var_12_9, var_12_10
 end
 
-DamageUtils.calculate_stagger_player = function (stagger_table, target_unit, attacker_unit, hit_zone_name, original_power_level, boost_curve_multiplier, is_critical_strike, damage_profile, target_index, blocked, damage_source)
-	local blackboard = BLACKBOARDS[target_unit]
-	local breed = blackboard.breed
-	local difficulty_level = Managers.state.difficulty:get_difficulty()
-	local shield_user = AiUtils.shield_user(target_unit)
-	local target_settings = damage_profile.targets and damage_profile.targets[target_index] or damage_profile.default_target
-	local range_scalar_multiplier = ActionUtils.get_range_scalar_multiplier(damage_profile, target_settings, attacker_unit, target_unit)
-	local ai_shield_extension = ScriptUnit.has_extension(target_unit, "ai_shield_system")
-	local has_power_boost = false
+function DamageUtils.calculate_stagger_player(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7, arg_13_8, arg_13_9, arg_13_10)
+	local var_13_0 = var_0_2[arg_13_1]
+	local var_13_1 = var_13_0.breed
+	local var_13_2 = Managers.state.difficulty:get_difficulty()
+	local var_13_3 = AiUtils.shield_user(arg_13_1)
+	local var_13_4 = arg_13_7.targets and arg_13_7.targets[arg_13_8] or arg_13_7.default_target
+	local var_13_5 = ActionUtils.get_range_scalar_multiplier(arg_13_7, var_13_4, arg_13_2, arg_13_1)
+	local var_13_6 = ScriptUnit.has_extension(arg_13_1, "ai_shield_system")
+	local var_13_7 = false
 
-	if attacker_unit and unit_alive(attacker_unit) then
-		local attacker_buff_extension = ScriptUnit.has_extension(attacker_unit, "buff_system")
+	if arg_13_2 and var_0_6(arg_13_2) then
+		local var_13_8 = ScriptUnit.has_extension(arg_13_2, "buff_system")
 
-		if attacker_buff_extension then
-			has_power_boost = attacker_buff_extension:has_buff_perk("potion_armor_penetration")
+		if var_13_8 then
+			var_13_7 = var_13_8:has_buff_perk("potion_armor_penetration")
 		end
 	end
 
-	local stagger_type, stagger_duration, stagger_distance, stagger_value, stagger_strength = do_stagger_calculation(stagger_table, breed, blackboard, attacker_unit, target_unit, hit_zone_name, original_power_level, boost_curve_multiplier, is_critical_strike, damage_profile, target_index, blocked, damage_source, range_scalar_multiplier, ai_shield_extension, difficulty_level, shield_user, has_power_boost)
+	local var_13_9, var_13_10, var_13_11, var_13_12, var_13_13 = var_0_27(arg_13_0, var_13_1, var_13_0, arg_13_2, arg_13_1, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7, arg_13_8, arg_13_9, arg_13_10, var_13_5, var_13_6, var_13_2, var_13_3, var_13_7)
 
-	return stagger_type, stagger_duration, stagger_distance, stagger_value, stagger_strength
+	return var_13_9, var_13_10, var_13_11, var_13_12, var_13_13
 end
 
-DamageUtils.calculate_stagger = function (impact_table, duration_table, target_unit, attacker_unit, attack_template, hit_zone_name, blocked)
-	local blackboard = BLACKBOARDS[target_unit]
-	local breed = blackboard.breed
-	local target_unit_armor = breed.stagger_armor_category or breed.armor_category or 1
-	local shield_user = AiUtils.shield_user(target_unit)
-	local stagger_type = stagger_types.none
-	local duration = 0.5
-	local ai_extension = ScriptUnit.has_extension(target_unit, "ai_system")
-	local status_extension = ScriptUnit.has_extension(target_unit, "status_system")
-	local is_player = blackboard.is_player and not ai_extension
+function DamageUtils.calculate_stagger(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
+	local var_14_0 = var_0_2[arg_14_2]
+	local var_14_1 = var_14_0.breed
+	local var_14_2 = var_14_1.stagger_armor_category or var_14_1.armor_category or 1
+	local var_14_3 = AiUtils.shield_user(arg_14_2)
+	local var_14_4 = var_0_0.none
+	local var_14_5 = 0.5
+	local var_14_6 = ScriptUnit.has_extension(arg_14_2, "ai_system")
+	local var_14_7 = ScriptUnit.has_extension(arg_14_2, "status_system")
+	local var_14_8 = var_14_0.is_player and not var_14_6
 
-	if hit_zone_name == "weakspot" and blackboard.stagger_count == 0 and (not blackboard.stagger or blackboard.stagger_anim_done) then
-		stagger_type = stagger_types.weakspot
-	elseif impact_table then
-		stagger_type = impact_table[target_unit_armor] or impact_table[1]
+	if arg_14_5 == "weakspot" and var_14_0.stagger_count == 0 and (not var_14_0.stagger or var_14_0.stagger_anim_done) then
+		var_14_4 = var_0_0.weakspot
+	elseif arg_14_0 then
+		var_14_4 = arg_14_0[var_14_2] or arg_14_0[1]
 	end
 
-	local stagger_value = attack_template and attack_template.stagger_value or 1
+	local var_14_9 = arg_14_4 and arg_14_4.stagger_value or 1
 
-	if blocked then
-		if stagger_type == stagger_types.none then
-			stagger_type = stagger_types.weak
-		elseif stagger_type == stagger_types.heavy and stagger_value == 1 then
-			stagger_type = stagger_types.medium
+	if arg_14_6 then
+		if var_14_4 == var_0_0.none then
+			var_14_4 = var_0_0.weak
+		elseif var_14_4 == var_0_0.heavy and var_14_9 == 1 then
+			var_14_4 = var_0_0.medium
 		end
 	end
 
-	if breed.boss_staggers and stagger_type < stagger_types.explosion then
-		stagger_type = stagger_types.none
+	if var_14_1.boss_staggers and var_14_4 < var_0_0.explosion then
+		var_14_4 = var_0_0.none
 	end
 
-	local action = is_player and status_extension:breed_action() or blackboard.action
-	local ignore_staggers = action and action.ignore_staggers
+	local var_14_10 = var_14_8 and var_14_7:breed_action() or var_14_0.action
+	local var_14_11 = var_14_10 and var_14_10.ignore_staggers
 
-	if ignore_staggers then
-		local owner_buff_extension = ScriptUnit.has_extension(attacker_unit, "buff_system")
+	if var_14_11 then
+		local var_14_12 = ScriptUnit.has_extension(arg_14_3, "buff_system")
 
-		if owner_buff_extension and owner_buff_extension:has_buff_type("push_increase") then
-			ignore_staggers = false
+		if var_14_12 and var_14_12:has_buff_type("push_increase") then
+			var_14_11 = false
 		end
 	end
 
-	if ignore_staggers and ignore_staggers[stagger_type] and (not ignore_staggers.allow_push or not attack_template or not attack_template.is_push) then
+	if var_14_11 and var_14_11[var_14_4] and (not var_14_11.allow_push or not arg_14_4 or not arg_14_4.is_push) then
 		return 0, 0
 	end
 
-	if duration_table then
-		duration = duration_table[target_unit_armor] or duration_table[1]
+	if arg_14_1 then
+		var_14_5 = arg_14_1[var_14_2] or arg_14_1[1]
 	end
 
-	if breed.no_stagger_duration then
-		duration = duration * 0.25
-	elseif breed.stagger_duration_mod then
-		duration = duration * breed.stagger_duration_mod
-	elseif blocked then
-		duration = math.lerp(duration, 1.25, breed.block_stagger_mod or 0.5)
-	elseif shield_user then
-		duration = duration * (breed.shield_stagger_mod or 0.6)
+	if var_14_1.no_stagger_duration then
+		var_14_5 = var_14_5 * 0.25
+	elseif var_14_1.stagger_duration_mod then
+		var_14_5 = var_14_5 * var_14_1.stagger_duration_mod
+	elseif arg_14_6 then
+		var_14_5 = math.lerp(var_14_5, 1.25, var_14_1.block_stagger_mod or 0.5)
+	elseif var_14_3 then
+		var_14_5 = var_14_5 * (var_14_1.shield_stagger_mod or 0.6)
 	else
-		duration = math.max(duration + math.random() - 0.5, 0)
+		var_14_5 = math.max(var_14_5 + math.random() - 0.5, 0)
 	end
 
-	return stagger_type, duration
+	return var_14_4, var_14_5
 end
 
-DamageUtils.is_player_unit = function (unit)
-	return Managers.player:is_player_unit(unit)
+function DamageUtils.is_player_unit(arg_15_0)
+	return Managers.player:is_player_unit(arg_15_0)
 end
 
-DamageUtils.stagger_player = function (unit, breed, stagger_direction, stagger_length, stagger_type, stagger_duration, stagger_animation_scale, t, stagger_value, always_stagger, is_push, should_play_push_sound)
-	fassert(stagger_type > 0, "Tried to use invalid stagger type %q", stagger_type)
+function DamageUtils.stagger_player(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9, arg_16_10, arg_16_11)
+	fassert(arg_16_4 > 0, "Tried to use invalid stagger type %q", arg_16_4)
 
-	local difficulty_settings = Managers.state.difficulty:get_difficulty_settings()
-	local difficulty_modifier = difficulty_settings.stagger_modifier
-	local status_extension = ScriptUnit.has_extension(unit, "status_system")
-	local breed_action = status_extension:breed_action()
-	local breed_action_immunity = breed_action and breed_action.stagger_prohibited
+	local var_16_0 = Managers.state.difficulty:get_difficulty_settings().stagger_modifier
+	local var_16_1 = ScriptUnit.has_extension(arg_16_0, "status_system")
+	local var_16_2 = var_16_1:breed_action()
 
-	if breed_action_immunity or status_extension:get_in_ghost_mode() then
+	if var_16_2 and var_16_2.stagger_prohibited or var_16_1:get_in_ghost_mode() then
 		return
 	end
 
-	stagger_value = stagger_value or 1
-	stagger_animation_scale = stagger_animation_scale or 1
+	arg_16_8 = arg_16_8 or 1
+	arg_16_6 = arg_16_6 or 1
 
-	local stagger_time = stagger_duration * difficulty_modifier
-	local accumulated_stagger = status_extension:accumulated_stagger()
-	local accumulated_clamped = math.clamp(accumulated_stagger and accumulated_stagger + stagger_value or stagger_value, 0, 2)
+	local var_16_3 = arg_16_5 * var_16_0
+	local var_16_4 = var_16_1:accumulated_stagger()
+	local var_16_5 = math.clamp(var_16_4 and var_16_4 + arg_16_8 or arg_16_8, 0, 2)
+	local var_16_6 = math.max(var_16_5, var_16_4)
 
-	accumulated_stagger = math.max(accumulated_clamped, accumulated_stagger)
+	var_16_1:set_stagger_values(arg_16_4, arg_16_2, arg_16_3, var_16_6, var_16_3, arg_16_6, arg_16_9, true)
 
-	status_extension:set_stagger_values(stagger_type, stagger_direction, stagger_length, accumulated_stagger, stagger_time, stagger_animation_scale, always_stagger, true)
+	if arg_16_11 then
+		local var_16_7 = arg_16_1.push_sound_event or "Play_generic_pushed_impact_small"
 
-	if should_play_push_sound then
-		local push_sound_event = breed.push_sound_event or "Play_generic_pushed_impact_small"
-
-		Managers.state.entity:system("audio_system"):play_audio_unit_event(push_sound_event, unit)
+		Managers.state.entity:system("audio_system"):play_audio_unit_event(var_16_7, arg_16_0)
 	end
 end
 
-DamageUtils.hit_zone = function (unit, actor)
-	local breed = AiUtils.unit_breed(unit)
+function DamageUtils.hit_zone(arg_17_0, arg_17_1)
+	local var_17_0 = AiUtils.unit_breed(arg_17_0)
 
-	if breed then
-		local node = actor_node(actor)
-		local hit_zone = breed.hit_zones_lookup[node]
-		local hit_zone_name = hit_zone.name
+	if var_17_0 then
+		local var_17_1 = var_0_19(arg_17_1)
 
-		return hit_zone_name
+		return var_17_0.hit_zones_lookup[var_17_1].name
 	else
 		return "full"
 	end
 end
 
-DamageUtils.aoe_hit_zone = function (unit, actor)
-	local breed = AiUtils.unit_breed(unit)
+function DamageUtils.aoe_hit_zone(arg_18_0, arg_18_1)
+	local var_18_0 = AiUtils.unit_breed(arg_18_0)
 
-	if breed then
-		local node = actor_node(actor)
-		local hit_zone = breed.hit_zones_lookup[node]
-		local hit_zone_name = hit_zone and hit_zone.name
+	if var_18_0 then
+		local var_18_1 = var_0_19(arg_18_1)
+		local var_18_2 = var_18_0.hit_zones_lookup[var_18_1]
 
-		return hit_zone_name == "afro" and "afro" or "torso"
+		return (var_18_2 and var_18_2.name) == "afro" and "afro" or "torso"
 	else
 		return "full"
 	end
 end
 
-DamageUtils.draw_aoe_size = function (target_unit, breed)
-	local radius, height = DamageUtils.calculate_aoe_size(target_unit)
-	local unit_position = POSITION_LOOKUP[target_unit]
-	local unit_top_position = unit_position + Vector3(0, 0, math.max(height - radius * 0.5, height * 0.5))
-	local unit_bottom_position = unit_position + Vector3(0, 0, math.min(radius * 0.5, height * 0.5))
+function DamageUtils.draw_aoe_size(arg_19_0, arg_19_1)
+	local var_19_0, var_19_1 = DamageUtils.calculate_aoe_size(arg_19_0)
+	local var_19_2 = var_0_4[arg_19_0]
+	local var_19_3 = var_19_2 + Vector3(0, 0, math.max(var_19_1 - var_19_0 * 0.5, var_19_1 * 0.5))
+	local var_19_4 = var_19_2 + Vector3(0, 0, math.min(var_19_0 * 0.5, var_19_1 * 0.5))
 
-	QuickDrawer:capsule(unit_bottom_position, unit_top_position, radius, Color(255, 255, 0, 255))
+	QuickDrawer:capsule(var_19_4, var_19_3, var_19_0, Color(255, 255, 0, 255))
 end
 
-DamageUtils.calculate_aoe_size = function (target_unit, breed)
-	local radius, height
+function DamageUtils.calculate_aoe_size(arg_20_0, arg_20_1)
+	local var_20_0
+	local var_20_1
 
-	if breed then
-		radius = breed.aoe_radius or DEFAULT_BREED_AOE_RADIUS
-		height = breed.aoe_height or DEFAULT_BREED_AOE_HEIGHT
-	elseif DamageUtils.is_player_unit(target_unit) then
-		radius = 0.3
-		height = 1.7
+	if arg_20_1 then
+		var_20_0 = arg_20_1.aoe_radius or DEFAULT_BREED_AOE_RADIUS
+		var_20_1 = arg_20_1.aoe_height or DEFAULT_BREED_AOE_HEIGHT
+	elseif DamageUtils.is_player_unit(arg_20_0) then
+		var_20_0 = 0.3
+		var_20_1 = 1.7
 	else
-		radius = 1
-		height = 1
+		var_20_0 = 1
+		var_20_1 = 1
 	end
 
-	return radius, height
+	return var_20_0, var_20_1
 end
 
-local AOE_TARGET_UNITS = {}
-local AOE_TARGET_ARRAY = {}
-local AOE_SIMPLE_DAMAGE_UNITS = {}
+local var_0_29 = {}
+local var_0_30 = {}
+local var_0_31 = {}
 
-DamageUtils.create_explosion = function (world, attacker_unit, impact_position, rotation, explosion_template, scale, damage_source, is_server, is_husk, damaging_unit, attacker_power_level, is_critical_strike, source_attacker_unit)
-	local DamageUtils = DamageUtils
-	local explosion_data = explosion_template.explosion
-	local active_wind = Managers.weave:get_active_wind()
-	local wind_settings = Managers.weave:get_active_wind_settings()
-	local wind_mutator = explosion_data.wind_mutator
+function DamageUtils.create_explosion(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8, arg_21_9, arg_21_10, arg_21_11, arg_21_12)
+	local var_21_0 = DamageUtils
+	local var_21_1 = arg_21_4.explosion
+	local var_21_2 = Managers.weave:get_active_wind()
+	local var_21_3 = Managers.weave:get_active_wind_settings()
+	local var_21_4 = var_21_1.wind_mutator
 
-	if explosion_data.camera_effect then
-		local effect_settings = explosion_data.camera_effect
-		local shake_name = effect_settings.shake_name
-		local near_distance = effect_settings.near_distance
-		local far_distance = effect_settings.far_distance
-		local near_scale = effect_settings.near_scale
-		local far_scale = effect_settings.far_scale
-		local t = Managers.time:time("game")
+	if var_21_1.camera_effect then
+		local var_21_5 = var_21_1.camera_effect
+		local var_21_6 = var_21_5.shake_name
+		local var_21_7 = var_21_5.near_distance
+		local var_21_8 = var_21_5.far_distance
+		local var_21_9 = var_21_5.near_scale
+		local var_21_10 = var_21_5.far_scale
+		local var_21_11 = Managers.time:time("game")
 
-		DamageUtils.camera_shake_by_distance(shake_name, t, nil, damaging_unit, near_distance, far_distance, near_scale, far_scale)
+		var_21_0.camera_shake_by_distance(var_21_6, var_21_11, nil, arg_21_9, var_21_7, var_21_8, var_21_9, var_21_10)
 	end
 
-	if explosion_data.effect_name then
-		local explosion_rotation = explosion_data.dont_rotate_fx and Quaternion.identity() or rotation
+	if var_21_1.effect_name then
+		local var_21_12 = var_21_1.dont_rotate_fx and Quaternion.identity() or arg_21_3
 
-		World.create_particles(world, explosion_data.effect_name, impact_position, explosion_rotation)
+		World.create_particles(arg_21_0, var_21_1.effect_name, arg_21_2, var_21_12)
 	end
 
-	if explosion_data.sound_event_name then
-		local wwise_source_id, wwise_world = WwiseUtils.make_position_auto_source(world, impact_position)
-		local husk = is_husk and "true" or "false"
+	if var_21_1.sound_event_name then
+		local var_21_13, var_21_14 = WwiseUtils.make_position_auto_source(arg_21_0, arg_21_2)
+		local var_21_15 = arg_21_8 and "true" or "false"
 
-		WwiseWorld.set_switch(wwise_world, "husk", husk, wwise_source_id)
-		WwiseWorld.trigger_event(wwise_world, explosion_data.sound_event_name, wwise_source_id)
+		WwiseWorld.set_switch(var_21_14, "husk", var_21_15, var_21_13)
+		WwiseWorld.trigger_event(var_21_14, var_21_1.sound_event_name, var_21_13)
 	end
 
-	local facing_explosion = false
+	local var_21_16 = false
 
-	if explosion_data.only_facing then
-		local local_player = Managers.player:local_player()
-		local local_player_unit = local_player and local_player.player_unit
+	if var_21_1.only_facing then
+		local var_21_17 = Managers.player:local_player()
+		local var_21_18 = var_21_17 and var_21_17.player_unit
 
-		if local_player_unit then
-			local unit_pos = Unit.local_position(attacker_unit, 0)
-			local hit_unit_pos = POSITION_LOOKUP[local_player_unit]
-			local player_rot = Unit.local_rotation(local_player_unit, 0)
-			local _, _, nr = Quaternion.to_euler_angles_xyz(player_rot)
-			local angle_towards_explosion = nr - math.radians_to_degrees(math.angle(unit_pos.x, unit_pos.y, hit_unit_pos.x, hit_unit_pos.y))
+		if var_21_18 then
+			local var_21_19 = Unit.local_position(arg_21_1, 0)
+			local var_21_20 = var_0_4[var_21_18]
+			local var_21_21 = Unit.local_rotation(var_21_18, 0)
+			local var_21_22, var_21_23, var_21_24 = Quaternion.to_euler_angles_xyz(var_21_21)
+			local var_21_25 = var_21_24 - math.radians_to_degrees(math.angle(var_21_19.x, var_21_19.y, var_21_20.x, var_21_20.y))
 
-			if angle_towards_explosion < 0 then
-				angle_towards_explosion = angle_towards_explosion + 360
+			if var_21_25 < 0 then
+				var_21_25 = var_21_25 + 360
 			end
 
-			if math.abs(90 - angle_towards_explosion) < 90 then
-				facing_explosion = true
+			if math.abs(90 - var_21_25) < 90 then
+				var_21_16 = true
 			end
 		end
 	end
 
-	if explosion_data.screenspace_effect_name and (not explosion_data.only_facing or facing_explosion) then
-		local local_player = Managers.player:local_player()
-		local local_player_unit = local_player and local_player.player_unit
+	if var_21_1.screenspace_effect_name and (not var_21_1.only_facing or var_21_16) then
+		local var_21_26 = Managers.player:local_player()
+		local var_21_27 = var_21_26 and var_21_26.player_unit
 
-		if local_player_unit then
-			local local_player_unit_position = POSITION_LOOKUP[local_player_unit]
-			local distance_to_explosion = Vector3.distance(local_player_unit_position, impact_position)
-			local radius = explosion_data.screenspace_effect_radius or explosion_data.radius
+		if var_21_27 then
+			local var_21_28 = var_0_4[var_21_27]
 
-			if distance_to_explosion <= radius then
-				local first_person_extension = ScriptUnit.has_extension(local_player_unit, "first_person_system")
+			if Vector3.distance(var_21_28, arg_21_2) <= (var_21_1.screenspace_effect_radius or var_21_1.radius) then
+				local var_21_29 = ScriptUnit.has_extension(var_21_27, "first_person_system")
 
-				if first_person_extension then
-					first_person_extension:create_screen_particles(explosion_data.screenspace_effect_name)
+				if var_21_29 then
+					var_21_29:create_screen_particles(var_21_1.screenspace_effect_name)
 				end
 			end
 		end
 	end
 
-	local attacker_unit_alive = unit_alive(attacker_unit)
+	local var_21_30 = var_0_6(arg_21_1)
 
-	if is_server and attacker_unit_alive then
-		if explosion_data.alert_enemies then
-			Managers.state.entity:system("ai_system"):alert_enemies_within_range(attacker_unit, impact_position, explosion_data.alert_enemies_radius)
+	if arg_21_7 and var_21_30 then
+		if var_21_1.alert_enemies then
+			Managers.state.entity:system("ai_system"):alert_enemies_within_range(arg_21_1, arg_21_2, var_21_1.alert_enemies_radius)
 		end
 
-		local push_speed = explosion_data.player_push_speed
-		local difficulty_rank = Managers.state.difficulty:get_difficulty()
-		local fallback_difficulty = Managers.state.difficulty.fallback_difficulty
-		local radius = explosion_data.radius
-		local max_damage_radius
+		local var_21_31 = var_21_1.player_push_speed
+		local var_21_32 = Managers.state.difficulty:get_difficulty()
+		local var_21_33 = Managers.state.difficulty.fallback_difficulty
+		local var_21_34 = var_21_1.radius
+		local var_21_35
 
-		if wind_mutator and active_wind and wind_settings.radius then
-			local wind_strength = Managers.weave:get_wind_strength()
+		if var_21_4 and var_21_2 and var_21_3.radius then
+			local var_21_36 = Managers.weave:get_wind_strength()
 
-			radius = wind_settings.radius[difficulty_rank][wind_strength] or wind_settings.radius[2][wind_strength]
-			max_damage_radius = explosion_data.max_damage_radius or radius - 1
+			var_21_34 = var_21_3.radius[var_21_32][var_21_36] or var_21_3.radius[2][var_21_36]
+			var_21_35 = var_21_1.max_damage_radius or var_21_34 - 1
 		else
-			max_damage_radius = explosion_data.max_damage_radius or 0
+			var_21_35 = var_21_1.max_damage_radius or 0
 		end
 
-		local radius_min = explosion_data.radius_min
-		local radius_max = explosion_data.radius_max
-		local exponential_falloff = explosion_data.exponential_falloff
+		local var_21_37 = var_21_1.radius_min
+		local var_21_38 = var_21_1.radius_max
+		local var_21_39 = var_21_1.exponential_falloff
 
-		if radius_min and radius_max then
-			radius = math.lerp(radius_min, radius_max, scale)
+		if var_21_37 and var_21_38 then
+			var_21_34 = math.lerp(var_21_37, var_21_38, arg_21_5)
 
-			if explosion_data.max_damage_radius_min then
-				local max_damage_radius_min = explosion_data.max_damage_radius_min
-				local max_damage_radius_max = explosion_data.max_damage_radius_max
+			if var_21_1.max_damage_radius_min then
+				local var_21_40 = var_21_1.max_damage_radius_min
+				local var_21_41 = var_21_1.max_damage_radius_max
 
-				max_damage_radius = math.lerp(max_damage_radius_min, max_damage_radius_max, scale)
+				var_21_35 = math.lerp(var_21_40, var_21_41, arg_21_5)
 			end
 		end
 
-		fassert(radius, "Explosion template [%s] has no radius, or radius_min & radius_max, set", explosion_template.name)
+		fassert(var_21_34, "Explosion template [%s] has no radius, or radius_min & radius_max, set", arg_21_4.name)
 
-		local buff_extension = ScriptUnit.has_extension(attacker_unit, "buff_system")
-		local is_grenade = explosion_template.is_grenade
+		local var_21_42 = ScriptUnit.has_extension(arg_21_1, "buff_system")
+		local var_21_43 = arg_21_4.is_grenade
 
-		if buff_extension then
-			local radius_multiplier = 1
+		if var_21_42 then
+			local var_21_44 = 1
 
-			if is_grenade then
-				radius_multiplier = radius_multiplier + (buff_extension:apply_buffs_to_value(1, "grenade_radius") - 1)
+			if var_21_43 then
+				var_21_44 = var_21_44 + (var_21_42:apply_buffs_to_value(1, "grenade_radius") - 1)
 			end
 
-			radius_multiplier = radius_multiplier + (buff_extension:apply_buffs_to_value(1, "explosion_radius") - 1)
-			radius = radius * radius_multiplier
-			max_damage_radius = max_damage_radius * radius_multiplier
+			local var_21_45 = var_21_44 + (var_21_42:apply_buffs_to_value(1, "explosion_radius") - 1)
+
+			var_21_34 = var_21_34 * var_21_45
+			var_21_35 = var_21_35 * var_21_45
 		end
 
-		local difficulty_power_level = explosion_data.difficulty_power_level and (explosion_data.difficulty_power_level[difficulty_rank] or explosion_data.difficulty_power_level[fallback_difficulty])
-		local different_power_levels_for_players = explosion_data.different_power_levels_for_players
-		local power_level_settings = difficulty_power_level or explosion_data
-		local power_level, power_level_min, power_level_max, wind_power_level_player, wind_power_level_ai
+		local var_21_46 = var_21_1.difficulty_power_level and (var_21_1.difficulty_power_level[var_21_32] or var_21_1.difficulty_power_level[var_21_33])
+		local var_21_47 = var_21_1.different_power_levels_for_players
+		local var_21_48 = var_21_46 or var_21_1
+		local var_21_49
+		local var_21_50
+		local var_21_51
+		local var_21_52
+		local var_21_53
 
-		if wind_mutator and active_wind then
-			local wind_strength = Managers.weave:get_wind_strength()
+		if var_21_4 and var_21_2 then
+			local var_21_54 = Managers.weave:get_wind_strength()
 
-			if different_power_levels_for_players then
-				wind_power_level_player = wind_settings.power_level_player[difficulty_rank][wind_strength]
-				wind_power_level_ai = wind_settings.power_level_ai[difficulty_rank][wind_strength]
+			if var_21_47 then
+				var_21_52 = var_21_3.power_level_player[var_21_32][var_21_54]
+				var_21_53 = var_21_3.power_level_ai[var_21_32][var_21_54]
 			else
-				power_level = wind_settings.power_level and wind_settings.power_level[difficulty_rank][wind_strength] or 0
+				var_21_49 = var_21_3.power_level and var_21_3.power_level[var_21_32][var_21_54] or 0
 			end
 		else
-			power_level = power_level_settings.power_level
-			power_level_min = power_level_settings.power_level_min
-			power_level_max = power_level_settings.power_level_max
+			var_21_49 = var_21_48.power_level
+			var_21_50 = var_21_48.power_level_min
+			var_21_51 = var_21_48.power_level_max
 		end
 
-		if explosion_data.use_attacker_power_level then
-			assert(attacker_power_level, "No attacker power level argument sent for explosion requiring it!")
+		if var_21_1.use_attacker_power_level then
+			assert(arg_21_10, "No attacker power level argument sent for explosion requiring it!")
 
-			power_level = attacker_power_level
-			power_level_max = attacker_power_level
-			power_level_min = power_level_max * (explosion_data.attacker_power_level_offset or DefaultAttackerPowerLevelOffset)
+			var_21_49 = arg_21_10
+			var_21_51 = arg_21_10
+			var_21_50 = var_21_51 * (var_21_1.attacker_power_level_offset or DefaultAttackerPowerLevelOffset)
 		end
 
-		if explosion_data.scale_power_level then
-			power_level = math.max(explosion_data.scale_power_level, scale) * power_level
-			power_level_max = math.max(explosion_data.scale_power_level, scale) * power_level_max
-			power_level_min = math.max(explosion_data.scale_power_level, scale) * power_level_min
+		if var_21_1.scale_power_level then
+			var_21_49 = math.max(var_21_1.scale_power_level, arg_21_5) * var_21_49
+			var_21_51 = math.max(var_21_1.scale_power_level, arg_21_5) * var_21_51
+			var_21_50 = math.max(var_21_1.scale_power_level, arg_21_5) * var_21_50
 		end
 
-		local power_level_glance = power_level_settings.power_level_glance
-		local do_damage = power_level or power_level_min and power_level_max or different_power_levels_for_players or false
-		local ignore_attacker_unit = explosion_data.ignore_attacker_unit
-		local collision_filter = explosion_data.collision_filter or "filter_explosion_overlap"
-		local difficulty_settings = Managers.state.difficulty:get_difficulty_settings()
-		local only_line_of_sight = explosion_data.only_line_of_sight
-		local attacker_player = Managers.player:owner(attacker_unit)
-		local attacker_is_player = attacker_player ~= nil
-		local friendly_fire_disabled = explosion_data.no_friendly_fire
-		local allow_friendly_fire_override = explosion_data.allow_friendly_fire_override
-		local friendly_fire_allowed
+		local var_21_55 = var_21_48.power_level_glance
+		local var_21_56 = var_21_49 or var_21_50 and var_21_51 or var_21_47 or false
+		local var_21_57 = var_21_1.ignore_attacker_unit
+		local var_21_58 = var_21_1.collision_filter or "filter_explosion_overlap"
+		local var_21_59 = Managers.state.difficulty:get_difficulty_settings()
+		local var_21_60 = var_21_1.only_line_of_sight
+		local var_21_61 = Managers.player:owner(arg_21_1)
+		local var_21_62 = var_21_61 ~= nil
+		local var_21_63 = var_21_1.no_friendly_fire
+		local var_21_64 = var_21_1.allow_friendly_fire_override
+		local var_21_65
 
-		if attacker_is_player then
-			friendly_fire_allowed = allow_friendly_fire_override or DamageUtils.allow_friendly_fire_ranged(difficulty_settings, attacker_player)
+		if var_21_62 then
+			var_21_65 = var_21_64 or var_21_0.allow_friendly_fire_ranged(var_21_59, var_21_61)
 		else
-			friendly_fire_allowed = explosion_data.ai_friendly_fire
+			var_21_65 = var_21_1.ai_friendly_fire
 		end
 
-		local buff_extension = ScriptUnit.has_extension(attacker_unit, "buff_system")
+		local var_21_66 = ScriptUnit.has_extension(arg_21_1, "buff_system")
 
-		if buff_extension then
-			local no_friendly_damage_perk = buff_extension:has_buff_perk(buff_perk_names.no_explosion_friendly_fire)
-
-			if no_friendly_damage_perk then
-				friendly_fire_allowed = false
-			end
+		if var_21_66 and var_21_66:has_buff_perk(var_0_1.no_explosion_friendly_fire) then
+			var_21_65 = false
 		end
 
-		local friendly_fire_enabled = friendly_fire_allowed and not friendly_fire_disabled
-		local physics_world = World.physics_world(world)
-		local actors, num_actors = PhysicsWorld.immediate_overlap(physics_world, "shape", "sphere", "position", impact_position, "size", radius, "collision_filter", collision_filter)
-		local aoe_target_units = AOE_TARGET_UNITS
-		local aoe_target_array = AOE_TARGET_ARRAY
-		local aoe_simple_damage_units = AOE_SIMPLE_DAMAGE_UNITS
+		local var_21_67 = var_21_65 and not var_21_63
+		local var_21_68 = World.physics_world(arg_21_0)
+		local var_21_69, var_21_70 = PhysicsWorld.immediate_overlap(var_21_68, "shape", "sphere", "position", arg_21_2, "size", var_21_34, "collision_filter", var_21_58)
+		local var_21_71 = var_0_29
+		local var_21_72 = var_0_30
+		local var_21_73 = var_0_31
 
-		table.clear(aoe_target_units)
-		table.clear(aoe_target_array)
-		table.clear(aoe_simple_damage_units)
+		table.clear(var_21_71)
+		table.clear(var_21_72)
+		table.clear(var_21_73)
 
-		local explosion_forward_scaling = explosion_data.explosion_forward_scaling
-		local explosion_angle = explosion_data.explosion_cone_angle
+		local var_21_74 = var_21_1.explosion_forward_scaling
+		local var_21_75 = var_21_1.explosion_cone_angle
 
-		explosion_angle = explosion_angle and math.cos(explosion_angle / 2)
+		var_21_75 = var_21_75 and math.cos(var_21_75 / 2)
 
-		local explosion_direction
+		local var_21_76
 
-		if explosion_forward_scaling or explosion_angle then
-			explosion_direction = Quaternion.forward(rotation)
+		if var_21_74 or var_21_75 then
+			var_21_76 = Quaternion.forward(arg_21_3)
 		end
 
-		local num_hits = 0
+		local var_21_77 = 0
 
-		for i = 1, num_actors do
-			local hit_actor = actors[i]
-			local hit_unit = hit_actor and actor_unit(hit_actor)
+		for iter_21_0 = 1, var_21_70 do
+			local var_21_78 = var_21_69[iter_21_0]
+			local var_21_79 = var_21_78 and var_0_18(var_21_78)
 
-			if ScriptUnit.has_extension(hit_unit, "health_system") then
-				local ignore_damage = unit_get_data(hit_unit, "ignore_explosion_damage")
+			if ScriptUnit.has_extension(var_21_79, "health_system") then
+				if not var_0_5(var_21_79, "ignore_explosion_damage") and not var_21_71[var_21_79] and (not var_21_57 or var_21_79 ~= arg_21_1) and var_21_0.aoe_hit_zone(var_21_79, var_21_78) ~= "afro" then
+					if not var_21_60 then
+						local var_21_80 = true
 
-				if not ignore_damage and not aoe_target_units[hit_unit] and (not ignore_attacker_unit or hit_unit ~= attacker_unit) then
-					local hit_zone_name = DamageUtils.aoe_hit_zone(hit_unit, hit_actor)
+						if var_21_75 or var_21_74 then
+							local var_21_81 = Unit.world_position(var_21_79, 0) + Vector3.up() - arg_21_2
+							local var_21_82 = Vector3.normalize(var_21_81)
 
-					if hit_zone_name ~= "afro" then
-						if not only_line_of_sight then
-							local should_hit = true
-
-							if explosion_angle or explosion_forward_scaling then
-								local unit_pos = Unit.world_position(hit_unit, 0) + Vector3.up()
-								local delta_pos = unit_pos - impact_position
-								local direction = Vector3.normalize(delta_pos)
-
-								if explosion_angle then
-									should_hit = explosion_angle <= Vector3.dot(direction, explosion_direction)
-								end
-
-								if should_hit and explosion_forward_scaling then
-									local modified_radius = math.lerp(radius, radius * explosion_forward_scaling, math.abs(Vector3.dot(direction, explosion_direction)))
-
-									should_hit = modified_radius * modified_radius >= Vector3.length_squared(delta_pos)
-								end
+							if var_21_75 then
+								var_21_80 = var_21_75 <= Vector3.dot(var_21_82, var_21_76)
 							end
 
-							if should_hit then
-								num_hits = num_hits + 1
-								aoe_target_units[hit_unit] = true
-								aoe_target_array[num_hits] = hit_actor
+							if var_21_80 and var_21_74 then
+								local var_21_83 = math.lerp(var_21_34, var_21_34 * var_21_74, math.abs(Vector3.dot(var_21_82, var_21_76)))
+
+								var_21_80 = var_21_83 * var_21_83 >= Vector3.length_squared(var_21_81)
 							end
-						else
-							local unit_pos = Unit.world_position(hit_unit, 0) + Vector3.up()
-							local delta_pos = unit_pos - impact_position
-							local direction = Vector3.normalize(delta_pos)
-							local length = radius
-							local in_cone = true
+						end
 
-							if explosion_angle then
-								in_cone = explosion_angle <= Vector3.dot(direction, explosion_direction)
-							end
+						if var_21_80 then
+							var_21_77 = var_21_77 + 1
+							var_21_71[var_21_79] = true
+							var_21_72[var_21_77] = var_21_78
+						end
+					else
+						local var_21_84 = Unit.world_position(var_21_79, 0) + Vector3.up() - arg_21_2
+						local var_21_85 = Vector3.normalize(var_21_84)
+						local var_21_86 = var_21_34
+						local var_21_87 = true
 
-							local in_range = true
+						if var_21_75 then
+							var_21_87 = var_21_75 <= Vector3.dot(var_21_85, var_21_76)
+						end
 
-							if in_cone and explosion_forward_scaling then
-								local modified_radius = math.lerp(radius, radius * explosion_forward_scaling, math.abs(Vector3.dot(direction, explosion_direction)))
+						local var_21_88 = true
 
-								in_range = modified_radius * modified_radius <= Vector3.length_squared(delta_pos)
-							end
+						if var_21_87 and var_21_74 then
+							local var_21_89 = math.lerp(var_21_34, var_21_34 * var_21_74, math.abs(Vector3.dot(var_21_85, var_21_76)))
 
-							if in_cone and explosion_right_scaling then
-								local modified_radius = math.lerp(radius, radius * explosion_right_scaling, 1 - math.abs(Vector3.dot(direction, explosion_right_scaling)))
+							var_21_88 = var_21_89 * var_21_89 <= Vector3.length_squared(var_21_84)
+						end
 
-								in_range = modified_radius * modified_radius <= Vector3.length_squared(delta_pos)
-							end
+						if var_21_87 and explosion_right_scaling then
+							local var_21_90 = math.lerp(var_21_34, var_21_34 * explosion_right_scaling, 1 - math.abs(Vector3.dot(var_21_85, explosion_right_scaling)))
 
-							if in_cone and in_range then
-								PhysicsWorld.prepare_actors_for_raycast(physics_world, impact_position, direction, 0.1)
+							var_21_88 = var_21_90 * var_21_90 <= Vector3.length_squared(var_21_84)
+						end
 
-								local result = PhysicsWorld.immediate_raycast(physics_world, impact_position, direction, length, "all", "collision_filter", "filter_explosion_overlap_no_static")
+						if var_21_87 and var_21_88 then
+							PhysicsWorld.prepare_actors_for_raycast(var_21_68, arg_21_2, var_21_85, 0.1)
 
-								if result then
-									local num_hits_raycast = #result
+							local var_21_91 = PhysicsWorld.immediate_raycast(var_21_68, arg_21_2, var_21_85, var_21_86, "all", "collision_filter", "filter_explosion_overlap_no_static")
 
-									for j = 1, num_hits_raycast do
-										local hit = result[j]
-										local hit_actor_raycast = hit[4]
-										local hit_unit_raycast = Actor.unit(hit_actor_raycast)
-										local unit_breed = AiUtils.unit_breed(hit_unit_raycast)
+							if var_21_91 then
+								local var_21_92 = #var_21_91
 
-										if not unit_breed then
-											break
-										end
+								for iter_21_1 = 1, var_21_92 do
+									local var_21_93 = var_21_91[iter_21_1][4]
+									local var_21_94 = Actor.unit(var_21_93)
 
-										if hit_unit == hit_unit_raycast then
-											num_hits = num_hits + 1
-											aoe_target_units[hit_unit] = true
-											aoe_target_array[num_hits] = hit_actor
+									if not AiUtils.unit_breed(var_21_94) then
+										break
+									end
 
-											break
-										end
+									if var_21_79 == var_21_94 then
+										var_21_77 = var_21_77 + 1
+										var_21_71[var_21_79] = true
+										var_21_72[var_21_77] = var_21_78
+
+										break
 									end
 								end
 							end
 						end
 					end
 				end
-			elseif hit_unit and unit_alive(hit_unit) and hit_actor and not explosion_data.no_prop_damage and not aoe_simple_damage_units[hit_unit] then
-				aoe_simple_damage_units[hit_unit] = true
+			elseif var_21_79 and var_0_6(var_21_79) and var_21_78 and not var_21_1.no_prop_damage and not var_21_73[var_21_79] then
+				var_21_73[var_21_79] = true
 
-				local hit_direction = Vector3.normalize(actor_position(hit_actor) - impact_position)
+				local var_21_95 = Vector3.normalize(var_0_17(var_21_78) - arg_21_2)
 
-				unit_set_flow_variable(hit_unit, "hit_actor", hit_actor)
-				unit_set_flow_variable(hit_unit, "hit_direction", hit_direction)
-				unit_set_flow_variable(hit_unit, "hit_position", impact_position)
-				unit_flow_event(hit_unit, "lua_simple_damage")
+				var_0_10(var_21_79, "hit_actor", var_21_78)
+				var_0_10(var_21_79, "hit_direction", var_21_95)
+				var_0_10(var_21_79, "hit_position", arg_21_2)
+				var_0_11(var_21_79, "lua_simple_damage")
 			end
 		end
 
-		if is_grenade then
-			SurroundingAwareSystem.add_event(attacker_unit, "grenade_exp", DialogueSettings.grabbed_broadcast_range, "hit", num_hits, "grenade_owner", ScriptUnit.extension(attacker_unit, "dialogue_system").context.player_profile)
+		if var_21_43 then
+			SurroundingAwareSystem.add_event(arg_21_1, "grenade_exp", DialogueSettings.grabbed_broadcast_range, "hit", var_21_77, "grenade_owner", ScriptUnit.extension(arg_21_1, "dialogue_system").context.player_profile)
 		end
 
-		if num_hits > 0 then
-			table.sort(aoe_target_array, function (a, b)
-				local a_unit = actor_unit(a)
-				local b_unit = actor_unit(b)
-				local a_pos = POSITION_LOOKUP[a_unit] or unit_local_position(a_unit, 0)
-				local b_pos = POSITION_LOOKUP[b_unit] or unit_local_position(b_unit, 0)
-				local a_distance = vector3_distance_squared(impact_position, a_pos)
-				local b_distance = vector3_distance_squared(impact_position, b_pos)
+		if var_21_77 > 0 then
+			table.sort(var_21_72, function(arg_22_0, arg_22_1)
+				local var_22_0 = var_0_18(arg_22_0)
+				local var_22_1 = var_0_18(arg_22_1)
+				local var_22_2 = var_0_4[var_22_0] or var_0_7(var_22_0, 0)
+				local var_22_3 = var_0_4[var_22_1] or var_0_7(var_22_1, 0)
 
-				return a_distance < b_distance
+				return var_0_16(arg_21_2, var_22_2) < var_0_16(arg_21_2, var_22_3)
 			end)
 		end
 
-		local side_manager = Managers.state.side
-		local area_damage_system = Managers.state.entity:system("area_damage_system")
-		local target_number = 0
-		local hit_sound_cap = explosion_data.hit_sound_event_cap or num_hits
-		local ignore_players = explosion_data.ignore_players
-		local hit_sound_count = 0
+		local var_21_96 = Managers.state.side
+		local var_21_97 = Managers.state.entity:system("area_damage_system")
+		local var_21_98 = 0
+		local var_21_99 = var_21_1.hit_sound_event_cap or var_21_77
+		local var_21_100 = var_21_1.ignore_players
+		local var_21_101 = 0
 
-		for i = 1, num_hits do
-			local hit_actor = aoe_target_array[i]
-			local hit_unit = actor_unit(hit_actor)
-			local blackboard = BLACKBOARDS[hit_unit]
-			local breed = blackboard and blackboard.breed
-			local is_player = breed and breed.is_player
-			local is_ai = breed and not is_player
-			local is_ally = side_manager:is_ally(attacker_unit, hit_unit)
-			local damage_unit = not is_ally or friendly_fire_enabled
+		for iter_21_2 = 1, var_21_77 do
+			local var_21_102 = var_21_72[iter_21_2]
+			local var_21_103 = var_0_18(var_21_102)
+			local var_21_104 = var_0_2[var_21_103]
+			local var_21_105 = var_21_104 and var_21_104.breed
+			local var_21_106 = var_21_105 and var_21_105.is_player
+			local var_21_107 = var_21_105 and not var_21_106
+			local var_21_108 = var_21_96:is_ally(arg_21_1, var_21_103)
+			local var_21_109 = not var_21_108 or var_21_67
 
-			if is_player then
-				if ignore_players then
-					damage_unit = false
-				elseif not is_ally and damage_unit then
-					local ghost_mode_extension = ScriptUnit.has_extension(hit_unit, "ghost_mode_system")
+			if var_21_106 then
+				if var_21_100 then
+					var_21_109 = false
+				elseif not var_21_108 and var_21_109 then
+					local var_21_110 = ScriptUnit.has_extension(var_21_103, "ghost_mode_system")
 
-					damage_unit = not ghost_mode_extension or not ghost_mode_extension:is_in_ghost_mode()
+					var_21_109 = not var_21_110 or not var_21_110:is_in_ghost_mode()
 				end
-			elseif attacker_is_player and is_ai and is_ally then
-				damage_unit = false
+			elseif var_21_62 and var_21_107 and var_21_108 then
+				var_21_109 = false
 			end
 
-			if damage_unit then
-				local target_radius, target_height = DamageUtils.calculate_aoe_size(hit_unit, breed)
-				local unit_position = POSITION_LOOKUP[hit_unit] or unit_local_position(hit_unit, 0)
-				local unit_top_position = unit_position + Vector3(0, 0, math.max(target_height - target_radius * 0.5, target_height * 0.5))
-				local unit_bottom_position = unit_position + Vector3(0, 0, math.min(target_radius * 0.5, target_height * 0.5))
-				local closest_point = Geometry.closest_point_on_line(impact_position, unit_bottom_position, unit_top_position)
-				local hit_direction = closest_point - impact_position
-				local hit_distance = math.max(Vector3.length(hit_direction) - target_radius, 0)
-				local hit_direction_normalized = Vector3.normalize(hit_direction)
-				local is_glancing_hit = max_damage_radius < hit_distance
-				local scaled_power_level
+			if var_21_109 then
+				local var_21_111, var_21_112 = var_21_0.calculate_aoe_size(var_21_103, var_21_105)
+				local var_21_113 = var_0_4[var_21_103] or var_0_7(var_21_103, 0)
+				local var_21_114 = var_21_113 + Vector3(0, 0, math.max(var_21_112 - var_21_111 * 0.5, var_21_112 * 0.5))
+				local var_21_115 = var_21_113 + Vector3(0, 0, math.min(var_21_111 * 0.5, var_21_112 * 0.5))
+				local var_21_116 = Geometry.closest_point_on_line(arg_21_2, var_21_115, var_21_114) - arg_21_2
+				local var_21_117 = math.max(Vector3.length(var_21_116) - var_21_111, 0)
+				local var_21_118 = Vector3.normalize(var_21_116)
+				local var_21_119 = var_21_35 < var_21_117
+				local var_21_120
 
-				if power_level_min and power_level_max then
-					scaled_power_level = math.lerp(power_level_min, power_level_max, scale)
+				if var_21_50 and var_21_51 then
+					var_21_120 = math.lerp(var_21_50, var_21_51, arg_21_5)
 				end
 
-				local distance_factor = 1
+				local var_21_121 = 1
 
-				if max_damage_radius < hit_distance then
-					local distance_scale_range = radius - max_damage_radius
+				if var_21_35 < var_21_117 then
+					local var_21_122 = var_21_34 - var_21_35
 
-					if distance_scale_range > 0 then
-						distance_factor = 1 - (hit_distance - max_damage_radius) / distance_scale_range
+					if var_21_122 > 0 then
+						var_21_121 = 1 - (var_21_117 - var_21_35) / var_21_122
 
-						if exponential_falloff then
-							distance_factor = distance_factor * distance_factor
+						if var_21_39 then
+							var_21_121 = var_21_121 * var_21_121
 						end
 					end
 				end
 
-				if wind_mutator and different_power_levels_for_players then
-					if breed and breed.is_hero then
-						power_level = wind_power_level_player
-						power_level_glance = wind_power_level_player
+				if var_21_4 and var_21_47 then
+					if var_21_105 and var_21_105.is_hero then
+						var_21_49 = var_21_52
+						var_21_55 = var_21_52
 					else
-						power_level = wind_power_level_ai
-						power_level_glance = wind_power_level_ai
+						var_21_49 = var_21_53
+						var_21_55 = var_21_53
 					end
 				end
 
-				local actual_power_level = is_glancing_hit and power_level_glance or scaled_power_level or power_level or 0
+				local var_21_123 = (var_21_119 and var_21_55 or var_21_120 or var_21_49 or 0) * var_21_121
 
-				actual_power_level = actual_power_level * distance_factor
-				push_speed = push_speed and math.auto_lerp(max_damage_radius, radius, push_speed, 1, math.clamp(hit_distance, max_damage_radius, radius))
+				var_21_31 = var_21_31 and math.auto_lerp(var_21_35, var_21_34, var_21_31, 1, math.clamp(var_21_117, var_21_35, var_21_34))
 
-				if HEALTH_ALIVE[hit_unit] then
-					target_number = target_number + 1
+				if HEALTH_ALIVE[var_21_103] then
+					var_21_98 = var_21_98 + 1
 				end
 
-				local damage_profile = DamageProfileTemplates[explosion_template.explosion.damage_profile]
-				local shield_blocked = AiUtils.attack_is_shield_blocked(hit_unit, attacker_unit)
-				local hit_zone_name = DamageUtils.aoe_hit_zone(hit_unit, hit_actor)
+				local var_21_124 = DamageProfileTemplates[arg_21_4.explosion.damage_profile]
+				local var_21_125 = AiUtils.attack_is_shield_blocked(var_21_103, arg_21_1)
+				local var_21_126 = var_21_0.aoe_hit_zone(var_21_103, var_21_102)
 
 				if script_data.debug_projectiles then
-					QuickDrawerStay:vector(impact_position, hit_direction, Colors.get("brown"))
+					QuickDrawerStay:vector(arg_21_2, var_21_116, Colors.get("brown"))
 				end
 
-				local allow_critical_proc = false
+				local var_21_127 = false
 
-				area_damage_system:add_aoe_damage_target(hit_unit, attacker_unit, impact_position, shield_blocked, do_damage, hit_zone_name, damage_source, hit_distance, push_speed, radius, max_damage_radius, radius_min, radius_max, power_level, actual_power_level, hit_direction_normalized, explosion_template.name, is_critical_strike, allow_critical_proc, source_attacker_unit, target_number)
+				var_21_97:add_aoe_damage_target(var_21_103, arg_21_1, arg_21_2, var_21_125, var_21_56, var_21_126, arg_21_6, var_21_117, var_21_31, var_21_34, var_21_35, var_21_37, var_21_38, var_21_49, var_21_123, var_21_118, arg_21_4.name, arg_21_11, var_21_127, arg_21_12, var_21_98)
 
-				if explosion_data.buff_to_apply and DamageUtils.is_player_unit(hit_unit) then
-					if not explosion_data.only_facing then
-						local buff_system = Managers.state.entity:system("buff_system")
-
-						buff_system:add_buff(hit_unit, explosion_data.buff_to_apply, hit_unit, false)
+				if var_21_1.buff_to_apply and var_21_0.is_player_unit(var_21_103) then
+					if not var_21_1.only_facing then
+						Managers.state.entity:system("buff_system"):add_buff(var_21_103, var_21_1.buff_to_apply, var_21_103, false)
 					else
-						local unit_pos = Unit.local_position(attacker_unit, 0)
-						local hit_unit_pos = POSITION_LOOKUP[hit_unit] or Unit.local_position(hit_unit, 0)
-						local player_rot = Unit.local_rotation(hit_unit, 0)
-						local _, _, nr = Quaternion.to_euler_angles_xyz(player_rot)
-						local angle_towards_explosion = nr - math.radians_to_degrees(math.angle(unit_pos.x, unit_pos.y, hit_unit_pos.x, hit_unit_pos.y))
+						local var_21_128 = Unit.local_position(arg_21_1, 0)
+						local var_21_129 = var_0_4[var_21_103] or Unit.local_position(var_21_103, 0)
+						local var_21_130 = Unit.local_rotation(var_21_103, 0)
+						local var_21_131, var_21_132, var_21_133 = Quaternion.to_euler_angles_xyz(var_21_130)
+						local var_21_134 = var_21_133 - math.radians_to_degrees(math.angle(var_21_128.x, var_21_128.y, var_21_129.x, var_21_129.y))
 
-						if angle_towards_explosion < 0 then
-							angle_towards_explosion = angle_towards_explosion + 360
+						if var_21_134 < 0 then
+							var_21_134 = var_21_134 + 360
 						end
 
-						if math.abs(90 - angle_towards_explosion) < 90 then
-							local buff_system = Managers.state.entity:system("buff_system")
-
-							buff_system:add_buff(hit_unit, explosion_data.buff_to_apply, hit_unit, false)
+						if math.abs(90 - var_21_134) < 90 then
+							Managers.state.entity:system("buff_system"):add_buff(var_21_103, var_21_1.buff_to_apply, var_21_103, false)
 						end
 					end
-				elseif explosion_data.enemy_debuff and DamageUtils.is_enemy(attacker_unit, hit_unit) then
-					local buff_system = Managers.state.entity:system("buff_system")
-					local debuffs_to_add = explosion_data.enemy_debuff
+				elseif var_21_1.enemy_debuff and var_21_0.is_enemy(arg_21_1, var_21_103) then
+					local var_21_135 = Managers.state.entity:system("buff_system")
+					local var_21_136 = var_21_1.enemy_debuff
 
-					for key, debuff_name in pairs(debuffs_to_add) do
-						buff_system:add_buff(hit_unit, debuff_name, hit_unit, false)
+					for iter_21_3, iter_21_4 in pairs(var_21_136) do
+						var_21_135:add_buff(var_21_103, iter_21_4, var_21_103, false)
 					end
 				end
 
-				if explosion_data.server_hit_func then
-					explosion_data.server_hit_func(hit_unit, damage_source, attacker_unit, impact_position, explosion_data)
+				if var_21_1.server_hit_func then
+					var_21_1.server_hit_func(var_21_103, arg_21_6, arg_21_1, arg_21_2, var_21_1)
 				end
 
-				if explosion_data.hit_sound_event and hit_sound_count < hit_sound_cap then
-					local audio_system = Managers.state.entity:system("audio_system")
+				if var_21_1.hit_sound_event and var_21_101 < var_21_99 then
+					Managers.state.entity:system("audio_system"):play_audio_unit_event(var_21_1.hit_sound_event, var_21_103)
 
-					audio_system:play_audio_unit_event(explosion_data.hit_sound_event, hit_unit)
-
-					hit_sound_count = hit_sound_count + 1
+					var_21_101 = var_21_101 + 1
 				end
 
-				if explosion_data.catapult_players and DamageUtils.is_player_unit(hit_unit) then
-					local bot = Managers.player:owner(hit_unit) and not Managers.player:owner(hit_unit):is_player_controlled()
-					local bot_knockback_immunity = bot and explosion_data.bot_knockback_immunity or false
+				if var_21_1.catapult_players and var_21_0.is_player_unit(var_21_103) and not (Managers.player:owner(var_21_103) and not Managers.player:owner(var_21_103):is_player_controlled() and var_21_1.bot_knockback_immunity or false) then
+					local var_21_137 = var_21_1.catapult_force
+					local var_21_138 = var_21_1.catapult_force_z
+					local var_21_139 = var_21_1.catapult_blocked_multiplier
 
-					if not bot_knockback_immunity then
-						local force = explosion_data.catapult_force
-						local force_z = explosion_data.catapult_force_z
-						local block_multiplier = explosion_data.catapult_blocked_multiplier
+					if var_21_139 then
+						local var_21_140 = var_21_0.check_block(arg_21_1, var_21_103, var_21_1.fatigue_type) and var_21_139 or 1
 
-						if block_multiplier then
-							local blocked = DamageUtils.check_block(attacker_unit, hit_unit, explosion_data.fatigue_type)
-							local multiplier = blocked and block_multiplier or 1
-
-							force = force * multiplier
-							force_z = force_z * multiplier
-						end
-
-						local velocity = force * Vector3.normalize(hit_direction)
-
-						if force_z then
-							Vector3.set_z(velocity, force_z)
-						end
-
-						StatusUtils.set_catapulted_network(hit_unit, true, velocity)
+						var_21_137 = var_21_137 * var_21_140
+						var_21_138 = var_21_138 * var_21_140
 					end
+
+					local var_21_141 = var_21_137 * Vector3.normalize(var_21_116)
+
+					if var_21_138 then
+						Vector3.set_z(var_21_141, var_21_138)
+					end
+
+					StatusUtils.set_catapulted_network(var_21_103, true, var_21_141)
 				end
 			end
 		end
 	end
 end
 
-local BROADPHASE_TEMP = {}
+local var_0_32 = {}
 
-DamageUtils.create_taunt = function (world, owner_unit, projectile_unit, position, aoe_data)
-	local taunt_data = aoe_data.taunt
-	local num_targets = AiUtils.broadphase_query(position, taunt_data.target_selection_range, BROADPHASE_TEMP)
-	local best_health = -math.huge
-	local best_target
+function DamageUtils.create_taunt(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+	local var_23_0 = arg_23_4.taunt
+	local var_23_1 = AiUtils.broadphase_query(arg_23_3, var_23_0.target_selection_range, var_0_32)
+	local var_23_2 = -math.huge
+	local var_23_3
 
-	if num_targets > 1 then
-		for i = 1, num_targets do
-			local unit = BROADPHASE_TEMP[i]
-			local health_ext = ScriptUnit.extension(unit, "health_system")
-			local current_health = health_ext:current_health()
+	if var_23_1 > 1 then
+		for iter_23_0 = 1, var_23_1 do
+			local var_23_4 = var_0_32[iter_23_0]
+			local var_23_5 = ScriptUnit.extension(var_23_4, "health_system"):current_health()
 
-			if best_health < current_health then
-				best_target = unit
-				best_health = current_health
+			if var_23_2 < var_23_5 then
+				var_23_3 = var_23_4
+				var_23_2 = var_23_5
 			end
 		end
 	end
 
-	local extension_init_data = {
+	local var_23_6 = {
 		health_system = {
-			attached_unit = best_target,
-			duration = taunt_data.duration,
+			attached_unit = var_23_3,
+			duration = var_23_0.duration
 		},
 		death_system = {
-			death_reaction_template = "lure_unit",
-		},
+			death_reaction_template = "lure_unit"
+		}
 	}
-	local unit_name = "units/hub_elements/empty"
-	local unit = Managers.state.unit_spawner:spawn_network_unit(unit_name, "lure_unit", extension_init_data, position)
+	local var_23_7 = "units/hub_elements/empty"
+	local var_23_8 = Managers.state.unit_spawner:spawn_network_unit(var_23_7, "lure_unit", var_23_6, arg_23_3)
 
-	if best_target then
-		World.link_unit(world, unit, best_target)
+	if var_23_3 then
+		World.link_unit(arg_23_0, var_23_8, var_23_3)
 	end
 
-	local t = Managers.time:time("game")
-	local taunt_end_time = t + taunt_data.duration
-	local num_taunted_units = AiUtils.broadphase_query(position, taunt_data.range, BROADPHASE_TEMP)
+	local var_23_9 = Managers.time:time("game")
+	local var_23_10 = var_23_9 + var_23_0.duration
+	local var_23_11 = AiUtils.broadphase_query(arg_23_3, var_23_0.range, var_0_32)
 
-	for i = 1, num_taunted_units do
-		local ai_unit = BROADPHASE_TEMP[i]
+	for iter_23_1 = 1, var_23_11 do
+		local var_23_12 = var_0_32[iter_23_1]
 
-		if ai_unit ~= best_target then
-			local ai_extension = ScriptUnit.extension(ai_unit, "ai_system")
-			local ai_blackboard = ai_extension:blackboard()
-			local ai_breed = ai_extension:breed()
+		if var_23_12 ~= var_23_3 then
+			local var_23_13 = ScriptUnit.extension(var_23_12, "ai_system")
+			local var_23_14 = var_23_13:blackboard()
 
-			if not ai_breed.ignore_taunts then
-				ai_blackboard.taunt_unit = unit
-				ai_blackboard.taunt_end_time = taunt_end_time
-				ai_blackboard.target_unit = unit
-				ai_blackboard.target_unit_found_time = t
+			if not var_23_13:breed().ignore_taunts then
+				var_23_14.taunt_unit = var_23_8
+				var_23_14.taunt_end_time = var_23_10
+				var_23_14.target_unit = var_23_8
+				var_23_14.target_unit_found_time = var_23_9
 			end
 		end
 	end
 
-	return unit
+	return var_23_8
 end
 
-DamageUtils.create_aoe = function (world, attacker_unit, position, damage_source, explosion_template, radius, duration)
-	local aoe_data = explosion_template.aoe
-	local radius = radius or aoe_data.radius
-	local duration = duration or aoe_data.duration
-	local attacker_unit = AiUtils.get_actual_attacker_unit(attacker_unit)
-	local is_grenade = explosion_template.is_grenade
-	local buff_extension = ScriptUnit.has_extension(attacker_unit, "buff_system")
+function DamageUtils.create_aoe(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
+	local var_24_0 = arg_24_4.aoe
+	local var_24_1 = arg_24_5 or var_24_0.radius
+	local var_24_2 = arg_24_6 or var_24_0.duration
+	local var_24_3 = AiUtils.get_actual_attacker_unit(arg_24_1)
+	local var_24_4 = arg_24_4.is_grenade
+	local var_24_5 = ScriptUnit.has_extension(var_24_3, "buff_system")
 
-	if buff_extension then
-		local radius_multiplier = 1
+	if var_24_5 then
+		local var_24_6 = 1
 
-		if is_grenade then
-			radius_multiplier = radius_multiplier + (buff_extension:apply_buffs_to_value(1, "grenade_radius") - 1)
+		if var_24_4 then
+			var_24_6 = var_24_6 + (var_24_5:apply_buffs_to_value(1, "grenade_radius") - 1)
 		end
 
-		radius_multiplier = radius_multiplier + (buff_extension:apply_buffs_to_value(1, "explosion_radius") - 1)
-		radius = radius * radius_multiplier
+		var_24_1 = var_24_1 * (var_24_6 + (var_24_5:apply_buffs_to_value(1, "explosion_radius") - 1))
 	end
 
-	local attacker_player = Managers.player:owner(attacker_unit)
-	local damage_players = true
-	local mechanism_name = Managers.mechanism:current_mechanism_name()
+	local var_24_7 = Managers.player:owner(var_24_3)
+	local var_24_8 = true
+	local var_24_9 = Managers.mechanism:current_mechanism_name()
 
-	if attacker_player ~= nil and mechanism_name ~= "versus" then
-		local difficulty_settings = Managers.state.difficulty:get_difficulty_settings()
-		local friendly_fire_disabled = aoe_data.no_friendly_fire
-		local friendly_fire_allowed = DamageUtils.allow_friendly_fire_ranged(difficulty_settings, attacker_player)
-		local forced_friendly_fire = aoe_data.allow_friendly_fire
+	if var_24_7 ~= nil and var_24_9 ~= "versus" then
+		local var_24_10 = Managers.state.difficulty:get_difficulty_settings()
+		local var_24_11 = var_24_0.no_friendly_fire
+		local var_24_12 = DamageUtils.allow_friendly_fire_ranged(var_24_10, var_24_7)
 
-		damage_players = forced_friendly_fire or friendly_fire_allowed and not friendly_fire_disabled
+		var_24_8 = var_24_0.allow_friendly_fire or var_24_12 and not var_24_11
 	end
 
-	local extension_init_data = {
+	local var_24_13 = {
 		area_damage_system = {
-			aoe_dot_damage = 0,
 			invisible_unit = true,
-			aoe_dot_damage_interval = aoe_data.damage_interval,
-			radius = radius,
-			life_time = duration,
-			damage_players = damage_players,
-			player_screen_effect_name = aoe_data.player_screen_effect_name,
-			dot_effect_name = aoe_data.effect_name,
-			extra_dot_effect_name = aoe_data.extra_effect_name,
-			nav_mesh_effect = aoe_data.nav_mesh_effect,
-			area_damage_template = aoe_data.area_damage_template or "explosion_template_aoe",
-			damage_source = damage_source,
-			create_nav_tag_volume = aoe_data.create_nav_tag_volume,
-			nav_tag_volume_layer = aoe_data.nav_tag_volume_layer,
-			explosion_template_name = explosion_template.name,
-			owner_player = attacker_player,
-			source_attacker_unit = attacker_unit,
-		},
+			aoe_dot_damage = 0,
+			aoe_dot_damage_interval = var_24_0.damage_interval,
+			radius = var_24_1,
+			life_time = var_24_2,
+			damage_players = var_24_8,
+			player_screen_effect_name = var_24_0.player_screen_effect_name,
+			dot_effect_name = var_24_0.effect_name,
+			extra_dot_effect_name = var_24_0.extra_effect_name,
+			nav_mesh_effect = var_24_0.nav_mesh_effect,
+			area_damage_template = var_24_0.area_damage_template or "explosion_template_aoe",
+			damage_source = arg_24_3,
+			create_nav_tag_volume = var_24_0.create_nav_tag_volume,
+			nav_tag_volume_layer = var_24_0.nav_tag_volume_layer,
+			explosion_template_name = arg_24_4.name,
+			owner_player = var_24_7,
+			source_attacker_unit = var_24_3
+		}
 	}
-	local aoe_unit_name = "units/hub_elements/empty"
-	local aoe_unit = Managers.state.unit_spawner:spawn_network_unit(aoe_unit_name, "aoe_unit", extension_init_data, position)
-	local unit_id = Managers.state.unit_storage:go_id(aoe_unit)
+	local var_24_14 = "units/hub_elements/empty"
+	local var_24_15 = Managers.state.unit_spawner:spawn_network_unit(var_24_14, "aoe_unit", var_24_13, arg_24_2)
+	local var_24_16 = Managers.state.unit_storage:go_id(var_24_15)
 
-	Unit.set_unit_visibility(aoe_unit, false)
-	Managers.state.network.network_transmit:send_rpc_all("rpc_area_damage", unit_id, position)
+	Unit.set_unit_visibility(var_24_15, false)
+	Managers.state.network.network_transmit:send_rpc_all("rpc_area_damage", var_24_16, arg_24_2)
 
-	return aoe_unit
+	return var_24_15
 end
 
-DamageUtils.networkify_damage = function (damage_amount)
-	local damage = NetworkConstants.damage
+function DamageUtils.networkify_damage(arg_25_0)
+	local var_25_0 = NetworkConstants.damage
 
-	damage_amount = math.clamp(damage_amount, damage.min, damage.max)
+	arg_25_0 = math.clamp(arg_25_0, var_25_0.min, var_25_0.max)
 
-	local decimal = damage_amount % 1
-	local rounded_decimal = math.round(decimal * 4) * 0.25
+	local var_25_1 = arg_25_0 % 1
+	local var_25_2 = math.round(var_25_1 * 4) * 0.25
 
-	return math.floor(damage_amount) + rounded_decimal
+	return math.floor(arg_25_0) + var_25_2
 end
 
-DamageUtils.networkify_health = function (health_amount)
-	local health = NetworkConstants.health
+function DamageUtils.networkify_health(arg_26_0)
+	local var_26_0 = NetworkConstants.health
 
-	health_amount = math.clamp(health_amount, health.min, health.max)
+	arg_26_0 = math.clamp(arg_26_0, var_26_0.min, var_26_0.max)
 
-	local decimal = health_amount % 1
-	local rounded_decimal = math.round(decimal * 4) * 0.25
+	local var_26_1 = arg_26_0 % 1
+	local var_26_2 = math.round(var_26_1 * 4) * 0.25
 
-	return math.floor(health_amount) + rounded_decimal
+	return math.floor(arg_26_0) + var_26_2
 end
 
-DamageUtils.create_hit_zone_lookup = function (unit, breed)
-	local hit_zones = breed.hit_zones
-	local hit_zones_lookup = {}
-	local breed_name = breed.name
+function DamageUtils.create_hit_zone_lookup(arg_27_0, arg_27_1)
+	local var_27_0 = arg_27_1.hit_zones
+	local var_27_1 = {}
+	local var_27_2 = arg_27_1.name
 
-	if not breed_name then
-		table.dump(breed, "breed", 2)
+	if not var_27_2 then
+		table.dump(arg_27_1, "breed", 2)
 		error("breed.name was nil in DamageUtils.create_hit_zone_lookup")
 	end
 
-	for zone_name, zone in pairs(hit_zones) do
-		for k, actor_name in ipairs(zone.actors) do
-			local actor = unit_actor(unit, actor_name)
+	for iter_27_0, iter_27_1 in pairs(var_27_0) do
+		for iter_27_2, iter_27_3 in ipairs(iter_27_1.actors) do
+			local var_27_3 = var_0_12(arg_27_0, iter_27_3)
 
-			if not actor then
-				printf("Actor %s not found in %s", actor_name, breed_name)
+			if not var_27_3 then
+				printf("Actor %s not found in %s", iter_27_3, var_27_2)
 			end
 
-			local node = actor_node(actor)
+			local var_27_4 = var_0_19(var_27_3)
 
-			hit_zones_lookup[node] = {
-				name = zone_name,
-				prio = zone.prio,
-				actor_name = actor_name,
+			var_27_1[var_27_4] = {
+				name = iter_27_0,
+				prio = iter_27_1.prio,
+				actor_name = iter_27_3
 			}
-			hit_zones_lookup[zone_name] = node
-			hit_zones_lookup[breed_name] = true
+			var_27_1[iter_27_0] = var_27_4
+			var_27_1[var_27_2] = true
 		end
 	end
 
-	breed.hit_zones_lookup = hit_zones_lookup
-	BreedHitZonesLookup[breed_name] = hit_zones_lookup
+	arg_27_1.hit_zones_lookup = var_27_1
+	BreedHitZonesLookup[var_27_2] = var_27_1
 end
 
-DamageUtils.vs_register_dark_pact_player_damage = function (attacker_unit, attacked_unit, damage_source, damage_type, player_manager, source_attacker_unit, damage_amount)
-	local attacker_player = player_manager:owner(attacker_unit)
-	local attacked_player = player_manager:owner(attacked_unit)
+function DamageUtils.vs_register_dark_pact_player_damage(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6)
+	local var_28_0 = arg_28_4:owner(arg_28_0)
+	local var_28_1 = arg_28_4:owner(arg_28_1)
 
-	if attacker_player and attacked_player then
-		local is_dark_pact_attacker = Managers.state.side:versus_is_dark_pact(attacker_unit) or Managers.state.side:versus_is_dark_pact(source_attacker_unit)
-		local status_extension = ScriptUnit.has_extension(attacked_unit, "status_system")
-		local target_downed = status_extension.is_ledge_hanging or status_extension.knocked_down
+	if var_28_0 and var_28_1 then
+		local var_28_2 = Managers.state.side:versus_is_dark_pact(arg_28_0) or Managers.state.side:versus_is_dark_pact(arg_28_5)
+		local var_28_3 = ScriptUnit.has_extension(arg_28_1, "status_system")
+		local var_28_4 = var_28_3.is_ledge_hanging or var_28_3.knocked_down
 
-		if attacker_unit and is_dark_pact_attacker then
-			local horde_ability_system = Managers.state.entity:system("versus_horde_ability_system")
-
-			horde_ability_system:server_ability_recharge_boost(attacker_player.peer_id, nil, damage_source, damage_type, target_downed, damage_amount)
+		if arg_28_0 and var_28_2 then
+			Managers.state.entity:system("versus_horde_ability_system"):server_ability_recharge_boost(var_28_0.peer_id, nil, arg_28_2, arg_28_3, var_28_4, arg_28_6)
 		end
 	end
 end
 
-DamageUtils.add_damage_network = function (attacked_unit, attacker_unit, original_damage_amount, hit_zone_name, damage_type, hit_position, damage_direction, damage_source, hit_ragdoll_actor, source_attacker_unit, buff_attack_type, hit_react_type, is_critical_strike, added_dot, first_hit, total_hits, backstab_multiplier, skip_buffs, target_index)
-	local network_manager = Managers.state.network
+function DamageUtils.add_damage_network(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8, arg_29_9, arg_29_10, arg_29_11, arg_29_12, arg_29_13, arg_29_14, arg_29_15, arg_29_16, arg_29_17, arg_29_18)
+	local var_29_0 = Managers.state.network
 
-	if not network_manager:game() then
+	if not var_29_0:game() then
 		return 0
 	end
 
-	local attacked_side = Managers.state.side.side_by_unit[attacked_unit]
+	local var_29_1 = Managers.state.side.side_by_unit[arg_29_0]
 
-	if DamageUtils.is_in_inn and attacked_side and attacked_side.VALID_ENEMY_PLAYERS_AND_BOTS[attacked_unit] then
+	if DamageUtils.is_in_inn and var_29_1 and var_29_1.VALID_ENEMY_PLAYERS_AND_BOTS[arg_29_0] then
 		return 0
 	end
 
-	local player_manager = Managers.player
-	local is_server = player_manager.is_server
+	local var_29_2 = Managers.player
+	local var_29_3 = var_29_2.is_server
 
-	if is_immune_to_damage(attacked_unit, damage_type, damage_source, buff_attack_type) then
-		if is_server or LEVEL_EDITOR_TEST then
-			Managers.state.achievement:trigger_event("register_damage_resisted_immune", attacked_unit, attacker_unit, damage_type)
+	if var_0_22(arg_29_0, arg_29_4, arg_29_7, arg_29_10) then
+		if var_29_3 or LEVEL_EDITOR_TEST then
+			Managers.state.achievement:trigger_event("register_damage_resisted_immune", arg_29_0, arg_29_1, arg_29_4)
 		end
 
 		return 0
 	end
 
-	if is_server and Managers.mechanism:current_mechanism_name() == "versus" then
-		DamageUtils.vs_register_dark_pact_player_damage(attacker_unit, attacked_unit, damage_source, damage_type, player_manager, source_attacker_unit)
+	if var_29_3 and Managers.mechanism:current_mechanism_name() == "versus" then
+		DamageUtils.vs_register_dark_pact_player_damage(arg_29_1, arg_29_0, arg_29_7, arg_29_4, var_29_2, arg_29_9)
 	end
 
-	local victim_units = FrameTable.alloc_table()
+	local var_29_4 = FrameTable.alloc_table()
 
-	if is_server or LEVEL_EDITOR_TEST then
-		local mechanism_ok, custom_setting_damage_multiplier, custom_settings_enabled = Managers.mechanism:mechanism_try_call("get_custom_game_setting", "hero_damage_taken")
+	if var_29_3 or LEVEL_EDITOR_TEST then
+		local var_29_5, var_29_6, var_29_7 = Managers.mechanism:mechanism_try_call("get_custom_game_setting", "hero_damage_taken")
 
-		if mechanism_ok and custom_settings_enabled then
-			local unit_is_hero = attacked_side and attacked_side:name() == "heroes"
+		arg_29_2 = var_29_5 and var_29_7 and var_29_1 and var_29_1:name() == "heroes" and arg_29_2 * var_29_6 or arg_29_2
 
-			original_damage_amount = unit_is_hero and original_damage_amount * custom_setting_damage_multiplier or original_damage_amount
+		local var_29_8 = AiUtils.unit_breed(arg_29_1)
+
+		if var_29_8 and var_29_8.is_hero then
+			arg_29_2 = DamageUtils.networkify_damage(arg_29_2)
 		end
 
-		local attacker_breed = AiUtils.unit_breed(attacker_unit)
-
-		if attacker_breed and attacker_breed.is_hero then
-			original_damage_amount = DamageUtils.networkify_damage(original_damage_amount)
-		end
-
-		original_damage_amount = DamageUtils.apply_buffs_to_damage(original_damage_amount, attacked_unit, attacker_unit, damage_source, victim_units, damage_type, buff_attack_type, first_hit, source_attacker_unit)
+		arg_29_2 = DamageUtils.apply_buffs_to_damage(arg_29_2, arg_29_0, arg_29_1, arg_29_7, var_29_4, arg_29_4, arg_29_10, arg_29_14, arg_29_9)
 	end
 
-	local damage_amount = DamageUtils.networkify_damage(original_damage_amount)
+	local var_29_9 = DamageUtils.networkify_damage(arg_29_2)
 
-	hit_position = hit_position or Unit.world_position(attacked_unit, 0)
-	hit_position = NetworkUtils.network_clamp_position(hit_position)
+	arg_29_5 = arg_29_5 or Unit.world_position(arg_29_0, 0)
+	arg_29_5 = NetworkUtils.network_clamp_position(arg_29_5)
 
-	if HEALTH_ALIVE[attacked_unit] then
-		local buff_extension = ScriptUnit.has_extension(attacker_unit, "buff_system")
+	if HEALTH_ALIVE[arg_29_0] then
+		local var_29_10 = ScriptUnit.has_extension(arg_29_1, "buff_system")
 
-		if buff_extension and not skip_buffs then
-			local on_damage_dealt_proc_modifiable = FrameTable.alloc_table()
+		if var_29_10 and not arg_29_17 then
+			local var_29_11 = FrameTable.alloc_table()
 
-			on_damage_dealt_proc_modifiable.damage_amount = damage_amount
+			var_29_11.damage_amount = var_29_9
 
-			buff_extension:trigger_procs("on_damage_dealt", attacked_unit, attacker_unit, damage_amount, hit_zone_name, 0, is_critical_strike, buff_attack_type, 100, damage_source, damage_type, first_hit, on_damage_dealt_proc_modifiable)
+			var_29_10:trigger_procs("on_damage_dealt", arg_29_0, arg_29_1, var_29_9, arg_29_3, 0, arg_29_12, arg_29_10, 100, arg_29_7, arg_29_4, arg_29_14, var_29_11)
 
-			damage_amount = on_damage_dealt_proc_modifiable.damage_amount
+			var_29_9 = var_29_11.damage_amount
 		end
 
-		Managers.state.achievement:trigger_event("on_damage_dealt", attacked_unit, attacker_unit, damage_amount, hit_zone_name, 0, is_critical_strike, buff_attack_type, 100, damage_source, damage_type, first_hit)
+		Managers.state.achievement:trigger_event("on_damage_dealt", arg_29_0, arg_29_1, var_29_9, arg_29_3, 0, arg_29_12, arg_29_10, 100, arg_29_7, arg_29_4, arg_29_14)
 	end
 
-	Managers.state.game_mode:game_mode():projectile_hit_character(nil, source_attacker_unit, attacker_unit, attacked_unit, hit_position, nil, damage_direction, damage_amount)
+	Managers.state.game_mode:game_mode():projectile_hit_character(nil, arg_29_9, arg_29_1, arg_29_0, arg_29_5, nil, arg_29_6, var_29_9)
 
-	if is_server or LEVEL_EDITOR_TEST then
-		local num_victim_units = #victim_units
-		local t = Managers.time:time("game")
+	if var_29_3 or LEVEL_EDITOR_TEST then
+		local var_29_12 = #var_29_4
+		local var_29_13 = Managers.time:time("game")
 
-		for i = 1, num_victim_units do
-			local victim_unit = victim_units[i]
+		for iter_29_0 = 1, var_29_12 do
+			local var_29_14 = var_29_4[iter_29_0]
 
-			damage_type = victim_unit == attacked_unit and damage_type or "buff"
+			arg_29_4 = var_29_14 == arg_29_0 and arg_29_4 or "buff"
 
-			local health_extension = ScriptUnit.extension(victim_unit, "health_system")
+			ScriptUnit.extension(var_29_14, "health_system"):add_damage(arg_29_1, var_29_9, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8, arg_29_9, arg_29_11, arg_29_12, arg_29_13, arg_29_14, arg_29_15, arg_29_10, arg_29_16, arg_29_18)
 
-			health_extension:add_damage(attacker_unit, damage_amount, hit_zone_name, damage_type, hit_position, damage_direction, damage_source, hit_ragdoll_actor, source_attacker_unit, hit_react_type, is_critical_strike, added_dot, first_hit, total_hits, buff_attack_type, backstab_multiplier, target_index)
-
-			if not HEALTH_ALIVE[victim_unit] then
-				Managers.state.unit_spawner:prioritize_death_watch_unit(attacked_unit, t)
+			if not HEALTH_ALIVE[var_29_14] then
+				Managers.state.unit_spawner:prioritize_death_watch_unit(arg_29_0, var_29_13)
 			end
 		end
 	else
-		local unit_id, is_level_unit = network_manager:game_object_or_level_id(attacked_unit)
-		local attacker_unit_id, attacker_is_level_unit = network_manager:game_object_or_level_id(attacker_unit)
-		local source_attacker_unit_id = network_manager:unit_game_object_id(source_attacker_unit) or NetworkConstants.invalid_game_object_id
-		local hit_zone_id = NetworkLookup.hit_zones[hit_zone_name]
-		local damage_type_id = NetworkLookup.damage_types[damage_type]
-		local damage_source_id = NetworkLookup.damage_sources[damage_source or "n/a"]
-		local hit_react_type_id = NetworkLookup.hit_react_types[hit_react_type or "light"]
+		local var_29_15, var_29_16 = var_29_0:game_object_or_level_id(arg_29_0)
+		local var_29_17, var_29_18 = var_29_0:game_object_or_level_id(arg_29_1)
+		local var_29_19 = var_29_0:unit_game_object_id(arg_29_9) or NetworkConstants.invalid_game_object_id
+		local var_29_20 = NetworkLookup.hit_zones[arg_29_3]
+		local var_29_21 = NetworkLookup.damage_types[arg_29_4]
+		local var_29_22 = NetworkLookup.damage_sources[arg_29_7 or "n/a"]
+		local var_29_23 = NetworkLookup.hit_react_types[arg_29_11 or "light"]
 
-		is_critical_strike = is_critical_strike or false
-		added_dot = added_dot or false
-		first_hit = first_hit or false
-		total_hits = total_hits or 0
-		backstab_multiplier = backstab_multiplier or 1
-		target_index = target_index or 1
+		arg_29_12 = arg_29_12 or false
+		arg_29_13 = arg_29_13 or false
+		arg_29_14 = arg_29_14 or false
+		arg_29_15 = arg_29_15 or 0
+		arg_29_16 = arg_29_16 or 1
+		arg_29_18 = arg_29_18 or 1
 
-		network_manager.network_transmit:send_rpc_server("rpc_add_damage_network", unit_id, is_level_unit, attacker_unit_id, attacker_is_level_unit, source_attacker_unit_id, damage_amount, hit_zone_id, damage_type_id, hit_position, damage_direction, damage_source_id, hit_react_type_id, is_critical_strike, added_dot, first_hit, total_hits, backstab_multiplier, target_index)
+		var_29_0.network_transmit:send_rpc_server("rpc_add_damage_network", var_29_15, var_29_16, var_29_17, var_29_18, var_29_19, var_29_9, var_29_20, var_29_21, arg_29_5, arg_29_6, var_29_22, var_29_23, arg_29_12, arg_29_13, arg_29_14, arg_29_15, arg_29_16, arg_29_18)
 	end
 
-	return damage_amount
+	return var_29_9
 end
 
-DamageUtils.get_damage_type = function (damage_profile, target_index)
-	local target_settings = damage_profile.targets and damage_profile.targets[target_index] or damage_profile.default_target
-	local attack_template_name = target_settings.attack_template
-	local attack_template = DamageUtils.get_attack_template(attack_template_name)
-	local damage_type = target_settings.damage_type or damage_profile.damage_type or attack_template.damage_type
+function DamageUtils.get_damage_type(arg_30_0, arg_30_1)
+	local var_30_0 = arg_30_0.targets and arg_30_0.targets[arg_30_1] or arg_30_0.default_target
+	local var_30_1 = var_30_0.attack_template
+	local var_30_2 = DamageUtils.get_attack_template(var_30_1)
 
-	return damage_type
+	return var_30_0.damage_type or arg_30_0.damage_type or var_30_2.damage_type
 end
 
-DamageUtils.add_damage_network_player = function (damage_profile, target_index, power_level, hit_unit, attacker_unit, hit_zone_name, hit_position, attack_direction, damage_source, hit_ragdoll_actor, boost_curve_multiplier, is_critical_strike, added_dot, first_hit, total_hits, backstab_multiplier, source_attacker_unit)
-	local network_manager = Managers.state.network
-
-	if not network_manager:game() then
+function DamageUtils.add_damage_network_player(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5, arg_31_6, arg_31_7, arg_31_8, arg_31_9, arg_31_10, arg_31_11, arg_31_12, arg_31_13, arg_31_14, arg_31_15, arg_31_16)
+	if not Managers.state.network:game() then
 		return 0
 	end
 
-	local attacked_side = Managers.state.side.side_by_unit[hit_unit]
+	local var_31_0 = Managers.state.side.side_by_unit[arg_31_3]
 
-	if DamageUtils.is_in_inn and attacked_side and attacked_side.VALID_ENEMY_PLAYERS_AND_BOTS[hit_unit] then
+	if DamageUtils.is_in_inn and var_31_0 and var_31_0.VALID_ENEMY_PLAYERS_AND_BOTS[arg_31_3] then
 		return 0
 	end
 
-	local player_manager = Managers.player
-	local attacker_player = player_manager:owner(attacker_unit)
+	local var_31_1 = Managers.player
+	local var_31_2 = var_31_1:owner(arg_31_4)
 
-	if attacker_player and attacker_player.bot_player and not DamageUtils.can_bots_damage(hit_unit) then
+	if var_31_2 and var_31_2.bot_player and not DamageUtils.can_bots_damage(arg_31_3) then
 		return 0
 	end
 
-	local mechanism_name = Managers.mechanism:current_mechanism_name()
-
-	if mechanism_name == "versus" and attacker_unit and Managers.state.side:versus_is_dark_pact(attacker_unit) then
-		if not DamageUtils.vs_dark_pact_can_damage(attacker_unit, hit_unit) then
+	if Managers.mechanism:current_mechanism_name() == "versus" and arg_31_4 and Managers.state.side:versus_is_dark_pact(arg_31_4) then
+		if not DamageUtils.vs_dark_pact_can_damage(arg_31_4, arg_31_3) then
 			return 0
 		end
 
-		DamageUtils.vs_register_dark_pact_player_damage(attacker_unit, hit_unit, damage_source, nil, player_manager)
+		DamageUtils.vs_register_dark_pact_player_damage(arg_31_4, arg_31_3, arg_31_8, nil, var_31_1)
 	end
 
-	local damage_type = DamageUtils.get_damage_type(damage_profile, target_index)
+	local var_31_3 = DamageUtils.get_damage_type(arg_31_0, arg_31_1)
 
-	if damage_profile.instant_death and DamageUtils.is_ai(hit_unit) then
-		AiUtils.kill_unit(hit_unit, attacker_unit, hit_zone_name, damage_type, attack_direction, damage_source)
+	if arg_31_0.instant_death and DamageUtils.is_ai(arg_31_3) then
+		AiUtils.kill_unit(arg_31_3, arg_31_4, arg_31_5, var_31_3, arg_31_7, arg_31_8)
 
 		return 0
 	end
 
-	local charge_value = damage_profile.charge_value
+	local var_31_4 = arg_31_0.charge_value
 
-	if is_immune_to_damage(hit_unit, damage_type, damage_source, charge_value) then
+	if var_0_22(arg_31_3, var_31_3, arg_31_8, var_31_4) then
 		return 0
 	end
 
-	local ghost_mode_extension = ScriptUnit.has_extension(hit_unit, "ghost_mode_system")
+	local var_31_5 = ScriptUnit.has_extension(arg_31_3, "ghost_mode_system")
 
-	if ghost_mode_extension and ghost_mode_extension:is_in_ghost_mode() then
+	if var_31_5 and var_31_5:is_in_ghost_mode() then
 		return 0
 	end
 
-	local target_settings = damage_profile.targets and damage_profile.targets[target_index] or damage_profile.default_target
-	local boost_curve = BoostCurves[target_settings.boost_curve_type]
-	local original_damage_amount = DamageUtils.calculate_damage(DamageOutput, hit_unit, attacker_unit, hit_zone_name, power_level, boost_curve, boost_curve_multiplier, is_critical_strike, damage_profile, target_index, backstab_multiplier, damage_source)
-	local victim_units = FrameTable.alloc_table()
-	local max_network_damage = NetworkConstants.damage.max
-	local buffed_damage_amount = DamageUtils.apply_buffs_to_damage(original_damage_amount, hit_unit, attacker_unit, damage_source, victim_units, damage_type, charge_value, first_hit, source_attacker_unit)
-	local damage_amount = buffed_damage_amount
+	local var_31_6 = arg_31_0.targets and arg_31_0.targets[arg_31_1] or arg_31_0.default_target
+	local var_31_7 = BoostCurves[var_31_6.boost_curve_type]
+	local var_31_8 = DamageUtils.calculate_damage(DamageOutput, arg_31_3, arg_31_4, arg_31_5, arg_31_2, var_31_7, arg_31_10, arg_31_11, arg_31_0, arg_31_1, arg_31_15, arg_31_8)
+	local var_31_9 = FrameTable.alloc_table()
+	local var_31_10 = NetworkConstants.damage.max
+	local var_31_11 = DamageUtils.apply_buffs_to_damage(var_31_8, arg_31_3, arg_31_4, arg_31_8, var_31_9, var_31_3, var_31_4, arg_31_13, arg_31_16)
 
-	hit_position = hit_position or Unit.world_position(hit_unit, 0)
-	hit_position = NetworkUtils.network_clamp_position(hit_position)
+	arg_31_6 = arg_31_6 or Unit.world_position(arg_31_3, 0)
+	arg_31_6 = NetworkUtils.network_clamp_position(arg_31_6)
 
-	local buff_extension = attacker_unit and ScriptUnit.has_extension(attacker_unit, "buff_system")
-	local source_buff_extension = source_attacker_unit and ScriptUnit.has_extension(source_attacker_unit, "buff_system")
+	local var_31_12 = arg_31_4 and ScriptUnit.has_extension(arg_31_4, "buff_system")
+	local var_31_13 = arg_31_16 and ScriptUnit.has_extension(arg_31_16, "buff_system")
 
-	if (buff_extension or source_buff_extension) and HEALTH_ALIVE[hit_unit] then
-		local item_data = rawget(ItemMasterList, damage_source)
-		local weapon_template_name = item_data and item_data.template
-		local buff_type = "other"
-		local no_crit_headshot_damage = damage_amount
+	if (var_31_12 or var_31_13) and HEALTH_ALIVE[arg_31_3] then
+		local var_31_14 = rawget(ItemMasterList, arg_31_8)
+		local var_31_15 = var_31_14 and var_31_14.template
+		local var_31_16 = "other"
+		local var_31_17 = var_31_11
 
-		if weapon_template_name then
-			local weapon_template = WeaponUtils.get_weapon_template(weapon_template_name)
+		if var_31_15 then
+			local var_31_18 = WeaponUtils.get_weapon_template(var_31_15).buff_type
 
-			buff_type = weapon_template.buff_type
-			no_crit_headshot_damage = DamageUtils.calculate_damage(DamageOutput, hit_unit, attacker_unit, "torso", power_level, boost_curve, boost_curve_multiplier, false, damage_profile, target_index, backstab_multiplier, damage_source)
+			var_31_17 = DamageUtils.calculate_damage(DamageOutput, arg_31_3, arg_31_4, "torso", arg_31_2, var_31_7, arg_31_10, false, arg_31_0, arg_31_1, arg_31_15, arg_31_8)
 		end
 
-		if damage_profile.deal_min_damage then
-			damage_amount = math.max(damage_amount, 0.25)
+		if arg_31_0.deal_min_damage then
+			var_31_11 = math.max(var_31_11, 0.25)
 		end
 
-		local on_damage_dealt_proc_modifiable = FrameTable.alloc_table()
+		local var_31_19 = FrameTable.alloc_table()
 
-		on_damage_dealt_proc_modifiable.damage_amount = damage_amount
+		var_31_19.damage_amount = var_31_11
 
-		local buff_extension = buff_extension or source_buff_extension
+		local var_31_20 = var_31_12 or var_31_13
 
-		buff_extension:trigger_procs("on_player_damage_dealt", hit_unit, damage_amount, hit_zone_name, no_crit_headshot_damage, is_critical_strike, charge_value, target_index, damage_source, first_hit, on_damage_dealt_proc_modifiable)
-		buff_extension:trigger_procs("on_damage_dealt", hit_unit, attacker_unit, damage_amount, hit_zone_name, no_crit_headshot_damage, is_critical_strike, charge_value, target_index, damage_source, damage_type, first_hit, on_damage_dealt_proc_modifiable)
+		var_31_20:trigger_procs("on_player_damage_dealt", arg_31_3, var_31_11, arg_31_5, var_31_17, arg_31_11, var_31_4, arg_31_1, arg_31_8, arg_31_13, var_31_19)
+		var_31_20:trigger_procs("on_damage_dealt", arg_31_3, arg_31_4, var_31_11, arg_31_5, var_31_17, arg_31_11, var_31_4, arg_31_1, arg_31_8, var_31_3, arg_31_13, var_31_19)
 
-		damage_amount = on_damage_dealt_proc_modifiable.damage_amount
+		var_31_11 = var_31_19.damage_amount
 	end
 
-	if player_manager.is_server or LEVEL_EDITOR_TEST then
-		local num_victim_units = #victim_units
-		local mechanism_ok, custom_setting_damage_multiplier, custom_settings_enabled = Managers.mechanism:mechanism_try_call("get_custom_game_setting", "hero_damage_taken")
+	if var_31_1.is_server or LEVEL_EDITOR_TEST then
+		local var_31_21 = #var_31_9
+		local var_31_22, var_31_23, var_31_24 = Managers.mechanism:mechanism_try_call("get_custom_game_setting", "hero_damage_taken")
 
-		if mechanism_ok and custom_settings_enabled then
-			local unit_is_hero = attacked_side and attacked_side:name() == "heroes"
+		var_31_11 = var_31_22 and var_31_24 and var_31_0 and var_31_0:name() == "heroes" and var_31_11 * var_31_23 or var_31_11
 
-			damage_amount = unit_is_hero and damage_amount * custom_setting_damage_multiplier or damage_amount
-		end
+		local var_31_25 = Managers.time:time("game")
 
-		local t = Managers.time:time("game")
+		for iter_31_0 = 1, var_31_21 do
+			local var_31_26 = var_31_9[iter_31_0]
 
-		for i = 1, num_victim_units do
-			local victim_unit = victim_units[i]
+			var_31_3 = var_31_26 == arg_31_3 and var_31_3 or "buff"
 
-			damage_type = victim_unit == hit_unit and damage_type or "buff"
+			local var_31_27 = ScriptUnit.extension(var_31_26, "health_system")
 
-			local target_health_extension = ScriptUnit.extension(victim_unit, "health_system")
+			if var_31_10 < var_31_11 then
+				local var_31_28 = math.floor(var_31_11 / var_31_10)
 
-			if max_network_damage < damage_amount then
-				local num_calls = math.floor(damage_amount / max_network_damage)
-
-				for _ = 1, num_calls do
-					target_health_extension:add_damage(attacker_unit, max_network_damage, hit_zone_name, damage_type, hit_position, attack_direction, damage_source, hit_ragdoll_actor, source_attacker_unit, nil, is_critical_strike, added_dot, first_hit, total_hits, charge_value, backstab_multiplier, target_index)
+				for iter_31_1 = 1, var_31_28 do
+					var_31_27:add_damage(arg_31_4, var_31_10, arg_31_5, var_31_3, arg_31_6, arg_31_7, arg_31_8, arg_31_9, arg_31_16, nil, arg_31_11, arg_31_12, arg_31_13, arg_31_14, var_31_4, arg_31_15, arg_31_1)
 				end
 
-				local remaining_damage_amount = damage_amount - max_network_damage * num_calls
-
-				damage_amount = remaining_damage_amount
+				var_31_11 = var_31_11 - var_31_10 * var_31_28
 			end
 
-			local networkified_damage_amount = DamageUtils.networkify_damage(damage_amount)
+			local var_31_29 = DamageUtils.networkify_damage(var_31_11)
 
-			target_health_extension:add_damage(attacker_unit, networkified_damage_amount, hit_zone_name, damage_type, hit_position, attack_direction, damage_source, hit_ragdoll_actor, source_attacker_unit, nil, is_critical_strike, added_dot, first_hit, total_hits, charge_value, backstab_multiplier, target_index)
+			var_31_27:add_damage(arg_31_4, var_31_29, arg_31_5, var_31_3, arg_31_6, arg_31_7, arg_31_8, arg_31_9, arg_31_16, nil, arg_31_11, arg_31_12, arg_31_13, arg_31_14, var_31_4, arg_31_15, arg_31_1)
 
-			if not HEALTH_ALIVE[victim_unit] then
-				Managers.state.unit_spawner:prioritize_death_watch_unit(hit_unit, t)
+			if not HEALTH_ALIVE[var_31_26] then
+				Managers.state.unit_spawner:prioritize_death_watch_unit(arg_31_3, var_31_25)
 			end
 		end
 	end
 
-	return damage_amount
+	return var_31_11
 end
 
-local HIT_MARKER_FREQ = 0.1
-local HIT_CRITICAL_MULTIPLIER_TYPES = {
+local var_0_33 = 0.1
+local var_0_34 = {
 	"headshot",
-	"weakspot",
+	"weakspot"
 }
 
-DamageUtils.handle_hit_indication = function (attacker_unit, victim_unit, damage_amount, hit_zone_name, added_dot, invulnerable, shield_break)
-	local hud_extension = ScriptUnit.has_extension(attacker_unit, "hud_system")
+function DamageUtils.handle_hit_indication(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6)
+	local var_32_0 = ScriptUnit.has_extension(arg_32_0, "hud_system")
 
-	if hud_extension and HEALTH_ALIVE[victim_unit] and attacker_unit ~= victim_unit then
-		local hit_marker_data = hud_extension.hit_marker_data
-		local curr_time = Managers.time:time("game")
-		local diff = 1
+	if var_32_0 and HEALTH_ALIVE[arg_32_1] and arg_32_0 ~= arg_32_1 then
+		local var_32_1 = var_32_0.hit_marker_data
+		local var_32_2 = Managers.time:time("game")
+		local var_32_3 = 1
 
-		if hit_marker_data.hit_marker_timestamp then
-			diff = curr_time - hit_marker_data.hit_marker_timestamp
+		if var_32_1.hit_marker_timestamp then
+			var_32_3 = var_32_2 - var_32_1.hit_marker_timestamp
 		end
 
-		if diff > HIT_MARKER_FREQ then
-			local breed = AiUtils.unit_breed(victim_unit)
-			local armor_override = unit_get_data(victim_unit, "armor")
-			local target_unit_armor, _, target_unit_primary_armor, _ = ActionUtils.get_target_armor(hit_zone_name, breed, armor_override)
-			local is_character = DamageUtils.is_character(victim_unit)
-			local friendly_fire = is_character and not DamageUtils.is_enemy(attacker_unit, victim_unit)
-			local multiplier_type = DamageUtils.get_breed_damage_multiplier_type(breed, hit_zone_name)
-			local hit_critical = table.contains(HIT_CRITICAL_MULTIPLIER_TYPES, multiplier_type)
-			local override_armored = breed and breed.armored_on_no_damage
+		if var_32_3 > var_0_33 then
+			local var_32_4 = AiUtils.unit_breed(arg_32_1)
+			local var_32_5 = var_0_5(arg_32_1, "armor")
+			local var_32_6, var_32_7, var_32_8, var_32_9 = ActionUtils.get_target_armor(arg_32_3, var_32_4, var_32_5)
+			local var_32_10 = DamageUtils.is_character(arg_32_1) and not DamageUtils.is_enemy(arg_32_0, arg_32_1)
+			local var_32_11 = DamageUtils.get_breed_damage_multiplier_type(var_32_4, arg_32_3)
+			local var_32_12 = table.contains(var_0_34, var_32_11)
+			local var_32_13 = var_32_4 and var_32_4.armored_on_no_damage
 
-			hit_marker_data.shield_break = shield_break
-			hit_marker_data.shield_open = false
-			hit_marker_data.hit_enemy = true
-			hit_marker_data.friendly_fire = friendly_fire
-			hit_marker_data.damage_amount = damage_amount
-			hit_marker_data.hit_zone = hit_zone_name
-			hit_marker_data.hit_critical = hit_critical
-			hit_marker_data.has_armor = override_armored or target_unit_primary_armor == 6 or target_unit_armor == 2 or target_unit_armor == 0
-			hit_marker_data.hit_marker_timestamp = curr_time
-			hit_marker_data.added_dot = added_dot
-			hit_marker_data.invulnerable = invulnerable
+			var_32_1.shield_break = arg_32_6
+			var_32_1.shield_open = false
+			var_32_1.hit_enemy = true
+			var_32_1.friendly_fire = var_32_10
+			var_32_1.damage_amount = arg_32_2
+			var_32_1.hit_zone = arg_32_3
+			var_32_1.hit_critical = var_32_12
+			var_32_1.has_armor = var_32_13 or var_32_8 == 6 or var_32_6 == 2 or var_32_6 == 0
+			var_32_1.hit_marker_timestamp = var_32_2
+			var_32_1.added_dot = arg_32_4
+			var_32_1.invulnerable = arg_32_5
 		end
 	end
 end
 
-DamageUtils.get_item_buff_type = function (damage_source)
-	local item_data = rawget(ItemMasterList, damage_source)
-	local weapon_template_name = item_data and item_data.template or item_data.temporary_template
-	local buff_type
+function DamageUtils.get_item_buff_type(arg_33_0)
+	local var_33_0 = rawget(ItemMasterList, arg_33_0)
+	local var_33_1 = var_33_0 and var_33_0.template or var_33_0.temporary_template
+	local var_33_2
 
-	if weapon_template_name then
-		local weapon_template = WeaponUtils.get_weapon_template(weapon_template_name)
-
-		buff_type = weapon_template.buff_type
+	if var_33_1 then
+		var_33_2 = WeaponUtils.get_weapon_template(var_33_1).buff_type
 	end
 
-	return buff_type or "n/a"
+	return var_33_2 or "n/a"
 end
 
-DamageUtils.buff_on_attack = function (unit, hit_unit, attack_type, is_critical, hit_zone_name, target_number, send_to_server, buff_type, unmodified, damage_source)
-	local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
+function DamageUtils.buff_on_attack(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5, arg_34_6, arg_34_7, arg_34_8, arg_34_9)
+	local var_34_0 = ScriptUnit.has_extension(arg_34_0, "buff_system")
 
-	if not buff_extension then
+	if not var_34_0 then
 		return false
 	end
 
-	if not HEALTH_ALIVE[hit_unit] then
+	if not HEALTH_ALIVE[arg_34_1] then
 		return false
 	end
 
-	local hit_unit_buff_extension = ScriptUnit.has_extension(hit_unit, "buff_system")
-	local side_manager = Managers.state.side
-	local hostile_unit = side_manager:is_enemy(unit, hit_unit)
+	local var_34_1 = ScriptUnit.has_extension(arg_34_1, "buff_system")
+	local var_34_2 = Managers.state.side:is_enemy(arg_34_0, arg_34_1)
 
-	if hostile_unit then
-		local ranged_attack = RangedAttackTypes[attack_type]
+	if var_34_2 then
+		if RangedAttackTypes[arg_34_2] then
+			var_34_0:trigger_procs("on_ranged_hit", arg_34_1, arg_34_2, arg_34_4, arg_34_5, arg_34_7, arg_34_3, arg_34_8)
 
-		if ranged_attack then
-			buff_extension:trigger_procs("on_ranged_hit", hit_unit, attack_type, hit_zone_name, target_number, buff_type, is_critical, unmodified)
-
-			if hit_unit_buff_extension then
-				hit_unit_buff_extension:trigger_procs("on_hit_by_ranged", unit, attack_type, hit_zone_name, target_number, buff_type, is_critical, unmodified)
+			if var_34_1 then
+				var_34_1:trigger_procs("on_hit_by_ranged", arg_34_0, arg_34_2, arg_34_4, arg_34_5, arg_34_7, arg_34_3, arg_34_8)
 			end
 		else
-			buff_extension:trigger_procs("on_melee_hit", hit_unit, attack_type, hit_zone_name, target_number, buff_type, is_critical, unmodified)
+			var_34_0:trigger_procs("on_melee_hit", arg_34_1, arg_34_2, arg_34_4, arg_34_5, arg_34_7, arg_34_3, arg_34_8)
 		end
 
-		buff_extension:trigger_procs("on_hit", hit_unit, attack_type, hit_zone_name, target_number, buff_type, is_critical, unmodified)
-		Managers.state.achievement:trigger_event("on_hit", hit_unit, attack_type, hit_zone_name, target_number, buff_type, is_critical, unmodified, unit, damage_source)
-		Managers.state.event:trigger("on_hit", hit_unit, attack_type, hit_zone_name, target_number, buff_type, is_critical, unmodified, unit)
+		var_34_0:trigger_procs("on_hit", arg_34_1, arg_34_2, arg_34_4, arg_34_5, arg_34_7, arg_34_3, arg_34_8)
+		Managers.state.achievement:trigger_event("on_hit", arg_34_1, arg_34_2, arg_34_4, arg_34_5, arg_34_7, arg_34_3, arg_34_8, arg_34_0, arg_34_9)
+		Managers.state.event:trigger("on_hit", arg_34_1, arg_34_2, arg_34_4, arg_34_5, arg_34_7, arg_34_3, arg_34_8, arg_34_0)
 
-		if hit_unit_buff_extension then
-			hit_unit_buff_extension:trigger_procs("on_hit_by_other", unit, attack_type, hit_zone_name, target_number, buff_type, is_critical, unmodified)
+		if var_34_1 then
+			var_34_1:trigger_procs("on_hit_by_other", arg_34_0, arg_34_2, arg_34_4, arg_34_5, arg_34_7, arg_34_3, arg_34_8)
 		end
 	end
 
-	if is_critical and hostile_unit then
-		buff_extension:trigger_procs("on_critical_hit", hit_unit, attack_type, hit_zone_name, target_number, buff_type)
+	if arg_34_3 and var_34_2 then
+		var_34_0:trigger_procs("on_critical_hit", arg_34_1, arg_34_2, arg_34_4, arg_34_5, arg_34_7)
 	end
 
-	if send_to_server and not Managers.player.is_server then
-		local network_manager = Managers.state.network
-		local attacker_unit_id = network_manager:unit_game_object_id(unit)
-		local hit_unit_id = network_manager:unit_game_object_id(hit_unit)
-		local attack_type_id = NetworkLookup.buff_attack_types[attack_type]
-		local hit_zone_id = NetworkLookup.hit_zones[hit_zone_name]
-		local buff_type_id = NetworkLookup.buff_weapon_types[buff_type]
-		local damage_source_id = NetworkLookup.damage_sources[damage_source or "undefined"]
+	if arg_34_6 and not Managers.player.is_server then
+		local var_34_3 = Managers.state.network
+		local var_34_4 = var_34_3:unit_game_object_id(arg_34_0)
+		local var_34_5 = var_34_3:unit_game_object_id(arg_34_1)
+		local var_34_6 = NetworkLookup.buff_attack_types[arg_34_2]
+		local var_34_7 = NetworkLookup.hit_zones[arg_34_4]
+		local var_34_8 = NetworkLookup.buff_weapon_types[arg_34_7]
+		local var_34_9 = NetworkLookup.damage_sources[arg_34_9 or "undefined"]
 
-		if hit_unit_id then
-			network_manager.network_transmit:send_rpc_server("rpc_buff_on_attack", attacker_unit_id, hit_unit_id, attack_type_id, is_critical, hit_zone_id, target_number, buff_type_id, damage_source_id)
+		if var_34_5 then
+			var_34_3.network_transmit:send_rpc_server("rpc_buff_on_attack", var_34_4, var_34_5, var_34_6, arg_34_3, var_34_7, arg_34_5, var_34_8, var_34_9)
 		end
 	end
 
 	return true
 end
 
-local IGNORED_SHARED_DAMAGE_TYPES = {
-	knockdown_bleed = true,
-	suicide = true,
+local var_0_35 = {
 	wounded_dot = true,
-}
-local INVALID_DAMAGE_TO_OVERHEAT_DAMAGE_SOURCES = {
-	ground_impact = true,
-	life_drain = true,
-	life_tap = true,
-	overcharge = true,
-	temporary_health_degen = true,
-}
-local INVALID_GROMRIL_DAMAGE_SOURCE = {
-	ground_impact = true,
-	life_drain = true,
-	life_tap = true,
-	overcharge = true,
-	temporary_health_degen = true,
-}
-local IGNORE_DAMAGE_REDUCTION_DAMAGE_SOURCE = {
-	life_tap = true,
 	suicide = true,
+	knockdown_bleed = true
+}
+local var_0_36 = {
 	temporary_health_degen = true,
+	overcharge = true,
+	life_tap = true,
+	ground_impact = true,
+	life_drain = true
+}
+local var_0_37 = {
+	temporary_health_degen = true,
+	overcharge = true,
+	life_tap = true,
+	ground_impact = true,
+	life_drain = true
+}
+local var_0_38 = {
+	temporary_health_degen = true,
+	suicide = true,
+	life_tap = true
 }
 
-DamageUtils.apply_buffs_to_damage = function (current_damage, attacked_unit, attacker_unit, damage_source, victim_units, damage_type, buff_attack_type, first_hit, source_attacker_unit)
-	local damage = current_damage
-	local network_manager = Managers.state.network
-	local attacker_unit_buff_extension = ScriptUnit.has_extension(attacker_unit, "buff_system") or ScriptUnit.has_extension(source_attacker_unit, "buff_system")
+function DamageUtils.apply_buffs_to_damage(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6, arg_35_7, arg_35_8)
+	local var_35_0 = arg_35_0
+	local var_35_1 = Managers.state.network
+	local var_35_2 = ScriptUnit.has_extension(arg_35_2, "buff_system") or ScriptUnit.has_extension(arg_35_8, "buff_system")
 
-	if attacker_unit_buff_extension then
-		attacker_unit_buff_extension:trigger_procs("damage_calculation_started", attacked_unit)
+	if var_35_2 then
+		var_35_2:trigger_procs("damage_calculation_started", arg_35_1)
 	end
 
-	local attacked_player = Managers.player:owner(attacked_unit)
-	local attacker_player = Managers.player:owner(attacker_unit)
+	local var_35_3 = Managers.player:owner(arg_35_1)
+	local var_35_4 = Managers.player:owner(arg_35_2)
 
-	if attacked_player then
-		damage = Managers.state.game_mode:modify_player_base_damage(attacked_unit, attacker_unit, damage, damage_type)
+	if var_35_3 then
+		var_35_0 = Managers.state.game_mode:modify_player_base_damage(arg_35_1, arg_35_2, var_35_0, arg_35_5)
 	end
 
-	victim_units[#victim_units + 1] = attacked_unit
+	arg_35_4[#arg_35_4 + 1] = arg_35_1
 
-	local health_extension = ScriptUnit.extension(attacked_unit, "health_system")
+	local var_35_5 = ScriptUnit.extension(arg_35_1, "health_system")
 
-	if health_extension:has_assist_shield() and not IGNORED_SHARED_DAMAGE_TYPES[damage_source] then
-		local attacked_unit_id = network_manager:unit_game_object_id(attacked_unit)
+	if var_35_5:has_assist_shield() and not var_0_35[arg_35_3] then
+		local var_35_6 = var_35_1:unit_game_object_id(arg_35_1)
 
-		network_manager.network_transmit:send_rpc_clients("rpc_remove_assist_shield", attacked_unit_id)
+		var_35_1.network_transmit:send_rpc_clients("rpc_remove_assist_shield", var_35_6)
 	end
 
-	if ScriptUnit.has_extension(attacked_unit, "buff_system") then
-		local buff_extension = ScriptUnit.extension(attacked_unit, "buff_system")
+	if ScriptUnit.has_extension(arg_35_1, "buff_system") then
+		local var_35_7 = ScriptUnit.extension(arg_35_1, "buff_system")
 
-		if SKAVEN[damage_source] then
-			damage = buff_extension:apply_buffs_to_value(damage, "protection_skaven")
-		elseif CHAOS[damage_source] or BEASTMEN[damage_source] then
-			damage = buff_extension:apply_buffs_to_value(damage, "protection_chaos")
+		if SKAVEN[arg_35_3] then
+			var_35_0 = var_35_7:apply_buffs_to_value(var_35_0, "protection_skaven")
+		elseif CHAOS[arg_35_3] or BEASTMEN[arg_35_3] then
+			var_35_0 = var_35_7:apply_buffs_to_value(var_35_0, "protection_chaos")
 		end
 
-		if DAMAGE_TYPES_AOE[damage_type] then
-			damage = buff_extension:apply_buffs_to_value(damage, "protection_aoe")
+		if DAMAGE_TYPES_AOE[arg_35_5] then
+			var_35_0 = var_35_7:apply_buffs_to_value(var_35_0, "protection_aoe")
 		end
 
-		if not IGNORE_DAMAGE_REDUCTION_DAMAGE_SOURCE[damage_source] then
-			damage = buff_extension:apply_buffs_to_value(damage, "damage_taken")
+		if not var_0_38[arg_35_3] then
+			var_35_0 = var_35_7:apply_buffs_to_value(var_35_0, "damage_taken")
 
-			if ELITES[damage_source] then
-				damage = buff_extension:apply_buffs_to_value(damage, "damage_taken_elites")
+			if ELITES[arg_35_3] then
+				var_35_0 = var_35_7:apply_buffs_to_value(var_35_0, "damage_taken_elites")
 			end
 		end
 
-		if RangedAttackTypes[buff_attack_type] then
-			damage = buff_extension:apply_buffs_to_value(damage, "damage_taken_ranged")
-		elseif MeleeAttackTypes[buff_attack_type] then
-			damage = buff_extension:apply_buffs_to_value(damage, "damage_taken_melee")
+		if RangedAttackTypes[arg_35_6] then
+			var_35_0 = var_35_7:apply_buffs_to_value(var_35_0, "damage_taken_ranged")
+		elseif MeleeAttackTypes[arg_35_6] then
+			var_35_0 = var_35_7:apply_buffs_to_value(var_35_0, "damage_taken_melee")
 		end
 
-		local status_extension = attacked_player and ScriptUnit.has_extension(attacked_unit, "status_system")
+		local var_35_8 = var_35_3 and ScriptUnit.has_extension(arg_35_1, "status_system")
 
-		if status_extension then
-			local is_knocked_down = status_extension:is_knocked_down()
+		if var_35_8 then
+			local var_35_9 = var_35_8:is_knocked_down()
 
-			if is_knocked_down then
-				damage = damage_type ~= "overcharge" and buff_extension:apply_buffs_to_value(damage, "damage_taken_kd") or 0
+			if var_35_9 then
+				var_35_0 = arg_35_5 ~= "overcharge" and var_35_7:apply_buffs_to_value(var_35_0, "damage_taken_kd") or 0
 			end
 
-			local is_disabled = status_extension:is_disabled()
+			if not var_35_8:is_disabled() and not var_0_36[arg_35_3] and var_35_0 > 0 and not var_35_9 then
+				local var_35_10 = var_35_0
+				local var_35_11 = var_35_7:apply_buffs_to_value(var_35_0, "damage_taken_to_overcharge")
 
-			if not is_disabled then
-				local valid_damage_to_overheat = not INVALID_DAMAGE_TO_OVERHEAT_DAMAGE_SOURCES[damage_source]
+				if var_35_11 < var_35_10 then
+					local var_35_12 = var_35_10 - var_35_11
+					local var_35_13 = var_35_7:apply_buffs_to_value(var_35_12, "reduced_overcharge_from_passive")
+					local var_35_14 = DamageUtils.networkify_damage(var_35_13)
 
-				if valid_damage_to_overheat and damage > 0 and not is_knocked_down then
-					local original_damage = damage
-					local new_damage = buff_extension:apply_buffs_to_value(damage, "damage_taken_to_overcharge")
+					if var_35_3.remote then
+						local var_35_15 = var_35_3.peer_id
+						local var_35_16 = var_35_1:unit_game_object_id(arg_35_1)
+						local var_35_17 = PEER_ID_TO_CHANNEL[var_35_15]
 
-					if new_damage < original_damage then
-						local damage_to_overcharge = original_damage - new_damage
-
-						damage_to_overcharge = buff_extension:apply_buffs_to_value(damage_to_overcharge, "reduced_overcharge_from_passive")
-						damage_to_overcharge = DamageUtils.networkify_damage(damage_to_overcharge)
-
-						if attacked_player.remote then
-							local peer_id = attacked_player.peer_id
-							local unit_id = network_manager:unit_game_object_id(attacked_unit)
-							local channel_id = PEER_ID_TO_CHANNEL[peer_id]
-
-							RPC.rpc_damage_taken_overcharge(channel_id, unit_id, damage_to_overcharge)
-						else
-							DamageUtils.apply_damage_to_overcharge(attacked_unit, damage_to_overcharge)
-						end
-
-						damage = new_damage
+						RPC.rpc_damage_taken_overcharge(var_35_17, var_35_16, var_35_14)
+					else
+						DamageUtils.apply_damage_to_overcharge(arg_35_1, var_35_14)
 					end
+
+					var_35_0 = var_35_11
 				end
 			end
 		end
 
-		if attacker_unit_buff_extension then
-			local is_grenade = buff_attack_type == AttackTypes.grenade or DamageUtils.attacker_is_fire_bomb(attacker_unit)
-
-			if is_grenade then
-				damage = attacker_unit_buff_extension:apply_buffs_to_value(damage, "explosion_damage")
+		if var_35_2 then
+			if arg_35_6 == AttackTypes.grenade or DamageUtils.attacker_is_fire_bomb(arg_35_2) then
+				var_35_0 = var_35_2:apply_buffs_to_value(var_35_0, "explosion_damage")
 			end
 
-			local has_burning_perk = attacker_unit_buff_extension:has_buff_perk("burning") or attacker_unit_buff_extension:has_buff_perk("burning_balefire") or attacker_unit_buff_extension:has_buff_perk("burning_elven_magic")
+			if var_35_2:has_buff_perk("burning") or var_35_2:has_buff_perk("burning_balefire") or var_35_2:has_buff_perk("burning_elven_magic") then
+				local var_35_18 = Managers.state.side.side_by_unit[arg_35_1]
 
-			if has_burning_perk then
-				local side_manager = Managers.state.side
-				local side = side_manager.side_by_unit[attacked_unit]
+				if var_35_18 then
+					local var_35_19 = var_35_18.PLAYER_AND_BOT_UNITS
+					local var_35_20 = #var_35_19
 
-				if side then
-					local player_and_bot_units = side.PLAYER_AND_BOT_UNITS
-					local num_units = #player_and_bot_units
+					for iter_35_0 = 1, var_35_20 do
+						local var_35_21 = var_35_19[iter_35_0]
+						local var_35_22 = ScriptUnit.has_extension(var_35_21, "talent_system")
 
-					for i = 1, num_units do
-						local unit = player_and_bot_units[i]
-						local talent_extension = ScriptUnit.has_extension(unit, "talent_system")
-
-						if talent_extension and talent_extension:has_talent("sienna_unchained_burning_enemies_reduced_damage") then
-							damage = damage * (1 + BuffUtils.get_buff_template("sienna_unchained_burning_enemies_reduced_damage").buffs[1].multiplier)
+						if var_35_22 and var_35_22:has_talent("sienna_unchained_burning_enemies_reduced_damage") then
+							var_35_0 = var_35_0 * (1 + BuffUtils.get_buff_template("sienna_unchained_burning_enemies_reduced_damage").buffs[1].multiplier)
 
 							break
 						end
@@ -2264,512 +2178,451 @@ DamageUtils.apply_buffs_to_damage = function (current_damage, attacked_unit, att
 			end
 		end
 
-		local boss_elite_damage_cap = buff_extension:get_buff_value("max_damage_taken_from_boss_or_elite")
-		local all_damage_cap = buff_extension:get_buff_value("max_damage_taken")
-		local has_anti_oneshot = buff_extension:has_buff_perk("anti_oneshot")
+		local var_35_23 = var_35_7:get_buff_value("max_damage_taken_from_boss_or_elite")
+		local var_35_24 = var_35_7:get_buff_value("max_damage_taken")
 
-		if has_anti_oneshot then
-			local max_health = health_extension:get_max_health()
-			local max_damage_allowed = max_health * 0.3
+		if var_35_7:has_buff_perk("anti_oneshot") then
+			local var_35_25 = var_35_5:get_max_health() * 0.3
 
-			if max_damage_allowed < damage then
-				damage = max_damage_allowed
+			if var_35_25 < var_35_0 then
+				var_35_0 = var_35_25
 			end
 		end
 
-		local breed = ALIVE[attacker_unit] and unit_get_data(attacker_unit, "breed")
+		local var_35_26 = ALIVE[arg_35_2] and var_0_5(arg_35_2, "breed")
 
-		if breed and (breed.boss or breed.elite) then
-			local min_damage_cap
+		if var_35_26 and (var_35_26.boss or var_35_26.elite) then
+			local var_35_27
 
-			if boss_elite_damage_cap and all_damage_cap then
-				min_damage_cap = math.min(boss_elite_damage_cap, all_damage_cap)
+			if var_35_23 and var_35_24 then
+				var_35_27 = math.min(var_35_23, var_35_24)
 			else
-				min_damage_cap = boss_elite_damage_cap and boss_elite_damage_cap or all_damage_cap
+				var_35_27 = var_35_23 and var_35_23 or var_35_24
 			end
 
-			if min_damage_cap and min_damage_cap <= damage then
-				damage = math.max(damage * 0.5, min_damage_cap)
+			if var_35_27 and var_35_27 <= var_35_0 then
+				var_35_0 = math.max(var_35_0 * 0.5, var_35_27)
 			end
-		elseif all_damage_cap and all_damage_cap <= damage then
-			damage = math.max(damage * 0.5, all_damage_cap)
+		elseif var_35_24 and var_35_24 <= var_35_0 then
+			var_35_0 = math.max(var_35_0 * 0.5, var_35_24)
 		end
 
-		if buff_extension:has_buff_type("shared_health_pool") and not IGNORED_SHARED_DAMAGE_TYPES[damage_source] then
-			local attacked_side = Managers.state.side.side_by_unit[attacked_unit]
-			local player_and_bot_units = attacked_side.PLAYER_AND_BOT_UNITS
-			local num_player_and_bot_units = #player_and_bot_units
-			local num_players_with_shared_health_pool = 1
+		if var_35_7:has_buff_type("shared_health_pool") and not var_0_35[arg_35_3] then
+			local var_35_28 = Managers.state.side.side_by_unit[arg_35_1].PLAYER_AND_BOT_UNITS
+			local var_35_29 = #var_35_28
+			local var_35_30 = 1
 
-			for i = 1, num_player_and_bot_units do
-				local friendly_unit = player_and_bot_units[i]
+			for iter_35_1 = 1, var_35_29 do
+				local var_35_31 = var_35_28[iter_35_1]
 
-				if friendly_unit ~= attacked_unit then
-					local friendly_buff_extension = ScriptUnit.extension(friendly_unit, "buff_system")
-
-					if friendly_buff_extension:has_buff_type("shared_health_pool") then
-						num_players_with_shared_health_pool = num_players_with_shared_health_pool + 1
-						victim_units[#victim_units + 1] = friendly_unit
-					end
+				if var_35_31 ~= arg_35_1 and ScriptUnit.extension(var_35_31, "buff_system"):has_buff_type("shared_health_pool") then
+					var_35_30 = var_35_30 + 1
+					arg_35_4[#arg_35_4 + 1] = var_35_31
 				end
 			end
 
-			damage = damage / num_players_with_shared_health_pool
+			var_35_0 = var_35_0 / var_35_30
 		end
 
-		local talent_extension = ScriptUnit.has_extension(attacked_unit, "talent_system")
+		local var_35_32 = ScriptUnit.has_extension(arg_35_1, "talent_system")
 
-		if talent_extension and talent_extension:has_talent("bardin_ranger_reduced_damage_taken_headshot") then
-			local has_position = POSITION_LOOKUP[attacker_unit]
-
-			if has_position and AiUtils.unit_is_flanking_player(attacker_unit, attacked_unit) and not buff_extension:has_buff_type("bardin_ranger_reduced_damage_taken_headshot_buff") then
-				damage = damage * (1 + BuffUtils.get_buff_template("bardin_ranger_reduced_damage_taken_headshot_buff").buffs[1].multiplier)
-			end
+		if var_35_32 and var_35_32:has_talent("bardin_ranger_reduced_damage_taken_headshot") and var_0_4[arg_35_2] and AiUtils.unit_is_flanking_player(arg_35_2, arg_35_1) and not var_35_7:has_buff_type("bardin_ranger_reduced_damage_taken_headshot_buff") then
+			var_35_0 = var_35_0 * (1 + BuffUtils.get_buff_template("bardin_ranger_reduced_damage_taken_headshot_buff").buffs[1].multiplier)
 		end
 
-		local is_invulnerable = buff_extension:has_buff_perk("invulnerable")
-		local has_gromril_armor = buff_extension:has_buff_type("bardin_ironbreaker_gromril_armour")
-		local has_metal_mutator_gromril_armor = buff_extension:has_buff_type("metal_mutator_gromril_armour")
-		local valid_damage_source = not INVALID_GROMRIL_DAMAGE_SOURCE[damage_source]
-		local unit_side = Managers.state.side.side_by_unit[attacked_unit]
+		local var_35_33 = var_35_7:has_buff_perk("invulnerable")
+		local var_35_34 = var_35_7:has_buff_type("bardin_ironbreaker_gromril_armour")
+		local var_35_35 = var_35_7:has_buff_type("metal_mutator_gromril_armour")
+		local var_35_36 = not var_0_37[arg_35_3]
+		local var_35_37 = Managers.state.side.side_by_unit[arg_35_1]
 
-		if unit_side and unit_side:name() == "dark_pact" then
-			is_invulnerable = is_invulnerable or damage_source == "ground_impact"
+		if var_35_37 and var_35_37:name() == "dark_pact" then
+			var_35_33 = var_35_33 or arg_35_3 == "ground_impact"
 		end
 
-		if is_invulnerable or (has_gromril_armor or has_metal_mutator_gromril_armor) and valid_damage_source then
-			damage = 0
+		if var_35_33 or (var_35_34 or var_35_35) and var_35_36 then
+			var_35_0 = 0
 		end
 
-		if has_gromril_armor and valid_damage_source and current_damage > 0 then
-			local buff = buff_extension:get_non_stacking_buff("bardin_ironbreaker_gromril_armour")
-			local id = buff.id
+		if var_35_34 and var_35_36 and arg_35_0 > 0 then
+			local var_35_38 = var_35_7:get_non_stacking_buff("bardin_ironbreaker_gromril_armour").id
 
-			buff_extension:remove_buff(id)
-			buff_extension:trigger_procs("on_gromril_armour_removed")
+			var_35_7:remove_buff(var_35_38)
+			var_35_7:trigger_procs("on_gromril_armour_removed")
 
-			local attacked_unit_id = network_manager:unit_game_object_id(attacked_unit)
+			local var_35_39 = var_35_1:unit_game_object_id(arg_35_1)
 
-			network_manager.network_transmit:send_rpc_clients("rpc_remove_gromril_armour", attacked_unit_id)
+			var_35_1.network_transmit:send_rpc_clients("rpc_remove_gromril_armour", var_35_39)
 		end
 
-		if buff_extension:has_buff_type("invincibility_standard") then
-			local buff = buff_extension:get_non_stacking_buff("invincibility_standard")
+		if var_35_7:has_buff_type("invincibility_standard") then
+			local var_35_40 = var_35_7:get_non_stacking_buff("invincibility_standard")
 
-			if not buff.applied_damage then
-				buff.stored_damage = not buff.stored_damage and damage or buff.stored_damage + damage
-				damage = 0
+			if not var_35_40.applied_damage then
+				var_35_40.stored_damage = not var_35_40.stored_damage and var_35_0 or var_35_40.stored_damage + var_35_0
+				var_35_0 = 0
 			end
 		end
 	end
 
-	if attacker_unit_buff_extension then
-		local attacked_buff_extension = ScriptUnit.has_extension(attacked_unit, "buff_system")
+	if var_35_2 then
+		local var_35_41 = ScriptUnit.has_extension(arg_35_1, "buff_system")
 
-		if attacker_player then
-			local item_data = rawget(ItemMasterList, damage_source)
-			local weapon_template_name = item_data and item_data.template
+		if var_35_4 then
+			local var_35_42 = rawget(ItemMasterList, arg_35_3)
+			local var_35_43 = var_35_42 and var_35_42.template
 
-			if weapon_template_name then
-				local weapon_template = WeaponUtils.get_weapon_template(weapon_template_name)
-				local buff_type = weapon_template.buff_type
+			if var_35_43 then
+				local var_35_44 = WeaponUtils.get_weapon_template(var_35_43)
+				local var_35_45 = var_35_44.buff_type
 
-				if buff_type then
-					damage = attacker_unit_buff_extension:apply_buffs_to_value(damage, "increased_weapon_damage")
+				if var_35_45 then
+					var_35_0 = var_35_2:apply_buffs_to_value(var_35_0, "increased_weapon_damage")
 
-					if attacker_unit_buff_extension:has_buff_perk("missing_health_damage") then
-						local attacked_health_extension = ScriptUnit.extension(attacked_unit, "health_system")
-						local missing_health_percentage = 1 - attacked_health_extension:current_health_percent()
-						local damage_mult = 1 + missing_health_percentage / 2
-
-						damage = damage * damage_mult
+					if var_35_2:has_buff_perk("missing_health_damage") then
+						var_35_0 = var_35_0 * (1 + (1 - ScriptUnit.extension(arg_35_1, "health_system"):current_health_percent()) / 2)
 					end
 				end
 
-				local is_melee = MeleeBuffTypes[buff_type]
-				local is_ranged = RangedBuffTypes[buff_type]
+				local var_35_46 = MeleeBuffTypes[var_35_45]
+				local var_35_47 = RangedBuffTypes[var_35_45]
 
-				if is_melee then
-					damage = attacker_unit_buff_extension:apply_buffs_to_value(damage, "increased_weapon_damage_melee")
+				if var_35_46 then
+					var_35_0 = var_35_2:apply_buffs_to_value(var_35_0, "increased_weapon_damage_melee")
 
-					if buff_type == "MELEE_1H" then
-						damage = attacker_unit_buff_extension:apply_buffs_to_value(damage, "increased_weapon_damage_melee_1h")
-					elseif buff_type == "MELEE_2H" then
-						damage = attacker_unit_buff_extension:apply_buffs_to_value(damage, "increased_weapon_damage_melee_2h")
+					if var_35_45 == "MELEE_1H" then
+						var_35_0 = var_35_2:apply_buffs_to_value(var_35_0, "increased_weapon_damage_melee_1h")
+					elseif var_35_45 == "MELEE_2H" then
+						var_35_0 = var_35_2:apply_buffs_to_value(var_35_0, "increased_weapon_damage_melee_2h")
 					end
 
-					if buff_attack_type == "heavy_attack" then
-						damage = attacker_unit_buff_extension:apply_buffs_to_value(damage, "increased_weapon_damage_heavy_attack")
+					if arg_35_6 == "heavy_attack" then
+						var_35_0 = var_35_2:apply_buffs_to_value(var_35_0, "increased_weapon_damage_heavy_attack")
 					end
 
-					if first_hit then
-						damage = attacker_unit_buff_extension:apply_buffs_to_value(damage, "first_melee_hit_damage")
+					if arg_35_7 then
+						var_35_0 = var_35_2:apply_buffs_to_value(var_35_0, "first_melee_hit_damage")
 					end
-				elseif is_ranged then
-					damage = attacker_unit_buff_extension:apply_buffs_to_value(damage, "increased_weapon_damage_ranged")
+				elseif var_35_47 then
+					var_35_0 = var_35_2:apply_buffs_to_value(var_35_0, "increased_weapon_damage_ranged")
 
-					local attacked_health_extension = ScriptUnit.extension(attacked_unit, "health_system")
+					local var_35_48 = ScriptUnit.extension(arg_35_1, "health_system")
 
-					if attacked_health_extension:current_health_percent() <= 0.9 or attacked_health_extension:current_max_health_percent() <= 0.9 then
-						damage = attacker_unit_buff_extension:apply_buffs_to_value(damage, "increased_weapon_damage_ranged_to_wounded")
+					if var_35_48:current_health_percent() <= 0.9 or var_35_48:current_max_health_percent() <= 0.9 then
+						var_35_0 = var_35_2:apply_buffs_to_value(var_35_0, "increased_weapon_damage_ranged_to_wounded")
 					end
 				end
 
-				local weapon_type = weapon_template.weapon_type
+				local var_35_49 = var_35_44.weapon_type
 
-				if weapon_type then
-					local stat_buff = WeaponSpecificStatBuffs[weapon_type].damage
+				if var_35_49 then
+					local var_35_50 = WeaponSpecificStatBuffs[var_35_49].damage
 
-					damage = attacker_unit_buff_extension:apply_buffs_to_value(damage, stat_buff)
+					var_35_0 = var_35_2:apply_buffs_to_value(var_35_0, var_35_50)
 				end
 
-				if is_melee or is_ranged then
-					damage = attacker_unit_buff_extension:apply_buffs_to_value(damage, "reduced_non_burn_damage")
+				if var_35_46 or var_35_47 then
+					var_35_0 = var_35_2:apply_buffs_to_value(var_35_0, "reduced_non_burn_damage")
 				end
 			end
 
-			if attacked_buff_extension then
-				local has_poison_or_bleed = attacked_buff_extension:has_buff_perk("poisoned") or attacked_buff_extension:has_buff_perk("bleeding")
-
-				if has_poison_or_bleed then
-					damage = attacker_unit_buff_extension:apply_buffs_to_value(damage, "increased_weapon_damage_poisoned_or_bleeding")
-				end
+			if var_35_41 and (var_35_41:has_buff_perk("poisoned") or var_35_41:has_buff_perk("bleeding")) then
+				var_35_0 = var_35_2:apply_buffs_to_value(var_35_0, "increased_weapon_damage_poisoned_or_bleeding")
 			end
 
-			if damage_type == "burninating" then
-				damage = attacker_unit_buff_extension:apply_buffs_to_value(damage, "increased_burn_dot_damage")
+			if arg_35_5 == "burninating" then
+				var_35_0 = var_35_2:apply_buffs_to_value(var_35_0, "increased_burn_dot_damage")
 			end
 		end
 
-		damage = attacker_unit_buff_extension:apply_buffs_to_value(damage, "damage_dealt")
+		var_35_0 = var_35_2:apply_buffs_to_value(var_35_0, "damage_dealt")
 
-		local has_balefire, applied_this_frame = Managers.state.status_effect:has_status(attacked_unit, StatusEffectNames.burning_balefire)
+		local var_35_51, var_35_52 = Managers.state.status_effect:has_status(arg_35_1, StatusEffectNames.burning_balefire)
 
-		if has_balefire and not applied_this_frame then
-			damage = attacker_unit_buff_extension:apply_buffs_to_value(damage, "increased_damage_to_balefire")
+		if var_35_51 and not var_35_52 then
+			var_35_0 = var_35_2:apply_buffs_to_value(var_35_0, "increased_damage_to_balefire")
 		end
 	end
 
-	Managers.state.game_mode:damage_taken(attacked_unit, attacker_unit, damage, damage_source, damage_type)
+	Managers.state.game_mode:damage_taken(arg_35_1, arg_35_2, var_35_0, arg_35_3, arg_35_5)
 
-	if attacker_unit_buff_extension then
-		attacker_unit_buff_extension:trigger_procs("damage_calculation_ended", attacked_unit)
+	if var_35_2 then
+		var_35_2:trigger_procs("damage_calculation_ended", arg_35_1)
 	end
 
-	return damage
+	return var_35_0
 end
 
-DamageUtils.apply_damage_to_overcharge = function (unit, damage)
-	local overcharge_extension = ScriptUnit.has_extension(unit, "overcharge_system")
+function DamageUtils.apply_damage_to_overcharge(arg_36_0, arg_36_1)
+	local var_36_0 = ScriptUnit.has_extension(arg_36_0, "overcharge_system")
 
-	if overcharge_extension then
-		overcharge_extension:add_charge(damage, nil, "damage_to_overcharge")
+	if var_36_0 then
+		var_36_0:add_charge(arg_36_1, nil, "damage_to_overcharge")
 	end
 end
 
-DamageUtils.assist_shield_network = function (shielded_unit, shielder_unit, shield_amount)
+function DamageUtils.assist_shield_network(arg_37_0, arg_37_1, arg_37_2)
 	assert(Managers.player.is_server or LEVEL_EDITOR_TEST)
-
-	local health_extension = ScriptUnit.extension(shielded_unit, "health_system")
-
-	health_extension:shield(shield_amount)
-
-	local status_extension = ScriptUnit.extension(shielded_unit, "status_system")
-
-	status_extension:set_shielded(true)
+	ScriptUnit.extension(arg_37_0, "health_system"):shield(arg_37_2)
+	ScriptUnit.extension(arg_37_0, "status_system"):set_shielded(true)
 
 	if not LEVEL_EDITOR_TEST then
-		local network_manager = Managers.state.network
-		local shielded_unit_id = network_manager:unit_game_object_id(shielded_unit)
-		local shielder_unit_id, shielder_is_level_unit = network_manager:game_object_or_level_id(shielder_unit)
-		local heal_type_id = NetworkLookup.heal_types.shield_by_assist
+		local var_37_0 = Managers.state.network
+		local var_37_1 = var_37_0:unit_game_object_id(arg_37_0)
+		local var_37_2, var_37_3 = var_37_0:game_object_or_level_id(arg_37_1)
+		local var_37_4 = NetworkLookup.heal_types.shield_by_assist
 
-		network_manager.network_transmit:send_rpc_clients("rpc_heal", shielded_unit_id, false, shielder_unit_id, shielder_is_level_unit, shield_amount, heal_type_id)
+		var_37_0.network_transmit:send_rpc_clients("rpc_heal", var_37_1, false, var_37_2, var_37_3, arg_37_2, var_37_4)
 	end
 end
 
-local HEALED_UNITS = {}
+local var_0_39 = {}
 
-DamageUtils.heal_network = function (healed_unit, healer_unit, heal_amount, heal_type)
+function DamageUtils.heal_network(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 	fassert(Managers.player.is_server or LEVEL_EDITOR_TEST, "Only server can heal")
 
-	local buff_extension = ScriptUnit.has_extension(healed_unit, "buff_system")
+	local var_38_0 = ScriptUnit.has_extension(arg_38_0, "buff_system")
 
-	if buff_extension and buff_extension:has_buff_perk("healing_immune") then
+	if var_38_0 and var_38_0:has_buff_perk("healing_immune") then
 		return
 	end
 
-	table.clear(HEALED_UNITS)
+	table.clear(var_0_39)
 
-	local buffed_heal_amount, shared_medpack = DamageUtils.apply_buffs_to_heal(healed_unit, healer_unit, heal_amount, heal_type, HEALED_UNITS)
+	local var_38_1, var_38_2 = DamageUtils.apply_buffs_to_heal(arg_38_0, arg_38_1, arg_38_2, arg_38_3, var_0_39)
+	local var_38_3 = DamageUtils.networkify_damage(var_38_1)
 
-	buffed_heal_amount = DamageUtils.networkify_damage(buffed_heal_amount)
+	if arg_38_0 == arg_38_1 and (arg_38_3 == "healing_draught" or arg_38_3 == "healing_draught_temp_health") and ScriptUnit.extension(arg_38_0, "health_system"):current_permanent_health() > 80 then
+		local var_38_4 = ScriptUnit.extension(arg_38_0, "dialogue_system").context.player_profile
 
-	if healed_unit == healer_unit then
-		local is_healing_draught = heal_type == "healing_draught" or heal_type == "healing_draught_temp_health"
-
-		if is_healing_draught then
-			local healed_unit_health_extension = ScriptUnit.extension(healed_unit, "health_system")
-
-			if healed_unit_health_extension:current_permanent_health() > 80 then
-				local target_name = ScriptUnit.extension(healed_unit, "dialogue_system").context.player_profile
-
-				SurroundingAwareSystem.add_event(healed_unit, "early_healing_draught", DialogueSettings.default_view_distance, "target_name", target_name)
-			end
-		end
+		SurroundingAwareSystem.add_event(arg_38_0, "early_healing_draught", DialogueSettings.default_view_distance, "target_name", var_38_4)
 	end
 
-	if buffed_heal_amount > 0 then
-		if healed_unit ~= healer_unit then
-			local healer_buff_extension = ScriptUnit.extension(healer_unit, "buff_system")
-
-			healer_buff_extension:trigger_procs("on_healed_ally", healed_unit, buffed_heal_amount, heal_type)
+	if var_38_3 > 0 then
+		if arg_38_0 ~= arg_38_1 then
+			ScriptUnit.extension(arg_38_1, "buff_system"):trigger_procs("on_healed_ally", arg_38_0, var_38_3, arg_38_3)
 		end
 
-		local num_healed_units = #HEALED_UNITS
+		local var_38_5 = #var_0_39
 
-		for i = 1, num_healed_units do
-			local unit = HEALED_UNITS[i]
+		for iter_38_0 = 1, var_38_5 do
+			local var_38_6 = var_0_39[iter_38_0]
 
-			heal_type = shared_medpack and ("buff_shared_medpack" or "buff_shared_medpack_temp_health") or unit == healed_unit and heal_type or "buff"
+			arg_38_3 = var_38_2 and ("buff_shared_medpack" or "buff_shared_medpack_temp_health") or var_38_6 == arg_38_0 and arg_38_3 or "buff"
 
-			local health_extension = ScriptUnit.extension(unit, "health_system")
+			ScriptUnit.extension(var_38_6, "health_system"):add_heal(arg_38_1, var_38_3, nil, arg_38_3)
 
-			health_extension:add_heal(healer_unit, buffed_heal_amount, nil, heal_type)
+			local var_38_7 = ScriptUnit.has_extension(var_38_6, "status_system")
 
-			local status_extension = ScriptUnit.has_extension(unit, "status_system")
-
-			if status_extension then
-				status_extension:healed(heal_type)
+			if var_38_7 then
+				var_38_7:healed(arg_38_3)
 			end
 
-			local buff_extension = ScriptUnit.extension(unit, "buff_system")
+			local var_38_8 = ScriptUnit.extension(var_38_6, "buff_system")
 
-			buff_extension:trigger_procs("on_healed", healer_unit, buffed_heal_amount, heal_type)
+			var_38_8:trigger_procs("on_healed", arg_38_1, var_38_3, arg_38_3)
 
-			if heal_type == "healing_draught" or heal_type == "bandage" or heal_type == "healing_draught_temp_health" or heal_type == "bandage_temp_health" or heal_type == "bandage_trinket" then
-				buff_extension:trigger_procs("on_healed_consumeable", healer_unit, buffed_heal_amount, heal_type)
+			if arg_38_3 == "healing_draught" or arg_38_3 == "bandage" or arg_38_3 == "healing_draught_temp_health" or arg_38_3 == "bandage_temp_health" or arg_38_3 == "bandage_trinket" then
+				var_38_8:trigger_procs("on_healed_consumeable", arg_38_1, var_38_3, arg_38_3)
 			end
 
-			if not LEVEL_EDITOR_TEST and status_extension and status_extension:heal_can_remove_wounded(heal_type) then
-				StatusUtils.set_wounded_network(unit, false, "healed")
+			if not LEVEL_EDITOR_TEST and var_38_7 and var_38_7:heal_can_remove_wounded(arg_38_3) then
+				StatusUtils.set_wounded_network(var_38_6, false, "healed")
 			end
 		end
 	else
-		local num_healed_units = #HEALED_UNITS
+		local var_38_9 = #var_0_39
 
-		for i = 1, num_healed_units do
-			local unit = HEALED_UNITS[i]
-			local status_extension = ScriptUnit.has_extension(unit, "status_system")
+		for iter_38_1 = 1, var_38_9 do
+			local var_38_10 = var_0_39[iter_38_1]
+			local var_38_11 = ScriptUnit.has_extension(var_38_10, "status_system")
 
-			if not LEVEL_EDITOR_TEST and status_extension and status_extension:is_wounded() and status_extension:heal_can_remove_wounded(heal_type) then
-				StatusUtils.set_wounded_network(unit, false, "healed")
+			if not LEVEL_EDITOR_TEST and var_38_11 and var_38_11:is_wounded() and var_38_11:heal_can_remove_wounded(arg_38_3) then
+				StatusUtils.set_wounded_network(var_38_10, false, "healed")
 			end
 		end
 	end
 end
 
-DamageUtils.apply_buffs_to_heal = function (healed_unit, healer_unit, heal_amount, heal_type, healed_units)
-	local shared_medpack = false
+function DamageUtils.apply_buffs_to_heal(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+	local var_39_0 = false
 
-	healed_units[#healed_units + 1] = healed_unit
+	arg_39_4[#arg_39_4 + 1] = arg_39_0
 
-	if ScriptUnit.has_extension(healed_unit, "buff_system") then
-		local buff_extension = ScriptUnit.extension(healed_unit, "buff_system")
+	if ScriptUnit.has_extension(arg_39_0, "buff_system") then
+		local var_39_1 = ScriptUnit.extension(arg_39_0, "buff_system")
 
-		if heal_type ~= "raw_heal" and heal_type ~= "health_conversion" then
-			heal_amount = buff_extension:apply_buffs_to_value(heal_amount, "healing_received")
+		if arg_39_3 ~= "raw_heal" and arg_39_3 ~= "health_conversion" then
+			arg_39_2 = var_39_1:apply_buffs_to_value(arg_39_2, "healing_received")
 		end
 
-		if buff_extension:has_buff_type("shared_health_pool") then
-			local healed_side = Managers.state.side.side_by_unit[healed_unit]
-			local player_and_bot_units = healed_side.PLAYER_AND_BOT_UNITS
-			local num_player_and_bot_units = #player_and_bot_units
-			local num_players_with_shared_health_pool = 1
+		if var_39_1:has_buff_type("shared_health_pool") then
+			local var_39_2 = Managers.state.side.side_by_unit[arg_39_0].PLAYER_AND_BOT_UNITS
+			local var_39_3 = #var_39_2
+			local var_39_4 = 1
 
-			for i = 1, num_player_and_bot_units do
-				local unit = player_and_bot_units[i]
+			for iter_39_0 = 1, var_39_3 do
+				local var_39_5 = var_39_2[iter_39_0]
 
-				if unit ~= healed_unit then
-					local target_buff_extension = ScriptUnit.extension(unit, "buff_system")
-
-					if target_buff_extension:has_buff_type("shared_health_pool") then
-						num_players_with_shared_health_pool = num_players_with_shared_health_pool + 1
-						healed_units[#healed_units + 1] = unit
-					end
+				if var_39_5 ~= arg_39_0 and ScriptUnit.extension(var_39_5, "buff_system"):has_buff_type("shared_health_pool") then
+					var_39_4 = var_39_4 + 1
+					arg_39_4[#arg_39_4 + 1] = var_39_5
 				end
 			end
 
-			heal_amount = heal_amount / num_players_with_shared_health_pool
+			arg_39_2 = arg_39_2 / var_39_4
 
-			if heal_type == "bandage" or heal_type == "healing_draught" then
-				shared_medpack = true
+			if arg_39_3 == "bandage" or arg_39_3 == "healing_draught" then
+				var_39_0 = true
 			end
 		end
 	end
 
-	return heal_amount, shared_medpack
+	return arg_39_2, var_39_0
 end
 
-DamageUtils.debug_heal = function (unit, amount)
+function DamageUtils.debug_heal(arg_40_0, arg_40_1)
 	if Managers.player.is_server then
-		DamageUtils.heal_network(unit, unit, amount, "debug")
+		DamageUtils.heal_network(arg_40_0, arg_40_0, arg_40_1, "debug")
 	else
-		local network_manager = Managers.state.network
-		local network_transmit = network_manager.network_transmit
-		local unit_id = network_manager:unit_game_object_id(unit)
-		local heal_type_id = NetworkLookup.heal_types.debug
+		local var_40_0 = Managers.state.network
+		local var_40_1 = var_40_0.network_transmit
+		local var_40_2 = var_40_0:unit_game_object_id(arg_40_0)
+		local var_40_3 = NetworkLookup.heal_types.debug
 
-		network_transmit:send_rpc_server("rpc_request_heal", unit_id, amount, heal_type_id)
+		var_40_1:send_rpc_server("rpc_request_heal", var_40_2, arg_40_1, var_40_3)
 	end
 end
 
-DamageUtils.debug_deal_damage = function (victim_unit, damage)
-	if not ALIVE[victim_unit] then
+function DamageUtils.debug_deal_damage(arg_41_0, arg_41_1)
+	if not ALIVE[arg_41_0] then
 		return
 	end
 
-	DamageUtils.add_damage_network(victim_unit, victim_unit, damage, "torso", "undefined", nil, Vector3(0, 0, 1), "debug", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
+	DamageUtils.add_damage_network(arg_41_0, arg_41_0, arg_41_1, "torso", "undefined", nil, Vector3(0, 0, 1), "debug", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 end
 
-DamageUtils.check_distance = function (action, blackboard, attacking_unit, target_unit)
-	local breed = blackboard.breed
-	local pos_attacker = POSITION_LOOKUP[attacking_unit]
-	local pos_target = POSITION_LOOKUP[target_unit] or Unit.world_position(target_unit, 0)
+function DamageUtils.check_distance(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+	local var_42_0 = arg_42_1.breed
+	local var_42_1 = var_0_4[arg_42_2]
+	local var_42_2 = var_0_4[arg_42_3] or Unit.world_position(arg_42_3, 0)
 
-	if not pos_target then
+	if not var_42_2 then
 		return false
 	end
 
-	local to_target = pos_target - pos_attacker
-	local ai_extension = ScriptUnit.has_extension(target_unit, "ai_system")
-	local is_player = blackboard.is_player and not ai_extension
-	local current_action = is_player and status_extension:breed_action() or blackboard.action
-	local player_radius = 1
+	local var_42_3 = var_42_2 - var_42_1
+	local var_42_4 = ScriptUnit.has_extension(arg_42_3, "ai_system")
+	local var_42_5 = arg_42_1.is_player and not var_42_4 and status_extension:breed_action() or arg_42_1.action
+	local var_42_6 = 1
 
-	if blackboard.target_dodged_during_attack or blackboard.set_dodge_rotation_timer or blackboard.locked_attack_rotation then
-		player_radius = player_radius * (current_action.player_dodged_radius or breed.player_dodged_radius or 0.75)
+	if arg_42_1.target_dodged_during_attack or arg_42_1.set_dodge_rotation_timer or arg_42_1.locked_attack_rotation then
+		var_42_6 = var_42_6 * (var_42_5.player_dodged_radius or var_42_0.player_dodged_radius or 0.75)
 	end
 
-	if action.use_box_range then
-		local x = to_target.x
-		local y = to_target.y
-		local z = to_target.z
-		local flat_range = blackboard.attack_range_flat + player_radius
+	if arg_42_0.use_box_range then
+		local var_42_7 = var_42_3.x
+		local var_42_8 = var_42_3.y
+		local var_42_9 = var_42_3.z
+		local var_42_10 = arg_42_1.attack_range_flat + var_42_6
 
-		if z < blackboard.attack_range_up and z > blackboard.attack_range_down and x * x + y * y < flat_range * flat_range then
+		if var_42_9 < arg_42_1.attack_range_up and var_42_9 > arg_42_1.attack_range_down and var_42_7 * var_42_7 + var_42_8 * var_42_8 < var_42_10 * var_42_10 then
 			return true
 		end
-	else
-		local dist = Vector3.length(to_target)
-
-		if dist <= (current_action.weapon_reach or breed.weapon_reach or breed.radius) + player_radius then
-			return true
-		end
-	end
-
-	return false
-end
-
-DamageUtils.check_infront = function (attacking_unit, target_unit)
-	local pos_attacker = POSITION_LOOKUP[attacking_unit]
-	local pos_target = POSITION_LOOKUP[target_unit] or Unit.world_position(target_unit, 0)
-
-	if not pos_target or not pos_attacker then
-		return false
-	end
-
-	local to_target = Vector3.flat(pos_target - pos_attacker)
-	local rot_attacker = unit_local_rotation(attacking_unit, 0)
-	local fwd_attacker = Quaternion.forward(rot_attacker)
-	local cos_a = Vector3.dot(Vector3.normalize(to_target), fwd_attacker)
-	local blackboard = BLACKBOARDS[attacking_unit]
-	local breed = blackboard.breed
-	local ai_extension = ScriptUnit.has_extension(target_unit, "ai_system")
-	local status_extension = ScriptUnit.has_extension(target_unit, "status_system")
-	local is_player = blackboard.is_player and not ai_extension
-	local current_action = is_player and status_extension:breed_action() or blackboard.action
-	local default_reach_cone = 0.866
-
-	if blackboard.target_dodged_during_attack or blackboard.set_dodge_rotation_timer or blackboard.locked_attack_rotation then
-		default_reach_cone = current_action.player_dodged_cone or breed.player_dodged_cone or 0.95
-	end
-
-	if cos_a > (breed.weapon_reach_cone or default_reach_cone) then
+	elseif Vector3.length(var_42_3) <= (var_42_5.weapon_reach or var_42_0.weapon_reach or var_42_0.radius) + var_42_6 then
 		return true
 	end
 
 	return false
 end
 
-DamageUtils.check_block = function (attacking_unit, target_unit, fatigue_type, original_enemy_weapon_direction)
-	if attacking_unit == target_unit then
+function DamageUtils.check_infront(arg_43_0, arg_43_1)
+	local var_43_0 = var_0_4[arg_43_0]
+	local var_43_1 = var_0_4[arg_43_1] or Unit.world_position(arg_43_1, 0)
+
+	if not var_43_1 or not var_43_0 then
 		return false
 	end
 
-	if type(fatigue_type) == "table" then
-		local difficulty_manager = Managers.state.difficulty
+	local var_43_2 = Vector3.flat(var_43_1 - var_43_0)
+	local var_43_3 = var_0_8(arg_43_0, 0)
+	local var_43_4 = Quaternion.forward(var_43_3)
+	local var_43_5 = Vector3.dot(Vector3.normalize(var_43_2), var_43_4)
+	local var_43_6 = var_0_2[arg_43_0]
+	local var_43_7 = var_43_6.breed
+	local var_43_8 = ScriptUnit.has_extension(arg_43_1, "ai_system")
+	local var_43_9 = ScriptUnit.has_extension(arg_43_1, "status_system")
+	local var_43_10 = var_43_6.is_player and not var_43_8 and var_43_9:breed_action() or var_43_6.action
+	local var_43_11 = 0.866
 
-		fatigue_type = difficulty_manager:get_difficulty_value_from_table(fatigue_type)
+	if var_43_6.target_dodged_during_attack or var_43_6.set_dodge_rotation_timer or var_43_6.locked_attack_rotation then
+		var_43_11 = var_43_10.player_dodged_cone or var_43_7.player_dodged_cone or 0.95
 	end
 
-	local network_manager = Managers.state.network
-	local _, is_level_unit = network_manager:game_object_or_level_id(target_unit)
+	if var_43_5 > (var_43_7.weapon_reach_cone or var_43_11) then
+		return true
+	end
 
-	if is_level_unit then
+	return false
+end
+
+function DamageUtils.check_block(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+	if arg_44_0 == arg_44_1 then
 		return false
-	elseif DamageUtils.is_ai(target_unit) then
-		local shield_blocked = AiUtils.attack_is_shield_blocked(target_unit, attacking_unit, false, original_enemy_weapon_direction)
-
-		if shield_blocked then
-			local blackboard = BLACKBOARDS[attacking_unit]
-			local action = blackboard.action
-			local no_block_stagger = action and action.no_block_stagger
-
-			blackboard.blocked = not no_block_stagger
-
-			return true
-		end
 	end
 
-	local status_extension = ScriptUnit.has_extension(target_unit, "status_system")
+	if type(arg_44_2) == "table" then
+		arg_44_2 = Managers.state.difficulty:get_difficulty_value_from_table(arg_44_2)
+	end
 
-	if status_extension then
-		local is_blocking = status_extension:is_blocking()
-		local can_block, fatigue_point_costs_multiplier, improved_block, enemy_weapon_direction = status_extension:can_block(attacking_unit, original_enemy_weapon_direction)
-		local target_buff_extension = ScriptUnit.has_extension(target_unit, "buff_system")
-		local is_invulnerable = target_buff_extension and target_buff_extension:has_buff_perk("invulnerable")
+	local var_44_0 = Managers.state.network
+	local var_44_1, var_44_2 = var_44_0:game_object_or_level_id(arg_44_1)
 
-		if is_blocking and can_block and not is_invulnerable then
-			local buff_extension = ScriptUnit.has_extension(attacking_unit, "buff_system")
+	if var_44_2 then
+		return false
+	elseif DamageUtils.is_ai(arg_44_1) and AiUtils.attack_is_shield_blocked(arg_44_1, arg_44_0, false, arg_44_3) then
+		local var_44_3 = var_0_2[arg_44_0]
+		local var_44_4 = var_44_3.action
 
-			if Managers.player.is_server and buff_extension and buff_extension:has_buff_perk("ai_unblockable") then
-				local blackboard = BLACKBOARDS[attacking_unit]
+		var_44_3.blocked = not (var_44_4 and var_44_4.no_block_stagger)
 
-				blackboard.hit_through_block = true
+		return true
+	end
+
+	local var_44_5 = ScriptUnit.has_extension(arg_44_1, "status_system")
+
+	if var_44_5 then
+		local var_44_6 = var_44_5:is_blocking()
+		local var_44_7, var_44_8, var_44_9, var_44_10 = var_44_5:can_block(arg_44_0, arg_44_3)
+		local var_44_11 = ScriptUnit.has_extension(arg_44_1, "buff_system")
+		local var_44_12 = var_44_11 and var_44_11:has_buff_perk("invulnerable")
+
+		if var_44_6 and var_44_7 and not var_44_12 then
+			local var_44_13 = ScriptUnit.has_extension(arg_44_0, "buff_system")
+
+			if Managers.player.is_server and var_44_13 and var_44_13:has_buff_perk("ai_unblockable") then
+				var_0_2[arg_44_0].hit_through_block = true
 
 				return false
 			end
 
-			status_extension:blocked_attack(fatigue_type, attacking_unit, fatigue_point_costs_multiplier, improved_block, enemy_weapon_direction)
+			var_44_5:blocked_attack(arg_44_2, arg_44_0, var_44_8, var_44_9, var_44_10)
 
 			if not LEVEL_EDITOR_TEST and Managers.player.is_server then
-				local unit_storage = Managers.state.unit_storage
-				local go_id = unit_storage:go_id(target_unit)
-				local fatigue_type_id = NetworkLookup.fatigue_types[fatigue_type]
-				local attacker_unit_id, attacker_is_level_unit = network_manager:game_object_or_level_id(attacking_unit)
+				local var_44_14 = Managers.state.unit_storage:go_id(arg_44_1)
+				local var_44_15 = NetworkLookup.fatigue_types[arg_44_2]
+				local var_44_16, var_44_17 = var_44_0:game_object_or_level_id(arg_44_0)
 
-				network_manager.network_transmit:send_rpc_clients("rpc_player_blocked_attack", go_id, fatigue_type_id, attacker_unit_id, fatigue_point_costs_multiplier, improved_block, enemy_weapon_direction, attacker_is_level_unit)
+				var_44_0.network_transmit:send_rpc_clients("rpc_player_blocked_attack", var_44_14, var_44_15, var_44_16, var_44_8, var_44_9, var_44_10, var_44_17)
 
-				local blackboard = BLACKBOARDS[attacking_unit]
-				local ai_extension = ScriptUnit.has_extension(target_unit, "ai_system")
-				local is_player = blackboard.is_player and not ai_extension
-				local action = is_player and status_extension:breed_action() or blackboard.action
+				local var_44_18 = var_0_2[arg_44_0]
+				local var_44_19 = ScriptUnit.has_extension(arg_44_1, "ai_system")
+				local var_44_20 = var_44_18.is_player and not var_44_19 and var_44_5:breed_action() or var_44_18.action
 
-				if action and action.no_block_stagger then
-					-- Nothing
-				elseif not blackboard.stagger then
-					blackboard.blocked = true
+				if var_44_20 and var_44_20.no_block_stagger then
+					-- block empty
+				elseif not var_44_18.stagger then
+					var_44_18.blocked = true
 				end
 			end
 
@@ -2780,55 +2633,52 @@ DamageUtils.check_block = function (attacking_unit, target_unit, fatigue_type, o
 	return false
 end
 
-DamageUtils.check_ranged_block = function (attacking_unit, target_unit, fatigue_type)
-	local status_extension = ScriptUnit.extension(target_unit, "status_system")
-	local is_blocking = status_extension:is_blocking()
-	local can_block, fatigue_point_costs_multiplier, improved_block, _ = status_extension:can_block(attacking_unit)
-	local breed, blockable_ranged_attack
+function DamageUtils.check_ranged_block(arg_45_0, arg_45_1, arg_45_2)
+	local var_45_0 = ScriptUnit.extension(arg_45_1, "status_system")
+	local var_45_1 = var_45_0:is_blocking()
+	local var_45_2, var_45_3, var_45_4, var_45_5 = var_45_0:can_block(arg_45_0)
+	local var_45_6
+	local var_45_7
 
-	if attacking_unit then
-		breed = AiUtils.unit_breed(attacking_unit)
+	if arg_45_0 then
+		local var_45_8 = AiUtils.unit_breed(arg_45_0)
 
-		if breed then
-			blockable_ranged_attack = breed.blockable_ranged_attack
+		if var_45_8 then
+			var_45_7 = var_45_8.blockable_ranged_attack
 		end
 	end
 
-	if is_blocking and can_block and improved_block then
-		local buff_extension = ScriptUnit.has_extension(attacking_unit, "buff_system")
+	if var_45_1 and var_45_2 and var_45_4 then
+		local var_45_9 = ScriptUnit.has_extension(arg_45_0, "buff_system")
 
-		if Managers.player.is_server and buff_extension and buff_extension:has_buff_perk("ai_unblockable") then
-			local blackboard = BLACKBOARDS[attacking_unit]
-
-			blackboard.hit_through_block = true
+		if Managers.player.is_server and var_45_9 and var_45_9:has_buff_perk("ai_unblockable") then
+			var_0_2[arg_45_0].hit_through_block = true
 
 			return false
 		end
 
-		local inventory_extension = ScriptUnit.extension(target_unit, "inventory_system")
-		local weapon_data = inventory_extension:get_wielded_slot_item_template()
+		local var_45_10 = ScriptUnit.extension(arg_45_1, "inventory_system"):get_wielded_slot_item_template()
 
-		if not weapon_data then
+		if not var_45_10 then
 			return false
 		end
 
-		if not weapon_data.can_block_ranged_attacks and not blockable_ranged_attack then
+		if not var_45_10.can_block_ranged_attacks and not var_45_7 then
 			return false
 		end
 
-		status_extension:blocked_attack(fatigue_type, attacking_unit, fatigue_point_costs_multiplier, false)
+		var_45_0:blocked_attack(arg_45_2, arg_45_0, var_45_3, false)
 
 		if not LEVEL_EDITOR_TEST then
-			local network_manager = Managers.state.network
-			local unit_storage = Managers.state.unit_storage
-			local go_id = unit_storage:go_id(target_unit)
-			local fatigue_type_id = NetworkLookup.fatigue_types[fatigue_type]
-			local attacker_unit_id, attacker_is_level_unit = network_manager:game_object_or_level_id(attacking_unit)
+			local var_45_11 = Managers.state.network
+			local var_45_12 = Managers.state.unit_storage:go_id(arg_45_1)
+			local var_45_13 = NetworkLookup.fatigue_types[arg_45_2]
+			local var_45_14, var_45_15 = var_45_11:game_object_or_level_id(arg_45_0)
 
 			if Managers.player.is_server then
-				network_manager.network_transmit:send_rpc_clients("rpc_player_blocked_attack", go_id, fatigue_type_id, attacker_unit_id, fatigue_point_costs_multiplier, improved_block, "back", attacker_is_level_unit)
+				var_45_11.network_transmit:send_rpc_clients("rpc_player_blocked_attack", var_45_12, var_45_13, var_45_14, var_45_3, var_45_4, "back", var_45_15)
 			else
-				network_manager.network_transmit:send_rpc_server("rpc_player_blocked_attack", go_id, fatigue_type_id, attacker_unit_id, fatigue_point_costs_multiplier, improved_block, "back", attacker_is_level_unit)
+				var_45_11.network_transmit:send_rpc_server("rpc_player_blocked_attack", var_45_12, var_45_13, var_45_14, var_45_3, var_45_4, "back", var_45_15)
 			end
 		end
 
@@ -2838,1197 +2688,1138 @@ DamageUtils.check_ranged_block = function (attacking_unit, target_unit, fatigue_
 	return false
 end
 
-DamageUtils.camera_shake_by_distance = function (shake_name, start_time, player_unit, source_unit, near_dist, far_dist, near_value, far_value)
-	local local_player = Managers.player:local_player()
+function DamageUtils.camera_shake_by_distance(arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4, arg_46_5, arg_46_6, arg_46_7)
+	local var_46_0 = Managers.player:local_player()
 
-	if not local_player then
+	if not var_46_0 then
 		return
 	end
 
-	local player_unit_to_shake = player_unit or local_player.player_unit
+	local var_46_1 = arg_46_2 or var_46_0.player_unit
 
-	if not player_unit_to_shake then
+	if not var_46_1 then
 		return
 	end
 
-	local game_mode_manager = Managers.state.game_mode
-	local game_end_reason = game_mode_manager and game_mode_manager:get_end_reason()
+	local var_46_2 = Managers.state.game_mode
 
-	if game_end_reason then
+	if var_46_2 and var_46_2:get_end_reason() then
 		return
 	end
 
-	local scale = 1
+	local var_46_3 = 1
 
-	if source_unit then
-		local d = Vector3.distance(unit_local_position(source_unit, 0), unit_local_position(player_unit_to_shake, 0))
+	if arg_46_3 then
+		local var_46_4 = Vector3.distance(var_0_7(arg_46_3, 0), var_0_7(var_46_1, 0))
 
-		scale = 1 - math.clamp((d - near_dist) / (far_dist - near_dist), 0, 1)
-		scale = far_value + scale * (near_value - far_value)
+		var_46_3 = 1 - math.clamp((var_46_4 - arg_46_4) / (arg_46_5 - arg_46_4), 0, 1)
+		var_46_3 = arg_46_7 + var_46_3 * (arg_46_6 - arg_46_7)
 	end
 
-	Managers.state.camera:camera_effect_shake_event(shake_name, start_time, scale)
+	Managers.state.camera:camera_effect_shake_event(arg_46_0, arg_46_1, var_46_3)
 end
 
-local INDEX_POSITION = 1
-local INDEX_NORMAL = 3
-local INDEX_ACTOR = 4
-local HIT_UNITS = {}
-local HIT_DATA = {}
+local var_0_40 = 1
+local var_0_41 = 3
+local var_0_42 = 4
+local var_0_43 = {}
+local var_0_44 = {}
 
-DamageUtils.is_enemy = function (attacker_unit, target_unit)
-	local side = Managers.state.side.side_by_unit[attacker_unit]
+function DamageUtils.is_enemy(arg_47_0, arg_47_1)
+	local var_47_0 = Managers.state.side.side_by_unit[arg_47_0]
 
-	return side and side.enemy_units_lookup[target_unit] ~= nil
+	return var_47_0 and var_47_0.enemy_units_lookup[arg_47_1] ~= nil
 end
 
-DamageUtils.is_ai = function (unit)
-	local breed = AiUtils.unit_breed(unit)
+function DamageUtils.is_ai(arg_48_0)
+	local var_48_0 = AiUtils.unit_breed(arg_48_0)
 
-	if breed then
-		return breed.is_ai
+	if var_48_0 then
+		return var_48_0.is_ai
 	end
 end
 
-DamageUtils.is_character = function (unit)
-	local has_breed = Unit.has_data(unit, "breed")
-
-	return has_breed or false
+function DamageUtils.is_character(arg_49_0)
+	return Unit.has_data(arg_49_0, "breed") or false
 end
 
-DamageUtils.can_bots_damage = function (unit)
-	local is_character, _ = DamageUtils.is_character(unit)
-	local is_level_unit = Managers.state.network:level_object_id(unit)
-	local health_extension = ScriptUnit.extension(unit, "health_system")
+function DamageUtils.can_bots_damage(arg_50_0)
+	local var_50_0, var_50_1 = DamageUtils.is_character(arg_50_0)
+	local var_50_2 = Managers.state.network:level_object_id(arg_50_0)
+	local var_50_3 = ScriptUnit.extension(arg_50_0, "health_system")
 
-	return is_character or is_level_unit or health_extension.bots_can_do_damage
+	return var_50_0 or var_50_2 or var_50_3.bots_can_do_damage
 end
 
-DamageUtils.vs_dark_pact_can_damage = function (damaging_unit, hit_unit)
-	local is_character, _ = DamageUtils.is_character(hit_unit)
-	local is_level_unit = Managers.state.network:level_object_id(hit_unit)
-	local prop_extension = ScriptUnit.has_extension(hit_unit, "props_system")
-	local prop_owner = prop_extension and prop_extension.owner and prop_extension:owner()
-	local is_enemy_owned = prop_owner and Managers.state.side:is_enemy(damaging_unit, prop_owner)
+function DamageUtils.vs_dark_pact_can_damage(arg_51_0, arg_51_1)
+	local var_51_0, var_51_1 = DamageUtils.is_character(arg_51_1)
+	local var_51_2 = Managers.state.network:level_object_id(arg_51_1)
+	local var_51_3 = ScriptUnit.has_extension(arg_51_1, "props_system")
+	local var_51_4 = var_51_3 and var_51_3.owner and var_51_3:owner()
+	local var_51_5 = var_51_4 and Managers.state.side:is_enemy(arg_51_0, var_51_4)
 
-	return is_character or is_level_unit or is_enemy_owned
+	return var_51_0 or var_51_2 or var_51_5
 end
 
-DamageUtils.allow_friendly_fire_ranged = function (difficulty_settings, attacker_player)
-	local friendly_fire_enabled = difficulty_settings.friendly_fire_ranged
-	local mechanism_ok, custom_setting_override, custom_settings_enabled = Managers.mechanism:mechanism_try_call("get_custom_game_setting", "friendly_fire")
+function DamageUtils.allow_friendly_fire_ranged(arg_52_0, arg_52_1)
+	local var_52_0 = arg_52_0.friendly_fire_ranged
+	local var_52_1, var_52_2, var_52_3 = Managers.mechanism:mechanism_try_call("get_custom_game_setting", "friendly_fire")
 
-	if mechanism_ok and custom_settings_enabled then
-		local attacker_unit = attacker_player and attacker_player.player_unit
-		local is_dark_pact_attacker = attacker_unit and Managers.state.side:versus_is_dark_pact(attacker_unit)
+	if var_52_1 and var_52_3 then
+		local var_52_4 = arg_52_1 and arg_52_1.player_unit
 
-		if not is_dark_pact_attacker then
-			friendly_fire_enabled = not not custom_setting_override
+		if not (var_52_4 and Managers.state.side:versus_is_dark_pact(var_52_4)) then
+			var_52_0 = not not var_52_2
 		end
 	end
 
-	return friendly_fire_enabled and attacker_player and not attacker_player.bot_player
+	return var_52_0 and arg_52_1 and not arg_52_1.bot_player
 end
 
-DamageUtils.allow_friendly_fire_melee = function (difficulty_settings, attacker_player)
-	return difficulty_settings.friendly_fire_melee and not attacker_player.bot_player
+function DamageUtils.allow_friendly_fire_melee(arg_53_0, arg_53_1)
+	return arg_53_0.friendly_fire_melee and not arg_53_1.bot_player
 end
 
-DamageUtils.damage_level_unit = function (hit_unit, attacker_unit, hit_zone_name, power_level, boost_curve_multiplier, is_critical_strike, damage_profile, target_index, hit_normal, damage_source)
-	local no_player_damage = unit_get_data(hit_unit, "no_damage_from_players")
-
-	if no_player_damage then
+function DamageUtils.damage_level_unit(arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5, arg_54_6, arg_54_7, arg_54_8, arg_54_9)
+	if var_0_5(arg_54_0, "no_damage_from_players") then
 		return
 	end
 
-	local is_versus = Managers.mechanism:current_mechanism_name() == "versus"
+	if Managers.mechanism:current_mechanism_name() == "versus" and ScriptUnit.has_extension(arg_54_0, "objective_system") then
+		local var_54_0 = Managers.state.side.side_by_unit[arg_54_1]
 
-	if is_versus then
-		local is_objective = ScriptUnit.has_extension(hit_unit, "objective_system")
-
-		if is_objective then
-			local attacker_side = Managers.state.side.side_by_unit[attacker_unit]
-
-			if not attacker_side or attacker_side:name() ~= "heroes" then
-				return
-			end
+		if not var_54_0 or var_54_0:name() ~= "heroes" then
+			return
 		end
 	end
 
-	local target_settings = damage_profile[target_index] or damage_profile.default_target
+	local var_54_1 = arg_54_6[arg_54_7] or arg_54_6.default_target
 
-	if not target_settings then
+	if not var_54_1 then
 		return
 	end
 
-	local filter_damage_source = unit_get_data(hit_unit, "filter_damage_source")
+	local var_54_2 = var_0_5(arg_54_0, "filter_damage_source")
 
-	if filter_damage_source and filter_damage_source ~= damage_source then
+	if var_54_2 and var_54_2 ~= arg_54_9 then
 		return
 	end
 
-	local boost_curve = BoostCurves[target_settings.boost_curve_type]
-	local damage_amount = DamageUtils.calculate_damage(DamageOutput, hit_unit, attacker_unit, hit_zone_name, power_level, boost_curve, boost_curve_multiplier, is_critical_strike, damage_profile, target_index, nil, damage_source)
-	local damage_type = "destructible_level_object_hit"
-	local hit_ragdoll_actor, source_attacker_unit, buff_attack_type, hit_react_type, added_dot
+	local var_54_3 = BoostCurves[var_54_1.boost_curve_type]
+	local var_54_4 = DamageUtils.calculate_damage(DamageOutput, arg_54_0, arg_54_1, arg_54_2, arg_54_3, var_54_3, arg_54_4, arg_54_5, arg_54_6, arg_54_7, nil, arg_54_9)
+	local var_54_5 = "destructible_level_object_hit"
+	local var_54_6
+	local var_54_7
+	local var_54_8
+	local var_54_9
+	local var_54_10
 
-	DamageUtils.add_damage_network(hit_unit, attacker_unit, damage_amount, hit_zone_name, damage_type, nil, hit_normal, damage_source, hit_ragdoll_actor, source_attacker_unit, buff_attack_type, hit_react_type, is_critical_strike, added_dot, nil, nil, nil, nil, target_index)
+	DamageUtils.add_damage_network(arg_54_0, arg_54_1, var_54_4, arg_54_2, var_54_5, nil, arg_54_8, arg_54_9, var_54_6, var_54_7, var_54_8, var_54_9, arg_54_5, var_54_10, nil, nil, nil, nil, arg_54_7)
 end
 
-DamageUtils._projectile_hit_object = function (current_action, owner_unit, owner_player, owner_buff_extension, target_settings, hit_unit, hit_actor, hit_position, hit_rotation, hit_normal, is_husk, breed, is_server, check_buffs, check_backstab, is_critical_strike, difficulty_rank, power_level, ranged_boost_curve_multiplier, damage_profile, damage_source, critical_hit_effect, world, hit_effect, attack_direction, damage_source_id, damage_profile_id, max_targets, num_penetrations, current_amount_of_mass_hit)
-	local hit_units = HIT_UNITS
-	local hit_data = HIT_DATA
-	local ai_system = Managers.state.entity:system("ai_system")
-	local network_manager = Managers.state.network
-	local _, is_level_unit = network_manager:game_object_or_level_id(hit_unit)
-	local has_health_extension = ScriptUnit.has_extension(hit_unit, "health_system")
-	local owner = Managers.player:owner(hit_unit)
-	local hit_zone_name = "full"
-	local amount_of_mass_hit = current_amount_of_mass_hit
-	local allow_ranged_damage = unit_get_data(hit_unit, "allow_ranged_damage") ~= false
+function DamageUtils._projectile_hit_object(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5, arg_55_6, arg_55_7, arg_55_8, arg_55_9, arg_55_10, arg_55_11, arg_55_12, arg_55_13, arg_55_14, arg_55_15, arg_55_16, arg_55_17, arg_55_18, arg_55_19, arg_55_20, arg_55_21, arg_55_22, arg_55_23, arg_55_24, arg_55_25, arg_55_26, arg_55_27, arg_55_28, arg_55_29)
+	local var_55_0 = var_0_43
+	local var_55_1 = var_0_44
+	local var_55_2 = Managers.state.entity:system("ai_system")
+	local var_55_3 = Managers.state.network
+	local var_55_4, var_55_5 = var_55_3:game_object_or_level_id(arg_55_5)
+	local var_55_6 = ScriptUnit.has_extension(arg_55_5, "health_system")
+	local var_55_7 = Managers.player:owner(arg_55_5)
+	local var_55_8 = "full"
+	local var_55_9 = arg_55_29
+	local var_55_10 = var_0_5(arg_55_5, "allow_ranged_damage") ~= false
 
-	if is_level_unit and not hit_units[hit_unit] and (GameSettingsDevelopment.allow_ranged_attacks_to_damage_props or allow_ranged_damage) and has_health_extension then
-		hit_units[hit_unit] = true
-		amount_of_mass_hit = amount_of_mass_hit + 1
+	if var_55_5 and not var_55_0[arg_55_5] and (GameSettingsDevelopment.allow_ranged_attacks_to_damage_props or var_55_10) and var_55_6 then
+		var_55_0[arg_55_5] = true
+		var_55_9 = var_55_9 + 1
 
-		local target_index = math.ceil(amount_of_mass_hit)
+		local var_55_11 = math.ceil(var_55_9)
 
-		DamageUtils.damage_level_unit(hit_unit, owner_unit, hit_zone_name, power_level, ranged_boost_curve_multiplier, is_critical_strike, damage_profile, target_index, attack_direction, damage_source)
+		DamageUtils.damage_level_unit(arg_55_5, arg_55_1, var_55_8, arg_55_17, arg_55_18, arg_55_15, arg_55_19, var_55_11, arg_55_24, arg_55_20)
 
-		hit_data.stop = true
-		hit_data.hits = num_penetrations + 1
-	elseif not is_level_unit and allow_ranged_damage and has_health_extension and not owner then
-		hit_units[hit_unit] = true
+		var_55_1.stop = true
+		var_55_1.hits = arg_55_28 + 1
+	elseif not var_55_5 and var_55_10 and var_55_6 and not var_55_7 then
+		var_55_0[arg_55_5] = true
 
-		local attacker_unit_id = network_manager:unit_game_object_id(owner_unit)
-		local hit_unit_id = network_manager:unit_game_object_id(hit_unit)
-		local hit_zone_id = NetworkLookup.hit_zones[hit_zone_name]
-		local weapon_system = Managers.state.entity:system("weapon_system")
+		local var_55_12 = var_55_3:unit_game_object_id(arg_55_1)
+		local var_55_13 = var_55_3:unit_game_object_id(arg_55_5)
+		local var_55_14 = NetworkLookup.hit_zones[var_55_8]
 
-		weapon_system:send_rpc_attack_hit(damage_source_id, attacker_unit_id, hit_unit_id, hit_zone_id, hit_position, attack_direction, damage_profile_id, "power_level", power_level, "hit_target_index", nil, "blocking", false, "shield_break_procced", false, "boost_curve_multiplier", ranged_boost_curve_multiplier, "is_critical_strike", is_critical_strike, "first_hit", num_penetrations == 0)
+		Managers.state.entity:system("weapon_system"):send_rpc_attack_hit(arg_55_25, var_55_12, var_55_13, var_55_14, arg_55_7, arg_55_24, arg_55_26, "power_level", arg_55_17, "hit_target_index", nil, "blocking", false, "shield_break_procced", false, "boost_curve_multiplier", arg_55_18, "is_critical_strike", arg_55_15, "first_hit", arg_55_28 == 0)
 
-		if is_critical_strike and critical_hit_effect then
-			EffectHelper.play_surface_material_effects(critical_hit_effect, world, hit_unit, hit_position, hit_rotation, hit_normal, nil, is_husk, nil, hit_actor)
+		if arg_55_15 and arg_55_21 then
+			EffectHelper.play_surface_material_effects(arg_55_21, arg_55_22, arg_55_5, arg_55_7, arg_55_8, arg_55_9, nil, arg_55_10, nil, arg_55_6)
 		else
-			EffectHelper.play_surface_material_effects(hit_effect, world, hit_unit, hit_position, hit_rotation, hit_normal, nil, is_husk, nil, hit_actor)
+			EffectHelper.play_surface_material_effects(arg_55_23, arg_55_22, arg_55_5, arg_55_7, arg_55_8, arg_55_9, nil, arg_55_10, nil, arg_55_6)
 		end
 
 		if Managers.state.network:game() then
-			if is_critical_strike and critical_hit_effect then
-				EffectHelper.remote_play_surface_material_effects(critical_hit_effect, world, hit_unit, hit_position, hit_rotation, hit_normal, is_server, hit_actor)
+			if arg_55_15 and arg_55_21 then
+				EffectHelper.remote_play_surface_material_effects(arg_55_21, arg_55_22, arg_55_5, arg_55_7, arg_55_8, arg_55_9, arg_55_12, arg_55_6)
 			else
-				EffectHelper.remote_play_surface_material_effects(hit_effect, world, hit_unit, hit_position, hit_rotation, hit_normal, is_server, hit_actor)
+				EffectHelper.remote_play_surface_material_effects(arg_55_23, arg_55_22, arg_55_5, arg_55_7, arg_55_8, arg_55_9, arg_55_12, arg_55_6)
 			end
 		end
 
-		hit_data.stop = true
-		hit_data.hits = num_penetrations + 1
+		var_55_1.stop = true
+		var_55_1.hits = arg_55_28 + 1
 	else
-		if current_action.alert_sound_range_hit and owner_unit then
-			ai_system:alert_enemies_within_range(owner_unit, hit_position, current_action.alert_sound_range_fire)
+		if arg_55_0.alert_sound_range_hit and arg_55_1 then
+			var_55_2:alert_enemies_within_range(arg_55_1, arg_55_7, arg_55_0.alert_sound_range_fire)
 		end
 
-		local is_inventory_item = ScriptUnit.has_extension(hit_unit, "ai_inventory_item_system")
+		if not ScriptUnit.has_extension(arg_55_5, "ai_inventory_item_system") then
+			local var_55_15 = Managers.player:owner(arg_55_5)
 
-		if not is_inventory_item then
-			local hit_unit_owner = Managers.player:owner(hit_unit)
-
-			if hit_unit_owner == nil or hit_unit_owner.player_unit == nil then
-				if is_critical_strike and critical_hit_effect then
-					EffectHelper.play_surface_material_effects(critical_hit_effect, world, hit_unit, hit_position, hit_rotation, hit_normal, nil, is_husk, nil, hit_actor)
+			if var_55_15 == nil or var_55_15.player_unit == nil then
+				if arg_55_15 and arg_55_21 then
+					EffectHelper.play_surface_material_effects(arg_55_21, arg_55_22, arg_55_5, arg_55_7, arg_55_8, arg_55_9, nil, arg_55_10, nil, arg_55_6)
 				else
-					EffectHelper.play_surface_material_effects(hit_effect, world, hit_unit, hit_position, hit_rotation, hit_normal, nil, is_husk, nil, hit_actor)
+					EffectHelper.play_surface_material_effects(arg_55_23, arg_55_22, arg_55_5, arg_55_7, arg_55_8, arg_55_9, nil, arg_55_10, nil, arg_55_6)
 				end
 
 				if Managers.state.network:game() then
-					if is_critical_strike and critical_hit_effect then
-						EffectHelper.remote_play_surface_material_effects(critical_hit_effect, world, hit_unit, hit_position, hit_rotation, hit_normal, is_server, hit_actor)
+					if arg_55_15 and arg_55_21 then
+						EffectHelper.remote_play_surface_material_effects(arg_55_21, arg_55_22, arg_55_5, arg_55_7, arg_55_8, arg_55_9, arg_55_12, arg_55_6)
 					else
-						EffectHelper.remote_play_surface_material_effects(hit_effect, world, hit_unit, hit_position, hit_rotation, hit_normal, is_server, hit_actor)
+						EffectHelper.remote_play_surface_material_effects(arg_55_23, arg_55_22, arg_55_5, arg_55_7, arg_55_8, arg_55_9, arg_55_12, arg_55_6)
 					end
 				end
 
-				if allow_ranged_damage and hit_unit and unit_alive(hit_unit) and hit_actor then
-					local hit_direction = Vector3.multiply(hit_normal, -1)
+				if var_55_10 and arg_55_5 and var_0_6(arg_55_5) and arg_55_6 then
+					local var_55_16 = Vector3.multiply(arg_55_9, -1)
 
-					unit_set_flow_variable(hit_unit, "hit_actor", hit_actor)
-					unit_set_flow_variable(hit_unit, "hit_direction", hit_direction)
-					unit_set_flow_variable(hit_unit, "hit_position", hit_position)
-					unit_flow_event(hit_unit, "lua_simple_damage")
+					var_0_10(arg_55_5, "hit_actor", arg_55_6)
+					var_0_10(arg_55_5, "hit_direction", var_55_16)
+					var_0_10(arg_55_5, "hit_position", arg_55_7)
+					var_0_11(arg_55_5, "lua_simple_damage")
 				end
 			end
 
-			hit_data.stop = true
-			hit_data.hits = 1
+			var_55_1.stop = true
+			var_55_1.hits = 1
 		end
 	end
 
-	return amount_of_mass_hit
+	return var_55_9
 end
 
-DamageUtils._projectile_hit_character = function (current_action, owner_unit, owner_player, owner_buff_extension, target_settings, hit_unit, hit_actor, hit_position, hit_rotation, hit_normal, is_husk, breed, is_server, check_buffs, is_critical_strike, difficulty_rank, power_level, ranged_boost_curve_multiplier, damage_profile, damage_source, critical_hit_effect, world, hit_effect, attack_direction, damage_source_id, damage_profile_id, max_targets, current_num_penetrations, current_amount_of_mass_hit, target_number)
-	local hit_units = HIT_UNITS
-	local hit_data = HIT_DATA
-	local network_manager = Managers.state.network
-	local attacker_unit_id, attacker_is_level_unit = network_manager:game_object_or_level_id(owner_unit)
-	local hit_unit_id, _ = network_manager:game_object_or_level_id(hit_unit)
-	local hit_zone_name = "torso"
-	local predicted_damage = 0
-	local invulnerable = false
-	local shield_blocked = false
-	local num_penetrations = current_num_penetrations
-	local amount_of_mass_hit = current_amount_of_mass_hit
+function DamageUtils._projectile_hit_character(arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4, arg_56_5, arg_56_6, arg_56_7, arg_56_8, arg_56_9, arg_56_10, arg_56_11, arg_56_12, arg_56_13, arg_56_14, arg_56_15, arg_56_16, arg_56_17, arg_56_18, arg_56_19, arg_56_20, arg_56_21, arg_56_22, arg_56_23, arg_56_24, arg_56_25, arg_56_26, arg_56_27, arg_56_28, arg_56_29)
+	local var_56_0 = var_0_43
+	local var_56_1 = var_0_44
+	local var_56_2 = Managers.state.network
+	local var_56_3, var_56_4 = var_56_2:game_object_or_level_id(arg_56_1)
+	local var_56_5, var_56_6 = var_56_2:game_object_or_level_id(arg_56_5)
+	local var_56_7 = "torso"
+	local var_56_8 = 0
+	local var_56_9 = false
+	local var_56_10 = false
+	local var_56_11 = arg_56_27
+	local var_56_12 = arg_56_28
 
-	if breed then
-		local node = actor_node(hit_actor)
-		local hit_zone = breed.hit_zones_lookup[node]
+	if arg_56_11 then
+		local var_56_13 = var_0_19(arg_56_6)
 
-		hit_zone_name = hit_zone.name
+		var_56_7 = arg_56_11.hit_zones_lookup[var_56_13].name
 
-		if hit_zone_name ~= "afro" then
-			shield_blocked = AiUtils.attack_is_shield_blocked(hit_unit, owner_unit) and not current_action.ignore_shield_hit
+		if var_56_7 ~= "afro" then
+			var_56_10 = AiUtils.attack_is_shield_blocked(arg_56_5, arg_56_1) and not arg_56_0.ignore_shield_hit
 
-			if shield_blocked then
-				hit_data.blocked_by_unit = hit_unit
+			if var_56_10 then
+				var_56_1.blocked_by_unit = arg_56_5
 			end
 		end
 	end
 
-	if current_action.hit_zone_override and hit_zone_name ~= "afro" then
-		hit_zone_name = current_action.hit_zone_override
+	if arg_56_0.hit_zone_override and var_56_7 ~= "afro" then
+		var_56_7 = arg_56_0.hit_zone_override
 	end
 
-	local unmodified = true
+	local var_56_14 = true
 
-	if hit_zone_name ~= "head" and HEALTH_ALIVE[hit_unit] and breed and breed.hit_zones and breed.hit_zones.head then
-		local owner_buff_extension = ScriptUnit.has_extension(owner_unit, "buff_system")
-		local auto_headshot = owner_buff_extension and owner_buff_extension:has_buff_perk("auto_headshot")
+	if var_56_7 ~= "head" and HEALTH_ALIVE[arg_56_5] and arg_56_11 and arg_56_11.hit_zones and arg_56_11.hit_zones.head then
+		local var_56_15 = ScriptUnit.has_extension(arg_56_1, "buff_system")
 
-		if auto_headshot and hit_zone_name ~= "afro" then
-			hit_zone_name = "head"
-			unmodified = false
+		if var_56_15 and var_56_15:has_buff_perk("auto_headshot") and var_56_7 ~= "afro" then
+			var_56_7 = "head"
+			var_56_14 = false
 
-			owner_buff_extension:trigger_procs("on_auto_headshot")
+			var_56_15:trigger_procs("on_auto_headshot")
 		end
 	end
 
-	if breed and hit_zone_name == "head" and owner_player and not shield_blocked then
-		local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
-		local _, procced = owner_buff_extension:apply_buffs_to_value(0, "coop_stamina")
+	if arg_56_11 and var_56_7 == "head" and arg_56_2 and not var_56_10 then
+		local var_56_16 = ScriptUnit.extension(arg_56_1, "first_person_system")
+		local var_56_17, var_56_18 = arg_56_3:apply_buffs_to_value(0, "coop_stamina")
 
-		if procced and HEALTH_ALIVE[hit_unit] then
-			local headshot_coop_stamina_fatigue_type = breed.headshot_coop_stamina_fatigue_type or "headshot_clan_rat"
-			local fatigue_type_id = NetworkLookup.fatigue_types[headshot_coop_stamina_fatigue_type]
+		if var_56_18 and HEALTH_ALIVE[arg_56_5] then
+			local var_56_19 = arg_56_11.headshot_coop_stamina_fatigue_type or "headshot_clan_rat"
+			local var_56_20 = NetworkLookup.fatigue_types[var_56_19]
 
-			if is_server then
-				network_manager.network_transmit:send_rpc_clients("rpc_replenish_fatigue_other_players", fatigue_type_id)
+			if arg_56_12 then
+				var_56_2.network_transmit:send_rpc_clients("rpc_replenish_fatigue_other_players", var_56_20)
 			else
-				network_manager.network_transmit:send_rpc_server("rpc_replenish_fatigue_other_players", fatigue_type_id)
+				var_56_2.network_transmit:send_rpc_server("rpc_replenish_fatigue_other_players", var_56_20)
 			end
 
-			StatusUtils.replenish_stamina_local_players(owner_unit, headshot_coop_stamina_fatigue_type)
-			first_person_extension:play_hud_sound_event("hud_player_buff_headshot", nil, false)
+			StatusUtils.replenish_stamina_local_players(arg_56_1, var_56_19)
+			var_56_16:play_hud_sound_event("hud_player_buff_headshot", nil, false)
 		end
 
-		if not current_action.no_headshot_sound and HEALTH_ALIVE[hit_unit] then
-			first_person_extension:play_hud_sound_event("Play_hud_headshot", nil, false)
+		if not arg_56_0.no_headshot_sound and HEALTH_ALIVE[arg_56_5] then
+			var_56_16:play_hud_sound_event("Play_hud_headshot", nil, false)
 		end
 	end
 
-	local hit_unit_player = Managers.player:owner(hit_unit)
+	local var_56_21 = Managers.player:owner(arg_56_5)
 
-	if hit_zone_name == "afro" then
-		if breed.is_ai then
-			local is_enemy = Managers.state.side:is_enemy(hit_unit, owner_unit)
-
-			if is_enemy then
-				if is_server then
-					if ScriptUnit.has_extension(hit_unit, "ai_system") then
-						AiUtils.alert_unit_of_enemy(hit_unit, owner_unit)
-					end
-				else
-					network_manager.network_transmit:send_rpc_server("rpc_alert_enemy", hit_unit_id, attacker_unit_id)
+	if var_56_7 == "afro" then
+		if arg_56_11.is_ai and Managers.state.side:is_enemy(arg_56_5, arg_56_1) then
+			if arg_56_12 then
+				if ScriptUnit.has_extension(arg_56_5, "ai_system") then
+					AiUtils.alert_unit_of_enemy(arg_56_5, arg_56_1)
 				end
+			else
+				var_56_2.network_transmit:send_rpc_server("rpc_alert_enemy", var_56_5, var_56_3)
 			end
 		end
-	elseif hit_unit_player and hit_actor == unit_actor(hit_unit, "c_afro") then
-		local afro_hit_sound = current_action.afro_hit_sound
+	elseif var_56_21 and arg_56_6 == var_0_12(arg_56_5, "c_afro") then
+		local var_56_22 = arg_56_0.afro_hit_sound
 
-		if afro_hit_sound and not hit_unit_player.bot_player and Managers.state.network:game() then
-			local sound_id = NetworkLookup.sound_events[afro_hit_sound]
+		if var_56_22 and not var_56_21.bot_player and Managers.state.network:game() then
+			local var_56_23 = NetworkLookup.sound_events[var_56_22]
 
-			network_manager.network_transmit:send_rpc("rpc_play_first_person_sound", hit_unit_player.peer_id, hit_unit_id, sound_id, hit_position)
+			var_56_2.network_transmit:send_rpc("rpc_play_first_person_sound", var_56_21.peer_id, var_56_5, var_56_23, arg_56_7)
 		end
 	else
-		hit_units[hit_unit] = true
+		var_56_0[arg_56_5] = true
 
-		local hit_zone_id = NetworkLookup.hit_zones[hit_zone_name]
-		local attack_template_name = target_settings.attack_template
-		local attack_template = DamageUtils.get_attack_template(attack_template_name)
+		local var_56_24 = NetworkLookup.hit_zones[var_56_7]
+		local var_56_25 = arg_56_4.attack_template
+		local var_56_26 = DamageUtils.get_attack_template(var_56_25)
 
-		if owner_player and breed and check_buffs and not shield_blocked then
-			local send_to_server = true
-			local buff_type = DamageUtils.get_item_buff_type(damage_source)
-			local buffs_checked = DamageUtils.buff_on_attack(owner_unit, hit_unit, "instant_projectile", is_critical_strike, hit_zone_name, target_number or num_penetrations + 1, send_to_server, buff_type, unmodified, damage_source)
+		if arg_56_2 and arg_56_11 and arg_56_13 and not var_56_10 then
+			local var_56_27 = true
+			local var_56_28 = DamageUtils.get_item_buff_type(arg_56_19)
+			local var_56_29 = DamageUtils.buff_on_attack(arg_56_1, arg_56_5, "instant_projectile", arg_56_14, var_56_7, arg_56_29 or var_56_11 + 1, var_56_27, var_56_28, var_56_14, arg_56_19)
 
-			hit_data.buffs_checked = hit_data.buffs_checked or buffs_checked
+			var_56_1.buffs_checked = var_56_1.buffs_checked or var_56_29
 		end
 
-		if breed and HEALTH_ALIVE[hit_unit] then
-			local action_mass_override = current_action.hit_mass_count
+		if arg_56_11 and HEALTH_ALIVE[arg_56_5] then
+			local var_56_30 = arg_56_0.hit_mass_count
 
-			if action_mass_override and action_mass_override[breed.name] then
-				local mass_cost = current_action.hit_mass_count[breed.name]
-
-				amount_of_mass_hit = amount_of_mass_hit + (mass_cost or 1)
+			if var_56_30 and var_56_30[arg_56_11.name] then
+				var_56_12 = var_56_12 + (arg_56_0.hit_mass_count[arg_56_11.name] or 1)
 			else
-				amount_of_mass_hit = amount_of_mass_hit + (shield_blocked and (breed.hit_mass_counts_block and breed.hit_mass_counts_block[difficulty_rank] or breed.hit_mass_count_block) or breed.hit_mass_counts and breed.hit_mass_counts[difficulty_rank] or breed.hit_mass_count or 1)
+				var_56_12 = var_56_12 + (var_56_10 and (arg_56_11.hit_mass_counts_block and arg_56_11.hit_mass_counts_block[arg_56_15] or arg_56_11.hit_mass_count_block) or arg_56_11.hit_mass_counts and arg_56_11.hit_mass_counts[arg_56_15] or arg_56_11.hit_mass_count or 1)
 			end
 
-			local hit_unit_buff_extension = ScriptUnit.has_extension(hit_unit, "buff_system")
+			local var_56_31 = ScriptUnit.has_extension(arg_56_5, "buff_system")
 
-			if hit_unit_buff_extension then
-				amount_of_mass_hit = hit_unit_buff_extension:apply_buffs_to_value(amount_of_mass_hit, "hit_mass_amount")
+			if var_56_31 then
+				var_56_12 = var_56_31:apply_buffs_to_value(var_56_12, "hit_mass_amount")
 			end
 		end
 
-		local actual_target_index = math.ceil(amount_of_mass_hit)
-		local damage_sound = attack_template.sound_type
+		local var_56_32 = math.ceil(var_56_12)
+		local var_56_33 = var_56_26.sound_type
+		local var_56_34
 
-		predicted_damage, invulnerable = DamageUtils.calculate_damage(DamageOutput, hit_unit, owner_unit, hit_zone_name, power_level, BoostCurves[target_settings.boost_curve_type], ranged_boost_curve_multiplier, is_critical_strike, damage_profile, actual_target_index, nil, damage_source)
+		var_56_8, var_56_34 = DamageUtils.calculate_damage(DamageOutput, arg_56_5, arg_56_1, var_56_7, arg_56_16, BoostCurves[arg_56_4.boost_curve_type], arg_56_17, arg_56_14, arg_56_18, var_56_32, nil, arg_56_19)
 
-		local no_damage = predicted_damage <= 0
+		local var_56_35 = var_56_8 <= 0
 
-		if invulnerable then
-			hit_effect = "invulnerable"
-			critical_hit_effect = "invulnerable"
+		if var_56_34 then
+			arg_56_22 = "invulnerable"
+			arg_56_20 = "invulnerable"
 
-			DamageUtils.handle_hit_indication(owner_unit, hit_unit, 0, hit_zone_name, false, true)
+			DamageUtils.handle_hit_indication(arg_56_1, arg_56_5, 0, var_56_7, false, true)
 		end
 
-		if breed and not breed.is_hero then
-			local enemy_type = breed.name
+		if arg_56_11 and not arg_56_11.is_hero then
+			local var_56_36 = arg_56_11.name
 
-			if is_critical_strike and critical_hit_effect then
-				EffectHelper.play_skinned_surface_material_effects(critical_hit_effect, world, hit_unit, hit_position, hit_rotation, hit_normal, is_husk, enemy_type, damage_sound, no_damage, hit_zone_name, shield_blocked, breed)
+			if arg_56_14 and arg_56_20 then
+				EffectHelper.play_skinned_surface_material_effects(arg_56_20, arg_56_21, arg_56_5, arg_56_7, arg_56_8, arg_56_9, arg_56_10, var_56_36, var_56_33, var_56_35, var_56_7, var_56_10, arg_56_11)
 			else
-				EffectHelper.play_skinned_surface_material_effects(hit_effect, world, hit_unit, hit_position, hit_rotation, hit_normal, is_husk, enemy_type, damage_sound, no_damage, hit_zone_name, shield_blocked, breed)
+				EffectHelper.play_skinned_surface_material_effects(arg_56_22, arg_56_21, arg_56_5, arg_56_7, arg_56_8, arg_56_9, arg_56_10, var_56_36, var_56_33, var_56_35, var_56_7, var_56_10, arg_56_11)
 			end
 
 			if Managers.state.network:game() then
-				if is_critical_strike and critical_hit_effect then
-					EffectHelper.remote_play_skinned_surface_material_effects(critical_hit_effect, world, hit_position, hit_rotation, hit_normal, enemy_type, damage_sound, no_damage, hit_zone_name, is_server)
+				if arg_56_14 and arg_56_20 then
+					EffectHelper.remote_play_skinned_surface_material_effects(arg_56_20, arg_56_21, arg_56_7, arg_56_8, arg_56_9, var_56_36, var_56_33, var_56_35, var_56_7, arg_56_12)
 				else
-					EffectHelper.remote_play_skinned_surface_material_effects(hit_effect, world, hit_position, hit_rotation, hit_normal, enemy_type, damage_sound, no_damage, hit_zone_name, is_server)
+					EffectHelper.remote_play_skinned_surface_material_effects(arg_56_22, arg_56_21, arg_56_7, arg_56_8, arg_56_9, var_56_36, var_56_33, var_56_35, var_56_7, arg_56_12)
 				end
 			end
-		elseif hit_unit_player and breed.is_hero and current_action.player_push_velocity then
-			local hit_unit_buff_extension = ScriptUnit.has_extension(hit_unit, "buff_system")
-			local no_ranged_knockback = hit_unit_buff_extension and hit_unit_buff_extension:has_buff_perk("no_ranged_knockback")
+		elseif var_56_21 and arg_56_11.is_hero and arg_56_0.player_push_velocity then
+			local var_56_37 = ScriptUnit.has_extension(arg_56_5, "buff_system")
 
-			if not no_ranged_knockback then
-				local status_extension = ScriptUnit.extension(hit_unit, "status_system")
+			if not (var_56_37 and var_56_37:has_buff_perk("no_ranged_knockback")) and not ScriptUnit.extension(arg_56_5, "status_system"):is_disabled() then
+				local var_56_38 = arg_56_0.max_impact_push_speed
 
-				if not status_extension:is_disabled() then
-					local max_impact_push_speed = current_action.max_impact_push_speed
-					local locomotion = ScriptUnit.extension(hit_unit, "locomotion_system")
-
-					locomotion:add_external_velocity(current_action.player_push_velocity:unbox(), max_impact_push_speed)
-				end
+				ScriptUnit.extension(arg_56_5, "locomotion_system"):add_external_velocity(arg_56_0.player_push_velocity:unbox(), var_56_38)
 			end
 		end
 
-		local deal_damage = true
-		local owner_unit_alive = unit_alive(owner_unit)
+		local var_56_39 = true
+		local var_56_40 = var_0_6(arg_56_1)
 
-		if owner_unit_alive and hit_unit_player then
-			local range_fatigue_damage = damage_profile.fatigue_damage_override or "blocked_ranged"
-			local ranged_block = DamageUtils.check_ranged_block(owner_unit, hit_unit, range_fatigue_damage)
+		if var_56_40 and var_56_21 then
+			local var_56_41 = arg_56_18.fatigue_damage_override or "blocked_ranged"
+			local var_56_42 = DamageUtils.check_ranged_block(arg_56_1, arg_56_5, var_56_41)
 
-			deal_damage = not ranged_block
-			shield_blocked = ranged_block
+			var_56_39 = not var_56_42
+			var_56_10 = var_56_42
 
-			if ranged_block and Managers.state.side:versus_is_dark_pact(owner_unit) then
-				WwiseUtils.trigger_unit_event(world, "Play_versus_ui_damage_mitigated_indicator", hit_unit)
+			if var_56_42 and Managers.state.side:versus_is_dark_pact(arg_56_1) then
+				WwiseUtils.trigger_unit_event(arg_56_21, "Play_versus_ui_damage_mitigated_indicator", arg_56_5)
 			end
 
-			local owner_breed = Unit.get_data(owner_unit, "breed")
+			local var_56_43 = Unit.get_data(arg_56_1, "breed")
 
-			if shield_blocked and owner_breed and owner_breed.track_projectile_blocked_vo then
-				local t = Managers.time:time("game")
-				local tracked_blocked_projectiles = Unit.get_data(owner_unit, "blocked_projectile_hits") or {}
-				local num_blocked = #tracked_blocked_projectiles + 1
+			if var_56_10 and var_56_43 and var_56_43.track_projectile_blocked_vo then
+				local var_56_44 = Managers.time:time("game")
+				local var_56_45 = Unit.get_data(arg_56_1, "blocked_projectile_hits") or {}
+				local var_56_46 = #var_56_45 + 1
 
-				tracked_blocked_projectiles[num_blocked] = t
+				var_56_45[var_56_46] = var_56_44
 
-				for i = num_blocked, 1, -1 do
-					if t > tracked_blocked_projectiles[i] + DialogueSettings.vs_track_projectiles_blocked_timer then
-						table.swap_delete(tracked_blocked_projectiles, i)
+				for iter_56_0 = var_56_46, 1, -1 do
+					if var_56_44 > var_56_45[iter_56_0] + DialogueSettings.vs_track_projectiles_blocked_timer then
+						table.swap_delete(var_56_45, iter_56_0)
 
-						num_blocked = num_blocked - 1
+						var_56_46 = var_56_46 - 1
 					end
 				end
 
-				if num_blocked > DialogueSettings.vs_num_blocked_projectiles_to_track then
-					local dialogue_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
-
-					dialogue_input:trigger_networked_dialogue_event("vs_ratling_hitting_shield")
-					table.clear(tracked_blocked_projectiles)
+				if var_56_46 > DialogueSettings.vs_num_blocked_projectiles_to_track then
+					ScriptUnit.extension_input(arg_56_1, "dialogue_system"):trigger_networked_dialogue_event("vs_ratling_hitting_shield")
+					table.clear(var_56_45)
 				end
 
-				Unit.set_data(owner_unit, "blocked_projectile_hits", tracked_blocked_projectiles)
+				Unit.set_data(arg_56_1, "blocked_projectile_hits", var_56_45)
 			end
 		end
 
-		if hit_unit_player and breed.boss and Managers.state.side:versus_is_dark_pact(owner_unit) then
-			deal_damage = false
+		if var_56_21 and arg_56_11.boss and Managers.state.side:versus_is_dark_pact(arg_56_1) then
+			var_56_39 = false
 		end
 
-		if deal_damage then
-			local weapon_system = Managers.state.entity:system("weapon_system")
+		if var_56_39 then
+			Managers.state.entity:system("weapon_system"):send_rpc_attack_hit(arg_56_24, var_56_3, var_56_5, var_56_24, arg_56_7, arg_56_23, arg_56_25, "power_level", arg_56_16, "hit_target_index", var_56_32, "blocking", var_56_10, "shield_break_procced", false, "boost_curve_multiplier", arg_56_17, "is_critical_strike", arg_56_14, "attacker_is_level_unit", var_56_4, "first_hit", var_56_11 == 0)
+			EffectHelper.player_critical_hit(arg_56_21, arg_56_14, arg_56_1, arg_56_5, arg_56_7)
+			Managers.state.game_mode:game_mode():projectile_hit_character(arg_56_2, nil, arg_56_1, arg_56_5, arg_56_7, arg_56_11, arg_56_23, var_56_8)
 
-			weapon_system:send_rpc_attack_hit(damage_source_id, attacker_unit_id, hit_unit_id, hit_zone_id, hit_position, attack_direction, damage_profile_id, "power_level", power_level, "hit_target_index", actual_target_index, "blocking", shield_blocked, "shield_break_procced", false, "boost_curve_multiplier", ranged_boost_curve_multiplier, "is_critical_strike", is_critical_strike, "attacker_is_level_unit", attacker_is_level_unit, "first_hit", num_penetrations == 0)
-			EffectHelper.player_critical_hit(world, is_critical_strike, owner_unit, hit_unit, hit_position)
-			Managers.state.game_mode:game_mode():projectile_hit_character(owner_player, nil, owner_unit, hit_unit, hit_position, breed, attack_direction, predicted_damage)
-
-			if not owner_player and owner_unit_alive and hit_unit_player and hit_unit_player.bot_player then
-				local bot_ai_extension = ScriptUnit.extension(hit_unit, "ai_system")
-
-				bot_ai_extension:hit_by_projectile(owner_unit)
+			if not arg_56_2 and var_56_40 and var_56_21 and var_56_21.bot_player then
+				ScriptUnit.extension(arg_56_5, "ai_system"):hit_by_projectile(arg_56_1)
 			end
 		end
 
-		local armor_override = unit_get_data(hit_unit, "armor")
-		local target_unit_armor, _, target_unit_primary_armor, _ = ActionUtils.get_target_armor(hit_zone_name, breed, armor_override)
+		local var_56_47 = var_0_5(arg_56_5, "armor")
+		local var_56_48, var_56_49, var_56_50, var_56_51 = ActionUtils.get_target_armor(var_56_7, arg_56_11, var_56_47)
 
-		if no_damage or shield_blocked or target_unit_primary_armor == 6 or target_unit_armor == 2 then
-			max_targets = num_penetrations
+		if var_56_35 or var_56_10 or var_56_50 == 6 or var_56_48 == 2 then
+			arg_56_26 = var_56_11
 		else
-			num_penetrations = num_penetrations + 1
+			var_56_11 = var_56_11 + 1
 		end
 
-		if max_targets <= amount_of_mass_hit then
-			hit_data.stop = true
-			hit_data.hits = num_penetrations
+		if arg_56_26 <= var_56_12 then
+			var_56_1.stop = true
+			var_56_1.hits = var_56_11
 		end
 	end
 
-	return amount_of_mass_hit, num_penetrations, predicted_damage, shield_blocked
+	return var_56_12, var_56_11, var_56_8, var_56_10
 end
 
-DamageUtils.process_projectile_hit = function (world, damage_source, owner_unit, is_server, raycast_result, current_action, direction, check_buffs, target, ignore_list, is_critical_strike, power_level, override_damage_profile_name, target_number)
-	table.clear(HIT_UNITS)
-	table.clear(HIT_DATA)
+function DamageUtils.process_projectile_hit(arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4, arg_57_5, arg_57_6, arg_57_7, arg_57_8, arg_57_9, arg_57_10, arg_57_11, arg_57_12, arg_57_13)
+	table.clear(var_0_43)
+	table.clear(var_0_44)
 
-	local hit_units = HIT_UNITS
-	local hit_data = HIT_DATA
-	local attack_direction = direction
-	local owner_player = owner_unit and Managers.player:owner(owner_unit)
-	local damage_source_id = NetworkLookup.damage_sources[damage_source]
-	local check_backstab = false
-	local difficulty_settings = Managers.state.difficulty:get_difficulty_settings()
-	local owner_buff_extension = ScriptUnit.has_extension(owner_unit, "buff_system")
-	local amount_of_mass_hit = 0
-	local num_penetrations = 0
-	local num_additional_penetrations = 0
-	local predicted_damage, shield_blocked
+	local var_57_0 = var_0_43
+	local var_57_1 = var_0_44
+	local var_57_2 = arg_57_6
+	local var_57_3 = arg_57_2 and Managers.player:owner(arg_57_2)
+	local var_57_4 = NetworkLookup.damage_sources[arg_57_1]
+	local var_57_5 = false
+	local var_57_6 = Managers.state.difficulty:get_difficulty_settings()
+	local var_57_7 = ScriptUnit.has_extension(arg_57_2, "buff_system")
+	local var_57_8 = 0
+	local var_57_9 = 0
+	local var_57_10 = 0
+	local var_57_11
+	local var_57_12
 
-	power_level = power_level or DefaultPowerLevel
+	arg_57_11 = arg_57_11 or DefaultPowerLevel
 
-	local damage_profile_name = override_damage_profile_name or current_action.damage_profile or "default"
-	local override_damage_profile = override_damage_profile_name and DamageProfileTemplates[override_damage_profile_name]
-	local damage_profile_id = NetworkLookup.damage_profiles[damage_profile_name]
-	local damage_profile = override_damage_profile or DamageProfileTemplates[damage_profile_name]
-	local difficulty_level = Managers.state.difficulty:get_difficulty()
-	local cleave_power_level = ActionUtils.scale_power_levels(power_level, "cleave", owner_unit, difficulty_level)
-	local max_targets_attack, max_targets_impact = ActionUtils.get_max_targets(damage_profile, cleave_power_level)
+	local var_57_13 = arg_57_12 or arg_57_5.damage_profile or "default"
+	local var_57_14 = arg_57_12 and DamageProfileTemplates[arg_57_12]
+	local var_57_15 = NetworkLookup.damage_profiles[var_57_13]
+	local var_57_16 = var_57_14 or DamageProfileTemplates[var_57_13]
+	local var_57_17 = Managers.state.difficulty:get_difficulty()
+	local var_57_18 = ActionUtils.scale_power_levels(arg_57_11, "cleave", arg_57_2, var_57_17)
+	local var_57_19, var_57_20 = ActionUtils.get_max_targets(var_57_16, var_57_18)
 
-	if owner_buff_extension then
-		num_additional_penetrations = owner_buff_extension:apply_buffs_to_value(num_additional_penetrations, "ranged_additional_penetrations")
+	if var_57_7 then
+		var_57_10 = var_57_7:apply_buffs_to_value(var_57_10, "ranged_additional_penetrations")
 	end
 
-	local _, ranged_boost_curve_multiplier = ActionUtils.get_ranged_boost(owner_unit)
-	local max_targets = max_targets_impact < max_targets_attack and max_targets_attack or max_targets_impact
-	local owner_is_bot = owner_player and owner_player.bot_player
-	local is_husk = owner_is_bot and true or false
-	local hit_effect = current_action.hit_effect
-	local critical_hit_effect = current_action.critical_hit_effect
-	local num_hits = #raycast_result
+	local var_57_21, var_57_22 = ActionUtils.get_ranged_boost(arg_57_2)
+	local var_57_23 = var_57_20 < var_57_19 and var_57_19 or var_57_20
+	local var_57_24 = var_57_3 and var_57_3.bot_player and true or false
+	local var_57_25 = arg_57_5.hit_effect
+	local var_57_26 = arg_57_5.critical_hit_effect
+	local var_57_27 = #arg_57_4
 
-	hit_data.hits = num_penetrations
+	var_57_1.hits = var_57_9
 
-	local friendly_fire_disabled = damage_profile.no_friendly_fire
-	local forced_friendly_fire = damage_profile.allow_friendly_fire
-	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local allow_friendly_fire = forced_friendly_fire or not friendly_fire_disabled and DamageUtils.allow_friendly_fire_ranged(difficulty_settings, owner_player)
-	local side_manager = Managers.state.side
-	local player_manager = Managers.player
+	local var_57_28 = var_57_16.no_friendly_fire
+	local var_57_29 = var_57_16.allow_friendly_fire
+	local var_57_30 = Managers.state.difficulty:get_difficulty_rank()
+	local var_57_31 = var_57_29 or not var_57_28 and DamageUtils.allow_friendly_fire_ranged(var_57_6, var_57_3)
+	local var_57_32 = Managers.state.side
+	local var_57_33 = Managers.player
 
-	for i = 1, num_hits do
+	for iter_57_0 = 1, var_57_27 do
 		repeat
-			local hit = raycast_result[i]
-			local hit_position = hit[INDEX_POSITION]
-			local hit_normal = hit[INDEX_NORMAL]
-			local hit_actor = hit[INDEX_ACTOR]
-			local hit_valid_target = hit_actor ~= nil
-			local hit_unit = hit_valid_target and actor_unit(hit_actor) or nil
+			local var_57_34 = arg_57_4[iter_57_0]
+			local var_57_35 = var_57_34[var_0_40]
+			local var_57_36 = var_57_34[var_0_41]
+			local var_57_37 = var_57_34[var_0_42]
+			local var_57_38 = var_57_37 ~= nil
+			local var_57_39 = var_57_38 and var_0_18(var_57_37) or nil
 
-			if not unit_alive(hit_unit) or Unit.is_frozen(hit_unit) then
-				hit_valid_target = false
-				hit_unit = nil
+			if not var_0_6(var_57_39) or Unit.is_frozen(var_57_39) then
+				var_57_38 = false
+				var_57_39 = nil
 			else
-				hit_unit, hit_actor = ActionUtils.redirect_shield_hit(hit_unit, hit_actor)
+				var_57_39, var_57_37 = ActionUtils.redirect_shield_hit(var_57_39, var_57_37)
 			end
 
-			local attack_hit_self = hit_unit == owner_unit
-
-			if attack_hit_self or not hit_valid_target then
+			if var_57_39 == arg_57_2 or not var_57_38 then
 				break
 			end
 
-			local target_settings = damage_profile.targets and damage_profile.targets[num_penetrations + 1] or damage_profile.default_target
-			local hit_rotation = Quaternion.look(hit_normal)
-			local is_target = hit_unit == target or target == nil
-			local breed = AiUtils.unit_breed(hit_unit)
-			local hit_zone_name
+			local var_57_40 = var_57_16.targets and var_57_16.targets[var_57_9 + 1] or var_57_16.default_target
+			local var_57_41 = Quaternion.look(var_57_36)
+			local var_57_42 = var_57_39 == arg_57_8 or arg_57_8 == nil
+			local var_57_43 = AiUtils.unit_breed(var_57_39)
+			local var_57_44
 
-			if breed then
-				local node = actor_node(hit_actor)
-				local hit_zone = breed.hit_zones_lookup[node]
+			if var_57_43 then
+				local var_57_45 = var_0_19(var_57_37)
+				local var_57_46 = var_57_43.hit_zones_lookup[var_57_45].name
 
-				hit_zone_name = hit_zone.name
-
-				if ignore_list and ignore_list[hit_unit] and hit_zone_name ~= "afro" then
-					return hit_data
+				if arg_57_9 and arg_57_9[var_57_39] and var_57_46 ~= "afro" then
+					return var_57_1
 				end
 			end
 
-			local is_player = player_manager:is_player_unit(hit_unit)
-			local is_character = breed or is_player
+			local var_57_47 = var_57_33:is_player_unit(var_57_39)
+			local var_57_48 = var_57_43 or var_57_47
 
-			hit_data.hit_any_player = hit_data.hit_any_player or is_player
+			var_57_1.hit_any_player = var_57_1.hit_any_player or var_57_47
 
-			local block_processing = false
+			local var_57_49 = false
 
-			if is_character and owner_player then
-				local side = side_manager.side_by_unit[hit_unit]
-				local owner_side = side_manager.side_by_unit[owner_unit]
-				local units_on_same_side = side and owner_side and side.side_id == owner_side.side_id
+			if var_57_48 and var_57_3 then
+				local var_57_50 = var_57_32.side_by_unit[var_57_39]
+				local var_57_51 = var_57_32.side_by_unit[arg_57_2]
+				local var_57_52 = var_57_50 and var_57_51 and var_57_50.side_id == var_57_51.side_id
 
-				if side and owner_side and units_on_same_side and not breed.boss then
-					block_processing = not allow_friendly_fire or breed.disable_projectile_friendly_fire
+				if var_57_50 and var_57_51 and var_57_52 and not var_57_43.boss then
+					var_57_49 = not var_57_31 or var_57_43.disable_projectile_friendly_fire
 				end
 			end
 
-			if not is_character and not hit_units[hit_unit] then
-				amount_of_mass_hit = DamageUtils._projectile_hit_object(current_action, owner_unit, owner_player, owner_buff_extension, target_settings, hit_unit, hit_actor, hit_position, hit_rotation, hit_normal, is_husk, breed, is_server, check_buffs, check_backstab, is_critical_strike, difficulty_rank, power_level, ranged_boost_curve_multiplier, damage_profile, damage_source, critical_hit_effect, world, hit_effect, attack_direction, damage_source_id, damage_profile_id, max_targets, num_penetrations, amount_of_mass_hit)
+			if not var_57_48 and not var_57_0[var_57_39] then
+				var_57_8 = DamageUtils._projectile_hit_object(arg_57_5, arg_57_2, var_57_3, var_57_7, var_57_40, var_57_39, var_57_37, var_57_35, var_57_41, var_57_36, var_57_24, var_57_43, arg_57_3, arg_57_7, var_57_5, arg_57_10, var_57_30, arg_57_11, var_57_22, var_57_16, arg_57_1, var_57_26, arg_57_0, var_57_25, var_57_2, var_57_4, var_57_15, var_57_23, var_57_9, var_57_8)
 
-				if hit_data.stop then
-					if num_additional_penetrations > 0 then
-						num_additional_penetrations = num_additional_penetrations - 1
-						hit_data.stop = false
+				if var_57_1.stop then
+					if var_57_10 > 0 then
+						var_57_10 = var_57_10 - 1
+						var_57_1.stop = false
 
 						break
 					end
 
-					hit_data.hit_unit = hit_unit
-					hit_data.hit_actor = hit_actor
-					hit_data.hit_position = hit_position
-					hit_data.hit_direction = attack_direction
+					var_57_1.hit_unit = var_57_39
+					var_57_1.hit_actor = var_57_37
+					var_57_1.hit_position = var_57_35
+					var_57_1.hit_direction = var_57_2
 
-					return hit_data
+					return var_57_1
 				end
 
 				break
 			end
 
-			if not hit_units[hit_unit] and is_target and not block_processing then
-				amount_of_mass_hit, num_penetrations, predicted_damage, shield_blocked = DamageUtils._projectile_hit_character(current_action, owner_unit, owner_player, owner_buff_extension, target_settings, hit_unit, hit_actor, hit_position, hit_rotation, hit_normal, is_husk, breed, is_server, check_buffs, is_critical_strike, difficulty_rank, power_level, ranged_boost_curve_multiplier, damage_profile, damage_source, critical_hit_effect, world, hit_effect, attack_direction, damage_source_id, damage_profile_id, max_targets, num_penetrations, amount_of_mass_hit, target_number)
+			if not var_57_0[var_57_39] and var_57_42 and not var_57_49 then
+				local var_57_53, var_57_54
 
-				if hit_data.stop then
-					if num_additional_penetrations > 0 then
-						num_additional_penetrations = num_additional_penetrations - 1
-						hit_data.stop = false
+				var_57_8, var_57_9, var_57_53, var_57_54 = DamageUtils._projectile_hit_character(arg_57_5, arg_57_2, var_57_3, var_57_7, var_57_40, var_57_39, var_57_37, var_57_35, var_57_41, var_57_36, var_57_24, var_57_43, arg_57_3, arg_57_7, arg_57_10, var_57_30, arg_57_11, var_57_22, var_57_16, arg_57_1, var_57_26, arg_57_0, var_57_25, var_57_2, var_57_4, var_57_15, var_57_23, var_57_9, var_57_8, arg_57_13)
+
+				if var_57_1.stop then
+					if var_57_10 > 0 then
+						var_57_10 = var_57_10 - 1
+						var_57_1.stop = false
 
 						break
 					end
 
-					hit_data.hit_unit = hit_unit
-					hit_data.hit_actor = hit_actor
-					hit_data.hit_position = hit_position
-					hit_data.hit_direction = attack_direction
-					hit_data.predicted_damage = predicted_damage
-					hit_data.shield_blocked = shield_blocked
-					hit_data.hit_player = is_player
+					var_57_1.hit_unit = var_57_39
+					var_57_1.hit_actor = var_57_37
+					var_57_1.hit_position = var_57_35
+					var_57_1.hit_direction = var_57_2
+					var_57_1.predicted_damage = var_57_53
+					var_57_1.shield_blocked = var_57_54
+					var_57_1.hit_player = var_57_47
 
-					return hit_data
+					return var_57_1
 				end
 			end
 		until true
 	end
 
-	return hit_data
+	return var_57_1
 end
 
-local modified_boost_curve = {}
+local var_0_45 = {}
 
-DamageUtils.get_modified_boost_curve = function (boost_curve, boost_curve_coefficient)
-	table.clear(modified_boost_curve)
+function DamageUtils.get_modified_boost_curve(arg_58_0, arg_58_1)
+	table.clear(var_0_45)
 
-	for index, _ in ipairs(boost_curve) do
-		modified_boost_curve[index] = boost_curve[index] * boost_curve_coefficient
+	for iter_58_0, iter_58_1 in ipairs(arg_58_0) do
+		var_0_45[iter_58_0] = arg_58_0[iter_58_0] * arg_58_1
 	end
 
-	return modified_boost_curve
+	return var_0_45
 end
 
-local function add_stagger_hit(blackboard, t)
-	local stagger_immunity = blackboard.stagger_immunity
+local function var_0_46(arg_59_0, arg_59_1)
+	local var_59_0 = arg_59_0.stagger_immunity
 
-	if not stagger_immunity then
+	if not var_59_0 then
 		return
 	end
 
-	local num_attacks_needed = stagger_immunity.num_attacks
-	local num_hits = stagger_immunity.num_hits or 0
+	local var_59_1 = var_59_0.num_attacks
+	local var_59_2 = (var_59_0.num_hits or 0) + 1
 
-	num_hits = num_hits + 1
-
-	if num_hits == num_attacks_needed then
-		stagger_immunity.stagger_immune_at = t
-		stagger_immunity.stagger_immune_at_health = blackboard.current_health_percent
-		stagger_immunity.debug_damage_left = stagger_immunity.damage_threshold
-		num_hits = 0
+	if var_59_2 == var_59_1 then
+		var_59_0.stagger_immune_at = arg_59_1
+		var_59_0.stagger_immune_at_health = arg_59_0.current_health_percent
+		var_59_0.debug_damage_left = var_59_0.damage_threshold
+		var_59_2 = 0
 	end
 
-	stagger_immunity.num_hits = num_hits
+	var_59_0.num_hits = var_59_2
 end
 
-local function is_stagger_immune(blackboard, t)
-	local stagger_immunity = blackboard.stagger_immunity
+local function var_0_47(arg_60_0, arg_60_1)
+	local var_60_0 = arg_60_0.stagger_immunity
 
-	if not stagger_immunity then
+	if not var_60_0 then
 		return false
 	end
 
-	local health_percent = blackboard.current_health_percent
-	local health_threshold = stagger_immunity.health_threshold
+	local var_60_1 = arg_60_0.current_health_percent
+	local var_60_2 = var_60_0.health_threshold
 
-	if health_threshold and health_threshold < health_percent then
+	if var_60_2 and var_60_2 < var_60_1 then
 		return true
 	end
 
-	local damage_left = 0
-	local stagger_immune_at_health = stagger_immunity.stagger_immune_at_health
+	local var_60_3 = 0
+	local var_60_4 = var_60_0.stagger_immune_at_health
 
-	if stagger_immune_at_health then
-		local damage_threshold = stagger_immunity.damage_threshold
-		local damage_accumulated = stagger_immune_at_health - health_percent
-
-		damage_left = damage_threshold - damage_accumulated
-		stagger_immunity.debug_damage_left = damage_left
+	if var_60_4 then
+		var_60_3 = var_60_0.damage_threshold - (var_60_4 - var_60_1)
+		var_60_0.debug_damage_left = var_60_3
 	end
 
-	local time_left = 0
-	local stagger_immune_at = stagger_immunity.stagger_immune_at
+	local var_60_5 = 0
+	local var_60_6 = var_60_0.stagger_immune_at
 
-	if stagger_immune_at then
-		local stagger_immune_until = stagger_immune_at + stagger_immunity.time or 0
-
-		time_left = stagger_immune_until - t
+	if var_60_6 then
+		var_60_5 = (var_60_6 + var_60_0.time or 0) - arg_60_1
 	end
 
-	if damage_left > 0 and time_left > 0 then
+	if var_60_3 > 0 and var_60_5 > 0 then
 		return true
 	end
 
 	return false
 end
 
-local function action_ignores_stagger(blackboard, attack_template, stagger_type, target_unit, is_player)
-	local status_extension = ScriptUnit.has_extension(target_unit, "status_system")
-	local action = is_player and status_extension:breed_action() or blackboard.action
-	local ignore_staggers = action and action.ignore_staggers
+local function var_0_48(arg_61_0, arg_61_1, arg_61_2, arg_61_3, arg_61_4)
+	local var_61_0 = ScriptUnit.has_extension(arg_61_3, "status_system")
+	local var_61_1 = arg_61_4 and var_61_0:breed_action() or arg_61_0.action
+	local var_61_2 = var_61_1 and var_61_1.ignore_staggers
 
-	if blackboard.anim_cb_stagger_immune then
+	if arg_61_0.anim_cb_stagger_immune then
 		return true
 	end
 
-	if not ignore_staggers or attack_template.always_stagger then
+	if not var_61_2 or arg_61_1.always_stagger then
 		return false
 	end
 
-	if ignore_staggers.allow_push and attack_template.is_push then
+	if var_61_2.allow_push and arg_61_1.is_push then
 		return false
 	end
 
-	local ignore_stagger = ignore_staggers[stagger_type]
+	local var_61_3 = var_61_2[arg_61_2]
 
-	if type(ignore_stagger) == "table" then
-		local type = ignore_stagger.type
+	if type(var_61_3) == "table" then
+		local var_61_4 = var_61_3.type
 
-		if type == "ignore_by_health" then
-			local health_percent = blackboard.current_health_percent
-			local health_threshold = ignore_stagger.health
-			local health_ignore_stagger = health_percent > health_threshold.min and health_percent <= health_threshold.max
+		if var_61_4 == "ignore_by_health" then
+			local var_61_5 = arg_61_0.current_health_percent
+			local var_61_6 = var_61_3.health
 
-			return health_ignore_stagger
-		elseif type == "reset_attack" then
-			blackboard.reset_attack = true
-			blackboard.reset_attack_delay = ignore_stagger.delay
+			return var_61_5 > var_61_6.min and var_61_5 <= var_61_6.max
+		elseif var_61_4 == "reset_attack" then
+			arg_61_0.reset_attack = true
+			arg_61_0.reset_attack_delay = var_61_3.delay
 
 			return true
 		end
-	elseif type(ignore_stagger) == "boolean" then
-		return ignore_stagger
+	elseif type(var_61_3) == "boolean" then
+		return var_61_3
 	else
 		error("action_ignores_stagger: unsupported type")
 	end
 end
 
-DamageUtils.stagger_ai = function (t, damage_profile, target_index, power_level, target_unit, attacker_unit, hit_zone_name, attack_direction, boost_curve_multiplier, is_critical_strike, blocked, damage_source, source_attacker_unit, optional_predicted_damage)
-	local hazard = EnvironmentalHazards[damage_source]
+function DamageUtils.stagger_ai(arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4, arg_62_5, arg_62_6, arg_62_7, arg_62_8, arg_62_9, arg_62_10, arg_62_11, arg_62_12, arg_62_13)
+	local var_62_0 = EnvironmentalHazards[arg_62_11]
 
-	if not damage_profile.always_stagger_ai and not DamageUtils.is_enemy(source_attacker_unit or attacker_unit, target_unit) and (not hazard or not hazard.enemy.can_stagger) then
+	if not arg_62_1.always_stagger_ai and not DamageUtils.is_enemy(arg_62_12 or arg_62_5, arg_62_4) and (not var_62_0 or not var_62_0.enemy.can_stagger) then
 		return
 	end
 
-	local ai_extension = ScriptUnit.has_extension(target_unit, "ai_system")
-	local blackboard = ai_extension and ai_extension:blackboard() or BLACKBOARDS[target_unit]
+	local var_62_1 = ScriptUnit.has_extension(arg_62_4, "ai_system")
+	local var_62_2 = var_62_1 and var_62_1:blackboard() or var_0_2[arg_62_4]
 
-	if not blackboard then
+	if not var_62_2 then
 		return
 	end
 
-	local is_hero_player = blackboard.breed.is_hero and not ai_extension
-
-	if is_hero_player then
+	if var_62_2.breed.is_hero and not var_62_1 then
 		return
 	end
 
-	if is_stagger_immune(blackboard, t) then
+	if var_0_47(var_62_2, arg_62_0) then
 		return
 	end
 
-	local target_settings = damage_profile.targets and damage_profile.targets[target_index] or damage_profile.default_target
-	local attack_template_name = target_settings.attack_template
-	local attack_template = DamageUtils.get_attack_template(attack_template_name)
-	local stagger_type, stagger_duration, stagger_length, stagger_value = DamageUtils.calculate_stagger_player(ImpactTypeOutput, target_unit, attacker_unit, hit_zone_name, power_level, boost_curve_multiplier, is_critical_strike, damage_profile, target_index, blocked, damage_source)
-	local is_push = damage_profile.is_push
+	local var_62_3 = (arg_62_1.targets and arg_62_1.targets[arg_62_2] or arg_62_1.default_target).attack_template
+	local var_62_4 = DamageUtils.get_attack_template(var_62_3)
+	local var_62_5, var_62_6, var_62_7, var_62_8 = DamageUtils.calculate_stagger_player(ImpactTypeOutput, arg_62_4, arg_62_5, arg_62_6, arg_62_3, arg_62_8, arg_62_9, arg_62_1, arg_62_2, arg_62_10, arg_62_11)
+	local var_62_9 = arg_62_1.is_push
 
-	if stagger_type == 0 then
+	if var_62_5 == 0 then
 		return
 	end
 
-	local is_player = blackboard.is_player and not ai_extension
+	local var_62_10 = var_62_2.is_player and not var_62_1
 
-	if action_ignores_stagger(blackboard, attack_template, stagger_type, target_unit, is_player) then
+	if var_0_48(var_62_2, var_62_4, var_62_5, arg_62_4, var_62_10) then
 		return
 	end
 
-	if not is_player then
-		add_stagger_hit(blackboard, t)
+	if not var_62_10 then
+		var_0_46(var_62_2, arg_62_0)
 	end
 
-	local stagger_angle = attack_template.stagger_angle
-	local target_unit_position = POSITION_LOOKUP[target_unit] or unit_world_position(target_unit, 0)
-	local attacker_position = POSITION_LOOKUP[attacker_unit] or unit_world_position(attacker_unit, 0)
+	local var_62_11 = var_62_4.stagger_angle
+	local var_62_12 = var_0_4[arg_62_4] or var_0_9(arg_62_4, 0)
+	local var_62_13 = var_0_4[arg_62_5] or var_0_9(arg_62_5, 0)
 
-	if stagger_angle == "down" or stagger_angle == "smiter" and blocked then
-		attack_direction = Vector3.normalize(target_unit_position - attacker_position)
-		attack_direction.z = -1
-	elseif stagger_angle == "stab" or stagger_angle == "smiter" or blocked then
-		attack_direction = Vector3.normalize(target_unit_position - attacker_position)
-	elseif stagger_angle == "pull" then
-		attack_direction = Vector3.normalize(attacker_position - target_unit_position)
+	if var_62_11 == "down" or var_62_11 == "smiter" and arg_62_10 then
+		arg_62_7 = Vector3.normalize(var_62_12 - var_62_13)
+		arg_62_7.z = -1
+	elseif var_62_11 == "stab" or var_62_11 == "smiter" or arg_62_10 then
+		arg_62_7 = Vector3.normalize(var_62_12 - var_62_13)
+	elseif var_62_11 == "pull" then
+		arg_62_7 = Vector3.normalize(var_62_13 - var_62_12)
 	end
 
-	if stagger_type > stagger_types.none then
-		if is_player then
-			DamageUtils.stagger_player(target_unit, blackboard.breed, attack_direction, stagger_length, stagger_type, stagger_duration, attack_template.stagger_animation_scale, t, stagger_value, attack_template.always_stagger, is_push)
+	if var_62_5 > var_0_0.none then
+		if var_62_10 then
+			DamageUtils.stagger_player(arg_62_4, var_62_2.breed, arg_62_7, var_62_7, var_62_5, var_62_6, var_62_4.stagger_animation_scale, arg_62_0, var_62_8, var_62_4.always_stagger, var_62_9)
 		else
-			AiUtils.stagger(target_unit, blackboard, attacker_unit, attack_direction, stagger_length, stagger_type, stagger_duration, attack_template.stagger_animation_scale, t, stagger_value, attack_template.always_stagger, is_push, nil, optional_predicted_damage)
+			AiUtils.stagger(arg_62_4, var_62_2, arg_62_5, arg_62_7, var_62_7, var_62_5, var_62_6, var_62_4.stagger_animation_scale, arg_62_0, var_62_8, var_62_4.always_stagger, var_62_9, nil, arg_62_13)
 		end
 
-		local item_data = rawget(ItemMasterList, damage_source)
-		local weapon_template_name = item_data and item_data.template
-		local weapon_template = weapon_template_name and WeaponUtils.get_weapon_template(weapon_template_name)
-		local buff_type = weapon_template and weapon_template.buff_type or nil
-		local attacker_buff_extension = attacker_unit and ScriptUnit.has_extension(attacker_unit, "buff_system")
+		local var_62_14 = rawget(ItemMasterList, arg_62_11)
+		local var_62_15 = var_62_14 and var_62_14.template
+		local var_62_16 = var_62_15 and WeaponUtils.get_weapon_template(var_62_15)
+		local var_62_17 = var_62_16 and var_62_16.buff_type or nil
+		local var_62_18 = arg_62_5 and ScriptUnit.has_extension(arg_62_5, "buff_system")
 
-		if attacker_buff_extension and not blackboard.override_stagger then
-			Managers.state.achievement:trigger_event("register_ai_stagger", target_unit, attacker_unit, damage_profile, is_push, stagger_type)
-			attacker_buff_extension:trigger_procs("on_stagger", target_unit, damage_profile, attacker_unit, stagger_type, stagger_duration, stagger_value, buff_type, target_index)
+		if var_62_18 and not var_62_2.override_stagger then
+			Managers.state.achievement:trigger_event("register_ai_stagger", arg_62_4, arg_62_5, arg_62_1, var_62_9, var_62_5)
+			var_62_18:trigger_procs("on_stagger", arg_62_4, arg_62_1, arg_62_5, var_62_5, var_62_6, var_62_8, var_62_17, arg_62_2)
 		end
 
-		local attacked_buff_extension = ScriptUnit.has_extension(target_unit, "buff_system")
+		local var_62_19 = ScriptUnit.has_extension(arg_62_4, "buff_system")
 
-		if attacked_buff_extension then
-			attacked_buff_extension:trigger_procs("on_staggered", target_unit, damage_profile, attacker_unit, stagger_type, stagger_duration, stagger_value, buff_type, target_index)
+		if var_62_19 then
+			var_62_19:trigger_procs("on_staggered", arg_62_4, arg_62_1, arg_62_5, var_62_5, var_62_6, var_62_8, var_62_17, arg_62_2)
 		end
 	end
 end
 
-local damage_source_procs = {
-	charge_ability_hit = "on_charge_ability_hit",
+local var_0_49 = {
 	charge_ability_hit_blast = "on_charge_ability_hit_blast",
+	charge_ability_hit = "on_charge_ability_hit"
 }
 
-DamageUtils.server_apply_hit = function (t, attacker_unit, target_unit, hit_zone_name, hit_position, attack_direction, hit_ragdoll_actor, damage_source, power_level, damage_profile, target_index, boost_curve_multiplier, is_critical_strike, can_damage, can_stagger, blocking, shield_breaking_hit, backstab_multiplier, first_hit, total_hits, source_attacker_unit, optional_predicted_damage)
-	source_attacker_unit = source_attacker_unit or attacker_unit
+function DamageUtils.server_apply_hit(arg_63_0, arg_63_1, arg_63_2, arg_63_3, arg_63_4, arg_63_5, arg_63_6, arg_63_7, arg_63_8, arg_63_9, arg_63_10, arg_63_11, arg_63_12, arg_63_13, arg_63_14, arg_63_15, arg_63_16, arg_63_17, arg_63_18, arg_63_19, arg_63_20, arg_63_21)
+	arg_63_20 = arg_63_20 or arg_63_1
 
-	local buff_extension = ScriptUnit.has_extension(attacker_unit, "buff_system")
+	local var_63_0 = ScriptUnit.has_extension(arg_63_1, "buff_system")
 
-	if buff_extension and damage_source_procs[damage_source] then
-		buff_extension:trigger_procs(damage_source_procs[damage_source], target_unit, target_index)
+	if var_63_0 and var_0_49[arg_63_7] then
+		var_63_0:trigger_procs(var_0_49[arg_63_7], arg_63_2, arg_63_10)
 	end
 
-	if not blocking then
-		local attack_power_level = power_level
+	if not arg_63_15 then
+		local var_63_1 = arg_63_8
 
-		if not can_damage then
-			attack_power_level = 0
+		if not arg_63_13 then
+			var_63_1 = 0
 		end
 
-		if damage_profile.charge_value == "heavy_attack" and DamageUtils.is_player_unit(attacker_unit) then
-			local status_extension = ScriptUnit.has_extension(attacker_unit, "status_system")
+		if arg_63_9.charge_value == "heavy_attack" and DamageUtils.is_player_unit(arg_63_1) then
+			local var_63_2 = ScriptUnit.has_extension(arg_63_1, "status_system")
 
-			if status_extension then
-				local current_fall_distance = status_extension:fall_distance()
-
-				if current_fall_distance >= MinFallDistanceForBonus then
-					attack_power_level = attack_power_level * FallingPowerLevelBonusMultiplier
-				end
+			if var_63_2 and var_63_2:fall_distance() >= MinFallDistanceForBonus then
+				var_63_1 = var_63_1 * FallingPowerLevelBonusMultiplier
 			end
 		end
 
-		local added_dot = false
+		local var_63_3 = false
 
-		if buff_extension then
-			local witch_hunter_bleed = buff_extension:has_buff_perk("victor_witchhunter_bleed_on_critical_hit") and (damage_profile.charge_value == "light_attack" or damage_profile.charge_value == "heavy_attack") and not buff_extension:has_buff_perk("victor_witchhunter_bleed_on_critical_hit_disable")
-			local kerillian_bleed = buff_extension:has_buff_perk("kerillian_critical_bleed_dot") and damage_profile.charge_value == "projectile" and not buff_extension:has_buff_perk("kerillian_critical_bleed_dot_disable")
-			local generic_melee_bleed = buff_extension:has_buff_perk("generic_melee_bleed") and (damage_profile.charge_value == "light_attack" or damage_profile.charge_value == "heavy_attack")
-			local custom_dot_name
+		if var_63_0 then
+			local var_63_4 = var_63_0:has_buff_perk("victor_witchhunter_bleed_on_critical_hit") and (arg_63_9.charge_value == "light_attack" or arg_63_9.charge_value == "heavy_attack") and not var_63_0:has_buff_perk("victor_witchhunter_bleed_on_critical_hit_disable")
+			local var_63_5 = var_63_0:has_buff_perk("kerillian_critical_bleed_dot") and arg_63_9.charge_value == "projectile" and not var_63_0:has_buff_perk("kerillian_critical_bleed_dot_disable")
+			local var_63_6 = var_63_0:has_buff_perk("generic_melee_bleed") and (arg_63_9.charge_value == "light_attack" or arg_63_9.charge_value == "heavy_attack")
+			local var_63_7
 
-			if witch_hunter_bleed or kerillian_bleed or generic_melee_bleed then
-				custom_dot_name = "weapon_bleed_dot_whc"
-			elseif buff_extension:has_buff_perk("sienna_unchained_burn_push") and damage_profile and damage_profile.is_push then
-				custom_dot_name = "burning_dot_unchained_push"
+			if var_63_4 or var_63_5 or var_63_6 then
+				var_63_7 = "weapon_bleed_dot_whc"
+			elseif var_63_0:has_buff_perk("sienna_unchained_burn_push") and arg_63_9 and arg_63_9.is_push then
+				var_63_7 = "burning_dot_unchained_push"
 			end
 
-			if custom_dot_name then
-				local custom_dot = FrameTable.alloc_table()
+			if var_63_7 then
+				local var_63_8 = FrameTable.alloc_table()
 
-				custom_dot.dot_template_name = custom_dot_name
+				var_63_8.dot_template_name = var_63_7
 
-				local added_custom_dot = DamageUtils.apply_dot(damage_profile, target_index, power_level, target_unit, attacker_unit, hit_zone_name, damage_source, boost_curve_multiplier, is_critical_strike, nil, source_attacker_unit, custom_dot)
+				local var_63_9 = DamageUtils.apply_dot(arg_63_9, arg_63_10, arg_63_8, arg_63_2, arg_63_1, arg_63_3, arg_63_7, arg_63_11, arg_63_12, nil, arg_63_20, var_63_8)
 
-				added_dot = added_dot or added_custom_dot
-			end
-		end
-
-		if (not damage_profile.require_damage_for_dot or attack_power_level ~= 0) and not added_dot then
-			local added_profile_dot = DamageUtils.apply_dot(damage_profile, target_index, power_level, target_unit, attacker_unit, hit_zone_name, damage_source, boost_curve_multiplier, is_critical_strike, nil, source_attacker_unit, nil)
-
-			added_dot = added_dot or added_profile_dot
-		end
-
-		DamageUtils.add_damage_network_player(damage_profile, target_index, attack_power_level, target_unit, attacker_unit, hit_zone_name, hit_position, attack_direction, damage_source, hit_ragdoll_actor, boost_curve_multiplier, is_critical_strike, added_dot, first_hit, total_hits, backstab_multiplier, source_attacker_unit)
-	elseif shield_breaking_hit then
-		local shield_extension = ScriptUnit.has_extension(target_unit, "ai_shield_system")
-
-		if shield_extension then
-			local item_actually_dropped = shield_extension:break_shield()
-
-			if item_actually_dropped and buff_extension then
-				buff_extension:trigger_procs("on_broke_shield", target_unit)
+				var_63_3 = var_63_3 or var_63_9
 			end
 		end
 
-		blocking = false
+		if (not arg_63_9.require_damage_for_dot or var_63_1 ~= 0) and not var_63_3 then
+			local var_63_10 = DamageUtils.apply_dot(arg_63_9, arg_63_10, arg_63_8, arg_63_2, arg_63_1, arg_63_3, arg_63_7, arg_63_11, arg_63_12, nil, arg_63_20, nil)
+
+			var_63_3 = var_63_3 or var_63_10
+		end
+
+		DamageUtils.add_damage_network_player(arg_63_9, arg_63_10, var_63_1, arg_63_2, arg_63_1, arg_63_3, arg_63_4, arg_63_5, arg_63_7, arg_63_6, arg_63_11, arg_63_12, var_63_3, arg_63_18, arg_63_19, arg_63_17, arg_63_20)
+	elseif arg_63_16 then
+		local var_63_11 = ScriptUnit.has_extension(arg_63_2, "ai_shield_system")
+
+		if var_63_11 and var_63_11:break_shield() and var_63_0 then
+			var_63_0:trigger_procs("on_broke_shield", arg_63_2)
+		end
+
+		arg_63_15 = false
 	end
 
-	local target_alive = HEALTH_ALIVE[target_unit]
+	if HEALTH_ALIVE[arg_63_2] and not arg_63_9.no_stagger then
+		local var_63_12 = arg_63_8
 
-	if target_alive and not damage_profile.no_stagger then
-		local stagger_power_level = power_level
-
-		if not can_stagger then
-			stagger_power_level = 0
+		if not arg_63_14 then
+			var_63_12 = 0
 		end
 
-		DamageUtils.stagger_ai(t, damage_profile, target_index, stagger_power_level, target_unit, attacker_unit, hit_zone_name, attack_direction, boost_curve_multiplier, is_critical_strike, blocking, damage_source, source_attacker_unit, optional_predicted_damage)
+		DamageUtils.stagger_ai(arg_63_0, arg_63_9, arg_63_10, var_63_12, arg_63_2, arg_63_1, arg_63_3, arg_63_5, arg_63_11, arg_63_12, arg_63_15, arg_63_7, arg_63_20, arg_63_21)
 	end
 end
 
-local function parse_dot_name(damage_profile, target_index, explosion_or_aoe_data, custom_dot)
-	local dot_name
-	local balefire = false
+local function var_0_50(arg_64_0, arg_64_1, arg_64_2, arg_64_3)
+	local var_64_0
+	local var_64_1 = false
 
-	if custom_dot then
-		dot_name = custom_dot.dot_template_name
-		balefire = custom_dot.dot_balefire_variant
-	elseif explosion_or_aoe_data and explosion_or_aoe_data.dot_template_name then
-		dot_name = explosion_or_aoe_data.dot_template_name
-		balefire = explosion_or_aoe_data.dot_balefire_variant
-	elseif damage_profile then
-		local target_settings = damage_profile.targets and damage_profile.targets[target_index] or damage_profile.default_target
+	if arg_64_3 then
+		var_64_0 = arg_64_3.dot_template_name
+		var_64_1 = arg_64_3.dot_balefire_variant
+	elseif arg_64_2 and arg_64_2.dot_template_name then
+		var_64_0 = arg_64_2.dot_template_name
+		var_64_1 = arg_64_2.dot_balefire_variant
+	elseif arg_64_0 then
+		local var_64_2 = arg_64_0.targets and arg_64_0.targets[arg_64_1] or arg_64_0.default_target
 
-		if target_settings then
-			dot_name = target_settings.dot_template_name
-			balefire = target_settings.dot_balefire_variant
+		if var_64_2 then
+			var_64_0 = var_64_2.dot_template_name
+			var_64_1 = var_64_2.dot_balefire_variant
 		end
 
-		if not dot_name then
-			dot_name = damage_profile.dot_template_name
-			balefire = damage_profile.dot_balefire_variant
+		if not var_64_0 then
+			var_64_0 = arg_64_0.dot_template_name
+			var_64_1 = arg_64_0.dot_balefire_variant
 		end
 	end
 
-	return dot_name, balefire
+	return var_64_0, var_64_1
 end
 
-DamageUtils.apply_dot = function (damage_profile, target_index, power_level, target_unit, attacker_unit, hit_zone_name, damage_source, boost_curve_multiplier, is_critical_strike, explosion_or_aoe_data, source_attacker_unit, custom_dot)
-	if damage_profile then
-		local target_settings = damage_profile.targets and damage_profile.targets[target_index] or damage_profile.default_target
+function DamageUtils.apply_dot(arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4, arg_65_5, arg_65_6, arg_65_7, arg_65_8, arg_65_9, arg_65_10, arg_65_11)
+	if arg_65_0 then
+		local var_65_0 = arg_65_0.targets and arg_65_0.targets[arg_65_1] or arg_65_0.default_target
 
-		if damage_profile.allow_dot_finesse_hit then
-			local breed = AiUtils.unit_breed(target_unit)
-			local multiplier_type = DamageUtils.get_breed_damage_multiplier_type(breed, hit_zone_name)
-			local is_finesse_hit = multiplier_type == "headshot" or multiplier_type == "weakspot" or multiplier_type == "protected_weakspot"
+		if arg_65_0.allow_dot_finesse_hit then
+			local var_65_1 = AiUtils.unit_breed(arg_65_3)
+			local var_65_2 = DamageUtils.get_breed_damage_multiplier_type(var_65_1, arg_65_5)
+			local var_65_3 = var_65_2 == "headshot" or var_65_2 == "weakspot" or var_65_2 == "protected_weakspot"
 
-			if is_finesse_hit or is_critical_strike then
-				local boost_coefficient_headshot = target_settings.boost_curve_coefficient_headshot or DefaultBoostCurveCoefficient
-				local boost_curve = BoostCurves[target_settings.boost_curve_type]
-				local modified_boost_curve_head_shot = DamageUtils.get_modified_boost_curve(boost_curve, boost_coefficient_headshot)
-				local fallback_armor_type = 1
-				local target_unit_armor, _, target_unit_primary_armor, _ = ActionUtils.get_target_armor(hit_zone_name, breed, fallback_armor_type)
-				local head_shot_boost_amount = get_head_shot_boost_amount(target_settings, damage_profile, is_finesse_hit, multiplier_type, true, target_unit_armor, target_unit_primary_armor)
-				local attacker_buff_extension = ScriptUnit.has_extension(attacker_unit, "buff_system")
+			if var_65_3 or arg_65_8 then
+				local var_65_4 = var_65_0.boost_curve_coefficient_headshot or DefaultBoostCurveCoefficient
+				local var_65_5 = BoostCurves[var_65_0.boost_curve_type]
+				local var_65_6 = DamageUtils.get_modified_boost_curve(var_65_5, var_65_4)
+				local var_65_7 = 1
+				local var_65_8, var_65_9, var_65_10, var_65_11 = ActionUtils.get_target_armor(arg_65_5, var_65_1, var_65_7)
+				local var_65_12 = var_0_24(var_65_0, arg_65_0, var_65_3, var_65_2, true, var_65_8, var_65_10)
+				local var_65_13 = ScriptUnit.has_extension(arg_65_4, "buff_system")
 
-				if attacker_buff_extension then
-					if is_finesse_hit then
-						head_shot_boost_amount = attacker_buff_extension:apply_buffs_to_value(head_shot_boost_amount, "headshot_multiplier")
+				if var_65_13 then
+					if var_65_3 then
+						var_65_12 = var_65_13:apply_buffs_to_value(var_65_12, "headshot_multiplier")
 					end
 
-					if is_critical_strike then
-						head_shot_boost_amount = attacker_buff_extension:apply_buffs_to_value(head_shot_boost_amount, "critical_strike_effectiveness")
+					if arg_65_8 then
+						var_65_12 = var_65_13:apply_buffs_to_value(var_65_12, "critical_strike_effectiveness")
 					end
 				end
 
-				local target_unit_buff_extension = ScriptUnit.has_extension(target_unit, "buff_system")
+				local var_65_14 = ScriptUnit.has_extension(arg_65_3, "buff_system")
 
-				if target_unit_buff_extension and is_finesse_hit then
-					head_shot_boost_amount = target_unit_buff_extension:apply_buffs_to_value(head_shot_boost_amount, "headshot_vulnerability")
+				if var_65_14 and var_65_3 then
+					var_65_12 = var_65_14:apply_buffs_to_value(var_65_12, "headshot_vulnerability")
 				end
 
-				local head_shot_boost_multiplier = DamageUtils.get_boost_curve_multiplier(modified_boost_curve_head_shot or boost_curve, head_shot_boost_amount)
-
-				power_level = power_level + power_level * head_shot_boost_multiplier
+				arg_65_2 = arg_65_2 + arg_65_2 * DamageUtils.get_boost_curve_multiplier(var_65_6 or var_65_5, var_65_12)
 			end
 		end
 	end
 
-	local dot_template_name, dot_balefire_variant = parse_dot_name(damage_profile, target_index, explosion_or_aoe_data, custom_dot)
+	local var_65_15, var_65_16 = var_0_50(arg_65_0, arg_65_1, arg_65_9, arg_65_11)
 
-	if dot_balefire_variant then
-		local career_extension = ScriptUnit.has_extension(source_attacker_unit, "career_system") or ScriptUnit.has_extension(attacker_unit, "career_system")
+	if var_65_16 then
+		local var_65_17 = ScriptUnit.has_extension(arg_65_10, "career_system") or ScriptUnit.has_extension(arg_65_4, "career_system")
 
-		dot_template_name = career_extension and career_extension:career_name() == "bw_necromancer" and BalefireBurnDotLookup[dot_template_name] or dot_template_name
+		var_65_15 = var_65_17 and var_65_17:career_name() == "bw_necromancer" and BalefireBurnDotLookup[var_65_15] or var_65_15
 	end
 
-	local applied_dot = false
-	local dot_type = DotTypeLookup[dot_template_name]
+	local var_65_18 = false
+	local var_65_19 = DotTypeLookup[var_65_15]
 
-	if dot_type then
-		local dot_func = Dots[dot_type]
+	if var_65_19 then
+		var_65_18 = Dots[var_65_19](var_65_15, arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4, arg_65_5, arg_65_6, arg_65_7, arg_65_8, arg_65_10)
 
-		applied_dot = dot_func(dot_template_name, damage_profile, target_index, power_level, target_unit, attacker_unit, hit_zone_name, damage_source, boost_curve_multiplier, is_critical_strike, source_attacker_unit)
-
-		if applied_dot then
-			Managers.state.achievement:trigger_event("on_dot_applied", dot_template_name, damage_source, attacker_unit)
+		if var_65_18 then
+			Managers.state.achievement:trigger_event("on_dot_applied", var_65_15, arg_65_6, arg_65_4)
 		end
 	end
 
-	return applied_dot
+	return var_65_18
 end
 
-DamageUtils.custom_calculate_damage = function (attacker_unit, damage_source, power_level, damage_profile, target_index, range_scalar_multiplier, is_critical_strike, backstab_multiplier, has_power_boost, boost_damage_multiplier, breed, hit_zone_name, stagger_level, difficulty_level)
-	local target_settings = damage_profile.targets and damage_profile.targets[target_index] or damage_profile.default_target
-	local boost_curve = BoostCurves[target_settings.boost_curve_type]
-	local fallback_armor_type = 1
-	local armor_type, _, primary_armor_type, _ = ActionUtils.get_target_armor(hit_zone_name, breed, fallback_armor_type)
-	local difficulty_settings = DifficultySettings[difficulty_level]
-	local damage_output = DamageOutput
-	local static_base_damage = false
-	local is_friendly_fire = false
-	local has_crit_head_shot_killing_blow_perk = false
-	local has_crit_backstab_killing_blow_perk = false
-	local target_buff_extension, target_max_health, target_unit
-	local base_damage = do_damage_calculation(attacker_unit, damage_source, power_level, damage_output, hit_zone_name, damage_profile, target_index, boost_curve, boost_damage_multiplier, is_critical_strike, backstab_multiplier, breed, range_scalar_multiplier, static_base_damage, is_friendly_fire, has_power_boost, difficulty_level, armor_type, primary_armor_type, has_crit_head_shot_killing_blow_perk, has_crit_backstab_killing_blow_perk, target_max_health, target_unit)
-	local stagger_damage = base_damage * DamageUtils.calculate_stagger_multiplier(damage_profile, target_buff_extension, difficulty_settings, stagger_level)
-	local total_damage = base_damage + stagger_damage
+function DamageUtils.custom_calculate_damage(arg_66_0, arg_66_1, arg_66_2, arg_66_3, arg_66_4, arg_66_5, arg_66_6, arg_66_7, arg_66_8, arg_66_9, arg_66_10, arg_66_11, arg_66_12, arg_66_13)
+	local var_66_0 = arg_66_3.targets and arg_66_3.targets[arg_66_4] or arg_66_3.default_target
+	local var_66_1 = BoostCurves[var_66_0.boost_curve_type]
+	local var_66_2 = 1
+	local var_66_3, var_66_4, var_66_5, var_66_6 = ActionUtils.get_target_armor(arg_66_11, arg_66_10, var_66_2)
+	local var_66_7 = DifficultySettings[arg_66_13]
+	local var_66_8 = DamageOutput
+	local var_66_9 = false
+	local var_66_10 = false
+	local var_66_11 = false
+	local var_66_12 = false
+	local var_66_13
+	local var_66_14
+	local var_66_15
+	local var_66_16 = var_0_25(arg_66_0, arg_66_1, arg_66_2, var_66_8, arg_66_11, arg_66_3, arg_66_4, var_66_1, arg_66_9, arg_66_6, arg_66_7, arg_66_10, arg_66_5, var_66_9, var_66_10, arg_66_8, arg_66_13, var_66_3, var_66_5, var_66_11, var_66_12, var_66_14, var_66_15)
+	local var_66_17 = var_66_16 * DamageUtils.calculate_stagger_multiplier(arg_66_3, var_66_13, var_66_7, arg_66_12)
 
-	return total_damage, base_damage, stagger_damage
+	return var_66_16 + var_66_17, var_66_16, var_66_17
 end
 
-DamageUtils.calculate_stagger_multiplier = function (damage_profile, target_buff_extension, difficulty_settings, stagger_number)
-	if difficulty_settings then
-		local min_stagger_damage_coefficient = difficulty_settings.min_stagger_damage_coefficient
-		local stagger_damage_multiplier = difficulty_settings.stagger_damage_multiplier
+function DamageUtils.calculate_stagger_multiplier(arg_67_0, arg_67_1, arg_67_2, arg_67_3)
+	if arg_67_2 then
+		local var_67_0 = arg_67_2.min_stagger_damage_coefficient
+		local var_67_1 = arg_67_2.stagger_damage_multiplier
 
-		if stagger_damage_multiplier then
-			local bonus_damage_percentage = stagger_number * stagger_damage_multiplier
+		if var_67_1 then
+			local var_67_2 = arg_67_3 * var_67_1
 
-			if target_buff_extension and not damage_profile.no_stagger_damage_reduction_ranged then
-				bonus_damage_percentage = target_buff_extension:apply_buffs_to_value(bonus_damage_percentage, "unbalanced_damage_taken")
+			if arg_67_1 and not arg_67_0.no_stagger_damage_reduction_ranged then
+				var_67_2 = arg_67_1:apply_buffs_to_value(var_67_2, "unbalanced_damage_taken")
 			end
 
-			local stagger_damage_mult = min_stagger_damage_coefficient + bonus_damage_percentage - 1
-
-			return stagger_damage_mult
+			return var_67_0 + var_67_2 - 1
 		end
 	end
 
 	return 0
 end
 
-local dot_hit_types = {
-	arrow_poison_dot = true,
+local var_0_51 = {
 	bleed = true,
 	burninating = true,
+	arrow_poison_dot = true
 }
-local dmg_color_lookup = {
+local var_0_52 = {
 	{
 		255,
 		252,
 		219,
-		3,
+		3
 	},
 	{
 		255,
 		252,
 		169,
-		3,
+		3
 	},
 	{
 		255,
 		252,
 		128,
-		3,
+		3
 	},
 	{
 		255,
 		252,
 		98,
-		3,
+		3
 	},
 	{
 		255,
 		252,
 		65,
-		3,
+		3
 	},
 	{
 		255,
 		207,
 		49,
-		31,
+		31
 	},
 	{
 		255,
 		156,
 		29,
-		19,
-	},
+		19
+	}
 }
 
-DamageUtils.get_color_from_damage = function (damage)
-	local index = math.clamp(math.floor(math.remap(0, 30, 1, 7, damage)), 1, 7)
-	local color = dmg_color_lookup[index]
+function DamageUtils.get_color_from_damage(arg_68_0)
+	local var_68_0 = math.clamp(math.floor(math.remap(0, 30, 1, 7, arg_68_0)), 1, 7)
 
-	return color
+	return var_0_52[var_68_0]
 end
 
-DamageUtils.add_unit_floating_damage_numbers = function (unit, damage_type, damage_amount, is_critical_strike, streak_damage, z_offset_override, damage_numbers_font_override, data)
-	local color
-	local is_dot_damage = dot_hit_types[damage_type]
+function DamageUtils.add_unit_floating_damage_numbers(arg_69_0, arg_69_1, arg_69_2, arg_69_3, arg_69_4, arg_69_5, arg_69_6, arg_69_7)
+	local var_69_0
+	local var_69_1 = var_0_51[arg_69_1]
 
-	if streak_damage then
-		local c = DamageUtils.get_color_from_damage(streak_damage)
+	if arg_69_4 then
+		local var_69_2 = DamageUtils.get_color_from_damage(arg_69_4)
 
-		color = Vector3(c[2], c[3], c[4])
+		var_69_0 = Vector3(var_69_2[2], var_69_2[3], var_69_2[4])
 	else
-		local color_modifier_red = math.min(120 + damage_amount * 4, 255)
-		local color_modifier_green = math.max(200 - damage_amount * 4, 0)
+		local var_69_3 = math.min(120 + arg_69_2 * 4, 255)
+		local var_69_4 = math.max(200 - arg_69_2 * 4, 0)
 
-		if is_dot_damage then
-			color = Vector3(192, 192, 192)
+		if var_69_1 then
+			var_69_0 = Vector3(192, 192, 192)
 		else
-			color = Vector3(color_modifier_red, color_modifier_green, 0)
+			var_69_0 = Vector3(var_69_3, var_69_4, 0)
 		end
 	end
 
-	local text_size = 40 + damage_amount * 0.75 * (damage_numbers_font_override or 1)
-	local duration = 2.2
+	local var_69_5 = 40 + arg_69_2 * 0.75 * (arg_69_6 or 1)
+	local var_69_6 = 2.2
 
-	if is_critical_strike then
-		color[1] = 255
-		duration = 3.2
-		text_size = text_size + 0.05
+	if arg_69_3 then
+		var_69_0[1] = 255
+		var_69_6 = 3.2
+		var_69_5 = var_69_5 + 0.05
 	end
 
-	if is_dot_damage then
-		duration = 1.5
-		text_size = text_size - 0.05
+	if var_69_1 then
+		var_69_6 = 1.5
+		var_69_5 = var_69_5 - 0.05
 	end
 
-	Managers.state.event:trigger("add_damage_number", damage_amount, text_size, unit, duration, color, is_critical_strike, z_offset_override, data)
+	Managers.state.event:trigger("add_damage_number", arg_69_2, var_69_5, arg_69_0, var_69_6, var_69_0, arg_69_3, arg_69_5, arg_69_7)
 end
 
-DamageUtils.add_hit_reaction = function (hit_unit, breed, husk, attack_direction, target_presumed_dead)
-	if husk or target_presumed_dead or not breed or breed.disable_local_hit_reactions or not unit_has_animation_state_machine(hit_unit) then
+function DamageUtils.add_hit_reaction(arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4)
+	if arg_70_2 or arg_70_4 or not arg_70_1 or arg_70_1.disable_local_hit_reactions or not var_0_13(arg_70_0) then
 		return
 	end
 
-	local hit_anim
+	local var_70_0
 
-	if unit_has_animation_event(hit_unit, "hit_reaction_climb") then
-		local network_manager = Managers.state.network
-		local hit_unit_id = network_manager:unit_game_object_id(hit_unit)
-		local action_name = NetworkLookup.bt_action_names[GameSession.game_object_field(network_manager:game(), hit_unit_id, "bt_action_name")]
+	if var_0_15(arg_70_0, "hit_reaction_climb") then
+		local var_70_1 = Managers.state.network
+		local var_70_2 = var_70_1:unit_game_object_id(arg_70_0)
+		local var_70_3 = NetworkLookup.bt_action_names[GameSession.game_object_field(var_70_1:game(), var_70_2, "bt_action_name")]
 
-		if action_name and action_name == "climb" then
-			hit_anim = "hit_reaction_climb"
+		if var_70_3 and var_70_3 == "climb" then
+			var_70_0 = "hit_reaction_climb"
 		end
 	end
 
-	local hit_unit_dir = Quaternion.forward(unit_local_rotation(hit_unit, 0))
-	local angle_difference = Vector3.flat_angle(hit_unit_dir, attack_direction)
+	local var_70_4 = Quaternion.forward(var_0_8(arg_70_0, 0))
+	local var_70_5 = Vector3.flat_angle(var_70_4, arg_70_3)
 
-	if not hit_anim and breed.hit_reaction_function then
-		hit_anim = breed.hit_reaction_function(hit_unit, breed, hit_unit_dir, attack_direction, angle_difference)
+	if not var_70_0 and arg_70_1.hit_reaction_function then
+		var_70_0 = arg_70_1.hit_reaction_function(arg_70_0, arg_70_1, var_70_4, arg_70_3, var_70_5)
 	else
-		hit_anim = hit_anim or (angle_difference < -math.pi * 0.75 or angle_difference > math.pi * 0.75) and "hit_reaction_backward" or angle_difference < -math.pi * 0.25 and "hit_reaction_left" or angle_difference < math.pi * 0.25 and "hit_reaction_forward" or "hit_reaction_right"
+		var_70_0 = var_70_0 or (var_70_5 < -math.pi * 0.75 or var_70_5 > math.pi * 0.75) and "hit_reaction_backward" or var_70_5 < -math.pi * 0.25 and "hit_reaction_left" or var_70_5 < math.pi * 0.25 and "hit_reaction_forward" or "hit_reaction_right"
 	end
 
-	unit_animation_event(hit_unit, hit_anim)
+	var_0_14(arg_70_0, var_70_0)
 end
 
-DamageUtils.attacker_is_fire_bomb = function (attacker_unit)
-	local liquid_extension = ScriptUnit.has_extension(attacker_unit, "area_damage_system")
+function DamageUtils.attacker_is_fire_bomb(arg_71_0)
+	local var_71_0 = ScriptUnit.has_extension(arg_71_0, "area_damage_system")
 
-	if not liquid_extension then
+	if not var_71_0 then
 		return false
 	end
 
-	if liquid_extension.explosion_template_name ~= "fire_grenade" and liquid_extension.explosion_template_name ~= "frag_fire_grenade" then
+	if var_71_0.explosion_template_name ~= "fire_grenade" and var_71_0.explosion_template_name ~= "frag_fire_grenade" then
 		return false
 	end
 
 	return true
 end
 
-DamageUtils.get_attack_template = function (template_name)
-	return MechanismOverrides.get(AttackTemplates[template_name])
+function DamageUtils.get_attack_template(arg_72_0)
+	return MechanismOverrides.get(AttackTemplates[arg_72_0])
 end

@@ -1,15 +1,12 @@
-﻿-- chunkname: @scripts/network/game_server/testify/game_server_testify.lua
+-- chunkname: @scripts/network/game_server/testify/game_server_testify.lua
 
-local GameServerTestify = {
-	wait_for_lobby_data_value = function (game_server, params)
-		local key = params.key
-		local value = params.value
-		local lobby_value = game_server:lobby_data(key)
+return {
+	wait_for_lobby_data_value = function(arg_1_0, arg_1_1)
+		local var_1_0 = arg_1_1.key
+		local var_1_1 = arg_1_1.value
 
-		if lobby_value ~= value then
+		if arg_1_0:lobby_data(var_1_0) ~= var_1_1 then
 			return Testify.RETRY
 		end
-	end,
+	end
 }
-
-return GameServerTestify

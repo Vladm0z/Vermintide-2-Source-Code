@@ -1,681 +1,665 @@
-﻿-- chunkname: @scripts/ui/views/player_inventory_ui.lua
+-- chunkname: @scripts/ui/views/player_inventory_ui.lua
 
-local definitions = local_require("scripts/ui/views/player_inventory_ui_definitions")
+local var_0_0 = local_require("scripts/ui/views/player_inventory_ui_definitions")
 
 require("scripts/settings/inventory_settings")
 
 PlayerInventoryUI = class(PlayerInventoryUI)
 
-local SLOTS_LIST = InventorySettings.weapon_slots
-local GAMEPAD_SLOTS_LIST = {}
+local var_0_1 = InventorySettings.weapon_slots
+local var_0_2 = {}
 
-for i, slot in ipairs(SLOTS_LIST) do
-	local slot_name = slot.name
+for iter_0_0, iter_0_1 in ipairs(var_0_1) do
+	local var_0_3 = iter_0_1.name
 
-	if slot_name == "slot_melee" or slot_name == "slot_ranged" then
-		GAMEPAD_SLOTS_LIST[i] = slot
+	if var_0_3 == "slot_melee" or var_0_3 == "slot_ranged" then
+		var_0_2[iter_0_0] = iter_0_1
 	end
 end
 
-local consumable_slots = {
-	slot_grenade = 3,
+local var_0_4 = {
 	slot_healthkit = 1,
-	slot_potion = 2,
+	slot_grenade = 3,
+	slot_potion = 2
 }
-local temp_slot_texture_mapping = {
-	slot_grenade = "consumables_frag",
+local var_0_5 = {
 	slot_healthkit = "consumables_medpack",
-	slot_potion = "consumables_potion_01",
+	slot_grenade = "consumables_frag",
+	slot_potion = "consumables_potion_01"
 }
-local stance_bar_glow_pulse_lookup_table = {}
-local stance_bar_lit_glow_out_lookup_table = {}
-local stance_bar_glow_fade_out_lookup_table = {}
-local inventory_entry_root_lookup_table = {}
-local inventory_slot_lookup_table = {}
-local ammo_text_1_flash_lookup_table = {}
-local ammo_text_2_flash_lookup_table = {}
-local ammo_text_1_pulse_lookup_table = {}
-local ammo_text_2_pulse_lookup_table = {}
-local hud_icon_texture_lit_lookup_table = {}
-local inventory_entry_background_lookup_table = {}
-local inventory_entry_lookup_table = {}
-local inventory_entry_icon_lookup_table = {}
-local inventory_entry_stance_bar_lookup_table = {}
-local inventory_entry_stance_bar_fill_lookup_table = {}
-local inventory_entry_stance_bar_lit_lookup_table = {}
-local inventory_entry_stance_bar_glow_lookup_table = {}
+local var_0_6 = {}
+local var_0_7 = {}
+local var_0_8 = {}
+local var_0_9 = {}
+local var_0_10 = {}
+local var_0_11 = {}
+local var_0_12 = {}
+local var_0_13 = {}
+local var_0_14 = {}
+local var_0_15 = {}
+local var_0_16 = {}
+local var_0_17 = {}
+local var_0_18 = {}
+local var_0_19 = {}
+local var_0_20 = {}
+local var_0_21 = {}
+local var_0_22 = {}
 
-PlayerInventoryUI.init = function (self, parent, ingame_ui_context)
-	self._parent = parent
-	self.platform = PLATFORM
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self.input_manager = ingame_ui_context.input_manager
-	self.slot_equip_animations = {}
-	self.slot_animations = {}
-	self.ui_animations = {}
+function PlayerInventoryUI.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0._parent = arg_1_1
+	arg_1_0.platform = PLATFORM
+	arg_1_0.ui_renderer = arg_1_2.ui_renderer
+	arg_1_0.input_manager = arg_1_2.input_manager
+	arg_1_0.slot_equip_animations = {}
+	arg_1_0.slot_animations = {}
+	arg_1_0.ui_animations = {}
 
-	self:create_ui_elements()
+	arg_1_0:create_ui_elements()
 
-	self.profile_synchronizer = ingame_ui_context.profile_synchronizer
-	self.peer_id = ingame_ui_context.peer_id
-	self.player_manager = ingame_ui_context.player_manager
-	self.render_settings = {
-		snap_pixel_positions = true,
+	arg_1_0.profile_synchronizer = arg_1_2.profile_synchronizer
+	arg_1_0.peer_id = arg_1_2.peer_id
+	arg_1_0.player_manager = arg_1_2.player_manager
+	arg_1_0.render_settings = {
+		snap_pixel_positions = true
 	}
-
-	local gamepad_active = self.input_manager:is_device_active("gamepad")
-
-	self._visible = not gamepad_active
+	arg_1_0._visible = not arg_1_0.input_manager:is_device_active("gamepad")
 end
 
-PlayerInventoryUI.destroy = function (self)
-	self:set_visible(false)
+function PlayerInventoryUI.destroy(arg_2_0)
+	arg_2_0:set_visible(false)
 end
 
-local inventory_widget_definitions = {
-	definitions.top_inventory_widget_definition,
-	definitions.inventory_widget_definition,
-	definitions.small_inventory_widget_definition,
-	definitions.small_inventory_widget_definition,
-	definitions.small_inventory_widget_definition,
+local var_0_23 = {
+	var_0_0.top_inventory_widget_definition,
+	var_0_0.inventory_widget_definition,
+	var_0_0.small_inventory_widget_definition,
+	var_0_0.small_inventory_widget_definition,
+	var_0_0.small_inventory_widget_definition
 }
 
-PlayerInventoryUI.create_ui_elements = function (self)
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+function PlayerInventoryUI.create_ui_elements(arg_3_0)
+	UIRenderer.clear_scenegraph_queue(arg_3_0.ui_renderer)
 
-	local widget_definitions = definitions.inventory_entry_definitions
+	local var_3_0 = var_0_0.inventory_entry_definitions
 
-	self.inventory_slots_widgets = {}
+	arg_3_0.inventory_slots_widgets = {}
 
-	for i = 1, #widget_definitions do
-		self.inventory_slots_widgets[i] = UIWidget.init(widget_definitions[i])
+	for iter_3_0 = 1, #var_3_0 do
+		arg_3_0.inventory_slots_widgets[iter_3_0] = UIWidget.init(var_3_0[iter_3_0])
 	end
 
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
-	self.inventory_widgets = {}
+	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	arg_3_0.inventory_widgets = {}
 
-	for i, widget in ipairs(inventory_widget_definitions) do
-		if not inventory_slot_lookup_table[i] then
-			inventory_slot_lookup_table[i] = "inventory_slot_" .. i
+	for iter_3_1, iter_3_2 in ipairs(var_0_23) do
+		if not var_0_10[iter_3_1] then
+			var_0_10[iter_3_1] = "inventory_slot_" .. iter_3_1
 		end
 
-		widget.scenegraph_id = inventory_slot_lookup_table[i]
-		self.inventory_widgets[i] = UIWidget.init(widget)
+		iter_3_2.scenegraph_id = var_0_10[iter_3_1]
+		arg_3_0.inventory_widgets[iter_3_1] = UIWidget.init(iter_3_2)
 	end
 end
 
-PlayerInventoryUI.set_visible = function (self, visible)
-	if visible then
-		local gamepad_active = self.input_manager:is_device_active("gamepad")
-
-		if gamepad_active then
-			visible = false
-		end
+function PlayerInventoryUI.set_visible(arg_4_0, arg_4_1)
+	if arg_4_1 and arg_4_0.input_manager:is_device_active("gamepad") then
+		arg_4_1 = false
 	end
 
-	for i, slot in ipairs(SLOTS_LIST) do
-		local widget = self.inventory_slots_widgets[i]
+	for iter_4_0, iter_4_1 in ipairs(var_0_1) do
+		local var_4_0 = arg_4_0.inventory_slots_widgets[iter_4_0]
 
-		UIRenderer.set_element_visible(self.ui_renderer, widget.element, visible)
+		UIRenderer.set_element_visible(arg_4_0.ui_renderer, var_4_0.element, arg_4_1)
 	end
 
-	self._visible = visible
+	arg_4_0._visible = arg_4_1
 end
 
-local function get_ammunition_count(left_hand_wielded_unit, right_hand_wielded_unit, item_template)
-	local ammo_extension
+local function var_0_24(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0
 
-	if not item_template.ammo_data then
+	if not arg_5_2.ammo_data then
 		return
 	end
 
-	local ammo_unit_hand = item_template.ammo_data.ammo_hand
+	local var_5_1 = arg_5_2.ammo_data.ammo_hand
 
-	if ammo_unit_hand == "right" then
-		ammo_extension = ScriptUnit.extension(right_hand_wielded_unit, "ammo_system")
-	elseif ammo_unit_hand == "left" then
-		ammo_extension = ScriptUnit.extension(left_hand_wielded_unit, "ammo_system")
+	if var_5_1 == "right" then
+		var_5_0 = ScriptUnit.extension(arg_5_1, "ammo_system")
+	elseif var_5_1 == "left" then
+		var_5_0 = ScriptUnit.extension(arg_5_0, "ammo_system")
 	else
 		return
 	end
 
-	local single_clip = ammo_extension:using_single_clip()
-	local ammo_count = ammo_extension:ammo_count()
-	local remaining_ammo = ammo_extension:remaining_ammo()
+	local var_5_2 = var_5_0:using_single_clip()
+	local var_5_3 = var_5_0:ammo_count()
+	local var_5_4 = var_5_0:remaining_ammo()
 
-	return ammo_count, not single_clip and remaining_ammo
+	return var_5_3, not var_5_2 and var_5_4
 end
 
-PlayerInventoryUI.overcharge_amount = function (self, unit)
-	local overcharge_extension = ScriptUnit.extension(unit, "overcharge_system")
-	local overcharge_fraction = overcharge_extension:overcharge_fraction()
-	local threshold_fraction = overcharge_extension:threshold_fraction()
-	local anim_blend_overcharge = overcharge_extension:get_anim_blend_overcharge()
+function PlayerInventoryUI.overcharge_amount(arg_6_0, arg_6_1)
+	local var_6_0 = ScriptUnit.extension(arg_6_1, "overcharge_system")
+	local var_6_1 = var_6_0:overcharge_fraction()
+	local var_6_2 = var_6_0:threshold_fraction()
+	local var_6_3 = var_6_0:get_anim_blend_overcharge()
 
-	return overcharge_fraction, threshold_fraction, anim_blend_overcharge
+	return var_6_1, var_6_2, var_6_3
 end
 
-PlayerInventoryUI.update = function (self, dt, t, my_player)
-	local ui_scenegraph = self.ui_scenegraph
-	local input_manager = self.input_manager
-	local input_service = input_manager:get_service("ingame_menu")
-	local gamepad_active = input_manager:is_device_active("gamepad")
-	local ui_renderer = self.ui_renderer
+function PlayerInventoryUI.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	local var_7_0 = arg_7_0.ui_scenegraph
+	local var_7_1 = arg_7_0.input_manager
+	local var_7_2 = var_7_1:get_service("ingame_menu")
+	local var_7_3 = var_7_1:is_device_active("gamepad")
+	local var_7_4 = arg_7_0.ui_renderer
 
-	if gamepad_active then
-		if not self.gamepad_active_last_frame then
-			self.gamepad_active_last_frame = true
+	if var_7_3 then
+		if not arg_7_0.gamepad_active_last_frame then
+			arg_7_0.gamepad_active_last_frame = true
 
-			self:on_gamepad_activated()
+			arg_7_0:on_gamepad_activated()
 		end
-	elseif self.gamepad_active_last_frame then
-		self.gamepad_active_last_frame = false
+	elseif arg_7_0.gamepad_active_last_frame then
+		arg_7_0.gamepad_active_last_frame = false
 
-		self:on_gamepad_deactivated()
+		arg_7_0:on_gamepad_deactivated()
 	end
 
-	if self.stance_bar_lit_animation then
-		UIAnimation.update(self.stance_bar_lit_animation, dt)
+	if arg_7_0.stance_bar_lit_animation then
+		UIAnimation.update(arg_7_0.stance_bar_lit_animation, arg_7_1)
 
-		if UIAnimation.completed(self.stance_bar_lit_animation) then
-			self.stance_bar_lit_animation = nil
-		end
-	end
-
-	for name, ui_animation in pairs(self.ui_animations) do
-		UIAnimation.update(ui_animation, dt)
-
-		if UIAnimation.completed(ui_animation) then
-			self.ui_animations[name] = nil
+		if UIAnimation.completed(arg_7_0.stance_bar_lit_animation) then
+			arg_7_0.stance_bar_lit_animation = nil
 		end
 	end
 
-	if not self._visible then
+	for iter_7_0, iter_7_1 in pairs(arg_7_0.ui_animations) do
+		UIAnimation.update(iter_7_1, arg_7_1)
+
+		if UIAnimation.completed(iter_7_1) then
+			arg_7_0.ui_animations[iter_7_0] = nil
+		end
+	end
+
+	if not arg_7_0._visible then
 		return
 	end
 
-	self:update_slot_animations(dt)
-	self:update_inventory_slots_positions(dt)
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
+	arg_7_0:update_slot_animations(arg_7_1)
+	arg_7_0:update_inventory_slots_positions(arg_7_1)
+	UIRenderer.begin_pass(var_7_4, var_7_0, var_7_2, arg_7_1, nil, arg_7_0.render_settings)
 
 	if RESOLUTION_LOOKUP.modified then
-		for i, slot in ipairs(SLOTS_LIST) do
-			local widget = self.inventory_slots_widgets[i]
-
-			widget.element.dirty = true
+		for iter_7_2, iter_7_3 in ipairs(var_0_1) do
+			arg_7_0.inventory_slots_widgets[iter_7_2].element.dirty = true
 		end
 	end
 
-	if my_player then
-		local profile_index = my_player:profile_index()
+	if arg_7_3 then
+		local var_7_5 = arg_7_3:profile_index()
 
-		if profile_index ~= self.profile_index then
-			self.selected_index = nil
-			self.profile_index = profile_index
+		if var_7_5 ~= arg_7_0.profile_index then
+			arg_7_0.selected_index = nil
+			arg_7_0.profile_index = var_7_5
 		end
 
-		self:update_inventory_slots(dt, ui_scenegraph, ui_renderer, my_player)
+		arg_7_0:update_inventory_slots(arg_7_1, var_7_0, var_7_4, arg_7_3)
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_7_4)
 end
 
-PlayerInventoryUI.on_gamepad_activated = function (self)
-	local gamepad_layout = Application.user_setting("gamepad_layout")
+function PlayerInventoryUI.on_gamepad_activated(arg_8_0)
+	local var_8_0 = Application.user_setting("gamepad_layout")
 
-	self:set_visible(false)
+	arg_8_0:set_visible(false)
 end
 
-PlayerInventoryUI.on_gamepad_deactivated = function (self)
-	self:set_visible(true)
+function PlayerInventoryUI.on_gamepad_deactivated(arg_9_0)
+	arg_9_0:set_visible(true)
 end
 
-PlayerInventoryUI.update_inventory_slots = function (self, dt, ui_scenegraph, ui_renderer, my_player)
-	local profile_synchronizer = self.profile_synchronizer
-	local player_unit = my_player.player_unit
-	local inventory_extension
-	local inventory_hud_settings = UISettings.inventory_hud
-	local hud_extension
+function PlayerInventoryUI.update_inventory_slots(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	local var_10_0 = arg_10_0.profile_synchronizer
+	local var_10_1 = arg_10_4.player_unit
+	local var_10_2
+	local var_10_3 = UISettings.inventory_hud
+	local var_10_4
 
-	if player_unit then
-		local health_extension = ScriptUnit.extension(player_unit, "health_system")
-		local status_extension = ScriptUnit.extension(player_unit, "status_system")
+	if var_10_1 then
+		local var_10_5 = ScriptUnit.extension(var_10_1, "health_system")
+		local var_10_6 = ScriptUnit.extension(var_10_1, "status_system")
 
-		inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
-		hud_extension = ScriptUnit.extension(player_unit, "hud_system")
+		var_10_2 = ScriptUnit.extension(var_10_1, "inventory_system")
+		var_10_4 = ScriptUnit.extension(var_10_1, "hud_system")
 	end
 
-	if inventory_extension then
-		local inventory_widgets = self.inventory_widgets
-		local equipment = inventory_extension:equipment()
-		local slots = SLOTS_LIST
-		local wielded = equipment.wielded
-		local picked_up_ammo = hud_extension:get_picked_up_ammo()
+	if var_10_2 then
+		local var_10_7 = arg_10_0.inventory_widgets
+		local var_10_8 = var_10_2:equipment()
+		local var_10_9 = var_0_1
+		local var_10_10 = var_10_8.wielded
+		local var_10_11 = var_10_4:get_picked_up_ammo()
 
-		if picked_up_ammo then
-			hud_extension:set_picked_up_ammo(false)
+		if var_10_11 then
+			var_10_4:set_picked_up_ammo(false)
 		end
 
-		for i, slot in ipairs(slots) do
-			local slot_name = slot.name
-			local slot_data = equipment.slots[slot_name]
-			local widget = self.inventory_slots_widgets[i]
-			local widget_content = widget.content
-			local widget_style = widget.style
+		for iter_10_0, iter_10_1 in ipairs(var_10_9) do
+			local var_10_12 = iter_10_1.name
+			local var_10_13 = var_10_8.slots[var_10_12]
+			local var_10_14 = arg_10_0.inventory_slots_widgets[iter_10_0]
+			local var_10_15 = var_10_14.content
+			local var_10_16 = var_10_14.style
 
-			if not slot_data then
-				if widget_content.has_data then
-					widget_content.has_data = nil
+			if not var_10_13 then
+				if var_10_15.has_data then
+					var_10_15.has_data = nil
 				end
 
-				if widget_content.ammo_text_1 ~= "" then
-					widget_content.ammo_text_1 = ""
-					widget_content.ammo_text_2 = ""
+				if var_10_15.ammo_text_1 ~= "" then
+					var_10_15.ammo_text_1 = ""
+					var_10_15.ammo_text_2 = ""
 				end
 
-				if widget_content.stance_bar then
-					widget_content.stance_bar.active = false
+				if var_10_15.stance_bar then
+					var_10_15.stance_bar.active = false
 				end
 
-				if widget_content.icon ~= "weapon_icon_empty" then
-					widget_content.icon = "weapon_icon_empty"
+				if var_10_15.icon ~= "weapon_icon_empty" then
+					var_10_15.icon = "weapon_icon_empty"
 				end
 			else
-				local item_data = slot_data.item_data
-				local is_wielded = wielded == slot_data.item_data
-				local first_update = false
-				local master_item_name = item_data and item_data.name or "no_master_item_found"
-				local hud_icon_texture = item_data and item_data.hud_icon or temp_slot_texture_mapping[slot_name]
+				local var_10_17 = var_10_13.item_data
+				local var_10_18 = var_10_10 == var_10_13.item_data
+				local var_10_19 = false
+				local var_10_20 = var_10_17 and var_10_17.name or "no_master_item_found"
+				local var_10_21 = var_10_17 and var_10_17.hud_icon or var_0_5[var_10_12]
 
-				if not hud_icon_texture_lit_lookup_table[hud_icon_texture] then
-					hud_icon_texture_lit_lookup_table[hud_icon_texture] = hud_icon_texture .. "_lit"
+				if not var_0_15[var_10_21] then
+					var_0_15[var_10_21] = var_10_21 .. "_lit"
 				end
 
-				if widget_content.icon ~= hud_icon_texture then
-					widget.element.dirty = true
-					widget_content.icon = hud_icon_texture
+				if var_10_15.icon ~= var_10_21 then
+					var_10_14.element.dirty = true
+					var_10_15.icon = var_10_21
 
-					assert(widget_content.icon, "No hud icon for weapon %s", master_item_name)
+					assert(var_10_15.icon, "No hud icon for weapon %s", var_10_20)
 
-					widget_content.icon_lit = hud_icon_texture_lit_lookup_table[hud_icon_texture]
+					var_10_15.icon_lit = var_0_15[var_10_21]
 				end
 
-				if is_wielded then
-					first_update = self:on_inventory_selected_slot_changed(i)
+				if var_10_18 and arg_10_0:on_inventory_selected_slot_changed(iter_10_0) then
+					local var_10_22 = var_0_0.bar_textures
+					local var_10_23, var_10_24 = arg_10_0:overcharge_amount(var_10_1)
 
-					if first_update then
-						local bar_textures = definitions.bar_textures
-						local overcharge_fraction, threshold_fraction = self:overcharge_amount(player_unit)
-
-						if not overcharge_fraction then
-							widget_content.stance_bar.texture_id = bar_textures.stance_bar.bar
-							widget_content.stance_bar_glow = bar_textures.stance_bar.glow
-						else
-							widget_content.stance_bar.texture_id = bar_textures.charge_bar.bar
-							widget_content.stance_bar_glow = bar_textures.charge_bar.glow
-						end
+					if not var_10_23 then
+						var_10_15.stance_bar.texture_id = var_10_22.stance_bar.bar
+						var_10_15.stance_bar_glow = var_10_22.stance_bar.glow
+					else
+						var_10_15.stance_bar.texture_id = var_10_22.charge_bar.bar
+						var_10_15.stance_bar_glow = var_10_22.charge_bar.glow
 					end
 				end
 
-				if not widget_content.has_data then
-					widget_content.has_data = true
+				if not var_10_15.has_data then
+					var_10_15.has_data = true
 				end
 
-				local item_template = BackendUtils.get_item_template(item_data)
-				local ammo_count, remaining_ammo = get_ammunition_count(slot_data.left_unit_1p, slot_data.right_unit_1p, item_template)
+				local var_10_25 = BackendUtils.get_item_template(var_10_17)
+				local var_10_26, var_10_27 = var_0_24(var_10_13.left_unit_1p, var_10_13.right_unit_1p, var_10_25)
 
-				if ammo_count then
-					local ammo_data = item_template.ammo_data
+				if var_10_26 then
+					local var_10_28 = var_10_25.ammo_data
 
-					if ammo_data and not ammo_data.destroy_when_out_of_ammo then
-						local ammo_text_1 = tostring(ammo_count)
-						local ammo_text_2 = remaining_ammo and tostring(remaining_ammo) or ""
+					if var_10_28 and not var_10_28.destroy_when_out_of_ammo then
+						local var_10_29 = tostring(var_10_26)
+						local var_10_30 = var_10_27 and tostring(var_10_27) or ""
 
-						if ammo_text_1 ~= widget_content.ammo_text_1 or ammo_text_2 ~= widget_content.ammo_text_2 then
-							widget.element.dirty = true
-							widget_content.ammo_text_1 = ammo_text_1
-							widget_content.ammo_text_2 = ammo_text_2
+						if var_10_29 ~= var_10_15.ammo_text_1 or var_10_30 ~= var_10_15.ammo_text_2 then
+							var_10_14.element.dirty = true
+							var_10_15.ammo_text_1 = var_10_29
+							var_10_15.ammo_text_2 = var_10_30
 						end
 
-						if not ammo_text_1_flash_lookup_table[slot_name] then
-							ammo_text_1_flash_lookup_table[slot_name] = slot_name .. "ammo_text_1_flash"
-							ammo_text_2_flash_lookup_table[slot_name] = slot_name .. "ammo_text_2_flash"
-							ammo_text_1_pulse_lookup_table[slot_name] = slot_name .. "ammo_text_1_pulse"
-							ammo_text_2_pulse_lookup_table[slot_name] = slot_name .. "ammo_text_2_pulse"
+						if not var_0_11[var_10_12] then
+							var_0_11[var_10_12] = var_10_12 .. "ammo_text_1_flash"
+							var_0_12[var_10_12] = var_10_12 .. "ammo_text_2_flash"
+							var_0_13[var_10_12] = var_10_12 .. "ammo_text_1_pulse"
+							var_0_14[var_10_12] = var_10_12 .. "ammo_text_2_pulse"
 						end
 
-						if picked_up_ammo then
-							self.ui_animations[ammo_text_1_flash_lookup_table[slot_name]] = UIAnimation.init(UIAnimation.text_flash, widget_style.ammo_text_1.text_color, 1, 255, 200, 5, 0.7)
-							self.ui_animations[ammo_text_2_flash_lookup_table[slot_name]] = UIAnimation.init(UIAnimation.text_flash, widget_style.ammo_text_2.text_color, 1, 255, 200, 5, 0.7)
-							self.ui_animations[ammo_text_1_pulse_lookup_table[slot_name]] = UIAnimation.init(UIAnimation.pulse_animation3, widget_style.ammo_text_1, "font_size", 26, 24, 5, 0.7)
-							self.ui_animations[ammo_text_2_pulse_lookup_table[slot_name]] = UIAnimation.init(UIAnimation.pulse_animation3, widget_style.ammo_text_2, "font_size", 26, 24, 5, 0.7)
+						if var_10_11 then
+							arg_10_0.ui_animations[var_0_11[var_10_12]] = UIAnimation.init(UIAnimation.text_flash, var_10_16.ammo_text_1.text_color, 1, 255, 200, 5, 0.7)
+							arg_10_0.ui_animations[var_0_12[var_10_12]] = UIAnimation.init(UIAnimation.text_flash, var_10_16.ammo_text_2.text_color, 1, 255, 200, 5, 0.7)
+							arg_10_0.ui_animations[var_0_13[var_10_12]] = UIAnimation.init(UIAnimation.pulse_animation3, var_10_16.ammo_text_1, "font_size", 26, 24, 5, 0.7)
+							arg_10_0.ui_animations[var_0_14[var_10_12]] = UIAnimation.init(UIAnimation.pulse_animation3, var_10_16.ammo_text_2, "font_size", 26, 24, 5, 0.7)
 						end
 					else
-						widget_content.ammo_text_1 = ""
-						widget_content.ammo_text_2 = ""
+						var_10_15.ammo_text_1 = ""
+						var_10_15.ammo_text_2 = ""
 					end
 
-					widget_content.stance_bar.active = false
+					var_10_15.stance_bar.active = false
 				else
-					local bar_progress
-					local overcharge_fraction, threshold_fraction, anim_blend_overcharge = self:overcharge_amount(player_unit)
+					local var_10_31
+					local var_10_32, var_10_33, var_10_34 = arg_10_0:overcharge_amount(var_10_1)
 
-					if overcharge_fraction then
-						bar_progress = math.min(overcharge_fraction, 1)
+					if var_10_32 then
+						var_10_31 = math.min(var_10_32, 1)
 					else
-						bar_progress = 0
+						var_10_31 = 0
 					end
 
-					bar_progress = math.lerp(widget_content.stance_bar.bar_value, math.min(bar_progress, 1), 0.3)
-					widget_content.stance_bar.active = item_data.slot_type ~= "melee" and true or false
-					widget_content.stance_bar.bar_value = bar_progress
+					local var_10_35 = math.lerp(var_10_15.stance_bar.bar_value, math.min(var_10_31, 1), 0.3)
 
-					if not stance_bar_glow_pulse_lookup_table[slot_name] then
-						stance_bar_glow_pulse_lookup_table[slot_name] = slot_name .. "stance_bar_glow_pulse"
-						stance_bar_lit_glow_out_lookup_table[slot_name] = slot_name .. "stance_bar_lit_glow_out"
-						stance_bar_glow_fade_out_lookup_table[slot_name] = slot_name .. "stance_bar_glow_fade_out"
+					var_10_15.stance_bar.active = var_10_17.slot_type ~= "melee" and true or false
+					var_10_15.stance_bar.bar_value = var_10_35
+
+					if not var_0_6[var_10_12] then
+						var_0_6[var_10_12] = var_10_12 .. "stance_bar_glow_pulse"
+						var_0_7[var_10_12] = var_10_12 .. "stance_bar_lit_glow_out"
+						var_0_8[var_10_12] = var_10_12 .. "stance_bar_glow_fade_out"
 					end
 
-					if not self.ui_animations[stance_bar_glow_pulse_lookup_table[slot_name]] and bar_progress >= 1 then
-						self.ui_animations[stance_bar_glow_pulse_lookup_table[slot_name]] = UIAnimation.init(UIAnimation.pulse_animation, widget_style.stance_bar_glow.color, 1, 0, 255, inventory_hud_settings.bar_lit_pulse_duration)
-					elseif self.ui_animations[stance_bar_glow_pulse_lookup_table[slot_name]] and not self.ui_animations[stance_bar_lit_glow_out_lookup_table[slot_name]] and bar_progress < 1 then
-						self.ui_animations[stance_bar_glow_pulse_lookup_table[slot_name]] = nil
-						self.ui_animations[stance_bar_glow_fade_out_lookup_table[slot_name]] = UIAnimation.init(UIAnimation.function_by_time, widget_style.stance_bar_glow.color, 1, widget_style.stance_bar_glow.color[1], 0, inventory_hud_settings.bar_lit_fade_out_duration, math.easeInCubic)
+					if not arg_10_0.ui_animations[var_0_6[var_10_12]] and var_10_35 >= 1 then
+						arg_10_0.ui_animations[var_0_6[var_10_12]] = UIAnimation.init(UIAnimation.pulse_animation, var_10_16.stance_bar_glow.color, 1, 0, 255, var_10_3.bar_lit_pulse_duration)
+					elseif arg_10_0.ui_animations[var_0_6[var_10_12]] and not arg_10_0.ui_animations[var_0_7[var_10_12]] and var_10_35 < 1 then
+						arg_10_0.ui_animations[var_0_6[var_10_12]] = nil
+						arg_10_0.ui_animations[var_0_8[var_10_12]] = UIAnimation.init(UIAnimation.function_by_time, var_10_16.stance_bar_glow.color, 1, var_10_16.stance_bar_glow.color[1], 0, var_10_3.bar_lit_fade_out_duration, math.easeInCubic)
 					end
 
-					widget_content.ammo_text_1 = ""
-					widget_content.ammo_text_2 = ""
+					var_10_15.ammo_text_1 = ""
+					var_10_15.ammo_text_2 = ""
 				end
 
-				local stance_bar_root_offset = -26
-				local default_root_offset = -5
+				local var_10_36 = -26
+				local var_10_37 = -5
 
-				if not inventory_entry_root_lookup_table[i] then
-					inventory_entry_root_lookup_table[i] = "inventory_entry_root_" .. i
+				if not var_0_9[iter_10_0] then
+					var_0_9[iter_10_0] = "inventory_entry_root_" .. iter_10_0
 				end
 
-				if widget_content.stance_bar.active then
-					if self.ui_scenegraph[inventory_entry_root_lookup_table[i]].local_position[1] ~= stance_bar_root_offset then
-						self.ui_scenegraph[inventory_entry_root_lookup_table[i]].local_position[1] = stance_bar_root_offset
+				if var_10_15.stance_bar.active then
+					if arg_10_0.ui_scenegraph[var_0_9[iter_10_0]].local_position[1] ~= var_10_36 then
+						arg_10_0.ui_scenegraph[var_0_9[iter_10_0]].local_position[1] = var_10_36
 					end
-				elseif self.ui_scenegraph[inventory_entry_root_lookup_table[i]].local_position[1] ~= default_root_offset then
-					self.ui_scenegraph[inventory_entry_root_lookup_table[i]].local_position[1] = default_root_offset
+				elseif arg_10_0.ui_scenegraph[var_0_9[iter_10_0]].local_position[1] ~= var_10_37 then
+					arg_10_0.ui_scenegraph[var_0_9[iter_10_0]].local_position[1] = var_10_37
 				end
 			end
 
-			UIRenderer.draw_widget(ui_renderer, widget)
+			UIRenderer.draw_widget(arg_10_3, var_10_14)
 		end
 	end
 end
 
-PlayerInventoryUI.update_inventory_slots_positions = function (self, dt)
-	local scenegraph_definition = definitions.scenegraph_definition
-	local selected_index = self.selected_index or 0
-	local previous_selected_index = self.previous_selected_index
-	local ui_scenegraph = self.ui_scenegraph
-	local slot_spacing = UISettings.inventory_hud.slot_spacing
-	local height_offset = 0
+function PlayerInventoryUI.update_inventory_slots_positions(arg_11_0, arg_11_1)
+	local var_11_0 = var_0_0.scenegraph_definition
 
-	for i = #SLOTS_LIST, 1, -1 do
-		local slot = SLOTS_LIST[i]
-		local slot_name = slot.name
-		local is_consumable_slot = consumable_slots[slot_name] and true or false
-		local size_multiplier = is_consumable_slot and 0.9 or 0.6
+	if not arg_11_0.selected_index then
+		local var_11_1 = 0
+	end
 
-		if not inventory_entry_background_lookup_table[i] then
-			inventory_entry_background_lookup_table[i] = "inventory_entry_background_" .. i
+	local var_11_2 = arg_11_0.previous_selected_index
+	local var_11_3 = arg_11_0.ui_scenegraph
+	local var_11_4 = UISettings.inventory_hud.slot_spacing
+	local var_11_5 = 0
+
+	for iter_11_0 = #var_0_1, 1, -1 do
+		local var_11_6 = var_0_1[iter_11_0].name
+		local var_11_7 = (var_0_4[var_11_6] and true or false) and 0.9 or 0.6
+
+		if not var_0_16[iter_11_0] then
+			var_0_16[iter_11_0] = "inventory_entry_background_" .. iter_11_0
 		end
 
-		local scenegraph_background_id = inventory_entry_background_lookup_table[i]
-		local widget = self.inventory_slots_widgets[i]
-		local next_widget_index = i - 1
-		local next_widget = self.inventory_slots_widgets[next_widget_index]
-		local widget_height = ui_scenegraph[scenegraph_background_id].size[2] * size_multiplier
+		local var_11_8 = var_0_16[iter_11_0]
+		local var_11_9 = arg_11_0.inventory_slots_widgets[iter_11_0]
+		local var_11_10 = iter_11_0 - 1
+		local var_11_11 = arg_11_0.inventory_slots_widgets[var_11_10]
+		local var_11_12 = var_11_3[var_11_8].size[2] * var_11_7
 
-		if not inventory_entry_root_lookup_table[i] then
-			inventory_entry_root_lookup_table[i] = "inventory_entry_root_" .. i
+		if not var_0_9[iter_11_0] then
+			var_0_9[iter_11_0] = "inventory_entry_root_" .. iter_11_0
 		end
 
-		local scenegraph_root_id = inventory_entry_root_lookup_table[i]
-
-		ui_scenegraph[scenegraph_root_id].position[2] = height_offset + widget_height * 0.5
-		height_offset = height_offset + widget_height + slot_spacing
+		var_11_3[var_0_9[iter_11_0]].position[2] = var_11_5 + var_11_12 * 0.5
+		var_11_5 = var_11_5 + var_11_12 + var_11_4
 	end
 end
 
-PlayerInventoryUI.on_inventory_selected_slot_changed = function (self, new_index)
-	if self.selected_index == new_index then
+function PlayerInventoryUI.on_inventory_selected_slot_changed(arg_12_0, arg_12_1)
+	if arg_12_0.selected_index == arg_12_1 then
 		return
 	end
 
-	local duration = self:add_animation_for_slot_index(new_index, true)
+	local var_12_0 = arg_12_0:add_animation_for_slot_index(arg_12_1, true)
 
-	for i = 1, #SLOTS_LIST do
-		if i ~= new_index then
-			self:add_animation_for_slot_index(i, false, duration)
+	for iter_12_0 = 1, #var_0_1 do
+		if iter_12_0 ~= arg_12_1 then
+			arg_12_0:add_animation_for_slot_index(iter_12_0, false, var_12_0)
 		end
 	end
 
-	self.previous_selected_index = self.selected_index
-	self.selected_index = new_index
+	arg_12_0.previous_selected_index = arg_12_0.selected_index
+	arg_12_0.selected_index = arg_12_1
 
 	return true
 end
 
-PlayerInventoryUI.add_animation_for_slot_index = function (self, index, selected, optional_duration)
-	local animations = self.slot_animations
-	local ui_scenegraph = self.ui_scenegraph
-	local scenegraph_definition = definitions.scenegraph_definition
+function PlayerInventoryUI.add_animation_for_slot_index(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	local var_13_0 = arg_13_0.slot_animations
+	local var_13_1 = arg_13_0.ui_scenegraph
+	local var_13_2 = var_0_0.scenegraph_definition
 
-	if not inventory_entry_lookup_table[index] then
-		inventory_entry_lookup_table[index] = "inventory_entry_" .. index
-		inventory_entry_icon_lookup_table[index] = "inventory_entry_icon_" .. index
+	if not var_0_17[arg_13_1] then
+		var_0_17[arg_13_1] = "inventory_entry_" .. arg_13_1
+		var_0_18[arg_13_1] = "inventory_entry_icon_" .. arg_13_1
 	end
 
-	local scenegraph_id = inventory_entry_lookup_table[index]
-	local scenegraph_icon_id = inventory_entry_icon_lookup_table[index]
-	local widget = self.inventory_slots_widgets[index]
-	local icon_size = ui_scenegraph[scenegraph_icon_id].size
-	local default_size = definitions.scenegraph_definition[scenegraph_icon_id].size
-	local default_width = default_size[1]
-	local default_total_time = UISettings.inventory_hud.select_animation_duration
-	local duration = optional_duration or 0
+	local var_13_3 = var_0_17[arg_13_1]
+	local var_13_4 = var_0_18[arg_13_1]
+	local var_13_5 = arg_13_0.inventory_slots_widgets[arg_13_1]
+	local var_13_6 = var_13_1[var_13_4].size
+	local var_13_7 = var_0_0.scenegraph_definition[var_13_4].size[1]
+	local var_13_8 = UISettings.inventory_hud.select_animation_duration
+	local var_13_9 = arg_13_3 or 0
 
-	if selected then
-		if not optional_duration then
-			local size_diff_fraction = 1 - (icon_size[1] - default_width) / default_width
-
-			duration = size_diff_fraction * default_total_time
+	if arg_13_2 then
+		if not arg_13_3 then
+			var_13_9 = (1 - (var_13_6[1] - var_13_7) / var_13_7) * var_13_8
 		end
 
-		self.animating_selected_slot = true
-	elseif not optional_duration then
-		for _, animation_data in pairs(animations) do
-			if animation_data.selected then
-				duration = animation_data.total_time - animation_data.time
+		arg_13_0.animating_selected_slot = true
+	elseif not arg_13_3 then
+		for iter_13_0, iter_13_1 in pairs(var_13_0) do
+			if iter_13_1.selected then
+				var_13_9 = iter_13_1.total_time - iter_13_1.time
 
 				break
 			end
 		end
 	end
 
-	local icon_current_size = ui_scenegraph[scenegraph_icon_id].size
-	local icon_default_size = definitions.scenegraph_definition[scenegraph_icon_id].size
-	local start_scale_fraction = icon_current_size[1] / icon_default_size[1]
+	local var_13_10 = var_13_1[var_13_4].size
+	local var_13_11 = var_0_0.scenegraph_definition[var_13_4].size
+	local var_13_12 = var_13_10[1] / var_13_11[1]
 
-	if animations[scenegraph_id] then
-		local animation = animations[scenegraph_id]
+	if var_13_0[var_13_3] then
+		local var_13_13 = var_13_0[var_13_3]
 
-		animation.total_time = duration
-		animation.time = 0
-		animation.selected = selected
-		animation.icon_start_size = ui_scenegraph[scenegraph_icon_id].size
-		animation.start_alpha = widget.style.icon.color[1]
-		animation.start_selected_alpha = widget.style.background_lit.color[1]
-		animation.start_scale_fraction = start_scale_fraction
-		animation.target_scale_fraction = selected and 1 or 0.8
+		var_13_13.total_time = var_13_9
+		var_13_13.time = 0
+		var_13_13.selected = arg_13_2
+		var_13_13.icon_start_size = var_13_1[var_13_4].size
+		var_13_13.start_alpha = var_13_5.style.icon.color[1]
+		var_13_13.start_selected_alpha = var_13_5.style.background_lit.color[1]
+		var_13_13.start_scale_fraction = var_13_12
+		var_13_13.target_scale_fraction = arg_13_2 and 1 or 0.8
 	else
-		animations[scenegraph_id] = {
+		var_13_0[var_13_3] = {
 			time = 0,
-			total_time = duration,
-			widget = self.inventory_slots_widgets[index],
-			scenegraph_id = scenegraph_id,
-			start_scale_fraction = start_scale_fraction,
-			target_scale_fraction = selected and 1 or 0.8,
-			start_size = ui_scenegraph[scenegraph_icon_id].size,
-			start_alpha = widget.style.icon.color[1],
-			start_selected_alpha = widget.style.background_lit.color[1],
-			selected = selected,
-			index = index,
+			total_time = var_13_9,
+			widget = arg_13_0.inventory_slots_widgets[arg_13_1],
+			scenegraph_id = var_13_3,
+			start_scale_fraction = var_13_12,
+			target_scale_fraction = arg_13_2 and 1 or 0.8,
+			start_size = var_13_1[var_13_4].size,
+			start_alpha = var_13_5.style.icon.color[1],
+			start_selected_alpha = var_13_5.style.background_lit.color[1],
+			selected = arg_13_2,
+			index = arg_13_1
 		}
 	end
 
-	return duration
+	return var_13_9
 end
 
-PlayerInventoryUI.update_slot_animations = function (self, dt)
-	local animations = self.slot_animations
+function PlayerInventoryUI.update_slot_animations(arg_14_0, arg_14_1)
+	local var_14_0 = arg_14_0.slot_animations
 
-	for scenegraph_id, animation_data in pairs(animations) do
-		animations[scenegraph_id] = self:animate_slot_widget(animation_data, dt)
+	for iter_14_0, iter_14_1 in pairs(var_14_0) do
+		var_14_0[iter_14_0] = arg_14_0:animate_slot_widget(iter_14_1, arg_14_1)
 	end
 end
 
-PlayerInventoryUI.animate_slot_widget = function (self, animation_data, dt)
-	local ui_scenegraph = self.ui_scenegraph
-	local scenegraph_definition = definitions.scenegraph_definition
-	local widget = animation_data.widget
-	local total_time = animation_data.total_time
-	local time = animation_data.time
-	local selected = animation_data.selected
-	local widget_index = animation_data.index
-	local start_size = animation_data.start_size
-	local start_alpha = animation_data.start_alpha
-	local start_scale_fraction = animation_data.start_scale_fraction
-	local target_scale_fraction = animation_data.target_scale_fraction
-	local start_selected_alpha = animation_data.start_selected_alpha
-	local widget_content = widget.content
-	local widget_style = widget.style
-	local inventory_hud_settings = UISettings.inventory_hud
+function PlayerInventoryUI.animate_slot_widget(arg_15_0, arg_15_1, arg_15_2)
+	local var_15_0 = arg_15_0.ui_scenegraph
+	local var_15_1 = var_0_0.scenegraph_definition
+	local var_15_2 = arg_15_1.widget
+	local var_15_3 = arg_15_1.total_time
+	local var_15_4 = arg_15_1.time
+	local var_15_5 = arg_15_1.selected
+	local var_15_6 = arg_15_1.index
+	local var_15_7 = arg_15_1.start_size
+	local var_15_8 = arg_15_1.start_alpha
+	local var_15_9 = arg_15_1.start_scale_fraction
+	local var_15_10 = arg_15_1.target_scale_fraction
+	local var_15_11 = arg_15_1.start_selected_alpha
+	local var_15_12 = var_15_2.content
+	local var_15_13 = var_15_2.style
+	local var_15_14 = UISettings.inventory_hud
+	local var_15_15 = var_15_4 + arg_15_2
+	local var_15_16 = math.min(var_15_15 / var_15_3, 1)
+	local var_15_17 = math.smoothstep(var_15_16, 0, 1)
+	local var_15_18 = math.min(var_15_16 * 2, 1)
+	local var_15_19 = math.smoothstep(var_15_18, 0, 1)
+	local var_15_20 = var_15_5 and math.min(math.max(0, (var_15_16 - 0.8) / 0.2), 1) or math.min(math.max(0, var_15_16 / 0.2), 1)
 
-	time = time + dt
-
-	local progress = math.min(time / total_time, 1)
-	local smoothstep = math.smoothstep(progress, 0, 1)
-	local lit_progress = math.min(progress * 2, 1)
-	local lit_smoothstep = math.smoothstep(lit_progress, 0, 1)
-	local ammo_progress = selected and math.min(math.max(0, (progress - 0.8) / 0.2), 1) or math.min(math.max(0, progress / 0.2), 1)
-
-	if not inventory_entry_lookup_table[widget_index] then
-		inventory_entry_lookup_table[widget_index] = "inventory_entry_" .. widget_index
-		inventory_entry_background_lookup_table[widget_index] = "inventory_entry_background_" .. widget_index
-		inventory_entry_icon_lookup_table[widget_index] = "inventory_entry_icon_" .. widget_index
+	if not var_0_17[var_15_6] then
+		var_0_17[var_15_6] = "inventory_entry_" .. var_15_6
+		var_0_16[var_15_6] = "inventory_entry_background_" .. var_15_6
+		var_0_18[var_15_6] = "inventory_entry_icon_" .. var_15_6
 	end
 
-	if not inventory_entry_stance_bar_lookup_table[widget_index] then
-		inventory_entry_stance_bar_lookup_table[widget_index] = "inventory_entry_stance_bar_" .. widget_index
-		inventory_entry_stance_bar_fill_lookup_table[widget_index] = "inventory_entry_stance_bar_fill_" .. widget_index
-		inventory_entry_stance_bar_lit_lookup_table[widget_index] = "inventory_entry_stance_bar_lit_" .. widget_index
-		inventory_entry_stance_bar_glow_lookup_table[widget_index] = "inventory_entry_stance_bar_glow_" .. widget_index
+	if not var_0_19[var_15_6] then
+		var_0_19[var_15_6] = "inventory_entry_stance_bar_" .. var_15_6
+		var_0_20[var_15_6] = "inventory_entry_stance_bar_fill_" .. var_15_6
+		var_0_21[var_15_6] = "inventory_entry_stance_bar_lit_" .. var_15_6
+		var_0_22[var_15_6] = "inventory_entry_stance_bar_glow_" .. var_15_6
 	end
 
-	local scenegraph_id = inventory_entry_lookup_table[widget_index]
-	local scenegraph_background_id = inventory_entry_background_lookup_table[widget_index]
-	local scenegraph_icon_id = inventory_entry_icon_lookup_table[widget_index]
-	local scenegraph_stance_bar_id = inventory_entry_stance_bar_lookup_table[widget_index]
-	local scenegraph_stance_bar_fill_id = inventory_entry_stance_bar_fill_lookup_table[widget_index]
-	local scenegraph_stance_bar_lit_id = inventory_entry_stance_bar_lit_lookup_table[widget_index]
-	local scenegraph_stance_bar_glow_id = inventory_entry_stance_bar_glow_lookup_table[widget_index]
-	local widget_scenegraph = ui_scenegraph[scenegraph_id]
-	local widget_icon_scenegraph = ui_scenegraph[scenegraph_icon_id]
-	local widget_background_scenegraph = ui_scenegraph[scenegraph_background_id]
+	local var_15_21 = var_0_17[var_15_6]
+	local var_15_22 = var_0_16[var_15_6]
+	local var_15_23 = var_0_18[var_15_6]
+	local var_15_24 = var_0_19[var_15_6]
+	local var_15_25 = var_0_20[var_15_6]
+	local var_15_26 = var_0_21[var_15_6]
+	local var_15_27 = var_0_22[var_15_6]
+	local var_15_28 = var_15_0[var_15_21]
+	local var_15_29 = var_15_0[var_15_23]
+	local var_15_30 = var_15_0[var_15_22]
 
-	widget.element.dirty = true
+	var_15_2.element.dirty = true
 
-	local scale_fraction_diff = selected and target_scale_fraction - start_scale_fraction or start_scale_fraction - target_scale_fraction
-	local new_scale_fraction = selected and start_scale_fraction + scale_fraction_diff * smoothstep or start_scale_fraction - scale_fraction_diff * smoothstep
-	local icon_default_size = scenegraph_definition[scenegraph_icon_id].size
+	local var_15_31 = var_15_5 and var_15_10 - var_15_9 or var_15_9 - var_15_10
+	local var_15_32 = var_15_5 and var_15_9 + var_15_31 * var_15_17 or var_15_9 - var_15_31 * var_15_17
+	local var_15_33 = var_15_1[var_15_23].size
 
-	widget_icon_scenegraph.size[1] = icon_default_size[1] * new_scale_fraction
-	widget_icon_scenegraph.size[2] = icon_default_size[2] * new_scale_fraction
+	var_15_29.size[1] = var_15_33[1] * var_15_32
+	var_15_29.size[2] = var_15_33[2] * var_15_32
 
-	local background_default_size = scenegraph_definition[scenegraph_background_id].size
+	local var_15_34 = var_15_1[var_15_22].size
 
-	widget_background_scenegraph.size[1] = background_default_size[1] * new_scale_fraction
-	widget_background_scenegraph.size[2] = background_default_size[2] * new_scale_fraction
+	var_15_30.size[1] = var_15_34[1] * var_15_32
+	var_15_30.size[2] = var_15_34[2] * var_15_32
 
-	local new_lit_alpha = 0
+	local var_15_35 = 0
 
-	if selected then
-		local lit_alpha_diff = 255 - start_selected_alpha
-
-		new_lit_alpha = start_selected_alpha + lit_alpha_diff * lit_smoothstep
+	if var_15_5 then
+		var_15_35 = var_15_11 + (255 - var_15_11) * var_15_19
 	else
-		new_lit_alpha = start_selected_alpha - start_selected_alpha * lit_smoothstep
+		var_15_35 = var_15_11 - var_15_11 * var_15_19
 	end
 
-	widget_style.background_lit.color[1] = new_lit_alpha
-	widget_style.background_lit.color[1] = new_lit_alpha
-	widget_style.icon_lit.color[1] = new_lit_alpha
-	widget_style.icon.color[1] = 255 - new_lit_alpha
-	widget_style.stance_bar_lit.color[1] = new_lit_alpha
-	widget_style.stance_bar_fg.color[1] = 255 - new_lit_alpha
+	var_15_13.background_lit.color[1] = var_15_35
+	var_15_13.background_lit.color[1] = var_15_35
+	var_15_13.icon_lit.color[1] = var_15_35
+	var_15_13.icon.color[1] = 255 - var_15_35
+	var_15_13.stance_bar_lit.color[1] = var_15_35
+	var_15_13.stance_bar_fg.color[1] = 255 - var_15_35
 
-	local widget_stance_bar_scenegraph = ui_scenegraph[scenegraph_stance_bar_id]
-	local stance_bar_default_size = scenegraph_definition[scenegraph_stance_bar_id].size
+	local var_15_36 = var_15_0[var_15_24]
+	local var_15_37 = var_15_1[var_15_24].size
 
-	widget_stance_bar_scenegraph.size[1] = stance_bar_default_size[1] * new_scale_fraction
-	widget_stance_bar_scenegraph.size[2] = stance_bar_default_size[2] * new_scale_fraction
+	var_15_36.size[1] = var_15_37[1] * var_15_32
+	var_15_36.size[2] = var_15_37[2] * var_15_32
 
-	local widget_stance_bar_fill_scenegraph = ui_scenegraph[scenegraph_stance_bar_fill_id]
-	local stance_bar_fill_default_definitions = scenegraph_definition[scenegraph_stance_bar_fill_id]
-	local stance_bar_fill_default_size = stance_bar_fill_default_definitions.size
-	local stance_bar_fill_default_position = stance_bar_fill_default_definitions.position
+	local var_15_38 = var_15_0[var_15_25]
+	local var_15_39 = var_15_1[var_15_25]
+	local var_15_40 = var_15_39.size
+	local var_15_41 = var_15_39.position
 
-	widget_stance_bar_fill_scenegraph.size[1] = stance_bar_fill_default_size[1] * new_scale_fraction
-	widget_stance_bar_fill_scenegraph.size[2] = stance_bar_fill_default_size[2] * new_scale_fraction
-	widget_stance_bar_fill_scenegraph.local_position[1] = stance_bar_fill_default_position[1] * new_scale_fraction
-	widget_stance_bar_fill_scenegraph.local_position[2] = stance_bar_fill_default_position[2] * new_scale_fraction
-	widget_style.stance_bar.uv_scale_pixels = 67 * new_scale_fraction
+	var_15_38.size[1] = var_15_40[1] * var_15_32
+	var_15_38.size[2] = var_15_40[2] * var_15_32
+	var_15_38.local_position[1] = var_15_41[1] * var_15_32
+	var_15_38.local_position[2] = var_15_41[2] * var_15_32
+	var_15_13.stance_bar.uv_scale_pixels = 67 * var_15_32
 
-	local widget_stance_bar_glow_scenegraph = ui_scenegraph[scenegraph_stance_bar_glow_id]
-	local stance_bar_glow_default_size = scenegraph_definition[scenegraph_stance_bar_glow_id].size
+	local var_15_42 = var_15_0[var_15_27]
+	local var_15_43 = var_15_1[var_15_27].size
 
-	widget_stance_bar_glow_scenegraph.size[1] = stance_bar_glow_default_size[1] * new_scale_fraction
-	widget_stance_bar_glow_scenegraph.size[2] = stance_bar_glow_default_size[2] * new_scale_fraction
+	var_15_42.size[1] = var_15_43[1] * var_15_32
+	var_15_42.size[2] = var_15_43[2] * var_15_32
 
-	local default_alpha = inventory_hud_settings.slot_default_alpha
-	local selected_alpha = inventory_hud_settings.slot_select_alpha
-	local target_alpha = selected and selected_alpha or default_alpha
-	local icon_style = widget_style.icon
+	local var_15_44 = var_15_14.slot_default_alpha
+	local var_15_45 = var_15_14.slot_select_alpha
+	local var_15_46 = var_15_5 and var_15_45 or var_15_44
+	local var_15_47 = var_15_13.icon
 
-	if icon_style.color[1] ~= target_alpha then
-		local alpha_diff = selected and target_alpha - start_alpha or start_alpha - target_alpha
-		local new_alpha = selected and start_alpha + alpha_diff * smoothstep or start_alpha - alpha_diff * smoothstep
+	if var_15_47.color[1] ~= var_15_46 then
+		local var_15_48 = var_15_5 and var_15_46 - var_15_8 or var_15_8 - var_15_46
+		local var_15_49 = var_15_5 and var_15_8 + var_15_48 * var_15_17 or var_15_8 - var_15_48 * var_15_17
 
-		icon_style.color[1] = new_alpha
+		var_15_47.color[1] = var_15_49
 
-		local ammo_text_style = widget_style.ammo_text_1
-		local stance_bar_style = widget_style.stance_bar
-		local ammo_alpha = selected and ammo_progress * target_alpha or (1 - ammo_progress) * selected_alpha
+		local var_15_50 = var_15_13.ammo_text_1
+		local var_15_51 = var_15_13.stance_bar
 
-		stance_bar_style.color[1] = new_alpha
-		ammo_text_style.text_color[1] = new_alpha
-	end
-
-	if progress < 1 then
-		animation_data.time = time
-
-		if selected and not widget_content.selected and progress > 0.8 then
-			widget_content.selected = selected
-		elseif not selected and widget.content.selected and ammo_progress == 1 then
-			widget.content.selected = selected
+		if not var_15_5 or not (var_15_20 * var_15_46) then
+			local var_15_52 = (1 - var_15_20) * var_15_45
 		end
 
-		return animation_data
+		var_15_51.color[1] = var_15_49
+		var_15_50.text_color[1] = var_15_49
+	end
+
+	if var_15_16 < 1 then
+		arg_15_1.time = var_15_15
+
+		if var_15_5 and not var_15_12.selected and var_15_16 > 0.8 then
+			var_15_12.selected = var_15_5
+		elseif not var_15_5 and var_15_2.content.selected and var_15_20 == 1 then
+			var_15_2.content.selected = var_15_5
+		end
+
+		return arg_15_1
 	else
-		if selected then
-			self.animating_selected_slot = nil
+		if var_15_5 then
+			arg_15_0.animating_selected_slot = nil
 		end
 
 		return nil

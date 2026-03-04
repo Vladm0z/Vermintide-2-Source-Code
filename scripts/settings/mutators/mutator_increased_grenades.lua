@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/settings/mutators/mutator_increased_grenades.lua
+-- chunkname: @scripts/settings/mutators/mutator_increased_grenades.lua
 
 return {
 	description = "mutator_increased_grenades_desc",
@@ -6,6 +6,6 @@ return {
 	hide_from_player_ui = true,
 	icon = "mutator_icon_increased_grenades",
 	pickup_system_multipliers = {
-		grenades = 2,
-	},
+		grenades = 2
+	}
 }

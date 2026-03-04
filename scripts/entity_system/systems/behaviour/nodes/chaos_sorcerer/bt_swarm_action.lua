@@ -1,115 +1,105 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/chaos_sorcerer/bt_swarm_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/chaos_sorcerer/bt_swarm_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTSwarmAction = class(BTSwarmAction, BTNode)
 BTSwarmAction.name = "BTSwarmAction"
 
-BTSwarmAction.init = function (self, ...)
-	BTSwarmAction.super.init(self, ...)
+function BTSwarmAction.init(arg_1_0, ...)
+	BTSwarmAction.super.init(arg_1_0, ...)
 end
 
-BTSwarmAction.enter = function (self, unit, blackboard, t)
-	local action = self._tree_node.action_data
+function BTSwarmAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	arg_2_2.action = arg_2_0._tree_node.action_data
+	arg_2_2.active_node = BTSwarmAction
+	arg_2_2.abort_action = not arg_2_0:_calculate_swarm_targets(arg_2_1, arg_2_2)
 
-	blackboard.action = action
-	blackboard.active_node = BTSwarmAction
+	arg_2_2.navigation_extension:stop()
 
-	local valid_action = self:_calculate_swarm_targets(unit, blackboard)
-
-	blackboard.abort_action = not valid_action
-
-	blackboard.navigation_extension:stop()
-
-	blackboard.swarm_start = true
-	blackboard.summoning = true
-	blackboard.attack_finished = false
+	arg_2_2.swarm_start = true
+	arg_2_2.summoning = true
+	arg_2_2.attack_finished = false
 end
 
-BTSwarmAction._calculate_swarm_targets = function (self, unit, blackboard)
-	blackboard.valid_swarm_targets = {}
+function BTSwarmAction._calculate_swarm_targets(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_2.valid_swarm_targets = {}
 
-	local side = blackboard.side
-	local player_and_bot_units = side.ENEMY_PLAYER_AND_BOT_UNITS
-	local valid_player_units = {}
-	local valid_bot_units = {}
+	local var_3_0 = arg_3_2.side.ENEMY_PLAYER_AND_BOT_UNITS
+	local var_3_1 = {}
+	local var_3_2 = {}
 
-	for _, player_unit in pairs(player_and_bot_units) do
-		local status_extension = ScriptUnit.extension(player_unit, "status_system")
-		local valid_target = status_extension and not status_extension:is_invisible() and not status_extension:is_disabled()
+	for iter_3_0, iter_3_1 in pairs(var_3_0) do
+		local var_3_3 = ScriptUnit.extension(iter_3_1, "status_system")
 
-		if valid_target then
-			if not Managers.player:owner(player_unit).bot_player then
-				valid_player_units[#valid_player_units + 1] = player_unit
+		if var_3_3 and not var_3_3:is_invisible() and not var_3_3:is_disabled() then
+			if not Managers.player:owner(iter_3_1).bot_player then
+				var_3_1[#var_3_1 + 1] = iter_3_1
 			else
-				valid_bot_units[#valid_bot_units + 1] = player_unit
+				var_3_2[#var_3_2 + 1] = iter_3_1
 			end
 		end
 	end
 
-	if #valid_player_units > 1 then
-		blackboard.valid_swarm_targets = valid_player_units
+	if #var_3_1 > 1 then
+		arg_3_2.valid_swarm_targets = var_3_1
 	else
-		blackboard.valid_swarm_targets = valid_bot_units
+		arg_3_2.valid_swarm_targets = var_3_2
 	end
 
-	if #blackboard.valid_swarm_targets < 2 then
+	if #arg_3_2.valid_swarm_targets < 2 then
 		return false
 	end
 
 	return true
 end
 
-BTSwarmAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	blackboard.active_node = nil
-	blackboard.summoning = nil
-	blackboard.ready_to_summon = false
-	blackboard.abort_action = nil
-	blackboard.attack_finished = nil
+function BTSwarmAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	arg_4_2.active_node = nil
+	arg_4_2.summoning = nil
+	arg_4_2.ready_to_summon = false
+	arg_4_2.abort_action = nil
+	arg_4_2.attack_finished = nil
 end
 
-BTSwarmAction.anim_cb_damage = function (self, unit, blackboard)
-	local action = blackboard.action
-	local blob_unit = AiUtils.spawn_overpowering_blob(Managers.state.network, blackboard.target_unit, action.health, action.duration)
-	local overpowered_template_name = "slow_bomb"
+function BTSwarmAction.anim_cb_damage(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = arg_5_2.action
+	local var_5_1 = AiUtils.spawn_overpowering_blob(Managers.state.network, arg_5_2.target_unit, var_5_0.health, var_5_0.duration)
+	local var_5_2 = "slow_bomb"
 
-	StatusUtils.set_overpowered_network(blackboard.target_unit, true, overpowered_template_name, blob_unit)
+	StatusUtils.set_overpowered_network(arg_5_2.target_unit, true, var_5_2, var_5_1)
 end
 
-BTSwarmAction.anim_cb_attack_finished = function (self, unit, blackboard)
-	blackboard.attack_finished = true
+function BTSwarmAction.anim_cb_attack_finished(arg_6_0, arg_6_1, arg_6_2)
+	arg_6_2.attack_finished = true
 end
 
-BTSwarmAction.run = function (self, unit, blackboard, t, dt)
-	if blackboard.abort_action or blackboard.attack_finished then
+function BTSwarmAction.run(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	if arg_7_2.abort_action or arg_7_2.attack_finished then
 		return "done"
 	end
 
-	local action = blackboard.action
+	local var_7_0 = arg_7_2.action
 
-	if blackboard.swarm_start then
-		Managers.state.network:anim_event(unit, action.cast_anim)
+	if arg_7_2.swarm_start then
+		Managers.state.network:anim_event(arg_7_1, var_7_0.cast_anim)
 
-		blackboard.swarm_start = nil
+		arg_7_2.swarm_start = nil
 	end
 
-	local status_extension = ScriptUnit.extension(blackboard.target_unit, "status_system")
-	local valid_target = status_extension and not status_extension:is_invisible() and not status_extension:is_disabled()
+	local var_7_1 = ScriptUnit.extension(arg_7_2.target_unit, "status_system")
 
-	if not valid_target then
-		local valid_action = self:_calculate_swarm_targets(unit, blackboard)
-
-		if not valid_action then
+	if not (var_7_1 and not var_7_1:is_invisible() and not var_7_1:is_disabled()) then
+		if not arg_7_0:_calculate_swarm_targets(arg_7_1, arg_7_2) then
 			return "done"
 		end
 
-		local new_target
+		local var_7_2
 
-		while not new_target or new_target == blackboard.target_unit do
-			new_target = blackboard.valid_swarm_targets[math.random(#blackboard.valid_swarm_targets)]
+		while not var_7_2 or var_7_2 == arg_7_2.target_unit do
+			var_7_2 = arg_7_2.valid_swarm_targets[math.random(#arg_7_2.valid_swarm_targets)]
 		end
 
-		blackboard.target_unit = new_target
+		arg_7_2.target_unit = var_7_2
 	end
 
 	return "running"

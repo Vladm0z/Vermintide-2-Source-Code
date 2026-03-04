@@ -1,69 +1,69 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_gor_behavior.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_gor_behavior.lua
 
-local ACTIONS = BreedActions.beastmen_gor
-local GOR_COMBAT = {
+local var_0_0 = BreedActions.beastmen_gor
+local var_0_1 = {
 	"BTUtilityNode",
 	{
 		"BTCombatStepAction",
 		name = "combat_step",
-		action_data = ACTIONS.combat_step,
+		action_data = var_0_0.combat_step
 	},
 	{
 		"BTClanRatFollowAction",
 		name = "follow",
-		action_data = ACTIONS.follow,
+		action_data = var_0_0.follow
 	},
 	{
 		"BTAttackAction",
-		condition = "ask_target_before_attacking",
 		name = "headbutt_attack",
-		action_data = ACTIONS.headbutt_attack,
+		condition = "ask_target_before_attacking",
+		action_data = var_0_0.headbutt_attack
 	},
 	{
 		"BTAttackAction",
-		condition = "ask_target_before_attacking",
 		name = "running_attack",
-		action_data = ACTIONS.running_attack,
+		condition = "ask_target_before_attacking",
+		action_data = var_0_0.running_attack
 	},
 	{
 		"BTAttackAction",
-		condition = "ask_target_before_attacking",
 		name = "normal_attack",
-		action_data = ACTIONS.normal_attack,
+		condition = "ask_target_before_attacking",
+		action_data = var_0_0.normal_attack
 	},
 	{
 		"BTCombatShoutAction",
 		name = "combat_shout",
-		action_data = ACTIONS.combat_shout,
+		action_data = var_0_0.combat_shout
 	},
 	condition = "confirmed_player_sighting",
-	name = "in_combat",
+	name = "in_combat"
 }
-local GOR_SMART_OBJECT = {
+local var_0_2 = {
 	"BTSelector",
 	{
 		"BTTeleportAction",
 		condition = "at_teleport_smartobject",
-		name = "teleport",
+		name = "teleport"
 	},
 	{
 		"BTClimbAction",
 		condition = "at_climb_smartobject",
-		name = "climb",
+		name = "climb"
 	},
 	{
 		"BTJumpAcrossAction",
 		condition = "at_jump_smartobject",
-		name = "jump_across",
+		name = "jump_across"
 	},
 	{
 		"BTSmashDoorAction",
-		condition = "at_door_smartobject",
 		name = "smash_door",
-		action_data = ACTIONS.smash_door,
+		condition = "at_door_smartobject",
+		action_data = var_0_0.smash_door
 	},
 	condition = "at_smartobject",
-	name = "smartobject",
+	name = "smartobject"
 }
 
 BreedBehaviors.gor = {
@@ -71,64 +71,64 @@ BreedBehaviors.gor = {
 	{
 		"BTSpawningAction",
 		condition = "spawn",
-		name = "spawn",
+		name = "spawn"
 	},
 	{
 		"BTInVortexAction",
 		condition = "in_vortex",
-		name = "in_vortex",
+		name = "in_vortex"
 	},
 	{
 		"BTInGravityWellAction",
 		condition = "in_gravity_well",
-		name = "in_gravity_well",
+		name = "in_gravity_well"
 	},
 	{
 		"BTFallAction",
 		condition = "is_falling",
-		name = "falling",
+		name = "falling"
 	},
 	{
 		"BTStaggerAction",
-		condition = "stagger",
 		name = "stagger",
-		action_data = ACTIONS.stagger,
+		condition = "stagger",
+		action_data = var_0_0.stagger
 	},
 	{
 		"BTBlockedAction",
-		condition = "blocked",
 		name = "blocked",
-		action_data = ACTIONS.blocked,
+		condition = "blocked",
+		action_data = var_0_0.blocked
 	},
-	GOR_SMART_OBJECT,
+	var_0_2,
 	{
 		"BTHesitateAction",
-		condition = "is_alerted",
 		name = "hesitate",
-		action_data = ACTIONS.alerted,
+		condition = "is_alerted",
+		action_data = var_0_0.alerted
 	},
-	GOR_COMBAT,
+	var_0_1,
 	{
 		"BTMoveToGoalAction",
-		condition = "has_goal_destination",
 		name = "move_to_goal",
-		action_data = ACTIONS.follow,
+		condition = "has_goal_destination",
+		action_data = var_0_0.follow
 	},
 	{
 		"BTAlertedAction",
-		condition = "player_spotted",
 		name = "alerted",
-		action_data = ACTIONS.alerted,
+		condition = "player_spotted",
+		action_data = var_0_0.alerted
 	},
 	{
 		"BTIdleAction",
-		condition = "no_target",
 		name = "idle",
-		action_data = ACTIONS.idle,
+		condition = "no_target",
+		action_data = var_0_0.idle
 	},
 	{
 		"BTFallbackIdleAction",
-		name = "fallback_idle",
+		name = "fallback_idle"
 	},
-	name = "gor",
+	name = "gor"
 }

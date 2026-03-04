@@ -1,373 +1,358 @@
-﻿-- chunkname: @scripts/ui/views/versus_menu/versus_team_parading_view.lua
+-- chunkname: @scripts/ui/views/versus_menu/versus_team_parading_view.lua
 
-local definitions = local_require("scripts/ui/views/versus_menu/versus_team_parading_view_definitions")
+local var_0_0 = local_require("scripts/ui/views/versus_menu/versus_team_parading_view_definitions")
 
 require("scripts/ui/views/world_hero_previewer")
 require("scripts/ui/views/team_previewer")
 
-local DO_RELOAD = false
-local DIORAMA_SIZE = definitions.DIORAMA_SIZE
+local var_0_1 = false
+local var_0_2 = var_0_0.DIORAMA_SIZE
 
 VersusTeamParadingView = class(VersusTeamParadingView, BaseView)
 
-VersusTeamParadingView.init = function (self, ingame_ui_context)
-	self.normal_chat = true
+function VersusTeamParadingView.init(arg_1_0, arg_1_1)
+	arg_1_0.normal_chat = true
 
-	local player = ingame_ui_context.player
+	local var_1_0 = arg_1_1.player
 
-	self._player = player
-	self._peer_id = player:network_id()
-	self._local_player_id = player:local_player_id()
-	self._render_settings = {}
-	self._ui_renderer = ingame_ui_context.ui_renderer
-	self._ingame_ui = ingame_ui_context.ingame_ui
-	self._is_server = ingame_ui_context.is_server
-	self._ingame_ui_context = ingame_ui_context
-	self._network_handler = ingame_ui_context.network_server or ingame_ui_context.network_client
+	arg_1_0._player = var_1_0
+	arg_1_0._peer_id = var_1_0:network_id()
+	arg_1_0._local_player_id = var_1_0:local_player_id()
+	arg_1_0._render_settings = {}
+	arg_1_0._ui_renderer = arg_1_1.ui_renderer
+	arg_1_0._ingame_ui = arg_1_1.ingame_ui
+	arg_1_0._is_server = arg_1_1.is_server
+	arg_1_0._ingame_ui_context = arg_1_1
+	arg_1_0._network_handler = arg_1_1.network_server or arg_1_1.network_client
 
-	self.super.init(self, ingame_ui_context, definitions)
+	arg_1_0.super.init(arg_1_0, arg_1_1, var_0_0)
 end
 
-VersusTeamParadingView.on_enter = function (self, params)
-	self.super.on_enter(self)
+function VersusTeamParadingView.on_enter(arg_2_0, arg_2_1)
+	arg_2_0.super.on_enter(arg_2_0)
 
-	local game_mode_manager = Managers.state.game_mode
-	local game_mode = game_mode_manager:game_mode()
-	local game_mode_state = game_mode:game_mode_state()
+	local var_2_0 = Managers.state.game_mode:game_mode()
+	local var_2_1 = var_2_0:game_mode_state()
 
-	if self._game_mode_state ~= game_mode_state then
-		local player = Managers.player:local_player()
-		local party = Managers.party:get_party_from_unique_id(player:unique_id())
+	if arg_2_0._game_mode_state ~= var_2_1 then
+		local var_2_2 = Managers.player:local_player()
+		local var_2_3 = Managers.party:get_party_from_unique_id(var_2_2:unique_id())
 
-		self:_initialize_timers()
+		arg_2_0:_initialize_timers()
 
-		local hero_party = Managers.state.side:get_party_from_side_name("heroes")
+		local var_2_4 = Managers.state.side:get_party_from_side_name("heroes")
 
-		self:_present_team(hero_party.party_id)
+		arg_2_0:_present_team(var_2_4.party_id)
 	end
 
-	local game_mode_round_id = game_mode:round_id()
-
-	if game_mode_round_id == 1 then
-		self:_set_round_text(Localize("vs_objective_round_one"))
-		self:play_sound("versus_round_start")
+	if var_2_0:round_id() == 1 then
+		arg_2_0:_set_round_text(Localize("vs_objective_round_one"))
+		arg_2_0:play_sound("versus_round_start")
 	else
-		self:_set_round_text(Localize("vs_objective_final_round"))
-		self:play_sound("versus_round_start_final")
+		arg_2_0:_set_round_text(Localize("vs_objective_final_round"))
+		arg_2_0:play_sound("versus_round_start_final")
 	end
 
-	local optional_params
+	local var_2_5
 
-	self:_start_animation("start", "start", self._widgets_by_name, optional_params)
-	self:play_sound("menu_versus_character_selection_round_start_team_parade")
-	Managers.state.event:register(self, "player_party_changed", "on_player_party_changed")
+	arg_2_0:_start_animation("start", "start", arg_2_0._widgets_by_name, var_2_5)
+	arg_2_0:play_sound("menu_versus_character_selection_round_start_team_parade")
+	Managers.state.event:register(arg_2_0, "player_party_changed", "on_player_party_changed")
 end
 
-VersusTeamParadingView._create_diorama = function (self, position)
-	local horizontal_alignment = "left"
-	local vertical_alignment = "bottom"
-	local settings = {
-		horizontal_alignment = horizontal_alignment,
-		vertical_alignment = vertical_alignment,
-		position = position,
-		size = DIORAMA_SIZE,
+function VersusTeamParadingView._create_diorama(arg_3_0, arg_3_1)
+	local var_3_0 = "left"
+	local var_3_1 = "bottom"
+	local var_3_2 = {
+		horizontal_alignment = var_3_0,
+		vertical_alignment = var_3_1,
+		position = arg_3_1,
+		size = var_0_2
 	}
 
-	return HeroDioramaUI:new(self._ingame_ui_context, settings)
+	return HeroDioramaUI:new(arg_3_0._ingame_ui_context, var_3_2)
 end
 
-VersusTeamParadingView._set_round_text = function (self, text)
-	local widget = self._widgets_by_name.round_title
-
-	widget.content.text = text
+function VersusTeamParadingView._set_round_text(arg_4_0, arg_4_1)
+	arg_4_0._widgets_by_name.round_title.content.text = arg_4_1
 end
 
-VersusTeamParadingView.get_loadout = function (self, slot_data, use_dark_pact_profile, profile_index, career_index, profile, career_name)
-	local backend_items = Managers.backend:get_interface("items")
-	local melee_name, ranged_name, skin_name, hat_name
-	local slot_melee = slot_data.slot_melee
+function VersusTeamParadingView.get_loadout(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
+	local var_5_0 = Managers.backend:get_interface("items")
+	local var_5_1
+	local var_5_2
+	local var_5_3
+	local var_5_4
+	local var_5_5 = arg_5_1.slot_melee
 
-	if use_dark_pact_profile or not slot_melee then
-		local loadout = backend_items:get_loadout()
-		local current_loadout = loadout[career_name]
-		local melee_id = current_loadout.slot_melee
-		local ranged_id = current_loadout.slot_ranged
-		local hat_id = current_loadout.slot_hat
+	if arg_5_2 or not var_5_5 then
+		local var_5_6 = var_5_0:get_loadout()[arg_5_6]
+		local var_5_7 = var_5_6.slot_melee
+		local var_5_8 = var_5_6.slot_ranged
+		local var_5_9 = var_5_6.slot_hat
 
-		melee_name = melee_id and backend_items:get_item_name(current_loadout.slot_melee)
-		ranged_name = ranged_id and backend_items:get_item_name(current_loadout.slot_ranged)
-		skin_name = backend_items:get_item_name(current_loadout.slot_skin)
-		hat_name = hat_id and backend_items:get_item_name(hat_id)
+		var_5_1 = var_5_7 and var_5_0:get_item_name(var_5_6.slot_melee)
+		var_5_2 = var_5_8 and var_5_0:get_item_name(var_5_6.slot_ranged)
+		var_5_3 = var_5_0:get_item_name(var_5_6.slot_skin)
+		var_5_4 = var_5_9 and var_5_0:get_item_name(var_5_9)
 	else
-		melee_name = slot_melee
-		ranged_name = slot_data.slot_ranged
-		skin_name = slot_data.slot_skin
-		hat_name = slot_data.slot_hat
+		var_5_1 = var_5_5
+		var_5_2 = arg_5_1.slot_ranged
+		var_5_3 = arg_5_1.slot_skin
+		var_5_4 = arg_5_1.slot_hat
 	end
 
-	local weapons = {}
+	local var_5_10 = {}
 
-	if melee_name ~= "n/a" then
-		weapons[#weapons + 1] = melee_name
+	if var_5_1 ~= "n/a" then
+		var_5_10[#var_5_10 + 1] = var_5_1
 	end
 
-	if ranged_name ~= "n/a" then
-		weapons[#weapons + 1] = ranged_name
+	if var_5_2 ~= "n/a" then
+		var_5_10[#var_5_10 + 1] = var_5_2
 	end
 
-	fassert(#weapons > 0, "Character must have at least one weapon equipped")
+	fassert(#var_5_10 > 0, "Character must have at least one weapon equipped")
 
-	local weapon_name = weapons[math.random(1, #weapons)]
-	local weapon_data = ItemMasterList[weapon_name]
-	local weapon_slot = weapon_data.slot_type
-	local preview_animation = backend_items:get_item_template(weapon_data).wield_anim
-	local preview_items = {
+	local var_5_11 = var_5_10[math.random(1, #var_5_10)]
+	local var_5_12 = ItemMasterList[var_5_11]
+	local var_5_13 = var_5_12.slot_type
+	local var_5_14 = var_5_0:get_item_template(var_5_12).wield_anim
+	local var_5_15 = {
 		{
-			item_name = weapon_name,
-		},
+			item_name = var_5_11
+		}
 	}
 
-	if hat_name then
-		preview_items[#preview_items + 1] = {
-			item_name = hat_name,
+	if var_5_4 then
+		var_5_15[#var_5_15 + 1] = {
+			item_name = var_5_4
 		}
 	end
 
 	return {
-		profile_index = profile_index,
-		career_index = career_index,
-		hero_name = profile.display_name,
-		skin_name = skin_name,
-		weapon_slot = weapon_slot,
-		preview_items = preview_items,
-		preview_animation = preview_animation,
-		career_name = career_name,
+		profile_index = arg_5_3,
+		career_index = arg_5_4,
+		hero_name = arg_5_5.display_name,
+		skin_name = var_5_3,
+		weapon_slot = var_5_13,
+		preview_items = var_5_15,
+		preview_animation = var_5_14,
+		career_name = arg_5_6
 	}
 end
 
-VersusTeamParadingView._initialize_timers = function (self)
-	self._screen_timer = Managers.state.game_mode:setting("character_picking_settings").parading_duration or 1
-	self._screen_timer_ended = nil
+function VersusTeamParadingView._initialize_timers(arg_6_0)
+	arg_6_0._screen_timer = Managers.state.game_mode:setting("character_picking_settings").parading_duration or 1
+	arg_6_0._screen_timer_ended = nil
 end
 
-VersusTeamParadingView._present_team = function (self, party_id)
-	local parade_dark_pact = Managers.state.game_mode:setting("parade_dark_pact")
-	local party = Managers.party:get_party(party_id)
-	local slots_data = party.slots_data
-	local side = Managers.state.side.side_by_party[party]
-	local available_profiles = side.available_profiles
-	local use_dark_pact_profile = parade_dark_pact and side:name() == "dark_pact"
-	local team_name_text_widget = self._widgets_by_name.team_name_text
+function VersusTeamParadingView._present_team(arg_7_0, arg_7_1)
+	local var_7_0 = Managers.state.game_mode:setting("parade_dark_pact")
+	local var_7_1 = Managers.party:get_party(arg_7_1)
+	local var_7_2 = var_7_1.slots_data
+	local var_7_3 = Managers.state.side.side_by_party[var_7_1]
+	local var_7_4 = var_7_3.available_profiles
+	local var_7_5 = var_7_0 and var_7_3:name() == "dark_pact"
+	local var_7_6 = arg_7_0._widgets_by_name.team_name_text
+	local var_7_7 = "Your Team"
+	local var_7_8 = {}
+	local var_7_9 = {}
 
-	team_name_text_widget = "Your Team"
+	for iter_7_0 = 1, #var_7_2 do
+		local var_7_10 = var_7_1.slots[iter_7_0]
+		local var_7_11 = var_7_2[iter_7_0]
+		local var_7_12 = var_7_10.career_index or 1
+		local var_7_13 = var_7_10.profile_index
 
-	local hero_data = {}
-	local diorama_list = {}
+		var_7_13 = var_7_13 and var_7_13 > 0 and var_7_13 or 1
 
-	for i = 1, #slots_data do
-		local status = party.slots[i]
-		local slot_data = slots_data[i]
-		local career_index = status.career_index or 1
-		local profile_index = status.profile_index
+		local var_7_14 = SPProfiles[var_7_13]
+		local var_7_15 = var_7_14.careers[var_7_12]
+		local var_7_16 = arg_7_0:get_loadout(var_7_11, var_7_5, var_7_13, var_7_12, var_7_14, var_7_15.name)
+		local var_7_17 = "player_" .. iter_7_0
+		local var_7_18 = arg_7_0._ui_scenegraph[var_7_17].world_position
+		local var_7_19 = arg_7_0:_create_diorama(var_7_18)
 
-		profile_index = profile_index and profile_index > 0 and profile_index or 1
+		var_7_19:set_hero_profile(var_7_13, var_7_12)
+		var_7_19:set_viewport_active(false)
+		var_7_19:fade_out(0)
 
-		local profile = SPProfiles[profile_index]
-		local career = profile.careers[career_index]
-		local loadout_data = self:get_loadout(slot_data, use_dark_pact_profile, profile_index, career_index, profile, career.name)
-		local player_slot_scenegraph_id = "player_" .. i
-		local player_slot_scenegraph = self._ui_scenegraph[player_slot_scenegraph_id]
-		local position = player_slot_scenegraph.world_position
-		local diorama = self:_create_diorama(position)
+		local var_7_20
 
-		diorama:set_hero_profile(profile_index, career_index)
-		diorama:set_viewport_active(false)
-		diorama:fade_out(0)
+		if var_7_10.peer_id then
+			local var_7_21 = Managers.player:player(var_7_10.peer_id, var_7_10.local_player_id)
 
-		local player_name
-
-		if status.peer_id then
-			local player = Managers.player:player(status.peer_id, status.local_player_id)
-
-			player_name = player and player:name() or "Bot-" .. i
+			var_7_20 = var_7_21 and var_7_21:name() or "Bot-" .. iter_7_0
 		else
-			player_name = Localize(loadout_data.hero_name)
+			var_7_20 = Localize(var_7_16.hero_name)
 		end
 
-		diorama:set_player_name(player_name)
+		var_7_19:set_player_name(var_7_20)
 
-		diorama_list[i] = diorama
+		var_7_9[iter_7_0] = var_7_19
 	end
 
-	self._diorama_list = diorama_list
-	self._animation_params = {
-		wwise_world = self._wwise_world,
-		render_settings = self._render_settings,
-		diorama_list = self._diorama_list,
+	arg_7_0._diorama_list = var_7_9
+	arg_7_0._animation_params = {
+		wwise_world = arg_7_0._wwise_world,
+		render_settings = arg_7_0._render_settings,
+		diorama_list = arg_7_0._diorama_list
 	}
 
-	self:_start_animation("start", "start", self._widgets_by_name, self._animation_params)
+	arg_7_0:_start_animation("start", "start", arg_7_0._widgets_by_name, arg_7_0._animation_params)
 end
 
-VersusTeamParadingView._destroy_diorama_list = function (self)
-	local diorama_list = self._diorama_list
+function VersusTeamParadingView._destroy_diorama_list(arg_8_0)
+	local var_8_0 = arg_8_0._diorama_list
 
-	if diorama_list then
-		for i = 1, #diorama_list do
-			local diorama = diorama_list[i]
-
-			diorama:destroy()
+	if var_8_0 then
+		for iter_8_0 = 1, #var_8_0 do
+			var_8_0[iter_8_0]:destroy()
 		end
 	end
 
-	self._diorama_list = nil
+	arg_8_0._diorama_list = nil
 end
 
-VersusTeamParadingView.on_exit = function (self)
-	self.super.on_exit(self)
+function VersusTeamParadingView.on_exit(arg_9_0)
+	arg_9_0.super.on_exit(arg_9_0)
 	Managers.transition:fade_out(1.5)
-	Managers.state.event:unregister("on_player_party_changed", self)
+	Managers.state.event:unregister("on_player_party_changed", arg_9_0)
 end
 
-VersusTeamParadingView.post_update_on_exit = function (self)
-	self.super.post_update_on_exit(self)
-	self:_destroy_diorama_list()
+function VersusTeamParadingView.post_update_on_exit(arg_10_0)
+	arg_10_0.super.post_update_on_exit(arg_10_0)
+	arg_10_0:_destroy_diorama_list()
 end
 
-VersusTeamParadingView._draw_widgets = function (self, ui_renderer, dt)
+function VersusTeamParadingView._draw_widgets(arg_11_0, arg_11_1, arg_11_2)
 	return
 end
 
-VersusTeamParadingView.post_update = function (self, dt, t)
-	if DO_RELOAD then
-		DO_RELOAD = false
+function VersusTeamParadingView.post_update(arg_12_0, arg_12_1, arg_12_2)
+	if var_0_1 then
+		var_0_1 = false
 
-		self:_destroy_diorama_list()
-		self:_initialize_timers()
-		self:_present_team(1)
+		arg_12_0:_destroy_diorama_list()
+		arg_12_0:_initialize_timers()
+		arg_12_0:_present_team(1)
 	end
 
-	local diorama_list = self._diorama_list
+	local var_12_0 = arg_12_0._diorama_list
 
-	if diorama_list then
-		for i = 1, #diorama_list do
-			local diorama = diorama_list[i]
-
-			diorama:post_update(dt, t)
+	if var_12_0 then
+		for iter_12_0 = 1, #var_12_0 do
+			var_12_0[iter_12_0]:post_update(arg_12_1, arg_12_2)
 		end
 	end
 end
 
-VersusTeamParadingView._update_screen_timer = function (self, widget, screen_timer)
-	local value = math.clamp(screen_timer, 0, 999999)
-	local time_text
+function VersusTeamParadingView._update_screen_timer(arg_13_0, arg_13_1, arg_13_2)
+	local var_13_0 = math.clamp(arg_13_2, 0, 999999)
+	local var_13_1
+	local var_13_2 = var_13_0 <= 0 and "" or string.format("%.0f", var_13_0)
 
-	time_text = value <= 0 and "" or string.format("%.0f", value)
-	widget.content.text = time_text
+	arg_13_1.content.text = var_13_2
 end
 
-VersusTeamParadingView._animate_font_size_bounce = function (self, dt, t)
-	local widgets_by_name = self._widgets_by_name
-	local widget = widgets_by_name.screen_timer_text_big
-	local content = widget.content
-	local style = widget.style
-	local text = content.text
-	local text_style = style.text
-	local text_shadow_style = style.text_shadow
-	local default_font_size = text_style.default_font_size
-	local max_font_size = text_style.max_font_size
-	local screen_timer = self._screen_timer
-	local progress = 1 - (screen_timer + 0.5) % 1
-	local timer_ended = self._screen_timer_ended
-	local new_font_size = default_font_size + (max_font_size - default_font_size) * progress
+function VersusTeamParadingView._animate_font_size_bounce(arg_14_0, arg_14_1, arg_14_2)
+	local var_14_0 = arg_14_0._widgets_by_name
+	local var_14_1 = var_14_0.screen_timer_text_big
+	local var_14_2 = var_14_1.content
+	local var_14_3 = var_14_1.style
+	local var_14_4 = var_14_2.text
+	local var_14_5 = var_14_3.text
+	local var_14_6 = var_14_3.text_shadow
+	local var_14_7 = var_14_5.default_font_size
+	local var_14_8 = var_14_5.max_font_size
+	local var_14_9 = 1 - (arg_14_0._screen_timer + 0.5) % 1
+	local var_14_10 = arg_14_0._screen_timer_ended
+	local var_14_11 = var_14_7 + (var_14_8 - var_14_7) * var_14_9
 
-	text_style.font_size = new_font_size
-	text_shadow_style.font_size = new_font_size
+	var_14_5.font_size = var_14_11
+	var_14_6.font_size = var_14_11
 
-	local previous_alpha = text_style.text_color[1]
-	local alpha = timer_ended and 0 or 15 * (1 - progress)
+	local var_14_12 = var_14_5.text_color[1]
+	local var_14_13 = var_14_10 and 0 or 15 * (1 - var_14_9)
 
-	self:_set_text_widget_alpha(widget, alpha)
+	arg_14_0:_set_text_widget_alpha(var_14_1, var_14_13)
 
-	if timer_ended then
-		self:_set_text_widget_alpha(widgets_by_name.screen_timer_text, 0)
+	if var_14_10 then
+		arg_14_0:_set_text_widget_alpha(var_14_0.screen_timer_text, 0)
 	end
 end
 
-VersusTeamParadingView._set_text_widget_alpha = function (self, widget, alpha)
-	local style = widget.style
-	local text_style = style.text
-	local text_shadow_style = style.text_shadow
+function VersusTeamParadingView._set_text_widget_alpha(arg_15_0, arg_15_1, arg_15_2)
+	local var_15_0 = arg_15_1.style
+	local var_15_1 = var_15_0.text
+	local var_15_2 = var_15_0.text_shadow
 
-	text_style.text_color[1] = alpha
-	text_shadow_style.text_color[1] = alpha
+	var_15_1.text_color[1] = arg_15_2
+	var_15_2.text_color[1] = arg_15_2
 end
 
-VersusTeamParadingView.update = function (self, dt, t)
-	if DO_RELOAD then
-		self.super.debug_set_definitions(self, definitions)
+function VersusTeamParadingView.update(arg_16_0, arg_16_1, arg_16_2)
+	if var_0_1 then
+		arg_16_0.super.debug_set_definitions(arg_16_0, var_0_0)
 	end
 
-	local diorama_list = self._diorama_list
+	local var_16_0 = arg_16_0._diorama_list
 
-	if diorama_list then
-		for i = 1, #diorama_list do
-			local diorama = diorama_list[i]
-
-			diorama:update(dt, t)
+	if var_16_0 then
+		for iter_16_0 = 1, #var_16_0 do
+			var_16_0[iter_16_0]:update(arg_16_1, arg_16_2)
 		end
 	end
 
-	self:_handle_input(dt, t)
+	arg_16_0:_handle_input(arg_16_1, arg_16_2)
 
-	local previous_time = self._screen_timer
+	local var_16_1 = arg_16_0._screen_timer
 
-	self._screen_timer = self._screen_timer - dt
+	arg_16_0._screen_timer = arg_16_0._screen_timer - arg_16_1
 
-	if self._screen_timer <= 0 and not self._screen_timer_ended then
-		self._screen_timer_ended = true
+	if arg_16_0._screen_timer <= 0 and not arg_16_0._screen_timer_ended then
+		arg_16_0._screen_timer_ended = true
 	end
 
-	local play_sound = self._screen_timer > 0 and previous_time and math.round(previous_time) ~= math.round(self._screen_timer)
-
-	if play_sound then
-		if self._screen_timer < 1 then
-			self:play_sound("menu_wind_countdown_warning")
-		elseif self._screen_timer < 4 then
-			self:play_sound("menu_wind_countdown_count_big")
-		elseif self._screen_timer < 8 then
-			self:play_sound("menu_wind_countdown_count_small")
+	if arg_16_0._screen_timer > 0 and var_16_1 and math.round(var_16_1) ~= math.round(arg_16_0._screen_timer) then
+		if arg_16_0._screen_timer < 1 then
+			arg_16_0:play_sound("menu_wind_countdown_warning")
+		elseif arg_16_0._screen_timer < 4 then
+			arg_16_0:play_sound("menu_wind_countdown_count_big")
+		elseif arg_16_0._screen_timer < 8 then
+			arg_16_0:play_sound("menu_wind_countdown_count_small")
 		end
 	end
 
-	self:_animate_font_size_bounce(dt, t)
-	self:_update_screen_timer(self._widgets_by_name.screen_timer_text, self._screen_timer)
-	self:_update_screen_timer(self._widgets_by_name.screen_timer_text_big, self._screen_timer)
-	self.super.update(self, dt, t)
+	arg_16_0:_animate_font_size_bounce(arg_16_1, arg_16_2)
+	arg_16_0:_update_screen_timer(arg_16_0._widgets_by_name.screen_timer_text, arg_16_0._screen_timer)
+	arg_16_0:_update_screen_timer(arg_16_0._widgets_by_name.screen_timer_text_big, arg_16_0._screen_timer)
+	arg_16_0.super.update(arg_16_0, arg_16_1, arg_16_2)
 end
 
-VersusTeamParadingView.destroy = function (self)
+function VersusTeamParadingView.destroy(arg_17_0)
 	if not Managers.chat:chat_is_focused() then
-		local input_manager = Managers.input
+		local var_17_0 = Managers.input
 
-		input_manager:device_unblock_all_services("keyboard")
-		input_manager:device_unblock_all_services("mouse")
-		input_manager:device_unblock_all_services("gamepad")
+		var_17_0:device_unblock_all_services("keyboard")
+		var_17_0:device_unblock_all_services("mouse")
+		var_17_0:device_unblock_all_services("gamepad")
 	end
 
-	Managers.state.event:unregister("on_player_party_changed", self)
+	Managers.state.event:unregister("on_player_party_changed", arg_17_0)
 end
 
-VersusTeamParadingView._handle_input = function (self, dt, t)
+function VersusTeamParadingView._handle_input(arg_18_0, arg_18_1, arg_18_2)
 	return
 end
 
-VersusTeamParadingView.on_player_party_changed = function (self, player, is_local_player, old_party_id, new_party_id)
-	if not is_local_player then
+function VersusTeamParadingView.on_player_party_changed(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+	if not arg_19_2 then
 		return
 	end
 
 	if Managers.mechanism:get_state() == "inn" then
-		self:_present_team(new_party_id)
+		arg_19_0:_present_team(arg_19_4)
 	end
 end

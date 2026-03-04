@@ -1,208 +1,208 @@
-﻿-- chunkname: @scripts/imgui/imgui_combat_log.lua
+-- chunkname: @scripts/imgui/imgui_combat_log.lua
 
 ImguiCombatLog = class(ImguiCombatLog)
 
-local SHOULD_RELOAD = false
-local DEFAULT_WINDOW_X = 800
-local DEFAULT_WINDOW_Y = 500
+local var_0_0 = false
+local var_0_1 = 800
+local var_0_2 = 500
 
-local function format_timestamp(time)
-	local miliseconds = time % 60
-	local seconds = math.floor(time)
+local function var_0_3(arg_1_0)
+	local var_1_0 = arg_1_0 % 60
+	local var_1_1 = math.floor(arg_1_0)
 
-	return os.date("%H:%M", seconds) .. string.format(":%06.3f", miliseconds)
+	return os.date("%H:%M", var_1_1) .. string.format(":%06.3f", var_1_0)
 end
 
-ImguiCombatLog.init = function (self)
-	self._log = {}
-	self._max_lines = 1000
-	self._start_time = os.time() - os.clock()
-	self.categories = {
+function ImguiCombatLog.init(arg_2_0)
+	arg_2_0._log = {}
+	arg_2_0._max_lines = 1000
+	arg_2_0._start_time = os.time() - os.clock()
+	arg_2_0.categories = {
 		{
-			enabled = true,
 			name = "Damage",
-			type = "damage",
+			enabled = true,
+			type = "damage"
 		},
 		{
-			enabled = true,
 			name = "Heal",
-			type = "heal",
+			enabled = true,
+			type = "heal"
 		},
 		{
-			enabled = true,
 			name = "Buff",
-			type = "buff",
+			enabled = true,
+			type = "buff"
 		},
 		{
-			enabled = true,
 			name = "Buff Proc",
-			type = "buff_proc",
+			enabled = true,
+			type = "buff_proc"
 		},
 		{
-			enabled = true,
 			name = "Action",
-			type = "action",
-		},
+			enabled = true,
+			type = "action"
+		}
 	}
-	self._type_ids = {}
-	self._settings = {
+	arg_2_0._type_ids = {}
+	arg_2_0._settings = {
 		auto_start_recording = true,
 		show_timestamp = true,
-		show_type = true,
+		show_type = true
 	}
-	self._first_run = true
+	arg_2_0._first_run = true
 
-	self:_make_log_type_lookup()
-	self:register_events()
-	self:_load_settings()
+	arg_2_0:_make_log_type_lookup()
+	arg_2_0:register_events()
+	arg_2_0:_load_settings()
 end
 
-ImguiCombatLog.register_events = function (self)
-	local event_manager = Managers.state.event
+function ImguiCombatLog.register_events(arg_3_0)
+	local var_3_0 = Managers.state.event
 
-	if event_manager then
-		event_manager:register(self, "combat_log_damage", "log_damage")
-		event_manager:register(self, "combat_log_heal", "log_heal")
-		event_manager:register(self, "combat_log_action", "log_action")
-		event_manager:register(self, "combat_log_proc", "log_proc")
-		event_manager:register(self, "combat_log_buff", "log_buff")
+	if var_3_0 then
+		var_3_0:register(arg_3_0, "combat_log_damage", "log_damage")
+		var_3_0:register(arg_3_0, "combat_log_heal", "log_heal")
+		var_3_0:register(arg_3_0, "combat_log_action", "log_action")
+		var_3_0:register(arg_3_0, "combat_log_proc", "log_proc")
+		var_3_0:register(arg_3_0, "combat_log_buff", "log_buff")
 	end
 end
 
-ImguiCombatLog.unregister_events = function (self)
-	local event_manager = Managers.state.event
+function ImguiCombatLog.unregister_events(arg_4_0)
+	local var_4_0 = Managers.state.event
 
-	if event_manager then
-		event_manager:unregister("combat_log_damage", self)
-		event_manager:unregister("combat_log_heal", self)
-		event_manager:unregister("combat_log_action", self)
-		event_manager:unregister("combat_log_proc", self)
-		event_manager:unregister("combat_log_buff", self)
+	if var_4_0 then
+		var_4_0:unregister("combat_log_damage", arg_4_0)
+		var_4_0:unregister("combat_log_heal", arg_4_0)
+		var_4_0:unregister("combat_log_action", arg_4_0)
+		var_4_0:unregister("combat_log_proc", arg_4_0)
+		var_4_0:unregister("combat_log_buff", arg_4_0)
 	end
 end
 
-ImguiCombatLog.on_round_start = function (self)
-	if self._settings.auto_start_recording then
-		self:register_events()
+function ImguiCombatLog.on_round_start(arg_5_0)
+	if arg_5_0._settings.auto_start_recording then
+		arg_5_0:register_events()
 	end
 
-	self:_save_settings()
+	arg_5_0:_save_settings()
 end
 
-ImguiCombatLog.on_round_end = function (self)
-	self:unregister_events()
-	self:_save_settings()
+function ImguiCombatLog.on_round_end(arg_6_0)
+	arg_6_0:unregister_events()
+	arg_6_0:_save_settings()
 end
 
-ImguiCombatLog.destroy = function (self)
-	self:unregister_events()
-	self:_save_settings()
+function ImguiCombatLog.destroy(arg_7_0)
+	arg_7_0:unregister_events()
+	arg_7_0:_save_settings()
 end
 
-ImguiCombatLog.update = function (self)
-	if SHOULD_RELOAD then
-		self:unregister_events()
-		self:init()
+function ImguiCombatLog.update(arg_8_0)
+	if var_0_0 then
+		arg_8_0:unregister_events()
+		arg_8_0:init()
 
-		SHOULD_RELOAD = false
+		var_0_0 = false
 	end
 end
 
-ImguiCombatLog.is_persistent = function (self)
+function ImguiCombatLog.is_persistent(arg_9_0)
 	return true
 end
 
-ImguiCombatLog.draw = function (self, is_open)
-	if self._first_run then
-		Imgui.set_next_window_size(DEFAULT_WINDOW_X, DEFAULT_WINDOW_Y)
+function ImguiCombatLog.draw(arg_10_0, arg_10_1)
+	if arg_10_0._first_run then
+		Imgui.set_next_window_size(var_0_1, var_0_2)
 
-		self._first_run = false
+		arg_10_0._first_run = false
 	end
 
-	local do_close = Imgui.begin_window("Combat Log")
+	local var_10_0 = Imgui.begin_window("Combat Log")
 
-	self._settings.show_timestamp = Imgui.checkbox("Timestamp", self._settings.show_timestamp)
-
-	Imgui.same_line()
-
-	self._settings.show_type = Imgui.checkbox("Type", self._settings.show_type)
+	arg_10_0._settings.show_timestamp = Imgui.checkbox("Timestamp", arg_10_0._settings.show_timestamp)
 
 	Imgui.same_line()
 
-	self._settings.auto_start_recording = Imgui.checkbox("Auto Start Recording", self._settings.auto_start_recording)
+	arg_10_0._settings.show_type = Imgui.checkbox("Type", arg_10_0._settings.show_type)
 
-	local categories = self.categories
+	Imgui.same_line()
 
-	for i = 1, #categories do
-		if i > 1 then
+	arg_10_0._settings.auto_start_recording = Imgui.checkbox("Auto Start Recording", arg_10_0._settings.auto_start_recording)
+
+	local var_10_1 = arg_10_0.categories
+
+	for iter_10_0 = 1, #var_10_1 do
+		if iter_10_0 > 1 then
 			Imgui.same_line()
 		end
 
-		local category = categories[i]
+		local var_10_2 = var_10_1[iter_10_0]
 
-		category.enabled = Imgui.checkbox(category.name, category.enabled)
+		var_10_2.enabled = Imgui.checkbox(var_10_2.name, var_10_2.enabled)
 	end
 
 	if Imgui.button("Start", 100, 20) then
-		self:register_events()
+		arg_10_0:register_events()
 	end
 
 	Imgui.same_line()
 
 	if Imgui.button("Stop", 100, 20) then
-		self:unregister_events()
+		arg_10_0:unregister_events()
 	end
 
 	Imgui.same_line()
 
 	if Imgui.button("Copy Visible", 100, 20) then
-		self:copy_to_clipboard(false)
+		arg_10_0:copy_to_clipboard(false)
 	end
 
 	Imgui.same_line()
 
 	if Imgui.button("Copy All", 100, 20) then
-		self:copy_to_clipboard(true)
+		arg_10_0:copy_to_clipboard(true)
 	end
 
 	Imgui.same_line()
 
 	if Imgui.button("Clear", 40, 20) then
-		self:clear()
+		arg_10_0:clear()
 	end
 
-	local show_timestamp = self._settings.show_timestamp
-	local show_type = self._settings.show_type
-	local window_size_x, window_size_y = Imgui.get_window_size()
+	local var_10_3 = arg_10_0._settings.show_timestamp
+	local var_10_4 = arg_10_0._settings.show_type
+	local var_10_5, var_10_6 = Imgui.get_window_size()
 
-	Imgui.begin_child_window("Log:", window_size_x - 15, window_size_y - 105, false, "no_title_bar", "always_auto_resize", "horizontal_scrollbar")
+	Imgui.begin_child_window("Log:", var_10_5 - 15, var_10_6 - 105, false, "no_title_bar", "always_auto_resize", "horizontal_scrollbar")
 
-	for line_id = 1, #self._log do
-		local line = self._log[line_id]
+	for iter_10_1 = 1, #arg_10_0._log do
+		local var_10_7 = arg_10_0._log[iter_10_1]
 
-		if categories[line.type_id].enabled then
-			local line_contents = line.content
+		if var_10_1[var_10_7.type_id].enabled then
+			local var_10_8 = var_10_7.content
 
-			if show_timestamp then
-				Imgui.text(line.timestamp)
+			if var_10_3 then
+				Imgui.text(var_10_7.timestamp)
 				Imgui.same_line()
 			end
 
-			if show_type then
-				Imgui.text(line.type_name)
+			if var_10_4 then
+				Imgui.text(var_10_7.type_name)
 				Imgui.same_line()
 			end
 
-			local line_content_num = #line_contents
+			local var_10_9 = #var_10_8
 
-			for i = 1, line_content_num do
-				local data = line_contents[i]
-				local text = data[1]
-				local color = data[2]
+			for iter_10_2 = 1, var_10_9 do
+				local var_10_10 = var_10_8[iter_10_2]
+				local var_10_11 = var_10_10[1]
+				local var_10_12 = var_10_10[2]
 
-				Imgui.text_colored(text, color[2], color[3], color[4], color[1])
+				Imgui.text_colored(var_10_11, var_10_12[2], var_10_12[3], var_10_12[4], var_10_12[1])
 
-				if i ~= line_content_num then
+				if iter_10_2 ~= var_10_9 then
 					Imgui.same_line()
 				end
 			end
@@ -212,197 +212,194 @@ ImguiCombatLog.draw = function (self, is_open)
 	Imgui.end_child_window()
 	Imgui.end_window("Combat Log")
 
-	return do_close
+	return var_10_0
 end
 
-ImguiCombatLog.log_damage = function (self, attacker_unit, victim_unit, networkified_damage_amount, hit_zone_name, damage_type, damage_source, is_critical_strike, backstab_multiplier, added_dot, target_index, first_hit, total_hits, power_level)
-	local attacker_unit_breed = Unit.alive(attacker_unit) and Unit.get_data(attacker_unit, "breed")
-	local victim_unit_breed = Unit.alive(victim_unit) and Unit.get_data(victim_unit, "breed")
-	local network_manager = Managers.state.network
-	local unit_id = network_manager and network_manager:unit_game_object_id(victim_unit)
-	local line = self:_add_line("damage")
+function ImguiCombatLog.log_damage(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8, arg_11_9, arg_11_10, arg_11_11, arg_11_12, arg_11_13)
+	local var_11_0 = Unit.alive(arg_11_1) and Unit.get_data(arg_11_1, "breed")
+	local var_11_1 = Unit.alive(arg_11_2) and Unit.get_data(arg_11_2, "breed")
+	local var_11_2 = Managers.state.network
+	local var_11_3 = var_11_2 and var_11_2:unit_game_object_id(arg_11_2)
+	local var_11_4 = arg_11_0:_add_line("damage")
 
-	self:_add_colored_segment(line, string.format("%s -> %s (%d) (%.2f %s), Power(%.2f), hit (%s) using (%s) Crit: %s, Backstab Mult: %.2f, Target Index: %d", tostring(attacker_unit_breed and attacker_unit_breed.name or attacker_unit), tostring(victim_unit_breed and victim_unit_breed.name or victim_unit), unit_id or 0, networkified_damage_amount or 0, tostring(damage_type), power_level or 0, tostring(hit_zone_name), tostring(damage_source), tostring(is_critical_strike), backstab_multiplier or 1, target_index or 0), Colors.get_table("orange"))
+	arg_11_0:_add_colored_segment(var_11_4, string.format("%s -> %s (%d) (%.2f %s), Power(%.2f), hit (%s) using (%s) Crit: %s, Backstab Mult: %.2f, Target Index: %d", tostring(var_11_0 and var_11_0.name or arg_11_1), tostring(var_11_1 and var_11_1.name or arg_11_2), var_11_3 or 0, arg_11_3 or 0, tostring(arg_11_5), arg_11_13 or 0, tostring(arg_11_4), tostring(arg_11_6), tostring(arg_11_7), arg_11_8 or 1, arg_11_10 or 0), Colors.get_table("orange"))
 end
 
-ImguiCombatLog.log_heal = function (self, healer_unit, unit, buffed_heal_amount, heal_type)
-	local healer_unit_breed = Unit.alive(healer_unit) and Unit.get_data(healer_unit, "breed")
-	local unit_breed = Unit.alive(unit) and Unit.get_data(unit, "breed")
-	local line = self:_add_line("heal")
+function ImguiCombatLog.log_heal(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+	local var_12_0 = Unit.alive(arg_12_1) and Unit.get_data(arg_12_1, "breed")
+	local var_12_1 = Unit.alive(arg_12_2) and Unit.get_data(arg_12_2, "breed")
+	local var_12_2 = arg_12_0:_add_line("heal")
 
-	self:_add_colored_segment(line, string.format("%s -> %s (%.2f %s)", tostring(healer_unit_breed and healer_unit_breed.name or healer_unit), tostring(unit_breed and unit_breed.name or unit), buffed_heal_amount or 0, tostring(heal_type)), Colors.get_table("lime"))
+	arg_12_0:_add_colored_segment(var_12_2, string.format("%s -> %s (%.2f %s)", tostring(var_12_0 and var_12_0.name or arg_12_1), tostring(var_12_1 and var_12_1.name or arg_12_2), arg_12_3 or 0, tostring(arg_12_4)), Colors.get_table("lime"))
 end
 
-ImguiCombatLog.log_action = function (self, unit, item_name, kind, action_name, sub_action_name, power_level, started, reason)
-	local unit_breed = Unit.alive(unit) and Unit.get_data(unit, "breed")
-	local line = self:_add_line("action")
+function ImguiCombatLog.log_action(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7, arg_13_8)
+	local var_13_0 = Unit.alive(arg_13_1) and Unit.get_data(arg_13_1, "breed")
+	local var_13_1 = arg_13_0:_add_line("action")
 
-	if started then
-		self:_add_colored_segment(line, string.format("[Start] %s (%s - power %.2f) - %s/%s/%s", tostring(unit_breed and unit_breed.name or unit), tostring(kind), power_level or 0, tostring(item_name), tostring(action_name), tostring(sub_action_name)), Colors.get_table("white"))
+	if arg_13_7 then
+		arg_13_0:_add_colored_segment(var_13_1, string.format("[Start] %s (%s - power %.2f) - %s/%s/%s", tostring(var_13_0 and var_13_0.name or arg_13_1), tostring(arg_13_3), arg_13_6 or 0, tostring(arg_13_2), tostring(arg_13_4), tostring(arg_13_5)), Colors.get_table("white"))
 	else
-		self:_add_colored_segment(line, string.format("[End] %s (%s - power %.2f), Reason: %s - %s/%s/%s ", tostring(unit_breed and unit_breed.name or unit), tostring(kind), power_level or 0, tostring(reason), tostring(item_name), tostring(action_name), tostring(sub_action_name)), Colors.get_table("white"))
+		arg_13_0:_add_colored_segment(var_13_1, string.format("[End] %s (%s - power %.2f), Reason: %s - %s/%s/%s ", tostring(var_13_0 and var_13_0.name or arg_13_1), tostring(arg_13_3), arg_13_6 or 0, tostring(arg_13_8), tostring(arg_13_2), tostring(arg_13_4), tostring(arg_13_5)), Colors.get_table("white"))
 	end
 end
 
-ImguiCombatLog.log_proc = function (self, player, event, buff, params, success)
-	local unit = player and player.player_unit
-	local unit_breed = Unit.alive(unit) and Unit.get_data(unit, "breed")
-	local line = self:_add_line("buff_proc")
+function ImguiCombatLog.log_proc(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+	local var_14_0 = arg_14_1 and arg_14_1.player_unit
+	local var_14_1 = Unit.alive(var_14_0) and Unit.get_data(var_14_0, "breed")
+	local var_14_2 = arg_14_0:_add_line("buff_proc")
 
-	self:_add_colored_segment(line, string.format("%s (%s) -> %s", tostring(unit_breed and unit_breed.name or unit), event or "-", tostring(buff.buff_type)), Colors.get_table("silver"))
+	arg_14_0:_add_colored_segment(var_14_2, string.format("%s (%s) -> %s", tostring(var_14_1 and var_14_1.name or var_14_0), arg_14_2 or "-", tostring(arg_14_3.buff_type)), Colors.get_table("silver"))
 end
 
-ImguiCombatLog.log_buff = function (self, unit, buff, added, stack_count, max_stacks)
-	local owner_breed = Unit.alive(unit) and Unit.get_data(unit, "breed")
-	local attacker_unit = buff and buff.attacker_unit
-	local attacker_breed = Unit.alive(attacker_unit) and Unit.get_data(attacker_unit, "breed")
-	local line = self:_add_line("buff")
+function ImguiCombatLog.log_buff(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+	local var_15_0 = Unit.alive(arg_15_1) and Unit.get_data(arg_15_1, "breed")
+	local var_15_1 = arg_15_2 and arg_15_2.attacker_unit
+	local var_15_2 = Unit.alive(var_15_1) and Unit.get_data(var_15_1, "breed")
+	local var_15_3 = arg_15_0:_add_line("buff")
 
-	if added then
-		self:_add_colored_segment(line, string.format("[Added] %s -> %s (mult: %.2f)", tostring(owner_breed and owner_breed.name or unit), tostring(buff.buff_type), type(buff.multiplier) == "function" and buff.multiplier(unit, ScriptUnit.extension(unit, "buff_system")) or buff.multiplier or 1), Colors.get_table("lime"))
+	if arg_15_3 then
+		arg_15_0:_add_colored_segment(var_15_3, string.format("[Added] %s -> %s (mult: %.2f)", tostring(var_15_0 and var_15_0.name or arg_15_1), tostring(arg_15_2.buff_type), type(arg_15_2.multiplier) == "function" and arg_15_2.multiplier(arg_15_1, ScriptUnit.extension(arg_15_1, "buff_system")) or arg_15_2.multiplier or 1), Colors.get_table("lime"))
 
-		if stack_count and max_stacks then
-			self:_add_colored_segment(line, string.format("(stacks: %d/%d)", stack_count, max_stacks), Colors.get_table("lime"))
+		if arg_15_4 and arg_15_5 then
+			arg_15_0:_add_colored_segment(var_15_3, string.format("(stacks: %d/%d)", arg_15_4, arg_15_5), Colors.get_table("lime"))
 		end
 
-		if attacker_unit then
-			self:_add_colored_segment(line, string.format("(%s)", tostring(attacker_breed and attacker_breed.name or attacker_unit)), Colors.get_table("lime"))
+		if var_15_1 then
+			arg_15_0:_add_colored_segment(var_15_3, string.format("(%s)", tostring(var_15_2 and var_15_2.name or var_15_1)), Colors.get_table("lime"))
 		end
 	else
-		self:_add_colored_segment(line, string.format("[Removed] %s -> %s", tostring(owner_breed and owner_breed.name or unit), tostring(buff.buff_type)), Colors.get_table("yellow"))
+		arg_15_0:_add_colored_segment(var_15_3, string.format("[Removed] %s -> %s", tostring(var_15_0 and var_15_0.name or arg_15_1), tostring(arg_15_2.buff_type)), Colors.get_table("yellow"))
 
-		if attacker_unit then
-			self:_add_colored_segment(line, string.format("(%s)", tostring(attacker_breed and attacker_breed.name or attacker_unit)), Colors.get_table("yellow"))
+		if var_15_1 then
+			arg_15_0:_add_colored_segment(var_15_3, string.format("(%s)", tostring(var_15_2 and var_15_2.name or var_15_1)), Colors.get_table("yellow"))
 		end
 	end
 end
 
-ImguiCombatLog._make_log_type_lookup = function (self)
-	local categories = self.categories
+function ImguiCombatLog._make_log_type_lookup(arg_16_0)
+	local var_16_0 = arg_16_0.categories
 
-	for i = 1, #categories do
-		self._type_ids[categories[i].type] = i
+	for iter_16_0 = 1, #var_16_0 do
+		arg_16_0._type_ids[var_16_0[iter_16_0].type] = iter_16_0
 	end
 end
 
-ImguiCombatLog._get_type_name = function (self, type)
-	if type then
-		local id = self._type_ids[type]
-		local category = self.categories[id]
-		local type_name = category and category.name or tostring(type)
+function ImguiCombatLog._get_type_name(arg_17_0, arg_17_1)
+	if arg_17_1 then
+		local var_17_0 = arg_17_0._type_ids[arg_17_1]
+		local var_17_1 = arg_17_0.categories[var_17_0]
 
-		return type_name
+		return var_17_1 and var_17_1.name or tostring(arg_17_1)
 	end
 
 	return tostring("Unknown")
 end
 
-ImguiCombatLog._add_line = function (self, type)
-	local new_line = {}
+function ImguiCombatLog._add_line(arg_18_0, arg_18_1)
+	local var_18_0 = {
+		timestamp = "[" .. var_0_3(arg_18_0._start_time + os.clock()) .. "]",
+		content = {},
+		type_id = arg_18_0._type_ids[arg_18_1] or 0,
+		type_name = "[" .. arg_18_0:_get_type_name(arg_18_1) .. "]"
+	}
 
-	new_line.timestamp = "[" .. format_timestamp(self._start_time + os.clock()) .. "]"
-	new_line.content = {}
-	new_line.type_id = self._type_ids[type] or 0
-	new_line.type_name = "[" .. self:_get_type_name(type) .. "]"
+	table.insert(arg_18_0._log, 1, var_18_0)
 
-	table.insert(self._log, 1, new_line)
+	local var_18_1 = #arg_18_0._log
 
-	local num_lines = #self._log
-
-	if num_lines > self._max_lines then
-		table.remove(self._log, num_lines)
+	if var_18_1 > arg_18_0._max_lines then
+		table.remove(arg_18_0._log, var_18_1)
 	end
 
-	return new_line
+	return var_18_0
 end
 
-ImguiCombatLog._add_colored_segment = function (self, line, text, color)
-	local text_to_add = text or ""
-	local color_to_add = color or Colors.get_table("white")
+function ImguiCombatLog._add_colored_segment(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+	local var_19_0 = arg_19_2 or ""
+	local var_19_1 = arg_19_3 or Colors.get_table("white")
 
-	table.insert(line.content, {
-		text_to_add,
-		color_to_add,
+	table.insert(arg_19_1.content, {
+		var_19_0,
+		var_19_1
 	})
 end
 
-ImguiCombatLog.clear = function (self)
-	self._log = {}
+function ImguiCombatLog.clear(arg_20_0)
+	arg_20_0._log = {}
 end
 
-ImguiCombatLog.copy_to_clipboard = function (self, copy_all)
-	local output = ""
-	local categories = self.categories
-	local show_type = self._settings.show_type
+function ImguiCombatLog.copy_to_clipboard(arg_21_0, arg_21_1)
+	local var_21_0 = ""
+	local var_21_1 = arg_21_0.categories
+	local var_21_2 = arg_21_0._settings.show_type
 
-	for line_id = 1, #self._log do
-		local line = self._log[line_id]
+	for iter_21_0 = 1, #arg_21_0._log do
+		local var_21_3 = arg_21_0._log[iter_21_0]
 
-		if copy_all or categories[line.type_id].enabled then
-			local line_contents = line.content
+		if arg_21_1 or var_21_1[var_21_3.type_id].enabled then
+			local var_21_4 = var_21_3.content
 
-			if copy_all or self._show_timestamp then
-				output = output .. line.timestamp
+			if arg_21_1 or arg_21_0._show_timestamp then
+				var_21_0 = var_21_0 .. var_21_3.timestamp
 			end
 
-			if copy_all or show_type then
-				output = output .. " " .. line.type_name
+			if arg_21_1 or var_21_2 then
+				var_21_0 = var_21_0 .. " " .. var_21_3.type_name
 			end
 
-			for i = 1, #line_contents do
-				local data = line_contents[i]
-				local text = data[1]
+			for iter_21_1 = 1, #var_21_4 do
+				local var_21_5 = var_21_4[iter_21_1][1]
 
-				output = output .. " " .. text
+				var_21_0 = var_21_0 .. " " .. var_21_5
 			end
 
-			output = output .. "\n"
+			var_21_0 = var_21_0 .. "\n"
 		end
 	end
 
-	Clipboard.put(output)
+	Clipboard.put(var_21_0)
 end
 
-ImguiCombatLog._save_settings = function (self)
-	local categories = self.categories
-	local saved_settings = {
+function ImguiCombatLog._save_settings(arg_22_0)
+	local var_22_0 = arg_22_0.categories
+	local var_22_1 = {
 		categories = {},
-		settings = self._settings,
+		settings = arg_22_0._settings
 	}
 
-	for i = 1, #categories do
-		local type = categories[i].type
+	for iter_22_0 = 1, #var_22_0 do
+		local var_22_2 = var_22_0[iter_22_0].type
 
-		saved_settings.categories[type] = categories[i].enabled
+		var_22_1.categories[var_22_2] = var_22_0[iter_22_0].enabled
 	end
 
-	Development.set_setting("ImguiCombatLog_settings", saved_settings)
+	Development.set_setting("ImguiCombatLog_settings", var_22_1)
 	Application.save_user_settings()
 end
 
-ImguiCombatLog._load_settings = function (self)
-	local saved_settings = Development.setting("ImguiCombatLog_settings")
+function ImguiCombatLog._load_settings(arg_23_0)
+	local var_23_0 = Development.setting("ImguiCombatLog_settings")
 
-	if saved_settings then
-		local category_settings = saved_settings.categories
+	if var_23_0 then
+		local var_23_1 = var_23_0.categories
 
-		if category_settings then
-			local categories = self.categories
+		if var_23_1 then
+			local var_23_2 = arg_23_0.categories
 
-			for i = 1, #categories do
-				local type = categories[i].type
-				local new_val = category_settings[type]
+			for iter_23_0 = 1, #var_23_2 do
+				local var_23_3 = var_23_1[var_23_2[iter_23_0].type]
 
-				if new_val ~= nil then
-					categories[i].enabled = new_val
+				if var_23_3 ~= nil then
+					var_23_2[iter_23_0].enabled = var_23_3
 				end
 			end
 		end
 
-		local general_settings = saved_settings.settings
+		local var_23_4 = var_23_0.settings
 
-		if general_settings then
-			table.merge(self._settings, general_settings)
+		if var_23_4 then
+			table.merge(arg_23_0._settings, var_23_4)
 		end
 	end
 end

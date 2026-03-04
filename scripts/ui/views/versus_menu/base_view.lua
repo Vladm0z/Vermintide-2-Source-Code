@@ -1,179 +1,177 @@
-﻿-- chunkname: @scripts/ui/views/versus_menu/base_view.lua
+-- chunkname: @scripts/ui/views/versus_menu/base_view.lua
 
 BaseView = class(BaseView)
 
-BaseView.init = function (self, ingame_ui_context, definitions)
-	fassert(definitions, "No definitions passed")
-	fassert(definitions.scenegraph_definition, "No scenegraph in definitions")
+function BaseView.init(arg_1_0, arg_1_1, arg_1_2)
+	fassert(arg_1_2, "No definitions passed")
+	fassert(arg_1_2.scenegraph_definition, "No scenegraph in definitions")
 
-	self._ingame_ui_context = ingame_ui_context
-	self._world = ingame_ui_context.world
-	self._ui_renderer = ingame_ui_context.ui_renderer
-	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self._render_settings = self._render_settings or {}
+	arg_1_0._ingame_ui_context = arg_1_1
+	arg_1_0._world = arg_1_1.world
+	arg_1_0._ui_renderer = arg_1_1.ui_renderer
+	arg_1_0._ui_top_renderer = arg_1_1.ui_top_renderer
+	arg_1_0._render_settings = arg_1_0._render_settings or {}
 
-	local world = Managers.world:world("level_world")
+	local var_1_0 = Managers.world:world("level_world")
 
-	self._wwise_world = Managers.world:wwise_world(world)
-	self._input_manager = ingame_ui_context.input_manager
-	self._input_service_name = "ingame_menu"
-	self._definitions = definitions
-	self._retained_mode = not not definitions.retained_mode
-	self._dirty = true
-	self._animations = {}
+	arg_1_0._wwise_world = Managers.world:wwise_world(var_1_0)
+	arg_1_0._input_manager = arg_1_1.input_manager
+	arg_1_0._input_service_name = "ingame_menu"
+	arg_1_0._definitions = arg_1_2
+	arg_1_0._retained_mode = not not arg_1_2.retained_mode
+	arg_1_0._dirty = true
+	arg_1_0._animations = {}
 end
 
-BaseView.destroy = function (self)
+function BaseView.destroy(arg_2_0)
 	return
 end
 
-BaseView.on_enter = function (self)
+function BaseView.on_enter(arg_3_0)
 	ShowCursorStack.show("BaseView")
 
-	local input_manager = self._input_manager
-	local input_service_name = self._input_service_name
+	local var_3_0 = arg_3_0._input_manager
+	local var_3_1 = arg_3_0._input_service_name
 
-	input_manager:block_device_except_service(input_service_name, "keyboard", 1)
-	input_manager:block_device_except_service(input_service_name, "mouse", 1)
-	input_manager:block_device_except_service(input_service_name, "gamepad", 1)
-	self:_create_ui_elements()
+	var_3_0:block_device_except_service(var_3_1, "keyboard", 1)
+	var_3_0:block_device_except_service(var_3_1, "mouse", 1)
+	var_3_0:block_device_except_service(var_3_1, "gamepad", 1)
+	arg_3_0:_create_ui_elements()
 end
 
-BaseView.post_update_on_enter = function (self)
+function BaseView.post_update_on_enter(arg_4_0)
 	return
 end
 
-BaseView.on_exit = function (self)
+function BaseView.on_exit(arg_5_0)
 	ShowCursorStack.hide("BaseView")
 
-	local input_manager = self._input_manager
+	local var_5_0 = arg_5_0._input_manager
 
-	input_manager:device_unblock_all_services("keyboard", 1)
-	input_manager:device_unblock_all_services("mouse", 1)
-	input_manager:device_unblock_all_services("gamepad", 1)
-	self:_destroy_ui_elements()
+	var_5_0:device_unblock_all_services("keyboard", 1)
+	var_5_0:device_unblock_all_services("mouse", 1)
+	var_5_0:device_unblock_all_services("gamepad", 1)
+	arg_5_0:_destroy_ui_elements()
 end
 
-BaseView.post_update_on_exit = function (self)
+function BaseView.post_update_on_exit(arg_6_0)
 	return
 end
 
-BaseView._create_ui_elements = function (self)
-	local definitions = self._definitions
-	local scenegraph_definition = definitions.scenegraph_definition
+function BaseView._create_ui_elements(arg_7_0)
+	local var_7_0 = arg_7_0._definitions
+	local var_7_1 = var_7_0.scenegraph_definition
 
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	arg_7_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_7_1)
 
-	local widgets_by_name = {}
+	local var_7_2 = {}
 
-	self._widgets = UIUtils.create_widgets(definitions.widget_definitions, {}, widgets_by_name)
+	arg_7_0._widgets = UIUtils.create_widgets(var_7_0.widget_definitions, {}, var_7_2)
 
-	local top_widget_definitions = definitions.top_widget_definitions
+	local var_7_3 = var_7_0.top_widget_definitions
 
-	if top_widget_definitions then
-		self._top_widgets = UIUtils.create_widgets(top_widget_definitions, {}, widgets_by_name)
+	if var_7_3 then
+		arg_7_0._top_widgets = UIUtils.create_widgets(var_7_3, {}, var_7_2)
 	end
 
-	self._widgets_by_name = widgets_by_name
+	arg_7_0._widgets_by_name = var_7_2
 
-	local animations = definitions.animations
-
-	if animations then
-		self._ui_animator = UIAnimator:new(self._ui_scenegraph, definitions.animations)
+	if var_7_0.animations then
+		arg_7_0._ui_animator = UIAnimator:new(arg_7_0._ui_scenegraph, var_7_0.animations)
 	end
 end
 
-BaseView._destroy_ui_elements = function (self)
-	if self._retained_mode then
-		UIUtils.destroy_widgets(self._ui_renderer, self._widgets_by_name)
+function BaseView._destroy_ui_elements(arg_8_0)
+	if arg_8_0._retained_mode then
+		UIUtils.destroy_widgets(arg_8_0._ui_renderer, arg_8_0._widgets_by_name)
 	end
 
-	self._ui_scenegraph = nil
-	self._widgets = nil
-	self._top_widgets = nil
-	self._widgets_by_name = nil
-	self._ui_animator = nil
+	arg_8_0._ui_scenegraph = nil
+	arg_8_0._widgets = nil
+	arg_8_0._top_widgets = nil
+	arg_8_0._widgets_by_name = nil
+	arg_8_0._ui_animator = nil
 end
 
-BaseView.post_update = function (self, dt, t)
+function BaseView.post_update(arg_9_0, arg_9_1, arg_9_2)
 	return
 end
 
-BaseView.update = function (self, dt, t)
-	local animator = self._ui_animator
+function BaseView.update(arg_10_0, arg_10_1, arg_10_2)
+	local var_10_0 = arg_10_0._ui_animator
 
-	if animator then
-		animator:update(dt, t)
+	if var_10_0 then
+		var_10_0:update(arg_10_1, arg_10_2)
 	end
 
-	if not self._retained_mode or self._dirty then
-		self:_draw(dt, self:input_service())
+	if not arg_10_0._retained_mode or arg_10_0._dirty then
+		arg_10_0:_draw(arg_10_1, arg_10_0:input_service())
 
-		self._dirty = false
+		arg_10_0._dirty = false
 	end
 end
 
-BaseView._draw_widgets = function (self, ui_renderer, dt)
+function BaseView._draw_widgets(arg_11_0, arg_11_1, arg_11_2)
 	return
 end
 
-BaseView._draw = function (self, dt, input_service)
-	local ui_renderer = self._ui_renderer
-	local ui_top_renderer = self._ui_top_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local render_settings = self._render_settings
-	local alpha_multiplier = render_settings.alpha_multiplier or 1
+function BaseView._draw(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = arg_12_0._ui_renderer
+	local var_12_1 = arg_12_0._ui_top_renderer
+	local var_12_2 = arg_12_0._ui_scenegraph
+	local var_12_3 = arg_12_0._render_settings
+	local var_12_4 = var_12_3.alpha_multiplier or 1
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+	UIRenderer.begin_pass(var_12_0, var_12_2, arg_12_2, arg_12_1, nil, var_12_3)
 
-	for i, widget in pairs(self._widgets) do
-		render_settings.alpha_multiplier = widget.alpha_multiplier or alpha_multiplier
+	for iter_12_0, iter_12_1 in pairs(arg_12_0._widgets) do
+		var_12_3.alpha_multiplier = iter_12_1.alpha_multiplier or var_12_4
 
-		UIRenderer.draw_widget(ui_renderer, widget)
+		UIRenderer.draw_widget(var_12_0, iter_12_1)
 	end
 
-	render_settings.alpha_multiplier = alpha_multiplier
+	var_12_3.alpha_multiplier = var_12_4
 
-	self:_draw_widgets(ui_renderer, dt)
-	UIRenderer.end_pass(ui_renderer)
+	arg_12_0:_draw_widgets(var_12_0, arg_12_1)
+	UIRenderer.end_pass(var_12_0)
 
-	if self._top_widgets then
-		UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+	if arg_12_0._top_widgets then
+		UIRenderer.begin_pass(var_12_1, var_12_2, arg_12_2, arg_12_1, nil, var_12_3)
 
-		for _, widget in pairs(self._top_widgets) do
-			render_settings.alpha_multiplier = widget.alpha_multiplier or alpha_multiplier
+		for iter_12_2, iter_12_3 in pairs(arg_12_0._top_widgets) do
+			var_12_3.alpha_multiplier = iter_12_3.alpha_multiplier or var_12_4
 
-			UIRenderer.draw_widget(ui_top_renderer, widget)
+			UIRenderer.draw_widget(var_12_1, iter_12_3)
 		end
 
-		UIRenderer.end_pass(ui_top_renderer)
+		UIRenderer.end_pass(var_12_1)
 	end
 
-	render_settings.alpha_multiplier = alpha_multiplier
+	var_12_3.alpha_multiplier = var_12_4
 end
 
-BaseView._start_animation = function (self, key, animation_name, widget, optional_params)
-	local params = optional_params or {
-		wwise_world = self._wwise_world,
-		render_settings = self._render_settings,
+function BaseView._start_animation(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+	local var_13_0 = arg_13_4 or {
+		wwise_world = arg_13_0._wwise_world,
+		render_settings = arg_13_0._render_settings
 	}
-	local scenegraph_definition = self._definitions.scenegraph_definition
+	local var_13_1 = arg_13_0._definitions.scenegraph_definition
 
-	return self._ui_animator:start_animation(animation_name, widget, scenegraph_definition, params)
+	return arg_13_0._ui_animator:start_animation(arg_13_2, arg_13_3, var_13_1, var_13_0)
 end
 
-BaseView.play_sound = function (self, event)
-	return WwiseWorld.trigger_event(self._wwise_world, event)
+function BaseView.play_sound(arg_14_0, arg_14_1)
+	return WwiseWorld.trigger_event(arg_14_0._wwise_world, arg_14_1)
 end
 
-BaseView.input_service = function (self)
-	return self._input_manager:get_service(self._input_service_name)
+function BaseView.input_service(arg_15_0)
+	return arg_15_0._input_manager:get_service(arg_15_0._input_service_name)
 end
 
-BaseView._set_widget_dirty = function (self, widget)
-	widget.element.dirty = true
+function BaseView._set_widget_dirty(arg_16_0, arg_16_1)
+	arg_16_1.element.dirty = true
 end
 
-BaseView.debug_set_definitions = function (self, definitions)
-	self._definitions = definitions
+function BaseView.debug_set_definitions(arg_17_0, arg_17_1)
+	arg_17_0._definitions = arg_17_1
 end

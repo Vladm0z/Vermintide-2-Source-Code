@@ -1,68 +1,68 @@
-﻿-- chunkname: @scripts/unit_extensions/objectives/versus_survive_event_objective_extension.lua
+-- chunkname: @scripts/unit_extensions/objectives/versus_survive_event_objective_extension.lua
 
 VersusSurviveEventObjectiveExtension = class(VersusSurviveEventObjectiveExtension, BaseObjectiveExtension)
 VersusSurviveEventObjectiveExtension.NAME = "VersusSurviveEventObjectiveExtension"
 
-VersusSurviveEventObjectiveExtension.init = function (self, ...)
-	VersusSurviveEventObjectiveExtension.super.init(self, ...)
+function VersusSurviveEventObjectiveExtension.init(arg_1_0, ...)
+	VersusSurviveEventObjectiveExtension.super.init(arg_1_0, ...)
 
-	self._survive_time_done = 0
-	self._remaining_survive_time = 0
-	self._current_time_survived = 0
-	self._percentage = 0
+	arg_1_0._survive_time_done = 0
+	arg_1_0._remaining_survive_time = 0
+	arg_1_0._current_time_survived = 0
+	arg_1_0._percentage = 0
 end
 
-VersusSurviveEventObjectiveExtension._set_objective_data = function (self, objective_data)
-	local survive_default_settings = GameModeSettings.versus.objectives.survive_event
+function VersusSurviveEventObjectiveExtension._set_objective_data(arg_2_0, arg_2_1)
+	local var_2_0 = GameModeSettings.versus.objectives.survive_event
 
-	self._num_sections = objective_data.num_sections or survive_default_settings.num_sections
-	self._score_per_section = objective_data.score_per_section or survive_default_settings.score_per_section
-	self._time_per_section = objective_data.time_per_section or survive_default_settings.time_per_section
-	self._score_for_completion = objective_data.score_for_completion or survive_default_settings.score_for_completion
-	self._time_for_completion = objective_data.time_for_completion or survive_default_settings.time_for_completion
-	self._on_last_leaf_complete_sound_event = objective_data.on_last_leaf_complete_sound_event or survive_default_settings.on_last_leaf_complete_sound_event
-	self._on_leaf_complete_sound_event = objective_data.on_leaf_complete_sound_event or survive_default_settings.on_leaf_complete_sound_event
-	self._on_section_progress_sound_event = objective_data.on_section_progress_sound_event or survive_default_settings.on_section_progress_sound_event
+	arg_2_0._num_sections = arg_2_1.num_sections or var_2_0.num_sections
+	arg_2_0._score_per_section = arg_2_1.score_per_section or var_2_0.score_per_section
+	arg_2_0._time_per_section = arg_2_1.time_per_section or var_2_0.time_per_section
+	arg_2_0._score_for_completion = arg_2_1.score_for_completion or var_2_0.score_for_completion
+	arg_2_0._time_for_completion = arg_2_1.time_for_completion or var_2_0.time_for_completion
+	arg_2_0._on_last_leaf_complete_sound_event = arg_2_1.on_last_leaf_complete_sound_event or var_2_0.on_last_leaf_complete_sound_event
+	arg_2_0._on_leaf_complete_sound_event = arg_2_1.on_leaf_complete_sound_event or var_2_0.on_leaf_complete_sound_event
+	arg_2_0._on_section_progress_sound_event = arg_2_1.on_section_progress_sound_event or var_2_0.on_section_progress_sound_event
 end
 
-VersusSurviveEventObjectiveExtension._activate = function (self)
-	self._survive_time_done = Managers.time:time("game") + self._time_for_completion
+function VersusSurviveEventObjectiveExtension._activate(arg_3_0)
+	arg_3_0._survive_time_done = Managers.time:time("game") + arg_3_0._time_for_completion
 end
 
-VersusSurviveEventObjectiveExtension._deactivate = function (self)
+function VersusSurviveEventObjectiveExtension._deactivate(arg_4_0)
 	return
 end
 
-VersusSurviveEventObjectiveExtension._server_update = function (self, dt, t)
-	local time_remaining = math.clamp(self._survive_time_done - t, 0, self._time_for_completion)
+function VersusSurviveEventObjectiveExtension._server_update(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = math.clamp(arg_5_0._survive_time_done - arg_5_2, 0, arg_5_0._time_for_completion)
 
-	if time_remaining ~= self._remaining_survive_time then
-		self._remaining_survive_time = time_remaining
+	if var_5_0 ~= arg_5_0._remaining_survive_time then
+		arg_5_0._remaining_survive_time = var_5_0
 
-		local percentage_done = self:get_percentage_done()
+		local var_5_1 = arg_5_0:get_percentage_done()
 
-		self:server_set_value(percentage_done)
+		arg_5_0:server_set_value(var_5_1)
 
-		if percentage_done >= (self._current_section + 1) * (1 / self._num_sections) then
-			self:on_section_completed()
+		if var_5_1 >= (arg_5_0._current_section + 1) * (1 / arg_5_0._num_sections) then
+			arg_5_0:on_section_completed()
 		end
 	end
 end
 
-VersusSurviveEventObjectiveExtension._client_update = function (self, dt, t)
-	self._percentage = self:client_get_value()
+function VersusSurviveEventObjectiveExtension._client_update(arg_6_0, arg_6_1, arg_6_2)
+	arg_6_0._percentage = arg_6_0:client_get_value()
 end
 
-VersusSurviveEventObjectiveExtension.update_testify = function (self, dt, t)
+function VersusSurviveEventObjectiveExtension.update_testify(arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-VersusSurviveEventObjectiveExtension.get_percentage_done = function (self)
-	if self._is_server then
-		local value = 1 - self._remaining_survive_time / self._time_for_completion
+function VersusSurviveEventObjectiveExtension.get_percentage_done(arg_8_0)
+	if arg_8_0._is_server then
+		local var_8_0 = 1 - arg_8_0._remaining_survive_time / arg_8_0._time_for_completion
 
-		return math.clamp(value, 0, 1)
+		return math.clamp(var_8_0, 0, 1)
 	end
 
-	return self._percentage
+	return arg_8_0._percentage
 end

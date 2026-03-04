@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/managers/conflict_director/conflict_utils.lua
+-- chunkname: @scripts/managers/conflict_director/conflict_utils.lua
 
 require("scripts/settings/breeds")
 require("scripts/settings/patrol_formation_settings")
@@ -7,575 +7,570 @@ require("scripts/managers/conflict_director/encampment_templates")
 
 ConflictUtils = {}
 
-local ConflictUtils = ConflictUtils
-local distance_squared = Vector3.distance_squared
-local math_random = Math.random
-local quaternion_look = Quaternion.look
+local var_0_0 = ConflictUtils
+local var_0_1 = Vector3.distance_squared
+local var_0_2 = Math.random
+local var_0_3 = Quaternion.look
 
-local function get_with_override(settings, key, difficulty, fallback_difficulty)
-	local overrides = settings.difficulty_overrides
-	local override_settings = overrides and (overrides[difficulty] or overrides[fallback_difficulty])
+local function var_0_4(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	local var_1_0 = arg_1_0.difficulty_overrides
+	local var_1_1 = var_1_0 and (var_1_0[arg_1_2] or var_1_0[arg_1_3])
 
-	return override_settings and override_settings[key] or settings[key]
+	return var_1_1 and var_1_1[arg_1_1] or arg_1_0[arg_1_1]
 end
 
-ConflictUtils.random_interval = function (numbers)
-	if type(numbers) == "table" then
-		return math_random(numbers[1], numbers[2])
+function var_0_0.random_interval(arg_2_0)
+	if type(arg_2_0) == "table" then
+		return var_0_2(arg_2_0[1], arg_2_0[2])
 	else
-		return numbers
+		return arg_2_0
 	end
 end
 
-local clusters_sizes = {}
-local cluster_index_lookup = {}
-local cluster_work_queue = {
+local var_0_5 = {}
+local var_0_6 = {}
+local var_0_7 = {
 	false,
 	false,
-	false,
+	false
 }
 
-ConflictUtils.cluster_positions = function (positions, min_dist)
-	local clusters = {
-		positions[1],
+function var_0_0.cluster_positions(arg_3_0, arg_3_1)
+	local var_3_0 = {
+		arg_3_0[1]
 	}
-	local clusters_sizes = clusters_sizes
+	local var_3_1 = var_0_5
 
-	clusters_sizes[1] = 1
-	cluster_index_lookup[1] = 1
-	min_dist = min_dist * min_dist
+	var_3_1[1] = 1
+	var_0_6[1] = 1
+	arg_3_1 = arg_3_1 * arg_3_1
 
-	local work_queue = cluster_work_queue
+	local var_3_2 = var_0_7
 
-	for i = 1, 3 do
-		work_queue[i] = nil
+	for iter_3_0 = 1, 3 do
+		var_3_2[iter_3_0] = nil
 	end
 
-	for i = 2, #positions do
-		work_queue[i - 1] = i
+	for iter_3_1 = 2, #arg_3_0 do
+		var_3_2[iter_3_1 - 1] = iter_3_1
 	end
 
-	local work_size = #work_queue
+	local var_3_3 = #var_3_2
 
-	while work_size > 0 do
-		local clustered = false
+	while var_3_3 > 0 do
+		local var_3_4 = false
 
-		for i = 1, #clusters do
-			for j = 1, work_size do
-				local index = work_queue[j]
-				local dist = Vector3.distance_squared(clusters[i], positions[index])
+		for iter_3_2 = 1, #var_3_0 do
+			for iter_3_3 = 1, var_3_3 do
+				local var_3_5 = var_3_2[iter_3_3]
 
-				if dist < min_dist then
-					work_queue[j] = work_queue[work_size]
-					work_size = work_size - 1
-					cluster_index_lookup[index] = i
-					clusters_sizes[i] = clusters_sizes[i] + 1
-					clustered = true
+				if arg_3_1 > Vector3.distance_squared(var_3_0[iter_3_2], arg_3_0[var_3_5]) then
+					var_3_2[iter_3_3] = var_3_2[var_3_3]
+					var_3_3 = var_3_3 - 1
+					var_0_6[var_3_5] = iter_3_2
+					var_3_1[iter_3_2] = var_3_1[iter_3_2] + 1
+					var_3_4 = true
 
 					break
 				end
 			end
 		end
 
-		if not clustered then
-			local i = #clusters + 1
-			local index = work_queue[1]
+		if not var_3_4 then
+			local var_3_6 = #var_3_0 + 1
+			local var_3_7 = var_3_2[1]
 
-			clusters[i] = positions[index]
-			cluster_index_lookup[index] = i
-			clusters_sizes[i] = 1
-			work_queue[1] = work_queue[work_size]
-			work_size = work_size - 1
+			var_3_0[var_3_6] = arg_3_0[var_3_7]
+			var_0_6[var_3_7] = var_3_6
+			var_3_1[var_3_6] = 1
+			var_3_2[1] = var_3_2[var_3_3]
+			var_3_3 = var_3_3 - 1
 		end
 	end
 
-	for i = #clusters + 1, #clusters_sizes do
-		clusters_sizes[i] = nil
+	for iter_3_4 = #var_3_0 + 1, #var_3_1 do
+		var_3_1[iter_3_4] = nil
 	end
 
-	return clusters, clusters_sizes, cluster_index_lookup
+	return var_3_0, var_3_1, var_0_6
 end
 
-local loneliness = {}
-local max_cluster_score = {
+local var_0_8 = {}
+local var_0_9 = {
 	1,
 	2,
 	3,
-	6,
+	6
 }
 
-ConflictUtils.cluster_weight_and_loneliness = function (positions, min_dist)
-	local distance_squared = Vector3.distance_squared
+function var_0_0.cluster_weight_and_loneliness(arg_4_0, arg_4_1)
+	local var_4_0 = Vector3.distance_squared
 
-	min_dist = min_dist * min_dist
+	arg_4_1 = arg_4_1 * arg_4_1
 
-	local num_positions = math.min(#positions, 4)
+	local var_4_1 = math.min(#arg_4_0, 4)
 
-	if num_positions == 1 then
+	if var_4_1 == 1 then
 		return 1, 1, 100
-	elseif num_positions == 0 then
+	elseif var_4_1 == 0 then
 		return 0, 0, 0
 	end
 
-	local a = positions[1]
-	local b = positions[2]
-	local c = positions[3]
-	local d = positions[4]
-	local utility_sum = 0
-	local ab, ac, ad, bc, bd, cd = 0, 0, 0, 0, 0, 0
+	local var_4_2 = arg_4_0[1]
+	local var_4_3 = arg_4_0[2]
+	local var_4_4 = arg_4_0[3]
+	local var_4_5 = arg_4_0[4]
+	local var_4_6 = 0
+	local var_4_7 = 0
+	local var_4_8 = 0
+	local var_4_9 = 0
+	local var_4_10 = 0
+	local var_4_11 = 0
+	local var_4_12 = 0
 
-	if d then
-		ad = distance_squared(a, d)
-		bd = distance_squared(b, d)
-		cd = distance_squared(c, d)
-		utility_sum = utility_sum + (ad < min_dist and 1 or 0)
-		utility_sum = utility_sum + (bd < min_dist and 1 or 0)
-		utility_sum = utility_sum + (cd < min_dist and 1 or 0)
-		loneliness[4] = ad + bd + cd
+	if var_4_5 then
+		var_4_9 = var_4_0(var_4_2, var_4_5)
+		var_4_11 = var_4_0(var_4_3, var_4_5)
+		var_4_12 = var_4_0(var_4_4, var_4_5)
+		var_4_6 = var_4_6 + (var_4_9 < arg_4_1 and 1 or 0)
+		var_4_6 = var_4_6 + (var_4_11 < arg_4_1 and 1 or 0)
+		var_4_6 = var_4_6 + (var_4_12 < arg_4_1 and 1 or 0)
+		var_0_8[4] = var_4_9 + var_4_11 + var_4_12
 	end
 
-	if c then
-		ac = distance_squared(a, c)
-		bc = distance_squared(b, c)
-		utility_sum = utility_sum + (ac < min_dist and 1 or 0)
-		utility_sum = utility_sum + (bc < min_dist and 1 or 0)
-		loneliness[3] = ac + bc + cd
+	if var_4_4 then
+		var_4_8 = var_4_0(var_4_2, var_4_4)
+		var_4_10 = var_4_0(var_4_3, var_4_4)
+		var_4_6 = var_4_6 + (var_4_8 < arg_4_1 and 1 or 0)
+		var_4_6 = var_4_6 + (var_4_10 < arg_4_1 and 1 or 0)
+		var_0_8[3] = var_4_8 + var_4_10 + var_4_12
 	end
 
-	if b then
-		ab = distance_squared(a, b)
-		utility_sum = utility_sum + (ab < min_dist and 1 or 0)
-		loneliness[2] = ab + bc + bd
+	if var_4_3 then
+		var_4_7 = var_4_0(var_4_2, var_4_3)
+		var_4_6 = var_4_6 + (var_4_7 < arg_4_1 and 1 or 0)
+		var_0_8[2] = var_4_7 + var_4_10 + var_4_11
 	end
 
-	loneliness[1] = ab + ac + ad
+	var_0_8[1] = var_4_7 + var_4_8 + var_4_9
 
-	local cluster_utility = utility_sum / max_cluster_score[num_positions]
-	local loneliest_value = 0
-	local loneliest_index = 1
+	local var_4_13 = var_4_6 / var_0_9[var_4_1]
+	local var_4_14 = 0
+	local var_4_15 = 1
 
-	for i = 1, num_positions do
-		if loneliest_value < loneliness[i] then
-			loneliest_value = loneliness[i]
-			loneliest_index = i
+	for iter_4_0 = 1, var_4_1 do
+		if var_4_14 < var_0_8[iter_4_0] then
+			var_4_14 = var_0_8[iter_4_0]
+			var_4_15 = iter_4_0
 		end
 	end
 
-	loneliest_value = math.sqrt(loneliest_value) / num_positions
+	local var_4_16 = math.sqrt(var_4_14) / var_4_1
 
-	return cluster_utility, loneliest_index, loneliest_value, loneliness
+	return var_4_13, var_4_15, var_4_16, var_0_8
 end
 
-ConflictUtils.average_player_position = function ()
-	local player_count = 0
-	local player_center_pos = Vector3.zero()
-	local players = Managers.player:human_and_bot_players()
+function var_0_0.average_player_position()
+	local var_5_0 = 0
+	local var_5_1 = Vector3.zero()
+	local var_5_2 = Managers.player:human_and_bot_players()
 
-	for k, player in pairs(players) do
-		local unit = player.player_unit
+	for iter_5_0, iter_5_1 in pairs(var_5_2) do
+		local var_5_3 = iter_5_1.player_unit
 
-		if ALIVE[unit] then
-			local pos = POSITION_LOOKUP[unit]
-
-			player_center_pos = player_center_pos + pos
-			player_count = player_count + 1
+		if ALIVE[var_5_3] then
+			var_5_1 = var_5_1 + POSITION_LOOKUP[var_5_3]
+			var_5_0 = var_5_0 + 1
 		end
 	end
 
-	if player_count == 0 then
+	if var_5_0 == 0 then
 		return nil
 	end
 
-	player_center_pos = player_center_pos * (1 / player_count)
-
-	return player_center_pos
+	return var_5_1 * (1 / var_5_0)
 end
 
-local found_cover_units = {}
-local hidden_cover_units = {}
+local var_0_10 = {}
+local var_0_11 = {}
 
-ConflictUtils.hidden_cover_points = function (center_position, avoid_pos_list, min_rad, max_rad, dot_threshold)
-	local bp = Managers.state.conflict.level_analysis.cover_points_broadphase
+function var_0_0.hidden_cover_points(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	local var_6_0 = Managers.state.conflict.level_analysis.cover_points_broadphase
 
-	min_rad = min_rad * min_rad
-	dot_threshold = dot_threshold and math.max(dot_threshold, -0.9) or -0.9
+	arg_6_2 = arg_6_2 * arg_6_2
+	arg_6_4 = arg_6_4 and math.max(arg_6_4, -0.9) or -0.9
 
-	local MAX_RANGE = 40
-	local num_found_cover_units = Broadphase.query(bp, center_position, math.min(max_rad, MAX_RANGE), found_cover_units)
-	local vector3_normalize = Vector3.normalize
-	local quaternion_forward = Quaternion.forward
-	local unit_local_rotation = Unit.local_rotation
-	local unit_local_position = Unit.local_position
-	local vector3_dot = Vector3.dot
-	local num_found = 0
-	local num_to_avoid = #avoid_pos_list
+	local var_6_1 = 40
+	local var_6_2 = Broadphase.query(var_6_0, arg_6_0, math.min(arg_6_3, var_6_1), var_0_10)
+	local var_6_3 = Vector3.normalize
+	local var_6_4 = Quaternion.forward
+	local var_6_5 = Unit.local_rotation
+	local var_6_6 = Unit.local_position
+	local var_6_7 = Vector3.dot
+	local var_6_8 = 0
+	local var_6_9 = #arg_6_1
 
-	for i = 1, num_found_cover_units do
-		local cover_unit = found_cover_units[i]
-		local pos = unit_local_position(cover_unit, 0)
-		local dist_squared = distance_squared(pos, center_position)
+	for iter_6_0 = 1, var_6_2 do
+		local var_6_10 = var_0_10[iter_6_0]
+		local var_6_11 = var_6_6(var_6_10, 0)
+		local var_6_12 = var_0_1(var_6_11, arg_6_0)
 
-		if min_rad <= dist_squared then
-			local rot = unit_local_rotation(cover_unit, 0)
-			local num_valid = 0
+		if arg_6_2 <= var_6_12 then
+			local var_6_13 = var_6_5(var_6_10, 0)
+			local var_6_14 = 0
 
-			for j = 1, num_to_avoid do
-				local avoid_pos = avoid_pos_list[j]
-				local to_cover_point = vector3_normalize(pos - avoid_pos)
+			for iter_6_1 = 1, var_6_9 do
+				local var_6_15 = arg_6_1[iter_6_1]
+				local var_6_16 = var_6_3(var_6_11 - var_6_15)
 
-				Vector3.set_z(to_cover_point, 0)
+				Vector3.set_z(var_6_16, 0)
 
-				local dot = dist_squared < 50 and dot_threshold or -0.6
-				local valid = dot > vector3_dot(quaternion_forward(rot), to_cover_point)
-
-				if valid then
-					num_valid = num_valid + 1
+				if (var_6_12 < 50 and arg_6_4 or -0.6) > var_6_7(var_6_4(var_6_13), var_6_16) then
+					var_6_14 = var_6_14 + 1
 				else
 					break
 				end
 			end
 
-			if num_to_avoid == num_valid then
-				num_found = num_found + 1
-				hidden_cover_units[num_found] = cover_unit
+			if var_6_9 == var_6_14 then
+				var_6_8 = var_6_8 + 1
+				var_0_11[var_6_8] = var_6_10
 			end
 		end
 	end
 
-	return num_found, hidden_cover_units
+	return var_6_8, var_0_11
 end
 
-ConflictUtils.debug_is_cover_point_hidden = function ()
-	local bp = Managers.state.conflict.level_analysis.cover_points_broadphase
-	local num_found_cover_units = Broadphase.query(bp, PLAYER_POSITIONS[1], 20, found_cover_units)
-	local red, green = Colors.get("red"), Colors.get("green")
-	local unit_local_rotation = Unit.local_rotation
-	local unit_local_position = Unit.local_position
-	local min_rad = 5
+function var_0_0.debug_is_cover_point_hidden()
+	local var_7_0 = Managers.state.conflict.level_analysis.cover_points_broadphase
+	local var_7_1 = Broadphase.query(var_7_0, PLAYER_POSITIONS[1], 20, var_0_10)
+	local var_7_2 = Colors.get("red")
+	local var_7_3 = Colors.get("green")
+	local var_7_4 = Unit.local_rotation
+	local var_7_5 = Unit.local_position
+	local var_7_6 = 5
 
-	for i = 1, num_found_cover_units do
-		local cover_unit = found_cover_units[i]
-		local pos = unit_local_position(cover_unit, 0)
-		local rot = unit_local_rotation(cover_unit, 0)
+	for iter_7_0 = 1, var_7_1 do
+		local var_7_7 = var_0_10[iter_7_0]
+		local var_7_8 = var_7_5(var_7_7, 0)
+		local var_7_9 = var_7_4(var_7_7, 0)
 
-		if ConflictUtils.is_cover_point_hidden(cover_unit, PLAYER_POSITIONS, min_rad) then
-			QuickDrawer:sphere(pos, 0.8, green)
-			QuickDrawer:line(pos + Vector3(0, 0, 1), pos + Quaternion.forward(rot) * 2 + Vector3(0, 0, 1), green)
+		if var_0_0.is_cover_point_hidden(var_7_7, PLAYER_POSITIONS, var_7_6) then
+			QuickDrawer:sphere(var_7_8, 0.8, var_7_3)
+			QuickDrawer:line(var_7_8 + Vector3(0, 0, 1), var_7_8 + Quaternion.forward(var_7_9) * 2 + Vector3(0, 0, 1), var_7_3)
 		else
-			QuickDrawer:sphere(pos, 0.8, red)
-			QuickDrawer:line(pos + Vector3(0, 0, 1), pos + Quaternion.forward(rot) * 2 + Vector3(0, 0, 1), red)
+			QuickDrawer:sphere(var_7_8, 0.8, var_7_2)
+			QuickDrawer:line(var_7_8 + Vector3(0, 0, 1), var_7_8 + Quaternion.forward(var_7_9) * 2 + Vector3(0, 0, 1), var_7_2)
 		end
 	end
 end
 
-ConflictUtils.is_cover_point_hidden = function (cover_point_unit, avoid_pos_list, min_rad, long_distance_sqr)
-	local vector3_normalize = Vector3.normalize
-	local quaternion_forward = Quaternion.forward
-	local unit_local_rotation = Unit.local_rotation
-	local unit_local_position = Unit.local_position
-	local vector3_dot = Vector3.dot
-	local long_distance_sqr = long_distance_sqr or 10000
-	local pos = unit_local_position(cover_point_unit, 0)
-	local rot = unit_local_rotation(cover_point_unit, 0)
-	local num_to_avoid = #avoid_pos_list
-	local num_valid = 0
+function var_0_0.is_cover_point_hidden(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	local var_8_0 = Vector3.normalize
+	local var_8_1 = Quaternion.forward
+	local var_8_2 = Unit.local_rotation
+	local var_8_3 = Unit.local_position
+	local var_8_4 = Vector3.dot
+	local var_8_5 = arg_8_3 or 10000
+	local var_8_6 = var_8_3(arg_8_0, 0)
+	local var_8_7 = var_8_2(arg_8_0, 0)
+	local var_8_8 = #arg_8_1
+	local var_8_9 = 0
 
-	for j = 1, num_to_avoid do
-		local avoid_pos = avoid_pos_list[j]
-		local dist_squared = distance_squared(pos, avoid_pos)
+	for iter_8_0 = 1, var_8_8 do
+		local var_8_10 = arg_8_1[iter_8_0]
+		local var_8_11 = var_0_1(var_8_6, var_8_10)
 
-		if dist_squared < min_rad then
+		if var_8_11 < arg_8_2 then
 			break
 		end
 
-		local to_cover_point = vector3_normalize(pos - avoid_pos)
-		local dot = dist_squared < 225 and -0.9 or -0.6
-		local valid = dot > vector3_dot(quaternion_forward(rot), to_cover_point) or long_distance_sqr < dist_squared
+		local var_8_12 = var_8_0(var_8_6 - var_8_10)
 
-		if valid then
-			num_valid = num_valid + 1
+		if (var_8_11 < 225 and -0.9 or -0.6) > var_8_4(var_8_1(var_8_7), var_8_12) or var_8_5 < var_8_11 then
+			var_8_9 = var_8_9 + 1
 		else
 			break
 		end
 	end
 
-	if num_valid == num_to_avoid then
+	if var_8_9 == var_8_8 then
 		return true
 	end
 end
 
-ConflictUtils.get_random_spawner_with_id = function (id, except_spawner_unit)
-	local spawner_system = Managers.state.entity:system("spawner_system")
-	local spawners = spawner_system._id_lookup[id]
+function var_0_0.get_random_spawner_with_id(arg_9_0, arg_9_1)
+	local var_9_0 = Managers.state.entity:system("spawner_system")._id_lookup[arg_9_0]
 
-	if spawners then
-		local num = #spawners
-		local index = Math.random(1, num)
-		local spawner = spawners[index]
+	if var_9_0 then
+		local var_9_1 = #var_9_0
+		local var_9_2 = Math.random(1, var_9_1)
+		local var_9_3 = var_9_0[var_9_2]
 
-		if num > 1 and spawner == except_spawner_unit then
-			index = (index - 1) % num + 1
-			spawner = spawners[index]
+		if var_9_1 > 1 and var_9_3 == arg_9_1 then
+			var_9_2 = (var_9_2 - 1) % var_9_1 + 1
+			var_9_3 = var_9_0[var_9_2]
 		end
 
-		return spawner, index
+		return var_9_3, var_9_2
 	end
 end
 
-ConflictUtils.get_random_hidden_spawner = function (center_pos, radius, pick_closest_spawner)
-	local spawner_system = Managers.state.entity:system("spawner_system")
-	local amount = Broadphase.query(spawner_system.hidden_spawners_broadphase, center_pos, radius, found_cover_units)
+function var_0_0.get_random_hidden_spawner(arg_10_0, arg_10_1, arg_10_2)
+	local var_10_0 = Managers.state.entity:system("spawner_system")
+	local var_10_1 = Broadphase.query(var_10_0.hidden_spawners_broadphase, arg_10_0, arg_10_1, var_0_10)
 
-	if amount <= 0 then
+	if var_10_1 <= 0 then
 		return
 	end
 
-	if pick_closest_spawner then
-		return found_cover_units[1]
+	if arg_10_2 then
+		return var_0_10[1]
 	end
 
-	local index = math.random(1, amount)
+	local var_10_2 = math.random(1, var_10_1)
 
-	return found_cover_units[index]
+	return var_0_10[var_10_2]
 end
 
-ConflictUtils.get_biggest_cluster = function (clusters_sizes)
-	local biggest = 1
+function var_0_0.get_biggest_cluster(arg_11_0)
+	local var_11_0 = 1
 
-	for i = 2, #clusters_sizes do
-		local size = clusters_sizes[i]
+	for iter_11_0 = 2, #arg_11_0 do
+		local var_11_1 = arg_11_0[iter_11_0]
 
-		if size then
-			if size > clusters_sizes[biggest] then
-				biggest = i
+		if var_11_1 then
+			if var_11_1 > arg_11_0[var_11_0] then
+				var_11_0 = iter_11_0
 			end
 		else
 			break
 		end
 	end
 
-	return biggest
+	return var_11_0
 end
 
-ConflictUtils.filter_positions = function (center_pos, main_target_pos, spawner_units, min_dist, max_dist)
-	local list = {}
+function var_0_0.filter_positions(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+	local var_12_0 = {}
 
-	max_dist = max_dist * max_dist
-	min_dist = min_dist * min_dist
+	arg_12_4 = arg_12_4 * arg_12_4
+	arg_12_3 = arg_12_3 * arg_12_3
 
-	local behind_dist = distance_squared(center_pos, main_target_pos)
+	local var_12_1 = var_0_1(arg_12_0, arg_12_1)
 
-	for j = 1, #spawner_units do
-		local unit = spawner_units[j]
-		local unit_pos = Unit.local_position(unit, 0)
-		local dist_squared = distance_squared(center_pos, unit_pos)
+	for iter_12_0 = 1, #arg_12_2 do
+		local var_12_2 = arg_12_2[iter_12_0]
+		local var_12_3 = Unit.local_position(var_12_2, 0)
+		local var_12_4 = var_0_1(arg_12_0, var_12_3)
 
-		if dist_squared < max_dist and min_dist < dist_squared then
-			local dist_squared_to_players = distance_squared(main_target_pos, unit_pos)
-
-			if dist_squared_to_players < behind_dist then
-				list[#list + 1] = unit
-			end
+		if var_12_4 < arg_12_4 and arg_12_3 < var_12_4 and var_12_1 > var_0_1(arg_12_1, var_12_3) then
+			var_12_0[#var_12_0 + 1] = var_12_2
 		end
 	end
 
-	return list
+	return var_12_0
 end
 
-ConflictUtils.filter_horde_spawners = function (player_positions, spawner_units, hidden_spawner_units, min_dist, max_dist)
-	local list, hidden_list = {}, {}
+function var_0_0.filter_horde_spawners(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+	local var_13_0 = {}
+	local var_13_1 = {}
 
-	max_dist = max_dist * max_dist
-	min_dist = min_dist * min_dist
+	arg_13_4 = arg_13_4 * arg_13_4
+	arg_13_3 = arg_13_3 * arg_13_3
 
-	for i = 1, #player_positions do
-		local pos = player_positions[i]
+	for iter_13_0 = 1, #arg_13_0 do
+		local var_13_2 = arg_13_0[iter_13_0]
 
-		for j = 1, #spawner_units do
-			local unit = spawner_units[j]
-			local unit_pos = Unit.local_position(unit, 0)
-			local dist_squared = distance_squared(pos, unit_pos)
+		for iter_13_1 = 1, #arg_13_1 do
+			local var_13_3 = arg_13_1[iter_13_1]
+			local var_13_4 = Unit.local_position(var_13_3, 0)
+			local var_13_5 = var_0_1(var_13_2, var_13_4)
 
-			if dist_squared < max_dist and min_dist < dist_squared then
-				list[#list + 1] = unit
+			if var_13_5 < arg_13_4 and arg_13_3 < var_13_5 then
+				var_13_0[#var_13_0 + 1] = var_13_3
 
-				if hidden_spawner_units[unit] then
-					hidden_list[#hidden_list + 1] = unit
+				if arg_13_2[var_13_3] then
+					var_13_1[#var_13_1 + 1] = var_13_3
 				end
 			end
 		end
 	end
 
-	return list, hidden_list
+	return var_13_0, var_13_1
 end
 
-ConflictUtils.filter_horde_spawners_strictly = function (player_positions, spawner_units, hidden_spawner_units, min_dist, max_dist)
-	local list, hidden_list = {}, {}
+function var_0_0.filter_horde_spawners_strictly(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+	local var_14_0 = {}
+	local var_14_1 = {}
 
-	max_dist = max_dist * max_dist
-	min_dist = min_dist * min_dist
+	arg_14_4 = arg_14_4 * arg_14_4
+	arg_14_3 = arg_14_3 * arg_14_3
 
-	local num_player_pos = #player_positions
+	local var_14_2 = #arg_14_0
 
-	for j = 1, #spawner_units do
-		local unit = spawner_units[j]
-		local spawner_pos = Unit.local_position(unit, 0)
-		local count = 0
+	for iter_14_0 = 1, #arg_14_1 do
+		local var_14_3 = arg_14_1[iter_14_0]
+		local var_14_4 = Unit.local_position(var_14_3, 0)
+		local var_14_5 = 0
 
-		for i = 1, num_player_pos do
-			local pos = player_positions[i]
-			local dist_squared = distance_squared(pos, spawner_pos)
+		for iter_14_1 = 1, var_14_2 do
+			local var_14_6 = arg_14_0[iter_14_1]
+			local var_14_7 = var_0_1(var_14_6, var_14_4)
 
-			if dist_squared < max_dist and min_dist < dist_squared then
-				count = count + 1
+			if var_14_7 < arg_14_4 and arg_14_3 < var_14_7 then
+				var_14_5 = var_14_5 + 1
 			end
 		end
 
-		if count == num_player_pos then
-			list[#list + 1] = unit
+		if var_14_5 == var_14_2 then
+			var_14_0[#var_14_0 + 1] = var_14_3
 
-			if hidden_spawner_units[unit] then
-				hidden_list[#hidden_list + 1] = unit
+			if arg_14_2[var_14_3] then
+				var_14_1[#var_14_1 + 1] = var_14_3
 			end
 		end
 	end
 
-	return list, hidden_list
+	return var_14_0, var_14_1
 end
 
-ConflictUtils.get_hidden_pos = function (world, nav_world, level, nav_tag_volume_handler, check_no_spawn_volumes, center_pos, avoid_positions, radius, radius_spread, avoid_dist_sqr, max_tries, cake_slice_dir, cake_slice_angle_radians)
-	local h = Vector3(0, 0, 1)
-	local half_radius_spread = radius_spread * 0.5
-	local ignore_umbra = not World.umbra_available(world)
+function var_0_0.get_hidden_pos(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8, arg_15_9, arg_15_10, arg_15_11, arg_15_12)
+	local var_15_0 = Vector3(0, 0, 1)
+	local var_15_1 = arg_15_8 * 0.5
+	local var_15_2 = not World.umbra_available(arg_15_0)
 
-	for i = 1, max_tries do
-		local check_pos
+	for iter_15_0 = 1, arg_15_10 do
+		local var_15_3
 
-		if cake_slice_dir then
-			check_pos = ConflictUtils.get_spawn_pos_on_cake_slice(nav_world, center_pos, radius - half_radius_spread, radius + half_radius_spread, cake_slice_dir, cake_slice_angle_radians, 10, check_no_spawn_volumes, level, nav_tag_volume_handler)
+		if arg_15_11 then
+			var_15_3 = var_0_0.get_spawn_pos_on_cake_slice(arg_15_1, arg_15_5, arg_15_7 - var_15_1, arg_15_7 + var_15_1, arg_15_11, arg_15_12, 10, arg_15_4, arg_15_2, arg_15_3)
 		else
-			check_pos = ConflictUtils.get_spawn_pos_on_circle(nav_world, center_pos, radius, radius_spread, 10, check_no_spawn_volumes, level, nav_tag_volume_handler)
+			var_15_3 = var_0_0.get_spawn_pos_on_circle(arg_15_1, arg_15_5, arg_15_7, arg_15_8, 10, arg_15_4, arg_15_2, arg_15_3)
 		end
 
-		if check_pos then
-			local hidden = true
+		if var_15_3 then
+			local var_15_4 = true
 
-			for j = 1, #avoid_positions do
-				local avoid_pos = avoid_positions[j]
-				local los = ignore_umbra or World.umbra_has_line_of_sight(world, check_pos + h, avoid_pos + h)
+			for iter_15_1 = 1, #arg_15_6 do
+				local var_15_5 = arg_15_6[iter_15_1]
 
-				if los then
-					hidden = false
+				if var_15_2 or World.umbra_has_line_of_sight(arg_15_0, var_15_3 + var_15_0, var_15_5 + var_15_0) then
+					var_15_4 = false
 
 					break
 				end
 			end
 
-			if hidden then
-				return check_pos
+			if var_15_4 then
+				return var_15_3
 			end
 		end
 	end
 end
 
-ConflictUtils.is_position_inside_no_spawn_volume = function (level, nav_tag_volume_handler, pos)
-	return NavTagVolumeUtils.inside_level_volume_layer(level, nav_tag_volume_handler, pos, "NO_SPAWN") or NavTagVolumeUtils.inside_level_volume_layer(level, nav_tag_volume_handler, pos, "NO_BOTS_NO_SPAWN")
+function var_0_0.is_position_inside_no_spawn_volume(arg_16_0, arg_16_1, arg_16_2)
+	return NavTagVolumeUtils.inside_level_volume_layer(arg_16_0, arg_16_1, arg_16_2, "NO_SPAWN") or NavTagVolumeUtils.inside_level_volume_layer(arg_16_0, arg_16_1, arg_16_2, "NO_BOTS_NO_SPAWN")
 end
 
-ConflictUtils.find_center_tri = function (nav_world, pos, above_max, below_max)
-	local success, altitude, p1, p2, p3 = GwNavQueries.triangle_from_position(nav_world, pos, above_max or 30, below_max or 30)
+function var_0_0.find_center_tri(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+	local var_17_0, var_17_1, var_17_2, var_17_3, var_17_4 = GwNavQueries.triangle_from_position(arg_17_0, arg_17_1, arg_17_2 or 30, arg_17_3 or 30)
 
-	if success then
-		pos.z = altitude
+	if var_17_0 then
+		arg_17_1.z = var_17_1
 
-		return pos, p1, p2, p3
+		return arg_17_1, var_17_2, var_17_3, var_17_4
 	end
 end
 
-ConflictUtils.find_center_tri_with_fallback = function (nav_world, pos, above_max, below_max)
-	above_max, below_max = above_max or 30, below_max or 30
+function var_0_0.find_center_tri_with_fallback(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+	arg_18_2, arg_18_3 = arg_18_2 or 30, arg_18_3 or 30
 
-	local success, altitude, p1, p2, p3 = GwNavQueries.triangle_from_position(nav_world, pos, above_max, below_max)
+	local var_18_0, var_18_1, var_18_2, var_18_3, var_18_4 = GwNavQueries.triangle_from_position(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 
-	if success then
-		pos.z = altitude
+	if var_18_0 then
+		arg_18_1.z = var_18_1
 
-		return pos, p1, p2, p3
+		return arg_18_1, var_18_2, var_18_3, var_18_4
 	end
 
-	local fallback_z_diff = 5
+	local var_18_5 = 5
 
-	if above_max < fallback_z_diff or below_max < fallback_z_diff then
-		success, altitude, p1, p2, p3 = GwNavQueries.triangle_from_position(nav_world, pos, math.max(above_max, fallback_z_diff), math.max(below_max, fallback_z_diff))
+	if arg_18_2 < var_18_5 or arg_18_3 < var_18_5 then
+		local var_18_6, var_18_7, var_18_8, var_18_9, var_18_10 = GwNavQueries.triangle_from_position(arg_18_0, arg_18_1, math.max(arg_18_2, var_18_5), math.max(arg_18_3, var_18_5))
+		local var_18_11 = var_18_10
+		local var_18_12 = var_18_9
+		local var_18_13 = var_18_8
+		local var_18_14 = var_18_7
 
-		if success then
-			pos.z = altitude
+		if var_18_6 then
+			arg_18_1.z = var_18_14
 
-			return pos, p1, p2, p3
+			return arg_18_1, var_18_13, var_18_12, var_18_11
 		end
 	end
 
-	local fallback_xy_diff = 5
+	local var_18_15 = 5
 
-	pos = GwNavQueries.inside_position_from_outside_position(nav_world, pos, fallback_z_diff, fallback_z_diff, fallback_xy_diff, 0.5)
+	arg_18_1 = GwNavQueries.inside_position_from_outside_position(arg_18_0, arg_18_1, var_18_5, var_18_5, var_18_15, 0.5)
 
-	if pos then
-		local _
+	if arg_18_1 then
+		local var_18_16
+		local var_18_17, var_18_18, var_18_19, var_18_20, var_18_21 = GwNavQueries.triangle_from_position(arg_18_0, arg_18_1, math.max(arg_18_2, var_18_5), math.max(arg_18_3, var_18_5))
 
-		_, _, p1, p2, p3 = GwNavQueries.triangle_from_position(nav_world, pos, math.max(above_max, fallback_z_diff), math.max(below_max, fallback_z_diff))
-
-		return pos, p1, p2, p3
+		return arg_18_1, var_18_19, var_18_20, var_18_21
 	end
 
 	return nil
 end
 
-ConflictUtils.simulate_dummy_target = function (nav_world, center_pos, t)
-	local radius = 15
-	local add_vec = Vector3(radius, 0, 1)
-	local angle_in_radians = t / 3 % (math.pi * 2)
-	local pos = center_pos + Quaternion.rotate(Quaternion(Vector3.up(), angle_in_radians), add_vec)
-	local success, altitude = GwNavQueries.triangle_from_position(nav_world, pos, 15, 15)
+function var_0_0.simulate_dummy_target(arg_19_0, arg_19_1, arg_19_2)
+	local var_19_0 = 15
+	local var_19_1 = Vector3(var_19_0, 0, 1)
+	local var_19_2 = arg_19_2 / 3 % (math.pi * 2)
+	local var_19_3 = arg_19_1 + Quaternion.rotate(Quaternion(Vector3.up(), var_19_2), var_19_1)
+	local var_19_4, var_19_5 = GwNavQueries.triangle_from_position(arg_19_0, var_19_3, 15, 15)
 
-	if success then
-		pos.z = altitude
+	if var_19_4 then
+		var_19_3.z = var_19_5
 
-		return pos
+		return var_19_3
 	end
 
-	return pos
+	return var_19_3
 end
 
-ConflictUtils.test_cake_slice = function (nav_world, center_pos, t)
-	local cake_slice_dir = Quaternion.rotate(Quaternion(Vector3.up(), math.degrees_to_radians(t % 20 / 20 * 360)), Vector3(0, 20, 0))
+function var_0_0.test_cake_slice(arg_20_0, arg_20_1, arg_20_2)
+	local var_20_0 = Quaternion.rotate(Quaternion(Vector3.up(), math.degrees_to_radians(arg_20_2 % 20 / 20 * 360)), Vector3(0, 20, 0))
 
-	QuickDrawer:line(center_pos + Vector3(0, 0, 1), center_pos + cake_slice_dir + Vector3(0, 0, 1), Color(0, 255, 175))
+	QuickDrawer:line(arg_20_1 + Vector3(0, 0, 1), arg_20_1 + var_20_0 + Vector3(0, 0, 1), Color(0, 255, 175))
 
-	for i = 1, 100 do
-		local v = ConflictUtils.get_spawn_pos_on_cake_slice(nav_world, center_pos, 1, 40, cake_slice_dir, math.pi / 4, 5)
+	for iter_20_0 = 1, 100 do
+		local var_20_1 = var_0_0.get_spawn_pos_on_cake_slice(arg_20_0, arg_20_1, 1, 40, var_20_0, math.pi / 4, 5)
 
-		if v then
-			QuickDrawer:sphere(v, 0.5, Color(0, 0, 175))
+		if var_20_1 then
+			QuickDrawer:sphere(var_20_1, 0.5, Color(0, 0, 175))
 		end
 	end
 end
 
-ConflictUtils.get_spawn_pos_on_cake_slice = function (nav_world, center_pos, radius1, radius2, cake_slice_dir, cake_slice_angle_radians, tries, check_no_spawn_volumes, level, nav_tag_volume_handler)
-	local slice_angle = math.atan2(cake_slice_dir.x, cake_slice_dir.y)
-	local half_slice_angle = cake_slice_angle_radians * 0.5
-	local angle1 = slice_angle - half_slice_angle
-	local angle2 = slice_angle + half_slice_angle
+function var_0_0.get_spawn_pos_on_cake_slice(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8, arg_21_9)
+	local var_21_0 = math.atan2(arg_21_4.x, arg_21_4.y)
+	local var_21_1 = arg_21_5 * 0.5
+	local var_21_2 = var_21_0 - var_21_1
+	local var_21_3 = var_21_0 + var_21_1
 
-	for i = 1, tries do
-		local x, y = math.get_uniformly_random_point_inside_sector(radius1, radius2, angle1, angle2)
-		local pos = Vector3(center_pos.x + x, center_pos.y + y, center_pos.z)
-		local success, z = GwNavQueries.triangle_from_position(nav_world, pos, 30, 30)
+	for iter_21_0 = 1, arg_21_6 do
+		local var_21_4, var_21_5 = math.get_uniformly_random_point_inside_sector(arg_21_2, arg_21_3, var_21_2, var_21_3)
+		local var_21_6 = Vector3(arg_21_1.x + var_21_4, arg_21_1.y + var_21_5, arg_21_1.z)
+		local var_21_7, var_21_8 = GwNavQueries.triangle_from_position(arg_21_0, var_21_6, 30, 30)
 
-		if success then
-			Vector3.set_z(pos, z)
+		if var_21_7 then
+			Vector3.set_z(var_21_6, var_21_8)
 
-			if not check_no_spawn_volumes or not ConflictUtils.is_position_inside_no_spawn_volume(level, nav_tag_volume_handler, pos) then
-				return pos
+			if not arg_21_7 or not var_0_0.is_position_inside_no_spawn_volume(arg_21_8, arg_21_9, var_21_6) then
+				return var_21_6
 			end
 		end
 	end
@@ -583,1108 +578,1037 @@ ConflictUtils.get_spawn_pos_on_cake_slice = function (nav_world, center_pos, rad
 	return false
 end
 
-ConflictUtils.get_spawn_pos_on_circle = function (nav_world, center_pos, dist, spread, tries, check_no_spawn_volumes, level, nav_tag_volume_handler, above_max, below_max)
-	local p1, p2, p3
+function var_0_0.get_spawn_pos_on_circle(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_9)
+	local var_22_0
+	local var_22_1
+	local var_22_2
 
-	for i = 1, tries do
-		local add_vec = Vector3(dist + (math.random() - 0.5) * spread, 0, 1)
-		local pos = center_pos + Quaternion.rotate(Quaternion(Vector3.up(), math.degrees_to_radians(Math.random(1, 360))), add_vec)
+	for iter_22_0 = 1, arg_22_4 do
+		local var_22_3 = Vector3(arg_22_2 + (math.random() - 0.5) * arg_22_3, 0, 1)
+		local var_22_4 = arg_22_1 + Quaternion.rotate(Quaternion(Vector3.up(), math.degrees_to_radians(Math.random(1, 360))), var_22_3)
+		local var_22_5, var_22_6, var_22_7, var_22_8 = var_0_0.find_center_tri(arg_22_0, var_22_4, arg_22_8, arg_22_9)
 
-		pos, p1, p2, p3 = ConflictUtils.find_center_tri(nav_world, pos, above_max, below_max)
-
-		if pos and (not check_no_spawn_volumes or not ConflictUtils.is_position_inside_no_spawn_volume(level, nav_tag_volume_handler, pos)) then
-			return pos, p1, p2, p3
+		if var_22_5 and (not arg_22_5 or not var_0_0.is_position_inside_no_spawn_volume(arg_22_6, arg_22_7, var_22_5)) then
+			return var_22_5, var_22_6, var_22_7, var_22_8
 		end
 	end
 
 	return false
 end
 
-ConflictUtils.get_pos_towards_goal = function (nav_world, center_pos, dist, spread, tries, optional_dir, check_no_spawn_volumes, level, nav_tag_volume_handler)
-	tries = tries or 1
+function var_0_0.get_pos_towards_goal(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8)
+	arg_23_4 = arg_23_4 or 1
 
-	for i = 1, tries do
-		local add_vec, goal_pos
+	for iter_23_0 = 1, arg_23_4 do
+		local var_23_0
+		local var_23_1
 
-		if optional_dir then
-			goal_pos = center_pos + optional_dir * dist + (math.random() - 0.5) * spread
+		if arg_23_5 then
+			var_23_1 = arg_23_1 + arg_23_5 * arg_23_2 + (math.random() - 0.5) * arg_23_3
 		else
-			add_vec = Vector3(dist + (math.random() - 0.5) * spread, 0, 0)
-			goal_pos = center_pos + Quaternion.rotate(Quaternion(Vector3.up(), math.degrees_to_radians(Math.random(1, 360))), add_vec)
+			local var_23_2 = Vector3(arg_23_2 + (math.random() - 0.5) * arg_23_3, 0, 0)
+
+			var_23_1 = arg_23_1 + Quaternion.rotate(Quaternion(Vector3.up(), math.degrees_to_radians(Math.random(1, 360))), var_23_2)
 		end
 
-		local _, end_pos = GwNavQueries.raycast(nav_world, center_pos, goal_pos)
+		local var_23_3, var_23_4 = GwNavQueries.raycast(arg_23_0, arg_23_1, var_23_1)
 
-		if end_pos then
-			local return_pos
-			local is_on_navmesh, altitude = GwNavQueries.triangle_from_position(nav_world, end_pos, 1, 1)
+		if var_23_4 then
+			local var_23_5
+			local var_23_6, var_23_7 = GwNavQueries.triangle_from_position(arg_23_0, var_23_4, 1, 1)
 
-			if is_on_navmesh then
-				return_pos = end_pos
+			if var_23_6 then
+				var_23_5 = var_23_4
 			else
-				return_pos = GwNavQueries.inside_position_from_outside_position(nav_world, end_pos, 3, 3, 5, 0.5)
+				var_23_5 = GwNavQueries.inside_position_from_outside_position(arg_23_0, var_23_4, 3, 3, 5, 0.5)
 			end
 
-			if not check_no_spawn_volumes or not ConflictUtils.is_position_inside_no_spawn_volume(level, nav_tag_volume_handler, end_pos) then
-				return return_pos
-			end
-		end
-	end
-
-	return false
-end
-
-ConflictUtils.get_furthest_pos_from_pos_on_circle = function (nav_world, center_pos, dist, spread, tries, avoid_pos)
-	local positions = {}
-
-	for i = 1, tries do
-		local add_vec = Vector3(dist + (math.random() - 0.5) * spread, 0, 1)
-		local pos = center_pos + Quaternion.rotate(Quaternion(Vector3.up(), math.degrees_to_radians(Math.random(1, 360))), add_vec)
-
-		pos = ConflictUtils.find_center_tri(nav_world, pos)
-
-		if pos then
-			positions[#positions + 1] = pos
-		end
-	end
-
-	local max_dist = (dist + 0.5 * spread + 1) * 2 * ((dist + 0.5 * spread + 1) * 2)
-	local furthest_pos
-	local furthest_distance = 0
-
-	for i, pos in ipairs(positions) do
-		if not furthest_pos then
-			furthest_pos = pos
-		elseif pos then
-			local distance = Vector3.distance_squared(avoid_pos, pos)
-
-			if furthest_distance < distance and distance <= max_dist then
-				furthest_pos = pos
-				furthest_distance = distance
+			if not arg_23_6 or not var_0_0.is_position_inside_no_spawn_volume(arg_23_7, arg_23_8, var_23_4) then
+				return var_23_5
 			end
 		end
 	end
 
-	if furthest_pos then
-		return furthest_pos
+	return false
+end
+
+function var_0_0.get_furthest_pos_from_pos_on_circle(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
+	local var_24_0 = {}
+
+	for iter_24_0 = 1, arg_24_4 do
+		local var_24_1 = Vector3(arg_24_2 + (math.random() - 0.5) * arg_24_3, 0, 1)
+		local var_24_2 = arg_24_1 + Quaternion.rotate(Quaternion(Vector3.up(), math.degrees_to_radians(Math.random(1, 360))), var_24_1)
+		local var_24_3 = var_0_0.find_center_tri(arg_24_0, var_24_2)
+
+		if var_24_3 then
+			var_24_0[#var_24_0 + 1] = var_24_3
+		end
+	end
+
+	local var_24_4 = (arg_24_2 + 0.5 * arg_24_3 + 1) * 2 * ((arg_24_2 + 0.5 * arg_24_3 + 1) * 2)
+	local var_24_5
+	local var_24_6 = 0
+
+	for iter_24_1, iter_24_2 in ipairs(var_24_0) do
+		if not var_24_5 then
+			var_24_5 = iter_24_2
+		elseif iter_24_2 then
+			local var_24_7 = Vector3.distance_squared(arg_24_5, iter_24_2)
+
+			if var_24_6 < var_24_7 and var_24_7 <= var_24_4 then
+				var_24_5 = iter_24_2
+				var_24_6 = var_24_7
+			end
+		end
+	end
+
+	if var_24_5 then
+		return var_24_5
 	end
 
 	return false
 end
 
-ConflictUtils.get_spawn_pos_on_circle_with_func = function (nav_world, center_pos, dist, spread, tries, filter_func, filter_data, above_max, below_max)
-	for i = 1, tries do
-		local add_vec = Vector3(dist + (math.random() - 0.5) * spread, 0, 1)
-		local pos = center_pos + Quaternion.rotate(Quaternion(Vector3.up(), math.degrees_to_radians(Math.random(1, 360))), add_vec)
+function var_0_0.get_spawn_pos_on_circle_with_func(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7, arg_25_8)
+	for iter_25_0 = 1, arg_25_4 do
+		local var_25_0 = Vector3(arg_25_2 + (math.random() - 0.5) * arg_25_3, 0, 1)
+		local var_25_1 = arg_25_1 + Quaternion.rotate(Quaternion(Vector3.up(), math.degrees_to_radians(Math.random(1, 360))), var_25_0)
+		local var_25_2 = var_0_0.find_center_tri(arg_25_0, var_25_1, arg_25_7, arg_25_8)
 
-		pos = ConflictUtils.find_center_tri(nav_world, pos, above_max, below_max)
-
-		if pos and filter_func(pos, filter_data) then
-			return pos
+		if var_25_2 and arg_25_5(var_25_2, arg_25_6) then
+			return var_25_2
 		end
 	end
 
 	return false
 end
 
-ConflictUtils.get_spawn_pos_on_circle_with_func_range = function (nav_world, center_pos, min_dist, max_dist, tries, filter_func, filter_data, above_max, below_max)
-	for i = 1, tries do
-		local add_vec = Vector3(math.lerp(min_dist, max_dist, math.random()), 0, 1)
-		local pos = center_pos + Quaternion.rotate(Quaternion(Vector3.up(), math.degrees_to_radians(Math.random(1, 360))), add_vec)
+function var_0_0.get_spawn_pos_on_circle_with_func_range(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6, arg_26_7, arg_26_8)
+	for iter_26_0 = 1, arg_26_4 do
+		local var_26_0 = Vector3(math.lerp(arg_26_2, arg_26_3, math.random()), 0, 1)
+		local var_26_1 = arg_26_1 + Quaternion.rotate(Quaternion(Vector3.up(), math.degrees_to_radians(Math.random(1, 360))), var_26_0)
+		local var_26_2 = var_0_0.find_center_tri(arg_26_0, var_26_1, arg_26_7, arg_26_8)
 
-		pos = ConflictUtils.find_center_tri(nav_world, pos, above_max, below_max)
-
-		if pos and filter_func(pos, filter_data) then
-			return pos
+		if var_26_2 and arg_26_5(var_26_2, arg_26_6) then
+			return var_26_2
 		end
 	end
 
 	return false
 end
 
-ConflictUtils.draw_stack_of_balls = function (pos, a, r, g, b)
-	QuickDrawer:sphere(pos + Vector3(0, 0, 1), 0.4, Color(a, r, g, b))
-	QuickDrawer:sphere(pos + Vector3(0, 0, 1.5), 0.3, Color(a, r * 0.75, g * 0.75, b * 0.75))
-	QuickDrawer:sphere(pos + Vector3(0, 0, 2), 0.2, Color(a, r * 0.5, g * 0.5, b * 0.5))
-	QuickDrawer:sphere(pos + Vector3(0, 0, 2.5), 0.1, Color(a, r * 0.25, g * 0.25, b * 0.25))
+function var_0_0.draw_stack_of_balls(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+	QuickDrawer:sphere(arg_27_0 + Vector3(0, 0, 1), 0.4, Color(arg_27_1, arg_27_2, arg_27_3, arg_27_4))
+	QuickDrawer:sphere(arg_27_0 + Vector3(0, 0, 1.5), 0.3, Color(arg_27_1, arg_27_2 * 0.75, arg_27_3 * 0.75, arg_27_4 * 0.75))
+	QuickDrawer:sphere(arg_27_0 + Vector3(0, 0, 2), 0.2, Color(arg_27_1, arg_27_2 * 0.5, arg_27_3 * 0.5, arg_27_4 * 0.5))
+	QuickDrawer:sphere(arg_27_0 + Vector3(0, 0, 2.5), 0.1, Color(arg_27_1, arg_27_2 * 0.25, arg_27_3 * 0.25, arg_27_4 * 0.25))
 end
 
-local level_portals = {}
+local var_0_12 = {}
 
-ConflictUtils.get_teleporter_portals = function ()
-	local level_key = Managers.state.game_mode:level_key()
-	local level_name = LevelSettings[level_key].level_name
-	local portals = level_portals[level_name]
+function var_0_0.get_teleporter_portals()
+	local var_28_0 = Managers.state.game_mode:level_key()
+	local var_28_1 = LevelSettings[var_28_0].level_name
+	local var_28_2 = var_0_12[var_28_1]
 
-	if portals then
-		return portals
+	if var_28_2 then
+		return var_28_2
 	end
 
-	portals = {}
-	level_portals[level_name] = portals
+	local var_28_3 = {}
 
-	local unit_ind = LevelResource.unit_indices(level_name, "units/hub_elements/portal")
+	var_0_12[var_28_1] = var_28_3
 
-	for _, id in ipairs(unit_ind) do
-		local pos = LevelResource.unit_position(level_name, id)
-		local rot = LevelResource.unit_rotation(level_name, id)
-		local unit_data = LevelResource.unit_data(level_name, id)
-		local portal_id = DynamicData.get(unit_data, "id")
-		local boxed_rot = QuaternionBox(rot)
-		local boxed_pos = Vector3Box(pos)
+	local var_28_4 = LevelResource.unit_indices(var_28_1, "units/hub_elements/portal")
 
-		portals[portal_id] = {
-			boxed_pos,
-			boxed_rot,
+	for iter_28_0, iter_28_1 in ipairs(var_28_4) do
+		local var_28_5 = LevelResource.unit_position(var_28_1, iter_28_1)
+		local var_28_6 = LevelResource.unit_rotation(var_28_1, iter_28_1)
+		local var_28_7 = LevelResource.unit_data(var_28_1, iter_28_1)
+		local var_28_8 = DynamicData.get(var_28_7, "id")
+		local var_28_9 = QuaternionBox(var_28_6)
+		local var_28_10 = Vector3Box(var_28_5)
+
+		var_28_3[var_28_8] = {
+			var_28_10,
+			var_28_9
 		}
 	end
 
-	return portals
+	return var_28_3
 end
 
-ConflictUtils.interest_point_outside_nav_mesh = function (nav_world, unit_name, pos, interest_point_rot)
-	local lookup = InterestPointUnitsLookup[unit_name]
+function var_0_0.interest_point_outside_nav_mesh(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+	local var_29_0 = InterestPointUnitsLookup[arg_29_1]
 
-	for i = 1, #lookup do
-		local point = lookup[i]
-		local local_pos = point[1]:unbox()
+	for iter_29_0 = 1, #var_29_0 do
+		local var_29_1 = var_29_0[iter_29_0][1]:unbox()
+		local var_29_2 = arg_29_2 + Quaternion.rotate(arg_29_3, var_29_1)
+		local var_29_3, var_29_4 = GwNavQueries.triangle_from_position(arg_29_0, var_29_2, 0.3, 0.3)
 
-		local_pos = Quaternion.rotate(interest_point_rot, local_pos)
-
-		local point_world_position = pos + local_pos
-		local is_position_on_navmesh, _ = GwNavQueries.triangle_from_position(nav_world, point_world_position, 0.3, 0.3)
-
-		if not is_position_on_navmesh then
-			return point_world_position
+		if not var_29_3 then
+			return var_29_2
 		end
 	end
 end
 
-ConflictUtils.generate_spawn_point_lookup = function (world)
-	local InterestPointUnits = InterestPointUnits
-	local lookup = {}
-	local position = Vector3(0, 0, -1000)
-	local rotation = Quaternion.identity()
+function var_0_0.generate_spawn_point_lookup(arg_30_0)
+	local var_30_0 = InterestPointUnits
+	local var_30_1 = {}
+	local var_30_2 = Vector3(0, 0, -1000)
+	local var_30_3 = Quaternion.identity()
 
-	for _, unit_names in ipairs(InterestPointUnits) do
-		if unit_names then
-			for k, unit_name in ipairs(unit_names) do
-				local unit = World.spawn_unit(world, unit_name, position, rotation)
-				local p = {}
-				local i = 0
+	for iter_30_0, iter_30_1 in ipairs(var_30_0) do
+		if iter_30_1 then
+			for iter_30_2, iter_30_3 in ipairs(iter_30_1) do
+				local var_30_4 = World.spawn_unit(arg_30_0, iter_30_3, var_30_2, var_30_3)
+				local var_30_5 = {}
+				local var_30_6 = 0
 
-				while Unit.has_data(unit, "interest_point", "points", i) do
-					local node_name = Unit.get_data(unit, "interest_point", "points", i, "node")
-					local node = Unit.node(unit, node_name)
-					local point_position = node_name == "root_point" and Vector3(0, 0, 0) or Unit.local_position(unit, node)
-					local point_rotation = Unit.local_rotation(unit, node)
+				while Unit.has_data(var_30_4, "interest_point", "points", var_30_6) do
+					local var_30_7 = Unit.get_data(var_30_4, "interest_point", "points", var_30_6, "node")
+					local var_30_8 = Unit.node(var_30_4, var_30_7)
+					local var_30_9 = var_30_7 == "root_point" and Vector3(0, 0, 0) or Unit.local_position(var_30_4, var_30_8)
+					local var_30_10 = Unit.local_rotation(var_30_4, var_30_8)
 
-					p[#p + 1] = {
-						Vector3Box(point_position),
-						QuaternionBox(point_rotation),
+					var_30_5[#var_30_5 + 1] = {
+						Vector3Box(var_30_9),
+						QuaternionBox(var_30_10)
 					}
-					i = i + 1
+					var_30_6 = var_30_6 + 1
 				end
 
-				lookup[unit_name] = p
+				var_30_1[iter_30_3] = var_30_5
 
-				World.destroy_unit(world, unit)
+				World.destroy_unit(arg_30_0, var_30_4)
 			end
 		end
 	end
 
-	InterestPointUnitsLookup = lookup
+	InterestPointUnitsLookup = var_30_1
 end
 
-ConflictUtils.display_number_of_breeds = function (header, num_spawned, num_spawned_by_breed)
-	local s = header .. tostring(num_spawned) .. ", "
+function var_0_0.display_number_of_breeds(arg_31_0, arg_31_1, arg_31_2)
+	local var_31_0 = arg_31_0 .. tostring(arg_31_1) .. ", "
 
-	for breed_name, amount in pairs(num_spawned_by_breed) do
-		if amount > 0 then
-			s = s .. breed_name .. "=" .. amount .. ", "
+	for iter_31_0, iter_31_1 in pairs(arg_31_2) do
+		if iter_31_1 > 0 then
+			var_31_0 = var_31_0 .. iter_31_0 .. "=" .. iter_31_1 .. ", "
 		end
 	end
 
-	Debug.text(s)
+	Debug.text(var_31_0)
 end
 
-local count_list = {}
+local var_0_13 = {}
 
-ConflictUtils.display_number_of_breeds_in_segment = function (header, units_spawned_by_breed, zone_data)
-	table.clear(count_list)
+function var_0_0.display_number_of_breeds_in_segment(arg_32_0, arg_32_1, arg_32_2)
+	table.clear(var_0_13)
 
-	local s = header .. ", "
+	local var_32_0 = arg_32_0 .. ", "
 
-	for breed_name, unit_list in pairs(units_spawned_by_breed) do
-		for _, ai_unit in pairs(unit_list) do
-			local health_extension = ScriptUnit.has_extension(ai_unit, "health_system")
-			local hi_data1 = zone_data.hi_data
-			local hi_data2 = health_extension.zone_data and health_extension.zone_data.hi_data
+	for iter_32_0, iter_32_1 in pairs(arg_32_1) do
+		for iter_32_2, iter_32_3 in pairs(iter_32_1) do
+			local var_32_1 = ScriptUnit.has_extension(iter_32_3, "health_system")
+			local var_32_2 = arg_32_2.hi_data
+			local var_32_3 = var_32_1.zone_data and var_32_1.zone_data.hi_data
 
-			if hi_data1 and hi_data1 == hi_data2 then
-				count_list[breed_name] = (count_list[breed_name] or 0) + 1
+			if var_32_2 and var_32_2 == var_32_3 then
+				var_0_13[iter_32_0] = (var_0_13[iter_32_0] or 0) + 1
 
-				QuickDrawer:sphere(POSITION_LOOKUP[ai_unit], 0.75, Color(200, 0, 200))
+				QuickDrawer:sphere(POSITION_LOOKUP[iter_32_3], 0.75, Color(200, 0, 200))
 			end
 		end
 	end
 
-	Debug.text(s)
+	Debug.text(var_32_0)
 
-	for breed_name, amount in pairs(count_list) do
-		s = s .. breed_name .. "=" .. amount .. ", "
+	for iter_32_4, iter_32_5 in pairs(var_0_13) do
+		var_32_0 = var_32_0 .. iter_32_4 .. "=" .. iter_32_5 .. ", "
 	end
 
-	return s
+	return var_32_0
 end
 
-ConflictUtils.show_where_ai_is = function (spawned)
-	local POSITION_LOOKUP = POSITION_LOOKUP
-	local h = Vector3(0, 0, 40)
+function var_0_0.show_where_ai_is(arg_33_0)
+	local var_33_0 = POSITION_LOOKUP
+	local var_33_1 = Vector3(0, 0, 40)
 
-	for i = 1, #spawned do
-		local unit = spawned[i]
-		local pos = POSITION_LOOKUP[unit]
-		local breed = Unit.get_data(unit, "breed")
+	for iter_33_0 = 1, #arg_33_0 do
+		local var_33_2 = arg_33_0[iter_33_0]
+		local var_33_3 = var_33_0[var_33_2]
+		local var_33_4 = Unit.get_data(var_33_2, "breed")
 
-		QuickDrawer:line(pos, pos + h, Color(unpack(breed.debug_color)))
+		QuickDrawer:line(var_33_3, var_33_3 + var_33_1, Color(unpack(var_33_4.debug_color)))
 	end
 end
 
-ConflictUtils.make_roaming_spawns = function (nav_world, level_analysis)
-	local list = {}
+function var_0_0.make_roaming_spawns(arg_34_0, arg_34_1)
+	local var_34_0 = {}
 
 	if LEVEL_EDITOR_TEST then
-		return list
+		return var_34_0
 	end
 
-	local density = CurrentConflictSettings.roaming.density or 0.01
-	local seed_pos = level_analysis:get_start_and_finish()
+	local var_34_1 = CurrentConflictSettings.roaming.density or 0.01
+	local var_34_2 = arg_34_1:get_start_and_finish()
 
-	if seed_pos then
-		seed_pos = seed_pos:unbox()
+	if var_34_2 then
+		var_34_2 = var_34_2:unbox()
 	else
-		local level_key = Managers.state.game_mode:level_key()
-		local level_name = LevelSettings[level_key].level_name
-		local unit_ind = LevelResource.unit_indices(level_name, "core/gwnav/units/seedpoint/seedpoint")
+		local var_34_3 = Managers.state.game_mode:level_key()
+		local var_34_4 = LevelSettings[var_34_3].level_name
+		local var_34_5 = LevelResource.unit_indices(var_34_4, "core/gwnav/units/seedpoint/seedpoint")
 
-		if #unit_ind > 0 then
-			local id = unit_ind[1]
+		if #var_34_5 > 0 then
+			local var_34_6 = var_34_5[1]
 
-			seed_pos = LevelResource.unit_position(level_name, id)
+			var_34_2 = LevelResource.unit_position(var_34_4, var_34_6)
 		end
 	end
 
-	local triangle = GwNavTraversal.get_seed_triangle(nav_world, seed_pos)
-	local triangles = {
-		triangle,
+	local var_34_7 = GwNavTraversal.get_seed_triangle(arg_34_0, var_34_2)
+	local var_34_8 = {
+		var_34_7
 	}
-	local num_triangles = 1
-	local i = 0
-	local lookup = {}
-	local p1, p2, p3 = GwNavTraversal.get_triangle_vertices(nav_world, triangle)
-	local p = (p1 + p2 + p3) / 3
+	local var_34_9 = 1
+	local var_34_10 = 0
+	local var_34_11 = {}
+	local var_34_12, var_34_13, var_34_14 = GwNavTraversal.get_triangle_vertices(arg_34_0, var_34_7)
+	local var_34_15 = (var_34_12 + var_34_13 + var_34_14) / 3
 
-	lookup[p.x * 0.0001 + p.y + p.z * 10000] = true
+	var_34_11[var_34_15.x * 0.0001 + var_34_15.y + var_34_15.z * 10000] = true
 
-	while i < num_triangles do
-		i = i + 1
-		triangle = triangles[i]
+	while var_34_10 < var_34_9 do
+		var_34_10 = var_34_10 + 1
 
-		local a, b, c = Script.temp_count()
-		local p1, p2, p3 = GwNavTraversal.get_triangle_vertices(nav_world, triangle)
-		local triangle_center = (p1 + p2 + p3) / 3
+		local var_34_16 = var_34_8[var_34_10]
+		local var_34_17, var_34_18, var_34_19 = Script.temp_count()
+		local var_34_20, var_34_21, var_34_22 = GwNavTraversal.get_triangle_vertices(arg_34_0, var_34_16)
+		local var_34_23 = (var_34_20 + var_34_21 + var_34_22) / 3
 
-		if density > math.random() then
-			list[#list + 1] = Vector3Box(triangle_center)
+		if var_34_1 > math.random() then
+			var_34_0[#var_34_0 + 1] = Vector3Box(var_34_23)
 		end
 
-		Script.set_temp_count(a, b, c)
+		Script.set_temp_count(var_34_17, var_34_18, var_34_19)
 
-		local neighbors = {
-			GwNavTraversal.get_neighboring_triangles(triangle),
+		local var_34_24 = {
+			GwNavTraversal.get_neighboring_triangles(var_34_16)
 		}
 
-		for j = 1, #neighbors do
-			local neighbour = neighbors[j]
-			local a, b, c = Script.temp_count()
+		for iter_34_0 = 1, #var_34_24 do
+			local var_34_25 = var_34_24[iter_34_0]
+			local var_34_26, var_34_27, var_34_28 = Script.temp_count()
+			local var_34_29, var_34_30, var_34_31 = GwNavTraversal.get_triangle_vertices(arg_34_0, var_34_25)
+			local var_34_32 = var_34_31
+			local var_34_33 = var_34_30
+			local var_34_34 = (var_34_29 + var_34_33 + var_34_32) / 3
+			local var_34_35 = var_34_34.x * 0.0001 + var_34_34.y + var_34_34.z * 10000
 
-			p1, p2, p3 = GwNavTraversal.get_triangle_vertices(nav_world, neighbour)
+			Script.set_temp_count(var_34_26, var_34_27, var_34_28)
 
-			local tri_center = (p1 + p2 + p3) / 3
-			local key = tri_center.x * 0.0001 + tri_center.y + tri_center.z * 10000
-
-			Script.set_temp_count(a, b, c)
-
-			if not lookup[key] then
-				num_triangles = num_triangles + 1
-				triangles[num_triangles] = neighbour
-				lookup[key] = true
+			if not var_34_11[var_34_35] then
+				var_34_9 = var_34_9 + 1
+				var_34_8[var_34_9] = var_34_25
+				var_34_11[var_34_35] = true
 			end
 		end
 	end
 
-	return list
+	return var_34_0
 end
 
-local function add_breeds_from_patrol_formation(formation, difficulty, output)
-	local difficulty_rows = formation[difficulty]
+local function var_0_14(arg_35_0, arg_35_1, arg_35_2)
+	local var_35_0 = arg_35_0[arg_35_1]
 
-	if difficulty_rows then
-		for i = 1, #difficulty_rows do
-			local row = difficulty_rows[i]
+	if var_35_0 then
+		for iter_35_0 = 1, #var_35_0 do
+			local var_35_1 = var_35_0[iter_35_0]
 
-			for j = 1, #row do
-				local breed_name = row[j]
+			for iter_35_1 = 1, #var_35_1 do
+				local var_35_2 = var_35_1[iter_35_1]
 
-				if Breeds[breed_name] then
-					output[breed_name] = true
+				if Breeds[var_35_2] then
+					arg_35_2[var_35_2] = true
 				end
 			end
 		end
 	end
 end
 
-local function add_breeds_from_horde_composition(output, composition_type, difficulty)
-	local difficulty_index = DifficultySettings[difficulty].rank - 1
-	local event_composition = HordeCompositions[composition_type][difficulty_index]
+local function var_0_15(arg_36_0, arg_36_1, arg_36_2)
+	local var_36_0 = DifficultySettings[arg_36_2].rank - 1
+	local var_36_1 = HordeCompositions[arg_36_1][var_36_0]
 
-	fassert(event_composition ~= nil, string.format("No horde composition found for '%s' on difficulty '%s'", composition_type, difficulty))
+	fassert(var_36_1 ~= nil, string.format("No horde composition found for '%s' on difficulty '%s'", arg_36_1, arg_36_2))
 
-	for j = 1, #event_composition do
-		local composition = event_composition[j]
-		local breeds = composition.breeds
+	for iter_36_0 = 1, #var_36_1 do
+		local var_36_2 = var_36_1[iter_36_0].breeds
 
-		for k = 1, #breeds, 2 do
-			local breed_name = breeds[k]
-
-			output[breed_name] = true
+		for iter_36_1 = 1, #var_36_2, 2 do
+			arg_36_0[var_36_2[iter_36_1]] = true
 		end
 	end
 end
 
-local function add_breeds_from_breed_action(output, breed_name, difficulty)
-	local actions = BreedActions[breed_name]
+local function var_0_16(arg_37_0, arg_37_1, arg_37_2)
+	local var_37_0 = BreedActions[arg_37_1]
 
-	if actions then
-		for _, action in pairs(actions) do
-			if action.difficulty_spawn_list or action.spawn_list then
-				local spawn_list = action.difficulty_spawn_list and action.difficulty_spawn_list[difficulty] or action.spawn_list
+	if var_37_0 then
+		for iter_37_0, iter_37_1 in pairs(var_37_0) do
+			if iter_37_1.difficulty_spawn_list or iter_37_1.spawn_list then
+				local var_37_1 = iter_37_1.difficulty_spawn_list and iter_37_1.difficulty_spawn_list[arg_37_2] or iter_37_1.spawn_list
 
-				for i = 1, #spawn_list do
-					output[spawn_list[i]] = true
+				for iter_37_2 = 1, #var_37_1 do
+					arg_37_0[var_37_1[iter_37_2]] = true
 				end
 			end
 
-			if action.phase_spawn then
-				for _, composition_type in pairs(action.phase_spawn) do
-					add_breeds_from_horde_composition(output, composition_type, difficulty)
+			if iter_37_1.phase_spawn then
+				for iter_37_3, iter_37_4 in pairs(iter_37_1.phase_spawn) do
+					var_0_15(arg_37_0, iter_37_4, arg_37_2)
 				end
 			end
 
-			if action.difficulty_spawn or action.spawn then
-				local composition_type = action.difficulty_spawn and action.difficulty_spawn[difficulty] or action.spawn
+			if iter_37_1.difficulty_spawn or iter_37_1.spawn then
+				local var_37_2 = iter_37_1.difficulty_spawn and iter_37_1.difficulty_spawn[arg_37_2] or iter_37_1.spawn
 
-				add_breeds_from_horde_composition(output, composition_type, difficulty)
+				var_0_15(arg_37_0, var_37_2, arg_37_2)
 			end
 		end
 	end
 end
 
-local function add_breed_or_breeds(output, breed_name, difficulty)
-	if type(breed_name) == "table" then
-		for i = 1, #breed_name do
-			local sub_breed_name = breed_name[i]
+local function var_0_17(arg_38_0, arg_38_1, arg_38_2)
+	if type(arg_38_1) == "table" then
+		for iter_38_0 = 1, #arg_38_1 do
+			local var_38_0 = arg_38_1[iter_38_0]
 
-			output[sub_breed_name] = true
+			arg_38_0[var_38_0] = true
 
-			add_breeds_from_breed_action(output, sub_breed_name, difficulty)
+			var_0_16(arg_38_0, var_38_0, arg_38_2)
 		end
 	else
-		output[breed_name] = true
+		arg_38_0[arg_38_1] = true
 
-		add_breeds_from_breed_action(output, breed_name, difficulty)
+		var_0_16(arg_38_0, arg_38_1, arg_38_2)
 	end
 end
 
-ConflictUtils.add_breeds_from_event = function (event_name, event, difficulty, difficulty_rank, output, terror_event_lookup)
-	for i = 1, #event do
+function var_0_0.add_breeds_from_event(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5)
+	for iter_39_0 = 1, #arg_39_1 do
 		repeat
-			local sub_event = event[i]
-			local sub_event_name = sub_event[1]
-			local difficulty_requirement = sub_event.difficulty_requirement
+			local var_39_0 = arg_39_1[iter_39_0]
+			local var_39_1 = var_39_0[1]
+			local var_39_2 = var_39_0.difficulty_requirement
 
-			if difficulty_requirement and difficulty_requirement > (difficulty_rank or DifficultySettings.normal.rank) then
+			if var_39_2 and var_39_2 > (arg_39_3 or DifficultySettings.normal.rank) then
 				break
 			end
 
-			if sub_event_name == "spawn" or sub_event_name == "spawn_at_raw" or sub_event_name == "spawn_special" or sub_event_name == "spawn_weave_special" or sub_event_name == "spawn_weave_special_event" then
-				add_breed_or_breeds(output, sub_event.breed_name, difficulty)
+			if var_39_1 == "spawn" or var_39_1 == "spawn_at_raw" or var_39_1 == "spawn_special" or var_39_1 == "spawn_weave_special" or var_39_1 == "spawn_weave_special_event" then
+				var_0_17(arg_39_4, var_39_0.breed_name, arg_39_2)
 
 				break
 			end
 
-			if sub_event_name == "spawn_patrol" then
-				do
-					local formations = sub_event.formations
+			if var_39_1 == "spawn_patrol" then
+				local var_39_3 = var_39_0.formations
 
-					for j = 1, #formations do
-						local formation_name = formations[j]
-						local formation = PatrolFormationSettings[formation_name]
+				for iter_39_1 = 1, #var_39_3 do
+					local var_39_4 = var_39_3[iter_39_1]
+					local var_39_5 = PatrolFormationSettings[var_39_4]
 
-						add_breeds_from_patrol_formation(formation, difficulty, output)
-					end
+					var_0_14(var_39_5, arg_39_2, arg_39_4)
 				end
 
 				break
 			end
 
-			if sub_event_name == "start_event" then
-				do
-					local contained_event_name = sub_event.start_event_name
-					local contained_event = terror_event_lookup[contained_event_name]
+			if var_39_1 == "start_event" then
+				local var_39_6 = var_39_0.start_event_name
+				local var_39_7 = arg_39_5[var_39_6]
 
-					if contained_event_name ~= event_name then
-						ConflictUtils.add_breeds_from_event(event_name, contained_event, difficulty, difficulty_rank, output, terror_event_lookup)
-					end
+				if var_39_6 ~= arg_39_0 then
+					var_0_0.add_breeds_from_event(arg_39_0, var_39_7, arg_39_2, arg_39_3, arg_39_4, arg_39_5)
 				end
 
 				break
 			end
 
-			if sub_event_name == "event_horde" or sub_event_name == "ambush_horde" then
-				local event_composition_type = sub_event.composition_type
+			if var_39_1 == "event_horde" or var_39_1 == "ambush_horde" then
+				local var_39_8 = var_39_0.composition_type
 
-				add_breeds_from_horde_composition(output, event_composition_type, difficulty)
+				var_0_15(arg_39_4, var_39_8, arg_39_2)
 			end
 		until true
 	end
 end
 
-local function add_breeds_from_boss_settings(boss_settings, difficulty, fallback_difficulty, output)
-	local difficulty_rank = DifficultySettings[difficulty].rank
+local function var_0_18(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+	local var_40_0 = DifficultySettings[arg_40_1].rank
 
-	for key, _ in pairs(boss_settings) do
-		local settings = get_with_override(boss_settings, key, difficulty, fallback_difficulty)
+	for iter_40_0, iter_40_1 in pairs(arg_40_0) do
+		local var_40_1 = var_0_4(arg_40_0, iter_40_0, arg_40_1, arg_40_2)
 
-		if type(settings) == "table" then
-			local event_lookup = settings.event_lookup
+		if type(var_40_1) == "table" then
+			local var_40_2 = var_40_1.event_lookup
 
-			for _, lookup in pairs(event_lookup) do
-				for i = 1, #lookup do
-					local event_name = lookup[i]
-					local terror_event_lookup = GenericTerrorEvents
-					local event = terror_event_lookup[event_name]
+			for iter_40_2, iter_40_3 in pairs(var_40_2) do
+				for iter_40_4 = 1, #iter_40_3 do
+					local var_40_3 = iter_40_3[iter_40_4]
+					local var_40_4 = GenericTerrorEvents
+					local var_40_5 = var_40_4[var_40_3]
 
-					ConflictUtils.add_breeds_from_event(event_name, event, difficulty, difficulty_rank, output, terror_event_lookup)
+					var_0_0.add_breeds_from_event(var_40_3, var_40_5, arg_40_1, var_40_0, arg_40_3, var_40_4)
 				end
 			end
 		end
 	end
 end
 
-local function add_breeds_from_special_settings(special_settings, difficulty, fallback_difficulty, output)
-	local breeds = get_with_override(special_settings, "breeds", difficulty, fallback_difficulty)
+local function var_0_19(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+	local var_41_0 = var_0_4(arg_41_0, "breeds", arg_41_1, arg_41_2)
 
-	for i = 1, #breeds do
-		local breed_name = breeds[i]
-
-		output[breed_name] = true
+	for iter_41_0 = 1, #var_41_0 do
+		arg_41_3[var_41_0[iter_41_0]] = true
 	end
 
-	local rush_intervention = get_with_override(special_settings, "rush_intervention", difficulty, fallback_difficulty)
-	local rush_intervention_breeds = rush_intervention.breeds
+	local var_41_1 = var_0_4(arg_41_0, "rush_intervention", arg_41_1, arg_41_2).breeds
 
-	for i = 1, #rush_intervention_breeds do
-		local breed_name = rush_intervention_breeds[i]
-
-		output[breed_name] = true
+	for iter_41_1 = 1, #var_41_1 do
+		arg_41_3[var_41_1[iter_41_1]] = true
 	end
 
-	local speed_running_intervention = get_with_override(special_settings, "speed_running_intervention", difficulty, fallback_difficulty) or SpecialsSettings.default.speed_running_intervention
-	local speed_running_intervention_breeds = speed_running_intervention.breeds
+	local var_41_2 = var_0_4(arg_41_0, "speed_running_intervention", arg_41_1, arg_41_2) or SpecialsSettings.default.speed_running_intervention
+	local var_41_3 = var_41_2.breeds
 
-	for i = 1, #speed_running_intervention_breeds do
-		local breed_name = speed_running_intervention_breeds[i]
-
-		output[breed_name] = true
+	for iter_41_2 = 1, #var_41_3 do
+		arg_41_3[var_41_3[iter_41_2]] = true
 	end
 
-	local speed_running_intervention_vector_horde_breeds = speed_running_intervention.vector_horde_breeds
+	local var_41_4 = var_41_2.vector_horde_breeds
 
-	for i = 1, #speed_running_intervention_vector_horde_breeds do
-		local breed_name = speed_running_intervention_vector_horde_breeds[i]
-
-		output[breed_name] = true
+	for iter_41_3 = 1, #var_41_4 do
+		arg_41_3[var_41_4[iter_41_3]] = true
 	end
 end
 
-local function add_breeds_from_breed_packs(breed_packs, difficulty, output)
-	local zone_checks = breed_packs.zone_checks
-	local REPLACEMENT_BREED_INDEX = 3
-	local clamp_breeds_low = zone_checks.clamp_breeds_low[difficulty]
+local function var_0_20(arg_42_0, arg_42_1, arg_42_2)
+	local var_42_0 = arg_42_0.zone_checks
+	local var_42_1 = 3
+	local var_42_2 = var_42_0.clamp_breeds_low[arg_42_1]
 
-	if clamp_breeds_low then
-		for i = 1, #clamp_breeds_low do
-			local clamp_breeds = clamp_breeds_low[i]
-			local replacement_breed_name = clamp_breeds[REPLACEMENT_BREED_INDEX].name
-
-			output[replacement_breed_name] = true
+	if var_42_2 then
+		for iter_42_0 = 1, #var_42_2 do
+			arg_42_2[var_42_2[iter_42_0][var_42_1].name] = true
 		end
 	end
 
-	local clamp_breeds_hi = zone_checks.clamp_breeds_hi[difficulty]
+	local var_42_3 = var_42_0.clamp_breeds_hi[arg_42_1]
 
-	if clamp_breeds_hi then
-		for i = 1, #clamp_breeds_hi do
-			local clamp_breeds = clamp_breeds_hi[i]
-			local replacement_breed_name = clamp_breeds[REPLACEMENT_BREED_INDEX].name
-
-			output[replacement_breed_name] = true
+	if var_42_3 then
+		for iter_42_1 = 1, #var_42_3 do
+			arg_42_2[var_42_3[iter_42_1][var_42_1].name] = true
 		end
 	end
 
-	for i = 1, #breed_packs do
-		local pack = breed_packs[i]
-		local breed_members = pack.members
+	for iter_42_2 = 1, #arg_42_0 do
+		local var_42_4 = arg_42_0[iter_42_2].members
 
-		for j = 1, #breed_members do
-			local breed = breed_members[j]
-			local breed_name = breed.name
+		for iter_42_3 = 1, #var_42_4 do
+			local var_42_5 = var_42_4[iter_42_3]
+			local var_42_6 = var_42_5.name
 
-			if breed_name then
-				output[breed_name] = true
+			if var_42_6 then
+				arg_42_2[var_42_6] = true
 			else
-				for k, sub_breed in ipairs(breed) do
-					local breed_name = sub_breed.name
-
-					output[breed_name] = true
+				for iter_42_4, iter_42_5 in ipairs(var_42_5) do
+					arg_42_2[iter_42_5.name] = true
 				end
 			end
 		end
 	end
 end
 
-local function add_breeds_from_pack_spawning_settings(pack_spawning_settings, difficulty, fallback_difficulty, output)
-	local roaming_set = get_with_override(pack_spawning_settings, "roaming_set", difficulty, fallback_difficulty)
-	local breed_packs_name = roaming_set.breed_packs
-	local breed_packs = BreedPacks[breed_packs_name]
+local function var_0_21(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+	local var_43_0 = var_0_4(arg_43_0, "roaming_set", arg_43_1, arg_43_2)
+	local var_43_1 = var_43_0.breed_packs
+	local var_43_2 = BreedPacks[var_43_1]
 
-	add_breeds_from_breed_packs(breed_packs, difficulty, output)
+	var_0_20(var_43_2, arg_43_1, arg_43_3)
 
-	local PACK_OVERRIDE_BREED_INDEX = 1
-	local breed_packs_override = roaming_set.breed_packs_override
+	local var_43_3 = 1
+	local var_43_4 = var_43_0.breed_packs_override
 
-	for i = 1, #breed_packs_override do
-		local pack_override_data = breed_packs_override[i]
-		local pack_override_name = pack_override_data[PACK_OVERRIDE_BREED_INDEX]
-		local pack_override = BreedPacks[pack_override_name]
+	for iter_43_0 = 1, #var_43_4 do
+		local var_43_5 = var_43_4[iter_43_0][var_43_3]
+		local var_43_6 = BreedPacks[var_43_5]
 
-		add_breeds_from_breed_packs(pack_override, difficulty, output)
+		var_0_20(var_43_6, arg_43_1, arg_43_3)
 	end
 end
 
-local function add_breeds_from_horde_settings(horde_settings, difficulty, fallback_difficulty, output)
-	local compositions_pacing = get_with_override(horde_settings, "compositions_pacing", difficulty, fallback_difficulty)
-	local ambush_composition = get_with_override(horde_settings, "ambush_composition", difficulty, fallback_difficulty)
+local function var_0_22(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+	local var_44_0 = var_0_4(arg_44_0, "compositions_pacing", arg_44_1, arg_44_2)
+	local var_44_1 = var_0_4(arg_44_0, "ambush_composition", arg_44_1, arg_44_2)
 
-	if type(ambush_composition) == "table" then
-		for i = 1, #ambush_composition do
-			local wave_compositions = ambush_composition[i]
-			local composition_wave_table = HordeWaveCompositions[wave_compositions]
+	if type(var_44_1) == "table" then
+		for iter_44_0 = 1, #var_44_1 do
+			local var_44_2 = var_44_1[iter_44_0]
+			local var_44_3 = HordeWaveCompositions[var_44_2]
 
-			for j = 1, #composition_wave_table do
-				local composition_name = composition_wave_table[j]
-				local composition = compositions_pacing[composition_name]
+			for iter_44_1 = 1, #var_44_3 do
+				local var_44_4 = var_44_0[var_44_3[iter_44_1]]
 
-				for h = 1, #composition do
-					local variant = composition[h]
-					local breeds = variant.breeds
+				for iter_44_2 = 1, #var_44_4 do
+					local var_44_5 = var_44_4[iter_44_2].breeds
 
-					for k = 1, #breeds, 2 do
-						local breed_name = breeds[k]
-
-						output[breed_name] = true
+					for iter_44_3 = 1, #var_44_5, 2 do
+						arg_44_3[var_44_5[iter_44_3]] = true
 					end
 				end
 			end
 		end
 	else
-		local composition_table = compositions_pacing[ambush_composition]
+		local var_44_6 = var_44_0[var_44_1]
 
-		for i = 1, #composition_table do
-			local composition = composition_table[i]
-			local breeds = composition.breeds
+		for iter_44_4 = 1, #var_44_6 do
+			local var_44_7 = var_44_6[iter_44_4].breeds
 
-			for j = 1, #breeds, 2 do
-				local breed_name = breeds[j]
-
-				output[breed_name] = true
+			for iter_44_5 = 1, #var_44_7, 2 do
+				arg_44_3[var_44_7[iter_44_5]] = true
 			end
 		end
 	end
 
-	local vector_composition = horde_settings.vector_composition
+	local var_44_8 = arg_44_0.vector_composition
 
-	if type(vector_composition) == "table" then
-		for i = 1, #vector_composition do
-			local wave_compositions = vector_composition[i]
-			local composition_wave_table = HordeWaveCompositions[wave_compositions]
+	if type(var_44_8) == "table" then
+		for iter_44_6 = 1, #var_44_8 do
+			local var_44_9 = var_44_8[iter_44_6]
+			local var_44_10 = HordeWaveCompositions[var_44_9]
 
-			for j = 1, #composition_wave_table do
-				local composition_name = composition_wave_table[j]
-				local composition = compositions_pacing[composition_name]
+			for iter_44_7 = 1, #var_44_10 do
+				local var_44_11 = var_44_0[var_44_10[iter_44_7]]
 
-				for h = 1, #composition do
-					local variant = composition[h]
-					local breeds = variant.breeds
+				for iter_44_8 = 1, #var_44_11 do
+					local var_44_12 = var_44_11[iter_44_8].breeds
 
-					for k = 1, #breeds, 2 do
-						local breed_name = breeds[k]
-
-						output[breed_name] = true
+					for iter_44_9 = 1, #var_44_12, 2 do
+						arg_44_3[var_44_12[iter_44_9]] = true
 					end
 				end
 			end
 		end
 	else
-		local composition_table = compositions_pacing[vector_composition]
+		local var_44_13 = var_44_0[var_44_8]
 
-		for i = 1, #composition_table do
-			local composition = composition_table[i]
-			local breeds = composition.breeds
+		for iter_44_10 = 1, #var_44_13 do
+			local var_44_14 = var_44_13[iter_44_10].breeds
 
-			for j = 1, #breeds, 2 do
-				local breed_name = breeds[j]
-
-				output[breed_name] = true
+			for iter_44_11 = 1, #var_44_14, 2 do
+				arg_44_3[var_44_14[iter_44_11]] = true
 			end
 		end
 	end
 
-	local vector_blob_composition = horde_settings.vector_blob_composition
+	local var_44_15 = arg_44_0.vector_blob_composition
 
-	if type(vector_blob_composition) == "table" then
-		for i = 1, #vector_blob_composition do
-			local wave_compositions = vector_blob_composition[i]
-			local composition_wave_table = HordeWaveCompositions[wave_compositions]
+	if type(var_44_15) == "table" then
+		for iter_44_12 = 1, #var_44_15 do
+			local var_44_16 = var_44_15[iter_44_12]
+			local var_44_17 = HordeWaveCompositions[var_44_16]
 
-			for j = 1, #composition_wave_table do
-				local composition_name = composition_wave_table[j]
-				local composition = compositions_pacing[composition_name]
+			for iter_44_13 = 1, #var_44_17 do
+				local var_44_18 = var_44_0[var_44_17[iter_44_13]]
 
-				for h = 1, #composition do
-					local variant = composition[h]
-					local breeds = variant.breeds
+				for iter_44_14 = 1, #var_44_18 do
+					local var_44_19 = var_44_18[iter_44_14].breeds
 
-					for k = 1, #breeds, 2 do
-						local breed_name = breeds[k]
-
-						output[breed_name] = true
+					for iter_44_15 = 1, #var_44_19, 2 do
+						arg_44_3[var_44_19[iter_44_15]] = true
 					end
 				end
 			end
 		end
 	else
-		local composition_table = compositions_pacing[vector_blob_composition]
+		local var_44_20 = var_44_0[var_44_15]
 
-		for i = 1, #composition_table do
-			local composition = composition_table[i]
-			local breeds = composition.breeds
+		for iter_44_16 = 1, #var_44_20 do
+			local var_44_21 = var_44_20[iter_44_16].breeds
 
-			for j = 1, #breeds, 2 do
-				local breed_name = breeds[j]
-
-				output[breed_name] = true
+			for iter_44_17 = 1, #var_44_21, 2 do
+				arg_44_3[var_44_21[iter_44_17]] = true
 			end
 		end
 	end
 
-	local mini_patrol_composition_name = horde_settings.mini_patrol_composition
-	local mini_patrol_composition = compositions_pacing[mini_patrol_composition_name]
+	local var_44_22 = var_44_0[arg_44_0.mini_patrol_composition]
 
-	for i = 1, #mini_patrol_composition do
-		local composition = mini_patrol_composition[i]
-		local breeds = composition.breeds
+	for iter_44_18 = 1, #var_44_22 do
+		local var_44_23 = var_44_22[iter_44_18].breeds
 
-		for j = 1, #breeds, 2 do
-			local breed_name = breeds[j]
-
-			output[breed_name] = true
+		for iter_44_19 = 1, #var_44_23, 2 do
+			arg_44_3[var_44_23[iter_44_19]] = true
 		end
 	end
 end
 
-ConflictUtils.find_conflict_director_breeds = function (conflict_director, difficulty, output)
-	local fallback_difficulty = DifficultySettings[difficulty].fallback_difficulty
+function var_0_0.find_conflict_director_breeds(arg_45_0, arg_45_1, arg_45_2)
+	local var_45_0 = DifficultySettings[arg_45_1].fallback_difficulty
 
-	if not conflict_director.boss.disabled then
-		add_breeds_from_boss_settings(conflict_director.boss, difficulty, fallback_difficulty, output)
+	if not arg_45_0.boss.disabled then
+		var_0_18(arg_45_0.boss, arg_45_1, var_45_0, arg_45_2)
 	end
 
-	if not conflict_director.specials.disabled then
-		add_breeds_from_special_settings(conflict_director.specials, difficulty, fallback_difficulty, output)
+	if not arg_45_0.specials.disabled then
+		var_0_19(arg_45_0.specials, arg_45_1, var_45_0, arg_45_2)
 	end
 
-	if not conflict_director.pack_spawning.disabled then
-		add_breeds_from_pack_spawning_settings(conflict_director.pack_spawning, difficulty, fallback_difficulty, output)
+	if not arg_45_0.pack_spawning.disabled then
+		var_0_21(arg_45_0.pack_spawning, arg_45_1, var_45_0, arg_45_2)
 	end
 
-	if not conflict_director.horde.disabled then
-		add_breeds_from_horde_settings(conflict_director.horde, difficulty, fallback_difficulty, output)
+	if not arg_45_0.horde.disabled then
+		var_0_22(arg_45_0.horde, arg_45_1, var_45_0, arg_45_2)
 	end
 
-	return output
+	return arg_45_2
 end
 
-ConflictUtils.patch_settings_with_difficulty = function (source_settings, difficulty, fallback_difficulty)
-	local overrides = source_settings.difficulty_overrides
-	local override_settings = overrides and (overrides[difficulty] or overrides[fallback_difficulty])
+function var_0_0.patch_settings_with_difficulty(arg_46_0, arg_46_1, arg_46_2)
+	local var_46_0 = arg_46_0.difficulty_overrides
+	local var_46_1 = var_46_0 and (var_46_0[arg_46_1] or var_46_0[arg_46_2])
 
-	if override_settings then
-		for key, _ in pairs(source_settings) do
-			if key ~= "difficulty_overrides" then
-				source_settings[key] = override_settings[key] or source_settings[key]
+	if var_46_1 then
+		for iter_46_0, iter_46_1 in pairs(arg_46_0) do
+			if iter_46_0 ~= "difficulty_overrides" then
+				arg_46_0[iter_46_0] = var_46_1[iter_46_0] or arg_46_0[iter_46_0]
 			end
 		end
 
-		source_settings.difficulty_overrides = nil
+		arg_46_0.difficulty_overrides = nil
 
-		return source_settings
+		return arg_46_0
 	else
-		return source_settings
+		return arg_46_0
 	end
 end
 
-ConflictUtils.patch_terror_events_with_weaves = function (level_key, weave_data, objective_index)
-	local weave_name = weave_data.name
-	local weave_template = WeaveSettings.templates[weave_name]
-	local objectives = weave_template.objectives
-	local weave_terror_events = TerrorEventBlueprints.weaves
+function var_0_0.patch_terror_events_with_weaves(arg_47_0, arg_47_1, arg_47_2)
+	local var_47_0 = arg_47_1.name
+	local var_47_1 = WeaveSettings.templates[var_47_0].objectives
+	local var_47_2 = TerrorEventBlueprints.weaves
 
-	TerrorEventBlueprints[level_key] = TerrorEventBlueprints[level_key] or {}
+	TerrorEventBlueprints[arg_47_0] = TerrorEventBlueprints[arg_47_0] or {}
 
-	table.clear(TerrorEventBlueprints[level_key])
+	table.clear(TerrorEventBlueprints[arg_47_0])
 
-	local objective = objectives[objective_index]
-	local spawning_settings = objective.spawning_settings
+	local var_47_3 = var_47_1[arg_47_2]
+	local var_47_4 = var_47_3.spawning_settings
 
-	if spawning_settings then
-		local main_path_spawning = spawning_settings.main_path_spawning
-		local terror_event_trickle = spawning_settings.terror_event_trickle
+	if var_47_4 then
+		local var_47_5 = var_47_4.main_path_spawning
+		local var_47_6 = var_47_4.terror_event_trickle
 
-		if main_path_spawning then
-			for j = 1, #main_path_spawning do
-				local main_path_spawning_setting = main_path_spawning[j]
-				local terror_event_name = main_path_spawning_setting.terror_event_name
+		if var_47_5 then
+			for iter_47_0 = 1, #var_47_5 do
+				local var_47_7 = var_47_5[iter_47_0].terror_event_name
 
-				TerrorEventBlueprints[level_key][terror_event_name] = weave_terror_events[terror_event_name]
+				TerrorEventBlueprints[arg_47_0][var_47_7] = var_47_2[var_47_7]
 			end
 		end
 
-		if terror_event_trickle then
-			TerrorEventBlueprints[level_key][terror_event_trickle] = weave_terror_events[terror_event_trickle]
+		if var_47_6 then
+			TerrorEventBlueprints[arg_47_0][var_47_6] = var_47_2[var_47_6]
 		end
 	end
 
-	local objective_terror_events = objective.terror_events
+	local var_47_8 = var_47_3.terror_events
 
-	if objective_terror_events then
-		for i = 1, #objective_terror_events do
-			local objective_event = objective_terror_events[i]
+	if var_47_8 then
+		for iter_47_1 = 1, #var_47_8 do
+			local var_47_9 = var_47_8[iter_47_1]
 
-			TerrorEventBlueprints[level_key][objective_event] = weave_terror_events[objective_event]
+			TerrorEventBlueprints[arg_47_0][var_47_9] = var_47_2[var_47_9]
 		end
 	end
 end
 
-ConflictUtils.generate_conflict_director_locked_functions = function (level_key)
-	local locked_director_functions = {}
+function var_0_0.generate_conflict_director_locked_functions(arg_48_0)
+	local var_48_0 = {}
 
-	for director_name, locked_func in pairs(ConflictDirectorLockedFunctions) do
-		if locked_func(level_key) then
-			locked_director_functions[#locked_director_functions + 1] = director_name
+	for iter_48_0, iter_48_1 in pairs(ConflictDirectorLockedFunctions) do
+		if iter_48_1(arg_48_0) then
+			var_48_0[#var_48_0 + 1] = iter_48_0
 		end
 	end
 
-	return locked_director_functions
+	return var_48_0
 end
 
-ConflictUtils.teleport_ai_unit = function (unit, teleport_position, play_sound, play_effect)
-	if teleport_position then
-		if ALIVE[unit] then
-			local blackboard = BLACKBOARDS[unit]
-			local navigation_extension = blackboard.navigation_extension
-			local locomotion_extension = blackboard.locomotion_extension
+function var_0_0.teleport_ai_unit(arg_49_0, arg_49_1, arg_49_2, arg_49_3)
+	if arg_49_1 then
+		if ALIVE[arg_49_0] then
+			local var_49_0 = BLACKBOARDS[arg_49_0]
+			local var_49_1 = var_49_0.navigation_extension
+			local var_49_2 = var_49_0.locomotion_extension
 
-			if navigation_extension and locomotion_extension then
-				navigation_extension:set_navbot_position(teleport_position)
-				locomotion_extension:teleport_to(teleport_position)
-				Managers.state.entity:system("ai_bot_group_system"):enemy_teleported(unit, teleport_position)
+			if var_49_1 and var_49_2 then
+				var_49_1:set_navbot_position(arg_49_1)
+				var_49_2:teleport_to(arg_49_1)
+				Managers.state.entity:system("ai_bot_group_system"):enemy_teleported(arg_49_0, arg_49_1)
 			end
 		end
 
-		local ping_system = Managers.state.entity:system("ping_system")
+		Managers.state.entity:system("ping_system"):remove_ping_from_unit(arg_49_0)
 
-		ping_system:remove_ping_from_unit(unit)
-
-		if play_sound then
-			local audio_system_extension = Managers.state.entity:system("audio_system")
-
-			audio_system_extension:play_audio_unit_event(play_sound, unit)
+		if arg_49_2 then
+			Managers.state.entity:system("audio_system"):play_audio_unit_event(arg_49_2, arg_49_0)
 		end
 
-		if play_effect then
-			local effect_name_id = NetworkLookup.effects[play_effect]
-			local node_id = 0
-			local rotation_offset = Quaternion.identity()
-			local unit_pos = POSITION_LOOKUP[unit]
-			local network_manager = Managers.state.network
+		if arg_49_3 then
+			local var_49_3 = NetworkLookup.effects[arg_49_3]
+			local var_49_4 = 0
+			local var_49_5 = Quaternion.identity()
+			local var_49_6 = POSITION_LOOKUP[arg_49_0]
+			local var_49_7 = Managers.state.network
 
-			network_manager:rpc_play_particle_effect(nil, effect_name_id, NetworkConstants.invalid_game_object_id, node_id, unit_pos, rotation_offset, false)
-			network_manager:rpc_play_particle_effect(nil, effect_name_id, NetworkConstants.invalid_game_object_id, node_id, teleport_position, rotation_offset, false)
+			var_49_7:rpc_play_particle_effect(nil, var_49_3, NetworkConstants.invalid_game_object_id, var_49_4, var_49_6, var_49_5, false)
+			var_49_7:rpc_play_particle_effect(nil, var_49_3, NetworkConstants.invalid_game_object_id, var_49_4, arg_49_1, var_49_5, false)
 		end
 	end
 end
 
-ConflictUtils.look_at_position_flat = function (source_pos, target_pos)
-	local look_at_direction_flat = Vector3.flat(target_pos - source_pos)
-	local look_at_direction_flat_normalized = Vector3.normalize(look_at_direction_flat)
-	local wanted_rot = quaternion_look(look_at_direction_flat_normalized, Vector3.up())
+function var_0_0.look_at_position_flat(arg_50_0, arg_50_1)
+	local var_50_0 = Vector3.flat(arg_50_1 - arg_50_0)
+	local var_50_1 = Vector3.normalize(var_50_0)
 
-	return wanted_rot
+	return (var_0_3(var_50_1, Vector3.up()))
 end
 
-ConflictUtils.get_closest_position = function (pos, pos_list)
-	local min_dist = math.huge
-	local closest_pos
+function var_0_0.get_closest_position(arg_51_0, arg_51_1)
+	local var_51_0 = math.huge
+	local var_51_1
 
-	for i = 1, #pos_list do
-		local check_pos = pos_list[i]
-		local dist = distance_squared(pos, check_pos)
+	for iter_51_0 = 1, #arg_51_1 do
+		local var_51_2 = arg_51_1[iter_51_0]
+		local var_51_3 = var_0_1(arg_51_0, var_51_2)
 
-		if dist < min_dist then
-			min_dist = dist
-			closest_pos = check_pos
+		if var_51_3 < var_51_0 then
+			var_51_0 = var_51_3
+			var_51_1 = var_51_2
 		end
 	end
 
-	return closest_pos, min_dist
+	return var_51_1, var_51_0
 end
 
-ConflictUtils.override_extension_init_data = function (main_extension_init_data, optional_data)
-	local override_extension_init_data = optional_data.extension_init_data
+function var_0_0.override_extension_init_data(arg_52_0, arg_52_1)
+	local var_52_0 = arg_52_1.extension_init_data
 
-	if override_extension_init_data then
-		for system_name, data in pairs(override_extension_init_data) do
-			table.merge(main_extension_init_data[system_name], data)
+	if var_52_0 then
+		for iter_52_0, iter_52_1 in pairs(var_52_0) do
+			table.merge(arg_52_0[iter_52_0], iter_52_1)
 		end
 	end
 end
 
-local function check_if_in_line_of_sight(physics_world, unit, from, to)
-	local dir = to - from
-	local dist = Vector3.length(dir)
+local function var_0_23(arg_53_0, arg_53_1, arg_53_2, arg_53_3)
+	local var_53_0 = arg_53_3 - arg_53_2
+	local var_53_1 = Vector3.length(var_53_0)
+	local var_53_2 = Vector3.normalize(var_53_0)
+	local var_53_3, var_53_4, var_53_5, var_53_6, var_53_7 = PhysicsWorld.raycast(arg_53_0, arg_53_2, var_53_2, var_53_1, "closest", "collision_filter", "filter_ai_line_of_sight_check")
+	local var_53_8 = var_53_3 and Actor.unit(var_53_7)
 
-	dir = Vector3.normalize(dir)
-
-	local hit, hit_position, _, _, hit_actor = PhysicsWorld.raycast(physics_world, from, dir, dist, "closest", "collision_filter", "filter_ai_line_of_sight_check")
-	local hit_unit = hit and Actor.unit(hit_actor)
-
-	return not hit or hit_unit == unit
+	return not var_53_3 or var_53_8 == arg_53_1
 end
 
-ConflictUtils.raise_dead = function (pos, radius, side_id)
-	if pos then
-		radius = radius or 10
+function var_0_0.raise_dead(arg_54_0, arg_54_1, arg_54_2)
+	if arg_54_0 then
+		arg_54_1 = arg_54_1 or 10
 
-		local result_table = {}
-		local raise_list = {}
-		local death_system = Managers.state.entity:system("death_system")
+		local var_54_0 = {}
+		local var_54_1 = {}
 
-		death_system:get_dead(result_table)
+		Managers.state.entity:system("death_system"):get_dead(var_54_0)
 
-		for unit, _ in pairs(result_table) do
-			local blackboard = BLACKBOARDS[unit]
+		for iter_54_0, iter_54_1 in pairs(var_54_0) do
+			local var_54_2 = BLACKBOARDS[iter_54_0]
 
-			if blackboard then
-				local breed = blackboard.breed
-				local dead_pos = POSITION_LOOKUP[unit]
-				local dist = Vector3.distance(pos, dead_pos)
+			if var_54_2 then
+				local var_54_3 = var_54_2.breed
+				local var_54_4 = POSITION_LOOKUP[iter_54_0]
 
-				if dist < radius and breed.is_resurrectable ~= false then
-					if Unit.has_animation_event(unit, "spawn_floor") then
-						raise_list[#raise_list + 1] = unit
+				if arg_54_1 > Vector3.distance(arg_54_0, var_54_4) and var_54_3.is_resurrectable ~= false then
+					if Unit.has_animation_event(iter_54_0, "spawn_floor") then
+						var_54_1[#var_54_1 + 1] = iter_54_0
 					else
-						printf("Can't raise %s missing animation event: 'spawn_floor' ", BLACKBOARDS[unit].breed.name)
+						printf("Can't raise %s missing animation event: 'spawn_floor' ", BLACKBOARDS[iter_54_0].breed.name)
 					end
 				end
 			end
 		end
 
-		local amount = #raise_list
+		local var_54_5 = #var_54_1
 
-		if amount > 0 then
-			local local_player = Managers.player:local_player()
-			local resurrected_group_id = local_player.resurrected_group_id
-			local group_id = resurrected_group_id or Managers.state.entity:system("ai_group_system"):generate_group_id()
-			local group_data = {
-				group_type = "resurrected",
+		if var_54_5 > 0 then
+			local var_54_6 = Managers.player:local_player()
+			local var_54_7 = var_54_6.resurrected_group_id
+			local var_54_8 = var_54_7 or Managers.state.entity:system("ai_group_system"):generate_group_id()
+			local var_54_9 = {
 				insert_into_group = true,
 				template = "resurrected",
-				id = group_id,
-				size = amount,
-				commanding_player = local_player,
+				group_type = "resurrected",
+				id = var_54_8,
+				size = var_54_5,
+				commanding_player = var_54_6
 			}
 
-			local_player.resurrected_group_id = group_id
+			var_54_6.resurrected_group_id = var_54_8
 
-			for i = 1, amount do
-				local unit = raise_list[i]
-				local dead_pos = POSITION_LOOKUP[unit]
-				local dead_rot = Unit.local_rotation(unit, 0)
-				local breed = BLACKBOARDS[unit].breed
-				local spawn_category = "resurrected"
-				local spawn_animation = "spawn_floor"
-				local optional_data = {
+			for iter_54_2 = 1, var_54_5 do
+				local var_54_10 = var_54_1[iter_54_2]
+				local var_54_11 = POSITION_LOOKUP[var_54_10]
+				local var_54_12 = Unit.local_rotation(var_54_10, 0)
+				local var_54_13 = BLACKBOARDS[var_54_10].breed
+				local var_54_14 = "resurrected"
+				local var_54_15 = "spawn_floor"
+				local var_54_16 = {
 					ignore_breed_limits = true,
-					side_id = side_id,
-					insert_into_group = resurrected_group_id ~= nil,
+					side_id = arg_54_2,
+					insert_into_group = var_54_7 ~= nil
 				}
 
-				Managers.state.conflict:spawn_queued_unit(breed, Vector3Box(dead_pos), QuaternionBox(dead_rot), spawn_category, spawn_animation, nil, optional_data, group_data)
-				Managers.state.unit_spawner:mark_for_deletion(unit)
+				Managers.state.conflict:spawn_queued_unit(var_54_13, Vector3Box(var_54_11), QuaternionBox(var_54_12), var_54_14, var_54_15, nil, var_54_16, var_54_9)
+				Managers.state.unit_spawner:mark_for_deletion(var_54_10)
 			end
 		end
 	end
 end
 
-ConflictUtils.command_ai_to_move = function (player, nav_world, pos)
-	if pos then
-		local group = Managers.state.entity:system("ai_group_system"):get_ai_group(player.resurrected_group_id)
+function var_0_0.command_ai_to_move(arg_55_0, arg_55_1, arg_55_2)
+	if arg_55_2 then
+		local var_55_0 = Managers.state.entity:system("ai_group_system"):get_ai_group(arg_55_0.resurrected_group_id)
 
-		if group then
-			QuickDrawer:sphere(pos, 2, Color(100, 0, 255))
+		if var_55_0 then
+			QuickDrawer:sphere(arg_55_2, 2, Color(100, 0, 255))
 
-			local i = 1
-			local amount = group.members_n
-			local num_attempts = 8
-			local grid_size = math.ceil(math.sqrt(amount))
+			local var_55_1 = 1
+			local var_55_2 = var_55_0.members_n
+			local var_55_3 = 8
+			local var_55_4 = math.ceil(math.sqrt(var_55_2))
 
-			for unit, extension in pairs(group.members) do
-				local blackboard = BLACKBOARDS[unit]
+			for iter_55_0, iter_55_1 in pairs(var_55_0.members) do
+				local var_55_5 = BLACKBOARDS[iter_55_0]
 
-				for j = 1, num_attempts do
-					local offset = Vector3(4 * math.random() - 2, 4 * math.random() - 2, 0)
+				for iter_55_2 = 1, var_55_3 do
+					local var_55_6 = Vector3(4 * math.random() - 2, 4 * math.random() - 2, 0)
 
-					if j == 1 then
-						offset = Vector3(-grid_size / 2 + i % grid_size, -grid_size / 2 + math.floor(i / grid_size), 0)
+					if iter_55_2 == 1 then
+						var_55_6 = Vector3(-var_55_4 / 2 + var_55_1 % var_55_4, -var_55_4 / 2 + math.floor(var_55_1 / var_55_4), 0)
 					end
 
-					local goal_pos = LocomotionUtils.pos_on_mesh(nav_world, pos + offset)
+					local var_55_7 = LocomotionUtils.pos_on_mesh(arg_55_1, arg_55_2 + var_55_6)
 
-					if goal_pos then
-						blackboard.new_move_to_goal = true
-						blackboard.goal_destination = Vector3Box(goal_pos)
+					if var_55_7 then
+						var_55_5.new_move_to_goal = true
+						var_55_5.goal_destination = Vector3Box(var_55_7)
 
 						break
 					end
 				end
 
-				i = i + 1
+				var_55_1 = var_55_1 + 1
 			end
 		end
 	end
 end
 
-ConflictUtils.find_positions_around_position = function (center_position, output_position_list, nav_world, min_distance, max_distance, num_of_positions, forbidden_position_list, distance_to_forbidden_position_list, tries, circle_subdivision, row_distance, above_max, below_max, check_line_of_sight, physics_world, line_of_sight_target)
-	distance_to_forbidden_position_list = distance_to_forbidden_position_list or 1
+function var_0_0.find_positions_around_position(arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4, arg_56_5, arg_56_6, arg_56_7, arg_56_8, arg_56_9, arg_56_10, arg_56_11, arg_56_12, arg_56_13, arg_56_14, arg_56_15)
+	arg_56_7 = arg_56_7 or 1
 
-	local function filter_func(pos)
-		local distance_to_forbidden_position_list_sqr = math.pow(distance_to_forbidden_position_list, 2)
+	local function var_56_0(arg_57_0)
+		local var_57_0 = math.pow(arg_56_7, 2)
 
-		if forbidden_position_list then
-			for i = 1, #forbidden_position_list do
-				local forbidden_position = forbidden_position_list[i]
+		if arg_56_6 then
+			for iter_57_0 = 1, #arg_56_6 do
+				local var_57_1 = arg_56_6[iter_57_0]
 
-				if distance_to_forbidden_position_list_sqr > Vector3.distance_squared(pos, forbidden_position) then
+				if var_57_0 > Vector3.distance_squared(arg_57_0, var_57_1) then
 					return false
 				end
 			end
 		end
 
-		for i = 1, #output_position_list do
-			local output_position = output_position_list[i]
+		for iter_57_1 = 1, #arg_56_1 do
+			local var_57_2 = arg_56_1[iter_57_1]
 
-			if distance_to_forbidden_position_list_sqr > Vector3.distance_squared(pos, output_position) then
+			if var_57_0 > Vector3.distance_squared(arg_57_0, var_57_2) then
 				return false
 			end
 		end
 
-		if check_line_of_sight then
-			local ground_offset = Vector3(0, 0, 1)
-			local offset_pos = pos + ground_offset
-			local offset_center_position = center_position + ground_offset
-			local in_line_of_sight = check_if_in_line_of_sight(physics_world, line_of_sight_target, offset_pos, offset_center_position)
+		if arg_56_13 then
+			local var_57_3 = Vector3(0, 0, 1)
+			local var_57_4 = arg_57_0 + var_57_3
+			local var_57_5 = arg_56_0 + var_57_3
 
-			return in_line_of_sight
+			return (var_0_23(arg_56_14, arg_56_15, var_57_4, var_57_5))
 		end
 
 		return true
 	end
 
-	local spread = max_distance - min_distance
-	local distance = min_distance + spread * 0.5
+	local var_56_1 = arg_56_4 - arg_56_3
+	local var_56_2 = arg_56_3 + var_56_1 * 0.5
 
-	circle_subdivision = circle_subdivision or 4
+	arg_56_9 = arg_56_9 or 4
 
-	local radian_subdivision = math.pi * 2 / circle_subdivision
-	local spread_delta = row_distance or 2
-	local two_pi = 2 * math.pi
-	local start_spread = (math.random() - 0.5) * spread
-	local current_spread = start_spread
-	local start_radians = math.random() * two_pi
-	local current_radians = start_radians
-	local current_subdivision_count = 0
+	local var_56_3 = math.pi * 2 / arg_56_9
+	local var_56_4 = arg_56_10 or 2
+	local var_56_5 = 2 * math.pi
+	local var_56_6 = (math.random() - 0.5) * var_56_1
+	local var_56_7 = math.random() * var_56_5
+	local var_56_8 = 0
 
-	tries = tries or 30
+	arg_56_8 = arg_56_8 or 30
 
-	local function get_next_pos()
-		current_radians = current_radians + radian_subdivision
+	local function var_56_9()
+		var_56_7 = var_56_7 + var_56_3
 
-		if current_radians > two_pi then
-			current_radians = current_radians - two_pi
+		if var_56_7 > var_56_5 then
+			var_56_7 = var_56_7 - var_56_5
 		end
 
-		current_subdivision_count = current_subdivision_count + 1
+		var_56_8 = var_56_8 + 1
 
-		if current_subdivision_count > circle_subdivision then
-			current_spread = current_spread + spread_delta
+		if var_56_8 > arg_56_9 then
+			var_56_6 = var_56_6 + var_56_4
 
-			if current_spread > spread * 0.5 then
-				current_spread = current_spread - spread
+			if var_56_6 > var_56_1 * 0.5 then
+				var_56_6 = var_56_6 - var_56_1
 			end
 
-			current_subdivision_count = 0
-			current_radians = math.random() * two_pi
+			var_56_8 = 0
+			var_56_7 = math.random() * var_56_5
 		end
 
-		local add_vec = Vector3(distance + current_spread, 0, 0)
-		local pos = center_position + Quaternion.rotate(Quaternion(Vector3.up(), current_radians), add_vec)
+		local var_58_0 = Vector3(var_56_2 + var_56_6, 0, 0)
 
-		return pos
+		return arg_56_0 + Quaternion.rotate(Quaternion(Vector3.up(), var_56_7), var_58_0)
 	end
 
-	for i = 1, num_of_positions do
-		for try = 1, tries do
-			local pos = get_next_pos()
-			local spawn_pos = ConflictUtils.find_center_tri_with_fallback(nav_world, pos, above_max, below_max)
+	for iter_56_0 = 1, arg_56_5 do
+		for iter_56_1 = 1, arg_56_8 do
+			local var_56_10 = var_56_9()
+			local var_56_11 = var_0_0.find_center_tri_with_fallback(arg_56_2, var_56_10, arg_56_11, arg_56_12)
 
-			if spawn_pos then
-				local valid_position = filter_func(spawn_pos)
-
-				if valid_position then
-					output_position_list[#output_position_list + 1] = spawn_pos
+			if var_56_11 then
+				if var_56_0(var_56_11) then
+					arg_56_1[#arg_56_1 + 1] = var_56_11
 				end
 
 				break
@@ -1692,79 +1616,79 @@ ConflictUtils.find_positions_around_position = function (center_position, output
 		end
 	end
 
-	return output_position_list
+	return arg_56_1
 end
 
-local function check_if_above_ground(physics_world, origin_position, distance)
-	local hit, _, _, _, _ = PhysicsWorld.raycast(physics_world, origin_position, Vector3(0, 0, -1), distance, "closest", "types", "statics", "collision_filter", "filter_environment_overlap")
+local function var_0_24(arg_59_0, arg_59_1, arg_59_2)
+	local var_59_0, var_59_1, var_59_2, var_59_3, var_59_4 = PhysicsWorld.raycast(arg_59_0, arg_59_1, Vector3(0, 0, -1), arg_59_2, "closest", "types", "statics", "collision_filter", "filter_environment_overlap")
 
-	return not hit
+	return not var_59_0
 end
 
-ConflictUtils.find_visible_positions_in_sphere_around_player = function (physics_world, position_count, player_unit, radius, from_pitch, to_pitch, pitch_delta, from_yaw, to_yaw, yaw_delta, forbidden_position_list, distance_to_forbidden_position_list, distance_between_positions, min_distance_from_floor)
-	distance_to_forbidden_position_list = distance_to_forbidden_position_list or 0
+function var_0_0.find_visible_positions_in_sphere_around_player(arg_60_0, arg_60_1, arg_60_2, arg_60_3, arg_60_4, arg_60_5, arg_60_6, arg_60_7, arg_60_8, arg_60_9, arg_60_10, arg_60_11, arg_60_12, arg_60_13)
+	arg_60_11 = arg_60_11 or 0
 
-	local distance_between_positions_sqr = math.pow(distance_between_positions, 2)
-	local distance_to_forbidden_position_list_sqr = math.pow(distance_to_forbidden_position_list, 2)
-	local center_position = POSITION_LOOKUP[player_unit]
-	local full_pitch_delta = to_pitch - from_pitch
-	local full_yaw_delta = to_yaw - from_yaw
-	local start_pitch = from_pitch + full_pitch_delta * math.random()
-	local start_yaw = from_yaw + full_yaw_delta * math.random()
-	local start_pitch_switch_count = full_pitch_delta / pitch_delta
-	local start_yaw_switch_count = full_yaw_delta / yaw_delta
-	local pitch = start_pitch
-	local pitch_switch_count = 0
-	local yaw_switch_count = 0
-	local yaw = start_yaw
-	local valid_positions = {}
+	local var_60_0 = math.pow(arg_60_12, 2)
+	local var_60_1 = math.pow(arg_60_11, 2)
+	local var_60_2 = POSITION_LOOKUP[arg_60_2]
+	local var_60_3 = arg_60_5 - arg_60_4
+	local var_60_4 = arg_60_8 - arg_60_7
+	local var_60_5 = arg_60_4 + var_60_3 * math.random()
+	local var_60_6 = arg_60_7 + var_60_4 * math.random()
+	local var_60_7 = var_60_3 / arg_60_6
+	local var_60_8 = var_60_4 / arg_60_9
+	local var_60_9 = var_60_5
+	local var_60_10 = 0
+	local var_60_11 = 0
+	local var_60_12 = var_60_6
+	local var_60_13 = {}
 
-	while position_count > #valid_positions do
-		pitch = pitch + pitch_delta
-		pitch_switch_count = pitch_switch_count + 1
+	while arg_60_1 > #var_60_13 do
+		var_60_9 = var_60_9 + arg_60_6
+		var_60_10 = var_60_10 + 1
 
-		if start_pitch_switch_count <= pitch_switch_count then
-			pitch = start_pitch
-			pitch_switch_count = 0
-			yaw = yaw + yaw_delta
-			yaw_switch_count = yaw_switch_count + 1
+		if var_60_7 <= var_60_10 then
+			var_60_9 = var_60_5
+			var_60_10 = 0
+			var_60_12 = var_60_12 + arg_60_9
+			var_60_11 = var_60_11 + 1
 
-			if start_yaw_switch_count <= yaw_switch_count then
+			if var_60_8 <= var_60_11 then
 				break
 			end
 		end
 
-		local new_position = center_position + Quaternion.rotate(Quaternion.from_yaw_pitch_roll(yaw, pitch, 0), Vector3.forward()) * radius
-		local failed = false
+		local var_60_14 = var_60_2 + Quaternion.rotate(Quaternion.from_yaw_pitch_roll(var_60_12, var_60_9, 0), Vector3.forward()) * arg_60_3
+		local var_60_15 = false
 
-		if forbidden_position_list then
-			for i = 1, #forbidden_position_list do
-				local forbidden_position = forbidden_position_list[i]
+		if arg_60_10 then
+			for iter_60_0 = 1, #arg_60_10 do
+				local var_60_16 = arg_60_10[iter_60_0]
 
-				if distance_to_forbidden_position_list_sqr > Vector3.distance_squared(new_position, forbidden_position) then
-					failed = true
+				if var_60_1 > Vector3.distance_squared(var_60_14, var_60_16) then
+					var_60_15 = true
 
 					break
 				end
 			end
 		end
 
-		if not failed then
-			for i = 1, #valid_positions do
-				local valid_position = valid_positions[i]
+		if not var_60_15 then
+			for iter_60_1 = 1, #var_60_13 do
+				local var_60_17 = var_60_13[iter_60_1]
 
-				if distance_between_positions_sqr > Vector3.distance_squared(new_position, valid_position) then
-					failed = true
+				if var_60_0 > Vector3.distance_squared(var_60_14, var_60_17) then
+					var_60_15 = true
 
 					break
 				end
 			end
 
-			if not failed and check_if_in_line_of_sight(physics_world, player_unit, new_position, center_position) and check_if_above_ground(physics_world, new_position, min_distance_from_floor) then
-				valid_positions[#valid_positions + 1] = new_position
+			if not var_60_15 and var_0_23(arg_60_0, arg_60_2, var_60_14, var_60_2) and var_0_24(arg_60_0, var_60_14, arg_60_13) then
+				var_60_13[#var_60_13 + 1] = var_60_14
 			end
 		end
 	end
 
-	return valid_positions
+	return var_60_13
 end

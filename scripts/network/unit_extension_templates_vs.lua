@@ -1,6 +1,6 @@
-﻿-- chunkname: @scripts/network/unit_extension_templates_vs.lua
+-- chunkname: @scripts/network/unit_extension_templates_vs.lua
 
-local unit_templates_vs = {
+return {
 	player_unit_dark_pact = {
 		base_template = "player_unit_base",
 		go_type = "player_unit",
@@ -14,7 +14,7 @@ local unit_templates_vs = {
 			"PlayerUnitGhostModeExtension",
 			"DarkPactPlayerOutlineExtension",
 			"ProjectileLinkerExtension",
-			"VersusHordeAbilityExtension",
+			"VersusHordeAbilityExtension"
 		},
 		self_owned_extensions_server = {
 			"PlayerUnitOverchargeExtension",
@@ -27,7 +27,7 @@ local unit_templates_vs = {
 			"PlayerUnitGhostModeExtension",
 			"DarkPactPlayerOutlineExtension",
 			"ProjectileLinkerExtension",
-			"VersusHordeAbilityExtension",
+			"VersusHordeAbilityExtension"
 		},
 		husk_extensions = {
 			"PlayerHuskOverchargeExtension",
@@ -39,7 +39,7 @@ local unit_templates_vs = {
 			"PlayerHuskGhostModeExtension",
 			"DarkPactPlayerHuskOutlineExtension",
 			"ProjectileLinkerExtension",
-			"VersusHordeAbilityHuskExtension",
+			"VersusHordeAbilityHuskExtension"
 		},
 		husk_extensions_server = {
 			"PlayerHuskOverchargeExtension",
@@ -52,17 +52,15 @@ local unit_templates_vs = {
 			"PlayerHuskGhostModeExtension",
 			"DarkPactPlayerHuskOutlineExtension",
 			"ProjectileLinkerExtension",
-			"VersusHordeAbilityExtension",
-		},
+			"VersusHordeAbilityExtension"
+		}
 	},
 	versus_dark_pact_climbing_interaction_unit = {
 		go_type = "versus_dark_pact_climbing_interaction_unit",
 		self_owned_extensions = {
 			"LocalInteractableExtension",
 			"GenericOutlineExtension",
-			"DarkPactClimbingExtension",
-		},
-	},
+			"DarkPactClimbingExtension"
+		}
+	}
 }
-
-return unit_templates_vs

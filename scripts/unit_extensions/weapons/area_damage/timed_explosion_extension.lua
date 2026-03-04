@@ -1,148 +1,148 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/area_damage/timed_explosion_extension.lua
+-- chunkname: @scripts/unit_extensions/weapons/area_damage/timed_explosion_extension.lua
 
 TimedExplosionExtension = class(TimedExplosionExtension)
 
-TimedExplosionExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self._unit = unit
-	self._on_explode_callbacks = {}
-	self._area_damage_system = extension_init_context.entity_manager:system("area_damage_system")
-	self.explosion_template_name = extension_init_data.explosion_template_name
+function TimedExplosionExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._unit = arg_1_2
+	arg_1_0._on_explode_callbacks = {}
+	arg_1_0._area_damage_system = arg_1_1.entity_manager:system("area_damage_system")
+	arg_1_0.explosion_template_name = arg_1_3.explosion_template_name
 
-	local explosion_template = ExplosionUtils.get_template(extension_init_data.explosion_template_name)
-	local difficulty_name = Managers.state.difficulty:get_difficulty()
-	local active_wind = Managers.weave:get_active_wind()
+	local var_1_0 = ExplosionUtils.get_template(arg_1_3.explosion_template_name)
+	local var_1_1 = Managers.state.difficulty:get_difficulty()
+	local var_1_2 = Managers.weave:get_active_wind()
 
-	if active_wind and WindSettings[active_wind].timed_explosion_extension_settings then
-		local wind_settings = Managers.weave:get_active_wind_settings()
-		local wind_strength = Managers.weave:get_wind_strength()
-		local explosion_settings = wind_settings.timed_explosion_extension_settings
+	if var_1_2 and WindSettings[var_1_2].timed_explosion_extension_settings then
+		local var_1_3 = Managers.weave:get_active_wind_settings()
+		local var_1_4 = Managers.weave:get_wind_strength()
+		local var_1_5 = var_1_3.timed_explosion_extension_settings
 
-		self._time_to_explode = explosion_settings.time_to_explode[difficulty_name][wind_strength]
-		self._follow_time = explosion_settings.follow_time and explosion_settings.follow_time[difficulty_name][wind_strength]
-		self._scale = wind_settings.radius and wind_settings.radius[difficulty_name][wind_strength] or 1
-		self._power = wind_settings.power_level and wind_settings.power_level[difficulty_name][wind_strength] or 0
-		self._buildup_effect_delay = self._time_to_explode + self._follow_time - (explosion_template.explosion.buildup_effect_time or 0)
+		arg_1_0._time_to_explode = var_1_5.time_to_explode[var_1_1][var_1_4]
+		arg_1_0._follow_time = var_1_5.follow_time and var_1_5.follow_time[var_1_1][var_1_4]
+		arg_1_0._scale = var_1_3.radius and var_1_3.radius[var_1_1][var_1_4] or 1
+		arg_1_0._power = var_1_3.power_level and var_1_3.power_level[var_1_1][var_1_4] or 0
+		arg_1_0._buildup_effect_delay = arg_1_0._time_to_explode + arg_1_0._follow_time - (var_1_0.explosion.buildup_effect_time or 0)
 	else
-		self._time_to_explode = explosion_template.time_to_explode or 0
-		self._scale = explosion_template.explosion.unit_scale or explosion_template.explosion.radius or 1
-		self._follow_time = explosion_template.follow_time or 0
-		self._power = explosion_template.explosion.power_level or 0
-		self._buildup_effect_delay = self._time_to_explode + self._follow_time - (explosion_template.explosion.buildup_effect_time or 0)
+		arg_1_0._time_to_explode = var_1_0.time_to_explode or 0
+		arg_1_0._scale = var_1_0.explosion.unit_scale or var_1_0.explosion.radius or 1
+		arg_1_0._follow_time = var_1_0.follow_time or 0
+		arg_1_0._power = var_1_0.explosion.power_level or 0
+		arg_1_0._buildup_effect_delay = arg_1_0._time_to_explode + arg_1_0._follow_time - (var_1_0.explosion.buildup_effect_time or 0)
 	end
 
-	self._buildup_effect_offset = explosion_template.explosion.buildup_effect_offset
-	self._buildup_effect = explosion_template.explosion.buildup_effect_name
-	self._use_effect = self._buildup_effect ~= nil
-	self.is_server = Managers.player.is_server
-	self.follow_unit = extension_init_data.follow_unit
-	self.trigger_on_server_only = explosion_template.explosion.trigger_on_server_only
+	arg_1_0._buildup_effect_offset = var_1_0.explosion.buildup_effect_offset
+	arg_1_0._buildup_effect = var_1_0.explosion.buildup_effect_name
+	arg_1_0._use_effect = arg_1_0._buildup_effect ~= nil
+	arg_1_0.is_server = Managers.player.is_server
+	arg_1_0.follow_unit = arg_1_3.follow_unit
+	arg_1_0.trigger_on_server_only = var_1_0.explosion.trigger_on_server_only
 
-	if self._scale then
-		Unit.set_local_scale(unit, 0, Vector3(self._scale * 1.25, self._scale * 1.25, self._scale * 1.25))
+	if arg_1_0._scale then
+		Unit.set_local_scale(arg_1_2, 0, Vector3(arg_1_0._scale * 1.25, arg_1_0._scale * 1.25, arg_1_0._scale * 1.25))
 	end
 
-	if self.follow_unit then
-		self._state = "follow_unit"
+	if arg_1_0.follow_unit then
+		arg_1_0._state = "follow_unit"
 	else
-		self._state = "waiting_to_explode"
+		arg_1_0._state = "waiting_to_explode"
 	end
 
-	self._deletion_timer = explosion_template.explosion.deletion_timer or 1
+	arg_1_0._deletion_timer = var_1_0.explosion.deletion_timer or 1
 end
 
-TimedExplosionExtension.update = function (self, unit, input, dt, context, t)
-	local state = self._state
+function TimedExplosionExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	local var_2_0 = arg_2_0._state
 
-	if self._buildup_effect then
-		self._buildup_effect_delay = math.max(self._buildup_effect_delay - dt, 0)
+	if arg_2_0._buildup_effect then
+		arg_2_0._buildup_effect_delay = math.max(arg_2_0._buildup_effect_delay - arg_2_3, 0)
 
-		if self._buildup_effect_delay <= 0 and self._use_effect then
-			self._use_effect = false
+		if arg_2_0._buildup_effect_delay <= 0 and arg_2_0._use_effect then
+			arg_2_0._use_effect = false
 
-			local position = Vector3.copy(POSITION_LOOKUP[unit])
+			local var_2_1 = Vector3.copy(POSITION_LOOKUP[arg_2_1])
 
-			if self._buildup_effect_offset then
-				local buildup_effect_offset = Vector3(unpack(self._buildup_effect_offset))
+			if arg_2_0._buildup_effect_offset then
+				local var_2_2 = Vector3(unpack(arg_2_0._buildup_effect_offset))
 
-				position.x = position.x + buildup_effect_offset.x
-				position.y = position.y + buildup_effect_offset.y
-				position.z = position.z + buildup_effect_offset.z
+				var_2_1.x = var_2_1.x + var_2_2.x
+				var_2_1.y = var_2_1.y + var_2_2.y
+				var_2_1.z = var_2_1.z + var_2_2.z
 			end
 
-			self._fx_id = World.create_particles(context.world, self._buildup_effect, position)
+			arg_2_0._fx_id = World.create_particles(arg_2_4.world, arg_2_0._buildup_effect, var_2_1)
 		end
 	end
 
-	if state == "waiting_to_explode" then
-		self._time_to_explode = math.max(self._time_to_explode - dt, 0)
+	if var_2_0 == "waiting_to_explode" then
+		arg_2_0._time_to_explode = math.max(arg_2_0._time_to_explode - arg_2_3, 0)
 
-		if self._time_to_explode == 0 and (self.is_server or not self.trigger_on_server_only) then
-			self:_explode()
+		if arg_2_0._time_to_explode == 0 and (arg_2_0.is_server or not arg_2_0.trigger_on_server_only) then
+			arg_2_0:_explode()
 		end
-	elseif state == "follow_unit" then
-		if Unit.alive(self.follow_unit) then
-			self._follow_time = math.max(self._follow_time - dt, 0)
+	elseif var_2_0 == "follow_unit" then
+		if Unit.alive(arg_2_0.follow_unit) then
+			arg_2_0._follow_time = math.max(arg_2_0._follow_time - arg_2_3, 0)
 
-			local follow_position = Unit.local_position(self.follow_unit, 0)
+			local var_2_3 = Unit.local_position(arg_2_0.follow_unit, 0)
 
-			Unit.set_local_position(unit, 0, follow_position)
+			Unit.set_local_position(arg_2_1, 0, var_2_3)
 
-			if self._follow_time == 0 then
-				Unit.flow_event(unit, "disable_rotation")
+			if arg_2_0._follow_time == 0 then
+				Unit.flow_event(arg_2_1, "disable_rotation")
 
-				self._state = "waiting_to_explode"
+				arg_2_0._state = "waiting_to_explode"
 			end
 		else
-			self._state = "waiting_to_explode"
+			arg_2_0._state = "waiting_to_explode"
 		end
-	elseif state == "exploded" then
-		self._deletion_timer = math.max(self._deletion_timer - dt, 0)
+	elseif var_2_0 == "exploded" then
+		arg_2_0._deletion_timer = math.max(arg_2_0._deletion_timer - arg_2_3, 0)
 
-		if self._deletion_timer == 0 then
-			Managers.state.side:remove_unit_from_side(unit)
-			Managers.state.unit_spawner:mark_for_deletion(unit)
+		if arg_2_0._deletion_timer == 0 then
+			Managers.state.side:remove_unit_from_side(arg_2_1)
+			Managers.state.unit_spawner:mark_for_deletion(arg_2_1)
 
-			if self._buildup_effect and self._fx_id then
-				World.destroy_particles(context.world, self._fx_id)
+			if arg_2_0._buildup_effect and arg_2_0._fx_id then
+				World.destroy_particles(arg_2_4.world, arg_2_0._fx_id)
 			end
 
-			self._state = "waiting_for_deletion"
+			arg_2_0._state = "waiting_for_deletion"
 		end
-	elseif state == "waiting_for_deletion" then
-		-- Nothing
+	elseif var_2_0 == "waiting_for_deletion" then
+		-- block empty
 	else
-		ferror("Unknown state (%s)", state)
+		ferror("Unknown state (%s)", var_2_0)
 	end
 end
 
-TimedExplosionExtension._explode = function (self)
-	local explosion_template = ExplosionUtils.get_template(self.explosion_template_name)
-	local attacker_unit = self._unit
-	local position = Unit.world_position(attacker_unit, 0)
-	local rotation = Unit.world_rotation(attacker_unit, 0)
-	local explosion_template_name = self.explosion_template_name
-	local scale = 1
-	local damage_source = explosion_template.damage_source or "undefined"
-	local attacker_power_level = self._power
+function TimedExplosionExtension._explode(arg_3_0)
+	local var_3_0 = ExplosionUtils.get_template(arg_3_0.explosion_template_name)
+	local var_3_1 = arg_3_0._unit
+	local var_3_2 = Unit.world_position(var_3_1, 0)
+	local var_3_3 = Unit.world_rotation(var_3_1, 0)
+	local var_3_4 = arg_3_0.explosion_template_name
+	local var_3_5 = 1
+	local var_3_6 = var_3_0.damage_source or "undefined"
+	local var_3_7 = arg_3_0._power
 
-	self._state = "exploded"
+	arg_3_0._state = "exploded"
 
-	self._area_damage_system:create_explosion(attacker_unit, position, rotation, explosion_template_name, scale, damage_source, attacker_power_level, false)
-	self:_invoke_on_explode_callbacks()
+	arg_3_0._area_damage_system:create_explosion(var_3_1, var_3_2, var_3_3, var_3_4, var_3_5, var_3_6, var_3_7, false)
+	arg_3_0:_invoke_on_explode_callbacks()
 end
 
-TimedExplosionExtension._invoke_on_explode_callbacks = function (self)
-	local position = POSITION_LOOKUP[self._unit]
+function TimedExplosionExtension._invoke_on_explode_callbacks(arg_4_0)
+	local var_4_0 = POSITION_LOOKUP[arg_4_0._unit]
 
-	for _, callback in ipairs(self._on_explode_callbacks) do
-		callback(self.explosion_template_name, position)
+	for iter_4_0, iter_4_1 in ipairs(arg_4_0._on_explode_callbacks) do
+		iter_4_1(arg_4_0.explosion_template_name, var_4_0)
 	end
 
-	self._on_explode_callbacks = nil
+	arg_4_0._on_explode_callbacks = nil
 end
 
-TimedExplosionExtension.add_on_explode_callback = function (self, callback)
-	if callback ~= nil then
-		table.insert(self._on_explode_callbacks, callback)
+function TimedExplosionExtension.add_on_explode_callback(arg_5_0, arg_5_1)
+	if arg_5_1 ~= nil then
+		table.insert(arg_5_0._on_explode_callbacks, arg_5_1)
 	end
 end

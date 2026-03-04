@@ -1,188 +1,186 @@
-﻿-- chunkname: @levels/honduras_dlcs/carousel/level_settings_carousel.lua
+-- chunkname: @levels/honduras_dlcs/carousel/level_settings_carousel.lua
 
-local settings = DLCSettings.carousel
-
-settings.missions = {
+DLCSettings.carousel.missions = {
 	bell_pvp_barrels = {
-		collect_amount = 3,
-		mission_template_name = "collect",
 		text = "bell_pvp_barrels",
+		mission_template_name = "collect",
+		collect_amount = 3
 	},
 	military_pvp_barrels = {
-		collect_amount = 2,
-		mission_template_name = "collect",
 		text = "military_pvp_barrels",
+		mission_template_name = "collect",
+		collect_amount = 2
 	},
 	versus_mission_survive_courtyard_01 = {
 		mission_template_name = "goal",
-		text = "level_objective_description_military_05",
+		text = "level_objective_description_military_05"
 	},
 	versus_mission_survive_courtyard_02 = {
 		mission_template_name = "goal",
-		text = "level_objective_description_military_05",
+		text = "level_objective_description_military_05"
 	},
 	versus_mission_survive_courtyard_03 = {
 		mission_template_name = "goal",
-		text = "level_objective_description_military_05",
+		text = "level_objective_description_military_05"
 	},
 	versus_mission_survive_courtyard_04 = {
 		mission_template_name = "goal",
-		text = "level_objective_description_military_05",
+		text = "level_objective_description_military_05"
 	},
 	versus_mission_survive_temple_01 = {
 		mission_template_name = "goal",
-		text = "level_objective_description_military_20",
+		text = "level_objective_description_military_20"
 	},
 	versus_mission_survive_temple_02 = {
 		mission_template_name = "goal",
-		text = "level_objective_description_military_20",
+		text = "level_objective_description_military_20"
 	},
 	versus_mission_survive_temple_02_B = {
 		mission_template_name = "goal",
-		text = "level_objective_description_military_20",
+		text = "level_objective_description_military_20"
 	},
 	versus_mission_survive_temple_03 = {
 		mission_template_name = "goal",
-		text = "level_objective_description_military_20",
+		text = "level_objective_description_military_20"
 	},
 	versus_mission_survive_temple_04 = {
 		mission_template_name = "goal",
-		text = "level_objective_description_military_20",
+		text = "level_objective_description_military_20"
 	},
 	versus_mission_survive_temple_05 = {
 		mission_template_name = "goal",
-		text = "level_objective_description_military_20",
+		text = "level_objective_description_military_20"
 	},
 	versus_mission_survive_temple_06 = {
 		mission_template_name = "goal",
-		text = "level_objective_description_military_20",
+		text = "level_objective_description_military_20"
 	},
 	versus_mission_survive_temple_07 = {
 		mission_template_name = "goal",
-		text = "level_objective_description_military_20",
+		text = "level_objective_description_military_20"
 	},
 	versus_mission_survive_temple_08 = {
 		mission_template_name = "goal",
-		text = "level_objective_description_military_20",
+		text = "level_objective_description_military_20"
 	},
 	versus_mission_objective_barricade_sockets = {
 		mission_template_name = "goal",
-		text = "level_objective_description_military_02",
+		text = "level_objective_description_military_02"
 	},
 	versus_mission_farmlands_key = {
 		mission_template_name = "goal",
-		text = "level_objective_description_farmlands_07",
+		text = "level_objective_description_farmlands_07"
 	},
 	versus_mission_objective_barn = {
 		mission_template_name = "goal",
-		text = "level_objective_description_farmlands_08",
+		text = "level_objective_description_farmlands_08"
 	},
 	versus_mission_monster = {
 		mission_template_name = "goal",
-		text = "level_objective_description_farmlands_09",
+		text = "level_objective_description_farmlands_09"
 	},
 	mission_fort_bonfire_001 = {
 		mission_template_name = "goal",
-		text = "level_objective_description_fort_09",
+		text = "level_objective_description_fort_09"
 	},
 	mission_fort_bonfire_002 = {
 		mission_template_name = "goal",
-		text = "level_objective_description_fort_09",
+		text = "level_objective_description_fort_09"
 	},
 	mission_fort_bonfire_003 = {
 		mission_template_name = "goal",
-		text = "level_objective_description_fort_09",
+		text = "level_objective_description_fort_09"
 	},
 	mission_fort_bonfire_004 = {
 		mission_template_name = "goal",
-		text = "level_objective_description_fort_09",
+		text = "level_objective_description_fort_09"
 	},
 	mission_fort_bonfire_005 = {
 		mission_template_name = "goal",
-		text = "level_objective_description_fort_09",
+		text = "level_objective_description_fort_09"
 	},
 	mission_fort_breach_wall = {
 		mission_template_name = "goal",
-		text = "level_objective_description_fort_16",
+		text = "level_objective_description_fort_16"
 	},
 	versus_fort_cannon_balls = {
 		mission_template_name = "goal",
-		text = "level_objective_description_fort_16",
+		text = "level_objective_description_fort_16"
 	},
 	versus_fort_secret_elevator = {
 		mission_template_name = "goal",
-		text = "level_objective_description_fort_17",
+		text = "level_objective_description_fort_17"
 	},
 	versus_fort_open_portcullis = {
 		mission_template_name = "goal",
-		text = "level_objective_description_fort_20",
+		text = "level_objective_description_fort_20"
 	},
 	versus_mission_objective_end_cannon_01 = {
 		mission_template_name = "goal",
-		text = "level_objective_description_fort_23",
+		text = "level_objective_description_fort_23"
 	},
 	versus_mission_survive_ferry_01 = {
 		mission_template_name = "goal",
-		text = "level_objective_description_forest_ambush_15",
+		text = "level_objective_description_forest_ambush_15"
 	},
 	versus_mission_survive_ferry_02 = {
 		mission_template_name = "goal",
-		text = "level_objective_description_forest_ambush_15",
+		text = "level_objective_description_forest_ambush_15"
 	},
 	versus_mission_survive_ferry_03 = {
 		mission_template_name = "goal",
-		text = "level_objective_description_forest_ambush_15",
+		text = "level_objective_description_forest_ambush_15"
 	},
 	versus_mission_survive_ferry_04 = {
 		mission_template_name = "goal",
-		text = "level_objective_description_forest_ambush_15",
+		text = "level_objective_description_forest_ambush_15"
 	},
 	versus_mission_watch_tower_01 = {
 		mission_template_name = "goal",
-		text = "level_objective_description_forest_ambush_06",
+		text = "level_objective_description_forest_ambush_06"
 	},
 	versus_mission_watch_tower_02 = {
 		mission_template_name = "goal",
-		text = "level_objective_description_forest_ambush_06",
+		text = "level_objective_description_forest_ambush_06"
 	},
 	versus_mission_watch_tower_03 = {
 		mission_template_name = "goal",
-		text = "level_objective_description_forest_ambush_06",
+		text = "level_objective_description_forest_ambush_06"
 	},
 	forest_ambush_pvp_gargoyles = {
-		collect_amount = 2,
-		mission_template_name = "collect",
 		text = "level_objective_description_forest_ambush_11",
-	},
+		mission_template_name = "collect",
+		collect_amount = 2
+	}
 }
 LevelSettings.carousel_hub = {
-	act = "act_versus",
-	act_presentation_order = 1,
-	ambient_sound_event = "silent_default_world_sound",
-	conflict_settings = "inn_level",
-	default_surface_material = "dirt",
 	display_name = "level_name_carousel_hub",
-	dlc_name = "carousel",
-	environment_state = "exterior",
-	game_mode = "inn_vs",
-	has_multiple_loading_images = true,
-	hub_level = true,
 	knocked_down_setting = "knocked_down",
-	level_image = "level_image_carousel_hub",
-	level_name = "levels/honduras_dlcs/carousel/carousel_hub/world",
-	loading_ui_package_name = "loading_screen_carousel",
-	mechanism = "versus",
-	no_bots_allowed = true,
-	no_nav_mesh = false,
-	no_terror_events = true,
-	player_aux_bus_name = "environment_reverb_outside",
+	conflict_settings = "inn_level",
+	environment_state = "exterior",
 	preload_no_enemies = true,
-	skip_generate_spawns = true,
+	level_image = "level_image_carousel_hub",
+	act = "act_versus",
+	dlc_name = "carousel",
 	small_level_image = "carousel_hub_small_image",
+	skip_generate_spawns = true,
+	loading_ui_package_name = "loading_screen_carousel",
+	hub_level = true,
+	ambient_sound_event = "silent_default_world_sound",
+	no_bots_allowed = true,
+	mechanism = "versus",
+	act_presentation_order = 1,
+	game_mode = "inn_vs",
+	default_surface_material = "dirt",
+	has_multiple_loading_images = true,
+	level_name = "levels/honduras_dlcs/carousel/carousel_hub/world",
+	no_nav_mesh = false,
+	player_aux_bus_name = "environment_reverb_outside",
+	no_terror_events = true,
 	source_aux_bus_name = "environment_reverb_outside_source",
 	packages = {
 		"resource_packages/levels/dlcs/carousel/carousel_hub",
-		"resource_packages/levels/inn_dependencies",
+		"resource_packages/levels/inn_dependencies"
 	},
 	level_particle_effects = {},
 	level_screen_effects = {},
@@ -191,53 +189,53 @@ LevelSettings.carousel_hub = {
 	pickup_settings = {
 		{
 			primary = {
-				ammo = 2,
 				grenades = 5,
+				ammo = 2,
 				level_events = {
 					explosive_barrel = 4,
-					lamp_oil = 4,
-				},
-			},
-		},
+					lamp_oil = 4
+				}
+			}
+		}
 	},
 	supported_game_modes = {
-		versus = true,
-	},
+		versus = true
+	}
 }
 LevelSettings.farmlands_pvp = {
-	act = "act_versus",
-	act_presentation_order = 5,
 	ambient_sound_event = "silent_default_world_sound",
-	boss_spawning_method = "hand_placed",
-	default_surface_material = "dirt",
-	description_text = "nik_loading_screen_farmland_01",
-	display_name = "level_name_farmlands",
-	dlc_name = "carousel",
-	environment_state = "exterior",
-	game_mode = "versus",
-	knocked_down_setting = "knocked_down",
-	level_image = "level_icon_09",
 	level_name = "levels/honduras_dlcs/carousel/farmlands_pvp/world",
-	loading_ui_package_name = "loading_screen_7",
-	main_game_level = false,
-	mechanism = "versus",
-	override_map_start_section = true,
 	player_aux_bus_name = "environment_reverb_outside",
+	display_name = "level_name_farmlands",
+	environment_state = "exterior",
+	mechanism = "versus",
+	knocked_down_setting = "knocked_down",
+	act = "act_versus",
 	small_level_image = "farmlands_small_image",
-	source_aux_bus_name = "environment_reverb_outside_source",
+	main_game_level = false,
+	boss_spawning_method = "hand_placed",
+	description_text = "nik_loading_screen_farmland_01",
 	unlockable = true,
 	use_mini_patrols = false,
+	loading_ui_package_name = "loading_screen_7",
+	act_presentation_order = 5,
+	default_surface_material = "dirt",
+	game_mode = "versus",
+	level_image = "level_icon_09",
+	dlc_name = "carousel",
+	override_map_start_section = true,
+	source_aux_bus_name = "environment_reverb_outside_source",
 	packages = {
 		"resource_packages/levels/honduras/farmlands_common",
 		"resource_packages/levels/honduras/farmlands",
 		"resource_packages/levels/dlcs/carousel/farmlands_pvp_meta",
-		"resource_packages/levels/dlcs/carousel/versus_dependencies",
+		"resource_packages/levels/dlcs/carousel/versus_dependencies"
 	},
 	level_particle_effects = {},
 	level_screen_effects = {},
 	loading_screen_wwise_events = {
 		"nik_loading_screen_farmland_01",
-		"nik_loading_screen_farmland_02",
+		"nik_loading_screen_farmland_02"
 	},
 	locations = {
 		"location_farmlands_pvp_farmlands",
@@ -245,38 +243,38 @@ LevelSettings.farmlands_pvp = {
 		"location_farmlands_pvp_oak_hill",
 		"location_farmlands_pvp_farmstead_01",
 		"location_farmlands_pvp_farmstead_02",
-		"location_farmlands_pvp_farmstead_03",
+		"location_farmlands_pvp_farmstead_03"
 	},
 	supported_game_modes = {
-		versus = true,
-	},
+		versus = true
+	}
 }
 LevelSettings.dwarf_exterior_pvp = {
-	act = "act_versus",
-	act_presentation_order = 9,
-	ambient_sound_event = "silent_default_world_sound",
-	boss_spawning_method = "hand_placed",
 	climate_type = "snow",
-	description_text = "nik_dlc_dwarf_exterior_loading_screen_01",
-	display_name = "dwarf_exterior_pvp",
-	dlc_name = "carousel",
-	environment_state = "exterior",
-	game_mode = "versus",
-	knocked_down_setting = "knocked_down",
-	level_image = "dlc_dwarf_exterior",
+	ambient_sound_event = "silent_default_world_sound",
 	level_name = "levels/honduras_dlcs/carousel/dwarf_exterior_pvp/world",
-	loading_ui_package_name = "loading_screen_dwarf_2",
-	main_game_level = false,
-	mechanism = "versus",
-	override_map_start_section = true,
 	player_aux_bus_name = "environment_reverb_outside",
+	environment_state = "exterior",
+	mechanism = "versus",
+	act_presentation_order = 9,
+	act = "act_versus",
+	knocked_down_setting = "knocked_down",
 	small_level_image = "dlc_dwarf_exterior_small_image",
-	source_aux_bus_name = "environment_reverb_outside_source",
+	main_game_level = false,
+	boss_spawning_method = "hand_placed",
+	description_text = "nik_dlc_dwarf_exterior_loading_screen_01",
 	unlockable = true,
 	use_mini_patrols = false,
+	display_name = "dwarf_exterior_pvp",
+	loading_ui_package_name = "loading_screen_dwarf_2",
+	game_mode = "versus",
+	level_image = "dlc_dwarf_exterior",
+	dlc_name = "carousel",
+	override_map_start_section = true,
+	source_aux_bus_name = "environment_reverb_outside_source",
 	packages = {
 		"resource_packages/levels/dlcs/carousel/versus_dependencies",
-		"resource_packages/levels/dlcs/carousel/dwarf_exterior_pvp_meta",
+		"resource_packages/levels/dlcs/carousel/dwarf_exterior_pvp_meta"
 	},
 	level_particle_effects = {},
 	level_screen_effects = {},
@@ -284,7 +282,7 @@ LevelSettings.dwarf_exterior_pvp = {
 		"nik_dwarf_external_loading_screen_01",
 		"nik_dwarf_external_loading_screen_02",
 		"nde_dwarf_external_loading_screen_01",
-		"nde_dwarf_external_loading_screen_02",
+		"nde_dwarf_external_loading_screen_02"
 	},
 	locations = {
 		"dlc1_5_dwarf_exterior_location_forest_outskirts",
@@ -297,46 +295,46 @@ LevelSettings.dwarf_exterior_pvp = {
 		"dlc1_5_dwarf_exterior_location_mining_path",
 		"dlc1_5_dwarf_exterior_location_railyard",
 		"dlc1_5_dwarf_exterior_location_hidden_cave",
-		"dlc1_5_dwarf_exterior_location_chamber_area",
+		"dlc1_5_dwarf_exterior_location_chamber_area"
 	},
 	supported_game_modes = {
-		versus = true,
-	},
+		versus = true
+	}
 }
 LevelSettings.bell_pvp = {
-	act = "act_versus",
-	act_presentation_order = 3,
 	ambient_sound_event = "silent_default_world_sound",
-	boss_spawning_method = "hand_placed",
-	default_surface_material = "stone_wet",
-	description_text = "nik_loading_screen_bell_01",
-	display_name = "level_name_bell",
-	dlc_name = "carousel",
-	environment_state = "exterior",
-	game_mode = "versus",
-	knocked_down_setting = "knocked_down",
-	level_image = "level_icon_07",
 	level_name = "levels/honduras_dlcs/carousel/bell_pvp/world",
-	loading_ui_package_name = "loading_screen_1",
-	main_game_level = false,
-	mechanism = "versus",
-	override_map_start_section = true,
 	player_aux_bus_name = "environment_reverb_outside",
+	display_name = "level_name_bell",
+	environment_state = "exterior",
+	mechanism = "versus",
+	knocked_down_setting = "knocked_down",
+	act = "act_versus",
 	small_level_image = "bell_small_image",
-	source_aux_bus_name = "environment_reverb_outside_source",
+	main_game_level = false,
+	boss_spawning_method = "hand_placed",
+	description_text = "nik_loading_screen_bell_01",
 	unlockable = true,
 	use_mini_patrols = false,
+	loading_ui_package_name = "loading_screen_1",
+	act_presentation_order = 3,
+	default_surface_material = "stone_wet",
+	game_mode = "versus",
+	level_image = "level_icon_07",
+	dlc_name = "carousel",
+	override_map_start_section = true,
+	source_aux_bus_name = "environment_reverb_outside_source",
 	packages = {
 		"resource_packages/levels/honduras/bell_common",
 		"resource_packages/levels/honduras/bell",
 		"resource_packages/levels/dlcs/carousel/bell_pvp_meta",
-		"resource_packages/levels/dlcs/carousel/versus_dependencies",
+		"resource_packages/levels/dlcs/carousel/versus_dependencies"
 	},
 	level_particle_effects = {},
 	level_screen_effects = {},
 	loading_screen_wwise_events = {
 		"nik_loading_screen_bell_01",
-		"nik_loading_screen_bell_02",
+		"nik_loading_screen_bell_02"
 	},
 	locations = {
 		"location_bell_pvp_winery",
@@ -351,46 +349,46 @@ LevelSettings.bell_pvp = {
 		"location_bell_pvp_serpentine",
 		"location_bell_pvp_mountain",
 		"location_bell_pvp_northside",
-		"location_bell_pvp_platz",
+		"location_bell_pvp_platz"
 	},
 	supported_game_modes = {
-		versus = true,
-	},
+		versus = true
+	}
 }
 LevelSettings.military_pvp = {
-	act = "act_versus",
-	act_presentation_order = 1,
 	ambient_sound_event = "silent_default_world_sound",
-	boss_spawning_method = "hand_placed",
-	default_surface_material = "stone",
-	description_text = "nik_loading_screen_helmgart_military_01",
-	display_name = "level_name_military",
-	dlc_name = "carousel",
+	level_name = "levels/honduras_dlcs/carousel/military_pvp/world",
+	player_aux_bus_name = "environment_reverb_outside",
 	environment_state = "exterior",
+	mechanism = "versus",
+	act = "act_versus",
+	small_level_image = "military_small_image",
+	main_game_level = false,
+	use_mini_patrols = false,
+	description_text = "nik_loading_screen_helmgart_military_01",
+	unlockable = true,
+	boss_spawning_method = "hand_placed",
+	act_presentation_order = 1,
+	loading_ui_package_name = "loading_screen_13",
+	display_name = "level_name_military",
+	default_surface_material = "stone",
 	game_mode = "versus",
 	knocked_down_setting = "knocked_down",
 	level_image = "level_icon_01",
-	level_name = "levels/honduras_dlcs/carousel/military_pvp/world",
-	loading_ui_package_name = "loading_screen_13",
-	main_game_level = false,
-	mechanism = "versus",
+	dlc_name = "carousel",
 	override_map_start_section = true,
-	player_aux_bus_name = "environment_reverb_outside",
-	small_level_image = "military_small_image",
 	source_aux_bus_name = "environment_reverb_outside_source",
-	unlockable = true,
-	use_mini_patrols = false,
 	packages = {
 		"resource_packages/levels/honduras/military_common",
 		"resource_packages/levels/honduras/military",
 		"resource_packages/levels/dlcs/carousel/military_pvp_meta",
-		"resource_packages/levels/dlcs/carousel/versus_dependencies",
+		"resource_packages/levels/dlcs/carousel/versus_dependencies"
 	},
 	level_particle_effects = {},
 	level_screen_effects = {},
 	loading_screen_wwise_events = {
 		"nik_loading_screen_helmgart_military_01",
-		"nik_loading_screen_helmgart_military_02",
+		"nik_loading_screen_helmgart_military_02"
 	},
 	locations = {
 		"location_military_pvp_streets_01",
@@ -408,39 +406,39 @@ LevelSettings.military_pvp = {
 		"location_military_pvp_temple",
 		"location_military_pvp_vs_01",
 		"location_military_pvp_vs_02",
-		"location_military_pvp_vs_03",
+		"location_military_pvp_vs_03"
 	},
 	supported_game_modes = {
-		versus = true,
-	},
+		versus = true
+	}
 }
 LevelSettings.fort_pvp = {
-	act = "act_versus",
-	act_presentation_order = 4,
-	ambient_sound_event = "silent_default_world_sound",
-	boss_spawning_method = "hand_placed",
-	default_surface_material = "stone_wet",
 	description_text = "nik_loading_screen_fort_01",
-	display_name = "level_name_forest_fort",
-	dlc_name = "carousel",
-	environment_state = "exterior",
-	game_mode = "versus",
-	knocked_down_setting = "knocked_down",
 	level_image = "level_icon_06",
-	level_name = "levels/honduras_dlcs/carousel/fort_pvp/world",
-	loading_ui_package_name = "loading_screen_8",
-	main_game_level = false,
-	mechanism = "versus",
-	override_map_start_section = true,
+	display_name = "level_name_forest_fort",
 	player_aux_bus_name = "environment_reverb_outside",
+	environment_state = "exterior",
+	mechanism = "versus",
+	act = "act_versus",
+	dlc_name = "carousel",
 	small_level_image = "fort_small_image",
-	source_aux_bus_name = "environment_reverb_outside_source",
+	main_game_level = false,
+	game_mode = "versus",
+	boss_spawning_method = "hand_placed",
+	act_presentation_order = 4,
 	unlockable = true,
+	ambient_sound_event = "silent_default_world_sound",
+	loading_ui_package_name = "loading_screen_8",
+	default_surface_material = "stone_wet",
+	knocked_down_setting = "knocked_down",
+	level_name = "levels/honduras_dlcs/carousel/fort_pvp/world",
+	override_map_start_section = true,
+	source_aux_bus_name = "environment_reverb_outside_source",
 	packages = {
 		"resource_packages/levels/honduras/fort_common",
 		"resource_packages/levels/honduras/fort",
 		"resource_packages/levels/dlcs/carousel/fort_pvp_meta",
-		"resource_packages/levels/dlcs/carousel/versus_dependencies",
+		"resource_packages/levels/dlcs/carousel/versus_dependencies"
 	},
 	level_particle_effects = {},
 	level_screen_effects = {},
@@ -455,49 +453,49 @@ LevelSettings.fort_pvp = {
 		"location_fort_pvp_inner_yard",
 		"location_fort_pvp_north_yard",
 		"location_fort_pvp_north_bridge",
-		"location_fort_river_overlook",
+		"location_fort_river_overlook"
 	},
 	loading_screen_wwise_events = {
 		"nik_loading_screen_fort_01",
-		"nik_loading_screen_fort_02",
+		"nik_loading_screen_fort_02"
 	},
 	supported_game_modes = {
-		versus = true,
-	},
+		versus = true
+	}
 }
 LevelSettings.forest_ambush_pvp = {
-	act = "act_versus",
-	act_presentation_order = 8,
-	ambient_sound_event = "silent_default_world_sound",
-	boss_spawning_method = "hand_placed",
-	default_surface_material = "stone",
 	description_text = "nfl_forest_ambush_loading_screen_02",
-	display_name = "level_name_forest_ambush",
-	dlc_name = "carousel",
+	ambient_sound_event = "silent_default_world_sound",
+	player_aux_bus_name = "environment_reverb_outside",
 	environment_state = "exterior",
+	mechanism = "versus",
+	level_image = "level_icon_ubersreik_forest",
+	act = "act_versus",
+	use_mini_patrols = false,
+	small_level_image = "forest_ambush_small_image",
+	waystone_type = 2,
+	act_presentation_order = 8,
+	display_name = "level_name_forest_ambush",
+	boss_spawning_method = "hand_placed",
+	unlockable = true,
+	default_surface_material = "stone",
 	game_mode = "versus",
 	knocked_down_setting = "knocked_down",
-	level_image = "level_icon_ubersreik_forest",
-	level_name = "levels/honduras_dlcs/carousel/forest_ambush_pvp/world",
 	loading_ui_package_name = "loading_screen_18",
-	mechanism = "versus",
+	level_name = "levels/honduras_dlcs/carousel/forest_ambush_pvp/world",
+	dlc_name = "carousel",
 	override_map_start_section = true,
-	player_aux_bus_name = "environment_reverb_outside",
-	small_level_image = "forest_ambush_small_image",
 	source_aux_bus_name = "environment_reverb_outside_source",
-	unlockable = true,
-	use_mini_patrols = false,
-	waystone_type = 2,
 	packages = {
 		"resource_packages/levels/dlcs/holly/forest_ambush",
 		"resource_packages/levels/dlcs/carousel/forest_ambush_pvp_meta",
-		"resource_packages/levels/dlcs/carousel/versus_dependencies",
+		"resource_packages/levels/dlcs/carousel/versus_dependencies"
 	},
 	level_particle_effects = {},
 	level_screen_effects = {},
 	loading_screen_wwise_events = {
 		"nfl_forest_ambush_loading_screen_01",
-		"nfl_forest_ambush_loading_screen_02",
+		"nfl_forest_ambush_loading_screen_02"
 	},
 	locations = {
 		"location_forest_pvp_reikwald",
@@ -511,14 +509,14 @@ LevelSettings.forest_ambush_pvp = {
 		"location_forest_pvp_swamp",
 		"location_forest_ambush_pvp_vs_01",
 		"location_forest_ambush_pvp_vs_02",
-		"location_forest_ambush_pvp_vs_03",
+		"location_forest_ambush_pvp_vs_03"
 	},
 	mission_selection_offset = {
 		184,
 		-167,
-		0,
+		0
 	},
 	supported_game_modes = {
-		versus = true,
-	},
+		versus = true
+	}
 }

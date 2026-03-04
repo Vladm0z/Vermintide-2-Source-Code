@@ -1,43 +1,42 @@
-﻿-- chunkname: @scripts/managers/admin/admin_manager.lua
+-- chunkname: @scripts/managers/admin/admin_manager.lua
 
 require("scripts/managers/admin/script_rcon_server")
 
 AdminManager = class(AdminManager)
 
-AdminManager.init = function (self)
+function AdminManager.init(arg_1_0)
 	if DEDICATED_SERVER then
-		local window_title = script_data.window_title
+		local var_1_0 = script_data.window_title
 
-		if type(window_title) == "table" then
-			window_title = table.concat(window_title, " ")
+		if type(var_1_0) == "table" then
+			var_1_0 = table.concat(var_1_0, " ")
 		end
 
-		CommandWindow.open(window_title or "Dedicated Server")
+		CommandWindow.open(var_1_0 or "Dedicated Server")
 		cprintf("Version: content '%s', engine '%s'", script_data.settings.content_revision, script_data.build_identifier)
 
-		local start_port_range = script_data.start_port_range
-		local rcon_port
+		local var_1_1 = script_data.start_port_range
+		local var_1_2
 
-		if start_port_range then
-			start_port_range = tonumber(start_port_range)
-			rcon_port = start_port_range + 3
+		if var_1_1 then
+			var_1_2 = tonumber(var_1_1) + 3
 		else
-			rcon_port = script_data.rcon_port or script_data.settings.rcon_port or Managers.mechanism:mechanism_setting("rcon_port")
+			var_1_2 = script_data.rcon_port or script_data.settings.rcon_port or Managers.mechanism:mechanism_setting("rcon_port")
 		end
 
-		local settings = {
-			port = rcon_port,
-			rcon_password = script_data.rcon_password or script_data.settings.rcon_password or "rconpassword",
+		local var_1_3 = {
+			port = var_1_2,
+			rcon_password = script_data.rcon_password or script_data.settings.rcon_password or "rconpassword"
 		}
 
-		self._dedicated_server_commands = DedicatedServerCommands:new()
-		self._rcon_server = ScriptRconServer:new(settings, self._dedicated_server_commands)
+		arg_1_0._dedicated_server_commands = DedicatedServerCommands:new()
+		arg_1_0._rcon_server = ScriptRconServer:new(var_1_3, arg_1_0._dedicated_server_commands)
 	end
 end
 
-AdminManager.destroy = function (self)
-	if self._rcon_server ~= nil then
-		self._rcon_server:destroy()
+function AdminManager.destroy(arg_2_0)
+	if arg_2_0._rcon_server ~= nil then
+		arg_2_0._rcon_server:destroy()
 	end
 
 	if DEDICATED_SERVER then
@@ -45,12 +44,12 @@ AdminManager.destroy = function (self)
 	end
 end
 
-AdminManager.update = function (self, dt)
-	if self._rcon_server ~= nil then
-		self._rcon_server:update(dt)
+function AdminManager.update(arg_3_0, arg_3_1)
+	if arg_3_0._rcon_server ~= nil then
+		arg_3_0._rcon_server:update(arg_3_1)
 	end
 end
 
-AdminManager.execute_command = function (self, input)
-	self._dedicated_server_commands:execute_command(input)
+function AdminManager.execute_command(arg_4_0, arg_4_1)
+	arg_4_0._dedicated_server_commands:execute_command(arg_4_1)
 end

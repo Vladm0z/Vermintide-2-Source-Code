@@ -1,140 +1,135 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_target_unreachable_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_target_unreachable_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTTargetUnreachableAction = class(BTTargetUnreachableAction, BTNode)
 
-BTTargetUnreachableAction.init = function (self, ...)
-	BTTargetUnreachableAction.super.init(self, ...)
+function BTTargetUnreachableAction.init(arg_1_0, ...)
+	BTTargetUnreachableAction.super.init(arg_1_0, ...)
 end
 
 BTTargetUnreachableAction.name = "BTTargetUnreachableAction"
 
-BTTargetUnreachableAction.enter = function (self, unit, blackboard, t)
-	local action = self._tree_node.action_data
-
-	blackboard.action = action
-	blackboard.unreachable_timer = blackboard.chasing_timer or 0
+function BTTargetUnreachableAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	arg_2_2.action = arg_2_0._tree_node.action_data
+	arg_2_2.unreachable_timer = arg_2_2.chasing_timer or 0
 end
 
-BTTargetUnreachableAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
-	local navigation_extension = blackboard.navigation_extension
+function BTTargetUnreachableAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	local var_3_0 = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
 
-	navigation_extension:set_max_speed(default_move_speed)
+	arg_3_2.navigation_extension:set_max_speed(var_3_0)
 end
 
-BTTargetUnreachableAction.run = function (self, unit, blackboard, t, dt)
-	local position = POSITION_LOOKUP[unit]
-	local target_unit = blackboard.target_unit
+function BTTargetUnreachableAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = POSITION_LOOKUP[arg_4_1]
+	local var_4_1 = arg_4_2.target_unit
 
-	if not target_unit then
+	if not var_4_1 then
 		return "done"
 	end
 
-	local target_position = POSITION_LOOKUP[target_unit]
-	local distance_target_sq = Vector3.distance_squared(target_position, position)
-	local closest_position
-	local best_score = math.huge
-	local reach_distance_squared = blackboard.breed.reach_distance^2
-	local position_list, target_on_mesh
-	local whereabouts_extension = ScriptUnit.has_extension(target_unit, "whereabouts_system")
+	local var_4_2 = POSITION_LOOKUP[var_4_1]
+	local var_4_3 = Vector3.distance_squared(var_4_2, var_4_0)
+	local var_4_4
+	local var_4_5 = math.huge
+	local var_4_6 = arg_4_2.breed.reach_distance^2
+	local var_4_7
+	local var_4_8
+	local var_4_9 = ScriptUnit.has_extension(var_4_1, "whereabouts_system")
 
-	if whereabouts_extension then
-		position_list, target_on_mesh = whereabouts_extension:closest_positions_when_outside_navmesh()
+	if var_4_9 then
+		local var_4_10, var_4_11 = var_4_9:closest_positions_when_outside_navmesh()
 
-		for i = 1, #position_list do
-			local test_position = position_list[i]:unbox()
-			local score = 0
-			local distance_enemy_and_target_sq = Vector3.distance_squared(target_position, test_position)
+		for iter_4_0 = 1, #var_4_10 do
+			local var_4_12 = var_4_10[iter_4_0]:unbox()
+			local var_4_13 = 0
+			local var_4_14 = Vector3.distance_squared(var_4_2, var_4_12)
 
-			if distance_enemy_and_target_sq < reach_distance_squared * 4 then
-				score = distance_enemy_and_target_sq
+			if var_4_14 < var_4_6 * 4 then
+				var_4_13 = var_4_14
 			else
-				local distance_point_sq = Vector3.distance_squared(test_position, position)
-
-				score = score + distance_point_sq + distance_target_sq
+				var_4_13 = var_4_13 + Vector3.distance_squared(var_4_12, var_4_0) + var_4_3
 			end
 
-			if score < best_score then
-				closest_position = test_position
-				best_score = score
+			if var_4_13 < var_4_5 then
+				var_4_4 = var_4_12
+				var_4_5 = var_4_13
 			end
 		end
 
-		blackboard.target_outside_navmesh = not target_on_mesh
+		arg_4_2.target_outside_navmesh = not var_4_11
 	else
-		if distance_target_sq < 1 then
-			local to_target = Vector3.normalize(position - target_position)
-			local test_pos = position + to_target * 1.5
+		if var_4_3 < 1 then
+			local var_4_15 = var_4_0 + Vector3.normalize(var_4_0 - var_4_2) * 1.5
 
-			closest_position = ConflictUtils.find_center_tri(blackboard.nav_world, test_pos, 0.7, 0.7)
+			var_4_4 = ConflictUtils.find_center_tri(arg_4_2.nav_world, var_4_15, 0.7, 0.7)
 		end
 
-		blackboard.target_outside_navmesh = false
+		arg_4_2.target_outside_navmesh = false
 	end
 
-	local navigation_extension = blackboard.navigation_extension
+	local var_4_16 = arg_4_2.navigation_extension
 
-	if closest_position then
-		navigation_extension:move_to(closest_position)
+	if var_4_4 then
+		var_4_16:move_to(var_4_4)
 	end
 
-	local locomotion_extension = blackboard.locomotion_extension
+	local var_4_17 = arg_4_2.locomotion_extension
 
-	self:move_closer(unit, blackboard, locomotion_extension, navigation_extension)
+	arg_4_0:move_closer(arg_4_1, arg_4_2, var_4_17, var_4_16)
 
-	blackboard.unreachable_timer = blackboard.unreachable_timer + dt
+	arg_4_2.unreachable_timer = arg_4_2.unreachable_timer + arg_4_4
 
 	return "running", "evaluate"
 end
 
-BTTargetUnreachableAction.move_closer = function (self, unit, blackboard, locomotion_extension, navigation_extension)
-	local unit_position = POSITION_LOOKUP[unit]
-	local distance_sq = navigation_extension:distance_to_destination_sq(unit_position)
+function BTTargetUnreachableAction.move_closer(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	local var_5_0 = POSITION_LOOKUP[arg_5_1]
+	local var_5_1 = arg_5_4:distance_to_destination_sq(var_5_0)
 
-	if distance_sq < 1 then
-		navigation_extension:set_max_speed(blackboard.breed.walk_speed)
-	elseif distance_sq > 4 then
-		navigation_extension:set_max_speed(blackboard.breed.run_speed)
+	if var_5_1 < 1 then
+		arg_5_4:set_max_speed(arg_5_2.breed.walk_speed)
+	elseif var_5_1 > 4 then
+		arg_5_4:set_max_speed(arg_5_2.breed.run_speed)
 	end
 
-	local is_following_path = navigation_extension:is_following_path()
+	local var_5_2 = arg_5_4:is_following_path()
 
-	if blackboard.move_state ~= "moving" and is_following_path and distance_sq > 0.25 then
-		print("GO TO UNREACHABLE MOVING, DIST_SQ=", distance_sq, unit)
+	if arg_5_2.move_state ~= "moving" and var_5_2 and var_5_1 > 0.25 then
+		print("GO TO UNREACHABLE MOVING, DIST_SQ=", var_5_1, arg_5_1)
 
-		blackboard.move_state = "moving"
+		arg_5_2.move_state = "moving"
 
-		local action = blackboard.action
-		local start_anim, anim_driven = LocomotionUtils.get_start_anim(unit, blackboard, action.start_anims)
+		local var_5_3 = arg_5_2.action
+		local var_5_4, var_5_5 = LocomotionUtils.get_start_anim(arg_5_1, arg_5_2, var_5_3.start_anims)
 
-		Managers.state.network:anim_event(unit, start_anim or action.move_anim)
-	elseif blackboard.move_state ~= "idle" and (not is_following_path or distance_sq < 0.04000000000000001) then
-		print("GO TO UNREACHABLE IDLE, DIST_SQ=", distance_sq, unit)
+		Managers.state.network:anim_event(arg_5_1, var_5_4 or var_5_3.move_anim)
+	elseif arg_5_2.move_state ~= "idle" and (not var_5_2 or var_5_1 < 0.04000000000000001) then
+		print("GO TO UNREACHABLE IDLE, DIST_SQ=", var_5_1, arg_5_1)
 
-		blackboard.move_state = "idle"
+		arg_5_2.move_state = "idle"
 
-		Managers.state.network:anim_event(unit, "idle")
+		Managers.state.network:anim_event(arg_5_1, "idle")
 	end
 
-	if blackboard.move_state == "moving" then
-		locomotion_extension:set_wanted_rotation(nil)
+	if arg_5_2.move_state == "moving" then
+		arg_5_3:set_wanted_rotation(nil)
 	else
-		local rot = LocomotionUtils.rotation_towards_unit_flat(unit, blackboard.target_unit)
+		local var_5_6 = LocomotionUtils.rotation_towards_unit_flat(arg_5_1, arg_5_2.target_unit)
 
-		locomotion_extension:set_wanted_rotation(rot)
+		arg_5_3:set_wanted_rotation(var_5_6)
 	end
 end
 
-BTTargetUnreachableAction._debug_distance_text = function (self, unit, navigation_extension)
+function BTTargetUnreachableAction._debug_distance_text(arg_6_0, arg_6_1, arg_6_2)
 	if script_data.debug_ai_movement then
-		local unit_position = POSITION_LOOKUP[unit]
-		local destination = navigation_extension:destination()
-		local distance = navigation_extension:distance_to_destination(unit_position)
-		local to_destination_flat = Vector3.flat(destination - unit_position)
-		local flat_distance = Vector3.length(to_destination_flat)
+		local var_6_0 = POSITION_LOOKUP[arg_6_1]
+		local var_6_1 = arg_6_2:destination()
+		local var_6_2 = arg_6_2:distance_to_destination(var_6_0)
+		local var_6_3 = Vector3.flat(var_6_1 - var_6_0)
+		local var_6_4 = Vector3.length(var_6_3)
 
-		Debug.text("Unreachable distance to target: %.2f Flat: %.2f", distance, flat_distance)
+		Debug.text("Unreachable distance to target: %.2f Flat: %.2f", var_6_2, var_6_4)
 	end
 end

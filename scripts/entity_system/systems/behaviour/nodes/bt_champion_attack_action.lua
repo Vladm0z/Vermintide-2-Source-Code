@@ -1,881 +1,871 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_champion_attack_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_champion_attack_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTChampionAttackAction = class(BTChampionAttackAction, BTNode)
 
-BTChampionAttackAction.init = function (self, ...)
-	BTChampionAttackAction.super.init(self, ...)
+function BTChampionAttackAction.init(arg_1_0, ...)
+	BTChampionAttackAction.super.init(arg_1_0, ...)
 end
 
 BTChampionAttackAction.name = "BTChampionAttackAction"
 
-local function randomize(event)
-	if type(event) == "table" then
-		return event[Math.random(1, #event)]
+local function var_0_0(arg_2_0)
+	if type(arg_2_0) == "table" then
+		return arg_2_0[Math.random(1, #arg_2_0)]
 	else
-		return event
+		return arg_2_0
 	end
 end
 
-BTChampionAttackAction.enter = function (self, unit, blackboard, t)
-	local action = self._tree_node.action_data
+function BTChampionAttackAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	local var_3_0 = arg_3_0._tree_node.action_data
 
-	blackboard.action = action
-	blackboard.active_node = BTChampionAttackAction
-	blackboard.attack_range = action.range
-	blackboard.attack_finished = false
-	blackboard.attack_aborted = false
-	blackboard.hit_players = blackboard.hit_players or {}
-	blackboard.target_dodged = false
+	arg_3_2.action = var_3_0
+	arg_3_2.active_node = BTChampionAttackAction
+	arg_3_2.attack_range = var_3_0.range
+	arg_3_2.attack_finished = false
+	arg_3_2.attack_aborted = false
+	arg_3_2.hit_players = arg_3_2.hit_players or {}
+	arg_3_2.target_dodged = false
 
-	local target_unit = blackboard.target_unit
+	local var_3_1 = arg_3_2.target_unit
 
-	blackboard.target_unit_status_extension = ScriptUnit.has_extension(target_unit, "status_system") and ScriptUnit.extension(target_unit, "status_system") or nil
+	arg_3_2.target_unit_status_extension = ScriptUnit.has_extension(var_3_1, "status_system") and ScriptUnit.extension(var_3_1, "status_system") or nil
 
-	blackboard.navigation_extension:set_enabled(false)
-	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
+	arg_3_2.navigation_extension:set_enabled(false)
+	arg_3_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-	blackboard.attacking_target = blackboard.target_unit
+	arg_3_2.attacking_target = arg_3_2.target_unit
 
-	self:_init_attack(unit, blackboard, action, t)
+	arg_3_0:_init_attack(arg_3_1, arg_3_2, var_3_0, arg_3_3)
 
-	blackboard.spawn_to_running = nil
+	arg_3_2.spawn_to_running = nil
 
-	AiUtils.stormvermin_champion_hack_check_ward(unit, blackboard)
+	AiUtils.stormvermin_champion_hack_check_ward(arg_3_1, arg_3_2)
 end
 
-local function NEVER()
+local function var_0_1()
 	return false
 end
 
-local PARTICLES_TEMP = {}
-local POSITIONS_TEMP = {}
-local SOUNDS_TEMP = {}
-local debug_drawer_info = {
+local var_0_2 = {}
+local var_0_3 = {}
+local var_0_4 = {}
+local var_0_5 = {
 	mode = "retained",
-	name = "BTChampionAttackAction",
+	name = "BTChampionAttackAction"
 }
 
-BTChampionAttackAction._init_attack = function (self, unit, blackboard, action, t)
-	blackboard.move_state = "attacking"
+function BTChampionAttackAction._init_attack(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	arg_5_2.move_state = "attacking"
 
-	local world = blackboard.world
-	local anim, scale
-	local seq = action.attack_sequence
+	local var_5_0 = arg_5_2.world
+	local var_5_1
+	local var_5_2
+	local var_5_3 = arg_5_3.attack_sequence
 
-	if seq then
-		anim, scale = self:_next_in_sequence(blackboard, t, seq, 1)
+	if var_5_3 then
+		var_5_1, var_5_2 = arg_5_0:_next_in_sequence(arg_5_2, arg_5_4, var_5_3, 1)
 	else
-		blackboard.attack_next_sequence_ready = NEVER
-		anim = action.attack_anim
-		scale = action.animation_drive_scale
+		arg_5_2.attack_next_sequence_ready = var_0_1
+		var_5_1 = arg_5_3.attack_anim
+		var_5_2 = arg_5_3.animation_drive_scale
 	end
 
-	if action.animation_driven and scale then
-		LocomotionUtils.set_animation_translation_scale(unit, Vector3(scale, scale, scale))
+	if arg_5_3.animation_driven and var_5_2 then
+		LocomotionUtils.set_animation_translation_scale(arg_5_1, Vector3(var_5_2, var_5_2, var_5_2))
 	end
 
-	if anim then
-		Managers.state.network:anim_event(unit, randomize(anim))
+	if var_5_1 then
+		Managers.state.network:anim_event(arg_5_1, var_0_0(var_5_1))
 	else
-		self:anim_cb_damage(unit, blackboard)
+		arg_5_0:anim_cb_damage(arg_5_1, arg_5_2)
 
-		blackboard.attack_finished = true
+		arg_5_2.attack_finished = true
 	end
 
-	local rotation = LocomotionUtils.rotation_towards_unit_flat(unit, blackboard.attacking_target)
+	local var_5_4 = LocomotionUtils.rotation_towards_unit_flat(arg_5_1, arg_5_2.attacking_target)
 
-	blackboard.attack_rotation = QuaternionBox(rotation)
-	blackboard.attack_rotation_update_timer = t + action.rotation_time
+	arg_5_2.attack_rotation = QuaternionBox(var_5_4)
+	arg_5_2.attack_rotation_update_timer = arg_5_4 + arg_5_3.rotation_time
 
-	if action.mode == "continuous_overlap" then
-		blackboard.last_attack_overlap_position = Vector3Box(POSITION_LOOKUP[unit])
-		blackboard.last_attack_overlap_position_time = t
-		blackboard.overlap_start_time = t + action.overlap_start_time
-		blackboard.overlap_end_time = t + action.overlap_end_time
-		blackboard.overlap_walls_check_time = t + (action.overlap_check_walls_time or math.huge)
-	elseif action.mode == "radial_cylinder" then
-		blackboard.overlap_start_time = t + action.overlap_start_time
-		blackboard.overlap_end_time = t + action.overlap_end_time
-		blackboard.overlap_angle_speed = (action.overlap_end_angle_offset - action.overlap_start_angle_offset) / (action.overlap_end_time - action.overlap_start_time)
+	if arg_5_3.mode == "continuous_overlap" then
+		arg_5_2.last_attack_overlap_position = Vector3Box(POSITION_LOOKUP[arg_5_1])
+		arg_5_2.last_attack_overlap_position_time = arg_5_4
+		arg_5_2.overlap_start_time = arg_5_4 + arg_5_3.overlap_start_time
+		arg_5_2.overlap_end_time = arg_5_4 + arg_5_3.overlap_end_time
+		arg_5_2.overlap_walls_check_time = arg_5_4 + (arg_5_3.overlap_check_walls_time or math.huge)
+	elseif arg_5_3.mode == "radial_cylinder" then
+		arg_5_2.overlap_start_time = arg_5_4 + arg_5_3.overlap_start_time
+		arg_5_2.overlap_end_time = arg_5_4 + arg_5_3.overlap_end_time
+		arg_5_2.overlap_angle_speed = (arg_5_3.overlap_end_angle_offset - arg_5_3.overlap_start_angle_offset) / (arg_5_3.overlap_end_time - arg_5_3.overlap_start_time)
 
-		local forward = Quaternion.forward(blackboard.attack_rotation:unbox())
-		local forward_angle = math.atan2(forward.y, forward.x)
+		local var_5_5 = Quaternion.forward(arg_5_2.attack_rotation:unbox())
+		local var_5_6 = math.atan2(var_5_5.y, var_5_5.x)
 
-		blackboard.overlap_start_angle = forward_angle + action.overlap_start_angle_offset
-		blackboard.overlap_end_angle = forward_angle + action.overlap_end_angle_offset
-		blackboard.overlap_last_angle = blackboard.overlap_start_angle
-	elseif action.mode == "nav_mesh_wave" then
-		local num_points = 1
-		local fwd = Quaternion.forward(rotation)
-		local pos = POSITION_LOOKUP[unit]
-		local wanted_start_pos = pos + fwd * action.offset_forward
-		local nav_world = Managers.state.entity:system("ai_system"):nav_world()
-		local above, below = 2, 2
-		local ray_z_offset = 0.4
-		local success, z = GwNavQueries.triangle_from_position(nav_world, pos, above, below)
+		arg_5_2.overlap_start_angle = var_5_6 + arg_5_3.overlap_start_angle_offset
+		arg_5_2.overlap_end_angle = var_5_6 + arg_5_3.overlap_end_angle_offset
+		arg_5_2.overlap_last_angle = arg_5_2.overlap_start_angle
+	elseif arg_5_3.mode == "nav_mesh_wave" then
+		local var_5_7 = 1
+		local var_5_8 = Quaternion.forward(var_5_4)
+		local var_5_9 = POSITION_LOOKUP[arg_5_1]
+		local var_5_10 = var_5_9 + var_5_8 * arg_5_3.offset_forward
+		local var_5_11 = Managers.state.entity:system("ai_system"):nav_world()
+		local var_5_12 = 2
+		local var_5_13 = 2
+		local var_5_14 = 0.4
+		local var_5_15, var_5_16 = GwNavQueries.triangle_from_position(var_5_11, var_5_9, var_5_12, var_5_13)
 
-		table.clear(PARTICLES_TEMP)
-		table.clear(POSITIONS_TEMP)
-		table.clear(SOUNDS_TEMP)
+		table.clear(var_0_2)
+		table.clear(var_0_3)
+		table.clear(var_0_4)
 
-		if success then
-			local debug = Development.parameter("debug_ai_attack")
-			local pw = World.get_data(world, "physics_world")
-			local distance = action.wave_point_distance
-			local last_pos = Vector3(wanted_start_pos.x, wanted_start_pos.y, z)
-			local points = {
-				Vector3Box(last_pos),
+		if var_5_15 then
+			local var_5_17 = Development.parameter("debug_ai_attack")
+			local var_5_18 = World.get_data(var_5_0, "physics_world")
+			local var_5_19 = arg_5_3.wave_point_distance
+			local var_5_20 = Vector3(var_5_10.x, var_5_10.y, var_5_16)
+			local var_5_21 = {
+				Vector3Box(var_5_20)
 			}
 
-			POSITIONS_TEMP[num_points] = last_pos
+			var_0_3[var_5_7] = var_5_20
 
-			while success and num_points < action.num_wave_points do
-				local new_wanted_pos = last_pos + fwd * distance
+			while var_5_15 and var_5_7 < arg_5_3.num_wave_points do
+				local var_5_22 = var_5_20 + var_5_8 * var_5_19
+				local var_5_23
 
-				success, z = GwNavQueries.triangle_from_position(nav_world, new_wanted_pos, above, below)
+				var_5_15, var_5_23 = GwNavQueries.triangle_from_position(var_5_11, var_5_22, var_5_12, var_5_13)
 
-				if success then
-					new_wanted_pos.z = z
-					success = GwNavQueries.raycango(nav_world, last_pos, new_wanted_pos)
+				if var_5_15 then
+					var_5_22.z = var_5_23
+					var_5_15 = GwNavQueries.raycango(var_5_11, var_5_20, var_5_22)
 
-					if not success then
-						local from = last_pos + Vector3(0, 0, ray_z_offset)
-						local offset = new_wanted_pos - last_pos
-						local dist = Vector3.length(offset)
-						local dir = offset / dist
-						local hit = PhysicsWorld.raycast(pw, from, dir, dist, "closest", "collision_filter", "filter_ai_line_of_sight_check")
+					if not var_5_15 then
+						local var_5_24 = var_5_20 + Vector3(0, 0, var_5_14)
+						local var_5_25 = var_5_22 - var_5_20
+						local var_5_26 = Vector3.length(var_5_25)
+						local var_5_27 = var_5_25 / var_5_26
 
-						success = not hit
+						var_5_15 = not PhysicsWorld.raycast(var_5_18, var_5_24, var_5_27, var_5_26, "closest", "collision_filter", "filter_ai_line_of_sight_check")
 					end
 
-					if success then
-						num_points = num_points + 1
-						points[num_points] = Vector3Box(new_wanted_pos)
-						POSITIONS_TEMP[num_points] = new_wanted_pos
-						last_pos = new_wanted_pos
+					if var_5_15 then
+						var_5_7 = var_5_7 + 1
+						var_5_21[var_5_7] = Vector3Box(var_5_22)
+						var_0_3[var_5_7] = var_5_22
+						var_5_20 = var_5_22
 
-						if debug then
-							local drawer = Managers.state.debug:drawer(debug_drawer_info)
+						if var_5_17 then
+							local var_5_28 = Managers.state.debug:drawer(var_0_5)
 
-							drawer:reset()
-							drawer:sphere(new_wanted_pos, 0.25, Color(255, 0, 0))
+							var_5_28:reset()
+							var_5_28:sphere(var_5_22, 0.25, Color(255, 0, 0))
 						end
 					end
 				end
 			end
 
-			blackboard.overlap_wave_points = points
+			arg_5_2.overlap_wave_points = var_5_21
 		else
-			blackboard.overlap_wave_points = {
-				Vector3Box(wanted_start_pos),
+			arg_5_2.overlap_wave_points = {
+				Vector3Box(var_5_10)
 			}
-			POSITIONS_TEMP[num_points] = wanted_start_pos
+			var_0_3[var_5_7] = var_5_10
 		end
 
-		local fx_name = action.anticipation_fx
-		local fx_name_id = NetworkLookup.effects[fx_name]
+		local var_5_29 = arg_5_3.anticipation_fx
+		local var_5_30 = NetworkLookup.effects[var_5_29]
 
-		for i = 1, num_points do
-			local pos = POSITIONS_TEMP[i]
+		for iter_5_0 = 1, var_5_7 do
+			local var_5_31 = var_0_3[iter_5_0]
 
-			PARTICLES_TEMP[i] = fx_name_id
+			var_0_2[iter_5_0] = var_5_30
 
-			World.create_particles(world, fx_name, pos)
+			World.create_particles(var_5_0, var_5_29, var_5_31)
 		end
 
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_play_fx", PARTICLES_TEMP, SOUNDS_TEMP, POSITIONS_TEMP)
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_play_fx", var_0_2, var_0_4, var_0_3)
 
-		local speed = action.wave_speed
+		local var_5_32 = arg_5_3.wave_speed
 
-		blackboard.overlap_start_time = t + action.overlap_start_time
-		blackboard.overlap_end_time = blackboard.overlap_start_time + num_points * speed
-		blackboard.last_overlap_index = 0
+		arg_5_2.overlap_start_time = arg_5_4 + arg_5_3.overlap_start_time
+		arg_5_2.overlap_end_time = arg_5_2.overlap_start_time + var_5_7 * var_5_32
+		arg_5_2.last_overlap_index = 0
 	end
 
-	if action.animation_driven then
-		LocomotionUtils.set_animation_driven_movement(unit, true, true, true)
+	if arg_5_3.animation_driven then
+		LocomotionUtils.set_animation_driven_movement(arg_5_1, true, true, true)
 	end
 
-	local bot_threat_duration = action.bot_threat_duration
+	local var_5_33 = arg_5_3.bot_threat_duration
 
-	if bot_threat_duration then
-		if action.collision_type == "cylinder" then
-			local rot = LocomotionUtils.rotation_towards_unit_flat(unit, blackboard.attacking_target)
-			local pos = self:_calculate_cylinder_collision(action, POSITION_LOOKUP[unit], rot)
-			local size = Vector3(0, action.radius, action.height * 0.5)
+	if var_5_33 then
+		if arg_5_3.collision_type == "cylinder" then
+			local var_5_34 = LocomotionUtils.rotation_towards_unit_flat(arg_5_1, arg_5_2.attacking_target)
+			local var_5_35 = arg_5_0:_calculate_cylinder_collision(arg_5_3, POSITION_LOOKUP[arg_5_1], var_5_34)
+			local var_5_36 = Vector3(0, arg_5_3.radius, arg_5_3.height * 0.5)
 
-			Managers.state.entity:system("ai_bot_group_system"):aoe_threat_created(pos, "cylinder", size, nil, bot_threat_duration, "Champion Attack")
-		elseif action.collision_type == "oobb" or not action.collision_type then
-			local rot = LocomotionUtils.rotation_towards_unit_flat(unit, blackboard.attacking_target)
-			local pos, rot, size = self:_calculate_oobb_collision(action, POSITION_LOOKUP[unit], rot)
+			Managers.state.entity:system("ai_bot_group_system"):aoe_threat_created(var_5_35, "cylinder", var_5_36, nil, var_5_33, "Champion Attack")
+		elseif arg_5_3.collision_type == "oobb" or not arg_5_3.collision_type then
+			local var_5_37 = LocomotionUtils.rotation_towards_unit_flat(arg_5_1, arg_5_2.attacking_target)
+			local var_5_38, var_5_39, var_5_40 = arg_5_0:_calculate_oobb_collision(arg_5_3, POSITION_LOOKUP[arg_5_1], var_5_37)
 
-			Managers.state.entity:system("ai_bot_group_system"):aoe_threat_created(pos, "oobb", size, rot, bot_threat_duration, "Champion Attack")
+			Managers.state.entity:system("ai_bot_group_system"):aoe_threat_created(var_5_38, "oobb", var_5_40, var_5_39, var_5_33, "Champion Attack")
 		end
 	end
 end
 
-BTChampionAttackAction._attack_threat_over = function (self, unit, blackboard, action)
-	local target_unit = blackboard.attacking_target
-	local target_alive = Unit.alive(target_unit)
-	local target_hit = blackboard.hit_players[target_unit]
+function BTChampionAttackAction._attack_threat_over(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	local var_6_0 = arg_6_2.attacking_target
+	local var_6_1 = Unit.alive(var_6_0)
+	local var_6_2 = arg_6_2.hit_players[var_6_0]
 
-	if target_alive and not target_hit and (action.throw_dialogue_system_event_on_dodged_attack and blackboard.target_dodged or action.throw_dialogue_system_event_on_missed_attack) then
-		local target_name = ScriptUnit.extension(target_unit, "dialogue_system").context.player_profile
+	if var_6_1 and not var_6_2 and (arg_6_3.throw_dialogue_system_event_on_dodged_attack and arg_6_2.target_dodged or arg_6_3.throw_dialogue_system_event_on_missed_attack) then
+		local var_6_3 = ScriptUnit.extension(var_6_0, "dialogue_system").context.player_profile
 
-		Managers.state.entity:system("surrounding_aware_system"):add_system_event(unit, "enemy_attack", DialogueSettings.enemy_attack_distance, "attack_tag", action.name, "target_name", target_name, "attack_hit", false)
+		Managers.state.entity:system("surrounding_aware_system"):add_system_event(arg_6_1, "enemy_attack", DialogueSettings.enemy_attack_distance, "attack_tag", arg_6_3.name, "target_name", var_6_3, "attack_hit", false)
 	end
 end
 
-BTChampionAttackAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	local action = blackboard.action
-	local catapulted_players = blackboard.catapulted_players
+function BTChampionAttackAction.leave(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+	local var_7_0 = arg_7_2.action
+	local var_7_1 = arg_7_2.catapulted_players
 
-	if catapulted_players then
-		blackboard.catapulted_players = nil
+	if var_7_1 then
+		arg_7_2.catapulted_players = nil
 
-		if not destroy and catapulted_players[1] then
-			self:_catapult_players(unit, blackboard, action, catapulted_players)
+		if not arg_7_5 and var_7_1[1] then
+			arg_7_0:_catapult_players(arg_7_1, arg_7_2, var_7_0, var_7_1)
 		end
 	end
 
-	if not destroy and action.animation_driven then
-		LocomotionUtils.set_animation_driven_movement(unit, false)
-		LocomotionUtils.set_animation_translation_scale(unit, Vector3(1, 1, 1))
+	if not arg_7_5 and var_7_0.animation_driven then
+		LocomotionUtils.set_animation_driven_movement(arg_7_1, false)
+		LocomotionUtils.set_animation_translation_scale(arg_7_1, Vector3(1, 1, 1))
 	end
 
-	if blackboard.attacking_target and not destroy then
-		self:_attack_threat_over(unit, blackboard, action)
+	if arg_7_2.attacking_target and not arg_7_5 then
+		arg_7_0:_attack_threat_over(arg_7_1, arg_7_2, var_7_0)
 	end
 
-	local target_unit = blackboard.attacking_target
-	local target_alive = Unit.alive(target_unit)
-	local target_hit = blackboard.hit_players[target_unit]
-	local inc_stat_on_dodged = action.increment_stat_on_attack_dodged
+	local var_7_2 = arg_7_2.attacking_target
+	local var_7_3 = Unit.alive(var_7_2)
+	local var_7_4 = arg_7_2.hit_players[var_7_2]
+	local var_7_5 = var_7_0.increment_stat_on_attack_dodged
 
-	if inc_stat_on_dodged and not destroy and target_alive and not target_hit and blackboard.target_dodged then
-		local owner = Managers.player:owner(target_unit)
+	if var_7_5 and not arg_7_5 and var_7_3 and not var_7_4 and arg_7_2.target_dodged then
+		local var_7_6 = Managers.player:owner(var_7_2)
 
-		if owner and owner.local_player then
-			local stats_id = owner:stats_id()
-			local statistics_db = Managers.player:statistics_db()
+		if var_7_6 and var_7_6.local_player then
+			local var_7_7 = var_7_6:stats_id()
 
-			statistics_db:increment_stat(stats_id, inc_stat_on_dodged)
-		elseif owner and owner:is_player_controlled() then
-			local channel_id = PEER_ID_TO_CHANNEL[owner:network_id()]
+			Managers.player:statistics_db():increment_stat(var_7_7, var_7_5)
+		elseif var_7_6 and var_7_6:is_player_controlled() then
+			local var_7_8 = PEER_ID_TO_CHANNEL[var_7_6:network_id()]
 
-			RPC.rpc_increment_stat(channel_id, NetworkLookup.statistics[inc_stat_on_dodged])
+			RPC.rpc_increment_stat(var_7_8, NetworkLookup.statistics[var_7_5])
 		end
 	end
 
-	blackboard.navigation_extension:set_enabled(true)
-	table.clear(blackboard.hit_players)
+	arg_7_2.navigation_extension:set_enabled(true)
+	table.clear(arg_7_2.hit_players)
 
-	blackboard.target_unit_status_extension = nil
-	blackboard.active_node = nil
-	blackboard.attack_aborted = nil
-	blackboard.attack_rotation = nil
-	blackboard.attack_rotation_update_timer = nil
-	blackboard.attacking_target = nil
-	blackboard.action = nil
-	blackboard.target_dodged = nil
-	blackboard.attack_next_sequence_step_at = nil
-	blackboard.attack_next_sequence_index = nil
+	arg_7_2.target_unit_status_extension = nil
+	arg_7_2.active_node = nil
+	arg_7_2.attack_aborted = nil
+	arg_7_2.attack_rotation = nil
+	arg_7_2.attack_rotation_update_timer = nil
+	arg_7_2.attacking_target = nil
+	arg_7_2.action = nil
+	arg_7_2.target_dodged = nil
+	arg_7_2.attack_next_sequence_step_at = nil
+	arg_7_2.attack_next_sequence_index = nil
 
-	if action.mode == "continuous_overlap" then
-		blackboard.last_attack_overlap_position = nil
-		blackboard.overlap_start_time = nil
-		blackboard.overlap_end_time = nil
-		blackboard.overlap_wall_collision_time = nil
-		blackboard.overlap_walls_check_time = nil
-	elseif action.mode == "radial_cylinder" then
-		-- Nothing
+	if var_7_0.mode == "continuous_overlap" then
+		arg_7_2.last_attack_overlap_position = nil
+		arg_7_2.overlap_start_time = nil
+		arg_7_2.overlap_end_time = nil
+		arg_7_2.overlap_wall_collision_time = nil
+		arg_7_2.overlap_walls_check_time = nil
+	elseif var_7_0.mode == "radial_cylinder" then
+		-- block empty
 	end
 
-	local flow_event = action.exit_flow_event
+	local var_7_9 = var_7_0.exit_flow_event
 
-	if flow_event then
-		Unit.flow_event(unit, flow_event)
+	if var_7_9 then
+		Unit.flow_event(arg_7_1, var_7_9)
 	end
 end
 
-BTChampionAttackAction.run = function (self, unit, blackboard, t, dt)
-	local target_unit = blackboard.attacking_target
+function BTChampionAttackAction.run(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	local var_8_0 = arg_8_2.attacking_target
 
-	if not Unit.alive(target_unit) or blackboard.attack_aborted then
+	if not Unit.alive(var_8_0) or arg_8_2.attack_aborted then
 		return "done"
 	end
 
-	self:_update_rotation(unit, t, dt, blackboard)
+	arg_8_0:_update_rotation(arg_8_1, arg_8_3, arg_8_4, arg_8_2)
 
-	local action = blackboard.action
-	local catapulted_players = blackboard.catapulted_players
+	local var_8_1 = arg_8_2.action
+	local var_8_2 = arg_8_2.catapulted_players
 
-	if catapulted_players and catapulted_players[1] then
-		self:_catapult_players(unit, blackboard, action, catapulted_players)
+	if var_8_2 and var_8_2[1] then
+		arg_8_0:_catapult_players(arg_8_1, arg_8_2, var_8_1, var_8_2)
 	end
 
-	local collision_time = blackboard.overlap_wall_collision_time
+	local var_8_3 = arg_8_2.overlap_wall_collision_time
 
-	if collision_time then
-		if collision_time < t then
+	if var_8_3 then
+		if var_8_3 < arg_8_3 then
 			return "done"
 		else
 			return "running"
 		end
 	end
 
-	if blackboard.attack_next_sequence_ready(unit, blackboard, t) then
-		local anim, scale = self:_next_in_sequence(blackboard, t, action.attack_sequence, blackboard.attack_next_sequence_index)
+	if arg_8_2.attack_next_sequence_ready(arg_8_1, arg_8_2, arg_8_3) then
+		local var_8_4, var_8_5 = arg_8_0:_next_in_sequence(arg_8_2, arg_8_3, var_8_1.attack_sequence, arg_8_2.attack_next_sequence_index)
 
-		Managers.state.network:anim_event(unit, randomize(anim))
+		Managers.state.network:anim_event(arg_8_1, var_0_0(var_8_4))
 
-		if action.animation_driven then
-			LocomotionUtils.set_animation_translation_scale(unit, Vector3(scale, scale, scale))
+		if var_8_1.animation_driven then
+			LocomotionUtils.set_animation_translation_scale(arg_8_1, Vector3(var_8_5, var_8_5, var_8_5))
 		end
 	end
 
-	if action.mode == "continuous_overlap" then
-		self:_update_overlap(unit, blackboard, action, dt, t)
-	elseif action.mode == "radial_cylinder" then
-		self:_update_radial_cylinder(unit, blackboard, action, dt, t)
-	elseif action.mode == "nav_mesh_wave" then
-		self:_update_nav_mesh_wave(unit, blackboard, action, dt, t)
+	if var_8_1.mode == "continuous_overlap" then
+		arg_8_0:_update_overlap(arg_8_1, arg_8_2, var_8_1, arg_8_4, arg_8_3)
+	elseif var_8_1.mode == "radial_cylinder" then
+		arg_8_0:_update_radial_cylinder(arg_8_1, arg_8_2, var_8_1, arg_8_4, arg_8_3)
+	elseif var_8_1.mode == "nav_mesh_wave" then
+		arg_8_0:_update_nav_mesh_wave(arg_8_1, arg_8_2, var_8_1, arg_8_4, arg_8_3)
 	end
 
-	if blackboard.attack_finished then
+	if arg_8_2.attack_finished then
 		return "done"
 	end
 
 	return "running"
 end
 
-BTChampionAttackAction._next_in_sequence = function (self, blackboard, t, sequence_data, sequence_index)
-	local current = sequence_data[sequence_index]
-	local anim = current.attack_anim
-	local scale = current.animation_drive_scale
-	local next_index = sequence_index + 1
-	local next_sequence_step = sequence_data[next_index]
-	local start_time = t
+function BTChampionAttackAction._next_in_sequence(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	local var_9_0 = arg_9_3[arg_9_4]
+	local var_9_1 = var_9_0.attack_anim
+	local var_9_2 = var_9_0.animation_drive_scale
+	local var_9_3 = arg_9_4 + 1
+	local var_9_4 = arg_9_3[var_9_3]
+	local var_9_5 = arg_9_2
 
-	blackboard.attack_sequence_start_time = start_time
+	arg_9_1.attack_sequence_start_time = var_9_5
 
-	if next_sequence_step then
-		local at = next_sequence_step.at
+	if var_9_4 then
+		local var_9_6 = var_9_4.at
 
-		blackboard.attack_next_sequence_ready = at and function (unit, blackboard, t)
-			return t - start_time >= at
-		end or next_sequence_step.ready_function
-		blackboard.attack_next_sequence_index = next_index
+		arg_9_1.attack_next_sequence_ready = var_9_6 and function(arg_10_0, arg_10_1, arg_10_2)
+			return arg_10_2 - var_9_5 >= var_9_6
+		end or var_9_4.ready_function
+		arg_9_1.attack_next_sequence_index = var_9_3
 	else
-		blackboard.attack_next_sequence_ready = NEVER
-		blackboard.attack_next_sequence_index = nil
+		arg_9_1.attack_next_sequence_ready = var_0_1
+		arg_9_1.attack_next_sequence_index = nil
 	end
 
-	return anim, scale or 1
+	return var_9_1, var_9_2 or 1
 end
 
-BTChampionAttackAction._update_rotation = function (self, unit, t, dt, blackboard)
-	local target_status_ext = blackboard.target_unit_status_extension
-	local has_dodged = blackboard.target_dodged or target_status_ext and (target_status_ext:get_is_dodging() or target_status_ext:is_invisible())
+function BTChampionAttackAction._update_rotation(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	local var_11_0 = arg_11_4.target_unit_status_extension
+	local var_11_1 = arg_11_4.target_dodged or var_11_0 and (var_11_0:get_is_dodging() or var_11_0:is_invisible())
 
-	blackboard.target_dodged = has_dodged
+	arg_11_4.target_dodged = var_11_1
 
-	local rotation
-	local self_pos = POSITION_LOOKUP[unit]
-	local target_unit = blackboard.attacking_target
-	local target_pos = POSITION_LOOKUP[target_unit]
-	local target_is_alive = Unit.alive(target_unit)
-	local should_update_rotation = target_is_alive and t < blackboard.attack_rotation_update_timer and not has_dodged and Vector3.distance_squared(self_pos, target_pos) > 0.09 and not blackboard.hit_players[target_unit]
+	local var_11_2
+	local var_11_3 = POSITION_LOOKUP[arg_11_1]
+	local var_11_4 = arg_11_4.attacking_target
+	local var_11_5 = POSITION_LOOKUP[var_11_4]
 
-	if should_update_rotation then
-		rotation = LocomotionUtils.rotation_towards_unit_flat(unit, blackboard.attacking_target)
+	if Unit.alive(var_11_4) and arg_11_2 < arg_11_4.attack_rotation_update_timer and not var_11_1 and Vector3.distance_squared(var_11_3, var_11_5) > 0.09 and not arg_11_4.hit_players[var_11_4] then
+		var_11_2 = LocomotionUtils.rotation_towards_unit_flat(arg_11_1, arg_11_4.attacking_target)
 
-		local offset = target_pos - self_pos
+		local var_11_6 = var_11_5 - var_11_3
 
-		offset.z = 0
+		var_11_6.z = 0
 
-		local rotation = Quaternion.look(Vector3.normalize(offset))
+		local var_11_7 = Quaternion.look(Vector3.normalize(var_11_6))
 
-		blackboard.attack_rotation:store(rotation)
+		arg_11_4.attack_rotation:store(var_11_7)
 	else
-		rotation = blackboard.attack_rotation:unbox()
+		var_11_2 = arg_11_4.attack_rotation:unbox()
 	end
 
-	local locomotion_extension = blackboard.locomotion_extension
-
-	locomotion_extension:set_wanted_rotation(rotation)
+	arg_11_4.locomotion_extension:set_wanted_rotation(var_11_2)
 end
 
-BTChampionAttackAction._update_overlap = function (self, unit, blackboard, action, dt, t)
-	local start_t = blackboard.overlap_start_time
-	local end_t = blackboard.overlap_end_time
-	local last_t = blackboard.last_attack_overlap_position_time
-	local new_pos = POSITION_LOOKUP[unit]
+function BTChampionAttackAction._update_overlap(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+	local var_12_0 = arg_12_2.overlap_start_time
+	local var_12_1 = arg_12_2.overlap_end_time
+	local var_12_2 = arg_12_2.last_attack_overlap_position_time
+	local var_12_3 = POSITION_LOOKUP[arg_12_1]
 
-	if start_t < t and last_t < end_t then
-		local old_pos = blackboard.last_attack_overlap_position:unbox()
-		local from, to
+	if var_12_0 < arg_12_5 and var_12_2 < var_12_1 then
+		local var_12_4 = arg_12_2.last_attack_overlap_position:unbox()
+		local var_12_5
+		local var_12_6
 
-		if last_t < start_t then
-			local lerp_t = (start_t - last_t) / (t - last_t)
+		if var_12_2 < var_12_0 then
+			local var_12_7 = (var_12_0 - var_12_2) / (arg_12_5 - var_12_2)
 
-			from = Vector3.lerp(old_pos, new_pos, lerp_t)
+			var_12_5 = Vector3.lerp(var_12_4, var_12_3, var_12_7)
 		else
-			from = old_pos
+			var_12_5 = var_12_4
 		end
 
-		if end_t < t then
-			local lerp_t = (end_t - last_t) / (t - last_t)
+		if var_12_1 < arg_12_5 then
+			local var_12_8 = (var_12_1 - var_12_2) / (arg_12_5 - var_12_2)
 
-			to = Vector3.lerp(old_pos, new_pos, lerp_t)
+			var_12_6 = Vector3.lerp(var_12_4, var_12_3, var_12_8)
 		else
-			to = new_pos
+			var_12_6 = var_12_3
 		end
 
-		local movement_controlled_rotation = action.movement_controlled_rotation
-		local delta = to - from
-		local length = Vector3.length(delta)
-		local direction = Vector3.normalize(delta)
-		local rot, forward
+		local var_12_9 = arg_12_3.movement_controlled_rotation
+		local var_12_10 = var_12_6 - var_12_5
+		local var_12_11 = Vector3.length(var_12_10)
+		local var_12_12 = Vector3.normalize(var_12_10)
+		local var_12_13
+		local var_12_14
 
-		if movement_controlled_rotation then
-			rot = Quaternion.look(direction, Vector3.up())
-			forward = direction
+		if var_12_9 then
+			var_12_13 = Quaternion.look(var_12_12, Vector3.up())
+			var_12_14 = var_12_12
 		else
-			rot = Unit.local_rotation(unit, 0)
-			forward = Quaternion.forward(rot)
+			var_12_13 = Unit.local_rotation(arg_12_1, 0)
+			var_12_14 = Quaternion.forward(var_12_13)
 		end
 
-		local up = Quaternion.up(rot)
-		local base_range
-		local action_range = action.range
+		local var_12_15 = Quaternion.up(var_12_13)
+		local var_12_16
+		local var_12_17 = arg_12_3.range
 
-		if type(action_range) == "function" then
-			base_range = action_range((t - start_t) / (end_t - start_t))
+		if type(var_12_17) == "function" then
+			var_12_16 = var_12_17((arg_12_5 - var_12_0) / (var_12_1 - var_12_0))
 		else
-			base_range = action_range
+			var_12_16 = var_12_17
 		end
 
-		local range = base_range + (movement_controlled_rotation and length or Vector3.dot(delta, forward))
-		local height = action.height
-		local width = action.width
-		local half_range = range * 0.5
-		local half_height = height * 0.5
-		local oobb_pos = from + forward * (action.offset_forward + half_range) + up * (action.offset_up + half_height)
-		local size = Vector3(width * 0.5, half_range, half_height)
-		local pw = World.get_data(blackboard.world, "physics_world")
-		local hit_actors, actor_count = PhysicsWorld.immediate_overlap(pw, "position", oobb_pos, "rotation", rot, "size", size, "shape", "oobb", "types", "dynamics", "collision_filter", "filter_player_hit_box_check")
+		local var_12_18 = var_12_16 + (var_12_9 and var_12_11 or Vector3.dot(var_12_10, var_12_14))
+		local var_12_19 = arg_12_3.height
+		local var_12_20 = arg_12_3.width
+		local var_12_21 = var_12_18 * 0.5
+		local var_12_22 = var_12_19 * 0.5
+		local var_12_23 = var_12_5 + var_12_14 * (arg_12_3.offset_forward + var_12_21) + var_12_15 * (arg_12_3.offset_up + var_12_22)
+		local var_12_24 = Vector3(var_12_20 * 0.5, var_12_21, var_12_22)
+		local var_12_25 = World.get_data(arg_12_2.world, "physics_world")
+		local var_12_26, var_12_27 = PhysicsWorld.immediate_overlap(var_12_25, "position", var_12_23, "rotation", var_12_13, "size", var_12_24, "shape", "oobb", "types", "dynamics", "collision_filter", "filter_player_hit_box_check")
 
 		if Development.parameter("debug_ai_attack") then
-			local pose = Matrix4x4.from_quaternion_position(rot, oobb_pos)
+			local var_12_28 = Matrix4x4.from_quaternion_position(var_12_13, var_12_23)
 
-			QuickDrawer:box(pose, size)
+			QuickDrawer:box(var_12_28, var_12_24)
 		end
 
-		self:_deal_damage(unit, blackboard, action, from, hit_actors, actor_count, true)
+		arg_12_0:_deal_damage(arg_12_1, arg_12_2, arg_12_3, var_12_5, var_12_26, var_12_27, true)
 
-		if t > blackboard.overlap_walls_check_time then
-			local above, below = 0.3, 0.3
-			local nav_world = blackboard.nav_world
-			local success, z = GwNavQueries.triangle_from_position(nav_world, from, above, below)
-			local collision = false
+		if arg_12_5 > arg_12_2.overlap_walls_check_time then
+			local var_12_29 = 0.3
+			local var_12_30 = 0.3
+			local var_12_31 = arg_12_2.nav_world
+			local var_12_32, var_12_33 = GwNavQueries.triangle_from_position(var_12_31, var_12_5, var_12_29, var_12_30)
+			local var_12_34 = false
 
-			if success then
-				local length = action.overlap_check_walls_range + dt * Vector3.length(blackboard.locomotion_extension:current_velocity())
-				local to = from + forward * length
-				local success2, z2 = GwNavQueries.triangle_from_position(nav_world, to, math.max(above, length), math.max(below, length))
+			if var_12_32 then
+				local var_12_35 = arg_12_3.overlap_check_walls_range + arg_12_4 * Vector3.length(arg_12_2.locomotion_extension:current_velocity())
+				local var_12_36 = var_12_5 + var_12_14 * var_12_35
+				local var_12_37, var_12_38 = GwNavQueries.triangle_from_position(var_12_31, var_12_36, math.max(var_12_29, var_12_35), math.max(var_12_30, var_12_35))
 
-				if not success2 or not GwNavQueries.raycango(nav_world, Vector3(from.x, from.y, z), Vector3(to.x, to.y, z2)) then
-					collision = true
+				if not var_12_37 or not GwNavQueries.raycango(var_12_31, Vector3(var_12_5.x, var_12_5.y, var_12_33), Vector3(var_12_36.x, var_12_36.y, var_12_38)) then
+					var_12_34 = true
 				end
 			else
-				collision = true
+				var_12_34 = true
 			end
 
-			if collision then
-				blackboard.overlap_wall_collision_time = t + action.wall_collision_stun_time
+			if var_12_34 then
+				arg_12_2.overlap_wall_collision_time = arg_12_5 + arg_12_3.wall_collision_stun_time
 
-				Managers.state.network:anim_event(unit, randomize(action.wall_collision_anim))
+				Managers.state.network:anim_event(arg_12_1, var_0_0(arg_12_3.wall_collision_anim))
 			end
 		end
-	elseif blackboard.attacking_target and end_t < last_t then
-		self:_attack_threat_over(unit, blackboard, action)
+	elseif arg_12_2.attacking_target and var_12_1 < var_12_2 then
+		arg_12_0:_attack_threat_over(arg_12_1, arg_12_2, arg_12_3)
 	end
 
-	blackboard.last_attack_overlap_position:store(new_pos)
+	arg_12_2.last_attack_overlap_position:store(var_12_3)
 
-	blackboard.last_attack_overlap_position_time = t
+	arg_12_2.last_attack_overlap_position_time = arg_12_5
 end
 
-local HITS_TEMP = {}
+local var_0_6 = {}
 
-BTChampionAttackAction._update_nav_mesh_wave = function (self, unit, blackboard, action, dt, t)
-	local world = blackboard.world
-	local start_t = blackboard.overlap_start_time
-	local end_t = blackboard.overlap_end_time
+function BTChampionAttackAction._update_nav_mesh_wave(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+	local var_13_0 = arg_13_2.world
+	local var_13_1 = arg_13_2.overlap_start_time
+	local var_13_2 = arg_13_2.overlap_end_time
 
-	if end_t < t and blackboard.attacking_target then
-		self:_attack_threat_over(unit, blackboard, action)
+	if var_13_2 < arg_13_5 and arg_13_2.attacking_target then
+		arg_13_0:_attack_threat_over(arg_13_1, arg_13_2, arg_13_3)
 
 		return
-	elseif t < start_t or end_t < t then
+	elseif arg_13_5 < var_13_1 or var_13_2 < arg_13_5 then
 		return
 	end
 
-	local speed = action.wave_speed
-	local wave_points = blackboard.overlap_wave_points
-	local relative_t = t - start_t
-	local new_index = math.min(math.floor(relative_t * speed + 1), #wave_points)
-	local last_index = blackboard.last_overlap_index
-	local start_index = math.min(last_index + 1, new_index)
-	local pw = World.get_data(world, "physics_world")
+	local var_13_3 = arg_13_3.wave_speed
+	local var_13_4 = arg_13_2.overlap_wave_points
+	local var_13_5 = arg_13_5 - var_13_1
+	local var_13_6 = math.min(math.floor(var_13_5 * var_13_3 + 1), #var_13_4)
+	local var_13_7 = arg_13_2.last_overlap_index
+	local var_13_8 = math.min(var_13_7 + 1, var_13_6)
+	local var_13_9 = World.get_data(var_13_0, "physics_world")
 
-	table.clear(HITS_TEMP)
+	table.clear(var_0_6)
 
-	local num_hits = 0
-	local from
-	local debug = Development.parameter("debug_ai_attack")
+	local var_13_10 = 0
+	local var_13_11
+	local var_13_12 = Development.parameter("debug_ai_attack")
 
-	table.clear(PARTICLES_TEMP)
-	table.clear(POSITIONS_TEMP)
-	table.clear(SOUNDS_TEMP)
+	table.clear(var_0_2)
+	table.clear(var_0_3)
+	table.clear(var_0_4)
 
-	local num_fx = 0
-	local sfx = action.wave_sfx
-	local vfx = action.wave_fx
-	local vfx_id = NetworkLookup.effects[vfx]
-	local sfx_id = NetworkLookup.sound_events[sfx]
+	local var_13_13 = 0
+	local var_13_14 = arg_13_3.wave_sfx
+	local var_13_15 = arg_13_3.wave_fx
+	local var_13_16 = NetworkLookup.effects[var_13_15]
+	local var_13_17 = NetworkLookup.sound_events[var_13_14]
 
-	for i = start_index, new_index do
-		local pos = wave_points[i]:unbox()
+	for iter_13_0 = var_13_8, var_13_6 do
+		local var_13_18 = var_13_4[iter_13_0]:unbox()
 
-		if i ~= last_index then
-			WwiseUtils.trigger_position_event(world, sfx, pos)
-			World.create_particles(world, vfx, pos)
+		if iter_13_0 ~= var_13_7 then
+			WwiseUtils.trigger_position_event(var_13_0, var_13_14, var_13_18)
+			World.create_particles(var_13_0, var_13_15, var_13_18)
 
-			num_fx = num_fx + 1
-			PARTICLES_TEMP[num_fx] = vfx_id
-			SOUNDS_TEMP[num_fx] = sfx_id
-			POSITIONS_TEMP[num_fx] = pos
+			var_13_13 = var_13_13 + 1
+			var_0_2[var_13_13] = var_13_16
+			var_0_4[var_13_13] = var_13_17
+			var_0_3[var_13_13] = var_13_18
 		end
 
-		local to = wave_points[i + 1]
+		local var_13_19 = var_13_4[iter_13_0 + 1]
+		local var_13_20
 
-		to = to and to:unbox() or pos
-		from = wave_points[i - 1]
-		from = from and from:unbox() or POSITION_LOOKUP[unit]
+		var_13_20 = var_13_19 and var_13_19:unbox() or var_13_18
+		var_13_11 = var_13_4[iter_13_0 - 1]
+		var_13_11 = var_13_11 and var_13_11:unbox() or POSITION_LOOKUP[arg_13_1]
 
-		local rot = Quaternion.look(to - from, Vector3.up())
-		local y = math.max(Vector3.length(to - pos), Vector3.length(from - pos))
-		local half_height = action.height * 0.5
-		local size = Vector3(action.width * 0.5, y, half_height)
-		local up = Quaternion.up(rot)
-		local oobb_pos = (to + from) * 0.5 + up * half_height
-		local hit_actors, actor_count = PhysicsWorld.immediate_overlap(pw, "position", oobb_pos, "rotation", rot, "size", size, "shape", "oobb", "types", "dynamics", "collision_filter", "filter_player_hit_box_check")
+		local var_13_21 = Quaternion.look(var_13_20 - var_13_11, Vector3.up())
+		local var_13_22 = math.max(Vector3.length(var_13_20 - var_13_18), Vector3.length(var_13_11 - var_13_18))
+		local var_13_23 = arg_13_3.height * 0.5
+		local var_13_24 = Vector3(arg_13_3.width * 0.5, var_13_22, var_13_23)
+		local var_13_25 = Quaternion.up(var_13_21)
+		local var_13_26 = (var_13_20 + var_13_11) * 0.5 + var_13_25 * var_13_23
+		local var_13_27, var_13_28 = PhysicsWorld.immediate_overlap(var_13_9, "position", var_13_26, "rotation", var_13_21, "size", var_13_24, "shape", "oobb", "types", "dynamics", "collision_filter", "filter_player_hit_box_check")
 
-		table.append(HITS_TEMP, hit_actors)
+		table.append(var_0_6, var_13_27)
 
-		num_hits = num_hits + actor_count
+		var_13_10 = var_13_10 + var_13_28
 
-		if debug then
-			local pose = Matrix4x4.from_quaternion_position(rot, oobb_pos)
+		if var_13_12 then
+			local var_13_29 = Matrix4x4.from_quaternion_position(var_13_21, var_13_26)
 
-			QuickDrawer:box(pose, size)
+			QuickDrawer:box(var_13_29, var_13_24)
 		end
 	end
 
-	if num_fx > 0 then
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_play_fx", PARTICLES_TEMP, SOUNDS_TEMP, POSITIONS_TEMP)
+	if var_13_13 > 0 then
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_play_fx", var_0_2, var_0_4, var_0_3)
 	end
 
-	self:_deal_damage(unit, blackboard, action, from, HITS_TEMP, num_hits, true)
+	arg_13_0:_deal_damage(arg_13_1, arg_13_2, arg_13_3, var_13_11, var_0_6, var_13_10, true)
 
-	blackboard.last_overlap_index = new_index
+	arg_13_2.last_overlap_index = var_13_6
 end
 
-BTChampionAttackAction.anim_cb_damage = function (self, unit, blackboard)
-	local action = blackboard.action
-	local mode = action.mode
+function BTChampionAttackAction.anim_cb_damage(arg_14_0, arg_14_1, arg_14_2)
+	local var_14_0 = arg_14_2.action
+	local var_14_1 = var_14_0.mode
 
-	if mode then
-		printf("BTChampionAttackAction anim_cb_damage in mode %q", mode)
+	if var_14_1 then
+		printf("BTChampionAttackAction anim_cb_damage in mode %q", var_14_1)
 
 		return
 	end
 
-	local self_pos = Unit.local_position(unit, 0)
-	local self_rot = Unit.local_rotation(unit, 0)
-	local pw = World.get_data(blackboard.world, "physics_world")
+	local var_14_2 = Unit.local_position(arg_14_1, 0)
+	local var_14_3 = Unit.local_rotation(arg_14_1, 0)
+	local var_14_4 = World.get_data(arg_14_2.world, "physics_world")
 
-	if action.effect_name then
-		Managers.state.network:rpc_play_particle_effect(nil, NetworkLookup.effects[action.effect_name], NetworkConstants.invalid_game_object_id, 0, POSITION_LOOKUP[unit], Quaternion.identity(), false)
+	if var_14_0.effect_name then
+		Managers.state.network:rpc_play_particle_effect(nil, NetworkLookup.effects[var_14_0.effect_name], NetworkConstants.invalid_game_object_id, 0, POSITION_LOOKUP[arg_14_1], Quaternion.identity(), false)
 	end
 
-	if action.collision_type == "oobb" or not action.collision_type then
-		local oobb_pos, self_rot, size = self:_calculate_oobb_collision(action, self_pos, self_rot)
-		local hit_actors, actor_count = PhysicsWorld.immediate_overlap(pw, "position", oobb_pos, "rotation", self_rot, "size", size, "shape", "oobb", "types", "dynamics", "collision_filter", "filter_player_hit_box_check")
+	if var_14_0.collision_type == "oobb" or not var_14_0.collision_type then
+		local var_14_5, var_14_6, var_14_7 = arg_14_0:_calculate_oobb_collision(var_14_0, var_14_2, var_14_3)
+		local var_14_8, var_14_9 = PhysicsWorld.immediate_overlap(var_14_4, "position", var_14_5, "rotation", var_14_6, "size", var_14_7, "shape", "oobb", "types", "dynamics", "collision_filter", "filter_player_hit_box_check")
 
 		if Development.parameter("debug_ai_attack") then
-			local drawer = Managers.state.debug:drawer(debug_drawer_info)
+			local var_14_10 = Managers.state.debug:drawer(var_0_5)
 
-			drawer:reset()
+			var_14_10:reset()
 
-			local pose = Matrix4x4.from_quaternion_position(self_rot, oobb_pos)
+			local var_14_11 = Matrix4x4.from_quaternion_position(var_14_6, var_14_5)
 
-			drawer:box(pose, size)
+			var_14_10:box(var_14_11, var_14_7)
 		end
 
-		self:_deal_damage(unit, blackboard, action, self_pos, hit_actors, actor_count, true)
-	elseif action.collision_type == "cylinder" then
-		local cylinder_center, size, rotation = self:_calculate_cylinder_collision(action, self_pos, self_rot)
-		local shape = size.y - size.x > 0 and "capsule" or "sphere"
+		arg_14_0:_deal_damage(arg_14_1, arg_14_2, var_14_0, var_14_2, var_14_8, var_14_9, true)
+	elseif var_14_0.collision_type == "cylinder" then
+		local var_14_12, var_14_13, var_14_14 = arg_14_0:_calculate_cylinder_collision(var_14_0, var_14_2, var_14_3)
+		local var_14_15 = var_14_13.y - var_14_13.x > 0 and "capsule" or "sphere"
 
-		PhysicsWorld.prepare_actors_for_overlap(pw, cylinder_center, action.radius)
+		PhysicsWorld.prepare_actors_for_overlap(var_14_4, var_14_12, var_14_0.radius)
 
-		local hit_actors, actor_count = PhysicsWorld.immediate_overlap(pw, "position", cylinder_center, "rotation", rotation, "size", size, "shape", shape, "types", "dynamics", "collision_filter", action.collision_filter or "filter_player_hit_box_check")
+		local var_14_16, var_14_17 = PhysicsWorld.immediate_overlap(var_14_4, "position", var_14_12, "rotation", var_14_14, "size", var_14_13, "shape", var_14_15, "types", "dynamics", "collision_filter", var_14_0.collision_filter or "filter_player_hit_box_check")
 
 		if Development.parameter("debug_ai_attack") then
-			local drawer = Managers.state.debug:drawer(debug_drawer_info)
+			local var_14_18 = Managers.state.debug:drawer(var_0_5)
 
-			drawer:reset()
+			var_14_18:reset()
 
-			local fwd = Quaternion.forward(rotation)
+			local var_14_19 = Quaternion.forward(var_14_14)
 
-			drawer:cylinder(cylinder_center - fwd * size.y, cylinder_center + fwd * size.y, math.max(size.x, size.z), nil, 4)
+			var_14_18:cylinder(var_14_12 - var_14_19 * var_14_13.y, var_14_12 + var_14_19 * var_14_13.y, math.max(var_14_13.x, var_14_13.z), nil, 4)
 		end
 
-		self:_deal_damage(unit, blackboard, action, self_pos, hit_actors, actor_count, true)
+		arg_14_0:_deal_damage(arg_14_1, arg_14_2, var_14_0, var_14_2, var_14_16, var_14_17, true)
 	end
 
-	self:_attack_threat_over(unit, blackboard, action)
+	arg_14_0:_attack_threat_over(arg_14_1, arg_14_2, var_14_0)
 end
 
-BTChampionAttackAction._update_radial_cylinder = function (self, unit, blackboard, action, dt, t)
-	if t > blackboard.overlap_end_time and blackboard.attacking_target then
-		self:_attack_threat_over(unit, blackboard, action)
+function BTChampionAttackAction._update_radial_cylinder(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+	if arg_15_5 > arg_15_2.overlap_end_time and arg_15_2.attacking_target then
+		arg_15_0:_attack_threat_over(arg_15_1, arg_15_2, arg_15_3)
 
 		return
-	elseif t < blackboard.overlap_start_time or t > blackboard.overlap_end_time then
+	elseif arg_15_5 < arg_15_2.overlap_start_time or arg_15_5 > arg_15_2.overlap_end_time then
 		return
 	end
 
-	local attack_t = t - blackboard.overlap_start_time
-	local self_pos = Unit.local_position(unit, 0)
-	local self_rot = Unit.local_rotation(unit, 0)
-	local pw = World.get_data(blackboard.world, "physics_world")
-	local cylinder_center, size, rotation = self:_calculate_cylinder_collision(action, self_pos, self_rot)
-	local shape = size.y - size.x > 0 and "capsule" or "sphere"
-	local hit_actors, actor_count = PhysicsWorld.immediate_overlap(pw, "position", cylinder_center, "rotation", rotation, "size", size, "shape", shape, "types", "dynamics", "collision_filter", action.collision_filter)
+	local var_15_0 = arg_15_5 - arg_15_2.overlap_start_time
+	local var_15_1 = Unit.local_position(arg_15_1, 0)
+	local var_15_2 = Unit.local_rotation(arg_15_1, 0)
+	local var_15_3 = World.get_data(arg_15_2.world, "physics_world")
+	local var_15_4, var_15_5, var_15_6 = arg_15_0:_calculate_cylinder_collision(arg_15_3, var_15_1, var_15_2)
+	local var_15_7 = var_15_5.y - var_15_5.x > 0 and "capsule" or "sphere"
+	local var_15_8, var_15_9 = PhysicsWorld.immediate_overlap(var_15_3, "position", var_15_4, "rotation", var_15_6, "size", var_15_5, "shape", var_15_7, "types", "dynamics", "collision_filter", arg_15_3.collision_filter)
 
 	if Development.parameter("debug_ai_attack") then
-		local drawer = Managers.state.debug:drawer(debug_drawer_info)
+		local var_15_10 = Managers.state.debug:drawer(var_0_5)
 
-		drawer:reset()
+		var_15_10:reset()
 
-		local fwd = Quaternion.forward(rotation)
+		local var_15_11 = Quaternion.forward(var_15_6)
 
-		drawer:cylinder(cylinder_center - fwd * size.y, cylinder_center + fwd * size.y, math.max(size.x, size.z), nil, 4)
+		var_15_10:cylinder(var_15_4 - var_15_11 * var_15_5.y, var_15_4 + var_15_11 * var_15_5.y, math.max(var_15_5.x, var_15_5.z), nil, 4)
 	end
 
-	local start_angle = blackboard.overlap_start_angle
-	local old_angle = blackboard.overlap_last_angle
-	local new_angle = start_angle + attack_t * blackboard.overlap_angle_speed
-	local relative_angle = new_angle - old_angle
-	local check_radius = 0.5
-	local two_pi = 2 * math.pi
-	local hit_list = {}
-	local num_hit = 0
+	local var_15_12 = arg_15_2.overlap_start_angle
+	local var_15_13 = arg_15_2.overlap_last_angle
+	local var_15_14 = var_15_12 + var_15_0 * arg_15_2.overlap_angle_speed
+	local var_15_15 = var_15_14 - var_15_13
+	local var_15_16 = 0.5
+	local var_15_17 = 2 * math.pi
+	local var_15_18 = {}
+	local var_15_19 = 0
 
-	for i = 1, actor_count do
-		local actor = hit_actors[i]
-		local hit_unit = Actor.unit(actor)
+	for iter_15_0 = 1, var_15_9 do
+		local var_15_20 = var_15_8[iter_15_0]
+		local var_15_21 = Actor.unit(var_15_20)
 
-		if hit_unit ~= unit and not blackboard.hit_players[hit_unit] then
-			local actor_pos = Actor.center_of_mass(actor)
-			local offset = actor_pos - self_pos
-			local y = offset.y
-			local x
-			local direction = action.direction
+		if var_15_21 ~= arg_15_1 and not arg_15_2.hit_players[var_15_21] then
+			local var_15_22 = Actor.center_of_mass(var_15_20) - var_15_1
+			local var_15_23 = var_15_22.y
+			local var_15_24
+			local var_15_25 = arg_15_3.direction
 
-			if direction == "clockwise" then
-				x = -offset.x
-			elseif direction == "counter_clockwise" then
-				x = offset.x
+			if var_15_25 == "clockwise" then
+				var_15_24 = -var_15_22.x
+			elseif var_15_25 == "counter_clockwise" then
+				var_15_24 = var_15_22.x
 			else
-				fassert(false, "Radial cylinder overlap with invalid direction %s", tostring(direction))
+				fassert(false, "Radial cylinder overlap with invalid direction %s", tostring(var_15_25))
 			end
 
-			local dist = math.sqrt(x * x + y * y)
-			local angle = math.atan2(y, x)
-			local radial_width = 2 * math.tan(check_radius, dist)
-			local min_angle = (angle - radial_width - old_angle) % two_pi
-			local max_angle = (angle + radial_width - old_angle) % two_pi
+			local var_15_26 = math.sqrt(var_15_24 * var_15_24 + var_15_23 * var_15_23)
+			local var_15_27 = math.atan2(var_15_23, var_15_24)
+			local var_15_28 = 2 * math.tan(var_15_16, var_15_26)
+			local var_15_29 = (var_15_27 - var_15_28 - var_15_13) % var_15_17
+			local var_15_30 = (var_15_27 + var_15_28 - var_15_13) % var_15_17
 
-			if max_angle < min_angle then
-				min_angle = min_angle - two_pi
+			if var_15_30 < var_15_29 then
+				var_15_29 = var_15_29 - var_15_17
 			end
 
-			local hit = min_angle < 0 and relative_angle < max_angle or min_angle > 0 and min_angle < relative_angle or max_angle > 0 and max_angle < relative_angle
-
-			if hit then
-				hit_list[#hit_list + 1] = actor
-				num_hit = num_hit + 1
+			if var_15_29 < 0 and var_15_15 < var_15_30 or var_15_29 > 0 and var_15_29 < var_15_15 or var_15_30 > 0 and var_15_30 < var_15_15 then
+				var_15_18[#var_15_18 + 1] = var_15_20
+				var_15_19 = var_15_19 + 1
 			end
 		end
 	end
 
-	self:_deal_damage(unit, blackboard, action, self_pos, hit_list, num_hit, false)
+	arg_15_0:_deal_damage(arg_15_1, arg_15_2, arg_15_3, var_15_1, var_15_18, var_15_19, false)
 
-	blackboard.overlap_last_angle = new_angle
+	arg_15_2.overlap_last_angle = var_15_14
 end
 
-BTChampionAttackAction._calculate_cylinder_collision = function (self, action, self_pos, self_rot)
-	local radius = action.radius
-	local height = action.height
-	local offset_up = action.offset_up
-	local offset_forward = action.offset_forward
-	local offset_right = action.offset_right
-	local half_height = height * 0.5
-	local size = Vector3(radius, half_height, radius)
-	local forward = Quaternion.forward(self_rot)
-	local up = Quaternion.up(self_rot)
-	local right = Quaternion.right(self_rot)
-	local cylinder_center = self_pos + forward * (radius + offset_forward) + up * (half_height + offset_up) + right * offset_right
-	local rotation = Quaternion.look(up, Vector3.up())
+function BTChampionAttackAction._calculate_cylinder_collision(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+	local var_16_0 = arg_16_1.radius
+	local var_16_1 = arg_16_1.height
+	local var_16_2 = arg_16_1.offset_up
+	local var_16_3 = arg_16_1.offset_forward
+	local var_16_4 = arg_16_1.offset_right
+	local var_16_5 = var_16_1 * 0.5
+	local var_16_6 = Vector3(var_16_0, var_16_5, var_16_0)
+	local var_16_7 = Quaternion.forward(arg_16_3)
+	local var_16_8 = Quaternion.up(arg_16_3)
+	local var_16_9 = Quaternion.right(arg_16_3)
+	local var_16_10 = arg_16_2 + var_16_7 * (var_16_0 + var_16_3) + var_16_8 * (var_16_5 + var_16_2) + var_16_9 * var_16_4
+	local var_16_11 = Quaternion.look(var_16_8, Vector3.up())
 
-	return cylinder_center, size, rotation
+	return var_16_10, var_16_6, var_16_11
 end
 
-BTChampionAttackAction._calculate_oobb_collision = function (self, action, self_pos, self_rot)
-	local range = action.range
-	local height = action.height
-	local width = action.width
-	local offset_up = action.offset_up
-	local offset_forward = action.offset_forward
-	local half_range = range * 0.5
-	local half_height = height * 0.5
-	local size = Vector3(width * 0.5, half_range, half_height)
-	local forward = Quaternion.rotate(self_rot, Vector3.forward()) * (offset_forward + half_range)
-	local up = Vector3.up() * (half_height + offset_up)
-	local oobb_pos = self_pos + forward + up
+function BTChampionAttackAction._calculate_oobb_collision(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+	local var_17_0 = arg_17_1.range
+	local var_17_1 = arg_17_1.height
+	local var_17_2 = arg_17_1.width
+	local var_17_3 = arg_17_1.offset_up
+	local var_17_4 = arg_17_1.offset_forward
+	local var_17_5 = var_17_0 * 0.5
+	local var_17_6 = var_17_1 * 0.5
+	local var_17_7 = Vector3(var_17_2 * 0.5, var_17_5, var_17_6)
+	local var_17_8 = Quaternion.rotate(arg_17_3, Vector3.forward()) * (var_17_4 + var_17_5)
+	local var_17_9 = Vector3.up() * (var_17_6 + var_17_3)
 
-	return oobb_pos, self_rot, size
+	return arg_17_2 + var_17_8 + var_17_9, arg_17_3, var_17_7
 end
 
-BTChampionAttackAction._deal_damage = function (self, unit, blackboard, action, self_pos, hit_actors, actor_count, is_animation_callback)
-	local hit_players = blackboard.hit_players
-	local Unit_alive = Unit.alive
-	local Actor_unit = Actor.unit
-	local AiUtils_damage_target = AiUtils.damage_target
-	local catapult = action.catapult
-	local shove_speed = action.shove_speed
-	local shove_z_speed = action.shove_z_speed
-	local impact_shove = action.impact_shove_multiplier
+function BTChampionAttackAction._deal_damage(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7)
+	local var_18_0 = arg_18_2.hit_players
+	local var_18_1 = Unit.alive
+	local var_18_2 = Actor.unit
+	local var_18_3 = AiUtils.damage_target
+	local var_18_4 = arg_18_3.catapult
+	local var_18_5 = arg_18_3.shove_speed
+	local var_18_6 = arg_18_3.shove_z_speed
+	local var_18_7 = arg_18_3.impact_shove_multiplier
 
-	if impact_shove then
-		local speed = Vector3.length(blackboard.locomotion_extension:current_velocity())
-
-		shove_speed = speed * impact_shove
+	if var_18_7 then
+		var_18_5 = Vector3.length(arg_18_2.locomotion_extension:current_velocity()) * var_18_7
 	end
 
-	assert(not shove_speed == not shove_z_speed, "Shove speed and shove_z_speed both or neither need to be set")
+	assert(not var_18_5 == not var_18_6, "Shove speed and shove_z_speed both or neither need to be set")
 
-	for i = 1, actor_count do
-		local actor = hit_actors[i]
-		local target_unit = Actor_unit(actor)
-		local is_a_character = DamageUtils.is_character(target_unit)
+	for iter_18_0 = 1, arg_18_6 do
+		local var_18_8 = arg_18_5[iter_18_0]
+		local var_18_9 = var_18_2(var_18_8)
 
-		if is_a_character and Unit_alive(target_unit) and not hit_players[target_unit] and unit ~= target_unit then
-			hit_players[target_unit] = true
+		if DamageUtils.is_character(var_18_9) and var_18_1(var_18_9) and not var_18_0[var_18_9] and arg_18_1 ~= var_18_9 then
+			var_18_0[var_18_9] = true
 
-			local attack_direction = action.attack_directions and action.attack_directions[blackboard.attack_anim]
-			local blocked = DamageUtils.check_block(unit, target_unit, action.fatigue_type, attack_direction)
-			local target_pos = POSITION_LOOKUP[target_unit]
-			local is_player_unit = DamageUtils.is_player_unit(target_unit)
+			local var_18_10 = arg_18_3.attack_directions and arg_18_3.attack_directions[arg_18_2.attack_anim]
+			local var_18_11 = DamageUtils.check_block(arg_18_1, var_18_9, arg_18_3.fatigue_type, var_18_10)
+			local var_18_12 = POSITION_LOOKUP[var_18_9]
+			local var_18_13 = DamageUtils.is_player_unit(var_18_9)
 
-			if shove_speed and is_player_unit then
-				local direction = Vector3.normalize(target_pos - self_pos)
+			if var_18_5 and var_18_13 then
+				local var_18_14 = Vector3.normalize(var_18_12 - arg_18_4)
 
-				if is_animation_callback then
-					local catapulted = blackboard.catapulted_players
+				if arg_18_7 then
+					local var_18_15 = arg_18_2.catapulted_players
 
-					if not catapulted then
-						catapulted = {}
-						blackboard.catapulted_players = catapulted
+					if not var_18_15 then
+						var_18_15 = {}
+						arg_18_2.catapulted_players = var_18_15
 					end
 
-					catapulted[#catapulted + 1] = {
-						target_unit = target_unit,
-						blocked = blocked,
-						direction = Vector3Box(direction),
+					var_18_15[#var_18_15 + 1] = {
+						target_unit = var_18_9,
+						blocked = var_18_11,
+						direction = Vector3Box(var_18_14)
 					}
 				else
-					self:_catapult_enemy(unit, blackboard, shove_speed, shove_z_speed, target_unit, blocked, direction)
+					arg_18_0:_catapult_enemy(arg_18_1, arg_18_2, var_18_5, var_18_6, var_18_9, var_18_11, var_18_14)
 				end
 			end
 
-			if is_player_unit and blocked then
-				local push_speed = action.player_push_speed_blocked
+			if var_18_13 and var_18_11 then
+				local var_18_16 = arg_18_3.player_push_speed_blocked
 
-				if push_speed then
-					local blocked_velocity = push_speed * Vector3.normalize(target_pos - self_pos)
-					local locomotion_extension = ScriptUnit.extension(target_unit, "locomotion_system")
+				if var_18_16 then
+					local var_18_17 = var_18_16 * Vector3.normalize(var_18_12 - arg_18_4)
 
-					locomotion_extension:add_external_velocity(blocked_velocity)
+					ScriptUnit.extension(var_18_9, "locomotion_system"):add_external_velocity(var_18_17)
 				end
 
-				local blocked_damage = action.blocked_damage
+				local var_18_18 = arg_18_3.blocked_damage
 
-				if blocked_damage then
-					AiUtils_damage_target(target_unit, unit, action, blocked_damage)
+				if var_18_18 then
+					var_18_3(var_18_9, arg_18_1, arg_18_3, var_18_18)
 				end
 
-				if not action.ignore_abort_on_blocked_attack then
+				if not arg_18_3.ignore_abort_on_blocked_attack then
 					return
 				end
 			else
-				local is_ai_unit = DamageUtils.is_enemy(blackboard.attacking_target, target_unit)
-
-				if is_ai_unit and action.hit_ai_func then
-					action.hit_ai_func(unit, blackboard, target_unit)
+				if DamageUtils.is_enemy(arg_18_2.attacking_target, var_18_9) and arg_18_3.hit_ai_func then
+					arg_18_3.hit_ai_func(arg_18_1, arg_18_2, var_18_9)
 				end
 
-				AiUtils_damage_target(target_unit, unit, action, action.damage)
+				var_18_3(var_18_9, arg_18_1, arg_18_3, arg_18_3.damage)
 			end
 		end
 	end
 end
 
-BTChampionAttackAction._catapult_players = function (self, unit, blackboard, action, catapulted_players)
-	local shove_speed, shove_z_speed = action.shove_speed, action.shove_z_speed
-	local impact_shove = action.impact_shove_multiplier
+function BTChampionAttackAction._catapult_players(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+	local var_19_0 = arg_19_3.shove_speed
+	local var_19_1 = arg_19_3.shove_z_speed
+	local var_19_2 = arg_19_3.impact_shove_multiplier
 
-	if impact_shove then
-		local speed = Vector3.length(blackboard.locomotion_extension:current_velocity())
-
-		shove_speed = speed * impact_shove
+	if var_19_2 then
+		var_19_0 = Vector3.length(arg_19_2.locomotion_extension:current_velocity()) * var_19_2
 	end
 
-	for _, data in ipairs(catapulted_players) do
-		local target_unit = data.target_unit
+	for iter_19_0, iter_19_1 in ipairs(arg_19_4) do
+		local var_19_3 = iter_19_1.target_unit
 
-		if Unit.alive(target_unit) then
-			self:_catapult_player(unit, shove_speed, shove_z_speed, target_unit, data.blocked, data.direction:unbox())
+		if Unit.alive(var_19_3) then
+			arg_19_0:_catapult_player(arg_19_1, var_19_0, var_19_1, var_19_3, iter_19_1.blocked, iter_19_1.direction:unbox())
 		end
 	end
 
-	table.clear(catapulted_players)
+	table.clear(arg_19_4)
 end
 
-BTChampionAttackAction._catapult_player = function (self, unit, shove_speed, shove_z_speed, target_unit, blocked, direction)
-	local target_status_extension = ScriptUnit.extension(target_unit, "status_system")
+function BTChampionAttackAction._catapult_player(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6)
+	local var_20_0 = ScriptUnit.extension(arg_20_4, "status_system")
 
-	if not target_status_extension:is_knocked_down() and not target_status_extension:is_dead() then
-		local push_velocity = direction * shove_speed
+	if not var_20_0:is_knocked_down() and not var_20_0:is_dead() then
+		local var_20_1 = arg_20_6 * arg_20_2
 
-		Vector3.set_z(push_velocity, shove_z_speed)
-		StatusUtils.set_catapulted_network(target_unit, true, push_velocity)
+		Vector3.set_z(var_20_1, arg_20_3)
+		StatusUtils.set_catapulted_network(arg_20_4, true, var_20_1)
 	end
 end

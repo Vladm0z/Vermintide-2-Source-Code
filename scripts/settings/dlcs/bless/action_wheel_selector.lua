@@ -1,55 +1,55 @@
-﻿-- chunkname: @scripts/settings/dlcs/bless/action_wheel_selector.lua
+-- chunkname: @scripts/settings/dlcs/bless/action_wheel_selector.lua
 
 ActionWheelSelector = class(ActionWheelSelector, ActionBase)
 
-local STOP_LERP_TIME = 0.125
-local STOP_LERP_TIME_CONTROLLER = 0.25
-local START_LERP_TIME = 0.01
-local START_LERP_TIME_CONTROLLER = 0.125
+local var_0_0 = 0.125
+local var_0_1 = 0.25
+local var_0_2 = 0.01
+local var_0_3 = 0.125
 
-ActionWheelSelector.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionWheelSelector.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionWheelSelector.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionWheelSelector.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	self.weapon_unit = weapon_unit
-	self.weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
+	arg_1_0.weapon_unit = arg_1_7
+	arg_1_0.weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
 end
 
-ActionWheelSelector.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
-	ActionWheelSelector.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
+function ActionWheelSelector.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	ActionWheelSelector.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 
-	self.timer_per_seg = new_action.timer_per_seg
-	self.num_seg = new_action.num_seg
-	self._timer = t + self.timer_per_seg
-	self.current_seg = self.current_seg and self.current_seg + 1 or 1
+	arg_2_0.timer_per_seg = arg_2_1.timer_per_seg
+	arg_2_0.num_seg = arg_2_1.num_seg
+	arg_2_0._timer = arg_2_2 + arg_2_0.timer_per_seg
+	arg_2_0.current_seg = arg_2_0.current_seg and arg_2_0.current_seg + 1 or 1
 
-	if self.current_seg > self.num_seg then
-		self.current_seg = 1
+	if arg_2_0.current_seg > arg_2_0.num_seg then
+		arg_2_0.current_seg = 1
 	end
 
-	self.shader_info = new_action.shader_info
+	arg_2_0.shader_info = arg_2_1.shader_info
 end
 
-ActionWheelSelector.client_owner_post_update = function (self, dt, t, world, can_damage)
-	if t > self._timer then
-		self.current_seg = self.current_seg + 1
+function ActionWheelSelector.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	if arg_3_2 > arg_3_0._timer then
+		arg_3_0.current_seg = arg_3_0.current_seg + 1
 
-		if self.current_seg > self.num_seg then
-			self.current_seg = 1
+		if arg_3_0.current_seg > arg_3_0.num_seg then
+			arg_3_0.current_seg = 1
 		end
 
-		self._timer = t + self.timer_per_seg
+		arg_3_0._timer = arg_3_2 + arg_3_0.timer_per_seg
 	end
 
-	self.weapon_extension:set_mode(self.current_seg)
+	arg_3_0.weapon_extension:set_mode(arg_3_0.current_seg)
 
-	if self.shader_info then
-		local material_slot = self.shader_info.material_slot
-		local variable_name = self.shader_info.variable_name
+	if arg_3_0.shader_info then
+		local var_3_0 = arg_3_0.shader_info.material_slot
+		local var_3_1 = arg_3_0.shader_info.variable_name
 
-		Unit.set_scalar_for_material(self.weapon_unit, material_slot, variable_name, self.current_seg - 1)
+		Unit.set_scalar_for_material(arg_3_0.weapon_unit, var_3_0, var_3_1, arg_3_0.current_seg - 1)
 	end
 end
 
-ActionWheelSelector.finish = function (self, reason, data)
-	ActionChangeMode.super.finish(self, reason)
+function ActionWheelSelector.finish(arg_4_0, arg_4_1, arg_4_2)
+	ActionChangeMode.super.finish(arg_4_0, arg_4_1)
 end

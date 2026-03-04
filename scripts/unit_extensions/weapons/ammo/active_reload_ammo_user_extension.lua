@@ -1,237 +1,231 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/ammo/active_reload_ammo_user_extension.lua
+-- chunkname: @scripts/unit_extensions/weapons/ammo/active_reload_ammo_user_extension.lua
 
 script_data.infinite_ammo = script_data.infinite_ammo or Development.parameter("infinite_ammo")
 ActiveReloadAmmoUserExtension = class(ActiveReloadAmmoUserExtension)
 
-ActiveReloadAmmoUserExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self.world = extension_init_context.world
-	self.owner_unit = extension_init_data.owner_unit
+function ActiveReloadAmmoUserExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.world = arg_1_1.world
+	arg_1_0.owner_unit = arg_1_3.owner_unit
 
-	local ammo_data = extension_init_data.ammo_data
+	local var_1_0 = arg_1_3.ammo_data
 
-	self.reload_time = ammo_data.reload_time
-	self.max_ammo = ammo_data.max_ammo
-	self.start_ammo = ammo_data.start_ammo or self.max_ammo
-	self.ammo_per_clip = ammo_data.ammo_per_clip or self.start_ammo
-	self.time_penalty = ammo_data.time_penalty
+	arg_1_0.reload_time = var_1_0.reload_time
+	arg_1_0.max_ammo = var_1_0.max_ammo
+	arg_1_0.start_ammo = var_1_0.start_ammo or arg_1_0.max_ammo
+	arg_1_0.ammo_per_clip = var_1_0.ammo_per_clip or arg_1_0.start_ammo
+	arg_1_0.time_penalty = var_1_0.time_penalty
 
-	if ScriptUnit.has_extension(self.owner_unit, "first_person_system") then
-		self.first_person_extension = ScriptUnit.extension(self.owner_unit, "first_person_system")
+	if ScriptUnit.has_extension(arg_1_0.owner_unit, "first_person_system") then
+		arg_1_0.first_person_extension = ScriptUnit.extension(arg_1_0.owner_unit, "first_person_system")
 	end
 
-	if ScriptUnit.has_extension(self.owner_unit, "input_system") then
-		self.input_extension = ScriptUnit.extension(self.owner_unit, "input_system")
+	if ScriptUnit.has_extension(arg_1_0.owner_unit, "input_system") then
+		arg_1_0.input_extension = ScriptUnit.extension(arg_1_0.owner_unit, "input_system")
 	end
 
-	self._gui = World.create_screen_gui(extension_init_context.world, "immediate")
+	arg_1_0._gui = World.create_screen_gui(arg_1_1.world, "immediate")
 
-	self:reset()
+	arg_1_0:reset()
 end
 
-ActiveReloadAmmoUserExtension.extensions_ready = function (self, world, unit)
+function ActiveReloadAmmoUserExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
 	return
 end
 
-ActiveReloadAmmoUserExtension.destroy = function (self)
+function ActiveReloadAmmoUserExtension.destroy(arg_3_0)
 	return
 end
 
-ActiveReloadAmmoUserExtension.reset = function (self)
-	self.current_ammo = self.ammo_per_clip
-	self.available_ammo = self.start_ammo - self.current_ammo
-	self.shots_fired = 0
+function ActiveReloadAmmoUserExtension.reset(arg_4_0)
+	arg_4_0.current_ammo = arg_4_0.ammo_per_clip
+	arg_4_0.available_ammo = arg_4_0.start_ammo - arg_4_0.current_ammo
+	arg_4_0.shots_fired = 0
 end
 
-ActiveReloadAmmoUserExtension.update = function (self, unit, input, dt, context, t)
-	if self.shots_fired > 0 then
-		self.current_ammo = self.current_ammo - self.shots_fired
-		self.shots_fired = 0
+function ActiveReloadAmmoUserExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	if arg_5_0.shots_fired > 0 then
+		arg_5_0.current_ammo = arg_5_0.current_ammo - arg_5_0.shots_fired
+		arg_5_0.shots_fired = 0
 
-		assert(self.current_ammo >= 0)
+		assert(arg_5_0.current_ammo >= 0)
 
-		if self.current_ammo == 0 then
-			Unit.flow_event(unit, "used_last_ammo")
+		if arg_5_0.current_ammo == 0 then
+			Unit.flow_event(arg_5_1, "used_last_ammo")
 
-			if self.available_ammo == 0 then
-				local inventory_system = ScriptUnit.extension(self.owner_unit, "inventory_system")
-				local equipment = inventory_system:equipment()
-				local slot_name = equipment.wielded_slot
-				local slots = equipment.slots
-				local slot_data = slots[slot_name]
-				local item_data = slot_data.item_data
-				local item_template = BackendUtils.get_item_template(item_data)
-				local ammo_data = item_template.ammo_data
+			if arg_5_0.available_ammo == 0 then
+				local var_5_0 = ScriptUnit.extension(arg_5_0.owner_unit, "inventory_system")
+				local var_5_1 = var_5_0:equipment()
+				local var_5_2 = var_5_1.wielded_slot
+				local var_5_3 = var_5_1.slots[var_5_2].item_data
 
-				if ammo_data.destroy_when_out_of_ammo then
-					inventory_system:destroy_slot(slot_name)
-					inventory_system:wield_previous_weapon()
+				if BackendUtils.get_item_template(var_5_3).ammo_data.destroy_when_out_of_ammo then
+					var_5_0:destroy_slot(var_5_2)
+					var_5_0:wield_previous_weapon()
 				end
 			end
 		end
 	end
 
-	if self.next_reload_time then
-		if t > self.next_reload_time then
-			if not self.start_reloading then
-				self.current_ammo = self.current_ammo + 1
-				self.available_ammo = self.available_ammo - 1
+	if arg_5_0.next_reload_time then
+		if arg_5_5 > arg_5_0.next_reload_time then
+			if not arg_5_0.start_reloading then
+				arg_5_0.current_ammo = arg_5_0.current_ammo + 1
+				arg_5_0.available_ammo = arg_5_0.available_ammo - 1
 			end
 
-			self.start_reloading = nil
+			arg_5_0.start_reloading = nil
 
-			local num_missing = self.ammo_per_clip - self.current_ammo
+			local var_5_4 = arg_5_0.ammo_per_clip - arg_5_0.current_ammo
 
-			if num_missing > 0 and self.available_ammo > 0 then
-				local reload_event = "reload"
+			if var_5_4 > 0 and arg_5_0.available_ammo > 0 then
+				local var_5_5 = "reload"
 
-				self.next_reload_time = t + self.reload_time
+				arg_5_0.next_reload_time = arg_5_5 + arg_5_0.reload_time
 
-				if num_missing == 1 or self.available_ammo == 1 then
-					reload_event = "reload_last"
+				if var_5_4 == 1 or arg_5_0.available_ammo == 1 then
+					var_5_5 = "reload_last"
 				end
 
-				if self.first_person_extension then
-					self.first_person_extension:play_animation_event(reload_event)
+				if arg_5_0.first_person_extension then
+					arg_5_0.first_person_extension:play_animation_event(var_5_5)
 				end
 
-				Unit.animation_event(self.owner_unit, reload_event)
+				Unit.animation_event(arg_5_0.owner_unit, var_5_5)
 
 				if not LEVEL_EDITOR_TEST then
-					Managers.state.network:anim_event(self.owner_unit, reload_event)
+					Managers.state.network:anim_event(arg_5_0.owner_unit, var_5_5)
 				end
 
-				self:_setup_indicator_area()
+				arg_5_0:_setup_indicator_area()
 			else
-				self.next_reload_time = nil
+				arg_5_0.next_reload_time = nil
 			end
 
-			self.event_missed = nil
+			arg_5_0.event_missed = nil
 		end
 
-		if self.next_reload_time and not self.event_missed then
-			self:_update_active_reload(dt, t)
-			self:_debug_draw(dt, t)
+		if arg_5_0.next_reload_time and not arg_5_0.event_missed then
+			arg_5_0:_update_active_reload(arg_5_3, arg_5_5)
+			arg_5_0:_debug_draw(arg_5_3, arg_5_5)
 		end
 	end
 end
 
-local EVENT_TIME = 0.2
-local DEAD_ZONE_PERCENT = 0.3
+local var_0_0 = 0.2
+local var_0_1 = 0.3
 
-ActiveReloadAmmoUserExtension._update_active_reload = function (self, dt, t)
-	if not self.input_extension:get("weapon_reload") then
+function ActiveReloadAmmoUserExtension._update_active_reload(arg_6_0, arg_6_1, arg_6_2)
+	if not arg_6_0.input_extension:get("weapon_reload") then
 		return
 	end
 
-	local reload_start_time = self:reload_start_time()
-	local dead_zone_time = self.reload_time * DEAD_ZONE_PERCENT
+	local var_6_0 = arg_6_0:reload_start_time()
 
-	if t < reload_start_time + dead_zone_time then
+	if arg_6_2 < var_6_0 + arg_6_0.reload_time * var_0_1 then
 		return
 	end
 
-	local event_start = reload_start_time + self.event_start
-	local event_end = event_start + EVENT_TIME
+	local var_6_1 = var_6_0 + arg_6_0.event_start
+	local var_6_2 = var_6_1 + var_0_0
 
-	if event_start <= t and t <= event_end then
-		self.next_reload_time = t
+	if var_6_1 <= arg_6_2 and arg_6_2 <= var_6_2 then
+		arg_6_0.next_reload_time = arg_6_2
 	else
-		self.next_reload_time = self.next_reload_time + self.time_penalty
-		self.event_missed = true
+		arg_6_0.next_reload_time = arg_6_0.next_reload_time + arg_6_0.time_penalty
+		arg_6_0.event_missed = true
 	end
 end
 
-ActiveReloadAmmoUserExtension._debug_draw = function (self, dt, t)
-	local gui = self._gui
-	local w, h = Gui.resolution()
-	local pos = Vector3(w * 0.5, h * 0.4, 100)
-	local bg_size = Vector2(150, 35)
-	local bg_pos_offset = Vector3(-bg_size.x / 2, -bg_size.y / 2, 0)
+function ActiveReloadAmmoUserExtension._debug_draw(arg_7_0, arg_7_1, arg_7_2)
+	local var_7_0 = arg_7_0._gui
+	local var_7_1, var_7_2 = Gui.resolution()
+	local var_7_3 = Vector3(var_7_1 * 0.5, var_7_2 * 0.4, 100)
+	local var_7_4 = Vector2(150, 35)
+	local var_7_5 = Vector3(-var_7_4.x / 2, -var_7_4.y / 2, 0)
 
-	Gui.rect(gui, pos + bg_pos_offset, bg_size, Color(200, 237, 237, 237))
+	Gui.rect(var_7_0, var_7_3 + var_7_5, var_7_4, Color(200, 237, 237, 237))
 
-	local current_time = self.next_reload_time - t
-	local progress = 1 - current_time / self.reload_time
-	local marker_size = Vector2(3, 35)
-	local marker_pos_offset = Vector3(bg_size.x * progress - marker_size.x * 0.5, 0, 10)
+	local var_7_6 = 1 - (arg_7_0.next_reload_time - arg_7_2) / arg_7_0.reload_time
+	local var_7_7 = Vector2(3, 35)
+	local var_7_8 = Vector3(var_7_4.x * var_7_6 - var_7_7.x * 0.5, 0, 10)
 
-	Gui.rect(gui, pos + bg_pos_offset + marker_pos_offset, marker_size, Color(255, 0, 0, 0))
+	Gui.rect(var_7_0, var_7_3 + var_7_5 + var_7_8, var_7_7, Color(255, 0, 0, 0))
 
-	local event_start = self.event_start
-	local event_end = event_start + EVENT_TIME
-	local start_percentage = event_start / self.reload_time
-	local end_percentage = math.min(1, 1 - event_end / self.reload_time)
-	local percentage = EVENT_TIME / self.reload_time
-	local area_size = Vector2(bg_size.x * percentage, 35)
-	local area_pos_offset = Vector3(bg_size.x * start_percentage, 0, 5)
+	local var_7_9 = arg_7_0.event_start
+	local var_7_10 = var_7_9 + var_0_0
+	local var_7_11 = var_7_9 / arg_7_0.reload_time
+	local var_7_12 = math.min(1, 1 - var_7_10 / arg_7_0.reload_time)
+	local var_7_13 = var_0_0 / arg_7_0.reload_time
+	local var_7_14 = Vector2(var_7_4.x * var_7_13, 35)
+	local var_7_15 = Vector3(var_7_4.x * var_7_11, 0, 5)
 
-	Gui.rect(gui, pos + bg_pos_offset + area_pos_offset, area_size, Color(255, 107, 106, 105))
+	Gui.rect(var_7_0, var_7_3 + var_7_5 + var_7_15, var_7_14, Color(255, 107, 106, 105))
 
-	local indicator_size = Vector2(1, 35)
-	local indicator_pos_offset = Vector3(bg_size.x * DEAD_ZONE_PERCENT, 0, 5)
+	local var_7_16 = Vector2(1, 35)
+	local var_7_17 = Vector3(var_7_4.x * var_0_1, 0, 5)
 
-	Gui.rect(gui, pos + bg_pos_offset + indicator_pos_offset, indicator_size, Color(255, 255, 0, 0))
+	Gui.rect(var_7_0, var_7_3 + var_7_5 + var_7_17, var_7_16, Color(255, 255, 0, 0))
 end
 
-local EVENT_START_PERCENT = 0.6
+local var_0_2 = 0.6
 
-ActiveReloadAmmoUserExtension._setup_indicator_area = function (self)
-	assert(self.next_reload_time)
+function ActiveReloadAmmoUserExtension._setup_indicator_area(arg_8_0)
+	assert(arg_8_0.next_reload_time)
 
-	local reload_start = self:reload_start_time()
+	local var_8_0 = arg_8_0:reload_start_time()
 
-	self.event_start = self.reload_time * EVENT_START_PERCENT
+	arg_8_0.event_start = arg_8_0.reload_time * var_0_2
 end
 
-ActiveReloadAmmoUserExtension.reload_start_time = function (self)
-	assert(self.next_reload_time)
+function ActiveReloadAmmoUserExtension.reload_start_time(arg_9_0)
+	assert(arg_9_0.next_reload_time)
 
-	return self.next_reload_time - self.reload_time
+	return arg_9_0.next_reload_time - arg_9_0.reload_time
 end
 
-ActiveReloadAmmoUserExtension.add_ammo = function (self, ammo_amount)
-	self.available_ammo = math.min(self.available_ammo + ammo_amount, self.max_ammo - (self.current_ammo - self.shots_fired))
+function ActiveReloadAmmoUserExtension.add_ammo(arg_10_0, arg_10_1)
+	arg_10_0.available_ammo = math.min(arg_10_0.available_ammo + arg_10_1, arg_10_0.max_ammo - (arg_10_0.current_ammo - arg_10_0.shots_fired))
 end
 
-ActiveReloadAmmoUserExtension.use_ammo = function (self, ammo_used)
-	self.shots_fired = self.shots_fired + ammo_used
+function ActiveReloadAmmoUserExtension.use_ammo(arg_11_0, arg_11_1)
+	arg_11_0.shots_fired = arg_11_0.shots_fired + arg_11_1
 
-	assert(self:ammo_count() >= 0)
+	assert(arg_11_0:ammo_count() >= 0)
 end
 
-ActiveReloadAmmoUserExtension.start_reload = function (self, play_reload_animation)
-	assert(self:can_reload())
-	assert(self.next_reload_time == nil)
+function ActiveReloadAmmoUserExtension.start_reload(arg_12_0, arg_12_1)
+	assert(arg_12_0:can_reload())
+	assert(arg_12_0.next_reload_time == nil)
 
-	self.start_reloading = true
-	self.next_reload_time = 0
+	arg_12_0.start_reloading = true
+	arg_12_0.next_reload_time = 0
 end
 
-ActiveReloadAmmoUserExtension.abort_reload = function (self)
-	assert(self:is_reloading())
+function ActiveReloadAmmoUserExtension.abort_reload(arg_13_0)
+	assert(arg_13_0:is_reloading())
 
-	self.start_reloading = nil
-	self.next_reload_time = nil
+	arg_13_0.start_reloading = nil
+	arg_13_0.next_reload_time = nil
 end
 
-ActiveReloadAmmoUserExtension.ammo_count = function (self)
-	return self.current_ammo - self.shots_fired
+function ActiveReloadAmmoUserExtension.ammo_count(arg_14_0)
+	return arg_14_0.current_ammo - arg_14_0.shots_fired
 end
 
-ActiveReloadAmmoUserExtension.clip_size = function (self)
-	return self.ammo_per_clip
+function ActiveReloadAmmoUserExtension.clip_size(arg_15_0)
+	return arg_15_0.ammo_per_clip
 end
 
-ActiveReloadAmmoUserExtension.remaining_ammo = function (self)
-	return self.available_ammo
+function ActiveReloadAmmoUserExtension.remaining_ammo(arg_16_0)
+	return arg_16_0.available_ammo
 end
 
-ActiveReloadAmmoUserExtension.can_reload = function (self)
-	if self:is_reloading() then
+function ActiveReloadAmmoUserExtension.can_reload(arg_17_0)
+	if arg_17_0:is_reloading() then
 		return false
 	end
 
-	if self:ammo_count() == self.ammo_per_clip then
+	if arg_17_0:ammo_count() == arg_17_0.ammo_per_clip then
 		return false
 	end
 
@@ -239,9 +233,9 @@ ActiveReloadAmmoUserExtension.can_reload = function (self)
 		return true
 	end
 
-	return self.available_ammo > 0
+	return arg_17_0.available_ammo > 0
 end
 
-ActiveReloadAmmoUserExtension.is_reloading = function (self)
-	return self.next_reload_time ~= nil
+function ActiveReloadAmmoUserExtension.is_reloading(arg_18_0)
+	return arg_18_0.next_reload_time ~= nil
 end

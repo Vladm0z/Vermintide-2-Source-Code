@@ -1,585 +1,575 @@
-﻿-- chunkname: @scripts/managers/game_mode/mechanisms/deus_run_state_spec.lua
+-- chunkname: @scripts/managers/game_mode/mechanisms/deus_run_state_spec.lua
 
-local LibDeflate = require("scripts/utils/lib_deflate")
-local ByteArray = require("scripts/utils/byte_array")
-local FLOAT_CONVERSION_EPSILON = 100000
+local var_0_0 = require("scripts/utils/lib_deflate")
+local var_0_1 = require("scripts/utils/byte_array")
+local var_0_2 = 100000
 
-local function encode_comma_separated_string_array(array)
-	return table.concat(array, ",")
+local function var_0_3(arg_1_0)
+	return table.concat(arg_1_0, ",")
 end
 
-local function decode_comma_separated_string_array(string)
-	local array = string.split_deprecated(string, ",")
-
-	return array
+local function var_0_4(arg_2_0)
+	return (arg_2_0.split_deprecated(arg_2_0, ","))
 end
 
-local function encode_blessings(blessings_table)
-	local blessings_array = {}
+local function var_0_5(arg_3_0)
+	local var_3_0 = {}
 
-	for blessing_name, buyer in pairs(blessings_table) do
-		blessings_array[#blessings_array + 1] = blessing_name
-		blessings_array[#blessings_array + 1] = buyer
+	for iter_3_0, iter_3_1 in pairs(arg_3_0) do
+		var_3_0[#var_3_0 + 1] = iter_3_0
+		var_3_0[#var_3_0 + 1] = iter_3_1
 	end
 
-	return table.concat(blessings_array, ",")
+	return table.concat(var_3_0, ",")
 end
 
-local function decode_blessings(blessings_string)
-	local blessings_with_buyer_unassigned = string.split_deprecated(blessings_string, ",")
-	local blessings_with_buyer = {}
+local function var_0_6(arg_4_0)
+	local var_4_0 = string.split_deprecated(arg_4_0, ",")
+	local var_4_1 = {}
 
-	for i = 1, #blessings_with_buyer_unassigned, 2 do
-		local blessing_name = blessings_with_buyer_unassigned[i]
-		local buyer_peer_id = blessings_with_buyer_unassigned[i + 1]
-
-		blessings_with_buyer[blessing_name] = buyer_peer_id
+	for iter_4_0 = 1, #var_4_0, 2 do
+		var_4_1[var_4_0[iter_4_0]] = var_4_0[iter_4_0 + 1]
 	end
 
-	return blessings_with_buyer
+	return var_4_1
 end
 
-local function encode_json(table)
-	return cjson.encode(table)
+local function var_0_7(arg_5_0)
+	return cjson.encode(arg_5_0)
 end
 
-local function decode_json(json)
-	local table = cjson.decode(json)
-
-	return table
+local function var_0_8(arg_6_0)
+	return (cjson.decode(arg_6_0))
 end
 
-local power_ups_working_byte_array = {}
+local var_0_9 = {}
 
-local function encode_power_ups(power_ups_table)
-	table.clear(power_ups_working_byte_array)
+local function var_0_10(arg_7_0)
+	table.clear(var_0_9)
 
-	for power_up_table_index = 1, #power_ups_table do
-		local power_up = power_ups_table[power_up_table_index]
+	for iter_7_0 = 1, #arg_7_0 do
+		local var_7_0 = arg_7_0[iter_7_0]
 
-		ByteArray.write_int32(power_ups_working_byte_array, NetworkLookup.deus_power_up_templates[power_up.name])
-		ByteArray.write_int32(power_ups_working_byte_array, NetworkLookup.rarities[power_up.rarity])
-		ByteArray.write_int32(power_ups_working_byte_array, power_up.client_id)
+		var_0_1.write_int32(var_0_9, NetworkLookup.deus_power_up_templates[var_7_0.name])
+		var_0_1.write_int32(var_0_9, NetworkLookup.rarities[var_7_0.rarity])
+		var_0_1.write_int32(var_0_9, var_7_0.client_id)
 	end
 
-	local power_ups_string = ByteArray.read_string(power_ups_working_byte_array)
-	local compressed_power_ups_string = LibDeflate:CompressDeflate(power_ups_string)
+	local var_7_1 = var_0_1.read_string(var_0_9)
 
-	return compressed_power_ups_string
+	return (var_0_0:CompressDeflate(var_7_1))
 end
 
-local function decode_power_ups(compressed_power_ups_string)
-	local power_ups_string = LibDeflate:DecompressDeflate(compressed_power_ups_string)
+local function var_0_11(arg_8_0)
+	local var_8_0 = var_0_0:DecompressDeflate(arg_8_0)
 
-	table.clear(power_ups_working_byte_array)
-	ByteArray.write_string(power_ups_working_byte_array, power_ups_string)
+	table.clear(var_0_9)
+	var_0_1.write_string(var_0_9, var_8_0)
 
-	local power_ups = {}
-	local index = 1
+	local var_8_1 = {}
+	local var_8_2 = 1
 
-	while index < #power_ups_working_byte_array do
-		local power_up_name_lookup = ByteArray.read_int32(power_ups_working_byte_array, index)
+	while var_8_2 < #var_0_9 do
+		local var_8_3 = var_0_1.read_int32(var_0_9, var_8_2)
 
-		index = index + 4
+		var_8_2 = var_8_2 + 4
 
-		local power_up_name = NetworkLookup.deus_power_up_templates[power_up_name_lookup]
-		local rarity_lookup = ByteArray.read_int32(power_ups_working_byte_array, index)
+		local var_8_4 = NetworkLookup.deus_power_up_templates[var_8_3]
+		local var_8_5 = var_0_1.read_int32(var_0_9, var_8_2)
 
-		index = index + 4
+		var_8_2 = var_8_2 + 4
 
-		local rarity = NetworkLookup.rarities[rarity_lookup]
-		local client_id = ByteArray.read_int32(power_ups_working_byte_array, index)
+		local var_8_6 = NetworkLookup.rarities[var_8_5]
+		local var_8_7 = var_0_1.read_int32(var_0_9, var_8_2)
 
-		index = index + 4
-		power_ups[#power_ups + 1] = {
-			name = power_up_name,
-			rarity = rarity,
-			client_id = client_id,
+		var_8_2 = var_8_2 + 4
+		var_8_1[#var_8_1 + 1] = {
+			name = var_8_4,
+			rarity = var_8_6,
+			client_id = var_8_7
 		}
 	end
 
-	return power_ups
+	return var_8_1
 end
 
-local function encode_percentage(val)
-	return math.round(val * FLOAT_CONVERSION_EPSILON)
+local function var_0_12(arg_9_0)
+	return math.round(arg_9_0 * var_0_2)
 end
 
-local function decode_percentage(encoded_val)
-	return encoded_val / FLOAT_CONVERSION_EPSILON
+local function var_0_13(arg_10_0)
+	return arg_10_0 / var_0_2
 end
 
-local function encode_additional_items(additional_items)
-	local encoded_table = SpawningHelper.netpack_additional_items(additional_items)
+local function var_0_14(arg_11_0)
+	local var_11_0 = SpawningHelper.netpack_additional_items(arg_11_0)
 
-	return table.concat(encoded_table, ",")
+	return table.concat(var_11_0, ",")
 end
 
-local function decode_additional_items(encoded_additional_items_string)
-	local encoded_additional_items_list = string.split_deprecated(encoded_additional_items_string, ",")
-	local decoded_table = SpawningHelper.unnetpack_additional_items(encoded_additional_items_list)
+local function var_0_15(arg_12_0)
+	local var_12_0 = string.split_deprecated(arg_12_0, ",")
+	local var_12_1 = SpawningHelper.unnetpack_additional_items(var_12_0)
 
-	decoded_table = table.clone(decoded_table)
-
-	return decoded_table
+	return (table.clone(var_12_1))
 end
 
-local function encode_bought_power_ups(bought_power_ups)
-	local string_array = {}
+local function var_0_16(arg_13_0)
+	local var_13_0 = {}
 
-	for power_up_table_index = 1, #bought_power_ups do
-		local power_up = bought_power_ups[power_up_table_index]
+	for iter_13_0 = 1, #arg_13_0 do
+		local var_13_1 = arg_13_0[iter_13_0]
 
-		table.insert(string_array, NetworkLookup.deus_power_up_templates[power_up])
+		table.insert(var_13_0, NetworkLookup.deus_power_up_templates[var_13_1])
 	end
 
-	return table.concat(string_array, ",")
+	return table.concat(var_13_0, ",")
 end
 
-local function decode_bought_power_ups(bought_power_ups_string)
-	local power_ups = {}
-	local power_up_data_strings = string.split_deprecated(bought_power_ups_string, ",")
+local function var_0_17(arg_14_0)
+	local var_14_0 = {}
+	local var_14_1 = string.split_deprecated(arg_14_0, ",")
 
-	for power_up_data_strings_index = 1, #power_up_data_strings do
-		local power_up_data_string = power_up_data_strings[power_up_data_strings_index]
-		local power_up_name = NetworkLookup.deus_power_up_templates[tonumber(power_up_data_string)]
+	for iter_14_0 = 1, #var_14_1 do
+		local var_14_2 = var_14_1[iter_14_0]
+		local var_14_3 = NetworkLookup.deus_power_up_templates[tonumber(var_14_2)]
 
-		power_ups[#power_ups + 1] = power_up_name
+		var_14_0[#var_14_0 + 1] = var_14_3
 	end
 
-	return power_ups
+	return var_14_0
 end
 
-local function encode_bought_blessings(bought_blessings)
-	local string_array = {}
+local function var_0_18(arg_15_0)
+	local var_15_0 = {}
 
-	for blessing_table_index = 1, #bought_blessings do
-		local blessing = bought_blessings[blessing_table_index]
+	for iter_15_0 = 1, #arg_15_0 do
+		local var_15_1 = arg_15_0[iter_15_0]
 
-		table.insert(string_array, NetworkLookup.deus_blessings[blessing])
+		table.insert(var_15_0, NetworkLookup.deus_blessings[var_15_1])
 	end
 
-	return table.concat(string_array, ",")
+	return table.concat(var_15_0, ",")
 end
 
-local function decode_bought_blessings(bought_blessings_string)
-	local blessings = {}
-	local blessing_data_strings = string.split_deprecated(bought_blessings_string, ",")
+local function var_0_19(arg_16_0)
+	local var_16_0 = {}
+	local var_16_1 = string.split_deprecated(arg_16_0, ",")
 
-	for blessing_data_strings_index = 1, #blessing_data_strings do
-		local blessing_data_string = blessing_data_strings[blessing_data_strings_index]
-		local blessing_name = NetworkLookup.deus_blessings[tonumber(blessing_data_string)]
+	for iter_16_0 = 1, #var_16_1 do
+		local var_16_2 = var_16_1[iter_16_0]
+		local var_16_3 = NetworkLookup.deus_blessings[tonumber(var_16_2)]
 
-		blessings[#blessings + 1] = blessing_name
+		var_16_0[#var_16_0 + 1] = var_16_3
 	end
 
-	return blessings
+	return var_16_0
 end
 
-local function encode_chests_used(chests_used_table)
-	local string_array = {}
+local function var_0_20(arg_17_0)
+	local var_17_0 = {}
 
-	for rarity, count in pairs(chests_used_table) do
-		string_array[#string_array + 1] = NetworkLookup.rarities[rarity]
-		string_array[#string_array + 1] = tostring(count)
+	for iter_17_0, iter_17_1 in pairs(arg_17_0) do
+		var_17_0[#var_17_0 + 1] = NetworkLookup.rarities[iter_17_0]
+		var_17_0[#var_17_0 + 1] = tostring(iter_17_1)
 	end
 
-	return table.concat(string_array, ",")
+	return table.concat(var_17_0, ",")
 end
 
-local function decode_chests_used(chests_used_string)
-	local chests_used_string_split = string.split_deprecated(chests_used_string, ",")
-	local chests_used_table = {}
+local function var_0_21(arg_18_0)
+	local var_18_0 = string.split_deprecated(arg_18_0, ",")
+	local var_18_1 = {}
 
-	for i = 1, #chests_used_string_split, 2 do
-		local rarity_lookup = chests_used_string_split[i]
-		local count_string = chests_used_string_split[i + 1]
+	for iter_18_0 = 1, #var_18_0, 2 do
+		local var_18_2 = var_18_0[iter_18_0]
+		local var_18_3 = var_18_0[iter_18_0 + 1]
 
-		chests_used_table[NetworkLookup.rarities[tonumber(rarity_lookup)]] = tonumber(count_string)
+		var_18_1[NetworkLookup.rarities[tonumber(var_18_2)]] = tonumber(var_18_3)
 	end
 
-	return chests_used_table
+	return var_18_1
 end
 
-local function compress_string(string)
-	return LibDeflate:CompressDeflate(string)
+local function var_0_22(arg_19_0)
+	return var_0_0:CompressDeflate(arg_19_0)
 end
 
-local function decompress_string(compressed_string)
-	return LibDeflate:DecompressDeflate(compressed_string)
+local function var_0_23(arg_20_0)
+	return var_0_0:DecompressDeflate(arg_20_0)
 end
 
-local spec = {
+local var_0_24 = {
 	server = {
 		run_node_key = {
 			default_value = "start",
 			type = "string",
-			composite_keys = {},
+			composite_keys = {}
 		},
 		run_ended = {
 			default_value = false,
 			type = "boolean",
-			composite_keys = {},
+			composite_keys = {}
 		},
 		completed_level_count = {
 			default_value = 0,
 			type = "number",
-			composite_keys = {},
+			composite_keys = {}
 		},
 		traversed_nodes = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = encode_comma_separated_string_array,
-			decode = decode_comma_separated_string_array,
+			encode = var_0_3,
+			decode = var_0_4
 		},
 		blessings_with_buyer = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = encode_blessings,
-			decode = decode_blessings,
+			encode = var_0_5,
+			decode = var_0_6
 		},
 		blessing_lifetimes = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = encode_json,
-			decode = decode_json,
+			encode = var_0_7,
+			decode = var_0_8
 		},
 		peer_initialized = {
 			default_value = false,
 			type = "boolean",
 			composite_keys = {
-				peer_id = true,
-			},
+				peer_id = true
+			}
 		},
 		profile_initialized = {
 			default_value = false,
 			type = "boolean",
 			composite_keys = {
-				career_index = true,
-				local_player_id = true,
 				peer_id = true,
+				career_index = true,
 				profile_index = true,
-			},
+				local_player_id = true
+			}
 		},
 		cursed_levels_completed = {
 			default_value = 0,
 			type = "number",
 			composite_keys = {
-				peer_id = true,
-			},
+				peer_id = true
+			}
 		},
 		cursed_chests_purified = {
 			default_value = 0,
 			type = "number",
 			composite_keys = {
-				peer_id = true,
-			},
+				peer_id = true
+			}
 		},
 		coin_chests_collected = {
 			default_value = 0,
 			type = "number",
 			composite_keys = {
-				peer_id = true,
-			},
+				peer_id = true
+			}
 		},
 		spawned_once = {
 			default_value = false,
 			type = "boolean",
 			composite_keys = {
-				career_index = true,
-				local_player_id = true,
 				peer_id = true,
+				career_index = true,
 				profile_index = true,
-			},
+				local_player_id = true
+			}
 		},
 		power_ups = {
 			type = "table",
 			default_value = {},
 			composite_keys = {
-				career_index = true,
-				local_player_id = true,
 				peer_id = true,
+				career_index = true,
 				profile_index = true,
+				local_player_id = true
 			},
-			encode = encode_power_ups,
-			decode = decode_power_ups,
+			encode = var_0_10,
+			decode = var_0_11
 		},
 		party_power_ups = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = encode_power_ups,
-			decode = decode_power_ups,
+			encode = var_0_10,
+			decode = var_0_11
 		},
 		persistent_buffs = {
 			type = "table",
 			default_value = {},
 			composite_keys = {
-				career_index = true,
-				local_player_id = true,
 				peer_id = true,
+				career_index = true,
 				profile_index = true,
+				local_player_id = true
 			},
-			encode = encode_comma_separated_string_array,
-			decode = decode_comma_separated_string_array,
+			encode = var_0_3,
+			decode = var_0_4
 		},
 		soft_currency = {
 			default_value = 0,
 			type = "number",
 			composite_keys = {
-				local_player_id = true,
 				peer_id = true,
-			},
+				local_player_id = true
+			}
 		},
 		health_percentage = {
-			default_value = 1,
 			type = "number",
+			default_value = 1,
 			composite_keys = {
-				career_index = true,
-				local_player_id = true,
 				peer_id = true,
+				career_index = true,
 				profile_index = true,
+				local_player_id = true
 			},
-			encode = encode_percentage,
-			decode = decode_percentage,
+			encode = var_0_12,
+			decode = var_0_13
 		},
 		health_state = {
 			default_value = "alive",
 			type = "string",
 			composite_keys = {
-				career_index = true,
-				local_player_id = true,
 				peer_id = true,
+				career_index = true,
 				profile_index = true,
-			},
+				local_player_id = true
+			}
 		},
 		melee_ammo = {
-			default_value = 1,
 			type = "number",
+			default_value = 1,
 			composite_keys = {
-				career_index = true,
-				local_player_id = true,
 				peer_id = true,
+				career_index = true,
 				profile_index = true,
+				local_player_id = true
 			},
-			encode = encode_percentage,
-			decode = decode_percentage,
+			encode = var_0_12,
+			decode = var_0_13
 		},
 		ranged_ammo = {
-			default_value = 1,
 			type = "number",
+			default_value = 1,
 			composite_keys = {
-				career_index = true,
-				local_player_id = true,
 				peer_id = true,
+				career_index = true,
 				profile_index = true,
+				local_player_id = true
 			},
-			encode = encode_percentage,
-			decode = decode_percentage,
+			encode = var_0_12,
+			decode = var_0_13
 		},
 		healthkit = {
 			default_value = "",
 			type = "string",
 			composite_keys = {
-				career_index = true,
-				local_player_id = true,
 				peer_id = true,
+				career_index = true,
 				profile_index = true,
-			},
+				local_player_id = true
+			}
 		},
 		potion = {
 			default_value = "",
 			type = "string",
 			composite_keys = {
-				career_index = true,
-				local_player_id = true,
 				peer_id = true,
+				career_index = true,
 				profile_index = true,
-			},
+				local_player_id = true
+			}
 		},
 		grenade = {
 			default_value = "",
 			type = "string",
 			composite_keys = {
-				career_index = true,
-				local_player_id = true,
 				peer_id = true,
+				career_index = true,
 				profile_index = true,
-			},
+				local_player_id = true
+			}
 		},
 		additional_items = {
 			type = "table",
 			default_value = {},
 			composite_keys = {
-				career_index = true,
-				local_player_id = true,
 				peer_id = true,
+				career_index = true,
 				profile_index = true,
+				local_player_id = true
 			},
-			encode = encode_additional_items,
-			decode = decode_additional_items,
+			encode = var_0_14,
+			decode = var_0_15
 		},
 		slot_melee = {
-			default_value = "",
 			type = "string",
+			default_value = "",
 			composite_keys = {
-				career_index = true,
-				local_player_id = true,
 				peer_id = true,
+				career_index = true,
 				profile_index = true,
+				local_player_id = true
 			},
-			encode = compress_string,
-			decode = decompress_string,
+			encode = var_0_22,
+			decode = var_0_23
 		},
 		slot_ranged = {
-			default_value = "",
 			type = "string",
+			default_value = "",
 			composite_keys = {
-				career_index = true,
-				local_player_id = true,
 				peer_id = true,
+				career_index = true,
 				profile_index = true,
+				local_player_id = true
 			},
-			encode = compress_string,
-			decode = decompress_string,
+			encode = var_0_22,
+			decode = var_0_23
 		},
 		twitch_vote = {
 			default_value = "",
 			type = "string",
-			composite_keys = {},
+			composite_keys = {}
 		},
 		persisted_score = {
 			type = "table",
 			default_value = {},
 			composite_keys = {
-				local_player_id = true,
 				peer_id = true,
+				local_player_id = true
 			},
-			encode = encode_json,
-			decode = decode_json,
+			encode = var_0_7,
+			decode = var_0_8
 		},
 		bought_power_ups = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = encode_bought_power_ups,
-			decode = decode_bought_power_ups,
+			encode = var_0_16,
+			decode = var_0_17
 		},
 		bought_blessings = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = encode_bought_blessings,
-			decode = decode_bought_blessings,
+			encode = var_0_18,
+			decode = var_0_19
 		},
 		ground_coins_picked_up = {
 			default_value = 0,
 			type = "number",
-			composite_keys = {},
+			composite_keys = {}
 		},
 		monster_coins_picked_up = {
 			default_value = 0,
 			type = "number",
-			composite_keys = {},
+			composite_keys = {}
 		},
 		melee_swap_chests_used = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = encode_chests_used,
-			decode = decode_chests_used,
+			encode = var_0_20,
+			decode = var_0_21
 		},
 		ranged_swap_chests_used = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = encode_chests_used,
-			decode = decode_chests_used,
+			encode = var_0_20,
+			decode = var_0_21
 		},
 		upgrade_chests_used = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = encode_chests_used,
-			decode = decode_chests_used,
+			encode = var_0_20,
+			decode = var_0_21
 		},
 		power_up_chests_used = {
 			default_value = 0,
 			type = "number",
-			composite_keys = {},
+			composite_keys = {}
 		},
 		coins_earned = {
 			default_value = 0,
 			type = "number",
-			composite_keys = {},
+			composite_keys = {}
 		},
 		coins_spent = {
 			default_value = 0,
 			type = "number",
-			composite_keys = {},
+			composite_keys = {}
 		},
 		host_migration_count = {
 			default_value = 0,
 			type = "number",
-			composite_keys = {},
+			composite_keys = {}
 		},
 		arena_belakor_node = {
 			default_value = "",
 			type = "string",
-			composite_keys = {},
+			composite_keys = {}
 		},
 		seen_arena_belakor_node = {
 			default_value = false,
 			type = "boolean",
 			composite_keys = {
-				peer_id = true,
-			},
+				peer_id = true
+			}
 		},
 		granted_non_party_end_of_level_power_ups = {
 			type = "table",
 			default_value = {},
 			composite_keys = {
-				career_index = true,
-				local_player_id = true,
 				peer_id = true,
+				career_index = true,
 				profile_index = true,
+				local_player_id = true
 			},
-			encode = encode_comma_separated_string_array,
-			decode = decode_comma_separated_string_array,
-		},
+			encode = var_0_3,
+			decode = var_0_4
+		}
 	},
 	peer = {
 		telemetry_id = {
 			default_value = "",
 			type = "string",
-			composite_keys = {},
+			composite_keys = {}
 		},
 		player_level = {
 			default_value = 1,
 			type = "number",
-			composite_keys = {},
+			composite_keys = {}
 		},
 		player_name = {
 			default_value = "Player",
 			type = "string",
-			composite_keys = {},
+			composite_keys = {}
 		},
 		player_frame = {
 			default_value = "default",
 			type = "string",
-			composite_keys = {},
+			composite_keys = {}
 		},
 		versus_player_level = {
 			default_value = 0,
 			type = "number",
-			composite_keys = {},
-		},
-	},
+			composite_keys = {}
+		}
+	}
 }
 
-SharedState.validate_spec(spec)
+SharedState.validate_spec(var_0_24)
 
-return spec
+return var_0_24

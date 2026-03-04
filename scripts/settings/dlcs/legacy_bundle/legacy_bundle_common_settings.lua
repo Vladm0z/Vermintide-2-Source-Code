@@ -1,11 +1,9 @@
-﻿-- chunkname: @scripts/settings/dlcs/legacy_bundle/legacy_bundle_common_settings.lua
+-- chunkname: @scripts/settings/dlcs/legacy_bundle/legacy_bundle_common_settings.lua
 
-local settings = DLCSettings.legacy_bundle
-
-settings.unlock_settings = {
+DLCSettings.legacy_bundle.unlock_settings = {
 	legacy_bundle = {
-		class = "UnlockDlcBundle",
 		id = "47337",
+		class = "UnlockDlcBundle",
 		requires_restart = false,
 		bundle_contains = {
 			"lake",
@@ -17,7 +15,7 @@ settings.unlock_settings = {
 			"bogenhafen",
 			"holly",
 			"scorpion",
-			"grass",
-		},
-	},
+			"grass"
+		}
+	}
 }

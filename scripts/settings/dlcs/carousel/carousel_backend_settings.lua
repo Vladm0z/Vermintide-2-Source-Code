@@ -1,10 +1,8 @@
-﻿-- chunkname: @scripts/settings/dlcs/carousel/carousel_backend_settings.lua
+-- chunkname: @scripts/settings/dlcs/carousel/carousel_backend_settings.lua
 
-local settings = DLCSettings.carousel
-
-settings.backend_interfaces = {
+DLCSettings.carousel.backend_interfaces = {
 	versus = {
-		playfab_class = "BackendInterfaceVersusPlayFab",
 		playfab_file = "scripts/managers/backend_playfab/backend_interface_versus_playfab",
-	},
+		playfab_class = "BackendInterfaceVersusPlayFab"
+	}
 }

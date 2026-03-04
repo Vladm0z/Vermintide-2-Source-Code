@@ -1,91 +1,91 @@
-﻿-- chunkname: @scripts/ui/views/character_inspect_ui.lua
+-- chunkname: @scripts/ui/views/character_inspect_ui.lua
 
-local definitions = local_require("scripts/ui/views/character_inspect_ui_definitions")
-local create_loot_widget = definitions.create_loot_widget
+local var_0_0 = local_require("scripts/ui/views/character_inspect_ui_definitions")
+local var_0_1 = var_0_0.create_loot_widget
 
 CharacterInspectUI = class(CharacterInspectUI)
 
-CharacterInspectUI.init = function (self, ingame_ui_context)
-	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self.ingame_ui = ingame_ui_context.ingame_ui
-	self.input_manager = ingame_ui_context.input_manager
+function CharacterInspectUI.init(arg_1_0, arg_1_1)
+	arg_1_0.ui_top_renderer = arg_1_1.ui_top_renderer
+	arg_1_0.ui_renderer = arg_1_1.ui_renderer
+	arg_1_0.ingame_ui = arg_1_1.ingame_ui
+	arg_1_0.input_manager = arg_1_1.input_manager
 
-	local world = ingame_ui_context.world_manager:world("level_world")
+	local var_1_0 = arg_1_1.world_manager:world("level_world")
 
-	self.wwise_world = Managers.world:wwise_world(world)
-	self._animations = {}
+	arg_1_0.wwise_world = Managers.world:wwise_world(var_1_0)
+	arg_1_0._animations = {}
 
-	self:create_ui_elements()
+	arg_1_0:create_ui_elements()
 end
 
-local DO_RELOAD = true
+local var_0_2 = true
 
-CharacterInspectUI.create_ui_elements = function (self)
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
+function CharacterInspectUI.create_ui_elements(arg_2_0)
+	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
-	local widgets = {}
-	local widgets_by_name = {}
-	local widget_definitions = definitions.widget_definitions
+	local var_2_0 = {}
+	local var_2_1 = {}
+	local var_2_2 = var_0_0.widget_definitions
 
-	for name, definition in pairs(widget_definitions) do
-		local widget = UIWidget.init(definition)
+	for iter_2_0, iter_2_1 in pairs(var_2_2) do
+		local var_2_3 = UIWidget.init(iter_2_1)
 
-		widgets[#widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_2_0[#var_2_0 + 1] = var_2_3
+		var_2_1[iter_2_0] = var_2_3
 	end
 
-	self._widgets = widgets
-	self._widgets_by_name = widgets_by_name
+	arg_2_0._widgets = var_2_0
+	arg_2_0._widgets_by_name = var_2_1
 
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_renderer)
 
-	DO_RELOAD = false
+	var_0_2 = false
 end
 
-CharacterInspectUI.destroy = function (self)
-	GarbageLeakDetector.register_object(self, "character_inspect_ui")
+function CharacterInspectUI.destroy(arg_3_0)
+	GarbageLeakDetector.register_object(arg_3_0, "character_inspect_ui")
 end
 
-CharacterInspectUI.update = function (self, dt)
-	if DO_RELOAD then
-		self:create_ui_elements()
+function CharacterInspectUI.update(arg_4_0, arg_4_1)
+	if var_0_2 then
+		arg_4_0:create_ui_elements()
 	end
 
-	self:_update_animations(dt)
-	self:draw(dt)
+	arg_4_0:_update_animations(arg_4_1)
+	arg_4_0:draw(arg_4_1)
 end
 
-CharacterInspectUI._update_animations = function (self, dt)
-	local animations = self._animations
+function CharacterInspectUI._update_animations(arg_5_0, arg_5_1)
+	local var_5_0 = arg_5_0._animations
 
-	for anmation_name, anmation in pairs(animations) do
-		UIAnimation.update(anmation, dt)
+	for iter_5_0, iter_5_1 in pairs(var_5_0) do
+		UIAnimation.update(iter_5_1, arg_5_1)
 
-		if UIAnimation.completed(anmation) then
-			animations[anmation_name] = nil
+		if UIAnimation.completed(iter_5_1) then
+			var_5_0[iter_5_0] = nil
 		end
 	end
 end
 
-CharacterInspectUI.draw = function (self, dt)
-	local ui_top_renderer = self.ui_top_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self.input_manager:get_service("ingame_menu")
-	local widgets_by_name = self._widgets_by_name
+function CharacterInspectUI.draw(arg_6_0, arg_6_1)
+	local var_6_0 = arg_6_0.ui_top_renderer
+	local var_6_1 = arg_6_0.ui_scenegraph
+	local var_6_2 = arg_6_0.input_manager:get_service("ingame_menu")
+	local var_6_3 = arg_6_0._widgets_by_name
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt)
+	UIRenderer.begin_pass(var_6_0, var_6_1, var_6_2, arg_6_1)
 
-	for _, widget in pairs(widgets_by_name) do
-		UIRenderer.draw_widget(ui_top_renderer, widget)
+	for iter_6_0, iter_6_1 in pairs(var_6_3) do
+		UIRenderer.draw_widget(var_6_0, iter_6_1)
 	end
 
-	UIRenderer.end_pass(ui_top_renderer)
+	UIRenderer.end_pass(var_6_0)
 end
 
-CharacterInspectUI.set_position = function (self, x, y)
-	local position = self.ui_scenegraph.background.local_position
+function CharacterInspectUI.set_position(arg_7_0, arg_7_1, arg_7_2)
+	local var_7_0 = arg_7_0.ui_scenegraph.background.local_position
 
-	position[1] = x
-	position[2] = y
+	var_7_0[1] = arg_7_1
+	var_7_0[2] = arg_7_2
 end

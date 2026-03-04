@@ -1,35 +1,34 @@
-﻿-- chunkname: @scripts/helpers/weave_utils.lua
+-- chunkname: @scripts/helpers/weave_utils.lua
 
 WeaveUtils = WeaveUtils or {}
 
-WeaveUtils.get_rating = function (score)
-	local rating_values = WeaveSettings.rating_values
-	local max_rating = 5
-	local rating = 0
+function WeaveUtils.get_rating(arg_1_0)
+	local var_1_0 = WeaveSettings.rating_values
+	local var_1_1 = 5
+	local var_1_2 = 0
 
-	if score then
-		for i = 1, #rating_values do
-			if score > rating_values[i] then
-				rating = max_rating - i + 1
+	if arg_1_0 then
+		for iter_1_0 = 1, #var_1_0 do
+			if arg_1_0 > var_1_0[iter_1_0] then
+				var_1_2 = var_1_1 - iter_1_0 + 1
 
 				break
 			end
 		end
 	end
 
-	return rating
+	return var_1_2
 end
 
-WeaveUtils.magic_level_to_power_level = function (magic_level)
-	local settings = PowerLevelFromMagicLevel
+function WeaveUtils.magic_level_to_power_level(arg_2_0)
+	local var_2_0 = PowerLevelFromMagicLevel
 
-	return math.min(math.ceil(settings.starting_power_level + magic_level * settings.power_level_per_magic_level), settings.max_power_level)
+	return math.min(math.ceil(var_2_0.starting_power_level + arg_2_0 * var_2_0.power_level_per_magic_level), var_2_0.max_power_level)
 end
 
-WeaveUtils.weave_equivalent_item_unlocked = function (base_item_key)
-	local weaves_item_name = MagicItemByUnlockName[base_item_key]
-	local backend_interface_items = Managers.backend:get_interface("items")
-	local weave_item = backend_interface_items:get_item_from_key(weaves_item_name)
+function WeaveUtils.weave_equivalent_item_unlocked(arg_3_0)
+	local var_3_0 = MagicItemByUnlockName[arg_3_0]
+	local var_3_1 = Managers.backend:get_interface("items"):get_item_from_key(var_3_0)
 
-	return weave_item and weave_item.backend_id
+	return var_3_1 and var_3_1.backend_id
 end

@@ -1,90 +1,90 @@
-﻿-- chunkname: @scripts/network/peer_state_machine.lua
+-- chunkname: @scripts/network/peer_state_machine.lua
 
 require("scripts/network/peer_states")
 
 PeerStateMachine = {}
 
-local function network_printf(format, ...)
-	printf("[PeerSM] " .. format, ...)
+local function var_0_0(arg_1_0, ...)
+	printf("[PeerSM] " .. arg_1_0, ...)
 end
 
-PeerStateMachine.create = function (server, peer_id, xb1_preconnect)
-	local state_data = {
-		server = server,
-		peer_id = peer_id,
-		is_remote = peer_id ~= Network.peer_id(),
+function PeerStateMachine.create(arg_2_0, arg_2_1, arg_2_2)
+	local var_2_0 = {
+		server = arg_2_0,
+		peer_id = arg_2_1,
+		is_remote = arg_2_1 ~= Network.peer_id()
 	}
-	local function_memoize = {}
-	local state_machine = {
-		state_data = state_data,
+	local var_2_1 = {}
+	local var_2_2 = {
+		state_data = var_2_0,
 		current_state = PeerStates.Connecting,
-		function_memoize = function_memoize,
+		function_memoize = var_2_1
 	}
 
-	state_data.change_state = function (_, new_state)
-		network_printf("%s :: on_exit %s", peer_id, tostring(state_machine.current_state))
-		state_machine.current_state.on_exit(state_data, new_state)
+	function var_2_0.change_state(arg_3_0, arg_3_1)
+		var_0_0("%s :: on_exit %s", arg_2_1, tostring(var_2_2.current_state))
+		var_2_2.current_state.on_exit(var_2_0, arg_3_1)
 
-		local old_state = state_machine.current_state
+		local var_3_0 = var_2_2.current_state
 
-		state_machine.current_state = new_state
+		var_2_2.current_state = arg_3_1
 
-		network_printf("%s :: on_enter %s", peer_id, tostring(new_state))
-		new_state.on_enter(state_data, old_state)
+		var_0_0("%s :: on_enter %s", arg_2_1, tostring(arg_3_1))
+		arg_3_1.on_enter(var_2_0, var_3_0)
 	end
 
-	network_printf("%s :: on_enter %s", peer_id, tostring(state_machine.current_state))
-	state_machine.current_state.on_enter(state_data)
+	var_0_0("%s :: on_enter %s", arg_2_1, tostring(var_2_2.current_state))
+	var_2_2.current_state.on_enter(var_2_0)
 
-	local state_machine_meta_table = {
-		__newindex = function (t, k, v)
+	local var_2_3 = {
+		__newindex = function(arg_4_0, arg_4_1, arg_4_2)
 			assert(false)
 		end,
-		__index = function (self, k)
-			local state_machine_member = PeerStateMachine[k]
+		__index = function(arg_5_0, arg_5_1)
+			local var_5_0 = PeerStateMachine[arg_5_1]
 
-			if not state_machine_member then
-				local fetched_function = function_memoize[k]
+			if not var_5_0 then
+				local var_5_1 = var_2_1[arg_5_1]
 
-				if not fetched_function then
-					local function new_function(...)
-						local current_function = self.current_state[k]
+				if not var_5_1 then
+					local function var_5_2(...)
+						local var_6_0 = arg_5_0.current_state[arg_5_1]
 
-						assert(current_function and type(current_function) == "function", "Could not find function %q in state %q", k, tostring(self.current_state))
-						current_function(state_data, ...)
+						assert(var_6_0 and type(var_6_0) == "function", "Could not find function %q in state %q", arg_5_1, tostring(arg_5_0.current_state))
+						var_6_0(var_2_0, ...)
 					end
 
-					function_memoize[k] = new_function
+					var_2_1[arg_5_1] = var_5_2
 
-					return new_function
+					return var_5_2
 				else
-					return fetched_function
+					return var_5_1
 				end
 			else
-				return state_machine_member
+				return var_5_0
 			end
-		end,
+		end
 	}
 
-	setmetatable(state_machine, state_machine_meta_table)
+	setmetatable(var_2_2, var_2_3)
 
-	return state_machine
+	return var_2_2
 end
 
-PeerStateMachine.has_function = function (self, function_name)
-	return not not self.current_state[function_name]
+function PeerStateMachine.has_function(arg_7_0, arg_7_1)
+	return not not arg_7_0.current_state[arg_7_1]
 end
 
-PeerStateMachine.update = function (self, dt)
-	local state_data = self.state_data
+function PeerStateMachine.update(arg_8_0, arg_8_1)
+	local var_8_0 = arg_8_0.state_data
 
 	if script_data.debug_peers then
-		Debug.text("Peer %s State %s", self.state_data.peer_id, tostring(self.current_state))
+		Debug.text("Peer %s State %s", arg_8_0.state_data.peer_id, tostring(arg_8_0.current_state))
 	end
 
-	local new_state = self.current_state.update(state_data, dt)
+	local var_8_1 = arg_8_0.current_state.update(var_8_0, arg_8_1)
 
-	if new_state then
-		state_data:change_state(new_state)
+	if var_8_1 then
+		var_8_0:change_state(var_8_1)
 	end
 end

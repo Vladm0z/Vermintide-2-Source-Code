@@ -1,542 +1,508 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_enter_hooks.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_enter_hooks.lua
 
 BTEnterHooks = BTEnterHooks or {}
 
-local BTEnterHooks = BTEnterHooks
-local unit_local_position = Unit.local_position
-local unit_alive = Unit.alive
-local ScriptUnit = ScriptUnit
+local var_0_0 = BTEnterHooks
+local var_0_1 = Unit.local_position
+local var_0_2 = Unit.alive
+local var_0_3 = ScriptUnit
 
-BTEnterHooks.crouch_on_enter = function (unit, blackboard, t)
-	if blackboard.is_upright then
-		Managers.state.network:anim_event(unit, "to_crouch")
+function var_0_0.crouch_on_enter(arg_1_0, arg_1_1, arg_1_2)
+	if arg_1_1.is_upright then
+		Managers.state.network:anim_event(arg_1_0, "to_crouch")
 
-		blackboard.is_upright = false
+		arg_1_1.is_upright = false
 	end
 end
 
-BTEnterHooks.upright_on_enter = function (unit, blackboard, t)
-	if not blackboard.is_upright then
-		Managers.state.network:anim_event(unit, "to_upright")
+function var_0_0.upright_on_enter(arg_2_0, arg_2_1, arg_2_2)
+	if not arg_2_1.is_upright then
+		Managers.state.network:anim_event(arg_2_0, "to_upright")
 
-		blackboard.is_upright = true
+		arg_2_1.is_upright = true
 	end
 end
 
-BTEnterHooks.drop_items = function (unit, blackboard, t)
-	local ai_inventory_extension = ScriptUnit.extension(unit, "ai_inventory_system")
-	local inventory_item_definitions = ai_inventory_extension.inventory_item_definitions
-	local reason = "death"
-	local network_transmit = Managers.state.network.network_transmit
-	local game_object_id = Managers.state.unit_storage:go_id(unit)
-	local reason_id = NetworkLookup.item_drop_reasons[reason]
+function var_0_0.drop_items(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0 = var_0_3.extension(arg_3_0, "ai_inventory_system")
+	local var_3_1 = var_3_0.inventory_item_definitions
+	local var_3_2 = "death"
+	local var_3_3 = Managers.state.network.network_transmit
+	local var_3_4 = Managers.state.unit_storage:go_id(arg_3_0)
+	local var_3_5 = NetworkLookup.item_drop_reasons[var_3_2]
 
-	for i = 1, #inventory_item_definitions do
-		local success, item = ai_inventory_extension:drop_single_item(i, reason)
+	for iter_3_0 = 1, #var_3_1 do
+		local var_3_6, var_3_7 = var_3_0:drop_single_item(iter_3_0, var_3_2)
 
-		if success then
-			network_transmit:send_rpc_clients("rpc_ai_drop_single_item", game_object_id, i, reason_id)
-			print("DROPPING ITEMS", i, item)
+		if var_3_6 then
+			var_3_3:send_rpc_clients("rpc_ai_drop_single_item", var_3_4, iter_3_0, var_3_5)
+			print("DROPPING ITEMS", iter_3_0, var_3_7)
 		end
 	end
 end
 
-BTEnterHooks.crouch_or_upright_on_enter = function (unit, blackboard, t)
-	if blackboard.needs_to_crouch == nil then
-		PerceptionUtils.troll_crouch_check(unit, blackboard, t)
+function var_0_0.crouch_or_upright_on_enter(arg_4_0, arg_4_1, arg_4_2)
+	if arg_4_1.needs_to_crouch == nil then
+		PerceptionUtils.troll_crouch_check(arg_4_0, arg_4_1, arg_4_2)
 	end
 
-	if blackboard.needs_to_crouch then
-		Managers.state.network:anim_event(unit, "to_crouch")
+	if arg_4_1.needs_to_crouch then
+		Managers.state.network:anim_event(arg_4_0, "to_crouch")
 	else
-		Managers.state.network:anim_event(unit, "to_upright")
+		Managers.state.network:anim_event(arg_4_0, "to_upright")
 	end
 end
 
-BTEnterHooks.rage_on_enter = function (unit, blackboard, t)
-	blackboard.next_rage_time = t + 7
+function var_0_0.rage_on_enter(arg_5_0, arg_5_1, arg_5_2)
+	arg_5_1.next_rage_time = arg_5_2 + 7
 end
 
-BTEnterHooks.attack_grabbed_smash = function (unit, blackboard, t)
-	if unit_alive(blackboard.victim_grabbed) then
-		StatusUtils.set_grabbed_by_chaos_spawn_status_network(blackboard.victim_grabbed, "beating_with")
+function var_0_0.attack_grabbed_smash(arg_6_0, arg_6_1, arg_6_2)
+	if var_0_2(arg_6_1.victim_grabbed) then
+		StatusUtils.set_grabbed_by_chaos_spawn_status_network(arg_6_1.victim_grabbed, "beating_with")
 
-		blackboard.override_target_unit = blackboard.victim_grabbed
+		arg_6_1.override_target_unit = arg_6_1.victim_grabbed
 	end
 
-	blackboard.grabbed_state = "attack_smash"
-	blackboard.attack_grabbed_attacks = blackboard.attack_grabbed_attacks + 1
+	arg_6_1.grabbed_state = "attack_smash"
+	arg_6_1.attack_grabbed_attacks = arg_6_1.attack_grabbed_attacks + 1
 
-	if blackboard.attack_grabbed_attacks >= blackboard.breed.max_grabbed_attacks then
-		blackboard.wants_to_throw = true
-		blackboard.attack_grabbed_attacks = 0
-	end
-end
-
-BTEnterHooks.on_warlord_dual_wield = function (unit, blackboard, t)
-	if blackboard.inventory_item_set ~= 2 then
-		blackboard.switching_weapons = 2
+	if arg_6_1.attack_grabbed_attacks >= arg_6_1.breed.max_grabbed_attacks then
+		arg_6_1.wants_to_throw = true
+		arg_6_1.attack_grabbed_attacks = 0
 	end
 end
 
-BTEnterHooks.on_warlord_halberd = function (unit, blackboard, t)
-	if blackboard.inventory_item_set ~= 1 then
-		blackboard.switching_weapons = 1
+function var_0_0.on_warlord_dual_wield(arg_7_0, arg_7_1, arg_7_2)
+	if arg_7_1.inventory_item_set ~= 2 then
+		arg_7_1.switching_weapons = 2
 	end
 end
 
-BTEnterHooks.on_warlord_disable_blocking = function (unit, blackboard, t)
-	local ai_shield_extension = ScriptUnit.has_extension(unit, "ai_shield_system")
-
-	if ai_shield_extension then
-		ai_shield_extension:set_is_blocking(false)
-		ai_shield_extension:set_is_dodging(false)
+function var_0_0.on_warlord_halberd(arg_8_0, arg_8_1, arg_8_2)
+	if arg_8_1.inventory_item_set ~= 1 then
+		arg_8_1.switching_weapons = 1
 	end
 end
 
-BTEnterHooks.on_grey_seer_intro_enter = function (unit, blackboard, t)
-	local health_extension = ScriptUnit.extension(unit, "health_system")
+function var_0_0.on_warlord_disable_blocking(arg_9_0, arg_9_1, arg_9_2)
+	local var_9_0 = var_0_3.has_extension(arg_9_0, "ai_shield_system")
 
-	health_extension.is_invincible = true
-
-	local network_manager = Managers.state.network
-	local network_transmit = network_manager.network_transmit
-	local go_id = Managers.state.unit_storage:go_id(unit)
-
-	network_transmit:send_rpc_clients("rpc_set_hit_reaction_template", go_id, "HitEffectsSkavenGreySeerMounted")
-
-	local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
-	local event_data = FrameTable.alloc_table()
-
-	dialogue_input:trigger_networked_dialogue_event("egs_intro", event_data)
-end
-
-BTEnterHooks.grey_seer_death_sequence_teleport = function (unit, blackboard, t)
-	local index = blackboard.current_death_sequence_index or 1
-	local teleport_position = blackboard.death_sequence_positions[index]
-
-	if teleport_position then
-		blackboard.quick_teleport_exit_pos = Vector3Box(teleport_position:unbox())
-		blackboard.quick_teleport = true
-		blackboard.current_death_sequence_index = index + 1
+	if var_9_0 then
+		var_9_0:set_is_blocking(false)
+		var_9_0:set_is_dodging(false)
 	end
 end
 
-BTEnterHooks.grey_seer_call_stormfiend_enter = function (unit, blackboard, t)
-	local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
-	local mounted_data = blackboard.mounted_data
-	local mount_blackboard = BLACKBOARDS[mounted_data.mount_unit]
-	local call_stormfiend_positions = blackboard.call_stormfiend_positions
-	local self_position = POSITION_LOOKUP[unit]
-	local closest_distance = math.huge
-	local wanted_pos
+function var_0_0.on_grey_seer_intro_enter(arg_10_0, arg_10_1, arg_10_2)
+	var_0_3.extension(arg_10_0, "health_system").is_invincible = true
 
-	for i = 1, #call_stormfiend_positions do
-		local position = call_stormfiend_positions[i]:unbox()
-		local distance = Vector3.distance(self_position, position)
+	local var_10_0 = Managers.state.network.network_transmit
+	local var_10_1 = Managers.state.unit_storage:go_id(arg_10_0)
 
-		if distance < closest_distance then
-			wanted_pos = position
-			closest_distance = distance
+	var_10_0:send_rpc_clients("rpc_set_hit_reaction_template", var_10_1, "HitEffectsSkavenGreySeerMounted")
+
+	local var_10_2 = var_0_3.extension_input(arg_10_0, "dialogue_system")
+	local var_10_3 = FrameTable.alloc_table()
+
+	var_10_2:trigger_networked_dialogue_event("egs_intro", var_10_3)
+end
+
+function var_0_0.grey_seer_death_sequence_teleport(arg_11_0, arg_11_1, arg_11_2)
+	local var_11_0 = arg_11_1.current_death_sequence_index or 1
+	local var_11_1 = arg_11_1.death_sequence_positions[var_11_0]
+
+	if var_11_1 then
+		arg_11_1.quick_teleport_exit_pos = Vector3Box(var_11_1:unbox())
+		arg_11_1.quick_teleport = true
+		arg_11_1.current_death_sequence_index = var_11_0 + 1
+	end
+end
+
+function var_0_0.grey_seer_call_stormfiend_enter(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = var_0_3.extension_input(arg_12_0, "dialogue_system")
+	local var_12_1 = arg_12_1.mounted_data
+	local var_12_2 = BLACKBOARDS[var_12_1.mount_unit]
+	local var_12_3 = arg_12_1.call_stormfiend_positions
+	local var_12_4 = POSITION_LOOKUP[arg_12_0]
+	local var_12_5 = math.huge
+	local var_12_6
+
+	for iter_12_0 = 1, #var_12_3 do
+		local var_12_7 = var_12_3[iter_12_0]:unbox()
+		local var_12_8 = Vector3.distance(var_12_4, var_12_7)
+
+		if var_12_8 < var_12_5 then
+			var_12_6 = var_12_7
+			var_12_5 = var_12_8
 		end
 	end
 
-	local projected_wanted_pos = LocomotionUtils.pos_on_mesh(blackboard.nav_world, wanted_pos, 1, 1)
+	local var_12_9 = LocomotionUtils.pos_on_mesh(arg_12_1.nav_world, var_12_6, 1, 1)
 
-	mount_blackboard.goal_destination = Vector3Box(projected_wanted_pos)
-	mount_blackboard.start_anim_done = true
+	var_12_2.goal_destination = Vector3Box(var_12_9)
+	var_12_2.start_anim_done = true
 
-	local event_data = FrameTable.alloc_table()
+	local var_12_10 = FrameTable.alloc_table()
 
-	dialogue_input:trigger_networked_dialogue_event("egs_calls_mount_battle", event_data)
+	var_12_0:trigger_networked_dialogue_event("egs_calls_mount_battle", var_12_10)
 
-	blackboard.quick_teleport = true
-	blackboard.quick_teleport_exit_pos = Vector3Box(projected_wanted_pos)
+	arg_12_1.quick_teleport = true
+	arg_12_1.quick_teleport_exit_pos = Vector3Box(var_12_9)
 end
 
-BTEnterHooks.stormfiend_boss_charge_enter = function (unit, blackboard, t)
-	local wanted_unit
-	local furthest_distance = 0
-	local self_pos = POSITION_LOOKUP[unit] + Vector3.up()
-	local world = blackboard.world
-	local physics_world = World.get_data(world, "physics_world")
-	local side = blackboard.side
-	local ENEMY_PLAYER_AND_BOT_POSITIONS = side.ENEMY_PLAYER_AND_BOT_POSITIONS
-	local ENEMY_PLAYER_AND_BOT_UNITS = side.ENEMY_PLAYER_AND_BOT_UNITS
+function var_0_0.stormfiend_boss_charge_enter(arg_13_0, arg_13_1, arg_13_2)
+	local var_13_0
+	local var_13_1 = 0
+	local var_13_2 = POSITION_LOOKUP[arg_13_0] + Vector3.up()
+	local var_13_3 = arg_13_1.world
+	local var_13_4 = World.get_data(var_13_3, "physics_world")
+	local var_13_5 = arg_13_1.side
+	local var_13_6 = var_13_5.ENEMY_PLAYER_AND_BOT_POSITIONS
+	local var_13_7 = var_13_5.ENEMY_PLAYER_AND_BOT_UNITS
 
-	for i, pos in ipairs(ENEMY_PLAYER_AND_BOT_POSITIONS) do
-		local player_unit = ENEMY_PLAYER_AND_BOT_UNITS[i]
-		local distance = Vector3.distance(self_pos, pos)
-		local target_pos = pos + Vector3.up()
+	for iter_13_0, iter_13_1 in ipairs(var_13_6) do
+		local var_13_8 = var_13_7[iter_13_0]
+		local var_13_9 = Vector3.distance(var_13_2, iter_13_1)
+		local var_13_10 = iter_13_1 + Vector3.up()
 
-		if furthest_distance < distance then
-			local is_in_line_of_sight = PerceptionUtils.is_position_in_line_of_sight(unit, self_pos, target_pos, physics_world)
-
-			if is_in_line_of_sight then
-				wanted_unit = player_unit
-			end
+		if var_13_1 < var_13_9 and PerceptionUtils.is_position_in_line_of_sight(arg_13_0, var_13_2, var_13_10, var_13_4) then
+			var_13_0 = var_13_8
 		end
 	end
 
-	if HEALTH_ALIVE[wanted_unit] then
-		blackboard.target_unit = wanted_unit
-		blackboard.keep_target = true
+	if HEALTH_ALIVE[var_13_0] then
+		arg_13_1.target_unit = var_13_0
+		arg_13_1.keep_target = true
 	end
 end
 
-BTEnterHooks.to_combat = function (unit, blackboard, t)
-	AiUtils.enter_combat(unit, blackboard)
+function var_0_0.to_combat(arg_14_0, arg_14_1, arg_14_2)
+	AiUtils.enter_combat(arg_14_0, arg_14_1)
 end
 
-BTEnterHooks.on_chaos_exalted_champion_intro_enter = function (unit, blackboard, t)
-	local level_analysis = Managers.state.conflict.level_analysis
-	local node_units = level_analysis.generic_ai_node_units.chaos_exalted_intro_move_to
+function var_0_0.on_chaos_exalted_champion_intro_enter(arg_15_0, arg_15_1, arg_15_2)
+	local var_15_0 = Managers.state.conflict.level_analysis.generic_ai_node_units.chaos_exalted_intro_move_to
 
-	if node_units then
-		local node_unit = node_units[1]
-		local pos = unit_local_position(node_unit, 0)
+	if var_15_0 then
+		local var_15_1 = var_15_0[1]
+		local var_15_2 = var_0_1(var_15_1, 0)
 
-		blackboard.goal_destination = Vector3Box(pos)
-
-		local health_extension = ScriptUnit.extension(unit, "health_system")
-
-		health_extension.is_invincible = true
+		arg_15_1.goal_destination = Vector3Box(var_15_2)
+		var_0_3.extension(arg_15_0, "health_system").is_invincible = true
 	else
-		print("Found no generic AI node (chaos_exalted_intro_move_to) for lord intro, ", unit)
+		print("Found no generic AI node (chaos_exalted_intro_move_to) for lord intro, ", arg_15_0)
 
-		blackboard.intro_timer = nil
+		arg_15_1.intro_timer = nil
 	end
 end
 
-BTEnterHooks.on_chaos_exalted_sorcerer_intro_enter = function (unit, blackboard, t)
-	local level_analysis = Managers.state.conflict.level_analysis
-	local node_units = level_analysis.generic_ai_node_units.sorcerer_boss_intro
+function var_0_0.on_chaos_exalted_sorcerer_intro_enter(arg_16_0, arg_16_1, arg_16_2)
+	local var_16_0 = Managers.state.conflict.level_analysis.generic_ai_node_units.sorcerer_boss_intro
 
-	if node_units then
-		local node_unit = node_units[1]
-		local pos = unit_local_position(node_unit, 0)
-		local rot = Unit.local_rotation(node_unit, 0)
+	if var_16_0 then
+		local var_16_1 = var_16_0[1]
+		local var_16_2 = var_0_1(var_16_1, 0)
+		local var_16_3 = Unit.local_rotation(var_16_1, 0)
 
-		blackboard.quick_teleport_exit_pos = Vector3Box(pos)
-		blackboard.quick_teleport = true
+		arg_16_1.quick_teleport_exit_pos = Vector3Box(var_16_2)
+		arg_16_1.quick_teleport = true
 
-		Unit.set_local_rotation(unit, 0, rot)
+		Unit.set_local_rotation(arg_16_0, 0, var_16_3)
 
-		local health_extension = ScriptUnit.extension(unit, "health_system")
-
-		health_extension.is_invincible = true
+		var_0_3.extension(arg_16_0, "health_system").is_invincible = true
 	else
-		print("Found no generic AI node (sorcerer_boss_intro) for lord intro, ", unit)
+		print("Found no generic AI node (sorcerer_boss_intro) for lord intro, ", arg_16_0)
 
-		blackboard.intro_timer = nil
+		arg_16_1.intro_timer = nil
 	end
 
-	local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
-	local event_data = FrameTable.alloc_table()
+	local var_16_4 = var_0_3.extension_input(arg_16_0, "dialogue_system")
+	local var_16_5 = FrameTable.alloc_table()
 
-	dialogue_input:trigger_networked_dialogue_event("ebh_intro", event_data)
+	var_16_4:trigger_networked_dialogue_event("ebh_intro", var_16_5)
 end
 
-BTEnterHooks.on_skaven_warlord_intro_enter = function (unit, blackboard, t)
-	local level_analysis = Managers.state.conflict.level_analysis
-	local node_units = level_analysis.generic_ai_node_units.skaven_warlord_intro_move_to
+function var_0_0.on_skaven_warlord_intro_enter(arg_17_0, arg_17_1, arg_17_2)
+	local var_17_0 = Managers.state.conflict.level_analysis.generic_ai_node_units.skaven_warlord_intro_move_to
 
-	if node_units then
-		local node_unit = node_units[1]
-		local pos = unit_local_position(node_unit, 0)
+	if var_17_0 then
+		local var_17_1 = var_17_0[1]
+		local var_17_2 = var_0_1(var_17_1, 0)
 
-		blackboard.goal_destination = Vector3Box(pos)
-
-		local health_extension = ScriptUnit.extension(unit, "health_system")
-
-		health_extension.is_invincible = true
+		arg_17_1.goal_destination = Vector3Box(var_17_2)
+		var_0_3.extension(arg_17_0, "health_system").is_invincible = true
 	else
-		print("Found no generic AI node (skaven_warlord_intro_move_to) for lord intro, ", unit)
+		print("Found no generic AI node (skaven_warlord_intro_move_to) for lord intro, ", arg_17_0)
 
-		blackboard.intro_timer = nil
+		arg_17_1.intro_timer = nil
 	end
 end
 
-BTEnterHooks.sorcerer_dummy_idle = function (unit, blackboard, t)
-	Managers.state.network:anim_event(unit, "to_plague_wave")
+function var_0_0.sorcerer_dummy_idle(arg_18_0, arg_18_1, arg_18_2)
+	Managers.state.network:anim_event(arg_18_0, "to_plague_wave")
 
-	local health_extension = ScriptUnit.extension(unit, "health_system")
-
-	health_extension.is_invincible = true
+	var_0_3.extension(arg_18_0, "health_system").is_invincible = true
 end
 
-BTEnterHooks.corruptor_enter = function (unit, blackboard, t)
-	Managers.state.network:anim_event(unit, "to_corruptor")
+function var_0_0.corruptor_enter(arg_19_0, arg_19_1, arg_19_2)
+	Managers.state.network:anim_event(arg_19_0, "to_corruptor")
 end
 
-BTEnterHooks.grey_seer_stagger_enter = function (unit, blackboard, t)
-	local damage_wave_extension = blackboard.damage_wave_extension
+function var_0_0.grey_seer_stagger_enter(arg_20_0, arg_20_1, arg_20_2)
+	local var_20_0 = arg_20_1.damage_wave_extension
 
-	if damage_wave_extension then
-		damage_wave_extension:abort()
+	if var_20_0 then
+		var_20_0:abort()
 	end
 end
 
-local function setup_sorcerer_boss_spawning(unit, blackboard, data)
-	local call_position
-	local spawner = ConflictUtils.get_random_spawner_with_id("sorcerer_boss")
+local function var_0_4(arg_21_0, arg_21_1, arg_21_2)
+	local var_21_0
+	local var_21_1 = ConflictUtils.get_random_spawner_with_id("sorcerer_boss")
 
-	if spawner then
-		call_position = unit_local_position(spawner, 0)
+	if var_21_1 then
+		var_21_0 = var_0_1(var_21_1, 0)
 
-		local fwd = Vector3.normalize(Vector3.flat(Quaternion.forward(ScriptUnit.extension(spawner, "spawner_system"):spawn_rotation())))
+		local var_21_2 = Vector3.normalize(Vector3.flat(Quaternion.forward(var_0_3.extension(var_21_1, "spawner_system"):spawn_rotation())))
 
-		data.spawn_forward = Vector3Box(fwd)
+		arg_21_2.spawn_forward = Vector3Box(var_21_2)
 
-		local spawners = {}
-
-		spawners[1] = ConflictUtils.get_random_spawner_with_id("sorcerer_boss_minion")
-
-		print("found spawner for sorcerer_boss_minion:", spawners[1])
-
-		spawners[2] = ConflictUtils.get_random_spawner_with_id("sorcerer_boss_minion", spawners[1])
-
-		print("found spawner for sorcerer_boss_minion:", spawners[2])
-
-		data.spawners = spawners
-		blackboard.defensive_spawner = spawner
-	else
-		local dummy_action = {
-			spawn_group = "default",
-			use_fallback_spawners = true,
+		local var_21_3 = {
+			(ConflictUtils.get_random_spawner_with_id("sorcerer_boss_minion"))
 		}
 
-		call_position = BTSpawnAllies.find_spawn_point(unit, blackboard, dummy_action, data)
+		print("found spawner for sorcerer_boss_minion:", var_21_3[1])
+
+		var_21_3[2] = ConflictUtils.get_random_spawner_with_id("sorcerer_boss_minion", var_21_3[1])
+
+		print("found spawner for sorcerer_boss_minion:", var_21_3[2])
+
+		arg_21_2.spawners = var_21_3
+		arg_21_1.defensive_spawner = var_21_1
+	else
+		local var_21_4 = {
+			spawn_group = "default",
+			use_fallback_spawners = true
+		}
+
+		var_21_0 = BTSpawnAllies.find_spawn_point(arg_21_0, arg_21_1, var_21_4, arg_21_2)
 	end
 
-	return call_position
+	return var_21_0
 end
 
-BTEnterHooks.sorcerer_begin_defensive_mode = function (unit, blackboard, t)
-	local data = {
+function var_0_0.sorcerer_begin_defensive_mode(arg_22_0, arg_22_1, arg_22_2)
+	local var_22_0 = {
 		stay_still = true,
-		end_time = math.huge,
+		end_time = math.huge
 	}
-	local call_position = setup_sorcerer_boss_spawning(unit, blackboard, data)
+	local var_22_1 = var_0_4(arg_22_0, arg_22_1, var_22_0)
 
-	blackboard.spawning_allies = data
-	blackboard.quick_teleport_exit_pos = Vector3Box(call_position)
-	blackboard.quick_teleport = true
-	data.call_position = blackboard.quick_teleport_exit_pos
-	blackboard.has_call_position = true
-	blackboard.teleport_health_percent = blackboard.health_extension:current_health_percent() - 0.1
-	blackboard.spell_count = 0
-	blackboard.phase = "defensive_starts"
+	arg_22_1.spawning_allies = var_22_0
+	arg_22_1.quick_teleport_exit_pos = Vector3Box(var_22_1)
+	arg_22_1.quick_teleport = true
+	var_22_0.call_position = arg_22_1.quick_teleport_exit_pos
+	arg_22_1.has_call_position = true
+	arg_22_1.teleport_health_percent = arg_22_1.health_extension:current_health_percent() - 0.1
+	arg_22_1.spell_count = 0
+	arg_22_1.phase = "defensive_starts"
 
-	local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
-	local event_data = FrameTable.alloc_table()
+	local var_22_2 = var_0_3.extension_input(arg_22_0, "dialogue_system")
+	local var_22_3 = FrameTable.alloc_table()
 
-	dialogue_input:trigger_networked_dialogue_event("ebh_summon", event_data)
+	var_22_2:trigger_networked_dialogue_event("ebh_summon", var_22_3)
 end
 
-BTEnterHooks.dont_face_target_while_summoning = function (unit, blackboard, t)
-	blackboard.face_target_while_summoning = false
+function var_0_0.dont_face_target_while_summoning(arg_23_0, arg_23_1, arg_23_2)
+	arg_23_1.face_target_while_summoning = false
 end
 
-BTEnterHooks.sorcerer_re_enter_defensive_mode = function (unit, blackboard, t)
-	local data = {
+function var_0_0.sorcerer_re_enter_defensive_mode(arg_24_0, arg_24_1, arg_24_2)
+	local var_24_0 = {
 		stay_still = true,
-		end_time = math.huge,
+		end_time = math.huge
 	}
-	local level_analysis = Managers.state.conflict.level_analysis
-	local node_units = level_analysis.generic_ai_node_units.sorcerer_boss_intro
-	local node_unit = node_units[1]
-	local pos = unit_local_position(node_unit, 0)
+	local var_24_1 = Managers.state.conflict.level_analysis.generic_ai_node_units.sorcerer_boss_intro[1]
+	local var_24_2 = var_0_1(var_24_1, 0)
 
-	blackboard.spawning_allies = data
-	blackboard.quick_teleport_exit_pos = Vector3Box(pos)
-	blackboard.quick_teleport = true
-	data.call_position = blackboard.quick_teleport_exit_pos
-	blackboard.has_call_position = true
-	blackboard.teleport_health_percent = blackboard.health_extension:current_health_percent() - 0.1
-	blackboard.spell_count = 0
+	arg_24_1.spawning_allies = var_24_0
+	arg_24_1.quick_teleport_exit_pos = Vector3Box(var_24_2)
+	arg_24_1.quick_teleport = true
+	var_24_0.call_position = arg_24_1.quick_teleport_exit_pos
+	arg_24_1.has_call_position = true
+	arg_24_1.teleport_health_percent = arg_24_1.health_extension:current_health_percent() - 0.1
+	arg_24_1.spell_count = 0
 
-	local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
-	local event_data = FrameTable.alloc_table()
+	local var_24_3 = var_0_3.extension_input(arg_24_0, "dialogue_system")
+	local var_24_4 = FrameTable.alloc_table()
 
-	dialogue_input:trigger_networked_dialogue_event("ebh_summon", event_data)
+	var_24_3:trigger_networked_dialogue_event("ebh_summon", var_24_4)
 end
 
-BTEnterHooks.target_furthest_player_in_sight = function (unit, blackboard, t)
-	local side = Managers.state.side:get_side_from_name("heroes")
-	local player_units = side.PLAYER_AND_BOT_UNITS
-	local physics_world = blackboard.physics_world or World.get_data(blackboard.world, "physics_world")
-	local pos = POSITION_LOOKUP[unit]
-	local furthest_unit
-	local furthest_distance = 0
+function var_0_0.target_furthest_player_in_sight(arg_25_0, arg_25_1, arg_25_2)
+	local var_25_0 = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_UNITS
+	local var_25_1 = arg_25_1.physics_world or World.get_data(arg_25_1.world, "physics_world")
+	local var_25_2 = POSITION_LOOKUP[arg_25_0]
+	local var_25_3
+	local var_25_4 = 0
 
-	for _, player_unit in pairs(player_units) do
-		local has_line_of_sight = PerceptionUtils.raycast_spine_to_spine(unit, player_unit, physics_world)
-		local distance = Vector3.distance_squared(pos, POSITION_LOOKUP[player_unit])
+	for iter_25_0, iter_25_1 in pairs(var_25_0) do
+		local var_25_5 = PerceptionUtils.raycast_spine_to_spine(arg_25_0, iter_25_1, var_25_1)
+		local var_25_6 = Vector3.distance_squared(var_25_2, POSITION_LOOKUP[iter_25_1])
 
-		if has_line_of_sight and furthest_distance < distance then
-			furthest_unit = player_unit
-			furthest_distance = distance
+		if var_25_5 and var_25_4 < var_25_6 then
+			var_25_3 = iter_25_1
+			var_25_4 = var_25_6
 		end
 	end
 
-	blackboard.target_unit = furthest_unit or blackboard.target_unit
+	arg_25_1.target_unit = var_25_3 or arg_25_1.target_unit
 end
 
-BTEnterHooks.sorcerer_spawn_horde = function (unit, blackboard, t)
-	local data = {
+function var_0_0.sorcerer_spawn_horde(arg_26_0, arg_26_1, arg_26_2)
+	local var_26_0 = {
 		stay_still = true,
-		end_time = math.huge,
+		end_time = math.huge
 	}
 
-	setup_sorcerer_boss_spawning(unit, blackboard, data)
+	var_0_4(arg_26_0, arg_26_1, var_26_0)
 
-	blackboard.spawning_allies = data
+	arg_26_1.spawning_allies = var_26_0
 end
 
-BTEnterHooks.sorcerer_defensive_seeking_bomb = function (unit, blackboard, t)
-	local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
-	local event_data = FrameTable.alloc_table()
+function var_0_0.sorcerer_defensive_seeking_bomb(arg_27_0, arg_27_1, arg_27_2)
+	local var_27_0 = var_0_3.extension_input(arg_27_0, "dialogue_system")
+	local var_27_1 = FrameTable.alloc_table()
 
-	dialogue_input:trigger_networked_dialogue_event("ebh_insect_spell", event_data)
+	var_27_0:trigger_networked_dialogue_event("ebh_insect_spell", var_27_1)
 end
 
-BTEnterHooks.teleport_to_center = function (unit, blackboard, t)
-	local level_analysis = Managers.state.conflict.level_analysis
-	local node_units = level_analysis.generic_ai_node_units.sorcerer_boss_center
-	local center_unit = node_units[1]
-	local teleport_pos = unit_local_position(center_unit, 0)
+function var_0_0.teleport_to_center(arg_28_0, arg_28_1, arg_28_2)
+	local var_28_0 = Managers.state.conflict.level_analysis.generic_ai_node_units.sorcerer_boss_center[1]
+	local var_28_1 = var_0_1(var_28_0, 0)
 
-	if teleport_pos then
-		blackboard.quick_teleport_exit_pos = Vector3Box(teleport_pos)
-		blackboard.quick_teleport = true
-		blackboard.move_pos = nil
+	if var_28_1 then
+		arg_28_1.quick_teleport_exit_pos = Vector3Box(var_28_1)
+		arg_28_1.quick_teleport = true
+		arg_28_1.move_pos = nil
 
 		return
 	end
 end
 
-BTEnterHooks.quick_teleport = function (unit, blackboard, t)
-	blackboard.quick_teleport = true
+function var_0_0.quick_teleport(arg_29_0, arg_29_1, arg_29_2)
+	arg_29_1.quick_teleport = true
 end
 
-BTEnterHooks.summoning_starts = function (unit, blackboard, t)
-	blackboard.is_summoning = true
+function var_0_0.summoning_starts(arg_30_0, arg_30_1, arg_30_2)
+	arg_30_1.is_summoning = true
 end
 
-BTEnterHooks.wave_summoning_starts = function (unit, blackboard, t)
-	blackboard.is_summoning = true
+function var_0_0.wave_summoning_starts(arg_31_0, arg_31_1, arg_31_2)
+	arg_31_1.is_summoning = true
 end
 
-BTEnterHooks.block_stagger_start = function (unit, blackboard, t)
-	if blackboard.mode == "defensive" then
-		local current_health_percent = blackboard.health_extension:current_health_percent()
-
-		if current_health_percent < blackboard.teleport_health_percent then
-			blackboard.teleport_health_percent = blackboard.health_extension:current_health_percent() - 0.05
-			blackboard.escape_teleport = true
+function var_0_0.block_stagger_start(arg_32_0, arg_32_1, arg_32_2)
+	if arg_32_1.mode == "defensive" then
+		if arg_32_1.health_extension:current_health_percent() < arg_32_1.teleport_health_percent then
+			arg_32_1.teleport_health_percent = arg_32_1.health_extension:current_health_percent() - 0.05
+			arg_32_1.escape_teleport = true
 		end
 
 		return
 	end
 
-	if not blackboard.stagger_time_end then
-		blackboard.stagger_time_end = t + blackboard.breed.max_chain_stagger_time
-	elseif t > blackboard.stagger_time_end then
-		blackboard.stagger_time_end = nil
+	if not arg_32_1.stagger_time_end then
+		arg_32_1.stagger_time_end = arg_32_2 + arg_32_1.breed.max_chain_stagger_time
+	elseif arg_32_2 > arg_32_1.stagger_time_end then
+		arg_32_1.stagger_time_end = nil
 
-		local unit_position = POSITION_LOOKUP[unit]
-		local teleport_pos = ConflictUtils.get_spawn_pos_on_circle(blackboard.nav_world, unit_position, 15, 7, 15)
+		local var_32_0 = POSITION_LOOKUP[arg_32_0]
+		local var_32_1 = ConflictUtils.get_spawn_pos_on_circle(arg_32_1.nav_world, var_32_0, 15, 7, 15)
 
-		if teleport_pos then
-			blackboard.quick_teleport_exit_pos = Vector3Box(teleport_pos)
-			blackboard.quick_teleport = true
-			blackboard.move_pos = nil
+		if var_32_1 then
+			arg_32_1.quick_teleport_exit_pos = Vector3Box(var_32_1)
+			arg_32_1.quick_teleport = true
+			arg_32_1.move_pos = nil
 
 			return
 		end
 	end
 end
 
-BTEnterHooks.sorcerer_evade = function (unit, blackboard, t)
-	blackboard.quick_teleport = true
+function var_0_0.sorcerer_evade(arg_33_0, arg_33_1, arg_33_2)
+	arg_33_1.quick_teleport = true
 
-	local difficulty = Managers.state.difficulty:get_difficulty()
-	local composition_type = "sorcerer_boss_hit_extra"
-	local spawner_event_id = "sorcerer_boss_minion"
-	local conflict_director = Managers.state.conflict
-	local strictly_not_close_to_players = true
-	local silent = true
-	local limit_spawners
-	local side = blackboard.side
-	local side_id = side.side_id
+	local var_33_0 = Managers.state.difficulty:get_difficulty()
+	local var_33_1 = "sorcerer_boss_hit_extra"
+	local var_33_2 = "sorcerer_boss_minion"
+	local var_33_3 = Managers.state.conflict
+	local var_33_4 = true
+	local var_33_5 = true
+	local var_33_6
+	local var_33_7 = arg_33_1.side.side_id
 
-	conflict_director.horde_spawner:execute_event_horde(t, spawner_event_id, side_id, composition_type, limit_spawners, silent, nil, strictly_not_close_to_players)
+	var_33_3.horde_spawner:execute_event_horde(arg_33_2, var_33_2, var_33_7, var_33_1, var_33_6, var_33_5, nil, var_33_4)
 
-	local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
-	local event_data = FrameTable.alloc_table()
+	local var_33_8 = var_0_3.extension_input(arg_33_0, "dialogue_system")
+	local var_33_9 = FrameTable.alloc_table()
 
-	dialogue_input:trigger_networked_dialogue_event("ebh_taunt", event_data)
+	var_33_8:trigger_networked_dialogue_event("ebh_taunt", var_33_9)
 end
 
-BTEnterHooks.warlord_defensive_on_enter = function (unit, blackboard, t)
-	local spawn_allies_positions = blackboard.spawn_allies_positions
-	local self_position = POSITION_LOOKUP[unit]
-	local furthest_distance = 0
-	local wanted_pos
+function var_0_0.warlord_defensive_on_enter(arg_34_0, arg_34_1, arg_34_2)
+	local var_34_0 = arg_34_1.spawn_allies_positions
+	local var_34_1 = POSITION_LOOKUP[arg_34_0]
+	local var_34_2 = 0
+	local var_34_3
 
-	if spawn_allies_positions then
-		for i = 1, #spawn_allies_positions do
-			local position = spawn_allies_positions[i]:unbox()
-			local distance = Vector3.distance(self_position, position)
+	if var_34_0 then
+		for iter_34_0 = 1, #var_34_0 do
+			local var_34_4 = var_34_0[iter_34_0]:unbox()
+			local var_34_5 = Vector3.distance(var_34_1, var_34_4)
 
-			if furthest_distance < distance then
-				wanted_pos = position
-				furthest_distance = distance
+			if var_34_2 < var_34_5 then
+				var_34_3 = var_34_4
+				var_34_2 = var_34_5
 			end
 		end
 	end
 
-	wanted_pos = wanted_pos or self_position
-	blackboard.override_spawn_allies_call_position = Vector3Box(wanted_pos)
+	var_34_3 = var_34_3 or var_34_1
+	arg_34_1.override_spawn_allies_call_position = Vector3Box(var_34_3)
 end
 
-BTEnterHooks.keep_target = function (unit, blackboard, t)
-	blackboard.keep_target = true
+function var_0_0.keep_target(arg_35_0, arg_35_1, arg_35_2)
+	arg_35_1.keep_target = true
 end
 
-BTEnterHooks.add_invincibility = function (unit, blackboard, t)
-	local health_extension = ScriptUnit.extension(unit, "health_system")
-
-	health_extension.is_invincible = true
+function var_0_0.add_invincibility(arg_36_0, arg_36_1, arg_36_2)
+	var_0_3.extension(arg_36_0, "health_system").is_invincible = true
 end
 
-BTEnterHooks.remove_invincibility = function (unit, blackboard, t)
-	local health_extension = ScriptUnit.extension(unit, "health_system")
-
-	health_extension.is_invincible = false
+function var_0_0.remove_invincibility(arg_37_0, arg_37_1, arg_37_2)
+	var_0_3.extension(arg_37_0, "health_system").is_invincible = false
 end
 
-BTEnterHooks.activate_slot_system = function (unit, blackboard, t)
-	local ai_slot_system = Managers.state.entity:system("ai_slot_system")
-
-	ai_slot_system:do_slot_search(unit, true)
+function var_0_0.activate_slot_system(arg_38_0, arg_38_1, arg_38_2)
+	Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_38_0, true)
 end
 
-BTEnterHooks.troll_chief_on_downed = function (unit, blackboard, t)
-	local data = {
+function var_0_0.troll_chief_on_downed(arg_39_0, arg_39_1, arg_39_2)
+	local var_39_0 = {
 		stay_still = true,
-		end_time = math.huge,
+		end_time = math.huge
 	}
-	local fwd = Quaternion.forward(Quaternion.flat_no_roll(Unit.local_rotation(unit, 0)))
+	local var_39_1 = Quaternion.forward(Quaternion.flat_no_roll(Unit.local_rotation(arg_39_0, 0)))
 
-	data.spawn_forward = Vector3Box(fwd)
-	blackboard.spawning_allies = data
-	blackboard.spawned_allies_wave = 0
+	var_39_0.spawn_forward = Vector3Box(var_39_1)
+	arg_39_1.spawning_allies = var_39_0
+	arg_39_1.spawned_allies_wave = 0
 
-	local _, _, _, _, phase = blackboard.health_extension:respawn_thresholds()
+	local var_39_2, var_39_3, var_39_4, var_39_5, var_39_6 = arg_39_1.health_extension:respawn_thresholds()
 
-	blackboard.downed_phase = phase
+	arg_39_1.downed_phase = var_39_6
 end
 
-DLCUtils.merge("bt_enter_hooks", BTEnterHooks)
+DLCUtils.merge("bt_enter_hooks", var_0_0)

@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/helpers/emoji_helper.lua
+-- chunkname: @scripts/helpers/emoji_helper.lua
 
 ESCAPE_CHARACTERS = {
 	"%",
@@ -11,30 +11,30 @@ ESCAPE_CHARACTERS = {
 	"?",
 	"[",
 	"^",
-	"$",
+	"$"
 }
 EMOJI_SETTINGS = {
 	{
-		keys = ":smiley:",
 		replacement_keys = ":)",
+		keys = ":smiley:",
 		texture = "emo_01",
 		color = {
 			255,
 			0,
 			255,
-			0,
-		},
+			0
+		}
 	},
 	{
-		keys = ":open_mouth:",
 		replacement_keys = ":O",
+		keys = ":open_mouth:",
 		texture = "emo_02",
 		color = {
 			255,
 			255,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	{
 		keys = ":shocked:",
@@ -43,63 +43,63 @@ EMOJI_SETTINGS = {
 			255,
 			0,
 			255,
-			0,
-		},
+			0
+		}
 	},
 	{
-		keys = ":confused:",
 		replacement_keys = ":/",
+		keys = ":confused:",
 		texture = "emo_04",
 		color = {
 			255,
 			0,
 			255,
-			0,
-		},
+			0
+		}
 	},
 	{
-		keys = ":stuck_out_tongue:",
 		replacement_keys = ":p",
+		keys = ":stuck_out_tongue:",
 		texture = "emo_05",
 		color = {
 			255,
 			0,
 			255,
-			0,
-		},
+			0
+		}
 	},
 	{
-		keys = ":neutral_face:",
 		replacement_keys = ":|",
+		keys = ":neutral_face:",
 		texture = "emo_06",
 		color = {
 			255,
 			0,
 			255,
-			0,
-		},
+			0
+		}
 	},
 	{
-		keys = ":disappointed:",
 		replacement_keys = ":(",
+		keys = ":disappointed:",
 		texture = "emo_07",
 		color = {
 			255,
 			0,
 			255,
-			0,
-		},
+			0
+		}
 	},
 	{
-		keys = ":cry:",
 		replacement_keys = ":'(",
+		keys = ":cry:",
 		texture = "emo_08",
 		color = {
 			255,
 			0,
 			255,
-			0,
-		},
+			0
+		}
 	},
 	{
 		keys = ":smile:",
@@ -108,74 +108,74 @@ EMOJI_SETTINGS = {
 			255,
 			0,
 			255,
-			0,
-		},
+			0
+		}
 	},
 	{
-		keys = ":smirk:",
 		replacement_keys = ";)",
+		keys = ":smirk:",
 		texture = "emo_10",
 		color = {
 			255,
 			0,
 			255,
-			0,
-		},
+			0
+		}
 	},
 	{
-		keys = ":grinning:",
 		replacement_keys = ":D",
+		keys = ":grinning:",
 		texture = "emo_11",
 		color = {
 			255,
 			0,
 			255,
-			0,
-		},
+			0
+		}
 	},
 	{
-		keys = ":tired_face:",
 		replacement_keys = ">_<",
+		keys = ":tired_face:",
 		texture = "emo_12",
 		color = {
 			255,
 			0,
 			255,
-			0,
-		},
+			0
+		}
 	},
 	{
-		keys = ":angry:",
 		replacement_keys = ">:(",
+		keys = ":angry:",
 		texture = "emo_13",
 		color = {
 			255,
 			0,
 			255,
-			0,
-		},
+			0
+		}
 	},
 	{
-		keys = ":heart:",
 		replacement_keys = "<3",
+		keys = ":heart:",
 		texture = "emo_14",
 		color = {
 			255,
 			0,
 			255,
-			0,
-		},
+			0
+		}
 	},
 	{
-		keys = ":broken_heart:",
 		replacement_keys = "</3",
+		keys = ":broken_heart:",
 		texture = "emo_15",
 		color = {
 			255,
 			0,
 			255,
-			0,
-		},
+			0
+		}
 	},
 	{
 		keys = ":sun:",
@@ -184,8 +184,8 @@ EMOJI_SETTINGS = {
 			255,
 			0,
 			255,
-			0,
-		},
+			0
+		}
 	},
 	{
 		keys = ":cross:",
@@ -194,94 +194,94 @@ EMOJI_SETTINGS = {
 			255,
 			0,
 			255,
-			0,
-		},
-	},
+			0
+		}
+	}
 }
 
-for _, emoji_data in ipairs(EMOJI_SETTINGS) do
-	local pattern = emoji_data.keys
+for iter_0_0, iter_0_1 in ipairs(EMOJI_SETTINGS) do
+	local var_0_0 = iter_0_1.keys
 
-	for _, escape_character in ipairs(ESCAPE_CHARACTERS) do
-		pattern = string.gsub(pattern, "%" .. escape_character, "%%" .. escape_character)
+	for iter_0_2, iter_0_3 in ipairs(ESCAPE_CHARACTERS) do
+		var_0_0 = string.gsub(var_0_0, "%" .. iter_0_3, "%%" .. iter_0_3)
 	end
 
-	emoji_data.pattern = pattern
+	iter_0_1.pattern = var_0_0
 
-	local pattern = emoji_data.replacement_keys
+	local var_0_1 = iter_0_1.replacement_keys
 
-	if pattern then
-		for _, escape_character in ipairs(ESCAPE_CHARACTERS) do
-			pattern = string.gsub(pattern, "%" .. escape_character, "%%" .. escape_character)
+	if var_0_1 then
+		for iter_0_4, iter_0_5 in ipairs(ESCAPE_CHARACTERS) do
+			var_0_1 = string.gsub(var_0_1, "%" .. iter_0_5, "%%" .. iter_0_5)
 		end
 
-		emoji_data.replacement_pattern = pattern
+		iter_0_1.replacement_pattern = var_0_1
 	end
 end
 
 EMOJI_SETTINGS_LUT = {}
 
-for idx, emoji_data in ipairs(EMOJI_SETTINGS) do
-	EMOJI_SETTINGS_LUT[emoji_data.keys] = idx
+for iter_0_6, iter_0_7 in ipairs(EMOJI_SETTINGS) do
+	EMOJI_SETTINGS_LUT[iter_0_7.keys] = iter_0_6
 end
 
 EMOJI_REPLACEMENTS = {}
 
-for idx, emoji_data in ipairs(EMOJI_SETTINGS) do
-	if emoji_data.replacement_keys then
+for iter_0_8, iter_0_9 in ipairs(EMOJI_SETTINGS) do
+	if iter_0_9.replacement_keys then
 		EMOJI_REPLACEMENTS[#EMOJI_REPLACEMENTS + 1] = {
-			data = emoji_data,
-			size = string.len(emoji_data.replacement_keys),
+			data = iter_0_9,
+			size = string.len(iter_0_9.replacement_keys)
 		}
 	end
 end
 
-local function sort_func(a, b)
-	return a.size > b.size
+local function var_0_2(arg_1_0, arg_1_1)
+	return arg_1_0.size > arg_1_1.size
 end
 
-table.sort(EMOJI_REPLACEMENTS, sort_func)
+table.sort(EMOJI_REPLACEMENTS, var_0_2)
 
 EmojiHelper = {}
 
-local EMOJIS = {}
+local var_0_3 = {}
 
-EmojiHelper.parse_emojis = function (message)
-	local match_str = message
+function EmojiHelper.parse_emojis(arg_2_0)
+	local var_2_0 = arg_2_0
 
-	table.clear(EMOJIS)
+	table.clear(var_0_3)
 
-	local start_index = string.find(match_str, ":")
+	local var_2_1 = string.find(var_2_0, ":")
 
-	while start_index do
-		local end_index = string.find(match_str, ":", start_index + 1)
-		local emoji = string.sub(match_str, start_index, end_index)
-		local emoji_idx = EMOJI_SETTINGS_LUT[emoji]
+	while var_2_1 do
+		local var_2_2 = string.find(var_2_0, ":", var_2_1 + 1)
+		local var_2_3 = string.sub(var_2_0, var_2_1, var_2_2)
+		local var_2_4 = EMOJI_SETTINGS_LUT[var_2_3]
 
-		if emoji_idx then
-			EMOJIS[#EMOJIS + 1] = EMOJI_SETTINGS[emoji_idx]
-			end_index = end_index + 1
+		if var_2_4 then
+			var_0_3[#var_0_3 + 1] = EMOJI_SETTINGS[var_2_4]
+			var_2_2 = var_2_2 + 1
 		end
 
-		if not end_index then
-			return EMOJIS
+		if not var_2_2 then
+			return var_0_3
 		end
 
-		match_str = string.sub(match_str, end_index)
-		start_index = string.find(match_str, ":")
+		var_2_0 = string.sub(var_2_0, var_2_2)
+		var_2_1 = string.find(var_2_0, ":")
 	end
 
-	return EMOJIS
+	return var_0_3
 end
 
-EmojiHelper.replace_emojis = function (text)
-	for _, emoji_table in ipairs(EMOJI_REPLACEMENTS) do
-		local emoji_data = emoji_table.data
+function EmojiHelper.replace_emojis(arg_3_0)
+	for iter_3_0, iter_3_1 in ipairs(EMOJI_REPLACEMENTS) do
+		local var_3_0 = iter_3_1.data
 
-		if emoji_data.replacement_pattern then
-			text = string.gsub(text, emoji_data.replacement_pattern, emoji_data.keys)
+		if var_3_0.replacement_pattern then
+			arg_3_0 = string.gsub(arg_3_0, var_3_0.replacement_pattern, var_3_0.keys)
 		end
 	end
 
-	return text
+	return arg_3_0
 end

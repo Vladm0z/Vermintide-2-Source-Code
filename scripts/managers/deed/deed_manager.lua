@@ -1,361 +1,344 @@
-﻿-- chunkname: @scripts/managers/deed/deed_manager.lua
+-- chunkname: @scripts/managers/deed/deed_manager.lua
 
 DeedManager = class(DeedManager)
 
-local RPCS = {
+local var_0_0 = {
 	"rpc_select_deed",
 	"rpc_reset_deed",
-	"rpc_deed_consumed",
+	"rpc_deed_consumed"
 }
 
-DeedManager.init = function (self)
-	self._selected_deed_data = nil
-	self._selected_deed_id = nil
-	self._owner_peer_id = nil
+function DeedManager.init(arg_1_0)
+	arg_1_0._selected_deed_data = nil
+	arg_1_0._selected_deed_id = nil
+	arg_1_0._owner_peer_id = nil
 end
 
-DeedManager.destroy = function (self)
-	if self._network_event_delegate then
-		self._network_event_delegate:unregister(self)
+function DeedManager.destroy(arg_2_0)
+	if arg_2_0._network_event_delegate then
+		arg_2_0._network_event_delegate:unregister(arg_2_0)
 
-		self._network_event_delegate = nil
+		arg_2_0._network_event_delegate = nil
 	end
 end
 
-DeedManager.network_context_created = function (self, lobby, server_peer_id, own_peer_id, is_server, network_handler)
-	self._lobby = lobby
-	self._server_peer_id = server_peer_id
-	self._peer_id = own_peer_id
-	self._network_server = is_server and network_handler or nil
-	self._is_server = is_server
+function DeedManager.network_context_created(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	arg_3_0._lobby = arg_3_1
+	arg_3_0._server_peer_id = arg_3_2
+	arg_3_0._peer_id = arg_3_3
+	arg_3_0._network_server = arg_3_4 and arg_3_5 or nil
+	arg_3_0._is_server = arg_3_4
 
-	local ignore_send = true
+	local var_3_0 = true
 
-	self:reset(ignore_send)
+	arg_3_0:reset(var_3_0)
 end
 
-DeedManager.network_context_destroyed = function (self)
-	self._lobby = nil
-	self._server_peer_id = nil
-	self._peer_id = nil
-	self._network_server = nil
-	self._is_server = false
+function DeedManager.network_context_destroyed(arg_4_0)
+	arg_4_0._lobby = nil
+	arg_4_0._server_peer_id = nil
+	arg_4_0._peer_id = nil
+	arg_4_0._network_server = nil
+	arg_4_0._is_server = false
 
-	local ignore_send = true
+	local var_4_0 = true
 
-	self:reset(ignore_send)
+	arg_4_0:reset(var_4_0)
 end
 
-DeedManager.register_rpcs = function (self, network_event_delegate)
-	network_event_delegate:register(self, unpack(RPCS))
+function DeedManager.register_rpcs(arg_5_0, arg_5_1)
+	arg_5_1:register(arg_5_0, unpack(var_0_0))
 
-	self._network_event_delegate = network_event_delegate
+	arg_5_0._network_event_delegate = arg_5_1
 end
 
-DeedManager.unregister_rpcs = function (self)
-	self._network_event_delegate:unregister(self)
+function DeedManager.unregister_rpcs(arg_6_0)
+	arg_6_0._network_event_delegate:unregister(arg_6_0)
 
-	self._network_event_delegate = nil
+	arg_6_0._network_event_delegate = nil
 end
 
-DeedManager.reset = function (self, ignore_send)
-	self._selected_deed_data = nil
-	self._selected_deed_id = nil
-	self._owner_peer_id = nil
-	self._deed_session_faulty = nil
+function DeedManager.reset(arg_7_0, arg_7_1)
+	arg_7_0._selected_deed_data = nil
+	arg_7_0._selected_deed_id = nil
+	arg_7_0._owner_peer_id = nil
+	arg_7_0._deed_session_faulty = nil
 
-	if self._is_server and not ignore_send then
-		self:_send_rpc_to_clients("rpc_reset_deed")
+	if arg_7_0._is_server and not arg_7_1 then
+		arg_7_0:_send_rpc_to_clients("rpc_reset_deed")
 	end
 end
 
-DeedManager.mutators = function (self)
-	if self._selected_deed_data then
-		return self._selected_deed_data.mutators
+function DeedManager.mutators(arg_8_0)
+	if arg_8_0._selected_deed_data then
+		return arg_8_0._selected_deed_data.mutators
 	else
 		return nil
 	end
 end
 
-DeedManager.rewards = function (self)
-	if self._selected_deed_data then
-		return self._selected_deed_data.rewards
+function DeedManager.rewards(arg_9_0)
+	if arg_9_0._selected_deed_data then
+		return arg_9_0._selected_deed_data.rewards
 	else
 		return nil
 	end
 end
 
-DeedManager.has_deed = function (self)
-	return self._selected_deed_data ~= nil
+function DeedManager.has_deed(arg_10_0)
+	return arg_10_0._selected_deed_data ~= nil
 end
 
-DeedManager.active_deed = function (self)
-	fassert(self._selected_deed_data, "Has no active deed")
+function DeedManager.active_deed(arg_11_0)
+	fassert(arg_11_0._selected_deed_data, "Has no active deed")
 
-	return self._selected_deed_data, self._selected_deed_id
+	return arg_11_0._selected_deed_data, arg_11_0._selected_deed_id
 end
 
-DeedManager.is_deed_owner = function (self, peer_id)
-	peer_id = peer_id or self._peer_id
+function DeedManager.is_deed_owner(arg_12_0, arg_12_1)
+	arg_12_1 = arg_12_1 or arg_12_0._peer_id
 
-	return self._owner_peer_id == peer_id
+	return arg_12_0._owner_peer_id == arg_12_1
 end
 
-DeedManager.is_session_faulty = function (self)
-	return self._deed_session_faulty
+function DeedManager.is_session_faulty(arg_13_0)
+	return arg_13_0._deed_session_faulty
 end
 
-DeedManager.consume_deed = function (self, reward_callback)
+function DeedManager.consume_deed(arg_14_0, arg_14_1)
 	print("[DeedManager]:consume_deed()")
 
-	if self._owner_peer_id == self._peer_id then
-		local network_manager = Managers.state.network
+	if arg_14_0._owner_peer_id == arg_14_0._peer_id then
+		local var_14_0 = Managers.state.network
 
-		if network_manager and network_manager:game() then
-			if self._is_server then
-				self:_send_rpc_to_clients("rpc_deed_consumed")
+		if var_14_0 and var_14_0:game() then
+			if arg_14_0._is_server then
+				arg_14_0:_send_rpc_to_clients("rpc_deed_consumed")
 			else
-				self:_send_rpc_to_server("rpc_deed_consumed")
+				arg_14_0:_send_rpc_to_server("rpc_deed_consumed")
 			end
 		end
-	elseif self._has_consumed_deed then
-		self._has_consumed_deed = nil
-		self._reward_callback = reward_callback
+	elseif arg_14_0._has_consumed_deed then
+		arg_14_0._has_consumed_deed = nil
+		arg_14_0._reward_callback = arg_14_1
 
-		self:_use_reward_callback()
+		arg_14_0:_use_reward_callback()
 	else
-		self._reward_callback = reward_callback
+		arg_14_0._reward_callback = arg_14_1
 	end
 end
 
-DeedManager.hot_join_sync = function (self, peer_id)
-	if not self:has_deed() then
+function DeedManager.hot_join_sync(arg_15_0, arg_15_1)
+	if not arg_15_0:has_deed() then
 		return
 	end
 
-	local selected_deed_data = self._selected_deed_data
-	local owner_peer_id = self._owner_peer_id
-	local item_name_id = NetworkLookup.item_names[selected_deed_data.name]
+	local var_15_0 = arg_15_0._selected_deed_data
+	local var_15_1 = arg_15_0._owner_peer_id
+	local var_15_2 = NetworkLookup.item_names[var_15_0.name]
 
-	self:_send_rpc_to_client("rpc_select_deed", peer_id, item_name_id, owner_peer_id)
+	arg_15_0:_send_rpc_to_client("rpc_select_deed", arg_15_1, var_15_2, var_15_1)
 end
 
-DeedManager.delete_marked_deeds = function (self, deed_list)
-	local item_interface = Managers.backend:get_interface("items")
+function DeedManager.delete_marked_deeds(arg_16_0, arg_16_1)
+	local var_16_0 = Managers.backend:get_interface("items")
 
-	item_interface:delete_marked_deeds(deed_list)
+	var_16_0:delete_marked_deeds(arg_16_1)
 
-	local is_deleting_deeds = item_interface:is_deleting_deeds()
+	local var_16_1 = var_16_0:is_deleting_deeds()
 
-	self._is_deleting_deeds = is_deleting_deeds
+	arg_16_0._is_deleting_deeds = var_16_1
 
-	return is_deleting_deeds
+	return var_16_1
 end
 
-DeedManager.is_deleting_deeds = function (self)
-	return self._is_deleting_deeds and true or false
+function DeedManager.is_deleting_deeds(arg_17_0)
+	return arg_17_0._is_deleting_deeds and true or false
 end
 
-DeedManager._update_deed_deletion = function (self)
-	local is_deleting_deeds = self._is_deleting_deeds
-
-	if is_deleting_deeds then
-		local item_interface = Managers.backend:get_interface("items")
-		local deletion_completed = item_interface:is_deleting_deeds()
-
-		if not deletion_completed then
-			self._is_deleting_deeds = nil
-		end
+function DeedManager._update_deed_deletion(arg_18_0)
+	if arg_18_0._is_deleting_deeds and not Managers.backend:get_interface("items"):is_deleting_deeds() then
+		arg_18_0._is_deleting_deeds = nil
 	end
 end
 
-DeedManager.can_delete_deeds = function (self, current_deeds, marked_deeds)
-	local item_interface = Managers.backend:get_interface("items")
-	local can_delete, remaining_deeds, deletable_deeds = item_interface:can_delete_deeds(current_deeds, marked_deeds)
-	local num_marked_deeds, num_deletable_deeds
+function DeedManager.can_delete_deeds(arg_19_0, arg_19_1, arg_19_2)
+	local var_19_0, var_19_1, var_19_2 = Managers.backend:get_interface("items"):can_delete_deeds(arg_19_1, arg_19_2)
+	local var_19_3
+	local var_19_4
+	local var_19_5 = arg_19_2 and #arg_19_2 or 0
+	local var_19_6 = var_19_2 and #var_19_2 or 0
 
-	num_marked_deeds = marked_deeds and #marked_deeds or 0
-	num_deletable_deeds = deletable_deeds and #deletable_deeds or 0
-
-	if can_delete and num_deletable_deeds ~= num_marked_deeds then
-		return remaining_deeds, deletable_deeds, "Not all marked deeds could be deleted."
+	if var_19_0 and var_19_6 ~= var_19_5 then
+		return var_19_1, var_19_2, "Not all marked deeds could be deleted."
 	end
 
-	if not can_delete then
+	if not var_19_0 then
 		return nil, nil, "No deeds could be deleted!"
 	end
 
-	return remaining_deeds, deletable_deeds, nil
+	return var_19_1, var_19_2, nil
 end
 
-DeedManager.update = function (self, dt)
-	if self:has_deed() then
-		self:_update_owner(dt)
+function DeedManager.update(arg_20_0, arg_20_1)
+	if arg_20_0:has_deed() then
+		arg_20_0:_update_owner(arg_20_1)
 	end
 
-	self:_update_deed_deletion()
+	arg_20_0:_update_deed_deletion()
 end
 
-DeedManager.select_deed = function (self, backend_id, peer_id)
-	local item_interface = Managers.backend:get_interface("items")
-	local item = item_interface:get_item_from_id(backend_id)
-	local item_data = item.data
+function DeedManager.select_deed(arg_21_0, arg_21_1, arg_21_2)
+	local var_21_0 = Managers.backend:get_interface("items"):get_item_from_id(arg_21_1).data
 
-	self._selected_deed_data = item_data
-	self._selected_deed_id = backend_id
-	self._owner_peer_id = peer_id
-	self._deed_session_faulty = false
+	arg_21_0._selected_deed_data = var_21_0
+	arg_21_0._selected_deed_id = arg_21_1
+	arg_21_0._owner_peer_id = arg_21_2
+	arg_21_0._deed_session_faulty = false
 
-	local network_manager = Managers.state.network
+	local var_21_1 = Managers.state.network
 
-	if network_manager and network_manager:game() then
-		local item_name_id = NetworkLookup.item_names[item_data.name]
+	if var_21_1 and var_21_1:game() then
+		local var_21_2 = NetworkLookup.item_names[var_21_0.name]
 
-		if self._is_server then
-			self:_send_rpc_to_clients("rpc_select_deed", item_name_id, peer_id)
+		if arg_21_0._is_server then
+			arg_21_0:_send_rpc_to_clients("rpc_select_deed", var_21_2, arg_21_2)
 		else
-			self:_send_rpc_to_server("rpc_select_deed", item_name_id, peer_id)
+			arg_21_0:_send_rpc_to_server("rpc_select_deed", var_21_2, arg_21_2)
 		end
 	end
 end
 
-DeedManager._update_owner = function (self, dt)
-	if self._deed_session_faulty then
+function DeedManager._update_owner(arg_22_0, arg_22_1)
+	if arg_22_0._deed_session_faulty then
 		return
 	end
 
-	local owner_peer_id = self._owner_peer_id
-	local lobby = self._lobby
-	local members_map = lobby:members():members_map()
+	local var_22_0 = arg_22_0._owner_peer_id
 
-	if not members_map[owner_peer_id] then
+	if not arg_22_0._lobby:members():members_map()[var_22_0] then
 		Managers.chat:add_local_system_message(1, Localize("deed_owner_left_game"), true)
 
-		self._deed_session_faulty = true
+		arg_22_0._deed_session_faulty = true
 	end
 end
 
-DeedManager._use_reward_callback = function (self)
-	fassert(self._reward_callback, "there is no reward callback")
+function DeedManager._use_reward_callback(arg_23_0)
+	fassert(arg_23_0._reward_callback, "there is no reward callback")
 
-	local reward_callback = self._reward_callback
+	local var_23_0 = arg_23_0._reward_callback
 
-	self._reward_callback = nil
+	arg_23_0._reward_callback = nil
 
-	reward_callback()
+	var_23_0()
 end
 
-DeedManager.rpc_select_deed = function (self, channel_id, item_name_id, owner_peer_id)
-	local item_name = NetworkLookup.item_names[item_name_id]
-	local item_data = ItemMasterList[item_name]
+function DeedManager.rpc_select_deed(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+	local var_24_0 = NetworkLookup.item_names[arg_24_2]
 
-	self._selected_deed_data = item_data
-	self._selected_deed_id = nil
-	self._owner_peer_id = owner_peer_id
+	arg_24_0._selected_deed_data = ItemMasterList[var_24_0]
+	arg_24_0._selected_deed_id = nil
+	arg_24_0._owner_peer_id = arg_24_3
 
-	local network_manager = Managers.state.network
+	local var_24_1 = Managers.state.network
 
-	if self._is_server and network_manager and network_manager:game() then
-		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+	if arg_24_0._is_server and var_24_1 and var_24_1:game() then
+		local var_24_2 = CHANNEL_TO_PEER_ID[arg_24_1]
 
-		self:_send_rpc_to_clients_except("rpc_select_deed", peer_id, item_name_id, owner_peer_id)
+		arg_24_0:_send_rpc_to_clients_except("rpc_select_deed", var_24_2, arg_24_2, arg_24_3)
 	end
 end
 
-DeedManager.rpc_deed_consumed = function (self, channel_id)
+function DeedManager.rpc_deed_consumed(arg_25_0, arg_25_1)
 	print("Deed has been consumed by owner, act on reward callback!")
 
-	if not self._reward_callback then
-		self._has_consumed_deed = true
+	if not arg_25_0._reward_callback then
+		arg_25_0._has_consumed_deed = true
 	else
-		self:_use_reward_callback()
+		arg_25_0:_use_reward_callback()
 	end
 
-	local network_manager = Managers.state.network
+	local var_25_0 = Managers.state.network
 
-	if self._is_server and network_manager and network_manager:game() then
+	if arg_25_0._is_server and var_25_0 and var_25_0:game() then
 		print("Sending to the other clients to act on deed consume")
 
-		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+		local var_25_1 = CHANNEL_TO_PEER_ID[arg_25_1]
 
-		self:_send_rpc_to_clients_except("rpc_deed_consumed", peer_id)
+		arg_25_0:_send_rpc_to_clients_except("rpc_deed_consumed", var_25_1)
 	end
 end
 
-DeedManager.rpc_reset_deed = function (self, channel_id)
-	local peer_id = CHANNEL_TO_PEER_ID[channel_id]
-
-	if peer_id ~= self._server_peer_id then
+function DeedManager.rpc_reset_deed(arg_26_0, arg_26_1)
+	if CHANNEL_TO_PEER_ID[arg_26_1] ~= arg_26_0._server_peer_id then
 		print("[DeedManager] Skipping rpc_reset_deed, not sent from current server")
 
 		return
 	end
 
-	local ignore_send = true
+	local var_26_0 = true
 
-	self:reset(ignore_send)
+	arg_26_0:reset(var_26_0)
 end
 
-DeedManager._send_rpc_to_server = function (self, rpc_name, ...)
-	local rpc = RPC[rpc_name]
-	local channel_id = PEER_ID_TO_CHANNEL[self._server_peer_id]
+function DeedManager._send_rpc_to_server(arg_27_0, arg_27_1, ...)
+	local var_27_0 = RPC[arg_27_1]
+	local var_27_1 = PEER_ID_TO_CHANNEL[arg_27_0._server_peer_id]
 
-	rpc(channel_id, ...)
+	var_27_0(var_27_1, ...)
 end
 
-DeedManager._send_rpc_to_clients = function (self, rpc_name, ...)
-	local network_server = self._network_server
+function DeedManager._send_rpc_to_clients(arg_28_0, arg_28_1, ...)
+	local var_28_0 = arg_28_0._network_server
 
-	if not network_server then
+	if not var_28_0 then
 		return
 	end
 
-	local rpc = RPC[rpc_name]
-	local server_peer_id = self._server_peer_id
-	local client_peer_ids = network_server:players_past_connecting()
+	local var_28_1 = RPC[arg_28_1]
+	local var_28_2 = arg_28_0._server_peer_id
+	local var_28_3 = var_28_0:players_past_connecting()
 
-	for i = 1, #client_peer_ids do
-		local peer_id = client_peer_ids[i]
+	for iter_28_0 = 1, #var_28_3 do
+		local var_28_4 = var_28_3[iter_28_0]
 
-		if peer_id ~= server_peer_id then
-			local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+		if var_28_4 ~= var_28_2 then
+			local var_28_5 = PEER_ID_TO_CHANNEL[var_28_4]
 
-			rpc(channel_id, ...)
+			var_28_1(var_28_5, ...)
 		end
 	end
 end
 
-DeedManager._send_rpc_to_clients_except = function (self, rpc_name, except, ...)
-	local network_server = self._network_server
+function DeedManager._send_rpc_to_clients_except(arg_29_0, arg_29_1, arg_29_2, ...)
+	local var_29_0 = arg_29_0._network_server
 
-	if not network_server then
+	if not var_29_0 then
 		return
 	end
 
-	local rpc = RPC[rpc_name]
-	local server_peer_id = self._server_peer_id
-	local client_peer_ids = network_server:players_past_connecting()
+	local var_29_1 = RPC[arg_29_1]
+	local var_29_2 = arg_29_0._server_peer_id
+	local var_29_3 = var_29_0:players_past_connecting()
 
-	for i = 1, #client_peer_ids do
-		local peer_id = client_peer_ids[i]
+	for iter_29_0 = 1, #var_29_3 do
+		local var_29_4 = var_29_3[iter_29_0]
 
-		if peer_id ~= server_peer_id and peer_id ~= except then
-			local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+		if var_29_4 ~= var_29_2 and var_29_4 ~= arg_29_2 then
+			local var_29_5 = PEER_ID_TO_CHANNEL[var_29_4]
 
-			rpc(channel_id, ...)
+			var_29_1(var_29_5, ...)
 		end
 	end
 end
 
-DeedManager._send_rpc_to_client = function (self, rpc_name, client_peer_id, ...)
-	local network_server = self._network_server
-
-	if not network_server then
+function DeedManager._send_rpc_to_client(arg_30_0, arg_30_1, arg_30_2, ...)
+	if not arg_30_0._network_server then
 		return
 	end
 
-	local rpc = RPC[rpc_name]
-	local channel_id = PEER_ID_TO_CHANNEL[client_peer_id]
+	local var_30_0 = RPC[arg_30_1]
+	local var_30_1 = PEER_ID_TO_CHANNEL[arg_30_2]
 
-	rpc(channel_id, ...)
+	var_30_0(var_30_1, ...)
 end

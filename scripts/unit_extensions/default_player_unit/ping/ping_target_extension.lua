@@ -1,123 +1,120 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/ping/ping_target_extension.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/ping/ping_target_extension.lua
 
 PingTargetExtension = class(PingTargetExtension)
 
-PingTargetExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self._world = extension_init_context.world
-	self._unit = unit
-	self._pinged = 0
-	self._outline_ids = {}
+function PingTargetExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._world = arg_1_1.world
+	arg_1_0._unit = arg_1_2
+	arg_1_0._pinged = 0
+	arg_1_0._outline_ids = {}
 
-	if extension_init_data.always_pingable == nil then
-		self.always_pingable = Unit.get_data(unit, "ping_data", "always_pingable")
+	if arg_1_3.always_pingable == nil then
+		arg_1_0.always_pingable = Unit.get_data(arg_1_2, "ping_data", "always_pingable")
 	else
-		self.always_pingable = extension_init_data.always_pingable
+		arg_1_0.always_pingable = arg_1_3.always_pingable
 	end
 end
 
-PingTargetExtension.extensions_ready = function (self, world, unit)
-	self._outline_extension = ScriptUnit.has_extension(unit, "outline_system")
-	self._buff_extension = ScriptUnit.has_extension(unit, "buff_system")
-	self._locomotion_extension = ScriptUnit.has_extension(unit, "locomotion_system")
+function PingTargetExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+	arg_2_0._outline_extension = ScriptUnit.has_extension(arg_2_2, "outline_system")
+	arg_2_0._buff_extension = ScriptUnit.has_extension(arg_2_2, "buff_system")
+	arg_2_0._locomotion_extension = ScriptUnit.has_extension(arg_2_2, "locomotion_system")
 end
 
-PingTargetExtension.set_pinged = function (self, pinged, flash, pinger_unit, show_outline)
-	local owner_unit = self._unit
+function PingTargetExtension.set_pinged(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local var_3_0 = arg_3_0._unit
 
-	show_outline = show_outline == nil and true or show_outline
+	arg_3_4 = arg_3_4 == nil and true or arg_3_4
 
-	if pinged then
-		self._pinged = self._pinged + 1
+	if arg_3_1 then
+		arg_3_0._pinged = arg_3_0._pinged + 1
 	else
-		self._pinged = self._pinged - 1
+		arg_3_0._pinged = arg_3_0._pinged - 1
 	end
 
-	if self._outline_extension then
-		if show_outline then
-			if pinged then
-				local ping_outline_template = table.shallow_copy(OutlineSettings.templates.ping_unit, true)
+	if arg_3_0._outline_extension then
+		if arg_3_4 then
+			if arg_3_1 then
+				local var_3_1 = table.shallow_copy(OutlineSettings.templates.ping_unit, true)
 
-				ping_outline_template.method = self._outline_extension.pinged_method
+				var_3_1.method = arg_3_0._outline_extension.pinged_method
 
-				local outline_id = self._outline_extension:add_outline(ping_outline_template)
+				local var_3_2 = arg_3_0._outline_extension:add_outline(var_3_1)
 
-				self._outline_ids[pinger_unit] = outline_id
+				arg_3_0._outline_ids[arg_3_3] = var_3_2
 			else
-				local outline_id = self._outline_ids[pinger_unit]
+				local var_3_3 = arg_3_0._outline_ids[arg_3_3]
 
-				self._outline_extension:remove_outline(outline_id)
+				arg_3_0._outline_extension:remove_outline(var_3_3)
 
-				self._outline_ids[pinger_unit] = nil
+				arg_3_0._outline_ids[arg_3_3] = nil
 			end
 		end
 
-		if pinged then
-			self:_add_witch_hunter_buff(pinger_unit)
+		if arg_3_1 then
+			arg_3_0:_add_witch_hunter_buff(arg_3_3)
 		end
 	end
 
-	if Unit.alive(owner_unit) then
-		local breed = Unit.get_data(owner_unit, "breed")
+	if Unit.alive(var_3_0) then
+		if Unit.get_data(var_3_0, "breed") then
+			local var_3_4 = ScriptUnit.has_extension(var_3_0, "proximity_system")
 
-		if breed then
-			local proximity_extension = ScriptUnit.has_extension(owner_unit, "proximity_system")
-
-			if proximity_extension then
-				proximity_extension.has_been_seen = true
+			if var_3_4 then
+				var_3_4.has_been_seen = true
 			end
 		end
 
-		local pinger_buff_extension = ScriptUnit.has_extension(pinger_unit, "buff_system")
+		local var_3_5 = ScriptUnit.has_extension(arg_3_3, "buff_system")
 
-		if pinger_buff_extension then
-			pinger_buff_extension:trigger_procs("on_pinged", owner_unit, pinger_unit, pinged)
+		if var_3_5 then
+			var_3_5:trigger_procs("on_pinged", var_3_0, arg_3_3, arg_3_1)
 		end
 
-		Managers.state.event:trigger_referenced(owner_unit, "on_pinged", pinger_unit, pinged)
+		Managers.state.event:trigger_referenced(var_3_0, "on_pinged", arg_3_3, arg_3_1)
 	end
 end
 
-PingTargetExtension.pinged = function (self)
-	return self._pinged > 0
+function PingTargetExtension.pinged(arg_4_0)
+	return arg_4_0._pinged > 0
 end
 
-PingTargetExtension.update = function (self, unit, input, dt, context, t)
+function PingTargetExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	return
 end
 
-PingTargetExtension.destroy = function (self)
+function PingTargetExtension.destroy(arg_6_0)
 	return
 end
 
-PingTargetExtension._add_witch_hunter_buff = function (self, pinger_unit)
+function PingTargetExtension._add_witch_hunter_buff(arg_7_0, arg_7_1)
 	if not Managers.state.network.is_server then
 		return
 	end
 
-	local buff_extension = self._buff_extension
+	local var_7_0 = arg_7_0._buff_extension
 
-	if buff_extension then
-		local wh_buff_name = "defence_debuff_enemies"
-		local side = Managers.state.side.side_by_unit[pinger_unit]
+	if var_7_0 then
+		local var_7_1 = "defence_debuff_enemies"
+		local var_7_2 = Managers.state.side.side_by_unit[arg_7_1]
 
-		if not side then
+		if not var_7_2 then
 			return
 		end
 
-		local player_and_bot_units = side.PLAYER_AND_BOT_UNITS
-		local num_units = #player_and_bot_units
+		local var_7_3 = var_7_2.PLAYER_AND_BOT_UNITS
+		local var_7_4 = #var_7_3
 
-		for i = 1, num_units do
-			local player_unit = player_and_bot_units[i]
-			local career_extension = ScriptUnit.has_extension(player_unit, "career_system")
-			local talent_extension = ScriptUnit.has_extension(player_unit, "talent_system")
-			local career_name = career_extension and career_extension:career_name()
+		for iter_7_0 = 1, var_7_4 do
+			local var_7_5 = var_7_3[iter_7_0]
+			local var_7_6 = ScriptUnit.has_extension(var_7_5, "career_system")
+			local var_7_7 = ScriptUnit.has_extension(var_7_5, "talent_system")
 
-			if career_name == "wh_captain" then
-				buff_extension:add_buff(wh_buff_name)
+			if (var_7_6 and var_7_6:career_name()) == "wh_captain" then
+				var_7_0:add_buff(var_7_1)
 
-				if talent_extension:has_talent("victor_witchhunter_improved_damage_taken_ping") then
-					buff_extension:add_buff("victor_witchhunter_improved_damage_taken_ping")
+				if var_7_7:has_talent("victor_witchhunter_improved_damage_taken_ping") then
+					var_7_0:add_buff("victor_witchhunter_improved_damage_taken_ping")
 				end
 			end
 		end

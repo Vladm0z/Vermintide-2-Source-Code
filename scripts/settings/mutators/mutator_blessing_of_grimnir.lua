@@ -1,27 +1,25 @@
-﻿-- chunkname: @scripts/settings/mutators/mutator_blessing_of_grimnir.lua
+-- chunkname: @scripts/settings/mutators/mutator_blessing_of_grimnir.lua
 
 require("scripts/settings/dlcs/morris/deus_blessing_settings")
 
-local BOSS_BUFF = "blessing_of_grimnir_boss_buff"
-local PLAYER_BUFF = "blessing_of_grimnir_player_buff"
-local SOUND_EVENTS = {
-	monster_killed = "Play_blessing_challenge_of_grimnir_activate",
+local var_0_0 = "blessing_of_grimnir_boss_buff"
+local var_0_1 = "blessing_of_grimnir_player_buff"
+local var_0_2 = {
+	monster_killed = "Play_blessing_challenge_of_grimnir_activate"
 }
 
-local function buff_all_players(buff_name)
-	local side = Managers.state.side:get_side_from_name("heroes")
-	local current_player_units = side.PLAYER_UNITS
-	local num_current_player_units = #current_player_units
-	local health_alive = HEALTH_ALIVE
-	local buff_system = Managers.state.entity:system("buff_system")
-	local server_controlled = false
+local function var_0_3(arg_1_0)
+	local var_1_0 = Managers.state.side:get_side_from_name("heroes").PLAYER_UNITS
+	local var_1_1 = #var_1_0
+	local var_1_2 = HEALTH_ALIVE
+	local var_1_3 = Managers.state.entity:system("buff_system")
+	local var_1_4 = false
 
-	for i = 1, num_current_player_units do
-		local unit = current_player_units[i]
-		local is_alive = health_alive[unit]
+	for iter_1_0 = 1, var_1_1 do
+		local var_1_5 = var_1_0[iter_1_0]
 
-		if is_alive then
-			buff_system:add_buff(unit, buff_name, unit, server_controlled)
+		if var_1_2[var_1_5] then
+			var_1_3:add_buff(var_1_5, arg_1_0, var_1_5, var_1_4)
 		end
 	end
 end
@@ -30,107 +28,101 @@ return {
 	display_name = DeusBlessingSettings.blessing_of_grimnir.display_name,
 	description = DeusBlessingSettings.blessing_of_grimnir.description,
 	icon = DeusBlessingSettings.blessing_of_grimnir.icon,
-	server_start_function = function (context, data, unit)
-		local conflict_director = Managers.state.conflict
+	server_start_function = function(arg_2_0, arg_2_1, arg_2_2)
+		local var_2_0 = Managers.state.conflict
 
-		if not conflict_director.enemy_recycler then
+		if not var_2_0.enemy_recycler then
 			return
 		end
 
-		local existing_events = conflict_director.enemy_recycler.main_path_events
+		local var_2_1 = var_2_0.enemy_recycler.main_path_events
 
-		for _, event in ipairs(existing_events) do
-			if event[4].event_kind == "event_boss" then
+		for iter_2_0, iter_2_1 in ipairs(var_2_1) do
+			if iter_2_1[4].event_kind == "event_boss" then
 				return
 			end
 		end
 
-		local boss_spawners = conflict_director.level_analysis.terror_spawners.event_boss.spawners
+		local var_2_2 = var_2_0.level_analysis.terror_spawners.event_boss.spawners
 
-		if #boss_spawners <= 0 then
+		if #var_2_2 <= 0 then
 			return
 		end
 
-		local spawner = boss_spawners[1]
-		local spawner_pos = Unit.local_position(spawner[1], 0)
-		local boxed_pos = Vector3Box(spawner_pos)
-		local event_data = {
-			event_kind = "event_boss",
+		local var_2_3 = var_2_2[1]
+		local var_2_4 = Unit.local_position(var_2_3[1], 0)
+		local var_2_5 = Vector3Box(var_2_4)
+		local var_2_6 = {
+			event_kind = "event_boss"
 		}
-		local terror_events = CurrentBossSettings.boss_events.event_lookup.event_boss
-		local seed = Managers.mechanism:get_level_seed("mutator")
-		local _, index = Math.next_random(seed, 1, #terror_events)
-		local terror_event_name = terror_events[index]
+		local var_2_7 = CurrentBossSettings.boss_events.event_lookup.event_boss
+		local var_2_8 = Managers.mechanism:get_level_seed("mutator")
+		local var_2_9, var_2_10 = Math.next_random(var_2_8, 1, #var_2_7)
+		local var_2_11 = var_2_7[var_2_10]
 
-		conflict_director.enemy_recycler:add_main_path_terror_event(boxed_pos, terror_event_name, 45, event_data)
+		var_2_0.enemy_recycler:add_main_path_terror_event(var_2_5, var_2_11, 45, var_2_6)
 	end,
-	server_update_function = function (context, data, dt, t)
-		if data.unit_to_mark and Managers.state.network:game_object_or_level_id(data.unit_to_mark) then
-			local unit = data.unit_to_mark
+	server_update_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		if arg_3_1.unit_to_mark and Managers.state.network:game_object_or_level_id(arg_3_1.unit_to_mark) then
+			local var_3_0 = arg_3_1.unit_to_mark
 
-			data.marked_unit = unit
-			data.unit_to_mark = nil
+			arg_3_1.marked_unit = var_3_0
+			arg_3_1.unit_to_mark = nil
 
-			local buff_system = Managers.state.entity:system("buff_system")
+			local var_3_1 = Managers.state.entity:system("buff_system")
 
-			buff_system:add_buff(unit, "objective_unit", unit)
-			buff_system:add_buff(unit, BOSS_BUFF, unit)
+			var_3_1:add_buff(var_3_0, "objective_unit", var_3_0)
+			var_3_1:add_buff(var_3_0, var_0_0, var_3_0)
 
-			local blackboard = BLACKBOARDS[unit]
+			local var_3_2 = BLACKBOARDS[var_3_0]
 
-			blackboard.optional_spawn_data = blackboard.optional_spawn_data or {}
-			blackboard.optional_spawn_data.prevent_killed_enemy_dialogue = true
+			var_3_2.optional_spawn_data = var_3_2.optional_spawn_data or {}
+			var_3_2.optional_spawn_data.prevent_killed_enemy_dialogue = true
 
-			local dialogue_system = Managers.state.entity:system("dialogue_system")
-			local player_unit = dialogue_system:get_random_player()
+			local var_3_3 = Managers.state.entity:system("dialogue_system"):get_random_player()
 
-			if player_unit then
-				local dialogue_input = ScriptUnit.extension_input(player_unit, "dialogue_system")
-				local event_data = FrameTable.alloc_table()
+			if var_3_3 then
+				local var_3_4 = ScriptUnit.extension_input(var_3_3, "dialogue_system")
+				local var_3_5 = FrameTable.alloc_table()
 
-				dialogue_input:trigger_dialogue_event("blessing_grimnir_monster_spotted", event_data)
+				var_3_4:trigger_dialogue_event("blessing_grimnir_monster_spotted", var_3_5)
 			end
 		end
 	end,
-	server_ai_spawned_function = function (context, data, unit)
-		if data.boss_spawned then
+	server_ai_spawned_function = function(arg_4_0, arg_4_1, arg_4_2)
+		if arg_4_1.boss_spawned then
 			return
 		end
 
-		local breed = Unit.get_data(unit, "breed")
-
-		if breed.boss then
-			data.boss_spawned = true
-			data.unit_to_mark = unit
+		if Unit.get_data(arg_4_2, "breed").boss then
+			arg_4_1.boss_spawned = true
+			arg_4_1.unit_to_mark = arg_4_2
 		end
 	end,
-	server_ai_killed_function = function (context, data, killed_unit, killer_unit)
-		if killed_unit == data.marked_unit then
-			buff_all_players(PLAYER_BUFF)
+	server_ai_killed_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+		if arg_5_2 == arg_5_1.marked_unit then
+			var_0_3(var_0_1)
 
-			data.marked_unit = nil
+			arg_5_1.marked_unit = nil
 
-			local dialogue_system = Managers.state.entity:system("dialogue_system")
-			local unit = dialogue_system:get_random_player()
+			local var_5_0 = Managers.state.entity:system("dialogue_system"):get_random_player()
 
-			if unit then
-				local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
-				local event_data = FrameTable.alloc_table()
+			if var_5_0 then
+				local var_5_1 = ScriptUnit.extension_input(var_5_0, "dialogue_system")
+				local var_5_2 = FrameTable.alloc_table()
 
-				dialogue_input:trigger_dialogue_event("blessing_grimnir_monster_killed", event_data)
+				var_5_1:trigger_dialogue_event("blessing_grimnir_monster_killed", var_5_2)
 			end
 
-			local audio_system = Managers.state.entity:system("audio_system")
+			Managers.state.entity:system("audio_system"):play_2d_audio_event(var_0_2.monster_killed)
 
-			audio_system:play_2d_audio_event(SOUND_EVENTS.monster_killed)
+			local var_5_3 = Network.peer_id()
+			local var_5_4 = Managers.player:player_from_peer_id(var_5_3)
+			local var_5_5 = var_5_4 and var_5_4.local_player
 
-			local peer_id = Network.peer_id()
-			local player = Managers.player:player_from_peer_id(peer_id)
-			local local_human = player and player.local_player
-
-			if local_human then
-				Managers.state.event:trigger("add_coop_feedback", player:stats_id(), local_human, "collected_grimnir_reward", player, player)
+			if var_5_5 then
+				Managers.state.event:trigger("add_coop_feedback", var_5_4:stats_id(), var_5_5, "collected_grimnir_reward", var_5_4, var_5_4)
 			end
 		end
-	end,
+	end
 }

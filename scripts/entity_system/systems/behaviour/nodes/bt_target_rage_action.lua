@@ -1,115 +1,112 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_target_rage_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_target_rage_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTTargetRageAction = class(BTTargetRageAction, BTNode)
 
-BTTargetRageAction.init = function (self, ...)
-	BTTargetRageAction.super.init(self, ...)
+function BTTargetRageAction.init(arg_1_0, ...)
+	BTTargetRageAction.super.init(arg_1_0, ...)
 end
 
-local POSITION_LOOKUP = POSITION_LOOKUP
+local var_0_0 = POSITION_LOOKUP
 
-local function debug3d(unit, text, color_name)
+local function var_0_1(arg_2_0, arg_2_1, arg_2_2)
 	if script_data.debug_ai_movement then
-		Debug.world_sticky_text(POSITION_LOOKUP[unit] + Vector3.up(), text, color_name)
+		Debug.world_sticky_text(var_0_0[arg_2_0] + Vector3.up(), arg_2_1, arg_2_2)
 	end
 end
 
 BTTargetRageAction.name = "BTTargetRageAction"
 
-BTTargetRageAction.enter = function (self, unit, blackboard, t)
-	local action = self._tree_node.action_data
+function BTTargetRageAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	local var_3_0 = arg_3_0._tree_node.action_data
 
-	blackboard.action = action
-	blackboard.active_node = self
+	arg_3_2.action = var_3_0
+	arg_3_2.active_node = arg_3_0
 
-	local start_anims
-	local is_close = action.close_anims_name and blackboard.target_dist < action.close_anims_dist
+	local var_3_1
 
-	if is_close then
-		blackboard.anim_locked = t + action.close_rage_time
-		start_anims = action.close_anims_name
+	if var_3_0.close_anims_name and arg_3_2.target_dist < var_3_0.close_anims_dist then
+		arg_3_2.anim_locked = arg_3_3 + var_3_0.close_rage_time
+		var_3_1 = var_3_0.close_anims_name
 	else
-		blackboard.anim_locked = t + action.rage_time
-		start_anims = action.start_anims_name
+		arg_3_2.anim_locked = arg_3_3 + var_3_0.rage_time
+		var_3_1 = var_3_0.start_anims_name
 	end
 
-	local target_pos = POSITION_LOOKUP[blackboard.target_unit]
-	local rage_anim = action.rage_anim or AiAnimUtils.get_start_move_animation(unit, target_pos, start_anims)
+	local var_3_2 = var_0_0[arg_3_2.target_unit]
+	local var_3_3 = var_3_0.rage_anim or AiAnimUtils.get_start_move_animation(arg_3_1, var_3_2, var_3_1)
 
-	if rage_anim == nil then
-		blackboard.anim_locked = 0
+	if var_3_3 == nil then
+		arg_3_2.anim_locked = 0
 
 		return
 	end
 
-	local anim_driven = false
+	local var_3_4 = false
 
-	if start_anims then
-		anim_driven = rage_anim ~= start_anims.fwd
-		blackboard.attack_anim_driven = anim_driven
+	if var_3_1 then
+		var_3_4 = var_3_3 ~= var_3_1.fwd
+		arg_3_2.attack_anim_driven = var_3_4
 	end
 
-	local locomotion_extension = blackboard.locomotion_extension
+	local var_3_5 = arg_3_2.locomotion_extension
 
-	locomotion_extension:use_lerp_rotation(not anim_driven)
+	var_3_5:use_lerp_rotation(not var_3_4)
 
-	if action.rotation_speed then
-		locomotion_extension:set_rotation_speed(action.rotation_speed)
+	if var_3_0.rotation_speed then
+		var_3_5:set_rotation_speed(var_3_0.rotation_speed)
 	end
 
-	LocomotionUtils.set_animation_driven_movement(unit, anim_driven, false, false)
+	LocomotionUtils.set_animation_driven_movement(arg_3_1, var_3_4, false, false)
 
-	if anim_driven then
-		blackboard.move_animation_name = rage_anim
-	elseif action.change_target_fwd_close_anims and blackboard.target_dist < action.change_target_fwd_close_dist then
-		rage_anim = AiAnimUtils.cycle_anims(blackboard, action.change_target_fwd_close_anims, "cycle_rage_anim_index")
+	if var_3_4 then
+		arg_3_2.move_animation_name = var_3_3
+	elseif var_3_0.change_target_fwd_close_anims and arg_3_2.target_dist < var_3_0.change_target_fwd_close_dist then
+		var_3_3 = AiAnimUtils.cycle_anims(arg_3_2, var_3_0.change_target_fwd_close_anims, "cycle_rage_anim_index")
 	end
 
-	blackboard.navigation_extension:stop()
+	arg_3_2.navigation_extension:stop()
 
-	blackboard.move_state = "attacking"
+	arg_3_2.move_state = "attacking"
 
-	local network_manager = Managers.state.network
+	Managers.state.network:anim_event(arg_3_1, var_3_3)
 
-	network_manager:anim_event(unit, rage_anim)
-
-	if blackboard.target_dist > 7 then
-		blackboard.chasing_timer = 25
+	if arg_3_2.target_dist > 7 then
+		arg_3_2.chasing_timer = 25
 	end
 end
 
-BTTargetRageAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	blackboard.action = nil
-	blackboard.active_node = nil
-	blackboard.anim_cb_move = nil
-	blackboard.anim_locked = nil
-	blackboard.target_changed = nil
-	blackboard.move_animation_name = nil
+function BTTargetRageAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	arg_4_2.action = nil
+	arg_4_2.active_node = nil
+	arg_4_2.anim_cb_move = nil
+	arg_4_2.anim_locked = nil
+	arg_4_2.target_changed = nil
+	arg_4_2.move_animation_name = nil
 
-	if not destroy then
-		blackboard.locomotion_extension:use_lerp_rotation(true)
-		blackboard.locomotion_extension:set_rotation_speed(nil)
-		LocomotionUtils.set_animation_driven_movement(unit, false)
+	if not arg_4_5 then
+		arg_4_2.locomotion_extension:use_lerp_rotation(true)
+		arg_4_2.locomotion_extension:set_rotation_speed(nil)
+		LocomotionUtils.set_animation_driven_movement(arg_4_1, false)
 	end
 end
 
-BTTargetRageAction.run = function (self, unit, blackboard, t, dt)
-	if t < blackboard.anim_locked then
-		if blackboard.attack_anim_driven then
-			if blackboard.anim_cb_rotation_start then
-				local target_pos = POSITION_LOOKUP[blackboard.target_unit]
-				local rot_scale = AiAnimUtils.get_animation_rotation_scale(unit, target_pos, blackboard.move_animation_name, blackboard.action.start_anims_data)
+function BTTargetRageAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	if arg_5_3 < arg_5_2.anim_locked then
+		if arg_5_2.attack_anim_driven then
+			if arg_5_2.anim_cb_rotation_start then
+				local var_5_0 = var_0_0[arg_5_2.target_unit]
+				local var_5_1 = AiAnimUtils.get_animation_rotation_scale(arg_5_1, var_5_0, arg_5_2.move_animation_name, arg_5_2.action.start_anims_data)
 
-				LocomotionUtils.set_animation_rotation_scale(unit, rot_scale)
+				LocomotionUtils.set_animation_rotation_scale(arg_5_1, var_5_1)
 
-				blackboard.anim_cb_rotation_start = nil
+				arg_5_2.anim_cb_rotation_start = nil
 			end
 		else
-			local rot = LocomotionUtils.rotation_towards_unit_flat(unit, blackboard.target_unit)
+			local var_5_2 = LocomotionUtils.rotation_towards_unit_flat(arg_5_1, arg_5_2.target_unit)
 
-			blackboard.locomotion_extension:set_wanted_rotation(rot)
+			arg_5_2.locomotion_extension:set_wanted_rotation(var_5_2)
 		end
 
 		return "running"
@@ -118,6 +115,6 @@ BTTargetRageAction.run = function (self, unit, blackboard, t, dt)
 	return "done"
 end
 
-BTTargetRageAction.anim_cb_move = function (self, unit, blackboard, action)
-	blackboard.move_state = "moving"
+function BTTargetRageAction.anim_cb_move(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	arg_6_2.move_state = "moving"
 end

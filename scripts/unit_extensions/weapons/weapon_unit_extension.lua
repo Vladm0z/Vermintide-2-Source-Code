@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/weapon_unit_extension.lua
+-- chunkname: @scripts/unit_extensions/weapons/weapon_unit_extension.lua
 
 require("scripts/unit_extensions/weapons/actions/action_base")
 require("scripts/unit_extensions/weapons/actions/action_ranged_base")
@@ -51,7 +51,7 @@ if Development.parameter("debug_weapons") then
 	script_data.debug_weapons = true
 end
 
-local action_classes = {
+local var_0_0 = {
 	career_aim = ActionCareerAim,
 	career_dummy = ActionCareerDummy,
 	career_true_flight_aim = ActionCareerTrueFlightAim,
@@ -95,46 +95,46 @@ local action_classes = {
 	career_bw_one = ActionCareerBWScholar,
 	career_we_three = ActionCareerWEWaywatcher,
 	career_we_three_piercing = ActionCareerWEWaywatcherPiercing,
-	career_wh_two = ActionCareerWHBountyhunter,
+	career_wh_two = ActionCareerWHBountyhunter
 }
 
 DLCUtils.require_list("action_template_file_names")
-DLCUtils.map("action_classes_lookup", function (action_classes_lookup)
-	for key, class_name in pairs(action_classes_lookup) do
-		action_classes[key] = _G[class_name]
+DLCUtils.map("action_classes_lookup", function(arg_1_0)
+	for iter_1_0, iter_1_1 in pairs(arg_1_0) do
+		var_0_0[iter_1_0] = _G[iter_1_1]
 	end
 end)
 
-local function create_attack(item_name, attack_kind, world, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	return action_classes[attack_kind]:new(world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+local function var_0_1(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
+	return var_0_0[arg_2_1]:new(arg_2_2, arg_2_0, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
 end
 
-local function is_within_damage_window(current_time_in_action, action, owner_unit)
-	local damage_window_start = action.damage_window_start
-	local damage_window_end = action.damage_window_end
+local function var_0_2(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0 = arg_3_1.damage_window_start
+	local var_3_1 = arg_3_1.damage_window_end
 
-	if not damage_window_start and not damage_window_end then
+	if not var_3_0 and not var_3_1 then
 		return false
 	end
 
-	local damage_time_scale = ActionUtils.get_action_time_scale(owner_unit, action, false)
+	local var_3_2 = ActionUtils.get_action_time_scale(arg_3_2, arg_3_1, false)
+	local var_3_3 = var_3_0 / var_3_2
 
-	damage_window_start = damage_window_start / damage_time_scale
-	damage_window_end = damage_window_end or action.total_time or math.huge
-	damage_window_end = damage_window_end / damage_time_scale
+	var_3_1 = var_3_1 or arg_3_1.total_time or math.huge
 
-	local after_start = damage_window_start < current_time_in_action
-	local before_end = current_time_in_action < damage_window_end
+	local var_3_4 = var_3_1 / var_3_2
+	local var_3_5 = var_3_3 < arg_3_0
+	local var_3_6 = arg_3_0 < var_3_4
 
-	return after_start and before_end
+	return var_3_5 and var_3_6
 end
 
-local function get_skin_action_override_data(skin_anim_data, action_settings)
-	if skin_anim_data then
-		local lookup_data = action_settings.lookup_data
-		local action_overrides = skin_anim_data[lookup_data.action_name]
+local function var_0_3(arg_4_0, arg_4_1)
+	if arg_4_0 then
+		local var_4_0 = arg_4_1.lookup_data
+		local var_4_1 = arg_4_0[var_4_0.action_name]
 
-		return action_overrides and action_overrides[lookup_data.sub_action_name]
+		return var_4_1 and var_4_1[var_4_0.sub_action_name]
 	end
 
 	return nil
@@ -142,1325 +142,1300 @@ end
 
 WeaponUnitExtension = class(WeaponUnitExtension)
 
-WeaponUnitExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self.weapon_system = extension_init_data.weapon_system
+function WeaponUnitExtension.init(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	arg_5_0.weapon_system = arg_5_3.weapon_system
 
-	local world = extension_init_context.world
+	local var_5_0 = arg_5_1.world
 
-	self.world = world
-	self.wwise_world = Managers.world:wwise_world(world)
-	self.unit = unit
+	arg_5_0.world = var_5_0
+	arg_5_0.wwise_world = Managers.world:wwise_world(var_5_0)
+	arg_5_0.unit = arg_5_2
 
-	local owner_unit = extension_init_data.owner_unit
+	local var_5_1 = arg_5_3.owner_unit
 
-	self.owner_unit = owner_unit
-	self.item_name = extension_init_data.item_name
+	arg_5_0.owner_unit = var_5_1
+	arg_5_0.item_name = arg_5_3.item_name
 
-	local first_person_unit = extension_init_data.first_person_rig
+	local var_5_2 = arg_5_3.first_person_rig
 
-	self.first_person_unit = first_person_unit
+	arg_5_0.first_person_unit = var_5_2
 
-	local weapon_skin_name = extension_init_data.skin_name
-	local weapon_skin_data = WeaponSkins.skins[weapon_skin_name]
+	local var_5_3 = arg_5_3.skin_name
+	local var_5_4 = WeaponSkins.skins[var_5_3]
 
-	self.weapon_skin_anim_overrides = weapon_skin_data and weapon_skin_data.action_anim_overrides
+	arg_5_0.weapon_skin_anim_overrides = var_5_4 and var_5_4.action_anim_overrides
 
-	local actual_damage_unit = World.spawn_unit(world, "units/weapons/player/wpn_damage/wpn_damage")
+	local var_5_5 = World.spawn_unit(var_5_0, "units/weapons/player/wpn_damage/wpn_damage")
 
-	Unit.disable_physics(actual_damage_unit)
-	Unit.set_unit_visibility(actual_damage_unit, false)
+	Unit.disable_physics(var_5_5)
+	Unit.set_unit_visibility(var_5_5, false)
 
-	if first_person_unit then
-		local attach_nodes = extension_init_data.attach_nodes
-		local attachment_nodes = attach_nodes[1]
-		local source_node = attachment_nodes.source
-		local target_node = 0
-		local source_node_index = type(source_node) == "string" and Unit.node(first_person_unit, source_node) or source_node
-		local target_node_index = type(target_node) == "string" and Unit.node(actual_damage_unit, target_node) or target_node
+	if var_5_2 then
+		local var_5_6 = arg_5_3.attach_nodes[1].source
+		local var_5_7 = 0
+		local var_5_8 = type(var_5_6) == "string" and Unit.node(var_5_2, var_5_6) or var_5_6
+		local var_5_9 = type(var_5_7) == "string" and Unit.node(var_5_5, var_5_7) or var_5_7
 
-		World.link_unit(world, actual_damage_unit, target_node_index, first_person_unit, source_node_index)
+		World.link_unit(var_5_0, var_5_5, var_5_9, var_5_2, var_5_8)
 	end
 
-	self.actual_damage_unit = actual_damage_unit
-	self.actions = {}
-	self.action_buff_data = {
+	arg_5_0.actual_damage_unit = var_5_5
+	arg_5_0.actions = {}
+	arg_5_0.action_buff_data = {
 		buff_start_times = {},
 		buff_end_times = {},
 		action_buffs_in_progress = {},
-		buff_identifiers = {},
+		buff_identifiers = {}
 	}
-	self.cooldown_timer = {}
-	self.chain_action_sound_played = {}
-	self.is_server = Managers.state.network.network_transmit.is_server
+	arg_5_0.cooldown_timer = {}
+	arg_5_0.chain_action_sound_played = {}
+	arg_5_0.is_server = Managers.state.network.network_transmit.is_server
 
-	local player_manager = Managers.player
-	local player = player_manager:unit_owner(owner_unit)
+	local var_5_10 = Managers.player:unit_owner(var_5_1)
 
-	if player and player.bot_player then
-		self.bot_attack_data = {
-			request = {},
+	if var_5_10 and var_5_10.bot_player then
+		arg_5_0.bot_attack_data = {
+			request = {}
 		}
 	end
 
-	self.looping_audio_events = {}
-	self._current_weapon_buffs = {}
-	self._custom_data = {}
-	self._passive_update_actions = nil
-	self._passive_update_actions_n = 0
+	arg_5_0.looping_audio_events = {}
+	arg_5_0._current_weapon_buffs = {}
+	arg_5_0._custom_data = {}
+	arg_5_0._passive_update_actions = nil
+	arg_5_0._passive_update_actions_n = 0
 
-	local item_data = rawget(ItemMasterList, self.item_name)
-	local weapon_template_name = item_data and item_data.template
+	local var_5_11 = rawget(ItemMasterList, arg_5_0.item_name)
+	local var_5_12 = var_5_11 and var_5_11.template
 
-	if weapon_template_name then
-		self._weapon_template_name = weapon_template_name
+	if var_5_12 then
+		arg_5_0._weapon_template_name = var_5_12
 
-		local template = WeaponUtils.get_weapon_template(weapon_template_name)
-		local custom_data = template.custom_data
+		local var_5_13 = WeaponUtils.get_weapon_template(var_5_12)
+		local var_5_14 = var_5_13.custom_data
 
-		if custom_data then
-			for key, value in pairs(custom_data) do
-				if type(value) == "table" then
-					self._custom_data[key] = Script.new_table(value.array_size or 0, value.map_size or 0)
+		if var_5_14 then
+			for iter_5_0, iter_5_1 in pairs(var_5_14) do
+				if type(iter_5_1) == "table" then
+					arg_5_0._custom_data[iter_5_0] = Script.new_table(iter_5_1.array_size or 0, iter_5_1.map_size or 0)
 				else
-					self._custom_data[key] = value
+					arg_5_0._custom_data[iter_5_0] = iter_5_1
 				end
 			end
 		end
 
-		self._weapon_update = template and template.update
-		self._weapon_wield = template and template.on_wield
-		self._weapon_unwield = template and template.on_unwield
-		self._synced_weapon_state = nil
-		self._synced_weapon_states = template and template.synced_states
+		arg_5_0._weapon_update = var_5_13 and var_5_13.update
+		arg_5_0._weapon_wield = var_5_13 and var_5_13.on_wield
+		arg_5_0._weapon_unwield = var_5_13 and var_5_13.on_unwield
+		arg_5_0._synced_weapon_state = nil
+		arg_5_0._synced_weapon_states = var_5_13 and var_5_13.synced_states
 
-		if self._synced_weapon_states then
-			self._synced_weapon_state_data = {}
+		if arg_5_0._synced_weapon_states then
+			arg_5_0._synced_weapon_state_data = {}
 		end
 	end
 
-	Managers.state.event:register(self, "on_game_options_changed", "update_game_options")
-	self:update_game_options()
+	Managers.state.event:register(arg_5_0, "on_game_options_changed", "update_game_options")
+	arg_5_0:update_game_options()
 end
 
-WeaponUnitExtension.update_game_options = function (self)
-	local weapon_trails = Application.user_setting("weapon_trails")
+function WeaponUnitExtension.update_game_options(arg_6_0)
+	local var_6_0 = Application.user_setting("weapon_trails")
 
-	Unit.set_data(self.unit, "trails_enabled", weapon_trails ~= "none")
+	Unit.set_data(arg_6_0.unit, "trails_enabled", var_6_0 ~= "none")
 end
 
-WeaponUnitExtension.cb_game_session_disconnect = function (self)
-	self.sync_data_game_object_id = nil
+function WeaponUnitExtension.cb_game_session_disconnect(arg_7_0)
+	arg_7_0.sync_data_game_object_id = nil
 end
 
-WeaponUnitExtension.extensions_ready = function (self, world, unit)
-	self.ammo_extension = ScriptUnit.has_extension(unit, "ammo_system")
+function WeaponUnitExtension.extensions_ready(arg_8_0, arg_8_1, arg_8_2)
+	arg_8_0.ammo_extension = ScriptUnit.has_extension(arg_8_2, "ammo_system")
 
-	local owner_unit = self.owner_unit
+	local var_8_0 = arg_8_0.owner_unit
 
-	self.first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
-	self._buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
-	self._talent_extension = ScriptUnit.has_extension(owner_unit, "talent_system")
+	arg_8_0.first_person_extension = ScriptUnit.extension(var_8_0, "first_person_system")
+	arg_8_0._buff_extension = ScriptUnit.extension(var_8_0, "buff_system")
+	arg_8_0._talent_extension = ScriptUnit.has_extension(var_8_0, "talent_system")
 end
 
-WeaponUnitExtension.unlink_damage_unit = function (self)
-	if self.actual_damage_unit then
-		World.unlink_unit(self.world, self.actual_damage_unit)
+function WeaponUnitExtension.unlink_damage_unit(arg_9_0)
+	if arg_9_0.actual_damage_unit then
+		World.unlink_unit(arg_9_0.world, arg_9_0.actual_damage_unit)
 	end
 end
 
-WeaponUnitExtension.destroy = function (self)
-	Managers.state.event:unregister("on_game_options_changed", self)
+function WeaponUnitExtension.destroy(arg_10_0)
+	Managers.state.event:unregister("on_game_options_changed", arg_10_0)
 
-	if self._synced_weapon_state then
-		local weapon_state = self._synced_weapon_states[self._synced_weapon_state]
+	if arg_10_0._synced_weapon_state then
+		local var_10_0 = arg_10_0._synced_weapon_states[arg_10_0._synced_weapon_state]
 
-		if weapon_state.leave then
-			weapon_state:leave(self.owner_unit, self.unit, self._synced_weapon_state_data, self:_is_local_player(), self.world, nil, true)
+		if var_10_0.leave then
+			var_10_0:leave(arg_10_0.owner_unit, arg_10_0.unit, arg_10_0._synced_weapon_state_data, arg_10_0:_is_local_player(), arg_10_0.world, nil, true)
 		end
 	end
 
-	if self.current_action_settings then
-		local buff_data = self.current_action_settings.buff_data
+	if arg_10_0.current_action_settings then
+		local var_10_1 = arg_10_0.current_action_settings.buff_data
 
-		if buff_data then
-			ActionUtils.remove_action_buff_data(self.action_buff_data, buff_data, self.owner_unit)
+		if var_10_1 then
+			ActionUtils.remove_action_buff_data(arg_10_0.action_buff_data, var_10_1, arg_10_0.owner_unit)
 		end
 
-		local action_kind = self.current_action_settings.kind
-		local attack_prev = self.actions[action_kind]
+		local var_10_2 = arg_10_0.current_action_settings.kind
+		local var_10_3 = arg_10_0.actions[var_10_2]
 
-		if attack_prev.destroy then
-			attack_prev:destroy()
+		if var_10_3.destroy then
+			var_10_3:destroy()
 		end
 	end
 
-	for id in pairs(self.looping_audio_events) do
-		self:stop_looping_audio(id)
+	for iter_10_0 in pairs(arg_10_0.looping_audio_events) do
+		arg_10_0:stop_looping_audio(iter_10_0)
 	end
 
-	if self.first_person_unit then
-		World.unlink_unit(self.world, self.actual_damage_unit)
+	if arg_10_0.first_person_unit then
+		World.unlink_unit(arg_10_0.world, arg_10_0.actual_damage_unit)
 	end
 end
 
-WeaponUnitExtension.get_action = function (self, action_name, sub_action_name, actions)
-	local sub_actions = actions[action_name]
-	local action = sub_actions[sub_action_name]
-
-	return action
+function WeaponUnitExtension.get_action(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+	return arg_11_3[arg_11_1][arg_11_2]
 end
 
-local interupting_action_data = {}
+local var_0_4 = {}
 
-local function get_action_anim_event(previous_action_settings, current_action_settings, skin_data, anim_key)
-	if previous_action_settings then
-		local anim_event_from_chain = current_action_settings.anim_event_from_chain
+local function var_0_5(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	if arg_12_0 then
+		local var_12_0 = arg_12_1.anim_event_from_chain
 
-		if anim_event_from_chain then
-			local lookup_data = previous_action_settings.lookup_data
-			local action_anim_data = anim_event_from_chain[lookup_data.action_name]
+		if var_12_0 then
+			local var_12_1 = arg_12_0.lookup_data
+			local var_12_2 = var_12_0[var_12_1.action_name]
 
-			if action_anim_data then
-				local sub_action_anim_data = action_anim_data[lookup_data.sub_action_name]
+			if var_12_2 then
+				local var_12_3 = var_12_2[var_12_1.sub_action_name]
 
-				if sub_action_anim_data and sub_action_anim_data[anim_key] then
-					return sub_action_anim_data[anim_key]
+				if var_12_3 and var_12_3[arg_12_3] then
+					return var_12_3[arg_12_3]
 				end
 			end
 		end
 	end
 
-	return skin_data and skin_data[anim_key] or current_action_settings[anim_key]
+	return arg_12_2 and arg_12_2[arg_12_3] or arg_12_1[arg_12_3]
 end
 
-WeaponUnitExtension.start_action = function (self, action_name, sub_action_name, actions, t, power_level, action_init_data)
-	local owner_unit = self.owner_unit
-	local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
-	local talent_extension = ScriptUnit.has_extension(owner_unit, "talent_system")
-	local first_person_extension = self.first_person_extension
-	local status_extension = ScriptUnit.extension(owner_unit, "status_system")
-	local current_action_settings = self.current_action_settings
-	local new_action = action_name
-	local new_sub_action = sub_action_name
+function WeaponUnitExtension.start_action(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
+	local var_13_0 = arg_13_0.owner_unit
+	local var_13_1 = ScriptUnit.extension(var_13_0, "buff_system")
+	local var_13_2 = ScriptUnit.has_extension(var_13_0, "talent_system")
+	local var_13_3 = arg_13_0.first_person_extension
+	local var_13_4 = ScriptUnit.extension(var_13_0, "status_system")
+	local var_13_5 = arg_13_0.current_action_settings
+	local var_13_6 = arg_13_1
+	local var_13_7 = arg_13_2
 
-	if not self.player then
-		local player_manager = Managers.player
-		local player = player_manager:unit_owner(owner_unit)
+	if not arg_13_0.player then
+		local var_13_8 = Managers.player:unit_owner(var_13_0)
 
-		self.is_bot = player and not player:is_player_controlled()
-		self.is_local = player and not player.remote
-		self.player = player
+		arg_13_0.is_bot = var_13_8 and not var_13_8:is_player_controlled()
+		arg_13_0.is_local = var_13_8 and not var_13_8.remote
+		arg_13_0.player = var_13_8
 	end
 
-	table.clear(interupting_action_data)
+	table.clear(var_0_4)
 
-	if new_action then
-		local action_settings = self:get_action(new_action, new_sub_action, actions)
+	if var_13_6 then
+		local var_13_9 = arg_13_0:get_action(var_13_6, var_13_7, arg_13_3)
+		local var_13_10, var_13_11, var_13_12 = ActionUtils.resolve_action_selector(var_13_9, var_13_2, var_13_1, arg_13_0, var_13_0)
 
-		action_settings, new_action, new_sub_action = ActionUtils.resolve_action_selector(action_settings, talent_extension, buff_extension, self, owner_unit)
+		var_13_7 = var_13_12
+		var_13_6 = var_13_11
 
-		local action_kind = action_settings.kind
+		local var_13_13 = var_13_10.kind
 
-		if not self.actions[action_kind] then
-			local new_action_instance = create_attack(self.item_name, action_kind, self.world, self.is_server, owner_unit, self.actual_damage_unit, self.first_person_unit, self.unit, self.weapon_system)
+		if not arg_13_0.actions[var_13_13] then
+			local var_13_14 = var_0_1(arg_13_0.item_name, var_13_13, arg_13_0.world, arg_13_0.is_server, var_13_0, arg_13_0.actual_damage_unit, arg_13_0.first_person_unit, arg_13_0.unit, arg_13_0.weapon_system)
 
-			self.actions[action_kind] = new_action_instance
+			arg_13_0.actions[var_13_13] = var_13_14
 
-			if new_action_instance.passive_update then
-				if not self._passive_update_actions then
-					self._passive_update_actions = {
-						new_action_instance,
+			if var_13_14.passive_update then
+				if not arg_13_0._passive_update_actions then
+					arg_13_0._passive_update_actions = {
+						var_13_14
 					}
-					self._passive_update_actions_n = 1
+					arg_13_0._passive_update_actions_n = 1
 				else
-					local passive_update_actions_n = self._passive_update_actions_n + 1
+					local var_13_15 = arg_13_0._passive_update_actions_n + 1
 
-					self._passive_update_actions[passive_update_actions_n] = new_action_instance
-					self._passive_update_actions_n = passive_update_actions_n
+					arg_13_0._passive_update_actions[var_13_15] = var_13_14
+					arg_13_0._passive_update_actions_n = var_13_15
 				end
 			end
 		end
 	end
 
-	local ammo_extension = self.ammo_extension
+	local var_13_16 = arg_13_0.ammo_extension
 
-	if ammo_extension ~= nil and new_action then
-		local action = self:get_action(new_action, new_sub_action, actions)
-		local ammo_requirement = action.ammo_requirement or action.ammo_usage or 0
-		local ammo_count = ammo_extension:ammo_count()
-		local action_can_abort_reload = action.can_abort_reload == nil and true or action.can_abort_reload
+	if var_13_16 ~= nil and var_13_6 then
+		local var_13_17 = arg_13_0:get_action(var_13_6, var_13_7, arg_13_3)
+		local var_13_18 = var_13_17.ammo_requirement or var_13_17.ammo_usage or 0
+		local var_13_19 = var_13_16:ammo_count()
+		local var_13_20 = var_13_17.can_abort_reload == nil and true or var_13_17.can_abort_reload
 
-		if ammo_extension:is_reloading() then
-			if ammo_requirement <= ammo_count and action_can_abort_reload then
-				ammo_extension:abort_reload()
+		if var_13_16:is_reloading() then
+			if var_13_18 <= var_13_19 and var_13_20 then
+				var_13_16:abort_reload()
 			else
-				new_action = nil
-				new_sub_action = nil
+				var_13_6 = nil
+				var_13_7 = nil
 			end
-		elseif ammo_count < ammo_requirement then
-			if ammo_extension:total_remaining_ammo() == 0 and (not self.reload_failed_timer or t > self.reload_failed_timer) and (not action.interaction_type or action.interaction_type ~= "heal") and not action.no_out_of_ammo_vo then
-				local dialogue_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
-				local event_data = FrameTable.alloc_table()
+		elseif var_13_19 < var_13_18 then
+			if var_13_16:total_remaining_ammo() == 0 and (not arg_13_0.reload_failed_timer or arg_13_4 > arg_13_0.reload_failed_timer) and (not var_13_17.interaction_type or var_13_17.interaction_type ~= "heal") and not var_13_17.no_out_of_ammo_vo then
+				local var_13_21 = ScriptUnit.extension_input(var_13_0, "dialogue_system")
+				local var_13_22 = FrameTable.alloc_table()
 
-				event_data.fail_reason = "out_of_ammo"
-				event_data.item_name = "ranged_weapon"
+				var_13_22.fail_reason = "out_of_ammo"
+				var_13_22.item_name = "ranged_weapon"
 
-				local event_name = "reload_failed"
+				local var_13_23 = "reload_failed"
 
-				dialogue_input:trigger_networked_dialogue_event(event_name, event_data)
+				var_13_21:trigger_networked_dialogue_event(var_13_23, var_13_22)
 
-				self.reload_failed_timer = t + 5
+				arg_13_0.reload_failed_timer = arg_13_4 + 5
 			end
 
-			new_action = nil
-			new_sub_action = nil
+			var_13_6 = nil
+			var_13_7 = nil
 		end
 	end
 
-	local chain_action_data, previous_action_settings
+	local var_13_24
+	local var_13_25
 
-	if new_action and current_action_settings then
-		previous_action_settings = current_action_settings
-		interupting_action_data.new_action = new_action
-		interupting_action_data.new_sub_action = new_sub_action
-		interupting_action_data.new_action_settings = self:get_action(new_action, new_sub_action, actions)
-		chain_action_data = self:_finish_action("new_interupting_action", interupting_action_data)
+	if var_13_6 and var_13_5 then
+		var_13_25 = var_13_5
+		var_0_4.new_action = var_13_6
+		var_0_4.new_sub_action = var_13_7
+		var_0_4.new_action_settings = arg_13_0:get_action(var_13_6, var_13_7, arg_13_3)
+		var_13_24 = arg_13_0:_finish_action("new_interupting_action", var_0_4)
 	end
 
-	if new_action then
-		local locomotion_extension = ScriptUnit.extension(owner_unit, "locomotion_system")
+	if var_13_6 then
+		local var_13_26 = ScriptUnit.extension(var_13_0, "locomotion_system")
 
-		if locomotion_extension:is_stood_still() then
-			local look_rotation = first_person_extension:current_rotation()
+		if var_13_26:is_stood_still() then
+			local var_13_27 = var_13_3:current_rotation()
 
-			locomotion_extension:set_stood_still_target_rotation(look_rotation)
+			var_13_26:set_stood_still_target_rotation(var_13_27)
 		end
 
-		local chain_action = current_action_settings ~= nil
+		local var_13_28 = var_13_5 ~= nil
+		local var_13_29 = arg_13_0:get_action(var_13_6, var_13_7, arg_13_3)
 
-		current_action_settings = self:get_action(new_action, new_sub_action, actions)
+		var_13_3:set_weapon_sway_settings(var_13_29.weapon_sway_settings)
 
-		first_person_extension:set_weapon_sway_settings(current_action_settings.weapon_sway_settings)
+		if not var_13_28 and var_13_29.aim_at_gaze_setting then
+			ScriptUnit.extension(var_13_0, "status_system"):set_is_aiming(true)
 
-		if not chain_action and current_action_settings.aim_at_gaze_setting then
-			local status_extension = ScriptUnit.extension(owner_unit, "status_system")
+			if ScriptUnit.has_extension(var_13_0, "eyetracking_system") then
+				local var_13_30 = ScriptUnit.extension(var_13_0, "eyetracking_system")
 
-			status_extension:set_is_aiming(true)
+				var_13_30:set_is_aiming(true)
 
-			if ScriptUnit.has_extension(owner_unit, "eyetracking_system") then
-				local eyetracking_extension = ScriptUnit.extension(owner_unit, "eyetracking_system")
+				if var_13_30:get_is_feature_enabled("tobii_aim_at_gaze") then
+					local var_13_31 = var_13_30:gaze_rotation()
 
-				eyetracking_extension:set_is_aiming(true)
-
-				if eyetracking_extension:get_is_feature_enabled("tobii_aim_at_gaze") then
-					local gaze_rotation = eyetracking_extension:gaze_rotation()
-
-					first_person_extension:force_look_rotation(gaze_rotation, 1)
+					var_13_3:force_look_rotation(var_13_31, 1)
 				end
 			end
 		end
 
-		self.current_action_name = new_action
-		self.current_sub_action_name = new_sub_action
-		self.current_action_settings = current_action_settings
+		arg_13_0.current_action_name = var_13_6
+		arg_13_0.current_sub_action_name = var_13_7
+		arg_13_0.current_action_settings = var_13_29
 
-		local first_person_unit = self.first_person_unit
+		local var_13_32 = arg_13_0.first_person_unit
 
-		if not current_action_settings.looping_anim then
-			local equip_event = current_action_settings.wield_blend_event or "equip_interrupt"
+		if not var_13_29.looping_anim then
+			local var_13_33 = var_13_29.wield_blend_event or "equip_interrupt"
 
-			Unit.animation_event(first_person_unit, equip_event)
+			Unit.animation_event(var_13_32, var_13_33)
 		end
 
-		table.clear(self.chain_action_sound_played)
+		table.clear(arg_13_0.chain_action_sound_played)
 
-		local allowed_chain_actions = current_action_settings.allowed_chain_actions
-		local num_chain_actions = #allowed_chain_actions
+		local var_13_34 = #var_13_29.allowed_chain_actions
 
-		for i = 1, num_chain_actions do
-			self.chain_action_sound_played[i] = false
+		for iter_13_0 = 1, var_13_34 do
+			arg_13_0.chain_action_sound_played[iter_13_0] = false
 		end
 
-		local action_kind = current_action_settings.kind
-		local action = self.actions[action_kind]
-		local time_to_complete = current_action_settings.total_time
-		local action_time_scale = ActionUtils.get_action_time_scale(owner_unit, current_action_settings)
+		local var_13_35 = var_13_29.kind
+		local var_13_36 = arg_13_0.actions[var_13_35]
+		local var_13_37 = var_13_29.total_time
+		local var_13_38 = ActionUtils.get_action_time_scale(var_13_0, var_13_29)
+		local var_13_39 = var_13_37 / var_13_38
+		local var_13_40 = var_0_3(arg_13_0.weapon_skin_anim_overrides, var_13_29)
+		local var_13_41 = var_0_5(var_13_25, var_13_29, var_13_40, "pre_action_anim_event")
 
-		time_to_complete = time_to_complete / action_time_scale
+		if var_13_41 then
+			local var_13_42 = ActionUtils.get_action_time_scale(var_13_0, var_13_29, true)
+			local var_13_43 = math.clamp(var_13_42, NetworkConstants.animation_variable_float.min, NetworkConstants.animation_variable_float.max)
 
-		local skin_data = get_skin_action_override_data(self.weapon_skin_anim_overrides, current_action_settings)
-		local pre_action_anim = get_action_anim_event(previous_action_settings, current_action_settings, skin_data, "pre_action_anim_event")
-
-		if pre_action_anim then
-			local anim_time_scale = ActionUtils.get_action_time_scale(owner_unit, current_action_settings, true)
-
-			anim_time_scale = math.clamp(anim_time_scale, NetworkConstants.animation_variable_float.min, NetworkConstants.animation_variable_float.max)
-
-			if type(pre_action_anim) == "table" then
-				for i = 1, #pre_action_anim do
-					self:_play_3p_anim(pre_action_anim[i], pre_action_anim[i], owner_unit, nil, anim_time_scale)
-					self:_play_1p_anim(pre_action_anim[i], pre_action_anim[i], first_person_unit, nil, anim_time_scale)
+			if type(var_13_41) == "table" then
+				for iter_13_1 = 1, #var_13_41 do
+					arg_13_0:_play_3p_anim(var_13_41[iter_13_1], var_13_41[iter_13_1], var_13_0, nil, var_13_43)
+					arg_13_0:_play_1p_anim(var_13_41[iter_13_1], var_13_41[iter_13_1], var_13_32, nil, var_13_43)
 				end
 			else
-				self:_play_3p_anim(pre_action_anim, pre_action_anim, owner_unit, nil, anim_time_scale)
-				self:_play_1p_anim(pre_action_anim, pre_action_anim, first_person_unit, nil, anim_time_scale)
+				arg_13_0:_play_3p_anim(var_13_41, var_13_41, var_13_0, nil, var_13_43)
+				arg_13_0:_play_1p_anim(var_13_41, var_13_41, var_13_32, nil, var_13_43)
 			end
 		end
 
-		local event = get_action_anim_event(previous_action_settings, current_action_settings, skin_data, "anim_event")
-		local event_1p = get_action_anim_event(previous_action_settings, current_action_settings, skin_data, "anim_event_1p") or event
-		local event_3p = get_action_anim_event(previous_action_settings, current_action_settings, skin_data, "anim_event_3p") or event
-		local looping_event = get_action_anim_event(previous_action_settings, current_action_settings, skin_data, "looping_anim")
+		local var_13_44 = var_0_5(var_13_25, var_13_29, var_13_40, "anim_event")
+		local var_13_45 = var_0_5(var_13_25, var_13_29, var_13_40, "anim_event_1p") or var_13_44
+		local var_13_46 = var_0_5(var_13_25, var_13_29, var_13_40, "anim_event_3p") or var_13_44
+		local var_13_47 = var_0_5(var_13_25, var_13_29, var_13_40, "looping_anim")
 
-		for _, data in pairs(self.action_buff_data) do
-			table.clear(data)
+		for iter_13_2, iter_13_3 in pairs(arg_13_0.action_buff_data) do
+			table.clear(iter_13_3)
 		end
 
-		local buff_data = current_action_settings.buff_data
+		local var_13_48 = var_13_29.buff_data
 
-		if buff_data then
-			ActionUtils.init_action_buff_data(self.action_buff_data, buff_data, t)
+		if var_13_48 then
+			ActionUtils.init_action_buff_data(arg_13_0.action_buff_data, var_13_48, arg_13_4)
 
-			self.buff_data = buff_data
+			arg_13_0.buff_data = var_13_48
 		end
 
-		status_extension._current_action = new_action
+		var_13_4._current_action = var_13_6
 
-		action:client_owner_start_action(current_action_settings, t, chain_action_data, power_level, action_init_data)
+		var_13_36:client_owner_start_action(var_13_29, arg_13_4, var_13_24, arg_13_5, arg_13_6)
 
-		local aim_assist_ramp_multiplier = current_action_settings.aim_assist_ramp_multiplier
+		local var_13_49 = var_13_29.aim_assist_ramp_multiplier
 
-		if aim_assist_ramp_multiplier then
-			local aim_assist_max_ramp_multiplier = current_action_settings.aim_assist_max_ramp_multiplier
-			local aim_assist_ramp_decay_delay = current_action_settings.aim_assist_ramp_decay_delay
+		if var_13_49 then
+			local var_13_50 = var_13_29.aim_assist_max_ramp_multiplier
+			local var_13_51 = var_13_29.aim_assist_ramp_decay_delay
 
-			first_person_extension:increase_aim_assist_multiplier(aim_assist_ramp_multiplier, aim_assist_max_ramp_multiplier, aim_assist_ramp_decay_delay)
+			var_13_3:increase_aim_assist_multiplier(var_13_49, var_13_50, var_13_51)
 		end
 
-		if self.ammo_extension then
-			if self.ammo_extension:total_remaining_ammo() == 0 then
-				event = get_action_anim_event(previous_action_settings, current_action_settings, skin_data, "anim_event_no_ammo_left") or event
-				event_1p = get_action_anim_event(previous_action_settings, current_action_settings, skin_data, "anim_event_no_ammo_left_1p") or event_1p or event
-				event_3p = get_action_anim_event(previous_action_settings, current_action_settings, skin_data, "anim_event_no_ammo_left_3p") or event_3p or event
-			elseif self.ammo_extension:total_remaining_ammo() == 1 then
-				event = get_action_anim_event(previous_action_settings, current_action_settings, skin_data, "anim_event_last_ammo") or event
-				event_1p = get_action_anim_event(previous_action_settings, current_action_settings, skin_data, "anim_event_last_ammo_1p") or event_1p
-				event_3p = get_action_anim_event(previous_action_settings, current_action_settings, skin_data, "anim_event_last_ammo_3p") or event_3p
+		if arg_13_0.ammo_extension then
+			if arg_13_0.ammo_extension:total_remaining_ammo() == 0 then
+				var_13_44 = var_0_5(var_13_25, var_13_29, var_13_40, "anim_event_no_ammo_left") or var_13_44
+				var_13_45 = var_0_5(var_13_25, var_13_29, var_13_40, "anim_event_no_ammo_left_1p") or var_13_45 or var_13_44
+				var_13_46 = var_0_5(var_13_25, var_13_29, var_13_40, "anim_event_no_ammo_left_3p") or var_13_46 or var_13_44
+			elseif arg_13_0.ammo_extension:total_remaining_ammo() == 1 then
+				var_13_44 = var_0_5(var_13_25, var_13_29, var_13_40, "anim_event_last_ammo") or var_13_44
+				var_13_45 = var_0_5(var_13_25, var_13_29, var_13_40, "anim_event_last_ammo_1p") or var_13_45
+				var_13_46 = var_0_5(var_13_25, var_13_29, var_13_40, "anim_event_last_ammo_3p") or var_13_46
 			end
 		end
 
-		if buff_extension then
-			local infinite_ammo = buff_extension:has_buff_perk("infinite_ammo")
-
-			if infinite_ammo then
-				event = get_action_anim_event(previous_action_settings, current_action_settings, skin_data, "anim_event_infinite_ammo") or event
-				event_1p = get_action_anim_event(previous_action_settings, current_action_settings, skin_data, "anim_event_infinite_ammo_1p") or event_1p or event
-				event_3p = get_action_anim_event(previous_action_settings, current_action_settings, skin_data, "anim_event_infinite_ammo_3p") or event_3p or event
-			end
+		if var_13_1 and var_13_1:has_buff_perk("infinite_ammo") then
+			var_13_44 = var_0_5(var_13_25, var_13_29, var_13_40, "anim_event_infinite_ammo") or var_13_44
+			var_13_45 = var_0_5(var_13_25, var_13_29, var_13_40, "anim_event_infinite_ammo_1p") or var_13_45 or var_13_44
+			var_13_46 = var_0_5(var_13_25, var_13_29, var_13_40, "anim_event_infinite_ammo_3p") or var_13_46 or var_13_44
 		end
 
-		self.action_time_started = t
-		self.action_time_scale = action_time_scale
-		self.action_time_done = t + time_to_complete
+		arg_13_0.action_time_started = arg_13_4
+		arg_13_0.action_time_scale = var_13_38
+		arg_13_0.action_time_done = arg_13_4 + var_13_39
 
-		if current_action_settings.cooldown then
-			local lookup_data = current_action_settings.lookup_data
+		if var_13_29.cooldown then
+			local var_13_52 = var_13_29.lookup_data
 
-			self.cooldown_timer[lookup_data.action_name] = t + current_action_settings.cooldown
+			arg_13_0.cooldown_timer[var_13_52.action_name] = arg_13_4 + var_13_29.cooldown
 		end
 
-		if current_action_settings.enter_function then
-			local minimum_hold_time = self:get_scaled_min_hold_time(current_action_settings)
-			local input_extension = ScriptUnit.extension(owner_unit, "input_system")
-			local remaining_time = self.action_time_started + minimum_hold_time - t
+		if var_13_29.enter_function then
+			local var_13_53 = arg_13_0:get_scaled_min_hold_time(var_13_29)
+			local var_13_54 = ScriptUnit.extension(var_13_0, "input_system")
+			local var_13_55 = arg_13_0.action_time_started + var_13_53 - arg_13_4
 
-			current_action_settings.enter_function(owner_unit, input_extension, remaining_time, self)
+			var_13_29.enter_function(var_13_0, var_13_54, var_13_55, arg_13_0)
 		end
 
-		local anim_time_scale = ActionUtils.get_action_time_scale(owner_unit, current_action_settings, true)
+		local var_13_56 = ActionUtils.get_action_time_scale(var_13_0, var_13_29, true)
+		local var_13_57 = math.clamp(var_13_56, NetworkConstants.animation_variable_float.min, NetworkConstants.animation_variable_float.max)
 
-		anim_time_scale = math.clamp(anim_time_scale, NetworkConstants.animation_variable_float.min, NetworkConstants.animation_variable_float.max)
-
-		if event_3p then
-			if type(event_3p) == "table" then
-				for i = 1, #event_3p do
-					self:_play_3p_anim(event_3p[i], (event or event_3p)[i], owner_unit, looping_event, anim_time_scale)
+		if var_13_46 then
+			if type(var_13_46) == "table" then
+				for iter_13_4 = 1, #var_13_46 do
+					arg_13_0:_play_3p_anim(var_13_46[iter_13_4], (var_13_44 or var_13_46)[iter_13_4], var_13_0, var_13_47, var_13_57)
 				end
 			else
-				self:_play_3p_anim(event_3p, event or event_3p, owner_unit, looping_event, anim_time_scale)
+				arg_13_0:_play_3p_anim(var_13_46, var_13_44 or var_13_46, var_13_0, var_13_47, var_13_57)
 			end
 		end
 
-		if event_1p then
-			if type(event_1p) == "table" then
-				for i = 1, #event_1p do
-					self:_play_1p_anim(event_1p[i], (event or event_1p)[i], first_person_unit, looping_event, anim_time_scale)
+		if var_13_45 then
+			if type(var_13_45) == "table" then
+				for iter_13_5 = 1, #var_13_45 do
+					arg_13_0:_play_1p_anim(var_13_45[iter_13_5], (var_13_44 or var_13_45)[iter_13_5], var_13_32, var_13_47, var_13_57)
 				end
 			else
-				self:_play_1p_anim(event_1p, event or event_1p, first_person_unit, looping_event, anim_time_scale)
+				arg_13_0:_play_1p_anim(var_13_45, var_13_44 or var_13_45, var_13_32, var_13_47, var_13_57)
 			end
 		end
 
-		if (event_3p or event_1p) and current_action_settings.apply_recoil then
-			first_person_extension:apply_recoil()
-			first_person_extension:play_camera_recoil(current_action_settings.recoil_settings, t)
+		if (var_13_46 or var_13_45) and var_13_29.apply_recoil then
+			var_13_3:apply_recoil()
+			var_13_3:play_camera_recoil(var_13_29.recoil_settings, arg_13_4)
 		end
 	end
 end
 
-WeaponUnitExtension._play_1p_anim = function (self, event_1p, event, first_person_unit, looping_event, anim_time_scale)
-	if not IS_WINDOWS and not IS_LINUX and event == "attack_shoot" then
-		anim_time_scale = anim_time_scale * 1.2
+function WeaponUnitExtension._play_1p_anim(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+	if not IS_WINDOWS and not IS_LINUX and arg_14_2 == "attack_shoot" then
+		arg_14_5 = arg_14_5 * 1.2
 	end
 
-	self.first_person_extension:animation_set_variable("attack_speed", anim_time_scale)
+	arg_14_0.first_person_extension:animation_set_variable("attack_speed", arg_14_5)
 
-	if not looping_event or looping_event and not self._looping_anim_event_started then
-		Unit.animation_event(first_person_unit, event)
+	if not arg_14_4 or arg_14_4 and not arg_14_0._looping_anim_event_started then
+		Unit.animation_event(arg_14_3, arg_14_2)
 
-		if looping_event then
-			self._looping_anim_event_started = true
+		if arg_14_4 then
+			arg_14_0._looping_anim_event_started = true
 		end
 	end
 end
 
-WeaponUnitExtension._play_3p_anim = function (self, event_3p, event, owner_unit, looping_event, anim_time_scale)
-	local go_id = Managers.state.unit_storage:go_id(owner_unit)
-	local event_id = NetworkLookup.anims[event_3p]
-	local variable_id = NetworkLookup.anims.attack_speed
+function WeaponUnitExtension._play_3p_anim(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+	local var_15_0 = Managers.state.unit_storage:go_id(arg_15_3)
+	local var_15_1 = NetworkLookup.anims[arg_15_1]
+	local var_15_2 = NetworkLookup.anims.attack_speed
 
 	if not LEVEL_EDITOR_TEST then
-		if self.is_server then
-			Managers.state.network.network_transmit:send_rpc_clients("rpc_anim_event_variable_float", event_id, go_id, variable_id, anim_time_scale)
+		if arg_15_0.is_server then
+			Managers.state.network.network_transmit:send_rpc_clients("rpc_anim_event_variable_float", var_15_1, var_15_0, var_15_2, arg_15_5)
 		else
-			Managers.state.network.network_transmit:send_rpc_server("rpc_anim_event_variable_float", event_id, go_id, variable_id, anim_time_scale)
+			Managers.state.network.network_transmit:send_rpc_server("rpc_anim_event_variable_float", var_15_1, var_15_0, var_15_2, arg_15_5)
 		end
 	end
 
-	if not IS_WINDOWS and not IS_LINUX and event == "attack_shoot" then
-		anim_time_scale = anim_time_scale * 1.2
+	if not IS_WINDOWS and not IS_LINUX and arg_15_2 == "attack_shoot" then
+		arg_15_5 = arg_15_5 * 1.2
 	end
 
 	if not script_data.disable_third_person_weapon_animation_events then
-		local third_person_variable_id
+		local var_15_3
+		local var_15_4 = Unit.animation_find_variable(arg_15_3, "attack_speed")
 
-		third_person_variable_id = Unit.animation_find_variable(owner_unit, "attack_speed")
+		Unit.animation_set_variable(arg_15_3, var_15_4, arg_15_5)
 
-		Unit.animation_set_variable(owner_unit, third_person_variable_id, anim_time_scale)
+		if not arg_15_4 or arg_15_4 and not arg_15_0._looping_anim_event_started then
+			Unit.animation_event(arg_15_3, arg_15_1)
 
-		if not looping_event or looping_event and not self._looping_anim_event_started then
-			Unit.animation_event(owner_unit, event_3p)
-
-			if looping_event then
-				self._looping_anim_event_started = true
+			if arg_15_4 then
+				arg_15_0._looping_anim_event_started = true
 			end
 		end
 	end
 end
 
-WeaponUnitExtension.stop_action = function (self, reason, data)
-	if self:has_current_action() and not self._currently_stopping_action then
-		self._currently_stopping_action = true
+function WeaponUnitExtension.stop_action(arg_16_0, arg_16_1, arg_16_2)
+	if arg_16_0:has_current_action() and not arg_16_0._currently_stopping_action then
+		arg_16_0._currently_stopping_action = true
 
-		self:_finish_action(reason, data)
+		arg_16_0:_finish_action(arg_16_1, arg_16_2)
 
-		self._currently_stopping_action = false
+		arg_16_0._currently_stopping_action = false
 	end
 end
 
-WeaponUnitExtension._finish_action = function (self, reason, data)
-	local current_action_settings = self.current_action_settings
-	local action_kind = current_action_settings.kind
-	local action = self.actions[action_kind]
+function WeaponUnitExtension._finish_action(arg_17_0, arg_17_1, arg_17_2)
+	local var_17_0 = arg_17_0.current_action_settings
+	local var_17_1 = var_17_0.kind
+	local var_17_2 = arg_17_0.actions[var_17_1]
 
-	if Application.user_setting("tobii_eyetracking") and ScriptUnit.has_extension(self.owner_unit, "eyetracking_system") then
-		local eyetracking_extension = ScriptUnit.extension(self.owner_unit, "eyetracking_system")
+	if Application.user_setting("tobii_eyetracking") and ScriptUnit.has_extension(arg_17_0.owner_unit, "eyetracking_system") then
+		local var_17_3 = ScriptUnit.extension(arg_17_0.owner_unit, "eyetracking_system")
 
-		if reason == "hold_input_released" then
-			eyetracking_extension:set_is_aiming(false)
-			eyetracking_extension:set_aim_at_gaze_cancelled(false)
+		if arg_17_1 == "hold_input_released" then
+			var_17_3:set_is_aiming(false)
+			var_17_3:set_aim_at_gaze_cancelled(false)
 		end
 	end
 
-	if reason == "hold_input_released" then
-		local status_extension = ScriptUnit.has_extension(self.owner_unit, "status_system")
-
-		status_extension:set_is_aiming(false)
+	if arg_17_1 == "hold_input_released" then
+		ScriptUnit.has_extension(arg_17_0.owner_unit, "status_system"):set_is_aiming(false)
 	end
 
-	local buff_data = current_action_settings.buff_data
+	local var_17_4 = var_17_0.buff_data
 
-	if buff_data then
-		ActionUtils.remove_action_buff_data(self.action_buff_data, buff_data, self.owner_unit)
+	if var_17_4 then
+		ActionUtils.remove_action_buff_data(arg_17_0.action_buff_data, var_17_4, arg_17_0.owner_unit)
 	end
 
-	for _, action_buff_data in pairs(self.action_buff_data) do
-		table.clear(action_buff_data)
+	for iter_17_0, iter_17_1 in pairs(arg_17_0.action_buff_data) do
+		table.clear(iter_17_1)
 	end
 
-	local chain_action_data = action:finish(reason, data)
+	local var_17_5 = var_17_2:finish(arg_17_1, arg_17_2)
 
-	self:anim_end_event(reason, current_action_settings)
+	arg_17_0:anim_end_event(arg_17_1, var_17_0)
 
-	local next_action_settings = data and data.new_action_settings
-	local on_chain_keep_audio_loops = next_action_settings and next_action_settings.on_chain_keep_audio_loops
+	local var_17_6 = arg_17_2 and arg_17_2.new_action_settings
+	local var_17_7 = var_17_6 and var_17_6.on_chain_keep_audio_loops
 
-	if on_chain_keep_audio_loops then
-		for id in pairs(self.looping_audio_events) do
-			if not table.contains(on_chain_keep_audio_loops, id) then
-				self:stop_looping_audio(id)
+	if var_17_7 then
+		for iter_17_2 in pairs(arg_17_0.looping_audio_events) do
+			if not table.contains(var_17_7, iter_17_2) then
+				arg_17_0:stop_looping_audio(iter_17_2)
 			end
 		end
 	else
-		for id in pairs(self.looping_audio_events) do
-			self:stop_looping_audio(id)
+		for iter_17_3 in pairs(arg_17_0.looping_audio_events) do
+			arg_17_0:stop_looping_audio(iter_17_3)
 		end
 	end
 
-	if current_action_settings.finish_function then
-		current_action_settings.finish_function(self.owner_unit, reason, self)
+	if var_17_0.finish_function then
+		var_17_0.finish_function(arg_17_0.owner_unit, arg_17_1, arg_17_0)
 	end
 
-	local first_person_extension = self.first_person_extension
+	local var_17_8 = arg_17_0.first_person_extension
 
-	if first_person_extension then
-		local weapon_template = self:_weapon_template()
-		local sway_settings = weapon_template and weapon_template.weapon_sway_settings
+	if var_17_8 then
+		local var_17_9 = arg_17_0:_weapon_template()
+		local var_17_10 = var_17_9 and var_17_9.weapon_sway_settings
 
-		first_person_extension:set_weapon_sway_settings(sway_settings)
+		var_17_8:set_weapon_sway_settings(var_17_10)
 	end
 
-	if self.bot_attack_data then
-		self:clear_bot_attack_request()
+	if arg_17_0.bot_attack_data then
+		arg_17_0:clear_bot_attack_request()
 	end
 
-	self.current_action_settings = nil
-	self.action_time_scale = nil
+	arg_17_0.current_action_settings = nil
+	arg_17_0.action_time_scale = nil
 
-	return chain_action_data
+	return var_17_5
 end
 
-WeaponUnitExtension._weapon_template = function (self)
-	return WeaponUtils.get_weapon_template(self._weapon_template_name)
+function WeaponUnitExtension._weapon_template(arg_18_0)
+	return WeaponUtils.get_weapon_template(arg_18_0._weapon_template_name)
 end
 
-WeaponUnitExtension.anim_end_event = function (self, reason, current_action_settings)
-	local anim_end_event_condition_func = current_action_settings.anim_end_event_condition_func
-	local do_event = not anim_end_event_condition_func and true or anim_end_event_condition_func(self.owner_unit, reason, self.ammo_extension)
+function WeaponUnitExtension.anim_end_event(arg_19_0, arg_19_1, arg_19_2)
+	local var_19_0 = arg_19_2.anim_end_event_condition_func
 
-	if do_event then
-		local skin_data = get_skin_action_override_data(self.weapon_skin_anim_overrides, current_action_settings)
-		local event = skin_data and skin_data.anim_end_event or current_action_settings.anim_end_event
-		local event_1p = skin_data and skin_data.anim_end_event_1p or current_action_settings.anim_end_event_1p
-		local event_3p = skin_data and skin_data.anim_end_event_3p or current_action_settings.anim_end_event_3p
+	if not var_19_0 and true or var_19_0(arg_19_0.owner_unit, arg_19_1, arg_19_0.ammo_extension) then
+		local var_19_1 = var_0_3(arg_19_0.weapon_skin_anim_overrides, arg_19_2)
+		local var_19_2 = var_19_1 and var_19_1.anim_end_event or arg_19_2.anim_end_event
+		local var_19_3 = var_19_1 and var_19_1.anim_end_event_1p or arg_19_2.anim_end_event_1p
+		local var_19_4 = var_19_1 and var_19_1.anim_end_event_3p or arg_19_2.anim_end_event_3p
 
-		if event then
-			if type(event) == "table" then
-				for i = 1, #event do
-					self:_play_end_event_1p(event[i])
-					self:_play_end_event_3p(event[i])
+		if var_19_2 then
+			if type(var_19_2) == "table" then
+				for iter_19_0 = 1, #var_19_2 do
+					arg_19_0:_play_end_event_1p(var_19_2[iter_19_0])
+					arg_19_0:_play_end_event_3p(var_19_2[iter_19_0])
 				end
 			else
-				self:_play_end_event_1p(event)
-				self:_play_end_event_3p(event)
+				arg_19_0:_play_end_event_1p(var_19_2)
+				arg_19_0:_play_end_event_3p(var_19_2)
 			end
 		end
 
-		if event_1p then
-			if type(event_1p) == "table" then
-				for i = 1, #event_1p do
-					self:_play_end_event_1p(event_1p[i])
+		if var_19_3 then
+			if type(var_19_3) == "table" then
+				for iter_19_1 = 1, #var_19_3 do
+					arg_19_0:_play_end_event_1p(var_19_3[iter_19_1])
 				end
 			else
-				self:_play_end_event_1p(event_1p)
+				arg_19_0:_play_end_event_1p(var_19_3)
 			end
 		end
 
-		if event_3p then
-			if type(event_3p) == "table" then
-				for i = 1, #event_3p do
-					self:_play_end_event_3p(event_3p[i])
+		if var_19_4 then
+			if type(var_19_4) == "table" then
+				for iter_19_2 = 1, #var_19_4 do
+					arg_19_0:_play_end_event_3p(var_19_4[iter_19_2])
 				end
 			else
-				self:_play_end_event_3p(event_3p)
+				arg_19_0:_play_end_event_3p(var_19_4)
 			end
 		end
 
-		self._looping_anim_event_started = nil
+		arg_19_0._looping_anim_event_started = nil
 	end
 end
 
-WeaponUnitExtension._play_end_event_3p = function (self, event)
-	local event_id = NetworkLookup.anims[event]
-	local go_id = Managers.state.unit_storage:go_id(self.owner_unit)
+function WeaponUnitExtension._play_end_event_3p(arg_20_0, arg_20_1)
+	local var_20_0 = NetworkLookup.anims[arg_20_1]
+	local var_20_1 = Managers.state.unit_storage:go_id(arg_20_0.owner_unit)
 
 	if not LEVEL_EDITOR_TEST then
-		if self.is_server then
-			Managers.state.network.network_transmit:send_rpc_clients("rpc_anim_event", event_id, go_id)
+		if arg_20_0.is_server then
+			Managers.state.network.network_transmit:send_rpc_clients("rpc_anim_event", var_20_0, var_20_1)
 		else
-			Managers.state.network.network_transmit:send_rpc_server("rpc_anim_event", event_id, go_id)
+			Managers.state.network.network_transmit:send_rpc_server("rpc_anim_event", var_20_0, var_20_1)
 		end
 	end
 
 	if not script_data.disable_third_person_weapon_animation_events then
-		Unit.animation_event(self.owner_unit, event)
+		Unit.animation_event(arg_20_0.owner_unit, arg_20_1)
 	end
 end
 
-WeaponUnitExtension._play_end_event_1p = function (self, event)
-	Unit.animation_event(self.first_person_unit, event)
+function WeaponUnitExtension._play_end_event_1p(arg_21_0, arg_21_1)
+	Unit.animation_event(arg_21_0.first_person_unit, arg_21_1)
 end
 
-WeaponUnitExtension.trigger_anim_event = function (self, event)
-	if event then
-		local event_id = NetworkLookup.anims[event]
+function WeaponUnitExtension.trigger_anim_event(arg_22_0, arg_22_1)
+	if arg_22_1 then
+		local var_22_0 = NetworkLookup.anims[arg_22_1]
 
 		if not LEVEL_EDITOR_TEST then
-			local go_id = Managers.state.unit_storage:go_id(self.owner_unit)
+			local var_22_1 = Managers.state.unit_storage:go_id(arg_22_0.owner_unit)
 
-			if self.is_server then
-				Managers.state.network.network_transmit:send_rpc_clients("rpc_anim_event", event_id, go_id)
+			if arg_22_0.is_server then
+				Managers.state.network.network_transmit:send_rpc_clients("rpc_anim_event", var_22_0, var_22_1)
 			else
-				Managers.state.network.network_transmit:send_rpc_server("rpc_anim_event", event_id, go_id)
+				Managers.state.network.network_transmit:send_rpc_server("rpc_anim_event", var_22_0, var_22_1)
 			end
 		end
 
-		Unit.animation_event(self.first_person_unit, event)
+		Unit.animation_event(arg_22_0.first_person_unit, arg_22_1)
 
 		if not script_data.disable_third_person_weapon_animation_events then
-			Unit.animation_event(self.owner_unit, event)
+			Unit.animation_event(arg_22_0.owner_unit, arg_22_1)
 		end
 
-		self._looping_anim_event_started = nil
+		arg_22_0._looping_anim_event_started = nil
 	end
 end
 
-WeaponUnitExtension.update = function (self, unit, input, dt, context, t)
-	local current_action_settings = self.current_action_settings
+function WeaponUnitExtension.update(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
+	local var_23_0 = arg_23_0.current_action_settings
 
-	if current_action_settings then
-		local owner_unit = self.owner_unit
-		local wwise_world = Managers.world:wwise_world(self.world)
-		local allowed_chain_actions = current_action_settings.allowed_chain_actions
-		local num_chain_actions = #allowed_chain_actions
+	if var_23_0 then
+		local var_23_1 = arg_23_0.owner_unit
+		local var_23_2 = Managers.world:wwise_world(arg_23_0.world)
+		local var_23_3 = var_23_0.allowed_chain_actions
+		local var_23_4 = #var_23_3
 
-		for i = 1, num_chain_actions do
-			local chain_info = allowed_chain_actions[i]
-			local chain_ready_sound = chain_info.chain_ready_sound
+		for iter_23_0 = 1, var_23_4 do
+			local var_23_5 = var_23_3[iter_23_0]
+			local var_23_6 = var_23_5.chain_ready_sound
 
-			if chain_ready_sound then
-				local time_offset = chain_info.sound_time_offset or 0
-				local sound_ready = self:is_chain_action_available(chain_info, t, time_offset)
+			if var_23_6 then
+				local var_23_7 = var_23_5.sound_time_offset or 0
 
-				if sound_ready and not self.chain_action_sound_played[i] then
-					WwiseWorld.trigger_event(wwise_world, chain_ready_sound)
+				if arg_23_0:is_chain_action_available(var_23_5, arg_23_5, var_23_7) and not arg_23_0.chain_action_sound_played[iter_23_0] then
+					WwiseWorld.trigger_event(var_23_2, var_23_6)
 
-					self.chain_action_sound_played[i] = true
+					arg_23_0.chain_action_sound_played[iter_23_0] = true
 				end
 			end
 		end
 
-		if t > self.action_time_done then
-			self:_finish_action("action_complete")
+		if arg_23_5 > arg_23_0.action_time_done then
+			arg_23_0:_finish_action("action_complete")
 		else
-			local current_time_in_action = t - self.action_time_started
-			local can_damage = is_within_damage_window(current_time_in_action, self.current_action_settings, owner_unit)
-			local action_kind = current_action_settings.kind
-			local action = self.actions[action_kind]
-			local buff_data = current_action_settings.buff_data
+			local var_23_8 = arg_23_5 - arg_23_0.action_time_started
+			local var_23_9 = var_0_2(var_23_8, arg_23_0.current_action_settings, var_23_1)
+			local var_23_10 = var_23_0.kind
+			local var_23_11 = arg_23_0.actions[var_23_10]
+			local var_23_12 = var_23_0.buff_data
 
-			if buff_data then
-				ActionUtils.update_action_buff_data(self.action_buff_data, buff_data, owner_unit, t)
+			if var_23_12 then
+				ActionUtils.update_action_buff_data(arg_23_0.action_buff_data, var_23_12, var_23_1, arg_23_5)
 			end
 
-			action:client_owner_post_update(dt, t, self.world, can_damage, current_time_in_action)
+			var_23_11:client_owner_post_update(arg_23_3, arg_23_5, arg_23_0.world, var_23_9, var_23_8)
 
-			if current_action_settings.cooldown and not current_action_settings.cooldown_from_start then
-				local lookup_data = current_action_settings.lookup_data
+			if var_23_0.cooldown and not var_23_0.cooldown_from_start then
+				local var_23_13 = var_23_0.lookup_data
 
-				self.cooldown_timer[lookup_data.action_name] = t + current_action_settings.cooldown
+				arg_23_0.cooldown_timer[var_23_13.action_name] = arg_23_5 + var_23_0.cooldown
 			end
 		end
 	end
 
-	local passive_update_actions = self._passive_update_actions
+	local var_23_14 = arg_23_0._passive_update_actions
 
-	for i = 1, self._passive_update_actions_n do
-		passive_update_actions[i]:passive_update(dt, t)
+	for iter_23_1 = 1, arg_23_0._passive_update_actions_n do
+		var_23_14[iter_23_1]:passive_update(arg_23_3, arg_23_5)
 	end
 
-	if self._weapon_update then
-		self._weapon_update(self, dt, t)
+	if arg_23_0._weapon_update then
+		arg_23_0._weapon_update(arg_23_0, arg_23_3, arg_23_5)
 	end
 
-	if self._synced_weapon_state then
-		local weapon_state = self._synced_weapon_states[self._synced_weapon_state]
+	if arg_23_0._synced_weapon_state then
+		local var_23_15 = arg_23_0._synced_weapon_states[arg_23_0._synced_weapon_state]
 
-		if weapon_state.update then
-			weapon_state:update(self.owner_unit, self.unit, self._synced_weapon_state_data, self:_is_local_player(), self.world, dt, self)
+		if var_23_15.update then
+			var_23_15:update(arg_23_0.owner_unit, arg_23_0.unit, arg_23_0._synced_weapon_state_data, arg_23_0:_is_local_player(), arg_23_0.world, arg_23_3, arg_23_0)
 		end
 	end
 end
 
-WeaponUnitExtension._is_local_player = function (self)
-	local player = Managers.player:owner(self.owner_unit)
+function WeaponUnitExtension._is_local_player(arg_24_0)
+	local var_24_0 = Managers.player:owner(arg_24_0.owner_unit)
 
-	return player and player.local_player
+	return var_24_0 and var_24_0.local_player
 end
 
-WeaponUnitExtension.is_streak_action_available = function (self, streak_action, t, time_offset)
-	local current_action_settings = self.current_action_settings or self.temporary_action_settings
-	local action = self.actions[current_action_settings.kind]
-	local current_time_in_action = t - self.action_time_started
+function WeaponUnitExtension.is_streak_action_available(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+	local var_25_0 = arg_25_0.current_action_settings or arg_25_0.temporary_action_settings
+	local var_25_1 = arg_25_0.actions[var_25_0.kind]
+	local var_25_2 = arg_25_2 - arg_25_0.action_time_started
 
-	if action.streak_available and action:streak_available(current_time_in_action, streak_action) and self:is_chain_action_available(streak_action, t, time_offset) then
+	if var_25_1.streak_available and var_25_1:streak_available(var_25_2, arg_25_1) and arg_25_0:is_chain_action_available(arg_25_1, arg_25_2, arg_25_3) then
 		return true
 	end
 
 	return false
 end
 
-WeaponUnitExtension.is_chain_action_available = function (self, next_chain_action, t, time_offset)
-	local current_action_settings = self.current_action_settings or self.temporary_action_settings
-	local current_time_in_action = t - self.action_time_started
-	local max_time = current_action_settings.total_time + 2
+function WeaponUnitExtension.is_chain_action_available(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+	local var_26_0 = arg_26_0.current_action_settings or arg_26_0.temporary_action_settings
+	local var_26_1 = arg_26_2 - arg_26_0.action_time_started
+	local var_26_2 = var_26_0.total_time + 2
 
-	time_offset = time_offset or 0
+	arg_26_3 = arg_26_3 or 0
 
-	local chain_time_scale = self.action_time_scale or ActionUtils.get_action_time_scale(self.owner_unit, current_action_settings)
+	local var_26_3 = arg_26_0.action_time_scale or ActionUtils.get_action_time_scale(arg_26_0.owner_unit, var_26_0)
 
-	if next_chain_action.auto_chain then
-		return current_time_in_action >= (next_chain_action.start_time and next_chain_action.start_time / chain_time_scale or max_time) + time_offset
+	if arg_26_1.auto_chain then
+		return var_26_1 >= (arg_26_1.start_time and arg_26_1.start_time / var_26_3 or var_26_2) + arg_26_3
 	else
-		local end_time = next_chain_action.end_time and next_chain_action.end_time / chain_time_scale or max_time
+		local var_26_4 = arg_26_1.end_time and arg_26_1.end_time / var_26_3 or var_26_2
 
-		return current_time_in_action >= next_chain_action.start_time / chain_time_scale + time_offset and current_time_in_action <= end_time
+		return var_26_1 >= arg_26_1.start_time / var_26_3 + arg_26_3 and var_26_1 <= var_26_4
 	end
 end
 
-WeaponUnitExtension.time_to_next_chain_action = function (self, next_chain_action, t, time_offset, action_settings)
-	action_settings = action_settings or self.current_action_settings or self.temporary_action_settings
+function WeaponUnitExtension.time_to_next_chain_action(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+	arg_27_4 = arg_27_4 or arg_27_0.current_action_settings or arg_27_0.temporary_action_settings
 
-	local current_time_in_action = self:has_current_action() and t - self.action_time_started or 0
-	local max_time = action_settings.total_time + 2
+	local var_27_0 = arg_27_0:has_current_action() and arg_27_2 - arg_27_0.action_time_started or 0
+	local var_27_1 = arg_27_4.total_time + 2
 
-	time_offset = time_offset or 0
+	arg_27_3 = arg_27_3 or 0
 
-	local chain_time_scale = ActionUtils.get_action_time_scale(self.owner_unit, action_settings)
-	local start_time = (next_chain_action.start_time and next_chain_action.start_time / chain_time_scale or max_time) + time_offset
+	local var_27_2 = ActionUtils.get_action_time_scale(arg_27_0.owner_unit, arg_27_4)
 
-	return start_time - current_time_in_action
+	return (arg_27_1.start_time and arg_27_1.start_time / var_27_2 or var_27_1) + arg_27_3 - var_27_0
 end
 
-WeaponUnitExtension.get_scaled_min_hold_time = function (self, action)
-	local minimum_hold_time = action.minimum_hold_time
+function WeaponUnitExtension.get_scaled_min_hold_time(arg_28_0, arg_28_1)
+	local var_28_0 = arg_28_1.minimum_hold_time
 
-	if not minimum_hold_time then
+	if not var_28_0 then
 		return 0
 	end
 
-	local buff_extension = ScriptUnit.extension(self.owner_unit, "buff_system")
-	local scaled_min_hold_time = minimum_hold_time
+	local var_28_1 = ScriptUnit.extension(arg_28_0.owner_unit, "buff_system")
+	local var_28_2 = var_28_0
 
-	if buff_extension then
-		scaled_min_hold_time = buff_extension:apply_buffs_to_value(scaled_min_hold_time, "reload_speed")
+	if var_28_1 then
+		var_28_2 = var_28_1:apply_buffs_to_value(var_28_2, "reload_speed")
 
-		if scaled_min_hold_time > 0 then
-			local action_time_scale = ActionUtils.get_action_time_scale(self.owner_unit, action, false, 1)
-
-			scaled_min_hold_time = scaled_min_hold_time / action_time_scale
+		if var_28_2 > 0 then
+			var_28_2 = var_28_2 / ActionUtils.get_action_time_scale(arg_28_0.owner_unit, arg_28_1, false, 1)
 		end
 	end
 
-	return scaled_min_hold_time
+	return var_28_2
 end
 
-WeaponUnitExtension.can_stop_hold_action = function (self, t)
-	local current_time_in_action = t - self.action_time_started
-	local current_action_settings = self.current_action_settings
-	local minimum_hold_time = current_action_settings.minimum_hold_time
+function WeaponUnitExtension.can_stop_hold_action(arg_29_0, arg_29_1)
+	local var_29_0 = arg_29_1 - arg_29_0.action_time_started
+	local var_29_1 = arg_29_0.current_action_settings
 
-	if not minimum_hold_time then
+	if not var_29_1.minimum_hold_time then
 		return true
 	end
 
-	local scaled_minimum_hold_time = self:get_scaled_min_hold_time(current_action_settings)
-
-	return scaled_minimum_hold_time < current_time_in_action
+	return var_29_0 > arg_29_0:get_scaled_min_hold_time(var_29_1)
 end
 
-WeaponUnitExtension.get_action_cooldown = function (self, action)
-	local action_cooldown = self.cooldown_timer[action]
-
-	return action_cooldown
+function WeaponUnitExtension.get_action_cooldown(arg_30_0, arg_30_1)
+	return arg_30_0.cooldown_timer[arg_30_1]
 end
 
-WeaponUnitExtension.get_current_action = function (self)
-	return self.actions[self.current_action_settings.kind]
+function WeaponUnitExtension.get_current_action(arg_31_0)
+	return arg_31_0.actions[arg_31_0.current_action_settings.kind]
 end
 
-WeaponUnitExtension.has_current_action = function (self)
-	return self.current_action_settings ~= nil
+function WeaponUnitExtension.has_current_action(arg_32_0)
+	return arg_32_0.current_action_settings ~= nil
 end
 
-WeaponUnitExtension.get_current_action_settings = function (self)
-	return self.current_action_settings
+function WeaponUnitExtension.get_current_action_settings(arg_33_0)
+	return arg_33_0.current_action_settings
 end
 
-WeaponUnitExtension.is_after_damage_window = function (self)
-	local action = self.current_action_settings
+function WeaponUnitExtension.is_after_damage_window(arg_34_0)
+	local var_34_0 = arg_34_0.current_action_settings
 
-	if not action then
+	if not var_34_0 then
 		return false
 	end
 
-	local damage_window_start = action.damage_window_start
-	local damage_window_end = action.damage_window_end
+	local var_34_1 = var_34_0.damage_window_start
+	local var_34_2 = var_34_0.damage_window_end
 
-	if not damage_window_start and not damage_window_end then
+	if not var_34_1 and not var_34_2 then
 		return false
 	end
 
-	local owner_unit = self.owner_unit
-	local t = Managers.time:time("game")
-	local current_time_in_action = t - self.action_time_started
-	local damage_time_scale = ActionUtils.get_action_time_scale(owner_unit, action, false)
+	local var_34_3 = arg_34_0.owner_unit
+	local var_34_4 = Managers.time:time("game") - arg_34_0.action_time_started
+	local var_34_5 = ActionUtils.get_action_time_scale(var_34_3, var_34_0, false)
 
-	damage_window_end = damage_window_end or action.total_time or math.huge
-	damage_window_end = damage_window_end / damage_time_scale
+	var_34_2 = var_34_2 or var_34_0.total_time or math.huge
 
-	return damage_window_end <= current_time_in_action
+	return var_34_4 >= var_34_2 / var_34_5
 end
 
-WeaponUnitExtension.bot_should_stop_attack_on_leave = function (self)
-	local current_action_settings = self.current_action_settings
+function WeaponUnitExtension.bot_should_stop_attack_on_leave(arg_35_0)
+	local var_35_0 = arg_35_0.current_action_settings
 
-	if current_action_settings then
-		return current_action_settings.stop_action_on_leave_for_bot
+	if var_35_0 then
+		return var_35_0.stop_action_on_leave_for_bot
 	end
 end
 
-WeaponUnitExtension._is_before_end_time = function (self, next_chain_action, t)
-	local current_action_settings = self.current_action_settings or self.temporary_action_settings
-	local current_time_in_action = t - self.action_time_started
-	local max_time = current_action_settings.total_time + 2
-	local chain_time_scale = ActionUtils.get_action_time_scale(self.owner_unit, current_action_settings)
-	local end_time = next_chain_action.end_time and next_chain_action.end_time / chain_time_scale or max_time
+function WeaponUnitExtension._is_before_end_time(arg_36_0, arg_36_1, arg_36_2)
+	local var_36_0 = arg_36_0.current_action_settings or arg_36_0.temporary_action_settings
+	local var_36_1 = arg_36_2 - arg_36_0.action_time_started
+	local var_36_2 = var_36_0.total_time + 2
+	local var_36_3 = ActionUtils.get_action_time_scale(arg_36_0.owner_unit, var_36_0)
 
-	return current_time_in_action < end_time
+	return var_36_1 < (arg_36_1.end_time and arg_36_1.end_time / var_36_3 or var_36_2)
 end
 
-WeaponUnitExtension._find_chain_action = function (self, actions, allowed_chain_actions, t, wanted_input, wanted_occurrence_number)
-	local current_occurrence_number = 0
-	local num_chain_actions = #allowed_chain_actions
-	local found_chain_info, found_action_settings
+function WeaponUnitExtension._find_chain_action(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
+	local var_37_0 = 0
+	local var_37_1 = #arg_37_2
+	local var_37_2
+	local var_37_3
 
-	for i = 1, num_chain_actions do
-		local chain_info = allowed_chain_actions[i]
+	for iter_37_0 = 1, var_37_1 do
+		local var_37_4 = arg_37_2[iter_37_0]
 
-		if chain_info.input == wanted_input then
-			current_occurrence_number = current_occurrence_number + 1
+		if var_37_4.input == arg_37_4 then
+			var_37_0 = var_37_0 + 1
 
-			if current_occurrence_number == wanted_occurrence_number then
-				found_chain_info = chain_info
+			if var_37_0 == arg_37_5 then
+				var_37_2 = var_37_4
 
 				break
 			end
 		end
 	end
 
-	if found_chain_info then
-		local action_name = found_chain_info.action
-		local sub_action_name = found_chain_info.sub_action
+	if var_37_2 then
+		local var_37_5 = var_37_2.action
+		local var_37_6 = var_37_2.sub_action
 
-		found_action_settings = actions[action_name][sub_action_name]
-		found_action_settings, action_name, sub_action_name = ActionUtils.resolve_action_selector(found_action_settings, self._talent_extension, self._buff_extension, self, self.unit)
+		var_37_3 = arg_37_1[var_37_5][var_37_6]
 
-		local current_action_settings = self.current_action_settings
+		local var_37_7, var_37_8
 
-		if current_action_settings and not self:_is_before_end_time(found_chain_info, t) then
+		var_37_3, var_37_7, var_37_8 = ActionUtils.resolve_action_selector(var_37_3, arg_37_0._talent_extension, arg_37_0._buff_extension, arg_37_0, arg_37_0.unit)
+
+		if arg_37_0.current_action_settings and not arg_37_0:_is_before_end_time(var_37_2, arg_37_3) then
 			return nil
 		end
 	end
 
-	return found_chain_info, found_action_settings
+	return var_37_2, var_37_3
 end
 
-WeaponUnitExtension._get_attack_chain_data = function (self, actions, attack_chain, t)
-	local found_chain_action, found_action_settings, action_settings
-	local bot_wait_input = "hold_attack"
-	local bot_wanted_input
-	local current_action_settings = self.current_action_settings
+function WeaponUnitExtension._get_attack_chain_data(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+	local var_38_0
+	local var_38_1
+	local var_38_2
+	local var_38_3 = "hold_attack"
+	local var_38_4
+	local var_38_5 = arg_38_0.current_action_settings
 
-	if current_action_settings then
-		action_settings = current_action_settings
+	if var_38_5 then
+		var_38_2 = var_38_5
 	else
-		local start_action_name, start_sub_action_name = attack_chain.start_action_name, attack_chain.start_sub_action_name
+		local var_38_6 = arg_38_2.start_action_name
+		local var_38_7 = arg_38_2.start_sub_action_name
 
-		action_settings = actions[start_action_name][start_sub_action_name]
+		var_38_2 = arg_38_1[var_38_6][var_38_7]
 	end
 
-	local lookup_data = action_settings.lookup_data
-	local action_name, sub_action_name = lookup_data.action_name, lookup_data.sub_action_name
-	local attack_chain_data = attack_chain.transitions[action_name][sub_action_name]
+	local var_38_8 = var_38_2.lookup_data
+	local var_38_9 = var_38_8.action_name
+	local var_38_10 = var_38_8.sub_action_name
+	local var_38_11 = arg_38_2.transitions[var_38_9][var_38_10]
 
-	if attack_chain_data == nil then
+	if var_38_11 == nil then
 		return nil
 	end
 
-	found_chain_action = attack_chain_data.chain_action
+	local var_38_12 = var_38_11.chain_action
 
-	if current_action_settings and not self:_is_before_end_time(found_chain_action, t) then
+	if var_38_5 and not arg_38_0:_is_before_end_time(var_38_12, arg_38_3) then
 		return nil
 	end
 
-	found_action_settings = actions[found_chain_action.action][found_chain_action.sub_action_name]
-	bot_wait_input = attack_chain_data.bot_wait_input or bot_wait_input
-	bot_wanted_input = attack_chain_data.bot_wanted_input or bot_wanted_input
+	local var_38_13 = arg_38_1[var_38_12.action][var_38_12.sub_action_name]
 
-	return found_chain_action, found_action_settings, action_settings, bot_wait_input, bot_wanted_input
+	var_38_3 = var_38_11.bot_wait_input or var_38_3
+	var_38_4 = var_38_11.bot_wanted_input or var_38_4
+
+	return var_38_12, var_38_13, var_38_2, var_38_3, var_38_4
 end
 
-WeaponUnitExtension._process_bot_attack_request = function (self, attack_type, actions, weapon_name, t, attack_chain)
-	if attack_chain then
-		return self:_get_attack_chain_data(actions, attack_chain, t)
+function WeaponUnitExtension._process_bot_attack_request(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5)
+	if arg_39_5 then
+		return arg_39_0:_get_attack_chain_data(arg_39_2, arg_39_5, arg_39_4)
 	end
 
-	local found_chain_action, found_action_settings, action_settings
-	local wanted_input = "action_one_release"
-	local bot_wait_input = "hold_attack"
-	local bot_wanted_input
-	local wanted_occurrence_number = attack_type == "tap_attack" and 1 or attack_type == "hold_attack" and 2
+	local var_39_0
+	local var_39_1
+	local var_39_2
+	local var_39_3 = "action_one_release"
+	local var_39_4 = "hold_attack"
+	local var_39_5
+	local var_39_6 = arg_39_1 == "tap_attack" and 1 or arg_39_1 == "hold_attack" and 2
 
-	if self.current_action_settings then
-		action_settings = self.current_action_settings
+	if arg_39_0.current_action_settings then
+		var_39_2 = arg_39_0.current_action_settings
 
-		local allowed_chain_actions = action_settings.allowed_chain_actions
+		local var_39_7 = var_39_2.allowed_chain_actions
 
-		found_chain_action, found_action_settings = self:_find_chain_action(actions, allowed_chain_actions, t, wanted_input, wanted_occurrence_number)
+		var_39_0, var_39_1 = arg_39_0:_find_chain_action(arg_39_2, var_39_7, arg_39_4, var_39_3, var_39_6)
 
-		if found_chain_action == nil and action_settings.kind ~= "block" then
-			bot_wait_input = nil
-			bot_wanted_input = "tap_attack"
-			found_chain_action, found_action_settings = self:_find_chain_action(actions, allowed_chain_actions, t, "action_one", 1)
+		if var_39_0 == nil and var_39_2.kind ~= "block" then
+			var_39_4 = nil
+			var_39_5 = "tap_attack"
+			var_39_0, var_39_1 = arg_39_0:_find_chain_action(arg_39_2, var_39_7, arg_39_4, "action_one", 1)
 		end
 	else
-		action_settings = ActionUtils.resolve_action_selector(actions.action_one.default)
-		found_chain_action, found_action_settings = self:_find_chain_action(actions, action_settings.allowed_chain_actions, t, wanted_input, wanted_occurrence_number)
+		var_39_2 = ActionUtils.resolve_action_selector(arg_39_2.action_one.default)
+		var_39_0, var_39_1 = arg_39_0:_find_chain_action(arg_39_2, var_39_2.allowed_chain_actions, arg_39_4, var_39_3, var_39_6)
 	end
 
-	return found_chain_action, found_action_settings, action_settings, bot_wait_input, bot_wanted_input
+	return var_39_0, var_39_1, var_39_2, var_39_4, var_39_5
 end
 
-WeaponUnitExtension.update_bot_attack_request = function (self, t)
-	local bot_attack_data = self.bot_attack_data
-	local request = bot_attack_data.request
+function WeaponUnitExtension.update_bot_attack_request(arg_40_0, arg_40_1)
+	local var_40_0 = arg_40_0.bot_attack_data
+	local var_40_1 = var_40_0.request
 
-	if request.attack_type then
-		local chain_action, chain_action_settings, action_settings, wait_input, wanted_input = self:_process_bot_attack_request(request.attack_type, request.actions, request.weapon_name, t, request.attack_chain)
+	if var_40_1.attack_type then
+		local var_40_2, var_40_3, var_40_4, var_40_5, var_40_6 = arg_40_0:_process_bot_attack_request(var_40_1.attack_type, var_40_1.actions, var_40_1.weapon_name, arg_40_1, var_40_1.attack_chain)
 
-		if chain_action then
-			bot_attack_data.chain_action = chain_action
-			bot_attack_data.chain_action_settings = chain_action_settings
-			bot_attack_data.action_settings = action_settings
-			bot_attack_data.wait_input = wait_input
-			bot_attack_data.wanted_input = wanted_input
+		if var_40_2 then
+			var_40_0.chain_action = var_40_2
+			var_40_0.chain_action_settings = var_40_3
+			var_40_0.action_settings = var_40_4
+			var_40_0.wait_input = var_40_5
+			var_40_0.wanted_input = var_40_6
 		end
 
-		table.clear(request)
+		table.clear(var_40_1)
 	end
 
-	local chain_action = bot_attack_data.chain_action
+	local var_40_7 = var_40_0.chain_action
 
-	if chain_action == nil then
+	if var_40_7 == nil then
 		return
 	end
 
-	local input
+	local var_40_8
 
-	if self.current_action_settings and self:is_chain_action_available(chain_action, t) then
-		input = bot_attack_data.wanted_input
+	if arg_40_0.current_action_settings and arg_40_0:is_chain_action_available(var_40_7, arg_40_1) then
+		var_40_8 = var_40_0.wanted_input
 
-		self:clear_bot_attack_request()
+		arg_40_0:clear_bot_attack_request()
 	else
-		input = bot_attack_data.wait_input
+		var_40_8 = var_40_0.wait_input
 	end
 
-	if input then
-		local owner_unit = self.owner_unit
-		local input_extension = ScriptUnit.extension(owner_unit, "input_system")
+	if var_40_8 then
+		local var_40_9 = arg_40_0.owner_unit
+		local var_40_10 = ScriptUnit.extension(var_40_9, "input_system")
 
-		input_extension[input](input_extension)
+		var_40_10[var_40_8](var_40_10)
 	end
 end
 
-WeaponUnitExtension.request_bot_attack_action = function (self, attack_type, actions, weapon_name, attack_chain)
-	local bot_attack_data = self.bot_attack_data
-	local attack_request = bot_attack_data.request
+function WeaponUnitExtension.request_bot_attack_action(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+	local var_41_0 = arg_41_0.bot_attack_data
+	local var_41_1 = var_41_0.request
 
-	if bot_attack_data.chain_action or attack_request.attack_type then
+	if var_41_0.chain_action or var_41_1.attack_type then
 		return false
 	else
-		attack_request.attack_type = attack_type
-		attack_request.actions = actions
-		attack_request.weapon_name = weapon_name
-		attack_request.attack_chain = attack_chain
+		var_41_1.attack_type = arg_41_1
+		var_41_1.actions = arg_41_2
+		var_41_1.weapon_name = arg_41_3
+		var_41_1.attack_chain = arg_41_4
 
 		return true
 	end
 end
 
-WeaponUnitExtension.clear_bot_attack_request = function (self)
-	local bot_attack_data = self.bot_attack_data
-	local attack_request = bot_attack_data.request
+function WeaponUnitExtension.clear_bot_attack_request(arg_42_0)
+	local var_42_0 = arg_42_0.bot_attack_data
+	local var_42_1 = var_42_0.request
 
-	table.clear(attack_request)
-	table.clear(bot_attack_data)
+	table.clear(var_42_1)
+	table.clear(var_42_0)
 
-	bot_attack_data.request = attack_request
+	var_42_0.request = var_42_1
 end
 
-WeaponUnitExtension.is_starting_attack = function (self)
-	local current_action_settings = self.current_action_settings
+function WeaponUnitExtension.is_starting_attack(arg_43_0)
+	local var_43_0 = arg_43_0.current_action_settings
 
-	return ActionUtils.is_melee_start_sub_action(current_action_settings)
+	return ActionUtils.is_melee_start_sub_action(var_43_0)
 end
 
-WeaponUnitExtension.time_to_next_attack = function (self, wanted_attack_type, current_actions, current_weapon_name, t, attack_chain)
-	local bot_attack_data = self.bot_attack_data
-	local chain_action, _, action_settings
+function WeaponUnitExtension.time_to_next_attack(arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4, arg_44_5)
+	local var_44_0 = arg_44_0.bot_attack_data
+	local var_44_1
+	local var_44_2
+	local var_44_3
 
-	if bot_attack_data.chain_action then
-		chain_action = bot_attack_data.chain_action
-		action_settings = bot_attack_data.action_settings
+	if var_44_0.chain_action then
+		var_44_1 = var_44_0.chain_action
+		var_44_3 = var_44_0.action_settings
 	else
-		local attack_request = bot_attack_data.request
-		local attack_type = attack_request.attack_type or wanted_attack_type
-		local actions = attack_request.actions or current_actions
-		local weapon_name = attack_request.weapon_name or current_weapon_name
+		local var_44_4 = var_44_0.request
+		local var_44_5 = var_44_4.attack_type or arg_44_1
+		local var_44_6 = var_44_4.actions or arg_44_2
+		local var_44_7 = var_44_4.weapon_name or arg_44_3
 
-		attack_chain = attack_request.attack_chain or attack_chain
-		chain_action, _, action_settings = self:_process_bot_attack_request(attack_type, actions, weapon_name, t, attack_chain)
+		arg_44_5 = var_44_4.attack_chain or arg_44_5
+
+		local var_44_8
+
+		var_44_1, var_44_8, var_44_3 = arg_44_0:_process_bot_attack_request(var_44_5, var_44_6, var_44_7, arg_44_4, arg_44_5)
 	end
 
-	if chain_action then
-		local chain_action_time = self:time_to_next_chain_action(chain_action, t, nil, action_settings)
-
-		return chain_action_time
+	if var_44_1 then
+		return (arg_44_0:time_to_next_chain_action(var_44_1, arg_44_4, nil, var_44_3))
 	else
 		return nil
 	end
 end
 
-WeaponUnitExtension.set_mode = function (self, new_mode)
-	self.weapon_mode = new_mode
+function WeaponUnitExtension.set_mode(arg_45_0, arg_45_1)
+	arg_45_0.weapon_mode = arg_45_1
 end
 
-WeaponUnitExtension.get_mode = function (self)
-	return self.weapon_mode
+function WeaponUnitExtension.get_mode(arg_46_0)
+	return arg_46_0.weapon_mode
 end
 
-WeaponUnitExtension.get_custom_data = function (self, key)
-	fassert(self._custom_data[key] ~= nil, "Custom data key '%s' does not exist, add it to the weapon template", key)
+function WeaponUnitExtension.get_custom_data(arg_47_0, arg_47_1)
+	fassert(arg_47_0._custom_data[arg_47_1] ~= nil, "Custom data key '%s' does not exist, add it to the weapon template", arg_47_1)
 
-	return self._custom_data[key]
+	return arg_47_0._custom_data[arg_47_1]
 end
 
-WeaponUnitExtension.set_custom_data = function (self, key, value)
-	fassert(self._custom_data[key] ~= nil, "Custom data key '%s' does not exist, add it to the weapon template", key)
+function WeaponUnitExtension.set_custom_data(arg_48_0, arg_48_1, arg_48_2)
+	fassert(arg_48_0._custom_data[arg_48_1] ~= nil, "Custom data key '%s' does not exist, add it to the weapon template", arg_48_1)
 
-	self._custom_data[key] = value
+	arg_48_0._custom_data[arg_48_1] = arg_48_2
 end
 
-WeaponUnitExtension.set_weapon_buffs = function (self, buffs)
-	local owner_unit = self.owner_unit
-	local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
-	local current_buffs = self._current_weapon_buffs
+function WeaponUnitExtension.set_weapon_buffs(arg_49_0, arg_49_1)
+	local var_49_0 = arg_49_0.owner_unit
+	local var_49_1 = ScriptUnit.extension(var_49_0, "buff_system")
+	local var_49_2 = arg_49_0._current_weapon_buffs
 
-	for i = 1, #current_buffs do
-		buff_extension:remove_buff(current_buffs[i])
+	for iter_49_0 = 1, #var_49_2 do
+		var_49_1:remove_buff(var_49_2[iter_49_0])
 	end
 
-	table.clear(current_buffs)
+	table.clear(var_49_2)
 
-	if buffs then
-		for i = 1, #buffs do
-			local buff_name = buffs[i]
-			local buff_id = buff_extension:add_buff(buff_name)
+	if arg_49_1 then
+		for iter_49_1 = 1, #arg_49_1 do
+			local var_49_3 = arg_49_1[iter_49_1]
 
-			current_buffs[i] = buff_id
+			var_49_2[iter_49_1] = var_49_1:add_buff(var_49_3)
 		end
 	end
 end
 
-WeaponUnitExtension.add_looping_audio = function (self, id, start_event_id, end_event_id, start_event_husk_id, end_event_husk_id, auto_start)
-	fassert(start_event_id, "tried to add looping audio with no start event, id: %s", id)
-	fassert(end_event_id, "tried to add looping audio with no end event, id: %s", id)
+function WeaponUnitExtension.add_looping_audio(arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_50_4, arg_50_5, arg_50_6)
+	fassert(arg_50_2, "tried to add looping audio with no start event, id: %s", arg_50_1)
+	fassert(arg_50_3, "tried to add looping audio with no end event, id: %s", arg_50_1)
 
-	local data = self.looping_audio_events[id]
+	local var_50_0 = arg_50_0.looping_audio_events[arg_50_1]
 
-	if data and data.is_playing then
-		self:stop_looping_audio(id)
+	if var_50_0 and var_50_0.is_playing then
+		arg_50_0:stop_looping_audio(arg_50_1)
 	end
 
-	local data = {
+	local var_50_1 = {
 		is_playing = false,
-		start_event_id = start_event_id,
-		end_event_id = end_event_id,
-		start_event_husk_id = start_event_husk_id,
-		end_event_husk_id = end_event_husk_id,
+		start_event_id = arg_50_2,
+		end_event_id = arg_50_3,
+		start_event_husk_id = arg_50_4,
+		end_event_husk_id = arg_50_5
 	}
 
-	self.looping_audio_events[id] = data
+	arg_50_0.looping_audio_events[arg_50_1] = var_50_1
 
-	if auto_start then
-		self:start_looping_audio(id)
+	if arg_50_6 then
+		arg_50_0:start_looping_audio(arg_50_1)
 	end
 end
 
-WeaponUnitExtension.start_looping_audio = function (self, id)
-	local audio_data = self.looping_audio_events[id]
+function WeaponUnitExtension.start_looping_audio(arg_51_0, arg_51_1)
+	local var_51_0 = arg_51_0.looping_audio_events[arg_51_1]
 
-	if not audio_data or audio_data.is_playing then
+	if not var_51_0 or var_51_0.is_playing then
 		return
 	end
 
-	if self.is_local and not self.is_bot and not audio_data.wwise_playing_id then
-		local wwise_source_id = WwiseWorld.make_auto_source(self.wwise_world, self.unit)
+	if arg_51_0.is_local and not arg_51_0.is_bot and not var_51_0.wwise_playing_id then
+		local var_51_1 = WwiseWorld.make_auto_source(arg_51_0.wwise_world, arg_51_0.unit)
 
-		audio_data.wwise_playing_id = WwiseWorld.trigger_event(self.wwise_world, audio_data.start_event_id, wwise_source_id)
+		var_51_0.wwise_playing_id = WwiseWorld.trigger_event(arg_51_0.wwise_world, var_51_0.start_event_id, var_51_1)
 	end
 
-	ActionUtils.play_husk_sound_event(self.wwise_world, audio_data.start_event_husk_id, self.owner_unit, self.is_bot)
+	ActionUtils.play_husk_sound_event(arg_51_0.wwise_world, var_51_0.start_event_husk_id, arg_51_0.owner_unit, arg_51_0.is_bot)
 
-	audio_data.is_playing = true
+	var_51_0.is_playing = true
 end
 
-WeaponUnitExtension.stop_looping_audio = function (self, id)
-	local audio_data = self.looping_audio_events[id]
+function WeaponUnitExtension.stop_looping_audio(arg_52_0, arg_52_1)
+	local var_52_0 = arg_52_0.looping_audio_events[arg_52_1]
 
-	if not audio_data or not audio_data.is_playing then
+	if not var_52_0 or not var_52_0.is_playing then
 		return
 	end
 
-	if self.is_local and not self.is_bot then
-		if audio_data.wwise_playing_id and WwiseWorld.is_playing(self.wwise_world, audio_data.wwise_playing_id) then
-			local wwise_source_id = WwiseWorld.make_auto_source(self.wwise_world, self.unit)
+	if arg_52_0.is_local and not arg_52_0.is_bot then
+		if var_52_0.wwise_playing_id and WwiseWorld.is_playing(arg_52_0.wwise_world, var_52_0.wwise_playing_id) then
+			local var_52_1 = WwiseWorld.make_auto_source(arg_52_0.wwise_world, arg_52_0.unit)
 
-			WwiseWorld.trigger_event(self.wwise_world, audio_data.end_event_id, wwise_source_id)
+			WwiseWorld.trigger_event(arg_52_0.wwise_world, var_52_0.end_event_id, var_52_1)
 		end
 
-		audio_data.wwise_playing_id = nil
+		var_52_0.wwise_playing_id = nil
 	end
 
-	ActionUtils.play_husk_sound_event(self.wwise_world, audio_data.end_event_husk_id, self.owner_unit, self.is_bot)
+	ActionUtils.play_husk_sound_event(arg_52_0.wwise_world, var_52_0.end_event_husk_id, arg_52_0.owner_unit, arg_52_0.is_bot)
 
-	audio_data.is_playing = false
+	var_52_0.is_playing = false
 end
 
-WeaponUnitExtension.is_playing_looping_audio = function (self, id)
-	local audio_data = self.looping_audio_events[id]
+function WeaponUnitExtension.is_playing_looping_audio(arg_53_0, arg_53_1)
+	local var_53_0 = arg_53_0.looping_audio_events[arg_53_1]
 
-	if audio_data then
-		return audio_data.is_playing
+	if var_53_0 then
+		return var_53_0.is_playing
 	end
 
 	return false
 end
 
-WeaponUnitExtension.set_looping_audio_switch = function (self, id, group, state)
-	local audio_data = self.looping_audio_events[id]
-
-	if not audio_data or not group or not state then
+function WeaponUnitExtension.set_looping_audio_switch(arg_54_0, arg_54_1, arg_54_2, arg_54_3)
+	if not arg_54_0.looping_audio_events[arg_54_1] or not arg_54_2 or not arg_54_3 then
 		return
 	end
 
-	local wwise_source_id = WwiseWorld.make_auto_source(self.wwise_world, self.unit)
+	local var_54_0 = WwiseWorld.make_auto_source(arg_54_0.wwise_world, arg_54_0.unit)
 
-	WwiseWorld.set_switch(self.wwise_world, group, state, wwise_source_id)
+	WwiseWorld.set_switch(arg_54_0.wwise_world, arg_54_2, arg_54_3, var_54_0)
 end
 
-WeaponUnitExtension.update_looping_audio_parameter = function (self, id, parameter_name, parameter_value)
-	local audio_data = self.looping_audio_events[id]
-
-	if not audio_data or not parameter_name or not parameter_value then
+function WeaponUnitExtension.update_looping_audio_parameter(arg_55_0, arg_55_1, arg_55_2, arg_55_3)
+	if not arg_55_0.looping_audio_events[arg_55_1] or not arg_55_2 or not arg_55_3 then
 		return
 	end
 
-	local wwise_source_id = WwiseWorld.make_auto_source(self.wwise_world, self.unit)
+	local var_55_0 = WwiseWorld.make_auto_source(arg_55_0.wwise_world, arg_55_0.unit)
 
-	WwiseWorld.set_source_parameter(self.wwise_world, wwise_source_id, parameter_name, parameter_value)
+	WwiseWorld.set_source_parameter(arg_55_0.wwise_world, var_55_0, arg_55_2, arg_55_3)
 end
 
-WeaponUnitExtension.on_wield = function (self, hand_name)
-	local first_person_extension = self.first_person_extension
+function WeaponUnitExtension.on_wield(arg_56_0, arg_56_1)
+	local var_56_0 = arg_56_0.first_person_extension
 
-	if first_person_extension then
-		local weapon_template = self:_weapon_template()
-		local sway_settings = weapon_template and weapon_template.weapon_sway_settings
+	if var_56_0 then
+		local var_56_1 = arg_56_0:_weapon_template()
+		local var_56_2 = var_56_1 and var_56_1.weapon_sway_settings
 
-		first_person_extension:set_weapon_sway_settings(sway_settings)
+		var_56_0:set_weapon_sway_settings(var_56_2)
 	end
 
-	if self._weapon_wield then
-		self._weapon_wield(self, hand_name, self.owner_unit, self:_is_local_player())
-	end
-end
-
-WeaponUnitExtension.on_unwield = function (self, hand_name)
-	if self._weapon_unwield then
-		self._weapon_unwield(self, hand_name)
-	end
-
-	if self._synced_weapon_state then
-		local weapon_state = self._synced_weapon_states[self._synced_weapon_state]
-
-		if weapon_state.leave then
-			weapon_state:leave(self.owner_unit, self.unit, self._synced_weapon_state_data, self:_is_local_player(), self.world, nil, false)
-		end
+	if arg_56_0._weapon_wield then
+		arg_56_0._weapon_wield(arg_56_0, arg_56_1, arg_56_0.owner_unit, arg_56_0:_is_local_player())
 	end
 end
 
-WeaponUnitExtension.change_synced_state = function (self, state_name, skip_sync)
-	if self._synced_weapon_state then
-		local weapon_state = self._synced_weapon_states[self._synced_weapon_state]
+function WeaponUnitExtension.on_unwield(arg_57_0, arg_57_1)
+	if arg_57_0._weapon_unwield then
+		arg_57_0._weapon_unwield(arg_57_0, arg_57_1)
+	end
 
-		if weapon_state.leave then
-			weapon_state:leave(self.owner_unit, self.unit, self._synced_weapon_state_data, self:_is_local_player(), self.world, state_name, false)
+	if arg_57_0._synced_weapon_state then
+		local var_57_0 = arg_57_0._synced_weapon_states[arg_57_0._synced_weapon_state]
+
+		if var_57_0.leave then
+			var_57_0:leave(arg_57_0.owner_unit, arg_57_0.unit, arg_57_0._synced_weapon_state_data, arg_57_0:_is_local_player(), arg_57_0.world, nil, false)
+		end
+	end
+end
+
+function WeaponUnitExtension.change_synced_state(arg_58_0, arg_58_1, arg_58_2)
+	if arg_58_0._synced_weapon_state then
+		local var_58_0 = arg_58_0._synced_weapon_states[arg_58_0._synced_weapon_state]
+
+		if var_58_0.leave then
+			var_58_0:leave(arg_58_0.owner_unit, arg_58_0.unit, arg_58_0._synced_weapon_state_data, arg_58_0:_is_local_player(), arg_58_0.world, arg_58_1, false)
 		end
 	end
 
-	self._synced_weapon_state = state_name
+	arg_58_0._synced_weapon_state = arg_58_1
 
-	if state_name then
-		local weapon_state = self._synced_weapon_states[state_name]
+	if arg_58_1 then
+		local var_58_1 = arg_58_0._synced_weapon_states[arg_58_1]
 
-		if weapon_state.clear_data_on_enter then
-			table.clear(self._synced_weapon_state_data)
+		if var_58_1.clear_data_on_enter then
+			table.clear(arg_58_0._synced_weapon_state_data)
 		end
 
-		if weapon_state.enter then
-			weapon_state:enter(self.owner_unit, self.unit, self._synced_weapon_state_data, self:_is_local_player(), self.world)
+		if var_58_1.enter then
+			var_58_1:enter(arg_58_0.owner_unit, arg_58_0.unit, arg_58_0._synced_weapon_state_data, arg_58_0:_is_local_player(), arg_58_0.world)
 		end
 	end
 
-	if not skip_sync then
-		local network_manager = Managers.state.network
+	if not arg_58_2 then
+		local var_58_2 = Managers.state.network
 
-		if network_manager then
-			local network_transmit = network_manager.network_transmit
-			local owner_unit_id = Managers.state.unit_storage:go_id(self.owner_unit)
-			local state_id = NetworkLookup.weapon_synced_states[state_name or "n/a"]
+		if var_58_2 then
+			local var_58_3 = var_58_2.network_transmit
+			local var_58_4 = Managers.state.unit_storage:go_id(arg_58_0.owner_unit)
+			local var_58_5 = NetworkLookup.weapon_synced_states[arg_58_1 or "n/a"]
 
-			if self.is_server then
-				network_transmit:send_rpc_clients("rpc_change_synced_weapon_state", owner_unit_id, state_id)
+			if arg_58_0.is_server then
+				var_58_3:send_rpc_clients("rpc_change_synced_weapon_state", var_58_4, var_58_5)
 			else
-				network_transmit:send_rpc_server("rpc_change_synced_weapon_state", owner_unit_id, state_id)
+				var_58_3:send_rpc_server("rpc_change_synced_weapon_state", var_58_4, var_58_5)
 			end
 		end
 	end
 end
 
-WeaponUnitExtension.current_synced_state = function (self)
-	return self._synced_weapon_state
+function WeaponUnitExtension.current_synced_state(arg_59_0)
+	return arg_59_0._synced_weapon_state
 end

@@ -1,419 +1,399 @@
-﻿-- chunkname: @scripts/ui/views/ingame_view.lua
+-- chunkname: @scripts/ui/views/ingame_view.lua
 
 require("scripts/ui/views/ingame_view_definitions")
 require("scripts/ui/views/ingame_view_layout_logic")
 require("scripts/ui/views/menu_input_description_ui")
 
-local layout_definitions = local_require("scripts/ui/views/ingame_view_menu_layout")
-local generic_input_actions = {
+local var_0_0 = local_require("scripts/ui/views/ingame_view_menu_layout")
+local var_0_1 = {
 	{
-		description_text = "input_description_open",
 		input_action = "confirm",
 		priority = 2,
+		description_text = "input_description_open"
 	},
 	{
-		description_text = "input_description_close",
 		input_action = "back",
 		priority = 3,
-	},
+		description_text = "input_description_close"
+	}
 }
 
 IngameView = class(IngameView)
 
-IngameView.init = function (self, ingame_ui_context)
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self.input_manager = ingame_ui_context.input_manager
-	self.menu_active = false
-	self.ingame_ui = ingame_ui_context.ingame_ui
-	self.render_settings = {
-		snap_pixel_positions = true,
+function IngameView.init(arg_1_0, arg_1_1)
+	arg_1_0.ui_renderer = arg_1_1.ui_renderer
+	arg_1_0.ui_top_renderer = arg_1_1.ui_top_renderer
+	arg_1_0.input_manager = arg_1_1.input_manager
+	arg_1_0.menu_active = false
+	arg_1_0.ingame_ui = arg_1_1.ingame_ui
+	arg_1_0.render_settings = {
+		snap_pixel_positions = true
 	}
-	self.ingame_ui_context = ingame_ui_context
-	self.network_lobby = ingame_ui_context.network_lobby
+	arg_1_0.ingame_ui_context = arg_1_1
+	arg_1_0.network_lobby = arg_1_1.network_lobby
 
-	local is_in_inn = ingame_ui_context.is_in_inn
+	local var_1_0 = arg_1_1.is_in_inn
 
-	self.is_server = ingame_ui_context.is_server
-	self.menu_definition = IngameViewDefinitions
+	arg_1_0.is_server = arg_1_1.is_server
+	arg_1_0.menu_definition = IngameViewDefinitions
 
-	self:create_ui_elements()
+	arg_1_0:create_ui_elements()
 
-	self.ui_animations = {}
-	self.controller_grid_index = {
+	arg_1_0.ui_animations = {}
+	arg_1_0.controller_grid_index = {
 		x = 1,
-		y = 1,
+		y = 1
 	}
-	self.controller_cooldown = 0
+	arg_1_0.controller_cooldown = 0
 
-	local input_service = self.input_manager:get_service("ingame_menu")
-	local number_of_actvie_descriptions = 3
-	local world = Managers.world:world("level_world")
+	local var_1_1 = arg_1_0.input_manager:get_service("ingame_menu")
+	local var_1_2 = 3
+	local var_1_3 = Managers.world:world("level_world")
 
-	self.wwise_world = Managers.world:wwise_world(world)
-	self._friends_component_ui = FriendsUIComponent:new(ingame_ui_context)
+	arg_1_0.wwise_world = Managers.world:wwise_world(var_1_3)
+	arg_1_0._friends_component_ui = FriendsUIComponent:new(arg_1_1)
 
-	local gui_layer = self.menu_definition.scenegraph_definition.root.position[3]
+	local var_1_4 = arg_1_0.menu_definition.scenegraph_definition.root.position[3]
 
-	self.menu_input_description = MenuInputDescriptionUI:new(ingame_ui_context, self.ui_top_renderer, input_service, number_of_actvie_descriptions, gui_layer, generic_input_actions)
+	arg_1_0.menu_input_description = MenuInputDescriptionUI:new(arg_1_1, arg_1_0.ui_top_renderer, var_1_1, var_1_2, var_1_4, var_0_1)
 
-	self.menu_input_description:set_input_description(nil)
+	arg_1_0.menu_input_description:set_input_description(nil)
 end
 
-local MENU_ANIMATION_TIME = 0.3
+local var_0_2 = 0.3
 
-IngameView.on_enter = function (self, params)
-	self.layout_logic = IngameViewLayoutLogic:new(self.ingame_ui_context, params, layout_definitions.menu_layouts, layout_definitions.full_access_layout)
-	self.controller_cooldown = 0.2
+function IngameView.on_enter(arg_2_0, arg_2_1)
+	arg_2_0.layout_logic = IngameViewLayoutLogic:new(arg_2_0.ingame_ui_context, arg_2_1, var_0_0.menu_layouts, var_0_0.full_access_layout)
+	arg_2_0.controller_cooldown = 0.2
 
-	self.input_manager:block_device_except_service("ingame_menu", "keyboard", 1)
-	self.input_manager:block_device_except_service("ingame_menu", "mouse", 1)
-	self.input_manager:block_device_except_service("ingame_menu", "gamepad", 1)
+	arg_2_0.input_manager:block_device_except_service("ingame_menu", "keyboard", 1)
+	arg_2_0.input_manager:block_device_except_service("ingame_menu", "mouse", 1)
+	arg_2_0.input_manager:block_device_except_service("ingame_menu", "gamepad", 1)
 
 	if script_data.debug_enabled then
-		self.input_manager:device_unblock_service("keyboard", 1, "Debug")
+		arg_2_0.input_manager:device_unblock_service("keyboard", 1, "Debug")
 	end
 
 	ShowCursorStack.show("IngameView")
-	self:play_sound("Play_hud_button_open")
+	arg_2_0:play_sound("Play_hud_button_open")
 
-	local world = self.ui_renderer.world
-	local shading_env = World.get_data(world, "shading_environment")
+	local var_2_0 = arg_2_0.ui_renderer.world
+	local var_2_1 = World.get_data(var_2_0, "shading_environment")
 
-	if shading_env then
-		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", 1)
-		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", 0.75)
-		ShadingEnvironment.apply(shading_env)
+	if var_2_1 then
+		ShadingEnvironment.set_scalar(var_2_1, "fullscreen_blur_enabled", 1)
+		ShadingEnvironment.set_scalar(var_2_1, "fullscreen_blur_amount", 0.75)
+		ShadingEnvironment.apply(var_2_1)
 	end
 
 	Managers.state.event:trigger("ingame_menu_opened", "interacting")
 end
 
-IngameView.on_exit = function (self)
-	if self._friends_component_ui:is_active() then
-		self._friends_component_ui:deactivate_friends_ui()
+function IngameView.on_exit(arg_3_0)
+	if arg_3_0._friends_component_ui:is_active() then
+		arg_3_0._friends_component_ui:deactivate_friends_ui()
 	end
 
 	ShowCursorStack.hide("IngameView")
-	self.input_manager:device_unblock_all_services("keyboard", 1)
-	self.input_manager:device_unblock_all_services("mouse", 1)
-	self.input_manager:device_unblock_all_services("gamepad", 1)
-	self:play_sound("Play_hud_button_close")
+	arg_3_0.input_manager:device_unblock_all_services("keyboard", 1)
+	arg_3_0.input_manager:device_unblock_all_services("mouse", 1)
+	arg_3_0.input_manager:device_unblock_all_services("gamepad", 1)
+	arg_3_0:play_sound("Play_hud_button_close")
 
-	local world = self.ui_renderer.world
-	local shading_env = World.get_data(world, "shading_environment")
+	local var_3_0 = arg_3_0.ui_renderer.world
+	local var_3_1 = World.get_data(var_3_0, "shading_environment")
 
-	if shading_env then
-		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", 0)
-		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", 0)
-		ShadingEnvironment.apply(shading_env)
+	if var_3_1 then
+		ShadingEnvironment.set_scalar(var_3_1, "fullscreen_blur_enabled", 0)
+		ShadingEnvironment.set_scalar(var_3_1, "fullscreen_blur_amount", 0)
+		ShadingEnvironment.apply(var_3_1)
 	end
 
 	Managers.state.event:trigger("ingame_menu_closed")
-	self.layout_logic:destroy()
+	arg_3_0.layout_logic:destroy()
 
-	self.layout_logic = nil
+	arg_3_0.layout_logic = nil
 end
 
-IngameView.input_service = function (self)
-	return self.input_manager:get_service("ingame_menu")
+function IngameView.input_service(arg_4_0)
+	return arg_4_0.input_manager:get_service("ingame_menu")
 end
 
-IngameView.create_ui_elements = function (self)
-	local widgets = self.menu_definition.widgets
+function IngameView.create_ui_elements(arg_5_0)
+	local var_5_0 = arg_5_0.menu_definition.widgets
 
-	self.stored_buttons = {
-		UIWidget.init(widgets.button_1),
-		UIWidget.init(widgets.button_2),
-		UIWidget.init(widgets.button_3),
-		UIWidget.init(widgets.button_4),
-		UIWidget.init(widgets.button_5),
-		UIWidget.init(widgets.button_6),
-		UIWidget.init(widgets.button_7),
-		UIWidget.init(widgets.button_8),
-		UIWidget.init(widgets.button_9),
+	arg_5_0.stored_buttons = {
+		UIWidget.init(var_5_0.button_1),
+		UIWidget.init(var_5_0.button_2),
+		UIWidget.init(var_5_0.button_3),
+		UIWidget.init(var_5_0.button_4),
+		UIWidget.init(var_5_0.button_5),
+		UIWidget.init(var_5_0.button_6),
+		UIWidget.init(var_5_0.button_7),
+		UIWidget.init(var_5_0.button_8),
+		UIWidget.init(var_5_0.button_9)
 	}
 
-	for _, button_widget in ipairs(self.stored_buttons) do
-		button_widget.style.title_text.localize = true
-		button_widget.style.title_text_disabled.localize = true
-		button_widget.style.title_text_shadow.localize = true
+	for iter_5_0, iter_5_1 in ipairs(arg_5_0.stored_buttons) do
+		iter_5_1.style.title_text.localize = true
+		iter_5_1.style.title_text_disabled.localize = true
+		iter_5_1.style.title_text_shadow.localize = true
 	end
 
-	self.static_widgets = {
-		UIWidget.init(widgets.background),
-		UIWidget.init(widgets.top_panel),
-		UIWidget.init(widgets.left_chain_end),
+	arg_5_0.static_widgets = {
+		UIWidget.init(var_5_0.background),
+		UIWidget.init(var_5_0.top_panel),
+		UIWidget.init(var_5_0.left_chain_end)
 	}
-	self.left_chain_widget = UIWidget.init(widgets.left_chain)
-	self.right_chain_widget = UIWidget.init(widgets.right_chain)
-	self.console_cursor_widget = UIWidget.init(widgets.console_cursor)
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(self.menu_definition.scenegraph_definition)
+	arg_5_0.left_chain_widget = UIWidget.init(var_5_0.left_chain)
+	arg_5_0.right_chain_widget = UIWidget.init(var_5_0.right_chain)
+	arg_5_0.console_cursor_widget = UIWidget.init(var_5_0.console_cursor)
+	arg_5_0.ui_scenegraph = UISceneGraph.init_scenegraph(arg_5_0.menu_definition.scenegraph_definition)
 end
 
-IngameView._update_presentation = function (self)
-	local layout_logic = self.layout_logic
-	local layout_data = layout_logic:layout_data()
-	local num_entries = #layout_data
+function IngameView._update_presentation(arg_6_0)
+	local var_6_0 = #arg_6_0.layout_logic:layout_data()
 
-	if num_entries ~= self._num_entries then
-		local controller_selection_index = self.controller_selection_index
+	if var_6_0 ~= arg_6_0._num_entries then
+		local var_6_1 = arg_6_0.controller_selection_index
 
-		if controller_selection_index and num_entries < controller_selection_index then
-			self:controller_select_button_index(num_entries, true)
+		if var_6_1 and var_6_0 < var_6_1 then
+			arg_6_0:controller_select_button_index(var_6_0, true)
 		end
 
-		self:set_background_height(num_entries)
+		arg_6_0:set_background_height(var_6_0)
 
-		self._num_entries = num_entries
+		arg_6_0._num_entries = var_6_0
 	end
 end
 
-IngameView.destroy = function (self)
-	self.menu_input_description:destroy()
+function IngameView.destroy(arg_7_0)
+	arg_7_0.menu_input_description:destroy()
 
-	self.menu_input_description = nil
+	arg_7_0.menu_input_description = nil
 end
 
-IngameView.set_background_height = function (self, num_buttons)
-	local button_spacing = self.menu_definition.MENU_BUTTON_SPACING
-	local button_size = self.menu_definition.MENU_BUTTON_SIZE
-	local button_height = button_size[2]
-	local total_button_height = num_buttons * (button_height + button_spacing)
-	local ui_scenegraph = self.ui_scenegraph
-	local background_size = ui_scenegraph.window.size
+function IngameView.set_background_height(arg_8_0, arg_8_1)
+	local var_8_0 = arg_8_0.menu_definition.MENU_BUTTON_SPACING
+	local var_8_1 = arg_8_1 * (arg_8_0.menu_definition.MENU_BUTTON_SIZE[2] + var_8_0)
+	local var_8_2 = arg_8_0.ui_scenegraph
 
-	background_size[2] = total_button_height
-
-	local left_chain_widget = self.left_chain_widget
-	local left_chain_scenegraph_id = left_chain_widget.scenegraph_id
-
-	ui_scenegraph[left_chain_scenegraph_id].size[2] = total_button_height + 40
-
-	local right_chain_widget = self.right_chain_widget
-	local right_chain_scenegraph_id = right_chain_widget.scenegraph_id
-
-	ui_scenegraph[right_chain_scenegraph_id].size[2] = total_button_height + 100
+	var_8_2.window.size[2] = var_8_1
+	var_8_2[arg_8_0.left_chain_widget.scenegraph_id].size[2] = var_8_1 + 40
+	var_8_2[arg_8_0.right_chain_widget.scenegraph_id].size[2] = var_8_1 + 100
 end
 
-IngameView.update = function (self, dt)
-	local layout_logic = self.layout_logic
+function IngameView.update(arg_9_0, arg_9_1)
+	local var_9_0 = arg_9_0.layout_logic
 
-	layout_logic:update(dt)
-	self:_update_presentation()
+	var_9_0:update(arg_9_1)
+	arg_9_0:_update_presentation()
 
-	if self._reinit_menu_input_description_next_update then
-		self._reinit_menu_input_description_next_update = nil
+	if arg_9_0._reinit_menu_input_description_next_update then
+		arg_9_0._reinit_menu_input_description_next_update = nil
 
-		self.menu_input_description:set_input_description(generic_input_actions)
+		arg_9_0.menu_input_description:set_input_description(var_0_1)
 	end
 
-	local ui_top_renderer = self.ui_top_renderer
-	local input_manager = self.input_manager
-	local input_service = input_manager:get_service("ingame_menu")
-	local gamepad_active = input_manager:is_device_active("gamepad")
+	local var_9_1 = arg_9_0.ui_top_renderer
+	local var_9_2 = arg_9_0.input_manager
+	local var_9_3 = var_9_2:get_service("ingame_menu")
+	local var_9_4 = var_9_2:is_device_active("gamepad")
 
 	if Managers.account:is_online() then
-		self._friends_component_ui:update(dt, input_service)
+		arg_9_0._friends_component_ui:update(arg_9_1, var_9_3)
 	end
 
-	local ui_animations = self.ui_animations
+	local var_9_5 = arg_9_0.ui_animations
 
-	for name, ui_animation in pairs(ui_animations) do
-		UIAnimation.update(ui_animation, dt)
+	for iter_9_0, iter_9_1 in pairs(var_9_5) do
+		UIAnimation.update(iter_9_1, arg_9_1)
 	end
 
-	local ui_scenegraph = self.ui_scenegraph
+	local var_9_6 = arg_9_0.ui_scenegraph
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
-	UIRenderer.draw_widget(ui_top_renderer, self.left_chain_widget)
-	UIRenderer.draw_widget(ui_top_renderer, self.right_chain_widget)
+	UIRenderer.begin_pass(var_9_1, var_9_6, var_9_3, arg_9_1, nil, arg_9_0.render_settings)
+	UIRenderer.draw_widget(var_9_1, arg_9_0.left_chain_widget)
+	UIRenderer.draw_widget(var_9_1, arg_9_0.right_chain_widget)
 
-	for _, widget in ipairs(self.static_widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, widget)
+	for iter_9_2, iter_9_3 in ipairs(arg_9_0.static_widgets) do
+		UIRenderer.draw_widget(var_9_1, iter_9_3)
 	end
 
-	if gamepad_active then
-		UIRenderer.draw_widget(ui_top_renderer, self.console_cursor_widget)
+	if var_9_4 then
+		UIRenderer.draw_widget(var_9_1, arg_9_0.console_cursor_widget)
 	end
 
-	local layout_data = layout_logic:layout_data()
-	local ingame_ui = self.ingame_ui
+	local var_9_7 = var_9_0:layout_data()
+	local var_9_8 = arg_9_0.ingame_ui
 
-	if layout_data then
-		local stored_buttons = self.stored_buttons
+	if var_9_7 then
+		local var_9_9 = arg_9_0.stored_buttons
 
-		for index, data in ipairs(layout_data) do
-			local widget = stored_buttons[index]
-			local content = widget.content
-			local button_hotspot = content.button_hotspot
+		for iter_9_4, iter_9_5 in ipairs(var_9_7) do
+			local var_9_10 = var_9_9[iter_9_4]
+			local var_9_11 = var_9_10.content
 
-			button_hotspot.disable_button = data.disabled
-			content.title_text = data.display_name
+			var_9_11.button_hotspot.disable_button = iter_9_5.disabled
+			var_9_11.title_text = iter_9_5.display_name
 
-			UIWidgetUtils.animate_default_button(widget, dt)
-			UIRenderer.draw_widget(ui_top_renderer, widget)
+			UIWidgetUtils.animate_default_button(var_9_10, arg_9_1)
+			UIRenderer.draw_widget(var_9_1, var_9_10)
 
-			if widget.content.button_hotspot.on_hover_enter then
-				self:play_sound("Play_hud_hover")
+			if var_9_10.content.button_hotspot.on_hover_enter then
+				arg_9_0:play_sound("Play_hud_hover")
 			end
 
-			if not ingame_ui:pending_transition() then
-				local mouse_input_approved = widget.content.button_hotspot.on_release
-				local gamepad_input_approved = self.controller_cooldown < 0 and self.controller_selection_index == index and input_service:get("confirm", true)
+			if not var_9_8:pending_transition() then
+				local var_9_12 = var_9_10.content.button_hotspot.on_release
+				local var_9_13 = arg_9_0.controller_cooldown < 0 and arg_9_0.controller_selection_index == iter_9_4 and var_9_3:get("confirm", true)
 
-				if mouse_input_approved or gamepad_input_approved then
-					widget.content.button_hotspot.on_release = nil
+				if var_9_12 or var_9_13 then
+					var_9_10.content.button_hotspot.on_release = nil
 
-					self:play_sound("Play_hud_select")
-					layout_logic:execute_layout_option(index)
+					arg_9_0:play_sound("Play_hud_select")
+					var_9_0:execute_layout_option(iter_9_4)
 
-					self._reinit_menu_input_description_next_update = true
-					self.controller_cooldown = GamepadSettings.menu_cooldown
+					arg_9_0._reinit_menu_input_description_next_update = true
+					arg_9_0.controller_cooldown = GamepadSettings.menu_cooldown
 				end
 			end
 		end
 	end
 
-	UIRenderer.end_pass(ui_top_renderer)
+	UIRenderer.end_pass(var_9_1)
 
-	self.gamepad_active_last_frame = gamepad_active
+	arg_9_0.gamepad_active_last_frame = var_9_4
 
-	local join_lobby_data = self._friends_component_ui:join_lobby_data()
+	local var_9_14 = arg_9_0._friends_component_ui:join_lobby_data()
 
-	if join_lobby_data and Managers.matchmaking:allowed_to_initiate_join_lobby() then
-		Managers.matchmaking:request_join_lobby(join_lobby_data)
-		ingame_ui:handle_transition("exit_menu")
+	if var_9_14 and Managers.matchmaking:allowed_to_initiate_join_lobby() then
+		Managers.matchmaking:request_join_lobby(var_9_14)
+		var_9_8:handle_transition("exit_menu")
 	end
 
-	if (input_service:get("toggle_menu", true) or input_service:get("back", true)) and not ingame_ui:pending_transition() then
-		ingame_ui:handle_transition("exit_menu")
+	if (var_9_3:get("toggle_menu", true) or var_9_3:get("back", true)) and not var_9_8:pending_transition() then
+		var_9_8:handle_transition("exit_menu")
 	end
 end
 
-IngameView.setup_controller_selection = function (self)
-	local selection_index = 1
+function IngameView.setup_controller_selection(arg_10_0)
+	local var_10_0 = 1
 
-	self:controller_select_button_index(selection_index, true)
+	arg_10_0:controller_select_button_index(var_10_0, true)
 end
 
-IngameView.controller_select_button_index = function (self, index, ignore_sound)
-	local selection_accepted = false
-	local layout_logic = self.layout_logic
-	local stored_buttons = self.stored_buttons
-	local layout_data = layout_logic:layout_data()
-	local widget = stored_buttons[index]
-	local new_selection_data = layout_data[index]
+function IngameView.controller_select_button_index(arg_11_0, arg_11_1, arg_11_2)
+	local var_11_0 = false
+	local var_11_1 = arg_11_0.layout_logic
+	local var_11_2 = arg_11_0.stored_buttons
+	local var_11_3 = var_11_1:layout_data()
+	local var_11_4 = var_11_2[arg_11_1]
 
-	if not new_selection_data or widget.content.button_hotspot.disable_button then
-		return selection_accepted
+	if not var_11_3[arg_11_1] or var_11_4.content.button_hotspot.disable_button then
+		return var_11_0
 	end
 
-	local gamepad_selection_scenegraph_id = self.gamepad_button_selection_widget.scenegraph_id
-	local gamepad_selection_default_position = self.menu_definition.scenegraph_definition[gamepad_selection_scenegraph_id].position
-	local gamepad_selection_current_position = self.ui_scenegraph[gamepad_selection_scenegraph_id].local_position
+	local var_11_5 = arg_11_0.gamepad_button_selection_widget.scenegraph_id
+	local var_11_6 = arg_11_0.menu_definition.scenegraph_definition[var_11_5].position
+	local var_11_7 = arg_11_0.ui_scenegraph[var_11_5].local_position
 
-	for i, data in ipairs(layout_data) do
-		local button_widget = stored_buttons[i]
-		local is_selected = i == index
+	for iter_11_0, iter_11_1 in ipairs(var_11_3) do
+		local var_11_8 = var_11_2[iter_11_0]
+		local var_11_9 = iter_11_0 == arg_11_1
 
-		button_widget.content.button_hotspot.is_selected = is_selected
+		var_11_8.content.button_hotspot.is_selected = var_11_9
 
-		if is_selected then
-			local widget_scenegraph_id = button_widget.scenegraph_id
-			local widget_current_position = self.ui_scenegraph[widget_scenegraph_id].local_position
+		if var_11_9 then
+			local var_11_10 = var_11_8.scenegraph_id
+			local var_11_11 = arg_11_0.ui_scenegraph[var_11_10].local_position
 
-			gamepad_selection_current_position[2] = gamepad_selection_default_position[2] - i * 84
+			var_11_7[2] = var_11_6[2] - iter_11_0 * 84
 		end
 	end
 
-	if not ignore_sound and index ~= self.controller_selection_index then
-		self:play_sound("Play_hud_hover")
+	if not arg_11_2 and arg_11_1 ~= arg_11_0.controller_selection_index then
+		arg_11_0:play_sound("Play_hud_hover")
 	end
 
-	self.controller_selection_index = index
-	selection_accepted = true
+	arg_11_0.controller_selection_index = arg_11_1
 
-	return selection_accepted
+	return true
 end
 
-IngameView.clear_controller_selection = function (self)
-	local layout_logic = self.layout_logic
-	local stored_buttons = self.stored_buttons
-	local layout_data = layout_logic:layout_data()
+function IngameView.clear_controller_selection(arg_12_0)
+	local var_12_0 = arg_12_0.layout_logic
+	local var_12_1 = arg_12_0.stored_buttons
+	local var_12_2 = var_12_0:layout_data()
 
-	for i, data in ipairs(layout_data) do
-		local widget = stored_buttons[i]
-
-		widget.content.button_hotspot.is_selected = false
+	for iter_12_0, iter_12_1 in ipairs(var_12_2) do
+		var_12_1[iter_12_0].content.button_hotspot.is_selected = false
 	end
 end
 
-IngameView.update_controller_input = function (self, input_service, dt)
-	local layout_logic = self.layout_logic
-	local layout_data = layout_logic:layout_data()
-	local num_buttons = #layout_data
+function IngameView.update_controller_input(arg_13_0, arg_13_1, arg_13_2)
+	local var_13_0 = #arg_13_0.layout_logic:layout_data()
 
-	if self.controller_cooldown > 0 then
-		self.controller_cooldown = self.controller_cooldown - dt
+	if arg_13_0.controller_cooldown > 0 then
+		arg_13_0.controller_cooldown = arg_13_0.controller_cooldown - arg_13_2
 
-		local speed_multiplier = self.speed_multiplier or 1
-		local decrease = GamepadSettings.menu_speed_multiplier_frame_decrease
-		local min_multiplier = GamepadSettings.menu_min_speed_multiplier
+		local var_13_1 = arg_13_0.speed_multiplier or 1
+		local var_13_2 = GamepadSettings.menu_speed_multiplier_frame_decrease
+		local var_13_3 = GamepadSettings.menu_min_speed_multiplier
 
-		self.speed_multiplier = math.max(speed_multiplier - decrease, min_multiplier)
+		arg_13_0.speed_multiplier = math.max(var_13_1 - var_13_2, var_13_3)
 
 		return
 	else
-		local speed_multiplier = self.speed_multiplier or 1
+		local var_13_4 = arg_13_0.speed_multiplier or 1
 
 		repeat
-			local move_up = input_service:get("move_up")
-			local move_up_hold = input_service:get("move_up_hold")
-			local controller_selection_index = self.controller_selection_index or 0
+			local var_13_5 = arg_13_1:get("move_up")
+			local var_13_6 = arg_13_1:get("move_up_hold")
+			local var_13_7 = arg_13_0.controller_selection_index or 0
 
-			if move_up or move_up_hold then
-				local new_index = math.max(controller_selection_index - 1, 1)
-				local selection_accepted = self:controller_select_button_index(new_index)
+			if var_13_5 or var_13_6 then
+				local var_13_8 = math.max(var_13_7 - 1, 1)
+				local var_13_9 = arg_13_0:controller_select_button_index(var_13_8)
 
-				while not selection_accepted do
-					new_index = math.max(new_index - 1, 1)
-					selection_accepted = self:controller_select_button_index(new_index)
+				while not var_13_9 do
+					var_13_8 = math.max(var_13_8 - 1, 1)
+					var_13_9 = arg_13_0:controller_select_button_index(var_13_8)
 				end
 
-				self.controller_cooldown = GamepadSettings.menu_cooldown * speed_multiplier
+				arg_13_0.controller_cooldown = GamepadSettings.menu_cooldown * var_13_4
 
 				return
 			end
 
-			local move_down = input_service:get("move_down")
-			local move_down_hold = input_service:get("move_down_hold")
+			local var_13_10 = arg_13_1:get("move_down")
+			local var_13_11 = arg_13_1:get("move_down_hold")
 
-			if move_down or move_down_hold then
-				local new_index = math.min(controller_selection_index + 1, num_buttons)
-				local selection_accepted = self:controller_select_button_index(new_index)
+			if var_13_10 or var_13_11 then
+				local var_13_12 = math.min(var_13_7 + 1, var_13_0)
+				local var_13_13 = arg_13_0:controller_select_button_index(var_13_12)
 
-				while not selection_accepted do
-					new_index = math.min(new_index + 1, num_buttons)
-					selection_accepted = self:controller_select_button_index(new_index)
+				while not var_13_13 do
+					var_13_12 = math.min(var_13_12 + 1, var_13_0)
+					var_13_13 = arg_13_0:controller_select_button_index(var_13_12)
 				end
 
-				self.controller_cooldown = GamepadSettings.menu_cooldown * speed_multiplier
+				arg_13_0.controller_cooldown = GamepadSettings.menu_cooldown * var_13_4
 
 				return
 			end
 		until true
 	end
 
-	self.speed_multiplier = 1
+	arg_13_0.speed_multiplier = 1
 end
 
-IngameView.get_transition = function (self)
-	if self.leave_game then
+function IngameView.get_transition(arg_14_0)
+	if arg_14_0.leave_game then
 		return "leave_game"
 	end
 end
 
-IngameView.play_sound = function (self, event)
-	WwiseWorld.trigger_event(self.wwise_world, event)
+function IngameView.play_sound(arg_15_0, arg_15_1)
+	WwiseWorld.trigger_event(arg_15_0.wwise_world, arg_15_1)
 end

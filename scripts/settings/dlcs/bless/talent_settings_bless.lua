@@ -1,713 +1,713 @@
-﻿-- chunkname: @scripts/settings/dlcs/bless/talent_settings_bless.lua
+-- chunkname: @scripts/settings/dlcs/bless/talent_settings_bless.lua
 
-local buff_perks = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
-local buff_tweak_data = {
+local var_0_0 = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local var_0_1 = {
 	victor_priest_ability_cooldown_on_hit = {
-		bonus = 0.25,
+		bonus = 0.25
 	},
 	victor_priest_ability_cooldown_on_damage_taken = {
-		bonus = 0.25,
+		bonus = 0.25
 	},
 	victor_priest_2_1 = {
-		num_targets = 3,
+		num_targets = 3
 	},
 	victor_priest_2_1_buff = {
-		duration = 4,
+		duration = 4
 	},
 	victor_priest_2_2_timer = {
-		duration = 2,
+		duration = 2
 	},
 	victor_priest_2_2_buff = {
 		max_stacks = 5,
-		multiplier = 0.08,
+		multiplier = 0.08
 	},
 	victor_priest_2_3_buff = {
-		bonus = 0.05,
-		duration = 12,
 		max_stacks = 3,
+		duration = 12,
+		bonus = 0.05
 	},
 	victor_priest_4_3 = {
-		chunk_size = 40,
 		percent_fury_to_gain = 0.02,
+		chunk_size = 40
 	},
 	victor_priest_5_1_buff = {
-		multiplier = 0.15,
+		multiplier = 0.15
 	},
 	victor_priest_5_2_buff = {
-		multiplier = 0.25,
+		multiplier = 0.25
 	},
 	victor_priest_5_3_buff = {
-		multiplier = 0.15,
+		multiplier = 0.15
 	},
 	victor_priest_6_3_buff = {
-		heal_window = 3,
-	},
+		heal_window = 3
+	}
 }
-local talent_buff_templates = {
+local var_0_2 = {
 	victor_priest_ability_cooldown_on_hit = {
 		buffs = {
 			{
-				buff_func = "reduce_activated_ability_cooldown",
 				event = "on_hit",
-			},
-		},
+				buff_func = "reduce_activated_ability_cooldown"
+			}
+		}
 	},
 	victor_priest_ability_cooldown_on_damage_taken = {
 		buffs = {
 			{
-				buff_func = "reduce_activated_ability_cooldown_on_damage_taken",
 				event = "on_damage_taken",
-			},
-		},
+				buff_func = "reduce_activated_ability_cooldown_on_damage_taken"
+			}
+		}
 	},
 	victor_priest_passive_damage_stagger = {
 		buffs = {
 			{
-				buff_func = "victor_priest_damage_stagger",
 				buff_to_add = "damage_stagger",
-				event = "on_damage_taken",
 				multiplier = -0.4,
-				percentage_to_take = 0.2,
-				staggered_damage_taken = 0.4,
 				stat_buff = "damage_taken",
-			},
-		},
+				buff_func = "victor_priest_damage_stagger",
+				staggered_damage_taken = 0.4,
+				percentage_to_take = 0.2,
+				event = "on_damage_taken"
+			}
+		}
 	},
 	damage_stagger = {
 		buffs = {
 			{
-				damage_per_tick = 5,
-				duration = 3,
 				icon = "victor_priest_perk_1",
-				max_stacks = 1,
-				update_frequency = 0.9,
-				update_func = "damage_stagger_dot",
-				update_start_delay = 1,
+				damage_per_tick = 5,
 				value = 0,
-			},
-		},
+				update_func = "damage_stagger_dot",
+				max_stacks = 1,
+				duration = 3,
+				update_start_delay = 1,
+				update_frequency = 0.9
+			}
+		}
 	},
 	victor_priest_super_armour_damage = {
 		buffs = {
 			{
-				multiplier = 0.3,
 				stat_buff = "power_level_super_armour",
-			},
-		},
+				multiplier = 0.3
+			}
+		}
 	},
 	victor_priest_curse_resistance = {
 		buffs = {
 			{
-				multiplier = -1,
 				stat_buff = "curse_protection",
-			},
-		},
+				multiplier = -1
+			}
+		}
 	},
 	victor_priest_vanguard = {
 		buffs = {
 			{
+				name = "vanguard",
+				multiplier = 1,
 				buff_func = "heal_stagger_targets_on_melee",
 				event = "on_stagger",
-				multiplier = 1,
-				name = "vanguard",
 				perks = {
-					buff_perks.tank_healing,
-				},
-			},
-		},
+					var_0_0.tank_healing
+				}
+			}
+		}
 	},
 	victor_priest_reaper = {
 		buffs = {
 			{
-				bonus = 0.25,
+				multiplier = -0.05,
+				name = "reaper",
 				buff_func = "heal_damage_targets_on_melee",
 				event = "on_player_damage_dealt",
 				max_targets = 5,
-				multiplier = -0.05,
-				name = "reaper",
+				bonus = 0.25,
 				perks = {
-					buff_perks.linesman_healing,
-				},
-			},
-		},
+					var_0_0.linesman_healing
+				}
+			}
+		}
 	},
 	victor_priest_conqueror = {
 		buffs = {
 			{
-				buff_func = "heal_other_players_percent_at_range",
-				event = "on_healed_consumeable",
-				multiplier = 0.2,
 				name = "conqueror",
+				multiplier = 0.2,
 				range = 10,
-			},
-		},
+				buff_func = "heal_other_players_percent_at_range",
+				event = "on_healed_consumeable"
+			}
+		}
 	},
 	victor_priest_2_1 = {
 		buffs = {
 			{
-				block_buff = "victor_priest_2_1_cooldown",
-				buff_func = "add_buff_on_num_targets_hit",
-				buff_to_add = "victor_priest_2_1_buff",
 				event = "on_hit",
-			},
-		},
+				buff_to_add = "victor_priest_2_1_buff",
+				block_buff = "victor_priest_2_1_cooldown",
+				buff_func = "add_buff_on_num_targets_hit"
+			}
+		}
 	},
 	victor_priest_2_1_buff = {
 		buffs = {
 			{
 				icon = "victor_priest_2_1",
 				max_stacks = 1,
-				priority_buff = true,
 				refresh_durations = true,
+				priority_buff = true,
 				perks = {
-					"slayer_stamina",
-				},
-			},
-		},
+					"slayer_stamina"
+				}
+			}
+		}
 	},
 	victor_priest_2_1_cooldown = {
 		buffs = {
 			{
-				duration = 0.3,
 				max_stacks = 1,
-				refresh_durations = true,
-			},
-		},
+				duration = 0.3,
+				refresh_durations = true
+			}
+		}
 	},
 	victor_priest_2_2 = {
 		buffs = {
 			{
-				buff_func = "victor_priest_add_buff_first_target",
-				buff_to_add = "victor_priest_2_2_buff",
 				event = "on_hit",
+				buff_to_add = "victor_priest_2_2_buff",
 				max_stacks = 1,
-			},
-		},
+				buff_func = "victor_priest_add_buff_first_target"
+			}
+		}
 	},
 	victor_priest_2_2_buff = {
 		buffs = {
 			{
-				icon = "victor_priest_2_2",
 				stat_buff = "increased_weapon_damage_heavy_attack",
-			},
-		},
+				icon = "victor_priest_2_2"
+			}
+		}
 	},
 	victor_priest_2_2_remover = {
 		buffs = {
 			{
-				buff_func = "add_buff_on_first_target_hit",
-				buff_to_add = "victor_priest_2_2_delay",
 				event = "on_hit",
+				buff_to_add = "victor_priest_2_2_delay",
+				buff_func = "add_buff_on_first_target_hit",
 				valid_attack_types = {
-					heavy_attack = true,
-				},
-			},
-		},
+					heavy_attack = true
+				}
+			}
+		}
 	},
 	victor_priest_2_2_delay = {
 		buffs = {
 			{
 				buff_list_buff = "victor_priest_2_2",
 				duration = 0.2,
-				remove_buff_func = "victor_priest_delayed_buff_remove",
-			},
-		},
+				remove_buff_func = "victor_priest_delayed_buff_remove"
+			}
+		}
 	},
 	victor_priest_2_3 = {
 		buffs = {
 			{
-				buff_func = "add_buff_on_elite_kill",
 				buff_to_add = "victor_priest_2_3_buff",
 				event = "on_elite_killed",
-			},
-		},
+				buff_func = "add_buff_on_elite_kill"
+			}
+		}
 	},
 	victor_priest_2_3_buff = {
 		buffs = {
 			{
 				icon = "victor_priest_2_3",
 				refresh_durations = true,
-				stat_buff = "critical_strike_chance",
-			},
-		},
+				stat_buff = "critical_strike_chance"
+			}
+		}
 	},
 	victor_priest_4_1 = {
 		buffs = {
 			{
-				buff_func = "victor_priest_4_1_on_damage_taken",
 				event = "on_damage_taken",
-			},
-		},
+				buff_func = "victor_priest_4_1_on_damage_taken"
+			}
+		}
 	},
 	victor_priest_4_3 = {
 		buffs = {
 			{
-				buff_func = "victor_priest_4_3_heal_on_kill",
 				event = "on_kill",
-			},
-		},
+				buff_func = "victor_priest_4_3_heal_on_kill"
+			}
+		}
 	},
 	victor_priest_5_1 = {
 		buffs = {
 			{
 				buff_to_add = "victor_priest_5_1_buff",
-				range = 100,
-				remove_buff_func = "remove_aura_buff",
 				update_func = "activate_buff_on_distance",
-			},
-		},
+				remove_buff_func = "remove_aura_buff",
+				range = 100
+			}
+		}
 	},
 	victor_priest_5_1_buff = {
 		buffs = {
 			{
-				icon = "victor_priest_5_1",
 				max_stacks = 1,
-				stat_buff = "power_level_large",
-			},
-		},
+				icon = "victor_priest_5_1",
+				stat_buff = "power_level_large"
+			}
+		}
 	},
 	victor_priest_5_2 = {
 		buffs = {
 			{
 				buff_to_add = "victor_priest_5_2_buff",
-				range = 100,
-				remove_buff_func = "remove_aura_buff",
 				update_func = "activate_buff_on_distance",
-			},
-		},
+				remove_buff_func = "remove_aura_buff",
+				range = 100
+			}
+		}
 	},
 	victor_priest_5_2_buff = {
 		buffs = {
 			{
-				icon = "victor_priest_5_2",
 				max_stacks = 1,
-				stat_buff = "power_level_impact",
-			},
-		},
+				icon = "victor_priest_5_2",
+				stat_buff = "power_level_impact"
+			}
+		}
 	},
 	victor_priest_5_3 = {
 		buffs = {
 			{
 				buff_to_add = "victor_priest_5_3_buff",
-				range = 100,
-				remove_buff_func = "remove_aura_buff",
 				update_func = "activate_buff_on_distance",
-			},
-		},
+				remove_buff_func = "remove_aura_buff",
+				range = 100
+			}
+		}
 	},
 	victor_priest_5_3_buff = {
 		buffs = {
 			{
-				icon = "victor_priest_5_3",
 				max_stacks = 1,
-				stat_buff = "max_health",
-			},
-		},
+				icon = "victor_priest_5_3",
+				stat_buff = "max_health"
+			}
+		}
 	},
 	victor_priest_6_3 = {
 		buffs = {
 			{
 				buff_to_add = "victor_priest_6_3_buff",
-				max_stacks = 1,
 				range = 100,
-				remove_buff_func = "remove_aura_buff",
 				update_func = "activate_buff_on_distance",
-			},
-		},
+				max_stacks = 1,
+				remove_buff_func = "remove_aura_buff"
+			}
+		}
 	},
 	victor_priest_6_3_buff = {
 		buffs = {
 			{
-				buff_func = "victor_priest_store_damage",
 				event = "on_damage_taken",
 				max_stacks = 1,
-			},
-		},
+				buff_func = "victor_priest_store_damage"
+			}
+		}
 	},
 	victor_priest_6_3_delayed_heal = {
 		buffs = {
 			{
-				duration = 0.2,
 				remove_buff_func = "victor_priest_6_1_removed",
-			},
-		},
-	},
+				duration = 0.2
+			}
+		}
+	}
 }
-local talent_trees = {
+local var_0_3 = {
 	{
 		{
 			"victor_priest_thp_tank",
 			"victor_priest_thp_linesman",
-			"victor_priest_thp_smiter",
+			"victor_priest_thp_smiter"
 		},
 		{
 			"victor_priest_2_1",
 			"victor_priest_2_2",
-			"victor_priest_2_3",
+			"victor_priest_2_3"
 		},
 		{
 			"victor_priest_3_1",
 			"victor_priest_3_2",
-			"victor_priest_3_3",
+			"victor_priest_3_3"
 		},
 		{
 			"victor_priest_4_1_new",
 			"victor_priest_4_2_new",
-			"victor_priest_4_3",
+			"victor_priest_4_3"
 		},
 		{
 			"victor_priest_5_1",
 			"victor_priest_5_2",
-			"victor_priest_5_3",
+			"victor_priest_5_3"
 		},
 		{
 			"victor_priest_6_1",
 			"victor_priest_6_2",
-			"victor_priest_6_3",
-		},
-	},
+			"victor_priest_6_3"
+		}
+	}
 }
-local talents = {
+local var_0_4 = {
 	{
-		buffer = "server",
 		description = "vanguard_desc",
-		icon = "victor_priest_1_1",
 		name = "victor_priest_vanguard",
+		buffer = "server",
 		num_ranks = 1,
+		icon = "victor_priest_1_1",
 		description_values = {},
 		buffs = {
-			"victor_priest_vanguard",
-		},
+			"victor_priest_vanguard"
+		}
 	},
 	{
-		buffer = "server",
 		description = "reaper_desc",
-		icon = "victor_priest_1_2",
 		name = "victor_priest_reaper",
+		buffer = "server",
 		num_ranks = 1,
+		icon = "victor_priest_1_2",
 		description_values = {
 			{
-				value = BuffUtils.get_buff_template("reaper", "adventure").buffs[1].max_targets,
-			},
+				value = BuffUtils.get_buff_template("reaper", "adventure").buffs[1].max_targets
+			}
 		},
 		buffs = {
-			"victor_priest_reaper",
-		},
+			"victor_priest_reaper"
+		}
 	},
 	{
-		buffer = "server",
 		description = "conqueror_desc_3",
-		icon = "victor_priest_1_3",
 		name = "victor_priest_heal_share",
+		buffer = "server",
 		num_ranks = 1,
+		icon = "victor_priest_1_3",
 		description_values = {
 			{
 				value_type = "percent",
-				value = BuffUtils.get_buff_template("conqueror", "adventure").buffs[1].multiplier,
-			},
+				value = BuffUtils.get_buff_template("conqueror", "adventure").buffs[1].multiplier
+			}
 		},
 		buffs = {
-			"victor_priest_conqueror",
-		},
+			"victor_priest_conqueror"
+		}
 	},
 	{
-		buffer = "server",
-		icon = "victor_priest_1_1",
 		name = "victor_priest_thp_tank",
+		buffer = "server",
 		num_ranks = 1,
+		icon = "victor_priest_1_1",
 		display_name = BuffUtils.get_buff_template("thp_tank", "adventure").buffs[1].display_name,
 		description = BuffUtils.get_buff_template("thp_tank", "adventure").buffs[1].description,
 		description_values = BuffUtils.get_buff_template("thp_tank", "adventure").buffs[1].description_values,
 		buffs = {
-			"thp_tank",
-		},
+			"thp_tank"
+		}
 	},
 	{
-		buffer = "server",
-		icon = "victor_priest_1_2",
 		name = "victor_priest_thp_linesman",
+		buffer = "server",
 		num_ranks = 1,
+		icon = "victor_priest_1_2",
 		display_name = BuffUtils.get_buff_template("thp_linesman", "adventure").buffs[1].display_name,
 		description = BuffUtils.get_buff_template("thp_linesman", "adventure").buffs[1].description,
 		description_values = BuffUtils.get_buff_template("thp_linesman", "adventure").buffs[1].description_values,
 		buffs = {
-			"thp_linesman",
-		},
+			"thp_linesman"
+		}
 	},
 	{
-		buffer = "server",
-		icon = "victor_priest_1_3",
 		name = "victor_priest_thp_smiter",
+		buffer = "server",
 		num_ranks = 1,
+		icon = "victor_priest_1_3",
 		display_name = BuffUtils.get_buff_template("thp_smiter", "adventure").buffs[1].display_name,
 		description = BuffUtils.get_buff_template("thp_smiter", "adventure").buffs[1].description,
 		description_values = BuffUtils.get_buff_template("thp_smiter", "adventure").buffs[1].description_values,
 		buffs = {
-			"thp_smiter",
-		},
+			"thp_smiter"
+		}
 	},
 	{
 		description = "victor_priest_2_1_desc",
-		icon = "victor_priest_2_1",
 		name = "victor_priest_2_1",
 		num_ranks = 1,
+		icon = "victor_priest_2_1",
 		description_values = {
 			{
-				value = buff_tweak_data.victor_priest_2_1.num_targets,
+				value = var_0_1.victor_priest_2_1.num_targets
 			},
 			{
-				value = buff_tweak_data.victor_priest_2_1_buff.duration,
-			},
+				value = var_0_1.victor_priest_2_1_buff.duration
+			}
 		},
 		buffs = {
-			"victor_priest_2_1",
-		},
+			"victor_priest_2_1"
+		}
 	},
 	{
-		buffer = "both",
 		description = "victor_priest_2_2_desc",
-		icon = "victor_priest_2_2",
 		name = "victor_priest_2_2",
+		buffer = "both",
 		num_ranks = 1,
+		icon = "victor_priest_2_2",
 		description_values = {
 			{
 				value_type = "percent",
-				value = buff_tweak_data.victor_priest_2_2_buff.multiplier,
+				value = var_0_1.victor_priest_2_2_buff.multiplier
 			},
 			{
-				value = buff_tweak_data.victor_priest_2_2_buff.max_stacks,
-			},
+				value = var_0_1.victor_priest_2_2_buff.max_stacks
+			}
 		},
 		buffs = {
 			"victor_priest_2_2",
-			"victor_priest_2_2_remover",
-		},
+			"victor_priest_2_2_remover"
+		}
 	},
 	{
 		description = "victor_priest_2_3_desc",
-		icon = "victor_priest_2_3",
 		name = "victor_priest_2_3",
 		num_ranks = 1,
+		icon = "victor_priest_2_3",
 		description_values = {
 			{
 				value_type = "percent",
-				value = buff_tweak_data.victor_priest_2_3_buff.bonus,
+				value = var_0_1.victor_priest_2_3_buff.bonus
 			},
 			{
-				value = buff_tweak_data.victor_priest_2_3_buff.duration,
+				value = var_0_1.victor_priest_2_3_buff.duration
 			},
 			{
-				value = buff_tweak_data.victor_priest_2_3_buff.max_stacks,
-			},
+				value = var_0_1.victor_priest_2_3_buff.max_stacks
+			}
 		},
 		buffs = {
-			"victor_priest_2_3",
-		},
+			"victor_priest_2_3"
+		}
 	},
 	{
-		buffer = "server",
 		description = "smiter_unbalance_desc",
-		icon = "victor_priest_3_1",
 		name = "victor_priest_3_1",
+		buffer = "server",
 		num_ranks = 1,
+		icon = "victor_priest_3_1",
 		description_values = {
 			{
 				value_type = "percent",
-				value = BuffUtils.get_buff_template("smiter_unbalance", "adventure").buffs[1].display_multiplier,
+				value = BuffUtils.get_buff_template("smiter_unbalance", "adventure").buffs[1].display_multiplier
 			},
 			{
 				value_type = "percent",
-				value = BuffUtils.get_buff_template("smiter_unbalance", "adventure").buffs[1].max_display_multiplier,
-			},
+				value = BuffUtils.get_buff_template("smiter_unbalance", "adventure").buffs[1].max_display_multiplier
+			}
 		},
 		buffs = {
-			"smiter_unbalance",
-		},
+			"smiter_unbalance"
+		}
 	},
 	{
-		buffer = "server",
 		description = "linesman_unbalance_desc",
-		icon = "victor_priest_3_2",
 		name = "victor_priest_3_2",
+		buffer = "server",
 		num_ranks = 1,
+		icon = "victor_priest_3_2",
 		description_values = {
 			{
 				value_type = "percent",
-				value = BuffUtils.get_buff_template("linesman_unbalance", "adventure").buffs[1].display_multiplier,
+				value = BuffUtils.get_buff_template("linesman_unbalance", "adventure").buffs[1].display_multiplier
 			},
 			{
 				value_type = "percent",
-				value = BuffUtils.get_buff_template("linesman_unbalance", "adventure").buffs[1].max_display_multiplier,
-			},
+				value = BuffUtils.get_buff_template("linesman_unbalance", "adventure").buffs[1].max_display_multiplier
+			}
 		},
 		buffs = {
-			"linesman_unbalance",
-		},
+			"linesman_unbalance"
+		}
 	},
 	{
-		buffer = "server",
 		description = "power_level_unbalance_desc",
-		icon = "victor_priest_3_3",
 		name = "victor_priest_3_3",
+		buffer = "server",
 		num_ranks = 1,
+		icon = "victor_priest_3_3",
 		description_values = {
 			{
 				value_type = "percent",
-				value = BuffUtils.get_buff_template("power_level_unbalance", "adventure").buffs[1].multiplier,
-			},
+				value = BuffUtils.get_buff_template("power_level_unbalance", "adventure").buffs[1].multiplier
+			}
 		},
 		buffs = {
-			"power_level_unbalance",
-		},
+			"power_level_unbalance"
+		}
 	},
 	{
 		description = "victor_priest_4_1_desc_new",
-		icon = "victor_priest_4_1",
 		name = "victor_priest_4_1_new",
 		num_ranks = 1,
+		icon = "victor_priest_4_1",
 		description_values = {},
 		buffs = {
-			"victor_priest_4_1",
-		},
+			"victor_priest_4_1"
+		}
 	},
 	{
 		description = "victor_priest_4_2_desc_new",
-		icon = "victor_priest_4_2",
 		name = "victor_priest_4_2_new",
 		num_ranks = 1,
+		icon = "victor_priest_4_2",
 		description_values = {
 			{
 				value_type = "percent",
-				value = CareerConstants.wh_priest.talent_4_2_fury_to_gain_percent,
+				value = CareerConstants.wh_priest.talent_4_2_fury_to_gain_percent
 			},
 			{
 				value_type = "percent",
-				value = CareerConstants.wh_priest.talent_4_2_smite_improved_damage,
-			},
+				value = CareerConstants.wh_priest.talent_4_2_smite_improved_damage
+			}
 		},
-		buffs = {},
+		buffs = {}
 	},
 	{
-		buffer = "both",
 		description = "victor_priest_4_3_desc_new",
-		icon = "victor_priest_4_3",
 		name = "victor_priest_4_3",
+		buffer = "both",
 		num_ranks = 1,
+		icon = "victor_priest_4_3",
 		description_values = {
 			{
 				value_type = "percent",
-				value = buff_tweak_data.victor_priest_4_3.percent_fury_to_gain,
-			},
+				value = var_0_1.victor_priest_4_3.percent_fury_to_gain
+			}
 		},
 		buffs = {
-			"victor_priest_4_3",
-		},
+			"victor_priest_4_3"
+		}
 	},
 	{
-		buffer = "server",
 		description = "victor_priest_5_1_desc_new",
-		icon = "victor_priest_5_1",
 		name = "victor_priest_5_1",
+		buffer = "server",
 		num_ranks = 1,
+		icon = "victor_priest_5_1",
 		description_values = {
 			{
 				value_type = "percent",
-				value = buff_tweak_data.victor_priest_5_1_buff.multiplier,
-			},
+				value = var_0_1.victor_priest_5_1_buff.multiplier
+			}
 		},
 		buffs = {
-			"victor_priest_5_1",
-		},
+			"victor_priest_5_1"
+		}
 	},
 	{
-		buffer = "server",
 		description = "victor_priest_5_2_desc",
-		icon = "victor_priest_5_2",
 		name = "victor_priest_5_2",
+		buffer = "server",
 		num_ranks = 1,
+		icon = "victor_priest_5_2",
 		description_values = {
 			{
 				value_type = "percent",
-				value = buff_tweak_data.victor_priest_5_2_buff.multiplier,
-			},
+				value = var_0_1.victor_priest_5_2_buff.multiplier
+			}
 		},
 		buffs = {
-			"victor_priest_5_2",
-		},
+			"victor_priest_5_2"
+		}
 	},
 	{
-		buffer = "server",
 		description = "victor_priest_5_3_desc",
-		icon = "victor_priest_5_3",
 		name = "victor_priest_5_3",
+		buffer = "server",
 		num_ranks = 1,
+		icon = "victor_priest_5_3",
 		description_values = {
 			{
 				value_type = "percent",
-				value = buff_tweak_data.victor_priest_5_3_buff.multiplier,
-			},
+				value = var_0_1.victor_priest_5_3_buff.multiplier
+			}
 		},
 		buffs = {
-			"victor_priest_5_3",
-		},
+			"victor_priest_5_3"
+		}
 	},
 	{
 		description = "victor_priest_6_1_desc_new",
-		icon = "victor_priest_6_1",
 		name = "victor_priest_6_1",
+		icon = "victor_priest_6_1",
 		num_ranks = 1,
 		description_values = {
 			{
-				value = CareerConstants.wh_priest.talent_6_1_improved_ability_duration,
-			},
+				value = CareerConstants.wh_priest.talent_6_1_improved_ability_duration
+			}
 		},
 		mechanism_overrides = {
 			versus = {
 				description_values = {
 					{
-						value = CareerConstants.wh_priest.talent_6_1_improved_ability_duration_versus,
-					},
-				},
-			},
+						value = CareerConstants.wh_priest.talent_6_1_improved_ability_duration_versus
+					}
+				}
+			}
 		},
-		buffs = {},
+		buffs = {}
 	},
 	{
-		buffer = "server",
 		description = "victor_priest_6_3_desc",
-		icon = "victor_priest_6_3",
 		name = "victor_priest_6_3",
+		buffer = "server",
 		num_ranks = 1,
+		icon = "victor_priest_6_3",
 		description_values = {
 			{
-				value = buff_tweak_data.victor_priest_6_3_buff.heal_window,
-			},
+				value = var_0_1.victor_priest_6_3_buff.heal_window
+			}
 		},
 		buffs = {
-			"victor_priest_6_3",
-		},
+			"victor_priest_6_3"
+		}
 	},
 	{
 		description = "victor_priest_6_2_desc",
-		icon = "victor_priest_6_2",
 		name = "victor_priest_6_2",
 		num_ranks = 1,
+		icon = "victor_priest_6_2",
 		description_values = {},
-		buffs = {},
-	},
+		buffs = {}
+	}
 }
-local hero_name = "witch_hunter"
+local var_0_5 = "witch_hunter"
 
-table.merge(TalentBuffTemplates[hero_name], talent_buff_templates)
-table.append(TalentTrees[hero_name], talent_trees)
-table.append(Talents[hero_name], talents)
+table.merge(TalentBuffTemplates[var_0_5], var_0_2)
+table.append(TalentTrees[var_0_5], var_0_3)
+table.append(Talents[var_0_5], var_0_4)
 
 WeaveLoadoutSettings = WeaveLoadoutSettings or {}
 WeaveLoadoutSettings.wh_priest = {
-	talent_tree = talent_trees[1],
+	talent_tree = var_0_3[1],
 	properties = {},
-	traits = {},
+	traits = {}
 }
 
-BuffUtils.copy_talent_buff_names(talent_buff_templates)
-BuffUtils.apply_buff_tweak_data(talent_buff_templates, buff_tweak_data)
+BuffUtils.copy_talent_buff_names(var_0_2)
+BuffUtils.apply_buff_tweak_data(var_0_2, var_0_1)

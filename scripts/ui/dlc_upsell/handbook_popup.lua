@@ -1,275 +1,270 @@
-﻿-- chunkname: @scripts/ui/dlc_upsell/handbook_popup.lua
+-- chunkname: @scripts/ui/dlc_upsell/handbook_popup.lua
 
 require("scripts/ui/helpers/handbook_logic")
 
-local hero_view_handbook_definitions = local_require("scripts/ui/views/hero_view/states/definitions/hero_view_state_handbook_definitions")
-local content_blueprints = hero_view_handbook_definitions.content_blueprints
-local definitions = local_require("scripts/ui/dlc_upsell/handbook_popup_definitions")
-local generic_input_actions = definitions.generic_input_actions
-local achievement_window_size = definitions.achievement_window_size
-local ACHIEVEMENT_WINDOW_HEIGHT = achievement_window_size[2]
+local var_0_0 = local_require("scripts/ui/views/hero_view/states/definitions/hero_view_state_handbook_definitions").content_blueprints
+local var_0_1 = local_require("scripts/ui/dlc_upsell/handbook_popup_definitions")
+local var_0_2 = var_0_1.generic_input_actions
+local var_0_3 = var_0_1.achievement_window_size[2]
 
 HandbookPopup = class(HandbookPopup, CommonPopup)
 
-HandbookPopup.init = function (self, ui_context, hint_name, hint_settings)
-	HandbookPopup.super.init(self, ui_context, hint_name, hint_settings)
+function HandbookPopup.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	HandbookPopup.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
-	self._input_manager = ui_context.input_manager
-	self._render_settings = {
+	arg_1_0._input_manager = arg_1_1.input_manager
+	arg_1_0._render_settings = {
 		alpha_multiplier = 1,
-		snap_pixel_positions = false,
+		snap_pixel_positions = false
 	}
-	self._active_pages = hint_settings.pages
-	self._current_page = 1
-	self._total_pages = #self._active_pages
+	arg_1_0._active_pages = arg_1_3.pages
+	arg_1_0._current_page = 1
+	arg_1_0._total_pages = #arg_1_0._active_pages
 
-	local first_page = hint_settings.pages[1]
+	local var_1_0 = arg_1_3.pages[1]
 
 	SaveData.seen_handbook_pages = SaveData.seen_handbook_pages or {}
-	SaveData.seen_handbook_pages[first_page] = true
-	self._has_widget_been_closed = false
+	SaveData.seen_handbook_pages[var_1_0] = true
+	arg_1_0._has_widget_been_closed = false
 end
 
-HandbookPopup.destroy = function (self)
-	HandbookPopup.super.destroy(self)
-	self._handbook_logic:delete()
+function HandbookPopup.destroy(arg_2_0)
+	HandbookPopup.super.destroy(arg_2_0)
+	arg_2_0._handbook_logic:delete()
 end
 
-HandbookPopup.create_ui_elements = function (self)
-	HandbookPopup.super.create_ui_elements(self)
+function HandbookPopup.create_ui_elements(arg_3_0)
+	HandbookPopup.super.create_ui_elements(arg_3_0)
 
-	local blueprint_context = {
+	local var_3_0 = {
 		scenegraph_id = "achievement_root",
-		ui_renderer = self._ui_top_renderer,
-		world = self._ui_context.world,
+		ui_renderer = arg_3_0._ui_top_renderer,
+		world = arg_3_0._ui_context.world
 	}
 
-	self._handbook_logic = HandbookLogic:new(blueprint_context, content_blueprints)
+	arg_3_0._handbook_logic = HandbookLogic:new(var_3_0, var_0_0)
 end
 
-HandbookPopup.show = function (self)
-	HandbookPopup.super.show(self)
-	self:_start_transition_animation("on_enter")
-	self:play_sound("Play_gui_handbook_popup")
-	self:set_fullscreen_effect_enable_state(true)
+function HandbookPopup.show(arg_4_0)
+	HandbookPopup.super.show(arg_4_0)
+	arg_4_0:_start_transition_animation("on_enter")
+	arg_4_0:play_sound("Play_gui_handbook_popup")
+	arg_4_0:set_fullscreen_effect_enable_state(true)
 end
 
-HandbookPopup.hide = function (self)
-	self:set_fullscreen_effect_enable_state(false)
+function HandbookPopup.hide(arg_5_0)
+	arg_5_0:set_fullscreen_effect_enable_state(false)
 
-	self._exit_anim_id = self:_start_transition_animation("on_exit")
+	arg_5_0._exit_anim_id = arg_5_0:_start_transition_animation("on_exit")
 end
 
-HandbookPopup._start_transition_animation = function (self, animation_name)
-	return self._ui_animator:start_animation(animation_name, nil, definitions.scenegraph_definition, {
-		wwise_world = self._wwise_world,
-		render_settings = self._render_settings,
+function HandbookPopup._start_transition_animation(arg_6_0, arg_6_1)
+	return arg_6_0._ui_animator:start_animation(arg_6_1, nil, var_0_1.scenegraph_definition, {
+		wwise_world = arg_6_0._wwise_world,
+		render_settings = arg_6_0._render_settings
 	})
 end
 
-HandbookPopup._update_animations = function (self, dt)
-	HandbookPopup.super._update_animations(self, dt)
+function HandbookPopup._update_animations(arg_7_0, arg_7_1)
+	HandbookPopup.super._update_animations(arg_7_0, arg_7_1)
 
-	if self._exit_anim_id and self._ui_animator:is_animation_completed(self._exit_anim_id) then
-		self._is_visible = false
+	if arg_7_0._exit_anim_id and arg_7_0._ui_animator:is_animation_completed(arg_7_0._exit_anim_id) then
+		arg_7_0._is_visible = false
 	end
 
-	local exit_button = self._widgets_by_name.exit_button
+	local var_7_0 = arg_7_0._widgets_by_name.exit_button
 
-	UIWidgetUtils.animate_default_button(exit_button, dt)
+	UIWidgetUtils.animate_default_button(var_7_0, arg_7_1)
 end
 
-HandbookPopup._handle_input = function (self, dt)
-	if self._has_widget_been_closed then
+function HandbookPopup._handle_input(arg_8_0, arg_8_1)
+	if arg_8_0._has_widget_been_closed then
 		return
 	end
 
-	HandbookPopup.super._handle_input(self, dt)
+	HandbookPopup.super._handle_input(arg_8_0, arg_8_1)
 
-	local widgets_by_name = self._widgets_by_name
-	local input_service = self:_get_input_service()
-	local is_gamepad_active = Managers.input:is_device_active("gamepad")
+	local var_8_0 = arg_8_0._widgets_by_name
+	local var_8_1 = arg_8_0:_get_input_service()
+	local var_8_2 = Managers.input:is_device_active("gamepad")
 
-	self:_set_gamepad_input_buttons_visibility(is_gamepad_active)
+	arg_8_0:_set_gamepad_input_buttons_visibility(var_8_2)
 
-	local page_button_next = widgets_by_name.page_button_next
-	local page_button_previous = widgets_by_name.page_button_previous
+	local var_8_3 = var_8_0.page_button_next
+	local var_8_4 = var_8_0.page_button_previous
 
-	UIWidgetUtils.animate_arrow_button(page_button_next, dt)
-	UIWidgetUtils.animate_arrow_button(page_button_previous, dt)
+	UIWidgetUtils.animate_arrow_button(var_8_3, arg_8_1)
+	UIWidgetUtils.animate_arrow_button(var_8_4, arg_8_1)
 
-	if UIUtils.is_button_hover_enter(page_button_next) or UIUtils.is_button_hover_enter(page_button_previous) then
-		self:play_sound("play_gui_inventory_next_hover")
+	if UIUtils.is_button_hover_enter(var_8_3) or UIUtils.is_button_hover_enter(var_8_4) then
+		arg_8_0:play_sound("play_gui_inventory_next_hover")
 	end
 
-	if UIUtils.is_button_pressed(page_button_next) or input_service:get("cycle_next") then
-		local next_page_index = self._current_page + 1
+	if UIUtils.is_button_pressed(var_8_3) or var_8_1:get("cycle_next") then
+		local var_8_5 = arg_8_0._current_page + 1
 
-		if next_page_index <= self._total_pages then
-			self:_go_to_page(next_page_index)
-			self:play_sound("play_gui_cosmetics_inventory_next_click")
+		if var_8_5 <= arg_8_0._total_pages then
+			arg_8_0:_go_to_page(var_8_5)
+			arg_8_0:play_sound("play_gui_cosmetics_inventory_next_click")
 		end
-	elseif UIUtils.is_button_pressed(page_button_previous) or input_service:get("cycle_previous") then
-		local next_page_index = self._current_page - 1
+	elseif UIUtils.is_button_pressed(var_8_4) or var_8_1:get("cycle_previous") then
+		local var_8_6 = arg_8_0._current_page - 1
 
-		if next_page_index >= 1 then
-			self:_go_to_page(next_page_index)
-			self:play_sound("play_gui_cosmetics_inventory_next_click")
+		if var_8_6 >= 1 then
+			arg_8_0:_go_to_page(var_8_6)
+			arg_8_0:play_sound("play_gui_cosmetics_inventory_next_click")
 		end
 	end
 
-	if self._content_widgets then
-		self:_update_mouse_scroll_input()
+	if arg_8_0._content_widgets then
+		arg_8_0:_update_mouse_scroll_input()
 	end
 
-	if UIUtils.is_button_pressed(widgets_by_name.exit_button) or input_service:get("back", true) or input_service:get("toggle_menu", true) then
-		self:hide()
-		self:release_input()
+	if UIUtils.is_button_pressed(var_8_0.exit_button) or var_8_1:get("back", true) or var_8_1:get("toggle_menu", true) then
+		arg_8_0:hide()
+		arg_8_0:release_input()
 
-		self._has_widget_been_closed = true
+		arg_8_0._has_widget_been_closed = true
 
-		self:play_sound("Play_hud_button_close")
+		arg_8_0:play_sound("Play_hud_button_close")
 
 		return
 	end
 end
 
-HandbookPopup._go_to_page = function (self, page_index)
-	local page_name = self._active_pages[page_index]
-	local page_settings = HandbookSettings.pages[page_name]
+function HandbookPopup._go_to_page(arg_9_0, arg_9_1)
+	local var_9_0 = arg_9_0._active_pages[arg_9_1]
+	local var_9_1 = HandbookSettings.pages[var_9_0]
 
-	if not page_settings then
+	if not var_9_1 then
 		return
 	end
 
-	local entry_widgets, total_height = self._handbook_logic:create_entry_widgets(page_settings)
+	local var_9_2, var_9_3 = arg_9_0._handbook_logic:create_entry_widgets(var_9_1)
+	local var_9_4 = var_9_3 + 150
 
-	total_height = total_height + 150
-	self._content_widgets = entry_widgets
-	self._total_scroll_height = math.max(total_height - ACHIEVEMENT_WINDOW_HEIGHT, 0)
-	self._scroll_value = nil
+	arg_9_0._content_widgets = var_9_2
+	arg_9_0._total_scroll_height = math.max(var_9_4 - var_0_3, 0)
+	arg_9_0._scroll_value = nil
 
-	self:_setup_scrollbar(total_height)
+	arg_9_0:_setup_scrollbar(var_9_4)
 
-	self._current_page = page_index
+	arg_9_0._current_page = arg_9_1
 
-	self:_update_page_info()
+	arg_9_0:_update_page_info()
 end
 
-HandbookPopup._update_page_info = function (self)
-	local widgets_by_name = self._widgets_by_name
-	local current_page = self._current_page
-	local total_pages = self._total_pages
+function HandbookPopup._update_page_info(arg_10_0)
+	local var_10_0 = arg_10_0._widgets_by_name
+	local var_10_1 = arg_10_0._current_page
+	local var_10_2 = arg_10_0._total_pages
 
-	widgets_by_name.page_text_left.content.text = tostring(current_page)
-	widgets_by_name.page_text_right.content.text = tostring(total_pages)
-	widgets_by_name.page_button_next.content.hotspot.disable_button = current_page == total_pages
-	widgets_by_name.page_button_previous.content.hotspot.disable_button = current_page == 1
+	var_10_0.page_text_left.content.text = tostring(var_10_1)
+	var_10_0.page_text_right.content.text = tostring(var_10_2)
+	var_10_0.page_button_next.content.hotspot.disable_button = var_10_1 == var_10_2
+	var_10_0.page_button_previous.content.hotspot.disable_button = var_10_1 == 1
 
-	local has_pages = total_pages > 1
+	local var_10_3 = var_10_2 > 1
 
-	widgets_by_name.page_button_next.content.visible = has_pages
-	widgets_by_name.page_button_previous.content.visible = has_pages
-	widgets_by_name.input_icon_next.content.visible = has_pages
-	widgets_by_name.input_icon_previous.content.visible = has_pages
-	widgets_by_name.input_arrow_next.content.visible = has_pages
-	widgets_by_name.input_arrow_previous.content.visible = has_pages
-	widgets_by_name.page_text_center.content.visible = has_pages
-	widgets_by_name.page_text_left.content.visible = has_pages
-	widgets_by_name.page_text_right.content.visible = has_pages
-	widgets_by_name.page_text_area.content.visible = has_pages
+	var_10_0.page_button_next.content.visible = var_10_3
+	var_10_0.page_button_previous.content.visible = var_10_3
+	var_10_0.input_icon_next.content.visible = var_10_3
+	var_10_0.input_icon_previous.content.visible = var_10_3
+	var_10_0.input_arrow_next.content.visible = var_10_3
+	var_10_0.input_arrow_previous.content.visible = var_10_3
+	var_10_0.page_text_center.content.visible = var_10_3
+	var_10_0.page_text_left.content.visible = var_10_3
+	var_10_0.page_text_right.content.visible = var_10_3
+	var_10_0.page_text_area.content.visible = var_10_3
 
-	self._menu_input_description:set_input_description(has_pages and generic_input_actions.has_pages or nil)
+	arg_10_0._menu_input_description:set_input_description(var_10_3 and var_0_2.has_pages or nil)
 end
 
-HandbookPopup.should_show = function (self)
-	return self._ui_context.is_in_inn and not Managers.popup:has_popup() and not self._is_visible and not Managers.unlock:is_waiting_for_gift_popup_ui()
+function HandbookPopup.should_show(arg_11_0)
+	return arg_11_0._ui_context.is_in_inn and not Managers.popup:has_popup() and not arg_11_0._is_visible and not Managers.unlock:is_waiting_for_gift_popup_ui()
 end
 
-HandbookPopup.update = function (self, dt)
-	HandbookPopup.super.update(self, dt)
+function HandbookPopup.update(arg_12_0, arg_12_1)
+	HandbookPopup.super.update(arg_12_0, arg_12_1)
 
-	if self:should_show() and not self._has_widget_been_closed then
-		self:show()
-		self:_go_to_page(1)
+	if arg_12_0:should_show() and not arg_12_0._has_widget_been_closed then
+		arg_12_0:show()
+		arg_12_0:_go_to_page(1)
 	end
 end
 
-HandbookPopup._setup_scrollbar = function (self, height, optional_value)
-	local widget = self._widgets_by_name.achievement_scrollbar
-	local scenegraph_id = widget.scenegraph_id
-	local scrollbar_size_y = self._ui_scenegraph[scenegraph_id].size[2]
-	local percentage = math.min(scrollbar_size_y / height, 1)
+function HandbookPopup._setup_scrollbar(arg_13_0, arg_13_1, arg_13_2)
+	local var_13_0 = arg_13_0._widgets_by_name.achievement_scrollbar
+	local var_13_1 = var_13_0.scenegraph_id
+	local var_13_2 = arg_13_0._ui_scenegraph[var_13_1].size[2]
+	local var_13_3 = math.min(var_13_2 / arg_13_1, 1)
 
-	widget.content.scroll_bar_info.bar_height_percentage = percentage
+	var_13_0.content.scroll_bar_info.bar_height_percentage = var_13_3
 
-	self:_set_scrollbar_value(optional_value or 0)
+	arg_13_0:_set_scrollbar_value(arg_13_2 or 0)
 
-	local scroll_step_multiplier = 2
-	local scroll_amount = math.max(110 / self._total_scroll_height, 0) * scroll_step_multiplier
+	local var_13_4 = 2
+	local var_13_5 = math.max(110 / arg_13_0._total_scroll_height, 0) * var_13_4
 
-	self._widgets_by_name.achievement_window.content.scroll_amount = scroll_amount
+	arg_13_0._widgets_by_name.achievement_window.content.scroll_amount = var_13_5
 end
 
-HandbookPopup._set_scrollbar_value = function (self, value)
-	if value then
-		local widgets_by_name = self._widgets_by_name
-		local widget = widgets_by_name.achievement_scrollbar
-		local widget_scroll_bar_info = widget.content.scroll_bar_info
+function HandbookPopup._set_scrollbar_value(arg_14_0, arg_14_1)
+	if arg_14_1 then
+		local var_14_0 = arg_14_0._widgets_by_name
 
-		widget_scroll_bar_info.value = value
-		widgets_by_name.achievement_window.content.scroll_value = value
+		var_14_0.achievement_scrollbar.content.scroll_bar_info.value = arg_14_1
+		var_14_0.achievement_window.content.scroll_value = arg_14_1
 
-		local total_scroll_height = self._total_scroll_height
-		local height_scrolled = total_scroll_height * value
+		local var_14_1 = arg_14_0._total_scroll_height * arg_14_1
 
-		self._ui_scenegraph.achievement_root.position[2] = math.floor(height_scrolled)
-		self._scroll_value = value
+		arg_14_0._ui_scenegraph.achievement_root.position[2] = math.floor(var_14_1)
+		arg_14_0._scroll_value = arg_14_1
 	end
 end
 
-HandbookPopup._update_mouse_scroll_input = function (self)
-	local using_scrollbar = true
+function HandbookPopup._update_mouse_scroll_input(arg_15_0)
+	local var_15_0 = true
 
-	if using_scrollbar then
-		local widgets_by_name = self._widgets_by_name
-		local widget = widgets_by_name.achievement_scrollbar
-		local achievement_window_widget = widgets_by_name.achievement_window
+	if var_15_0 then
+		local var_15_1 = arg_15_0._widgets_by_name
+		local var_15_2 = var_15_1.achievement_scrollbar
+		local var_15_3 = var_15_1.achievement_window
 
-		if widget.content.scroll_bar_info.on_pressed then
-			achievement_window_widget.content.scroll_add = nil
+		if var_15_2.content.scroll_bar_info.on_pressed then
+			var_15_3.content.scroll_add = nil
 		end
 
-		local mouse_scroll_value = achievement_window_widget.content.scroll_value
+		local var_15_4 = var_15_3.content.scroll_value
 
-		if not mouse_scroll_value then
+		if not var_15_4 then
 			return
 		end
 
-		local scroll_bar_value = widget.content.scroll_bar_info.value
-		local current_scroll_value = self._scroll_value
+		local var_15_5 = var_15_2.content.scroll_bar_info.value
+		local var_15_6 = arg_15_0._scroll_value
 
-		if current_scroll_value ~= mouse_scroll_value then
-			self:_set_scrollbar_value(mouse_scroll_value)
-		elseif current_scroll_value ~= scroll_bar_value then
-			self:_set_scrollbar_value(scroll_bar_value)
+		if var_15_6 ~= var_15_4 then
+			arg_15_0:_set_scrollbar_value(var_15_4)
+		elseif var_15_6 ~= var_15_5 then
+			arg_15_0:_set_scrollbar_value(var_15_5)
 		end
 	end
 end
 
-HandbookPopup._set_gamepad_input_buttons_visibility = function (self, visible)
-	local widgets_by_name = self._widgets_by_name
-	local has_pages = self._total_pages > 1
+function HandbookPopup._set_gamepad_input_buttons_visibility(arg_16_0, arg_16_1)
+	local var_16_0 = arg_16_0._widgets_by_name
+	local var_16_1 = arg_16_0._total_pages > 1
 
-	visible = visible and has_pages
+	arg_16_1 = arg_16_1 and var_16_1
 
-	local input_1_widget = widgets_by_name.input_icon_next
-	local input_2_widget = widgets_by_name.input_icon_previous
-	local input_arrow_1_widget = widgets_by_name.input_arrow_next
-	local input_arrow_2_widget = widgets_by_name.input_arrow_previous
+	local var_16_2 = var_16_0.input_icon_next
+	local var_16_3 = var_16_0.input_icon_previous
+	local var_16_4 = var_16_0.input_arrow_next
+	local var_16_5 = var_16_0.input_arrow_previous
 
-	input_1_widget.content.visible = visible
-	input_2_widget.content.visible = visible
-	input_arrow_1_widget.content.visible = visible
-	input_arrow_2_widget.content.visible = visible
+	var_16_2.content.visible = arg_16_1
+	var_16_3.content.visible = arg_16_1
+	var_16_4.content.visible = arg_16_1
+	var_16_5.content.visible = arg_16_1
 end

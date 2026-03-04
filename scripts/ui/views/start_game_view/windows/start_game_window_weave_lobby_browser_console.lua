@@ -1,49 +1,45 @@
-﻿-- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_weave_lobby_browser_console.lua
+-- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_weave_lobby_browser_console.lua
 
-local definitions = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_lobby_browser_console_definitions")
+local var_0_0 = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_lobby_browser_console_definitions")
 
 StartGameWindowWeaveLobbyBrowserConsole = class(StartGameWindowWeaveLobbyBrowserConsole, StartGameWindowLobbyBrowserConsole)
 StartGameWindowWeaveLobbyBrowserConsole.NAME = "StartGameWindowWeaveLobbyBrowserConsole"
 
-local network_options = {
-	config_file_name = "global",
+local var_0_1 = {
 	project_hash = "bulldozer",
+	config_file_name = "global",
 	lobby_port = GameSettingsDevelopment.network_port,
 	server_port = GameSettingsDevelopment.network_port,
-	max_members = MatchmakingSettings.MAX_NUMBER_OF_PLAYERS,
+	max_members = MatchmakingSettings.MAX_NUMBER_OF_PLAYERS
 }
 
-StartGameWindowWeaveLobbyBrowserConsole.on_enter = function (self, params, offset)
+function StartGameWindowWeaveLobbyBrowserConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindowWeaveLobbyBrowserConsole] Enter Substate StartGameWindowWeaveLobbyBrowserConsole")
 
-	self._parent = params.parent
+	arg_1_0._parent = arg_1_1.parent
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_1_0 = arg_1_1.ingame_ui_context
 
-	self._statistics_db = ingame_ui_context.statistics_db
+	arg_1_0._statistics_db = var_1_0.statistics_db
 
-	local player_manager = Managers.player
-	local local_player = player_manager:local_player()
+	local var_1_1 = Managers.player:local_player()
 
-	self._profile_name = local_player:profile_display_name()
-	self._career_name = local_player:career_name()
-	self._stats_id = local_player:stats_id()
-	self._friend_names = {}
+	arg_1_0._profile_name = var_1_1:profile_display_name()
+	arg_1_0._career_name = var_1_1:career_name()
+	arg_1_0._stats_id = var_1_1:stats_id()
+	arg_1_0._friend_names = {}
+	arg_1_0._lobby_finder = LobbyFinder:new(var_0_1, MatchmakingSettings.MAX_NUM_LOBBIES, IS_WINDOWS and true)
 
-	local lobby_finder = LobbyFinder:new(network_options, MatchmakingSettings.MAX_NUM_LOBBIES, IS_WINDOWS and true)
+	local var_1_2 = false
 
-	self._lobby_finder = lobby_finder
+	arg_1_0._current_weave = LevelUnlockUtils.current_weave(arg_1_0._statistics_db, arg_1_0._stats_id, var_1_2)
+	arg_1_0._game_mode_data = var_0_0.setup_game_mode_data(arg_1_0._statistics_db, arg_1_0._stats_id)
+	arg_1_0._lobby_browser_console_ui = LobbyBrowserConsoleUI:new(arg_1_0, var_1_0, arg_1_0._game_mode_data, var_0_0.show_lobbies_table, var_0_0.distance_table)
 
-	local ignore_dlc_check = false
-
-	self._current_weave = LevelUnlockUtils.current_weave(self._statistics_db, self._stats_id, ignore_dlc_check)
-	self._game_mode_data = definitions.setup_game_mode_data(self._statistics_db, self._stats_id)
-	self._lobby_browser_console_ui = LobbyBrowserConsoleUI:new(self, ingame_ui_context, self._game_mode_data, definitions.show_lobbies_table, definitions.distance_table)
-
-	self:reset_filters("weave")
-	Managers.matchmaking:set_active_lobby_browser(self)
-	self:_populate_lobby_list()
-	self:change_generic_actions("default_lobby_browser")
-	self:set_input_description(nil)
-	Managers.account:get_friends(2000, callback(self, "cb_friends_collected"))
+	arg_1_0:reset_filters("weave")
+	Managers.matchmaking:set_active_lobby_browser(arg_1_0)
+	arg_1_0:_populate_lobby_list()
+	arg_1_0:change_generic_actions("default_lobby_browser")
+	arg_1_0:set_input_description(nil)
+	Managers.account:get_friends(2000, callback(arg_1_0, "cb_friends_collected"))
 end

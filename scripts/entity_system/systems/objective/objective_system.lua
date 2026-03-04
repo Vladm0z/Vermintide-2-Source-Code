@@ -1,6 +1,6 @@
-﻿-- chunkname: @scripts/entity_system/systems/objective/objective_system.lua
+-- chunkname: @scripts/entity_system/systems/objective/objective_system.lua
 
-local objective_system_testify = script_data.testify and require("scripts/entity_system/systems/objective/objective_system_testify")
+local var_0_0 = script_data.testify and require("scripts/entity_system/systems/objective/objective_system_testify")
 
 require("scripts/entity_system/systems/weaves/weave_essence_handler")
 require("scripts/unit_extensions/objectives/base_objective_extension")
@@ -8,12 +8,12 @@ require("scripts/unit_extensions/objectives/objective_group_extension")
 
 ObjectiveSystem = class(ObjectiveSystem, ExtensionSystemBase)
 
-local RPCS = {
+local var_0_1 = {
 	"rpc_register_objectives",
 	"rpc_activate_objective",
-	"rpc_objective_completed",
+	"rpc_objective_completed"
 }
-local EXTENSIONS = {
+local var_0_2 = {
 	"ObjectiveGroupExtension",
 	"WeaveCapturePointExtension",
 	"WeaveTargetExtension",
@@ -31,1046 +31,1013 @@ local EXTENSIONS = {
 	"VersusMissionObjectiveExtension",
 	"VersusCapturePointObjectiveExtension",
 	"VersusSurviveEventObjectiveExtension",
-	"ObjectiveEventExtension",
+	"ObjectiveEventExtension"
 }
 
-ObjectiveSystem.init = function (self, entity_system_creation_context, system_name)
-	ExtensionSystemBase.init(self, entity_system_creation_context, system_name, EXTENSIONS)
+function ObjectiveSystem.init(arg_1_0, arg_1_1, arg_1_2)
+	ExtensionSystemBase.init(arg_1_0, arg_1_1, arg_1_2, var_0_2)
 
-	local network_event_delegate = entity_system_creation_context.network_event_delegate
+	local var_1_0 = arg_1_1.network_event_delegate
 
-	self.network_event_delegate = network_event_delegate
+	arg_1_0.network_event_delegate = var_1_0
 
-	network_event_delegate:register(self, unpack(RPCS))
+	var_1_0:register(arg_1_0, unpack(var_0_1))
 
-	self._game_session = Network.game_session()
-	self._entity_system_creation_context = entity_system_creation_context
-	self._is_server = entity_system_creation_context.is_server
-	self._world = entity_system_creation_context.world
-	self._extensions = {}
-	self._units = {}
-	self._progress_listeners = {}
-	self._objective_lists = {}
-	self._active_objectives = {}
-	self._active_leaf_objectives = {}
-	self._active_root_objectives = {}
-	self._activated = false
-	self._all_objectives_completed = false
-	self._objective_by_name = {}
-	self._group_by_name = {}
-	self._children_by_name = {}
-	self._extension_by_sync_object = {}
-	self._pending_sync_objects = {}
-	self._data_by_name = {}
-	self._sync_object_by_name = {}
-	self._total_num_main_objectives = 0
-	self._total_num_objectives_at_current_list_index = 0
-	self._current_objective_list_index = 1
-	self._hot_join_sync_completed_objectives = {}
+	arg_1_0._game_session = Network.game_session()
+	arg_1_0._entity_system_creation_context = arg_1_1
+	arg_1_0._is_server = arg_1_1.is_server
+	arg_1_0._world = arg_1_1.world
+	arg_1_0._extensions = {}
+	arg_1_0._units = {}
+	arg_1_0._progress_listeners = {}
+	arg_1_0._objective_lists = {}
+	arg_1_0._active_objectives = {}
+	arg_1_0._active_leaf_objectives = {}
+	arg_1_0._active_root_objectives = {}
+	arg_1_0._activated = false
+	arg_1_0._all_objectives_completed = false
+	arg_1_0._objective_by_name = {}
+	arg_1_0._group_by_name = {}
+	arg_1_0._children_by_name = {}
+	arg_1_0._extension_by_sync_object = {}
+	arg_1_0._pending_sync_objects = {}
+	arg_1_0._data_by_name = {}
+	arg_1_0._sync_object_by_name = {}
+	arg_1_0._total_num_main_objectives = 0
+	arg_1_0._total_num_objectives_at_current_list_index = 0
+	arg_1_0._current_objective_list_index = 1
+	arg_1_0._hot_join_sync_completed_objectives = {}
 
-	local game_mode_name = Managers.state.game_mode:game_mode_key()
+	local var_1_1 = Managers.state.game_mode:game_mode_key()
 
-	if game_mode_name == "weave" then
-		self._weave_essence_handler = WeaveEssenceHandler:new(self._world)
-		self._weave_manager = Managers.weave
-	elseif game_mode_name == "versus" then
-		self._is_versus = true
+	if var_1_1 == "weave" then
+		arg_1_0._weave_essence_handler = WeaveEssenceHandler:new(arg_1_0._world)
+		arg_1_0._weave_manager = Managers.weave
+	elseif var_1_1 == "versus" then
+		arg_1_0._is_versus = true
 	end
 
-	self._objective_item_spawner = Managers.state.entity:system("objective_item_spawner_system")
+	arg_1_0._objective_item_spawner = Managers.state.entity:system("objective_item_spawner_system")
 
-	Managers.state.event:register(self, "on_player_joined_party", "_on_player_joined_party")
+	Managers.state.event:register(arg_1_0, "on_player_joined_party", "_on_player_joined_party")
 end
 
-ObjectiveSystem.on_game_entered = function (self)
-	if self._is_server then
-		local level_start_objectives = Managers.state.game_mode:level_start_objectives()
+function ObjectiveSystem.on_game_entered(arg_2_0)
+	if arg_2_0._is_server then
+		local var_2_0 = Managers.state.game_mode:level_start_objectives()
 
-		if level_start_objectives then
-			self:server_register_objectives(level_start_objectives)
+		if var_2_0 then
+			arg_2_0:server_register_objectives(var_2_0)
 		end
 	end
 end
 
-ObjectiveSystem.destroy = function (self)
-	self.network_event_delegate:unregister(self)
+function ObjectiveSystem.destroy(arg_3_0)
+	arg_3_0.network_event_delegate:unregister(arg_3_0)
 
-	local event_manager = Managers.state.event
+	local var_3_0 = Managers.state.event
 
-	if event_manager then
-		event_manager:unregister("on_player_joined_party", self)
+	if var_3_0 then
+		var_3_0:unregister("on_player_joined_party", arg_3_0)
 	end
 end
 
-ObjectiveSystem.weave_essence_handler = function (self)
-	return self._weave_essence_handler
+function ObjectiveSystem.weave_essence_handler(arg_4_0)
+	return arg_4_0._weave_essence_handler
 end
 
-ObjectiveSystem.game_object_created = function (self, game_session, game_object_id)
-	local objective_name_id = GameSession.game_object_field(game_session, game_object_id, "objective_name")
-	local objective_name = NetworkLookup.objective_names[objective_name_id]
-	local extension = self._objective_by_name[objective_name]
+function ObjectiveSystem.game_object_created(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = GameSession.game_object_field(arg_5_1, arg_5_2, "objective_name")
+	local var_5_1 = NetworkLookup.objective_names[var_5_0]
+	local var_5_2 = arg_5_0._objective_by_name[var_5_1]
 
-	if extension then
-		extension:sync_objective(game_object_id, game_session)
+	if var_5_2 then
+		var_5_2:sync_objective(arg_5_2, arg_5_1)
 
-		self._extension_by_sync_object[game_object_id] = extension
+		arg_5_0._extension_by_sync_object[arg_5_2] = var_5_2
 	else
-		self._pending_sync_objects[objective_name] = game_object_id
+		arg_5_0._pending_sync_objects[var_5_1] = arg_5_2
 	end
 end
 
-ObjectiveSystem.deactivate_all_objectives = function (self)
-	if self._weave_essence_handler then
-		self._weave_essence_handler:destroy_all_essence()
+function ObjectiveSystem.deactivate_all_objectives(arg_6_0)
+	if arg_6_0._weave_essence_handler then
+		arg_6_0._weave_essence_handler:destroy_all_essence()
 	end
 
-	self:_destroy_all_sync_objects()
+	arg_6_0:_destroy_all_sync_objects()
 
-	local active_objectives = self._active_objectives
+	local var_6_0 = arg_6_0._active_objectives
 
-	for idx, objective_name in ipairs(active_objectives) do
-		local extension = self._objective_by_name[objective_name]
+	for iter_6_0, iter_6_1 in ipairs(var_6_0) do
+		local var_6_1 = arg_6_0._objective_by_name[iter_6_1]
 
-		extension:deactivate()
+		var_6_1:deactivate()
 
-		if not extension.keep_alive then
-			self._objective_item_spawner:destroy_objective(objective_name)
+		if not var_6_1.keep_alive then
+			arg_6_0._objective_item_spawner:destroy_objective(iter_6_1)
 		end
 
-		active_objectives[idx] = nil
+		var_6_0[iter_6_0] = nil
 	end
 end
 
-ObjectiveSystem._destroy_all_sync_objects = function (self, ignore_kill_objectives)
-	local objective_index = self._current_objective_list_index
-	local objectives = self._objective_lists[objective_index]
+function ObjectiveSystem._destroy_all_sync_objects(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_0._current_objective_list_index
+	local var_7_1 = arg_7_0._objective_lists[var_7_0]
 
-	if objectives then
-		for objective_name in pairs(objectives) do
-			if ignore_kill_objectives or objective_name ~= "kill_enemies" then
-				self:_destroy_sync_object(objective_name)
+	if var_7_1 then
+		for iter_7_0 in pairs(var_7_1) do
+			if arg_7_1 or iter_7_0 ~= "kill_enemies" then
+				arg_7_0:_destroy_sync_object(iter_7_0)
 			end
 		end
 	end
 end
 
-ObjectiveSystem._destroy_sync_object = function (self, objective_name)
-	local game_session = Network.game_session()
+function ObjectiveSystem._destroy_sync_object(arg_8_0, arg_8_1)
+	local var_8_0 = Network.game_session()
 
-	if not game_session then
+	if not var_8_0 then
 		return
 	end
 
-	local sync_object_id = self._sync_object_by_name[objective_name]
+	local var_8_1 = arg_8_0._sync_object_by_name[arg_8_1]
 
-	if sync_object_id then
-		self._sync_object_by_name[objective_name] = nil
+	if var_8_1 then
+		arg_8_0._sync_object_by_name[arg_8_1] = nil
 
-		GameSession.destroy_game_object(game_session, sync_object_id)
+		GameSession.destroy_game_object(var_8_0, var_8_1)
 	end
 end
 
-ObjectiveSystem.server_register_objectives = function (self, objective_list_name)
-	assert(self._is_server, "[ObjectiveSystem] Only server may register objectives")
-	self:_register_objectives(objective_list_name)
+function ObjectiveSystem.server_register_objectives(arg_9_0, arg_9_1)
+	assert(arg_9_0._is_server, "[ObjectiveSystem] Only server may register objectives")
+	arg_9_0:_register_objectives(arg_9_1)
 
-	local objective_list_id = NetworkLookup.objective_lists[objective_list_name]
+	local var_9_0 = NetworkLookup.objective_lists[arg_9_1]
 
-	self.network_transmit:send_rpc_clients("rpc_register_objectives", objective_list_id)
+	arg_9_0.network_transmit:send_rpc_clients("rpc_register_objectives", var_9_0)
 end
 
-ObjectiveSystem._register_objectives = function (self, objective_list_name)
-	assert(not self._objective_list_name, "[ObjectiveSystem] No support implemented for registering multiple sets of objectives. Needs a pass to support this.")
+function ObjectiveSystem._register_objectives(arg_10_0, arg_10_1)
+	assert(not arg_10_0._objective_list_name, "[ObjectiveSystem] No support implemented for registering multiple sets of objectives. Needs a pass to support this.")
 
-	self._objective_list_name = objective_list_name
+	arg_10_0._objective_list_name = arg_10_1
 
-	local objective_list = ObjectiveLists[objective_list_name]
+	local var_10_0 = ObjectiveLists[arg_10_1]
 
-	self._objective_lists = objective_list
+	arg_10_0._objective_lists = var_10_0
 
-	local num_main_objectives = 0
+	local var_10_1 = 0
 
-	for objective_group_index, objective_set in ipairs(objective_list) do
-		num_main_objectives = num_main_objectives + table.size(objective_set)
+	for iter_10_0, iter_10_1 in ipairs(var_10_0) do
+		var_10_1 = var_10_1 + table.size(iter_10_1)
 
-		for objective_name, objective_data in pairs(objective_set) do
-			fassert(not self._data_by_name[objective_name] or objective_name == "kill_enemies", "[ObjectiveSystem] Objective with name %s in group %s was already registered as part of group %s.", objective_name, objective_group_index, self._data_by_name[objective_name])
-			self:_register_objective(objective_name, objective_data)
+		for iter_10_2, iter_10_3 in pairs(iter_10_1) do
+			fassert(not arg_10_0._data_by_name[iter_10_2] or iter_10_2 == "kill_enemies", "[ObjectiveSystem] Objective with name %s in group %s was already registered as part of group %s.", iter_10_2, iter_10_0, arg_10_0._data_by_name[iter_10_2])
+			arg_10_0:_register_objective(iter_10_2, iter_10_3)
 		end
 	end
 
-	self._total_num_main_objectives = self._total_num_main_objectives + num_main_objectives
+	arg_10_0._total_num_main_objectives = arg_10_0._total_num_main_objectives + var_10_1
 end
 
-ObjectiveSystem._register_objective = function (self, objective_name, objective_data)
-	self._data_by_name[objective_name] = objective_data
+function ObjectiveSystem._register_objective(arg_11_0, arg_11_1, arg_11_2)
+	arg_11_0._data_by_name[arg_11_1] = arg_11_2
 
-	if objective_data.sub_objectives then
-		self:_create_group_unit(objective_name, objective_data)
+	if arg_11_2.sub_objectives then
+		arg_11_0:_create_group_unit(arg_11_1, arg_11_2)
 
-		self._children_by_name[objective_name] = {}
+		arg_11_0._children_by_name[arg_11_1] = {}
 
-		for sub_objective_name, sub_objective_data in pairs(objective_data.sub_objectives) do
-			self._group_by_name[sub_objective_name] = objective_name
+		for iter_11_0, iter_11_1 in pairs(arg_11_2.sub_objectives) do
+			arg_11_0._group_by_name[iter_11_0] = arg_11_1
 
-			table.insert(self._children_by_name[objective_name], sub_objective_name)
-			self:_register_objective(sub_objective_name, sub_objective_data)
-			self:_patch_relation(objective_name, sub_objective_name)
+			table.insert(arg_11_0._children_by_name[arg_11_1], iter_11_0)
+			arg_11_0:_register_objective(iter_11_0, iter_11_1)
+			arg_11_0:_patch_relation(arg_11_1, iter_11_0)
 		end
 	end
 
-	local extension = self._objective_by_name[objective_name]
+	local var_11_0 = arg_11_0._objective_by_name[arg_11_1]
 
-	if extension then
-		extension:set_objective_data(objective_data)
+	if var_11_0 then
+		var_11_0:set_objective_data(arg_11_2)
 	end
 end
 
-ObjectiveSystem._patch_relation = function (self, group_name, sub_objective_name)
-	local group_extension = self._objective_by_name[group_name]
-	local child_extension = self._objective_by_name[sub_objective_name]
+function ObjectiveSystem._patch_relation(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = arg_12_0._objective_by_name[arg_12_1]
+	local var_12_1 = arg_12_0._objective_by_name[arg_12_2]
 
-	if not group_extension or not child_extension then
+	if not var_12_0 or not var_12_1 then
 		return
 	end
 
-	group_extension:register_child(child_extension)
+	var_12_0:register_child(var_12_1)
 end
 
-ObjectiveSystem.server_activate_first_objective = function (self)
-	assert(self._is_server, "[ObjectiveSystem] Only server may activate objectives")
-	assert(not self._activated, "[ObjectiveSystem] Already activated the first objective")
+function ObjectiveSystem.server_activate_first_objective(arg_13_0)
+	assert(arg_13_0._is_server, "[ObjectiveSystem] Only server may activate objectives")
+	assert(not arg_13_0._activated, "[ObjectiveSystem] Already activated the first objective")
 
-	if not self:_activate_objectives_at_index(1) then
+	if not arg_13_0:_activate_objectives_at_index(1) then
 		return
 	end
 
-	self:objective_started_telemetry(self._current_objective_list_index)
+	arg_13_0:objective_started_telemetry(arg_13_0._current_objective_list_index)
 end
 
-ObjectiveSystem._create_group_unit = function (self, objective_name, objective_data)
-	local unit_spawner = Managers.state.unit_spawner
-	local objective_unit_template = ObjectiveUnitTemplates.objective_group
-	local unit_name = objective_unit_template.unit_name
-	local unit_template_name = objective_unit_template.unit_template_name
-	local extension_init_data = objective_unit_template.create_extension_init_data_func(objective_name, objective_data, nil)
-	local group_unit = unit_spawner:spawn_local_unit_with_extensions(unit_name, unit_template_name, extension_init_data)
+function ObjectiveSystem._create_group_unit(arg_14_0, arg_14_1, arg_14_2)
+	local var_14_0 = Managers.state.unit_spawner
+	local var_14_1 = ObjectiveUnitTemplates.objective_group
+	local var_14_2 = var_14_1.unit_name
+	local var_14_3 = var_14_1.unit_template_name
+	local var_14_4 = var_14_1.create_extension_init_data_func(arg_14_1, arg_14_2, nil)
 
-	return group_unit
+	return (var_14_0:spawn_local_unit_with_extensions(var_14_2, var_14_3, var_14_4))
 end
 
-ObjectiveSystem._activate_objective = function (self, objective_name)
-	local objective_data = self._data_by_name[objective_name]
+function ObjectiveSystem._activate_objective(arg_15_0, arg_15_1)
+	local var_15_0 = arg_15_0._data_by_name[arg_15_1]
 
-	assert(objective_data, "[ObjectiveSystem] Tried activating objective before registering it.")
+	assert(var_15_0, "[ObjectiveSystem] Tried activating objective before registering it.")
 
-	if self._is_server then
-		self:_check_trigger_start_vo(objective_data)
+	if arg_15_0._is_server then
+		arg_15_0:_check_trigger_start_vo(var_15_0)
 	end
 
-	if objective_data.vo_context_on_activate then
-		local dialogue_system = Managers.state.entity:system("dialogue_system")
+	if var_15_0.vo_context_on_activate then
+		local var_15_1 = Managers.state.entity:system("dialogue_system")
 
-		for context_name, context_value in pairs(objective_data.vo_context_on_activate) do
-			dialogue_system:set_global_context(context_name, context_value)
+		for iter_15_0, iter_15_1 in pairs(var_15_0.vo_context_on_activate) do
+			var_15_1:set_global_context(iter_15_0, iter_15_1)
 		end
 	end
 
-	local is_objective_container = self:_is_objective_container(objective_name)
+	local var_15_2 = arg_15_0:_is_objective_container(arg_15_1)
 
-	if is_objective_container then
-		local objective_extension = self._objective_by_name[objective_name]
+	if var_15_2 then
+		local var_15_3 = arg_15_0._objective_by_name[arg_15_1]
 
-		if objective_extension.activate then
-			objective_extension:activate()
+		if var_15_3.activate then
+			var_15_3:activate()
 		end
 	else
-		if self._is_server then
-			self._objective_item_spawner:spawn_item(objective_name, objective_data)
+		if arg_15_0._is_server then
+			arg_15_0._objective_item_spawner:spawn_item(arg_15_1, var_15_0)
 
-			local objective_extension = self._objective_by_name[objective_name]
+			local var_15_4 = arg_15_0._objective_by_name[arg_15_1]
 
-			fassert(objective_extension, "[ObjectiveSystem] Missing unit with objective extension and objective id %s", objective_name)
+			fassert(var_15_4, "[ObjectiveSystem] Missing unit with objective extension and objective id %s", arg_15_1)
 
-			local game_object_data_table = {
+			local var_15_5 = {
 				value = 0,
 				go_type = NetworkLookup.go_types.objective,
-				objective_name = NetworkLookup.objective_names[objective_name],
+				objective_name = NetworkLookup.objective_names[arg_15_1]
 			}
 
-			if objective_extension.initial_sync_data then
-				objective_extension:initial_sync_data(game_object_data_table)
+			if var_15_4.initial_sync_data then
+				var_15_4:initial_sync_data(var_15_5)
 			end
 
-			local callback = callback(self, "cb_game_session_disconnect")
-			local sync_go_id = Managers.state.network:create_game_object("objective", game_object_data_table, callback)
+			local var_15_6 = callback(arg_15_0, "cb_game_session_disconnect")
+			local var_15_7 = Managers.state.network:create_game_object("objective", var_15_5, var_15_6)
 
-			self._sync_object_by_name[objective_name] = sync_go_id
+			arg_15_0._sync_object_by_name[arg_15_1] = var_15_7
 
-			objective_extension:sync_objective(sync_go_id)
+			var_15_4:sync_objective(var_15_7)
 		end
 
-		local objective_extension = self._objective_by_name[objective_name]
-		local go_id = self._pending_sync_objects[objective_name]
+		local var_15_8 = arg_15_0._objective_by_name[arg_15_1]
+		local var_15_9 = arg_15_0._pending_sync_objects[arg_15_1]
 
-		if go_id then
-			objective_extension:sync_objective(go_id)
+		if var_15_9 then
+			var_15_8:sync_objective(var_15_9)
 
-			self._pending_sync_objects[objective_name] = nil
+			arg_15_0._pending_sync_objects[arg_15_1] = nil
 		end
 
-		if objective_extension.activate then
-			objective_extension:activate()
+		if var_15_8.activate then
+			var_15_8:activate()
 		end
 
-		self._active_leaf_objectives[#self._active_leaf_objectives + 1] = objective_name
+		arg_15_0._active_leaf_objectives[#arg_15_0._active_leaf_objectives + 1] = arg_15_1
 	end
 
-	self._active_objectives[#self._active_objectives + 1] = objective_name
+	arg_15_0._active_objectives[#arg_15_0._active_objectives + 1] = arg_15_1
 
-	local is_part_of_objective_container = self:_is_part_of_objective_container(objective_name)
-
-	if not is_part_of_objective_container then
-		self._active_root_objectives[#self._active_root_objectives + 1] = objective_name
+	if not arg_15_0:_is_part_of_objective_container(arg_15_1) then
+		arg_15_0._active_root_objectives[#arg_15_0._active_root_objectives + 1] = arg_15_1
 	end
 
-	if is_objective_container then
-		local children = self._children_by_name[objective_name]
+	if var_15_2 then
+		local var_15_10 = arg_15_0._children_by_name[arg_15_1]
 
-		for _, sub_objective_name in ipairs(children) do
-			if not self._hot_join_sync_completed_objectives[sub_objective_name] then
-				self:_activate_objective(sub_objective_name)
+		for iter_15_2, iter_15_3 in ipairs(var_15_10) do
+			if not arg_15_0._hot_join_sync_completed_objectives[iter_15_3] then
+				arg_15_0:_activate_objective(iter_15_3)
 			end
 		end
 	end
 end
 
-ObjectiveSystem.cb_game_session_disconnect = function (self, go_id)
-	local extension = self._extension_by_sync_object[go_id]
+function ObjectiveSystem.cb_game_session_disconnect(arg_16_0, arg_16_1)
+	local var_16_0 = arg_16_0._extension_by_sync_object[arg_16_1]
 
-	if extension then
-		extension:desync_objective()
+	if var_16_0 then
+		var_16_0:desync_objective()
 
-		self._extension_by_sync_object[go_id] = nil
+		arg_16_0._extension_by_sync_object[arg_16_1] = nil
 	end
 end
 
-ObjectiveSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
-	local progress_listener = Unit.get_data(unit, "listen_to_progress")
+function ObjectiveSystem.on_add_extension(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+	local var_17_0 = Unit.get_data(arg_17_2, "listen_to_progress")
 
-	if progress_listener then
-		local listeners = self._progress_listeners[progress_listener] or {}
+	if var_17_0 then
+		local var_17_1 = arg_17_0._progress_listeners[var_17_0] or {}
 
-		listeners[0] = #listeners + 1
-		listeners[listeners[0]] = unit
-		self._progress_listeners[progress_listener] = listeners
+		var_17_1[0] = #var_17_1 + 1
+		var_17_1[var_17_1[0]] = arg_17_2
+		arg_17_0._progress_listeners[var_17_0] = var_17_1
 	end
 
-	local extension
+	local var_17_2
 
-	if extension_name == "ObjectiveEventExtension" then
-		extension = {}
+	if arg_17_3 == "ObjectiveEventExtension" then
+		var_17_2 = {}
 	else
-		local extension_alias = self.NAME
-		local extension_pool_table
+		local var_17_3 = arg_17_0.NAME
+		local var_17_4
 
-		extension = ScriptUnit.add_extension(self.extension_init_context, unit, extension_name, extension_alias, extension_init_data, extension_pool_table)
+		var_17_2 = ScriptUnit.add_extension(arg_17_0.extension_init_context, arg_17_2, arg_17_3, var_17_3, arg_17_4, var_17_4)
 	end
 
-	self.extensions[extension_name] = (self.extensions[extension_name] or 0) + 1
-	self._units[extension] = unit
-	self._extensions[unit] = extension
+	arg_17_0.extensions[arg_17_3] = (arg_17_0.extensions[arg_17_3] or 0) + 1
+	arg_17_0._units[var_17_2] = arg_17_2
+	arg_17_0._extensions[arg_17_2] = var_17_2
 
-	if extension_name == "ObjectiveEventExtension" then
-		return extension
+	if arg_17_3 == "ObjectiveEventExtension" then
+		return var_17_2
 	end
 
-	local objective_name = extension:objective_name()
+	local var_17_5 = var_17_2:objective_name()
 
-	if objective_name and objective_name ~= "" then
-		local objective_data = self._data_by_name[objective_name]
+	if var_17_5 and var_17_5 ~= "" then
+		local var_17_6 = arg_17_0._data_by_name[var_17_5]
 
-		if objective_data then
-			extension:set_objective_data(objective_data)
+		if var_17_6 then
+			var_17_2:set_objective_data(var_17_6)
 		end
 
-		local spawn_template = self._objective_item_spawner:template_by_unit(unit)
+		if not arg_17_0._objective_item_spawner:template_by_unit(arg_17_2) then
+			arg_17_0._objective_by_name[var_17_5] = var_17_2
 
-		if not spawn_template then
-			self._objective_by_name[objective_name] = extension
+			local var_17_7 = arg_17_0._group_by_name[var_17_5]
 
-			local group_name = self._group_by_name[objective_name]
-
-			if group_name then
-				self:_patch_relation(group_name, objective_name)
+			if var_17_7 then
+				arg_17_0:_patch_relation(var_17_7, var_17_5)
 			end
 		end
 	end
 
-	return extension
+	return var_17_2
 end
 
-ObjectiveSystem.on_remove_extension = function (self, unit, ...)
-	ObjectiveSystem.super.on_remove_extension(self, unit, ...)
+function ObjectiveSystem.on_remove_extension(arg_18_0, arg_18_1, ...)
+	ObjectiveSystem.super.on_remove_extension(arg_18_0, arg_18_1, ...)
 
-	local extension = self._extensions[unit]
+	local var_18_0 = arg_18_0._extensions[arg_18_1]
 
-	self._units[extension] = nil
-	self._extensions[unit] = nil
+	arg_18_0._units[var_18_0] = nil
+	arg_18_0._extensions[arg_18_1] = nil
 end
 
-ObjectiveSystem.update = function (self, context, t)
+function ObjectiveSystem.update(arg_19_0, arg_19_1, arg_19_2)
 	if script_data.testify then
-		Testify:poll_requests_through_handler(objective_system_testify, self)
+		Testify:poll_requests_through_handler(var_0_0, arg_19_0)
 	end
 
-	local dt = context.dt
+	local var_19_0 = arg_19_1.dt
 
-	if self._weave_essence_handler then
-		self._weave_essence_handler:update(dt, t)
+	if arg_19_0._weave_essence_handler then
+		arg_19_0._weave_essence_handler:update(var_19_0, arg_19_2)
 	end
 
-	if not self._activated or Managers.state.game_mode:is_game_mode_ended() then
+	if not arg_19_0._activated or Managers.state.game_mode:is_game_mode_ended() then
 		return
 	end
 
-	if self._is_server then
-		self:_update_server(dt, t)
+	if arg_19_0._is_server then
+		arg_19_0:_update_server(var_19_0, arg_19_2)
 	else
-		self:_update_client(dt, t)
+		arg_19_0:_update_client(var_19_0, arg_19_2)
 	end
 end
 
-ObjectiveSystem._on_player_joined_party = function (self, peer_id, local_player_id, party_id, slot_id, is_bot)
-	if is_bot or peer_id ~= Network.peer_id() then
+function ObjectiveSystem._on_player_joined_party(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+	if arg_20_5 or arg_20_1 ~= Network.peer_id() then
 		return
 	end
 
-	local extensions = self._extensions
+	local var_20_0 = arg_20_0._extensions
 
-	for unit, extension in pairs(extensions) do
-		Unit.flow_event(unit, "local_player_party_changed")
+	for iter_20_0, iter_20_1 in pairs(var_20_0) do
+		Unit.flow_event(iter_20_0, "local_player_party_changed")
 	end
 end
 
-ObjectiveSystem.game_object_destroyed = function (self, game_session, game_object_id)
-	local objective_name_id = GameSession.game_object_field(game_session, game_object_id, "objective_name")
-	local objective_name = NetworkLookup.objective_names[objective_name_id]
+function ObjectiveSystem.game_object_destroyed(arg_21_0, arg_21_1, arg_21_2)
+	local var_21_0 = GameSession.game_object_field(arg_21_1, arg_21_2, "objective_name")
+	local var_21_1 = NetworkLookup.objective_names[var_21_0]
 
-	self._pending_sync_objects[objective_name] = game_object_id
+	arg_21_0._pending_sync_objects[var_21_1] = arg_21_2
 
-	local objective_extension = self._extension_by_sync_object[game_object_id]
+	local var_21_2 = arg_21_0._extension_by_sync_object[arg_21_2]
 
-	if objective_extension then
-		objective_extension:desync_objective()
+	if var_21_2 then
+		var_21_2:desync_objective()
 
-		self._extension_by_sync_object[game_object_id] = nil
+		arg_21_0._extension_by_sync_object[arg_21_2] = nil
 	end
 end
 
-ObjectiveSystem._update_server = function (self, dt, t)
-	local active_objectives = self._active_objectives
-	local active_leaf_objectives = self._active_leaf_objectives
-	local active_root_objectives = self._active_root_objectives
-	local objects_to_remove = {}
+function ObjectiveSystem._update_server(arg_22_0, arg_22_1, arg_22_2)
+	local var_22_0 = arg_22_0._active_objectives
+	local var_22_1 = arg_22_0._active_leaf_objectives
+	local var_22_2 = arg_22_0._active_root_objectives
+	local var_22_3 = {}
 
-	self:_update_objective_vo()
+	arg_22_0:_update_objective_vo()
 
-	for idx, objective_name in ipairs(active_objectives) do
-		local extension = self._objective_by_name[objective_name]
+	for iter_22_0, iter_22_1 in ipairs(var_22_0) do
+		local var_22_4 = arg_22_0._objective_by_name[iter_22_1]
 
-		extension:update(dt, t)
-		self:_update_progress_listeners(objective_name)
+		var_22_4:update(arg_22_1, arg_22_2)
+		arg_22_0:_update_progress_listeners(iter_22_1)
 
-		if extension:is_done() then
-			objects_to_remove[#objects_to_remove + 1] = idx
+		if var_22_4:is_done() then
+			var_22_3[#var_22_3 + 1] = iter_22_0
 		end
 	end
 
-	for i = #objects_to_remove, 1, -1 do
-		local index = objects_to_remove[i]
-		local objective_name = table.remove(active_objectives, index)
-		local leaf_index = table.index_of(active_leaf_objectives, objective_name)
+	for iter_22_2 = #var_22_3, 1, -1 do
+		local var_22_5 = var_22_3[iter_22_2]
+		local var_22_6 = table.remove(var_22_0, var_22_5)
+		local var_22_7 = table.index_of(var_22_1, var_22_6)
 
-		if leaf_index then
-			table.remove(active_leaf_objectives, leaf_index)
+		if var_22_7 then
+			table.remove(var_22_1, var_22_7)
 		end
 
-		local root_index = table.index_of(active_root_objectives, objective_name)
+		local var_22_8 = table.index_of(var_22_2, var_22_6)
 
-		if root_index then
-			table.remove(active_root_objectives, root_index)
+		if var_22_8 then
+			table.remove(var_22_2, var_22_8)
 		end
 
-		local extension = self._objective_by_name[objective_name]
+		local var_22_9 = arg_22_0._objective_by_name[var_22_6]
 
-		self:_complete_objective_server(extension, objects_to_remove)
+		arg_22_0:_complete_objective_server(var_22_9, var_22_3)
 	end
 
-	self:_update_activate_objectives()
+	arg_22_0:_update_activate_objectives()
 end
 
-ObjectiveSystem._update_client = function (self, dt, t)
-	local active_objectives = self._active_objectives
+function ObjectiveSystem._update_client(arg_23_0, arg_23_1, arg_23_2)
+	local var_23_0 = arg_23_0._active_objectives
 
-	for _, objective_name in pairs(active_objectives) do
-		local extension = self._objective_by_name[objective_name]
-
-		extension:update(dt, t)
-		self:_update_progress_listeners(objective_name)
+	for iter_23_0, iter_23_1 in pairs(var_23_0) do
+		arg_23_0._objective_by_name[iter_23_1]:update(arg_23_1, arg_23_2)
+		arg_23_0:_update_progress_listeners(iter_23_1)
 	end
 end
 
-ObjectiveSystem._update_progress_listeners = function (self, objective_name)
-	local extension = self._objective_by_name[objective_name]
-	local progress = extension:get_percentage_done()
-	local unit = self._units[extension]
+function ObjectiveSystem._update_progress_listeners(arg_24_0, arg_24_1)
+	local var_24_0 = arg_24_0._objective_by_name[arg_24_1]
+	local var_24_1 = var_24_0:get_percentage_done()
+	local var_24_2 = arg_24_0._units[var_24_0]
 
-	Unit.set_data(unit, "objective_progress", progress)
-	Unit.flow_event(unit, "objective_progress_update")
+	Unit.set_data(var_24_2, "objective_progress", var_24_1)
+	Unit.flow_event(var_24_2, "objective_progress_update")
 
-	local progress_listeners = self._progress_listeners
-	local listeners = progress_listeners[objective_name]
+	local var_24_3 = arg_24_0._progress_listeners[arg_24_1]
 
-	if listeners then
-		local num_listeners = listeners[0]
+	if var_24_3 then
+		local var_24_4 = var_24_3[0]
 
-		for i = 1, num_listeners do
-			local listener = listeners[i]
+		for iter_24_0 = 1, var_24_4 do
+			local var_24_5 = var_24_3[iter_24_0]
 
-			Unit.set_data(listener, "objective_progress", progress)
-			Unit.flow_event(listener, "objective_progress_update")
+			Unit.set_data(var_24_5, "objective_progress", var_24_1)
+			Unit.flow_event(var_24_5, "objective_progress_update")
 		end
 	end
 end
 
-ObjectiveSystem._update_activate_objectives = function (self)
-	local num_update_list = #self._active_objectives
-	local only_kill_objective_left = num_update_list > 0
+function ObjectiveSystem._update_activate_objectives(arg_25_0)
+	local var_25_0 = #arg_25_0._active_objectives
+	local var_25_1 = var_25_0 > 0
 
-	for i = 1, num_update_list do
-		if self._active_objectives[i] ~= "kill_enemies" then
-			only_kill_objective_left = false
+	for iter_25_0 = 1, var_25_0 do
+		if arg_25_0._active_objectives[iter_25_0] ~= "kill_enemies" then
+			var_25_1 = false
 
 			break
 		end
 	end
 
-	if num_update_list == 0 or only_kill_objective_left then
-		local next_objective_index = self._current_objective_list_index + 1
-		local next_objectives = self._objective_lists[next_objective_index]
+	if var_25_0 == 0 or var_25_1 then
+		local var_25_2 = arg_25_0._current_objective_list_index + 1
+		local var_25_3 = arg_25_0._objective_lists[var_25_2]
 
-		if self._weave_manager then
-			self._weave_manager:objective_set_completed()
+		if arg_25_0._weave_manager then
+			arg_25_0._weave_manager:objective_set_completed()
 		end
 
-		if next_objectives then
-			self:_destroy_all_sync_objects(false)
-			self:_activate_objectives_at_index(next_objective_index)
-			self:objective_started_telemetry(self._current_objective_list_index)
+		if var_25_3 then
+			arg_25_0:_destroy_all_sync_objects(false)
+			arg_25_0:_activate_objectives_at_index(var_25_2)
+			arg_25_0:objective_started_telemetry(arg_25_0._current_objective_list_index)
 
-			self._main_objective_scratch = {}
-		elseif not only_kill_objective_left then
-			self:_destroy_all_sync_objects(true)
+			arg_25_0._main_objective_scratch = {}
+		elseif not var_25_1 then
+			arg_25_0:_destroy_all_sync_objects(true)
 
-			self._activated = false
-			self._all_objectives_completed = true
+			arg_25_0._activated = false
+			arg_25_0._all_objectives_completed = true
 		end
 	end
 end
 
-ObjectiveSystem._complete_objective_server = function (self, extension, objects_to_remove)
-	local objective_name = extension:objective_name()
-	local objective_data = self._data_by_name[objective_name]
+function ObjectiveSystem._complete_objective_server(arg_26_0, arg_26_1, arg_26_2)
+	local var_26_0 = arg_26_1:objective_name()
+	local var_26_1 = arg_26_0._data_by_name[var_26_0]
 
-	self:_check_trigger_complete_vo(objective_data)
+	arg_26_0:_check_trigger_complete_vo(var_26_1)
 
-	if objective_data.vo_context_on_complete then
-		local dialogue_system = Managers.state.entity:system("dialogue_system")
+	if var_26_1.vo_context_on_complete then
+		local var_26_2 = Managers.state.entity:system("dialogue_system")
 
-		for context_name, context_value in pairs(objective_data.vo_context_on_complete) do
-			if type(context_value) == "function" then
-				context_value = context_value(dialogue_system:get_global_context(context_name))
+		for iter_26_0, iter_26_1 in pairs(var_26_1.vo_context_on_complete) do
+			if type(iter_26_1) == "function" then
+				iter_26_1 = iter_26_1(var_26_2:get_global_context(iter_26_0))
 			end
 
-			dialogue_system:set_global_context(context_name, context_value)
+			var_26_2:set_global_context(iter_26_0, iter_26_1)
 		end
 	end
 
-	if self._weave_manager then
-		self._weave_manager:increase_bar_score(extension:get_score_for_completion() or 0)
+	if arg_26_0._weave_manager then
+		arg_26_0._weave_manager:increase_bar_score(arg_26_1:get_score_for_completion() or 0)
 	end
 
-	if not extension.keep_alive then
-		self._objective_item_spawner:destroy_objective(objective_name)
+	if not arg_26_1.keep_alive then
+		arg_26_0._objective_item_spawner:destroy_objective(var_26_0)
 	end
 
-	LevelHelper:flow_event(self._world, "objective_completed_" .. objective_name)
-	LevelHelper:flow_event(self._world, "objective_completed")
+	LevelHelper:flow_event(arg_26_0._world, "objective_completed_" .. var_26_0)
+	LevelHelper:flow_event(arg_26_0._world, "objective_completed")
 
-	if self:_is_last_active_objective(objective_name) then
+	if arg_26_0:_is_last_active_objective(var_26_0) then
 		Managers.state.event:trigger("objective_group_completed")
 
-		local game_mode_manager = Managers.state.game_mode
-		local game_mode = game_mode_manager:game_mode()
-		local settings = game_mode_manager:settings()
+		local var_26_3 = Managers.state.game_mode
+		local var_26_4 = var_26_3:game_mode()
 
-		if settings.move_dead_players_after_objective_completed then
-			local adventure_spawning = game_mode:adventure_spawning()
-
-			adventure_spawning:set_move_dead_players_to_next_respawn(true)
+		if var_26_3:settings().move_dead_players_after_objective_completed then
+			var_26_4:adventure_spawning():set_move_dead_players_to_next_respawn(true)
 		end
 	end
 
-	local is_root_objective = self:is_root_objective(objective_name)
-	local is_leaf_objective = self:is_leaf_objective(objective_name)
-	local is_last_leaf_objective = self:is_last_leaf_objective(objective_name)
+	local var_26_5 = arg_26_0:is_root_objective(var_26_0)
+	local var_26_6 = arg_26_0:is_leaf_objective(var_26_0)
+	local var_26_7 = arg_26_0:is_last_leaf_objective(var_26_0)
 
-	extension:complete(is_root_objective, is_leaf_objective, is_last_leaf_objective)
-	Managers.state.event:trigger("objective_completed", extension, objective_data)
+	arg_26_1:complete(var_26_5, var_26_6, var_26_7)
+	Managers.state.event:trigger("objective_completed", arg_26_1, var_26_1)
 
-	local objective_name_id = NetworkLookup.objective_names[objective_name]
+	local var_26_8 = NetworkLookup.objective_names[var_26_0]
 
-	self.network_transmit:send_rpc_clients("rpc_objective_completed", objective_name_id)
+	arg_26_0.network_transmit:send_rpc_clients("rpc_objective_completed", var_26_8)
 end
 
-ObjectiveSystem._is_last_active_objective = function (self, objective_name)
-	return self._active_objectives[2] == nil and self._active_objectives[1] == objective_name
+function ObjectiveSystem._is_last_active_objective(arg_27_0, arg_27_1)
+	return arg_27_0._active_objectives[2] == nil and arg_27_0._active_objectives[1] == arg_27_1
 end
 
-ObjectiveSystem.is_root_objective = function (self, objective_name)
-	return self:_is_part_of_objective_container(objective_name)
+function ObjectiveSystem.is_root_objective(arg_28_0, arg_28_1)
+	return arg_28_0:_is_part_of_objective_container(arg_28_1)
 end
 
-ObjectiveSystem.is_leaf_objective = function (self, objective_name)
-	return not self:_is_objective_container(objective_name)
+function ObjectiveSystem.is_leaf_objective(arg_29_0, arg_29_1)
+	return not arg_29_0:_is_objective_container(arg_29_1)
 end
 
-ObjectiveSystem.is_last_leaf_objective = function (self, objective_name)
-	return self:is_leaf_objective(objective_name) and table.is_empty(self._active_leaf_objectives)
+function ObjectiveSystem.is_last_leaf_objective(arg_30_0, arg_30_1)
+	return arg_30_0:is_leaf_objective(arg_30_1) and table.is_empty(arg_30_0._active_leaf_objectives)
 end
 
-ObjectiveSystem._get_first_objective = function (self)
-	local objective_name = self._active_objectives[1]
-	local extension = self._objective_by_name[objective_name]
-	local objective_data = self._data_by_name[objective_name]
+function ObjectiveSystem._get_first_objective(arg_31_0)
+	local var_31_0 = arg_31_0._active_objectives[1]
+	local var_31_1 = arg_31_0._objective_by_name[var_31_0]
+	local var_31_2 = arg_31_0._data_by_name[var_31_0]
 
-	return extension, objective_data, objective_name
+	return var_31_1, var_31_2, var_31_0
 end
 
-ObjectiveSystem._get_first_leaf_objective = function (self)
-	local objective_name = self._active_leaf_objectives[1]
-	local extension = self._objective_by_name[objective_name]
-	local objective_data = self._data_by_name[objective_name]
+function ObjectiveSystem._get_first_leaf_objective(arg_32_0)
+	local var_32_0 = arg_32_0._active_leaf_objectives[1]
+	local var_32_1 = arg_32_0._objective_by_name[var_32_0]
+	local var_32_2 = arg_32_0._data_by_name[var_32_0]
 
-	return extension, objective_data, objective_name
+	return var_32_1, var_32_2, var_32_0
 end
 
-ObjectiveSystem.first_active_leaf_objective_unit = function (self)
-	local extension = self:_get_first_leaf_objective()
+function ObjectiveSystem.first_active_leaf_objective_unit(arg_33_0)
+	local var_33_0 = arg_33_0:_get_first_leaf_objective()
 
-	return extension and extension:unit()
+	return var_33_0 and var_33_0:unit()
 end
 
-ObjectiveSystem.first_active_objective_name = function (self)
-	return self._active_objectives[1]
+function ObjectiveSystem.first_active_objective_name(arg_34_0)
+	return arg_34_0._active_objectives[1]
 end
 
-ObjectiveSystem.first_active_root_objective_name = function (self)
-	return self._active_root_objectives[1]
+function ObjectiveSystem.first_active_root_objective_name(arg_35_0)
+	return arg_35_0._active_root_objectives[1]
 end
 
-ObjectiveSystem.first_active_objective_description = function (self)
-	local active_objectives = self:active_objectives()
+function ObjectiveSystem.first_active_objective_description(arg_36_0)
+	local var_36_0 = arg_36_0:active_objectives()
 
-	for i = 1, #active_objectives do
-		local objective_name = active_objectives[i]
-		local extension = self._objective_by_name[objective_name]
-		local objective_data = self._data_by_name[objective_name]
-		local description = extension:description() or objective_data.description
+	for iter_36_0 = 1, #var_36_0 do
+		local var_36_1 = var_36_0[iter_36_0]
+		local var_36_2 = arg_36_0._objective_by_name[var_36_1]
+		local var_36_3 = arg_36_0._data_by_name[var_36_1]
+		local var_36_4 = var_36_2:description() or var_36_3.description
 
-		if description then
-			return Localize(description)
+		if var_36_4 then
+			return Localize(var_36_4)
 		end
 	end
 
-	return string.format("<MISSING DESCRIPTION FOR OBJECTIVE '%s'>", self:first_active_objective_name())
+	return string.format("<MISSING DESCRIPTION FOR OBJECTIVE '%s'>", arg_36_0:first_active_objective_name())
 end
 
-ObjectiveSystem.current_objective_progress = function (self)
-	local active_root_objectives = self:active_root_objectives()
-	local num_root_objectives = self._total_num_objectives_at_current_list_index
-	local total_progress = 0
-	local num_active = #active_root_objectives
+function ObjectiveSystem.current_objective_progress(arg_37_0)
+	local var_37_0 = arg_37_0:active_root_objectives()
+	local var_37_1 = arg_37_0._total_num_objectives_at_current_list_index
+	local var_37_2 = 0
+	local var_37_3 = #var_37_0
 
-	if num_active == 0 then
+	if var_37_3 == 0 then
 		return 0
 	end
 
-	for i = 1, num_active do
-		local extension = self._objective_by_name[active_root_objectives[i]]
+	for iter_37_0 = 1, var_37_3 do
+		local var_37_4 = arg_37_0._objective_by_name[var_37_0[iter_37_0]]
 
-		if extension.get_percentage_done then
-			total_progress = total_progress + extension:get_percentage_done()
+		if var_37_4.get_percentage_done then
+			var_37_2 = var_37_2 + var_37_4:get_percentage_done()
 		else
-			total_progress = extension:is_done() and 1 or 0
+			var_37_2 = var_37_4:is_done() and 1 or 0
 		end
 	end
 
-	total_progress = total_progress + (num_root_objectives - num_active)
-
-	return total_progress / num_root_objectives
+	return (var_37_2 + (var_37_1 - var_37_3)) / var_37_1
 end
 
-ObjectiveSystem.current_objective_icon = function (self)
-	local active_objectives = self:active_objectives()
+function ObjectiveSystem.current_objective_icon(arg_38_0)
+	local var_38_0 = arg_38_0:active_objectives()
 
-	for i = 1, #active_objectives do
-		local objective_name = active_objectives[i]
-		local extension = self._objective_by_name[objective_name]
-		local objective_data = self._data_by_name[objective_name]
-		local objective_icon = extension:objective_icon() or objective_data.objective_type
+	for iter_38_0 = 1, #var_38_0 do
+		local var_38_1 = var_38_0[iter_38_0]
+		local var_38_2 = arg_38_0._objective_by_name[var_38_1]
+		local var_38_3 = arg_38_0._data_by_name[var_38_1]
+		local var_38_4 = var_38_2:objective_icon() or var_38_3.objective_type
 
-		if objective_icon then
-			return objective_icon
+		if var_38_4 then
+			return var_38_4
 		end
 	end
 
 	return "icons_placeholder"
 end
 
-ObjectiveSystem.current_objective_type = function (self)
-	local active_objectives = self:active_objectives()
+function ObjectiveSystem.current_objective_type(arg_39_0)
+	local var_39_0 = arg_39_0:active_objectives()
 
-	for i = 1, #active_objectives do
-		local objective_name = active_objectives[i]
-		local extension = self._objective_by_name[objective_name]
-		local objective_data = self._data_by_name[objective_name]
-		local objective_type = extension:objective_type() or objective_data.objective_type
+	for iter_39_0 = 1, #var_39_0 do
+		local var_39_1 = var_39_0[iter_39_0]
+		local var_39_2 = arg_39_0._objective_by_name[var_39_1]
+		local var_39_3 = arg_39_0._data_by_name[var_39_1]
+		local var_39_4 = var_39_2:objective_type() or var_39_3.objective_type
 
-		if objective_type then
-			return objective_type
+		if var_39_4 then
+			return var_39_4
 		end
 	end
 
 	return "objective_reach"
 end
 
-ObjectiveSystem.current_objectives_position = function (self)
-	if not self._objective_lists then
+function ObjectiveSystem.current_objectives_position(arg_40_0)
+	if not arg_40_0._objective_lists then
 		return
 	end
 
-	local positions = {}
-	local active_leafs = self:active_leaf_objectives()
+	local var_40_0 = {}
+	local var_40_1 = arg_40_0:active_leaf_objectives()
 
-	for i = 1, #active_leafs do
-		local objective_name = active_leafs[i]
-		local extension = self._objective_by_name[objective_name]
-		local unit = extension:unit()
+	for iter_40_0 = 1, #var_40_1 do
+		local var_40_2 = var_40_1[iter_40_0]
+		local var_40_3 = arg_40_0._objective_by_name[var_40_2]:unit()
 
-		if Unit.alive(unit) then
-			positions[#positions + 1] = Unit.world_position(unit, 0)
+		if Unit.alive(var_40_3) then
+			var_40_0[#var_40_0 + 1] = Unit.world_position(var_40_3, 0)
 		end
 	end
 
-	return positions
+	return var_40_0
 end
 
-ObjectiveSystem.objective_started_telemetry = function (self, objective_id)
-	if not self._is_versus then
+function ObjectiveSystem.objective_started_telemetry(arg_41_0, arg_41_1)
+	if not arg_41_0._is_versus then
 		return
 	end
 
-	local match_id = Managers.mechanism:game_mechanism():match_id()
-	local objective_list = self._objective_lists[objective_id]
-	local objective_name = next(objective_list)
-	local game_round = Managers.mechanism:game_mechanism():total_rounds_started()
+	local var_41_0 = Managers.mechanism:game_mechanism():match_id()
+	local var_41_1 = arg_41_0._objective_lists[arg_41_1]
+	local var_41_2 = next(var_41_1)
+	local var_41_3 = Managers.mechanism:game_mechanism():total_rounds_started()
 
-	Managers.telemetry_events:versus_objective_started(match_id, objective_id, game_round, objective_name)
+	Managers.telemetry_events:versus_objective_started(var_41_0, arg_41_1, var_41_3, var_41_2)
 end
 
-ObjectiveSystem.objective_section_completed_telemetry = function (self, current_section, total_sections)
-	if not self._is_versus then
+function ObjectiveSystem.objective_section_completed_telemetry(arg_42_0, arg_42_1, arg_42_2)
+	if not arg_42_0._is_versus then
 		return
 	end
 
-	current_section = current_section or 1
-	total_sections = total_sections or 1
+	arg_42_1 = arg_42_1 or 1
+	arg_42_2 = arg_42_2 or 1
 
-	local match_id = Managers.mechanism:game_mechanism():match_id()
-	local objective_id = self._current_objective_list_index
-	local objective_list = self._objective_lists[objective_id]
-	local objective_name = next(objective_list)
-	local game_round = Managers.mechanism:game_mechanism():total_rounds_started()
+	local var_42_0 = Managers.mechanism:game_mechanism():match_id()
+	local var_42_1 = arg_42_0._current_objective_list_index
+	local var_42_2 = arg_42_0._objective_lists[var_42_1]
+	local var_42_3 = next(var_42_2)
+	local var_42_4 = Managers.mechanism:game_mechanism():total_rounds_started()
 
-	Managers.telemetry_events:versus_objective_section_completed(match_id, objective_id, game_round, objective_name, current_section, total_sections)
+	Managers.telemetry_events:versus_objective_section_completed(var_42_0, var_42_1, var_42_4, var_42_3, arg_42_1, arg_42_2)
 end
 
-ObjectiveSystem.is_active = function (self)
-	return self._activated
+function ObjectiveSystem.is_active(arg_43_0)
+	return arg_43_0._activated
 end
 
-ObjectiveSystem.all_objectives_completed = function (self)
-	return self._all_objectives_completed
+function ObjectiveSystem.all_objectives_completed(arg_44_0)
+	return arg_44_0._all_objectives_completed
 end
 
-ObjectiveSystem.hot_join_sync = function (self, peer_id)
-	local objective_list_name = self._objective_list_name
+function ObjectiveSystem.hot_join_sync(arg_45_0, arg_45_1)
+	local var_45_0 = arg_45_0._objective_list_name
 
-	if not objective_list_name then
+	if not var_45_0 then
 		return
 	end
 
-	local channel_id = PEER_ID_TO_CHANNEL[peer_id]
-	local objective_list_id = NetworkLookup.objective_lists[objective_list_name]
+	local var_45_1 = PEER_ID_TO_CHANNEL[arg_45_1]
+	local var_45_2 = NetworkLookup.objective_lists[var_45_0]
 
-	RPC.rpc_register_objectives(channel_id, objective_list_id)
+	RPC.rpc_register_objectives(var_45_1, var_45_2)
 
-	if not table.is_empty(self._active_objectives) then
-		local objective_list = self._objective_lists[self._current_objective_list_index]
-		local completed_objectives_bit_field = self:_write_hot_join_sync_completed_objectives(objective_list)
+	if not table.is_empty(arg_45_0._active_objectives) then
+		local var_45_3 = arg_45_0._objective_lists[arg_45_0._current_objective_list_index]
+		local var_45_4 = arg_45_0:_write_hot_join_sync_completed_objectives(var_45_3)
 
-		RPC.rpc_activate_objective(channel_id, self._current_objective_list_index, completed_objectives_bit_field)
+		RPC.rpc_activate_objective(var_45_1, arg_45_0._current_objective_list_index, var_45_4)
 	end
 end
 
-ObjectiveSystem.active_objectives = function (self)
-	return self._active_objectives
+function ObjectiveSystem.active_objectives(arg_46_0)
+	return arg_46_0._active_objectives
 end
 
-ObjectiveSystem.active_leaf_objectives = function (self)
-	return self._active_leaf_objectives
+function ObjectiveSystem.active_leaf_objectives(arg_47_0)
+	return arg_47_0._active_leaf_objectives
 end
 
-ObjectiveSystem.active_root_objectives = function (self)
-	return self._active_root_objectives
+function ObjectiveSystem.active_root_objectives(arg_48_0)
+	return arg_48_0._active_root_objectives
 end
 
-ObjectiveSystem.extension_by_objective_name = function (self, objective_name)
-	return self._objective_by_name[objective_name]
+function ObjectiveSystem.extension_by_objective_name(arg_49_0, arg_49_1)
+	return arg_49_0._objective_by_name[arg_49_1]
 end
 
-ObjectiveSystem.current_objective_index = function (self)
-	return self._current_objective_list_index
+function ObjectiveSystem.current_objective_index(arg_50_0)
+	return arg_50_0._current_objective_list_index
 end
 
-ObjectiveSystem.num_main_objectives = function (self)
-	return self._total_num_main_objectives
+function ObjectiveSystem.num_main_objectives(arg_51_0)
+	return arg_51_0._total_num_main_objectives
 end
 
-ObjectiveSystem.num_current_sub_objectives = function (self)
-	return self._total_num_objectives_at_current_list_index
+function ObjectiveSystem.num_current_sub_objectives(arg_52_0)
+	return arg_52_0._total_num_objectives_at_current_list_index
 end
 
-ObjectiveSystem.num_completed_main_objectives = function (self)
-	return self._current_objective_list_index - 1
+function ObjectiveSystem.num_completed_main_objectives(arg_53_0)
+	return arg_53_0._current_objective_list_index - 1
 end
 
-ObjectiveSystem.num_current_completed_sub_objectives = function (self)
-	return self._total_num_objectives_at_current_list_index - #self._active_root_objectives
+function ObjectiveSystem.num_current_completed_sub_objectives(arg_54_0)
+	return arg_54_0._total_num_objectives_at_current_list_index - #arg_54_0._active_root_objectives
 end
 
-ObjectiveSystem.on_ai_killed = function (self, killed_unit, killer_unit, death_data, killing_blow)
-	if self._weave_essence_handler then
-		self._weave_essence_handler:on_ai_killed(killed_unit, killer_unit, death_data, killing_blow)
+function ObjectiveSystem.on_ai_killed(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
+	if arg_55_0._weave_essence_handler then
+		arg_55_0._weave_essence_handler:on_ai_killed(arg_55_1, arg_55_2, arg_55_3, arg_55_4)
 	end
 
-	local update_list = self._active_objectives
+	local var_55_0 = arg_55_0._active_objectives
 
-	for _, objective_name in pairs(update_list) do
-		local extension = self._objective_by_name[objective_name]
+	for iter_55_0, iter_55_1 in pairs(var_55_0) do
+		local var_55_1 = arg_55_0._objective_by_name[iter_55_1]
 
-		if extension.on_ai_killed then
-			extension:on_ai_killed(killed_unit, killer_unit, death_data, killing_blow)
+		if var_55_1.on_ai_killed then
+			var_55_1:on_ai_killed(arg_55_1, arg_55_2, arg_55_3, arg_55_4)
 		end
 	end
 end
 
-ObjectiveSystem.rpc_register_objectives = function (self, sender, objective_name_id)
-	local objective_name = NetworkLookup.objective_lists[objective_name_id]
+function ObjectiveSystem.rpc_register_objectives(arg_56_0, arg_56_1, arg_56_2)
+	local var_56_0 = NetworkLookup.objective_lists[arg_56_2]
 
-	self:_register_objectives(objective_name)
+	arg_56_0:_register_objectives(var_56_0)
 end
 
-ObjectiveSystem._read_hot_join_sync_completed_objectives = function (self, objective_list, completed_objectives_bit_field, optional_offset)
-	optional_offset = optional_offset or 0
+function ObjectiveSystem._read_hot_join_sync_completed_objectives(arg_57_0, arg_57_1, arg_57_2, arg_57_3)
+	arg_57_3 = arg_57_3 or 0
 
-	for objective_name, objective_data in pairs(objective_list) do
-		local is_completed = bit.band(bit.rshift(completed_objectives_bit_field, optional_offset), 1)
-
-		if is_completed ~= 0 then
-			self._hot_join_sync_completed_objectives[objective_name] = true
+	for iter_57_0, iter_57_1 in pairs(arg_57_1) do
+		if bit.band(bit.rshift(arg_57_2, arg_57_3), 1) ~= 0 then
+			arg_57_0._hot_join_sync_completed_objectives[iter_57_0] = true
 		end
 
-		optional_offset = optional_offset + 1
+		arg_57_3 = arg_57_3 + 1
 
-		if objective_data.sub_objectives then
-			optional_offset = self:_read_hot_join_sync_completed_objectives(objective_data.sub_objectives, completed_objectives_bit_field, optional_offset)
+		if iter_57_1.sub_objectives then
+			arg_57_3 = arg_57_0:_read_hot_join_sync_completed_objectives(iter_57_1.sub_objectives, arg_57_2, arg_57_3)
 		end
 	end
 
-	return optional_offset
+	return arg_57_3
 end
 
-ObjectiveSystem._write_hot_join_sync_completed_objectives = function (self, objective_list, optional_completed_objectives_bit_field, optional_offset)
-	optional_offset = optional_offset or 0
-	optional_completed_objectives_bit_field = optional_completed_objectives_bit_field or 0
+function ObjectiveSystem._write_hot_join_sync_completed_objectives(arg_58_0, arg_58_1, arg_58_2, arg_58_3)
+	arg_58_3 = arg_58_3 or 0
+	arg_58_2 = arg_58_2 or 0
 
-	for objective_name, objective_data in pairs(objective_list) do
-		local is_completed = not table.contains(self._active_objectives, objective_name)
-
-		if is_completed then
-			optional_completed_objectives_bit_field = bit.bor(bit.lshift(1, optional_offset), optional_completed_objectives_bit_field)
+	for iter_58_0, iter_58_1 in pairs(arg_58_1) do
+		if not table.contains(arg_58_0._active_objectives, iter_58_0) then
+			arg_58_2 = bit.bor(bit.lshift(1, arg_58_3), arg_58_2)
 		end
 
-		optional_offset = optional_offset + 1
+		arg_58_3 = arg_58_3 + 1
 
-		if objective_data.sub_objectives then
-			optional_completed_objectives_bit_field, optional_offset = self:_write_hot_join_sync_completed_objectives(objective_data.sub_objectives, optional_completed_objectives_bit_field, optional_offset)
+		if iter_58_1.sub_objectives then
+			arg_58_2, arg_58_3 = arg_58_0:_write_hot_join_sync_completed_objectives(iter_58_1.sub_objectives, arg_58_2, arg_58_3)
 		end
 	end
 
-	return optional_completed_objectives_bit_field, optional_offset
+	return arg_58_2, arg_58_3
 end
 
-ObjectiveSystem.rpc_activate_objective = function (self, sender, objective_index, completed_objectives_bit_field)
-	assert(objective_index > self._current_objective_list_index or table.is_empty(self._active_objectives), "[ObjectiveSystem] Reactivating objective or activating old objective")
-	self:_read_hot_join_sync_completed_objectives(self._objective_lists[objective_index], completed_objectives_bit_field)
-	self:_activate_objectives_at_index(objective_index)
+function ObjectiveSystem.rpc_activate_objective(arg_59_0, arg_59_1, arg_59_2, arg_59_3)
+	assert(arg_59_2 > arg_59_0._current_objective_list_index or table.is_empty(arg_59_0._active_objectives), "[ObjectiveSystem] Reactivating objective or activating old objective")
+	arg_59_0:_read_hot_join_sync_completed_objectives(arg_59_0._objective_lists[arg_59_2], arg_59_3)
+	arg_59_0:_activate_objectives_at_index(arg_59_2)
 end
 
-ObjectiveSystem._activate_objectives_at_index = function (self, objective_index)
-	table.clear(self._active_objectives)
-	table.clear(self._active_root_objectives)
-	table.clear(self._active_leaf_objectives)
+function ObjectiveSystem._activate_objectives_at_index(arg_60_0, arg_60_1)
+	table.clear(arg_60_0._active_objectives)
+	table.clear(arg_60_0._active_root_objectives)
+	table.clear(arg_60_0._active_leaf_objectives)
 
-	self._total_num_objectives_at_current_list_index = 0
+	arg_60_0._total_num_objectives_at_current_list_index = 0
 
-	local objective_list = self._objective_lists[objective_index]
+	local var_60_0 = arg_60_0._objective_lists[arg_60_1]
 
-	if table.is_empty(objective_list) then
-		self._activated = false
-		self._all_objectives_completed = true
+	if table.is_empty(var_60_0) then
+		arg_60_0._activated = false
+		arg_60_0._all_objectives_completed = true
 
 		return false
 	end
 
-	self._activated = true
-	self._all_objectives_completed = false
-	self._current_objective_list_index = objective_index
+	arg_60_0._activated = true
+	arg_60_0._all_objectives_completed = false
+	arg_60_0._current_objective_list_index = arg_60_1
 
-	for objective_name in pairs(objective_list) do
-		if not self._hot_join_sync_completed_objectives[objective_name] then
-			self:_activate_objective(objective_name)
+	for iter_60_0 in pairs(var_60_0) do
+		if not arg_60_0._hot_join_sync_completed_objectives[iter_60_0] then
+			arg_60_0:_activate_objective(iter_60_0)
 
-			self._total_num_objectives_at_current_list_index = self._total_num_objectives_at_current_list_index + 1
+			arg_60_0._total_num_objectives_at_current_list_index = arg_60_0._total_num_objectives_at_current_list_index + 1
 		end
 	end
 
-	if self._is_server then
-		self.network_transmit:send_rpc_clients("rpc_activate_objective", objective_index, 0)
+	if arg_60_0._is_server then
+		arg_60_0.network_transmit:send_rpc_clients("rpc_activate_objective", arg_60_1, 0)
 	end
 
 	return true
 end
 
-ObjectiveSystem._is_objective_container = function (self, objective_name)
-	return not not self._children_by_name[objective_name]
+function ObjectiveSystem._is_objective_container(arg_61_0, arg_61_1)
+	return not not arg_61_0._children_by_name[arg_61_1]
 end
 
-ObjectiveSystem._is_part_of_objective_container = function (self, objective_name)
-	return not not self._group_by_name[objective_name]
+function ObjectiveSystem._is_part_of_objective_container(arg_62_0, arg_62_1)
+	return not not arg_62_0._group_by_name[arg_62_1]
 end
 
-ObjectiveSystem.rpc_objective_completed = function (self, sender, objective_name_id)
-	local objective_name = NetworkLookup.objective_names[objective_name_id]
+function ObjectiveSystem.rpc_objective_completed(arg_63_0, arg_63_1, arg_63_2)
+	local var_63_0 = NetworkLookup.objective_names[arg_63_2]
 
-	table.remove(self._active_objectives, table.index_of(self._active_objectives, objective_name))
+	table.remove(arg_63_0._active_objectives, table.index_of(arg_63_0._active_objectives, var_63_0))
 
-	local active_leaf_objectives = self._active_leaf_objectives
-	local leaf_index = table.index_of(active_leaf_objectives, objective_name)
+	local var_63_1 = arg_63_0._active_leaf_objectives
+	local var_63_2 = table.index_of(var_63_1, var_63_0)
 
-	if leaf_index then
-		table.remove(active_leaf_objectives, leaf_index)
+	if var_63_2 then
+		table.remove(var_63_1, var_63_2)
 	end
 
-	local active_root_objectives = self._active_root_objectives
-	local root_index = table.index_of(active_root_objectives, objective_name)
+	local var_63_3 = arg_63_0._active_root_objectives
+	local var_63_4 = table.index_of(var_63_3, var_63_0)
 
-	if root_index then
-		table.remove(active_root_objectives, root_index)
-		printf("[ObjectiveSystem] Completed root objective: %s", objective_name)
+	if var_63_4 then
+		table.remove(var_63_3, var_63_4)
+		printf("[ObjectiveSystem] Completed root objective: %s", var_63_0)
 	else
-		printf("[ObjectiveSystem] Completed sub objective: %s", objective_name)
+		printf("[ObjectiveSystem] Completed sub objective: %s", var_63_0)
 	end
 
-	local is_root_objective = self:is_root_objective(objective_name)
-	local is_leaf_objective = self:is_leaf_objective(objective_name)
-	local is_last_leaf_objective = self:is_last_leaf_objective(objective_name)
-	local extension = self._objective_by_name[objective_name]
+	local var_63_5 = arg_63_0:is_root_objective(var_63_0)
+	local var_63_6 = arg_63_0:is_leaf_objective(var_63_0)
+	local var_63_7 = arg_63_0:is_last_leaf_objective(var_63_0)
+	local var_63_8 = arg_63_0._objective_by_name[var_63_0]
 
-	extension:complete(is_root_objective, is_leaf_objective, is_last_leaf_objective)
+	var_63_8:complete(var_63_5, var_63_6, var_63_7)
 
-	local objective_data = self._data_by_name[objective_name]
+	local var_63_9 = arg_63_0._data_by_name[var_63_0]
 
-	Managers.state.event:trigger("objective_completed", extension, objective_data)
+	Managers.state.event:trigger("objective_completed", var_63_8, var_63_9)
 end
 
-ObjectiveSystem.complete_objective = function (self, objective_name)
-	self._objective_by_name[objective_name]._completed = true
+function ObjectiveSystem.complete_objective(arg_64_0, arg_64_1)
+	arg_64_0._objective_by_name[arg_64_1]._completed = true
 end
 
-ObjectiveSystem.get_remaining_objectives_list = function (self)
-	return table.slice(self._objective_lists, self._current_objective_list_index, #self._objective_lists)
+function ObjectiveSystem.get_remaining_objectives_list(arg_65_0)
+	return table.slice(arg_65_0._objective_lists, arg_65_0._current_objective_list_index, #arg_65_0._objective_lists)
 end
 
-ObjectiveSystem._update_objective_vo = function (self)
-	local current_objectives = self._objective_lists[self._current_objective_list_index]
+function ObjectiveSystem._update_objective_vo(arg_66_0)
+	local var_66_0 = arg_66_0._objective_lists[arg_66_0._current_objective_list_index]
 
-	for _, objective_data in pairs(current_objectives) do
-		if objective_data.almost_done and not self._main_objective_scratch.almost_done_vo_played then
-			local almost_done = objective_data:almost_done(self._active_objectives)
+	for iter_66_0, iter_66_1 in pairs(var_66_0) do
+		if iter_66_1.almost_done and not arg_66_0._main_objective_scratch.almost_done_vo_played and iter_66_1:almost_done(arg_66_0._active_objectives) then
+			arg_66_0._main_objective_scratch.almost_done_vo_played = true
 
-			if almost_done then
-				self._main_objective_scratch.almost_done_vo_played = true
+			Managers.state.entity:system("dialogue_system"):queue_mission_giver_event("vs_mg_heroes_objective_almost_completed")
 
-				local dialogue_system = Managers.state.entity:system("dialogue_system")
-
-				dialogue_system:queue_mission_giver_event("vs_mg_heroes_objective_almost_completed")
-
-				break
-			end
+			break
 		end
 	end
 end
 
-ObjectiveSystem._check_trigger_complete_vo = function (self, objective_data)
-	if objective_data.play_complete_vo then
-		local dialogue_system = Managers.state.entity:system("dialogue_system")
+function ObjectiveSystem._check_trigger_complete_vo(arg_67_0, arg_67_1)
+	if arg_67_1.play_complete_vo then
+		Managers.state.entity:system("dialogue_system"):queue_mission_giver_event("vs_mg_heroes_objective_completed")
+	elseif arg_67_1.play_safehouse_vo then
+		Managers.state.entity:system("dialogue_system"):queue_mission_giver_event("vs_mg_heroes_reached_safe_room")
+	elseif arg_67_1.play_waystone_vo then
+		Managers.state.entity:system("dialogue_system"):queue_mission_giver_event("vs_mg_heroes_reached_waystone")
+	elseif arg_67_1.play_dialogue_event_on_complete then
+		local var_67_0 = arg_67_1.dialogue_event
 
-		dialogue_system:queue_mission_giver_event("vs_mg_heroes_objective_completed")
-	elseif objective_data.play_safehouse_vo then
-		local dialogue_system = Managers.state.entity:system("dialogue_system")
-
-		dialogue_system:queue_mission_giver_event("vs_mg_heroes_reached_safe_room")
-	elseif objective_data.play_waystone_vo then
-		local dialogue_system = Managers.state.entity:system("dialogue_system")
-
-		dialogue_system:queue_mission_giver_event("vs_mg_heroes_reached_waystone")
-	elseif objective_data.play_dialogue_event_on_complete then
-		local dialogue_event = objective_data.dialogue_event
-		local dialogue_system = Managers.state.entity:system("dialogue_system")
-
-		dialogue_system:queue_mission_giver_event(dialogue_event)
+		Managers.state.entity:system("dialogue_system"):queue_mission_giver_event(var_67_0)
 	end
 end
 
-ObjectiveSystem._check_trigger_start_vo = function (self, objective_data)
-	if objective_data.play_arrive_vo then
-		local dialogue_system = Managers.state.entity:system("dialogue_system")
-
-		dialogue_system:queue_mission_giver_event("vs_mg_heroes_objective_reached")
+function ObjectiveSystem._check_trigger_start_vo(arg_68_0, arg_68_1)
+	if arg_68_1.play_arrive_vo then
+		Managers.state.entity:system("dialogue_system"):queue_mission_giver_event("vs_mg_heroes_objective_reached")
 	end
 end

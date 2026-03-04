@@ -1,16 +1,16 @@
-﻿-- chunkname: @scripts/settings/dlcs/celebrate/celebrate_level_settings.lua
+-- chunkname: @scripts/settings/dlcs/celebrate/celebrate_level_settings.lua
 
-local settings = DLCSettings.celebrate
+local var_0_0 = DLCSettings.celebrate
 
-settings.level_settings = "levels/honduras_dlcs/celebrate/level_settings_celebrate"
-settings.level_unlock_settings = "levels/honduras_dlcs/celebrate/level_unlock_settings_celebrate"
-settings.terror_event_blueprints_filename = "levels/honduras_dlcs/celebrate/terror_events_celebrate"
-settings.weighted_random_terror_events = {
+var_0_0.level_settings = "levels/honduras_dlcs/celebrate/level_settings_celebrate"
+var_0_0.level_unlock_settings = "levels/honduras_dlcs/celebrate/level_unlock_settings_celebrate"
+var_0_0.terror_event_blueprints_filename = "levels/honduras_dlcs/celebrate/terror_events_celebrate"
+var_0_0.weighted_random_terror_events = {
 	crawl_gauntlet = {
 		"crawl_gauntlet_01",
 		1,
 		"crawl_gauntlet_02",
-		1,
+		1
 	},
 	crawl_bar_fight_specials = {
 		"crawl_bar_fight_specials_01",
@@ -24,7 +24,7 @@ settings.weighted_random_terror_events = {
 		"crawl_bar_fight_specials_05",
 		1,
 		"crawl_bar_fight_specials_06",
-		1,
-	},
+		1
+	}
 }
-settings.missions = {}
+var_0_0.missions = {}

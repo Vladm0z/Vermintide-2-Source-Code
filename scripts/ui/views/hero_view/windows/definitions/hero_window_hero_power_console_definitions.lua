@@ -1,215 +1,214 @@
-﻿-- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_hero_power_console_definitions.lua
+-- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_hero_power_console_definitions.lua
 
-local window_default_settings = UISettings.game_start_windows
-local window_size = window_default_settings.size
-local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
-local scenegraph_definition = {
-	screen = console_menu_scenegraphs.screen,
-	area = console_menu_scenegraphs.area,
-	area_left = console_menu_scenegraphs.area_left,
-	area_right = console_menu_scenegraphs.area_right,
-	area_divider = console_menu_scenegraphs.area_divider,
+local var_0_0 = UISettings.game_start_windows.size
+local var_0_1 = UISettings.console_menu_scenegraphs
+local var_0_2 = {
+	screen = var_0_1.screen,
+	area = var_0_1.area,
+	area_left = var_0_1.area_left,
+	area_right = var_0_1.area_right,
+	area_divider = var_0_1.area_divider,
 	divider = {
-		horizontal_alignment = "left",
-		parent = "area_left",
 		vertical_alignment = "top",
+		parent = "area_left",
+		horizontal_alignment = "left",
 		size = {
 			489,
-			137,
+			137
 		},
 		position = {
 			50,
 			-13,
-			1,
-		},
+			1
+		}
 	},
 	divider_detail_1 = {
-		horizontal_alignment = "left",
-		parent = "divider",
 		vertical_alignment = "center",
+		parent = "divider",
+		horizontal_alignment = "left",
 		size = {
 			55,
-			59,
+			59
 		},
 		position = {
 			51,
 			-4,
-			1,
-		},
+			1
+		}
 	},
 	divider_detail_2 = {
-		horizontal_alignment = "left",
-		parent = "divider",
 		vertical_alignment = "center",
+		parent = "divider",
+		horizontal_alignment = "left",
 		size = {
 			494,
-			138,
+			138
 		},
 		position = {
 			-12,
 			44,
-			-1,
-		},
+			-1
+		}
 	},
 	hero_power_number = {
-		horizontal_alignment = "left",
-		parent = "divider",
 		vertical_alignment = "top",
+		parent = "divider",
+		horizontal_alignment = "left",
 		size = {
 			500,
-			120,
+			120
 		},
 		position = {
 			164,
 			26,
-			1,
-		},
+			1
+		}
 	},
 	hero_power_text = {
-		horizontal_alignment = "left",
-		parent = "divider",
 		vertical_alignment = "center",
+		parent = "divider",
+		horizontal_alignment = "left",
 		size = {
 			500,
-			40,
+			40
 		},
 		position = {
 			170,
 			-24,
-			1,
-		},
-	},
+			1
+		}
+	}
 }
-local hero_power_number_style = {
-	font_size = 102,
-	font_type = "hell_shark_header",
-	horizontal_alignment = "left",
-	localize = false,
-	upper_case = true,
-	use_shadow = true,
-	vertical_alignment = "top",
+local var_0_3 = {
 	word_wrap = true,
-	text_color = Colors.get_color_table_with_alpha("font_default", 255),
-	offset = {
-		0,
-		0,
-		2,
-	},
-}
-local hero_power_text_style = {
-	font_size = 28,
-	font_type = "hell_shark_header",
-	horizontal_alignment = "left",
-	localize = true,
-	upper_case = false,
+	upper_case = true,
+	localize = false,
 	use_shadow = true,
+	font_size = 102,
+	horizontal_alignment = "left",
 	vertical_alignment = "top",
+	font_type = "hell_shark_header",
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	offset = {
 		0,
 		0,
-		2,
-	},
+		2
+	}
 }
-local widgets = {
+local var_0_4 = {
+	font_size = 28,
+	upper_case = false,
+	localize = true,
+	use_shadow = true,
+	horizontal_alignment = "left",
+	vertical_alignment = "top",
+	font_type = "hell_shark_header",
+	text_color = Colors.get_color_table_with_alpha("font_default", 255),
+	offset = {
+		0,
+		0,
+		2
+	}
+}
+local var_0_5 = {
 	hero_power_tooltip = {
 		scenegraph_id = "divider",
 		element = {
 			passes = {
 				{
-					content_id = "button_hotspot",
 					pass_type = "hotspot",
+					content_id = "button_hotspot"
 				},
 				{
 					pass_type = "hero_power_tooltip",
-					content_check_function = function (content)
-						return content.button_hotspot.is_hover
-					end,
+					content_check_function = function(arg_1_0)
+						return arg_1_0.button_hotspot.is_hover
+					end
 				},
 				{
 					pass_type = "rotated_texture",
 					style_id = "effect",
-					texture_id = "effect",
-				},
-			},
+					texture_id = "effect"
+				}
+			}
 		},
 		content = {
-			background = "hero_power_bg",
 			effect = "sparkle_effect",
+			background = "hero_power_bg",
 			hover = "hero_power_bg_hover",
-			button_hotspot = {},
+			button_hotspot = {}
 		},
 		style = {
 			effect = {
+				vertical_alignment = "top",
 				angle = 0,
 				horizontal_alignment = "left",
-				vertical_alignment = "top",
 				offset = {
 					40,
 					40,
-					4,
+					4
 				},
 				pivot = {
 					128,
-					128,
+					128
 				},
 				texture_size = {
 					256,
-					256,
+					256
 				},
-				color = Colors.get_color_table_with_alpha("white", 0),
-			},
-		},
+				color = Colors.get_color_table_with_alpha("white", 0)
+			}
+		}
 	},
 	divider = UIWidgets.create_simple_texture("hero_power_bg_console", "divider"),
 	divider_detail_1 = UIWidgets.create_simple_texture("hero_power_eyes_console", "divider_detail_1"),
 	divider_detail_2 = UIWidgets.create_simple_texture("hero_power_glow_console", "divider_detail_2", nil, nil, Colors.get_color_table_with_alpha("font_title", 255)),
-	power_text = UIWidgets.create_simple_text("10", "hero_power_number", nil, nil, hero_power_number_style),
-	power_title = UIWidgets.create_simple_text("hero_power_header", "hero_power_text", nil, nil, hero_power_text_style),
+	power_text = UIWidgets.create_simple_text("10", "hero_power_number", nil, nil, var_0_3),
+	power_title = UIWidgets.create_simple_text("hero_power_header", "hero_power_text", nil, nil, var_0_4)
 }
-local animation_definitions = {
+local var_0_6 = {
 	on_enter = {
 		{
-			end_progress = 0.3,
 			name = "fade_in",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 0
+			end_progress = 0.3,
+			init = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+				arg_2_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+				local var_3_0 = math.easeOutCubic(arg_3_3)
 
-				params.render_settings.alpha_multiplier = anim_progress
+				arg_3_4.render_settings.alpha_multiplier = var_3_0
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				return
-			end,
-		},
+			end
+		}
 	},
 	on_exit = {
 		{
-			end_progress = 0.3,
 			name = "fade_out",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 1
+			end_progress = 0.3,
+			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+				arg_5_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+				local var_6_0 = math.easeOutCubic(arg_6_3)
 
-				params.render_settings.alpha_multiplier = 1 - anim_progress
+				arg_6_4.render_settings.alpha_multiplier = 1 - var_6_0
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				return
-			end,
-		},
-	},
+			end
+		}
+	}
 }
 
 return {
-	widgets = widgets,
+	widgets = var_0_5,
 	node_widgets = node_widgets,
 	category_settings = category_settings,
-	scenegraph_definition = scenegraph_definition,
-	animation_definitions = animation_definitions,
+	scenegraph_definition = var_0_2,
+	animation_definitions = var_0_6
 }

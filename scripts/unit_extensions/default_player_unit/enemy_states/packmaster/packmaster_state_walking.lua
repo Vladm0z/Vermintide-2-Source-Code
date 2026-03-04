@@ -1,47 +1,43 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/packmaster/packmaster_state_walking.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/packmaster/packmaster_state_walking.lua
 
 PackmasterStateWalking = class(PackmasterStateWalking, EnemyCharacterStateWalking)
 
-PackmasterStateWalking.init = function (self, character_state_init_context)
-	PackmasterStateWalking.super.init(self, character_state_init_context)
+function PackmasterStateWalking.init(arg_1_0, arg_1_1)
+	PackmasterStateWalking.super.init(arg_1_0, arg_1_1)
 
-	self._grab_ability_id = self._career_extension:ability_id("grab")
-	self._equip_ability_id = self._career_extension:ability_id("equip")
+	arg_1_0._grab_ability_id = arg_1_0._career_extension:ability_id("grab")
+	arg_1_0._equip_ability_id = arg_1_0._career_extension:ability_id("equip")
 end
 
-PackmasterStateWalking.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
-	PackmasterStateWalking.super.on_enter(self, unit, input, dt, context, t, previous_state, params)
+function PackmasterStateWalking.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	PackmasterStateWalking.super.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 
-	self._right_wpn_particle_node_name = "g_skaven_packmaster_claw"
-	self._right_wpn_particle_name = "fx/wpnfx_packmaster_enemy_in_range_1p"
+	arg_2_0._right_wpn_particle_node_name = "g_skaven_packmaster_claw"
+	arg_2_0._right_wpn_particle_name = "fx/wpnfx_packmaster_enemy_in_range_1p"
 end
 
-PackmasterStateWalking.update = function (self, unit, input, dt, context, t)
-	local handled = self:common_state_changes()
-
-	if handled then
+function PackmasterStateWalking.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	if arg_3_0:common_state_changes() then
 		return
 	end
 
-	local csm = self._csm
-	local career_extension = self._career_extension
+	local var_3_0 = arg_3_0._csm
+	local var_3_1 = arg_3_0._career_extension
 
-	if career_extension:ability_was_triggered(self._grab_ability_id) then
-		csm:change_state("packmaster_grabbing")
-
-		return
-	end
-
-	if career_extension:ability_was_triggered(self._equip_ability_id) then
-		csm:change_state("packmaster_equipping")
+	if var_3_1:ability_was_triggered(arg_3_0._grab_ability_id) then
+		var_3_0:change_state("packmaster_grabbing")
 
 		return
 	end
 
-	self:_update_taunt_dialogue(t)
+	if var_3_1:ability_was_triggered(arg_3_0._equip_ability_id) then
+		var_3_0:change_state("packmaster_equipping")
 
-	local ghost_mode_extension = self._ghost_mode_extension
-	local in_ghost_mode = ghost_mode_extension:is_in_ghost_mode()
+		return
+	end
 
-	handled = self:common_movement(in_ghost_mode, dt)
+	arg_3_0:_update_taunt_dialogue(arg_3_5)
+
+	local var_3_2 = arg_3_0._ghost_mode_extension:is_in_ghost_mode()
+	local var_3_3 = arg_3_0:common_movement(var_3_2, arg_3_3)
 end

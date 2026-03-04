@@ -1,44 +1,42 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/careers/career_ability_poison_wind_globadier_throw.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/careers/career_ability_poison_wind_globadier_throw.lua
 
 CareerAbilityPoisonWindGlobadierThrow = class(CareerAbilityPoisonWindGlobadierThrow, CareerAbilityDarkPactBase)
 
-CareerAbilityPoisonWindGlobadierThrow.extensions_ready = function (self, world, unit)
-	CareerAbilityPoisonWindGlobadierThrow.super.extensions_ready(self, world, unit)
+function CareerAbilityPoisonWindGlobadierThrow.extensions_ready(arg_1_0, arg_1_1, arg_1_2)
+	CareerAbilityPoisonWindGlobadierThrow.super.extensions_ready(arg_1_0, arg_1_1, arg_1_2)
 
-	local ability_init_data = self._ability_data
+	local var_1_0 = arg_1_0._ability_data
 
-	self._career_extension:setup_extra_ability_uses(0, ability_init_data.cooldown, 0, ability_init_data.max_stacks)
-	self._career_extension:modify_extra_ability_uses(ability_init_data.starting_stack_count)
+	arg_1_0._career_extension:setup_extra_ability_uses(0, var_1_0.cooldown, 0, var_1_0.max_stacks)
+	arg_1_0._career_extension:modify_extra_ability_uses(var_1_0.starting_stack_count)
 end
 
-CareerAbilityPoisonWindGlobadierThrow.ability_ready = function (self)
-	self.super.ability_ready(self)
+function CareerAbilityPoisonWindGlobadierThrow.ability_ready(arg_2_0)
+	arg_2_0.super.ability_ready(arg_2_0)
 
-	local status_extension = self._status_extension
+	if not arg_2_0._status_extension:get_in_ghost_mode() then
+		local var_2_0 = arg_2_0._unit
+		local var_2_1 = ScriptUnit.extension(var_2_0, "inventory_system")
 
-	if not status_extension:get_in_ghost_mode() then
-		local unit = self._unit
-		local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
-
-		Unit.flow_event(unit, "reload_finished")
-		CharacterStateHelper.show_inventory_3p(unit, true, false, self._is_server, inventory_extension)
+		Unit.flow_event(var_2_0, "reload_finished")
+		CharacterStateHelper.show_inventory_3p(var_2_0, true, false, arg_2_0._is_server, var_2_1)
 	end
 end
 
-CareerAbilityPoisonWindGlobadierThrow.update = function (self, unit, input, dt, context, t)
-	CareerAbilityPoisonWindGlobadierThrow.super.update(self, unit, input, dt, context, t)
-	self._career_extension:modify_extra_ability_charge(dt)
+function CareerAbilityPoisonWindGlobadierThrow.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	CareerAbilityPoisonWindGlobadierThrow.super.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	arg_3_0._career_extension:modify_extra_ability_charge(arg_3_3)
 end
 
-CareerAbilityPoisonWindGlobadierThrow.start_cooldown_anim = function (self)
-	local first_person_extension = self._first_person_extension
-	local unit = self._unit
+function CareerAbilityPoisonWindGlobadierThrow.start_cooldown_anim(arg_4_0)
+	local var_4_0 = arg_4_0._first_person_extension
+	local var_4_1 = arg_4_0._unit
 
-	if first_person_extension then
-		CharacterStateHelper.play_animation_event(unit, "reload_start")
-		CharacterStateHelper.play_animation_event_first_person(first_person_extension, "reload_start")
-		Unit.flow_event(unit, "reload_start")
-		first_person_extension:animation_set_variable("armed", 1)
-		first_person_extension:unhide_weapons("catapulted")
+	if var_4_0 then
+		CharacterStateHelper.play_animation_event(var_4_1, "reload_start")
+		CharacterStateHelper.play_animation_event_first_person(var_4_0, "reload_start")
+		Unit.flow_event(var_4_1, "reload_start")
+		var_4_0:animation_set_variable("armed", 1)
+		var_4_0:unhide_weapons("catapulted")
 	end
 end

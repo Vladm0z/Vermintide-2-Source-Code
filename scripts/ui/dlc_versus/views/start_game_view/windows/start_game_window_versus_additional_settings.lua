@@ -1,110 +1,98 @@
-﻿-- chunkname: @scripts/ui/dlc_versus/views/start_game_view/windows/start_game_window_versus_additional_settings.lua
+-- chunkname: @scripts/ui/dlc_versus/views/start_game_view/windows/start_game_window_versus_additional_settings.lua
 
 StartGameWindowVersusAdditionalSettings = class(StartGameWindowVersusAdditionalSettings, StartGameWindowAdditionalSettingsConsole)
 StartGameWindowVersusAdditionalSettings.NAME = "StartGameWindowVersusAdditionalSettings"
 
-local definitions = local_require("scripts/ui/dlc_versus/views/start_game_view/windows/definitions/start_game_window_versus_additional_settings_definitions")
+local var_0_0 = local_require("scripts/ui/dlc_versus/views/start_game_view/windows/definitions/start_game_window_versus_additional_settings_definitions")
 
-StartGameWindowVersusAdditionalSettings.create_ui_elements = function (self, _, params, offset)
-	StartGameWindowVersusAdditionalSettings.super.create_ui_elements(self, definitions, params, offset)
+function StartGameWindowVersusAdditionalSettings.create_ui_elements(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	StartGameWindowVersusAdditionalSettings.super.create_ui_elements(arg_1_0, var_0_0, arg_1_2, arg_1_3)
 end
 
-StartGameWindowVersusAdditionalSettings._set_additional_options_enabled_state = function (self, enabled)
-	local widgets_by_name = self._widgets_by_name
-	local dedicated_servers_win_checkbox = widgets_by_name.dedicated_servers_win_checkbox
+function StartGameWindowVersusAdditionalSettings._set_additional_options_enabled_state(arg_2_0, arg_2_1)
+	local var_2_0 = arg_2_0._widgets_by_name
 
-	dedicated_servers_win_checkbox.content.button_hotspot.disable_button = not enabled
-
-	local dedicated_servers_aws_checkbox = widgets_by_name.dedicated_servers_aws_checkbox
-
-	dedicated_servers_aws_checkbox.content.button_hotspot.disable_button = not enabled
-
-	local player_hosted_checkbox = widgets_by_name.player_hosted_checkbox
-
-	player_hosted_checkbox.content.button_hotspot.disable_button = not enabled
-	self._additional_option_enabled = enabled
+	var_2_0.dedicated_servers_win_checkbox.content.button_hotspot.disable_button = not arg_2_1
+	var_2_0.dedicated_servers_aws_checkbox.content.button_hotspot.disable_button = not arg_2_1
+	var_2_0.player_hosted_checkbox.content.button_hotspot.disable_button = not arg_2_1
+	arg_2_0._additional_option_enabled = arg_2_1
 end
 
-StartGameWindowVersusAdditionalSettings._handle_input = function (self, dt, t)
-	local parent = self.parent
-	local input_service = parent:window_input_service()
+function StartGameWindowVersusAdditionalSettings._handle_input(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0 = arg_3_0.parent
+	local var_3_1 = var_3_0:window_input_service()
 
-	if self._additional_option_enabled then
-		local gamepad_active = Managers.input:is_device_active("gamepad")
-
-		if gamepad_active then
-			self:_handle_gamepad_input(dt, t, input_service)
+	if arg_3_0._additional_option_enabled then
+		if Managers.input:is_device_active("gamepad") then
+			arg_3_0:_handle_gamepad_input(arg_3_1, arg_3_2, var_3_1)
 		else
-			self:_handle_mouse_input(dt, t, input_service)
+			arg_3_0:_handle_mouse_input(arg_3_1, arg_3_2, var_3_1)
 		end
 
-		local widgets_by_name = self._widgets_by_name
-		local dedicated_servers_win_checkbox = widgets_by_name.dedicated_servers_win_checkbox
-		local dedicated_servers_aws_checkbox = widgets_by_name.dedicated_servers_aws_checkbox
-		local player_hosted_checkbox = widgets_by_name.player_hosted_checkbox
+		local var_3_2 = arg_3_0._widgets_by_name
+		local var_3_3 = var_3_2.dedicated_servers_win_checkbox
+		local var_3_4 = var_3_2.dedicated_servers_aws_checkbox
+		local var_3_5 = var_3_2.player_hosted_checkbox
 
-		UIWidgetUtils.animate_default_checkbox_button_console(dedicated_servers_win_checkbox, dt)
-		UIWidgetUtils.animate_default_checkbox_button_console(dedicated_servers_aws_checkbox, dt)
-		UIWidgetUtils.animate_default_checkbox_button_console(player_hosted_checkbox, dt)
+		UIWidgetUtils.animate_default_checkbox_button_console(var_3_3, arg_3_1)
+		UIWidgetUtils.animate_default_checkbox_button_console(var_3_4, arg_3_1)
+		UIWidgetUtils.animate_default_checkbox_button_console(var_3_5, arg_3_1)
 
-		if self:_is_button_hover_enter(dedicated_servers_win_checkbox) or self:_is_button_hover_enter(dedicated_servers_aws_checkbox) or self:_is_button_hover_enter(player_hosted_checkbox) then
-			self:_play_sound("play_gui_lobby_button_01_difficulty_confirm_hover")
+		if arg_3_0:_is_button_hover_enter(var_3_3) or arg_3_0:_is_button_hover_enter(var_3_4) or arg_3_0:_is_button_hover_enter(var_3_5) then
+			arg_3_0:_play_sound("play_gui_lobby_button_01_difficulty_confirm_hover")
 		end
 
-		local dedicated_servers_win_enabled = self:_is_other_option_button_selected(dedicated_servers_win_checkbox, self._dedicated_servers_win_checkbox_enabled)
+		local var_3_6 = arg_3_0:_is_other_option_button_selected(var_3_3, arg_3_0._dedicated_servers_win_checkbox_enabled)
 
-		if dedicated_servers_win_enabled ~= nil then
-			parent:set_dedicated_or_player_hosted_search(dedicated_servers_win_enabled, self._dedicated_servers_aws_checkbox_enabled, self._player_hosted_checkbox_enabled)
+		if var_3_6 ~= nil then
+			var_3_0:set_dedicated_or_player_hosted_search(var_3_6, arg_3_0._dedicated_servers_aws_checkbox_enabled, arg_3_0._player_hosted_checkbox_enabled)
 		end
 
-		local dedicated_servers_aws = self:_is_other_option_button_selected(dedicated_servers_aws_checkbox, self._dedicated_servers_aws_checkbox_enabled)
+		local var_3_7 = arg_3_0:_is_other_option_button_selected(var_3_4, arg_3_0._dedicated_servers_aws_checkbox_enabled)
 
-		if dedicated_servers_aws ~= nil then
-			parent:set_dedicated_or_player_hosted_search(self._dedicated_servers_win_checkbox_enabled, dedicated_servers_aws, self._player_hosted_checkbox_enabled)
+		if var_3_7 ~= nil then
+			var_3_0:set_dedicated_or_player_hosted_search(arg_3_0._dedicated_servers_win_checkbox_enabled, var_3_7, arg_3_0._player_hosted_checkbox_enabled)
 		end
 
-		local player_hosted_enabled = self:_is_other_option_button_selected(player_hosted_checkbox, self._player_hosted_checkbox_enabled)
+		local var_3_8 = arg_3_0:_is_other_option_button_selected(var_3_5, arg_3_0._player_hosted_checkbox_enabled)
 
-		if player_hosted_enabled ~= nil then
-			parent:set_dedicated_or_player_hosted_search(self._dedicated_servers_win_checkbox_enabled, self._dedicated_servers_aws_checkbox_enabled, player_hosted_enabled)
+		if var_3_8 ~= nil then
+			var_3_0:set_dedicated_or_player_hosted_search(arg_3_0._dedicated_servers_win_checkbox_enabled, arg_3_0._dedicated_servers_aws_checkbox_enabled, var_3_8)
 		end
 	end
 
-	if self.gamepad_active_last_frame then
-		local consume = true
+	if arg_3_0.gamepad_active_last_frame then
+		local var_3_9 = true
 
-		if input_service:get("back_menu", consume) or input_service:get("refresh", consume) or input_service:get("right_stick_press", consume) then
-			parent:set_window_input_focus(self._parent_window_name or "custom_game_overview")
+		if var_3_1:get("back_menu", var_3_9) or var_3_1:get("refresh", var_3_9) or var_3_1:get("right_stick_press", var_3_9) then
+			var_3_0:set_window_input_focus(arg_3_0._parent_window_name or "custom_game_overview")
 		end
 	end
 end
 
-StartGameWindowVersusAdditionalSettings._update_additional_options = function (self)
-	local parent = self.parent
-	local player_hosted_enabled = parent:using_player_hosted_search()
-	local dedicated_servers_win_enabled, dedicated_servers_aws_enabled = parent:using_dedicated_servers_search()
-	local lobby = self._network_lobby
-	local num_members = lobby:members():get_member_count()
-	local is_alone = num_members == 1
+function StartGameWindowVersusAdditionalSettings._update_additional_options(arg_4_0)
+	local var_4_0 = arg_4_0.parent
+	local var_4_1 = var_4_0:using_player_hosted_search()
+	local var_4_2, var_4_3 = var_4_0:using_dedicated_servers_search()
+	local var_4_4 = arg_4_0._network_lobby:members():get_member_count() == 1
 
-	if is_alone ~= self._is_alone or player_hosted_enabled ~= self._player_hosted_enabled or dedicated_servers_win_enabled ~= self._dedicated_servers_win_enabled or dedicated_servers_aws_enabled ~= self._dedicated_servers_aws_enabled then
-		local widgets_by_name = self._widgets_by_name
-		local button_hotspot = widgets_by_name.player_hosted_checkbox.content.button_hotspot
+	if var_4_4 ~= arg_4_0._is_alone or var_4_1 ~= arg_4_0._player_hosted_enabled or var_4_2 ~= arg_4_0._dedicated_servers_win_enabled or var_4_3 ~= arg_4_0._dedicated_servers_aws_enabled then
+		local var_4_5 = arg_4_0._widgets_by_name
 
-		button_hotspot.is_selected = player_hosted_enabled
+		var_4_5.player_hosted_checkbox.content.button_hotspot.is_selected = var_4_1
 
-		local button_hotspot = widgets_by_name.dedicated_servers_win_checkbox.content.button_hotspot
+		local var_4_6 = var_4_5.dedicated_servers_win_checkbox.content.button_hotspot
 
-		button_hotspot.is_selected = dedicated_servers_win_enabled
-		button_hotspot.disable_button = not dedicated_servers_aws_enabled
+		var_4_6.is_selected = var_4_2
+		var_4_6.disable_button = not var_4_3
 
-		local button_hotspot = widgets_by_name.dedicated_servers_aws_checkbox.content.button_hotspot
+		local var_4_7 = var_4_5.dedicated_servers_aws_checkbox.content.button_hotspot
 
-		button_hotspot.is_selected = dedicated_servers_aws_enabled
-		button_hotspot.disable_button = not dedicated_servers_win_enabled
-		self._dedicated_servers_win_checkbox_enabled = dedicated_servers_win_enabled
-		self._dedicated_servers_aws_checkbox_enabled = dedicated_servers_aws_enabled
-		self._player_hosted_checkbox_enabled = player_hosted_enabled
-		self._is_alone = is_alone
+		var_4_7.is_selected = var_4_3
+		var_4_7.disable_button = not var_4_2
+		arg_4_0._dedicated_servers_win_checkbox_enabled = var_4_2
+		arg_4_0._dedicated_servers_aws_checkbox_enabled = var_4_3
+		arg_4_0._player_hosted_checkbox_enabled = var_4_1
+		arg_4_0._is_alone = var_4_4
 	end
 end

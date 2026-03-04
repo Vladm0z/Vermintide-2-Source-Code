@@ -1,1095 +1,1078 @@
-﻿-- chunkname: @scripts/ui/dlc_morris/views/start_game_view/windows/definitions/start_game_window_deus_weekly_event_definitions.lua
+-- chunkname: @scripts/ui/dlc_morris/views/start_game_view/windows/definitions/start_game_window_deus_weekly_event_definitions.lua
 
-local window_default_settings = UISettings.game_start_windows
-local window_frame = window_default_settings.frame
-local window_size = window_default_settings.size
-local window_frame_height = UIFrameSettings[window_frame].texture_sizes.horizontal[2]
-local game_option_size = {
-	window_size[1],
-	194,
+local var_0_0 = UISettings.game_start_windows
+local var_0_1 = var_0_0.frame
+local var_0_2 = var_0_0.size
+local var_0_3 = UIFrameSettings[var_0_1].texture_sizes.horizontal[2]
+local var_0_4 = {
+	var_0_2[1],
+	194
 }
-local window_text_width = window_size[1]
-local min_difficulty_info_size = {
+local var_0_5 = var_0_2[1]
+local var_0_6 = {
 	500,
-	200,
+	200
 }
-local scenegraph_definition = {
+local var_0_7 = {
 	root = {
 		is_root = true,
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			UILayer.default,
-		},
+			UILayer.default
+		}
 	},
 	root_fit = {
 		scale = "fit",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			UILayer.default,
-		},
+			UILayer.default
+		}
 	},
 	menu_root = {
-		horizontal_alignment = "center",
-		parent = "root",
 		vertical_alignment = "center",
+		parent = "root",
+		horizontal_alignment = "center",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	window = {
-		horizontal_alignment = "left",
-		parent = "menu_root",
 		vertical_alignment = "center",
-		size = window_size,
+		parent = "menu_root",
+		horizontal_alignment = "left",
+		size = var_0_2,
 		position = {
 			220,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	adventure_background = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "top",
+		parent = "window",
+		horizontal_alignment = "center",
 		size = {
-			window_size[1] + 70,
-			260,
+			var_0_2[1] + 70,
+			260
 		},
 		position = {
 			0,
 			-75,
-			1,
-		},
+			1
+		}
 	},
 	game_option_1 = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "bottom",
+		parent = "window",
+		horizontal_alignment = "center",
 		size = {
-			game_option_size[1],
-			game_option_size[2],
+			var_0_4[1],
+			var_0_4[2]
 		},
 		position = {
 			-15,
-			-105 + game_option_size[2] * 2,
-			1,
-		},
+			-105 + var_0_4[2] * 2,
+			1
+		}
 	},
 	right_window = {
-		horizontal_alignment = "right",
-		parent = "menu_root",
 		vertical_alignment = "top",
+		parent = "menu_root",
+		horizontal_alignment = "right",
 		size = {
-			window_size[1],
-			window_size[2],
+			var_0_2[1],
+			var_0_2[2]
 		},
 		position = {
 			-100,
 			-160,
-			1,
-		},
+			1
+		}
 	},
 	divider = {
-		horizontal_alignment = "center",
-		parent = "right_window",
 		vertical_alignment = "top",
+		parent = "right_window",
+		horizontal_alignment = "center",
 		size = {
-			window_size[1],
-			4,
+			var_0_2[1],
+			4
 		},
 		position = {
 			20,
 			-50,
-			2,
-		},
+			2
+		}
 	},
 	play_button = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "bottom",
+		parent = "window",
+		horizontal_alignment = "center",
 		size = {
-			game_option_size[1],
-			72,
+			var_0_4[1],
+			72
 		},
 		position = {
 			0,
 			-40,
-			1,
-		},
+			1
+		}
 	},
 	difficulty_stepper = {
-		horizontal_alignment = "center",
-		parent = "game_option_1",
 		vertical_alignment = "bottom",
+		parent = "game_option_1",
+		horizontal_alignment = "center",
 		size = {
-			game_option_size[1],
-			game_option_size[2],
+			var_0_4[1],
+			var_0_4[2]
 		},
 		position = {
 			17.5,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	difficulty_info = {
-		horizontal_alignment = "center",
-		parent = "difficulty_stepper",
 		vertical_alignment = "center",
-		size = min_difficulty_info_size,
+		parent = "difficulty_stepper",
+		horizontal_alignment = "center",
+		size = var_0_6,
 		position = {
 			500,
 			-10,
-			0,
-		},
+			0
+		}
 	},
 	upsell_button = {
-		horizontal_alignment = "center",
-		parent = "difficulty_info",
 		vertical_alignment = "center",
+		parent = "difficulty_info",
+		horizontal_alignment = "center",
 		size = {
 			28,
-			28,
+			28
 		},
 		position = {
 			218,
 			0,
-			2,
-		},
+			2
+		}
 	},
 	info_box = {
-		horizontal_alignment = "left",
-		parent = "right_window",
 		vertical_alignment = "bottom",
+		parent = "right_window",
+		horizontal_alignment = "left",
 		position = {
 			20,
 			20,
-			1,
+			1
 		},
 		size = {
-			window_size[1] - 50,
-			window_size[2] - 80,
-		},
+			var_0_2[1] - 50,
+			var_0_2[2] - 80
+		}
 	},
 	info_box_anchor = {
-		parent = "info_box",
+		parent = "info_box"
 	},
 	scrollbar_anchor = {
-		horizontal_alignment = "center",
-		parent = "right_window",
 		vertical_alignment = "top",
+		parent = "right_window",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			-20,
-			1,
+			1
 		},
 		size = {
-			window_size[1],
-			window_size[2] - 40,
-		},
+			var_0_2[1],
+			var_0_2[2] - 40
+		}
 	},
 	scrollbar_window = {
 		parent = "scrollbar_anchor",
 		size = {
-			window_size[1] - 20,
-			window_size[2] - 40,
-		},
-	},
+			var_0_2[1] - 20,
+			var_0_2[2] - 40
+		}
+	}
 }
-local timer_text_style = {
-	dynamic_font_size = false,
+local var_0_8 = {
 	font_size = 28,
-	font_type = "hell_shark",
-	horizontal_alignment = "center",
-	localize = false,
 	upper_case = false,
+	localize = false,
 	use_shadow = false,
-	vertical_alignment = "top",
 	word_wrap = false,
+	horizontal_alignment = "center",
+	vertical_alignment = "top",
+	dynamic_font_size = false,
+	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	offset = {
 		0,
 		-10,
-		2,
-	},
+		2
+	}
 }
 
-local function create_weekly_event_information_box(event_data, offset)
-	local widget_definition = {}
-	local element = {}
-	local passes = {}
-	local content = {}
-	local style = {}
-	local frame_name = "morris_gaze_header"
-	local edge_name = "menu_frame_detail_morris"
-	local frame_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(frame_name)
-	local edge_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(edge_name)
+local function var_0_9(arg_1_0, arg_1_1)
+	local var_1_0 = {}
+	local var_1_1 = {}
+	local var_1_2 = {}
+	local var_1_3 = {}
+	local var_1_4 = {}
+	local var_1_5 = "morris_gaze_header"
+	local var_1_6 = "menu_frame_detail_morris"
+	local var_1_7 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_1_5)
+	local var_1_8 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_1_6)
 
-	passes[#passes + 1] = {
-		content_id = "frame_top",
-		pass_type = "texture_uv",
+	var_1_2[#var_1_2 + 1] = {
 		style_id = "frame_top",
-	}
-	passes[#passes + 1] = {
-		content_id = "frame_bottom",
 		pass_type = "texture_uv",
+		content_id = "frame_top"
+	}
+	var_1_2[#var_1_2 + 1] = {
 		style_id = "frame_bottom",
-	}
-	passes[#passes + 1] = {
-		content_id = "frame_right",
 		pass_type = "texture_uv",
-		style_id = "frame_right",
+		content_id = "frame_bottom"
 	}
-	passes[#passes + 1] = {
+	var_1_2[#var_1_2 + 1] = {
+		style_id = "frame_right",
+		pass_type = "texture_uv",
+		content_id = "frame_right"
+	}
+	var_1_2[#var_1_2 + 1] = {
 		pass_type = "texture",
 		style_id = "frame_left",
-		texture_id = "frame_left",
+		texture_id = "frame_left"
 	}
-	content.frame_top = {
+	var_1_3.frame_top = {
 		texture_id = "morris_gaze_header",
 		uvs = {
 			{
 				0,
-				0,
+				0
 			},
 			{
 				1,
-				0.5,
-			},
-		},
+				0.5
+			}
+		}
 	}
-	content.frame_bottom = {
+	var_1_3.frame_bottom = {
 		texture_id = "morris_gaze_header",
 		uvs = {
 			{
 				0,
-				0.5,
+				0.5
 			},
 			{
 				1,
-				1,
-			},
-		},
+				1
+			}
+		}
 	}
-	content.frame_right = {
+	var_1_3.frame_right = {
 		texture_id = "menu_frame_detail_morris",
 		uvs = {
 			{
 				1,
-				0,
+				0
 			},
 			{
 				0,
-				1,
-			},
-		},
+				1
+			}
+		}
 	}
-	content.frame_left = "menu_frame_detail_morris"
-	style.frame_top = {
-		horizontal_alignment = "center",
+	var_1_3.frame_left = "menu_frame_detail_morris"
+	var_1_4.frame_top = {
 		vertical_alignment = "top",
+		horizontal_alignment = "center",
 		texture_size = {
-			scenegraph_definition.right_window.size[1],
-			frame_texture_settings.size[2] * 0.5 * scenegraph_definition.right_window.size[1] / frame_texture_settings.size[1],
+			var_0_7.right_window.size[1],
+			var_1_7.size[2] * 0.5 * var_0_7.right_window.size[1] / var_1_7.size[1]
 		},
 		offset = {
 			0,
-			frame_texture_settings.size[2] * 0.5 * scenegraph_definition.right_window.size[1] / frame_texture_settings.size[1] - 13,
-			1,
-		},
+			var_1_7.size[2] * 0.5 * var_0_7.right_window.size[1] / var_1_7.size[1] - 13,
+			1
+		}
 	}
-	style.frame_bottom = {
-		horizontal_alignment = "center",
+	var_1_4.frame_bottom = {
 		vertical_alignment = "bottom",
+		horizontal_alignment = "center",
 		texture_size = {
-			scenegraph_definition.right_window.size[1],
-			frame_texture_settings.size[2] * 0.5 * scenegraph_definition.right_window.size[1] / frame_texture_settings.size[1],
+			var_0_7.right_window.size[1],
+			var_1_7.size[2] * 0.5 * var_0_7.right_window.size[1] / var_1_7.size[1]
 		},
 		offset = {
 			0,
 			-20,
-			1,
-		},
+			1
+		}
 	}
-	style.frame_right = {
+	var_1_4.frame_right = {
+		vertical_alignment = "center",
 		horizontal_alignment = "right",
-		vertical_alignment = "center",
 		texture_size = {
-			edge_texture_settings.size[1],
-			scenegraph_definition.right_window.size[2],
+			var_1_8.size[1],
+			var_0_7.right_window.size[2]
 		},
 		offset = {
-			edge_texture_settings.size[1] - 5,
+			var_1_8.size[1] - 5,
 			0,
-			1,
-		},
+			1
+		}
 	}
-	style.frame_left = {
+	var_1_4.frame_left = {
+		vertical_alignment = "center",
 		horizontal_alignment = "left",
-		vertical_alignment = "center",
 		texture_size = {
-			edge_texture_settings.size[1],
-			scenegraph_definition.right_window.size[2],
+			var_1_8.size[1],
+			var_0_7.right_window.size[2]
 		},
 		offset = {
-			-edge_texture_settings.size[1] + 5,
+			-var_1_8.size[1] + 5,
 			0,
-			1,
-		},
+			1
+		}
 	}
-	element.passes = passes
-	widget_definition.element = element
-	widget_definition.content = content
-	widget_definition.style = style
-	widget_definition.scenegraph_id = "right_window"
-	widget_definition.offset = offset or {
+	var_1_1.passes = var_1_2
+	var_1_0.element = var_1_1
+	var_1_0.content = var_1_3
+	var_1_0.style = var_1_4
+	var_1_0.scenegraph_id = "right_window"
+	var_1_0.offset = arg_1_1 or {
 		0,
 		0,
-		0,
+		0
 	}
 
-	return widget_definition
+	return var_1_0
 end
 
-local function create_header(header, offset_y, header_type)
-	local widget_definition = {}
-	local element = {}
-	local passes = {}
-	local content = {}
-	local style = {}
+local function var_0_10(arg_2_0, arg_2_1, arg_2_2)
+	local var_2_0 = {}
+	local var_2_1 = {}
+	local var_2_2 = {}
+	local var_2_3 = {}
+	local var_2_4 = {}
 
-	passes[#passes + 1] = {
-		pass_type = "text",
+	var_2_2[#var_2_2 + 1] = {
 		style_id = "header",
-		text_id = "header",
+		pass_type = "text",
+		text_id = "header"
 	}
-	passes[#passes + 1] = {
+	var_2_2[#var_2_2 + 1] = {
 		pass_type = "texture",
 		style_id = "plus_horizontal",
 		texture_id = "masked_rect",
-		content_check_function = function (content, style)
-			return header_type and header_type == "boon"
-		end,
+		content_check_function = function(arg_3_0, arg_3_1)
+			return arg_2_2 and arg_2_2 == "boon"
+		end
 	}
-	passes[#passes + 1] = {
+	var_2_2[#var_2_2 + 1] = {
 		pass_type = "texture",
 		style_id = "plus_vertical",
 		texture_id = "masked_rect",
-		content_check_function = function (content, style)
-			return header_type and header_type == "boon"
-		end,
+		content_check_function = function(arg_4_0, arg_4_1)
+			return arg_2_2 and arg_2_2 == "boon"
+		end
 	}
-	passes[#passes + 1] = {
+	var_2_2[#var_2_2 + 1] = {
 		pass_type = "texture",
 		style_id = "minus",
 		texture_id = "masked_rect",
-		content_check_function = function (content, style)
-			return header_type and header_type == "curse"
-		end,
+		content_check_function = function(arg_5_0, arg_5_1)
+			return arg_2_2 and arg_2_2 == "curse"
+		end
 	}
-	content.header = header
-	content.masked_rect = "rect_masked"
+	var_2_3.header = arg_2_0
+	var_2_3.masked_rect = "rect_masked"
 
-	local font_size = 32
+	local var_2_5 = 32
 
-	style.header = {
-		font_type = "hell_shark_header_masked",
-		horizontal_alignment = "left",
-		localize = true,
-		upper_case = true,
+	var_2_4.header = {
 		vertical_alignment = "top",
-		font_size = font_size,
+		upper_case = true,
+		localize = true,
+		horizontal_alignment = "left",
+		font_type = "hell_shark_header_masked",
+		font_size = var_2_5,
 		text_color = Colors.get_color_table_with_alpha("white", 255),
 		offset = {
-			header_type and 25 or 0,
+			arg_2_2 and 25 or 0,
 			0,
-			2,
-		},
+			2
+		}
 	}
-	style.plus_horizontal = {
-		horizontal_alignment = "left",
+	var_2_4.plus_horizontal = {
 		vertical_alignment = "top",
+		horizontal_alignment = "left",
 		color = {
 			255,
 			255,
 			255,
-			0,
+			0
 		},
 		texture_size = {
 			20,
-			4,
+			4
 		},
 		offset = {
 			0,
 			-14,
-			0,
-		},
+			0
+		}
 	}
-	style.plus_vertical = {
-		horizontal_alignment = "left",
+	var_2_4.plus_vertical = {
 		vertical_alignment = "top",
+		horizontal_alignment = "left",
 		color = {
 			255,
 			255,
 			255,
-			0,
+			0
 		},
 		texture_size = {
 			4,
-			20,
+			20
 		},
 		offset = {
 			8,
 			-6,
-			0,
-		},
+			0
+		}
 	}
-	style.minus = {
-		horizontal_alignment = "left",
+	var_2_4.minus = {
 		vertical_alignment = "top",
+		horizontal_alignment = "left",
 		color = {
 			255,
 			255,
 			0,
-			0,
+			0
 		},
 		texture_size = {
 			20,
-			4,
+			4
 		},
 		offset = {
 			0,
 			-14,
-			0,
-		},
+			0
+		}
 	}
-	element.passes = passes
-	widget_definition.element = element
-	widget_definition.content = content
-	widget_definition.style = style
-	widget_definition.scenegraph_id = "info_box_anchor"
-	widget_definition.offset = {
+	var_2_1.passes = var_2_2
+	var_2_0.element = var_2_1
+	var_2_0.content = var_2_3
+	var_2_0.style = var_2_4
+	var_2_0.scenegraph_id = "info_box_anchor"
+	var_2_0.offset = {
 		0,
-		offset_y,
-		2,
+		arg_2_1,
+		2
 	}
 
-	return widget_definition
+	return var_2_0
 end
 
-local function create_entry_widget(icon, title, description, offset_y)
-	local widget_definition = {}
-	local element = {}
-	local passes = {}
-	local content = {}
-	local style = {}
+local function var_0_11(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	local var_6_0 = {}
+	local var_6_1 = {}
+	local var_6_2 = {}
+	local var_6_3 = {}
+	local var_6_4 = {}
 
-	passes[#passes + 1] = {
-		pass_type = "text",
+	var_6_2[#var_6_2 + 1] = {
 		style_id = "title",
-		text_id = "title",
-	}
-	passes[#passes + 1] = {
 		pass_type = "text",
-		style_id = "desc",
-		text_id = "desc",
+		text_id = "title"
 	}
-	passes[#passes + 1] = {
+	var_6_2[#var_6_2 + 1] = {
+		style_id = "desc",
+		pass_type = "text",
+		text_id = "desc"
+	}
+	var_6_2[#var_6_2 + 1] = {
 		pass_type = "texture",
 		style_id = "icon",
-		texture_id = "icon",
+		texture_id = "icon"
 	}
-	content.title = title
-	content.desc = description
-	content.icon = icon
+	var_6_3.title = arg_6_1
+	var_6_3.desc = arg_6_2
+	var_6_3.icon = arg_6_0
 
-	local indentation = 10
+	local var_6_5 = 10
 
-	style.title = {
-		font_size = 22,
-		font_type = "hell_shark_masked",
+	var_6_4.title = {
+		word_wrap = true,
 		horizontal_alignment = "left",
 		localize = true,
+		font_size = 22,
 		vertical_alignment = "top",
-		word_wrap = true,
+		font_type = "hell_shark_masked",
 		text_color = Colors.get_color_table_with_alpha("font_title", 255),
 		offset = {
-			35 + indentation,
+			35 + var_6_5,
 			-3,
-			2,
+			2
 		},
 		area_size = {
-			scenegraph_definition.info_box.size[1] - 35 - indentation,
-			50,
-		},
+			var_0_7.info_box.size[1] - 35 - var_6_5,
+			50
+		}
 	}
-	style.desc = {
-		font_size = 22,
-		font_type = "hell_shark_masked",
+	var_6_4.desc = {
+		word_wrap = true,
 		horizontal_alignment = "left",
 		localize = false,
+		font_size = 22,
 		vertical_alignment = "top",
-		word_wrap = true,
+		font_type = "hell_shark_masked",
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
-			35 + indentation,
+			35 + var_6_5,
 			-30,
-			2,
+			2
 		},
 		area_size = {
-			scenegraph_definition.info_box.size[1] - 35 - indentation,
-			50,
-		},
+			var_0_7.info_box.size[1] - 35 - var_6_5,
+			50
+		}
 	}
-	style.icon = {
-		horizontal_alignment = "left",
-		masked = true,
+	var_6_4.icon = {
 		vertical_alignment = "top",
+		masked = true,
+		horizontal_alignment = "left",
 		color = {
 			255,
 			255,
 			255,
-			255,
+			255
 		},
 		texture_size = {
 			25,
-			25,
+			25
 		},
 		offset = {
-			indentation,
+			var_6_5,
 			-5,
-			0,
-		},
+			0
+		}
 	}
-	element.passes = passes
-	widget_definition.element = element
-	widget_definition.content = content
-	widget_definition.style = style
-	widget_definition.scenegraph_id = "info_box_anchor"
-	widget_definition.offset = {
+	var_6_1.passes = var_6_2
+	var_6_0.element = var_6_1
+	var_6_0.content = var_6_3
+	var_6_0.style = var_6_4
+	var_6_0.scenegraph_id = "info_box_anchor"
+	var_6_0.offset = {
 		0,
-		offset_y,
-		2,
+		arg_6_3,
+		2
 	}
 
-	return widget_definition
+	return var_6_0
 end
 
-local function create_reward_widget(reward_data, offset_y)
-	local widget_definition = {}
-	local element = {}
-	local passes = {}
-	local content = {}
-	local style = {}
+local function var_0_12(arg_7_0, arg_7_1)
+	local var_7_0 = {}
+	local var_7_1 = {}
+	local var_7_2 = {}
+	local var_7_3 = {}
+	local var_7_4 = {}
 
-	passes[#passes + 1] = {
-		pass_type = "text",
+	var_7_2[#var_7_2 + 1] = {
 		style_id = "difficulty",
-		text_id = "difficulty",
-	}
-	passes[#passes + 1] = {
 		pass_type = "text",
-		style_id = "desc",
-		text_id = "desc",
+		text_id = "difficulty"
 	}
-	passes[#passes + 1] = {
+	var_7_2[#var_7_2 + 1] = {
+		style_id = "desc",
+		pass_type = "text",
+		text_id = "desc"
+	}
+	var_7_2[#var_7_2 + 1] = {
 		pass_type = "texture",
 		style_id = "icon",
-		texture_id = "icon",
+		texture_id = "icon"
 	}
-	passes[#passes + 1] = {
+	var_7_2[#var_7_2 + 1] = {
 		pass_type = "texture",
 		style_id = "checkmark",
 		texture_id = "checkmark",
-		content_check_function = function (content)
-			return content.collected
-		end,
+		content_check_function = function(arg_8_0)
+			return arg_8_0.collected
+		end
 	}
-	passes[#passes + 1] = {
+	var_7_2[#var_7_2 + 1] = {
 		pass_type = "texture",
 		style_id = "frame",
-		texture_id = "frame",
+		texture_id = "frame"
 	}
-	passes[#passes + 1] = {
-		pass_type = "text",
+	var_7_2[#var_7_2 + 1] = {
 		style_id = "num_rewards",
-		text_id = "num_rewards_text",
-		content_check_function = function (content)
-			return content.num_rewards > 1
-		end,
-	}
-	passes[#passes + 1] = {
 		pass_type = "text",
-		style_id = "num_rewards_shadow",
 		text_id = "num_rewards_text",
-		content_check_function = function (content)
-			return content.num_rewards > 1
-		end,
+		content_check_function = function(arg_9_0)
+			return arg_9_0.num_rewards > 1
+		end
 	}
-	content.frame = "button_frame_01"
-	content.difficulty = reward_data.difficulty_name or "MISSING DIFFICULTY"
-	content.desc = reward_data.desc or "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-	content.icon = reward_data.icon or "icon_placeholder"
-	content.num_rewards = reward_data.num_rewards
-	content.num_rewards_text = "x" .. content.num_rewards
-	content.checkmark = "plain_checkmark"
-	content.collected = reward_data.collected
+	var_7_2[#var_7_2 + 1] = {
+		style_id = "num_rewards_shadow",
+		pass_type = "text",
+		text_id = "num_rewards_text",
+		content_check_function = function(arg_10_0)
+			return arg_10_0.num_rewards > 1
+		end
+	}
+	var_7_3.frame = "button_frame_01"
+	var_7_3.difficulty = arg_7_0.difficulty_name or "MISSING DIFFICULTY"
+	var_7_3.desc = arg_7_0.desc or "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+	var_7_3.icon = arg_7_0.icon or "icon_placeholder"
+	var_7_3.num_rewards = arg_7_0.num_rewards
+	var_7_3.num_rewards_text = "x" .. var_7_3.num_rewards
+	var_7_3.checkmark = "plain_checkmark"
+	var_7_3.collected = arg_7_0.collected
 
-	local indentation = 40
+	local var_7_5 = 40
 
-	style.difficulty = {
-		font_size = 22,
-		font_type = "hell_shark_masked",
-		horizontal_alignment = "left",
+	var_7_4.difficulty = {
 		vertical_alignment = "top",
+		font_size = 22,
+		horizontal_alignment = "left",
 		word_wrap = true,
+		font_type = "hell_shark_masked",
 		text_color = Colors.get_color_table_with_alpha("font_title", 255),
 		offset = {
-			50 + indentation,
+			50 + var_7_5,
 			0,
-			2,
+			2
 		},
 		area_size = {
-			scenegraph_definition.info_box.size[1] - 50 - indentation,
-			50,
-		},
+			var_0_7.info_box.size[1] - 50 - var_7_5,
+			50
+		}
 	}
-	style.desc = {
-		font_size = 22,
-		font_type = "hell_shark_masked",
-		horizontal_alignment = "left",
+	var_7_4.desc = {
 		vertical_alignment = "top",
+		font_size = 22,
+		horizontal_alignment = "left",
 		word_wrap = true,
+		font_type = "hell_shark_masked",
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
-			50 + indentation,
+			50 + var_7_5,
 			-22,
-			2,
+			2
 		},
 		area_size = {
-			scenegraph_definition.info_box.size[1] - 50 - indentation,
-			50,
-		},
+			var_0_7.info_box.size[1] - 50 - var_7_5,
+			50
+		}
 	}
-	style.num_rewards = {
-		font_size = 22,
-		font_type = "hell_shark_masked",
-		horizontal_alignment = "left",
+	var_7_4.num_rewards = {
 		vertical_alignment = "top",
+		font_size = 22,
+		horizontal_alignment = "left",
 		word_wrap = true,
+		font_type = "hell_shark_masked",
 		text_color = Colors.get_color_table_with_alpha("white", 255),
 		offset = {
-			indentation + 20,
+			var_7_5 + 20,
 			-22,
-			6,
-		},
+			6
+		}
 	}
-	style.num_rewards_shadow = {
-		font_size = 25,
-		font_type = "hell_shark_masked",
-		horizontal_alignment = "left",
+	var_7_4.num_rewards_shadow = {
 		vertical_alignment = "top",
+		font_size = 25,
+		horizontal_alignment = "left",
 		word_wrap = true,
+		font_type = "hell_shark_masked",
 		text_color = Colors.get_color_table_with_alpha("black", 255),
 		offset = {
-			indentation + 20 + 1,
+			var_7_5 + 20 + 1,
 			-23,
-			5,
-		},
+			5
+		}
 	}
-	style.icon = {
-		horizontal_alignment = "left",
-		masked = true,
+	var_7_4.icon = {
 		vertical_alignment = "top",
+		masked = true,
+		horizontal_alignment = "left",
 		color = {
 			255,
 			255,
 			255,
-			255,
+			255
 		},
 		texture_size = {
 			40,
-			40,
+			40
 		},
 		offset = {
-			indentation,
+			var_7_5,
 			-5,
-			0,
-		},
+			0
+		}
 	}
-	style.frame = {
-		horizontal_alignment = "left",
-		masked = true,
+	var_7_4.frame = {
 		vertical_alignment = "top",
+		masked = true,
+		horizontal_alignment = "left",
 		color = {
 			255,
 			255,
 			255,
-			255,
+			255
 		},
 		texture_size = {
 			40,
-			40,
+			40
 		},
 		offset = {
-			indentation,
+			var_7_5,
 			-5,
-			1,
-		},
+			1
+		}
 	}
-	style.checkmark = {
-		horizontal_alignment = "left",
-		masked = true,
+	var_7_4.checkmark = {
 		vertical_alignment = "top",
+		masked = true,
+		horizontal_alignment = "left",
 		color = {
 			255,
 			0,
 			255,
-			0,
+			0
 		},
 		texture_size = {
 			15,
-			15,
+			15
 		},
 		offset = {
 			10,
 			-20,
-			0,
-		},
+			0
+		}
 	}
-	element.passes = passes
-	widget_definition.element = element
-	widget_definition.content = content
-	widget_definition.style = style
-	widget_definition.scenegraph_id = "info_box_anchor"
-	widget_definition.offset = {
+	var_7_1.passes = var_7_2
+	var_7_0.element = var_7_1
+	var_7_0.content = var_7_3
+	var_7_0.style = var_7_4
+	var_7_0.scenegraph_id = "info_box_anchor"
+	var_7_0.offset = {
 		0,
-		offset_y,
-		2,
+		arg_7_1,
+		2
 	}
 
-	return widget_definition
+	return var_7_0
 end
 
-local disable_with_gamepad = true
-local widget_definitions = {
-	quickplay_gamemode_info_box = UIWidgets.create_start_game_deus_gamemode_info_box("adventure_background", scenegraph_definition.adventure_background.size, Localize("cw_weekly_expedition_name_long"), string.gsub(Localize("cw_weekly_expedition_description"), Localize("expedition_highlight_text"), "{#color(255,168,0)}" .. Localize("expedition_highlight_text") .. "{#reset()}"), false, true),
+local var_0_13 = true
+local var_0_14 = {
+	quickplay_gamemode_info_box = UIWidgets.create_start_game_deus_gamemode_info_box("adventure_background", var_0_7.adventure_background.size, Localize("cw_weekly_expedition_name_long"), string.gsub(Localize("cw_weekly_expedition_description"), Localize("expedition_highlight_text"), "{#color(255,168,0)}" .. Localize("expedition_highlight_text") .. "{#reset()}"), false, true),
 	difficulty_stepper = UIWidgets.create_start_game_difficulty_stepper("difficulty_stepper", Localize("start_game_window_difficulty"), "difficulty_option_1"),
-	difficulty_info = UIWidgets.create_start_game_deus_difficulty_info_box("difficulty_info", scenegraph_definition.difficulty_info.size),
+	difficulty_info = UIWidgets.create_start_game_deus_difficulty_info_box("difficulty_info", var_0_7.difficulty_info.size),
 	upsell_button = UIWidgets.create_simple_two_state_button("upsell_button", "icon_redirect", "icon_redirect_hover"),
-	play_button = UIWidgets.create_start_game_deus_play_button("play_button", scenegraph_definition.play_button.size, Localize("start_game_window_play"), 34, disable_with_gamepad),
+	play_button = UIWidgets.create_start_game_deus_play_button("play_button", var_0_7.play_button.size, Localize("start_game_window_play"), 34, var_0_13),
 	info_box_bg = UIWidgets.create_simple_rect("right_window", {
 		164,
 		0,
 		0,
-		0,
+		0
 	}),
 	info_box_mask = UIWidgets.create_simple_texture("mask_rect", "info_box", nil, nil, {
 		255,
 		255,
 		255,
-		255,
+		255
 	}),
-	timer = UIWidgets.create_simple_text("4 Days, 11h 49min", "right_window", 28, nil, timer_text_style),
-	divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "divider"),
+	timer = UIWidgets.create_simple_text("4 Days, 11h 49min", "right_window", 28, nil, var_0_8),
+	divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "divider")
 }
-local animation_definitions = {
+local var_0_15 = {
 	on_enter = {
 		{
-			end_progress = 0.3,
 			name = "fade_in",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 0
+			end_progress = 0.3,
+			init = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+				arg_11_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+				local var_12_0 = math.easeOutCubic(arg_12_3)
 
-				params.render_settings.alpha_multiplier = anim_progress
+				arg_12_4.render_settings.alpha_multiplier = var_12_0
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				return
-			end,
-		},
+			end
+		}
 	},
 	on_exit = {
 		{
-			end_progress = 0.3,
 			name = "fade_out",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 1
+			end_progress = 0.3,
+			init = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+				arg_14_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				params.render_settings.alpha_multiplier = 1
+			update = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+				arg_15_4.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 				return
-			end,
-		},
+			end
+		}
 	},
 	gamemode_text_swap = {
 		{
-			end_progress = 0.2,
 			name = "gamemode_swap_text_fade_out",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			end_progress = 0.2,
+			init = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 				return
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+				local var_18_0 = math.easeOutCubic(arg_18_3)
 
-				widgets.style.game_mode_text.text_color[1] = 255 * (1 - anim_progress)
-				widgets.style.press_key_text.text_color[1] = 255 * (1 - anim_progress)
+				arg_18_2.style.game_mode_text.text_color[1] = 255 * (1 - var_18_0)
+				arg_18_2.style.press_key_text.text_color[1] = 255 * (1 - var_18_0)
 
-				if widgets.content.show_note then
-					widgets.style.note_text.text_color[1] = 255 * (1 - anim_progress)
+				if arg_18_2.content.show_note then
+					arg_18_2.style.note_text.text_color[1] = 255 * (1 - var_18_0)
 				end
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 				return
-			end,
+			end
 		},
 		{
-			end_progress = 0.4,
 			name = "gamemode_swap_text_fade_in",
 			start_progress = 0.2,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			end_progress = 0.4,
+			init = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 				return
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				if widgets.content.is_showing_info then
-					widgets.content.game_mode_text = Localize("expedition_info")
-					widgets.content.show_note = true
+			update = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+				if arg_21_2.content.is_showing_info then
+					arg_21_2.content.game_mode_text = Localize("expedition_info")
+					arg_21_2.content.show_note = true
 				else
-					widgets.content.game_mode_text = string.gsub(Localize("cw_weekly_expedition_description"), Localize("expedition_highlight_text"), "{#color(255,168,0)}" .. Localize("expedition_highlight_text") .. "{#reset()}")
-					widgets.content.show_note = false
+					arg_21_2.content.game_mode_text = string.gsub(Localize("cw_weekly_expedition_description"), Localize("expedition_highlight_text"), "{#color(255,168,0)}" .. Localize("expedition_highlight_text") .. "{#reset()}")
+					arg_21_2.content.show_note = false
 				end
 
-				widgets.style.game_mode_text.text_color[1] = 255 * math.easeOutCubic(progress)
-				widgets.style.press_key_text.text_color[1] = 255 * math.easeOutCubic(progress)
+				arg_21_2.style.game_mode_text.text_color[1] = 255 * math.easeOutCubic(arg_21_3)
+				arg_21_2.style.press_key_text.text_color[1] = 255 * math.easeOutCubic(arg_21_3)
 
-				if widgets.content.show_note then
-					widgets.style.note_text.text_color[1] = 255 * math.easeOutCubic(progress)
+				if arg_21_2.content.show_note then
+					arg_21_2.style.note_text.text_color[1] = 255 * math.easeOutCubic(arg_21_3)
 				end
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 				return
-			end,
-		},
+			end
+		}
 	},
 	right_arrow_flick = {
 		{
-			end_progress = 0.6,
 			name = "right_arrow_flick",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			end_progress = 0.6,
+			init = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 				return
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				params.right_key.color[1] = 255 * (1 - math.easeOutCubic(progress))
+			update = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+				arg_24_4.right_key.color[1] = 255 * (1 - math.easeOutCubic(arg_24_3))
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				widgets.content.right_arrow_pressed = false
-			end,
-		},
+			on_complete = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+				arg_25_2.content.right_arrow_pressed = false
+			end
+		}
 	},
 	left_arrow_flick = {
 		{
-			end_progress = 0.6,
 			name = "left_arrow_flick",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			end_progress = 0.6,
+			init = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 				return
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				params.left_key.color[1] = 255 * (1 - math.easeOutCubic(progress))
+			update = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+				arg_27_4.left_key.color[1] = 255 * (1 - math.easeOutCubic(arg_27_3))
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				widgets.content.left_arrow_pressed = false
-			end,
-		},
+			on_complete = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+				arg_28_2.content.left_arrow_pressed = false
+			end
+		}
 	},
 	difficulty_info_enter = {
 		{
-			end_progress = 0.6,
 			name = "difficulty_info_enter",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				widgets.difficulty_info.content.visible = true
+			end_progress = 0.6,
+			init = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+				arg_29_2.difficulty_info.content.visible = true
 
-				local diff_info_style = widgets.difficulty_info.style
+				local var_29_0 = arg_29_2.difficulty_info.style
 
-				diff_info_style.background.color[1] = 0
-				diff_info_style.border.color[1] = 0
-				diff_info_style.difficulty_description.text_color[1] = 0
-				diff_info_style.highest_obtainable_level.text_color[1] = 0
-				diff_info_style.difficulty_separator.color[1] = 0
+				var_29_0.background.color[1] = 0
+				var_29_0.border.color[1] = 0
+				var_29_0.difficulty_description.text_color[1] = 0
+				var_29_0.highest_obtainable_level.text_color[1] = 0
+				var_29_0.difficulty_separator.color[1] = 0
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
-				local diff_info = widgets.difficulty_info
-				local diff_info_style = widgets.difficulty_info.style
-				local diff_info_content = widgets.difficulty_info.content
+			update = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+				local var_30_0 = math.easeOutCubic(arg_30_3)
+				local var_30_1 = arg_30_2.difficulty_info
+				local var_30_2 = arg_30_2.difficulty_info.style
+				local var_30_3 = arg_30_2.difficulty_info.content
 
-				diff_info.offset[1] = 50 * anim_progress
-				widgets.upsell_button.offset[1] = 50 * anim_progress
+				var_30_1.offset[1] = 50 * var_30_0
+				arg_30_2.upsell_button.offset[1] = 50 * var_30_0
 
-				local alpha = 200 * anim_progress
+				local var_30_4 = 200 * var_30_0
 
-				diff_info_style.background.color[1] = alpha
-				diff_info_style.border.color[1] = alpha
-				alpha = 255 * anim_progress
-				diff_info_style.difficulty_description.text_color[1] = alpha
-				diff_info_style.highest_obtainable_level.text_color[1] = alpha
-				diff_info_style.difficulty_separator.color[1] = alpha
+				var_30_2.background.color[1] = var_30_4
+				var_30_2.border.color[1] = var_30_4
 
-				if diff_info_content.should_show_diff_lock_text then
-					diff_info_style.difficulty_lock_text.text_color[1] = alpha
+				local var_30_5 = 255 * var_30_0
+
+				var_30_2.difficulty_description.text_color[1] = var_30_5
+				var_30_2.highest_obtainable_level.text_color[1] = var_30_5
+				var_30_2.difficulty_separator.color[1] = var_30_5
+
+				if var_30_3.should_show_diff_lock_text then
+					var_30_2.difficulty_lock_text.text_color[1] = var_30_5
 				end
 
-				if diff_info_content.should_show_dlc_lock then
-					diff_info_style.dlc_lock_text.text_color[1] = alpha
+				if var_30_3.should_show_dlc_lock then
+					var_30_2.dlc_lock_text.text_color[1] = var_30_5
 				end
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 				return
-			end,
-		},
-	},
+			end
+		}
+	}
 }
-local selector_input_definitions = {
+local var_0_16 = {
 	{
 		widget_name = "difficulty_stepper",
-		enter_requirements = function (self)
+		enter_requirements = function(arg_32_0)
 			return true
 		end,
-		on_enter = function (self, dt, t)
-			local widgets_by_name = self._widgets_by_name
-			local difficulty_setting_widget = widgets_by_name.difficulty_stepper
-
-			difficulty_setting_widget.content.is_selected = true
+		on_enter = function(arg_33_0, arg_33_1, arg_33_2)
+			arg_33_0._widgets_by_name.difficulty_stepper.content.is_selected = true
 		end,
-		update = function (self, input_service, dt, t)
-			local widgets_by_name = self._widgets_by_name
-			local difficulty_stepper = widgets_by_name.difficulty_stepper
-			local widgets = {
-				difficulty_info = self._widgets_by_name.difficulty_info,
-				upsell_button = self._widgets_by_name.upsell_button,
+		update = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+			local var_34_0 = arg_34_0._widgets_by_name.difficulty_stepper
+			local var_34_1 = {
+				difficulty_info = arg_34_0._widgets_by_name.difficulty_info,
+				upsell_button = arg_34_0._widgets_by_name.upsell_button
 			}
 
-			if not self.diff_info_anim_played then
-				self._diff_anim_id = self._ui_animator:start_animation("difficulty_info_enter", widgets, scenegraph_definition)
-				self.diff_info_anim_played = true
+			if not arg_34_0.diff_info_anim_played then
+				arg_34_0._diff_anim_id = arg_34_0._ui_animator:start_animation("difficulty_info_enter", var_34_1, var_0_7)
+				arg_34_0.diff_info_anim_played = true
 			end
 
-			local anim_params = {}
+			local var_34_2 = {}
 
-			if input_service:get("move_left") then
-				self:_option_selected("difficulty_stepper", "left_arrow", t)
+			if arg_34_1:get("move_left") then
+				arg_34_0:_option_selected("difficulty_stepper", "left_arrow", arg_34_3)
 
-				difficulty_stepper.content.left_arrow_pressed = true
-				anim_params.left_key = difficulty_stepper.style.left_arrow_gamepad_highlight
+				var_34_0.content.left_arrow_pressed = true
+				var_34_2.left_key = var_34_0.style.left_arrow_gamepad_highlight
 
-				if self._arrow_anim_id then
-					self._ui_animator:stop_animation(self._arrow_anim_id)
+				if arg_34_0._arrow_anim_id then
+					arg_34_0._ui_animator:stop_animation(arg_34_0._arrow_anim_id)
 
-					difficulty_stepper.style.right_arrow_gamepad_highlight.color[1] = 0
+					var_34_0.style.right_arrow_gamepad_highlight.color[1] = 0
 				end
 
-				local anim_id = self._ui_animator:start_animation("left_arrow_flick", difficulty_stepper, scenegraph_definition, anim_params)
+				arg_34_0._arrow_anim_id = arg_34_0._ui_animator:start_animation("left_arrow_flick", var_34_0, var_0_7, var_34_2)
+			elseif arg_34_1:get("move_right") then
+				arg_34_0:_option_selected("difficulty_stepper", "right_arrow", arg_34_3)
 
-				self._arrow_anim_id = anim_id
-			elseif input_service:get("move_right") then
-				self:_option_selected("difficulty_stepper", "right_arrow", t)
+				var_34_0.content.right_arrow_pressed = true
+				var_34_2.right_key = var_34_0.style.right_arrow_gamepad_highlight
 
-				difficulty_stepper.content.right_arrow_pressed = true
-				anim_params.right_key = difficulty_stepper.style.right_arrow_gamepad_highlight
+				if arg_34_0._arrow_anim_id then
+					arg_34_0._ui_animator:stop_animation(arg_34_0._arrow_anim_id)
 
-				if self._arrow_anim_id then
-					self._ui_animator:stop_animation(self._arrow_anim_id)
-
-					difficulty_stepper.style.left_arrow_gamepad_highlight.color[1] = 0
+					var_34_0.style.left_arrow_gamepad_highlight.color[1] = 0
 				end
 
-				local anim_id = self._ui_animator:start_animation("right_arrow_flick", difficulty_stepper, scenegraph_definition, anim_params)
-
-				self._arrow_anim_id = anim_id
+				arg_34_0._arrow_anim_id = arg_34_0._ui_animator:start_animation("right_arrow_flick", var_34_0, var_0_7, var_34_2)
 			end
 
-			if input_service:get("confirm_press", true) and self._dlc_locked then
-				Managers.unlock:open_dlc_page(self._dlc_name)
+			if arg_34_1:get("confirm_press", true) and arg_34_0._dlc_locked then
+				Managers.unlock:open_dlc_page(arg_34_0._dlc_name)
 			end
 
-			self:_update_difficulty_lock()
+			arg_34_0:_update_difficulty_lock()
 		end,
-		on_exit = function (self, dt, t)
-			local widgets_by_name = self._widgets_by_name
-			local difficulty_setting_widget = widgets_by_name.difficulty_stepper
+		on_exit = function(arg_35_0, arg_35_1, arg_35_2)
+			arg_35_0._widgets_by_name.difficulty_stepper.content.is_selected = false
 
-			difficulty_setting_widget.content.is_selected = false
+			local var_35_0 = arg_35_0._widgets_by_name.upsell_button
+			local var_35_1 = arg_35_0._widgets_by_name.difficulty_info
 
-			local upsell_button = self._widgets_by_name.upsell_button
-			local difficulty_info = self._widgets_by_name.difficulty_info
-
-			if self._diff_anim_id then
-				self._ui_animator:stop_animation(self._diff_anim_id)
+			if arg_35_0._diff_anim_id then
+				arg_35_0._ui_animator:stop_animation(arg_35_0._diff_anim_id)
 			end
 
-			difficulty_info.content.visible = false
-			upsell_button.content.visible = false
-			self.diff_info_anim_played = false
-		end,
+			var_35_1.content.visible = false
+			var_35_0.content.visible = false
+			arg_35_0.diff_info_anim_played = false
+		end
 	},
 	{
 		widget_name = "play_button",
-		enter_requirements = function (self)
-			local gamepad_active = Managers.input:is_device_active("gamepad")
-
-			return not gamepad_active
+		enter_requirements = function(arg_36_0)
+			return not Managers.input:is_device_active("gamepad")
 		end,
-		on_enter = function (self, dt, t)
-			local selection_widgets_by_name = self._widgets_by_name
-			local difficulty_setting_widget = selection_widgets_by_name.play_button
-
-			difficulty_setting_widget.content.is_selected = true
+		on_enter = function(arg_37_0, arg_37_1, arg_37_2)
+			arg_37_0._widgets_by_name.play_button.content.is_selected = true
 		end,
-		update = function (self, input_service, dt, t)
-			if input_service:get("confirm_press") or input_service:get("skip_press") then
-				self:_option_selected("play_button", nil, t)
+		update = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+			if arg_38_1:get("confirm_press") or arg_38_1:get("skip_press") then
+				arg_38_0:_option_selected("play_button", nil, arg_38_3)
 			end
 		end,
-		on_exit = function (self, dt, t)
-			local selection_widgets_by_name = self._widgets_by_name
-			local difficulty_setting_widget = selection_widgets_by_name.play_button
-
-			difficulty_setting_widget.content.is_selected = false
-		end,
-	},
+		on_exit = function(arg_39_0, arg_39_1, arg_39_2)
+			arg_39_0._widgets_by_name.play_button.content.is_selected = false
+		end
+	}
 }
 
 return {
-	scenegraph_definition = scenegraph_definition,
-	widget_definitions = widget_definitions,
-	animation_definitions = animation_definitions,
-	selector_input_definitions = selector_input_definitions,
-	create_weekly_event_information_box = create_weekly_event_information_box,
-	create_header = create_header,
-	create_entry_widget = create_entry_widget,
-	create_reward_widget = create_reward_widget,
+	scenegraph_definition = var_0_7,
+	widget_definitions = var_0_14,
+	animation_definitions = var_0_15,
+	selector_input_definitions = var_0_16,
+	create_weekly_event_information_box = var_0_9,
+	create_header = var_0_10,
+	create_entry_widget = var_0_11,
+	create_reward_widget = var_0_12
 }

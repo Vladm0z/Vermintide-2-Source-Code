@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/managers/game_mode/mutator_common_settings.lua
+-- chunkname: @scripts/managers/game_mode/mutator_common_settings.lua
 
 MutatorCommonSettings = MutatorCommonSettings or {}
 

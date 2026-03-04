@@ -1,89 +1,89 @@
-﻿-- chunkname: @scripts/ui/hud_ui/deus_debug_ui.lua
+-- chunkname: @scripts/ui/hud_ui/deus_debug_ui.lua
 
 DeusDebugUI = class(DeusDebugUI)
 
-DeusDebugUI.init = function (self, parent, ingame_ui_context)
-	self._world = ingame_ui_context.world_manager:world("level_world")
-	self._gui = World.create_screen_gui(self._world, "immediate", "material", "materials/fonts/gw_fonts")
+function DeusDebugUI.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0._world = arg_1_2.world_manager:world("level_world")
+	arg_1_0._gui = World.create_screen_gui(arg_1_0._world, "immediate", "material", "materials/fonts/gw_fonts")
 end
 
-DeusDebugUI.destroy = function (self)
-	World.destroy_gui(self._world, self._gui)
+function DeusDebugUI.destroy(arg_2_0)
+	World.destroy_gui(arg_2_0._world, arg_2_0._gui)
 
-	self._gui = nil
+	arg_2_0._gui = nil
 end
 
-DeusDebugUI.update = function (self, dt, t)
-	self:_draw(dt, t)
+function DeusDebugUI.update(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_0:_draw(arg_3_1, arg_3_2)
 end
 
-DeusDebugUI._draw = function (self, dt, t)
-	self:_draw_left_side(dt, t)
-	self:_draw_right_side(dt, t)
+function DeusDebugUI._draw(arg_4_0, arg_4_1, arg_4_2)
+	arg_4_0:_draw_left_side(arg_4_1, arg_4_2)
+	arg_4_0:_draw_right_side(arg_4_1, arg_4_2)
 end
 
-DeusDebugUI._draw_right_side = function (self, dt, t)
-	local font = "materials/fonts/arial"
-	local font_material = "arial"
-	local font_size = 12
-	local width, height = Gui.resolution()
-	local mid_x = width * 0.75
-	local top_y = height
-	local right_side_text = ""
-	local deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
+function DeusDebugUI._draw_right_side(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = "materials/fonts/arial"
+	local var_5_1 = "arial"
+	local var_5_2 = 12
+	local var_5_3, var_5_4 = Gui.resolution()
+	local var_5_5 = var_5_3 * 0.75
+	local var_5_6 = var_5_4
+	local var_5_7 = ""
+	local var_5_8 = Managers.mechanism:game_mechanism():get_deus_run_controller()
 
-	if deus_run_controller then
-		right_side_text = right_side_text .. "Run seed: " .. deus_run_controller:get_run_seed()
+	if var_5_8 then
+		var_5_7 = var_5_7 .. "Run seed: " .. var_5_8:get_run_seed()
 	end
 
 	if IS_WINDOWS and rawget(_G, "Steam") then
-		right_side_text = right_side_text .. " User: " .. Steam.user_name()
+		var_5_7 = var_5_7 .. " User: " .. Steam.user_name()
 	end
 
-	if right_side_text == "" then
+	if var_5_7 == "" then
 		return
 	end
 
-	local min, max = Gui.text_extents(self._gui, right_side_text, font, font_size)
-	local text_width = max.x - min.x
-	local text_height = max.y
-	local padding = 5
-	local text_x = mid_x - text_width * 0.5 - padding
-	local text_y = top_y - text_height - padding
-	local bg_width = text_width + padding * 2
-	local bg_height = text_height + padding * 2
-	local bg_x = text_x - padding
-	local bg_y = text_y - padding
+	local var_5_9, var_5_10 = Gui.text_extents(arg_5_0._gui, var_5_7, var_5_0, var_5_2)
+	local var_5_11 = var_5_10.x - var_5_9.x
+	local var_5_12 = var_5_10.y
+	local var_5_13 = 5
+	local var_5_14 = var_5_5 - var_5_11 * 0.5 - var_5_13
+	local var_5_15 = var_5_6 - var_5_12 - var_5_13
+	local var_5_16 = var_5_11 + var_5_13 * 2
+	local var_5_17 = var_5_12 + var_5_13 * 2
+	local var_5_18 = var_5_14 - var_5_13
+	local var_5_19 = var_5_15 - var_5_13
 
-	Gui.rect(self._gui, Vector2(bg_x, bg_y), Vector2(bg_width, bg_height), Color(128, 0, 0, 0))
-	Gui.text(self._gui, right_side_text, font, font_size, font_material, Vector3(text_x, text_y, 0), Color(255, 255, 255, 0))
+	Gui.rect(arg_5_0._gui, Vector2(var_5_18, var_5_19), Vector2(var_5_16, var_5_17), Color(128, 0, 0, 0))
+	Gui.text(arg_5_0._gui, var_5_7, var_5_0, var_5_2, var_5_1, Vector3(var_5_14, var_5_15, 0), Color(255, 255, 255, 0))
 end
 
-DeusDebugUI._draw_left_side = function (self, dt, t)
-	local deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
+function DeusDebugUI._draw_left_side(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = Managers.mechanism:game_mechanism():get_deus_run_controller()
 
-	if not deus_run_controller then
+	if not var_6_0 then
 		return
 	end
 
-	local font = "materials/fonts/arial"
-	local font_material = "arial"
-	local font_size = 12
-	local width, height = Gui.resolution()
-	local mid_x = width * 0.25
-	local top_y = height
-	local left_side_text = "Level: " .. deus_run_controller:get_current_node().level
-	local min, max = Gui.text_extents(self._gui, left_side_text, font, font_size)
-	local text_width = max.x - min.x
-	local text_height = max.y
-	local padding = 5
-	local text_x = mid_x - text_width * 0.5 - padding
-	local text_y = top_y - text_height - padding
-	local bg_width = text_width + padding * 2
-	local bg_height = text_height + padding * 2
-	local bg_x = text_x - padding
-	local bg_y = text_y - padding
+	local var_6_1 = "materials/fonts/arial"
+	local var_6_2 = "arial"
+	local var_6_3 = 12
+	local var_6_4, var_6_5 = Gui.resolution()
+	local var_6_6 = var_6_4 * 0.25
+	local var_6_7 = var_6_5
+	local var_6_8 = "Level: " .. var_6_0:get_current_node().level
+	local var_6_9, var_6_10 = Gui.text_extents(arg_6_0._gui, var_6_8, var_6_1, var_6_3)
+	local var_6_11 = var_6_10.x - var_6_9.x
+	local var_6_12 = var_6_10.y
+	local var_6_13 = 5
+	local var_6_14 = var_6_6 - var_6_11 * 0.5 - var_6_13
+	local var_6_15 = var_6_7 - var_6_12 - var_6_13
+	local var_6_16 = var_6_11 + var_6_13 * 2
+	local var_6_17 = var_6_12 + var_6_13 * 2
+	local var_6_18 = var_6_14 - var_6_13
+	local var_6_19 = var_6_15 - var_6_13
 
-	Gui.rect(self._gui, Vector2(bg_x, bg_y), Vector2(bg_width, bg_height), Color(128, 0, 0, 0))
-	Gui.text(self._gui, left_side_text, font, font_size, font_material, Vector3(text_x, text_y, 0), Color(255, 255, 255, 0))
+	Gui.rect(arg_6_0._gui, Vector2(var_6_18, var_6_19), Vector2(var_6_16, var_6_17), Color(128, 0, 0, 0))
+	Gui.text(arg_6_0._gui, var_6_8, var_6_1, var_6_3, var_6_2, Vector3(var_6_14, var_6_15, 0), Color(255, 255, 255, 0))
 end

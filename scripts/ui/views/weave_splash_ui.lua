@@ -1,126 +1,126 @@
-﻿-- chunkname: @scripts/ui/views/weave_splash_ui.lua
+-- chunkname: @scripts/ui/views/weave_splash_ui.lua
 
-local definitions = local_require("scripts/ui/views/weave_splash_ui_definitions")
-local scenegraph_definition = definitions.scenegraph_definition
-local widget_definitions = definitions.widget_definitions
-local create_weave_image_func = definitions.create_weave_image_func
-local weave_splash_images = {
-	"weave_loading_screen",
+local var_0_0 = local_require("scripts/ui/views/weave_splash_ui_definitions")
+local var_0_1 = var_0_0.scenegraph_definition
+local var_0_2 = var_0_0.widget_definitions
+local var_0_3 = var_0_0.create_weave_image_func
+local var_0_4 = {
+	"weave_loading_screen"
 }
-local TIME_BETWEEN_SPLASHES = 5
+local var_0_5 = 5
 
 WeaveSplashUI = class(WeaveSplashUI)
 
-WeaveSplashUI.init = function (self, world)
-	self._world = world
-	self._current_splash_index = 1
-	self._current_timer = #weave_splash_images > 1 and TIME_BETWEEN_SPLASHES
+function WeaveSplashUI.init(arg_1_0, arg_1_1)
+	arg_1_0._world = arg_1_1
+	arg_1_0._current_splash_index = 1
+	arg_1_0._current_timer = #var_0_4 > 1 and var_0_5
 
-	self:_setup_ui()
-	self:_create_ui_elements()
+	arg_1_0:_setup_ui()
+	arg_1_0:_create_ui_elements()
 end
 
-WeaveSplashUI._setup_ui = function (self)
-	self._render_settings = {
-		alpha_multiplier = 1,
+function WeaveSplashUI._setup_ui(arg_2_0)
+	arg_2_0._render_settings = {
+		alpha_multiplier = 1
 	}
-	self._ui_renderer = UIRenderer.create(self._world, "material", "materials/ui/loading_screens/loading_screen_default")
+	arg_2_0._ui_renderer = UIRenderer.create(arg_2_0._world, "material", "materials/ui/loading_screens/loading_screen_default")
 end
 
-WeaveSplashUI._create_ui_elements = function (self)
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-	self._animations = {}
-	self._widgets = {}
-	self._weave_splash_widgets = {}
+function WeaveSplashUI._create_ui_elements(arg_3_0)
+	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
+	arg_3_0._animations = {}
+	arg_3_0._widgets = {}
+	arg_3_0._weave_splash_widgets = {}
 
-	for name, widget_definition in pairs(widget_definitions) do
-		self._widgets[name] = UIWidget.init(widget_definition)
+	for iter_3_0, iter_3_1 in pairs(var_0_2) do
+		arg_3_0._widgets[iter_3_0] = UIWidget.init(iter_3_1)
 	end
 
-	local image_name = Managers.mechanism:mechanism_setting("loading_screen_override") or weave_splash_images[1]
-	local widget_definition = create_weave_image_func(image_name, 255)
+	local var_3_0 = Managers.mechanism:mechanism_setting("loading_screen_override") or var_0_4[1]
+	local var_3_1 = var_0_3(var_3_0, 255)
 
-	self._weave_splash_widgets[#self._weave_splash_widgets + 1] = UIWidget.init(widget_definition)
+	arg_3_0._weave_splash_widgets[#arg_3_0._weave_splash_widgets + 1] = UIWidget.init(var_3_1)
 
-	local next_image_index = 1 + self._current_splash_index % #weave_splash_images
-	local next_image_name = weave_splash_images[next_image_index]
-	local widget_definition = create_weave_image_func(next_image_name, 0)
+	local var_3_2 = 1 + arg_3_0._current_splash_index % #var_0_4
+	local var_3_3 = var_0_4[var_3_2]
+	local var_3_4 = var_0_3(var_3_3, 0)
 
-	self._weave_splash_widgets[#self._weave_splash_widgets + 1] = UIWidget.init(widget_definition)
+	arg_3_0._weave_splash_widgets[#arg_3_0._weave_splash_widgets + 1] = UIWidget.init(var_3_4)
 
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_3_0._ui_renderer)
 end
 
-WeaveSplashUI.update = function (self, dt, t)
-	self:_update_animations(dt, t)
-	self:_draw(dt, t)
-	self:_update_current_splash(dt, t)
+function WeaveSplashUI.update(arg_4_0, arg_4_1, arg_4_2)
+	arg_4_0:_update_animations(arg_4_1, arg_4_2)
+	arg_4_0:_draw(arg_4_1, arg_4_2)
+	arg_4_0:_update_current_splash(arg_4_1, arg_4_2)
 end
 
-WeaveSplashUI._update_animations = function (self, dt, t)
-	local animations = self._animations
+function WeaveSplashUI._update_animations(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = arg_5_0._animations
 
-	for name, animation in pairs(animations) do
-		if not UIAnimation.completed(animation) then
-			UIAnimation.update(animation, dt)
+	for iter_5_0, iter_5_1 in pairs(var_5_0) do
+		if not UIAnimation.completed(iter_5_1) then
+			UIAnimation.update(iter_5_1, arg_5_1)
 		else
-			animations[name] = nil
+			var_5_0[iter_5_0] = nil
 
-			if table.is_empty(self._animations) then
-				self._current_timer = TIME_BETWEEN_SPLASHES
+			if table.is_empty(arg_5_0._animations) then
+				arg_5_0._current_timer = var_0_5
 			end
 		end
 	end
 end
 
-WeaveSplashUI._update_current_splash = function (self, dt, t)
-	if not self._current_timer then
+function WeaveSplashUI._update_current_splash(arg_6_0, arg_6_1, arg_6_2)
+	if not arg_6_0._current_timer then
 		return
 	end
 
-	self._current_timer = self._current_timer - dt
+	arg_6_0._current_timer = arg_6_0._current_timer - arg_6_1
 
-	if self._current_timer <= 0 then
-		local old_splash = self._current_splash_index
+	if arg_6_0._current_timer <= 0 then
+		local var_6_0 = arg_6_0._current_splash_index
 
-		self._current_splash_index = 1 + self._current_splash_index % #weave_splash_images
+		arg_6_0._current_splash_index = 1 + arg_6_0._current_splash_index % #var_0_4
 
-		local widget_1_content = self._weave_splash_widgets[1].content
-		local widget_1_style = self._weave_splash_widgets[1].style.bg_texture
-		local widget_2_content = self._weave_splash_widgets[2].content
-		local widget_2_style = self._weave_splash_widgets[2].style.bg_texture
+		local var_6_1 = arg_6_0._weave_splash_widgets[1].content
+		local var_6_2 = arg_6_0._weave_splash_widgets[1].style.bg_texture
+		local var_6_3 = arg_6_0._weave_splash_widgets[2].content
+		local var_6_4 = arg_6_0._weave_splash_widgets[2].style.bg_texture
 
-		widget_1_content.bg_texture = weave_splash_images[old_splash]
-		widget_2_content.bg_texture = weave_splash_images[self._current_splash_index]
-		self._animations.splash_image_1 = UIAnimation.init(UIAnimation.function_by_time, widget_1_style.color, 1, 255, 0, 0.5, math.easeInCubic)
-		self._animations.splash_image_2 = UIAnimation.init(UIAnimation.function_by_time, widget_2_style.color, 1, 0, 255, 0.5, math.easeInCubic)
-		self._current_timer = nil
+		var_6_1.bg_texture = var_0_4[var_6_0]
+		var_6_3.bg_texture = var_0_4[arg_6_0._current_splash_index]
+		arg_6_0._animations.splash_image_1 = UIAnimation.init(UIAnimation.function_by_time, var_6_2.color, 1, 255, 0, 0.5, math.easeInCubic)
+		arg_6_0._animations.splash_image_2 = UIAnimation.init(UIAnimation.function_by_time, var_6_4.color, 1, 0, 255, 0.5, math.easeInCubic)
+		arg_6_0._current_timer = nil
 	end
 end
 
-WeaveSplashUI._draw = function (self, dt, t)
-	local ui_renderer = self._ui_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local render_settings = self._render_settings
-	local input_service = FAKE_INPUT_SERVICE
+function WeaveSplashUI._draw(arg_7_0, arg_7_1, arg_7_2)
+	local var_7_0 = arg_7_0._ui_renderer
+	local var_7_1 = arg_7_0._ui_scenegraph
+	local var_7_2 = arg_7_0._render_settings
+	local var_7_3 = FAKE_INPUT_SERVICE
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+	UIRenderer.begin_pass(var_7_0, var_7_1, var_7_3, arg_7_1, nil, var_7_2)
 
-	for name, widget in pairs(self._widgets) do
-		UIRenderer.draw_widget(ui_renderer, widget)
+	for iter_7_0, iter_7_1 in pairs(arg_7_0._widgets) do
+		UIRenderer.draw_widget(var_7_0, iter_7_1)
 	end
 
-	for _, widget in ipairs(self._weave_splash_widgets) do
-		UIRenderer.draw_widget(ui_renderer, widget)
+	for iter_7_2, iter_7_3 in ipairs(arg_7_0._weave_splash_widgets) do
+		UIRenderer.draw_widget(var_7_0, iter_7_3)
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_7_0)
 end
 
-WeaveSplashUI.destroy = function (self)
-	UIRenderer.destroy(self._ui_renderer, self._world)
+function WeaveSplashUI.destroy(arg_8_0)
+	UIRenderer.destroy(arg_8_0._ui_renderer, arg_8_0._world)
 end
 
-WeaveSplashUI.clear_user_name = function (self)
+function WeaveSplashUI.clear_user_name(arg_9_0)
 	return
 end

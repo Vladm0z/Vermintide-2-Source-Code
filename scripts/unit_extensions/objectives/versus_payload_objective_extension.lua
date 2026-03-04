@@ -1,73 +1,73 @@
-﻿-- chunkname: @scripts/unit_extensions/objectives/versus_payload_objective_extension.lua
+-- chunkname: @scripts/unit_extensions/objectives/versus_payload_objective_extension.lua
 
 VersusPayloadObjectiveExtension = class(VersusPayloadObjectiveExtension, BaseObjectiveExtension)
 VersusPayloadObjectiveExtension.NAME = "VersusPayloadObjectiveExtension"
 
-VersusPayloadObjectiveExtension.init = function (self, ...)
-	VersusPayloadObjectiveExtension.super.init(self, ...)
+function VersusPayloadObjectiveExtension.init(arg_1_0, ...)
+	VersusPayloadObjectiveExtension.super.init(arg_1_0, ...)
 
-	self._total_distance = math.huge
-	self._current_distance = 0
-	self._percentage = 0
+	arg_1_0._total_distance = math.huge
+	arg_1_0._current_distance = 0
+	arg_1_0._percentage = 0
 end
 
-VersusPayloadObjectiveExtension.extensions_ready = function (self)
-	local payload_extension = ScriptUnit.has_extension(self._unit, "payload_system")
+function VersusPayloadObjectiveExtension.extensions_ready(arg_2_0)
+	local var_2_0 = ScriptUnit.has_extension(arg_2_0._unit, "payload_system")
 
-	if payload_extension then
-		self._payload_extension = payload_extension
+	if var_2_0 then
+		arg_2_0._payload_extension = var_2_0
 	end
 end
 
-VersusPayloadObjectiveExtension._set_objective_data = function (self, objective_data)
-	local payload_default_settings = GameModeSettings.versus.objectives.payload
+function VersusPayloadObjectiveExtension._set_objective_data(arg_3_0, arg_3_1)
+	local var_3_0 = GameModeSettings.versus.objectives.payload
 
-	self._num_sections = objective_data.num_sections or payload_default_settings.num_sections
-	self._score_per_section = objective_data.score_per_section or payload_default_settings.score_per_section
-	self._time_per_section = objective_data.time_per_section or payload_default_settings.time_per_section
-	self._score_for_completion = objective_data.score_for_completion or payload_default_settings.score_for_completion
-	self._time_for_completion = objective_data.time_for_completion or payload_default_settings.time_for_completion
-	self._on_last_leaf_complete_sound_event = objective_data.on_last_leaf_complete_sound_event or payload_default_settings.on_last_leaf_complete_sound_event
-	self._on_section_progress_sound_event = objective_data.on_section_progress_sound_event or payload_default_settings.on_section_progress_sound_event
+	arg_3_0._num_sections = arg_3_1.num_sections or var_3_0.num_sections
+	arg_3_0._score_per_section = arg_3_1.score_per_section or var_3_0.score_per_section
+	arg_3_0._time_per_section = arg_3_1.time_per_section or var_3_0.time_per_section
+	arg_3_0._score_for_completion = arg_3_1.score_for_completion or var_3_0.score_for_completion
+	arg_3_0._time_for_completion = arg_3_1.time_for_completion or var_3_0.time_for_completion
+	arg_3_0._on_last_leaf_complete_sound_event = arg_3_1.on_last_leaf_complete_sound_event or var_3_0.on_last_leaf_complete_sound_event
+	arg_3_0._on_section_progress_sound_event = arg_3_1.on_section_progress_sound_event or var_3_0.on_section_progress_sound_event
 end
 
-VersusPayloadObjectiveExtension._activate = function (self)
-	self._spline_movement = self._payload_extension:movement()
-	self._total_distance = self._spline_movement:distance(1, 1, 0, #self._spline_movement._splines, #self._spline_movement:_current_spline().subdivisions, 1)
+function VersusPayloadObjectiveExtension._activate(arg_4_0)
+	arg_4_0._spline_movement = arg_4_0._payload_extension:movement()
+	arg_4_0._total_distance = arg_4_0._spline_movement:distance(1, 1, 0, #arg_4_0._spline_movement._splines, #arg_4_0._spline_movement:_current_spline().subdivisions, 1)
 end
 
-VersusPayloadObjectiveExtension._deactivate = function (self)
+function VersusPayloadObjectiveExtension._deactivate(arg_5_0)
 	return
 end
 
-VersusPayloadObjectiveExtension._server_update = function (self, dt, t)
-	if not self._payload_extension:started() then
+function VersusPayloadObjectiveExtension._server_update(arg_6_0, arg_6_1, arg_6_2)
+	if not arg_6_0._payload_extension:started() then
 		return
 	end
 
-	local new_distance = self._spline_movement:current_spline_curve_distance()
+	local var_6_0 = arg_6_0._spline_movement:current_spline_curve_distance()
 
-	if new_distance ~= self._current_distance then
-		self._current_distance = new_distance
+	if var_6_0 ~= arg_6_0._current_distance then
+		arg_6_0._current_distance = var_6_0
 
-		local percentage_done = self:get_percentage_done()
+		local var_6_1 = arg_6_0:get_percentage_done()
 
-		self:server_set_value(percentage_done)
+		arg_6_0:server_set_value(var_6_1)
 
-		if percentage_done >= (self._current_section + 1) * (1 / self._num_sections) then
-			self:on_section_completed()
+		if var_6_1 >= (arg_6_0._current_section + 1) * (1 / arg_6_0._num_sections) then
+			arg_6_0:on_section_completed()
 		end
 	end
 end
 
-VersusPayloadObjectiveExtension._client_update = function (self, dt, t)
-	self._percentage = self:client_get_value()
+function VersusPayloadObjectiveExtension._client_update(arg_7_0, arg_7_1, arg_7_2)
+	arg_7_0._percentage = arg_7_0:client_get_value()
 end
 
-VersusPayloadObjectiveExtension.get_percentage_done = function (self)
-	if self._is_server then
-		return self._current_distance / self._total_distance + math.epsilon
+function VersusPayloadObjectiveExtension.get_percentage_done(arg_8_0)
+	if arg_8_0._is_server then
+		return arg_8_0._current_distance / arg_8_0._total_distance + math.epsilon
 	end
 
-	return self._percentage
+	return arg_8_0._percentage
 end

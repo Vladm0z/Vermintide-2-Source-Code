@@ -1,11 +1,11 @@
-﻿-- chunkname: @scripts/unit_extensions/ai_commander/controlled_unit_templates.lua
+-- chunkname: @scripts/unit_extensions/ai_commander/controlled_unit_templates.lua
 
 ControlledUnitDisbandType = table.enum("kill", "remove", "none")
 ControlledUnitTemplates = {}
 ControlledUnitTemplates.necromancer_pet = {
-	duration = 20,
 	pet_ui_type = "buff",
-	disband_type = ControlledUnitDisbandType.kill,
+	duration = 20,
+	disband_type = ControlledUnitDisbandType.kill
 }
 ControlledUnitTemplates.necromancer_pet_charges = {
 	pet_ui_type = "health",
@@ -13,33 +13,33 @@ ControlledUnitTemplates.necromancer_pet_charges = {
 	buff_on_command = {
 		[CommandStates.Attacking] = {
 			{
-				name = "skeleton_command_attack_boost",
 				remove_on_command = false,
-			},
+				name = "skeleton_command_attack_boost"
+			}
 		},
 		[CommandStates.StandingGround] = {
 			{
-				name = "skeleton_command_defend_boost",
 				remove_on_command = true,
-			},
-		},
-	},
+				name = "skeleton_command_defend_boost"
+			}
+		}
+	}
 }
 ControlledUnitTemplates.necromancer_pet_ability = {
-	duration = 20,
 	pet_ui_type = "buff",
-	disband_type = ControlledUnitDisbandType.kill,
+	duration = 20,
+	disband_type = ControlledUnitDisbandType.kill
 }
 ControlledUnitTemplates.necromancer_pet_army = {
-	client_version = "necromancer_pet_army_client",
-	duration = 20,
 	pet_ui_type = "buff",
-	disband_type = ControlledUnitDisbandType.kill,
+	duration = 20,
+	client_version = "necromancer_pet_army_client",
+	disband_type = ControlledUnitDisbandType.kill
 }
 ControlledUnitTemplates.necromancer_pet_army_client = table.clone(ControlledUnitTemplates.necromancer_pet_army)
 ControlledUnitTemplates.necromancer_pet_army_client.disband_type = ControlledUnitDisbandType.none
 ControlledUnitTemplates.necromancer_pet_army_client.pet_ui_type = "server_controlled"
 
-for name, template in pairs(ControlledUnitTemplates) do
-	template.name = name
+for iter_0_0, iter_0_1 in pairs(ControlledUnitTemplates) do
+	iter_0_1.name = iter_0_0
 end

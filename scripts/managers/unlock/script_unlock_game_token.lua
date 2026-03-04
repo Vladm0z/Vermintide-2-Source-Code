@@ -1,23 +1,23 @@
-﻿-- chunkname: @scripts/managers/unlock/script_unlock_game_token.lua
+-- chunkname: @scripts/managers/unlock/script_unlock_game_token.lua
 
 ScriptUnlockGameToken = class(ScriptUnlockGameToken)
 
-ScriptUnlockGameToken.init = function (self, token)
+function ScriptUnlockGameToken.init(arg_1_0, arg_1_1)
 	return
 end
 
-ScriptUnlockGameToken.update = function (self)
+function ScriptUnlockGameToken.update(arg_2_0)
 	return
 end
 
-ScriptUnlockGameToken.info = function (self)
+function ScriptUnlockGameToken.info(arg_3_0)
 	return
 end
 
-ScriptUnlockGameToken.done = function (self)
+function ScriptUnlockGameToken.done(arg_4_0)
 	return
 end
 
-ScriptUnlockGameToken.close = function (self)
+function ScriptUnlockGameToken.close(arg_5_0)
 	return
 end

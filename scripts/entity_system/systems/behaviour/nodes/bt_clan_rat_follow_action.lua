@@ -1,491 +1,470 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_clan_rat_follow_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_clan_rat_follow_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTClanRatFollowAction = class(BTClanRatFollowAction, BTNode)
 
-local LEAVE_WALK_DISTANCE_SQ = 36
-local ENTER_WALK_DISTANCE_SQ = 16
-local LATERAL_DISTANCE_FACTOR = 0.01
-local WALK_MAX_TARGET_VELOCITY = 3
-local CHASE_MIN_REQUIRED_MOVEMENT_DISTANCE = 2
-local CHASE_MAX_TARGET_DISTANCE = 10
-local CHASE_MAX_SPEED_INCREASE = 2
-local CHASE_DEACCELERATION_DISTANCE = 1
-local RUN_SPEED_INTERPOLATION_FACTOR = 0.05
-local POSITION_LOOKUP = POSITION_LOOKUP
-local DEFAULT_MIN_ALERT_FRIENDS_DIST = 7
-local DEFAULT_MAX_ALERT_FRIENDS_DIST = 30
-local DEFAULT_FRIENDS_ALERT_RANGE = 3
+local var_0_0 = 36
+local var_0_1 = 16
+local var_0_2 = 0.01
+local var_0_3 = 3
+local var_0_4 = 2
+local var_0_5 = 10
+local var_0_6 = 2
+local var_0_7 = 1
+local var_0_8 = 0.05
+local var_0_9 = POSITION_LOOKUP
+local var_0_10 = 7
+local var_0_11 = 30
+local var_0_12 = 3
 
-BTClanRatFollowAction.init = function (self, ...)
-	BTClanRatFollowAction.super.init(self, ...)
+function BTClanRatFollowAction.init(arg_1_0, ...)
+	BTClanRatFollowAction.super.init(arg_1_0, ...)
 
-	self.next_time_to_trigger_running_dialogue = 0
-	self.triggered_units = {}
+	arg_1_0.next_time_to_trigger_running_dialogue = 0
+	arg_1_0.triggered_units = {}
 end
 
 BTClanRatFollowAction.name = "BTClanRatFollowAction"
 
-local EPSILON_SQ = 0.0001
+local var_0_13 = 0.0001
 
-BTClanRatFollowAction.enter = function (self, unit, blackboard, t)
-	local action_data = self._tree_node.action_data
+function BTClanRatFollowAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_0._tree_node.action_data
 
-	blackboard.action = action_data
-	blackboard.active_node = self
-	blackboard.time_to_next_evaluate = t + 0.5
+	arg_2_2.action = var_2_0
+	arg_2_2.active_node = arg_2_0
+	arg_2_2.time_to_next_evaluate = arg_2_3 + 0.5
 
-	if blackboard.sneaky then
-		blackboard.time_to_next_friend_alert = t + 99999
+	if arg_2_2.sneaky then
+		arg_2_2.time_to_next_friend_alert = arg_2_3 + 99999
 	else
-		blackboard.time_to_next_friend_alert = t + 0.3
+		arg_2_2.time_to_next_friend_alert = arg_2_3 + 0.3
 	end
 
-	local ai_slot_system = Managers.state.entity:system("ai_slot_system")
+	Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_2_1, true)
 
-	ai_slot_system:do_slot_search(unit, true)
+	local var_2_1 = arg_2_2.target_unit
+	local var_2_2 = arg_2_2.locomotion_extension
+	local var_2_3 = LocomotionUtils.rotation_towards_unit_flat(arg_2_1, var_2_1)
 
-	local target_unit = blackboard.target_unit
-	local locomotion_extension = blackboard.locomotion_extension
-	local rotation = LocomotionUtils.rotation_towards_unit_flat(unit, target_unit)
+	var_2_2:set_wanted_rotation(var_2_3)
 
-	locomotion_extension:set_wanted_rotation(rotation)
+	local var_2_4 = var_0_9[arg_2_1]
+	local var_2_5 = arg_2_2.breed
+	local var_2_6 = var_2_5.enter_walk_distance and var_2_5.enter_walk_distance^2 or var_0_1
+	local var_2_7 = arg_2_2.navigation_extension:destination()
+	local var_2_8 = arg_2_0:_should_walk(var_2_7, var_2_4, var_2_6, var_2_3)
+	local var_2_9 = arg_2_0:_slow_approach(var_2_7, var_2_4, var_2_0, var_2_3)
 
-	local position = POSITION_LOOKUP[unit]
-	local breed = blackboard.breed
-	local enter_walk_dist_sq = breed.enter_walk_distance and breed.enter_walk_distance^2 or ENTER_WALK_DISTANCE_SQ
-	local navigation_extension = blackboard.navigation_extension
-	local destination = navigation_extension:destination()
-	local should_walk = self:_should_walk(destination, position, enter_walk_dist_sq, rotation)
-	local use_slow_approach = self:_slow_approach(destination, position, action_data, rotation)
+	if var_2_8 or var_2_9 then
+		arg_2_2.walking = true
 
-	if should_walk or use_slow_approach then
-		blackboard.walking = true
-
-		if use_slow_approach then
-			blackboard.walk_timer = t + action_data.slow_approach_time
+		if var_2_9 then
+			arg_2_2.walk_timer = arg_2_3 + var_2_0.slow_approach_time
 		else
-			blackboard.walk_timer = t + (action_data.walk_time or 3 + 1 * Math.random())
+			arg_2_2.walk_timer = arg_2_3 + (var_2_0.walk_time or 3 + 1 * Math.random())
 		end
 	end
 
-	if action_data.skip_start_anim_if_moving and blackboard.move_state == "moving" then
-		blackboard.skip_start_anim = true
+	if var_2_0.skip_start_anim_if_moving and arg_2_2.move_state == "moving" then
+		arg_2_2.skip_start_anim = true
 	end
 end
 
-BTClanRatFollowAction._should_walk = function (self, destination, self_pos, max_distance_sq, rotation_towards_target)
-	local diff_vector = destination - self_pos
-	local direct_distance = Vector3.dot(Quaternion.forward(rotation_towards_target), diff_vector)
-	local lateral_distance = Vector3.dot(Quaternion.right(rotation_towards_target), diff_vector)
-	local distance_sq = direct_distance * direct_distance + lateral_distance * LATERAL_DISTANCE_FACTOR * (lateral_distance * LATERAL_DISTANCE_FACTOR)
+function BTClanRatFollowAction._should_walk(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local var_3_0 = arg_3_1 - arg_3_2
+	local var_3_1 = Vector3.dot(Quaternion.forward(arg_3_4), var_3_0)
+	local var_3_2 = Vector3.dot(Quaternion.right(arg_3_4), var_3_0)
 
-	return distance_sq < max_distance_sq
+	return arg_3_3 > var_3_1 * var_3_1 + var_3_2 * var_0_2 * (var_3_2 * var_0_2)
 end
 
-BTClanRatFollowAction._slow_approach = function (self, destination, self_pos, action_data, rotation_towards_target)
-	local breed = action_data
-	local slow_approach_distance_sq = breed.slow_approach_distance_sq
+function BTClanRatFollowAction._slow_approach(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = arg_4_3.slow_approach_distance_sq
 
-	if not slow_approach_distance_sq then
+	if not var_4_0 then
 		return false
 	end
 
-	local diff_vector = destination - self_pos
-	local direct_distance = Vector3.dot(Quaternion.forward(rotation_towards_target), diff_vector)
-	local lateral_distance = Vector3.dot(Quaternion.right(rotation_towards_target), diff_vector)
-	local distance_sq = direct_distance^2 + (lateral_distance * LATERAL_DISTANCE_FACTOR)^2
-	local use_slow_approach = slow_approach_distance_sq < distance_sq
+	local var_4_1 = arg_4_1 - arg_4_2
+	local var_4_2 = Vector3.dot(Quaternion.forward(arg_4_4), var_4_1)
+	local var_4_3 = Vector3.dot(Quaternion.right(arg_4_4), var_4_1)
 
-	return use_slow_approach
+	return var_4_0 < var_4_2^2 + (var_4_3 * var_0_2)^2
 end
 
-BTClanRatFollowAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	blackboard.active_node = nil
+function BTClanRatFollowAction.leave(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	arg_5_2.active_node = nil
 
-	local locomotion_extension = blackboard.locomotion_extension
-
-	if not locomotion_extension._engine_extension_id then
+	if not arg_5_2.locomotion_extension._engine_extension_id then
 		return
 	end
 
 	if Managers.state.network:in_game_session() then
-		self:set_start_move_animation_lock(unit, blackboard, false)
+		arg_5_0:set_start_move_animation_lock(arg_5_1, arg_5_2, false)
 	end
 
-	if blackboard.is_turning then
-		LocomotionUtils.reset_turning(unit, blackboard)
+	if arg_5_2.is_turning then
+		LocomotionUtils.reset_turning(arg_5_1, arg_5_2)
 
-		blackboard.is_turning = nil
+		arg_5_2.is_turning = nil
 	end
 
-	blackboard.start_anim_locked = nil
-	blackboard.anim_cb_rotation_start = nil
-	blackboard.anim_cb_move = nil
-	blackboard.start_anim_done = nil
-	blackboard.anim_lock_fallback_time = nil
-	blackboard.deacceleration_factor = nil
-	blackboard.walking = nil
-	blackboard.walking_direction = nil
-	blackboard.skip_start_anim = nil
+	arg_5_2.start_anim_locked = nil
+	arg_5_2.anim_cb_rotation_start = nil
+	arg_5_2.anim_cb_move = nil
+	arg_5_2.start_anim_done = nil
+	arg_5_2.anim_lock_fallback_time = nil
+	arg_5_2.deacceleration_factor = nil
+	arg_5_2.walking = nil
+	arg_5_2.walking_direction = nil
+	arg_5_2.skip_start_anim = nil
 
-	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
-	local navigation_extension = blackboard.navigation_extension
+	local var_5_0 = AiUtils.get_default_breed_move_speed(arg_5_1, arg_5_2)
 
-	navigation_extension:set_max_speed(default_move_speed)
+	arg_5_2.navigation_extension:set_max_speed(var_5_0)
 
-	self.triggered_units[unit] = nil
+	arg_5_0.triggered_units[arg_5_1] = nil
 end
 
-local Unit_alive = Unit.alive
+local var_0_14 = Unit.alive
 
-BTClanRatFollowAction.run = function (self, unit, blackboard, t, dt)
-	if not Unit_alive(blackboard.target_unit) then
+function BTClanRatFollowAction.run(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	if not var_0_14(arg_6_2.target_unit) then
 		return "done"
 	end
 
-	if blackboard.spawn_to_running or blackboard.skip_start_anim then
-		blackboard.spawn_to_running = nil
-		blackboard.start_anim_done = true
-		blackboard.move_state = "moving"
-		blackboard.start_anim_locked = nil
-		blackboard.skip_start_anim = nil
+	if arg_6_2.spawn_to_running or arg_6_2.skip_start_anim then
+		arg_6_2.spawn_to_running = nil
+		arg_6_2.start_anim_done = true
+		arg_6_2.move_state = "moving"
+		arg_6_2.start_anim_locked = nil
+		arg_6_2.skip_start_anim = nil
 
-		self:set_start_move_animation_lock(unit, blackboard, false)
+		arg_6_0:set_start_move_animation_lock(arg_6_1, arg_6_2, false)
 	end
 
-	if blackboard.walking then
-		self:_update_walking(unit, blackboard, dt, t)
+	if arg_6_2.walking then
+		arg_6_0:_update_walking(arg_6_1, arg_6_2, arg_6_4, arg_6_3)
 	end
 
-	if not blackboard.walking and not blackboard.start_anim_done then
-		if not blackboard.start_anim_locked then
-			self:start_move_animation(unit, blackboard)
+	if not arg_6_2.walking and not arg_6_2.start_anim_done then
+		if not arg_6_2.start_anim_locked then
+			arg_6_0:start_move_animation(arg_6_1, arg_6_2)
 
-			blackboard.anim_lock_fallback_time = t + 2.5
+			arg_6_2.anim_lock_fallback_time = arg_6_3 + 2.5
 		end
 
-		if blackboard.anim_cb_rotation_start then
-			self:start_move_rotation(unit, blackboard, t, dt)
+		if arg_6_2.anim_cb_rotation_start then
+			arg_6_0:start_move_rotation(arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 		end
 
-		if blackboard.anim_cb_move or blackboard.anim_lock_fallback_time and t >= blackboard.anim_lock_fallback_time then
-			blackboard.anim_cb_move = false
-			blackboard.move_state = "moving"
-			blackboard.anim_lock_fallback_time = nil
+		if arg_6_2.anim_cb_move or arg_6_2.anim_lock_fallback_time and arg_6_3 >= arg_6_2.anim_lock_fallback_time then
+			arg_6_2.anim_cb_move = false
+			arg_6_2.move_state = "moving"
+			arg_6_2.anim_lock_fallback_time = nil
 
-			self:set_start_move_animation_lock(unit, blackboard, false)
+			arg_6_0:set_start_move_animation_lock(arg_6_1, arg_6_2, false)
 
-			blackboard.start_anim_locked = nil
-			blackboard.start_anim_done = true
+			arg_6_2.start_anim_locked = nil
+			arg_6_2.start_anim_done = true
 		end
 	else
-		self:follow(unit, blackboard, t, dt)
-		self:do_dialogue(unit, blackboard, t, dt)
+		arg_6_0:follow(arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+		arg_6_0:do_dialogue(arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	end
 
-	local should_evaluate
-	local navigation_extension = blackboard.navigation_extension
+	local var_6_0
+	local var_6_1 = arg_6_2.navigation_extension
 
-	if t > blackboard.time_to_next_evaluate or navigation_extension:has_reached_destination() then
-		local prioritized_update = blackboard.have_slot == 1 and blackboard.attacks_done == 0
+	if arg_6_3 > arg_6_2.time_to_next_evaluate or var_6_1:has_reached_destination() then
+		local var_6_2 = arg_6_2.have_slot == 1 and arg_6_2.attacks_done == 0
 
-		should_evaluate = "evaluate"
-		blackboard.time_to_next_evaluate = prioritized_update and t + 0.1 or t + 0.5
+		var_6_0 = "evaluate"
+		arg_6_2.time_to_next_evaluate = var_6_2 and arg_6_3 + 0.1 or arg_6_3 + 0.5
 	end
 
-	return "running", should_evaluate
+	return "running", var_6_0
 end
 
-BTClanRatFollowAction._update_walking = function (self, unit, blackboard, dt, t)
-	local target = blackboard.target_unit
-	local locomotion_extension = blackboard.locomotion_extension
-	local rotation = LocomotionUtils.rotation_towards_unit_flat(unit, target)
+function BTClanRatFollowAction._update_walking(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	local var_7_0 = arg_7_2.target_unit
+	local var_7_1 = arg_7_2.locomotion_extension
+	local var_7_2 = LocomotionUtils.rotation_towards_unit_flat(arg_7_1, var_7_0)
 
-	locomotion_extension:set_wanted_rotation(rotation)
+	var_7_1:set_wanted_rotation(var_7_2)
 
-	local action_data = blackboard.action
-	local self_pos = POSITION_LOOKUP[unit]
-	local target_locomotion = ScriptUnit.has_extension(target, "locomotion_system")
-	local velocity_away = target_locomotion and target_locomotion.average_velocity and Vector3.dot(target_locomotion:average_velocity(), Vector3.normalize(POSITION_LOOKUP[target] - self_pos))
-	local destination = blackboard.navigation_extension:destination()
-	local walk_timer_finished = t > blackboard.walk_timer
-	local use_slow_approach = self:_slow_approach(destination, self_pos, action_data, rotation)
-	local breed = blackboard.breed
-	local leave_walk_distance = breed.leave_walk_distance
-	local leave_walk_dist_sq = leave_walk_distance and leave_walk_distance * leave_walk_distance or LEAVE_WALK_DISTANCE_SQ
-	local should_walk = self:_should_walk(destination, self_pos, leave_walk_dist_sq, rotation)
-	local run = not use_slow_approach and not should_walk
-	local target_moving_fast = not use_slow_approach and velocity_away and velocity_away > WALK_MAX_TARGET_VELOCITY and not action_data.ignore_target_velocity
-	local is_tired = blackboard.action.custom_is_tired_function and blackboard.action.custom_is_tired_function(unit, blackboard)
-	local run_anim = is_tired and blackboard.action.alt_tired_anim or "move_fwd"
+	local var_7_3 = arg_7_2.action
+	local var_7_4 = var_0_9[arg_7_1]
+	local var_7_5 = ScriptUnit.has_extension(var_7_0, "locomotion_system")
+	local var_7_6 = var_7_5 and var_7_5.average_velocity and Vector3.dot(var_7_5:average_velocity(), Vector3.normalize(var_0_9[var_7_0] - var_7_4))
+	local var_7_7 = arg_7_2.navigation_extension:destination()
+	local var_7_8 = arg_7_4 > arg_7_2.walk_timer
+	local var_7_9 = arg_7_0:_slow_approach(var_7_7, var_7_4, var_7_3, var_7_2)
+	local var_7_10 = arg_7_2.breed
+	local var_7_11 = var_7_10.leave_walk_distance
+	local var_7_12 = var_7_11 and var_7_11 * var_7_11 or var_0_0
+	local var_7_13 = arg_7_0:_should_walk(var_7_7, var_7_4, var_7_12, var_7_2)
+	local var_7_14 = not var_7_9 and not var_7_13
+	local var_7_15 = not var_7_9 and var_7_6 and var_7_6 > var_0_3 and not var_7_3.ignore_target_velocity
+	local var_7_16 = arg_7_2.action.custom_is_tired_function and arg_7_2.action.custom_is_tired_function(arg_7_1, arg_7_2)
+	local var_7_17 = var_7_16 and arg_7_2.action.alt_tired_anim or "move_fwd"
 
-	if (not breed.force_walk_while_tired or not is_tired) and (not should_walk and walk_timer_finished or run or target_moving_fast) then
-		blackboard.walking = false
-		blackboard.walking_direction = nil
+	if (not var_7_10.force_walk_while_tired or not var_7_16) and (not var_7_13 and var_7_8 or var_7_14 or var_7_15) then
+		arg_7_2.walking = false
+		arg_7_2.walking_direction = nil
 
-		Managers.state.network:anim_event(unit, run_anim)
+		Managers.state.network:anim_event(arg_7_1, var_7_17)
 
 		return
 	end
 
-	local walk_anims = action_data.walk_anims
-	local dir = blackboard.navigation_extension:desired_velocity()
-	local walk_dir = self:_calculate_walk_dir(Quaternion.right(rotation), Quaternion.forward(rotation), dir, self_pos, walk_anims)
+	local var_7_18 = var_7_3.walk_anims
+	local var_7_19 = arg_7_2.navigation_extension:desired_velocity()
+	local var_7_20 = arg_7_0:_calculate_walk_dir(Quaternion.right(var_7_2), Quaternion.forward(var_7_2), var_7_19, var_7_4, var_7_18)
 
-	if walk_dir ~= blackboard.walking_direction then
-		local walk_anim = self:_calculate_walk_animation(walk_dir, walk_anims)
+	if var_7_20 ~= arg_7_2.walking_direction then
+		local var_7_21 = arg_7_0:_calculate_walk_animation(var_7_20, var_7_18)
 
-		if blackboard.action.alt_walk_anim and not is_tired then
-			Managers.state.network:anim_event(unit, blackboard.action.alt_walk_anim)
+		if arg_7_2.action.alt_walk_anim and not var_7_16 then
+			Managers.state.network:anim_event(arg_7_1, arg_7_2.action.alt_walk_anim)
 		else
-			Managers.state.network:anim_event(unit, walk_anim)
+			Managers.state.network:anim_event(arg_7_1, var_7_21)
 		end
 
-		blackboard.move_state = "moving"
-		blackboard.walking_direction = walk_dir
+		arg_7_2.move_state = "moving"
+		arg_7_2.walking_direction = var_7_20
 	end
 end
 
-local function randomize(event)
-	if type(event) == "table" then
-		return event[Math.random(1, #event)]
+local function var_0_15(arg_8_0)
+	if type(arg_8_0) == "table" then
+		return arg_8_0[Math.random(1, #arg_8_0)]
 	else
-		return event
+		return arg_8_0
 	end
 end
 
-BTClanRatFollowAction._calculate_walk_animation = function (self, walk_dir, walk_anims)
-	local anim
+function BTClanRatFollowAction._calculate_walk_animation(arg_9_0, arg_9_1, arg_9_2)
+	local var_9_0
 
-	if walk_dir == "right" then
-		anim = "move_right_walk"
-	elseif walk_dir == "left" then
-		anim = "move_left_walk"
-	elseif walk_dir == "forward" then
-		anim = walk_anims and randomize(walk_anims) or "move_fwd_walk"
+	if arg_9_1 == "right" then
+		var_9_0 = "move_right_walk"
+	elseif arg_9_1 == "left" then
+		var_9_0 = "move_left_walk"
+	elseif arg_9_1 == "forward" then
+		var_9_0 = arg_9_2 and var_0_15(arg_9_2) or "move_fwd_walk"
 	else
-		anim = "move_bwd_walk"
+		var_9_0 = "move_bwd_walk"
 	end
 
-	return anim
+	return var_9_0
 end
 
-BTClanRatFollowAction._calculate_walk_dir = function (self, right_vector, forward_vector, dir, pos, walk_anims)
-	local right_dot = Vector3.dot(right_vector, dir)
-	local fwd_dot = Vector3.dot(forward_vector, dir)
-	local abs_right = math.abs(right_dot)
-	local abs_fwd = math.abs(fwd_dot)
+function BTClanRatFollowAction._calculate_walk_dir(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+	local var_10_0 = Vector3.dot(arg_10_1, arg_10_3)
+	local var_10_1 = Vector3.dot(arg_10_2, arg_10_3)
+	local var_10_2 = math.abs(var_10_0)
+	local var_10_3 = math.abs(var_10_1)
 
-	dir = abs_fwd < abs_right and right_dot > 0 and "right" or abs_fwd < abs_right and "left" or fwd_dot > 0 and "forward" or "backward"
+	arg_10_3 = var_10_3 < var_10_2 and var_10_0 > 0 and "right" or var_10_3 < var_10_2 and "left" or var_10_1 > 0 and "forward" or "backward"
 
-	return dir
+	return arg_10_3
 end
 
-BTClanRatFollowAction.follow = function (self, unit, blackboard, t, dt)
-	local breed = blackboard.breed
-	local target_unit = blackboard.target_unit
-	local target_distance = blackboard.target_dist
-	local weapon_reach = breed.follow_reach or breed.weapon_reach or 2
-	local target_locomotion = ScriptUnit.has_extension(target_unit, "locomotion_system")
-	local locomotion_extension = blackboard.locomotion_extension
-	local current_speed = Vector3.length(locomotion_extension:current_velocity())
+function BTClanRatFollowAction.follow(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	local var_11_0 = arg_11_2.breed
+	local var_11_1 = arg_11_2.target_unit
+	local var_11_2 = arg_11_2.target_dist
+	local var_11_3 = var_11_0.follow_reach or var_11_0.weapon_reach or 2
+	local var_11_4 = ScriptUnit.has_extension(var_11_1, "locomotion_system")
+	local var_11_5 = arg_11_2.locomotion_extension
+	local var_11_6 = Vector3.length(var_11_5:current_velocity())
 
-	if breed.use_big_boy_turning and blackboard.move_state == "moving" then
-		local is_turning = blackboard.is_turning
-
-		if is_turning then
-			LocomotionUtils.update_turning(unit, t, dt, blackboard)
+	if var_11_0.use_big_boy_turning and arg_11_2.move_state == "moving" then
+		if arg_11_2.is_turning then
+			LocomotionUtils.update_turning(arg_11_1, arg_11_3, arg_11_4, arg_11_2)
 		else
-			LocomotionUtils.check_start_turning(unit, t, dt, blackboard)
+			LocomotionUtils.check_start_turning(arg_11_1, arg_11_3, arg_11_4, arg_11_2)
 		end
 	end
 
-	local new_speed
+	local var_11_7
 
-	if blackboard.walking then
-		blackboard.deacceleration_factor = nil
-		new_speed = breed.walk_speed
-	elseif target_distance < (breed.match_speed_distance or 2 * weapon_reach) then
-		blackboard.deacceleration_factor = nil
+	if arg_11_2.walking then
+		arg_11_2.deacceleration_factor = nil
+		var_11_7 = var_11_0.walk_speed
+	elseif var_11_2 < (var_11_0.match_speed_distance or 2 * var_11_3) then
+		arg_11_2.deacceleration_factor = nil
 
-		local lerp_value = math.max((target_distance - weapon_reach) / weapon_reach, 0) * 0.4
-		local target_velocity = target_locomotion and target_locomotion.average_velocity and target_locomotion:average_velocity() or Vector3.zero()
-		local target_speed = Vector3.length(target_velocity) or 0
-		local wanted_speed = target_speed > breed.walk_speed and target_speed or breed.walk_speed
+		local var_11_8 = math.max((var_11_2 - var_11_3) / var_11_3, 0) * 0.4
+		local var_11_9 = var_11_4 and var_11_4.average_velocity and var_11_4:average_velocity() or Vector3.zero()
+		local var_11_10 = Vector3.length(var_11_9) or 0
+		local var_11_11 = var_11_10 > var_11_0.walk_speed and var_11_10 or var_11_0.walk_speed
 
-		new_speed = math.lerp(wanted_speed, breed.run_speed, lerp_value)
-	elseif (current_speed > breed.run_speed + 0.1 or blackboard.deacceleration_factor) and target_distance < 2 * weapon_reach + CHASE_DEACCELERATION_DISTANCE then
-		local deaccelearation_distance_left = target_distance - weapon_reach
+		var_11_7 = math.lerp(var_11_11, var_11_0.run_speed, var_11_8)
+	elseif (var_11_6 > var_11_0.run_speed + 0.1 or arg_11_2.deacceleration_factor) and var_11_2 < 2 * var_11_3 + var_0_7 then
+		local var_11_12 = var_11_2 - var_11_3
 
-		if not blackboard.deacceleration_factor then
-			blackboard.deacceleration_factor = (current_speed - breed.run_speed) / deaccelearation_distance_left
+		if not arg_11_2.deacceleration_factor then
+			arg_11_2.deacceleration_factor = (var_11_6 - var_11_0.run_speed) / var_11_12
 		end
 
-		new_speed = blackboard.deacceleration_factor * deaccelearation_distance_left + breed.run_speed
+		var_11_7 = arg_11_2.deacceleration_factor * var_11_12 + var_11_0.run_speed
 	else
-		blackboard.deacceleration_factor = nil
+		arg_11_2.deacceleration_factor = nil
 
-		local interpolation_factor = blackboard.breed.run_speed_interpolation_factor or RUN_SPEED_INTERPOLATION_FACTOR
-		local wanted_speed = self:_calculate_run_speed(unit, target_unit, blackboard, target_locomotion)
-		local sign = math.sign(wanted_speed - current_speed)
+		local var_11_13 = arg_11_2.breed.run_speed_interpolation_factor or var_0_8
+		local var_11_14 = arg_11_0:_calculate_run_speed(arg_11_1, var_11_1, arg_11_2, var_11_4)
+		local var_11_15 = math.sign(var_11_14 - var_11_6)
 
-		current_speed = sign > 0 and current_speed < breed.run_speed and target_distance > (breed.match_speed_distance or weapon_reach) + 0.5 and breed.run_speed or current_speed
-		new_speed = math.min(current_speed + sign * interpolation_factor * dt, wanted_speed)
+		var_11_6 = var_11_15 > 0 and var_11_6 < var_11_0.run_speed and var_11_2 > (var_11_0.match_speed_distance or var_11_3) + 0.5 and var_11_0.run_speed or var_11_6
+		var_11_7 = math.min(var_11_6 + var_11_15 * var_11_13 * arg_11_4, var_11_14)
 	end
 
-	local action = blackboard.action
+	local var_11_16 = arg_11_2.action
 
-	if action.custom_is_tired_function and action.custom_is_tired_function(unit, blackboard) then
-		blackboard.walking = true
-		blackboard.walk_timer = t + 2.5
+	if var_11_16.custom_is_tired_function and var_11_16.custom_is_tired_function(arg_11_1, arg_11_2) then
+		arg_11_2.walking = true
+		arg_11_2.walk_timer = arg_11_3 + 2.5
 	end
 
-	if not blackboard.walking then
-		local enter_walk_dist_sq = breed.enter_walk_distance and breed.enter_walk_distance^2 or ENTER_WALK_DISTANCE_SQ
-		local destination = blackboard.navigation_extension:destination()
-		local rotation = LocomotionUtils.rotation_towards_unit_flat(unit, blackboard.target_unit)
-		local position = POSITION_LOOKUP[unit]
-		local should_walk = self:_should_walk(destination, position, enter_walk_dist_sq, rotation)
+	if not arg_11_2.walking then
+		local var_11_17 = var_11_0.enter_walk_distance and var_11_0.enter_walk_distance^2 or var_0_1
+		local var_11_18 = arg_11_2.navigation_extension:destination()
+		local var_11_19 = LocomotionUtils.rotation_towards_unit_flat(arg_11_1, arg_11_2.target_unit)
+		local var_11_20 = var_0_9[arg_11_1]
 
-		if should_walk then
-			local target_speed = 0
+		if arg_11_0:_should_walk(var_11_18, var_11_20, var_11_17, var_11_19) then
+			local var_11_21 = 0
 
-			if not action.ignore_target_velocity then
-				local target_velocity = target_locomotion and target_locomotion.average_velocity and target_locomotion:average_velocity() or Vector3.zero()
+			if not var_11_16.ignore_target_velocity then
+				local var_11_22 = var_11_4 and var_11_4.average_velocity and var_11_4:average_velocity() or Vector3.zero()
 
-				target_speed = Vector3.length(target_velocity) or 0
+				var_11_21 = Vector3.length(var_11_22) or 0
 			end
 
-			if target_speed < WALK_MAX_TARGET_VELOCITY then
-				blackboard.walking = true
-				blackboard.walk_timer = t + 2.5
+			if var_11_21 < var_0_3 then
+				arg_11_2.walking = true
+				arg_11_2.walk_timer = arg_11_3 + 2.5
 			end
 		end
 	end
 
-	local navigation_extension = blackboard.navigation_extension
+	arg_11_2.navigation_extension:set_max_speed(var_11_7)
 
-	navigation_extension:set_max_speed(new_speed)
+	if arg_11_3 > arg_11_2.time_to_next_friend_alert then
+		arg_11_2.time_to_next_friend_alert = arg_11_3 + 0.5
 
-	if t > blackboard.time_to_next_friend_alert then
-		blackboard.time_to_next_friend_alert = t + 0.5
+		if var_11_2 > (var_11_0.min_alert_friends_distance or var_0_10) and var_11_2 < (var_11_0.max_alert_friends_distance or var_0_11) then
+			local var_11_23 = World.get_data(arg_11_2.world, "physics_world")
+			local var_11_24 = var_0_9[arg_11_1]
+			local var_11_25 = var_0_9[var_11_1] - var_11_24
+			local var_11_26 = var_11_24 + Vector3(0, 0, 1)
 
-		local is_within_range = target_distance > (breed.min_alert_friends_distance or DEFAULT_MIN_ALERT_FRIENDS_DIST) and target_distance < (breed.max_alert_friends_distance or DEFAULT_MAX_ALERT_FRIENDS_DIST)
+			if Vector3.length_squared(var_11_25) > 0 then
+				local var_11_27, var_11_28, var_11_29, var_11_30 = PhysicsWorld.immediate_raycast(var_11_23, var_11_26, var_11_25, arg_11_2.target_dist, "closest", "types", "statics", "collision_filter", "filter_ai_line_of_sight_check")
 
-		if is_within_range then
-			local physics_world = World.get_data(blackboard.world, "physics_world")
-			local unit_pos = POSITION_LOOKUP[unit]
-			local direction = POSITION_LOOKUP[target_unit] - unit_pos
-			local raycast_pos = unit_pos + Vector3(0, 0, 1)
-
-			if Vector3.length_squared(direction) > 0 then
-				local result, hit_pos, hit_distance, normal = PhysicsWorld.immediate_raycast(physics_world, raycast_pos, direction, blackboard.target_dist, "closest", "types", "statics", "collision_filter", "filter_ai_line_of_sight_check")
-
-				if not result then
-					AiUtils.alert_nearby_friends_of_enemy(unit, blackboard.group_blackboard.broadphase, target_unit, breed.friends_alert_range or DEFAULT_FRIENDS_ALERT_RANGE)
+				if not var_11_27 then
+					AiUtils.alert_nearby_friends_of_enemy(arg_11_1, arg_11_2.group_blackboard.broadphase, var_11_1, var_11_0.friends_alert_range or var_0_12)
 				end
 			end
 		end
 	end
 end
 
-BTClanRatFollowAction._calculate_run_speed = function (self, unit, target_unit, blackboard, target_locomotion)
-	local target_distance = blackboard.target_dist
-	local destination_distance = blackboard.destination_dist
-	local chase_factor = 0
+function BTClanRatFollowAction._calculate_run_speed(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+	local var_12_0 = arg_12_3.target_dist
+	local var_12_1 = arg_12_3.destination_dist
+	local var_12_2 = 0
 
-	if target_locomotion and target_locomotion.average_velocity and destination_distance > CHASE_MIN_REQUIRED_MOVEMENT_DISTANCE and target_distance < CHASE_MAX_TARGET_DISTANCE then
-		local current_position = POSITION_LOOKUP[unit]
-		local navigation_extension = blackboard.navigation_extension
-		local destination = navigation_extension:destination()
-		local target_velocity = target_locomotion:average_velocity()
-		local move_direction = Vector3.normalize(destination - current_position)
-		local target_move_direction = Vector3.normalize(target_velocity)
-		local dot = Vector3.dot(target_move_direction, move_direction)
+	if arg_12_4 and arg_12_4.average_velocity and var_12_1 > var_0_4 and var_12_0 < var_0_5 then
+		local var_12_3 = var_0_9[arg_12_1]
+		local var_12_4 = arg_12_3.navigation_extension:destination()
+		local var_12_5 = arg_12_4:average_velocity()
+		local var_12_6 = Vector3.normalize(var_12_4 - var_12_3)
+		local var_12_7 = Vector3.normalize(var_12_5)
+		local var_12_8 = Vector3.dot(var_12_7, var_12_6)
 
-		chase_factor = math.clamp(dot, 0, 1)
+		var_12_2 = math.clamp(var_12_8, 0, 1)
 	end
 
-	local breed = blackboard.breed
-	local new_speed = breed.run_speed + CHASE_MAX_SPEED_INCREASE * chase_factor
-
-	return new_speed
+	return arg_12_3.breed.run_speed + var_0_6 * var_12_2
 end
 
-BTClanRatFollowAction.start_move_animation = function (self, unit, blackboard)
-	self:set_start_move_animation_lock(unit, blackboard, true)
+function BTClanRatFollowAction.start_move_animation(arg_13_0, arg_13_1, arg_13_2)
+	arg_13_0:set_start_move_animation_lock(arg_13_1, arg_13_2, true)
 
-	local target_pos = POSITION_LOOKUP[blackboard.target_unit]
-	local start_anims_name
-	local action = blackboard.action
+	local var_13_0 = var_0_9[arg_13_2.target_unit]
+	local var_13_1
+	local var_13_2 = arg_13_2.action
 
-	if action.start_alt_tired_anims_name and action.custom_is_tired_function(unit, blackboard) then
-		start_anims_name = action.start_alt_tired_anims_name
+	if var_13_2.start_alt_tired_anims_name and var_13_2.custom_is_tired_function(arg_13_1, arg_13_2) then
+		var_13_1 = var_13_2.start_alt_tired_anims_name
 	else
-		start_anims_name = blackboard.action.start_anims_name
+		var_13_1 = arg_13_2.action.start_anims_name
 	end
 
-	local animation_name = AiAnimUtils.get_start_move_animation(unit, target_pos, start_anims_name)
+	local var_13_3 = AiAnimUtils.get_start_move_animation(arg_13_1, var_13_0, var_13_1)
 
-	Managers.state.network:anim_event(unit, animation_name)
+	Managers.state.network:anim_event(arg_13_1, var_13_3)
 
-	blackboard.move_animation_name = animation_name
-	blackboard.start_anim_locked = true
+	arg_13_2.move_animation_name = var_13_3
+	arg_13_2.start_anim_locked = true
 end
 
-BTClanRatFollowAction.start_move_rotation = function (self, unit, blackboard, t, dt)
-	if blackboard.move_animation_name == "move_start_fwd" or blackboard.move_animation_name == "move_start_fwd_jog" then
-		self:set_start_move_animation_lock(unit, blackboard, false)
+function BTClanRatFollowAction.start_move_rotation(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+	if arg_14_2.move_animation_name == "move_start_fwd" or arg_14_2.move_animation_name == "move_start_fwd_jog" then
+		arg_14_0:set_start_move_animation_lock(arg_14_1, arg_14_2, false)
 
-		local locomotion_extension = blackboard.locomotion_extension
-		local rot = LocomotionUtils.rotation_towards_unit_flat(unit, blackboard.target_unit)
+		local var_14_0 = arg_14_2.locomotion_extension
+		local var_14_1 = LocomotionUtils.rotation_towards_unit_flat(arg_14_1, arg_14_2.target_unit)
 
-		locomotion_extension:set_wanted_rotation(rot)
+		var_14_0:set_wanted_rotation(var_14_1)
 	else
-		blackboard.anim_cb_rotation_start = false
+		arg_14_2.anim_cb_rotation_start = false
 
-		local target_pos = POSITION_LOOKUP[blackboard.target_unit]
-		local rot_scale = AiAnimUtils.get_animation_rotation_scale(unit, target_pos, blackboard.move_animation_name, blackboard.action.start_anims_data)
+		local var_14_2 = var_0_9[arg_14_2.target_unit]
+		local var_14_3 = AiAnimUtils.get_animation_rotation_scale(arg_14_1, var_14_2, arg_14_2.move_animation_name, arg_14_2.action.start_anims_data)
 
-		LocomotionUtils.set_animation_rotation_scale(unit, rot_scale)
+		LocomotionUtils.set_animation_rotation_scale(arg_14_1, var_14_3)
 	end
 end
 
-BTClanRatFollowAction.set_start_move_animation_lock = function (self, unit, blackboard, should_lock_ani)
-	local locomotion_extension = blackboard.locomotion_extension
+function BTClanRatFollowAction.set_start_move_animation_lock(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+	local var_15_0 = arg_15_2.locomotion_extension
 
-	if should_lock_ani then
-		locomotion_extension:use_lerp_rotation(false)
-		LocomotionUtils.set_animation_driven_movement(unit, true, false, false)
+	if arg_15_3 then
+		var_15_0:use_lerp_rotation(false)
+		LocomotionUtils.set_animation_driven_movement(arg_15_1, true, false, false)
 	else
-		locomotion_extension:use_lerp_rotation(true)
-		LocomotionUtils.set_animation_driven_movement(unit, false)
-		LocomotionUtils.set_animation_rotation_scale(unit, 1)
+		var_15_0:use_lerp_rotation(true)
+		LocomotionUtils.set_animation_driven_movement(arg_15_1, false)
+		LocomotionUtils.set_animation_rotation_scale(arg_15_1, 1)
 	end
 end
 
-local nearby_units = {}
+local var_0_16 = {}
 
-BTClanRatFollowAction.do_dialogue = function (self, unit, blackboard, t, dt)
-	if t > self.next_time_to_trigger_running_dialogue and self.triggered_units[unit] == nil then
-		local distance = math.ceil(Vector3.distance(POSITION_LOOKUP[unit], POSITION_LOOKUP[blackboard.target_unit]))
+function BTClanRatFollowAction.do_dialogue(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+	if arg_16_3 > arg_16_0.next_time_to_trigger_running_dialogue and arg_16_0.triggered_units[arg_16_1] == nil then
+		local var_16_0 = math.ceil(Vector3.distance(var_0_9[arg_16_1], var_0_9[arg_16_2.target_unit]))
 
-		if distance < 15 then
-			local position = POSITION_LOOKUP[unit]
-			local num_nearby_units = AiUtils.broadphase_query(position, 10, nearby_units)
+		if var_16_0 < 15 then
+			local var_16_1 = var_0_9[arg_16_1]
+			local var_16_2 = AiUtils.broadphase_query(var_16_1, 10, var_0_16)
 
-			self.next_time_to_trigger_running_dialogue = t + 1
-			self.triggered_units[unit] = true
+			arg_16_0.next_time_to_trigger_running_dialogue = arg_16_3 + 1
+			arg_16_0.triggered_units[arg_16_1] = true
 
-			local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
-			local event_data = FrameTable.alloc_table()
+			local var_16_3 = ScriptUnit.extension_input(arg_16_1, "dialogue_system")
+			local var_16_4 = FrameTable.alloc_table()
 
-			event_data.distance = distance
-			event_data.num_units = num_nearby_units - 1
+			var_16_4.distance = var_16_0
+			var_16_4.num_units = var_16_2 - 1
 
-			dialogue_input:trigger_networked_dialogue_event("running", event_data)
+			var_16_3:trigger_networked_dialogue_event("running", var_16_4)
 		end
 	end
 end

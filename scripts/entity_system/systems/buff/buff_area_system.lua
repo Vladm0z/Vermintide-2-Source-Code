@@ -1,91 +1,93 @@
-﻿-- chunkname: @scripts/entity_system/systems/buff/buff_area_system.lua
+-- chunkname: @scripts/entity_system/systems/buff/buff_area_system.lua
 
 require("scripts/unit_extensions/default_player_unit/buffs/buff_area_extension")
 
 BuffAreaSystem = class(BuffAreaSystem, ExtensionSystemBase)
 
-local RPCS = {
+local var_0_0 = {
 	"rpc_play_enter_buff_zone_sfx",
-	"rpc_play_leave_buff_zone_sfx",
+	"rpc_play_leave_buff_zone_sfx"
 }
-local extensions = {
-	"BuffAreaExtension",
+local var_0_1 = {
+	"BuffAreaExtension"
 }
 
-BuffAreaSystem.init = function (self, entity_system_creation_context, system_name)
-	BuffAreaSystem.super.init(self, entity_system_creation_context, system_name, extensions)
+function BuffAreaSystem.init(arg_1_0, arg_1_1, arg_1_2)
+	BuffAreaSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
-	self._inside_by_side_and_template = {}
-	self._inside_by_area = {}
-	self._buff_area_extensions = {}
+	arg_1_0._inside_by_side_and_template = {}
+	arg_1_0._inside_by_area = {}
+	arg_1_0._buff_area_extensions = {}
 
-	local network_event_delegate = entity_system_creation_context.network_event_delegate
+	local var_1_0 = arg_1_1.network_event_delegate
 
-	self.network_event_delegate = network_event_delegate
+	arg_1_0.network_event_delegate = var_1_0
 
-	network_event_delegate:register(self, unpack(RPCS))
+	var_1_0:register(arg_1_0, unpack(var_0_0))
 end
 
-BuffAreaSystem.destroy = function (self)
-	self.network_event_delegate:unregister(self)
+function BuffAreaSystem.destroy(arg_2_0)
+	arg_2_0.network_event_delegate:unregister(arg_2_0)
 end
 
-BuffAreaSystem.on_add_extension = function (self, world, unit, extension_name, ...)
-	local buff_area_extension = BuffAreaSystem.super.on_add_extension(self, world, unit, extension_name, ...)
-	local buff_template = buff_area_extension.template
+function BuffAreaSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, ...)
+	local var_3_0 = BuffAreaSystem.super.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, ...)
+	local var_3_1 = var_3_0.template
 
-	if buff_template.shared_area then
-		local side = buff_area_extension.side
-		local name = buff_template.name
-		local inside = self._inside_by_side_and_template
+	if var_3_1.shared_area then
+		local var_3_2 = var_3_0.side
+		local var_3_3 = var_3_1.name
+		local var_3_4 = arg_3_0._inside_by_side_and_template
 
-		inside[side] = inside[side] or {}
-		inside = inside[side]
-		inside[name] = inside[name] or {
+		var_3_4[var_3_2] = var_3_4[var_3_2] or {}
+
+		local var_3_5 = var_3_4[var_3_2]
+
+		var_3_5[var_3_3] = var_3_5[var_3_3] or {
 			by_broadphase = {},
 			by_position = {},
-			buff_ids = {},
+			buff_ids = {}
 		}
 	else
-		self._inside_by_area[buff_area_extension] = {
+		arg_3_0._inside_by_area[var_3_0] = {
 			by_broadphase = {},
 			by_position = {},
-			buff_ids = {},
+			buff_ids = {}
 		}
 	end
 
-	self._buff_area_extensions[unit] = buff_area_extension
+	arg_3_0._buff_area_extensions[arg_3_2] = var_3_0
 
-	return buff_area_extension
+	return var_3_0
 end
 
-BuffAreaSystem.inside_by_area = function (self, buff_area_extension)
-	local template = buff_area_extension.template
+function BuffAreaSystem.inside_by_area(arg_4_0, arg_4_1)
+	local var_4_0 = arg_4_1.template
 
-	if template.shared_area then
-		local side = buff_area_extension.side
-		local name = template.name
+	if var_4_0.shared_area then
+		local var_4_1 = arg_4_1.side
+		local var_4_2 = var_4_0.name
 
-		return self._inside_by_side_and_template[side][name]
+		return arg_4_0._inside_by_side_and_template[var_4_1][var_4_2]
 	else
-		return self._inside_by_area[buff_area_extension]
+		return arg_4_0._inside_by_area[arg_4_1]
 	end
 end
 
-BuffAreaSystem.rpc_play_enter_buff_zone_sfx = function (self, channel_id, go_id)
-	local unit = Managers.state.unit_storage:unit(go_id)
-	local extension = self._buff_area_extensions[unit]
+function BuffAreaSystem.rpc_play_enter_buff_zone_sfx(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = Managers.state.unit_storage:unit(arg_5_2)
+	local var_5_1 = arg_5_0._buff_area_extensions[var_5_0]
 
-	if extension then
-		extension:play_enter_buff_zone_sfx()
+	if var_5_1 then
+		var_5_1:play_enter_buff_zone_sfx()
 	end
 end
 
-BuffAreaSystem.rpc_play_leave_buff_zone_sfx = function (self, channel_id, go_id)
-	local unit = Managers.state.unit_storage:unit(go_id)
-	local extension = self._buff_area_extensions[unit]
+function BuffAreaSystem.rpc_play_leave_buff_zone_sfx(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = Managers.state.unit_storage:unit(arg_6_2)
+	local var_6_1 = arg_6_0._buff_area_extensions[var_6_0]
 
-	if extension then
-		extension:play_leave_buff_zone_sfx()
+	if var_6_1 then
+		var_6_1:play_leave_buff_zone_sfx()
 	end
 end

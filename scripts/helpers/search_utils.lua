@@ -1,19 +1,19 @@
-﻿-- chunkname: @scripts/helpers/search_utils.lua
+-- chunkname: @scripts/helpers/search_utils.lua
 
 SearchUtils = SearchUtils or {}
 
-local function find_synonym_match(query, query_index, tuple_list)
-	for i = 1, #tuple_list do
-		local tuple = tuple_list[i]
-		local synonyms = Localize(tuple[2])
+local function var_0_0(arg_1_0, arg_1_1, arg_1_2)
+	for iter_1_0 = 1, #arg_1_2 do
+		local var_1_0 = arg_1_2[iter_1_0]
+		local var_1_1 = Localize(var_1_0[2])
 
-		for synonym in string.gmatch(synonyms, "[^,]+") do
-			synonym = Utf8.lower(string.gsub(synonym, "%s+", ""))
+		for iter_1_1 in string.gmatch(var_1_1, "[^,]+") do
+			iter_1_1 = Utf8.lower(string.gsub(iter_1_1, "%s+", ""))
 
-			local end_index = query_index + #synonym - 1
+			local var_1_2 = arg_1_1 + #iter_1_1 - 1
 
-			if string.sub(query, query_index, end_index) == synonym then
-				return tuple[1], end_index
+			if string.sub(arg_1_0, arg_1_1, var_1_2) == iter_1_1 then
+				return var_1_0[1], var_1_2
 			end
 		end
 	end
@@ -21,32 +21,33 @@ local function find_synonym_match(query, query_index, tuple_list)
 	return nil, nil
 end
 
-SearchUtils.extract_queries = function (query, definitions, results)
-	query = Utf8.lower(query)
+function SearchUtils.extract_queries(arg_2_0, arg_2_1, arg_2_2)
+	arg_2_0 = Utf8.lower(arg_2_0)
 
-	for i = 1, #definitions do
-		local def = definitions[i]
-		local key = def.key
-		local pattern = Localize("search_filter_" .. key) .. "%s*:%s*"
-		local start_index, keyword_index = string.find(query, pattern)
+	for iter_2_0 = 1, #arg_2_1 do
+		local var_2_0 = arg_2_1[iter_2_0]
+		local var_2_1 = var_2_0.key
+		local var_2_2 = Localize("search_filter_" .. var_2_1) .. "%s*:%s*"
+		local var_2_3, var_2_4 = string.find(arg_2_0, var_2_2)
 
-		if start_index then
-			local value, end_index = find_synonym_match(query, keyword_index + 1, def)
+		if var_2_3 then
+			local var_2_5, var_2_6 = var_0_0(arg_2_0, var_2_4 + 1, var_2_0)
 
-			if value ~= nil then
-				results[key] = value
-				query = string.remove(query, start_index, end_index)
+			if var_2_5 ~= nil then
+				arg_2_2[var_2_1] = var_2_5
+				arg_2_0 = string.remove(arg_2_0, var_2_3, var_2_6)
 			end
 		end
 	end
 
-	query = string.trim(string.gsub(query, "%s+", " "))
+	arg_2_0 = string.trim(string.gsub(arg_2_0, "%s+", " "))
 
-	return query, results
+	return arg_2_0, arg_2_2
 end
 
-local find, lower = string.find, Utf8.lower
+local var_0_1 = string.find
+local var_0_2 = Utf8.lower
 
-SearchUtils.simple_search = function (needle, haystack)
-	return (find(lower(haystack), needle, 1, true))
+function SearchUtils.simple_search(arg_3_0, arg_3_1)
+	return (var_0_1(var_0_2(arg_3_1), arg_3_0, 1, true))
 end

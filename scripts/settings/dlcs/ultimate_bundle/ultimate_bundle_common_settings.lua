@@ -1,11 +1,9 @@
-﻿-- chunkname: @scripts/settings/dlcs/ultimate_bundle/ultimate_bundle_common_settings.lua
+-- chunkname: @scripts/settings/dlcs/ultimate_bundle/ultimate_bundle_common_settings.lua
 
-local settings = DLCSettings.ultimate_bundle
-
-settings.unlock_settings = {
+DLCSettings.ultimate_bundle.unlock_settings = {
 	ultimate_bundle = {
-		class = "UnlockDlcBundle",
 		id = "47329",
+		class = "UnlockDlcBundle",
 		requires_restart = false,
 		bundle_contains = {
 			"lake",
@@ -22,7 +20,7 @@ settings.unlock_settings = {
 			"bogenhafen",
 			"holly",
 			"scorpion",
-			"grass",
-		},
-	},
+			"grass"
+		}
+	}
 }

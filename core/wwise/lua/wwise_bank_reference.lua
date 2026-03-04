@@ -1,33 +1,31 @@
-﻿-- chunkname: @core/wwise/lua/wwise_bank_reference.lua
+-- chunkname: @core/wwise/lua/wwise_bank_reference.lua
 
 WwiseBankReference = WwiseBankReference or {}
 
-local function lazy_init(self)
-	if not self.references then
-		self.references = {}
+local function var_0_0(arg_1_0)
+	if not arg_1_0.references then
+		arg_1_0.references = {}
 	end
 end
 
-WwiseBankReference.add = function (self, bank_resource_name)
-	lazy_init(self)
+function WwiseBankReference.add(arg_2_0, arg_2_1)
+	var_0_0(arg_2_0)
 
-	self.references[bank_resource_name] = (self.references[bank_resource_name] or 0) + 1
+	arg_2_0.references[arg_2_1] = (arg_2_0.references[arg_2_1] or 0) + 1
 end
 
-WwiseBankReference.remove = function (self, bank_resource_name)
-	lazy_init(self)
+function WwiseBankReference.remove(arg_3_0, arg_3_1)
+	var_0_0(arg_3_0)
 
-	local new_count = (self.references[bank_resource_name] or 0) - 1
-
-	if new_count <= 0 then
-		self.references[bank_resource_name] = nil
+	if (arg_3_0.references[arg_3_1] or 0) - 1 <= 0 then
+		arg_3_0.references[arg_3_1] = nil
 	end
 end
 
-WwiseBankReference.count = function (self, bank_resource_name)
-	lazy_init(self)
+function WwiseBankReference.count(arg_4_0, arg_4_1)
+	var_0_0(arg_4_0)
 
-	return self.references[bank_resource_name] or 0
+	return arg_4_0.references[arg_4_1] or 0
 end
 
 return WwiseBankReference

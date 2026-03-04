@@ -1,567 +1,560 @@
-﻿-- chunkname: @scripts/entity_system/systems/ai/nav_graph_system.lua
+-- chunkname: @scripts/entity_system/systems/ai/nav_graph_system.lua
 
 NavGraphSystem = class(NavGraphSystem, ExtensionSystemBase)
 
-local WANTED_LEDGELATOR_VERSION = "2017.MAY.05.05"
-local extensions = {
+local var_0_0 = "2017.MAY.05.05"
+local var_0_1 = {
 	"NavGraphConnectorExtension",
 	"LevelUnitSmartObjectExtension",
 	"DynamicUnitSmartObjectExtension",
-	"DarkPactClimbingExtension",
+	"DarkPactClimbingExtension"
 }
 
 script_data.nav_mesh_debug = script_data.nav_mesh_debug or Development.parameter("nav_mesh_debug")
 use_simple_jump_units = true
 
-NavGraphSystem.init = function (self, context, system_name)
-	local entity_manager = context.entity_manager
+function NavGraphSystem.init(arg_1_0, arg_1_1, arg_1_2)
+	local var_1_0 = arg_1_1.entity_manager
 
-	entity_manager:register_system(self, system_name, extensions)
+	var_1_0:register_system(arg_1_0, arg_1_2, var_0_1)
 
-	self.entity_manager = entity_manager
-	self.world = context.world
-	self._is_server = context.is_server
-	self.unit_extension_data = {}
-	self._use_level_jumps = Managers.state.game_mode:setting("use_level_jumps")
+	arg_1_0.entity_manager = var_1_0
+	arg_1_0.world = arg_1_1.world
+	arg_1_0._is_server = arg_1_1.is_server
+	arg_1_0.unit_extension_data = {}
+	arg_1_0._use_level_jumps = Managers.state.game_mode:setting("use_level_jumps")
 
-	if self._use_level_jumps then
-		self.level_jumps = {}
-		self._level_jumps_ready = false
-		self.jumps_broadphase_max_dist = 25
-		self.jumps_broadphase = Broadphase(self.jumps_broadphase_max_dist, 2048)
+	if arg_1_0._use_level_jumps then
+		arg_1_0.level_jumps = {}
+		arg_1_0._level_jumps_ready = false
+		arg_1_0.jumps_broadphase_max_dist = 25
+		arg_1_0.jumps_broadphase = Broadphase(arg_1_0.jumps_broadphase_max_dist, 2048)
 	end
 
-	local ai_system = Managers.state.entity:system("ai_system")
+	arg_1_0.nav_world = Managers.state.entity:system("ai_system"):nav_world()
 
-	self.nav_world = ai_system:nav_world()
-
-	local version
-	local level_settings = LevelHelper:current_level_settings(self.world)
-	local level_path = level_settings.level_name
+	local var_1_1
+	local var_1_2 = LevelHelper:current_level_settings(arg_1_0.world)
+	local var_1_3 = var_1_2.level_name
 
 	if LEVEL_EDITOR_TEST then
-		level_path = Application.get_data("LevelEditor", "level_resource_name")
+		var_1_3 = Application.get_data("LevelEditor", "level_resource_name")
 	end
 
-	local num_nested_levels = LevelResource.nested_level_count(level_path)
-
-	if num_nested_levels > 0 then
-		level_path = LevelResource.nested_level_resource_name(level_path, 0)
+	if LevelResource.nested_level_count(var_1_3) > 0 then
+		var_1_3 = LevelResource.nested_level_resource_name(var_1_3, 0)
 	end
 
-	if level_settings.no_nav_mesh then
-		self.ledgelator_version = WANTED_LEDGELATOR_VERSION
-		self.smart_objects = {}
-		self.no_nav_mesh = true
-	elseif level_path then
-		local smart_object_path = level_path .. "_smartobjects"
-		local ledge_path = level_path .. "_ledges"
+	if var_1_2.no_nav_mesh then
+		arg_1_0.ledgelator_version = var_0_0
+		arg_1_0.smart_objects = {}
+		arg_1_0.no_nav_mesh = true
+	elseif var_1_3 then
+		local var_1_4 = var_1_3 .. "_smartobjects"
+		local var_1_5 = var_1_3 .. "_ledges"
 
-		if Application.can_get("lua", smart_object_path) then
-			local smart_objects = require(smart_object_path)
+		if Application.can_get("lua", var_1_4) then
+			local var_1_6 = require(var_1_4)
 
-			self.smart_objects, self.smart_object_count, version = smart_objects.smart_objects, smart_objects.smart_object_count, smart_objects.version
-			self.ledgelator_version = smart_objects.ledgelator_version
+			arg_1_0.smart_objects, arg_1_0.smart_object_count = var_1_6.smart_objects, var_1_6.smart_object_count, var_1_6.version
+			arg_1_0.ledgelator_version = var_1_6.ledgelator_version
 
-			if self.smart_objects == nil then
-				self.smart_objects = smart_objects
+			if arg_1_0.smart_objects == nil then
+				arg_1_0.smart_objects = var_1_6
 			end
 
-			package.loaded[smart_object_path] = nil
+			package.loaded[var_1_4] = nil
 			package.load_order[#package.load_order] = nil
-		elseif Application.can_get("lua", ledge_path) then
-			self.smart_objects = require(ledge_path)
-			package.loaded[ledge_path] = nil
+		elseif Application.can_get("lua", var_1_5) then
+			arg_1_0.smart_objects = require(var_1_5)
+			package.loaded[var_1_5] = nil
 			package.load_order[#package.load_order] = nil
 		else
-			self.smart_objects = {}
+			arg_1_0.smart_objects = {}
 		end
 
-		printf("Nav graph ledgelator version: Found version=%s Wanted version=%s", tostring(self.ledgelator_version), WANTED_LEDGELATOR_VERSION)
+		printf("Nav graph ledgelator version: Found version=%s Wanted version=%s", tostring(arg_1_0.ledgelator_version), var_0_0)
 	end
 
-	self.fallback_smart_object_index = 0
-	self.smart_object_types = {}
-	self.smart_object_data = {}
-	self.smart_object_ids = {}
-	self.line_object = World.create_line_object(self.world)
-	self.initialized_unit_nav_graphs = {}
-	self.dynamic_smart_object_index = 1
+	arg_1_0.fallback_smart_object_index = 0
+	arg_1_0.smart_object_types = {}
+	arg_1_0.smart_object_data = {}
+	arg_1_0.smart_object_ids = {}
+	arg_1_0.line_object = World.create_line_object(arg_1_0.world)
+	arg_1_0.initialized_unit_nav_graphs = {}
+	arg_1_0.dynamic_smart_object_index = 1
 
-	Managers.state.event:register(self, "level_start_local_player_spawned", "_event_local_player_spawned")
+	Managers.state.event:register(arg_1_0, "level_start_local_player_spawned", "_event_local_player_spawned")
 end
 
-NavGraphSystem.destroy = function (self)
-	World.destroy_line_object(self.world, self.line_object)
+function NavGraphSystem.destroy(arg_2_0)
+	World.destroy_line_object(arg_2_0.world, arg_2_0.line_object)
 
-	self.line_object = nil
-	self.initialized_unit_nav_graphs = nil
+	arg_2_0.line_object = nil
+	arg_2_0.initialized_unit_nav_graphs = nil
 
-	local event_manager = Managers.state.event
+	local var_2_0 = Managers.state.event
 
-	if event_manager then
-		event_manager:unregister("level_start_local_player_spawned", self)
+	if var_2_0 then
+		var_2_0:unregister("level_start_local_player_spawned", arg_2_0)
 	end
 end
 
-local control_points = {}
-local BROADPHASE_RESULTS = {}
+local var_0_2 = {}
+local var_0_3 = {}
 
-NavGraphSystem.init_nav_graphs = function (self, unit, smart_object_id, extension)
-	local nav_world = self.nav_world
-	local smart_objects = self.smart_objects
-	local debug_color = Colors.get("orange")
-	local smart_object_unit_data = smart_objects[smart_object_id]
-	local use_for_versus = Unit.get_data(unit, "ledge_enabled_vs")
-	local count = 0
-	local num_smart_objects_in_unit = #smart_object_unit_data
+function NavGraphSystem.init_nav_graphs(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	local var_3_0 = arg_3_0.nav_world
+	local var_3_1 = arg_3_0.smart_objects
+	local var_3_2 = Colors.get("orange")
+	local var_3_3 = var_3_1[arg_3_2]
+	local var_3_4 = Unit.get_data(arg_3_1, "ledge_enabled_vs")
+	local var_3_5 = 0
+	local var_3_6 = #var_3_3
 
-	for i = 1, num_smart_objects_in_unit do
-		local smart_object_data = smart_object_unit_data[i]
-		local smart_object_type = smart_object_data.smart_object_type or "ledges"
-		local layer_id = LAYER_ID_MAPPING[smart_object_type]
+	for iter_3_0 = 1, var_3_6 do
+		local var_3_7 = var_3_3[iter_3_0]
+		local var_3_8 = var_3_7.smart_object_type or "ledges"
+		local var_3_9 = LAYER_ID_MAPPING[var_3_8]
 
-		control_points[1] = Vector3Aux.unbox(smart_object_data.pos1)
-		control_points[2] = Vector3Aux.unbox(smart_object_data.pos2)
+		var_0_2[1] = Vector3Aux.unbox(var_3_7.pos1)
+		var_0_2[2] = Vector3Aux.unbox(var_3_7.pos2)
 
-		local is_bidirectional = true
+		local var_3_10 = true
 
-		if smart_object_unit_data.is_one_way or smart_object_type ~= "teleporters" and math.abs(control_points[1].z - control_points[2].z) > SmartObjectSettings.jump_up_max_height then
-			is_bidirectional = false
+		if var_3_3.is_one_way or var_3_8 ~= "teleporters" and math.abs(var_0_2[1].z - var_0_2[2].z) > SmartObjectSettings.jump_up_max_height then
+			var_3_10 = false
 		end
 
-		smart_object_data.data.is_bidirectional = is_bidirectional
+		var_3_7.data.is_bidirectional = var_3_10
 
-		local smart_object_index = smart_object_data.smart_object_index
+		local var_3_11 = var_3_7.smart_object_index
 
-		self.smart_object_types[smart_object_index] = smart_object_type
-		self.smart_object_data[smart_object_index] = smart_object_data.data
+		arg_3_0.smart_object_types[var_3_11] = var_3_8
+		arg_3_0.smart_object_data[var_3_11] = var_3_7.data
 
-		local navgraph = GwNavGraph.create(nav_world, is_bidirectional, control_points, debug_color, layer_id, smart_object_index)
+		local var_3_12 = GwNavGraph.create(var_3_0, var_3_10, var_0_2, var_3_2, var_3_9, var_3_11)
 
-		if not use_for_versus and not script_data.disable_crowd_dispersion then
-			GwNavWorld.register_all_navgraphedges_for_crowd_dispersion(nav_world, navgraph, 1, 100)
+		if not var_3_4 and not script_data.disable_crowd_dispersion then
+			GwNavWorld.register_all_navgraphedges_for_crowd_dispersion(var_3_0, var_3_12, 1, 100)
 		end
 
-		GwNavGraph.add_to_database(navgraph)
+		GwNavGraph.add_to_database(var_3_12)
 
-		extension.navgraphs[#extension.navgraphs + 1] = navgraph
+		arg_3_3.navgraphs[#arg_3_3.navgraphs + 1] = var_3_12
 	end
 
-	if self._use_level_jumps and use_for_versus then
-		local first_unit_data = smart_object_unit_data[1]
+	if arg_3_0._use_level_jumps and var_3_4 then
+		local var_3_13 = var_3_3[1]
 
-		self:spawn_versus_jump_unit(unit, first_unit_data)
+		arg_3_0:spawn_versus_jump_unit(arg_3_1, var_3_13)
 
-		local smart_object_type = first_unit_data.smart_object_type or "ledges"
+		local var_3_14 = var_3_13.smart_object_type or "ledges"
 
-		if first_unit_data.data.is_bidirectional and (smart_object_type == "jumps" or smart_object_type == "ledges_with_fence") and not first_unit_data.data.is_on_small_fence then
-			self:spawn_versus_jump_unit(unit, first_unit_data, true)
+		if var_3_13.data.is_bidirectional and (var_3_14 == "jumps" or var_3_14 == "ledges_with_fence") and not var_3_13.data.is_on_small_fence then
+			arg_3_0:spawn_versus_jump_unit(arg_3_1, var_3_13, true)
 		end
 	end
 
-	self.initialized_unit_nav_graphs[unit] = true
+	arg_3_0.initialized_unit_nav_graphs[arg_3_1] = true
 end
 
-local jump_unit_offset_z = 1.1
+local var_0_4 = 1.1
 
-NavGraphSystem.spawn_versus_jump_unit = function (self, ledge_unit, jump_object_data, swap)
-	local ledge_position = jump_object_data.data.ledge_position
+function NavGraphSystem.spawn_versus_jump_unit(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	local var_4_0 = arg_4_2.data.ledge_position
 
-	ledge_position = ledge_position and Vector3Aux.unbox(ledge_position)
+	var_4_0 = var_4_0 and Vector3Aux.unbox(var_4_0)
 
-	local position1 = Vector3Aux.unbox(jump_object_data.pos1) + Vector3(0, 0, jump_unit_offset_z)
-	local position2 = Vector3Aux.unbox(jump_object_data.pos2) + Vector3(0, 0, jump_unit_offset_z)
-	local unit_jump_data = {
-		jump_object_data = jump_object_data,
+	local var_4_1 = Vector3Aux.unbox(arg_4_2.pos1) + Vector3(0, 0, var_0_4)
+	local var_4_2 = Vector3Aux.unbox(arg_4_2.pos2) + Vector3(0, 0, var_0_4)
+	local var_4_3 = {
+		jump_object_data = arg_4_2
 	}
-	local center_position
+	local var_4_4
 
-	if ledge_position then
-		center_position = ledge_position
+	if var_4_0 then
+		var_4_4 = var_4_0
 	else
-		center_position = (position1 + position2) / 2
+		var_4_4 = (var_4_1 + var_4_2) / 2
 	end
 
-	local direction, spawn_position
+	local var_4_5
+	local var_4_6
 
-	if swap then
-		direction = Vector3.normalize(center_position - position1)
-		spawn_position = position1
-		unit_jump_data.swap_entrance_exit = true
+	if arg_4_3 then
+		var_4_5 = Vector3.normalize(var_4_4 - var_4_1)
+		var_4_6 = var_4_1
+		var_4_3.swap_entrance_exit = true
 	else
-		direction = Vector3.normalize(center_position - position2)
-		spawn_position = position2
+		var_4_5 = Vector3.normalize(var_4_4 - var_4_2)
+		var_4_6 = var_4_2
 	end
 
-	local right = Vector3.normalize(Vector3.cross(direction, Vector3.up()))
-	local up = Vector3.normalize(Vector3.cross(right, direction))
-	local rotation = Quaternion.look(direction, up)
-	local extension_init_data = {
+	local var_4_7 = Vector3.normalize(Vector3.cross(var_4_5, Vector3.up()))
+	local var_4_8 = Vector3.normalize(Vector3.cross(var_4_7, var_4_5))
+	local var_4_9 = Quaternion.look(var_4_5, var_4_8)
+	local var_4_10 = {
 		nav_graph_system = {
-			smart_object_index = jump_object_data.smart_object_index,
-			swap = swap,
-		},
+			smart_object_index = arg_4_2.smart_object_index,
+			swap = arg_4_3
+		}
 	}
-	local jump_unit = Managers.state.unit_spawner:spawn_local_unit_with_extensions("units/test_unit/jump_marker_ground_pactsworn", "versus_dark_pact_climbing_interaction_unit", extension_init_data, spawn_position, rotation)
-	local node_id = Unit.node(jump_unit, "c_interaction")
+	local var_4_11 = Managers.state.unit_spawner:spawn_local_unit_with_extensions("units/test_unit/jump_marker_ground_pactsworn", "versus_dark_pact_climbing_interaction_unit", var_4_10, var_4_6, var_4_9)
+	local var_4_12 = Unit.node(var_4_11, "c_interaction")
 
-	Unit.set_local_scale(jump_unit, node_id, Vector3(1, 2, 1))
+	Unit.set_local_scale(var_4_11, var_4_12, Vector3(1, 2, 1))
 
-	self.level_jumps[jump_unit] = unit_jump_data
+	arg_4_0.level_jumps[var_4_11] = var_4_3
 
-	local allow_boss_traversal = Unit.get_data(ledge_unit, "allow_boss_traversal")
+	local var_4_13 = Unit.get_data(arg_4_1, "allow_boss_traversal")
 
-	Unit.set_data(jump_unit, "allow_boss_traversal", allow_boss_traversal)
+	Unit.set_data(var_4_11, "allow_boss_traversal", var_4_13)
 end
 
-NavGraphSystem.level_jump_units = function (self)
-	return self._level_jumps_ready and self.level_jumps
+function NavGraphSystem.level_jump_units(arg_5_0)
+	return arg_5_0._level_jumps_ready and arg_5_0.level_jumps
 end
 
-NavGraphSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
-	local extension = {
-		navgraphs = {},
+function NavGraphSystem.on_add_extension(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	local var_6_0 = {
+		navgraphs = {}
 	}
-	local input = {}
+	local var_6_1 = {}
 
-	ScriptUnit.set_extension(unit, "nav_graph_system", extension, input)
+	ScriptUnit.set_extension(arg_6_2, "nav_graph_system", var_6_0, var_6_1)
 
-	self.unit_extension_data[unit] = extension
+	arg_6_0.unit_extension_data[arg_6_2] = var_6_0
 
-	if extension_name == "NavGraphConnectorExtension" then
-		local smart_object_id = Unit.get_data(unit, "smart_object_id") or Unit.get_data(unit, "ledge_id")
+	if arg_6_3 == "NavGraphConnectorExtension" then
+		local var_6_2 = Unit.get_data(arg_6_2, "smart_object_id") or Unit.get_data(arg_6_2, "ledge_id")
 
-		if smart_object_id and self.smart_objects[smart_object_id] and not self.no_nav_mesh and (not Unit.has_data(unit, "enabled_on_spawn") or Unit.get_data(unit, "enabled_on_spawn") == true) then
-			self:init_nav_graphs(unit, smart_object_id, extension)
+		if var_6_2 and arg_6_0.smart_objects[var_6_2] and not arg_6_0.no_nav_mesh and (not Unit.has_data(arg_6_2, "enabled_on_spawn") or Unit.get_data(arg_6_2, "enabled_on_spawn") == true) then
+			arg_6_0:init_nav_graphs(arg_6_2, var_6_2, var_6_0)
 		end
 	end
 
-	if extension_name == "LevelUnitSmartObjectExtension" then
-		local smart_object_id = self:_level_unit_smart_object_id(unit)
-		local smart_object = self:smart_object_from_unit_data(unit, smart_object_id)
+	if arg_6_3 == "LevelUnitSmartObjectExtension" then
+		local var_6_3 = arg_6_0:_level_unit_smart_object_id(arg_6_2)
+		local var_6_4 = arg_6_0:smart_object_from_unit_data(arg_6_2, var_6_3)
 
-		self.smart_objects[smart_object_id] = smart_object
-		self.smart_object_ids[unit] = smart_object_id
+		arg_6_0.smart_objects[var_6_3] = var_6_4
+		arg_6_0.smart_object_ids[arg_6_2] = var_6_3
 
-		if not self.no_nav_mesh then
-			self:init_nav_graphs(unit, smart_object_id, extension)
+		if not arg_6_0.no_nav_mesh then
+			arg_6_0:init_nav_graphs(arg_6_2, var_6_3, var_6_0)
 		end
 	end
 
-	if extension_name == "DynamicUnitSmartObjectExtension" then
-		local smart_object_id = self:_dynamic_unit_smart_object_id(unit)
-		local smart_object = self:smart_object_from_unit_data(unit, smart_object_id)
+	if arg_6_3 == "DynamicUnitSmartObjectExtension" then
+		local var_6_5 = arg_6_0:_dynamic_unit_smart_object_id(arg_6_2)
+		local var_6_6 = arg_6_0:smart_object_from_unit_data(arg_6_2, var_6_5)
 
-		self.smart_objects[smart_object_id] = smart_object
-		self.smart_object_ids[unit] = smart_object_id
+		arg_6_0.smart_objects[var_6_5] = var_6_6
+		arg_6_0.smart_object_ids[arg_6_2] = var_6_5
 
-		if not self.no_nav_mesh then
-			local function safe_navigation_callback()
-				self:init_nav_graphs(unit, smart_object_id, extension)
+		if not arg_6_0.no_nav_mesh then
+			local function var_6_7()
+				arg_6_0:init_nav_graphs(arg_6_2, var_6_5, var_6_0)
 			end
 
-			local ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
-
-			ai_navigation_system:add_safe_navigation_callback(safe_navigation_callback)
+			Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(var_6_7)
 		end
 	end
 
-	if extension_name == "DarkPactClimbingExtension" then
-		local smart_object_index = extension_init_data.smart_object_index
-		local swap = extension_init_data.swap
+	if arg_6_3 == "DarkPactClimbingExtension" then
+		local var_6_8 = arg_6_4.smart_object_index
 
-		extension.smart_object_index = smart_object_index
-		extension.swap = swap
+		var_6_0.swap, var_6_0.smart_object_index = arg_6_4.swap, var_6_8
 	end
 
-	return extension
+	return var_6_0
 end
 
-NavGraphSystem.on_remove_extension = function (self, unit, extension_name)
-	NavGraphSystem.super.on_remove_extension(self, unit, extension_name)
+function NavGraphSystem.on_remove_extension(arg_8_0, arg_8_1, arg_8_2)
+	NavGraphSystem.super.on_remove_extension(arg_8_0, arg_8_1, arg_8_2)
 
-	if extension_name == "DynamicUnitSmartObjectExtension" then
-		local id = self.smart_object_ids[unit]
+	if arg_8_2 == "DynamicUnitSmartObjectExtension" then
+		local var_8_0 = arg_8_0.smart_object_ids[arg_8_1]
 
-		self.smart_objects[id] = nil
-		self.smart_object_ids[unit] = nil
+		arg_8_0.smart_objects[var_8_0] = nil
+		arg_8_0.smart_object_ids[arg_8_1] = nil
 
-		self:remove_nav_graph(unit)
+		arg_8_0:remove_nav_graph(arg_8_1)
 	end
 end
 
-NavGraphSystem.extensions_ready = function (self, world, unit, extension_name)
-	if extension_name == "DarkPactClimbingExtension" then
-		self._level_jumps_ready = true
+function NavGraphSystem.extensions_ready(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	if arg_9_3 == "DarkPactClimbingExtension" then
+		arg_9_0._level_jumps_ready = true
 	end
 end
 
-NavGraphSystem._level_unit_smart_object_id = function (self, unit)
-	local level = LevelHelper:current_level(self.world)
-	local unit_level_id = Level.unit_index(level, unit)
-	local smart_object_id = 10000 + unit_level_id
+function NavGraphSystem._level_unit_smart_object_id(arg_10_0, arg_10_1)
+	local var_10_0 = LevelHelper:current_level(arg_10_0.world)
+	local var_10_1 = 10000 + Level.unit_index(var_10_0, arg_10_1)
 
-	fassert(not self.smart_objects[smart_object_id], "Smart Object with id %s already registered!", smart_object_id)
+	fassert(not arg_10_0.smart_objects[var_10_1], "Smart Object with id %s already registered!", var_10_1)
 
-	return smart_object_id
+	return var_10_1
 end
 
-NavGraphSystem._dynamic_unit_smart_object_id = function (self, unit)
-	local smart_object_id = 1000000 + self.dynamic_smart_object_index
+function NavGraphSystem._dynamic_unit_smart_object_id(arg_11_0, arg_11_1)
+	local var_11_0 = 1000000 + arg_11_0.dynamic_smart_object_index
 
-	fassert(not self.smart_objects[smart_object_id], "Smart Object with id %s already registered!", smart_object_id)
+	fassert(not arg_11_0.smart_objects[var_11_0], "Smart Object with id %s already registered!", var_11_0)
 
-	self.dynamic_smart_object_index = self.dynamic_smart_object_index + 1
+	arg_11_0.dynamic_smart_object_index = arg_11_0.dynamic_smart_object_index + 1
 
-	return smart_object_id
+	return var_11_0
 end
 
-NavGraphSystem.queue_add_nav_graph_from_flow = function (self, unit)
-	local extension = self.unit_extension_data[unit]
+function NavGraphSystem.queue_add_nav_graph_from_flow(arg_12_0, arg_12_1)
+	local var_12_0 = arg_12_0.unit_extension_data[arg_12_1]
 
-	fassert(extension, "Tried to add nav graph from flow for a unit without nav graph extension. %s", unit)
+	fassert(var_12_0, "Tried to add nav graph from flow for a unit without nav graph extension. %s", arg_12_1)
 
-	self.nav_graphs_units_to_add = self.nav_graphs_units_to_add or {}
-	self.nav_graphs_units_to_add[#self.nav_graphs_units_to_add + 1] = unit
+	arg_12_0.nav_graphs_units_to_add = arg_12_0.nav_graphs_units_to_add or {}
+	arg_12_0.nav_graphs_units_to_add[#arg_12_0.nav_graphs_units_to_add + 1] = arg_12_1
 end
 
-NavGraphSystem.queue_remove_nav_graph_from_flow = function (self, unit)
-	local extension = self.unit_extension_data[unit]
+function NavGraphSystem.queue_remove_nav_graph_from_flow(arg_13_0, arg_13_1)
+	local var_13_0 = arg_13_0.unit_extension_data[arg_13_1]
 
-	fassert(extension, "Tried to remove nav graph from flow for a unit without nav graph extension. %s", unit)
+	fassert(var_13_0, "Tried to remove nav graph from flow for a unit without nav graph extension. %s", arg_13_1)
 
-	self.nav_graphs_units_to_remove = self.nav_graphs_units_to_remove or {}
-	self.nav_graphs_units_to_remove[#self.nav_graphs_units_to_remove + 1] = unit
+	arg_13_0.nav_graphs_units_to_remove = arg_13_0.nav_graphs_units_to_remove or {}
+	arg_13_0.nav_graphs_units_to_remove[#arg_13_0.nav_graphs_units_to_remove + 1] = arg_13_1
 end
 
-NavGraphSystem.add_nav_graph = function (self, unit)
-	local extension = self.unit_extension_data[unit]
+function NavGraphSystem.add_nav_graph(arg_14_0, arg_14_1)
+	local var_14_0 = arg_14_0.unit_extension_data[arg_14_1]
 
-	fassert(extension, "Tried to add nav graph from flow for a unit without nav graph extension. %s", unit)
+	fassert(var_14_0, "Tried to add nav graph from flow for a unit without nav graph extension. %s", arg_14_1)
 
-	if extension.nav_graph_removed then
-		local navgraphs = extension.navgraphs
+	if var_14_0.nav_graph_removed then
+		local var_14_1 = var_14_0.navgraphs
 
-		for i = 1, #navgraphs do
-			local navgraph = navgraphs[i]
+		for iter_14_0 = 1, #var_14_1 do
+			local var_14_2 = var_14_1[iter_14_0]
 
-			GwNavGraph.add_to_database(navgraph)
-			printf("[NavGraphSystem] Adding navgraph(s) for [%q]", tostring(unit))
+			GwNavGraph.add_to_database(var_14_2)
+			printf("[NavGraphSystem] Adding navgraph(s) for [%q]", tostring(arg_14_1))
 		end
 
-		extension.nav_graph_removed = false
+		var_14_0.nav_graph_removed = false
 	end
 end
 
-NavGraphSystem.remove_nav_graph = function (self, unit)
-	local extension = self.unit_extension_data[unit]
+function NavGraphSystem.remove_nav_graph(arg_15_0, arg_15_1)
+	local var_15_0 = arg_15_0.unit_extension_data[arg_15_1]
 
-	fassert(extension, "Tried to remove nav graph from flow for a unit without nav graph extension. %s", unit)
+	fassert(var_15_0, "Tried to remove nav graph from flow for a unit without nav graph extension. %s", arg_15_1)
 
-	if not extension.nav_graph_removed then
-		local navgraphs = extension.navgraphs
+	if not var_15_0.nav_graph_removed then
+		local var_15_1 = var_15_0.navgraphs
 
-		for i = 1, #navgraphs do
-			local navgraph = navgraphs[i]
+		for iter_15_0 = 1, #var_15_1 do
+			local var_15_2 = var_15_1[iter_15_0]
 
-			GwNavGraph.remove_from_database(navgraph)
-			printf("[NavGraphSystem] Removing navgraph(s) for [%q]", tostring(unit))
+			GwNavGraph.remove_from_database(var_15_2)
+			printf("[NavGraphSystem] Removing navgraph(s) for [%q]", tostring(arg_15_1))
 		end
 
-		extension.nav_graph_removed = true
+		var_15_0.nav_graph_removed = true
 	end
 end
 
-NavGraphSystem.init_nav_graph_from_flow = function (self, unit)
-	local extension = self.unit_extension_data[unit]
+function NavGraphSystem.init_nav_graph_from_flow(arg_16_0, arg_16_1)
+	local var_16_0 = arg_16_0.unit_extension_data[arg_16_1]
 
-	fassert(extension, "Tried to init nav graph from flow for a unit without nav graph extension. %s", unit)
+	fassert(var_16_0, "Tried to init nav graph from flow for a unit without nav graph extension. %s", arg_16_1)
 
-	local valid_script_data = Unit.has_data(unit, "enabled_on_spawn") and Unit.get_data(unit, "enabled_on_spawn") == false
+	local var_16_1 = Unit.has_data(arg_16_1, "enabled_on_spawn") and Unit.get_data(arg_16_1, "enabled_on_spawn") == false
 
-	fassert(valid_script_data, "Tried to init nav graph from flow for a unit without script data \"enabled_on_spawn\" set to false. %s", unit)
-	fassert(not self.initialized_unit_nav_graphs[unit], "Tried to init nav graph from flow for a unit but the nav graph has already been initialized. %s", unit)
+	fassert(var_16_1, "Tried to init nav graph from flow for a unit without script data \"enabled_on_spawn\" set to false. %s", arg_16_1)
+	fassert(not arg_16_0.initialized_unit_nav_graphs[arg_16_1], "Tried to init nav graph from flow for a unit but the nav graph has already been initialized. %s", arg_16_1)
 
-	local smart_object_id = Unit.get_data(unit, "smart_object_id") or Unit.get_data(unit, "ledge_id")
+	local var_16_2 = Unit.get_data(arg_16_1, "smart_object_id") or Unit.get_data(arg_16_1, "ledge_id")
 
-	if smart_object_id and self.smart_objects[smart_object_id] and not self.no_nav_mesh then
-		self:init_nav_graphs(unit, smart_object_id, extension)
+	if var_16_2 and arg_16_0.smart_objects[var_16_2] and not arg_16_0.no_nav_mesh then
+		arg_16_0:init_nav_graphs(arg_16_1, var_16_2, var_16_0)
 	end
 end
 
-NavGraphSystem.smart_object_from_unit_data = function (self, unit, smart_object_id)
-	local smart_object = {}
-	local i = 0
+function NavGraphSystem.smart_object_from_unit_data(arg_17_0, arg_17_1, arg_17_2)
+	local var_17_0 = {}
+	local var_17_1 = 0
 
-	while Unit.has_data(unit, "smart_objects", i) do
-		local entrance_position, exit_position
-		local smart_object_type = Unit.get_data(unit, "smart_objects", i, "type")
-		local is_one_way = Unit.get_data(unit, "smart_objects", i, "is_one_way")
+	while Unit.has_data(arg_17_1, "smart_objects", var_17_1) do
+		local var_17_2
+		local var_17_3
+		local var_17_4 = Unit.get_data(arg_17_1, "smart_objects", var_17_1, "type")
+		local var_17_5 = Unit.get_data(arg_17_1, "smart_objects", var_17_1, "is_one_way")
 
-		if Unit.has_data(unit, "smart_objects", i, "entrance_node") then
-			local entrance_node = Unit.get_data(unit, "smart_objects", i, "entrance_node")
-			local exit_node = Unit.get_data(unit, "smart_objects", i, "exit_node")
-			local nav_world = self.nav_world
-			local above = 0.5
-			local below = 0.5
-			local horizontal = 0.5
-			local distance_from_border = 0.1
-			local entrance_node_index = Unit.node(unit, entrance_node)
+		if Unit.has_data(arg_17_1, "smart_objects", var_17_1, "entrance_node") then
+			local var_17_6 = Unit.get_data(arg_17_1, "smart_objects", var_17_1, "entrance_node")
+			local var_17_7 = Unit.get_data(arg_17_1, "smart_objects", var_17_1, "exit_node")
+			local var_17_8 = arg_17_0.nav_world
+			local var_17_9 = 0.5
+			local var_17_10 = 0.5
+			local var_17_11 = 0.5
+			local var_17_12 = 0.1
+			local var_17_13 = Unit.node(arg_17_1, var_17_6)
 
-			entrance_position = Unit.world_position(unit, entrance_node_index)
+			var_17_2 = Unit.world_position(arg_17_1, var_17_13)
 
-			local success, z = GwNavQueries.triangle_from_position(nav_world, entrance_position, above, below)
+			local var_17_14, var_17_15 = GwNavQueries.triangle_from_position(var_17_8, var_17_2, var_17_9, var_17_10)
 
-			if success then
-				entrance_position.z = z
+			if var_17_14 then
+				var_17_2.z = var_17_15
 			else
-				local nav_mesh_entrance_position = GwNavQueries.inside_position_from_outside_position(nav_world, entrance_position, above, below, horizontal, distance_from_border)
+				local var_17_16 = GwNavQueries.inside_position_from_outside_position(var_17_8, var_17_2, var_17_9, var_17_10, var_17_11, var_17_12)
 
-				fassert(nav_mesh_entrance_position, "[NavGraphSystem] While creating smart object of type %q could not find nav mesh for entrance position at %s.", smart_object_type, entrance_position)
+				fassert(var_17_16, "[NavGraphSystem] While creating smart object of type %q could not find nav mesh for entrance position at %s.", var_17_4, var_17_2)
 
-				entrance_position = nav_mesh_entrance_position
+				var_17_2 = var_17_16
 			end
 
-			local exit_node_index = Unit.node(unit, exit_node)
+			local var_17_17 = Unit.node(arg_17_1, var_17_7)
 
-			exit_position = Unit.world_position(unit, exit_node_index)
+			var_17_3 = Unit.world_position(arg_17_1, var_17_17)
 
-			local success, z = GwNavQueries.triangle_from_position(nav_world, exit_position, above, below)
+			local var_17_18, var_17_19 = GwNavQueries.triangle_from_position(var_17_8, var_17_3, var_17_9, var_17_10)
 
-			if success then
-				exit_position.z = z
+			if var_17_18 then
+				var_17_3.z = var_17_19
 			else
-				local nav_mesh_exit_position = GwNavQueries.inside_position_from_outside_position(nav_world, exit_position, above, below, horizontal, distance_from_border)
+				local var_17_20 = GwNavQueries.inside_position_from_outside_position(var_17_8, var_17_3, var_17_9, var_17_10, var_17_11, var_17_12)
 
-				fassert(nav_mesh_exit_position, "[NavGraphSystem] While creating smart object of type %q could not find nav mesh for exit position at %s.", smart_object_type, exit_position)
+				fassert(var_17_20, "[NavGraphSystem] While creating smart object of type %q could not find nav mesh for exit position at %s.", var_17_4, var_17_3)
 
-				exit_position = nav_mesh_exit_position
+				var_17_3 = var_17_20
 			end
 		else
-			local node = Unit.get_data(unit, "smart_objects", i, "node")
-			local entrance_offset_x = Unit.get_data(unit, "smart_objects", i, "entrance", "offset_x")
-			local entrance_offset_y = Unit.get_data(unit, "smart_objects", i, "entrance", "offset_y")
-			local entrance_offset_z = Unit.get_data(unit, "smart_objects", i, "entrance", "offset_z")
-			local exit_offset_x = Unit.get_data(unit, "smart_objects", i, "exit", "offset_x")
-			local exit_offset_y = Unit.get_data(unit, "smart_objects", i, "exit", "offset_y")
-			local exit_offset_z = Unit.get_data(unit, "smart_objects", i, "exit", "offset_z")
-			local node_index = Unit.node(unit, node)
-			local position = Unit.world_position(unit, node_index)
-			local rotation = Unit.world_rotation(unit, node_index)
-			local right = Quaternion.right(rotation)
-			local forward = Quaternion.forward(rotation)
-			local up = Quaternion.up(rotation)
+			local var_17_21 = Unit.get_data(arg_17_1, "smart_objects", var_17_1, "node")
+			local var_17_22 = Unit.get_data(arg_17_1, "smart_objects", var_17_1, "entrance", "offset_x")
+			local var_17_23 = Unit.get_data(arg_17_1, "smart_objects", var_17_1, "entrance", "offset_y")
+			local var_17_24 = Unit.get_data(arg_17_1, "smart_objects", var_17_1, "entrance", "offset_z")
+			local var_17_25 = Unit.get_data(arg_17_1, "smart_objects", var_17_1, "exit", "offset_x")
+			local var_17_26 = Unit.get_data(arg_17_1, "smart_objects", var_17_1, "exit", "offset_y")
+			local var_17_27 = Unit.get_data(arg_17_1, "smart_objects", var_17_1, "exit", "offset_z")
+			local var_17_28 = Unit.node(arg_17_1, var_17_21)
+			local var_17_29 = Unit.world_position(arg_17_1, var_17_28)
+			local var_17_30 = Unit.world_rotation(arg_17_1, var_17_28)
+			local var_17_31 = Quaternion.right(var_17_30)
+			local var_17_32 = Quaternion.forward(var_17_30)
+			local var_17_33 = Quaternion.up(var_17_30)
 
-			entrance_position = position + right * entrance_offset_x + forward * entrance_offset_y + up * entrance_offset_z
-			exit_position = position + right * exit_offset_x + forward * exit_offset_y + up * exit_offset_z
+			var_17_2 = var_17_29 + var_17_31 * var_17_22 + var_17_32 * var_17_23 + var_17_33 * var_17_24
+			var_17_3 = var_17_29 + var_17_31 * var_17_25 + var_17_32 * var_17_26 + var_17_33 * var_17_27
 		end
 
-		i = i + 1
-		smart_object[i] = {
+		var_17_1 = var_17_1 + 1
+		var_17_0[var_17_1] = {
 			data = {
-				unit = unit,
+				unit = arg_17_1
 			},
-			smart_object_type = smart_object_type,
-			smart_object_index = smart_object_id,
-			pos1 = Vector3Aux.box(nil, entrance_position),
-			pos2 = Vector3Aux.box(nil, exit_position),
-			is_one_way = is_one_way,
+			smart_object_type = var_17_4,
+			smart_object_index = arg_17_2,
+			pos1 = Vector3Aux.box(nil, var_17_2),
+			pos2 = Vector3Aux.box(nil, var_17_3),
+			is_one_way = var_17_5
 		}
 	end
 
-	return smart_object
+	return var_17_0
 end
 
-NavGraphSystem.on_remove_extension = function (self, unit, extension_name)
-	ScriptUnit.remove_extension(unit, self.NAME)
+function NavGraphSystem.on_remove_extension(arg_18_0, arg_18_1, arg_18_2)
+	ScriptUnit.remove_extension(arg_18_1, arg_18_0.NAME)
 
-	local extension = self.unit_extension_data[unit]
+	local var_18_0 = arg_18_0.unit_extension_data[arg_18_1]
 
-	for i = 1, #extension.navgraphs do
-		local navgraph = extension.navgraphs[i]
+	for iter_18_0 = 1, #var_18_0.navgraphs do
+		local var_18_1 = var_18_0.navgraphs[iter_18_0]
 
-		GwNavGraph.destroy(navgraph)
+		GwNavGraph.destroy(var_18_1)
 	end
 
-	self.unit_extension_data[unit] = nil
+	arg_18_0.unit_extension_data[arg_18_1] = nil
 end
 
-NavGraphSystem.update = function (self, context, t, dt)
-	if self.nav_graphs_units_to_add then
-		for i = 1, #self.nav_graphs_units_to_add do
-			local nav_graphs_unit_to_add = self.nav_graphs_units_to_add[i]
+function NavGraphSystem.update(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+	if arg_19_0.nav_graphs_units_to_add then
+		for iter_19_0 = 1, #arg_19_0.nav_graphs_units_to_add do
+			local var_19_0 = arg_19_0.nav_graphs_units_to_add[iter_19_0]
 
-			self:add_nav_graph(nav_graphs_unit_to_add)
+			arg_19_0:add_nav_graph(var_19_0)
 		end
 
-		self.nav_graphs_units_to_add = nil
-	elseif self.nav_graphs_units_to_remove then
-		for i = 1, #self.nav_graphs_units_to_remove do
-			local nav_graphs_unit_to_remove = self.nav_graphs_units_to_remove[i]
+		arg_19_0.nav_graphs_units_to_add = nil
+	elseif arg_19_0.nav_graphs_units_to_remove then
+		for iter_19_1 = 1, #arg_19_0.nav_graphs_units_to_remove do
+			local var_19_1 = arg_19_0.nav_graphs_units_to_remove[iter_19_1]
 
-			self:remove_nav_graph(nav_graphs_unit_to_remove)
+			arg_19_0:remove_nav_graph(var_19_1)
 		end
 
-		self.nav_graphs_units_to_remove = nil
+		arg_19_0.nav_graphs_units_to_remove = nil
 	end
 end
 
-NavGraphSystem.hot_join_sync = function (self, sender)
+function NavGraphSystem.hot_join_sync(arg_20_0, arg_20_1)
 	return
 end
 
-NavGraphSystem.get_smart_object_type = function (self, smart_object_id)
-	return self.smart_object_types[smart_object_id]
+function NavGraphSystem.get_smart_object_type(arg_21_0, arg_21_1)
+	return arg_21_0.smart_object_types[arg_21_1]
 end
 
-NavGraphSystem.get_smart_object_data = function (self, smart_object_id)
-	return self.smart_object_data[smart_object_id]
+function NavGraphSystem.get_smart_object_data(arg_22_0, arg_22_1)
+	return arg_22_0.smart_object_data[arg_22_1]
 end
 
-NavGraphSystem.get_smart_objects = function (self, smart_object_id)
-	return self.smart_objects[smart_object_id]
+function NavGraphSystem.get_smart_objects(arg_23_0, arg_23_1)
+	return arg_23_0.smart_objects[arg_23_1]
 end
 
-NavGraphSystem.get_smart_object_id = function (self, unit)
-	return self.smart_object_ids[unit]
+function NavGraphSystem.get_smart_object_id(arg_24_0, arg_24_1)
+	return arg_24_0.smart_object_ids[arg_24_1]
 end
 
-NavGraphSystem.has_nav_graph = function (self, unit)
-	local nav_graph_extension = self.unit_extension_data[unit]
+function NavGraphSystem.has_nav_graph(arg_25_0, arg_25_1)
+	local var_25_0 = arg_25_0.unit_extension_data[arg_25_1]
 
-	if nav_graph_extension then
-		return true, not nav_graph_extension.nav_graph_removed
+	if var_25_0 then
+		return true, not var_25_0.nav_graph_removed
 	else
 		return false, false
 	end
 end
 
-local LevelJumpStates = table.enum("shown", "hidden", "partial")
+local var_0_5 = table.enum("shown", "hidden", "partial")
 
-NavGraphSystem._event_local_player_spawned = function (self, is_initial_spawn, player_unit, side, breed)
-	if not self._use_level_jumps or Managers.state.game_mode:setting("hide_level_jumps") then
+function NavGraphSystem._event_local_player_spawned(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+	if not arg_26_0._use_level_jumps or Managers.state.game_mode:setting("hide_level_jumps") then
 		return
 	end
 
-	if side:name() ~= "dark_pact" then
-		if self._level_jump_state ~= LevelJumpStates.hidden then
-			for unit in pairs(self.level_jumps) do
-				ScriptUnit.extension(unit, "interactable_system"):set_enabled(false)
+	if arg_26_3:name() ~= "dark_pact" then
+		if arg_26_0._level_jump_state ~= var_0_5.hidden then
+			for iter_26_0 in pairs(arg_26_0.level_jumps) do
+				ScriptUnit.extension(iter_26_0, "interactable_system"):set_enabled(false)
 			end
 		end
 	else
-		local is_boss = breed.boss
+		local var_26_0 = arg_26_4.boss
 
-		if is_boss and self._level_jump_state ~= LevelJumpStates.partial then
-			for unit in pairs(self.level_jumps) do
-				local allow_boss_traversal = Unit.get_data(unit, "allow_boss_traversal")
+		if var_26_0 and arg_26_0._level_jump_state ~= var_0_5.partial then
+			for iter_26_1 in pairs(arg_26_0.level_jumps) do
+				local var_26_1 = Unit.get_data(iter_26_1, "allow_boss_traversal")
 
-				ScriptUnit.extension(unit, "interactable_system"):set_enabled(allow_boss_traversal)
+				ScriptUnit.extension(iter_26_1, "interactable_system"):set_enabled(var_26_1)
 			end
-		elseif not is_boss and self._level_jump_state ~= LevelJumpStates.shown then
-			for unit in pairs(self.level_jumps) do
-				ScriptUnit.extension(unit, "interactable_system"):set_enabled(true)
+		elseif not var_26_0 and arg_26_0._level_jump_state ~= var_0_5.shown then
+			for iter_26_2 in pairs(arg_26_0.level_jumps) do
+				ScriptUnit.extension(iter_26_2, "interactable_system"):set_enabled(true)
 			end
 		end
 	end

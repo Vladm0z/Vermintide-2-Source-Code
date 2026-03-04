@@ -1,77 +1,77 @@
-﻿-- chunkname: @scripts/settings/dlcs/mutators_batch_01/mutators_batch_01_equipment_settings.lua
+-- chunkname: @scripts/settings/dlcs/mutators_batch_01/mutators_batch_01_equipment_settings.lua
 
-local settings = DLCSettings.mutators_batch_01
+local var_0_0 = DLCSettings.mutators_batch_01
 
-settings.damage_profile_template_files_names = {
-	"scripts/settings/equipment/damage_profile_templates_dlc_mutators_batch_01",
+var_0_0.damage_profile_template_files_names = {
+	"scripts/settings/equipment/damage_profile_templates_dlc_mutators_batch_01"
 }
-settings.attack_template_files_names = {
-	"scripts/settings/equipment/attack_templates_dlc_mutators_batch_01",
+var_0_0.attack_template_files_names = {
+	"scripts/settings/equipment/attack_templates_dlc_mutators_batch_01"
 }
-settings.explosion_templates = {
+var_0_0.explosion_templates = {
 	ticking_bomb_explosion = {
 		explosion = {
-			alert_enemies = true,
-			alert_enemies_radius = 10,
-			allow_friendly_fire_override = true,
-			attack_template = "ticking_bomb_explosion",
-			bot_damage_immunity = true,
-			bot_damage_profile = "ticking_bomb_explosion_bot",
-			bot_knockback_immunity = false,
-			catapult_force = 10,
-			catapult_force_z = 5,
-			catapult_players = true,
-			damage_profile = "ticking_bomb_explosion",
-			dot_template_name = "burning_dot_1tick",
-			effect_name = "fx/ticking_bomb_explosion_01",
-			ignore_attacker_unit = true,
-			max_damage_radius = 2,
 			radius = 6,
+			alert_enemies_radius = 10,
+			alert_enemies = true,
+			allow_friendly_fire_override = true,
+			bot_damage_immunity = true,
+			attack_template = "ticking_bomb_explosion",
+			bot_knockback_immunity = false,
 			sound_event_name = "Play_mutator_ticking_bomb_explosion",
+			catapult_force = 10,
+			ignore_attacker_unit = true,
+			effect_name = "fx/ticking_bomb_explosion_01",
+			max_damage_radius = 2,
+			catapult_players = true,
+			dot_template_name = "burning_dot_1tick",
+			catapult_force_z = 5,
+			bot_damage_profile = "ticking_bomb_explosion_bot",
+			damage_profile = "ticking_bomb_explosion",
 			difficulty_power_level = {
 				easy = {
-					power_level = 200,
 					power_level_glance = 100,
+					power_level = 200
 				},
 				normal = {
-					power_level = 400,
 					power_level_glance = 200,
+					power_level = 400
 				},
 				hard = {
-					power_level = 600,
 					power_level_glance = 300,
+					power_level = 600
 				},
 				harder = {
-					power_level = 800,
 					power_level_glance = 400,
+					power_level = 800
 				},
 				hardest = {
-					power_level = 1000,
 					power_level_glance = 500,
+					power_level = 1000
 				},
 				cataclysm = {
-					power_level = 600,
 					power_level_glance = 300,
+					power_level = 600
 				},
 				cataclysm_2 = {
-					power_level = 800,
 					power_level_glance = 400,
+					power_level = 800
 				},
 				cataclysm_3 = {
-					power_level = 1000,
 					power_level_glance = 500,
-				},
+					power_level = 1000
+				}
 			},
 			immune_breeds = {
-				skaven_explosive_loot_rat = true,
+				skaven_explosive_loot_rat = true
 			},
 			camera_effect = {
-				far_distance = 20,
-				far_scale = 0.15,
 				near_distance = 5,
 				near_scale = 1,
 				shake_name = "frag_grenade_explosion",
-			},
-		},
-	},
+				far_scale = 0.15,
+				far_distance = 20
+			}
+		}
+	}
 }

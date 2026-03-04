@@ -1,82 +1,79 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/gutter_runner/gutter_runner_state_foff.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/gutter_runner/gutter_runner_state_foff.lua
 
 GutterRunnerStateFoff = class(GutterRunnerStateFoff, EnemyCharacterStateWalking)
 
-GutterRunnerStateFoff.init = function (self, character_state_init_context, name)
-	GutterRunnerStateFoff.super.init(self, character_state_init_context, "gutter_runner_foff")
+function GutterRunnerStateFoff.init(arg_1_0, arg_1_1, arg_1_2)
+	GutterRunnerStateFoff.super.init(arg_1_0, arg_1_1, "gutter_runner_foff")
 
-	self._network_manager = Managers.state.network
+	arg_1_0._network_manager = Managers.state.network
 end
 
-GutterRunnerStateFoff.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
-	self:set_breed_action("ninja_vanish")
-	self._locomotion_extension:set_forced_velocity(Vector3:zero())
-	self._locomotion_extension:set_wanted_velocity(Vector3.zero())
+function GutterRunnerStateFoff.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	arg_2_0:set_breed_action("ninja_vanish")
+	arg_2_0._locomotion_extension:set_forced_velocity(Vector3:zero())
+	arg_2_0._locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-	self._enter_anim_time = t + self._breed.foff_enter_anim_time
-	self.falling = false
-	self.foffed = false
+	arg_2_0._enter_anim_time = arg_2_5 + arg_2_0._breed.foff_enter_anim_time
+	arg_2_0.falling = false
+	arg_2_0.foffed = false
 
-	self:on_enter_animation()
+	arg_2_0:on_enter_animation()
 end
 
-GutterRunnerStateFoff.on_exit = function (self, unit, input, dt, context, t, next_state)
-	self:set_breed_action("n/a")
-	self:on_exit_animation()
+function GutterRunnerStateFoff.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	arg_3_0:set_breed_action("n/a")
+	arg_3_0:on_exit_animation()
 
-	if not Managers.state.network:game() or not next_state then
+	if not Managers.state.network:game() or not arg_3_6 then
 		return
 	end
 
-	if self.falling and next_state ~= "falling" then
-		ScriptUnit.extension(unit, "whereabouts_system"):set_no_landing()
+	if arg_3_0.falling and arg_3_6 ~= "falling" then
+		ScriptUnit.extension(arg_3_1, "whereabouts_system"):set_no_landing()
 	end
 end
 
-GutterRunnerStateFoff.on_enter_animation = function (self)
-	CharacterStateHelper.play_animation_event(self._unit, "foff_self")
-	CharacterStateHelper.play_animation_event_first_person(self._first_person_extension, "foff_self")
+function GutterRunnerStateFoff.on_enter_animation(arg_4_0)
+	CharacterStateHelper.play_animation_event(arg_4_0._unit, "foff_self")
+	CharacterStateHelper.play_animation_event_first_person(arg_4_0._first_person_extension, "foff_self")
 end
 
-GutterRunnerStateFoff.on_exit_animation = function (self)
-	CharacterStateHelper.play_animation_event(self._unit, "idle")
-	CharacterStateHelper.play_animation_event_first_person(self._first_person_extension, "idle")
+function GutterRunnerStateFoff.on_exit_animation(arg_5_0)
+	CharacterStateHelper.play_animation_event(arg_5_0._unit, "idle")
+	CharacterStateHelper.play_animation_event_first_person(arg_5_0._first_person_extension, "idle")
 end
 
-GutterRunnerStateFoff.update = function (self, unit, input, dt, context, t)
-	local handled = self:common_state_changes()
-
-	if handled then
+function GutterRunnerStateFoff.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+	if arg_6_0:common_state_changes() then
 		return
 	end
 
-	if t > self._enter_anim_time and not self.foffed then
-		self:foff()
+	if arg_6_5 > arg_6_0._enter_anim_time and not arg_6_0.foffed then
+		arg_6_0:foff()
 
-		self.foffed = true
+		arg_6_0.foffed = true
 	end
 end
 
-GutterRunnerStateFoff.foff = function (self)
-	local unit = self._unit
-	local csm = self._csm
-	local player = Managers.player:owner(unit)
-	local local_player = player.local_player
-	local go_id = Managers.state.network:unit_game_object_id(unit) or NetworkConstants.invalid_game_object_id
-	local effect_name = "fx/chr_gutter_foff"
+function GutterRunnerStateFoff.foff(arg_7_0)
+	local var_7_0 = arg_7_0._unit
+	local var_7_1 = arg_7_0._csm
+	local var_7_2 = Managers.player:owner(var_7_0).local_player
+	local var_7_3 = Managers.state.network:unit_game_object_id(var_7_0) or NetworkConstants.invalid_game_object_id
+	local var_7_4 = "fx/chr_gutter_foff"
 
-	Managers.state.network.network_transmit:send_rpc_server("rpc_play_particle_effect", NetworkLookup.effects[effect_name], go_id, 0, Vector3.zero(), Quaternion.identity(), false)
-	self._buff_extension:add_buff("vs_gutter_runner_smoke_bomb_invisible", {
-		attacker_unit = unit,
+	Managers.state.network.network_transmit:send_rpc_server("rpc_play_particle_effect", NetworkLookup.effects[var_7_4], var_7_3, 0, Vector3.zero(), Quaternion.identity(), false)
+	arg_7_0._buff_extension:add_buff("vs_gutter_runner_smoke_bomb_invisible", {
+		attacker_unit = var_7_0
 	})
 
-	if local_player then
-		local first_person_extension = self._first_person_extension
-		local career_extension = ScriptUnit.extension(unit, "career_system")
+	if var_7_2 then
+		local var_7_5 = arg_7_0._first_person_extension
+		local var_7_6 = ScriptUnit.extension(var_7_0, "career_system")
 
-		first_person_extension:play_unit_sound_event("Play_versus_gutterrunner_vanish_fps", unit, 0)
-		career_extension:set_state("vs_gutter_runner_smoke_bomb_invisible")
+		var_7_5:play_unit_sound_event("Play_versus_gutterrunner_vanish_fps", var_7_0, 0)
+		var_7_6:set_state("vs_gutter_runner_smoke_bomb_invisible")
 	end
 
-	csm:change_state("standing")
+	var_7_1:change_state("standing")
 end

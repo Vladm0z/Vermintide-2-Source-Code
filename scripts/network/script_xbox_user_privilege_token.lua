@@ -1,38 +1,38 @@
-﻿-- chunkname: @scripts/network/script_xbox_user_privilege_token.lua
+-- chunkname: @scripts/network/script_xbox_user_privilege_token.lua
 
 ScriptXboxUserPrivilegeToken = class(ScriptXboxUserPrivilegeToken)
 
-ScriptXboxUserPrivilegeToken.init = function (self, token)
-	self._token = token
-	self._result = {}
+function ScriptXboxUserPrivilegeToken.init(arg_1_0, arg_1_1)
+	arg_1_0._token = arg_1_1
+	arg_1_0._result = {}
 end
 
-ScriptXboxUserPrivilegeToken.update = function (self)
-	local in_progress, done, error, status_code = UserPrivilege.status(self._token)
+function ScriptXboxUserPrivilegeToken.update(arg_2_0)
+	local var_2_0, var_2_1, var_2_2, var_2_3 = UserPrivilege.status(arg_2_0._token)
 
-	self._result.in_progress = in_progress
-	self._result.done = done
-	self._result.error = error
-	self._result.status_code = status_code
+	arg_2_0._result.in_progress = var_2_0
+	arg_2_0._result.done = var_2_1
+	arg_2_0._result.error = var_2_2
+	arg_2_0._result.status_code = var_2_3
 end
 
-ScriptXboxUserPrivilegeToken.info = function (self)
-	local info = {}
+function ScriptXboxUserPrivilegeToken.info(arg_3_0)
+	local var_3_0 = {}
 
-	if self._result.error then
-		info.error = self._result.error
-		info.status_code = self._result.status_code
+	if arg_3_0._result.error then
+		var_3_0.error = arg_3_0._result.error
+		var_3_0.status_code = arg_3_0._result.status_code
 	else
-		info.status_code = self._result.status_code
+		var_3_0.status_code = arg_3_0._result.status_code
 	end
 
-	return info
+	return var_3_0
 end
 
-ScriptXboxUserPrivilegeToken.done = function (self)
-	return self._result.done
+function ScriptXboxUserPrivilegeToken.done(arg_4_0)
+	return arg_4_0._result.done
 end
 
-ScriptXboxUserPrivilegeToken.close = function (self)
-	UserPrivilege.release(self._token)
+function ScriptXboxUserPrivilegeToken.close(arg_5_0)
+	UserPrivilege.release(arg_5_0._token)
 end

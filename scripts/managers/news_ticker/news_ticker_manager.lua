@@ -1,151 +1,147 @@
-﻿-- chunkname: @scripts/managers/news_ticker/news_ticker_manager.lua
+-- chunkname: @scripts/managers/news_ticker/news_ticker_manager.lua
 
 require("scripts/managers/news_ticker/news_ticker_token")
 
 NewsTickerManager = class(NewsTickerManager)
 
-NewsTickerManager.init = function (self)
-	self._server_name = "cdn.fatsharkgames.se"
+function NewsTickerManager.init(arg_1_0)
+	arg_1_0._server_name = "cdn.fatsharkgames.se"
 
 	if IS_WINDOWS then
-		self._loading_screen_url = Development.parameter("news_ticker_url") or "http://cdn.fatsharkgames.se/vermintide_2_news_ticker.txt"
-		self._ingame_url = Development.parameter("news_ticker_ingame_url") or "http://cdn.fatsharkgames.se/vermintide_2_news_ticker_ingame.txt"
+		arg_1_0._loading_screen_url = Development.parameter("news_ticker_url") or "http://cdn.fatsharkgames.se/vermintide_2_news_ticker.txt"
+		arg_1_0._ingame_url = Development.parameter("news_ticker_ingame_url") or "http://cdn.fatsharkgames.se/vermintide_2_news_ticker_ingame.txt"
 	else
-		self._loading_screen_url = Development.parameter("news_ticker_url_xb1") or "vermintide_2_news_ticker_" .. PLATFORM .. ".txt"
-		self._ingame_url = Development.parameter("news_ticker_ingame_url_xb1") or "vermintide_2_news_ticker_ingame_" .. PLATFORM .. ".txt"
+		arg_1_0._loading_screen_url = Development.parameter("news_ticker_url_xb1") or "vermintide_2_news_ticker_" .. PLATFORM .. ".txt"
+		arg_1_0._ingame_url = Development.parameter("news_ticker_ingame_url_xb1") or "vermintide_2_news_ticker_ingame_" .. PLATFORM .. ".txt"
 	end
 
-	self._loading_screen_text = nil
-	self._ingame_text = nil
+	arg_1_0._loading_screen_text = nil
+	arg_1_0._ingame_text = nil
 end
 
-local function lines(str)
-	local t = {}
+local function var_0_0(arg_2_0)
+	local var_2_0 = {}
 
-	local function helper(line)
-		table.insert(t, line)
+	local function var_2_1(arg_3_0)
+		table.insert(var_2_0, arg_3_0)
 
 		return ""
 	end
 
-	helper((str:gsub("(.-)\r?\n", helper)))
+	var_2_1((arg_2_0:gsub("(.-)\r?\n", var_2_1)))
 
-	return t
+	return var_2_0
 end
 
-NewsTickerManager.update = function (self, dt)
+function NewsTickerManager.update(arg_4_0, arg_4_1)
 	return
 end
 
-NewsTickerManager.destroy = function (self)
+function NewsTickerManager.destroy(arg_5_0)
 	return
 end
 
-local function _callback_wrapper(success, http_code, response_headers, data, userdata_callback)
-	local info = {
-		done = false,
+local function var_0_1(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	local var_6_0 = {
+		done = false
 	}
 
-	if success and http_code >= 200 and http_code < 300 then
-		info.done = true
-		info.data = data
+	if arg_6_0 and arg_6_1 >= 200 and arg_6_1 < 300 then
+		var_6_0.done = true
+		var_6_0.data = arg_6_3
 	end
 
-	userdata_callback(info)
+	arg_6_4(var_6_0)
 end
 
-NewsTickerManager._load = function (self, url, callback)
+function NewsTickerManager._load(arg_7_0, arg_7_1, arg_7_2)
 	if rawget(_G, "Curl") then
-		Managers.curl:get(url, nil, _callback_wrapper, callback)
+		Managers.curl:get(arg_7_1, nil, var_0_1, arg_7_2)
 	elseif rawget(_G, "Http") then
-		local message = Http.get_uri(self._server_name, 80, url)
+		local var_7_0 = Http.get_uri(arg_7_0._server_name, 80, arg_7_1)
 
-		if message then
-			local is_ok = string.find(message, "HTTP/1.1 200 OK") or string.find(message, "HTTP/1.0 200 OK")
+		if var_7_0 and (string.find(var_7_0, "HTTP/1.1 200 OK") or string.find(var_7_0, "HTTP/1.0 200 OK")) then
+			local var_7_1, var_7_2 = string.find(var_7_0, "\r\n\r\n")
+			local var_7_3 = ""
 
-			if is_ok then
-				local start_idx, end_idx = string.find(message, "\r\n\r\n")
-				local formatted_message = ""
-
-				if end_idx then
-					formatted_message = string.sub(message, end_idx + 1)
-				end
-
-				local info = {
-					done = true,
-					data = formatted_message,
-				}
-
-				callback(info)
-
-				return
+			if var_7_2 then
+				var_7_3 = string.sub(var_7_0, var_7_2 + 1)
 			end
+
+			local var_7_4 = {
+				done = true,
+				data = var_7_3
+			}
+
+			arg_7_2(var_7_4)
+
+			return
 		end
 
-		local info = {
-			data = "",
+		local var_7_5 = {
 			done = true,
+			data = ""
 		}
 
-		callback(info)
+		arg_7_2(var_7_5)
 	else
-		self:cb_loading_screen_loaded({
-			data = "This executable is built without Curl or Http. News ticker will be unavailable.",
+		arg_7_0:cb_loading_screen_loaded({
 			done = true,
+			data = "This executable is built without Curl or Http. News ticker will be unavailable."
 		})
 	end
 end
 
-NewsTickerManager.refresh_loading_screen_message = function (self)
-	self._loading_screen_text = nil
-	self._refreshing_loading_screen_message = true
+function NewsTickerManager.refresh_loading_screen_message(arg_8_0)
+	arg_8_0._loading_screen_text = nil
+	arg_8_0._refreshing_loading_screen_message = true
 
-	self:_load(Development.parameter("news_ticker_url_xb1") or self._loading_screen_url, callback(self, "cb_loading_screen_loaded"))
+	arg_8_0:_load(Development.parameter("news_ticker_url_xb1") or arg_8_0._loading_screen_url, callback(arg_8_0, "cb_loading_screen_loaded"))
 end
 
-NewsTickerManager.cb_loading_screen_loaded = function (self, info)
-	if self._refreshing_loading_screen_message and info.done then
-		local str = info.data
+function NewsTickerManager.cb_loading_screen_loaded(arg_9_0, arg_9_1)
+	if arg_9_0._refreshing_loading_screen_message and arg_9_1.done then
+		local var_9_0 = arg_9_1.data
 
-		if str and str ~= "" then
-			self._loading_screen_text = str
+		if var_9_0 and var_9_0 ~= "" then
+			arg_9_0._loading_screen_text = var_9_0
 		else
-			self._loading_screen_text = nil
+			arg_9_0._loading_screen_text = nil
 		end
 
-		self._refreshing_loading_screen_message = nil
+		arg_9_0._refreshing_loading_screen_message = nil
 	end
 end
 
-NewsTickerManager.loading_screen_text = function (self)
-	return self._loading_screen_text
+function NewsTickerManager.loading_screen_text(arg_10_0)
+	return arg_10_0._loading_screen_text
 end
 
-NewsTickerManager.refresh_ingame_message = function (self)
-	self._ingame_text = nil
-	self._refreshing_ingame_message = true
+function NewsTickerManager.refresh_ingame_message(arg_11_0)
+	arg_11_0._ingame_text = nil
+	arg_11_0._refreshing_ingame_message = true
 
-	self:_load(Development.parameter("news_ticker_ingame_url_xb1") or self._ingame_url, callback(self, "cb_ingame_loaded"))
+	arg_11_0:_load(Development.parameter("news_ticker_ingame_url_xb1") or arg_11_0._ingame_url, callback(arg_11_0, "cb_ingame_loaded"))
 end
 
-NewsTickerManager.refreshing_ingame_message = function (self)
-	return self._refreshing_ingame_message
+function NewsTickerManager.refreshing_ingame_message(arg_12_0)
+	return arg_12_0._refreshing_ingame_message
 end
 
-NewsTickerManager.cb_ingame_loaded = function (self, info)
-	if self._refreshing_ingame_message and info.done then
-		local str = info.data
+function NewsTickerManager.cb_ingame_loaded(arg_13_0, arg_13_1)
+	if arg_13_0._refreshing_ingame_message and arg_13_1.done then
+		local var_13_0 = arg_13_1.data
 
-		if str and str ~= "" then
-			self._ingame_text = str
+		if var_13_0 and var_13_0 ~= "" then
+			arg_13_0._ingame_text = var_13_0
 		else
-			self._ingame_text = nil
+			arg_13_0._ingame_text = nil
 		end
 
-		self._refreshing_ingame_message = nil
+		arg_13_0._refreshing_ingame_message = nil
 	end
 end
 
-NewsTickerManager.ingame_text = function (self)
-	return self._ingame_text
+function NewsTickerManager.ingame_text(arg_14_0)
+	return arg_14_0._ingame_text
 end

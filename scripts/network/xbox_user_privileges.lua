@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/network/xbox_user_privileges.lua
+-- chunkname: @scripts/network/xbox_user_privileges.lua
 
 require("scripts/network/script_xbox_user_privilege_token")
 
@@ -8,162 +8,162 @@ ATTEMPT_RESOLUTION_PRIVILEGES = ATTEMPT_RESOLUTION_PRIVILEGES or {}
 XBOX_PRIVILEGE_LUT = XBOX_PRIVILEGE_LUT or {}
 PRIVILEGES_ERROR_CODES = PRIVILEGES_ERROR_CODES or {}
 
-XboxUserPrivileges.init = function (self)
-	self:reset()
-	self:_setup_lookup_tables()
+function XboxUserPrivileges.init(arg_1_0)
+	arg_1_0:reset()
+	arg_1_0:_setup_lookup_tables()
 end
 
-XboxUserPrivileges.reset = function (self)
-	self._current_users = {}
-	self._initialized = false
-	self._has_error = nil
-	self._check_privilege_cb = {}
+function XboxUserPrivileges.reset(arg_2_0)
+	arg_2_0._current_users = {}
+	arg_2_0._initialized = false
+	arg_2_0._has_error = nil
+	arg_2_0._check_privilege_cb = {}
 end
 
-XboxUserPrivileges.add_user = function (self, user_id)
-	self:reset()
+function XboxUserPrivileges.add_user(arg_3_0, arg_3_1)
+	arg_3_0:reset()
 
-	self._current_users[user_id] = {}
+	arg_3_0._current_users[arg_3_1] = {}
 
-	for _, privilege in pairs(DEFAULT_PRIVILEGES) do
-		local attempt_resolution = false
+	for iter_3_0, iter_3_1 in pairs(DEFAULT_PRIVILEGES) do
+		local var_3_0 = false
 
-		if ATTEMPT_RESOLUTION_PRIVILEGES[privilege] then
-			print(XBOX_PRIVILEGE_LUT[privilege] .. " using attempt_resolution=true")
+		if ATTEMPT_RESOLUTION_PRIVILEGES[iter_3_1] then
+			print(XBOX_PRIVILEGE_LUT[iter_3_1] .. " using attempt_resolution=true")
 
-			attempt_resolution = true
+			var_3_0 = true
 		end
 
-		local token = UserPrivilege.has(user_id, attempt_resolution, privilege)
+		local var_3_1 = UserPrivilege.has(arg_3_1, var_3_0, iter_3_1)
 
-		if token then
-			local script_token = ScriptXboxUserPrivilegeToken:new(token)
+		if var_3_1 then
+			local var_3_2 = ScriptXboxUserPrivilegeToken:new(var_3_1)
 
-			Managers.token:register_token(script_token, callback(self, "cb_user_privilege_done", user_id, privilege, nil))
+			Managers.token:register_token(var_3_2, callback(arg_3_0, "cb_user_privilege_done", arg_3_1, iter_3_1, nil))
 		else
-			self._has_error = true
+			arg_3_0._has_error = true
 		end
 	end
 end
 
-XboxUserPrivileges.get_privilege_async = function (self, user_id, privilege, attempt_resolution, external_cb)
-	if not self._current_users[user_id] then
+function XboxUserPrivileges.get_privilege_async(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	if not arg_4_0._current_users[arg_4_1] then
 		fassert(false, "ERROR ERROR")
 
 		return
 	end
 
-	local token = UserPrivilege.has(user_id, attempt_resolution, privilege)
+	local var_4_0 = UserPrivilege.has(arg_4_1, arg_4_3, arg_4_2)
 
-	if token then
-		local script_token = ScriptXboxUserPrivilegeToken:new(token)
+	if var_4_0 then
+		local var_4_1 = ScriptXboxUserPrivilegeToken:new(var_4_0)
 
-		Managers.token:register_token(script_token, callback(self, "cb_user_privilege_done", user_id, privilege, external_cb))
+		Managers.token:register_token(var_4_1, callback(arg_4_0, "cb_user_privilege_done", arg_4_1, arg_4_2, arg_4_4))
 	else
-		self._has_error = true
+		arg_4_0._has_error = true
 	end
 end
 
-XboxUserPrivileges.update_privilege = function (self, privilege, cb)
-	local privilege_id
+function XboxUserPrivileges.update_privilege(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0
 
-	for id, name in pairs(XBOX_PRIVILEGE_LUT) do
-		if name == privilege then
-			privilege_id = id
+	for iter_5_0, iter_5_1 in pairs(XBOX_PRIVILEGE_LUT) do
+		if iter_5_1 == arg_5_1 then
+			var_5_0 = iter_5_0
 
 			break
 		end
 	end
 
-	if not privilege_id then
-		Application.error(string.format("[XboxUserPrivileges] Couldn't find privilege called %s", privilege))
+	if not var_5_0 then
+		Application.error(string.format("[XboxUserPrivileges] Couldn't find privilege called %s", arg_5_1))
 	else
-		local user_id = Managers.account:user_id()
-		local token = UserPrivilege.has(user_id, false, privilege_id)
+		local var_5_1 = Managers.account:user_id()
+		local var_5_2 = UserPrivilege.has(var_5_1, false, var_5_0)
 
-		if token then
-			local script_token = ScriptXboxUserPrivilegeToken:new(token)
+		if var_5_2 then
+			local var_5_3 = ScriptXboxUserPrivilegeToken:new(var_5_2)
 
-			Managers.token:register_token(script_token, callback(self, "cb_user_privilege_done", user_id, privilege_id, nil))
+			Managers.token:register_token(var_5_3, callback(arg_5_0, "cb_user_privilege_done", var_5_1, var_5_0, nil))
 
-			if cb then
-				self._check_privilege_cb = self._check_privilege_cb or {}
-				self._check_privilege_cb[privilege_id] = self._check_privilege_cb[privilege_id] or {}
-				self._check_privilege_cb[privilege_id][#self._check_privilege_cb[privilege_id] + 1] = cb
+			if arg_5_2 then
+				arg_5_0._check_privilege_cb = arg_5_0._check_privilege_cb or {}
+				arg_5_0._check_privilege_cb[var_5_0] = arg_5_0._check_privilege_cb[var_5_0] or {}
+				arg_5_0._check_privilege_cb[var_5_0][#arg_5_0._check_privilege_cb[var_5_0] + 1] = arg_5_2
 			end
 		else
-			self._has_error = true
+			arg_5_0._has_error = true
 		end
 	end
 end
 
-XboxUserPrivileges.cb_user_privilege_done = function (self, user_id, privilege, external_cb, info)
-	if info.error then
-		Application.error(string.format("[XboxUserPrivileges] Something went wrong when trying to fetch privilege [%s] for User [%s]. Error: %s", XBOX_PRIVILEGE_LUT[privilege] or "unknown", tostring(user_id), PRIVILEGES_ERROR_CODES[info.error] or "UNKNOWN"))
+function XboxUserPrivileges.cb_user_privilege_done(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	if arg_6_4.error then
+		Application.error(string.format("[XboxUserPrivileges] Something went wrong when trying to fetch privilege [%s] for User [%s]. Error: %s", XBOX_PRIVILEGE_LUT[arg_6_2] or "unknown", tostring(arg_6_1), PRIVILEGES_ERROR_CODES[arg_6_4.error] or "UNKNOWN"))
 
-		self._has_error = true
-		self._initialized = true
-	elseif info.status_code == UserPrivilege.NoIssue then
-		Application.warning(string.format("[XboxUserPrivileges] User [%s] has the privilege to [%s]", tostring(user_id), XBOX_PRIVILEGE_LUT[privilege] or "unknown", PRIVILEGES_ERROR_CODES[info.status_code] or "UNKNOWN"))
+		arg_6_0._has_error = true
+		arg_6_0._initialized = true
+	elseif arg_6_4.status_code == UserPrivilege.NoIssue then
+		Application.warning(string.format("[XboxUserPrivileges] User [%s] has the privilege to [%s]", tostring(arg_6_1), XBOX_PRIVILEGE_LUT[arg_6_2] or "unknown", PRIVILEGES_ERROR_CODES[arg_6_4.status_code] or "UNKNOWN"))
 
-		self._current_users[user_id][privilege] = true
+		arg_6_0._current_users[arg_6_1][arg_6_2] = true
 	else
-		Application.error(string.format("[XboxUserPrivileges] User [%s] do not have the privilege to [%s]. Error: %s", tostring(user_id), XBOX_PRIVILEGE_LUT[privilege] or "unknown", PRIVILEGES_ERROR_CODES[info.status_code] or "UNKNOWN"))
+		Application.error(string.format("[XboxUserPrivileges] User [%s] do not have the privilege to [%s]. Error: %s", tostring(arg_6_1), XBOX_PRIVILEGE_LUT[arg_6_2] or "unknown", PRIVILEGES_ERROR_CODES[arg_6_4.status_code] or "UNKNOWN"))
 
-		self._current_users[user_id][privilege] = false
+		arg_6_0._current_users[arg_6_1][arg_6_2] = false
 	end
 
-	if self._check_privilege_cb and self._check_privilege_cb[privilege] then
-		local callbacks = self._check_privilege_cb[privilege]
+	if arg_6_0._check_privilege_cb and arg_6_0._check_privilege_cb[arg_6_2] then
+		local var_6_0 = arg_6_0._check_privilege_cb[arg_6_2]
 
-		for _, cb in pairs(callbacks) do
-			cb(XBOX_PRIVILEGE_LUT[privilege])
+		for iter_6_0, iter_6_1 in pairs(var_6_0) do
+			iter_6_1(XBOX_PRIVILEGE_LUT[arg_6_2])
 		end
 
-		self._check_privilege_cb[privilege] = nil
+		arg_6_0._check_privilege_cb[arg_6_2] = nil
 	end
 
-	if external_cb then
-		external_cb(privilege)
+	if arg_6_3 then
+		arg_6_3(arg_6_2)
 	end
 end
 
-XboxUserPrivileges.has_privilege = function (self, user_id, privilege)
-	if user_id and self._current_users[user_id] then
-		return self._current_users[user_id][privilege]
+function XboxUserPrivileges.has_privilege(arg_7_0, arg_7_1, arg_7_2)
+	if arg_7_1 and arg_7_0._current_users[arg_7_1] then
+		return arg_7_0._current_users[arg_7_1][arg_7_2]
 	else
 		return false
 	end
 end
 
-XboxUserPrivileges.is_initialized = function (self)
-	if self._initialized then
+function XboxUserPrivileges.is_initialized(arg_8_0)
+	if arg_8_0._initialized then
 		return true
 	else
-		local user_id = Managers.account:user_id()
-		local privileges = self._current_users[user_id]
+		local var_8_0 = Managers.account:user_id()
+		local var_8_1 = arg_8_0._current_users[var_8_0]
 
-		if not privileges then
+		if not var_8_1 then
 			return false
 		end
 
-		for _, privilege in pairs(DEFAULT_PRIVILEGES) do
-			if privileges[privilege] == nil then
+		for iter_8_0, iter_8_1 in pairs(DEFAULT_PRIVILEGES) do
+			if var_8_1[iter_8_1] == nil then
 				return false
 			end
 		end
 
-		self._initialized = true
+		arg_8_0._initialized = true
 
 		return true
 	end
 end
 
-XboxUserPrivileges.has_error = function (self)
-	return self._has_error
+function XboxUserPrivileges.has_error(arg_9_0)
+	return arg_9_0._has_error
 end
 
-XboxUserPrivileges._setup_lookup_tables = function (self)
+function XboxUserPrivileges._setup_lookup_tables(arg_10_0)
 	XBOX_PRIVILEGE_LUT[UserPrivilege.ADD_FRIEND] = "ADD_FRIEND"
 	XBOX_PRIVILEGE_LUT[UserPrivilege.BROADCAST] = "BROADCAST"
 	XBOX_PRIVILEGE_LUT[UserPrivilege.CLOUD_GAMING_JOIN_SESSION] = "CLOUD_GAMING_JOIN_SESSION"

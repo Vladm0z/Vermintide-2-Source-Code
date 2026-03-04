@@ -1,68 +1,68 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_inspecting.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_inspecting.lua
 
 PlayerCharacterStateInspecting = class(PlayerCharacterStateInspecting, PlayerCharacterState)
 
-PlayerCharacterStateInspecting.init = function (self, character_state_init_context)
-	PlayerCharacterState.init(self, character_state_init_context, "inspecting")
+function PlayerCharacterStateInspecting.init(arg_1_0, arg_1_1)
+	PlayerCharacterState.init(arg_1_0, arg_1_1, "inspecting")
 
-	local context = character_state_init_context
+	local var_1_0 = arg_1_1
 end
 
-PlayerCharacterStateInspecting.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
-	self.locomotion_extension:set_wanted_velocity(Vector3.zero())
-	CharacterStateHelper.change_camera_state(self.player, "follow_third_person")
-	self.first_person_extension:set_first_person_mode(false)
-	CharacterStateHelper.stop_weapon_actions(self.inventory_extension, "inspecting")
-	CharacterStateHelper.stop_career_abilities(self.career_extension, "inspecting")
-	CharacterStateHelper.play_animation_event(unit, "idle")
-	CharacterStateHelper.play_animation_event_first_person(self.first_person_extension, "idle")
-	self.status_extension:set_inspecting(true)
+function PlayerCharacterStateInspecting.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	arg_2_0.locomotion_extension:set_wanted_velocity(Vector3.zero())
+	CharacterStateHelper.change_camera_state(arg_2_0.player, "follow_third_person")
+	arg_2_0.first_person_extension:set_first_person_mode(false)
+	CharacterStateHelper.stop_weapon_actions(arg_2_0.inventory_extension, "inspecting")
+	CharacterStateHelper.stop_career_abilities(arg_2_0.career_extension, "inspecting")
+	CharacterStateHelper.play_animation_event(arg_2_1, "idle")
+	CharacterStateHelper.play_animation_event_first_person(arg_2_0.first_person_extension, "idle")
+	arg_2_0.status_extension:set_inspecting(true)
 end
 
-PlayerCharacterStateInspecting.on_exit = function (self, unit, input, dt, context, t, next_state)
-	CharacterStateHelper.change_camera_state(self.player, "follow")
-	self.first_person_extension:toggle_visibility(CameraTransitionSettings.perspective_transition_time)
-	self.status_extension:set_inspecting(false)
+function PlayerCharacterStateInspecting.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	CharacterStateHelper.change_camera_state(arg_3_0.player, "follow")
+	arg_3_0.first_person_extension:toggle_visibility(CameraTransitionSettings.perspective_transition_time)
+	arg_3_0.status_extension:set_inspecting(false)
 end
 
-PlayerCharacterStateInspecting.update = function (self, unit, input, dt, context, t)
-	local csm = self.csm
-	local unit = self.unit
-	local input_extension = self.input_extension
-	local interactor_extension = self.interactor_extension
-	local camera_manager = Managers.state.camera
-	local status_extension = self.status_extension
+function PlayerCharacterStateInspecting.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	local var_4_0 = arg_4_0.csm
+	local var_4_1 = arg_4_0.unit
+	local var_4_2 = arg_4_0.input_extension
+	local var_4_3 = arg_4_0.interactor_extension
+	local var_4_4 = Managers.state.camera
+	local var_4_5 = arg_4_0.status_extension
 
-	if CharacterStateHelper.do_common_state_transitions(status_extension, csm) then
+	if CharacterStateHelper.do_common_state_transitions(var_4_5, var_4_0) then
 		return
 	end
 
-	local world = self.world
+	local var_4_6 = arg_4_0.world
 
-	if CharacterStateHelper.is_ledge_hanging(world, unit, self.temp_params) then
-		csm:change_state("ledge_hanging", self.temp_params)
-
-		return
-	end
-
-	if self.cosmetic_extension:get_queued_3p_emote() then
-		csm:change_state("emote")
+	if CharacterStateHelper.is_ledge_hanging(var_4_6, var_4_1, arg_4_0.temp_params) then
+		var_4_0:change_state("ledge_hanging", arg_4_0.temp_params)
 
 		return
 	end
 
-	if not input_extension:get("character_inspecting") then
-		csm:change_state("standing")
+	if arg_4_0.cosmetic_extension:get_queued_3p_emote() then
+		var_4_0:change_state("emote")
 
 		return
 	end
 
-	if not csm.state_next and status_extension.do_leap then
-		csm:change_state("leaping")
+	if not var_4_2:get("character_inspecting") then
+		var_4_0:change_state("standing")
 
 		return
 	end
 
-	self.locomotion_extension:set_disable_rotation_update()
-	CharacterStateHelper.look(input_extension, self.player.viewport_name, self.first_person_extension, status_extension, self.inventory_extension)
+	if not var_4_0.state_next and var_4_5.do_leap then
+		var_4_0:change_state("leaping")
+
+		return
+	end
+
+	arg_4_0.locomotion_extension:set_disable_rotation_update()
+	CharacterStateHelper.look(var_4_2, arg_4_0.player.viewport_name, arg_4_0.first_person_extension, var_4_5, arg_4_0.inventory_extension)
 end

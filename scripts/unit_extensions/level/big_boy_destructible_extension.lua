@@ -1,171 +1,170 @@
-﻿-- chunkname: @scripts/unit_extensions/level/big_boy_destructible_extension.lua
+-- chunkname: @scripts/unit_extensions/level/big_boy_destructible_extension.lua
 
 BigBoyDestructibleExtension = class(BigBoyDestructibleExtension)
 
-local SIMPLE_ANIMATION_FPS = 30
-local NAVMESH_UPDATE_DELAY = 3
-local unit_alive = Unit.alive
+local var_0_0 = 30
+local var_0_1 = 3
+local var_0_2 = Unit.alive
 
-BigBoyDestructibleExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self.unit = unit
-	self.world = extension_init_context.world
-	self.is_server = Managers.player.is_server
+function BigBoyDestructibleExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.unit = arg_1_2
+	arg_1_0.world = arg_1_1.world
+	arg_1_0.is_server = Managers.player.is_server
 
-	local move_to_exit_when_opened = Unit.get_data(unit, "move_to_exit_when_opened")
+	local var_1_0 = Unit.get_data(arg_1_2, "move_to_exit_when_opened")
 
-	self.move_to_exit_when_opened = move_to_exit_when_opened == nil or move_to_exit_when_opened
+	arg_1_0.move_to_exit_when_opened = var_1_0 == nil or var_1_0
 
-	local door_state = Unit.get_data(unit, "door_state")
+	local var_1_1 = Unit.get_data(arg_1_2, "door_state")
 
-	self.current_state = door_state == 0 and "open_forward" or door_state == 1 and "closed" or door_state == 2 and "open_backward"
-	self.state_to_nav_obstacle_map = {}
-	self.animation_stop_time = 0
-	self.dead = false
-	self.breeds_failed_leaving_smart_object = {}
-	self.frames_since_obstacle_update = nil
-	self.num_attackers = 0
+	arg_1_0.current_state = var_1_1 == 0 and "open_forward" or var_1_1 == 1 and "closed" or var_1_1 == 2 and "open_backward"
+	arg_1_0.state_to_nav_obstacle_map = {}
+	arg_1_0.animation_stop_time = 0
+	arg_1_0.dead = false
+	arg_1_0.breeds_failed_leaving_smart_object = {}
+	arg_1_0.frames_since_obstacle_update = nil
+	arg_1_0.num_attackers = 0
 end
 
-BigBoyDestructibleExtension.extensions_ready = function (self)
-	self.health_extension = ScriptUnit.extension(self.unit, "health_system")
+function BigBoyDestructibleExtension.extensions_ready(arg_2_0)
+	arg_2_0.health_extension = ScriptUnit.extension(arg_2_0.unit, "health_system")
 end
 
-BigBoyDestructibleExtension.animation_played = function (self, frames, speed)
-	local animation_length = frames / SIMPLE_ANIMATION_FPS / speed
-	local t = Managers.time:time("game")
+function BigBoyDestructibleExtension.animation_played(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0 = arg_3_1 / var_0_0 / arg_3_2
 
-	self.animation_stop_time = t + animation_length
+	arg_3_0.animation_stop_time = Managers.time:time("game") + var_3_0
 end
 
-BigBoyDestructibleExtension.update_nav_obstacles = function (self)
-	local current_state = self.current_state
-	local obstacles = self.state_to_nav_obstacle_map
+function BigBoyDestructibleExtension.update_nav_obstacles(arg_4_0)
+	local var_4_0 = arg_4_0.current_state
+	local var_4_1 = arg_4_0.state_to_nav_obstacle_map
 
-	if not obstacles[current_state] then
-		local unit = self.unit
-		local nav_world = GLOBAL_AI_NAVWORLD
-		local obstacle, transform = NavigationUtils.create_exclusive_box_obstacle_from_unit_data(nav_world, unit)
+	if not var_4_1[var_4_0] then
+		local var_4_2 = arg_4_0.unit
+		local var_4_3 = GLOBAL_AI_NAVWORLD
+		local var_4_4, var_4_5 = NavigationUtils.create_exclusive_box_obstacle_from_unit_data(var_4_3, var_4_2)
 
-		GwNavBoxObstacle.add_to_world(obstacle)
-		GwNavBoxObstacle.set_transform(obstacle, transform)
+		GwNavBoxObstacle.add_to_world(var_4_4)
+		GwNavBoxObstacle.set_transform(var_4_4, var_4_5)
 
-		obstacles[current_state] = obstacle
+		var_4_1[var_4_0] = var_4_4
 	end
 
-	for obstacle_state, obstacle in pairs(obstacles) do
-		local does_trigger = obstacle_state == current_state
+	for iter_4_0, iter_4_1 in pairs(var_4_1) do
+		local var_4_6 = iter_4_0 == var_4_0
 
-		GwNavBoxObstacle.set_does_trigger_tagvolume(obstacle, does_trigger)
+		GwNavBoxObstacle.set_does_trigger_tagvolume(iter_4_1, var_4_6)
 	end
 
-	self.frames_since_obstacle_update = 0
+	arg_4_0.frames_since_obstacle_update = 0
 end
 
-BigBoyDestructibleExtension._get_animation_flow_event = function (self, current_state, new_state)
-	local event = self.animation_flow_events[current_state][new_state]
+function BigBoyDestructibleExtension._get_animation_flow_event(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = arg_5_0.animation_flow_events[arg_5_1][arg_5_2]
 
-	fassert(event, "Door animation event from %s to %s unavailable", current_state, new_state)
+	fassert(var_5_0, "Door animation event from %s to %s unavailable", arg_5_1, arg_5_2)
 
-	return event
+	return var_5_0
 end
 
-BigBoyDestructibleExtension.update_nav_graphs = function (self)
-	local unit = self.unit
-	local nav_graph_system = Managers.state.entity:system("nav_graph_system")
+function BigBoyDestructibleExtension.update_nav_graphs(arg_6_0)
+	local var_6_0 = arg_6_0.unit
+	local var_6_1 = Managers.state.entity:system("nav_graph_system")
 
-	if self:is_open() or self.dead then
-		nav_graph_system:remove_nav_graph(unit)
+	if arg_6_0:is_open() or arg_6_0.dead then
+		var_6_1:remove_nav_graph(var_6_0)
 	else
-		nav_graph_system:add_nav_graph(unit)
+		var_6_1:add_nav_graph(var_6_0)
 	end
 end
 
-BigBoyDestructibleExtension.update = function (self, unit, input, dt, context, t)
-	local frames_since_obstacle_update = self.frames_since_obstacle_update
+function BigBoyDestructibleExtension.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+	local var_7_0 = arg_7_0.frames_since_obstacle_update
 
-	if frames_since_obstacle_update then
-		frames_since_obstacle_update = frames_since_obstacle_update + 1
+	if var_7_0 then
+		local var_7_1 = var_7_0 + 1
 
-		if frames_since_obstacle_update == NAVMESH_UPDATE_DELAY then
-			self:update_nav_graphs()
-			self:handle_breeds_failed_leaving_smart_object()
+		if var_7_1 == var_0_1 then
+			arg_7_0:update_nav_graphs()
+			arg_7_0:handle_breeds_failed_leaving_smart_object()
 
-			self.frames_since_obstacle_update = nil
+			arg_7_0.frames_since_obstacle_update = nil
 		else
-			self.frames_since_obstacle_update = frames_since_obstacle_update
+			arg_7_0.frames_since_obstacle_update = var_7_1
 		end
 	end
 
-	if self.dead then
+	if arg_7_0.dead then
 		return
 	end
 
-	local animation_stop_time = self.animation_stop_time
+	local var_7_2 = arg_7_0.animation_stop_time
 
-	if animation_stop_time and animation_stop_time <= t then
-		self:update_nav_obstacles()
+	if var_7_2 and var_7_2 <= arg_7_5 then
+		arg_7_0:update_nav_obstacles()
 
-		self.animation_stop_time = nil
+		arg_7_0.animation_stop_time = nil
 	end
 
-	if not self.health_extension:is_alive() then
-		self.dead = true
+	if not arg_7_0.health_extension:is_alive() then
+		arg_7_0.dead = true
 
-		self:destroy_box_obstacles()
+		arg_7_0:destroy_box_obstacles()
 	end
 end
 
-BigBoyDestructibleExtension.register_breed_failed_leaving_smart_object = function (self, unit)
-	if self.breeds_failed_leaving_smart_object == nil then
+function BigBoyDestructibleExtension.register_breed_failed_leaving_smart_object(arg_8_0, arg_8_1)
+	if arg_8_0.breeds_failed_leaving_smart_object == nil then
 		return
 	end
 
-	self.breeds_failed_leaving_smart_object[unit] = true
+	arg_8_0.breeds_failed_leaving_smart_object[arg_8_1] = true
 end
 
-BigBoyDestructibleExtension.handle_breeds_failed_leaving_smart_object = function (self)
-	if self.breeds_failed_leaving_smart_object == nil then
+function BigBoyDestructibleExtension.handle_breeds_failed_leaving_smart_object(arg_9_0)
+	if arg_9_0.breeds_failed_leaving_smart_object == nil then
 		return
 	end
 
-	for unit, _ in pairs(self.breeds_failed_leaving_smart_object) do
-		if unit_alive(unit) then
-			local navigation_extension = ScriptUnit.has_extension(unit, "ai_navigation_system")
+	for iter_9_0, iter_9_1 in pairs(arg_9_0.breeds_failed_leaving_smart_object) do
+		if var_0_2(iter_9_0) then
+			local var_9_0 = ScriptUnit.has_extension(iter_9_0, "ai_navigation_system")
 
-			if navigation_extension then
-				navigation_extension:reset_destination()
+			if var_9_0 then
+				var_9_0:reset_destination()
 			end
 		end
 	end
 
-	self.breeds_failed_leaving_smart_object = {}
+	arg_9_0.breeds_failed_leaving_smart_object = {}
 end
 
-BigBoyDestructibleExtension.destroy = function (self)
-	self:destroy_box_obstacles()
+function BigBoyDestructibleExtension.destroy(arg_10_0)
+	arg_10_0:destroy_box_obstacles()
 
-	self.unit = nil
-	self.world = nil
-	self.health_extension = nil
-	self.breeds_failed_leaving_smart_object = nil
+	arg_10_0.unit = nil
+	arg_10_0.world = nil
+	arg_10_0.health_extension = nil
+	arg_10_0.breeds_failed_leaving_smart_object = nil
 end
 
-BigBoyDestructibleExtension.destroy_box_obstacles = function (self)
-	if self.state_to_nav_obstacle_map then
-		for _, obstacle in pairs(self.state_to_nav_obstacle_map) do
-			GwNavBoxObstacle.destroy(obstacle)
+function BigBoyDestructibleExtension.destroy_box_obstacles(arg_11_0)
+	if arg_11_0.state_to_nav_obstacle_map then
+		for iter_11_0, iter_11_1 in pairs(arg_11_0.state_to_nav_obstacle_map) do
+			GwNavBoxObstacle.destroy(iter_11_1)
 		end
 
-		self.state_to_nav_obstacle_map = nil
+		arg_11_0.state_to_nav_obstacle_map = nil
 	end
 
-	self.frames_since_obstacle_update = 0
+	arg_11_0.frames_since_obstacle_update = 0
 end
 
-BigBoyDestructibleExtension.is_open = function (self)
-	return self.dead
+function BigBoyDestructibleExtension.is_open(arg_12_0)
+	return arg_12_0.dead
 end
 
-BigBoyDestructibleExtension.is_opening = function (self)
+function BigBoyDestructibleExtension.is_opening(arg_13_0)
 	return false
 end

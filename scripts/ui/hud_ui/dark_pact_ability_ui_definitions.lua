@@ -1,136 +1,137 @@
-﻿-- chunkname: @scripts/ui/hud_ui/dark_pact_ability_ui_definitions.lua
+-- chunkname: @scripts/ui/hud_ui/dark_pact_ability_ui_definitions.lua
 
-local SIZE_X, SIZE_Y = 1920, 1080
-local RETAINED_MODE_ENABLED = false
-local scenegraph_definition = {
+local var_0_0 = 1920
+local var_0_1 = 1080
+local var_0_2 = false
+local var_0_3 = {
 	screen = {
 		scale = "hud_scale_fit",
 		position = {
 			0,
 			0,
-			UILayer.hud,
+			UILayer.hud
 		},
 		size = {
-			SIZE_X,
-			SIZE_Y,
-		},
+			var_0_0,
+			var_0_1
+		}
 	},
 	ability_root = {
-		horizontal_alignment = "right",
-		parent = "screen",
 		vertical_alignment = "bottom",
+		parent = "screen",
+		horizontal_alignment = "right",
 		position = {
 			-90,
 			300,
-			10,
+			10
 		},
 		size = {
 			1,
-			1,
-		},
+			1
+		}
 	},
 	horde_ability_root = {
-		horizontal_alignment = "right",
-		parent = "screen",
 		vertical_alignment = "bottom",
+		parent = "screen",
+		horizontal_alignment = "right",
 		position = {
 			-360,
 			40,
-			10,
+			10
 		},
 		size = {
 			1,
-			1,
-		},
+			1
+		}
 	},
 	crosshair_root = {
-		horizontal_alignment = "center",
-		parent = "screen",
 		vertical_alignment = "center",
+		parent = "screen",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			0,
-			10,
+			10
 		},
 		size = {
 			1,
-			1,
-		},
+			1
+		}
 	},
 	bottom_root = {
-		horizontal_alignment = "center",
-		parent = "screen",
 		vertical_alignment = "bottom",
+		parent = "screen",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			0,
-			10,
+			10
 		},
 		size = {
 			1,
-			1,
-		},
+			1
+		}
 	},
 	ability_pivot = {
-		horizontal_alignment = "center",
-		parent = "screen",
 		vertical_alignment = "bottom",
+		parent = "screen",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			40,
-			10,
+			10
 		},
 		size = {
 			1,
-			1,
-		},
+			1
+		}
 	},
 	ammo_parent = {
-		horizontal_alignment = "right",
-		parent = "screen",
 		vertical_alignment = "bottom",
+		parent = "screen",
+		horizontal_alignment = "right",
 		position = {
 			-50,
 			140,
-			10,
+			10
 		},
 		size = {
 			383,
-			86,
-		},
-	},
+			86
+		}
+	}
 }
-local widget_definitions = {
+local var_0_4 = {
 	abilities_detail_left = UIWidgets.create_simple_texture("health_bar_addon", "ability_pivot", nil, nil, {
 		255,
 		255,
 		255,
-		255,
+		255
 	}, nil, {
 		88,
-		68,
+		68
 	}),
 	abilities_detail_right = UIWidgets.create_simple_uv_texture("health_bar_addon", {
 		{
 			1,
-			0,
+			0
 		},
 		{
 			0,
-			1,
-		},
+			1
+		}
 	}, "ability_pivot", nil, nil, {
 		255,
 		255,
 		255,
-		255,
+		255
 	}, nil, false, {
 		88,
-		68,
-	}),
+		68
+	})
 }
 
-local function create_widget_priming()
+local function var_0_5()
 	return {
 		scenegraph_id = "crosshair_root",
 		element = {
@@ -139,74 +140,74 @@ local function create_widget_priming()
 					pass_type = "texture",
 					style_id = "background",
 					texture_id = "background",
-					content_check_function = function (content)
-						return content.progress > 0
-					end,
+					content_check_function = function(arg_2_0)
+						return arg_2_0.progress > 0
+					end
 				},
 				{
-					content_id = "progress_1",
-					pass_type = "texture_uv",
 					style_id = "progress_1",
-					content_check_function = function (content)
-						return content.parent.progress > 0
+					pass_type = "texture_uv",
+					content_id = "progress_1",
+					content_check_function = function(arg_3_0)
+						return arg_3_0.parent.progress > 0
 					end,
-					content_change_function = function (content, style)
-						content.uvs = {
+					content_change_function = function(arg_4_0, arg_4_1)
+						arg_4_0.uvs = {
 							{
 								0,
-								1 - content.parent.progress,
+								1 - arg_4_0.parent.progress
 							},
 							{
 								1,
-								1,
-							},
+								1
+							}
 						}
-						style.texture_size[2] = 84 * content.parent.progress
-					end,
+						arg_4_1.texture_size[2] = 84 * arg_4_0.parent.progress
+					end
 				},
 				{
-					content_id = "progress_2",
-					pass_type = "texture_uv",
 					style_id = "progress_2",
-					content_check_function = function (content)
-						return content.parent.progress > 0
+					pass_type = "texture_uv",
+					content_id = "progress_2",
+					content_check_function = function(arg_5_0)
+						return arg_5_0.parent.progress > 0
 					end,
-					content_change_function = function (content, style)
-						content.uvs = {
+					content_change_function = function(arg_6_0, arg_6_1)
+						arg_6_0.uvs = {
 							{
 								0,
-								1 - content.parent.progress,
+								1 - arg_6_0.parent.progress
 							},
 							{
 								1,
-								1,
-							},
+								1
+							}
 						}
-						style.texture_size[2] = 84 * content.parent.progress
-					end,
+						arg_6_1.texture_size[2] = 84 * arg_6_0.parent.progress
+					end
 				},
 				{
-					content_id = "progress_3",
-					pass_type = "texture_uv",
 					style_id = "progress_3",
-					content_check_function = function (content)
-						return content.parent.progress > 0
+					pass_type = "texture_uv",
+					content_id = "progress_3",
+					content_check_function = function(arg_7_0)
+						return arg_7_0.parent.progress > 0
 					end,
-					content_change_function = function (content, style)
-						content.uvs = {
+					content_change_function = function(arg_8_0, arg_8_1)
+						arg_8_0.uvs = {
 							{
 								0,
-								1 - content.parent.progress,
+								1 - arg_8_0.parent.progress
 							},
 							{
 								1,
-								1,
-							},
+								1
+							}
 						}
-						style.texture_size[2] = 84 * content.parent.progress
-					end,
-				},
-			},
+						arg_8_1.texture_size[2] = 84 * arg_8_0.parent.progress
+					end
+				}
+			}
 		},
 		content = {
 			background = "pounce_background",
@@ -216,100 +217,100 @@ local function create_widget_priming()
 				uvs = {
 					{
 						0,
-						1,
+						1
 					},
 					{
 						1,
-						0,
-					},
-				},
+						0
+					}
+				}
 			},
 			progress_2 = {
 				texture_id = "pounce_02",
 				uvs = {
 					{
 						0,
-						1,
+						1
 					},
 					{
 						1,
-						0,
-					},
-				},
+						0
+					}
+				}
 			},
 			progress_3 = {
 				texture_id = "pounce_03",
 				uvs = {
 					{
 						0,
-						1,
+						1
 					},
 					{
 						1,
-						0,
-					},
-				},
-			},
+						0
+					}
+				}
+			}
 		},
 		style = {
 			background = {
 				texture_size = {
 					108,
-					100,
+					100
 				},
 				offset = {
 					-54,
 					-110,
-					1,
+					1
 				},
-				color = Colors.get_color_table_with_alpha("white", 255),
+				color = Colors.get_color_table_with_alpha("white", 255)
 			},
 			progress_1 = {
 				texture_size = {
 					108,
-					84,
+					84
 				},
 				offset = {
 					-54,
 					-110,
-					2,
+					2
 				},
-				color = Colors.get_color_table_with_alpha("white", 255),
+				color = Colors.get_color_table_with_alpha("white", 255)
 			},
 			progress_2 = {
 				texture_size = {
 					108,
-					84,
+					84
 				},
 				offset = {
 					-54,
 					-110,
-					3,
+					3
 				},
-				color = Colors.get_color_table_with_alpha("white", 255),
+				color = Colors.get_color_table_with_alpha("white", 255)
 			},
 			progress_3 = {
 				texture_size = {
 					108,
-					84,
+					84
 				},
 				offset = {
 					-54,
 					-110,
-					4,
+					4
 				},
-				color = Colors.get_color_table_with_alpha("white", 255),
-			},
+				color = Colors.get_color_table_with_alpha("white", 255)
+			}
 		},
 		offset = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	}
 end
 
-local function create_widget_recharge()
+local function var_0_6()
 	return {
 		scenegraph_id = "crosshair_root",
 		element = {
@@ -317,341 +318,341 @@ local function create_widget_recharge()
 				{
 					pass_type = "texture",
 					style_id = "cooldown_mask",
-					texture_id = "cooldown_mask",
+					texture_id = "cooldown_mask"
 				},
 				{
-					content_id = "cooldown",
-					pass_type = "texture_uv",
 					style_id = "cooldown",
+					pass_type = "texture_uv",
+					content_id = "cooldown"
 				},
 				{
 					pass_type = "texture",
 					style_id = "background",
 					texture_id = "background",
-					retained_mode = RETAINED_MODE_ENABLED,
-					content_check_function = function (content)
-						return content.progress > 0
-					end,
+					retained_mode = var_0_2,
+					content_check_function = function(arg_10_0)
+						return arg_10_0.progress > 0
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "ring",
 					texture_id = "ring",
-					retained_mode = RETAINED_MODE_ENABLED,
-					content_check_function = function (content)
-						return content.progress > 0
-					end,
-				},
-			},
+					retained_mode = var_0_2,
+					content_check_function = function(arg_11_0)
+						return arg_11_0.progress > 0
+					end
+				}
+			}
 		},
 		content = {
-			background = "versus_crosshair_crosshair_bg",
-			cooldown_mask = "hud_ability_cooldown_mask",
-			progress = 0,
 			ring = "versus_crosshair_crosshair_ring",
+			background = "versus_crosshair_crosshair_bg",
+			progress = 0,
+			cooldown_mask = "hud_ability_cooldown_mask",
 			cooldown = {
 				texture_id = "versus_crosshair_crosshair_fill",
 				uvs = {
 					{
 						0,
-						0,
+						0
 					},
 					{
 						1,
-						1,
-					},
-				},
-			},
+						1
+					}
+				}
+			}
 		},
 		style = {
 			ring = {
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
+				horizontal_alignment = "center",
 				texture_size = {
 					80,
-					80,
+					80
 				},
 				offset = {
 					0,
 					0,
-					2,
+					2
 				},
-				color = Colors.get_color_table_with_alpha("black", 0),
+				color = Colors.get_color_table_with_alpha("black", 0)
 			},
 			background = {
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
+				horizontal_alignment = "center",
 				texture_size = {
 					80,
-					80,
+					80
 				},
 				offset = {
 					0,
 					0,
-					0,
+					0
 				},
-				color = Colors.get_color_table_with_alpha("white", 0),
+				color = Colors.get_color_table_with_alpha("white", 0)
 			},
 			cooldown = {
-				horizontal_alignment = "center",
-				masked = true,
 				vertical_alignment = "center",
+				masked = true,
+				horizontal_alignment = "center",
 				default_size = {
 					80,
-					80,
+					80
 				},
 				texture_size = {
 					80,
-					80,
+					80
 				},
 				color = Colors.get_color_table_with_alpha("pactsworn_green", 0),
 				offset = {
 					0,
 					0,
-					1,
-				},
+					1
+				}
 			},
 			cooldown_mask = {
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
+				horizontal_alignment = "center",
 				default_size = {
 					80,
-					80,
+					80
 				},
 				texture_size = {
 					80,
-					80,
+					80
 				},
 				color = Colors.get_color_table_with_alpha("black", 0),
 				offset = {
 					0,
 					0,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		offset = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	}
 end
 
-local function create_widget_reload()
+local function var_0_7()
 	return {
 		scenegraph_id = "crosshair_root",
 		element = {
 			passes = {
 				{
-					content_id = "cooldown",
-					pass_type = "texture_uv",
 					style_id = "cooldown",
-					retained_mode = RETAINED_MODE_ENABLED,
+					pass_type = "texture_uv",
+					content_id = "cooldown",
+					retained_mode = var_0_2
 				},
 				{
 					pass_type = "texture",
 					style_id = "background",
 					texture_id = "background",
-					retained_mode = RETAINED_MODE_ENABLED,
+					retained_mode = var_0_2
 				},
 				{
-					pass_type = "text",
 					style_id = "text",
+					pass_type = "text",
 					text_id = "text",
-					retained_mode = RETAINED_MODE_ENABLED,
+					retained_mode = var_0_2
 				},
 				{
-					pass_type = "text",
 					style_id = "text_shadow",
+					pass_type = "text",
 					text_id = "text",
-					retained_mode = RETAINED_MODE_ENABLED,
-				},
-			},
+					retained_mode = var_0_2
+				}
+			}
 		},
 		content = {
-			background = "circular_bar_background",
-			on_cooldown = false,
-			progress = 0,
 			text = "",
+			background = "circular_bar_background",
+			progress = 0,
+			on_cooldown = false,
 			cooldown = {
 				texture_id = "circular_bar_fill",
 				uvs = {
 					{
 						0,
-						0,
+						0
 					},
 					{
 						1,
-						1,
-					},
-				},
-			},
+						1
+					}
+				}
+			}
 		},
 		style = {
 			background = {
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
+				horizontal_alignment = "center",
 				texture_size = {
 					250,
-					70,
+					70
 				},
 				offset = {
 					0,
 					0,
-					0,
+					0
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			cooldown = {
-				horizontal_alignment = "left",
 				vertical_alignment = "center",
+				horizontal_alignment = "left",
 				default_size = {
 					250,
-					70,
+					70
 				},
 				texture_size = {
 					250,
-					70,
+					70
 				},
 				color = Colors.get_color_table_with_alpha("pactsworn_green", 255),
 				offset = {
 					-125,
 					0,
-					1,
-				},
+					1
+				}
 			},
 			text = {
-				font_size = 24,
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
+				font_size = 24,
+				horizontal_alignment = "center",
 				word_wrap = true,
+				font_type = "hell_shark",
 				text_color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				size = {
 					500,
-					30,
+					30
 				},
 				offset = {
 					-250,
 					16,
-					1,
-				},
+					1
+				}
 			},
 			text_shadow = {
-				font_size = 24,
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
+				font_size = 24,
+				horizontal_alignment = "center",
 				word_wrap = true,
+				font_type = "hell_shark",
 				text_color = {
 					255,
 					0,
 					0,
-					0,
+					0
 				},
 				size = {
 					500,
-					30,
+					30
 				},
 				offset = {
 					-249,
 					15,
-					0,
-				},
-			},
+					0
+				}
+			}
 		},
 		offset = {
 			0,
 			-140,
-			0,
-		},
+			0
+		}
 	}
 end
 
-local function create_widget_ammo()
+local function var_0_8()
 	return {
 		scenegraph_id = "bottom_root",
 		element = {
 			passes = {
 				{
-					pass_type = "rect",
 					style_id = "background",
-					retained_mode = RETAINED_MODE_ENABLED,
+					pass_type = "rect",
+					retained_mode = var_0_2
 				},
 				{
-					pass_type = "rect",
 					style_id = "progress",
-					retained_mode = RETAINED_MODE_ENABLED,
-				},
-			},
+					pass_type = "rect",
+					retained_mode = var_0_2
+				}
+			}
 		},
 		content = {
-			progress = 0,
+			progress = 0
 		},
 		style = {
 			background = {
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
+				horizontal_alignment = "center",
 				texture_size = {
 					501,
-					20,
+					20
 				},
 				offset = {
 					0,
 					0,
-					0,
+					0
 				},
 				color = {
 					255,
 					0,
 					0,
-					0,
-				},
+					0
+				}
 			},
 			progress = {
-				horizontal_alignment = "left",
 				vertical_alignment = "center",
+				horizontal_alignment = "left",
 				default_size = {
 					496,
-					16,
+					16
 				},
 				texture_size = {
 					496,
-					16,
+					16
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					-248,
 					0,
-					1,
-				},
-			},
+					1
+				}
+			}
 		},
 		offset = {
 			0,
 			80,
-			0,
-		},
+			0
+		}
 	}
 end
 
-local function create_dark_pact_ability_widget()
+local function var_0_9()
 	return {
 		scenegraph_id = "horde_ability_root",
 		element = {
@@ -659,169 +660,169 @@ local function create_dark_pact_ability_widget()
 				{
 					pass_type = "texture",
 					style_id = "background",
-					texture_id = "background",
+					texture_id = "background"
 				},
 				{
 					pass_type = "texture",
 					style_id = "ability_progress",
-					texture_id = "ability_progress",
+					texture_id = "ability_progress"
 				},
 				{
 					pass_type = "texture",
 					style_id = "ability_effect",
 					texture_id = "ability_effect",
-					content_check_function = function (content)
-						return content.ready
-					end,
+					content_check_function = function(arg_15_0)
+						return arg_15_0.ready
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "ability_effect_top",
 					texture_id = "ability_effect_top",
-					content_check_function = function (content)
-						return content.ready
-					end,
+					content_check_function = function(arg_16_0)
+						return arg_16_0.ready
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "ability_effect_halo",
 					texture_id = "ability_effect_halo",
-					content_check_function = function (content)
-						return content.ready
-					end,
+					content_check_function = function(arg_17_0)
+						return arg_17_0.ready
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "input_text",
-					text_id = "input_text",
+					pass_type = "text",
+					text_id = "input_text"
 				},
 				{
 					pass_type = "texture",
 					style_id = "input_background",
-					texture_id = "input_background",
-				},
-			},
+					texture_id = "input_background"
+				}
+			}
 		},
 		content = {
-			ability_effect = "dark_pact_ability_effect",
-			ability_effect_halo = "dark_pact_ability_effect_halo",
 			ability_effect_top = "dark_pact_ability_effect_top",
 			ability_progress = "dark_pact_ability_progress_bar",
 			background = "horde_bar_background",
+			ready = false,
+			ability_effect = "dark_pact_ability_effect",
 			input_background = "info_window_background",
 			input_text = "-",
-			ready = false,
+			ability_effect_halo = "dark_pact_ability_effect_halo"
 		},
 		style = {
 			background = {
 				size = {
 					356,
-					160,
+					160
 				},
 				offset = {
 					0,
 					0,
-					1,
+					1
 				},
-				color = Colors.get_color_table_with_alpha("white", 255),
+				color = Colors.get_color_table_with_alpha("white", 255)
 			},
 			ability_progress = {
 				gradient_threshold = 0,
 				size = {
 					262,
-					16,
+					16
 				},
 				offset = {
 					10,
 					72,
-					2,
+					2
 				},
-				color = Colors.get_color_table_with_alpha("white", 255),
+				color = Colors.get_color_table_with_alpha("white", 255)
 			},
 			ability_effect = {
 				size = {
 					152,
-					180,
+					180
 				},
 				offset = {
 					223,
 					-15,
-					3,
+					3
 				},
-				color = Colors.get_color_table_with_alpha("pactsworn_red", 255),
+				color = Colors.get_color_table_with_alpha("pactsworn_red", 255)
 			},
 			ability_effect_top = {
 				size = {
 					152,
-					180,
+					180
 				},
 				offset = {
 					223,
 					-15,
-					4,
+					4
 				},
-				color = Colors.get_color_table_with_alpha("white", 255),
+				color = Colors.get_color_table_with_alpha("white", 255)
 			},
 			ability_effect_halo = {
 				size = {
 					356,
-					160,
+					160
 				},
 				offset = {
 					0,
 					0,
-					2,
+					2
 				},
-				color = Colors.get_color_table_with_alpha("white", 255),
+				color = Colors.get_color_table_with_alpha("white", 255)
 			},
 			input_text = {
-				font_size = 30,
-				font_type = "hell_shark",
-				horizontal_alignment = "left",
-				localize = false,
-				use_shadow = false,
-				vertical_alignment = "center",
 				word_wrap = false,
+				use_shadow = false,
+				localize = false,
+				font_size = 30,
+				horizontal_alignment = "left",
+				vertical_alignment = "center",
+				font_type = "hell_shark",
 				size = {
 					30,
-					30,
+					30
 				},
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					284,
 					162,
-					2,
-				},
+					2
+				}
 			},
 			input_background = {
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
+				horizontal_alignment = "center",
 				texture_size = {
 					110,
-					30,
+					30
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					301,
 					180,
-					0,
-				},
-			},
+					0
+				}
+			}
 		},
 		offset = {
 			0,
 			0,
-			10,
-		},
+			10
+		}
 	}
 end
 
-local function create_ammo_widget()
+local function var_0_10()
 	return {
 		scenegraph_id = "ammo_parent",
 		element = {
@@ -829,30 +830,30 @@ local function create_ammo_widget()
 				{
 					pass_type = "texture",
 					style_id = "ammo_background",
-					texture_id = "ammo_background",
+					texture_id = "ammo_background"
 				},
 				{
-					pass_type = "text",
 					style_id = "current_ammo",
-					text_id = "current_ammo",
+					pass_type = "text",
+					text_id = "current_ammo"
 				},
 				{
-					pass_type = "text",
 					style_id = "ammo_divider",
-					text_id = "ammo_divider",
+					pass_type = "text",
+					text_id = "ammo_divider"
 				},
 				{
-					pass_type = "text",
 					style_id = "remaining_ammo",
-					text_id = "remaining_ammo",
-				},
-			},
+					pass_type = "text",
+					text_id = "remaining_ammo"
+				}
+			}
 		},
 		content = {
-			ammo_background = "loot_objective_bg",
 			ammo_divider = "/",
+			ammo_background = "loot_objective_bg",
 			current_ammo = "-",
-			remaining_ammo = "-",
+			remaining_ammo = "-"
 		},
 		style = {
 			ammo_background = {
@@ -860,947 +861,937 @@ local function create_ammo_widget()
 					200,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			current_ammo = {
 				font_size = 72,
-				font_type = "hell_shark_header",
-				horizontal_alignment = "right",
-				localize = false,
 				use_shadow = true,
-				vertical_alignment = "bottom",
+				localize = false,
 				word_wrap = false,
+				horizontal_alignment = "right",
+				vertical_alignment = "bottom",
+				font_type = "hell_shark_header",
 				size = {
 					20,
-					20,
+					20
 				},
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				default_text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					161.5,
 					-8,
-					10,
-				},
+					10
+				}
 			},
 			ammo_divider = {
+				word_wrap = false,
 				font_size = 40,
-				font_type = "hell_shark_header",
-				horizontal_alignment = "center",
 				localize = false,
 				use_shadow = true,
+				horizontal_alignment = "center",
 				vertical_alignment = "bottom",
-				word_wrap = false,
+				font_type = "hell_shark_header",
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				default_text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					0,
 					0,
-					10,
-				},
+					10
+				}
 			},
 			remaining_ammo = {
 				font_size = 40,
-				font_type = "hell_shark_header",
-				horizontal_alignment = "left",
-				localize = false,
 				use_shadow = true,
-				vertical_alignment = "bottom",
+				localize = false,
 				word_wrap = false,
+				horizontal_alignment = "left",
+				vertical_alignment = "bottom",
+				font_type = "hell_shark_header",
 				size = {
 					20,
-					20,
+					20
 				},
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				default_text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					204.5,
 					0,
-					10,
-				},
-			},
+					10
+				}
+			}
 		},
 		offset = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	}
 end
 
-local pre_defined_widgets = {
+local var_0_11 = {
 	packmaster_reload = {
-		definition = create_widget_reload(),
-		update_function = function (dt, t, ui_renderer, career_extension, ability_id, widget, is_player_dead)
-			local ability_cooldown, full_cooldown = career_extension:current_ability_cooldown(ability_id)
-			local uses_cooldown = career_extension:uses_cooldown(ability_id)
-			local ability = career_extension:ability_by_id(ability_id)
-			local conditions_met = ability:ability_available()
-			local startup_delay_time = ability:startup_delay_time()
-			local progress
-			local draw = false
+		definition = var_0_7(),
+		update_function = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
+			local var_19_0, var_19_1 = arg_19_3:current_ability_cooldown(arg_19_4)
+			local var_19_2 = arg_19_3:uses_cooldown(arg_19_4)
+			local var_19_3 = arg_19_3:ability_by_id(arg_19_4)
+			local var_19_4 = var_19_3:ability_available()
+			local var_19_5 = var_19_3:startup_delay_time()
+			local var_19_6
+			local var_19_7 = false
 
-			if conditions_met then
-				progress = ability:startup_delay_fraction()
-				draw = progress ~= nil
+			if var_19_4 then
+				var_19_6 = var_19_3:startup_delay_fraction()
+				var_19_7 = var_19_6 ~= nil
 			end
 
-			local content = widget.content
-			local style = widget.style
+			local var_19_8 = arg_19_5.content
+			local var_19_9 = arg_19_5.style
 
-			content.visible = draw
+			var_19_8.visible = var_19_7
 
-			if progress then
-				local default_size = style.cooldown.default_size
-				local texture_size = style.cooldown.texture_size
-				local uvs = content.cooldown.uvs
+			if var_19_6 then
+				local var_19_10 = var_19_9.cooldown.default_size
+				local var_19_11 = var_19_9.cooldown.texture_size
 
-				uvs[2][1] = progress
-				texture_size[1] = default_size[1] * progress
+				var_19_8.cooldown.uvs[2][1] = var_19_6
+				var_19_11[1] = var_19_10[1] * var_19_6
 			end
 
-			UIRenderer.draw_widget(ui_renderer, widget)
-		end,
+			UIRenderer.draw_widget(arg_19_2, arg_19_5)
+		end
 	},
 	ratling_gunner_reload = {
-		definition = create_widget_reload(),
-		update_function = function (dt, t, ui_renderer, career_extension, ability_id, widget, is_player_dead, player_unit)
-			if is_player_dead then
+		definition = var_0_7(),
+		update_function = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7)
+			if arg_20_6 then
 				return
 			end
 
-			local content = widget.content
-			local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
-			local weapon_unit = inventory_extension:get_weapon_unit()
-			local weapon_unit_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
-			local reload_progress = weapon_unit_extension:get_custom_data("reload_progress")
+			local var_20_0 = arg_20_5.content
+			local var_20_1 = ScriptUnit.extension(arg_20_7, "inventory_system"):get_weapon_unit()
+			local var_20_2 = ScriptUnit.extension(var_20_1, "weapon_system"):get_custom_data("reload_progress")
 
-			content.visible = reload_progress > 0
+			var_20_0.visible = var_20_2 > 0
 
-			if not content.visible then
+			if not var_20_0.visible then
 				return
 			end
 
-			local style = widget.style
+			local var_20_3 = arg_20_5.style
+			local var_20_4 = 1 - var_20_2
 
-			reload_progress = 1 - reload_progress
+			if var_20_4 then
+				local var_20_5 = var_20_3.cooldown.default_size
+				local var_20_6 = var_20_3.cooldown.texture_size
+				local var_20_7 = math.remap(0, 1, 0.05, 0.95, var_20_4)
 
-			if reload_progress then
-				local default_size = style.cooldown.default_size
-				local texture_size = style.cooldown.texture_size
-
-				reload_progress = math.remap(0, 1, 0.05, 0.95, reload_progress)
-
-				local uvs = content.cooldown.uvs
-
-				uvs[2][1] = reload_progress
-				texture_size[1] = default_size[1] * reload_progress
+				var_20_0.cooldown.uvs[2][1] = var_20_7
+				var_20_6[1] = var_20_5[1] * var_20_7
 			end
 
-			UIRenderer.draw_widget(ui_renderer, widget)
-		end,
+			UIRenderer.draw_widget(arg_20_2, arg_20_5)
+		end
 	},
 	reload = {
-		definition = create_widget_reload(),
-		update_function = function (dt, t, ui_renderer, career_extension, ability_id, widget, is_player_dead)
-			if is_player_dead then
+		definition = var_0_7(),
+		update_function = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6)
+			if arg_21_6 then
 				return
 			end
 
-			local ability_cooldown, full_cooldown = career_extension:current_ability_cooldown(ability_id)
-			local uses_cooldown = career_extension:uses_cooldown(ability_id)
-			local num_extra_current, num_extra_total = career_extension:get_extra_ability_uses()
-			local num_total_stacks = 1 + num_extra_total
-			local num_current_stacks = num_extra_current
+			local var_21_0, var_21_1 = arg_21_3:current_ability_cooldown(arg_21_4)
+			local var_21_2 = arg_21_3:uses_cooldown(arg_21_4)
+			local var_21_3, var_21_4 = arg_21_3:get_extra_ability_uses()
+			local var_21_5 = 1 + var_21_4
+			local var_21_6 = var_21_3
 
-			if ability_cooldown <= 0 then
-				num_current_stacks = num_current_stacks + 1
+			if var_21_0 <= 0 then
+				var_21_6 = var_21_6 + 1
 
-				if num_extra_total > 0 then
-					ability_cooldown, full_cooldown = career_extension:get_extra_ability_charge()
-					ability_cooldown = full_cooldown - ability_cooldown
+				if var_21_4 > 0 then
+					local var_21_7
+
+					var_21_0, var_21_7 = arg_21_3:get_extra_ability_charge()
+					var_21_0 = var_21_7 - var_21_0
 				end
 			end
 
-			local display_on_cooldown = false
-			local content = widget.content
-			local style = widget.style
-			local stored_ability_cooldown = content.ability_cooldown or 0
-			local cooldown_fraction = 0
+			local var_21_8 = false
+			local var_21_9 = arg_21_5.content
+			local var_21_10 = arg_21_5.style
+			local var_21_11 = var_21_9.ability_cooldown or 0
+			local var_21_12 = 0
 
-			if uses_cooldown then
-				if ability_cooldown < stored_ability_cooldown then
-					display_on_cooldown = true
-					cooldown_fraction = ability_cooldown / stored_ability_cooldown
+			if var_21_2 then
+				if var_21_0 < var_21_11 then
+					var_21_8 = true
+					var_21_12 = var_21_0 / var_21_11
 				else
-					content.ability_cooldown = ability_cooldown
+					var_21_9.ability_cooldown = var_21_0
 				end
 
-				if not ability_cooldown or ability_cooldown <= 0 then
-					content.ability_cooldown = 0
+				if not var_21_0 or var_21_0 <= 0 then
+					var_21_9.ability_cooldown = 0
 				end
 			end
 
-			local default_size = style.cooldown.default_size
-			local texture_size = style.cooldown.texture_size
-			local uvs = content.cooldown.uvs
+			local var_21_13 = var_21_10.cooldown.default_size
+			local var_21_14 = var_21_10.cooldown.texture_size
 
-			uvs[2][1] = cooldown_fraction
-			texture_size[1] = default_size[1] * cooldown_fraction
-			content.visible = display_on_cooldown
+			var_21_9.cooldown.uvs[2][1] = var_21_12
+			var_21_14[1] = var_21_13[1] * var_21_12
+			var_21_9.visible = var_21_8
 
-			if num_total_stacks > 1 then
-				local orig_text = content.orig_text
+			if var_21_5 > 1 then
+				local var_21_15 = var_21_9.orig_text
 
-				if not orig_text then
-					content.orig_text = content.text
+				if not var_21_15 then
+					var_21_9.orig_text = var_21_9.text
 				end
 
-				content.text = string.format("%s (%d/%d)", orig_text, num_current_stacks, num_total_stacks)
+				var_21_9.text = string.format("%s (%d/%d)", var_21_15, var_21_6, var_21_5)
 			end
 
-			UIRenderer.draw_widget(ui_renderer, widget)
-		end,
+			UIRenderer.draw_widget(arg_21_2, arg_21_5)
+		end
 	},
 	priming = {
-		definition = create_widget_priming(),
-		update_function = function (dt, t, ui_renderer, career_extension, ability_id, widget, is_player_dead)
-			if is_player_dead then
+		definition = var_0_5(),
+		update_function = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
+			if arg_22_6 then
 				return
 			end
 
-			local ability_cooldown, full_cooldown = career_extension:current_ability_cooldown(ability_id)
-			local ability_data = career_extension:get_activated_ability_data(ability_id)
-			local uses_cooldown = career_extension:uses_cooldown(ability_id)
-			local priming_progress = ability_data.priming_progress or 0
-			local content = widget.content
-			local style = widget.style
-			local stored_ability_cooldown = content.ability_cooldown or 0
+			local var_22_0, var_22_1 = arg_22_3:current_ability_cooldown(arg_22_4)
+			local var_22_2 = arg_22_3:get_activated_ability_data(arg_22_4)
+			local var_22_3 = arg_22_3:uses_cooldown(arg_22_4)
+			local var_22_4 = var_22_2.priming_progress or 0
+			local var_22_5 = arg_22_5.content
+			local var_22_6 = arg_22_5.style
+			local var_22_7 = var_22_5.ability_cooldown or 0
 
-			content.progress = priming_progress
+			var_22_5.progress = var_22_4
 
-			if uses_cooldown and stored_ability_cooldown <= ability_cooldown then
-				content.ability_cooldown = ability_cooldown
+			if var_22_3 and var_22_7 <= var_22_0 then
+				var_22_5.ability_cooldown = var_22_0
 			end
 
-			if not ability_cooldown or ability_cooldown <= 0 then
-				content.ability_cooldown = 0
+			if not var_22_0 or var_22_0 <= 0 then
+				var_22_5.ability_cooldown = 0
 			end
 
-			UIRenderer.draw_widget(ui_renderer, widget)
-		end,
+			UIRenderer.draw_widget(arg_22_2, arg_22_5)
+		end
 	},
 	recharge = {
-		definition = create_widget_recharge(),
-		update_function = function (dt, t, ui_renderer, career_extension, ability_id, widget, is_player_dead)
-			if is_player_dead then
+		definition = var_0_6(),
+		update_function = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6)
+			if arg_23_6 then
 				return
 			end
 
-			local ability_cooldown, full_cooldown = career_extension:current_ability_cooldown(ability_id)
-			local ability_available = career_extension:can_use_activated_ability(ability_id)
-			local uses_cooldown = career_extension:uses_cooldown(ability_id)
-			local cooldown_fraction = 0
+			local var_23_0, var_23_1 = arg_23_3:current_ability_cooldown(arg_23_4)
+			local var_23_2 = arg_23_3:can_use_activated_ability(arg_23_4)
+			local var_23_3 = arg_23_3:uses_cooldown(arg_23_4)
+			local var_23_4 = 0
 
-			if uses_cooldown then
-				cooldown_fraction = ability_cooldown / full_cooldown
+			if var_23_3 then
+				var_23_4 = var_23_0 / var_23_1
 			else
-				cooldown_fraction = ability_available and 0 or 1
+				var_23_4 = var_23_2 and 0 or 1
 			end
 
-			local content = widget.content
-			local dirty = cooldown_fraction ~= content.current_cooldown_fraction
-			local on_cooldown = cooldown_fraction ~= 0
+			local var_23_5 = arg_23_5.content
+			local var_23_6
 
-			widget.style.cooldown_mask.color[1] = 255 * cooldown_fraction
-			content.on_cooldown = on_cooldown
-			content.progress = cooldown_fraction
+			var_23_6 = var_23_4 ~= var_23_5.current_cooldown_fraction
 
-			UIRenderer.draw_widget(ui_renderer, widget)
-		end,
+			local var_23_7 = var_23_4 ~= 0
+
+			arg_23_5.style.cooldown_mask.color[1] = 255 * var_23_4
+			var_23_5.on_cooldown = var_23_7
+			var_23_5.progress = var_23_4
+
+			UIRenderer.draw_widget(arg_23_2, arg_23_5)
+		end
 	},
 	throw_charge = {
-		definition = create_widget_recharge(),
-		update_function = function (dt, t, ui_renderer, career_extension, ability_id, widget, is_player_dead)
-			if is_player_dead then
+		definition = var_0_6(),
+		update_function = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
+			if arg_24_6 then
 				return
 			end
 
-			local ability_cooldown, full_cooldown = career_extension:current_ability_cooldown(ability_id)
-			local ability_data = career_extension:get_activated_ability_data(ability_id)
-			local uses_cooldown = career_extension:uses_cooldown(ability_id)
-			local priming_progress = ability_data.priming_progress or 0
-			local content = widget.content
-			local style = widget.style
-			local current_priming_progress = content.progress or 0
-			local visible = current_priming_progress < priming_progress
+			local var_24_0, var_24_1 = arg_24_3:current_ability_cooldown(arg_24_4)
+			local var_24_2 = arg_24_3:get_activated_ability_data(arg_24_4)
+			local var_24_3 = arg_24_3:uses_cooldown(arg_24_4)
+			local var_24_4 = var_24_2.priming_progress or 0
+			local var_24_5 = arg_24_5.content
+			local var_24_6 = arg_24_5.style
+			local var_24_7 = var_24_4 > (var_24_5.progress or 0)
 
-			style.cooldown_mask.color[1] = visible and 255 * priming_progress or 0
+			var_24_6.cooldown_mask.color[1] = var_24_7 and 255 * var_24_4 or 0
 
-			local stored_ability_cooldown = content.ability_cooldown or 0
+			local var_24_8 = var_24_5.ability_cooldown or 0
 
-			content.visible = priming_progress > 0 and priming_progress < 1
-			content.progress = priming_progress
+			var_24_5.visible = var_24_4 > 0 and var_24_4 < 1
+			var_24_5.progress = var_24_4
 
-			if uses_cooldown and stored_ability_cooldown <= ability_cooldown then
-				content.ability_cooldown = ability_cooldown
+			if var_24_3 and var_24_8 <= var_24_0 then
+				var_24_5.ability_cooldown = var_24_0
 			end
 
-			if not ability_cooldown or ability_cooldown <= 0 then
-				content.ability_cooldown = 0
+			if not var_24_0 or var_24_0 <= 0 then
+				var_24_5.ability_cooldown = 0
 			end
 
-			UIRenderer.draw_widget(ui_renderer, widget)
-		end,
+			UIRenderer.draw_widget(arg_24_2, arg_24_5)
+		end
 	},
 	ammo = {
-		definition = create_ammo_widget(),
-		update_function = function (dt, t, ui_renderer, career_extension, ability_id, widget, is_player_dead)
-			UIRenderer.draw_widget(ui_renderer, widget)
-		end,
+		definition = var_0_10(),
+		update_function = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6)
+			UIRenderer.draw_widget(arg_25_2, arg_25_5)
+		end
 	},
 	duration = {
-		definition = create_widget_ammo(),
-		update_function = function (dt, t, ui_renderer, career_extension, ability_id, widget, is_player_dead)
-			local ability_data = career_extension:get_activated_ability_data(ability_id)
-			local duration_progress = ability_data.duration_progress or 0
-			local buff_name = "vs_gutter_runner_smoke_bomb_invisible"
-			local player = Managers.player:local_player(1)
-			local player_unit = player.player_unit
+		definition = var_0_8(),
+		update_function = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6)
+			if not arg_26_3:get_activated_ability_data(arg_26_4).duration_progress then
+				local var_26_0 = 0
+			end
 
-			if not Unit.alive(player_unit) then
+			local var_26_1 = "vs_gutter_runner_smoke_bomb_invisible"
+			local var_26_2 = Managers.player:local_player(1).player_unit
+
+			if not Unit.alive(var_26_2) then
 				return
 			end
 
-			local buff_extension = ScriptUnit.extension(player_unit, "buff_system")
-			local buff = buff_extension:get_non_stacking_buff(buff_name)
+			local var_26_3 = ScriptUnit.extension(var_26_2, "buff_system"):get_non_stacking_buff(var_26_1)
 
-			if not buff then
+			if not var_26_3 then
 				return
 			end
 
-			local duration = buff.duration
-			local start_time = buff.start_time
-			local game_time = Managers.time:time("game")
-			local end_time = duration and start_time + duration or 0
-			local remaining_duration = end_time and math.max(end_time - game_time, 0)
-			local style = widget.style
-			local default_size = style.progress.default_size
-			local texture_size = style.progress.texture_size
-			local progress = remaining_duration / duration
+			local var_26_4 = var_26_3.duration
+			local var_26_5 = var_26_3.start_time
+			local var_26_6 = Managers.time:time("game")
+			local var_26_7 = var_26_4 and var_26_5 + var_26_4 or 0
+			local var_26_8 = var_26_7 and math.max(var_26_7 - var_26_6, 0)
+			local var_26_9 = arg_26_5.style
+			local var_26_10 = var_26_9.progress.default_size
+			local var_26_11 = var_26_9.progress.texture_size
+			local var_26_12 = var_26_8 / var_26_4
 
-			texture_size[1] = default_size[1] * progress
+			var_26_11[1] = var_26_10[1] * var_26_12
 
-			UIRenderer.draw_widget(ui_renderer, widget)
-		end,
+			UIRenderer.draw_widget(arg_26_2, arg_26_5)
+		end
 	},
 	ability = {
-		definition = create_dark_pact_ability_widget(),
-		update_function = function (dt, t, ui_renderer, career_extension, ability_id, widget, is_player_dead, player_unit, horde_ability_extension)
-			if is_player_dead then
+		definition = var_0_9(),
+		update_function = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6, arg_27_7, arg_27_8)
+			if arg_27_6 then
 				return
 			end
 
-			local cooldown = horde_ability_extension:cooldown()
-			local game_time = Managers.time:time("game")
-			local ability_charge = horde_ability_extension:get_ability_charge(game_time)
-			local ability_cooldown = math.clamp(cooldown - ability_charge, 0, cooldown)
-			local content = widget.content
-			local cooldown_fraction = ability_cooldown == 0 and 0 or ability_cooldown / cooldown
+			local var_27_0 = arg_27_8:cooldown()
+			local var_27_1 = Managers.time:time("game")
+			local var_27_2 = arg_27_8:get_ability_charge(var_27_1)
+			local var_27_3 = math.clamp(var_27_0 - var_27_2, 0, var_27_0)
+			local var_27_4 = arg_27_5.content
+			local var_27_5 = 1 - (var_27_3 == 0 and 0 or var_27_3 / var_27_0)
+			local var_27_6 = arg_27_5.content.ability_progress
+			local var_27_7 = Gui.material(arg_27_2.gui, var_27_6)
 
-			cooldown_fraction = 1 - cooldown_fraction
+			Material.set_scalar(var_27_7, "gradient_threshold", var_27_5)
 
-			local material_name = widget.content.ability_progress
-			local material = Gui.material(ui_renderer.gui, material_name)
+			var_27_4.ready = var_27_5 == 1
+			var_27_4.actual_cooldown = var_27_5
 
-			Material.set_scalar(material, "gradient_threshold", cooldown_fraction)
+			local var_27_8 = Managers.input:is_device_active("gamepad")
+			local var_27_9 = "versus_horde_ability"
+			local var_27_10 = Managers.input:get_service("Player")
+			local var_27_11, var_27_12 = UISettings.get_gamepad_input_texture_data(var_27_10, var_27_9, var_27_8)
 
-			content.ready = cooldown_fraction == 1
-			content.actual_cooldown = cooldown_fraction
+			if var_27_4.current_input_text ~= var_27_12 then
+				var_27_4.current_input_text = var_27_12
 
-			local gamepad_active = Managers.input:is_device_active("gamepad")
-			local input_action = "versus_horde_ability"
-			local input_service = Managers.input:get_service("Player")
-			local _, input_text = UISettings.get_gamepad_input_texture_data(input_service, input_action, gamepad_active)
-
-			if content.current_input_text ~= input_text then
-				content.current_input_text = input_text
-
-				if gamepad_active then
-					content.input_text = "$KEY;Player__" .. input_action .. ":"
+				if var_27_8 then
+					var_27_4.input_text = "$KEY;Player__" .. var_27_9 .. ":"
 				else
-					content.input_text = "[" .. input_text .. "]"
+					var_27_4.input_text = "[" .. var_27_12 .. "]"
 				end
 			end
 
-			UIRenderer.draw_widget(ui_renderer, widget)
-		end,
-	},
+			UIRenderer.draw_widget(arg_27_2, arg_27_5)
+		end
+	}
 }
 
-local function create_dark_pact_hud_ability_icon_widget()
+local function var_0_12()
 	return {
 		scenegraph_id = "ability_pivot",
 		element = {
 			passes = {
 				{
-					pass_type = "texture",
 					style_id = "texture_icon_bg",
 					texture_id = "texture_icon",
-					content_change_function = function (content, style, _, dt)
-						if content.texture_icon == "icons_placeholder" and content.settings then
-							content.texture_icon = content.settings.icon
+					pass_type = "texture",
+					content_change_function = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+						if arg_29_0.texture_icon == "icons_placeholder" and arg_29_0.settings then
+							arg_29_0.texture_icon = arg_29_0.settings.icon
 						end
-					end,
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_icon",
 					texture_id = "texture_icon",
-					content_check_function = function (content)
-						return content.is_cooldown
-					end,
+					content_check_function = function(arg_30_0)
+						return arg_30_0.is_cooldown
+					end
 				},
 				{
-					pass_type = "texture",
 					style_id = "icon_mask",
 					texture_id = "icon_mask",
-					content_change_function = function (content, style, _, dt)
-						style.color[1] = 255 * (1 - content.progress)
-					end,
+					pass_type = "texture",
+					content_change_function = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+						arg_31_1.color[1] = 255 * (1 - arg_31_0.progress)
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_frame",
-					texture_id = "texture_frame",
+					texture_id = "texture_frame"
 				},
 				{
-					pass_type = "gradient_mask_texture",
 					style_id = "texture_cooldown",
 					texture_id = "texture_cooldown",
-					content_check_function = function (content)
-						return content.is_cooldown
+					pass_type = "gradient_mask_texture",
+					content_check_function = function(arg_32_0)
+						return arg_32_0.is_cooldown
 					end,
-					content_change_function = function (content, style, _, dt)
-						style.color[1] = 255 * (1 - content.progress)
-					end,
+					content_change_function = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+						arg_33_1.color[1] = 255 * (1 - arg_33_0.progress)
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "input",
+					pass_type = "text",
 					text_id = "input",
-					content_change_function = function (content, style, _, dt)
-						if not content.settings then
+					content_change_function = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+						if not arg_34_0.settings then
 							return
 						end
 
-						local gamepad_active = Managers.input:is_device_active("gamepad")
-						local input = gamepad_active and content.settings.gamepad_input or content.settings.input_action
-						local input_service = Managers.input:get_service("Player")
-						local _, input_text, keymap_binding = UISettings.get_gamepad_input_texture_data(input_service, input, gamepad_active)
+						local var_34_0 = Managers.input:is_device_active("gamepad")
+						local var_34_1 = var_34_0 and arg_34_0.settings.gamepad_input or arg_34_0.settings.input_action
+						local var_34_2 = Managers.input:get_service("Player")
+						local var_34_3, var_34_4, var_34_5 = UISettings.get_gamepad_input_texture_data(var_34_2, var_34_1, var_34_0)
 
-						if content.current_input_text ~= input_text then
-							content.current_input_text = input_text
+						if arg_34_0.current_input_text ~= var_34_4 then
+							arg_34_0.current_input_text = var_34_4
 
-							if keymap_binding and keymap_binding[1] == "mouse" or gamepad_active then
-								content.input = string.format("$KEY;Player__%s:", input)
-								style.offset[1] = 68
+							if var_34_5 and var_34_5[1] == "mouse" or var_34_0 then
+								arg_34_0.input = string.format("$KEY;Player__%s:", var_34_1)
+								arg_34_1.offset[1] = 68
 							else
-								content.input = input_text
-								style.offset[1] = 40
+								arg_34_0.input = var_34_4
+								arg_34_1.offset[1] = 40
 							end
 						end
 
-						local subtitle_gui = Managers.ui:get_hud_component("SubtitleGui")
+						local var_34_6 = Managers.ui:get_hud_component("SubtitleGui")
 
-						if subtitle_gui then
-							local has_subtitles = subtitle_gui:is_displaying_subtitle()
+						if var_34_6 then
+							local var_34_7 = var_34_6:is_displaying_subtitle()
 
-							content.has_subtitles = has_subtitles
+							arg_34_0.has_subtitles = var_34_7
 
-							local fade_progress = content.fade_progress or 0
+							local var_34_8 = arg_34_0.fade_progress or 0
 
-							if has_subtitles then
-								fade_progress = math.max(fade_progress - dt * 5, 0)
+							if var_34_7 then
+								var_34_8 = math.max(var_34_8 - arg_34_3 * 5, 0)
 							else
-								fade_progress = math.min(fade_progress + dt * 5, 1)
+								var_34_8 = math.min(var_34_8 + arg_34_3 * 5, 1)
 							end
 
-							style.text_color[1] = 55 + 200 * fade_progress
-							content.fade_progress = fade_progress
+							arg_34_1.text_color[1] = 55 + 200 * var_34_8
+							arg_34_0.fade_progress = var_34_8
 						end
-					end,
-				},
-			},
+					end
+				}
+			}
 		},
 		content = {
-			gris = "rect_masked",
-			icon_mask = "dark_pact_ability_icon_gradient_mask",
-			input = "n/a",
-			is_cooldown = false,
-			progress = 0,
 			set_unsaturated = false,
+			is_cooldown = false,
 			texture_cooldown = "dark_pact_ability_icon_cooldown_gradient",
+			progress = 0,
 			texture_frame = "health_bar_ability_icon_frame",
 			texture_icon = "icons_placeholder",
+			gris = "rect_masked",
+			icon_mask = "dark_pact_ability_icon_gradient_mask",
+			input = "n/a"
 		},
 		style = {
 			texture_icon_bg = {
 				saturated = false,
 				size = {
 					56,
-					56,
+					56
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					12,
 					14,
-					1,
-				},
+					1
+				}
 			},
 			texture_icon = {
-				masked = true,
 				saturated = false,
+				masked = true,
 				size = {
 					56,
-					56,
+					56
 				},
 				color = {
 					255,
 					30,
 					30,
-					30,
+					30
 				},
 				offset = {
 					12,
 					14,
-					2,
-				},
+					2
+				}
 			},
 			icon_mask = {
 				size = {
 					56,
-					56,
+					56
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					12,
 					14,
-					2,
-				},
+					2
+				}
 			},
 			texture_cooldown = {
 				size = {
 					56,
-					56,
+					56
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					12,
 					14,
-					3,
-				},
+					3
+				}
 			},
 			texture_frame = {
 				size = {
 					80,
-					80,
+					80
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					4,
-				},
+					4
+				}
 			},
 			input = {
-				font_size = 26,
 				font_type = "hell_shark",
-				horizontal_alignment = "center",
-				localize = false,
 				upper_case = false,
+				localize = false,
 				use_shadow = true,
+				font_size = 26,
+				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				size = {
 					0,
-					0,
+					0
 				},
 				area_size = {
 					20,
-					20,
+					20
 				},
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					68,
 					100,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		offset = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	}
 end
 
-local function ratling_gunner_reload_icon_update(dt, t, ui_renderer, career_extension, ability_id, widget, is_player_dead, player_unit, horde_ability_extension)
-	if is_player_dead then
+local function var_0_13(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6, arg_35_7, arg_35_8)
+	if arg_35_6 then
 		return
 	end
 
-	local content = widget.content
-	local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
-	local weapon_unit = inventory_extension:get_weapon_unit()
-	local weapon_unit_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
-	local reload_progress = weapon_unit_extension:get_custom_data("reload_progress")
-	local on_cooldown = reload_progress > 0
+	local var_35_0 = arg_35_5.content
+	local var_35_1 = ScriptUnit.extension(arg_35_7, "inventory_system"):get_weapon_unit()
+	local var_35_2 = ScriptUnit.extension(var_35_1, "weapon_system"):get_custom_data("reload_progress")
 
-	content.is_cooldown = on_cooldown
-	content.progress = reload_progress
+	var_35_0.is_cooldown = var_35_2 > 0
+	var_35_0.progress = var_35_2
 
-	UIRenderer.draw_widget(ui_renderer, widget)
+	UIRenderer.draw_widget(arg_35_2, arg_35_5)
 end
 
-local function chaos_troll_cooldown_update(dt, t, ui_renderer, career_extension, ability_id, widget, is_player_dead, player_unit, horde_ability_extension)
-	if is_player_dead then
+local function var_0_14(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6, arg_36_7, arg_36_8)
+	if arg_36_6 then
 		return
 	end
 
-	local ability_cooldown, full_cooldown = career_extension:current_ability_cooldown(ability_id)
-	local ability_data = career_extension:get_activated_ability_data(ability_id)
-	local uses_cooldown = career_extension:uses_cooldown(ability_id)
-	local content = widget.content
-	local style = widget.style
-	local on_cooldown = ability_cooldown ~= 0
+	local var_36_0, var_36_1 = arg_36_3:current_ability_cooldown(arg_36_4)
+	local var_36_2 = arg_36_3:get_activated_ability_data(arg_36_4)
+	local var_36_3 = arg_36_3:uses_cooldown(arg_36_4)
+	local var_36_4 = arg_36_5.content
+	local var_36_5 = arg_36_5.style
+	local var_36_6 = var_36_0 ~= 0
 
-	content.is_cooldown = on_cooldown
+	var_36_4.is_cooldown = var_36_6
 
-	if on_cooldown then
-		content.progress = 1 - math.clamp(ability_cooldown / full_cooldown, 0, content.current_progress or 1)
+	if var_36_6 then
+		var_36_4.progress = 1 - math.clamp(var_36_0 / var_36_1, 0, var_36_4.current_progress or 1)
 	end
 
-	UIRenderer.draw_widget(ui_renderer, widget)
+	UIRenderer.draw_widget(arg_36_2, arg_36_5)
 end
 
-local function rat_ogre_cooldown_update(dt, t, ui_renderer, career_extension, ability_id, widget, is_player_dead, player_unit, horde_ability_extension)
-	if is_player_dead then
+local function var_0_15(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5, arg_37_6, arg_37_7, arg_37_8)
+	if arg_37_6 then
 		return
 	end
 
-	local ability_cooldown, full_cooldown = career_extension:current_ability_cooldown(ability_id)
-	local ability_data = career_extension:get_activated_ability_data(ability_id)
-	local uses_cooldown = career_extension:uses_cooldown(ability_id)
-	local content = widget.content
-	local style = widget.style
-	local on_cooldown = ability_cooldown ~= 0
+	local var_37_0, var_37_1 = arg_37_3:current_ability_cooldown(arg_37_4)
+	local var_37_2 = arg_37_3:get_activated_ability_data(arg_37_4)
+	local var_37_3 = arg_37_3:uses_cooldown(arg_37_4)
+	local var_37_4 = arg_37_5.content
+	local var_37_5 = arg_37_5.style
+	local var_37_6 = var_37_0 ~= 0
 
-	content.is_cooldown = on_cooldown
+	var_37_4.is_cooldown = var_37_6
 
-	if on_cooldown then
-		content.progress = 1 - math.clamp(ability_cooldown / full_cooldown, 0, content.current_progress or 1)
+	if var_37_6 then
+		var_37_4.progress = 1 - math.clamp(var_37_0 / var_37_1, 0, var_37_4.current_progress or 1)
 	end
 
-	UIRenderer.draw_widget(ui_renderer, widget)
+	UIRenderer.draw_widget(arg_37_2, arg_37_5)
 end
 
-local function gutter_runner_foff_duration_update(dt, t, ui_renderer, career_extension, ability_id, widget, is_player_dead, player_unit, horde_ability_extension)
-	if is_player_dead then
+local function var_0_16(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5, arg_38_6, arg_38_7, arg_38_8)
+	if arg_38_6 then
 		return
 	end
 
-	local ability_data = career_extension:get_activated_ability_data(ability_id)
-	local duration_progress = ability_data.duration_progress or 0
-	local can_use_ability = career_extension:can_use_activated_ability(ability_id)
-	local content = widget.content
-	local progress = 0
-	local on_cooldown = false
+	if not arg_38_3:get_activated_ability_data(arg_38_4).duration_progress then
+		local var_38_0 = 0
+	end
 
-	if not can_use_ability then
-		on_cooldown = true
-		progress = 0
-		widget.style.texture_icon.color = {
+	local var_38_1 = arg_38_3:can_use_activated_ability(arg_38_4)
+	local var_38_2 = arg_38_5.content
+	local var_38_3 = 0
+	local var_38_4 = false
+
+	if not var_38_1 then
+		var_38_4 = true
+		var_38_3 = 0
+		arg_38_5.style.texture_icon.color = {
 			255,
 			100,
 			100,
-			100,
+			100
 		}
 	end
 
-	local buff_name = "vs_gutter_runner_smoke_bomb_invisible"
-	local player = Managers.player:local_player(1)
-	local player_unit = player.player_unit
+	local var_38_5 = "vs_gutter_runner_smoke_bomb_invisible"
+	local var_38_6 = Managers.player:local_player(1).player_unit
 
-	if not Unit.alive(player_unit) then
+	if not Unit.alive(var_38_6) then
 		return
 	end
 
-	local buff_extension = ScriptUnit.extension(player_unit, "buff_system")
-	local buff = buff_extension:get_non_stacking_buff(buff_name)
+	local var_38_7 = ScriptUnit.extension(var_38_6, "buff_system"):get_non_stacking_buff(var_38_5)
 
-	if buff then
-		local duration = buff.duration
-		local start_time = buff.start_time
-		local game_time = Managers.time:time("game")
-		local end_time = duration and start_time + duration or 0
-		local remaining_duration = end_time and math.max(end_time - game_time, 0)
-		local progress = remaining_duration / duration
+	if var_38_7 then
+		local var_38_8 = var_38_7.duration
+		local var_38_9 = var_38_7.start_time
+		local var_38_10 = Managers.time:time("game")
+		local var_38_11 = var_38_8 and var_38_9 + var_38_8 or 0
 
-		on_cooldown = progress ~= 1
+		var_38_4 = (var_38_11 and math.max(var_38_11 - var_38_10, 0)) / var_38_8 ~= 1
 	end
 
-	content.is_cooldown = on_cooldown
-	content.progress = progress
+	var_38_2.is_cooldown = var_38_4
+	var_38_2.progress = var_38_3
 
-	UIRenderer.draw_widget(ui_renderer, widget)
+	UIRenderer.draw_widget(arg_38_2, arg_38_5)
 end
 
-local function poison_wind_globadier_reload_update(dt, t, ui_renderer, career_extension, ability_id, widget, is_player_dead, player_unit, horde_ability_extension)
-	if is_player_dead then
+local function var_0_17(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6, arg_39_7, arg_39_8)
+	if arg_39_6 then
 		return
 	end
 
-	local ability_cooldown, full_cooldown = career_extension:current_ability_cooldown(ability_id)
-	local uses_cooldown = career_extension:uses_cooldown(ability_id)
-	local num_extra_current, num_extra_total = career_extension:get_extra_ability_uses()
-	local num_total_stacks = 1 + num_extra_total
-	local num_current_stacks = num_extra_current
+	local var_39_0, var_39_1 = arg_39_3:current_ability_cooldown(arg_39_4)
+	local var_39_2 = arg_39_3:uses_cooldown(arg_39_4)
+	local var_39_3, var_39_4 = arg_39_3:get_extra_ability_uses()
+	local var_39_5 = 1 + var_39_4
+	local var_39_6 = var_39_3
 
-	if ability_cooldown <= 0 then
-		num_current_stacks = num_current_stacks + 1
+	if var_39_0 <= 0 then
+		local var_39_7 = var_39_6 + 1
 
-		if num_extra_total > 0 then
-			ability_cooldown, full_cooldown = career_extension:get_extra_ability_charge()
-			ability_cooldown = full_cooldown - ability_cooldown
+		if var_39_4 > 0 then
+			local var_39_8
+
+			var_39_0, var_39_8 = arg_39_3:get_extra_ability_charge()
+			var_39_0 = var_39_8 - var_39_0
 		end
 	end
 
-	local display_on_cooldown = false
-	local content = widget.content
-	local style = widget.style
-	local stored_ability_cooldown = content.ability_cooldown or 0
-	local cooldown_fraction = 0
+	local var_39_9 = false
+	local var_39_10 = arg_39_5.content
+	local var_39_11 = arg_39_5.style
+	local var_39_12 = var_39_10.ability_cooldown or 0
+	local var_39_13 = 0
 
-	if uses_cooldown then
-		if ability_cooldown < stored_ability_cooldown then
-			display_on_cooldown = true
-			cooldown_fraction = ability_cooldown / stored_ability_cooldown
+	if var_39_2 then
+		if var_39_0 < var_39_12 then
+			var_39_9 = true
+			var_39_13 = var_39_0 / var_39_12
 		else
-			content.ability_cooldown = ability_cooldown
+			var_39_10.ability_cooldown = var_39_0
 		end
 
-		if not ability_cooldown or ability_cooldown <= 0 then
-			content.ability_cooldown = 0
+		if not var_39_0 or var_39_0 <= 0 then
+			var_39_10.ability_cooldown = 0
 		end
 	end
 
-	content.is_cooldown = display_on_cooldown
-	content.progress = 1 - cooldown_fraction
+	var_39_10.is_cooldown = var_39_9
+	var_39_10.progress = 1 - var_39_13
 
-	UIRenderer.draw_widget(ui_renderer, widget)
+	UIRenderer.draw_widget(arg_39_2, arg_39_5)
 end
 
-local profile_ability_templates = {
+local var_0_18 = {
 	vs_chaos_troll = {
 		{
 			widget_definitions = {
-				ability_icon = create_dark_pact_hud_ability_icon_widget(),
-			},
+				ability_icon = var_0_12()
+			}
 		},
 		{
 			ability_name = "vomit",
 			widget_definitions = {
-				ability_icon = create_dark_pact_hud_ability_icon_widget(),
+				ability_icon = var_0_12()
 			},
 			update_functions = {
-				ability_icon = chaos_troll_cooldown_update,
-			},
+				ability_icon = var_0_14
+			}
 		},
 		{
 			ability_name = "horde_ability",
 			widget_definitions = {
-				ability = pre_defined_widgets.ability.definition,
+				ability = var_0_11.ability.definition
 			},
 			update_functions = {
-				ability = pre_defined_widgets.ability.update_function,
-			},
-		},
+				ability = var_0_11.ability.update_function
+			}
+		}
 	},
 	vs_rat_ogre = {
 		{
 			widget_definitions = {
-				ability_icon = create_dark_pact_hud_ability_icon_widget(),
-			},
+				ability_icon = var_0_12()
+			}
 		},
 		{
 			ability_name = "ogre_jump",
 			widget_definitions = {
-				ability_icon = create_dark_pact_hud_ability_icon_widget(),
-				priming = pre_defined_widgets.priming.definition,
+				ability_icon = var_0_12(),
+				priming = var_0_11.priming.definition
 			},
 			update_functions = {
-				priming = pre_defined_widgets.priming.update_function,
-				ability_icon = rat_ogre_cooldown_update,
-			},
+				priming = var_0_11.priming.update_function,
+				ability_icon = var_0_15
+			}
 		},
 		{
 			ability_name = "horde_ability",
 			widget_definitions = {
-				ability = pre_defined_widgets.ability.definition,
+				ability = var_0_11.ability.definition
 			},
 			update_functions = {
-				ability = pre_defined_widgets.ability.update_function,
-			},
-		},
+				ability = var_0_11.ability.update_function
+			}
+		}
 	},
 	vs_gutter_runner = {
 		{
 			ability_name = "pounce",
 			widget_definitions = {
-				ability_icon = create_dark_pact_hud_ability_icon_widget(),
-				priming = pre_defined_widgets.priming.definition,
+				ability_icon = var_0_12(),
+				priming = var_0_11.priming.definition
 			},
 			update_functions = {
-				priming = pre_defined_widgets.priming.update_function,
-			},
+				priming = var_0_11.priming.update_function
+			}
 		},
 		{
 			ability_name = "foff",
 			widget_definitions = {
-				ability_icon = create_dark_pact_hud_ability_icon_widget(),
+				ability_icon = var_0_12()
 			},
 			update_functions = {
-				ability_icon = gutter_runner_foff_duration_update,
-			},
+				ability_icon = var_0_16
+			}
 		},
 		{
 			ability_name = "horde_ability",
 			widget_definitions = {
-				ability = pre_defined_widgets.ability.definition,
+				ability = var_0_11.ability.definition
 			},
 			update_functions = {
-				ability = pre_defined_widgets.ability.update_function,
-			},
-		},
+				ability = var_0_11.ability.update_function
+			}
+		}
 	},
 	vs_ratling_gunner = {
 		{
 			widget_definitions = {
-				ability_icon = create_dark_pact_hud_ability_icon_widget(),
-			},
+				ability_icon = var_0_12()
+			}
 		},
 		{
 			ability_name = "fire",
 			widget_definitions = {
-				ability_icon = create_dark_pact_hud_ability_icon_widget(),
-				reload = pre_defined_widgets.ratling_gunner_reload.definition,
-				ammo = pre_defined_widgets.ammo.definition,
+				ability_icon = var_0_12(),
+				reload = var_0_11.ratling_gunner_reload.definition,
+				ammo = var_0_11.ammo.definition
 			},
 			update_functions = {
-				ability_icon = ratling_gunner_reload_icon_update,
-				reload = pre_defined_widgets.ratling_gunner_reload.update_function,
-				ammo = pre_defined_widgets.ammo.update_function,
+				ability_icon = var_0_13,
+				reload = var_0_11.ratling_gunner_reload.update_function,
+				ammo = var_0_11.ammo.update_function
 			},
 			events = {
-				on_dark_pact_ammo_changed = "event_on_dark_pact_ammo_changed",
-			},
+				on_dark_pact_ammo_changed = "event_on_dark_pact_ammo_changed"
+			}
 		},
 		{
 			ability_name = "horde_ability",
 			widget_definitions = {
-				ability = pre_defined_widgets.ability.definition,
+				ability = var_0_11.ability.definition
 			},
 			update_functions = {
-				ability = pre_defined_widgets.ability.update_function,
-			},
-		},
+				ability = var_0_11.ability.update_function
+			}
+		}
 	},
 	vs_warpfire_thrower = {
 		{
 			ability_name = "fire",
 			widget_definitions = {
-				ability_icon = create_dark_pact_hud_ability_icon_widget(),
+				ability_icon = var_0_12()
 			},
-			update_functions = {},
+			update_functions = {}
 		},
 		{
 			ability_name = "horde_ability",
 			widget_definitions = {
-				ability = pre_defined_widgets.ability.definition,
+				ability = var_0_11.ability.definition
 			},
 			update_functions = {
-				ability = pre_defined_widgets.ability.update_function,
-			},
-		},
+				ability = var_0_11.ability.update_function
+			}
+		}
 	},
 	vs_poison_wind_globadier = {
 		{
 			ability_name = "gas",
 			widget_definitions = {
-				ability_icon = create_dark_pact_hud_ability_icon_widget(),
-				throw_charge = pre_defined_widgets.throw_charge.definition,
+				ability_icon = var_0_12(),
+				throw_charge = var_0_11.throw_charge.definition
 			},
 			update_functions = {
-				ability_icon = poison_wind_globadier_reload_update,
-				throw_charge = pre_defined_widgets.throw_charge.update_function,
-			},
+				ability_icon = var_0_17,
+				throw_charge = var_0_11.throw_charge.update_function
+			}
 		},
 		{
 			ability_name = "horde_ability",
 			widget_definitions = {
-				ability = pre_defined_widgets.ability.definition,
+				ability = var_0_11.ability.definition
 			},
 			update_functions = {
-				ability = pre_defined_widgets.ability.update_function,
-			},
-		},
+				ability = var_0_11.ability.update_function
+			}
+		}
 	},
 	vs_packmaster = {
 		{
 			ability_name = "equip",
 			widget_definitions = {
-				ability_icon = create_dark_pact_hud_ability_icon_widget(),
-				reload = pre_defined_widgets.packmaster_reload.definition,
+				ability_icon = var_0_12(),
+				reload = var_0_11.packmaster_reload.definition
 			},
 			update_functions = {
-				reload = pre_defined_widgets.packmaster_reload.update_function,
-			},
+				reload = var_0_11.packmaster_reload.update_function
+			}
 		},
 		{
 			ability_name = "horde_ability",
 			widget_definitions = {
-				ability_charge = pre_defined_widgets.ability.definition,
+				ability_charge = var_0_11.ability.definition
 			},
 			update_functions = {
-				ability_charge = pre_defined_widgets.ability.update_function,
-			},
-		},
-	},
+				ability_charge = var_0_11.ability.update_function
+			}
+		}
+	}
 }
 
 return {
-	profile_ability_templates = profile_ability_templates,
-	scenegraph_definition = scenegraph_definition,
-	widget_definitions = widget_definitions,
+	profile_ability_templates = var_0_18,
+	scenegraph_definition = var_0_3,
+	widget_definitions = var_0_4
 }

@@ -1,4 +1,4 @@
-﻿-- chunkname: @dialogues/generated/lookup_hero_conversation_crater.lua
+-- chunkname: @dialogues/generated/lookup_hero_conversation_crater.lua
 
 assert(DialogueLookup[DialogueLookup_n + 1] == nil)
 assert(DialogueLookup[DialogueLookup_n + 2] == nil)

@@ -1,298 +1,289 @@
-﻿-- chunkname: @scripts/ui/views/subtitle_timed_gui.lua
+-- chunkname: @scripts/ui/views/subtitle_timed_gui.lua
 
-local scenegraph_definition = {
+local var_0_0 = {
 	root = {
 		is_root = true,
 		position = {
 			0,
 			0,
-			1,
+			1
 		},
 		size = {
 			1920,
-			1080,
-		},
+			1080
+		}
 	},
 	menu_root = {
-		horizontal_alignment = "center",
-		parent = "root",
 		vertical_alignment = "center",
+		parent = "root",
+		horizontal_alignment = "center",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	subtitle_row = {
-		horizontal_alignment = "center",
-		parent = "menu_root",
 		vertical_alignment = "bottom",
+		parent = "menu_root",
+		horizontal_alignment = "center",
 		size = {
 			600,
-			50,
+			50
 		},
 		position = {
 			0,
 			300,
-			3,
-		},
-	},
+			3
+		}
+	}
 }
-local subtitle_row_widget = {
-	scenegraph_id = "subtitle_row",
+local var_0_1 = {
 	start_offset_y = 0,
+	scenegraph_id = "subtitle_row",
 	element = {
 		passes = {
 			{
-				pass_type = "text",
 				style_id = "text",
-				text_id = "text",
+				pass_type = "text",
+				text_id = "text"
 			},
 			{
-				pass_type = "text",
 				style_id = "shadow_text",
-				text_id = "text",
-			},
-		},
+				pass_type = "text",
+				text_id = "text"
+			}
+		}
 	},
 	content = {
-		text = "",
+		text = ""
 	},
 	style = {
 		text = {
-			font_size = 36,
-			font_type = "hell_shark",
-			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			font_type = "hell_shark",
 			word_wrap = false,
+			font_size = 36,
+			horizontal_alignment = "center",
 			text_color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
 				0,
 				0,
-				1,
-			},
+				1
+			}
 		},
 		shadow_text = {
-			font_size = 36,
-			font_type = "hell_shark",
-			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			font_type = "hell_shark",
 			word_wrap = false,
+			font_size = 36,
+			horizontal_alignment = "center",
 			text_color = {
 				255,
 				0,
 				0,
-				0,
+				0
 			},
 			offset = {
 				2,
 				-2,
-				0,
-			},
-		},
+				0
+			}
+		}
 	},
 	offset = {
 		0,
 		0,
-		0,
-	},
+		0
+	}
 }
-local DO_RELOAD = false
+local var_0_2 = false
 
 SubtitleTimedGui = class(SubtitleTimedGui)
 
-local function extract_lines(text)
-	local language_id = Managers.localizer:language_id()
-	local is_chinese = language_id == "zh"
-	local lines = {}
-	local text_length = UTF8Utils.string_length(text)
-	local index = 1
-	local latest_space_index
-	local max_chars_per_line = 50
+local function var_0_3(arg_1_0)
+	local var_1_0 = Managers.localizer:language_id() == "zh"
+	local var_1_1 = {}
+	local var_1_2 = UTF8Utils.string_length(arg_1_0)
+	local var_1_3 = 1
+	local var_1_4
+	local var_1_5 = 50
 
-	for i = 1, text_length do
-		local char = UTF8Utils.sub_string(text, i, i)
+	for iter_1_0 = 1, var_1_2 do
+		local var_1_6 = UTF8Utils.sub_string(arg_1_0, iter_1_0, iter_1_0)
 
-		if is_chinese then
-			local is_space_char = char == " " or char == "。" or char == "，"
-
-			if is_space_char and i >= max_chars_per_line / 2 then
-				latest_space_index = i
+		if var_1_0 then
+			if (var_1_6 == " " or var_1_6 == "。" or var_1_6 == "，") and iter_1_0 >= var_1_5 / 2 then
+				var_1_4 = iter_1_0
 			end
 
-			if max_chars_per_line < i - index and i < text_length then
-				if latest_space_index then
-					lines[#lines + 1] = UTF8Utils.sub_string(text, index, latest_space_index)
-					index = latest_space_index + 1
-					i = latest_space_index
-					latest_space_index = nil
+			if var_1_5 < iter_1_0 - var_1_3 and iter_1_0 < var_1_2 then
+				if var_1_4 then
+					var_1_1[#var_1_1 + 1] = UTF8Utils.sub_string(arg_1_0, var_1_3, var_1_4)
+					var_1_3 = var_1_4 + 1
+					iter_1_0 = var_1_4
+					var_1_4 = nil
 				else
-					lines[#lines + 1] = UTF8Utils.sub_string(text, index, i)
-					index = i + 1
+					var_1_1[#var_1_1 + 1] = UTF8Utils.sub_string(arg_1_0, var_1_3, iter_1_0)
+					var_1_3 = iter_1_0 + 1
 				end
 			end
-		else
-			local is_space_char = char == " "
-
-			if is_space_char and max_chars_per_line < i - index then
-				lines[#lines + 1] = UTF8Utils.sub_string(text, index, i)
-				index = i + 1
-			end
+		elseif var_1_6 == " " and var_1_5 < iter_1_0 - var_1_3 then
+			var_1_1[#var_1_1 + 1] = UTF8Utils.sub_string(arg_1_0, var_1_3, iter_1_0)
+			var_1_3 = iter_1_0 + 1
 		end
 	end
 
-	if index < text_length then
-		lines[#lines + 1] = UTF8Utils.sub_string(text, index, text_length)
+	if var_1_3 < var_1_2 then
+		var_1_1[#var_1_1 + 1] = UTF8Utils.sub_string(arg_1_0, var_1_3, var_1_2)
 	end
 
-	return lines
+	return var_1_1
 end
 
-SubtitleTimedGui.is_complete = function (self)
-	return self._complete
+function SubtitleTimedGui.is_complete(arg_2_0)
+	return arg_2_0._complete
 end
 
-SubtitleTimedGui.init = function (self, subtitle_timing_name, num_rows)
-	self._num_rows = num_rows or 5
-	self.render_settings = {
-		snap_pixel_positions = true,
+function SubtitleTimedGui.init(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_0._num_rows = arg_3_2 or 5
+	arg_3_0.render_settings = {
+		snap_pixel_positions = true
 	}
 
-	local localized_subtitle_timing_name = ""
+	local var_3_0 = ""
 
-	if type(subtitle_timing_name) == "table" then
-		for _, subtitle_name in ipairs(subtitle_timing_name) do
-			localized_subtitle_timing_name = localized_subtitle_timing_name .. Localize(subtitle_name) .. " "
+	if type(arg_3_1) == "table" then
+		for iter_3_0, iter_3_1 in ipairs(arg_3_1) do
+			var_3_0 = var_3_0 .. Localize(iter_3_1) .. " "
 		end
 	else
-		localized_subtitle_timing_name = subtitle_timing_name ~= "" and Localize(subtitle_timing_name) or subtitle_timing_name
+		var_3_0 = arg_3_1 ~= "" and Localize(arg_3_1) or arg_3_1
 	end
 
-	self.texts = extract_lines(localized_subtitle_timing_name)
-	self.next_text_index = 0
-	self.text_speed = 20
-	self.subtitle_timing_name = localized_subtitle_timing_name
-	DO_RELOAD = false
+	arg_3_0.texts = var_0_3(var_3_0)
+	arg_3_0.next_text_index = 0
+	arg_3_0.text_speed = 20
+	arg_3_0.subtitle_timing_name = var_3_0
+	var_0_2 = false
 end
 
-SubtitleTimedGui._create_ui_elements = function (self, ui_renderer)
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+function SubtitleTimedGui._create_ui_elements(arg_4_0, arg_4_1)
+	arg_4_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0)
 
-	local widgets = {}
+	local var_4_0 = {}
 
-	for i = 1, self._num_rows do
-		local widget = UIWidget.init(subtitle_row_widget)
+	for iter_4_0 = 1, arg_4_0._num_rows do
+		local var_4_1 = UIWidget.init(var_0_1)
 
-		widgets[i] = widget
+		var_4_0[iter_4_0] = var_4_1
 
-		local start_offset_y = -(i - 1) * 50
+		local var_4_2 = -(iter_4_0 - 1) * 50
 
-		widget.start_offset_y = start_offset_y
-		widget.offset[2] = start_offset_y
+		var_4_1.start_offset_y = var_4_2
+		var_4_1.offset[2] = var_4_2
 	end
 
-	self._widgets = widgets
+	arg_4_0._widgets = var_4_0
 
-	UIRenderer.clear_scenegraph_queue(ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_4_1)
 end
 
-SubtitleTimedGui.update = function (self, ui_renderer, dt)
-	if not self._widgets_initialized then
-		self._widgets_initialized = true
+function SubtitleTimedGui.update(arg_5_0, arg_5_1, arg_5_2)
+	if not arg_5_0._widgets_initialized then
+		arg_5_0._widgets_initialized = true
 
-		self:_create_ui_elements(ui_renderer)
+		arg_5_0:_create_ui_elements(arg_5_1)
 	end
 
-	local widgets = self._widgets
+	local var_5_0 = arg_5_0._widgets
 
-	if DO_RELOAD then
-		DO_RELOAD = false
-		self.texts = extract_lines(self.subtitle_timing_name)
-		self.next_text_index = 0
+	if var_0_2 then
+		var_0_2 = false
+		arg_5_0.texts = var_0_3(arg_5_0.subtitle_timing_name)
+		arg_5_0.next_text_index = 0
 
-		for i = 1, #widgets do
-			local widget = widgets[i]
+		for iter_5_0 = 1, #var_5_0 do
+			local var_5_1 = var_5_0[iter_5_0]
 
-			widget.offset[2] = widget.start_offset_y
+			var_5_1.offset[2] = var_5_1.start_offset_y
 		end
 	end
 
-	for i = 1, #widgets do
-		local widget = widgets[i]
-		local offset_y = widget.offset[2]
-		local offset_y_old = offset_y
+	for iter_5_1 = 1, #var_5_0 do
+		local var_5_2 = var_5_0[iter_5_1]
+		local var_5_3 = var_5_2.offset[2]
+		local var_5_4 = var_5_3
+		local var_5_5 = var_5_3 + arg_5_2 * arg_5_0.text_speed
+		local var_5_6 = var_5_2.style
+		local var_5_7 = var_5_6.text
+		local var_5_8 = var_5_6.shadow_text
 
-		offset_y = offset_y + dt * self.text_speed
+		if var_5_5 > 0 and var_5_4 <= 0 then
+			local var_5_9 = arg_5_0.next_text_index + 1
 
-		local style = widget.style
-		local text_style = style.text
-		local shadow_text_style = style.shadow_text
+			arg_5_0.next_text_index = var_5_9
 
-		if offset_y > 0 and offset_y_old <= 0 then
-			local next_text_index = self.next_text_index + 1
+			local var_5_10 = arg_5_0.texts[var_5_9]
 
-			self.next_text_index = next_text_index
+			var_5_2.content.text = var_5_10 or ""
+			var_5_2.content.text_index = var_5_9
+		elseif var_5_5 > 200 then
+			var_5_5 = var_5_5 - #var_5_0 * 50
+			var_5_7.text_color[1] = 0
+			var_5_8.text_color[1] = 0
 
-			local text = self.texts[next_text_index]
-
-			widget.content.text = text or ""
-			widget.content.text_index = next_text_index
-		elseif offset_y > 200 then
-			offset_y = offset_y - #widgets * 50
-			text_style.text_color[1] = 0
-			shadow_text_style.text_color[1] = 0
-
-			if widget.content.text_index > #self.texts then
-				self._complete = true
+			if var_5_2.content.text_index > #arg_5_0.texts then
+				arg_5_0._complete = true
 			end
 		end
 
-		widget.offset[2] = offset_y
+		var_5_2.offset[2] = var_5_5
 
-		if offset_y >= 0 and offset_y < 50 then
-			local alpha = math.lerp(0, 255, offset_y / 50)
+		if var_5_5 >= 0 and var_5_5 < 50 then
+			local var_5_11 = math.lerp(0, 255, var_5_5 / 50)
 
-			text_style.text_color[1] = alpha
-			shadow_text_style.text_color[1] = alpha
-		elseif offset_y >= 50 and offset_y < 150 then
-			text_style.text_color[1] = 255
-			shadow_text_style.text_color[1] = 255
-		elseif offset_y >= 150 then
-			local alpha = math.lerp(255, 0, (offset_y - 150) / 50)
+			var_5_7.text_color[1] = var_5_11
+			var_5_8.text_color[1] = var_5_11
+		elseif var_5_5 >= 50 and var_5_5 < 150 then
+			var_5_7.text_color[1] = 255
+			var_5_8.text_color[1] = 255
+		elseif var_5_5 >= 150 then
+			local var_5_12 = math.lerp(255, 0, (var_5_5 - 150) / 50)
 
-			text_style.text_color[1] = alpha
-			shadow_text_style.text_color[1] = alpha
+			var_5_7.text_color[1] = var_5_12
+			var_5_8.text_color[1] = var_5_12
 		end
 	end
 
-	self:draw(ui_renderer, dt)
+	arg_5_0:draw(arg_5_1, arg_5_2)
 end
 
-SubtitleTimedGui.draw = function (self, ui_renderer, dt)
-	local ui_scenegraph = self.ui_scenegraph
-	local render_settings = self.render_settings
-	local widgets = self._widgets
+function SubtitleTimedGui.draw(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = arg_6_0.ui_scenegraph
+	local var_6_1 = arg_6_0.render_settings
+	local var_6_2 = arg_6_0._widgets
 
-	if not widgets then
+	if not var_6_2 then
 		return
 	end
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, FAKE_INPUT_SERVICE, dt, nil, render_settings)
+	UIRenderer.begin_pass(arg_6_1, var_6_0, FAKE_INPUT_SERVICE, arg_6_2, nil, var_6_1)
 
-	for i = 1, #widgets do
-		local widget = widgets[i]
+	for iter_6_0 = 1, #var_6_2 do
+		local var_6_3 = var_6_2[iter_6_0]
 
-		UIRenderer.draw_widget(ui_renderer, widget)
+		UIRenderer.draw_widget(arg_6_1, var_6_3)
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(arg_6_1)
 end

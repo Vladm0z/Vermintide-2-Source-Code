@@ -1,532 +1,520 @@
-﻿-- chunkname: @scripts/network/unit_spawner.lua
+-- chunkname: @scripts/network/unit_spawner.lua
 
 require("scripts/settings/unit_spawner_settings")
 require("scripts/settings/spawn_unit_templates")
 
-local unit_templates = require("scripts/network/unit_extension_templates")
+local var_0_0 = require("scripts/network/unit_extension_templates")
 
-local function call_destroy_listener(unit_destroy_listeners, unit)
-	local listeners = unit_destroy_listeners[unit]
+local function var_0_1(arg_1_0, arg_1_1)
+	local var_1_0 = arg_1_0[arg_1_1]
 
-	if not listeners then
+	if not var_1_0 then
 		return
 	end
 
-	for _, listener in pairs(listeners) do
-		listener(unit)
+	for iter_1_0, iter_1_1 in pairs(var_1_0) do
+		iter_1_1(arg_1_1)
 	end
 
-	unit_destroy_listeners[unit] = nil
+	arg_1_0[arg_1_1] = nil
 end
 
-local Unit_alive = Unit.alive
+local var_0_2 = Unit.alive
 
 UnitSpawner = class(UnitSpawner)
 
-UnitSpawner.init = function (self, world, entity_manager, is_server)
-	self.world = world
-	self.entity_manager = entity_manager
-	self.unit_storage = nil
-	self.is_server = is_server
-	self.unit_deletion_information = {}
-	self.deletion_queue = GrowQueue:new()
-	self.temp_deleted_units_list = {}
-	self.unit_unique_id = 0
-	self.game_session = nil
-	self.unit_synchronizer = nil
-	self.own_peer_id = nil
-	self.gameobject_functor_context = nil
-	self.gameobject_initializers = nil
-	self.gameobject_extractors = nil
-	self.pending_extension_adds_map = {}
-	self.pending_extension_adds_list = {}
-	self.pending_extension_adds_list_n = 0
-	self.unit_destroy_listeners = {}
-	self.unit_destroy_listeners_post_cleanup = {}
-	self.unit_death_watch_list = {}
-	self.unit_death_watch_lookup = {}
-	self.unit_death_watch_list_n = 0
-	self.unit_death_watch_list_dirty = false
-	self._async_spawn_queue = {}
-	self._async_spawn_handle = 0
-	self._spawned_async_units = {}
+function UnitSpawner.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	arg_2_0.world = arg_2_1
+	arg_2_0.entity_manager = arg_2_2
+	arg_2_0.unit_storage = nil
+	arg_2_0.is_server = arg_2_3
+	arg_2_0.unit_deletion_information = {}
+	arg_2_0.deletion_queue = GrowQueue:new()
+	arg_2_0.temp_deleted_units_list = {}
+	arg_2_0.unit_unique_id = 0
+	arg_2_0.game_session = nil
+	arg_2_0.unit_synchronizer = nil
+	arg_2_0.own_peer_id = nil
+	arg_2_0.gameobject_functor_context = nil
+	arg_2_0.gameobject_initializers = nil
+	arg_2_0.gameobject_extractors = nil
+	arg_2_0.pending_extension_adds_map = {}
+	arg_2_0.pending_extension_adds_list = {}
+	arg_2_0.pending_extension_adds_list_n = 0
+	arg_2_0.unit_destroy_listeners = {}
+	arg_2_0.unit_destroy_listeners_post_cleanup = {}
+	arg_2_0.unit_death_watch_list = {}
+	arg_2_0.unit_death_watch_lookup = {}
+	arg_2_0.unit_death_watch_list_n = 0
+	arg_2_0.unit_death_watch_list_dirty = false
+	arg_2_0._async_spawn_queue = {}
+	arg_2_0._async_spawn_handle = 0
+	arg_2_0._spawned_async_units = {}
 end
 
-UnitSpawner.destroy = function (self)
-	GarbageLeakDetector.register_object(self, "UnitSpawner")
+function UnitSpawner.destroy(arg_3_0)
+	GarbageLeakDetector.register_object(arg_3_0, "UnitSpawner")
 
-	self.unit_destroy_listeners = nil
-	self.entity_manager = nil
+	arg_3_0.unit_destroy_listeners = nil
+	arg_3_0.entity_manager = nil
 end
 
-UnitSpawner.set_gameobject_initializer_data = function (self, initializer_function_table, extraction_function_table, gameobject_context)
-	self.game_session = Network.game_session()
+function UnitSpawner.set_gameobject_initializer_data(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	arg_4_0.game_session = Network.game_session()
 
-	fassert(self.game_session, "No game session when initializing game object")
+	fassert(arg_4_0.game_session, "No game session when initializing game object")
 
-	self.own_peer_id = Network.peer_id()
+	arg_4_0.own_peer_id = Network.peer_id()
 
-	fassert(self.own_peer_id, "No own peer id when initializing game object")
+	fassert(arg_4_0.own_peer_id, "No own peer id when initializing game object")
 
-	self.gameobject_functor_context = gameobject_context
-	self.gameobject_initializers = initializer_function_table
-	self.gameobject_extractors = extraction_function_table
+	arg_4_0.gameobject_functor_context = arg_4_3
+	arg_4_0.gameobject_initializers = arg_4_1
+	arg_4_0.gameobject_extractors = arg_4_2
 end
 
-UnitSpawner.set_unit_storage = function (self, unit_storage)
-	self.unit_storage = unit_storage
+function UnitSpawner.set_unit_storage(arg_5_0, arg_5_1)
+	arg_5_0.unit_storage = arg_5_1
 end
 
-UnitSpawner.set_gameobject_to_unit_creator_function = function (self, func)
-	self.create_unit_from_gameobject_function = func
+function UnitSpawner.set_gameobject_to_unit_creator_function(arg_6_0, arg_6_1)
+	arg_6_0.create_unit_from_gameobject_function = arg_6_1
 end
 
-UnitSpawner.set_unit_template_lookup_table = function (self, template_lut)
-	self.unit_template_lut = template_lut
+function UnitSpawner.set_unit_template_lookup_table(arg_7_0, arg_7_1)
+	arg_7_0.unit_template_lut = arg_7_1
 end
 
-UnitSpawner.push_unit_to_death_watch_list = function (self, unit, t, data)
-	self:freeze_unit_extensions(unit, t, data)
+function UnitSpawner.push_unit_to_death_watch_list(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	arg_8_0:freeze_unit_extensions(arg_8_1, arg_8_2, arg_8_3)
 
-	self.unit_death_watch_list_n = self.unit_death_watch_list_n + 1
-	self.unit_death_watch_list[self.unit_death_watch_list_n] = {
-		unit = unit,
-		t = t,
-		data = data,
+	arg_8_0.unit_death_watch_list_n = arg_8_0.unit_death_watch_list_n + 1
+	arg_8_0.unit_death_watch_list[arg_8_0.unit_death_watch_list_n] = {
+		unit = arg_8_1,
+		t = arg_8_2,
+		data = arg_8_3
 	}
-	self.unit_death_watch_lookup[unit] = self.unit_death_watch_list[self.unit_death_watch_list_n]
+	arg_8_0.unit_death_watch_lookup[arg_8_1] = arg_8_0.unit_death_watch_list[arg_8_0.unit_death_watch_list_n]
 end
 
-UnitSpawner.freeze_unit_extensions = function (self, unit, t, data)
-	local is_husk = NetworkUnit.is_husk_unit(unit)
-	local extensions_to_remove_on_death = unit_templates.extensions_to_remove_on_death(data.breed.unit_template, is_husk, self.is_server)
+function UnitSpawner.freeze_unit_extensions(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	local var_9_0 = NetworkUnit.is_husk_unit(arg_9_1)
+	local var_9_1 = var_0_0.extensions_to_remove_on_death(arg_9_3.breed.unit_template, var_9_0, arg_9_0.is_server)
 
-	if extensions_to_remove_on_death then
-		self.entity_manager:freeze_extensions(unit, extensions_to_remove_on_death)
+	if var_9_1 then
+		arg_9_0.entity_manager:freeze_extensions(arg_9_1, var_9_1)
 	end
 end
 
-UnitSpawner.prioritize_death_watch_unit = function (self, unit, t)
-	local death_data = self.unit_death_watch_lookup[unit]
+function UnitSpawner.prioritize_death_watch_unit(arg_10_0, arg_10_1, arg_10_2)
+	local var_10_0 = arg_10_0.unit_death_watch_lookup[arg_10_1]
 
-	if death_data then
-		death_data.t = t
-		self.unit_death_watch_list_dirty = true
+	if var_10_0 then
+		var_10_0.t = arg_10_2
+		arg_10_0.unit_death_watch_list_dirty = true
 	end
 end
 
-UnitSpawner.breed_in_death_watch = function (self, breed_name)
-	local unit_death_watch_list = self.unit_death_watch_list
+function UnitSpawner.breed_in_death_watch(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_0.unit_death_watch_list
 
-	for i = 1, self.unit_death_watch_list_n do
-		local death_data = unit_death_watch_list[i]
-		local unit = death_data.unit
-		local blackboard_data = BLACKBOARDS[unit]
+	for iter_11_0 = 1, arg_11_0.unit_death_watch_list_n do
+		local var_11_1 = var_11_0[iter_11_0].unit
+		local var_11_2 = BLACKBOARDS[var_11_1]
 
-		if blackboard_data then
-			local breed = blackboard_data.breed
-			local name = breed.name
-
-			if breed_name == name then
-				return true
-			end
+		if var_11_2 and arg_11_1 == var_11_2.breed.name then
+			return true
 		end
 	end
 end
 
-local function death_watch_list_sort(a, b)
-	return a.t < b.t
+local function var_0_3(arg_12_0, arg_12_1)
+	return arg_12_0.t < arg_12_1.t
 end
 
-UnitSpawner.update_death_watch_list = function (self)
-	if self.unit_death_watch_list_dirty then
-		table.sort(self.unit_death_watch_list, death_watch_list_sort)
+function UnitSpawner.update_death_watch_list(arg_13_0)
+	if arg_13_0.unit_death_watch_list_dirty then
+		table.sort(arg_13_0.unit_death_watch_list, var_0_3)
 
-		self.unit_death_watch_list_dirty = false
+		arg_13_0.unit_death_watch_list_dirty = false
 	end
 
-	local max_num_ragdolls = RagdollSettings.max_num_ragdolls
-	local min_num_ragdolls = RagdollSettings.min_num_ragdolls
-	local num_alive_and_dead_units = Managers.state.conflict:total_num_ai_spawned() + self.unit_death_watch_list_n
+	local var_13_0 = RagdollSettings.max_num_ragdolls
+	local var_13_1 = RagdollSettings.min_num_ragdolls
+	local var_13_2 = Managers.state.conflict:total_num_ai_spawned() + arg_13_0.unit_death_watch_list_n
 
-	if max_num_ragdolls < num_alive_and_dead_units then
-		local units_to_remove = math.min(num_alive_and_dead_units - max_num_ragdolls, self.unit_death_watch_list_n)
+	if var_13_0 < var_13_2 then
+		local var_13_3 = math.min(var_13_2 - var_13_0, arg_13_0.unit_death_watch_list_n)
 
-		if min_num_ragdolls > self.unit_death_watch_list_n - units_to_remove then
-			units_to_remove = units_to_remove - min_num_ragdolls
+		if var_13_1 > arg_13_0.unit_death_watch_list_n - var_13_3 then
+			var_13_3 = var_13_3 - var_13_1
 		end
 
-		for idx = 1, units_to_remove do
-			local my_death_data
+		for iter_13_0 = 1, var_13_3 do
+			local var_13_4
 
-			if idx < self.unit_death_watch_list_n then
-				my_death_data = self.unit_death_watch_list[idx]
+			if iter_13_0 < arg_13_0.unit_death_watch_list_n then
+				var_13_4 = arg_13_0.unit_death_watch_list[iter_13_0]
 
-				local swap_death_data = self.unit_death_watch_list[self.unit_death_watch_list_n]
+				local var_13_5 = arg_13_0.unit_death_watch_list[arg_13_0.unit_death_watch_list_n]
 
-				self.unit_death_watch_list[idx] = swap_death_data
-				self.unit_death_watch_lookup[swap_death_data.unit] = self.unit_death_watch_list[idx]
-				self.unit_death_watch_list[self.unit_death_watch_list_n] = nil
-				self.unit_death_watch_lookup[my_death_data.unit] = nil
+				arg_13_0.unit_death_watch_list[iter_13_0] = var_13_5
+				arg_13_0.unit_death_watch_lookup[var_13_5.unit] = arg_13_0.unit_death_watch_list[iter_13_0]
+				arg_13_0.unit_death_watch_list[arg_13_0.unit_death_watch_list_n] = nil
+				arg_13_0.unit_death_watch_lookup[var_13_4.unit] = nil
 			else
-				my_death_data = self.unit_death_watch_list[self.unit_death_watch_list_n]
-				self.unit_death_watch_list[self.unit_death_watch_list_n] = nil
-				self.unit_death_watch_lookup[my_death_data.unit] = nil
+				var_13_4 = arg_13_0.unit_death_watch_list[arg_13_0.unit_death_watch_list_n]
+				arg_13_0.unit_death_watch_list[arg_13_0.unit_death_watch_list_n] = nil
+				arg_13_0.unit_death_watch_lookup[var_13_4.unit] = nil
 			end
 
-			self.unit_death_watch_list_n = math.max(self.unit_death_watch_list_n - 1, 0)
-			my_death_data.data.remove = true
+			arg_13_0.unit_death_watch_list_n = math.max(arg_13_0.unit_death_watch_list_n - 1, 0)
+			var_13_4.data.remove = true
 		end
 
-		self.unit_death_watch_list_dirty = true
+		arg_13_0.unit_death_watch_list_dirty = true
 	end
 end
 
-UnitSpawner.mark_for_deletion = function (self, unit)
-	fassert(Unit_alive(unit), "Tried to destroy a unit (%s) that was already destroyed.", tostring(unit))
-	self.deletion_queue:push_back(unit)
+function UnitSpawner.mark_for_deletion(arg_14_0, arg_14_1)
+	fassert(var_0_2(arg_14_1), "Tried to destroy a unit (%s) that was already destroyed.", tostring(arg_14_1))
+	arg_14_0.deletion_queue:push_back(arg_14_1)
 
-	local my_death_data = self.unit_death_watch_lookup[unit]
+	local var_14_0 = arg_14_0.unit_death_watch_lookup[arg_14_1]
 
-	if my_death_data then
-		local idx = table.find(self.unit_death_watch_list, my_death_data)
-		local swap_death_data = self.unit_death_watch_list[self.unit_death_watch_list_n]
+	if var_14_0 then
+		local var_14_1 = table.find(arg_14_0.unit_death_watch_list, var_14_0)
+		local var_14_2 = arg_14_0.unit_death_watch_list[arg_14_0.unit_death_watch_list_n]
 
-		self.unit_death_watch_list[idx] = swap_death_data
-		self.unit_death_watch_lookup[swap_death_data.unit] = self.unit_death_watch_list[idx]
-		self.unit_death_watch_list[self.unit_death_watch_list_n] = nil
-		self.unit_death_watch_lookup[my_death_data.unit] = nil
-		self.unit_death_watch_list_n = math.max(self.unit_death_watch_list_n - 1, 0)
-		self.unit_death_watch_list_dirty = true
+		arg_14_0.unit_death_watch_list[var_14_1] = var_14_2
+		arg_14_0.unit_death_watch_lookup[var_14_2.unit] = arg_14_0.unit_death_watch_list[var_14_1]
+		arg_14_0.unit_death_watch_list[arg_14_0.unit_death_watch_list_n] = nil
+		arg_14_0.unit_death_watch_lookup[var_14_0.unit] = nil
+		arg_14_0.unit_death_watch_list_n = math.max(arg_14_0.unit_death_watch_list_n - 1, 0)
+		arg_14_0.unit_death_watch_list_dirty = true
 	end
 end
 
-UnitSpawner.is_marked_for_deletion = function (self, unit)
-	local deletion_queue = self.deletion_queue
-	local is_marked = deletion_queue:contains(unit)
-
-	return is_marked
+function UnitSpawner.is_marked_for_deletion(arg_15_0, arg_15_1)
+	return (arg_15_0.deletion_queue:contains(arg_15_1))
 end
 
-UnitSpawner.commit_and_remove_pending_units = function (self)
-	local n_commited, n_removed = 0, 0
+function UnitSpawner.commit_and_remove_pending_units(arg_16_0)
+	local var_16_0 = 0
+	local var_16_1 = 0
 
 	repeat
-		n_commited = self:commit_pending_unit_system_registrations()
-		n_removed = self:remove_units_marked_for_deletion()
-	until n_commited + n_removed == 0
+		-- block empty
+	until arg_16_0:commit_pending_unit_system_registrations() + arg_16_0:remove_units_marked_for_deletion() == 0
 end
 
-UnitSpawner.commit_pending_unit_system_registrations = function (self)
-	fassert(not self.locked)
+function UnitSpawner.commit_pending_unit_system_registrations(arg_17_0)
+	fassert(not arg_17_0.locked)
 
-	local num_pending_units = self.pending_extension_adds_list_n
+	local var_17_0 = arg_17_0.pending_extension_adds_list_n
 
-	if num_pending_units == 0 then
+	if var_17_0 == 0 then
 		return 0
 	end
 
-	local pending_extension_adds_map, pending_extension_adds_list = self.pending_extension_adds_map, self.pending_extension_adds_list
-	local count = 0
+	local var_17_1 = arg_17_0.pending_extension_adds_map
+	local var_17_2 = arg_17_0.pending_extension_adds_list
+	local var_17_3 = 0
 
-	for unit, _ in pairs(pending_extension_adds_map) do
-		pending_extension_adds_map[unit] = nil
-		count = count + 1
-		pending_extension_adds_list[count] = unit
+	for iter_17_0, iter_17_1 in pairs(var_17_1) do
+		var_17_1[iter_17_0] = nil
+		var_17_3 = var_17_3 + 1
+		var_17_2[var_17_3] = iter_17_0
 	end
 
-	fassert(count == num_pending_units)
-	self.entity_manager:register_units_extensions(pending_extension_adds_list, num_pending_units)
+	fassert(var_17_3 == var_17_0)
+	arg_17_0.entity_manager:register_units_extensions(var_17_2, var_17_0)
 
-	self.pending_extension_adds_list_n = 0
+	arg_17_0.pending_extension_adds_list_n = 0
 
-	return num_pending_units
+	return var_17_0
 end
 
-UnitSpawner.remove_units_marked_for_deletion = function (self)
-	fassert(not self.locked)
+function UnitSpawner.remove_units_marked_for_deletion(arg_18_0)
+	fassert(not arg_18_0.locked)
 
-	local pending_extension_adds_map = self.pending_extension_adds_map
-	local pending_extension_adds_list_n = self.pending_extension_adds_list_n
-	local total_number_of_deleted_units = 0
-	local entity_manager = self.entity_manager
-	local event_manager = Managers.state.event
-	local world = self.world
-	local world_delete_units_function = self.world_delete_units
-	local temp_deleted_units_list = self.temp_deleted_units_list
-	local unit_storage = self.unit_storage
-	local unit_destroy_listeners = self.unit_destroy_listeners
-	local unit_destroy_listeners_post_cleanup = self.unit_destroy_listeners_post_cleanup
-	local unit = self.deletion_queue:pop_first()
+	local var_18_0 = arg_18_0.pending_extension_adds_map
+	local var_18_1 = arg_18_0.pending_extension_adds_list_n
+	local var_18_2 = 0
+	local var_18_3 = arg_18_0.entity_manager
+	local var_18_4 = Managers.state.event
+	local var_18_5 = arg_18_0.world
+	local var_18_6 = arg_18_0.world_delete_units
+	local var_18_7 = arg_18_0.temp_deleted_units_list
+	local var_18_8 = arg_18_0.unit_storage
+	local var_18_9 = arg_18_0.unit_destroy_listeners
+	local var_18_10 = arg_18_0.unit_destroy_listeners_post_cleanup
+	local var_18_11 = arg_18_0.deletion_queue:pop_first()
 
-	if Unit_alive(unit) then
-		local number_of_deleted_units = 0
+	if var_0_2(var_18_11) then
+		local var_18_12 = 0
 
-		call_destroy_listener(unit_destroy_listeners, unit)
-		Unit.flow_event(unit, "cleanup_before_destroy")
+		var_0_1(var_18_9, var_18_11)
+		Unit.flow_event(var_18_11, "cleanup_before_destroy")
 
-		number_of_deleted_units = number_of_deleted_units + 1
-		temp_deleted_units_list[number_of_deleted_units] = unit
+		local var_18_13 = var_18_12 + 1
 
-		if pending_extension_adds_list_n > 0 and pending_extension_adds_map[unit] then
-			pending_extension_adds_map[unit] = nil
-			pending_extension_adds_list_n = pending_extension_adds_list_n - 1
+		var_18_7[var_18_13] = var_18_11
+
+		if var_18_1 > 0 and var_18_0[var_18_11] then
+			var_18_0[var_18_11] = nil
+			var_18_1 = var_18_1 - 1
 		end
 
-		event_manager:unregister_referenced_all(unit)
-		entity_manager:unregister_units(temp_deleted_units_list, number_of_deleted_units)
+		var_18_4:unregister_referenced_all(var_18_11)
+		var_18_3:unregister_units(var_18_7, var_18_13)
 
-		for i = 1, number_of_deleted_units do
-			call_destroy_listener(unit_destroy_listeners_post_cleanup, temp_deleted_units_list[i])
+		for iter_18_0 = 1, var_18_13 do
+			var_0_1(var_18_10, var_18_7[iter_18_0])
 		end
 
-		world_delete_units_function(self, world, temp_deleted_units_list, number_of_deleted_units)
+		var_18_6(arg_18_0, var_18_5, var_18_7, var_18_13)
 
-		total_number_of_deleted_units = total_number_of_deleted_units + number_of_deleted_units
+		var_18_2 = var_18_2 + var_18_13
 	end
 
-	self.pending_extension_adds_list_n = pending_extension_adds_list_n
+	arg_18_0.pending_extension_adds_list_n = var_18_1
 
-	return total_number_of_deleted_units
+	return var_18_2
 end
 
-UnitSpawner.spawn_local_unit = function (self, unit_name, position, rotation, material)
-	local unit = World.spawn_unit(self.world, unit_name, position, rotation, material)
-	local unit_unique_id = self.unit_unique_id
+function UnitSpawner.spawn_local_unit(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+	local var_19_0 = World.spawn_unit(arg_19_0.world, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+	local var_19_1 = arg_19_0.unit_unique_id
 
-	self.unit_unique_id = unit_unique_id + 1
+	arg_19_0.unit_unique_id = var_19_1 + 1
 
-	Unit.set_data(unit, "unique_id", unit_unique_id)
-	Unit.set_data(unit, "unit_name", unit_name)
+	Unit.set_data(var_19_0, "unique_id", var_19_1)
+	Unit.set_data(var_19_0, "unit_name", arg_19_1)
 
-	POSITION_LOOKUP[unit] = Unit.world_position(unit, 0)
+	POSITION_LOOKUP[var_19_0] = Unit.world_position(var_19_0, 0)
 
-	return unit
+	return var_19_0
 end
 
-local TEMP_SINGLE_UNIT_ARRAY = {}
+local var_0_4 = {}
 
-UnitSpawner.create_unit_extensions = function (self, world, unit, unit_template_name, extension_init_data)
-	local any_extensions_added = self.entity_manager:add_unit_extensions(world, unit, unit_template_name, extension_init_data)
+function UnitSpawner.create_unit_extensions(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+	if arg_20_0.entity_manager:add_unit_extensions(arg_20_1, arg_20_2, arg_20_3, arg_20_4) then
+		if not arg_20_0.locked then
+			var_0_4[1] = arg_20_2
 
-	if any_extensions_added then
-		local register_to_systems = not self.locked
-
-		if register_to_systems then
-			TEMP_SINGLE_UNIT_ARRAY[1] = unit
-
-			self.entity_manager:register_units_extensions(TEMP_SINGLE_UNIT_ARRAY, 1)
+			arg_20_0.entity_manager:register_units_extensions(var_0_4, 1)
 		else
-			self.pending_extension_adds_list_n = self.pending_extension_adds_list_n + 1
-			self.pending_extension_adds_map[unit] = true
+			arg_20_0.pending_extension_adds_list_n = arg_20_0.pending_extension_adds_list_n + 1
+			arg_20_0.pending_extension_adds_map[arg_20_2] = true
 		end
 	end
 end
 
-UnitSpawner.spawn_local_unit_with_extensions = function (self, unit_name, unit_template_name, extension_init_data, position, rotation, material)
-	local unit = self:spawn_local_unit(unit_name, position, rotation, material)
+function UnitSpawner.spawn_local_unit_with_extensions(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6)
+	local var_21_0 = arg_21_0:spawn_local_unit(arg_21_1, arg_21_4, arg_21_5, arg_21_6)
 
-	unit_template_name = unit_template_name or Unit.get_data(unit, "unit_template")
+	arg_21_2 = arg_21_2 or Unit.get_data(var_21_0, "unit_template")
 
-	self:create_unit_extensions(self.world, unit, unit_template_name, extension_init_data)
+	arg_21_0:create_unit_extensions(arg_21_0.world, var_21_0, arg_21_2, arg_21_3)
 
-	return unit, unit_template_name
+	return var_21_0, arg_21_2
 end
 
-UnitSpawner.spawn_network_unit = function (self, unit_name, unit_template_name, extension_init_data, position, rotation, material)
-	local unit, final_unit_template_name = self:spawn_local_unit_with_extensions(unit_name, unit_template_name, extension_init_data, position, rotation, material)
-	local unit_template = self.unit_template_lut[final_unit_template_name]
+function UnitSpawner.spawn_network_unit(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
+	local var_22_0, var_22_1 = arg_22_0:spawn_local_unit_with_extensions(arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
+	local var_22_2 = arg_22_0.unit_template_lut[var_22_1]
 
-	NetworkUnit.add_unit(unit)
-	NetworkUnit.set_is_husk_unit(unit, false)
+	NetworkUnit.add_unit(var_22_0)
+	NetworkUnit.set_is_husk_unit(var_22_0, false)
 
-	local go_type = unit_template.go_type
-	local go_initializer_function = self.gameobject_initializers[go_type]
-	local go_init_data = go_initializer_function(unit, unit_name, unit_template, self.gameobject_functor_context)
-	local go_id = GameSession.create_game_object(self.game_session, go_type, go_init_data)
+	local var_22_3 = var_22_2.go_type
+	local var_22_4 = arg_22_0.gameobject_initializers[var_22_3](var_22_0, arg_22_1, var_22_2, arg_22_0.gameobject_functor_context)
+	local var_22_5 = GameSession.create_game_object(arg_22_0.game_session, var_22_3, var_22_4)
 
-	self.unit_storage:add_unit_info(unit, go_id, go_type, self.own_peer_id)
-	self.entity_manager:sync_unit_extensions(unit, go_id)
+	arg_22_0.unit_storage:add_unit_info(var_22_0, var_22_5, var_22_3, arg_22_0.own_peer_id)
+	arg_22_0.entity_manager:sync_unit_extensions(var_22_0, var_22_5)
 
-	return unit, go_id
+	return var_22_0, var_22_5
 end
 
-UnitSpawner.queue_spawn_network_unit = function (self, ...)
-	local spawn_queue = self._async_spawn_queue
-	local handle = self._async_spawn_handle
+function UnitSpawner.queue_spawn_network_unit(arg_23_0, ...)
+	local var_23_0 = arg_23_0._async_spawn_queue
+	local var_23_1 = arg_23_0._async_spawn_handle
 
-	self._async_spawn_handle = handle + 1
+	arg_23_0._async_spawn_handle = var_23_1 + 1
 
-	local packed_args = Managers.state.network.network_transmit:pack_temp_types(nil, ...)
+	local var_23_2 = Managers.state.network.network_transmit:pack_temp_types(nil, ...)
 
-	spawn_queue[#spawn_queue + 1] = {
-		handle = handle,
-		unpack(packed_args),
+	var_23_0[#var_23_0 + 1] = {
+		handle = var_23_1,
+		unpack(var_23_2)
 	}
 
-	return handle
+	return var_23_1
 end
 
-UnitSpawner.remove_queued_network_unit = function (self, handle)
-	local spawned_unit = self._spawned_async_units[handle]
+function UnitSpawner.remove_queued_network_unit(arg_24_0, arg_24_1)
+	local var_24_0 = arg_24_0._spawned_async_units[arg_24_1]
 
-	if spawned_unit then
-		self:mark_for_deletion(spawned_unit)
+	if var_24_0 then
+		arg_24_0:mark_for_deletion(var_24_0)
 
 		return
 	end
 
-	local spawn_queue = self._async_spawn_queue
+	local var_24_1 = arg_24_0._async_spawn_queue
 
-	for i = #spawn_queue, 1, -1 do
-		if spawn_queue[i].handle == handle then
-			table.remove(spawn_queue, i)
+	for iter_24_0 = #var_24_1, 1, -1 do
+		if var_24_1[iter_24_0].handle == arg_24_1 then
+			table.remove(var_24_1, iter_24_0)
 
 			break
 		end
 	end
 end
 
-UnitSpawner.spawn_queued_units = function (self)
-	local spawn_queue = self._async_spawn_queue
+function UnitSpawner.spawn_queued_units(arg_25_0)
+	local var_25_0 = arg_25_0._async_spawn_queue
 
-	for i = 1, #spawn_queue do
-		local spawn_data = spawn_queue[i]
+	for iter_25_0 = 1, #var_25_0 do
+		local var_25_1 = var_25_0[iter_25_0]
 
-		Managers.state.network.network_transmit:unpack_temp_types(spawn_data)
+		Managers.state.network.network_transmit:unpack_temp_types(var_25_1)
 
-		local unit = self:spawn_network_unit(unpack(spawn_data))
+		local var_25_2 = arg_25_0:spawn_network_unit(unpack(var_25_1))
 
-		self._async_spawn_queue[i] = nil
-		self._spawned_async_units[spawn_data.handle] = unit
+		arg_25_0._async_spawn_queue[iter_25_0] = nil
+		arg_25_0._spawned_async_units[var_25_1.handle] = var_25_2
 	end
 end
 
-UnitSpawner.try_claim_async_unit = function (self, handle)
-	local spawned_unit = self._spawned_async_units[handle]
+function UnitSpawner.try_claim_async_unit(arg_26_0, arg_26_1)
+	local var_26_0 = arg_26_0._spawned_async_units[arg_26_1]
 
-	self._spawned_async_units[handle] = nil
+	arg_26_0._spawned_async_units[arg_26_1] = nil
 
-	return spawned_unit
+	return var_26_0
 end
 
-UnitSpawner.request_spawn_template_unit = function (self, template_name, position, rotation, source_unit, state_int, group_spawn_index)
-	group_spawn_index = group_spawn_index or 1
+function UnitSpawner.request_spawn_template_unit(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6)
+	arg_27_6 = arg_27_6 or 1
 
-	local template_id = NetworkLookup.spawn_unit_templates[template_name]
-	local source_unit_id = Managers.state.unit_storage:go_id(source_unit)
+	local var_27_0 = NetworkLookup.spawn_unit_templates[arg_27_1]
+	local var_27_1 = Managers.state.unit_storage:go_id(arg_27_4)
 
-	Managers.state.network.network_transmit:send_rpc_server("rpc_request_spawn_template_unit", template_id, position, rotation, source_unit_id, state_int, group_spawn_index)
+	Managers.state.network.network_transmit:send_rpc_server("rpc_request_spawn_template_unit", var_27_0, arg_27_2, arg_27_3, var_27_1, arg_27_5, arg_27_6)
 end
 
-UnitSpawner.world_delete_units = function (self, world, units_list, units_list_n)
-	local game_session, unit_storage = self.game_session, self.unit_storage
+function UnitSpawner.world_delete_units(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+	local var_28_0 = arg_28_0.game_session
+	local var_28_1 = arg_28_0.unit_storage
 
-	if game_session then
-		for i = 1, units_list_n do
-			local unit = units_list[i]
-			local unit_is_alive, unit_alive_name = Unit_alive(unit)
-			local go_id_to_remove = unit_storage:go_id(unit)
+	if var_28_0 then
+		for iter_28_0 = 1, arg_28_3 do
+			local var_28_2 = arg_28_2[iter_28_0]
+			local var_28_3, var_28_4 = var_0_2(var_28_2)
+			local var_28_5 = var_28_1:go_id(var_28_2)
 
-			if not unit_is_alive then
+			if not var_28_3 then
 				fassert(false)
 			end
 
-			if go_id_to_remove then
-				GameSession.destroy_game_object(game_session, go_id_to_remove)
-				unit_storage:remove(unit, go_id_to_remove)
-				NetworkUnit.remove_unit(unit)
+			if var_28_5 then
+				GameSession.destroy_game_object(var_28_0, var_28_5)
+				var_28_1:remove(var_28_2, var_28_5)
+				NetworkUnit.remove_unit(var_28_2)
 			end
 
-			POSITION_LOOKUP[unit] = nil
+			POSITION_LOOKUP[var_28_2] = nil
 
-			Unit.flow_event(unit, "unit_despawned")
-			World.destroy_unit(world, unit)
+			Unit.flow_event(var_28_2, "unit_despawned")
+			World.destroy_unit(arg_28_1, var_28_2)
 		end
 	else
-		for i = 1, units_list_n do
-			local unit = units_list[i]
-			local unit_is_alive, unit_alive_name = Unit_alive(unit)
+		for iter_28_1 = 1, arg_28_3 do
+			local var_28_6 = arg_28_2[iter_28_1]
+			local var_28_7, var_28_8 = var_0_2(var_28_6)
 
-			if not unit_is_alive then
+			if not var_28_7 then
 				fassert(false)
 			end
 
-			local go_id_to_remove = unit_storage:go_id(unit)
+			local var_28_9 = var_28_1:go_id(var_28_6)
 
-			if go_id_to_remove then
-				unit_storage:remove(unit, go_id_to_remove)
-				NetworkUnit.remove_unit(unit)
+			if var_28_9 then
+				var_28_1:remove(var_28_6, var_28_9)
+				NetworkUnit.remove_unit(var_28_6)
 			end
 
-			POSITION_LOOKUP[unit] = nil
+			POSITION_LOOKUP[var_28_6] = nil
 
-			Unit.flow_event(unit, "unit_despawned")
-			World.destroy_unit(world, unit)
+			Unit.flow_event(var_28_6, "unit_despawned")
+			World.destroy_unit(arg_28_1, var_28_6)
 		end
 	end
 end
 
-UnitSpawner.spawn_unit_from_game_object = function (self, go_id, owner_id, go_template)
-	local unit = self.create_unit_from_gameobject_function(self, self.game_session, go_id, go_template)
+function UnitSpawner.spawn_unit_from_game_object(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+	local var_29_0 = arg_29_0.create_unit_from_gameobject_function(arg_29_0, arg_29_0.game_session, arg_29_1, arg_29_3)
 
-	NetworkUnit.add_unit(unit)
-	NetworkUnit.set_is_husk_unit(unit, true)
+	NetworkUnit.add_unit(var_29_0)
+	NetworkUnit.set_is_husk_unit(var_29_0, true)
 
-	local go_type = go_template.go_type
+	local var_29_1 = arg_29_3.go_type
 
-	self.unit_storage:add_unit_info(unit, go_id, go_type, owner_id)
+	arg_29_0.unit_storage:add_unit_info(var_29_0, arg_29_1, var_29_1, arg_29_2)
 
-	local go_extract_functor = self.gameobject_extractors[go_type]
+	local var_29_2 = arg_29_0.gameobject_extractors[var_29_1]
 
-	fassert(type(go_extract_functor) == "function")
+	fassert(type(var_29_2) == "function")
 
-	local unit_template_name, extension_init_data = go_extract_functor(self.game_session, go_id, owner_id, unit, self.gameobject_functor_context)
-	local is_husk = true
+	local var_29_3, var_29_4 = var_29_2(arg_29_0.game_session, arg_29_1, arg_29_2, var_29_0, arg_29_0.gameobject_functor_context)
+	local var_29_5 = true
 
-	self:create_unit_extensions(self.world, unit, unit_template_name, extension_init_data, is_husk)
+	arg_29_0:create_unit_extensions(arg_29_0.world, var_29_0, var_29_3, var_29_4, var_29_5)
 
-	return unit
+	return var_29_0
 end
 
-UnitSpawner.destroy_game_object_unit = function (self, go_id, owner_id)
-	local unit_storage = self.unit_storage
-	local unit = unit_storage:units()[go_id]
+function UnitSpawner.destroy_game_object_unit(arg_30_0, arg_30_1, arg_30_2)
+	local var_30_0 = arg_30_0.unit_storage
+	local var_30_1 = var_30_0:units()[arg_30_1]
 
-	fassert(unit, "Couldn't find unit with go_id %d", go_id)
+	fassert(var_30_1, "Couldn't find unit with go_id %d", arg_30_1)
 
-	if Unit.is_frozen(unit) then
-		FROZEN[unit] = nil
+	if Unit.is_frozen(var_30_1) then
+		FROZEN[var_30_1] = nil
 
-		Unit.set_frozen(unit, false)
+		Unit.set_frozen(var_30_1, false)
 	end
 
-	self.entity_manager:game_object_unit_destroyed(unit)
-	self:mark_for_deletion(unit)
-	unit_storage:remove(unit, go_id)
+	arg_30_0.entity_manager:game_object_unit_destroyed(var_30_1)
+	arg_30_0:mark_for_deletion(var_30_1)
+	var_30_0:remove(var_30_1, arg_30_1)
 end
 
-UnitSpawner.add_destroy_listener = function (self, unit, identifier, callback, post_cleanup_listener)
-	local destroy_listeners = post_cleanup_listener and self.unit_destroy_listeners_post_cleanup or self.unit_destroy_listeners
-	local listeners = destroy_listeners[unit]
+function UnitSpawner.add_destroy_listener(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+	local var_31_0 = arg_31_4 and arg_31_0.unit_destroy_listeners_post_cleanup or arg_31_0.unit_destroy_listeners
+	local var_31_1 = var_31_0[arg_31_1]
 
-	if not listeners then
-		listeners = {}
-		destroy_listeners[unit] = listeners
+	if not var_31_1 then
+		var_31_1 = {}
+		var_31_0[arg_31_1] = var_31_1
 	end
 
-	fassert(listeners[identifier] == nil, "Tried to register a unit destroy listener identifier (%s) twice for the same unit %s", tostring(identifier), tostring(unit))
+	fassert(var_31_1[arg_31_2] == nil, "Tried to register a unit destroy listener identifier (%s) twice for the same unit %s", tostring(arg_31_2), tostring(arg_31_1))
 
-	listeners[identifier] = callback
+	var_31_1[arg_31_2] = arg_31_3
 end
 
-UnitSpawner.remove_destroy_listener = function (self, unit, identifier, post_cleanup_listener)
-	local destroy_listeners = post_cleanup_listener and self.unit_destroy_listeners_post_cleanup or self.unit_destroy_listeners
-	local listeners = destroy_listeners[unit]
+function UnitSpawner.remove_destroy_listener(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+	local var_32_0 = (arg_32_3 and arg_32_0.unit_destroy_listeners_post_cleanup or arg_32_0.unit_destroy_listeners)[arg_32_1]
 
-	if listeners then
-		listeners[identifier] = nil
+	if var_32_0 then
+		var_32_0[arg_32_2] = nil
 	else
-		printf("[UnitSpawner] [%s] failed to remove listener [%s] from unit [%s]", self.identifier_tag, tostring(identifier), tostring(unit))
+		printf("[UnitSpawner] [%s] failed to remove listener [%s] from unit [%s]", arg_32_0.identifier_tag, tostring(arg_32_2), tostring(arg_32_1))
 	end
 end

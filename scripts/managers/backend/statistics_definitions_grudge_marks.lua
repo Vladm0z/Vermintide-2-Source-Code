@@ -1,73 +1,73 @@
-﻿-- chunkname: @scripts/managers/backend/statistics_definitions_grudge_marks.lua
+-- chunkname: @scripts/managers/backend/statistics_definitions_grudge_marks.lua
 
-local player = StatisticsDefinitions.player
+local var_0_0 = StatisticsDefinitions.player
 
-player.grudge_mark_kills = {}
-player.grudge_marks_kills_per_career_per_monster = {}
-player.grudge_marks_kills_per_career_per_expedition = {}
+var_0_0.grudge_mark_kills = {}
+var_0_0.grudge_marks_kills_per_career_per_monster = {}
+var_0_0.grudge_marks_kills_per_career_per_expedition = {}
 
-local database_names = {}
+local var_0_1 = {}
 
-for i = 1, #database_names do
-	local name = database_names[i]
+for iter_0_0 = 1, #var_0_1 do
+	local var_0_2 = var_0_1[iter_0_0]
 
-	player[name] = {
-		source = "player_data",
+	var_0_0[var_0_2] = {
 		value = 0,
-		database_name = name,
+		source = "player_data",
+		database_name = var_0_2
 	}
 end
 
-local relevant_bosses = {
+local var_0_3 = {
 	"skaven_rat_ogre",
 	"skaven_stormfiend",
 	"chaos_spawn",
 	"beastmen_minotaur",
 	"chaos_troll",
-	"chaos_troll_chief",
+	"chaos_troll_chief"
 }
-local expeditions = {
+local var_0_4 = {
 	"journey_ruin",
 	"journey_ice",
 	"journey_cave",
-	"journey_citadel",
+	"journey_citadel"
 }
 
-for career, _ in pairs(CareerSettings) do
-	if career ~= "empire_soldier_tutorial" then
-		local career_breed = CareerSettings[career].breed
+for iter_0_1, iter_0_2 in pairs(CareerSettings) do
+	if iter_0_1 ~= "empire_soldier_tutorial" then
+		local var_0_5 = CareerSettings[iter_0_1].breed
 
-		if career_breed and career_breed.is_hero then
-			local database_name = "grudge_mark_kills_" .. career
+		if var_0_5 and var_0_5.is_hero then
+			local var_0_6 = "grudge_mark_kills_" .. iter_0_1
 
-			player.grudge_mark_kills[career] = {
-				source = "player_data",
+			var_0_0.grudge_mark_kills[iter_0_1] = {
 				value = 0,
-				database_name = database_name,
+				source = "player_data",
+				database_name = var_0_6
 			}
-			player.grudge_marks_kills_per_career_per_monster[career] = {}
+			var_0_0.grudge_marks_kills_per_career_per_monster[iter_0_1] = {}
 
-			for i = 1, #relevant_bosses do
-				local breed_name = relevant_bosses[i]
+			for iter_0_3 = 1, #var_0_3 do
+				local var_0_7 = var_0_3[iter_0_3]
+				local var_0_8 = "grudge_marks_kills_per_" .. iter_0_1 .. "_per_" .. var_0_7
 
-				database_name = "grudge_marks_kills_per_" .. career .. "_per_" .. breed_name
-				player.grudge_marks_kills_per_career_per_monster[career][breed_name] = {
-					source = "player_data",
+				var_0_0.grudge_marks_kills_per_career_per_monster[iter_0_1][var_0_7] = {
 					value = 0,
-					database_name = database_name,
+					source = "player_data",
+					database_name = var_0_8
 				}
 			end
 
-			player.grudge_marks_kills_per_career_per_expedition[career] = {}
+			var_0_0.grudge_marks_kills_per_career_per_expedition[iter_0_1] = {}
 
-			for i = 1, #expeditions do
-				local expedition_name = expeditions[i]
+			for iter_0_4 = 1, #var_0_4 do
+				local var_0_9 = var_0_4[iter_0_4]
+				local var_0_10 = "grudge_marks_kills_per_" .. iter_0_1 .. "_per_" .. var_0_9
 
-				database_name = "grudge_marks_kills_per_" .. career .. "_per_" .. expedition_name
-				player.grudge_marks_kills_per_career_per_expedition[career][expedition_name] = {
-					source = "player_data",
+				var_0_0.grudge_marks_kills_per_career_per_expedition[iter_0_1][var_0_9] = {
 					value = 0,
-					database_name = database_name,
+					source = "player_data",
+					database_name = var_0_10
 				}
 			end
 		end

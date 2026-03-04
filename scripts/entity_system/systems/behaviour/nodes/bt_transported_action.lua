@@ -1,56 +1,53 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_transported_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_transported_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTTransportedAction = class(BTTransportedAction, BTNode)
 
-BTTransportedAction.init = function (self, ...)
-	BTTransportedAction.super.init(self, ...)
+function BTTransportedAction.init(arg_1_0, ...)
+	BTTransportedAction.super.init(arg_1_0, ...)
 end
 
 BTTransportedAction.name = "BTTransportedAction"
 
-BTTransportedAction.enter = function (self, unit, blackboard, t, dt)
-	local action = self._tree_node.action_data
+function BTTransportedAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	arg_2_2.action = arg_2_0._tree_node.action_data
 
-	blackboard.action = action
+	local var_2_0 = arg_2_2.navigation_extension
+	local var_2_1 = arg_2_2.locomotion_extension
 
-	local navigation_extension = blackboard.navigation_extension
-	local locomotion_extension = blackboard.locomotion_extension
+	var_2_1:set_wanted_velocity(Vector3.zero())
+	var_2_1:set_movement_type("script_driven")
+	var_2_0:set_enabled(false)
+	LocomotionUtils.set_animation_driven_movement(arg_2_1, false, false, false, true)
 
-	locomotion_extension:set_wanted_velocity(Vector3.zero())
-	locomotion_extension:set_movement_type("script_driven")
-	navigation_extension:set_enabled(false)
-	LocomotionUtils.set_animation_driven_movement(unit, false, false, false, true)
+	local var_2_2 = arg_2_2.is_transported
+	local var_2_3 = arg_2_2.transport_slot_id
+	local var_2_4 = var_2_2:get_ai_slot(var_2_3)
 
-	local transport_ext = blackboard.is_transported
-	local transport_slot_id = blackboard.transport_slot_id
-	local position = transport_ext:get_ai_slot(transport_slot_id)
+	var_2_0:set_navbot_position(var_2_4)
+	var_2_1:teleport_to(var_2_4)
 
-	navigation_extension:set_navbot_position(position)
-	locomotion_extension:teleport_to(position)
+	local var_2_5 = "idle"
 
-	local animation = "idle"
-	local network_manager = Managers.state.network
+	Managers.state.network:anim_event(arg_2_1, var_2_5)
 
-	network_manager:anim_event(unit, animation)
-
-	blackboard.move_state = "idle"
+	arg_2_2.move_state = "idle"
 end
 
-BTTransportedAction.leave = function (self, unit, blackboard, t, dt)
-	local navigation_extension = blackboard.navigation_extension
-	local locomotion_extension = blackboard.locomotion_extension
-	local position = POSITION_LOOKUP[unit] or Unit.local_position(unit, 0)
+function BTTransportedAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local var_3_0 = arg_3_2.navigation_extension
+	local var_3_1 = arg_3_2.locomotion_extension
+	local var_3_2 = POSITION_LOOKUP[arg_3_1] or Unit.local_position(arg_3_1, 0)
 
-	locomotion_extension:teleport_to(position)
-	navigation_extension:set_navbot_position(position)
-	navigation_extension:set_enabled(true)
-	navigation_extension:reset_destination(position)
-	locomotion_extension:set_movement_type("snap_to_navmesh")
-	LocomotionUtils.set_animation_driven_movement(unit, false)
+	var_3_1:teleport_to(var_3_2)
+	var_3_0:set_navbot_position(var_3_2)
+	var_3_0:set_enabled(true)
+	var_3_0:reset_destination(var_3_2)
+	var_3_1:set_movement_type("snap_to_navmesh")
+	LocomotionUtils.set_animation_driven_movement(arg_3_1, false)
 end
 
-BTTransportedAction.run = function (self, unit, blackboard, t, dt, bt_name)
+function BTTransportedAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	return "running"
 end

@@ -1,237 +1,237 @@
-﻿-- chunkname: @scripts/ui/views/ingame_voting_ui_definitions.lua
+-- chunkname: @scripts/ui/views/ingame_voting_ui_definitions.lua
 
-local scenegraph_definition = {
+local var_0_0 = {
 	screen = {
 		scale = "fit",
 		position = {
 			0,
 			0,
-			UILayer.ingame_voting,
+			UILayer.ingame_voting
 		},
 		size = {
 			1920,
-			1080,
-		},
+			1080
+		}
 	},
 	voting_box_root = {
-		horizontal_alignment = "right",
-		parent = "screen",
 		vertical_alignment = "center",
+		parent = "screen",
+		horizontal_alignment = "right",
 		position = {
 			-450,
 			0,
-			0,
+			0
 		},
 		size = {
 			1,
-			1,
-		},
+			1
+		}
 	},
 	info_box = {
-		horizontal_alignment = "left",
-		parent = "voting_box_root",
 		vertical_alignment = "bottom",
+		parent = "voting_box_root",
+		horizontal_alignment = "left",
 		position = {
 			0,
 			0,
-			1,
+			1
 		},
 		size = {
 			360,
-			140,
-		},
+			140
+		}
 	},
 	bar_frame = {
-		horizontal_alignment = "center",
-		parent = "info_box",
 		vertical_alignment = "bottom",
+		parent = "info_box",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			4,
-			4,
+			4
 		},
 		size = {
 			260,
-			6,
-		},
+			6
+		}
 	},
 	info_text = {
-		horizontal_alignment = "left",
-		parent = "info_box",
 		vertical_alignment = "top",
+		parent = "info_box",
+		horizontal_alignment = "left",
 		position = {
 			15,
 			14,
-			1,
+			1
 		},
 		size = {
 			328,
-			53,
-		},
+			53
+		}
 	},
 	option_box = {
-		horizontal_alignment = "left",
-		parent = "info_box",
 		vertical_alignment = "bottom",
+		parent = "info_box",
+		horizontal_alignment = "left",
 		position = {
 			0,
 			-84,
-			0,
+			0
 		},
 		size = {
 			358,
-			84,
-		},
+			84
+		}
 	},
 	option_yes = {
-		horizontal_alignment = "center",
-		parent = "option_box",
 		vertical_alignment = "top",
+		parent = "option_box",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			32,
-			4,
+			4
 		},
 		size = {
 			200,
-			25,
-		},
+			25
+		}
 	},
 	option_no = {
-		horizontal_alignment = "center",
-		parent = "option_box",
 		vertical_alignment = "top",
+		parent = "option_box",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			32,
-			4,
+			4
 		},
 		size = {
 			200,
-			25,
-		},
+			25
+		}
 	},
 	input_icon_pivot_yes = {
-		horizontal_alignment = "center",
-		parent = "option_yes",
 		vertical_alignment = "bottom",
+		parent = "option_yes",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			4,
-			1,
+			1
 		},
 		size = {
 			0,
-			0,
-		},
+			0
+		}
 	},
 	input_icon_pivot_no = {
-		horizontal_alignment = "center",
-		parent = "option_no",
 		vertical_alignment = "bottom",
+		parent = "option_no",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			4,
-			1,
+			1
 		},
 		size = {
 			0,
-			0,
-		},
-	},
+			0
+		}
+	}
 }
-local text_box_element = {
+
+;({}).passes = {
+	{
+		pass_type = "rect",
+		style_id = "rect"
+	},
+	{
+		pass_type = "border",
+		style_id = "border"
+	},
+	{
+		style_id = "text",
+		pass_type = "text",
+		text_id = "text"
+	}
+}
+
+local var_0_1 = {
 	passes = {
 		{
-			pass_type = "rect",
-			style_id = "rect",
-		},
-		{
-			pass_type = "border",
-			style_id = "border",
-		},
-		{
-			pass_type = "text",
-			style_id = "text",
-			text_id = "text",
-		},
-	},
-}
-local option_element = {
-	passes = {
-		{
-			pass_type = "rect",
 			style_id = "bar",
-			content_check_function = function (content)
-				return content.can_vote and not content.has_voted and content.input_icon
-			end,
-		},
-		{
 			pass_type = "rect",
+			content_check_function = function(arg_1_0)
+				return arg_1_0.can_vote and not arg_1_0.has_voted and arg_1_0.input_icon
+			end
+		},
+		{
 			style_id = "bar_bg",
-			content_check_function = function (content)
-				return content.can_vote and not content.has_voted and content.input_icon
-			end,
+			pass_type = "rect",
+			content_check_function = function(arg_2_0)
+				return arg_2_0.can_vote and not arg_2_0.has_voted and arg_2_0.input_icon
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "option_text",
+			pass_type = "text",
 			text_id = "option_text",
-			content_check_function = function (content)
-				return content.can_vote and not content.has_voted
-			end,
+			content_check_function = function(arg_3_0)
+				return arg_3_0.can_vote and not arg_3_0.has_voted
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "option_text_shadow",
+			pass_type = "text",
 			text_id = "option_text",
-			content_check_function = function (content)
-				return content.can_vote and not content.has_voted
-			end,
+			content_check_function = function(arg_4_0)
+				return arg_4_0.can_vote and not arg_4_0.has_voted
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "result_text",
+			pass_type = "text",
 			text_id = "result_text",
-			content_check_function = function (content)
-				return content.has_voted
-			end,
+			content_check_function = function(arg_5_0)
+				return arg_5_0.has_voted
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "result_text_shadow",
+			pass_type = "text",
 			text_id = "result_text",
-			content_check_function = function (content)
-				return content.has_voted
-			end,
+			content_check_function = function(arg_6_0)
+				return arg_6_0.has_voted
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "input_text",
+			pass_type = "text",
 			text_id = "input_text",
-			content_check_function = function (content)
-				return content.can_vote and not content.has_voted
-			end,
+			content_check_function = function(arg_7_0)
+				return arg_7_0.can_vote and not arg_7_0.has_voted
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "input_text_shadow",
+			pass_type = "text",
 			text_id = "input_text",
-			content_check_function = function (content)
-				return content.can_vote and not content.has_voted
-			end,
+			content_check_function = function(arg_8_0)
+				return arg_8_0.can_vote and not arg_8_0.has_voted
+			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "input_icon",
 			texture_id = "input_icon",
-			content_check_function = function (content)
-				return content.can_vote and not content.has_voted and content.input_icon
-			end,
-		},
-	},
+			content_check_function = function(arg_9_0)
+				return arg_9_0.can_vote and not arg_9_0.has_voted and arg_9_0.input_icon
+			end
+		}
+	}
 }
-local widget_definitions = {
+local var_0_2 = {
 	background = {
 		scenegraph_id = "voting_box_root",
 		element = {
@@ -239,88 +239,88 @@ local widget_definitions = {
 				{
 					pass_type = "texture",
 					style_id = "background",
-					texture_id = "background",
+					texture_id = "background"
 				},
 				{
 					pass_type = "texture",
 					style_id = "top_divider",
-					texture_id = "top_divider",
+					texture_id = "top_divider"
 				},
 				{
 					pass_type = "texture",
 					style_id = "bottom_divider",
-					texture_id = "bottom_divider",
+					texture_id = "bottom_divider"
 				},
 				{
 					pass_type = "texture",
 					style_id = "input_glow",
 					texture_id = "input_glow",
-					content_check_function = function (content)
-						return not content.can_vote and not content.has_voted
-					end,
+					content_check_function = function(arg_10_0)
+						return not arg_10_0.can_vote and not arg_10_0.has_voted
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "input_text",
+					pass_type = "text",
 					text_id = "input_text",
-					content_check_function = function (content)
-						return not content.has_voted and not content.can_vote
-					end,
+					content_check_function = function(arg_11_0)
+						return not arg_11_0.has_voted and not arg_11_0.can_vote
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "input_text_shadow",
+					pass_type = "text",
 					text_id = "input_text",
-					content_check_function = function (content)
-						return not content.has_voted and not content.can_vote
-					end,
+					content_check_function = function(arg_12_0)
+						return not arg_12_0.has_voted and not arg_12_0.can_vote
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "time_text",
-					text_id = "time_text",
+					pass_type = "text",
+					text_id = "time_text"
 				},
 				{
-					pass_type = "text",
 					style_id = "time_text_shadow",
-					text_id = "time_text",
+					pass_type = "text",
+					text_id = "time_text"
 				},
 				{
-					pass_type = "text",
 					style_id = "info_text",
-					text_id = "info_text",
+					pass_type = "text",
+					text_id = "info_text"
 				},
 				{
-					pass_type = "text",
 					style_id = "info_text_shadow",
-					text_id = "info_text",
+					pass_type = "text",
+					text_id = "info_text"
 				},
 				{
 					pass_type = "texture",
 					style_id = "timer_bg",
-					texture_id = "timer_bg",
+					texture_id = "timer_bg"
 				},
 				{
 					pass_type = "texture",
 					style_id = "gamepad_input_icon",
 					texture_id = "gamepad_input_icon",
-					content_check_function = function (content)
-						return content.gamepad_input_icon and content.is_gamepad_active and not content.has_voted
-					end,
-				},
-			},
+					content_check_function = function(arg_13_0)
+						return arg_13_0.gamepad_input_icon and arg_13_0.is_gamepad_active and not arg_13_0.has_voted
+					end
+				}
+			}
 		},
 		content = {
-			background = "info_window_background",
+			top_divider = "divider_01_top",
 			bottom_divider = "divider_01_bottom",
 			can_vote = false,
-			has_voted = false,
-			info_text = "",
-			input_glow = "mission_objective_glow_01",
 			input_text = "voting_open_description",
-			time_text = "",
+			has_voted = false,
 			timer_bg = "tab_menu_bg_03",
-			top_divider = "divider_01_top",
+			time_text = "",
+			background = "info_window_background",
+			input_glow = "mission_objective_glow_01",
+			info_text = ""
 		},
 		style = {
 			background = {
@@ -329,207 +329,207 @@ local widget_definitions = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					0,
-				},
+					0
+				}
 			},
 			timer_bg = {
-				horizontal_alignment = "center",
-				scenegraph_id = "info_box",
 				vertical_alignment = "bottom",
+				scenegraph_id = "info_box",
+				horizontal_alignment = "center",
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					-58,
-					0,
+					0
 				},
 				texture_size = {
 					334,
-					60,
-				},
+					60
+				}
 			},
 			bottom_divider = {
-				horizontal_alignment = "center",
-				scenegraph_id = "info_box",
 				vertical_alignment = "bottom",
+				scenegraph_id = "info_box",
+				horizontal_alignment = "center",
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					3,
+					3
 				},
 				texture_size = {
 					264,
-					21,
-				},
+					21
+				}
 			},
 			top_divider = {
-				horizontal_alignment = "center",
-				scenegraph_id = "info_box",
 				vertical_alignment = "top",
+				scenegraph_id = "info_box",
+				horizontal_alignment = "center",
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					12,
-					3,
+					3
 				},
 				texture_size = {
 					264,
-					32,
-				},
+					32
+				}
 			},
 			input_glow = {
-				horizontal_alignment = "center",
-				scenegraph_id = "info_box",
 				vertical_alignment = "bottom",
+				scenegraph_id = "info_box",
+				horizontal_alignment = "center",
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					5,
-					3,
+					3
 				},
 				texture_size = {
 					264,
-					24,
-				},
+					24
+				}
 			},
 			input_text = {
+				vertical_alignment = "bottom",
+				scenegraph_id = "info_box",
+				localize = true,
+				horizontal_alignment = "center",
 				font_size = 32,
 				font_type = "hell_shark_header",
-				horizontal_alignment = "center",
-				localize = true,
-				scenegraph_id = "info_box",
-				vertical_alignment = "bottom",
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
 					0,
 					0,
-					5,
-				},
+					5
+				}
 			},
 			input_text_shadow = {
+				vertical_alignment = "bottom",
+				scenegraph_id = "info_box",
+				localize = true,
+				horizontal_alignment = "center",
 				font_size = 32,
 				font_type = "hell_shark_header",
-				horizontal_alignment = "center",
-				localize = true,
-				scenegraph_id = "info_box",
-				vertical_alignment = "bottom",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					2,
 					-2,
-					4,
-				},
+					4
+				}
 			},
 			info_text = {
-				dynamic_font_size_word_wrap = true,
-				font_size = 32,
-				font_type = "hell_shark_header",
-				horizontal_alignment = "center",
-				localize = false,
 				scenegraph_id = "info_box",
-				vertical_alignment = "top",
+				localize = false,
+				dynamic_font_size_word_wrap = true,
 				word_wrap = true,
+				horizontal_alignment = "center",
+				font_size = 32,
+				vertical_alignment = "top",
+				font_type = "hell_shark_header",
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				line_colors = {
 					Colors.get_color_table_with_alpha("font_title", 255),
-					Colors.get_color_table_with_alpha("font_default", 255),
+					Colors.get_color_table_with_alpha("font_default", 255)
 				},
 				offset = {
 					0,
 					-14,
-					3,
+					3
 				},
 				area_size = {
 					350,
-					85,
-				},
+					85
+				}
 			},
 			info_text_shadow = {
-				dynamic_font_size_word_wrap = true,
-				font_size = 32,
-				font_type = "hell_shark_header",
-				horizontal_alignment = "center",
-				localize = false,
 				scenegraph_id = "info_box",
-				vertical_alignment = "top",
+				localize = false,
+				dynamic_font_size_word_wrap = true,
 				word_wrap = true,
+				font_size = 32,
+				horizontal_alignment = "center",
+				vertical_alignment = "top",
+				font_type = "hell_shark_header",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					2,
 					-16,
-					2,
+					2
 				},
 				area_size = {
 					350,
-					85,
-				},
+					85
+				}
 			},
 			time_text = {
+				vertical_alignment = "bottom",
+				scenegraph_id = "info_box",
+				localize = false,
+				horizontal_alignment = "center",
 				font_size = 36,
 				font_type = "hell_shark_header",
-				horizontal_alignment = "center",
-				localize = false,
-				scenegraph_id = "info_box",
-				vertical_alignment = "bottom",
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
 					0,
 					-56,
-					3,
-				},
+					3
+				}
 			},
 			time_text_shadow = {
+				vertical_alignment = "bottom",
+				scenegraph_id = "info_box",
+				localize = false,
+				horizontal_alignment = "center",
 				font_size = 36,
 				font_type = "hell_shark_header",
-				horizontal_alignment = "center",
-				localize = false,
-				scenegraph_id = "info_box",
-				vertical_alignment = "bottom",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					2,
 					-58,
-					2,
-				},
-			},
-		},
+					2
+				}
+			}
+		}
 	},
 	option_yes = {
 		scenegraph_id = "option_yes",
-		element = option_element,
+		element = var_0_1,
 		content = {
-			can_vote = false,
-			gamepad_active = false,
-			has_voted = false,
 			input_text = "",
-			left_side = true,
+			has_voted = false,
+			can_vote = false,
 			option_text = "",
 			result_text = "0",
+			gamepad_active = false,
+			left_side = true
 		},
 		style = {
 			bar = {
@@ -537,48 +537,48 @@ local widget_definitions = {
 				scenegraph_id = "bar_frame",
 				size = {
 					130,
-					6,
+					6
 				},
 				color = {
 					255,
 					0,
 					255,
-					0,
+					0
 				},
 				offset = {
 					0,
 					0,
-					2,
+					2
 				},
 				default_offset = {
 					0,
 					0,
-					2,
-				},
+					2
+				}
 			},
 			bar_bg = {
 				default_width = 130,
 				scenegraph_id = "bar_frame",
 				size = {
 					130,
-					6,
+					6
 				},
 				color = {
 					255,
 					0,
 					100,
-					0,
+					0
 				},
 				offset = {
 					0,
 					0,
-					1,
+					1
 				},
 				default_offset = {
 					0,
 					0,
-					1,
-				},
+					1
+				}
 			},
 			input_icon = {
 				scenegraph_id = "input_icon_pivot_yes",
@@ -586,118 +586,118 @@ local widget_definitions = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					1,
-				},
+					1
+				}
 			},
 			option_text = {
-				dynamic_font = true,
 				font_size = 24,
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
 				localize = false,
+				horizontal_alignment = "center",
+				word_wrap = false,
 				pixel_perfect = true,
 				vertical_alignment = "bottom",
-				word_wrap = false,
+				dynamic_font = true,
+				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("green", 255),
 				offset = {
 					0,
 					0,
-					1,
-				},
+					1
+				}
 			},
 			option_text_shadow = {
-				font_size = 24,
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
-				localize = false,
 				vertical_alignment = "bottom",
+				localize = false,
+				font_size = 24,
+				horizontal_alignment = "center",
+				font_type = "hell_shark",
 				word_wrap = false,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					2,
 					-2,
-					0,
-				},
+					0
+				}
 			},
 			result_text = {
-				dynamic_font = true,
-				font_size = 36,
-				font_type = "hell_shark_header",
-				horizontal_alignment = "center",
-				localize = false,
-				pixel_perfect = true,
 				scenegraph_id = "bar_frame",
-				vertical_alignment = "center",
+				localize = false,
+				horizontal_alignment = "center",
 				word_wrap = false,
+				pixel_perfect = true,
+				font_size = 36,
+				vertical_alignment = "center",
+				dynamic_font = true,
+				font_type = "hell_shark_header",
 				text_color = Colors.get_color_table_with_alpha("green", 255),
 				offset = {
 					-40,
 					16,
-					1,
-				},
+					1
+				}
 			},
 			result_text_shadow = {
 				font_size = 36,
-				font_type = "hell_shark_header",
-				horizontal_alignment = "center",
-				localize = false,
 				scenegraph_id = "bar_frame",
-				vertical_alignment = "center",
+				localize = false,
 				word_wrap = false,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				font_type = "hell_shark_header",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					-38,
 					14,
-					0,
-				},
+					0
+				}
 			},
 			input_text = {
-				dynamic_font = true,
 				font_size = 24,
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
 				localize = false,
+				horizontal_alignment = "center",
+				word_wrap = false,
 				pixel_perfect = true,
 				vertical_alignment = "bottom",
-				word_wrap = false,
+				dynamic_font = true,
+				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
 					0,
 					0,
-					1,
-				},
+					1
+				}
 			},
 			input_text_shadow = {
-				font_size = 24,
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
-				localize = false,
 				vertical_alignment = "bottom",
+				localize = false,
+				font_size = 24,
+				horizontal_alignment = "center",
+				font_type = "hell_shark",
 				word_wrap = false,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					2,
 					-2,
-					0,
-				},
-			},
-		},
+					0
+				}
+			}
+		}
 	},
 	option_no = {
 		scenegraph_id = "option_no",
-		element = option_element,
+		element = var_0_1,
 		content = {
-			can_vote = false,
-			gamepad_active = false,
-			has_voted = false,
 			input_text = "",
+			has_voted = false,
+			can_vote = false,
 			option_text = "",
 			result_text = "0",
+			gamepad_active = false
 		},
 		style = {
 			bar = {
@@ -705,48 +705,48 @@ local widget_definitions = {
 				scenegraph_id = "bar_frame",
 				size = {
 					130,
-					6,
+					6
 				},
 				color = {
 					255,
 					255,
 					0,
-					0,
+					0
 				},
 				offset = {
 					130,
 					0,
-					2,
+					2
 				},
 				default_offset = {
 					130,
 					0,
-					2,
-				},
+					2
+				}
 			},
 			bar_bg = {
 				default_width = 130,
 				scenegraph_id = "bar_frame",
 				size = {
 					130,
-					6,
+					6
 				},
 				color = {
 					255,
 					100,
 					0,
-					0,
+					0
 				},
 				offset = {
 					130,
 					0,
-					1,
+					1
 				},
 				default_offset = {
 					130,
 					0,
-					1,
-				},
+					1
+				}
 			},
 			input_icon = {
 				scenegraph_id = "input_icon_pivot_no",
@@ -754,105 +754,105 @@ local widget_definitions = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					1,
-				},
+					1
+				}
 			},
 			option_text = {
-				font_size = 24,
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
-				localize = false,
 				vertical_alignment = "bottom",
+				localize = false,
+				font_size = 24,
+				horizontal_alignment = "center",
+				font_type = "hell_shark",
 				word_wrap = false,
 				text_color = Colors.get_color_table_with_alpha("red", 255),
 				offset = {
 					0,
 					0,
-					1,
-				},
+					1
+				}
 			},
 			option_text_shadow = {
-				font_size = 24,
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
-				localize = false,
 				vertical_alignment = "bottom",
+				localize = false,
+				font_size = 24,
+				horizontal_alignment = "center",
+				font_type = "hell_shark",
 				word_wrap = false,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					2,
 					-2,
-					0,
-				},
+					0
+				}
 			},
 			result_text = {
 				font_size = 36,
-				font_type = "hell_shark_header",
-				horizontal_alignment = "center",
-				localize = false,
 				scenegraph_id = "bar_frame",
-				vertical_alignment = "center",
+				localize = false,
 				word_wrap = false,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				font_type = "hell_shark_header",
 				text_color = Colors.get_color_table_with_alpha("red", 255),
 				offset = {
 					40,
 					16,
-					1,
-				},
+					1
+				}
 			},
 			result_text_shadow = {
 				font_size = 36,
-				font_type = "hell_shark_header",
-				horizontal_alignment = "center",
-				localize = false,
 				scenegraph_id = "bar_frame",
-				vertical_alignment = "center",
+				localize = false,
 				word_wrap = false,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				font_type = "hell_shark_header",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					42,
 					14,
-					0,
-				},
+					0
+				}
 			},
 			input_text = {
-				font_size = 24,
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
-				localize = false,
 				vertical_alignment = "bottom",
+				localize = false,
+				font_size = 24,
+				horizontal_alignment = "center",
+				font_type = "hell_shark",
 				word_wrap = false,
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
 					0,
 					0,
-					1,
-				},
+					1
+				}
 			},
 			input_text_shadow = {
-				font_size = 24,
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
-				localize = false,
 				vertical_alignment = "bottom",
+				localize = false,
+				font_size = 24,
+				horizontal_alignment = "center",
+				font_type = "hell_shark",
 				word_wrap = false,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					2,
 					-2,
-					0,
-				},
-			},
-		},
-	},
+					0
+				}
+			}
+		}
+	}
 }
 
 return {
-	scenegraph_definition = scenegraph_definition,
-	widget_definitions = widget_definitions,
+	scenegraph_definition = var_0_0,
+	widget_definitions = var_0_2
 }

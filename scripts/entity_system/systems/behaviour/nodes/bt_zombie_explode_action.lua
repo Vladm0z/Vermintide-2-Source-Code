@@ -1,57 +1,52 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_zombie_explode_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_zombie_explode_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTZombieExplodeAction = class(BTZombieExplodeAction, BTNode)
 
-BTZombieExplodeAction.init = function (self, ...)
-	BTZombieExplodeAction.super.init(self, ...)
+function BTZombieExplodeAction.init(arg_1_0, ...)
+	BTZombieExplodeAction.super.init(arg_1_0, ...)
 end
 
 BTZombieExplodeAction.name = "BTZombieExplodeAction"
 
-BTZombieExplodeAction.enter = function (self, unit, blackboard, t)
-	local action = self._tree_node.action_data
+function BTZombieExplodeAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_0._tree_node.action_data
 
-	blackboard.action = action
+	arg_2_2.action = var_2_0
 
-	if action.explode_animation then
-		local explode_animation = action.explode_animation
-		local network_manager = Managers.state.network
+	if var_2_0.explode_animation then
+		local var_2_1 = var_2_0.explode_animation
 
-		network_manager:anim_event(unit, explode_animation)
+		Managers.state.network:anim_event(arg_2_1, var_2_1)
 
-		blackboard.explosion_timer = t + action.explosion_at_time
-		blackboard.bot_threat_timer = t + action.explosion_at_time * 0.75
+		arg_2_2.explosion_timer = arg_2_3 + var_2_0.explosion_at_time
+		arg_2_2.bot_threat_timer = arg_2_3 + var_2_0.explosion_at_time * 0.75
 	else
-		blackboard.explosion_timer = t
+		arg_2_2.explosion_timer = arg_2_3
 	end
 
-	local navigation_extension = blackboard.navigation_extension
-
-	navigation_extension:set_enabled(false)
+	arg_2_2.navigation_extension:set_enabled(false)
 end
 
-BTZombieExplodeAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	local navigation_extension = blackboard.navigation_extension
-
-	navigation_extension:set_enabled(true)
+function BTZombieExplodeAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	arg_3_2.navigation_extension:set_enabled(true)
 end
 
-BTZombieExplodeAction.run = function (self, unit, blackboard, t, dt)
-	if blackboard.bot_threat_timer and t > blackboard.bot_threat_timer then
-		local action = blackboard.action
-		local position = POSITION_LOOKUP[unit]
-		local size = Vector3(0, action.radius, 1)
-		local bot_threat_duration = action.bot_threat_duration or 1.5
+function BTZombieExplodeAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	if arg_4_2.bot_threat_timer and arg_4_3 > arg_4_2.bot_threat_timer then
+		local var_4_0 = arg_4_2.action
+		local var_4_1 = POSITION_LOOKUP[arg_4_1]
+		local var_4_2 = Vector3(0, var_4_0.radius, 1)
+		local var_4_3 = var_4_0.bot_threat_duration or 1.5
 
-		Managers.state.entity:system("ai_bot_group_system"):aoe_threat_created(position, "cylinder", size, nil, bot_threat_duration, "Chaos Zombie")
+		Managers.state.entity:system("ai_bot_group_system"):aoe_threat_created(var_4_1, "cylinder", var_4_2, nil, var_4_3, "Chaos Zombie")
 
-		blackboard.bot_threat_timer = nil
+		arg_4_2.bot_threat_timer = nil
 	end
 
-	if t > blackboard.explosion_timer then
-		self:explode(unit, blackboard, t)
+	if arg_4_3 > arg_4_2.explosion_timer then
+		arg_4_0:explode(arg_4_1, arg_4_2, arg_4_3)
 
 		return "done"
 	end
@@ -59,11 +54,11 @@ BTZombieExplodeAction.run = function (self, unit, blackboard, t, dt)
 	return "running"
 end
 
-BTZombieExplodeAction.explode = function (self, unit, blackboard, t)
-	local damage_type = "kinetic"
-	local damage_direction = Vector3(0, 0, -1)
+function BTZombieExplodeAction.explode(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	local var_5_0 = "kinetic"
+	local var_5_1 = Vector3(0, 0, -1)
 
-	blackboard.explosion_finished = true
+	arg_5_2.explosion_finished = true
 
-	AiUtils.kill_unit(unit, nil, nil, damage_type, damage_direction)
+	AiUtils.kill_unit(arg_5_1, nil, nil, var_5_0, var_5_1)
 end

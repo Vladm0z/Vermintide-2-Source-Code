@@ -1,87 +1,86 @@
-﻿-- chunkname: @scripts/managers/backend_playfab/playfab_mirror_dedicated.lua
+-- chunkname: @scripts/managers/backend_playfab/playfab_mirror_dedicated.lua
 
 require("scripts/managers/backend_playfab/playfab_mirror_adventure")
 
-local PlayFabClientApi = require("PlayFab.PlayFabClientApi")
+local var_0_0 = require("PlayFab.PlayFabClientApi")
 
 PlayFabMirrorDedicated = class(PlayFabMirrorDedicated, PlayFabMirrorAdventure)
 
-PlayFabMirrorDedicated.init = function (self, signin_result)
-	self._data_is_ready = false
+function PlayFabMirrorDedicated.init(arg_1_0, arg_1_1)
+	arg_1_0._data_is_ready = false
 
-	PlayFabMirrorAdventure.init(self, signin_result)
+	PlayFabMirrorAdventure.init(arg_1_0, arg_1_1)
 
-	self._unlocked_weapon_skins = {}
-	self._unlocked_cosmetics = {}
-	self._owned_dlcs = {}
+	arg_1_0._unlocked_weapon_skins = {}
+	arg_1_0._unlocked_cosmetics = {}
+	arg_1_0._owned_dlcs = {}
 
-	for key, dlc in pairs(Managers.unlock:get_dlcs()) do
-		self._owned_dlcs[#self._owned_dlcs + 1] = key
+	for iter_1_0, iter_1_1 in pairs(Managers.unlock:get_dlcs()) do
+		arg_1_0._owned_dlcs[#arg_1_0._owned_dlcs + 1] = iter_1_0
 
-		if dlc and dlc.set_owned then
-			dlc:set_owned(true)
+		if iter_1_1 and iter_1_1.set_owned then
+			iter_1_1:set_owned(true)
 		end
 	end
 end
 
-PlayFabMirrorDedicated.is_update_items_done = function (self)
-	return self._data_is_ready
+function PlayFabMirrorDedicated.is_update_items_done(arg_2_0)
+	return arg_2_0._data_is_ready
 end
 
-PlayFabMirrorDedicated.set_character_data = function (self, career_name, key, value)
+function PlayFabMirrorDedicated.set_character_data(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	assert(false)
 end
 
-PlayFabMirrorDedicated._request_server_inventory = function (self)
-	local request = {
+function PlayFabMirrorDedicated._request_server_inventory(arg_4_0)
+	local var_4_0 = {
 		FunctionName = "getServerInventory",
-		FunctionParameter = {},
+		FunctionParameter = {}
 	}
-	local inventory_request_cb = callback(self, "inventory_request_cb")
+	local var_4_1 = callback(arg_4_0, "inventory_request_cb")
 
-	self._request_queue:enqueue(request, inventory_request_cb)
+	arg_4_0._request_queue:enqueue(var_4_0, var_4_1)
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_4_0._num_items_to_load = arg_4_0._num_items_to_load + 1
 end
 
-PlayFabMirrorDedicated.inventory_request_cb = function (self, result)
-	self._data_is_ready = true
-	self._unlocked_weapon_skins = self:_parse_unlocked_weapon_skins(result.FunctionResult)
-	self._unlocked_cosmetics = self:_parse_unlocked_cosmetics(result.FunctionResult.unlocked_cosmetics)
+function PlayFabMirrorDedicated.inventory_request_cb(arg_5_0, arg_5_1)
+	arg_5_0._data_is_ready = true
+	arg_5_0._unlocked_weapon_skins = arg_5_0:_parse_unlocked_weapon_skins(arg_5_1.FunctionResult)
+	arg_5_0._unlocked_cosmetics = arg_5_0:_parse_unlocked_cosmetics(arg_5_1.FunctionResult.unlocked_cosmetics)
 
-	self.super.inventory_request_cb(self, result.FunctionResult)
+	arg_5_0.super.inventory_request_cb(arg_5_0, arg_5_1.FunctionResult)
 end
 
-PlayFabMirrorDedicated.request_characters = function (self)
-	if self._refresh_characters or self:get_read_only_data("vs_characters_data") == nil then
-		self._refresh_characters = false
-		self._num_items_to_load = self._num_items_to_load + 1
+function PlayFabMirrorDedicated.request_characters(arg_6_0)
+	if arg_6_0._refresh_characters or arg_6_0:get_read_only_data("vs_characters_data") == nil then
+		arg_6_0._refresh_characters = false
+		arg_6_0._num_items_to_load = arg_6_0._num_items_to_load + 1
 
-		local request = {
+		local var_6_0 = {
 			FunctionName = "getServerCharactersData",
-			FunctionParameter = {},
+			FunctionParameter = {}
 		}
-		local get_versus_characters_data_cb = callback(self, "get_versus_characters_data")
+		local var_6_1 = callback(arg_6_0, "get_versus_characters_data")
 
-		self._request_queue:enqueue(request, get_versus_characters_data_cb)
+		arg_6_0._request_queue:enqueue(var_6_0, var_6_1)
 	else
-		self:_setup_careers()
+		arg_6_0:_setup_careers()
 	end
 end
 
-PlayFabMirrorDedicated.get_versus_characters_data = function (self, result)
-	local function_result = result.FunctionResult
-	local vs_characters_data = function_result.vs_characters_data
+function PlayFabMirrorDedicated.get_versus_characters_data(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_1.FunctionResult.vs_characters_data
 
-	self._num_items_to_load = self._num_items_to_load - 1
+	arg_7_0._num_items_to_load = arg_7_0._num_items_to_load - 1
 
-	self:set_read_only_data("vs_characters_data", vs_characters_data, true)
-	self:_setup_careers()
+	arg_7_0:set_read_only_data("vs_characters_data", var_7_0, true)
+	arg_7_0:_setup_careers()
 end
 
-PlayFabMirrorDedicated._fix_career_data = function (self, broken_slots_data)
-	local characters_data = cjson.decode(self._read_only_data.vs_characters_data)
+function PlayFabMirrorDedicated._fix_career_data(arg_8_0, arg_8_1)
+	local var_8_0 = cjson.decode(arg_8_0._read_only_data.vs_characters_data)
 
-	self._characters_data = characters_data
-	self._characters_data_mirror = table.clone(characters_data)
+	arg_8_0._characters_data = var_8_0
+	arg_8_0._characters_data_mirror = table.clone(var_8_0)
 end

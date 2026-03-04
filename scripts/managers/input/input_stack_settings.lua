@@ -1,99 +1,99 @@
-﻿-- chunkname: @scripts/managers/input/input_stack_settings.lua
+-- chunkname: @scripts/managers/input/input_stack_settings.lua
 
 DEFAULT_INPUT_GROUP = "GLOBAL"
 InputStackSettings = {
 	{
 		group_name = "input",
 		services = {
-			"text_input",
-		},
+			"text_input"
+		}
 	},
 	{
 		group_name = "chat",
 		services = {
-			"chat_input",
-		},
+			"chat_input"
+		}
 	},
 	{
 		group_name = "main_popups",
 		services = {
-			"popup",
-		},
+			"popup"
+		}
 	},
 	{
 		group_name = "game_popups",
 		services = {
 			"weave_tutorial",
 			"rewards_popups",
-			"common_popup",
-		},
+			"common_popup"
+		}
 	},
 	{
 		group_name = "network_popups",
 		services = {
 			"mission_voting",
-			"popup_profile_picker",
-		},
+			"popup_profile_picker"
+		}
 	},
 	{
 		group_name = "ui",
 		services = {
 			"Text",
-			"dark_pact_selection",
-		},
+			"dark_pact_selection"
+		}
 	},
 	{
 		group_name = "options",
 		services = {
-			"options_menu",
-		},
+			"options_menu"
+		}
 	},
 	{
 		group_name = "ingame_ui",
 		services = {
 			"ingame_menu",
-			"hero_view",
-		},
+			"hero_view"
+		}
 	},
 	{
 		group_name = "cutscene",
 		services = {
-			"cutscene",
-		},
+			"cutscene"
+		}
 	},
 	{
 		group_name = "console_friends_view",
 		services = {
-			"console_friends_view",
-		},
+			"console_friends_view"
+		}
 	},
 	{
 		group_name = "hud_player_list",
 		services = {
-			"player_list_input",
-		},
+			"player_list_input"
+		}
 	},
 	{
 		group_name = "deus_shop",
 		services = {
-			"deus_shop_view",
-		},
+			"deus_shop_view"
+		}
 	},
 	{
 		group_name = "deus_map_view",
 		services = {
-			"deus_map_input_service_name",
-		},
-	},
+			"deus_map_input_service_name"
+		}
+	}
 }
 InputServiceToGroupMap = {}
 
-for group_id = 1, #InputStackSettings do
-	local group_services = InputStackSettings[group_id].services
+for iter_0_0 = 1, #InputStackSettings do
+	local var_0_0 = InputStackSettings[iter_0_0].services
 
-	for service_id = 1, #group_services do
-		local service_name = group_services[service_id]
+	for iter_0_1 = 1, #var_0_0 do
+		local var_0_1 = var_0_0[iter_0_1]
 
-		InputServiceToGroupMap[service_name] = group_id
+		InputServiceToGroupMap[var_0_1] = iter_0_0
 	end
 end

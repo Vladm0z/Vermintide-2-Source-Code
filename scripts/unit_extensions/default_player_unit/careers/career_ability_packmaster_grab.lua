@@ -1,29 +1,29 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/careers/career_ability_packmaster_grab.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/careers/career_ability_packmaster_grab.lua
 
 CareerAbilityPackmasterGrab = class(CareerAbilityPackmasterGrab, CareerAbilityDarkPactBase)
 
-CareerAbilityPackmasterGrab._ability_available = function (self)
-	local ability_available = self.super._ability_available(self)
-	local status_extension = self._status_extension
+function CareerAbilityPackmasterGrab._ability_available(arg_1_0)
+	local var_1_0 = arg_1_0.super._ability_available(arg_1_0)
+	local var_1_1 = arg_1_0._status_extension
 
-	return ability_available and not status_extension:get_unarmed()
+	return var_1_0 and not var_1_1:get_unarmed()
 end
 
-CareerAbilityPackmasterGrab._start = function (self)
-	self.super._start(self)
+function CareerAbilityPackmasterGrab._start(arg_2_0)
+	arg_2_0.super._start(arg_2_0)
 
-	local career_extension = self._career_extension
+	local var_2_0 = arg_2_0._career_extension
 
-	career_extension:start_activated_ability_cooldown(self._ability_data.ability_id)
-	career_extension:set_activated_ability_cooldown_paused(self._ability_data.ability_id)
+	var_2_0:start_activated_ability_cooldown(arg_2_0._ability_data.ability_id)
+	var_2_0:set_activated_ability_cooldown_paused(arg_2_0._ability_data.ability_id)
 end
 
-CareerAbilityPackmasterGrab.ability_ready = function (self)
-	self.super.ability_ready(self)
+function CareerAbilityPackmasterGrab.ability_ready(arg_3_0)
+	arg_3_0.super.ability_ready(arg_3_0)
 
-	local first_person_extension = self._first_person_extension
+	local var_3_0 = arg_3_0._first_person_extension
 
-	if first_person_extension then
-		CharacterStateHelper.play_animation_event_first_person(first_person_extension, "cooldown_ready")
+	if var_3_0 then
+		CharacterStateHelper.play_animation_event_first_person(var_3_0, "cooldown_ready")
 	end
 end

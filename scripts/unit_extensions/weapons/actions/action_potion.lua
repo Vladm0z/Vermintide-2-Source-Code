@@ -1,144 +1,141 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/actions/action_potion.lua
+-- chunkname: @scripts/unit_extensions/weapons/actions/action_potion.lua
 
 ActionPotion = class(ActionPotion, ActionBase)
 
-ActionPotion.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionPotion.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionPotion.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionPotion.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	if ScriptUnit.has_extension(weapon_unit, "ammo_system") then
-		self.ammo_extension = ScriptUnit.extension(weapon_unit, "ammo_system")
+	if ScriptUnit.has_extension(arg_1_7, "ammo_system") then
+		arg_1_0.ammo_extension = ScriptUnit.extension(arg_1_7, "ammo_system")
 	end
 end
 
-ActionPotion.client_owner_start_action = function (self, new_action, t)
-	ActionPotion.super.client_owner_start_action(self, new_action, t)
+function ActionPotion.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
+	ActionPotion.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
 
-	self.current_action = new_action
+	arg_2_0.current_action = arg_2_1
 end
 
-ActionPotion.client_owner_post_update = function (self, dt, t, world, can_damage)
+function ActionPotion.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	return
 end
 
-ActionPotion.finish = function (self, reason)
-	if reason ~= "action_complete" then
+function ActionPotion.finish(arg_4_0, arg_4_1)
+	if arg_4_1 ~= "action_complete" then
 		return
 	end
 
-	local current_action = self.current_action
-	local owner_unit = self.owner_unit
-	local buff_template = current_action.buff_template
-	local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
-	local career_extension = ScriptUnit.has_extension(owner_unit, "career_system")
-	local cooldown_reduction_override = buff_extension:has_buff_perk("cooldown_reduction_override") and buff_template == "cooldown_reduction_potion"
-	local potion_spread = buff_extension:has_buff_type("trait_ring_potion_spread") or buff_extension:has_buff_type("weave_trait_ring_potion_spread")
-	local targets = {
-		owner_unit,
+	local var_4_0 = arg_4_0.current_action
+	local var_4_1 = arg_4_0.owner_unit
+	local var_4_2 = var_4_0.buff_template
+	local var_4_3 = ScriptUnit.extension(var_4_1, "buff_system")
+	local var_4_4 = ScriptUnit.has_extension(var_4_1, "career_system")
+	local var_4_5 = var_4_3:has_buff_perk("cooldown_reduction_override") and var_4_2 == "cooldown_reduction_potion"
+	local var_4_6 = var_4_3:has_buff_type("trait_ring_potion_spread") or var_4_3:has_buff_type("weave_trait_ring_potion_spread")
+	local var_4_7 = {
+		var_4_1
 	}
-	local smallest_distance = TrinketSpreadDistance
-	local additional_target
+	local var_4_8 = TrinketSpreadDistance
+	local var_4_9
 
-	if potion_spread then
-		local side = Managers.state.side.side_by_unit[owner_unit]
-		local player_and_bot_units = side.PLAYER_AND_BOT_UNITS
-		local num_players = #player_and_bot_units
-		local owner_player_position = POSITION_LOOKUP[owner_unit]
+	if var_4_6 then
+		local var_4_10 = Managers.state.side.side_by_unit[var_4_1].PLAYER_AND_BOT_UNITS
+		local var_4_11 = #var_4_10
+		local var_4_12 = POSITION_LOOKUP[var_4_1]
 
-		for i = 1, num_players do
-			local other_player_unit = player_and_bot_units[i]
+		for iter_4_0 = 1, var_4_11 do
+			local var_4_13 = var_4_10[iter_4_0]
 
-			if Unit.alive(other_player_unit) and other_player_unit ~= owner_unit then
-				local other_player_position = POSITION_LOOKUP[other_player_unit]
-				local distance = Vector3.distance(owner_player_position, other_player_position)
+			if Unit.alive(var_4_13) and var_4_13 ~= var_4_1 then
+				local var_4_14 = POSITION_LOOKUP[var_4_13]
+				local var_4_15 = Vector3.distance(var_4_12, var_4_14)
 
-				if distance <= smallest_distance then
-					smallest_distance = distance
-					additional_target = other_player_unit
+				if var_4_15 <= var_4_8 then
+					var_4_8 = var_4_15
+					var_4_9 = var_4_13
 				end
 			end
 		end
 	end
 
-	if additional_target then
-		targets[#targets + 1] = additional_target
+	if var_4_9 then
+		var_4_7[#var_4_7 + 1] = var_4_9
 	end
 
-	local increased_buff_template = buff_template .. "_increased"
+	local var_4_16 = var_4_2 .. "_increased"
 
-	if buff_extension:has_buff_perk("potion_duration") and BuffUtils.get_buff_template(increased_buff_template) then
-		buff_template = increased_buff_template
+	if var_4_3:has_buff_perk("potion_duration") and BuffUtils.get_buff_template(var_4_16) then
+		var_4_2 = var_4_16
 	end
 
-	local num_targets = #targets
-	local network_manager = Managers.state.network
-	local buff_template_name_id = NetworkLookup.buff_templates[buff_template]
-	local owner_unit_id = network_manager:unit_game_object_id(owner_unit)
+	local var_4_17 = #var_4_7
+	local var_4_18 = Managers.state.network
+	local var_4_19 = NetworkLookup.buff_templates[var_4_2]
+	local var_4_20 = var_4_18:unit_game_object_id(var_4_1)
 
-	Managers.razer_chroma:play_animation(current_action.buff_template, false, RAZER_ADD_ANIMATION_TYPE.REPLACE)
+	Managers.razer_chroma:play_animation(var_4_0.buff_template, false, RAZER_ADD_ANIMATION_TYPE.REPLACE)
 
-	if not buff_extension:has_buff_type("trait_ring_all_potions") and not buff_extension:has_buff_type("weave_trait_ring_all_potions") then
-		for i = 1, num_targets do
-			local target_unit = targets[i]
-			local unit_object_id = network_manager:unit_game_object_id(target_unit)
-			local target_unit_buff_extension = ScriptUnit.extension(target_unit, "buff_system")
+	if not var_4_3:has_buff_type("trait_ring_all_potions") and not var_4_3:has_buff_type("weave_trait_ring_all_potions") then
+		for iter_4_1 = 1, var_4_17 do
+			local var_4_21 = var_4_7[iter_4_1]
+			local var_4_22 = var_4_18:unit_game_object_id(var_4_21)
+			local var_4_23 = ScriptUnit.extension(var_4_21, "buff_system")
 
-			if cooldown_reduction_override and career_extension then
-				career_extension:set_activated_ability_cooldown_unpaused()
-				career_extension:reduce_activated_ability_cooldown_percent(1)
+			if var_4_5 and var_4_4 then
+				var_4_4:set_activated_ability_cooldown_unpaused()
+				var_4_4:reduce_activated_ability_cooldown_percent(1)
 			end
 
-			if self.is_server then
-				target_unit_buff_extension:add_buff(buff_template)
-				network_manager.network_transmit:send_rpc_clients("rpc_add_buff", unit_object_id, buff_template_name_id, owner_unit_id, 0, false)
+			if arg_4_0.is_server then
+				var_4_23:add_buff(var_4_2)
+				var_4_18.network_transmit:send_rpc_clients("rpc_add_buff", var_4_22, var_4_19, var_4_20, 0, false)
 			else
-				network_manager.network_transmit:send_rpc_server("rpc_add_buff", unit_object_id, buff_template_name_id, owner_unit_id, 0, true)
+				var_4_18.network_transmit:send_rpc_server("rpc_add_buff", var_4_22, var_4_19, var_4_20, 0, true)
 			end
 		end
 	else
-		local additional_potion_buffs = {
+		local var_4_24 = {
 			"speed_boost_potion_reduced",
 			"damage_boost_potion_reduced",
-			"cooldown_reduction_potion_reduced",
+			"cooldown_reduction_potion_reduced"
 		}
 
-		if cooldown_reduction_override and career_extension then
-			career_extension:set_activated_ability_cooldown_unpaused()
-			career_extension:reduce_activated_ability_cooldown_percent(0.5)
+		if var_4_5 and var_4_4 then
+			var_4_4:set_activated_ability_cooldown_unpaused()
+			var_4_4:reduce_activated_ability_cooldown_percent(0.5)
 		end
 
-		for i = 1, #additional_potion_buffs do
-			local additional_buff_template_name_id = NetworkLookup.buff_templates[additional_potion_buffs[i]]
+		for iter_4_2 = 1, #var_4_24 do
+			local var_4_25 = NetworkLookup.buff_templates[var_4_24[iter_4_2]]
 
-			if self.is_server then
-				buff_extension:add_buff(additional_potion_buffs[i])
-				network_manager.network_transmit:send_rpc_clients("rpc_add_buff", owner_unit_id, additional_buff_template_name_id, owner_unit_id, 0, false)
+			if arg_4_0.is_server then
+				var_4_3:add_buff(var_4_24[iter_4_2])
+				var_4_18.network_transmit:send_rpc_clients("rpc_add_buff", var_4_20, var_4_25, var_4_20, 0, false)
 			else
-				network_manager.network_transmit:send_rpc_server("rpc_add_buff", owner_unit_id, additional_buff_template_name_id, owner_unit_id, 0, true)
+				var_4_18.network_transmit:send_rpc_server("rpc_add_buff", var_4_20, var_4_25, var_4_20, 0, true)
 			end
 		end
 	end
 
-	if self.ammo_extension then
-		local ammo_usage = current_action.ammo_usage
-		local _, procced = buff_extension:apply_buffs_to_value(0, "not_consume_potion")
+	if arg_4_0.ammo_extension then
+		local var_4_26 = var_4_0.ammo_usage
+		local var_4_27, var_4_28 = var_4_3:apply_buffs_to_value(0, "not_consume_potion")
 
-		if not procced then
-			self.ammo_extension:use_ammo(ammo_usage)
+		if not var_4_28 then
+			arg_4_0.ammo_extension:use_ammo(var_4_26)
 		else
-			local inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
+			ScriptUnit.extension(var_4_1, "inventory_system"):wield_previous_weapon()
 
-			inventory_extension:wield_previous_weapon()
-
-			if buff_extension:has_buff_type("trait_ring_not_consume_potion_damage") then
-				DamageUtils.add_damage_network(self.owner_unit, self.owner_unit, 20, "torso", "buff", nil, Vector3(0, 0, 1), "buff", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
+			if var_4_3:has_buff_type("trait_ring_not_consume_potion_damage") then
+				DamageUtils.add_damage_network(arg_4_0.owner_unit, arg_4_0.owner_unit, 20, "torso", "buff", nil, Vector3(0, 0, 1), "buff", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 			end
 		end
 	end
 
-	buff_extension:trigger_procs("on_potion_consumed", self.item_name)
+	var_4_3:trigger_procs("on_potion_consumed", arg_4_0.item_name)
 
-	local player = Managers.player:unit_owner(owner_unit)
-	local position = POSITION_LOOKUP[owner_unit]
+	local var_4_29 = Managers.player:unit_owner(var_4_1)
+	local var_4_30 = POSITION_LOOKUP[var_4_1]
 
-	Managers.telemetry_events:player_used_item(player, self.item_name, position)
+	Managers.telemetry_events:player_used_item(var_4_29, arg_4_0.item_name, var_4_30)
 end

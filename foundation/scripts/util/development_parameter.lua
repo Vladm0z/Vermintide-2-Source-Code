@@ -1,84 +1,84 @@
-﻿-- chunkname: @foundation/scripts/util/development_parameter.lua
+-- chunkname: @foundation/scripts/util/development_parameter.lua
 
 Development._hardcoded_dev_params = {
-	beta_level_progression = false,
-	debug_interactions = false,
-	disable_debug_draw = true,
-	disable_intro_trailer = false,
-	disable_tutorial_at_start = false,
-	disable_water_mark = true,
-	dont_show_unseen_rewards = false,
-	force_debug_disabled = true,
-	force_steam = true,
-	hide_fps = true,
-	hide_version_info = true,
-	matchmaking_debug = true,
-	network_debug = true,
 	package_debug = true,
-	packaged_build = true,
-	qr_watermark = false,
-	show_fps = false,
-	spawn_empty_chest = true,
-	telemetry_log_interval = "600",
-	text_watermark = "BETA",
-	tobii_button = false,
 	use_beta_overlay = true,
+	disable_tutorial_at_start = false,
+	network_debug = true,
+	matchmaking_debug = true,
+	hide_version_info = true,
 	use_local_backend = false,
-	use_tech_telemetry = true,
+	spawn_empty_chest = true,
+	tobii_button = false,
+	disable_debug_draw = true,
+	force_debug_disabled = true,
 	use_telemetry = true,
+	packaged_build = true,
+	dont_show_unseen_rewards = false,
+	text_watermark = "BETA",
+	telemetry_log_interval = "600",
+	qr_watermark = false,
+	disable_intro_trailer = false,
+	force_steam = true,
+	debug_interactions = false,
+	beta_level_progression = false,
+	disable_water_mark = true,
+	show_fps = false,
+	use_tech_telemetry = true,
+	hide_fps = true
 }
 Development._hardcoded_benchmark_mode_params = {
 	attract_benchmark = true,
-	attract_mode = true,
-	disable_debug_draw = true,
+	use_local_backend = false,
+	disable_tutorial_at_start = true,
 	disable_gutter_runner = true,
 	disable_pack_master = true,
-	disable_tutorial_at_start = true,
-	force_steam = true,
-	hide_fps = false,
-	infinite_ammo = true,
-	player_invincible = true,
 	screen_space_player_camera_reactions = false,
 	show_fps = true,
-	tobii_button = false,
+	hide_fps = false,
 	use_lan_backend = false,
-	use_local_backend = false,
-	wanted_profile = "bright_wizard",
+	disable_debug_draw = true,
+	infinite_ammo = true,
+	force_steam = true,
+	tobii_button = false,
+	player_invincible = true,
+	attract_mode = true,
+	wanted_profile = "bright_wizard"
 }
 
-local hardcoded_dev_params = Development._hardcoded_dev_params
+local var_0_0 = Development._hardcoded_dev_params
 
 if LAUNCH_MODE == "attract_benchmark" then
-	hardcoded_dev_params = Development._hardcoded_benchmark_mode_params
+	var_0_0 = Development._hardcoded_benchmark_mode_params
 end
 
-Development.parameter = function (param)
-	return hardcoded_dev_params[param]
+function Development.parameter(arg_1_0)
+	return var_0_0[arg_1_0]
 end
 
-Development.clear_param_cache = function (param)
+function Development.clear_param_cache(arg_2_0)
 	return
 end
 
-Development.set_parameter = function (param, value)
+function Development.set_parameter(arg_3_0, arg_3_1)
 	return
 end
 
-Development.init_parameters = function ()
-	for param, value in pairs(hardcoded_dev_params) do
-		script_data[param] = value
+function Development.init_parameters()
+	for iter_4_0, iter_4_1 in pairs(var_0_0) do
+		script_data[iter_4_0] = iter_4_1
 	end
 
 	new_params = {}
 
-	for param, value in pairs(hardcoded_dev_params) do
-		if param:find("_") then
-			new_param = param:gsub("_", "-")
-			new_params[new_param] = value
+	for iter_4_2, iter_4_3 in pairs(var_0_0) do
+		if iter_4_2:find("_") then
+			new_param = iter_4_2:gsub("_", "-")
+			new_params[new_param] = iter_4_3
 		end
 	end
 
-	for param, value in pairs(new_params) do
-		hardcoded_dev_params[param] = value
+	for iter_4_4, iter_4_5 in pairs(new_params) do
+		var_0_0[iter_4_4] = iter_4_5
 	end
 end

@@ -1,277 +1,277 @@
-﻿-- chunkname: @scripts/settings/equipment/weapon_skins_lake.lua
+-- chunkname: @scripts/settings/equipment/weapon_skins_lake.lua
 
-local skins = {
+local var_0_0 = {
 	{
 		name = "es_bastard_sword_skin_01",
 		data = {
 			description = "es_bastard_sword_skin_01_description",
-			display_name = "es_bastard_sword_skin_01_name",
-			display_unit = "units/weapons/weapon_display/display_2h_swords",
-			hud_icon = "weapon_generic_icon_staff_3",
-			inventory_icon = "icon_wpn_emp_gk_sword_01_t1",
 			rarity = "common",
+			hud_icon = "weapon_generic_icon_staff_3",
+			display_unit = "units/weapons/weapon_display/display_2h_swords",
+			inventory_icon = "icon_wpn_emp_gk_sword_01_t1",
+			display_name = "es_bastard_sword_skin_01_name",
 			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_01_t1/wpn_emp_gk_sword_01_t1",
-			template = "bastard_sword_template",
-		},
+			template = "bastard_sword_template"
+		}
 	},
 	{
 		name = "es_bastard_sword_skin_02",
 		data = {
 			description = "es_bastard_sword_skin_02_description",
-			display_name = "es_bastard_sword_skin_02_name",
-			display_unit = "units/weapons/weapon_display/display_2h_swords",
-			hud_icon = "weapon_generic_icon_staff_3",
-			inventory_icon = "icon_wpn_emp_gk_sword_01_t2",
 			rarity = "rare",
+			hud_icon = "weapon_generic_icon_staff_3",
+			display_unit = "units/weapons/weapon_display/display_2h_swords",
+			inventory_icon = "icon_wpn_emp_gk_sword_01_t2",
+			display_name = "es_bastard_sword_skin_02_name",
 			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_01_t2/wpn_emp_gk_sword_01_t2",
-			template = "bastard_sword_template",
-		},
+			template = "bastard_sword_template"
+		}
 	},
 	{
 		name = "es_bastard_sword_skin_03",
 		data = {
 			description = "es_bastard_sword_skin_03_description",
-			display_name = "es_bastard_sword_skin_03_name",
-			display_unit = "units/weapons/weapon_display/display_2h_swords",
-			hud_icon = "weapon_generic_icon_staff_3",
-			inventory_icon = "icon_wpn_emp_gk_sword_02_t1",
 			rarity = "exotic",
+			hud_icon = "weapon_generic_icon_staff_3",
+			display_unit = "units/weapons/weapon_display/display_2h_swords",
+			inventory_icon = "icon_wpn_emp_gk_sword_02_t1",
+			display_name = "es_bastard_sword_skin_03_name",
 			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_02_t1/wpn_emp_gk_sword_02_t1",
-			template = "bastard_sword_template",
-		},
+			template = "bastard_sword_template"
+		}
 	},
 	{
 		name = "es_bastard_sword_skin_03_runed_01",
 		data = {
 			description = "es_bastard_sword_skin_03_runed_01_description",
-			display_name = "es_bastard_sword_skin_03_runed_01_name",
-			display_unit = "units/weapons/weapon_display/display_2h_swords",
-			hud_icon = "weapon_generic_icon_staff_3",
-			inventory_icon = "icon_wpn_emp_gk_sword_02_t1_runed_01",
 			rarity = "unique",
+			hud_icon = "weapon_generic_icon_staff_3",
+			display_unit = "units/weapons/weapon_display/display_2h_swords",
+			inventory_icon = "icon_wpn_emp_gk_sword_02_t1_runed_01",
+			display_name = "es_bastard_sword_skin_03_runed_01_name",
 			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_02_t1/wpn_emp_gk_sword_02_t1_runed_01",
-			template = "bastard_sword_template",
-		},
+			template = "bastard_sword_template"
+		}
 	},
 	{
 		name = "es_bastard_sword_skin_03_runed_02",
 		data = {
 			description = "es_bastard_sword_skin_03_runed_02_description",
-			display_name = "es_bastard_sword_skin_03_runed_02_name",
-			display_unit = "units/weapons/weapon_display/display_2h_swords",
-			hud_icon = "weapon_generic_icon_staff_3",
-			inventory_icon = "icon_wpn_emp_gk_sword_02_t1_runed_02",
 			rarity = "unique",
 			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_02_t1/wpn_emp_gk_sword_02_t1_runed_01",
+			hud_icon = "weapon_generic_icon_staff_3",
+			inventory_icon = "icon_wpn_emp_gk_sword_02_t1_runed_02",
+			display_name = "es_bastard_sword_skin_03_runed_02_name",
+			material_settings_name = "purple_glow",
 			template = "bastard_sword_template",
-			material_settings = WeaponMaterialSettingsTemplates.purple_glow,
-		},
+			display_unit = "units/weapons/weapon_display/display_2h_swords"
+		}
 	},
 	{
 		name = "es_bastard_sword_skin_04",
 		data = {
 			description = "es_bastard_sword_skin_04_description",
-			display_name = "es_bastard_sword_skin_04_name",
-			display_unit = "units/weapons/weapon_display/display_2h_swords",
-			hud_icon = "weapon_generic_icon_staff_3",
-			inventory_icon = "icon_wpn_emp_gk_sword_02_t2",
 			rarity = "exotic",
+			hud_icon = "weapon_generic_icon_staff_3",
+			display_unit = "units/weapons/weapon_display/display_2h_swords",
+			inventory_icon = "icon_wpn_emp_gk_sword_02_t2",
+			display_name = "es_bastard_sword_skin_04_name",
 			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_02_t2/wpn_emp_gk_sword_02_t2",
-			template = "bastard_sword_template",
-		},
+			template = "bastard_sword_template"
+		}
 	},
 	{
 		name = "es_bastard_sword_skin_04_magic_01",
 		data = {
 			description = "es_bastard_sword_skin_04_description",
-			display_name = "es_bastard_sword_skin_04_name",
-			display_unit = "units/weapons/weapon_display/display_2h_swords",
-			hud_icon = "weapon_generic_icon_staff_3",
-			inventory_icon = "icon_wpn_emp_gk_sword_02_t2_magic_01",
 			rarity = "magic",
+			hud_icon = "weapon_generic_icon_staff_3",
+			display_unit = "units/weapons/weapon_display/display_2h_swords",
+			inventory_icon = "icon_wpn_emp_gk_sword_02_t2_magic_01",
+			display_name = "es_bastard_sword_skin_04_name",
 			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_02_t2/wpn_emp_gk_sword_02_t2_magic_01",
-			template = "bastard_sword_template",
-		},
+			template = "bastard_sword_template"
+		}
 	},
 	{
 		name = "es_sword_shield_breton_skin_01",
 		data = {
 			description = "es_sword_shield_breton_skin_02_description",
+			rarity = "common",
 			display_name = "es_sword_shield_breton_skin_02_name",
-			display_unit = "units/weapons/weapon_display/display_shield_sword",
-			hud_icon = "weapon_generic_icon_staff_3",
+			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_01_t1/wpn_emp_gk_sword_01_t1",
 			inventory_icon = "icon_wpn_emp_gk_sword_01_t1_wpn_emp_gk_shield_02",
 			left_hand_unit = "units/weapons/player/wpn_emp_gk_shield_02/wpn_emp_gk_shield_02",
-			rarity = "common",
-			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_01_t1/wpn_emp_gk_sword_01_t1",
 			template = "one_handed_sword_shield_template_2",
-		},
+			hud_icon = "weapon_generic_icon_staff_3",
+			display_unit = "units/weapons/weapon_display/display_shield_sword"
+		}
 	},
 	{
 		name = "es_sword_shield_breton_skin_02",
 		data = {
 			description = "es_sword_shield_breton_skin_03_description",
+			rarity = "rare",
 			display_name = "es_sword_shield_breton_skin_03_name",
-			display_unit = "units/weapons/weapon_display/display_shield_sword",
-			hud_icon = "weapon_generic_icon_staff_3",
+			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_01_t2/wpn_emp_gk_sword_01_t2",
 			inventory_icon = "icon_wpn_emp_gk_sword_01_t2_wpn_emp_gk_shield_04",
 			left_hand_unit = "units/weapons/player/wpn_emp_gk_shield_04/wpn_emp_gk_shield_04",
-			rarity = "rare",
-			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_01_t2/wpn_emp_gk_sword_01_t2",
 			template = "one_handed_sword_shield_template_2",
-		},
+			hud_icon = "weapon_generic_icon_staff_3",
+			display_unit = "units/weapons/weapon_display/display_shield_sword"
+		}
 	},
 	{
 		name = "es_sword_shield_breton_skin_03",
 		data = {
 			description = "es_sword_shield_breton_skin_04_description",
+			rarity = "exotic",
 			display_name = "es_sword_shield_breton_skin_04_name",
-			display_unit = "units/weapons/weapon_display/display_shield_sword",
-			hud_icon = "weapon_generic_icon_staff_3",
+			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_02_t1/wpn_emp_gk_sword_02_t1",
 			inventory_icon = "icon_wpn_emp_gk_sword_02_t1_wpn_emp_gk_shield_05",
 			left_hand_unit = "units/weapons/player/wpn_emp_gk_shield_05/wpn_emp_gk_shield_05",
-			rarity = "exotic",
-			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_02_t1/wpn_emp_gk_sword_02_t1",
 			template = "one_handed_sword_shield_template_2",
-		},
+			hud_icon = "weapon_generic_icon_staff_3",
+			display_unit = "units/weapons/weapon_display/display_shield_sword"
+		}
 	},
 	{
 		name = "es_sword_shield_breton_skin_03_runed_01",
 		data = {
 			description = "es_sword_shield_breton_skin_03_runed_01_description",
+			rarity = "unique",
 			display_name = "es_sword_shield_breton_skin_03_runed_01_name",
-			display_unit = "units/weapons/weapon_display/display_shield_sword",
-			hud_icon = "weapon_generic_icon_staff_3",
+			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_02_t1/wpn_emp_gk_sword_02_t1_runed_01",
 			inventory_icon = "icon_wpn_emp_gk_sword_02_t1_runed_01_wpn_emp_gk_shield_02_runed_01",
 			left_hand_unit = "units/weapons/player/wpn_emp_gk_shield_02/wpn_emp_gk_shield_02_runed_01",
-			rarity = "unique",
-			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_02_t1/wpn_emp_gk_sword_02_t1_runed_01",
 			template = "one_handed_sword_shield_template_2",
-		},
+			hud_icon = "weapon_generic_icon_staff_3",
+			display_unit = "units/weapons/weapon_display/display_shield_sword"
+		}
 	},
 	{
 		name = "es_sword_shield_breton_skin_03_runed_02",
 		data = {
 			description = "es_sword_shield_breton_skin_03_runed_02_description",
+			rarity = "unique",
 			display_name = "es_sword_shield_breton_skin_03_runed_02_name",
-			display_unit = "units/weapons/weapon_display/display_shield_sword",
-			hud_icon = "weapon_generic_icon_staff_3",
+			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_02_t1/wpn_emp_gk_sword_02_t1_runed_01",
 			inventory_icon = "icon_wpn_emp_gk_sword_02_t1_runed_01_wpn_emp_gk_shield_02_runed_02",
 			left_hand_unit = "units/weapons/player/wpn_emp_gk_shield_02/wpn_emp_gk_shield_02_runed_01",
-			rarity = "unique",
-			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_02_t1/wpn_emp_gk_sword_02_t1_runed_01",
+			material_settings_name = "purple_glow",
 			template = "one_handed_sword_shield_template_2",
-			material_settings = WeaponMaterialSettingsTemplates.purple_glow,
-		},
+			hud_icon = "weapon_generic_icon_staff_3",
+			display_unit = "units/weapons/weapon_display/display_shield_sword"
+		}
 	},
 	{
 		name = "es_sword_shield_breton_skin_04",
 		data = {
 			description = "es_sword_shield_breton_skin_05_description",
+			rarity = "exotic",
 			display_name = "es_sword_shield_breton_skin_05_name",
-			display_unit = "units/weapons/weapon_display/display_shield_sword",
-			hud_icon = "weapon_generic_icon_staff_3",
+			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_02_t2/wpn_emp_gk_sword_02_t2",
 			inventory_icon = "icon_wpn_emp_gk_sword_02_t2_wpn_emp_gk_shield_01",
 			left_hand_unit = "units/weapons/player/wpn_emp_gk_shield_01/wpn_emp_gk_shield_01",
-			rarity = "exotic",
-			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_02_t2/wpn_emp_gk_sword_02_t2",
 			template = "one_handed_sword_shield_template_2",
-		},
+			hud_icon = "weapon_generic_icon_staff_3",
+			display_unit = "units/weapons/weapon_display/display_shield_sword"
+		}
 	},
 	{
 		name = "es_sword_shield_breton_skin_04_magic_01_magic_01",
 		data = {
 			description = "es_sword_shield_breton_skin_05_magic_01_description",
+			rarity = "magic",
 			display_name = "es_sword_shield_breton_skin_05_magic_01_name",
-			display_unit = "units/weapons/weapon_display/display_shield_sword",
-			hud_icon = "weapon_generic_icon_staff_3",
+			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_02_t2/wpn_emp_gk_sword_02_t2_magic_01",
 			inventory_icon = "icon_wpn_emp_gk_sword_02_t2_wpn_emp_gk_shield_01_magic_01",
 			left_hand_unit = "units/weapons/player/wpn_emp_gk_shield_01/wpn_emp_gk_shield_01_magic_01",
-			rarity = "magic",
-			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_02_t2/wpn_emp_gk_sword_02_t2_magic_01",
 			template = "one_handed_sword_shield_template_2",
-		},
+			hud_icon = "weapon_generic_icon_staff_3",
+			display_unit = "units/weapons/weapon_display/display_shield_sword"
+		}
 	},
 	{
 		name = "es_sword_shield_breton_skin_05",
 		data = {
 			description = "es_sword_shield_breton_skin_01_description",
+			rarity = "plentiful",
 			display_name = "es_sword_shield_breton_skin_01_name",
-			display_unit = "units/weapons/weapon_display/display_shield_sword",
-			hud_icon = "weapon_generic_icon_staff_3",
+			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_01_t1/wpn_emp_gk_sword_01_t1",
 			inventory_icon = "icon_wpn_emp_gk_sword_01_t1_wpn_emp_gk_shield_03",
 			left_hand_unit = "units/weapons/player/wpn_emp_gk_shield_03/wpn_emp_gk_shield_03",
-			rarity = "plentiful",
-			right_hand_unit = "units/weapons/player/wpn_emp_gk_sword_01_t1/wpn_emp_gk_sword_01_t1",
 			template = "one_handed_sword_shield_template_2",
-		},
-	},
+			hud_icon = "weapon_generic_icon_staff_3",
+			display_unit = "units/weapons/weapon_display/display_shield_sword"
+		}
+	}
 }
-local skin_combinations = {
+local var_0_1 = {
 	es_bastard_sword_skins = {
 		common = {
-			"es_bastard_sword_skin_01",
+			"es_bastard_sword_skin_01"
 		},
 		rare = {
-			"es_bastard_sword_skin_02",
+			"es_bastard_sword_skin_02"
 		},
 		exotic = {
 			"es_bastard_sword_skin_03",
-			"es_bastard_sword_skin_04",
+			"es_bastard_sword_skin_04"
 		},
 		unique = {
 			"es_bastard_sword_skin_03_runed_01",
-			"es_bastard_sword_skin_03_runed_02",
+			"es_bastard_sword_skin_03_runed_02"
 		},
 		magic = {
-			"es_bastard_sword_skin_04_magic_01",
-		},
+			"es_bastard_sword_skin_04_magic_01"
+		}
 	},
 	es_sword_shield_breton_skins = {
 		common = {
-			"es_sword_shield_breton_skin_01",
+			"es_sword_shield_breton_skin_01"
 		},
 		rare = {
-			"es_sword_shield_breton_skin_02",
+			"es_sword_shield_breton_skin_02"
 		},
 		exotic = {
 			"es_sword_shield_breton_skin_03",
-			"es_sword_shield_breton_skin_04",
+			"es_sword_shield_breton_skin_04"
 		},
 		unique = {
 			"es_sword_shield_breton_skin_03_runed_01",
-			"es_sword_shield_breton_skin_03_runed_02",
+			"es_sword_shield_breton_skin_03_runed_02"
 		},
 		magic = {
-			"es_sword_shield_breton_skin_04_magic_01_magic_01",
-		},
-	},
+			"es_sword_shield_breton_skin_04_magic_01_magic_01"
+		}
+	}
 }
-local default_skins = {
+local var_0_2 = {
 	es_bastard_sword = "es_bastard_sword_skin_01",
-	es_sword_shield_breton = "es_sword_shield_breton_skin_05",
+	es_sword_shield_breton = "es_sword_shield_breton_skin_05"
 }
 
-for _, skin in ipairs(skins) do
-	WeaponSkins.skins[skin.name] = skin.data
+for iter_0_0, iter_0_1 in ipairs(var_0_0) do
+	WeaponSkins.skins[iter_0_1.name] = iter_0_1.data
 end
 
-for weapon_name, skin_data in pairs(skin_combinations) do
-	if not WeaponSkins.skin_combinations[weapon_name] then
-		WeaponSkins.skin_combinations[weapon_name] = {}
+for iter_0_2, iter_0_3 in pairs(var_0_1) do
+	if not WeaponSkins.skin_combinations[iter_0_2] then
+		WeaponSkins.skin_combinations[iter_0_2] = {}
 	end
 
-	for weapon_rarity, skin_names in pairs(skin_data) do
-		if not WeaponSkins.skin_combinations[weapon_name][weapon_rarity] then
-			WeaponSkins.skin_combinations[weapon_name][weapon_rarity] = {}
+	for iter_0_4, iter_0_5 in pairs(iter_0_3) do
+		if not WeaponSkins.skin_combinations[iter_0_2][iter_0_4] then
+			WeaponSkins.skin_combinations[iter_0_2][iter_0_4] = {}
 		end
 
-		for _, skin_name in ipairs(skin_names) do
-			WeaponSkins.skin_combinations[weapon_name][weapon_rarity][#WeaponSkins.skin_combinations[weapon_name][weapon_rarity] + 1] = skin_name
+		for iter_0_6, iter_0_7 in ipairs(iter_0_5) do
+			WeaponSkins.skin_combinations[iter_0_2][iter_0_4][#WeaponSkins.skin_combinations[iter_0_2][iter_0_4] + 1] = iter_0_7
 		end
 	end
 end
 
-for name, data in pairs(default_skins) do
-	WeaponSkins.default_skins[name] = data
+for iter_0_8, iter_0_9 in pairs(var_0_2) do
+	WeaponSkins.default_skins[iter_0_8] = iter_0_9
 end

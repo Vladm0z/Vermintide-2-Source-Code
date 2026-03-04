@@ -1,25 +1,25 @@
-﻿-- chunkname: @scripts/settings/dlcs/morris/deus_power_up_testify.lua
+-- chunkname: @scripts/settings/dlcs/morris/deus_power_up_testify.lua
 
 require("scripts/settings/dlcs/morris/deus_power_up_settings")
 
-local function deus_power_up_terror_event_test(nav_world, terror_event_name, main_path_point, bot_teleportation_data)
-	Testify:make_request("start_terror_event", terror_event_name)
+local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	Testify:make_request("start_terror_event", arg_1_1)
 
-	while not Testify:make_request("terror_event_finished", terror_event_name) do
+	while not Testify:make_request("terror_event_finished", arg_1_1) do
 		Testify:make_request("make_players_invicible")
 		Testify:make_request("set_player_unit_not_visible")
 		Testify:make_request("set_camera_to_observe_first_bot")
 
-		local position = MainPathUtils.point_on_mainpath(nil, main_path_point)
-		local teleport_pos = ConflictUtils.get_spawn_pos_on_circle(nav_world, position, 7, 7, 15)
+		local var_1_0 = MainPathUtils.point_on_mainpath(nil, arg_1_2)
+		local var_1_1 = ConflictUtils.get_spawn_pos_on_circle(arg_1_0, var_1_0, 7, 7, 15)
 
-		if teleport_pos then
-			local boxed_position = Vector3Box(teleport_pos)
+		if var_1_1 then
+			local var_1_2 = Vector3Box(var_1_1)
 
-			Testify:make_request("teleport_player_to_position", boxed_position)
+			Testify:make_request("teleport_player_to_position", var_1_2)
 		end
 
-		Testify:make_request("teleport_bots_forward_on_main_path_if_blocked", bot_teleportation_data)
+		Testify:make_request("teleport_bots_forward_on_main_path_if_blocked", arg_1_3)
 
 		if Testify:make_request("level_end_screen_displayed") then
 			if Testify:make_request("has_lost") then
@@ -29,9 +29,9 @@ local function deus_power_up_terror_event_test(nav_world, terror_event_name, mai
 			end
 		end
 
-		local start_time = os.clock()
+		local var_1_3 = os.clock()
 
-		while os.clock() < start_time + 2 do
+		while os.clock() < var_1_3 + 2 do
 			Testify:make_request("update_camera_to_follow_first_bot_rotation")
 		end
 	end
@@ -40,5 +40,5 @@ local function deus_power_up_terror_event_test(nav_world, terror_event_name, mai
 end
 
 DeusPowerUpTests = {
-	default = deus_power_up_terror_event_test,
+	default = var_0_0
 }

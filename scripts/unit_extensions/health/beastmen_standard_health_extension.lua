@@ -1,58 +1,56 @@
-﻿-- chunkname: @scripts/unit_extensions/health/beastmen_standard_health_extension.lua
+-- chunkname: @scripts/unit_extensions/health/beastmen_standard_health_extension.lua
 
 BeastmenStandardHealthExtension = class(BeastmenStandardHealthExtension, GenericHealthExtension)
 
-BeastmenStandardHealthExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	BeastmenStandardHealthExtension.super.init(self, extension_init_context, unit, extension_init_data)
+function BeastmenStandardHealthExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	BeastmenStandardHealthExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
-	self._unit = unit
+	arg_1_0._unit = arg_1_2
 end
 
-BeastmenStandardHealthExtension.extensions_ready = function (self, world, unit, extension_name)
+function BeastmenStandardHealthExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	return
 end
 
-BeastmenStandardHealthExtension.destroy = function (self)
-	BeastmenStandardHealthExtension.super.destroy(self)
+function BeastmenStandardHealthExtension.destroy(arg_3_0)
+	BeastmenStandardHealthExtension.super.destroy(arg_3_0)
 
-	self.blackboard = nil
+	arg_3_0.blackboard = nil
 end
 
-BeastmenStandardHealthExtension.apply_client_predicted_damage = function (self, predicted_damage)
+function BeastmenStandardHealthExtension.apply_client_predicted_damage(arg_4_0, arg_4_1)
 	return
 end
 
-local white_listed_damage_sources = {
-	dr_deus_01 = true,
-	explosive_barrel = true,
+local var_0_0 = {
+	grenade_frag_02 = true,
+	torch = true,
 	grenade_fire_01 = true,
 	grenade_fire_02 = true,
-	grenade_frag_01 = true,
-	grenade_frag_02 = true,
-	markus_questingknight_career_skill_weapon = true,
-	shadow_torch = true,
-	torch = true,
 	wpn_deus_relic_01 = true,
+	grenade_frag_01 = true,
+	explosive_barrel = true,
+	markus_questingknight_career_skill_weapon = true,
+	dr_deus_01 = true,
+	shadow_torch = true
 }
 
-BeastmenStandardHealthExtension.add_damage = function (self, attacker_unit, damage_amount, hit_zone_name, damage_type, hit_position, damage_direction, damage_source_name, hit_ragdoll_actor, damaging_unit, hit_react_type, is_critical_strike, added_dot, first_hit, total_hits, attack_type, backstab_multiplier, target_index)
-	if damage_source_name == "suicide" then
-		BeastmenStandardHealthExtension.super.add_damage(self, attacker_unit, damage_amount, hit_zone_name, damage_type, hit_position, damage_direction, damage_source_name, hit_ragdoll_actor, damaging_unit, hit_react_type, is_critical_strike, added_dot, first_hit, total_hits, attack_type, backstab_multiplier, target_index)
+function BeastmenStandardHealthExtension.add_damage(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10, arg_5_11, arg_5_12, arg_5_13, arg_5_14, arg_5_15, arg_5_16, arg_5_17)
+	if arg_5_7 == "suicide" then
+		BeastmenStandardHealthExtension.super.add_damage(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10, arg_5_11, arg_5_12, arg_5_13, arg_5_14, arg_5_15, arg_5_16, arg_5_17)
 	else
-		local can_damage_banner = false
+		local var_5_0 = false
 
-		can_damage_banner = attack_type and (attack_type == "heavy_attack" or attack_type == "light_attack") or white_listed_damage_sources[damage_source_name]
+		if arg_5_15 and (arg_5_15 == "heavy_attack" or arg_5_15 == "light_attack") or var_0_0[arg_5_7] then
+			BeastmenStandardHealthExtension.super.add_damage(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10, arg_5_11, arg_5_12, arg_5_13, arg_5_14, arg_5_15, arg_5_16, arg_5_17)
 
-		if can_damage_banner then
-			BeastmenStandardHealthExtension.super.add_damage(self, attacker_unit, damage_amount, hit_zone_name, damage_type, hit_position, damage_direction, damage_source_name, hit_ragdoll_actor, damaging_unit, hit_react_type, is_critical_strike, added_dot, first_hit, total_hits, attack_type, backstab_multiplier, target_index)
+			local var_5_1 = ScriptUnit.has_extension(arg_5_0._unit, "ai_supplementary_system")
+			local var_5_2 = var_5_1.standard_template
 
-			local standard_extension = ScriptUnit.has_extension(self._unit, "ai_supplementary_system")
-			local standard_template = standard_extension.standard_template
+			if var_5_2 then
+				local var_5_3 = var_5_2.sfx_taking_damage
 
-			if standard_template then
-				local sfx_taking_damage = standard_template.sfx_taking_damage
-
-				WwiseUtils.trigger_unit_event(standard_extension.world, sfx_taking_damage, self._unit, 0)
+				WwiseUtils.trigger_unit_event(var_5_1.world, var_5_3, arg_5_0._unit, 0)
 			end
 		end
 	end

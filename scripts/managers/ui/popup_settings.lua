@@ -1,17 +1,17 @@
-﻿-- chunkname: @scripts/managers/ui/popup_settings.lua
+-- chunkname: @scripts/managers/ui/popup_settings.lua
 
 PopupSettings = {
 	{
-		class = "PopupProfilePicker",
-		file = "scripts/ui/views/popup_profile_picker",
-		name = "profile_picker",
 		singleton = true,
-	},
+		name = "profile_picker",
+		class = "PopupProfilePicker",
+		file = "scripts/ui/views/popup_profile_picker"
+	}
 }
 PopupSettingsByName = {}
 
-for i, settings in pairs(PopupSettings) do
-	local name = settings.name
+for iter_0_0, iter_0_1 in pairs(PopupSettings) do
+	local var_0_0 = iter_0_1.name
 
-	PopupSettingsByName[name] = settings
+	PopupSettingsByName[var_0_0] = iter_0_1
 end

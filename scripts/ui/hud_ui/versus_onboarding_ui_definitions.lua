@@ -1,111 +1,108 @@
-﻿-- chunkname: @scripts/ui/hud_ui/versus_onboarding_ui_definitions.lua
+-- chunkname: @scripts/ui/hud_ui/versus_onboarding_ui_definitions.lua
 
 require("scripts/ui/views/versus_menu/ui_widgets_vs")
 
-local SIZE_X, SIZE_Y = 1920, 1080
-local RETAINED_MODE_ENABLED = false
-local scenegraph_definition = {
+local var_0_0 = 1920
+local var_0_1 = 1080
+local var_0_2 = false
+local var_0_3 = {
 	screen = {
 		scale = "hud_scale_fit",
 		position = {
 			0,
 			0,
-			UILayer.hud,
+			UILayer.hud
 		},
 		size = {
-			SIZE_X,
-			SIZE_Y,
-		},
+			var_0_0,
+			var_0_1
+		}
 	},
 	side_pivot_dark_pact = {
-		horizontal_alignment = "right",
-		parent = "screen",
 		vertical_alignment = "center",
+		parent = "screen",
+		horizontal_alignment = "right",
 		position = {
 			0,
 			0,
-			UILayer.hud,
+			UILayer.hud
 		},
 		size = {
 			400,
-			260,
-		},
+			260
+		}
 	},
 	side_pivot_heroes = {
-		horizontal_alignment = "right",
-		parent = "screen",
 		vertical_alignment = "center",
+		parent = "screen",
+		horizontal_alignment = "right",
 		position = {
 			0,
 			0,
-			UILayer.hud,
+			UILayer.hud
 		},
 		size = {
 			400,
-			360,
-		},
-	},
+			360
+		}
+	}
 }
-local widgets = {}
-local animations_definitions = {
+local var_0_4 = {}
+local var_0_5 = {
 	enter = {
 		{
-			end_progress = 0.75,
 			name = "slide_and_fade_in",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widget, params)
-				local self = params.self
+			end_progress = 0.75,
+			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+				local var_1_0 = arg_1_3.self
 
-				self._render_settings.alpha_multiplier = 0
-				self._should_draw = true
+				var_1_0._render_settings.alpha_multiplier = 0
+				var_1_0._should_draw = true
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
-				if not widget then
+			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				if not arg_2_2 then
 					return
 				end
 
-				local anim_progress = math.easeOutCubic(progress)
-				local self = params.self
+				local var_2_0 = math.easeOutCubic(arg_2_3)
 
-				self._render_settings.alpha_multiplier = progress
-				widget.offset[1] = 400 * (1 - anim_progress)
+				arg_2_4.self._render_settings.alpha_multiplier = arg_2_3
+				arg_2_2.offset[1] = 400 * (1 - var_2_0)
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
+			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				return
-			end,
-		},
+			end
+		}
 	},
 	exit = {
 		{
-			end_progress = 0.5,
 			name = "slide_and_fade_out",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widget, params)
+			end_progress = 0.5,
+			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				return
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
-				if not widget then
+			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				if not arg_5_2 then
 					return
 				end
 
-				local anim_progress = math.easeOutCubic(progress)
-				local self = params.self
+				local var_5_0 = math.easeOutCubic(arg_5_3)
 
-				self._render_settings.alpha_multiplier = 1 - progress
-				widget.offset[1] = 400 * anim_progress
-				widget.element.dirty = true
+				arg_5_4.self._render_settings.alpha_multiplier = 1 - arg_5_3
+				arg_5_2.offset[1] = 400 * var_5_0
+				arg_5_2.element.dirty = true
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
-				local self = params.self
-
-				self._should_draw = false
-			end,
-		},
-	},
+			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				arg_6_3.self._should_draw = false
+			end
+		}
+	}
 }
 
 return {
-	animations_definitions = animations_definitions,
-	scenegraph = scenegraph_definition,
-	widgets = widgets,
+	animations_definitions = var_0_5,
+	scenegraph = var_0_3,
+	widgets = var_0_4
 }

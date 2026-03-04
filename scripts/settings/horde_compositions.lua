@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/settings/horde_compositions.lua
+-- chunkname: @scripts/settings/horde_compositions.lua
 
 HordeCompositions = Script.new_map(512)
 HordeCompositions.event_large_beastmen = {
@@ -10,14 +10,14 @@ HordeCompositions.event_large_beastmen = {
 				"beastmen_gor",
 				{
 					9,
-					10,
+					10
 				},
 				"beastmen_ungor",
 				{
 					17,
-					18,
-				},
-			},
+					18
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -26,219 +26,15 @@ HordeCompositions.event_large_beastmen = {
 				"beastmen_gor",
 				{
 					14,
-					15,
+					15
 				},
 				"beastmen_ungor",
 				{
 					12,
-					13,
-				},
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 7,
-			breeds = {
-				"beastmen_gor",
-				{
-					10,
-					11,
-				},
-				"beastmen_ungor",
-				{
-					17,
-					18,
-				},
-			},
-		},
-		{
-			name = "mixed",
-			weight = 3,
-			breeds = {
-				"beastmen_gor",
-				{
-					15,
-					16,
-				},
-				"beastmen_ungor",
-				{
-					12,
-					13,
-				},
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 7,
-			breeds = {
-				"beastmen_gor",
-				{
-					11,
-					12,
-				},
-				"beastmen_ungor",
-				{
-					18,
-					19,
-				},
-			},
-		},
-		{
-			name = "mixed",
-			weight = 3,
-			breeds = {
-				"beastmen_gor",
-				{
-					16,
-					17,
-				},
-				"beastmen_ungor",
-				{
-					13,
-					14,
-				},
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 7,
-			breeds = {
-				"beastmen_gor",
-				{
-					12,
-					13,
-				},
-				"beastmen_ungor",
-				{
-					18,
-					19,
-				},
-			},
-		},
-		{
-			name = "mixed",
-			weight = 3,
-			breeds = {
-				"beastmen_gor",
-				{
-					17,
-					18,
-				},
-				"beastmen_ungor",
-				{
-					14,
-					15,
-				},
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 7,
-			breeds = {
-				"beastmen_gor",
-				{
-					18,
-					19,
-				},
-				"beastmen_ungor",
-				{
-					16,
-					17,
-				},
-			},
-		},
-		{
-			name = "mixed",
-			weight = 3,
-			breeds = {
-				"beastmen_gor",
-				{
-					22,
-					23,
-				},
-				"beastmen_ungor",
-				{
-					14,
-					15,
-				},
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 7,
-			breeds = {
-				"beastmen_gor",
-				{
-					18,
-					19,
-				},
-				"beastmen_ungor",
-				{
-					16,
-					17,
-				},
-			},
-		},
-		{
-			name = "mixed",
-			weight = 3,
-			breeds = {
-				"beastmen_gor",
-				{
-					22,
-					23,
-				},
-				"beastmen_ungor",
-				{
-					14,
-					15,
-				},
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 7,
-			breeds = {
-				"beastmen_gor",
-				{
-					18,
-					19,
-				},
-				"beastmen_ungor",
-				{
-					16,
-					17,
-				},
-			},
-		},
-		{
-			name = "mixed",
-			weight = 3,
-			breeds = {
-				"beastmen_gor",
-				{
-					22,
-					23,
-				},
-				"beastmen_ungor",
-				{
-					14,
-					15,
-				},
-			},
-		},
+					13
+				}
+			}
+		}
 	},
 	{
 		{
@@ -248,14 +44,14 @@ HordeCompositions.event_large_beastmen = {
 				"beastmen_gor",
 				{
 					10,
-					11,
+					11
 				},
 				"beastmen_ungor",
 				{
 					17,
-					18,
-				},
-			},
+					18
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -264,16 +60,220 @@ HordeCompositions.event_large_beastmen = {
 				"beastmen_gor",
 				{
 					15,
-					16,
+					16
 				},
 				"beastmen_ungor",
 				{
 					12,
-					13,
-				},
-			},
-		},
+					13
+				}
+			}
+		}
 	},
+	{
+		{
+			name = "plain",
+			weight = 7,
+			breeds = {
+				"beastmen_gor",
+				{
+					11,
+					12
+				},
+				"beastmen_ungor",
+				{
+					18,
+					19
+				}
+			}
+		},
+		{
+			name = "mixed",
+			weight = 3,
+			breeds = {
+				"beastmen_gor",
+				{
+					16,
+					17
+				},
+				"beastmen_ungor",
+				{
+					13,
+					14
+				}
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 7,
+			breeds = {
+				"beastmen_gor",
+				{
+					12,
+					13
+				},
+				"beastmen_ungor",
+				{
+					18,
+					19
+				}
+			}
+		},
+		{
+			name = "mixed",
+			weight = 3,
+			breeds = {
+				"beastmen_gor",
+				{
+					17,
+					18
+				},
+				"beastmen_ungor",
+				{
+					14,
+					15
+				}
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 7,
+			breeds = {
+				"beastmen_gor",
+				{
+					18,
+					19
+				},
+				"beastmen_ungor",
+				{
+					16,
+					17
+				}
+			}
+		},
+		{
+			name = "mixed",
+			weight = 3,
+			breeds = {
+				"beastmen_gor",
+				{
+					22,
+					23
+				},
+				"beastmen_ungor",
+				{
+					14,
+					15
+				}
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 7,
+			breeds = {
+				"beastmen_gor",
+				{
+					18,
+					19
+				},
+				"beastmen_ungor",
+				{
+					16,
+					17
+				}
+			}
+		},
+		{
+			name = "mixed",
+			weight = 3,
+			breeds = {
+				"beastmen_gor",
+				{
+					22,
+					23
+				},
+				"beastmen_ungor",
+				{
+					14,
+					15
+				}
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 7,
+			breeds = {
+				"beastmen_gor",
+				{
+					18,
+					19
+				},
+				"beastmen_ungor",
+				{
+					16,
+					17
+				}
+			}
+		},
+		{
+			name = "mixed",
+			weight = 3,
+			breeds = {
+				"beastmen_gor",
+				{
+					22,
+					23
+				},
+				"beastmen_ungor",
+				{
+					14,
+					15
+				}
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 7,
+			breeds = {
+				"beastmen_gor",
+				{
+					10,
+					11
+				},
+				"beastmen_ungor",
+				{
+					17,
+					18
+				}
+			}
+		},
+		{
+			name = "mixed",
+			weight = 3,
+			breeds = {
+				"beastmen_gor",
+				{
+					15,
+					16
+				},
+				"beastmen_ungor",
+				{
+					12,
+					13
+				}
+			}
+		}
+	}
 }
 HordeCompositions.event_small_beastmen = {
 	{
@@ -284,9 +284,9 @@ HordeCompositions.event_small_beastmen = {
 				"beastmen_gor",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -295,15 +295,15 @@ HordeCompositions.event_small_beastmen = {
 				"beastmen_ungor",
 				{
 					2,
-					3,
+					3
 				},
 				"beastmen_gor",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -313,9 +313,9 @@ HordeCompositions.event_small_beastmen = {
 				"beastmen_gor",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -324,15 +324,15 @@ HordeCompositions.event_small_beastmen = {
 				"beastmen_ungor",
 				{
 					2,
-					3,
+					3
 				},
 				"beastmen_gor",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -342,9 +342,9 @@ HordeCompositions.event_small_beastmen = {
 				"beastmen_gor",
 				{
 					7,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -353,44 +353,44 @@ HordeCompositions.event_small_beastmen = {
 				"beastmen_ungor",
 				{
 					2,
-					3,
+					3
 				},
 				"beastmen_gor",
 				{
 					4,
+					5
+				}
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 7,
+			breeds = {
+				"beastmen_gor",
+				{
+					10,
+					11
+				}
+			}
+		},
+		{
+			name = "mixed",
+			weight = 3,
+			breeds = {
+				"beastmen_ungor",
+				{
+					3,
+					4
+				},
+				"beastmen_gor",
+				{
 					5,
-				},
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 7,
-			breeds = {
-				"beastmen_gor",
-				{
-					10,
-					11,
-				},
-			},
-		},
-		{
-			name = "mixed",
-			weight = 3,
-			breeds = {
-				"beastmen_ungor",
-				{
-					3,
-					4,
-				},
-				"beastmen_gor",
-				{
-					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -400,9 +400,9 @@ HordeCompositions.event_small_beastmen = {
 				"beastmen_gor",
 				{
 					13,
-					14,
-				},
-			},
+					14
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -411,15 +411,15 @@ HordeCompositions.event_small_beastmen = {
 				"beastmen_ungor",
 				{
 					3,
-					4,
+					4
 				},
 				"beastmen_gor",
 				{
 					9,
-					10,
-				},
-			},
-		},
+					10
+				}
+			}
+		}
 	},
 	{
 		{
@@ -429,9 +429,9 @@ HordeCompositions.event_small_beastmen = {
 				"beastmen_gor",
 				{
 					13,
-					14,
-				},
-			},
+					14
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -440,15 +440,15 @@ HordeCompositions.event_small_beastmen = {
 				"beastmen_ungor",
 				{
 					3,
-					4,
+					4
 				},
 				"beastmen_gor",
 				{
 					9,
-					10,
-				},
-			},
-		},
+					10
+				}
+			}
+		}
 	},
 	{
 		{
@@ -458,9 +458,9 @@ HordeCompositions.event_small_beastmen = {
 				"beastmen_gor",
 				{
 					13,
-					14,
-				},
-			},
+					14
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -469,15 +469,15 @@ HordeCompositions.event_small_beastmen = {
 				"beastmen_ungor",
 				{
 					3,
-					4,
+					4
 				},
 				"beastmen_gor",
 				{
 					9,
-					10,
-				},
-			},
-		},
+					10
+				}
+			}
+		}
 	},
 	{
 		{
@@ -487,9 +487,9 @@ HordeCompositions.event_small_beastmen = {
 				"beastmen_gor",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -498,16 +498,16 @@ HordeCompositions.event_small_beastmen = {
 				"beastmen_ungor",
 				{
 					2,
-					3,
+					3
 				},
 				"beastmen_gor",
 				{
 					3,
-					4,
-				},
-			},
-		},
-	},
+					4
+				}
+			}
+		}
+	}
 }
 HordeCompositions.event_medium_beastmen = {
 	{
@@ -518,14 +518,14 @@ HordeCompositions.event_medium_beastmen = {
 				"beastmen_gor",
 				{
 					10,
-					11,
+					11
 				},
 				"beastmen_ungor",
 				{
 					8,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -534,15 +534,15 @@ HordeCompositions.event_medium_beastmen = {
 				"beastmen_gor",
 				{
 					4,
-					5,
+					5
 				},
 				"beastmen_ungor",
 				{
 					14,
-					15,
-				},
-			},
-		},
+					15
+				}
+			}
+		}
 	},
 	{
 		{
@@ -552,14 +552,14 @@ HordeCompositions.event_medium_beastmen = {
 				"beastmen_gor",
 				{
 					11,
-					12,
+					12
 				},
 				"beastmen_ungor",
 				{
 					8,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -568,15 +568,15 @@ HordeCompositions.event_medium_beastmen = {
 				"beastmen_gor",
 				{
 					5,
-					6,
+					6
 				},
 				"beastmen_ungor",
 				{
 					14,
-					15,
-				},
-			},
-		},
+					15
+				}
+			}
+		}
 	},
 	{
 		{
@@ -586,14 +586,14 @@ HordeCompositions.event_medium_beastmen = {
 				"beastmen_gor",
 				{
 					13,
-					14,
+					14
 				},
 				"beastmen_ungor",
 				{
 					7,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -602,15 +602,15 @@ HordeCompositions.event_medium_beastmen = {
 				"beastmen_gor",
 				{
 					7,
-					8,
+					8
 				},
 				"beastmen_ungor",
 				{
 					14,
-					15,
-				},
-			},
-		},
+					15
+				}
+			}
+		}
 	},
 	{
 		{
@@ -620,14 +620,14 @@ HordeCompositions.event_medium_beastmen = {
 				"beastmen_gor",
 				{
 					14,
-					15,
+					15
 				},
 				"beastmen_ungor",
 				{
 					7,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -636,15 +636,15 @@ HordeCompositions.event_medium_beastmen = {
 				"beastmen_gor",
 				{
 					7,
-					8,
+					8
 				},
 				"beastmen_ungor",
 				{
 					14,
-					15,
-				},
-			},
-		},
+					15
+				}
+			}
+		}
 	},
 	{
 		{
@@ -654,14 +654,14 @@ HordeCompositions.event_medium_beastmen = {
 				"beastmen_gor",
 				{
 					16,
-					17,
+					17
 				},
 				"beastmen_ungor",
 				{
 					8,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -670,15 +670,15 @@ HordeCompositions.event_medium_beastmen = {
 				"beastmen_gor",
 				{
 					7,
-					8,
+					8
 				},
 				"beastmen_ungor",
 				{
 					15,
-					16,
-				},
-			},
-		},
+					16
+				}
+			}
+		}
 	},
 	{
 		{
@@ -688,14 +688,14 @@ HordeCompositions.event_medium_beastmen = {
 				"beastmen_gor",
 				{
 					16,
-					17,
+					17
 				},
 				"beastmen_ungor",
 				{
 					8,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -704,15 +704,15 @@ HordeCompositions.event_medium_beastmen = {
 				"beastmen_gor",
 				{
 					7,
-					8,
+					8
 				},
 				"beastmen_ungor",
 				{
 					15,
-					16,
-				},
-			},
-		},
+					16
+				}
+			}
+		}
 	},
 	{
 		{
@@ -722,14 +722,14 @@ HordeCompositions.event_medium_beastmen = {
 				"beastmen_gor",
 				{
 					16,
-					17,
+					17
 				},
 				"beastmen_ungor",
 				{
 					8,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -738,15 +738,15 @@ HordeCompositions.event_medium_beastmen = {
 				"beastmen_gor",
 				{
 					7,
-					8,
+					8
 				},
 				"beastmen_ungor",
 				{
 					15,
-					16,
-				},
-			},
-		},
+					16
+				}
+			}
+		}
 	},
 	{
 		{
@@ -756,14 +756,14 @@ HordeCompositions.event_medium_beastmen = {
 				"beastmen_gor",
 				{
 					11,
-					12,
+					12
 				},
 				"beastmen_ungor",
 				{
 					8,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -772,16 +772,16 @@ HordeCompositions.event_medium_beastmen = {
 				"beastmen_gor",
 				{
 					5,
-					6,
+					6
 				},
 				"beastmen_ungor",
 				{
 					14,
-					15,
-				},
-			},
-		},
-	},
+					15
+				}
+			}
+		}
+	}
 }
 HordeCompositions.event_small_chaos = {
 	{
@@ -792,9 +792,9 @@ HordeCompositions.event_small_chaos = {
 				"chaos_marauder",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -803,15 +803,15 @@ HordeCompositions.event_small_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -821,9 +821,9 @@ HordeCompositions.event_small_chaos = {
 				"chaos_marauder",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -832,15 +832,15 @@ HordeCompositions.event_small_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -850,9 +850,9 @@ HordeCompositions.event_small_chaos = {
 				"chaos_marauder",
 				{
 					7,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -861,44 +861,44 @@ HordeCompositions.event_small_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					4,
+					5
+				}
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 7,
+			breeds = {
+				"chaos_marauder",
+				{
+					10,
+					11
+				}
+			}
+		},
+		{
+			name = "mixed",
+			weight = 3,
+			breeds = {
+				"chaos_marauder_with_shield",
+				{
+					3,
+					4
+				},
+				"chaos_marauder",
+				{
 					5,
-				},
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 7,
-			breeds = {
-				"chaos_marauder",
-				{
-					10,
-					11,
-				},
-			},
-		},
-		{
-			name = "mixed",
-			weight = 3,
-			breeds = {
-				"chaos_marauder_with_shield",
-				{
-					3,
-					4,
-				},
-				"chaos_marauder",
-				{
-					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -908,9 +908,9 @@ HordeCompositions.event_small_chaos = {
 				"chaos_marauder",
 				{
 					14,
-					15,
-				},
-			},
+					15
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -919,15 +919,15 @@ HordeCompositions.event_small_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder",
 				{
 					9,
-					10,
-				},
-			},
-		},
+					10
+				}
+			}
+		}
 	},
 	{
 		{
@@ -937,9 +937,9 @@ HordeCompositions.event_small_chaos = {
 				"chaos_marauder",
 				{
 					14,
-					15,
-				},
-			},
+					15
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -948,15 +948,15 @@ HordeCompositions.event_small_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder",
 				{
 					9,
-					10,
-				},
-			},
-		},
+					10
+				}
+			}
+		}
 	},
 	{
 		{
@@ -966,9 +966,9 @@ HordeCompositions.event_small_chaos = {
 				"chaos_marauder",
 				{
 					14,
-					15,
-				},
-			},
+					15
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -977,15 +977,15 @@ HordeCompositions.event_small_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder",
 				{
 					9,
-					10,
-				},
-			},
-		},
+					10
+				}
+			}
+		}
 	},
 	{
 		{
@@ -995,9 +995,9 @@ HordeCompositions.event_small_chaos = {
 				"chaos_marauder",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1006,16 +1006,16 @@ HordeCompositions.event_small_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					1,
-					2,
+					2
 				},
 				"chaos_marauder",
 				{
 					4,
-					5,
-				},
-			},
-		},
-	},
+					5
+				}
+			}
+		}
+	}
 }
 HordeCompositions.event_medium_chaos = {
 	{
@@ -1026,14 +1026,14 @@ HordeCompositions.event_medium_chaos = {
 				"chaos_marauder",
 				{
 					9,
-					10,
+					10
 				},
 				"chaos_fanatic",
 				{
 					11,
-					13,
-				},
-			},
+					13
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1042,20 +1042,20 @@ HordeCompositions.event_medium_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_fanatic",
 				{
 					11,
-					13,
-				},
-			},
-		},
+					13
+				}
+			}
+		}
 	},
 	{
 		{
@@ -1065,14 +1065,14 @@ HordeCompositions.event_medium_chaos = {
 				"chaos_marauder",
 				{
 					10,
-					11,
+					11
 				},
 				"chaos_fanatic",
 				{
 					11,
-					13,
-				},
-			},
+					13
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1081,20 +1081,20 @@ HordeCompositions.event_medium_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder",
 				{
 					6,
-					7,
+					7
 				},
 				"chaos_fanatic",
 				{
 					11,
-					13,
-				},
-			},
-		},
+					13
+				}
+			}
+		}
 	},
 	{
 		{
@@ -1104,14 +1104,14 @@ HordeCompositions.event_medium_chaos = {
 				"chaos_marauder",
 				{
 					11,
-					12,
+					12
 				},
 				"chaos_fanatic",
 				{
 					11,
-					13,
-				},
-			},
+					13
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1120,20 +1120,20 @@ HordeCompositions.event_medium_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder",
 				{
 					7,
-					8,
+					8
 				},
 				"chaos_fanatic",
 				{
 					11,
-					13,
-				},
-			},
-		},
+					13
+				}
+			}
+		}
 	},
 	{
 		{
@@ -1143,14 +1143,14 @@ HordeCompositions.event_medium_chaos = {
 				"chaos_marauder",
 				{
 					15,
-					16,
+					16
 				},
 				"chaos_fanatic",
 				{
 					11,
-					13,
-				},
-			},
+					13
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1159,20 +1159,20 @@ HordeCompositions.event_medium_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder",
 				{
 					11,
-					12,
+					12
 				},
 				"chaos_fanatic",
 				{
 					11,
-					13,
-				},
-			},
-		},
+					13
+				}
+			}
+		}
 	},
 	{
 		{
@@ -1182,14 +1182,14 @@ HordeCompositions.event_medium_chaos = {
 				"chaos_marauder",
 				{
 					21,
-					22,
+					22
 				},
 				"chaos_fanatic",
 				{
 					10,
-					11,
-				},
-			},
+					11
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1198,19 +1198,19 @@ HordeCompositions.event_medium_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder",
 				{
 					17,
-					18,
+					18
 				},
 				"chaos_fanatic",
 				{
 					9,
-					10,
-				},
-			},
+					10
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1219,24 +1219,24 @@ HordeCompositions.event_medium_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder",
 				{
 					14,
-					15,
+					15
 				},
 				"chaos_fanatic",
 				{
 					9,
-					10,
+					10
 				},
 				"chaos_berzerker",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1245,25 +1245,25 @@ HordeCompositions.event_medium_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder",
 				{
 					14,
-					15,
+					15
 				},
 				"chaos_fanatic",
 				{
 					9,
-					10,
+					10
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -1273,14 +1273,14 @@ HordeCompositions.event_medium_chaos = {
 				"chaos_marauder",
 				{
 					21,
-					22,
+					22
 				},
 				"chaos_fanatic",
 				{
 					10,
-					11,
-				},
-			},
+					11
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1289,19 +1289,19 @@ HordeCompositions.event_medium_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder",
 				{
 					17,
-					18,
+					18
 				},
 				"chaos_fanatic",
 				{
 					9,
-					10,
-				},
-			},
+					10
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1310,24 +1310,24 @@ HordeCompositions.event_medium_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder",
 				{
 					14,
-					15,
+					15
 				},
 				"chaos_fanatic",
 				{
 					9,
-					10,
+					10
 				},
 				"chaos_berzerker",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1336,25 +1336,25 @@ HordeCompositions.event_medium_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder",
 				{
 					14,
-					15,
+					15
 				},
 				"chaos_fanatic",
 				{
 					9,
-					10,
+					10
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -1364,14 +1364,14 @@ HordeCompositions.event_medium_chaos = {
 				"chaos_marauder",
 				{
 					21,
-					22,
+					22
 				},
 				"chaos_fanatic",
 				{
 					10,
-					11,
-				},
-			},
+					11
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1380,19 +1380,19 @@ HordeCompositions.event_medium_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder",
 				{
 					17,
-					18,
+					18
 				},
 				"chaos_fanatic",
 				{
 					9,
-					10,
-				},
-			},
+					10
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1401,24 +1401,24 @@ HordeCompositions.event_medium_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder",
 				{
 					14,
-					15,
+					15
 				},
 				"chaos_fanatic",
 				{
 					9,
-					10,
+					10
 				},
 				"chaos_berzerker",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1427,25 +1427,25 @@ HordeCompositions.event_medium_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder",
 				{
 					14,
-					15,
+					15
 				},
 				"chaos_fanatic",
 				{
 					9,
-					10,
+					10
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -1455,14 +1455,14 @@ HordeCompositions.event_medium_chaos = {
 				"chaos_marauder",
 				{
 					10,
-					11,
+					11
 				},
 				"chaos_fanatic",
 				{
 					11,
-					13,
-				},
-			},
+					13
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1471,21 +1471,21 @@ HordeCompositions.event_medium_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder",
 				{
 					6,
-					7,
+					7
 				},
 				"chaos_fanatic",
 				{
 					11,
-					13,
-				},
-			},
-		},
-	},
+					13
+				}
+			}
+		}
+	}
 }
 HordeCompositions.event_large_chaos = {
 	{
@@ -1496,14 +1496,14 @@ HordeCompositions.event_large_chaos = {
 				"chaos_marauder",
 				{
 					11,
-					13,
+					13
 				},
 				"chaos_fanatic",
 				{
 					16,
-					18,
-				},
-			},
+					18
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1512,20 +1512,20 @@ HordeCompositions.event_large_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_fanatic",
 				{
 					14,
-					16,
-				},
-			},
-		},
+					16
+				}
+			}
+		}
 	},
 	{
 		{
@@ -1535,14 +1535,14 @@ HordeCompositions.event_large_chaos = {
 				"chaos_marauder",
 				{
 					13,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					16,
-					18,
-				},
-			},
+					18
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1551,20 +1551,20 @@ HordeCompositions.event_large_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder",
 				{
 					7,
-					8,
+					8
 				},
 				"chaos_fanatic",
 				{
 					14,
-					16,
-				},
-			},
-		},
+					16
+				}
+			}
+		}
 	},
 	{
 		{
@@ -1574,14 +1574,14 @@ HordeCompositions.event_large_chaos = {
 				"chaos_marauder",
 				{
 					13,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					18,
-					20,
-				},
-			},
+					20
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1590,20 +1590,20 @@ HordeCompositions.event_large_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder",
 				{
 					9,
-					10,
+					10
 				},
 				"chaos_fanatic",
 				{
 					14,
-					16,
-				},
-			},
-		},
+					16
+				}
+			}
+		}
 	},
 	{
 		{
@@ -1613,14 +1613,14 @@ HordeCompositions.event_large_chaos = {
 				"chaos_marauder",
 				{
 					16,
-					18,
+					18
 				},
 				"chaos_fanatic",
 				{
 					18,
-					20,
-				},
-			},
+					20
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1629,20 +1629,20 @@ HordeCompositions.event_large_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_marauder",
 				{
 					11,
-					12,
+					12
 				},
 				"chaos_fanatic",
 				{
 					14,
-					16,
-				},
-			},
-		},
+					16
+				}
+			}
+		}
 	},
 	{
 		{
@@ -1652,14 +1652,14 @@ HordeCompositions.event_large_chaos = {
 				"chaos_marauder",
 				{
 					20,
-					21,
+					21
 				},
 				"chaos_fanatic",
 				{
 					16,
-					18,
-				},
-			},
+					18
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1668,19 +1668,19 @@ HordeCompositions.event_large_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_marauder",
 				{
 					13,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					14,
-					16,
-				},
-			},
+					16
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1689,24 +1689,24 @@ HordeCompositions.event_large_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder",
 				{
 					13,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_berzerker",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1715,25 +1715,25 @@ HordeCompositions.event_large_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder",
 				{
 					13,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_raider",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -1743,14 +1743,14 @@ HordeCompositions.event_large_chaos = {
 				"chaos_marauder",
 				{
 					20,
-					21,
+					21
 				},
 				"chaos_fanatic",
 				{
 					16,
-					18,
-				},
-			},
+					18
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1759,19 +1759,19 @@ HordeCompositions.event_large_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_marauder",
 				{
 					13,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					14,
-					16,
-				},
-			},
+					16
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1780,24 +1780,24 @@ HordeCompositions.event_large_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder",
 				{
 					13,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_berzerker",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1806,25 +1806,25 @@ HordeCompositions.event_large_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder",
 				{
 					13,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_raider",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -1834,14 +1834,14 @@ HordeCompositions.event_large_chaos = {
 				"chaos_marauder",
 				{
 					20,
-					21,
+					21
 				},
 				"chaos_fanatic",
 				{
 					16,
-					18,
-				},
-			},
+					18
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1850,19 +1850,19 @@ HordeCompositions.event_large_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_marauder",
 				{
 					13,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					14,
-					16,
-				},
-			},
+					16
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1871,24 +1871,24 @@ HordeCompositions.event_large_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder",
 				{
 					13,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_berzerker",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1897,25 +1897,25 @@ HordeCompositions.event_large_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder",
 				{
 					13,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_raider",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -1925,14 +1925,14 @@ HordeCompositions.event_large_chaos = {
 				"chaos_marauder",
 				{
 					13,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					16,
-					18,
-				},
-			},
+					18
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1941,21 +1941,21 @@ HordeCompositions.event_large_chaos = {
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder",
 				{
 					7,
-					8,
+					8
 				},
 				"chaos_fanatic",
 				{
 					14,
-					16,
-				},
-			},
-		},
-	},
+					16
+				}
+			}
+		}
+	}
 }
 HordeCompositions.event_smaller = {
 	{
@@ -1966,9 +1966,9 @@ HordeCompositions.event_smaller = {
 				"skaven_slave",
 				{
 					8,
-					10,
-				},
-			},
+					10
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -1977,15 +1977,15 @@ HordeCompositions.event_smaller = {
 				"skaven_slave",
 				{
 					5,
-					6,
+					6
 				},
 				"skaven_clan_rat",
 				{
 					1,
-					2,
-				},
-			},
-		},
+					2
+				}
+			}
+		}
 	},
 	{
 		{
@@ -1995,9 +1995,9 @@ HordeCompositions.event_smaller = {
 				"skaven_slave",
 				{
 					9,
-					11,
-				},
-			},
+					11
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2006,15 +2006,15 @@ HordeCompositions.event_smaller = {
 				"skaven_slave",
 				{
 					5,
-					6,
+					6
 				},
 				"skaven_clan_rat",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2024,9 +2024,9 @@ HordeCompositions.event_smaller = {
 				"skaven_slave",
 				{
 					10,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2035,15 +2035,15 @@ HordeCompositions.event_smaller = {
 				"skaven_slave",
 				{
 					5,
-					6,
+					6
 				},
 				"skaven_clan_rat",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2053,9 +2053,9 @@ HordeCompositions.event_smaller = {
 				"skaven_slave",
 				{
 					13,
-					14,
-				},
-			},
+					14
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2064,15 +2064,15 @@ HordeCompositions.event_smaller = {
 				"skaven_slave",
 				{
 					7,
-					8,
+					8
 				},
 				"skaven_clan_rat",
 				{
 					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2082,9 +2082,9 @@ HordeCompositions.event_smaller = {
 				"skaven_slave",
 				{
 					16,
-					17,
-				},
-			},
+					17
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2093,15 +2093,15 @@ HordeCompositions.event_smaller = {
 				"skaven_slave",
 				{
 					7,
-					8,
+					8
 				},
 				"skaven_clan_rat",
 				{
 					7,
-					8,
-				},
-			},
-		},
+					8
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2111,9 +2111,9 @@ HordeCompositions.event_smaller = {
 				"skaven_slave",
 				{
 					16,
-					17,
-				},
-			},
+					17
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2122,15 +2122,15 @@ HordeCompositions.event_smaller = {
 				"skaven_slave",
 				{
 					7,
-					8,
+					8
 				},
 				"skaven_clan_rat",
 				{
 					7,
-					8,
-				},
-			},
-		},
+					8
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2140,9 +2140,9 @@ HordeCompositions.event_smaller = {
 				"skaven_slave",
 				{
 					16,
-					17,
-				},
-			},
+					17
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2151,15 +2151,15 @@ HordeCompositions.event_smaller = {
 				"skaven_slave",
 				{
 					7,
-					8,
+					8
 				},
 				"skaven_clan_rat",
 				{
 					7,
-					8,
-				},
-			},
-		},
+					8
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2169,9 +2169,9 @@ HordeCompositions.event_smaller = {
 				"skaven_slave",
 				{
 					9,
-					11,
-				},
-			},
+					11
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2180,16 +2180,16 @@ HordeCompositions.event_smaller = {
 				"skaven_slave",
 				{
 					5,
-					6,
+					6
 				},
 				"skaven_clan_rat",
 				{
 					2,
-					3,
-				},
-			},
-		},
-	},
+					3
+				}
+			}
+		}
+	}
 }
 HordeCompositions.event_small = {
 	{
@@ -2200,9 +2200,9 @@ HordeCompositions.event_small = {
 				"skaven_slave",
 				{
 					13,
-					15,
-				},
-			},
+					15
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2211,15 +2211,15 @@ HordeCompositions.event_small = {
 				"skaven_slave",
 				{
 					10,
-					12,
+					12
 				},
 				"skaven_clan_rat",
 				{
 					2,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2229,9 +2229,9 @@ HordeCompositions.event_small = {
 				"skaven_slave",
 				{
 					14,
-					16,
-				},
-			},
+					16
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2240,15 +2240,15 @@ HordeCompositions.event_small = {
 				"skaven_slave",
 				{
 					10,
-					12,
+					12
 				},
 				"skaven_clan_rat",
 				{
 					3,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2258,9 +2258,9 @@ HordeCompositions.event_small = {
 				"skaven_slave",
 				{
 					15,
-					17,
-				},
-			},
+					17
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2269,15 +2269,15 @@ HordeCompositions.event_small = {
 				"skaven_slave",
 				{
 					10,
-					12,
+					12
 				},
 				"skaven_clan_rat",
 				{
 					4,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2287,9 +2287,9 @@ HordeCompositions.event_small = {
 				"skaven_slave",
 				{
 					20,
-					22,
-				},
-			},
+					22
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2298,15 +2298,15 @@ HordeCompositions.event_small = {
 				"skaven_slave",
 				{
 					13,
-					14,
+					14
 				},
 				"skaven_clan_rat",
 				{
 					5,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2316,9 +2316,9 @@ HordeCompositions.event_small = {
 				"skaven_slave",
 				{
 					23,
-					25,
-				},
-			},
+					25
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2327,15 +2327,15 @@ HordeCompositions.event_small = {
 				"skaven_slave",
 				{
 					13,
-					14,
+					14
 				},
 				"skaven_clan_rat",
 				{
 					11,
-					12,
-				},
-			},
-		},
+					12
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2345,9 +2345,9 @@ HordeCompositions.event_small = {
 				"skaven_slave",
 				{
 					23,
-					25,
-				},
-			},
+					25
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2356,15 +2356,15 @@ HordeCompositions.event_small = {
 				"skaven_slave",
 				{
 					13,
-					14,
+					14
 				},
 				"skaven_clan_rat",
 				{
 					11,
-					12,
-				},
-			},
-		},
+					12
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2374,9 +2374,9 @@ HordeCompositions.event_small = {
 				"skaven_slave",
 				{
 					23,
-					25,
-				},
-			},
+					25
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2385,15 +2385,15 @@ HordeCompositions.event_small = {
 				"skaven_slave",
 				{
 					13,
-					14,
+					14
 				},
 				"skaven_clan_rat",
 				{
 					11,
-					12,
-				},
-			},
-		},
+					12
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2403,9 +2403,9 @@ HordeCompositions.event_small = {
 				"skaven_slave",
 				{
 					14,
-					16,
-				},
-			},
+					16
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2414,16 +2414,16 @@ HordeCompositions.event_small = {
 				"skaven_slave",
 				{
 					10,
-					12,
+					12
 				},
 				"skaven_clan_rat",
 				{
 					3,
-					5,
-				},
-			},
-		},
-	},
+					5
+				}
+			}
+		}
+	}
 }
 HordeCompositions.event_medium = {
 	{
@@ -2434,9 +2434,9 @@ HordeCompositions.event_medium = {
 				"skaven_slave",
 				{
 					32,
-					33,
-				},
-			},
+					33
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2445,15 +2445,15 @@ HordeCompositions.event_medium = {
 				"skaven_slave",
 				{
 					22,
-					24,
+					24
 				},
 				"skaven_clan_rat",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2463,9 +2463,9 @@ HordeCompositions.event_medium = {
 				"skaven_slave",
 				{
 					33,
-					34,
-				},
-			},
+					34
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2474,15 +2474,15 @@ HordeCompositions.event_medium = {
 				"skaven_slave",
 				{
 					22,
-					24,
+					24
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2492,9 +2492,9 @@ HordeCompositions.event_medium = {
 				"skaven_slave",
 				{
 					34,
-					35,
-				},
-			},
+					35
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2503,15 +2503,15 @@ HordeCompositions.event_medium = {
 				"skaven_slave",
 				{
 					22,
-					24,
+					24
 				},
 				"skaven_clan_rat",
 				{
 					7,
-					8,
-				},
-			},
-		},
+					8
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2521,9 +2521,9 @@ HordeCompositions.event_medium = {
 				"skaven_slave",
 				{
 					38,
-					40,
-				},
-			},
+					40
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2532,15 +2532,15 @@ HordeCompositions.event_medium = {
 				"skaven_slave",
 				{
 					25,
-					27,
+					27
 				},
 				"skaven_clan_rat",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2550,14 +2550,14 @@ HordeCompositions.event_medium = {
 				"skaven_slave",
 				{
 					30,
-					32,
+					32
 				},
 				"skaven_clan_rat",
 				{
 					10,
-					11,
-				},
-			},
+					11
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2566,19 +2566,19 @@ HordeCompositions.event_medium = {
 				"skaven_slave",
 				{
 					20,
-					21,
+					21
 				},
 				"skaven_clan_rat",
 				{
 					14,
-					15,
+					15
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2587,20 +2587,20 @@ HordeCompositions.event_medium = {
 				"skaven_slave",
 				{
 					20,
-					21,
+					21
 				},
 				"skaven_clan_rat",
 				{
 					14,
-					15,
+					15
 				},
 				"skaven_storm_vermin_commander",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2610,14 +2610,14 @@ HordeCompositions.event_medium = {
 				"skaven_slave",
 				{
 					30,
-					32,
+					32
 				},
 				"skaven_clan_rat",
 				{
 					10,
-					11,
-				},
-			},
+					11
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2626,19 +2626,19 @@ HordeCompositions.event_medium = {
 				"skaven_slave",
 				{
 					20,
-					21,
+					21
 				},
 				"skaven_clan_rat",
 				{
 					14,
-					15,
+					15
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2647,20 +2647,20 @@ HordeCompositions.event_medium = {
 				"skaven_slave",
 				{
 					20,
-					21,
+					21
 				},
 				"skaven_clan_rat",
 				{
 					14,
-					15,
+					15
 				},
 				"skaven_storm_vermin_commander",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2670,14 +2670,14 @@ HordeCompositions.event_medium = {
 				"skaven_slave",
 				{
 					30,
-					32,
+					32
 				},
 				"skaven_clan_rat",
 				{
 					10,
-					11,
-				},
-			},
+					11
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2686,19 +2686,19 @@ HordeCompositions.event_medium = {
 				"skaven_slave",
 				{
 					20,
-					21,
+					21
 				},
 				"skaven_clan_rat",
 				{
 					14,
-					15,
+					15
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2707,20 +2707,20 @@ HordeCompositions.event_medium = {
 				"skaven_slave",
 				{
 					20,
-					21,
+					21
 				},
 				"skaven_clan_rat",
 				{
 					14,
-					15,
+					15
 				},
 				"skaven_storm_vermin_commander",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2730,9 +2730,9 @@ HordeCompositions.event_medium = {
 				"skaven_slave",
 				{
 					33,
-					34,
-				},
-			},
+					34
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2741,16 +2741,16 @@ HordeCompositions.event_medium = {
 				"skaven_slave",
 				{
 					22,
-					24,
+					24
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					7,
-				},
-			},
-		},
-	},
+					7
+				}
+			}
+		}
+	}
 }
 HordeCompositions.event_medium_shield = {
 	{
@@ -2761,20 +2761,20 @@ HordeCompositions.event_medium_shield = {
 				"skaven_slave",
 				{
 					18,
-					20,
+					20
 				},
 				"skaven_clan_rat",
 				{
 					1,
-					2,
+					2
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2784,43 +2784,43 @@ HordeCompositions.event_medium_shield = {
 				"skaven_slave",
 				{
 					18,
-					20,
+					20
 				},
 				"skaven_clan_rat",
 				{
 					2,
+					4
+				},
+				"skaven_clan_rat_with_shield",
+				{
+					6,
+					7
+				}
+			}
+		}
+	},
+	{
+		{
+			name = "mixed",
+			weight = 3,
+			breeds = {
+				"skaven_slave",
+				{
+					18,
+					20
+				},
+				"skaven_clan_rat",
+				{
 					4,
-				},
-				"skaven_clan_rat_with_shield",
-				{
-					6,
-					7,
-				},
-			},
-		},
-	},
-	{
-		{
-			name = "mixed",
-			weight = 3,
-			breeds = {
-				"skaven_slave",
-				{
-					18,
-					20,
-				},
-				"skaven_clan_rat",
-				{
-					4,
-					6,
+					6
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					7,
-					8,
-				},
-			},
-		},
+					8
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2830,20 +2830,20 @@ HordeCompositions.event_medium_shield = {
 				"skaven_slave",
 				{
 					18,
-					20,
+					20
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					8,
+					8
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2853,20 +2853,20 @@ HordeCompositions.event_medium_shield = {
 				"skaven_slave",
 				{
 					18,
-					20,
+					20
 				},
 				"skaven_clan_rat",
 				{
 					8,
-					11,
+					11
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					11,
-					13,
-				},
-			},
-		},
+					13
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2876,20 +2876,20 @@ HordeCompositions.event_medium_shield = {
 				"skaven_slave",
 				{
 					18,
-					20,
+					20
 				},
 				"skaven_clan_rat",
 				{
 					8,
-					11,
+					11
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					11,
-					13,
-				},
-			},
-		},
+					13
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2899,20 +2899,20 @@ HordeCompositions.event_medium_shield = {
 				"skaven_slave",
 				{
 					18,
-					20,
+					20
 				},
 				"skaven_clan_rat",
 				{
 					8,
-					11,
+					11
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					11,
-					13,
-				},
-			},
-		},
+					13
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2922,21 +2922,21 @@ HordeCompositions.event_medium_shield = {
 				"skaven_slave",
 				{
 					18,
-					20,
+					20
 				},
 				"skaven_clan_rat",
 				{
 					2,
-					4,
+					4
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					6,
-					7,
-				},
-			},
-		},
-	},
+					7
+				}
+			}
+		}
+	}
 }
 HordeCompositions.event_large = {
 	{
@@ -2947,9 +2947,9 @@ HordeCompositions.event_large = {
 				"skaven_slave",
 				{
 					42,
-					45,
-				},
-			},
+					45
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2958,15 +2958,15 @@ HordeCompositions.event_large = {
 				"skaven_slave",
 				{
 					37,
-					39,
+					39
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -2976,9 +2976,9 @@ HordeCompositions.event_large = {
 				"skaven_slave",
 				{
 					43,
-					46,
-				},
-			},
+					46
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -2987,15 +2987,15 @@ HordeCompositions.event_large = {
 				"skaven_slave",
 				{
 					37,
-					39,
+					39
 				},
 				"skaven_clan_rat",
 				{
 					7,
-					8,
-				},
-			},
-		},
+					8
+				}
+			}
+		}
 	},
 	{
 		{
@@ -3005,9 +3005,9 @@ HordeCompositions.event_large = {
 				"skaven_slave",
 				{
 					44,
-					47,
-				},
-			},
+					47
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -3016,15 +3016,15 @@ HordeCompositions.event_large = {
 				"skaven_slave",
 				{
 					37,
-					39,
+					39
 				},
 				"skaven_clan_rat",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -3034,9 +3034,9 @@ HordeCompositions.event_large = {
 				"skaven_slave",
 				{
 					48,
-					50,
-				},
-			},
+					50
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -3045,15 +3045,15 @@ HordeCompositions.event_large = {
 				"skaven_slave",
 				{
 					40,
-					42,
+					42
 				},
 				"skaven_clan_rat",
 				{
 					9,
-					10,
-				},
-			},
-		},
+					10
+				}
+			}
+		}
 	},
 	{
 		{
@@ -3063,14 +3063,14 @@ HordeCompositions.event_large = {
 				"skaven_slave",
 				{
 					38,
-					39,
+					39
 				},
 				"skaven_clan_rat",
 				{
 					15,
-					16,
-				},
-			},
+					16
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -3079,19 +3079,19 @@ HordeCompositions.event_large = {
 				"skaven_slave",
 				{
 					32,
-					33,
+					33
 				},
 				"skaven_clan_rat",
 				{
 					13,
-					14,
+					14
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -3100,20 +3100,20 @@ HordeCompositions.event_large = {
 				"skaven_slave",
 				{
 					30,
-					31,
+					31
 				},
 				"skaven_clan_rat",
 				{
 					13,
-					14,
+					14
 				},
 				"skaven_storm_vermin_commander",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -3123,14 +3123,14 @@ HordeCompositions.event_large = {
 				"skaven_slave",
 				{
 					38,
-					39,
+					39
 				},
 				"skaven_clan_rat",
 				{
 					15,
-					16,
-				},
-			},
+					16
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -3139,19 +3139,19 @@ HordeCompositions.event_large = {
 				"skaven_slave",
 				{
 					32,
-					33,
+					33
 				},
 				"skaven_clan_rat",
 				{
 					13,
-					14,
+					14
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -3160,20 +3160,20 @@ HordeCompositions.event_large = {
 				"skaven_slave",
 				{
 					30,
-					31,
+					31
 				},
 				"skaven_clan_rat",
 				{
 					13,
-					14,
+					14
 				},
 				"skaven_storm_vermin_commander",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -3183,14 +3183,14 @@ HordeCompositions.event_large = {
 				"skaven_slave",
 				{
 					38,
-					39,
+					39
 				},
 				"skaven_clan_rat",
 				{
 					15,
-					16,
-				},
-			},
+					16
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -3199,19 +3199,19 @@ HordeCompositions.event_large = {
 				"skaven_slave",
 				{
 					32,
-					33,
+					33
 				},
 				"skaven_clan_rat",
 				{
 					13,
-					14,
+					14
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -3220,20 +3220,20 @@ HordeCompositions.event_large = {
 				"skaven_slave",
 				{
 					30,
-					31,
+					31
 				},
 				"skaven_clan_rat",
 				{
 					13,
-					14,
+					14
 				},
 				"skaven_storm_vermin_commander",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -3243,9 +3243,9 @@ HordeCompositions.event_large = {
 				"skaven_slave",
 				{
 					43,
-					46,
-				},
-			},
+					46
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -3254,16 +3254,16 @@ HordeCompositions.event_large = {
 				"skaven_slave",
 				{
 					37,
-					39,
+					39
 				},
 				"skaven_clan_rat",
 				{
 					7,
-					8,
-				},
-			},
-		},
-	},
+					8
+				}
+			}
+		}
+	}
 }
 HordeCompositions.event_extra_spice_small = {
 	{
@@ -3274,9 +3274,9 @@ HordeCompositions.event_extra_spice_small = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -3285,12 +3285,12 @@ HordeCompositions.event_extra_spice_small = {
 				"skaven_clan_rat",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_storm_vermin_commander",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -3300,9 +3300,9 @@ HordeCompositions.event_extra_spice_small = {
 				"skaven_clan_rat",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -3311,12 +3311,12 @@ HordeCompositions.event_extra_spice_small = {
 				"skaven_clan_rat",
 				{
 					3,
-					4,
+					4
 				},
 				"skaven_storm_vermin_commander",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -3326,9 +3326,9 @@ HordeCompositions.event_extra_spice_small = {
 				"skaven_clan_rat",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -3337,12 +3337,12 @@ HordeCompositions.event_extra_spice_small = {
 				"skaven_clan_rat",
 				{
 					3,
-					4,
+					4
 				},
 				"skaven_storm_vermin_commander",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -3352,9 +3352,9 @@ HordeCompositions.event_extra_spice_small = {
 				"skaven_clan_rat",
 				{
 					9,
-					11,
-				},
-			},
+					11
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -3363,12 +3363,12 @@ HordeCompositions.event_extra_spice_small = {
 				"skaven_clan_rat",
 				{
 					6,
-					7,
+					7
 				},
 				"skaven_storm_vermin_commander",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -3380,9 +3380,9 @@ HordeCompositions.event_extra_spice_small = {
 				"skaven_clan_rat",
 				{
 					11,
-					13,
-				},
-			},
+					13
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -3391,12 +3391,12 @@ HordeCompositions.event_extra_spice_small = {
 				"skaven_clan_rat",
 				{
 					8,
-					9,
+					9
 				},
 				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -3408,9 +3408,9 @@ HordeCompositions.event_extra_spice_small = {
 				"skaven_clan_rat",
 				{
 					11,
-					13,
-				},
-			},
+					13
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -3419,12 +3419,12 @@ HordeCompositions.event_extra_spice_small = {
 				"skaven_clan_rat",
 				{
 					8,
-					9,
+					9
 				},
 				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -3436,9 +3436,9 @@ HordeCompositions.event_extra_spice_small = {
 				"skaven_clan_rat",
 				{
 					11,
-					13,
-				},
-			},
+					13
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -3447,12 +3447,12 @@ HordeCompositions.event_extra_spice_small = {
 				"skaven_clan_rat",
 				{
 					8,
-					9,
+					9
 				},
 				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -3462,9 +3462,9 @@ HordeCompositions.event_extra_spice_small = {
 				"skaven_clan_rat",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -3473,13 +3473,13 @@ HordeCompositions.event_extra_spice_small = {
 				"skaven_clan_rat",
 				{
 					3,
-					4,
+					4
 				},
 				"skaven_clan_rat_with_shield",
-				1,
-			},
-		},
-	},
+				1
+			}
+		}
+	}
 }
 HordeCompositions.event_extra_spice_medium = {
 	{
@@ -3490,9 +3490,9 @@ HordeCompositions.event_extra_spice_medium = {
 				"skaven_clan_rat",
 				{
 					5,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -3501,15 +3501,15 @@ HordeCompositions.event_extra_spice_medium = {
 				"skaven_clan_rat",
 				{
 					3,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
 				{
 					1,
-					2,
-				},
-			},
-		},
+					2
+				}
+			}
+		}
 	},
 	{
 		{
@@ -3519,9 +3519,9 @@ HordeCompositions.event_extra_spice_medium = {
 				"skaven_clan_rat",
 				{
 					6,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -3530,15 +3530,15 @@ HordeCompositions.event_extra_spice_medium = {
 				"skaven_clan_rat",
 				{
 					4,
-					6,
+					6
 				},
 				"skaven_storm_vermin_commander",
 				{
 					1,
-					2,
-				},
-			},
-		},
+					2
+				}
+			}
+		}
 	},
 	{
 		{
@@ -3548,11 +3548,11 @@ HordeCompositions.event_extra_spice_medium = {
 				"skaven_clan_rat",
 				{
 					7,
-					9,
+					9
 				},
 				"skaven_storm_vermin_commander",
-				1,
-			},
+				1
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -3561,15 +3561,15 @@ HordeCompositions.event_extra_spice_medium = {
 				"skaven_clan_rat",
 				{
 					4,
-					6,
+					6
 				},
 				"skaven_storm_vermin_commander",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -3579,11 +3579,11 @@ HordeCompositions.event_extra_spice_medium = {
 				"skaven_clan_rat",
 				{
 					10,
-					12,
+					12
 				},
 				"skaven_storm_vermin_commander",
-				2,
-			},
+				2
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -3592,15 +3592,15 @@ HordeCompositions.event_extra_spice_medium = {
 				"skaven_clan_rat",
 				{
 					7,
-					8,
+					8
 				},
 				"skaven_storm_vermin_commander",
 				{
 					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -3610,14 +3610,14 @@ HordeCompositions.event_extra_spice_medium = {
 				"skaven_clan_rat",
 				{
 					13,
-					14,
+					14
 				},
 				"skaven_storm_vermin_commander",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -3626,15 +3626,15 @@ HordeCompositions.event_extra_spice_medium = {
 				"skaven_clan_rat",
 				{
 					9,
-					11,
+					11
 				},
 				"skaven_storm_vermin_commander",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -3644,14 +3644,14 @@ HordeCompositions.event_extra_spice_medium = {
 				"skaven_clan_rat",
 				{
 					13,
-					14,
+					14
 				},
 				"skaven_storm_vermin_commander",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -3660,15 +3660,15 @@ HordeCompositions.event_extra_spice_medium = {
 				"skaven_clan_rat",
 				{
 					9,
-					11,
+					11
 				},
 				"skaven_storm_vermin_commander",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -3678,14 +3678,14 @@ HordeCompositions.event_extra_spice_medium = {
 				"skaven_clan_rat",
 				{
 					13,
-					14,
+					14
 				},
 				"skaven_storm_vermin_commander",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -3694,15 +3694,15 @@ HordeCompositions.event_extra_spice_medium = {
 				"skaven_clan_rat",
 				{
 					9,
-					11,
+					11
 				},
 				"skaven_storm_vermin_commander",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -3712,9 +3712,9 @@ HordeCompositions.event_extra_spice_medium = {
 				"skaven_clan_rat",
 				{
 					6,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -3723,16 +3723,16 @@ HordeCompositions.event_extra_spice_medium = {
 				"skaven_clan_rat",
 				{
 					4,
-					6,
+					6
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					1,
-					2,
-				},
-			},
-		},
-	},
+					2
+				}
+			}
+		}
+	}
 }
 HordeCompositions.event_extra_spice_large = {
 	{
@@ -3743,9 +3743,9 @@ HordeCompositions.event_extra_spice_large = {
 				"skaven_clan_rat",
 				{
 					17,
-					19,
-				},
-			},
+					19
+				}
+			}
 		},
 		{
 			name = "lotsofvermin",
@@ -3754,15 +3754,15 @@ HordeCompositions.event_extra_spice_large = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -3772,9 +3772,9 @@ HordeCompositions.event_extra_spice_large = {
 				"skaven_clan_rat",
 				{
 					18,
-					20,
-				},
-			},
+					20
+				}
+			}
 		},
 		{
 			name = "lotsofvermin",
@@ -3783,15 +3783,15 @@ HordeCompositions.event_extra_spice_large = {
 				"skaven_clan_rat",
 				{
 					5,
-					6,
+					6
 				},
 				"skaven_storm_vermin_commander",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -3801,11 +3801,11 @@ HordeCompositions.event_extra_spice_large = {
 				"skaven_clan_rat",
 				{
 					19,
-					21,
+					21
 				},
 				"skaven_storm_vermin_commander",
-				1,
-			},
+				1
+			}
 		},
 		{
 			name = "lotsofvermin",
@@ -3814,15 +3814,15 @@ HordeCompositions.event_extra_spice_large = {
 				"skaven_clan_rat",
 				{
 					5,
-					6,
+					6
 				},
 				"skaven_storm_vermin_commander",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -3832,11 +3832,11 @@ HordeCompositions.event_extra_spice_large = {
 				"skaven_clan_rat",
 				{
 					22,
-					24,
+					24
 				},
 				"skaven_storm_vermin_commander",
-				3,
-			},
+				3
+			}
 		},
 		{
 			name = "lotsofvermin",
@@ -3845,15 +3845,15 @@ HordeCompositions.event_extra_spice_large = {
 				"skaven_clan_rat",
 				{
 					8,
-					9,
+					9
 				},
 				"skaven_storm_vermin_commander",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -3863,14 +3863,14 @@ HordeCompositions.event_extra_spice_large = {
 				"skaven_clan_rat",
 				{
 					25,
-					27,
+					27
 				},
 				"skaven_storm_vermin_commander",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "lotsofvermin",
@@ -3879,15 +3879,15 @@ HordeCompositions.event_extra_spice_large = {
 				"skaven_clan_rat",
 				{
 					11,
-					13,
+					13
 				},
 				"skaven_storm_vermin_commander",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -3896,15 +3896,15 @@ HordeCompositions.event_extra_spice_large = {
 				"skaven_clan_rat",
 				{
 					25,
-					27,
-				},
+					27
+				}
 			},
 			{
 				4,
-				5,
+				5
 			},
 			name = "plain",
-			weight = 10,
+			weight = 10
 		},
 		{
 			name = "lotsofvermin",
@@ -3913,15 +3913,15 @@ HordeCompositions.event_extra_spice_large = {
 				"skaven_clan_rat",
 				{
 					11,
-					13,
+					13
 				},
 				"skaven_storm_vermin_commander",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -3930,15 +3930,15 @@ HordeCompositions.event_extra_spice_large = {
 				"skaven_clan_rat",
 				{
 					25,
-					27,
-				},
+					27
+				}
 			},
 			{
 				4,
-				5,
+				5
 			},
 			name = "plain",
-			weight = 10,
+			weight = 10
 		},
 		{
 			name = "lotsofvermin",
@@ -3947,15 +3947,15 @@ HordeCompositions.event_extra_spice_large = {
 				"skaven_clan_rat",
 				{
 					11,
-					13,
+					13
 				},
 				"skaven_storm_vermin_commander",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -3965,9 +3965,9 @@ HordeCompositions.event_extra_spice_large = {
 				"skaven_clan_rat",
 				{
 					18,
-					20,
-				},
-			},
+					20
+				}
+			}
 		},
 		{
 			name = "lotsofvermin",
@@ -3976,16 +3976,16 @@ HordeCompositions.event_extra_spice_large = {
 				"skaven_clan_rat",
 				{
 					5,
-					6,
+					6
 				},
 				"skaven_storm_vermin_commander",
 				{
 					2,
-					3,
-				},
-			},
-		},
-	},
+					3
+				}
+			}
+		}
+	}
 }
 HordeCompositions.event_chaos_extra_spice_small = {
 	{
@@ -3996,9 +3996,9 @@ HordeCompositions.event_chaos_extra_spice_small = {
 				"chaos_marauder",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -4007,12 +4007,12 @@ HordeCompositions.event_chaos_extra_spice_small = {
 				"chaos_marauder",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_raider",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -4022,9 +4022,9 @@ HordeCompositions.event_chaos_extra_spice_small = {
 				"chaos_marauder",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -4033,12 +4033,12 @@ HordeCompositions.event_chaos_extra_spice_small = {
 				"chaos_marauder",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_raider",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -4048,9 +4048,9 @@ HordeCompositions.event_chaos_extra_spice_small = {
 				"chaos_marauder",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -4059,12 +4059,12 @@ HordeCompositions.event_chaos_extra_spice_small = {
 				"chaos_marauder",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_raider",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -4074,9 +4074,9 @@ HordeCompositions.event_chaos_extra_spice_small = {
 				"chaos_marauder",
 				{
 					9,
-					11,
-				},
-			},
+					11
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -4085,12 +4085,12 @@ HordeCompositions.event_chaos_extra_spice_small = {
 				"chaos_marauder",
 				{
 					6,
-					7,
+					7
 				},
 				"chaos_raider",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -4100,11 +4100,11 @@ HordeCompositions.event_chaos_extra_spice_small = {
 				"chaos_marauder",
 				{
 					11,
-					13,
+					13
 				},
 				"chaos_raider",
-				2,
-			},
+				2
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -4113,12 +4113,12 @@ HordeCompositions.event_chaos_extra_spice_small = {
 				"chaos_marauder",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_raider",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -4128,11 +4128,11 @@ HordeCompositions.event_chaos_extra_spice_small = {
 				"chaos_marauder",
 				{
 					11,
-					13,
+					13
 				},
 				"chaos_raider",
-				2,
-			},
+				2
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -4141,12 +4141,12 @@ HordeCompositions.event_chaos_extra_spice_small = {
 				"chaos_marauder",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_raider",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -4156,11 +4156,11 @@ HordeCompositions.event_chaos_extra_spice_small = {
 				"chaos_marauder",
 				{
 					11,
-					13,
+					13
 				},
 				"chaos_raider",
-				2,
-			},
+				2
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -4169,12 +4169,12 @@ HordeCompositions.event_chaos_extra_spice_small = {
 				"chaos_marauder",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_raider",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -4184,9 +4184,9 @@ HordeCompositions.event_chaos_extra_spice_small = {
 				"chaos_marauder",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -4195,13 +4195,13 @@ HordeCompositions.event_chaos_extra_spice_small = {
 				"chaos_marauder",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_fanatic",
-				4,
-			},
-		},
-	},
+				4
+			}
+		}
+	}
 }
 HordeCompositions.event_chaos_extra_spice_medium = {
 	{
@@ -4212,9 +4212,9 @@ HordeCompositions.event_chaos_extra_spice_medium = {
 				"chaos_marauder",
 				{
 					5,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -4223,15 +4223,15 @@ HordeCompositions.event_chaos_extra_spice_medium = {
 				"chaos_marauder",
 				{
 					3,
-					5,
+					5
 				},
 				"chaos_raider",
 				{
 					1,
-					2,
-				},
-			},
-		},
+					2
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4241,9 +4241,9 @@ HordeCompositions.event_chaos_extra_spice_medium = {
 				"chaos_marauder",
 				{
 					6,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -4252,15 +4252,15 @@ HordeCompositions.event_chaos_extra_spice_medium = {
 				"chaos_marauder",
 				{
 					4,
-					6,
+					6
 				},
 				"chaos_raider",
 				{
 					1,
-					2,
-				},
-			},
-		},
+					2
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4270,11 +4270,11 @@ HordeCompositions.event_chaos_extra_spice_medium = {
 				"chaos_marauder",
 				{
 					7,
-					9,
+					9
 				},
 				"chaos_raider",
-				1,
-			},
+				1
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -4283,15 +4283,15 @@ HordeCompositions.event_chaos_extra_spice_medium = {
 				"chaos_marauder",
 				{
 					4,
-					6,
+					6
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4301,11 +4301,11 @@ HordeCompositions.event_chaos_extra_spice_medium = {
 				"chaos_marauder",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_raider",
-				2,
-			},
+				2
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -4314,15 +4314,15 @@ HordeCompositions.event_chaos_extra_spice_medium = {
 				"chaos_marauder",
 				{
 					7,
-					8,
+					8
 				},
 				"chaos_raider",
 				{
 					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4332,14 +4332,14 @@ HordeCompositions.event_chaos_extra_spice_medium = {
 				"chaos_marauder",
 				{
 					13,
-					14,
+					14
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -4348,15 +4348,15 @@ HordeCompositions.event_chaos_extra_spice_medium = {
 				"chaos_marauder",
 				{
 					9,
-					11,
+					11
 				},
 				"chaos_raider",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4366,14 +4366,14 @@ HordeCompositions.event_chaos_extra_spice_medium = {
 				"chaos_marauder",
 				{
 					13,
-					14,
+					14
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -4382,15 +4382,15 @@ HordeCompositions.event_chaos_extra_spice_medium = {
 				"chaos_marauder",
 				{
 					9,
-					11,
+					11
 				},
 				"chaos_raider",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4400,14 +4400,14 @@ HordeCompositions.event_chaos_extra_spice_medium = {
 				"chaos_marauder",
 				{
 					13,
-					14,
+					14
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -4416,15 +4416,15 @@ HordeCompositions.event_chaos_extra_spice_medium = {
 				"chaos_marauder",
 				{
 					9,
-					11,
+					11
 				},
 				"chaos_raider",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4434,9 +4434,9 @@ HordeCompositions.event_chaos_extra_spice_medium = {
 				"chaos_marauder",
 				{
 					6,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -4445,16 +4445,16 @@ HordeCompositions.event_chaos_extra_spice_medium = {
 				"chaos_marauder",
 				{
 					4,
-					6,
+					6
 				},
 				"chaos_fanatic",
 				{
 					4,
-					8,
-				},
-			},
-		},
-	},
+					8
+				}
+			}
+		}
+	}
 }
 HordeCompositions.chaos_raiders_small = {
 	{
@@ -4465,10 +4465,10 @@ HordeCompositions.chaos_raiders_small = {
 				"chaos_raider",
 				{
 					1,
-					2,
-				},
-			},
-		},
+					2
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4478,10 +4478,10 @@ HordeCompositions.chaos_raiders_small = {
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4491,10 +4491,10 @@ HordeCompositions.chaos_raiders_small = {
 				"chaos_raider",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4504,10 +4504,10 @@ HordeCompositions.chaos_raiders_small = {
 				"chaos_raider",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4517,10 +4517,10 @@ HordeCompositions.chaos_raiders_small = {
 				"chaos_raider",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4530,10 +4530,10 @@ HordeCompositions.chaos_raiders_small = {
 				"chaos_raider",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4543,10 +4543,10 @@ HordeCompositions.chaos_raiders_small = {
 				"chaos_raider",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4556,11 +4556,11 @@ HordeCompositions.chaos_raiders_small = {
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
-		},
-	},
+					3
+				}
+			}
+		}
+	}
 }
 HordeCompositions.chaos_raiders_medium = {
 	{
@@ -4571,10 +4571,10 @@ HordeCompositions.chaos_raiders_medium = {
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4584,10 +4584,10 @@ HordeCompositions.chaos_raiders_medium = {
 				"chaos_raider",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4597,10 +4597,10 @@ HordeCompositions.chaos_raiders_medium = {
 				"chaos_raider",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4610,10 +4610,10 @@ HordeCompositions.chaos_raiders_medium = {
 				"chaos_raider",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4623,10 +4623,10 @@ HordeCompositions.chaos_raiders_medium = {
 				"chaos_raider",
 				{
 					10,
-					11,
-				},
-			},
-		},
+					11
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4636,10 +4636,10 @@ HordeCompositions.chaos_raiders_medium = {
 				"chaos_raider",
 				{
 					10,
-					11,
-				},
-			},
-		},
+					11
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4649,10 +4649,10 @@ HordeCompositions.chaos_raiders_medium = {
 				"chaos_raider",
 				{
 					10,
-					11,
-				},
-			},
-		},
+					11
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4662,9 +4662,9 @@ HordeCompositions.chaos_raiders_medium = {
 				"chaos_marauder",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
 		{
 			name = "raiders",
@@ -4673,9 +4673,9 @@ HordeCompositions.chaos_raiders_medium = {
 				"chaos_fanatic",
 				{
 					12,
-					16,
-				},
-			},
+					16
+				}
+			}
 		},
 		{
 			name = "raiders",
@@ -4684,16 +4684,16 @@ HordeCompositions.chaos_raiders_medium = {
 				"chaos_marauder",
 				{
 					1,
-					2,
+					2
 				},
 				"chaos_fanatic",
 				{
 					6,
-					8,
-				},
-			},
-		},
-	},
+					8
+				}
+			}
+		}
+	}
 }
 HordeCompositions.chaos_shields = {
 	{
@@ -4704,10 +4704,10 @@ HordeCompositions.chaos_shields = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4717,10 +4717,10 @@ HordeCompositions.chaos_shields = {
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4730,10 +4730,10 @@ HordeCompositions.chaos_shields = {
 				"chaos_marauder_with_shield",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4743,10 +4743,10 @@ HordeCompositions.chaos_shields = {
 				"chaos_marauder_with_shield",
 				{
 					7,
-					8,
-				},
-			},
-		},
+					8
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4756,10 +4756,10 @@ HordeCompositions.chaos_shields = {
 				"chaos_marauder_with_shield",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4769,10 +4769,10 @@ HordeCompositions.chaos_shields = {
 				"chaos_marauder_with_shield",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4782,10 +4782,10 @@ HordeCompositions.chaos_shields = {
 				"chaos_marauder_with_shield",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4795,11 +4795,11 @@ HordeCompositions.chaos_shields = {
 				"chaos_marauder",
 				{
 					4,
-					5,
-				},
-			},
-		},
-	},
+					5
+				}
+			}
+		}
+	}
 }
 HordeCompositions.chaos_berzerkers_small = {
 	{
@@ -4810,10 +4810,10 @@ HordeCompositions.chaos_berzerkers_small = {
 				"chaos_berzerker",
 				{
 					1,
-					2,
-				},
-			},
-		},
+					2
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4823,10 +4823,10 @@ HordeCompositions.chaos_berzerkers_small = {
 				"chaos_berzerker",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4836,23 +4836,23 @@ HordeCompositions.chaos_berzerkers_small = {
 				"chaos_berzerker",
 				{
 					3,
+					4
+				}
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 7,
+			breeds = {
+				"chaos_berzerker",
+				{
 					4,
-				},
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 7,
-			breeds = {
-				"chaos_berzerker",
-				{
-					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4862,10 +4862,10 @@ HordeCompositions.chaos_berzerkers_small = {
 				"chaos_berzerker",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4875,10 +4875,10 @@ HordeCompositions.chaos_berzerkers_small = {
 				"chaos_berzerker",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4888,10 +4888,10 @@ HordeCompositions.chaos_berzerkers_small = {
 				"chaos_berzerker",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4901,11 +4901,11 @@ HordeCompositions.chaos_berzerkers_small = {
 				"chaos_berzerker",
 				{
 					2,
-					3,
-				},
-			},
-		},
-	},
+					3
+				}
+			}
+		}
+	}
 }
 HordeCompositions.chaos_berzerkers_medium = {
 	{
@@ -4916,10 +4916,10 @@ HordeCompositions.chaos_berzerkers_medium = {
 				"chaos_berzerker",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4929,10 +4929,10 @@ HordeCompositions.chaos_berzerkers_medium = {
 				"chaos_berzerker",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4942,10 +4942,10 @@ HordeCompositions.chaos_berzerkers_medium = {
 				"chaos_berzerker",
 				{
 					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4955,10 +4955,10 @@ HordeCompositions.chaos_berzerkers_medium = {
 				"chaos_berzerker",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4968,10 +4968,10 @@ HordeCompositions.chaos_berzerkers_medium = {
 				"chaos_berzerker",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4981,10 +4981,10 @@ HordeCompositions.chaos_berzerkers_medium = {
 				"chaos_berzerker",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -4994,10 +4994,10 @@ HordeCompositions.chaos_berzerkers_medium = {
 				"chaos_berzerker",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5007,9 +5007,9 @@ HordeCompositions.chaos_berzerkers_medium = {
 				"chaos_marauder",
 				{
 					6,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -5018,16 +5018,16 @@ HordeCompositions.chaos_berzerkers_medium = {
 				"chaos_marauder",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder_with_shield",
 				{
 					1,
-					2,
-				},
-			},
-		},
-	},
+					2
+				}
+			}
+		}
+	}
 }
 HordeCompositions.chaos_warriors = {
 	{
@@ -5036,9 +5036,9 @@ HordeCompositions.chaos_warriors = {
 			weight = 7,
 			breeds = {
 				"chaos_warrior",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -5046,9 +5046,9 @@ HordeCompositions.chaos_warriors = {
 			weight = 7,
 			breeds = {
 				"chaos_warrior",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -5058,10 +5058,10 @@ HordeCompositions.chaos_warriors = {
 				"chaos_warrior",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5071,10 +5071,10 @@ HordeCompositions.chaos_warriors = {
 				"chaos_warrior",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5084,10 +5084,10 @@ HordeCompositions.chaos_warriors = {
 				"chaos_warrior",
 				{
 					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5097,10 +5097,10 @@ HordeCompositions.chaos_warriors = {
 				"chaos_warrior",
 				{
 					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5110,10 +5110,10 @@ HordeCompositions.chaos_warriors = {
 				"chaos_warrior",
 				{
 					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5121,16 +5121,16 @@ HordeCompositions.chaos_warriors = {
 			weight = 7,
 			breeds = {
 				"chaos_raider",
-				2,
-			},
+				2
+			}
 		},
 		{
 			name = "plain",
 			weight = 7,
 			breeds = {
 				"chaos_marauder_with_shield",
-				2,
-			},
+				2
+			}
 		},
 		{
 			name = "plain",
@@ -5139,10 +5139,10 @@ HordeCompositions.chaos_warriors = {
 				"chaos_raider",
 				1,
 				"chaos_marauder_with_shield",
-				1,
-			},
-		},
-	},
+				1
+			}
+		}
+	}
 }
 HordeCompositions.chaos_warriors_small = {
 	{
@@ -5151,9 +5151,9 @@ HordeCompositions.chaos_warriors_small = {
 			weight = 7,
 			breeds = {
 				"chaos_warrior",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -5161,9 +5161,9 @@ HordeCompositions.chaos_warriors_small = {
 			weight = 7,
 			breeds = {
 				"chaos_warrior",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -5171,9 +5171,9 @@ HordeCompositions.chaos_warriors_small = {
 			weight = 7,
 			breeds = {
 				"chaos_warrior",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -5183,10 +5183,10 @@ HordeCompositions.chaos_warriors_small = {
 				"chaos_warrior",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5196,10 +5196,10 @@ HordeCompositions.chaos_warriors_small = {
 				"chaos_warrior",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5209,10 +5209,10 @@ HordeCompositions.chaos_warriors_small = {
 				"chaos_warrior",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5222,10 +5222,10 @@ HordeCompositions.chaos_warriors_small = {
 				"chaos_warrior",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5233,16 +5233,16 @@ HordeCompositions.chaos_warriors_small = {
 			weight = 7,
 			breeds = {
 				"chaos_raider",
-				2,
-			},
+				2
+			}
 		},
 		{
 			name = "plain",
 			weight = 7,
 			breeds = {
 				"chaos_marauder_with_shield",
-				2,
-			},
+				2
+			}
 		},
 		{
 			name = "plain",
@@ -5251,10 +5251,10 @@ HordeCompositions.chaos_warriors_small = {
 				"chaos_raider",
 				1,
 				"chaos_marauder_with_shield",
-				1,
-			},
-		},
-	},
+				1
+			}
+		}
+	}
 }
 HordeCompositions.event_small_fanatics = {
 	{
@@ -5265,10 +5265,10 @@ HordeCompositions.event_small_fanatics = {
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5278,10 +5278,10 @@ HordeCompositions.event_small_fanatics = {
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5291,10 +5291,10 @@ HordeCompositions.event_small_fanatics = {
 				"chaos_fanatic",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5304,10 +5304,10 @@ HordeCompositions.event_small_fanatics = {
 				"chaos_fanatic",
 				{
 					9,
-					10,
-				},
-			},
-		},
+					10
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5317,10 +5317,10 @@ HordeCompositions.event_small_fanatics = {
 				"chaos_fanatic",
 				{
 					12,
-					13,
-				},
-			},
-		},
+					13
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5330,10 +5330,10 @@ HordeCompositions.event_small_fanatics = {
 				"chaos_fanatic",
 				{
 					12,
-					13,
-				},
-			},
-		},
+					13
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5343,10 +5343,10 @@ HordeCompositions.event_small_fanatics = {
 				"chaos_fanatic",
 				{
 					12,
-					13,
-				},
-			},
-		},
+					13
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5356,11 +5356,11 @@ HordeCompositions.event_small_fanatics = {
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
-	},
+					6
+				}
+			}
+		}
+	}
 }
 HordeCompositions.plague_monks_small = {
 	{
@@ -5371,10 +5371,10 @@ HordeCompositions.plague_monks_small = {
 				"skaven_plague_monk",
 				{
 					1,
-					2,
-				},
-			},
-		},
+					2
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5384,10 +5384,10 @@ HordeCompositions.plague_monks_small = {
 				"skaven_plague_monk",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5397,10 +5397,10 @@ HordeCompositions.plague_monks_small = {
 				"skaven_plague_monk",
 				{
 					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5410,10 +5410,10 @@ HordeCompositions.plague_monks_small = {
 				"skaven_plague_monk",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5423,10 +5423,10 @@ HordeCompositions.plague_monks_small = {
 				"skaven_plague_monk",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5436,10 +5436,10 @@ HordeCompositions.plague_monks_small = {
 				"skaven_plague_monk",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5449,10 +5449,10 @@ HordeCompositions.plague_monks_small = {
 				"skaven_plague_monk",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5462,9 +5462,9 @@ HordeCompositions.plague_monks_small = {
 				"skaven_clan_rat",
 				{
 					6,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
 		{
 			name = "mines_plague_monks",
@@ -5473,16 +5473,16 @@ HordeCompositions.plague_monks_small = {
 				"skaven_clan_rat",
 				{
 					3,
-					4,
+					4
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					1,
-					2,
-				},
-			},
-		},
-	},
+					2
+				}
+			}
+		}
+	}
 }
 HordeCompositions.plague_monks_medium = {
 	{
@@ -5493,10 +5493,10 @@ HordeCompositions.plague_monks_medium = {
 				"skaven_plague_monk",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5506,10 +5506,10 @@ HordeCompositions.plague_monks_medium = {
 				"skaven_plague_monk",
 				{
 					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5519,10 +5519,10 @@ HordeCompositions.plague_monks_medium = {
 				"skaven_plague_monk",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5532,10 +5532,10 @@ HordeCompositions.plague_monks_medium = {
 				"skaven_plague_monk",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5545,10 +5545,10 @@ HordeCompositions.plague_monks_medium = {
 				"skaven_plague_monk",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5558,10 +5558,10 @@ HordeCompositions.plague_monks_medium = {
 				"skaven_plague_monk",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5571,10 +5571,10 @@ HordeCompositions.plague_monks_medium = {
 				"skaven_plague_monk",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5584,9 +5584,9 @@ HordeCompositions.plague_monks_medium = {
 				"skaven_clan_rat",
 				{
 					8,
-					10,
-				},
-			},
+					10
+				}
+			}
 		},
 		{
 			name = "mines_plague_monks",
@@ -5595,16 +5595,16 @@ HordeCompositions.plague_monks_medium = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					2,
-					3,
-				},
-			},
-		},
-	},
+					3
+				}
+			}
+		}
+	}
 }
 HordeCompositions.storm_vermin_small = {
 	{
@@ -5615,10 +5615,10 @@ HordeCompositions.storm_vermin_small = {
 				"skaven_storm_vermin_commander",
 				{
 					1,
-					2,
-				},
-			},
-		},
+					2
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5628,10 +5628,10 @@ HordeCompositions.storm_vermin_small = {
 				"skaven_storm_vermin_commander",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5641,10 +5641,10 @@ HordeCompositions.storm_vermin_small = {
 				"skaven_storm_vermin_commander",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5654,10 +5654,10 @@ HordeCompositions.storm_vermin_small = {
 				"skaven_storm_vermin_commander",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5667,10 +5667,10 @@ HordeCompositions.storm_vermin_small = {
 				"skaven_storm_vermin_commander",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5680,10 +5680,10 @@ HordeCompositions.storm_vermin_small = {
 				"skaven_storm_vermin_commander",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5693,10 +5693,10 @@ HordeCompositions.storm_vermin_small = {
 				"skaven_storm_vermin_commander",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5706,16 +5706,16 @@ HordeCompositions.storm_vermin_small = {
 				"skaven_clan_rat_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_clan_rat",
 				{
 					4,
-					6,
-				},
-			},
-		},
-	},
+					6
+				}
+			}
+		}
+	}
 }
 HordeCompositions.storm_vermin_medium = {
 	{
@@ -5726,10 +5726,10 @@ HordeCompositions.storm_vermin_medium = {
 				"skaven_storm_vermin_commander",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5739,10 +5739,10 @@ HordeCompositions.storm_vermin_medium = {
 				"skaven_storm_vermin_commander",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5752,10 +5752,10 @@ HordeCompositions.storm_vermin_medium = {
 				"skaven_storm_vermin_commander",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5765,10 +5765,10 @@ HordeCompositions.storm_vermin_medium = {
 				"skaven_storm_vermin_commander",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5778,10 +5778,10 @@ HordeCompositions.storm_vermin_medium = {
 				"skaven_storm_vermin_commander",
 				{
 					11,
-					12,
-				},
-			},
-		},
+					12
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5791,10 +5791,10 @@ HordeCompositions.storm_vermin_medium = {
 				"skaven_storm_vermin_commander",
 				{
 					11,
-					12,
-				},
-			},
-		},
+					12
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5804,10 +5804,10 @@ HordeCompositions.storm_vermin_medium = {
 				"skaven_storm_vermin_commander",
 				{
 					11,
-					12,
-				},
-			},
-		},
+					12
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5817,11 +5817,11 @@ HordeCompositions.storm_vermin_medium = {
 				"skaven_storm_vermin_commander",
 				{
 					3,
-					4,
-				},
-			},
-		},
-	},
+					4
+				}
+			}
+		}
+	}
 }
 HordeCompositions.storm_vermin_shields_small = {
 	{
@@ -5832,10 +5832,10 @@ HordeCompositions.storm_vermin_shields_small = {
 				"skaven_storm_vermin_with_shield",
 				{
 					1,
-					2,
-				},
-			},
-		},
+					2
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5845,10 +5845,10 @@ HordeCompositions.storm_vermin_shields_small = {
 				"skaven_storm_vermin_with_shield",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5858,10 +5858,10 @@ HordeCompositions.storm_vermin_shields_small = {
 				"skaven_storm_vermin_with_shield",
 				{
 					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5871,10 +5871,10 @@ HordeCompositions.storm_vermin_shields_small = {
 				"skaven_storm_vermin_with_shield",
 				{
 					7,
-					8,
-				},
-			},
-		},
+					8
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5884,10 +5884,10 @@ HordeCompositions.storm_vermin_shields_small = {
 				"skaven_storm_vermin_with_shield",
 				{
 					9,
-					10,
-				},
-			},
-		},
+					10
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5897,10 +5897,10 @@ HordeCompositions.storm_vermin_shields_small = {
 				"skaven_storm_vermin_with_shield",
 				{
 					9,
-					10,
-				},
-			},
-		},
+					10
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5910,10 +5910,10 @@ HordeCompositions.storm_vermin_shields_small = {
 				"skaven_storm_vermin_with_shield",
 				{
 					9,
-					10,
-				},
-			},
-		},
+					10
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5923,16 +5923,16 @@ HordeCompositions.storm_vermin_shields_small = {
 				"skaven_clan_rat_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_clan_rat",
 				{
 					4,
-					6,
-				},
-			},
-		},
-	},
+					6
+				}
+			}
+		}
+	}
 }
 HordeCompositions.storm_vermin_shields_medium = {
 	{
@@ -5943,10 +5943,10 @@ HordeCompositions.storm_vermin_shields_medium = {
 				"skaven_storm_vermin_with_shield",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5956,10 +5956,10 @@ HordeCompositions.storm_vermin_shields_medium = {
 				"skaven_storm_vermin_with_shield",
 				{
 					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5969,10 +5969,10 @@ HordeCompositions.storm_vermin_shields_medium = {
 				"skaven_storm_vermin_with_shield",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5982,10 +5982,10 @@ HordeCompositions.storm_vermin_shields_medium = {
 				"skaven_storm_vermin_with_shield",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -5995,10 +5995,10 @@ HordeCompositions.storm_vermin_shields_medium = {
 				"skaven_storm_vermin_with_shield",
 				{
 					11,
-					12,
-				},
-			},
-		},
+					12
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6008,10 +6008,10 @@ HordeCompositions.storm_vermin_shields_medium = {
 				"skaven_storm_vermin_with_shield",
 				{
 					11,
-					12,
-				},
-			},
-		},
+					12
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6021,10 +6021,10 @@ HordeCompositions.storm_vermin_shields_medium = {
 				"skaven_storm_vermin_with_shield",
 				{
 					11,
-					12,
-				},
-			},
-		},
+					12
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6034,11 +6034,11 @@ HordeCompositions.storm_vermin_shields_medium = {
 				"skaven_storm_vermin_with_shield",
 				{
 					4,
-					5,
-				},
-			},
-		},
-	},
+					5
+				}
+			}
+		}
+	}
 }
 HordeCompositions.ungor_archers = {
 	{
@@ -6049,10 +6049,10 @@ HordeCompositions.ungor_archers = {
 				"beastmen_ungor_archer",
 				{
 					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6062,10 +6062,10 @@ HordeCompositions.ungor_archers = {
 				"beastmen_ungor_archer",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6073,9 +6073,9 @@ HordeCompositions.ungor_archers = {
 			weight = 7,
 			breeds = {
 				"beastmen_ungor_archer",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -6085,10 +6085,10 @@ HordeCompositions.ungor_archers = {
 				"beastmen_ungor_archer",
 				{
 					9,
-					10,
-				},
-			},
-		},
+					10
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6096,9 +6096,9 @@ HordeCompositions.ungor_archers = {
 			weight = 7,
 			breeds = {
 				"beastmen_ungor_archer",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -6106,9 +6106,9 @@ HordeCompositions.ungor_archers = {
 			weight = 7,
 			breeds = {
 				"beastmen_ungor_archer",
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -6116,9 +6116,9 @@ HordeCompositions.ungor_archers = {
 			weight = 7,
 			breeds = {
 				"beastmen_ungor_archer",
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -6128,11 +6128,11 @@ HordeCompositions.ungor_archers = {
 				"beastmen_ungor_archer",
 				{
 					6,
-					7,
-				},
-			},
-		},
-	},
+					7
+				}
+			}
+		}
+	}
 }
 HordeCompositions.bestigors = {
 	{
@@ -6143,10 +6143,10 @@ HordeCompositions.bestigors = {
 				"beastmen_bestigor",
 				{
 					1,
-					2,
-				},
-			},
-		},
+					2
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6154,9 +6154,9 @@ HordeCompositions.bestigors = {
 			weight = 7,
 			breeds = {
 				"beastmen_bestigor",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -6166,10 +6166,10 @@ HordeCompositions.bestigors = {
 				"beastmen_bestigor",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6179,10 +6179,10 @@ HordeCompositions.bestigors = {
 				"beastmen_bestigor",
 				{
 					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6192,10 +6192,10 @@ HordeCompositions.bestigors = {
 				"beastmen_bestigor",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6205,10 +6205,10 @@ HordeCompositions.bestigors = {
 				"beastmen_bestigor",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6218,10 +6218,10 @@ HordeCompositions.bestigors = {
 				"beastmen_bestigor",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6229,10 +6229,10 @@ HordeCompositions.bestigors = {
 			weight = 7,
 			breeds = {
 				"beastmen_gor",
-				3,
-			},
-		},
-	},
+				3
+			}
+		}
+	}
 }
 HordeCompositions.bestigors_small = {
 	{
@@ -6241,9 +6241,9 @@ HordeCompositions.bestigors_small = {
 			weight = 7,
 			breeds = {
 				"beastmen_bestigor",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -6251,9 +6251,9 @@ HordeCompositions.bestigors_small = {
 			weight = 7,
 			breeds = {
 				"beastmen_bestigor",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -6261,9 +6261,9 @@ HordeCompositions.bestigors_small = {
 			weight = 7,
 			breeds = {
 				"beastmen_bestigor",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -6273,10 +6273,10 @@ HordeCompositions.bestigors_small = {
 				"beastmen_bestigor",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6286,10 +6286,10 @@ HordeCompositions.bestigors_small = {
 				"beastmen_bestigor",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6299,10 +6299,10 @@ HordeCompositions.bestigors_small = {
 				"beastmen_bestigor",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6312,10 +6312,10 @@ HordeCompositions.bestigors_small = {
 				"beastmen_bestigor",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6323,10 +6323,10 @@ HordeCompositions.bestigors_small = {
 			weight = 7,
 			breeds = {
 				"beastmen_bestigor",
-				2,
-			},
-		},
-	},
+				2
+			}
+		}
+	}
 }
 HordeCompositions.warcamp_inside_camp = {
 	{
@@ -6337,14 +6337,14 @@ HordeCompositions.warcamp_inside_camp = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -6353,20 +6353,20 @@ HordeCompositions.warcamp_inside_camp = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6376,14 +6376,14 @@ HordeCompositions.warcamp_inside_camp = {
 				"chaos_marauder",
 				{
 					7,
-					8,
+					8
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -6392,20 +6392,20 @@ HordeCompositions.warcamp_inside_camp = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6415,14 +6415,14 @@ HordeCompositions.warcamp_inside_camp = {
 				"chaos_marauder",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -6431,20 +6431,20 @@ HordeCompositions.warcamp_inside_camp = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6454,14 +6454,14 @@ HordeCompositions.warcamp_inside_camp = {
 				"chaos_marauder",
 				{
 					10,
-					11,
+					11
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -6470,20 +6470,20 @@ HordeCompositions.warcamp_inside_camp = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					7,
-					8,
+					8
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6493,14 +6493,14 @@ HordeCompositions.warcamp_inside_camp = {
 				"chaos_marauder",
 				{
 					12,
-					13,
+					13
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -6509,20 +6509,20 @@ HordeCompositions.warcamp_inside_camp = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6532,14 +6532,14 @@ HordeCompositions.warcamp_inside_camp = {
 				"chaos_marauder",
 				{
 					12,
-					13,
+					13
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -6548,20 +6548,20 @@ HordeCompositions.warcamp_inside_camp = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6571,14 +6571,14 @@ HordeCompositions.warcamp_inside_camp = {
 				"chaos_marauder",
 				{
 					12,
-					13,
+					13
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -6587,20 +6587,20 @@ HordeCompositions.warcamp_inside_camp = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6610,14 +6610,14 @@ HordeCompositions.warcamp_inside_camp = {
 				"chaos_marauder",
 				{
 					7,
-					8,
+					8
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -6626,21 +6626,21 @@ HordeCompositions.warcamp_inside_camp = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
-	},
+					6
+				}
+			}
+		}
+	}
 }
 HordeCompositions.event_military_courtyard_plague_monks = {
 	{
@@ -6651,33 +6651,15 @@ HordeCompositions.event_military_courtyard_plague_monks = {
 				"skaven_plague_monk",
 				{
 					3,
-					3,
+					3
 				},
 				"skaven_clan_rat",
 				{
 					4,
-					6,
-				},
-			},
-		},
-	},
-	{
-		{
-			name = "mixed",
-			weight = 1,
-			breeds = {
-				"skaven_plague_monk",
-				{
-					4,
-					5,
-				},
-				"skaven_clan_rat",
-				{
-					4,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6687,15 +6669,33 @@ HordeCompositions.event_military_courtyard_plague_monks = {
 				"skaven_plague_monk",
 				{
 					4,
+					5
+				},
+				"skaven_clan_rat",
+				{
+					4,
+					6
+				}
+			}
+		}
+	},
+	{
+		{
+			name = "mixed",
+			weight = 1,
+			breeds = {
+				"skaven_plague_monk",
+				{
+					4,
+					5
+				},
+				"skaven_clan_rat",
+				{
 					5,
-				},
-				"skaven_clan_rat",
-				{
-					5,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6705,15 +6705,15 @@ HordeCompositions.event_military_courtyard_plague_monks = {
 				"skaven_plague_monk",
 				{
 					5,
-					6,
+					6
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6723,15 +6723,15 @@ HordeCompositions.event_military_courtyard_plague_monks = {
 				"skaven_plague_monk",
 				{
 					6,
-					7,
+					7
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6741,15 +6741,15 @@ HordeCompositions.event_military_courtyard_plague_monks = {
 				"skaven_plague_monk",
 				{
 					6,
-					7,
+					7
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6759,15 +6759,15 @@ HordeCompositions.event_military_courtyard_plague_monks = {
 				"skaven_plague_monk",
 				{
 					6,
-					7,
+					7
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6777,16 +6777,16 @@ HordeCompositions.event_military_courtyard_plague_monks = {
 				"skaven_clan_rat_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					8,
-				},
-			},
-		},
-	},
+					8
+				}
+			}
+		}
+	}
 }
 HordeCompositions.military_end_event_chaos_01 = {
 	{
@@ -6797,14 +6797,14 @@ HordeCompositions.military_end_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -6813,20 +6813,20 @@ HordeCompositions.military_end_event_chaos_01 = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6836,14 +6836,14 @@ HordeCompositions.military_end_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -6852,20 +6852,20 @@ HordeCompositions.military_end_event_chaos_01 = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6875,14 +6875,14 @@ HordeCompositions.military_end_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					10,
-					11,
+					11
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -6891,20 +6891,20 @@ HordeCompositions.military_end_event_chaos_01 = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					6,
-					7,
+					7
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6914,14 +6914,14 @@ HordeCompositions.military_end_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					12,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -6930,20 +6930,20 @@ HordeCompositions.military_end_event_chaos_01 = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6953,19 +6953,19 @@ HordeCompositions.military_end_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					12,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -6974,20 +6974,20 @@ HordeCompositions.military_end_event_chaos_01 = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder",
 				{
 					13,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -6997,19 +6997,19 @@ HordeCompositions.military_end_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					12,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -7018,20 +7018,20 @@ HordeCompositions.military_end_event_chaos_01 = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder",
 				{
 					13,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -7041,19 +7041,19 @@ HordeCompositions.military_end_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					12,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -7062,20 +7062,20 @@ HordeCompositions.military_end_event_chaos_01 = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder",
 				{
 					13,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -7085,14 +7085,14 @@ HordeCompositions.military_end_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -7101,21 +7101,21 @@ HordeCompositions.military_end_event_chaos_01 = {
 				"chaos_marauder_with_shield",
 				{
 					1,
-					2,
+					2
 				},
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
-	},
+					6
+				}
+			}
+		}
+	}
 }
 HordeCompositions.military_end_event_berzerkers = {
 	{
@@ -7126,9 +7126,9 @@ HordeCompositions.military_end_event_berzerkers = {
 				"chaos_berzerker",
 				3,
 				"chaos_marauder_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -7138,9 +7138,9 @@ HordeCompositions.military_end_event_berzerkers = {
 				"chaos_berzerker",
 				3,
 				"chaos_marauder_with_shield",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -7150,9 +7150,9 @@ HordeCompositions.military_end_event_berzerkers = {
 				"chaos_berzerker",
 				4,
 				"chaos_marauder_with_shield",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -7162,9 +7162,9 @@ HordeCompositions.military_end_event_berzerkers = {
 				"chaos_berzerker",
 				5,
 				"chaos_marauder_with_shield",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -7174,9 +7174,9 @@ HordeCompositions.military_end_event_berzerkers = {
 				"chaos_berzerker",
 				6,
 				"chaos_marauder_with_shield",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -7186,9 +7186,9 @@ HordeCompositions.military_end_event_berzerkers = {
 				"chaos_berzerker",
 				6,
 				"chaos_marauder_with_shield",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -7198,9 +7198,9 @@ HordeCompositions.military_end_event_berzerkers = {
 				"chaos_berzerker",
 				6,
 				"chaos_marauder_with_shield",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -7210,10 +7210,10 @@ HordeCompositions.military_end_event_berzerkers = {
 				"chaos_marauder",
 				6,
 				"chaos_marauder_with_shield",
-				3,
-			},
-		},
-	},
+				3
+			}
+		}
+	}
 }
 HordeCompositions.military_end_event_chaos_warriors = {
 	{
@@ -7226,9 +7226,9 @@ HordeCompositions.military_end_event_chaos_warriors = {
 				"chaos_fanatic",
 				{
 					7,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -7239,15 +7239,15 @@ HordeCompositions.military_end_event_chaos_warriors = {
 				"chaos_marauder",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -7259,9 +7259,9 @@ HordeCompositions.military_end_event_chaos_warriors = {
 				"chaos_fanatic",
 				{
 					8,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -7272,15 +7272,15 @@ HordeCompositions.military_end_event_chaos_warriors = {
 				"chaos_marauder",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -7292,9 +7292,9 @@ HordeCompositions.military_end_event_chaos_warriors = {
 				"chaos_fanatic",
 				{
 					8,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -7305,15 +7305,15 @@ HordeCompositions.military_end_event_chaos_warriors = {
 				"chaos_marauder",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -7325,9 +7325,9 @@ HordeCompositions.military_end_event_chaos_warriors = {
 				"chaos_fanatic",
 				{
 					8,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -7338,15 +7338,15 @@ HordeCompositions.military_end_event_chaos_warriors = {
 				"chaos_marauder",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -7358,9 +7358,9 @@ HordeCompositions.military_end_event_chaos_warriors = {
 				"chaos_fanatic",
 				{
 					8,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -7371,15 +7371,15 @@ HordeCompositions.military_end_event_chaos_warriors = {
 				"chaos_marauder",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -7391,9 +7391,9 @@ HordeCompositions.military_end_event_chaos_warriors = {
 				"chaos_fanatic",
 				{
 					8,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -7404,15 +7404,15 @@ HordeCompositions.military_end_event_chaos_warriors = {
 				"chaos_marauder",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -7424,9 +7424,9 @@ HordeCompositions.military_end_event_chaos_warriors = {
 				"chaos_fanatic",
 				{
 					8,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -7437,15 +7437,15 @@ HordeCompositions.military_end_event_chaos_warriors = {
 				"chaos_marauder",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -7457,9 +7457,9 @@ HordeCompositions.military_end_event_chaos_warriors = {
 				"chaos_fanatic",
 				{
 					8,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -7470,16 +7470,16 @@ HordeCompositions.military_end_event_chaos_warriors = {
 				"chaos_marauder",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
-	},
+					6
+				}
+			}
+		}
+	}
 }
 HordeCompositions.military_end_event_plague_monks = {
 	{
@@ -7490,10 +7490,10 @@ HordeCompositions.military_end_event_plague_monks = {
 				"skaven_plague_monk",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -7503,10 +7503,10 @@ HordeCompositions.military_end_event_plague_monks = {
 				"skaven_plague_monk",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -7516,10 +7516,10 @@ HordeCompositions.military_end_event_plague_monks = {
 				"skaven_plague_monk",
 				{
 					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -7529,10 +7529,10 @@ HordeCompositions.military_end_event_plague_monks = {
 				"skaven_plague_monk",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -7542,10 +7542,10 @@ HordeCompositions.military_end_event_plague_monks = {
 				"skaven_plague_monk",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -7555,10 +7555,10 @@ HordeCompositions.military_end_event_plague_monks = {
 				"skaven_plague_monk",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -7568,10 +7568,10 @@ HordeCompositions.military_end_event_plague_monks = {
 				"skaven_plague_monk",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -7581,11 +7581,11 @@ HordeCompositions.military_end_event_plague_monks = {
 				"skaven_plague_monk",
 				{
 					3,
-					4,
-				},
-			},
-		},
-	},
+					4
+				}
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_1_01 = {
 	{
@@ -7594,9 +7594,9 @@ HordeCompositions.plaza_wave_1_01 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				20,
-			},
-		},
+				20
+			}
+		}
 	},
 	{
 		{
@@ -7604,9 +7604,9 @@ HordeCompositions.plaza_wave_1_01 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				20,
-			},
-		},
+				20
+			}
+		}
 	},
 	{
 		{
@@ -7616,9 +7616,9 @@ HordeCompositions.plaza_wave_1_01 = {
 				"skaven_slave",
 				20,
 				"skaven_clan_rat",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -7628,9 +7628,9 @@ HordeCompositions.plaza_wave_1_01 = {
 				"skaven_slave",
 				24,
 				"skaven_clan_rat",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -7640,9 +7640,9 @@ HordeCompositions.plaza_wave_1_01 = {
 				"skaven_slave",
 				18,
 				"skaven_clan_rat",
-				14,
-			},
-		},
+				14
+			}
+		}
 	},
 	{
 		{
@@ -7652,9 +7652,9 @@ HordeCompositions.plaza_wave_1_01 = {
 				"skaven_slave",
 				18,
 				"skaven_clan_rat",
-				14,
-			},
-		},
+				14
+			}
+		}
 	},
 	{
 		{
@@ -7664,9 +7664,9 @@ HordeCompositions.plaza_wave_1_01 = {
 				"skaven_slave",
 				18,
 				"skaven_clan_rat",
-				14,
-			},
-		},
+				14
+			}
+		}
 	},
 	{
 		{
@@ -7674,10 +7674,10 @@ HordeCompositions.plaza_wave_1_01 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				20,
-			},
-		},
-	},
+				20
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_1_02 = {
 	{
@@ -7686,9 +7686,9 @@ HordeCompositions.plaza_wave_1_02 = {
 			weight = 1,
 			breeds = {
 				"chaos_fanatic",
-				20,
-			},
-		},
+				20
+			}
+		}
 	},
 	{
 		{
@@ -7696,21 +7696,9 @@ HordeCompositions.plaza_wave_1_02 = {
 			weight = 1,
 			breeds = {
 				"chaos_fanatic",
-				20,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"chaos_fanatic",
-				20,
-				"chaos_marauder",
-				2,
-			},
-		},
+				20
+			}
+		}
 	},
 	{
 		{
@@ -7720,9 +7708,21 @@ HordeCompositions.plaza_wave_1_02 = {
 				"chaos_fanatic",
 				20,
 				"chaos_marauder",
-				6,
-			},
-		},
+				2
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"chaos_fanatic",
+				20,
+				"chaos_marauder",
+				6
+			}
+		}
 	},
 	{
 		{
@@ -7732,9 +7732,9 @@ HordeCompositions.plaza_wave_1_02 = {
 				"chaos_fanatic",
 				16,
 				"chaos_marauder",
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -7744,9 +7744,9 @@ HordeCompositions.plaza_wave_1_02 = {
 				"chaos_fanatic",
 				16,
 				"chaos_marauder",
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -7756,9 +7756,9 @@ HordeCompositions.plaza_wave_1_02 = {
 				"chaos_fanatic",
 				16,
 				"chaos_marauder",
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -7766,10 +7766,10 @@ HordeCompositions.plaza_wave_1_02 = {
 			weight = 1,
 			breeds = {
 				"chaos_fanatic",
-				20,
-			},
-		},
-	},
+				20
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_1_03 = {
 	{
@@ -7778,9 +7778,9 @@ HordeCompositions.plaza_wave_1_03 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				32,
-			},
-		},
+				32
+			}
+		}
 	},
 	{
 		{
@@ -7788,9 +7788,9 @@ HordeCompositions.plaza_wave_1_03 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				32,
-			},
-		},
+				32
+			}
+		}
 	},
 	{
 		{
@@ -7798,9 +7798,9 @@ HordeCompositions.plaza_wave_1_03 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				35,
-			},
-		},
+				35
+			}
+		}
 	},
 	{
 		{
@@ -7808,21 +7808,9 @@ HordeCompositions.plaza_wave_1_03 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				40,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"skaven_slave",
-				32,
-				"skaven_clan_rat",
-				12,
-			},
-		},
+				40
+			}
+		}
 	},
 	{
 		{
@@ -7832,9 +7820,9 @@ HordeCompositions.plaza_wave_1_03 = {
 				"skaven_slave",
 				32,
 				"skaven_clan_rat",
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -7844,9 +7832,9 @@ HordeCompositions.plaza_wave_1_03 = {
 				"skaven_slave",
 				32,
 				"skaven_clan_rat",
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -7855,9 +7843,21 @@ HordeCompositions.plaza_wave_1_03 = {
 			breeds = {
 				"skaven_slave",
 				32,
-			},
-		},
+				"skaven_clan_rat",
+				12
+			}
+		}
 	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"skaven_slave",
+				32
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_1_04 = {
 	{
@@ -7866,9 +7866,9 @@ HordeCompositions.plaza_wave_1_04 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -7876,9 +7876,9 @@ HordeCompositions.plaza_wave_1_04 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -7886,9 +7886,9 @@ HordeCompositions.plaza_wave_1_04 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -7896,9 +7896,9 @@ HordeCompositions.plaza_wave_1_04 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -7906,9 +7906,9 @@ HordeCompositions.plaza_wave_1_04 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				7,
-			},
-		},
+				7
+			}
+		}
 	},
 	{
 		{
@@ -7916,9 +7916,9 @@ HordeCompositions.plaza_wave_1_04 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				7,
-			},
-		},
+				7
+			}
+		}
 	},
 	{
 		{
@@ -7926,9 +7926,9 @@ HordeCompositions.plaza_wave_1_04 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				7,
-			},
-		},
+				7
+			}
+		}
 	},
 	{
 		{
@@ -7936,10 +7936,10 @@ HordeCompositions.plaza_wave_1_04 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
-	},
+				3
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_2_01 = {
 	{
@@ -7950,9 +7950,9 @@ HordeCompositions.plaza_wave_2_01 = {
 				"chaos_fanatic",
 				30,
 				"chaos_marauder",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -7962,9 +7962,9 @@ HordeCompositions.plaza_wave_2_01 = {
 				"chaos_fanatic",
 				30,
 				"chaos_marauder",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -7974,9 +7974,9 @@ HordeCompositions.plaza_wave_2_01 = {
 				"chaos_fanatic",
 				32,
 				"chaos_marauder",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -7986,9 +7986,9 @@ HordeCompositions.plaza_wave_2_01 = {
 				"chaos_fanatic",
 				36,
 				"chaos_marauder",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -7998,9 +7998,9 @@ HordeCompositions.plaza_wave_2_01 = {
 				"chaos_fanatic",
 				30,
 				"chaos_marauder",
-				16,
-			},
-		},
+				16
+			}
+		}
 	},
 	{
 		{
@@ -8010,9 +8010,9 @@ HordeCompositions.plaza_wave_2_01 = {
 				"chaos_fanatic",
 				30,
 				"chaos_marauder",
-				16,
-			},
-		},
+				16
+			}
+		}
 	},
 	{
 		{
@@ -8022,9 +8022,9 @@ HordeCompositions.plaza_wave_2_01 = {
 				"chaos_fanatic",
 				30,
 				"chaos_marauder",
-				16,
-			},
-		},
+				16
+			}
+		}
 	},
 	{
 		{
@@ -8034,10 +8034,10 @@ HordeCompositions.plaza_wave_2_01 = {
 				"chaos_fanatic",
 				30,
 				"chaos_marauder",
-				3,
-			},
-		},
-	},
+				3
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_2_02 = {
 	{
@@ -8048,9 +8048,9 @@ HordeCompositions.plaza_wave_2_02 = {
 				"chaos_warrior",
 				2,
 				"chaos_marauder",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -8060,9 +8060,9 @@ HordeCompositions.plaza_wave_2_02 = {
 				"chaos_warrior",
 				3,
 				"chaos_marauder",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -8072,9 +8072,9 @@ HordeCompositions.plaza_wave_2_02 = {
 				"chaos_warrior",
 				4,
 				"chaos_marauder",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -8084,23 +8084,9 @@ HordeCompositions.plaza_wave_2_02 = {
 				"chaos_warrior",
 				6,
 				"chaos_marauder",
-				6,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"chaos_warrior",
-				7,
-				"chaos_marauder",
-				6,
-				"chaos_marauder_with_shield",
-				2,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -8112,9 +8098,9 @@ HordeCompositions.plaza_wave_2_02 = {
 				"chaos_marauder",
 				6,
 				"chaos_marauder_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -8126,9 +8112,23 @@ HordeCompositions.plaza_wave_2_02 = {
 				"chaos_marauder",
 				6,
 				"chaos_marauder_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"chaos_warrior",
+				7,
+				"chaos_marauder",
+				6,
+				"chaos_marauder_with_shield",
+				2
+			}
+		}
 	},
 	{
 		{
@@ -8138,10 +8138,10 @@ HordeCompositions.plaza_wave_2_02 = {
 				"chaos_warrior",
 				3,
 				"chaos_marauder",
-				4,
-			},
-		},
-	},
+				4
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_2_03 = {
 	{
@@ -8152,9 +8152,9 @@ HordeCompositions.plaza_wave_2_03 = {
 				"chaos_fanatic",
 				20,
 				"chaos_marauder",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -8164,9 +8164,9 @@ HordeCompositions.plaza_wave_2_03 = {
 				"chaos_fanatic",
 				20,
 				"chaos_marauder",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -8176,9 +8176,9 @@ HordeCompositions.plaza_wave_2_03 = {
 				"chaos_fanatic",
 				20,
 				"chaos_marauder",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -8188,9 +8188,9 @@ HordeCompositions.plaza_wave_2_03 = {
 				"chaos_fanatic",
 				25,
 				"chaos_marauder",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -8200,9 +8200,9 @@ HordeCompositions.plaza_wave_2_03 = {
 				"chaos_fanatic",
 				21,
 				"chaos_marauder",
-				16,
-			},
-		},
+				16
+			}
+		}
 	},
 	{
 		{
@@ -8212,9 +8212,9 @@ HordeCompositions.plaza_wave_2_03 = {
 				"chaos_fanatic",
 				21,
 				"chaos_marauder",
-				16,
-			},
-		},
+				16
+			}
+		}
 	},
 	{
 		{
@@ -8224,9 +8224,9 @@ HordeCompositions.plaza_wave_2_03 = {
 				"chaos_fanatic",
 				21,
 				"chaos_marauder",
-				16,
-			},
-		},
+				16
+			}
+		}
 	},
 	{
 		{
@@ -8236,10 +8236,10 @@ HordeCompositions.plaza_wave_2_03 = {
 				"chaos_fanatic",
 				20,
 				"chaos_marauder",
-				6,
-			},
-		},
-	},
+				6
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_2_04 = {
 	{
@@ -8248,9 +8248,9 @@ HordeCompositions.plaza_wave_2_04 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				30,
-			},
-		},
+				30
+			}
+		}
 	},
 	{
 		{
@@ -8260,9 +8260,9 @@ HordeCompositions.plaza_wave_2_04 = {
 				"skaven_slave",
 				25,
 				"skaven_clan_rat_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -8272,9 +8272,9 @@ HordeCompositions.plaza_wave_2_04 = {
 				"skaven_slave",
 				28,
 				"skaven_clan_rat_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -8284,9 +8284,9 @@ HordeCompositions.plaza_wave_2_04 = {
 				"skaven_slave",
 				30,
 				"skaven_clan_rat_with_shield",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -8298,9 +8298,9 @@ HordeCompositions.plaza_wave_2_04 = {
 				"skaven_clan_rat_with_shield",
 				8,
 				"skaven_clan_rat",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -8312,9 +8312,9 @@ HordeCompositions.plaza_wave_2_04 = {
 				"skaven_clan_rat_with_shield",
 				8,
 				"skaven_clan_rat",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -8326,9 +8326,9 @@ HordeCompositions.plaza_wave_2_04 = {
 				"skaven_clan_rat_with_shield",
 				8,
 				"skaven_clan_rat",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -8338,10 +8338,10 @@ HordeCompositions.plaza_wave_2_04 = {
 				"skaven_slave",
 				25,
 				"skaven_clan_rat_with_shield",
-				2,
-			},
-		},
-	},
+				2
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_2_05 = {
 	{
@@ -8352,9 +8352,9 @@ HordeCompositions.plaza_wave_2_05 = {
 				"chaos_fanatic",
 				10,
 				"chaos_marauder",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -8364,9 +8364,9 @@ HordeCompositions.plaza_wave_2_05 = {
 				"chaos_fanatic",
 				10,
 				"chaos_marauder",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -8376,9 +8376,9 @@ HordeCompositions.plaza_wave_2_05 = {
 				"chaos_fanatic",
 				12,
 				"chaos_marauder",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -8388,9 +8388,9 @@ HordeCompositions.plaza_wave_2_05 = {
 				"chaos_fanatic",
 				15,
 				"chaos_marauder",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -8400,9 +8400,9 @@ HordeCompositions.plaza_wave_2_05 = {
 				"chaos_fanatic",
 				10,
 				"chaos_marauder",
-				18,
-			},
-		},
+				18
+			}
+		}
 	},
 	{
 		{
@@ -8412,9 +8412,9 @@ HordeCompositions.plaza_wave_2_05 = {
 				"chaos_fanatic",
 				10,
 				"chaos_marauder",
-				18,
-			},
-		},
+				18
+			}
+		}
 	},
 	{
 		{
@@ -8424,9 +8424,9 @@ HordeCompositions.plaza_wave_2_05 = {
 				"chaos_fanatic",
 				10,
 				"chaos_marauder",
-				18,
-			},
-		},
+				18
+			}
+		}
 	},
 	{
 		{
@@ -8436,10 +8436,10 @@ HordeCompositions.plaza_wave_2_05 = {
 				"chaos_fanatic",
 				10,
 				"chaos_marauder",
-				6,
-			},
-		},
-	},
+				6
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_3_01 = {
 	{
@@ -8450,9 +8450,9 @@ HordeCompositions.plaza_wave_3_01 = {
 				"skaven_slave",
 				35,
 				"skaven_clan_rat_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -8462,9 +8462,9 @@ HordeCompositions.plaza_wave_3_01 = {
 				"skaven_slave",
 				35,
 				"skaven_clan_rat_with_shield",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -8474,9 +8474,9 @@ HordeCompositions.plaza_wave_3_01 = {
 				"skaven_slave",
 				40,
 				"skaven_clan_rat_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -8486,9 +8486,9 @@ HordeCompositions.plaza_wave_3_01 = {
 				"skaven_slave",
 				45,
 				"skaven_clan_rat_with_shield",
-				7,
-			},
-		},
+				7
+			}
+		}
 	},
 	{
 		{
@@ -8498,9 +8498,9 @@ HordeCompositions.plaza_wave_3_01 = {
 				"skaven_slave",
 				42,
 				"skaven_clan_rat_with_shield",
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -8510,9 +8510,9 @@ HordeCompositions.plaza_wave_3_01 = {
 				"skaven_slave",
 				42,
 				"skaven_clan_rat_with_shield",
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -8522,9 +8522,9 @@ HordeCompositions.plaza_wave_3_01 = {
 				"skaven_slave",
 				42,
 				"skaven_clan_rat_with_shield",
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -8534,10 +8534,10 @@ HordeCompositions.plaza_wave_3_01 = {
 				"skaven_slave",
 				35,
 				"skaven_clan_rat_with_shield",
-				3,
-			},
-		},
-	},
+				3
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_3_02 = {
 	{
@@ -8548,9 +8548,9 @@ HordeCompositions.plaza_wave_3_02 = {
 				"skaven_slave",
 				35,
 				"skaven_clan_rat",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -8560,9 +8560,9 @@ HordeCompositions.plaza_wave_3_02 = {
 				"skaven_slave",
 				40,
 				"skaven_clan_rat",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -8574,9 +8574,9 @@ HordeCompositions.plaza_wave_3_02 = {
 				"skaven_clan_rat",
 				4,
 				"skaven_clan_rat_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -8588,9 +8588,9 @@ HordeCompositions.plaza_wave_3_02 = {
 				"skaven_clan_rat",
 				7,
 				"skaven_clan_rat_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -8602,9 +8602,9 @@ HordeCompositions.plaza_wave_3_02 = {
 				"skaven_clan_rat",
 				12,
 				"skaven_clan_rat_with_shield",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -8616,9 +8616,9 @@ HordeCompositions.plaza_wave_3_02 = {
 				"skaven_clan_rat",
 				12,
 				"skaven_clan_rat_with_shield",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -8630,9 +8630,9 @@ HordeCompositions.plaza_wave_3_02 = {
 				"skaven_clan_rat",
 				12,
 				"skaven_clan_rat_with_shield",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -8642,10 +8642,10 @@ HordeCompositions.plaza_wave_3_02 = {
 				"skaven_slave",
 				40,
 				"skaven_clan_rat",
-				3,
-			},
-		},
-	},
+				3
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_3_03 = {
 	{
@@ -8654,9 +8654,9 @@ HordeCompositions.plaza_wave_3_03 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -8664,9 +8664,9 @@ HordeCompositions.plaza_wave_3_03 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -8674,9 +8674,9 @@ HordeCompositions.plaza_wave_3_03 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -8684,9 +8684,9 @@ HordeCompositions.plaza_wave_3_03 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -8694,9 +8694,9 @@ HordeCompositions.plaza_wave_3_03 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -8704,9 +8704,9 @@ HordeCompositions.plaza_wave_3_03 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -8714,9 +8714,9 @@ HordeCompositions.plaza_wave_3_03 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -8724,10 +8724,10 @@ HordeCompositions.plaza_wave_3_03 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				2,
-			},
-		},
-	},
+				2
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_3_04 = {
 	{
@@ -8738,9 +8738,9 @@ HordeCompositions.plaza_wave_3_04 = {
 				"chaos_fanatic",
 				20,
 				"chaos_marauder",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -8750,9 +8750,9 @@ HordeCompositions.plaza_wave_3_04 = {
 				"chaos_fanatic",
 				20,
 				"chaos_marauder",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -8762,9 +8762,9 @@ HordeCompositions.plaza_wave_3_04 = {
 				"chaos_fanatic",
 				23,
 				"chaos_marauder",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -8774,9 +8774,9 @@ HordeCompositions.plaza_wave_3_04 = {
 				"chaos_fanatic",
 				25,
 				"chaos_marauder",
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -8788,9 +8788,9 @@ HordeCompositions.plaza_wave_3_04 = {
 				"chaos_marauder",
 				20,
 				"chaos_marauder_with_shield",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -8802,9 +8802,9 @@ HordeCompositions.plaza_wave_3_04 = {
 				"chaos_marauder",
 				20,
 				"chaos_marauder_with_shield",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -8816,9 +8816,9 @@ HordeCompositions.plaza_wave_3_04 = {
 				"chaos_marauder",
 				20,
 				"chaos_marauder_with_shield",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -8828,10 +8828,10 @@ HordeCompositions.plaza_wave_3_04 = {
 				"chaos_fanatic",
 				20,
 				"chaos_marauder",
-				10,
-			},
-		},
-	},
+				10
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_3_05 = {
 	{
@@ -8840,9 +8840,9 @@ HordeCompositions.plaza_wave_3_05 = {
 			weight = 1,
 			breeds = {
 				"chaos_berzerker",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -8850,9 +8850,9 @@ HordeCompositions.plaza_wave_3_05 = {
 			weight = 1,
 			breeds = {
 				"chaos_berzerker",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -8860,9 +8860,9 @@ HordeCompositions.plaza_wave_3_05 = {
 			weight = 1,
 			breeds = {
 				"chaos_berzerker",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -8870,9 +8870,9 @@ HordeCompositions.plaza_wave_3_05 = {
 			weight = 1,
 			breeds = {
 				"chaos_berzerker",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -8880,9 +8880,9 @@ HordeCompositions.plaza_wave_3_05 = {
 			weight = 1,
 			breeds = {
 				"chaos_berzerker",
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -8890,9 +8890,9 @@ HordeCompositions.plaza_wave_3_05 = {
 			weight = 1,
 			breeds = {
 				"chaos_berzerker",
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -8900,9 +8900,9 @@ HordeCompositions.plaza_wave_3_05 = {
 			weight = 1,
 			breeds = {
 				"chaos_berzerker",
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -8910,10 +8910,10 @@ HordeCompositions.plaza_wave_3_05 = {
 			weight = 1,
 			breeds = {
 				"chaos_berzerker",
-				6,
-			},
-		},
-	},
+				6
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_3_06 = {
 	{
@@ -8924,9 +8924,9 @@ HordeCompositions.plaza_wave_3_06 = {
 				"chaos_marauder_with_shield",
 				7,
 				"chaos_marauder",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -8936,9 +8936,9 @@ HordeCompositions.plaza_wave_3_06 = {
 				"chaos_marauder_with_shield",
 				8,
 				"chaos_marauder",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -8948,9 +8948,9 @@ HordeCompositions.plaza_wave_3_06 = {
 				"chaos_marauder_with_shield",
 				10,
 				"chaos_marauder",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -8960,9 +8960,9 @@ HordeCompositions.plaza_wave_3_06 = {
 				"chaos_marauder_with_shield",
 				12,
 				"chaos_marauder",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -8974,9 +8974,9 @@ HordeCompositions.plaza_wave_3_06 = {
 				"chaos_marauder",
 				10,
 				"chaos_raider",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -8988,9 +8988,9 @@ HordeCompositions.plaza_wave_3_06 = {
 				"chaos_marauder",
 				10,
 				"chaos_raider",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -9002,9 +9002,9 @@ HordeCompositions.plaza_wave_3_06 = {
 				"chaos_marauder",
 				10,
 				"chaos_raider",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -9014,10 +9014,10 @@ HordeCompositions.plaza_wave_3_06 = {
 				"chaos_marauder_with_shield",
 				8,
 				"chaos_marauder",
-				4,
-			},
-		},
-	},
+				4
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_4_01 = {
 	{
@@ -9028,9 +9028,9 @@ HordeCompositions.plaza_wave_4_01 = {
 				"chaos_fanatic",
 				16,
 				"chaos_marauder",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -9040,9 +9040,9 @@ HordeCompositions.plaza_wave_4_01 = {
 				"chaos_fanatic",
 				16,
 				"chaos_marauder",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -9052,9 +9052,9 @@ HordeCompositions.plaza_wave_4_01 = {
 				"chaos_fanatic",
 				20,
 				"chaos_marauder",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -9066,9 +9066,9 @@ HordeCompositions.plaza_wave_4_01 = {
 				"chaos_marauder_with_shield",
 				3,
 				"chaos_marauder",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -9080,9 +9080,9 @@ HordeCompositions.plaza_wave_4_01 = {
 				"chaos_marauder",
 				10,
 				"chaos_raider",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -9094,9 +9094,9 @@ HordeCompositions.plaza_wave_4_01 = {
 				"chaos_marauder",
 				10,
 				"chaos_raider",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -9108,9 +9108,9 @@ HordeCompositions.plaza_wave_4_01 = {
 				"chaos_marauder",
 				10,
 				"chaos_raider",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -9120,10 +9120,10 @@ HordeCompositions.plaza_wave_4_01 = {
 				"chaos_fanatic",
 				16,
 				"chaos_marauder",
-				3,
-			},
-		},
-	},
+				3
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_4_02 = {
 	{
@@ -9134,9 +9134,9 @@ HordeCompositions.plaza_wave_4_02 = {
 				"chaos_marauder",
 				3,
 				"chaos_raider",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -9146,9 +9146,9 @@ HordeCompositions.plaza_wave_4_02 = {
 				"chaos_marauder",
 				5,
 				"chaos_raider",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -9160,9 +9160,9 @@ HordeCompositions.plaza_wave_4_02 = {
 				"chaos_marauder_with_shield",
 				2,
 				"chaos_raider",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -9174,9 +9174,9 @@ HordeCompositions.plaza_wave_4_02 = {
 				"chaos_marauder_with_shield",
 				4,
 				"chaos_raider",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -9188,9 +9188,9 @@ HordeCompositions.plaza_wave_4_02 = {
 				"chaos_marauder_with_shield",
 				4,
 				"chaos_raider",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -9202,9 +9202,9 @@ HordeCompositions.plaza_wave_4_02 = {
 				"chaos_marauder_with_shield",
 				4,
 				"chaos_raider",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -9216,9 +9216,9 @@ HordeCompositions.plaza_wave_4_02 = {
 				"chaos_marauder_with_shield",
 				4,
 				"chaos_raider",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -9228,10 +9228,10 @@ HordeCompositions.plaza_wave_4_02 = {
 				"chaos_marauder",
 				5,
 				"chaos_raider",
-				2,
-			},
-		},
-	},
+				2
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_4_03 = {
 	{
@@ -9240,9 +9240,9 @@ HordeCompositions.plaza_wave_4_03 = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -9250,9 +9250,9 @@ HordeCompositions.plaza_wave_4_03 = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -9260,9 +9260,9 @@ HordeCompositions.plaza_wave_4_03 = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -9270,9 +9270,9 @@ HordeCompositions.plaza_wave_4_03 = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -9280,9 +9280,9 @@ HordeCompositions.plaza_wave_4_03 = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				7,
-			},
-		},
+				7
+			}
+		}
 	},
 	{
 		{
@@ -9290,9 +9290,9 @@ HordeCompositions.plaza_wave_4_03 = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				7,
-			},
-		},
+				7
+			}
+		}
 	},
 	{
 		{
@@ -9300,9 +9300,9 @@ HordeCompositions.plaza_wave_4_03 = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				7,
-			},
-		},
+				7
+			}
+		}
 	},
 	{
 		{
@@ -9310,10 +9310,10 @@ HordeCompositions.plaza_wave_4_03 = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				2,
-			},
-		},
-	},
+				2
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_4_04 = {
 	{
@@ -9322,9 +9322,9 @@ HordeCompositions.plaza_wave_4_04 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				25,
-			},
-		},
+				25
+			}
+		}
 	},
 	{
 		{
@@ -9334,9 +9334,9 @@ HordeCompositions.plaza_wave_4_04 = {
 				"skaven_slave",
 				20,
 				"skaven_clan_rat",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -9346,9 +9346,9 @@ HordeCompositions.plaza_wave_4_04 = {
 				"skaven_slave",
 				15,
 				"skaven_clan_rat",
-				7,
-			},
-		},
+				7
+			}
+		}
 	},
 	{
 		{
@@ -9358,23 +9358,9 @@ HordeCompositions.plaza_wave_4_04 = {
 				"skaven_slave",
 				15,
 				"skaven_clan_rat",
-				10,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"skaven_slave",
-				15,
-				"skaven_clan_rat",
-				10,
-				"skaven_clan_rat_with_shield",
-				3,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -9386,9 +9372,9 @@ HordeCompositions.plaza_wave_4_04 = {
 				"skaven_clan_rat",
 				10,
 				"skaven_clan_rat_with_shield",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -9400,9 +9386,23 @@ HordeCompositions.plaza_wave_4_04 = {
 				"skaven_clan_rat",
 				10,
 				"skaven_clan_rat_with_shield",
-				3,
-			},
-		},
+				3
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"skaven_slave",
+				15,
+				"skaven_clan_rat",
+				10,
+				"skaven_clan_rat_with_shield",
+				3
+			}
+		}
 	},
 	{
 		{
@@ -9412,10 +9412,10 @@ HordeCompositions.plaza_wave_4_04 = {
 				"skaven_slave",
 				20,
 				"skaven_clan_rat",
-				2,
-			},
-		},
-	},
+				2
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_4_05 = {
 	{
@@ -9424,31 +9424,31 @@ HordeCompositions.plaza_wave_4_05 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
+				3
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"skaven_storm_vermin_commander",
+				4
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"skaven_storm_vermin_commander",
 				3,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"skaven_storm_vermin_commander",
-				3,
 				"skaven_storm_vermin_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -9458,9 +9458,9 @@ HordeCompositions.plaza_wave_4_05 = {
 				"skaven_storm_vermin_commander",
 				4,
 				"skaven_storm_vermin_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -9470,9 +9470,9 @@ HordeCompositions.plaza_wave_4_05 = {
 				"skaven_storm_vermin_commander",
 				5,
 				"skaven_storm_vermin_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -9482,9 +9482,9 @@ HordeCompositions.plaza_wave_4_05 = {
 				"skaven_storm_vermin_commander",
 				5,
 				"skaven_storm_vermin_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -9494,9 +9494,9 @@ HordeCompositions.plaza_wave_4_05 = {
 				"skaven_storm_vermin_commander",
 				5,
 				"skaven_storm_vermin_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -9504,10 +9504,10 @@ HordeCompositions.plaza_wave_4_05 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
-	},
+				4
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_5_01 = {
 	{
@@ -9518,9 +9518,9 @@ HordeCompositions.plaza_wave_5_01 = {
 				"chaos_fanatic",
 				20,
 				"chaos_marauder",
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -9532,9 +9532,9 @@ HordeCompositions.plaza_wave_5_01 = {
 				"chaos_marauder_with_shield",
 				2,
 				"chaos_marauder",
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -9546,9 +9546,9 @@ HordeCompositions.plaza_wave_5_01 = {
 				"chaos_marauder_with_shield",
 				3,
 				"chaos_marauder",
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -9560,9 +9560,9 @@ HordeCompositions.plaza_wave_5_01 = {
 				"chaos_marauder_with_shield",
 				3,
 				"chaos_marauder",
-				20,
-			},
-		},
+				20
+			}
+		}
 	},
 	{
 		{
@@ -9574,9 +9574,9 @@ HordeCompositions.plaza_wave_5_01 = {
 				"chaos_marauder_with_shield",
 				3,
 				"chaos_marauder",
-				30,
-			},
-		},
+				30
+			}
+		}
 	},
 	{
 		{
@@ -9588,9 +9588,9 @@ HordeCompositions.plaza_wave_5_01 = {
 				"chaos_marauder_with_shield",
 				3,
 				"chaos_marauder",
-				30,
-			},
-		},
+				30
+			}
+		}
 	},
 	{
 		{
@@ -9602,9 +9602,9 @@ HordeCompositions.plaza_wave_5_01 = {
 				"chaos_marauder_with_shield",
 				3,
 				"chaos_marauder",
-				30,
-			},
-		},
+				30
+			}
+		}
 	},
 	{
 		{
@@ -9616,10 +9616,10 @@ HordeCompositions.plaza_wave_5_01 = {
 				"chaos_marauder_with_shield",
 				2,
 				"chaos_marauder",
-				12,
-			},
-		},
-	},
+				12
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_5_02 = {
 	{
@@ -9628,9 +9628,9 @@ HordeCompositions.plaza_wave_5_02 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -9638,9 +9638,9 @@ HordeCompositions.plaza_wave_5_02 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -9648,9 +9648,9 @@ HordeCompositions.plaza_wave_5_02 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -9658,9 +9658,9 @@ HordeCompositions.plaza_wave_5_02 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -9668,9 +9668,9 @@ HordeCompositions.plaza_wave_5_02 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -9678,9 +9678,9 @@ HordeCompositions.plaza_wave_5_02 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -9688,9 +9688,9 @@ HordeCompositions.plaza_wave_5_02 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -9698,10 +9698,10 @@ HordeCompositions.plaza_wave_5_02 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				5,
-			},
-		},
-	},
+				5
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_5_03 = {
 	{
@@ -9710,9 +9710,9 @@ HordeCompositions.plaza_wave_5_03 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				40,
-			},
-		},
+				40
+			}
+		}
 	},
 	{
 		{
@@ -9722,9 +9722,9 @@ HordeCompositions.plaza_wave_5_03 = {
 				"skaven_slave",
 				35,
 				"skaven_clan_rat",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -9734,9 +9734,9 @@ HordeCompositions.plaza_wave_5_03 = {
 				"skaven_slave",
 				40,
 				"skaven_clan_rat",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -9746,9 +9746,9 @@ HordeCompositions.plaza_wave_5_03 = {
 				"skaven_slave",
 				40,
 				"skaven_clan_rat",
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -9760,9 +9760,9 @@ HordeCompositions.plaza_wave_5_03 = {
 				"skaven_clan_rat",
 				18,
 				"skaven_clan_rat_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -9774,9 +9774,9 @@ HordeCompositions.plaza_wave_5_03 = {
 				"skaven_clan_rat",
 				18,
 				"skaven_clan_rat_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -9788,9 +9788,9 @@ HordeCompositions.plaza_wave_5_03 = {
 				"skaven_clan_rat",
 				18,
 				"skaven_clan_rat_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -9800,10 +9800,10 @@ HordeCompositions.plaza_wave_5_03 = {
 				"skaven_slave",
 				35,
 				"skaven_clan_rat",
-				8,
-			},
-		},
-	},
+				8
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_5_04 = {
 	{
@@ -9812,9 +9812,9 @@ HordeCompositions.plaza_wave_5_04 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				40,
-			},
-		},
+				40
+			}
+		}
 	},
 	{
 		{
@@ -9824,9 +9824,9 @@ HordeCompositions.plaza_wave_5_04 = {
 				"skaven_slave",
 				35,
 				"skaven_clan_rat",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -9836,9 +9836,9 @@ HordeCompositions.plaza_wave_5_04 = {
 				"skaven_slave",
 				35,
 				"skaven_clan_rat",
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -9848,9 +9848,9 @@ HordeCompositions.plaza_wave_5_04 = {
 				"skaven_slave",
 				35,
 				"skaven_clan_rat",
-				20,
-			},
-		},
+				20
+			}
+		}
 	},
 	{
 		{
@@ -9860,9 +9860,9 @@ HordeCompositions.plaza_wave_5_04 = {
 				"skaven_slave",
 				32,
 				"skaven_clan_rat",
-				30,
-			},
-		},
+				30
+			}
+		}
 	},
 	{
 		{
@@ -9872,9 +9872,9 @@ HordeCompositions.plaza_wave_5_04 = {
 				"skaven_slave",
 				32,
 				"skaven_clan_rat",
-				30,
-			},
-		},
+				30
+			}
+		}
 	},
 	{
 		{
@@ -9884,9 +9884,9 @@ HordeCompositions.plaza_wave_5_04 = {
 				"skaven_slave",
 				32,
 				"skaven_clan_rat",
-				30,
-			},
-		},
+				30
+			}
+		}
 	},
 	{
 		{
@@ -9896,10 +9896,10 @@ HordeCompositions.plaza_wave_5_04 = {
 				"skaven_slave",
 				35,
 				"skaven_clan_rat",
-				10,
-			},
-		},
-	},
+				10
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_5_05 = {
 	{
@@ -9908,9 +9908,9 @@ HordeCompositions.plaza_wave_5_05 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -9918,9 +9918,9 @@ HordeCompositions.plaza_wave_5_05 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -9928,9 +9928,9 @@ HordeCompositions.plaza_wave_5_05 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				7,
-			},
-		},
+				7
+			}
+		}
 	},
 	{
 		{
@@ -9938,9 +9938,9 @@ HordeCompositions.plaza_wave_5_05 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -9948,9 +9948,9 @@ HordeCompositions.plaza_wave_5_05 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -9958,9 +9958,9 @@ HordeCompositions.plaza_wave_5_05 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -9968,9 +9968,9 @@ HordeCompositions.plaza_wave_5_05 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -9978,10 +9978,10 @@ HordeCompositions.plaza_wave_5_05 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				5,
-			},
-		},
-	},
+				5
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_6_01 = {
 	{
@@ -9990,9 +9990,9 @@ HordeCompositions.plaza_wave_6_01 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -10000,9 +10000,9 @@ HordeCompositions.plaza_wave_6_01 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -10012,9 +10012,9 @@ HordeCompositions.plaza_wave_6_01 = {
 				"skaven_storm_vermin_commander",
 				8,
 				"skaven_storm_vermin_with_shield",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -10024,9 +10024,9 @@ HordeCompositions.plaza_wave_6_01 = {
 				"skaven_storm_vermin_commander",
 				10,
 				"skaven_storm_vermin_with_shield",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -10036,9 +10036,9 @@ HordeCompositions.plaza_wave_6_01 = {
 				"skaven_storm_vermin_commander",
 				11,
 				"skaven_storm_vermin_with_shield",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -10048,9 +10048,9 @@ HordeCompositions.plaza_wave_6_01 = {
 				"skaven_storm_vermin_commander",
 				11,
 				"skaven_storm_vermin_with_shield",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -10060,9 +10060,9 @@ HordeCompositions.plaza_wave_6_01 = {
 				"skaven_storm_vermin_commander",
 				11,
 				"skaven_storm_vermin_with_shield",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -10070,10 +10070,10 @@ HordeCompositions.plaza_wave_6_01 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				8,
-			},
-		},
-	},
+				8
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_6_02 = {
 	{
@@ -10082,9 +10082,9 @@ HordeCompositions.plaza_wave_6_02 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				30,
-			},
-		},
+				30
+			}
+		}
 	},
 	{
 		{
@@ -10094,9 +10094,9 @@ HordeCompositions.plaza_wave_6_02 = {
 				"skaven_slave",
 				30,
 				"skaven_clan_rat",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -10106,9 +10106,9 @@ HordeCompositions.plaza_wave_6_02 = {
 				"skaven_slave",
 				32,
 				"skaven_clan_rat",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -10118,23 +10118,9 @@ HordeCompositions.plaza_wave_6_02 = {
 				"skaven_slave",
 				35,
 				"skaven_clan_rat",
-				10,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"skaven_slave",
-				35,
-				"skaven_clan_rat",
-				12,
-				"skaven_clan_rat_with_shield",
-				3,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -10146,9 +10132,9 @@ HordeCompositions.plaza_wave_6_02 = {
 				"skaven_clan_rat",
 				12,
 				"skaven_clan_rat_with_shield",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -10160,9 +10146,23 @@ HordeCompositions.plaza_wave_6_02 = {
 				"skaven_clan_rat",
 				12,
 				"skaven_clan_rat_with_shield",
-				3,
-			},
-		},
+				3
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"skaven_slave",
+				35,
+				"skaven_clan_rat",
+				12,
+				"skaven_clan_rat_with_shield",
+				3
+			}
+		}
 	},
 	{
 		{
@@ -10172,10 +10172,10 @@ HordeCompositions.plaza_wave_6_02 = {
 				"skaven_slave",
 				30,
 				"skaven_clan_rat",
-				4,
-			},
-		},
-	},
+				4
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_6_03 = {
 	{
@@ -10186,9 +10186,9 @@ HordeCompositions.plaza_wave_6_03 = {
 				"chaos_raider",
 				2,
 				"chaos_fanatic",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -10198,9 +10198,9 @@ HordeCompositions.plaza_wave_6_03 = {
 				"chaos_raider",
 				3,
 				"chaos_fanatic",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -10210,9 +10210,9 @@ HordeCompositions.plaza_wave_6_03 = {
 				"chaos_raider",
 				4,
 				"chaos_fanatic",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -10224,9 +10224,9 @@ HordeCompositions.plaza_wave_6_03 = {
 				"chaos_fanatic",
 				10,
 				"chaos_marauder",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -10238,9 +10238,9 @@ HordeCompositions.plaza_wave_6_03 = {
 				"chaos_fanatic",
 				9,
 				"chaos_marauder",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -10252,9 +10252,9 @@ HordeCompositions.plaza_wave_6_03 = {
 				"chaos_fanatic",
 				9,
 				"chaos_marauder",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -10266,9 +10266,9 @@ HordeCompositions.plaza_wave_6_03 = {
 				"chaos_fanatic",
 				9,
 				"chaos_marauder",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -10278,10 +10278,10 @@ HordeCompositions.plaza_wave_6_03 = {
 				"chaos_raider",
 				3,
 				"chaos_fanatic",
-				10,
-			},
-		},
-	},
+				10
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_6_04 = {
 	{
@@ -10290,9 +10290,9 @@ HordeCompositions.plaza_wave_6_04 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				24,
-			},
-		},
+				24
+			}
+		}
 	},
 	{
 		{
@@ -10302,9 +10302,9 @@ HordeCompositions.plaza_wave_6_04 = {
 				"skaven_slave",
 				18,
 				"skaven_clan_rat",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -10314,9 +10314,9 @@ HordeCompositions.plaza_wave_6_04 = {
 				"skaven_slave",
 				20,
 				"skaven_clan_rat",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -10326,23 +10326,9 @@ HordeCompositions.plaza_wave_6_04 = {
 				"skaven_slave",
 				20,
 				"skaven_clan_rat",
-				10,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"skaven_slave",
-				20,
-				"skaven_clan_rat",
-				12,
-				"skaven_clan_rat_with_shield",
-				3,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -10354,9 +10340,9 @@ HordeCompositions.plaza_wave_6_04 = {
 				"skaven_clan_rat",
 				12,
 				"skaven_clan_rat_with_shield",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -10368,9 +10354,23 @@ HordeCompositions.plaza_wave_6_04 = {
 				"skaven_clan_rat",
 				12,
 				"skaven_clan_rat_with_shield",
-				3,
-			},
-		},
+				3
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"skaven_slave",
+				20,
+				"skaven_clan_rat",
+				12,
+				"skaven_clan_rat_with_shield",
+				3
+			}
+		}
 	},
 	{
 		{
@@ -10380,10 +10380,10 @@ HordeCompositions.plaza_wave_6_04 = {
 				"skaven_slave",
 				18,
 				"skaven_clan_rat",
-				6,
-			},
-		},
-	},
+				6
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_6_05 = {
 	{
@@ -10392,9 +10392,9 @@ HordeCompositions.plaza_wave_6_05 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -10402,9 +10402,9 @@ HordeCompositions.plaza_wave_6_05 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -10412,9 +10412,9 @@ HordeCompositions.plaza_wave_6_05 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -10422,9 +10422,9 @@ HordeCompositions.plaza_wave_6_05 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -10432,9 +10432,9 @@ HordeCompositions.plaza_wave_6_05 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -10442,9 +10442,9 @@ HordeCompositions.plaza_wave_6_05 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -10452,9 +10452,9 @@ HordeCompositions.plaza_wave_6_05 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -10462,10 +10462,10 @@ HordeCompositions.plaza_wave_6_05 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				2,
-			},
-		},
-	},
+				2
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_7_01 = {
 	{
@@ -10476,9 +10476,9 @@ HordeCompositions.plaza_wave_7_01 = {
 				"skaven_storm_vermin_commander",
 				1,
 				"skaven_slave",
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -10488,9 +10488,9 @@ HordeCompositions.plaza_wave_7_01 = {
 				"skaven_storm_vermin_commander",
 				1,
 				"skaven_slave",
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -10500,9 +10500,9 @@ HordeCompositions.plaza_wave_7_01 = {
 				"skaven_storm_vermin_commander",
 				1,
 				"skaven_slave",
-				20,
-			},
-		},
+				20
+			}
+		}
 	},
 	{
 		{
@@ -10512,9 +10512,9 @@ HordeCompositions.plaza_wave_7_01 = {
 				"skaven_storm_vermin_commander",
 				2,
 				"skaven_slave",
-				20,
-			},
-		},
+				20
+			}
+		}
 	},
 	{
 		{
@@ -10526,9 +10526,9 @@ HordeCompositions.plaza_wave_7_01 = {
 				"skaven_slave",
 				15,
 				"skaven_clan_rat",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -10540,9 +10540,9 @@ HordeCompositions.plaza_wave_7_01 = {
 				"skaven_slave",
 				15,
 				"skaven_clan_rat",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -10554,9 +10554,9 @@ HordeCompositions.plaza_wave_7_01 = {
 				"skaven_slave",
 				15,
 				"skaven_clan_rat",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -10566,10 +10566,10 @@ HordeCompositions.plaza_wave_7_01 = {
 				"skaven_storm_vermin_commander",
 				1,
 				"skaven_slave",
-				15,
-			},
-		},
-	},
+				15
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_7_02 = {
 	{
@@ -10578,9 +10578,9 @@ HordeCompositions.plaza_wave_7_02 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				30,
-			},
-		},
+				30
+			}
+		}
 	},
 	{
 		{
@@ -10590,9 +10590,9 @@ HordeCompositions.plaza_wave_7_02 = {
 				"skaven_slave",
 				25,
 				"skaven_clan_rat",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -10602,9 +10602,9 @@ HordeCompositions.plaza_wave_7_02 = {
 				"skaven_slave",
 				30,
 				"skaven_clan_rat",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -10614,9 +10614,9 @@ HordeCompositions.plaza_wave_7_02 = {
 				"skaven_slave",
 				35,
 				"skaven_clan_rat",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -10628,9 +10628,9 @@ HordeCompositions.plaza_wave_7_02 = {
 				"skaven_clan_rat",
 				15,
 				"skaven_clan_rat_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -10642,9 +10642,9 @@ HordeCompositions.plaza_wave_7_02 = {
 				"skaven_clan_rat",
 				15,
 				"skaven_clan_rat_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -10656,9 +10656,9 @@ HordeCompositions.plaza_wave_7_02 = {
 				"skaven_clan_rat",
 				15,
 				"skaven_clan_rat_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -10668,10 +10668,10 @@ HordeCompositions.plaza_wave_7_02 = {
 				"skaven_slave",
 				25,
 				"skaven_clan_rat",
-				6,
-			},
-		},
-	},
+				6
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_7_03 = {
 	{
@@ -10680,9 +10680,9 @@ HordeCompositions.plaza_wave_7_03 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -10690,9 +10690,9 @@ HordeCompositions.plaza_wave_7_03 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -10700,9 +10700,9 @@ HordeCompositions.plaza_wave_7_03 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -10710,9 +10710,9 @@ HordeCompositions.plaza_wave_7_03 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -10720,9 +10720,9 @@ HordeCompositions.plaza_wave_7_03 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -10730,9 +10730,9 @@ HordeCompositions.plaza_wave_7_03 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -10740,9 +10740,9 @@ HordeCompositions.plaza_wave_7_03 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -10750,10 +10750,10 @@ HordeCompositions.plaza_wave_7_03 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				5,
-			},
-		},
-	},
+				5
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_7_04 = {
 	{
@@ -10764,9 +10764,9 @@ HordeCompositions.plaza_wave_7_04 = {
 				"skaven_clan_rat_with_shield",
 				8,
 				"skaven_storm_vermin_commander",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -10776,9 +10776,9 @@ HordeCompositions.plaza_wave_7_04 = {
 				"skaven_clan_rat_with_shield",
 				8,
 				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -10788,9 +10788,9 @@ HordeCompositions.plaza_wave_7_04 = {
 				"skaven_clan_rat_with_shield",
 				10,
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -10800,9 +10800,9 @@ HordeCompositions.plaza_wave_7_04 = {
 				"skaven_clan_rat_with_shield",
 				10,
 				"skaven_storm_vermin_commander",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -10812,9 +10812,9 @@ HordeCompositions.plaza_wave_7_04 = {
 				"skaven_clan_rat_with_shield",
 				11,
 				"skaven_storm_vermin_commander",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -10824,9 +10824,9 @@ HordeCompositions.plaza_wave_7_04 = {
 				"skaven_clan_rat_with_shield",
 				11,
 				"skaven_storm_vermin_commander",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -10836,9 +10836,9 @@ HordeCompositions.plaza_wave_7_04 = {
 				"skaven_clan_rat_with_shield",
 				11,
 				"skaven_storm_vermin_commander",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -10848,10 +10848,10 @@ HordeCompositions.plaza_wave_7_04 = {
 				"skaven_clan_rat_with_shield",
 				8,
 				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
-	},
+				3
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_7_05 = {
 	{
@@ -10860,9 +10860,9 @@ HordeCompositions.plaza_wave_7_05 = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -10870,9 +10870,9 @@ HordeCompositions.plaza_wave_7_05 = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -10880,9 +10880,9 @@ HordeCompositions.plaza_wave_7_05 = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				7,
-			},
-		},
+				7
+			}
+		}
 	},
 	{
 		{
@@ -10890,21 +10890,9 @@ HordeCompositions.plaza_wave_7_05 = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				10,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"chaos_warrior",
-				12,
-				"chaos_raider",
-				1,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -10914,9 +10902,9 @@ HordeCompositions.plaza_wave_7_05 = {
 				"chaos_warrior",
 				12,
 				"chaos_raider",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -10926,9 +10914,9 @@ HordeCompositions.plaza_wave_7_05 = {
 				"chaos_warrior",
 				12,
 				"chaos_raider",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -10936,10 +10924,22 @@ HordeCompositions.plaza_wave_7_05 = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				4,
-			},
-		},
+				12,
+				"chaos_raider",
+				1
+			}
+		}
 	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"chaos_warrior",
+				4
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_8_01 = {
 	{
@@ -10950,9 +10950,9 @@ HordeCompositions.plaza_wave_8_01 = {
 				"chaos_fanatic",
 				15,
 				"chaos_warrior",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -10964,9 +10964,9 @@ HordeCompositions.plaza_wave_8_01 = {
 				"chaos_raider",
 				1,
 				"chaos_warrior",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -10978,9 +10978,9 @@ HordeCompositions.plaza_wave_8_01 = {
 				"chaos_raider",
 				2,
 				"chaos_warrior",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -10992,9 +10992,9 @@ HordeCompositions.plaza_wave_8_01 = {
 				"chaos_raider",
 				2,
 				"chaos_warrior",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -11006,9 +11006,9 @@ HordeCompositions.plaza_wave_8_01 = {
 				"chaos_raider",
 				2,
 				"chaos_warrior",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -11020,9 +11020,9 @@ HordeCompositions.plaza_wave_8_01 = {
 				"chaos_raider",
 				2,
 				"chaos_warrior",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -11034,9 +11034,9 @@ HordeCompositions.plaza_wave_8_01 = {
 				"chaos_raider",
 				2,
 				"chaos_warrior",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -11048,10 +11048,10 @@ HordeCompositions.plaza_wave_8_01 = {
 				"chaos_raider",
 				1,
 				"chaos_warrior",
-				1,
-			},
-		},
-	},
+				1
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_8_02 = {
 	{
@@ -11060,9 +11060,9 @@ HordeCompositions.plaza_wave_8_02 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				20,
-			},
-		},
+				20
+			}
+		}
 	},
 	{
 		{
@@ -11072,9 +11072,9 @@ HordeCompositions.plaza_wave_8_02 = {
 				"skaven_slave",
 				20,
 				"skaven_clan_rat",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -11084,9 +11084,9 @@ HordeCompositions.plaza_wave_8_02 = {
 				"skaven_slave",
 				22,
 				"skaven_clan_rat",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -11096,64 +11096,64 @@ HordeCompositions.plaza_wave_8_02 = {
 				"skaven_slave",
 				15,
 				"skaven_clan_rat",
+				20
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"skaven_slave",
+				12,
+				"skaven_clan_rat",
+				24,
+				"skaven_clan_rat_with_shield",
+				4
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"skaven_slave",
+				12,
+				"skaven_clan_rat",
+				24,
+				"skaven_clan_rat_with_shield",
+				4
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"skaven_slave",
+				12,
+				"skaven_clan_rat",
+				24,
+				"skaven_clan_rat_with_shield",
+				4
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"skaven_slave",
 				20,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"skaven_slave",
-				12,
 				"skaven_clan_rat",
-				24,
-				"skaven_clan_rat_with_shield",
-				4,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"skaven_slave",
-				12,
-				"skaven_clan_rat",
-				24,
-				"skaven_clan_rat_with_shield",
-				4,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"skaven_slave",
-				12,
-				"skaven_clan_rat",
-				24,
-				"skaven_clan_rat_with_shield",
-				4,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"skaven_slave",
-				20,
-				"skaven_clan_rat",
-				8,
-			},
-		},
-	},
+				8
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_8_03 = {
 	{
@@ -11164,9 +11164,9 @@ HordeCompositions.plaza_wave_8_03 = {
 				"chaos_marauder",
 				4,
 				"chaos_raider",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -11176,9 +11176,9 @@ HordeCompositions.plaza_wave_8_03 = {
 				"chaos_berzerker",
 				2,
 				"chaos_raider",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -11188,9 +11188,9 @@ HordeCompositions.plaza_wave_8_03 = {
 				"chaos_berzerker",
 				4,
 				"chaos_raider",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -11200,9 +11200,9 @@ HordeCompositions.plaza_wave_8_03 = {
 				"chaos_berzerker",
 				6,
 				"chaos_raider",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -11214,9 +11214,9 @@ HordeCompositions.plaza_wave_8_03 = {
 				"chaos_raider",
 				4,
 				"chaos_marauder",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -11228,9 +11228,9 @@ HordeCompositions.plaza_wave_8_03 = {
 				"chaos_raider",
 				4,
 				"chaos_marauder",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -11242,9 +11242,9 @@ HordeCompositions.plaza_wave_8_03 = {
 				"chaos_raider",
 				4,
 				"chaos_marauder",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -11254,10 +11254,10 @@ HordeCompositions.plaza_wave_8_03 = {
 				"chaos_berzerker",
 				2,
 				"chaos_raider",
-				2,
-			},
-		},
-	},
+				2
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_8_04 = {
 	{
@@ -11266,9 +11266,9 @@ HordeCompositions.plaza_wave_8_04 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -11278,9 +11278,9 @@ HordeCompositions.plaza_wave_8_04 = {
 				"skaven_storm_vermin_commander",
 				5,
 				"skaven_storm_vermin_with_shield",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -11290,9 +11290,9 @@ HordeCompositions.plaza_wave_8_04 = {
 				"skaven_storm_vermin_commander",
 				6,
 				"skaven_storm_vermin_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -11302,9 +11302,9 @@ HordeCompositions.plaza_wave_8_04 = {
 				"skaven_storm_vermin_commander",
 				8,
 				"skaven_storm_vermin_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -11314,9 +11314,9 @@ HordeCompositions.plaza_wave_8_04 = {
 				"skaven_storm_vermin_commander",
 				8,
 				"skaven_storm_vermin_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -11326,9 +11326,9 @@ HordeCompositions.plaza_wave_8_04 = {
 				"skaven_storm_vermin_commander",
 				8,
 				"skaven_storm_vermin_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -11338,9 +11338,9 @@ HordeCompositions.plaza_wave_8_04 = {
 				"skaven_storm_vermin_commander",
 				8,
 				"skaven_storm_vermin_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -11350,10 +11350,10 @@ HordeCompositions.plaza_wave_8_04 = {
 				"skaven_storm_vermin_commander",
 				5,
 				"skaven_storm_vermin_with_shield",
-				1,
-			},
-		},
-	},
+				1
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_8_05 = {
 	{
@@ -11362,9 +11362,9 @@ HordeCompositions.plaza_wave_8_05 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				30,
-			},
-		},
+				30
+			}
+		}
 	},
 	{
 		{
@@ -11372,9 +11372,9 @@ HordeCompositions.plaza_wave_8_05 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				32,
-			},
-		},
+				32
+			}
+		}
 	},
 	{
 		{
@@ -11382,9 +11382,9 @@ HordeCompositions.plaza_wave_8_05 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				38,
-			},
-		},
+				38
+			}
+		}
 	},
 	{
 		{
@@ -11392,21 +11392,9 @@ HordeCompositions.plaza_wave_8_05 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				45,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"skaven_slave",
-				37,
-				"skaven_clan_rat",
-				10,
-			},
-		},
+				45
+			}
+		}
 	},
 	{
 		{
@@ -11416,9 +11404,9 @@ HordeCompositions.plaza_wave_8_05 = {
 				"skaven_slave",
 				37,
 				"skaven_clan_rat",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -11428,9 +11416,9 @@ HordeCompositions.plaza_wave_8_05 = {
 				"skaven_slave",
 				37,
 				"skaven_clan_rat",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -11438,10 +11426,22 @@ HordeCompositions.plaza_wave_8_05 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				32,
-			},
-		},
+				37,
+				"skaven_clan_rat",
+				10
+			}
+		}
 	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"skaven_slave",
+				32
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_8_06 = {
 	{
@@ -11452,9 +11452,9 @@ HordeCompositions.plaza_wave_8_06 = {
 				"chaos_marauder",
 				4,
 				"chaos_raider",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -11466,9 +11466,9 @@ HordeCompositions.plaza_wave_8_06 = {
 				"chaos_raider",
 				1,
 				"chaos_marauder_with_shield",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -11480,9 +11480,9 @@ HordeCompositions.plaza_wave_8_06 = {
 				"chaos_raider",
 				2,
 				"chaos_marauder_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -11494,9 +11494,9 @@ HordeCompositions.plaza_wave_8_06 = {
 				"chaos_raider",
 				4,
 				"chaos_marauder_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -11508,9 +11508,9 @@ HordeCompositions.plaza_wave_8_06 = {
 				"chaos_raider",
 				6,
 				"chaos_marauder_with_shield",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -11522,9 +11522,9 @@ HordeCompositions.plaza_wave_8_06 = {
 				"chaos_raider",
 				6,
 				"chaos_marauder_with_shield",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -11536,9 +11536,9 @@ HordeCompositions.plaza_wave_8_06 = {
 				"chaos_raider",
 				6,
 				"chaos_marauder_with_shield",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -11550,10 +11550,10 @@ HordeCompositions.plaza_wave_8_06 = {
 				"chaos_raider",
 				1,
 				"chaos_marauder_with_shield",
-				1,
-			},
-		},
-	},
+				1
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_8_07 = {
 	{
@@ -11562,9 +11562,9 @@ HordeCompositions.plaza_wave_8_07 = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -11572,9 +11572,9 @@ HordeCompositions.plaza_wave_8_07 = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -11582,9 +11582,9 @@ HordeCompositions.plaza_wave_8_07 = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -11592,9 +11592,9 @@ HordeCompositions.plaza_wave_8_07 = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -11602,9 +11602,9 @@ HordeCompositions.plaza_wave_8_07 = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -11612,9 +11612,9 @@ HordeCompositions.plaza_wave_8_07 = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -11622,9 +11622,9 @@ HordeCompositions.plaza_wave_8_07 = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -11632,10 +11632,10 @@ HordeCompositions.plaza_wave_8_07 = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				3,
-			},
-		},
-	},
+				3
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_8_08 = {
 	{
@@ -11644,9 +11644,9 @@ HordeCompositions.plaza_wave_8_08 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -11654,9 +11654,9 @@ HordeCompositions.plaza_wave_8_08 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -11664,9 +11664,9 @@ HordeCompositions.plaza_wave_8_08 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -11674,9 +11674,9 @@ HordeCompositions.plaza_wave_8_08 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -11684,9 +11684,9 @@ HordeCompositions.plaza_wave_8_08 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				7,
-			},
-		},
+				7
+			}
+		}
 	},
 	{
 		{
@@ -11694,9 +11694,9 @@ HordeCompositions.plaza_wave_8_08 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				7,
-			},
-		},
+				7
+			}
+		}
 	},
 	{
 		{
@@ -11704,9 +11704,9 @@ HordeCompositions.plaza_wave_8_08 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				7,
-			},
-		},
+				7
+			}
+		}
 	},
 	{
 		{
@@ -11714,10 +11714,10 @@ HordeCompositions.plaza_wave_8_08 = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				2,
-			},
-		},
-	},
+				2
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_8_09 = {
 	{
@@ -11726,9 +11726,9 @@ HordeCompositions.plaza_wave_8_09 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -11736,9 +11736,9 @@ HordeCompositions.plaza_wave_8_09 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -11746,9 +11746,9 @@ HordeCompositions.plaza_wave_8_09 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -11756,21 +11756,9 @@ HordeCompositions.plaza_wave_8_09 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				8,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"skaven_storm_vermin_commander",
-				8,
-				"skaven_storm_vermin_with_shield",
-				2,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -11780,9 +11768,9 @@ HordeCompositions.plaza_wave_8_09 = {
 				"skaven_storm_vermin_commander",
 				8,
 				"skaven_storm_vermin_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -11792,9 +11780,9 @@ HordeCompositions.plaza_wave_8_09 = {
 				"skaven_storm_vermin_commander",
 				8,
 				"skaven_storm_vermin_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -11802,10 +11790,22 @@ HordeCompositions.plaza_wave_8_09 = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				8,
+				"skaven_storm_vermin_with_shield",
+				2
+			}
+		}
 	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"skaven_storm_vermin_commander",
+				4
+			}
+		}
+	}
 }
 HordeCompositions.plaza_wave_8_10 = {
 	{
@@ -11814,9 +11814,9 @@ HordeCompositions.plaza_wave_8_10 = {
 			weight = 1,
 			breeds = {
 				"chaos_marauder",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -11824,9 +11824,9 @@ HordeCompositions.plaza_wave_8_10 = {
 			weight = 1,
 			breeds = {
 				"chaos_marauder",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -11834,9 +11834,9 @@ HordeCompositions.plaza_wave_8_10 = {
 			weight = 1,
 			breeds = {
 				"chaos_marauder",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -11844,9 +11844,9 @@ HordeCompositions.plaza_wave_8_10 = {
 			weight = 1,
 			breeds = {
 				"chaos_marauder",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -11854,9 +11854,9 @@ HordeCompositions.plaza_wave_8_10 = {
 			weight = 1,
 			breeds = {
 				"chaos_marauder",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -11864,9 +11864,9 @@ HordeCompositions.plaza_wave_8_10 = {
 			weight = 1,
 			breeds = {
 				"chaos_marauder",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -11874,9 +11874,9 @@ HordeCompositions.plaza_wave_8_10 = {
 			weight = 1,
 			breeds = {
 				"chaos_marauder",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -11884,10 +11884,10 @@ HordeCompositions.plaza_wave_8_10 = {
 			weight = 1,
 			breeds = {
 				"chaos_marauder",
-				3,
-			},
-		},
-	},
+				3
+			}
+		}
+	}
 }
 HordeCompositions.performance_test = {
 	{
@@ -11898,15 +11898,15 @@ HordeCompositions.performance_test = {
 				"skaven_slave",
 				{
 					15,
-					15,
+					15
 				},
 				"skaven_clan_rat",
 				{
 					15,
-					15,
-				},
-			},
-		},
+					15
+				}
+			}
+		}
 	},
 	{
 		{
@@ -11916,15 +11916,15 @@ HordeCompositions.performance_test = {
 				"skaven_slave",
 				{
 					15,
-					15,
+					15
 				},
 				"skaven_clan_rat",
 				{
 					15,
-					15,
-				},
-			},
-		},
+					15
+				}
+			}
+		}
 	},
 	{
 		{
@@ -11934,15 +11934,15 @@ HordeCompositions.performance_test = {
 				"skaven_slave",
 				{
 					15,
-					15,
+					15
 				},
 				"skaven_clan_rat",
 				{
 					15,
-					15,
-				},
-			},
-		},
+					15
+				}
+			}
+		}
 	},
 	{
 		{
@@ -11952,15 +11952,15 @@ HordeCompositions.performance_test = {
 				"skaven_slave",
 				{
 					15,
-					15,
+					15
 				},
 				"skaven_clan_rat",
 				{
 					15,
-					15,
-				},
-			},
-		},
+					15
+				}
+			}
+		}
 	},
 	{
 		{
@@ -11970,15 +11970,15 @@ HordeCompositions.performance_test = {
 				"skaven_slave",
 				{
 					15,
-					15,
+					15
 				},
 				"skaven_clan_rat",
 				{
 					15,
-					15,
-				},
-			},
-		},
+					15
+				}
+			}
+		}
 	},
 	{
 		{
@@ -11988,15 +11988,15 @@ HordeCompositions.performance_test = {
 				"skaven_slave",
 				{
 					15,
-					15,
+					15
 				},
 				"skaven_clan_rat",
 				{
 					15,
-					15,
-				},
-			},
-		},
+					15
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12006,15 +12006,15 @@ HordeCompositions.performance_test = {
 				"skaven_slave",
 				{
 					15,
-					15,
+					15
 				},
 				"skaven_clan_rat",
 				{
 					15,
-					15,
-				},
-			},
-		},
+					15
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12024,16 +12024,16 @@ HordeCompositions.performance_test = {
 				"skaven_slave",
 				{
 					15,
-					15,
+					15
 				},
 				"skaven_clan_rat",
 				{
 					15,
-					15,
-				},
-			},
-		},
-	},
+					15
+				}
+			}
+		}
+	}
 }
 HordeCompositions.stronghold_boss_event_defensive = {
 	{
@@ -12044,9 +12044,9 @@ HordeCompositions.stronghold_boss_event_defensive = {
 				"skaven_slave",
 				{
 					6,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -12055,10 +12055,10 @@ HordeCompositions.stronghold_boss_event_defensive = {
 				"skaven_clan_rat",
 				{
 					3,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12068,9 +12068,9 @@ HordeCompositions.stronghold_boss_event_defensive = {
 				"skaven_slave",
 				{
 					10,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -12079,15 +12079,15 @@ HordeCompositions.stronghold_boss_event_defensive = {
 				"skaven_clan_rat",
 				{
 					6,
-					8,
+					8
 				},
 				"skaven_plague_monk",
 				{
 					1,
-					1,
-				},
-			},
-		},
+					1
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12097,14 +12097,14 @@ HordeCompositions.stronghold_boss_event_defensive = {
 				"skaven_slave",
 				{
 					12,
-					15,
+					15
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -12113,10 +12113,10 @@ HordeCompositions.stronghold_boss_event_defensive = {
 				"skaven_clan_rat",
 				{
 					10,
-					12,
-				},
-			},
-		},
+					12
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12126,14 +12126,14 @@ HordeCompositions.stronghold_boss_event_defensive = {
 				"skaven_slave",
 				{
 					12,
-					14,
+					14
 				},
 				"skaven_clan_rat",
 				{
 					8,
-					10,
-				},
-			},
+					10
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -12142,10 +12142,10 @@ HordeCompositions.stronghold_boss_event_defensive = {
 				"skaven_clan_rat",
 				{
 					12,
-					14,
-				},
-			},
-		},
+					14
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12155,14 +12155,14 @@ HordeCompositions.stronghold_boss_event_defensive = {
 				"skaven_slave",
 				{
 					12,
-					14,
+					14
 				},
 				"skaven_clan_rat",
 				{
 					8,
-					10,
-				},
-			},
+					10
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -12171,15 +12171,15 @@ HordeCompositions.stronghold_boss_event_defensive = {
 				"skaven_clan_rat",
 				{
 					12,
-					14,
+					14
 				},
 				"skaven_storm_vermin_commander",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12189,14 +12189,14 @@ HordeCompositions.stronghold_boss_event_defensive = {
 				"skaven_slave",
 				{
 					12,
-					14,
+					14
 				},
 				"skaven_clan_rat",
 				{
 					8,
-					10,
-				},
-			},
+					10
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -12205,15 +12205,15 @@ HordeCompositions.stronghold_boss_event_defensive = {
 				"skaven_clan_rat",
 				{
 					12,
-					14,
+					14
 				},
 				"skaven_storm_vermin_commander",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12223,14 +12223,14 @@ HordeCompositions.stronghold_boss_event_defensive = {
 				"skaven_slave",
 				{
 					12,
-					14,
+					14
 				},
 				"skaven_clan_rat",
 				{
 					8,
-					10,
-				},
-			},
+					10
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -12239,15 +12239,15 @@ HordeCompositions.stronghold_boss_event_defensive = {
 				"skaven_clan_rat",
 				{
 					12,
-					14,
+					14
 				},
 				"skaven_storm_vermin_commander",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12257,9 +12257,9 @@ HordeCompositions.stronghold_boss_event_defensive = {
 				"skaven_slave",
 				{
 					10,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -12268,16 +12268,16 @@ HordeCompositions.stronghold_boss_event_defensive = {
 				"skaven_clan_rat",
 				{
 					6,
-					8,
+					8
 				},
 				"skaven_plague_monk",
 				{
 					1,
-					1,
-				},
-			},
-		},
-	},
+					1
+				}
+			}
+		}
+	}
 }
 HordeCompositions.stronghold_boss_trickle = {
 	{
@@ -12288,10 +12288,10 @@ HordeCompositions.stronghold_boss_trickle = {
 				"skaven_slave",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12301,10 +12301,10 @@ HordeCompositions.stronghold_boss_trickle = {
 				"skaven_slave",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12314,15 +12314,15 @@ HordeCompositions.stronghold_boss_trickle = {
 				"skaven_slave",
 				{
 					5,
-					6,
+					6
 				},
 				"skaven_clan_rat",
 				{
 					1,
-					2,
-				},
-			},
-		},
+					2
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12332,15 +12332,15 @@ HordeCompositions.stronghold_boss_trickle = {
 				"skaven_slave",
 				{
 					5,
-					6,
+					6
 				},
 				"skaven_clan_rat",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12350,14 +12350,14 @@ HordeCompositions.stronghold_boss_trickle = {
 				"skaven_slave",
 				{
 					8,
-					10,
+					10
 				},
 				"skaven_clan_rat",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -12366,15 +12366,15 @@ HordeCompositions.stronghold_boss_trickle = {
 				"skaven_slave",
 				{
 					8,
-					10,
+					10
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12384,14 +12384,14 @@ HordeCompositions.stronghold_boss_trickle = {
 				"skaven_slave",
 				{
 					8,
-					10,
+					10
 				},
 				"skaven_clan_rat",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -12400,15 +12400,15 @@ HordeCompositions.stronghold_boss_trickle = {
 				"skaven_slave",
 				{
 					8,
-					10,
+					10
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12418,14 +12418,14 @@ HordeCompositions.stronghold_boss_trickle = {
 				"skaven_slave",
 				{
 					8,
-					10,
+					10
 				},
 				"skaven_clan_rat",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -12434,15 +12434,15 @@ HordeCompositions.stronghold_boss_trickle = {
 				"skaven_slave",
 				{
 					8,
-					10,
+					10
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12452,11 +12452,11 @@ HordeCompositions.stronghold_boss_trickle = {
 				"skaven_slave",
 				{
 					5,
-					6,
-				},
-			},
-		},
-	},
+					6
+				}
+			}
+		}
+	}
 }
 HordeCompositions.warcamp_boss_event_trickle = {
 	{
@@ -12467,9 +12467,9 @@ HordeCompositions.warcamp_boss_event_trickle = {
 				"chaos_marauder",
 				{
 					3,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -12478,15 +12478,15 @@ HordeCompositions.warcamp_boss_event_trickle = {
 				"chaos_marauder",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_raider",
 				{
 					1,
-					1,
-				},
-			},
-		},
+					1
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12496,9 +12496,9 @@ HordeCompositions.warcamp_boss_event_trickle = {
 				"chaos_marauder",
 				{
 					3,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -12507,15 +12507,15 @@ HordeCompositions.warcamp_boss_event_trickle = {
 				"chaos_marauder",
 				{
 					3,
-					5,
+					5
 				},
 				"chaos_raider",
 				{
 					1,
-					1,
-				},
-			},
-		},
+					1
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12525,9 +12525,9 @@ HordeCompositions.warcamp_boss_event_trickle = {
 				"chaos_marauder",
 				{
 					4,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -12536,15 +12536,15 @@ HordeCompositions.warcamp_boss_event_trickle = {
 				"chaos_marauder",
 				{
 					4,
-					6,
+					6
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12554,9 +12554,9 @@ HordeCompositions.warcamp_boss_event_trickle = {
 				"chaos_marauder",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -12565,15 +12565,15 @@ HordeCompositions.warcamp_boss_event_trickle = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12583,14 +12583,14 @@ HordeCompositions.warcamp_boss_event_trickle = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -12599,15 +12599,15 @@ HordeCompositions.warcamp_boss_event_trickle = {
 				"chaos_marauder",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12617,14 +12617,14 @@ HordeCompositions.warcamp_boss_event_trickle = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -12633,15 +12633,15 @@ HordeCompositions.warcamp_boss_event_trickle = {
 				"chaos_marauder",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12651,14 +12651,14 @@ HordeCompositions.warcamp_boss_event_trickle = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -12667,15 +12667,15 @@ HordeCompositions.warcamp_boss_event_trickle = {
 				"chaos_marauder",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12685,9 +12685,9 @@ HordeCompositions.warcamp_boss_event_trickle = {
 				"chaos_marauder",
 				{
 					3,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -12696,16 +12696,16 @@ HordeCompositions.warcamp_boss_event_trickle = {
 				"chaos_marauder",
 				{
 					3,
-					5,
+					5
 				},
 				"chaos_raider",
 				{
 					1,
-					1,
-				},
-			},
-		},
-	},
+					1
+				}
+			}
+		}
+	}
 }
 HordeCompositions.warcamp_boss_event_defensive = {
 	{
@@ -12716,14 +12716,14 @@ HordeCompositions.warcamp_boss_event_defensive = {
 				"chaos_marauder",
 				{
 					4,
-					6,
+					6
 				},
 				"chaos_raider",
 				{
 					1,
-					2,
-				},
-			},
+					2
+				}
+			}
 		},
 		{
 			name = "horde",
@@ -12732,14 +12732,14 @@ HordeCompositions.warcamp_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					8,
-					10,
+					10
 				},
 				"chaos_marauder",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -12748,15 +12748,15 @@ HordeCompositions.warcamp_boss_event_defensive = {
 				"chaos_marauder",
 				{
 					4,
-					6,
+					6
 				},
 				"chaos_berzerker",
 				{
 					1,
-					2,
-				},
-			},
-		},
+					2
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12766,19 +12766,19 @@ HordeCompositions.warcamp_boss_event_defensive = {
 				"chaos_marauder",
 				{
 					4,
-					6,
+					6
 				},
 				"chaos_marauder",
 				{
 					3,
-					5,
+					5
 				},
 				"chaos_raider",
 				{
 					1,
-					2,
-				},
-			},
+					2
+				}
+			}
 		},
 		{
 			name = "horde",
@@ -12787,14 +12787,14 @@ HordeCompositions.warcamp_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_marauder",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -12803,15 +12803,15 @@ HordeCompositions.warcamp_boss_event_defensive = {
 				"chaos_marauder",
 				{
 					4,
-					6,
+					6
 				},
 				"chaos_berzerker",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12821,19 +12821,19 @@ HordeCompositions.warcamp_boss_event_defensive = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "horde",
@@ -12842,14 +12842,14 @@ HordeCompositions.warcamp_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					12,
-					15,
+					15
 				},
 				"chaos_marauder",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -12858,14 +12858,14 @@ HordeCompositions.warcamp_boss_event_defensive = {
 				"chaos_marauder",
 				{
 					4,
-					6,
+					6
 				},
 				"chaos_berzerker",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -12876,10 +12876,10 @@ HordeCompositions.warcamp_boss_event_defensive = {
 				"chaos_berzerker",
 				{
 					1,
-					2,
-				},
-			},
-		},
+					2
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12889,19 +12889,19 @@ HordeCompositions.warcamp_boss_event_defensive = {
 				"chaos_marauder",
 				{
 					6,
-					7,
+					7
 				},
 				"chaos_marauder",
 				{
 					6,
-					7,
+					7
 				},
 				"chaos_warrior",
 				{
 					1,
-					2,
-				},
-			},
+					2
+				}
+			}
 		},
 		{
 			name = "horde",
@@ -12910,14 +12910,14 @@ HordeCompositions.warcamp_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					16,
-					18,
+					18
 				},
 				"chaos_marauder",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -12928,10 +12928,10 @@ HordeCompositions.warcamp_boss_event_defensive = {
 				"chaos_marauder",
 				{
 					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -12941,19 +12941,19 @@ HordeCompositions.warcamp_boss_event_defensive = {
 				"chaos_marauder_with_shield",
 				{
 					6,
-					7,
+					7
 				},
 				"chaos_marauder",
 				{
 					8,
-					10,
+					10
 				},
 				"chaos_warrior",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
 		{
 			name = "horde",
@@ -12962,19 +12962,19 @@ HordeCompositions.warcamp_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					16,
-					18,
+					18
 				},
 				"chaos_marauder",
 				{
 					8,
-					10,
+					10
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -12985,15 +12985,15 @@ HordeCompositions.warcamp_boss_event_defensive = {
 				"chaos_marauder",
 				{
 					6,
-					8,
+					8
 				},
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -13003,19 +13003,19 @@ HordeCompositions.warcamp_boss_event_defensive = {
 				"chaos_marauder_with_shield",
 				{
 					6,
-					7,
+					7
 				},
 				"chaos_marauder",
 				{
 					8,
-					10,
+					10
 				},
 				"chaos_warrior",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
 		{
 			name = "horde",
@@ -13024,19 +13024,19 @@ HordeCompositions.warcamp_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					16,
-					18,
+					18
 				},
 				"chaos_marauder",
 				{
 					8,
-					10,
+					10
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -13047,15 +13047,15 @@ HordeCompositions.warcamp_boss_event_defensive = {
 				"chaos_marauder",
 				{
 					6,
-					8,
+					8
 				},
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -13065,19 +13065,19 @@ HordeCompositions.warcamp_boss_event_defensive = {
 				"chaos_marauder_with_shield",
 				{
 					6,
-					7,
+					7
 				},
 				"chaos_marauder",
 				{
 					8,
-					10,
+					10
 				},
 				"chaos_warrior",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
 		{
 			name = "horde",
@@ -13086,19 +13086,19 @@ HordeCompositions.warcamp_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					16,
-					18,
+					18
 				},
 				"chaos_marauder",
 				{
 					8,
-					10,
+					10
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -13109,15 +13109,15 @@ HordeCompositions.warcamp_boss_event_defensive = {
 				"chaos_marauder",
 				{
 					6,
-					8,
+					8
 				},
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -13127,19 +13127,19 @@ HordeCompositions.warcamp_boss_event_defensive = {
 				"chaos_marauder",
 				{
 					4,
-					6,
+					6
 				},
 				"chaos_marauder",
 				{
 					3,
-					5,
+					5
 				},
 				"chaos_raider",
 				{
 					1,
-					2,
-				},
-			},
+					2
+				}
+			}
 		},
 		{
 			name = "horde",
@@ -13148,14 +13148,14 @@ HordeCompositions.warcamp_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_marauder",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -13164,16 +13164,16 @@ HordeCompositions.warcamp_boss_event_defensive = {
 				"chaos_marauder",
 				{
 					4,
-					6,
+					6
 				},
 				"chaos_berzerker",
 				{
 					2,
-					3,
-				},
-			},
-		},
-	},
+					3
+				}
+			}
+		}
+	}
 }
 HordeCompositions.skittergate_boss_event_defensive = {
 	{
@@ -13184,14 +13184,14 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_clan_rat_with_shield",
 				{
 					1,
-					2,
+					2
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -13200,10 +13200,10 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_slave",
 				{
 					12,
-					14,
-				},
-			},
-		},
+					14
+				}
+			}
+		}
 	},
 	{
 		{
@@ -13213,14 +13213,14 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_clan_rat_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_clan_rat",
 				{
 					8,
-					10,
-				},
-			},
+					10
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -13229,9 +13229,9 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_slave",
 				{
 					15,
-					20,
-				},
-			},
+					20
+				}
+			}
 		},
 		{
 			name = "stormvermin",
@@ -13240,14 +13240,14 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_storm_vermin",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_clan_rat",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "berzerkers",
@@ -13256,15 +13256,15 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_plague_monk",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_clan_rat",
 				{
 					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -13274,14 +13274,14 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_clan_rat",
 				{
 					10,
-					12,
+					12
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -13290,9 +13290,9 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_slave",
 				{
 					20,
-					25,
-				},
-			},
+					25
+				}
+			}
 		},
 		{
 			name = "berzerkers",
@@ -13301,14 +13301,14 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_plague_monk",
 				{
 					3,
-					4,
+					4
 				},
 				"skaven_clan_rat",
 				{
 					8,
-					10,
-				},
-			},
+					10
+				}
+			}
 		},
 		{
 			name = "stormvermin",
@@ -13317,14 +13317,14 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_storm_vermin",
 				{
 					3,
-					4,
+					4
 				},
 				"skaven_clan_rat",
 				{
 					8,
-					10,
-				},
-			},
+					10
+				}
+			}
 		},
 		{
 			name = "shield_vermins",
@@ -13333,15 +13333,15 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_storm_vermin_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					8,
-					10,
-				},
-			},
-		},
+					10
+				}
+			}
+		}
 	},
 	{
 		{
@@ -13351,14 +13351,14 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_clan_rat",
 				{
 					10,
-					12,
+					12
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					3,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -13367,9 +13367,9 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_slave",
 				{
 					25,
-					30,
-				},
-			},
+					30
+				}
+			}
 		},
 		{
 			name = "berzerkers",
@@ -13380,9 +13380,9 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_clan_rat",
 				{
 					10,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		{
 			name = "shield_vermins",
@@ -13391,14 +13391,14 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_storm_vermin_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					8,
-					10,
-				},
-			},
+					10
+				}
+			}
 		},
 		{
 			name = "stormvermin",
@@ -13409,10 +13409,10 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_clan_rat",
 				{
 					8,
-					10,
-				},
-			},
-		},
+					10
+				}
+			}
+		}
 	},
 	{
 		{
@@ -13422,14 +13422,14 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_clan_rat",
 				{
 					14,
-					16,
+					16
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					4,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -13438,9 +13438,9 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_slave",
 				{
 					30,
-					35,
-				},
-			},
+					35
+				}
+			}
 		},
 		{
 			name = "berzerkers",
@@ -13451,9 +13451,9 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_clan_rat",
 				{
 					10,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		{
 			name = "shield_vermins",
@@ -13462,14 +13462,14 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_storm_vermin_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					10,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		{
 			name = "stormvermin",
@@ -13480,10 +13480,10 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_clan_rat",
 				{
 					10,
-					12,
-				},
-			},
-		},
+					12
+				}
+			}
+		}
 	},
 	{
 		{
@@ -13493,14 +13493,14 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_clan_rat",
 				{
 					10,
-					12,
+					12
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					3,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -13509,9 +13509,9 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_slave",
 				{
 					25,
-					30,
-				},
-			},
+					30
+				}
+			}
 		},
 		{
 			name = "berzerkers",
@@ -13522,9 +13522,9 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_clan_rat",
 				{
 					10,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		{
 			name = "shield_vermins",
@@ -13533,14 +13533,14 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_storm_vermin_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					8,
-					10,
-				},
-			},
+					10
+				}
+			}
 		},
 		{
 			name = "stormvermin",
@@ -13551,10 +13551,10 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_clan_rat",
 				{
 					8,
-					10,
-				},
-			},
-		},
+					10
+				}
+			}
+		}
 	},
 	{
 		{
@@ -13564,14 +13564,14 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_clan_rat",
 				{
 					10,
-					12,
+					12
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					3,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -13580,9 +13580,9 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_slave",
 				{
 					25,
-					30,
-				},
-			},
+					30
+				}
+			}
 		},
 		{
 			name = "berzerkers",
@@ -13593,9 +13593,9 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_clan_rat",
 				{
 					10,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		{
 			name = "shield_vermins",
@@ -13604,14 +13604,14 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_storm_vermin_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					8,
-					10,
-				},
-			},
+					10
+				}
+			}
 		},
 		{
 			name = "stormvermin",
@@ -13622,10 +13622,10 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_clan_rat",
 				{
 					8,
-					10,
-				},
-			},
-		},
+					10
+				}
+			}
+		}
 	},
 	{
 		{
@@ -13635,14 +13635,14 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_clan_rat_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_clan_rat",
 				{
 					8,
-					10,
-				},
-			},
+					10
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -13651,9 +13651,9 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_slave",
 				{
 					15,
-					20,
-				},
-			},
+					20
+				}
+			}
 		},
 		{
 			name = "stormvermin",
@@ -13662,14 +13662,14 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_storm_vermin",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_clan_rat",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "berzerkers",
@@ -13678,16 +13678,16 @@ HordeCompositions.skittergate_boss_event_defensive = {
 				"skaven_plague_monk",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_clan_rat",
 				{
 					4,
-					5,
-				},
-			},
-		},
-	},
+					5
+				}
+			}
+		}
+	}
 }
 HordeCompositions.skittergate_grey_seer_trickle = {
 	{
@@ -13698,15 +13698,15 @@ HordeCompositions.skittergate_grey_seer_trickle = {
 				"skaven_slave",
 				{
 					6,
-					8,
+					8
 				},
 				"skaven_clan_rat",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -13716,15 +13716,15 @@ HordeCompositions.skittergate_grey_seer_trickle = {
 				"skaven_slave",
 				{
 					8,
-					10,
+					10
 				},
 				"skaven_clan_rat",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -13734,15 +13734,15 @@ HordeCompositions.skittergate_grey_seer_trickle = {
 				"skaven_slave",
 				{
 					8,
-					10,
+					10
 				},
 				"skaven_clan_rat",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -13752,14 +13752,14 @@ HordeCompositions.skittergate_grey_seer_trickle = {
 				"skaven_slave",
 				{
 					10,
-					12,
+					12
 				},
 				"skaven_clan_rat",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -13768,20 +13768,20 @@ HordeCompositions.skittergate_grey_seer_trickle = {
 				"skaven_slave",
 				{
 					8,
-					10,
+					10
 				},
 				"skaven_clan_rat",
 				{
 					5,
-					6,
+					6
 				},
 				"skaven_storm_vermin",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -13791,19 +13791,19 @@ HordeCompositions.skittergate_grey_seer_trickle = {
 				"skaven_slave",
 				{
 					12,
-					14,
+					14
 				},
 				"skaven_clan_rat",
 				{
 					8,
-					10,
+					10
 				},
 				"skaven_plague_monk",
 				{
 					1,
-					2,
-				},
-			},
+					2
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -13812,19 +13812,19 @@ HordeCompositions.skittergate_grey_seer_trickle = {
 				"skaven_slave",
 				{
 					8,
-					10,
+					10
 				},
 				"skaven_clan_rat",
 				{
 					5,
-					6,
+					6
 				},
 				"skaven_storm_vermin",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -13833,20 +13833,20 @@ HordeCompositions.skittergate_grey_seer_trickle = {
 				"skaven_slave",
 				{
 					8,
-					10,
+					10
 				},
 				"skaven_clan_rat",
 				{
 					5,
-					6,
+					6
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -13856,19 +13856,19 @@ HordeCompositions.skittergate_grey_seer_trickle = {
 				"skaven_slave",
 				{
 					12,
-					14,
+					14
 				},
 				"skaven_clan_rat",
 				{
 					8,
-					10,
+					10
 				},
 				"skaven_plague_monk",
 				{
 					1,
-					2,
-				},
-			},
+					2
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -13877,19 +13877,19 @@ HordeCompositions.skittergate_grey_seer_trickle = {
 				"skaven_slave",
 				{
 					8,
-					10,
+					10
 				},
 				"skaven_clan_rat",
 				{
 					5,
-					6,
+					6
 				},
 				"skaven_storm_vermin",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -13898,20 +13898,20 @@ HordeCompositions.skittergate_grey_seer_trickle = {
 				"skaven_slave",
 				{
 					8,
-					10,
+					10
 				},
 				"skaven_clan_rat",
 				{
 					5,
-					6,
+					6
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -13921,19 +13921,19 @@ HordeCompositions.skittergate_grey_seer_trickle = {
 				"skaven_slave",
 				{
 					12,
-					14,
+					14
 				},
 				"skaven_clan_rat",
 				{
 					8,
-					10,
+					10
 				},
 				"skaven_plague_monk",
 				{
 					1,
-					2,
-				},
-			},
+					2
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -13942,19 +13942,19 @@ HordeCompositions.skittergate_grey_seer_trickle = {
 				"skaven_slave",
 				{
 					8,
-					10,
+					10
 				},
 				"skaven_clan_rat",
 				{
 					5,
-					6,
+					6
 				},
 				"skaven_storm_vermin",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -13963,20 +13963,20 @@ HordeCompositions.skittergate_grey_seer_trickle = {
 				"skaven_slave",
 				{
 					8,
-					10,
+					10
 				},
 				"skaven_clan_rat",
 				{
 					5,
-					6,
+					6
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -13986,16 +13986,16 @@ HordeCompositions.skittergate_grey_seer_trickle = {
 				"skaven_slave",
 				{
 					8,
-					10,
+					10
 				},
 				"skaven_clan_rat",
 				{
 					5,
-					6,
-				},
-			},
-		},
-	},
+					6
+				}
+			}
+		}
+	}
 }
 HordeCompositions.sorcerer_boss_hit_extra = {
 	{
@@ -14006,10 +14006,10 @@ HordeCompositions.sorcerer_boss_hit_extra = {
 				"chaos_fanatic",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -14019,10 +14019,10 @@ HordeCompositions.sorcerer_boss_hit_extra = {
 				"chaos_fanatic",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -14032,10 +14032,10 @@ HordeCompositions.sorcerer_boss_hit_extra = {
 				"chaos_fanatic",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -14045,10 +14045,10 @@ HordeCompositions.sorcerer_boss_hit_extra = {
 				"chaos_fanatic",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -14058,10 +14058,10 @@ HordeCompositions.sorcerer_boss_hit_extra = {
 				"chaos_fanatic",
 				{
 					6,
-					8,
-				},
-			},
-		},
+					8
+				}
+			}
+		}
 	},
 	{
 		{
@@ -14071,10 +14071,10 @@ HordeCompositions.sorcerer_boss_hit_extra = {
 				"chaos_fanatic",
 				{
 					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -14084,10 +14084,10 @@ HordeCompositions.sorcerer_boss_hit_extra = {
 				"chaos_fanatic",
 				{
 					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -14097,11 +14097,11 @@ HordeCompositions.sorcerer_boss_hit_extra = {
 				"chaos_fanatic",
 				{
 					2,
-					3,
-				},
-			},
-		},
-	},
+					3
+				}
+			}
+		}
+	}
 }
 HordeCompositions.sorcerer_boss_event_defensive = {
 	{
@@ -14112,9 +14112,9 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					8,
-					10,
-				},
-			},
+					10
+				}
+			}
 		},
 		{
 			name = "wave_b",
@@ -14123,14 +14123,14 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_marauder",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
 		{
 			name = "wave_d",
@@ -14139,16 +14139,16 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_raider",
 				{
 					1,
-					2,
-				},
-			},
+					2
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -14158,9 +14158,9 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					10,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		{
 			name = "wave_b",
@@ -14169,14 +14169,14 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					7,
-					8,
+					8
 				},
 				"chaos_marauder",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "wave_d",
@@ -14185,11 +14185,11 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					6,
-					7,
+					7
 				},
 				"chaos_raider",
-				1,
-			},
+				1
+			}
 		},
 		{
 			name = "wave_e",
@@ -14198,13 +14198,13 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					6,
-					8,
+					8
 				},
 				"chaos_berzerker",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -14214,9 +14214,9 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					12,
-					14,
-				},
-			},
+					14
+				}
+			}
 		},
 		{
 			name = "wave_b",
@@ -14225,14 +14225,14 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					6,
-					7,
+					7
 				},
 				"chaos_marauder",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "wave_c",
@@ -14241,11 +14241,11 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_warrior",
-				1,
-			},
+				1
+			}
 		},
 		{
 			name = "wave_d",
@@ -14254,11 +14254,11 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					7,
-					8,
+					8
 				},
 				"chaos_raider",
-				2,
-			},
+				2
+			}
 		},
 		{
 			name = "wave_e",
@@ -14267,13 +14267,13 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_marauder",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_berzerker",
-				2,
-			},
+				2
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -14283,9 +14283,9 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					14,
-					16,
-				},
-			},
+					16
+				}
+			}
 		},
 		{
 			name = "wave_b",
@@ -14294,14 +14294,14 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_marauder",
 				{
 					6,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "wave_c",
@@ -14310,11 +14310,11 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_marauder",
 				{
 					7,
-					8,
+					8
 				},
 				"chaos_warrior",
-				2,
-			},
+				2
+			}
 		},
 		{
 			name = "wave_d",
@@ -14323,11 +14323,11 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_raider",
-				3,
-			},
+				3
+			}
 		},
 		{
 			name = "wave_e",
@@ -14336,13 +14336,13 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_berzerker",
-				4,
-			},
+				4
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -14352,9 +14352,9 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					18,
-					20,
-				},
-			},
+					20
+				}
+			}
 		},
 		{
 			name = "wave_b",
@@ -14363,14 +14363,14 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_marauder",
 				{
 					10,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		{
 			name = "wave_c",
@@ -14379,11 +14379,11 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_marauder",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_warrior",
-				4,
-			},
+				4
+			}
 		},
 		{
 			name = "wave_d",
@@ -14392,11 +14392,11 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					12,
-					14,
+					14
 				},
 				"chaos_raider",
-				6,
-			},
+				6
+			}
 		},
 		{
 			name = "wave_e",
@@ -14405,13 +14405,13 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_marauder",
 				{
 					8,
-					10,
+					10
 				},
 				"chaos_berzerker",
-				7,
-			},
+				7
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -14421,9 +14421,9 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					14,
-					16,
-				},
-			},
+					16
+				}
+			}
 		},
 		{
 			name = "wave_b",
@@ -14432,14 +14432,14 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_marauder",
 				{
 					6,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "wave_c",
@@ -14448,11 +14448,11 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_marauder",
 				{
 					7,
-					8,
+					8
 				},
 				"chaos_warrior",
-				3,
-			},
+				3
+			}
 		},
 		{
 			name = "wave_d",
@@ -14461,80 +14461,11 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_raider",
-				4,
-			},
-		},
-		{
-			name = "wave_e",
-			weight = 4,
-			breeds = {
-				"chaos_marauder",
-				{
-					5,
-					6,
-				},
-				"chaos_berzerker",
-				5,
-			},
-		},
-		start_time = 0,
-	},
-	{
-		{
-			name = "wave_a",
-			weight = 4,
-			breeds = {
-				"chaos_fanatic",
-				{
-					14,
-					16,
-				},
-			},
-		},
-		{
-			name = "wave_b",
-			weight = 4,
-			breeds = {
-				"chaos_fanatic",
-				{
-					10,
-					12,
-				},
-				"chaos_marauder",
-				{
-					6,
-					9,
-				},
-			},
-		},
-		{
-			name = "wave_c",
-			weight = 4,
-			breeds = {
-				"chaos_marauder",
-				{
-					7,
-					8,
-				},
-				"chaos_warrior",
-				3,
-			},
-		},
-		{
-			name = "wave_d",
-			weight = 4,
-			breeds = {
-				"chaos_fanatic",
-				{
-					8,
-					9,
-				},
-				"chaos_raider",
-				4,
-			},
+				4
+			}
 		},
 		{
 			name = "wave_e",
@@ -14543,13 +14474,82 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_berzerker",
-				5,
-			},
+				5
+			}
 		},
-		start_time = 0,
+		start_time = 0
+	},
+	{
+		{
+			name = "wave_a",
+			weight = 4,
+			breeds = {
+				"chaos_fanatic",
+				{
+					14,
+					16
+				}
+			}
+		},
+		{
+			name = "wave_b",
+			weight = 4,
+			breeds = {
+				"chaos_fanatic",
+				{
+					10,
+					12
+				},
+				"chaos_marauder",
+				{
+					6,
+					9
+				}
+			}
+		},
+		{
+			name = "wave_c",
+			weight = 4,
+			breeds = {
+				"chaos_marauder",
+				{
+					7,
+					8
+				},
+				"chaos_warrior",
+				3
+			}
+		},
+		{
+			name = "wave_d",
+			weight = 4,
+			breeds = {
+				"chaos_fanatic",
+				{
+					8,
+					9
+				},
+				"chaos_raider",
+				4
+			}
+		},
+		{
+			name = "wave_e",
+			weight = 4,
+			breeds = {
+				"chaos_marauder",
+				{
+					5,
+					6
+				},
+				"chaos_berzerker",
+				5
+			}
+		},
+		start_time = 0
 	},
 	{
 		{
@@ -14559,9 +14559,9 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					10,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		{
 			name = "wave_b",
@@ -14570,14 +14570,14 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					7,
-					8,
+					8
 				},
 				"chaos_marauder",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "wave_d",
@@ -14586,11 +14586,11 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					6,
-					7,
+					7
 				},
 				"chaos_raider",
-				1,
-			},
+				1
+			}
 		},
 		{
 			name = "wave_e",
@@ -14599,14 +14599,14 @@ HordeCompositions.sorcerer_boss_event_defensive = {
 				"chaos_fanatic",
 				{
 					6,
-					8,
+					8
 				},
 				"chaos_berzerker",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.chaos_event_defensive = {
 	{
@@ -14617,9 +14617,9 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					16,
-					18,
-				},
-			},
+					18
+				}
+			}
 		},
 		{
 			name = "wave_b",
@@ -14628,14 +14628,14 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_marauder",
 				{
 					5,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "wave_c",
@@ -14644,14 +14644,14 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					7,
-					9,
+					9
 				},
 				"chaos_marauder",
 				{
 					7,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "wave_d",
@@ -14660,14 +14660,14 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					12,
-					14,
+					14
 				},
 				"chaos_raider",
-				2,
-			},
+				2
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -14677,9 +14677,9 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					18,
-					20,
-				},
-			},
+					20
+				}
+			}
 		},
 		{
 			name = "wave_b",
@@ -14688,14 +14688,14 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					12,
-					14,
+					14
 				},
 				"chaos_marauder",
 				{
 					6,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
 		{
 			name = "wave_c",
@@ -14704,14 +14704,14 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_marauder",
 				{
 					8,
-					10,
-				},
-			},
+					10
+				}
+			}
 		},
 		{
 			name = "wave_d",
@@ -14720,17 +14720,17 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -14740,9 +14740,9 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					22,
-					24,
-				},
-			},
+					24
+				}
+			}
 		},
 		{
 			name = "wave_b",
@@ -14751,19 +14751,19 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_marauder",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
 		{
 			name = "wave_c",
@@ -14772,19 +14772,19 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					6,
-					8,
+					8
 				},
 				"chaos_marauder",
 				{
 					6,
-					8,
+					8
 				},
 				"chaos_marauder_with_shield",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "wave_d",
@@ -14793,19 +14793,19 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					16,
-					18,
+					18
 				},
 				"chaos_marauder",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_raider",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
 		{
 			name = "wave_e",
@@ -14814,22 +14814,22 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					16,
-					18,
+					18
 				},
 				"chaos_marauder",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_berzerker",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -14839,9 +14839,9 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					26,
-					28,
-				},
-			},
+					28
+				}
+			}
 		},
 		{
 			name = "wave_b",
@@ -14850,19 +14850,19 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					18,
-					20,
+					20
 				},
 				"chaos_marauder",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
 		{
 			name = "wave_c",
@@ -14871,19 +14871,19 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					6,
-					8,
+					8
 				},
 				"chaos_marauder",
 				{
 					6,
-					8,
+					8
 				},
 				"chaos_marauder_with_shield",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "wave_d",
@@ -14892,24 +14892,24 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					18,
-					20,
+					20
 				},
 				"chaos_marauder",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_raider",
 				{
 					4,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "wave_e",
@@ -14918,24 +14918,24 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					18,
-					20,
+					20
 				},
 				"chaos_marauder",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_berzerker",
 				{
 					4,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "wave_f",
@@ -14944,27 +14944,27 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_marauder",
 				{
 					6,
-					8,
+					8
 				},
 				"chaos_marauder_with_shield",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_warrior",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -14974,19 +14974,19 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					22,
-					24,
+					24
 				},
 				"chaos_marauder",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_marauder_with_shield",
 				{
 					10,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		{
 			name = "wave_b",
@@ -14995,19 +14995,19 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_marauder",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_marauder_with_shield",
 				{
 					14,
-					16,
-				},
-			},
+					16
+				}
+			}
 		},
 		{
 			name = "wave_c",
@@ -15016,24 +15016,24 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					22,
-					24,
+					24
 				},
 				"chaos_marauder",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_marauder_with_shield",
 				{
 					7,
-					9,
+					9
 				},
 				"chaos_raider",
 				{
 					10,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		{
 			name = "wave_d",
@@ -15042,24 +15042,24 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					22,
-					24,
+					24
 				},
 				"chaos_marauder",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_marauder_with_shield",
 				{
 					7,
-					9,
+					9
 				},
 				"chaos_berzerker",
 				{
 					10,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		{
 			name = "wave_e",
@@ -15068,27 +15068,27 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					18,
-					20,
+					20
 				},
 				"chaos_marauder",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_marauder_with_shield",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_warrior",
 				{
 					6,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -15098,19 +15098,19 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					22,
-					24,
+					24
 				},
 				"chaos_marauder",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_marauder_with_shield",
 				{
 					10,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		{
 			name = "wave_b",
@@ -15119,19 +15119,19 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_marauder",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_marauder_with_shield",
 				{
 					14,
-					16,
-				},
-			},
+					16
+				}
+			}
 		},
 		{
 			name = "wave_c",
@@ -15140,24 +15140,24 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					22,
-					24,
+					24
 				},
 				"chaos_marauder",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_marauder_with_shield",
 				{
 					7,
-					9,
+					9
 				},
 				"chaos_raider",
 				{
 					10,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		{
 			name = "wave_d",
@@ -15166,24 +15166,24 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					22,
-					24,
+					24
 				},
 				"chaos_marauder",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_marauder_with_shield",
 				{
 					7,
-					9,
+					9
 				},
 				"chaos_berzerker",
 				{
 					10,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		{
 			name = "wave_e",
@@ -15192,27 +15192,27 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					18,
-					20,
+					20
 				},
 				"chaos_marauder",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_marauder_with_shield",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_warrior",
 				{
 					6,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -15222,19 +15222,19 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					22,
-					24,
+					24
 				},
 				"chaos_marauder",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_marauder_with_shield",
 				{
 					10,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		{
 			name = "wave_b",
@@ -15243,19 +15243,19 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_marauder",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_marauder_with_shield",
 				{
 					14,
-					16,
-				},
-			},
+					16
+				}
+			}
 		},
 		{
 			name = "wave_c",
@@ -15264,24 +15264,24 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					22,
-					24,
+					24
 				},
 				"chaos_marauder",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_marauder_with_shield",
 				{
 					7,
-					9,
+					9
 				},
 				"chaos_raider",
 				{
 					10,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		{
 			name = "wave_d",
@@ -15290,24 +15290,24 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					22,
-					24,
+					24
 				},
 				"chaos_marauder",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_marauder_with_shield",
 				{
 					7,
-					9,
+					9
 				},
 				"chaos_berzerker",
 				{
 					10,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		{
 			name = "wave_e",
@@ -15316,27 +15316,27 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					18,
-					20,
+					20
 				},
 				"chaos_marauder",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_marauder_with_shield",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_warrior",
 				{
 					6,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -15346,9 +15346,9 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					18,
-					20,
-				},
-			},
+					20
+				}
+			}
 		},
 		{
 			name = "wave_b",
@@ -15357,14 +15357,14 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					12,
-					14,
+					14
 				},
 				"chaos_marauder",
 				{
 					6,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
 		{
 			name = "wave_c",
@@ -15373,14 +15373,14 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_marauder",
 				{
 					8,
-					10,
-				},
-			},
+					10
+				}
+			}
 		},
 		{
 			name = "wave_d",
@@ -15389,18 +15389,18 @@ HordeCompositions.chaos_event_defensive = {
 				"chaos_fanatic",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.chaos_event_defensive_intense = {
 	{
@@ -15411,9 +15411,9 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					16,
-					18,
-				},
-			},
+					18
+				}
+			}
 		},
 		{
 			name = "wave_b",
@@ -15422,14 +15422,14 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_marauder",
 				{
 					5,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "wave_c",
@@ -15438,14 +15438,14 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					7,
-					9,
+					9
 				},
 				"chaos_marauder",
 				{
 					7,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "wave_d",
@@ -15454,14 +15454,14 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					12,
-					14,
+					14
 				},
 				"chaos_raider",
-				2,
-			},
+				2
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -15471,9 +15471,9 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					16,
-					18,
-				},
-			},
+					18
+				}
+			}
 		},
 		{
 			name = "wave_b",
@@ -15482,14 +15482,14 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_marauder",
 				{
 					5,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "wave_c",
@@ -15498,14 +15498,14 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					7,
-					9,
+					9
 				},
 				"chaos_marauder",
 				{
 					7,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "wave_d",
@@ -15514,14 +15514,14 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					12,
-					14,
+					14
 				},
 				"chaos_raider",
-				2,
-			},
+				2
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -15531,9 +15531,9 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					24,
-					28,
-				},
-			},
+					28
+				}
+			}
 		},
 		{
 			name = "wave_b",
@@ -15542,14 +15542,14 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					12,
-					14,
+					14
 				},
 				"chaos_marauder",
 				{
 					10,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		{
 			name = "wave_c",
@@ -15558,11 +15558,11 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_marauder",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_warrior",
-				2,
-			},
+				2
+			}
 		},
 		{
 			name = "wave_d",
@@ -15571,11 +15571,11 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_raider",
-				4,
-			},
+				4
+			}
 		},
 		{
 			name = "wave_e",
@@ -15584,14 +15584,14 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_marauder",
 				{
 					8,
-					12,
+					12
 				},
 				"chaos_berzerker",
-				4,
-			},
+				4
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -15601,9 +15601,9 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					28,
-					32,
-				},
-			},
+					32
+				}
+			}
 		},
 		{
 			name = "wave_b",
@@ -15612,14 +15612,14 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_marauder",
 				{
 					12,
-					18,
-				},
-			},
+					18
+				}
+			}
 		},
 		{
 			name = "wave_c",
@@ -15628,11 +15628,11 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_marauder",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_warrior",
-				4,
-			},
+				4
+			}
 		},
 		{
 			name = "wave_d",
@@ -15641,11 +15641,11 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					16,
-					18,
+					18
 				},
 				"chaos_raider",
-				12,
-			},
+				12
+			}
 		},
 		{
 			name = "wave_e",
@@ -15654,14 +15654,14 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_marauder",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_berzerker",
-				8,
-			},
+				8
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -15671,9 +15671,9 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					32,
-					40,
-				},
-			},
+					40
+				}
+			}
 		},
 		{
 			name = "wave_b",
@@ -15682,14 +15682,14 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					20,
-					24,
+					24
 				},
 				"chaos_marauder",
 				{
 					20,
-					24,
-				},
-			},
+					24
+				}
+			}
 		},
 		{
 			name = "wave_c",
@@ -15698,11 +15698,11 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_marauder",
 				{
 					20,
-					24,
+					24
 				},
 				"chaos_warrior",
-				8,
-			},
+				8
+			}
 		},
 		{
 			name = "wave_d",
@@ -15711,11 +15711,11 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					24,
-					28,
+					28
 				},
 				"chaos_raider",
-				12,
-			},
+				12
+			}
 		},
 		{
 			name = "wave_e",
@@ -15724,14 +15724,14 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_marauder",
 				{
 					16,
-					20,
+					20
 				},
 				"chaos_berzerker",
-				14,
-			},
+				14
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -15741,9 +15741,9 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					32,
-					40,
-				},
-			},
+					40
+				}
+			}
 		},
 		{
 			name = "wave_b",
@@ -15752,14 +15752,14 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					20,
-					24,
+					24
 				},
 				"chaos_marauder",
 				{
 					20,
-					24,
-				},
-			},
+					24
+				}
+			}
 		},
 		{
 			name = "wave_c",
@@ -15768,11 +15768,11 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_marauder",
 				{
 					20,
-					24,
+					24
 				},
 				"chaos_warrior",
-				8,
-			},
+				8
+			}
 		},
 		{
 			name = "wave_d",
@@ -15781,11 +15781,11 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					24,
-					28,
+					28
 				},
 				"chaos_raider",
-				12,
-			},
+				12
+			}
 		},
 		{
 			name = "wave_e",
@@ -15794,14 +15794,14 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_marauder",
 				{
 					16,
-					20,
+					20
 				},
 				"chaos_berzerker",
-				14,
-			},
+				14
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -15811,9 +15811,9 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					32,
-					40,
-				},
-			},
+					40
+				}
+			}
 		},
 		{
 			name = "wave_b",
@@ -15822,14 +15822,14 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					20,
-					24,
+					24
 				},
 				"chaos_marauder",
 				{
 					20,
-					24,
-				},
-			},
+					24
+				}
+			}
 		},
 		{
 			name = "wave_c",
@@ -15838,11 +15838,11 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_marauder",
 				{
 					20,
-					24,
+					24
 				},
 				"chaos_warrior",
-				8,
-			},
+				8
+			}
 		},
 		{
 			name = "wave_d",
@@ -15851,11 +15851,11 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					24,
-					28,
+					28
 				},
 				"chaos_raider",
-				12,
-			},
+				12
+			}
 		},
 		{
 			name = "wave_e",
@@ -15864,14 +15864,14 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_marauder",
 				{
 					16,
-					20,
+					20
 				},
 				"chaos_berzerker",
-				14,
-			},
+				14
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -15881,9 +15881,9 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					16,
-					18,
-				},
-			},
+					18
+				}
+			}
 		},
 		{
 			name = "wave_b",
@@ -15892,14 +15892,14 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					10,
-					12,
+					12
 				},
 				"chaos_marauder",
 				{
 					5,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "wave_c",
@@ -15908,14 +15908,14 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					7,
-					9,
+					9
 				},
 				"chaos_marauder",
 				{
 					7,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "wave_d",
@@ -15924,15 +15924,15 @@ HordeCompositions.chaos_event_defensive_intense = {
 				"chaos_fanatic",
 				{
 					12,
-					14,
+					14
 				},
 				"chaos_raider",
-				2,
-			},
+				2
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.chaos_event_offensive_small = {
 	{
@@ -15943,17 +15943,17 @@ HordeCompositions.chaos_event_offensive_small = {
 				"chaos_marauder",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_fanatic",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -15963,17 +15963,17 @@ HordeCompositions.chaos_event_offensive_small = {
 				"chaos_marauder",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_fanatic",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -15983,17 +15983,17 @@ HordeCompositions.chaos_event_offensive_small = {
 				"chaos_marauder",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_fanatic",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -16003,17 +16003,17 @@ HordeCompositions.chaos_event_offensive_small = {
 				"chaos_marauder",
 				{
 					6,
-					7,
+					7
 				},
 				"chaos_fanatic",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -16023,17 +16023,17 @@ HordeCompositions.chaos_event_offensive_small = {
 				"chaos_marauder",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_fanatic",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -16043,17 +16043,17 @@ HordeCompositions.chaos_event_offensive_small = {
 				"chaos_marauder",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_fanatic",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -16063,17 +16063,17 @@ HordeCompositions.chaos_event_offensive_small = {
 				"chaos_marauder",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_fanatic",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -16083,18 +16083,18 @@ HordeCompositions.chaos_event_offensive_small = {
 				"chaos_marauder",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_fanatic",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.chaos_event_offensive = {
 	{
@@ -16105,17 +16105,17 @@ HordeCompositions.chaos_event_offensive = {
 				"chaos_marauder",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_fanatic",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -16125,17 +16125,17 @@ HordeCompositions.chaos_event_offensive = {
 				"chaos_marauder",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_fanatic",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -16145,17 +16145,17 @@ HordeCompositions.chaos_event_offensive = {
 				"chaos_marauder",
 				{
 					7,
-					8,
+					8
 				},
 				"chaos_fanatic",
 				{
 					9,
-					10,
-				},
-			},
+					10
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -16165,17 +16165,17 @@ HordeCompositions.chaos_event_offensive = {
 				"chaos_marauder",
 				{
 					9,
-					10,
+					10
 				},
 				"chaos_fanatic",
 				{
 					11,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -16185,17 +16185,17 @@ HordeCompositions.chaos_event_offensive = {
 				"chaos_marauder",
 				{
 					9,
-					10,
+					10
 				},
 				"chaos_fanatic",
 				{
 					11,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -16205,17 +16205,17 @@ HordeCompositions.chaos_event_offensive = {
 				"chaos_marauder",
 				{
 					9,
-					10,
+					10
 				},
 				"chaos_fanatic",
 				{
 					11,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -16225,17 +16225,17 @@ HordeCompositions.chaos_event_offensive = {
 				"chaos_marauder",
 				{
 					9,
-					10,
+					10
 				},
 				"chaos_fanatic",
 				{
 					11,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -16245,18 +16245,18 @@ HordeCompositions.chaos_event_offensive = {
 				"chaos_marauder",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_fanatic",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.chaos_event_offensive_intense = {
 	{
@@ -16267,12 +16267,12 @@ HordeCompositions.chaos_event_offensive_intense = {
 				"chaos_fanatic",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -16282,12 +16282,12 @@ HordeCompositions.chaos_event_offensive_intense = {
 				"chaos_fanatic",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -16297,12 +16297,12 @@ HordeCompositions.chaos_event_offensive_intense = {
 				"chaos_fanatic",
 				{
 					9,
-					10,
-				},
-			},
+					10
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -16312,12 +16312,12 @@ HordeCompositions.chaos_event_offensive_intense = {
 				"chaos_fanatic",
 				{
 					11,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -16327,12 +16327,12 @@ HordeCompositions.chaos_event_offensive_intense = {
 				"chaos_fanatic",
 				{
 					11,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -16342,12 +16342,12 @@ HordeCompositions.chaos_event_offensive_intense = {
 				"chaos_fanatic",
 				{
 					11,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -16357,12 +16357,12 @@ HordeCompositions.chaos_event_offensive_intense = {
 				"chaos_fanatic",
 				{
 					11,
-					12,
-				},
-			},
+					12
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -16372,13 +16372,13 @@ HordeCompositions.chaos_event_offensive_intense = {
 				"chaos_fanatic",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		end_time = 9999,
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.sorcerer_extra_spawn = {
 	{
@@ -16389,10 +16389,10 @@ HordeCompositions.sorcerer_extra_spawn = {
 				"chaos_fanatic",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -16402,10 +16402,10 @@ HordeCompositions.sorcerer_extra_spawn = {
 				"chaos_fanatic",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -16415,10 +16415,10 @@ HordeCompositions.sorcerer_extra_spawn = {
 				"chaos_fanatic",
 				{
 					5,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -16428,10 +16428,10 @@ HordeCompositions.sorcerer_extra_spawn = {
 				"chaos_fanatic",
 				{
 					7,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -16441,10 +16441,10 @@ HordeCompositions.sorcerer_extra_spawn = {
 				"chaos_fanatic",
 				{
 					12,
-					14,
-				},
-			},
-		},
+					14
+				}
+			}
+		}
 	},
 	{
 		{
@@ -16454,10 +16454,10 @@ HordeCompositions.sorcerer_extra_spawn = {
 				"chaos_fanatic",
 				{
 					10,
-					11,
-				},
-			},
-		},
+					11
+				}
+			}
+		}
 	},
 	{
 		{
@@ -16467,10 +16467,10 @@ HordeCompositions.sorcerer_extra_spawn = {
 				"chaos_fanatic",
 				{
 					10,
-					11,
-				},
-			},
-		},
+					11
+				}
+			}
+		}
 	},
 	{
 		{
@@ -16480,11 +16480,11 @@ HordeCompositions.sorcerer_extra_spawn = {
 				"chaos_fanatic",
 				{
 					3,
-					4,
-				},
-			},
-		},
-	},
+					4
+				}
+			}
+		}
+	}
 }
 HordeCompositions.rezzed_demo_boss_event = {
 	{
@@ -16493,9 +16493,9 @@ HordeCompositions.rezzed_demo_boss_event = {
 			weight = 3,
 			breeds = {
 				"chaos_warrior",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -16503,9 +16503,9 @@ HordeCompositions.rezzed_demo_boss_event = {
 			weight = 3,
 			breeds = {
 				"chaos_warrior",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -16513,9 +16513,9 @@ HordeCompositions.rezzed_demo_boss_event = {
 			weight = 3,
 			breeds = {
 				"chaos_warrior",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -16523,9 +16523,9 @@ HordeCompositions.rezzed_demo_boss_event = {
 			weight = 3,
 			breeds = {
 				"chaos_warrior",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -16533,9 +16533,9 @@ HordeCompositions.rezzed_demo_boss_event = {
 			weight = 3,
 			breeds = {
 				"chaos_warrior",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -16543,9 +16543,9 @@ HordeCompositions.rezzed_demo_boss_event = {
 			weight = 3,
 			breeds = {
 				"chaos_warrior",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -16553,9 +16553,9 @@ HordeCompositions.rezzed_demo_boss_event = {
 			weight = 3,
 			breeds = {
 				"chaos_warrior",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -16563,10 +16563,10 @@ HordeCompositions.rezzed_demo_boss_event = {
 			weight = 3,
 			breeds = {
 				"chaos_warrior",
-				2,
-			},
-		},
-	},
+				2
+			}
+		}
+	}
 }
 HordeCompositions.explosive_horde_medium = {
 	{
@@ -16575,9 +16575,9 @@ HordeCompositions.explosive_horde_medium = {
 			weight = 3,
 			breeds = {
 				"skaven_explosive_loot_rat",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -16585,9 +16585,9 @@ HordeCompositions.explosive_horde_medium = {
 			weight = 3,
 			breeds = {
 				"skaven_explosive_loot_rat",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -16595,9 +16595,9 @@ HordeCompositions.explosive_horde_medium = {
 			weight = 3,
 			breeds = {
 				"skaven_explosive_loot_rat",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -16605,9 +16605,9 @@ HordeCompositions.explosive_horde_medium = {
 			weight = 3,
 			breeds = {
 				"skaven_explosive_loot_rat",
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -16615,9 +16615,9 @@ HordeCompositions.explosive_horde_medium = {
 			weight = 3,
 			breeds = {
 				"skaven_explosive_loot_rat",
-				13,
-			},
-		},
+				13
+			}
+		}
 	},
 	{
 		{
@@ -16625,9 +16625,9 @@ HordeCompositions.explosive_horde_medium = {
 			weight = 3,
 			breeds = {
 				"skaven_explosive_loot_rat",
-				13,
-			},
-		},
+				13
+			}
+		}
 	},
 	{
 		{
@@ -16635,9 +16635,9 @@ HordeCompositions.explosive_horde_medium = {
 			weight = 3,
 			breeds = {
 				"skaven_explosive_loot_rat",
-				13,
-			},
-		},
+				13
+			}
+		}
 	},
 	{
 		{
@@ -16645,10 +16645,10 @@ HordeCompositions.explosive_horde_medium = {
 			weight = 3,
 			breeds = {
 				"skaven_explosive_loot_rat",
-				8,
-			},
-		},
-	},
+				8
+			}
+		}
+	}
 }
 HordeCompositions.explosive_horde_small_mixed = {
 	{
@@ -16659,9 +16659,9 @@ HordeCompositions.explosive_horde_small_mixed = {
 				"skaven_slave",
 				3,
 				"skaven_explosive_loot_rat",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -16671,9 +16671,9 @@ HordeCompositions.explosive_horde_small_mixed = {
 				"skaven_slave",
 				4,
 				"skaven_explosive_loot_rat",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -16683,9 +16683,9 @@ HordeCompositions.explosive_horde_small_mixed = {
 				"skaven_slave",
 				5,
 				"skaven_explosive_loot_rat",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -16695,58 +16695,58 @@ HordeCompositions.explosive_horde_small_mixed = {
 				"skaven_slave",
 				6,
 				"skaven_explosive_loot_rat",
+				4
+			}
+		}
+	},
+	{
+		{
+			name = "explo_small",
+			weight = 3,
+			breeds = {
+				"skaven_slave",
+				6,
+				"skaven_explosive_loot_rat",
+				6
+			}
+		}
+	},
+	{
+		{
+			name = "explo_small",
+			weight = 3,
+			breeds = {
+				"skaven_slave",
+				6,
+				"skaven_explosive_loot_rat",
+				8
+			}
+		}
+	},
+	{
+		{
+			name = "explo_small",
+			weight = 3,
+			breeds = {
+				"skaven_slave",
+				8,
+				"skaven_explosive_loot_rat",
+				8
+			}
+		}
+	},
+	{
+		{
+			name = "explo_small",
+			weight = 3,
+			breeds = {
+				"skaven_slave",
 				4,
-			},
-		},
-	},
-	{
-		{
-			name = "explo_small",
-			weight = 3,
-			breeds = {
-				"skaven_slave",
-				6,
 				"skaven_explosive_loot_rat",
-				6,
-			},
-		},
-	},
-	{
-		{
-			name = "explo_small",
-			weight = 3,
-			breeds = {
-				"skaven_slave",
-				6,
-				"skaven_explosive_loot_rat",
-				8,
-			},
-		},
-	},
-	{
-		{
-			name = "explo_small",
-			weight = 3,
-			breeds = {
-				"skaven_slave",
-				8,
-				"skaven_explosive_loot_rat",
-				8,
-			},
-		},
-	},
-	{
-		{
-			name = "explo_small",
-			weight = 3,
-			breeds = {
-				"skaven_slave",
-				4,
-				"skaven_explosive_loot_rat",
-				2,
-			},
-		},
-	},
+				2
+			}
+		}
+	}
 }
 HordeCompositions.end_boss_event_stormvermin = {
 	{
@@ -16755,9 +16755,9 @@ HordeCompositions.end_boss_event_stormvermin = {
 			weight = 3,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -16765,9 +16765,9 @@ HordeCompositions.end_boss_event_stormvermin = {
 			weight = 3,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -16775,9 +16775,9 @@ HordeCompositions.end_boss_event_stormvermin = {
 			weight = 3,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				7,
-			},
-		},
+				7
+			}
+		}
 	},
 	{
 		{
@@ -16785,9 +16785,9 @@ HordeCompositions.end_boss_event_stormvermin = {
 			weight = 3,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -16795,9 +16795,9 @@ HordeCompositions.end_boss_event_stormvermin = {
 			weight = 3,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				9,
-			},
-		},
+				9
+			}
+		}
 	},
 	{
 		{
@@ -16805,9 +16805,9 @@ HordeCompositions.end_boss_event_stormvermin = {
 			weight = 3,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				9,
-			},
-		},
+				9
+			}
+		}
 	},
 	{
 		{
@@ -16815,9 +16815,9 @@ HordeCompositions.end_boss_event_stormvermin = {
 			weight = 3,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				9,
-			},
-		},
+				9
+			}
+		}
 	},
 	{
 		{
@@ -16825,10 +16825,10 @@ HordeCompositions.end_boss_event_stormvermin = {
 			weight = 3,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				6,
-			},
-		},
-	},
+				6
+			}
+		}
+	}
 }
 HordeCompositions.city_wall_extra_spice = {
 	{
@@ -16839,9 +16839,9 @@ HordeCompositions.city_wall_extra_spice = {
 				"skaven_clan_rat",
 				{
 					5,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -16850,12 +16850,12 @@ HordeCompositions.city_wall_extra_spice = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -16865,9 +16865,9 @@ HordeCompositions.city_wall_extra_spice = {
 				"skaven_clan_rat",
 				{
 					5,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -16876,12 +16876,12 @@ HordeCompositions.city_wall_extra_spice = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -16891,9 +16891,9 @@ HordeCompositions.city_wall_extra_spice = {
 				"skaven_clan_rat",
 				{
 					5,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -16902,12 +16902,12 @@ HordeCompositions.city_wall_extra_spice = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -16917,9 +16917,9 @@ HordeCompositions.city_wall_extra_spice = {
 				"skaven_clan_rat",
 				{
 					5,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -16928,12 +16928,12 @@ HordeCompositions.city_wall_extra_spice = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -16943,9 +16943,9 @@ HordeCompositions.city_wall_extra_spice = {
 				"skaven_clan_rat",
 				{
 					5,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -16954,12 +16954,12 @@ HordeCompositions.city_wall_extra_spice = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -16969,9 +16969,9 @@ HordeCompositions.city_wall_extra_spice = {
 				"skaven_clan_rat",
 				{
 					5,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -16980,12 +16980,12 @@ HordeCompositions.city_wall_extra_spice = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -16995,9 +16995,9 @@ HordeCompositions.city_wall_extra_spice = {
 				"skaven_clan_rat",
 				{
 					5,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -17006,12 +17006,12 @@ HordeCompositions.city_wall_extra_spice = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17021,9 +17021,9 @@ HordeCompositions.city_wall_extra_spice = {
 				"skaven_clan_rat",
 				{
 					5,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -17032,13 +17032,13 @@ HordeCompositions.city_wall_extra_spice = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				1,
-			},
-		},
-	},
+				1
+			}
+		}
+	}
 }
 HordeCompositions.ai_benchmark_cycle_slaves = {
 	{
@@ -17047,9 +17047,9 @@ HordeCompositions.ai_benchmark_cycle_slaves = {
 			weight = 3,
 			breeds = {
 				"skaven_slave",
-				20,
-			},
-		},
+				20
+			}
+		}
 	},
 	{
 		{
@@ -17057,9 +17057,9 @@ HordeCompositions.ai_benchmark_cycle_slaves = {
 			weight = 3,
 			breeds = {
 				"skaven_slave",
-				20,
-			},
-		},
+				20
+			}
+		}
 	},
 	{
 		{
@@ -17067,9 +17067,9 @@ HordeCompositions.ai_benchmark_cycle_slaves = {
 			weight = 3,
 			breeds = {
 				"skaven_slave",
-				20,
-			},
-		},
+				20
+			}
+		}
 	},
 	{
 		{
@@ -17077,9 +17077,9 @@ HordeCompositions.ai_benchmark_cycle_slaves = {
 			weight = 3,
 			breeds = {
 				"skaven_slave",
-				20,
-			},
-		},
+				20
+			}
+		}
 	},
 	{
 		{
@@ -17087,9 +17087,9 @@ HordeCompositions.ai_benchmark_cycle_slaves = {
 			weight = 3,
 			breeds = {
 				"skaven_slave",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17097,9 +17097,9 @@ HordeCompositions.ai_benchmark_cycle_slaves = {
 			weight = 3,
 			breeds = {
 				"skaven_slave",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17107,9 +17107,9 @@ HordeCompositions.ai_benchmark_cycle_slaves = {
 			weight = 3,
 			breeds = {
 				"skaven_slave",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17117,10 +17117,10 @@ HordeCompositions.ai_benchmark_cycle_slaves = {
 			weight = 3,
 			breeds = {
 				"skaven_slave",
-				20,
-			},
-		},
-	},
+				20
+			}
+		}
+	}
 }
 HordeCompositions.ai_benchmark_cycle_clanrat = {
 	{
@@ -17129,9 +17129,9 @@ HordeCompositions.ai_benchmark_cycle_clanrat = {
 			weight = 3,
 			breeds = {
 				"skaven_clan_rat",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -17139,9 +17139,9 @@ HordeCompositions.ai_benchmark_cycle_clanrat = {
 			weight = 3,
 			breeds = {
 				"skaven_clan_rat",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -17149,9 +17149,9 @@ HordeCompositions.ai_benchmark_cycle_clanrat = {
 			weight = 3,
 			breeds = {
 				"skaven_clan_rat",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -17159,9 +17159,9 @@ HordeCompositions.ai_benchmark_cycle_clanrat = {
 			weight = 3,
 			breeds = {
 				"skaven_clan_rat",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -17169,9 +17169,9 @@ HordeCompositions.ai_benchmark_cycle_clanrat = {
 			weight = 3,
 			breeds = {
 				"skaven_clan_rat",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17179,9 +17179,9 @@ HordeCompositions.ai_benchmark_cycle_clanrat = {
 			weight = 3,
 			breeds = {
 				"skaven_clan_rat",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17189,9 +17189,9 @@ HordeCompositions.ai_benchmark_cycle_clanrat = {
 			weight = 3,
 			breeds = {
 				"skaven_clan_rat",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17199,10 +17199,10 @@ HordeCompositions.ai_benchmark_cycle_clanrat = {
 			weight = 3,
 			breeds = {
 				"skaven_clan_rat",
-				10,
-			},
-		},
-	},
+				10
+			}
+		}
+	}
 }
 HordeCompositions.ai_benchmark_cycle_clanrat_shield = {
 	{
@@ -17211,9 +17211,9 @@ HordeCompositions.ai_benchmark_cycle_clanrat_shield = {
 			weight = 3,
 			breeds = {
 				"skaven_clan_rat_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17221,9 +17221,9 @@ HordeCompositions.ai_benchmark_cycle_clanrat_shield = {
 			weight = 3,
 			breeds = {
 				"skaven_clan_rat_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17231,9 +17231,9 @@ HordeCompositions.ai_benchmark_cycle_clanrat_shield = {
 			weight = 3,
 			breeds = {
 				"skaven_clan_rat_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17241,9 +17241,9 @@ HordeCompositions.ai_benchmark_cycle_clanrat_shield = {
 			weight = 3,
 			breeds = {
 				"skaven_clan_rat_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17251,9 +17251,9 @@ HordeCompositions.ai_benchmark_cycle_clanrat_shield = {
 			weight = 3,
 			breeds = {
 				"skaven_clan_rat_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17261,9 +17261,9 @@ HordeCompositions.ai_benchmark_cycle_clanrat_shield = {
 			weight = 3,
 			breeds = {
 				"skaven_clan_rat_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17271,9 +17271,9 @@ HordeCompositions.ai_benchmark_cycle_clanrat_shield = {
 			weight = 3,
 			breeds = {
 				"skaven_clan_rat_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17281,10 +17281,10 @@ HordeCompositions.ai_benchmark_cycle_clanrat_shield = {
 			weight = 3,
 			breeds = {
 				"skaven_clan_rat_with_shield",
-				4,
-			},
-		},
-	},
+				4
+			}
+		}
+	}
 }
 HordeCompositions.ai_benchmark_cycle_stormvermin = {
 	{
@@ -17293,9 +17293,9 @@ HordeCompositions.ai_benchmark_cycle_stormvermin = {
 			weight = 3,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17303,9 +17303,9 @@ HordeCompositions.ai_benchmark_cycle_stormvermin = {
 			weight = 3,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17313,9 +17313,9 @@ HordeCompositions.ai_benchmark_cycle_stormvermin = {
 			weight = 3,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17323,9 +17323,9 @@ HordeCompositions.ai_benchmark_cycle_stormvermin = {
 			weight = 3,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17333,9 +17333,9 @@ HordeCompositions.ai_benchmark_cycle_stormvermin = {
 			weight = 3,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17343,9 +17343,9 @@ HordeCompositions.ai_benchmark_cycle_stormvermin = {
 			weight = 3,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17353,9 +17353,9 @@ HordeCompositions.ai_benchmark_cycle_stormvermin = {
 			weight = 3,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17363,10 +17363,10 @@ HordeCompositions.ai_benchmark_cycle_stormvermin = {
 			weight = 3,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
-	},
+				4
+			}
+		}
+	}
 }
 HordeCompositions.ai_benchmark_cycle_stormvermin_shield = {
 	{
@@ -17375,9 +17375,9 @@ HordeCompositions.ai_benchmark_cycle_stormvermin_shield = {
 			weight = 3,
 			breeds = {
 				"skaven_storm_vermin_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -17385,9 +17385,9 @@ HordeCompositions.ai_benchmark_cycle_stormvermin_shield = {
 			weight = 3,
 			breeds = {
 				"skaven_storm_vermin_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -17395,9 +17395,9 @@ HordeCompositions.ai_benchmark_cycle_stormvermin_shield = {
 			weight = 3,
 			breeds = {
 				"skaven_storm_vermin_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -17405,9 +17405,9 @@ HordeCompositions.ai_benchmark_cycle_stormvermin_shield = {
 			weight = 3,
 			breeds = {
 				"skaven_storm_vermin_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -17415,9 +17415,9 @@ HordeCompositions.ai_benchmark_cycle_stormvermin_shield = {
 			weight = 3,
 			breeds = {
 				"skaven_storm_vermin_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17425,9 +17425,9 @@ HordeCompositions.ai_benchmark_cycle_stormvermin_shield = {
 			weight = 3,
 			breeds = {
 				"skaven_storm_vermin_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17435,9 +17435,9 @@ HordeCompositions.ai_benchmark_cycle_stormvermin_shield = {
 			weight = 3,
 			breeds = {
 				"skaven_storm_vermin_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17445,10 +17445,10 @@ HordeCompositions.ai_benchmark_cycle_stormvermin_shield = {
 			weight = 3,
 			breeds = {
 				"skaven_storm_vermin_with_shield",
-				2,
-			},
-		},
-	},
+				2
+			}
+		}
+	}
 }
 HordeCompositions.ai_benchmark_cycle_plague_monks = {
 	{
@@ -17457,9 +17457,9 @@ HordeCompositions.ai_benchmark_cycle_plague_monks = {
 			weight = 3,
 			breeds = {
 				"skaven_plague_monk",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17467,9 +17467,9 @@ HordeCompositions.ai_benchmark_cycle_plague_monks = {
 			weight = 3,
 			breeds = {
 				"skaven_plague_monk",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17477,9 +17477,9 @@ HordeCompositions.ai_benchmark_cycle_plague_monks = {
 			weight = 3,
 			breeds = {
 				"skaven_plague_monk",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17487,9 +17487,9 @@ HordeCompositions.ai_benchmark_cycle_plague_monks = {
 			weight = 3,
 			breeds = {
 				"skaven_plague_monk",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17497,9 +17497,9 @@ HordeCompositions.ai_benchmark_cycle_plague_monks = {
 			weight = 3,
 			breeds = {
 				"skaven_plague_monk",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17507,9 +17507,9 @@ HordeCompositions.ai_benchmark_cycle_plague_monks = {
 			weight = 3,
 			breeds = {
 				"skaven_plague_monk",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17517,9 +17517,9 @@ HordeCompositions.ai_benchmark_cycle_plague_monks = {
 			weight = 3,
 			breeds = {
 				"skaven_plague_monk",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17527,10 +17527,10 @@ HordeCompositions.ai_benchmark_cycle_plague_monks = {
 			weight = 3,
 			breeds = {
 				"skaven_plague_monk",
-				4,
-			},
-		},
-	},
+				4
+			}
+		}
+	}
 }
 HordeCompositions.ai_benchmark_cycle_chaos_marauder = {
 	{
@@ -17539,9 +17539,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_marauder = {
 			weight = 3,
 			breeds = {
 				"chaos_marauder",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -17549,9 +17549,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_marauder = {
 			weight = 3,
 			breeds = {
 				"chaos_marauder",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -17559,9 +17559,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_marauder = {
 			weight = 3,
 			breeds = {
 				"chaos_marauder",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -17569,9 +17569,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_marauder = {
 			weight = 3,
 			breeds = {
 				"chaos_marauder",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -17579,9 +17579,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_marauder = {
 			weight = 3,
 			breeds = {
 				"chaos_marauder",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17589,9 +17589,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_marauder = {
 			weight = 3,
 			breeds = {
 				"chaos_marauder",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17599,9 +17599,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_marauder = {
 			weight = 3,
 			breeds = {
 				"chaos_marauder",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17609,10 +17609,10 @@ HordeCompositions.ai_benchmark_cycle_chaos_marauder = {
 			weight = 3,
 			breeds = {
 				"chaos_marauder",
-				10,
-			},
-		},
-	},
+				10
+			}
+		}
+	}
 }
 HordeCompositions.ai_benchmark_cycle_chaos_marauder_shield = {
 	{
@@ -17621,9 +17621,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_marauder_shield = {
 			weight = 3,
 			breeds = {
 				"chaos_marauder_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -17631,9 +17631,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_marauder_shield = {
 			weight = 3,
 			breeds = {
 				"chaos_marauder_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -17641,9 +17641,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_marauder_shield = {
 			weight = 3,
 			breeds = {
 				"chaos_marauder_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -17651,9 +17651,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_marauder_shield = {
 			weight = 3,
 			breeds = {
 				"chaos_marauder_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -17661,9 +17661,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_marauder_shield = {
 			weight = 3,
 			breeds = {
 				"chaos_marauder_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17671,9 +17671,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_marauder_shield = {
 			weight = 3,
 			breeds = {
 				"chaos_marauder_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17681,9 +17681,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_marauder_shield = {
 			weight = 3,
 			breeds = {
 				"chaos_marauder_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17691,10 +17691,10 @@ HordeCompositions.ai_benchmark_cycle_chaos_marauder_shield = {
 			weight = 3,
 			breeds = {
 				"chaos_marauder_with_shield",
-				2,
-			},
-		},
-	},
+				2
+			}
+		}
+	}
 }
 HordeCompositions.ai_benchmark_cycle_chaos_berzerker = {
 	{
@@ -17703,9 +17703,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_berzerker = {
 			weight = 3,
 			breeds = {
 				"chaos_berzerker",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17713,9 +17713,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_berzerker = {
 			weight = 3,
 			breeds = {
 				"chaos_berzerker",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17723,9 +17723,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_berzerker = {
 			weight = 3,
 			breeds = {
 				"chaos_berzerker",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17733,9 +17733,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_berzerker = {
 			weight = 3,
 			breeds = {
 				"chaos_berzerker",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17743,9 +17743,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_berzerker = {
 			weight = 3,
 			breeds = {
 				"chaos_berzerker",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17753,9 +17753,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_berzerker = {
 			weight = 3,
 			breeds = {
 				"chaos_berzerker",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17763,9 +17763,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_berzerker = {
 			weight = 3,
 			breeds = {
 				"chaos_berzerker",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17773,10 +17773,10 @@ HordeCompositions.ai_benchmark_cycle_chaos_berzerker = {
 			weight = 3,
 			breeds = {
 				"chaos_berzerker",
-				4,
-			},
-		},
-	},
+				4
+			}
+		}
+	}
 }
 HordeCompositions.ai_benchmark_cycle_chaos_raider = {
 	{
@@ -17785,9 +17785,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_raider = {
 			weight = 3,
 			breeds = {
 				"chaos_raider",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17795,9 +17795,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_raider = {
 			weight = 3,
 			breeds = {
 				"chaos_raider",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17805,9 +17805,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_raider = {
 			weight = 3,
 			breeds = {
 				"chaos_raider",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17815,9 +17815,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_raider = {
 			weight = 3,
 			breeds = {
 				"chaos_raider",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17825,9 +17825,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_raider = {
 			weight = 3,
 			breeds = {
 				"chaos_raider",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17835,9 +17835,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_raider = {
 			weight = 3,
 			breeds = {
 				"chaos_raider",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17845,9 +17845,9 @@ HordeCompositions.ai_benchmark_cycle_chaos_raider = {
 			weight = 3,
 			breeds = {
 				"chaos_raider",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -17855,10 +17855,10 @@ HordeCompositions.ai_benchmark_cycle_chaos_raider = {
 			weight = 3,
 			breeds = {
 				"chaos_raider",
-				4,
-			},
-		},
-	},
+				4
+			}
+		}
+	}
 }
 HordeCompositions.event_ussingen_gate_group = {
 	{
@@ -17871,10 +17871,10 @@ HordeCompositions.event_ussingen_gate_group = {
 				"skaven_storm_vermin_commander",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -17886,10 +17886,10 @@ HordeCompositions.event_ussingen_gate_group = {
 				"skaven_storm_vermin_commander",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -17901,10 +17901,10 @@ HordeCompositions.event_ussingen_gate_group = {
 				"skaven_storm_vermin_commander",
 				{
 					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -17916,10 +17916,10 @@ HordeCompositions.event_ussingen_gate_group = {
 				"skaven_storm_vermin_commander",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -17931,10 +17931,10 @@ HordeCompositions.event_ussingen_gate_group = {
 				"skaven_storm_vermin_commander",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -17946,10 +17946,10 @@ HordeCompositions.event_ussingen_gate_group = {
 				"skaven_storm_vermin_commander",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -17961,10 +17961,10 @@ HordeCompositions.event_ussingen_gate_group = {
 				"skaven_storm_vermin_commander",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -17976,11 +17976,11 @@ HordeCompositions.event_ussingen_gate_group = {
 				"skaven_storm_vermin_commander",
 				{
 					3,
-					4,
-				},
-			},
-		},
-	},
+					4
+				}
+			}
+		}
+	}
 }
 HordeCompositions.event_ussingen_smaller_hard = {
 	{
@@ -17991,9 +17991,9 @@ HordeCompositions.event_ussingen_smaller_hard = {
 				"skaven_clan_rat",
 				{
 					6,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -18002,12 +18002,12 @@ HordeCompositions.event_ussingen_smaller_hard = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -18017,9 +18017,9 @@ HordeCompositions.event_ussingen_smaller_hard = {
 				"skaven_clan_rat",
 				{
 					6,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -18028,12 +18028,12 @@ HordeCompositions.event_ussingen_smaller_hard = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -18043,9 +18043,9 @@ HordeCompositions.event_ussingen_smaller_hard = {
 				"skaven_clan_rat",
 				{
 					6,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -18054,12 +18054,12 @@ HordeCompositions.event_ussingen_smaller_hard = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -18069,9 +18069,9 @@ HordeCompositions.event_ussingen_smaller_hard = {
 				"skaven_clan_rat",
 				{
 					6,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -18080,12 +18080,12 @@ HordeCompositions.event_ussingen_smaller_hard = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -18095,9 +18095,9 @@ HordeCompositions.event_ussingen_smaller_hard = {
 				"skaven_clan_rat",
 				{
 					6,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -18106,12 +18106,12 @@ HordeCompositions.event_ussingen_smaller_hard = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -18121,9 +18121,9 @@ HordeCompositions.event_ussingen_smaller_hard = {
 				"skaven_clan_rat",
 				{
 					6,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -18132,12 +18132,12 @@ HordeCompositions.event_ussingen_smaller_hard = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -18147,9 +18147,9 @@ HordeCompositions.event_ussingen_smaller_hard = {
 				"skaven_clan_rat",
 				{
 					6,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -18158,12 +18158,12 @@ HordeCompositions.event_ussingen_smaller_hard = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -18173,9 +18173,9 @@ HordeCompositions.event_ussingen_smaller_hard = {
 				"skaven_clan_rat",
 				{
 					6,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -18184,13 +18184,13 @@ HordeCompositions.event_ussingen_smaller_hard = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				1,
-			},
-		},
-	},
+				1
+			}
+		}
+	}
 }
 HordeCompositions.event_ussingen_small_hard = {
 	{
@@ -18201,14 +18201,14 @@ HordeCompositions.event_ussingen_small_hard = {
 				"skaven_slave",
 				{
 					2,
-					4,
+					4
 				},
 				"skaven_clan_rat",
 				{
 					12,
-					14,
-				},
-			},
+					14
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -18217,12 +18217,12 @@ HordeCompositions.event_ussingen_small_hard = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -18232,14 +18232,14 @@ HordeCompositions.event_ussingen_small_hard = {
 				"skaven_slave",
 				{
 					2,
-					4,
+					4
 				},
 				"skaven_clan_rat",
 				{
 					12,
-					14,
-				},
-			},
+					14
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -18248,12 +18248,12 @@ HordeCompositions.event_ussingen_small_hard = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -18263,14 +18263,14 @@ HordeCompositions.event_ussingen_small_hard = {
 				"skaven_slave",
 				{
 					2,
-					4,
+					4
 				},
 				"skaven_clan_rat",
 				{
 					12,
-					14,
-				},
-			},
+					14
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -18279,12 +18279,12 @@ HordeCompositions.event_ussingen_small_hard = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -18294,14 +18294,14 @@ HordeCompositions.event_ussingen_small_hard = {
 				"skaven_slave",
 				{
 					2,
-					4,
+					4
 				},
 				"skaven_clan_rat",
 				{
 					12,
-					14,
-				},
-			},
+					14
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -18310,12 +18310,12 @@ HordeCompositions.event_ussingen_small_hard = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -18325,14 +18325,14 @@ HordeCompositions.event_ussingen_small_hard = {
 				"skaven_slave",
 				{
 					2,
-					4,
+					4
 				},
 				"skaven_clan_rat",
 				{
 					12,
-					14,
-				},
-			},
+					14
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -18341,12 +18341,12 @@ HordeCompositions.event_ussingen_small_hard = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -18356,14 +18356,14 @@ HordeCompositions.event_ussingen_small_hard = {
 				"skaven_slave",
 				{
 					2,
-					4,
+					4
 				},
 				"skaven_clan_rat",
 				{
 					12,
-					14,
-				},
-			},
+					14
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -18372,12 +18372,12 @@ HordeCompositions.event_ussingen_small_hard = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -18387,14 +18387,14 @@ HordeCompositions.event_ussingen_small_hard = {
 				"skaven_slave",
 				{
 					2,
-					4,
+					4
 				},
 				"skaven_clan_rat",
 				{
 					12,
-					14,
-				},
-			},
+					14
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -18403,12 +18403,12 @@ HordeCompositions.event_ussingen_small_hard = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -18418,14 +18418,14 @@ HordeCompositions.event_ussingen_small_hard = {
 				"skaven_slave",
 				{
 					2,
-					4,
+					4
 				},
 				"skaven_clan_rat",
 				{
 					12,
-					14,
-				},
-			},
+					14
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -18434,13 +18434,13 @@ HordeCompositions.event_ussingen_small_hard = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				2,
-			},
-		},
-	},
+				2
+			}
+		}
+	}
 }
 HordeCompositions.event_prologue_well = {
 	{
@@ -18449,10 +18449,10 @@ HordeCompositions.event_prologue_well = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				12,
-			},
+				12
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18460,10 +18460,10 @@ HordeCompositions.event_prologue_well = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				12,
-			},
+				12
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18471,10 +18471,10 @@ HordeCompositions.event_prologue_well = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				12,
-			},
+				12
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18482,10 +18482,10 @@ HordeCompositions.event_prologue_well = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				12,
-			},
+				12
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18493,10 +18493,10 @@ HordeCompositions.event_prologue_well = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				12,
-			},
+				12
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18504,10 +18504,10 @@ HordeCompositions.event_prologue_well = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				12,
-			},
+				12
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18515,10 +18515,10 @@ HordeCompositions.event_prologue_well = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				12,
-			},
+				12
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18526,11 +18526,11 @@ HordeCompositions.event_prologue_well = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				12,
-			},
+				12
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.event_prologue_melee_pickup = {
 	{
@@ -18539,10 +18539,10 @@ HordeCompositions.event_prologue_melee_pickup = {
 			weight = 1,
 			breeds = {
 				"skaven_clan_rat",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18550,10 +18550,10 @@ HordeCompositions.event_prologue_melee_pickup = {
 			weight = 1,
 			breeds = {
 				"skaven_clan_rat",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18561,10 +18561,10 @@ HordeCompositions.event_prologue_melee_pickup = {
 			weight = 1,
 			breeds = {
 				"skaven_clan_rat",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18572,10 +18572,10 @@ HordeCompositions.event_prologue_melee_pickup = {
 			weight = 1,
 			breeds = {
 				"skaven_clan_rat",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18583,10 +18583,10 @@ HordeCompositions.event_prologue_melee_pickup = {
 			weight = 1,
 			breeds = {
 				"skaven_clan_rat",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18594,10 +18594,10 @@ HordeCompositions.event_prologue_melee_pickup = {
 			weight = 1,
 			breeds = {
 				"skaven_clan_rat",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18605,10 +18605,10 @@ HordeCompositions.event_prologue_melee_pickup = {
 			weight = 1,
 			breeds = {
 				"skaven_clan_rat",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18616,11 +18616,11 @@ HordeCompositions.event_prologue_melee_pickup = {
 			weight = 1,
 			breeds = {
 				"skaven_clan_rat",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.event_prologue_practice_01 = {
 	{
@@ -18629,10 +18629,10 @@ HordeCompositions.event_prologue_practice_01 = {
 			weight = 1,
 			breeds = {
 				"skaven_clan_rat",
-				3,
-			},
+				3
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18640,10 +18640,10 @@ HordeCompositions.event_prologue_practice_01 = {
 			weight = 1,
 			breeds = {
 				"skaven_clan_rat",
-				3,
-			},
+				3
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18651,10 +18651,10 @@ HordeCompositions.event_prologue_practice_01 = {
 			weight = 1,
 			breeds = {
 				"skaven_clan_rat",
-				3,
-			},
+				3
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18662,10 +18662,10 @@ HordeCompositions.event_prologue_practice_01 = {
 			weight = 1,
 			breeds = {
 				"skaven_clan_rat",
-				3,
-			},
+				3
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18673,10 +18673,10 @@ HordeCompositions.event_prologue_practice_01 = {
 			weight = 1,
 			breeds = {
 				"skaven_clan_rat",
-				3,
-			},
+				3
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18684,10 +18684,10 @@ HordeCompositions.event_prologue_practice_01 = {
 			weight = 1,
 			breeds = {
 				"skaven_clan_rat",
-				3,
-			},
+				3
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18695,10 +18695,10 @@ HordeCompositions.event_prologue_practice_01 = {
 			weight = 1,
 			breeds = {
 				"skaven_clan_rat",
-				3,
-			},
+				3
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18706,11 +18706,11 @@ HordeCompositions.event_prologue_practice_01 = {
 			weight = 1,
 			breeds = {
 				"skaven_clan_rat",
-				3,
-			},
+				3
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.event_prologue_practice_02 = {
 	{
@@ -18719,10 +18719,10 @@ HordeCompositions.event_prologue_practice_02 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				6,
-			},
+				6
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18730,10 +18730,10 @@ HordeCompositions.event_prologue_practice_02 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				6,
-			},
+				6
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18741,10 +18741,10 @@ HordeCompositions.event_prologue_practice_02 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				6,
-			},
+				6
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18752,10 +18752,10 @@ HordeCompositions.event_prologue_practice_02 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				6,
-			},
+				6
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18763,10 +18763,10 @@ HordeCompositions.event_prologue_practice_02 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				6,
-			},
+				6
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18774,10 +18774,10 @@ HordeCompositions.event_prologue_practice_02 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				6,
-			},
+				6
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18785,10 +18785,10 @@ HordeCompositions.event_prologue_practice_02 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				6,
-			},
+				6
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18796,11 +18796,11 @@ HordeCompositions.event_prologue_practice_02 = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				6,
-			},
+				6
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.event_prologue_ranged = {
 	{
@@ -18809,10 +18809,10 @@ HordeCompositions.event_prologue_ranged = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				7,
-			},
+				7
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18820,10 +18820,10 @@ HordeCompositions.event_prologue_ranged = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				7,
-			},
+				7
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18831,10 +18831,10 @@ HordeCompositions.event_prologue_ranged = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				7,
-			},
+				7
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18842,10 +18842,10 @@ HordeCompositions.event_prologue_ranged = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				7,
-			},
+				7
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18853,10 +18853,10 @@ HordeCompositions.event_prologue_ranged = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				7,
-			},
+				7
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18864,10 +18864,10 @@ HordeCompositions.event_prologue_ranged = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				7,
-			},
+				7
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18875,10 +18875,10 @@ HordeCompositions.event_prologue_ranged = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				7,
-			},
+				7
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18886,11 +18886,11 @@ HordeCompositions.event_prologue_ranged = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				7,
-			},
+				7
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.event_prologue_slaves = {
 	{
@@ -18899,10 +18899,10 @@ HordeCompositions.event_prologue_slaves = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				12,
-			},
+				12
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18910,10 +18910,10 @@ HordeCompositions.event_prologue_slaves = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				12,
-			},
+				12
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18921,10 +18921,10 @@ HordeCompositions.event_prologue_slaves = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				12,
-			},
+				12
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18932,10 +18932,10 @@ HordeCompositions.event_prologue_slaves = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				12,
-			},
+				12
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18943,10 +18943,10 @@ HordeCompositions.event_prologue_slaves = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				12,
-			},
+				12
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18954,10 +18954,10 @@ HordeCompositions.event_prologue_slaves = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				12,
-			},
+				12
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18965,10 +18965,10 @@ HordeCompositions.event_prologue_slaves = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				12,
-			},
+				12
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -18976,11 +18976,11 @@ HordeCompositions.event_prologue_slaves = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				12,
-			},
+				12
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.event_prologue_block = {
 	{
@@ -18989,10 +18989,10 @@ HordeCompositions.event_prologue_block = {
 			weight = 1,
 			breeds = {
 				"chaos_marauder_tutorial",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19000,10 +19000,10 @@ HordeCompositions.event_prologue_block = {
 			weight = 1,
 			breeds = {
 				"chaos_marauder_tutorial",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19011,10 +19011,10 @@ HordeCompositions.event_prologue_block = {
 			weight = 1,
 			breeds = {
 				"chaos_marauder_tutorial",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19022,10 +19022,10 @@ HordeCompositions.event_prologue_block = {
 			weight = 1,
 			breeds = {
 				"chaos_marauder_tutorial",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19033,10 +19033,10 @@ HordeCompositions.event_prologue_block = {
 			weight = 1,
 			breeds = {
 				"chaos_marauder_tutorial",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19044,10 +19044,10 @@ HordeCompositions.event_prologue_block = {
 			weight = 1,
 			breeds = {
 				"chaos_marauder_tutorial",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19055,10 +19055,10 @@ HordeCompositions.event_prologue_block = {
 			weight = 1,
 			breeds = {
 				"chaos_marauder_tutorial",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19066,11 +19066,11 @@ HordeCompositions.event_prologue_block = {
 			weight = 1,
 			breeds = {
 				"chaos_marauder_tutorial",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.event_prologue_dodge = {
 	{
@@ -19079,10 +19079,10 @@ HordeCompositions.event_prologue_dodge = {
 			weight = 1,
 			breeds = {
 				"chaos_raider_tutorial",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19090,10 +19090,10 @@ HordeCompositions.event_prologue_dodge = {
 			weight = 1,
 			breeds = {
 				"chaos_raider_tutorial",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19101,10 +19101,10 @@ HordeCompositions.event_prologue_dodge = {
 			weight = 1,
 			breeds = {
 				"chaos_raider_tutorial",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19112,10 +19112,10 @@ HordeCompositions.event_prologue_dodge = {
 			weight = 1,
 			breeds = {
 				"chaos_raider_tutorial",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19123,10 +19123,10 @@ HordeCompositions.event_prologue_dodge = {
 			weight = 1,
 			breeds = {
 				"chaos_raider_tutorial",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19134,10 +19134,10 @@ HordeCompositions.event_prologue_dodge = {
 			weight = 1,
 			breeds = {
 				"chaos_raider_tutorial",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19145,10 +19145,10 @@ HordeCompositions.event_prologue_dodge = {
 			weight = 1,
 			breeds = {
 				"chaos_raider_tutorial",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19156,11 +19156,11 @@ HordeCompositions.event_prologue_dodge = {
 			weight = 1,
 			breeds = {
 				"chaos_raider_tutorial",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.event_prologue_horde = {
 	{
@@ -19171,10 +19171,10 @@ HordeCompositions.event_prologue_horde = {
 				"skaven_slave",
 				15,
 				"skaven_clan_rat",
-				7,
-			},
+				7
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19184,10 +19184,10 @@ HordeCompositions.event_prologue_horde = {
 				"skaven_slave",
 				15,
 				"skaven_clan_rat",
-				7,
-			},
+				7
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19197,10 +19197,10 @@ HordeCompositions.event_prologue_horde = {
 				"skaven_slave",
 				15,
 				"skaven_clan_rat",
-				7,
-			},
+				7
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19210,10 +19210,10 @@ HordeCompositions.event_prologue_horde = {
 				"skaven_slave",
 				15,
 				"skaven_clan_rat",
-				7,
-			},
+				7
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19223,10 +19223,10 @@ HordeCompositions.event_prologue_horde = {
 				"skaven_slave",
 				15,
 				"skaven_clan_rat",
-				7,
-			},
+				7
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19236,10 +19236,10 @@ HordeCompositions.event_prologue_horde = {
 				"skaven_slave",
 				15,
 				"skaven_clan_rat",
-				7,
-			},
+				7
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19249,10 +19249,10 @@ HordeCompositions.event_prologue_horde = {
 				"skaven_slave",
 				15,
 				"skaven_clan_rat",
-				7,
-			},
+				7
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19262,11 +19262,11 @@ HordeCompositions.event_prologue_horde = {
 				"skaven_slave",
 				15,
 				"skaven_clan_rat",
-				7,
-			},
+				7
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.crawl_pub_01_skaven_small = {
 	{
@@ -19277,9 +19277,9 @@ HordeCompositions.crawl_pub_01_skaven_small = {
 				"skaven_slave",
 				{
 					13,
-					15,
-				},
-			},
+					15
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -19288,16 +19288,16 @@ HordeCompositions.crawl_pub_01_skaven_small = {
 				"skaven_slave",
 				{
 					10,
-					12,
+					12
 				},
 				"skaven_clan_rat",
 				{
 					2,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19307,9 +19307,9 @@ HordeCompositions.crawl_pub_01_skaven_small = {
 				"skaven_slave",
 				{
 					13,
-					15,
-				},
-			},
+					15
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -19318,16 +19318,16 @@ HordeCompositions.crawl_pub_01_skaven_small = {
 				"skaven_slave",
 				{
 					10,
-					12,
+					12
 				},
 				"skaven_clan_rat",
 				{
 					2,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19337,9 +19337,9 @@ HordeCompositions.crawl_pub_01_skaven_small = {
 				"skaven_slave",
 				{
 					13,
-					15,
-				},
-			},
+					15
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -19348,16 +19348,16 @@ HordeCompositions.crawl_pub_01_skaven_small = {
 				"skaven_slave",
 				{
 					10,
-					12,
+					12
 				},
 				"skaven_clan_rat",
 				{
 					2,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19367,9 +19367,9 @@ HordeCompositions.crawl_pub_01_skaven_small = {
 				"skaven_slave",
 				{
 					13,
-					15,
-				},
-			},
+					15
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -19378,16 +19378,16 @@ HordeCompositions.crawl_pub_01_skaven_small = {
 				"skaven_slave",
 				{
 					10,
-					12,
+					12
 				},
 				"skaven_clan_rat",
 				{
 					2,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19397,9 +19397,9 @@ HordeCompositions.crawl_pub_01_skaven_small = {
 				"skaven_slave",
 				{
 					14,
-					16,
-				},
-			},
+					16
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -19408,16 +19408,16 @@ HordeCompositions.crawl_pub_01_skaven_small = {
 				"skaven_slave",
 				{
 					11,
-					13,
+					13
 				},
 				"skaven_clan_rat",
 				{
 					3,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19427,9 +19427,9 @@ HordeCompositions.crawl_pub_01_skaven_small = {
 				"skaven_slave",
 				{
 					14,
-					16,
-				},
-			},
+					16
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -19438,16 +19438,16 @@ HordeCompositions.crawl_pub_01_skaven_small = {
 				"skaven_slave",
 				{
 					11,
-					13,
+					13
 				},
 				"skaven_clan_rat",
 				{
 					3,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19457,9 +19457,9 @@ HordeCompositions.crawl_pub_01_skaven_small = {
 				"skaven_slave",
 				{
 					14,
-					16,
-				},
-			},
+					16
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -19468,16 +19468,16 @@ HordeCompositions.crawl_pub_01_skaven_small = {
 				"skaven_slave",
 				{
 					11,
-					13,
+					13
 				},
 				"skaven_clan_rat",
 				{
 					3,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19487,9 +19487,9 @@ HordeCompositions.crawl_pub_01_skaven_small = {
 				"skaven_slave",
 				{
 					13,
-					15,
-				},
-			},
+					15
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -19498,17 +19498,17 @@ HordeCompositions.crawl_pub_01_skaven_small = {
 				"skaven_slave",
 				{
 					10,
-					12,
+					12
 				},
 				"skaven_clan_rat",
 				{
 					2,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.crawl_pub_01_skaven_medium = {
 	{
@@ -19519,9 +19519,9 @@ HordeCompositions.crawl_pub_01_skaven_medium = {
 				"skaven_slave",
 				{
 					42,
-					45,
-				},
-			},
+					45
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -19530,14 +19530,14 @@ HordeCompositions.crawl_pub_01_skaven_medium = {
 				"skaven_slave",
 				{
 					37,
-					39,
+					39
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "mixed_plague",
@@ -19546,21 +19546,21 @@ HordeCompositions.crawl_pub_01_skaven_medium = {
 				"skaven_slave",
 				{
 					37,
-					39,
+					39
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					7,
+					7
 				},
 				"skaven_plague_monk",
 				{
 					1,
-					2,
-				},
-			},
+					2
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19570,9 +19570,9 @@ HordeCompositions.crawl_pub_01_skaven_medium = {
 				"skaven_slave",
 				{
 					42,
-					45,
-				},
-			},
+					45
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -19581,14 +19581,14 @@ HordeCompositions.crawl_pub_01_skaven_medium = {
 				"skaven_slave",
 				{
 					37,
-					39,
+					39
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "mixed_plague",
@@ -19597,21 +19597,21 @@ HordeCompositions.crawl_pub_01_skaven_medium = {
 				"skaven_slave",
 				{
 					37,
-					39,
+					39
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					7,
+					7
 				},
 				"skaven_plague_monk",
 				{
 					1,
-					2,
-				},
-			},
+					2
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19621,9 +19621,9 @@ HordeCompositions.crawl_pub_01_skaven_medium = {
 				"skaven_slave",
 				{
 					42,
-					45,
-				},
-			},
+					45
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -19632,14 +19632,14 @@ HordeCompositions.crawl_pub_01_skaven_medium = {
 				"skaven_slave",
 				{
 					37,
-					39,
+					39
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "mixed_plague",
@@ -19648,21 +19648,21 @@ HordeCompositions.crawl_pub_01_skaven_medium = {
 				"skaven_slave",
 				{
 					37,
-					39,
+					39
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					7,
+					7
 				},
 				"skaven_plague_monk",
 				{
 					1,
-					2,
-				},
-			},
+					2
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19672,9 +19672,9 @@ HordeCompositions.crawl_pub_01_skaven_medium = {
 				"skaven_slave",
 				{
 					42,
-					45,
-				},
-			},
+					45
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -19683,14 +19683,14 @@ HordeCompositions.crawl_pub_01_skaven_medium = {
 				"skaven_slave",
 				{
 					37,
-					39,
+					39
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "mixed_plague",
@@ -19699,21 +19699,21 @@ HordeCompositions.crawl_pub_01_skaven_medium = {
 				"skaven_slave",
 				{
 					37,
-					39,
+					39
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					7,
+					7
 				},
 				"skaven_plague_monk",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19723,9 +19723,9 @@ HordeCompositions.crawl_pub_01_skaven_medium = {
 				"skaven_slave",
 				{
 					43,
-					46,
-				},
-			},
+					46
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -19734,14 +19734,14 @@ HordeCompositions.crawl_pub_01_skaven_medium = {
 				"skaven_slave",
 				{
 					38,
-					40,
+					40
 				},
 				"skaven_clan_rat",
 				{
 					7,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
 		{
 			name = "mixed_plague",
@@ -19750,21 +19750,21 @@ HordeCompositions.crawl_pub_01_skaven_medium = {
 				"skaven_slave",
 				{
 					38,
-					40,
+					40
 				},
 				"skaven_clan_rat",
 				{
 					7,
-					8,
+					8
 				},
 				"skaven_plague_monk",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19774,9 +19774,9 @@ HordeCompositions.crawl_pub_01_skaven_medium = {
 				"skaven_slave",
 				{
 					43,
-					46,
-				},
-			},
+					46
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -19785,14 +19785,14 @@ HordeCompositions.crawl_pub_01_skaven_medium = {
 				"skaven_slave",
 				{
 					38,
-					40,
+					40
 				},
 				"skaven_clan_rat",
 				{
 					7,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
 		{
 			name = "mixed_plague",
@@ -19801,21 +19801,21 @@ HordeCompositions.crawl_pub_01_skaven_medium = {
 				"skaven_slave",
 				{
 					38,
-					40,
+					40
 				},
 				"skaven_clan_rat",
 				{
 					7,
-					8,
+					8
 				},
 				"skaven_plague_monk",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19825,9 +19825,9 @@ HordeCompositions.crawl_pub_01_skaven_medium = {
 				"skaven_slave",
 				{
 					43,
-					46,
-				},
-			},
+					46
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -19836,14 +19836,14 @@ HordeCompositions.crawl_pub_01_skaven_medium = {
 				"skaven_slave",
 				{
 					38,
-					40,
+					40
 				},
 				"skaven_clan_rat",
 				{
 					7,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
 		{
 			name = "mixed_plague",
@@ -19852,21 +19852,21 @@ HordeCompositions.crawl_pub_01_skaven_medium = {
 				"skaven_slave",
 				{
 					38,
-					40,
+					40
 				},
 				"skaven_clan_rat",
 				{
 					7,
-					8,
+					8
 				},
 				"skaven_plague_monk",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19876,9 +19876,9 @@ HordeCompositions.crawl_pub_01_skaven_medium = {
 				"skaven_slave",
 				{
 					42,
-					45,
-				},
-			},
+					45
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -19887,14 +19887,14 @@ HordeCompositions.crawl_pub_01_skaven_medium = {
 				"skaven_slave",
 				{
 					37,
-					39,
+					39
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "mixed_plague",
@@ -19903,22 +19903,22 @@ HordeCompositions.crawl_pub_01_skaven_medium = {
 				"skaven_slave",
 				{
 					37,
-					39,
+					39
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					7,
+					7
 				},
 				"skaven_plague_monk",
 				{
 					1,
-					2,
-				},
-			},
+					2
+				}
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.crawl_pub_01_skaven_extras = {
 	{
@@ -19929,9 +19929,9 @@ HordeCompositions.crawl_pub_01_skaven_extras = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -19940,11 +19940,11 @@ HordeCompositions.crawl_pub_01_skaven_extras = {
 				"skaven_clan_rat",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_storm_vermin_commander",
-				1,
-			},
+				1
+			}
 		},
 		{
 			name = "somevermin",
@@ -19953,18 +19953,18 @@ HordeCompositions.crawl_pub_01_skaven_extras = {
 				"skaven_storm_vermin_with_shield",
 				{
 					1,
-					2,
+					2
 				},
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -19974,9 +19974,9 @@ HordeCompositions.crawl_pub_01_skaven_extras = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -19985,11 +19985,11 @@ HordeCompositions.crawl_pub_01_skaven_extras = {
 				"skaven_clan_rat",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_storm_vermin_commander",
-				1,
-			},
+				1
+			}
 		},
 		{
 			name = "somevermin",
@@ -19998,18 +19998,18 @@ HordeCompositions.crawl_pub_01_skaven_extras = {
 				"skaven_storm_vermin_with_shield",
 				{
 					1,
-					2,
+					2
 				},
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -20019,9 +20019,9 @@ HordeCompositions.crawl_pub_01_skaven_extras = {
 				"skaven_clan_rat",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -20030,11 +20030,11 @@ HordeCompositions.crawl_pub_01_skaven_extras = {
 				"skaven_clan_rat",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_storm_vermin_commander",
-				1,
-			},
+				1
+			}
 		},
 		{
 			name = "somevermin",
@@ -20043,18 +20043,18 @@ HordeCompositions.crawl_pub_01_skaven_extras = {
 				"skaven_storm_vermin_with_shield",
 				{
 					1,
-					2,
+					2
 				},
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -20064,9 +20064,9 @@ HordeCompositions.crawl_pub_01_skaven_extras = {
 				"skaven_clan_rat",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "storm_clanrats",
@@ -20075,203 +20075,14 @@ HordeCompositions.crawl_pub_01_skaven_extras = {
 				"skaven_clan_rat",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_storm_vermin_commander",
 				{
 					1,
-					2,
-				},
-			},
-		},
-		{
-			name = "somevermin",
-			weight = 8,
-			breeds = {
-				"skaven_storm_vermin_with_shield",
-				{
-					1,
-					2,
-				},
-				"skaven_clan_rat",
-				{
-					4,
-					5,
-				},
-				"skaven_storm_vermin_commander",
-				2,
-			},
-		},
-		start_time = 0,
-	},
-	{
-		{
-			name = "few_clanrats",
-			weight = 25,
-			breeds = {
-				"skaven_clan_rat",
-				{
-					6,
-					7,
-				},
-			},
-		},
-		{
-			name = "storm_clanrats",
-			weight = 5,
-			breeds = {
-				"skaven_clan_rat",
-				{
-					3,
-					4,
-				},
-				"skaven_storm_vermin_commander",
-				{
-					2,
-					3,
-				},
-			},
-		},
-		{
-			name = "somevermin",
-			weight = 8,
-			breeds = {
-				"skaven_storm_vermin_with_shield",
-				{
-					2,
-					3,
-				},
-				"skaven_clan_rat",
-				{
-					5,
-					6,
-				},
-				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
-		start_time = 0,
-	},
-	{
-		{
-			name = "few_clanrats",
-			weight = 25,
-			breeds = {
-				"skaven_clan_rat",
-				{
-					6,
-					7,
-				},
-			},
-		},
-		{
-			name = "storm_clanrats",
-			weight = 5,
-			breeds = {
-				"skaven_clan_rat",
-				{
-					3,
-					4,
-				},
-				"skaven_storm_vermin_commander",
-				{
-					2,
-					3,
-				},
-			},
-		},
-		{
-			name = "somevermin",
-			weight = 8,
-			breeds = {
-				"skaven_storm_vermin_with_shield",
-				{
-					2,
-					3,
-				},
-				"skaven_clan_rat",
-				{
-					5,
-					6,
-				},
-				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
-		start_time = 0,
-	},
-	{
-		{
-			name = "few_clanrats",
-			weight = 25,
-			breeds = {
-				"skaven_clan_rat",
-				{
-					6,
-					7,
-				},
-			},
-		},
-		{
-			name = "storm_clanrats",
-			weight = 5,
-			breeds = {
-				"skaven_clan_rat",
-				{
-					3,
-					4,
-				},
-				"skaven_storm_vermin_commander",
-				{
-					2,
-					3,
-				},
-			},
-		},
-		{
-			name = "somevermin",
-			weight = 8,
-			breeds = {
-				"skaven_storm_vermin_with_shield",
-				{
-					2,
-					3,
-				},
-				"skaven_clan_rat",
-				{
-					5,
-					6,
-				},
-				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
-		start_time = 0,
-	},
-	{
-		{
-			name = "few_clanrats",
-			weight = 25,
-			breeds = {
-				"skaven_clan_rat",
-				{
-					4,
-					5,
-				},
-			},
-		},
-		{
-			name = "storm_clanrats",
-			weight = 5,
-			breeds = {
-				"skaven_clan_rat",
-				{
-					2,
-					3,
-				},
-				"skaven_storm_vermin_commander",
-				1,
-			},
+					2
+				}
+			}
 		},
 		{
 			name = "somevermin",
@@ -20280,19 +20091,208 @@ HordeCompositions.crawl_pub_01_skaven_extras = {
 				"skaven_storm_vermin_with_shield",
 				{
 					1,
-					2,
+					2
 				},
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_commander",
-				1,
-			},
+				2
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
+	{
+		{
+			name = "few_clanrats",
+			weight = 25,
+			breeds = {
+				"skaven_clan_rat",
+				{
+					6,
+					7
+				}
+			}
+		},
+		{
+			name = "storm_clanrats",
+			weight = 5,
+			breeds = {
+				"skaven_clan_rat",
+				{
+					3,
+					4
+				},
+				"skaven_storm_vermin_commander",
+				{
+					2,
+					3
+				}
+			}
+		},
+		{
+			name = "somevermin",
+			weight = 8,
+			breeds = {
+				"skaven_storm_vermin_with_shield",
+				{
+					2,
+					3
+				},
+				"skaven_clan_rat",
+				{
+					5,
+					6
+				},
+				"skaven_storm_vermin_commander",
+				3
+			}
+		},
+		start_time = 0
+	},
+	{
+		{
+			name = "few_clanrats",
+			weight = 25,
+			breeds = {
+				"skaven_clan_rat",
+				{
+					6,
+					7
+				}
+			}
+		},
+		{
+			name = "storm_clanrats",
+			weight = 5,
+			breeds = {
+				"skaven_clan_rat",
+				{
+					3,
+					4
+				},
+				"skaven_storm_vermin_commander",
+				{
+					2,
+					3
+				}
+			}
+		},
+		{
+			name = "somevermin",
+			weight = 8,
+			breeds = {
+				"skaven_storm_vermin_with_shield",
+				{
+					2,
+					3
+				},
+				"skaven_clan_rat",
+				{
+					5,
+					6
+				},
+				"skaven_storm_vermin_commander",
+				3
+			}
+		},
+		start_time = 0
+	},
+	{
+		{
+			name = "few_clanrats",
+			weight = 25,
+			breeds = {
+				"skaven_clan_rat",
+				{
+					6,
+					7
+				}
+			}
+		},
+		{
+			name = "storm_clanrats",
+			weight = 5,
+			breeds = {
+				"skaven_clan_rat",
+				{
+					3,
+					4
+				},
+				"skaven_storm_vermin_commander",
+				{
+					2,
+					3
+				}
+			}
+		},
+		{
+			name = "somevermin",
+			weight = 8,
+			breeds = {
+				"skaven_storm_vermin_with_shield",
+				{
+					2,
+					3
+				},
+				"skaven_clan_rat",
+				{
+					5,
+					6
+				},
+				"skaven_storm_vermin_commander",
+				3
+			}
+		},
+		start_time = 0
+	},
+	{
+		{
+			name = "few_clanrats",
+			weight = 25,
+			breeds = {
+				"skaven_clan_rat",
+				{
+					4,
+					5
+				}
+			}
+		},
+		{
+			name = "storm_clanrats",
+			weight = 5,
+			breeds = {
+				"skaven_clan_rat",
+				{
+					2,
+					3
+				},
+				"skaven_storm_vermin_commander",
+				1
+			}
+		},
+		{
+			name = "somevermin",
+			weight = 8,
+			breeds = {
+				"skaven_storm_vermin_with_shield",
+				{
+					1,
+					2
+				},
+				"skaven_clan_rat",
+				{
+					4,
+					5
+				},
+				"skaven_storm_vermin_commander",
+				1
+			}
+		},
+		start_time = 0
+	}
 }
 HordeCompositions.crawl_pub_01_chaos_small = {
 	{
@@ -20303,9 +20303,9 @@ HordeCompositions.crawl_pub_01_chaos_small = {
 				"chaos_marauder",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -20314,16 +20314,16 @@ HordeCompositions.crawl_pub_01_chaos_small = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -20333,9 +20333,9 @@ HordeCompositions.crawl_pub_01_chaos_small = {
 				"chaos_marauder",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -20344,16 +20344,16 @@ HordeCompositions.crawl_pub_01_chaos_small = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -20363,9 +20363,9 @@ HordeCompositions.crawl_pub_01_chaos_small = {
 				"chaos_marauder",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -20374,16 +20374,16 @@ HordeCompositions.crawl_pub_01_chaos_small = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -20393,9 +20393,9 @@ HordeCompositions.crawl_pub_01_chaos_small = {
 				"chaos_marauder",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -20404,16 +20404,16 @@ HordeCompositions.crawl_pub_01_chaos_small = {
 				"chaos_marauder_with_shield",
 				{
 					6,
-					8,
+					8
 				},
 				"chaos_marauder",
 				{
 					6,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -20423,9 +20423,9 @@ HordeCompositions.crawl_pub_01_chaos_small = {
 				"chaos_marauder",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -20434,16 +20434,16 @@ HordeCompositions.crawl_pub_01_chaos_small = {
 				"chaos_marauder_with_shield",
 				{
 					7,
-					9,
+					9
 				},
 				"chaos_marauder",
 				{
 					7,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -20453,9 +20453,9 @@ HordeCompositions.crawl_pub_01_chaos_small = {
 				"chaos_marauder",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -20464,16 +20464,16 @@ HordeCompositions.crawl_pub_01_chaos_small = {
 				"chaos_marauder_with_shield",
 				{
 					7,
-					9,
+					9
 				},
 				"chaos_marauder",
 				{
 					7,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -20483,9 +20483,9 @@ HordeCompositions.crawl_pub_01_chaos_small = {
 				"chaos_marauder",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -20494,16 +20494,16 @@ HordeCompositions.crawl_pub_01_chaos_small = {
 				"chaos_marauder_with_shield",
 				{
 					7,
-					9,
+					9
 				},
 				"chaos_marauder",
 				{
 					7,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -20513,9 +20513,9 @@ HordeCompositions.crawl_pub_01_chaos_small = {
 				"chaos_marauder",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -20524,17 +20524,17 @@ HordeCompositions.crawl_pub_01_chaos_small = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.crawl_pub_01_chaos_large = {
 	{
@@ -20545,14 +20545,14 @@ HordeCompositions.crawl_pub_01_chaos_large = {
 				"chaos_marauder",
 				{
 					11,
-					13,
+					13
 				},
 				"chaos_fanatic",
 				{
 					11,
-					13,
-				},
-			},
+					13
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -20561,21 +20561,21 @@ HordeCompositions.crawl_pub_01_chaos_large = {
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_fanatic",
 				{
 					11,
-					13,
-				},
-			},
+					13
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -20585,14 +20585,14 @@ HordeCompositions.crawl_pub_01_chaos_large = {
 				"chaos_marauder",
 				{
 					11,
-					13,
+					13
 				},
 				"chaos_fanatic",
 				{
 					11,
-					13,
-				},
-			},
+					13
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -20601,21 +20601,21 @@ HordeCompositions.crawl_pub_01_chaos_large = {
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_fanatic",
 				{
 					11,
-					13,
-				},
-			},
+					13
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -20625,14 +20625,14 @@ HordeCompositions.crawl_pub_01_chaos_large = {
 				"chaos_marauder",
 				{
 					13,
-					15,
+					15
 				},
 				"chaos_fanatic",
 				{
 					13,
-					15,
-				},
-			},
+					15
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -20641,21 +20641,21 @@ HordeCompositions.crawl_pub_01_chaos_large = {
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_fanatic",
 				{
 					13,
-					15,
-				},
-			},
+					15
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -20665,14 +20665,14 @@ HordeCompositions.crawl_pub_01_chaos_large = {
 				"chaos_marauder",
 				{
 					13,
-					15,
+					15
 				},
 				"chaos_fanatic",
 				{
 					13,
-					15,
-				},
-			},
+					15
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -20681,21 +20681,21 @@ HordeCompositions.crawl_pub_01_chaos_large = {
 				"chaos_marauder_with_shield",
 				{
 					6,
-					8,
+					8
 				},
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_fanatic",
 				{
 					13,
-					15,
-				},
-			},
+					15
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -20705,14 +20705,14 @@ HordeCompositions.crawl_pub_01_chaos_large = {
 				"chaos_marauder",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_fanatic",
 				{
 					14,
-					16,
-				},
-			},
+					16
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -20721,21 +20721,21 @@ HordeCompositions.crawl_pub_01_chaos_large = {
 				"chaos_marauder_with_shield",
 				{
 					7,
-					9,
+					9
 				},
 				"chaos_marauder",
 				{
 					6,
-					7,
+					7
 				},
 				"chaos_fanatic",
 				{
 					14,
-					16,
-				},
-			},
+					16
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -20745,14 +20745,14 @@ HordeCompositions.crawl_pub_01_chaos_large = {
 				"chaos_marauder",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_fanatic",
 				{
 					14,
-					16,
-				},
-			},
+					16
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -20761,21 +20761,21 @@ HordeCompositions.crawl_pub_01_chaos_large = {
 				"chaos_marauder_with_shield",
 				{
 					7,
-					9,
+					9
 				},
 				"chaos_marauder",
 				{
 					6,
-					7,
+					7
 				},
 				"chaos_fanatic",
 				{
 					14,
-					16,
-				},
-			},
+					16
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -20785,14 +20785,14 @@ HordeCompositions.crawl_pub_01_chaos_large = {
 				"chaos_marauder",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_fanatic",
 				{
 					14,
-					16,
-				},
-			},
+					16
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -20801,21 +20801,21 @@ HordeCompositions.crawl_pub_01_chaos_large = {
 				"chaos_marauder_with_shield",
 				{
 					7,
-					9,
+					9
 				},
 				"chaos_marauder",
 				{
 					6,
-					7,
+					7
 				},
 				"chaos_fanatic",
 				{
 					14,
-					16,
-				},
-			},
+					16
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -20825,14 +20825,14 @@ HordeCompositions.crawl_pub_01_chaos_large = {
 				"chaos_marauder",
 				{
 					11,
-					13,
+					13
 				},
 				"chaos_fanatic",
 				{
 					11,
-					13,
-				},
-			},
+					13
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -20841,22 +20841,22 @@ HordeCompositions.crawl_pub_01_chaos_large = {
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_fanatic",
 				{
 					11,
-					13,
-				},
-			},
+					13
+				}
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.crawl_pub_01_chaos_extras = {
 	{
@@ -20867,9 +20867,9 @@ HordeCompositions.crawl_pub_01_chaos_extras = {
 				"chaos_berzerker",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -20878,11 +20878,11 @@ HordeCompositions.crawl_pub_01_chaos_extras = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -20892,9 +20892,9 @@ HordeCompositions.crawl_pub_01_chaos_extras = {
 				"chaos_berzerker",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -20903,11 +20903,11 @@ HordeCompositions.crawl_pub_01_chaos_extras = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -20917,9 +20917,9 @@ HordeCompositions.crawl_pub_01_chaos_extras = {
 				"chaos_berzerker",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -20928,11 +20928,11 @@ HordeCompositions.crawl_pub_01_chaos_extras = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -20942,9 +20942,9 @@ HordeCompositions.crawl_pub_01_chaos_extras = {
 				"chaos_berzerker",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -20953,9 +20953,9 @@ HordeCompositions.crawl_pub_01_chaos_extras = {
 				"chaos_marauder_with_shield",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -20964,21 +20964,21 @@ HordeCompositions.crawl_pub_01_chaos_extras = {
 				"chaos_warrior",
 				{
 					1,
-					2,
+					2
 				},
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_berzerker",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -20988,9 +20988,9 @@ HordeCompositions.crawl_pub_01_chaos_extras = {
 				"chaos_berzerker",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -20999,9 +20999,9 @@ HordeCompositions.crawl_pub_01_chaos_extras = {
 				"chaos_marauder_with_shield",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -21010,21 +21010,21 @@ HordeCompositions.crawl_pub_01_chaos_extras = {
 				"chaos_warrior",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_berzerker",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -21034,9 +21034,9 @@ HordeCompositions.crawl_pub_01_chaos_extras = {
 				"chaos_berzerker",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -21045,9 +21045,9 @@ HordeCompositions.crawl_pub_01_chaos_extras = {
 				"chaos_marauder_with_shield",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -21056,21 +21056,21 @@ HordeCompositions.crawl_pub_01_chaos_extras = {
 				"chaos_warrior",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_berzerker",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -21080,9 +21080,9 @@ HordeCompositions.crawl_pub_01_chaos_extras = {
 				"chaos_berzerker",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -21091,9 +21091,9 @@ HordeCompositions.crawl_pub_01_chaos_extras = {
 				"chaos_marauder_with_shield",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -21102,21 +21102,21 @@ HordeCompositions.crawl_pub_01_chaos_extras = {
 				"chaos_warrior",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_berzerker",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -21126,9 +21126,9 @@ HordeCompositions.crawl_pub_01_chaos_extras = {
 				"chaos_berzerker",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -21137,12 +21137,12 @@ HordeCompositions.crawl_pub_01_chaos_extras = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.crawl_end_event_chaos_01 = {
 	{
@@ -21153,14 +21153,14 @@ HordeCompositions.crawl_end_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "fanauder_shield",
@@ -21169,21 +21169,21 @@ HordeCompositions.crawl_end_event_chaos_01 = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -21193,14 +21193,14 @@ HordeCompositions.crawl_end_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "fanauder_shield",
@@ -21209,21 +21209,21 @@ HordeCompositions.crawl_end_event_chaos_01 = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -21233,14 +21233,14 @@ HordeCompositions.crawl_end_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "fanauder_shield",
@@ -21249,21 +21249,21 @@ HordeCompositions.crawl_end_event_chaos_01 = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -21273,14 +21273,14 @@ HordeCompositions.crawl_end_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "fanauder_shield",
@@ -21289,21 +21289,21 @@ HordeCompositions.crawl_end_event_chaos_01 = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_fanatic",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -21313,14 +21313,14 @@ HordeCompositions.crawl_end_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					9,
-					10,
+					10
 				},
 				"chaos_fanatic",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "fanauder_shield",
@@ -21329,21 +21329,21 @@ HordeCompositions.crawl_end_event_chaos_01 = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder",
 				{
 					6,
-					7,
+					7
 				},
 				"chaos_fanatic",
 				{
 					7,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -21353,14 +21353,14 @@ HordeCompositions.crawl_end_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					9,
-					10,
+					10
 				},
 				"chaos_fanatic",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "fanauder_shield",
@@ -21369,21 +21369,21 @@ HordeCompositions.crawl_end_event_chaos_01 = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder",
 				{
 					6,
-					7,
+					7
 				},
 				"chaos_fanatic",
 				{
 					7,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -21393,14 +21393,14 @@ HordeCompositions.crawl_end_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					9,
-					10,
+					10
 				},
 				"chaos_fanatic",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "fanauder_shield",
@@ -21409,21 +21409,21 @@ HordeCompositions.crawl_end_event_chaos_01 = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder",
 				{
 					6,
-					7,
+					7
 				},
 				"chaos_fanatic",
 				{
 					7,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -21433,14 +21433,14 @@ HordeCompositions.crawl_end_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "fanauder_shield",
@@ -21449,22 +21449,22 @@ HordeCompositions.crawl_end_event_chaos_01 = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.crawl_end_event_chaos_02 = {
 	{
@@ -21475,21 +21475,21 @@ HordeCompositions.crawl_end_event_chaos_02 = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_berzerker",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_fanatic",
 				{
 					12,
-					14,
-				},
-			},
+					14
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -21499,21 +21499,21 @@ HordeCompositions.crawl_end_event_chaos_02 = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_berzerker",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_fanatic",
 				{
 					12,
-					14,
-				},
-			},
+					14
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -21523,21 +21523,21 @@ HordeCompositions.crawl_end_event_chaos_02 = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_berzerker",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_fanatic",
 				{
 					12,
-					14,
-				},
-			},
+					14
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -21547,21 +21547,21 @@ HordeCompositions.crawl_end_event_chaos_02 = {
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_berzerker",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_fanatic",
 				{
 					12,
-					14,
-				},
-			},
+					14
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -21571,21 +21571,21 @@ HordeCompositions.crawl_end_event_chaos_02 = {
 				"chaos_marauder_with_shield",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_berzerker",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_fanatic",
 				{
 					13,
-					15,
-				},
-			},
+					15
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -21595,21 +21595,21 @@ HordeCompositions.crawl_end_event_chaos_02 = {
 				"chaos_marauder_with_shield",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_berzerker",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_fanatic",
 				{
 					13,
-					15,
-				},
-			},
+					15
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -21619,21 +21619,21 @@ HordeCompositions.crawl_end_event_chaos_02 = {
 				"chaos_marauder_with_shield",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_berzerker",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_fanatic",
 				{
 					13,
-					15,
-				},
-			},
+					15
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -21643,22 +21643,22 @@ HordeCompositions.crawl_end_event_chaos_02 = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_berzerker",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_fanatic",
 				{
 					12,
-					14,
-				},
-			},
+					14
+				}
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.crawl_end_event_chaos_small = {
 	{
@@ -21669,14 +21669,14 @@ HordeCompositions.crawl_end_event_chaos_small = {
 				"chaos_marauder",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_fanatic",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "fanauder_shield",
@@ -21687,16 +21687,16 @@ HordeCompositions.crawl_end_event_chaos_small = {
 				"chaos_marauder",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_fanatic",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -21706,14 +21706,14 @@ HordeCompositions.crawl_end_event_chaos_small = {
 				"chaos_marauder",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_fanatic",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "fanauder_shield",
@@ -21724,16 +21724,16 @@ HordeCompositions.crawl_end_event_chaos_small = {
 				"chaos_marauder",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_fanatic",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -21743,14 +21743,14 @@ HordeCompositions.crawl_end_event_chaos_small = {
 				"chaos_marauder",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_fanatic",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "fanauder_shield",
@@ -21761,16 +21761,16 @@ HordeCompositions.crawl_end_event_chaos_small = {
 				"chaos_marauder",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_fanatic",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -21780,14 +21780,14 @@ HordeCompositions.crawl_end_event_chaos_small = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_fanatic",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "fanauder_shield",
@@ -21798,16 +21798,16 @@ HordeCompositions.crawl_end_event_chaos_small = {
 				"chaos_marauder",
 				{
 					4,
-					6,
+					6
 				},
 				"chaos_fanatic",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -21817,14 +21817,14 @@ HordeCompositions.crawl_end_event_chaos_small = {
 				"chaos_marauder",
 				{
 					6,
-					7,
+					7
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "fanauder_shield",
@@ -21835,16 +21835,16 @@ HordeCompositions.crawl_end_event_chaos_small = {
 				"chaos_marauder",
 				{
 					5,
-					7,
+					7
 				},
 				"chaos_fanatic",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -21854,14 +21854,14 @@ HordeCompositions.crawl_end_event_chaos_small = {
 				"chaos_marauder",
 				{
 					6,
-					7,
+					7
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "fanauder_shield",
@@ -21872,16 +21872,16 @@ HordeCompositions.crawl_end_event_chaos_small = {
 				"chaos_marauder",
 				{
 					5,
-					7,
+					7
 				},
 				"chaos_fanatic",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -21891,14 +21891,14 @@ HordeCompositions.crawl_end_event_chaos_small = {
 				"chaos_marauder",
 				{
 					6,
-					7,
+					7
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "fanauder_shield",
@@ -21909,16 +21909,16 @@ HordeCompositions.crawl_end_event_chaos_small = {
 				"chaos_marauder",
 				{
 					5,
-					7,
+					7
 				},
 				"chaos_fanatic",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -21928,14 +21928,14 @@ HordeCompositions.crawl_end_event_chaos_small = {
 				"chaos_marauder",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_fanatic",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "fanauder_shield",
@@ -21946,17 +21946,17 @@ HordeCompositions.crawl_end_event_chaos_small = {
 				"chaos_marauder",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_fanatic",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.crawl_end_event_skaven_large = {
 	{
@@ -21967,16 +21967,16 @@ HordeCompositions.crawl_end_event_skaven_large = {
 				"skaven_slave",
 				{
 					26,
-					28,
+					28
 				},
 				"skaven_clan_rat",
 				{
 					8,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -21986,16 +21986,16 @@ HordeCompositions.crawl_end_event_skaven_large = {
 				"skaven_slave",
 				{
 					26,
-					28,
+					28
 				},
 				"skaven_clan_rat",
 				{
 					8,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22005,16 +22005,16 @@ HordeCompositions.crawl_end_event_skaven_large = {
 				"skaven_slave",
 				{
 					26,
-					28,
+					28
 				},
 				"skaven_clan_rat",
 				{
 					8,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22024,16 +22024,16 @@ HordeCompositions.crawl_end_event_skaven_large = {
 				"skaven_slave",
 				{
 					22,
-					24,
+					24
 				},
 				"skaven_clan_rat",
 				{
 					14,
-					16,
-				},
-			},
+					16
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22043,16 +22043,16 @@ HordeCompositions.crawl_end_event_skaven_large = {
 				"skaven_slave",
 				{
 					23,
-					25,
+					25
 				},
 				"skaven_clan_rat",
 				{
 					15,
-					17,
-				},
-			},
+					17
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22062,16 +22062,16 @@ HordeCompositions.crawl_end_event_skaven_large = {
 				"skaven_slave",
 				{
 					23,
-					25,
+					25
 				},
 				"skaven_clan_rat",
 				{
 					15,
-					17,
-				},
-			},
+					17
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22081,16 +22081,16 @@ HordeCompositions.crawl_end_event_skaven_large = {
 				"skaven_slave",
 				{
 					23,
-					25,
+					25
 				},
 				"skaven_clan_rat",
 				{
 					15,
-					17,
-				},
-			},
+					17
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22100,17 +22100,17 @@ HordeCompositions.crawl_end_event_skaven_large = {
 				"skaven_slave",
 				{
 					26,
-					28,
+					28
 				},
 				"skaven_clan_rat",
 				{
 					8,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.crawl_end_event_skaven_medium = {
 	{
@@ -22121,16 +22121,16 @@ HordeCompositions.crawl_end_event_skaven_medium = {
 				"skaven_slave",
 				{
 					16,
-					18,
+					18
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22140,16 +22140,16 @@ HordeCompositions.crawl_end_event_skaven_medium = {
 				"skaven_slave",
 				{
 					16,
-					18,
+					18
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22159,16 +22159,16 @@ HordeCompositions.crawl_end_event_skaven_medium = {
 				"skaven_slave",
 				{
 					16,
-					18,
+					18
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22178,16 +22178,16 @@ HordeCompositions.crawl_end_event_skaven_medium = {
 				"skaven_slave",
 				{
 					14,
-					16,
+					16
 				},
 				"skaven_clan_rat",
 				{
 					9,
-					10,
-				},
-			},
+					10
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22197,16 +22197,16 @@ HordeCompositions.crawl_end_event_skaven_medium = {
 				"skaven_slave",
 				{
 					15,
-					17,
+					17
 				},
 				"skaven_clan_rat",
 				{
 					10,
-					11,
-				},
-			},
+					11
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22216,16 +22216,16 @@ HordeCompositions.crawl_end_event_skaven_medium = {
 				"skaven_slave",
 				{
 					15,
-					17,
+					17
 				},
 				"skaven_clan_rat",
 				{
 					10,
-					11,
-				},
-			},
+					11
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22235,16 +22235,16 @@ HordeCompositions.crawl_end_event_skaven_medium = {
 				"skaven_slave",
 				{
 					15,
-					17,
+					17
 				},
 				"skaven_clan_rat",
 				{
 					10,
-					11,
-				},
-			},
+					11
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22254,17 +22254,17 @@ HordeCompositions.crawl_end_event_skaven_medium = {
 				"skaven_slave",
 				{
 					16,
-					18,
+					18
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.crawl_end_event_skaven_small = {
 	{
@@ -22275,16 +22275,16 @@ HordeCompositions.crawl_end_event_skaven_small = {
 				"skaven_slave",
 				{
 					7,
-					8,
+					8
 				},
 				"skaven_clan_rat",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22294,16 +22294,16 @@ HordeCompositions.crawl_end_event_skaven_small = {
 				"skaven_slave",
 				{
 					7,
-					8,
+					8
 				},
 				"skaven_clan_rat",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22313,16 +22313,16 @@ HordeCompositions.crawl_end_event_skaven_small = {
 				"skaven_slave",
 				{
 					7,
-					8,
+					8
 				},
 				"skaven_clan_rat",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22332,35 +22332,35 @@ HordeCompositions.crawl_end_event_skaven_small = {
 				"skaven_slave",
 				{
 					5,
+					6
+				},
+				"skaven_clan_rat",
+				{
+					8,
+					10
+				}
+			}
+		},
+		start_time = 0
+	},
+	{
+		{
+			name = "clave",
+			weight = 1,
+			breeds = {
+				"skaven_slave",
+				{
 					6,
-				},
-				"skaven_clan_rat",
-				{
-					8,
-					10,
-				},
-			},
-		},
-		start_time = 0,
-	},
-	{
-		{
-			name = "clave",
-			weight = 1,
-			breeds = {
-				"skaven_slave",
-				{
-					6,
-					7,
+					7
 				},
 				"skaven_clan_rat",
 				{
 					9,
-					11,
-				},
-			},
+					11
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22370,16 +22370,16 @@ HordeCompositions.crawl_end_event_skaven_small = {
 				"skaven_slave",
 				{
 					6,
-					7,
+					7
 				},
 				"skaven_clan_rat",
 				{
 					9,
-					11,
-				},
-			},
+					11
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22389,16 +22389,16 @@ HordeCompositions.crawl_end_event_skaven_small = {
 				"skaven_slave",
 				{
 					6,
-					7,
+					7
 				},
 				"skaven_clan_rat",
 				{
 					9,
-					11,
-				},
-			},
+					11
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22408,17 +22408,17 @@ HordeCompositions.crawl_end_event_skaven_small = {
 				"skaven_slave",
 				{
 					7,
-					8,
+					8
 				},
 				"skaven_clan_rat",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.crawl_end_event_skaven_shield = {
 	{
@@ -22429,26 +22429,26 @@ HordeCompositions.crawl_end_event_skaven_shield = {
 				"skaven_slave",
 				{
 					6,
-					7,
+					7
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_clan_rat",
 				{
 					3,
-					4,
+					4
 				},
 				"skaven_storm_vermin_with_shield",
 				{
 					1,
-					2,
-				},
-			},
+					2
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22458,26 +22458,26 @@ HordeCompositions.crawl_end_event_skaven_shield = {
 				"skaven_slave",
 				{
 					6,
-					7,
+					7
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_clan_rat",
 				{
 					3,
-					4,
+					4
 				},
 				"skaven_storm_vermin_with_shield",
 				{
 					1,
-					2,
-				},
-			},
+					2
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22487,26 +22487,26 @@ HordeCompositions.crawl_end_event_skaven_shield = {
 				"skaven_slave",
 				{
 					6,
-					7,
+					7
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_clan_rat",
 				{
 					3,
-					4,
+					4
 				},
 				"skaven_storm_vermin_with_shield",
 				{
 					1,
-					2,
-				},
-			},
+					2
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22516,26 +22516,26 @@ HordeCompositions.crawl_end_event_skaven_shield = {
 				"skaven_slave",
 				{
 					6,
-					7,
+					7
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"skaven_clan_rat",
 				{
 					3,
-					4,
+					4
 				},
 				"skaven_storm_vermin_with_shield",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22545,26 +22545,26 @@ HordeCompositions.crawl_end_event_skaven_shield = {
 				"skaven_slave",
 				{
 					7,
-					8,
+					8
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_with_shield",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22574,26 +22574,26 @@ HordeCompositions.crawl_end_event_skaven_shield = {
 				"skaven_slave",
 				{
 					7,
-					8,
+					8
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_with_shield",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22603,26 +22603,26 @@ HordeCompositions.crawl_end_event_skaven_shield = {
 				"skaven_slave",
 				{
 					7,
-					8,
+					8
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_clan_rat",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_storm_vermin_with_shield",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22632,27 +22632,27 @@ HordeCompositions.crawl_end_event_skaven_shield = {
 				"skaven_slave",
 				{
 					6,
-					7,
+					7
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"skaven_clan_rat",
 				{
 					3,
-					4,
+					4
 				},
 				"skaven_storm_vermin_with_shield",
 				{
 					1,
-					2,
-				},
-			},
+					2
+				}
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.crawl_end_event_storm_vermin = {
 	{
@@ -22663,11 +22663,11 @@ HordeCompositions.crawl_end_event_storm_vermin = {
 				"skaven_storm_vermin_commander",
 				{
 					1,
-					2,
-				},
-			},
+					2
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22677,11 +22677,11 @@ HordeCompositions.crawl_end_event_storm_vermin = {
 				"skaven_storm_vermin_commander",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22691,11 +22691,11 @@ HordeCompositions.crawl_end_event_storm_vermin = {
 				"skaven_storm_vermin_commander",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22705,11 +22705,11 @@ HordeCompositions.crawl_end_event_storm_vermin = {
 				"skaven_storm_vermin_commander",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22719,11 +22719,11 @@ HordeCompositions.crawl_end_event_storm_vermin = {
 				"skaven_storm_vermin_commander",
 				{
 					7,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22733,11 +22733,11 @@ HordeCompositions.crawl_end_event_storm_vermin = {
 				"skaven_storm_vermin_commander",
 				{
 					7,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22747,11 +22747,11 @@ HordeCompositions.crawl_end_event_storm_vermin = {
 				"skaven_storm_vermin_commander",
 				{
 					7,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22761,12 +22761,12 @@ HordeCompositions.crawl_end_event_storm_vermin = {
 				"skaven_storm_vermin_commander",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.crawl_end_event_skaven_monks = {
 	{
@@ -22777,11 +22777,11 @@ HordeCompositions.crawl_end_event_skaven_monks = {
 				"skaven_plague_monk",
 				{
 					3,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22791,11 +22791,11 @@ HordeCompositions.crawl_end_event_skaven_monks = {
 				"skaven_plague_monk",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22805,25 +22805,25 @@ HordeCompositions.crawl_end_event_skaven_monks = {
 				"skaven_plague_monk",
 				{
 					5,
+					6
+				}
+			}
+		},
+		start_time = 0
+	},
+	{
+		{
+			name = "monks",
+			weight = 1,
+			breeds = {
+				"skaven_plague_monk",
+				{
 					6,
-				},
-			},
+					7
+				}
+			}
 		},
-		start_time = 0,
-	},
-	{
-		{
-			name = "monks",
-			weight = 1,
-			breeds = {
-				"skaven_plague_monk",
-				{
-					6,
-					7,
-				},
-			},
-		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22833,11 +22833,11 @@ HordeCompositions.crawl_end_event_skaven_monks = {
 				"skaven_plague_monk",
 				{
 					7,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22847,11 +22847,11 @@ HordeCompositions.crawl_end_event_skaven_monks = {
 				"skaven_plague_monk",
 				{
 					7,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22861,11 +22861,11 @@ HordeCompositions.crawl_end_event_skaven_monks = {
 				"skaven_plague_monk",
 				{
 					7,
-					8,
-				},
-			},
+					8
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22875,12 +22875,12 @@ HordeCompositions.crawl_end_event_skaven_monks = {
 				"skaven_plague_monk",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.crawl_end_event_open_stairs = {
 	{
@@ -22889,10 +22889,10 @@ HordeCompositions.crawl_end_event_open_stairs = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22900,10 +22900,10 @@ HordeCompositions.crawl_end_event_open_stairs = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22911,10 +22911,10 @@ HordeCompositions.crawl_end_event_open_stairs = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				2,
-			},
+				2
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22922,10 +22922,10 @@ HordeCompositions.crawl_end_event_open_stairs = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				3,
-			},
+				3
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22933,10 +22933,10 @@ HordeCompositions.crawl_end_event_open_stairs = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				4,
-			},
+				4
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22944,10 +22944,10 @@ HordeCompositions.crawl_end_event_open_stairs = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				4,
-			},
+				4
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22955,10 +22955,10 @@ HordeCompositions.crawl_end_event_open_stairs = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				4,
-			},
+				4
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22966,11 +22966,11 @@ HordeCompositions.crawl_end_event_open_stairs = {
 			weight = 1,
 			breeds = {
 				"chaos_warrior",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.crawl_end_event_floor_fall = {
 	{
@@ -22979,10 +22979,10 @@ HordeCompositions.crawl_end_event_floor_fall = {
 			weight = 1,
 			breeds = {
 				"chaos_raider",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -22990,10 +22990,21 @@ HordeCompositions.crawl_end_event_floor_fall = {
 			weight = 1,
 			breeds = {
 				"chaos_raider",
-				2,
-			},
+				2
+			}
 		},
-		start_time = 0,
+		start_time = 0
+	},
+	{
+		{
+			name = "warriors",
+			weight = 1,
+			breeds = {
+				"chaos_raider",
+				3
+			}
+		},
+		start_time = 0
 	},
 	{
 		{
@@ -23002,22 +23013,11 @@ HordeCompositions.crawl_end_event_floor_fall = {
 			breeds = {
 				"chaos_raider",
 				3,
-			},
-		},
-		start_time = 0,
-	},
-	{
-		{
-			name = "warriors",
-			weight = 1,
-			breeds = {
-				"chaos_raider",
-				3,
 				"chaos_warrior",
-				1,
-			},
+				1
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -23027,10 +23027,10 @@ HordeCompositions.crawl_end_event_floor_fall = {
 				"chaos_raider",
 				4,
 				"chaos_warrior",
-				2,
-			},
+				2
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -23040,10 +23040,10 @@ HordeCompositions.crawl_end_event_floor_fall = {
 				"chaos_raider",
 				4,
 				"chaos_warrior",
-				2,
-			},
+				2
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -23053,10 +23053,10 @@ HordeCompositions.crawl_end_event_floor_fall = {
 				"chaos_raider",
 				4,
 				"chaos_warrior",
-				2,
-			},
+				2
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -23064,11 +23064,11 @@ HordeCompositions.crawl_end_event_floor_fall = {
 			weight = 1,
 			breeds = {
 				"chaos_raider",
-				2,
-			},
+				2
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.crater_bestigor_medium = {
 	{
@@ -23079,10 +23079,10 @@ HordeCompositions.crater_bestigor_medium = {
 				"beastmen_bestigor",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23092,10 +23092,10 @@ HordeCompositions.crater_bestigor_medium = {
 				"beastmen_bestigor",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23105,10 +23105,10 @@ HordeCompositions.crater_bestigor_medium = {
 				"beastmen_bestigor",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23118,10 +23118,10 @@ HordeCompositions.crater_bestigor_medium = {
 				"beastmen_bestigor",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23131,10 +23131,10 @@ HordeCompositions.crater_bestigor_medium = {
 				"beastmen_bestigor",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23144,10 +23144,10 @@ HordeCompositions.crater_bestigor_medium = {
 				"beastmen_bestigor",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23157,10 +23157,10 @@ HordeCompositions.crater_bestigor_medium = {
 				"beastmen_bestigor",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23170,11 +23170,11 @@ HordeCompositions.crater_bestigor_medium = {
 				"beastmen_bestigor",
 				{
 					3,
-					4,
-				},
-			},
-		},
-	},
+					4
+				}
+			}
+		}
+	}
 }
 HordeCompositions.crater_detour = {
 	{
@@ -23189,9 +23189,9 @@ HordeCompositions.crater_detour = {
 				"skaven_poison_wind_globadier",
 				1,
 				"skaven_ratling_gunner",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -23201,7 +23201,7 @@ HordeCompositions.crater_detour = {
 				"skaven_warpfire_thrower",
 				{
 					1,
-					2,
+					2
 				},
 				"skaven_gutter_runner",
 				1,
@@ -23210,10 +23210,10 @@ HordeCompositions.crater_detour = {
 				"skaven_ratling_gunner",
 				{
 					1,
-					2,
-				},
-			},
-		},
+					2
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23223,7 +23223,7 @@ HordeCompositions.crater_detour = {
 				"skaven_warpfire_thrower",
 				{
 					1,
-					3,
+					3
 				},
 				"skaven_gutter_runner",
 				1,
@@ -23232,10 +23232,10 @@ HordeCompositions.crater_detour = {
 				"skaven_ratling_gunner",
 				{
 					1,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23245,25 +23245,25 @@ HordeCompositions.crater_detour = {
 				"skaven_warpfire_thrower",
 				{
 					1,
-					3,
+					3
 				},
 				"skaven_gutter_runner",
 				{
 					1,
-					2,
+					2
 				},
 				"skaven_poison_wind_globadier",
 				{
 					1,
-					2,
+					2
 				},
 				"skaven_ratling_gunner",
 				{
 					1,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23273,25 +23273,25 @@ HordeCompositions.crater_detour = {
 				"skaven_warpfire_thrower",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_gutter_runner",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_poison_wind_globadier",
 				{
 					1,
-					2,
+					2
 				},
 				"skaven_ratling_gunner",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23301,25 +23301,25 @@ HordeCompositions.crater_detour = {
 				"skaven_warpfire_thrower",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_gutter_runner",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_poison_wind_globadier",
 				{
 					1,
-					2,
+					2
 				},
 				"skaven_ratling_gunner",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23329,25 +23329,25 @@ HordeCompositions.crater_detour = {
 				"skaven_warpfire_thrower",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_gutter_runner",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_poison_wind_globadier",
 				{
 					1,
-					2,
+					2
 				},
 				"skaven_ratling_gunner",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23357,7 +23357,7 @@ HordeCompositions.crater_detour = {
 				"skaven_warpfire_thrower",
 				{
 					1,
-					2,
+					2
 				},
 				"skaven_gutter_runner",
 				1,
@@ -23366,11 +23366,11 @@ HordeCompositions.crater_detour = {
 				"skaven_ratling_gunner",
 				{
 					1,
-					2,
-				},
-			},
-		},
-	},
+					2
+				}
+			}
+		}
+	}
 }
 HordeCompositions.end_event_crater_medium = {
 	{
@@ -23381,14 +23381,14 @@ HordeCompositions.end_event_crater_medium = {
 				"beastmen_gor",
 				{
 					2,
-					3,
+					3
 				},
 				"beastmen_ungor",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -23397,15 +23397,15 @@ HordeCompositions.end_event_crater_medium = {
 				"beastmen_gor",
 				{
 					1,
-					2,
+					2
 				},
 				"beastmen_ungor",
 				{
 					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23415,14 +23415,14 @@ HordeCompositions.end_event_crater_medium = {
 				"beastmen_gor",
 				{
 					3,
-					4,
+					4
 				},
 				"beastmen_ungor",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -23431,15 +23431,15 @@ HordeCompositions.end_event_crater_medium = {
 				"beastmen_gor",
 				{
 					2,
-					3,
+					3
 				},
 				"beastmen_ungor",
 				{
 					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23449,14 +23449,14 @@ HordeCompositions.end_event_crater_medium = {
 				"beastmen_gor",
 				{
 					4,
-					5,
+					5
 				},
 				"beastmen_ungor",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -23465,15 +23465,15 @@ HordeCompositions.end_event_crater_medium = {
 				"beastmen_gor",
 				{
 					3,
-					4,
+					4
 				},
 				"beastmen_ungor",
 				{
 					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23483,14 +23483,14 @@ HordeCompositions.end_event_crater_medium = {
 				"beastmen_gor",
 				{
 					6,
-					7,
+					7
 				},
 				"beastmen_ungor",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -23499,15 +23499,15 @@ HordeCompositions.end_event_crater_medium = {
 				"beastmen_gor",
 				{
 					4,
-					5,
+					5
 				},
 				"beastmen_ungor",
 				{
 					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23517,14 +23517,14 @@ HordeCompositions.end_event_crater_medium = {
 				"beastmen_gor",
 				{
 					6,
-					7,
+					7
 				},
 				"beastmen_ungor",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -23533,15 +23533,15 @@ HordeCompositions.end_event_crater_medium = {
 				"beastmen_gor",
 				{
 					4,
-					5,
+					5
 				},
 				"beastmen_ungor",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23551,14 +23551,14 @@ HordeCompositions.end_event_crater_medium = {
 				"beastmen_gor",
 				{
 					6,
-					7,
+					7
 				},
 				"beastmen_ungor",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -23567,15 +23567,15 @@ HordeCompositions.end_event_crater_medium = {
 				"beastmen_gor",
 				{
 					4,
-					5,
+					5
 				},
 				"beastmen_ungor",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23585,14 +23585,14 @@ HordeCompositions.end_event_crater_medium = {
 				"beastmen_gor",
 				{
 					6,
-					7,
+					7
 				},
 				"beastmen_ungor",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -23601,15 +23601,15 @@ HordeCompositions.end_event_crater_medium = {
 				"beastmen_gor",
 				{
 					4,
-					5,
+					5
 				},
 				"beastmen_ungor",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23619,14 +23619,14 @@ HordeCompositions.end_event_crater_medium = {
 				"beastmen_gor",
 				{
 					3,
-					4,
+					4
 				},
 				"beastmen_ungor",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -23635,14 +23635,14 @@ HordeCompositions.end_event_crater_medium = {
 				"beastmen_gor",
 				{
 					2,
-					3,
+					3
 				},
 				"beastmen_ungor",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -23651,14 +23651,14 @@ HordeCompositions.end_event_crater_medium = {
 				"beastmen_gor",
 				{
 					3,
-					4,
+					4
 				},
 				"beastmen_ungor",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -23667,16 +23667,16 @@ HordeCompositions.end_event_crater_medium = {
 				"beastmen_gor",
 				{
 					2,
-					3,
+					3
 				},
 				"beastmen_ungor",
 				{
 					4,
-					5,
-				},
-			},
-		},
-	},
+					5
+				}
+			}
+		}
+	}
 }
 HordeCompositions.end_event_crater_small = {
 	{
@@ -23687,9 +23687,9 @@ HordeCompositions.end_event_crater_small = {
 				"beastmen_gor",
 				{
 					1,
-					2,
-				},
-			},
+					2
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -23698,15 +23698,15 @@ HordeCompositions.end_event_crater_small = {
 				"beastmen_ungor_archer",
 				{
 					1,
-					2,
+					2
 				},
 				"beastmen_gor",
 				{
 					1,
-					2,
-				},
-			},
-		},
+					2
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23716,9 +23716,9 @@ HordeCompositions.end_event_crater_small = {
 				"beastmen_gor",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -23727,15 +23727,15 @@ HordeCompositions.end_event_crater_small = {
 				"beastmen_ungor_archer",
 				{
 					2,
-					3,
+					3
 				},
 				"beastmen_gor",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23745,9 +23745,9 @@ HordeCompositions.end_event_crater_small = {
 				"beastmen_gor",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -23756,15 +23756,15 @@ HordeCompositions.end_event_crater_small = {
 				"beastmen_ungor_archer",
 				{
 					2,
-					3,
+					3
 				},
 				"beastmen_gor",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23774,9 +23774,9 @@ HordeCompositions.end_event_crater_small = {
 				"beastmen_gor",
 				{
 					4,
-					5,
-				},
-			},
+					5
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -23785,44 +23785,15 @@ HordeCompositions.end_event_crater_small = {
 				"beastmen_ungor_archer",
 				{
 					3,
-					4,
+					4
 				},
 				"beastmen_gor",
 				{
 					4,
-					5,
-				},
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 7,
-			breeds = {
-				"beastmen_gor",
-				{
-					6,
-					7,
-				},
-			},
-		},
-		{
-			name = "mixed",
-			weight = 3,
-			breeds = {
-				"beastmen_ungor_archer",
-				{
-					3,
-					4,
-				},
-				"beastmen_gor",
-				{
-					6,
-					7,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23832,9 +23803,9 @@ HordeCompositions.end_event_crater_small = {
 				"beastmen_gor",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -23843,15 +23814,15 @@ HordeCompositions.end_event_crater_small = {
 				"beastmen_ungor_archer",
 				{
 					3,
-					4,
+					4
 				},
 				"beastmen_gor",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23861,9 +23832,9 @@ HordeCompositions.end_event_crater_small = {
 				"beastmen_gor",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -23872,15 +23843,44 @@ HordeCompositions.end_event_crater_small = {
 				"beastmen_ungor_archer",
 				{
 					3,
-					4,
+					4
 				},
 				"beastmen_gor",
 				{
 					6,
-					7,
-				},
-			},
+					7
+				}
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 7,
+			breeds = {
+				"beastmen_gor",
+				{
+					6,
+					7
+				}
+			}
 		},
+		{
+			name = "mixed",
+			weight = 3,
+			breeds = {
+				"beastmen_ungor_archer",
+				{
+					3,
+					4
+				},
+				"beastmen_gor",
+				{
+					6,
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23890,9 +23890,9 @@ HordeCompositions.end_event_crater_small = {
 				"beastmen_gor",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -23901,16 +23901,16 @@ HordeCompositions.end_event_crater_small = {
 				"beastmen_ungor_archer",
 				{
 					2,
-					3,
+					3
 				},
 				"beastmen_gor",
 				{
 					2,
-					3,
-				},
-			},
-		},
-	},
+					3
+				}
+			}
+		}
+	}
 }
 HordeCompositions.standard_bearer_ambush = {
 	{
@@ -23921,10 +23921,10 @@ HordeCompositions.standard_bearer_ambush = {
 				"beastmen_gor",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23934,10 +23934,10 @@ HordeCompositions.standard_bearer_ambush = {
 				"beastmen_gor",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23947,10 +23947,10 @@ HordeCompositions.standard_bearer_ambush = {
 				"beastmen_gor",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23960,10 +23960,10 @@ HordeCompositions.standard_bearer_ambush = {
 				"beastmen_gor",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23973,10 +23973,10 @@ HordeCompositions.standard_bearer_ambush = {
 				"beastmen_gor",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23986,10 +23986,10 @@ HordeCompositions.standard_bearer_ambush = {
 				"beastmen_gor",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -23999,10 +23999,10 @@ HordeCompositions.standard_bearer_ambush = {
 				"beastmen_gor",
 				{
 					6,
-					7,
-				},
-			},
-		},
+					7
+				}
+			}
+		}
 	},
 	{
 		{
@@ -24012,11 +24012,11 @@ HordeCompositions.standard_bearer_ambush = {
 				"beastmen_gor",
 				{
 					3,
-					4,
-				},
-			},
-		},
-	},
+					4
+				}
+			}
+		}
+	}
 }
 HordeCompositions.wt_end_event_skeletons_01 = {
 	{
@@ -24027,16 +24027,16 @@ HordeCompositions.wt_end_event_skeletons_01 = {
 				"ethereal_skeleton_with_shield",
 				{
 					1,
-					2,
+					2
 				},
 				"ethereal_skeleton_with_hammer",
 				{
 					6,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -24046,16 +24046,16 @@ HordeCompositions.wt_end_event_skeletons_01 = {
 				"ethereal_skeleton_with_shield",
 				{
 					1,
-					2,
+					2
 				},
 				"ethereal_skeleton_with_hammer",
 				{
 					6,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -24065,16 +24065,16 @@ HordeCompositions.wt_end_event_skeletons_01 = {
 				"ethereal_skeleton_with_shield",
 				{
 					1,
-					2,
+					2
 				},
 				"ethereal_skeleton_with_hammer",
 				{
 					6,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -24084,16 +24084,16 @@ HordeCompositions.wt_end_event_skeletons_01 = {
 				"ethereal_skeleton_with_shield",
 				{
 					1,
-					2,
+					2
 				},
 				"ethereal_skeleton_with_hammer",
 				{
 					6,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -24103,16 +24103,16 @@ HordeCompositions.wt_end_event_skeletons_01 = {
 				"ethereal_skeleton_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"ethereal_skeleton_with_hammer",
 				{
 					8,
-					11,
-				},
-			},
+					11
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -24122,16 +24122,16 @@ HordeCompositions.wt_end_event_skeletons_01 = {
 				"ethereal_skeleton_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"ethereal_skeleton_with_hammer",
 				{
 					8,
-					11,
-				},
-			},
+					11
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -24141,16 +24141,16 @@ HordeCompositions.wt_end_event_skeletons_01 = {
 				"ethereal_skeleton_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"ethereal_skeleton_with_hammer",
 				{
 					8,
-					11,
-				},
-			},
+					11
+				}
+			}
 		},
-		start_time = 0,
+		start_time = 0
 	},
 	{
 		{
@@ -24160,17 +24160,17 @@ HordeCompositions.wt_end_event_skeletons_01 = {
 				"ethereal_skeleton_with_shield",
 				{
 					1,
-					2,
+					2
 				},
 				"ethereal_skeleton_with_hammer",
 				{
 					6,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
-		start_time = 0,
-	},
+		start_time = 0
+	}
 }
 HordeCompositions.whaling_mid_event_chaos_02 = {
 	{
@@ -24181,14 +24181,14 @@ HordeCompositions.whaling_mid_event_chaos_02 = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -24197,20 +24197,20 @@ HordeCompositions.whaling_mid_event_chaos_02 = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -24220,14 +24220,14 @@ HordeCompositions.whaling_mid_event_chaos_02 = {
 				"chaos_marauder",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -24236,20 +24236,20 @@ HordeCompositions.whaling_mid_event_chaos_02 = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -24259,14 +24259,14 @@ HordeCompositions.whaling_mid_event_chaos_02 = {
 				"chaos_marauder",
 				{
 					10,
-					11,
+					11
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -24275,20 +24275,20 @@ HordeCompositions.whaling_mid_event_chaos_02 = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder",
 				{
 					6,
-					7,
+					7
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -24298,14 +24298,14 @@ HordeCompositions.whaling_mid_event_chaos_02 = {
 				"chaos_marauder",
 				{
 					12,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -24314,20 +24314,20 @@ HordeCompositions.whaling_mid_event_chaos_02 = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -24337,19 +24337,19 @@ HordeCompositions.whaling_mid_event_chaos_02 = {
 				"chaos_marauder",
 				{
 					12,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -24358,20 +24358,20 @@ HordeCompositions.whaling_mid_event_chaos_02 = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder",
 				{
 					13,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -24381,19 +24381,19 @@ HordeCompositions.whaling_mid_event_chaos_02 = {
 				"chaos_marauder",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -24402,20 +24402,20 @@ HordeCompositions.whaling_mid_event_chaos_02 = {
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder",
 				{
 					15,
-					16,
+					16
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -24425,19 +24425,19 @@ HordeCompositions.whaling_mid_event_chaos_02 = {
 				"chaos_marauder",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -24446,20 +24446,20 @@ HordeCompositions.whaling_mid_event_chaos_02 = {
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder",
 				{
 					16,
-					17,
+					17
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -24469,14 +24469,14 @@ HordeCompositions.whaling_mid_event_chaos_02 = {
 				"chaos_marauder",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -24485,21 +24485,21 @@ HordeCompositions.whaling_mid_event_chaos_02 = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
-	},
+					6
+				}
+			}
+		}
+	}
 }
 HordeCompositions.whaling_end_event_chaos_01 = {
 	{
@@ -24510,14 +24510,14 @@ HordeCompositions.whaling_end_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -24526,20 +24526,20 @@ HordeCompositions.whaling_end_event_chaos_01 = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -24549,14 +24549,14 @@ HordeCompositions.whaling_end_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -24565,20 +24565,20 @@ HordeCompositions.whaling_end_event_chaos_01 = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -24588,14 +24588,14 @@ HordeCompositions.whaling_end_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					10,
-					11,
+					11
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -24604,20 +24604,20 @@ HordeCompositions.whaling_end_event_chaos_01 = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder",
 				{
 					6,
-					7,
+					7
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -24627,14 +24627,14 @@ HordeCompositions.whaling_end_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					12,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -24643,20 +24643,20 @@ HordeCompositions.whaling_end_event_chaos_01 = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -24666,19 +24666,19 @@ HordeCompositions.whaling_end_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					12,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -24687,20 +24687,20 @@ HordeCompositions.whaling_end_event_chaos_01 = {
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
+					4
 				},
 				"chaos_marauder",
 				{
 					10,
-					11,
+					11
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -24710,19 +24710,19 @@ HordeCompositions.whaling_end_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -24731,20 +24731,20 @@ HordeCompositions.whaling_end_event_chaos_01 = {
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder",
 				{
 					12,
-					13,
+					13
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -24754,19 +24754,19 @@ HordeCompositions.whaling_end_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -24775,20 +24775,20 @@ HordeCompositions.whaling_end_event_chaos_01 = {
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_marauder",
 				{
 					14,
-					15,
+					15
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -24798,14 +24798,14 @@ HordeCompositions.whaling_end_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		{
 			name = "mixed",
@@ -24814,21 +24814,21 @@ HordeCompositions.whaling_end_event_chaos_01 = {
 				"chaos_marauder_with_shield",
 				{
 					2,
-					3,
+					3
 				},
 				"chaos_marauder",
 				{
 					4,
-					5,
+					5
 				},
 				"chaos_fanatic",
 				{
 					5,
-					6,
-				},
-			},
-		},
-	},
+					6
+				}
+			}
+		}
+	}
 }
 HordeCompositions.whaling_mid_event_chaos_01 = {
 	{
@@ -24839,15 +24839,15 @@ HordeCompositions.whaling_mid_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_fanatic",
 				{
 					20,
-					25,
-				},
-			},
-		},
+					25
+				}
+			}
+		}
 	},
 	{
 		{
@@ -24857,15 +24857,15 @@ HordeCompositions.whaling_mid_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_fanatic",
 				{
 					20,
-					25,
-				},
-			},
-		},
+					25
+				}
+			}
+		}
 	},
 	{
 		{
@@ -24875,15 +24875,15 @@ HordeCompositions.whaling_mid_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					10,
-					11,
+					11
 				},
 				"chaos_fanatic",
 				{
 					20,
-					25,
-				},
-			},
-		},
+					25
+				}
+			}
+		}
 	},
 	{
 		{
@@ -24893,15 +24893,15 @@ HordeCompositions.whaling_mid_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					12,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					20,
-					25,
-				},
-			},
-		},
+					25
+				}
+			}
+		}
 	},
 	{
 		{
@@ -24911,20 +24911,20 @@ HordeCompositions.whaling_mid_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					12,
-					14,
+					14
 				},
 				"chaos_fanatic",
 				{
 					20,
-					25,
+					25
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -24934,20 +24934,20 @@ HordeCompositions.whaling_mid_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_fanatic",
 				{
 					20,
-					25,
+					25
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -24957,20 +24957,20 @@ HordeCompositions.whaling_mid_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					14,
-					16,
+					16
 				},
 				"chaos_fanatic",
 				{
 					20,
-					25,
+					25
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -24980,16 +24980,16 @@ HordeCompositions.whaling_mid_event_chaos_01 = {
 				"chaos_marauder",
 				{
 					8,
-					9,
+					9
 				},
 				"chaos_fanatic",
 				{
 					20,
-					25,
-				},
-			},
-		},
-	},
+					25
+				}
+			}
+		}
+	}
 }
 HordeCompositions.whaling_mid_event_spice_chaos_raiders = {
 	{
@@ -25000,15 +25000,15 @@ HordeCompositions.whaling_mid_event_spice_chaos_raiders = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_raider",
 				{
 					1,
-					2,
-				},
-			},
-		},
+					2
+				}
+			}
+		}
 	},
 	{
 		{
@@ -25018,15 +25018,15 @@ HordeCompositions.whaling_mid_event_spice_chaos_raiders = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -25036,15 +25036,15 @@ HordeCompositions.whaling_mid_event_spice_chaos_raiders = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_raider",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -25054,15 +25054,15 @@ HordeCompositions.whaling_mid_event_spice_chaos_raiders = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_raider",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -25072,33 +25072,15 @@ HordeCompositions.whaling_mid_event_spice_chaos_raiders = {
 				"chaos_marauder",
 				{
 					5,
-					6,
-				},
-				"chaos_raider",
-				{
-					8,
-					9,
-				},
-			},
-		},
-	},
-	{
-		{
-			name = "raiders",
-			weight = 3,
-			breeds = {
-				"chaos_marauder",
-				{
-					5,
-					6,
+					6
 				},
 				"chaos_raider",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -25108,15 +25090,15 @@ HordeCompositions.whaling_mid_event_spice_chaos_raiders = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_raider",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -25126,16 +25108,34 @@ HordeCompositions.whaling_mid_event_spice_chaos_raiders = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
+				},
+				"chaos_raider",
+				{
+					8,
+					9
+				}
+			}
+		}
+	},
+	{
+		{
+			name = "raiders",
+			weight = 3,
+			breeds = {
+				"chaos_marauder",
+				{
+					5,
+					6
 				},
 				"chaos_raider",
 				{
 					2,
-					3,
-				},
-			},
-		},
-	},
+					3
+				}
+			}
+		}
+	}
 }
 HordeCompositions.whaling_mid_event_spice_chaos_berzerkers = {
 	{
@@ -25146,15 +25146,15 @@ HordeCompositions.whaling_mid_event_spice_chaos_berzerkers = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_berzerker",
 				{
 					1,
-					2,
-				},
-			},
-		},
+					2
+				}
+			}
+		}
 	},
 	{
 		{
@@ -25164,15 +25164,15 @@ HordeCompositions.whaling_mid_event_spice_chaos_berzerkers = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_berzerker",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -25182,15 +25182,33 @@ HordeCompositions.whaling_mid_event_spice_chaos_berzerkers = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_berzerker",
 				{
 					3,
+					4
+				}
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 7,
+			breeds = {
+				"chaos_marauder",
+				{
+					5,
+					6
+				},
+				"chaos_berzerker",
+				{
 					4,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -25200,33 +25218,15 @@ HordeCompositions.whaling_mid_event_spice_chaos_berzerkers = {
 				"chaos_marauder",
 				{
 					5,
-					6,
-				},
-				"chaos_berzerker",
-				{
-					4,
-					5,
-				},
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 7,
-			breeds = {
-				"chaos_marauder",
-				{
-					5,
-					6,
+					6
 				},
 				"chaos_berzerker",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -25236,15 +25236,15 @@ HordeCompositions.whaling_mid_event_spice_chaos_berzerkers = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_berzerker",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -25254,15 +25254,15 @@ HordeCompositions.whaling_mid_event_spice_chaos_berzerkers = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_berzerker",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -25272,16 +25272,16 @@ HordeCompositions.whaling_mid_event_spice_chaos_berzerkers = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_berzerker",
 				{
 					2,
-					3,
-				},
-			},
-		},
-	},
+					3
+				}
+			}
+		}
+	}
 }
 HordeCompositions.whaling_mid_event_spice_chaos_shields = {
 	{
@@ -25292,15 +25292,15 @@ HordeCompositions.whaling_mid_event_spice_chaos_shields = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_marauder_with_shield",
 				{
 					3,
-					4,
-				},
-			},
-		},
+					4
+				}
+			}
+		}
 	},
 	{
 		{
@@ -25310,15 +25310,15 @@ HordeCompositions.whaling_mid_event_spice_chaos_shields = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
-				},
-			},
-		},
+					5
+				}
+			}
+		}
 	},
 	{
 		{
@@ -25328,15 +25328,15 @@ HordeCompositions.whaling_mid_event_spice_chaos_shields = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_marauder_with_shield",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -25346,15 +25346,15 @@ HordeCompositions.whaling_mid_event_spice_chaos_shields = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_marauder_with_shield",
 				{
 					7,
-					8,
-				},
-			},
-		},
+					8
+				}
+			}
+		}
 	},
 	{
 		{
@@ -25364,15 +25364,15 @@ HordeCompositions.whaling_mid_event_spice_chaos_shields = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_marauder_with_shield",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -25382,15 +25382,15 @@ HordeCompositions.whaling_mid_event_spice_chaos_shields = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_marauder_with_shield",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -25400,15 +25400,15 @@ HordeCompositions.whaling_mid_event_spice_chaos_shields = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_marauder_with_shield",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -25418,16 +25418,16 @@ HordeCompositions.whaling_mid_event_spice_chaos_shields = {
 				"chaos_marauder",
 				{
 					5,
-					6,
+					6
 				},
 				"chaos_marauder_with_shield",
 				{
 					4,
-					5,
-				},
-			},
-		},
-	},
+					5
+				}
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl2_wave_1_small_slaves = {
 	{
@@ -25436,9 +25436,9 @@ HordeCompositions.termite_lvl2_wave_1_small_slaves = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				20,
-			},
-		},
+				20
+			}
+		}
 	},
 	{
 		{
@@ -25446,9 +25446,9 @@ HordeCompositions.termite_lvl2_wave_1_small_slaves = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				20,
-			},
-		},
+				20
+			}
+		}
 	},
 	{
 		{
@@ -25458,9 +25458,9 @@ HordeCompositions.termite_lvl2_wave_1_small_slaves = {
 				"skaven_slave",
 				20,
 				"skaven_clan_rat",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -25470,9 +25470,9 @@ HordeCompositions.termite_lvl2_wave_1_small_slaves = {
 				"skaven_slave",
 				24,
 				"skaven_clan_rat",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -25482,9 +25482,9 @@ HordeCompositions.termite_lvl2_wave_1_small_slaves = {
 				"skaven_slave",
 				18,
 				"skaven_clan_rat",
-				14,
-			},
-		},
+				14
+			}
+		}
 	},
 	{
 		{
@@ -25494,9 +25494,9 @@ HordeCompositions.termite_lvl2_wave_1_small_slaves = {
 				"skaven_slave",
 				18,
 				"skaven_clan_rat",
-				14,
-			},
-		},
+				14
+			}
+		}
 	},
 	{
 		{
@@ -25506,9 +25506,9 @@ HordeCompositions.termite_lvl2_wave_1_small_slaves = {
 				"skaven_slave",
 				18,
 				"skaven_clan_rat",
-				14,
-			},
-		},
+				14
+			}
+		}
 	},
 	{
 		{
@@ -25516,10 +25516,10 @@ HordeCompositions.termite_lvl2_wave_1_small_slaves = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				20,
-			},
-		},
-	},
+				20
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl2_wave_1_medium_slaves = {
 	{
@@ -25528,9 +25528,9 @@ HordeCompositions.termite_lvl2_wave_1_medium_slaves = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				32,
-			},
-		},
+				32
+			}
+		}
 	},
 	{
 		{
@@ -25538,9 +25538,9 @@ HordeCompositions.termite_lvl2_wave_1_medium_slaves = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				32,
-			},
-		},
+				32
+			}
+		}
 	},
 	{
 		{
@@ -25548,9 +25548,9 @@ HordeCompositions.termite_lvl2_wave_1_medium_slaves = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				35,
-			},
-		},
+				35
+			}
+		}
 	},
 	{
 		{
@@ -25558,21 +25558,9 @@ HordeCompositions.termite_lvl2_wave_1_medium_slaves = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				40,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"skaven_slave",
-				32,
-				"skaven_clan_rat",
-				12,
-			},
-		},
+				40
+			}
+		}
 	},
 	{
 		{
@@ -25582,9 +25570,9 @@ HordeCompositions.termite_lvl2_wave_1_medium_slaves = {
 				"skaven_slave",
 				32,
 				"skaven_clan_rat",
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -25594,9 +25582,9 @@ HordeCompositions.termite_lvl2_wave_1_medium_slaves = {
 				"skaven_slave",
 				32,
 				"skaven_clan_rat",
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -25605,9 +25593,21 @@ HordeCompositions.termite_lvl2_wave_1_medium_slaves = {
 			breeds = {
 				"skaven_slave",
 				32,
-			},
-		},
+				"skaven_clan_rat",
+				12
+			}
+		}
 	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"skaven_slave",
+				32
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl2_wave_1_commanders = {
 	{
@@ -25616,9 +25616,9 @@ HordeCompositions.termite_lvl2_wave_1_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -25626,9 +25626,9 @@ HordeCompositions.termite_lvl2_wave_1_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -25636,9 +25636,9 @@ HordeCompositions.termite_lvl2_wave_1_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -25646,9 +25646,9 @@ HordeCompositions.termite_lvl2_wave_1_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -25656,9 +25656,9 @@ HordeCompositions.termite_lvl2_wave_1_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				7,
-			},
-		},
+				7
+			}
+		}
 	},
 	{
 		{
@@ -25666,9 +25666,9 @@ HordeCompositions.termite_lvl2_wave_1_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				7,
-			},
-		},
+				7
+			}
+		}
 	},
 	{
 		{
@@ -25676,9 +25676,9 @@ HordeCompositions.termite_lvl2_wave_1_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				7,
-			},
-		},
+				7
+			}
+		}
 	},
 	{
 		{
@@ -25686,10 +25686,10 @@ HordeCompositions.termite_lvl2_wave_1_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
-	},
+				3
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl2_wave_2_slaves_shields = {
 	{
@@ -25698,9 +25698,9 @@ HordeCompositions.termite_lvl2_wave_2_slaves_shields = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				30,
-			},
-		},
+				30
+			}
+		}
 	},
 	{
 		{
@@ -25710,9 +25710,9 @@ HordeCompositions.termite_lvl2_wave_2_slaves_shields = {
 				"skaven_slave",
 				25,
 				"skaven_clan_rat_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -25722,9 +25722,9 @@ HordeCompositions.termite_lvl2_wave_2_slaves_shields = {
 				"skaven_slave",
 				28,
 				"skaven_clan_rat_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -25734,9 +25734,9 @@ HordeCompositions.termite_lvl2_wave_2_slaves_shields = {
 				"skaven_slave",
 				30,
 				"skaven_clan_rat_with_shield",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -25748,9 +25748,9 @@ HordeCompositions.termite_lvl2_wave_2_slaves_shields = {
 				"skaven_clan_rat_with_shield",
 				8,
 				"skaven_clan_rat",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -25762,9 +25762,9 @@ HordeCompositions.termite_lvl2_wave_2_slaves_shields = {
 				"skaven_clan_rat_with_shield",
 				8,
 				"skaven_clan_rat",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -25776,9 +25776,9 @@ HordeCompositions.termite_lvl2_wave_2_slaves_shields = {
 				"skaven_clan_rat_with_shield",
 				8,
 				"skaven_clan_rat",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -25788,10 +25788,10 @@ HordeCompositions.termite_lvl2_wave_2_slaves_shields = {
 				"skaven_slave",
 				25,
 				"skaven_clan_rat_with_shield",
-				2,
-			},
-		},
-	},
+				2
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl2_wave_3_shields = {
 	{
@@ -25802,9 +25802,9 @@ HordeCompositions.termite_lvl2_wave_3_shields = {
 				"skaven_slave",
 				35,
 				"skaven_clan_rat_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -25814,9 +25814,9 @@ HordeCompositions.termite_lvl2_wave_3_shields = {
 				"skaven_slave",
 				35,
 				"skaven_clan_rat_with_shield",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -25826,9 +25826,9 @@ HordeCompositions.termite_lvl2_wave_3_shields = {
 				"skaven_slave",
 				40,
 				"skaven_clan_rat_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -25838,9 +25838,9 @@ HordeCompositions.termite_lvl2_wave_3_shields = {
 				"skaven_slave",
 				45,
 				"skaven_clan_rat_with_shield",
-				7,
-			},
-		},
+				7
+			}
+		}
 	},
 	{
 		{
@@ -25850,9 +25850,9 @@ HordeCompositions.termite_lvl2_wave_3_shields = {
 				"skaven_slave",
 				42,
 				"skaven_clan_rat_with_shield",
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -25862,9 +25862,9 @@ HordeCompositions.termite_lvl2_wave_3_shields = {
 				"skaven_slave",
 				42,
 				"skaven_clan_rat_with_shield",
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -25874,9 +25874,9 @@ HordeCompositions.termite_lvl2_wave_3_shields = {
 				"skaven_slave",
 				42,
 				"skaven_clan_rat_with_shield",
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -25886,10 +25886,10 @@ HordeCompositions.termite_lvl2_wave_3_shields = {
 				"skaven_slave",
 				35,
 				"skaven_clan_rat_with_shield",
-				3,
-			},
-		},
-	},
+				3
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl2_wave_3_clan_shields = {
 	{
@@ -25900,9 +25900,9 @@ HordeCompositions.termite_lvl2_wave_3_clan_shields = {
 				"skaven_slave",
 				35,
 				"skaven_clan_rat",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -25912,9 +25912,9 @@ HordeCompositions.termite_lvl2_wave_3_clan_shields = {
 				"skaven_slave",
 				40,
 				"skaven_clan_rat",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -25926,9 +25926,9 @@ HordeCompositions.termite_lvl2_wave_3_clan_shields = {
 				"skaven_clan_rat",
 				4,
 				"skaven_clan_rat_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -25940,9 +25940,9 @@ HordeCompositions.termite_lvl2_wave_3_clan_shields = {
 				"skaven_clan_rat",
 				7,
 				"skaven_clan_rat_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -25954,9 +25954,9 @@ HordeCompositions.termite_lvl2_wave_3_clan_shields = {
 				"skaven_clan_rat",
 				12,
 				"skaven_clan_rat_with_shield",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -25968,9 +25968,9 @@ HordeCompositions.termite_lvl2_wave_3_clan_shields = {
 				"skaven_clan_rat",
 				12,
 				"skaven_clan_rat_with_shield",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -25982,9 +25982,9 @@ HordeCompositions.termite_lvl2_wave_3_clan_shields = {
 				"skaven_clan_rat",
 				12,
 				"skaven_clan_rat_with_shield",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -25994,10 +25994,10 @@ HordeCompositions.termite_lvl2_wave_3_clan_shields = {
 				"skaven_slave",
 				40,
 				"skaven_clan_rat",
-				3,
-			},
-		},
-	},
+				3
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl2_wave_3_commanders = {
 	{
@@ -26006,9 +26006,9 @@ HordeCompositions.termite_lvl2_wave_3_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -26016,9 +26016,9 @@ HordeCompositions.termite_lvl2_wave_3_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -26026,9 +26026,9 @@ HordeCompositions.termite_lvl2_wave_3_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -26036,9 +26036,9 @@ HordeCompositions.termite_lvl2_wave_3_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -26046,9 +26046,9 @@ HordeCompositions.termite_lvl2_wave_3_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -26056,9 +26056,9 @@ HordeCompositions.termite_lvl2_wave_3_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -26066,9 +26066,9 @@ HordeCompositions.termite_lvl2_wave_3_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -26076,10 +26076,10 @@ HordeCompositions.termite_lvl2_wave_3_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				2,
-			},
-		},
-	},
+				2
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl2_wave_4_slave_clan_shield = {
 	{
@@ -26088,9 +26088,9 @@ HordeCompositions.termite_lvl2_wave_4_slave_clan_shield = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				25,
-			},
-		},
+				25
+			}
+		}
 	},
 	{
 		{
@@ -26100,9 +26100,9 @@ HordeCompositions.termite_lvl2_wave_4_slave_clan_shield = {
 				"skaven_slave",
 				20,
 				"skaven_clan_rat",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -26112,9 +26112,9 @@ HordeCompositions.termite_lvl2_wave_4_slave_clan_shield = {
 				"skaven_slave",
 				15,
 				"skaven_clan_rat",
-				7,
-			},
-		},
+				7
+			}
+		}
 	},
 	{
 		{
@@ -26124,23 +26124,9 @@ HordeCompositions.termite_lvl2_wave_4_slave_clan_shield = {
 				"skaven_slave",
 				15,
 				"skaven_clan_rat",
-				10,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"skaven_slave",
-				15,
-				"skaven_clan_rat",
-				10,
-				"skaven_clan_rat_with_shield",
-				3,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -26152,9 +26138,9 @@ HordeCompositions.termite_lvl2_wave_4_slave_clan_shield = {
 				"skaven_clan_rat",
 				10,
 				"skaven_clan_rat_with_shield",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -26166,9 +26152,23 @@ HordeCompositions.termite_lvl2_wave_4_slave_clan_shield = {
 				"skaven_clan_rat",
 				10,
 				"skaven_clan_rat_with_shield",
-				3,
-			},
-		},
+				3
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"skaven_slave",
+				15,
+				"skaven_clan_rat",
+				10,
+				"skaven_clan_rat_with_shield",
+				3
+			}
+		}
 	},
 	{
 		{
@@ -26178,10 +26178,10 @@ HordeCompositions.termite_lvl2_wave_4_slave_clan_shield = {
 				"skaven_slave",
 				20,
 				"skaven_clan_rat",
-				2,
-			},
-		},
-	},
+				2
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl2_wave_4_command_shield = {
 	{
@@ -26190,31 +26190,31 @@ HordeCompositions.termite_lvl2_wave_4_command_shield = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
+				3
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"skaven_storm_vermin_commander",
+				4
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"skaven_storm_vermin_commander",
 				3,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"skaven_storm_vermin_commander",
-				3,
 				"skaven_storm_vermin_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -26224,9 +26224,9 @@ HordeCompositions.termite_lvl2_wave_4_command_shield = {
 				"skaven_storm_vermin_commander",
 				4,
 				"skaven_storm_vermin_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -26236,9 +26236,9 @@ HordeCompositions.termite_lvl2_wave_4_command_shield = {
 				"skaven_storm_vermin_commander",
 				5,
 				"skaven_storm_vermin_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -26248,9 +26248,9 @@ HordeCompositions.termite_lvl2_wave_4_command_shield = {
 				"skaven_storm_vermin_commander",
 				5,
 				"skaven_storm_vermin_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -26260,9 +26260,9 @@ HordeCompositions.termite_lvl2_wave_4_command_shield = {
 				"skaven_storm_vermin_commander",
 				5,
 				"skaven_storm_vermin_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -26270,10 +26270,10 @@ HordeCompositions.termite_lvl2_wave_4_command_shield = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
-	},
+				4
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl2_wave_5_monks = {
 	{
@@ -26282,9 +26282,9 @@ HordeCompositions.termite_lvl2_wave_5_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -26292,9 +26292,9 @@ HordeCompositions.termite_lvl2_wave_5_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -26302,9 +26302,9 @@ HordeCompositions.termite_lvl2_wave_5_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -26312,9 +26312,9 @@ HordeCompositions.termite_lvl2_wave_5_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -26322,9 +26322,9 @@ HordeCompositions.termite_lvl2_wave_5_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -26332,9 +26332,9 @@ HordeCompositions.termite_lvl2_wave_5_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -26342,9 +26342,9 @@ HordeCompositions.termite_lvl2_wave_5_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -26352,10 +26352,10 @@ HordeCompositions.termite_lvl2_wave_5_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				5,
-			},
-		},
-	},
+				5
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl2_wave_5_slave_clan_shield = {
 	{
@@ -26364,9 +26364,9 @@ HordeCompositions.termite_lvl2_wave_5_slave_clan_shield = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				40,
-			},
-		},
+				40
+			}
+		}
 	},
 	{
 		{
@@ -26376,9 +26376,9 @@ HordeCompositions.termite_lvl2_wave_5_slave_clan_shield = {
 				"skaven_slave",
 				35,
 				"skaven_clan_rat",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -26388,9 +26388,9 @@ HordeCompositions.termite_lvl2_wave_5_slave_clan_shield = {
 				"skaven_slave",
 				40,
 				"skaven_clan_rat",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -26400,9 +26400,9 @@ HordeCompositions.termite_lvl2_wave_5_slave_clan_shield = {
 				"skaven_slave",
 				40,
 				"skaven_clan_rat",
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -26414,9 +26414,9 @@ HordeCompositions.termite_lvl2_wave_5_slave_clan_shield = {
 				"skaven_clan_rat",
 				18,
 				"skaven_clan_rat_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -26428,9 +26428,9 @@ HordeCompositions.termite_lvl2_wave_5_slave_clan_shield = {
 				"skaven_clan_rat",
 				18,
 				"skaven_clan_rat_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -26442,9 +26442,9 @@ HordeCompositions.termite_lvl2_wave_5_slave_clan_shield = {
 				"skaven_clan_rat",
 				18,
 				"skaven_clan_rat_with_shield",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -26454,10 +26454,10 @@ HordeCompositions.termite_lvl2_wave_5_slave_clan_shield = {
 				"skaven_slave",
 				35,
 				"skaven_clan_rat",
-				8,
-			},
-		},
-	},
+				8
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl2_wave_5_slave_clan = {
 	{
@@ -26466,9 +26466,9 @@ HordeCompositions.termite_lvl2_wave_5_slave_clan = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				40,
-			},
-		},
+				40
+			}
+		}
 	},
 	{
 		{
@@ -26478,9 +26478,9 @@ HordeCompositions.termite_lvl2_wave_5_slave_clan = {
 				"skaven_slave",
 				35,
 				"skaven_clan_rat",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -26490,9 +26490,9 @@ HordeCompositions.termite_lvl2_wave_5_slave_clan = {
 				"skaven_slave",
 				35,
 				"skaven_clan_rat",
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -26502,9 +26502,9 @@ HordeCompositions.termite_lvl2_wave_5_slave_clan = {
 				"skaven_slave",
 				35,
 				"skaven_clan_rat",
-				20,
-			},
-		},
+				20
+			}
+		}
 	},
 	{
 		{
@@ -26514,9 +26514,9 @@ HordeCompositions.termite_lvl2_wave_5_slave_clan = {
 				"skaven_slave",
 				32,
 				"skaven_clan_rat",
-				30,
-			},
-		},
+				30
+			}
+		}
 	},
 	{
 		{
@@ -26526,9 +26526,9 @@ HordeCompositions.termite_lvl2_wave_5_slave_clan = {
 				"skaven_slave",
 				32,
 				"skaven_clan_rat",
-				30,
-			},
-		},
+				30
+			}
+		}
 	},
 	{
 		{
@@ -26538,9 +26538,9 @@ HordeCompositions.termite_lvl2_wave_5_slave_clan = {
 				"skaven_slave",
 				32,
 				"skaven_clan_rat",
-				30,
-			},
-		},
+				30
+			}
+		}
 	},
 	{
 		{
@@ -26550,10 +26550,10 @@ HordeCompositions.termite_lvl2_wave_5_slave_clan = {
 				"skaven_slave",
 				35,
 				"skaven_clan_rat",
-				10,
-			},
-		},
-	},
+				10
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl2_wave_5_commanders = {
 	{
@@ -26562,9 +26562,9 @@ HordeCompositions.termite_lvl2_wave_5_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -26572,9 +26572,9 @@ HordeCompositions.termite_lvl2_wave_5_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -26582,9 +26582,9 @@ HordeCompositions.termite_lvl2_wave_5_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				7,
-			},
-		},
+				7
+			}
+		}
 	},
 	{
 		{
@@ -26592,9 +26592,9 @@ HordeCompositions.termite_lvl2_wave_5_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -26602,9 +26602,9 @@ HordeCompositions.termite_lvl2_wave_5_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -26612,9 +26612,9 @@ HordeCompositions.termite_lvl2_wave_5_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -26622,9 +26622,9 @@ HordeCompositions.termite_lvl2_wave_5_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -26632,10 +26632,10 @@ HordeCompositions.termite_lvl2_wave_5_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				5,
-			},
-		},
-	},
+				5
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl2_wave_6_commander_shields = {
 	{
@@ -26644,9 +26644,9 @@ HordeCompositions.termite_lvl2_wave_6_commander_shields = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -26654,9 +26654,9 @@ HordeCompositions.termite_lvl2_wave_6_commander_shields = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -26666,9 +26666,9 @@ HordeCompositions.termite_lvl2_wave_6_commander_shields = {
 				"skaven_storm_vermin_commander",
 				8,
 				"skaven_storm_vermin_with_shield",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -26678,9 +26678,9 @@ HordeCompositions.termite_lvl2_wave_6_commander_shields = {
 				"skaven_storm_vermin_commander",
 				10,
 				"skaven_storm_vermin_with_shield",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -26690,9 +26690,9 @@ HordeCompositions.termite_lvl2_wave_6_commander_shields = {
 				"skaven_storm_vermin_commander",
 				11,
 				"skaven_storm_vermin_with_shield",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -26702,9 +26702,9 @@ HordeCompositions.termite_lvl2_wave_6_commander_shields = {
 				"skaven_storm_vermin_commander",
 				11,
 				"skaven_storm_vermin_with_shield",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -26714,9 +26714,9 @@ HordeCompositions.termite_lvl2_wave_6_commander_shields = {
 				"skaven_storm_vermin_commander",
 				11,
 				"skaven_storm_vermin_with_shield",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -26724,10 +26724,10 @@ HordeCompositions.termite_lvl2_wave_6_commander_shields = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				8,
-			},
-		},
-	},
+				8
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl2_wave_6_slave_clan_shields = {
 	{
@@ -26736,9 +26736,9 @@ HordeCompositions.termite_lvl2_wave_6_slave_clan_shields = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				30,
-			},
-		},
+				30
+			}
+		}
 	},
 	{
 		{
@@ -26748,9 +26748,9 @@ HordeCompositions.termite_lvl2_wave_6_slave_clan_shields = {
 				"skaven_slave",
 				30,
 				"skaven_clan_rat",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -26760,9 +26760,9 @@ HordeCompositions.termite_lvl2_wave_6_slave_clan_shields = {
 				"skaven_slave",
 				32,
 				"skaven_clan_rat",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -26772,23 +26772,9 @@ HordeCompositions.termite_lvl2_wave_6_slave_clan_shields = {
 				"skaven_slave",
 				35,
 				"skaven_clan_rat",
-				10,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"skaven_slave",
-				35,
-				"skaven_clan_rat",
-				12,
-				"skaven_clan_rat_with_shield",
-				3,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -26800,9 +26786,9 @@ HordeCompositions.termite_lvl2_wave_6_slave_clan_shields = {
 				"skaven_clan_rat",
 				12,
 				"skaven_clan_rat_with_shield",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -26814,9 +26800,23 @@ HordeCompositions.termite_lvl2_wave_6_slave_clan_shields = {
 				"skaven_clan_rat",
 				12,
 				"skaven_clan_rat_with_shield",
-				3,
-			},
-		},
+				3
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"skaven_slave",
+				35,
+				"skaven_clan_rat",
+				12,
+				"skaven_clan_rat_with_shield",
+				3
+			}
+		}
 	},
 	{
 		{
@@ -26826,10 +26826,10 @@ HordeCompositions.termite_lvl2_wave_6_slave_clan_shields = {
 				"skaven_slave",
 				30,
 				"skaven_clan_rat",
-				4,
-			},
-		},
-	},
+				4
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl2_wave_6_flush_slave_clan_shields = {
 	{
@@ -26838,9 +26838,9 @@ HordeCompositions.termite_lvl2_wave_6_flush_slave_clan_shields = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				24,
-			},
-		},
+				24
+			}
+		}
 	},
 	{
 		{
@@ -26850,9 +26850,9 @@ HordeCompositions.termite_lvl2_wave_6_flush_slave_clan_shields = {
 				"skaven_slave",
 				18,
 				"skaven_clan_rat",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -26862,9 +26862,9 @@ HordeCompositions.termite_lvl2_wave_6_flush_slave_clan_shields = {
 				"skaven_slave",
 				20,
 				"skaven_clan_rat",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -26874,23 +26874,9 @@ HordeCompositions.termite_lvl2_wave_6_flush_slave_clan_shields = {
 				"skaven_slave",
 				20,
 				"skaven_clan_rat",
-				10,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"skaven_slave",
-				20,
-				"skaven_clan_rat",
-				12,
-				"skaven_clan_rat_with_shield",
-				3,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -26902,9 +26888,9 @@ HordeCompositions.termite_lvl2_wave_6_flush_slave_clan_shields = {
 				"skaven_clan_rat",
 				12,
 				"skaven_clan_rat_with_shield",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -26916,9 +26902,23 @@ HordeCompositions.termite_lvl2_wave_6_flush_slave_clan_shields = {
 				"skaven_clan_rat",
 				12,
 				"skaven_clan_rat_with_shield",
-				3,
-			},
-		},
+				3
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"skaven_slave",
+				20,
+				"skaven_clan_rat",
+				12,
+				"skaven_clan_rat_with_shield",
+				3
+			}
+		}
 	},
 	{
 		{
@@ -26928,10 +26928,10 @@ HordeCompositions.termite_lvl2_wave_6_flush_slave_clan_shields = {
 				"skaven_slave",
 				18,
 				"skaven_clan_rat",
-				6,
-			},
-		},
-	},
+				6
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl2_wave_6_monks = {
 	{
@@ -26940,9 +26940,9 @@ HordeCompositions.termite_lvl2_wave_6_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -26950,9 +26950,9 @@ HordeCompositions.termite_lvl2_wave_6_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -26960,9 +26960,9 @@ HordeCompositions.termite_lvl2_wave_6_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -26970,9 +26970,9 @@ HordeCompositions.termite_lvl2_wave_6_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -26980,9 +26980,9 @@ HordeCompositions.termite_lvl2_wave_6_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -26990,9 +26990,9 @@ HordeCompositions.termite_lvl2_wave_6_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -27000,9 +27000,9 @@ HordeCompositions.termite_lvl2_wave_6_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -27010,10 +27010,10 @@ HordeCompositions.termite_lvl2_wave_6_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				2,
-			},
-		},
-	},
+				2
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl2_wave_7_slaves = {
 	{
@@ -27024,9 +27024,9 @@ HordeCompositions.termite_lvl2_wave_7_slaves = {
 				"skaven_storm_vermin_commander",
 				1,
 				"skaven_slave",
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -27036,9 +27036,9 @@ HordeCompositions.termite_lvl2_wave_7_slaves = {
 				"skaven_storm_vermin_commander",
 				1,
 				"skaven_slave",
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -27048,9 +27048,9 @@ HordeCompositions.termite_lvl2_wave_7_slaves = {
 				"skaven_storm_vermin_commander",
 				1,
 				"skaven_slave",
-				20,
-			},
-		},
+				20
+			}
+		}
 	},
 	{
 		{
@@ -27060,9 +27060,9 @@ HordeCompositions.termite_lvl2_wave_7_slaves = {
 				"skaven_storm_vermin_commander",
 				2,
 				"skaven_slave",
-				20,
-			},
-		},
+				20
+			}
+		}
 	},
 	{
 		{
@@ -27074,9 +27074,9 @@ HordeCompositions.termite_lvl2_wave_7_slaves = {
 				"skaven_slave",
 				15,
 				"skaven_clan_rat",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -27088,9 +27088,9 @@ HordeCompositions.termite_lvl2_wave_7_slaves = {
 				"skaven_slave",
 				15,
 				"skaven_clan_rat",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -27102,9 +27102,9 @@ HordeCompositions.termite_lvl2_wave_7_slaves = {
 				"skaven_slave",
 				15,
 				"skaven_clan_rat",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -27114,10 +27114,10 @@ HordeCompositions.termite_lvl2_wave_7_slaves = {
 				"skaven_storm_vermin_commander",
 				1,
 				"skaven_slave",
-				15,
-			},
-		},
-	},
+				15
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl2_wave_7_medium_slaves = {
 	{
@@ -27126,9 +27126,9 @@ HordeCompositions.termite_lvl2_wave_7_medium_slaves = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				30,
-			},
-		},
+				30
+			}
+		}
 	},
 	{
 		{
@@ -27138,9 +27138,9 @@ HordeCompositions.termite_lvl2_wave_7_medium_slaves = {
 				"skaven_slave",
 				25,
 				"skaven_clan_rat",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -27150,9 +27150,9 @@ HordeCompositions.termite_lvl2_wave_7_medium_slaves = {
 				"skaven_slave",
 				30,
 				"skaven_clan_rat",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -27162,9 +27162,9 @@ HordeCompositions.termite_lvl2_wave_7_medium_slaves = {
 				"skaven_slave",
 				35,
 				"skaven_clan_rat",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -27176,9 +27176,9 @@ HordeCompositions.termite_lvl2_wave_7_medium_slaves = {
 				"skaven_clan_rat",
 				15,
 				"skaven_clan_rat_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -27190,9 +27190,9 @@ HordeCompositions.termite_lvl2_wave_7_medium_slaves = {
 				"skaven_clan_rat",
 				15,
 				"skaven_clan_rat_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -27204,9 +27204,9 @@ HordeCompositions.termite_lvl2_wave_7_medium_slaves = {
 				"skaven_clan_rat",
 				15,
 				"skaven_clan_rat_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -27216,10 +27216,10 @@ HordeCompositions.termite_lvl2_wave_7_medium_slaves = {
 				"skaven_slave",
 				25,
 				"skaven_clan_rat",
-				6,
-			},
-		},
-	},
+				6
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl2_wave_7_monks = {
 	{
@@ -27228,9 +27228,9 @@ HordeCompositions.termite_lvl2_wave_7_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -27238,9 +27238,9 @@ HordeCompositions.termite_lvl2_wave_7_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -27248,9 +27248,9 @@ HordeCompositions.termite_lvl2_wave_7_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -27258,9 +27258,9 @@ HordeCompositions.termite_lvl2_wave_7_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -27268,9 +27268,9 @@ HordeCompositions.termite_lvl2_wave_7_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -27278,9 +27278,9 @@ HordeCompositions.termite_lvl2_wave_7_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -27288,9 +27288,9 @@ HordeCompositions.termite_lvl2_wave_7_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -27298,10 +27298,10 @@ HordeCompositions.termite_lvl2_wave_7_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				5,
-			},
-		},
-	},
+				5
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl2_wave_7_commanders = {
 	{
@@ -27312,9 +27312,9 @@ HordeCompositions.termite_lvl2_wave_7_commanders = {
 				"skaven_clan_rat_with_shield",
 				8,
 				"skaven_storm_vermin_commander",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -27324,9 +27324,9 @@ HordeCompositions.termite_lvl2_wave_7_commanders = {
 				"skaven_clan_rat_with_shield",
 				8,
 				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -27336,9 +27336,9 @@ HordeCompositions.termite_lvl2_wave_7_commanders = {
 				"skaven_clan_rat_with_shield",
 				10,
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -27348,9 +27348,9 @@ HordeCompositions.termite_lvl2_wave_7_commanders = {
 				"skaven_clan_rat_with_shield",
 				10,
 				"skaven_storm_vermin_commander",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -27360,9 +27360,9 @@ HordeCompositions.termite_lvl2_wave_7_commanders = {
 				"skaven_clan_rat_with_shield",
 				11,
 				"skaven_storm_vermin_commander",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -27372,9 +27372,9 @@ HordeCompositions.termite_lvl2_wave_7_commanders = {
 				"skaven_clan_rat_with_shield",
 				11,
 				"skaven_storm_vermin_commander",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -27384,9 +27384,9 @@ HordeCompositions.termite_lvl2_wave_7_commanders = {
 				"skaven_clan_rat_with_shield",
 				11,
 				"skaven_storm_vermin_commander",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -27396,10 +27396,10 @@ HordeCompositions.termite_lvl2_wave_7_commanders = {
 				"skaven_clan_rat_with_shield",
 				8,
 				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
-	},
+				3
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl2_wave_8_slave_clan_shield = {
 	{
@@ -27408,9 +27408,9 @@ HordeCompositions.termite_lvl2_wave_8_slave_clan_shield = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				20,
-			},
-		},
+				20
+			}
+		}
 	},
 	{
 		{
@@ -27420,9 +27420,9 @@ HordeCompositions.termite_lvl2_wave_8_slave_clan_shield = {
 				"skaven_slave",
 				20,
 				"skaven_clan_rat",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -27432,9 +27432,9 @@ HordeCompositions.termite_lvl2_wave_8_slave_clan_shield = {
 				"skaven_slave",
 				22,
 				"skaven_clan_rat",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -27444,64 +27444,64 @@ HordeCompositions.termite_lvl2_wave_8_slave_clan_shield = {
 				"skaven_slave",
 				15,
 				"skaven_clan_rat",
+				20
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"skaven_slave",
+				12,
+				"skaven_clan_rat",
+				24,
+				"skaven_clan_rat_with_shield",
+				4
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"skaven_slave",
+				12,
+				"skaven_clan_rat",
+				24,
+				"skaven_clan_rat_with_shield",
+				4
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"skaven_slave",
+				12,
+				"skaven_clan_rat",
+				24,
+				"skaven_clan_rat_with_shield",
+				4
+			}
+		}
+	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"skaven_slave",
 				20,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"skaven_slave",
-				12,
 				"skaven_clan_rat",
-				24,
-				"skaven_clan_rat_with_shield",
-				4,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"skaven_slave",
-				12,
-				"skaven_clan_rat",
-				24,
-				"skaven_clan_rat_with_shield",
-				4,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"skaven_slave",
-				12,
-				"skaven_clan_rat",
-				24,
-				"skaven_clan_rat_with_shield",
-				4,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"skaven_slave",
-				20,
-				"skaven_clan_rat",
-				8,
-			},
-		},
-	},
+				8
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl2_wave_8_big_slaves = {
 	{
@@ -27510,9 +27510,9 @@ HordeCompositions.termite_lvl2_wave_8_big_slaves = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				30,
-			},
-		},
+				30
+			}
+		}
 	},
 	{
 		{
@@ -27520,9 +27520,9 @@ HordeCompositions.termite_lvl2_wave_8_big_slaves = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				32,
-			},
-		},
+				32
+			}
+		}
 	},
 	{
 		{
@@ -27530,9 +27530,9 @@ HordeCompositions.termite_lvl2_wave_8_big_slaves = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				38,
-			},
-		},
+				38
+			}
+		}
 	},
 	{
 		{
@@ -27540,21 +27540,9 @@ HordeCompositions.termite_lvl2_wave_8_big_slaves = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				45,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"skaven_slave",
-				37,
-				"skaven_clan_rat",
-				10,
-			},
-		},
+				45
+			}
+		}
 	},
 	{
 		{
@@ -27564,9 +27552,9 @@ HordeCompositions.termite_lvl2_wave_8_big_slaves = {
 				"skaven_slave",
 				37,
 				"skaven_clan_rat",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -27576,9 +27564,9 @@ HordeCompositions.termite_lvl2_wave_8_big_slaves = {
 				"skaven_slave",
 				37,
 				"skaven_clan_rat",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -27586,10 +27574,22 @@ HordeCompositions.termite_lvl2_wave_8_big_slaves = {
 			weight = 1,
 			breeds = {
 				"skaven_slave",
-				32,
-			},
-		},
+				37,
+				"skaven_clan_rat",
+				10
+			}
+		}
 	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"skaven_slave",
+				32
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl2_wave_8_monks = {
 	{
@@ -27598,9 +27598,9 @@ HordeCompositions.termite_lvl2_wave_8_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -27608,9 +27608,9 @@ HordeCompositions.termite_lvl2_wave_8_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -27618,9 +27618,9 @@ HordeCompositions.termite_lvl2_wave_8_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -27628,9 +27628,9 @@ HordeCompositions.termite_lvl2_wave_8_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -27638,9 +27638,9 @@ HordeCompositions.termite_lvl2_wave_8_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				7,
-			},
-		},
+				7
+			}
+		}
 	},
 	{
 		{
@@ -27648,9 +27648,9 @@ HordeCompositions.termite_lvl2_wave_8_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				7,
-			},
-		},
+				7
+			}
+		}
 	},
 	{
 		{
@@ -27658,9 +27658,9 @@ HordeCompositions.termite_lvl2_wave_8_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				7,
-			},
-		},
+				7
+			}
+		}
 	},
 	{
 		{
@@ -27668,10 +27668,10 @@ HordeCompositions.termite_lvl2_wave_8_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				2,
-			},
-		},
-	},
+				2
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl2_wave_8_commander_shields = {
 	{
@@ -27680,9 +27680,9 @@ HordeCompositions.termite_lvl2_wave_8_commander_shields = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -27690,9 +27690,9 @@ HordeCompositions.termite_lvl2_wave_8_commander_shields = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -27700,9 +27700,9 @@ HordeCompositions.termite_lvl2_wave_8_commander_shields = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -27710,21 +27710,9 @@ HordeCompositions.termite_lvl2_wave_8_commander_shields = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				8,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"skaven_storm_vermin_commander",
-				8,
-				"skaven_storm_vermin_with_shield",
-				2,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -27734,9 +27722,9 @@ HordeCompositions.termite_lvl2_wave_8_commander_shields = {
 				"skaven_storm_vermin_commander",
 				8,
 				"skaven_storm_vermin_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -27746,9 +27734,9 @@ HordeCompositions.termite_lvl2_wave_8_commander_shields = {
 				"skaven_storm_vermin_commander",
 				8,
 				"skaven_storm_vermin_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -27756,10 +27744,22 @@ HordeCompositions.termite_lvl2_wave_8_commander_shields = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				8,
+				"skaven_storm_vermin_with_shield",
+				2
+			}
+		}
 	},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"skaven_storm_vermin_commander",
+				4
+			}
+		}
+	}
 }
 HordeCompositions.termite_lvl3_spotlight = {
 	{
@@ -27770,20 +27770,20 @@ HordeCompositions.termite_lvl3_spotlight = {
 				"skaven_slave",
 				{
 					18,
-					20,
+					20
 				},
 				"skaven_clan_rat",
 				{
 					1,
-					2,
+					2
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					5,
-					6,
-				},
-			},
-		},
+					6
+				}
+			}
+		}
 	},
 	{
 		{
@@ -27793,43 +27793,43 @@ HordeCompositions.termite_lvl3_spotlight = {
 				"skaven_slave",
 				{
 					18,
-					20,
+					20
 				},
 				"skaven_clan_rat",
 				{
 					2,
+					4
+				},
+				"skaven_clan_rat_with_shield",
+				{
+					6,
+					7
+				}
+			}
+		}
+	},
+	{
+		{
+			name = "mixed",
+			weight = 3,
+			breeds = {
+				"skaven_slave",
+				{
+					18,
+					20
+				},
+				"skaven_clan_rat",
+				{
 					4,
-				},
-				"skaven_clan_rat_with_shield",
-				{
-					6,
-					7,
-				},
-			},
-		},
-	},
-	{
-		{
-			name = "mixed",
-			weight = 3,
-			breeds = {
-				"skaven_slave",
-				{
-					18,
-					20,
-				},
-				"skaven_clan_rat",
-				{
-					4,
-					6,
+					6
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					7,
-					8,
-				},
-			},
-		},
+					8
+				}
+			}
+		}
 	},
 	{
 		{
@@ -27839,20 +27839,20 @@ HordeCompositions.termite_lvl3_spotlight = {
 				"skaven_slave",
 				{
 					18,
-					20,
+					20
 				},
 				"skaven_clan_rat",
 				{
 					6,
-					8,
+					8
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					8,
-					9,
-				},
-			},
-		},
+					9
+				}
+			}
+		}
 	},
 	{
 		{
@@ -27862,20 +27862,20 @@ HordeCompositions.termite_lvl3_spotlight = {
 				"skaven_slave",
 				{
 					18,
-					20,
+					20
 				},
 				"skaven_clan_rat",
 				{
 					8,
-					11,
+					11
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					11,
-					13,
-				},
-			},
-		},
+					13
+				}
+			}
+		}
 	},
 	{
 		{
@@ -27885,20 +27885,20 @@ HordeCompositions.termite_lvl3_spotlight = {
 				"skaven_slave",
 				{
 					18,
-					20,
+					20
 				},
 				"skaven_clan_rat",
 				{
 					8,
-					11,
+					11
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					11,
-					13,
-				},
-			},
-		},
+					13
+				}
+			}
+		}
 	},
 	{
 		{
@@ -27908,22 +27908,22 @@ HordeCompositions.termite_lvl3_spotlight = {
 				"skaven_slave",
 				{
 					18,
-					20,
+					20
 				},
 				"skaven_clan_rat",
 				{
 					8,
-					11,
+					11
 				},
 				"skaven_clan_rat_with_shield",
 				{
 					11,
-					13,
-				},
-			},
-		},
+					13
+				}
+			}
+		}
 	},
-	{},
+	{}
 }
 HordeCompositions.termite_lvl3_spotlight_commanders = {
 	{
@@ -27932,9 +27932,9 @@ HordeCompositions.termite_lvl3_spotlight_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -27942,9 +27942,9 @@ HordeCompositions.termite_lvl3_spotlight_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -27952,9 +27952,9 @@ HordeCompositions.termite_lvl3_spotlight_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -27962,21 +27962,9 @@ HordeCompositions.termite_lvl3_spotlight_commanders = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				8,
-			},
-		},
-	},
-	{
-		{
-			name = "plain",
-			weight = 1,
-			breeds = {
-				"skaven_storm_vermin_commander",
-				8,
-				"skaven_storm_vermin_with_shield",
-				2,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -27986,9 +27974,9 @@ HordeCompositions.termite_lvl3_spotlight_commanders = {
 				"skaven_storm_vermin_commander",
 				8,
 				"skaven_storm_vermin_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -27998,11 +27986,23 @@ HordeCompositions.termite_lvl3_spotlight_commanders = {
 				"skaven_storm_vermin_commander",
 				8,
 				"skaven_storm_vermin_with_shield",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
-	{},
+	{
+		{
+			name = "plain",
+			weight = 1,
+			breeds = {
+				"skaven_storm_vermin_commander",
+				8,
+				"skaven_storm_vermin_with_shield",
+				2
+			}
+		}
+	},
+	{}
 }
 HordeCompositions.termite_lvl3_spotlight_monks = {
 	{
@@ -28011,9 +28011,9 @@ HordeCompositions.termite_lvl3_spotlight_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -28021,9 +28021,9 @@ HordeCompositions.termite_lvl3_spotlight_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				5,
-			},
-		},
+				5
+			}
+		}
 	},
 	{
 		{
@@ -28031,9 +28031,9 @@ HordeCompositions.termite_lvl3_spotlight_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -28041,9 +28041,9 @@ HordeCompositions.termite_lvl3_spotlight_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -28051,9 +28051,9 @@ HordeCompositions.termite_lvl3_spotlight_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -28061,9 +28061,9 @@ HordeCompositions.termite_lvl3_spotlight_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	{
 		{
@@ -28071,11 +28071,11 @@ HordeCompositions.termite_lvl3_spotlight_monks = {
 			weight = 1,
 			breeds = {
 				"skaven_plague_monk",
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
-	{},
+	{}
 }
 HordeCompositions.termite_lvl3_spotlight_shields = {
 	{
@@ -28086,9 +28086,9 @@ HordeCompositions.termite_lvl3_spotlight_shields = {
 				"skaven_clan_rat_with_shield",
 				8,
 				"skaven_storm_vermin_commander",
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	{
 		{
@@ -28098,9 +28098,9 @@ HordeCompositions.termite_lvl3_spotlight_shields = {
 				"skaven_clan_rat_with_shield",
 				8,
 				"skaven_storm_vermin_commander",
-				3,
-			},
-		},
+				3
+			}
+		}
 	},
 	{
 		{
@@ -28110,9 +28110,9 @@ HordeCompositions.termite_lvl3_spotlight_shields = {
 				"skaven_clan_rat_with_shield",
 				10,
 				"skaven_storm_vermin_commander",
-				4,
-			},
-		},
+				4
+			}
+		}
 	},
 	{
 		{
@@ -28122,9 +28122,9 @@ HordeCompositions.termite_lvl3_spotlight_shields = {
 				"skaven_clan_rat_with_shield",
 				10,
 				"skaven_storm_vermin_commander",
-				6,
-			},
-		},
+				6
+			}
+		}
 	},
 	{
 		{
@@ -28134,9 +28134,9 @@ HordeCompositions.termite_lvl3_spotlight_shields = {
 				"skaven_clan_rat_with_shield",
 				11,
 				"skaven_storm_vermin_commander",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -28146,9 +28146,9 @@ HordeCompositions.termite_lvl3_spotlight_shields = {
 				"skaven_clan_rat_with_shield",
 				11,
 				"skaven_storm_vermin_commander",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -28158,11 +28158,11 @@ HordeCompositions.termite_lvl3_spotlight_shields = {
 				"skaven_clan_rat_with_shield",
 				11,
 				"skaven_storm_vermin_commander",
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
-	{},
+	{}
 }
 HordeCompositions.termite_lvl3_spotlight_specials = {
 	{
@@ -28177,9 +28177,9 @@ HordeCompositions.termite_lvl3_spotlight_specials = {
 				"skaven_poison_wind_globadier",
 				1,
 				"skaven_ratling_gunner",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -28189,7 +28189,7 @@ HordeCompositions.termite_lvl3_spotlight_specials = {
 				"skaven_warpfire_thrower",
 				{
 					1,
-					2,
+					2
 				},
 				"skaven_gutter_runner",
 				1,
@@ -28198,10 +28198,10 @@ HordeCompositions.termite_lvl3_spotlight_specials = {
 				"skaven_ratling_gunner",
 				{
 					1,
-					2,
-				},
-			},
-		},
+					2
+				}
+			}
+		}
 	},
 	{
 		{
@@ -28211,7 +28211,7 @@ HordeCompositions.termite_lvl3_spotlight_specials = {
 				"skaven_warpfire_thrower",
 				{
 					1,
-					3,
+					3
 				},
 				"skaven_gutter_runner",
 				1,
@@ -28220,10 +28220,10 @@ HordeCompositions.termite_lvl3_spotlight_specials = {
 				"skaven_ratling_gunner",
 				{
 					1,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -28233,25 +28233,25 @@ HordeCompositions.termite_lvl3_spotlight_specials = {
 				"skaven_warpfire_thrower",
 				{
 					1,
-					3,
+					3
 				},
 				"skaven_gutter_runner",
 				{
 					1,
-					2,
+					2
 				},
 				"skaven_poison_wind_globadier",
 				{
 					1,
-					2,
+					2
 				},
 				"skaven_ratling_gunner",
 				{
 					1,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -28261,25 +28261,25 @@ HordeCompositions.termite_lvl3_spotlight_specials = {
 				"skaven_warpfire_thrower",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_gutter_runner",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_poison_wind_globadier",
 				{
 					1,
-					2,
+					2
 				},
 				"skaven_ratling_gunner",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -28289,25 +28289,25 @@ HordeCompositions.termite_lvl3_spotlight_specials = {
 				"skaven_warpfire_thrower",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_gutter_runner",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_poison_wind_globadier",
 				{
 					1,
-					2,
+					2
 				},
 				"skaven_ratling_gunner",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
 	{
 		{
@@ -28317,27 +28317,27 @@ HordeCompositions.termite_lvl3_spotlight_specials = {
 				"skaven_warpfire_thrower",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_gutter_runner",
 				{
 					2,
-					3,
+					3
 				},
 				"skaven_poison_wind_globadier",
 				{
 					1,
-					2,
+					2
 				},
 				"skaven_ratling_gunner",
 				{
 					2,
-					3,
-				},
-			},
-		},
+					3
+				}
+			}
+		}
 	},
-	{},
+	{}
 }
 HordeCompositions.event_strom_boss = {
 	{
@@ -28346,9 +28346,9 @@ HordeCompositions.event_strom_boss = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_champion",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -28356,9 +28356,9 @@ HordeCompositions.event_strom_boss = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_champion",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -28366,9 +28366,9 @@ HordeCompositions.event_strom_boss = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_champion",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -28376,9 +28376,9 @@ HordeCompositions.event_strom_boss = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_champion",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -28386,9 +28386,9 @@ HordeCompositions.event_strom_boss = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_champion",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -28396,9 +28396,9 @@ HordeCompositions.event_strom_boss = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_champion",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -28406,9 +28406,9 @@ HordeCompositions.event_strom_boss = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_champion",
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	{
 		{
@@ -28416,250 +28416,246 @@ HordeCompositions.event_strom_boss = {
 			weight = 1,
 			breeds = {
 				"skaven_storm_vermin_champion",
-				1,
-			},
-		},
-	},
+				1
+			}
+		}
+	}
 }
 
-local TROLL_CHIEF_MAX_HORDE_SIZE = 36
-local difficulty_modifiers = {
+local var_0_0 = 36
+local var_0_1 = {
+	legend = 2,
 	cataclysm = 2.5,
 	cataclysm_2 = 3,
 	cataclysm_3 = 4,
-	champion = 1.3,
-	legend = 2,
-	recruit = 0.9,
 	veteran = 1,
+	recruit = 0.9,
+	champion = 1.3
 }
 
-local function troll_chief_generate_waves_defensive(difficulty, modifier)
-	local threat_mod = difficulty * modifier
-	local hordes = 1
-	local waves = {}
+local function var_0_2(arg_1_0, arg_1_1)
+	local var_1_0 = arg_1_0 * arg_1_1
+	local var_1_1 = 1
+	local var_1_2 = {}
 
-	for i = 1, hordes do
-		local wave = {
+	for iter_1_0 = 1, var_1_1 do
+		var_1_2[iter_1_0] = {
 			weight = 4,
-			name = "wave_adds_" .. i,
+			name = "wave_adds_" .. iter_1_0,
 			breeds = {
 				"chaos_fanatic",
-				math.min(TROLL_CHIEF_MAX_HORDE_SIZE, math.floor(8 * threat_mod)),
+				math.min(var_0_0, math.floor(8 * var_1_0)),
 				"chaos_marauder",
-				math.min(TROLL_CHIEF_MAX_HORDE_SIZE, math.floor(4 * threat_mod)),
+				math.min(var_0_0, math.floor(4 * var_1_0)),
 				"chaos_marauder_with_shield",
-				math.min(TROLL_CHIEF_MAX_HORDE_SIZE, math.floor(1.6 * threat_mod)),
+				math.min(var_0_0, math.floor(1.6 * var_1_0)),
 				"chaos_warrior",
-				math.min(TROLL_CHIEF_MAX_HORDE_SIZE, math.floor(0.8 * threat_mod)),
+				math.min(var_0_0, math.floor(0.8 * var_1_0)),
 				"chaos_raider",
-				math.min(TROLL_CHIEF_MAX_HORDE_SIZE, math.floor(1.4 * threat_mod)),
+				math.min(var_0_0, math.floor(1.4 * var_1_0)),
 				"chaos_berzerker",
-				math.min(TROLL_CHIEF_MAX_HORDE_SIZE, math.floor(1 * threat_mod)),
-			},
+				math.min(var_0_0, math.floor(1 * var_1_0))
+			}
 		}
-
-		waves[i] = wave
 	end
 
-	return waves
+	return var_1_2
 end
 
-local function troll_chief_generate_waves_adds(difficulty, modifier)
-	local threat_mod = difficulty * modifier
-	local amount = math.ceil(difficulty)
-	local max = 2
-	local compositions = {
+local function var_0_3(arg_2_0, arg_2_1)
+	local var_2_0 = arg_2_0 * arg_2_1
+	local var_2_1 = math.ceil(arg_2_0)
+	local var_2_2 = 2
+	local var_2_3 = {
 		{
 			"skaven_warpfire_thrower",
-			math.clamp(amount - 0, 0, max),
+			math.clamp(var_2_1 - 0, 0, var_2_2),
 			"skaven_warpfire_thrower",
-			math.clamp(amount - 2, 0, max),
+			math.clamp(var_2_1 - 2, 0, var_2_2),
 			"skaven_ratling_gunner",
-			math.clamp(amount - 3, 0, max),
+			math.clamp(var_2_1 - 3, 0, var_2_2)
 		},
 		{
 			"skaven_gutter_runner",
-			math.clamp(amount - 0, 0, max),
+			math.clamp(var_2_1 - 0, 0, var_2_2),
 			"skaven_poison_wind_globadier",
-			math.clamp(amount - 2, 0, max),
+			math.clamp(var_2_1 - 2, 0, var_2_2),
 			"skaven_gutter_runner",
-			math.clamp(amount - 3, 0, max),
+			math.clamp(var_2_1 - 3, 0, var_2_2)
 		},
 		{
 			"skaven_ratling_gunner",
-			math.clamp(amount - 0, 0, max),
+			math.clamp(var_2_1 - 0, 0, var_2_2),
 			"skaven_ratling_gunner",
-			math.clamp(amount - 2, 0, max),
+			math.clamp(var_2_1 - 2, 0, var_2_2),
 			"skaven_pack_master",
-			math.clamp(amount - 3, 0, max),
+			math.clamp(var_2_1 - 3, 0, var_2_2)
 		},
 		{
 			"chaos_vortex_sorcerer",
-			math.clamp(amount - 0, 0, max),
+			math.clamp(var_2_1 - 0, 0, var_2_2),
 			"chaos_corruptor_sorcerer",
-			math.clamp(amount - 2, 0, max),
+			math.clamp(var_2_1 - 2, 0, var_2_2),
 			"chaos_vortex_sorcerer",
-			math.clamp(amount - 3, 0, max),
-		},
+			math.clamp(var_2_1 - 3, 0, var_2_2)
+		}
 	}
-	local waves = {}
+	local var_2_4 = {}
 
-	for i = 1, #compositions do
-		local wave = {
+	for iter_2_0 = 1, #var_2_3 do
+		var_2_4[iter_2_0] = {
 			weight = 4,
-			name = "wave_adds_" .. i,
+			name = "wave_adds_" .. iter_2_0,
 			breeds = {
 				"chaos_fanatic",
-				math.min(TROLL_CHIEF_MAX_HORDE_SIZE, math.floor(6 * threat_mod)),
+				math.min(var_0_0, math.floor(6 * var_2_0)),
 				"chaos_marauder",
-				math.min(TROLL_CHIEF_MAX_HORDE_SIZE, math.floor(4 * threat_mod)),
+				math.min(var_0_0, math.floor(4 * var_2_0)),
 				"chaos_marauder_with_shield",
-				math.min(TROLL_CHIEF_MAX_HORDE_SIZE, math.floor(1 * threat_mod)),
-				unpack(compositions[i]),
-			},
+				math.min(var_0_0, math.floor(1 * var_2_0)),
+				unpack(var_2_3[iter_2_0])
+			}
 		}
-
-		waves[i] = wave
 	end
 
-	return waves
+	return var_2_4
 end
 
 HordeCompositions.troll_chief_defensive_1 = {
 	{
 		start_time = 3,
-		unpack(troll_chief_generate_waves_defensive(difficulty_modifiers.recruit, 0.6)),
+		unpack(var_0_2(var_0_1.recruit, 0.6))
 	},
 	{
 		start_time = 3,
-		unpack(troll_chief_generate_waves_defensive(difficulty_modifiers.veteran, 0.6)),
+		unpack(var_0_2(var_0_1.veteran, 0.6))
 	},
 	{
 		start_time = 3,
-		unpack(troll_chief_generate_waves_defensive(difficulty_modifiers.champion, 0.6)),
+		unpack(var_0_2(var_0_1.champion, 0.6))
 	},
 	{
 		start_time = 3,
-		unpack(troll_chief_generate_waves_defensive(difficulty_modifiers.legend, 0.6)),
+		unpack(var_0_2(var_0_1.legend, 0.6))
 	},
 	{
 		start_time = 3,
-		unpack(troll_chief_generate_waves_defensive(difficulty_modifiers.cataclysm, 0.6)),
+		unpack(var_0_2(var_0_1.cataclysm, 0.6))
 	},
 	{
 		start_time = 3,
-		unpack(troll_chief_generate_waves_defensive(difficulty_modifiers.cataclysm_2, 0.6)),
+		unpack(var_0_2(var_0_1.cataclysm_2, 0.6))
 	},
 	{
 		start_time = 3,
-		unpack(troll_chief_generate_waves_defensive(difficulty_modifiers.cataclysm_3, 0.6)),
+		unpack(var_0_2(var_0_1.cataclysm_3, 0.6))
 	},
 	{
 		start_time = 3,
-		unpack(troll_chief_generate_waves_defensive(difficulty_modifiers.recruit, 0.6)),
-	},
+		unpack(var_0_2(var_0_1.recruit, 0.6))
+	}
 }
 HordeCompositions.troll_chief_defensive_2 = {
 	{
 		start_time = 3,
-		unpack(troll_chief_generate_waves_defensive(difficulty_modifiers.recruit, 1)),
+		unpack(var_0_2(var_0_1.recruit, 1))
 	},
 	{
 		start_time = 3,
-		unpack(troll_chief_generate_waves_defensive(difficulty_modifiers.veteran, 1)),
+		unpack(var_0_2(var_0_1.veteran, 1))
 	},
 	{
 		start_time = 3,
-		unpack(troll_chief_generate_waves_defensive(difficulty_modifiers.champion, 1)),
+		unpack(var_0_2(var_0_1.champion, 1))
 	},
 	{
 		start_time = 3,
-		unpack(troll_chief_generate_waves_defensive(difficulty_modifiers.legend, 1)),
+		unpack(var_0_2(var_0_1.legend, 1))
 	},
 	{
 		start_time = 3,
-		unpack(troll_chief_generate_waves_defensive(difficulty_modifiers.cataclysm, 1)),
+		unpack(var_0_2(var_0_1.cataclysm, 1))
 	},
 	{
 		start_time = 3,
-		unpack(troll_chief_generate_waves_defensive(difficulty_modifiers.cataclysm_2, 1)),
+		unpack(var_0_2(var_0_1.cataclysm_2, 1))
 	},
 	{
 		start_time = 3,
-		unpack(troll_chief_generate_waves_defensive(difficulty_modifiers.cataclysm_3, 1)),
+		unpack(var_0_2(var_0_1.cataclysm_3, 1))
 	},
 	{
 		start_time = 3,
-		unpack(troll_chief_generate_waves_defensive(difficulty_modifiers.recruit, 1)),
-	},
+		unpack(var_0_2(var_0_1.recruit, 1))
+	}
 }
 HordeCompositions.troll_chief_rage_1 = {
 	{
 		start_time = 12,
-		unpack(troll_chief_generate_waves_adds(difficulty_modifiers.recruit, 0.6)),
+		unpack(var_0_3(var_0_1.recruit, 0.6))
 	},
 	{
 		start_time = 12,
-		unpack(troll_chief_generate_waves_adds(difficulty_modifiers.veteran, 0.6)),
+		unpack(var_0_3(var_0_1.veteran, 0.6))
 	},
 	{
 		start_time = 12,
-		unpack(troll_chief_generate_waves_adds(difficulty_modifiers.champion, 0.6)),
+		unpack(var_0_3(var_0_1.champion, 0.6))
 	},
 	{
 		start_time = 12,
-		unpack(troll_chief_generate_waves_adds(difficulty_modifiers.legend, 0.6)),
+		unpack(var_0_3(var_0_1.legend, 0.6))
 	},
 	{
 		start_time = 12,
-		unpack(troll_chief_generate_waves_adds(difficulty_modifiers.cataclysm, 0.6)),
+		unpack(var_0_3(var_0_1.cataclysm, 0.6))
 	},
 	{
 		start_time = 12,
-		unpack(troll_chief_generate_waves_adds(difficulty_modifiers.cataclysm_2, 0.6)),
+		unpack(var_0_3(var_0_1.cataclysm_2, 0.6))
 	},
 	{
 		start_time = 12,
-		unpack(troll_chief_generate_waves_adds(difficulty_modifiers.cataclysm_3, 0.6)),
+		unpack(var_0_3(var_0_1.cataclysm_3, 0.6))
 	},
 	{
 		start_time = 12,
-		unpack(troll_chief_generate_waves_adds(difficulty_modifiers.recruit, 0.6)),
-	},
+		unpack(var_0_3(var_0_1.recruit, 0.6))
+	}
 }
 HordeCompositions.troll_chief_rage_2 = {
 	{
 		start_time = 12,
-		unpack(troll_chief_generate_waves_adds(difficulty_modifiers.recruit, 1)),
+		unpack(var_0_3(var_0_1.recruit, 1))
 	},
 	{
 		start_time = 12,
-		unpack(troll_chief_generate_waves_adds(difficulty_modifiers.veteran, 1)),
+		unpack(var_0_3(var_0_1.veteran, 1))
 	},
 	{
 		start_time = 12,
-		unpack(troll_chief_generate_waves_adds(difficulty_modifiers.champion, 1)),
+		unpack(var_0_3(var_0_1.champion, 1))
 	},
 	{
 		start_time = 12,
-		unpack(troll_chief_generate_waves_adds(difficulty_modifiers.legend, 1)),
+		unpack(var_0_3(var_0_1.legend, 1))
 	},
 	{
 		start_time = 12,
-		unpack(troll_chief_generate_waves_adds(difficulty_modifiers.cataclysm, 1)),
+		unpack(var_0_3(var_0_1.cataclysm, 1))
 	},
 	{
 		start_time = 12,
-		unpack(troll_chief_generate_waves_adds(difficulty_modifiers.cataclysm_2, 1)),
+		unpack(var_0_3(var_0_1.cataclysm_2, 1))
 	},
 	{
 		start_time = 12,
-		unpack(troll_chief_generate_waves_adds(difficulty_modifiers.cataclysm_3, 1)),
+		unpack(var_0_3(var_0_1.cataclysm_3, 1))
 	},
 	{
 		start_time = 12,
-		unpack(troll_chief_generate_waves_adds(difficulty_modifiers.recruit, 1)),
-	},
+		unpack(var_0_3(var_0_1.recruit, 1))
+	}
 }
 HordeCompositions.pathfind_test_light = {
 	{
@@ -28670,10 +28666,10 @@ HordeCompositions.pathfind_test_light = {
 				"skaven_slave",
 				{
 					50,
-					50,
-				},
-			},
-		},
+					50
+				}
+			}
+		}
 	},
 	{
 		{
@@ -28683,10 +28679,10 @@ HordeCompositions.pathfind_test_light = {
 				"skaven_slave",
 				{
 					50,
-					50,
-				},
-			},
-		},
+					50
+				}
+			}
+		}
 	},
 	{
 		{
@@ -28696,10 +28692,10 @@ HordeCompositions.pathfind_test_light = {
 				"skaven_slave",
 				{
 					50,
-					50,
-				},
-			},
-		},
+					50
+				}
+			}
+		}
 	},
 	{
 		{
@@ -28709,10 +28705,10 @@ HordeCompositions.pathfind_test_light = {
 				"skaven_slave",
 				{
 					50,
-					50,
-				},
-			},
-		},
+					50
+				}
+			}
+		}
 	},
 	{
 		{
@@ -28722,10 +28718,10 @@ HordeCompositions.pathfind_test_light = {
 				"skaven_slave",
 				{
 					50,
-					50,
-				},
-			},
-		},
+					50
+				}
+			}
+		}
 	},
 	{
 		{
@@ -28735,10 +28731,10 @@ HordeCompositions.pathfind_test_light = {
 				"skaven_slave",
 				{
 					50,
-					50,
-				},
-			},
-		},
+					50
+				}
+			}
+		}
 	},
 	{
 		{
@@ -28748,10 +28744,10 @@ HordeCompositions.pathfind_test_light = {
 				"skaven_slave",
 				{
 					50,
-					50,
-				},
-			},
-		},
+					50
+				}
+			}
+		}
 	},
 	{
 		{
@@ -28761,11 +28757,11 @@ HordeCompositions.pathfind_test_light = {
 				"skaven_slave",
 				{
 					50,
-					50,
-				},
-			},
-		},
-	},
+					50
+				}
+			}
+		}
+	}
 }
 HordeCompositions.versus_horde_ability_skaven = {
 	{},
@@ -28783,8 +28779,8 @@ HordeCompositions.versus_horde_ability_skaven = {
 				"skaven_plague_monk",
 				3,
 				"skaven_slave",
-				7,
-			},
+				7
+			}
 		},
 		{
 			name = "horde_ability",
@@ -28793,8 +28789,8 @@ HordeCompositions.versus_horde_ability_skaven = {
 				"skaven_plague_monk",
 				2,
 				"skaven_slave",
-				14,
-			},
+				14
+			}
 		},
 		{
 			name = "horde_ability",
@@ -28805,8 +28801,8 @@ HordeCompositions.versus_horde_ability_skaven = {
 				"skaven_slave",
 				7,
 				"skaven_clan_rat_with_shield",
-				3,
-			},
+				3
+			}
 		},
 		{
 			name = "horde_ability",
@@ -28817,8 +28813,8 @@ HordeCompositions.versus_horde_ability_skaven = {
 				"skaven_slave",
 				7,
 				"skaven_clan_rat",
-				5,
-			},
+				5
+			}
 		},
 		{
 			name = "horde_ability",
@@ -28827,8 +28823,8 @@ HordeCompositions.versus_horde_ability_skaven = {
 				"skaven_plague_monk",
 				2,
 				"skaven_clan_rat",
-				10,
-			},
+				10
+			}
 		},
 		{
 			name = "horde_ability",
@@ -28837,8 +28833,8 @@ HordeCompositions.versus_horde_ability_skaven = {
 				"skaven_plague_monk",
 				1,
 				"skaven_clan_rat_with_shield",
-				6,
-			},
+				6
+			}
 		},
 		{
 			name = "horde_ability",
@@ -28849,8 +28845,8 @@ HordeCompositions.versus_horde_ability_skaven = {
 				"skaven_clan_rat",
 				5,
 				"skaven_clan_rat_with_shield",
-				3,
-			},
+				3
+			}
 		},
 		{
 			name = "horde_ability",
@@ -28859,8 +28855,8 @@ HordeCompositions.versus_horde_ability_skaven = {
 				"skaven_storm_vermin_commander",
 				3,
 				"skaven_slave",
-				7,
-			},
+				7
+			}
 		},
 		{
 			name = "horde_ability",
@@ -28869,8 +28865,8 @@ HordeCompositions.versus_horde_ability_skaven = {
 				"skaven_storm_vermin_commander",
 				2,
 				"skaven_slave",
-				14,
-			},
+				14
+			}
 		},
 		{
 			name = "horde_ability",
@@ -28881,8 +28877,8 @@ HordeCompositions.versus_horde_ability_skaven = {
 				"skaven_slave",
 				7,
 				"skaven_clan_rat_with_shield",
-				3,
-			},
+				3
+			}
 		},
 		{
 			name = "horde_ability",
@@ -28893,8 +28889,8 @@ HordeCompositions.versus_horde_ability_skaven = {
 				"skaven_slave",
 				7,
 				"skaven_clan_rat",
-				5,
-			},
+				5
+			}
 		},
 		{
 			name = "horde_ability",
@@ -28903,8 +28899,8 @@ HordeCompositions.versus_horde_ability_skaven = {
 				"skaven_storm_vermin_commander",
 				2,
 				"skaven_clan_rat",
-				10,
-			},
+				10
+			}
 		},
 		{
 			name = "horde_ability",
@@ -28913,140 +28909,140 @@ HordeCompositions.versus_horde_ability_skaven = {
 				"skaven_storm_vermin_commander",
 				1,
 				"skaven_clan_rat_with_shield",
-				6,
-			},
+				6
+			}
 		},
 		{
 			name = "horde_ability",
 			weight = 3,
 			breeds = {
 				"skaven_storm_vermin_commander",
-				1,
-				"skaven_clan_rat",
-				5,
-				"skaven_clan_rat_with_shield",
-				3,
-			},
-		},
-		{
-			name = "horde_ability",
-			weight = 3,
-			breeds = {
-				"skaven_storm_vermin_with_shield",
-				3,
-				"skaven_slave",
-				7,
-			},
-		},
-		{
-			name = "horde_ability",
-			weight = 3,
-			breeds = {
-				"skaven_storm_vermin_with_shield",
-				2,
-				"skaven_slave",
-				14,
-			},
-		},
-		{
-			name = "horde_ability",
-			weight = 3,
-			breeds = {
-				"skaven_storm_vermin_with_shield",
-				1,
-				"skaven_slave",
-				7,
-				"skaven_clan_rat_with_shield",
-				3,
-			},
-		},
-		{
-			name = "horde_ability",
-			weight = 3,
-			breeds = {
-				"skaven_storm_vermin_with_shield",
-				2,
-				"skaven_slave",
-				7,
-				"skaven_clan_rat",
-				5,
-			},
-		},
-		{
-			name = "horde_ability",
-			weight = 3,
-			breeds = {
-				"skaven_storm_vermin_with_shield",
-				2,
-				"skaven_clan_rat",
-				10,
-			},
-		},
-		{
-			name = "horde_ability",
-			weight = 3,
-			breeds = {
-				"skaven_storm_vermin_with_shield",
-				1,
-				"skaven_clan_rat_with_shield",
-				6,
-			},
-		},
-		{
-			name = "horde_ability",
-			weight = 3,
-			breeds = {
-				"skaven_storm_vermin_with_shield",
 				1,
 				"skaven_clan_rat",
 				5,
 				"skaven_clan_rat_with_shield",
-				3,
-			},
+				3
+			}
 		},
 		{
 			name = "horde_ability",
 			weight = 3,
 			breeds = {
-				"skaven_storm_vermin",
+				"skaven_storm_vermin_with_shield",
 				3,
 				"skaven_slave",
-				7,
-			},
+				7
+			}
 		},
 		{
 			name = "horde_ability",
 			weight = 3,
 			breeds = {
-				"skaven_storm_vermin",
+				"skaven_storm_vermin_with_shield",
 				2,
 				"skaven_slave",
-				14,
-			},
+				14
+			}
 		},
 		{
 			name = "horde_ability",
 			weight = 3,
 			breeds = {
-				"skaven_storm_vermin",
+				"skaven_storm_vermin_with_shield",
 				1,
 				"skaven_slave",
 				7,
 				"skaven_clan_rat_with_shield",
-				3,
-			},
+				3
+			}
 		},
 		{
 			name = "horde_ability",
 			weight = 3,
 			breeds = {
-				"skaven_storm_vermin",
+				"skaven_storm_vermin_with_shield",
 				2,
 				"skaven_slave",
 				7,
+				"skaven_clan_rat",
+				5
+			}
+		},
+		{
+			name = "horde_ability",
+			weight = 3,
+			breeds = {
+				"skaven_storm_vermin_with_shield",
+				2,
+				"skaven_clan_rat",
+				10
+			}
+		},
+		{
+			name = "horde_ability",
+			weight = 3,
+			breeds = {
+				"skaven_storm_vermin_with_shield",
+				1,
+				"skaven_clan_rat_with_shield",
+				6
+			}
+		},
+		{
+			name = "horde_ability",
+			weight = 3,
+			breeds = {
+				"skaven_storm_vermin_with_shield",
+				1,
 				"skaven_clan_rat",
 				5,
-			},
+				"skaven_clan_rat_with_shield",
+				3
+			}
+		},
+		{
+			name = "horde_ability",
+			weight = 3,
+			breeds = {
+				"skaven_storm_vermin",
+				3,
+				"skaven_slave",
+				7
+			}
+		},
+		{
+			name = "horde_ability",
+			weight = 3,
+			breeds = {
+				"skaven_storm_vermin",
+				2,
+				"skaven_slave",
+				14
+			}
+		},
+		{
+			name = "horde_ability",
+			weight = 3,
+			breeds = {
+				"skaven_storm_vermin",
+				1,
+				"skaven_slave",
+				7,
+				"skaven_clan_rat_with_shield",
+				3
+			}
+		},
+		{
+			name = "horde_ability",
+			weight = 3,
+			breeds = {
+				"skaven_storm_vermin",
+				2,
+				"skaven_slave",
+				7,
+				"skaven_clan_rat",
+				5
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29055,8 +29051,8 @@ HordeCompositions.versus_horde_ability_skaven = {
 				"skaven_storm_vermin",
 				2,
 				"skaven_clan_rat",
-				10,
-			},
+				10
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29065,8 +29061,8 @@ HordeCompositions.versus_horde_ability_skaven = {
 				"skaven_storm_vermin",
 				1,
 				"skaven_clan_rat_with_shield",
-				6,
-			},
+				6
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29077,10 +29073,10 @@ HordeCompositions.versus_horde_ability_skaven = {
 				"skaven_clan_rat",
 				5,
 				"skaven_clan_rat_with_shield",
-				3,
-			},
-		},
-	},
+				3
+			}
+		}
+	}
 }
 HordeCompositions.versus_horde_ability_chaos = {
 	{},
@@ -29098,8 +29094,8 @@ HordeCompositions.versus_horde_ability_chaos = {
 				"chaos_berzerker",
 				3,
 				"chaos_fanatic",
-				5,
-			},
+				5
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29108,8 +29104,8 @@ HordeCompositions.versus_horde_ability_chaos = {
 				"chaos_berzerker",
 				2,
 				"chaos_fanatic",
-				10,
-			},
+				10
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29120,8 +29116,8 @@ HordeCompositions.versus_horde_ability_chaos = {
 				"chaos_fanatic",
 				5,
 				"chaos_marauder_with_shield",
-				2,
-			},
+				2
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29131,41 +29127,41 @@ HordeCompositions.versus_horde_ability_chaos = {
 				2,
 				"chaos_fanatic",
 				5,
+				"chaos_marauder",
+				3
+			}
+		},
+		{
+			name = "horde_ability",
+			weight = 3,
+			breeds = {
+				"chaos_berzerker",
+				2,
+				"chaos_marauder",
+				6
+			}
+		},
+		{
+			name = "horde_ability",
+			weight = 3,
+			breeds = {
+				"chaos_berzerker",
+				1,
+				"chaos_marauder_with_shield",
+				4
+			}
+		},
+		{
+			name = "horde_ability",
+			weight = 3,
+			breeds = {
+				"chaos_berzerker",
+				1,
 				"chaos_marauder",
 				3,
-			},
-		},
-		{
-			name = "horde_ability",
-			weight = 3,
-			breeds = {
-				"chaos_berzerker",
-				2,
-				"chaos_marauder",
-				6,
-			},
-		},
-		{
-			name = "horde_ability",
-			weight = 3,
-			breeds = {
-				"chaos_berzerker",
-				1,
 				"chaos_marauder_with_shield",
-				4,
-			},
-		},
-		{
-			name = "horde_ability",
-			weight = 3,
-			breeds = {
-				"chaos_berzerker",
-				1,
-				"chaos_marauder",
-				3,
-				"chaos_marauder_with_shield",
-				2,
-			},
+				2
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29174,20 +29170,8 @@ HordeCompositions.versus_horde_ability_chaos = {
 				"chaos_warrior",
 				1,
 				"chaos_fanatic",
-				10,
-			},
-		},
-		{
-			name = "horde_ability",
-			weight = 3,
-			breeds = {
-				"chaos_warrior",
-				1,
-				"chaos_fanatic",
-				5,
-				"chaos_marauder_with_shield",
-				2,
-			},
+				10
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29197,9 +29181,21 @@ HordeCompositions.versus_horde_ability_chaos = {
 				1,
 				"chaos_fanatic",
 				5,
+				"chaos_marauder_with_shield",
+				2
+			}
+		},
+		{
+			name = "horde_ability",
+			weight = 3,
+			breeds = {
+				"chaos_warrior",
+				1,
+				"chaos_fanatic",
+				5,
 				"chaos_marauder",
-				3,
-			},
+				3
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29208,8 +29204,8 @@ HordeCompositions.versus_horde_ability_chaos = {
 				"chaos_warrior",
 				1,
 				"chaos_marauder",
-				6,
-			},
+				6
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29218,8 +29214,8 @@ HordeCompositions.versus_horde_ability_chaos = {
 				"chaos_warrior",
 				1,
 				"chaos_marauder_with_shield",
-				4,
-			},
+				4
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29230,8 +29226,8 @@ HordeCompositions.versus_horde_ability_chaos = {
 				"chaos_marauder",
 				3,
 				"chaos_marauder_with_shield",
-				2,
-			},
+				2
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29240,20 +29236,8 @@ HordeCompositions.versus_horde_ability_chaos = {
 				"chaos_bulwark",
 				1,
 				"chaos_fanatic",
-				10,
-			},
-		},
-		{
-			name = "horde_ability",
-			weight = 3,
-			breeds = {
-				"chaos_bulwark",
-				1,
-				"chaos_fanatic",
-				5,
-				"chaos_marauder_with_shield",
-				2,
-			},
+				10
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29263,9 +29247,21 @@ HordeCompositions.versus_horde_ability_chaos = {
 				1,
 				"chaos_fanatic",
 				5,
+				"chaos_marauder_with_shield",
+				2
+			}
+		},
+		{
+			name = "horde_ability",
+			weight = 3,
+			breeds = {
+				"chaos_bulwark",
+				1,
+				"chaos_fanatic",
+				5,
 				"chaos_marauder",
-				3,
-			},
+				3
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29274,8 +29270,8 @@ HordeCompositions.versus_horde_ability_chaos = {
 				"chaos_bulwark",
 				1,
 				"chaos_marauder",
-				6,
-			},
+				6
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29284,8 +29280,8 @@ HordeCompositions.versus_horde_ability_chaos = {
 				"chaos_bulwark",
 				1,
 				"chaos_marauder_with_shield",
-				4,
-			},
+				4
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29296,8 +29292,8 @@ HordeCompositions.versus_horde_ability_chaos = {
 				"chaos_marauder",
 				3,
 				"chaos_marauder_with_shield",
-				2,
-			},
+				2
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29306,8 +29302,8 @@ HordeCompositions.versus_horde_ability_chaos = {
 				"chaos_raider",
 				3,
 				"chaos_fanatic",
-				5,
-			},
+				5
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29316,8 +29312,8 @@ HordeCompositions.versus_horde_ability_chaos = {
 				"chaos_raider",
 				2,
 				"chaos_fanatic",
-				10,
-			},
+				10
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29328,8 +29324,8 @@ HordeCompositions.versus_horde_ability_chaos = {
 				"chaos_fanatic",
 				5,
 				"chaos_marauder_with_shield",
-				2,
-			},
+				2
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29340,8 +29336,8 @@ HordeCompositions.versus_horde_ability_chaos = {
 				"chaos_fanatic",
 				5,
 				"chaos_marauder",
-				3,
-			},
+				3
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29350,8 +29346,8 @@ HordeCompositions.versus_horde_ability_chaos = {
 				"chaos_raider",
 				2,
 				"chaos_marauder",
-				6,
-			},
+				6
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29360,8 +29356,8 @@ HordeCompositions.versus_horde_ability_chaos = {
 				"chaos_raider",
 				1,
 				"chaos_marauder_with_shield",
-				4,
-			},
+				4
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29372,10 +29368,10 @@ HordeCompositions.versus_horde_ability_chaos = {
 				"chaos_marauder",
 				3,
 				"chaos_marauder_with_shield",
-				2,
-			},
-		},
-	},
+				2
+			}
+		}
+	}
 }
 HordeCompositions.versus_horde_ability_beastmen = {
 	{},
@@ -29391,8 +29387,8 @@ HordeCompositions.versus_horde_ability_beastmen = {
 			weight = 3,
 			breeds = {
 				"beastmen_bestigor",
-				3,
-			},
+				3
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29401,8 +29397,8 @@ HordeCompositions.versus_horde_ability_beastmen = {
 				"beastmen_bestigor",
 				2,
 				"beastmen_gor",
-				8,
-			},
+				8
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29411,8 +29407,8 @@ HordeCompositions.versus_horde_ability_beastmen = {
 				"beastmen_bestigor",
 				2,
 				"beastmen_ungor",
-				10,
-			},
+				10
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29423,16 +29419,16 @@ HordeCompositions.versus_horde_ability_beastmen = {
 				"beastmen_gor",
 				4,
 				"beastmen_ungor",
-				5,
-			},
+				5
+			}
 		},
 		{
 			name = "horde_ability",
 			weight = 3,
 			breeds = {
 				"beastmen_ungor_archer",
-				12,
-			},
+				12
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29441,8 +29437,8 @@ HordeCompositions.versus_horde_ability_beastmen = {
 				"beastmen_ungor_archer",
 				6,
 				"beastmen_gor",
-				8,
-			},
+				8
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29451,8 +29447,8 @@ HordeCompositions.versus_horde_ability_beastmen = {
 				"beastmen_ungor_archer",
 				6,
 				"beastmen_ungor",
-				10,
-			},
+				10
+			}
 		},
 		{
 			name = "horde_ability",
@@ -29463,40 +29459,40 @@ HordeCompositions.versus_horde_ability_beastmen = {
 				"beastmen_gor",
 				4,
 				"beastmen_ungor",
-				5,
-			},
-		},
-	},
+				5
+			}
+		}
+	}
 }
 
 DLCUtils.require("horde_composition_file")
 
-local missing_composition_difficulty
-local num_difficulties = #Difficulties
-local console_max = table.index_of(Difficulties, "cataclysm")
+local var_0_4
+local var_0_5 = #Difficulties
+local var_0_6 = table.index_of(Difficulties, "cataclysm")
 
-for horde_composition_name, horde_composition in pairs(HordeCompositions) do
-	local max_composition
-	local already_printed = false
+for iter_0_0, iter_0_1 in pairs(HordeCompositions) do
+	local var_0_7
+	local var_0_8 = false
 
-	for i = 1, num_difficulties do
-		local composition_for_difficulty = horde_composition[i]
+	for iter_0_2 = 1, var_0_5 do
+		local var_0_9 = iter_0_1[iter_0_2]
 
-		if composition_for_difficulty then
-			max_composition = composition_for_difficulty
+		if var_0_9 then
+			var_0_7 = var_0_9
 		else
-			fassert(max_composition, "%s does not define any composition for any difficulty", horde_composition_name)
+			fassert(var_0_7, "%s does not define any composition for any difficulty", iter_0_0)
 
-			if not already_printed and (not IS_CONSOLE or not (i <= console_max) or true) then
-				already_printed = true
-				missing_composition_difficulty = (missing_composition_difficulty or 0) + 1
+			if not var_0_8 and (not IS_CONSOLE or not (iter_0_2 <= var_0_6) or true) then
+				var_0_8 = true
+				var_0_4 = (var_0_4 or 0) + 1
 			end
 
-			horde_composition[i] = max_composition
+			iter_0_1[iter_0_2] = var_0_7
 		end
 	end
 end
 
-if missing_composition_difficulty and not IS_CONSOLE then
-	ferror("[HordeCompisitions] %s Horde Compositions missing setting for certain difficulties -^", missing_composition_difficulty)
+if var_0_4 and not IS_CONSOLE then
+	ferror("[HordeCompisitions] %s Horde Compositions missing setting for certain difficulties -^", var_0_4)
 end

@@ -1,209 +1,209 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_storm_vermin_warlord_behavior.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_storm_vermin_warlord_behavior.lua
 
-local ACTIONS = BreedActions.skaven_storm_vermin_warlord
-local WARLORD_DEFENSIVE = {
+local var_0_0 = BreedActions.skaven_storm_vermin_warlord
+local var_0_1 = {
 	"BTUtilityNode",
 	{
 		"BTChampionAttackAction",
-		condition = "can_see_player",
 		name = "defensive_mode_spin",
-		action_data = ACTIONS.defensive_mode_spin,
+		condition = "can_see_player",
+		action_data = var_0_0.defensive_mode_spin
 	},
 	condition = "should_be_defensive",
-	name = "in_defensive",
+	name = "in_defensive"
 }
-local WARLORD_OFFENSIVE = {
+local var_0_2 = {
 	"BTSelector",
 	{
 		"BTUtilityNode",
 		{
 			"BTBossFollowAction",
 			name = "follow",
-			action_data = ACTIONS.follow,
+			action_data = var_0_0.follow
 		},
 		{
 			"BTMeleeOverlapAttackAction",
 			enter_hook = "on_warlord_disable_blocking",
 			name = "dual_combo_attack2",
-			action_data = ACTIONS.dual_combo_attack2,
+			action_data = var_0_0.dual_combo_attack2
 		},
 		{
 			"BTChampionAttackAction",
 			enter_hook = "on_warlord_disable_blocking",
 			name = "dual_attack_cleave",
-			action_data = ACTIONS.dual_attack_cleave,
+			action_data = var_0_0.dual_attack_cleave
 		},
 		{
 			"BTChampionAttackAction",
 			enter_hook = "on_warlord_disable_blocking",
 			name = "dual_lunge_attack",
-			action_data = ACTIONS.dual_lunge_attack,
+			action_data = var_0_0.dual_lunge_attack
 		},
-		condition = "warlord_dual_wielding",
-		enter_hook = "on_warlord_dual_wield",
 		name = "dual_wield_combat",
+		condition = "warlord_dual_wielding",
+		enter_hook = "on_warlord_dual_wield"
 	},
 	{
 		"BTUtilityNode",
 		{
 			"BTSequence",
-			action_data = ACTIONS.spawn_sequence,
+			action_data = var_0_0.spawn_sequence,
 			{
 				"BTChampionAttackAction",
 				name = "special_attack_spin_pre_spawn",
-				action_data = ACTIONS.special_attack_spin,
+				action_data = var_0_0.special_attack_spin
 			},
 			{
 				"BTSpawnAllies",
 				name = "spawn",
-				action_data = ACTIONS.spawn_allies,
+				action_data = var_0_0.spawn_allies
 			},
 			enter_hook = "warlord_defensive_on_enter",
-			name = "spawn_sequence",
+			name = "spawn_sequence"
 		},
 		{
 			"BTTargetRageAction",
-			condition = "target_changed",
 			name = "turn_to_face_target",
-			action_data = ACTIONS.turn_to_face_target,
+			condition = "target_changed",
+			action_data = var_0_0.turn_to_face_target
 		},
 		{
 			"BTBossFollowAction",
 			name = "follow",
-			action_data = ACTIONS.follow,
+			action_data = var_0_0.follow
 		},
 		{
 			"BTChampionAttackAction",
 			name = "special_running_attack",
-			action_data = ACTIONS.special_running_attack,
+			action_data = var_0_0.special_running_attack
 		},
 		{
 			"BTChampionAttackAction",
 			name = "special_lunge_attack",
-			action_data = ACTIONS.special_lunge_attack,
+			action_data = var_0_0.special_lunge_attack
 		},
 		{
 			"BTRandom",
-			action_data = ACTIONS.special_attack_champion,
+			action_data = var_0_0.special_attack_champion,
 			{
 				"BTChampionAttackAction",
 				name = "special_attack_cleave",
 				weight = 1,
-				action_data = ACTIONS.special_attack_cleave,
+				action_data = var_0_0.special_attack_cleave
 			},
 			{
 				"BTChampionAttackAction",
 				name = "special_attack_sweep_left",
 				weight = 0.5,
-				action_data = ACTIONS.special_attack_sweep_left,
+				action_data = var_0_0.special_attack_sweep_left
 			},
 			{
 				"BTChampionAttackAction",
 				name = "special_attack_sweep_right",
 				weight = 0.5,
-				action_data = ACTIONS.special_attack_sweep_right,
+				action_data = var_0_0.special_attack_sweep_right
 			},
-			name = "special_attack_champion",
+			name = "special_attack_champion"
 		},
 		{
 			"BTChampionAttackAction",
 			name = "special_attack_spin",
-			action_data = ACTIONS.special_attack_spin,
+			action_data = var_0_0.special_attack_spin
 		},
-		condition = "warlord_halberding",
-		enter_hook = "on_warlord_halberd",
 		name = "halberd_combat",
+		condition = "warlord_halberding",
+		enter_hook = "on_warlord_halberd"
 	},
 	condition = "can_see_player",
-	name = "has_target",
+	name = "has_target"
 }
 
 BreedBehaviors.storm_vermin_warlord = {
 	"BTSelector",
 	{
 		"BTSpawningAction",
-		condition = "spawn",
-		enter_hook = "on_warlord_disable_blocking",
 		name = "spawn",
+		condition = "spawn",
+		enter_hook = "on_warlord_disable_blocking"
 	},
 	{
 		"BTSelector",
-		action_data = ACTIONS.intro_sequence,
+		action_data = var_0_0.intro_sequence,
 		{
 			"BTMoveToGoalAction",
-			condition = "has_goal_destination",
 			name = "move_to_goal",
-			action_data = ACTIONS.follow,
+			condition = "has_goal_destination",
+			action_data = var_0_0.follow
 		},
 		{
 			"BTIdleAction",
 			name = "intro_idle",
-			action_data = ACTIONS.intro_idle,
+			action_data = var_0_0.intro_idle
 		},
-		condition = "lord_intro",
-		enter_hook = "on_skaven_warlord_intro_enter",
-		leave_hook = "on_lord_warlord_intro_leave",
 		name = "intro_sequence",
+		leave_hook = "on_lord_warlord_intro_leave",
+		condition = "lord_intro",
+		enter_hook = "on_skaven_warlord_intro_enter"
 	},
 	{
 		"BTSwitchWeaponsAction",
-		condition = "switching_weapons",
 		name = "switch_weapons",
-		action_data = ACTIONS.switch_weapons,
+		condition = "switching_weapons",
+		action_data = var_0_0.switch_weapons
 	},
 	{
 		"BTJumpToPositionAction",
-		condition = "warlord_jump_down",
 		name = "jump_to_position",
-		action_data = ACTIONS.jump_to_position,
+		condition = "warlord_jump_down",
+		action_data = var_0_0.jump_to_position
 	},
 	{
 		"BTFallAction",
 		condition = "is_falling",
-		name = "falling",
+		name = "falling"
 	},
 	{
 		"BTSelector",
 		{
 			"BTTeleportAction",
 			condition = "at_teleport_smartobject",
-			name = "teleport",
+			name = "teleport"
 		},
 		{
 			"BTClimbAction",
 			condition = "at_climb_smartobject",
-			name = "climb",
+			name = "climb"
 		},
 		{
 			"BTJumpAcrossAction",
 			condition = "at_jump_smartobject",
-			name = "jump_across",
+			name = "jump_across"
 		},
 		{
 			"BTSmashDoorAction",
-			condition = "at_door_smartobject",
 			name = "smash_door",
-			action_data = ACTIONS.smash_door,
+			condition = "at_door_smartobject",
+			action_data = var_0_0.smash_door
 		},
 		condition = "at_smartobject",
-		name = "smartobject",
+		name = "smartobject"
 	},
 	{
 		"BTStaggerAction",
-		condition = "stagger",
 		name = "stagger",
-		action_data = ACTIONS.stagger,
+		condition = "stagger",
+		action_data = var_0_0.stagger
 	},
-	WARLORD_DEFENSIVE,
-	WARLORD_OFFENSIVE,
+	var_0_1,
+	var_0_2,
 	{
 		"BTIdleAction",
 		name = "defensive_idle",
-		action_data = ACTIONS.defensive_idle,
+		action_data = var_0_0.defensive_idle
 	},
 	{
 		"BTIdleAction",
-		name = "idle",
+		name = "idle"
 	},
-	name = "storm_vermin_warlord",
+	name = "storm_vermin_warlord"
 }

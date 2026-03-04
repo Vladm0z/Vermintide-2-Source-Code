@@ -1,101 +1,93 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_allied_avoid_combat_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_allied_avoid_combat_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTAlliedAvoidCombatAction = class(BTAlliedAvoidCombatAction, BTNode)
 
-BTAlliedAvoidCombatAction.init = function (self, ...)
-	BTAlliedAvoidCombatAction.super.init(self, ...)
+function BTAlliedAvoidCombatAction.init(arg_1_0, ...)
+	BTAlliedAvoidCombatAction.super.init(arg_1_0, ...)
 end
 
 BTAlliedAvoidCombatAction.name = "BTAlliedAvoidCombatAction"
 
-BTAlliedAvoidCombatAction.enter = function (self, unit, blackboard, t)
-	local action = self._tree_node.action_data
+function BTAlliedAvoidCombatAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	arg_2_2.action = arg_2_0._tree_node.action_data
+	arg_2_2.target_status_extension = ScriptUnit.extension(arg_2_2.player_controller_unit, "status_system")
 
-	blackboard.action = action
-	blackboard.target_status_extension = ScriptUnit.extension(blackboard.player_controller_unit, "status_system")
+	local var_2_0 = POSITION_LOOKUP[arg_2_1]
+	local var_2_1 = POSITION_LOOKUP[arg_2_2.player_controller_unit]
+	local var_2_2 = LocomotionUtils.pos_on_mesh(arg_2_2.nav_world, var_2_1, 1, 1) or var_2_0
 
-	local self_pos = POSITION_LOOKUP[unit]
-	local wanted_position = POSITION_LOOKUP[blackboard.player_controller_unit]
-	local pos_on_nav_mesh = LocomotionUtils.pos_on_mesh(blackboard.nav_world, wanted_position, 1, 1)
-	local final_pos = pos_on_nav_mesh or self_pos
+	arg_2_2.wanted_flee_pos = Vector3Box(var_2_2)
 
-	blackboard.wanted_flee_pos = Vector3Box(final_pos)
-
-	local navigation_extension = blackboard.navigation_extension
-
-	navigation_extension:set_max_speed(blackboard.breed.run_speed)
+	arg_2_2.navigation_extension:set_max_speed(arg_2_2.breed.run_speed)
 end
 
-BTAlliedAvoidCombatAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
-	local navigation_extension = blackboard.navigation_extension
+function BTAlliedAvoidCombatAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	local var_3_0 = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
 
-	navigation_extension:set_max_speed(default_move_speed)
-	Unit.set_unit_visibility(unit, true)
+	arg_3_2.navigation_extension:set_max_speed(var_3_0)
+	Unit.set_unit_visibility(arg_3_1, true)
 
-	if blackboard.player_controller_unit then
-		local wanted_position = POSITION_LOOKUP[blackboard.player_controller_unit]
-		local locomotion_extension = blackboard.locomotion_extension
+	if arg_3_2.player_controller_unit then
+		local var_3_1 = POSITION_LOOKUP[arg_3_2.player_controller_unit]
 
-		locomotion_extension:teleport_to(wanted_position)
+		arg_3_2.locomotion_extension:teleport_to(var_3_1)
 	end
 
-	blackboard.wanted_flee_pos = nil
+	arg_3_2.wanted_flee_pos = nil
 end
 
-BTAlliedAvoidCombatAction.run = function (self, unit, blackboard, t, dt)
-	local locomotion_extension = blackboard.locomotion_extension
+function BTAlliedAvoidCombatAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = arg_4_2.locomotion_extension
 
-	self:flee(unit, t, dt, blackboard, locomotion_extension)
+	arg_4_0:flee(arg_4_1, arg_4_3, arg_4_4, arg_4_2, var_4_0)
 
 	return "running", "evaluate"
 end
 
-BTAlliedAvoidCombatAction._go_idle = function (self, unit, blackboard, locomotion_extension)
-	blackboard.move_state = "idle"
+function BTAlliedAvoidCombatAction._go_idle(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	arg_5_2.move_state = "idle"
 
-	local action = blackboard.action
+	local var_5_0 = arg_5_2.action
 
-	Managers.state.network:anim_event(unit, action.idle_anim or "idle")
-	Unit.set_unit_visibility(unit, false)
+	Managers.state.network:anim_event(arg_5_1, var_5_0.idle_anim or "idle")
+	Unit.set_unit_visibility(arg_5_1, false)
 end
 
-BTAlliedAvoidCombatAction._go_moving = function (self, unit, blackboard, action)
-	blackboard.move_state = "moving"
+function BTAlliedAvoidCombatAction._go_moving(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	arg_6_2.move_state = "moving"
 
-	Managers.state.network:anim_event(unit, action.move_anim)
+	Managers.state.network:anim_event(arg_6_1, arg_6_3.move_anim)
 end
 
-BTAlliedAvoidCombatAction.flee = function (self, unit, t, dt, blackboard, locomotion_extension)
-	local action = blackboard.action
-	local navigation_extension = blackboard.navigation_extension
+function BTAlliedAvoidCombatAction.flee(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+	local var_7_0 = arg_7_4.action
+	local var_7_1 = arg_7_4.navigation_extension
 
-	self:_move_to_flee_location(unit, blackboard, t, dt)
+	arg_7_0:_move_to_flee_location(arg_7_1, arg_7_4, arg_7_2, arg_7_3)
 
-	local destination = navigation_extension:destination()
-	local to_vec = destination - POSITION_LOOKUP[unit]
+	local var_7_2 = var_7_1:destination() - POSITION_LOOKUP[arg_7_1]
 
-	Vector3.set_z(to_vec, 0)
+	Vector3.set_z(var_7_2, 0)
 
-	local distance_sq = Vector3.length_squared(to_vec)
-	local is_following_path = navigation_extension:is_following_path()
+	local var_7_3 = Vector3.length_squared(var_7_2)
+	local var_7_4 = var_7_1:is_following_path()
 
-	if blackboard.move_state ~= "moving" and is_following_path and distance_sq > 0.25 then
-		self:_go_moving(unit, blackboard, action)
-	elseif blackboard.move_state ~= "idle" and (not is_following_path or distance_sq < 0.04000000000000001) then
-		self:_go_idle(unit, blackboard, locomotion_extension)
+	if arg_7_4.move_state ~= "moving" and var_7_4 and var_7_3 > 0.25 then
+		arg_7_0:_go_moving(arg_7_1, arg_7_4, var_7_0)
+	elseif arg_7_4.move_state ~= "idle" and (not var_7_4 or var_7_3 < 0.04000000000000001) then
+		arg_7_0:_go_idle(arg_7_1, arg_7_4, arg_7_5)
 	end
 
-	local target_intensity = blackboard.target_status_extension and blackboard.target_status_extension:get_pacing_intensity()
+	local var_7_5 = arg_7_4.target_status_extension and arg_7_4.target_status_extension:get_pacing_intensity()
 
-	blackboard.target_is_in_combat = target_intensity and target_intensity > 0
+	arg_7_4.target_is_in_combat = var_7_5 and var_7_5 > 0
 end
 
-BTAlliedAvoidCombatAction._move_to_flee_location = function (self, unit, blackboard, t, dt)
-	local navigation_extension = blackboard.navigation_extension
-	local wanted_position = blackboard.wanted_flee_pos:unbox()
+function BTAlliedAvoidCombatAction._move_to_flee_location(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	local var_8_0 = arg_8_2.navigation_extension
+	local var_8_1 = arg_8_2.wanted_flee_pos:unbox()
 
-	navigation_extension:move_to(wanted_position)
+	var_8_0:move_to(var_8_1)
 end

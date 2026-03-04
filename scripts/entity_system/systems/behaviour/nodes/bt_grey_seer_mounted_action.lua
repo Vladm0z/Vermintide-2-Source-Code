@@ -1,72 +1,70 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_grey_seer_mounted_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_grey_seer_mounted_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTGreySeerMountedAction = class(BTGreySeerMountedAction, BTNode)
 
-BTGreySeerMountedAction.init = function (self, ...)
-	BTGreySeerMountedAction.super.init(self, ...)
+function BTGreySeerMountedAction.init(arg_1_0, ...)
+	BTGreySeerMountedAction.super.init(arg_1_0, ...)
 end
 
 BTGreySeerMountedAction.name = "BTGreySeerMountedAction"
 
-BTGreySeerMountedAction.enter = function (self, unit, blackboard, t)
-	blackboard.navigation_extension:set_enabled(false)
-	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
+function BTGreySeerMountedAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	arg_2_2.navigation_extension:set_enabled(false)
+	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-	local game = Managers.state.network:game()
-	local unit_storage = Managers.state.unit_storage
-	local go_id = unit_storage:go_id(unit)
+	local var_2_0 = Managers.state.network:game()
+	local var_2_1 = Managers.state.unit_storage:go_id(arg_2_1)
 
-	blackboard.move_state = "moving"
+	arg_2_2.move_state = "moving"
 
-	local network_manager = Managers.state.network
-	local health_extension = ScriptUnit.extension(unit, "health_system")
-	local hit_reaction_extension = blackboard.hit_reaction_extension
-	local network_transmit = network_manager.network_transmit
+	local var_2_2 = Managers.state.network
+	local var_2_3 = ScriptUnit.extension(arg_2_1, "health_system")
+	local var_2_4 = arg_2_2.hit_reaction_extension
+	local var_2_5 = var_2_2.network_transmit
 
-	hit_reaction_extension:set_hit_effect_template_id("HitEffectsSkavenGreySeerMounted")
+	var_2_4:set_hit_effect_template_id("HitEffectsSkavenGreySeerMounted")
 
-	health_extension.is_invincible = true
+	var_2_3.is_invincible = true
 
-	GameSession.set_game_object_field(game, go_id, "show_health_bar", false)
-	network_transmit:send_rpc_clients("rpc_set_hit_reaction_template", go_id, "HitEffectsSkavenGreySeerMounted")
+	GameSession.set_game_object_field(var_2_0, var_2_1, "show_health_bar", false)
+	var_2_5:send_rpc_clients("rpc_set_hit_reaction_template", var_2_1, "HitEffectsSkavenGreySeerMounted")
 
-	blackboard.current_hit_reaction_type = "mounted"
+	arg_2_2.current_hit_reaction_type = "mounted"
 end
 
-BTGreySeerMountedAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	blackboard.navigation_extension:set_enabled(true)
+function BTGreySeerMountedAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	arg_3_2.navigation_extension:set_enabled(true)
 
-	local network_manager = Managers.state.network
-	local game = network_manager:game()
-	local unit_storage = Managers.state.unit_storage
-	local go_id = unit_storage:go_id(unit)
-	local health_extension = ScriptUnit.extension(unit, "health_system")
-	local hit_reaction_extension = blackboard.hit_reaction_extension
-	local network_transmit = network_manager.network_transmit
+	local var_3_0 = Managers.state.network
+	local var_3_1 = var_3_0:game()
+	local var_3_2 = Managers.state.unit_storage:go_id(arg_3_1)
+	local var_3_3 = ScriptUnit.extension(arg_3_1, "health_system")
+	local var_3_4 = arg_3_2.hit_reaction_extension
+	local var_3_5 = var_3_0.network_transmit
 
-	hit_reaction_extension:set_hit_effect_template_id("HitEffectsSkavenGreySeer")
+	var_3_4:set_hit_effect_template_id("HitEffectsSkavenGreySeer")
 
-	health_extension.is_invincible = false
+	var_3_3.is_invincible = false
 
-	GameSession.set_game_object_field(game, go_id, "show_health_bar", true)
-	network_transmit:send_rpc_clients("rpc_set_hit_reaction_template", go_id, "HitEffectsSkavenGreySeer")
+	GameSession.set_game_object_field(var_3_1, var_3_2, "show_health_bar", true)
+	var_3_5:send_rpc_clients("rpc_set_hit_reaction_template", var_3_2, "HitEffectsSkavenGreySeer")
 
-	blackboard.current_hit_reaction_type = "on_ground"
+	arg_3_2.current_hit_reaction_type = "on_ground"
 end
 
-local Unit_alive = Unit.alive
+local var_0_0 = Unit.alive
 
-BTGreySeerMountedAction.run = function (self, unit, blackboard, t, dt)
-	local mounted_data = blackboard.mounted_data
+function BTGreySeerMountedAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = arg_4_2.mounted_data
 
-	if Unit.alive(mounted_data.mount_unit) and not mounted_data.knocked_off_mounted_timer and not blackboard.knocked_off_mount then
-		local mount_rotation = Unit.local_rotation(mounted_data.mount_unit, 0)
-		local mount_position = Unit.local_position(mounted_data.mount_unit, 0)
+	if Unit.alive(var_4_0.mount_unit) and not var_4_0.knocked_off_mounted_timer and not arg_4_2.knocked_off_mount then
+		local var_4_1 = Unit.local_rotation(var_4_0.mount_unit, 0)
+		local var_4_2 = Unit.local_position(var_4_0.mount_unit, 0)
 
-		Unit.set_local_position(unit, 0, mount_position)
-		Unit.set_local_rotation(unit, 0, mount_rotation)
+		Unit.set_local_position(arg_4_1, 0, var_4_2)
+		Unit.set_local_rotation(arg_4_1, 0, var_4_1)
 	end
 
 	return "running"

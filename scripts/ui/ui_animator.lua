@@ -1,109 +1,110 @@
-﻿-- chunkname: @scripts/ui/ui_animator.lua
+-- chunkname: @scripts/ui/ui_animator.lua
 
 UIAnimator = class(UIAnimator)
 
-UIAnimator.init = function (self, ui_scenegraph, animation_definitions)
-	self._ui_scenegraph = ui_scenegraph
-	self._animation_definitions = animation_definitions
-	self._active_animations = {}
-	self._animation_id = 0
+function UIAnimator.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0._ui_scenegraph = arg_1_1
+	arg_1_0._animation_definitions = arg_1_2
+	arg_1_0._active_animations = {}
+	arg_1_0._animation_id = 0
 end
 
-UIAnimator.start_animation = function (self, anim_name, widget, scenegraph_def, params, speed, initial_delay)
-	local ui_scenegraph = self._ui_scenegraph
-	local times = {}
+function UIAnimator.start_animation(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+	local var_2_0 = arg_2_0._ui_scenegraph
+	local var_2_1 = {}
 
-	initial_delay = initial_delay or 0
+	arg_2_6 = arg_2_6 or 0
 
-	local anim_def = self._animation_definitions[anim_name]
+	local var_2_2 = arg_2_0._animation_definitions[arg_2_1]
 
-	for i = 1, #anim_def do
-		local anim = anim_def[i]
+	for iter_2_0 = 1, #var_2_2 do
+		local var_2_3 = var_2_2[iter_2_0]
 
-		anim.is_completed = nil
+		var_2_3.is_completed = nil
 
-		anim.init(ui_scenegraph, scenegraph_def, widget, params)
+		var_2_3.init(var_2_0, arg_2_3, arg_2_2, arg_2_4)
 
-		local t0, t1
+		local var_2_4
+		local var_2_5
 
-		if anim.start_progress then
-			t0, t1 = anim.start_progress, anim.end_progress
+		if var_2_3.start_progress then
+			var_2_4, var_2_5 = var_2_3.start_progress, var_2_3.end_progress
 		else
-			t0 = anim.delay or 0
-			t1 = t0 + anim.duration
+			var_2_4 = var_2_3.delay or 0
+			var_2_5 = var_2_4 + var_2_3.duration
 		end
 
-		times[i * 2 - 1] = initial_delay + t0
-		times[i * 2] = initial_delay + t1
+		var_2_1[iter_2_0 * 2 - 1] = arg_2_6 + var_2_4
+		var_2_1[iter_2_0 * 2] = arg_2_6 + var_2_5
 	end
 
-	local animation_id = self._animation_id + 1
+	local var_2_6 = arg_2_0._animation_id + 1
 
-	self._animation_id = animation_id
-	self._active_animations[animation_id] = {
+	arg_2_0._animation_id = var_2_6
+	arg_2_0._active_animations[var_2_6] = {
 		time = 0,
-		anim_name = anim_name,
-		anim_def = anim_def,
-		widget = widget,
-		scenegraph_def = scenegraph_def,
+		anim_name = arg_2_1,
+		anim_def = var_2_2,
+		widget = arg_2_2,
+		scenegraph_def = arg_2_3,
 		completed_animations = {},
-		params = params or {},
-		times = times,
+		params = arg_2_4 or {},
+		times = var_2_1
 	}
 
-	return animation_id
+	return var_2_6
 end
 
-UIAnimator.is_animation_completed = function (self, animation_id)
-	return self._active_animations[animation_id] == nil
+function UIAnimator.is_animation_completed(arg_3_0, arg_3_1)
+	return arg_3_0._active_animations[arg_3_1] == nil
 end
 
-UIAnimator.stop_animation = function (self, animation_id)
-	self._active_animations[animation_id] = nil
+function UIAnimator.stop_animation(arg_4_0, arg_4_1)
+	arg_4_0._active_animations[arg_4_1] = nil
 end
 
-UIAnimator.update = function (self, dt)
-	local ui_scenegraph = self._ui_scenegraph
+function UIAnimator.update(arg_5_0, arg_5_1)
+	local var_5_0 = arg_5_0._ui_scenegraph
 
-	for name, data in pairs(self._active_animations) do
-		if not data.completed then
-			local widget = data.widget
-			local scenegraph_def = data.scenegraph_def
-			local params = data.params
-			local completed_animations = data.completed_animations
-			local times = data.times
-			local time = data.time + dt
+	for iter_5_0, iter_5_1 in pairs(arg_5_0._active_animations) do
+		if not iter_5_1.completed then
+			local var_5_1 = iter_5_1.widget
+			local var_5_2 = iter_5_1.scenegraph_def
+			local var_5_3 = iter_5_1.params
+			local var_5_4 = iter_5_1.completed_animations
+			local var_5_5 = iter_5_1.times
+			local var_5_6 = iter_5_1.time + arg_5_1
 
-			data.time = time
+			iter_5_1.time = var_5_6
 
-			local all_done = true
-			local anim_def = data.anim_def
+			local var_5_7 = true
+			local var_5_8 = iter_5_1.anim_def
 
-			for i = 1, #anim_def do
-				local anim = anim_def[i]
-				local t0 = times[i * 2 - 1]
-				local t1 = times[i * 2]
+			for iter_5_2 = 1, #var_5_8 do
+				local var_5_9 = var_5_8[iter_5_2]
+				local var_5_10 = var_5_5[iter_5_2 * 2 - 1]
+				local var_5_11 = var_5_5[iter_5_2 * 2]
 
-				if time < t1 then
-					all_done = false
+				if var_5_6 < var_5_11 then
+					var_5_7 = false
 				end
 
-				if t0 < time and not completed_animations[anim.name] then
-					local p = (time - t0) / (t1 - t0)
+				if var_5_10 < var_5_6 and not var_5_4[var_5_9.name] then
+					local var_5_12 = (var_5_6 - var_5_10) / (var_5_11 - var_5_10)
 
-					if p < 1 then
-						anim.update(ui_scenegraph, scenegraph_def, widget, p, params)
+					if var_5_12 < 1 then
+						var_5_9.update(var_5_0, var_5_2, var_5_1, var_5_12, var_5_3)
 					else
-						anim.update(ui_scenegraph, scenegraph_def, widget, 1, params)
-						anim.on_complete(ui_scenegraph, scenegraph_def, widget, params)
+						var_5_9.update(var_5_0, var_5_2, var_5_1, 1, var_5_3)
+						var_5_9.on_complete(var_5_0, var_5_2, var_5_1, var_5_3)
 
-						completed_animations[anim.name] = true
+						var_5_4[var_5_9.name] = true
 					end
 				end
 			end
 
-			if all_done then
-				self._active_animations[name] = nil
+			if var_5_7 then
+				arg_5_0._active_animations[iter_5_0] = nil
 			end
 		end
 	end

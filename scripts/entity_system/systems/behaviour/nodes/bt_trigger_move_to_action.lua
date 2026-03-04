@@ -1,50 +1,49 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_trigger_move_to_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_trigger_move_to_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTTriggerMoveToAction = class(BTTriggerMoveToAction, BTNode)
 
-BTTriggerMoveToAction.init = function (self, ...)
-	BTTriggerMoveToAction.super.init(self, ...)
+function BTTriggerMoveToAction.init(arg_1_0, ...)
+	BTTriggerMoveToAction.super.init(arg_1_0, ...)
 end
 
 BTTriggerMoveToAction.name = "BTTriggerMoveToAction"
 
-BTTriggerMoveToAction.enter = function (self, unit, blackboard, t)
-	blackboard.trigger_index = blackboard.trigger_index or 0
+function BTTriggerMoveToAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	arg_2_2.trigger_index = arg_2_2.trigger_index or 0
 
-	blackboard.navigation_extension:set_enabled(false)
+	arg_2_2.navigation_extension:set_enabled(false)
 
-	blackboard.skulk_pos = nil
-	blackboard.skulk_around_dir = nil
+	arg_2_2.skulk_pos = nil
+	arg_2_2.skulk_around_dir = nil
 end
 
-BTTriggerMoveToAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	blackboard.navigation_extension:set_enabled(true)
+function BTTriggerMoveToAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	arg_3_2.navigation_extension:set_enabled(true)
 end
 
-BTTriggerMoveToAction.run = function (self, unit, blackboard, t, dt)
-	blackboard.trigger_index = (blackboard.trigger_index + 1) % 8
+function BTTriggerMoveToAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	arg_4_2.trigger_index = (arg_4_2.trigger_index + 1) % 8
 
-	local trigger_index = blackboard.trigger_index
-	local angle = math.degrees_to_radians(blackboard.trigger_index * 360 / 8)
-	local direction = Vector3(math.sin(angle), math.cos(angle), 0)
-	local position = POSITION_LOOKUP[unit]
-	local target_position = position + direction * 1
-	local result = GwNavQueries.raycango(blackboard.nav_world, position, target_position, blackboard.navigation_extension._traverse_logic)
+	local var_4_0 = arg_4_2.trigger_index
+	local var_4_1 = math.degrees_to_radians(arg_4_2.trigger_index * 360 / 8)
+	local var_4_2 = Vector3(math.sin(var_4_1), math.cos(var_4_1), 0)
+	local var_4_3 = POSITION_LOOKUP[arg_4_1]
+	local var_4_4 = var_4_3 + var_4_2 * 1
 
-	if not result then
+	if not GwNavQueries.raycango(arg_4_2.nav_world, var_4_3, var_4_4, arg_4_2.navigation_extension._traverse_logic) then
 		return "running"
-	elseif not blackboard.trigger_wait then
-		blackboard.trigger_time = t + 2
+	elseif not arg_4_2.trigger_wait then
+		arg_4_2.trigger_time = arg_4_3 + 2
 
-		blackboard.navigation_extension:move_to(target_position)
+		arg_4_2.navigation_extension:move_to(var_4_4)
 
-		blackboard.trigger_wait = true
+		arg_4_2.trigger_wait = true
 	else
-		blackboard.navigation_extension:move_to(position)
+		arg_4_2.navigation_extension:move_to(var_4_3)
 
-		blackboard.trigger_wait = nil
+		arg_4_2.trigger_wait = nil
 
 		return "done"
 	end

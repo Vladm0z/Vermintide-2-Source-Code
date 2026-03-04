@@ -1,325 +1,322 @@
-﻿-- chunkname: @scripts/unit_extensions/human/player_bot_unit/player_bot_navigation.lua
+-- chunkname: @scripts/unit_extensions/human/player_bot_unit/player_bot_navigation.lua
 
 PlayerBotNavigation = class(PlayerBotNavigation)
 
-PlayerBotNavigation.init = function (self, extension_init_context, unit, extension_init_data)
-	self._unit = unit
-	self._nav_world = extension_init_data.nav_world
-	self._final_goal_reached = false
-	self._position_when_final_goal_reached = Vector3Box(0, 0, 0)
-	self._player = Managers.player:owner(unit)
-	self._destination = Vector3Box(0, 0, 0)
-	self._traverse_data = Managers.state.bot_nav_transition:traverse_logic()
-	self._has_queued_target = false
-	self._queued_target_position = Vector3Box(0, 0, 0)
-	self._available_nav_transitions = {}
-	self._active_nav_transition = nil
-	self._astar = GwNavAStar.create()
-	self._running_astar = false
-	self._path = nil
-	self._last_successful_path = 0
-	self._successive_failed_paths = 0
-	self._close_to_goal_time = nil
-	self._astar_cancelled = false
+function PlayerBotNavigation.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._unit = arg_1_2
+	arg_1_0._nav_world = arg_1_3.nav_world
+	arg_1_0._final_goal_reached = false
+	arg_1_0._position_when_final_goal_reached = Vector3Box(0, 0, 0)
+	arg_1_0._player = Managers.player:owner(arg_1_2)
+	arg_1_0._destination = Vector3Box(0, 0, 0)
+	arg_1_0._traverse_data = Managers.state.bot_nav_transition:traverse_logic()
+	arg_1_0._has_queued_target = false
+	arg_1_0._queued_target_position = Vector3Box(0, 0, 0)
+	arg_1_0._available_nav_transitions = {}
+	arg_1_0._active_nav_transition = nil
+	arg_1_0._astar = GwNavAStar.create()
+	arg_1_0._running_astar = false
+	arg_1_0._path = nil
+	arg_1_0._last_successful_path = 0
+	arg_1_0._successive_failed_paths = 0
+	arg_1_0._close_to_goal_time = nil
+	arg_1_0._astar_cancelled = false
 end
 
-PlayerBotNavigation.destroy = function (self)
-	GwNavAStar.destroy(self._astar)
+function PlayerBotNavigation.destroy(arg_2_0)
+	GwNavAStar.destroy(arg_2_0._astar)
 
-	self._astar = nil
+	arg_2_0._astar = nil
 end
 
-PlayerBotNavigation.reset = function (self)
+function PlayerBotNavigation.reset(arg_3_0)
 	return
 end
 
-PlayerBotNavigation.update = function (self, unit, input, dt, context, t)
-	if self._astar_cancelled then
-		self._astar_cancelled = false
+function PlayerBotNavigation.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	if arg_4_0._astar_cancelled then
+		arg_4_0._astar_cancelled = false
 	end
 
-	if self._running_astar then
-		self:_update_astar(t)
+	if arg_4_0._running_astar then
+		arg_4_0:_update_astar(arg_4_5)
 	end
 
-	self:_update_path(t)
+	arg_4_0:_update_path(arg_4_5)
 end
 
-local SAME_DIRECTION_THRESHOLD = math.cos(math.pi / 8)
+local var_0_0 = math.cos(math.pi / 8)
 
-PlayerBotNavigation.move_to = function (self, target_position, callback)
-	fassert(not callback or type(callback) == "function", "Tried to pass invalid callback value to PlayerBotNavigation:move_to()")
+function PlayerBotNavigation.move_to(arg_5_0, arg_5_1, arg_5_2)
+	fassert(not arg_5_2 or type(arg_5_2) == "function", "Tried to pass invalid callback value to PlayerBotNavigation:move_to()")
 
-	if self._astar_cancelled then
+	if arg_5_0._astar_cancelled then
 		print("Can't path, AStar was cancelled, need to wait for command queue to be flushed")
 
 		return false
 	end
 
-	local transition = self._current_transition
+	local var_5_0 = arg_5_0._current_transition
 
-	if transition and Managers.time:time("game") - transition.t < 10 then
+	if var_5_0 and Managers.time:time("game") - var_5_0.t < 10 then
 		return false
 	end
 
-	if self._running_astar then
-		self._has_queued_target = true
+	if arg_5_0._running_astar then
+		arg_5_0._has_queued_target = true
 
-		self._queued_target_position:store(target_position)
+		arg_5_0._queued_target_position:store(arg_5_1)
 
-		self._queued_path_callback = callback
+		arg_5_0._queued_path_callback = arg_5_2
 
 		return true
 	end
 
-	local position = POSITION_LOOKUP[self._unit]
-	local above, below = 0.75, 0.5
-	local success, z = GwNavQueries.triangle_from_position(self._nav_world, position, above, below)
+	local var_5_1 = POSITION_LOOKUP[arg_5_0._unit]
+	local var_5_2 = 0.75
+	local var_5_3 = 0.5
+	local var_5_4, var_5_5 = GwNavQueries.triangle_from_position(arg_5_0._nav_world, var_5_1, var_5_2, var_5_3)
 
-	if success then
-		position = Vector3(position.x, position.y, z)
+	if var_5_4 then
+		var_5_1 = Vector3(var_5_1.x, var_5_1.y, var_5_5)
 	end
 
-	if Vector3.equal(position, target_position) then
+	if Vector3.equal(var_5_1, arg_5_1) then
 		print("Bot tried to move to its current position, AStar will probably fail.")
 	end
 
-	GwNavAStar.start_with_propagation_box(self._astar, self._nav_world, position, target_position, 30, self._traverse_data)
+	GwNavAStar.start_with_propagation_box(arg_5_0._astar, arg_5_0._nav_world, var_5_1, arg_5_1, 30, arg_5_0._traverse_data)
 
-	self._running_astar = true
+	arg_5_0._running_astar = true
 
-	if not self._final_goal_reached and Vector3.dot(Vector3.normalize(target_position - position), Vector3.normalize(self._destination:unbox() - position)) > SAME_DIRECTION_THRESHOLD then
-		self._last_path = self._path
-		self._last_path_index = self._path_index
+	if not arg_5_0._final_goal_reached and Vector3.dot(Vector3.normalize(arg_5_1 - var_5_1), Vector3.normalize(arg_5_0._destination:unbox() - var_5_1)) > var_0_0 then
+		arg_5_0._last_path = arg_5_0._path
+		arg_5_0._last_path_index = arg_5_0._path_index
 	end
 
-	self._path = nil
-	self._current_transition = nil
-	self._path_index = 0
-	self._close_to_goal_time = nil
-	self._final_goal_reached = false
+	arg_5_0._path = nil
+	arg_5_0._current_transition = nil
+	arg_5_0._path_index = 0
+	arg_5_0._close_to_goal_time = nil
+	arg_5_0._final_goal_reached = false
 
-	self._destination:store(target_position)
+	arg_5_0._destination:store(arg_5_1)
 
-	self._path_callback = callback
+	arg_5_0._path_callback = arg_5_2
 
 	return true
 end
 
-PlayerBotNavigation.teleport = function (self, destination)
-	if not self._astar then
+function PlayerBotNavigation.teleport(arg_6_0, arg_6_1)
+	if not arg_6_0._astar then
 		return
 	end
 
-	if self._running_astar and not GwNavAStar.processing_finished(self._astar) then
-		GwNavAStar.cancel(self._astar)
+	if arg_6_0._running_astar and not GwNavAStar.processing_finished(arg_6_0._astar) then
+		GwNavAStar.cancel(arg_6_0._astar)
 
-		self._running_astar = false
-		self._astar_cancelled = true
+		arg_6_0._running_astar = false
+		arg_6_0._astar_cancelled = true
 	end
 
-	self._has_queued_target = false
-	self._queued_path_callback = nil
-	self._final_goal_reached = true
+	arg_6_0._has_queued_target = false
+	arg_6_0._queued_path_callback = nil
+	arg_6_0._final_goal_reached = true
 
-	self._position_when_final_goal_reached:store(destination)
+	arg_6_0._position_when_final_goal_reached:store(arg_6_1)
 
-	self._path = nil
-	self._path_index = 0
-	self._path_callback = nil
+	arg_6_0._path = nil
+	arg_6_0._path_index = 0
+	arg_6_0._path_callback = nil
 
-	self._destination:store(destination)
+	arg_6_0._destination:store(arg_6_1)
 
-	self._successive_failed_paths = 0
-	self._close_to_goal_time = nil
-	self._last_path = nil
-	self._last_path_index = nil
-	self._current_transition = nil
+	arg_6_0._successive_failed_paths = 0
+	arg_6_0._close_to_goal_time = nil
+	arg_6_0._last_path = nil
+	arg_6_0._last_path_index = nil
+	arg_6_0._current_transition = nil
 end
 
-PlayerBotNavigation.stop = function (self)
-	local current_position = POSITION_LOOKUP[self._unit]
+function PlayerBotNavigation.stop(arg_7_0)
+	local var_7_0 = POSITION_LOOKUP[arg_7_0._unit]
 
-	self:teleport(current_position)
+	arg_7_0:teleport(var_7_0)
 end
 
-PlayerBotNavigation.is_path_safe_from_vortex = function (self, path_check_distance, min_allowed_vortex_distance)
-	local path = self._path
+function PlayerBotNavigation.is_path_safe_from_vortex(arg_8_0, arg_8_1, arg_8_2)
+	local var_8_0 = arg_8_0._path
 
-	if not path or self._final_goal_reached then
+	if not var_8_0 or arg_8_0._final_goal_reached then
 		return true
 	end
 
-	local conflict_director = Managers.state.conflict
-	local vortex_units = conflict_director:spawned_units_by_breed("chaos_vortex")
-	local heading_node_index = self._path_index
-	local num_nodes = #path
-	local self_unit = self._unit
-	local self_position = POSITION_LOOKUP[self_unit]
-	local previous_position = self_position
-	local result
-	local distance_checked = 0
-	local should_end, check_node = false, true
+	local var_8_1 = Managers.state.conflict:spawned_units_by_breed("chaos_vortex")
+	local var_8_2 = arg_8_0._path_index
+	local var_8_3 = #var_8_0
+	local var_8_4 = arg_8_0._unit
+	local var_8_5 = POSITION_LOOKUP[var_8_4]
+	local var_8_6
+	local var_8_7 = 0
+	local var_8_8 = false
+	local var_8_9 = true
 
-	for i = heading_node_index, num_nodes do
-		local current_node = path[i]:unbox()
-		local to_current_node = current_node - previous_position
-		local next_distance = distance_checked + Vector3.length(to_current_node)
+	for iter_8_0 = var_8_2, var_8_3 do
+		local var_8_10 = var_8_0[iter_8_0]:unbox()
+		local var_8_11 = var_8_10 - var_8_5
+		local var_8_12 = var_8_7 + Vector3.length(var_8_11)
 
-		if path_check_distance <= next_distance then
-			should_end = true
-			check_node = next_distance == path_check_distance
+		if arg_8_1 <= var_8_12 then
+			var_8_8 = true
+			var_8_9 = var_8_12 == arg_8_1
 		end
 
-		for unit, _ in pairs(vortex_units) do
-			local vortex_position = POSITION_LOOKUP[unit]
-			local vortex_extension = ScriptUnit.extension(unit, "ai_supplementary_system")
-			local previous_node = path[i - 1]:unbox()
-			local intermediate_position = Geometry.closest_point_on_line(vortex_position, previous_node, current_node)
-			local check_intermediate = true
-			local to_intermediate_position = intermediate_position - previous_position
+		for iter_8_1, iter_8_2 in pairs(var_8_1) do
+			local var_8_13 = POSITION_LOOKUP[iter_8_1]
+			local var_8_14 = ScriptUnit.extension(iter_8_1, "ai_supplementary_system")
+			local var_8_15 = var_8_0[iter_8_0 - 1]:unbox()
+			local var_8_16 = Geometry.closest_point_on_line(var_8_13, var_8_15, var_8_10)
+			local var_8_17 = true
+			local var_8_18 = var_8_16 - var_8_5
 
-			if i == heading_node_index then
-				local intermediate_position_dot = Vector3.dot(to_intermediate_position, to_current_node)
-
-				check_intermediate = intermediate_position_dot > 0
+			if iter_8_0 == var_8_2 then
+				var_8_17 = Vector3.dot(var_8_18, var_8_11) > 0
 			end
 
-			local distance_to_intermediate_position = check_intermediate and distance_checked + Vector3.length(to_intermediate_position)
+			local var_8_19 = var_8_17 and var_8_7 + Vector3.length(var_8_18)
 
-			check_intermediate = check_intermediate and distance_to_intermediate_position <= path_check_distance
+			var_8_17 = var_8_17 and var_8_19 <= arg_8_1
 
-			if check_intermediate then
-				result = vortex_extension:is_position_inside(intermediate_position, min_allowed_vortex_distance)
+			if var_8_17 then
+				var_8_6 = var_8_14:is_position_inside(var_8_16, arg_8_2)
 			end
 
-			if not result and check_node then
-				result = vortex_extension:is_position_inside(current_node, min_allowed_vortex_distance)
+			if not var_8_6 and var_8_9 then
+				var_8_6 = var_8_14:is_position_inside(var_8_10, arg_8_2)
 			end
 
-			if result then
+			if var_8_6 then
 				return false
 			end
 		end
 
-		if should_end then
+		if var_8_8 then
 			break
 		end
 
-		distance_checked = next_distance
-		previous_position = current_node
+		var_8_7 = var_8_12
+		var_8_5 = var_8_10
 	end
 
 	return true
 end
 
-local function is_same_point(p1, p2)
-	local diff = p1 - p2
+local function var_0_1(arg_9_0, arg_9_1)
+	local var_9_0 = arg_9_0 - arg_9_1
 
-	if math.abs(diff.z) > 0.1 then
+	if math.abs(var_9_0.z) > 0.1 then
 		return false
 	else
-		local x = diff.x
-		local y = diff.y
+		local var_9_1 = var_9_0.x
+		local var_9_2 = var_9_0.y
 
-		return x * x + y * y < 0.0001
+		return var_9_1 * var_9_1 + var_9_2 * var_9_2 < 0.0001
 	end
 end
 
-PlayerBotNavigation._update_path = function (self, t)
-	local path = self._path
+function PlayerBotNavigation._update_path(arg_10_0, arg_10_1)
+	local var_10_0 = arg_10_0._path
 
-	if not path or self._final_goal_reached then
-		self._current_transition = nil
+	if not var_10_0 or arg_10_0._final_goal_reached then
+		arg_10_0._current_transition = nil
 
 		return
 	end
 
-	local unit = self._unit
-	local position = POSITION_LOOKUP[unit]
-	local current_goal = path[self._path_index]:unbox()
-	local previous_goal = path[self._path_index - 1]:unbox()
-	local goal_reached = self:_goal_reached(position, current_goal, previous_goal, t)
+	local var_10_1 = arg_10_0._unit
+	local var_10_2 = POSITION_LOOKUP[var_10_1]
+	local var_10_3 = var_10_0[arg_10_0._path_index]:unbox()
+	local var_10_4 = var_10_0[arg_10_0._path_index - 1]:unbox()
 
-	if goal_reached then
-		self._path_index = self._path_index + 1
+	if arg_10_0:_goal_reached(var_10_2, var_10_3, var_10_4, arg_10_1) then
+		arg_10_0._path_index = arg_10_0._path_index + 1
 
-		local final_reached = self._path_index > #path
+		local var_10_5 = arg_10_0._path_index > #var_10_0
 
-		self._final_goal_reached = final_reached
+		arg_10_0._final_goal_reached = var_10_5
 
-		if final_reached then
-			self._position_when_final_goal_reached:store(position)
+		if var_10_5 then
+			arg_10_0._position_when_final_goal_reached:store(var_10_2)
 
-			self._current_transition = nil
+			arg_10_0._current_transition = nil
 		else
-			local new_goal = path[self._path_index]:unbox()
+			local var_10_6 = var_10_0[arg_10_0._path_index]:unbox()
 
-			self:_reevaluate_current_nav_transition(unit, position, current_goal, new_goal)
+			arg_10_0:_reevaluate_current_nav_transition(var_10_1, var_10_2, var_10_3, var_10_6)
 		end
 	end
 end
 
-PlayerBotNavigation._reevaluate_current_nav_transition = function (self, self_unit, self_position, current_goal, new_goal)
-	local old_transition = self._current_transition
+function PlayerBotNavigation._reevaluate_current_nav_transition(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	local var_11_0 = arg_11_0._current_transition
 
-	self._current_transition = nil
+	arg_11_0._current_transition = nil
 
-	local blackboard = BLACKBOARDS[self_unit]
+	local var_11_1 = BLACKBOARDS[arg_11_1]
 
-	blackboard.breakable_object = nil
+	var_11_1.breakable_object = nil
 
-	local best_ladder
-	local best_ladder_dist = math.huge
+	local var_11_2
+	local var_11_3 = math.huge
 
-	for unit, data in pairs(self._available_nav_transitions) do
-		if data.type == "ladder" then
-			local dist = Vector3.distance_squared(self_position, (data.from:unbox() + data.to:unbox()) * 0.5)
+	for iter_11_0, iter_11_1 in pairs(arg_11_0._available_nav_transitions) do
+		if iter_11_1.type == "ladder" then
+			local var_11_4 = Vector3.distance_squared(arg_11_2, (iter_11_1.from:unbox() + iter_11_1.to:unbox()) * 0.5)
 
-			if dist < best_ladder_dist then
-				best_ladder_dist = dist
-				best_ladder = data
+			if var_11_4 < var_11_3 then
+				var_11_3 = var_11_4
+				var_11_2 = iter_11_1
 			end
-		elseif data.type == "planks" then
-			local from = data.from:unbox()
-			local to = data.to:unbox()
-			local goal
+		elseif iter_11_1.type == "planks" then
+			local var_11_5 = iter_11_1.from:unbox()
+			local var_11_6 = iter_11_1.to:unbox()
+			local var_11_7
 
-			if is_same_point(current_goal, from) and is_same_point(new_goal, to) then
-				goal = "to"
-			elseif is_same_point(current_goal, to) and is_same_point(new_goal, from) then
-				goal = "from"
+			if var_0_1(arg_11_3, var_11_5) and var_0_1(arg_11_4, var_11_6) then
+				var_11_7 = "to"
+			elseif var_0_1(arg_11_3, var_11_6) and var_0_1(arg_11_4, var_11_5) then
+				var_11_7 = "from"
 			end
 
-			if goal then
-				data.goal = goal
-				self._current_transition = data
-				blackboard.breakable_object = data.unit
+			if var_11_7 then
+				iter_11_1.goal = var_11_7
+				arg_11_0._current_transition = iter_11_1
+				var_11_1.breakable_object = iter_11_1.unit
 
-				if data ~= old_transition then
-					data.t = Managers.time:time("game")
+				if iter_11_1 ~= var_11_0 then
+					iter_11_1.t = Managers.time:time("game")
 				end
 
 				return
 			end
 		else
-			local waypoint = data.waypoint:unbox()
-			local from = data.from:unbox()
-			local to = data.to:unbox()
-			local goal
+			local var_11_8 = iter_11_1.waypoint:unbox()
+			local var_11_9 = iter_11_1.from:unbox()
+			local var_11_10 = iter_11_1.to:unbox()
+			local var_11_11
 
-			if is_same_point(current_goal, from) and is_same_point(new_goal, waypoint) then
-				goal = "waypoint"
-			elseif is_same_point(current_goal, waypoint) and is_same_point(new_goal, to) then
-				goal = "to"
+			if var_0_1(arg_11_3, var_11_9) and var_0_1(arg_11_4, var_11_8) then
+				var_11_11 = "waypoint"
+			elseif var_0_1(arg_11_3, var_11_8) and var_0_1(arg_11_4, var_11_10) then
+				var_11_11 = "to"
 			end
 
-			if goal then
-				data.goal = goal
-				self._current_transition = data
+			if var_11_11 then
+				iter_11_1.goal = var_11_11
+				arg_11_0._current_transition = iter_11_1
 
-				if data ~= old_transition then
-					data.t = Managers.time:time("game")
+				if iter_11_1 ~= var_11_0 then
+					iter_11_1.t = Managers.time:time("game")
 				end
 
 				return
@@ -327,285 +324,278 @@ PlayerBotNavigation._reevaluate_current_nav_transition = function (self, self_un
 		end
 	end
 
-	if old_transition and old_transition.type ~= "ladder" and old_transition.waypoint and is_same_point(current_goal, old_transition.waypoint:unbox()) and is_same_point(new_goal, old_transition.to:unbox()) then
-		old_transition.goal = "to"
-		self._current_transition = old_transition
+	if var_11_0 and var_11_0.type ~= "ladder" and var_11_0.waypoint and var_0_1(arg_11_3, var_11_0.waypoint:unbox()) and var_0_1(arg_11_4, var_11_0.to:unbox()) then
+		var_11_0.goal = "to"
+		arg_11_0._current_transition = var_11_0
 
 		return
-	elseif best_ladder then
-		self._current_transition = best_ladder
+	elseif var_11_2 then
+		arg_11_0._current_transition = var_11_2
 
-		if best_ladder ~= old_transition then
-			best_ladder.t = Managers.time:time("game")
+		if var_11_2 ~= var_11_0 then
+			var_11_2.t = Managers.time:time("game")
 		end
 	end
 end
 
-local FLAT_THRESHOLD_DEFAULT = 0.05
-local TIME_UNTIL_RAMP_THRESHOLD = 0.25
-local MAX_FLAT_THRESHOLD = 0.2
-local RAMP_TIME = 0.25
-local RAMP_SPEED = (MAX_FLAT_THRESHOLD - FLAT_THRESHOLD_DEFAULT) / RAMP_TIME
+local var_0_2 = 0.05
+local var_0_3 = 0.25
+local var_0_4 = 0.2
+local var_0_5 = 0.25
+local var_0_6 = (var_0_4 - var_0_2) / var_0_5
 
-PlayerBotNavigation._goal_reached = function (self, position, goal, previous_goal, t)
-	local unit_to_goal_direction = goal - position
-	local previous_to_goal_direction = goal - previous_goal
-	local dot = Vector3.dot(unit_to_goal_direction, previous_to_goal_direction)
-	local passed_goal = dot < 0
-	local remaining = goal - position
-	local distance_z = remaining.z
-	local flat_distance = Vector3.length(Vector3.flat(remaining))
-	local flat_threshold = FLAT_THRESHOLD_DEFAULT
+function PlayerBotNavigation._goal_reached(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+	local var_12_0 = arg_12_2 - arg_12_1
+	local var_12_1 = arg_12_2 - arg_12_3
+	local var_12_2 = Vector3.dot(var_12_0, var_12_1) < 0
+	local var_12_3 = arg_12_2 - arg_12_1
+	local var_12_4 = var_12_3.z
+	local var_12_5 = Vector3.length(Vector3.flat(var_12_3))
+	local var_12_6 = var_0_2
 
-	if self._close_to_goal_time then
-		flat_threshold = math.clamp(flat_threshold + (t - self._close_to_goal_time - TIME_UNTIL_RAMP_THRESHOLD) * RAMP_SPEED, FLAT_THRESHOLD_DEFAULT, MAX_FLAT_THRESHOLD)
+	if arg_12_0._close_to_goal_time then
+		var_12_6 = math.clamp(var_12_6 + (arg_12_4 - arg_12_0._close_to_goal_time - var_0_3) * var_0_6, var_0_2, var_0_4)
 	end
 
-	local at_goal = flat_distance < flat_threshold and distance_z > -0.35 and distance_z < 0.5
-	local goal_reached = passed_goal or at_goal
+	local var_12_7 = var_12_5 < var_12_6 and var_12_4 > -0.35 and var_12_4 < 0.5
+	local var_12_8 = var_12_2 or var_12_7
 
-	if goal_reached then
-		self._close_to_goal_time = nil
-	elseif flat_distance < MAX_FLAT_THRESHOLD and not self._close_to_goal_time then
-		self._close_to_goal_time = t
+	if var_12_8 then
+		arg_12_0._close_to_goal_time = nil
+	elseif var_12_5 < var_0_4 and not arg_12_0._close_to_goal_time then
+		arg_12_0._close_to_goal_time = arg_12_4
 	end
 
-	return goal_reached
+	return var_12_8
 end
 
-PlayerBotNavigation.current_goal = function (self)
-	if self._final_goal_reached then
+function PlayerBotNavigation.current_goal(arg_13_0)
+	if arg_13_0._final_goal_reached then
 		return nil
-	elseif self._path then
-		return self._path[self._path_index]:unbox()
-	elseif self._last_path then
-		return self._last_path[self._last_path_index]:unbox()
+	elseif arg_13_0._path then
+		return arg_13_0._path[arg_13_0._path_index]:unbox()
+	elseif arg_13_0._last_path then
+		return arg_13_0._last_path[arg_13_0._last_path_index]:unbox()
 	else
 		return nil
 	end
 end
 
-PlayerBotNavigation.is_following_last_goal = function (self)
-	if self._final_goal_reached then
+function PlayerBotNavigation.is_following_last_goal(arg_14_0)
+	if arg_14_0._final_goal_reached then
 		return false
-	elseif self._path then
-		return self._path_index == #self._path
-	elseif self._last_path then
-		return self._last_path_index == #self._last_path
+	elseif arg_14_0._path then
+		return arg_14_0._path_index == #arg_14_0._path
+	elseif arg_14_0._last_path then
+		return arg_14_0._last_path_index == #arg_14_0._last_path
 	else
 		return false
 	end
 end
 
-PlayerBotNavigation.destination_reached = function (self)
-	return self._final_goal_reached
+function PlayerBotNavigation.destination_reached(arg_15_0)
+	return arg_15_0._final_goal_reached
 end
 
-PlayerBotNavigation._update_astar = function (self, t)
-	local astar = self._astar
-	local result = GwNavAStar.processing_finished(astar)
+function PlayerBotNavigation._update_astar(arg_16_0, arg_16_1)
+	local var_16_0 = arg_16_0._astar
 
-	if result then
-		if GwNavAStar.path_found(astar) then
-			local num_nodes = GwNavAStar.node_count(astar)
+	if GwNavAStar.processing_finished(var_16_0) then
+		if GwNavAStar.path_found(var_16_0) then
+			local var_16_1 = GwNavAStar.node_count(var_16_0)
 
-			fassert(num_nodes > 0, "Number of nodes in returned path is not greater than 0.")
+			fassert(var_16_1 > 0, "Number of nodes in returned path is not greater than 0.")
 
-			local path_last_node_pos = GwNavAStar.node_at_index(astar, num_nodes)
-			local found_nav_mesh, z = GwNavQueries.triangle_from_position(self._nav_world, path_last_node_pos, 0.3, 0.3, self._traverse_data)
-			local last_node_pos
+			local var_16_2 = GwNavAStar.node_at_index(var_16_0, var_16_1)
+			local var_16_3, var_16_4 = GwNavQueries.triangle_from_position(arg_16_0._nav_world, var_16_2, 0.3, 0.3, arg_16_0._traverse_data)
+			local var_16_5
 
-			if found_nav_mesh then
-				last_node_pos = Vector3Box(path_last_node_pos.x, path_last_node_pos.y, z)
+			if var_16_3 then
+				var_16_5 = Vector3Box(var_16_2.x, var_16_2.y, var_16_4)
 			else
-				last_node_pos = nil
+				var_16_5 = nil
 			end
 
-			if not found_nav_mesh and num_nodes <= 2 then
-				self:_path_failed(t)
+			if not var_16_3 and var_16_1 <= 2 then
+				arg_16_0:_path_failed(arg_16_1)
 			else
-				self._path = Script.new_array(num_nodes)
+				arg_16_0._path = Script.new_array(var_16_1)
 
-				self:_path_successful(t)
+				arg_16_0:_path_successful(arg_16_1)
 
-				for i = 1, num_nodes - 1 do
-					local pos = GwNavAStar.node_at_index(astar, i)
+				for iter_16_0 = 1, var_16_1 - 1 do
+					local var_16_6 = GwNavAStar.node_at_index(var_16_0, iter_16_0)
 
-					self._path[i] = Vector3Box(pos)
+					arg_16_0._path[iter_16_0] = Vector3Box(var_16_6)
 				end
 
-				self._path[num_nodes] = last_node_pos
-				self._path_index = 2
-				self._close_to_goal_time = nil
+				arg_16_0._path[var_16_1] = var_16_5
+				arg_16_0._path_index = 2
+				arg_16_0._close_to_goal_time = nil
 			end
 		else
-			self:_path_failed(t)
+			arg_16_0:_path_failed(arg_16_1)
 		end
 
-		self._running_astar = false
-		self._last_path = nil
-		self._last_path_index = nil
+		arg_16_0._running_astar = false
+		arg_16_0._last_path = nil
+		arg_16_0._last_path_index = nil
 
-		if self._has_queued_target then
-			self._has_queued_target = false
+		if arg_16_0._has_queued_target then
+			arg_16_0._has_queued_target = false
 
-			self:move_to(self._queued_target_position:unbox(), self._queued_path_callback)
+			arg_16_0:move_to(arg_16_0._queued_target_position:unbox(), arg_16_0._queued_path_callback)
 
-			self._queued_path_callback = nil
+			arg_16_0._queued_path_callback = nil
 		end
 	end
 end
 
-PlayerBotNavigation.path_callback = function (self)
-	return self._path_callback
+function PlayerBotNavigation.path_callback(arg_17_0)
+	return arg_17_0._path_callback
 end
 
-PlayerBotNavigation._path_failed = function (self, t)
+function PlayerBotNavigation._path_failed(arg_18_0, arg_18_1)
 	if script_data.debug_ai_movement then
 		print("AI bot failed to find path")
 	end
 
-	self._successive_failed_paths = self._successive_failed_paths + 1
+	arg_18_0._successive_failed_paths = arg_18_0._successive_failed_paths + 1
 
-	local cb = self._path_callback
+	local var_18_0 = arg_18_0._path_callback
 
-	if cb then
-		cb(false, self._destination:unbox())
+	if var_18_0 then
+		var_18_0(false, arg_18_0._destination:unbox())
 	end
 end
 
-PlayerBotNavigation._path_successful = function (self, t)
-	self._last_successful_path = t
-	self._successive_failed_paths = 0
+function PlayerBotNavigation._path_successful(arg_19_0, arg_19_1)
+	arg_19_0._last_successful_path = arg_19_1
+	arg_19_0._successive_failed_paths = 0
 
-	local cb = self._path_callback
+	local var_19_0 = arg_19_0._path_callback
 
-	if cb then
-		cb(true, self._destination:unbox())
+	if var_19_0 then
+		var_19_0(true, arg_19_0._destination:unbox())
 	end
 end
 
-PlayerBotNavigation.successive_failed_paths = function (self)
-	return self._successive_failed_paths, self._last_successful_path
+function PlayerBotNavigation.successive_failed_paths(arg_20_0)
+	return arg_20_0._successive_failed_paths, arg_20_0._last_successful_path
 end
 
-PlayerBotNavigation.destination = function (self)
-	if self._has_queued_target then
-		return self._queued_target_position:unbox()
+function PlayerBotNavigation.destination(arg_21_0)
+	if arg_21_0._has_queued_target then
+		return arg_21_0._queued_target_position:unbox()
 	else
-		return self._destination:unbox()
+		return arg_21_0._destination:unbox()
 	end
 end
 
-PlayerBotNavigation.position_when_destination_reached = function (self)
-	if self._final_goal_reached then
-		return self._position_when_final_goal_reached:unbox()
+function PlayerBotNavigation.position_when_destination_reached(arg_22_0)
+	if arg_22_0._final_goal_reached then
+		return arg_22_0._position_when_final_goal_reached:unbox()
 	else
 		return nil
 	end
 end
 
-PlayerBotNavigation._debug_draw_path = function (self, position, previous_goal, current_goal)
+function PlayerBotNavigation._debug_draw_path(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	if script_data.ai_bots_debug then
-		local color = self._player.color:unbox()
-		local drawer = Managers.state.debug:drawer(debug_drawer_info)
+		local var_23_0 = arg_23_0._player.color:unbox()
+		local var_23_1 = Managers.state.debug:drawer(debug_drawer_info)
 
-		drawer:vector(previous_goal, position - previous_goal, color)
-		drawer:vector(position, current_goal - position, color)
+		var_23_1:vector(arg_23_2, arg_23_1 - arg_23_2, var_23_0)
+		var_23_1:vector(arg_23_1, arg_23_3 - arg_23_1, var_23_0)
 
-		local path = self._path
-		local num_nodes = #path
+		local var_23_2 = arg_23_0._path
+		local var_23_3 = #var_23_2
 
-		for i = 1, num_nodes - 1 do
-			local current_node = path[i]:unbox()
-			local next_node = path[i + 1]:unbox()
+		for iter_23_0 = 1, var_23_3 - 1 do
+			local var_23_4 = var_23_2[iter_23_0]:unbox()
+			local var_23_5 = var_23_2[iter_23_0 + 1]:unbox()
 
-			drawer:vector(current_node, next_node - current_node, color)
+			var_23_1:vector(var_23_4, var_23_5 - var_23_4, var_23_0)
 
-			local size = math.lerp(0.15, 0.3, (i - 1) / (num_nodes - 1))
+			local var_23_6 = math.lerp(0.15, 0.3, (iter_23_0 - 1) / (var_23_3 - 1))
 
-			drawer:sphere(current_node, size, color)
+			var_23_1:sphere(var_23_4, var_23_6, var_23_0)
 		end
 
-		local last_node = path[num_nodes]:unbox()
-		local size = math.lerp(0.15, 0.3, (num_nodes - 1) / (num_nodes - 1))
+		local var_23_7 = var_23_2[var_23_3]:unbox()
+		local var_23_8 = math.lerp(0.15, 0.3, (var_23_3 - 1) / (var_23_3 - 1))
 
-		drawer:sphere(last_node, size, color)
+		var_23_1:sphere(var_23_7, var_23_8, var_23_0)
 	end
 end
 
-PlayerBotNavigation.is_in_transition = function (self)
-	return self._current_transition ~= nil
+function PlayerBotNavigation.is_in_transition(arg_24_0)
+	return arg_24_0._current_transition ~= nil
 end
 
-PlayerBotNavigation.transition_type = function (self)
-	local transition = self._current_transition
-
-	return transition.type
+function PlayerBotNavigation.transition_type(arg_25_0)
+	return arg_25_0._current_transition.type
 end
 
-PlayerBotNavigation.transition_requires_jump = function (self, position, direction)
-	local current_goal = self:current_goal()
+function PlayerBotNavigation.transition_requires_jump(arg_26_0, arg_26_1, arg_26_2)
+	local var_26_0 = arg_26_0:current_goal()
 
-	fassert(self._current_transition, "Trying to check if transition requires jump with no active transition")
-	fassert(current_goal, "Current transition but no current goal?")
+	fassert(arg_26_0._current_transition, "Trying to check if transition requires jump with no active transition")
+	fassert(var_26_0, "Current transition but no current goal?")
 
-	local data = self._current_transition
+	local var_26_1 = arg_26_0._current_transition
 
-	if data.type == "bot_leap_of_faith" and data.goal == "to" and Vector3.distance_squared(self._path[self._path_index - 1]:unbox(), position) < 1 then
+	if var_26_1.type == "bot_leap_of_faith" and var_26_1.goal == "to" and Vector3.distance_squared(arg_26_0._path[arg_26_0._path_index - 1]:unbox(), arg_26_1) < 1 then
 		return true
 	end
 
 	return false
 end
 
-PlayerBotNavigation.flow_cb_entered_nav_transition = function (self, transition_unit, actor)
-	local transitions = self._available_nav_transitions
-	local index = Unit.get_data(transition_unit, "bot_nav_transition_manager_index")
-	local type, from, to, waypoint = Managers.state.bot_nav_transition:transition_data(transition_unit)
-	local transition = {
-		type = type,
-		from = Vector3Box(from),
-		to = Vector3Box(to),
+function PlayerBotNavigation.flow_cb_entered_nav_transition(arg_27_0, arg_27_1, arg_27_2)
+	local var_27_0 = arg_27_0._available_nav_transitions
+	local var_27_1 = Unit.get_data(arg_27_1, "bot_nav_transition_manager_index")
+	local var_27_2, var_27_3, var_27_4, var_27_5 = Managers.state.bot_nav_transition:transition_data(arg_27_1)
+	local var_27_6 = {
+		type = var_27_2,
+		from = Vector3Box(var_27_3),
+		to = Vector3Box(var_27_4)
 	}
 
-	if type ~= "ladder" then
-		transition.waypoint = Vector3Box(waypoint)
+	if var_27_2 ~= "ladder" then
+		var_27_6.waypoint = Vector3Box(var_27_5)
 	end
 
-	transitions[transition_unit] = transition
+	var_27_0[arg_27_1] = var_27_6
 
-	if type == "ladder" and not self._current_transition then
-		self._current_transition = transition
-		transition.t = Managers.time:time("game")
+	if var_27_2 == "ladder" and not arg_27_0._current_transition then
+		arg_27_0._current_transition = var_27_6
+		var_27_6.t = Managers.time:time("game")
 	end
 end
 
-PlayerBotNavigation.flow_cb_left_nav_transition = function (self, transition_unit, actor)
-	local transitions = self._available_nav_transitions
-	local index = Unit.get_data(transition_unit, "bot_nav_transition_manager_index")
+function PlayerBotNavigation.flow_cb_left_nav_transition(arg_28_0, arg_28_1, arg_28_2)
+	local var_28_0 = arg_28_0._available_nav_transitions
+	local var_28_1 = Unit.get_data(arg_28_1, "bot_nav_transition_manager_index")
 
-	transitions[transition_unit] = nil
+	var_28_0[arg_28_1] = nil
 end
 
-PlayerBotNavigation.traverse_logic = function (self)
-	return self._traverse_data
+function PlayerBotNavigation.traverse_logic(arg_29_0)
+	return arg_29_0._traverse_data
 end
 
-PlayerBotNavigation.add_transition = function (self, transition_unit, type, from, to)
-	local transition = {
-		unit = transition_unit,
-		type = type,
-		from = Vector3Box(from),
-		to = Vector3Box(to),
+function PlayerBotNavigation.add_transition(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+	local var_30_0 = {
+		unit = arg_30_1,
+		type = arg_30_2,
+		from = Vector3Box(arg_30_3),
+		to = Vector3Box(arg_30_4)
 	}
-	local transitions = self._available_nav_transitions
 
-	transitions[transition_unit] = transition
+	arg_30_0._available_nav_transitions[arg_30_1] = var_30_0
 end
 
-PlayerBotNavigation.remove_transition = function (self, transition_unit)
-	local transitions = self._available_nav_transitions
-
-	transitions[transition_unit] = nil
+function PlayerBotNavigation.remove_transition(arg_31_0, arg_31_1)
+	arg_31_0._available_nav_transitions[arg_31_1] = nil
 end

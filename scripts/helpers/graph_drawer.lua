@@ -1,619 +1,617 @@
-﻿-- chunkname: @scripts/helpers/graph_drawer.lua
+-- chunkname: @scripts/helpers/graph_drawer.lua
 
-local array = require("foundation/scripts/util/array")
+local var_0_0 = require("foundation/scripts/util/array")
 
 GraphDrawer = class(GraphDrawer)
 
-GraphDrawer.init = function (self, world, input_manager)
-	self.world = world
-	self.input_manager = input_manager
-	self.gui = World.create_screen_gui(world, "material", "materials/fonts/gw_fonts", "material", "materials/menu/debug_screen", "immediate")
-	self.graphs = {}
-	self.unblocked_services = {}
-	self.unblocked_services_n = 0
-	self.active = false
+function GraphDrawer.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0.world = arg_1_1
+	arg_1_0.input_manager = arg_1_2
+	arg_1_0.gui = World.create_screen_gui(arg_1_1, "material", "materials/fonts/gw_fonts", "material", "materials/menu/debug_screen", "immediate")
+	arg_1_0.graphs = {}
+	arg_1_0.unblocked_services = {}
+	arg_1_0.unblocked_services_n = 0
+	arg_1_0.active = false
 end
 
-GraphDrawer.create_graph = function (self, graph_name, axis_names)
-	local graph = Graph:new(graph_name, axis_names)
+function GraphDrawer.create_graph(arg_2_0, arg_2_1, arg_2_2)
+	local var_2_0 = Graph:new(arg_2_1, arg_2_2)
 
-	self.graphs[graph_name] = graph
+	arg_2_0.graphs[arg_2_1] = var_2_0
 
-	return graph
+	return var_2_0
 end
 
-GraphDrawer.destroy_graph = function (self, graph)
-	self.graphs[graph.name] = nil
+function GraphDrawer.destroy_graph(arg_3_0, arg_3_1)
+	arg_3_0.graphs[arg_3_1.name] = nil
 end
 
-GraphDrawer.graph = function (self, graph_name)
-	return self.graphs[graph_name]
+function GraphDrawer.graph(arg_4_0, arg_4_1)
+	return arg_4_0.graphs[arg_4_1]
 end
 
-GraphDrawer.update = function (self, input_service, t)
-	local toggle = input_service:get("f11")
+function GraphDrawer.update(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = arg_5_1:get("f11")
 
-	if self.active then
+	if arg_5_0.active then
 		Debug.text("GraphDrawer active, other mouse input disabled")
 
-		local graph_drawer_input = self.input_manager:get_input_service("Debug")
+		local var_5_1 = arg_5_0.input_manager:get_input_service("Debug")
 
-		if not graph_drawer_input or graph_drawer_input:is_blocked() then
-			toggle = true
+		if not var_5_1 or var_5_1:is_blocked() then
+			var_5_0 = true
 		end
 	end
 
-	if toggle then
-		if not self.active then
-			self.input_manager:capture_input({
-				"mouse",
+	if var_5_0 then
+		if not arg_5_0.active then
+			arg_5_0.input_manager:capture_input({
+				"mouse"
 			}, 1, "Debug", "GraphDrawer")
 			Window.set_show_cursor(true)
 		else
-			self.input_manager:release_input({
-				"mouse",
+			arg_5_0.input_manager:release_input({
+				"mouse"
 			}, 1, "Debug", "GraphDrawer")
 			Window.set_show_cursor(false)
 		end
 
-		self.active = not self.active
+		arg_5_0.active = not arg_5_0.active
 	end
 
-	local res_x, res_y = RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h
-	local gui = self.gui
+	local var_5_2 = RESOLUTION_LOOKUP.res_w
+	local var_5_3 = RESOLUTION_LOOKUP.res_h
+	local var_5_4 = arg_5_0.gui
 
-	for graph_name, graph in pairs(self.graphs) do
-		if graph.active then
-			if self.active then
-				graph:update(input_service, t)
+	for iter_5_0, iter_5_1 in pairs(arg_5_0.graphs) do
+		if iter_5_1.active then
+			if arg_5_0.active then
+				iter_5_1:update(arg_5_1, arg_5_2)
 			end
 
-			graph:draw(gui, input_service, t)
+			iter_5_1:draw(var_5_4, arg_5_1, arg_5_2)
 		end
 	end
 end
 
 Graph = class(Graph)
 
-Graph.init = function (self, name, axis_names)
-	self.name = name
-	self.axis_names = axis_names
-	self.circle_index = 0
-	self.active = true
-	self.range_x = {
+function Graph.init(arg_6_0, arg_6_1, arg_6_2)
+	arg_6_0.name = arg_6_1
+	arg_6_0.axis_names = arg_6_2
+	arg_6_0.circle_index = 0
+	arg_6_0.active = true
+	arg_6_0.range_x = {
 		math.huge,
-		-math.huge,
+		-math.huge
 	}
-	self.range_y = {
+	arg_6_0.range_y = {
 		math.huge,
-		-math.huge,
+		-math.huge
 	}
-	self.visual_frame = {
-		x_max = 0,
+	arg_6_0.visual_frame = {
 		x_min = 0,
-		y_max = 0,
-		y_min = 0,
-	}
-	self.plots = {}
-	self.annotations_x = array.new()
-	self.annotations_data = array.new()
-	self.scroll_lock = {
-		left = true,
-		right = true,
-		vertical = true,
-	}
-	self.valid = false
-	self.zoom_window = nil
-end
-
-Graph.reset = function (self)
-	self.plots = {}
-
-	array.set_empty(self.annotations_x)
-	array.set_empty(self.annotations_data)
-
-	self.range_x = {
-		math.huge,
-		-math.huge,
-	}
-	self.range_y = {
-		math.huge,
-		-math.huge,
-	}
-	self.visual_frame = {
 		x_max = 0,
-		x_min = 0,
-		y_max = 0,
 		y_min = 0,
+		y_max = 0
 	}
-	self.valid = false
-	self.scroll_lock = {
-		left = true,
-		right = true,
+	arg_6_0.plots = {}
+	arg_6_0.annotations_x = var_0_0.new()
+	arg_6_0.annotations_data = var_0_0.new()
+	arg_6_0.scroll_lock = {
 		vertical = true,
+		left = true,
+		right = true
 	}
-	self.zoom_window = nil
-	self.state = nil
+	arg_6_0.valid = false
+	arg_6_0.zoom_window = nil
 end
 
-Graph.set_active = function (self, active)
-	self.active = active
+function Graph.reset(arg_7_0)
+	arg_7_0.plots = {}
+
+	var_0_0.set_empty(arg_7_0.annotations_x)
+	var_0_0.set_empty(arg_7_0.annotations_data)
+
+	arg_7_0.range_x = {
+		math.huge,
+		-math.huge
+	}
+	arg_7_0.range_y = {
+		math.huge,
+		-math.huge
+	}
+	arg_7_0.visual_frame = {
+		x_min = 0,
+		x_max = 0,
+		y_min = 0,
+		y_max = 0
+	}
+	arg_7_0.valid = false
+	arg_7_0.scroll_lock = {
+		vertical = true,
+		left = true,
+		right = true
+	}
+	arg_7_0.zoom_window = nil
+	arg_7_0.state = nil
 end
 
-Graph.set_plot_color = function (self, plot_name, point_color, line_color)
-	local plot = self.plots[plot_name]
+function Graph.set_active(arg_8_0, arg_8_1)
+	arg_8_0.active = arg_8_1
+end
 
-	if plot == nil then
-		plot = {
-			points_x = array.new(),
-			points_y = array.new(),
+function Graph.set_plot_color(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	local var_9_0 = arg_9_0.plots[arg_9_1]
+
+	if var_9_0 == nil then
+		var_9_0 = {
+			points_x = var_0_0.new(),
+			points_y = var_0_0.new()
 		}
-		self.plots[plot_name] = plot
+		arg_9_0.plots[arg_9_1] = var_9_0
 	end
 
-	plot.point_color = point_color
-	plot.line_color = line_color
+	var_9_0.point_color = arg_9_2
+	var_9_0.line_color = arg_9_3
 end
 
-Graph.add_point = function (self, x, y, plot_name)
-	plot_name = plot_name or "default"
+function Graph.add_point(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	arg_10_3 = arg_10_3 or "default"
 
-	local plot = self.plots[plot_name]
+	local var_10_0 = arg_10_0.plots[arg_10_3]
 
-	if plot == nil then
-		plot = {
-			points_x = array.new(),
-			points_y = array.new(),
+	if var_10_0 == nil then
+		var_10_0 = {
+			points_x = var_0_0.new(),
+			points_y = var_0_0.new()
 		}
-		self.plots[plot_name] = plot
+		arg_10_0.plots[arg_10_3] = var_10_0
 	end
 
-	self.range_x[1] = math.min(x, self.range_x[1])
-	self.range_x[2] = math.max(x, self.range_x[2])
-	self.range_y[1] = math.min(y, self.range_y[1])
-	self.range_y[2] = math.max(y, self.range_y[2])
+	arg_10_0.range_x[1] = math.min(arg_10_1, arg_10_0.range_x[1])
+	arg_10_0.range_x[2] = math.max(arg_10_1, arg_10_0.range_x[2])
+	arg_10_0.range_y[1] = math.min(arg_10_2, arg_10_0.range_y[1])
+	arg_10_0.range_y[2] = math.max(arg_10_2, arg_10_0.range_y[2])
 
-	local index = array.binary_insert(plot.points_x, x)
+	local var_10_1 = var_0_0.binary_insert(var_10_0.points_x, arg_10_1)
 
-	array.insert_at(plot.points_y, y, index)
+	var_0_0.insert_at(var_10_0.points_y, arg_10_2, var_10_1)
 
-	local num_points = array.num_items(plot.points_x)
+	local var_10_2 = var_0_0.num_items(var_10_0.points_x)
 
-	if self.scroll_lock.left then
-		self.visual_frame.x_min = self.range_x[1]
+	if arg_10_0.scroll_lock.left then
+		arg_10_0.visual_frame.x_min = arg_10_0.range_x[1]
 	end
 
-	if self.scroll_lock.right then
-		self.visual_frame.x_max = self.range_x[2]
+	if arg_10_0.scroll_lock.right then
+		arg_10_0.visual_frame.x_max = arg_10_0.range_x[2]
 	end
 
-	if self.scroll_lock.vertical then
-		self.visual_frame.y_min = self.range_y[1]
-		self.visual_frame.y_max = self.range_y[2]
+	if arg_10_0.scroll_lock.vertical then
+		arg_10_0.visual_frame.y_min = arg_10_0.range_y[1]
+		arg_10_0.visual_frame.y_max = arg_10_0.range_y[2]
 	end
 
-	self.valid = self.valid or num_points > 1 and math.abs(self.range_x[2] - self.range_x[1]) > 1e-05 and math.abs(self.range_y[2] - self.range_y[1]) > 1e-05
+	arg_10_0.valid = arg_10_0.valid or var_10_2 > 1 and math.abs(arg_10_0.range_x[2] - arg_10_0.range_x[1]) > 1e-05 and math.abs(arg_10_0.range_y[2] - arg_10_0.range_y[1]) > 1e-05
 end
 
-Graph.add_annotation = function (self, annotation)
-	local index = array.binary_insert(self.annotations_x, annotation.x)
+function Graph.add_annotation(arg_11_0, arg_11_1)
+	local var_11_0 = var_0_0.binary_insert(arg_11_0.annotations_x, arg_11_1.x)
 
-	array.insert_at(self.annotations_data, annotation, index)
+	var_0_0.insert_at(arg_11_0.annotations_data, arg_11_1, var_11_0)
 end
 
-Graph.move_annotation = function (self, annotation, new_x)
-	if new_x == annotation.x then
+function Graph.move_annotation(arg_12_0, arg_12_1, arg_12_2)
+	if arg_12_2 == arg_12_1.x then
 		return
 	end
 
-	local item, old_index = array.pop_item_ordered(self.annotations_data, annotation)
+	local var_12_0, var_12_1 = var_0_0.pop_item_ordered(arg_12_0.annotations_data, arg_12_1)
 
-	if item then
-		array.pop_item_ordered(self.annotations_x, annotation.x)
+	if var_12_0 then
+		var_0_0.pop_item_ordered(arg_12_0.annotations_x, arg_12_1.x)
 
-		annotation.x = new_x
+		arg_12_1.x = arg_12_2
 
-		local index = array.binary_insert(self.annotations_x, new_x)
+		local var_12_2 = var_0_0.binary_insert(arg_12_0.annotations_x, arg_12_2)
 
-		array.insert_at(self.annotations_data, annotation, index)
+		var_0_0.insert_at(arg_12_0.annotations_data, arg_12_1, var_12_2)
 	end
 end
 
-Graph.set_visual_range = function (self, x_min, x_max, y_min, y_max)
-	self.visual_frame = {
-		x_min = x_min,
-		x_max = x_max,
-		y_min = y_min,
-		y_max = y_max,
+function Graph.set_visual_range(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+	arg_13_0.visual_frame = {
+		x_min = arg_13_1,
+		x_max = arg_13_2,
+		y_min = arg_13_3,
+		y_max = arg_13_4
 	}
 end
 
-Graph.update = function (self, input_service, t)
-	if not self.valid then
+function Graph.update(arg_14_0, arg_14_1, arg_14_2)
+	if not arg_14_0.valid then
 		return
 	end
 
-	local mouse = input_service:get("cursor")
-	local origin = Vector3(100, 100, 0)
-	local graph_size_x, graph_size_y = 800, 400
+	local var_14_0 = arg_14_1:get("cursor")
+	local var_14_1 = Vector3(100, 100, 0)
+	local var_14_2 = 800
+	local var_14_3 = 400
 
-	self.state = self.state or "waiting_for_zoom_window"
+	arg_14_0.state = arg_14_0.state or "waiting_for_zoom_window"
 
-	if self.state == "waiting_for_zoom_window" then
-		if input_service:get("mouse_left_held") then
-			self.state = "drawing_zoom_window"
+	if arg_14_0.state == "waiting_for_zoom_window" then
+		if arg_14_1:get("mouse_left_held") then
+			arg_14_0.state = "drawing_zoom_window"
 		end
 
-		if input_service:get("mouse_middle_held") then
-			self.state = "panning"
+		if arg_14_1:get("mouse_middle_held") then
+			arg_14_0.state = "panning"
 		end
 
-		if input_service:get("mouse_right_held") then
-			self.zoom_window = {}
+		if arg_14_1:get("mouse_right_held") then
+			arg_14_0.zoom_window = {}
 
-			local zoom_factor_x_min = (self.visual_frame.x_max - self.range_x[1]) / (self.visual_frame.x_max - self.visual_frame.x_min)
-			local zoom_factor_x_max = (self.range_x[2] - self.visual_frame.x_min) / (self.visual_frame.x_max - self.visual_frame.x_min)
-			local zoom_factor_y_min = (self.visual_frame.y_max - self.range_y[1]) / (self.visual_frame.y_max - self.visual_frame.y_min)
-			local zoom_factor_y_max = (self.range_y[2] - self.visual_frame.y_min) / (self.visual_frame.y_max - self.visual_frame.y_min)
+			local var_14_4 = (arg_14_0.visual_frame.x_max - arg_14_0.range_x[1]) / (arg_14_0.visual_frame.x_max - arg_14_0.visual_frame.x_min)
+			local var_14_5 = (arg_14_0.range_x[2] - arg_14_0.visual_frame.x_min) / (arg_14_0.visual_frame.x_max - arg_14_0.visual_frame.x_min)
+			local var_14_6 = (arg_14_0.visual_frame.y_max - arg_14_0.range_y[1]) / (arg_14_0.visual_frame.y_max - arg_14_0.visual_frame.y_min)
+			local var_14_7 = (arg_14_0.range_y[2] - arg_14_0.visual_frame.y_min) / (arg_14_0.visual_frame.y_max - arg_14_0.visual_frame.y_min)
 
-			self.zoom_window.x_min = origin.x + graph_size_x - graph_size_x * zoom_factor_x_min
-			self.zoom_window.x_max = origin.x + graph_size_x * zoom_factor_x_max
-			self.zoom_window.y_min = origin.y + graph_size_y - graph_size_y * zoom_factor_y_min
-			self.zoom_window.y_max = origin.y + graph_size_y * zoom_factor_y_max
-			self.zoom_window.min_size = 100
-			self.scroll_lock.right = true
-			self.scroll_lock.left = true
-			self.scroll_lock.vertical = true
-			self.state = "zoom_prepare"
+			arg_14_0.zoom_window.x_min = var_14_1.x + var_14_2 - var_14_2 * var_14_4
+			arg_14_0.zoom_window.x_max = var_14_1.x + var_14_2 * var_14_5
+			arg_14_0.zoom_window.y_min = var_14_1.y + var_14_3 - var_14_3 * var_14_6
+			arg_14_0.zoom_window.y_max = var_14_1.y + var_14_3 * var_14_7
+			arg_14_0.zoom_window.min_size = 100
+			arg_14_0.scroll_lock.right = true
+			arg_14_0.scroll_lock.left = true
+			arg_14_0.scroll_lock.vertical = true
+			arg_14_0.state = "zoom_prepare"
 		end
 	end
 
-	if self.state == "drawing_zoom_window" then
-		if input_service:get("mouse_left_held") then
-			if self.zoom_window == nil then
-				local x_inside = true
-				local y_inside = true
+	if arg_14_0.state == "drawing_zoom_window" then
+		if arg_14_1:get("mouse_left_held") then
+			if arg_14_0.zoom_window == nil then
+				local var_14_8 = true
+				local var_14_9 = true
 
-				if mouse.x > origin.x + graph_size_x then
-					local zoom_factor = (self.range_x[2] - self.visual_frame.x_min) / (self.visual_frame.x_max - self.visual_frame.x_min)
+				if var_14_0.x > var_14_1.x + var_14_2 then
+					local var_14_10 = (arg_14_0.range_x[2] - arg_14_0.visual_frame.x_min) / (arg_14_0.visual_frame.x_max - arg_14_0.visual_frame.x_min)
 
-					self.zoom_window = {}
-					self.zoom_window.x_min = origin.x
-					self.zoom_window.x_max = origin.x + graph_size_x * zoom_factor
-					self.zoom_window.y_min = origin.y
-					self.zoom_window.y_max = origin.y + graph_size_y
-					self.zoom_window.min_size = 100
-					self.scroll_lock.right = true
-					self.state = "zoom_prepare"
+					arg_14_0.zoom_window = {}
+					arg_14_0.zoom_window.x_min = var_14_1.x
+					arg_14_0.zoom_window.x_max = var_14_1.x + var_14_2 * var_14_10
+					arg_14_0.zoom_window.y_min = var_14_1.y
+					arg_14_0.zoom_window.y_max = var_14_1.y + var_14_3
+					arg_14_0.zoom_window.min_size = 100
+					arg_14_0.scroll_lock.right = true
+					arg_14_0.state = "zoom_prepare"
 
 					return
-				elseif mouse.x < origin.x then
-					local zoom_factor = (self.visual_frame.x_max - self.range_x[1]) / (self.visual_frame.x_max - self.visual_frame.x_min)
+				elseif var_14_0.x < var_14_1.x then
+					local var_14_11 = (arg_14_0.visual_frame.x_max - arg_14_0.range_x[1]) / (arg_14_0.visual_frame.x_max - arg_14_0.visual_frame.x_min)
 
-					self.zoom_window = {}
-					self.zoom_window.x_min = origin.x + graph_size_x - graph_size_x * zoom_factor
-					self.zoom_window.x_max = origin.x + graph_size_x
-					self.zoom_window.y_min = origin.y
-					self.zoom_window.y_max = origin.y + graph_size_y
-					self.zoom_window.min_size = 100
-					self.scroll_lock.left = true
-					self.state = "zoom_prepare"
+					arg_14_0.zoom_window = {}
+					arg_14_0.zoom_window.x_min = var_14_1.x + var_14_2 - var_14_2 * var_14_11
+					arg_14_0.zoom_window.x_max = var_14_1.x + var_14_2
+					arg_14_0.zoom_window.y_min = var_14_1.y
+					arg_14_0.zoom_window.y_max = var_14_1.y + var_14_3
+					arg_14_0.zoom_window.min_size = 100
+					arg_14_0.scroll_lock.left = true
+					arg_14_0.state = "zoom_prepare"
 
 					return
 				end
 
-				if mouse.y > origin.y + graph_size_y then
-					local zoom_factor_min = (self.visual_frame.y_max - self.range_y[1]) / (self.visual_frame.y_max - self.visual_frame.y_min)
-					local zoom_factor_max = (self.range_y[2] - self.visual_frame.y_min) / (self.visual_frame.y_max - self.visual_frame.y_min)
+				if var_14_0.y > var_14_1.y + var_14_3 then
+					local var_14_12 = (arg_14_0.visual_frame.y_max - arg_14_0.range_y[1]) / (arg_14_0.visual_frame.y_max - arg_14_0.visual_frame.y_min)
+					local var_14_13 = (arg_14_0.range_y[2] - arg_14_0.visual_frame.y_min) / (arg_14_0.visual_frame.y_max - arg_14_0.visual_frame.y_min)
 
-					self.zoom_window = {}
-					self.zoom_window.x_min = origin.x + graph_size_x - graph_size_x
-					self.zoom_window.x_max = origin.x + graph_size_x
-					self.zoom_window.y_min = origin.y + graph_size_y - graph_size_y * zoom_factor_min
-					self.zoom_window.y_max = origin.y + graph_size_y * zoom_factor_max
-					self.zoom_window.min_size = 100
-					self.scroll_lock.vertical = true
-					self.state = "zoom_prepare"
+					arg_14_0.zoom_window = {}
+					arg_14_0.zoom_window.x_min = var_14_1.x + var_14_2 - var_14_2
+					arg_14_0.zoom_window.x_max = var_14_1.x + var_14_2
+					arg_14_0.zoom_window.y_min = var_14_1.y + var_14_3 - var_14_3 * var_14_12
+					arg_14_0.zoom_window.y_max = var_14_1.y + var_14_3 * var_14_13
+					arg_14_0.zoom_window.min_size = 100
+					arg_14_0.scroll_lock.vertical = true
+					arg_14_0.state = "zoom_prepare"
 
 					return
 				end
 
-				self.zoom_window = {
-					x_start = mouse.x,
-					y_start = mouse.y,
+				arg_14_0.zoom_window = {
+					x_start = var_14_0.x,
+					y_start = var_14_0.y
 				}
 			end
 
-			self.zoom_window.x_end = mouse.x
-			self.zoom_window.y_end = mouse.y
-			self.zoom_window.x_min = math.min(self.zoom_window.x_end, self.zoom_window.x_start)
-			self.zoom_window.x_max = math.max(self.zoom_window.x_end, self.zoom_window.x_start)
-			self.zoom_window.y_min = math.min(self.zoom_window.y_end, self.zoom_window.y_start)
-			self.zoom_window.y_max = math.max(self.zoom_window.y_end, self.zoom_window.y_start)
-			self.zoom_window.min_size = math.min(self.zoom_window.x_max - self.zoom_window.x_min, self.zoom_window.y_max - self.zoom_window.y_min)
-		elseif self.zoom_window ~= nil and self.zoom_window.min_size < 20 then
-			self.zoom_window = nil
-			self.state = "waiting_for_zoom_window"
-		elseif self.zoom_window then
-			self.state = "zoom_prepare"
-			self.scroll_lock.left = false
-			self.scroll_lock.right = false
-			self.scroll_lock.vertical = false
+			arg_14_0.zoom_window.x_end = var_14_0.x
+			arg_14_0.zoom_window.y_end = var_14_0.y
+			arg_14_0.zoom_window.x_min = math.min(arg_14_0.zoom_window.x_end, arg_14_0.zoom_window.x_start)
+			arg_14_0.zoom_window.x_max = math.max(arg_14_0.zoom_window.x_end, arg_14_0.zoom_window.x_start)
+			arg_14_0.zoom_window.y_min = math.min(arg_14_0.zoom_window.y_end, arg_14_0.zoom_window.y_start)
+			arg_14_0.zoom_window.y_max = math.max(arg_14_0.zoom_window.y_end, arg_14_0.zoom_window.y_start)
+			arg_14_0.zoom_window.min_size = math.min(arg_14_0.zoom_window.x_max - arg_14_0.zoom_window.x_min, arg_14_0.zoom_window.y_max - arg_14_0.zoom_window.y_min)
+		elseif arg_14_0.zoom_window ~= nil and arg_14_0.zoom_window.min_size < 20 then
+			arg_14_0.zoom_window = nil
+			arg_14_0.state = "waiting_for_zoom_window"
+		elseif arg_14_0.zoom_window then
+			arg_14_0.state = "zoom_prepare"
+			arg_14_0.scroll_lock.left = false
+			arg_14_0.scroll_lock.right = false
+			arg_14_0.scroll_lock.vertical = false
 		end
 	end
 
-	if self.state == "panning" then
-		if not input_service:get("mouse_middle_held") then
-			self.state = "waiting_for_zoom_window"
-			self.pan_previous = nil
+	if arg_14_0.state == "panning" then
+		if not arg_14_1:get("mouse_middle_held") then
+			arg_14_0.state = "waiting_for_zoom_window"
+			arg_14_0.pan_previous = nil
 
 			return
 		end
 
-		if self.pan_previous == nil then
-			self.pan_previous = {
-				x = mouse.x,
-				y = mouse.y,
+		if arg_14_0.pan_previous == nil then
+			arg_14_0.pan_previous = {
+				x = var_14_0.x,
+				y = var_14_0.y
 			}
 		end
 
-		local pan = Vector2(self.pan_previous.x - mouse.x, self.pan_previous.y - mouse.y)
-		local scale_x = (self.visual_frame.x_max - self.visual_frame.x_min) / graph_size_x
-		local scale_y = (self.visual_frame.y_max - self.visual_frame.y_min) / graph_size_y
+		local var_14_14 = Vector2(arg_14_0.pan_previous.x - var_14_0.x, arg_14_0.pan_previous.y - var_14_0.y)
+		local var_14_15 = (arg_14_0.visual_frame.x_max - arg_14_0.visual_frame.x_min) / var_14_2
+		local var_14_16 = (arg_14_0.visual_frame.y_max - arg_14_0.visual_frame.y_min) / var_14_3
 
-		if not self.scroll_lock.left then
-			self.visual_frame.x_min = self.visual_frame.x_min + pan.x * scale_x
+		if not arg_14_0.scroll_lock.left then
+			arg_14_0.visual_frame.x_min = arg_14_0.visual_frame.x_min + var_14_14.x * var_14_15
 		end
 
-		if not self.scroll_lock.right then
-			self.visual_frame.x_max = self.visual_frame.x_max + pan.x * scale_x
+		if not arg_14_0.scroll_lock.right then
+			arg_14_0.visual_frame.x_max = arg_14_0.visual_frame.x_max + var_14_14.x * var_14_15
 		end
 
-		if not self.scroll_lock.vertical then
-			self.visual_frame.y_min = self.visual_frame.y_min + pan.y * scale_y
-			self.visual_frame.y_max = self.visual_frame.y_max + pan.y * scale_y
+		if not arg_14_0.scroll_lock.vertical then
+			arg_14_0.visual_frame.y_min = arg_14_0.visual_frame.y_min + var_14_14.y * var_14_16
+			arg_14_0.visual_frame.y_max = arg_14_0.visual_frame.y_max + var_14_14.y * var_14_16
 		end
 
-		self.pan_previous = {
-			x = mouse.x,
-			y = mouse.y,
+		arg_14_0.pan_previous = {
+			x = var_14_0.x,
+			y = var_14_0.y
 		}
 	end
 
-	if self.state == "zoom_prepare" then
-		local x_min_percentage = (self.zoom_window.x_min - origin.x) / graph_size_x
-		local x_max_percentage = (self.zoom_window.x_max - origin.x) / graph_size_x
-		local y_min_percentage = (self.zoom_window.y_min - origin.x) / graph_size_y
-		local y_max_percentage = (self.zoom_window.y_max - origin.x) / graph_size_y
+	if arg_14_0.state == "zoom_prepare" then
+		local var_14_17 = (arg_14_0.zoom_window.x_min - var_14_1.x) / var_14_2
+		local var_14_18 = (arg_14_0.zoom_window.x_max - var_14_1.x) / var_14_2
+		local var_14_19 = (arg_14_0.zoom_window.y_min - var_14_1.x) / var_14_3
+		local var_14_20 = (arg_14_0.zoom_window.y_max - var_14_1.x) / var_14_3
 
-		self.visual_frame.x_min = math.max(self.range_x[1], self.visual_frame.x_min)
-		self.visual_frame.x_max = math.min(self.range_x[2], self.visual_frame.x_max)
-		self.visual_frame.y_min = math.max(self.range_y[1], self.visual_frame.y_min)
-		self.visual_frame.y_max = math.min(self.range_y[2], self.visual_frame.y_max)
+		arg_14_0.visual_frame.x_min = math.max(arg_14_0.range_x[1], arg_14_0.visual_frame.x_min)
+		arg_14_0.visual_frame.x_max = math.min(arg_14_0.range_x[2], arg_14_0.visual_frame.x_max)
+		arg_14_0.visual_frame.y_min = math.max(arg_14_0.range_y[1], arg_14_0.visual_frame.y_min)
+		arg_14_0.visual_frame.y_max = math.min(arg_14_0.range_y[2], arg_14_0.visual_frame.y_max)
 
-		local visual_x_min = self.visual_frame.x_min
-		local visual_x_max = self.visual_frame.x_max
-		local visual_y_min = self.visual_frame.y_min
-		local visual_y_max = self.visual_frame.y_max
-		local x_min = math.lerp(visual_x_min, visual_x_max, x_min_percentage)
-		local x_max = math.lerp(visual_x_min, visual_x_max, x_max_percentage)
-		local y_min = math.lerp(visual_y_min, visual_y_max, y_min_percentage)
-		local y_max = math.lerp(visual_y_min, visual_y_max, y_max_percentage)
+		local var_14_21 = arg_14_0.visual_frame.x_min
+		local var_14_22 = arg_14_0.visual_frame.x_max
+		local var_14_23 = arg_14_0.visual_frame.y_min
+		local var_14_24 = arg_14_0.visual_frame.y_max
+		local var_14_25 = math.lerp(var_14_21, var_14_22, var_14_17)
+		local var_14_26 = math.lerp(var_14_21, var_14_22, var_14_18)
+		local var_14_27 = math.lerp(var_14_23, var_14_24, var_14_19)
+		local var_14_28 = math.lerp(var_14_23, var_14_24, var_14_20)
 
-		self.zoom_window.target_x_min = x_min
-		self.zoom_window.target_x_max = x_max
-		self.zoom_window.target_y_min = y_min
-		self.zoom_window.target_y_max = y_max
-		self.anim_done_t = t + 1
-		self.state = "zooming"
+		arg_14_0.zoom_window.target_x_min = var_14_25
+		arg_14_0.zoom_window.target_x_max = var_14_26
+		arg_14_0.zoom_window.target_y_min = var_14_27
+		arg_14_0.zoom_window.target_y_max = var_14_28
+		arg_14_0.anim_done_t = arg_14_2 + 1
+		arg_14_0.state = "zooming"
 	end
 
-	if self.state == "zooming" then
+	if arg_14_0.state == "zooming" then
 		Debug.text("zooming")
 
-		self.zoom_window.x_min = math.lerp(self.zoom_window.x_min, origin.x, 0.2)
-		self.zoom_window.x_max = math.lerp(self.zoom_window.x_max, origin.x + graph_size_x, 0.2)
-		self.zoom_window.y_min = math.lerp(self.zoom_window.y_min, origin.y, 0.2)
-		self.zoom_window.y_max = math.lerp(self.zoom_window.y_max, origin.y + graph_size_y, 0.2)
+		arg_14_0.zoom_window.x_min = math.lerp(arg_14_0.zoom_window.x_min, var_14_1.x, 0.2)
+		arg_14_0.zoom_window.x_max = math.lerp(arg_14_0.zoom_window.x_max, var_14_1.x + var_14_2, 0.2)
+		arg_14_0.zoom_window.y_min = math.lerp(arg_14_0.zoom_window.y_min, var_14_1.y, 0.2)
+		arg_14_0.zoom_window.y_max = math.lerp(arg_14_0.zoom_window.y_max, var_14_1.y + var_14_3, 0.2)
 
-		local target_x_min = self.zoom_window.target_x_min
-		local target_x_max = self.zoom_window.target_x_max
-		local target_y_min = self.zoom_window.target_y_min
-		local target_y_max = self.zoom_window.target_y_max
+		local var_14_29 = arg_14_0.zoom_window.target_x_min
+		local var_14_30 = arg_14_0.zoom_window.target_x_max
+		local var_14_31 = arg_14_0.zoom_window.target_y_min
+		local var_14_32 = arg_14_0.zoom_window.target_y_max
 
-		self.visual_frame.x_min = math.lerp(self.visual_frame.x_min, target_x_min, 0.2)
-		self.visual_frame.x_max = math.lerp(self.visual_frame.x_max, target_x_max, 0.2)
-		self.visual_frame.y_min = math.lerp(self.visual_frame.y_min, target_y_min, 0.2)
-		self.visual_frame.y_max = math.lerp(self.visual_frame.y_max, target_y_max, 0.2)
+		arg_14_0.visual_frame.x_min = math.lerp(arg_14_0.visual_frame.x_min, var_14_29, 0.2)
+		arg_14_0.visual_frame.x_max = math.lerp(arg_14_0.visual_frame.x_max, var_14_30, 0.2)
+		arg_14_0.visual_frame.y_min = math.lerp(arg_14_0.visual_frame.y_min, var_14_31, 0.2)
+		arg_14_0.visual_frame.y_max = math.lerp(arg_14_0.visual_frame.y_max, var_14_32, 0.2)
 
-		Debug.text(self.visual_frame.x_min)
+		Debug.text(arg_14_0.visual_frame.x_min)
 
-		if t > self.anim_done_t then
-			self.visual_frame.x_min = target_x_min
-			self.visual_frame.x_max = target_x_max
-			self.visual_frame.y_min = target_y_min
-			self.visual_frame.y_max = target_y_max
-			self.anim_done_t = nil
-			self.zoom_window = nil
-			self.state = "waiting_for_zoom_window"
+		if arg_14_2 > arg_14_0.anim_done_t then
+			arg_14_0.visual_frame.x_min = var_14_29
+			arg_14_0.visual_frame.x_max = var_14_30
+			arg_14_0.visual_frame.y_min = var_14_31
+			arg_14_0.visual_frame.y_max = var_14_32
+			arg_14_0.anim_done_t = nil
+			arg_14_0.zoom_window = nil
+			arg_14_0.state = "waiting_for_zoom_window"
 		end
 	end
 end
 
-Graph.draw = function (self, gui, input_service, t)
-	local mouse = input_service:get("cursor")
-	local layer = 1
-	local line_width = 2
-	local font_size = 26
-	local font = "arial"
-	local font_mtrl = "materials/fonts/" .. font
-	local color_bg = Colors.get_color_with_alpha("navy", Window.show_cursor() and 100 or 50)
-	local color_point_line = Colors.get("aqua_marine")
-	local color_point_bg = Colors.get("white")
-	local color_point_fg = Colors.get("black")
-	local color_annotation_box = Colors.get("white")
-	local color_annotation_line = Colors.get_color_with_alpha("yellow", 100)
-	local color_annotation_line_hot = Colors.get("yellow")
-	local color_annotation_text_bg = Colors.get_color_with_alpha("black", 100)
-	local color_annotation_bg = Colors.get_color_with_alpha("black", 150)
-	local color_axis = Colors.get("white")
-	local color_zoom_window = Colors.get_color_with_alpha("white", self.anim_done_t == nil and 100 or math.lerp(100, 0, 1 - (self.anim_done_t - t)))
-	local color_zoom_window_too_small = Colors.get_color_with_alpha("red", 100)
-	local origin = Vector3(100, 100, 0)
-	local graph_size_x, graph_size_y = 800, 400
+function Graph.draw(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+	local var_15_0 = arg_15_2:get("cursor")
+	local var_15_1 = 1
+	local var_15_2 = 2
+	local var_15_3 = 26
+	local var_15_4 = "arial"
+	local var_15_5 = "materials/fonts/" .. var_15_4
+	local var_15_6 = Colors.get_color_with_alpha("navy", Window.show_cursor() and 100 or 50)
+	local var_15_7 = Colors.get("aqua_marine")
+	local var_15_8 = Colors.get("white")
+	local var_15_9 = Colors.get("black")
+	local var_15_10 = Colors.get("white")
+	local var_15_11 = Colors.get_color_with_alpha("yellow", 100)
+	local var_15_12 = Colors.get("yellow")
+	local var_15_13 = Colors.get_color_with_alpha("black", 100)
+	local var_15_14 = Colors.get_color_with_alpha("black", 150)
+	local var_15_15 = Colors.get("white")
+	local var_15_16 = Colors.get_color_with_alpha("white", arg_15_0.anim_done_t == nil and 100 or math.lerp(100, 0, 1 - (arg_15_0.anim_done_t - arg_15_3)))
+	local var_15_17 = Colors.get_color_with_alpha("red", 100)
+	local var_15_18 = Vector3(100, 100, 0)
+	local var_15_19 = 800
+	local var_15_20 = 400
 
-	Gui.rect(gui, origin, Vector2(graph_size_x, graph_size_y), color_bg)
+	Gui.rect(arg_15_1, var_15_18, Vector2(var_15_19, var_15_20), var_15_6)
 
-	do
-		local axis_x_p1 = Vector3(origin.x + graph_size_x + 5, 0, origin.y + 5)
-		local axis_x_p2 = Vector3(origin.x + graph_size_x + 5, 0, origin.y - 5)
-		local axis_x_p3 = Vector3(origin.x + graph_size_x + 15, 0, origin.y)
+	local var_15_21 = Vector3(var_15_18.x + var_15_19 + 5, 0, var_15_18.y + 5)
+	local var_15_22 = Vector3(var_15_18.x + var_15_19 + 5, 0, var_15_18.y - 5)
+	local var_15_23 = Vector3(var_15_18.x + var_15_19 + 15, 0, var_15_18.y)
 
-		Gui.triangle(gui, axis_x_p1, axis_x_p2, axis_x_p3, layer, color_axis)
+	Gui.triangle(arg_15_1, var_15_21, var_15_22, var_15_23, var_15_1, var_15_15)
 
-		local axis_y_p1 = Vector3(origin.x + 5, 0, origin.y + graph_size_y + 5)
-		local axis_y_p2 = Vector3(origin.x - 5, 0, origin.y + graph_size_y + 5)
-		local axis_y_p3 = Vector3(origin.x, 0, origin.y + graph_size_y + 15)
+	local var_15_24 = Vector3(var_15_18.x + 5, 0, var_15_18.y + var_15_20 + 5)
+	local var_15_25 = Vector3(var_15_18.x - 5, 0, var_15_18.y + var_15_20 + 5)
+	local var_15_26 = Vector3(var_15_18.x, 0, var_15_18.y + var_15_20 + 15)
 
-		Gui.triangle(gui, axis_y_p1, axis_y_p2, axis_y_p3, layer, color_axis)
-		ScriptGUI.hud_line(gui, origin, origin + Vector3(graph_size_x + 10, 0, 0), layer, 1, color_axis)
-		ScriptGUI.hud_line(gui, origin, origin + Vector3(0, graph_size_y + 10, 0), layer, 1, color_axis)
-		Gui.text(gui, self.axis_names[1], font_mtrl, font_size, font, origin + Vector3(-50 + graph_size_x, -20, 0), color_axis)
-		Gui.text(gui, self.axis_names[2], font_mtrl, font_size, font, origin + Vector3(-50, graph_size_y + 20, 0), color_axis)
-	end
+	Gui.triangle(arg_15_1, var_15_24, var_15_25, var_15_26, var_15_1, var_15_15)
+	ScriptGUI.hud_line(arg_15_1, var_15_18, var_15_18 + Vector3(var_15_19 + 10, 0, 0), var_15_1, 1, var_15_15)
+	ScriptGUI.hud_line(arg_15_1, var_15_18, var_15_18 + Vector3(0, var_15_20 + 10, 0), var_15_1, 1, var_15_15)
+	Gui.text(arg_15_1, arg_15_0.axis_names[1], var_15_5, var_15_3, var_15_4, var_15_18 + Vector3(-50 + var_15_19, -20, 0), var_15_15)
+	Gui.text(arg_15_1, arg_15_0.axis_names[2], var_15_5, var_15_3, var_15_4, var_15_18 + Vector3(-50, var_15_20 + 20, 0), var_15_15)
 
-	local visual_x_min = self.visual_frame.x_min
-	local visual_x_max = self.visual_frame.x_max
-	local visual_y_min = self.visual_frame.y_min
-	local visual_y_max = self.visual_frame.y_max
+	local var_15_27 = arg_15_0.visual_frame.x_min
+	local var_15_28 = arg_15_0.visual_frame.x_max
+	local var_15_29 = arg_15_0.visual_frame.y_min
+	local var_15_30 = arg_15_0.visual_frame.y_max
 
-	if visual_x_max == visual_x_min or visual_y_max == visual_y_min then
+	if var_15_28 == var_15_27 or var_15_30 == var_15_29 then
 		return
 	end
 
-	Gui.text(gui, string.format("(%.2f, %.2f)", visual_x_min, visual_y_min), font_mtrl, font_size, font, origin + Vector3(-50, -20, 0), color_axis)
-	Gui.text(gui, string.format("(%.2f, %.2f)", visual_x_max, visual_y_max), font_mtrl, font_size, font, origin + Vector3(-50 + graph_size_x, 10 + graph_size_y, 0), color_axis)
+	Gui.text(arg_15_1, string.format("(%.2f, %.2f)", var_15_27, var_15_29), var_15_5, var_15_3, var_15_4, var_15_18 + Vector3(-50, -20, 0), var_15_15)
+	Gui.text(arg_15_1, string.format("(%.2f, %.2f)", var_15_28, var_15_30), var_15_5, var_15_3, var_15_4, var_15_18 + Vector3(-50 + var_15_19, 10 + var_15_20, 0), var_15_15)
 
-	if not self.valid then
+	if not arg_15_0.valid then
 		return
 	end
 
-	local scale_x = graph_size_x / (visual_x_max - visual_x_min)
-	local scale_y = graph_size_y / (visual_y_max - visual_y_min)
+	local var_15_31 = var_15_19 / (var_15_28 - var_15_27)
+	local var_15_32 = var_15_20 / (var_15_30 - var_15_29)
 
-	for plot_name, plot in pairs(self.plots) do
-		local line_color = plot.line_color and Colors.get(plot.line_color) or color_point_line
-		local point_color = plot.line_color and Colors.get(plot.line_color) or color_point_bg
-		local xs = array.items(plot.points_x)
-		local ys = array.items(plot.points_y)
-		local p1 = Vector3((xs[1] - visual_x_min) * scale_x, (ys[1] - visual_y_min) * scale_y, 0)
-		local num_points = array.num_items(plot.points_x)
+	for iter_15_0, iter_15_1 in pairs(arg_15_0.plots) do
+		local var_15_33 = iter_15_1.line_color and Colors.get(iter_15_1.line_color) or var_15_7
+		local var_15_34 = iter_15_1.line_color and Colors.get(iter_15_1.line_color) or var_15_8
+		local var_15_35 = var_0_0.items(iter_15_1.points_x)
+		local var_15_36 = var_0_0.items(iter_15_1.points_y)
+		local var_15_37 = Vector3((var_15_35[1] - var_15_27) * var_15_31, (var_15_36[1] - var_15_29) * var_15_32, 0)
+		local var_15_38 = var_0_0.num_items(iter_15_1.points_x)
 
-		for i = 2, num_points do
-			local p2 = Vector3((xs[i] - visual_x_min) * scale_x, (ys[i] - visual_y_min) * scale_y, 0)
-			local p1_x_inside = p1.x >= 0 and graph_size_x >= p1.x
-			local p1_y_inside = p1.y >= 0 and graph_size_y >= p1.y
-			local p2_x_inside = p2.x >= 0 and graph_size_x >= p2.x
-			local p2_y_inside = p2.y >= 0 and graph_size_y >= p2.y
+		for iter_15_2 = 2, var_15_38 do
+			local var_15_39 = Vector3((var_15_35[iter_15_2] - var_15_27) * var_15_31, (var_15_36[iter_15_2] - var_15_29) * var_15_32, 0)
+			local var_15_40 = var_15_37.x >= 0 and var_15_19 >= var_15_37.x
+			local var_15_41 = var_15_37.y >= 0 and var_15_20 >= var_15_37.y
+			local var_15_42 = var_15_39.x >= 0 and var_15_19 >= var_15_39.x
+			local var_15_43 = var_15_39.y >= 0 and var_15_20 >= var_15_39.y
 
-			if p1_x_inside and p1_y_inside or p2_x_inside and p2_y_inside then
-				ScriptGUI.hud_line(gui, p1 + origin, p2 + origin, layer, line_width, line_color)
-				Gui.rect(gui, p2 + origin + Vector3(-3, -3, 100), Vector3(6, 6, 0), point_color)
+			if var_15_40 and var_15_41 or var_15_42 and var_15_43 then
+				ScriptGUI.hud_line(arg_15_1, var_15_37 + var_15_18, var_15_39 + var_15_18, var_15_1, var_15_2, var_15_33)
+				Gui.rect(arg_15_1, var_15_39 + var_15_18 + Vector3(-3, -3, 100), Vector3(6, 6, 0), var_15_34)
 			end
 
-			p1 = p2
+			var_15_37 = var_15_39
 		end
 	end
 
-	do
-		local annotations = array.items(self.annotations_data)
-		local num_annotations = array.num_items(self.annotations_data)
-		local last_x = -10
-		local annotation_y_offset = -10
-		local annotation_text_y_offset = 0
+	local var_15_44 = var_0_0.items(arg_15_0.annotations_data)
+	local var_15_45 = var_0_0.num_items(arg_15_0.annotations_data)
+	local var_15_46 = -10
+	local var_15_47 = -10
+	local var_15_48 = 0
 
-		for i = 1, num_annotations do
-			local annotation = annotations[i]
-			local pos = Vector3((annotation.x - visual_x_min) * scale_x, 0, 0)
-			local x_inside = pos.x >= 0 and graph_size_x >= pos.x
+	for iter_15_3 = 1, var_15_45 do
+		local var_15_49 = var_15_44[iter_15_3]
+		local var_15_50 = Vector3((var_15_49.x - var_15_27) * var_15_31, 0, 0)
 
-			if x_inside then
-				if pos.x < last_x + 8 then
-					annotation_y_offset = annotation_y_offset - 10
-				else
-					annotation_y_offset = -10
-				end
+		if var_15_50.x >= 0 and var_15_19 >= var_15_50.x then
+			if var_15_50.x < var_15_46 + 8 then
+				var_15_47 = var_15_47 - 10
+			else
+				var_15_47 = -10
+			end
 
-				last_x = pos.x
-				pos.y = pos.y + annotation_y_offset
+			var_15_46 = var_15_50.x
+			var_15_50.y = var_15_50.y + var_15_47
 
-				if Vector3.distance_squared(pos + origin, mouse) < 64 then
-					Gui.rect(gui, pos + origin + Vector3(-5, -5, 10), Vector3(10, 10, 0), color_annotation_box)
+			if Vector3.distance_squared(var_15_50 + var_15_18, var_15_0) < 64 then
+				Gui.rect(arg_15_1, var_15_50 + var_15_18 + Vector3(-5, -5, 10), Vector3(10, 10, 0), var_15_10)
 
-					local color_annotation_line_hot = Colors.get(annotation.color)
+				local var_15_51 = Colors.get(var_15_49.color)
 
-					ScriptGUI.hud_line(gui, pos + origin + Vector3(0, -annotation_text_y_offset, 0), pos + origin + Vector3(0, graph_size_y, 0), layer, 2, color_annotation_line_hot)
+				ScriptGUI.hud_line(arg_15_1, var_15_50 + var_15_18 + Vector3(0, -var_15_48, 0), var_15_50 + var_15_18 + Vector3(0, var_15_20, 0), var_15_1, 2, var_15_51)
 
-					local text_min, text_max, caret = Gui.text_extents(gui, annotation.text, font_mtrl, font_size)
-					local text_width = text_max.x - text_min.x + 10
-					local color_annotation_box = Colors.get(annotation.color)
+				local var_15_52, var_15_53, var_15_54 = Gui.text_extents(arg_15_1, var_15_49.text, var_15_5, var_15_3)
+				local var_15_55 = var_15_53.x - var_15_52.x + 10
+				local var_15_56 = Colors.get(var_15_49.color)
 
-					Gui.rect(gui, origin + Vector3(0, -70 - annotation_text_y_offset, 0), Vector3(text_width, 30, 0), color_annotation_text_bg)
-					Gui.rect(gui, origin + Vector3(0, -70 - annotation_text_y_offset, 0), Vector3(text_width, 5, 0), color_annotation_box)
-					Gui.text(gui, annotation.text, font_mtrl, font_size, font, origin + Vector3(5, -60 - annotation_text_y_offset, 0), color_point_bg)
+				Gui.rect(arg_15_1, var_15_18 + Vector3(0, -70 - var_15_48, 0), Vector3(var_15_55, 30, 0), var_15_13)
+				Gui.rect(arg_15_1, var_15_18 + Vector3(0, -70 - var_15_48, 0), Vector3(var_15_55, 5, 0), var_15_56)
+				Gui.text(arg_15_1, var_15_49.text, var_15_5, var_15_3, var_15_4, var_15_18 + Vector3(5, -60 - var_15_48, 0), var_15_8)
 
-					local pos_graph = Vector3(pos.x, (annotation.y - visual_y_min) * scale_y, 0)
+				local var_15_57 = Vector3(var_15_50.x, (var_15_49.y - var_15_29) * var_15_32, 0)
 
-					Gui.rect(gui, pos_graph + origin + Vector3(-5, -5, 101), Vector3(10, 10, 0), color_annotation_box)
-					Gui.rect(gui, pos_graph + origin + Vector3(-6, -6, 100), Vector3(12, 12, 0), color_point_bg)
+				Gui.rect(arg_15_1, var_15_57 + var_15_18 + Vector3(-5, -5, 101), Vector3(10, 10, 0), var_15_56)
+				Gui.rect(arg_15_1, var_15_57 + var_15_18 + Vector3(-6, -6, 100), Vector3(12, 12, 0), var_15_8)
 
-					annotation_text_y_offset = annotation_text_y_offset + 30
-				else
-					local color_annotation_line_hot = Colors.get_color_with_alpha(annotation.color, 50)
+				var_15_48 = var_15_48 + 30
+			else
+				local var_15_58 = Colors.get_color_with_alpha(var_15_49.color, 50)
 
-					ScriptGUI.hud_line(gui, pos + origin, pos + origin + Vector3(0, graph_size_y, 0), layer, 1, color_annotation_line_hot)
+				ScriptGUI.hud_line(arg_15_1, var_15_50 + var_15_18, var_15_50 + var_15_18 + Vector3(0, var_15_20, 0), var_15_1, 1, var_15_58)
 
-					local color_annotation_box_hot = Colors.get_color_with_alpha(annotation.color, 150)
-					local pos_graph = Vector3(pos.x, (annotation.y - visual_y_min) * scale_y, 0)
+				local var_15_59 = Colors.get_color_with_alpha(var_15_49.color, 150)
+				local var_15_60 = Vector3(var_15_50.x, (var_15_49.y - var_15_29) * var_15_32, 0)
 
-					Gui.rect(gui, pos_graph + origin + Vector3(-3, -3, 100), Vector3(6, 6, 0), color_annotation_box_hot)
-				end
+				Gui.rect(arg_15_1, var_15_60 + var_15_18 + Vector3(-3, -3, 100), Vector3(6, 6, 0), var_15_59)
+			end
 
-				local color_annotation_box = Colors.get(annotation.color)
+			local var_15_61 = Colors.get(var_15_49.color)
 
-				Gui.rect(gui, pos + origin + Vector3(-4, -4, 100), Vector3(8, 8, 0), color_annotation_box)
-				ScriptGUI.hud_line(gui, pos + origin, pos + origin + Vector3(0, graph_size_y, 0), layer, 1, color_annotation_line)
+			Gui.rect(arg_15_1, var_15_50 + var_15_18 + Vector3(-4, -4, 100), Vector3(8, 8, 0), var_15_61)
+			ScriptGUI.hud_line(arg_15_1, var_15_50 + var_15_18, var_15_50 + var_15_18 + Vector3(0, var_15_20, 0), var_15_1, 1, var_15_11)
 
-				if annotation.live then
-					local pos_graph = Vector3(pos.x, (annotation.y - visual_y_min) * scale_y, 0) + origin + Vector3(-3, -3, 100)
+			if var_15_49.live then
+				local var_15_62 = Vector3(var_15_50.x, (var_15_49.y - var_15_29) * var_15_32, 0) + var_15_18 + Vector3(-3, -3, 100)
 
-					Gui.text(gui, annotation.text, font_mtrl, font_size, font, pos_graph, color_annotation_box)
-				end
+				Gui.text(arg_15_1, var_15_49.text, var_15_5, var_15_3, var_15_4, var_15_62, var_15_61)
 			end
 		end
-
-		Gui.rect(gui, origin + Vector3(0, -40, 0), Vector3(graph_size_x, 40, 0), color_annotation_bg)
 	end
 
-	if self.zoom_window then
-		local bottom_left = Vector3(self.zoom_window.x_min, self.zoom_window.y_min, 0)
-		local size = Vector3(self.zoom_window.x_max - self.zoom_window.x_min, self.zoom_window.y_max - self.zoom_window.y_min, 0)
+	Gui.rect(arg_15_1, var_15_18 + Vector3(0, -40, 0), Vector3(var_15_19, 40, 0), var_15_14)
 
-		if self.zoom_window.min_size < 20 then
-			Gui.rect(gui, bottom_left, size, color_zoom_window_too_small)
+	if arg_15_0.zoom_window then
+		local var_15_63 = Vector3(arg_15_0.zoom_window.x_min, arg_15_0.zoom_window.y_min, 0)
+		local var_15_64 = Vector3(arg_15_0.zoom_window.x_max - arg_15_0.zoom_window.x_min, arg_15_0.zoom_window.y_max - arg_15_0.zoom_window.y_min, 0)
+
+		if arg_15_0.zoom_window.min_size < 20 then
+			Gui.rect(arg_15_1, var_15_63, var_15_64, var_15_17)
 		else
-			Gui.rect(gui, bottom_left, size, color_zoom_window)
+			Gui.rect(arg_15_1, var_15_63, var_15_64, var_15_16)
 		end
 	else
-		if mouse.x > origin.x + graph_size_x then
-			Gui.rect(gui, origin + Vector3(graph_size_x, 0, 0), Vector2(50, graph_size_y), color_zoom_window)
-		elseif mouse.x < origin.x then
-			Gui.rect(gui, origin + Vector3(-50, 0, 0), Vector2(50, graph_size_y), color_zoom_window)
+		if var_15_0.x > var_15_18.x + var_15_19 then
+			Gui.rect(arg_15_1, var_15_18 + Vector3(var_15_19, 0, 0), Vector2(50, var_15_20), var_15_16)
+		elseif var_15_0.x < var_15_18.x then
+			Gui.rect(arg_15_1, var_15_18 + Vector3(-50, 0, 0), Vector2(50, var_15_20), var_15_16)
 		end
 
-		if mouse.y > origin.y + graph_size_y then
-			Gui.rect(gui, origin + Vector3(0, -50, 0), Vector2(graph_size_x, 50), color_zoom_window)
-			Gui.rect(gui, origin + Vector3(0, graph_size_y, 0), Vector2(graph_size_x, 50), color_zoom_window)
+		if var_15_0.y > var_15_18.y + var_15_20 then
+			Gui.rect(arg_15_1, var_15_18 + Vector3(0, -50, 0), Vector2(var_15_19, 50), var_15_16)
+			Gui.rect(arg_15_1, var_15_18 + Vector3(0, var_15_20, 0), Vector2(var_15_19, 50), var_15_16)
 		end
 	end
 end

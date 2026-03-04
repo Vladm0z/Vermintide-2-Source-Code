@@ -1,128 +1,119 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/actions/action_melee_start.lua
+-- chunkname: @scripts/unit_extensions/weapons/actions/action_melee_start.lua
 
 ActionMeleeStart = class(ActionMeleeStart, ActionDummy)
 
-local function scale_delay_value(action_settings, value, owner_unit, buff_extension)
-	local new_value = value
-	local time_scale = ActionUtils.get_action_time_scale(owner_unit, action_settings)
-
-	new_value = new_value / time_scale
-
-	return new_value
+local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	return arg_1_1 / ActionUtils.get_action_time_scale(arg_1_2, arg_1_0)
 end
 
-ActionMeleeStart.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionMeleeStart.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionMeleeStart.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
+	ActionMeleeStart.super.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
 
-	self._owner_unit = owner_unit
-	self.input_extension = ScriptUnit.extension(owner_unit, "input_system")
-	self.buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
-	self.spread_extension = ScriptUnit.has_extension(weapon_unit, "spread_system")
+	arg_2_0._owner_unit = arg_2_4
+	arg_2_0.input_extension = ScriptUnit.extension(arg_2_4, "input_system")
+	arg_2_0.buff_extension = ScriptUnit.extension(arg_2_4, "buff_system")
+	arg_2_0.spread_extension = ScriptUnit.has_extension(arg_2_7, "spread_system")
 end
 
-ActionMeleeStart.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
-	ActionMeleeStart.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
-	Unit.flow_event(self.first_person_unit, "sfx_swing_charge")
-	self:_play_additional_animation(new_action.custom_start_anim_data)
+function ActionMeleeStart.client_owner_start_action(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	ActionMeleeStart.super.client_owner_start_action(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	Unit.flow_event(arg_3_0.first_person_unit, "sfx_swing_charge")
+	arg_3_0:_play_additional_animation(arg_3_1.custom_start_anim_data)
 
-	self.zoom_condition_function = new_action.zoom_condition_function
+	arg_3_0.zoom_condition_function = arg_3_1.zoom_condition_function
 
-	local owner_unit = self.owner_unit
-	local buff_extension = self.buff_extension
+	local var_3_0 = arg_3_0.owner_unit
+	local var_3_1 = arg_3_0.buff_extension
 
-	self._block_delay = scale_delay_value(new_action, new_action.blocking_charge_start_time or 0, owner_unit, buff_extension)
+	arg_3_0._block_delay = var_0_0(arg_3_1, arg_3_1.blocking_charge_start_time or 0, var_3_0, var_3_1)
 
-	if self.zoom_condition_function then
-		local aim_zoom_delay = scale_delay_value(new_action, new_action.aim_zoom_delay or 0, owner_unit, buff_extension)
-
-		self.aim_zoom_time = t + aim_zoom_delay
+	if arg_3_0.zoom_condition_function then
+		arg_3_0.aim_zoom_time = arg_3_2 + var_0_0(arg_3_1, arg_3_1.aim_zoom_delay or 0, var_3_0, var_3_1)
 	end
 end
 
-ActionMeleeStart.client_owner_post_update = function (self, dt, t, world)
-	local action = self.current_action
-	local owner_unit = self.owner_unit
-	local action_start_time = self.action_start_t
-	local blocking_charge = action.blocking_charge
-	local status_extension = self.status_extension
+function ActionMeleeStart.client_owner_post_update(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	local var_4_0 = arg_4_0.current_action
+	local var_4_1 = arg_4_0.owner_unit
+	local var_4_2 = arg_4_0.action_start_t
+	local var_4_3 = var_4_0.blocking_charge
+	local var_4_4 = arg_4_0.status_extension
 
-	if not status_extension.blocking and blocking_charge and t > action_start_time + self._block_delay then
-		local go_id = Managers.state.unit_storage:go_id(owner_unit)
+	if not var_4_4.blocking and var_4_3 and arg_4_2 > var_4_2 + arg_4_0._block_delay then
+		local var_4_5 = Managers.state.unit_storage:go_id(var_4_1)
 
 		if not LEVEL_EDITOR_TEST then
-			if self.is_server then
-				Managers.state.network.network_transmit:send_rpc_clients("rpc_set_blocking", go_id, true)
-				Managers.state.network.network_transmit:send_rpc_clients("rpc_set_charge_blocking", go_id, true)
+			if arg_4_0.is_server then
+				Managers.state.network.network_transmit:send_rpc_clients("rpc_set_blocking", var_4_5, true)
+				Managers.state.network.network_transmit:send_rpc_clients("rpc_set_charge_blocking", var_4_5, true)
 			else
-				Managers.state.network.network_transmit:send_rpc_server("rpc_set_blocking", go_id, true)
-				Managers.state.network.network_transmit:send_rpc_server("rpc_set_charge_blocking", go_id, true)
+				Managers.state.network.network_transmit:send_rpc_server("rpc_set_blocking", var_4_5, true)
+				Managers.state.network.network_transmit:send_rpc_server("rpc_set_charge_blocking", var_4_5, true)
 			end
 		end
 
-		status_extension:set_blocking(true)
-		status_extension:set_charge_blocking(true)
+		var_4_4:set_blocking(true)
+		var_4_4:set_charge_blocking(true)
 
-		status_extension.timed_block = t + 0.5
+		var_4_4.timed_block = arg_4_2 + 0.5
 	end
 
-	if self.zoom_condition_function and self.zoom_condition_function(action.lookup_data) then
-		local input_extension = self.input_extension
-		local buff_extension = self.buff_extension
+	if arg_4_0.zoom_condition_function and arg_4_0.zoom_condition_function(var_4_0.lookup_data) then
+		local var_4_6 = arg_4_0.input_extension
+		local var_4_7 = arg_4_0.buff_extension
 
-		if not status_extension:is_zooming() and t >= self.aim_zoom_time then
-			status_extension:set_zooming(true, action.default_zoom)
+		if not var_4_4:is_zooming() and arg_4_2 >= arg_4_0.aim_zoom_time then
+			var_4_4:set_zooming(true, var_4_0.default_zoom)
 		end
 
-		if buff_extension:has_buff_perk("increased_zoom") and status_extension:is_zooming() and input_extension:get("action_three") then
-			status_extension:switch_variable_zoom(action.buffed_zoom_thresholds)
+		if var_4_7:has_buff_perk("increased_zoom") and var_4_4:is_zooming() and var_4_6:get("action_three") then
+			var_4_4:switch_variable_zoom(var_4_0.buffed_zoom_thresholds)
 		end
 	end
 end
 
-ActionMeleeStart.finish = function (self, reason, data)
-	local reset_block = true
-	local reset_aim = true
+function ActionMeleeStart.finish(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = true
+	local var_5_1 = true
 
-	if reason == "new_interupting_action" then
-		local next_action = data and data.new_action_settings
+	if arg_5_1 == "new_interupting_action" then
+		local var_5_2 = arg_5_2 and arg_5_2.new_action_settings
 
-		if next_action then
-			reset_block = not next_action.chain_block_charge
-			reset_aim = not next_action.chain_aim
+		if var_5_2 then
+			var_5_0 = not var_5_2.chain_block_charge
+			var_5_1 = not var_5_2.chain_aim
 		end
 	end
 
-	local action = self.current_action
-	local owner_unit = self.owner_unit
+	local var_5_3 = arg_5_0.current_action
+	local var_5_4 = arg_5_0.owner_unit
 
-	if reset_aim then
-		local unzoom_condition_function = action.unzoom_condition_function
+	if var_5_1 then
+		local var_5_5 = var_5_3.unzoom_condition_function
 
-		if not unzoom_condition_function or unzoom_condition_function(reason, data) then
-			local status_extension = ScriptUnit.extension(owner_unit, "status_system")
-
-			status_extension:set_zooming(false)
+		if not var_5_5 or var_5_5(arg_5_1, arg_5_2) then
+			ScriptUnit.extension(var_5_4, "status_system"):set_zooming(false)
 		end
 	end
 
-	if reset_block then
+	if var_5_0 then
 		if not LEVEL_EDITOR_TEST then
-			local go_id = Managers.state.unit_storage:go_id(owner_unit)
+			local var_5_6 = Managers.state.unit_storage:go_id(var_5_4)
 
-			if self.is_server then
-				Managers.state.network.network_transmit:send_rpc_clients("rpc_set_blocking", go_id, false)
-				Managers.state.network.network_transmit:send_rpc_clients("rpc_set_charge_blocking", go_id, false)
+			if arg_5_0.is_server then
+				Managers.state.network.network_transmit:send_rpc_clients("rpc_set_blocking", var_5_6, false)
+				Managers.state.network.network_transmit:send_rpc_clients("rpc_set_charge_blocking", var_5_6, false)
 			else
-				Managers.state.network.network_transmit:send_rpc_server("rpc_set_blocking", go_id, false)
-				Managers.state.network.network_transmit:send_rpc_server("rpc_set_charge_blocking", go_id, false)
+				Managers.state.network.network_transmit:send_rpc_server("rpc_set_blocking", var_5_6, false)
+				Managers.state.network.network_transmit:send_rpc_server("rpc_set_charge_blocking", var_5_6, false)
 			end
 		end
 
-		local status_extension = ScriptUnit.extension(owner_unit, "status_system")
+		local var_5_7 = ScriptUnit.extension(var_5_4, "status_system")
 
-		status_extension:set_blocking(false)
-		status_extension:set_charge_blocking(false)
+		var_5_7:set_blocking(false)
+		var_5_7:set_charge_blocking(false)
 	end
 
-	self:_play_additional_animation(action.custom_finish_anim_data)
+	arg_5_0:_play_additional_animation(var_5_3.custom_finish_anim_data)
 end

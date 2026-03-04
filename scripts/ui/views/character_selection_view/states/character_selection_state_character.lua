@@ -1,1742 +1,1668 @@
-﻿-- chunkname: @scripts/ui/views/character_selection_view/states/character_selection_state_character.lua
+-- chunkname: @scripts/ui/views/character_selection_view/states/character_selection_state_character.lua
 
 require("scripts/settings/profiles/sp_profiles")
 require("scripts/ui/hud_ui/scrollbar_ui")
 
-local definitions = local_require("scripts/ui/views/character_selection_view/states/definitions/character_selection_state_character_definitions")
-local character_selection_widget_definitions = definitions.character_selection_widgets
-local widget_definitions = definitions.widgets
-local info_widget_definitions = definitions.info_widgets
-local bot_selection_widget_definitions = definitions.bot_selection_widgets
-local hero_widget_definition = definitions.hero_widget
-local empty_hero_widget_definition = definitions.empty_hero_widget
-local hero_icon_widget_definition = definitions.hero_icon_widget
-local generic_input_actions = definitions.generic_input_actions
-local animation_definitions = definitions.animation_definitions
-local scenegraph_definition = definitions.scenegraph_definition
-local DO_RELOAD = false
-local PERK_TEXT_AREA = 240
-local VIDEO_REFERENCE_NAME = "CharacterSelectionStateCharacter"
+local var_0_0 = local_require("scripts/ui/views/character_selection_view/states/definitions/character_selection_state_character_definitions")
+local var_0_1 = var_0_0.character_selection_widgets
+local var_0_2 = var_0_0.widgets
+local var_0_3 = var_0_0.info_widgets
+local var_0_4 = var_0_0.bot_selection_widgets
+local var_0_5 = var_0_0.hero_widget
+local var_0_6 = var_0_0.empty_hero_widget
+local var_0_7 = var_0_0.hero_icon_widget
+local var_0_8 = var_0_0.generic_input_actions
+local var_0_9 = var_0_0.animation_definitions
+local var_0_10 = var_0_0.scenegraph_definition
+local var_0_11 = false
+local var_0_12 = 240
+local var_0_13 = "CharacterSelectionStateCharacter"
 
 CharacterSelectionStateCharacter = class(CharacterSelectionStateCharacter)
 CharacterSelectionStateCharacter.NAME = "CharacterSelectionStateCharacter"
 
-CharacterSelectionStateCharacter.on_enter = function (self, params)
-	self.parent:clear_wanted_state()
+function CharacterSelectionStateCharacter.on_enter(arg_1_0, arg_1_1)
+	arg_1_0.parent:clear_wanted_state()
 	print("[HeroViewState] Enter Substate CharacterSelectionStateCharacter")
 
-	local state_params = params.state_params
+	local var_1_0 = arg_1_1.state_params
 
-	self._hero_name = params.hero_name
+	arg_1_0._hero_name = arg_1_1.hero_name
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_1_1 = arg_1_1.ingame_ui_context
 
-	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self.input_manager = ingame_ui_context.input_manager
-	self.statistics_db = ingame_ui_context.statistics_db
-	self.render_settings = {
-		snap_pixel_positions = true,
+	arg_1_0.ui_top_renderer = var_1_1.ui_top_renderer
+	arg_1_0.input_manager = var_1_1.input_manager
+	arg_1_0.statistics_db = var_1_1.statistics_db
+	arg_1_0.render_settings = {
+		snap_pixel_positions = true
 	}
-	self.profile_synchronizer = ingame_ui_context.profile_synchronizer
-	self.is_server = ingame_ui_context.is_server
-	self._close_on_successful_profile_request = true
-	self.world_previewer = params.world_previewer
-	self.wwise_world = params.wwise_world
-	self.platform = PLATFORM
-	self.allow_back_button = params.allow_back_button
+	arg_1_0.profile_synchronizer = var_1_1.profile_synchronizer
+	arg_1_0.is_server = var_1_1.is_server
+	arg_1_0._close_on_successful_profile_request = true
+	arg_1_0.world_previewer = arg_1_1.world_previewer
+	arg_1_0.wwise_world = arg_1_1.wwise_world
+	arg_1_0.platform = PLATFORM
+	arg_1_0.allow_back_button = arg_1_1.allow_back_button
 
-	if params.pick_time then
-		self.pick_time = params.pick_time
+	if arg_1_1.pick_time then
+		arg_1_0.pick_time = arg_1_1.pick_time
 	end
 
-	local player_manager = Managers.player
-	local local_player = player_manager:local_player()
+	local var_1_2 = Managers.player
+	local var_1_3 = var_1_2:local_player()
 
-	self._stats_id = local_player:stats_id()
-	self.player_manager = player_manager
-	self.peer_id = ingame_ui_context.peer_id
-	self.local_player_id = ingame_ui_context.local_player_id
-	self.local_player = local_player
-	self._animations = {}
-	self._ui_animations = {}
-	self._available_profiles = {}
+	arg_1_0._stats_id = var_1_3:stats_id()
+	arg_1_0.player_manager = var_1_2
+	arg_1_0.peer_id = var_1_1.peer_id
+	arg_1_0.local_player_id = var_1_1.local_player_id
+	arg_1_0.local_player = var_1_3
+	arg_1_0._animations = {}
+	arg_1_0._ui_animations = {}
+	arg_1_0._available_profiles = {}
+	arg_1_0._profile_requester = (var_1_1.network_server or var_1_1.network_client):profile_requester()
 
-	local network_handler = ingame_ui_context.network_server or ingame_ui_context.network_client
+	local var_1_4 = arg_1_0.parent
+	local var_1_5 = arg_1_0:input_service()
+	local var_1_6 = UILayer.default + 130
+	local var_1_7 = var_1_4:input_service(true)
 
-	self._profile_requester = network_handler:profile_requester()
+	arg_1_0.menu_input_description = MenuInputDescriptionUI:new(var_1_1, arg_1_0.ui_top_renderer, var_1_7, 6, var_1_6, arg_1_1.allow_back_button and var_0_8.default_back or var_0_8.default, true)
 
-	local parent = self.parent
-	local input_service = self:input_service()
-	local gui_layer = UILayer.default + 130
-	local input_description_input_service = parent:input_service(true)
+	arg_1_0.menu_input_description:set_input_description(nil)
+	arg_1_0:create_ui_elements(arg_1_1)
+	arg_1_0:_start_transition_animation("on_enter", "on_enter")
 
-	self.menu_input_description = MenuInputDescriptionUI:new(ingame_ui_context, self.ui_top_renderer, input_description_input_service, 6, gui_layer, params.allow_back_button and generic_input_actions.default_back or generic_input_actions.default, true)
+	arg_1_0._hero_preview_skin = nil
+	arg_1_0.use_user_skins = true
+	arg_1_0.use_loadout_items = false
 
-	self.menu_input_description:set_input_description(nil)
-	self:create_ui_elements(params)
-	self:_start_transition_animation("on_enter", "on_enter")
+	local var_1_8 = arg_1_0._hero_name
+	local var_1_9 = arg_1_1.profile_id
 
-	self._hero_preview_skin = nil
-	self.use_user_skins = true
-	self.use_loadout_items = false
+	if var_1_9 and var_1_9 > 0 then
+		arg_1_0._career_index = arg_1_1.career_id
+		arg_1_0._close_on_successful_profile_request = false
 
-	local hero_name = self._hero_name
-	local profile_id = params.profile_id
-
-	if profile_id and profile_id > 0 then
-		self._career_index = params.career_id
-		self._close_on_successful_profile_request = false
-
-		self:_select_hero(profile_id, self._career_index, true)
-		self:_change_profile(profile_id, self._career_index)
+		arg_1_0:_select_hero(var_1_9, arg_1_0._career_index, true)
+		arg_1_0:_change_profile(var_1_9, arg_1_0._career_index)
 	else
-		local profile_index, career_index = self.profile_synchronizer:profile_by_peer(self.peer_id, self.local_player_id)
+		local var_1_10, var_1_11 = arg_1_0.profile_synchronizer:profile_by_peer(arg_1_0.peer_id, arg_1_0.local_player_id)
 
-		if profile_index and hero_name then
-			local hero_attributes = Managers.backend:get_interface("hero_attributes")
+		if var_1_10 and var_1_8 then
+			local var_1_12 = Managers.backend:get_interface("hero_attributes")
 
-			self._career_index = career_index
+			arg_1_0._career_index = var_1_11
 
-			self:_select_hero(profile_index, self._career_index, true)
+			arg_1_0:_select_hero(var_1_10, arg_1_0._career_index, true)
 		end
 	end
 
-	self.parent:set_input_blocked(false)
+	arg_1_0.parent:set_input_blocked(false)
 end
 
-CharacterSelectionStateCharacter._update_video_player_settings = function (self)
-	local is_character_visible = self.world_previewer:character_visible()
+function CharacterSelectionStateCharacter._update_video_player_settings(arg_2_0)
+	local var_2_0 = arg_2_0.world_previewer:character_visible()
 
-	if is_character_visible and not self._video_widget then
-		local material_name = self._current_video_settings.material_name
-		local resource = self._current_video_settings.resource
+	if var_2_0 and not arg_2_0._video_widget then
+		local var_2_1 = arg_2_0._current_video_settings.material_name
+		local var_2_2 = arg_2_0._current_video_settings.resource
 
-		if material_name and resource then
-			self:_setup_video_player(material_name, resource)
+		if var_2_1 and var_2_2 then
+			arg_2_0:_setup_video_player(var_2_1, var_2_2)
 
-			self._draw_video_next_frame = true
+			arg_2_0._draw_video_next_frame = true
 		end
-	elseif not is_character_visible then
-		self:_destroy_video_player()
+	elseif not var_2_0 then
+		arg_2_0:_destroy_video_player()
 	end
 end
 
-CharacterSelectionStateCharacter._setup_video_player = function (self, material_name, resource)
-	self:_destroy_video_player()
+function CharacterSelectionStateCharacter._setup_video_player(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_0:_destroy_video_player()
 
-	local ui_top_renderer = self.ui_top_renderer
-	local set_loop = true
-	local world, viewport = self.parent:get_background_world()
+	local var_3_0 = arg_3_0.ui_top_renderer
+	local var_3_1 = true
+	local var_3_2, var_3_3 = arg_3_0.parent:get_background_world()
 
-	UIRenderer.create_video_player(ui_top_renderer, VIDEO_REFERENCE_NAME, world, resource, set_loop)
+	UIRenderer.create_video_player(var_3_0, var_0_13, var_3_2, arg_3_2, var_3_1)
 
-	local scenegraph_id = "info_window_video"
-	local widget_definition = UIWidgets.create_video(scenegraph_id, material_name, VIDEO_REFERENCE_NAME)
-	local widget = UIWidget.init(widget_definition)
+	local var_3_4 = "info_window_video"
+	local var_3_5 = UIWidgets.create_video(var_3_4, arg_3_1, var_0_13)
 
-	self._video_widget = widget
-	self._video_created = true
+	arg_3_0._video_widget = UIWidget.init(var_3_5)
+	arg_3_0._video_created = true
 end
 
-CharacterSelectionStateCharacter._destroy_video_player = function (self)
-	local ui_top_renderer = self.ui_top_renderer
-	local widget = self._video_widget
+function CharacterSelectionStateCharacter._destroy_video_player(arg_4_0)
+	local var_4_0 = arg_4_0.ui_top_renderer
+	local var_4_1 = arg_4_0._video_widget
 
-	if widget then
-		UIWidget.destroy(ui_top_renderer, widget)
+	if var_4_1 then
+		UIWidget.destroy(var_4_0, var_4_1)
 
-		self._video_widget = nil
+		arg_4_0._video_widget = nil
 	end
 
-	if ui_top_renderer and ui_top_renderer.video_players[VIDEO_REFERENCE_NAME] then
-		local world, viewport = self.parent:get_background_world()
+	if var_4_0 and var_4_0.video_players[var_0_13] then
+		local var_4_2, var_4_3 = arg_4_0.parent:get_background_world()
 
-		UIRenderer.destroy_video_player(ui_top_renderer, VIDEO_REFERENCE_NAME, world)
+		UIRenderer.destroy_video_player(var_4_0, var_0_13, var_4_2)
 	end
 
-	self._video_created = nil
+	arg_4_0._video_created = nil
 end
 
-CharacterSelectionStateCharacter._inject_additional_scenegraph_definitions = function (self, scenegraph_definition)
-	for _, career_settings in pairs(CareerSettings) do
-		if career_settings.additional_ui_info_file then
-			local additional_ui_definitions = local_require(career_settings.additional_ui_info_file)
+function CharacterSelectionStateCharacter._inject_additional_scenegraph_definitions(arg_5_0, arg_5_1)
+	for iter_5_0, iter_5_1 in pairs(CareerSettings) do
+		if iter_5_1.additional_ui_info_file then
+			local var_5_0 = local_require(iter_5_1.additional_ui_info_file)
 
-			for name, data in pairs(additional_ui_definitions.scenegraph_definition_to_inject) do
-				scenegraph_definition[name] = data
+			for iter_5_2, iter_5_3 in pairs(var_5_0.scenegraph_definition_to_inject) do
+				arg_5_1[iter_5_2] = iter_5_3
 			end
 		end
 	end
 end
 
-CharacterSelectionStateCharacter.create_ui_elements = function (self, params)
-	self:_inject_additional_scenegraph_definitions(scenegraph_definition)
+function CharacterSelectionStateCharacter.create_ui_elements(arg_6_0, arg_6_1)
+	arg_6_0:_inject_additional_scenegraph_definitions(var_0_10)
 
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	arg_6_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_10)
 
-	local widgets = {}
-	local info_widgets = {}
-	local bot_selection_widgets = {}
-	local widgets_by_name = {}
+	local var_6_0 = {}
+	local var_6_1 = {}
+	local var_6_2 = {}
+	local var_6_3 = {}
 
-	for name, widget_definition in pairs(widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_6_0, iter_6_1 in pairs(var_0_2) do
+		local var_6_4 = UIWidget.init(iter_6_1)
 
-		widgets[#widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_6_0[#var_6_0 + 1] = var_6_4
+		var_6_3[iter_6_0] = var_6_4
 	end
 
-	for name, widget_definition in pairs(info_widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_6_2, iter_6_3 in pairs(var_0_3) do
+		local var_6_5 = UIWidget.init(iter_6_3)
 
-		info_widgets[#info_widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_6_1[#var_6_1 + 1] = var_6_5
+		var_6_3[iter_6_2] = var_6_5
 	end
 
-	for name, widget_definition in pairs(bot_selection_widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_6_4, iter_6_5 in pairs(var_0_4) do
+		local var_6_6 = UIWidget.init(iter_6_5)
 
-		bot_selection_widgets[#bot_selection_widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_6_2[#var_6_2 + 1] = var_6_6
+		var_6_3[iter_6_4] = var_6_6
 	end
 
-	self._widgets = widgets
-	self._info_widgets = info_widgets
-	self._bot_selection_widgets = bot_selection_widgets
-	self._widgets_by_name = widgets_by_name
-	self._additional_widgets = {}
-	self._additional_widgets_by_name = {}
+	arg_6_0._widgets = var_6_0
+	arg_6_0._info_widgets = var_6_1
+	arg_6_0._bot_selection_widgets = var_6_2
+	arg_6_0._widgets_by_name = var_6_3
+	arg_6_0._additional_widgets = {}
+	arg_6_0._additional_widgets_by_name = {}
 
-	self:_setup_hero_selection_widgets()
-	UIRenderer.clear_scenegraph_queue(self.ui_top_renderer)
+	arg_6_0:_setup_hero_selection_widgets()
+	UIRenderer.clear_scenegraph_queue(arg_6_0.ui_top_renderer)
 
-	self.ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
+	arg_6_0.ui_animator = UIAnimator:new(arg_6_0._ui_scenegraph, var_0_9)
 end
 
-CharacterSelectionStateCharacter._set_hero_icon_selected = function (self, index)
-	for icon_index, widget in ipairs(self._hero_icon_widgets) do
-		widget.content.selected = icon_index == index
+function CharacterSelectionStateCharacter._set_hero_icon_selected(arg_7_0, arg_7_1)
+	for iter_7_0, iter_7_1 in ipairs(arg_7_0._hero_icon_widgets) do
+		iter_7_1.content.selected = iter_7_0 == arg_7_1
 	end
 end
 
-CharacterSelectionStateCharacter._setup_hero_selection_widgets = function (self)
-	local hero_widgets = {}
+function CharacterSelectionStateCharacter._setup_hero_selection_widgets(arg_8_0)
+	local var_8_0 = {}
 
-	self._hero_widgets = hero_widgets
+	arg_8_0._hero_widgets = var_8_0
 
-	local hero_icon_widgets = {}
+	local var_8_1 = {}
 
-	self._hero_icon_widgets = hero_icon_widgets
+	arg_8_0._hero_icon_widgets = var_8_1
 
-	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-	local backend_dlcs = Managers.backend:get_interface("dlcs")
-	local num_max_rows = #SPProfilesAbbreviation
-	local profiles = ProfilePriority
-	local profiles = PlayerData.bot_spawn_priority
+	local var_8_2 = Managers.backend:get_interface("hero_attributes")
+	local var_8_3 = Managers.backend:get_interface("dlcs")
+	local var_8_4 = #SPProfilesAbbreviation
+	local var_8_5 = ProfilePriority
+	local var_8_6 = PlayerData.bot_spawn_priority
 
-	if not profiles[1] then
-		profiles = ProfileIndexToPriorityIndex
+	if not var_8_6[1] then
+		var_8_6 = ProfileIndexToPriorityIndex
 	end
 
-	self._num_hero_columns = {}
+	arg_8_0._num_hero_columns = {}
 
-	for i, profile_index in ipairs(profiles) do
-		local profile_settings = SPProfiles[profile_index]
-		local hero_name = profile_settings.display_name
-		local hero_experience = hero_attributes:get(hero_name, "experience") or 0
-		local hero_level = ExperienceSettings.get_level(hero_experience)
-		local careers = profile_settings.careers
-		local icon_widget = UIWidget.init(hero_icon_widget_definition)
+	for iter_8_0, iter_8_1 in ipairs(var_8_6) do
+		local var_8_7 = SPProfiles[iter_8_1]
+		local var_8_8 = var_8_7.display_name
+		local var_8_9 = var_8_2:get(var_8_8, "experience") or 0
+		local var_8_10 = ExperienceSettings.get_level(var_8_9)
+		local var_8_11 = var_8_7.careers
+		local var_8_12 = UIWidget.init(var_0_7)
 
-		hero_icon_widgets[#hero_icon_widgets + 1] = icon_widget
+		var_8_1[#var_8_1 + 1] = var_8_12
+		var_8_12.offset[2] = -((iter_8_0 - 1) * 144)
+		var_8_12.content.bot_order_texture_id = "bot_order_" .. tostring(iter_8_0)
 
-		local hero_icon_offset = icon_widget.offset
+		local var_8_13 = "hero_icon_large_" .. var_8_8
 
-		hero_icon_offset[2] = -((i - 1) * 144)
-		icon_widget.content.bot_order_texture_id = "bot_order_" .. tostring(i)
+		var_8_12.content.icon = var_8_13
+		var_8_12.content.icon_selected = var_8_13 .. "_glow"
 
-		local hero_icon_texture = "hero_icon_large_" .. hero_name
+		local var_8_14 = 0
 
-		icon_widget.content.icon = hero_icon_texture
-		icon_widget.content.icon_selected = hero_icon_texture .. "_glow"
+		for iter_8_2 = 1, 4 do
+			local var_8_15 = var_8_11[iter_8_2]
 
-		local valid_career_count = 0
+			if var_8_15 and not var_8_3:is_unreleased_career(var_8_15.name) then
+				var_8_14 = var_8_14 + 1
 
-		for j = 1, 4 do
-			local career = careers[j]
+				local var_8_16 = UIWidget.init(var_0_5)
 
-			if career and not backend_dlcs:is_unreleased_career(career.name) then
-				valid_career_count = valid_career_count + 1
+				var_8_0[#var_8_0 + 1] = var_8_16
 
-				local widget = UIWidget.init(hero_widget_definition)
+				local var_8_17 = var_8_16.offset
+				local var_8_18 = var_8_16.content
 
-				hero_widgets[#hero_widgets + 1] = widget
+				var_8_18.career_settings = var_8_15
 
-				local offset = widget.offset
-				local content = widget.content
+				local var_8_19 = var_8_15.portrait_image
 
-				content.career_settings = career
+				var_8_18.portrait = "medium_" .. var_8_19
 
-				local portrait_image = career.portrait_image
+				local var_8_20, var_8_21, var_8_22, var_8_23 = var_8_15:is_unlocked_function(var_8_8, var_8_10)
 
-				content.portrait = "medium_" .. portrait_image
+				var_8_18.locked = not var_8_20
+				var_8_18.locked_reason = not var_8_20 and (var_8_23 and var_8_21 or Localize(var_8_21))
+				var_8_18.dlc_name = var_8_22
 
-				local is_career_unlocked, reason, dlc_name, localized = career:is_unlocked_function(hero_name, hero_level)
-
-				content.locked = not is_career_unlocked
-				content.locked_reason = not is_career_unlocked and (localized and reason or Localize(reason))
-				content.dlc_name = dlc_name
-
-				if reason == "dlc_not_owned" then
-					content.lock_texture = content.lock_texture .. "_gold"
-					content.frame = content.frame .. "_gold"
+				if var_8_21 == "dlc_not_owned" then
+					var_8_18.lock_texture = var_8_18.lock_texture .. "_gold"
+					var_8_18.frame = var_8_18.frame .. "_gold"
 				end
 
-				local career_index = hero_attributes:get(hero_name, "career")
-				local bot_career_index = hero_attributes:get(hero_name, "bot_career") or career_index or 1
-				local bot_priority = table.find(profiles, profile_index)
+				local var_8_24 = var_8_2:get(var_8_8, "career")
+				local var_8_25 = var_8_2:get(var_8_8, "bot_career") or var_8_24 or 1
+				local var_8_26 = table.find(var_8_6, iter_8_1)
 
-				if bot_career_index == j and bot_priority <= 5 then
-					content.bot_priority = bot_priority
-					content.bot_selected = true
+				if var_8_25 == iter_8_2 and var_8_26 <= 5 then
+					var_8_18.bot_priority = var_8_26
+					var_8_18.bot_selected = true
 				end
 
-				offset[1] = (j - 1) * 124
-				offset[2] = -((i - 1) * 144)
+				var_8_17[1] = (iter_8_2 - 1) * 124
+				var_8_17[2] = -((iter_8_0 - 1) * 144)
 			else
-				local offset = (j - 1) * 124
+				local var_8_27 = (iter_8_2 - 1) * 124
 
-				icon_widget.style.bg.offset[1] = icon_widget.style.bg.offset[1] + offset
-				icon_widget.style.hourglass_icon.offset[1] = icon_widget.style.hourglass_icon.offset[1] + offset
-				icon_widget.content.use_empty_icon = true
+				var_8_12.style.bg.offset[1] = var_8_12.style.bg.offset[1] + var_8_27
+				var_8_12.style.hourglass_icon.offset[1] = var_8_12.style.hourglass_icon.offset[1] + var_8_27
+				var_8_12.content.use_empty_icon = true
 			end
 		end
 
-		self._num_hero_columns[i] = valid_career_count
+		arg_8_0._num_hero_columns[iter_8_0] = var_8_14
 	end
 
-	self._num_max_hero_rows = num_max_rows
+	arg_8_0._num_max_hero_rows = var_8_4
 end
 
-CharacterSelectionStateCharacter._update_available_profiles = function (self)
-	local available_profiles = self._available_profiles
-	local hero_widgets = self._hero_widgets
-	local player = Managers.player:local_player()
-	local profile_synchronizer = self.profile_synchronizer
-	local own_player_profile_index = player ~= nil and player:profile_index()
-	local own_player_career_index = player ~= nil and player:career_index()
-	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-	local profiles = ProfilePriority
-	local profiles = PlayerData.bot_spawn_priority
+function CharacterSelectionStateCharacter._update_available_profiles(arg_9_0)
+	local var_9_0 = arg_9_0._available_profiles
+	local var_9_1 = arg_9_0._hero_widgets
+	local var_9_2 = Managers.player:local_player()
+	local var_9_3 = arg_9_0.profile_synchronizer
+	local var_9_4 = var_9_2 ~= nil and var_9_2:profile_index()
+	local var_9_5
 
-	if not profiles[1] then
-		profiles = ProfileIndexToPriorityIndex
+	var_9_5 = var_9_2 ~= nil and var_9_2:career_index()
+
+	local var_9_6 = Managers.backend:get_interface("hero_attributes")
+	local var_9_7 = ProfilePriority
+	local var_9_8 = PlayerData.bot_spawn_priority
+
+	if not var_9_8[1] then
+		var_9_8 = ProfileIndexToPriorityIndex
 	end
 
-	local widget_index = 1
-	local selected_career_index = self._selected_career_index
-	local selected_profile_index = self._selected_profile_index
-	local mechanism_manager = Managers.mechanism
+	local var_9_9 = 1
+	local var_9_10 = arg_9_0._selected_career_index
+	local var_9_11 = arg_9_0._selected_profile_index
+	local var_9_12 = Managers.mechanism
 
-	for i, profile_index in ipairs(profiles) do
-		local profile_settings = SPProfiles[profile_index]
-		local is_profile_available = false
+	for iter_9_0, iter_9_1 in ipairs(var_9_8) do
+		local var_9_13 = SPProfiles[iter_9_1]
+		local var_9_14 = false
 
-		if player then
-			local peer_id = player:network_id()
-			local _, party_id = Managers.party:get_party_from_unique_id(player:unique_id())
+		if var_9_2 then
+			local var_9_15 = var_9_2:network_id()
+			local var_9_16, var_9_17 = Managers.party:get_party_from_unique_id(var_9_2:unique_id())
 
-			is_profile_available = mechanism_manager:profile_available_for_peer(party_id, peer_id, profile_index)
+			var_9_14 = var_9_12:profile_available_for_peer(var_9_17, var_9_15, iter_9_1)
 		end
 
-		local is_currently_played_profile = own_player_profile_index == profile_index
-		local can_play_profile = is_currently_played_profile or is_profile_available
-		local careers = profile_settings.careers
+		local var_9_18 = var_9_4 == iter_9_1 or var_9_14
+		local var_9_19 = var_9_13.careers
 
-		for j, career in ipairs(careers) do
-			local widget = hero_widgets[widget_index]
+		for iter_9_2, iter_9_3 in ipairs(var_9_19) do
+			local var_9_20 = var_9_1[var_9_9]
 
-			if widget then
-				local content = widget.content
-				local is_career_locked = content.locked
+			if var_9_20 then
+				local var_9_21 = var_9_20.content
+				local var_9_22 = var_9_21.locked
 
-				content.taken = not can_play_profile
+				var_9_21.taken = not var_9_18
 
-				if j == selected_career_index and selected_profile_index == profile_index then
-					self:_set_select_button_enabled(can_play_profile and not is_career_locked, is_career_locked and content.dlc_name, content.dlc_name)
+				if iter_9_2 == var_9_10 and var_9_11 == iter_9_1 then
+					arg_9_0:_set_select_button_enabled(var_9_18 and not var_9_22, var_9_22 and var_9_21.dlc_name, var_9_21.dlc_name)
 				end
 			end
 
-			widget_index = widget_index + 1
+			var_9_9 = var_9_9 + 1
 		end
 	end
 end
 
-CharacterSelectionStateCharacter._handle_mouse_selection = function (self)
-	local hero_widgets = self._hero_widgets
-	local num_max_rows = self._num_max_hero_rows
-	local selected_row = self._selected_hero_row
-	local selected_column = self._selected_hero_column
-	local profiles = ProfilePriority
-	local hero_attributes = Managers.backend:get_interface("hero_attributes")
+function CharacterSelectionStateCharacter._handle_mouse_selection(arg_10_0)
+	local var_10_0 = arg_10_0._hero_widgets
+	local var_10_1 = arg_10_0._num_max_hero_rows
+	local var_10_2 = arg_10_0._selected_hero_row
+	local var_10_3 = arg_10_0._selected_hero_column
+	local var_10_4 = ProfilePriority
+	local var_10_5 = Managers.backend:get_interface("hero_attributes")
+	local var_10_6 = PlayerData.bot_spawn_priority
+	local var_10_7 = 1
 
-	profiles = PlayerData.bot_spawn_priority
+	for iter_10_0 = 1, var_10_1 do
+		local var_10_8 = arg_10_0._num_hero_columns[iter_10_0]
 
-	local widget_index = 1
+		for iter_10_1 = 1, var_10_8 do
+			if var_10_0[var_10_7].content.button_hotspot.on_pressed and (iter_10_0 ~= var_10_2 or iter_10_1 ~= var_10_3) then
+				local var_10_9 = var_10_6[iter_10_0]
+				local var_10_10 = iter_10_1
 
-	for i = 1, num_max_rows do
-		local num_max_columns = self._num_hero_columns[i]
-
-		for j = 1, num_max_columns do
-			local widget = hero_widgets[widget_index]
-			local content = widget.content
-			local button_hotspot = content.button_hotspot
-
-			if button_hotspot.on_pressed and (i ~= selected_row or j ~= selected_column) then
-				local profile_index = profiles[i]
-				local career_index = j
-
-				self:_select_hero(profile_index, career_index)
+				arg_10_0:_select_hero(var_10_9, var_10_10)
 
 				return
 			end
 
-			widget_index = widget_index + 1
+			var_10_7 = var_10_7 + 1
 		end
 	end
 end
 
-CharacterSelectionStateCharacter._update_equipped_bots = function (self)
-	local bot_spawn_priority = PlayerData.bot_spawn_priority
+function CharacterSelectionStateCharacter._update_equipped_bots(arg_11_0)
+	local var_11_0 = PlayerData.bot_spawn_priority
 
-	if not bot_spawn_priority[1] then
-		bot_spawn_priority = ProfileIndexToPriorityIndex
+	if not var_11_0[1] then
+		var_11_0 = ProfileIndexToPriorityIndex
 	end
 
-	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-	local hero_widgets = self._hero_widgets
-	local widget_index = 1
+	local var_11_1 = Managers.backend:get_interface("hero_attributes")
+	local var_11_2 = arg_11_0._hero_widgets
+	local var_11_3 = 1
 
-	for i, profile_index in ipairs(bot_spawn_priority) do
-		local profile_settings = SPProfiles[profile_index]
-		local hero_name = profile_settings.display_name
-		local careers = profile_settings.careers
+	for iter_11_0, iter_11_1 in ipairs(var_11_0) do
+		local var_11_4 = SPProfiles[iter_11_1]
+		local var_11_5 = var_11_4.display_name
+		local var_11_6 = var_11_4.careers
 
-		for career_index, career in ipairs(careers) do
-			local widget = self._hero_widgets[widget_index]
-			local content = widget.content
-			local heor_career_index = hero_attributes:get(hero_name, "career")
-			local bot_career_index = hero_attributes:get(hero_name, "bot_career") or career_index or 1
-			local bot_priority = table.find(bot_spawn_priority, profile_index)
+		for iter_11_2, iter_11_3 in ipairs(var_11_6) do
+			local var_11_7 = arg_11_0._hero_widgets[var_11_3].content
+			local var_11_8 = var_11_1:get(var_11_5, "career")
+			local var_11_9 = var_11_1:get(var_11_5, "bot_career") or iter_11_2 or 1
+			local var_11_10 = table.find(var_11_0, iter_11_1)
 
-			if bot_career_index == career_index and bot_priority <= 5 then
-				content.bot_priority = nil
-				content.bot_selected = true
+			if var_11_9 == iter_11_2 and var_11_10 <= 5 then
+				var_11_7.bot_priority = nil
+				var_11_7.bot_selected = true
 			else
-				content.bot_priority = nil
-				content.bot_selected = nil
+				var_11_7.bot_priority = nil
+				var_11_7.bot_selected = nil
 			end
 
-			widget_index = widget_index + 1
+			var_11_3 = var_11_3 + 1
 		end
 	end
 end
 
-CharacterSelectionStateCharacter._exit_bot_selection = function (self)
-	self.parent:set_input_blocked(false)
-	self:_setup_hero_selection_widgets()
-	self:_select_hero(self._selected_profile_index, self._selected_career_index, true)
+function CharacterSelectionStateCharacter._exit_bot_selection(arg_12_0)
+	arg_12_0.parent:set_input_blocked(false)
+	arg_12_0:_setup_hero_selection_widgets()
+	arg_12_0:_select_hero(arg_12_0._selected_profile_index, arg_12_0._selected_career_index, true)
 
-	for _, widget in pairs(self._hero_icon_widgets) do
-		widget.content.bot_selection_active = false
+	for iter_12_0, iter_12_1 in pairs(arg_12_0._hero_icon_widgets) do
+		iter_12_1.content.bot_selection_active = false
 	end
 
-	self._spawn_hero = true
-	self._bot_selection = nil
-	self._bot_priority_copy = nil
-	self._current_selected_bot_index = nil
-	self._current_selected_row = nil
-	self._x_offset = nil
-	self._base_y_offset = nil
+	arg_12_0._spawn_hero = true
+	arg_12_0._bot_selection = nil
+	arg_12_0._bot_priority_copy = nil
+	arg_12_0._current_selected_bot_index = nil
+	arg_12_0._current_selected_row = nil
+	arg_12_0._x_offset = nil
+	arg_12_0._base_y_offset = nil
 
-	local widgets_by_name = self._widgets_by_name
-	local background_widget = widgets_by_name.background
-	local background_widget_style = background_widget.style
+	local var_12_0 = arg_12_0._widgets_by_name.background.style
 
-	self._ui_animations.background = UIAnimation.init(UIAnimation.function_by_time, background_widget_style.rect.color, 1, background_widget_style.rect.color[1], 0, 0.4, math.easeOutCubic)
+	arg_12_0._ui_animations.background = UIAnimation.init(UIAnimation.function_by_time, var_12_0.rect.color, 1, var_12_0.rect.color[1], 0, 0.4, math.easeOutCubic)
 
-	self.menu_input_description:change_generic_actions(self.allow_back_button and generic_input_actions.default_back or generic_input_actions.default)
+	arg_12_0.menu_input_description:change_generic_actions(arg_12_0.allow_back_button and var_0_8.default_back or var_0_8.default)
 
-	self.render_settings.info_alpha_multiplier = 0
-	self.render_settings.bot_selection_alpha_multiplier = 0
+	arg_12_0.render_settings.info_alpha_multiplier = 0
+	arg_12_0.render_settings.bot_selection_alpha_multiplier = 0
 
-	if self.parent.show_hero_panel then
-		self.parent:show_hero_panel()
-		self.parent:set_input_blocked(false)
+	if arg_12_0.parent.show_hero_panel then
+		arg_12_0.parent:show_hero_panel()
+		arg_12_0.parent:set_input_blocked(false)
 	end
 
-	self:_start_transition_animation("fade_out", "on_exit_bot_selection")
-	self:_play_sound("Play_hud_button_close")
+	arg_12_0:_start_transition_animation("fade_out", "on_exit_bot_selection")
+	arg_12_0:_play_sound("Play_hud_button_close")
 end
 
-CharacterSelectionStateCharacter._enter_bot_selection = function (self, selected_row)
-	self._bot_selection = true
-	self._bot_priority_copy = table.clone(PlayerData.bot_spawn_priority)
+function CharacterSelectionStateCharacter._enter_bot_selection(arg_13_0, arg_13_1)
+	arg_13_0._bot_selection = true
+	arg_13_0._bot_priority_copy = table.clone(PlayerData.bot_spawn_priority)
 
-	local hero_widgets = self._hero_widgets
-	local hero_widget_index = 1
+	local var_13_0 = arg_13_0._hero_widgets
+	local var_13_1 = 1
 
-	for row = 1, #PlayerData.bot_spawn_priority do
-		local index = PlayerData.bot_spawn_priority[row]
-		local profile = SPProfiles[index]
-		local num_careers = #profile.careers
+	for iter_13_0 = 1, #PlayerData.bot_spawn_priority do
+		local var_13_2 = PlayerData.bot_spawn_priority[iter_13_0]
+		local var_13_3 = #SPProfiles[var_13_2].careers
 
-		for column = 1, num_careers do
-			local widget = hero_widgets[hero_widget_index]
-
-			widget.content.bot_selection_active = true
-			hero_widget_index = hero_widget_index + 1
+		for iter_13_1 = 1, var_13_3 do
+			var_13_0[var_13_1].content.bot_selection_active = true
+			var_13_1 = var_13_1 + 1
 		end
 	end
 
-	for _, widget in pairs(self._hero_icon_widgets) do
-		widget.content.bot_selection_active = true
+	for iter_13_2, iter_13_3 in pairs(arg_13_0._hero_icon_widgets) do
+		iter_13_3.content.bot_selection_active = true
 	end
 
-	local widgets_by_name = self._widgets_by_name
-	local background_widget = widgets_by_name.background
-	local background_widget_style = background_widget.style
+	local var_13_4 = arg_13_0._widgets_by_name.background.style
 
-	self._ui_animations.background = UIAnimation.init(UIAnimation.function_by_time, background_widget_style.rect.color, 1, background_widget_style.rect.color[1], 128, 0.4, math.easeOutCubic)
+	arg_13_0._ui_animations.background = UIAnimation.init(UIAnimation.function_by_time, var_13_4.rect.color, 1, var_13_4.rect.color[1], 128, 0.4, math.easeOutCubic)
 
-	self.menu_input_description:change_generic_actions(generic_input_actions.prioritize_bots)
+	arg_13_0.menu_input_description:change_generic_actions(var_0_8.prioritize_bots)
 
-	self.render_settings.main_alpha_multiplier = 1
-	self.render_settings.info_alpha_multiplier = 0
-	self.render_settings.bot_selection_alpha_multiplier = 0
+	arg_13_0.render_settings.main_alpha_multiplier = 1
+	arg_13_0.render_settings.info_alpha_multiplier = 0
+	arg_13_0.render_settings.bot_selection_alpha_multiplier = 0
 
-	if self.parent.hide_hero_panel then
-		self.parent:hide_hero_panel()
-		self.parent:set_input_blocked(false)
+	if arg_13_0.parent.hide_hero_panel then
+		arg_13_0.parent:hide_hero_panel()
+		arg_13_0.parent:set_input_blocked(false)
 	end
 
-	self:_start_transition_animation("fade_in", "on_enter_bot_selection")
-	self:_play_sound("Play_hud_button_open")
+	arg_13_0:_start_transition_animation("fade_in", "on_enter_bot_selection")
+	arg_13_0:_play_sound("Play_hud_button_open")
 end
 
-CharacterSelectionStateCharacter._handle_gamepad_selection = function (self, input_service)
-	local selected_row = self._selected_hero_row
-	local selected_column = self._selected_hero_column
-	local num_max_rows = self._num_max_hero_rows
-	local profile_index = ProfilePriority[selected_row]
+function CharacterSelectionStateCharacter._handle_gamepad_selection(arg_14_0, arg_14_1)
+	local var_14_0 = arg_14_0._selected_hero_row
+	local var_14_1 = arg_14_0._selected_hero_column
+	local var_14_2 = arg_14_0._num_max_hero_rows
+	local var_14_3 = ProfilePriority[var_14_0]
+	local var_14_4 = PlayerData.bot_spawn_priority[var_14_0]
+	local var_14_5 = #SPProfiles[var_14_4].careers
+	local var_14_6 = true
 
-	profile_index = PlayerData.bot_spawn_priority[selected_row]
-
-	local profile = SPProfiles[profile_index]
-	local num_max_columns = #profile.careers
-	local allow_movement = true
-
-	if input_service:get("refresh") and not self._bot_selection then
-		self:_enter_bot_selection(self._selected_hero_row)
+	if arg_14_1:get("refresh") and not arg_14_0._bot_selection then
+		arg_14_0:_enter_bot_selection(arg_14_0._selected_hero_row)
 	else
-		allow_movement = not self._current_selected_row
+		local var_14_7 = not arg_14_0._current_selected_row
 
-		if selected_row and selected_column and allow_movement then
-			local modified = false
+		if var_14_0 and var_14_1 and var_14_7 then
+			local var_14_8 = false
 
-			if selected_column > 1 and input_service:get("move_left_hold_continuous") then
-				selected_column = selected_column - 1
-				modified = true
-			elseif selected_column < num_max_columns and input_service:get("move_right_hold_continuous") then
-				selected_column = selected_column + 1
-				modified = true
+			if var_14_1 > 1 and arg_14_1:get("move_left_hold_continuous") then
+				var_14_1 = var_14_1 - 1
+				var_14_8 = true
+			elseif var_14_1 < var_14_5 and arg_14_1:get("move_right_hold_continuous") then
+				var_14_1 = var_14_1 + 1
+				var_14_8 = true
 			end
 
-			if selected_row > 1 and input_service:get("move_up_hold_continuous") then
-				selected_row = selected_row - 1
-				num_max_columns = self._num_hero_columns[selected_row]
-				modified = true
-			elseif selected_row < num_max_rows and input_service:get("move_down_hold_continuous") then
-				selected_row = selected_row + 1
-				num_max_columns = self._num_hero_columns[selected_row]
-				modified = true
+			if var_14_0 > 1 and arg_14_1:get("move_up_hold_continuous") then
+				var_14_0 = var_14_0 - 1
+				var_14_5 = arg_14_0._num_hero_columns[var_14_0]
+				var_14_8 = true
+			elseif var_14_0 < var_14_2 and arg_14_1:get("move_down_hold_continuous") then
+				var_14_0 = var_14_0 + 1
+				var_14_5 = arg_14_0._num_hero_columns[var_14_0]
+				var_14_8 = true
 			end
 
-			if num_max_columns < selected_column then
-				selected_column = num_max_columns
-				modified = true
+			if var_14_5 < var_14_1 then
+				var_14_1 = var_14_5
+				var_14_8 = true
 			end
 
-			if modified then
-				local profile_index = ProfilePriority[selected_row]
-				local disable_hero_spawn = false
+			if var_14_8 then
+				local var_14_9 = ProfilePriority[var_14_0]
+				local var_14_10 = false
+				local var_14_11 = PlayerData.bot_spawn_priority[var_14_0]
+				local var_14_12 = arg_14_0._bot_selection
+				local var_14_13 = var_14_1
 
-				profile_index = PlayerData.bot_spawn_priority[selected_row]
-				disable_hero_spawn = self._bot_selection
-
-				local career_index = selected_column
-
-				self:_select_hero(profile_index, career_index, nil, disable_hero_spawn)
+				arg_14_0:_select_hero(var_14_11, var_14_13, nil, var_14_12)
 			end
 		end
 	end
 end
 
-CharacterSelectionStateCharacter._is_selected_hero_unlocked = function (self)
-	local selected_row = self._selected_hero_row
-	local selected_column = self._selected_hero_column
-	local num_max_rows = self._num_max_hero_rows
-	local widget_index = 1
+function CharacterSelectionStateCharacter._is_selected_hero_unlocked(arg_15_0)
+	local var_15_0 = arg_15_0._selected_hero_row
+	local var_15_1 = arg_15_0._selected_hero_column
+	local var_15_2 = arg_15_0._num_max_hero_rows
+	local var_15_3 = 1
 
-	for i = 1, num_max_rows do
-		local num_max_columns = self._num_hero_columns[i]
+	for iter_15_0 = 1, var_15_2 do
+		local var_15_4 = arg_15_0._num_hero_columns[iter_15_0]
 
-		for j = 1, num_max_columns do
-			if selected_row == i and selected_column == j then
-				local widget = self._hero_widgets[widget_index]
-				local content = widget.content
+		for iter_15_1 = 1, var_15_4 do
+			if var_15_0 == iter_15_0 and var_15_1 == iter_15_1 then
+				local var_15_5 = arg_15_0._hero_widgets[var_15_3].content
 
-				return not content.locked_reason or not content.locked
+				return not var_15_5.locked_reason or not var_15_5.locked
 			end
 
-			widget_index = widget_index + 1
+			var_15_3 = var_15_3 + 1
 		end
 	end
 
 	return false
 end
 
-CharacterSelectionStateCharacter._handle_gamepad_bot_selection = function (self, input_service)
-	self:_handle_gamepad_selection(input_service)
+function CharacterSelectionStateCharacter._handle_gamepad_bot_selection(arg_16_0, arg_16_1)
+	arg_16_0:_handle_gamepad_selection(arg_16_1)
 
-	if input_service:get("confirm_press", true) and self:_is_selected_hero_unlocked() then
-		local selected_row = self._selected_hero_row
-		local selected_column = self._selected_hero_column
-		local profile_index = PlayerData.bot_spawn_priority[selected_row]
-		local hero_name = SPProfiles[profile_index].display_name
-		local career_index = selected_column
-		local hero_attributes = Managers.backend:get_interface("hero_attributes")
+	if arg_16_1:get("confirm_press", true) and arg_16_0:_is_selected_hero_unlocked() then
+		local var_16_0 = arg_16_0._selected_hero_row
+		local var_16_1 = arg_16_0._selected_hero_column
+		local var_16_2 = PlayerData.bot_spawn_priority[var_16_0]
+		local var_16_3 = SPProfiles[var_16_2].display_name
+		local var_16_4 = var_16_1
 
-		hero_attributes:set(hero_name, "bot_career", career_index)
-		self:_play_sound("play_gui_equipment_equip")
-		self:_update_equipped_bots()
-	elseif input_service:get("refresh") then
-		if self._current_selected_row then
-			self:_reset_bot_selection(true)
-			self:_play_sound("hud_bot_order_release")
+		Managers.backend:get_interface("hero_attributes"):set(var_16_3, "bot_career", var_16_4)
+		arg_16_0:_play_sound("play_gui_equipment_equip")
+		arg_16_0:_update_equipped_bots()
+	elseif arg_16_1:get("refresh") then
+		if arg_16_0._current_selected_row then
+			arg_16_0:_reset_bot_selection(true)
+			arg_16_0:_play_sound("hud_bot_order_release")
 		else
-			self:_set_bot_selection(self._selected_hero_row)
+			arg_16_0:_set_bot_selection(arg_16_0._selected_hero_row)
 		end
 	else
-		local selected_row = self._current_selected_row
-		local num_max_rows = self._num_max_hero_rows
-		local modified = false
+		local var_16_5 = arg_16_0._current_selected_row
+		local var_16_6 = arg_16_0._num_max_hero_rows
+		local var_16_7 = false
 
-		if not selected_row then
+		if not var_16_5 then
 			return
 		end
 
-		if selected_row > 1 and input_service:get("move_up_hold_continuous") then
-			selected_row = selected_row - 1
-			modified = true
-		elseif selected_row < num_max_rows and input_service:get("move_down_hold_continuous") then
-			selected_row = selected_row + 1
-			modified = true
+		if var_16_5 > 1 and arg_16_1:get("move_up_hold_continuous") then
+			var_16_5 = var_16_5 - 1
+			var_16_7 = true
+		elseif var_16_5 < var_16_6 and arg_16_1:get("move_down_hold_continuous") then
+			var_16_5 = var_16_5 + 1
+			var_16_7 = true
 		end
 
-		if modified then
-			self:_play_sound("play_gui_equipment_inventory_hover")
-			self:_update_bot_order(selected_row)
+		if var_16_7 then
+			arg_16_0:_play_sound("play_gui_equipment_inventory_hover")
+			arg_16_0:_update_bot_order(var_16_5)
 		end
 	end
 end
 
-CharacterSelectionStateCharacter._update_bot_order = function (self, new_row, reset_x_offset)
-	local old_row = self._current_selected_row
+function CharacterSelectionStateCharacter._update_bot_order(arg_17_0, arg_17_1, arg_17_2)
+	local var_17_0 = arg_17_0._current_selected_row
 
-	table.remove(self._bot_priority_copy, old_row)
-	table.insert(self._bot_priority_copy, new_row, self._current_selected_bot_index)
+	table.remove(arg_17_0._bot_priority_copy, var_17_0)
+	table.insert(arg_17_0._bot_priority_copy, arg_17_1, arg_17_0._current_selected_bot_index)
 
-	self._current_selected_row = new_row
+	arg_17_0._current_selected_row = arg_17_1
 
-	local hero_widgets = self._hero_widgets
-	local hero_icon_widgets = self._hero_icon_widgets
-	local hero_widget_index = 1
+	local var_17_1 = arg_17_0._hero_widgets
+	local var_17_2 = arg_17_0._hero_icon_widgets
+	local var_17_3 = 1
 
-	for row = 1, #PlayerData.bot_spawn_priority do
-		local index = PlayerData.bot_spawn_priority[row]
-		local profile = SPProfiles[index]
-		local num_careers = #profile.careers
-		local new_hero_row = table.find(self._bot_priority_copy, index)
-		local offset = -((new_hero_row - 1) * 144)
-		local is_old_row = row == old_row
+	for iter_17_0 = 1, #PlayerData.bot_spawn_priority do
+		local var_17_4 = PlayerData.bot_spawn_priority[iter_17_0]
+		local var_17_5 = #SPProfiles[var_17_4].careers
+		local var_17_6 = table.find(arg_17_0._bot_priority_copy, var_17_4)
+		local var_17_7 = -((var_17_6 - 1) * 144)
+		local var_17_8
 
-		for column = 1, num_careers do
-			local hero_widget = hero_widgets[hero_widget_index]
-			local hero_widget_content = hero_widget.content
+		var_17_8 = iter_17_0 == var_17_0
 
-			self._ui_animations[index .. ":" .. column] = UIAnimation.init(UIAnimation.function_by_time, hero_widget.offset, 2, hero_widget.offset[2], offset, 0.25, math.easeOutCubic)
+		for iter_17_1 = 1, var_17_5 do
+			local var_17_9 = var_17_1[var_17_3]
+			local var_17_10 = var_17_9.content
 
-			if hero_widget_content.bot_order_selection and reset_x_offset then
-				self._ui_animations[index .. ":" .. column .. "_x"] = UIAnimation.init(UIAnimation.function_by_time, hero_widget.offset, 1, hero_widget.offset[1], hero_widget.offset[1] - self._x_offset, 0.25, math.easeOutCubic)
+			arg_17_0._ui_animations[var_17_4 .. ":" .. iter_17_1] = UIAnimation.init(UIAnimation.function_by_time, var_17_9.offset, 2, var_17_9.offset[2], var_17_7, 0.25, math.easeOutCubic)
+
+			if var_17_10.bot_order_selection and arg_17_2 then
+				arg_17_0._ui_animations[var_17_4 .. ":" .. iter_17_1 .. "_x"] = UIAnimation.init(UIAnimation.function_by_time, var_17_9.offset, 1, var_17_9.offset[1], var_17_9.offset[1] - arg_17_0._x_offset, 0.25, math.easeOutCubic)
 			end
 
-			hero_widget_index = hero_widget_index + 1
+			var_17_3 = var_17_3 + 1
 		end
 
-		local row_diff = row - new_hero_row
-		local icon_offset = row_diff * 144 + 7
-		local hero_icon_widget = hero_icon_widgets[row]
-		local hero_icon_widget_style = hero_icon_widget.style
+		local var_17_11 = (iter_17_0 - var_17_6) * 144 + 7
+		local var_17_12 = var_17_2[iter_17_0]
+		local var_17_13 = var_17_12.style
 
-		self._ui_animations["hero_icon_" .. index .. "_bg"] = UIAnimation.init(UIAnimation.function_by_time, hero_icon_widget_style.bg.offset, 2, hero_icon_widget_style.bg.offset[2], hero_icon_widget_style.bg.offset[2] * 0 + icon_offset, 0.25, math.easeOutCubic)
-		self._ui_animations["hero_icon_" .. index .. "_hourglass_icon"] = UIAnimation.init(UIAnimation.function_by_time, hero_icon_widget_style.hourglass_icon.offset, 2, hero_icon_widget_style.hourglass_icon.offset[2], hero_icon_widget_style.hourglass_icon.offset[2] * 0 + icon_offset, 0.25, math.easeOutCubic)
+		arg_17_0._ui_animations["hero_icon_" .. var_17_4 .. "_bg"] = UIAnimation.init(UIAnimation.function_by_time, var_17_13.bg.offset, 2, var_17_13.bg.offset[2], var_17_13.bg.offset[2] * 0 + var_17_11, 0.25, math.easeOutCubic)
+		arg_17_0._ui_animations["hero_icon_" .. var_17_4 .. "_hourglass_icon"] = UIAnimation.init(UIAnimation.function_by_time, var_17_13.hourglass_icon.offset, 2, var_17_13.hourglass_icon.offset[2], var_17_13.hourglass_icon.offset[2] * 0 + var_17_11, 0.25, math.easeOutCubic)
 
-		if hero_icon_widget.content.bot_order_selection and reset_x_offset then
-			self._ui_animations["hero_icon_" .. index .. "_bg_x"] = UIAnimation.init(UIAnimation.function_by_time, hero_icon_widget_style.bg.offset, 1, hero_icon_widget_style.bg.offset[1], hero_icon_widget_style.bg.offset[1] - self._x_offset, 0.25, math.easeOutCubic)
-			self._ui_animations["hero_icon_" .. index .. "_hourglass_icon_x"] = UIAnimation.init(UIAnimation.function_by_time, hero_icon_widget_style.hourglass_icon.offset, 1, hero_icon_widget_style.hourglass_icon.offset[1], hero_icon_widget_style.hourglass_icon.offset[1] - self._x_offset, 0.25, math.easeOutCubic)
+		if var_17_12.content.bot_order_selection and arg_17_2 then
+			arg_17_0._ui_animations["hero_icon_" .. var_17_4 .. "_bg_x"] = UIAnimation.init(UIAnimation.function_by_time, var_17_13.bg.offset, 1, var_17_13.bg.offset[1], var_17_13.bg.offset[1] - arg_17_0._x_offset, 0.25, math.easeOutCubic)
+			arg_17_0._ui_animations["hero_icon_" .. var_17_4 .. "_hourglass_icon_x"] = UIAnimation.init(UIAnimation.function_by_time, var_17_13.hourglass_icon.offset, 1, var_17_13.hourglass_icon.offset[1], var_17_13.hourglass_icon.offset[1] - arg_17_0._x_offset, 0.25, math.easeOutCubic)
 		end
 	end
 end
 
-CharacterSelectionStateCharacter._set_bot_selection = function (self, index)
-	self._current_selected_bot_index = PlayerData.bot_spawn_priority[index]
-	self._current_selected_row = index
-	self._x_offset = 50
-	self._base_y_offset = nil
-	self._base_icon_y_offset = nil
+function CharacterSelectionStateCharacter._set_bot_selection(arg_18_0, arg_18_1)
+	arg_18_0._current_selected_bot_index = PlayerData.bot_spawn_priority[arg_18_1]
+	arg_18_0._current_selected_row = arg_18_1
+	arg_18_0._x_offset = 50
+	arg_18_0._base_y_offset = nil
+	arg_18_0._base_icon_y_offset = nil
 
-	local input_service = self:input_service()
-	local cursor = input_service:get("cursor")
+	local var_18_0 = arg_18_0:input_service():get("cursor")
 
 	if IS_XB1 then
-		self._base_cursor_y_offset = cursor and 1080 - cursor[2]
+		arg_18_0._base_cursor_y_offset = var_18_0 and 1080 - var_18_0[2]
 	else
-		self._base_cursor_y_offset = cursor and cursor[2] * RESOLUTION_LOOKUP.inv_scale
+		arg_18_0._base_cursor_y_offset = var_18_0 and var_18_0[2] * RESOLUTION_LOOKUP.inv_scale
 	end
 
-	local hero_widget_index = 1
+	local var_18_1 = 1
 
-	for row = 1, #PlayerData.bot_spawn_priority do
-		local index = PlayerData.bot_spawn_priority[row]
-		local profile = SPProfiles[index]
-		local num_careers = #profile.careers
+	for iter_18_0 = 1, #PlayerData.bot_spawn_priority do
+		local var_18_2 = PlayerData.bot_spawn_priority[iter_18_0]
+		local var_18_3 = #SPProfiles[var_18_2].careers
 
-		for column = 1, num_careers do
-			if row == self._current_selected_row then
-				self._hero_widgets[hero_widget_index].offset[1] = self._hero_widgets[hero_widget_index].offset[1] + self._x_offset
-				self._hero_widgets[hero_widget_index].offset[3] = 100
-				self._hero_widgets[hero_widget_index].content.bot_order_selection = true
-				self._base_y_offset = self._hero_widgets[hero_widget_index].offset[2]
+		for iter_18_1 = 1, var_18_3 do
+			if iter_18_0 == arg_18_0._current_selected_row then
+				arg_18_0._hero_widgets[var_18_1].offset[1] = arg_18_0._hero_widgets[var_18_1].offset[1] + arg_18_0._x_offset
+				arg_18_0._hero_widgets[var_18_1].offset[3] = 100
+				arg_18_0._hero_widgets[var_18_1].content.bot_order_selection = true
+				arg_18_0._base_y_offset = arg_18_0._hero_widgets[var_18_1].offset[2]
 			end
 
-			hero_widget_index = hero_widget_index + 1
+			var_18_1 = var_18_1 + 1
 		end
 	end
 
-	for index, widget in ipairs(self._hero_icon_widgets) do
-		widget.content.bot_change_order_active = true
+	for iter_18_2, iter_18_3 in ipairs(arg_18_0._hero_icon_widgets) do
+		iter_18_3.content.bot_change_order_active = true
 
-		if index == self._current_selected_row then
-			widget.style.bg.offset[1] = widget.style.bg.offset[1] + self._x_offset
-			widget.style.hourglass_icon.offset[1] = widget.style.hourglass_icon.offset[1] + self._x_offset
-			widget.content.bot_order_selection = true
-			self._base_icon_y_offset = widget.style.hourglass_icon.offset[2]
+		if iter_18_2 == arg_18_0._current_selected_row then
+			iter_18_3.style.bg.offset[1] = iter_18_3.style.bg.offset[1] + arg_18_0._x_offset
+			iter_18_3.style.hourglass_icon.offset[1] = iter_18_3.style.hourglass_icon.offset[1] + arg_18_0._x_offset
+			iter_18_3.content.bot_order_selection = true
+			arg_18_0._base_icon_y_offset = iter_18_3.style.hourglass_icon.offset[2]
 		end
 	end
 
-	self:_play_sound("hud_bot_order_grab")
+	arg_18_0:_play_sound("hud_bot_order_grab")
 end
 
-CharacterSelectionStateCharacter._reset_bot_selection = function (self, select_hero)
-	self._current_selected_bot_index = nil
-	self._current_selected_row = nil
-	self._x_offset = nil
-	self._base_y_offset = nil
-	self._base_icon_y_offset = nil
-	self._base_cursor_y_offset = nil
-	PlayerData.bot_spawn_priority = self._bot_priority_copy
-	self._bot_priority_copy = table.clone(PlayerData.bot_spawn_priority)
+function CharacterSelectionStateCharacter._reset_bot_selection(arg_19_0, arg_19_1)
+	arg_19_0._current_selected_bot_index = nil
+	arg_19_0._current_selected_row = nil
+	arg_19_0._x_offset = nil
+	arg_19_0._base_y_offset = nil
+	arg_19_0._base_icon_y_offset = nil
+	arg_19_0._base_cursor_y_offset = nil
+	PlayerData.bot_spawn_priority = arg_19_0._bot_priority_copy
+	arg_19_0._bot_priority_copy = table.clone(PlayerData.bot_spawn_priority)
 
-	self.parent:set_input_blocked(false)
-	self:_setup_hero_selection_widgets()
+	arg_19_0.parent:set_input_blocked(false)
+	arg_19_0:_setup_hero_selection_widgets()
 
-	if select_hero then
-		local disable_hero_spawn = true
-		local ignore_sound = true
+	if arg_19_1 then
+		local var_19_0 = true
+		local var_19_1 = true
 
-		self:_select_hero(self._selected_profile_index, self._selected_career_index, ignore_sound, disable_hero_spawn)
+		arg_19_0:_select_hero(arg_19_0._selected_profile_index, arg_19_0._selected_career_index, var_19_1, var_19_0)
 	end
 
-	local hero_widgets = self._hero_widgets
-	local hero_widget_index = 1
+	local var_19_2 = arg_19_0._hero_widgets
+	local var_19_3 = 1
 
-	for row = 1, #PlayerData.bot_spawn_priority do
-		local index = PlayerData.bot_spawn_priority[row]
-		local profile = SPProfiles[index]
-		local num_careers = #profile.careers
+	for iter_19_0 = 1, #PlayerData.bot_spawn_priority do
+		local var_19_4 = PlayerData.bot_spawn_priority[iter_19_0]
+		local var_19_5 = #SPProfiles[var_19_4].careers
 
-		for column = 1, num_careers do
-			local widget = hero_widgets[hero_widget_index]
+		for iter_19_1 = 1, var_19_5 do
+			local var_19_6 = var_19_2[var_19_3]
 
-			widget.content.bot_selection = true
-			widget.content.bot_order_selection = false
-			hero_widget_index = hero_widget_index + 1
+			var_19_6.content.bot_selection = true
+			var_19_6.content.bot_order_selection = false
+			var_19_3 = var_19_3 + 1
 		end
 	end
 
-	for _, widget in pairs(self._hero_icon_widgets) do
-		widget.content.bot_selection_active = true
-		widget.content.bot_order_selection = false
+	for iter_19_2, iter_19_3 in pairs(arg_19_0._hero_icon_widgets) do
+		iter_19_3.content.bot_selection_active = true
+		iter_19_3.content.bot_order_selection = false
 	end
 end
 
-CharacterSelectionStateCharacter._handle_mouse_bot_selection = function (self, input_service)
-	local gamepad_active = Managers.input:is_device_active("gamepad")
-
-	if gamepad_active then
+function CharacterSelectionStateCharacter._handle_mouse_bot_selection(arg_20_0, arg_20_1)
+	if Managers.input:is_device_active("gamepad") then
 		return
 	end
 
-	if not self.parent:input_blocked() then
-		if self._current_selected_row then
-			if not self._base_cursor_y_offset then
-				local reset_x_offset = true
+	if not arg_20_0.parent:input_blocked() then
+		if arg_20_0._current_selected_row then
+			if not arg_20_0._base_cursor_y_offset then
+				local var_20_0 = true
 
-				self:_update_bot_order(self._current_selected_row, reset_x_offset)
-				self.parent:set_input_blocked(true)
+				arg_20_0:_update_bot_order(arg_20_0._current_selected_row, var_20_0)
+				arg_20_0.parent:set_input_blocked(true)
 
 				return
 			end
 
-			local cursor = input_service:get("cursor")
-			local y_offset
+			local var_20_1 = arg_20_1:get("cursor")
+			local var_20_2
 
 			if IS_XB1 then
-				y_offset = 1080 - cursor[2]
+				var_20_2 = 1080 - var_20_1[2]
 			else
-				y_offset = cursor[2] * RESOLUTION_LOOKUP.inv_scale
+				var_20_2 = var_20_1[2] * RESOLUTION_LOOKUP.inv_scale
 			end
 
-			local diff = y_offset - self._base_cursor_y_offset
-			local max_offset = -((#PlayerData.bot_spawn_priority - 1) * 144)
-			local offset_y = math.clamp(self._base_y_offset + diff, max_offset, 0)
-			local icon_clamp = self._base_y_offset + diff - offset_y
-			local hero_widgets = self._hero_widgets
-			local hero_widget_index = 1
+			local var_20_3 = var_20_2 - arg_20_0._base_cursor_y_offset
+			local var_20_4 = -((#PlayerData.bot_spawn_priority - 1) * 144)
+			local var_20_5 = math.clamp(arg_20_0._base_y_offset + var_20_3, var_20_4, 0)
+			local var_20_6 = arg_20_0._base_y_offset + var_20_3 - var_20_5
+			local var_20_7 = arg_20_0._hero_widgets
+			local var_20_8 = 1
 
-			for row = 1, #self._bot_priority_copy do
-				local index = self._bot_priority_copy[row]
-				local profile = SPProfiles[index]
-				local num_careers = #profile.careers
+			for iter_20_0 = 1, #arg_20_0._bot_priority_copy do
+				local var_20_9 = arg_20_0._bot_priority_copy[iter_20_0]
+				local var_20_10 = #SPProfiles[var_20_9].careers
 
-				for column = 1, num_careers do
-					local hero_widget = hero_widgets[hero_widget_index]
-					local hero_widget_content = hero_widget.content
-
-					if hero_widget_content.bot_order_selection then
-						hero_widgets[hero_widget_index].offset[2] = offset_y
+				for iter_20_1 = 1, var_20_10 do
+					if var_20_7[var_20_8].content.bot_order_selection then
+						var_20_7[var_20_8].offset[2] = var_20_5
 					end
 
-					hero_widget_index = hero_widget_index + 1
+					var_20_8 = var_20_8 + 1
 				end
 			end
 
-			for i, hero_icon_widget in ipairs(self._hero_icon_widgets) do
-				local content = hero_icon_widget.content
+			for iter_20_2, iter_20_3 in ipairs(arg_20_0._hero_icon_widgets) do
+				if iter_20_3.content.bot_order_selection then
+					local var_20_11 = iter_20_3.style
 
-				if content.bot_order_selection then
-					local style = hero_icon_widget.style
-
-					style.bg.offset[2] = self._base_icon_y_offset + (diff - icon_clamp)
-					style.hourglass_icon.offset[2] = self._base_icon_y_offset + (diff - icon_clamp)
+					var_20_11.bg.offset[2] = arg_20_0._base_icon_y_offset + (var_20_3 - var_20_6)
+					var_20_11.hourglass_icon.offset[2] = arg_20_0._base_icon_y_offset + (var_20_3 - var_20_6)
 				end
 			end
 		end
 
-		local reset_x_offset = true
+		local var_20_12 = true
 
-		for index, hero_icon_widget in ipairs(self._hero_icon_widgets) do
-			if UIUtils.is_button_hover_enter(hero_icon_widget, "bot_change_order_hotspot") then
-				if self._current_selected_row then
-					self:_update_bot_order(index, false)
+		for iter_20_4, iter_20_5 in ipairs(arg_20_0._hero_icon_widgets) do
+			if UIUtils.is_button_hover_enter(iter_20_5, "bot_change_order_hotspot") then
+				if arg_20_0._current_selected_row then
+					arg_20_0:_update_bot_order(iter_20_4, false)
 				end
-			elseif UIUtils.is_button_held(hero_icon_widget, "bot_change_order_hotspot") then
-				if not self._current_selected_row then
-					self:_set_bot_selection(index)
+			elseif UIUtils.is_button_held(iter_20_5, "bot_change_order_hotspot") then
+				if not arg_20_0._current_selected_row then
+					arg_20_0:_set_bot_selection(iter_20_4)
 				end
-			elseif UIUtils.is_left_button_released(hero_icon_widget, "bot_change_order_hotspot") and self._current_selected_row then
-				self:_update_bot_order(index, reset_x_offset)
-				self.parent:set_input_blocked(true)
-				self:_play_sound("hud_bot_order_release")
+			elseif UIUtils.is_left_button_released(iter_20_5, "bot_change_order_hotspot") and arg_20_0._current_selected_row then
+				arg_20_0:_update_bot_order(iter_20_4, var_20_12)
+				arg_20_0.parent:set_input_blocked(true)
+				arg_20_0:_play_sound("hud_bot_order_release")
 
 				break
 			end
 		end
 
-		local hero_attributes = Managers.backend:get_interface("hero_attributes")
-		local profiles = PlayerData.bot_spawn_priority
-		local hero_widgets = self._hero_widgets
-		local widget_index = 1
+		local var_20_13 = Managers.backend:get_interface("hero_attributes")
+		local var_20_14 = PlayerData.bot_spawn_priority
+		local var_20_15 = arg_20_0._hero_widgets
+		local var_20_16 = 1
 
-		for i = 1, self._num_max_hero_rows do
-			local num_max_columns = self._num_hero_columns[i]
+		for iter_20_6 = 1, arg_20_0._num_max_hero_rows do
+			local var_20_17 = arg_20_0._num_hero_columns[iter_20_6]
 
-			for j = 1, num_max_columns do
-				local widget = hero_widgets[widget_index]
-				local content = widget.content
-				local button_hotspot = content.button_hotspot
+			for iter_20_7 = 1, var_20_17 do
+				local var_20_18 = var_20_15[var_20_16].content
+				local var_20_19 = var_20_18.button_hotspot
 
-				if not content.locked and button_hotspot.on_right_click then
-					local profile_index = profiles[i]
-					local career_index = j
-					local hero_name = SPProfiles[profile_index].display_name
+				if not var_20_18.locked and var_20_19.on_right_click then
+					local var_20_20 = var_20_14[iter_20_6]
+					local var_20_21 = iter_20_7
+					local var_20_22 = SPProfiles[var_20_20].display_name
 
-					hero_attributes:set(hero_name, "bot_career", career_index)
-					self:_play_sound("play_gui_equipment_equip")
-					self:_update_equipped_bots()
+					var_20_13:set(var_20_22, "bot_career", var_20_21)
+					arg_20_0:_play_sound("play_gui_equipment_equip")
+					arg_20_0:_update_equipped_bots()
 
 					return
 				end
 
-				widget_index = widget_index + 1
+				var_20_16 = var_20_16 + 1
 			end
 		end
-	elseif table.size(self._ui_animations) == 0 then
-		self:_reset_bot_selection()
+	elseif table.size(arg_20_0._ui_animations) == 0 then
+		arg_20_0:_reset_bot_selection()
 	end
 end
 
-CharacterSelectionStateCharacter._select_hero = function (self, profile_index, career_index, ignore_sound, disable_hero_spawn)
-	if not ignore_sound then
-		self:_play_sound("play_gui_hero_select_career_click")
+function CharacterSelectionStateCharacter._select_hero(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+	if not arg_21_3 then
+		arg_21_0:_play_sound("play_gui_hero_select_career_click")
 	end
 
-	local profile_settings = SPProfiles[profile_index]
-	local career_settings = profile_settings.careers[career_index]
-	local hero_name = profile_settings.display_name
-	local character_name = profile_settings.character_name
-	local character_career_name = career_settings.display_name
+	local var_21_0 = SPProfiles[arg_21_1]
+	local var_21_1 = var_21_0.careers[arg_21_2]
+	local var_21_2 = var_21_0.display_name
+	local var_21_3 = var_21_0.character_name
+	local var_21_4 = var_21_1.display_name
 
-	GlobalShaderFlags.set_global_shader_flag("NECROMANCER_CAREER_REMAP", character_career_name == "bw_necromancer")
+	GlobalShaderFlags.set_global_shader_flag("NECROMANCER_CAREER_REMAP", var_21_4 == "bw_necromancer")
 
-	local hero_display_name = Localize(character_name)
-	local career_display_name = Localize(character_career_name)
-	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-	local hero_experience = hero_attributes:get(hero_name, "experience") or 0
-	local level = ExperienceSettings.get_level(hero_experience)
+	local var_21_5 = Localize(var_21_3)
+	local var_21_6 = Localize(var_21_4)
+	local var_21_7 = Managers.backend:get_interface("hero_attributes"):get(var_21_2, "experience") or 0
+	local var_21_8 = ExperienceSettings.get_level(var_21_7)
 
-	self:_set_hero_info(hero_display_name, career_display_name, level)
-	self:_populate_career_info(profile_index, career_index)
+	arg_21_0:_set_hero_info(var_21_5, var_21_6, var_21_8)
+	arg_21_0:_populate_career_info(arg_21_1, arg_21_2)
 
-	local hero_widgets = self._hero_widgets
-	local num_max_rows = self._num_max_hero_rows
+	local var_21_9 = arg_21_0._hero_widgets
+	local var_21_10 = arg_21_0._num_max_hero_rows
 
-	self._spawn_hero = true
+	arg_21_0._spawn_hero = true
 
-	if disable_hero_spawn then
-		self._spawn_hero = false
+	if arg_21_4 then
+		arg_21_0._spawn_hero = false
 	end
 
-	self._selected_career_index = career_index
-	self._selected_profile_index = profile_index
-	self._selected_hero_name = hero_name
-	self._selected_hero_row = table.find(PlayerData.bot_spawn_priority, profile_index)
-	self._selected_hero_column = career_index
+	arg_21_0._selected_career_index = arg_21_2
+	arg_21_0._selected_profile_index = arg_21_1
+	arg_21_0._selected_hero_name = var_21_2
+	arg_21_0._selected_hero_row = table.find(PlayerData.bot_spawn_priority, arg_21_1)
+	arg_21_0._selected_hero_column = arg_21_2
 
-	self:_set_hero_icon_selected(self._selected_hero_row)
+	arg_21_0:_set_hero_icon_selected(arg_21_0._selected_hero_row)
 
-	local widget_index = 1
+	local var_21_11 = 1
 
-	for i = 1, num_max_rows do
-		local num_max_columns = self._num_hero_columns[i]
+	for iter_21_0 = 1, var_21_10 do
+		local var_21_12 = arg_21_0._num_hero_columns[iter_21_0]
 
-		for j = 1, num_max_columns do
-			local is_selected = i == self._selected_hero_row and j == self._selected_hero_column
-			local widget = hero_widgets[widget_index]
-			local content = widget.content
+		for iter_21_1 = 1, var_21_12 do
+			local var_21_13 = iter_21_0 == arg_21_0._selected_hero_row and iter_21_1 == arg_21_0._selected_hero_column
+			local var_21_14 = var_21_9[var_21_11].content
 
-			content.button_hotspot.is_selected = is_selected
+			var_21_14.button_hotspot.is_selected = var_21_13
 
-			if is_selected then
-				local locked_info_text_content = self._widgets_by_name.locked_info_text.content
-				local message
+			if var_21_13 then
+				local var_21_15 = arg_21_0._widgets_by_name.locked_info_text.content
+				local var_21_16
 
-				if content.locked_reason or content.locked then
-					message = content.locked_reason
+				if var_21_14.locked_reason or var_21_14.locked then
+					var_21_16 = var_21_14.locked_reason
 				end
 
-				locked_info_text_content.locked = content.locked_reason or content.locked
-				locked_info_text_content.text = message
-				locked_info_text_content.visible = message ~= nil
+				var_21_15.locked = var_21_14.locked_reason or var_21_14.locked
+				var_21_15.text = var_21_16
+				var_21_15.visible = var_21_16 ~= nil
 			end
 
-			widget_index = widget_index + 1
+			var_21_11 = var_21_11 + 1
 		end
 	end
 end
 
-CharacterSelectionStateCharacter._get_skin_item_data = function (self, index, career_index)
-	local profile_settings = SPProfiles[index]
-	local skin_name = profile_settings.careers[career_index].base_skin
+function CharacterSelectionStateCharacter._get_skin_item_data(arg_22_0, arg_22_1, arg_22_2)
+	local var_22_0 = SPProfiles[arg_22_1].careers[arg_22_2].base_skin
 
-	return Cosmetics[skin_name]
+	return Cosmetics[var_22_0]
 end
 
-CharacterSelectionStateCharacter._wanted_state = function (self)
-	local new_state = self.parent:wanted_state()
-
-	return new_state
+function CharacterSelectionStateCharacter._wanted_state(arg_23_0)
+	return (arg_23_0.parent:wanted_state())
 end
 
-CharacterSelectionStateCharacter.on_exit = function (self, params)
-	if self.menu_input_description then
-		self.menu_input_description:destroy()
+function CharacterSelectionStateCharacter.on_exit(arg_24_0, arg_24_1)
+	if arg_24_0.menu_input_description then
+		arg_24_0.menu_input_description:destroy()
 
-		self.menu_input_description = nil
+		arg_24_0.menu_input_description = nil
 	end
 
-	self:_destroy_video_player()
-	self:_respawn_player()
+	arg_24_0:_destroy_video_player()
+	arg_24_0:_respawn_player()
 
-	self.ui_animator = nil
+	arg_24_0.ui_animator = nil
 
-	self.parent:set_input_blocked(false)
+	arg_24_0.parent:set_input_blocked(false)
 
-	local player = Managers.player:local_player()
+	local var_24_0 = Managers.player:local_player()
 
-	if player then
-		local player_unit = player.player_unit
-		local career_extension = ALIVE[player_unit] and ScriptUnit.has_extension(player_unit, "career_system")
-		local profile_index = self._requested_profile_index or career_extension and career_extension:profile_index()
-		local career_index = self._requested_career_index or career_extension and career_extension:career_index()
-		local profile = profile_index and SPProfiles[profile_index]
-		local profile_name = profile and profile.display_name
+	if var_24_0 then
+		local var_24_1 = var_24_0.player_unit
+		local var_24_2 = ALIVE[var_24_1] and ScriptUnit.has_extension(var_24_1, "career_system")
+		local var_24_3 = arg_24_0._requested_profile_index or var_24_2 and var_24_2:profile_index()
+		local var_24_4 = arg_24_0._requested_career_index or var_24_2 and var_24_2:career_index()
+		local var_24_5 = var_24_3 and SPProfiles[var_24_3]
+		local var_24_6 = var_24_5 and var_24_5.display_name
 
-		if not DEDICATED_SERVER and profile_name == "bright_wizard" then
-			local careers = profile.careers
-			local career = careers[career_index]
-			local career_name = career.display_name
+		if not DEDICATED_SERVER and var_24_6 == "bright_wizard" then
+			local var_24_7 = var_24_5.careers[var_24_4].display_name
 
-			GlobalShaderFlags.set_global_shader_flag("NECROMANCER_CAREER_REMAP", career_name == "bw_necromancer")
+			GlobalShaderFlags.set_global_shader_flag("NECROMANCER_CAREER_REMAP", var_24_7 == "bw_necromancer")
 		end
 	end
 
 	print("[HeroViewState] Exit Substate CharacterSelectionStateCharacter")
 end
 
-CharacterSelectionStateCharacter._respawn_player = function (self)
-	if self._respawn_player_unit then
-		if self.is_server then
-			Managers.state.network.network_server:peer_respawn_player(self.peer_id)
+function CharacterSelectionStateCharacter._respawn_player(arg_25_0)
+	if arg_25_0._respawn_player_unit then
+		if arg_25_0.is_server then
+			Managers.state.network.network_server:peer_respawn_player(arg_25_0.peer_id)
 		else
 			Managers.state.network.network_transmit:send_rpc_server("rpc_client_respawn_player")
 		end
 
-		self._respawn_player_unit = nil
+		arg_25_0._respawn_player_unit = nil
 	end
 end
 
-CharacterSelectionStateCharacter._update_transition_timer = function (self, dt)
-	if not self._transition_timer then
+function CharacterSelectionStateCharacter._update_transition_timer(arg_26_0, arg_26_1)
+	if not arg_26_0._transition_timer then
 		return
 	end
 
-	if self._transition_timer == 0 then
-		self._transition_timer = nil
+	if arg_26_0._transition_timer == 0 then
+		arg_26_0._transition_timer = nil
 	else
-		self._transition_timer = math.max(self._transition_timer - dt, 0)
+		arg_26_0._transition_timer = math.max(arg_26_0._transition_timer - arg_26_1, 0)
 	end
 end
 
-CharacterSelectionStateCharacter.update = function (self, dt, t)
-	if DO_RELOAD then
-		DO_RELOAD = false
+function CharacterSelectionStateCharacter.update(arg_27_0, arg_27_1, arg_27_2)
+	if var_0_11 then
+		var_0_11 = false
 
-		self:create_ui_elements()
+		arg_27_0:create_ui_elements()
 	end
 
-	for name, animation in pairs(self._ui_animations) do
-		UIAnimation.update(animation, dt)
+	for iter_27_0, iter_27_1 in pairs(arg_27_0._ui_animations) do
+		UIAnimation.update(iter_27_1, arg_27_1)
 
-		if UIAnimation.completed(animation) then
-			self._ui_animations[name] = nil
+		if UIAnimation.completed(iter_27_1) then
+			arg_27_0._ui_animations[iter_27_0] = nil
 		end
 	end
 
-	self:_update_available_profiles()
-	self:_update_profile_request()
-	self:_update_video_player_settings()
+	arg_27_0:_update_available_profiles()
+	arg_27_0:_update_profile_request()
+	arg_27_0:_update_video_player_settings()
 
-	if not self._prepare_exit then
-		self:_handle_input(dt, t)
+	if not arg_27_0._prepare_exit then
+		arg_27_0:_handle_input(arg_27_1, arg_27_2)
 	end
 
-	self:draw(dt, t)
+	arg_27_0:draw(arg_27_1, arg_27_2)
 
-	return self:_handle_transitions()
+	return arg_27_0:_handle_transitions()
 end
 
-CharacterSelectionStateCharacter._handle_transitions = function (self)
-	local wanted_state = self:_wanted_state()
+function CharacterSelectionStateCharacter._handle_transitions(arg_28_0)
+	local var_28_0 = arg_28_0:_wanted_state()
 
-	if not self._transition_timer and not self:pending_profile_request() and (wanted_state or self._new_state) then
-		if self.world_previewer:has_units_spawned() then
-			self._prepare_exit = true
-		elseif not self._prepare_exit then
-			return wanted_state or self._new_state
+	if not arg_28_0._transition_timer and not arg_28_0:pending_profile_request() and (var_28_0 or arg_28_0._new_state) then
+		if arg_28_0.world_previewer:has_units_spawned() then
+			arg_28_0._prepare_exit = true
+		elseif not arg_28_0._prepare_exit then
+			return var_28_0 or arg_28_0._new_state
 		end
 	end
 end
 
-CharacterSelectionStateCharacter.post_update = function (self, dt, t)
-	self.ui_animator:update(dt)
-	self:_update_animations(dt)
+function CharacterSelectionStateCharacter.post_update(arg_29_0, arg_29_1, arg_29_2)
+	arg_29_0.ui_animator:update(arg_29_1)
+	arg_29_0:_update_animations(arg_29_1)
 
-	local transitioning = self.parent:transitioning()
+	if not arg_29_0.parent:transitioning() and not arg_29_0._transition_timer then
+		if arg_29_0._prepare_exit then
+			arg_29_0._prepare_exit = false
 
-	if not transitioning and not self._transition_timer then
-		if self._prepare_exit then
-			self._prepare_exit = false
+			arg_29_0.world_previewer:prepare_exit()
+		elseif arg_29_0._spawn_hero then
+			arg_29_0._spawn_hero = nil
 
-			self.world_previewer:prepare_exit()
-		elseif self._spawn_hero then
-			self._spawn_hero = nil
+			local var_29_0 = arg_29_0._selected_hero_name or arg_29_0._hero_name
 
-			local hero_name = self._selected_hero_name or self._hero_name
-
-			self:_spawn_hero_unit(hero_name)
+			arg_29_0:_spawn_hero_unit(var_29_0)
 		end
 	end
 
-	local profile_synchronizer = Managers.state.network.profile_synchronizer
-	local peer_id = self.local_player:network_id()
-	local local_player_id = self.local_player:local_player_id()
+	local var_29_1 = Managers.state.network.profile_synchronizer
+	local var_29_2 = arg_29_0.local_player:network_id()
+	local var_29_3 = arg_29_0.local_player:local_player_id()
 
-	if self._despawning_player_unit_career_change and not Unit.alive(self._despawning_player_unit_career_change) and profile_synchronizer:all_ingame_synced_for_peer(peer_id, local_player_id) then
-		local position = self._respawn_position:unbox()
-		local rotation = self._respawn_rotation:unbox()
+	if arg_29_0._despawning_player_unit_career_change and not Unit.alive(arg_29_0._despawning_player_unit_career_change) and var_29_1:all_ingame_synced_for_peer(var_29_2, var_29_3) then
+		local var_29_4 = arg_29_0._respawn_position:unbox()
+		local var_29_5 = arg_29_0._respawn_rotation:unbox()
 
-		self.local_player:spawn(position, rotation)
+		arg_29_0.local_player:spawn(var_29_4, var_29_5)
 
-		self._despawning_player_unit_career_change = nil
-		self._resyncing_loadout = nil
+		arg_29_0._despawning_player_unit_career_change = nil
+		arg_29_0._resyncing_loadout = nil
 
-		self.parent:close_menu()
+		arg_29_0.parent:close_menu()
 	end
 end
 
-CharacterSelectionStateCharacter.draw = function (self, dt, t)
-	local ui_top_renderer = self.ui_top_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local input_manager = self.input_manager
-	local parent = self.parent
-	local input_service = self:input_service()
-	local render_settings = self.render_settings
-	local gamepad_active = Managers.input:is_device_active("gamepad")
+function CharacterSelectionStateCharacter.draw(arg_30_0, arg_30_1, arg_30_2)
+	local var_30_0 = arg_30_0.ui_top_renderer
+	local var_30_1 = arg_30_0._ui_scenegraph
+	local var_30_2 = arg_30_0.input_manager
+	local var_30_3 = arg_30_0.parent
+	local var_30_4 = arg_30_0:input_service()
+	local var_30_5 = arg_30_0.render_settings
+	local var_30_6 = Managers.input:is_device_active("gamepad")
 
-	self._widgets_by_name.bottom_panel.content.visible = gamepad_active
+	arg_30_0._widgets_by_name.bottom_panel.content.visible = var_30_6
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+	UIRenderer.begin_pass(var_30_0, var_30_1, var_30_4, arg_30_1, nil, var_30_5)
 
-	render_settings.alpha_multiplier = render_settings.main_alpha_multiplier
+	var_30_5.alpha_multiplier = var_30_5.main_alpha_multiplier
 
-	for _, widget in ipairs(self._widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, widget)
+	for iter_30_0, iter_30_1 in ipairs(arg_30_0._widgets) do
+		UIRenderer.draw_widget(var_30_0, iter_30_1)
 	end
 
-	for _, widget in ipairs(self._hero_widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, widget)
+	for iter_30_2, iter_30_3 in ipairs(arg_30_0._hero_widgets) do
+		UIRenderer.draw_widget(var_30_0, iter_30_3)
 	end
 
-	for _, widget in ipairs(self._hero_icon_widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, widget)
+	for iter_30_4, iter_30_5 in ipairs(arg_30_0._hero_icon_widgets) do
+		UIRenderer.draw_widget(var_30_0, iter_30_5)
 	end
 
-	for _, widget in ipairs(self._additional_widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, widget)
+	for iter_30_6, iter_30_7 in ipairs(arg_30_0._additional_widgets) do
+		UIRenderer.draw_widget(var_30_0, iter_30_7)
 	end
 
-	if not self._draw_video_next_frame then
-		if self._video_widget and not self._prepare_exit then
-			if not self._video_created then
-				UIRenderer.draw_widget(ui_top_renderer, self._video_widget)
+	if not arg_30_0._draw_video_next_frame then
+		if arg_30_0._video_widget and not arg_30_0._prepare_exit then
+			if not arg_30_0._video_created then
+				UIRenderer.draw_widget(var_30_0, arg_30_0._video_widget)
 			else
-				self._video_created = nil
+				arg_30_0._video_created = nil
 			end
 		end
-	elseif self._draw_video_next_frame then
-		self._draw_video_next_frame = nil
+	elseif arg_30_0._draw_video_next_frame then
+		arg_30_0._draw_video_next_frame = nil
 	end
 
-	render_settings.alpha_multiplier = render_settings.info_alpha_multiplier
+	var_30_5.alpha_multiplier = var_30_5.info_alpha_multiplier
 
-	for _, widget in ipairs(self._info_widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, widget)
+	for iter_30_8, iter_30_9 in ipairs(arg_30_0._info_widgets) do
+		UIRenderer.draw_widget(var_30_0, iter_30_9)
 	end
 
-	render_settings.alpha_multiplier = render_settings.bot_selection_alpha_multiplier
+	var_30_5.alpha_multiplier = var_30_5.bot_selection_alpha_multiplier
 
-	for _, widget in ipairs(self._bot_selection_widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, widget)
+	for iter_30_10, iter_30_11 in ipairs(arg_30_0._bot_selection_widgets) do
+		UIRenderer.draw_widget(var_30_0, iter_30_11)
 	end
 
-	UIRenderer.end_pass(ui_top_renderer)
+	UIRenderer.end_pass(var_30_0)
 
-	if gamepad_active then
-		self.menu_input_description:draw(ui_top_renderer, dt)
+	if var_30_6 then
+		arg_30_0.menu_input_description:draw(var_30_0, arg_30_1)
 	end
 
-	if self._scrollbar then
-		render_settings.alpha_multiplier = render_settings.main_alpha_multiplier
+	if arg_30_0._scrollbar then
+		var_30_5.alpha_multiplier = var_30_5.main_alpha_multiplier
 
-		self._scrollbar:update(dt, t, ui_top_renderer, input_service, render_settings)
+		arg_30_0._scrollbar:update(arg_30_1, arg_30_2, var_30_0, var_30_4, var_30_5)
 	end
 end
 
-CharacterSelectionStateCharacter._update_animations = function (self, dt)
-	local select_button = self._widgets_by_name.select_button
+function CharacterSelectionStateCharacter._update_animations(arg_31_0, arg_31_1)
+	local var_31_0 = arg_31_0._widgets_by_name.select_button
 
-	UIWidgetUtils.animate_default_button(select_button, dt)
+	UIWidgetUtils.animate_default_button(var_31_0, arg_31_1)
 
-	local bot_priority_button = self._widgets_by_name.bot_priority_button
-	local back_button = self._widgets_by_name.back_button
+	local var_31_1 = arg_31_0._widgets_by_name.bot_priority_button
+	local var_31_2 = arg_31_0._widgets_by_name.back_button
 
-	UIWidgetUtils.animate_default_button(bot_priority_button, dt)
-	UIWidgetUtils.animate_default_button(back_button, dt)
+	UIWidgetUtils.animate_default_button(var_31_1, arg_31_1)
+	UIWidgetUtils.animate_default_button(var_31_2, arg_31_1)
 
-	if self.pick_time then
-		self.pick_time = math.clamp(self.pick_time - dt, 0, 100)
-		select_button.content.title_text = string.format(Localize("confirm_menu_button_name") .. " %.1f", self.pick_time)
-		select_button.element.dirty = true
+	if arg_31_0.pick_time then
+		arg_31_0.pick_time = math.clamp(arg_31_0.pick_time - arg_31_1, 0, 100)
+		var_31_0.content.title_text = string.format(Localize("confirm_menu_button_name") .. " %.1f", arg_31_0.pick_time)
+		var_31_0.element.dirty = true
 	end
 
-	if self:_is_button_hover_enter(select_button) then
-		self:_play_sound("play_gui_start_menu_button_hover")
+	if arg_31_0:_is_button_hover_enter(var_31_0) then
+		arg_31_0:_play_sound("play_gui_start_menu_button_hover")
 	end
 
-	if self:_is_button_hover_enter(bot_priority_button) then
-		self:_play_sound("play_gui_start_menu_button_hover")
+	if arg_31_0:_is_button_hover_enter(var_31_1) then
+		arg_31_0:_play_sound("play_gui_start_menu_button_hover")
 	end
 
-	local animations = self._animations
-	local ui_animator = self.ui_animator
+	local var_31_3 = arg_31_0._animations
+	local var_31_4 = arg_31_0.ui_animator
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_31_0, iter_31_1 in pairs(var_31_3) do
+		if var_31_4:is_animation_completed(iter_31_1) then
+			var_31_4:stop_animation(iter_31_1)
 
-			animations[animation_name] = nil
+			var_31_3[iter_31_0] = nil
 		end
 	end
 end
 
-CharacterSelectionStateCharacter._spawn_hero_unit = function (self, hero_name)
-	local world_previewer = self.world_previewer
-	local career_index = self._selected_career_index
-	local callback = callback(self, "cb_hero_unit_spawned", hero_name)
+function CharacterSelectionStateCharacter._spawn_hero_unit(arg_32_0, arg_32_1)
+	local var_32_0 = arg_32_0.world_previewer
+	local var_32_1 = arg_32_0._selected_career_index
+	local var_32_2 = callback(arg_32_0, "cb_hero_unit_spawned", arg_32_1)
 
-	world_previewer:request_spawn_hero_unit(hero_name, career_index, not self.use_user_skins, callback, nil, 0.5)
+	var_32_0:request_spawn_hero_unit(arg_32_1, var_32_1, not arg_32_0.use_user_skins, var_32_2, nil, 0.5)
 end
 
-CharacterSelectionStateCharacter.cb_hero_unit_spawned = function (self, hero_name)
-	local world_previewer = self.world_previewer
-	local career_index = self._selected_career_index
-	local profile_index = FindProfileIndex(hero_name)
-	local profile = SPProfiles[profile_index]
-	local careers = profile.careers
-	local career_settings = careers[career_index]
-	local preview_animation = career_settings.preview_animation
-	local preview_wield_slot = career_settings.preview_wield_slot
-	local preview_items = table.clone(career_settings.preview_items)
-	local career_name = career_settings.name
+function CharacterSelectionStateCharacter.cb_hero_unit_spawned(arg_33_0, arg_33_1)
+	local var_33_0 = arg_33_0.world_previewer
+	local var_33_1 = arg_33_0._selected_career_index
+	local var_33_2 = FindProfileIndex(arg_33_1)
+	local var_33_3 = SPProfiles[var_33_2].careers[var_33_1]
+	local var_33_4 = var_33_3.preview_animation
+	local var_33_5 = var_33_3.preview_wield_slot
+	local var_33_6 = table.clone(var_33_3.preview_items)
+	local var_33_7 = var_33_3.name
 
-	if self.use_loadout_items then
-		table.clear(preview_items)
+	if arg_33_0.use_loadout_items then
+		table.clear(var_33_6)
 
-		preview_wield_slot = preview_wield_slot or "melee"
+		var_33_5 = var_33_5 or "melee"
 
-		local slot_names = InventorySettings.slot_names_by_type[preview_wield_slot]
-		local slot_name = slot_names[1]
-		local weapon_item = BackendUtils.get_loadout_item(career_name, slot_name)
-		local weapon_item_name = weapon_item.key
-		local hat_item = BackendUtils.get_loadout_item(career_name, "slot_hat")
-		local hat_item_name = hat_item.key
+		local var_33_8 = InventorySettings.slot_names_by_type[var_33_5][1]
+		local var_33_9 = BackendUtils.get_loadout_item(var_33_7, var_33_8).key
+		local var_33_10 = BackendUtils.get_loadout_item(var_33_7, "slot_hat").key
 
-		preview_items[#preview_items + 1] = {
-			item_name = weapon_item_name,
+		var_33_6[#var_33_6 + 1] = {
+			item_name = var_33_9
 		}
-		preview_items[#preview_items + 1] = {
-			item_name = hat_item_name,
+		var_33_6[#var_33_6 + 1] = {
+			item_name = var_33_10
 		}
 	end
 
-	if preview_items then
-		for _, item_data in ipairs(preview_items) do
-			local item_name = item_data.item_name
-			local item_template = ItemMasterList[item_name]
-			local slot_type = item_template.slot_type
-			local slot_names = InventorySettings.slot_names_by_type[slot_type]
-			local slot_name = slot_names[1]
-			local slot = InventorySettings.slots_by_name[slot_name]
+	if var_33_6 then
+		for iter_33_0, iter_33_1 in ipairs(var_33_6) do
+			local var_33_11 = iter_33_1.item_name
+			local var_33_12 = ItemMasterList[var_33_11].slot_type
+			local var_33_13 = InventorySettings.slot_names_by_type[var_33_12][1]
+			local var_33_14 = InventorySettings.slots_by_name[var_33_13]
 
-			world_previewer:equip_item(item_name, slot)
+			var_33_0:equip_item(var_33_11, var_33_14)
 		end
 
-		if preview_wield_slot then
-			world_previewer:wield_weapon_slot(preview_wield_slot)
+		if var_33_5 then
+			var_33_0:wield_weapon_slot(var_33_5)
 		end
 	end
 
-	local preview_props = career_settings.preview_props
+	local var_33_15 = var_33_3.preview_props
 
-	if preview_props then
-		world_previewer:spawn_all_props(preview_props)
+	if var_33_15 then
+		var_33_0:spawn_all_props(var_33_15)
 	end
 
-	if self.use_user_skins then
-		local item = BackendUtils.get_loadout_item(career_name, "slot_hat")
+	if arg_33_0.use_user_skins then
+		local var_33_16 = BackendUtils.get_loadout_item(var_33_7, "slot_hat")
 
-		if item then
-			local item_data = item.data
-			local item_name = item_data.name
-			local backend_id = item.backend_id
-			local slot = InventorySettings.slots_by_name.slot_hat
+		if var_33_16 then
+			local var_33_17 = var_33_16.data.name
+			local var_33_18 = var_33_16.backend_id
+			local var_33_19 = InventorySettings.slots_by_name.slot_hat
 
-			world_previewer:equip_item(item_name, slot, backend_id)
-		elseif career_settings.required_dlc and Managers.unlock:is_dlc_unlocked(career_settings.required_dlc) then
-			Crashify.print_exception("[Cosmetic] Failed to equip item in slot \"slot_hat\" for career %q in character selection state character", career_name)
+			var_33_0:equip_item(var_33_17, var_33_19, var_33_18)
+		elseif var_33_3.required_dlc and Managers.unlock:is_dlc_unlocked(var_33_3.required_dlc) then
+			Crashify.print_exception("[Cosmetic] Failed to equip item in slot \"slot_hat\" for career %q in character selection state character", var_33_7)
 		end
 
-		local skin_item = BackendUtils.get_loadout_item(career_name, "slot_skin")
-		local skin_item_data = skin_item and skin_item.data
+		local var_33_20 = BackendUtils.get_loadout_item(var_33_7, "slot_skin")
+		local var_33_21 = var_33_20 and var_33_20.data
 
-		preview_animation = skin_item_data and skin_item_data.career_select_preview_animation or preview_animation
+		var_33_4 = var_33_21 and var_33_21.career_select_preview_animation or var_33_4
 	end
 
-	if preview_animation and not self.use_loadout_items then
-		self.world_previewer:play_character_animation(preview_animation)
+	if var_33_4 and not arg_33_0.use_loadout_items then
+		arg_33_0.world_previewer:play_character_animation(var_33_4)
 	end
 end
 
-CharacterSelectionStateCharacter._is_button_pressed = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
+function CharacterSelectionStateCharacter._is_button_pressed(arg_34_0, arg_34_1)
+	local var_34_0 = arg_34_1.content.button_hotspot
 
-	if hotspot.on_release then
-		hotspot.on_release = false
+	if var_34_0.on_release then
+		var_34_0.on_release = false
 
 		return true
 	end
 end
 
-CharacterSelectionStateCharacter._is_button_hover_enter = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	return hotspot.on_hover_enter
+function CharacterSelectionStateCharacter._is_button_hover_enter(arg_35_0, arg_35_1)
+	return arg_35_1.content.button_hotspot.on_hover_enter
 end
 
-CharacterSelectionStateCharacter._is_button_hover_exit = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	return hotspot.on_hover_exit
+function CharacterSelectionStateCharacter._is_button_hover_exit(arg_36_0, arg_36_1)
+	return arg_36_1.content.button_hotspot.on_hover_exit
 end
 
-CharacterSelectionStateCharacter._populate_career_info = function (self, profile_index, career_index)
-	local ui_scenegraph = self._ui_scenegraph
-	local ui_top_renderer = self.ui_top_renderer
-	local widgets_by_name = self._widgets_by_name
-	local profile = SPProfiles[profile_index]
-	local hero_name = profile.display_name
-	local career_settings = profile.careers[career_index]
-	local career_name = career_settings.name
-	local passive_ability_data = CareerUtils.get_passive_ability_by_career(career_settings)
-	local activated_ability_data = CareerUtils.get_ability_data(profile_index, career_index, 1)
-	local passive_display_name = passive_ability_data.display_name
-	local passive_icon = passive_ability_data.icon
-	local activated_display_name = activated_ability_data.display_name
-	local activated_icon = activated_ability_data.icon
+function CharacterSelectionStateCharacter._populate_career_info(arg_37_0, arg_37_1, arg_37_2)
+	local var_37_0 = arg_37_0._ui_scenegraph
+	local var_37_1 = arg_37_0.ui_top_renderer
+	local var_37_2 = arg_37_0._widgets_by_name
+	local var_37_3 = SPProfiles[arg_37_1]
+	local var_37_4 = var_37_3.display_name
+	local var_37_5 = var_37_3.careers[arg_37_2]
+	local var_37_6 = var_37_5.name
+	local var_37_7 = CareerUtils.get_passive_ability_by_career(var_37_5)
+	local var_37_8 = CareerUtils.get_ability_data(arg_37_1, arg_37_2, 1)
+	local var_37_9 = var_37_7.display_name
+	local var_37_10 = var_37_7.icon
+	local var_37_11 = var_37_8.display_name
+	local var_37_12 = var_37_8.icon
 
-	widgets_by_name.passive_title_text.content.text = Localize(passive_display_name)
-	widgets_by_name.passive_description_text.content.text = UIUtils.get_ability_description(passive_ability_data)
-	widgets_by_name.passive_icon.content.texture_id = passive_icon
-	widgets_by_name.active_title_text.content.text = Localize(activated_display_name)
-	widgets_by_name.active_description_text.content.text = UIUtils.get_ability_description(activated_ability_data)
-	widgets_by_name.active_icon.content.texture_id = activated_icon
+	var_37_2.passive_title_text.content.text = Localize(var_37_9)
+	var_37_2.passive_description_text.content.text = UIUtils.get_ability_description(var_37_7)
+	var_37_2.passive_icon.content.texture_id = var_37_10
+	var_37_2.active_title_text.content.text = Localize(var_37_11)
+	var_37_2.active_description_text.content.text = UIUtils.get_ability_description(var_37_8)
+	var_37_2.active_icon.content.texture_id = var_37_12
 
-	local passive_perks = passive_ability_data.perks
-	local total_perks_height = 0
-	local perks_height_spacing = 0
+	local var_37_13 = var_37_7.perks
+	local var_37_14 = 0
+	local var_37_15 = 0
 
-	for i = 1, 3 do
-		local widget = widgets_by_name["career_perk_" .. i]
-		local content = widget.content
-		local style = widget.style
-		local scenegraph_id = widget.scenegraph_id
-		local scenegraph = ui_scenegraph[scenegraph_id]
-		local size = scenegraph.size
-		local offset = widget.offset
+	for iter_37_0 = 1, 3 do
+		local var_37_16 = var_37_2["career_perk_" .. iter_37_0]
+		local var_37_17 = var_37_16.content
+		local var_37_18 = var_37_16.style
+		local var_37_19 = var_37_0[var_37_16.scenegraph_id].size
 
-		offset[2] = -total_perks_height
+		var_37_16.offset[2] = -var_37_14
 
-		local data = passive_perks[i]
+		local var_37_20 = var_37_13[iter_37_0]
 
-		if data then
-			local display_name = Localize(data.display_name)
-			local description = UIUtils.get_perk_description(data)
-			local title_text_style = style.title_text
-			local description_text_style = style.description_text
-			local description_text_shadow_style = style.description_text_shadow
+		if var_37_20 then
+			local var_37_21 = Localize(var_37_20.display_name)
+			local var_37_22 = UIUtils.get_perk_description(var_37_20)
+			local var_37_23 = var_37_18.title_text
+			local var_37_24 = var_37_18.description_text
+			local var_37_25 = var_37_18.description_text_shadow
 
-			content.title_text = display_name
-			content.description_text = description
+			var_37_17.title_text = var_37_21
+			var_37_17.description_text = var_37_22
 
-			local title_height = UIUtils.get_text_height(ui_top_renderer, size, title_text_style, display_name)
-			local description_height = UIUtils.get_text_height(ui_top_renderer, size, description_text_style, description)
+			local var_37_26 = UIUtils.get_text_height(var_37_1, var_37_19, var_37_23, var_37_21)
+			local var_37_27 = UIUtils.get_text_height(var_37_1, var_37_19, var_37_24, var_37_22)
 
-			description_text_style.offset[2] = -description_height
-			description_text_shadow_style.offset[2] = -(description_height + 2)
-			total_perks_height = total_perks_height + title_height + description_height + perks_height_spacing
+			var_37_24.offset[2] = -var_37_27
+			var_37_25.offset[2] = -(var_37_27 + 2)
+			var_37_14 = var_37_14 + var_37_26 + var_37_27 + var_37_15
 		end
 
-		content.visible = data ~= nil
+		var_37_17.visible = var_37_20 ~= nil
 	end
 
-	local base_excess = math.max(total_perks_height - PERK_TEXT_AREA, 0)
+	local var_37_28 = math.max(var_37_14 - var_0_12, 0)
 
-	self:_setup_additional_career_info(career_settings, base_excess)
+	arg_37_0:_setup_additional_career_info(var_37_5, var_37_28)
 
-	local video = career_settings.video
-	local material_name = video.material_name
-	local resource = video.resource
+	local var_37_29 = var_37_5.video
+	local var_37_30 = var_37_29.material_name
+	local var_37_31 = var_37_29.resource
 
-	self._current_video_settings = {
-		video = video,
-		material_name = material_name,
-		resource = resource,
+	arg_37_0._current_video_settings = {
+		video = var_37_29,
+		material_name = var_37_30,
+		resource = var_37_31
 	}
 
-	self:_destroy_video_player()
+	arg_37_0:_destroy_video_player()
 end
 
-CharacterSelectionStateCharacter._setup_additional_career_info = function (self, career_settings, optional_base_excess)
-	local base_excess = optional_base_excess or 0
+function CharacterSelectionStateCharacter._setup_additional_career_info(arg_38_0, arg_38_1, arg_38_2)
+	local var_38_0 = arg_38_2 or 0
 
-	if career_settings.additional_ui_info_file then
-		local additional_info_definitions = local_require(career_settings.additional_ui_info_file)
-		local scroll_area_scenegraph_id = "scrollbar_window"
-		local scroll_area_anchor_scenegraph_id = "scrollbar_anchor"
-		local height = self._ui_scenegraph[scroll_area_scenegraph_id].size[2]
-		local base_offset = {
+	if arg_38_1.additional_ui_info_file then
+		local var_38_1 = local_require(arg_38_1.additional_ui_info_file)
+		local var_38_2 = "scrollbar_window"
+		local var_38_3 = "scrollbar_anchor"
+		local var_38_4 = arg_38_0._ui_scenegraph[var_38_2].size[2]
+		local var_38_5 = {
 			0,
-			-height,
-			0,
+			-var_38_4,
+			0
 		}
-		local scroll_height
+		local var_38_6
+		local var_38_7
 
-		self._additional_widgets, self._additional_widgets_by_name, scroll_height = additional_info_definitions.setup(scroll_area_scenegraph_id, base_offset)
+		arg_38_0._additional_widgets, arg_38_0._additional_widgets_by_name, var_38_7 = var_38_1.setup(var_38_2, var_38_5)
 
-		local optional_scroll_area_hotspot
-		local enable_auto_scroll = true
+		local var_38_8
+		local var_38_9 = true
 
-		self._scrollbar = ScrollbarUI:new(self._ui_scenegraph, scroll_area_scenegraph_id, scroll_area_anchor_scenegraph_id, scroll_height + base_excess, enable_auto_scroll, optional_scroll_area_hotspot)
+		arg_38_0._scrollbar = ScrollbarUI:new(arg_38_0._ui_scenegraph, var_38_2, var_38_3, var_38_7 + var_38_0, var_38_9, var_38_8)
 	else
-		table.clear(self._additional_widgets)
-		table.clear(self._additional_widgets_by_name)
+		table.clear(arg_38_0._additional_widgets)
+		table.clear(arg_38_0._additional_widgets_by_name)
 
-		if base_excess > 0 then
-			local scroll_area_scenegraph_id = "scrollbar_window"
-			local scroll_area_anchor_scenegraph_id = "scrollbar_anchor"
-			local enable_auto_scroll = true
-			local optional_scroll_area_hotspot
+		if var_38_0 > 0 then
+			local var_38_10 = "scrollbar_window"
+			local var_38_11 = "scrollbar_anchor"
+			local var_38_12 = true
+			local var_38_13
 
-			self._scrollbar = ScrollbarUI:new(self._ui_scenegraph, scroll_area_scenegraph_id, scroll_area_anchor_scenegraph_id, base_excess, enable_auto_scroll, optional_scroll_area_hotspot)
-		elseif self._scrollbar then
-			self._scrollbar:destroy(self._ui_scenegraph)
+			arg_38_0._scrollbar = ScrollbarUI:new(arg_38_0._ui_scenegraph, var_38_10, var_38_11, var_38_0, var_38_12, var_38_13)
+		elseif arg_38_0._scrollbar then
+			arg_38_0._scrollbar:destroy(arg_38_0._ui_scenegraph)
 
-			self._scrollbar = nil
+			arg_38_0._scrollbar = nil
 		end
 	end
 end
 
-CharacterSelectionStateCharacter._handle_input = function (self, dt, t)
-	local input_service = self:input_service()
-	local gamepad_active = Managers.input:is_device_active("gamepad")
+function CharacterSelectionStateCharacter._handle_input(arg_39_0, arg_39_1, arg_39_2)
+	local var_39_0 = arg_39_0:input_service()
+	local var_39_1 = Managers.input:is_device_active("gamepad")
 
-	if self._bot_selection then
-		self:_handle_gamepad_bot_selection(input_service)
-		self:_handle_mouse_bot_selection(input_service)
+	if arg_39_0._bot_selection then
+		arg_39_0:_handle_gamepad_bot_selection(var_39_0)
+		arg_39_0:_handle_mouse_bot_selection(var_39_0)
 
-		local back_button = self._widgets_by_name.back_button
-		local back_pressed = gamepad_active and input_service:get("back_menu_alt", true) or input_service:get("toggle_menu", true) or input_service:get("back", true)
+		local var_39_2 = arg_39_0._widgets_by_name.back_button
 
-		if back_pressed or UIUtils.is_button_pressed(back_button) then
-			self:_exit_bot_selection()
+		if var_39_1 and var_39_0:get("back_menu_alt", true) or var_39_0:get("toggle_menu", true) or var_39_0:get("back", true) or UIUtils.is_button_pressed(var_39_2) then
+			arg_39_0:_exit_bot_selection()
 		end
 	else
-		self:_handle_gamepad_selection(input_service)
-		self:_handle_mouse_selection()
+		arg_39_0:_handle_gamepad_selection(var_39_0)
+		arg_39_0:_handle_mouse_selection()
 
-		local current_profile_index, current_career_index = self.profile_synchronizer:profile_by_peer(self.peer_id, self.local_player_id)
-		local select_button = self._widgets_by_name.select_button
-		local confirm_available = not select_button.content.button_hotspot.disable_button
-		local bot_priority_button = self._widgets_by_name.bot_priority_button
-		local confirm_pressed = confirm_available and input_service:get("confirm_press", true)
-		local back_pressed = self.allow_back_button and input_service:get("back_menu_alt", true) or input_service:get("back", true)
+		local var_39_3, var_39_4 = arg_39_0.profile_synchronizer:profile_by_peer(arg_39_0.peer_id, arg_39_0.local_player_id)
+		local var_39_5 = arg_39_0._widgets_by_name.select_button
+		local var_39_6 = not var_39_5.content.button_hotspot.disable_button
+		local var_39_7 = arg_39_0._widgets_by_name.bot_priority_button
+		local var_39_8 = var_39_6 and var_39_0:get("confirm_press", true)
+		local var_39_9 = arg_39_0.allow_back_button and var_39_0:get("back_menu_alt", true) or var_39_0:get("back", true)
 
-		if self:_is_button_pressed(select_button) or confirm_pressed then
-			self:_play_sound("play_gui_start_menu_button_click")
+		if arg_39_0:_is_button_pressed(var_39_5) or var_39_8 then
+			arg_39_0:_play_sound("play_gui_start_menu_button_click")
 
-			if select_button.content.dlc_name then
-				Managers.state.event:trigger("ui_show_popup", select_button.content.dlc_name, "upsell")
-			elseif current_profile_index ~= self._selected_profile_index or current_career_index ~= self._selected_career_index then
-				local dlc_name = select_button.content.verify_dlc_name
+			if var_39_5.content.dlc_name then
+				Managers.state.event:trigger("ui_show_popup", var_39_5.content.dlc_name, "upsell")
+			elseif var_39_3 ~= arg_39_0._selected_profile_index or var_39_4 ~= arg_39_0._selected_career_index then
+				local var_39_10 = var_39_5.content.verify_dlc_name
 
-				if dlc_name and Managers.unlock:dlc_requires_restart(dlc_name) then
-					self.parent:close_menu()
+				if var_39_10 and Managers.unlock:dlc_requires_restart(var_39_10) then
+					arg_39_0.parent:close_menu()
 
 					return
 				end
 
-				local game_session = Network.game_session()
-
-				if not game_session then
+				if not Network.game_session() then
 					return
 				end
 
-				self:_change_profile(self._selected_profile_index, self._selected_career_index)
-				self.parent:set_input_blocked(true)
+				arg_39_0:_change_profile(arg_39_0._selected_profile_index, arg_39_0._selected_career_index)
+				arg_39_0.parent:set_input_blocked(true)
 			else
-				self.parent:close_menu()
+				arg_39_0.parent:close_menu()
 			end
-		elseif back_pressed then
-			self.parent:close_menu()
-		elseif self:_is_button_pressed(bot_priority_button) then
-			self:_enter_bot_selection()
+		elseif var_39_9 then
+			arg_39_0.parent:close_menu()
+		elseif arg_39_0:_is_button_pressed(var_39_7) then
+			arg_39_0:_enter_bot_selection()
 		end
 	end
 end
 
-CharacterSelectionStateCharacter._set_hero_info = function (self, hero_name, career_name, level)
-	local widgets_by_name = self._widgets_by_name
+function CharacterSelectionStateCharacter._set_hero_info(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+	local var_40_0 = arg_40_0._widgets_by_name
 
-	widgets_by_name.info_hero_name.content.text = hero_name
-	widgets_by_name.info_career_name.content.text = career_name
-	widgets_by_name.info_hero_level.content.text = tostring(level)
+	var_40_0.info_hero_name.content.text = arg_40_1
+	var_40_0.info_career_name.content.text = arg_40_2
+	var_40_0.info_hero_level.content.text = tostring(arg_40_3)
 end
 
-CharacterSelectionStateCharacter._set_select_button_enabled = function (self, enabled, required_dlc_name, dlc_name)
-	if self._bot_selection then
-		local button_content = self._widgets_by_name.select_button.content
+function CharacterSelectionStateCharacter._set_select_button_enabled(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+	if arg_41_0._bot_selection then
+		local var_41_0 = arg_41_0._widgets_by_name.select_button.content
 
-		if enabled then
-			self.menu_input_description:set_input_description(generic_input_actions.bot_selection_available)
+		if arg_41_1 then
+			arg_41_0.menu_input_description:set_input_description(var_0_8.bot_selection_available)
 		else
-			self.menu_input_description:set_input_description(nil)
+			arg_41_0.menu_input_description:set_input_description(nil)
 		end
 	else
-		local button_content = self._widgets_by_name.select_button.content
+		local var_41_1 = arg_41_0._widgets_by_name.select_button.content
 
-		if enabled then
-			button_content.title_text = Localize("input_description_confirm")
-			button_content.button_hotspot.disable_button = false
-			button_content.verify_dlc_name = dlc_name
-			button_content.dlc_name = nil
+		if arg_41_1 then
+			var_41_1.title_text = Localize("input_description_confirm")
+			var_41_1.button_hotspot.disable_button = false
+			var_41_1.verify_dlc_name = arg_41_3
+			var_41_1.dlc_name = nil
 
-			self.menu_input_description:set_input_description(generic_input_actions.available)
-		elseif required_dlc_name then
-			button_content.title_text = Localize("menu_store_purchase_button_unlock")
-			button_content.button_hotspot.disable_button = false
-			button_content.dlc_name = required_dlc_name
-			button_content.verify_dlc_name = nil
+			arg_41_0.menu_input_description:set_input_description(var_0_8.available)
+		elseif arg_41_2 then
+			var_41_1.title_text = Localize("menu_store_purchase_button_unlock")
+			var_41_1.button_hotspot.disable_button = false
+			var_41_1.dlc_name = arg_41_2
+			var_41_1.verify_dlc_name = nil
 
-			self.menu_input_description:set_input_description(generic_input_actions.purchase)
+			arg_41_0.menu_input_description:set_input_description(var_0_8.purchase)
 		else
-			button_content.title_text = Localize("dlc1_2_difficulty_unavailable")
-			button_content.button_hotspot.disable_button = true
-			button_content.dlc_name = nil
-			button_content.verify_dlc_name = nil
+			var_41_1.title_text = Localize("dlc1_2_difficulty_unavailable")
+			var_41_1.button_hotspot.disable_button = true
+			var_41_1.dlc_name = nil
+			var_41_1.verify_dlc_name = nil
 
-			self.menu_input_description:set_input_description(nil)
+			arg_41_0.menu_input_description:set_input_description(nil)
 		end
 	end
 end
 
-CharacterSelectionStateCharacter._play_sound = function (self, event)
-	self.parent:play_sound(event)
+function CharacterSelectionStateCharacter._play_sound(arg_42_0, arg_42_1)
+	arg_42_0.parent:play_sound(arg_42_1)
 end
 
-CharacterSelectionStateCharacter.get_camera_position = function (self)
-	local world, viewport = self.parent:get_background_world()
-	local camera = ScriptViewport.camera(viewport)
+function CharacterSelectionStateCharacter.get_camera_position(arg_43_0)
+	local var_43_0, var_43_1 = arg_43_0.parent:get_background_world()
+	local var_43_2 = ScriptViewport.camera(var_43_1)
 
-	return ScriptCamera.position(camera)
+	return ScriptCamera.position(var_43_2)
 end
 
-CharacterSelectionStateCharacter.get_camera_rotation = function (self)
-	local world, viewport = self.parent:get_background_world()
-	local camera = ScriptViewport.camera(viewport)
+function CharacterSelectionStateCharacter.get_camera_rotation(arg_44_0)
+	local var_44_0, var_44_1 = arg_44_0.parent:get_background_world()
+	local var_44_2 = ScriptViewport.camera(var_44_1)
 
-	return ScriptCamera.rotation(camera)
+	return ScriptCamera.rotation(var_44_2)
 end
 
-CharacterSelectionStateCharacter.trigger_unit_flow_event = function (self, unit, event_name)
-	if unit and Unit.alive(unit) then
-		Unit.flow_event(unit, event_name)
+function CharacterSelectionStateCharacter.trigger_unit_flow_event(arg_45_0, arg_45_1, arg_45_2)
+	if arg_45_1 and Unit.alive(arg_45_1) then
+		Unit.flow_event(arg_45_1, arg_45_2)
 	end
 end
 
-CharacterSelectionStateCharacter._start_transition_animation = function (self, key, animation_name)
-	local params = {
-		wwise_world = self.wwise_world,
-		render_settings = self.render_settings,
+function CharacterSelectionStateCharacter._start_transition_animation(arg_46_0, arg_46_1, arg_46_2)
+	local var_46_0 = {
+		wwise_world = arg_46_0.wwise_world,
+		render_settings = arg_46_0.render_settings
 	}
-	local widgets = self._widgets_by_name
-	local anim_id = self.ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
+	local var_46_1 = arg_46_0._widgets_by_name
+	local var_46_2 = arg_46_0.ui_animator:start_animation(arg_46_2, var_46_1, var_0_10, var_46_0)
 
-	self._animations[key] = anim_id
+	arg_46_0._animations[arg_46_1] = var_46_2
 end
 
-CharacterSelectionStateCharacter._change_profile = function (self, profile_index, career_index)
-	local peer_id = self.peer_id
-	local local_player_id = 1
-	local profile = SPProfiles[profile_index]
-	local profile_name = profile.display_name
-	local career_name = profile.careers[career_index].display_name
-	local force_respawn = true
+function CharacterSelectionStateCharacter._change_profile(arg_47_0, arg_47_1, arg_47_2)
+	local var_47_0 = arg_47_0.peer_id
+	local var_47_1 = 1
+	local var_47_2 = SPProfiles[arg_47_1]
+	local var_47_3 = var_47_2.display_name
+	local var_47_4 = var_47_2.careers[arg_47_2].display_name
+	local var_47_5 = true
 
-	self._profile_requester:request_profile(peer_id, local_player_id, profile_name, career_name, force_respawn)
+	arg_47_0._profile_requester:request_profile(var_47_0, var_47_1, var_47_3, var_47_4, var_47_5)
 
-	self._pending_profile_request = true
-	self._requested_profile_index = profile_index
-	self._requested_career_index = career_index
+	arg_47_0._pending_profile_request = true
+	arg_47_0._requested_profile_index = arg_47_1
+	arg_47_0._requested_career_index = arg_47_2
 end
 
-CharacterSelectionStateCharacter._change_career = function (self, profile_index, career_index)
-	local player = self.local_player
-	local player_unit = player.player_unit
+function CharacterSelectionStateCharacter._change_career(arg_48_0, arg_48_1, arg_48_2)
+	local var_48_0 = arg_48_0.local_player
+	local var_48_1 = var_48_0.player_unit
 
-	if player.player_unit then
-		self._despawning_player_unit_career_change = player_unit
+	if var_48_0.player_unit then
+		arg_48_0._despawning_player_unit_career_change = var_48_1
 
-		Managers.state.spawn:delayed_despawn(player)
+		Managers.state.spawn:delayed_despawn(var_48_0)
 
-		self._respawn_position = Vector3Box(POSITION_LOOKUP[player_unit])
-		self._respawn_rotation = QuaternionBox(Unit.local_rotation(player_unit, 0))
+		arg_48_0._respawn_position = Vector3Box(POSITION_LOOKUP[var_48_1])
+		arg_48_0._respawn_rotation = QuaternionBox(Unit.local_rotation(var_48_1, 0))
 	end
 
-	local profile_settings = SPProfiles[profile_index]
-	local hero_name = profile_settings.display_name
+	local var_48_2 = SPProfiles[arg_48_1].display_name
 
-	self:_save_selected_profile(profile_index)
+	arg_48_0:_save_selected_profile(arg_48_1)
 
-	local peer_id = player:network_id()
-	local local_player_id = player:local_player_id()
-	local is_bot = player.bot_player
-	local force_resync = false
+	local var_48_3 = var_48_0:network_id()
+	local var_48_4 = var_48_0:local_player_id()
+	local var_48_5 = var_48_0.bot_player
+	local var_48_6 = false
 
-	self._profile_synchronizer:resync_loadout(peer_id, local_player_id, is_bot, force_resync)
-	CosmeticUtils.sync_local_player_cosmetics(player, profile_index, career_index)
+	arg_48_0._profile_synchronizer:resync_loadout(var_48_3, var_48_4, var_48_5, var_48_6)
+	CosmeticUtils.sync_local_player_cosmetics(var_48_0, arg_48_1, arg_48_2)
 
-	self._resyncing_loadout = true
+	arg_48_0._resyncing_loadout = true
 end
 
-CharacterSelectionStateCharacter.pending_profile_request = function (self)
-	return self._pending_profile_request
+function CharacterSelectionStateCharacter.pending_profile_request(arg_49_0)
+	return arg_49_0._pending_profile_request
 end
 
-CharacterSelectionStateCharacter._save_selected_profile = function (self, profile_index)
+function CharacterSelectionStateCharacter._save_selected_profile(arg_50_0, arg_50_1)
 	if not SaveData.first_hero_selection_made then
 		SaveData.first_hero_selection_made = true
 	end
 
-	SaveData.wanted_profile_index = profile_index
+	SaveData.wanted_profile_index = arg_50_1
 
 	Managers.save:auto_save(SaveFileName, SaveData, nil)
 end
 
-CharacterSelectionStateCharacter._update_profile_request = function (self)
-	if self._pending_profile_request then
-		local profile_requester = self._profile_requester
-		local result = profile_requester:result()
+function CharacterSelectionStateCharacter._update_profile_request(arg_51_0)
+	if arg_51_0._pending_profile_request then
+		local var_51_0 = arg_51_0._profile_requester:result()
 
-		if result == "success" then
-			self._pending_profile_request = nil
+		if var_51_0 == "success" then
+			arg_51_0._pending_profile_request = nil
 
-			local profile_index, career_index = self._requested_profile_index, self._requested_career_index
+			local var_51_1 = arg_51_0._requested_profile_index
+			local var_51_2 = arg_51_0._requested_career_index
 
-			self:_save_selected_profile(profile_index)
-			self.parent:set_current_hero(profile_index)
+			arg_51_0:_save_selected_profile(var_51_1)
+			arg_51_0.parent:set_current_hero(var_51_1)
 
-			if self._close_on_successful_profile_request then
-				self.parent:close_menu()
+			if arg_51_0._close_on_successful_profile_request then
+				arg_51_0.parent:close_menu()
 			end
 
-			self._close_on_successful_profile_request = true
-		elseif result == "failure" then
-			self._pending_profile_request = nil
+			arg_51_0._close_on_successful_profile_request = true
+		elseif var_51_0 == "failure" then
+			arg_51_0._pending_profile_request = nil
 
-			self.parent:set_input_blocked(false)
+			arg_51_0.parent:set_input_blocked(false)
 		end
 	end
 end
 
-CharacterSelectionStateCharacter._on_option_button_hover = function (self, widget, style_id)
-	local ui_animations = self._ui_animations
-	local animation_name = "option_button_" .. style_id
-	local widget_style = widget.style
-	local pass_style = widget_style[style_id]
-	local current_color_value = pass_style.color[2]
-	local target_color_value = 255
-	local total_time = UISettings.scoreboard.topic_hover_duration
-	local animation_duration = (1 - current_color_value / target_color_value) * total_time
+function CharacterSelectionStateCharacter._on_option_button_hover(arg_52_0, arg_52_1, arg_52_2)
+	local var_52_0 = arg_52_0._ui_animations
+	local var_52_1 = "option_button_" .. arg_52_2
+	local var_52_2 = arg_52_1.style[arg_52_2]
+	local var_52_3 = var_52_2.color[2]
+	local var_52_4 = 255
+	local var_52_5 = UISettings.scoreboard.topic_hover_duration
+	local var_52_6 = (1 - var_52_3 / var_52_4) * var_52_5
 
-	for i = 2, 4 do
-		if animation_duration > 0 then
-			ui_animations[animation_name .. "_hover_" .. i] = self:_animate_element_by_time(pass_style.color, i, current_color_value, target_color_value, animation_duration)
+	for iter_52_0 = 2, 4 do
+		if var_52_6 > 0 then
+			var_52_0[var_52_1 .. "_hover_" .. iter_52_0] = arg_52_0:_animate_element_by_time(var_52_2.color, iter_52_0, var_52_3, var_52_4, var_52_6)
 		else
-			pass_style.color[i] = target_color_value
+			var_52_2.color[iter_52_0] = var_52_4
 		end
 	end
 end
 
-CharacterSelectionStateCharacter._on_option_button_dehover = function (self, widget, style_id)
-	local ui_animations = self._ui_animations
-	local animation_name = "option_button_" .. style_id
-	local widget_style = widget.style
-	local pass_style = widget_style[style_id]
-	local current_color_value = pass_style.color[1]
-	local target_color_value = 100
-	local total_time = UISettings.scoreboard.topic_hover_duration
-	local animation_duration = current_color_value / 255 * total_time
+function CharacterSelectionStateCharacter._on_option_button_dehover(arg_53_0, arg_53_1, arg_53_2)
+	local var_53_0 = arg_53_0._ui_animations
+	local var_53_1 = "option_button_" .. arg_53_2
+	local var_53_2 = arg_53_1.style[arg_53_2]
+	local var_53_3 = var_53_2.color[1]
+	local var_53_4 = 100
+	local var_53_5 = UISettings.scoreboard.topic_hover_duration
+	local var_53_6 = var_53_3 / 255 * var_53_5
 
-	for i = 2, 4 do
-		if animation_duration > 0 then
-			ui_animations[animation_name .. "_hover_" .. i] = self:_animate_element_by_time(pass_style.color, i, current_color_value, target_color_value, animation_duration)
+	for iter_53_0 = 2, 4 do
+		if var_53_6 > 0 then
+			var_53_0[var_53_1 .. "_hover_" .. iter_53_0] = arg_53_0:_animate_element_by_time(var_53_2.color, iter_53_0, var_53_3, var_53_4, var_53_6)
 		else
-			pass_style.color[1] = target_color_value
+			var_53_2.color[1] = var_53_4
 		end
 	end
 end
 
-CharacterSelectionStateCharacter.play_sound = function (self, event)
+function CharacterSelectionStateCharacter.play_sound(arg_54_0, arg_54_1)
 	return
 end
 
-CharacterSelectionStateCharacter._animate_element_by_time = function (self, target, target_index, from, to, time)
-	local new_animation = UIAnimation.init(UIAnimation.function_by_time, target, target_index, from, to, time, math.ease_out_quad)
-
-	return new_animation
+function CharacterSelectionStateCharacter._animate_element_by_time(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5)
+	return (UIAnimation.init(UIAnimation.function_by_time, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5, math.ease_out_quad))
 end
 
-CharacterSelectionStateCharacter._animate_element_by_catmullrom = function (self, target, target_index, target_value, p0, p1, p2, p3, time)
-	local new_animation = UIAnimation.init(UIAnimation.catmullrom, target, target_index, target_value, p0, p1, p2, p3, time)
-
-	return new_animation
+function CharacterSelectionStateCharacter._animate_element_by_catmullrom(arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4, arg_56_5, arg_56_6, arg_56_7, arg_56_8)
+	return (UIAnimation.init(UIAnimation.catmullrom, arg_56_1, arg_56_2, arg_56_3, arg_56_4, arg_56_5, arg_56_6, arg_56_7, arg_56_8))
 end
 
-CharacterSelectionStateCharacter.input_service = function (self)
-	return (self._pending_profile_request or self._resyncing_loadout or self.parent:input_blocked()) and FAKE_INPUT_SERVICE or self.parent:input_service(true)
+function CharacterSelectionStateCharacter.input_service(arg_57_0)
+	return (arg_57_0._pending_profile_request or arg_57_0._resyncing_loadout or arg_57_0.parent:input_blocked()) and FAKE_INPUT_SERVICE or arg_57_0.parent:input_service(true)
 end

@@ -1,247 +1,233 @@
-﻿-- chunkname: @scripts/network/ps_restrictions.lua
+-- chunkname: @scripts/network/ps_restrictions.lua
 
 require("scripts/network/script_ps_restriction_token")
 
 PSRestrictions = class(PSRestrictions)
 
-local default_restrictions = {
+local var_0_0 = {
 	"network_availability",
 	"playstation_plus",
-	"parental_control",
+	"parental_control"
 }
-local start_funcs = {
-	network_availability = "_network_availability_start",
-	parental_control = "_parental_control_start",
+local var_0_1 = {
 	playstation_plus = "_playstation_plus_start",
+	network_availability = "_network_availability_start",
+	parental_control = "_parental_control_start"
 }
-local callbacks = {
-	network_availability = "cb_network_availability",
-	parental_control = "cb_parental_control",
+local var_0_2 = {
 	playstation_plus = "cb_playstation_plus",
+	network_availability = "cb_network_availability",
+	parental_control = "cb_parental_control"
 }
 
-local function dprint(string, ...)
+local function var_0_3(arg_1_0, ...)
 	if script_data.debug_ps_restrictions then
-		local s = string.format("[PSRestrictions] %s", string)
+		local var_1_0 = arg_1_0.format("[PSRestrictions] %s", arg_1_0)
 
-		printf(s, ...)
+		printf(var_1_0, ...)
 	end
 end
 
-local function error_print(string, ...)
-	local s = string.format("[PSRestrictions] %s", string)
+local function var_0_4(arg_2_0, ...)
+	local var_2_0 = arg_2_0.format("[PSRestrictions] %s", arg_2_0)
 
-	Application.error(string.format(s, ...))
+	Application.error(arg_2_0.format(var_2_0, ...))
 end
 
-local fake_restrictions = script_data.fake_restrictions
+local var_0_5 = script_data.fake_restrictions
 
-PSRestrictions.init = function (self)
-	self._current_users = {}
+function PSRestrictions.init(arg_3_0)
+	arg_3_0._current_users = {}
 end
 
-PSRestrictions.add_user = function (self, user_id)
-	self._current_users[user_id] = {
-		restrictions = table.clone(default_restrictions),
+function PSRestrictions.add_user(arg_4_0, arg_4_1)
+	arg_4_0._current_users[arg_4_1] = {
+		restrictions = table.clone(var_0_0)
 	}
 
-	self:_start_restriction_access_fetched(user_id)
+	arg_4_0:_start_restriction_access_fetched(arg_4_1)
 end
 
-PSRestrictions._start_restriction_access_fetched = function (self, user_id)
-	local user = self._current_users[user_id]
+function PSRestrictions._start_restriction_access_fetched(arg_5_0, arg_5_1)
+	local var_5_0 = arg_5_0._current_users[arg_5_1]
 
-	self:_fetch_next_restriction_access(user_id)
+	arg_5_0:_fetch_next_restriction_access(arg_5_1)
 end
 
-PSRestrictions._fetch_next_restriction_access = function (self, user_id)
-	if fake_restrictions then
+function PSRestrictions._fetch_next_restriction_access(arg_6_0, arg_6_1)
+	if var_0_5 then
 		return
 	end
 
-	local user = self._current_users[user_id]
-	local restrictions = user.restrictions
-	local _, restriction = next(restrictions)
-	local signed_in = PS4.signed_in(user_id)
-	local start_func = start_funcs[restriction]
-	local callback_name = callbacks[restriction]
+	local var_6_0 = arg_6_0._current_users[arg_6_1].restrictions
+	local var_6_1, var_6_2 = next(var_6_0)
+	local var_6_3 = PS4.signed_in(arg_6_1)
+	local var_6_4 = var_0_1[var_6_2]
+	local var_6_5 = var_0_2[var_6_2]
 
-	if signed_in then
-		local token = self[start_func](self, user_id)
-		local script_token = ScriptPSRestrictionToken:new(token)
+	if var_6_3 then
+		local var_6_6 = arg_6_0[var_6_4](arg_6_0, arg_6_1)
+		local var_6_7 = ScriptPSRestrictionToken:new(var_6_6)
 
-		Managers.token:register_token(script_token, callback(self, callback_name, user_id, restriction))
+		Managers.token:register_token(var_6_7, callback(arg_6_0, var_6_5, arg_6_1, var_6_2))
 	else
-		self[callback_name](self, user_id, restriction, {
-			error = PS4.SCE_NP_ERROR_SIGNED_OUT,
+		arg_6_0[var_6_5](arg_6_0, arg_6_1, var_6_2, {
+			error = PS4.SCE_NP_ERROR_SIGNED_OUT
 		})
 	end
 end
 
-PSRestrictions.has_access = function (self, user_id, restriction)
-	if fake_restrictions then
+function PSRestrictions.has_access(arg_7_0, arg_7_1, arg_7_2)
+	if var_0_5 then
 		return true
 	end
 
-	local user = self._current_users[user_id]
-	local restriction_result = user[restriction]
-	local access = restriction_result.access
+	local var_7_0 = arg_7_0._current_users[arg_7_1][arg_7_2].access
 
-	fassert(access ~= nil, "Have not fetched access to this restriction (%s)", restriction)
+	fassert(var_7_0 ~= nil, "Have not fetched access to this restriction (%s)", arg_7_2)
 
-	return access
+	return var_7_0
 end
 
-PSRestrictions.has_error = function (self, user_id, restriction)
-	if fake_restrictions then
+function PSRestrictions.has_error(arg_8_0, arg_8_1, arg_8_2)
+	if var_0_5 then
 		return false
 	end
 
-	local user = self._current_users[user_id]
-	local restriction_result = user[restriction]
-	local error_code = restriction_result.error
-
-	return error_code
+	return arg_8_0._current_users[arg_8_1][arg_8_2].error
 end
 
-PSRestrictions.restriction_access_fetched = function (self, user_id, restriction)
-	if fake_restrictions then
+function PSRestrictions.restriction_access_fetched(arg_9_0, arg_9_1, arg_9_2)
+	if var_0_5 then
 		return true
 	end
 
-	local user = self._current_users[user_id]
-	local restriction_access_fetched = user[restriction]
-
-	return restriction_access_fetched
+	return arg_9_0._current_users[arg_9_1][arg_9_2]
 end
 
-PSRestrictions.refetch_restriction_access = function (self, user_id, restrictions)
-	fassert(self._current_users[user_id] ~= nil, "User (%d) is not added", user_id)
+function PSRestrictions.refetch_restriction_access(arg_10_0, arg_10_1, arg_10_2)
+	fassert(arg_10_0._current_users[arg_10_1] ~= nil, "User (%d) is not added", arg_10_1)
 
-	local user = self._current_users[user_id]
+	local var_10_0 = arg_10_0._current_users[arg_10_1]
 
-	user.restrictions = table.clone(restrictions)
+	var_10_0.restrictions = table.clone(arg_10_2)
 
-	for i, restriction in ipairs(restrictions) do
-		user[restriction] = nil
+	for iter_10_0, iter_10_1 in ipairs(arg_10_2) do
+		var_10_0[iter_10_1] = nil
 	end
 
-	self:_fetch_next_restriction_access(user_id)
+	arg_10_0:_fetch_next_restriction_access(arg_10_1)
 end
 
-PSRestrictions._set_restriction_fetched = function (self, user_id, restriction)
-	local user = self._current_users[user_id]
-	local restrictions = user.restrictions
-	local index = table.find(restrictions, restriction)
+function PSRestrictions._set_restriction_fetched(arg_11_0, arg_11_1, arg_11_2)
+	local var_11_0 = arg_11_0._current_users[arg_11_1].restrictions
+	local var_11_1 = table.find(var_11_0, arg_11_2)
 
-	if index then
-		table.remove(restrictions, index)
+	if var_11_1 then
+		table.remove(var_11_0, var_11_1)
 	end
 end
 
-PSRestrictions._try_fetch_next_restriction_access = function (self, user_id)
-	local user = self._current_users[user_id]
-	local restrictions = user.restrictions
-
-	if #restrictions > 0 then
-		self:_fetch_next_restriction_access(user_id)
+function PSRestrictions._try_fetch_next_restriction_access(arg_12_0, arg_12_1)
+	if #arg_12_0._current_users[arg_12_1].restrictions > 0 then
+		arg_12_0:_fetch_next_restriction_access(arg_12_1)
 	end
 end
 
-PSRestrictions._playstation_plus_start = function (self, user_id)
-	return NpCheck.check_plus(user_id, NpCheck.REALTIME_MULTIPLAY)
+function PSRestrictions._playstation_plus_start(arg_13_0, arg_13_1)
+	return NpCheck.check_plus(arg_13_1, NpCheck.REALTIME_MULTIPLAY)
 end
 
-PSRestrictions._network_availability_start = function (self, user_id)
-	return NpCheck.check_availability(user_id)
+function PSRestrictions._network_availability_start(arg_14_0, arg_14_1)
+	return NpCheck.check_availability(arg_14_1)
 end
 
-PSRestrictions._parental_control_start = function (self, user_id)
-	return NpCheck.parental_control_info(user_id)
+function PSRestrictions._parental_control_start(arg_15_0, arg_15_1)
+	return NpCheck.parental_control_info(arg_15_1)
 end
 
-PSRestrictions.cb_network_availability = function (self, user_id, restriction, info)
-	local error = info.error or NpCheck.error_code(info.token)
+function PSRestrictions.cb_network_availability(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+	local var_16_0 = arg_16_3.error or NpCheck.error_code(arg_16_3.token)
 
-	if error then
-		error_print("Error (%#x) when checking (%s) access for user (%d)", error, restriction, user_id)
+	if var_16_0 then
+		var_0_4("Error (%#x) when checking (%s) access for user (%d)", var_16_0, arg_16_2, arg_16_1)
 
-		self._current_users[user_id][restriction] = {
+		arg_16_0._current_users[arg_16_1][arg_16_2] = {
 			access = false,
-			error = error,
+			error = var_16_0
 		}
 	else
-		local result = NpCheck.result(info.token)
+		local var_16_1 = NpCheck.result(arg_16_3.token)
 
-		dprint("(%q) access for user (%d) result (%s)", restriction, user_id, tostring(result))
+		var_0_3("(%q) access for user (%d) result (%s)", arg_16_2, arg_16_1, tostring(var_16_1))
 
-		self._current_users[user_id][restriction] = {
+		arg_16_0._current_users[arg_16_1][arg_16_2] = {
 			error = false,
-			access = result,
+			access = var_16_1
 		}
 	end
 
-	self:_set_restriction_fetched(user_id, restriction)
-	self:_try_fetch_next_restriction_access(user_id)
+	arg_16_0:_set_restriction_fetched(arg_16_1, arg_16_2)
+	arg_16_0:_try_fetch_next_restriction_access(arg_16_1)
 end
 
-PSRestrictions.cb_playstation_plus = function (self, user_id, restriction, info)
-	local error = info.error or NpCheck.error_code(info.token)
+function PSRestrictions.cb_playstation_plus(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+	local var_17_0 = arg_17_3.error or NpCheck.error_code(arg_17_3.token)
 
-	if error then
-		error_print("Error (%#x) when checking (%s) access for user (%d)", error, restriction, user_id)
+	if var_17_0 then
+		var_0_4("Error (%#x) when checking (%s) access for user (%d)", var_17_0, arg_17_2, arg_17_1)
 
-		self._current_users[user_id][restriction] = {
+		arg_17_0._current_users[arg_17_1][arg_17_2] = {
 			access = false,
-			error = error,
+			error = var_17_0
 		}
 	else
-		local result = NpCheck.result(info.token)
+		local var_17_1 = NpCheck.result(arg_17_3.token)
 
-		dprint("(%q) access for user (%d) result (%s)", restriction, user_id, tostring(result))
+		var_0_3("(%q) access for user (%d) result (%s)", arg_17_2, arg_17_1, tostring(var_17_1))
 
-		self._current_users[user_id][restriction] = {
+		arg_17_0._current_users[arg_17_1][arg_17_2] = {
 			error = false,
-			access = result,
+			access = var_17_1
 		}
 	end
 
-	self:_set_restriction_fetched(user_id, restriction)
-	self:_try_fetch_next_restriction_access(user_id)
+	arg_17_0:_set_restriction_fetched(arg_17_1, arg_17_2)
+	arg_17_0:_try_fetch_next_restriction_access(arg_17_1)
 end
 
-PSRestrictions.cb_parental_control = function (self, user_id, restriction, info)
-	local error = info.error or NpCheck.error_code(info.token)
+function PSRestrictions.cb_parental_control(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+	local var_18_0 = arg_18_3.error or NpCheck.error_code(arg_18_3.token)
 
-	if error then
-		error_print("Error (%#x) when checking parental control access for user (%d)", error, user_id)
+	if var_18_0 then
+		var_0_4("Error (%#x) when checking parental control access for user (%d)", var_18_0, arg_18_1)
 
-		self._current_users[user_id].chat = {
+		arg_18_0._current_users[arg_18_1].chat = {
 			access = false,
-			error = error,
+			error = var_18_0
 		}
-		self._current_users[user_id].user_generated_content = {
+		arg_18_0._current_users[arg_18_1].user_generated_content = {
 			access = false,
-			error = error,
+			error = var_18_0
 		}
 	else
-		local result = NpCheck.parental_control_info_result(info.token)
-		local chat = result.chat_restriction == false
-		local ugc = result.ugc_restriction == false
+		local var_18_1 = NpCheck.parental_control_info_result(arg_18_3.token)
+		local var_18_2 = var_18_1.chat_restriction == false
+		local var_18_3 = var_18_1.ugc_restriction == false
 
-		self._current_users[user_id].chat = {
+		arg_18_0._current_users[arg_18_1].chat = {
 			error = false,
-			access = chat,
+			access = var_18_2
 		}
-		self._current_users[user_id].user_generated_content = {
+		arg_18_0._current_users[arg_18_1].user_generated_content = {
 			error = false,
-			access = ugc,
+			access = var_18_3
 		}
 
-		dprint("\"chat\" access for user (%d) result (%s)", user_id, tostring(chat))
-		dprint("\"ugc\" access for user (%d) result (%s)", user_id, tostring(ugc))
+		var_0_3("\"chat\" access for user (%d) result (%s)", arg_18_1, tostring(var_18_2))
+		var_0_3("\"ugc\" access for user (%d) result (%s)", arg_18_1, tostring(var_18_3))
 	end
 
-	self:_set_restriction_fetched(user_id, restriction)
-	self:_try_fetch_next_restriction_access(user_id)
+	arg_18_0:_set_restriction_fetched(arg_18_1, arg_18_2)
+	arg_18_0:_try_fetch_next_restriction_access(arg_18_1)
 end

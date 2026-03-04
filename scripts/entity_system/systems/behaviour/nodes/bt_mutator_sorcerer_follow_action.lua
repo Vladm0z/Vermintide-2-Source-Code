@@ -1,246 +1,236 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_mutator_sorcerer_follow_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_mutator_sorcerer_follow_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTMutatorSorcererFollowAction = class(BTMutatorSorcererFollowAction, BTNode)
 
-BTMutatorSorcererFollowAction.init = function (self, ...)
-	BTMutatorSorcererFollowAction.super.init(self, ...)
+function BTMutatorSorcererFollowAction.init(arg_1_0, ...)
+	BTMutatorSorcererFollowAction.super.init(arg_1_0, ...)
 end
 
 BTMutatorSorcererFollowAction.name = "BTMutatorSorcererFollowAction"
 
-BTMutatorSorcererFollowAction.enter = function (self, unit, blackboard, t)
-	local action = self._tree_node.action_data
+function BTMutatorSorcererFollowAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_0._tree_node.action_data
 
-	blackboard.action = action
+	arg_2_2.action = var_2_0
 
-	local start_anims_table = action.start_anims_name
-	local target_position = POSITION_LOOKUP[blackboard.target_unit]
-	local start_animation = AiAnimUtils.get_start_move_animation(unit, target_position, start_anims_table)
-	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
-	local navigation_extension = blackboard.navigation_extension
+	local var_2_1 = var_2_0.start_anims_name
+	local var_2_2 = POSITION_LOOKUP[arg_2_2.target_unit]
+	local var_2_3 = AiAnimUtils.get_start_move_animation(arg_2_1, var_2_2, var_2_1)
+	local var_2_4 = AiUtils.get_default_breed_move_speed(arg_2_1, arg_2_2)
+	local var_2_5 = arg_2_2.navigation_extension
 
-	navigation_extension:set_max_speed(default_move_speed)
-	navigation_extension:set_enabled(true)
+	var_2_5:set_max_speed(var_2_4)
+	var_2_5:set_enabled(true)
 
-	local network_manager = Managers.state.network
+	local var_2_6 = Managers.state.network
 
-	blackboard.move_state = "moving"
+	arg_2_2.move_state = "moving"
 
-	network_manager:anim_event(unit, "float_into")
-	network_manager:anim_event(unit, start_animation)
+	var_2_6:anim_event(arg_2_1, "float_into")
+	var_2_6:anim_event(arg_2_1, var_2_3)
 
-	blackboard.physics_world = blackboard.physics_world or World.get_data(blackboard.world, "physics_world")
+	arg_2_2.physics_world = arg_2_2.physics_world or World.get_data(arg_2_2.world, "physics_world")
 
-	local audio_system = Managers.state.entity:system("audio_system")
-	local skulking_sound_event = action.skulking_sound_event
+	local var_2_7 = Managers.state.entity:system("audio_system")
+	local var_2_8 = var_2_0.skulking_sound_event
 
-	audio_system:play_audio_unit_event(skulking_sound_event, unit)
+	var_2_7:play_audio_unit_event(var_2_8, arg_2_1)
 end
 
-BTMutatorSorcererFollowAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	local audio_system = Managers.state.entity:system("audio_system")
-	local stop_skulking_sound_event = blackboard.action.stop_skulking_sound_event
+function BTMutatorSorcererFollowAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	local var_3_0 = Managers.state.entity:system("audio_system")
+	local var_3_1 = arg_3_2.action.stop_skulking_sound_event
 
-	audio_system:play_audio_unit_event(stop_skulking_sound_event, unit)
+	var_3_0:play_audio_unit_event(var_3_1, arg_3_1)
 
-	if blackboard.played_fast_movespeed_sound then
-		local stop_fast_move_speed_sound_event = blackboard.action.stop_fast_move_speed_sound_event
+	if arg_3_2.played_fast_movespeed_sound then
+		local var_3_2 = arg_3_2.action.stop_fast_move_speed_sound_event
 
-		audio_system:play_audio_unit_event(stop_fast_move_speed_sound_event, unit)
+		var_3_0:play_audio_unit_event(var_3_2, arg_3_1)
 
-		blackboard.played_fast_movespeed_sound = nil
+		arg_3_2.played_fast_movespeed_sound = nil
 	end
 
-	local current_hunting_target = blackboard.current_hunting_target
+	local var_3_3 = arg_3_2.current_hunting_target
 
-	if Unit.alive(current_hunting_target) then
-		local stop_hunting_sound_event = blackboard.action.stop_hunting_sound_event
-		local player = Managers.player:unit_owner(current_hunting_target)
-		local peer_id = player:network_id()
-		local network_manager = Managers.state.network
-		local unit_id = network_manager.unit_storage:go_id(unit)
+	if Unit.alive(var_3_3) then
+		local var_3_4 = arg_3_2.action.stop_hunting_sound_event
+		local var_3_5 = Managers.player:unit_owner(var_3_3):network_id()
+		local var_3_6 = Managers.state.network
+		local var_3_7 = var_3_6.unit_storage:go_id(arg_3_1)
 
-		network_manager.network_transmit:send_rpc("rpc_server_audio_unit_event", peer_id, NetworkLookup.sound_events[stop_hunting_sound_event], unit_id, false, 0)
+		var_3_6.network_transmit:send_rpc("rpc_server_audio_unit_event", var_3_5, NetworkLookup.sound_events[var_3_4], var_3_7, false, 0)
 	end
 
-	blackboard.action = nil
-	blackboard.start_anim_locked = nil
-	blackboard.anim_cb_rotation_start = nil
-	blackboard.anim_cb_move = nil
-	blackboard.start_finished = nil
+	arg_3_2.action = nil
+	arg_3_2.start_anim_locked = nil
+	arg_3_2.anim_cb_rotation_start = nil
+	arg_3_2.anim_cb_move = nil
+	arg_3_2.start_finished = nil
 end
 
-BTMutatorSorcererFollowAction.run = function (self, unit, blackboard, t, dt)
-	local target_unit = blackboard.target_unit
-	local action = blackboard.action
-	local navigation_extension = blackboard.navigation_extension
+function BTMutatorSorcererFollowAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = arg_4_2.target_unit
+	local var_4_1 = arg_4_2.action
+	local var_4_2 = arg_4_2.navigation_extension
 
-	if not AiUtils.is_of_interest_to_corruptor(unit, target_unit) then
+	if not AiUtils.is_of_interest_to_corruptor(arg_4_1, var_4_0) then
 		return "failed"
 	end
 
-	local current_position = POSITION_LOOKUP[unit]
-	local target_position = POSITION_LOOKUP[target_unit]
+	local var_4_3 = POSITION_LOOKUP[arg_4_1]
+	local var_4_4 = POSITION_LOOKUP[var_4_0]
 
-	self:handle_movement_speed_bonus(unit, blackboard, action, current_position, target_position, target_unit)
+	arg_4_0:handle_movement_speed_bonus(arg_4_1, arg_4_2, var_4_1, var_4_3, var_4_4, var_4_0)
 
-	local distance_sq = Vector3.distance_squared(current_position, target_position)
-	local attack_distance = action.distance_to_attack
+	local var_4_5 = Vector3.distance_squared(var_4_3, var_4_4)
+	local var_4_6 = var_4_1.distance_to_attack
 
-	if distance_sq < attack_distance * attack_distance then
-		local has_line_of_sight = PerceptionUtils.pack_master_has_line_of_sight_for_attack(blackboard.physics_world, unit, target_unit)
-
-		if has_line_of_sight then
-			return "done"
-		end
+	if var_4_5 < var_4_6 * var_4_6 and PerceptionUtils.pack_master_has_line_of_sight_for_attack(arg_4_2.physics_world, arg_4_1, var_4_0) then
+		return "done"
 	end
 
-	local whereabouts_extension = ScriptUnit.extension(target_unit, "whereabouts_system")
-	local pos_list, player_position_on_mesh = whereabouts_extension:closest_positions_when_outside_navmesh()
+	local var_4_7, var_4_8 = ScriptUnit.extension(var_4_0, "whereabouts_system"):closest_positions_when_outside_navmesh()
 
-	if player_position_on_mesh then
-		navigation_extension:move_to(target_position)
-	elseif #pos_list > 0 then
-		local position = pos_list[1]
+	if var_4_8 then
+		var_4_2:move_to(var_4_4)
+	elseif #var_4_7 > 0 then
+		local var_4_9 = var_4_7[1]
 
-		navigation_extension:move_to(position:unbox())
+		var_4_2:move_to(var_4_9:unbox())
 	else
 		return "failed"
 	end
 
-	local hunting_sound_distance_sq = action.hunting_sound_distance * action.hunting_sound_distance
-	local current_hunting_target = blackboard.current_hunting_target
-	local hunting_sound_event = action.hunting_sound_event
-	local stop_hunting_sound_event = action.stop_hunting_sound_event
+	local var_4_10 = var_4_1.hunting_sound_distance * var_4_1.hunting_sound_distance
+	local var_4_11 = arg_4_2.current_hunting_target
+	local var_4_12 = var_4_1.hunting_sound_event
+	local var_4_13 = var_4_1.stop_hunting_sound_event
 
-	if distance_sq <= hunting_sound_distance_sq and current_hunting_target ~= target_unit then
-		local player = Managers.player:unit_owner(target_unit)
-		local is_player_controlled = player and player:is_player_controlled()
+	if var_4_5 <= var_4_10 and var_4_11 ~= var_4_0 then
+		local var_4_14 = Managers.player:unit_owner(var_4_0)
 
-		if is_player_controlled then
-			local peer_id = player:network_id()
-			local network_manager = Managers.state.network
-			local unit_id = network_manager.unit_storage:go_id(unit)
+		if var_4_14 and var_4_14:is_player_controlled() then
+			local var_4_15 = var_4_14:network_id()
+			local var_4_16 = Managers.state.network
+			local var_4_17 = var_4_16.unit_storage:go_id(arg_4_1)
 
-			network_manager.network_transmit:send_rpc("rpc_server_audio_unit_event", peer_id, NetworkLookup.sound_events[hunting_sound_event], unit_id, false, 0)
+			var_4_16.network_transmit:send_rpc("rpc_server_audio_unit_event", var_4_15, NetworkLookup.sound_events[var_4_12], var_4_17, false, 0)
 
-			if Unit.alive(current_hunting_target) then
-				player = Managers.player:unit_owner(current_hunting_target)
-				peer_id = player:network_id()
+			if Unit.alive(var_4_11) then
+				local var_4_18 = Managers.player:unit_owner(var_4_11):network_id()
 
-				network_manager.network_transmit:send_rpc("rpc_server_audio_unit_event", peer_id, NetworkLookup.sound_events[stop_hunting_sound_event], unit_id, false, 0)
+				var_4_16.network_transmit:send_rpc("rpc_server_audio_unit_event", var_4_18, NetworkLookup.sound_events[var_4_13], var_4_17, false, 0)
 			end
 
-			blackboard.current_hunting_target = target_unit
+			arg_4_2.current_hunting_target = var_4_0
 		end
-	elseif hunting_sound_distance_sq < distance_sq and Unit.alive(current_hunting_target) then
-		local player = Managers.player:unit_owner(current_hunting_target)
-		local is_player_controlled = player and player:is_player_controlled()
+	elseif var_4_10 < var_4_5 and Unit.alive(var_4_11) then
+		local var_4_19 = Managers.player:unit_owner(var_4_11)
 
-		if is_player_controlled then
-			local peer_id = player:network_id()
-			local network_manager = Managers.state.network
-			local unit_id = network_manager.unit_storage:go_id(unit)
+		if var_4_19 and var_4_19:is_player_controlled() then
+			local var_4_20 = var_4_19:network_id()
+			local var_4_21 = Managers.state.network
+			local var_4_22 = var_4_21.unit_storage:go_id(arg_4_1)
 
-			network_manager.network_transmit:send_rpc("rpc_server_audio_unit_event", peer_id, NetworkLookup.sound_events[stop_hunting_sound_event], unit_id, false, 0)
+			var_4_21.network_transmit:send_rpc("rpc_server_audio_unit_event", var_4_20, NetworkLookup.sound_events[var_4_13], var_4_22, false, 0)
 		end
 
-		blackboard.current_hunting_target = nil
+		arg_4_2.current_hunting_target = nil
 	end
 
 	return "running"
 end
 
-BTMutatorSorcererFollowAction.check_infront = function (self, unit, target_unit, action)
-	local target_unit_pos = Unit.world_position(target_unit, 0)
-	local unit_pos = Unit.world_position(unit, 0)
-	local target_unit_to_unit_dir = Vector3.normalize(unit_pos - target_unit_pos)
-	local first_person_extension = ScriptUnit.has_extension(target_unit, "first_person_system")
-	local unit_direction
+function BTMutatorSorcererFollowAction.check_infront(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	local var_5_0 = Unit.world_position(arg_5_2, 0)
+	local var_5_1 = Unit.world_position(arg_5_1, 0)
+	local var_5_2 = Vector3.normalize(var_5_1 - var_5_0)
+	local var_5_3 = ScriptUnit.has_extension(arg_5_2, "first_person_system")
+	local var_5_4
 
-	if first_person_extension then
-		unit_direction = Quaternion.forward(first_person_extension:current_rotation())
+	if var_5_3 then
+		var_5_4 = Quaternion.forward(var_5_3:current_rotation())
 	else
-		local network_manager = Managers.state.network
-		local unit_id = network_manager:unit_game_object_id(target_unit)
+		local var_5_5 = Managers.state.network
+		local var_5_6 = var_5_5:unit_game_object_id(arg_5_2)
 
-		unit_direction = GameSession.game_object_field(network_manager:game(), unit_id, "aim_direction")
+		var_5_4 = GameSession.game_object_field(var_5_5:game(), var_5_6, "aim_direction")
 	end
 
-	local angle = Vector3.dot(unit_direction, target_unit_to_unit_dir)
-	local is_infront = angle >= 0.6 and angle <= 1
-	local movement_value = math.abs((1 - angle) / 0.4 - 1) * action.infront_movement_multiplier
+	local var_5_7 = Vector3.dot(var_5_4, var_5_2)
+	local var_5_8 = var_5_7 >= 0.6 and var_5_7 <= 1
+	local var_5_9 = math.abs((1 - var_5_7) / 0.4 - 1) * arg_5_3.infront_movement_multiplier
 
-	return is_infront, movement_value
+	return var_5_8, var_5_9
 end
 
-BTMutatorSorcererFollowAction.handle_movement_speed_bonus = function (self, unit, blackboard, action, current_position)
-	local is_infront, movement_value, has_line_of_sight
-	local fast_move_speed_sound_event = action.fast_move_speed_sound_event
-	local stop_fast_move_speed_sound_event = action.stop_fast_move_speed_sound_event
-	local navigation_extension = blackboard.navigation_extension
-	local target_position
-	local blackboard_target_unit = blackboard.target_unit
-	local side = Managers.state.side.side_by_unit[blackboard_target_unit]
-	local PLAYER_AND_BOT_UNITS = side.PLAYER_AND_BOT_UNITS
+function BTMutatorSorcererFollowAction.handle_movement_speed_bonus(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	local var_6_0
+	local var_6_1
+	local var_6_2
+	local var_6_3 = arg_6_3.fast_move_speed_sound_event
+	local var_6_4 = arg_6_3.stop_fast_move_speed_sound_event
+	local var_6_5 = arg_6_2.navigation_extension
+	local var_6_6
+	local var_6_7 = arg_6_2.target_unit
+	local var_6_8 = Managers.state.side.side_by_unit[var_6_7].PLAYER_AND_BOT_UNITS
 
-	for k, target_unit in ipairs(PLAYER_AND_BOT_UNITS) do
-		target_position = POSITION_LOOKUP[target_unit]
-		is_infront, movement_value = self:check_infront(unit, target_unit, action)
-		has_line_of_sight = PerceptionUtils.is_position_in_line_of_sight(unit, current_position + Vector3.up(), target_position + Vector3.up(), blackboard.physics_world)
+	for iter_6_0, iter_6_1 in ipairs(var_6_8) do
+		var_6_6 = POSITION_LOOKUP[iter_6_1]
+		var_6_0, var_6_1 = arg_6_0:check_infront(arg_6_1, iter_6_1, arg_6_3)
+		var_6_2 = PerceptionUtils.is_position_in_line_of_sight(arg_6_1, arg_6_4 + Vector3.up(), var_6_6 + Vector3.up(), arg_6_2.physics_world)
 
-		if is_infront and has_line_of_sight then
+		if var_6_0 and var_6_2 then
 			break
 		end
 	end
 
-	local distance = Vector3.distance(current_position, POSITION_LOOKUP[blackboard.target_unit])
+	local var_6_9 = Vector3.distance(arg_6_4, POSITION_LOOKUP[arg_6_2.target_unit])
 
-	if is_infront and Vector3.length(current_position - target_position) > 0 and has_line_of_sight then
-		local move_speed = action.slow_down_on_look_at and action.slow_move_speed or action.fast_move_speed * movement_value
+	if var_6_0 and Vector3.length(arg_6_4 - var_6_6) > 0 and var_6_2 then
+		local var_6_10 = arg_6_3.slow_down_on_look_at and arg_6_3.slow_move_speed or arg_6_3.fast_move_speed * var_6_1
 
-		navigation_extension:set_max_speed(move_speed)
+		var_6_5:set_max_speed(var_6_10)
 
-		if move_speed == action.slow_move_speed and blackboard.played_fast_movespeed_sound then
-			self:play_movement_sound(unit, stop_fast_move_speed_sound_event)
+		if var_6_10 == arg_6_3.slow_move_speed and arg_6_2.played_fast_movespeed_sound then
+			arg_6_0:play_movement_sound(arg_6_1, var_6_4)
 
-			blackboard.played_fast_movespeed_sound = nil
-		elseif not action.slow_down_on_look_at and not blackboard.played_fast_movespeed_sound then
-			self:play_movement_sound(unit, fast_move_speed_sound_event)
+			arg_6_2.played_fast_movespeed_sound = nil
+		elseif not arg_6_3.slow_down_on_look_at and not arg_6_2.played_fast_movespeed_sound then
+			arg_6_0:play_movement_sound(arg_6_1, var_6_3)
 
-			blackboard.played_fast_movespeed_sound = true
+			arg_6_2.played_fast_movespeed_sound = true
 		end
-	elseif distance > action.catchup_distance or not has_line_of_sight then
-		local catchup_speed = action.catchup_speed
+	elseif var_6_9 > arg_6_3.catchup_distance or not var_6_2 then
+		local var_6_11 = arg_6_3.catchup_speed
 
-		navigation_extension:set_max_speed(catchup_speed)
+		var_6_5:set_max_speed(var_6_11)
 
-		if not blackboard.played_fast_movespeed_sound then
-			self:play_movement_sound(unit, fast_move_speed_sound_event)
+		if not arg_6_2.played_fast_movespeed_sound then
+			arg_6_0:play_movement_sound(arg_6_1, var_6_3)
 
-			blackboard.played_fast_movespeed_sound = true
+			arg_6_2.played_fast_movespeed_sound = true
 		end
 	else
-		local move_speed = action.slow_down_on_look_at and action.fast_move_speed * 4 or action.slow_move_speed
+		local var_6_12 = arg_6_3.slow_down_on_look_at and arg_6_3.fast_move_speed * 4 or arg_6_3.slow_move_speed
 
-		navigation_extension:set_max_speed(move_speed)
+		var_6_5:set_max_speed(var_6_12)
 
-		if action.slow_down_on_look_at and not blackboard.played_fast_movespeed_sound then
-			self:play_movement_sound(unit, fast_move_speed_sound_event)
+		if arg_6_3.slow_down_on_look_at and not arg_6_2.played_fast_movespeed_sound then
+			arg_6_0:play_movement_sound(arg_6_1, var_6_3)
 
-			blackboard.played_fast_movespeed_sound = true
-		elseif move_speed == action.slow_move_speed then
-			self:play_movement_sound(unit, stop_fast_move_speed_sound_event)
+			arg_6_2.played_fast_movespeed_sound = true
+		elseif var_6_12 == arg_6_3.slow_move_speed then
+			arg_6_0:play_movement_sound(arg_6_1, var_6_4)
 
-			blackboard.played_fast_movespeed_sound = nil
+			arg_6_2.played_fast_movespeed_sound = nil
 		end
 	end
 end
 
-BTMutatorSorcererFollowAction.play_movement_sound = function (self, unit, sound_event)
-	local audio_system = Managers.state.entity:system("audio_system")
-
-	audio_system:play_audio_unit_event(sound_event, unit)
+function BTMutatorSorcererFollowAction.play_movement_sound(arg_7_0, arg_7_1, arg_7_2)
+	Managers.state.entity:system("audio_system"):play_audio_unit_event(arg_7_2, arg_7_1)
 end

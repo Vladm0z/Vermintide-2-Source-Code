@@ -1,935 +1,909 @@
-﻿-- chunkname: @scripts/utils/navigation_group_manager.lua
+-- chunkname: @scripts/utils/navigation_group_manager.lua
 
 require("foundation/scripts/util/math")
 require("scripts/utils/navigation_group")
 
 NavigationGroupManager = class(NavigationGroupManager)
 
-local MIN_AREA = 20
+local var_0_0 = 20
 
-NavigationGroupManager.init = function (self, using_editor)
-	self._navigation_groups = {}
-	self._registered_polygons = {}
-	self._world = nil
-	self._level = nil
-	self.nav_world = nil
-	self._groups_max_radius = 20
-	self._finish_point = nil
-	self._num_groups = 0
-	self._printing_groups = false
-	self._numb = 0
-	self._using_editor = using_editor
+function NavigationGroupManager.init(arg_1_0, arg_1_1)
+	arg_1_0._navigation_groups = {}
+	arg_1_0._registered_polygons = {}
+	arg_1_0._world = nil
+	arg_1_0._level = nil
+	arg_1_0.nav_world = nil
+	arg_1_0._groups_max_radius = 20
+	arg_1_0._finish_point = nil
+	arg_1_0._num_groups = 0
+	arg_1_0._printing_groups = false
+	arg_1_0._numb = 0
+	arg_1_0._using_editor = arg_1_1
 end
 
-NavigationGroupManager.setup = function (self, world, nav_world)
-	self._world = world
-	self.nav_world = nav_world
-	self.operational = true
+function NavigationGroupManager.setup(arg_2_0, arg_2_1, arg_2_2)
+	arg_2_0._world = arg_2_1
+	arg_2_0.nav_world = arg_2_2
+	arg_2_0.operational = true
 end
 
-NavigationGroupManager.form_groups = function (self, radius, finish_point, optional_level_name)
+function NavigationGroupManager.form_groups(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	print("Forming navigation groups")
-	assert(finish_point ~= nil, "Got nil for finish_point")
+	assert(arg_3_2 ~= nil, "Got nil for finish_point")
 
-	local time1 = os.clock()
+	local var_3_0 = os.clock()
 
-	self._groups_max_radius = radius or self._groups_max_radius
-	self._finish_point = finish_point
+	arg_3_0._groups_max_radius = arg_3_1 or arg_3_0._groups_max_radius
+	arg_3_0._finish_point = arg_3_2
 
-	local nav_world = self.nav_world
-	local level_name = optional_level_name
+	local var_3_1 = arg_3_0.nav_world
+	local var_3_2 = arg_3_3
 
-	if not optional_level_name then
-		local level_key = Managers.state.game_mode:level_key()
+	if not arg_3_3 then
+		local var_3_3 = Managers.state.game_mode:level_key()
 
-		level_name = LevelSettings[level_key].level_name
+		var_3_2 = LevelSettings[var_3_3].level_name
 	end
 
-	local num_nested_levels = LevelResource.nested_level_count(level_name)
-
-	if num_nested_levels > 0 then
-		level_name = LevelResource.nested_level_resource_name(level_name, 0)
+	if LevelResource.nested_level_count(var_3_2) > 0 then
+		var_3_2 = LevelResource.nested_level_resource_name(var_3_2, 0)
 	end
 
-	local unit_indices = LevelResource.unit_indices(level_name, "core/gwnav/units/seedpoint/seedpoint")
+	local var_3_4 = LevelResource.unit_indices(var_3_2, "core/gwnav/units/seedpoint/seedpoint")
 
-	self._num_groups = 0
+	arg_3_0._num_groups = 0
 
-	local first_poly = GwNavTraversal.get_seed_triangle(nav_world, finish_point:unbox())
-	local in_group_queue = {}
-	local rejected_queue = {}
+	local var_3_5 = GwNavTraversal.get_seed_triangle(var_3_1, arg_3_2:unbox())
+	local var_3_6 = {}
+	local var_3_7 = {}
 
-	self._in_group_queue_pos = 0
-	self._rejected_queue_pos = 0
-	in_group_queue[#in_group_queue + 1] = first_poly
-	self._iter_count = -999999
+	arg_3_0._in_group_queue_pos = 0
+	arg_3_0._rejected_queue_pos = 0
+	var_3_6[#var_3_6 + 1] = var_3_5
+	arg_3_0._iter_count = -999999
 
-	self:assign_group(nil, in_group_queue, rejected_queue)
+	arg_3_0:assign_group(nil, var_3_6, var_3_7)
 
-	local time2 = os.clock()
+	local var_3_8 = os.clock()
 
-	print("NavigationGroupManager -> calulation time A:", time2 - time1)
+	print("NavigationGroupManager -> calulation time A:", var_3_8 - var_3_0)
 
-	for i, unit_index in ipairs(unit_indices) do
-		local pos = LevelResource.unit_position(level_name, unit_index)
+	for iter_3_0, iter_3_1 in ipairs(var_3_4) do
+		local var_3_9 = LevelResource.unit_position(var_3_2, iter_3_1)
+		local var_3_10 = GwNavTraversal.get_seed_triangle(var_3_1, var_3_9)
+		local var_3_11 = {}
+		local var_3_12 = {}
 
-		first_poly = GwNavTraversal.get_seed_triangle(nav_world, pos)
+		arg_3_0._in_group_queue_pos = 0
+		arg_3_0._rejected_queue_pos = 0
+		var_3_11[#var_3_11 + 1] = var_3_10
 
-		local in_group_queue2 = {}
-		local rejected_queue2 = {}
-
-		self._in_group_queue_pos = 0
-		self._rejected_queue_pos = 0
-		in_group_queue2[#in_group_queue2 + 1] = first_poly
-
-		self:assign_group(nil, in_group_queue2, rejected_queue2)
+		arg_3_0:assign_group(nil, var_3_11, var_3_12)
 	end
 
-	local time3 = os.clock()
+	local var_3_13 = os.clock()
 
-	print("NavigationGroupManager -> calulation time B:", time3 - time2)
-	print("number of nav groups: ", self._num_groups)
-	self:refine_groups()
-	print("number of refined nav groups : ", self._num_groups)
-	self:calc_distances_from_finish_for_all(in_group_queue)
+	print("NavigationGroupManager -> calulation time B:", var_3_13 - var_3_8)
+	print("number of nav groups: ", arg_3_0._num_groups)
+	arg_3_0:refine_groups()
+	print("number of refined nav groups : ", arg_3_0._num_groups)
+	arg_3_0:calc_distances_from_finish_for_all(var_3_6)
 
-	if not self._using_editor then
-		self:make_sure_group_centers_are_on_mesh()
-		self:knit_groups_with_ledges()
+	if not arg_3_0._using_editor then
+		arg_3_0:make_sure_group_centers_are_on_mesh()
+		arg_3_0:knit_groups_with_ledges()
 	end
 
-	print("NavigationGroupManager -> calulation time C:", os.clock() - time3)
+	print("NavigationGroupManager -> calulation time C:", os.clock() - var_3_13)
 end
 
-NavigationGroupManager.form_groups_start = function (self, radius, finish_point, optional_level_name)
+function NavigationGroupManager.form_groups_start(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	print("NavigationGroupManager -> form_groups_start")
-	assert(finish_point ~= nil, "Got nil for finish_point")
+	assert(arg_4_2 ~= nil, "Got nil for finish_point")
 
-	self._groups_max_radius = radius or self._groups_max_radius
-	self._finish_point = finish_point
+	arg_4_0._groups_max_radius = arg_4_1 or arg_4_0._groups_max_radius
+	arg_4_0._finish_point = arg_4_2
 
-	local nav_world = self.nav_world
-	local level_name = optional_level_name
+	local var_4_0 = arg_4_0.nav_world
+	local var_4_1 = arg_4_3
 
-	if not optional_level_name then
-		local level_key = Managers.state.game_mode:level_key()
+	if not arg_4_3 then
+		local var_4_2 = Managers.state.game_mode:level_key()
 
-		level_name = LevelSettings[level_key].level_name
+		var_4_1 = LevelSettings[var_4_2].level_name
 	end
 
-	local num_nested_levels = LevelResource.nested_level_count(level_name)
-
-	if num_nested_levels > 0 then
-		level_name = LevelResource.nested_level_resource_name(level_name, 0)
+	if LevelResource.nested_level_count(var_4_1) > 0 then
+		var_4_1 = LevelResource.nested_level_resource_name(var_4_1, 0)
 	end
 
-	local unit_indices = LevelResource.unit_indices(level_name, "core/gwnav/units/seedpoint/seedpoint")
+	arg_4_0._seedpoint_unit_indices = LevelResource.unit_indices(var_4_1, "core/gwnav/units/seedpoint/seedpoint")
+	arg_4_0._level_name = var_4_1
+	arg_4_0._num_groups = 0
 
-	self._seedpoint_unit_indices = unit_indices
-	self._level_name = level_name
-	self._num_groups = 0
+	local var_4_3 = GwNavTraversal.get_seed_triangle(var_4_0, arg_4_2:unbox())
+	local var_4_4 = {}
+	local var_4_5 = {}
 
-	local first_poly = GwNavTraversal.get_seed_triangle(nav_world, finish_point:unbox())
-	local in_group_queue = {}
-	local rejected_queue = {}
+	arg_4_0._in_group_queue_pos = 0
+	arg_4_0._rejected_queue_pos = 0
+	var_4_4[#var_4_4 + 1] = var_4_3
+	arg_4_0._current_group = nil
+	arg_4_0._in_group_queue = var_4_4
+	arg_4_0._rejected_queue = var_4_5
+	arg_4_0._backup_group_queue = var_4_4
+	arg_4_0.form_groups_running = true
+	arg_4_0._sum_iter_count = 0
+	arg_4_0._spawn_point_index = 0
 
-	self._in_group_queue_pos = 0
-	self._rejected_queue_pos = 0
-	in_group_queue[#in_group_queue + 1] = first_poly
-	self._current_group = nil
-	self._in_group_queue = in_group_queue
-	self._rejected_queue = rejected_queue
-	self._backup_group_queue = in_group_queue
-	self.form_groups_running = true
-	self._sum_iter_count = 0
-	self._spawn_point_index = 0
-
-	self:form_groups_update()
+	arg_4_0:form_groups_update()
 end
 
-local max_nodes_per_frame = IS_WINDOWS and 1000 or 400
+local var_0_1 = IS_WINDOWS and 1000 or 400
 
-NavigationGroupManager.form_groups_update = function (self)
+function NavigationGroupManager.form_groups_update(arg_5_0)
 	print("NavigationGroupManager -> form_groups_update")
-	Debug.text("NavigationGroupManager: %d ", self._sum_iter_count)
+	Debug.text("NavigationGroupManager: %d ", arg_5_0._sum_iter_count)
 
-	local time1 = os.clock()
+	local var_5_0 = os.clock()
 
-	self._iter_count = 0
+	arg_5_0._iter_count = 0
 
-	local all_work_done = false
+	local var_5_1 = false
 
-	self.form_groups_running = true
+	arg_5_0.form_groups_running = true
 
-	while self._iter_count < max_nodes_per_frame do
-		local a, b, c = self:assign_group(self._current_group, self._in_group_queue, self._rejected_queue)
-		local completed = not b
+	while arg_5_0._iter_count < var_0_1 do
+		local var_5_2, var_5_3, var_5_4 = arg_5_0:assign_group(arg_5_0._current_group, arg_5_0._in_group_queue, arg_5_0._rejected_queue)
+		local var_5_5 = not var_5_3
 
-		self._sum_iter_count = self._sum_iter_count + self._iter_count
+		arg_5_0._sum_iter_count = arg_5_0._sum_iter_count + arg_5_0._iter_count
 
-		print("\t\tworking on group -> count:", self._iter_count)
+		print("\t\tworking on group -> count:", arg_5_0._iter_count)
 
-		if completed then
-			self._spawn_point_index = self._spawn_point_index + 1
+		if var_5_5 then
+			arg_5_0._spawn_point_index = arg_5_0._spawn_point_index + 1
 
-			local unit_index = self._seedpoint_unit_indices[self._spawn_point_index]
+			local var_5_6 = arg_5_0._seedpoint_unit_indices[arg_5_0._spawn_point_index]
 
-			if unit_index then
+			if var_5_6 then
 				print("\t\tpop next seed point")
 
-				local pos = LevelResource.unit_position(self._level_name, unit_index)
-				local first_poly = GwNavTraversal.get_seed_triangle(self.nav_world, pos)
+				local var_5_7 = LevelResource.unit_position(arg_5_0._level_name, var_5_6)
+				local var_5_8 = GwNavTraversal.get_seed_triangle(arg_5_0.nav_world, var_5_7)
 
-				self._in_group_queue = {}
-				self._rejected_queue = {}
-				self._current_group = nil
-				self._in_group_queue_pos = 0
-				self._rejected_queue_pos = 0
-				self._in_group_queue[#self._in_group_queue + 1] = first_poly
-				self._iter_count = 0
+				arg_5_0._in_group_queue = {}
+				arg_5_0._rejected_queue = {}
+				arg_5_0._current_group = nil
+				arg_5_0._in_group_queue_pos = 0
+				arg_5_0._rejected_queue_pos = 0
+				arg_5_0._in_group_queue[#arg_5_0._in_group_queue + 1] = var_5_8
+				arg_5_0._iter_count = 0
 			else
-				self:form_groups_end()
+				arg_5_0:form_groups_end()
 
-				self.form_groups_running = false
-				all_work_done = true
+				arg_5_0.form_groups_running = false
+				var_5_1 = true
 
 				break
 			end
 		else
-			self._current_group = a
-			self._in_group_queue = b
-			self._rejected_queue = c
+			arg_5_0._current_group = var_5_2
+			arg_5_0._in_group_queue = var_5_3
+			arg_5_0._rejected_queue = var_5_4
 		end
 	end
 
-	print("\t-> time:", os.clock() - time1, "sum:", self._sum_iter_count)
+	print("\t-> time:", os.clock() - var_5_0, "sum:", arg_5_0._sum_iter_count)
 
-	return all_work_done
+	return var_5_1
 end
 
-NavigationGroupManager.form_groups_end = function (self)
-	local time1 = os.clock()
+function NavigationGroupManager.form_groups_end(arg_6_0)
+	local var_6_0 = os.clock()
 
-	print("\t-> number of nav groups: ", self._num_groups)
-	self:refine_groups()
-	print("\t-> number of refined nav groups : ", self._num_groups)
-	self:calc_distances_from_finish_for_all(self._backup_group_queue)
+	print("\t-> number of nav groups: ", arg_6_0._num_groups)
+	arg_6_0:refine_groups()
+	print("\t-> number of refined nav groups : ", arg_6_0._num_groups)
+	arg_6_0:calc_distances_from_finish_for_all(arg_6_0._backup_group_queue)
 
-	if not self._using_editor then
-		self:make_sure_group_centers_are_on_mesh()
-		self:knit_groups_with_ledges()
+	if not arg_6_0._using_editor then
+		arg_6_0:make_sure_group_centers_are_on_mesh()
+		arg_6_0:knit_groups_with_ledges()
 	end
 
-	print("NavigationGroupManager -> form_groups_end time:", os.clock() - time1)
+	print("NavigationGroupManager -> form_groups_end time:", os.clock() - var_6_0)
 end
 
-NavigationGroupManager._breadth_first_fill_main_path_index = function (self, main_path_index, starting_nav_group)
-	local added_to_queue = {
-		starting_nav_group = true,
+function NavigationGroupManager._breadth_first_fill_main_path_index(arg_7_0, arg_7_1, arg_7_2)
+	local var_7_0 = {
+		starting_nav_group = true
 	}
-	local queue = {
-		starting_nav_group,
+	local var_7_1 = {
+		arg_7_2
 	}
-	local read_index = 1
-	local write_index = #queue + 1
+	local var_7_2 = 1
+	local var_7_3 = #var_7_1 + 1
 
-	while read_index < write_index do
-		local group = queue[read_index]
-		local group_index = group:get_main_path_index()
+	while var_7_2 < var_7_3 do
+		local var_7_4 = var_7_1[var_7_2]
 
-		if group_index == nil then
-			group:set_main_path_index(main_path_index)
+		if var_7_4:get_main_path_index() == nil then
+			var_7_4:set_main_path_index(arg_7_1)
 
-			local neighbours = group:get_group_neighbours()
-			local ledge_neighbours = group:get_group_ledge_neighbours()
+			local var_7_5 = var_7_4:get_group_neighbours()
+			local var_7_6 = var_7_4:get_group_ledge_neighbours()
 
-			for neighbour_group, _ in pairs(neighbours) do
-				if not added_to_queue[neighbour_group] and not ledge_neighbours[neighbour_group] then
-					added_to_queue[neighbour_group] = true
-					queue[write_index] = neighbour_group
-					write_index = write_index + 1
+			for iter_7_0, iter_7_1 in pairs(var_7_5) do
+				if not var_7_0[iter_7_0] and not var_7_6[iter_7_0] then
+					var_7_0[iter_7_0] = true
+					var_7_1[var_7_3] = iter_7_0
+					var_7_3 = var_7_3 + 1
 				end
 			end
 		end
 
-		read_index = read_index + 1
+		var_7_2 = var_7_2 + 1
 	end
 end
 
-NavigationGroupManager.assign_main_path_indexes = function (self, main_paths)
-	local time1 = os.clock()
-	local Script_set_temp_count = Script.set_temp_count
-	local Script_temp_count = Script.temp_count
+function NavigationGroupManager.assign_main_path_indexes(arg_8_0, arg_8_1)
+	local var_8_0 = os.clock()
+	local var_8_1 = Script.set_temp_count
+	local var_8_2 = Script.temp_count
 
-	for main_path_index = 1, #main_paths do
-		local sub_path = main_paths[main_path_index]
-		local nodes = sub_path.nodes
+	for iter_8_0 = 1, #arg_8_1 do
+		local var_8_3 = arg_8_1[iter_8_0].nodes
 
-		for node_index = 1, #nodes do
-			local num_v, num_q, num_m = Script_temp_count()
-			local node = nodes[node_index]:unbox()
-			local group = self:get_group_from_position(node)
+		for iter_8_1 = 1, #var_8_3 do
+			local var_8_4, var_8_5, var_8_6 = var_8_2()
+			local var_8_7 = var_8_3[iter_8_1]:unbox()
+			local var_8_8 = arg_8_0:get_group_from_position(var_8_7)
 
-			if group then
-				self:_breadth_first_fill_main_path_index(main_path_index, group)
+			if var_8_8 then
+				arg_8_0:_breadth_first_fill_main_path_index(iter_8_0, var_8_8)
 
 				break
 			end
 
-			Script_set_temp_count(num_v, num_q, num_m)
+			var_8_1(var_8_4, var_8_5, var_8_6)
 		end
 	end
 
-	print("NavigationGroupManager -> assign_main_path_indexes time:", os.clock() - time1)
+	print("NavigationGroupManager -> assign_main_path_indexes time:", os.clock() - var_8_0)
 end
 
-NavigationGroupManager.assign_group = function (self, group, in_group_queue, rejected_queue)
-	local a, b, c = Script.temp_count()
+function NavigationGroupManager.assign_group(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	local var_9_0, var_9_1, var_9_2 = Script.temp_count()
 
-	self._iter_count = self._iter_count + 1
+	arg_9_0._iter_count = arg_9_0._iter_count + 1
 
-	local poly, poly_hash, create_new_group = self:next_poly_in_queue(in_group_queue, rejected_queue)
+	local var_9_3, var_9_4, var_9_5 = arg_9_0:next_poly_in_queue(arg_9_2, arg_9_3)
 
-	create_new_group = create_new_group or not group
+	var_9_5 = var_9_5 or not arg_9_1
 
-	if not poly then
+	if not var_9_3 then
 		return
 	end
 
-	if create_new_group then
-		group = self:create_group(self.nav_world, poly_hash, poly)
-		in_group_queue = self:add_neighbours_to_queue(poly, group, in_group_queue)
-	elseif self:in_range(poly, group) then
-		if poly_hash ~= group:get_group_center_poly() then
-			self:join_group(poly, poly_hash, group)
+	if var_9_5 then
+		arg_9_1 = arg_9_0:create_group(arg_9_0.nav_world, var_9_4, var_9_3)
+		arg_9_2 = arg_9_0:add_neighbours_to_queue(var_9_3, arg_9_1, arg_9_2)
+	elseif arg_9_0:in_range(var_9_3, arg_9_1) then
+		if var_9_4 ~= arg_9_1:get_group_center_poly() then
+			arg_9_0:join_group(var_9_3, var_9_4, arg_9_1)
 		else
-			self._registered_polygons[poly_hash] = group
+			arg_9_0._registered_polygons[var_9_4] = arg_9_1
 		end
 
-		in_group_queue = self:add_neighbours_to_queue(poly, group, in_group_queue)
+		arg_9_2 = arg_9_0:add_neighbours_to_queue(var_9_3, arg_9_1, arg_9_2)
 	else
-		rejected_queue[#rejected_queue + 1] = poly
+		arg_9_3[#arg_9_3 + 1] = var_9_3
 	end
 
-	Script.set_temp_count(a, b, c)
+	Script.set_temp_count(var_9_0, var_9_1, var_9_2)
 
-	if self._iter_count > max_nodes_per_frame then
-		return group, in_group_queue, rejected_queue
+	if arg_9_0._iter_count > var_0_1 then
+		return arg_9_1, arg_9_2, arg_9_3
 	end
 
-	return self:assign_group(group, in_group_queue, rejected_queue)
+	return arg_9_0:assign_group(arg_9_1, arg_9_2, arg_9_3)
 end
 
-NavigationGroupManager.next_poly_in_queue = function (self, in_group_queue, rejected_queue)
-	self._in_group_queue_pos = self._in_group_queue_pos + 1
+function NavigationGroupManager.next_poly_in_queue(arg_10_0, arg_10_1, arg_10_2)
+	arg_10_0._in_group_queue_pos = arg_10_0._in_group_queue_pos + 1
 
-	local poly = in_group_queue[self._in_group_queue_pos]
-	local poly_is_valid, poly_hash = self:poly_is_valid(poly)
-	local create_new_group = false
+	local var_10_0 = arg_10_1[arg_10_0._in_group_queue_pos]
+	local var_10_1, var_10_2 = arg_10_0:poly_is_valid(var_10_0)
+	local var_10_3 = false
 
-	if not poly_is_valid then
-		self._in_group_queue_pos = self._in_group_queue_pos - 1
-		create_new_group = true
+	if not var_10_1 then
+		arg_10_0._in_group_queue_pos = arg_10_0._in_group_queue_pos - 1
+		var_10_3 = true
 
 		repeat
-			self._rejected_queue_pos = self._rejected_queue_pos + 1
-			poly = rejected_queue[self._rejected_queue_pos]
-			poly_is_valid, poly_hash = self:poly_is_valid(poly)
+			arg_10_0._rejected_queue_pos = arg_10_0._rejected_queue_pos + 1
+			var_10_0 = arg_10_2[arg_10_0._rejected_queue_pos]
 
-			if poly_is_valid == nil then
-				self._rejected_queue_pos = self._rejected_queue_pos - 1
+			local var_10_4
+
+			var_10_4, var_10_2 = arg_10_0:poly_is_valid(var_10_0)
+
+			if var_10_4 == nil then
+				arg_10_0._rejected_queue_pos = arg_10_0._rejected_queue_pos - 1
 
 				return false, false
 			end
-		until poly_is_valid
+		until var_10_4
 	end
 
-	if create_new_group then
-		self:unmark_polys(rejected_queue)
+	if var_10_3 then
+		arg_10_0:unmark_polys(arg_10_2)
 	end
 
-	return poly, poly_hash, create_new_group
+	return var_10_0, var_10_2, var_10_3
 end
 
-NavigationGroupManager.poly_is_valid = function (self, poly)
-	local poly_hash = false
-	local poly_is_valid = false
+function NavigationGroupManager.poly_is_valid(arg_11_0, arg_11_1)
+	local var_11_0 = false
+	local var_11_1 = false
 
-	if poly then
-		poly_hash = self:get_poly_hash(poly)
+	if arg_11_1 then
+		var_11_0 = arg_11_0:get_poly_hash(arg_11_1)
 
-		if self._registered_polygons[poly_hash] == nil or self._registered_polygons[poly_hash] == true then
-			poly_is_valid = true
+		if arg_11_0._registered_polygons[var_11_0] == nil or arg_11_0._registered_polygons[var_11_0] == true then
+			var_11_1 = true
 		end
 	else
 		return nil, nil
 	end
 
-	return poly_is_valid, poly_hash
+	return var_11_1, var_11_0
 end
 
-NavigationGroupManager.unmark_polys = function (self, rejected_queue)
-	for i = self._rejected_queue_pos, #rejected_queue do
-		local poly = rejected_queue[i]
-		local poly_hash = self:get_poly_hash(poly)
+function NavigationGroupManager.unmark_polys(arg_12_0, arg_12_1)
+	for iter_12_0 = arg_12_0._rejected_queue_pos, #arg_12_1 do
+		local var_12_0 = arg_12_1[iter_12_0]
+		local var_12_1 = arg_12_0:get_poly_hash(var_12_0)
 
-		if self._registered_polygons[poly_hash] == true then
-			self._registered_polygons[poly_hash] = nil
+		if arg_12_0._registered_polygons[var_12_1] == true then
+			arg_12_0._registered_polygons[var_12_1] = nil
 		end
 	end
 end
 
-NavigationGroupManager.add_neighbours_to_queue = function (self, poly, group, in_group_queue)
-	local neighbours = self:get_neighbours(poly)
-	local poly_hash_atm = self:get_poly_hash(poly)
+function NavigationGroupManager.add_neighbours_to_queue(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	local var_13_0 = arg_13_0:get_neighbours(arg_13_1)
+	local var_13_1 = arg_13_0:get_poly_hash(arg_13_1)
 
-	for _, neighbour in ipairs(neighbours) do
-		local poly_hash = self:get_poly_hash(neighbour)
-		local poly_group = self._registered_polygons[poly_hash]
+	for iter_13_0, iter_13_1 in ipairs(var_13_0) do
+		local var_13_2 = arg_13_0:get_poly_hash(iter_13_1)
+		local var_13_3 = arg_13_0._registered_polygons[var_13_2]
 
-		if poly_group == nil then
-			in_group_queue[#in_group_queue + 1] = neighbour
-			self._registered_polygons[poly_hash] = true
-		elseif poly_group ~= true and group ~= poly_group then
-			group:add_neighbour_group(poly_group)
-			poly_group:add_neighbour_group(group)
+		if var_13_3 == nil then
+			arg_13_3[#arg_13_3 + 1] = iter_13_1
+			arg_13_0._registered_polygons[var_13_2] = true
+		elseif var_13_3 ~= true and arg_13_2 ~= var_13_3 then
+			arg_13_2:add_neighbour_group(var_13_3)
+			var_13_3:add_neighbour_group(arg_13_2)
 		end
 	end
 
-	return in_group_queue
+	return arg_13_3
 end
 
-NavigationGroupManager.refine_groups = function (self)
-	for group, _ in pairs(self._navigation_groups) do
-		local group_area = group:get_group_area()
-		local group_neighbours = group:get_group_neighbours()
-		local num_neightbours = table.size(group_neighbours)
+function NavigationGroupManager.refine_groups(arg_14_0)
+	for iter_14_0, iter_14_1 in pairs(arg_14_0._navigation_groups) do
+		local var_14_0 = iter_14_0:get_group_area()
+		local var_14_1 = iter_14_0:get_group_neighbours()
+		local var_14_2 = table.size(var_14_1)
 
-		if group_area < MIN_AREA and num_neightbours > 0 then
-			local group_polygons = group:get_group_polygons()
-			local new_group = self:find_smallest_neighbour_group(group)
-			local a, b, c = Script.temp_count()
+		if var_14_0 < var_0_0 and var_14_2 > 0 then
+			local var_14_3 = iter_14_0:get_group_polygons()
+			local var_14_4 = arg_14_0:find_smallest_neighbour_group(iter_14_0)
+			local var_14_5, var_14_6, var_14_7 = Script.temp_count()
 
-			for _, poly in pairs(group_polygons) do
-				local poly_hash = self:get_poly_hash(poly)
+			for iter_14_2, iter_14_3 in pairs(var_14_3) do
+				local var_14_8 = arg_14_0:get_poly_hash(iter_14_3)
 
-				self:join_group(poly, poly_hash, new_group)
+				arg_14_0:join_group(iter_14_3, var_14_8, var_14_4)
 			end
 
-			Script.set_temp_count(a, b, c)
+			Script.set_temp_count(var_14_5, var_14_6, var_14_7)
 
-			for neighbour_group, _ in pairs(group_neighbours) do
-				neighbour_group:remove_neighbour_group(group)
+			for iter_14_4, iter_14_5 in pairs(var_14_1) do
+				iter_14_4:remove_neighbour_group(iter_14_0)
 
-				if neighbour_group ~= new_group then
-					neighbour_group:add_neighbour_group(new_group)
-					new_group:add_neighbour_group(neighbour_group)
+				if iter_14_4 ~= var_14_4 then
+					iter_14_4:add_neighbour_group(var_14_4)
+					var_14_4:add_neighbour_group(iter_14_4)
 				end
 			end
 
-			self._navigation_groups[group] = nil
-			self._num_groups = self._num_groups - 1
+			arg_14_0._navigation_groups[iter_14_0] = nil
+			arg_14_0._num_groups = arg_14_0._num_groups - 1
 
-			group:destroy(self._world)
+			iter_14_0:destroy(arg_14_0._world)
 
-			group = nil
+			iter_14_0 = nil
 		end
 	end
 end
 
-local function find_center_tri(nav_world, pos, above, below)
-	local success, altitude = GwNavQueries.triangle_from_position(nav_world, pos, above, below)
+local function var_0_2(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+	local var_15_0, var_15_1 = GwNavQueries.triangle_from_position(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 
-	if success then
-		pos.z = altitude
+	if var_15_0 then
+		arg_15_1.z = var_15_1
 
-		return pos
+		return arg_15_1
 	end
 end
 
-NavigationGroupManager.make_sure_group_centers_are_on_mesh = function (self)
-	for group, _ in pairs(self._navigation_groups) do
-		local pos = group._group_center:unbox()
-		local success, altitude = GwNavQueries.triangle_from_position(self.nav_world, pos, 1, 1)
+function NavigationGroupManager.make_sure_group_centers_are_on_mesh(arg_16_0)
+	for iter_16_0, iter_16_1 in pairs(arg_16_0._navigation_groups) do
+		local var_16_0 = iter_16_0._group_center:unbox()
+		local var_16_1, var_16_2 = GwNavQueries.triangle_from_position(arg_16_0.nav_world, var_16_0, 1, 1)
 
-		if not success then
-			success, altitude = GwNavQueries.triangle_from_position(self.nav_world, pos, 2.5, 2.5)
+		if not var_16_1 then
+			var_16_1, var_16_2 = GwNavQueries.triangle_from_position(arg_16_0.nav_world, var_16_0, 2.5, 2.5)
 		end
 
-		if not success then
-			success, altitude = GwNavQueries.triangle_from_position(self.nav_world, pos, 5, 5)
+		if not var_16_1 then
+			var_16_1, var_16_2 = GwNavQueries.triangle_from_position(arg_16_0.nav_world, var_16_0, 5, 5)
 		end
 
-		if success then
-			pos.z = altitude
+		if var_16_1 then
+			var_16_0.z = var_16_2
 
-			group._group_center:store(pos)
+			iter_16_0._group_center:store(var_16_0)
 		else
-			local triangle = GwNavTraversal.get_seed_triangle(self.nav_world, pos)
+			local var_16_3 = GwNavTraversal.get_seed_triangle(arg_16_0.nav_world, var_16_0)
 
-			if triangle then
-				local p1, p2, p3 = GwNavTraversal.get_triangle_vertices(self.nav_world, triangle)
-				local tri_center = (p1 + p2 + p3) / 3
+			if var_16_3 then
+				local var_16_4, var_16_5, var_16_6 = GwNavTraversal.get_triangle_vertices(arg_16_0.nav_world, var_16_3)
+				local var_16_7 = (var_16_4 + var_16_5 + var_16_6) / 3
 
-				group._group_center:store(tri_center)
+				iter_16_0._group_center:store(var_16_7)
 			else
-				local p = GwNavQueries.inside_position_from_outside_position(self.nav_world, pos + Vector3(0, 0, 2), 0, 4, 4, 0.1)
+				local var_16_8 = GwNavQueries.inside_position_from_outside_position(arg_16_0.nav_world, var_16_0 + Vector3(0, 0, 2), 0, 4, 4, 0.1)
 
-				if p then
-					group._group_center:store(p)
+				if var_16_8 then
+					iter_16_0._group_center:store(var_16_8)
 				end
 			end
 		end
 	end
 end
 
-NavigationGroupManager.find_smallest_neighbour_group = function (self, group)
-	local group_neighbours = group:get_group_neighbours()
-	local smallest_neighbour_group = next(group_neighbours, nil)
-	local smallest_area = smallest_neighbour_group:get_group_area()
+function NavigationGroupManager.find_smallest_neighbour_group(arg_17_0, arg_17_1)
+	local var_17_0 = arg_17_1:get_group_neighbours()
+	local var_17_1 = next(var_17_0, nil)
+	local var_17_2 = var_17_1:get_group_area()
 
-	for neighbour_group, _ in pairs(group_neighbours) do
-		local group_area = neighbour_group:get_group_area()
+	for iter_17_0, iter_17_1 in pairs(var_17_0) do
+		local var_17_3 = iter_17_0:get_group_area()
 
-		if group_area < smallest_area then
-			smallest_neighbour_group = neighbour_group
-			smallest_area = group_area
+		if var_17_3 < var_17_2 then
+			var_17_1 = iter_17_0
+			var_17_2 = var_17_3
 		end
 	end
 
-	return smallest_neighbour_group
+	return var_17_1
 end
 
-NavigationGroupManager.calc_distances_from_finish_for_all = function (self, in_group_queue)
-	local a, b, c = Script.temp_count()
-	local first_poly = GwNavTraversal.get_seed_triangle(self.nav_world, self._finish_point:unbox())
-	local first_poly_hash = self:get_poly_hash(first_poly)
+function NavigationGroupManager.calc_distances_from_finish_for_all(arg_18_0, arg_18_1)
+	local var_18_0, var_18_1, var_18_2 = Script.temp_count()
+	local var_18_3 = GwNavTraversal.get_seed_triangle(arg_18_0.nav_world, arg_18_0._finish_point:unbox())
+	local var_18_4 = arg_18_0:get_poly_hash(var_18_3)
 
-	for i, poly in ipairs(in_group_queue) do
+	for iter_18_0, iter_18_1 in ipairs(arg_18_1) do
 		repeat
-			Script.set_temp_count(a, b, c)
+			Script.set_temp_count(var_18_0, var_18_1, var_18_2)
 
-			local poly_hash = self:get_poly_hash(poly)
-			local group = self._registered_polygons[poly_hash]
-			local is_first_group = false
+			local var_18_5 = arg_18_0:get_poly_hash(iter_18_1)
+			local var_18_6 = arg_18_0._registered_polygons[var_18_5]
+			local var_18_7 = false
 
-			if group:get_distance_from_finish() ~= math.huge then
+			if var_18_6:get_distance_from_finish() ~= math.huge then
 				break
 			end
 
-			if group == self._registered_polygons[first_poly_hash] then
-				is_first_group = true
+			if var_18_6 == arg_18_0._registered_polygons[var_18_4] then
+				var_18_7 = true
 			end
 
-			local distance_from_finish = self:calc_distance_from_finish(group, is_first_group)
+			local var_18_8 = arg_18_0:calc_distance_from_finish(var_18_6, var_18_7)
 
-			group:set_distance_from_finish(distance_from_finish)
+			var_18_6:set_distance_from_finish(var_18_8)
 		until true
 	end
 end
 
-NavigationGroupManager.get_neighbours = function (self, poly)
-	local neighbours = {
-		GwNavTraversal.get_neighboring_triangles(poly),
+function NavigationGroupManager.get_neighbours(arg_19_0, arg_19_1)
+	return {
+		GwNavTraversal.get_neighboring_triangles(arg_19_1)
 	}
-
-	return neighbours
 end
 
-NavigationGroupManager.create_group = function (self, world, poly_hash, poly)
-	local poly_center = self:calc_polygon_center(poly)
-	local poly_area = self:calc_polygon_area(poly)
+function NavigationGroupManager.create_group(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+	local var_20_0 = arg_20_0:calc_polygon_center(arg_20_3)
+	local var_20_1 = arg_20_0:calc_polygon_area(arg_20_3)
 
-	self._num_groups = self._num_groups + 1
+	arg_20_0._num_groups = arg_20_0._num_groups + 1
 
-	local group = NavigationGroup:new(self.nav_world, poly_hash, poly, poly_center, poly_area, self._num_groups)
+	local var_20_2 = NavigationGroup:new(arg_20_0.nav_world, arg_20_2, arg_20_3, var_20_0, var_20_1, arg_20_0._num_groups)
 
-	self._navigation_groups[group] = true
-	self._registered_polygons[poly_hash] = group
+	arg_20_0._navigation_groups[var_20_2] = true
+	arg_20_0._registered_polygons[arg_20_2] = var_20_2
 
-	return group
+	return var_20_2
 end
 
-NavigationGroupManager.join_group = function (self, poly, poly_hash, group)
-	local poly_area = self:calc_polygon_area(poly)
-	local poly_center = self:calc_polygon_center(poly)
+function NavigationGroupManager.join_group(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+	local var_21_0 = arg_21_0:calc_polygon_area(arg_21_1)
+	local var_21_1 = arg_21_0:calc_polygon_center(arg_21_1)
 
-	group:add_polygon(poly, poly_center, poly_area, self.nav_world)
+	arg_21_3:add_polygon(arg_21_1, var_21_1, var_21_0, arg_21_0.nav_world)
 
-	self._registered_polygons[poly_hash] = group
+	arg_21_0._registered_polygons[arg_21_2] = arg_21_3
 end
 
-NavigationGroupManager.in_range = function (self, poly, group)
-	local poly_center = self:calc_polygon_center(poly)
-	local group_center = group:get_group_center():unbox()
-	local to_centre = poly_center - group_center
-	local distance = Vector3.length(to_centre)
-	local radius = self._groups_max_radius
+function NavigationGroupManager.in_range(arg_22_0, arg_22_1, arg_22_2)
+	local var_22_0 = arg_22_0:calc_polygon_center(arg_22_1) - arg_22_2:get_group_center():unbox()
 
-	return distance <= radius and math.abs(to_centre.z) < 2.5
+	return Vector3.length(var_22_0) <= arg_22_0._groups_max_radius and math.abs(var_22_0.z) < 2.5
 end
 
-NavigationGroupManager.calc_distance_from_finish = function (self, group, first_group)
-	local distance_from_finish = math.huge
-	local group_center = group:get_group_center()
+function NavigationGroupManager.calc_distance_from_finish(arg_23_0, arg_23_1, arg_23_2)
+	local var_23_0 = math.huge
+	local var_23_1 = arg_23_1:get_group_center()
 
-	if first_group then
-		distance_from_finish = Vector3.distance(group_center:unbox(), self._finish_point:unbox())
+	if arg_23_2 then
+		var_23_0 = Vector3.distance(var_23_1:unbox(), arg_23_0._finish_point:unbox())
 	else
-		local group_neighbours = group:get_group_neighbours()
-		local neighbour = next(group_neighbours, nil)
+		local var_23_2 = arg_23_1:get_group_neighbours()
+		local var_23_3 = next(var_23_2, nil)
 
-		if not neighbour then
-			return distance_from_finish
+		if not var_23_3 then
+			return var_23_0
 		end
 
-		for neighbour_group, _ in pairs(group_neighbours) do
-			local neighbour_distance = neighbour_group:get_distance_from_finish()
+		for iter_23_0, iter_23_1 in pairs(var_23_2) do
+			local var_23_4 = iter_23_0:get_distance_from_finish()
 
-			if neighbour_distance < distance_from_finish then
-				distance_from_finish = neighbour_distance
-				neighbour = neighbour_group
+			if var_23_4 < var_23_0 then
+				var_23_0 = var_23_4
+				var_23_3 = iter_23_0
 			end
 		end
 
-		local distance_to_neighbour = Vector3.distance(group_center:unbox(), neighbour:get_group_center():unbox())
-
-		distance_from_finish = distance_from_finish + distance_to_neighbour
+		var_23_0 = var_23_0 + Vector3.distance(var_23_1:unbox(), var_23_3:get_group_center():unbox())
 	end
 
-	return distance_from_finish
+	return var_23_0
 end
 
-NavigationGroupManager.calc_polygon_center = function (self, poly)
-	local p1, p2, p3 = GwNavTraversal.get_triangle_vertices(self.nav_world, poly)
-	local center = (p1 + p2 + p3) / 3
+function NavigationGroupManager.calc_polygon_center(arg_24_0, arg_24_1)
+	local var_24_0, var_24_1, var_24_2 = GwNavTraversal.get_triangle_vertices(arg_24_0.nav_world, arg_24_1)
 
-	return center
+	return (var_24_0 + var_24_1 + var_24_2) / 3
 end
 
-NavigationGroupManager.calc_polygon_area = function (self, poly)
-	local p1, p2, p3 = self:get_polygon_sides(poly)
-	local perimeter = p1 + p2 + p3
+function NavigationGroupManager.calc_polygon_area(arg_25_0, arg_25_1)
+	local var_25_0, var_25_1, var_25_2 = arg_25_0:get_polygon_sides(arg_25_1)
+	local var_25_3 = (var_25_0 + var_25_1 + var_25_2) / 2
 
-	perimeter = perimeter / 2
-
-	local area = math.sqrt(perimeter * (perimeter - p1) * (perimeter - p2) * (perimeter - p3))
-
-	return area
+	return (math.sqrt(var_25_3 * (var_25_3 - var_25_0) * (var_25_3 - var_25_1) * (var_25_3 - var_25_2)))
 end
 
-NavigationGroupManager.get_polygon_sides = function (self, poly)
-	local p1, p2, p3 = GwNavTraversal.get_triangle_vertices(self.nav_world, poly)
-	local side_p1, side_p2, side_p3
+function NavigationGroupManager.get_polygon_sides(arg_26_0, arg_26_1)
+	local var_26_0, var_26_1, var_26_2 = GwNavTraversal.get_triangle_vertices(arg_26_0.nav_world, arg_26_1)
+	local var_26_3
+	local var_26_4
+	local var_26_5
+	local var_26_6 = Vector3.distance(var_26_0, var_26_1)
+	local var_26_7 = Vector3.distance(var_26_0, var_26_2)
+	local var_26_8 = Vector3.distance(var_26_1, var_26_2)
 
-	side_p1 = Vector3.distance(p1, p2)
-	side_p2 = Vector3.distance(p1, p3)
-	side_p3 = Vector3.distance(p2, p3)
-
-	return side_p1, side_p2, side_p3
+	return var_26_6, var_26_7, var_26_8
 end
 
-NavigationGroupManager.destroy = function (self, world)
-	self:destroy_gui(world)
+function NavigationGroupManager.destroy(arg_27_0, arg_27_1)
+	arg_27_0:destroy_gui(arg_27_1)
 
-	for group, _ in pairs(self._navigation_groups) do
-		group:destroy(world)
+	for iter_27_0, iter_27_1 in pairs(arg_27_0._navigation_groups) do
+		iter_27_0:destroy(arg_27_1)
 
-		group = nil
+		iter_27_0 = nil
 	end
 
-	self.operational = nil
-	self._navigation_groups = {}
-	self._registered_polygons = {}
+	arg_27_0.operational = nil
+	arg_27_0._navigation_groups = {}
+	arg_27_0._registered_polygons = {}
 end
 
-NavigationGroupManager.get_group_from_position = function (self, position)
-	local triangle = GwNavTraversal.get_seed_triangle(self.nav_world, position)
+function NavigationGroupManager.get_group_from_position(arg_28_0, arg_28_1)
+	local var_28_0 = GwNavTraversal.get_seed_triangle(arg_28_0.nav_world, arg_28_1)
 
-	if not triangle then
+	if not var_28_0 then
 		return
 	end
 
-	local group = self:get_polygon_group(triangle)
-
-	return group
+	return (arg_28_0:get_polygon_group(var_28_0))
 end
 
-NavigationGroupManager.get_polygon_group = function (self, triangle, dont_clear)
-	local triangle_hash = self:get_poly_hash(triangle)
-	local group = self._registered_polygons[triangle_hash]
+function NavigationGroupManager.get_polygon_group(arg_29_0, arg_29_1, arg_29_2)
+	local var_29_0 = arg_29_0:get_poly_hash(arg_29_1)
+	local var_29_1 = arg_29_0._registered_polygons[var_29_0]
 
-	if group then
-		return group
+	if var_29_1 then
+		return var_29_1
 	end
 
-	group = self:breadth_first_search_neighbours(triangle)
-
-	return group
+	return (arg_29_0:breadth_first_search_neighbours(arg_29_1))
 end
 
-NavigationGroupManager.draw_tri = function (self, triangle, h, col)
-	h = h or 0.1
+function NavigationGroupManager.draw_tri(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+	arg_30_2 = arg_30_2 or 0.1
 
-	local p1, p2, p3 = GwNavTraversal.get_triangle_vertices(self.nav_world, triangle)
+	local var_30_0, var_30_1, var_30_2 = GwNavTraversal.get_triangle_vertices(arg_30_0.nav_world, arg_30_1)
+	local var_30_3 = var_30_0 + Vector3(0, 0, arg_30_2)
+	local var_30_4 = var_30_1 + Vector3(0, 0, arg_30_2)
+	local var_30_5 = var_30_2 + Vector3(0, 0, arg_30_2)
 
-	p1 = p1 + Vector3(0, 0, h)
-	p2 = p2 + Vector3(0, 0, h)
-	p3 = p3 + Vector3(0, 0, h)
-
-	QuickDrawerStay:line(p1, p2, col)
-	QuickDrawerStay:line(p2, p3, col)
-	QuickDrawerStay:line(p3, p1, col)
+	QuickDrawerStay:line(var_30_3, var_30_4, arg_30_3)
+	QuickDrawerStay:line(var_30_4, var_30_5, arg_30_3)
+	QuickDrawerStay:line(var_30_5, var_30_3, arg_30_3)
 end
 
-local b_queue = {}
-local patch_list = {}
-local triangle_lookup = {}
+local var_0_3 = {}
+local var_0_4 = {}
+local var_0_5 = {}
 
-NavigationGroupManager.breadth_first_search_neighbours = function (self, root_triangle)
-	table.clear(triangle_lookup)
-	table.clear(patch_list)
+function NavigationGroupManager.breadth_first_search_neighbours(arg_31_0, arg_31_1)
+	table.clear(var_0_5)
+	table.clear(var_0_4)
 
-	local count = 1
-	local b_queue = b_queue
-	local b_start = 1
-	local b_last = 1
+	local var_31_0 = 1
+	local var_31_1 = var_0_3
+	local var_31_2 = 1
+	local var_31_3 = 1
 
-	b_queue[1] = root_triangle
+	var_31_1[1] = arg_31_1
 
-	local root_hash = self:get_poly_hash(root_triangle)
+	local var_31_4 = arg_31_0:get_poly_hash(arg_31_1)
 
-	triangle_lookup[root_hash] = true
+	var_0_5[var_31_4] = true
 
-	while b_start <= b_last do
-		local node_tri = b_queue[b_start]
-		local node_hash = self:get_poly_hash(node_tri)
+	while var_31_2 <= var_31_3 do
+		local var_31_5 = var_31_1[var_31_2]
+		local var_31_6 = arg_31_0:get_poly_hash(var_31_5)
 
-		b_start = b_start + 1
-		count = count + 1
+		var_31_2 = var_31_2 + 1
+		var_31_0 = var_31_0 + 1
 
-		local group = self._registered_polygons[node_hash]
+		local var_31_7 = arg_31_0._registered_polygons[var_31_6]
 
-		if group then
-			for tri_hash, tri in pairs(patch_list) do
-				self:join_group(tri, tri_hash, group)
+		if var_31_7 then
+			for iter_31_0, iter_31_1 in pairs(var_0_4) do
+				arg_31_0:join_group(iter_31_1, iter_31_0, var_31_7)
 			end
 
-			return group
+			return var_31_7
 		end
 
-		patch_list[node_hash] = node_tri
+		var_0_4[var_31_6] = var_31_5
 
-		local neighbours = {
-			GwNavTraversal.get_neighboring_triangles(node_tri),
+		local var_31_8 = {
+			GwNavTraversal.get_neighboring_triangles(var_31_5)
 		}
 
-		for i = 1, #neighbours do
-			local a, b, c = Script.temp_count()
-			local neighbour_tri = neighbours[i]
-			local neighbour_hash = self:get_poly_hash(neighbour_tri)
+		for iter_31_2 = 1, #var_31_8 do
+			local var_31_9, var_31_10, var_31_11 = Script.temp_count()
+			local var_31_12 = var_31_8[iter_31_2]
+			local var_31_13 = arg_31_0:get_poly_hash(var_31_12)
 
-			if not triangle_lookup[neighbour_hash] then
-				b_last = b_last + 1
-				b_queue[b_last] = neighbour_tri
-				triangle_lookup[neighbour_hash] = true
+			if not var_0_5[var_31_13] then
+				var_31_3 = var_31_3 + 1
+				var_31_1[var_31_3] = var_31_12
+				var_0_5[var_31_13] = true
 			end
 
-			Script.set_temp_count(a, b, c)
+			Script.set_temp_count(var_31_9, var_31_10, var_31_11)
 		end
 
-		if count > 1000 then
-			local p1, p2, p3 = GwNavTraversal.get_triangle_vertices(self.nav_world, root_triangle)
+		if var_31_0 > 1000 then
+			local var_31_14, var_31_15, var_31_16 = GwNavTraversal.get_triangle_vertices(arg_31_0.nav_world, arg_31_1)
 
-			print("WARNING navigation group patching failed. Triangle at:", p1)
+			print("WARNING navigation group patching failed. Triangle at:", var_31_14)
 
 			break
 		end
 	end
 end
 
-NavigationGroupManager.get_group_polygons = function (self, poly)
-	local poly_group = self:get_polygon_group(poly)
-
-	return poly_group:get_group_polygons()
+function NavigationGroupManager.get_group_polygons(arg_32_0, arg_32_1)
+	return arg_32_0:get_polygon_group(arg_32_1):get_group_polygons()
 end
 
-NavigationGroupManager.get_group_center = function (self, poly)
-	local group = self:get_polygon_group(poly)
-
-	return group:get_group_center()
+function NavigationGroupManager.get_group_center(arg_33_0, arg_33_1)
+	return arg_33_0:get_polygon_group(arg_33_1):get_group_center()
 end
 
-NavigationGroupManager.get_poly_hash = function (self, poly)
-	local poly_center = self:calc_polygon_center(poly)
-	local poly_hash = poly_center.x * 0.0001 + poly_center.y + poly_center.z * 10000
+function NavigationGroupManager.get_poly_hash(arg_34_0, arg_34_1)
+	local var_34_0 = arg_34_0:calc_polygon_center(arg_34_1)
 
-	return poly_hash
+	return var_34_0.x * 0.0001 + var_34_0.y + var_34_0.z * 10000
 end
 
-NavigationGroupManager.get_group_centers = function (self, list)
-	local a, b, c = Script.temp_count()
+function NavigationGroupManager.get_group_centers(arg_35_0, arg_35_1)
+	local var_35_0, var_35_1, var_35_2 = Script.temp_count()
 
-	for group, _ in pairs(self._navigation_groups) do
-		local center = group:get_group_center()
+	for iter_35_0, iter_35_1 in pairs(arg_35_0._navigation_groups) do
+		local var_35_3 = iter_35_0:get_group_center()
 
-		table.insert(list, center)
+		table.insert(arg_35_1, var_35_3)
 	end
 
-	Script.set_temp_count(a, b, c)
+	Script.set_temp_count(var_35_0, var_35_1, var_35_2)
 
-	return list
+	return arg_35_1
 end
 
-NavigationGroupManager.get_group_polygons_centers = function (self, list)
-	for group, _ in pairs(self._navigation_groups) do
-		local a, b, c = Script.temp_count()
+function NavigationGroupManager.get_group_polygons_centers(arg_36_0, arg_36_1)
+	for iter_36_0, iter_36_1 in pairs(arg_36_0._navigation_groups) do
+		local var_36_0, var_36_1, var_36_2 = Script.temp_count()
 
-		list = group:get_group_polygons_centers(list)
+		arg_36_1 = iter_36_0:get_group_polygons_centers(arg_36_1)
 
-		Script.set_temp_count(a, b, c)
+		Script.set_temp_count(var_36_0, var_36_1, var_36_2)
 	end
 
-	return list
+	return arg_36_1
 end
 
-NavigationGroupManager.print_groups = function (self, world, nav_world)
-	local a, b, c = Script.temp_count()
-	local do_print_groups = not not script_data.debug_navigation_group_manager
+function NavigationGroupManager.print_groups(arg_37_0, arg_37_1, arg_37_2)
+	local var_37_0, var_37_1, var_37_2 = Script.temp_count()
+	local var_37_3 = not not script_data.debug_navigation_group_manager
 
-	if do_print_groups == self._printing_groups then
+	if var_37_3 == arg_37_0._printing_groups then
 		return
 	end
 
-	if do_print_groups then
-		self._line_object = self._line_object or World.create_line_object(self._world, false)
-		self._drawer = self._drawer or Managers.state.debug:drawer({
+	if var_37_3 then
+		arg_37_0._line_object = arg_37_0._line_object or World.create_line_object(arg_37_0._world, false)
+		arg_37_0._drawer = arg_37_0._drawer or Managers.state.debug:drawer({
 			mode = "perm",
-			name = "nav_group",
+			name = "nav_group"
 		})
-		self._debug_world_gui = World.create_world_gui(world, Matrix4x4.identity(), 1, 1, "material", "materials/fonts/gw_fonts")
+		arg_37_0._debug_world_gui = World.create_world_gui(arg_37_1, Matrix4x4.identity(), 1, 1, "material", "materials/fonts/gw_fonts")
 
-		local debug_world_gui = self._debug_world_gui
-		local a, b, c = Script.temp_count()
+		local var_37_4 = arg_37_0._debug_world_gui
+		local var_37_5, var_37_6, var_37_7 = Script.temp_count()
 
-		for group, _ in pairs(self._navigation_groups) do
-			group:print_group(world, nav_world, self._line_object, self._drawer, debug_world_gui)
+		for iter_37_0, iter_37_1 in pairs(arg_37_0._navigation_groups) do
+			iter_37_0:print_group(arg_37_1, arg_37_2, arg_37_0._line_object, arg_37_0._drawer, var_37_4)
 		end
 
-		Script.set_temp_count(a, b, c)
+		Script.set_temp_count(var_37_5, var_37_6, var_37_7)
 	else
-		self:destroy_gui(world)
+		arg_37_0:destroy_gui(arg_37_1)
 	end
 
-	self._printing_groups = do_print_groups
+	arg_37_0._printing_groups = var_37_3
 
-	Script.set_temp_count(a, b, c)
+	Script.set_temp_count(var_37_0, var_37_1, var_37_2)
 
-	if self._line_object then
-		LineObject.dispatch(world, self._line_object)
+	if arg_37_0._line_object then
+		LineObject.dispatch(arg_37_1, arg_37_0._line_object)
 	end
 end
 
-NavigationGroupManager.destroy_gui = function (self, world)
-	local line_object = self._line_object
+function NavigationGroupManager.destroy_gui(arg_38_0, arg_38_1)
+	local var_38_0 = arg_38_0._line_object
 
-	if not line_object then
+	if not var_38_0 then
 		return
 	end
 
-	self._drawer:reset()
-	LineObject.reset(line_object)
-	LineObject.dispatch(world, line_object)
-	World.destroy_line_object(world, line_object)
+	arg_38_0._drawer:reset()
+	LineObject.reset(var_38_0)
+	LineObject.dispatch(arg_38_1, var_38_0)
+	World.destroy_line_object(arg_38_1, var_38_0)
 
-	self._line_object = nil
+	arg_38_0._line_object = nil
 
-	World.destroy_gui(world, self._debug_world_gui)
+	World.destroy_gui(arg_38_1, arg_38_0._debug_world_gui)
 end
 
-NavigationGroupManager.a_star_cached = function (self, group1, group2)
-	return LuaAStar.a_star_cached(self._navigation_groups, group1, group2)
+function NavigationGroupManager.a_star_cached(arg_39_0, arg_39_1, arg_39_2)
+	return LuaAStar.a_star_cached(arg_39_0._navigation_groups, arg_39_1, arg_39_2)
 end
 
-NavigationGroupManager.a_star_cached_between_positions = function (self, p1, p2)
-	local tri1 = GwNavTraversal.get_seed_triangle(self.nav_world, p1)
-	local tri2 = GwNavTraversal.get_seed_triangle(self.nav_world, p2)
+function NavigationGroupManager.a_star_cached_between_positions(arg_40_0, arg_40_1, arg_40_2)
+	local var_40_0 = GwNavTraversal.get_seed_triangle(arg_40_0.nav_world, arg_40_1)
+	local var_40_1 = GwNavTraversal.get_seed_triangle(arg_40_0.nav_world, arg_40_2)
 
-	if not tri1 or not tri2 then
+	if not var_40_0 or not var_40_1 then
 		return false
 	end
 
-	local group1 = self:get_polygon_group(tri1)
-	local group2 = self:get_polygon_group(tri2)
+	local var_40_2 = arg_40_0:get_polygon_group(var_40_0)
+	local var_40_3 = arg_40_0:get_polygon_group(var_40_1)
 
-	if not group1 or not group2 then
+	if not var_40_2 or not var_40_3 then
 		print("CACHED ASTAR FAIL")
 
 		return false
 	end
 
-	return LuaAStar.a_star_cached(self._navigation_groups, group1, group2)
+	return LuaAStar.a_star_cached(arg_40_0._navigation_groups, var_40_2, var_40_3)
 end
 
-NavigationGroupManager.draw_group_path = function (self, path)
-	local col = Color(255, 200, 255, 10)
-	local p1 = path[1]._group_center:unbox()
-	local p2
+function NavigationGroupManager.draw_group_path(arg_41_0, arg_41_1)
+	local var_41_0 = Color(255, 200, 255, 10)
+	local var_41_1 = arg_41_1[1]._group_center:unbox()
+	local var_41_2
 
-	for i = 2, #path do
-		p2 = path[i]._group_center:unbox()
+	for iter_41_0 = 2, #arg_41_1 do
+		local var_41_3 = arg_41_1[iter_41_0]._group_center:unbox()
 
-		QuickDrawerStay:line(p1, p2, col)
+		QuickDrawerStay:line(var_41_1, var_41_3, var_41_0)
 
-		p1 = p2
+		var_41_1 = var_41_3
 	end
 end
 
-NavigationGroupManager.draw_group_connections = function (self)
-	local col = Color(255, 255, 128, 128)
-	local h = Vector3(0, 0, 1)
+function NavigationGroupManager.draw_group_connections(arg_42_0)
+	local var_42_0 = Color(255, 255, 128, 128)
+	local var_42_1 = Vector3(0, 0, 1)
 
-	for group, _ in pairs(self._navigation_groups) do
-		for n_group, _ in pairs(group._group_neighbours) do
-			local p1 = group._group_center:unbox() + h
-			local p2 = n_group._group_center:unbox() + h
-			local to_dir = Vector3.normalize(p2 - p1)
-			local arrow = Vector3.cross(to_dir, Vector3.up()) / 2
-			local text = string.format("dist=%.1f", Vector3.length(p2 - p1))
+	for iter_42_0, iter_42_1 in pairs(arg_42_0._navigation_groups) do
+		for iter_42_2, iter_42_3 in pairs(iter_42_0._group_neighbours) do
+			local var_42_2 = iter_42_0._group_center:unbox() + var_42_1
+			local var_42_3 = iter_42_2._group_center:unbox() + var_42_1
+			local var_42_4 = Vector3.normalize(var_42_3 - var_42_2)
+			local var_42_5 = Vector3.cross(var_42_4, Vector3.up()) / 2
+			local var_42_6 = string.format("dist=%.1f", Vector3.length(var_42_3 - var_42_2))
 
-			Debug.world_sticky_text((p2 + p1) * 0.5, text, "red")
-			QuickDrawerStay:line(p1, p2, col)
+			Debug.world_sticky_text((var_42_3 + var_42_2) * 0.5, var_42_6, "red")
+			QuickDrawerStay:line(var_42_2, var_42_3, var_42_0)
 
-			local p3 = p2 - to_dir
+			local var_42_7 = var_42_3 - var_42_4
 
-			QuickDrawerStay:line(p3, p3 - to_dir * 0.45 + arrow, col)
-			QuickDrawerStay:line(p3, p3 - to_dir * 0.45 - arrow, col)
+			QuickDrawerStay:line(var_42_7, var_42_7 - var_42_4 * 0.45 + var_42_5, var_42_0)
+			QuickDrawerStay:line(var_42_7, var_42_7 - var_42_4 * 0.45 - var_42_5, var_42_0)
 		end
 	end
 end
 
-NavigationGroupManager.knit_groups_with_ledges = function (self)
-	local nav_graph_system = Managers.state.entity:system("nav_graph_system")
-	local smart_objects = nav_graph_system.smart_objects
+function NavigationGroupManager.knit_groups_with_ledges(arg_43_0)
+	local var_43_0 = Managers.state.entity:system("nav_graph_system").smart_objects
 
-	for smart_object_id, smart_object_data in pairs(smart_objects) do
-		for i = 1, #smart_object_data do
-			local smart_object = smart_object_data[i]
-			local smart_object_type = smart_object.smart_object_type or "ledges"
-			local p1 = Vector3Aux.unbox(smart_object.pos1)
-			local group1 = self:get_group_from_position(p1)
+	for iter_43_0, iter_43_1 in pairs(var_43_0) do
+		for iter_43_2 = 1, #iter_43_1 do
+			local var_43_1 = iter_43_1[iter_43_2]
 
-			if group1 then
-				local p2 = Vector3Aux.unbox(smart_object.pos2)
-				local group2 = self:get_group_from_position(p2)
+			if not var_43_1.smart_object_type then
+				local var_43_2 = "ledges"
+			end
 
-				if group2 and group1 ~= group2 then
-					if not group1._group_neighbours[group2] then
-						group1:add_neighbour_group(group2, true)
+			local var_43_3 = Vector3Aux.unbox(var_43_1.pos1)
+			local var_43_4 = arg_43_0:get_group_from_position(var_43_3)
+
+			if var_43_4 then
+				local var_43_5 = Vector3Aux.unbox(var_43_1.pos2)
+				local var_43_6 = arg_43_0:get_group_from_position(var_43_5)
+
+				if var_43_6 and var_43_4 ~= var_43_6 then
+					if not var_43_4._group_neighbours[var_43_6] then
+						var_43_4:add_neighbour_group(var_43_6, true)
 					end
 
-					if smart_object.data.is_bidirectional and not group2._group_neighbours[group1] then
-						group2:add_neighbour_group(group1, true)
+					if var_43_1.data.is_bidirectional and not var_43_6._group_neighbours[var_43_4] then
+						var_43_6:add_neighbour_group(var_43_4, true)
 					end
 				end
 			end
@@ -937,64 +911,64 @@ NavigationGroupManager.knit_groups_with_ledges = function (self)
 	end
 end
 
-local function get_tri_hash(p1, p2, p3)
-	local center = (p1 + p2 + p3) / 3
+local function var_0_6(arg_44_0, arg_44_1, arg_44_2)
+	local var_44_0 = (arg_44_0 + arg_44_1 + arg_44_2) / 3
 
-	return center.x * 0.0001 + center.y + center.z * 10000
+	return var_44_0.x * 0.0001 + var_44_0.y + var_44_0.z * 10000
 end
 
-NavigationGroupManager.breadth_first_search_all_triangles = function (self, triangle)
-	local time1 = os.clock()
-	local nav_world = self.nav_world
-	local triangle = triangle or GwNavTraversal.get_seed_triangle(nav_world, self._finish_point:unbox())
+function NavigationGroupManager.breadth_first_search_all_triangles(arg_45_0, arg_45_1)
+	local var_45_0 = os.clock()
+	local var_45_1 = arg_45_0.nav_world
+	local var_45_2 = arg_45_1 or GwNavTraversal.get_seed_triangle(var_45_1, arg_45_0._finish_point:unbox())
 
-	if triangle == nil then
+	if var_45_2 == nil then
 		return
 	end
 
-	local num_triangles = 1
-	local i = 0
-	local unique_id = 0
-	local are_triangles_equal = GwNavTraversal.are_triangles_equal
-	local get_neighboring_triangles = GwNavTraversal.get_neighboring_triangles
-	local get_triangle_vertices = GwNavTraversal.get_triangle_vertices
-	local source_tri_hash = get_tri_hash(get_triangle_vertices(nav_world, triangle))
-	local triangles = {
-		triangle,
+	local var_45_3 = 1
+	local var_45_4 = 0
+	local var_45_5 = 0
+	local var_45_6 = GwNavTraversal.are_triangles_equal
+	local var_45_7 = GwNavTraversal.get_neighboring_triangles
+	local var_45_8 = GwNavTraversal.get_triangle_vertices
+	local var_45_9 = var_0_6(var_45_8(var_45_1, var_45_2))
+	local var_45_10 = {
+		var_45_2
 	}
-	local tri_lookup = {
-		source_tri_hash = unique_id,
+	local var_45_11 = {
+		source_tri_hash = var_45_5
 	}
 
-	while i < num_triangles do
-		i = i + 1
-		triangle = triangles[i]
+	while var_45_4 < var_45_3 do
+		var_45_4 = var_45_4 + 1
 
-		local neighbors = {
-			get_neighboring_triangles(triangle),
+		local var_45_12 = var_45_10[var_45_4]
+		local var_45_13 = {
+			var_45_7(var_45_12)
 		}
 
-		for j = 1, #neighbors do
-			local neighbor = neighbors[j]
+		for iter_45_0 = 1, #var_45_13 do
+			local var_45_14 = var_45_13[iter_45_0]
 
-			if neighbor then
-				local p1, p2, p3 = get_triangle_vertices(nav_world, neighbor)
-				local center = (p1 + p2 + p3) / 3
-				local tri_hash = center.x * 0.0001 + center.y + center.z * 10000
+			if var_45_14 then
+				local var_45_15, var_45_16, var_45_17 = var_45_8(var_45_1, var_45_14)
+				local var_45_18 = (var_45_15 + var_45_16 + var_45_17) / 3
+				local var_45_19 = var_45_18.x * 0.0001 + var_45_18.y + var_45_18.z * 10000
 
-				if not tri_lookup[tri_hash] then
-					num_triangles = num_triangles + 1
-					triangles[num_triangles] = neighbor
-					tri_lookup[tri_hash] = unique_id
-					unique_id = unique_id + 1
+				if not var_45_11[var_45_19] then
+					var_45_3 = var_45_3 + 1
+					var_45_10[var_45_3] = var_45_14
+					var_45_11[var_45_19] = var_45_5
+					var_45_5 = var_45_5 + 1
 				end
 			end
 		end
 	end
 
-	local time2 = os.clock()
+	local var_45_20 = os.clock()
 
-	print("NavigationGroupManager -> traverse all triangles time:", time2 - time1, "Num triangles:", num_triangles)
+	print("NavigationGroupManager -> traverse all triangles time:", var_45_20 - var_45_0, "Num triangles:", var_45_3)
 
-	return tri_lookup
+	return var_45_11
 end

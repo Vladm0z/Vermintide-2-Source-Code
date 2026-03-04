@@ -1,190 +1,180 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/skaven_ratling_gunner/bt_ratling_gunner_shoot_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/skaven_ratling_gunner/bt_ratling_gunner_shoot_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTRatlingGunnerShootAction = class(BTRatlingGunnerShootAction, BTNode)
 
-local PI = math.pi
-local TWO_PI = PI * 2
-local BOT_THREAT_UPDATE_TIME = 0.25
+local var_0_0 = math.pi
+local var_0_1 = var_0_0 * 2
+local var_0_2 = 0.25
 
 CLIENT_CONTROLLED_RATLING_GUN = true
 
-BTRatlingGunnerShootAction.init = function (self, ...)
-	BTRatlingGunnerShootAction.super.init(self, ...)
+function BTRatlingGunnerShootAction.init(arg_1_0, ...)
+	BTRatlingGunnerShootAction.super.init(arg_1_0, ...)
 end
 
 BTRatlingGunnerShootAction.name = "BTRatlingGunnerShootAction"
 
-BTRatlingGunnerShootAction.enter = function (self, unit, blackboard, t)
-	local action = self._tree_node.action_data
-	local data = blackboard.attack_pattern_data or {}
-	local new_target, node_name, old_target_visible = PerceptionUtils.pick_ratling_gun_target(unit, blackboard)
-	local target_unit = new_target or data.target_unit
+function BTRatlingGunnerShootAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_0._tree_node.action_data
+	local var_2_1 = arg_2_2.attack_pattern_data or {}
+	local var_2_2, var_2_3, var_2_4 = PerceptionUtils.pick_ratling_gun_target(arg_2_1, arg_2_2)
+	local var_2_5 = var_2_2 or var_2_1.target_unit
 
-	blackboard.action = action
-	data.target_unit = target_unit
-	data.target_node_name = node_name or data.target_node_name
+	arg_2_2.action = var_2_0
+	var_2_1.target_unit = var_2_5
+	var_2_1.target_node_name = var_2_3 or var_2_1.target_node_name
 
-	if not Unit.alive(target_unit) then
+	if not Unit.alive(var_2_5) then
 		return
 	end
 
-	data.shoot_start = nil
-	data.shots_fired = nil
-	data.time_between_shots_at_start = 1 / action.fire_rate_at_start
-	data.time_between_shots_at_end = 1 / action.fire_rate_at_end
-	data.max_fire_rate_at_percentage_modifier = 1 / action.max_fire_rate_at_percentage
-	data.target_switch_distance_squared = AiUtils.random(action.target_switch_distance[1], action.target_switch_distance[2])^2
-	data.target_obscured = false
-	data.target_check = t + 0.2 + Math.random() * 0.1
-	data.peer_id = data.peer_id or Network.peer_id()
-	data.update_bot_threat_t = t
-	self._use_obstacle = false
+	var_2_1.shoot_start = nil
+	var_2_1.shots_fired = nil
+	var_2_1.time_between_shots_at_start = 1 / var_2_0.fire_rate_at_start
+	var_2_1.time_between_shots_at_end = 1 / var_2_0.fire_rate_at_end
+	var_2_1.max_fire_rate_at_percentage_modifier = 1 / var_2_0.max_fire_rate_at_percentage
+	var_2_1.target_switch_distance_squared = AiUtils.random(var_2_0.target_switch_distance[1], var_2_0.target_switch_distance[2])^2
+	var_2_1.target_obscured = false
+	var_2_1.target_check = arg_2_3 + 0.2 + Math.random() * 0.1
+	var_2_1.peer_id = var_2_1.peer_id or Network.peer_id()
+	var_2_1.update_bot_threat_t = arg_2_3
+	arg_2_0._use_obstacle = false
 
-	if self._use_obstacle then
-		local lof_nav_obs, aos_nav_obs = self:_create_nav_obstacles(unit, target_unit, blackboard.nav_world, action)
+	if arg_2_0._use_obstacle then
+		local var_2_6, var_2_7 = arg_2_0:_create_nav_obstacles(arg_2_1, var_2_5, arg_2_2.nav_world, var_2_0)
 
-		data.line_of_fire_nav_obstacle = lof_nav_obs
-		data.arc_of_sight_nav_obstacle = aos_nav_obs
+		var_2_1.line_of_fire_nav_obstacle = var_2_6
+		var_2_1.arc_of_sight_nav_obstacle = var_2_7
 	end
 
-	blackboard.first_shots_fired = true
-	blackboard.attack_pattern_data = data
+	arg_2_2.first_shots_fired = true
+	arg_2_2.attack_pattern_data = var_2_1
 
-	blackboard.navigation_extension:set_enabled(false)
-	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
+	arg_2_2.navigation_extension:set_enabled(false)
+	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-	data.shoot_direction_box = Vector3Box(Quaternion.forward(Unit.world_rotation(unit, Unit.node(unit, "c_spine"))))
+	var_2_1.shoot_direction_box = Vector3Box(Quaternion.forward(Unit.world_rotation(arg_2_1, Unit.node(arg_2_1, "c_spine"))))
 
-	self:_start_align_towards_target(unit, blackboard, data, target_unit, t)
-	blackboard.locomotion_extension:use_lerp_rotation(false)
-	self:_notify_attacking(unit, target_unit)
+	arg_2_0:_start_align_towards_target(arg_2_1, arg_2_2, var_2_1, var_2_5, arg_2_3)
+	arg_2_2.locomotion_extension:use_lerp_rotation(false)
+	arg_2_0:_notify_attacking(arg_2_1, var_2_5)
 end
 
-BTRatlingGunnerShootAction._create_nav_obstacles = function (self, unit, target_unit, nav_world, action)
-	local pos = POSITION_LOOKUP[unit]
-	local target_pos = POSITION_LOOKUP[target_unit]
-	local local_center = Vector3(0, 0, 0)
-	local half_extents_fire = action.line_of_fire_nav_obstacle_half_extents:unbox()
-	local half_extents_sight = action.arc_of_sight_nav_obstacle_half_extents:unbox()
-	local is_exclusive = false
-	local color = Color(255, 0, 0)
-	local layer_id = LAYER_ID_MAPPING[action.nav_obstacle_layer_name]
-	local fire_nav_obstacle = GwNavBoxObstacle.create(nav_world, pos, local_center, half_extents_fire, is_exclusive, color, layer_id)
-	local sight_nav_obstacle = GwNavBoxObstacle.create(nav_world, pos, local_center, half_extents_sight, is_exclusive, color, layer_id)
+function BTRatlingGunnerShootAction._create_nav_obstacles(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local var_3_0 = POSITION_LOOKUP[arg_3_1]
+	local var_3_1 = POSITION_LOOKUP[arg_3_2]
+	local var_3_2 = Vector3(0, 0, 0)
+	local var_3_3 = arg_3_4.line_of_fire_nav_obstacle_half_extents:unbox()
+	local var_3_4 = arg_3_4.arc_of_sight_nav_obstacle_half_extents:unbox()
+	local var_3_5 = false
+	local var_3_6 = Color(255, 0, 0)
+	local var_3_7 = LAYER_ID_MAPPING[arg_3_4.nav_obstacle_layer_name]
+	local var_3_8 = GwNavBoxObstacle.create(arg_3_3, var_3_0, var_3_2, var_3_3, var_3_5, var_3_6, var_3_7)
+	local var_3_9 = GwNavBoxObstacle.create(arg_3_3, var_3_0, var_3_2, var_3_4, var_3_5, var_3_6, var_3_7)
 
-	return fire_nav_obstacle, sight_nav_obstacle
+	return var_3_8, var_3_9
 end
 
-BTRatlingGunnerShootAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	blackboard.anim_cb_attack_shoot_start_finished = nil
-	blackboard.anim_cb_attack_shoot_random_shot = nil
+function BTRatlingGunnerShootAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	arg_4_2.anim_cb_attack_shoot_start_finished = nil
+	arg_4_2.anim_cb_attack_shoot_random_shot = nil
 
-	local drawer = Managers.state.debug:drawer({
+	Managers.state.debug:drawer({
 		mode = "retained",
-		name = "BTRatlingGunnerShootAction",
-	})
+		name = "BTRatlingGunnerShootAction"
+	}):reset()
 
-	drawer:reset()
+	local var_4_0 = arg_4_2.attack_pattern_data
 
-	local data = blackboard.attack_pattern_data
+	var_4_0.shoot_direction_box = nil
+	var_4_0.aim_position_box = nil
+	var_4_0.current_aim_rotation = nil
+	var_4_0.shoot_duration = nil
+	var_4_0.shoot_start = nil
+	var_4_0.shots_fired = nil
+	var_4_0.time_between_shots_at_start = nil
+	var_4_0.time_between_shots_at_end = nil
+	var_4_0.max_fire_rate_at_percentage_modifier = nil
+	var_4_0.target_switch_distance_squared = nil
+	var_4_0.target_obscured = nil
+	var_4_0.last_known_target_position = nil
+	var_4_0.last_known_unit_position = nil
+	var_4_0.last_fired = arg_4_3
 
-	data.shoot_direction_box = nil
-	data.aim_position_box = nil
-	data.current_aim_rotation = nil
-	data.shoot_duration = nil
-	data.shoot_start = nil
-	data.shots_fired = nil
-	data.time_between_shots_at_start = nil
-	data.time_between_shots_at_end = nil
-	data.max_fire_rate_at_percentage_modifier = nil
-	data.target_switch_distance_squared = nil
-	data.target_obscured = nil
-	data.last_known_target_position = nil
-	data.last_known_unit_position = nil
-	data.last_fired = t
-
-	if data.is_shooting then
-		self:stop_shooting(unit, data)
+	if var_4_0.is_shooting then
+		arg_4_0:stop_shooting(arg_4_1, var_4_0)
 	end
 
-	if self._use_obstacle and data.line_of_fire_nav_obstacle and data.arc_of_sight_nav_obstacle then
-		GwNavBoxObstacle.destroy(data.line_of_fire_nav_obstacle)
-		GwNavBoxObstacle.destroy(data.arc_of_sight_nav_obstacle)
+	if arg_4_0._use_obstacle and var_4_0.line_of_fire_nav_obstacle and var_4_0.arc_of_sight_nav_obstacle then
+		GwNavBoxObstacle.destroy(var_4_0.line_of_fire_nav_obstacle)
+		GwNavBoxObstacle.destroy(var_4_0.arc_of_sight_nav_obstacle)
 
-		data.line_of_fire_nav_obstacle = nil
-		data.arc_of_sight_nav_obstacle = nil
+		var_4_0.line_of_fire_nav_obstacle = nil
+		var_4_0.arc_of_sight_nav_obstacle = nil
 	end
 
-	self:_notify_no_longer_attacking(unit, data.target_unit)
+	arg_4_0:_notify_no_longer_attacking(arg_4_1, var_4_0.target_unit)
 
-	if not destroy then
-		blackboard.locomotion_extension:use_lerp_rotation(true)
+	if not arg_4_5 then
+		arg_4_2.locomotion_extension:use_lerp_rotation(true)
 	end
 
-	blackboard.navigation_extension:set_enabled(true)
+	arg_4_2.navigation_extension:set_enabled(true)
 end
 
-BTRatlingGunnerShootAction.run = function (self, unit, blackboard, t, dt)
-	local data = blackboard.attack_pattern_data
-	local target_unit = data.target_unit
+function BTRatlingGunnerShootAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	local var_5_0 = arg_5_2.attack_pattern_data
+	local var_5_1 = var_5_0.target_unit
 
-	if not HEALTH_ALIVE[target_unit] then
+	if not HEALTH_ALIVE[var_5_1] then
 		return "done"
 	end
 
-	if data.state == "align" then
-		local switched_target = self:_update_target(unit, blackboard, self._tree_node.action_data, data, t, dt)
-
-		if switched_target then
-			self:_start_align_towards_target(unit, blackboard, data, data.target_unit, t)
+	if var_5_0.state == "align" then
+		if arg_5_0:_update_target(arg_5_1, arg_5_2, arg_5_0._tree_node.action_data, var_5_0, arg_5_3, arg_5_4) then
+			arg_5_0:_start_align_towards_target(arg_5_1, arg_5_2, var_5_0, var_5_0.target_unit, arg_5_3)
 		end
 
-		local done = self:_update_align_towards_target(unit, blackboard, t, dt)
-
-		if done and not script_data.disable_ratling_gun_fire then
-			self:_end_align_towards_target(unit, data)
+		if arg_5_0:_update_align_towards_target(arg_5_1, arg_5_2, arg_5_3, arg_5_4) and not script_data.disable_ratling_gun_fire then
+			arg_5_0:_end_align_towards_target(arg_5_1, var_5_0)
 		end
 
 		return "running"
-	elseif data.state == "ready" then
-		local realign = self:_aim_at_target(unit, blackboard, t, dt)
-		local switched_target = self:_update_target(unit, blackboard, self._tree_node.action_data, data, t, dt)
+	elseif var_5_0.state == "ready" then
+		local var_5_2 = arg_5_0:_aim_at_target(arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+		local var_5_3 = arg_5_0:_update_target(arg_5_1, arg_5_2, arg_5_0._tree_node.action_data, var_5_0, arg_5_3, arg_5_4)
 
-		if realign or switched_target then
-			self:_start_align_towards_target(unit, blackboard, data, data.target_unit, t)
+		if var_5_2 or var_5_3 then
+			arg_5_0:_start_align_towards_target(arg_5_1, arg_5_2, var_5_0, var_5_0.target_unit, arg_5_3)
 
 			return "running"
 		end
 
-		if blackboard.anim_cb_attack_shoot_random_shot then
-			self:_start_shooting(blackboard, unit, data, t)
+		if arg_5_2.anim_cb_attack_shoot_random_shot then
+			arg_5_0:_start_shooting(arg_5_2, arg_5_1, var_5_0, arg_5_3)
 		end
 
 		return "running"
-	elseif data.state == "shoot" then
-		local switched_target = self:_update_target(unit, blackboard, self._tree_node.action_data, data, t, dt)
-
-		if switched_target then
-			self:stop_shooting(unit, data)
-			self:_start_align_towards_target(unit, blackboard, data, data.target_unit, t)
+	elseif var_5_0.state == "shoot" then
+		if arg_5_0:_update_target(arg_5_1, arg_5_2, arg_5_0._tree_node.action_data, var_5_0, arg_5_3, arg_5_4) then
+			arg_5_0:stop_shooting(arg_5_1, var_5_0)
+			arg_5_0:_start_align_towards_target(arg_5_1, arg_5_2, var_5_0, var_5_0.target_unit, arg_5_3)
 
 			return "running"
 		end
 
-		local realign = self:_aim_at_target(unit, blackboard, t, dt)
-
-		if realign then
-			self:stop_shooting(unit, data)
-			self:_start_align_towards_target(unit, blackboard, data, data.target_unit, t)
+		if arg_5_0:_aim_at_target(arg_5_1, arg_5_2, arg_5_3, arg_5_4) then
+			arg_5_0:stop_shooting(arg_5_1, var_5_0)
+			arg_5_0:_start_align_towards_target(arg_5_1, arg_5_2, var_5_0, var_5_0.target_unit, arg_5_3)
 
 			return "running"
 		end
 
-		self:_update_shooting(unit, blackboard, data, t, dt)
+		arg_5_0:_update_shooting(arg_5_1, arg_5_2, var_5_0, arg_5_3, arg_5_4)
 
-		if t > data.shoot_start + data.shoot_duration then
+		if arg_5_3 > var_5_0.shoot_start + var_5_0.shoot_duration then
 			return "done"
 		end
 
@@ -192,437 +182,423 @@ BTRatlingGunnerShootAction.run = function (self, unit, blackboard, t, dt)
 	end
 end
 
-BTRatlingGunnerShootAction._notify_attacking = function (self, self_unit, target_unit)
-	Managers.state.entity:system("ai_bot_group_system"):ranged_attack_started(self_unit, target_unit, "ratling_gun_fire")
+function BTRatlingGunnerShootAction._notify_attacking(arg_6_0, arg_6_1, arg_6_2)
+	Managers.state.entity:system("ai_bot_group_system"):ranged_attack_started(arg_6_1, arg_6_2, "ratling_gun_fire")
 
-	if Unit.alive(target_unit) then
-		local status_extension = ScriptUnit.extension(target_unit, "status_system")
-
-		status_extension.under_ratling_gunner_attack = true
+	if Unit.alive(arg_6_2) then
+		ScriptUnit.extension(arg_6_2, "status_system").under_ratling_gunner_attack = true
 	end
 end
 
-BTRatlingGunnerShootAction._notify_no_longer_attacking = function (self, self_unit, target_unit)
-	Managers.state.entity:system("ai_bot_group_system"):ranged_attack_ended(self_unit, target_unit, "ratling_gun_fire")
+function BTRatlingGunnerShootAction._notify_no_longer_attacking(arg_7_0, arg_7_1, arg_7_2)
+	Managers.state.entity:system("ai_bot_group_system"):ranged_attack_ended(arg_7_1, arg_7_2, "ratling_gun_fire")
 
-	if Unit.alive(target_unit) then
-		local status_extension = ScriptUnit.extension(target_unit, "status_system")
-
-		status_extension.under_ratling_gunner_attack = false
+	if Unit.alive(arg_7_2) then
+		ScriptUnit.extension(arg_7_2, "status_system").under_ratling_gunner_attack = false
 	end
 end
 
-BTRatlingGunnerShootAction.stop_shooting = function (self, unit, data)
-	data.is_shooting = nil
+function BTRatlingGunnerShootAction.stop_shooting(arg_8_0, arg_8_1, arg_8_2)
+	arg_8_2.is_shooting = nil
 
-	local owner_unit_id = Managers.state.unit_storage:go_id(unit)
+	local var_8_0 = Managers.state.unit_storage:go_id(arg_8_1)
 
-	Managers.state.network.network_transmit:send_rpc_clients("rpc_ai_weapon_shoot_end", owner_unit_id)
-	Managers.state.entity:system("weapon_system"):rpc_ai_weapon_shoot_end(Network.peer_id(), owner_unit_id)
+	Managers.state.network.network_transmit:send_rpc_clients("rpc_ai_weapon_shoot_end", var_8_0)
+	Managers.state.entity:system("weapon_system"):rpc_ai_weapon_shoot_end(Network.peer_id(), var_8_0)
 
-	if self._use_obstacle then
-		GwNavBoxObstacle.remove_from_world(data.line_of_fire_nav_obstacle)
-		GwNavBoxObstacle.remove_from_world(data.arc_of_sight_nav_obstacle)
+	if arg_8_0._use_obstacle then
+		GwNavBoxObstacle.remove_from_world(arg_8_2.line_of_fire_nav_obstacle)
+		GwNavBoxObstacle.remove_from_world(arg_8_2.arc_of_sight_nav_obstacle)
 	end
 
 	if CLIENT_CONTROLLED_RATLING_GUN then
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_clients_continuous_shoot_stop", owner_unit_id)
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_clients_continuous_shoot_stop", var_8_0)
 	end
 end
 
-BTRatlingGunnerShootAction._update_shooting = function (self, unit, blackboard, data, t, dt)
-	local time_in_shoot_action = t - data.shoot_start
-	local percentage_in_shoot_action = math.clamp(time_in_shoot_action / data.shoot_duration * data.max_fire_rate_at_percentage_modifier, 0, 1)
-	local current_time_between_shots = math.lerp(data.time_between_shots_at_start, data.time_between_shots_at_end, percentage_in_shoot_action)
-	local shots_to_fire = math.floor(time_in_shoot_action / current_time_between_shots) + 1 - data.shots_fired
+function BTRatlingGunnerShootAction._update_shooting(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+	local var_9_0 = arg_9_4 - arg_9_3.shoot_start
+	local var_9_1 = math.clamp(var_9_0 / arg_9_3.shoot_duration * arg_9_3.max_fire_rate_at_percentage_modifier, 0, 1)
+	local var_9_2 = math.lerp(arg_9_3.time_between_shots_at_start, arg_9_3.time_between_shots_at_end, var_9_1)
+	local var_9_3 = math.floor(var_9_0 / var_9_2) + 1 - arg_9_3.shots_fired
 
-	for i = 1, shots_to_fire do
-		data.shots_fired = data.shots_fired + 1
+	for iter_9_0 = 1, var_9_3 do
+		arg_9_3.shots_fired = arg_9_3.shots_fired + 1
 
-		self:_shoot(unit, blackboard, t, dt)
+		arg_9_0:_shoot(arg_9_1, arg_9_2, arg_9_4, arg_9_5)
 	end
 
-	if t > data.update_bot_threat_t then
-		self:_create_bot_threat_box(unit, data, BOT_THREAT_UPDATE_TIME, blackboard, data)
+	if arg_9_4 > arg_9_3.update_bot_threat_t then
+		arg_9_0:_create_bot_threat_box(arg_9_1, arg_9_3, var_0_2, arg_9_2, arg_9_3)
 
-		data.update_bot_threat_t = t + BOT_THREAT_UPDATE_TIME
+		arg_9_3.update_bot_threat_t = arg_9_4 + var_0_2
 	end
 
-	if self._use_obstacle then
-		local fire_extents = blackboard.action.line_of_fire_nav_obstacle_half_extents:unbox()
-		local sight_extents = blackboard.action.arc_of_sight_nav_obstacle_half_extents:unbox()
-		local fire_position, fire_direction = self:_fire_from_position_direction(blackboard, data)
-		local direction = Vector3.normalize(fire_direction)
-		local lof_position = fire_position + direction * fire_extents.y
-		local aos_position = fire_position + direction * sight_extents.y
-		local rotation = Quaternion.look(direction, Vector3.up())
-		local fire_pose = Matrix4x4.from_quaternion_position(rotation, lof_position)
-		local sight_pose = Matrix4x4.from_quaternion_position(rotation, aos_position)
+	if arg_9_0._use_obstacle then
+		local var_9_4 = arg_9_2.action.line_of_fire_nav_obstacle_half_extents:unbox()
+		local var_9_5 = arg_9_2.action.arc_of_sight_nav_obstacle_half_extents:unbox()
+		local var_9_6, var_9_7 = arg_9_0:_fire_from_position_direction(arg_9_2, arg_9_3)
+		local var_9_8 = Vector3.normalize(var_9_7)
+		local var_9_9 = var_9_6 + var_9_8 * var_9_4.y
+		local var_9_10 = var_9_6 + var_9_8 * var_9_5.y
+		local var_9_11 = Quaternion.look(var_9_8, Vector3.up())
+		local var_9_12 = Matrix4x4.from_quaternion_position(var_9_11, var_9_9)
+		local var_9_13 = Matrix4x4.from_quaternion_position(var_9_11, var_9_10)
 
-		self.last_t = self.last_t or t
+		arg_9_0.last_t = arg_9_0.last_t or arg_9_4
 
-		local fire_obstacle = data.line_of_fire_nav_obstacle
-		local sight_obstacle = data.arc_of_sight_nav_obstacle
+		local var_9_14 = arg_9_3.line_of_fire_nav_obstacle
+		local var_9_15 = arg_9_3.arc_of_sight_nav_obstacle
 
-		if t > self.last_t + 1 then
-			GwNavBoxObstacle.set_does_trigger_tagvolume(fire_obstacle, false)
-			GwNavBoxObstacle.remove_from_world(fire_obstacle)
-			GwNavBoxObstacle.set_transform(fire_obstacle, fire_pose)
-			GwNavBoxObstacle.add_to_world(fire_obstacle)
-			GwNavBoxObstacle.set_does_trigger_tagvolume(fire_obstacle, true)
-			GwNavBoxObstacle.set_does_trigger_tagvolume(sight_obstacle, false)
-			GwNavBoxObstacle.remove_from_world(sight_obstacle)
-			GwNavBoxObstacle.set_transform(sight_obstacle, sight_pose)
-			GwNavBoxObstacle.add_to_world(sight_obstacle)
-			GwNavBoxObstacle.set_does_trigger_tagvolume(sight_obstacle, true)
+		if arg_9_4 > arg_9_0.last_t + 1 then
+			GwNavBoxObstacle.set_does_trigger_tagvolume(var_9_14, false)
+			GwNavBoxObstacle.remove_from_world(var_9_14)
+			GwNavBoxObstacle.set_transform(var_9_14, var_9_12)
+			GwNavBoxObstacle.add_to_world(var_9_14)
+			GwNavBoxObstacle.set_does_trigger_tagvolume(var_9_14, true)
+			GwNavBoxObstacle.set_does_trigger_tagvolume(var_9_15, false)
+			GwNavBoxObstacle.remove_from_world(var_9_15)
+			GwNavBoxObstacle.set_transform(var_9_15, var_9_13)
+			GwNavBoxObstacle.add_to_world(var_9_15)
+			GwNavBoxObstacle.set_does_trigger_tagvolume(var_9_15, true)
 
-			self.last_t = t
+			arg_9_0.last_t = arg_9_4
 		end
 	end
 end
 
-BTRatlingGunnerShootAction._start_shooting = function (self, blackboard, unit, data, t)
-	local shoot_time = math.round(data.shoot_duration * 100)
-	local owner_unit_id = Managers.state.unit_storage:go_id(unit)
+function BTRatlingGunnerShootAction._start_shooting(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	local var_10_0 = math.round(arg_10_3.shoot_duration * 100)
+	local var_10_1 = Managers.state.unit_storage:go_id(arg_10_2)
 
-	Managers.state.network.network_transmit:send_rpc_clients("rpc_ai_weapon_shoot_start", owner_unit_id, shoot_time)
-	Managers.state.entity:system("weapon_system"):rpc_ai_weapon_shoot_start(Network.peer_id(), owner_unit_id, shoot_time)
+	Managers.state.network.network_transmit:send_rpc_clients("rpc_ai_weapon_shoot_start", var_10_1, var_10_0)
+	Managers.state.entity:system("weapon_system"):rpc_ai_weapon_shoot_start(Network.peer_id(), var_10_1, var_10_0)
 
-	data.is_shooting = true
-	data.shoot_start = t
-	data.shots_fired = 0
-	data.state = "shoot"
+	arg_10_3.is_shooting = true
+	arg_10_3.shoot_start = arg_10_4
+	arg_10_3.shots_fired = 0
+	arg_10_3.state = "shoot"
 
-	local dialogue_system = Managers.state.entity:system("dialogue_system")
+	Managers.state.entity:system("dialogue_system"):trigger_targeted_by_ratling(arg_10_3.target_unit)
 
-	dialogue_system:trigger_targeted_by_ratling(data.target_unit)
+	if arg_10_0._use_obstacle then
+		local var_10_2 = arg_10_3.line_of_fire_nav_obstacle
 
-	if self._use_obstacle then
-		local fire_obstacle = data.line_of_fire_nav_obstacle
+		GwNavBoxObstacle.add_to_world(var_10_2)
 
-		GwNavBoxObstacle.add_to_world(fire_obstacle)
+		local var_10_3 = arg_10_3.arc_of_sight_nav_obstacle
 
-		local sight_obstacle = data.arc_of_sight_nav_obstacle
+		GwNavBoxObstacle.add_to_world(var_10_3)
 
-		GwNavBoxObstacle.add_to_world(sight_obstacle)
+		local var_10_4 = arg_10_1.action.line_of_fire_nav_obstacle_half_extents:unbox()
+		local var_10_5 = arg_10_1.action.arc_of_sight_nav_obstacle_half_extents:unbox()
+		local var_10_6, var_10_7 = arg_10_0:_fire_from_position_direction(arg_10_1, arg_10_3)
+		local var_10_8 = Vector3.normalize(var_10_7)
+		local var_10_9 = var_10_6 + var_10_8 * var_10_4.y
+		local var_10_10 = var_10_6 + var_10_8 * var_10_5.y
+		local var_10_11 = Quaternion.look(var_10_8, Vector3.up())
+		local var_10_12 = Matrix4x4.from_quaternion_position(var_10_11, var_10_9)
+		local var_10_13 = Matrix4x4.from_quaternion_position(var_10_11, var_10_10)
 
-		local fire_extents = blackboard.action.line_of_fire_nav_obstacle_half_extents:unbox()
-		local sight_extents = blackboard.action.arc_of_sight_nav_obstacle_half_extents:unbox()
-		local fire_position, fire_direction = self:_fire_from_position_direction(blackboard, data)
-		local direction = Vector3.normalize(fire_direction)
-		local lof_position = fire_position + direction * fire_extents.y
-		local aos_position = fire_position + direction * sight_extents.y
-		local rotation = Quaternion.look(direction, Vector3.up())
-		local fire_pose = Matrix4x4.from_quaternion_position(rotation, lof_position)
-		local sight_pose = Matrix4x4.from_quaternion_position(rotation, aos_position)
-
-		GwNavBoxObstacle.set_transform(fire_obstacle, fire_pose)
-		GwNavBoxObstacle.set_transform(sight_obstacle, sight_pose)
-		GwNavBoxObstacle.set_does_trigger_tagvolume(fire_obstacle, true)
-		GwNavBoxObstacle.set_does_trigger_tagvolume(sight_obstacle, true)
+		GwNavBoxObstacle.set_transform(var_10_2, var_10_12)
+		GwNavBoxObstacle.set_transform(var_10_3, var_10_13)
+		GwNavBoxObstacle.set_does_trigger_tagvolume(var_10_2, true)
+		GwNavBoxObstacle.set_does_trigger_tagvolume(var_10_3, true)
 	end
 
 	if CLIENT_CONTROLLED_RATLING_GUN then
-		local action = blackboard.action
-		local breed_name = blackboard.breed.name
-		local breed_id = NetworkLookup.breeds[breed_name]
-		local shoot_duration = data.shoot_duration
-		local breed_action_name = blackboard.action.name
-		local breed_action_id = NetworkLookup.bt_action_names[breed_action_name]
-		local owner_unit_id, owner_is_level_unit = Managers.state.network:game_object_or_level_id(unit)
+		local var_10_14 = arg_10_1.action
+		local var_10_15 = arg_10_1.breed.name
+		local var_10_16 = NetworkLookup.breeds[var_10_15]
+		local var_10_17 = arg_10_3.shoot_duration
+		local var_10_18 = arg_10_1.action.name
+		local var_10_19 = NetworkLookup.bt_action_names[var_10_18]
+		local var_10_20, var_10_21 = Managers.state.network:game_object_or_level_id(arg_10_2)
 
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_clients_continuous_shoot_start", owner_unit_id, owner_is_level_unit, breed_id, breed_action_id, shoot_duration, data.peer_id)
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_clients_continuous_shoot_start", var_10_20, var_10_21, var_10_16, var_10_19, var_10_17, arg_10_3.peer_id)
 	end
 end
 
-local VIEW_CONE = 0.7071067
+local var_0_3 = 0.7071067
 
-BTRatlingGunnerShootAction._update_target = function (self, unit, blackboard, action, data, t, dt)
-	local switched_target = false
+function BTRatlingGunnerShootAction._update_target(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6)
+	local var_11_0 = false
 
-	if t > data.target_check then
-		local old_target = data.target_unit
-		local target, node_name, old_target_visible, old_target_visible_node_name, target_distance_sq, old_target_distance_sq = PerceptionUtils.pick_ratling_gun_target(unit, blackboard, old_target, VIEW_CONE, data.shoot_direction_box:unbox())
+	if arg_11_5 > arg_11_4.target_check then
+		local var_11_1 = arg_11_4.target_unit
+		local var_11_2, var_11_3, var_11_4, var_11_5, var_11_6, var_11_7 = PerceptionUtils.pick_ratling_gun_target(arg_11_1, arg_11_2, var_11_1, var_0_3, arg_11_4.shoot_direction_box:unbox())
 
-		if target and target ~= old_target then
-			local target_pos = POSITION_LOOKUP[target]
-			local old_target_pos = POSITION_LOOKUP[data.target_unit]
-			local self_pos = POSITION_LOOKUP[unit]
-			local target_switch_distance_sq = data.target_switch_distance_squared
+		if var_11_2 and var_11_2 ~= var_11_1 then
+			local var_11_8 = POSITION_LOOKUP[var_11_2]
+			local var_11_9 = POSITION_LOOKUP[arg_11_4.target_unit]
+			local var_11_10 = POSITION_LOOKUP[arg_11_1]
+			local var_11_11 = arg_11_4.target_switch_distance_squared
 
-			if target == blackboard.taunt_unit or target_distance_sq < target_switch_distance_sq and target_switch_distance_sq < old_target_distance_sq then
-				data.target_unit = target
-				data.target_node_name = node_name
-				data.target_obscured = false
-				switched_target = true
+			if var_11_2 == arg_11_2.taunt_unit or var_11_6 < var_11_11 and var_11_11 < var_11_7 then
+				arg_11_4.target_unit = var_11_2
+				arg_11_4.target_node_name = var_11_3
+				arg_11_4.target_obscured = false
+				var_11_0 = true
 
-				self:_notify_no_longer_attacking(unit, old_target)
-				self:_notify_attacking(unit, target)
+				arg_11_0:_notify_no_longer_attacking(arg_11_1, var_11_1)
+				arg_11_0:_notify_attacking(arg_11_1, var_11_2)
 
-				data.target_check = t + 0.1 + Math.random() * 0.05
-			elseif old_target_visible then
-				data.target_obscured = false
-				data.target_node_name = old_target_visible_node_name
-				data.target_check = t + 0.1 + Math.random() * 0.05
+				arg_11_4.target_check = arg_11_5 + 0.1 + Math.random() * 0.05
+			elseif var_11_4 then
+				arg_11_4.target_obscured = false
+				arg_11_4.target_node_name = var_11_5
+				arg_11_4.target_check = arg_11_5 + 0.1 + Math.random() * 0.05
 			else
-				data.target_check = t + 0.5 + Math.random() * 0.25
-				data.target_obscured = true
+				arg_11_4.target_check = arg_11_5 + 0.5 + Math.random() * 0.25
+				arg_11_4.target_obscured = true
 			end
-		elseif old_target_visible then
-			data.target_obscured = false
-			data.target_node_name = old_target_visible_node_name
-			data.target_check = t + 0.1 + Math.random() * 0.05
+		elseif var_11_4 then
+			arg_11_4.target_obscured = false
+			arg_11_4.target_node_name = var_11_5
+			arg_11_4.target_check = arg_11_5 + 0.1 + Math.random() * 0.05
 		else
-			data.target_obscured = true
-			data.target_check = t + 0.5 + Math.random() * 0.25
+			arg_11_4.target_obscured = true
+			arg_11_4.target_check = arg_11_5 + 0.5 + Math.random() * 0.25
 		end
 
-		if not data.target_obscured then
-			local target_unit = data.target_unit
+		if not arg_11_4.target_obscured then
+			local var_11_12 = arg_11_4.target_unit
 
-			data.last_known_target_position:store(Unit.world_position(target_unit, Unit.node(target_unit, data.target_node_name)))
-			data.last_known_unit_position:store(Unit.world_position(unit, Unit.node(unit, "c_spine")))
+			arg_11_4.last_known_target_position:store(Unit.world_position(var_11_12, Unit.node(var_11_12, arg_11_4.target_node_name)))
+			arg_11_4.last_known_unit_position:store(Unit.world_position(arg_11_1, Unit.node(arg_11_1, "c_spine")))
 		end
 	end
 
-	return switched_target
+	return var_11_0
 end
 
-BTRatlingGunnerShootAction._calculate_wanted_target_position = function (self, unit, target_unit, data)
-	local target_position, unit_position
-	local obscured = data.target_obscured
+function BTRatlingGunnerShootAction._calculate_wanted_target_position(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	local var_12_0
+	local var_12_1
+	local var_12_2 = arg_12_3.target_obscured
 
-	if data.target_obscured then
-		target_position = data.last_known_target_position:unbox()
-		unit_position = data.last_known_unit_position:unbox()
+	if arg_12_3.target_obscured then
+		var_12_0 = arg_12_3.last_known_target_position:unbox()
+		var_12_1 = arg_12_3.last_known_unit_position:unbox()
 	else
-		target_position = Unit.world_position(target_unit, Unit.node(target_unit, data.target_node_name))
-		unit_position = Unit.world_position(unit, Unit.node(unit, "c_spine"))
+		var_12_0 = Unit.world_position(arg_12_2, Unit.node(arg_12_2, arg_12_3.target_node_name))
+		var_12_1 = Unit.world_position(arg_12_1, Unit.node(arg_12_1, "c_spine"))
 	end
 
-	local look_at_rotation = LocomotionUtils.look_at_position_flat(unit, target_position)
+	local var_12_3 = LocomotionUtils.look_at_position_flat(arg_12_1, var_12_0)
 
-	return target_position, look_at_rotation, unit_position
+	return var_12_0, var_12_3, var_12_1
 end
 
-BTRatlingGunnerShootAction._start_align_towards_target = function (self, unit, blackboard, data, target_unit, t)
-	data.state = "align"
+function BTRatlingGunnerShootAction._start_align_towards_target(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+	arg_13_3.state = "align"
 
-	local start_direction = data.shoot_direction_box:unbox()
-	local target_position, wanted_rotation, unit_position = self:_calculate_wanted_target_position(unit, target_unit, data)
-	local flat_start_direction = Vector3.normalize(Vector3.flat(start_direction))
-	local flat_wanted_direction = Vector3.normalize(Vector3.flat(target_position - unit_position))
-	local angle = Vector3.flat_angle(flat_start_direction, flat_wanted_direction)
-	local action = blackboard.action
+	local var_13_0 = arg_13_3.shoot_direction_box:unbox()
+	local var_13_1, var_13_2, var_13_3 = arg_13_0:_calculate_wanted_target_position(arg_13_1, arg_13_4, arg_13_3)
+	local var_13_4 = Vector3.normalize(Vector3.flat(var_13_0))
+	local var_13_5 = Vector3.normalize(Vector3.flat(var_13_1 - var_13_3))
+	local var_13_6 = Vector3.flat_angle(var_13_4, var_13_5)
+	local var_13_7 = arg_13_2.action
 
-	data.align_start = t
-	data.shoot_direction_start_box = Vector3Box(start_direction)
-	data.shoot_duration = AiUtils.random(action.attack_time[1], action.attack_time[2])
-	data.align_speed = 0
-	data.aim_position_box = nil
-	data.current_aim_rotation = nil
-	blackboard.anim_cb_attack_shoot_random_shot = nil
+	arg_13_3.align_start = arg_13_5
+	arg_13_3.shoot_direction_start_box = Vector3Box(var_13_0)
+	arg_13_3.shoot_duration = AiUtils.random(var_13_7.attack_time[1], var_13_7.attack_time[2])
+	arg_13_3.align_speed = 0
+	arg_13_3.aim_position_box = nil
+	arg_13_3.current_aim_rotation = nil
+	arg_13_2.anim_cb_attack_shoot_random_shot = nil
 
-	Managers.state.network:anim_event(unit, "attack_shoot_align")
+	Managers.state.network:anim_event(arg_13_1, "attack_shoot_align")
 end
 
-BTRatlingGunnerShootAction._end_align_towards_target = function (self, unit, data)
-	data.state = "ready"
-	data.align_start = nil
-	data.shoot_direction_start = nil
-	data.align_speed = nil
-	data.aim_position_box = Vector3Box()
-	data.current_aim_rotation = QuaternionBox(Quaternion.look(data.shoot_direction_box:unbox(), Vector3.up()))
+function BTRatlingGunnerShootAction._end_align_towards_target(arg_14_0, arg_14_1, arg_14_2)
+	arg_14_2.state = "ready"
+	arg_14_2.align_start = nil
+	arg_14_2.shoot_direction_start = nil
+	arg_14_2.align_speed = nil
+	arg_14_2.aim_position_box = Vector3Box()
+	arg_14_2.current_aim_rotation = QuaternionBox(Quaternion.look(arg_14_2.shoot_direction_box:unbox(), Vector3.up()))
 
-	Managers.state.network:anim_event(unit, "attack_shoot_start")
+	Managers.state.network:anim_event(arg_14_1, "attack_shoot_start")
 end
 
-local MAX_SPEED = 5
-local SLOW_SPEED = 1
-local STOP_SPEED = SLOW_SPEED * 0.5
-local SLOW_DOWN_ANGLE = PI / 12
-local ACCELERATION = PI * 12
-local DECELERATION = PI * 6
-local STOP_ANGLE = PI / 32
-local AIM_PIVOT_HEIGHT = 0.7
+local var_0_4 = 5
+local var_0_5 = 1
+local var_0_6 = var_0_5 * 0.5
+local var_0_7 = var_0_0 / 12
+local var_0_8 = var_0_0 * 12
+local var_0_9 = var_0_0 * 6
+local var_0_10 = var_0_0 / 32
+local var_0_11 = 0.7
 
-BTRatlingGunnerShootAction._update_align_towards_target = function (self, unit, blackboard, t, dt)
-	local data = blackboard.attack_pattern_data
-	local action = blackboard.action
-	local target_unit = data.target_unit
-	local target_position, wanted_rotation, unit_position = self:_calculate_wanted_target_position(unit, target_unit, data)
-	local current_rotation = Unit.local_rotation(unit, 0)
-	local speed = data.align_speed
-	local angle_left = self:_remaining_angle(current_rotation, wanted_rotation)
-	local wanted_speed = self:_angle_to_speed(angle_left)
+function BTRatlingGunnerShootAction._update_align_towards_target(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+	local var_15_0 = arg_15_2.attack_pattern_data
+	local var_15_1 = arg_15_2.action
+	local var_15_2 = var_15_0.target_unit
+	local var_15_3, var_15_4, var_15_5 = arg_15_0:_calculate_wanted_target_position(arg_15_1, var_15_2, var_15_0)
+	local var_15_6 = Unit.local_rotation(arg_15_1, 0)
+	local var_15_7 = var_15_0.align_speed
+	local var_15_8 = arg_15_0:_remaining_angle(var_15_6, var_15_4)
+	local var_15_9 = arg_15_0:_angle_to_speed(var_15_8)
 
-	if wanted_speed == 0 and speed > 0 then
-		speed = math.max(speed - DECELERATION * dt, 0)
-	elseif wanted_speed == 0 and speed < 0 then
-		speed = math.min(speed + DECELERATION * dt, 0)
-	elseif speed < wanted_speed and wanted_speed > 0 then
-		speed = math.min(speed + ACCELERATION * dt, wanted_speed)
-	elseif wanted_speed < speed and wanted_speed < 0 then
-		speed = math.max(speed - ACCELERATION * dt, wanted_speed)
-	elseif speed < wanted_speed and wanted_speed < 0 then
-		speed = math.min(speed + DECELERATION * dt, wanted_speed)
+	if var_15_9 == 0 and var_15_7 > 0 then
+		var_15_7 = math.max(var_15_7 - var_0_9 * arg_15_4, 0)
+	elseif var_15_9 == 0 and var_15_7 < 0 then
+		var_15_7 = math.min(var_15_7 + var_0_9 * arg_15_4, 0)
+	elseif var_15_7 < var_15_9 and var_15_9 > 0 then
+		var_15_7 = math.min(var_15_7 + var_0_8 * arg_15_4, var_15_9)
+	elseif var_15_9 < var_15_7 and var_15_9 < 0 then
+		var_15_7 = math.max(var_15_7 - var_0_8 * arg_15_4, var_15_9)
+	elseif var_15_7 < var_15_9 and var_15_9 < 0 then
+		var_15_7 = math.min(var_15_7 + var_0_9 * arg_15_4, var_15_9)
 	else
-		speed = math.max(speed - ACCELERATION * dt, wanted_speed)
+		var_15_7 = math.max(var_15_7 - var_0_8 * arg_15_4, var_15_9)
 	end
 
-	data.align_speed = speed
+	var_15_0.align_speed = var_15_7
 
-	local angle = 0 + speed * dt
-	local new_rot = Quaternion.multiply(current_rotation, Quaternion(Vector3.up(), angle))
-	local locomotion_extension = blackboard.locomotion_extension
+	local var_15_10 = 0 + var_15_7 * arg_15_4
+	local var_15_11 = Quaternion.multiply(var_15_6, Quaternion(Vector3.up(), var_15_10))
 
-	locomotion_extension:set_wanted_rotation(new_rot)
+	arg_15_2.locomotion_extension:set_wanted_rotation(var_15_11)
 
-	local lerp_value = math.min(dt * 3, 1)
-	local new_shoot_direction = Vector3.lerp(data.shoot_direction_box:unbox(), Quaternion.forward(new_rot), lerp_value)
+	local var_15_12 = math.min(arg_15_4 * 3, 1)
+	local var_15_13 = Vector3.lerp(var_15_0.shoot_direction_box:unbox(), Quaternion.forward(var_15_11), var_15_12)
 
-	data.shoot_direction_box:store(new_shoot_direction)
+	var_15_0.shoot_direction_box:store(var_15_13)
 
-	return math.abs(angle_left) < STOP_ANGLE
+	return math.abs(var_15_8) < var_0_10
 end
 
-BTRatlingGunnerShootAction._angle_to_speed = function (self, angle_left)
-	if angle_left > SLOW_DOWN_ANGLE then
-		return MAX_SPEED
-	elseif angle_left < -SLOW_DOWN_ANGLE then
-		return -MAX_SPEED
-	elseif angle_left > 0 then
-		return math.auto_lerp(SLOW_DOWN_ANGLE, 0, MAX_SPEED, SLOW_SPEED, angle_left)
+function BTRatlingGunnerShootAction._angle_to_speed(arg_16_0, arg_16_1)
+	if arg_16_1 > var_0_7 then
+		return var_0_4
+	elseif arg_16_1 < -var_0_7 then
+		return -var_0_4
+	elseif arg_16_1 > 0 then
+		return math.auto_lerp(var_0_7, 0, var_0_4, var_0_5, arg_16_1)
 	else
-		return math.auto_lerp(-SLOW_DOWN_ANGLE, 0, -MAX_SPEED, -SLOW_SPEED, angle_left)
+		return math.auto_lerp(-var_0_7, 0, -var_0_4, -var_0_5, arg_16_1)
 	end
 end
 
-BTRatlingGunnerShootAction._aim_at_target = function (self, unit, blackboard, t, dt)
-	local data = blackboard.attack_pattern_data
-	local action = blackboard.action
-	local target_unit = data.target_unit
-	local target_position, wanted_rotation, unit_position = self:_calculate_wanted_target_position(unit, target_unit, data)
-	local current_rotation = Unit.local_rotation(unit, 0)
-	local angle = Quaternion.yaw(wanted_rotation) - Quaternion.yaw(current_rotation)
-	local normalized_angle = (angle % TWO_PI + PI) % TWO_PI - PI
-	local self_pos = POSITION_LOOKUP[unit]
-	local pivot = self_pos + Vector3(0, 0, AIM_PIVOT_HEIGHT)
-	local wanted_aim_position_offset = target_position - pivot
-	local wanted_aim_rotation = Quaternion.look(wanted_aim_position_offset, Vector3.up())
-	local current_aim_rotation = data.current_aim_rotation:unbox()
-	local lerped_rotation = self:_rotate_from_to(current_aim_rotation, wanted_aim_rotation, action.radial_speed_upper_body_shooting, dt)
-	local aim_position = pivot + Quaternion.forward(lerped_rotation) * Vector3.length(wanted_aim_position_offset)
+function BTRatlingGunnerShootAction._aim_at_target(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+	local var_17_0 = arg_17_2.attack_pattern_data
+	local var_17_1 = arg_17_2.action
+	local var_17_2 = var_17_0.target_unit
+	local var_17_3, var_17_4, var_17_5 = arg_17_0:_calculate_wanted_target_position(arg_17_1, var_17_2, var_17_0)
+	local var_17_6 = Unit.local_rotation(arg_17_1, 0)
+	local var_17_7 = ((Quaternion.yaw(var_17_4) - Quaternion.yaw(var_17_6)) % var_0_1 + var_0_0) % var_0_1 - var_0_0
+	local var_17_8 = POSITION_LOOKUP[arg_17_1] + Vector3(0, 0, var_0_11)
+	local var_17_9 = var_17_3 - var_17_8
+	local var_17_10 = Quaternion.look(var_17_9, Vector3.up())
+	local var_17_11 = var_17_0.current_aim_rotation:unbox()
+	local var_17_12 = arg_17_0:_rotate_from_to(var_17_11, var_17_10, var_17_1.radial_speed_upper_body_shooting, arg_17_4)
+	local var_17_13 = var_17_8 + Quaternion.forward(var_17_12) * Vector3.length(var_17_9)
 
-	data.current_aim_rotation:store(lerped_rotation)
+	var_17_0.current_aim_rotation:store(var_17_12)
 
-	local lerped_rot, angle_left = self:_rotate_from_to(current_rotation, wanted_rotation, action.radial_speed_feet_shooting, dt)
-	local locomotion_extension = blackboard.locomotion_extension
+	local var_17_14, var_17_15 = arg_17_0:_rotate_from_to(var_17_6, var_17_4, var_17_1.radial_speed_feet_shooting, arg_17_4)
 
-	locomotion_extension:set_wanted_rotation(lerped_rot)
-	data.aim_position_box:store(aim_position)
-	data.shoot_direction_box:store(aim_position - pivot)
+	arg_17_2.locomotion_extension:set_wanted_rotation(var_17_14)
+	var_17_0.aim_position_box:store(var_17_13)
+	var_17_0.shoot_direction_box:store(var_17_13 - var_17_8)
 
-	local owner_unit_id, owner_is_level_unit = Managers.state.network:game_object_or_level_id(unit)
+	local var_17_16, var_17_17 = Managers.state.network:game_object_or_level_id(arg_17_1)
 
-	if not owner_is_level_unit then
-		local game = Managers.state.network:game()
-		local position_constant = NetworkConstants.position
-		local min = position_constant.min
-		local max = position_constant.max
+	if not var_17_17 then
+		local var_17_18 = Managers.state.network:game()
+		local var_17_19 = NetworkConstants.position
+		local var_17_20 = var_17_19.min
+		local var_17_21 = var_17_19.max
 
-		GameSession.set_game_object_field(game, owner_unit_id, "aim_position", Vector3.clamp(aim_position, min, max))
+		GameSession.set_game_object_field(var_17_18, var_17_16, "aim_position", Vector3.clamp(var_17_13, var_17_20, var_17_21))
 	end
 
-	local realign = normalized_angle > PI / 3 or normalized_angle < -PI
-	local physics_world = World.get_data(blackboard.world, "physics_world")
+	local var_17_22 = var_17_7 > var_0_0 / 3 or var_17_7 < -var_0_0
+	local var_17_23 = World.get_data(arg_17_2.world, "physics_world")
 
-	PhysicsWorld.prepare_actors_for_raycast(physics_world, pivot, Vector3.normalize(aim_position - pivot), action.spread)
+	PhysicsWorld.prepare_actors_for_raycast(var_17_23, var_17_8, Vector3.normalize(var_17_13 - var_17_8), var_17_1.spread)
 
-	return realign
+	return var_17_22
 end
 
-BTRatlingGunnerShootAction._remaining_angle = function (self, from, to)
-	local from_forward = Quaternion.forward(from)
-	local to_forward = Quaternion.forward(to)
-	local from_angle = math.atan2(from_forward.y, from_forward.x)
-	local to_angle = math.atan2(to_forward.y, to_forward.x)
-	local pi = PI
-	local pi2 = pi * 2
-	local angle_diff = to_angle - from_angle
-	local normalized_angle_diff = (angle_diff % pi2 + pi) % pi2 - pi
+function BTRatlingGunnerShootAction._remaining_angle(arg_18_0, arg_18_1, arg_18_2)
+	local var_18_0 = Quaternion.forward(arg_18_1)
+	local var_18_1 = Quaternion.forward(arg_18_2)
+	local var_18_2 = math.atan2(var_18_0.y, var_18_0.x)
+	local var_18_3 = math.atan2(var_18_1.y, var_18_1.x)
+	local var_18_4 = var_0_0
+	local var_18_5 = var_18_4 * 2
 
-	return normalized_angle_diff
+	return ((var_18_3 - var_18_2) % var_18_5 + var_18_4) % var_18_5 - var_18_4
 end
 
-BTRatlingGunnerShootAction._rotate_from_to = function (self, from, to, max_angle_speed, dt)
-	local max_delta = max_angle_speed * dt
-	local inner_product = Quaternion.dot(to, from)
-	local angle_difference = 2 * math.acos(math.clamp(inner_product, -1, 1))
-	local normalized_angle_diff = math.abs((angle_difference % TWO_PI + PI) % TWO_PI - PI)
-	local lerp_t = angle_difference == 0 and 1 or math.min(max_delta / angle_difference, 1)
+function BTRatlingGunnerShootAction._rotate_from_to(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+	local var_19_0 = arg_19_3 * arg_19_4
+	local var_19_1 = Quaternion.dot(arg_19_2, arg_19_1)
+	local var_19_2 = 2 * math.acos(math.clamp(var_19_1, -1, 1))
+	local var_19_3 = math.abs((var_19_2 % var_0_1 + var_0_0) % var_0_1 - var_0_0)
+	local var_19_4 = var_19_2 == 0 and 1 or math.min(var_19_0 / var_19_2, 1)
 
-	return Quaternion.lerp(from, to, lerp_t), math.max(normalized_angle_diff - max_delta, 0)
+	return Quaternion.lerp(arg_19_1, arg_19_2, var_19_4), math.max(var_19_3 - var_19_0, 0)
 end
 
-BTRatlingGunnerShootAction._fire_from_position_direction = function (self, blackboard, data)
-	local ratling_gun_unit = data.ratling_gun_unit
-	local fire_node = Unit.node(ratling_gun_unit, "p_fx")
-	local position = Unit.world_position(ratling_gun_unit, fire_node)
-	local direction
+function BTRatlingGunnerShootAction._fire_from_position_direction(arg_20_0, arg_20_1, arg_20_2)
+	local var_20_0 = arg_20_2.ratling_gun_unit
+	local var_20_1 = Unit.node(var_20_0, "p_fx")
+	local var_20_2 = Unit.world_position(var_20_0, var_20_1)
+	local var_20_3
 
-	if blackboard.in_hit_reaction then
-		direction = Quaternion.forward(Unit.world_rotation(ratling_gun_unit, fire_node))
+	if arg_20_1.in_hit_reaction then
+		var_20_3 = Quaternion.forward(Unit.world_rotation(var_20_0, var_20_1))
 	else
-		direction = data.aim_position_box:unbox() - position
+		var_20_3 = arg_20_2.aim_position_box:unbox() - var_20_2
 	end
 
-	local fire_pos = position - Vector3.normalize(direction) * 0.25
-
-	return fire_pos, direction
+	return var_20_2 - Vector3.normalize(var_20_3) * 0.25, var_20_3
 end
 
-BTRatlingGunnerShootAction._shoot = function (self, unit, blackboard)
-	local action = blackboard.action
-	local data = blackboard.attack_pattern_data
-	local light_weight_projectile_template_name = action.light_weight_projectile_template_name
-	local light_weight_projectile_template = LightWeightProjectiles[light_weight_projectile_template_name]
-	local from_position, direction = self:_fire_from_position_direction(blackboard, data)
-	local normalized_direction = Vector3.normalize(direction)
-	local spread_angle = Math.random() * light_weight_projectile_template.spread
-	local dir_rot = Quaternion.look(normalized_direction, Vector3.up())
-	local pitch = Quaternion(Vector3.right(), spread_angle)
-	local roll = Quaternion(Vector3.forward(), Math.random() * TWO_PI)
-	local spread_rot = Quaternion.multiply(Quaternion.multiply(dir_rot, roll), pitch)
-	local spread_direction = Quaternion.forward(spread_rot)
-	local collision_filter = "filter_enemy_player_afro_ray_projectile"
-	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local power_level = light_weight_projectile_template.attack_power_level[difficulty_rank] or light_weight_projectile_template.attack_power_level[2]
-	local action_data = {
-		power_level = power_level,
-		damage_profile = light_weight_projectile_template.damage_profile,
-		hit_effect = light_weight_projectile_template.hit_effect,
-		player_push_velocity = Vector3Box(normalized_direction * light_weight_projectile_template.impact_push_speed),
-		projectile_linker = light_weight_projectile_template.projectile_linker,
-		first_person_hit_flow_events = light_weight_projectile_template.first_person_hit_flow_events,
+function BTRatlingGunnerShootAction._shoot(arg_21_0, arg_21_1, arg_21_2)
+	local var_21_0 = arg_21_2.action
+	local var_21_1 = arg_21_2.attack_pattern_data
+	local var_21_2 = var_21_0.light_weight_projectile_template_name
+	local var_21_3 = LightWeightProjectiles[var_21_2]
+	local var_21_4, var_21_5 = arg_21_0:_fire_from_position_direction(arg_21_2, var_21_1)
+	local var_21_6 = Vector3.normalize(var_21_5)
+	local var_21_7 = Math.random() * var_21_3.spread
+	local var_21_8 = Quaternion.look(var_21_6, Vector3.up())
+	local var_21_9 = Quaternion(Vector3.right(), var_21_7)
+	local var_21_10 = Quaternion(Vector3.forward(), Math.random() * var_0_1)
+	local var_21_11 = Quaternion.multiply(Quaternion.multiply(var_21_8, var_21_10), var_21_9)
+	local var_21_12 = Quaternion.forward(var_21_11)
+	local var_21_13 = "filter_enemy_player_afro_ray_projectile"
+	local var_21_14 = Managers.state.difficulty:get_difficulty_rank()
+	local var_21_15 = var_21_3.attack_power_level[var_21_14] or var_21_3.attack_power_level[2]
+	local var_21_16 = {
+		power_level = var_21_15,
+		damage_profile = var_21_3.damage_profile,
+		hit_effect = var_21_3.hit_effect,
+		player_push_velocity = Vector3Box(var_21_6 * var_21_3.impact_push_speed),
+		projectile_linker = var_21_3.projectile_linker,
+		first_person_hit_flow_events = var_21_3.first_person_hit_flow_events
 	}
-	local projectile_system = Managers.state.entity:system("projectile_system")
-	local peer_id = data.peer_id
-	local skip_rpc = CLIENT_CONTROLLED_RATLING_GUN
+	local var_21_17 = Managers.state.entity:system("projectile_system")
+	local var_21_18 = var_21_1.peer_id
+	local var_21_19 = CLIENT_CONTROLLED_RATLING_GUN
 
-	projectile_system:create_light_weight_projectile(blackboard.breed.name, unit, from_position, spread_direction, light_weight_projectile_template.projectile_speed, nil, nil, light_weight_projectile_template.projectile_max_range, collision_filter, action_data, light_weight_projectile_template.light_weight_projectile_effect, peer_id, nil, skip_rpc)
+	var_21_17:create_light_weight_projectile(arg_21_2.breed.name, arg_21_1, var_21_4, var_21_12, var_21_3.projectile_speed, nil, nil, var_21_3.projectile_max_range, var_21_13, var_21_16, var_21_3.light_weight_projectile_effect, var_21_18, nil, var_21_19)
 end
 
-BTRatlingGunnerShootAction._create_bot_threat_box = function (self, unit, attack_data, duration, blackboard, shoot_data)
-	local self_pos = POSITION_LOOKUP[unit]
-	local target_pos = POSITION_LOOKUP[attack_data.target_unit]
+function BTRatlingGunnerShootAction._create_bot_threat_box(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
+	local var_22_0 = POSITION_LOOKUP[arg_22_1]
+	local var_22_1 = POSITION_LOOKUP[arg_22_2.target_unit]
 
-	if self_pos and target_pos then
-		local fire_position, fire_direction = self:_fire_from_position_direction(blackboard, shoot_data)
-		local distance = Vector3.length(fire_position - target_pos)
-		local obstacle_position, obstacle_rotation, obstacle_size = AiUtils.calculate_oobb(distance * 2, self_pos, Quaternion.look(fire_direction), nil, 3)
-		local ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
+	if var_22_0 and var_22_1 then
+		local var_22_2, var_22_3 = arg_22_0:_fire_from_position_direction(arg_22_4, arg_22_5)
+		local var_22_4 = Vector3.length(var_22_2 - var_22_1)
+		local var_22_5, var_22_6, var_22_7 = AiUtils.calculate_oobb(var_22_4 * 2, var_22_0, Quaternion.look(var_22_3), nil, 3)
 
-		ai_bot_group_system:aoe_threat_created(obstacle_position, "oobb", obstacle_size, obstacle_rotation, duration, "Ratling Gunner")
+		Managers.state.entity:system("ai_bot_group_system"):aoe_threat_created(var_22_5, "oobb", var_22_7, var_22_6, arg_22_3, "Ratling Gunner")
 	end
 end

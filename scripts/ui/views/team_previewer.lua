@@ -1,46 +1,46 @@
-﻿-- chunkname: @scripts/ui/views/team_previewer.lua
+-- chunkname: @scripts/ui/views/team_previewer.lua
 
 require("scripts/ui/views/world_hero_previewer")
 
 TeamPreviewer = class(TeamPreviewer)
 
-TeamPreviewer.init = function (self, ingame_ui_context, world, viewport)
-	self.hero_previewers = {}
-	self._context = ingame_ui_context
-	self.world = world
-	self.camera = ScriptViewport.camera(viewport)
+function TeamPreviewer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.hero_previewers = {}
+	arg_1_0._context = arg_1_1
+	arg_1_0.world = arg_1_2
+	arg_1_0.camera = ScriptViewport.camera(arg_1_3)
 end
 
-TeamPreviewer.setup_team = function (self, hero_data, hero_arrangement, spawn_on_setup)
-	self:destroy_previewers()
+function TeamPreviewer.setup_team(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	arg_2_0:destroy_previewers()
 
-	local previewers = self.hero_previewers
+	local var_2_0 = arg_2_0.hero_previewers
 
-	for i = 1, #hero_data do
-		local hero_previewer = HeroPreviewer:new(self._context)
+	for iter_2_0 = 1, #arg_2_1 do
+		local var_2_1 = HeroPreviewer:new(arg_2_0._context)
 
-		if hero_data[i] ~= true and spawn_on_setup ~= false then
-			self:_spawn_hero(hero_previewer, hero_data[i])
+		if arg_2_1[iter_2_0] ~= true and arg_2_3 ~= false then
+			arg_2_0:_spawn_hero(var_2_1, arg_2_1[iter_2_0])
 		end
 
-		previewers[#previewers + 1] = hero_previewer
+		var_2_0[#var_2_0 + 1] = var_2_1
 	end
 
-	local orientate_towards_camera = true
-	local character_look_target = Vector3Aux.box(nil, ScriptCamera.position(self.camera))
+	local var_2_2 = true
+	local var_2_3 = Vector3Aux.box(nil, ScriptCamera.position(arg_2_0.camera))
 
-	self:update_hero_arrangement(hero_arrangement, character_look_target, orientate_towards_camera)
+	arg_2_0:update_hero_arrangement(arg_2_2, var_2_3, var_2_2)
 end
 
-TeamPreviewer.on_enter = function (self)
+function TeamPreviewer.on_enter(arg_3_0)
 	return
 end
 
-TeamPreviewer.loading_done = function (self)
-	local previewers = self.hero_previewers
+function TeamPreviewer.loading_done(arg_4_0)
+	local var_4_0 = arg_4_0.hero_previewers
 
-	for i = 1, #previewers do
-		if not previewers[i]:loading_done() then
+	for iter_4_0 = 1, #var_4_0 do
+		if not var_4_0[iter_4_0]:loading_done() then
 			return false
 		end
 	end
@@ -48,153 +48,152 @@ TeamPreviewer.loading_done = function (self)
 	return true
 end
 
-TeamPreviewer.update = function (self, dt, t)
-	local previewers = self.hero_previewers
+function TeamPreviewer.update(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = arg_5_0.hero_previewers
 
-	for i = 1, #previewers do
-		previewers[i]:update(dt, t)
+	for iter_5_0 = 1, #var_5_0 do
+		var_5_0[iter_5_0]:update(arg_5_1, arg_5_2)
 	end
 end
 
-TeamPreviewer.post_update = function (self, dt, t)
-	local previewers = self.hero_previewers
+function TeamPreviewer.post_update(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = arg_6_0.hero_previewers
 
-	for i = 1, #previewers do
-		previewers[i]:post_update(dt, t)
+	for iter_6_0 = 1, #var_6_0 do
+		var_6_0[iter_6_0]:post_update(arg_6_1, arg_6_2)
 	end
 end
 
-TeamPreviewer.on_exit = function (self)
-	self:destroy_previewers()
+function TeamPreviewer.on_exit(arg_7_0)
+	arg_7_0:destroy_previewers()
 end
 
-TeamPreviewer.clear_team = function (self)
-	local previewers = self.hero_previewers
+function TeamPreviewer.clear_team(arg_8_0)
+	local var_8_0 = arg_8_0.hero_previewers
 
-	for i = 1, #previewers do
-		local hero_previewer = previewers[i]
+	for iter_8_0 = 1, #var_8_0 do
+		local var_8_1 = var_8_0[iter_8_0]
 
-		if hero_previewer then
-			hero_previewer:clear_units()
+		if var_8_1 then
+			var_8_1:clear_units()
 		end
 	end
 end
 
-TeamPreviewer.destroy_previewers = function (self)
-	local previewers = self.hero_previewers
+function TeamPreviewer.destroy_previewers(arg_9_0)
+	local var_9_0 = arg_9_0.hero_previewers
 
-	for i = 1, #previewers do
-		local hero_previewer = previewers[i]
+	for iter_9_0 = 1, #var_9_0 do
+		local var_9_1 = var_9_0[iter_9_0]
 
-		if hero_previewer then
-			hero_previewer:prepare_exit()
-			hero_previewer:on_exit()
-			hero_previewer:destroy()
+		if var_9_1 then
+			var_9_1:prepare_exit()
+			var_9_1:on_exit()
+			var_9_1:destroy()
 		end
 	end
 
-	self.hero_previewers = {}
+	arg_9_0.hero_previewers = {}
 end
 
-TeamPreviewer._spawn_hero = function (self, hero_previewer, hero_data)
-	hero_previewer:on_enter(self.world)
+function TeamPreviewer._spawn_hero(arg_10_0, arg_10_1, arg_10_2)
+	arg_10_1:on_enter(arg_10_0.world)
 
-	local callback = callback(self, "cb_hero_unit_spawned_skin_preview", hero_previewer, hero_data)
+	local var_10_0 = callback(arg_10_0, "cb_hero_unit_spawned_skin_preview", arg_10_1, arg_10_2)
 
-	hero_previewer:request_spawn_hero_unit(hero_data.hero_name, hero_data.career_index, callback, hero_data.skin_name, hero_data.breed)
+	arg_10_1:request_spawn_hero_unit(arg_10_2.hero_name, arg_10_2.career_index, var_10_0, arg_10_2.skin_name, arg_10_2.breed)
 end
 
-local EMPTY_TABLE = {}
+local var_0_0 = {}
 
-TeamPreviewer.cb_hero_unit_spawned_skin_preview = function (self, hero_previewer, hero_data)
-	local preview_items = hero_data.preview_items
-	local weapon_slot = hero_data.weapon_slot
+function TeamPreviewer.cb_hero_unit_spawned_skin_preview(arg_11_0, arg_11_1, arg_11_2)
+	local var_11_0 = arg_11_2.preview_items
+	local var_11_1 = arg_11_2.weapon_slot
 
-	for i = 1, #preview_items do
-		local item = preview_items[i]
+	for iter_11_0 = 1, #var_11_0 do
+		local var_11_2 = var_11_0[iter_11_0]
 
-		if item then
-			local item_name = item.item_name
+		if var_11_2 then
+			local var_11_3 = var_11_2.item_name
 
-			if item_name then
-				local item_template = ItemMasterList[item_name]
-				local slot_type = item_template.slot_type
-				local slot_names = InventorySettings.slot_names_by_type[slot_type]
-				local slot_name = slot_names[1]
-				local slot = InventorySettings.slots_by_name[slot_name]
+			if var_11_3 then
+				local var_11_4 = ItemMasterList[var_11_3].slot_type
+				local var_11_5 = InventorySettings.slot_names_by_type[var_11_4][1]
+				local var_11_6 = InventorySettings.slots_by_name[var_11_5]
 
-				hero_previewer:equip_item(item_name, slot, nil, item.skin_name ~= "n/a" and item.skin_name)
+				arg_11_1:equip_item(var_11_3, var_11_6, nil, var_11_2.skin_name ~= "n/a" and var_11_2.skin_name)
 			end
 		end
 	end
 
-	if weapon_slot then
-		hero_previewer:wield_weapon_slot(weapon_slot, hero_data)
+	if var_11_1 then
+		arg_11_1:wield_weapon_slot(var_11_1, arg_11_2)
 	end
 
-	local preview_idle_animation = "idle"
-	local weapon_pose_anim_event = hero_data.weapon_pose_anim_event
+	local var_11_7 = "idle"
+	local var_11_8 = arg_11_2.weapon_pose_anim_event
 
-	if weapon_pose_anim_event and table.is_empty(hero_data.breed or EMPTY_TABLE) then
-		hero_previewer:play_character_animation(weapon_pose_anim_event)
-	elseif hero_data.breed and not table.is_empty(hero_data.breed or EMPTY_TABLE) then
-		local random_value = Math.random(6)
+	if var_11_8 and table.is_empty(arg_11_2.breed or var_0_0) then
+		arg_11_1:play_character_animation(var_11_8)
+	elseif arg_11_2.breed and not table.is_empty(arg_11_2.breed or var_0_0) then
+		local var_11_9 = Math.random(6)
 
-		if hero_data.random_seed then
-			local random_seed
+		if arg_11_2.random_seed then
+			local var_11_10
+			local var_11_11
 
-			random_seed, random_value = Math.next_random(hero_data.random_seed, 1, 6)
+			var_11_11, var_11_9 = Math.next_random(arg_11_2.random_seed, 1, 6)
 		end
 
-		local anim_event = string.format("parading_pose_%02d", random_value)
+		local var_11_12 = string.format("parading_pose_%02d", var_11_9)
 
-		hero_previewer:play_character_animation(anim_event)
-	elseif hero_data.preview_animation then
-		hero_previewer:play_character_animation(hero_data.preview_animation)
+		arg_11_1:play_character_animation(var_11_12)
+	elseif arg_11_2.preview_animation then
+		arg_11_1:play_character_animation(arg_11_2.preview_animation)
 	else
-		hero_previewer:play_character_animation(preview_idle_animation)
+		arg_11_1:play_character_animation(var_11_7)
 	end
 end
 
-TeamPreviewer.update_hero_arrangement = function (self, hero_arrangement, lookat_target, orientate_towards_camera)
-	local arrangement = hero_arrangement
-	local previewers = self.hero_previewers
-	local camera_location = ScriptCamera.position(self.camera)
+function TeamPreviewer.update_hero_arrangement(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	local var_12_0 = arg_12_1
+	local var_12_1 = arg_12_0.hero_previewers
+	local var_12_2 = ScriptCamera.position(arg_12_0.camera)
 
-	for i = 1, #previewers do
-		local hero_previewer = previewers[i]
+	for iter_12_0 = 1, #var_12_1 do
+		local var_12_3 = var_12_1[iter_12_0]
 
-		if hero_previewer then
-			hero_previewer:set_hero_location(arrangement[i])
-			hero_previewer:set_hero_look_target(lookat_target)
+		if var_12_3 then
+			var_12_3:set_hero_location(var_12_0[iter_12_0])
+			var_12_3:set_hero_look_target(arg_12_2)
 
-			if orientate_towards_camera then
-				local location = Vector3Aux.unbox(arrangement[i])
-				local direction = Vector3.flat(camera_location - location)
-				local angle = -math.atan2(direction[1], direction[2])
+			if arg_12_3 then
+				local var_12_4 = Vector3Aux.unbox(var_12_0[iter_12_0])
+				local var_12_5 = Vector3.flat(var_12_2 - var_12_4)
+				local var_12_6 = -math.atan2(var_12_5[1], var_12_5[2])
 
-				hero_previewer:set_hero_rotation(angle)
+				var_12_3:set_hero_rotation(var_12_6)
 			end
 		end
 	end
 end
 
-TeamPreviewer.set_camera_orientation = function (self, position, lookat_target)
-	local position_vec = Vector3Aux.unbox(position)
-	local lookat_vec = Vector3Aux.unbox(lookat_target)
-	local direction = Vector3.normalize(lookat_vec - position_vec)
-	local rotation = Quaternion.look(direction)
+function TeamPreviewer.set_camera_orientation(arg_13_0, arg_13_1, arg_13_2)
+	local var_13_0 = Vector3Aux.unbox(arg_13_1)
+	local var_13_1 = Vector3Aux.unbox(arg_13_2)
+	local var_13_2 = Vector3.normalize(var_13_1 - var_13_0)
+	local var_13_3 = Quaternion.look(var_13_2)
 
-	ScriptCamera.set_local_rotation(self.camera, rotation)
-	ScriptCamera.set_local_position(self.camera, position_vec)
+	ScriptCamera.set_local_rotation(arg_13_0.camera, var_13_3)
+	ScriptCamera.set_local_position(arg_13_0.camera, var_13_0)
 end
 
-TeamPreviewer.set_camera_fov = function (self, fov)
-	Camera.set_vertical_fov(self.camera, math.degrees_to_radians(fov))
+function TeamPreviewer.set_camera_fov(arg_14_0, arg_14_1)
+	Camera.set_vertical_fov(arg_14_0.camera, math.degrees_to_radians(arg_14_1))
 end
 
-TeamPreviewer.get_hero_previewer = function (self, index)
-	fassert(self.hero_previewers[index], "[TeamPreviewer] The hero previewer at the index %d you are trying to access does not exist!", index)
+function TeamPreviewer.get_hero_previewer(arg_15_0, arg_15_1)
+	fassert(arg_15_0.hero_previewers[arg_15_1], "[TeamPreviewer] The hero previewer at the index %d you are trying to access does not exist!", arg_15_1)
 
-	return self.hero_previewers[index] or nil
+	return arg_15_0.hero_previewers[arg_15_1] or nil
 end

@@ -1,145 +1,143 @@
-ï»¿-- chunkname: @scripts/utils/sha256.lua
+-- chunkname: @scripts/utils/sha256.lua
 
-local MOD = 4294967296
-local MODM = MOD - 1
+local var_0_0 = 4294967296
+local var_0_1 = var_0_0 - 1
 
-local function memoize(f)
-	local mt = {}
-	local t = setmetatable({}, mt)
+local function var_0_2(arg_1_0)
+	local var_1_0 = {}
+	local var_1_1 = setmetatable({}, var_1_0)
 
-	mt.__index = function (self, k)
-		local v = f(k)
+	function var_1_0.__index(arg_2_0, arg_2_1)
+		local var_2_0 = arg_1_0(arg_2_1)
 
-		t[k] = v
+		var_1_1[arg_2_1] = var_2_0
 
-		return v
+		return var_2_0
 	end
 
-	return t
+	return var_1_1
 end
 
-local function make_bitop_uncached(t, m)
-	local function bitop(a, b)
-		local res, p = 0, 1
+local function var_0_3(arg_3_0, arg_3_1)
+	return function(arg_4_0, arg_4_1)
+		local var_4_0 = 0
+		local var_4_1 = 1
 
-		while a ~= 0 and b ~= 0 do
-			local am, bm = a % m, b % m
+		while arg_4_0 ~= 0 and arg_4_1 ~= 0 do
+			local var_4_2 = arg_4_0 % arg_3_1
+			local var_4_3 = arg_4_1 % arg_3_1
 
-			res = res + t[am][bm] * p
-			a = (a - am) / m
-			b = (b - bm) / m
-			p = p * m
+			var_4_0 = var_4_0 + arg_3_0[var_4_2][var_4_3] * var_4_1
+			arg_4_0 = (arg_4_0 - var_4_2) / arg_3_1
+			arg_4_1 = (arg_4_1 - var_4_3) / arg_3_1
+			var_4_1 = var_4_1 * arg_3_1
 		end
 
-		res = res + (a + b) * p
-
-		return res
+		return var_4_0 + (arg_4_0 + arg_4_1) * var_4_1
 	end
-
-	return bitop
 end
 
-local function make_bitop(t)
-	local op1 = make_bitop_uncached(t, 2)
-	local op2 = memoize(function (a)
-		return memoize(function (b)
-			return op1(a, b)
+local var_0_4 = (function(arg_5_0)
+	local var_5_0 = var_0_3(arg_5_0, 2)
+	local var_5_1 = var_0_2(function(arg_6_0)
+		return var_0_2(function(arg_7_0)
+			return var_5_0(arg_6_0, arg_7_0)
 		end)
 	end)
 
-	return make_bitop_uncached(op2, 2^(t.n or 1))
-end
-
-local bxor1 = make_bitop({
+	return var_0_3(var_5_1, 2^(arg_5_0.n or 1))
+end)({
 	[0] = {
 		[0] = 0,
-		1,
+		1
 	},
 	{
 		[0] = 1,
-		0,
+		0
 	},
-	n = 4,
+	n = 4
 })
 
-local function bxor(a, b, c, ...)
-	local z
+local function var_0_5(arg_8_0, arg_8_1, arg_8_2, ...)
+	local var_8_0
 
-	if b then
-		a = a % MOD
-		b = b % MOD
-		z = bxor1(a, b)
+	if arg_8_1 then
+		arg_8_0 = arg_8_0 % var_0_0
+		arg_8_1 = arg_8_1 % var_0_0
 
-		if c then
-			z = bxor(z, c, ...)
+		local var_8_1 = var_0_4(arg_8_0, arg_8_1)
+
+		if arg_8_2 then
+			var_8_1 = var_0_5(var_8_1, arg_8_2, ...)
 		end
 
-		return z
-	elseif a then
-		return a % MOD
+		return var_8_1
+	elseif arg_8_0 then
+		return arg_8_0 % var_0_0
 	else
 		return 0
 	end
 end
 
-local function band(a, b, c, ...)
-	local z
+local function var_0_6(arg_9_0, arg_9_1, arg_9_2, ...)
+	local var_9_0
 
-	if b then
-		a = a % MOD
-		b = b % MOD
-		z = (a + b - bxor1(a, b)) / 2
+	if arg_9_1 then
+		arg_9_0 = arg_9_0 % var_0_0
+		arg_9_1 = arg_9_1 % var_0_0
 
-		if c then
-			z = bit32_band(z, c, ...)
+		local var_9_1 = (arg_9_0 + arg_9_1 - var_0_4(arg_9_0, arg_9_1)) / 2
+
+		if arg_9_2 then
+			var_9_1 = bit32_band(var_9_1, arg_9_2, ...)
 		end
 
-		return z
-	elseif a then
-		return a % MOD
+		return var_9_1
+	elseif arg_9_0 then
+		return arg_9_0 % var_0_0
 	else
-		return MODM
+		return var_0_1
 	end
 end
 
-local function bnot(x)
-	return (-1 - x) % MOD
+local function var_0_7(arg_10_0)
+	return (-1 - arg_10_0) % var_0_0
 end
 
-local function rshift1(a, disp)
-	if disp < 0 then
-		return lshift(a, -disp)
+local function var_0_8(arg_11_0, arg_11_1)
+	if arg_11_1 < 0 then
+		return lshift(arg_11_0, -arg_11_1)
 	end
 
-	return math.floor(a % 4294967296 / 2^disp)
+	return math.floor(arg_11_0 % 4294967296 / 2^arg_11_1)
 end
 
-local function rshift(x, disp)
-	if disp > 31 or disp < -31 then
+local function var_0_9(arg_12_0, arg_12_1)
+	if arg_12_1 > 31 or arg_12_1 < -31 then
 		return 0
 	end
 
-	return rshift1(x % MOD, disp)
+	return var_0_8(arg_12_0 % var_0_0, arg_12_1)
 end
 
-local function lshift(a, disp)
-	if disp < 0 then
-		return rshift(a, -disp)
+local function var_0_10(arg_13_0, arg_13_1)
+	if arg_13_1 < 0 then
+		return var_0_9(arg_13_0, -arg_13_1)
 	end
 
-	return a * 2^disp % 4294967296
+	return arg_13_0 * 2^arg_13_1 % 4294967296
 end
 
-local function rrotate(x, disp)
-	x = x % MOD
-	disp = disp % 32
+local function var_0_11(arg_14_0, arg_14_1)
+	arg_14_0 = arg_14_0 % var_0_0
+	arg_14_1 = arg_14_1 % 32
 
-	local low = band(x, 2^disp - 1)
+	local var_14_0 = var_0_6(arg_14_0, 2^arg_14_1 - 1)
 
-	return rshift(x, disp) + lshift(low, 32 - disp)
+	return var_0_9(arg_14_0, arg_14_1) + var_0_10(var_14_0, 32 - arg_14_1)
 end
 
-local k = {
+local var_0_12 = {
 	1116352408,
 	1899447441,
 	3049323471,
@@ -203,108 +201,113 @@ local k = {
 	2428436474,
 	2756734187,
 	3204031479,
-	3329325298,
+	3329325298
 }
 
-local function str2hexa(s)
-	return (string.gsub(s, ".", function (c)
-		return string.format("%02x", string.byte(c))
+local function var_0_13(arg_15_0)
+	return (string.gsub(arg_15_0, ".", function(arg_16_0)
+		return string.format("%02x", string.byte(arg_16_0))
 	end))
 end
 
-local function num2s(l, n)
-	local s = ""
+local function var_0_14(arg_17_0, arg_17_1)
+	local var_17_0 = ""
 
-	for i = 1, n do
-		local rem = l % 256
+	for iter_17_0 = 1, arg_17_1 do
+		local var_17_1 = arg_17_0 % 256
 
-		s = string.char(rem) .. s
-		l = (l - rem) / 256
+		var_17_0 = string.char(var_17_1) .. var_17_0
+		arg_17_0 = (arg_17_0 - var_17_1) / 256
 	end
 
-	return s
+	return var_17_0
 end
 
-local function s232num(s, i)
-	local n = 0
+local function var_0_15(arg_18_0, arg_18_1)
+	local var_18_0 = 0
 
-	for i = i, i + 3 do
-		n = n * 256 + string.byte(s, i)
+	for iter_18_0 = arg_18_1, arg_18_1 + 3 do
+		var_18_0 = var_18_0 * 256 + string.byte(arg_18_0, iter_18_0)
 	end
 
-	return n
+	return var_18_0
 end
 
-local function preproc(msg, len)
-	local extra = 64 - (len + 9) % 64
+local function var_0_16(arg_19_0, arg_19_1)
+	local var_19_0 = 64 - (arg_19_1 + 9) % 64
 
-	len = num2s(8 * len, 8)
-	msg = msg .. "\x80" .. string.rep("\x00", extra) .. len
+	arg_19_1 = var_0_14(8 * arg_19_1, 8)
+	arg_19_0 = arg_19_0 .. "€" .. string.rep("\x00", var_19_0) .. arg_19_1
 
-	assert(#msg % 64 == 0)
+	assert(#arg_19_0 % 64 == 0)
 
-	return msg
+	return arg_19_0
 end
 
-local function initH256(H)
-	H[1] = 1779033703
-	H[2] = 3144134277
-	H[3] = 1013904242
-	H[4] = 2773480762
-	H[5] = 1359893119
-	H[6] = 2600822924
-	H[7] = 528734635
-	H[8] = 1541459225
+local function var_0_17(arg_20_0)
+	arg_20_0[1] = 1779033703
+	arg_20_0[2] = 3144134277
+	arg_20_0[3] = 1013904242
+	arg_20_0[4] = 2773480762
+	arg_20_0[5] = 1359893119
+	arg_20_0[6] = 2600822924
+	arg_20_0[7] = 528734635
+	arg_20_0[8] = 1541459225
 
-	return H
+	return arg_20_0
 end
 
-local function digestblock(msg, i, H)
-	local w = {}
+local function var_0_18(arg_21_0, arg_21_1, arg_21_2)
+	local var_21_0 = {}
 
-	for j = 1, 16 do
-		w[j] = s232num(msg, i + (j - 1) * 4)
+	for iter_21_0 = 1, 16 do
+		var_21_0[iter_21_0] = var_0_15(arg_21_0, arg_21_1 + (iter_21_0 - 1) * 4)
 	end
 
-	for j = 17, 64 do
-		local v = w[j - 15]
-		local s0 = bxor(rrotate(v, 7), rrotate(v, 18), rshift(v, 3))
+	for iter_21_1 = 17, 64 do
+		local var_21_1 = var_21_0[iter_21_1 - 15]
+		local var_21_2 = var_0_5(var_0_11(var_21_1, 7), var_0_11(var_21_1, 18), var_0_9(var_21_1, 3))
+		local var_21_3 = var_21_0[iter_21_1 - 2]
 
-		v = w[j - 2]
-		w[j] = w[j - 16] + s0 + w[j - 7] + bxor(rrotate(v, 17), rrotate(v, 19), rshift(v, 10))
+		var_21_0[iter_21_1] = var_21_0[iter_21_1 - 16] + var_21_2 + var_21_0[iter_21_1 - 7] + var_0_5(var_0_11(var_21_3, 17), var_0_11(var_21_3, 19), var_0_9(var_21_3, 10))
 	end
 
-	local a, b, c, d, e, f, g, h = H[1], H[2], H[3], H[4], H[5], H[6], H[7], H[8]
+	local var_21_4 = arg_21_2[1]
+	local var_21_5 = arg_21_2[2]
+	local var_21_6 = arg_21_2[3]
+	local var_21_7 = arg_21_2[4]
+	local var_21_8 = arg_21_2[5]
+	local var_21_9 = arg_21_2[6]
+	local var_21_10 = arg_21_2[7]
+	local var_21_11 = arg_21_2[8]
 
-	for i = 1, 64 do
-		local s0 = bxor(rrotate(a, 2), rrotate(a, 13), rrotate(a, 22))
-		local maj = bxor(band(a, b), band(a, c), band(b, c))
-		local t2 = s0 + maj
-		local s1 = bxor(rrotate(e, 6), rrotate(e, 11), rrotate(e, 25))
-		local ch = bxor(band(e, f), band(bnot(e), g))
-		local t1 = h + s1 + ch + k[i] + w[i]
+	for iter_21_2 = 1, 64 do
+		local var_21_12 = var_0_5(var_0_11(var_21_4, 2), var_0_11(var_21_4, 13), var_0_11(var_21_4, 22)) + var_0_5(var_0_6(var_21_4, var_21_5), var_0_6(var_21_4, var_21_6), var_0_6(var_21_5, var_21_6))
+		local var_21_13 = var_0_5(var_0_11(var_21_8, 6), var_0_11(var_21_8, 11), var_0_11(var_21_8, 25))
+		local var_21_14 = var_0_5(var_0_6(var_21_8, var_21_9), var_0_6(var_0_7(var_21_8), var_21_10))
+		local var_21_15 = var_21_11 + var_21_13 + var_21_14 + var_0_12[iter_21_2] + var_21_0[iter_21_2]
 
-		h, g, f, e, d, c, b, a = g, f, e, d + t1, c, b, a, t1 + t2
+		var_21_11, var_21_10, var_21_9, var_21_8, var_21_7, var_21_6, var_21_5, var_21_4 = var_21_10, var_21_9, var_21_8, var_21_7 + var_21_15, var_21_6, var_21_5, var_21_4, var_21_15 + var_21_12
 	end
 
-	H[1] = band(H[1] + a)
-	H[2] = band(H[2] + b)
-	H[3] = band(H[3] + c)
-	H[4] = band(H[4] + d)
-	H[5] = band(H[5] + e)
-	H[6] = band(H[6] + f)
-	H[7] = band(H[7] + g)
-	H[8] = band(H[8] + h)
+	arg_21_2[1] = var_0_6(arg_21_2[1] + var_21_4)
+	arg_21_2[2] = var_0_6(arg_21_2[2] + var_21_5)
+	arg_21_2[3] = var_0_6(arg_21_2[3] + var_21_6)
+	arg_21_2[4] = var_0_6(arg_21_2[4] + var_21_7)
+	arg_21_2[5] = var_0_6(arg_21_2[5] + var_21_8)
+	arg_21_2[6] = var_0_6(arg_21_2[6] + var_21_9)
+	arg_21_2[7] = var_0_6(arg_21_2[7] + var_21_10)
+	arg_21_2[8] = var_0_6(arg_21_2[8] + var_21_11)
 end
 
-function sha256(msg)
-	msg = preproc(msg, #msg)
+function sha256(arg_22_0)
+	arg_22_0 = var_0_16(arg_22_0, #arg_22_0)
 
-	local H = initH256({})
+	local var_22_0 = var_0_17({})
 
-	for i = 1, #msg, 64 do
-		digestblock(msg, i, H)
+	for iter_22_0 = 1, #arg_22_0, 64 do
+		var_0_18(arg_22_0, iter_22_0, var_22_0)
 	end
 
-	return str2hexa(num2s(H[1], 4) .. num2s(H[2], 4) .. num2s(H[3], 4) .. num2s(H[4], 4) .. num2s(H[5], 4) .. num2s(H[6], 4) .. num2s(H[7], 4) .. num2s(H[8], 4))
+	return var_0_13(var_0_14(var_22_0[1], 4) .. var_0_14(var_22_0[2], 4) .. var_0_14(var_22_0[3], 4) .. var_0_14(var_22_0[4], 4) .. var_0_14(var_22_0[5], 4) .. var_0_14(var_22_0[6], 4) .. var_0_14(var_22_0[7], 4) .. var_0_14(var_22_0[8], 4))
 end

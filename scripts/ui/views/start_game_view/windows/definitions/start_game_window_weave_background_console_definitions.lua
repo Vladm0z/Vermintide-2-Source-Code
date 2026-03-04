@@ -1,524 +1,520 @@
-﻿-- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_weave_background_console_definitions.lua
+-- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_weave_background_console_definitions.lua
 
-local window_default_settings = UISettings.game_start_windows
-local large_window_size = window_default_settings.large_window_size
-local window_frame_name = "menu_frame_11"
-local window_frame = UIFrameSettings[window_frame_name]
-local window_frame_width = window_frame.texture_sizes.vertical[1]
-local window_size = {
-	large_window_size[1] - window_frame_width * 2,
-	large_window_size[2] - window_frame_width * 2,
+local var_0_0 = UISettings.game_start_windows.large_window_size
+local var_0_1 = "menu_frame_11"
+local var_0_2 = UIFrameSettings[var_0_1].texture_sizes.vertical[1]
+local var_0_3 = {
+	var_0_0[1] - var_0_2 * 2,
+	var_0_0[2] - var_0_2 * 2
 }
-local wheel_scale = 1.5
-
-window_frame_width = 0
-window_size = {
+local var_0_4 = 1.5
+local var_0_5 = 0
+local var_0_6 = {
 	1920,
-	1080,
+	1080
 }
-
-local scenegraph_definition = {
+local var_0_7 = {
 	root = {
 		is_root = true,
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			UILayer.default,
-		},
+			UILayer.default
+		}
 	},
 	screen = {
 		scale = "fit",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			UILayer.default,
-		},
+			UILayer.default
+		}
 	},
 	root_fit = {
 		scale = "fit",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			UILayer.default,
-		},
+			UILayer.default
+		}
 	},
 	menu_root = {
-		horizontal_alignment = "center",
-		parent = "root",
 		vertical_alignment = "center",
+		parent = "root",
+		horizontal_alignment = "center",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	parent_window = {
-		horizontal_alignment = "center",
-		parent = "menu_root",
 		vertical_alignment = "center",
-		size = window_size,
+		parent = "menu_root",
+		horizontal_alignment = "center",
+		size = var_0_6,
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	window = {
-		horizontal_alignment = "right",
-		parent = "parent_window",
 		vertical_alignment = "center",
-		size = window_size,
+		parent = "parent_window",
+		horizontal_alignment = "right",
+		size = var_0_6,
 		position = {
-			-window_frame_width,
+			-var_0_5,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	top_panel = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "top",
+		parent = "window",
+		horizontal_alignment = "center",
 		size = {
-			window_size[1],
-			84,
+			var_0_6[1],
+			84
 		},
 		position = {
 			0,
 			0,
-			6,
-		},
+			6
+		}
 	},
 	top_glow = {
-		horizontal_alignment = "center",
-		parent = "top_panel",
 		vertical_alignment = "top",
+		parent = "top_panel",
+		horizontal_alignment = "center",
 		size = {
-			window_size[1],
-			500,
+			var_0_6[1],
+			500
 		},
 		position = {
 			0,
 			1,
-			-1,
-		},
+			-1
+		}
 	},
 	background_wheel = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "center",
+		parent = "window",
+		horizontal_alignment = "center",
 		size = {
-			math.floor(1022 * wheel_scale),
-			math.floor(1022 * wheel_scale),
+			math.floor(1022 * var_0_4),
+			math.floor(1022 * var_0_4)
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	wheel_ring_1 = {
-		horizontal_alignment = "center",
-		parent = "background_wheel",
 		vertical_alignment = "center",
+		parent = "background_wheel",
+		horizontal_alignment = "center",
 		size = {
-			math.floor(188 * wheel_scale),
-			math.floor(188 * wheel_scale),
+			math.floor(188 * var_0_4),
+			math.floor(188 * var_0_4)
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	wheel_ring_2 = {
-		horizontal_alignment = "center",
-		parent = "background_wheel",
 		vertical_alignment = "center",
+		parent = "background_wheel",
+		horizontal_alignment = "center",
 		size = {
-			math.floor(461 * wheel_scale),
-			math.floor(461 * wheel_scale),
+			math.floor(461 * var_0_4),
+			math.floor(461 * var_0_4)
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	wheel_ring_3 = {
-		horizontal_alignment = "center",
-		parent = "background_wheel",
 		vertical_alignment = "center",
+		parent = "background_wheel",
+		horizontal_alignment = "center",
 		size = {
-			math.floor(1074 * wheel_scale),
-			math.floor(1074 * wheel_scale),
+			math.floor(1074 * var_0_4),
+			math.floor(1074 * var_0_4)
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	top_corner_left = {
-		horizontal_alignment = "left",
-		parent = "window",
 		vertical_alignment = "top",
+		parent = "window",
+		horizontal_alignment = "left",
 		size = {
 			110,
-			110,
+			110
 		},
 		position = {
 			0,
 			0,
-			15,
-		},
+			15
+		}
 	},
 	top_corner_right = {
-		horizontal_alignment = "right",
-		parent = "window",
 		vertical_alignment = "top",
+		parent = "window",
+		horizontal_alignment = "right",
 		size = {
 			110,
-			110,
+			110
 		},
 		position = {
 			0,
 			0,
-			15,
-		},
+			15
+		}
 	},
 	bottom_corner_left = {
-		horizontal_alignment = "left",
-		parent = "window",
 		vertical_alignment = "bottom",
+		parent = "window",
+		horizontal_alignment = "left",
 		size = {
 			110,
-			110,
+			110
 		},
 		position = {
 			0,
 			0,
-			15,
-		},
+			15
+		}
 	},
 	bottom_corner_right = {
-		horizontal_alignment = "right",
-		parent = "window",
 		vertical_alignment = "bottom",
+		parent = "window",
+		horizontal_alignment = "right",
 		size = {
 			110,
-			110,
+			110
 		},
 		position = {
 			0,
 			0,
-			15,
-		},
+			15
+		}
 	},
 	bottom_glow = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "bottom",
+		parent = "window",
+		horizontal_alignment = "center",
 		size = {
-			window_size[1],
-			window_size[2],
+			var_0_6[1],
+			var_0_6[2]
 		},
 		position = {
 			0,
 			0,
-			3,
-		},
+			3
+		}
 	},
 	bottom_glow_short = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "bottom",
+		parent = "window",
+		horizontal_alignment = "center",
 		size = {
-			window_size[1],
-			500,
+			var_0_6[1],
+			500
 		},
 		position = {
 			0,
 			0,
-			4,
-		},
+			4
+		}
 	},
 	bottom_glow_shortest = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "bottom",
+		parent = "window",
+		horizontal_alignment = "center",
 		size = {
-			window_size[1],
-			200,
+			var_0_6[1],
+			200
 		},
 		position = {
 			0,
 			0,
-			5,
-		},
-	},
+			5
+		}
+	}
 }
-local window_background_color = {
+local var_0_8 = {
 	255,
 	153,
 	50,
-	204,
+	204
 }
-local background_color = {
+local var_0_9 = {
 	255,
 	0,
 	0,
-	0,
+	0
 }
-local bottom_glow_back_smoke_color = {
+local var_0_10 = {
 	200,
 	138,
 	0,
-	147,
+	147
 }
-local bottom_glow_front_smoke_color = {
+local var_0_11 = {
 	255,
 	138,
 	0,
-	187,
+	187
 }
-local bottom_glow_front_2_smoke_color = {
+local var_0_12 = {
 	200,
 	128,
 	0,
-	217,
+	217
 }
-local bottom_glow_back_ember_color = {
+local var_0_13 = {
 	130,
 	255,
 	255,
-	255,
+	255
 }
-local top_glow_back_smoke_color = {
+local var_0_14 = {
 	200,
 	138,
 	0,
-	147,
+	147
 }
-local wheel_color = {
+local var_0_15 = {
 	255,
 	138,
 	0,
-	147,
+	147
 }
-local bottom_hdr_widgets = {
+local var_0_16 = {
 	hdr_background_write_mask = UIWidgets.create_simple_texture("ui_write_mask", "window"),
-	hdr_background_wheel_1 = UIWidgets.create_simple_texture("athanor_skilltree_background_effect", "background_wheel", nil, nil, wheel_color, 5),
+	hdr_background_wheel_1 = UIWidgets.create_simple_texture("athanor_skilltree_background_effect", "background_wheel", nil, nil, var_0_15, 5),
 	hdr_wheel_ring_1_1 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_effect_1", 0, {
-		math.floor(188 * wheel_scale) / 2,
-		math.floor(188 * wheel_scale) / 2,
-	}, "wheel_ring_1", nil, nil, wheel_color),
+		math.floor(188 * var_0_4) / 2,
+		math.floor(188 * var_0_4) / 2
+	}, "wheel_ring_1", nil, nil, var_0_15),
 	hdr_wheel_ring_1_2 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_effect_2", 0, {
-		math.floor(461 * wheel_scale) / 2,
-		math.floor(461 * wheel_scale) / 2,
-	}, "wheel_ring_2", nil, nil, wheel_color),
+		math.floor(461 * var_0_4) / 2,
+		math.floor(461 * var_0_4) / 2
+	}, "wheel_ring_2", nil, nil, var_0_15),
 	hdr_wheel_ring_1_3 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_effect_3", 0, {
-		math.floor(1074 * wheel_scale) / 2,
-		math.floor(1074 * wheel_scale) / 2,
-	}, "wheel_ring_3", nil, nil, wheel_color),
+		math.floor(1074 * var_0_4) / 2,
+		math.floor(1074 * var_0_4) / 2
+	}, "wheel_ring_3", nil, nil, var_0_15),
 	hdr_wheel_ring_2_1 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_effect_1", 0, {
-		math.floor(188 * wheel_scale) / 2,
-		math.floor(188 * wheel_scale) / 2,
-	}, "wheel_ring_1", nil, nil, wheel_color),
+		math.floor(188 * var_0_4) / 2,
+		math.floor(188 * var_0_4) / 2
+	}, "wheel_ring_1", nil, nil, var_0_15),
 	hdr_wheel_ring_2_2 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_effect_2", 0, {
-		math.floor(461 * wheel_scale) / 2,
-		math.floor(461 * wheel_scale) / 2,
-	}, "wheel_ring_2", nil, nil, wheel_color),
+		math.floor(461 * var_0_4) / 2,
+		math.floor(461 * var_0_4) / 2
+	}, "wheel_ring_2", nil, nil, var_0_15),
 	hdr_wheel_ring_2_3 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_effect_3", 0, {
-		math.floor(1074 * wheel_scale) / 2,
-		math.floor(1074 * wheel_scale) / 2,
-	}, "wheel_ring_3", nil, nil, wheel_color),
+		math.floor(1074 * var_0_4) / 2,
+		math.floor(1074 * var_0_4) / 2
+	}, "wheel_ring_3", nil, nil, var_0_15),
 	top_glow_smoke_1 = UIWidgets.create_simple_uv_texture("forge_overview_top_glow_effect_smoke_1", {
 		{
 			0,
-			0,
+			0
 		},
 		{
 			1,
-			1,
-		},
-	}, "top_glow", nil, nil, top_glow_back_smoke_color, 0),
+			1
+		}
+	}, "top_glow", nil, nil, var_0_14, 0)
 }
-local bottom_widgets = {
+local var_0_17 = {
 	background_write_mask = UIWidgets.create_simple_texture("athanor_background_write_mask", "window"),
 	background_wheel_1 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_background", 0, {
-		math.floor(1022 * wheel_scale) / 2,
-		math.floor(1022 * wheel_scale) / 2,
-	}, "background_wheel", nil, nil, wheel_color),
+		math.floor(1022 * var_0_4) / 2,
+		math.floor(1022 * var_0_4) / 2
+	}, "background_wheel", nil, nil, var_0_15),
 	wheel_ring_1_1 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_1", 0, {
-		math.floor(188 * wheel_scale) / 2,
-		math.floor(188 * wheel_scale) / 2,
-	}, "wheel_ring_1", nil, nil, wheel_color),
+		math.floor(188 * var_0_4) / 2,
+		math.floor(188 * var_0_4) / 2
+	}, "wheel_ring_1", nil, nil, var_0_15),
 	wheel_ring_1_2 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_2", 0, {
-		math.floor(461 * wheel_scale) / 2,
-		math.floor(461 * wheel_scale) / 2,
-	}, "wheel_ring_2", nil, nil, wheel_color),
+		math.floor(461 * var_0_4) / 2,
+		math.floor(461 * var_0_4) / 2
+	}, "wheel_ring_2", nil, nil, var_0_15),
 	wheel_ring_1_3 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_3", 0, {
-		math.floor(1074 * wheel_scale) / 2,
-		math.floor(1074 * wheel_scale) / 2,
-	}, "wheel_ring_3", nil, nil, wheel_color),
+		math.floor(1074 * var_0_4) / 2,
+		math.floor(1074 * var_0_4) / 2
+	}, "wheel_ring_3", nil, nil, var_0_15),
 	wheel_ring_2_1 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_1", 0, {
-		math.floor(188 * wheel_scale) / 2,
-		math.floor(188 * wheel_scale) / 2,
-	}, "wheel_ring_1", nil, nil, wheel_color),
+		math.floor(188 * var_0_4) / 2,
+		math.floor(188 * var_0_4) / 2
+	}, "wheel_ring_1", nil, nil, var_0_15),
 	wheel_ring_2_2 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_2", 0, {
-		math.floor(461 * wheel_scale) / 2,
-		math.floor(461 * wheel_scale) / 2,
-	}, "wheel_ring_2", nil, nil, wheel_color),
+		math.floor(461 * var_0_4) / 2,
+		math.floor(461 * var_0_4) / 2
+	}, "wheel_ring_2", nil, nil, var_0_15),
 	wheel_ring_2_3 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_3", 0, {
-		math.floor(1074 * wheel_scale) / 2,
-		math.floor(1074 * wheel_scale) / 2,
-	}, "wheel_ring_3", nil, nil, wheel_color),
-	window_background = UIWidgets.create_simple_rect("window", window_background_color),
-	screen_background = UIWidgets.create_simple_rect("screen", background_color),
+		math.floor(1074 * var_0_4) / 2,
+		math.floor(1074 * var_0_4) / 2
+	}, "wheel_ring_3", nil, nil, var_0_15),
+	window_background = UIWidgets.create_simple_rect("window", var_0_8),
+	screen_background = UIWidgets.create_simple_rect("screen", var_0_9),
 	bottom_glow_smoke_1 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_smoke_1", {
 		{
 			0,
-			1,
+			1
 		},
 		{
 			1,
-			0,
-		},
-	}, "bottom_glow", nil, nil, bottom_glow_back_smoke_color),
+			0
+		}
+	}, "bottom_glow", nil, nil, var_0_10),
 	bottom_glow_smoke_2 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_smoke_2", {
 		{
 			0,
-			1,
+			1
 		},
 		{
 			1,
-			0,
-		},
-	}, "bottom_glow_short", nil, nil, bottom_glow_front_smoke_color),
+			0
+		}
+	}, "bottom_glow_short", nil, nil, var_0_11),
 	bottom_glow_smoke_3 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_embers_2", {
 		{
 			0,
-			1,
+			1
 		},
 		{
 			1,
-			0,
-		},
-	}, "bottom_glow_shortest", nil, nil, bottom_glow_front_2_smoke_color),
+			0
+		}
+	}, "bottom_glow_shortest", nil, nil, var_0_12),
 	bottom_glow_embers_1 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_embers_1", {
 		{
 			0,
-			1,
+			1
 		},
 		{
 			1,
-			0,
-		},
-	}, "bottom_glow", nil, nil, bottom_glow_back_ember_color, 1),
+			0
+		}
+	}, "bottom_glow", nil, nil, var_0_13, 1),
 	bottom_glow_embers_3 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_embers_3", {
 		{
 			0,
-			1,
+			1
 		},
 		{
 			1,
-			0,
-		},
-	}, "bottom_glow_short", nil, nil, bottom_glow_back_ember_color, 1),
+			0
+		}
+	}, "bottom_glow_short", nil, nil, var_0_13, 1)
 }
-local top_widgets = {
+local var_0_18 = {
 	top_corner_left = UIWidgets.create_simple_texture("athanor_decoration_corner", "top_corner_left"),
 	top_corner_right = UIWidgets.create_simple_uv_texture("athanor_decoration_corner", {
 		{
 			1,
-			0,
+			0
 		},
 		{
 			0,
-			1,
-		},
+			1
+		}
 	}, "top_corner_right"),
 	bottom_corner_left = UIWidgets.create_simple_uv_texture("athanor_decoration_corner", {
 		{
 			0,
-			1,
+			1
 		},
 		{
 			1,
-			0,
-		},
+			0
+		}
 	}, "bottom_corner_left"),
 	bottom_corner_right = UIWidgets.create_simple_uv_texture("athanor_decoration_corner", {
 		{
 			1,
-			1,
+			1
 		},
 		{
 			0,
-			0,
-		},
-	}, "bottom_corner_right"),
+			0
+		}
+	}, "bottom_corner_right")
 }
-local animation_definitions = {
+local var_0_19 = {
 	on_enter = {
 		{
-			end_progress = 0.3,
 			name = "fade_in",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 0
+			end_progress = 0.3,
+			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				local var_2_0 = math.easeOutCubic(arg_2_3)
 
-				params.render_settings.alpha_multiplier = anim_progress
+				arg_2_4.render_settings.alpha_multiplier = var_2_0
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				return
-			end,
-		},
+			end
+		}
 	},
 	on_exit = {
 		{
-			end_progress = 0.3,
 			name = "fade_out",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 1
+			end_progress = 0.3,
+			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				arg_4_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				local var_5_0 = math.easeOutCubic(arg_5_3)
 
-				params.render_settings.alpha_multiplier = 1 - anim_progress
+				arg_5_4.render_settings.alpha_multiplier = 1 - var_5_0
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				return
-			end,
-		},
-	},
+			end
+		}
+	}
 }
 
 return {
-	window_background_color = window_background_color,
-	top_widgets = top_widgets,
-	bottom_widgets = bottom_widgets,
-	bottom_hdr_widgets = bottom_hdr_widgets,
-	scenegraph_definition = scenegraph_definition,
-	animation_definitions = animation_definitions,
+	window_background_color = var_0_8,
+	top_widgets = var_0_18,
+	bottom_widgets = var_0_17,
+	bottom_hdr_widgets = var_0_16,
+	scenegraph_definition = var_0_7,
+	animation_definitions = var_0_19
 }

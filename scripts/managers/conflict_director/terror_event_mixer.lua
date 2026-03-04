@@ -1,995 +1,964 @@
-﻿-- chunkname: @scripts/managers/conflict_director/terror_event_mixer.lua
+-- chunkname: @scripts/managers/conflict_director/terror_event_mixer.lua
 
 require("scripts/settings/terror_event_blueprints")
 
 function create_spawn_counter()
-	local spawn_counter = {}
-	local mt = {
-		__index = function ()
+	local var_1_0 = {}
+	local var_1_1 = {
+		__index = function()
 			return 0
-		end,
+		end
 	}
 
-	setmetatable(spawn_counter, mt)
+	setmetatable(var_1_0, var_1_1)
 
-	return spawn_counter
+	return var_1_0
 end
 
-local function add_spawned_counting(event, optional_data, spawn_counter_category)
-	optional_data = optional_data or {}
+local function var_0_0(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_1 = arg_3_1 or {}
 
-	local function spawned_func_counter(_, _, _)
-		event.data.spawn_counter = event.data.spawn_counter or create_spawn_counter()
-		event.data.spawn_counter[spawn_counter_category] = (event.data.spawn_counter[spawn_counter_category] or 0) + 1
+	local function var_3_0(arg_4_0, arg_4_1, arg_4_2)
+		arg_3_0.data.spawn_counter = arg_3_0.data.spawn_counter or create_spawn_counter()
+		arg_3_0.data.spawn_counter[arg_3_2] = (arg_3_0.data.spawn_counter[arg_3_2] or 0) + 1
 	end
 
-	local function despawned_func_counter(_, _, _)
-		event.data.spawn_counter[spawn_counter_category] = event.data.spawn_counter[spawn_counter_category] - 1
+	local function var_3_1(arg_5_0, arg_5_1, arg_5_2)
+		arg_3_0.data.spawn_counter[arg_3_2] = arg_3_0.data.spawn_counter[arg_3_2] - 1
 	end
 
-	if not optional_data.spawned_func then
-		optional_data.spawned_func = spawned_func_counter
+	if not arg_3_1.spawned_func then
+		arg_3_1.spawned_func = var_3_0
 	else
-		local prev_spawned_func = optional_data.spawned_func
+		local var_3_2 = arg_3_1.spawned_func
 
-		optional_data.spawned_func = function (unit, breed, optional_data)
-			prev_spawned_func(unit, breed, optional_data)
-			spawned_func_counter(unit, breed, optional_data)
+		function arg_3_1.spawned_func(arg_6_0, arg_6_1, arg_6_2)
+			var_3_2(arg_6_0, arg_6_1, arg_6_2)
+			var_3_0(arg_6_0, arg_6_1, arg_6_2)
 		end
 	end
 
-	if not optional_data.despawned_func then
-		optional_data.despawned_func = despawned_func_counter
+	if not arg_3_1.despawned_func then
+		arg_3_1.despawned_func = var_3_1
 	else
-		local prev_despawned_func = optional_data.despawned_func
+		local var_3_3 = arg_3_1.despawned_func
 
-		optional_data.despawned_func = function (unit, breed, optional_data)
-			prev_despawned_func(unit, breed, optional_data)
-			despawned_func_counter(unit, breed, optional_data)
+		function arg_3_1.despawned_func(arg_7_0, arg_7_1, arg_7_2)
+			var_3_3(arg_7_0, arg_7_1, arg_7_2)
+			var_3_1(arg_7_0, arg_7_1, arg_7_2)
 		end
 	end
 
-	return optional_data
+	return arg_3_1
 end
 
 TerrorEventMixer = TerrorEventMixer or {}
 
-local TerrorEventMixer = TerrorEventMixer
+local var_0_1 = TerrorEventMixer
 
-TerrorEventMixer.active_events = TerrorEventMixer.active_events or {}
-TerrorEventMixer.active_event_i = -1
-TerrorEventMixer.start_event_list = TerrorEventMixer.start_event_list or {}
-TerrorEventMixer.finished_events = TerrorEventMixer.finished_events or {}
-TerrorEventMixer.optional_data = TerrorEventMixer.optional_data or {}
-TerrorEventMixer.incrementing_id = 1
-TerrorEventMixer.init_functions = {
-	text = function (event, element, t)
-		event.ends_at = t + ConflictUtils.random_interval(element.duration)
+var_0_1.active_events = var_0_1.active_events or {}
+var_0_1.active_event_i = -1
+var_0_1.start_event_list = var_0_1.start_event_list or {}
+var_0_1.finished_events = var_0_1.finished_events or {}
+var_0_1.optional_data = var_0_1.optional_data or {}
+var_0_1.incrementing_id = 1
+var_0_1.init_functions = {
+	text = function(arg_8_0, arg_8_1, arg_8_2)
+		arg_8_0.ends_at = arg_8_2 + ConflictUtils.random_interval(arg_8_1.duration)
 	end,
-	delay = function (event, element, t)
-		event.ends_at = t + ConflictUtils.random_interval(element.duration)
+	delay = function(arg_9_0, arg_9_1, arg_9_2)
+		arg_9_0.ends_at = arg_9_2 + ConflictUtils.random_interval(arg_9_1.duration)
 	end,
-	spawn = function (event, element, t)
+	spawn = function(arg_10_0, arg_10_1, arg_10_2)
 		return
 	end,
-	spawn_special = function (event, element, t)
+	spawn_special = function(arg_11_0, arg_11_1, arg_11_2)
 		return
 	end,
-	spawn_weave_special = function (event, element, t)
+	spawn_weave_special = function(arg_12_0, arg_12_1, arg_12_2)
 		return
 	end,
-	spawn_weave_special_event = function (event, element, t)
+	spawn_weave_special_event = function(arg_13_0, arg_13_1, arg_13_2)
 		return
 	end,
-	spawn_at_raw = function (event, element, t)
+	spawn_at_raw = function(arg_14_0, arg_14_1, arg_14_2)
 		return
 	end,
-	spawn_patrol = function (event, element, t)
+	spawn_patrol = function(arg_15_0, arg_15_1, arg_15_2)
 		return
 	end,
-	roaming_patrol = function (event, element, t)
+	roaming_patrol = function(arg_16_0, arg_16_1, arg_16_2)
 		return
 	end,
-	spawn_around_player = function (event, element, t)
+	spawn_around_player = function(arg_17_0, arg_17_1, arg_17_2)
 		return
 	end,
-	spawn_around_origin_unit = function (event, element, t)
-		local breed_spawn_table_per_difficulty = element.breed_spawn_table_per_difficulty
+	spawn_around_origin_unit = function(arg_18_0, arg_18_1, arg_18_2)
+		local var_18_0 = arg_18_1.breed_spawn_table_per_difficulty
 
-		if not breed_spawn_table_per_difficulty then
-			local breed_name = element.breed_name
-			local num_to_spawn = element.amount or 1
-			local num_to_spawn_scaled = element.difficulty_amount
+		if not var_18_0 then
+			local var_18_1 = arg_18_1.breed_name
+			local var_18_2 = arg_18_1.amount or 1
+			local var_18_3 = arg_18_1.difficulty_amount
 
-			if type(breed_name) == "table" then
-				breed_name = breed_name[Math.random(1, #breed_name)]
+			if type(var_18_1) == "table" then
+				var_18_1 = var_18_1[Math.random(1, #var_18_1)]
 			end
 
-			if num_to_spawn_scaled then
-				local chosen_amount = Managers.state.difficulty:get_difficulty_value_from_table(num_to_spawn_scaled)
+			if var_18_3 then
+				local var_18_4 = Managers.state.difficulty:get_difficulty_value_from_table(var_18_3) or var_18_3.hardest
 
-				chosen_amount = chosen_amount or num_to_spawn_scaled.hardest
-
-				if type(chosen_amount) == "table" then
-					num_to_spawn = chosen_amount[Math.random(1, #chosen_amount)]
+				if type(var_18_4) == "table" then
+					var_18_2 = var_18_4[Math.random(1, #var_18_4)]
 				else
-					num_to_spawn = chosen_amount
+					var_18_2 = var_18_4
 				end
-			elseif type(num_to_spawn) == "table" then
-				num_to_spawn = num_to_spawn[Math.random(1, #num_to_spawn)]
+			elseif type(var_18_2) == "table" then
+				var_18_2 = var_18_2[Math.random(1, #var_18_2)]
 			end
 
-			local spawn_table = {}
+			local var_18_5 = {}
 
-			for i = 1, num_to_spawn do
-				spawn_table[i] = breed_name
+			for iter_18_0 = 1, var_18_2 do
+				var_18_5[iter_18_0] = var_18_1
 			end
 
-			breed_spawn_table_per_difficulty = {
-				default = spawn_table,
+			var_18_0 = {
+				default = var_18_5
 			}
 		end
 
-		local difficulty, difficulty_tweak = Managers.state.difficulty:get_difficulty()
-		local spawn_table = breed_spawn_table_per_difficulty[difficulty] or breed_spawn_table_per_difficulty.default
-		local num_to_spawn = #spawn_table
-		local distance_to_enemies = element.distance_to_enemies or 2
-		local optional_data_table = {}
+		local var_18_6, var_18_7 = Managers.state.difficulty:get_difficulty()
+		local var_18_8 = var_18_0[var_18_6] or var_18_0.default
+		local var_18_9 = #var_18_8
+		local var_18_10 = arg_18_1.distance_to_enemies or 2
+		local var_18_11 = {}
 
-		for i = 1, num_to_spawn do
-			local optional_data = element.optional_data and table.clone(element.optional_data) or {}
+		for iter_18_1 = 1, var_18_9 do
+			local var_18_12 = arg_18_1.optional_data and table.clone(arg_18_1.optional_data) or {}
 
-			if element.spawn_counter_category then
-				optional_data = add_spawned_counting(event, optional_data, element.spawn_counter_category)
+			if arg_18_1.spawn_counter_category then
+				var_18_12 = var_0_0(arg_18_0, var_18_12, arg_18_1.spawn_counter_category)
 			end
 
-			local breed_name = spawn_table[i]
+			local var_18_13 = var_18_8[iter_18_1]
 
-			if element.pre_spawn_func then
-				optional_data = element.pre_spawn_func(optional_data, difficulty, breed_name, event, difficulty_tweak, element.enhancement_list)
+			if arg_18_1.pre_spawn_func then
+				var_18_12 = arg_18_1.pre_spawn_func(var_18_12, var_18_6, var_18_13, arg_18_0, var_18_7, arg_18_1.enhancement_list)
 			end
 
-			optional_data_table[i] = optional_data
+			var_18_11[iter_18_1] = var_18_12
 		end
 
-		event.optional_data_table = optional_data_table
+		arg_18_0.optional_data_table = var_18_11
 
-		local invalid_pos_list = {}
-		local nav_world = Managers.state.entity:system("ai_system"):nav_world()
-		local spawn_positions = {}
+		local var_18_14 = {}
+		local var_18_15 = Managers.state.entity:system("ai_system"):nav_world()
+		local var_18_16 = {}
 
-		event.spawn_at = t + (element.spawn_delay or 0)
-		event.spawn_positions = spawn_positions
-		event.optional_data_table = optional_data_table
-		event.spawn_table = spawn_table
+		arg_18_0.spawn_at = arg_18_2 + (arg_18_1.spawn_delay or 0)
+		arg_18_0.spawn_positions = var_18_16
+		arg_18_0.optional_data_table = var_18_11
+		arg_18_0.spawn_table = var_18_8
 
-		local center_unit = event.data.origin_unit
-		local center_position = event.data.origin_position
+		local var_18_17 = arg_18_0.data.origin_unit
+		local var_18_18 = arg_18_0.data.origin_position
 
-		if center_unit and Unit.alive(center_unit) then
-			center_position = Unit.local_position(center_unit, 0)
-		elseif not center_position then
+		if var_18_17 and Unit.alive(var_18_17) then
+			var_18_18 = Unit.local_position(var_18_17, 0)
+		elseif not var_18_18 then
 			Application.warning("[TerrorEventMixer] spawn_around_origin_unit present in a terror event that is started without an origin_unit or origin_position, falling back to a random player")
 
-			local random_player = PlayerUtils.get_random_alive_hero()
+			local var_18_19 = PlayerUtils.get_random_alive_hero()
 
-			center_position = POSITION_LOOKUP[random_player]
+			var_18_18 = POSITION_LOOKUP[var_18_19]
 		end
 
-		local row_distance = element.row_distance
-		local circle_subdivision = element.circle_subdivision
-		local min_distance = element.min_distance
-		local max_distance = element.max_distance
-		local above_max = element.above_max
-		local below_max = element.below_max
-		local tries = element.tries or 30
-		local check_line_of_sight = center_unit and element.check_line_of_sight or false
-		local world = Managers.world:world("level_world")
-		local physics_world = World.physics_world(world)
+		local var_18_20 = arg_18_1.row_distance
+		local var_18_21 = arg_18_1.circle_subdivision
+		local var_18_22 = arg_18_1.min_distance
+		local var_18_23 = arg_18_1.max_distance
+		local var_18_24 = arg_18_1.above_max
+		local var_18_25 = arg_18_1.below_max
+		local var_18_26 = arg_18_1.tries or 30
+		local var_18_27 = var_18_17 and arg_18_1.check_line_of_sight or false
+		local var_18_28 = Managers.world:world("level_world")
+		local var_18_29 = World.physics_world(var_18_28)
 
-		ConflictUtils.find_positions_around_position(center_position, spawn_positions, nav_world, min_distance, max_distance, num_to_spawn, invalid_pos_list, distance_to_enemies, tries, circle_subdivision, row_distance, above_max, below_max, check_line_of_sight, physics_world, center_unit)
+		ConflictUtils.find_positions_around_position(var_18_18, var_18_16, var_18_15, var_18_22, var_18_23, var_18_9, var_18_14, var_18_10, var_18_26, var_18_21, var_18_20, var_18_24, var_18_25, var_18_27, var_18_29, var_18_17)
 
-		event.center_position = Vector3Box(center_position)
+		arg_18_0.center_position = Vector3Box(var_18_18)
 
-		for i = 1, #spawn_positions do
-			local spawn_pos = spawn_positions[i]
-			local boxed_spawn_pos = Vector3Box(spawn_pos)
+		for iter_18_2 = 1, #var_18_16 do
+			local var_18_30 = var_18_16[iter_18_2]
+			local var_18_31 = Vector3Box(var_18_30)
 
-			if element.pre_spawn_unit_func then
-				local actual_breed_name = spawn_table[i]
+			if arg_18_1.pre_spawn_unit_func then
+				local var_18_32 = var_18_8[iter_18_2]
 
-				element.pre_spawn_unit_func(event, element, boxed_spawn_pos, actual_breed_name)
+				arg_18_1.pre_spawn_unit_func(arg_18_0, arg_18_1, var_18_31, var_18_32)
 			end
 
-			spawn_positions[i] = boxed_spawn_pos
+			var_18_16[iter_18_2] = var_18_31
 		end
 
-		if element.spawn_failed_func and table.is_empty(spawn_positions) then
-			element.spawn_failed_func(center_position)
+		if arg_18_1.spawn_failed_func and table.is_empty(var_18_16) then
+			arg_18_1.spawn_failed_func(var_18_18)
 		end
 
 		return true
 	end,
-	vs_assign_boss_profile = function (event, element, t)
-		local game_mode = Managers.state.game_mode:game_mode()
-
-		game_mode:set_playable_boss_can_be_picked(true)
+	vs_assign_boss_profile = function(arg_19_0, arg_19_1, arg_19_2)
+		Managers.state.game_mode:game_mode():set_playable_boss_can_be_picked(true)
 
 		if script_data.debug_playable_boss then
-			-- Nothing
+			-- block empty
 		end
 	end,
-	spawn_around_origin_unit_staggered = function (event, element, t)
-		return TerrorEventMixer.init_functions.spawn_around_origin_unit(event, element, t)
+	spawn_around_origin_unit_staggered = function(arg_20_0, arg_20_1, arg_20_2)
+		return var_0_1.init_functions.spawn_around_origin_unit(arg_20_0, arg_20_1, arg_20_2)
 	end,
-	continue_when = function (event, element, t)
-		if element.duration then
-			event.ends_at = t + ConflictUtils.random_interval(element.duration)
+	continue_when = function(arg_21_0, arg_21_1, arg_21_2)
+		if arg_21_1.duration then
+			arg_21_0.ends_at = arg_21_2 + ConflictUtils.random_interval(arg_21_1.duration)
 		end
 	end,
-	control_hordes = function (event, element, t)
-		local conflict_director = Managers.state.conflict
-
-		conflict_director.pacing:enable_hordes(element.enable)
+	control_hordes = function(arg_22_0, arg_22_1, arg_22_2)
+		Managers.state.conflict.pacing:enable_hordes(arg_22_1.enable)
 	end,
-	control_specials = function (event, element, t)
-		local conflict_director = Managers.state.conflict
-		local specials_pacing = conflict_director.specials_pacing
+	control_specials = function(arg_23_0, arg_23_1, arg_23_2)
+		local var_23_0 = Managers.state.conflict.specials_pacing
 
-		if specials_pacing then
-			specials_pacing:enable(element.enable)
+		if var_23_0 then
+			var_23_0:enable(arg_23_1.enable)
 
-			if element.enable then
-				local delay = math.random(20, 30)
-				local per_unit_delay = math.random(8, 16)
-				local t = Managers.time:time("game")
+			if arg_23_1.enable then
+				local var_23_1 = math.random(20, 30)
+				local var_23_2 = math.random(8, 16)
+				local var_23_3 = Managers.time:time("game")
 
-				specials_pacing:delay_spawning(t, delay, per_unit_delay, true)
+				var_23_0:delay_spawning(var_23_3, var_23_1, var_23_2, true)
 			end
 		end
 	end,
-	control_pacing = function (event, element, t)
-		local conflict_director = Managers.state.conflict
+	control_pacing = function(arg_24_0, arg_24_1, arg_24_2)
+		local var_24_0 = Managers.state.conflict
 
-		if element.enable then
-			conflict_director.pacing:enable()
+		if arg_24_1.enable then
+			var_24_0.pacing:enable()
 		else
-			conflict_director.pacing:disable()
+			var_24_0.pacing:disable()
 		end
 	end,
-	debug_horde = function (event, element, t)
-		event.ends_at = t + (element.duration and ConflictUtils.random_interval(element.duration) or 0)
+	debug_horde = function(arg_25_0, arg_25_1, arg_25_2)
+		arg_25_0.ends_at = arg_25_2 + (arg_25_1.duration and ConflictUtils.random_interval(arg_25_1.duration) or 0)
 	end,
-	event_horde = function (event, element, t)
-		event.ends_at = t + (element.duration and ConflictUtils.random_interval(element.duration) or 0)
+	event_horde = function(arg_26_0, arg_26_1, arg_26_2)
+		arg_26_0.ends_at = arg_26_2 + (arg_26_1.duration and ConflictUtils.random_interval(arg_26_1.duration) or 0)
 
-		local conflict_director = Managers.state.conflict
-		local terror_event_type = element.spawner_id or element.spawner_ids
-		local optional_data = element.optional_data and table.clone(element.optional_data)
+		local var_26_0 = Managers.state.conflict
+		local var_26_1 = arg_26_1.spawner_id or arg_26_1.spawner_ids
+		local var_26_2 = arg_26_1.optional_data and table.clone(arg_26_1.optional_data)
 
-		if element.spawn_counter_category then
-			optional_data = add_spawned_counting(event, optional_data, element.spawn_counter_category)
+		if arg_26_1.spawn_counter_category then
+			var_26_2 = var_0_0(arg_26_0, var_26_2, arg_26_1.spawn_counter_category)
 		end
 
-		local limit_spawner_ids = element.limit_spawner_ids
+		local var_26_3 = arg_26_1.limit_spawner_ids
 
-		if limit_spawner_ids then
-			terror_event_type = table.clone(element.spawner_ids)
+		if var_26_3 then
+			var_26_1 = table.clone(arg_26_1.spawner_ids)
 
-			table.shuffle(terror_event_type)
+			table.shuffle(var_26_1)
 
-			for i = limit_spawner_ids + 1, #terror_event_type do
-				terror_event_type[i] = nil
+			for iter_26_0 = var_26_3 + 1, #var_26_1 do
+				var_26_1[iter_26_0] = nil
 			end
 		end
 
-		local horde_data = conflict_director:event_horde(t, terror_event_type, element.side_id, element.composition_type, element.limit_spawners, element.horde_silent, nil, element.sound_settings, optional_data)
-
-		element.horde_data = horde_data
+		arg_26_1.horde_data = var_26_0:event_horde(arg_26_2, var_26_1, arg_26_1.side_id, arg_26_1.composition_type, arg_26_1.limit_spawners, arg_26_1.horde_silent, nil, arg_26_1.sound_settings, var_26_2)
 	end,
-	ambush_horde = function (event, element, t)
-		local optional_data = element.optional_data and table.clone(element.optional_data)
+	ambush_horde = function(arg_27_0, arg_27_1, arg_27_2)
+		local var_27_0 = arg_27_1.optional_data and table.clone(arg_27_1.optional_data)
 
-		if element.spawn_counter_category then
-			optional_data = add_spawned_counting(event, optional_data, element.spawn_counter_category)
+		if arg_27_1.spawn_counter_category then
+			var_27_0 = var_0_0(arg_27_0, var_27_0, arg_27_1.spawn_counter_category)
 		end
 
-		event.ends_at = t + (element.duration and ConflictUtils.random_interval(element.duration) or 0)
+		arg_27_0.ends_at = arg_27_2 + (arg_27_1.duration and ConflictUtils.random_interval(arg_27_1.duration) or 0)
 
-		local conflict_director = Managers.state.conflict
-		local override_epicenter_pos
-		local composition_type = element.composition_type
+		local var_27_1 = Managers.state.conflict
+		local var_27_2
+		local var_27_3 = arg_27_1.composition_type
 
-		if event.data and event.data.main_path_trigger_distance then
-			override_epicenter_pos = MainPathUtils.point_on_mainpath(nil, event.data.main_path_trigger_distance)
+		if arg_27_0.data and arg_27_0.data.main_path_trigger_distance then
+			var_27_2 = MainPathUtils.point_on_mainpath(nil, arg_27_0.data.main_path_trigger_distance)
 		end
 
-		local extra_data = {
-			sound_settings = element.sound_settings,
-			override_composition_type = composition_type,
+		local var_27_4 = {
+			sound_settings = arg_27_1.sound_settings,
+			override_composition_type = var_27_3
 		}
-		local horde_data = conflict_director.horde_spawner:execute_ambush_horde(extra_data, conflict_director.default_enemy_side_id, false, override_epicenter_pos, optional_data)
 
-		element.horde_data = horde_data
+		arg_27_1.horde_data = var_27_1.horde_spawner:execute_ambush_horde(var_27_4, var_27_1.default_enemy_side_id, false, var_27_2, var_27_0)
 	end,
-	reset_event_horde = function (event, element, t)
-		Managers.state.entity:system("spawner_system"):reset_spawners_with_event_id(element.event_id)
+	reset_event_horde = function(arg_28_0, arg_28_1, arg_28_2)
+		Managers.state.entity:system("spawner_system"):reset_spawners_with_event_id(arg_28_1.event_id)
 	end,
-	force_horde = function (event, element, t)
-		event.ends_at = t + (element.duration and ConflictUtils.random_interval(element.duration) or 0)
+	force_horde = function(arg_29_0, arg_29_1, arg_29_2)
+		arg_29_0.ends_at = arg_29_2 + (arg_29_1.duration and ConflictUtils.random_interval(arg_29_1.duration) or 0)
 
-		local horde_type = element.horde_type
-		local valid_horde_type = horde_type == "vector" or horde_type == "ambush" or horde_type == "" or horde_type == "random" or not horde_type
+		local var_29_0 = arg_29_1.horde_type
+		local var_29_1 = var_29_0 == "vector" or var_29_0 == "ambush" or var_29_0 == "" or var_29_0 == "random" or not var_29_0
 
-		assert(valid_horde_type, "Bad terror events element 'horde_type' was set to %s", horde_type)
+		assert(var_29_1, "Bad terror events element 'horde_type' was set to %s", var_29_0)
 
-		if horde_type == "" or horde_type == "random" then
-			horde_type = nil
+		if var_29_0 == "" or var_29_0 == "random" then
+			var_29_0 = nil
 		end
 
-		local side_id = element.side_id
-		local extra_data
+		local var_29_2 = arg_29_1.side_id
+		local var_29_3
 
-		Managers.state.conflict.horde_spawner:horde(horde_type, extra_data, side_id)
+		Managers.state.conflict.horde_spawner:horde(var_29_0, var_29_3, var_29_2)
 	end,
-	start_event = function (event, element, t)
-		print("starting terror event: ", element.start_event_name)
+	start_event = function(arg_30_0, arg_30_1, arg_30_2)
+		print("starting terror event: ", arg_30_1.start_event_name)
 
-		local start_events = TerrorEventMixer.start_event_list
-		local id = TerrorEventMixer.incrementing_id
+		local var_30_0 = var_0_1.start_event_list
+		local var_30_1 = var_0_1.incrementing_id
 
-		TerrorEventMixer.incrementing_id = TerrorEventMixer.incrementing_id + 1
-		start_events[#start_events + 1] = {
-			name = element.start_event_name,
+		var_0_1.incrementing_id = var_0_1.incrementing_id + 1
+		var_30_0[#var_30_0 + 1] = {
+			name = arg_30_1.start_event_name,
 			data = {},
-			id = id,
+			id = var_30_1
 		}
 	end,
-	stop_event = function (event, element, t)
-		print("stopping terror event: ", element.stop_event_name)
+	stop_event = function(arg_31_0, arg_31_1, arg_31_2)
+		print("stopping terror event: ", arg_31_1.stop_event_name)
 
-		local event = TerrorEventMixer.find_event(element.stop_event_name)
+		local var_31_0 = var_0_1.find_event(arg_31_1.stop_event_name)
 
-		if event then
-			event.destroy = true
+		if var_31_0 then
+			var_31_0.destroy = true
 		end
 	end,
-	start_mission = function (event, element, t)
-		local mission_name = element.mission_name
+	start_mission = function(arg_32_0, arg_32_1, arg_32_2)
+		local var_32_0 = arg_32_1.mission_name
 
-		Managers.state.entity:system("mission_system"):request_mission(mission_name)
+		Managers.state.entity:system("mission_system"):request_mission(var_32_0)
 	end,
-	end_mission = function (event, element, t)
-		local mission_name = element.mission_name
+	end_mission = function(arg_33_0, arg_33_1, arg_33_2)
+		local var_33_0 = arg_33_1.mission_name
 
-		Managers.state.entity:system("mission_system"):end_mission(mission_name, true)
+		Managers.state.entity:system("mission_system"):end_mission(var_33_0, true)
 	end,
-	set_master_event_running = function (event, element, t)
-		Managers.state.conflict:set_master_event_running(element.name)
+	set_master_event_running = function(arg_34_0, arg_34_1, arg_34_2)
+		Managers.state.conflict:set_master_event_running(arg_34_1.name)
 	end,
-	stop_master_event = function (event, element, t)
+	stop_master_event = function(arg_35_0, arg_35_1, arg_35_2)
 		Managers.state.conflict:set_master_event_running()
 	end,
-	flow_event = function (event, element, t)
-		local conflict_director = Managers.state.conflict
-		local flow_event = element.flow_event_name
+	flow_event = function(arg_36_0, arg_36_1, arg_36_2)
+		local var_36_0 = Managers.state.conflict
+		local var_36_1 = arg_36_1.flow_event_name
 
-		conflict_director:level_flow_event(flow_event)
+		var_36_0:level_flow_event(var_36_1)
 
-		local network_manager = Managers.state.network
+		local var_36_2 = Managers.state.network
 
-		if not element.disable_network_send and network_manager:game() then
-			local event_id = NetworkLookup.terror_flow_events[flow_event]
+		if not arg_36_1.disable_network_send and var_36_2:game() then
+			local var_36_3 = NetworkLookup.terror_flow_events[var_36_1]
 
-			network_manager.network_transmit:send_rpc_clients("rpc_terror_event_trigger_flow", event_id)
+			var_36_2.network_transmit:send_rpc_clients("rpc_terror_event_trigger_flow", var_36_3)
 		end
 	end,
-	play_stinger = function (event, element, t)
-		local stinger_name = element.stinger_name or "enemy_terror_event_stinger"
-		local use_origin_unit_position = element.use_origin_unit_position
-		local origin_unit = event.data.origin_unit
-		local optional_pos = element.optional_pos or use_origin_unit_position and Unit.alive(origin_unit) and Unit.local_position(origin_unit, 0)
-		local world = Managers.state.conflict._world
-		local wwise_world = Managers.world:wwise_world(world)
+	play_stinger = function(arg_37_0, arg_37_1, arg_37_2)
+		local var_37_0 = arg_37_1.stinger_name or "enemy_terror_event_stinger"
+		local var_37_1 = arg_37_1.use_origin_unit_position
+		local var_37_2 = arg_37_0.data.origin_unit
+		local var_37_3 = arg_37_1.optional_pos or var_37_1 and Unit.alive(var_37_2) and Unit.local_position(var_37_2, 0)
+		local var_37_4 = Managers.state.conflict._world
+		local var_37_5 = Managers.world:wwise_world(var_37_4)
 
-		if optional_pos then
-			local pos = Vector3(optional_pos[1], optional_pos[2], optional_pos[3])
+		if var_37_3 then
+			local var_37_6 = Vector3(var_37_3[1], var_37_3[2], var_37_3[3])
 
 			if not DEDICATED_SERVER then
-				WwiseUtils.trigger_position_event(world, stinger_name, pos)
+				WwiseUtils.trigger_position_event(var_37_4, var_37_0, var_37_6)
 			end
 
-			local rpc = optional_pos and "rpc_server_audio_position_event" or "rpc_server_audio_event"
+			local var_37_7 = var_37_3 and "rpc_server_audio_position_event" or "rpc_server_audio_event"
 
-			Managers.state.network.network_transmit:send_rpc_clients(rpc, NetworkLookup.sound_events[stinger_name], pos)
+			Managers.state.network.network_transmit:send_rpc_clients(var_37_7, NetworkLookup.sound_events[var_37_0], var_37_6)
 		else
 			if not DEDICATED_SERVER then
-				WwiseWorld.trigger_event(wwise_world, stinger_name)
+				WwiseWorld.trigger_event(var_37_5, var_37_0)
 			end
 
-			Managers.state.network.network_transmit:send_rpc_clients("rpc_server_audio_event", NetworkLookup.sound_events[stinger_name])
+			Managers.state.network.network_transmit:send_rpc_clients("rpc_server_audio_event", NetworkLookup.sound_events[var_37_0])
 		end
 	end,
-	force_load_breed_package = function (event, element, t)
-		local enemy_package_loader = Managers.level_transition_handler.enemy_package_loader
-		local breed_name = element.breed_name
+	force_load_breed_package = function(arg_38_0, arg_38_1, arg_38_2)
+		local var_38_0 = Managers.level_transition_handler.enemy_package_loader
+		local var_38_1 = arg_38_1.breed_name
 
-		print("terror_event_mixer->force_load_breed_package, breed_name=", breed_name)
+		print("terror_event_mixer->force_load_breed_package, breed_name=", var_38_1)
 
-		if not enemy_package_loader:is_breed_processed(breed_name) then
-			local ignore_breed_limits = true
+		if not var_38_0:is_breed_processed(var_38_1) then
+			local var_38_2 = true
 
-			enemy_package_loader:request_breed(breed_name, ignore_breed_limits)
+			var_38_0:request_breed(var_38_1, var_38_2)
 		end
 	end,
-	enable_bots_in_carry_event = function (event, element, t)
-		local side = Managers.state.side:get_side_from_name("heroes")
+	enable_bots_in_carry_event = function(arg_39_0, arg_39_1, arg_39_2)
+		local var_39_0 = Managers.state.side:get_side_from_name("heroes")
 
-		Managers.state.entity:system("ai_bot_group_system"):set_in_carry_event(true, side)
+		Managers.state.entity:system("ai_bot_group_system"):set_in_carry_event(true, var_39_0)
 	end,
-	disable_bots_in_carry_event = function (event, element, t)
-		local side = Managers.state.side:get_side_from_name("heroes")
+	disable_bots_in_carry_event = function(arg_40_0, arg_40_1, arg_40_2)
+		local var_40_0 = Managers.state.side:get_side_from_name("heroes")
 
-		Managers.state.entity:system("ai_bot_group_system"):set_in_carry_event(false, side)
+		Managers.state.entity:system("ai_bot_group_system"):set_in_carry_event(false, var_40_0)
 	end,
-	enable_kick = function (event, element, t)
+	enable_kick = function(arg_41_0, arg_41_1, arg_41_2)
 		Managers.state.voting:set_vote_kick_enabled(true)
 	end,
-	disable_kick = function (event, element, t)
+	disable_kick = function(arg_42_0, arg_42_1, arg_42_2)
 		Managers.state.voting:set_vote_kick_enabled(false)
 	end,
-	set_freeze_condition = function (event, element, t)
-		event.max_active_enemies = element.max_active_enemies or math.huge
+	set_freeze_condition = function(arg_43_0, arg_43_1, arg_43_2)
+		arg_43_0.max_active_enemies = arg_43_1.max_active_enemies or math.huge
 	end,
-	set_breed_event_horde_spawn_limit = function (event, element, t)
-		Managers.state.entity:system("spawner_system"):set_breed_event_horde_spawn_limit(element.breed_name, element.limit)
+	set_breed_event_horde_spawn_limit = function(arg_44_0, arg_44_1, arg_44_2)
+		Managers.state.entity:system("spawner_system"):set_breed_event_horde_spawn_limit(arg_44_1.breed_name, arg_44_1.limit)
 	end,
-	create_boss_door_group = function (event, element, t)
-		local data = event.data
-		local ai_group_system = Managers.state.entity:system("ai_group_system")
-		local group_data = {
+	create_boss_door_group = function(arg_45_0, arg_45_1, arg_45_2)
+		local var_45_0 = arg_45_0.data
+		local var_45_1 = Managers.state.entity:system("ai_group_system")
+
+		var_45_0.group_data = {
 			template = "boss_door_closers",
-			id = ai_group_system:generate_group_id(),
-			size = element.group_size,
+			id = var_45_1:generate_group_id(),
+			size = arg_45_1.group_size
 		}
-
-		data.group_data = group_data
 	end,
-	close_boss_doors = function (event, element, t)
-		local data = event.data
-		local map_section = data.map_section or element.map_section
-		local group_data = data.group_data
-		local group_id = group_data.id
+	close_boss_doors = function(arg_46_0, arg_46_1, arg_46_2)
+		local var_46_0 = arg_46_0.data
+		local var_46_1 = var_46_0.map_section or arg_46_1.map_section
+		local var_46_2 = var_46_0.group_data.id
 
-		if map_section then
-			local breed_name = element.breed_name
-			local door_system = Managers.state.entity:system("door_system")
+		if var_46_1 then
+			local var_46_3 = arg_46_1.breed_name
 
-			door_system:close_boss_doors(map_section, group_id, breed_name)
+			Managers.state.entity:system("door_system"):close_boss_doors(var_46_1, var_46_2, var_46_3)
 		end
 	end,
-	spawn_encampment = function (event, element, t)
-		local encampment_id, unit_compositions_id, rotation
-		local event_data = event.data
+	spawn_encampment = function(arg_47_0, arg_47_1, arg_47_2)
+		local var_47_0
+		local var_47_1
+		local var_47_2
+		local var_47_3 = arg_47_0.data
 
-		if event_data.gizmo_unit then
-			encampment_id = event_data.encampment_id
-			unit_compositions_id = event_data.unit_compositions_id
-			rotation = Unit.local_rotation(event_data.gizmo_unit, 0)
+		if var_47_3.gizmo_unit then
+			var_47_0 = var_47_3.encampment_id
+			var_47_1 = var_47_3.unit_compositions_id
+			var_47_2 = Unit.local_rotation(var_47_3.gizmo_unit, 0)
 		else
-			encampment_id = element.encampment_id
-			unit_compositions_id = element.unit_compositions_id
+			var_47_0 = arg_47_1.encampment_id
+			var_47_1 = arg_47_1.unit_compositions_id
 
-			local dir = event_data.dir
+			local var_47_4 = var_47_3.dir
 
-			rotation = dir and Quaternion.look(Vector3(dir[1], dir[2], 0)) or Quaternion.look(Vector3(0, 1, 0))
+			var_47_2 = var_47_4 and Quaternion.look(Vector3(var_47_4[1], var_47_4[2], 0)) or Quaternion.look(Vector3(0, 1, 0))
 		end
 
-		local side_id = event_data.side_id or element.side_id or 2
-		local position
-		local pos_from_recycler = event_data.optional_pos
+		local var_47_5 = var_47_3.side_id or arg_47_1.side_id or 2
+		local var_47_6
+		local var_47_7 = var_47_3.optional_pos
 
-		if pos_from_recycler then
-			position = pos_from_recycler:unbox()
+		if var_47_7 then
+			var_47_6 = var_47_7:unbox()
 		else
-			local optional_pos = element.optional_pos
+			local var_47_8 = arg_47_1.optional_pos
 
-			position = Vector3(optional_pos[1], optional_pos[2], optional_pos[3])
+			var_47_6 = Vector3(var_47_8[1], var_47_8[2], var_47_8[3])
 		end
 
-		print("encampment_id:", encampment_id, "unit_compositions_id:", unit_compositions_id, event_data)
+		print("encampment_id:", var_47_0, "unit_compositions_id:", var_47_1, var_47_3)
 
-		local encampment_template = EncampmentTemplates[encampment_id]
-		local encampment = FormationUtils.make_encampment(encampment_template)
-		local unit_composition = encampment_template.unit_compositions[unit_compositions_id]
+		local var_47_9 = EncampmentTemplates[var_47_0]
+		local var_47_10 = FormationUtils.make_encampment(var_47_9)
+		local var_47_11 = var_47_9.unit_compositions[var_47_1]
 
-		FormationUtils.spawn_encampment(encampment, position, rotation, unit_composition, side_id)
+		FormationUtils.spawn_encampment(var_47_10, var_47_6, var_47_2, var_47_11, var_47_5)
 	end,
-	teleport_player = function (event, element, t)
-		local local_player = Managers.player:local_player()
+	teleport_player = function(arg_48_0, arg_48_1, arg_48_2)
+		local var_48_0 = Managers.player:local_player()
 
-		if local_player then
-			local player_unit = local_player.player_unit
+		if var_48_0 then
+			local var_48_1 = var_48_0.player_unit
 
-			if Unit.alive(player_unit) then
-				local portals = ConflictUtils.get_teleporter_portals()
-				local portal_id = element.portal_id
-				local pos = portals[portal_id][1]:unbox()
-				local rot = portals[portal_id][2]:unbox()
-				local locomotion = ScriptUnit.extension(player_unit, "locomotion_system")
-				local world = Managers.world:world("level_world")
+			if Unit.alive(var_48_1) then
+				local var_48_2 = ConflictUtils.get_teleporter_portals()
+				local var_48_3 = arg_48_1.portal_id
+				local var_48_4 = var_48_2[var_48_3][1]:unbox()
+				local var_48_5 = var_48_2[var_48_3][2]:unbox()
+				local var_48_6 = ScriptUnit.extension(var_48_1, "locomotion_system")
+				local var_48_7 = Managers.world:world("level_world")
 
-				LevelHelper:flow_event(world, "teleport_" .. portal_id)
-				locomotion:teleport_to(pos, rot)
+				LevelHelper:flow_event(var_48_7, "teleport_" .. var_48_3)
+				var_48_6:teleport_to(var_48_4, var_48_5)
 			end
 		end
 	end,
-	run_benchmark_func = function (event, element, t)
-		local func_name = element.func_name
+	run_benchmark_func = function(arg_49_0, arg_49_1, arg_49_2)
+		local var_49_0 = arg_49_1.func_name
 
-		Managers.benchmark[func_name](Managers.benchmark, element, t)
+		Managers.benchmark[var_49_0](Managers.benchmark, arg_49_1, arg_49_2)
 	end,
-	set_time_challenge = function (event, element, t, dt)
-		local optional_data = TerrorEventMixer.optional_data
-		local time_challenge_name = element.time_challenge_name
-		local challenge_threshold = QuestSettings[time_challenge_name]
-		local duration = t + challenge_threshold
-		local current_difficulty = Managers.state.difficulty:get_difficulty()
-		local allowed_difficulties = QuestSettings.allowed_difficulties[time_challenge_name]
-		local allowed_difficulty = allowed_difficulties[current_difficulty]
+	set_time_challenge = function(arg_50_0, arg_50_1, arg_50_2, arg_50_3)
+		local var_50_0 = var_0_1.optional_data
+		local var_50_1 = arg_50_1.time_challenge_name
+		local var_50_2 = arg_50_2 + QuestSettings[var_50_1]
+		local var_50_3 = Managers.state.difficulty:get_difficulty()
 
-		if allowed_difficulty and not optional_data[time_challenge_name] then
-			optional_data[time_challenge_name] = duration
+		if QuestSettings.allowed_difficulties[var_50_1][var_50_3] and not var_50_0[var_50_1] then
+			var_50_0[var_50_1] = var_50_2
 		end
 	end,
-	has_completed_time_challenge = function (event, element, t, dt)
-		local optional_data = TerrorEventMixer.optional_data
-		local time_challenge_name = element.time_challenge_name
-		local duration = optional_data[time_challenge_name]
+	has_completed_time_challenge = function(arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+		local var_51_0 = var_0_1.optional_data
+		local var_51_1 = arg_51_1.time_challenge_name
+		local var_51_2 = var_51_0[var_51_1]
 
-		if duration then
-			local completed = t < duration
-			local time_left = math.abs(t - duration)
+		if var_51_2 then
+			local var_51_3 = arg_51_2 < var_51_2
+			local var_51_4 = math.abs(arg_51_2 - var_51_2)
 
-			if completed then
-				optional_data[time_challenge_name] = nil
+			if var_51_3 then
+				var_51_0[var_51_1] = nil
 
-				local stat_name = time_challenge_name
-				local statistics_db = Managers.player:statistics_db()
+				local var_51_5 = var_51_1
 
-				statistics_db:increment_stat_and_sync_to_clients(stat_name)
+				Managers.player:statistics_db():increment_stat_and_sync_to_clients(var_51_5)
 			else
-				optional_data[time_challenge_name] = nil
+				var_51_0[var_51_1] = nil
 			end
 		end
 	end,
-	do_volume_challenge = function (event, element, t, dt)
-		local optional_data = TerrorEventMixer.optional_data
-		local volume_name = element.volume_name
+	do_volume_challenge = function(arg_52_0, arg_52_1, arg_52_2, arg_52_3)
+		local var_52_0 = var_0_1.optional_data
+		local var_52_1 = arg_52_1.volume_name
 
-		fassert(optional_data[volume_name] == nil, "Already started a volume challenge for volume_name=(%s)", volume_name)
+		fassert(var_52_0[var_52_1] == nil, "Already started a volume challenge for volume_name=(%s)", var_52_1)
 
-		local challenge_name = element.challenge_name
-		local challenge_duration = QuestSettings[challenge_name]
-		local allowed_difficulties = QuestSettings.allowed_difficulties[challenge_name]
-		local difficulty = Managers.state.difficulty:get_difficulty()
-		local on_allowed_difficulty = allowed_difficulties[difficulty]
-		local terminate = not on_allowed_difficulty
+		local var_52_2 = arg_52_1.challenge_name
+		local var_52_3 = QuestSettings[var_52_2]
+		local var_52_4 = not QuestSettings.allowed_difficulties[var_52_2][Managers.state.difficulty:get_difficulty()]
 
-		optional_data[volume_name] = {
+		var_52_0[var_52_1] = {
 			time_inside = 0,
-			duration = challenge_duration,
+			duration = var_52_3,
 			player_units = {},
-			terminate = terminate,
+			terminate = var_52_4
 		}
 	end,
-	increase_weave_progress = function (event, element, t, dt)
+	increase_weave_progress = function(arg_53_0, arg_53_1, arg_53_2, arg_53_3)
 		if not Managers.weave:get_active_weave() then
 			return
 		end
 
-		local amount = element.amount
+		local var_53_0 = arg_53_1.amount
 
-		fassert(amount ~= nil, string.format("'amount' in 'increase_weave_progress' event in terror event '%s' is not defined", event.name))
-		Managers.weave:increase_bar_score(amount)
+		fassert(var_53_0 ~= nil, string.format("'amount' in 'increase_weave_progress' event in terror event '%s' is not defined", arg_53_0.name))
+		Managers.weave:increase_bar_score(var_53_0)
 	end,
-	complete_weave = function (event, element, t, dt)
-		local weave_manager = Managers.weave
+	complete_weave = function(arg_54_0, arg_54_1, arg_54_2, arg_54_3)
+		local var_54_0 = Managers.weave
 
-		if not weave_manager:get_active_weave() then
+		if not var_54_0:get_active_weave() then
 			return
 		end
 
-		weave_manager:final_objective_completed()
+		var_54_0:final_objective_completed()
 		Managers.state.game_mode:complete_level()
 	end,
-	activate_mutator = function (event, element, t, dt)
+	activate_mutator = function(arg_55_0, arg_55_1, arg_55_2, arg_55_3)
 		return
 	end,
-	set_wwise_override_state = function (event, element, t, dt)
+	set_wwise_override_state = function(arg_56_0, arg_56_1, arg_56_2, arg_56_3)
 		return
 	end,
-	freeze_story_trigger = function (event, element, t, dt)
+	freeze_story_trigger = function(arg_57_0, arg_57_1, arg_57_2, arg_57_3)
 		return
 	end,
-	continue_when_spawned_count = function (event, element, t, dt)
-		if element.duration then
-			event.ends_at = t + ConflictUtils.random_interval(element.duration)
+	continue_when_spawned_count = function(arg_58_0, arg_58_1, arg_58_2, arg_58_3)
+		if arg_58_1.duration then
+			arg_58_0.ends_at = arg_58_2 + ConflictUtils.random_interval(arg_58_1.duration)
 		end
 	end,
-	run_func = function (event, element, t, dt)
+	run_func = function(arg_59_0, arg_59_1, arg_59_2, arg_59_3)
 		return
-	end,
+	end
 }
-TerrorEventMixer.run_functions = {
-	vs_assign_boss_profile = function (event, element, t, dt)
+var_0_1.run_functions = {
+	vs_assign_boss_profile = function(arg_60_0, arg_60_1, arg_60_2, arg_60_3)
 		return
 	end,
-	spawn = function (event, element, t, dt)
-		local data = event.data
-		local optional_data = element.optional_data and table.clone(element.optional_data)
-		local gizmo_unit = data.gizmo_unit
+	spawn = function(arg_61_0, arg_61_1, arg_61_2, arg_61_3)
+		local var_61_0 = arg_61_0.data
+		local var_61_1 = arg_61_1.optional_data and table.clone(arg_61_1.optional_data)
+		local var_61_2 = var_61_0.gizmo_unit
 
-		if gizmo_unit then
-			local spawn_behind_door = Unit.get_data(gizmo_unit, "is_behind_door")
+		if var_61_2 then
+			local var_61_3 = Unit.get_data(var_61_2, "is_behind_door")
 
-			if spawn_behind_door then
-				optional_data = optional_data or {}
-				optional_data.spawn_behind_door = spawn_behind_door
+			if var_61_3 then
+				var_61_1 = var_61_1 or {}
+				var_61_1.spawn_behind_door = var_61_3
 			end
 		end
 
-		if element.spawn_counter_category then
-			optional_data = add_spawned_counting(event, optional_data, element.spawn_counter_category)
+		if arg_61_1.spawn_counter_category then
+			var_61_1 = var_0_0(arg_61_0, var_61_1, arg_61_1.spawn_counter_category)
 		end
 
-		local position = data.optional_pos and data.optional_pos:unbox() or data.origin_position and data.origin_position:unbox()
-		local conflict_director = Managers.state.conflict
-		local group_data = data.group_data
-		local breed_name = element.breed_name
+		local var_61_4 = var_61_0.optional_pos and var_61_0.optional_pos:unbox() or var_61_0.origin_position and var_61_0.origin_position:unbox()
+		local var_61_5 = Managers.state.conflict
+		local var_61_6 = var_61_0.group_data
+		local var_61_7 = arg_61_1.breed_name
 
-		if type(breed_name) == "table" then
-			breed_name = breed_name[Math.random(1, #breed_name)]
+		if type(var_61_7) == "table" then
+			var_61_7 = var_61_7[Math.random(1, #var_61_7)]
 		end
 
-		if element.pre_spawn_func then
-			local difficulty, difficulty_tweak = Managers.state.difficulty:get_difficulty()
+		if arg_61_1.pre_spawn_func then
+			local var_61_8, var_61_9 = Managers.state.difficulty:get_difficulty()
 
-			optional_data = element.pre_spawn_func(optional_data, difficulty, breed_name, event, difficulty_tweak, element.enhancement_list)
+			var_61_1 = arg_61_1.pre_spawn_func(var_61_1, var_61_8, var_61_7, arg_61_0, var_61_9, arg_61_1.enhancement_list)
 		end
 
-		conflict_director:spawn_one(Breeds[breed_name], position, group_data, optional_data)
+		var_61_5:spawn_one(Breeds[var_61_7], var_61_4, var_61_6, var_61_1)
 
 		return true
 	end,
-	spawn_special = function (event, element, t, dt)
-		local breed_name
-		local check_name = element.breed_name
-		local num_to_spawn = element.amount or 1
-		local num_to_spawn_scaled = element.difficulty_amount
-		local optional_data = element.optional_data and table.clone(element.optional_data)
+	spawn_special = function(arg_62_0, arg_62_1, arg_62_2, arg_62_3)
+		local var_62_0
+		local var_62_1 = arg_62_1.breed_name
+		local var_62_2 = arg_62_1.amount or 1
+		local var_62_3 = arg_62_1.difficulty_amount
+		local var_62_4 = arg_62_1.optional_data and table.clone(arg_62_1.optional_data)
 
-		if element.spawn_counter_category then
-			optional_data = add_spawned_counting(event, optional_data, element.spawn_counter_category)
+		if arg_62_1.spawn_counter_category then
+			var_62_4 = var_0_0(arg_62_0, var_62_4, arg_62_1.spawn_counter_category)
 		end
 
-		local conflict_director = Managers.state.conflict
+		local var_62_5 = Managers.state.conflict
 
-		if num_to_spawn_scaled then
-			local chosen_amount = Managers.state.difficulty:get_difficulty_value_from_table(num_to_spawn_scaled)
+		if var_62_3 then
+			local var_62_6 = Managers.state.difficulty:get_difficulty_value_from_table(var_62_3) or var_62_3.hardest
 
-			chosen_amount = chosen_amount or num_to_spawn_scaled.hardest
-
-			if type(chosen_amount) == "table" then
-				num_to_spawn = chosen_amount[Math.random(1, #chosen_amount)]
+			if type(var_62_6) == "table" then
+				var_62_2 = var_62_6[Math.random(1, #var_62_6)]
 			else
-				num_to_spawn = chosen_amount
+				var_62_2 = var_62_6
 			end
-		elseif type(num_to_spawn) == "table" then
-			num_to_spawn = num_to_spawn[Math.random(1, #num_to_spawn)]
+		elseif type(var_62_2) == "table" then
+			var_62_2 = var_62_2[Math.random(1, #var_62_2)]
 		end
 
-		if type(check_name) == "table" then
-			breed_name = check_name[Math.random(1, #check_name)]
+		if type(var_62_1) == "table" then
+			var_62_0 = var_62_1[Math.random(1, #var_62_1)]
 		else
-			breed_name = check_name
+			var_62_0 = var_62_1
 		end
 
-		for i = 1, num_to_spawn do
-			local hidden_pos = conflict_director.specials_pacing:get_special_spawn_pos()
+		for iter_62_0 = 1, var_62_2 do
+			local var_62_7 = var_62_5.specials_pacing:get_special_spawn_pos()
 
-			conflict_director:spawn_one(Breeds[breed_name], hidden_pos, nil, optional_data)
-		end
-
-		return true
-	end,
-	spawn_weave_special = function (event, element, t, dt)
-		local check_name = element.breed_name
-		local num_to_spawn = element.amount or 1
-		local conflict_director = Managers.state.conflict
-		local data = event.data
-		local main_path_trigger_distance = data.main_path_trigger_distance
-		local optional_data = element.optional_data and table.clone(element.optional_data)
-
-		if element.spawn_counter_category then
-			optional_data = add_spawned_counting(event, optional_data, element.spawn_counter_category)
-		end
-
-		for i = 1, num_to_spawn do
-			local override_epicenter_pos = MainPathUtils.point_on_mainpath(nil, main_path_trigger_distance)
-			local hidden_pos = Managers.weave:weave_spawner():get_hidden_spawn_pos_from_position_seeded(override_epicenter_pos)
-			local breed_name
-
-			if type(check_name) == "table" then
-				local seed, index = Math.next_random(data.seed, 1, #check_name)
-
-				breed_name = check_name[index]
-				data.seed = seed
-			else
-				breed_name = check_name
-			end
-
-			conflict_director:spawn_one(Breeds[breed_name], hidden_pos, nil, optional_data)
+			var_62_5:spawn_one(Breeds[var_62_0], var_62_7, nil, var_62_4)
 		end
 
 		return true
 	end,
-	spawn_weave_special_event = function (event, element, t, dt)
-		local breed_name
-		local check_name = element.breed_name
-		local num_to_spawn = element.amount or 1
-		local num_to_spawn_scaled = element.difficulty_amount
-		local optional_data = element.optional_data and table.clone(element.optional_data)
+	spawn_weave_special = function(arg_63_0, arg_63_1, arg_63_2, arg_63_3)
+		local var_63_0 = arg_63_1.breed_name
+		local var_63_1 = arg_63_1.amount or 1
+		local var_63_2 = Managers.state.conflict
+		local var_63_3 = arg_63_0.data
+		local var_63_4 = var_63_3.main_path_trigger_distance
+		local var_63_5 = arg_63_1.optional_data and table.clone(arg_63_1.optional_data)
 
-		if element.spawn_counter_category then
-			optional_data = add_spawned_counting(event, optional_data, element.spawn_counter_category)
+		if arg_63_1.spawn_counter_category then
+			var_63_5 = var_0_0(arg_63_0, var_63_5, arg_63_1.spawn_counter_category)
 		end
 
-		local data = event.data
-		local seed = data.seed
-		local conflict_director = Managers.state.conflict
+		for iter_63_0 = 1, var_63_1 do
+			local var_63_6 = MainPathUtils.point_on_mainpath(nil, var_63_4)
+			local var_63_7 = Managers.weave:weave_spawner():get_hidden_spawn_pos_from_position_seeded(var_63_6)
+			local var_63_8
 
-		if num_to_spawn_scaled then
-			local chosen_amount = Managers.state.difficulty:get_difficulty_value_from_table(num_to_spawn_scaled)
+			if type(var_63_0) == "table" then
+				local var_63_9, var_63_10 = Math.next_random(var_63_3.seed, 1, #var_63_0)
 
-			chosen_amount = chosen_amount or num_to_spawn_scaled.hardest
-
-			if type(chosen_amount) == "table" then
-				local index
-
-				seed, index = Math.next_random(seed, 1, #chosen_amount)
-				num_to_spawn = chosen_amount[index]
+				var_63_8 = var_63_0[var_63_10]
+				var_63_3.seed = var_63_9
 			else
-				num_to_spawn = chosen_amount
+				var_63_8 = var_63_0
 			end
-		elseif type(num_to_spawn) == "table" then
-			local index
 
-			seed, index = Math.next_random(seed, 1, #num_to_spawn)
-			num_to_spawn = num_to_spawn[index]
+			var_63_2:spawn_one(Breeds[var_63_8], var_63_7, nil, var_63_5)
 		end
 
-		if type(check_name) == "table" then
-			local index
+		return true
+	end,
+	spawn_weave_special_event = function(arg_64_0, arg_64_1, arg_64_2, arg_64_3)
+		local var_64_0
+		local var_64_1 = arg_64_1.breed_name
+		local var_64_2 = arg_64_1.amount or 1
+		local var_64_3 = arg_64_1.difficulty_amount
+		local var_64_4 = arg_64_1.optional_data and table.clone(arg_64_1.optional_data)
 
-			seed, index = Math.next_random(seed, 1, #check_name)
-			breed_name = check_name[index]
+		if arg_64_1.spawn_counter_category then
+			var_64_4 = var_0_0(arg_64_0, var_64_4, arg_64_1.spawn_counter_category)
+		end
+
+		local var_64_5 = arg_64_0.data
+		local var_64_6 = var_64_5.seed
+		local var_64_7 = Managers.state.conflict
+
+		if var_64_3 then
+			local var_64_8 = Managers.state.difficulty:get_difficulty_value_from_table(var_64_3) or var_64_3.hardest
+
+			if type(var_64_8) == "table" then
+				local var_64_9
+				local var_64_10
+
+				var_64_6, var_64_10 = Math.next_random(var_64_6, 1, #var_64_8)
+				var_64_2 = var_64_8[var_64_10]
+			else
+				var_64_2 = var_64_8
+			end
+		elseif type(var_64_2) == "table" then
+			local var_64_11
+			local var_64_12
+
+			var_64_6, var_64_12 = Math.next_random(var_64_6, 1, #var_64_2)
+			var_64_2 = var_64_2[var_64_12]
+		end
+
+		if type(var_64_1) == "table" then
+			local var_64_13
+			local var_64_14
+
+			var_64_6, var_64_14 = Math.next_random(var_64_6, 1, #var_64_1)
+			var_64_0 = var_64_1[var_64_14]
 		else
-			breed_name = check_name
+			var_64_0 = var_64_1
 		end
 
-		for i = 1, num_to_spawn do
-			local hidden_pos = conflict_director.specials_pacing:get_special_spawn_pos()
+		for iter_64_0 = 1, var_64_2 do
+			local var_64_15 = var_64_7.specials_pacing:get_special_spawn_pos()
 
-			conflict_director:spawn_one(Breeds[breed_name], hidden_pos, nil, optional_data)
+			var_64_7:spawn_one(Breeds[var_64_0], var_64_15, nil, var_64_4)
 		end
 
-		data.seed = seed
+		var_64_5.seed = var_64_6
 
 		return true
 	end,
-	spawn_at_raw = function (event, element, t, dt)
+	spawn_at_raw = function(arg_65_0, arg_65_1, arg_65_2, arg_65_3)
 		if Managers.player.is_server then
-			local breed_name
-			local check_name = element.breed_name
-			local num_to_spawn = element.amount or 1
-			local num_to_spawn_scaled = element.difficulty_amount
-			local optional_data = element.optional_data and table.clone(element.optional_data)
+			local var_65_0
+			local var_65_1 = arg_65_1.breed_name
+			local var_65_2 = arg_65_1.amount or 1
+			local var_65_3 = arg_65_1.difficulty_amount
+			local var_65_4 = arg_65_1.optional_data and table.clone(arg_65_1.optional_data)
 
-			if element.spawn_counter_category then
-				optional_data = add_spawned_counting(event, optional_data, element.spawn_counter_category)
+			if arg_65_1.spawn_counter_category then
+				var_65_4 = var_0_0(arg_65_0, var_65_4, arg_65_1.spawn_counter_category)
 			end
 
-			if num_to_spawn_scaled then
-				local chosen_amount = Managers.state.difficulty:get_difficulty_value_from_table(num_to_spawn_scaled)
+			if var_65_3 then
+				local var_65_5 = Managers.state.difficulty:get_difficulty_value_from_table(var_65_3) or var_65_3.hardest
 
-				chosen_amount = chosen_amount or num_to_spawn_scaled.hardest
-
-				if type(chosen_amount) == "table" then
-					num_to_spawn = chosen_amount[Math.random(1, #chosen_amount)]
+				if type(var_65_5) == "table" then
+					var_65_2 = var_65_5[Math.random(1, #var_65_5)]
 				else
-					num_to_spawn = chosen_amount
+					var_65_2 = var_65_5
 				end
-			elseif type(num_to_spawn) == "table" then
-				num_to_spawn = num_to_spawn[Math.random(1, #num_to_spawn)]
+			elseif type(var_65_2) == "table" then
+				var_65_2 = var_65_2[Math.random(1, #var_65_2)]
 			end
 
-			if type(check_name) == "table" then
-				breed_name = check_name[Math.random(1, #check_name)]
+			if type(var_65_1) == "table" then
+				var_65_0 = var_65_1[Math.random(1, #var_65_1)]
 			else
-				breed_name = check_name
+				var_65_0 = var_65_1
 			end
 
-			if element.pre_spawn_func then
-				local difficulty, difficulty_tweak = Managers.state.difficulty:get_difficulty()
+			if arg_65_1.pre_spawn_func then
+				local var_65_6, var_65_7 = Managers.state.difficulty:get_difficulty()
 
-				optional_data = element.pre_spawn_func(optional_data, difficulty, breed_name, event, difficulty_tweak, element.enhancement_list)
+				var_65_4 = arg_65_1.pre_spawn_func(var_65_4, var_65_6, var_65_0, arg_65_0, var_65_7, arg_65_1.enhancement_list)
 			end
 
-			local conflict_director = Managers.state.conflict
+			local var_65_8 = Managers.state.conflict
 
-			for i = 1, num_to_spawn do
-				local spawner_id
+			for iter_65_0 = 1, var_65_2 do
+				local var_65_9
 
-				if element.spawner_ids then
-					local spawner_ids = element.spawner_ids
-					local random_index = Math.random(1, #spawner_ids)
+				if arg_65_1.spawner_ids then
+					local var_65_10 = arg_65_1.spawner_ids
 
-					spawner_id = spawner_ids[random_index]
+					var_65_9 = var_65_10[Math.random(1, #var_65_10)]
 				else
-					spawner_id = element.spawner_id
+					var_65_9 = arg_65_1.spawner_id
 				end
 
-				conflict_director:spawn_at_raw_spawner(Breeds[breed_name], spawner_id, optional_data, element.side_id)
+				var_65_8:spawn_at_raw_spawner(Breeds[var_65_0], var_65_9, var_65_4, arg_65_1.side_id)
 			end
 		end
 
 		return true
 	end,
-	spawn_patrol = function (event, element, t, dt)
-		local data = event.data
-		local position = data and data.optional_pos and data.optional_pos:unbox()
-		local conflict_director = Managers.state.conflict
-		local patrol_template = element.patrol_template
-		local main_path_patrol = element.main_path_patrol
-		local patrol_data = {}
+	spawn_patrol = function(arg_66_0, arg_66_1, arg_66_2, arg_66_3)
+		local var_66_0 = arg_66_0.data
+		local var_66_1 = var_66_0 and var_66_0.optional_pos and var_66_0.optional_pos:unbox()
+		local var_66_2 = Managers.state.conflict
+		local var_66_3 = arg_66_1.patrol_template
+		local var_66_4 = arg_66_1.main_path_patrol
+		local var_66_5 = {}
 
-		if main_path_patrol then
-			local breed = Breeds[element.breed_name]
+		if var_66_4 then
+			var_66_5.breed = Breeds[arg_66_1.breed_name]
+			var_66_5.group_type = "main_path_patrol"
+			var_66_5.side_id = arg_66_1.side_id
 
-			patrol_data.breed = breed
-			patrol_data.group_type = "main_path_patrol"
-			patrol_data.side_id = element.side_id
+			local var_66_6 = arg_66_1.side_id
 
-			local side_id = element.side_id
-
-			conflict_director:spawn_group(patrol_template, position, patrol_data)
+			var_66_2:spawn_group(var_66_3, var_66_1, var_66_5)
 		else
-			local formations = data and data.formations or element.formations
-			local num_formations = #formations
-			local random_index = num_formations > 1 and math.random(num_formations) or 1
-			local formation_name = formations[random_index]
+			local var_66_7 = var_66_0 and var_66_0.formations or arg_66_1.formations
+			local var_66_8 = #var_66_7
+			local var_66_9 = var_66_7[var_66_8 > 1 and math.random(var_66_8) or 1]
 
-			assert(PatrolFormationSettings[formation_name], "No such formation exists in PatrolFormationSettings")
+			assert(PatrolFormationSettings[var_66_9], "No such formation exists in PatrolFormationSettings")
 
-			local spline_name
-			local splines = element.splines
+			local var_66_10
+			local var_66_11 = arg_66_1.splines
 
-			if splines then
-				local num_splines = #splines
-				local random_index = num_splines > 1 and math.random(num_splines) or 1
+			if var_66_11 then
+				local var_66_12 = #var_66_11
 
-				spline_name = splines[random_index]
+				var_66_10 = var_66_11[var_66_12 > 1 and math.random(var_66_12) or 1]
 			else
-				spline_name = data and data.spline_id
+				var_66_10 = var_66_0 and var_66_0.spline_id
 			end
 
-			local spline_start_position
-			local formation = Managers.state.difficulty:get_difficulty_value_from_table(PatrolFormationSettings[formation_name])
-			local despawn_at_end = data.one_directional
+			local var_66_13
+			local var_66_14 = Managers.state.difficulty:get_difficulty_value_from_table(PatrolFormationSettings[var_66_9])
+			local var_66_15 = var_66_0.one_directional
 
-			formation.settings = PatrolFormationSettings[formation_name].settings
+			var_66_14.settings = PatrolFormationSettings[var_66_9].settings
 
-			local spline_way_points = data and data.spline_way_points
+			local var_66_16 = var_66_0 and var_66_0.spline_way_points
 
-			if not spline_way_points then
-				local route_data, waypoints, start_pos, one_directional = conflict_director.level_analysis:get_waypoint_spline(spline_name)
+			if not var_66_16 then
+				local var_66_17, var_66_18, var_66_19, var_66_20 = var_66_2.level_analysis:get_waypoint_spline(var_66_10)
 
-				if route_data then
-					spline_way_points = waypoints
-					spline_start_position = start_pos
-					despawn_at_end = one_directional
+				if var_66_17 then
+					var_66_16 = var_66_18
+					var_66_13 = var_66_19
+					var_66_15 = var_66_20
 				end
 			end
 
-			local spline_type = data and data.spline_type or element.spline_type
+			local var_66_21 = var_66_0 and var_66_0.spline_type or arg_66_1.spline_type
 
-			patrol_data.spline_name = spline_name
-			patrol_data.formation = formation
-			patrol_data.group_type = "spline_patrol"
-			patrol_data.spline_way_points = spline_way_points
-			patrol_data.spline_type = spline_type
-			patrol_data.despawn_at_end = despawn_at_end
-			patrol_data.spawn_all_at_same_position = true
+			var_66_5.spline_name = var_66_10
+			var_66_5.formation = var_66_14
+			var_66_5.group_type = "spline_patrol"
+			var_66_5.spline_way_points = var_66_16
+			var_66_5.spline_type = var_66_21
+			var_66_5.despawn_at_end = var_66_15
+			var_66_5.spawn_all_at_same_position = true
 
-			conflict_director:spawn_spline_group(patrol_template, spline_start_position, patrol_data)
+			var_66_2:spawn_spline_group(var_66_3, var_66_13, var_66_5)
 		end
 
 		return true
 	end,
-	roaming_patrol = function (event, element, t, dt)
-		local data = event.data
-		local position = data.optional_pos and data.optional_pos:unbox()
-		local conflict_director = Managers.state.conflict
-		local patrol_template = element.patrol_template or "spline_patrol"
-		local patrol_data = {}
-		local spline_name = data.spline_name
-		local pack = data.pack
-		local formation = PatrolFormationSettings.random_roaming_formation(pack)
+	roaming_patrol = function(arg_67_0, arg_67_1, arg_67_2, arg_67_3)
+		local var_67_0 = arg_67_0.data
+		local var_67_1 = var_67_0.optional_pos and var_67_0.optional_pos:unbox()
+		local var_67_2 = Managers.state.conflict
+		local var_67_3 = arg_67_1.patrol_template or "spline_patrol"
+		local var_67_4 = {}
+		local var_67_5 = var_67_0.spline_name
+		local var_67_6 = var_67_0.pack
 
-		patrol_data.spline_name = spline_name
-		patrol_data.formation = formation
-		patrol_data.group_type = "roaming_patrol"
-		patrol_data.spline_way_points = data.spline_way_points
-		patrol_data.spline_type = data.spline_type
-		patrol_data.despawn_at_end = false
-		patrol_data.zone_data = data.zone_data
-		patrol_data.spawn_all_at_same_position = false
+		var_67_4.formation, var_67_4.spline_name = PatrolFormationSettings.random_roaming_formation(var_67_6), var_67_5
+		var_67_4.group_type = "roaming_patrol"
+		var_67_4.spline_way_points = var_67_0.spline_way_points
+		var_67_4.spline_type = var_67_0.spline_type
+		var_67_4.despawn_at_end = false
+		var_67_4.zone_data = var_67_0.zone_data
+		var_67_4.spawn_all_at_same_position = false
 
-		conflict_director:spawn_spline_group(patrol_template, position, patrol_data)
+		var_67_2:spawn_spline_group(var_67_3, var_67_1, var_67_4)
 
 		return true
 	end,
-	spawn_around_player = function (event, element, t, dt)
-		local breed_name
-		local check_name = element.breed_name
-		local num_to_spawn = element.amount or 1
-		local num_to_spawn_scaled = element.difficulty_amount
+	spawn_around_player = function(arg_68_0, arg_68_1, arg_68_2, arg_68_3)
+		local var_68_0
+		local var_68_1 = arg_68_1.breed_name
+		local var_68_2 = arg_68_1.amount or 1
+		local var_68_3 = arg_68_1.difficulty_amount
 
-		if type(check_name) == "table" then
-			breed_name = check_name[Math.random(1, #check_name)]
+		if type(var_68_1) == "table" then
+			var_68_0 = var_68_1[Math.random(1, #var_68_1)]
 		else
-			breed_name = check_name
+			var_68_0 = var_68_1
 		end
 
-		if num_to_spawn_scaled then
-			local chosen_amount = Managers.state.difficulty:get_difficulty_value_from_table(num_to_spawn_scaled)
+		if var_68_3 then
+			local var_68_4 = Managers.state.difficulty:get_difficulty_value_from_table(var_68_3) or var_68_3.hardest
 
-			chosen_amount = chosen_amount or num_to_spawn_scaled.hardest
-
-			if type(chosen_amount) == "table" then
-				num_to_spawn = chosen_amount[Math.random(1, #chosen_amount)]
+			if type(var_68_4) == "table" then
+				var_68_2 = var_68_4[Math.random(1, #var_68_4)]
 			else
-				num_to_spawn = chosen_amount
+				var_68_2 = var_68_4
 			end
-		elseif type(num_to_spawn) == "table" then
-			num_to_spawn = num_to_spawn[Math.random(1, #num_to_spawn)]
+		elseif type(var_68_2) == "table" then
+			var_68_2 = var_68_2[Math.random(1, #var_68_2)]
 		end
 
-		local optional_data = element.optional_data and table.clone(element.optional_data)
+		local var_68_5 = arg_68_1.optional_data and table.clone(arg_68_1.optional_data)
 
-		if element.spawn_counter_category then
-			optional_data = add_spawned_counting(event, optional_data, element.spawn_counter_category)
+		if arg_68_1.spawn_counter_category then
+			var_68_5 = var_0_0(arg_68_0, var_68_5, arg_68_1.spawn_counter_category)
 		end
 
-		local hero_side = Managers.state.side:get_side_from_name("heroes")
-		local player_positions = hero_side.PLAYER_AND_BOT_POSITIONS
-		local distance_to_players = element.distance_to_players or 2
-		local distance_to_enemies = element.distance_to_enemies or 2
+		local var_68_6 = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_POSITIONS
+		local var_68_7 = arg_68_1.distance_to_players or 2
+		local var_68_8 = arg_68_1.distance_to_enemies or 2
 
-		local function filter_func(pos, invalid_pos_list)
-			local min_dist_players_sqr = math.pow(distance_to_players, 2)
+		local function var_68_9(arg_69_0, arg_69_1)
+			local var_69_0 = math.pow(var_68_7, 2)
 
-			for i = 1, #player_positions do
-				if min_dist_players_sqr > Vector3.distance_squared(pos, player_positions[i]) then
+			for iter_69_0 = 1, #var_68_6 do
+				if var_69_0 > Vector3.distance_squared(arg_69_0, var_68_6[iter_69_0]) then
 					return false
 				end
 			end
 
-			local min_dist_enemies_sqr = math.pow(distance_to_enemies, 2)
+			local var_69_1 = math.pow(var_68_8, 2)
 
-			for i = 1, #invalid_pos_list do
-				if min_dist_enemies_sqr > Vector3.distance_squared(pos, invalid_pos_list[i]) then
+			for iter_69_1 = 1, #arg_69_1 do
+				if var_69_1 > Vector3.distance_squared(arg_69_0, arg_69_1[iter_69_1]) then
 					return false
 				end
 			end
@@ -997,442 +966,435 @@ TerrorEventMixer.run_functions = {
 			return true
 		end
 
-		if element.pre_spawn_func then
-			local difficulty, difficulty_tweak = Managers.state.difficulty:get_difficulty()
+		if arg_68_1.pre_spawn_func then
+			local var_68_10, var_68_11 = Managers.state.difficulty:get_difficulty()
 
-			optional_data = element.pre_spawn_func(optional_data, difficulty, breed_name, event, difficulty_tweak, element.enhancement_list)
+			var_68_5 = arg_68_1.pre_spawn_func(var_68_5, var_68_10, var_68_0, arg_68_0, var_68_11, arg_68_1.enhancement_list)
 		end
 
-		local invalid_pos_list = {}
-		local nav_world = Managers.state.entity:system("ai_system"):nav_world()
-		local conflict_director = Managers.state.conflict
+		local var_68_12 = {}
+		local var_68_13 = Managers.state.entity:system("ai_system"):nav_world()
+		local var_68_14 = Managers.state.conflict
 
-		for i = 1, num_to_spawn do
-			local random_player = PlayerUtils.get_random_alive_hero()
-			local player_position = POSITION_LOOKUP[random_player]
-			local distance = element.spawn_distance or 10
-			local spread = element.spread or 10
-			local spawn_pos = ConflictUtils.get_spawn_pos_on_circle_with_func(nav_world, player_position, distance, spread, 30, filter_func, invalid_pos_list)
+		for iter_68_0 = 1, var_68_2 do
+			local var_68_15 = PlayerUtils.get_random_alive_hero()
+			local var_68_16 = POSITION_LOOKUP[var_68_15]
+			local var_68_17 = arg_68_1.spawn_distance or 10
+			local var_68_18 = arg_68_1.spread or 10
+			local var_68_19 = ConflictUtils.get_spawn_pos_on_circle_with_func(var_68_13, var_68_16, var_68_17, var_68_18, 30, var_68_9, var_68_12)
 
-			if spawn_pos then
-				table.insert(invalid_pos_list, spawn_pos)
-				conflict_director:spawn_one(Breeds[breed_name], spawn_pos, nil, optional_data)
+			if var_68_19 then
+				table.insert(var_68_12, var_68_19)
+				var_68_14:spawn_one(Breeds[var_68_0], var_68_19, nil, var_68_5)
 			end
 		end
 
 		return true
 	end,
-	spawn_around_origin_unit = function (event, element, t, dt)
-		if t > event.spawn_at then
-			local conflict_director = Managers.state.conflict
-			local spawn_table = event.spawn_table
-			local optional_data_table = event.optional_data_table
-			local spawn_positions = event.spawn_positions
-			local group_data
+	spawn_around_origin_unit = function(arg_70_0, arg_70_1, arg_70_2, arg_70_3)
+		if arg_70_2 > arg_70_0.spawn_at then
+			local var_70_0 = Managers.state.conflict
+			local var_70_1 = arg_70_0.spawn_table
+			local var_70_2 = arg_70_0.optional_data_table
+			local var_70_3 = arg_70_0.spawn_positions
+			local var_70_4
 
-			if element.group_template then
-				group_data = {
+			if arg_70_1.group_template then
+				var_70_4 = {
 					id = Managers.state.entity:system("ai_group_system"):generate_group_id(),
-					size = #spawn_positions,
-					template = element.group_template,
+					size = #var_70_3,
+					template = arg_70_1.group_template
 				}
 			end
 
-			local center_position_unboxed = event.center_position:unbox()
+			local var_70_5 = arg_70_0.center_position:unbox()
 
-			for i = 1, #spawn_positions do
-				local spawn_pos = spawn_positions[i]
-				local spawn_pos_unboxed = spawn_pos:unbox()
-				local breed_name = spawn_table[i]
-				local breed = Breeds[breed_name]
-				local optional_data = optional_data_table[i]
-				local rotation
+			for iter_70_0 = 1, #var_70_3 do
+				local var_70_6 = var_70_3[iter_70_0]
+				local var_70_7 = var_70_6:unbox()
+				local var_70_8 = var_70_1[iter_70_0]
+				local var_70_9 = Breeds[var_70_8]
+				local var_70_10 = var_70_2[iter_70_0]
+				local var_70_11
 
-				if element.face_unit then
-					local direction = center_position_unboxed - spawn_pos_unboxed
+				if arg_70_1.face_unit then
+					local var_70_12 = var_70_5 - var_70_7
 
-					rotation = Quaternion.look(direction, Vector3.up())
+					var_70_11 = Quaternion.look(var_70_12, Vector3.up())
 				end
 
-				if element.face_nearest_player_of_side then
-					local side = Managers.state.side:get_side_from_name(element.face_nearest_player_of_side)
-					local player_positions = side.PLAYER_AND_BOT_POSITIONS
-					local player_units = side.PLAYER_AND_BOT_UNITS
+				if arg_70_1.face_nearest_player_of_side then
+					local var_70_13 = Managers.state.side:get_side_from_name(arg_70_1.face_nearest_player_of_side)
+					local var_70_14 = var_70_13.PLAYER_AND_BOT_POSITIONS
+					local var_70_15 = var_70_13.PLAYER_AND_BOT_UNITS
 
-					if #player_positions then
-						local nearest_distance_squared = math.huge
-						local nearest_position
+					if #var_70_14 then
+						local var_70_16 = math.huge
+						local var_70_17
 
-						for player_position_index = 1, #player_positions do
-							local player_position = player_positions[player_position_index]
-							local distance_squared = Vector3.length_squared(spawn_pos_unboxed - player_position)
-							local player_unit = player_units[player_position_index]
+						for iter_70_1 = 1, #var_70_14 do
+							local var_70_18 = var_70_14[iter_70_1]
+							local var_70_19 = Vector3.length_squared(var_70_7 - var_70_18)
+							local var_70_20 = var_70_15[iter_70_1]
 
-							if ALIVE[player_unit] and not ScriptUnit.extension(player_unit, "status_system"):is_invisible() and distance_squared < nearest_distance_squared then
-								nearest_position = player_position
+							if ALIVE[var_70_20] and not ScriptUnit.extension(var_70_20, "status_system"):is_invisible() and var_70_19 < var_70_16 then
+								var_70_17 = var_70_18
 							end
 						end
 
-						if nearest_position then
-							local direction = nearest_position - spawn_pos_unboxed
+						if var_70_17 then
+							local var_70_21 = var_70_17 - var_70_7
 
-							rotation = Quaternion.look(direction, Vector3.up())
+							var_70_11 = Quaternion.look(var_70_21, Vector3.up())
 						end
 					end
 				end
 
-				rotation = rotation or Quaternion.identity()
+				var_70_11 = var_70_11 or Quaternion.identity()
 
-				conflict_director:spawn_one(breed, spawn_pos_unboxed, group_data, optional_data, rotation)
+				var_70_0:spawn_one(var_70_9, var_70_7, var_70_4, var_70_10, var_70_11)
 
-				if element.post_spawn_unit_func then
-					element.post_spawn_unit_func(event, element, spawn_pos)
+				if arg_70_1.post_spawn_unit_func then
+					arg_70_1.post_spawn_unit_func(arg_70_0, arg_70_1, var_70_6)
 				end
 			end
 
-			event.spawn_positions = nil
+			arg_70_0.spawn_positions = nil
 
 			return true
 		end
 
 		return false
 	end,
-	spawn_around_origin_unit_staggered = function (event, element, t, dt)
-		if t >= event.spawn_at and (not event.next_spawn_t or t >= event.next_spawn_t) then
-			local conflict_director = Managers.state.conflict
-			local spawn_table = event.spawn_table
-			local optional_data_table = event.optional_data_table
-			local spawn_positions = event.spawn_positions
-			local group_data = event.group_data
+	spawn_around_origin_unit_staggered = function(arg_71_0, arg_71_1, arg_71_2, arg_71_3)
+		if arg_71_2 >= arg_71_0.spawn_at and (not arg_71_0.next_spawn_t or arg_71_2 >= arg_71_0.next_spawn_t) then
+			local var_71_0 = Managers.state.conflict
+			local var_71_1 = arg_71_0.spawn_table
+			local var_71_2 = arg_71_0.optional_data_table
+			local var_71_3 = arg_71_0.spawn_positions
+			local var_71_4 = arg_71_0.group_data
 
-			if element.group_template and not group_data then
-				group_data = {
+			if arg_71_1.group_template and not var_71_4 then
+				var_71_4 = {
 					id = Managers.state.entity:system("ai_group_system"):generate_group_id(),
-					size = #spawn_positions,
-					template = element.group_template,
+					size = #var_71_3,
+					template = arg_71_1.group_template
 				}
-				event.group_data = group_data
+				arg_71_0.group_data = var_71_4
 			end
 
-			local center_position_unboxed = event.center_position:unbox()
-			local num_to_spawn = #spawn_positions
-			local num_spawned = event.num_spawned and event.num_spawned + 1 or 1
-			local spawn_batch_size = Math.random(element.staggered_spawn_batch_size[1], element.staggered_spawn_batch_size[2])
-			local next_spawn_count = math.min(num_spawned + spawn_batch_size, num_to_spawn)
+			local var_71_5 = arg_71_0.center_position:unbox()
+			local var_71_6 = #var_71_3
+			local var_71_7 = arg_71_0.num_spawned and arg_71_0.num_spawned + 1 or 1
+			local var_71_8 = Math.random(arg_71_1.staggered_spawn_batch_size[1], arg_71_1.staggered_spawn_batch_size[2])
+			local var_71_9 = math.min(var_71_7 + var_71_8, var_71_6)
 
-			for i = num_spawned, next_spawn_count do
-				local spawn_pos = spawn_positions[i]
-				local spawn_pos_unboxed = spawn_pos:unbox()
-				local breed_name = spawn_table[i]
-				local breed = Breeds[breed_name]
-				local optional_data = optional_data_table[i]
-				local rotation
+			for iter_71_0 = var_71_7, var_71_9 do
+				local var_71_10 = var_71_3[iter_71_0]
+				local var_71_11 = var_71_10:unbox()
+				local var_71_12 = var_71_1[iter_71_0]
+				local var_71_13 = Breeds[var_71_12]
+				local var_71_14 = var_71_2[iter_71_0]
+				local var_71_15
 
-				if element.face_unit then
-					local direction = center_position_unboxed - spawn_pos_unboxed
+				if arg_71_1.face_unit then
+					local var_71_16 = var_71_5 - var_71_11
 
-					rotation = Quaternion.look(direction, Vector3.up())
+					var_71_15 = Quaternion.look(var_71_16, Vector3.up())
 				end
 
-				conflict_director:spawn_one(breed, spawn_pos_unboxed, group_data, optional_data, rotation)
+				var_71_0:spawn_one(var_71_13, var_71_11, var_71_4, var_71_14, var_71_15)
 
-				if element.post_spawn_unit_func then
-					element.post_spawn_unit_func(event, element, spawn_pos)
+				if arg_71_1.post_spawn_unit_func then
+					arg_71_1.post_spawn_unit_func(arg_71_0, arg_71_1, var_71_10)
 				end
 			end
 
-			if next_spawn_count <= num_spawned then
-				event.next_spawn_t = nil
-				event.num_spawned = nil
-				event.spawn_positions = nil
+			if var_71_9 <= var_71_7 then
+				arg_71_0.next_spawn_t = nil
+				arg_71_0.num_spawned = nil
+				arg_71_0.spawn_positions = nil
 
 				return true
 			end
 
-			event.num_spawned = next_spawn_count
+			arg_71_0.num_spawned = var_71_9
 
-			local random_min = element.staggered_spawn_delay[1]
-			local random_range = element.staggered_spawn_delay[2] - random_min
+			local var_71_17 = arg_71_1.staggered_spawn_delay[1]
+			local var_71_18 = arg_71_1.staggered_spawn_delay[2] - var_71_17
 
-			event.next_spawn_t = t + math.random() * random_range + random_min
+			arg_71_0.next_spawn_t = arg_71_2 + math.random() * var_71_18 + var_71_17
 		end
 
 		return false
 	end,
-	continue_when = function (event, element, t, dt)
-		if element.duration and t > event.ends_at then
+	continue_when = function(arg_72_0, arg_72_1, arg_72_2, arg_72_3)
+		if arg_72_1.duration and arg_72_2 > arg_72_0.ends_at then
 			return true
 		end
 
-		return element.condition(t)
+		return arg_72_1.condition(arg_72_2)
 	end,
-	control_pacing = function (event, element, t, dt)
+	control_pacing = function(arg_73_0, arg_73_1, arg_73_2, arg_73_3)
 		return true
 	end,
-	control_specials = function (event, element, t, dt)
+	control_specials = function(arg_74_0, arg_74_1, arg_74_2, arg_74_3)
 		return true
 	end,
-	control_hordes = function (event, element, t, dt)
+	control_hordes = function(arg_75_0, arg_75_1, arg_75_2, arg_75_3)
 		return true
 	end,
-	event_horde = function (event, element, t, dt)
-		if t > event.ends_at then
+	event_horde = function(arg_76_0, arg_76_1, arg_76_2, arg_76_3)
+		if arg_76_2 > arg_76_0.ends_at then
 			return true
 		end
 	end,
-	ambush_horde = function (event, element, t, dt)
-		if t > event.ends_at then
+	ambush_horde = function(arg_77_0, arg_77_1, arg_77_2, arg_77_3)
+		if arg_77_2 > arg_77_0.ends_at then
 			return true
 		end
 	end,
-	reset_event_horde = function (event, element, t, dt)
+	reset_event_horde = function(arg_78_0, arg_78_1, arg_78_2, arg_78_3)
 		return true
 	end,
-	force_horde = function (event, element, t, dt)
-		if t > event.ends_at then
+	force_horde = function(arg_79_0, arg_79_1, arg_79_2, arg_79_3)
+		if arg_79_2 > arg_79_0.ends_at then
 			return true
 		end
 	end,
-	debug_horde = function (event, element, t, dt)
-		if t > event.ends_at then
+	debug_horde = function(arg_80_0, arg_80_1, arg_80_2, arg_80_3)
+		if arg_80_2 > arg_80_0.ends_at then
 			return true
 		end
 
-		local conflict_director = Managers.state.conflict
-		local spawned_units = conflict_director:spawned_enemies()
-		local amount = #spawned_units
+		local var_80_0 = Managers.state.conflict
 
-		if amount < element.amount then
-			local side = Managers.state.side:get_side(conflict_director.default_hero_side_id)
-			local center_pos = side.PLAYER_AND_BOT_POSITIONS[1]
-			local pos = ConflictUtils.get_spawn_pos_on_circle(conflict_director.nav_world, center_pos, 25, 15, 5)
+		if #var_80_0:spawned_enemies() < arg_80_1.amount then
+			local var_80_1 = Managers.state.side:get_side(var_80_0.default_hero_side_id).PLAYER_AND_BOT_POSITIONS[1]
+			local var_80_2 = ConflictUtils.get_spawn_pos_on_circle(var_80_0.nav_world, var_80_1, 25, 15, 5)
 
-			if pos then
-				local dir = center_pos - pos
-				local spawn_rot = Quaternion.look(Vector3(dir.x, dir.y, 1))
-				local breed = Breeds[conflict_director._debug_breed or "skaven_slave"]
-				local optional_data
+			if var_80_2 then
+				local var_80_3 = var_80_1 - var_80_2
+				local var_80_4 = Quaternion.look(Vector3(var_80_3.x, var_80_3.y, 1))
+				local var_80_5 = Breeds[var_80_0._debug_breed or "skaven_slave"]
+				local var_80_6
 
-				conflict_director:spawn_queued_unit(breed, Vector3Box(pos), QuaternionBox(spawn_rot), "constant_70", nil, "horde_hidden", optional_data)
+				var_80_0:spawn_queued_unit(var_80_5, Vector3Box(var_80_2), QuaternionBox(var_80_4), "constant_70", nil, "horde_hidden", var_80_6)
 			end
 		end
 	end,
-	delay = function (event, element, t, dt)
-		if t > event.ends_at then
+	delay = function(arg_81_0, arg_81_1, arg_81_2, arg_81_3)
+		if arg_81_2 > arg_81_0.ends_at then
 			return true
 		end
 	end,
-	text = function (event, element, t, dt)
-		local time_left = event.ends_at - t
-
-		if time_left >= 0 then
-			Debug.text(tostring(element.text))
+	text = function(arg_82_0, arg_82_1, arg_82_2, arg_82_3)
+		if arg_82_0.ends_at - arg_82_2 >= 0 then
+			Debug.text(tostring(arg_82_1.text))
 		else
 			return true
 		end
 	end,
-	start_event = function (event, element, t, dt)
+	start_event = function(arg_83_0, arg_83_1, arg_83_2, arg_83_3)
 		return true
 	end,
-	stop_event = function (event, element, t, dt)
+	stop_event = function(arg_84_0, arg_84_1, arg_84_2, arg_84_3)
 		return true
 	end,
-	start_mission = function (event, element, t)
+	start_mission = function(arg_85_0, arg_85_1, arg_85_2)
 		return true
 	end,
-	end_mission = function (event, element, t)
+	end_mission = function(arg_86_0, arg_86_1, arg_86_2)
 		return true
 	end,
-	flow_event = function (event, element, t, dt)
+	flow_event = function(arg_87_0, arg_87_1, arg_87_2, arg_87_3)
 		return true
 	end,
-	play_stinger = function (event, element, t)
+	play_stinger = function(arg_88_0, arg_88_1, arg_88_2)
 		return true
 	end,
-	force_load_breed_package = function (event, element, t)
+	force_load_breed_package = function(arg_89_0, arg_89_1, arg_89_2)
 		return true
 	end,
-	set_master_event_running = function (event, element, t, dt)
+	set_master_event_running = function(arg_90_0, arg_90_1, arg_90_2, arg_90_3)
 		return true
 	end,
-	stop_master_event = function (event, element, t, dt)
+	stop_master_event = function(arg_91_0, arg_91_1, arg_91_2, arg_91_3)
 		return true
 	end,
-	enable_bots_in_carry_event = function (event, element, t)
+	enable_bots_in_carry_event = function(arg_92_0, arg_92_1, arg_92_2)
 		return true
 	end,
-	disable_bots_in_carry_event = function (event, element, t)
+	disable_bots_in_carry_event = function(arg_93_0, arg_93_1, arg_93_2)
 		return true
 	end,
-	enable_kick = function (event, element, t)
+	enable_kick = function(arg_94_0, arg_94_1, arg_94_2)
 		return true
 	end,
-	disable_kick = function (event, element, t)
+	disable_kick = function(arg_95_0, arg_95_1, arg_95_2)
 		return true
 	end,
-	set_freeze_condition = function (event, element, t)
+	set_freeze_condition = function(arg_96_0, arg_96_1, arg_96_2)
 		return true
 	end,
-	set_breed_event_horde_spawn_limit = function (event, element, t)
+	set_breed_event_horde_spawn_limit = function(arg_97_0, arg_97_1, arg_97_2)
 		return true
 	end,
-	create_boss_door_group = function (event, element, t)
+	create_boss_door_group = function(arg_98_0, arg_98_1, arg_98_2)
 		return true
 	end,
-	close_boss_doors = function (event, element, t)
+	close_boss_doors = function(arg_99_0, arg_99_1, arg_99_2)
 		return true
 	end,
-	spawn_encampment = function (event, element, t, dt)
+	spawn_encampment = function(arg_100_0, arg_100_1, arg_100_2, arg_100_3)
 		return true
 	end,
-	teleport_player = function (event, element, t, dt)
+	teleport_player = function(arg_101_0, arg_101_1, arg_101_2, arg_101_3)
 		return true
 	end,
-	run_benchmark_func = function (event, element, t, dt)
+	run_benchmark_func = function(arg_102_0, arg_102_1, arg_102_2, arg_102_3)
 		return true
 	end,
-	set_time_challenge = function (event, element, t, dt)
+	set_time_challenge = function(arg_103_0, arg_103_1, arg_103_2, arg_103_3)
 		return true
 	end,
-	has_completed_time_challenge = function (event, element, t, dt)
+	has_completed_time_challenge = function(arg_104_0, arg_104_1, arg_104_2, arg_104_3)
 		return true
 	end,
-	do_volume_challenge = function (event, element, t, dt)
-		local volume_name = element.volume_name
-		local optional_data = TerrorEventMixer.optional_data[volume_name]
+	do_volume_challenge = function(arg_105_0, arg_105_1, arg_105_2, arg_105_3)
+		local var_105_0 = arg_105_1.volume_name
+		local var_105_1 = var_0_1.optional_data[var_105_0]
 
-		if optional_data.terminate then
+		if var_105_1.terminate then
 			return true
 		end
 
-		local player_units = optional_data.player_units
-		local all_inside = true
-		local human_players = Managers.player:human_players()
+		local var_105_2 = var_105_1.player_units
+		local var_105_3 = true
+		local var_105_4 = Managers.player:human_players()
 
-		for _, player in pairs(human_players) do
-			local player_unit = player.player_unit
+		for iter_105_0, iter_105_1 in pairs(var_105_4) do
+			local var_105_5 = iter_105_1.player_unit
 
-			if not HEALTH_ALIVE[player_unit] then
-				all_inside = false
+			if not HEALTH_ALIVE[var_105_5] then
+				var_105_3 = false
 
 				break
 			end
 
-			player_units[#player_units + 1] = player_unit
+			var_105_2[#var_105_2 + 1] = var_105_5
 		end
 
-		if all_inside then
-			local volume_system = Managers.state.entity:system("volume_system")
+		if var_105_3 then
+			local var_105_6 = Managers.state.entity:system("volume_system")
 
-			all_inside = EngineOptimizedExtensions.volume_has_all_units_inside(volume_system._volume_system, volume_name, unpack(player_units))
+			var_105_3 = EngineOptimizedExtensions.volume_has_all_units_inside(var_105_6._volume_system, var_105_0, unpack(var_105_2))
 		end
 
-		table.clear(player_units)
+		table.clear(var_105_2)
 
-		if all_inside then
-			optional_data.time_inside = optional_data.time_inside + dt
+		if var_105_3 then
+			var_105_1.time_inside = var_105_1.time_inside + arg_105_3
 		else
-			optional_data.time_inside = 0
+			var_105_1.time_inside = 0
 		end
 
-		if optional_data.time_inside >= optional_data.duration then
-			local increment_stat_name = element.increment_stat_name
-			local statistics_db = Managers.player:statistics_db()
+		if var_105_1.time_inside >= var_105_1.duration then
+			local var_105_7 = arg_105_1.increment_stat_name
 
-			statistics_db:increment_stat_and_sync_to_clients(increment_stat_name)
+			Managers.player:statistics_db():increment_stat_and_sync_to_clients(var_105_7)
 
 			return true
 		else
 			return false
 		end
 	end,
-	increase_weave_progress = function (event, element, t, dt)
+	increase_weave_progress = function(arg_106_0, arg_106_1, arg_106_2, arg_106_3)
 		return true
 	end,
-	complete_weave = function (event, element, t, dt)
+	complete_weave = function(arg_107_0, arg_107_1, arg_107_2, arg_107_3)
 		return true
 	end,
-	activate_mutator = function (event, element, t, dt)
-		local name = element.name
+	activate_mutator = function(arg_108_0, arg_108_1, arg_108_2, arg_108_3)
+		local var_108_0 = arg_108_1.name
 
 		if Managers.state.game_mode then
-			local mutator_handler = Managers.state.game_mode._mutator_handler
+			local var_108_1 = Managers.state.game_mode._mutator_handler
 
-			if not mutator_handler:has_activated_mutator(name) then
-				mutator_handler:initialize_mutators({
-					name,
+			if not var_108_1:has_activated_mutator(var_108_0) then
+				var_108_1:initialize_mutators({
+					var_108_0
 				})
-				mutator_handler:activate_mutator(name)
+				var_108_1:activate_mutator(var_108_0)
 			end
 		end
 
 		return true
 	end,
-	set_wwise_override_state = function (event, element, t, dt)
-		local name = element.name
+	set_wwise_override_state = function(arg_109_0, arg_109_1, arg_109_2, arg_109_3)
+		local var_109_0 = arg_109_1.name
 
-		Managers.music:set_music_group_state("combat_music", "override", name)
+		Managers.music:set_music_group_state("combat_music", "override", var_109_0)
 
 		return true
 	end,
-	freeze_story_trigger = function (event, element, t, dt)
-		local freeze = element.freeze
-		local dialogue_system = Managers.state.entity:system("dialogue_system")
+	freeze_story_trigger = function(arg_110_0, arg_110_1, arg_110_2, arg_110_3)
+		local var_110_0 = arg_110_1.freeze
+		local var_110_1 = Managers.state.entity:system("dialogue_system")
 
-		if freeze then
-			dialogue_system:freeze_story_trigger()
+		if var_110_0 then
+			var_110_1:freeze_story_trigger()
 		else
-			dialogue_system:unfreeze_story_trigger()
+			var_110_1:unfreeze_story_trigger()
 		end
 
 		return true
 	end,
-	continue_when_spawned_count = function (event, element, t, dt)
-		if element.duration and t > event.ends_at then
+	continue_when_spawned_count = function(arg_111_0, arg_111_1, arg_111_2, arg_111_3)
+		if arg_111_1.duration and arg_111_2 > arg_111_0.ends_at then
 			return true
 		end
 
-		event.data.spawn_counter = event.data.spawn_counter or create_spawn_counter()
+		arg_111_0.data.spawn_counter = arg_111_0.data.spawn_counter or create_spawn_counter()
 
-		return not element.condition or element.condition(event.data.spawn_counter)
+		return not arg_111_1.condition or arg_111_1.condition(arg_111_0.data.spawn_counter)
 	end,
-	run_func = function (event, element, t, dt)
-		element.func()
+	run_func = function(arg_112_0, arg_112_1, arg_112_2, arg_112_3)
+		arg_112_1.func()
 
 		return true
-	end,
+	end
 }
-TerrorEventMixer.debug_functions = {
-	vs_assign_boss_profile = function (event, element, t, dt)
+var_0_1.debug_functions = {
+	vs_assign_boss_profile = function(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 		return "vs_assign_boss_profile"
 	end,
-	control_pacing = function (event, element, t, dt)
-		return element.enable and "enable" or "disable"
+	control_pacing = function(arg_114_0, arg_114_1, arg_114_2, arg_114_3)
+		return arg_114_1.enable and "enable" or "disable"
 	end,
-	control_specials = function (event, element, t, dt)
-		return element.enable and "enable" or "disable"
+	control_specials = function(arg_115_0, arg_115_1, arg_115_2, arg_115_3)
+		return arg_115_1.enable and "enable" or "disable"
 	end,
-	delay = function (event, element, t, dt)
+	delay = function(arg_116_0, arg_116_1, arg_116_2, arg_116_3)
 		return
 	end,
-	set_freeze_condition = function (event, element, t, dt)
-		return string.format(": max enemies %d", event.max_active_enemies)
+	set_freeze_condition = function(arg_117_0, arg_117_1, arg_117_2, arg_117_3)
+		return string.format(": max enemies %d", arg_117_0.max_active_enemies)
 	end,
-	debug_horde = function (event, element, t, dt)
-		local spawned_units = Managers.state.conflict:spawned_enemies()
-		local amount = #spawned_units
+	debug_horde = function(arg_118_0, arg_118_1, arg_118_2, arg_118_3)
+		local var_118_0 = #Managers.state.conflict:spawned_enemies()
 
-		return string.format(" alive: %d, max-amount: %d", amount, element.amount)
+		return string.format(" alive: %d, max-amount: %d", var_118_0, arg_118_1.amount)
 	end,
-	event_horde = function (event, element, t, dt)
-		local horde_data = element.horde_data
+	event_horde = function(arg_119_0, arg_119_1, arg_119_2, arg_119_3)
+		local var_119_0 = arg_119_1.horde_data
 
-		if horde_data then
-			if horde_data.started then
-				if horde_data.failed then
+		if var_119_0 then
+			if var_119_0.started then
+				if var_119_0.failed then
 					return string.format(" horde failed!")
 				else
-					return string.format(" amount: %d ", horde_data.amount)
+					return string.format(" amount: %d ", var_119_0.amount)
 				end
 			else
 				return "waiting to start..."
@@ -1441,15 +1403,15 @@ TerrorEventMixer.debug_functions = {
 			return string.format("waiting to start...")
 		end
 	end,
-	ambush_horde = function (event, element, t, dt)
-		local horde_data = element.horde_data
+	ambush_horde = function(arg_120_0, arg_120_1, arg_120_2, arg_120_3)
+		local var_120_0 = arg_120_1.horde_data
 
-		if horde_data then
-			if horde_data.started then
-				if horde_data.failed then
+		if var_120_0 then
+			if var_120_0.started then
+				if var_120_0.failed then
 					return string.format(" horde failed!")
 				else
-					return string.format(" amount: %d ", horde_data.amount)
+					return string.format(" amount: %d ", var_120_0.amount)
 				end
 			else
 				return "waiting to start..."
@@ -1458,197 +1420,185 @@ TerrorEventMixer.debug_functions = {
 			return string.format("waiting to start...")
 		end
 	end,
-	reset_event_horde = function (event, element, t, dt)
-		return string.format(element.event_id)
+	reset_event_horde = function(arg_121_0, arg_121_1, arg_121_2, arg_121_3)
+		return string.format(arg_121_1.event_id)
 	end,
-	force_horde = function (event, element, t, dt)
-		return string.format(element.horde_type)
+	force_horde = function(arg_122_0, arg_122_1, arg_122_2, arg_122_3)
+		return string.format(arg_122_1.horde_type)
 	end,
-	spawn = function (event, element, t, dt)
-		return element.breed_name
+	spawn = function(arg_123_0, arg_123_1, arg_123_2, arg_123_3)
+		return arg_123_1.breed_name
 	end,
-	spawn_at_raw = function (event, element, t, dt)
-		local debug_text
+	spawn_at_raw = function(arg_124_0, arg_124_1, arg_124_2, arg_124_3)
+		local var_124_0
 
-		if type(element.breed_name) == "table" then
-			debug_text = table.dump_string(element.breed_name)
+		if type(arg_124_1.breed_name) == "table" then
+			var_124_0 = table.dump_string(arg_124_1.breed_name)
 		else
-			debug_text = element.breed_name
+			var_124_0 = arg_124_1.breed_name
 		end
 
-		local terror_event_type = element.spawner_id or table.tostring(element.spawner_ids)
-
-		return terror_event_type .. " -> " .. debug_text
+		return (arg_124_1.spawner_id or table.tostring(arg_124_1.spawner_ids)) .. " -> " .. var_124_0
 	end,
-	spawn_patrol = function (event, element, t, dt)
-		return element.breed_name
+	spawn_patrol = function(arg_125_0, arg_125_1, arg_125_2, arg_125_3)
+		return arg_125_1.breed_name
 	end,
-	roaming_patrol = function (event, element, t, dt)
+	roaming_patrol = function(arg_126_0, arg_126_1, arg_126_2, arg_126_3)
 		return "roaming_patrol"
 	end,
-	start_event = function (event, element, t, dt)
-		return "event_name: " .. element.start_event_name
+	start_event = function(arg_127_0, arg_127_1, arg_127_2, arg_127_3)
+		return "event_name: " .. arg_127_1.start_event_name
 	end,
-	stop_event = function (event, element, t, dt)
-		return "event_name: " .. element.stop_event_name
+	stop_event = function(arg_128_0, arg_128_1, arg_128_2, arg_128_3)
+		return "event_name: " .. arg_128_1.stop_event_name
 	end,
-	start_mission = function (event, element, t)
-		return "mission_name: " .. element.mission_name
+	start_mission = function(arg_129_0, arg_129_1, arg_129_2)
+		return "mission_name: " .. arg_129_1.mission_name
 	end,
-	end_mission = function (event, element, t)
-		return "mission_name: " .. element.mission_name
+	end_mission = function(arg_130_0, arg_130_1, arg_130_2)
+		return "mission_name: " .. arg_130_1.mission_name
 	end,
-	flow_event = function (event, element, t, dt)
-		return "event_name: " .. tostring(element.flow_event_name)
+	flow_event = function(arg_131_0, arg_131_1, arg_131_2, arg_131_3)
+		return "event_name: " .. tostring(arg_131_1.flow_event_name)
 	end,
-	set_master_event_running = function (event, element, t, dt)
-		return "name: " .. element.name
+	set_master_event_running = function(arg_132_0, arg_132_1, arg_132_2, arg_132_3)
+		return "name: " .. arg_132_1.name
 	end,
-	play_stinger = function (event, element, t)
-		local p = element.optional_pos
+	play_stinger = function(arg_133_0, arg_133_1, arg_133_2)
+		local var_133_0 = arg_133_1.optional_pos
 
-		if p then
-			return string.format(" stinger-name: %s, pos: (%.1f,%.1f,%.1f) ", element.stinger_name, p[1], p[2], p[3])
+		if var_133_0 then
+			return string.format(" stinger-name: %s, pos: (%.1f,%.1f,%.1f) ", arg_133_1.stinger_name, var_133_0[1], var_133_0[2], var_133_0[3])
 		else
-			return " stinger-name:" .. element.stinger_name
+			return " stinger-name:" .. arg_133_1.stinger_name
 		end
 	end,
-	force_load_breed_package = function (event, element, t, dt)
-		return "breed_name: " .. element.breed_name
+	force_load_breed_package = function(arg_134_0, arg_134_1, arg_134_2, arg_134_3)
+		return "breed_name: " .. arg_134_1.breed_name
 	end,
-	stop_master_event = function (event, element, t, dt)
+	stop_master_event = function(arg_135_0, arg_135_1, arg_135_2, arg_135_3)
 		return ""
 	end,
-	spawn_encampment = function (event, element, t, dt)
+	spawn_encampment = function(arg_136_0, arg_136_1, arg_136_2, arg_136_3)
 		return ""
 	end,
-	teleport_player = function (event, element, t, dt)
-		return "teleport to portal_id:" .. element.portal_id
+	teleport_player = function(arg_137_0, arg_137_1, arg_137_2, arg_137_3)
+		return "teleport to portal_id:" .. arg_137_1.portal_id
 	end,
-	run_benchmark_func = function (event, element, t, dt)
-		return "func_name:" .. element.func_name
+	run_benchmark_func = function(arg_138_0, arg_138_1, arg_138_2, arg_138_3)
+		return "func_name:" .. arg_138_1.func_name
 	end,
-	set_time_challenge = function (event, element, t, dt)
+	set_time_challenge = function(arg_139_0, arg_139_1, arg_139_2, arg_139_3)
 		return "Time challenge started "
 	end,
-	do_volume_challenge = function (event, element, t, dt)
-		local volume_name = element.volume_name
-		local optional_data = TerrorEventMixer.optional_data[volume_name]
-		local time_inside = optional_data.time_inside
-		local duration = optional_data.duration
-		local complete_status = time_inside / duration
+	do_volume_challenge = function(arg_140_0, arg_140_1, arg_140_2, arg_140_3)
+		local var_140_0 = arg_140_1.volume_name
+		local var_140_1 = var_0_1.optional_data[var_140_0]
+		local var_140_2 = var_140_1.time_inside
+		local var_140_3 = var_140_1.duration
+		local var_140_4 = var_140_2 / var_140_3
 
-		return string.format("%.2f/%.2f - %.2f", time_inside, duration, complete_status)
+		return string.format("%.2f/%.2f - %.2f", var_140_2, var_140_3, var_140_4)
 	end,
-	activate_mutator = function (event, element, t, dt)
-		local name = element.name
-
-		return name
+	activate_mutator = function(arg_141_0, arg_141_1, arg_141_2, arg_141_3)
+		return arg_141_1.name
 	end,
-	set_wwise_override_state = function (event, element, t, dt)
-		local name = element.name
-
-		return name
+	set_wwise_override_state = function(arg_142_0, arg_142_1, arg_142_2, arg_142_3)
+		return arg_142_1.name
 	end,
-	freeze_story_trigger = function (event, element, t, dt)
-		local freeze = element.freeze
-
-		return freeze
-	end,
+	freeze_story_trigger = function(arg_143_0, arg_143_1, arg_143_2, arg_143_3)
+		return arg_143_1.freeze
+	end
 }
 
-TerrorEventMixer.reset = function ()
-	table.clear(TerrorEventMixer.active_events)
-	table.clear(TerrorEventMixer.start_event_list)
-	table.clear(TerrorEventMixer.finished_events)
-	table.clear(TerrorEventMixer.optional_data)
+function var_0_1.reset()
+	table.clear(var_0_1.active_events)
+	table.clear(var_0_1.start_event_list)
+	table.clear(var_0_1.finished_events)
+	table.clear(var_0_1.optional_data)
 end
 
-TerrorEventMixer.add_to_start_event_list = function (event_name, seed, origin_unit, origin_position)
-	local start_events = TerrorEventMixer.start_event_list
-	local id = TerrorEventMixer.incrementing_id
+function var_0_1.add_to_start_event_list(arg_145_0, arg_145_1, arg_145_2, arg_145_3)
+	local var_145_0 = var_0_1.start_event_list
+	local var_145_1 = var_0_1.incrementing_id
 
-	TerrorEventMixer.incrementing_id = TerrorEventMixer.incrementing_id + 1
-	start_events[#start_events + 1] = {
-		name = event_name,
+	var_0_1.incrementing_id = var_0_1.incrementing_id + 1
+	var_145_0[#var_145_0 + 1] = {
+		name = arg_145_0,
 		data = {
-			seed = seed,
-			origin_unit = origin_unit,
-			origin_position = origin_position,
+			seed = arg_145_1,
+			origin_unit = arg_145_2,
+			origin_position = arg_145_3
 		},
-		id = id,
+		id = var_145_1
 	}
 
-	return id
+	return var_145_1
 end
 
-TerrorEventMixer.start_random_event = function (event_chunk_name)
-	local level_transition_handler = Managers.level_transition_handler
+function var_0_1.start_random_event(arg_146_0)
+	local var_146_0 = Managers.level_transition_handler
 
-	if level_transition_handler:needs_level_load() then
-		print("TerrorEventMixer.start_random_event:", event_chunk_name, " ignored because game is transitioning away.")
+	if var_146_0:needs_level_load() then
+		print("TerrorEventMixer.start_random_event:", arg_146_0, " ignored because game is transitioning away.")
 
 		return
 	end
 
-	local level_key = level_transition_handler:get_current_level_keys()
-	local event_chunk = WeightedRandomTerrorEvents[level_key][event_chunk_name]
+	local var_146_1 = var_146_0:get_current_level_keys()
+	local var_146_2 = WeightedRandomTerrorEvents[var_146_1][arg_146_0]
 
-	fassert(event_chunk, "Cannot find a WeightedRandomTerrorEvent called %s", tostring(event_chunk_name))
+	fassert(var_146_2, "Cannot find a WeightedRandomTerrorEvent called %s", tostring(arg_146_0))
 
-	local index = LoadedDice.roll_easy(event_chunk.loaded_probability_table)
+	local var_146_3 = var_146_2[LoadedDice.roll_easy(var_146_2.loaded_probability_table) * 2 - 1]
+	local var_146_4 = var_0_1.add_to_start_event_list(var_146_3)
 
-	index = index * 2 - 1
+	print("TerrorEventMixer.start_random_event:", arg_146_0, "->", var_146_3)
 
-	local event_name = event_chunk[index]
-	local id = TerrorEventMixer.add_to_start_event_list(event_name)
-
-	print("TerrorEventMixer.start_random_event:", event_chunk_name, "->", event_name)
-
-	return id
+	return var_146_4
 end
 
-local function is_element_available(element, data)
-	local active_tags = data.active_tags
-	local factions = data.factions
-	local current_difficulty = data.current_difficulty
-	local current_difficulty_tweak = data.current_difficulty_tweak
+local function var_0_2(arg_147_0, arg_147_1)
+	local var_147_0 = arg_147_1.active_tags
+	local var_147_1 = arg_147_1.factions
+	local var_147_2 = arg_147_1.current_difficulty
+	local var_147_3 = arg_147_1.current_difficulty_tweak
 
-	if element.minimum_difficulty_tweak and current_difficulty_tweak < element.minimum_difficulty_tweak then
+	if arg_147_0.minimum_difficulty_tweak and var_147_3 < arg_147_0.minimum_difficulty_tweak then
 		return false
 	end
 
-	if element.difficulty_requirement then
-		if current_difficulty < element.difficulty_requirement then
+	if arg_147_0.difficulty_requirement then
+		if var_147_2 < arg_147_0.difficulty_requirement then
 			return false
 		end
-	elseif element.only_on_difficulty and current_difficulty ~= element.only_on_difficulty then
+	elseif arg_147_0.only_on_difficulty and var_147_2 ~= arg_147_0.only_on_difficulty then
 		return false
 	end
 
-	if factions and element.faction_requirement then
-		local requirement = element.faction_requirement
+	if var_147_1 and arg_147_0.faction_requirement then
+		local var_147_4 = arg_147_0.faction_requirement
 
-		if not table.contains(factions, requirement) then
+		if not table.contains(var_147_1, var_147_4) then
 			return false
 		end
 	end
 
-	if factions and element.faction_requirement_list then
-		local requirements = element.faction_requirement_list
+	if var_147_1 and arg_147_0.faction_requirement_list then
+		local var_147_5 = arg_147_0.faction_requirement_list
 
-		for _, requirement in ipairs(requirements) do
-			if not table.contains(factions, requirement) then
+		for iter_147_0, iter_147_1 in ipairs(var_147_5) do
+			if not table.contains(var_147_1, iter_147_1) then
 				return false
 			end
 		end
 	end
 
-	if element.tag_requirement_list then
-		local tags = element.tag_requirement_list
+	if arg_147_0.tag_requirement_list then
+		local var_147_6 = arg_147_0.tag_requirement_list
 
-		for _, tag in ipairs(tags) do
-			if not active_tags or not table.contains(active_tags, tag) then
+		for iter_147_2, iter_147_3 in ipairs(var_147_6) do
+			if not var_147_0 or not table.contains(var_147_0, iter_147_3) then
 				return false
 			end
 		end
@@ -1657,170 +1607,168 @@ local function is_element_available(element, data)
 	return true
 end
 
-local process_terror_event_recursive
+local var_0_3
 
-local function process_terror_event_recursive_element(element, data, processed_elements, base_event_name, depth)
-	if element[1] == "inject_event" then
-		local injected_event_name
+local function var_0_4(arg_148_0, arg_148_1, arg_148_2, arg_148_3, arg_148_4)
+	if arg_148_0[1] == "inject_event" then
+		local var_148_0
 
-		if element.event_name_list then
-			local seed, index = Math.next_random(data.seed, 1, #element.event_name_list)
+		if arg_148_0.event_name_list then
+			local var_148_1, var_148_2 = Math.next_random(arg_148_1.seed, 1, #arg_148_0.event_name_list)
 
-			injected_event_name = element.event_name_list[index]
-			data.seed = seed
-		elseif element.weighted_event_names then
-			local total_weight = 0
+			var_148_0 = arg_148_0.event_name_list[var_148_2]
+			arg_148_1.seed = var_148_1
+		elseif arg_148_0.weighted_event_names then
+			local var_148_3 = 0
 
-			for _, sub_element in ipairs(element.weighted_event_names) do
-				total_weight = total_weight + sub_element.weight
+			for iter_148_0, iter_148_1 in ipairs(arg_148_0.weighted_event_names) do
+				var_148_3 = var_148_3 + iter_148_1.weight
 			end
 
-			local seed, random = Math.next_random(data.seed, 0, total_weight)
+			local var_148_4, var_148_5 = Math.next_random(arg_148_1.seed, 0, var_148_3)
 
-			data.seed = seed
+			arg_148_1.seed = var_148_4
 
-			local weight_sum = 0
+			local var_148_6 = 0
 
-			for _, sub_element in ipairs(element.weighted_event_names) do
-				weight_sum = weight_sum + sub_element.weight
+			for iter_148_2, iter_148_3 in ipairs(arg_148_0.weighted_event_names) do
+				var_148_6 = var_148_6 + iter_148_3.weight
 
-				if random <= weight_sum then
-					injected_event_name = sub_element.event_name
+				if var_148_5 <= var_148_6 then
+					var_148_0 = iter_148_3.event_name
 
 					break
 				end
 			end
 
-			if injected_event_name == nil then
+			if var_148_0 == nil then
 				assert(false, "Failed getting a random weighted element.")
 			end
 		else
-			injected_event_name = element.event_name
+			var_148_0 = arg_148_0.event_name
 		end
 
-		process_terror_event_recursive(processed_elements, data, depth + 1, injected_event_name)
-	elseif element[1] == "one_of" then
-		for _, possible_element in ipairs(element[2]) do
-			if is_element_available(possible_element, data) then
-				process_terror_event_recursive_element(possible_element, data, processed_elements, base_event_name, depth)
+		var_0_3(arg_148_2, arg_148_1, arg_148_4 + 1, var_148_0)
+	elseif arg_148_0[1] == "one_of" then
+		for iter_148_4, iter_148_5 in ipairs(arg_148_0[2]) do
+			if var_0_2(iter_148_5, arg_148_1) then
+				var_0_4(iter_148_5, arg_148_1, arg_148_2, arg_148_3, arg_148_4)
 
 				break
 			end
 		end
 	else
-		element.base_event_name = base_event_name
-		processed_elements[#processed_elements + 1] = element
+		arg_148_0.base_event_name = arg_148_3
+		arg_148_2[#arg_148_2 + 1] = arg_148_0
 	end
 end
 
-local MAX_INJECTION_DEPTH = 10
+local var_0_5 = 10
 
-function process_terror_event_recursive(processed_elements, data, depth, event_name)
-	fassert(depth < MAX_INJECTION_DEPTH, "Injecting terror events lead to high level of recursion, please check if there is a possible loop, or increase MAX_INJECTION_DEPTH.")
+function var_0_3(arg_149_0, arg_149_1, arg_149_2, arg_149_3)
+	fassert(arg_149_2 < var_0_5, "Injecting terror events lead to high level of recursion, please check if there is a possible loop, or increase MAX_INJECTION_DEPTH.")
 
-	local level_transition_handler = Managers.level_transition_handler
-	local level_key = level_transition_handler:get_current_level_keys()
-	local injected_elements = TerrorEventBlueprints[level_key][event_name] or GenericTerrorEvents[event_name]
+	local var_149_0 = Managers.level_transition_handler:get_current_level_keys()
+	local var_149_1 = TerrorEventBlueprints[var_149_0][arg_149_3] or GenericTerrorEvents[arg_149_3]
 
-	fassert(injected_elements, "No terror event called '%s', exists. Make sure it is added to level %s, or generic, terror event file if its supposed to be there.", event_name, level_key)
+	fassert(var_149_1, "No terror event called '%s', exists. Make sure it is added to level %s, or generic, terror event file if its supposed to be there.", arg_149_3, var_149_0)
 
-	for _, element in ipairs(injected_elements) do
-		if is_element_available(element, data) then
-			process_terror_event_recursive_element(element, data, processed_elements, event_name, depth)
+	for iter_149_0, iter_149_1 in ipairs(var_149_1) do
+		if var_0_2(iter_149_1, arg_149_1) then
+			var_0_4(iter_149_1, arg_149_1, arg_149_0, arg_149_3, arg_149_2)
 		end
 	end
 
-	return processed_elements
+	return arg_149_0
 end
 
-local function process_terror_event(data, base_event_name)
-	local active_tags = Managers.state.game_mode._mutator_handler:get_terror_event_tags()
-	local conflict_director = Managers.state.conflict
-	local director = ConflictDirectors[conflict_director.initial_conflict_settings]
-	local factions = director.factions
-	local current_difficulty, current_difficulty_tweak = Managers.state.difficulty:get_difficulty_rank()
+local function var_0_6(arg_150_0, arg_150_1)
+	local var_150_0 = Managers.state.game_mode._mutator_handler:get_terror_event_tags()
+	local var_150_1 = Managers.state.conflict
+	local var_150_2 = ConflictDirectors[var_150_1.initial_conflict_settings].factions
+	local var_150_3, var_150_4 = Managers.state.difficulty:get_difficulty_rank()
 
-	data.current_difficulty = current_difficulty
-	data.current_difficulty_tweak = current_difficulty_tweak
-	data.factions = factions
-	data.active_tags = active_tags
+	arg_150_0.current_difficulty = var_150_3
+	arg_150_0.current_difficulty_tweak = var_150_4
+	arg_150_0.factions = var_150_2
+	arg_150_0.active_tags = var_150_0
 
-	local processed_elements = process_terror_event_recursive({}, data, 0, base_event_name)
+	local var_150_5 = var_0_3({}, arg_150_0, 0, arg_150_1)
 
 	if script_data.debug_terror then
-		print("process_terror_event: " .. table.tostring(processed_elements))
+		print("process_terror_event: " .. table.tostring(var_150_5))
 	end
 
-	return processed_elements
+	return var_150_5
 end
 
-TerrorEventMixer.start_event = function (event_name, data, id)
-	if script_data.only_allowed_terror_event ~= event_name and script_data.ai_terror_events_disabled then
+function var_0_1.start_event(arg_151_0, arg_151_1, arg_151_2)
+	if script_data.only_allowed_terror_event ~= arg_151_0 and script_data.ai_terror_events_disabled then
 		return
 	end
 
-	if data then
-		data.seed = data.seed or 0
+	if arg_151_1 then
+		arg_151_1.seed = arg_151_1.seed or 0
 	else
-		data = {
-			seed = 0,
+		arg_151_1 = {
+			seed = 0
 		}
 	end
 
-	local seed, _ = Math.next_random(data.seed)
+	local var_151_0, var_151_1 = Math.next_random(arg_151_1.seed)
 
-	data.seed = seed
+	arg_151_1.seed = var_151_0
 
-	print(string.format("TerrorEventMixer.start_event: %s (seed: %d)", event_name, data.seed))
+	print(string.format("TerrorEventMixer.start_event: %s (seed: %d)", arg_151_0, arg_151_1.seed))
 
-	local active_events = TerrorEventMixer.active_events
-	local elements = process_terror_event(data, event_name)
+	local var_151_2 = var_0_1.active_events
+	local var_151_3 = var_0_6(arg_151_1, arg_151_0)
 
-	Managers.state.game_mode:post_process_terror_event(elements)
+	Managers.state.game_mode:post_process_terror_event(var_151_3)
 
-	if not id then
-		id = TerrorEventMixer.incrementing_id
-		TerrorEventMixer.incrementing_id = TerrorEventMixer.incrementing_id + 1
+	if not arg_151_2 then
+		arg_151_2 = var_0_1.incrementing_id
+		var_0_1.incrementing_id = var_0_1.incrementing_id + 1
 	end
 
-	if #elements > 0 then
-		local new_event = {
-			ends_at = 0,
+	if #var_151_3 > 0 then
+		local var_151_4 = {
 			index = 1,
-			name = event_name,
-			elements = elements,
-			data = data,
+			ends_at = 0,
+			name = arg_151_0,
+			elements = var_151_3,
+			data = arg_151_1,
 			max_active_enemies = math.huge,
-			id = id,
+			id = arg_151_2
 		}
 
-		active_events[#active_events + 1] = new_event
+		var_151_2[#var_151_2 + 1] = var_151_4
 
-		local element = elements[1]
-		local func_name = element[1]
-		local t = Managers.time:time("game")
+		local var_151_5 = var_151_3[1]
+		local var_151_6 = var_151_5[1]
+		local var_151_7 = Managers.time:time("game")
 
-		TerrorEventMixer.init_functions[func_name](new_event, element, t)
+		var_0_1.init_functions[var_151_6](var_151_4, var_151_5, var_151_7)
 	end
 
-	Managers.telemetry_events:terror_event_started(event_name)
+	Managers.telemetry_events:terror_event_started(arg_151_0)
 end
 
-TerrorEventMixer.stop_event = function (event_name)
-	print("TerrorEventMixer.stop_event:", event_name)
+function var_0_1.stop_event(arg_152_0)
+	print("TerrorEventMixer.stop_event:", arg_152_0)
 
-	local active_events = TerrorEventMixer.active_events
-	local num_events = #active_events
+	local var_152_0 = var_0_1.active_events
+	local var_152_1 = #var_152_0
 
-	for i = 1, num_events do
-		local event = active_events[i]
+	for iter_152_0 = 1, var_152_1 do
+		local var_152_2 = var_152_0[iter_152_0]
 
-		if event.name == event_name then
-			table.remove(active_events, i)
-			table.insert(TerrorEventMixer.finished_events, event.name)
+		if var_152_2.name == arg_152_0 then
+			table.remove(var_152_0, iter_152_0)
+			table.insert(var_0_1.finished_events, var_152_2.name)
 
-			if i <= TerrorEventMixer.active_event_i then
-				TerrorEventMixer.active_event_i = TerrorEventMixer.active_event_i - 1
+			if iter_152_0 <= var_0_1.active_event_i then
+				var_0_1.active_event_i = var_0_1.active_event_i - 1
 			end
 
 			break
@@ -1828,39 +1776,34 @@ TerrorEventMixer.stop_event = function (event_name)
 	end
 end
 
-TerrorEventMixer.find_event = function (event_name)
-	local active_events = TerrorEventMixer.active_events
-	local num_events = #active_events
+function var_0_1.find_event(arg_153_0)
+	local var_153_0 = var_0_1.active_events
+	local var_153_1 = #var_153_0
 
-	for i = 1, num_events do
-		local event = active_events[i]
+	for iter_153_0 = 1, var_153_1 do
+		local var_153_2 = var_153_0[iter_153_0]
 
-		if event.name == event_name then
-			return event
+		if var_153_2.name == arg_153_0 then
+			return var_153_2
 		end
 	end
 end
 
-TerrorEventMixer.is_event_id_active_or_pending = function (id)
-	local active_events = TerrorEventMixer.active_events
-	local num_events = #active_events
+function var_0_1.is_event_id_active_or_pending(arg_154_0)
+	local var_154_0 = var_0_1.active_events
+	local var_154_1 = #var_154_0
 
-	for i = 1, num_events do
-		local event = active_events[i]
-
-		if event.id == id then
+	for iter_154_0 = 1, var_154_1 do
+		if var_154_0[iter_154_0].id == arg_154_0 then
 			return true
 		end
 	end
 
-	local start_event_list = TerrorEventMixer.start_event_list
+	local var_154_2 = var_0_1.start_event_list
+	local var_154_3 = #var_154_2
 
-	num_events = #start_event_list
-
-	for i = 1, num_events do
-		local event = start_event_list[i]
-
-		if event.id == id then
+	for iter_154_1 = 1, var_154_3 do
+		if var_154_2[iter_154_1].id == arg_154_0 then
 			return true
 		end
 	end
@@ -1868,245 +1811,241 @@ TerrorEventMixer.is_event_id_active_or_pending = function (id)
 	return false
 end
 
-TerrorEventMixer.update = function (t, dt, gui)
-	local active_events = TerrorEventMixer.active_events
+function var_0_1.update(arg_155_0, arg_155_1, arg_155_2)
+	local var_155_0 = var_0_1.active_events
 
-	TerrorEventMixer.active_event_i = 1
+	var_0_1.active_event_i = 1
 
-	while TerrorEventMixer.active_event_i <= #active_events do
-		local event = active_events[TerrorEventMixer.active_event_i]
-		local event_completed = TerrorEventMixer.run_event(event, t, dt)
+	while var_0_1.active_event_i <= #var_155_0 do
+		local var_155_1 = var_155_0[var_0_1.active_event_i]
 
-		if event_completed and TerrorEventMixer.find_event(event.name) then
-			table.remove(active_events, TerrorEventMixer.active_event_i)
-			table.insert(TerrorEventMixer.finished_events, event.name)
+		if var_0_1.run_event(var_155_1, arg_155_0, arg_155_1) and var_0_1.find_event(var_155_1.name) then
+			table.remove(var_155_0, var_0_1.active_event_i)
+			table.insert(var_0_1.finished_events, var_155_1.name)
 		else
-			TerrorEventMixer.active_event_i = TerrorEventMixer.active_event_i + 1
+			var_0_1.active_event_i = var_0_1.active_event_i + 1
 		end
 	end
 
-	TerrorEventMixer.active_event_i = -1
+	var_0_1.active_event_i = -1
 
-	local start_events = TerrorEventMixer.start_event_list
+	local var_155_2 = var_0_1.start_event_list
 
-	for i = 1, #start_events do
-		local event = start_events[i]
-		local event_name = event.name
-		local data = event.data
-		local id = event.id
+	for iter_155_0 = 1, #var_155_2 do
+		local var_155_3 = var_155_2[iter_155_0]
+		local var_155_4 = var_155_3.name
+		local var_155_5 = var_155_3.data
+		local var_155_6 = var_155_3.id
 
-		TerrorEventMixer.start_event(event_name, data, id)
+		var_0_1.start_event(var_155_4, var_155_5, var_155_6)
 
-		start_events[i] = nil
+		var_155_2[iter_155_0] = nil
 	end
 
-	if script_data.debug_terror and gui then
-		TerrorEventMixer.debug(gui, active_events, t, dt)
+	if script_data.debug_terror and arg_155_2 then
+		var_0_1.debug(arg_155_2, var_155_0, arg_155_0, arg_155_1)
 	end
 end
 
-TerrorEventMixer.run_event = function (event, t, dt)
-	local elements = event.elements
-	local index = event.index
-	local element = elements[index]
-	local active_enemies = Managers.state.performance:num_active_enemies()
+function var_0_1.run_event(arg_156_0, arg_156_1, arg_156_2)
+	local var_156_0 = arg_156_0.elements
+	local var_156_1 = arg_156_0.index
+	local var_156_2 = var_156_0[var_156_1]
 
-	if active_enemies > event.max_active_enemies then
-		element.ends_at = (element.ends_at or 0) + dt
+	if Managers.state.performance:num_active_enemies() > arg_156_0.max_active_enemies then
+		var_156_2.ends_at = (var_156_2.ends_at or 0) + arg_156_2
 	else
-		local func_name = element[1]
-		local element_name = element and element.composition_type or element.breed_name
+		local var_156_3 = var_156_2[1]
+		local var_156_4 = var_156_2 and var_156_2.composition_type or var_156_2.breed_name
 
-		if script_data.debug_terror and element_name then
-			printf("[Terror event] Started terror even function: %s with %s", func_name, element_name)
+		if script_data.debug_terror and var_156_4 then
+			printf("[Terror event] Started terror even function: %s with %s", var_156_3, var_156_4)
 		end
 
-		local continue = TerrorEventMixer.run_functions[func_name](event, element, t, dt)
-
-		if continue then
-			if event.destroy then
+		if var_0_1.run_functions[var_156_3](arg_156_0, var_156_2, arg_156_1, arg_156_2) then
+			if arg_156_0.destroy then
 				return true
 			end
 
-			index = index + 1
+			local var_156_5 = var_156_1 + 1
 
-			if index > #elements then
+			if var_156_5 > #var_156_0 then
 				return true
 			end
 
-			event.index = index
+			arg_156_0.index = var_156_5
 
-			local element = elements[index]
-			local func_name = element[1]
+			local var_156_6 = var_156_0[var_156_5]
+			local var_156_7 = var_156_6[1]
 
-			TerrorEventMixer.init_functions[func_name](event, element, t)
+			var_0_1.init_functions[var_156_7](arg_156_0, var_156_6, arg_156_1)
 		end
 	end
 end
 
-local tiny_font_size = 12
-local tiny_font = "arial"
-local tiny_font_mtrl = "materials/fonts/" .. tiny_font
-local resx, resy = Application.resolution()
-local debug_win_width = 400
-local debug_x = 0
+local var_0_7 = 12
+local var_0_8 = "arial"
+local var_0_9 = "materials/fonts/" .. var_0_8
+local var_0_10, var_0_11 = Application.resolution()
+local var_0_12 = 400
+local var_0_13 = 0
 
-TerrorEventMixer.debug = function (gui, active_events, t, dt)
+function var_0_1.debug(arg_157_0, arg_157_1, arg_157_2, arg_157_3)
 	if DebugKeyHandler.key_pressed("mouse_middle_held", "pan terror event mixer", "ai debugger") then
-		local input_service = Managers.free_flight.input_manager:get_service("Debug")
-		local look = input_service:get("look")
+		local var_157_0 = Managers.free_flight.input_manager:get_service("Debug"):get("look")
 
-		debug_x = debug_x - look.x * 0.001
+		var_0_13 = var_0_13 - var_157_0.x * 0.001
 	end
 
-	local x, y = 0, 0
+	local var_157_1 = 0
+	local var_157_2 = 0
 
-	for i = 1, #active_events do
-		local event = active_events[i]
+	for iter_157_0 = 1, #arg_157_1 do
+		local var_157_3 = arg_157_1[iter_157_0]
 
-		if event then
-			TerrorEventMixer.debug_event(gui, event, t, dt, x, y, debug_x * resx, i == 1)
+		if var_157_3 then
+			var_0_1.debug_event(arg_157_0, var_157_3, arg_157_2, arg_157_3, var_157_1, var_157_2, var_0_13 * var_0_10, iter_157_0 == 1)
 
-			x = x + debug_win_width + 15
+			var_157_1 = var_157_1 + var_0_12 + 15
 		end
 	end
 
-	for name, value in pairs(TerrorEventMixer.optional_data) do
-		if type(value) == "number" then
-			local duration = math.abs(t - value)
+	for iter_157_1, iter_157_2 in pairs(var_0_1.optional_data) do
+		if type(iter_157_2) == "number" then
+			local var_157_4 = math.abs(arg_157_2 - iter_157_2)
 
-			Debug.text("Time challenge running: %s Time left: %0.1f ", name, duration)
+			Debug.text("Time challenge running: %s Time left: %0.1f ", iter_157_1, var_157_4)
 		end
 	end
 end
 
-TerrorEventMixer.debug_event = function (gui, event, t, dt, x1, y1, panning_x, render_master)
-	local elements = event.elements
-	local index = event.index
-	local element = elements[index]
-	local func_name = element[1]
-	local borderx, bordery = 20 + panning_x, 280
+function var_0_1.debug_event(arg_158_0, arg_158_1, arg_158_2, arg_158_3, arg_158_4, arg_158_5, arg_158_6, arg_158_7)
+	local var_158_0 = arg_158_1.elements
+	local var_158_1 = arg_158_1.index
+	local var_158_2 = var_158_0[var_158_1][1]
+	local var_158_3 = 20 + arg_158_6
+	local var_158_4 = 280
 
-	x1 = x1 + borderx + 20
-	y1 = y1 + bordery + 40
+	arg_158_4 = arg_158_4 + var_158_3 + 20
+	arg_158_5 = arg_158_5 + var_158_4 + 40
 
-	local y2 = y1
-	local layer = 200
-	local completed_color = Colors.get_color_with_alpha("gray", 255)
-	local frozen_color = Colors.get_color_with_alpha("cyan", 255)
-	local running_color = Colors.get_color_with_alpha("lavender", 255)
-	local unrun_color = Colors.get_color_with_alpha("cadet_blue", 255)
-	local header_color = Colors.get_color_with_alpha("orange", 255)
+	local var_158_5 = arg_158_5
+	local var_158_6 = 200
+	local var_158_7 = Colors.get_color_with_alpha("gray", 255)
+	local var_158_8 = Colors.get_color_with_alpha("cyan", 255)
+	local var_158_9 = Colors.get_color_with_alpha("lavender", 255)
+	local var_158_10 = Colors.get_color_with_alpha("cadet_blue", 255)
+	local var_158_11 = Colors.get_color_with_alpha("orange", 255)
 
-	ScriptGUI.ictext(gui, resx, resy, "Event: " .. event.name, tiny_font_mtrl, tiny_font_size, tiny_font, x1 - 10, y2, layer, header_color)
+	ScriptGUI.ictext(arg_158_0, var_0_10, var_0_11, "Event: " .. arg_158_1.name, var_0_9, var_0_7, var_0_8, arg_158_4 - 10, var_158_5, var_158_6, var_158_11)
 
-	y2 = y2 + 20
+	local var_158_12 = var_158_5 + 20
 
-	if event.data.spawn_counter then
-		for spawn_counter_category, count in pairs(event.data.spawn_counter) do
-			local text = string.format("#%s:%d", spawn_counter_category, count)
+	if arg_158_1.data.spawn_counter then
+		for iter_158_0, iter_158_1 in pairs(arg_158_1.data.spawn_counter) do
+			local var_158_13 = string.format("#%s:%d", iter_158_0, iter_158_1)
 
-			ScriptGUI.ictext(gui, resx, resy, text, tiny_font_mtrl, tiny_font_size, tiny_font, x1, y2, layer, unrun_color)
+			ScriptGUI.ictext(arg_158_0, var_0_10, var_0_11, var_158_13, var_0_9, var_0_7, var_0_8, arg_158_4, var_158_12, var_158_6, var_158_10)
 
-			y2 = y2 + 20
+			var_158_12 = var_158_12 + 20
 		end
 	end
 
-	local start_index = 1
+	local var_158_14 = 1
 
-	if index > 9 then
-		start_index = index - 9
+	if var_158_1 > 9 then
+		var_158_14 = var_158_1 - 9
 	end
 
-	local end_index = #elements
+	local var_158_15 = #var_158_0
 
-	if end_index - start_index > 18 then
-		end_index = start_index + 18
+	if var_158_15 - var_158_14 > 18 then
+		var_158_15 = var_158_14 + 18
 	end
 
-	for i = start_index, index - 1 do
-		local element = elements[i]
-		local func_name = element[1]
-		local base_event_name = element.base_event_name
-		local debug_text = TerrorEventMixer.debug_functions[func_name] and TerrorEventMixer.debug_functions[func_name](event, element, t, dt) or ""
-		local text = string.format(" %d] %s: %s %s", i, base_event_name, func_name, debug_text)
+	for iter_158_2 = var_158_14, var_158_1 - 1 do
+		local var_158_16 = var_158_0[iter_158_2]
+		local var_158_17 = var_158_16[1]
+		local var_158_18 = var_158_16.base_event_name
+		local var_158_19 = var_0_1.debug_functions[var_158_17] and var_0_1.debug_functions[var_158_17](arg_158_1, var_158_16, arg_158_2, arg_158_3) or ""
+		local var_158_20 = string.format(" %d] %s: %s %s", iter_158_2, var_158_18, var_158_17, var_158_19)
 
-		ScriptGUI.ictext(gui, resx, resy, text, tiny_font_mtrl, tiny_font_size, tiny_font, x1, y2, layer, completed_color)
+		ScriptGUI.ictext(arg_158_0, var_0_10, var_0_11, var_158_20, var_0_9, var_0_7, var_0_8, arg_158_4, var_158_12, var_158_6, var_158_7)
 
-		y2 = y2 + 20
+		var_158_12 = var_158_12 + 20
 	end
 
-	local active_enemies = Managers.state.performance:num_active_enemies()
-	local event_frozen
+	local var_158_21 = Managers.state.performance:num_active_enemies()
+	local var_158_22
 
-	if active_enemies > event.max_active_enemies then
-		event_frozen = true
+	if var_158_21 > arg_158_1.max_active_enemies then
+		var_158_22 = true
 	end
 
-	local element = elements[index]
-	local func_name = element[1]
-	local base_event_name = element.base_event_name
-	local debug_text = TerrorEventMixer.debug_functions[func_name] and TerrorEventMixer.debug_functions[func_name](event, element, t, dt) or ""
-	local ends_at = element.duration and string.format("time: %.1f", event.ends_at - t) or ""
-	local text
+	local var_158_23 = var_158_0[var_158_1]
+	local var_158_24 = var_158_23[1]
+	local var_158_25 = var_158_23.base_event_name
+	local var_158_26 = var_0_1.debug_functions[var_158_24] and var_0_1.debug_functions[var_158_24](arg_158_1, var_158_23, arg_158_2, arg_158_3) or ""
+	local var_158_27 = var_158_23.duration and string.format("time: %.1f", arg_158_1.ends_at - arg_158_2) or ""
+	local var_158_28
 
-	if event_frozen then
-		text = string.format(" %d] %s: %s %s %s FROZEN: %d / %d", index, base_event_name, func_name, debug_text, ends_at, active_enemies, event.max_active_enemies)
+	if var_158_22 then
+		var_158_28 = string.format(" %d] %s: %s %s %s FROZEN: %d / %d", var_158_1, var_158_25, var_158_24, var_158_26, var_158_27, var_158_21, arg_158_1.max_active_enemies)
 	else
-		text = string.format(" %d] %s: %s %s %s", index, base_event_name, func_name, debug_text, ends_at)
+		var_158_28 = string.format(" %d] %s: %s %s %s", var_158_1, var_158_25, var_158_24, var_158_26, var_158_27)
 	end
 
-	ScriptGUI.ictext(gui, resx, resy, "==>", tiny_font_mtrl, tiny_font_size, tiny_font, x1 - 20, y2, layer, event_frozen and frozen_color or running_color)
-	ScriptGUI.ictext(gui, resx, resy, text, tiny_font_mtrl, tiny_font_size, tiny_font, x1, y2, layer, event_frozen and frozen_color or running_color)
+	ScriptGUI.ictext(arg_158_0, var_0_10, var_0_11, "==>", var_0_9, var_0_7, var_0_8, arg_158_4 - 20, var_158_12, var_158_6, var_158_22 and var_158_8 or var_158_9)
+	ScriptGUI.ictext(arg_158_0, var_0_10, var_0_11, var_158_28, var_0_9, var_0_7, var_0_8, arg_158_4, var_158_12, var_158_6, var_158_22 and var_158_8 or var_158_9)
 
-	y2 = y2 + 20
+	local var_158_29 = var_158_12 + 20
 
-	for i = index + 1, end_index do
-		local element = elements[i]
-		local func_name = element[1]
-		local base_event_name = element.base_event_name
-		local duration = ""
-		local text = string.format(" %d] %s: %s %s", i, base_event_name, func_name, duration)
+	for iter_158_3 = var_158_1 + 1, var_158_15 do
+		local var_158_30 = var_158_0[iter_158_3]
+		local var_158_31 = var_158_30[1]
+		local var_158_32 = var_158_30.base_event_name
+		local var_158_33 = ""
+		local var_158_34 = string.format(" %d] %s: %s %s", iter_158_3, var_158_32, var_158_31, var_158_33)
 
-		ScriptGUI.ictext(gui, resx, resy, text, tiny_font_mtrl, tiny_font_size, tiny_font, x1, y2, layer, unrun_color)
+		ScriptGUI.ictext(arg_158_0, var_0_10, var_0_11, var_158_34, var_0_9, var_0_7, var_0_8, arg_158_4, var_158_29, var_158_6, var_158_10)
 
-		y2 = y2 + 20
+		var_158_29 = var_158_29 + 20
 	end
 
-	ScriptGUI.icrect(gui, resx, resy, borderx, bordery, x1 + debug_win_width, y2, layer - 1, Color(200, 20, 20, 20))
+	ScriptGUI.icrect(arg_158_0, var_0_10, var_0_11, var_158_3, var_158_4, arg_158_4 + var_0_12, var_158_29, var_158_6 - 1, Color(200, 20, 20, 20))
 
-	if render_master then
-		local disabled_color = Colors.get_color_with_alpha("red", 255)
-		local master_color = Colors.get_color_with_alpha("lawn_green", 255)
-		local running_master_event = Managers.state.conflict.running_master_event
+	if arg_158_7 then
+		local var_158_35 = Colors.get_color_with_alpha("red", 255)
+		local var_158_36 = Colors.get_color_with_alpha("lawn_green", 255)
+		local var_158_37 = Managers.state.conflict.running_master_event
 
-		if running_master_event then
-			ScriptGUI.ictext(gui, resx, resy, "Master Event: ", tiny_font_mtrl, tiny_font_size, tiny_font, x1 - 10, bordery - 6, layer, header_color)
-			ScriptGUI.ictext(gui, resx, resy, running_master_event, tiny_font_mtrl, tiny_font_size, tiny_font, x1 - 10 + 100, bordery - 6, layer, master_color)
+		if var_158_37 then
+			ScriptGUI.ictext(arg_158_0, var_0_10, var_0_11, "Master Event: ", var_0_9, var_0_7, var_0_8, arg_158_4 - 10, var_158_4 - 6, var_158_6, var_158_11)
+			ScriptGUI.ictext(arg_158_0, var_0_10, var_0_11, var_158_37, var_0_9, var_0_7, var_0_8, arg_158_4 - 10 + 100, var_158_4 - 6, var_158_6, var_158_36)
 		else
-			ScriptGUI.ictext(gui, resx, resy, "Master Event: ", tiny_font_mtrl, tiny_font_size, tiny_font, x1 - 10, bordery - 6, layer, header_color)
-			ScriptGUI.ictext(gui, resx, resy, "disabled", tiny_font_mtrl, tiny_font_size, tiny_font, x1 - 10 + 75, bordery - 6, layer, disabled_color)
+			ScriptGUI.ictext(arg_158_0, var_0_10, var_0_11, "Master Event: ", var_0_9, var_0_7, var_0_8, arg_158_4 - 10, var_158_4 - 6, var_158_6, var_158_11)
+			ScriptGUI.ictext(arg_158_0, var_0_10, var_0_11, "disabled", var_0_9, var_0_7, var_0_8, arg_158_4 - 10 + 75, var_158_4 - 6, var_158_6, var_158_35)
 		end
 
-		ScriptGUI.ictext(gui, resx, resy, string.format("Active enemies: %d / %d", active_enemies, event.max_active_enemies), tiny_font_mtrl, tiny_font_size, tiny_font, x1 - 10, bordery + 12, layer, event_frozen and disabled_color or master_color)
-		ScriptGUI.icrect(gui, resx, resy, borderx, bordery - 22, x1 + debug_win_width, bordery, layer - 1, Color(200, 20, 20, 20))
+		ScriptGUI.ictext(arg_158_0, var_0_10, var_0_11, string.format("Active enemies: %d / %d", var_158_21, arg_158_1.max_active_enemies), var_0_9, var_0_7, var_0_8, arg_158_4 - 10, var_158_4 + 12, var_158_6, var_158_22 and var_158_35 or var_158_36)
+		ScriptGUI.icrect(arg_158_0, var_0_10, var_0_11, var_158_3, var_158_4 - 22, arg_158_4 + var_0_12, var_158_4, var_158_6 - 1, Color(200, 20, 20, 20))
 	end
 end
 
-local fail
-local s = "\n"
+local var_0_14
+local var_0_15 = "\n"
 
-for event_name, elements in pairs(TerrorEventBlueprints) do
-	for i = 1, #elements do
-		local element_name = elements[i][1]
+for iter_0_0, iter_0_1 in pairs(TerrorEventBlueprints) do
+	for iter_0_2 = 1, #iter_0_1 do
+		local var_0_16 = iter_0_1[iter_0_2][1]
 
-		if not TerrorEventMixer.init_functions[element_name] then
-			s = s .. string.format("Bad terror event: '%s', there is no element called '%s'. \n", tostring(event_name), tostring(element_name))
-			fail = true
+		if not var_0_1.init_functions[var_0_16] then
+			var_0_15 = var_0_15 .. string.format("Bad terror event: '%s', there is no element called '%s'. \n", tostring(iter_0_0), tostring(var_0_16))
+			var_0_14 = true
 		end
 	end
 end
 
-if fail then
-	assert(false, s)
+if var_0_14 then
+	assert(false, var_0_15)
 end

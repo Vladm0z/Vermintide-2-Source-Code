@@ -1,87 +1,84 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_dead.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_dead.lua
 
 PlayerCharacterStateDead = class(PlayerCharacterStateDead, PlayerCharacterState)
 
-PlayerCharacterStateDead.init = function (self, character_state_init_context)
-	PlayerCharacterState.init(self, character_state_init_context, "dead")
+function PlayerCharacterStateDead.init(arg_1_0, arg_1_1)
+	PlayerCharacterState.init(arg_1_0, arg_1_1, "dead")
 end
 
-PlayerCharacterStateDead.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
-	self.despawn_time_start = t
-	self.despawned = false
-	self.switched_to_observer_camera = false
+function PlayerCharacterStateDead.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	arg_2_0.despawn_time_start = arg_2_5
+	arg_2_0.despawned = false
+	arg_2_0.switched_to_observer_camera = false
 
-	local animation = params and params.animation or "death"
+	local var_2_0 = arg_2_7 and arg_2_7.animation or "death"
 
-	CharacterStateHelper.play_animation_event(self.unit, animation)
-	self.locomotion_extension:set_wanted_velocity(Vector3.zero())
+	CharacterStateHelper.play_animation_event(arg_2_0.unit, var_2_0)
+	arg_2_0.locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-	local first_person_extension = self.first_person_extension
+	local var_2_1 = arg_2_0.first_person_extension
 
-	first_person_extension:set_wanted_player_height("knocked_down", t)
-	first_person_extension:set_first_person_mode(false)
+	var_2_1:set_wanted_player_height("knocked_down", arg_2_5)
+	var_2_1:set_first_person_mode(false)
 
-	local include_local_player = true
+	local var_2_2 = true
 
-	CharacterStateHelper.show_inventory_3p(unit, false, include_local_player, self.is_server, self.inventory_extension)
-	CharacterStateHelper.change_camera_state(self.player, "follow_third_person")
+	CharacterStateHelper.show_inventory_3p(arg_2_1, false, var_2_2, arg_2_0.is_server, arg_2_0.inventory_extension)
+	CharacterStateHelper.change_camera_state(arg_2_0.player, "follow_third_person")
 
-	local fast_respawns = Development.parameter("fast_respawns")
+	local var_2_3 = Development.parameter("fast_respawns")
 
-	self.dead_player_destroy_time = fast_respawns and 1 or PlayerUnitDamageSettings.dead_player_destroy_time
+	arg_2_0.dead_player_destroy_time = var_2_3 and 1 or PlayerUnitDamageSettings.dead_player_destroy_time
 
-	local drop_items_delay = not fast_respawns and params and params.drop_items_delay or 0
+	local var_2_4 = not var_2_3 and arg_2_7 and arg_2_7.drop_items_delay or 0
 
-	fassert(drop_items_delay < self.dead_player_destroy_time, "Drop items delay too large - this will cause a drop attempt when the player is already despawned!")
+	fassert(var_2_4 < arg_2_0.dead_player_destroy_time, "Drop items delay too large - this will cause a drop attempt when the player is already despawned!")
 
-	self.drop_items_time = t + drop_items_delay
+	arg_2_0.drop_items_time = arg_2_5 + var_2_4
 
-	local override_item_drop_position = params and params.override_item_drop_position or nil
-	local override_item_drop_direction = params and params.override_item_drop_direction or nil
+	local var_2_5 = arg_2_7 and arg_2_7.override_item_drop_position or nil
+	local var_2_6 = arg_2_7 and arg_2_7.override_item_drop_direction or nil
 
-	self.override_item_drop_position = override_item_drop_position and Vector3Box(override_item_drop_position) or nil
-	self.override_item_drop_direction = override_item_drop_direction and Vector3Box(override_item_drop_direction) or nil
+	arg_2_0.override_item_drop_position = var_2_5 and Vector3Box(var_2_5) or nil
+	arg_2_0.override_item_drop_direction = var_2_6 and Vector3Box(var_2_6) or nil
 end
 
-PlayerCharacterStateDead.on_exit = function (self, unit, input, dt, context, t, next_state)
-	self.override_item_drop_position = nil
-	self.override_item_drop_direction = nil
+function PlayerCharacterStateDead.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	arg_3_0.override_item_drop_position = nil
+	arg_3_0.override_item_drop_direction = nil
 end
 
-PlayerCharacterStateDead.update = function (self, unit, input, dt, context, t)
-	local time_since_death = t - self.despawn_time_start
-	local player = Managers.player:unit_owner(unit)
-	local marked_for_despawn = player and not player:needs_despawn()
-	local game_mode = Managers.state.game_mode:game_mode()
-	local about_to_end_game_early = game_mode:is_about_to_end_game_early()
-	local should_go_to_observer = not self.switched_to_observer_camera and (marked_for_despawn or time_since_death + 1 > self.dead_player_destroy_time)
+function PlayerCharacterStateDead.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	local var_4_0 = arg_4_5 - arg_4_0.despawn_time_start
+	local var_4_1 = Managers.player:unit_owner(arg_4_1)
+	local var_4_2 = var_4_1 and not var_4_1:needs_despawn()
+	local var_4_3 = Managers.state.game_mode:game_mode():is_about_to_end_game_early()
 
-	if should_go_to_observer and not about_to_end_game_early then
-		self.switched_to_observer_camera = true
+	if not arg_4_0.switched_to_observer_camera and (var_4_2 or var_4_0 + 1 > arg_4_0.dead_player_destroy_time) and not var_4_3 then
+		arg_4_0.switched_to_observer_camera = true
 
-		CharacterStateHelper.change_camera_state(self.player, "observer")
+		CharacterStateHelper.change_camera_state(arg_4_0.player, "observer")
 	end
 
-	if not self.items_dropped and (marked_for_despawn or t > self.drop_items_time) then
-		local override_item_drop_position = self.override_item_drop_position and self.override_item_drop_position:unbox()
-		local override_item_drop_direction = self.override_item_drop_direction and self.override_item_drop_direction:unbox()
-		local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
+	if not arg_4_0.items_dropped and (var_4_2 or arg_4_5 > arg_4_0.drop_items_time) then
+		local var_4_4 = arg_4_0.override_item_drop_position and arg_4_0.override_item_drop_position:unbox()
+		local var_4_5 = arg_4_0.override_item_drop_direction and arg_4_0.override_item_drop_direction:unbox()
 
-		inventory_extension:check_and_drop_pickups("death", override_item_drop_position, override_item_drop_direction)
+		ScriptUnit.extension(arg_4_1, "inventory_system"):check_and_drop_pickups("death", var_4_4, var_4_5)
 
-		self.items_dropped = true
+		arg_4_0.items_dropped = true
 	end
 
-	if not self.despawned and (marked_for_despawn or time_since_death > self.dead_player_destroy_time) then
+	if not arg_4_0.despawned and (var_4_2 or var_4_0 > arg_4_0.dead_player_destroy_time) then
 		print("state dead despawn")
 
-		if not marked_for_despawn then
-			Managers.state.spawn:delayed_despawn(player)
+		if not var_4_2 then
+			Managers.state.spawn:delayed_despawn(var_4_1)
 		end
 
-		self.despawned = true
+		arg_4_0.despawned = true
 
-		if player.local_player then
+		if var_4_1.local_player then
 			Managers.state.camera:clear_mood("knocked_down")
 			Managers.state.camera:clear_mood("wounded")
 			Managers.state.camera:clear_mood("bleeding_out")

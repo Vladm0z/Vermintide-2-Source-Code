@@ -1,44 +1,43 @@
-﻿-- chunkname: @scripts/ui/hint_ui/hint_templates.lua
+-- chunkname: @scripts/ui/hint_ui/hint_templates.lua
 
-local ObjectiveTypes = dofile("scripts/settings/objective_templates_vs")
+local var_0_0 = dofile("scripts/settings/objective_templates_vs")
 
 HintTemplates = HintTemplates or {}
 HintTemplates.first_time_pactsworn = {
 	data = {
-		body_text = "vs_hint_ghost_mode_body",
-		class_name = "HintUIVersusHowToPlay",
-		duration = 20,
-		foot_text = "vs_hint_ghost_mode_foot",
-		game_mode_key = "versus",
-		icon = "objective_ghost_mode",
-		mechanism_name = "versus",
 		side = "dark_pact",
 		title_text = "vs_hint_ghost_mode_title",
+		game_mode_key = "versus",
+		icon = "objective_ghost_mode",
+		body_text = "vs_hint_ghost_mode_body",
+		mechanism_name = "versus",
+		foot_text = "vs_hint_ghost_mode_foot",
+		duration = 20,
+		class_name = "HintUIVersusHowToPlay",
 		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions"),
 		input_data = {
 			input_action = "ghost_mode_exit",
-			input_service_name = "Player",
-		},
+			input_service_name = "Player"
+		}
 	},
-	condition_function = function (data, dt, t)
-		local mechanism_name = Managers.mechanism:current_mechanism_name()
-		local game_mode_key = Managers.state.game_mode:game_mode_key()
+	condition_function = function(arg_1_0, arg_1_1, arg_1_2)
+		local var_1_0 = Managers.mechanism:current_mechanism_name()
+		local var_1_1 = Managers.state.game_mode:game_mode_key()
 
-		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = Managers.player and Managers.player:local_player()
+		if var_1_0 == arg_1_0.mechanism_name and var_1_1 == arg_1_0.game_mode_key then
+			local var_1_2 = Managers.player and Managers.player:local_player()
 
-			if local_player then
-				local local_party = local_player:get_party()
-				local local_side = local_party and Managers.state.side.side_by_party[local_party]
+			if var_1_2 then
+				local var_1_3 = var_1_2:get_party()
+				local var_1_4 = var_1_3 and Managers.state.side.side_by_party[var_1_3]
 
-				if local_side then
-					local side_name = local_side:name()
-					local local_player_unit = local_player.player_unit
-					local ghost_mode_ext = ScriptUnit.has_extension(local_player_unit, "ghost_mode_system")
-					local is_in_ghost_mode = ghost_mode_ext and ghost_mode_ext:is_in_ghost_mode()
-					local is_dark_pact = side_name and side_name == data.side
+				if var_1_4 then
+					local var_1_5 = var_1_4:name()
+					local var_1_6 = var_1_2.player_unit
+					local var_1_7 = ScriptUnit.has_extension(var_1_6, "ghost_mode_system")
+					local var_1_8 = var_1_7 and var_1_7:is_in_ghost_mode()
 
-					if is_dark_pact and is_in_ghost_mode then
+					if var_1_5 and var_1_5 == arg_1_0.side and var_1_8 then
 						return true
 					end
 				end
@@ -46,52 +45,48 @@ HintTemplates.first_time_pactsworn = {
 		end
 
 		return false
-	end,
+	end
 }
 HintTemplates.horde_ability = {
 	data = {
-		body_text = "vs_hint_horde_ability_body",
-		class_name = "HintUIVersusHowToPlay",
-		duration = 20,
-		foot_text = "vs_hint_horde_ability_foot",
-		game_mode_key = "versus",
-		icon = "objective_horde",
-		mechanism_name = "versus",
 		side = "dark_pact",
 		title_text = "vs_hint_horde_ability_title",
+		game_mode_key = "versus",
+		icon = "objective_horde",
+		body_text = "vs_hint_horde_ability_body",
+		mechanism_name = "versus",
+		foot_text = "vs_hint_horde_ability_foot",
+		duration = 20,
+		class_name = "HintUIVersusHowToPlay",
 		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions"),
 		input_data = {
 			input_action = "versus_horde_ability",
-			input_service_name = "Player",
-		},
+			input_service_name = "Player"
+		}
 	},
-	condition_function = function (data, dt, t)
-		local mechanism_name = Managers.mechanism:current_mechanism_name()
-		local game_mode_key = Managers.state.game_mode:game_mode_key()
+	condition_function = function(arg_2_0, arg_2_1, arg_2_2)
+		local var_2_0 = Managers.mechanism:current_mechanism_name()
+		local var_2_1 = Managers.state.game_mode:game_mode_key()
 
-		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = Managers.player and Managers.player:local_player()
+		if var_2_0 == arg_2_0.mechanism_name and var_2_1 == arg_2_0.game_mode_key then
+			local var_2_2 = Managers.player and Managers.player:local_player()
 
-			if local_player then
-				local local_party = local_player:get_party()
-				local local_side = local_party and Managers.state.side.side_by_party[local_party]
+			if var_2_2 then
+				local var_2_3 = var_2_2:get_party()
+				local var_2_4 = var_2_3 and Managers.state.side.side_by_party[var_2_3]
 
-				if local_side then
-					local side_name = local_side:name()
+				if var_2_4 and var_2_4:name() == arg_2_0.side then
+					local var_2_5 = var_2_2.player_unit
 
-					if side_name == data.side then
-						local player_unit = local_player.player_unit
+					if ALIVE[var_2_5] then
+						local var_2_6 = ScriptUnit.has_extension(var_2_5, "versus_horde_ability_system")
 
-						if ALIVE[player_unit] then
-							local horde_ability_extension = ScriptUnit.has_extension(player_unit, "versus_horde_ability_system")
+						if var_2_6 then
+							local var_2_7 = var_2_6:get_ability_charge(arg_2_2)
+							local var_2_8 = var_2_6:cooldown()
 
-							if horde_ability_extension then
-								local ability_charge = horde_ability_extension:get_ability_charge(t)
-								local ability_cooldown = horde_ability_extension:cooldown()
-
-								if ability_charge and ability_cooldown <= ability_charge then
-									return true
-								end
+							if var_2_7 and var_2_8 <= var_2_7 then
+								return true
 							end
 						end
 					end
@@ -100,39 +95,133 @@ HintTemplates.horde_ability = {
 		end
 
 		return false
-	end,
+	end
 }
 HintTemplates.scoring_points = {
 	data = {
-		body_text = "vs_hint_scoring_body",
-		class_name = "HintUIVersusHowToPlay",
-		duration = 20,
-		foot_text = "vs_hint_scoring_foot",
-		game_mode_key = "versus",
-		icon = "objective_points",
-		mechanism_name = "versus",
 		side = "heroes",
 		title_text = "vs_hint_scoring_title",
-		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions"),
+		game_mode_key = "versus",
+		icon = "objective_points",
+		body_text = "vs_hint_scoring_body",
+		mechanism_name = "versus",
+		foot_text = "vs_hint_scoring_foot",
+		duration = 20,
+		class_name = "HintUIVersusHowToPlay",
+		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions")
 	},
-	condition_function = function (data, dt, t)
-		local mechanism_name = Managers.mechanism:current_mechanism_name()
-		local game_mode_key = Managers.state.game_mode:game_mode_key()
+	condition_function = function(arg_3_0, arg_3_1, arg_3_2)
+		local var_3_0 = Managers.mechanism:current_mechanism_name()
+		local var_3_1 = Managers.state.game_mode:game_mode_key()
 
-		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = Managers.player and Managers.player:local_player()
+		if var_3_0 == arg_3_0.mechanism_name and var_3_1 == arg_3_0.game_mode_key then
+			local var_3_2 = Managers.player and Managers.player:local_player()
 
-			if local_player then
-				local local_party = local_player:get_party()
-				local local_side = local_party and Managers.state.side.side_by_party[local_party]
+			if var_3_2 then
+				local var_3_3 = var_3_2:get_party()
+				local var_3_4 = var_3_3 and Managers.state.side.side_by_party[var_3_3]
 
-				if local_side then
-					local side_name = local_side:name()
+				if var_3_4 and var_3_4:name() == arg_3_0.side then
+					local var_3_5 = var_3_2.player_unit
 
-					if side_name == data.side then
-						local player_unit = local_player.player_unit
+					if ALIVE[var_3_5] then
+						return true
+					end
+				end
+			end
+		end
 
-						if ALIVE[player_unit] then
+		return false
+	end
+}
+HintTemplates.block_parry = {
+	data = {
+		mechanism = "versus",
+		title_text = "vs_hint_block_parry_title",
+		side = "dark_pact",
+		icon = "objective_block",
+		body_text = "vs_hint_block_parry_body",
+		foot_text = "vs_hint_block_parry_foot",
+		duration = 15,
+		class_name = "HintUIVersusHowToPlay",
+		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions"),
+		input_data = {
+			input_action = "action_two",
+			input_service_name = "Player"
+		}
+	}
+}
+HintTemplates.dodge = {
+	data = {
+		mechanism = "versus",
+		title_text = "vs_hint_dodge_title",
+		side = "dark_pact",
+		icon = "objective_dodge",
+		body_text = "vs_hint_dodge_body",
+		foot_text = "vs_hint_dodge_foot",
+		duration = 15,
+		class_name = "HintUIVersusHowToPlay",
+		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions"),
+		input_data = {
+			input_action = "dodge_hold",
+			input_service_name = "Player"
+		}
+	}
+}
+HintTemplates.early_win = {
+	data = {
+		mechanism = "versus",
+		title_text = "vs_hint_early_win_title",
+		side = "dark_pact",
+		icon = "objective_win",
+		body_text = "vs_hint_early_win_body",
+		foot_text = "vs_hint_early_win_foot",
+		duration = 15,
+		class_name = "HintUIVersusHowToPlay",
+		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions"),
+		input_data = {
+			input_action = "    ",
+			input_service_name = "Player"
+		}
+	}
+}
+HintTemplates.healing = {
+	data = {
+		side = "heroes",
+		title_text = "vs_hint_healing_title",
+		game_mode_key = "versus",
+		icon = "objective_heal",
+		body_text = "vs_hint_healing_body",
+		mechanism_name = "versus",
+		foot_text = "vs_hint_healing_foot",
+		duration = 15,
+		class_name = "HintUIVersusHowToPlay",
+		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions"),
+		input_data = {
+			input_action = "wield_3",
+			input_service_name = "Player"
+		}
+	},
+	condition_function = function(arg_4_0, arg_4_1, arg_4_2)
+		local var_4_0 = Managers.mechanism:current_mechanism_name()
+		local var_4_1 = Managers.state.game_mode:game_mode_key()
+
+		if var_4_0 == arg_4_0.mechanism_name and var_4_1 == arg_4_0.game_mode_key then
+			local var_4_2 = Managers.player and Managers.player:local_player()
+
+			if var_4_2 then
+				local var_4_3 = var_4_2:get_party()
+				local var_4_4 = var_4_3 and Managers.state.side.side_by_party[var_4_3]
+
+				if var_4_4 and var_4_4:name() == arg_4_0.side then
+					local var_4_5 = var_4_2.player_unit
+
+					if ALIVE[var_4_5] then
+						local var_4_6 = ScriptUnit.extension(var_4_5, "status_system")
+						local var_4_7 = ScriptUnit.extension(var_4_5, "health_system")
+						local var_4_8 = ScriptUnit.extension(var_4_5, "inventory_system"):get_slot_data("slot_healthkit")
+
+						if (var_4_6 and var_4_6:is_dead() and 0 or var_4_7:current_health_percent()) <= 0.2 and var_4_8 then
 							return true
 						end
 					end
@@ -141,625 +230,434 @@ HintTemplates.scoring_points = {
 		end
 
 		return false
-	end,
-}
-HintTemplates.block_parry = {
-	data = {
-		body_text = "vs_hint_block_parry_body",
-		class_name = "HintUIVersusHowToPlay",
-		duration = 15,
-		foot_text = "vs_hint_block_parry_foot",
-		icon = "objective_block",
-		mechanism = "versus",
-		side = "dark_pact",
-		title_text = "vs_hint_block_parry_title",
-		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions"),
-		input_data = {
-			input_action = "action_two",
-			input_service_name = "Player",
-		},
-	},
-}
-HintTemplates.dodge = {
-	data = {
-		body_text = "vs_hint_dodge_body",
-		class_name = "HintUIVersusHowToPlay",
-		duration = 15,
-		foot_text = "vs_hint_dodge_foot",
-		icon = "objective_dodge",
-		mechanism = "versus",
-		side = "dark_pact",
-		title_text = "vs_hint_dodge_title",
-		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions"),
-		input_data = {
-			input_action = "dodge_hold",
-			input_service_name = "Player",
-		},
-	},
-}
-HintTemplates.early_win = {
-	data = {
-		body_text = "vs_hint_early_win_body",
-		class_name = "HintUIVersusHowToPlay",
-		duration = 15,
-		foot_text = "vs_hint_early_win_foot",
-		icon = "objective_win",
-		mechanism = "versus",
-		side = "dark_pact",
-		title_text = "vs_hint_early_win_title",
-		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions"),
-		input_data = {
-			input_action = "    ",
-			input_service_name = "Player",
-		},
-	},
-}
-HintTemplates.healing = {
-	data = {
-		body_text = "vs_hint_healing_body",
-		class_name = "HintUIVersusHowToPlay",
-		duration = 15,
-		foot_text = "vs_hint_healing_foot",
-		game_mode_key = "versus",
-		icon = "objective_heal",
-		mechanism_name = "versus",
-		side = "heroes",
-		title_text = "vs_hint_healing_title",
-		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions"),
-		input_data = {
-			input_action = "wield_3",
-			input_service_name = "Player",
-		},
-	},
-	condition_function = function (data, dt, t)
-		local mechanism_name = Managers.mechanism:current_mechanism_name()
-		local game_mode_key = Managers.state.game_mode:game_mode_key()
-
-		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = Managers.player and Managers.player:local_player()
-
-			if local_player then
-				local local_party = local_player:get_party()
-				local local_side = local_party and Managers.state.side.side_by_party[local_party]
-
-				if local_side then
-					local side_name = local_side:name()
-
-					if side_name == data.side then
-						local player_unit = local_player.player_unit
-
-						if ALIVE[player_unit] then
-							local status_extension = ScriptUnit.extension(player_unit, "status_system")
-							local health_extension = ScriptUnit.extension(player_unit, "health_system")
-							local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
-							local has_healing_item = inventory_extension:get_slot_data("slot_healthkit")
-							local is_dead = status_extension and status_extension:is_dead()
-							local total_health_percent = is_dead and 0 or health_extension:current_health_percent()
-
-							if total_health_percent <= 0.2 and has_healing_item then
-								return true
-							end
-						end
-					end
-				end
-			end
-		end
-
-		return false
-	end,
+	end
 }
 HintTemplates.bombs = {
 	data = {
-		body_text = "vs_hint_bombs_body",
-		class_name = "HintUIVersusHowToPlay",
-		duration = 15,
-		foot_text = "vs_hint_bombs_foot",
-		game_mode_key = "versus",
-		icon = "objective_bomb",
-		mechanism_name = "versus",
 		side = "heroes",
 		title_text = "vs_hint_bombs_title",
+		game_mode_key = "versus",
+		icon = "objective_bomb",
+		body_text = "vs_hint_bombs_body",
+		mechanism_name = "versus",
+		foot_text = "vs_hint_bombs_foot",
+		duration = 15,
+		class_name = "HintUIVersusHowToPlay",
 		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions"),
 		input_data = {
 			input_action = "wield_5",
-			input_service_name = "Player",
-		},
+			input_service_name = "Player"
+		}
 	},
-	condition_function = function (data, dt, t)
-		local mechanism_name = Managers.mechanism:current_mechanism_name()
-		local game_mode_key = Managers.state.game_mode:game_mode_key()
+	condition_function = function(arg_5_0, arg_5_1, arg_5_2)
+		local var_5_0 = Managers.mechanism:current_mechanism_name()
+		local var_5_1 = Managers.state.game_mode:game_mode_key()
 
-		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = Managers.player and Managers.player:local_player()
+		if var_5_0 == arg_5_0.mechanism_name and var_5_1 == arg_5_0.game_mode_key then
+			local var_5_2 = Managers.player and Managers.player:local_player()
 
-			if local_player then
-				local local_party = local_player:get_party()
-				local local_side = local_party and Managers.state.side.side_by_party[local_party]
+			if var_5_2 then
+				local var_5_3 = var_5_2:get_party()
+				local var_5_4 = var_5_3 and Managers.state.side.side_by_party[var_5_3]
 
-				if local_side then
-					local side_name = local_side:name()
+				if var_5_4 and var_5_4:name() == arg_5_0.side then
+					local var_5_5 = var_5_2.player_unit
 
-					if side_name == data.side then
-						local player_unit = local_player.player_unit
-
-						if ALIVE[player_unit] then
-							local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
-							local has_bomb_item = inventory_extension:get_slot_data("slot_grenade")
-
-							if has_bomb_item then
-								return true
-							end
-						end
+					if ALIVE[var_5_5] and ScriptUnit.extension(var_5_5, "inventory_system"):get_slot_data("slot_grenade") then
+						return true
 					end
 				end
 			end
 		end
 
 		return false
-	end,
+	end
 }
 HintTemplates.wounds = {
 	data = {
-		body_text = "vs_hint_wounds_body",
-		class_name = "HintUIVersusHowToPlay",
-		duration = 15,
-		foot_text = "vs_hint_wounds_foot",
-		game_mode_key = "versus",
-		icon = "objective_wound",
-		mechanism_name = "versus",
 		side = "heroes",
 		title_text = "vs_hint_wounds_title",
+		game_mode_key = "versus",
+		icon = "objective_wound",
+		body_text = "vs_hint_wounds_body",
+		mechanism_name = "versus",
+		foot_text = "vs_hint_wounds_foot",
+		duration = 15,
+		class_name = "HintUIVersusHowToPlay",
 		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions"),
 		input_data = {
 			input_action = "versus_horde_ability",
-			input_service_name = "Player",
-		},
+			input_service_name = "Player"
+		}
 	},
-	condition_function = function (data, dt, t)
-		local mechanism_name = Managers.mechanism:current_mechanism_name()
-		local game_mode_key = Managers.state.game_mode:game_mode_key()
+	condition_function = function(arg_6_0, arg_6_1, arg_6_2)
+		local var_6_0 = Managers.mechanism:current_mechanism_name()
+		local var_6_1 = Managers.state.game_mode:game_mode_key()
 
-		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = Managers.player and Managers.player:local_player()
+		if var_6_0 == arg_6_0.mechanism_name and var_6_1 == arg_6_0.game_mode_key then
+			local var_6_2 = Managers.player and Managers.player:local_player()
 
-			if local_player then
-				local local_party = local_player:get_party()
-				local local_side = local_party and Managers.state.side.side_by_party[local_party]
+			if var_6_2 then
+				local var_6_3 = var_6_2:get_party()
+				local var_6_4 = var_6_3 and Managers.state.side.side_by_party[var_6_3]
 
-				if local_side then
-					local side_name = local_side:name()
+				if var_6_4 and var_6_4:name() == arg_6_0.side then
+					local var_6_5 = var_6_2.player_unit
 
-					if side_name == data.side then
-						local player_unit = local_player.player_unit
-
-						if ALIVE[player_unit] then
-							local status_extension = ScriptUnit.extension(player_unit, "status_system")
-							local last_wound = status_extension:wounded_and_on_last_wound()
-
-							if last_wound then
-								return true
-							end
-						end
+					if ALIVE[var_6_5] and ScriptUnit.extension(var_6_5, "status_system"):wounded_and_on_last_wound() then
+						return true
 					end
 				end
 			end
 		end
 
 		return false
-	end,
+	end
 }
 HintTemplates.loadouts_01 = {
 	data = {
-		body_text = "vs_hint_loadouts_body",
-		class_name = "HintUIVersusHowToPlay",
-		duration = 15,
-		foot_text = "vs_hint_loadouts_foot",
-		icon = "objective_loadout",
 		mechanism = "versus",
-		side = "dark_pact",
 		title_text = "vs_hint_loadouts_title",
+		side = "dark_pact",
+		icon = "objective_loadout",
+		body_text = "vs_hint_loadouts_body",
+		foot_text = "vs_hint_loadouts_foot",
+		duration = 15,
+		class_name = "HintUIVersusHowToPlay",
 		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions"),
 		input_data = {
 			input_action = "versus_horde_ability",
-			input_service_name = "Player",
-		},
-	},
+			input_service_name = "Player"
+		}
+	}
 }
 HintTemplates.all_chat = {
 	data = {
-		body_text = "vs_hint_chat_body",
-		class_name = "HintUIVersusHowToPlay",
-		duration = 15,
-		foot_text = "vs_hint_chat_foot",
+		title_text = "vs_hint_chat_title",
 		game_mode_key = "versus",
 		icon = "objective_chat",
+		body_text = "vs_hint_chat_body",
 		mechanism_name = "versus",
-		title_text = "vs_hint_chat_title",
+		foot_text = "vs_hint_chat_foot",
+		duration = 15,
+		class_name = "HintUIVersusHowToPlay",
 		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions"),
 		input_data = {
 			input_action = "activate_chat_input",
-			input_service_name = "chat_input",
-		},
+			input_service_name = "chat_input"
+		}
 	},
-	condition_function = function (data, dt, t)
+	condition_function = function(arg_7_0, arg_7_1, arg_7_2)
 		if Managers.input:is_device_active("gamepad") then
 			return false
 		end
 
-		local mechanism_name = Managers.mechanism:current_mechanism_name()
-		local game_mode_key = Managers.state.game_mode:game_mode_key()
+		local var_7_0 = Managers.mechanism:current_mechanism_name()
+		local var_7_1 = Managers.state.game_mode:game_mode_key()
 
-		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local chat_manager = Managers.chat
-
-			if chat_manager:chat_is_focused() then
-				local view_name = Managers.chat:current_view_and_color()
-
-				if view_name == "All" then
-					return true
-				end
-			end
+		if var_7_0 == arg_7_0.mechanism_name and var_7_1 == arg_7_0.game_mode_key and Managers.chat:chat_is_focused() and Managers.chat:current_view_and_color() == "All" then
+			return true
 		end
 
 		return false
-	end,
+	end
 }
 HintTemplates.capture_objective = {
 	data = {
-		body_text = "vs_hint_capture_objective_body",
-		class_name = "HintUIVersusHowToPlay",
-		duration = 15,
-		foot_text = "vs_hint_capture_objective_foot",
-		game_mode_key = "versus",
-		icon = "objective_capture_point",
-		mechanism_name = "versus",
 		side = "heroes",
 		title_text = "vs_hint_capture_objective_title",
-		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions"),
+		game_mode_key = "versus",
+		icon = "objective_capture_point",
+		body_text = "vs_hint_capture_objective_body",
+		mechanism_name = "versus",
+		foot_text = "vs_hint_capture_objective_foot",
+		duration = 15,
+		class_name = "HintUIVersusHowToPlay",
+		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions")
 	},
-	condition_function = function (data, dt, t)
-		local mechanism_name = Managers.mechanism:current_mechanism_name()
-		local game_mode_key = Managers.state.game_mode:game_mode_key()
+	condition_function = function(arg_8_0, arg_8_1, arg_8_2)
+		local var_8_0 = Managers.mechanism:current_mechanism_name()
+		local var_8_1 = Managers.state.game_mode:game_mode_key()
 
-		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = Managers.player and Managers.player:local_player()
+		if var_8_0 == arg_8_0.mechanism_name and var_8_1 == arg_8_0.game_mode_key then
+			local var_8_2 = Managers.player and Managers.player:local_player()
 
-			if local_player then
-				local local_party = local_player:get_party()
-				local local_side = local_party and Managers.state.side.side_by_party[local_party]
+			if var_8_2 then
+				local var_8_3 = var_8_2:get_party()
+				local var_8_4 = var_8_3 and Managers.state.side.side_by_party[var_8_3]
 
-				if local_side then
-					local side_name = local_side:name()
+				if var_8_4 and var_8_4:name() == arg_8_0.side then
+					local var_8_5 = Managers.state.entity:system("objective_system")
 
-					if side_name == data.side then
-						local objective_system = Managers.state.entity:system("objective_system")
-
-						if objective_system and objective_system:is_active() then
-							local objective_type = objective_system:current_objective_type()
-
-							if objective_type == "objective_capture_point" then
-								return true
-							end
-						end
+					if var_8_5 and var_8_5:is_active() and var_8_5:current_objective_type() == "objective_capture_point" then
+						return true
 					end
 				end
 			end
 		end
 
 		return false
-	end,
+	end
 }
 HintTemplates.payload_objective = {
 	data = {
-		body_text = "vs_hint_payload_objective_body",
-		class_name = "HintUIVersusHowToPlay",
-		duration = 15,
-		foot_text = "vs_hint_payload_objective_foot",
-		game_mode_key = "versus",
-		icon = "objective_payload",
-		mechanism_name = "versus",
 		side = "heroes",
 		title_text = "vs_hint_payload_objective_title",
-		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions"),
+		game_mode_key = "versus",
+		icon = "objective_payload",
+		body_text = "vs_hint_payload_objective_body",
+		mechanism_name = "versus",
+		foot_text = "vs_hint_payload_objective_foot",
+		duration = 15,
+		class_name = "HintUIVersusHowToPlay",
+		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions")
 	},
-	condition_function = function (data, dt, t)
-		local mechanism_name = Managers.mechanism:current_mechanism_name()
-		local game_mode_key = Managers.state.game_mode:game_mode_key()
+	condition_function = function(arg_9_0, arg_9_1, arg_9_2)
+		local var_9_0 = Managers.mechanism:current_mechanism_name()
+		local var_9_1 = Managers.state.game_mode:game_mode_key()
 
-		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = Managers.player and Managers.player:local_player()
+		if var_9_0 == arg_9_0.mechanism_name and var_9_1 == arg_9_0.game_mode_key then
+			local var_9_2 = Managers.player and Managers.player:local_player()
 
-			if local_player then
-				local local_party = local_player:get_party()
-				local local_side = local_party and Managers.state.side.side_by_party[local_party]
+			if var_9_2 then
+				local var_9_3 = var_9_2:get_party()
+				local var_9_4 = var_9_3 and Managers.state.side.side_by_party[var_9_3]
 
-				if local_side then
-					local side_name = local_side:name()
+				if var_9_4 and var_9_4:name() == arg_9_0.side then
+					local var_9_5 = Managers.state.entity:system("objective_system")
 
-					if side_name == data.side then
-						local objective_system = Managers.state.entity:system("objective_system")
-
-						if objective_system and objective_system:is_active() then
-							local objective_type = objective_system:current_objective_type()
-
-							if objective_type == "objective_payload" then
-								return true
-							end
-						end
+					if var_9_5 and var_9_5:is_active() and var_9_5:current_objective_type() == "objective_payload" then
+						return true
 					end
 				end
 			end
 		end
 
 		return false
-	end,
+	end
 }
 HintTemplates.safe_zone = {
 	data = {
-		body_text = "vs_hint_safe_zone_body",
-		class_name = "HintUIVersusHowToPlay",
-		duration = 15,
-		foot_text = "vs_hint_safe_zone_foot",
-		game_mode_key = "versus",
-		icon = "objective_safehouse",
-		mechanism_name = "versus",
 		side = "heroes",
 		title_text = "vs_hint_safe_zone_title",
-		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions"),
+		game_mode_key = "versus",
+		icon = "objective_safehouse",
+		body_text = "vs_hint_safe_zone_body",
+		mechanism_name = "versus",
+		foot_text = "vs_hint_safe_zone_foot",
+		duration = 15,
+		class_name = "HintUIVersusHowToPlay",
+		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions")
 	},
-	condition_function = function (data, dt, t)
-		local mechanism_name = Managers.mechanism:current_mechanism_name()
-		local game_mode_key = Managers.state.game_mode:game_mode_key()
+	condition_function = function(arg_10_0, arg_10_1, arg_10_2)
+		local var_10_0 = Managers.mechanism:current_mechanism_name()
+		local var_10_1 = Managers.state.game_mode:game_mode_key()
 
-		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = Managers.player and Managers.player:local_player()
+		if var_10_0 == arg_10_0.mechanism_name and var_10_1 == arg_10_0.game_mode_key then
+			local var_10_2 = Managers.player and Managers.player:local_player()
 
-			if local_player then
-				local local_party = local_player:get_party()
-				local local_side = local_party and Managers.state.side.side_by_party[local_party]
+			if var_10_2 then
+				local var_10_3 = var_10_2:get_party()
+				local var_10_4 = var_10_3 and Managers.state.side.side_by_party[var_10_3]
 
-				if local_side then
-					local side_name = local_side:name()
+				if var_10_4 and var_10_4:name() == arg_10_0.side then
+					local var_10_5 = Managers.state.entity:system("objective_system")
 
-					if side_name == data.side then
-						local objective_system = Managers.state.entity:system("objective_system")
-
-						if objective_system and objective_system:is_active() then
-							local objective_type = objective_system:current_objective_type()
-
-							if objective_type == "objective_safehouse" then
-								return true
-							end
-						end
+					if var_10_5 and var_10_5:is_active() and var_10_5:current_objective_type() == "objective_safehouse" then
+						return true
 					end
 				end
 			end
 		end
 
 		return false
-	end,
+	end
 }
 HintTemplates.socket_objective = {
 	data = {
-		body_text = "vs_hint_socket_objective_body",
-		class_name = "HintUIVersusHowToPlay",
-		duration = 15,
-		foot_text = "vs_hint_socket_objective_foot",
-		game_mode_key = "versus",
-		icon = "objective_socket",
-		mechanism_name = "versus",
 		side = "heroes",
 		title_text = "vs_hint_socket_objective_title",
-		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions"),
+		game_mode_key = "versus",
+		icon = "objective_socket",
+		body_text = "vs_hint_socket_objective_body",
+		mechanism_name = "versus",
+		foot_text = "vs_hint_socket_objective_foot",
+		duration = 15,
+		class_name = "HintUIVersusHowToPlay",
+		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions")
 	},
-	condition_function = function (data, dt, t)
-		local mechanism_name = Managers.mechanism:current_mechanism_name()
-		local game_mode_key = Managers.state.game_mode:game_mode_key()
+	condition_function = function(arg_11_0, arg_11_1, arg_11_2)
+		local var_11_0 = Managers.mechanism:current_mechanism_name()
+		local var_11_1 = Managers.state.game_mode:game_mode_key()
 
-		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = Managers.player and Managers.player:local_player()
+		if var_11_0 == arg_11_0.mechanism_name and var_11_1 == arg_11_0.game_mode_key then
+			local var_11_2 = Managers.player and Managers.player:local_player()
 
-			if local_player then
-				local local_party = local_player:get_party()
-				local local_side = local_party and Managers.state.side.side_by_party[local_party]
+			if var_11_2 then
+				local var_11_3 = var_11_2:get_party()
+				local var_11_4 = var_11_3 and Managers.state.side.side_by_party[var_11_3]
 
-				if local_side then
-					local side_name = local_side:name()
+				if var_11_4 and var_11_4:name() == arg_11_0.side then
+					local var_11_5 = Managers.state.entity:system("objective_system")
 
-					if side_name == data.side then
-						local objective_system = Managers.state.entity:system("objective_system")
-
-						if objective_system and objective_system:is_active() then
-							local objective_type = objective_system:current_objective_type()
-
-							if objective_type == "objective_socket" then
-								return true
-							end
-						end
+					if var_11_5 and var_11_5:is_active() and var_11_5:current_objective_type() == "objective_socket" then
+						return true
 					end
 				end
 			end
 		end
 
 		return false
-	end,
+	end
 }
 HintTemplates.target_objective = {
 	data = {
-		body_text = "vs_hint_target_objective_body",
-		class_name = "HintUIVersusHowToPlay",
-		duration = 15,
-		foot_text = "vs_hint_target_objective_foot",
-		game_mode_key = "versus",
-		icon = "objective_target",
-		mechanism_name = "versus",
 		side = "heroes",
 		title_text = "vs_hint_target_objective_title",
-		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions"),
+		game_mode_key = "versus",
+		icon = "objective_target",
+		body_text = "vs_hint_target_objective_body",
+		mechanism_name = "versus",
+		foot_text = "vs_hint_target_objective_foot",
+		duration = 15,
+		class_name = "HintUIVersusHowToPlay",
+		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions")
 	},
-	condition_function = function (data, dt, t)
-		local mechanism_name = Managers.mechanism:current_mechanism_name()
-		local game_mode_key = Managers.state.game_mode:game_mode_key()
+	condition_function = function(arg_12_0, arg_12_1, arg_12_2)
+		local var_12_0 = Managers.mechanism:current_mechanism_name()
+		local var_12_1 = Managers.state.game_mode:game_mode_key()
 
-		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = Managers.player and Managers.player:local_player()
+		if var_12_0 == arg_12_0.mechanism_name and var_12_1 == arg_12_0.game_mode_key then
+			local var_12_2 = Managers.player and Managers.player:local_player()
 
-			if local_player then
-				local local_party = local_player:get_party()
-				local local_side = local_party and Managers.state.side.side_by_party[local_party]
+			if var_12_2 then
+				local var_12_3 = var_12_2:get_party()
+				local var_12_4 = var_12_3 and Managers.state.side.side_by_party[var_12_3]
 
-				if local_side then
-					local side_name = local_side:name()
+				if var_12_4 and var_12_4:name() == arg_12_0.side then
+					local var_12_5 = Managers.state.entity:system("objective_system")
 
-					if side_name == data.side then
-						local objective_system = Managers.state.entity:system("objective_system")
-
-						if objective_system and objective_system:is_active() then
-							local objective_type = objective_system:current_objective_type()
-
-							if objective_type == "objective_target" then
-								return true
-							end
-						end
+					if var_12_5 and var_12_5:is_active() and var_12_5:current_objective_type() == "objective_target" then
+						return true
 					end
 				end
 			end
 		end
 
 		return false
-	end,
+	end
 }
 HintTemplates.survive_event = {
 	data = {
-		body_text = "vs_hint_survive_event_body",
-		class_name = "HintUIVersusHowToPlay",
-		duration = 15,
-		foot_text = "vs_hint_survive_event_foot",
-		game_mode_key = "versus",
-		icon = "objective_survive",
-		mechanism_name = "versus",
 		side = "heroes",
 		title_text = "vs_hint_survive_event_title",
-		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions"),
+		game_mode_key = "versus",
+		icon = "objective_survive",
+		body_text = "vs_hint_survive_event_body",
+		mechanism_name = "versus",
+		foot_text = "vs_hint_survive_event_foot",
+		duration = 15,
+		class_name = "HintUIVersusHowToPlay",
+		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions")
 	},
-	condition_function = function (data, dt, t)
-		local mechanism_name = Managers.mechanism:current_mechanism_name()
-		local game_mode_key = Managers.state.game_mode:game_mode_key()
+	condition_function = function(arg_13_0, arg_13_1, arg_13_2)
+		local var_13_0 = Managers.mechanism:current_mechanism_name()
+		local var_13_1 = Managers.state.game_mode:game_mode_key()
 
-		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = Managers.player and Managers.player:local_player()
+		if var_13_0 == arg_13_0.mechanism_name and var_13_1 == arg_13_0.game_mode_key then
+			local var_13_2 = Managers.player and Managers.player:local_player()
 
-			if local_player then
-				local local_party = local_player:get_party()
-				local local_side = local_party and Managers.state.side.side_by_party[local_party]
+			if var_13_2 then
+				local var_13_3 = var_13_2:get_party()
+				local var_13_4 = var_13_3 and Managers.state.side.side_by_party[var_13_3]
 
-				if local_side then
-					local side_name = local_side:name()
+				if var_13_4 and var_13_4:name() == arg_13_0.side then
+					local var_13_5 = Managers.state.entity:system("objective_system")
 
-					if side_name == data.side then
-						local objective_system = Managers.state.entity:system("objective_system")
-
-						if objective_system and objective_system:is_active() then
-							local objective_type = objective_system:current_objective_type()
-
-							if objective_type == "objective_survive" then
-								return true
-							end
-						end
+					if var_13_5 and var_13_5:is_active() and var_13_5:current_objective_type() == "objective_survive" then
+						return true
 					end
 				end
 			end
 		end
 
 		return false
-	end,
+	end
 }
 HintTemplates.interact_objective = {
 	data = {
-		body_text = "vs_hint_interact_objective_body",
-		class_name = "HintUIVersusHowToPlay",
-		duration = 15,
-		foot_text = "vs_hint_interact_objective_foot",
-		game_mode_key = "versus",
-		icon = "objective_interact",
-		mechanism_name = "versus",
 		side = "heroes",
 		title_text = "vs_hint_interact_objective_title",
+		game_mode_key = "versus",
+		icon = "objective_interact",
+		body_text = "vs_hint_interact_objective_body",
+		mechanism_name = "versus",
+		foot_text = "vs_hint_interact_objective_foot",
+		duration = 15,
+		class_name = "HintUIVersusHowToPlay",
 		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions"),
 		input_data = {
 			input_action = "interact",
-			input_service_name = "Player",
-		},
+			input_service_name = "Player"
+		}
 	},
-	condition_function = function (data, dt, t)
-		local mechanism_name = Managers.mechanism:current_mechanism_name()
-		local game_mode_key = Managers.state.game_mode:game_mode_key()
+	condition_function = function(arg_14_0, arg_14_1, arg_14_2)
+		local var_14_0 = Managers.mechanism:current_mechanism_name()
+		local var_14_1 = Managers.state.game_mode:game_mode_key()
 
-		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = Managers.player and Managers.player:local_player()
+		if var_14_0 == arg_14_0.mechanism_name and var_14_1 == arg_14_0.game_mode_key then
+			local var_14_2 = Managers.player and Managers.player:local_player()
 
-			if local_player then
-				local local_party = local_player:get_party()
-				local local_side = local_party and Managers.state.side.side_by_party[local_party]
+			if var_14_2 then
+				local var_14_3 = var_14_2:get_party()
+				local var_14_4 = var_14_3 and Managers.state.side.side_by_party[var_14_3]
 
-				if local_side then
-					local side_name = local_side:name()
+				if var_14_4 and var_14_4:name() == arg_14_0.side then
+					local var_14_5 = Managers.state.entity:system("objective_system")
 
-					if side_name == data.side then
-						local objective_system = Managers.state.entity:system("objective_system")
-
-						if objective_system and objective_system:is_active() then
-							local objective_type = objective_system:current_objective_type()
-
-							if objective_type == "objective_interact" then
-								return true
-							end
-						end
+					if var_14_5 and var_14_5:is_active() and var_14_5:current_objective_type() == "objective_interact" then
+						return true
 					end
 				end
 			end
 		end
 
 		return false
-	end,
+	end
 }
 HintTemplates.reach_objective = {
 	data = {
-		body_text = "vs_hint_reach_objective_body",
-		class_name = "HintUIVersusHowToPlay",
-		duration = 15,
-		foot_text = "vs_hint_reach_objective_foot",
-		game_mode_key = "versus",
-		icon = "objective_reach",
-		mechanism_name = "versus",
 		side = "heroes",
 		title_text = "vs_hint_reach_objective_title",
-		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions"),
+		game_mode_key = "versus",
+		icon = "objective_reach",
+		body_text = "vs_hint_reach_objective_body",
+		mechanism_name = "versus",
+		foot_text = "vs_hint_reach_objective_foot",
+		duration = 15,
+		class_name = "HintUIVersusHowToPlay",
+		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions")
 	},
-	condition_function = function (data, dt, t)
-		local mechanism_name = Managers.mechanism:current_mechanism_name()
-		local game_mode_key = Managers.state.game_mode:game_mode_key()
+	condition_function = function(arg_15_0, arg_15_1, arg_15_2)
+		local var_15_0 = Managers.mechanism:current_mechanism_name()
+		local var_15_1 = Managers.state.game_mode:game_mode_key()
 
-		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = Managers.player and Managers.player:local_player()
+		if var_15_0 == arg_15_0.mechanism_name and var_15_1 == arg_15_0.game_mode_key then
+			local var_15_2 = Managers.player and Managers.player:local_player()
 
-			if local_player then
-				local local_party = local_player:get_party()
-				local local_side = local_party and Managers.state.side.side_by_party[local_party]
+			if var_15_2 then
+				local var_15_3 = var_15_2:get_party()
+				local var_15_4 = var_15_3 and Managers.state.side.side_by_party[var_15_3]
 
-				if local_side then
-					local side_name = local_side:name()
+				if var_15_4 and var_15_4:name() == arg_15_0.side then
+					local var_15_5 = Managers.state.entity:system("objective_system")
 
-					if side_name == data.side then
-						local objective_system = Managers.state.entity:system("objective_system")
+					if var_15_5 and var_15_5:is_active() then
+						local var_15_6 = var_15_5:current_objective_type()
+						local var_15_7 = var_15_5:current_objective_index() == 1
 
-						if objective_system and objective_system:is_active() then
-							local objective_type = objective_system:current_objective_type()
-							local is_first_objective = objective_system:current_objective_index() == 1
-
-							if objective_type == "objective_reach" and not is_first_objective then
-								return true
-							end
+						if var_15_6 == "objective_reach" and not var_15_7 then
+							return true
 						end
 					end
 				end
@@ -767,5 +665,5 @@ HintTemplates.reach_objective = {
 		end
 
 		return false
-	end,
+	end
 }

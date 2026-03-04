@@ -1,663 +1,633 @@
-﻿-- chunkname: @scripts/ui/views/hero_view/windows/hero_window_crafting_inventory_console.lua
+-- chunkname: @scripts/ui/views/hero_view/windows/hero_window_crafting_inventory_console.lua
 
-local crafting_recipes, crafting_recipes_by_name, crafting_recipes_lookup = dofile("scripts/settings/crafting/crafting_recipes")
-local definitions = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_crafting_inventory_console_definitions")
-local widget_definitions = definitions.widgets
-local scenegraph_definition = definitions.scenegraph_definition
-local animation_definitions = definitions.animation_definitions
-local pc_filter_widget_definitions = definitions.pc_filter_widgets
-local create_search_input_widget = definitions.create_search_input_widget
-local create_search_filters_widget = definitions.create_search_filters_widget
-local DO_RELOAD = false
-local INPUT_ACTION_NEXT = "trigger_cycle_next"
-local INPUT_ACTION_PREVIOUS = "trigger_cycle_previous"
+local var_0_0, var_0_1, var_0_2 = dofile("scripts/settings/crafting/crafting_recipes")
+local var_0_3 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_crafting_inventory_console_definitions")
+local var_0_4 = var_0_3.widgets
+local var_0_5 = var_0_3.scenegraph_definition
+local var_0_6 = var_0_3.animation_definitions
+local var_0_7 = var_0_3.pc_filter_widgets
+local var_0_8 = var_0_3.create_search_input_widget
+local var_0_9 = var_0_3.create_search_filters_widget
+local var_0_10 = false
+local var_0_11 = "trigger_cycle_next"
+local var_0_12 = "trigger_cycle_previous"
 
 HeroWindowCraftingInventoryConsole = class(HeroWindowCraftingInventoryConsole)
 HeroWindowCraftingInventoryConsole.NAME = "HeroWindowCraftingInventoryConsole"
 
-HeroWindowCraftingInventoryConsole.on_enter = function (self, params, offset)
+function HeroWindowCraftingInventoryConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowCraftingInventoryConsole")
 
-	self.params = params
-	self.parent = params.parent
+	arg_1_0.params = arg_1_1
+	arg_1_0.parent = arg_1_1.parent
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_1_0 = arg_1_1.ingame_ui_context
 
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self.input_manager = ingame_ui_context.input_manager
-	self.statistics_db = ingame_ui_context.statistics_db
-	self.render_settings = {
-		snap_pixel_positions = true,
+	arg_1_0.ui_renderer = var_1_0.ui_renderer
+	arg_1_0.ui_top_renderer = var_1_0.ui_top_renderer
+	arg_1_0.input_manager = var_1_0.input_manager
+	arg_1_0.statistics_db = var_1_0.statistics_db
+	arg_1_0.render_settings = {
+		snap_pixel_positions = true
 	}
 
-	local player_manager = Managers.player
-	local local_player = player_manager:local_player()
+	local var_1_1 = Managers.player
 
-	self._stats_id = local_player:stats_id()
-	self.player_manager = player_manager
-	self.peer_id = ingame_ui_context.peer_id
-	self._animations = {}
+	arg_1_0._stats_id = var_1_1:local_player():stats_id()
+	arg_1_0.player_manager = var_1_1
+	arg_1_0.peer_id = var_1_0.peer_id
+	arg_1_0._animations = {}
 
-	self:create_ui_elements(params, offset)
+	arg_1_0:create_ui_elements(arg_1_1, arg_1_2)
 
-	self.hero_name = params.hero_name
-	self.career_index = params.career_index
-	self.profile_index = params.profile_index
-	params = {
-		profile_index = self.profile_index,
-		career_index = self.career_index,
+	arg_1_0.hero_name = arg_1_1.hero_name
+	arg_1_0.career_index = arg_1_1.career_index
+	arg_1_0.profile_index = arg_1_1.profile_index
+	arg_1_1 = {
+		profile_index = arg_1_0.profile_index,
+		career_index = arg_1_0.career_index
 	}
 
-	self:_setup_input_buttons()
+	arg_1_0:_setup_input_buttons()
 
-	local item_grid = ItemGridUI:new(crafting_recipes, self._widgets_by_name.item_grid, self.hero_name, self.career_index, params)
+	local var_1_2 = ItemGridUI:new(var_0_0, arg_1_0._widgets_by_name.item_grid, arg_1_0.hero_name, arg_1_0.career_index, arg_1_1)
 
-	self._item_grid = item_grid
+	arg_1_0._item_grid = var_1_2
 
-	item_grid:mark_equipped_items(true)
-	item_grid:mark_locked_items(true)
-	item_grid:disable_locked_items(false)
-	item_grid:disable_item_drag()
+	var_1_2:mark_equipped_items(true)
+	var_1_2:mark_locked_items(true)
+	var_1_2:disable_locked_items(false)
+	var_1_2:disable_item_drag()
 
-	local inventory_sync_id = self.parent.inventory_sync_id
+	arg_1_0._inventory_sync_id = arg_1_0.parent.inventory_sync_id
 
-	self._inventory_sync_id = inventory_sync_id
-
-	self:_start_transition_animation("on_enter")
-	self.parent:set_inventory_grid(item_grid)
+	arg_1_0:_start_transition_animation("on_enter")
+	arg_1_0.parent:set_inventory_grid(var_1_2)
 end
 
-HeroWindowCraftingInventoryConsole._start_transition_animation = function (self, animation_name)
-	local params = {
-		wwise_world = self.wwise_world,
-		render_settings = self.render_settings,
+function HeroWindowCraftingInventoryConsole._start_transition_animation(arg_2_0, arg_2_1)
+	local var_2_0 = {
+		wwise_world = arg_2_0.wwise_world,
+		render_settings = arg_2_0.render_settings
 	}
-	local widgets = {}
-	local anim_id = self.ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
+	local var_2_1 = {}
+	local var_2_2 = arg_2_0.ui_animator:start_animation(arg_2_1, var_2_1, var_0_5, var_2_0)
 
-	self._animations[animation_name] = anim_id
+	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-HeroWindowCraftingInventoryConsole.create_ui_elements = function (self, params, offset)
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+function HeroWindowCraftingInventoryConsole.create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_5)
 
-	local widgets = {}
-	local widgets_by_name = {}
+	local var_3_0 = {}
+	local var_3_1 = {}
 
-	for name, widget_definition in pairs(widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_3_0, iter_3_1 in pairs(var_0_4) do
+		local var_3_2 = UIWidget.init(iter_3_1)
 
-		widgets[#widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_3_0[#var_3_0 + 1] = var_3_2
+		var_3_1[iter_3_0] = var_3_2
 	end
 
-	local widget_definition = create_search_input_widget(self)
-	local widget = UIWidget.init(widget_definition)
+	local var_3_3 = var_0_8(arg_3_0)
+	local var_3_4 = UIWidget.init(var_3_3)
 
-	widgets[#widgets + 1] = widget
-	widgets_by_name.input = widget
-	self._widgets = widgets
-	self._widgets_by_name = widgets_by_name
+	var_3_0[#var_3_0 + 1] = var_3_4
+	var_3_1.input = var_3_4
+	arg_3_0._widgets = var_3_0
+	arg_3_0._widgets_by_name = var_3_1
 
-	local widget_definition = create_search_filters_widget("search_filters", self.ui_top_renderer, self, UISettings.inventory_filter_definitions)
+	local var_3_5 = var_0_9("search_filters", arg_3_0.ui_top_renderer, arg_3_0, UISettings.inventory_filter_definitions)
 
-	self._filter_widget = UIWidget.init(widget_definition)
+	arg_3_0._filter_widget = UIWidget.init(var_3_5)
 
-	local pc_filter_widgets = {}
-	local pc_filter_widgets_by_name = {}
+	local var_3_6 = {}
+	local var_3_7 = {}
 
-	for name, widget_definition in pairs(pc_filter_widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_3_2, iter_3_3 in pairs(var_0_7) do
+		local var_3_8 = UIWidget.init(iter_3_3)
 
-		pc_filter_widgets[#pc_filter_widgets + 1] = widget
-		pc_filter_widgets_by_name[name] = widget
+		var_3_6[#var_3_6 + 1] = var_3_8
+		var_3_7[iter_3_2] = var_3_8
 	end
 
-	self._pc_filter_widgets = pc_filter_widgets
-	self._pc_filter_widgets_by_name = pc_filter_widgets_by_name
+	arg_3_0._pc_filter_widgets = var_3_6
+	arg_3_0._pc_filter_widgets_by_name = var_3_7
 
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_3_0.ui_renderer)
 
-	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
+	arg_3_0.ui_animator = UIAnimator:new(arg_3_0.ui_scenegraph, var_0_6)
 
-	if offset then
-		local window_position = self.ui_scenegraph.window.local_position
+	if arg_3_2 then
+		local var_3_9 = arg_3_0.ui_scenegraph.window.local_position
 
-		window_position[1] = window_position[1] + offset[1]
-		window_position[2] = window_position[2] + offset[2]
-		window_position[3] = window_position[3] + offset[3]
+		var_3_9[1] = var_3_9[1] + arg_3_2[1]
+		var_3_9[2] = var_3_9[2] + arg_3_2[2]
+		var_3_9[3] = var_3_9[3] + arg_3_2[3]
 	end
 
-	widgets_by_name.item_tooltip.content.profile_index = self.params.profile_index
-	widgets_by_name.item_tooltip.content.career_index = self.params.career_index
+	var_3_1.item_tooltip.content.profile_index = arg_3_0.params.profile_index
+	var_3_1.item_tooltip.content.career_index = arg_3_0.params.career_index
 
-	self:_set_input_blocked(false)
+	arg_3_0:_set_input_blocked(false)
 end
 
-HeroWindowCraftingInventoryConsole.on_exit = function (self, params)
+function HeroWindowCraftingInventoryConsole.on_exit(arg_4_0, arg_4_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowCraftingInventoryConsole")
 
-	self.ui_animator = nil
+	arg_4_0.ui_animator = nil
 
-	self._item_grid:destroy()
+	arg_4_0._item_grid:destroy()
 
-	self._item_grid = nil
+	arg_4_0._item_grid = nil
 
-	self.parent:set_filter_selected(false)
-	self.parent:set_filter_active(false)
+	arg_4_0.parent:set_filter_selected(false)
+	arg_4_0.parent:set_filter_active(false)
 end
 
-HeroWindowCraftingInventoryConsole._input_service = function (self)
-	local parent = self.parent
+function HeroWindowCraftingInventoryConsole._input_service(arg_5_0)
+	local var_5_0 = arg_5_0.parent
 
-	if parent:is_friends_list_active() then
+	if var_5_0:is_friends_list_active() then
 		return FAKE_INPUT_SERVICE
 	end
 
-	return parent:window_input_service()
+	return var_5_0:window_input_service()
 end
 
-HeroWindowCraftingInventoryConsole.update = function (self, dt, t)
-	if DO_RELOAD then
-		DO_RELOAD = false
+function HeroWindowCraftingInventoryConsole.update(arg_6_0, arg_6_1, arg_6_2)
+	if var_0_10 then
+		var_0_10 = false
 
-		self:create_ui_elements()
+		arg_6_0:create_ui_elements()
 	end
 
-	self._item_grid:update(dt, t)
-	self:_update_filter_status()
-	self:_update_animations(dt)
-	self:_handle_input(dt, t)
-	self:_handle_gamepad_input(dt, t)
-	self:_update_inventory_items()
-	self:_update_disabled_item_icon()
-	self:_update_disabled_backend_ids()
-	self:_update_page_info()
-	self:_handle_gamepad_activity()
-	self:_update_selected_item_tooltip()
-	self:_update_filter_reset()
-	self:_handle_filer_widgets_sounds()
-	self:draw(dt)
+	arg_6_0._item_grid:update(arg_6_1, arg_6_2)
+	arg_6_0:_update_filter_status()
+	arg_6_0:_update_animations(arg_6_1)
+	arg_6_0:_handle_input(arg_6_1, arg_6_2)
+	arg_6_0:_handle_gamepad_input(arg_6_1, arg_6_2)
+	arg_6_0:_update_inventory_items()
+	arg_6_0:_update_disabled_item_icon()
+	arg_6_0:_update_disabled_backend_ids()
+	arg_6_0:_update_page_info()
+	arg_6_0:_handle_gamepad_activity()
+	arg_6_0:_update_selected_item_tooltip()
+	arg_6_0:_update_filter_reset()
+	arg_6_0:_handle_filer_widgets_sounds()
+	arg_6_0:draw(arg_6_1)
 
-	if self._do_delayed_search then
-		local filter_widget_content = self._filter_widget.content
-		local input_content = self._widgets_by_name.input.content
+	if arg_6_0._do_delayed_search then
+		local var_6_0 = arg_6_0._filter_widget.content
+		local var_6_1 = arg_6_0._widgets_by_name.input.content
 
-		self:_do_search(input_content.search_query, filter_widget_content.query)
+		arg_6_0:_do_search(var_6_1.search_query, var_6_0.query)
 
-		self._do_delayed_search = false
-	end
-end
-
-HeroWindowCraftingInventoryConsole._update_filter_status = function (self)
-	local filter_disabled, search_disabled = self.parent:filter_search_disabled()
-	local widget = self._widgets_by_name.input
-	local widget_content = widget.content
-
-	widget_content.hotspot.disable_button = search_disabled
-	widget_content.clear_hotspot.disable_button = search_disabled
-	widget_content.search_filters_hotspot.disable_button = filter_disabled
-end
-
-HeroWindowCraftingInventoryConsole._update_filter_reset = function (self, force_reset)
-	local filter_reset = self.parent:filter_reset()
-
-	if filter_reset or force_reset then
-		local filter_widget = self._filter_widget
-		local filter_widget_content = filter_widget.content
-
-		table.clear(filter_widget_content.query.sort)
-		table.clear(filter_widget_content.query.filter)
-
-		filter_widget_content.query.only_new = nil
-
-		local input_widget = self._widgets_by_name.input
-		local input_content = input_widget.content
-
-		input_content.search_query, input_content.caret_index, input_content.text_index = "", 1, 1
-
-		self:_do_search(input_content.search_query, filter_widget_content.query)
-		self:_set_filter_selected(false)
+		arg_6_0._do_delayed_search = false
 	end
 end
 
-HeroWindowCraftingInventoryConsole.post_update = function (self, dt, t)
+function HeroWindowCraftingInventoryConsole._update_filter_status(arg_7_0)
+	local var_7_0, var_7_1 = arg_7_0.parent:filter_search_disabled()
+	local var_7_2 = arg_7_0._widgets_by_name.input.content
+
+	var_7_2.hotspot.disable_button = var_7_1
+	var_7_2.clear_hotspot.disable_button = var_7_1
+	var_7_2.search_filters_hotspot.disable_button = var_7_0
+end
+
+function HeroWindowCraftingInventoryConsole._update_filter_reset(arg_8_0, arg_8_1)
+	if arg_8_0.parent:filter_reset() or arg_8_1 then
+		local var_8_0 = arg_8_0._filter_widget.content
+
+		table.clear(var_8_0.query.sort)
+		table.clear(var_8_0.query.filter)
+
+		var_8_0.query.only_new = nil
+
+		local var_8_1 = arg_8_0._widgets_by_name.input.content
+
+		var_8_1.search_query, var_8_1.caret_index, var_8_1.text_index = "", 1, 1
+
+		arg_8_0:_do_search(var_8_1.search_query, var_8_0.query)
+		arg_8_0:_set_filter_selected(false)
+	end
+end
+
+function HeroWindowCraftingInventoryConsole.post_update(arg_9_0, arg_9_1, arg_9_2)
 	return
 end
 
-HeroWindowCraftingInventoryConsole._update_animations = function (self, dt)
-	self.ui_animator:update(dt)
+function HeroWindowCraftingInventoryConsole._update_animations(arg_10_0, arg_10_1)
+	arg_10_0.ui_animator:update(arg_10_1)
 
-	local animations = self._animations
-	local ui_animator = self.ui_animator
+	local var_10_0 = arg_10_0._animations
+	local var_10_1 = arg_10_0.ui_animator
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_10_0, iter_10_1 in pairs(var_10_0) do
+		if var_10_1:is_animation_completed(iter_10_1) then
+			var_10_1:stop_animation(iter_10_1)
 
-			animations[animation_name] = nil
+			var_10_0[iter_10_0] = nil
 		end
 	end
 
-	local widgets_by_name = self._widgets_by_name
-	local page_button_next = widgets_by_name.page_button_next
-	local page_button_previous = widgets_by_name.page_button_previous
+	local var_10_2 = arg_10_0._widgets_by_name
+	local var_10_3 = var_10_2.page_button_next
+	local var_10_4 = var_10_2.page_button_previous
 
-	UIWidgetUtils.animate_arrow_button(page_button_next, dt)
-	UIWidgetUtils.animate_arrow_button(page_button_previous, dt)
-	UIWidgetUtils.animate_default_button(self._pc_filter_widgets_by_name.apply_button, dt)
+	UIWidgetUtils.animate_arrow_button(var_10_3, arg_10_1)
+	UIWidgetUtils.animate_arrow_button(var_10_4, arg_10_1)
+	UIWidgetUtils.animate_default_button(arg_10_0._pc_filter_widgets_by_name.apply_button, arg_10_1)
 end
 
-HeroWindowCraftingInventoryConsole._is_button_pressed = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot or content.hotspot
+function HeroWindowCraftingInventoryConsole._is_button_pressed(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_1.content
+	local var_11_1 = var_11_0.button_hotspot or var_11_0.hotspot
 
-	if hotspot.on_release then
-		hotspot.on_release = false
+	if var_11_1.on_release then
+		var_11_1.on_release = false
 
 		return true
 	end
 end
 
-HeroWindowCraftingInventoryConsole._is_button_hovered = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot or content.hotspot
+function HeroWindowCraftingInventoryConsole._is_button_hovered(arg_12_0, arg_12_1)
+	local var_12_0 = arg_12_1.content
 
-	if hotspot.on_hover_enter then
+	if (var_12_0.button_hotspot or var_12_0.hotspot).on_hover_enter then
 		return true
 	end
 end
 
-HeroWindowCraftingInventoryConsole._handle_filter_input = function (self, input_service, dt, t)
-	local filter_active = self.parent:filter_active()
-
-	if not filter_active then
+function HeroWindowCraftingInventoryConsole._handle_filter_input(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	if not arg_13_0.parent:filter_active() then
 		return false
 	end
 
-	if input_service:get("toggle_menu", true) then
-		self.parent:set_filter_active(false)
-
-		return false
-	end
-
-	local filter_widget = self._filter_widget
-	local filter_content = filter_widget.content
-
-	if filter_content.close_filter_hotspot.on_pressed then
-		self.parent:set_filter_active(false)
-
-		return false
-	elseif not filter_content.area_hotspot.is_hover and input_service:get("left_press", true) then
-		local input_widget = self._widgets_by_name.input
-		local input_content = input_widget.content
-
-		self:_do_search(input_content.search_query, filter_content.query)
-		self.parent:set_filter_active(false)
+	if arg_13_1:get("toggle_menu", true) then
+		arg_13_0.parent:set_filter_active(false)
 
 		return false
 	end
 
-	if UIUtils.is_button_pressed(self._pc_filter_widgets_by_name.apply_button) then
-		local input_widget = self._widgets_by_name.input
-		local input_content = input_widget.content
+	local var_13_0 = arg_13_0._filter_widget.content
 
-		self:_do_search(input_content.search_query, filter_content.query)
-		self.parent:set_filter_active(false)
+	if var_13_0.close_filter_hotspot.on_pressed then
+		arg_13_0.parent:set_filter_active(false)
+
+		return false
+	elseif not var_13_0.area_hotspot.is_hover and arg_13_1:get("left_press", true) then
+		local var_13_1 = arg_13_0._widgets_by_name.input.content
+
+		arg_13_0:_do_search(var_13_1.search_query, var_13_0.query)
+		arg_13_0.parent:set_filter_active(false)
+
+		return false
+	end
+
+	if UIUtils.is_button_pressed(arg_13_0._pc_filter_widgets_by_name.apply_button) then
+		local var_13_2 = arg_13_0._widgets_by_name.input.content
+
+		arg_13_0:_do_search(var_13_2.search_query, var_13_0.query)
+		arg_13_0.parent:set_filter_active(false)
 
 		return false
 	end
 end
 
-HeroWindowCraftingInventoryConsole._handle_filer_widgets_sounds = function (self)
-	local filter_widget = self._filter_widget
-	local search_widget = self._widgets_by_name.input
+function HeroWindowCraftingInventoryConsole._handle_filer_widgets_sounds(arg_14_0)
+	local var_14_0 = arg_14_0._filter_widget
+	local var_14_1 = arg_14_0._widgets_by_name.input
 
-	if search_widget and UIUtils.is_button_hover_enter(search_widget, "search_filters_hotspot") then
-		self:_play_sound("play_gui_filter_tab_hover")
+	if var_14_1 and UIUtils.is_button_hover_enter(var_14_1, "search_filters_hotspot") then
+		arg_14_0:_play_sound("play_gui_filter_tab_hover")
 	end
 
-	if filter_widget then
-		if UIUtils.is_button_pressed(filter_widget, "reset_filter_hotspot") then
-			self:_play_sound("play_gui_filter_reset")
+	if var_14_0 then
+		if UIUtils.is_button_pressed(var_14_0, "reset_filter_hotspot") then
+			arg_14_0:_play_sound("play_gui_filter_reset")
 		end
 
-		local sort_by_names = {
+		local var_14_2 = {
 			[1] = "rarity",
-			[2] = "power_level",
+			[2] = "power_level"
 		}
 
-		for i = 1, #sort_by_names do
-			local name = sort_by_names[i]
+		for iter_14_0 = 1, #var_14_2 do
+			local var_14_3 = var_14_2[iter_14_0]
 
-			if UIUtils.is_button_hover_enter(filter_widget, "sort_items_" .. name .. "_hotspot") then
-				self:_play_sound("play_gui_filter_sort_type_hover")
+			if UIUtils.is_button_hover_enter(var_14_0, "sort_items_" .. var_14_3 .. "_hotspot") then
+				arg_14_0:_play_sound("play_gui_filter_sort_type_hover")
 			end
 
-			if UIUtils.is_button_pressed(filter_widget, "sort_items_" .. name .. "_hotspot") then
-				self:_play_sound("play_gui_filter_sort_type")
-			end
-		end
-
-		for rarity, settings in pairs(RaritySettings) do
-			if UIUtils.is_button_hover_enter(filter_widget, rarity .. "_hotspot") then
-				self:_play_sound("play_gui_filter_rarity_hover")
-			end
-
-			if UIUtils.is_button_pressed(filter_widget, rarity .. "_hotspot") then
-				self:_play_sound("play_gui_filter_rarity_click")
+			if UIUtils.is_button_pressed(var_14_0, "sort_items_" .. var_14_3 .. "_hotspot") then
+				arg_14_0:_play_sound("play_gui_filter_sort_type")
 			end
 		end
 
-		if UIUtils.is_button_hover_enter(filter_widget, "checkbox_hotspot") then
-			self:_play_sound("play_gui_filter_rarity_hover")
+		for iter_14_1, iter_14_2 in pairs(RaritySettings) do
+			if UIUtils.is_button_hover_enter(var_14_0, iter_14_1 .. "_hotspot") then
+				arg_14_0:_play_sound("play_gui_filter_rarity_hover")
+			end
+
+			if UIUtils.is_button_pressed(var_14_0, iter_14_1 .. "_hotspot") then
+				arg_14_0:_play_sound("play_gui_filter_rarity_click")
+			end
 		end
 
-		if UIUtils.is_button_pressed(filter_widget, "checkbox_hotspot") then
-			self:_play_sound("play_gui_filter_rarity_click")
+		if UIUtils.is_button_hover_enter(var_14_0, "checkbox_hotspot") then
+			arg_14_0:_play_sound("play_gui_filter_rarity_hover")
+		end
+
+		if UIUtils.is_button_pressed(var_14_0, "checkbox_hotspot") then
+			arg_14_0:_play_sound("play_gui_filter_rarity_click")
 		end
 	end
 end
 
-HeroWindowCraftingInventoryConsole._handle_gamepad_filter_input = function (self, input_service, dt, t)
-	local filter_active = self.parent:filter_active()
-	local filter_selected = self.parent:filter_selected()
+function HeroWindowCraftingInventoryConsole._handle_gamepad_filter_input(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+	local var_15_0 = arg_15_0.parent:filter_active()
+	local var_15_1 = arg_15_0.parent:filter_selected()
 
-	if filter_active then
-		input_service:get("back_menu", true)
+	if var_15_0 then
+		arg_15_1:get("back_menu", true)
 
-		local filter_widget = self._filter_widget
-		local filter_content = filter_widget.content
-		local current_gamepad_index = filter_content.current_gamepad_index or {
+		local var_15_2 = arg_15_0._filter_widget.content
+		local var_15_3 = var_15_2.current_gamepad_index or {
 			1,
-			1,
+			1
 		}
-		local gamepad_input_matrix = filter_content.gamepad_input_matrix
-		local rows = #gamepad_input_matrix
-		local columns = #gamepad_input_matrix[current_gamepad_index[1]]
+		local var_15_4 = var_15_2.gamepad_input_matrix
+		local var_15_5 = #var_15_4
+		local var_15_6 = #var_15_4[var_15_3[1]]
 
-		if input_service:get("move_down_hold_continuous") then
-			current_gamepad_index[1] = math.clamp(current_gamepad_index[1] + 1, 1, rows)
+		if arg_15_1:get("move_down_hold_continuous") then
+			var_15_3[1] = math.clamp(var_15_3[1] + 1, 1, var_15_5)
 
-			local columns = #gamepad_input_matrix[current_gamepad_index[1]]
+			local var_15_7 = #var_15_4[var_15_3[1]]
 
-			current_gamepad_index[2] = math.clamp(current_gamepad_index[2], 1, columns)
-		elseif input_service:get("move_up_hold_continuous") then
-			current_gamepad_index[1] = math.clamp(current_gamepad_index[1] - 1, 1, rows)
+			var_15_3[2] = math.clamp(var_15_3[2], 1, var_15_7)
+		elseif arg_15_1:get("move_up_hold_continuous") then
+			var_15_3[1] = math.clamp(var_15_3[1] - 1, 1, var_15_5)
 
-			local columns = #gamepad_input_matrix[current_gamepad_index[1]]
+			local var_15_8 = #var_15_4[var_15_3[1]]
 
-			current_gamepad_index[2] = math.clamp(current_gamepad_index[2], 1, columns)
-		elseif input_service:get("move_right_hold_continuous") then
-			current_gamepad_index[2] = math.clamp(current_gamepad_index[2] + 1, 1, columns)
-		elseif input_service:get("move_left_hold_continuous") then
-			current_gamepad_index[2] = math.clamp(current_gamepad_index[2] - 1, 1, columns)
+			var_15_3[2] = math.clamp(var_15_3[2], 1, var_15_8)
+		elseif arg_15_1:get("move_right_hold_continuous") then
+			var_15_3[2] = math.clamp(var_15_3[2] + 1, 1, var_15_6)
+		elseif arg_15_1:get("move_left_hold_continuous") then
+			var_15_3[2] = math.clamp(var_15_3[2] - 1, 1, var_15_6)
 		end
 
-		if input_service:get("confirm", true) then
-			local row = current_gamepad_index[1]
-			local column = current_gamepad_index[2]
-			local selected_hotspot = gamepad_input_matrix[row][column]
+		if arg_15_1:get("confirm", true) then
+			local var_15_9 = var_15_3[1]
+			local var_15_10 = var_15_3[2]
 
-			filter_content[selected_hotspot].gamepad_pressed = true
-			self._do_delayed_search = true
-		elseif input_service:get("special_1", true) then
-			self:_update_filter_reset(true)
-		elseif input_service:get("back", true) then
-			filter_content.current_gamepad_index[1] = 1
-			filter_content.current_gamepad_index[2] = 1
+			var_15_2[var_15_4[var_15_9][var_15_10]].gamepad_pressed = true
+			arg_15_0._do_delayed_search = true
+		elseif arg_15_1:get("special_1", true) then
+			arg_15_0:_update_filter_reset(true)
+		elseif arg_15_1:get("back", true) then
+			var_15_2.current_gamepad_index[1] = 1
+			var_15_2.current_gamepad_index[2] = 1
 
-			local input_widget = self._widgets_by_name.input
-			local input_content = input_widget.content
+			local var_15_11 = arg_15_0._widgets_by_name.input.content
 
-			self:_do_search(input_content.search_query, filter_content.query)
-			self.parent:set_filter_active(false)
-			self:_set_filter_selected(true)
+			arg_15_0:_do_search(var_15_11.search_query, var_15_2.query)
+			arg_15_0.parent:set_filter_active(false)
+			arg_15_0:_set_filter_selected(true)
 		end
-	elseif filter_selected then
-		local first_item = self._item_grid:get_item_in_slot(1, 1)
-
-		if first_item and input_service:get("move_down_hold_continuous") then
-			self:_set_filter_selected(false)
-		elseif input_service:get("special_1", true) then
-			self:_update_filter_reset(true)
-		elseif input_service:get("confirm") then
-			self.parent:set_filter_active(true)
-			self.parent:set_filter_selected(false)
+	elseif var_15_1 then
+		if arg_15_0._item_grid:get_item_in_slot(1, 1) and arg_15_1:get("move_down_hold_continuous") then
+			arg_15_0:_set_filter_selected(false)
+		elseif arg_15_1:get("special_1", true) then
+			arg_15_0:_update_filter_reset(true)
+		elseif arg_15_1:get("confirm") then
+			arg_15_0.parent:set_filter_active(true)
+			arg_15_0.parent:set_filter_selected(false)
 		end
-	else
-		local filter_disabled = self.parent:filter_search_disabled()
+	elseif not arg_15_0.parent:filter_search_disabled() and arg_15_0._item_grid:get_selected_item_grid_slot() == 1 and arg_15_1:get("move_up_hold_continuous") then
+		arg_15_0:_set_filter_selected(true)
 
-		if not filter_disabled then
-			local selected_row = self._item_grid:get_selected_item_grid_slot()
-
-			if selected_row == 1 and input_service:get("move_up_hold_continuous") then
-				self:_set_filter_selected(true)
-
-				return true
-			end
-		end
+		return true
 	end
 
-	return filter_active or filter_selected
+	return var_15_0 or var_15_1
 end
 
-HeroWindowCraftingInventoryConsole.filter_selected = function (self)
-	return self.parent:filter_selected()
+function HeroWindowCraftingInventoryConsole.filter_selected(arg_16_0)
+	return arg_16_0.parent:filter_selected()
 end
 
-HeroWindowCraftingInventoryConsole.filter_active = function (self)
-	return self.parent:filter_active()
+function HeroWindowCraftingInventoryConsole.filter_active(arg_17_0)
+	return arg_17_0.parent:filter_active()
 end
 
-HeroWindowCraftingInventoryConsole._set_filter_selected = function (self, selected)
-	local item_grid = self._item_grid
-	local gamepad_active = Managers.input:is_device_active("gamepad")
+function HeroWindowCraftingInventoryConsole._set_filter_selected(arg_18_0, arg_18_1)
+	local var_18_0 = arg_18_0._item_grid
+	local var_18_1 = Managers.input:is_device_active("gamepad")
 
-	if selected then
-		item_grid:set_item_selected(nil)
-	elseif gamepad_active then
-		local first_item = item_grid:get_item_in_slot(1, 1)
+	if arg_18_1 then
+		var_18_0:set_item_selected(nil)
+	elseif var_18_1 then
+		local var_18_2 = var_18_0:get_item_in_slot(1, 1)
 
-		item_grid:set_item_selected(first_item)
+		var_18_0:set_item_selected(var_18_2)
 	end
 
-	self.parent:set_filter_selected(selected)
+	arg_18_0.parent:set_filter_selected(arg_18_1)
 end
 
-HeroWindowCraftingInventoryConsole._handle_input = function (self, dt, t)
-	local input_service = self:_input_service()
-	local gamepad_active = Managers.input:is_device_active("gamepad")
+function HeroWindowCraftingInventoryConsole._handle_input(arg_19_0, arg_19_1, arg_19_2)
+	local var_19_0 = arg_19_0:_input_service()
 
-	if not gamepad_active then
-		if self:_handle_search_input(dt, t) then
+	if not Managers.input:is_device_active("gamepad") then
+		if arg_19_0:_handle_search_input(arg_19_1, arg_19_2) then
 			return
 		end
 
-		if self:_handle_filter_input(input_service, dt, t) then
+		if arg_19_0:_handle_filter_input(var_19_0, arg_19_1, arg_19_2) then
 			return
 		end
 
-		local widgets_by_name = self._widgets_by_name
-		local parent = self.parent
-		local item_grid = self._item_grid
-		local allow_single_press = false
-		local item = item_grid:is_item_pressed(allow_single_press)
+		local var_19_1 = arg_19_0._widgets_by_name
+		local var_19_2 = arg_19_0.parent
+		local var_19_3 = arg_19_0._item_grid
+		local var_19_4 = false
+		local var_19_5 = var_19_3:is_item_pressed(var_19_4)
 
-		if item_grid:is_item_hovered() then
-			self:_play_sound("play_gui_inventory_item_hover")
+		if var_19_3:is_item_hovered() then
+			arg_19_0:_play_sound("play_gui_inventory_item_hover")
 		end
 
-		if self._pressed_backend_id and parent:get_pressed_item_backend_id() == self._pressed_backend_id then
-			parent:set_pressed_item_backend_id(nil)
+		if arg_19_0._pressed_backend_id and var_19_2:get_pressed_item_backend_id() == arg_19_0._pressed_backend_id then
+			var_19_2:set_pressed_item_backend_id(nil)
 
-			self._pressed_backend_id = nil
+			arg_19_0._pressed_backend_id = nil
 		end
 
-		if item then
-			local backend_id = item.backend_id
+		if var_19_5 then
+			local var_19_6 = var_19_5.backend_id
 
-			self._pressed_backend_id = backend_id
+			arg_19_0._pressed_backend_id = var_19_6
 
-			local is_drag_item = false
+			local var_19_7 = false
 
-			parent:set_pressed_item_backend_id(backend_id, is_drag_item)
+			var_19_2:set_pressed_item_backend_id(var_19_6, var_19_7)
 		end
 
-		local page_button_next = widgets_by_name.page_button_next
-		local page_button_previous = widgets_by_name.page_button_previous
+		local var_19_8 = var_19_1.page_button_next
+		local var_19_9 = var_19_1.page_button_previous
 
-		if self:_is_button_hovered(page_button_next) or self:_is_button_hovered(page_button_previous) then
-			self:_play_sound("play_gui_inventory_next_hover")
+		if arg_19_0:_is_button_hovered(var_19_8) or arg_19_0:_is_button_hovered(var_19_9) then
+			arg_19_0:_play_sound("play_gui_inventory_next_hover")
 		end
 
-		if self:_is_button_pressed(page_button_next) then
-			local next_page_index = self._current_page + 1
+		if arg_19_0:_is_button_pressed(var_19_8) then
+			local var_19_10 = arg_19_0._current_page + 1
 
-			item_grid:set_item_page(next_page_index)
-			self:_play_sound("play_gui_craft_inventory_next")
-		elseif self:_is_button_pressed(page_button_previous) then
-			local next_page_index = self._current_page - 1
+			var_19_3:set_item_page(var_19_10)
+			arg_19_0:_play_sound("play_gui_craft_inventory_next")
+		elseif arg_19_0:_is_button_pressed(var_19_9) then
+			local var_19_11 = arg_19_0._current_page - 1
 
-			item_grid:set_item_page(next_page_index)
-			self:_play_sound("play_gui_craft_inventory_next")
+			var_19_3:set_item_page(var_19_11)
+			arg_19_0:_play_sound("play_gui_craft_inventory_next")
 		end
 	end
 
-	self:_handle_recipe_inputs(dt, t)
+	arg_19_0:_handle_recipe_inputs(arg_19_1, arg_19_2)
 end
 
-HeroWindowCraftingInventoryConsole._handle_gamepad_input = function (self, dt, t)
-	local parent = self.parent
-	local input_service = self:_input_service()
-	local item_grid = self._item_grid
-	local mouse_active = Managers.input:is_device_active("mouse")
+function HeroWindowCraftingInventoryConsole._handle_gamepad_input(arg_20_0, arg_20_1, arg_20_2)
+	local var_20_0 = arg_20_0.parent
+	local var_20_1 = arg_20_0:_input_service()
+	local var_20_2 = arg_20_0._item_grid
 
-	if mouse_active or self.parent.parent:input_blocked() then
+	if Managers.input:is_device_active("mouse") or arg_20_0.parent.parent:input_blocked() then
 		return
 	end
 
-	if IS_CONSOLE and self:_handle_search_input(dt, t) then
+	if IS_CONSOLE and arg_20_0:_handle_search_input(arg_20_1, arg_20_2) then
 		return
 	end
 
-	if self:_handle_gamepad_filter_input(input_service, dt, t) then
+	if arg_20_0:_handle_gamepad_filter_input(var_20_1, arg_20_1, arg_20_2) then
 		return
 	end
 
-	if input_service:get("confirm", true) then
-		local selected_item = item_grid:selected_item()
+	if var_20_1:get("confirm", true) then
+		local var_20_3 = var_20_2:selected_item()
 
-		if selected_item then
-			local backend_id = selected_item.backend_id
+		if var_20_3 then
+			local var_20_4 = var_20_3.backend_id
 
-			self._pressed_backend_id = backend_id
+			arg_20_0._pressed_backend_id = var_20_4
 
-			local is_drag_item = false
+			local var_20_5 = false
 
-			parent:set_pressed_item_backend_id(backend_id, is_drag_item)
+			var_20_0:set_pressed_item_backend_id(var_20_4, var_20_5)
 		end
-	elseif self._pressed_backend_id and parent:get_pressed_item_backend_id() == self._pressed_backend_id then
-		parent:set_pressed_item_backend_id(nil)
+	elseif arg_20_0._pressed_backend_id and var_20_0:get_pressed_item_backend_id() == arg_20_0._pressed_backend_id then
+		var_20_0:set_pressed_item_backend_id(nil)
 
-		self._pressed_backend_id = nil
-	elseif item_grid:handle_gamepad_selection(input_service) then
-		self:_play_sound("play_gui_craft_forge_hover")
+		arg_20_0._pressed_backend_id = nil
+	elseif var_20_2:handle_gamepad_selection(var_20_1) then
+		arg_20_0:_play_sound("play_gui_craft_forge_hover")
 	end
 
-	local page_index = self._current_page
-	local total_pages = self._total_pages
+	local var_20_6 = arg_20_0._current_page
+	local var_20_7 = arg_20_0._total_pages
 
-	if page_index and total_pages then
-		if page_index < total_pages and input_service:get(INPUT_ACTION_NEXT) then
-			item_grid:set_item_page(page_index + 1)
-			self:_play_sound("play_gui_craft_inventory_next")
+	if var_20_6 and var_20_7 then
+		if var_20_6 < var_20_7 and var_20_1:get(var_0_11) then
+			var_20_2:set_item_page(var_20_6 + 1)
+			arg_20_0:_play_sound("play_gui_craft_inventory_next")
 
-			local first_item = item_grid:get_item_in_slot(1, 1)
+			local var_20_8 = var_20_2:get_item_in_slot(1, 1)
 
-			item_grid:set_item_selected(first_item)
-		elseif page_index > 1 and input_service:get(INPUT_ACTION_PREVIOUS) then
-			item_grid:set_item_page(page_index - 1)
-			self:_play_sound("play_gui_craft_inventory_next")
+			var_20_2:set_item_selected(var_20_8)
+		elseif var_20_6 > 1 and var_20_1:get(var_0_12) then
+			var_20_2:set_item_page(var_20_6 - 1)
+			arg_20_0:_play_sound("play_gui_craft_inventory_next")
 
-			local first_item = item_grid:get_item_in_slot(1, 1)
+			local var_20_9 = var_20_2:get_item_in_slot(1, 1)
 
-			item_grid:set_item_selected(first_item)
+			var_20_2:set_item_selected(var_20_9)
 		end
 	end
 end
 
-HeroWindowCraftingInventoryConsole._set_input_blocked = function (self, blocked)
-	local input_manager = Managers.input
+function HeroWindowCraftingInventoryConsole._set_input_blocked(arg_21_0, arg_21_1)
+	local var_21_0 = Managers.input
 
-	if blocked then
-		input_manager:block_device_except_service("hero_view", "keyboard", 1, "search")
-		input_manager:block_device_except_service("hero_view", "mouse", 1, "search")
-		input_manager:block_device_except_service("hero_view", "gamepad", 1, "search")
+	if arg_21_1 then
+		var_21_0:block_device_except_service("hero_view", "keyboard", 1, "search")
+		var_21_0:block_device_except_service("hero_view", "mouse", 1, "search")
+		var_21_0:block_device_except_service("hero_view", "gamepad", 1, "search")
 	else
-		input_manager:device_unblock_all_services("keyboard")
-		input_manager:device_unblock_all_services("mouse")
-		input_manager:device_unblock_all_services("gamepad")
-		input_manager:block_device_except_service("hero_view", "keyboard", 1)
-		input_manager:block_device_except_service("hero_view", "mouse", 1)
-		input_manager:block_device_except_service("hero_view", "gamepad", 1)
+		var_21_0:device_unblock_all_services("keyboard")
+		var_21_0:device_unblock_all_services("mouse")
+		var_21_0:device_unblock_all_services("gamepad")
+		var_21_0:block_device_except_service("hero_view", "keyboard", 1)
+		var_21_0:block_device_except_service("hero_view", "mouse", 1)
+		var_21_0:block_device_except_service("hero_view", "gamepad", 1)
 	end
 
-	self.parent.parent:set_input_blocked(blocked)
+	arg_21_0.parent.parent:set_input_blocked(arg_21_1)
 end
 
-HeroWindowCraftingInventoryConsole._handle_search_input = function (self, dt, t)
-	local gamepad_active = Managers.input:is_device_active("gamepad")
-	local input_service = self:_input_service()
-	local input_widget = self._widgets_by_name.input
-	local input_content = input_widget.content
+function HeroWindowCraftingInventoryConsole._handle_search_input(arg_22_0, arg_22_1, arg_22_2)
+	local var_22_0 = Managers.input:is_device_active("gamepad")
+	local var_22_1 = arg_22_0:_input_service()
+	local var_22_2 = arg_22_0._widgets_by_name.input.content
 
-	if not gamepad_active then
-		if input_content.clear_hotspot.on_pressed then
-			input_content.search_query, input_content.caret_index, input_content.text_index = "", 1, 1
+	if not var_22_0 then
+		if var_22_2.clear_hotspot.on_pressed then
+			var_22_2.search_query, var_22_2.caret_index, var_22_2.text_index = "", 1, 1
 
-			self:_do_search(input_content.search_query)
+			arg_22_0:_do_search(var_22_2.search_query)
 
 			return true
-		elseif input_content.search_filters_hotspot.on_pressed then
-			self:_play_sound("play_gui_filter_tab_click")
+		elseif var_22_2.search_filters_hotspot.on_pressed then
+			arg_22_0:_play_sound("play_gui_filter_tab_click")
 
-			input_content.input_active = false
-			self._keyboard_id = nil
+			var_22_2.input_active = false
+			arg_22_0._keyboard_id = nil
 
-			self:_set_input_blocked(false)
-			self.parent:set_filter_active(true)
+			arg_22_0:_set_input_blocked(false)
+			arg_22_0.parent:set_filter_active(true)
 
 			return true
 		end
 	end
 
-	if not self._keyboard_id then
-		input_content.input_active = false
+	if not arg_22_0._keyboard_id then
+		var_22_2.input_active = false
 
-		local filter_selected = self.parent:filter_selected()
-		local toggle_keyboard_pressed = gamepad_active and filter_selected and input_service:get("refresh") and not IS_WINDOWS
+		local var_22_3 = arg_22_0.parent:filter_selected()
+		local var_22_4 = var_22_0 and var_22_3 and var_22_1:get("refresh") and not IS_WINDOWS
 
-		if input_content.hotspot.on_pressed or toggle_keyboard_pressed then
-			input_content.input_active = true
+		if var_22_2.hotspot.on_pressed or var_22_4 then
+			var_22_2.input_active = true
 
 			if IS_WINDOWS then
-				self:_set_input_blocked(true)
+				arg_22_0:_set_input_blocked(true)
 
-				self._keyboard_id = true
+				arg_22_0._keyboard_id = true
 			elseif IS_XB1 then
-				local title = Localize("lb_search")
+				local var_22_5 = Localize("lb_search")
 
-				XboxInterface.show_virtual_keyboard(self._search_query, title)
+				XboxInterface.show_virtual_keyboard(arg_22_0._search_query, var_22_5)
 
-				self._keyboard_id = true
+				arg_22_0._keyboard_id = true
 			elseif IS_PS4 then
-				local user_id = Managers.account:user_id()
-				local title = Localize("lb_search")
-				local position = definitions.virtual_keyboard_anchor_point
+				local var_22_6 = Managers.account:user_id()
+				local var_22_7 = Localize("lb_search")
+				local var_22_8 = var_0_3.virtual_keyboard_anchor_point
 
-				self._keyboard_id = Managers.system_dialog:open_virtual_keyboard(user_id, title, self._search_query, position)
+				arg_22_0._keyboard_id = Managers.system_dialog:open_virtual_keyboard(var_22_6, var_22_7, arg_22_0._search_query, var_22_8)
 			end
 
 			return true
@@ -666,440 +636,426 @@ HeroWindowCraftingInventoryConsole._handle_search_input = function (self, dt, t)
 		return false
 	end
 
-	local gamepad_active = Managers.input:is_device_active("gamepad")
+	local var_22_9 = Managers.input:is_device_active("gamepad")
 
 	Managers.chat:block_chat_input_for_one_frame()
 
 	if IS_WINDOWS then
-		local keystrokes = Keyboard.keystrokes()
+		local var_22_10 = Keyboard.keystrokes()
 
-		input_content.search_query, input_content.caret_index = KeystrokeHelper.parse_strokes(input_content.search_query, input_content.caret_index, "insert", keystrokes)
+		var_22_2.search_query, var_22_2.caret_index = KeystrokeHelper.parse_strokes(var_22_2.search_query, var_22_2.caret_index, "insert", var_22_10)
 
-		if input_service:get("execute_chat_input", true) then
-			self:_do_search(input_content.search_query)
+		if var_22_1:get("execute_chat_input", true) then
+			arg_22_0:_do_search(var_22_2.search_query)
 
-			input_content.input_active = false
-			self._keyboard_id = nil
+			var_22_2.input_active = false
+			arg_22_0._keyboard_id = nil
 
-			self:_set_input_blocked(false)
-		elseif input_service:get("toggle_menu", true) then
-			input_content.input_active = false
-			self._keyboard_id = nil
+			arg_22_0:_set_input_blocked(false)
+		elseif var_22_1:get("toggle_menu", true) then
+			var_22_2.input_active = false
+			arg_22_0._keyboard_id = nil
 
-			self:_set_input_blocked(false)
+			arg_22_0:_set_input_blocked(false)
 		end
 	elseif IS_XB1 then
 		if not XboxInterface.interface_active() then
-			local search_query = XboxInterface.get_keyboard_result()
+			local var_22_11 = XboxInterface.get_keyboard_result()
 
-			input_content.caret_index = gamepad_active and 1 or #search_query
+			var_22_2.caret_index = var_22_9 and 1 or #var_22_11
 
-			self:_do_search(search_query)
+			arg_22_0:_do_search(var_22_11)
 
-			self._keyboard_id = nil
+			arg_22_0._keyboard_id = nil
 
-			local first_item = self._item_grid:get_item_in_slot(1, 1)
+			local var_22_12 = arg_22_0._item_grid:get_item_in_slot(1, 1)
 
-			self:_set_filter_selected(first_item == nil)
+			arg_22_0:_set_filter_selected(var_22_12 == nil)
 		end
 	elseif IS_PS4 then
-		local done, success, search_query = Managers.system_dialog:poll_virtual_keyboard(self._keyboard_id)
+		local var_22_13, var_22_14, var_22_15 = Managers.system_dialog:poll_virtual_keyboard(arg_22_0._keyboard_id)
 
-		if done then
-			if success then
-				input_content.caret_index = gamepad_active and 1 or #search_query
+		if var_22_13 then
+			if var_22_14 then
+				var_22_2.caret_index = var_22_9 and 1 or #var_22_15
 
-				self:_do_search(search_query)
+				arg_22_0:_do_search(var_22_15)
 			end
 
-			self._keyboard_id = nil
+			arg_22_0._keyboard_id = nil
 
-			local first_item = self._item_grid:get_item_in_slot(1, 1)
+			local var_22_16 = arg_22_0._item_grid:get_item_in_slot(1, 1)
 
-			self:_set_filter_selected(first_item == nil)
+			arg_22_0:_set_filter_selected(var_22_16 == nil)
 		end
 	end
 
-	if input_content.hotspot.on_pressed then
+	if var_22_2.hotspot.on_pressed then
 		return true
 	end
 
-	return self._keyboard_id
+	return arg_22_0._keyboard_id
 end
 
-local EMPTY_TABLE = {}
+local var_0_13 = {}
 
-HeroWindowCraftingInventoryConsole._do_search = function (self, search_query, filter_query)
-	self._search_query = search_query
-	self._filter_query = filter_query or self._filter_query or EMPTY_TABLE
+function HeroWindowCraftingInventoryConsole._do_search(arg_23_0, arg_23_1, arg_23_2)
+	arg_23_0._search_query = arg_23_1
+	arg_23_0._filter_query = arg_23_2 or arg_23_0._filter_query or var_0_13
+	arg_23_0._widgets_by_name.input.content.search_query = arg_23_1
 
-	local search_widget = self._widgets_by_name.input
-	local search_widget_content = search_widget.content
+	local var_23_0 = var_0_1[arg_23_0._selected_craft_page_name]
+	local var_23_1 = var_23_0.item_filter
+	local var_23_2 = var_23_0.hero_specific_filter
+	local var_23_3 = var_23_0.career_specific_filter
 
-	search_widget_content.search_query = search_query
+	if var_23_2 then
+		local var_23_4 = var_23_1 and "and " .. var_23_1 or ""
 
-	local local_crafting_recipes_by_name = crafting_recipes_by_name
-	local recipe = local_crafting_recipes_by_name[self._selected_craft_page_name]
-	local item_filter = recipe.item_filter
-	local hero_specific_filter = recipe.hero_specific_filter
-	local career_specific_filter = recipe.career_specific_filter
-
-	if hero_specific_filter then
-		local temp_item_filter = item_filter and "and " .. item_filter or ""
-
-		item_filter = "can_wield_by_current_hero " .. temp_item_filter
+		var_23_1 = "can_wield_by_current_hero " .. var_23_4
 	end
 
-	if self._filter_query.filter then
-		for name, disable in pairs(self._filter_query.filter) do
-			if disable then
-				item_filter = item_filter .. " and not is_" .. name
+	if arg_23_0._filter_query.filter then
+		for iter_23_0, iter_23_1 in pairs(arg_23_0._filter_query.filter) do
+			if iter_23_1 then
+				var_23_1 = var_23_1 .. " and not is_" .. iter_23_0
 			end
 		end
 	end
 
-	if self._filter_query.only_new then
-		item_filter = item_filter .. " and is_new"
+	if arg_23_0._filter_query.only_new then
+		var_23_1 = var_23_1 .. " and is_new"
 	end
 
-	self:change_item_filter(item_filter, true, search_query)
+	arg_23_0:change_item_filter(var_23_1, true, arg_23_1)
 
-	if self._filter_query.sort then
-		local sort_function
+	if arg_23_0._filter_query.sort then
+		local var_23_5
 
-		for name, type in pairs(self._filter_query.sort) do
-			local sort_function_name = name .. "_" .. type
+		for iter_23_2, iter_23_3 in pairs(arg_23_0._filter_query.sort) do
+			local var_23_6 = iter_23_2 .. "_" .. iter_23_3
 
-			sort_function = UIUtils[sort_function_name]
+			var_23_5 = UIUtils[var_23_6]
 
 			break
 		end
 
-		local items = self._item_grid:items()
+		local var_23_7 = arg_23_0._item_grid:items()
 
-		if sort_function and #items > 1 then
-			table.sort(items, sort_function)
+		if var_23_5 and #var_23_7 > 1 then
+			table.sort(var_23_7, var_23_5)
 		end
 
-		self._item_grid:set_item_page(1)
+		arg_23_0._item_grid:set_item_page(1)
 	end
 
-	self:_play_sound("Play_hud_select")
+	arg_23_0:_play_sound("Play_hud_select")
 end
 
-HeroWindowCraftingInventoryConsole._handle_recipe_inputs = function (self, dt, t)
-	local input_service = self:_input_service()
-	local local_crafting_recipes_by_name = crafting_recipes_by_name
-	local recipe = local_crafting_recipes_by_name[self._selected_craft_page_name]
+function HeroWindowCraftingInventoryConsole._handle_recipe_inputs(arg_24_0, arg_24_1, arg_24_2)
+	local var_24_0 = arg_24_0:_input_service()
+	local var_24_1 = var_0_1[arg_24_0._selected_craft_page_name]
 
-	if recipe and recipe.input_func then
-		recipe.input_func(self, input_service)
-	end
-end
-
-HeroWindowCraftingInventoryConsole._update_page_info = function (self)
-	local current_page, total_pages = self._item_grid:get_page_info()
-
-	if current_page ~= self._current_page or total_pages ~= self._total_pages then
-		self._total_pages = total_pages
-		self._current_page = current_page
-		current_page = current_page or 1
-		total_pages = total_pages or 1
-
-		local widgets_by_name = self._widgets_by_name
-
-		widgets_by_name.page_text_left.content.text = tostring(current_page)
-		widgets_by_name.page_text_right.content.text = tostring(total_pages)
-		widgets_by_name.page_button_next.content.hotspot.disable_button = current_page == total_pages
-		widgets_by_name.page_button_previous.content.hotspot.disable_button = current_page == 1
+	if var_24_1 and var_24_1.input_func then
+		var_24_1.input_func(arg_24_0, var_24_0)
 	end
 end
 
-HeroWindowCraftingInventoryConsole._update_crafting_material_panel = function (self)
-	local backend_items = Managers.backend:get_interface("items")
-	local material_textures = UISettings.crafting_material_icons_small
-	local material_order = UISettings.crafting_material_order
-	local widgets_by_name = self._widgets_by_name
-	local index = 1
+function HeroWindowCraftingInventoryConsole._update_page_info(arg_25_0)
+	local var_25_0, var_25_1 = arg_25_0._item_grid:get_page_info()
 
-	for index, item_key in ipairs(material_order) do
-		local texture = material_textures[item_key]
-		local item_filter = "item_key == " .. item_key
-		local items = backend_items:get_filtered_items(item_filter)
-		local item = items and items[1]
-		local backend_id = item and item.backend_id
-		local amount = backend_id and backend_items:get_item_amount(backend_id) or 0
-		local widget = widgets_by_name["material_text_" .. index]
-		local content = widget.content
-		local amount_text
+	if var_25_0 ~= arg_25_0._current_page or var_25_1 ~= arg_25_0._total_pages then
+		arg_25_0._total_pages = var_25_1
+		arg_25_0._current_page = var_25_0
+		var_25_0 = var_25_0 or 1
+		var_25_1 = var_25_1 or 1
 
-		if amount < 10000 then
-			amount_text = tostring(amount)
-		elseif amount < 100000 then
-			amount_text = string.format("%.1fk", amount * 0.001)
+		local var_25_2 = arg_25_0._widgets_by_name
+
+		var_25_2.page_text_left.content.text = tostring(var_25_0)
+		var_25_2.page_text_right.content.text = tostring(var_25_1)
+		var_25_2.page_button_next.content.hotspot.disable_button = var_25_0 == var_25_1
+		var_25_2.page_button_previous.content.hotspot.disable_button = var_25_0 == 1
+	end
+end
+
+function HeroWindowCraftingInventoryConsole._update_crafting_material_panel(arg_26_0)
+	local var_26_0 = Managers.backend:get_interface("items")
+	local var_26_1 = UISettings.crafting_material_icons_small
+	local var_26_2 = UISettings.crafting_material_order
+	local var_26_3 = arg_26_0._widgets_by_name
+	local var_26_4 = 1
+
+	for iter_26_0, iter_26_1 in ipairs(var_26_2) do
+		local var_26_5 = var_26_1[iter_26_1]
+		local var_26_6 = "item_key == " .. iter_26_1
+		local var_26_7 = var_26_0:get_filtered_items(var_26_6)
+		local var_26_8 = var_26_7 and var_26_7[1]
+		local var_26_9 = var_26_8 and var_26_8.backend_id
+		local var_26_10 = var_26_9 and var_26_0:get_item_amount(var_26_9) or 0
+		local var_26_11 = var_26_3["material_text_" .. iter_26_0].content
+		local var_26_12
+
+		if var_26_10 < 10000 then
+			var_26_12 = tostring(var_26_10)
+		elseif var_26_10 < 100000 then
+			var_26_12 = string.format("%.1fk", var_26_10 * 0.001)
 		else
-			amount_text = "+99k"
+			var_26_12 = "+99k"
 		end
 
-		content.text = amount_text
-		content.icon = texture
+		var_26_11.text = var_26_12
+		var_26_11.icon = var_26_5
 
-		if not content.item then
-			content.item = item or {
-				data = table.clone(ItemMasterList[item_key]),
+		if not var_26_11.item then
+			var_26_11.item = var_26_8 or {
+				data = table.clone(ItemMasterList[iter_26_1])
 			}
 		end
 	end
 end
 
-HeroWindowCraftingInventoryConsole._update_inventory_items = function (self)
-	local item_grid = self._item_grid
-	local parent = self.parent
-	local inventory_sync_id = parent.inventory_sync_id
-	local selected_craft_page_name = parent:get_selected_craft_page()
-	local optional_craft_item_filter = parent:get_craft_optional_item_filter()
+function HeroWindowCraftingInventoryConsole._update_inventory_items(arg_27_0)
+	local var_27_0 = arg_27_0._item_grid
+	local var_27_1 = arg_27_0.parent
+	local var_27_2 = var_27_1.inventory_sync_id
+	local var_27_3 = var_27_1:get_selected_craft_page()
+	local var_27_4 = var_27_1:get_craft_optional_item_filter()
 
-	if inventory_sync_id ~= self._inventory_sync_id or selected_craft_page_name ~= self._selected_craft_page_name or self._optional_craft_item_filter ~= optional_craft_item_filter then
-		if selected_craft_page_name ~= self._selected_craft_page_name then
-			self._selected_craft_page_name = selected_craft_page_name
+	if var_27_2 ~= arg_27_0._inventory_sync_id or var_27_3 ~= arg_27_0._selected_craft_page_name or arg_27_0._optional_craft_item_filter ~= var_27_4 then
+		if var_27_3 ~= arg_27_0._selected_craft_page_name then
+			arg_27_0._selected_craft_page_name = var_27_3
 
-			self:_change_category_by_name(selected_craft_page_name)
-		elseif optional_craft_item_filter then
-			self:change_item_filter(optional_craft_item_filter, true)
-			self:_handle_gamepad_activity(true)
-			self:_update_selected_item_tooltip(true)
+			arg_27_0:_change_category_by_name(var_27_3)
+		elseif var_27_4 then
+			arg_27_0:change_item_filter(var_27_4, true)
+			arg_27_0:_handle_gamepad_activity(true)
+			arg_27_0:_update_selected_item_tooltip(true)
 		else
-			self:_change_category_by_index(nil, true)
+			arg_27_0:_change_category_by_index(nil, true)
 		end
 
-		self._inventory_sync_id = inventory_sync_id
-		self._optional_craft_item_filter = optional_craft_item_filter
+		arg_27_0._inventory_sync_id = var_27_2
+		arg_27_0._optional_craft_item_filter = var_27_4
 
-		self:_update_crafting_material_panel()
+		arg_27_0:_update_crafting_material_panel()
 	end
 end
 
-HeroWindowCraftingInventoryConsole._update_disabled_item_icon = function (self)
-	local item_grid = self._item_grid
-	local parent = self.parent
-	local icon = parent:disabled_item_icon()
+function HeroWindowCraftingInventoryConsole._update_disabled_item_icon(arg_28_0)
+	local var_28_0 = arg_28_0._item_grid
+	local var_28_1 = arg_28_0.parent:disabled_item_icon()
 
-	if icon ~= self._disabled_item_icon then
-		self._disabled_item_icon = icon
+	if var_28_1 ~= arg_28_0._disabled_item_icon then
+		arg_28_0._disabled_item_icon = var_28_1
 
-		item_grid:set_locked_items_icon(icon)
+		var_28_0:set_locked_items_icon(var_28_1)
 	end
 end
 
-HeroWindowCraftingInventoryConsole._update_disabled_backend_ids = function (self)
-	local item_grid = self._item_grid
-	local parent = self.parent
-	local disabled_backend_ids_sync_id = parent.disabled_backend_ids_sync_id
+function HeroWindowCraftingInventoryConsole._update_disabled_backend_ids(arg_29_0)
+	local var_29_0 = arg_29_0._item_grid
+	local var_29_1 = arg_29_0.parent.disabled_backend_ids_sync_id
 
-	if disabled_backend_ids_sync_id ~= self._disabled_backend_ids_sync_id then
-		self._disabled_backend_ids_sync_id = disabled_backend_ids_sync_id
+	if var_29_1 ~= arg_29_0._disabled_backend_ids_sync_id then
+		arg_29_0._disabled_backend_ids_sync_id = var_29_1
 
-		item_grid:clear_locked_items()
+		var_29_0:clear_locked_items()
 
-		local disabled_backend_ids = self.parent:get_disabled_backend_ids()
+		local var_29_2 = arg_29_0.parent:get_disabled_backend_ids()
 
-		for backend_id, _ in pairs(disabled_backend_ids) do
-			item_grid:lock_item_by_id(backend_id, true)
+		for iter_29_0, iter_29_1 in pairs(var_29_2) do
+			var_29_0:lock_item_by_id(iter_29_0, true)
 		end
 
-		item_grid:update_items_status()
+		var_29_0:update_items_status()
 	end
 end
 
-HeroWindowCraftingInventoryConsole._exit = function (self, selected_level)
-	self.exit = true
-	self.exit_level_id = selected_level
+function HeroWindowCraftingInventoryConsole._exit(arg_30_0, arg_30_1)
+	arg_30_0.exit = true
+	arg_30_0.exit_level_id = arg_30_1
 end
 
-HeroWindowCraftingInventoryConsole.draw = function (self, dt)
-	local ui_renderer = self.ui_renderer
-	local ui_top_renderer = self.ui_top_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self:_input_service()
-	local gamepad_active = Managers.input:is_device_active("gamepad")
-	local filter_active = self.parent:filter_active()
+function HeroWindowCraftingInventoryConsole.draw(arg_31_0, arg_31_1)
+	local var_31_0 = arg_31_0.ui_renderer
+	local var_31_1 = arg_31_0.ui_top_renderer
+	local var_31_2 = arg_31_0.ui_scenegraph
+	local var_31_3 = arg_31_0:_input_service()
+	local var_31_4 = Managers.input:is_device_active("gamepad")
+	local var_31_5 = arg_31_0.parent:filter_active()
 
-	if filter_active then
-		UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
-		UIRenderer.draw_widget(ui_top_renderer, self._filter_widget)
+	if var_31_5 then
+		UIRenderer.begin_pass(var_31_1, var_31_2, var_31_3, arg_31_1, nil, arg_31_0.render_settings)
+		UIRenderer.draw_widget(var_31_1, arg_31_0._filter_widget)
 
-		if not gamepad_active then
-			for _, widget in ipairs(self._pc_filter_widgets) do
-				UIRenderer.draw_widget(ui_top_renderer, widget)
+		if not var_31_4 then
+			for iter_31_0, iter_31_1 in ipairs(arg_31_0._pc_filter_widgets) do
+				UIRenderer.draw_widget(var_31_1, iter_31_1)
 			end
 		end
 
-		UIRenderer.end_pass(ui_top_renderer)
+		UIRenderer.end_pass(var_31_1)
 	end
 
-	input_service = filter_active and FAKE_INPUT_SERVICE or input_service
+	var_31_3 = var_31_5 and FAKE_INPUT_SERVICE or var_31_3
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
+	UIRenderer.begin_pass(var_31_1, var_31_2, var_31_3, arg_31_1, nil, arg_31_0.render_settings)
 
-	for _, widget in ipairs(self._widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, widget)
+	for iter_31_2, iter_31_3 in ipairs(arg_31_0._widgets) do
+		UIRenderer.draw_widget(var_31_1, iter_31_3)
 	end
 
-	UIRenderer.end_pass(ui_top_renderer)
+	UIRenderer.end_pass(var_31_1)
 end
 
-HeroWindowCraftingInventoryConsole._play_sound = function (self, event)
-	self.parent:play_sound(event)
+function HeroWindowCraftingInventoryConsole._play_sound(arg_32_0, arg_32_1)
+	arg_32_0.parent:play_sound(arg_32_1)
 end
 
-HeroWindowCraftingInventoryConsole._change_category_by_name = function (self, name)
-	for i, recipe in ipairs(crafting_recipes) do
-		if recipe.name == name then
-			self:_change_category_by_index(i)
+function HeroWindowCraftingInventoryConsole._change_category_by_name(arg_33_0, arg_33_1)
+	for iter_33_0, iter_33_1 in ipairs(var_0_0) do
+		if iter_33_1.name == arg_33_1 then
+			arg_33_0:_change_category_by_index(iter_33_0)
 
 			break
 		end
 	end
 end
 
-HeroWindowCraftingInventoryConsole._change_category_by_index = function (self, index, force_update)
-	if force_update then
-		index = self._current_category_index or 1
+function HeroWindowCraftingInventoryConsole._change_category_by_index(arg_34_0, arg_34_1, arg_34_2)
+	if arg_34_2 then
+		arg_34_1 = arg_34_0._current_category_index or 1
 	end
 
-	if self._current_category_index == index and not force_update then
+	if arg_34_0._current_category_index == arg_34_1 and not arg_34_2 then
 		return
 	end
 
-	self._current_category_index = index
+	arg_34_0._current_category_index = arg_34_1
 
-	local item_grid = self._item_grid
-	local recipe_setting = crafting_recipes[index]
-	local recipe_name = recipe_setting.name
-	local item_sort_func = recipe_setting.item_sort_func
+	local var_34_0 = arg_34_0._item_grid
+	local var_34_1 = var_0_0[arg_34_1]
+	local var_34_2 = var_34_1.name
+	local var_34_3 = var_34_1.item_sort_func
 
-	if item_sort_func then
-		item_grid:apply_item_sorting_function(item_sort_func)
+	if var_34_3 then
+		var_34_0:apply_item_sorting_function(var_34_3)
 	end
 
-	item_grid:change_category(recipe_name, force_update)
+	var_34_0:change_category(var_34_2, arg_34_2)
 
-	local filter_widget = self._filter_widget
-	local input_widget = self._widgets_by_name.input
-	local filter_content = filter_widget.content
-	local input_content = input_widget.content
-	local search_query = input_content.search_query
-	local filter_query = filter_content.query
+	local var_34_4 = arg_34_0._filter_widget
+	local var_34_5 = arg_34_0._widgets_by_name.input
+	local var_34_6 = var_34_4.content
+	local var_34_7 = var_34_5.content.search_query
+	local var_34_8 = var_34_6.query
 
-	if search_query ~= "" or not table.is_empty(filter_query.sort) or not table.is_empty(filter_query.filter) or filter_query.only_new then
-		self:_do_search(search_query, filter_query)
+	if var_34_7 ~= "" or not table.is_empty(var_34_8.sort) or not table.is_empty(var_34_8.filter) or var_34_8.only_new then
+		arg_34_0:_do_search(var_34_7, var_34_8)
 	end
 
-	self:_handle_gamepad_activity(true)
-	self:_update_selected_item_tooltip(true)
+	arg_34_0:_handle_gamepad_activity(true)
+	arg_34_0:_update_selected_item_tooltip(true)
 
 	return true
 end
 
-HeroWindowCraftingInventoryConsole.change_item_filter = function (self, item_filter, change_page, optional_search_query)
-	change_page = change_page or change_page == nil
+function HeroWindowCraftingInventoryConsole.change_item_filter(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+	arg_35_2 = arg_35_2 or arg_35_2 == nil
 
-	self._item_grid:change_item_filter(item_filter, change_page, optional_search_query)
+	arg_35_0._item_grid:change_item_filter(arg_35_1, arg_35_2, arg_35_3)
 end
 
-HeroWindowCraftingInventoryConsole._update_selected_item_tooltip = function (self, forced_update)
-	local selected_item = self._item_grid:selected_item()
-	local backend_id = selected_item and selected_item.backend_id
+function HeroWindowCraftingInventoryConsole._update_selected_item_tooltip(arg_36_0, arg_36_1)
+	local var_36_0 = arg_36_0._item_grid:selected_item()
+	local var_36_1 = var_36_0 and var_36_0.backend_id
 
-	if backend_id ~= self._selected_backend_id or forced_update then
-		local widget = self._widgets_by_name.item_tooltip
-
-		widget.content.item = selected_item
+	if var_36_1 ~= arg_36_0._selected_backend_id or arg_36_1 then
+		arg_36_0._widgets_by_name.item_tooltip.content.item = var_36_0
 	end
 
-	self._selected_backend_id = backend_id
+	arg_36_0._selected_backend_id = var_36_1
 end
 
-HeroWindowCraftingInventoryConsole._setup_input_buttons = function (self)
-	local input_service = self.parent:window_input_service()
-	local input_1_texture_data = UISettings.get_gamepad_input_texture_data(input_service, INPUT_ACTION_NEXT, true)
-	local input_2_texture_data = UISettings.get_gamepad_input_texture_data(input_service, INPUT_ACTION_PREVIOUS, true)
-	local widgets_by_name = self._widgets_by_name
-	local input_1_widget = widgets_by_name.input_icon_next
-	local input_2_widget = widgets_by_name.input_icon_previous
-	local icon_style_input_1 = input_1_widget.style.texture_id
+function HeroWindowCraftingInventoryConsole._setup_input_buttons(arg_37_0)
+	local var_37_0 = arg_37_0.parent:window_input_service()
+	local var_37_1 = UISettings.get_gamepad_input_texture_data(var_37_0, var_0_11, true)
+	local var_37_2 = UISettings.get_gamepad_input_texture_data(var_37_0, var_0_12, true)
+	local var_37_3 = arg_37_0._widgets_by_name
+	local var_37_4 = var_37_3.input_icon_next
+	local var_37_5 = var_37_3.input_icon_previous
+	local var_37_6 = var_37_4.style.texture_id
 
-	icon_style_input_1.horizontal_alignment = "center"
-	icon_style_input_1.vertical_alignment = "center"
-	icon_style_input_1.texture_size = {
-		input_1_texture_data.size[1],
-		input_1_texture_data.size[2],
+	var_37_6.horizontal_alignment = "center"
+	var_37_6.vertical_alignment = "center"
+	var_37_6.texture_size = {
+		var_37_1.size[1],
+		var_37_1.size[2]
 	}
-	input_1_widget.content.texture_id = input_1_texture_data.texture
+	var_37_4.content.texture_id = var_37_1.texture
 
-	local icon_style_input_2 = input_2_widget.style.texture_id
+	local var_37_7 = var_37_5.style.texture_id
 
-	icon_style_input_2.horizontal_alignment = "center"
-	icon_style_input_2.vertical_alignment = "center"
-	icon_style_input_2.texture_size = {
-		input_2_texture_data.size[1],
-		input_2_texture_data.size[2],
+	var_37_7.horizontal_alignment = "center"
+	var_37_7.vertical_alignment = "center"
+	var_37_7.texture_size = {
+		var_37_2.size[1],
+		var_37_2.size[2]
 	}
-	input_2_widget.content.texture_id = input_2_texture_data.texture
+	var_37_5.content.texture_id = var_37_2.texture
 end
 
-HeroWindowCraftingInventoryConsole._set_gamepad_input_buttons_visibility = function (self, visible)
-	local widgets_by_name = self._widgets_by_name
-	local input_1_widget = widgets_by_name.input_icon_next
-	local input_2_widget = widgets_by_name.input_icon_previous
-	local input_arrow_1_widget = widgets_by_name.input_arrow_next
-	local input_arrow_2_widget = widgets_by_name.input_arrow_previous
+function HeroWindowCraftingInventoryConsole._set_gamepad_input_buttons_visibility(arg_38_0, arg_38_1)
+	local var_38_0 = arg_38_0._widgets_by_name
+	local var_38_1 = var_38_0.input_icon_next
+	local var_38_2 = var_38_0.input_icon_previous
+	local var_38_3 = var_38_0.input_arrow_next
+	local var_38_4 = var_38_0.input_arrow_previous
 
-	input_1_widget.content.visible = visible
-	input_2_widget.content.visible = visible
-	input_arrow_1_widget.content.visible = visible
-	input_arrow_2_widget.content.visible = visible
+	var_38_1.content.visible = arg_38_1
+	var_38_2.content.visible = arg_38_1
+	var_38_3.content.visible = arg_38_1
+	var_38_4.content.visible = arg_38_1
 end
 
-HeroWindowCraftingInventoryConsole._handle_gamepad_activity = function (self, forced_update)
-	if self.parent.parent:input_blocked() then
+function HeroWindowCraftingInventoryConsole._handle_gamepad_activity(arg_39_0, arg_39_1)
+	if arg_39_0.parent.parent:input_blocked() then
 		return
 	end
 
-	local mouse_active = Managers.input:is_device_active("mouse")
+	local var_39_0 = Managers.input:is_device_active("mouse")
 
-	forced_update = forced_update or self.gamepad_active_last_frame == nil
+	arg_39_1 = arg_39_1 or arg_39_0.gamepad_active_last_frame == nil
 
-	if not mouse_active then
-		if not self.gamepad_active_last_frame or forced_update then
-			self.gamepad_active_last_frame = true
+	if not var_39_0 then
+		if not arg_39_0.gamepad_active_last_frame or arg_39_1 then
+			arg_39_0.gamepad_active_last_frame = true
 
-			local item_grid = self._item_grid
-			local selected_item_backend_id
-			local selected_item = item_grid:selected_item()
+			local var_39_1 = arg_39_0._item_grid
+			local var_39_2
+			local var_39_3 = var_39_1:selected_item()
 
-			if selected_item and item_grid:has_item(selected_item) then
-				selected_item_backend_id = selected_item.backend_id
+			if var_39_3 and var_39_1:has_item(var_39_3) then
+				var_39_2 = var_39_3.backend_id
 			else
-				local first_item = item_grid:get_item_in_slot(1, 1)
+				local var_39_4 = var_39_1:get_item_in_slot(1, 1)
 
-				selected_item_backend_id = first_item and first_item.backend_id
+				var_39_2 = var_39_4 and var_39_4.backend_id
 			end
 
-			if selected_item_backend_id then
-				item_grid:set_backend_id_selected(selected_item_backend_id)
+			if var_39_2 then
+				var_39_1:set_backend_id_selected(var_39_2)
 			else
-				item_grid:set_item_selected(nil)
+				var_39_1:set_item_selected(nil)
 			end
 
-			self:_set_gamepad_input_buttons_visibility(true)
+			arg_39_0:_set_gamepad_input_buttons_visibility(true)
 		end
-	elseif self.gamepad_active_last_frame or forced_update then
-		self.gamepad_active_last_frame = false
+	elseif arg_39_0.gamepad_active_last_frame or arg_39_1 then
+		arg_39_0.gamepad_active_last_frame = false
 
-		local item_grid = self._item_grid
-
-		item_grid:set_item_selected(nil)
-		self:_set_gamepad_input_buttons_visibility(false)
+		arg_39_0._item_grid:set_item_selected(nil)
+		arg_39_0:_set_gamepad_input_buttons_visibility(false)
 	end
 end

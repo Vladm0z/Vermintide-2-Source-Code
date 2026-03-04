@@ -1,148 +1,148 @@
-﻿-- chunkname: @scripts/level/environment/environment_blender.lua
+-- chunkname: @scripts/level/environment/environment_blender.lua
 
 require("scripts/level/environment/environment_handler")
 
 EnvironmentBlender = class(EnvironmentBlender)
 
-EnvironmentBlender.init = function (self, world, viewport)
-	self.world = world
-	self.environment_handler = EnvironmentHandler:new()
-	self.shading_settings = {}
-	self.viewport = viewport
-	self.particle_light_intensity = nil
+function EnvironmentBlender.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0.world = arg_1_1
+	arg_1_0.environment_handler = EnvironmentHandler:new()
+	arg_1_0.shading_settings = {}
+	arg_1_0.viewport = arg_1_2
+	arg_1_0.particle_light_intensity = nil
 
-	self.environment_handler:add_blend_group("volumes")
+	arg_1_0.environment_handler:add_blend_group("volumes")
 
-	local blend_data = {
-		always_inside = true,
+	local var_1_0 = {
+		volume_name = "world",
 		environment = "default",
+		always_inside = true,
 		override_sun_snap = false,
 		particle_light_intensity = 1,
-		volume_name = "world",
-		viewport = self.viewport,
+		viewport = arg_1_0.viewport
 	}
 
-	self.environment_handler:add_blend("EnvironmentBlendVolume", "volumes", -1, blend_data)
+	arg_1_0.environment_handler:add_blend("EnvironmentBlendVolume", "volumes", -1, var_1_0)
 
-	local event_manager = Managers.state.event
+	local var_1_1 = Managers.state.event
 
-	event_manager:register(self, "register_environment_volume", "event_register_environment_volume")
-	event_manager:register(self, "unregister_environment_volume", "event_unregister_environment_volume")
+	var_1_1:register(arg_1_0, "register_environment_volume", "event_register_environment_volume")
+	var_1_1:register(arg_1_0, "unregister_environment_volume", "event_unregister_environment_volume")
 end
 
-EnvironmentBlender.event_register_environment_volume = function (self, volume_name, environment_name, priority, blend_time, override_sun_snap, particle_light_intensity, sphere_pos, sphere_radius, specified_id)
-	local blend_data = {
+function EnvironmentBlender.event_register_environment_volume(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8, arg_2_9)
+	local var_2_0 = {
 		always_inside = false,
-		level = LevelHelper:current_level(self.world),
-		viewport = self.viewport,
-		environment = environment_name,
-		volume_name = volume_name,
-		blend_time = blend_time,
-		override_sun_snap = override_sun_snap,
-		particle_light_intensity = particle_light_intensity,
-		is_sphere = sphere_pos and sphere_radius,
-		sphere_pos = sphere_pos and Vector3Box(sphere_pos),
-		sphere_radius = sphere_radius,
+		level = LevelHelper:current_level(arg_2_0.world),
+		viewport = arg_2_0.viewport,
+		environment = arg_2_2,
+		volume_name = arg_2_1,
+		blend_time = arg_2_4,
+		override_sun_snap = arg_2_5,
+		particle_light_intensity = arg_2_6,
+		is_sphere = arg_2_7 and arg_2_8,
+		sphere_pos = arg_2_7 and Vector3Box(arg_2_7),
+		sphere_radius = arg_2_8
 	}
 
-	self.environment_handler:add_blend("EnvironmentBlendVolume", "volumes", priority, blend_data, specified_id)
+	arg_2_0.environment_handler:add_blend("EnvironmentBlendVolume", "volumes", arg_2_3, var_2_0, arg_2_9)
 end
 
-EnvironmentBlender.event_unregister_environment_volume = function (self, id)
-	self.environment_handler:remove_blend(id)
+function EnvironmentBlender.event_unregister_environment_volume(arg_3_0, arg_3_1)
+	arg_3_0.environment_handler:remove_blend(arg_3_1)
 end
 
-EnvironmentBlender.update = function (self, dt, t)
-	self.environment_handler:update(dt, t)
-	self:update_shading_settings()
+function EnvironmentBlender.update(arg_4_0, arg_4_1, arg_4_2)
+	arg_4_0.environment_handler:update(arg_4_1, arg_4_2)
+	arg_4_0:update_shading_settings()
 end
 
-EnvironmentBlender.update_shading_settings = function (self)
-	local environment_handler = self.environment_handler
-	local volume_weights = environment_handler:weights("volumes")
-	local shading_settings = self.shading_settings
+function EnvironmentBlender.update_shading_settings(arg_5_0)
+	local var_5_0 = arg_5_0.environment_handler
+	local var_5_1 = var_5_0:weights("volumes")
+	local var_5_2 = arg_5_0.shading_settings
 
-	table.clear(shading_settings)
+	table.clear(var_5_2)
 
-	local particle_light_intensity = 0
+	local var_5_3 = 0
 
-	for _, volume in ipairs(volume_weights) do
-		if volume.weight > 0 then
-			local weight = volume.weight
+	for iter_5_0, iter_5_1 in ipairs(var_5_1) do
+		if iter_5_1.weight > 0 then
+			local var_5_4 = iter_5_1.weight
 
-			shading_settings[#shading_settings + 1] = volume.environment
-			shading_settings[#shading_settings + 1] = weight
-			particle_light_intensity = particle_light_intensity + weight * volume.particle_light_intensity
+			var_5_2[#var_5_2 + 1] = iter_5_1.environment
+			var_5_2[#var_5_2 + 1] = var_5_4
+			var_5_3 = var_5_3 + var_5_4 * iter_5_1.particle_light_intensity
 		end
 	end
 
-	if particle_light_intensity ~= self.particle_light_intensity then
-		World.set_particles_light_intensity(self.world, particle_light_intensity)
+	if var_5_3 ~= arg_5_0.particle_light_intensity then
+		World.set_particles_light_intensity(arg_5_0.world, var_5_3)
 
-		self.particle_light_intensity = particle_light_intensity
+		arg_5_0.particle_light_intensity = var_5_3
 	end
 
-	World.set_data(self.world, "override_shading_settings", environment_handler:override_settings())
-	World.set_data(self.world, "shading_settings", shading_settings)
+	World.set_data(arg_5_0.world, "override_shading_settings", var_5_0:override_settings())
+	World.set_data(arg_5_0.world, "shading_settings", var_5_2)
 
 	if script_data.debug_environment_blend then
-		self:debug_draw(shading_settings)
+		arg_5_0:debug_draw(var_5_2)
 	end
 end
 
-EnvironmentBlender.destroy = function (self)
-	self.environment_handler:destroy()
+function EnvironmentBlender.destroy(arg_6_0)
+	arg_6_0.environment_handler:destroy()
 
-	self.environment_handler = nil
+	arg_6_0.environment_handler = nil
 end
 
-local debug_colors = {
+local var_0_0 = {
 	{
 		255,
 		100,
 		100,
-		200,
+		200
 	},
 	{
 		255,
 		100,
 		200,
-		100,
+		100
 	},
 	{
 		255,
 		200,
 		100,
-		100,
+		100
 	},
 	{
 		255,
 		200,
 		200,
-		100,
-	},
+		100
+	}
 }
 
-EnvironmentBlender.debug_color = function (self)
-	return table.remove(debug_colors)
+function EnvironmentBlender.debug_color(arg_7_0)
+	return table.remove(var_0_0)
 end
 
-EnvironmentBlender.debug_draw = function (self, shading_settings)
-	local w, h = Gui.resolution()
-	local x = w * 0.01
-	local y = h * 0.95
-	local spacing = 5
-	local size = 36
-	local offset_y = 0
+function EnvironmentBlender.debug_draw(arg_8_0, arg_8_1)
+	local var_8_0, var_8_1 = Gui.resolution()
+	local var_8_2 = var_8_0 * 0.01
+	local var_8_3 = var_8_1 * 0.95
+	local var_8_4 = 5
+	local var_8_5 = 36
+	local var_8_6 = 0
 
-	for i = 1, #shading_settings, 2 do
-		local env_name = shading_settings[i]
-		local weight = shading_settings[i + 1]
-		local text = string.format("%.2f", weight) .. " " .. env_name
+	for iter_8_0 = 1, #arg_8_1, 2 do
+		local var_8_7 = arg_8_1[iter_8_0]
+		local var_8_8 = arg_8_1[iter_8_0 + 1]
+		local var_8_9 = string.format("%.2f", var_8_8) .. " " .. var_8_7
 
-		Managers.state.debug:draw_screen_text(x, y + offset_y, 999, text, size, Color(255, 255, 255, 255))
-		Managers.state.debug:draw_screen_text(x + 2, y + offset_y - 2, 998, text, size, Color(255, 0, 0, 0))
+		Managers.state.debug:draw_screen_text(var_8_2, var_8_3 + var_8_6, 999, var_8_9, var_8_5, Color(255, 255, 255, 255))
+		Managers.state.debug:draw_screen_text(var_8_2 + 2, var_8_3 + var_8_6 - 2, 998, var_8_9, var_8_5, Color(255, 0, 0, 0))
 
-		offset_y = offset_y - size - spacing
+		var_8_6 = var_8_6 - var_8_5 - var_8_4
 	end
 end

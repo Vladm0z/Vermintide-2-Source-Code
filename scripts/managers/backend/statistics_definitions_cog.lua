@@ -1,24 +1,24 @@
-﻿-- chunkname: @scripts/managers/backend/statistics_definitions_cog.lua
+-- chunkname: @scripts/managers/backend/statistics_definitions_cog.lua
 
-local player = StatisticsDefinitions.player
+local var_0_0 = StatisticsDefinitions.player
 
-player.cog_kills_bardin_engineer_career_skill_weapon = {
+var_0_0.cog_kills_bardin_engineer_career_skill_weapon = {
+	value = 0,
 	database_name = "cog_kills_bardin_engineer_career_skill_weapon",
-	source = "player_data",
-	value = 0,
+	source = "player_data"
 }
-player.cog_kills_bardin_engineer_career_skill_weapon_heavy = {
+var_0_0.cog_kills_bardin_engineer_career_skill_weapon_heavy = {
+	value = 0,
 	database_name = "cog_kills_bardin_engineer_career_skill_weapon_heavy",
-	source = "player_data",
-	value = 0,
+	source = "player_data"
 }
-player.cog_kills_dr_2h_cog_hammer = {
-	database_name = "cog_kills_dr_2h_cog_hammer",
-	source = "player_data",
+var_0_0.cog_kills_dr_2h_cog_hammer = {
 	value = 0,
+	database_name = "cog_kills_dr_2h_cog_hammer",
+	source = "player_data"
 }
 
-local database_names = {
+local var_0_1 = {
 	"complete_all_helmgart_levels_recruit_dr_engineer",
 	"complete_all_helmgart_levels_veteran_dr_engineer",
 	"complete_all_helmgart_levels_champion_dr_engineer",
@@ -52,58 +52,58 @@ local database_names = {
 	"cog_only_crank",
 	"cog_long_crank_fire",
 	"cog_missing_cog",
-	"complete_all_engineer_challenges",
+	"complete_all_engineer_challenges"
 }
 
-for i = 1, #database_names do
-	local name = database_names[i]
+for iter_0_0 = 1, #var_0_1 do
+	local var_0_2 = var_0_1[iter_0_0]
 
-	player[name] = {
-		source = "player_data",
+	var_0_0[var_0_2] = {
 		value = 0,
-		database_name = name,
+		source = "player_data",
+		database_name = var_0_2
 	}
 end
 
-local tracked_weapons = {
+local var_0_3 = {
 	"dr_2h_cog_hammer",
 	"dr_steam_pistol",
 	"bardin_engineer_career_skill_weapon",
-	"bardin_engineer_career_skill_weapon_heavy",
+	"bardin_engineer_career_skill_weapon_heavy"
 }
 
-for _, v in pairs(tracked_weapons) do
-	player.weapon_kills_per_breed[v] = {}
+for iter_0_1, iter_0_2 in pairs(var_0_3) do
+	var_0_0.weapon_kills_per_breed[iter_0_2] = {}
 end
 
-for breed_name, breed in pairs(Breeds) do
-	for _, v in pairs(tracked_weapons) do
-		local database_name = v .. "_" .. breed_name
+for iter_0_3, iter_0_4 in pairs(Breeds) do
+	for iter_0_5, iter_0_6 in pairs(var_0_3) do
+		local var_0_4 = iter_0_6 .. "_" .. iter_0_3
 
-		player.weapon_kills_per_breed[v][breed_name] = {
-			source = "player_data",
+		var_0_0.weapon_kills_per_breed[iter_0_6][iter_0_3] = {
 			value = 0,
-			database_name = database_name,
+			source = "player_data",
+			database_name = var_0_4
 		}
 	end
 end
 
-local relevant_careers = {
-	dr_engineer = true,
+local var_0_5 = {
+	dr_engineer = true
 }
 
-for career, _ in pairs(CareerSettings) do
-	if relevant_careers[career] then
-		player.mission_streak[career] = {}
+for iter_0_7, iter_0_8 in pairs(CareerSettings) do
+	if var_0_5[iter_0_7] then
+		var_0_0.mission_streak[iter_0_7] = {}
 
-		for level_key, _ in pairs(LevelSettings) do
-			if table.contains(UnlockableLevels, level_key) then
-				local database_name = "mission_streak_" .. career .. "_" .. level_key
+		for iter_0_9, iter_0_10 in pairs(LevelSettings) do
+			if table.contains(UnlockableLevels, iter_0_9) then
+				local var_0_6 = "mission_streak_" .. iter_0_7 .. "_" .. iter_0_9
 
-				player.mission_streak[career][level_key] = {
-					source = "player_data",
+				var_0_0.mission_streak[iter_0_7][iter_0_9] = {
 					value = 0,
-					database_name = database_name,
+					source = "player_data",
+					database_name = var_0_6
 				}
 			end
 		end

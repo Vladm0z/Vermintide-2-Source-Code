@@ -1,213 +1,205 @@
-﻿-- chunkname: @scripts/entity_system/systems/puzzle/puzzle_system.lua
+-- chunkname: @scripts/entity_system/systems/puzzle/puzzle_system.lua
 
 require("scripts/unit_extensions/puzzle/combination_puzzle_extension")
 
 PuzzleSystem = class(PuzzleSystem, ExtensionSystemBase)
 
-local EXTENSIONS = {
+local var_0_0 = {
 	"PuzzleExtensionBase",
-	"CombinationPuzzleExtension",
+	"CombinationPuzzleExtension"
 }
-local RPCS = {
-	"rpc_on_puzzle_completed",
+local var_0_1 = {
+	"rpc_on_puzzle_completed"
 }
 
-PuzzleSystem.init = function (self, entity_system_creation_context, system_name)
-	PuzzleSystem.super.init(self, entity_system_creation_context, system_name, EXTENSIONS)
+function PuzzleSystem.init(arg_1_0, arg_1_1, arg_1_2)
+	PuzzleSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 
-	self._is_server = entity_system_creation_context.is_server
-	self._network_event_delegate = entity_system_creation_context.network_event_delegate
+	arg_1_0._is_server = arg_1_1.is_server
+	arg_1_0._network_event_delegate = arg_1_1.network_event_delegate
 
-	self._network_event_delegate:register(self, unpack(RPCS))
+	arg_1_0._network_event_delegate:register(arg_1_0, unpack(var_0_1))
 
-	self._extensions = Script.new_map(16)
-	self._network_manager = entity_system_creation_context.network_manager
-	self._puzzle_groups = {}
-	self._puzzles_to_update = {}
-	self._group_id_hash_lookup = {}
-	self._puzzle_id_hash_lookup = {}
+	arg_1_0._extensions = Script.new_map(16)
+	arg_1_0._network_manager = arg_1_1.network_manager
+	arg_1_0._puzzle_groups = {}
+	arg_1_0._puzzles_to_update = {}
+	arg_1_0._group_id_hash_lookup = {}
+	arg_1_0._puzzle_id_hash_lookup = {}
 end
 
-PuzzleSystem.destroy = function (self)
-	PuzzleSystem.super.destroy(self)
-	self._network_event_delegate:unregister(self)
+function PuzzleSystem.destroy(arg_2_0)
+	PuzzleSystem.super.destroy(arg_2_0)
+	arg_2_0._network_event_delegate:unregister(arg_2_0)
 end
 
-PuzzleSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
-	local ext = PuzzleSystem.super.on_add_extension(self, world, unit, extension_name, extension_init_data)
+function PuzzleSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local var_3_0 = PuzzleSystem.super.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 
-	self._extensions[unit] = ext
+	arg_3_0._extensions[arg_3_2] = var_3_0
 
-	local group_name = ext:puzzle_group_id()
-	local group_id_type = type(group_name)
+	local var_3_1 = var_3_0:puzzle_group_id()
+	local var_3_2 = type(var_3_1)
 
-	if group_id_type == "string" then
-		local group = self:_get_or_add_group(group_name)
-
-		group.extensions[ext] = true
-	elseif group_id_type == "table" then
-		for i = 1, #group_id_type do
-			local group = self:_get_or_add_group(group_id_type[i])
-
-			group.extensions[ext] = true
+	if var_3_2 == "string" then
+		arg_3_0:_get_or_add_group(var_3_1).extensions[var_3_0] = true
+	elseif var_3_2 == "table" then
+		for iter_3_0 = 1, #var_3_2 do
+			arg_3_0:_get_or_add_group(var_3_2[iter_3_0]).extensions[var_3_0] = true
 		end
 	end
 
-	return ext
+	return var_3_0
 end
 
-PuzzleSystem._get_or_add_group = function (self, group_name)
-	local puzzle_group = self._puzzle_groups[group_name] or {
+function PuzzleSystem._get_or_add_group(arg_4_0, arg_4_1)
+	local var_4_0 = arg_4_0._puzzle_groups[arg_4_1] or {
 		extensions = {},
-		puzzles = {},
+		puzzles = {}
 	}
 
-	self._puzzle_groups[group_name] = puzzle_group
+	arg_4_0._puzzle_groups[arg_4_1] = var_4_0
 
-	return puzzle_group
+	return var_4_0
 end
 
-PuzzleSystem.on_remove_extension = function (self, unit, extension_name)
-	local ext = self._extensions[unit]
-	local group_name = ext:puzzle_group_id()
-	local group = self:_get_or_add_group(group_name)
+function PuzzleSystem.on_remove_extension(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = arg_5_0._extensions[arg_5_1]
+	local var_5_1 = var_5_0:puzzle_group_id()
 
-	group.extensions[ext] = nil
-	self._extensions[unit] = nil
+	arg_5_0:_get_or_add_group(var_5_1).extensions[var_5_0] = nil
+	arg_5_0._extensions[arg_5_1] = nil
 
-	PuzzleSystem.super.on_remove_extension(self, unit, extension_name)
+	PuzzleSystem.super.on_remove_extension(arg_5_0, arg_5_1, arg_5_2)
 end
 
-PuzzleSystem.update = function (self, context, t)
-	PuzzleSystem.super.update(self, context, t)
+function PuzzleSystem.update(arg_6_0, arg_6_1, arg_6_2)
+	PuzzleSystem.super.update(arg_6_0, arg_6_1, arg_6_2)
 
-	if not self._is_server then
+	if not arg_6_0._is_server then
 		return
 	end
 
-	self:_update_puzzles()
+	arg_6_0:_update_puzzles()
 end
 
-PuzzleSystem.register_puzzle = function (self, group_name, puzzle_name, puzzle_combination, ordered, completed_level_event, hot_join_sync_completion)
-	local group = self:_get_or_add_group(group_name)
+function PuzzleSystem.register_puzzle(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+	local var_7_0 = arg_7_0:_get_or_add_group(arg_7_1)
 
-	if group.puzzles[puzzle_name] then
+	if var_7_0.puzzles[arg_7_2] then
 		return
 	end
 
-	group.puzzles[puzzle_name] = {
+	var_7_0.puzzles[arg_7_2] = {
 		completed = false,
 		completed_level_event = "",
 		ordered = false,
-		group_name = group_name,
+		group_name = arg_7_1,
 		combination = {},
-		num_per_combination_value = {},
+		num_per_combination_value = {}
 	}
 
-	local puzzle = group.puzzles[puzzle_name]
-	local combination_tbl = puzzle.combination
-	local num_per_combination_value = puzzle.num_per_combination_value
-	local parsed_combination = string.split_deprecated(puzzle_combination, ",")
+	local var_7_1 = var_7_0.puzzles[arg_7_2]
+	local var_7_2 = var_7_1.combination
+	local var_7_3 = var_7_1.num_per_combination_value
+	local var_7_4 = string.split_deprecated(arg_7_3, ",")
 
-	for i = 1, #parsed_combination do
-		local trimmed = string.trim(parsed_combination[i])
+	for iter_7_0 = 1, #var_7_4 do
+		local var_7_5 = string.trim(var_7_4[iter_7_0])
 
-		if trimmed == "" then
+		if var_7_5 == "" then
 			break
 		end
 
-		combination_tbl[i] = trimmed
-		num_per_combination_value[trimmed] = (num_per_combination_value[trimmed] or 0) + 1
+		var_7_2[iter_7_0] = var_7_5
+		var_7_3[var_7_5] = (var_7_3[var_7_5] or 0) + 1
 	end
 
-	puzzle.ordered = ordered
-	puzzle.completed_level_event = completed_level_event
-	puzzle.hot_join_sync_completion = hot_join_sync_completion
-	self._puzzles_to_update[puzzle_name] = puzzle
+	var_7_1.ordered = arg_7_4
+	var_7_1.completed_level_event = arg_7_5
+	var_7_1.hot_join_sync_completion = arg_7_6
+	arg_7_0._puzzles_to_update[arg_7_2] = var_7_1
 
-	local group_hash = self._group_id_hash_lookup[group_name] or HashUtils.fnv32_hash(group_name)
+	local var_7_6 = arg_7_0._group_id_hash_lookup[arg_7_1] or HashUtils.fnv32_hash(arg_7_1)
 
-	self._group_id_hash_lookup[group_hash] = group_name
-	self._group_id_hash_lookup[group_name] = group_hash
+	arg_7_0._group_id_hash_lookup[var_7_6] = arg_7_1
+	arg_7_0._group_id_hash_lookup[arg_7_1] = var_7_6
 
-	local puzzle_hash = self._puzzle_id_hash_lookup[puzzle_name] or HashUtils.fnv32_hash(puzzle_name)
+	local var_7_7 = arg_7_0._puzzle_id_hash_lookup[arg_7_2] or HashUtils.fnv32_hash(arg_7_2)
 
-	self._puzzle_id_hash_lookup[puzzle_hash] = puzzle_name
-	self._puzzle_id_hash_lookup[puzzle_name] = puzzle_hash
+	arg_7_0._puzzle_id_hash_lookup[var_7_7] = arg_7_2
+	arg_7_0._puzzle_id_hash_lookup[arg_7_2] = var_7_7
 end
 
-PuzzleSystem.hot_join_sync = function (self, peer_id)
-	for group_name, group in pairs(self._puzzle_groups) do
-		local group_id_hash = self._group_id_hash_lookup[group_name]
+function PuzzleSystem.hot_join_sync(arg_8_0, arg_8_1)
+	for iter_8_0, iter_8_1 in pairs(arg_8_0._puzzle_groups) do
+		local var_8_0 = arg_8_0._group_id_hash_lookup[iter_8_0]
 
-		for puzzle_name, puzzle in pairs(group.puzzles) do
-			if puzzle.hot_join_sync_completion and puzzle.completed then
-				local puzzle_id_hash = self._puzzle_id_hash_lookup[puzzle_name]
+		for iter_8_2, iter_8_3 in pairs(iter_8_1.puzzles) do
+			if iter_8_3.hot_join_sync_completion and iter_8_3.completed then
+				local var_8_1 = arg_8_0._puzzle_id_hash_lookup[iter_8_2]
 
-				self.network_transmit:send_rpc("rpc_on_puzzle_completed", peer_id, group_id_hash, puzzle_id_hash)
+				arg_8_0.network_transmit:send_rpc("rpc_on_puzzle_completed", arg_8_1, var_8_0, var_8_1)
 			end
 		end
 	end
 end
 
-PuzzleSystem._update_puzzles = function (self)
-	local puzzles_to_update = self._puzzles_to_update
+function PuzzleSystem._update_puzzles(arg_9_0)
+	local var_9_0 = arg_9_0._puzzles_to_update
 
-	for puzzle_name, puzzle in pairs(puzzles_to_update) do
-		local puzzle_done = self:_update_puzzle(puzzle)
+	for iter_9_0, iter_9_1 in pairs(var_9_0) do
+		if arg_9_0:_update_puzzle(iter_9_1) then
+			var_9_0[iter_9_0] = nil
 
-		if puzzle_done then
-			puzzles_to_update[puzzle_name] = nil
-
-			self:_on_puzzle_complete(puzzle.group_name, puzzle_name)
+			arg_9_0:_on_puzzle_complete(iter_9_1.group_name, iter_9_0)
 		end
 	end
 end
 
-local NUM_FOUND_PER_VALUE = {}
-local INDICES_READ = {}
+local var_0_2 = {}
+local var_0_3 = {}
 
-PuzzleSystem._update_puzzle = function (self, puzzle)
-	local group_name = puzzle.group_name
-	local group = self:_get_or_add_group(group_name)
-	local combination = puzzle.combination
-	local num_per_combination_value = puzzle.num_per_combination_value
-	local puzzle_extensions = group.extensions
-	local ordered = puzzle.ordered
-	local num_done = 0
-	local num_needed = #combination
+function PuzzleSystem._update_puzzle(arg_10_0, arg_10_1)
+	local var_10_0 = arg_10_1.group_name
+	local var_10_1 = arg_10_0:_get_or_add_group(var_10_0)
+	local var_10_2 = arg_10_1.combination
+	local var_10_3 = arg_10_1.num_per_combination_value
+	local var_10_4 = var_10_1.extensions
+	local var_10_5 = arg_10_1.ordered
+	local var_10_6 = 0
+	local var_10_7 = #var_10_2
 
-	if ordered then
-		for extension in pairs(puzzle_extensions) do
-			local value = extension:puzzle_value()
-			local order_id = extension:order_id()
-			local combination_value = puzzle.combination[order_id]
+	if var_10_5 then
+		for iter_10_0 in pairs(var_10_4) do
+			local var_10_8 = iter_10_0:puzzle_value()
+			local var_10_9 = iter_10_0:order_id()
 
-			if value ~= combination_value then
+			if var_10_8 ~= arg_10_1.combination[var_10_9] then
 				break
 			end
 
-			num_done = num_done + 1
+			var_10_6 = var_10_6 + 1
 		end
 	else
-		table.clear(NUM_FOUND_PER_VALUE)
-		table.clear(INDICES_READ)
+		table.clear(var_0_2)
+		table.clear(var_0_3)
 
-		for extension in pairs(puzzle_extensions) do
-			local value = extension:puzzle_value()
-			local index
+		for iter_10_1 in pairs(var_10_4) do
+			local var_10_10 = iter_10_1:puzzle_value()
+			local var_10_11
 
-			while index ~= -1 do
-				index = table.index_of(combination, value, (index or 0) + 1)
+			while var_10_11 ~= -1 do
+				var_10_11 = table.index_of(var_10_2, var_10_10, (var_10_11 or 0) + 1)
 
-				if INDICES_READ[index] then
-					if NUM_FOUND_PER_VALUE[value] >= num_per_combination_value[value] then
+				if var_0_3[var_10_11] then
+					if var_0_2[var_10_10] >= var_10_3[var_10_10] then
 						break
 					end
-				elseif index ~= -1 then
-					INDICES_READ[index] = true
-					NUM_FOUND_PER_VALUE[value] = (NUM_FOUND_PER_VALUE[value] or 0) + 1
-					num_done = num_done + 1
+				elseif var_10_11 ~= -1 then
+					var_0_3[var_10_11] = true
+					var_0_2[var_10_10] = (var_0_2[var_10_10] or 0) + 1
+					var_10_6 = var_10_6 + 1
 
 					break
 				end
@@ -215,125 +207,125 @@ PuzzleSystem._update_puzzle = function (self, puzzle)
 		end
 	end
 
-	return num_needed <= num_done
+	return var_10_7 <= var_10_6
 end
 
-PuzzleSystem._on_puzzle_complete = function (self, group_name, puzzle_id)
-	local group = self:_get_or_add_group(group_name)
-	local puzzle = group.puzzles[puzzle_id]
+function PuzzleSystem._on_puzzle_complete(arg_11_0, arg_11_1, arg_11_2)
+	local var_11_0 = arg_11_0:_get_or_add_group(arg_11_1)
+	local var_11_1 = var_11_0.puzzles[arg_11_2]
 
-	puzzle.completed = true
+	var_11_1.completed = true
 
-	local puzzle_extensions = group.extensions
+	local var_11_2 = var_11_0.extensions
 
-	for ext in pairs(puzzle_extensions) do
-		ext:on_puzzle_completed(puzzle_id)
+	for iter_11_0 in pairs(var_11_2) do
+		iter_11_0:on_puzzle_completed(arg_11_2)
 	end
 
-	local completed_level_event = puzzle.completed_level_event
-	local level = LevelHelper:current_level(self.world)
+	local var_11_3 = var_11_1.completed_level_event
+	local var_11_4 = LevelHelper:current_level(arg_11_0.world)
 
-	Level.trigger_event(level, completed_level_event)
+	Level.trigger_event(var_11_4, var_11_3)
 
-	if self._is_server then
-		local group_id_hash = self._group_id_hash_lookup[group_name]
-		local puzzle_id_hash = self._puzzle_id_hash_lookup[puzzle_id]
+	if arg_11_0._is_server then
+		local var_11_5 = arg_11_0._group_id_hash_lookup[arg_11_1]
+		local var_11_6 = arg_11_0._puzzle_id_hash_lookup[arg_11_2]
 
-		self.network_transmit:send_rpc_clients("rpc_on_puzzle_completed", group_id_hash, puzzle_id_hash)
+		arg_11_0.network_transmit:send_rpc_clients("rpc_on_puzzle_completed", var_11_5, var_11_6)
 	end
 end
 
-PuzzleSystem.rpc_on_puzzle_completed = function (self, channel_id, group_id_hash, puzzle_id_hash)
-	local group_name = self._group_id_hash_lookup[group_id_hash]
-	local puzzle_id = self._puzzle_id_hash_lookup[puzzle_id_hash]
+function PuzzleSystem.rpc_on_puzzle_completed(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	local var_12_0 = arg_12_0._group_id_hash_lookup[arg_12_2]
+	local var_12_1 = arg_12_0._puzzle_id_hash_lookup[arg_12_3]
 
-	if not group_name then
+	if not var_12_0 then
 		Crashify.print_exception("PuzzleSystem", "Desync during hot join. Missing puzzle group.")
 
 		return
-	elseif not puzzle_id then
-		Crashify.print_exception("PuzzleSystem", "Desync during hot join. Missing puzzle in group '%s'", group_name)
+	elseif not var_12_1 then
+		Crashify.print_exception("PuzzleSystem", "Desync during hot join. Missing puzzle in group '%s'", var_12_0)
 
 		return
 	end
 
-	self:_on_puzzle_complete(group_name, puzzle_id)
+	arg_12_0:_on_puzzle_complete(var_12_0, var_12_1)
 end
 
-local DEBUG_CATEGORY = "debug_puzzles"
+local var_0_4 = "debug_puzzles"
 
-PuzzleSystem._debug_draw_values = function (self)
-	local drawn_extensions = FrameTable.alloc_table()
+function PuzzleSystem._debug_draw_values(arg_13_0)
+	local var_13_0 = FrameTable.alloc_table()
 
-	Managers.state.debug_text:clear_world_text(DEBUG_CATEGORY)
+	Managers.state.debug_text:clear_world_text(var_0_4)
 
-	local puzzle_extensions = self._extensions
+	local var_13_1 = arg_13_0._extensions
 
-	for unit, ext in pairs(puzzle_extensions) do
-		if not drawn_extensions[ext] then
-			local value = ext:puzzle_value()
+	for iter_13_0, iter_13_1 in pairs(var_13_1) do
+		if not var_13_0[iter_13_1] then
+			local var_13_2 = iter_13_1:puzzle_value()
 
-			Managers.state.debug_text:output_world_text(value, 0.6, Unit.local_position(unit, 0), nil, DEBUG_CATEGORY, Vector3(0, 255, 0), nil, Unit.local_rotation(unit, 0))
+			Managers.state.debug_text:output_world_text(var_13_2, 0.6, Unit.local_position(iter_13_0, 0), nil, var_0_4, Vector3(0, 255, 0), nil, Unit.local_rotation(iter_13_0, 0))
 		end
 
-		drawn_extensions[ext] = true
+		var_13_0[iter_13_1] = true
 	end
 
-	local active_groups = FrameTable.alloc_table()
-	local inactive_groups = FrameTable.alloc_table()
-	local puzzle_groups = self._puzzle_groups
+	local var_13_3 = FrameTable.alloc_table()
+	local var_13_4 = FrameTable.alloc_table()
+	local var_13_5 = arg_13_0._puzzle_groups
 
-	for group_name, group in pairs(puzzle_groups) do
-		for puzzle_name, puzzle in pairs(group.puzzles) do
-			if not puzzle.completed then
-				active_groups[group_name] = true
+	for iter_13_2, iter_13_3 in pairs(var_13_5) do
+		for iter_13_4, iter_13_5 in pairs(iter_13_3.puzzles) do
+			if not iter_13_5.completed then
+				var_13_3[iter_13_2] = true
 			else
-				inactive_groups[group_name] = true
+				var_13_4[iter_13_2] = true
 			end
 		end
 	end
 
 	Debug.text("Puzzle Debug")
 
-	if not table.is_empty(active_groups) then
+	if not table.is_empty(var_13_3) then
 		Debug.text("    Active groups:")
 
-		for group_name in pairs(active_groups) do
-			Debug.text("        %s:", group_name)
+		for iter_13_6 in pairs(var_13_3) do
+			Debug.text("        %s:", iter_13_6)
 
-			local group = self:_get_or_add_group(group_name)
+			local var_13_6 = arg_13_0:_get_or_add_group(iter_13_6)
 
-			for puzzle_name, puzzle in pairs(group.puzzles) do
-				if not puzzle.completed then
-					local combination_string = table.concat(puzzle.combination, ", ")
-					local values = {}
-					local extensions = group.extensions
-					local fallback_i = 1
+			for iter_13_7, iter_13_8 in pairs(var_13_6.puzzles) do
+				if not iter_13_8.completed then
+					local var_13_7 = table.concat(iter_13_8.combination, ", ")
+					local var_13_8 = {}
+					local var_13_9 = var_13_6.extensions
+					local var_13_10 = 1
 
-					for ext in pairs(extensions) do
-						values[ext:order_id() or fallback_i] = ext:puzzle_value()
-						fallback_i = fallback_i + 1
+					for iter_13_9 in pairs(var_13_9) do
+						var_13_8[iter_13_9:order_id() or var_13_10] = iter_13_9:puzzle_value()
+						var_13_10 = var_13_10 + 1
 					end
 
-					local values_string = table.concat(values, ", ")
+					local var_13_11 = table.concat(var_13_8, ", ")
 
-					Debug.text("            %s: Combination: %s, Values: %s, (Ordered=%s)", puzzle_name == "" and "<no_name>" or puzzle_name, combination_string, values_string, puzzle.ordered)
+					Debug.text("            %s: Combination: %s, Values: %s, (Ordered=%s)", iter_13_7 == "" and "<no_name>" or iter_13_7, var_13_7, var_13_11, iter_13_8.ordered)
 				end
 			end
 		end
 	end
 
-	if not table.is_empty(inactive_groups) then
+	if not table.is_empty(var_13_4) then
 		Debug.text("    Inactive groups:")
 
-		for group_name in pairs(inactive_groups) do
-			local group = self:_get_or_add_group(group_name)
+		for iter_13_10 in pairs(var_13_4) do
+			local var_13_12 = arg_13_0:_get_or_add_group(iter_13_10)
 
-			Debug.text("        %s:", group_name)
+			Debug.text("        %s:", iter_13_10)
 
-			for puzzle_name, puzzle in pairs(group.puzzles) do
-				if puzzle.completed then
-					Debug.text("            %s", puzzle_name)
+			for iter_13_11, iter_13_12 in pairs(var_13_12.puzzles) do
+				if iter_13_12.completed then
+					Debug.text("            %s", iter_13_11)
 				end
 			end
 		end

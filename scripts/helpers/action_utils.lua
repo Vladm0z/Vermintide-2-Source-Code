@@ -1,971 +1,922 @@
-﻿-- chunkname: @scripts/helpers/action_utils.lua
+-- chunkname: @scripts/helpers/action_utils.lua
 
 require("scripts/helpers/pseudo_random_distribution")
 
 ActionUtils = ActionUtils or {}
 
-local unit_get_data = Unit.get_data
-local unit_actor = Unit.actor
-local unit_find_actor = Unit.find_actor
+local var_0_0 = Unit.get_data
+local var_0_1 = Unit.actor
+local var_0_2 = Unit.find_actor
 
 script_data.no_critical_strikes = script_data.no_critical_strikes or Development.parameter("no_critical_strikes")
 script_data.always_critical_strikes = script_data.always_critical_strikes or Development.parameter("always_critical_strikes")
 script_data.alternating_critical_strikes = script_data.alternating_critical_strikes or Development.parameter("alternating_critical_strikes")
 
-ActionUtils.get_power_level_percentage = function (power_level)
-	local min_power_level, max_power_level = MIN_POWER_LEVEL, MAX_POWER_LEVEL
-	local percentage = (power_level - min_power_level) / (max_power_level - min_power_level)
+function ActionUtils.get_power_level_percentage(arg_1_0)
+	local var_1_0 = MIN_POWER_LEVEL
+	local var_1_1 = MAX_POWER_LEVEL
 
-	return percentage
+	return (arg_1_0 - var_1_0) / (var_1_1 - var_1_0)
 end
 
-ActionUtils.get_max_targets = function (damage_profile, cleave_power_level)
-	local cleave_distribution = damage_profile.cleave_distribution or DefaultCleaveDistribution
-	local cleave_range = Cleave.max - Cleave.min
-	local attack_cleave_power_level = cleave_power_level * cleave_distribution.attack
-	local attack_percentage = ActionUtils.get_power_level_percentage(attack_cleave_power_level)
-	local max_targets_attack = cleave_range * attack_percentage
-	local impact_cleave_power_level = cleave_power_level * cleave_distribution.impact
-	local impact_percentage = ActionUtils.get_power_level_percentage(impact_cleave_power_level)
-	local max_targets_impact = cleave_range * impact_percentage
+function ActionUtils.get_max_targets(arg_2_0, arg_2_1)
+	local var_2_0 = arg_2_0.cleave_distribution or DefaultCleaveDistribution
+	local var_2_1 = Cleave.max - Cleave.min
+	local var_2_2 = arg_2_1 * var_2_0.attack
+	local var_2_3 = var_2_1 * ActionUtils.get_power_level_percentage(var_2_2)
+	local var_2_4 = arg_2_1 * var_2_0.impact
+	local var_2_5 = var_2_1 * ActionUtils.get_power_level_percentage(var_2_4)
 
-	return max_targets_attack, max_targets_impact
+	return var_2_3, var_2_5
 end
 
-ActionUtils.get_target_armor = function (hit_zone_name, breed, armor_override)
-	local target_unit_armor_attack, target_unit_armor_impact, target_unit_armor, target_unit_primary_armor_attack, target_unit_primary_armor_impact
+function ActionUtils.get_target_armor(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0
+	local var_3_1
+	local var_3_2
+	local var_3_3
+	local var_3_4
 
-	if armor_override then
-		target_unit_armor_attack = armor_override
-		target_unit_armor_impact = armor_override
+	if arg_3_2 then
+		var_3_0 = arg_3_2
+		var_3_1 = arg_3_2
 
-		return target_unit_armor_attack, target_unit_armor_impact
+		return var_3_0, var_3_1
 	end
 
-	if breed and hit_zone_name then
-		local hitzone_armor_categories = breed.hitzone_armor_categories
+	if arg_3_1 and arg_3_0 then
+		local var_3_5 = arg_3_1.hitzone_armor_categories
+		local var_3_6 = var_3_5 and var_3_5[arg_3_0] or arg_3_1.armor_category
 
-		target_unit_armor = hitzone_armor_categories and hitzone_armor_categories[hit_zone_name] or breed.armor_category
-
-		if type(target_unit_armor) == "table" then
-			target_unit_armor_attack = target_unit_armor.attack
-			target_unit_armor_impact = target_unit_armor.impact
+		if type(var_3_6) == "table" then
+			var_3_0 = var_3_6.attack
+			var_3_1 = var_3_6.impact
 		else
-			target_unit_armor_attack = target_unit_armor
-			target_unit_armor_impact = target_unit_armor
+			var_3_0 = var_3_6
+			var_3_1 = var_3_6
 		end
 
-		local hitzone_primary_armor_categories = breed.hitzone_primary_armor_categories
-		local target_pritority_unit_armor = hitzone_primary_armor_categories and hitzone_primary_armor_categories[hit_zone_name] or breed.primary_armor_category
+		local var_3_7 = arg_3_1.hitzone_primary_armor_categories
+		local var_3_8 = var_3_7 and var_3_7[arg_3_0] or arg_3_1.primary_armor_category
 
-		if type(target_pritority_unit_armor) == "table" then
-			target_unit_primary_armor_attack = target_pritority_unit_armor.attack
-			target_unit_primary_armor_impact = target_pritority_unit_armor.impact
+		if type(var_3_8) == "table" then
+			var_3_3 = var_3_8.attack
+			var_3_4 = var_3_8.impact
 		else
-			target_unit_primary_armor_attack = target_pritority_unit_armor
-			target_unit_primary_armor_impact = target_pritority_unit_armor
+			var_3_3 = var_3_8
+			var_3_4 = var_3_8
 		end
-	elseif breed then
-		target_unit_armor_attack = breed.armor_category
-		target_unit_armor_impact = breed.armor_category
-		target_unit_primary_armor_attack = breed.primary_armor_category
-		target_unit_primary_armor_impact = breed.primary_armor_category
+	elseif arg_3_1 then
+		var_3_0 = arg_3_1.armor_category
+		var_3_1 = arg_3_1.armor_category
+		var_3_3 = arg_3_1.primary_armor_category
+		var_3_4 = arg_3_1.primary_armor_category
 	else
-		local player_armor = 1
+		local var_3_9 = 1
 
-		target_unit_armor_attack = player_armor
-		target_unit_armor_impact = player_armor
+		var_3_0 = var_3_9
+		var_3_1 = var_3_9
 	end
 
-	return target_unit_armor_attack, target_unit_armor_impact, target_unit_primary_armor_attack, target_unit_primary_armor_impact
+	return var_3_0, var_3_1, var_3_3, var_3_4
 end
 
-ActionUtils.get_range_scalar_multiplier = function (damage_profile, target_settings, attacker_unit, target_unit)
-	local range_modifier_settings = target_settings.range_modifier_settings or damage_profile.range_modifier_settings
+function ActionUtils.get_range_scalar_multiplier(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	local var_4_0 = arg_4_1.range_modifier_settings or arg_4_0.range_modifier_settings
 
-	if not range_modifier_settings then
+	if not var_4_0 then
 		return 0
 	end
 
-	local attacker_position = POSITION_LOOKUP[attacker_unit] or Unit.world_position(attacker_unit, 0)
-	local target_position = POSITION_LOOKUP[target_unit] or Unit.world_position(target_unit, 0)
-	local distance = Vector3.distance(target_position, attacker_position)
-	local scaling_steps = range_modifier_settings.distance_scaling_steps
+	local var_4_1 = POSITION_LOOKUP[arg_4_2] or Unit.world_position(arg_4_2, 0)
+	local var_4_2 = POSITION_LOOKUP[arg_4_3] or Unit.world_position(arg_4_3, 0)
+	local var_4_3 = Vector3.distance(var_4_2, var_4_1)
+	local var_4_4 = var_4_0.distance_scaling_steps
 
-	if scaling_steps then
-		local range_multiplier
+	if var_4_4 then
+		local var_4_5
 
-		if distance < scaling_steps[1].distance then
+		if var_4_3 < var_4_4[1].distance then
 			return 0
-		elseif distance > scaling_steps[#scaling_steps].distance then
-			range_multiplier = scaling_steps[#scaling_steps].multiplier
-
-			return range_multiplier
+		elseif var_4_3 > var_4_4[#var_4_4].distance then
+			return var_4_4[#var_4_4].multiplier
 		else
-			for i = 1, #scaling_steps - 1 do
-				if distance > scaling_steps[i].distance and distance < scaling_steps[i + 1].distance then
-					range_multiplier = scaling_steps[i].multiplier
-
-					return range_multiplier
+			for iter_4_0 = 1, #var_4_4 - 1 do
+				if var_4_3 > var_4_4[iter_4_0].distance and var_4_3 < var_4_4[iter_4_0 + 1].distance then
+					return var_4_4[iter_4_0].multiplier
 				end
 			end
 		end
 
 		assert(false, "Setting: [distance_scaling_steps] range_multiplier never gets assigned a value")
 	else
-		local dropoff_start = range_modifier_settings.dropoff_start
-		local dropoff_end = range_modifier_settings.dropoff_end
-		local buff_extension = ScriptUnit.has_extension(attacker_unit, "buff_system")
+		local var_4_6 = var_4_0.dropoff_start
+		local var_4_7 = var_4_0.dropoff_end
 
-		if buff_extension:has_buff_perk("no_damage_dropoff") then
-			dropoff_start = dropoff_start * 2
-			dropoff_end = dropoff_end * 2
+		if ScriptUnit.has_extension(arg_4_2, "buff_system"):has_buff_perk("no_damage_dropoff") then
+			var_4_6 = var_4_6 * 2
+			var_4_7 = var_4_7 * 2
 		end
 
-		local dropoff_scale = dropoff_end - dropoff_start
-		local dropoff_distance = math.clamp(distance - dropoff_start, 0, dropoff_scale)
-		local range_scalar_multiplier = dropoff_distance / dropoff_scale
+		local var_4_8 = var_4_7 - var_4_6
 
-		return range_scalar_multiplier
+		return math.clamp(var_4_3 - var_4_6, 0, var_4_8) / var_4_8
 	end
 end
 
-ActionUtils.get_armor_power_modifier = function (power_type, damage_profile, target_settings, target_unit_armor, target_unit_primary_armor, critical_strike_settings, range_scalar_multiplier)
-	local armor_modifier = target_settings.armor_modifier or damage_profile.armor_modifier or DefaultArmorPowerModifier
-	local armor_modifier_near = target_settings.armor_modifier_near or damage_profile.armor_modifier_near
-	local armor_modifier_far = target_settings.armor_modifier_far or damage_profile.armor_modifier_far
-	local armor_power_modifier, critical_armor_power_modifier
+function ActionUtils.get_armor_power_modifier(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
+	local var_5_0 = arg_5_2.armor_modifier or arg_5_1.armor_modifier or DefaultArmorPowerModifier
+	local var_5_1 = arg_5_2.armor_modifier_near or arg_5_1.armor_modifier_near
+	local var_5_2 = arg_5_2.armor_modifier_far or arg_5_1.armor_modifier_far
+	local var_5_3
+	local var_5_4
 
-	if critical_strike_settings then
-		critical_armor_power_modifier = critical_strike_settings[power_type .. "_armor_power_modifer"]
+	if arg_5_5 then
+		var_5_4 = arg_5_5[arg_5_0 .. "_armor_power_modifer"]
 	end
 
-	if critical_armor_power_modifier and critical_armor_power_modifier[target_unit_armor] then
-		armor_power_modifier = target_unit_primary_armor and critical_armor_power_modifier[target_unit_primary_armor] or critical_armor_power_modifier[target_unit_armor]
-	elseif armor_modifier_near and armor_modifier_far and range_scalar_multiplier then
-		local armor_power_modifier_near = target_unit_primary_armor and armor_modifier_near[power_type][target_unit_primary_armor] or armor_modifier_near[power_type][target_unit_armor] or 1
-		local armor_power_modifier_far = target_unit_primary_armor and armor_modifier_far[power_type][target_unit_primary_armor] or armor_modifier_far[power_type][target_unit_armor] or 1
+	if var_5_4 and var_5_4[arg_5_3] then
+		var_5_3 = arg_5_4 and var_5_4[arg_5_4] or var_5_4[arg_5_3]
+	elseif var_5_1 and var_5_2 and arg_5_6 then
+		local var_5_5 = arg_5_4 and var_5_1[arg_5_0][arg_5_4] or var_5_1[arg_5_0][arg_5_3] or 1
+		local var_5_6 = arg_5_4 and var_5_2[arg_5_0][arg_5_4] or var_5_2[arg_5_0][arg_5_3] or 1
 
-		armor_power_modifier = math.lerp(armor_power_modifier_near, armor_power_modifier_far, range_scalar_multiplier)
+		var_5_3 = math.lerp(var_5_5, var_5_6, arg_5_6)
 	else
-		armor_power_modifier = target_unit_primary_armor and armor_modifier[power_type][target_unit_primary_armor] or armor_modifier[power_type][target_unit_armor] or 1
+		var_5_3 = arg_5_4 and var_5_0[arg_5_0][arg_5_4] or var_5_0[arg_5_0][arg_5_3] or 1
 	end
 
-	return armor_power_modifier
+	return var_5_3
 end
 
-ActionUtils.scale_power_levels = function (power_level, power_type, attacker_unit, difficulty_level)
-	local actual_power_level = math.clamp(power_level, MIN_POWER_LEVEL, MAX_POWER_LEVEL)
+function ActionUtils.scale_power_levels(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	local var_6_0 = math.clamp(arg_6_0, MIN_POWER_LEVEL, MAX_POWER_LEVEL)
 
 	if Managers and Managers.state.game_mode:setting("cap_power_level") then
-		local difficulty_settings = DifficultySettings[difficulty_level]
-		local difficulty_power_level_cap = difficulty_settings.power_level_cap
-		local power_level_max = MAX_POWER_LEVEL
-		local difficulty_power_level_max_target = difficulty_settings.power_level_max_target
+		local var_6_1 = DifficultySettings[arg_6_3]
+		local var_6_2 = var_6_1.power_level_cap
+		local var_6_3 = MAX_POWER_LEVEL
+		local var_6_4 = var_6_1.power_level_max_target
 
-		if difficulty_power_level_cap < actual_power_level and difficulty_power_level_max_target then
-			local above_cap = actual_power_level - difficulty_power_level_cap
-			local cap_to_max = power_level_max - difficulty_power_level_cap
-
-			actual_power_level = difficulty_power_level_cap + difficulty_power_level_max_target * (above_cap / cap_to_max)
+		if var_6_2 < var_6_0 and var_6_4 then
+			var_6_0 = var_6_2 + var_6_4 * ((var_6_0 - var_6_2) / (var_6_3 - var_6_2))
 		else
-			actual_power_level = math.min(power_level, difficulty_power_level_cap)
+			var_6_0 = math.min(arg_6_0, var_6_2)
 		end
 	end
 
-	local scaled_power_level = actual_power_level
+	local var_6_5 = var_6_0
 
-	if actual_power_level >= MIN_POWER_LEVEL_CAP then
-		local starting_power_level_bonus = 50
-		local starting_bonus_range = 100
-		local native_diff_ratio = 10
-		local scaled_power_level_section
+	if var_6_0 >= MIN_POWER_LEVEL_CAP then
+		local var_6_6 = 50
+		local var_6_7 = 100
+		local var_6_8 = 10
+		local var_6_9
 
-		if actual_power_level >= MIN_POWER_LEVEL_CAP + starting_bonus_range then
-			scaled_power_level_section = (actual_power_level - MIN_POWER_LEVEL_CAP) * ((POWER_LEVEL_DIFF_RATIO[power_type] - 1) / (native_diff_ratio - 1))
+		if var_6_0 >= MIN_POWER_LEVEL_CAP + var_6_7 then
+			var_6_9 = (var_6_0 - MIN_POWER_LEVEL_CAP) * ((POWER_LEVEL_DIFF_RATIO[arg_6_1] - 1) / (var_6_8 - 1))
 		else
-			local starting_bonus = starting_power_level_bonus * (1 - (actual_power_level - 200) / starting_bonus_range)
-
-			scaled_power_level_section = (actual_power_level + starting_bonus - MIN_POWER_LEVEL_CAP) * ((POWER_LEVEL_DIFF_RATIO[power_type] - 1) / (native_diff_ratio - 1))
+			var_6_9 = (var_6_0 + var_6_6 * (1 - (var_6_0 - 200) / var_6_7) - MIN_POWER_LEVEL_CAP) * ((POWER_LEVEL_DIFF_RATIO[arg_6_1] - 1) / (var_6_8 - 1))
 		end
 
-		scaled_power_level = MIN_POWER_LEVEL_CAP + scaled_power_level_section
+		var_6_5 = MIN_POWER_LEVEL_CAP + var_6_9
 	end
 
-	if attacker_unit then
-		scaled_power_level = ActionUtils.apply_buffs_to_power_level(attacker_unit, scaled_power_level)
+	if arg_6_2 then
+		var_6_5 = ActionUtils.apply_buffs_to_power_level(arg_6_2, var_6_5)
 	end
 
-	return scaled_power_level
+	return var_6_5
 end
 
-ActionUtils.get_power_multiplier = function (power_type, damage_profile, target_settings, range_scalar_multiplier)
-	local power_distribution = target_settings.power_distribution or damage_profile.power_distribution or DefaultPowerDistribution
-	local power_distribution_near = target_settings.power_distribution_near or damage_profile.power_distribution_near
-	local power_distribution_far = target_settings.power_distribution_far or damage_profile.power_distribution_far
-	local power_multiplier
+function ActionUtils.get_power_multiplier(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	local var_7_0 = arg_7_2.power_distribution or arg_7_1.power_distribution or DefaultPowerDistribution
+	local var_7_1 = arg_7_2.power_distribution_near or arg_7_1.power_distribution_near
+	local var_7_2 = arg_7_2.power_distribution_far or arg_7_1.power_distribution_far
+	local var_7_3
 
-	if range_scalar_multiplier and range_scalar_multiplier >= 0 and distance_scaling_steps then
-		power_multiplier = range_scalar_multiplier
-	elseif power_distribution_near and power_distribution_far and range_scalar_multiplier then
-		local power_near = power_distribution_near[power_type]
-		local power_far = power_distribution_far[power_type]
+	if arg_7_3 and arg_7_3 >= 0 and distance_scaling_steps then
+		var_7_3 = arg_7_3
+	elseif var_7_1 and var_7_2 and arg_7_3 then
+		local var_7_4 = var_7_1[arg_7_0]
+		local var_7_5 = var_7_2[arg_7_0]
 
-		power_multiplier = math.lerp(power_near, power_far, range_scalar_multiplier)
+		var_7_3 = math.lerp(var_7_4, var_7_5, arg_7_3)
 	else
-		power_multiplier = power_distribution[power_type]
+		var_7_3 = var_7_0[arg_7_0]
 	end
 
-	return power_multiplier
+	return var_7_3
 end
 
-ActionUtils.get_power_level = function (power_type, power_level, damage_profile, target_settings, critical_strike_settings, range_scalar_multiplier, attacker_unit, difficulty_level)
-	local power_multiplier = ActionUtils.get_power_multiplier(power_type, damage_profile, target_settings, range_scalar_multiplier)
-	local scaled_power_level = ActionUtils.scale_power_levels(power_level, power_type, attacker_unit, difficulty_level)
+function ActionUtils.get_power_level(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7)
+	local var_8_0 = ActionUtils.get_power_multiplier(arg_8_0, arg_8_2, arg_8_3, arg_8_5)
 
-	return scaled_power_level * power_multiplier
+	return ActionUtils.scale_power_levels(arg_8_1, arg_8_0, arg_8_6, arg_8_7) * var_8_0
 end
 
-ActionUtils.get_power_level_for_target = function (optional_target_unit, original_power_level, damage_profile, target_index, is_critical_strike, attacker_unit, hit_zone_name, armor_type_override, damage_source, breed, range_scalar_multiplier, difficulty_level, target_unit_armor, target_unit_primary_armor)
-	local target_settings = damage_profile.targets and damage_profile.targets[target_index] or damage_profile.default_target
-	local critical_strike_settings = is_critical_strike and damage_profile.critical_strike
-	local attack_armor_power_modifer, impact_armor_power_modifer
-	local power_level = original_power_level
-	local is_enemy_target = breed
-	local target_unit_armor_attack = target_unit_armor
-	local target_unit_armor_impact = target_unit_armor
-	local target_unit_primary_armor_attack = target_unit_primary_armor
-	local target_unit_primary_armor_impact = target_unit_primary_armor
+function ActionUtils.get_power_level_for_target(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7, arg_9_8, arg_9_9, arg_9_10, arg_9_11, arg_9_12, arg_9_13)
+	local var_9_0 = arg_9_2.targets and arg_9_2.targets[arg_9_3] or arg_9_2.default_target
+	local var_9_1 = arg_9_4 and arg_9_2.critical_strike
+	local var_9_2
+	local var_9_3
+	local var_9_4 = arg_9_1
+	local var_9_5 = arg_9_9
+	local var_9_6 = arg_9_12
+	local var_9_7 = arg_9_12
+	local var_9_8 = arg_9_13
+	local var_9_9 = arg_9_13
 
-	if armor_type_override then
-		target_unit_armor_attack = armor_type_override
-		target_unit_armor_impact = armor_type_override
-		target_unit_primary_armor_attack = armor_type_override
-		target_unit_primary_armor_impact = armor_type_override
+	if arg_9_7 then
+		var_9_6 = arg_9_7
+		var_9_7 = arg_9_7
+		var_9_8 = arg_9_7
+		var_9_9 = arg_9_7
 	end
 
-	attack_armor_power_modifer = ActionUtils.get_armor_power_modifier("attack", damage_profile, target_settings, target_unit_armor_attack, target_unit_primary_armor_attack, critical_strike_settings, range_scalar_multiplier)
-	impact_armor_power_modifer = ActionUtils.get_armor_power_modifier("impact", damage_profile, target_settings, target_unit_armor_impact, target_unit_primary_armor_impact, critical_strike_settings, range_scalar_multiplier)
+	local var_9_10 = ActionUtils.get_armor_power_modifier("attack", arg_9_2, var_9_0, var_9_6, var_9_8, var_9_1, arg_9_10)
+	local var_9_11 = ActionUtils.get_armor_power_modifier("impact", arg_9_2, var_9_0, var_9_7, var_9_9, var_9_1, arg_9_10)
+	local var_9_12 = arg_9_9 and arg_9_9.lord_armor
 
-	local lord_armor = breed and breed.lord_armor
-
-	if lord_armor and target_unit_primary_armor_attack == 6 and attack_armor_power_modifer == 0 then
-		local new_armor_power_modifer = ActionUtils.get_armor_power_modifier("attack", damage_profile, target_settings, target_unit_armor_attack, nil, critical_strike_settings, range_scalar_multiplier)
-
-		attack_armor_power_modifer = attack_armor_power_modifer + new_armor_power_modifer * lord_armor
+	if var_9_12 and var_9_8 == 6 and var_9_10 == 0 then
+		var_9_10 = var_9_10 + ActionUtils.get_armor_power_modifier("attack", arg_9_2, var_9_0, var_9_6, nil, var_9_1, arg_9_10) * var_9_12
 	end
 
-	local attack_power = ActionUtils.get_power_level("attack", power_level, damage_profile, target_settings, critical_strike_settings, range_scalar_multiplier, attacker_unit, difficulty_level)
-	local impact_power = ActionUtils.get_power_level("impact", power_level, damage_profile, target_settings, critical_strike_settings, range_scalar_multiplier, attacker_unit, difficulty_level)
+	local var_9_13 = ActionUtils.get_power_level("attack", var_9_4, arg_9_2, var_9_0, var_9_1, arg_9_10, arg_9_5, arg_9_11)
+	local var_9_14 = ActionUtils.get_power_level("impact", var_9_4, arg_9_2, var_9_0, var_9_1, arg_9_10, arg_9_5, arg_9_11)
 
-	if is_enemy_target then
-		local armor_override = optional_target_unit and unit_get_data(optional_target_unit, "armor") or nil
+	if var_9_5 then
+		local var_9_15 = arg_9_0 and var_0_0(arg_9_0, "armor") or nil
 
-		attack_power = ActionUtils.apply_buffs_to_power_level_on_hit(attacker_unit, attack_power, breed, damage_source, is_critical_strike, armor_override)
-		impact_power = ActionUtils.apply_buffs_to_power_level_on_hit(attacker_unit, impact_power, breed, damage_source, is_critical_strike, armor_override)
+		var_9_13 = ActionUtils.apply_buffs_to_power_level_on_hit(arg_9_5, var_9_13, arg_9_9, arg_9_8, arg_9_4, var_9_15)
+		var_9_14 = ActionUtils.apply_buffs_to_power_level_on_hit(arg_9_5, var_9_14, arg_9_9, arg_9_8, arg_9_4, var_9_15)
 
-		local target_armor = armor_type_override or target_unit_primary_armor or target_unit_armor
+		local var_9_16 = arg_9_7 or arg_9_13 or arg_9_12
 
-		attack_armor_power_modifer = ActionUtils.apply_buffs_to_armor_power_on_hit(attacker_unit, optional_target_unit, attack_armor_power_modifer, target_armor)
-		impact_armor_power_modifer = ActionUtils.apply_buffs_to_armor_power_on_hit(attacker_unit, optional_target_unit, impact_armor_power_modifer, target_armor)
+		var_9_10 = ActionUtils.apply_buffs_to_armor_power_on_hit(arg_9_5, arg_9_0, var_9_10, var_9_16)
+		var_9_11 = ActionUtils.apply_buffs_to_armor_power_on_hit(arg_9_5, arg_9_0, var_9_11, var_9_16)
 	end
 
-	attack_power = attack_power * attack_armor_power_modifer
-	impact_power = impact_power * impact_armor_power_modifer
+	local var_9_17 = var_9_13 * var_9_10
+	local var_9_18 = var_9_14 * var_9_11
 
-	local is_player_target = breed and breed.is_player
+	if arg_9_9 and arg_9_9.is_player then
+		local var_9_19 = var_9_0.attack_player_target_power_modifier
+		local var_9_20 = var_9_0.impact_player_target_power_modifier
 
-	if is_player_target then
-		local attack_player_target_modifier = target_settings.attack_player_target_power_modifier
-		local impact_player_target_modifier = target_settings.impact_player_target_power_modifier
-
-		attack_power = attack_power * (attack_player_target_modifier or 1)
-		impact_power = impact_power * (impact_player_target_modifier or 1)
+		var_9_17 = var_9_17 * (var_9_19 or 1)
+		var_9_18 = var_9_18 * (var_9_20 or 1)
 	end
 
-	return attack_power, impact_power
+	return var_9_17, var_9_18
 end
 
-ActionUtils.apply_buffs_to_power_level = function (unit, power_level)
-	local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
+function ActionUtils.apply_buffs_to_power_level(arg_10_0, arg_10_1)
+	local var_10_0 = ScriptUnit.has_extension(arg_10_0, "buff_system")
 
-	if not buff_extension then
-		return power_level
+	if not var_10_0 then
+		return arg_10_1
 	end
 
-	power_level = buff_extension:apply_buffs_to_value(power_level, "power_level")
+	arg_10_1 = var_10_0:apply_buffs_to_value(arg_10_1, "power_level")
 
-	return power_level
+	return arg_10_1
 end
 
-ActionUtils.apply_buffs_to_power_level_on_hit = function (unit, power_level, breed, damage_source, is_critical_strike, armor_override)
-	if not Unit.alive(unit) then
-		return power_level
+function ActionUtils.apply_buffs_to_power_level_on_hit(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+	if not Unit.alive(arg_11_0) then
+		return arg_11_1
 	end
 
-	local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
+	local var_11_0 = ScriptUnit.has_extension(arg_11_0, "buff_system")
 
-	if not buff_extension then
-		return power_level
+	if not var_11_0 then
+		return arg_11_1
 	end
 
-	local stacked_multiplier = 1
+	local var_11_1 = 1
 
-	if damage_source then
-		local item_data = rawget(ItemMasterList, damage_source)
-		local weapon_template_name = item_data and item_data.template
+	if arg_11_3 then
+		local var_11_2 = rawget(ItemMasterList, arg_11_3)
+		local var_11_3 = var_11_2 and var_11_2.template
 
-		if weapon_template_name then
-			local power_level_weapon_multiplier = 1
-			local weapon_template = WeaponUtils.get_weapon_template(weapon_template_name)
-			local buff_type = weapon_template.buff_type
-			local is_melee = MeleeBuffTypes[buff_type]
-			local is_ranged = RangedBuffTypes[buff_type]
-			local weapon_type = weapon_template.weapon_type
+		if var_11_3 then
+			local var_11_4 = 1
+			local var_11_5 = WeaponUtils.get_weapon_template(var_11_3)
+			local var_11_6 = var_11_5.buff_type
+			local var_11_7 = MeleeBuffTypes[var_11_6]
+			local var_11_8 = RangedBuffTypes[var_11_6]
+			local var_11_9 = var_11_5.weapon_type
 
-			if is_melee then
-				power_level_weapon_multiplier = buff_extension:apply_buffs_to_value(power_level_weapon_multiplier, "power_level_melee")
-			elseif is_ranged then
-				power_level_weapon_multiplier = buff_extension:apply_buffs_to_value(power_level_weapon_multiplier, "power_level_ranged")
+			if var_11_7 then
+				var_11_4 = var_11_0:apply_buffs_to_value(var_11_4, "power_level_melee")
+			elseif var_11_8 then
+				var_11_4 = var_11_0:apply_buffs_to_value(var_11_4, "power_level_ranged")
 			end
 
-			if weapon_type and weapon_type == "DRAKEFIRE" then
-				power_level_weapon_multiplier = buff_extension:apply_buffs_to_value(power_level_weapon_multiplier, "power_level_ranged_drakefire")
+			if var_11_9 and var_11_9 == "DRAKEFIRE" then
+				var_11_4 = var_11_0:apply_buffs_to_value(var_11_4, "power_level_ranged_drakefire")
 			end
 
-			stacked_multiplier = stacked_multiplier + (power_level_weapon_multiplier - 1)
+			var_11_1 = var_11_1 + (var_11_4 - 1)
 		end
 	end
 
-	local armor_power_level_target_multiplier = 1
-	local armor_category = armor_override or breed and breed.armor_category or 1
+	local var_11_10 = 1
+	local var_11_11 = arg_11_5 or arg_11_2 and arg_11_2.armor_category or 1
 
-	if armor_category == 2 then
-		armor_power_level_target_multiplier = buff_extension:apply_buffs_to_value(armor_power_level_target_multiplier, "power_level_armoured")
-	elseif armor_category == 3 then
-		armor_power_level_target_multiplier = buff_extension:apply_buffs_to_value(armor_power_level_target_multiplier, "power_level_large")
-	elseif armor_category == 5 then
-		armor_power_level_target_multiplier = buff_extension:apply_buffs_to_value(armor_power_level_target_multiplier, "power_level_frenzy")
-	elseif armor_category == 1 then
-		armor_power_level_target_multiplier = buff_extension:apply_buffs_to_value(armor_power_level_target_multiplier, "power_level_unarmoured")
+	if var_11_11 == 2 then
+		var_11_10 = var_11_0:apply_buffs_to_value(var_11_10, "power_level_armoured")
+	elseif var_11_11 == 3 then
+		var_11_10 = var_11_0:apply_buffs_to_value(var_11_10, "power_level_large")
+	elseif var_11_11 == 5 then
+		var_11_10 = var_11_0:apply_buffs_to_value(var_11_10, "power_level_frenzy")
+	elseif var_11_11 == 1 then
+		var_11_10 = var_11_0:apply_buffs_to_value(var_11_10, "power_level_unarmoured")
 	end
 
-	stacked_multiplier = stacked_multiplier + (armor_power_level_target_multiplier - 1)
+	local var_11_12 = var_11_1 + (var_11_10 - 1)
+	local var_11_13 = 1
+	local var_11_14 = var_0_0(arg_11_0, "race") or arg_11_2 and arg_11_2.race
 
-	local race_power_level_target_multiplier = 1
-	local race = unit_get_data(unit, "race") or breed and breed.race
-
-	if race == "chaos" or race == "beastmen" then
-		race_power_level_target_multiplier = buff_extension:apply_buffs_to_value(race_power_level_target_multiplier, "power_level_chaos")
-	elseif race == "skaven" then
-		race_power_level_target_multiplier = buff_extension:apply_buffs_to_value(race_power_level_target_multiplier, "power_level_skaven")
+	if var_11_14 == "chaos" or var_11_14 == "beastmen" then
+		var_11_13 = var_11_0:apply_buffs_to_value(var_11_13, "power_level_chaos")
+	elseif var_11_14 == "skaven" then
+		var_11_13 = var_11_0:apply_buffs_to_value(var_11_13, "power_level_skaven")
 	end
 
-	stacked_multiplier = stacked_multiplier + (race_power_level_target_multiplier - 1)
+	local var_11_15 = var_11_12 + (var_11_13 - 1)
 
-	if is_critical_strike then
-		local power_level_crit_multiplier = 1
+	if arg_11_4 then
+		local var_11_16 = 1
 
-		power_level_crit_multiplier = buff_extension:apply_buffs_to_value(power_level_crit_multiplier, "power_level_critical_strike")
-		stacked_multiplier = stacked_multiplier + (power_level_crit_multiplier - 1)
+		var_11_15 = var_11_15 + (var_11_0:apply_buffs_to_value(var_11_16, "power_level_critical_strike") - 1)
 	end
 
-	power_level = power_level * stacked_multiplier
+	arg_11_1 = arg_11_1 * var_11_15
 
-	return power_level
+	return arg_11_1
 end
 
-ActionUtils.apply_buffs_to_armor_power_on_hit = function (attacker_unit, target_unit, attack_armor_power_modifer, armor_category)
-	if ALIVE[attacker_unit] then
-		local attacker_unit_buff_extension = ScriptUnit.has_extension(attacker_unit, "buff_system")
+function ActionUtils.apply_buffs_to_armor_power_on_hit(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	if ALIVE[arg_12_0] then
+		local var_12_0 = ScriptUnit.has_extension(arg_12_0, "buff_system")
 
-		if attacker_unit_buff_extension and armor_category == 6 then
-			attack_armor_power_modifer = attacker_unit_buff_extension:apply_buffs_to_value(attack_armor_power_modifer, "power_level_super_armour")
+		if var_12_0 and arg_12_3 == 6 then
+			arg_12_2 = var_12_0:apply_buffs_to_value(arg_12_2, "power_level_super_armour")
 		end
 	end
 
-	if not ALIVE[target_unit] then
-		return attack_armor_power_modifer
+	if not ALIVE[arg_12_1] then
+		return arg_12_2
 	end
 
-	local target_buff_extension = ScriptUnit.has_extension(target_unit, "buff_system")
+	local var_12_1 = ScriptUnit.has_extension(arg_12_1, "buff_system")
 
-	if not target_buff_extension then
-		return attack_armor_power_modifer
+	if not var_12_1 then
+		return arg_12_2
 	end
 
-	if armor_category == 2 or armor_category == 6 then
-		attack_armor_power_modifer = target_buff_extension:apply_buffs_to_value(attack_armor_power_modifer, "debuff_armoured")
+	if arg_12_3 == 2 or arg_12_3 == 6 then
+		arg_12_2 = var_12_1:apply_buffs_to_value(arg_12_2, "debuff_armoured")
 	end
 
-	return attack_armor_power_modifer
+	return arg_12_2
 end
 
-ActionUtils.scale_charged_projectile_power_level = function (power_level, action, charge_level)
-	if action.scale_power_level then
-		local projectile_power_level = math.max(action.scale_power_level, charge_level) * power_level
-
-		return projectile_power_level
+function ActionUtils.scale_charged_projectile_power_level(arg_13_0, arg_13_1, arg_13_2)
+	if arg_13_1.scale_power_level then
+		return math.max(arg_13_1.scale_power_level, arg_13_2) * arg_13_0
 	end
 
-	return power_level
+	return arg_13_0
 end
 
-ActionUtils.scale_geiser_power_level = function (power_level, charge_value)
-	local scaled_power_level = (0.5 + 0.5 * charge_value) * power_level
-
-	return scaled_power_level
+function ActionUtils.scale_geiser_power_level(arg_14_0, arg_14_1)
+	return (0.5 + 0.5 * arg_14_1) * arg_14_0
 end
 
-ActionUtils.get_melee_boost = function (unit, melee_boost_override)
-	local career_extension = ScriptUnit.has_extension(unit, "career_system")
-	local has_melee_boost, boost_curve_multiplier = false, 0
+function ActionUtils.get_melee_boost(arg_15_0, arg_15_1)
+	local var_15_0 = ScriptUnit.has_extension(arg_15_0, "career_system")
+	local var_15_1 = false
+	local var_15_2 = 0
 
-	if career_extension then
-		has_melee_boost, boost_curve_multiplier = career_extension:has_melee_boost()
+	if var_15_0 then
+		var_15_1, var_15_2 = var_15_0:has_melee_boost()
 	end
 
-	if has_melee_boost and melee_boost_override then
-		boost_curve_multiplier = melee_boost_override
+	if var_15_1 and arg_15_1 then
+		var_15_2 = arg_15_1
 	end
 
-	return has_melee_boost, boost_curve_multiplier
+	return var_15_1, var_15_2
 end
 
-ActionUtils.get_ranged_boost = function (unit)
-	local career_extension = ScriptUnit.has_extension(unit, "career_system")
-	local has_ranged_boost, boost_curve_multiplier = false, 0
+function ActionUtils.get_ranged_boost(arg_16_0)
+	local var_16_0 = ScriptUnit.has_extension(arg_16_0, "career_system")
+	local var_16_1 = false
+	local var_16_2 = 0
 
-	if career_extension then
-		has_ranged_boost, boost_curve_multiplier = career_extension:has_ranged_boost()
+	if var_16_0 then
+		var_16_1, var_16_2 = var_16_0:has_ranged_boost()
 	end
 
-	return has_ranged_boost, boost_curve_multiplier
+	return var_16_1, var_16_2
 end
 
-ActionUtils.spawn_player_projectile = function (owner_unit, position, rotation, scale, angle, target_vector, speed, item_name, item_template_name, action_name, sub_action_name, is_critical_strike, power_level, gaze_settings, charge_level)
-	scale = scale or 100
+function ActionUtils.spawn_player_projectile(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10, arg_17_11, arg_17_12, arg_17_13, arg_17_14)
+	arg_17_3 = arg_17_3 or 100
 
-	local projectile_system = Managers.state.entity:system("projectile_system")
-	local ping = 0
+	local var_17_0 = Managers.state.entity:system("projectile_system")
+	local var_17_1 = 0
 
-	projectile_system:spawn_player_projectile(owner_unit, position, rotation, scale, angle, target_vector, speed, item_name, item_template_name, action_name, sub_action_name, ping, is_critical_strike, power_level, gaze_settings, charge_level)
+	var_17_0:spawn_player_projectile(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10, var_17_1, arg_17_11, arg_17_12, arg_17_13, arg_17_14)
 end
 
-ActionUtils.spawn_pickup_projectile = function (world, weapon_unit, projectile_unit_name, projectile_unit_template_name, current_action, owner_unit, position, rotation, velocity, angular_velocity, item_name, spawn_type)
-	local projectile_info = current_action.projectile_info
-	local pickup_name = projectile_info.pickup_name
-	local projectile_unit_name_id = NetworkLookup.husks[projectile_unit_name]
-	local projectile_unit_template_name_id = NetworkLookup.go_types[projectile_unit_template_name]
-	local network_position = AiAnimUtils.position_network_scale(position, true)
-	local network_rotation = AiAnimUtils.rotation_network_scale(rotation, true)
-	local network_velocity = AiAnimUtils.velocity_network_scale(velocity, true)
-	local network_angular_velocity = AiAnimUtils.velocity_network_scale(angular_velocity, true)
-	local pickup_name_id = NetworkLookup.pickup_names[pickup_name]
-	local spawn_type_id = NetworkLookup.pickup_spawn_types[spawn_type]
-	local tutorial_extension = ScriptUnit.has_extension(weapon_unit, "tutorial_system")
-	local always_show = tutorial_extension and tutorial_extension.always_show or false
-	local objective_active = tutorial_extension and (tutorial_extension.proxy_active or tutorial_extension.active) or false
-	local has_death_extension = ScriptUnit.has_extension(weapon_unit, "death_system")
+function ActionUtils.spawn_pickup_projectile(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8, arg_18_9, arg_18_10, arg_18_11)
+	local var_18_0 = arg_18_4.projectile_info.pickup_name
+	local var_18_1 = NetworkLookup.husks[arg_18_2]
+	local var_18_2 = NetworkLookup.go_types[arg_18_3]
+	local var_18_3 = AiAnimUtils.position_network_scale(arg_18_6, true)
+	local var_18_4 = AiAnimUtils.rotation_network_scale(arg_18_7, true)
+	local var_18_5 = AiAnimUtils.velocity_network_scale(arg_18_8, true)
+	local var_18_6 = AiAnimUtils.velocity_network_scale(arg_18_9, true)
+	local var_18_7 = NetworkLookup.pickup_names[var_18_0]
+	local var_18_8 = NetworkLookup.pickup_spawn_types[arg_18_11]
+	local var_18_9 = ScriptUnit.has_extension(arg_18_1, "tutorial_system")
+	local var_18_10 = var_18_9 and var_18_9.always_show or false
+	local var_18_11 = var_18_9 and (var_18_9.proxy_active or var_18_9.active) or false
 
-	if has_death_extension then
-		local health_extension = ScriptUnit.extension(weapon_unit, "health_system")
+	if ScriptUnit.has_extension(arg_18_1, "death_system") then
+		local var_18_12 = ScriptUnit.extension(arg_18_1, "health_system")
 
-		health_extension.thrown = true
+		var_18_12.thrown = true
 
-		local damage = health_extension.damage
-		local explode_time = 0
-		local fuse_time = 6
-		local attacker_unit_id
+		local var_18_13 = var_18_12.damage
+		local var_18_14 = 0
+		local var_18_15 = 6
+		local var_18_16
 
-		if health_extension.ignited then
-			local data = health_extension:health_data()
+		if var_18_12.ignited then
+			local var_18_17 = var_18_12:health_data()
 
-			explode_time = data.explode_time
-			fuse_time = data.fuse_time
-			attacker_unit_id = data.attacker_unit_id
+			var_18_14 = var_18_17.explode_time
+			var_18_15 = var_18_17.fuse_time
+			var_18_16 = var_18_17.attacker_unit_id
 		end
 
-		attacker_unit_id = attacker_unit_id or NetworkConstants.invalid_game_object_id
+		var_18_16 = var_18_16 or NetworkConstants.invalid_game_object_id
 
-		local item_name_id = NetworkLookup.item_names[item_name]
+		local var_18_18 = NetworkLookup.item_names[arg_18_10]
 
-		if ScriptUnit.has_extension(weapon_unit, "limited_item_track_system") then
-			local limited_item_extension = ScriptUnit.extension(weapon_unit, "limited_item_track_system")
+		if ScriptUnit.has_extension(arg_18_1, "limited_item_track_system") then
+			local var_18_19 = ScriptUnit.extension(arg_18_1, "limited_item_track_system")
 
-			limited_item_extension.thrown = true
+			var_18_19.thrown = true
 
-			local limited_item_id = limited_item_extension.id
-			local spawner_unit = limited_item_extension.spawner_unit
-			local level = LevelHelper:current_level(world)
-			local spawner_unit_id = spawner_unit and Level.unit_index(level, spawner_unit) or 0
+			local var_18_20 = var_18_19.id
+			local var_18_21 = var_18_19.spawner_unit
+			local var_18_22 = LevelHelper:current_level(arg_18_0)
+			local var_18_23 = var_18_21 and Level.unit_index(var_18_22, var_18_21) or 0
 
-			projectile_unit_template_name_id = NetworkLookup.go_types.explosive_pickup_projectile_unit_limited
+			var_18_2 = NetworkLookup.go_types.explosive_pickup_projectile_unit_limited
 
-			Managers.state.network.network_transmit:send_rpc_server("rpc_spawn_explosive_pickup_projectile_limited", projectile_unit_name_id, projectile_unit_template_name_id, network_position, network_rotation, network_velocity, network_angular_velocity, pickup_name_id, spawner_unit_id, limited_item_id, damage, explode_time, fuse_time, attacker_unit_id, item_name_id, spawn_type_id, always_show, objective_active)
+			Managers.state.network.network_transmit:send_rpc_server("rpc_spawn_explosive_pickup_projectile_limited", var_18_1, var_18_2, var_18_3, var_18_4, var_18_5, var_18_6, var_18_7, var_18_23, var_18_20, var_18_13, var_18_14, var_18_15, var_18_16, var_18_18, var_18_8, var_18_10, var_18_11)
 		else
-			Managers.state.network.network_transmit:send_rpc_server("rpc_spawn_explosive_pickup_projectile", projectile_unit_name_id, projectile_unit_template_name_id, network_position, network_rotation, network_velocity, network_angular_velocity, pickup_name_id, damage, explode_time, fuse_time, attacker_unit_id, item_name_id, spawn_type_id, always_show, objective_active)
+			Managers.state.network.network_transmit:send_rpc_server("rpc_spawn_explosive_pickup_projectile", var_18_1, var_18_2, var_18_3, var_18_4, var_18_5, var_18_6, var_18_7, var_18_13, var_18_14, var_18_15, var_18_16, var_18_18, var_18_8, var_18_10, var_18_11)
 		end
-	elseif ScriptUnit.has_extension(weapon_unit, "limited_item_track_system") then
-		local limited_item_extension = ScriptUnit.extension(weapon_unit, "limited_item_track_system")
+	elseif ScriptUnit.has_extension(arg_18_1, "limited_item_track_system") then
+		local var_18_24 = ScriptUnit.extension(arg_18_1, "limited_item_track_system")
 
-		limited_item_extension.thrown = true
+		var_18_24.thrown = true
 
-		local limited_item_id = limited_item_extension.id
-		local spawner_unit = limited_item_extension.spawner_unit
-		local level = LevelHelper:current_level(world)
-		local spawner_unit_id = spawner_unit and Level.unit_index(level, spawner_unit) or 0
+		local var_18_25 = var_18_24.id
+		local var_18_26 = var_18_24.spawner_unit
+		local var_18_27 = LevelHelper:current_level(arg_18_0)
+		local var_18_28 = var_18_26 and Level.unit_index(var_18_27, var_18_26) or 0
 
-		projectile_unit_template_name_id = NetworkLookup.go_types.pickup_projectile_unit_limited
+		var_18_2 = NetworkLookup.go_types.pickup_projectile_unit_limited
 
-		Managers.state.network.network_transmit:send_rpc_server("rpc_spawn_pickup_projectile_limited", projectile_unit_name_id, projectile_unit_template_name_id, network_position, network_rotation, network_velocity, network_angular_velocity, pickup_name_id, spawner_unit_id, limited_item_id, spawn_type_id, always_show, objective_active)
+		Managers.state.network.network_transmit:send_rpc_server("rpc_spawn_pickup_projectile_limited", var_18_1, var_18_2, var_18_3, var_18_4, var_18_5, var_18_6, var_18_7, var_18_28, var_18_25, var_18_8, var_18_10, var_18_11)
 	else
-		local ammo_extension = ScriptUnit.has_extension(weapon_unit, "ammo_system")
-		local spawn_limit = ammo_extension and ammo_extension:max_ammo() or 1
+		local var_18_29 = ScriptUnit.has_extension(arg_18_1, "ammo_system")
+		local var_18_30 = var_18_29 and var_18_29:max_ammo() or 1
+		local var_18_31 = NetworkLookup.material_settings_templates["n/a"]
 
-		Managers.state.network.network_transmit:send_rpc_server("rpc_spawn_pickup_projectile", projectile_unit_name_id, projectile_unit_template_name_id, network_position, network_rotation, network_velocity, network_angular_velocity, pickup_name_id, spawn_type_id, spawn_limit, always_show, objective_active)
+		Managers.state.network.network_transmit:send_rpc_server("rpc_spawn_pickup_projectile", var_18_1, var_18_2, var_18_3, var_18_4, var_18_5, var_18_6, var_18_7, var_18_8, var_18_30, var_18_10, var_18_11, var_18_31)
 	end
 end
 
-ActionUtils.spawn_true_flight_projectile = function (owner_unit, target_unit, true_flight_template_id, position, rotation, angle, target_vector, speed, item_name, item_template_name, action_name, sub_action_name, scale, is_critical_strike, power_level)
-	local projectile_system = Managers.state.entity:system("projectile_system")
-	local true_flight_template_name = TrueFlightTemplatesLookup[true_flight_template_id]
+function ActionUtils.spawn_true_flight_projectile(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9, arg_19_10, arg_19_11, arg_19_12, arg_19_13, arg_19_14)
+	local var_19_0 = Managers.state.entity:system("projectile_system")
+	local var_19_1 = TrueFlightTemplatesLookup[arg_19_2]
 
-	projectile_system:spawn_true_flight_projectile(owner_unit, target_unit, true_flight_template_name, position, rotation, angle, target_vector, speed, item_name, item_template_name, action_name, sub_action_name, scale, is_critical_strike, power_level)
+	var_19_0:spawn_true_flight_projectile(arg_19_0, arg_19_1, var_19_1, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9, arg_19_10, arg_19_11, arg_19_12, arg_19_13, arg_19_14)
 end
 
-ActionUtils.get_action_time_scale = function (unit, action_settings, is_animation, custom_value)
-	local time_scale = custom_value or action_settings.anim_time_scale or 1
+function ActionUtils.get_action_time_scale(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+	local var_20_0 = arg_20_3 or arg_20_1.anim_time_scale or 1
 
-	if unit and Unit.alive(unit) then
-		local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
+	if arg_20_0 and Unit.alive(arg_20_0) then
+		local var_20_1 = ScriptUnit.has_extension(arg_20_0, "buff_system")
 
-		if buff_extension then
-			local custom_anim_time_scale_mult = action_settings.custom_anim_time_scale_mult
+		if var_20_1 then
+			local var_20_2 = arg_20_1.custom_anim_time_scale_mult
 
-			if custom_anim_time_scale_mult then
-				time_scale = time_scale * custom_anim_time_scale_mult(unit, time_scale, is_animation)
+			if var_20_2 then
+				var_20_0 = var_20_0 * var_20_2(arg_20_0, var_20_0, arg_20_2)
 			end
 
-			local inventory_extension = ScriptUnit.has_extension(unit, "inventory_system")
-			local wielded_slot_template = inventory_extension:get_wielded_slot_item_template()
+			local var_20_3 = ScriptUnit.has_extension(arg_20_0, "inventory_system"):get_wielded_slot_item_template()
 
-			if wielded_slot_template then
-				local buff_type = wielded_slot_template.buff_type
-				local is_melee = MeleeBuffTypes[buff_type]
-				local is_ranged = RangedBuffTypes[buff_type]
-				local weapon_type = wielded_slot_template.weapon_type
+			if var_20_3 then
+				local var_20_4 = var_20_3.buff_type
+				local var_20_5 = MeleeBuffTypes[var_20_4]
+				local var_20_6 = RangedBuffTypes[var_20_4]
+				local var_20_7 = var_20_3.weapon_type
 
-				if is_melee then
-					time_scale = buff_extension:apply_buffs_to_value(time_scale, "attack_speed")
-					time_scale = buff_extension:apply_buffs_to_value(time_scale, "attack_speed_melee")
-				elseif is_ranged then
-					time_scale = buff_extension:apply_buffs_to_value(time_scale, "attack_speed")
+				if var_20_5 then
+					var_20_0 = var_20_1:apply_buffs_to_value(var_20_0, "attack_speed")
+					var_20_0 = var_20_1:apply_buffs_to_value(var_20_0, "attack_speed_melee")
+				elseif var_20_6 then
+					var_20_0 = var_20_1:apply_buffs_to_value(var_20_0, "attack_speed")
 				end
 
-				if weapon_type and weapon_type == "DRAKEFIRE" then
-					time_scale = buff_extension:apply_buffs_to_value(time_scale, "attack_speed_drakefire")
+				if var_20_7 and var_20_7 == "DRAKEFIRE" then
+					var_20_0 = var_20_1:apply_buffs_to_value(var_20_0, "attack_speed_drakefire")
 				end
 
-				if action_settings.scale_chain_window_by_charge_time_buff or action_settings.scale_anim_by_charge_time_buff and is_animation then
-					local charge_speed = buff_extension:apply_buffs_to_value(1, "reduced_ranged_charge_time")
-
-					time_scale = time_scale * (1 / charge_speed)
+				if arg_20_1.scale_chain_window_by_charge_time_buff or arg_20_1.scale_anim_by_charge_time_buff and arg_20_2 then
+					var_20_0 = var_20_0 * (1 / var_20_1:apply_buffs_to_value(1, "reduced_ranged_charge_time"))
 				end
 			end
 		end
 	end
 
-	return time_scale
+	return var_20_0
 end
 
-ActionUtils.init_action_buff_data = function (action_buff_data, buff_data, t)
-	local start_times = action_buff_data.buff_start_times
-	local end_times = action_buff_data.buff_end_times
-	local action_buffs_in_progress = action_buff_data.action_buffs_in_progress
-	local buff_identifiers = action_buff_data.buff_identifiers
+function ActionUtils.init_action_buff_data(arg_21_0, arg_21_1, arg_21_2)
+	local var_21_0 = arg_21_0.buff_start_times
+	local var_21_1 = arg_21_0.buff_end_times
+	local var_21_2 = arg_21_0.action_buffs_in_progress
+	local var_21_3 = arg_21_0.buff_identifiers
 
-	for _, buff in ipairs(buff_data) do
-		local start_time = t + (buff.start_time or 0)
-		local end_time = buff.end_time or math.huge
-		local buff_index = #start_times + 1
+	for iter_21_0, iter_21_1 in ipairs(arg_21_1) do
+		local var_21_4 = arg_21_2 + (iter_21_1.start_time or 0)
+		local var_21_5 = iter_21_1.end_time or math.huge
+		local var_21_6 = #var_21_0 + 1
 
-		start_times[buff_index] = start_time
-		end_times[buff_index] = start_time + end_time
-		action_buffs_in_progress[buff_index] = false
-		buff_identifiers[buff_index] = ""
+		var_21_0[var_21_6] = var_21_4
+		var_21_1[var_21_6] = var_21_4 + var_21_5
+		var_21_2[var_21_6] = false
+		var_21_3[var_21_6] = ""
 	end
 end
 
-local params = {}
+local var_0_3 = {}
 
-ActionUtils.update_action_buff_data = function (action_buff_data, buff_data, owner_unit, t)
-	local start_times = action_buff_data.buff_start_times
-	local end_times = action_buff_data.buff_end_times
-	local buff_identifiers = action_buff_data.buff_identifiers
-	local action_buffs_in_progress = action_buff_data.action_buffs_in_progress
+function ActionUtils.update_action_buff_data(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+	local var_22_0 = arg_22_0.buff_start_times
+	local var_22_1 = arg_22_0.buff_end_times
+	local var_22_2 = arg_22_0.buff_identifiers
+	local var_22_3 = arg_22_0.action_buffs_in_progress
 
-	for index, start_time in ipairs(start_times) do
-		if start_time <= t then
-			local buff = buff_data[index]
-			local buff_template_name = buff.buff_name
+	for iter_22_0, iter_22_1 in ipairs(var_22_0) do
+		if iter_22_1 <= arg_22_3 then
+			local var_22_4 = arg_22_1[iter_22_0]
+			local var_22_5 = var_22_4.buff_name
 
-			params.external_optional_bonus = buff.external_value
-			params.external_optional_multiplier = buff.external_multiplier
-			start_times[index] = math.huge
-
-			local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
-
-			buff_identifiers[index] = buff_extension:add_buff(buff_template_name, params)
-			action_buffs_in_progress[index] = true
+			var_0_3.external_optional_bonus = var_22_4.external_value
+			var_0_3.external_optional_multiplier = var_22_4.external_multiplier
+			var_22_0[iter_22_0] = math.huge
+			var_22_2[iter_22_0] = ScriptUnit.extension(arg_22_2, "buff_system"):add_buff(var_22_5, var_0_3)
+			var_22_3[iter_22_0] = true
 		end
 	end
 
-	for index, end_time in ipairs(end_times) do
-		if end_time <= t then
-			end_times[index] = math.huge
-			action_buffs_in_progress[index] = false
+	for iter_22_2, iter_22_3 in ipairs(var_22_1) do
+		if iter_22_3 <= arg_22_3 then
+			var_22_1[iter_22_2] = math.huge
+			var_22_3[iter_22_2] = false
 
-			local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
-			local id = buff_identifiers[index]
+			local var_22_6 = ScriptUnit.extension(arg_22_2, "buff_system")
+			local var_22_7 = var_22_2[iter_22_2]
 
-			buff_extension:remove_buff(id)
+			var_22_6:remove_buff(var_22_7)
 		end
 	end
 end
 
-ActionUtils.remove_action_buff_data = function (action_buff_data, buff_data, owner_unit)
-	if ALIVE[owner_unit] then
-		local action_buffs_in_progress = action_buff_data.action_buffs_in_progress
-		local buff_extension = ScriptUnit.has_extension(owner_unit, "buff_system")
-		local buff_identifiers = action_buff_data.buff_identifiers
+function ActionUtils.remove_action_buff_data(arg_23_0, arg_23_1, arg_23_2)
+	if ALIVE[arg_23_2] then
+		local var_23_0 = arg_23_0.action_buffs_in_progress
+		local var_23_1 = ScriptUnit.has_extension(arg_23_2, "buff_system")
+		local var_23_2 = arg_23_0.buff_identifiers
 
-		if buff_extension then
-			for index, buff_in_progress in ipairs(action_buffs_in_progress) do
-				if buff_in_progress then
-					local id = buff_identifiers[index]
+		if var_23_1 then
+			for iter_23_0, iter_23_1 in ipairs(var_23_0) do
+				if iter_23_1 then
+					local var_23_3 = var_23_2[iter_23_0]
 
-					buff_extension:remove_buff(id)
+					var_23_1:remove_buff(var_23_3)
 				end
 			end
 		end
 	end
 end
 
-ActionUtils.start_charge_sound = function (wwise_world, weapon_unit, player_unit, action_settings)
-	local charge_sound_switch = action_settings.charge_sound_switch
-	local charge_sound_name = action_settings.charge_sound_name
-	local charge_sound_parameter_name = action_settings.charge_sound_parameter_name
+function ActionUtils.start_charge_sound(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+	local var_24_0 = arg_24_3.charge_sound_switch
+	local var_24_1 = arg_24_3.charge_sound_name
+	local var_24_2 = arg_24_3.charge_sound_parameter_name
 
-	if not action_settings.charge_sound_name then
+	if not arg_24_3.charge_sound_name then
 		return
 	end
 
-	local wwise_source_id = WwiseWorld.make_auto_source(wwise_world, weapon_unit)
+	local var_24_3 = WwiseWorld.make_auto_source(arg_24_0, arg_24_1)
 
-	if charge_sound_switch then
-		local overcharge_extension = ScriptUnit.extension(player_unit, "overcharge_system")
-
-		if overcharge_extension:above_overcharge_threshold() then
-			WwiseWorld.set_switch(wwise_world, charge_sound_switch, "above_overcharge_threshold", wwise_source_id)
+	if var_24_0 then
+		if ScriptUnit.extension(arg_24_2, "overcharge_system"):above_overcharge_threshold() then
+			WwiseWorld.set_switch(arg_24_0, var_24_0, "above_overcharge_threshold", var_24_3)
 		else
-			WwiseWorld.set_switch(wwise_world, charge_sound_switch, "below_overcharge_threshold", wwise_source_id)
+			WwiseWorld.set_switch(arg_24_0, var_24_0, "below_overcharge_threshold", var_24_3)
 		end
 	end
 
-	local wwise_playing_id = WwiseWorld.trigger_event(wwise_world, charge_sound_name, wwise_source_id)
+	local var_24_4 = WwiseWorld.trigger_event(arg_24_0, var_24_1, var_24_3)
 
-	if charge_sound_parameter_name then
-		WwiseWorld.set_source_parameter(wwise_world, wwise_source_id, charge_sound_parameter_name, 1)
+	if var_24_2 then
+		WwiseWorld.set_source_parameter(arg_24_0, var_24_3, var_24_2, 1)
 	end
 
-	return wwise_playing_id, wwise_source_id
+	return var_24_4, var_24_3
 end
 
-ActionUtils.stop_charge_sound = function (wwise_world, wwise_playing_id, wwise_source_id, action_settings)
-	local charge_sound_stop_event = action_settings.charge_sound_stop_event
+function ActionUtils.stop_charge_sound(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+	local var_25_0 = arg_25_3.charge_sound_stop_event
 
-	if not charge_sound_stop_event or not wwise_source_id then
+	if not var_25_0 or not arg_25_2 then
 		return
 	end
 
-	if not WwiseWorld.is_playing(wwise_world, wwise_playing_id) then
+	if not WwiseWorld.is_playing(arg_25_0, arg_25_1) then
 		return
 	end
 
-	WwiseWorld.trigger_event(wwise_world, charge_sound_stop_event, wwise_source_id)
+	WwiseWorld.trigger_event(arg_25_0, var_25_0, arg_25_2)
 end
 
-ActionUtils.play_husk_sound_event = function (wwise_world, sound_event, player_unit, is_bot)
-	if not sound_event then
+function ActionUtils.play_husk_sound_event(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+	if not arg_26_1 then
 		return
 	end
 
-	if not Unit.alive(player_unit) then
+	if not Unit.alive(arg_26_2) then
 		return
 	end
 
-	local is_server = Managers.player.is_server
-	local network_manager = Managers.state.network
-	local network_transmit = network_manager.network_transmit
-	local go_id = network_manager:unit_game_object_id(player_unit)
-	local event_id = NetworkLookup.sound_events[sound_event]
-	local game = Managers.state.network:game()
+	local var_26_0 = Managers.player.is_server
+	local var_26_1 = Managers.state.network
+	local var_26_2 = var_26_1.network_transmit
+	local var_26_3 = var_26_1:unit_game_object_id(arg_26_2)
+	local var_26_4 = NetworkLookup.sound_events[arg_26_1]
+	local var_26_5 = Managers.state.network:game()
 
-	if not go_id then
+	if not var_26_3 then
 		return
 	end
 
-	if is_server and is_bot then
-		local wwise_source_id = WwiseWorld.make_auto_source(wwise_world, player_unit)
+	if var_26_0 and arg_26_3 then
+		local var_26_6 = WwiseWorld.make_auto_source(arg_26_0, arg_26_2)
 
-		WwiseWorld.trigger_event(wwise_world, sound_event, wwise_source_id)
+		WwiseWorld.trigger_event(arg_26_0, arg_26_1, var_26_6)
 	end
 
-	if game then
-		if is_server then
-			network_transmit:send_rpc_clients("rpc_play_husk_sound_event", go_id, event_id)
+	if var_26_5 then
+		if var_26_0 then
+			var_26_2:send_rpc_clients("rpc_play_husk_sound_event", var_26_3, var_26_4)
 		else
-			network_transmit:send_rpc_server("rpc_play_husk_sound_event", go_id, event_id)
+			var_26_2:send_rpc_server("rpc_play_husk_sound_event", var_26_3, var_26_4)
 		end
 	end
 end
 
-ActionUtils.get_critical_strike_chance = function (unit, action, overrides)
-	local career_extension = ScriptUnit.extension(unit, "career_system")
-	local buff_extension = ScriptUnit.extension(unit, "buff_system")
-	local base_crit_chance = career_extension:get_base_critical_strike_chance()
-	local additional_crit_chance = overrides and overrides.additional_critical_strike_chance or action.additional_critical_strike_chance or 0
-	local crit_chance = base_crit_chance + additional_crit_chance
-	local action_type = action.kind
-	local is_melee_action = action_type == "sweep" or action_type == "push_stagger" or action_type == "shield_slam"
+function ActionUtils.get_critical_strike_chance(arg_27_0, arg_27_1, arg_27_2)
+	local var_27_0 = ScriptUnit.extension(arg_27_0, "career_system")
+	local var_27_1 = ScriptUnit.extension(arg_27_0, "buff_system")
+	local var_27_2 = var_27_0:get_base_critical_strike_chance() + (arg_27_2 and arg_27_2.additional_critical_strike_chance or arg_27_1.additional_critical_strike_chance or 0)
+	local var_27_3 = arg_27_1.kind
 
-	if is_melee_action then
-		crit_chance = buff_extension:apply_buffs_to_value(crit_chance, "critical_strike_chance_melee")
+	if var_27_3 == "sweep" or var_27_3 == "push_stagger" or var_27_3 == "shield_slam" then
+		var_27_2 = var_27_1:apply_buffs_to_value(var_27_2, "critical_strike_chance_melee")
 	else
-		crit_chance = buff_extension:apply_buffs_to_value(crit_chance, "critical_strike_chance_ranged")
+		var_27_2 = var_27_1:apply_buffs_to_value(var_27_2, "critical_strike_chance_ranged")
 	end
 
-	local any_damage_profile = DamageProfileTemplates[action.damage_profile] or DamageProfileTemplates[action.damage_profile_left] or DamageProfileTemplates[action.damage_profile_right]
+	local var_27_4 = DamageProfileTemplates[arg_27_1.damage_profile] or DamageProfileTemplates[arg_27_1.damage_profile_left] or DamageProfileTemplates[arg_27_1.damage_profile_right]
 
-	if any_damage_profile and any_damage_profile.charge_value == "heavy_attack" then
-		crit_chance = buff_extension:apply_buffs_to_value(crit_chance, "critical_strike_chance_heavy")
+	if var_27_4 and var_27_4.charge_value == "heavy_attack" then
+		var_27_2 = var_27_1:apply_buffs_to_value(var_27_2, "critical_strike_chance_heavy")
 	end
 
-	crit_chance = buff_extension:apply_buffs_to_value(crit_chance, "critical_strike_chance")
-
-	return crit_chance
+	return (var_27_1:apply_buffs_to_value(var_27_2, "critical_strike_chance"))
 end
 
-local last_attack_critical = false
+local var_0_4 = false
 
-ActionUtils.is_critical_strike = function (unit, action, t, overrides)
-	local buff_extension = ScriptUnit.extension(unit, "buff_system")
-	local talent_extension = ScriptUnit.has_extension(unit, "talent_system")
-	local is_crit = false
+function ActionUtils.is_critical_strike(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+	local var_28_0 = ScriptUnit.extension(arg_28_0, "buff_system")
+	local var_28_1 = ScriptUnit.has_extension(arg_28_0, "talent_system")
+	local var_28_2 = false
 
 	if script_data.no_critical_strikes then
-		is_crit = false
+		var_28_2 = false
 	elseif script_data.always_critical_strikes then
-		is_crit = true
+		var_28_2 = true
 	elseif script_data.alternating_critical_strikes then
-		last_attack_critical = not last_attack_critical
-		is_crit = last_attack_critical
-	elseif buff_extension:has_buff_perk("guaranteed_crit") then
-		is_crit = true
-	elseif talent_extension and talent_extension:has_talent_perk("no_random_crits") then
-		is_crit = false
+		var_0_4 = not var_0_4
+		var_28_2 = var_0_4
+	elseif var_28_0:has_buff_perk("guaranteed_crit") then
+		var_28_2 = true
+	elseif var_28_1 and var_28_1:has_talent_perk("no_random_crits") then
+		var_28_2 = false
 	else
-		local crit_chance = ActionUtils.get_critical_strike_chance(unit, action, overrides or action)
+		local var_28_3 = ActionUtils.get_critical_strike_chance(arg_28_0, arg_28_1, arg_28_3 or arg_28_1)
 
-		is_crit = buff_extension:has_procced(crit_chance, action or "ACTION_UNKNOWN")
+		var_28_2 = var_28_0:has_procced(var_28_3, arg_28_1 or "ACTION_UNKNOWN")
 	end
 
-	local action_kind = action.kind
+	local var_28_4 = arg_28_1.kind
 
-	if action_kind ~= "push_stagger" then
-		if is_crit then
-			buff_extension:trigger_procs("on_critical_action", action_kind)
+	if var_28_4 ~= "push_stagger" then
+		if var_28_2 then
+			var_28_0:trigger_procs("on_critical_action", var_28_4)
 		else
-			buff_extension:trigger_procs("on_non_critical_action", action_kind)
+			var_28_0:trigger_procs("on_non_critical_action", var_28_4)
 		end
 	end
 
-	return is_crit
+	return var_28_2
 end
 
-ActionUtils.pitch_from_rotation = function (rotation)
-	local forward = Vector3.normalize(Quaternion.forward(rotation))
-	local forward_flat = Vector3.normalize(Vector3.flat(forward))
-	local dot = Vector3.dot(forward, forward_flat)
+function ActionUtils.pitch_from_rotation(arg_29_0)
+	local var_29_0 = Vector3.normalize(Quaternion.forward(arg_29_0))
+	local var_29_1 = Vector3.normalize(Vector3.flat(var_29_0))
+	local var_29_2 = Vector3.dot(var_29_0, var_29_1)
+	local var_29_3 = math.clamp(var_29_2, -1, 1)
+	local var_29_4 = math.radians_to_degrees(math.acos(var_29_3))
+	local var_29_5 = Vector3(0, 0, 1)
 
-	dot = math.clamp(dot, -1, 1)
-
-	local angle = math.radians_to_degrees(math.acos(dot))
-	local up_vector = Vector3(0, 0, 1)
-	local up_dot = Vector3.dot(forward, up_vector)
-
-	if up_dot < 0 then
-		angle = -angle
+	if Vector3.dot(var_29_0, var_29_5) < 0 then
+		var_29_4 = -var_29_4
 	end
 
-	return angle
+	return var_29_4
 end
 
-ActionUtils.redirect_shield_hit = function (hit_unit, hit_actor)
-	local potential_hit_unit_owner = unit_get_data(hit_unit, "shield_owner_unit")
+function ActionUtils.redirect_shield_hit(arg_30_0, arg_30_1)
+	local var_30_0 = var_0_0(arg_30_0, "shield_owner_unit")
 
-	if not HEALTH_ALIVE[potential_hit_unit_owner] then
-		return hit_unit, hit_actor
+	if not HEALTH_ALIVE[var_30_0] then
+		return arg_30_0, arg_30_1
 	end
 
-	local new_hit_actor = unit_actor(potential_hit_unit_owner, unit_find_actor(potential_hit_unit_owner, "c_leftforearm"))
+	local var_30_1 = var_0_1(var_30_0, var_0_2(var_30_0, "c_leftforearm"))
 
-	return potential_hit_unit_owner, new_hit_actor
+	return var_30_0, var_30_1
 end
 
-ActionUtils.resolve_action_selector = function (action, talent_extension, buff_extension, weapon_extension, owner_unit)
-	if not action then
+function ActionUtils.resolve_action_selector(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+	if not arg_31_0 then
 		return nil
 	end
 
-	if action.kind ~= "action_selector" then
-		return action, action.lookup_data.action_name, action.lookup_data.sub_action_name
+	if arg_31_0.kind ~= "action_selector" then
+		return arg_31_0, arg_31_0.lookup_data.action_name, arg_31_0.lookup_data.sub_action_name
 	end
 
-	local next_action = action.default_action
-	local conditional_actions = action.conditional_actions
+	local var_31_0 = arg_31_0.default_action
+	local var_31_1 = arg_31_0.conditional_actions
 
-	for i = 1, #conditional_actions do
-		if conditional_actions[i].condition(talent_extension, buff_extension, weapon_extension, owner_unit) then
-			next_action = conditional_actions[i]
+	for iter_31_0 = 1, #var_31_1 do
+		if var_31_1[iter_31_0].condition(arg_31_1, arg_31_2, arg_31_3, arg_31_4) then
+			var_31_0 = var_31_1[iter_31_0]
 
 			break
 		end
 	end
 
-	local next_action_name = next_action.action or action.lookup_data.action_name
-	local next_sub_action_name = next_action.sub_action
-	local item_template = WeaponUtils.get_weapon_template(action.lookup_data.item_template_name)
-	local new_action = item_template.actions[next_action_name][next_sub_action_name]
+	local var_31_2 = var_31_0.action or arg_31_0.lookup_data.action_name
+	local var_31_3 = var_31_0.sub_action
 
-	return new_action, next_action_name, next_sub_action_name
+	return WeaponUtils.get_weapon_template(arg_31_0.lookup_data.item_template_name).actions[var_31_2][var_31_3], var_31_2, var_31_3
 end
 
-ActionUtils.get_push_damage_profile = function (sub_action)
-	if sub_action then
-		return sub_action.damage_profile_inner, sub_action.damage_profile_outer
+function ActionUtils.get_push_damage_profile(arg_32_0)
+	if arg_32_0 then
+		return arg_32_0.damage_profile_inner, arg_32_0.damage_profile_outer
 	end
 
 	return nil, nil
 end
 
-ActionUtils.get_damage_profile_name = function (sub_action, action_hand)
-	if sub_action then
-		action_hand = action_hand or sub_action.weapon_action_hand
+function ActionUtils.get_damage_profile_name(arg_33_0, arg_33_1)
+	if arg_33_0 then
+		arg_33_1 = arg_33_1 or arg_33_0.weapon_action_hand
 
-		local impact_data = sub_action.impact_data
-		local damage_profile_name_either = impact_data and impact_data.damage_profile or sub_action.damage_profile
-		local damage_profile_name_left = impact_data and impact_data.damage_profile_left or sub_action.damage_profile_left
-		local damage_profile_name_right = impact_data and impact_data.damage_profile_right or sub_action.damage_profile_right
+		local var_33_0 = arg_33_0.impact_data
+		local var_33_1 = var_33_0 and var_33_0.damage_profile or arg_33_0.damage_profile
+		local var_33_2 = var_33_0 and var_33_0.damage_profile_left or arg_33_0.damage_profile_left
+		local var_33_3 = var_33_0 and var_33_0.damage_profile_right or arg_33_0.damage_profile_right
 
-		if action_hand == "both" then
-			return damage_profile_name_left, damage_profile_name_right
+		if arg_33_1 == "both" then
+			return var_33_2, var_33_3
 		end
 
-		if action_hand == "left" then
-			local damage_profile_name = damage_profile_name_either or damage_profile_name_left
-
-			return damage_profile_name, nil
+		if arg_33_1 == "left" then
+			return var_33_1 or var_33_2, nil
 		end
 
-		if action_hand == "right" then
-			local damage_profile_name = damage_profile_name_either or damage_profile_name_right
+		if arg_33_1 == "right" then
+			local var_33_4 = var_33_1 or var_33_3
 
-			return nil, damage_profile_name
+			return nil, var_33_4
 		end
 
-		return nil, damage_profile_name_either
+		return nil, var_33_1
 	end
 
 	return nil, nil
 end
 
-ActionUtils.get_damage_profile_performance_scores = function (damage_profile_name)
-	local results = {
+function ActionUtils.get_damage_profile_performance_scores(arg_34_0)
+	local var_34_0 = {
 		0,
 		0,
 		0,
 		0,
 		0,
-		0,
+		0
 	}
 
-	if damage_profile_name then
-		local damage_profile = DamageProfileTemplates[damage_profile_name]
-		local target_settings = damage_profile.targets and damage_profile.targets[1] or damage_profile.default_target
-		local attack_power = ActionUtils.get_power_multiplier("attack", damage_profile, target_settings, nil)
+	if arg_34_0 then
+		local var_34_1 = DamageProfileTemplates[arg_34_0]
+		local var_34_2 = var_34_1.targets and var_34_1.targets[1] or var_34_1.default_target
+		local var_34_3 = ActionUtils.get_power_multiplier("attack", var_34_1, var_34_2, nil)
 
-		for i = 1, 5 do
-			local armor_mod = ActionUtils.get_armor_power_modifier("attack", damage_profile, target_settings, i)
-			local performance_value = attack_power * armor_mod
-
-			results[i] = performance_value
+		for iter_34_0 = 1, 5 do
+			var_34_0[iter_34_0] = var_34_3 * ActionUtils.get_armor_power_modifier("attack", var_34_1, var_34_2, iter_34_0)
 		end
 
-		local super_armor_mod = ActionUtils.get_armor_power_modifier("attack", damage_profile, target_settings, 2, 6)
-		local performance_value = attack_power * super_armor_mod
-
-		results[6] = performance_value
+		var_34_0[6] = var_34_3 * ActionUtils.get_armor_power_modifier("attack", var_34_1, var_34_2, 2, 6)
 	end
 
-	return results
+	return var_34_0
 end
 
-ActionUtils.get_performance_scores_for_sub_action = function (sub_action)
-	local results
-	local left_profile, right_profile = ActionUtils.get_damage_profile_name(sub_action)
+function ActionUtils.get_performance_scores_for_sub_action(arg_35_0)
+	local var_35_0
+	local var_35_1, var_35_2 = ActionUtils.get_damage_profile_name(arg_35_0)
 
-	if left_profile then
-		results = ActionUtils.get_damage_profile_performance_scores(left_profile)
+	if var_35_1 then
+		var_35_0 = ActionUtils.get_damage_profile_performance_scores(var_35_1)
 	end
 
-	if right_profile then
-		if not left_profile then
-			results = ActionUtils.get_damage_profile_performance_scores(right_profile)
+	if var_35_2 then
+		if not var_35_1 then
+			var_35_0 = ActionUtils.get_damage_profile_performance_scores(var_35_2)
 		else
-			local other_results = ActionUtils.get_damage_profile_performance_scores(right_profile)
+			local var_35_3 = ActionUtils.get_damage_profile_performance_scores(var_35_2)
 
-			for i = 1, #other_results do
-				results[i] = results[i] + other_results[i]
+			for iter_35_0 = 1, #var_35_3 do
+				var_35_0[iter_35_0] = var_35_0[iter_35_0] + var_35_3[iter_35_0]
 			end
 		end
 	end
 
-	return results
+	return var_35_0
 end
 
-ActionUtils.is_melee_start_sub_action = function (sub_action)
-	if not sub_action then
+function ActionUtils.is_melee_start_sub_action(arg_36_0)
+	if not arg_36_0 then
 		return false
 	end
 
-	local kind = sub_action.kind
-
-	if kind == "melee_start" then
+	if arg_36_0.kind == "melee_start" then
 		return true
 	end
 
-	return sub_action.melee_start
+	return arg_36_0.melee_start
 end
 
-ActionUtils.is_backstab = function (unit, hit_unit)
-	local origin_pos = POSITION_LOOKUP[unit]
-	local hit_unit_pos = POSITION_LOOKUP[hit_unit]
-	local owner_to_hit_dir = Vector3.normalize(hit_unit_pos - origin_pos)
-	local hit_unit_direction = Quaternion.forward(Unit.local_rotation(hit_unit, 0))
-	local hit_angle = Vector3.dot(hit_unit_direction, owner_to_hit_dir)
-	local behind_target = hit_angle >= 0.55 and hit_angle <= 1
+function ActionUtils.is_backstab(arg_37_0, arg_37_1)
+	local var_37_0 = POSITION_LOOKUP[arg_37_0]
+	local var_37_1 = POSITION_LOOKUP[arg_37_1]
+	local var_37_2 = Vector3.normalize(var_37_1 - var_37_0)
+	local var_37_3 = Quaternion.forward(Unit.local_rotation(arg_37_1, 0))
+	local var_37_4 = Vector3.dot(var_37_3, var_37_2)
 
-	return behind_target
+	return var_37_4 >= 0.55 and var_37_4 <= 1
 end

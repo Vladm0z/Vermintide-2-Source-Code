@@ -1,37 +1,37 @@
-﻿-- chunkname: @scripts/managers/presence/script_presence_token.lua
+-- chunkname: @scripts/managers/presence/script_presence_token.lua
 
 ScriptPresenceToken = class(ScriptPresenceToken)
 
-ScriptPresenceToken.init = function (self, token)
-	self._token = token
-	self._result = {}
-	self._done = false
+function ScriptPresenceToken.init(arg_1_0, arg_1_1)
+	arg_1_0._token = arg_1_1
+	arg_1_0._result = {}
+	arg_1_0._done = false
 end
 
-ScriptPresenceToken.update = function (self)
-	local done, presence, error_code = Presence.status(self._token)
+function ScriptPresenceToken.update(arg_2_0)
+	local var_2_0, var_2_1, var_2_2 = Presence.status(arg_2_0._token)
 
-	self._done = done
-	self._presence = presence
-	self._error_code = error_code
+	arg_2_0._done = var_2_0
+	arg_2_0._presence = var_2_1
+	arg_2_0._error_code = var_2_2
 end
 
-ScriptPresenceToken.info = function (self)
-	local info = {}
+function ScriptPresenceToken.info(arg_3_0)
+	local var_3_0 = {}
 
-	if self._error_code then
-		info.error_code = self._error_code
-	elseif self._presence then
-		info.presence = self._presence
+	if arg_3_0._error_code then
+		var_3_0.error_code = arg_3_0._error_code
+	elseif arg_3_0._presence then
+		var_3_0.presence = arg_3_0._presence
 	end
 
-	return info
+	return var_3_0
 end
 
-ScriptPresenceToken.done = function (self)
-	return self._done
+function ScriptPresenceToken.done(arg_4_0)
+	return arg_4_0._done
 end
 
-ScriptPresenceToken.close = function (self)
-	Presence.close(self._token)
+function ScriptPresenceToken.close(arg_5_0)
+	Presence.close(arg_5_0._token)
 end

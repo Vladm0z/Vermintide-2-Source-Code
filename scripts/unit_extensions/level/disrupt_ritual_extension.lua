@@ -1,275 +1,275 @@
-﻿-- chunkname: @scripts/unit_extensions/level/disrupt_ritual_extension.lua
+-- chunkname: @scripts/unit_extensions/level/disrupt_ritual_extension.lua
 
 DisruptRitualExtension = class(DisruptRitualExtension)
 
-local RPCS = {
-	"rpc_client_disrupt_ritual_update",
+local var_0_0 = {
+	"rpc_client_disrupt_ritual_update"
 }
 
-DisruptRitualExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self._network_transmit = extension_init_context.network_transmit
-	self._network_event_delegate = extension_init_context.network_transmit.network_event_delegate
+function DisruptRitualExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._network_transmit = arg_1_1.network_transmit
+	arg_1_0._network_event_delegate = arg_1_1.network_transmit.network_event_delegate
 
-	self._network_event_delegate:register(self, unpack(RPCS))
+	arg_1_0._network_event_delegate:register(arg_1_0, unpack(var_0_0))
 
-	self._event_manager = Managers.state.event
+	arg_1_0._event_manager = Managers.state.event
 
-	Managers.state.event:register(self, "start_disrupt_ritual", "start_disrupt_ritual")
-	Managers.state.event:register(self, "player_party_changed", "player_party_changed")
+	Managers.state.event:register(arg_1_0, "start_disrupt_ritual", "start_disrupt_ritual")
+	Managers.state.event:register(arg_1_0, "player_party_changed", "player_party_changed")
 
-	self._volume_system = Managers.state.entity:system("volume_system")
-	self._tutorial_system = Managers.state.entity:system("tutorial_system")
-	self._ritual_system = Managers.state.entity:system("disrupt_ritual_system")
-	self._health_extension = ScriptUnit.extension(unit, "health_system")
-	self._level = LevelHelper:current_level(extension_init_context.world)
-	self._is_server = extension_init_context.is_server
-	self._unit = unit
-	self._next_tick = 0
+	arg_1_0._volume_system = Managers.state.entity:system("volume_system")
+	arg_1_0._tutorial_system = Managers.state.entity:system("tutorial_system")
+	arg_1_0._ritual_system = Managers.state.entity:system("disrupt_ritual_system")
+	arg_1_0._health_extension = ScriptUnit.extension(arg_1_2, "health_system")
+	arg_1_0._level = LevelHelper:current_level(arg_1_1.world)
+	arg_1_0._is_server = arg_1_1.is_server
+	arg_1_0._unit = arg_1_2
+	arg_1_0._next_tick = 0
 end
 
-DisruptRitualExtension.start_disrupt_ritual = function (self, unit, volume_name, sub_type, num_progression_events, tick_length, damage_per_tick, heal_per_tick)
-	if unit ~= self._unit then
+function DisruptRitualExtension.start_disrupt_ritual(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	if arg_2_1 ~= arg_2_0._unit then
 		return
 	end
 
-	self._active = true
-	self._volume_name = volume_name
+	arg_2_0._active = true
+	arg_2_0._volume_name = arg_2_2
 
-	local max_damage = Unit.get_data(self._unit, "health")
+	local var_2_0 = Unit.get_data(arg_2_0._unit, "health")
 
-	self._max_damage = max_damage
+	arg_2_0._max_damage = var_2_0
 
-	self._health_extension:set_current_damage(self._max_damage)
+	arg_2_0._health_extension:set_current_damage(arg_2_0._max_damage)
 
-	self._current_damage = 0
+	arg_2_0._current_damage = 0
 
-	self._event_manager:trigger("tutorial_event_show_health_bar", self._unit, true)
+	arg_2_0._event_manager:trigger("tutorial_event_show_health_bar", arg_2_0._unit, true)
 
-	if not self._is_server then
+	if not arg_2_0._is_server then
 		return
 	end
 
-	sub_type = sub_type or "any_alive_players_inside"
+	arg_2_3 = arg_2_3 or "any_alive_players_inside"
 
-	if sub_type == "all_alive_players_inside" then
-		self._condition_func = self._volume_system.all_alive_human_players_inside
-		sub_type = "all_alive_players_inside"
-	elseif sub_type == "any_alive_players_inside" then
-		self._condition_func = self._volume_system.any_alive_human_players_inside
-		sub_type = "players_inside"
+	if arg_2_3 == "all_alive_players_inside" then
+		arg_2_0._condition_func = arg_2_0._volume_system.all_alive_human_players_inside
+		arg_2_3 = "all_alive_players_inside"
+	elseif arg_2_3 == "any_alive_players_inside" then
+		arg_2_0._condition_func = arg_2_0._volume_system.any_alive_human_players_inside
+		arg_2_3 = "players_inside"
 	else
 		fassert(false, "disrupt ritual has to be of type 'all_alive_players_inside' or 'any_alive_players_inside' ")
 	end
 
-	self._tick_length = tick_length
-	self._num_progression_events = num_progression_events
-	self._damage_per_tick = damage_per_tick
-	self._heal_per_tick = heal_per_tick
-	self._active = true
+	arg_2_0._tick_length = arg_2_5
+	arg_2_0._num_progression_events = arg_2_4
+	arg_2_0._damage_per_tick = arg_2_6
+	arg_2_0._heal_per_tick = arg_2_7
+	arg_2_0._active = true
 
-	self._volume_system:register_volume(volume_name, "trigger_volume", {
-		sub_type = sub_type,
+	arg_2_0._volume_system:register_volume(arg_2_2, "trigger_volume", {
+		sub_type = arg_2_3
 	})
 
-	local checkpoints = {}
+	local var_2_1 = {}
 
-	for i = 0, 100 do
-		local checkpoint = Unit.get_data(self._unit, "checkpoints", i)
+	for iter_2_0 = 0, 100 do
+		local var_2_2 = Unit.get_data(arg_2_0._unit, "checkpoints", iter_2_0)
 
-		if not checkpoint then
+		if not var_2_2 then
 			break
 		end
 
-		if checkpoint ~= 0 then
-			checkpoints[#checkpoints + 1] = checkpoint
+		if var_2_2 ~= 0 then
+			var_2_1[#var_2_1 + 1] = var_2_2
 		end
 	end
 
-	self._checkpoints = checkpoints
-	self._num_checkpoints = #checkpoints
+	arg_2_0._checkpoints = var_2_1
+	arg_2_0._num_checkpoints = #var_2_1
 
-	local progression_event_thresholds = {
+	local var_2_3 = {
 		[1] = 0,
-		[num_progression_events] = max_damage,
+		[arg_2_4] = var_2_0
 	}
-	local progression_step = max_damage / num_progression_events
+	local var_2_4 = var_2_0 / arg_2_4
 
-	for i = 2, num_progression_events - 1 do
-		progression_event_thresholds[i] = progression_step * i
+	for iter_2_1 = 2, arg_2_4 - 1 do
+		var_2_3[iter_2_1] = var_2_4 * iter_2_1
 	end
 
-	self._progression_event_thresholds = progression_event_thresholds
-	self._num_progression_events = num_progression_events
+	arg_2_0._progression_event_thresholds = var_2_3
+	arg_2_0._num_progression_events = arg_2_4
 end
 
-DisruptRitualExtension.update = function (self, t)
-	if not self._active or t < self._next_tick then
+function DisruptRitualExtension.update(arg_3_0, arg_3_1)
+	if not arg_3_0._active or arg_3_1 < arg_3_0._next_tick then
 		return
 	end
 
-	self._next_tick = t + self._tick_length
+	arg_3_0._next_tick = arg_3_1 + arg_3_0._tick_length
 
-	local current_damage = self._current_damage
-	local checkpoints = self._checkpoints
-	local current_checkpoint = self._current_checkpoint or 0
-	local current_progression_event = self._current_progression_event or 0
+	local var_3_0 = arg_3_0._current_damage
+	local var_3_1 = arg_3_0._checkpoints
+	local var_3_2 = arg_3_0._current_checkpoint or 0
+	local var_3_3 = arg_3_0._current_progression_event or 0
 
-	if self._condition_func(self._volume_system, self._volume_name) then
-		self:server_apply_damage(current_damage, checkpoints, current_checkpoint, self._num_checkpoints)
+	if arg_3_0._condition_func(arg_3_0._volume_system, arg_3_0._volume_name) then
+		arg_3_0:server_apply_damage(var_3_0, var_3_1, var_3_2, arg_3_0._num_checkpoints)
 	else
-		self:server_heal(current_damage, checkpoints, current_checkpoint)
+		arg_3_0:server_heal(var_3_0, var_3_1, var_3_2)
 	end
 
-	current_damage = self._current_damage
+	local var_3_4 = arg_3_0._current_damage
 
-	self._health_extension:set_current_damage(self._max_damage - current_damage)
-	self:server_update_progression_status(self._progression_event_thresholds, current_progression_event, self._num_progression_events, current_damage)
-	self:print_damage(current_damage)
-	self:server_send_rpc_update_clients(current_damage, self._current_checkpoint or 0, self._current_progression_event, self._volume_name)
+	arg_3_0._health_extension:set_current_damage(arg_3_0._max_damage - var_3_4)
+	arg_3_0:server_update_progression_status(arg_3_0._progression_event_thresholds, var_3_3, arg_3_0._num_progression_events, var_3_4)
+	arg_3_0:print_damage(var_3_4)
+	arg_3_0:server_send_rpc_update_clients(var_3_4, arg_3_0._current_checkpoint or 0, arg_3_0._current_progression_event, arg_3_0._volume_name)
 end
 
-DisruptRitualExtension.server_heal = function (self, current_damage, checkpoints, current_checkpoint)
-	if self._increasing_damage then
-		self:fire_flow_event("decreased", "damage")
+function DisruptRitualExtension.server_heal(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	if arg_4_0._increasing_damage then
+		arg_4_0:fire_flow_event("decreased", "damage")
 
-		self._increasing_damage = false
+		arg_4_0._increasing_damage = false
 	end
 
-	local checkpoint_threshold = 0
-	local updated_damage = current_damage - self._heal_per_tick
+	local var_4_0 = 0
+	local var_4_1 = arg_4_1 - arg_4_0._heal_per_tick
 
-	if current_checkpoint > 0 then
-		checkpoint_threshold = checkpoints[current_checkpoint]
+	if arg_4_3 > 0 then
+		var_4_0 = arg_4_2[arg_4_3]
 	end
 
-	if updated_damage < checkpoint_threshold then
+	if var_4_1 < var_4_0 then
 		return
 	end
 
-	self._current_damage = updated_damage
+	arg_4_0._current_damage = var_4_1
 end
 
-DisruptRitualExtension.server_apply_damage = function (self, current_damage, checkpoints, current_checkpoint, num_checkpoints)
-	if not self._increasing_damage then
-		self:fire_flow_event("increased", "damage")
+function DisruptRitualExtension.server_apply_damage(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	if not arg_5_0._increasing_damage then
+		arg_5_0:fire_flow_event("increased", "damage")
 
-		self._increasing_damage = true
+		arg_5_0._increasing_damage = true
 	end
 
-	self._current_damage = current_damage + self._damage_per_tick
+	arg_5_0._current_damage = arg_5_1 + arg_5_0._damage_per_tick
 
-	if self._current_damage >= self._max_damage then
-		self._tutorial_system:flow_callback_show_health_bar(self._unit, false)
+	if arg_5_0._current_damage >= arg_5_0._max_damage then
+		arg_5_0._tutorial_system:flow_callback_show_health_bar(arg_5_0._unit, false)
 
-		self._active = false
+		arg_5_0._active = false
 	end
 
-	if current_checkpoint == num_checkpoints then
+	if arg_5_3 == arg_5_4 then
 		return
 	end
 
-	local next_checkpoint = current_checkpoint + 1
+	local var_5_0 = arg_5_3 + 1
 
-	if self._current_damage >= checkpoints[next_checkpoint] then
-		self._current_checkpoint = next_checkpoint
+	if arg_5_0._current_damage >= arg_5_2[var_5_0] then
+		arg_5_0._current_checkpoint = var_5_0
 
-		self:fire_flow_event(next_checkpoint, "checkpoint")
-		self:print_checkpoint(next_checkpoint)
+		arg_5_0:fire_flow_event(var_5_0, "checkpoint")
+		arg_5_0:print_checkpoint(var_5_0)
 	end
 end
 
-DisruptRitualExtension.server_update_progression_status = function (self, progression_event_thresholds, current_progression_event, num_progression_events, current_damage)
-	local next_threshold = progression_event_thresholds[current_progression_event + 1]
-	local reached_threshold
+function DisruptRitualExtension.server_update_progression_status(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	local var_6_0 = arg_6_1[arg_6_2 + 1]
+	local var_6_1
 
-	if next_threshold then
-		reached_threshold = next_threshold <= current_damage
+	if var_6_0 then
+		var_6_1 = var_6_0 <= arg_6_4
 	end
 
-	local new_event
+	local var_6_2
 
-	if reached_threshold then
-		new_event = current_progression_event + 1
+	if var_6_1 then
+		var_6_2 = arg_6_2 + 1
 	end
 
-	if not new_event then
+	if not var_6_2 then
 		return
 	end
 
-	self._current_progression_event = new_event
+	arg_6_0._current_progression_event = var_6_2
 
-	self:fire_flow_event(new_event, "progression")
-	self:print_progression_event(new_event)
+	arg_6_0:fire_flow_event(var_6_2, "progression")
+	arg_6_0:print_progression_event(var_6_2)
 end
 
-DisruptRitualExtension.server_send_rpc_update_clients = function (self, damage, checkpoint, progression_event, volume_name)
-	self._network_transmit:send_rpc_clients("rpc_client_disrupt_ritual_update", damage, checkpoint, progression_event, volume_name)
+function DisruptRitualExtension.server_send_rpc_update_clients(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	arg_7_0._network_transmit:send_rpc_clients("rpc_client_disrupt_ritual_update", arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 end
 
-DisruptRitualExtension.rpc_client_disrupt_ritual_update = function (self, sender, damage, checkpoint, progression_event, volume_name)
-	if not self._active or self._volume_name ~= volume_name then
+function DisruptRitualExtension.rpc_client_disrupt_ritual_update(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+	if not arg_8_0._active or arg_8_0._volume_name ~= arg_8_5 then
 		return
 	end
 
-	if damage > self._current_damage and not self._increasing_damage then
-		self:fire_flow_event("increased", "damage")
+	if arg_8_2 > arg_8_0._current_damage and not arg_8_0._increasing_damage then
+		arg_8_0:fire_flow_event("increased", "damage")
 
-		self._increasing_damage = true
-	elseif damage < self._current_damage and self._increasing_damage then
-		self:fire_flow_event("decreased", "damage")
+		arg_8_0._increasing_damage = true
+	elseif arg_8_2 < arg_8_0._current_damage and arg_8_0._increasing_damage then
+		arg_8_0:fire_flow_event("decreased", "damage")
 
-		self._increasing_damage = false
+		arg_8_0._increasing_damage = false
 	end
 
-	self._current_damage = damage
+	arg_8_0._current_damage = arg_8_2
 
-	self._health_extension:set_current_damage(self._max_damage - damage)
+	arg_8_0._health_extension:set_current_damage(arg_8_0._max_damage - arg_8_2)
 
-	if self._current_checkpoint ~= checkpoint and checkpoint ~= 0 then
-		self._current_checkpoint = checkpoint
+	if arg_8_0._current_checkpoint ~= arg_8_3 and arg_8_3 ~= 0 then
+		arg_8_0._current_checkpoint = arg_8_3
 
-		self:fire_flow_event(checkpoint, "checkpoint")
-		self:print_checkpoint(checkpoint)
+		arg_8_0:fire_flow_event(arg_8_3, "checkpoint")
+		arg_8_0:print_checkpoint(arg_8_3)
 	end
 
-	if self._current_progression_event ~= progression_event then
-		self._current_progression_event = progression_event
+	if arg_8_0._current_progression_event ~= arg_8_4 then
+		arg_8_0._current_progression_event = arg_8_4
 
-		self:fire_flow_event(progression_event, "progression")
-		self:print_progression_event(progression_event)
+		arg_8_0:fire_flow_event(arg_8_4, "progression")
+		arg_8_0:print_progression_event(arg_8_4)
 	end
 
-	if damage >= self._max_damage then
-		self._event_manager:trigger("tutorial_event_show_health_bar", self._unit, false)
+	if arg_8_2 >= arg_8_0._max_damage then
+		arg_8_0._event_manager:trigger("tutorial_event_show_health_bar", arg_8_0._unit, false)
 
-		self._active = false
-	end
-end
-
-DisruptRitualExtension.player_party_changed = function (self)
-	if self._active then
-		Unit.flow_event(self._unit, "show_health_bar")
+		arg_8_0._active = false
 	end
 end
 
-DisruptRitualExtension.fire_flow_event = function (self, event_id, event_type)
-	local event_name = self._volume_name .. "_" .. event_type .. "_" .. event_id
-
-	Level.trigger_event(self._level, event_name)
+function DisruptRitualExtension.player_party_changed(arg_9_0)
+	if arg_9_0._active then
+		Unit.flow_event(arg_9_0._unit, "show_health_bar")
+	end
 end
 
-DisruptRitualExtension.print_damage = function (self, damage)
-	print("Disrupt Ritual ", self._volume_name, " current damage: ", damage)
+function DisruptRitualExtension.fire_flow_event(arg_10_0, arg_10_1, arg_10_2)
+	local var_10_0 = arg_10_0._volume_name .. "_" .. arg_10_2 .. "_" .. arg_10_1
+
+	Level.trigger_event(arg_10_0._level, var_10_0)
 end
 
-DisruptRitualExtension.print_progression_event = function (self, new_event)
-	print(self._volume_name, ": Disrupt Ritual progress updated. Current progression event: ", new_event)
+function DisruptRitualExtension.print_damage(arg_11_0, arg_11_1)
+	print("Disrupt Ritual ", arg_11_0._volume_name, " current damage: ", arg_11_1)
 end
 
-DisruptRitualExtension.print_checkpoint = function (self, checkpoint)
-	print(self._volume_name, ": Disrupt Ritual checkpoint updated. Current checkpoint: ", checkpoint)
+function DisruptRitualExtension.print_progression_event(arg_12_0, arg_12_1)
+	print(arg_12_0._volume_name, ": Disrupt Ritual progress updated. Current progression event: ", arg_12_1)
 end
 
-DisruptRitualExtension.destroy = function (self)
-	self._network_event_delegate:unregister(self)
+function DisruptRitualExtension.print_checkpoint(arg_13_0, arg_13_1)
+	print(arg_13_0._volume_name, ": Disrupt Ritual checkpoint updated. Current checkpoint: ", arg_13_1)
+end
+
+function DisruptRitualExtension.destroy(arg_14_0)
+	arg_14_0._network_event_delegate:unregister(arg_14_0)
 end

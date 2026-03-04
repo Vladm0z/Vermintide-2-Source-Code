@@ -1,48 +1,48 @@
-﻿-- chunkname: @scripts/managers/camera/transitions/camera_transition_generic.lua
+-- chunkname: @scripts/managers/camera/transitions/camera_transition_generic.lua
 
 require("scripts/managers/camera/transitions/camera_transition_base")
 
 CameraTransitionGeneric = class(CameraTransitionGeneric, CameraTransitionBase)
 
-CameraTransitionGeneric.init = function (self, node_1, node_2, duration, speed, settings)
-	CameraTransitionBase.init(self, node_1, node_2, duration, speed, settings)
+function CameraTransitionGeneric.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	CameraTransitionBase.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 
-	self._transition_func = settings.transition_func
-	self._parameter = settings.parameter
+	arg_1_0._transition_func = arg_1_5.transition_func
+	arg_1_0._parameter = arg_1_5.parameter
 end
 
-CameraTransitionGeneric.update = function (self, dt, parameter_value, update_time)
-	CameraTransitionBase.update(self, dt, update_time)
+function CameraTransitionGeneric.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	CameraTransitionBase.update(arg_2_0, arg_2_1, arg_2_3)
 
-	local target = self._node_2[self._parameter](self._node_2)
-	local duration = self._duration
-	local speed = self._speed
-	local value, done
+	local var_2_0 = arg_2_0._node_2[arg_2_0._parameter](arg_2_0._node_2)
+	local var_2_1 = arg_2_0._duration
+	local var_2_2 = arg_2_0._speed
+	local var_2_3
+	local var_2_4
 
-	if speed and duration then
+	if var_2_2 and var_2_1 then
 		assert(false, "CameraTransitionGeneric:update() transition has defined both speed and duration, only one can be allowed at once")
-	elseif speed then
-		local max_length = target - parameter_value
-		local dist_moved = self._time * speed
+	elseif var_2_2 then
+		local var_2_5 = var_2_0 - arg_2_2
+		local var_2_6 = arg_2_0._time * var_2_2
 
-		if max_length < dist_moved then
-			value = target
-			done = true
+		if var_2_5 < var_2_6 then
+			var_2_3 = var_2_0
+			var_2_4 = true
 		else
-			value = parameter_value + dist_moved
+			var_2_3 = arg_2_2 + var_2_6
 		end
-	elseif duration then
-		local t = self._time / duration
+	elseif var_2_1 then
+		local var_2_7 = arg_2_0._time / var_2_1
+		local var_2_8 = math.min(var_2_7, 1)
 
-		t = math.min(t, 1)
-
-		if self._transition_func then
-			t = self._transition_func(t)
+		if arg_2_0._transition_func then
+			var_2_8 = arg_2_0._transition_func(var_2_8)
 		end
 
-		value = parameter_value * (1 - t) + target * t
-		done = duration < self._time
+		var_2_3 = arg_2_2 * (1 - var_2_8) + var_2_0 * var_2_8
+		var_2_4 = var_2_1 < arg_2_0._time
 	end
 
-	return value, done
+	return var_2_3, var_2_4
 end

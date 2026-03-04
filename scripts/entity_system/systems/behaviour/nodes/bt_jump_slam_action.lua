@@ -1,121 +1,110 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_jump_slam_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_jump_slam_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
-local position_lookup = POSITION_LOOKUP
+local var_0_0 = POSITION_LOOKUP
 
 BTJumpSlamAction = class(BTJumpSlamAction, BTNode)
 
-BTJumpSlamAction.init = function (self, ...)
-	BTJumpSlamAction.super.init(self, ...)
+function BTJumpSlamAction.init(arg_1_0, ...)
+	BTJumpSlamAction.super.init(arg_1_0, ...)
 end
 
 BTJumpSlamAction.name = "BTJumpSlamAction"
 
-BTJumpSlamAction.enter = function (self, unit, blackboard, t)
-	local data = blackboard.jump_slam_data
+function BTJumpSlamAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_2.jump_slam_data
 
-	data.anim_jump_rot_var = Unit.animation_find_variable(unit, "jump_rotation")
-	data.start_jump_time = t
-	data.landing_time = t + data.time_of_flight
-	blackboard.keep_target = true
+	var_2_0.anim_jump_rot_var = Unit.animation_find_variable(arg_2_1, "jump_rotation")
+	var_2_0.start_jump_time = arg_2_3
+	var_2_0.landing_time = arg_2_3 + var_2_0.time_of_flight
+	arg_2_2.keep_target = true
 
-	local animation_system = Managers.state.entity:system("animation_system")
-
-	animation_system:start_anim_variable_update_by_time(unit, data.anim_jump_rot_var, data.time_of_flight, 2)
-	BTJumpSlamAction.progress_to_in_flight(blackboard, unit, data.initial_velociy_boxed:unbox())
+	Managers.state.entity:system("animation_system"):start_anim_variable_update_by_time(arg_2_1, var_2_0.anim_jump_rot_var, var_2_0.time_of_flight, 2)
+	BTJumpSlamAction.progress_to_in_flight(arg_2_2, arg_2_1, var_2_0.initial_velociy_boxed:unbox())
 	Managers.state.conflict:freeze_intensity_decay(15)
 
-	local action = self._tree_node.action_data
-	local bot_threats = action.bot_threats
+	local var_2_1 = arg_2_0._tree_node.action_data
+	local var_2_2 = var_2_1.bot_threats
 
-	if bot_threats then
-		local current_threat_index = 1
-		local bot_threat = bot_threats[current_threat_index]
-		local bot_threat_start_time = bot_threat.start_time_before_landing
-		local landing_time = data.landing_time
+	if var_2_2 then
+		local var_2_3 = 1
+		local var_2_4 = var_2_2[var_2_3].start_time_before_landing
+		local var_2_5 = var_2_0.landing_time
 
-		blackboard.create_bot_threat_at_t = math.max(landing_time - bot_threat_start_time, 0)
-		blackboard.current_bot_threat_index = current_threat_index
-		blackboard.bot_threats_data = bot_threats
+		arg_2_2.create_bot_threat_at_t = math.max(var_2_5 - var_2_4, 0)
+		arg_2_2.current_bot_threat_index = var_2_3
+		arg_2_2.bot_threats_data = var_2_2
 	end
 
-	blackboard.action = action
+	arg_2_2.action = var_2_1
 
-	local target_unit = blackboard.target_unit
+	local var_2_6 = arg_2_2.target_unit
 
-	AiUtils.add_attack_intensity(target_unit, action, blackboard)
+	AiUtils.add_attack_intensity(var_2_6, var_2_1, arg_2_2)
 end
 
-BTJumpSlamAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	local animation_system = Managers.state.entity:system("animation_system")
+function BTJumpSlamAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	Managers.state.entity:system("animation_system"):set_update_anim_variable_done(arg_3_1)
 
-	animation_system:set_update_anim_variable_done(unit)
+	arg_3_2.jump_slam_data.updating_jump_rot = false
 
-	blackboard.jump_slam_data.updating_jump_rot = false
+	arg_3_2.navigation_extension:set_enabled(true)
 
-	blackboard.navigation_extension:set_enabled(true)
-
-	local data = blackboard.jump_slam_data
-
-	if data.constrained then
-		LocomotionUtils.constrain_on_clients(unit, false)
+	if arg_3_2.jump_slam_data.constrained then
+		LocomotionUtils.constrain_on_clients(arg_3_1, false)
 	end
 
-	if reason == "aborted" then
-		LocomotionUtils.set_animation_driven_movement(unit, false, true)
+	if arg_3_4 == "aborted" then
+		LocomotionUtils.set_animation_driven_movement(arg_3_1, false, true)
 
-		blackboard.keep_target = nil
-		blackboard.jump_slam_data = nil
+		arg_3_2.keep_target = nil
+		arg_3_2.jump_slam_data = nil
 	end
 
-	blackboard.action = nil
-	blackboard.create_bot_threat_at_t = nil
-	blackboard.current_bot_threat_index = nil
-	blackboard.bot_threats_data = nil
+	arg_3_2.action = nil
+	arg_3_2.create_bot_threat_at_t = nil
+	arg_3_2.current_bot_threat_index = nil
+	arg_3_2.bot_threats_data = nil
 end
 
-BTJumpSlamAction.run = function (self, unit, blackboard, t, dt)
-	local data = blackboard.jump_slam_data
-	local velocity = blackboard.locomotion_extension:current_velocity()
-	local z_speed = velocity.z
+function BTJumpSlamAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = arg_4_2.jump_slam_data
 
-	if z_speed < 0 and not data.constrained then
-		data.constrained = true
+	if arg_4_2.locomotion_extension:current_velocity().z < 0 and not var_4_0.constrained then
+		var_4_0.constrained = true
 
-		local constrain_max = POSITION_LOOKUP[unit] + Vector3.up() * 2
-		local constrain_min = data.target_pos:unbox()
+		local var_4_1 = POSITION_LOOKUP[arg_4_1] + Vector3.up() * 2
+		local var_4_2 = var_4_0.target_pos:unbox()
 
-		LocomotionUtils.constrain_on_clients(unit, true, constrain_min, constrain_max)
+		LocomotionUtils.constrain_on_clients(arg_4_1, true, var_4_2, var_4_1)
 	end
 
-	local create_bot_threat_at_t = blackboard.create_bot_threat_at_t
+	local var_4_3 = arg_4_2.create_bot_threat_at_t
 
-	if create_bot_threat_at_t and create_bot_threat_at_t < t then
-		local action = blackboard.action
-		local bot_threats = blackboard.bot_threats_data
-		local attack_rotation = data.attack_rotation:unbox()
-		local current_bot_threat_index = blackboard.current_bot_threat_index
-		local current_bot_threat = bot_threats[current_bot_threat_index]
+	if var_4_3 and var_4_3 < arg_4_3 then
+		local var_4_4 = arg_4_2.action
+		local var_4_5 = arg_4_2.bot_threats_data
+		local var_4_6 = var_4_0.attack_rotation:unbox()
+		local var_4_7 = arg_4_2.current_bot_threat_index
+		local var_4_8 = var_4_5[var_4_7]
 
-		self:_create_bot_aoe_threat(data, attack_rotation, action, current_bot_threat)
+		arg_4_0:_create_bot_aoe_threat(var_4_0, var_4_6, var_4_4, var_4_8)
 
-		local next_bot_threat_index = current_bot_threat_index + 1
-		local next_bot_threat = bot_threats[next_bot_threat_index]
+		local var_4_9 = var_4_7 + 1
+		local var_4_10 = var_4_5[var_4_9]
 
-		if next_bot_threat then
-			local landing_time = data.landing_time
-
-			blackboard.create_bot_threat_at_t = landing_time - next_bot_threat.start_time_before_landing
-			blackboard.current_bot_threat_index = next_bot_threat_index
+		if var_4_10 then
+			arg_4_2.create_bot_threat_at_t = var_4_0.landing_time - var_4_10.start_time_before_landing
+			arg_4_2.current_bot_threat_index = var_4_9
 		else
-			blackboard.create_bot_threat_at_t = nil
-			blackboard.current_bot_threat_index = nil
+			arg_4_2.create_bot_threat_at_t = nil
+			arg_4_2.current_bot_threat_index = nil
 		end
 	end
 
-	if t + dt >= data.landing_time then
-		BTJumpSlamAction.progress_to_landing(blackboard, unit, data)
+	if arg_4_3 + arg_4_4 >= var_4_0.landing_time then
+		BTJumpSlamAction.progress_to_landing(arg_4_2, arg_4_1, var_4_0)
 
 		return "done"
 	end
@@ -123,41 +112,38 @@ BTJumpSlamAction.run = function (self, unit, blackboard, t, dt)
 	return "running"
 end
 
-BTJumpSlamAction._calculate_sphere_collision = function (self, action, bot_threat, self_pos, self_rot)
-	local radius = bot_threat.radius or action.radius
-	local offset_forward = bot_threat.offset_forward or action.forward_offset
-	local forward = Quaternion.forward(self_rot)
-	local sphere_center = self_pos + forward * offset_forward
+function BTJumpSlamAction._calculate_sphere_collision(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	local var_5_0 = arg_5_2.radius or arg_5_1.radius
+	local var_5_1 = arg_5_2.offset_forward or arg_5_1.forward_offset
 
-	return sphere_center, radius
+	return arg_5_3 + Quaternion.forward(arg_5_4) * var_5_1, var_5_0
 end
 
-BTJumpSlamAction._create_bot_aoe_threat = function (self, jump_data, attack_rotation, action, bot_threat)
-	local bot_threat_duration = bot_threat.duration
-	local hit_position = jump_data.target_pos:unbox()
-	local obstacle_position, obstacle_size = self:_calculate_sphere_collision(action, bot_threat, hit_position, attack_rotation)
-	local ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
+function BTJumpSlamAction._create_bot_aoe_threat(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	local var_6_0 = arg_6_4.duration
+	local var_6_1 = arg_6_1.target_pos:unbox()
+	local var_6_2, var_6_3 = arg_6_0:_calculate_sphere_collision(arg_6_3, arg_6_4, var_6_1, arg_6_2)
 
-	ai_bot_group_system:aoe_threat_created(obstacle_position, "sphere", obstacle_size, nil, bot_threat_duration, "Jump Slam")
+	Managers.state.entity:system("ai_bot_group_system"):aoe_threat_created(var_6_2, "sphere", var_6_3, nil, var_6_0, "Jump Slam")
 end
 
-BTJumpSlamAction.progress_to_landing = function (blackboard, unit, data)
-	LocomotionUtils.set_animation_driven_movement(unit, true, false, false)
-	Managers.state.network:anim_event(unit, "attack_jump_land")
+function BTJumpSlamAction.progress_to_landing(arg_7_0, arg_7_1, arg_7_2)
+	LocomotionUtils.set_animation_driven_movement(arg_7_1, true, false, false)
+	Managers.state.network:anim_event(arg_7_1, "attack_jump_land")
 
-	local locomotion = blackboard.locomotion_extension
+	local var_7_0 = arg_7_0.locomotion_extension
 
-	locomotion:set_movement_type("snap_to_navmesh")
-	locomotion:set_wanted_velocity(Vector3.zero())
-	locomotion:set_gravity(nil)
+	var_7_0:set_movement_type("snap_to_navmesh")
+	var_7_0:set_wanted_velocity(Vector3.zero())
+	var_7_0:set_gravity(nil)
 end
 
-BTJumpSlamAction.progress_to_in_flight = function (blackboard, unit, velocity)
-	LocomotionUtils.set_animation_driven_movement(unit, false, true)
+function BTJumpSlamAction.progress_to_in_flight(arg_8_0, arg_8_1, arg_8_2)
+	LocomotionUtils.set_animation_driven_movement(arg_8_1, false, true)
 
-	local locomotion = blackboard.locomotion_extension
+	local var_8_0 = arg_8_0.locomotion_extension
 
-	locomotion:set_movement_type("script_driven")
-	locomotion:set_gravity(blackboard.breed.jump_slam_gravity)
-	locomotion:set_wanted_velocity(velocity)
+	var_8_0:set_movement_type("script_driven")
+	var_8_0:set_gravity(arg_8_0.breed.jump_slam_gravity)
+	var_8_0:set_wanted_velocity(arg_8_2)
 end

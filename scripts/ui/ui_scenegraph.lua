@@ -1,436 +1,428 @@
-﻿-- chunkname: @scripts/ui/ui_scenegraph.lua
+-- chunkname: @scripts/ui/ui_scenegraph.lua
 
 require("scripts/ui/ui_resolution")
 
 UISceneGraph = {}
 
-local UISceneGraph = UISceneGraph
-local Vector2, Vector3 = Vector2, Vector3
-local RESOLUTION_LOOKUP = RESOLUTION_LOOKUP
-local Application = Application
-local fassert = fassert
-local ZERO_VECTOR3 = {
+local var_0_0 = UISceneGraph
+local var_0_1 = Vector2
+local var_0_2 = Vector3
+local var_0_3 = RESOLUTION_LOOKUP
+local var_0_4 = Application
+local var_0_5 = fassert
+local var_0_6 = {
 	0,
 	0,
-	0,
+	0
 }
 
-local function to_vector2_table(t)
+local function var_0_7(arg_1_0)
 	return {
-		t[1],
-		t[2],
+		arg_1_0[1],
+		arg_1_0[2]
 	}
 end
 
-local function to_vector3_table(t)
+local function var_0_8(arg_2_0)
 	return {
-		t[1],
-		t[2],
-		t[3] or 0,
+		arg_2_0[1],
+		arg_2_0[2],
+		arg_2_0[3] or 0
 	}
 end
 
-UISceneGraph.ZERO_VECTOR3 = ZERO_VECTOR3
+var_0_0.ZERO_VECTOR3 = var_0_6
 
-local ALIGN_KWORD_MULT = {
-	bottom = 0,
-	center = 0.5,
+local var_0_9 = {
 	left = 0,
-	right = 1,
+	bottom = 0,
 	top = 1,
+	center = 0.5,
+	right = 1
 }
 
-local function align(x, dx, alignment)
-	return x + dx * (ALIGN_KWORD_MULT[alignment] or 0)
+local function var_0_10(arg_3_0, arg_3_1, arg_3_2)
+	return arg_3_0 + arg_3_1 * (var_0_9[arg_3_2] or 0)
 end
 
-local NEWINDEX_ERR_MT = {
+local var_0_11 = {
 	__class_name = "scenegraph",
-	__newindex = function (t, k, v)
-		local err_msg = string.format("[UIScenegraph] Cannot add field %q to %s", k, t)
+	__newindex = function(arg_4_0, arg_4_1, arg_4_2)
+		local var_4_0 = string.format("[UIScenegraph] Cannot add field %q to %s", arg_4_1, arg_4_0)
 
-		print(err_msg)
+		print(var_4_0)
 
-		return rawset(t, k, v)
-	end,
+		return rawset(arg_4_0, arg_4_1, arg_4_2)
+	end
 }
 
-local function legacy_merge_no_override(node, node_def)
-	for k, v in pairs(node_def) do
-		if node[k] == nil then
-			Application.warning("[UIScenegraph] Node polluted: scenegraph[%q][%q]\n%s", node.name, k, Script.callstack())
+local function var_0_12(arg_5_0, arg_5_1)
+	for iter_5_0, iter_5_1 in pairs(arg_5_1) do
+		if arg_5_0[iter_5_0] == nil then
+			var_0_4.warning("[UIScenegraph] Node polluted: scenegraph[%q][%q]\n%s", arg_5_0.name, iter_5_0, Script.callstack())
 
-			node[k] = type(v) == "table" and table.clone(v) or v
+			arg_5_0[iter_5_0] = type(iter_5_1) == "table" and table.clone(iter_5_1) or iter_5_1
 		end
 	end
 end
 
-local function scenegraph_visit_node(scenegraph, scenegraph_def, name, node_def)
-	fassert(scenegraph[name] == nil, "Cycle detected at %q", name)
-	fassert(node_def, "Missing definition for %q", name)
+local function var_0_13(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	var_0_5(arg_6_0[arg_6_2] == nil, "Cycle detected at %q", arg_6_2)
+	var_0_5(arg_6_3, "Missing definition for %q", arg_6_2)
 
-	scenegraph[name] = false
+	arg_6_0[arg_6_2] = false
 
-	local parent_name = node_def.parent
+	local var_6_0 = arg_6_3.parent
 
-	if not parent_name then
-		local local_position = to_vector3_table(node_def.position)
-		local node = {
+	if not var_6_0 then
+		local var_6_1 = var_0_8(arg_6_3.position)
+		local var_6_2 = {
 			parent = false,
-			name = name,
-			world_position = to_vector3_table(node_def.position),
-			local_position = local_position,
-			position = local_position,
-			size = to_vector2_table(node_def.size),
-			horizontal_alignment = node_def.horizontal_alignment,
-			vertical_alignment = node_def.vertical_alignment,
-			is_root = node_def.is_root,
-			scale = node_def.scale,
+			name = arg_6_2,
+			world_position = var_0_8(arg_6_3.position),
+			local_position = var_6_1,
+			position = var_6_1,
+			size = var_0_7(arg_6_3.size),
+			horizontal_alignment = arg_6_3.horizontal_alignment,
+			vertical_alignment = arg_6_3.vertical_alignment,
+			is_root = arg_6_3.is_root,
+			scale = arg_6_3.scale
 		}
 
-		legacy_merge_no_override(node, node_def)
+		var_0_12(var_6_2, arg_6_3)
 
-		scenegraph[name] = node
-		scenegraph[#scenegraph + 1] = node
+		arg_6_0[arg_6_2] = var_6_2
+		arg_6_0[#arg_6_0 + 1] = var_6_2
 
 		return
 	end
 
-	local parent = scenegraph[parent_name]
+	local var_6_3 = arg_6_0[var_6_0]
 
-	if not parent then
-		scenegraph_visit_node(scenegraph, scenegraph_def, parent_name, scenegraph_def[parent_name])
+	if not var_6_3 then
+		var_0_13(arg_6_0, arg_6_1, var_6_0, arg_6_1[var_6_0])
 
-		parent = scenegraph[parent_name]
+		var_6_3 = arg_6_0[var_6_0]
 	end
 
-	local parent_world_position = parent.world_position
-	local local_position = to_vector3_table(node_def.position or ZERO_VECTOR3)
-	local size = to_vector2_table(node_def.size or parent.size)
+	local var_6_4 = var_6_3.world_position
+	local var_6_5 = var_0_8(arg_6_3.position or var_0_6)
+	local var_6_6 = var_0_7(arg_6_3.size or var_6_3.size)
 
-	if size[1] < 0 then
-		size[1] = size[1] + parent.size[1]
+	if var_6_6[1] < 0 then
+		var_6_6[1] = var_6_6[1] + var_6_3.size[1]
 	end
 
-	if size[2] < 0 then
-		size[2] = size[2] + parent.size[2]
+	if var_6_6[2] < 0 then
+		var_6_6[2] = var_6_6[2] + var_6_3.size[2]
 	end
 
-	local node = {
-		name = name,
-		parent = parent_name,
+	local var_6_7 = {
+		name = arg_6_2,
+		parent = var_6_0,
 		world_position = {
-			local_position[1] + parent_world_position[1],
-			local_position[2] + parent_world_position[2],
-			local_position[3] + parent_world_position[3],
+			var_6_5[1] + var_6_4[1],
+			var_6_5[2] + var_6_4[2],
+			var_6_5[3] + var_6_4[3]
 		},
-		local_position = local_position,
-		position = local_position,
-		size = size,
-		horizontal_alignment = node_def.horizontal_alignment,
-		vertical_alignment = node_def.vertical_alignment,
-		offset = node_def.offset and to_vector2_table(node_def.offset),
+		local_position = var_6_5,
+		position = var_6_5,
+		size = var_6_6,
+		horizontal_alignment = arg_6_3.horizontal_alignment,
+		vertical_alignment = arg_6_3.vertical_alignment,
+		offset = arg_6_3.offset and var_0_7(arg_6_3.offset)
 	}
 
-	legacy_merge_no_override(node, node_def)
-	setmetatable(node, NEWINDEX_ERR_MT)
+	var_0_12(var_6_7, arg_6_3)
+	setmetatable(var_6_7, var_0_11)
 
-	scenegraph[name] = node
+	arg_6_0[arg_6_2] = var_6_7
 
-	local num_children = rawget(parent, "num_children")
+	local var_6_8 = rawget(var_6_3, "num_children")
 
-	if not num_children then
-		rawset(parent, "children", {
-			node,
+	if not var_6_8 then
+		rawset(var_6_3, "children", {
+			var_6_7
 		})
-		rawset(parent, "num_children", 1)
+		rawset(var_6_3, "num_children", 1)
 	else
-		num_children = num_children + 1
-		parent.children[num_children] = node
-		parent.num_children = num_children
+		local var_6_9 = var_6_8 + 1
+
+		var_6_3.children[var_6_9] = var_6_7
+		var_6_3.num_children = var_6_9
 	end
 end
 
-UISceneGraph.init_scenegraph = function (scenegraph_def)
-	local scenegraph = {}
+function var_0_0.init_scenegraph(arg_7_0)
+	local var_7_0 = {}
 
-	for name, node in pairs(scenegraph_def) do
-		if not scenegraph[name] then
-			scenegraph_visit_node(scenegraph, scenegraph_def, name, node)
+	for iter_7_0, iter_7_1 in pairs(arg_7_0) do
+		if not var_7_0[iter_7_0] then
+			var_0_13(var_7_0, arg_7_0, iter_7_0, iter_7_1)
 		end
 	end
 
-	return setmetatable(scenegraph, NEWINDEX_ERR_MT)
+	return setmetatable(var_7_0, var_0_11)
 end
 
-local function scenegraph_update_children(world_position, children, num_children, size_x, size_y)
-	for i = 1, num_children do
-		local child = children[i]
-		local x, y, z
+local function var_0_14(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	for iter_8_0 = 1, arg_8_2 do
+		local var_8_0 = arg_8_1[iter_8_0]
+		local var_8_1
+		local var_8_2
+		local var_8_3
+		local var_8_4 = var_8_0.local_position
+		local var_8_5, var_8_6, var_8_7 = var_8_4[1], var_8_4[2], var_8_4[3]
+		local var_8_8 = var_8_0.size
+		local var_8_9 = var_8_8[1]
+		local var_8_10 = var_8_8[2]
+		local var_8_11 = var_0_10(var_8_5 + arg_8_0[1], arg_8_3 - var_8_9, var_8_0.horizontal_alignment)
+		local var_8_12 = var_0_10(var_8_6 + arg_8_0[2], arg_8_4 - var_8_10, var_8_0.vertical_alignment)
+		local var_8_13 = var_8_0.offset
 
-		do
-			local box = child.local_position
+		if var_8_13 then
+			var_8_11 = var_8_11 + var_8_13[1]
+			var_8_12 = var_8_12 + var_8_13[2]
 
-			x, y, z = box[1], box[2], box[3]
-		end
+			local var_8_14 = var_8_13[3]
 
-		local size = child.size
-		local child_size_x = size[1]
-		local child_size_y = size[2]
-
-		x = align(x + world_position[1], size_x - child_size_x, child.horizontal_alignment)
-		y = align(y + world_position[2], size_y - child_size_y, child.vertical_alignment)
-
-		local offset = child.offset
-
-		if offset then
-			x = x + offset[1]
-			y = y + offset[2]
-
-			local offset_z = offset[3]
-
-			if offset_z then
-				z = z + offset_z
+			if var_8_14 then
+				var_8_7 = var_8_7 + var_8_14
 			end
 		end
 
-		local box = child.world_position
+		local var_8_15 = var_8_0.world_position
 
-		box[1], box[2], box[2] = x, y, z
+		var_8_15[1], var_8_15[2], var_8_15[2] = var_8_11, var_8_12, var_8_7
 
-		local child_children = child.children
+		local var_8_16 = var_8_0.children
 
-		if child_children then
-			scenegraph_update_children(box, child_children, child.num_children, child_size_x, child_size_y)
+		if var_8_16 then
+			var_0_14(var_8_15, var_8_16, var_8_0.num_children, var_8_9, var_8_10)
 		end
 	end
 end
 
-UISceneGraph.update_scenegraph = function (scenegraph, parent_scenegraph, scenegraph_id)
-	local w = RESOLUTION_LOOKUP.res_w
-	local h = RESOLUTION_LOOKUP.res_h
-	local scale = RESOLUTION_LOOKUP.scale
-	local inverse_scale = RESOLUTION_LOOKUP.inv_scale
-	local root_scale_x = w / (1920 * scale)
-	local root_scale_y = UISettings.root_scale[2]
+function var_0_0.update_scenegraph(arg_9_0, arg_9_1, arg_9_2)
+	local var_9_0 = var_0_3.res_w
+	local var_9_1 = var_0_3.res_h
+	local var_9_2 = var_0_3.scale
+	local var_9_3 = var_0_3.inv_scale
+	local var_9_4 = var_9_0 / (1920 * var_9_2)
+	local var_9_5 = UISettings.root_scale[2]
 
-	for i = 1, #scenegraph do
-		local node = scenegraph[i]
-		local name = node.name
-		local x, y, z
+	for iter_9_0 = 1, #arg_9_0 do
+		local var_9_6 = arg_9_0[iter_9_0]
+		local var_9_7 = var_9_6.name
+		local var_9_8
+		local var_9_9
+		local var_9_10
 
-		if parent_scenegraph then
-			local box = parent_scenegraph[scenegraph_id].world_position
+		if arg_9_1 then
+			local var_9_11 = arg_9_1[arg_9_2].world_position
 
-			x, y, z = box[1], box[2], box[3]
+			var_9_8, var_9_9, var_9_10 = var_9_11[1], var_9_11[2], var_9_11[3]
 		else
-			local box = node.local_position
+			local var_9_12 = var_9_6.local_position
 
-			x, y, z = box[1], box[2], box[3]
+			var_9_8, var_9_9, var_9_10 = var_9_12[1], var_9_12[2], var_9_12[3]
 		end
 
-		local size = node.size
-		local size_x = size[1]
-		local size_y = size[2]
+		local var_9_13 = var_9_6.size
+		local var_9_14 = var_9_13[1]
+		local var_9_15 = var_9_13[2]
 
-		if node.is_root then
-			size_x = root_scale_x * size_x
-			size_y = root_scale_y * h * inverse_scale
-			x = (x + (w - size_x * scale) * 0.5) * inverse_scale
-			y = (y + (h - size_y * scale) * 0.5) * inverse_scale
+		if var_9_6.is_root then
+			var_9_14 = var_9_4 * var_9_14
+			var_9_15 = var_9_5 * var_9_1 * var_9_3
+			var_9_8 = (var_9_8 + (var_9_0 - var_9_14 * var_9_2) * 0.5) * var_9_3
+			var_9_9 = (var_9_9 + (var_9_1 - var_9_15 * var_9_2) * 0.5) * var_9_3
 		else
-			local scale_mode = node.scale
+			local var_9_16 = var_9_6.scale
 
-			if scale_mode == "fit" then
-				size_x = w * inverse_scale
-				size_y = h * inverse_scale
-				x = 0
-				y = 0
-			elseif scale_mode == "hud_scale_fit" then
-				size_x = size_x * root_scale_x
-				size_y = h * inverse_scale
-				x = (x + (w - size_x * scale) * 0.5) * inverse_scale
-				y = 0
-			elseif scale_mode == "hud_fit" then
-				local safe_rect = (Application.user_setting("safe_rect") or 0) * 0.01
+			if var_9_16 == "fit" then
+				var_9_14 = var_9_0 * var_9_3
+				var_9_15 = var_9_1 * var_9_3
+				var_9_8 = 0
+				var_9_9 = 0
+			elseif var_9_16 == "hud_scale_fit" then
+				var_9_14 = var_9_14 * var_9_4
+				var_9_15 = var_9_1 * var_9_3
+				var_9_8 = (var_9_8 + (var_9_0 - var_9_14 * var_9_2) * 0.5) * var_9_3
+				var_9_9 = 0
+			elseif var_9_16 == "hud_fit" then
+				local var_9_17 = (var_0_4.user_setting("safe_rect") or 0) * 0.01
 
-				size_x = w * inverse_scale * (1 - safe_rect)
-				size_y = h * inverse_scale * (1 - safe_rect)
-				x = w * safe_rect * inverse_scale * 0.5
-				y = h * safe_rect * inverse_scale * 0.5
-			elseif scale_mode == "aspect_ratio" then
-				local aspect_ratio_screen = w / h
-				local aspect_ratio_node = size_x / size_y
+				var_9_14 = var_9_0 * var_9_3 * (1 - var_9_17)
+				var_9_15 = var_9_1 * var_9_3 * (1 - var_9_17)
+				var_9_8 = var_9_0 * var_9_17 * var_9_3 * 0.5
+				var_9_9 = var_9_1 * var_9_17 * var_9_3 * 0.5
+			elseif var_9_16 == "aspect_ratio" then
+				local var_9_18 = var_9_0 / var_9_1
+				local var_9_19 = var_9_14 / var_9_15
 
-				if aspect_ratio_screen < aspect_ratio_node then
-					size_x = w
-					size_y = w / aspect_ratio_node
+				if var_9_18 < var_9_19 then
+					var_9_14 = var_9_0
+					var_9_15 = var_9_0 / var_9_19
 				else
-					size_x = h * aspect_ratio_node
-					size_y = h
+					var_9_14 = var_9_1 * var_9_19
+					var_9_15 = var_9_1
 				end
 
-				size_x = size_x * inverse_scale
-				size_y = size_y * inverse_scale
-				x = align(x, w * inverse_scale - size_x, node.horizontal_alignment)
-				y = align(y, h * inverse_scale - size_y, node.vertical_alignment)
-			elseif scale_mode == "fit_width" then
-				size_x = w * inverse_scale
-				x = 0
-				y = align(y, h * inverse_scale - size_y, node.vertical_alignment)
-			elseif scale_mode == "fit_height" then
-				size_y = h * inverse_scale
-				x = align(x, w * inverse_scale - size_x, node.horizontal_alignment)
-				y = 0
+				var_9_14 = var_9_14 * var_9_3
+				var_9_15 = var_9_15 * var_9_3
+				var_9_8 = var_0_10(var_9_8, var_9_0 * var_9_3 - var_9_14, var_9_6.horizontal_alignment)
+				var_9_9 = var_0_10(var_9_9, var_9_1 * var_9_3 - var_9_15, var_9_6.vertical_alignment)
+			elseif var_9_16 == "fit_width" then
+				var_9_14 = var_9_0 * var_9_3
+				var_9_8 = 0
+				var_9_9 = var_0_10(var_9_9, var_9_1 * var_9_3 - var_9_15, var_9_6.vertical_alignment)
+			elseif var_9_16 == "fit_height" then
+				var_9_15 = var_9_1 * var_9_3
+				var_9_8 = var_0_10(var_9_8, var_9_0 * var_9_3 - var_9_14, var_9_6.horizontal_alignment)
+				var_9_9 = 0
 			end
 		end
 
-		do
-			local box = node.world_position
+		local var_9_20 = var_9_6.world_position
 
-			box[1], box[2], box[3] = x, y, z
-		end
+		var_9_20[1], var_9_20[2], var_9_20[3] = var_9_8, var_9_9, var_9_10
 
-		local children = node.children
+		local var_9_21 = var_9_6.children
 
-		if children then
-			scenegraph_update_children(node.world_position, children, node.num_children, size_x, size_y)
+		if var_9_21 then
+			var_0_14(var_9_6.world_position, var_9_21, var_9_6.num_children, var_9_14, var_9_15)
 		end
 	end
 end
 
-UISceneGraph.get_size = function (scenegraph, node_name)
-	local node = scenegraph[node_name]
-
-	return node.size
+function var_0_0.get_size(arg_10_0, arg_10_1)
+	return arg_10_0[arg_10_1].size
 end
 
-UISceneGraph.get_world_position = function (scenegraph, node_name)
-	local node = scenegraph[node_name]
-
-	return node.world_position
+function var_0_0.get_world_position(arg_11_0, arg_11_1)
+	return arg_11_0[arg_11_1].world_position
 end
 
-UISceneGraph.get_local_position = function (scenegraph, node_name)
-	local node = scenegraph[node_name]
-
-	return node.local_position
+function var_0_0.get_local_position(arg_12_0, arg_12_1)
+	return arg_12_0[arg_12_1].local_position
 end
 
-UISceneGraph.get_size_scaled = function (scenegraph, node_name, optional_scale)
-	local node = scenegraph[node_name]
-	local size = node.size
+function var_0_0.get_size_scaled(arg_13_0, arg_13_1, arg_13_2)
+	local var_13_0 = arg_13_0[arg_13_1]
+	local var_13_1 = var_13_0.size
 
-	if node.is_root then
-		local w, h = RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h
-		local inverse_scale = RESOLUTION_LOOKUP.inv_scale
+	if var_13_0.is_root then
+		local var_13_2 = var_0_3.res_w
+		local var_13_3 = var_0_3.res_h
+		local var_13_4 = var_0_3.inv_scale
 
-		if optional_scale then
-			inverse_scale = inverse_scale / optional_scale
+		if arg_13_2 then
+			var_13_4 = var_13_4 / arg_13_2
 		end
 
-		return Vector2(w * inverse_scale / 1920 * size[1], h * inverse_scale * UISettings.root_scale[2])
+		return var_0_1(var_13_2 * var_13_4 / 1920 * var_13_1[1], var_13_3 * var_13_4 * UISettings.root_scale[2])
 	end
 
-	local scale_mode = node.scale
+	local var_13_5 = var_13_0.scale
 
-	if not scale_mode then
-		if not optional_scale then
-			return Vector2(size[1], size[2])
+	if not var_13_5 then
+		if not arg_13_2 then
+			return var_0_1(var_13_1[1], var_13_1[2])
 		else
-			return Vector2(size[1] * optional_scale, size[2] * optional_scale)
+			return var_0_1(var_13_1[1] * arg_13_2, var_13_1[2] * arg_13_2)
 		end
 	end
 
-	local w, h = RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h
-	local inverse_scale = RESOLUTION_LOOKUP.inv_scale
+	local var_13_6 = var_0_3.res_w
+	local var_13_7 = var_0_3.res_h
+	local var_13_8 = var_0_3.inv_scale
 
-	if scale_mode == "fit" then
-		return Vector2(w * inverse_scale, h * inverse_scale)
-	elseif scale_mode == "hud_fit" then
-		local safe_rect = (Application.user_setting("safe_rect") or 0) * 0.01
+	if var_13_5 == "fit" then
+		return var_0_1(var_13_6 * var_13_8, var_13_7 * var_13_8)
+	elseif var_13_5 == "hud_fit" then
+		local var_13_9 = (var_0_4.user_setting("safe_rect") or 0) * 0.01
 
-		return Vector2(w * inverse_scale * (1 - safe_rect), h * inverse_scale * (1 - safe_rect))
-	elseif scale_mode == "fit_width" then
-		return Vector2(w * inverse_scale, size[2])
-	elseif scale_mode == "fit_height" then
-		return Vector2(size[1], h * inverse_scale)
-	elseif scale_mode == "aspect_ratio" then
-		local size_x = size[1]
-		local size_y = size[2]
-		local aspect_ratio_screen = w / h
-		local aspect_ratio_node = size_x / size_y
+		return var_0_1(var_13_6 * var_13_8 * (1 - var_13_9), var_13_7 * var_13_8 * (1 - var_13_9))
+	elseif var_13_5 == "fit_width" then
+		return var_0_1(var_13_6 * var_13_8, var_13_1[2])
+	elseif var_13_5 == "fit_height" then
+		return var_0_1(var_13_1[1], var_13_7 * var_13_8)
+	elseif var_13_5 == "aspect_ratio" then
+		local var_13_10 = var_13_1[1]
+		local var_13_11 = var_13_1[2]
+		local var_13_12 = var_13_6 / var_13_7
+		local var_13_13 = var_13_10 / var_13_11
 
-		if aspect_ratio_screen < aspect_ratio_node then
-			size_x = w
-			size_y = w / aspect_ratio_node
+		if var_13_12 < var_13_13 then
+			var_13_10 = var_13_6
+			var_13_11 = var_13_6 / var_13_13
 		else
-			size_x = h * aspect_ratio_node
-			size_y = h
+			var_13_10 = var_13_7 * var_13_13
+			var_13_11 = var_13_7
 		end
 
-		return Vector2(size_x * inverse_scale, size_y * inverse_scale)
+		return var_0_1(var_13_10 * var_13_8, var_13_11 * var_13_8)
 	end
 end
 
-UISceneGraph.set_local_position = function (scenegraph, node_name, new_position)
-	local node = scenegraph[node_name]
-	local old_position = node.local_position
+function var_0_0.set_local_position(arg_14_0, arg_14_1, arg_14_2)
+	local var_14_0 = arg_14_0[arg_14_1].local_position
 
-	old_position[1] = new_position[1]
-	old_position[2] = new_position[2]
-	old_position[3] = new_position[3]
+	var_14_0[1] = arg_14_2[1]
+	var_14_0[2] = arg_14_2[2]
+	var_14_0[3] = arg_14_2[3]
 end
 
-local function draw_border(gui, pos, size, color, border)
-	border = border or 5
-	pos = pos + Vector3(0, 0, 1)
+local function var_0_15(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+	arg_15_4 = arg_15_4 or 5
+	arg_15_1 = arg_15_1 + var_0_2(0, 0, 1)
 
-	local w = size[1]
-	local h = size[2] - 2 * border
+	local var_15_0 = arg_15_2[1]
+	local var_15_1 = arg_15_2[2] - 2 * arg_15_4
 
-	Gui.rect(gui, Vector3(pos[1], pos[2], pos[3]), Vector2(w, border), color)
-	Gui.rect(gui, Vector3(pos[1], pos[2] + size[2] - border, pos[3]), Vector2(w, border), color)
-	Gui.rect(gui, Vector3(pos[1], pos[2] + border, pos[3]), Vector2(border, h), color)
-	Gui.rect(gui, Vector3(pos[1] + size[1] - border, pos[2] + border, pos[3]), Vector2(border, h), color)
+	Gui.rect(arg_15_0, var_0_2(arg_15_1[1], arg_15_1[2], arg_15_1[3]), var_0_1(var_15_0, arg_15_4), arg_15_3)
+	Gui.rect(arg_15_0, var_0_2(arg_15_1[1], arg_15_1[2] + arg_15_2[2] - arg_15_4, arg_15_1[3]), var_0_1(var_15_0, arg_15_4), arg_15_3)
+	Gui.rect(arg_15_0, var_0_2(arg_15_1[1], arg_15_1[2] + arg_15_4, arg_15_1[3]), var_0_1(arg_15_4, var_15_1), arg_15_3)
+	Gui.rect(arg_15_0, var_0_2(arg_15_1[1] + arg_15_2[1] - arg_15_4, arg_15_1[2] + arg_15_4, arg_15_1[3]), var_0_1(arg_15_4, var_15_1), arg_15_3)
 end
 
-local function debug_render_scenegraph(ui_renderer, scenegraph, n_scenegraph, force_draw_depth)
-	local cursor = Mouse.axis(Mouse.axis_id("cursor"))
-	local inside_box = math.point_is_inside_2d_box
-	local gui = Debug.gui
+local function var_0_16(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+	local var_16_0 = Mouse.axis(Mouse.axis_id("cursor"))
+	local var_16_1 = math.point_is_inside_2d_box
+	local var_16_2 = Debug.gui
 
-	force_draw_depth = force_draw_depth - 1
+	arg_16_3 = arg_16_3 - 1
 
-	local border = 4
+	local var_16_3 = 4
 
-	for i = 1, n_scenegraph do
-		local node = scenegraph[i]
-		local pos = node.world_position
-		local size = node.size
+	for iter_16_0 = 1, arg_16_2 do
+		local var_16_4 = arg_16_1[iter_16_0]
+		local var_16_5 = var_16_4.world_position
+		local var_16_6 = var_16_4.size
 
-		if force_draw_depth >= 0 or inside_box(cursor, pos, size) then
-			local name = node.name
-			local posV3 = Vector3(pos[1], pos[2], pos[3])
-			local hue = tonumber(string.sub(Application.make_hash(name), 8), 16) / 4294967296
-			local r, g, b = Colors.hsl2rgb(hue, 0.75, 0.5)
+		if arg_16_3 >= 0 or var_16_1(var_16_0, var_16_5, var_16_6) then
+			local var_16_7 = var_16_4.name
+			local var_16_8 = var_0_2(var_16_5[1], var_16_5[2], var_16_5[3])
+			local var_16_9 = tonumber(string.sub(var_0_4.make_hash(var_16_7), 8), 16) / 4294967296
+			local var_16_10, var_16_11, var_16_12 = Colors.hsl2rgb(var_16_9, 0.75, 0.5)
 
-			Gui.rect(gui, posV3, Vector2(size[1], size[2]), Color(20, r, g, b))
+			Gui.rect(var_16_2, var_16_8, var_0_1(var_16_6[1], var_16_6[2]), Color(20, var_16_10, var_16_11, var_16_12))
 
-			local label = string.format("%s (%d,%d,%d)[%d,%d]", name, pos[1], pos[2], pos[3], size[1], size[2])
+			local var_16_13 = string.format("%s (%d,%d,%d)[%d,%d]", var_16_7, var_16_5[1], var_16_5[2], var_16_5[3], var_16_6[1], var_16_6[2])
 
-			Gui.text(gui, label, "materials/fonts/arial", 16, nil, posV3 + Vector2(border, border), Color(200, r, g, b), "shadow", Color(200, 0, 0, 0))
-			draw_border(gui, posV3, size, Color(50, r, g, b), border)
+			Gui.text(var_16_2, var_16_13, "materials/fonts/arial", 16, nil, var_16_8 + var_0_1(var_16_3, var_16_3), Color(200, var_16_10, var_16_11, var_16_12), "shadow", Color(200, 0, 0, 0))
+			var_0_15(var_16_2, var_16_8, var_16_6, Color(50, var_16_10, var_16_11, var_16_12), var_16_3)
 
-			local children = node.children
+			local var_16_14 = var_16_4.children
 
-			if children then
-				debug_render_scenegraph(ui_renderer, children, #children, force_draw_depth)
+			if var_16_14 then
+				var_0_16(arg_16_0, var_16_14, #var_16_14, arg_16_3)
 			end
 		end
 	end
 end
 
-UISceneGraph.debug_render_scenegraph = function (ui_renderer, scenegraph, force_draw_depth)
-	return debug_render_scenegraph(ui_renderer, scenegraph, #scenegraph, force_draw_depth or 1)
+function var_0_0.debug_render_scenegraph(arg_17_0, arg_17_1, arg_17_2)
+	return var_0_16(arg_17_0, arg_17_1, #arg_17_1, arg_17_2 or 1)
 end

@@ -1,86 +1,87 @@
-﻿-- chunkname: @scripts/managers/game_mode/mechanisms/deus_gen_engine.lua
+-- chunkname: @scripts/managers/game_mode/mechanisms/deus_gen_engine.lua
 
-local function find_next_action(action_list)
-	for i = #action_list, 1, -1 do
-		local action = action_list[i]
+local function var_0_0(arg_1_0)
+	for iter_1_0 = #arg_1_0, 1, -1 do
+		local var_1_0 = arg_1_0[iter_1_0]
 
-		if action._next_action_generators then
-			for index, next_action in pairs(action._next_actions) do
-				if not next_action then
-					local new_action = action._next_action_generators[index]()
+		if var_1_0._next_action_generators then
+			for iter_1_1, iter_1_2 in pairs(var_1_0._next_actions) do
+				if not iter_1_2 then
+					local var_1_1 = var_1_0._next_action_generators[iter_1_1]()
 
-					new_action._parent = action
-					action._next_actions[index] = new_action
+					var_1_1._parent = var_1_0
+					var_1_0._next_actions[iter_1_1] = var_1_1
 
-					return new_action
+					return var_1_1
 				end
 			end
 		end
 	end
 end
 
-local function cancel_action(action)
-	if not action._parent then
+local function var_0_1(arg_2_0)
+	if not arg_2_0._parent then
 		return
 	end
 
-	for index, next_action in pairs(action._parent._next_actions) do
-		if next_action == action then
-			action._parent._next_actions[index] = false
+	for iter_2_0, iter_2_1 in pairs(arg_2_0._parent._next_actions) do
+		if iter_2_1 == arg_2_0 then
+			arg_2_0._parent._next_actions[iter_2_0] = false
 		end
 	end
 end
 
-local function handle_success(action, next_action_generators)
-	action._next_action_generators = next_action_generators
+local function var_0_2(arg_3_0, arg_3_1)
+	arg_3_0._next_action_generators = arg_3_1
 
-	if next_action_generators then
-		action._next_actions = {}
+	if arg_3_1 then
+		arg_3_0._next_actions = {}
 
-		for index, _ in ipairs(next_action_generators) do
-			action._next_actions[index] = false
+		for iter_3_0, iter_3_1 in ipairs(arg_3_1) do
+			arg_3_0._next_actions[iter_3_0] = false
 		end
 	end
 end
 
 DeusGenEngine = {
-	get_generator = function (action_list, per_action_callback)
-		local retrying = false
+	get_generator = function(arg_4_0, arg_4_1)
+		local var_4_0 = false
 
-		return function ()
-			if #action_list > 0 then
-				local action = action_list[#action_list]
+		return function()
+			if #arg_4_0 > 0 then
+				local var_5_0 = arg_4_0[#arg_4_0]
 
-				if per_action_callback then
-					per_action_callback(action_list, action)
+				if arg_4_1 then
+					arg_4_1(arg_4_0, var_5_0)
 				end
 
-				local result, next_action_generators
+				local var_5_1
+				local var_5_2
 
-				if not retrying then
-					result, next_action_generators = action.run()
+				if not var_4_0 then
+					var_5_1, var_5_2 = var_5_0.run()
 				else
-					result, next_action_generators = action.retry()
+					var_5_1, var_5_2 = var_5_0.retry()
 				end
 
-				if result then
-					retrying = false
+				if var_5_1 then
+					var_4_0 = false
 
-					handle_success(action, next_action_generators)
+					var_0_2(var_5_0, var_5_2)
 
-					local next_action = find_next_action(action_list)
+					local var_5_3 = var_0_0(arg_4_0)
 
-					if next_action then
-						action_list[#action_list + 1] = next_action
+					if var_5_3 then
+						arg_4_0[#arg_4_0 + 1] = var_5_3
 					else
 						return true
 					end
 				else
-					retrying = true
+					var_4_0 = true
 
-					cancel_action(action)
+					var_0_1(var_5_0)
 
-					action_list[#action_list] = nil
+					arg_4_0[#arg_4_0] = nil
 				end
 
 				return false
@@ -88,5 +89,5 @@ DeusGenEngine = {
 				return true, "Gen Failed"
 			end
 		end
-	end,
+	end
 }

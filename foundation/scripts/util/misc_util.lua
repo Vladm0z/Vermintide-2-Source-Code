@@ -1,37 +1,37 @@
-﻿-- chunkname: @foundation/scripts/util/misc_util.lua
+-- chunkname: @foundation/scripts/util/misc_util.lua
 
-IDENTITY = IDENTITY or function (x)
-	return x
+IDENTITY = IDENTITY or function(arg_1_0)
+	return arg_1_0
 end
-NOP = NOP or function ()
+NOP = NOP or function()
 	return
 end
-TABLE_NEW = TABLE_NEW or function ()
+TABLE_NEW = TABLE_NEW or function()
 	return {}
 end
 CONST = CONST or setmetatable({}, {
-	__call = function (self, x)
-		return x == nil and NOP or self[x]
+	__call = function(arg_4_0, arg_4_1)
+		return arg_4_1 == nil and NOP or arg_4_0[arg_4_1]
 	end,
-	__index = function (self, x)
-		local function f()
-			return x
+	__index = function(arg_5_0, arg_5_1)
+		local function var_5_0()
+			return arg_5_1
 		end
 
-		self[x] = f
+		arg_5_0[arg_5_1] = var_5_0
 
-		return f
-	end,
+		return var_5_0
+	end
 })
 
-local string_format = string.format
+local var_0_0 = string.format
 
-function printf(f, ...)
-	print(string_format(f, ...))
+function printf(arg_7_0, ...)
+	print(var_0_0(arg_7_0, ...))
 end
 
-function sprintf(f, ...)
-	return string_format(f, ...)
+function sprintf(arg_8_0, ...)
+	return var_0_0(arg_8_0, ...)
 end
 
 function cprint(...)
@@ -42,107 +42,109 @@ function cprint(...)
 	end
 end
 
-function cprintf(f, ...)
-	local s = string_format(f, ...)
+function cprintf(arg_10_0, ...)
+	local var_10_0 = var_0_0(arg_10_0, ...)
 
-	print(s)
+	print(var_10_0)
 
 	if IS_WINDOWS and DEDICATED_SERVER then
-		CommandWindow.print(s)
+		CommandWindow.print(var_10_0)
 	end
 end
 
-function to_boolean(a)
-	local t = type(a)
+function to_boolean(arg_11_0)
+	local var_11_0 = type(arg_11_0)
 
-	if t == "number" then
-		return a ~= 0
-	elseif t == "string" then
-		return a == "true"
-	elseif t == "boolean" then
-		return a
-	elseif t == "nil" then
+	if var_11_0 == "number" then
+		return arg_11_0 ~= 0
+	elseif var_11_0 == "string" then
+		return arg_11_0 == "true"
+	elseif var_11_0 == "boolean" then
+		return arg_11_0
+	elseif var_11_0 == "nil" then
 		return false
-	elseif t == "table" then
+	elseif var_11_0 == "table" then
 		return true
 	end
 
-	ferror("unsupported type(%s)", type(a))
+	ferror("unsupported type(%s)", type(arg_11_0))
 
 	return false
 end
 
-function bool_string(b)
-	return to_boolean(b) and "true" or "false"
+function bool_string(arg_12_0)
+	return to_boolean(arg_12_0) and "true" or "false"
 end
 
-function vector_string(v)
-	local x, y, z = v[1], v[2], v[3]
+function vector_string(arg_13_0)
+	local var_13_0 = arg_13_0[1]
+	local var_13_1 = arg_13_0[2]
+	local var_13_2 = arg_13_0[3]
 
-	return string.format("x(%.2f) y(%.2f) z(%.2f)", x, y, z)
+	return string.format("x(%.2f) y(%.2f) z(%.2f)", var_13_0, var_13_1, var_13_2)
 end
 
-function T(v1, v2)
-	if v1 ~= nil then
-		return v1
+function T(arg_14_0, arg_14_1)
+	if arg_14_0 ~= nil then
+		return arg_14_0
 	else
-		return v2
+		return arg_14_1
 	end
 end
 
 varargs = varargs or {}
 
-varargs.to_table = function (...)
-	local values = {}
-	local num_args = select("#", ...)
+function varargs.to_table(...)
+	local var_15_0 = {}
+	local var_15_1 = select("#", ...)
 
-	for i = 1, num_args do
-		local val = select(i, ...)
+	for iter_15_0 = 1, var_15_1 do
+		local var_15_2 = select(iter_15_0, ...)
 
-		table.insert(values, val)
+		table.insert(var_15_0, var_15_2)
 	end
 
-	return values, #values
+	return var_15_0, #var_15_0
 end
 
-varargs.join = function (delimiter, ...)
-	local output = ""
-	local num_args = select("#", ...)
+function varargs.join(arg_16_0, ...)
+	local var_16_0 = ""
+	local var_16_1 = select("#", ...)
 
-	for i = 1, num_args - 1 do
-		local val = select(i, ...)
+	for iter_16_0 = 1, var_16_1 - 1 do
+		local var_16_2 = select(iter_16_0, ...)
 
-		output = output .. tostring(val) .. delimiter
+		var_16_0 = var_16_0 .. tostring(var_16_2) .. arg_16_0
 	end
 
-	return output .. tostring(select(num_args, ...))
+	return var_16_0 .. tostring(select(var_16_1, ...))
 end
 
-function split_string(s)
-	local parts = {}
+function split_string(arg_17_0)
+	local var_17_0 = {}
 
-	for part in s:gmatch("(%S+)") do
-		parts[#parts + 1] = part
+	for iter_17_0 in arg_17_0:gmatch("(%S+)") do
+		var_17_0[#var_17_0 + 1] = iter_17_0
 	end
 
-	return parts
+	return var_17_0
 end
 
-function unpack_string(s)
-	return unpack(split_string(s))
+function unpack_string(arg_18_0)
+	return unpack(split_string(arg_18_0))
 end
 
-function ituple(t)
-	return ituple_iterator, t, -1
+function ituple(arg_19_0)
+	return ituple_iterator, arg_19_0, -1
 end
 
-function ituple_iterator(t, k)
-	local k1 = k + 2
-	local val1 = t[k1]
+function ituple_iterator(arg_20_0, arg_20_1)
+	local var_20_0 = arg_20_1 + 2
+	local var_20_1 = arg_20_0[var_20_0]
 
-	if val1 == nil then
+	if var_20_1 == nil then
 		return
 	end
 
-	return k1, val1, t[k + 3]
+	return var_20_0, var_20_1, arg_20_0[arg_20_1 + 3]
 end

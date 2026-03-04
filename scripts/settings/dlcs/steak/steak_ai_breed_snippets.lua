@@ -1,141 +1,131 @@
-﻿-- chunkname: @scripts/settings/dlcs/steak/steak_ai_breed_snippets.lua
+-- chunkname: @scripts/settings/dlcs/steak/steak_ai_breed_snippets.lua
 
 AiBreedSnippets = AiBreedSnippets or {}
 
-AiBreedSnippets.on_beastmen_minotaur_spawn = function (unit, blackboard)
-	local t = Managers.time:time("game")
+function AiBreedSnippets.on_beastmen_minotaur_spawn(arg_1_0, arg_1_1)
+	arg_1_1.charge_astar_timer = Managers.time:time("game")
+	arg_1_1.num_charges_targeting_target = 0
+	arg_1_1.target_is_charged = false
+	arg_1_1.aggro_list = {}
 
-	blackboard.charge_astar_timer = t
-	blackboard.num_charges_targeting_target = 0
-	blackboard.target_is_charged = false
-	blackboard.aggro_list = {}
-
-	local breed = blackboard.breed
-	local allowed_layers = {
-		bot_poison_wind = 1,
-		bot_ratling_gun_fire = 1,
-		destructible_wall = 0,
-		doors = 1,
-		fire_grenade = 1,
+	local var_1_0 = arg_1_1.breed
+	local var_1_1 = {
 		planks = 1,
+		bot_ratling_gun_fire = 1,
+		doors = 1,
+		destructible_wall = 0,
+		bot_poison_wind = 1,
 		temporary_wall = 0,
+		fire_grenade = 1
 	}
-	local navigation_extension = blackboard.navigation_extension
-	local navtag_layer_cost_table = navigation_extension:get_navtag_layer_cost_table("charge")
+	local var_1_2 = arg_1_1.navigation_extension
+	local var_1_3 = var_1_2:get_navtag_layer_cost_table("charge")
 
-	table.merge(allowed_layers, NAV_TAG_VOLUME_LAYER_COST_AI)
-	AiUtils.initialize_cost_table(navtag_layer_cost_table, allowed_layers)
+	table.merge(var_1_1, NAV_TAG_VOLUME_LAYER_COST_AI)
+	AiUtils.initialize_cost_table(var_1_3, var_1_1)
 
-	local nav_cost_map_cost_table = navigation_extension:nav_cost_map_cost_table("charge")
+	local var_1_4 = var_1_2:nav_cost_map_cost_table("charge")
 
-	AiUtils.initialize_nav_cost_map_cost_table(nav_cost_map_cost_table)
+	AiUtils.initialize_nav_cost_map_cost_table(var_1_4)
 
-	local charge_traverse_logic = navigation_extension:get_reusable_traverse_logic("charge", nav_cost_map_cost_table)
+	local var_1_5 = var_1_2:get_reusable_traverse_logic("charge", var_1_4)
 
-	GwNavTraverseLogic.set_navtag_layer_cost_table(charge_traverse_logic, navtag_layer_cost_table)
+	GwNavTraverseLogic.set_navtag_layer_cost_table(var_1_5, var_1_3)
 
-	blackboard.aggro_list = {}
-	blackboard.fling_skaven_timer = 0
-	blackboard.next_move_check = 0
-	blackboard.is_valid_target_func = GenericStatusExtension.is_ogre_target
+	arg_1_1.aggro_list = {}
+	arg_1_1.fling_skaven_timer = 0
+	arg_1_1.next_move_check = 0
+	arg_1_1.is_valid_target_func = GenericStatusExtension.is_ogre_target
 
-	local conflict_director = Managers.state.conflict
-	local ai_simple = ScriptUnit.extension(unit, "ai_system")
+	local var_1_6 = Managers.state.conflict
 
-	ai_simple:set_perception(breed.perception, breed.target_selection_angry)
-	conflict_director:add_angry_boss(1, blackboard)
+	ScriptUnit.extension(arg_1_0, "ai_system"):set_perception(var_1_0.perception, var_1_0.target_selection_angry)
+	var_1_6:add_angry_boss(1, arg_1_1)
 
-	blackboard.is_angry = true
+	arg_1_1.is_angry = true
 
-	local side = Managers.state.side.side_by_unit[unit]
-	local enemy_player_and_bot_units = side.ENEMY_PLAYER_AND_BOT_UNITS
-	local weights = breed.perception_weights
-	local best_score = 0
-	local best_enemy
+	local var_1_7 = Managers.state.side.side_by_unit[arg_1_0].ENEMY_PLAYER_AND_BOT_UNITS
+	local var_1_8 = var_1_0.perception_weights
+	local var_1_9 = 0
+	local var_1_10
 
-	for i = 1, #enemy_player_and_bot_units do
-		local enemy_unit = enemy_player_and_bot_units[i]
-		local enemy_pos = POSITION_LOOKUP[enemy_unit]
-		local pos = POSITION_LOOKUP[unit]
-		local dist = Vector3.distance(pos, enemy_pos)
+	for iter_1_0 = 1, #var_1_7 do
+		local var_1_11 = var_1_7[iter_1_0]
+		local var_1_12 = POSITION_LOOKUP[var_1_11]
+		local var_1_13 = POSITION_LOOKUP[arg_1_0]
+		local var_1_14 = Vector3.distance(var_1_13, var_1_12)
 
-		if dist < breed.detection_radius then
-			local inv_radius = math.clamp(1 - dist / weights.max_distance, 0, 1)
-			local score = inv_radius * inv_radius * weights.distance_weight
+		if var_1_14 < var_1_0.detection_radius then
+			local var_1_15 = math.clamp(1 - var_1_14 / var_1_8.max_distance, 0, 1)
+			local var_1_16 = var_1_15 * var_1_15 * var_1_8.distance_weight
 
-			if best_score < score then
-				best_score = score
-				best_enemy = enemy_unit
+			if var_1_9 < var_1_16 then
+				var_1_9 = var_1_16
+				var_1_10 = var_1_11
 			end
 		end
 	end
 
-	if best_enemy then
-		local aggro_list = blackboard.aggro_list
-
-		aggro_list[best_enemy] = 50
+	if var_1_10 then
+		arg_1_1.aggro_list[var_1_10] = 50
 	end
 
-	conflict_director:freeze_intensity_decay(10)
-	conflict_director:add_unit_to_bosses(unit)
+	var_1_6:freeze_intensity_decay(10)
+	var_1_6:add_unit_to_bosses(arg_1_0)
 end
 
-AiBreedSnippets.on_beastmen_minotaur_update = function (unit, blackboard, t)
-	local nav_cost_map_cost_table = blackboard.navigation_extension:nav_cost_map_cost_table("charge")
-	local traverse_logic = blackboard.navigation_extension:get_reusable_traverse_logic("charge", nav_cost_map_cost_table)
+function AiBreedSnippets.on_beastmen_minotaur_update(arg_2_0, arg_2_1, arg_2_2)
+	local var_2_0 = arg_2_1.navigation_extension:nav_cost_map_cost_table("charge")
+	local var_2_1 = arg_2_1.navigation_extension:get_reusable_traverse_logic("charge", var_2_0)
 
-	if traverse_logic and blackboard.charge_astar_timer and not blackboard.charge_state and Unit.alive(blackboard.target_unit) then
-		local astar = blackboard.navigation_extension:get_reusable_astar("charge", true)
+	if var_2_1 and arg_2_1.charge_astar_timer and not arg_2_1.charge_state and Unit.alive(arg_2_1.target_unit) then
+		local var_2_2 = arg_2_1.navigation_extension:get_reusable_astar("charge", true)
 
-		if astar then
-			local done = GwNavAStar.processing_finished(astar)
-
-			if done then
-				local path_found = GwNavAStar.path_found(astar)
-
-				if path_found then
-					blackboard.has_valid_astar_path = true
+		if var_2_2 then
+			if GwNavAStar.processing_finished(var_2_2) then
+				if GwNavAStar.path_found(var_2_2) then
+					arg_2_1.has_valid_astar_path = true
 				else
-					blackboard.has_valid_astar_path = false
+					arg_2_1.has_valid_astar_path = false
 				end
 
-				blackboard.navigation_extension:destroy_reusable_astar("charge")
+				arg_2_1.navigation_extension:destroy_reusable_astar("charge")
 
-				blackboard.charge_astar_timer = t + 1
+				arg_2_1.charge_astar_timer = arg_2_2 + 1
 			end
-		elseif t > blackboard.charge_astar_timer then
-			local nav_world = blackboard.nav_world
-			local target_position = Unit.local_position(blackboard.target_unit, 0)
-			local success, z = GwNavQueries.triangle_from_position(nav_world, target_position, 1, 1)
+		elseif arg_2_2 > arg_2_1.charge_astar_timer then
+			local var_2_3 = arg_2_1.nav_world
+			local var_2_4 = Unit.local_position(arg_2_1.target_unit, 0)
+			local var_2_5, var_2_6 = GwNavQueries.triangle_from_position(var_2_3, var_2_4, 1, 1)
 
-			if success then
-				local wanted_position = Vector3(target_position[1], target_position[2], z)
-				local width = 7
-				local new_astar = blackboard.navigation_extension:get_reusable_astar("charge")
+			if var_2_5 then
+				local var_2_7 = Vector3(var_2_4[1], var_2_4[2], var_2_6)
+				local var_2_8 = 7
+				local var_2_9 = arg_2_1.navigation_extension:get_reusable_astar("charge")
 
-				GwNavAStar.start_with_propagation_box(new_astar, nav_world, Unit.local_position(unit, 0), wanted_position, width, traverse_logic)
+				GwNavAStar.start_with_propagation_box(var_2_9, var_2_3, Unit.local_position(arg_2_0, 0), var_2_7, var_2_8, var_2_1)
 
-				blackboard.charge_astar_timer = t + 1
+				arg_2_1.charge_astar_timer = arg_2_2 + 1
 			else
-				blackboard.charge_astar_timer = t + 0.1
+				arg_2_1.charge_astar_timer = arg_2_2 + 0.1
 			end
 		end
 	end
 end
 
-AiBreedSnippets.on_beastmen_minotaur_death = function (unit, blackboard, t)
+function AiBreedSnippets.on_beastmen_minotaur_death(arg_3_0, arg_3_1, arg_3_2)
 	print("minotaur died!")
 
-	if not blackboard.rewarded_boss_loot then
-		AiBreedSnippets.reward_boss_kill_loot(unit, blackboard)
+	if not arg_3_1.rewarded_boss_loot then
+		AiBreedSnippets.reward_boss_kill_loot(arg_3_0, arg_3_1)
 	end
 
-	local conflict_director = Managers.state.conflict
+	local var_3_0 = Managers.state.conflict
 
-	if blackboard.is_angry then
-		conflict_director:add_angry_boss(-1)
+	if arg_3_1.is_angry then
+		var_3_0:add_angry_boss(-1)
 	end
 
-	conflict_director:freeze_intensity_decay(1)
-	conflict_director:remove_unit_from_bosses(unit)
+	var_3_0:freeze_intensity_decay(1)
+	var_3_0:remove_unit_from_bosses(arg_3_0)
 end

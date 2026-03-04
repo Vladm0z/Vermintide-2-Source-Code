@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/settings/player_movement_settings_vs.lua
+-- chunkname: @scripts/settings/player_movement_settings_vs.lua
 
 PlayerUnitMovementSettings.player_air_speed_scale_pouncing = 0.005
 PlayerUnitMovementSettings.ghost_move_speed = 8

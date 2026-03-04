@@ -1,302 +1,300 @@
-﻿-- chunkname: @scripts/ui/hud_ui/challenge_tracker_ui.lua
+-- chunkname: @scripts/ui/hud_ui/challenge_tracker_ui.lua
 
-local definitions = local_require("scripts/ui/hud_ui/challenge_tracker_ui_definitions")
+local var_0_0 = local_require("scripts/ui/hud_ui/challenge_tracker_ui_definitions")
 
 ChallengeTrackerUI = class(ChallengeTrackerUI)
 
-local RESTACK_SPEED = 500
-local RETAINED_MODE_ENABLED = definitions.RETAINED_MODE_ENABLED
+local var_0_1 = 500
+local var_0_2 = var_0_0.RETAINED_MODE_ENABLED
 
-ChallengeTrackerUI.init = function (self, parent, ingame_ui_context)
-	self._ui_renderer = ingame_ui_context.ui_renderer
-	self._wwise_world = ingame_ui_context.wwise_world
+function ChallengeTrackerUI.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0._ui_renderer = arg_1_2.ui_renderer
+	arg_1_0._wwise_world = arg_1_2.wwise_world
 
-	self:_create_ui_elements()
+	arg_1_0:_create_ui_elements()
 end
 
-ChallengeTrackerUI.destroy = function (self)
-	if RETAINED_MODE_ENABLED then
-		local widgets = self._data and self._data.widgets
+function ChallengeTrackerUI.destroy(arg_2_0)
+	if var_0_2 then
+		local var_2_0 = arg_2_0._data and arg_2_0._data.widgets
 
-		if widgets then
-			UIUtils.destroy_widgets(self._ui_renderer, widgets)
+		if var_2_0 then
+			UIUtils.destroy_widgets(arg_2_0._ui_renderer, var_2_0)
 		end
 	end
 end
 
-ChallengeTrackerUI._play_sound = function (self, sound_event)
-	return WwiseWorld.trigger_event(self._wwise_world, sound_event)
+function ChallengeTrackerUI._play_sound(arg_3_0, arg_3_1)
+	return WwiseWorld.trigger_event(arg_3_0._wwise_world, arg_3_1)
 end
 
-ChallengeTrackerUI._create_ui_elements = function (self)
-	self:destroy()
+function ChallengeTrackerUI._create_ui_elements(arg_4_0)
+	arg_4_0:destroy()
 
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
-	self._render_settings = {
-		alpha_multiplier = 1,
+	arg_4_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	arg_4_0._render_settings = {
+		alpha_multiplier = 1
 	}
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, definitions.animation_definitions)
-	self._data = {
+	arg_4_0._ui_animator = UIAnimator:new(arg_4_0._ui_scenegraph, var_0_0.animation_definitions)
+	arg_4_0._data = {
 		offset = {
 			0,
 			0,
-			0,
+			0
 		},
 		widgets = {},
 		widget_by_challenge = {},
-		challenges = {},
+		challenges = {}
 	}
-	self._animation_queue = MakeTableWeakKeys({})
-	self._restack_targets = {}
+	arg_4_0._animation_queue = MakeTableWeakKeys({})
+	arg_4_0._restack_targets = {}
 
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_4_0._ui_renderer)
 
-	self._dirty = true
+	arg_4_0._dirty = true
 end
 
-local function sort_by_category(a, b)
-	return a:get_category() < b:get_category()
+local function var_0_3(arg_5_0, arg_5_1)
+	return arg_5_0:get_category() < arg_5_1:get_category()
 end
 
-ChallengeTrackerUI._refresh_challenge_data = function (self, data)
-	table.clear(data.challenges)
+function ChallengeTrackerUI._refresh_challenge_data(arg_6_0, arg_6_1)
+	table.clear(arg_6_1.challenges)
 
-	local challenges, n = Managers.venture.challenge:get_challenges_filtered(data.challenges)
+	local var_6_0, var_6_1 = Managers.venture.challenge:get_challenges_filtered(arg_6_1.challenges)
 
-	table.sort(challenges, sort_by_category)
+	table.sort(var_6_0, var_0_3)
 
-	local active_widgets = data.widgets
-	local num_active_widgets = #active_widgets
-	local gui = RETAINED_MODE_ENABLED and self._ui_renderer.gui_retained or self._ui_renderer.gui
+	local var_6_2 = arg_6_1.widgets
+	local var_6_3 = #var_6_2
+	local var_6_4 = var_0_2 and arg_6_0._ui_renderer.gui_retained or arg_6_0._ui_renderer.gui
 
-	for i = 1, n do
-		local challenge = challenges[i]
-		local challenge_status = challenge:get_status()
-		local widget = data.widget_by_challenge[challenge]
+	for iter_6_0 = 1, var_6_1 do
+		local var_6_5 = var_6_0[iter_6_0]
+		local var_6_6 = var_6_5:get_status()
 
-		if not widget and challenge_status == InGameChallengeStatus.InProgress then
-			num_active_widgets = num_active_widgets + 1
-			widget = definitions.create_objective(challenge, gui, data.offset, num_active_widgets)
-			data.widgets[num_active_widgets] = widget
-			data.widget_by_challenge[challenge] = widget
+		if not arg_6_1.widget_by_challenge[var_6_5] and var_6_6 == InGameChallengeStatus.InProgress then
+			var_6_3 = var_6_3 + 1
 
-			self:_play_animation_queued("on_enter", widget)
+			local var_6_7 = var_0_0.create_objective(var_6_5, var_6_4, arg_6_1.offset, var_6_3)
+
+			arg_6_1.widgets[var_6_3] = var_6_7
+			arg_6_1.widget_by_challenge[var_6_5] = var_6_7
+
+			arg_6_0:_play_animation_queued("on_enter", var_6_7)
 		end
 	end
 
-	for i = 1, num_active_widgets do
-		local widget = active_widgets[i]
-		local content = widget.content
-		local challenge = content.challenge
-		local challenge_status = challenge:get_status()
+	for iter_6_1 = 1, var_6_3 do
+		local var_6_8 = var_6_2[iter_6_1]
+		local var_6_9 = var_6_8.content
+		local var_6_10 = var_6_9.challenge
+		local var_6_11 = var_6_10:get_status()
 
-		if challenge_status == InGameChallengeStatus.InProgress then
-			content.progress, content.max_progress = challenge:get_progress()
+		if var_6_11 == InGameChallengeStatus.InProgress then
+			var_6_9.progress, var_6_9.max_progress = var_6_10:get_progress()
 
-			if content.last_progress ~= content.progress then
-				self:_play_animation_queued("on_progress", widget)
+			if var_6_9.last_progress ~= var_6_9.progress then
+				arg_6_0:_play_animation_queued("on_progress", var_6_8)
 
-				content.last_progress = content.progress
+				var_6_9.last_progress = var_6_9.progress
 			end
-		elseif not content.is_done and not content.canceled then
-			if challenge_status == InGameChallengeStatus.Finished then
-				local challenge_result = challenge:get_result()
+		elseif not var_6_9.is_done and not var_6_9.canceled then
+			if var_6_11 == InGameChallengeStatus.Finished then
+				if var_6_10:get_result() == InGameChallengeResult.Completed then
+					var_6_9.is_done = true
+					var_6_9.progress, var_6_9.max_progress = var_6_10:get_progress()
 
-				if challenge_result == InGameChallengeResult.Completed then
-					content.is_done = true
-					content.progress, content.max_progress = challenge:get_progress()
-
-					self:_play_animation_queued("on_progress", widget)
-					self:_play_animation_queued("on_done", widget)
+					arg_6_0:_play_animation_queued("on_progress", var_6_8)
+					arg_6_0:_play_animation_queued("on_done", var_6_8)
 				else
-					content.canceled = true
+					var_6_9.canceled = true
 
-					self:_play_animation_queued("on_cancel", widget)
+					arg_6_0:_play_animation_queued("on_cancel", var_6_8)
 				end
-			elseif challenge_status == InGameChallengeStatus.Paused then
-				content.canceled = true
+			elseif var_6_11 == InGameChallengeStatus.Paused then
+				var_6_9.canceled = true
 
-				self:_play_animation_queued("on_cancel", widget)
+				arg_6_0:_play_animation_queued("on_cancel", var_6_8)
 			end
 		end
 	end
 end
 
-ChallengeTrackerUI._cb_on_done = function (self, widget, challenge)
-	local data = self._data
-	local index = table.index_of(data.widgets, widget)
-	local num_widgets = #data.widgets
+function ChallengeTrackerUI._cb_on_done(arg_7_0, arg_7_1, arg_7_2)
+	local var_7_0 = arg_7_0._data
+	local var_7_1 = table.index_of(var_7_0.widgets, arg_7_1)
+	local var_7_2 = #var_7_0.widgets
 
-	data.widgets[index] = nil
-	data.widget_by_challenge[challenge] = nil
-	self._animation_queue[widget] = nil
-	self._restack_targets[widget] = nil
+	var_7_0.widgets[var_7_1] = nil
+	var_7_0.widget_by_challenge[arg_7_2] = nil
+	arg_7_0._animation_queue[arg_7_1] = nil
+	arg_7_0._restack_targets[arg_7_1] = nil
 
-	if RETAINED_MODE_ENABLED then
-		UIWidget.destroy(self._ui_renderer, widget)
+	if var_0_2 then
+		UIWidget.destroy(arg_7_0._ui_renderer, arg_7_1)
 	end
 
-	local offset = data.offset
-	local restack_targets = self._restack_targets
+	local var_7_3 = var_7_0.offset
+	local var_7_4 = arg_7_0._restack_targets
 
-	for i = index + 1, num_widgets do
-		restack_targets[data.widgets[i]] = definitions.get_widget_position(offset, i - 1)[2]
-		data.widgets[i - 1] = data.widgets[i]
-		data.widgets[i] = nil
+	for iter_7_0 = var_7_1 + 1, var_7_2 do
+		var_7_4[var_7_0.widgets[iter_7_0]] = var_0_0.get_widget_position(var_7_3, iter_7_0 - 1)[2]
+		var_7_0.widgets[iter_7_0 - 1] = var_7_0.widgets[iter_7_0]
+		var_7_0.widgets[iter_7_0] = nil
 	end
 end
 
-ChallengeTrackerUI._play_animation = function (self, name, widget, initial_delay)
-	local animator = self._ui_animator
+function ChallengeTrackerUI._play_animation(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	local var_8_0 = arg_8_0._ui_animator
 
-	animator:stop_animation(widget.content.animation_id or false)
+	var_8_0:stop_animation(arg_8_2.content.animation_id or false)
 
-	widget.content.animation_id = animator:start_animation(name, widget, definitions.scenegraph_definition, {
-		view = self,
-		ui_renderer = self._ui_renderer,
-	}, initial_delay)
+	arg_8_2.content.animation_id = var_8_0:start_animation(arg_8_1, arg_8_2, var_0_0.scenegraph_definition, {
+		view = arg_8_0,
+		ui_renderer = arg_8_0._ui_renderer
+	}, arg_8_3)
 end
 
-ChallengeTrackerUI._play_animation_queued = function (self, name, widget, initial_delay)
-	local animator = self._ui_animator
-	local current_animation_id = widget.content.animation_id
+function ChallengeTrackerUI._play_animation_queued(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	local var_9_0 = arg_9_0._ui_animator
+	local var_9_1 = arg_9_2.content.animation_id
 
-	if animator:is_animation_completed(current_animation_id) then
-		self:_play_animation(name, widget, initial_delay)
+	if var_9_0:is_animation_completed(var_9_1) then
+		arg_9_0:_play_animation(arg_9_1, arg_9_2, arg_9_3)
 	else
-		local queue = self._animation_queue[widget] or {}
+		local var_9_2 = arg_9_0._animation_queue[arg_9_2] or {}
 
-		queue[#queue + 1] = {
-			name = name,
-			initial_delay = initial_delay,
+		var_9_2[#var_9_2 + 1] = {
+			name = arg_9_1,
+			initial_delay = arg_9_3
 		}
-		self._animation_queue[widget] = queue
+		arg_9_0._animation_queue[arg_9_2] = var_9_2
 	end
 end
 
-ChallengeTrackerUI._update_animation_queue = function (self)
-	local animator = self._ui_animator
+function ChallengeTrackerUI._update_animation_queue(arg_10_0)
+	local var_10_0 = arg_10_0._ui_animator
 
-	for widget, anim_queue in pairs(self._animation_queue) do
-		local anim_data = anim_queue[1]
+	for iter_10_0, iter_10_1 in pairs(arg_10_0._animation_queue) do
+		local var_10_1 = iter_10_1[1]
 
-		if anim_data then
-			local current_animation_id = widget.content.animation_id
+		if var_10_1 then
+			local var_10_2 = iter_10_0.content.animation_id
 
-			if animator:is_animation_completed(current_animation_id) then
-				self:_play_animation(anim_data.name, widget, anim_data.initial_delay)
-				table.remove(anim_queue, 1)
+			if var_10_0:is_animation_completed(var_10_2) then
+				arg_10_0:_play_animation(var_10_1.name, iter_10_0, var_10_1.initial_delay)
+				table.remove(iter_10_1, 1)
 			end
 		else
-			self._animation_queue[widget] = nil
+			arg_10_0._animation_queue[iter_10_0] = nil
 		end
 	end
 end
 
-ChallengeTrackerUI._update_restacking = function (self, dt)
-	local restack_targets = self._restack_targets
-	local speed = RESTACK_SPEED * dt
+function ChallengeTrackerUI._update_restacking(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_0._restack_targets
+	local var_11_1 = var_0_1 * arg_11_1
 
-	for widget, target in pairs(restack_targets) do
-		local current = widget.offset[2]
-		local step = target - current
-		local step_dist = math.abs(step)
+	for iter_11_0, iter_11_1 in pairs(var_11_0) do
+		local var_11_2 = iter_11_0.offset[2]
+		local var_11_3 = iter_11_1 - var_11_2
 
-		if step_dist <= speed then
-			widget.offset[2] = target
-			restack_targets[widget] = nil
+		if var_11_1 >= math.abs(var_11_3) then
+			iter_11_0.offset[2] = iter_11_1
+			var_11_0[iter_11_0] = nil
 		else
-			local step_size = math.min(math.abs(step), speed)
+			local var_11_4 = math.min(math.abs(var_11_3), var_11_1)
 
-			widget.offset[2] = current + math.clamp(step, -step_size, step_size)
+			iter_11_0.offset[2] = var_11_2 + math.clamp(var_11_3, -var_11_4, var_11_4)
 		end
 
-		self:_set_widget_dirty(widget)
+		arg_11_0:_set_widget_dirty(iter_11_0)
 	end
 end
 
-ChallengeTrackerUI._set_widget_dirty = function (self, widget)
-	widget.element.dirty = true
-	self._dirty = true
+function ChallengeTrackerUI._set_widget_dirty(arg_12_0, arg_12_1)
+	arg_12_1.element.dirty = true
+	arg_12_0._dirty = true
 end
 
-ChallengeTrackerUI._update_animations = function (self, dt, t)
-	local ui_animator = self._ui_animator
+function ChallengeTrackerUI._update_animations(arg_13_0, arg_13_1, arg_13_2)
+	local var_13_0 = arg_13_0._ui_animator
 
-	ui_animator:update(dt)
+	var_13_0:update(arg_13_1)
 
-	local active_widgets = self._data.widgets
-	local num_active_widgets = #active_widgets
+	local var_13_1 = arg_13_0._data.widgets
+	local var_13_2 = #var_13_1
 
-	for i = 1, num_active_widgets do
-		local widget = active_widgets[i]
-		local anim_id = widget.content.animation_id
+	for iter_13_0 = 1, var_13_2 do
+		local var_13_3 = var_13_1[iter_13_0]
+		local var_13_4 = var_13_3.content.animation_id
 
-		if not ui_animator:is_animation_completed(anim_id) then
-			self:_set_widget_dirty(widget)
+		if not var_13_0:is_animation_completed(var_13_4) then
+			arg_13_0:_set_widget_dirty(var_13_3)
 		end
 	end
 end
 
-ChallengeTrackerUI._handle_resolution_modified = function (self)
+function ChallengeTrackerUI._handle_resolution_modified(arg_14_0)
 	if RESOLUTION_LOOKUP.modified then
-		UIUtils.mark_dirty(self._data.widgets)
+		UIUtils.mark_dirty(arg_14_0._data.widgets)
 
-		self._dirty = true
+		arg_14_0._dirty = true
 	end
 end
 
-local customizer_data = {
-	drag_scenegraph_id = "quest",
-	label = "Duties",
-	lock_x = false,
+local var_0_4 = {
 	lock_y = false,
 	registry_key = "questingknight",
+	drag_scenegraph_id = "quest",
 	root_scenegraph_id = "quest",
+	label = "Duties",
+	lock_x = false
 }
 
-ChallengeTrackerUI.update = function (self, dt, t)
-	HudCustomizer.run(self._ui_renderer, self._ui_scenegraph, customizer_data)
-	self:_handle_resolution_modified()
-	self:_update_restacking(dt)
-	self:_update_animation_queue()
-	self:_refresh_challenge_data(self._data)
-	self:_update_animations(dt, t)
-	self:_draw(dt)
+function ChallengeTrackerUI.update(arg_15_0, arg_15_1, arg_15_2)
+	HudCustomizer.run(arg_15_0._ui_renderer, arg_15_0._ui_scenegraph, var_0_4)
+	arg_15_0:_handle_resolution_modified()
+	arg_15_0:_update_restacking(arg_15_1)
+	arg_15_0:_update_animation_queue()
+	arg_15_0:_refresh_challenge_data(arg_15_0._data)
+	arg_15_0:_update_animations(arg_15_1, arg_15_2)
+	arg_15_0:_draw(arg_15_1)
 end
 
-ChallengeTrackerUI._draw = function (self, dt)
-	if not self._dirty and RETAINED_MODE_ENABLED or not self._is_visible then
+function ChallengeTrackerUI._draw(arg_16_0, arg_16_1)
+	if not arg_16_0._dirty and var_0_2 or not arg_16_0._is_visible then
 		return
 	end
 
-	local ui_renderer = self._ui_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local render_settings = self._render_settings
-	local input_service
-	local UIRenderer = UIRenderer
+	local var_16_0 = arg_16_0._ui_renderer
+	local var_16_1 = arg_16_0._ui_scenegraph
+	local var_16_2 = arg_16_0._render_settings
+	local var_16_3
+	local var_16_4 = UIRenderer
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+	var_16_4.begin_pass(var_16_0, var_16_1, var_16_3, arg_16_1, nil, var_16_2)
 
-	for _, widget in pairs(self._data.widgets) do
-		render_settings.alpha_multiplier = widget.content.alpha_multiplier or 1
+	for iter_16_0, iter_16_1 in pairs(arg_16_0._data.widgets) do
+		var_16_2.alpha_multiplier = iter_16_1.content.alpha_multiplier or 1
 
-		UIRenderer.draw_widget(ui_renderer, widget)
+		var_16_4.draw_widget(var_16_0, iter_16_1)
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	var_16_4.end_pass(var_16_0)
 
-	self._dirty = false
+	arg_16_0._dirty = false
 end
 
-ChallengeTrackerUI.set_visible = function (self, visible)
-	self._is_visible = visible
+function ChallengeTrackerUI.set_visible(arg_17_0, arg_17_1)
+	arg_17_0._is_visible = arg_17_1
 
-	local ui_renderer = self._ui_renderer
+	local var_17_0 = arg_17_0._ui_renderer
 
-	for _, widget in pairs(self._data.widgets) do
-		UIRenderer.set_element_visible(ui_renderer, widget.element, visible)
+	for iter_17_0, iter_17_1 in pairs(arg_17_0._data.widgets) do
+		UIRenderer.set_element_visible(var_17_0, iter_17_1.element, arg_17_1)
 	end
 
-	self._dirty = true
+	arg_17_0._dirty = true
 end

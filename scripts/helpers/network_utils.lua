@@ -1,111 +1,110 @@
-﻿-- chunkname: @scripts/helpers/network_utils.lua
+-- chunkname: @scripts/helpers/network_utils.lua
 
-function mm_printf_force(format_text, ...)
-	format_text = "[Matchmaking] " .. format_text
+function mm_printf_force(arg_1_0, ...)
+	arg_1_0 = "[Matchmaking] " .. arg_1_0
 
-	printf(format_text, ...)
+	printf(arg_1_0, ...)
 end
 
-function mm_printf(format_text, ...)
+function mm_printf(arg_2_0, ...)
 	if script_data.matchmaking_debug then
-		format_text = "[Matchmaking] " .. format_text
+		arg_2_0 = "[Matchmaking] " .. arg_2_0
 
-		printf(format_text, ...)
+		printf(arg_2_0, ...)
 	end
 end
 
 script_data.matchmaking_debug = true
 NetworkUtils = {}
 
-NetworkUtils.network_safe_position = function (pos)
-	local pos_min = NetworkConstants.position.min
-	local pos_max = NetworkConstants.position.max
-	local pos_x = pos.x
-	local pos_y = pos.y
-	local pos_z = pos.z
-	local in_range_x = pos_min <= pos_x and pos_x <= pos_max
-	local in_range_y = pos_min <= pos_y and pos_y <= pos_max
-	local in_range_z = pos_min <= pos_z and pos_z <= pos_max
-	local in_range = in_range_x and in_range_y and in_range_z
+function NetworkUtils.network_safe_position(arg_3_0)
+	local var_3_0 = NetworkConstants.position.min
+	local var_3_1 = NetworkConstants.position.max
+	local var_3_2 = arg_3_0.x
+	local var_3_3 = arg_3_0.y
+	local var_3_4 = arg_3_0.z
+	local var_3_5 = var_3_0 <= var_3_2 and var_3_2 <= var_3_1
+	local var_3_6 = var_3_0 <= var_3_3 and var_3_3 <= var_3_1
+	local var_3_7 = var_3_0 <= var_3_4 and var_3_4 <= var_3_1
 
-	return in_range
+	return var_3_5 and var_3_6 and var_3_7
 end
 
-NetworkUtils.get_network_safe_damage_hotjoin_sync = function (damage)
-	local damage_min = NetworkConstants.damage_hotjoin_sync.min
-	local damage_max = NetworkConstants.damage_hotjoin_sync.max
+function NetworkUtils.get_network_safe_damage_hotjoin_sync(arg_4_0)
+	local var_4_0 = NetworkConstants.damage_hotjoin_sync.min
+	local var_4_1 = NetworkConstants.damage_hotjoin_sync.max
 
-	damage = math.clamp(damage, damage_min, damage_max)
+	arg_4_0 = math.clamp(arg_4_0, var_4_0, var_4_1)
 
-	return damage
+	return arg_4_0
 end
 
-NetworkUtils.network_clamp_position = function (pos)
-	local pos_constant = NetworkConstants.position
-	local pos_min = pos_constant.min
-	local pos_max = pos_constant.max
+function NetworkUtils.network_clamp_position(arg_5_0)
+	local var_5_0 = NetworkConstants.position
+	local var_5_1 = var_5_0.min
+	local var_5_2 = var_5_0.max
 
-	return Vector3.clamp(pos, pos_min, pos_max)
+	return Vector3.clamp(arg_5_0, var_5_1, var_5_2)
 end
 
-NetworkUtils.announce_chat_peer_joined = function (peer_id, lobby)
-	local sender = PlayerUtils.player_name(peer_id, lobby)
-	local message = string.format(Localize("system_chat_player_joined_the_game"), sender)
-	local pop_chat = true
+function NetworkUtils.announce_chat_peer_joined(arg_6_0, arg_6_1)
+	local var_6_0 = PlayerUtils.player_name(arg_6_0, arg_6_1)
+	local var_6_1 = string.format(Localize("system_chat_player_joined_the_game"), var_6_0)
+	local var_6_2 = true
 
-	Managers.chat:add_local_system_message(1, message, pop_chat)
+	Managers.chat:add_local_system_message(1, var_6_1, var_6_2)
 end
 
-local peer_left_ignored_states = table.set({
+local var_0_0 = table.set({
 	"MatchmakingStatePartyJoins",
-	"MatchmakingStateJoinGame",
+	"MatchmakingStateJoinGame"
 })
 
-NetworkUtils.announce_chat_peer_left = function (peer_id, lobby)
-	local matchmaking_manager = Managers.matchmaking
-	local matchmaking_state = matchmaking_manager and matchmaking_manager:state()
-	local matchmaking_state_name = matchmaking_state and matchmaking_state.NAME
+function NetworkUtils.announce_chat_peer_left(arg_7_0, arg_7_1)
+	local var_7_0 = Managers.matchmaking
+	local var_7_1 = var_7_0 and var_7_0:state()
+	local var_7_2 = var_7_1 and var_7_1.NAME
 
-	if peer_left_ignored_states[matchmaking_state_name] then
+	if var_0_0[var_7_2] then
 		return
 	end
 
-	local sender = PlayerUtils.player_name(peer_id, lobby)
-	local message = string.format(Localize("system_chat_player_left_the_game"), sender)
-	local pop_chat = true
+	local var_7_3 = PlayerUtils.player_name(arg_7_0, arg_7_1)
+	local var_7_4 = string.format(Localize("system_chat_player_left_the_game"), var_7_3)
+	local var_7_5 = true
 
-	Managers.chat:add_local_system_message(1, message, pop_chat)
+	Managers.chat:add_local_system_message(1, var_7_4, var_7_5)
 end
 
-local cached_ip_port = {}
+local var_0_1 = {}
 
-NetworkUtils.split_ip_port = function (ip_port)
-	local parts, n = string.split(ip_port, ":", cached_ip_port)
+function NetworkUtils.split_ip_port(arg_8_0)
+	local var_8_0, var_8_1 = string.split(arg_8_0, ":", var_0_1)
 
-	if parts and n >= 2 then
-		return parts[1], parts[2]
+	if var_8_0 and var_8_1 >= 2 then
+		return var_8_0[1], var_8_0[2]
 	end
 
 	return nil, nil
 end
 
-NetworkUtils.net_pack_flexmatch_ticket = function (ticket)
-	local STRING_MAX = 500
-	local id_size = #ticket
-	local parts = math.ceil(id_size / STRING_MAX)
-	local max_size = Network.type_info("flexmatch_ticket").max_size
+function NetworkUtils.net_pack_flexmatch_ticket(arg_9_0)
+	local var_9_0 = 500
+	local var_9_1 = #arg_9_0
+	local var_9_2 = math.ceil(var_9_1 / var_9_0)
+	local var_9_3 = Network.type_info("flexmatch_ticket").max_size
 
-	fassert(parts <= max_size, "Flexmatch ticket is too big (%s>%s)", id_size, max_size * STRING_MAX)
+	fassert(var_9_2 <= var_9_3, "Flexmatch ticket is too big (%s>%s)", var_9_1, var_9_3 * var_9_0)
 
-	local networkified_ticket = {}
+	local var_9_4 = {}
 
-	for i = 1, parts do
-		networkified_ticket[i] = string.sub(ticket, (i - 1) * STRING_MAX + 1, math.min(i * STRING_MAX, id_size))
+	for iter_9_0 = 1, var_9_2 do
+		var_9_4[iter_9_0] = string.sub(arg_9_0, (iter_9_0 - 1) * var_9_0 + 1, math.min(iter_9_0 * var_9_0, var_9_1))
 	end
 
-	return networkified_ticket
+	return var_9_4
 end
 
-NetworkUtils.unnet_pack_flexmatch_ticket = function (packed_ticket)
-	return table.concat(packed_ticket)
+function NetworkUtils.unnet_pack_flexmatch_ticket(arg_10_0)
+	return table.concat(arg_10_0)
 end

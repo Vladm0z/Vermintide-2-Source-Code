@@ -1,101 +1,97 @@
-﻿-- chunkname: @scripts/settings/dlcs/mutators_batch_01/mutators_batch_01_buff_settings.lua
+-- chunkname: @scripts/settings/dlcs/mutators_batch_01/mutators_batch_01_buff_settings.lua
 
-local settings = DLCSettings.mutators_batch_01
+local var_0_0 = DLCSettings.mutators_batch_01
 
-settings.buff_templates = {
+var_0_0.buff_templates = {
 	mutator_ticking_bomb = {
 		buffs = {
 			{
-				apply_buff_func = "apply_ticking_bomb",
 				duration = 8,
-				icon = "buff_icon_mutator_ticking_bomb",
-				max_stacks = 1,
 				name = "mutator_ticking_bomb",
 				remove_buff_func = "remove_ticking_bomb",
+				icon = "buff_icon_mutator_ticking_bomb",
+				max_stacks = 1,
 				update_func = "update_ticking_bomb",
-			},
-		},
+				apply_buff_func = "apply_ticking_bomb"
+			}
+		}
 	},
 	ticking_bomb_decrease_movement = {
 		buffs = {
 			{
 				apply_buff_func = "apply_action_lerp_movement_buff",
-				duration = 3,
-				lerp_time = 2,
-				max_stacks = 1,
 				multiplier = 0.5,
+				update_func = "update_action_lerp_movement_buff",
 				name = "decrease_speed",
 				remove_buff_func = "remove_action_lerp_movement_buff",
 				remove_buff_name = "planted_return_to_normal_movement",
-				update_func = "update_action_lerp_movement_buff",
+				lerp_time = 2,
+				max_stacks = 1,
+				duration = 3,
 				path_to_movement_setting_to_modify = {
-					"move_speed",
-				},
-			},
-		},
-	},
+					"move_speed"
+				}
+			}
+		}
+	}
 }
-settings.buff_function_templates = {
-	apply_ticking_bomb = function (unit, buff, params, world)
-		WwiseUtils.trigger_unit_event(world, "Play_mutator_ticking_bomb_tick", unit, 0)
+var_0_0.buff_function_templates = {
+	apply_ticking_bomb = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+		WwiseUtils.trigger_unit_event(arg_1_3, "Play_mutator_ticking_bomb_tick", arg_1_0, 0)
 
-		local local_player = Managers.player:local_player()
-		local local_player_unit = local_player and local_player.player_unit
+		local var_1_0 = Managers.player:local_player()
 
-		if unit == local_player_unit then
-			local first_person_extension = ScriptUnit.extension(unit, "first_person_system")
-			local first_person_unit = first_person_extension.first_person_unit
-			local fx = World.create_particles(world, "fx/ticking_bomb_1p_01", POSITION_LOOKUP[first_person_unit])
+		if arg_1_0 == (var_1_0 and var_1_0.player_unit) then
+			local var_1_1 = ScriptUnit.extension(arg_1_0, "first_person_system").first_person_unit
+			local var_1_2 = World.create_particles(arg_1_3, "fx/ticking_bomb_1p_01", POSITION_LOOKUP[var_1_1])
 
-			World.link_particles(world, fx, first_person_unit, Unit.node(first_person_unit, "root_point"), Matrix4x4.identity(), "stop")
+			World.link_particles(arg_1_3, var_1_2, var_1_1, Unit.node(var_1_1, "root_point"), Matrix4x4.identity(), "stop")
 
-			local wwise_world = Managers.world:wwise_world(world)
+			local var_1_3 = Managers.world:wwise_world(arg_1_3)
 
-			WwiseWorld.trigger_event(wwise_world, "Play_mutator_ticking_bomb_start")
+			WwiseWorld.trigger_event(var_1_3, "Play_mutator_ticking_bomb_start")
 		else
-			local fx = World.create_particles(world, "fx/ticking_bomb_01", POSITION_LOOKUP[unit])
+			local var_1_4 = World.create_particles(arg_1_3, "fx/ticking_bomb_01", POSITION_LOOKUP[arg_1_0])
 
-			World.link_particles(world, fx, unit, Unit.node(unit, "root_point"), Matrix4x4.identity(), "stop")
+			World.link_particles(arg_1_3, var_1_4, arg_1_0, Unit.node(arg_1_0, "root_point"), Matrix4x4.identity(), "stop")
 		end
 	end,
-	update_ticking_bomb = function (unit, buff, params, world)
+	update_ticking_bomb = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		return
 	end,
-	remove_ticking_bomb = function (unit, buff, params, world)
+	remove_ticking_bomb = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 		if Managers.state.network.is_server then
-			local explosion_position = POSITION_LOOKUP[unit]
-			local damage_source = "grenade_frag_01"
-			local explosion_template = ExplosionUtils.get_template("ticking_bomb_explosion")
+			local var_3_0 = POSITION_LOOKUP[arg_3_0]
+			local var_3_1 = "grenade_frag_01"
+			local var_3_2 = ExplosionUtils.get_template("ticking_bomb_explosion")
 
-			if explosion_position then
-				DamageUtils.create_explosion(world, unit, explosion_position, Quaternion.identity(), explosion_template, 1, damage_source, true, false, unit, false)
+			if var_3_0 then
+				DamageUtils.create_explosion(arg_3_3, arg_3_0, var_3_0, Quaternion.identity(), var_3_2, 1, var_3_1, true, false, arg_3_0, false)
 
-				local attacker_unit_id = Managers.state.unit_storage:go_id(unit)
-				local explosion_template_id = NetworkLookup.explosion_templates[explosion_template.name]
-				local damage_source_id = NetworkLookup.damage_sources[damage_source]
+				local var_3_3 = Managers.state.unit_storage:go_id(arg_3_0)
+				local var_3_4 = NetworkLookup.explosion_templates[var_3_2.name]
+				local var_3_5 = NetworkLookup.damage_sources[var_3_1]
 
-				Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", attacker_unit_id, false, explosion_position, Quaternion.identity(), explosion_template_id, 1, damage_source_id, 0, false, attacker_unit_id)
+				Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", var_3_3, false, var_3_0, Quaternion.identity(), var_3_4, 1, var_3_5, 0, false, var_3_3)
 			end
 		end
 
-		local player = Managers.player:owner(unit)
+		local var_3_6 = Managers.player:owner(arg_3_0)
 
-		if player and not player.remote then
-			local unit_rotation = ScriptUnit.extension(unit, "first_person_system"):current_rotation()
+		if var_3_6 and not var_3_6.remote then
+			local var_3_7 = ScriptUnit.extension(arg_3_0, "first_person_system"):current_rotation()
+			local var_3_8 = Quaternion.flat_no_roll(var_3_7)
+			local var_3_9 = Quaternion.multiply(Quaternion.axis_angle(Vector3.up(), math.pi), var_3_8)
+			local var_3_10 = Quaternion.multiply(Quaternion.axis_angle(Vector3.up(), math.random(-45, 45) * math.pi / 180), var_3_9)
+			local var_3_11 = Quaternion.forward(var_3_10)
+			local var_3_12 = 12
+			local var_3_13 = 6
+			local var_3_14 = Vector3.normalize(var_3_11) * var_3_12
 
-			unit_rotation = Quaternion.flat_no_roll(unit_rotation)
-			unit_rotation = Quaternion.multiply(Quaternion.axis_angle(Vector3.up(), math.pi), unit_rotation)
-			unit_rotation = Quaternion.multiply(Quaternion.axis_angle(Vector3.up(), math.random(-45, 45) * math.pi / 180), unit_rotation)
-
-			local catapult_direction = Quaternion.forward(unit_rotation)
-			local catapult_force = 12
-			local catapult_force_z = 6
-			local velocity = Vector3.normalize(catapult_direction) * catapult_force
-
-			Vector3.set_z(velocity, catapult_force_z)
-			StatusUtils.set_catapulted_network(unit, true, velocity)
+			Vector3.set_z(var_3_14, var_3_13)
+			StatusUtils.set_catapulted_network(arg_3_0, true, var_3_14)
 		end
 
-		WwiseUtils.trigger_unit_event(world, "Stop_mutator_ticking_bomb_tick", unit, 0)
-	end,
+		WwiseUtils.trigger_unit_event(arg_3_3, "Stop_mutator_ticking_bomb_tick", arg_3_0, 0)
+	end
 }

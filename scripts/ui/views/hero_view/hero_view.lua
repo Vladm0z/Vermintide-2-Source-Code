@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/ui/views/hero_view/hero_view.lua
+-- chunkname: @scripts/ui/views/hero_view/hero_view.lua
 
 require("scripts/ui/ui_unit_previewer")
 require("scripts/ui/views/menu_world_previewer")
@@ -10,447 +10,420 @@ require("scripts/ui/views/hero_view/states/hero_view_state_keep_decorations")
 require("scripts/ui/views/hero_view/states/hero_view_state_weave_forge")
 require("scripts/ui/views/hero_view/states/hero_view_state_handbook")
 require("scripts/settings/news_feed_templates")
-DLCUtils.map_list("hero_view", function (hero_view_ui_data)
-	require(hero_view_ui_data.filename)
+DLCUtils.map_list("hero_view", function(arg_1_0)
+	require(arg_1_0.filename)
 end)
 
-local definitions = local_require("scripts/ui/views/hero_view/hero_view_definitions")
-local widget_definitions = definitions.widgets_definitions
-local scenegraph_definition = definitions.scenegraph_definition
-local settings_by_screen = definitions.settings_by_screen
-local attachments = definitions.attachments
-local flow_events = definitions.flow_events
+local var_0_0 = local_require("scripts/ui/views/hero_view/hero_view_definitions")
+local var_0_1 = var_0_0.widgets_definitions
+local var_0_2 = var_0_0.scenegraph_definition
+local var_0_3 = var_0_0.settings_by_screen
+local var_0_4 = var_0_0.attachments
+local var_0_5 = var_0_0.flow_events
 
-local function dprint(...)
+local function var_0_6(...)
 	print("[HeroView]", ...)
 end
 
-local DO_RELOAD = true
-local debug_draw_scenegraph = false
-local debug_menu = true
+local var_0_7 = true
+local var_0_8 = false
+local var_0_9 = true
 
 HeroView = class(HeroView)
 
-HeroView.init = function (self, ingame_ui_context)
-	self.world = ingame_ui_context.world
-	self.player_manager = ingame_ui_context.player_manager
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self.ingame_ui = ingame_ui_context.ingame_ui
-	self.voting_manager = ingame_ui_context.voting_manager
-	self.profile_synchronizer = ingame_ui_context.profile_synchronizer
-	self.peer_id = ingame_ui_context.peer_id
-	self.local_player_id = ingame_ui_context.local_player_id
-	self.is_server = ingame_ui_context.is_server
-	self.is_in_inn = ingame_ui_context.is_in_inn
-	self.world_manager = ingame_ui_context.world_manager
+function HeroView.init(arg_3_0, arg_3_1)
+	arg_3_0.world = arg_3_1.world
+	arg_3_0.player_manager = arg_3_1.player_manager
+	arg_3_0.ui_renderer = arg_3_1.ui_renderer
+	arg_3_0.ui_top_renderer = arg_3_1.ui_top_renderer
+	arg_3_0.ingame_ui = arg_3_1.ingame_ui
+	arg_3_0.voting_manager = arg_3_1.voting_manager
+	arg_3_0.profile_synchronizer = arg_3_1.profile_synchronizer
+	arg_3_0.peer_id = arg_3_1.peer_id
+	arg_3_0.local_player_id = arg_3_1.local_player_id
+	arg_3_0.is_server = arg_3_1.is_server
+	arg_3_0.is_in_inn = arg_3_1.is_in_inn
+	arg_3_0.world_manager = arg_3_1.world_manager
 
-	local world = self.world_manager:world("level_world")
+	local var_3_0 = arg_3_0.world_manager:world("level_world")
 
-	self.wwise_world = Managers.world:wwise_world(world)
+	arg_3_0.wwise_world = Managers.world:wwise_world(var_3_0)
 
-	local input_manager = ingame_ui_context.input_manager
+	local var_3_1 = arg_3_1.input_manager
 
-	self.input_manager = input_manager
+	arg_3_0.input_manager = var_3_1
 
-	input_manager:create_input_service("hero_view", "IngameMenuKeymaps", "IngameMenuFilters")
-	input_manager:map_device_to_service("hero_view", "keyboard")
-	input_manager:map_device_to_service("hero_view", "mouse")
-	input_manager:map_device_to_service("hero_view", "gamepad")
+	var_3_1:create_input_service("hero_view", "IngameMenuKeymaps", "IngameMenuFilters")
+	var_3_1:map_device_to_service("hero_view", "keyboard")
+	var_3_1:map_device_to_service("hero_view", "mouse")
+	var_3_1:map_device_to_service("hero_view", "gamepad")
 
-	local state_machine_params = {
-		wwise_world = self.wwise_world,
-		ingame_ui_context = ingame_ui_context,
-		parent = self,
-		settings_by_screen = settings_by_screen,
-		input_service = FAKE_INPUT_SERVICE,
+	arg_3_0._state_machine_params = {
+		wwise_world = arg_3_0.wwise_world,
+		ingame_ui_context = arg_3_1,
+		parent = arg_3_0,
+		settings_by_screen = var_0_3,
+		input_service = FAKE_INPUT_SERVICE
 	}
-
-	self._state_machine_params = state_machine_params
-	self.units = {}
-	self.attachment_units = {}
-	self.unit_states = {}
-	self.ui_animations = {}
-	self.ingame_ui_context = ingame_ui_context
-	DO_RELOAD = false
+	arg_3_0.units = {}
+	arg_3_0.attachment_units = {}
+	arg_3_0.unit_states = {}
+	arg_3_0.ui_animations = {}
+	arg_3_0.ingame_ui_context = arg_3_1
+	var_0_7 = false
 end
 
-HeroView.initial_profile_view = function (self)
-	return self.ingame_ui.initial_profile_view
+function HeroView.initial_profile_view(arg_4_0)
+	return arg_4_0.ingame_ui.initial_profile_view
 end
 
-HeroView._setup_state_machine = function (self, state_machine_params, optional_start_state, optional_start_sub_state, optional_params)
-	if self._machine then
-		self._machine:destroy()
+function HeroView._setup_state_machine(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	if arg_5_0._machine then
+		arg_5_0._machine:destroy()
 
-		self._machine = nil
+		arg_5_0._machine = nil
 	end
 
-	local start_state = optional_start_state or HeroViewStateOverview
-	local profiling_debugging_enabled = false
+	local var_5_0 = arg_5_2 or HeroViewStateOverview
+	local var_5_1 = false
 
-	state_machine_params.start_state = optional_start_sub_state
-	state_machine_params.state_params = optional_params
-	self._machine = GameStateMachine:new(self, start_state, state_machine_params, profiling_debugging_enabled)
-	self._state_machine_params = state_machine_params
-	state_machine_params.state_params = nil
+	arg_5_1.start_state = arg_5_3
+	arg_5_1.state_params = arg_5_4
+	arg_5_0._machine = GameStateMachine:new(arg_5_0, var_5_0, arg_5_1, var_5_1)
+	arg_5_0._state_machine_params = arg_5_1
+	arg_5_1.state_params = nil
 end
 
-HeroView.wanted_state = function (self)
-	return self._wanted_state
+function HeroView.wanted_state(arg_6_0)
+	return arg_6_0._wanted_state
 end
 
-HeroView.clear_wanted_state = function (self)
-	self._wanted_state = nil
+function HeroView.clear_wanted_state(arg_7_0)
+	arg_7_0._wanted_state = nil
 end
 
-HeroView.input_service = function (self)
-	return self._draw_loading and FAKE_INPUT_SERVICE or self.input_manager:get_service("hero_view")
+function HeroView.input_service(arg_8_0)
+	return arg_8_0._draw_loading and FAKE_INPUT_SERVICE or arg_8_0.input_manager:get_service("hero_view")
 end
 
-HeroView.set_input_blocked = function (self, blocked)
-	self._input_blocked = blocked
+function HeroView.set_input_blocked(arg_9_0, arg_9_1)
+	arg_9_0._input_blocked = arg_9_1
 end
 
-HeroView.input_blocked = function (self)
-	return self._input_blocked
+function HeroView.input_blocked(arg_10_0)
+	return arg_10_0._input_blocked
 end
 
-HeroView.play_sound = function (self, event)
-	WwiseWorld.trigger_event(self.wwise_world, event)
+function HeroView.play_sound(arg_11_0, arg_11_1)
+	WwiseWorld.trigger_event(arg_11_0.wwise_world, arg_11_1)
 end
 
-HeroView.create_ui_elements = function (self)
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-	self._static_widgets = {}
-	self._loading_widgets = {
-		background = UIWidget.init(widget_definitions.loading_bg),
-		text = UIWidget.init(widget_definitions.loading_text),
+function HeroView.create_ui_elements(arg_12_0)
+	arg_12_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
+	arg_12_0._static_widgets = {}
+	arg_12_0._loading_widgets = {
+		background = UIWidget.init(var_0_1.loading_bg),
+		text = UIWidget.init(var_0_1.loading_text)
 	}
 
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_12_0.ui_renderer)
 
-	self.ui_animator = UIAnimator:new(self.ui_scenegraph, definitions.animations)
+	arg_12_0.ui_animator = UIAnimator:new(arg_12_0.ui_scenegraph, var_0_0.animations)
 end
 
-HeroView._setup_hdr_gui = function (self)
-	if self.is_in_inn then
-		local hdr_gui_data = {}
-		local default_hdr_name = "hero_view_hdr"
+function HeroView._setup_hdr_gui(arg_13_0)
+	if arg_13_0.is_in_inn then
+		local var_13_0 = {}
+		local var_13_1 = "hero_view_hdr"
 
-		if default_hdr_name then
-			local renderer, world, viewport_name = self:_setup_hdr_renderer(default_hdr_name, 600)
+		if var_13_1 then
+			local var_13_2, var_13_3, var_13_4 = arg_13_0:_setup_hdr_renderer(var_13_1, 600)
 
-			hdr_gui_data.bottom = {
-				renderer = renderer,
-				world = world,
-				viewport_name = viewport_name,
+			var_13_0.bottom = {
+				renderer = var_13_2,
+				world = var_13_3,
+				viewport_name = var_13_4
 			}
 		end
 
-		local top_hdr_name = "hero_view_hdr_top"
+		local var_13_5 = "hero_view_hdr_top"
 
-		if top_hdr_name then
-			local renderer, world, viewport_name = self:_setup_hdr_renderer(top_hdr_name, 850)
+		if var_13_5 then
+			local var_13_6, var_13_7, var_13_8 = arg_13_0:_setup_hdr_renderer(var_13_5, 850)
 
-			hdr_gui_data.top = {
-				renderer = renderer,
-				world = world,
-				viewport_name = viewport_name,
+			var_13_0.top = {
+				renderer = var_13_6,
+				world = var_13_7,
+				viewport_name = var_13_8
 			}
 		end
 
-		self._hdr_gui_data = hdr_gui_data
+		arg_13_0._hdr_gui_data = var_13_0
 	end
 end
 
-HeroView._setup_hdr_renderer = function (self, name, layer)
-	local world_flags = {
+function HeroView._setup_hdr_renderer(arg_14_0, arg_14_1, arg_14_2)
+	local var_14_0 = {
 		Application.DISABLE_SOUND,
-		Application.DISABLE_ESRAM,
+		Application.DISABLE_ESRAM
 	}
-	local world_name = name
-	local viewport_name = name
-	local shading_environment = "environment/ui_hdr"
-	local world = Managers.world:create_world(world_name, shading_environment, nil, layer, unpack(world_flags))
-	local viewport_type = "overlay"
-	local viewport = ScriptWorld.create_viewport(world, viewport_name, viewport_type, 999)
-	local renderer = self.ingame_ui:create_ui_renderer(world, false, self.is_in_inn)
+	local var_14_1 = arg_14_1
+	local var_14_2 = arg_14_1
+	local var_14_3 = "environment/ui_hdr"
+	local var_14_4 = Managers.world:create_world(var_14_1, var_14_3, nil, arg_14_2, unpack(var_14_0))
+	local var_14_5 = "overlay"
+	local var_14_6 = ScriptWorld.create_viewport(var_14_4, var_14_2, var_14_5, 999)
 
-	return renderer, world, viewport_name
+	return arg_14_0.ingame_ui:create_ui_renderer(var_14_4, false, arg_14_0.is_in_inn), var_14_4, var_14_2
 end
 
-HeroView.hdr_renderer = function (self)
-	local hdr_gui_data = self._hdr_gui_data
-	local hdr_data = hdr_gui_data.bottom
-
-	return hdr_data.renderer
+function HeroView.hdr_renderer(arg_15_0)
+	return arg_15_0._hdr_gui_data.bottom.renderer
 end
 
-HeroView.hdr_top_renderer = function (self)
-	local hdr_gui_data = self._hdr_gui_data
-	local hdr_data = hdr_gui_data.top
-
-	return hdr_data.renderer
+function HeroView.hdr_top_renderer(arg_16_0)
+	return arg_16_0._hdr_gui_data.top.renderer
 end
 
-HeroView.draw = function (self, dt, input_service)
-	local ui_renderer = self.ui_renderer
-	local ui_top_renderer = self.ui_top_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_manager = self.input_manager
-	local gamepad_active = input_manager:is_device_active("gamepad")
+function HeroView.draw(arg_17_0, arg_17_1, arg_17_2)
+	local var_17_0 = arg_17_0.ui_renderer
+	local var_17_1 = arg_17_0.ui_top_renderer
+	local var_17_2 = arg_17_0.ui_scenegraph
+	local var_17_3 = arg_17_0.input_manager:is_device_active("gamepad")
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt)
+	UIRenderer.begin_pass(var_17_0, var_17_2, arg_17_2, arg_17_1)
 
-	if debug_draw_scenegraph then
-		UISceneGraph.debug_render_scenegraph(ui_renderer, ui_scenegraph)
+	if var_0_8 then
+		UISceneGraph.debug_render_scenegraph(var_17_0, var_17_2)
 	end
 
-	for _, widget in ipairs(self._static_widgets) do
-		UIRenderer.draw_widget(ui_renderer, widget)
+	for iter_17_0, iter_17_1 in ipairs(arg_17_0._static_widgets) do
+		UIRenderer.draw_widget(var_17_0, iter_17_1)
 	end
 
-	if self._draw_loading then
-		UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt)
+	if arg_17_0._draw_loading then
+		UIRenderer.begin_pass(var_17_1, var_17_2, arg_17_2, arg_17_1)
 
-		for _, widget in pairs(self._loading_widgets) do
-			UIRenderer.draw_widget(ui_top_renderer, widget)
+		for iter_17_2, iter_17_3 in pairs(arg_17_0._loading_widgets) do
+			UIRenderer.draw_widget(var_17_1, iter_17_3)
 		end
 
-		UIRenderer.end_pass(ui_top_renderer)
+		UIRenderer.end_pass(var_17_1)
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_17_0)
 end
 
-HeroView.post_update = function (self, dt, t)
-	self._machine:post_update(dt, t)
+function HeroView.post_update(arg_18_0, arg_18_1, arg_18_2)
+	arg_18_0._machine:post_update(arg_18_1, arg_18_2)
 end
 
-HeroView.update = function (self, dt, t)
-	if self.suspended or self.waiting_for_post_update_enter then
+function HeroView.update(arg_19_0, arg_19_1, arg_19_2)
+	if arg_19_0.suspended or arg_19_0.waiting_for_post_update_enter then
 		return
 	end
 
-	local requested_screen_change_data = self._requested_screen_change_data
+	local var_19_0 = arg_19_0._requested_screen_change_data
 
-	if requested_screen_change_data then
-		local screen_name = requested_screen_change_data.screen_name
-		local sub_screen_name = requested_screen_change_data.sub_screen_name
+	if var_19_0 then
+		local var_19_1 = var_19_0.screen_name
+		local var_19_2 = var_19_0.sub_screen_name
 
-		self:_change_screen_by_name(screen_name, sub_screen_name)
+		arg_19_0:_change_screen_by_name(var_19_1, var_19_2)
 
-		self._requested_screen_change_data = nil
+		arg_19_0._requested_screen_change_data = nil
 	end
 
-	local is_sub_menu = true
-	local input_manager = self.input_manager
-	local gamepad_active = input_manager:is_device_active("gamepad")
-	local input_blocked = self:input_blocked()
-	local input_service = input_blocked and FAKE_INPUT_SERVICE or self:input_service()
+	local var_19_3 = true
+	local var_19_4 = arg_19_0.input_manager:is_device_active("gamepad")
+	local var_19_5 = arg_19_0:input_blocked() and FAKE_INPUT_SERVICE or arg_19_0:input_service()
 
-	self._state_machine_params.input_service = input_service
+	arg_19_0._state_machine_params.input_service = var_19_5
 
-	local transitioning = self:transitioning()
+	local var_19_6 = arg_19_0:transitioning()
 
-	self.ui_animator:update(dt)
+	arg_19_0.ui_animator:update(arg_19_1)
 
-	for name, ui_animation in pairs(self.ui_animations) do
-		UIAnimation.update(ui_animation, dt)
+	for iter_19_0, iter_19_1 in pairs(arg_19_0.ui_animations) do
+		UIAnimation.update(iter_19_1, arg_19_1)
 
-		if UIAnimation.completed(ui_animation) then
-			self.ui_animations[name] = nil
+		if UIAnimation.completed(iter_19_1) then
+			arg_19_0.ui_animations[iter_19_0] = nil
 		end
 	end
 
-	if not transitioning then
-		self:_handle_mouse_input(dt, t, input_service)
+	if not var_19_6 then
+		arg_19_0:_handle_mouse_input(arg_19_1, arg_19_2, var_19_5)
 	end
 
-	self._machine:update(dt, t)
-	self:draw(dt, input_service)
+	arg_19_0._machine:update(arg_19_1, arg_19_2)
+	arg_19_0:draw(arg_19_1, var_19_5)
 end
 
-HeroView.on_enter = function (self, params)
-	self._force_ingame_menu = params.force_ingame_menu
+function HeroView.on_enter(arg_20_0, arg_20_1)
+	arg_20_0._force_ingame_menu = arg_20_1.force_ingame_menu
 
-	if not self._force_ingame_menu then
-		self:_setup_hdr_gui()
+	if not arg_20_0._force_ingame_menu then
+		arg_20_0:_setup_hdr_gui()
 	end
 
 	ShowCursorStack.show("HeroView")
 
-	local input_manager = self.input_manager
+	local var_20_0 = arg_20_0.input_manager
 
-	input_manager:block_device_except_service("hero_view", "keyboard", 1)
-	input_manager:block_device_except_service("hero_view", "mouse", 1)
-	input_manager:block_device_except_service("hero_view", "gamepad", 1)
+	var_20_0:block_device_except_service("hero_view", "keyboard", 1)
+	var_20_0:block_device_except_service("hero_view", "mouse", 1)
+	var_20_0:block_device_except_service("hero_view", "gamepad", 1)
 
-	local state_machine_params = self._state_machine_params
+	arg_20_0._state_machine_params.initial_state = true
 
-	state_machine_params.initial_state = true
+	arg_20_0:create_ui_elements()
 
-	self:create_ui_elements()
+	local var_20_1 = arg_20_0.profile_synchronizer:profile_by_peer(arg_20_0.peer_id, arg_20_0.local_player_id) or 1
 
-	local profile_index = self.profile_synchronizer:profile_by_peer(self.peer_id, self.local_player_id) or 1
+	arg_20_0:set_current_hero(var_20_1)
 
-	self:set_current_hero(profile_index)
-
-	self.waiting_for_post_update_enter = true
-	self._loadout_dirty = false
-	self._on_enter_transition_params = params
+	arg_20_0.waiting_for_post_update_enter = true
+	arg_20_0._loadout_dirty = false
+	arg_20_0._on_enter_transition_params = arg_20_1
 
 	Managers.music:duck_sounds()
 
-	self._draw_loading = false
+	arg_20_0._draw_loading = false
 
-	self:_handle_new_ui_disclaimer()
-	self:_fetch_initial_loadout_index(params)
+	arg_20_0:_handle_new_ui_disclaimer()
+	arg_20_0:_fetch_initial_loadout_index(arg_20_1)
 end
 
-HeroView._fetch_initial_loadout_index = function (self, params)
-	local ingame_ui_context = self._state_machine_params.ingame_ui_context
+function HeroView._fetch_initial_loadout_index(arg_21_0, arg_21_1)
+	local var_21_0 = arg_21_0._state_machine_params.ingame_ui_context
 
-	self._is_in_tutorial = ingame_ui_context.is_in_tutorial
+	arg_21_0._is_in_tutorial = var_21_0.is_in_tutorial
 
-	if self._is_in_tutorial then
+	if arg_21_0._is_in_tutorial then
 		return
 	end
 
-	local game_mode_key = Managers.state.game_mode:game_mode_key()
+	local var_21_1 = Managers.state.game_mode:game_mode_key()
 
-	if not InventorySettings.inventory_loadout_access_supported_game_modes[game_mode_key] then
+	if not InventorySettings.inventory_loadout_access_supported_game_modes[var_21_1] then
 		return
 	end
 
-	self._peer_id = ingame_ui_context.peer_id
-	self._local_player_id = ingame_ui_context.local_player_id
+	arg_21_0._peer_id = var_21_0.peer_id
+	arg_21_0._local_player_id = var_21_0.local_player_id
+	arg_21_0._profile_requester = (var_21_0.network_server or var_21_0.network_client):profile_requester()
+	arg_21_0._profile_synchronizer = var_21_0.profile_synchronizer
 
-	local network_handler = ingame_ui_context.network_server or ingame_ui_context.network_client
+	local var_21_2, var_21_3 = arg_21_0._profile_synchronizer:profile_by_peer(arg_21_0._peer_id, arg_21_0._local_player_id)
+	local var_21_4 = SPProfiles[var_21_2]
+	local var_21_5 = var_21_4.careers[var_21_3].name
 
-	self._profile_requester = network_handler:profile_requester()
-	self._profile_synchronizer = ingame_ui_context.profile_synchronizer
-
-	local profile_index, career_index = self._profile_synchronizer:profile_by_peer(self._peer_id, self._local_player_id)
-	local profile = SPProfiles[profile_index]
-	local career_data = profile.careers[career_index]
-	local career_name = career_data.name
-
-	self._profile_name = profile.display_name
-	self._career_name = career_name
-
-	local item_interface = Managers.backend:get_interface("items")
-
-	self._initial_loadout_index = item_interface:get_selected_career_loadout(career_name)
+	arg_21_0._profile_name = var_21_4.display_name
+	arg_21_0._career_name = var_21_5
+	arg_21_0._initial_loadout_index = Managers.backend:get_interface("items"):get_selected_career_loadout(var_21_5)
 end
 
-HeroView._handle_new_ui_disclaimer = function (self)
-	local mechanism_name = Managers.mechanism:current_mechanism_name()
-	local global_disclaimer_states = {
+function HeroView._handle_new_ui_disclaimer(arg_22_0)
+	local var_22_0 = Managers.mechanism:current_mechanism_name()
+	local var_22_1 = {
 		deus = {
-			achievements = false,
-			default = true,
-			keep_decorations = false,
-			loot = false,
 			store = false,
+			default = true,
+			loot = false,
 			system = false,
+			achievements = false,
+			keep_decorations = false
 		},
 		adventure = {
-			achievements = false,
-			default = true,
-			keep_decorations = false,
-			loot = false,
 			store = false,
+			default = true,
+			loot = false,
 			system = false,
+			achievements = false,
+			keep_decorations = false
 		},
 		default = {
-			achievements = false,
-			default = true,
-			keep_decorations = false,
-			loot = false,
 			store = false,
+			default = true,
+			loot = false,
 			system = false,
-		},
+			achievements = false,
+			keep_decorations = false
+		}
 	}
-	local disclaimer_states = global_disclaimer_states[mechanism_name] or global_disclaimer_states.default
-	local on_enter_transition_params = self._on_enter_transition_params
-	local menu_state_name = on_enter_transition_params and on_enter_transition_params.menu_state_name or "default"
-	local menu_sub_state_name = on_enter_transition_params and on_enter_transition_params.menu_sub_state_name
+	local var_22_2 = var_22_1[var_22_0] or var_22_1.default
+	local var_22_3 = arg_22_0._on_enter_transition_params
+	local var_22_4 = var_22_3 and var_22_3.menu_state_name or "default"
+	local var_22_5 = var_22_3 and var_22_3.menu_sub_state_name
 
-	menu_state_name = disclaimer_states[menu_sub_state_name] ~= nil and menu_sub_state_name or menu_state_name
+	var_22_4 = var_22_2[var_22_5] ~= nil and var_22_5 or var_22_4
 
-	Managers.ui:handle_new_ui_disclaimer(disclaimer_states, menu_state_name)
+	Managers.ui:handle_new_ui_disclaimer(var_22_2, var_22_4)
 end
 
-HeroView.set_current_hero = function (self, profile_index)
-	local profile_settings = SPProfiles[profile_index]
-	local display_name = profile_settings.display_name
-	local character_name = profile_settings.character_name
+function HeroView.set_current_hero(arg_23_0, arg_23_1)
+	local var_23_0 = SPProfiles[arg_23_1]
+	local var_23_1 = var_23_0.display_name
+	local var_23_2 = var_23_0.character_name
 
-	self._hero_name = display_name
-
-	local state_machine_params = self._state_machine_params
-
-	state_machine_params.hero_name = display_name
+	arg_23_0._hero_name = var_23_1
+	arg_23_0._state_machine_params.hero_name = var_23_1
 end
 
-HeroView._get_sorted_players = function (self)
-	local human_players = self.player_manager:human_players()
-	local player_order = {}
+function HeroView._get_sorted_players(arg_24_0)
+	local var_24_0 = arg_24_0.player_manager:human_players()
+	local var_24_1 = {}
 
-	for _, player in pairs(human_players) do
-		player_order[#player_order + 1] = player
+	for iter_24_0, iter_24_1 in pairs(var_24_0) do
+		var_24_1[#var_24_1 + 1] = iter_24_1
 	end
 
-	table.sort(player_order, function (a, b)
-		return a.local_player and not b.local_player
+	table.sort(var_24_1, function(arg_25_0, arg_25_1)
+		return arg_25_0.local_player and not arg_25_1.local_player
 	end)
 
-	return player_order
+	return var_24_1
 end
 
-HeroView._handle_mouse_input = function (self, dt, t, input_service)
+function HeroView._handle_mouse_input(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 	return
 end
 
-HeroView._is_selection_widget_pressed = function (self, widget)
-	local content = widget.content
-	local steps = content.steps
+function HeroView._is_selection_widget_pressed(arg_27_0, arg_27_1)
+	local var_27_0 = arg_27_1.content
+	local var_27_1 = var_27_0.steps
 
-	for i = 1, steps do
-		local hotspot_name = "hotspot_" .. i
-		local hotspot = content[hotspot_name]
-
-		if hotspot.on_release then
-			return true, i
+	for iter_27_0 = 1, var_27_1 do
+		if var_27_0["hotspot_" .. iter_27_0].on_release then
+			return true, iter_27_0
 		end
 	end
 end
 
-HeroView.hotkey_allowed = function (self, input, mapping_data)
-	if self:input_blocked() then
+function HeroView.hotkey_allowed(arg_28_0, arg_28_1, arg_28_2)
+	if arg_28_0:input_blocked() then
 		return false
 	end
 
-	local transition_state = mapping_data.transition_state
-	local transition_sub_state = mapping_data.transition_sub_state
-	local state_machine = self._machine
+	local var_28_0 = arg_28_2.transition_state
+	local var_28_1 = arg_28_2.transition_sub_state
+	local var_28_2 = arg_28_0._machine
 
-	if state_machine then
-		local current_state = state_machine:state()
-		local current_state_name = current_state.NAME
-		local current_screen_settings = self:_get_screen_settings_by_state_name(current_state_name)
-		local name = current_screen_settings.name
+	if var_28_2 then
+		local var_28_3 = var_28_2:state()
+		local var_28_4 = var_28_3.NAME
+		local var_28_5 = arg_28_0:_get_screen_settings_by_state_name(var_28_4)
+		local var_28_6 = var_28_5.name
 
-		if current_screen_settings.hotkey_disabled then
+		if var_28_5.hotkey_disabled then
 			return false
 		end
 
-		if name == transition_state then
-			local active_sub_settings_name = current_state.get_selected_layout_name and current_state:get_selected_layout_name()
+		if var_28_6 == var_28_0 then
+			local var_28_7 = var_28_3.get_selected_layout_name and var_28_3:get_selected_layout_name()
 
-			if not transition_sub_state or transition_sub_state == active_sub_settings_name then
+			if not var_28_1 or var_28_1 == var_28_7 then
 				return true
 			end
 		end
@@ -459,227 +432,226 @@ HeroView.hotkey_allowed = function (self, input, mapping_data)
 	return false
 end
 
-HeroView._get_screen_settings_by_state_name = function (self, state_name)
-	for index, screen_settings in ipairs(settings_by_screen) do
-		if screen_settings.state_name == state_name then
-			return screen_settings
+function HeroView._get_screen_settings_by_state_name(arg_29_0, arg_29_1)
+	for iter_29_0, iter_29_1 in ipairs(var_0_3) do
+		if iter_29_1.state_name == arg_29_1 then
+			return iter_29_1
 		end
 	end
 end
 
-HeroView.requested_screen_change_by_name = function (self, screen_name, sub_screen_name)
-	self._requested_screen_change_data = {
-		screen_name = screen_name,
-		sub_screen_name = sub_screen_name,
+function HeroView.requested_screen_change_by_name(arg_30_0, arg_30_1, arg_30_2)
+	arg_30_0._requested_screen_change_data = {
+		screen_name = arg_30_1,
+		sub_screen_name = arg_30_2
 	}
 end
 
-HeroView._change_screen_by_name = function (self, screen_name, sub_screen_name, optional_params)
-	local settings_index, settings = table.find_by_key(settings_by_screen, "name", screen_name)
+function HeroView._change_screen_by_name(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+	local var_31_0, var_31_1 = table.find_by_key(var_0_3, "name", arg_31_1)
 
-	assert(settings_index, "[HeroView] - Could not find state by name: %s", screen_name)
+	assert(var_31_0, "[HeroView] - Could not find state by name: %s", arg_31_1)
 
-	local state_name = settings.state_name
-	local state = rawget(_G, state_name)
+	local var_31_2 = var_31_1.state_name
+	local var_31_3 = rawget(_G, var_31_2)
 
-	if self._machine and not sub_screen_name then
-		self._wanted_state = state
+	if arg_31_0._machine and not arg_31_2 then
+		arg_31_0._wanted_state = var_31_3
 	else
-		self:_setup_state_machine(self._state_machine_params, state, sub_screen_name, optional_params)
+		arg_31_0:_setup_state_machine(arg_31_0._state_machine_params, var_31_3, arg_31_2, arg_31_3)
 	end
 end
 
-HeroView._change_screen_by_index = function (self, index)
-	local screen_settings = settings_by_screen[index]
-	local settings_name = screen_settings.name
+function HeroView._change_screen_by_index(arg_32_0, arg_32_1)
+	local var_32_0 = var_0_3[arg_32_1].name
 
-	self:_change_screen_by_name(settings_name)
+	arg_32_0:_change_screen_by_name(var_32_0)
 end
 
-HeroView.post_update_on_enter = function (self)
-	self.waiting_for_post_update_enter = nil
+function HeroView.post_update_on_enter(arg_33_0)
+	arg_33_0.waiting_for_post_update_enter = nil
 
-	local on_enter_transition_params = self._on_enter_transition_params
+	local var_33_0 = arg_33_0._on_enter_transition_params
 
-	if on_enter_transition_params and on_enter_transition_params.menu_state_name then
-		local menu_state_name = on_enter_transition_params.menu_state_name
-		local menu_sub_state_name = on_enter_transition_params.menu_sub_state_name
+	if var_33_0 and var_33_0.menu_state_name then
+		local var_33_1 = var_33_0.menu_state_name
+		local var_33_2 = var_33_0.menu_sub_state_name
 
-		self:_change_screen_by_name(menu_state_name, menu_sub_state_name, on_enter_transition_params)
+		arg_33_0:_change_screen_by_name(var_33_1, var_33_2, var_33_0)
 
-		self._on_enter_transition_params = nil
+		arg_33_0._on_enter_transition_params = nil
 	else
-		self:_change_screen_by_index(1)
+		arg_33_0:_change_screen_by_index(1)
 	end
 end
 
-HeroView.post_update_on_exit = function (self, transition_params, view_in_use)
-	if self._machine then
-		self._machine:destroy()
+function HeroView.post_update_on_exit(arg_34_0, arg_34_1, arg_34_2)
+	if arg_34_0._machine then
+		arg_34_0._machine:destroy()
 
-		self._machine = nil
+		arg_34_0._machine = nil
 	end
 
 	Managers.backend:commit()
 
-	if not view_in_use then
-		self:destroy_hdr_gui()
+	if not arg_34_2 then
+		arg_34_0:destroy_hdr_gui()
 	end
 end
 
-HeroView.on_exit = function (self)
-	self.input_manager:device_unblock_all_services("keyboard", 1)
-	self.input_manager:device_unblock_all_services("mouse", 1)
-	self.input_manager:device_unblock_all_services("gamepad", 1)
+function HeroView.on_exit(arg_35_0)
+	arg_35_0.input_manager:device_unblock_all_services("keyboard", 1)
+	arg_35_0.input_manager:device_unblock_all_services("mouse", 1)
+	arg_35_0.input_manager:device_unblock_all_services("gamepad", 1)
 	ShowCursorStack.hide("HeroView")
 
-	self.exiting = nil
+	arg_35_0.exiting = nil
 
-	self:_handle_view_popups()
+	arg_35_0:_handle_view_popups()
 	Managers.music:unduck_sounds()
 
-	self._draw_loading = false
+	arg_35_0._draw_loading = false
 
-	if not self._is_in_tutorial and self._loadout_dirty then
-		local force_respawn = true
+	if not arg_35_0._is_in_tutorial and arg_35_0._loadout_dirty then
+		local var_35_0 = true
 
-		self._loadout_dirty = false
+		arg_35_0._loadout_dirty = false
 
 		if Managers.state.network:game() then
-			self._profile_requester:request_profile(self._peer_id, self._local_player_id, self._profile_name, self._career_name, force_respawn)
+			arg_35_0._profile_requester:request_profile(arg_35_0._peer_id, arg_35_0._local_player_id, arg_35_0._profile_name, arg_35_0._career_name, var_35_0)
 		end
 	end
 end
 
-HeroView.set_loadout_dirty = function (self)
-	self._loadout_dirty = true
+function HeroView.set_loadout_dirty(arg_36_0)
+	arg_36_0._loadout_dirty = true
 end
 
-HeroView.is_loadout_dirty = function (self)
-	return self._loadout_dirty
+function HeroView.is_loadout_dirty(arg_37_0)
+	return arg_37_0._loadout_dirty
 end
 
-HeroView._handle_view_popups = function (self)
-	local console_friends_view = self.ingame_ui.views.console_friends_view
+function HeroView._handle_view_popups(arg_38_0)
+	local var_38_0 = arg_38_0.ingame_ui.views.console_friends_view
 
-	if console_friends_view then
-		console_friends_view:cleanup_popups()
+	if var_38_0 then
+		var_38_0:cleanup_popups()
 	end
 
-	local options_view = self.ingame_ui.views.options_view
+	local var_38_1 = arg_38_0.ingame_ui.views.options_view
 
-	if options_view then
-		options_view:cleanup_popups()
+	if var_38_1 then
+		var_38_1:cleanup_popups()
 	end
 end
 
-HeroView.exit = function (self, return_to_game, ignore_sound, no_fade)
-	local exit_transition = "exit_menu"
+function HeroView.exit(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+	local var_39_0 = "exit_menu"
 
-	self.exiting = true
+	arg_39_0.exiting = true
 
-	if not no_fade and self.is_in_inn and not self._force_ingame_menu then
-		self.ingame_ui:transition_with_fade(exit_transition)
+	if not arg_39_3 and arg_39_0.is_in_inn and not arg_39_0._force_ingame_menu then
+		arg_39_0.ingame_ui:transition_with_fade(var_39_0)
 	else
-		self.ingame_ui:handle_transition(exit_transition)
+		arg_39_0.ingame_ui:handle_transition(var_39_0)
 	end
 
-	if not ignore_sound then
-		self:play_sound("Play_hud_button_close")
+	if not arg_39_2 then
+		arg_39_0:play_sound("Play_hud_button_close")
 	end
 end
 
-HeroView.transitioning = function (self)
-	if self.exiting then
+function HeroView.transitioning(arg_40_0)
+	if arg_40_0.exiting then
 		return true
 	else
 		return false
 	end
 end
 
-HeroView._handle_exit = function (self, input_service)
+function HeroView._handle_exit(arg_41_0, arg_41_1)
 	return
 end
 
-HeroView.suspend = function (self)
-	self.input_manager:device_unblock_all_services("keyboard", 1)
-	self.input_manager:device_unblock_all_services("mouse", 1)
-	self.input_manager:device_unblock_all_services("gamepad", 1)
+function HeroView.suspend(arg_42_0)
+	arg_42_0.input_manager:device_unblock_all_services("keyboard", 1)
+	arg_42_0.input_manager:device_unblock_all_services("mouse", 1)
+	arg_42_0.input_manager:device_unblock_all_services("gamepad", 1)
 
-	self.suspended = true
+	arg_42_0.suspended = true
 end
 
-HeroView.unsuspend = function (self)
-	self.input_manager:block_device_except_service("hero_view", "keyboard", 1)
-	self.input_manager:block_device_except_service("hero_view", "mouse", 1)
-	self.input_manager:block_device_except_service("hero_view", "gamepad", 1)
+function HeroView.unsuspend(arg_43_0)
+	arg_43_0.input_manager:block_device_except_service("hero_view", "keyboard", 1)
+	arg_43_0.input_manager:block_device_except_service("hero_view", "mouse", 1)
+	arg_43_0.input_manager:block_device_except_service("hero_view", "gamepad", 1)
 
-	self.suspended = nil
+	arg_43_0.suspended = nil
 end
 
-HeroView.close_menu = function (self, return_to_main_screen, ignore_sound, no_fade)
-	local return_to_game = not return_to_main_screen
+function HeroView.close_menu(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+	local var_44_0 = not arg_44_1
 
-	self:exit(return_to_game, ignore_sound, no_fade)
+	arg_44_0:exit(var_44_0, arg_44_2, arg_44_3)
 end
 
-HeroView.destroy = function (self)
-	self.ingame_ui_context = nil
-	self.ui_animator = nil
+function HeroView.destroy(arg_45_0)
+	arg_45_0.ingame_ui_context = nil
+	arg_45_0.ui_animator = nil
 
-	if self._machine then
-		self._machine:destroy()
+	if arg_45_0._machine then
+		arg_45_0._machine:destroy()
 
-		self._machine = nil
+		arg_45_0._machine = nil
 	end
 
-	self:destroy_hdr_gui()
+	arg_45_0:destroy_hdr_gui()
 end
 
-HeroView.destroy_hdr_gui = function (self)
-	local hdr_gui_data = self._hdr_gui_data
+function HeroView.destroy_hdr_gui(arg_46_0)
+	local var_46_0 = arg_46_0._hdr_gui_data
 
-	if hdr_gui_data then
-		for _, data in pairs(hdr_gui_data) do
-			local renderer = data.renderer
-			local world = data.world
-			local viewport_name = data.viewport_name
+	if var_46_0 then
+		for iter_46_0, iter_46_1 in pairs(var_46_0) do
+			local var_46_1 = iter_46_1.renderer
+			local var_46_2 = iter_46_1.world
+			local var_46_3 = iter_46_1.viewport_name
 
-			UIRenderer.destroy(renderer, world)
-			ScriptWorld.destroy_viewport(world, viewport_name)
-			Managers.world:destroy_world(world)
+			UIRenderer.destroy(var_46_1, var_46_2)
+			ScriptWorld.destroy_viewport(var_46_2, var_46_3)
+			Managers.world:destroy_world(var_46_2)
 		end
 
-		self._hdr_gui_data = nil
+		arg_46_0._hdr_gui_data = nil
 	end
 end
 
-HeroView._is_button_pressed = function (self, widget)
-	local button_hotspot = widget.content.button_hotspot
+function HeroView._is_button_pressed(arg_47_0, arg_47_1)
+	local var_47_0 = arg_47_1.content.button_hotspot
 
-	if button_hotspot.on_release then
-		button_hotspot.on_release = false
+	if var_47_0.on_release then
+		var_47_0.on_release = false
 
 		return true
 	end
 end
 
-HeroView._set_loading_overlay_enabled = function (self, enabled, message)
-	local loading_widgets = self._loading_widgets
-	local loading_text_widget = loading_widgets.text
-	local loading_bg_widget = loading_widgets.background
-	local alpha = enabled and 255 or 0
+function HeroView._set_loading_overlay_enabled(arg_48_0, arg_48_1, arg_48_2)
+	local var_48_0 = arg_48_0._loading_widgets
+	local var_48_1 = var_48_0.text
+	local var_48_2 = var_48_0.background
+	local var_48_3 = arg_48_1 and 255 or 0
 
-	loading_bg_widget.style.color[1] = alpha
-	loading_text_widget.style.text.text_color[1] = alpha
-	loading_text_widget.content.text = message or ""
-	self._draw_loading = enabled
+	var_48_2.style.color[1] = var_48_3
+	var_48_1.style.text.text_color[1] = var_48_3
+	var_48_1.content.text = arg_48_2 or ""
+	arg_48_0._draw_loading = arg_48_1
 end
 
-HeroView.current_state = function (self)
-	if not self._machine then
+function HeroView.current_state(arg_49_0)
+	if not arg_49_0._machine then
 		return nil
 	end
 
-	return self._machine:state()
+	return arg_49_0._machine:state()
 end

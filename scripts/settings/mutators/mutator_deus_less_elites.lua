@@ -1,11 +1,11 @@
-﻿-- chunkname: @scripts/settings/mutators/mutator_deus_less_elites.lua
+-- chunkname: @scripts/settings/mutators/mutator_deus_less_elites.lua
 
-local conversion_table = {
+local var_0_0 = {
 	beastmen = "beastmen_light",
-	beastmen_elites = "beastmen",
-	marauders_elites = "marauders_and_warriors",
 	shield_rats = "shield_rats_no_elites",
+	beastmen_elites = "beastmen",
 	standard = "standard_no_elites",
+	marauders_elites = "marauders_and_warriors"
 }
 
 return {
@@ -13,7 +13,7 @@ return {
 	display_name = "mutator_deus_less_elites_name",
 	hide_from_player_ui = true,
 	icon = "mutator_icon_deus_less_elites",
-	tweak_pack_spawning_settings = function (conflict_director_name, pack_spawning_settings)
-		MutatorUtils.tweak_pack_spawning_settings_convert_breeds(pack_spawning_settings, conversion_table)
-	end,
+	tweak_pack_spawning_settings = function(arg_1_0, arg_1_1)
+		MutatorUtils.tweak_pack_spawning_settings_convert_breeds(arg_1_1, var_0_0)
+	end
 }

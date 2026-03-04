@@ -1,53 +1,48 @@
-﻿-- chunkname: @scripts/unit_extensions/generic/generic_unit_aim_extension.lua
+-- chunkname: @scripts/unit_extensions/generic/generic_unit_aim_extension.lua
 
 require("scripts/unit_extensions/generic/aim_templates")
 
 GenericUnitAimExtension = class(GenericUnitAimExtension)
 
-GenericUnitAimExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self.unit = unit
-	self.template = AimTemplates[extension_init_data.template or Unit.get_data(unit, "aim_template")]
-	self.network_type = extension_init_data.is_husk and "husk" or "owner"
-	self.data = {}
-	self.enabled = false
+function GenericUnitAimExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.unit = arg_1_2
+	arg_1_0.template = AimTemplates[arg_1_3.template or Unit.get_data(arg_1_2, "aim_template")]
+	arg_1_0.network_type = arg_1_3.is_husk and "husk" or "owner"
+	arg_1_0.data = {}
+	arg_1_0.enabled = false
 end
 
-GenericUnitAimExtension.extensions_ready = function (self)
-	local template = self.template
+function GenericUnitAimExtension.extensions_ready(arg_2_0)
+	arg_2_0.template[arg_2_0.network_type].init(arg_2_0.unit, arg_2_0.data)
 
-	template[self.network_type].init(self.unit, self.data)
+	local var_2_0 = Unit.get_data(arg_2_0.unit, "breed")
 
-	local breed = Unit.get_data(self.unit, "breed")
-
-	self.always_aim = DEDICATED_SERVER or breed and breed.always_look_at_target or self.template == "innkeeper"
+	arg_2_0.always_aim = DEDICATED_SERVER or var_2_0 and var_2_0.always_look_at_target or arg_2_0.template == "innkeeper"
 end
 
-GenericUnitAimExtension.destroy = function (self)
-	local template = self.template
+function GenericUnitAimExtension.destroy(arg_3_0)
+	arg_3_0.template[arg_3_0.network_type].leave(arg_3_0.unit, arg_3_0.data)
 
-	template[self.network_type].leave(self.unit, self.data)
-
-	self.template = nil
-	self.data = nil
+	arg_3_0.template = nil
+	arg_3_0.data = nil
 end
 
-GenericUnitAimExtension.reset = function (self)
+function GenericUnitAimExtension.reset(arg_4_0)
 	return
 end
 
-GenericUnitAimExtension.set_enabled = function (self, enable)
-	self.enabled = enable
+function GenericUnitAimExtension.set_enabled(arg_5_0, arg_5_1)
+	arg_5_0.enabled = arg_5_1
 end
 
-GenericUnitAimExtension.update = function (self, unit, input, dt, context, t)
-	local data = self.data
-	local template = self.template
-	local is_player = DamageUtils.is_player_unit(unit)
-	local should_aim = self.enabled or self.always_aim or is_player
+function GenericUnitAimExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+	local var_6_0 = arg_6_0.data
+	local var_6_1 = arg_6_0.template
+	local var_6_2 = DamageUtils.is_player_unit(arg_6_1)
 
-	if should_aim then
-		template[self.network_type].update(unit, t, dt, data)
+	if arg_6_0.enabled or arg_6_0.always_aim or var_6_2 then
+		var_6_1[arg_6_0.network_type].update(arg_6_1, arg_6_5, arg_6_3, var_6_0)
 	else
-		template[self.network_type].leave(unit, data)
+		var_6_1[arg_6_0.network_type].leave(arg_6_1, var_6_0)
 	end
 end

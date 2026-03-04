@@ -1,30 +1,29 @@
-﻿-- chunkname: @scripts/managers/camera/transitions/camera_transition_rotation_lerp.lua
+-- chunkname: @scripts/managers/camera/transitions/camera_transition_rotation_lerp.lua
 
 require("scripts/managers/camera/transitions/camera_transition_base")
 
 CameraTransitionRotationLerp = class(CameraTransitionRotationLerp, CameraTransitionBase)
 
-CameraTransitionRotationLerp.init = function (self, node_1, node_2, duration, speed, settings)
-	CameraTransitionBase.init(self, node_1, node_2, duration, speed, settings)
+function CameraTransitionRotationLerp.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	CameraTransitionBase.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 
-	self._freeze_node_1 = settings.freeze_start_node
+	arg_1_0._freeze_node_1 = arg_1_5.freeze_start_node
 
-	if self._freeze_node_1 then
-		local node_1_rot = node_1:rotation()
+	if arg_1_0._freeze_node_1 then
+		local var_1_0 = arg_1_1:rotation()
 
-		self._node_1_rot_table = QuaternionBox(node_1_rot)
+		arg_1_0._node_1_rot_table = QuaternionBox(var_1_0)
 	end
 end
 
-CameraTransitionRotationLerp.update = function (self, dt, rotation, update_time)
-	CameraTransitionBase.update(self, dt, update_time)
+function CameraTransitionRotationLerp.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	CameraTransitionBase.update(arg_2_0, arg_2_1, arg_2_3)
 
-	local node_1_rot = self._freeze_node_1 and self._node_1_rot_table:unbox() or rotation
-	local node_2_rot = self._node_2:rotation()
-	local duration = self._duration
-	local t = self._time / self._duration
-	local done = t >= 1
-	local rot = Quaternion.lerp(node_1_rot, node_2_rot, math.min(t, 1))
+	local var_2_0 = arg_2_0._freeze_node_1 and arg_2_0._node_1_rot_table:unbox() or arg_2_2
+	local var_2_1 = arg_2_0._node_2:rotation()
+	local var_2_2 = arg_2_0._duration
+	local var_2_3 = arg_2_0._time / arg_2_0._duration
+	local var_2_4 = var_2_3 >= 1
 
-	return rot, done
+	return Quaternion.lerp(var_2_0, var_2_1, math.min(var_2_3, 1)), var_2_4
 end

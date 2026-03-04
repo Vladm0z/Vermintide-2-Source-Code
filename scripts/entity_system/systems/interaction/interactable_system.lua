@@ -1,103 +1,98 @@
-﻿-- chunkname: @scripts/entity_system/systems/interaction/interactable_system.lua
+-- chunkname: @scripts/entity_system/systems/interaction/interactable_system.lua
 
 require("scripts/unit_extensions/generic/generic_unit_interactable_extension")
 require("scripts/unit_extensions/generic/local_interactable_extension")
 
 InteractableSystem = class(InteractableSystem, ExtensionSystemBase)
 
-local RPCS = {
-	"rpc_generic_interaction_request",
+local var_0_0 = {
+	"rpc_generic_interaction_request"
 }
-local extensions = {
+local var_0_1 = {
 	"GenericUnitInteractableExtension",
-	"LocalInteractableExtension",
+	"LocalInteractableExtension"
 }
 
-InteractableSystem.init = function (self, entity_system_creation_context, system_name)
-	InteractableSystem.super.init(self, entity_system_creation_context, system_name, extensions)
+function InteractableSystem.init(arg_1_0, arg_1_1, arg_1_2)
+	InteractableSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
-	local network_event_delegate = entity_system_creation_context.network_event_delegate
+	local var_1_0 = arg_1_1.network_event_delegate
 
-	self.network_event_delegate = network_event_delegate
+	arg_1_0.network_event_delegate = var_1_0
 
-	network_event_delegate:register(self, unpack(RPCS))
+	var_1_0:register(arg_1_0, unpack(var_0_0))
 
-	self.unit_extensions = {}
+	arg_1_0.unit_extensions = {}
 end
 
-InteractableSystem.destroy = function (self)
-	self.network_event_delegate:unregister(self)
+function InteractableSystem.destroy(arg_2_0)
+	arg_2_0.network_event_delegate:unregister(arg_2_0)
 end
 
-InteractableSystem.update = function (self, context, t)
-	local dt = context.dt
+function InteractableSystem.update(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0 = arg_3_1.dt
 
 	if script_data.debug_interactions then
-		for unit, extension in pairs(self.unit_extensions) do
-			local pose, half_extents = Unit.box(unit)
+		for iter_3_0, iter_3_1 in pairs(arg_3_0.unit_extensions) do
+			local var_3_1, var_3_2 = Unit.box(iter_3_0)
 
-			QuickDrawer:box(pose, half_extents)
+			QuickDrawer:box(var_3_1, var_3_2)
 		end
 	end
 end
 
-InteractableSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
-	local extension = InteractableSystem.super.on_add_extension(self, world, unit, extension_name, extension_init_data)
+function InteractableSystem.on_add_extension(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = InteractableSystem.super.on_add_extension(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 
-	self.unit_extensions[unit] = extension
+	arg_4_0.unit_extensions[arg_4_2] = var_4_0
 
-	return extension
+	return var_4_0
 end
 
-InteractableSystem.on_remove_extension = function (self, unit, extension_name)
-	self.unit_extensions[unit] = nil
+function InteractableSystem.on_remove_extension(arg_5_0, arg_5_1, arg_5_2)
+	arg_5_0.unit_extensions[arg_5_1] = nil
 
-	InteractableSystem.super.on_remove_extension(self, unit, extension_name)
+	InteractableSystem.super.on_remove_extension(arg_5_0, arg_5_1, arg_5_2)
 end
 
-InteractableSystem._can_interact_server_check = function (self, interactor_unit, interactable_unit, interaction_type)
-	if Unit.alive(interactor_unit) and Unit.alive(interactable_unit) then
-		local interactable_extension = ScriptUnit.extension(interactable_unit, "interactable_system")
-		local can_interact = not interactable_extension:is_being_interacted_with() and InteractionDefinitions[interaction_type].server.can_interact(interactor_unit, interactable_unit)
-
-		return can_interact
+function InteractableSystem._can_interact_server_check(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	if Unit.alive(arg_6_1) and Unit.alive(arg_6_2) then
+		return not ScriptUnit.extension(arg_6_2, "interactable_system"):is_being_interacted_with() and InteractionDefinitions[arg_6_3].server.can_interact(arg_6_1, arg_6_2)
 	end
 
 	return false
 end
 
-InteractableSystem._handle_standard_interact_request = function (self, interaction_type, sender, interactor_id, interactable_id, is_level_unit)
-	local interactor_unit = self.unit_storage:unit(interactor_id)
-	local interactable_unit
+function InteractableSystem._handle_standard_interact_request(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+	local var_7_0 = arg_7_0.unit_storage:unit(arg_7_3)
+	local var_7_1
 
-	if is_level_unit then
-		local level = LevelHelper:current_level(self.world)
+	if arg_7_5 then
+		local var_7_2 = LevelHelper:current_level(arg_7_0.world)
 
-		interactable_unit = Level.unit_by_index(level, interactable_id)
+		var_7_1 = Level.unit_by_index(var_7_2, arg_7_4)
 
-		fassert(interactable_unit, "Interactable unit was not found in level")
+		fassert(var_7_1, "Interactable unit was not found in level")
 	else
-		interactable_unit = self.unit_storage:unit(interactable_id)
+		var_7_1 = arg_7_0.unit_storage:unit(arg_7_4)
 	end
 
-	if self:_can_interact_server_check(interactor_unit, interactable_unit, interaction_type) then
-		local interactor_extension = ScriptUnit.extension(interactor_unit, "interactor_system")
-
-		interactor_extension:interaction_approved(interaction_type, interactable_unit)
-		InteractionHelper:approve_request(interaction_type, interactor_unit, interactable_unit)
+	if arg_7_0:_can_interact_server_check(var_7_0, var_7_1, arg_7_1) then
+		ScriptUnit.extension(var_7_0, "interactor_system"):interaction_approved(arg_7_1, var_7_1)
+		InteractionHelper:approve_request(arg_7_1, var_7_0, var_7_1)
 
 		return
 	end
 
-	InteractionHelper:deny_request(sender, interactor_id)
+	InteractionHelper:deny_request(arg_7_2, arg_7_3)
 end
 
-local IS_LOCAL_HOST = "IS_LOCAL_HOST"
+local var_0_2 = "IS_LOCAL_HOST"
 
-InteractableSystem.rpc_generic_interaction_request = function (self, channel_id, interactor_go_id, interactable_go_id, is_level_unit, interaction_type_id)
-	local peer_id = channel_id == IS_LOCAL_HOST and Network.peer_id() or CHANNEL_TO_PEER_ID[channel_id]
-	local interaction_type = NetworkLookup.interactions[interaction_type_id]
+function InteractableSystem.rpc_generic_interaction_request(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+	local var_8_0 = arg_8_1 == var_0_2 and Network.peer_id() or CHANNEL_TO_PEER_ID[arg_8_1]
+	local var_8_1 = NetworkLookup.interactions[arg_8_5]
 
-	InteractionHelper.printf("rpc_generic_interaction_request(%s, %s, %s, %s, %s)", peer_id, tostring(interactor_go_id), tostring(interactable_go_id), tostring(is_level_unit), interaction_type)
-	self:_handle_standard_interact_request(interaction_type, peer_id, interactor_go_id, interactable_go_id, is_level_unit)
+	InteractionHelper.printf("rpc_generic_interaction_request(%s, %s, %s, %s, %s)", var_8_0, tostring(arg_8_2), tostring(arg_8_3), tostring(arg_8_4), var_8_1)
+	arg_8_0:_handle_standard_interact_request(var_8_1, var_8_0, arg_8_2, arg_8_3, arg_8_4)
 end

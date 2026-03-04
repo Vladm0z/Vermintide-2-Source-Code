@@ -1,563 +1,531 @@
-﻿-- chunkname: @scripts/ui/views/hero_view/windows/hero_window_loadout_inventory.lua
+-- chunkname: @scripts/ui/views/hero_view/windows/hero_window_loadout_inventory.lua
 
-local definitions = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_loadout_inventory_definitions")
-local widget_definitions = definitions.widgets
-local scenegraph_definition = definitions.scenegraph_definition
-local animation_definitions = definitions.animation_definitions
-local generic_input_actions = definitions.generic_input_actions
-local DO_RELOAD = false
+local var_0_0 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_loadout_inventory_definitions")
+local var_0_1 = var_0_0.widgets
+local var_0_2 = var_0_0.scenegraph_definition
+local var_0_3 = var_0_0.animation_definitions
+local var_0_4 = var_0_0.generic_input_actions
+local var_0_5 = false
 
 HeroWindowLoadoutInventory = class(HeroWindowLoadoutInventory)
 HeroWindowLoadoutInventory.NAME = "HeroWindowLoadoutInventory"
 
-local function item_sort_func(item_1, item_2)
-	local item_data_1 = item_1.data
-	local item_data_2 = item_2.data
-	local item_key_1 = item_data_1.key
-	local item_key_2 = item_data_2.key
-	local item_1_power_level = item_1.power_level or 0
-	local item_2_power_level = item_2.power_level or 0
-	local item_1_backend_id = item_1.backend_id
-	local item_2_backend_id = item_2.backend_id
-	local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
-	local item_2_favorited = ItemHelper.is_favorite_backend_id(item_2_backend_id, item_2)
+local function var_0_6(arg_1_0, arg_1_1)
+	local var_1_0 = arg_1_0.data
+	local var_1_1 = arg_1_1.data
+	local var_1_2 = var_1_0.key
+	local var_1_3 = var_1_1.key
+	local var_1_4 = arg_1_0.power_level or 0
+	local var_1_5 = arg_1_1.power_level or 0
+	local var_1_6 = arg_1_0.backend_id
+	local var_1_7 = arg_1_1.backend_id
+	local var_1_8 = ItemHelper.is_favorite_backend_id(var_1_6, arg_1_0)
 
-	if item_1_favorited == item_2_favorited then
-		if item_1_power_level == item_2_power_level then
-			local item_1_rarity = item_1.rarity or item_data_1.rarity
-			local item_2_rarity = item_2.rarity or item_data_2.rarity
-			local item_rarity_order = UISettings.item_rarity_order
-			local item_1_rarity_order = item_rarity_order[item_1_rarity]
-			local item_2_rarity_order = item_rarity_order[item_2_rarity]
+	if var_1_8 == ItemHelper.is_favorite_backend_id(var_1_7, arg_1_1) then
+		if var_1_4 == var_1_5 then
+			local var_1_9 = arg_1_0.rarity or var_1_0.rarity
+			local var_1_10 = arg_1_1.rarity or var_1_1.rarity
+			local var_1_11 = UISettings.item_rarity_order
+			local var_1_12 = var_1_11[var_1_9]
+			local var_1_13 = var_1_11[var_1_10]
 
-			if item_1_rarity_order == item_2_rarity_order then
-				local item_type_1 = Localize(item_data_1.item_type)
-				local item_type_2 = Localize(item_data_2.item_type)
+			if var_1_12 == var_1_13 then
+				local var_1_14 = Localize(var_1_0.item_type)
+				local var_1_15 = Localize(var_1_1.item_type)
 
-				if item_type_1 == item_type_2 then
-					local _, item_1_display_name = UIUtils.get_ui_information_from_item(item_1)
-					local _, item_2_display_name = UIUtils.get_ui_information_from_item(item_2)
-					local item_name_1 = Localize(item_1_display_name)
-					local item_name_2 = Localize(item_2_display_name)
+				if var_1_14 == var_1_15 then
+					local var_1_16, var_1_17 = UIUtils.get_ui_information_from_item(arg_1_0)
+					local var_1_18, var_1_19 = UIUtils.get_ui_information_from_item(arg_1_1)
 
-					return item_name_1 < item_name_2
+					return Localize(var_1_17) < Localize(var_1_19)
 				else
-					return item_type_1 < item_type_2
+					return var_1_14 < var_1_15
 				end
 			else
-				return item_1_rarity_order < item_2_rarity_order
+				return var_1_12 < var_1_13
 			end
 		else
-			return item_2_power_level < item_1_power_level
+			return var_1_5 < var_1_4
 		end
-	elseif item_1_favorited then
+	elseif var_1_8 then
 		return true
 	else
 		return false
 	end
 end
 
-local display_titles_by_slot_type = {
+local var_0_7 = {
 	melee = Localize("inventory_screen_melee_weapon_title"),
 	ranged = Localize("inventory_screen_ranged_weapon_title"),
 	necklace = Localize("inventory_screen_necklace_title"),
 	trinket = Localize("inventory_screen_trinket_title"),
-	ring = Localize("inventory_screen_ring_title"),
+	ring = Localize("inventory_screen_ring_title")
 }
 
-HeroWindowLoadoutInventory.on_enter = function (self, params, offset)
+function HeroWindowLoadoutInventory.on_enter(arg_2_0, arg_2_1, arg_2_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowLoadoutInventory")
 
-	self.parent = params.parent
+	arg_2_0.parent = arg_2_1.parent
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_2_0 = arg_2_1.ingame_ui_context
 
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self.input_manager = ingame_ui_context.input_manager
-	self.statistics_db = ingame_ui_context.statistics_db
-	self.render_settings = {
-		snap_pixel_positions = true,
+	arg_2_0.ui_renderer = var_2_0.ui_renderer
+	arg_2_0.ui_top_renderer = var_2_0.ui_top_renderer
+	arg_2_0.input_manager = var_2_0.input_manager
+	arg_2_0.statistics_db = var_2_0.statistics_db
+	arg_2_0.render_settings = {
+		snap_pixel_positions = true
 	}
 
-	local player_manager = Managers.player
-	local local_player = player_manager:local_player()
+	local var_2_1 = Managers.player
+	local var_2_2 = var_2_1:local_player()
 
-	self._stats_id = local_player:stats_id()
-	self.player_manager = player_manager
-	self.peer_id = ingame_ui_context.peer_id
-	self.hero_name = params.hero_name
-	self.career_index = params.career_index
-	self.profile_index = params.profile_index
-	self._categories = self:_create_item_categories(self.profile_index, self.career_index)
-	self._animations = {}
+	arg_2_0._stats_id = var_2_2:stats_id()
+	arg_2_0.player_manager = var_2_1
+	arg_2_0.peer_id = var_2_0.peer_id
+	arg_2_0.hero_name = arg_2_1.hero_name
+	arg_2_0.career_index = arg_2_1.career_index
+	arg_2_0.profile_index = arg_2_1.profile_index
+	arg_2_0._categories = arg_2_0:_create_item_categories(arg_2_0.profile_index, arg_2_0.career_index)
+	arg_2_0._animations = {}
 
-	self:create_ui_elements(params, offset)
+	arg_2_0:create_ui_elements(arg_2_1, arg_2_2)
 
-	local item_grid = ItemGridUI:new(self._categories, self._widgets_by_name.item_grid, self.hero_name, self.career_index)
+	local var_2_3 = ItemGridUI:new(arg_2_0._categories, arg_2_0._widgets_by_name.item_grid, arg_2_0.hero_name, arg_2_0.career_index)
 
-	self._item_grid = item_grid
+	arg_2_0._item_grid = var_2_3
 
-	item_grid:mark_equipped_items(true)
-	item_grid:mark_locked_items(true)
-	item_grid:disable_locked_items(true)
-	item_grid:disable_unwieldable_items(true)
-	item_grid:disable_item_drag()
-	item_grid:apply_item_sorting_function(item_sort_func)
+	var_2_3:mark_equipped_items(true)
+	var_2_3:mark_locked_items(true)
+	var_2_3:disable_locked_items(true)
+	var_2_3:disable_unwieldable_items(true)
+	var_2_3:disable_item_drag()
+	var_2_3:apply_item_sorting_function(var_0_6)
 
-	local player_unit = local_player and local_player.player_unit
+	local var_2_4 = var_2_2 and var_2_2.player_unit
 
-	if player_unit then
-		local inventory_extension = ScriptUnit.has_extension(player_unit, "inventory_system")
+	if var_2_4 then
+		local var_2_5 = ScriptUnit.has_extension(var_2_4, "inventory_system")
 
-		if inventory_extension then
-			inventory_extension:check_and_drop_pickups("enter_inventory")
+		if var_2_5 then
+			var_2_5:check_and_drop_pickups("enter_inventory")
 		end
 	end
 end
 
-HeroWindowLoadoutInventory._create_item_categories = function (self, profile_index, career_index)
-	local career_index = self.career_index
-	local profile_index = self.profile_index
-	local profile = SPProfiles[profile_index]
-	local careers = profile.careers
-	local career = careers[career_index]
-	local item_slot_types_by_slot_name = career.item_slot_types_by_slot_name
-	local categories = {}
+function HeroWindowLoadoutInventory._create_item_categories(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0 = arg_3_0.career_index
+	local var_3_1 = arg_3_0.profile_index
+	local var_3_2 = SPProfiles[var_3_1].careers[var_3_0].item_slot_types_by_slot_name
+	local var_3_3 = {}
 
-	for slot_name, slot_types in pairs(item_slot_types_by_slot_name) do
-		local slot = InventorySettings.slots_by_name[slot_name]
-		local ui_slot_index = slot.ui_slot_index
+	for iter_3_0, iter_3_1 in pairs(var_3_2) do
+		local var_3_4 = InventorySettings.slots_by_name[iter_3_0].ui_slot_index
 
-		if ui_slot_index then
-			local item_filter = "( "
-			local display_name = ""
-			local slot_icon
-			local potential_icons = {}
+		if var_3_4 then
+			local var_3_5 = "( "
+			local var_3_6 = ""
+			local var_3_7
+			local var_3_8 = {}
 
-			for index, slot_type in ipairs(slot_types) do
-				local slot_display_name = display_titles_by_slot_type[slot_type]
+			for iter_3_2, iter_3_3 in ipairs(iter_3_1) do
+				local var_3_9 = var_0_7[iter_3_3]
 
-				display_name = display_name .. slot_display_name
-				item_filter = item_filter .. "slot_type == " .. slot_type
+				var_3_6 = var_3_6 .. var_3_9
+				var_3_5 = var_3_5 .. "slot_type == " .. iter_3_3
 
-				if index < #slot_types then
-					display_name = display_name .. " - "
-					item_filter = item_filter .. " or "
+				if iter_3_2 < #iter_3_1 then
+					var_3_6 = var_3_6 .. " - "
+					var_3_5 = var_3_5 .. " or "
 				else
-					item_filter = item_filter .. " ) and item_rarity ~= magic"
+					var_3_5 = var_3_5 .. " ) and item_rarity ~= magic"
 				end
 
-				for icon_key, icon in pairs(UISettings.slot_icons) do
-					if string.find(icon_key, slot_type) then
-						potential_icons[icon_key] = icon
+				for iter_3_4, iter_3_5 in pairs(UISettings.slot_icons) do
+					if string.find(iter_3_4, iter_3_3) then
+						var_3_8[iter_3_4] = iter_3_5
 					end
 				end
 			end
 
-			for icon_key, icon in pairs(potential_icons) do
-				local is_correct_icon = true
+			for iter_3_6, iter_3_7 in pairs(var_3_8) do
+				local var_3_10 = true
 
-				for _, slot_type in ipairs(slot_types) do
-					if not string.find(icon_key, slot_type) then
-						is_correct_icon = false
+				for iter_3_8, iter_3_9 in ipairs(iter_3_1) do
+					if not string.find(iter_3_6, iter_3_9) then
+						var_3_10 = false
 
 						break
 					end
 				end
 
-				if is_correct_icon then
-					slot_icon = icon
+				if var_3_10 then
+					var_3_7 = iter_3_7
 
 					break
 				end
 			end
 
-			local category = {
+			var_3_3[var_3_4] = {
 				hero_specific_filter = true,
-				name = slot_name,
-				display_name = display_name,
-				icon = slot_icon,
-				item_types = slot_types,
-				slot_index = ui_slot_index,
-				slot_name = slot_name,
-				item_filter = item_filter,
+				name = iter_3_0,
+				display_name = var_3_6,
+				icon = var_3_7,
+				item_types = iter_3_1,
+				slot_index = var_3_4,
+				slot_name = iter_3_0,
+				item_filter = var_3_5
 			}
-
-			categories[ui_slot_index] = category
 		end
 	end
 
-	return categories
+	return var_3_3
 end
 
-HeroWindowLoadoutInventory.create_ui_elements = function (self, params, offset)
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+function HeroWindowLoadoutInventory.create_ui_elements(arg_4_0, arg_4_1, arg_4_2)
+	arg_4_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 
-	local widgets = {}
-	local widgets_by_name = {}
+	local var_4_0 = {}
+	local var_4_1 = {}
 
-	for name, widget_definition in pairs(widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_4_0, iter_4_1 in pairs(var_0_1) do
+		local var_4_2 = UIWidget.init(iter_4_1)
 
-		widgets[#widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_4_0[#var_4_0 + 1] = var_4_2
+		var_4_1[iter_4_0] = var_4_2
 	end
 
-	self._widgets = widgets
-	self._widgets_by_name = widgets_by_name
+	arg_4_0._widgets = var_4_0
+	arg_4_0._widgets_by_name = var_4_1
 
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_4_0.ui_renderer)
 
-	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
+	arg_4_0.ui_animator = UIAnimator:new(arg_4_0.ui_scenegraph, var_0_3)
 
-	if offset then
-		local window_position = self.ui_scenegraph.window.local_position
+	if arg_4_2 then
+		local var_4_3 = arg_4_0.ui_scenegraph.window.local_position
 
-		window_position[1] = window_position[1] + offset[1]
-		window_position[2] = window_position[2] + offset[2]
-		window_position[3] = window_position[3] + offset[3]
+		var_4_3[1] = var_4_3[1] + arg_4_2[1]
+		var_4_3[2] = var_4_3[2] + arg_4_2[2]
+		var_4_3[3] = var_4_3[3] + arg_4_2[3]
 	end
 
-	self:_setup_tab_widget()
+	arg_4_0:_setup_tab_widget()
 end
 
-HeroWindowLoadoutInventory._setup_tab_widget = function (self)
-	local categories = self._categories
-	local num_tabs = #categories
-	local widgets = self._widgets
-	local widgets_by_name = self._widgets_by_name
-	local item_tabs_segments = UIWidget.init(UIWidgets.create_simple_centered_texture_amount("menu_frame_09_divider_vertical", {
+function HeroWindowLoadoutInventory._setup_tab_widget(arg_5_0)
+	local var_5_0 = arg_5_0._categories
+	local var_5_1 = #var_5_0
+	local var_5_2 = arg_5_0._widgets
+	local var_5_3 = arg_5_0._widgets_by_name
+	local var_5_4 = UIWidget.init(UIWidgets.create_simple_centered_texture_amount("menu_frame_09_divider_vertical", {
 		5,
-		35,
-	}, "item_tabs_segments", num_tabs - 1))
-	local item_tabs_segments_top = UIWidget.init(UIWidgets.create_simple_centered_texture_amount("menu_frame_09_divider_top", {
+		35
+	}, "item_tabs_segments", var_5_1 - 1))
+	local var_5_5 = UIWidget.init(UIWidgets.create_simple_centered_texture_amount("menu_frame_09_divider_top", {
 		17,
-		9,
-	}, "item_tabs_segments_top", num_tabs - 1))
-	local item_tabs_segments_bottom = UIWidget.init(UIWidgets.create_simple_centered_texture_amount("menu_frame_09_divider_bottom", {
+		9
+	}, "item_tabs_segments_top", var_5_1 - 1))
+	local var_5_6 = UIWidget.init(UIWidgets.create_simple_centered_texture_amount("menu_frame_09_divider_bottom", {
 		17,
-		9,
-	}, "item_tabs_segments_bottom", num_tabs - 1))
+		9
+	}, "item_tabs_segments_bottom", var_5_1 - 1))
 
-	widgets_by_name.item_tabs_segments = item_tabs_segments
-	widgets_by_name.item_tabs_segments_top = item_tabs_segments_top
-	widgets_by_name.item_tabs_segments_bottom = item_tabs_segments_bottom
-	widgets[#widgets + 1] = item_tabs_segments
-	widgets[#widgets + 1] = item_tabs_segments_top
-	widgets[#widgets + 1] = item_tabs_segments_bottom
+	var_5_3.item_tabs_segments = var_5_4
+	var_5_3.item_tabs_segments_top = var_5_5
+	var_5_3.item_tabs_segments_bottom = var_5_6
+	var_5_2[#var_5_2 + 1] = var_5_4
+	var_5_2[#var_5_2 + 1] = var_5_5
+	var_5_2[#var_5_2 + 1] = var_5_6
 
-	local scenegraph_id = "item_tabs"
-	local size = scenegraph_definition.item_tabs.size
-	local widget_definition = UIWidgets.create_default_icon_tabs(scenegraph_id, size, num_tabs)
-	local widget = UIWidget.init(widget_definition)
+	local var_5_7 = "item_tabs"
+	local var_5_8 = var_0_2.item_tabs.size
+	local var_5_9 = UIWidgets.create_default_icon_tabs(var_5_7, var_5_8, var_5_1)
+	local var_5_10 = UIWidget.init(var_5_9)
 
-	widgets_by_name[scenegraph_id] = widget
-	widgets[#widgets + 1] = widget
+	var_5_3[var_5_7] = var_5_10
+	var_5_2[#var_5_2 + 1] = var_5_10
 
-	local widget_content = widget.content
+	local var_5_11 = var_5_10.content
 
-	for index, category in ipairs(categories) do
-		local name_suffix = "_" .. tostring(index)
-		local hotspot_name = "hotspot" .. name_suffix
-		local icon_name = "icon" .. name_suffix
-		local hotspot_content = widget_content[hotspot_name]
-		local slot_index = category.slot_index
-		local icon = category.icon
+	for iter_5_0, iter_5_1 in ipairs(var_5_0) do
+		local var_5_12 = "_" .. tostring(iter_5_0)
+		local var_5_13 = "hotspot" .. var_5_12
+		local var_5_14 = "icon" .. var_5_12
+		local var_5_15 = var_5_11[var_5_13]
 
-		hotspot_content[icon_name] = icon
-		hotspot_content.slot_index = slot_index
+		var_5_15.slot_index, var_5_15[var_5_14] = iter_5_1.slot_index, iter_5_1.icon
 	end
 end
 
-HeroWindowLoadoutInventory.on_exit = function (self, params)
+function HeroWindowLoadoutInventory.on_exit(arg_6_0, arg_6_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowLoadoutInventory")
 
-	self.ui_animator = nil
+	arg_6_0.ui_animator = nil
 
-	self._item_grid:destroy()
+	arg_6_0._item_grid:destroy()
 
-	self._item_grid = nil
+	arg_6_0._item_grid = nil
 end
 
-HeroWindowLoadoutInventory.update = function (self, dt, t)
-	if DO_RELOAD then
-		DO_RELOAD = false
+function HeroWindowLoadoutInventory.update(arg_7_0, arg_7_1, arg_7_2)
+	if var_0_5 then
+		var_0_5 = false
 
-		self:create_ui_elements()
+		arg_7_0:create_ui_elements()
 	end
 
-	self._item_grid:update(dt, t)
-	self:_update_animations(dt)
-	self:_handle_input(dt, t)
-	self:_update_selected_loadout_slot_index()
-	self:_update_loadout_sync()
-	self:_update_page_info()
-	self:draw(dt)
+	arg_7_0._item_grid:update(arg_7_1, arg_7_2)
+	arg_7_0:_update_animations(arg_7_1)
+	arg_7_0:_handle_input(arg_7_1, arg_7_2)
+	arg_7_0:_update_selected_loadout_slot_index()
+	arg_7_0:_update_loadout_sync()
+	arg_7_0:_update_page_info()
+	arg_7_0:draw(arg_7_1)
 end
 
-HeroWindowLoadoutInventory.post_update = function (self, dt, t)
+function HeroWindowLoadoutInventory.post_update(arg_8_0, arg_8_1, arg_8_2)
 	return
 end
 
-HeroWindowLoadoutInventory._update_animations = function (self, dt)
-	self.ui_animator:update(dt)
+function HeroWindowLoadoutInventory._update_animations(arg_9_0, arg_9_1)
+	arg_9_0.ui_animator:update(arg_9_1)
 
-	local animations = self._animations
-	local ui_animator = self.ui_animator
+	local var_9_0 = arg_9_0._animations
+	local var_9_1 = arg_9_0.ui_animator
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_9_0, iter_9_1 in pairs(var_9_0) do
+		if var_9_1:is_animation_completed(iter_9_1) then
+			var_9_1:stop_animation(iter_9_1)
 
-			animations[animation_name] = nil
+			var_9_0[iter_9_0] = nil
 		end
 	end
 
-	local widgets_by_name = self._widgets_by_name
+	local var_9_2 = arg_9_0._widgets_by_name
 end
 
-HeroWindowLoadoutInventory._is_button_pressed = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
+function HeroWindowLoadoutInventory._is_button_pressed(arg_10_0, arg_10_1)
+	local var_10_0 = arg_10_1.content.button_hotspot
 
-	if hotspot.on_release then
-		hotspot.on_release = false
+	if var_10_0.on_release then
+		var_10_0.on_release = false
 
 		return true
 	end
 end
 
-HeroWindowLoadoutInventory._is_button_hovered = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	if hotspot.on_hover_enter then
+function HeroWindowLoadoutInventory._is_button_hovered(arg_11_0, arg_11_1)
+	if arg_11_1.content.button_hotspot.on_hover_enter then
 		return true
 	end
 end
 
-HeroWindowLoadoutInventory._is_inventory_tab_hovered = function (self)
-	local widget = self._widgets_by_name.item_tabs
-	local widget_content = widget.content
-	local amount = widget_content.amount
+function HeroWindowLoadoutInventory._is_inventory_tab_hovered(arg_12_0)
+	local var_12_0 = arg_12_0._widgets_by_name.item_tabs.content
+	local var_12_1 = var_12_0.amount
 
-	for i = 1, amount do
-		local name_sufix = "_" .. tostring(i)
-		local hotspot_name = "hotspot" .. name_sufix
-		local hotspot_content = widget_content[hotspot_name]
+	for iter_12_0 = 1, var_12_1 do
+		local var_12_2 = "_" .. tostring(iter_12_0)
 
-		if hotspot_content.on_hover_enter then
-			return i
+		if var_12_0["hotspot" .. var_12_2].on_hover_enter then
+			return iter_12_0
 		end
 	end
 end
 
-HeroWindowLoadoutInventory._is_inventory_tab_pressed = function (self)
-	local widget = self._widgets_by_name.item_tabs
-	local widget_content = widget.content
-	local amount = widget_content.amount
+function HeroWindowLoadoutInventory._is_inventory_tab_pressed(arg_13_0)
+	local var_13_0 = arg_13_0._widgets_by_name.item_tabs.content
+	local var_13_1 = var_13_0.amount
 
-	for i = 1, amount do
-		local name_sufix = "_" .. tostring(i)
-		local hotspot_name = "hotspot" .. name_sufix
-		local hotspot_content = widget_content[hotspot_name]
+	for iter_13_0 = 1, var_13_1 do
+		local var_13_2 = "_" .. tostring(iter_13_0)
+		local var_13_3 = var_13_0["hotspot" .. var_13_2]
 
-		if hotspot_content.on_release and not hotspot_content.is_selected then
-			return i
+		if var_13_3.on_release and not var_13_3.is_selected then
+			return iter_13_0
 		end
 	end
 end
 
-HeroWindowLoadoutInventory._select_tab_by_slot_index = function (self, index)
-	local widget = self._widgets_by_name.item_tabs
-	local widget_content = widget.content
-	local amount = widget_content.amount
+function HeroWindowLoadoutInventory._select_tab_by_slot_index(arg_14_0, arg_14_1)
+	local var_14_0 = arg_14_0._widgets_by_name.item_tabs.content
+	local var_14_1 = var_14_0.amount
 
-	for i = 1, amount do
-		local name_sufix = "_" .. tostring(i)
-		local hotspot_name = "hotspot" .. name_sufix
-		local hotspot_content = widget_content[hotspot_name]
-		local slot_index = hotspot_content.slot_index
+	for iter_14_0 = 1, var_14_1 do
+		local var_14_2 = "_" .. tostring(iter_14_0)
+		local var_14_3 = var_14_0["hotspot" .. var_14_2]
 
-		hotspot_content.is_selected = index == slot_index
+		var_14_3.is_selected = arg_14_1 == var_14_3.slot_index
 	end
 end
 
-HeroWindowLoadoutInventory._handle_input = function (self, dt, t)
-	local widgets_by_name = self._widgets_by_name
-	local parent = self.parent
-	local item_grid = self._item_grid
-	local allow_single_press = false
-	local item, is_equipped = item_grid:is_item_pressed(allow_single_press)
-	local input_service = parent:window_input_service()
+function HeroWindowLoadoutInventory._handle_input(arg_15_0, arg_15_1, arg_15_2)
+	local var_15_0 = arg_15_0._widgets_by_name
+	local var_15_1 = arg_15_0.parent
+	local var_15_2 = arg_15_0._item_grid
+	local var_15_3 = false
+	local var_15_4, var_15_5 = var_15_2:is_item_pressed(var_15_3)
+	local var_15_6 = var_15_1:window_input_service()
 
-	if item_grid:handle_favorite_marking(input_service) then
-		self:_play_sound("play_gui_inventory_item_hover")
+	if var_15_2:handle_favorite_marking(var_15_6) then
+		arg_15_0:_play_sound("play_gui_inventory_item_hover")
 	end
 
-	if item_grid:is_item_hovered() then
-		self:_play_sound("play_gui_inventory_item_hover")
+	if var_15_2:is_item_hovered() then
+		arg_15_0:_play_sound("play_gui_inventory_item_hover")
 	end
 
-	if item and not is_equipped then
-		parent:_set_loadout_item(item, self._strict_slot_name)
-		self:_play_sound("play_gui_equipment_equip_hero")
+	if var_15_4 and not var_15_5 then
+		var_15_1:_set_loadout_item(var_15_4, arg_15_0._strict_slot_name)
+		arg_15_0:_play_sound("play_gui_equipment_equip_hero")
 	end
 
-	local item_tabs = widgets_by_name.item_tabs
+	local var_15_7 = var_15_0.item_tabs
 
-	UIWidgetUtils.animate_default_icon_tabs(item_tabs, dt)
+	UIWidgetUtils.animate_default_icon_tabs(var_15_7, arg_15_1)
 
-	local tab_index_hovered = self:_is_inventory_tab_hovered()
-
-	if tab_index_hovered then
-		self:_play_sound("play_gui_inventory_tab_hover")
+	if arg_15_0:_is_inventory_tab_hovered() then
+		arg_15_0:_play_sound("play_gui_inventory_tab_hover")
 	end
 
-	local tab_index_pressed = self:_is_inventory_tab_pressed()
+	local var_15_8 = arg_15_0:_is_inventory_tab_pressed()
 
-	if tab_index_pressed and tab_index_pressed ~= self._category_index then
-		local slot_index = self:_get_category_slot_index(tab_index_pressed)
+	if var_15_8 and var_15_8 ~= arg_15_0._category_index then
+		local var_15_9 = arg_15_0:_get_category_slot_index(var_15_8)
 
-		parent:set_selected_loadout_slot_index(slot_index)
-		self:_play_sound("play_gui_inventory_tab_click")
+		var_15_1:set_selected_loadout_slot_index(var_15_9)
+		arg_15_0:_play_sound("play_gui_inventory_tab_click")
 	elseif Managers.input:is_device_active("gamepad") then
-		local input_service = Managers.input:get_service("hero_view")
-		local current_index = parent._selected_loadout_slot_index or 1
-		local num_tabs = #self._categories
+		local var_15_10 = Managers.input:get_service("hero_view")
+		local var_15_11 = var_15_1._selected_loadout_slot_index or 1
+		local var_15_12 = #arg_15_0._categories
 
-		if input_service:get("cycle_previous") and current_index > 1 then
-			parent:set_selected_loadout_slot_index(current_index - 1)
-			self:_play_sound("play_gui_inventory_tab_click")
-		elseif input_service:get("cycle_next") and current_index < num_tabs then
-			parent:set_selected_loadout_slot_index(current_index + 1)
-			self:_play_sound("play_gui_inventory_tab_click")
+		if var_15_10:get("cycle_previous") and var_15_11 > 1 then
+			var_15_1:set_selected_loadout_slot_index(var_15_11 - 1)
+			arg_15_0:_play_sound("play_gui_inventory_tab_click")
+		elseif var_15_10:get("cycle_next") and var_15_11 < var_15_12 then
+			var_15_1:set_selected_loadout_slot_index(var_15_11 + 1)
+			arg_15_0:_play_sound("play_gui_inventory_tab_click")
 		end
 	end
 
-	local page_button_next = widgets_by_name.page_button_next
-	local page_button_previous = widgets_by_name.page_button_previous
+	local var_15_13 = var_15_0.page_button_next
+	local var_15_14 = var_15_0.page_button_previous
 
-	UIWidgetUtils.animate_default_button(page_button_next, dt)
-	UIWidgetUtils.animate_default_button(page_button_previous, dt)
+	UIWidgetUtils.animate_default_button(var_15_13, arg_15_1)
+	UIWidgetUtils.animate_default_button(var_15_14, arg_15_1)
 
-	if self:_is_button_hovered(page_button_next) or self:_is_button_hovered(page_button_previous) then
-		self:_play_sound("play_gui_inventory_next_hover")
+	if arg_15_0:_is_button_hovered(var_15_13) or arg_15_0:_is_button_hovered(var_15_14) then
+		arg_15_0:_play_sound("play_gui_inventory_next_hover")
 	end
 
-	if self:_is_button_pressed(page_button_next) then
-		local next_page_index = self._current_page + 1
+	if arg_15_0:_is_button_pressed(var_15_13) then
+		local var_15_15 = arg_15_0._current_page + 1
 
-		item_grid:set_item_page(next_page_index)
-		self:_play_sound("play_gui_equipment_inventory_next_click")
-	elseif self:_is_button_pressed(page_button_previous) then
-		local next_page_index = self._current_page - 1
+		var_15_2:set_item_page(var_15_15)
+		arg_15_0:_play_sound("play_gui_equipment_inventory_next_click")
+	elseif arg_15_0:_is_button_pressed(var_15_14) then
+		local var_15_16 = arg_15_0._current_page - 1
 
-		item_grid:set_item_page(next_page_index)
-		self:_play_sound("play_gui_equipment_inventory_next_click")
-	end
-end
-
-HeroWindowLoadoutInventory._update_page_info = function (self)
-	local current_page, total_pages = self._item_grid:get_page_info()
-
-	if current_page ~= self._current_page or total_pages ~= self._total_pages then
-		self._total_pages = total_pages
-		self._current_page = current_page
-		current_page = current_page or 1
-		total_pages = total_pages or 1
-
-		local widgets_by_name = self._widgets_by_name
-
-		widgets_by_name.page_text_left.content.text = tostring(current_page)
-		widgets_by_name.page_text_right.content.text = tostring(total_pages)
-		widgets_by_name.page_button_next.content.button_hotspot.disable_button = current_page == total_pages
-		widgets_by_name.page_button_previous.content.button_hotspot.disable_button = current_page == 1
+		var_15_2:set_item_page(var_15_16)
+		arg_15_0:_play_sound("play_gui_equipment_inventory_next_click")
 	end
 end
 
-HeroWindowLoadoutInventory._get_category_slot_index = function (self, index)
-	local categories = self._categories
-	local category = categories[index]
+function HeroWindowLoadoutInventory._update_page_info(arg_16_0)
+	local var_16_0, var_16_1 = arg_16_0._item_grid:get_page_info()
 
-	return category.slot_index
+	if var_16_0 ~= arg_16_0._current_page or var_16_1 ~= arg_16_0._total_pages then
+		arg_16_0._total_pages = var_16_1
+		arg_16_0._current_page = var_16_0
+		var_16_0 = var_16_0 or 1
+		var_16_1 = var_16_1 or 1
+
+		local var_16_2 = arg_16_0._widgets_by_name
+
+		var_16_2.page_text_left.content.text = tostring(var_16_0)
+		var_16_2.page_text_right.content.text = tostring(var_16_1)
+		var_16_2.page_button_next.content.button_hotspot.disable_button = var_16_0 == var_16_1
+		var_16_2.page_button_previous.content.button_hotspot.disable_button = var_16_0 == 1
+	end
 end
 
-HeroWindowLoadoutInventory._get_category_index_by_slot_index = function (self, slot_index)
-	local categories = self._categories
+function HeroWindowLoadoutInventory._get_category_slot_index(arg_17_0, arg_17_1)
+	return arg_17_0._categories[arg_17_1].slot_index
+end
 
-	for i, category in ipairs(categories) do
-		if category.slot_index == slot_index then
-			return i
+function HeroWindowLoadoutInventory._get_category_index_by_slot_index(arg_18_0, arg_18_1)
+	local var_18_0 = arg_18_0._categories
+
+	for iter_18_0, iter_18_1 in ipairs(var_18_0) do
+		if iter_18_1.slot_index == arg_18_1 then
+			return iter_18_0
 		end
 	end
 end
 
-HeroWindowLoadoutInventory._update_selected_loadout_slot_index = function (self)
-	local slot_index = self.parent:get_selected_loadout_slot_index()
-	local category_index = self:_get_category_index_by_slot_index(slot_index)
+function HeroWindowLoadoutInventory._update_selected_loadout_slot_index(arg_19_0)
+	local var_19_0 = arg_19_0.parent:get_selected_loadout_slot_index()
+	local var_19_1 = arg_19_0:_get_category_index_by_slot_index(var_19_0)
 
-	if slot_index ~= self._selected_loadout_slot_index then
-		self:_change_category_by_index(category_index)
+	if var_19_0 ~= arg_19_0._selected_loadout_slot_index then
+		arg_19_0:_change_category_by_index(var_19_1)
 
-		self._selected_loadout_slot_index = slot_index
-		self._category_index = category_index
+		arg_19_0._selected_loadout_slot_index = var_19_0
+		arg_19_0._category_index = var_19_1
 	end
 end
 
-HeroWindowLoadoutInventory._update_loadout_sync = function (self)
-	local item_grid = self._item_grid
-	local parent = self.parent
-	local loadout_sync_id = parent.loadout_sync_id
+function HeroWindowLoadoutInventory._update_loadout_sync(arg_20_0)
+	local var_20_0 = arg_20_0._item_grid
+	local var_20_1 = arg_20_0.parent.loadout_sync_id
 
-	if loadout_sync_id ~= self._loadout_sync_id then
-		self._loadout_sync_id = loadout_sync_id
+	if var_20_1 ~= arg_20_0._loadout_sync_id then
+		arg_20_0._loadout_sync_id = var_20_1
 
-		item_grid:update_items_status()
+		var_20_0:update_items_status()
 	end
 end
 
-HeroWindowLoadoutInventory._exit = function (self, selected_level)
-	self.exit = true
-	self.exit_level_id = selected_level
+function HeroWindowLoadoutInventory._exit(arg_21_0, arg_21_1)
+	arg_21_0.exit = true
+	arg_21_0.exit_level_id = arg_21_1
 end
 
-HeroWindowLoadoutInventory.draw = function (self, dt)
-	local ui_renderer = self.ui_renderer
-	local ui_top_renderer = self.ui_top_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self.parent:window_input_service()
-	local gamepad_active = Managers.input:is_device_active("gamepad")
+function HeroWindowLoadoutInventory.draw(arg_22_0, arg_22_1)
+	local var_22_0 = arg_22_0.ui_renderer
+	local var_22_1 = arg_22_0.ui_top_renderer
+	local var_22_2 = arg_22_0.ui_scenegraph
+	local var_22_3 = arg_22_0.parent:window_input_service()
+	local var_22_4 = Managers.input:is_device_active("gamepad")
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
+	UIRenderer.begin_pass(var_22_1, var_22_2, var_22_3, arg_22_1, nil, arg_22_0.render_settings)
 
-	for _, widget in ipairs(self._widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, widget)
+	for iter_22_0, iter_22_1 in ipairs(arg_22_0._widgets) do
+		UIRenderer.draw_widget(var_22_1, iter_22_1)
 	end
 
-	UIRenderer.end_pass(ui_top_renderer)
+	UIRenderer.end_pass(var_22_1)
 end
 
-HeroWindowLoadoutInventory._play_sound = function (self, event)
-	self.parent:play_sound(event)
+function HeroWindowLoadoutInventory._play_sound(arg_23_0, arg_23_1)
+	arg_23_0.parent:play_sound(arg_23_1)
 end
 
-HeroWindowLoadoutInventory._change_category_by_index = function (self, index)
-	self:_select_tab_by_slot_index(index)
+function HeroWindowLoadoutInventory._change_category_by_index(arg_24_0, arg_24_1)
+	arg_24_0:_select_tab_by_slot_index(arg_24_1)
 
-	local categories = self._categories
-	local category = categories[index]
-	local category_slot_name = category.slot_name
+	local var_24_0 = arg_24_0._categories[arg_24_1]
 
-	self._strict_slot_name = category_slot_name
+	arg_24_0._strict_slot_name = var_24_0.slot_name
 
-	local category_name = category.name
-	local display_name = category.display_name
+	local var_24_1 = var_24_0.name
+	local var_24_2 = var_24_0.display_name
 
-	self._widgets_by_name.item_grid_header.content.text = display_name
+	arg_24_0._widgets_by_name.item_grid_header.content.text = var_24_2
 
-	self._item_grid:change_category(category_name)
+	arg_24_0._item_grid:change_category(var_24_1)
 
 	return true
 end

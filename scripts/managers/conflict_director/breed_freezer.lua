@@ -1,254 +1,254 @@
-﻿-- chunkname: @scripts/managers/conflict_director/breed_freezer.lua
+-- chunkname: @scripts/managers/conflict_director/breed_freezer.lua
 
 BreedFreezerSettings = {
 	freezer_pos = {
 		0,
 		0,
-		-600,
+		-600
 	},
 	freezer_offset = {
 		0,
 		0.05,
-		0.05,
+		0.05
 	},
 	freezer_pos_debug = {
 		0,
 		0,
-		10,
+		10
 	},
 	freezer_offset_debug = {
 		0,
 		2,
-		3,
+		3
 	},
 	freezer_size = {
 		0,
 		0,
-		0,
+		0
 	},
 	breeds = {
 		skaven_clan_rat = {
-			pool_size = 32,
+			pool_size = 32
 		},
 		skaven_slave = {
-			pool_size = 50,
+			pool_size = 50
 		},
 		skaven_storm_vermin = {
-			pool_size = 16,
+			pool_size = 16
 		},
 		skaven_plague_monk = {
-			pool_size = 8,
+			pool_size = 8
 		},
 		chaos_marauder = {
-			pool_size = 32,
+			pool_size = 32
 		},
 		chaos_fanatic = {
-			pool_size = 50,
+			pool_size = 50
 		},
 		chaos_berzerker = {
-			pool_size = 8,
+			pool_size = 8
 		},
 		chaos_raider = {
-			pool_size = 8,
+			pool_size = 8
 		},
 		chaos_warrior = {
-			pool_size = 6,
+			pool_size = 6
 		},
 		beastmen_ungor = {
-			pool_size = 50,
+			pool_size = 50
 		},
 		beastmen_ungor_archer = {
-			pool_size = 16,
+			pool_size = 16
 		},
 		beastmen_gor = {
-			pool_size = 32,
+			pool_size = 32
 		},
 		beastmen_bestigor = {
-			pool_size = 16,
-		},
+			pool_size = 16
+		}
 	},
-	breeds_index_lookup = {},
+	breeds_index_lookup = {}
 }
 
 fassert(BreedFreezerSettings.freezer_offset[2] > 0, "Must have positive offset so we can sort the units when hot joining")
 
-local unit_templates = require("scripts/network/unit_extension_templates")
+local var_0_0 = require("scripts/network/unit_extension_templates")
 
 BreedFreezer = class(BreedFreezer)
 
-BreedFreezer.init = function (self, world, entity_manager, network_event_delegate, enemy_package_loader)
-	local is_server = Managers.player.is_server
+function BreedFreezer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	local var_1_0 = Managers.player.is_server
 
-	self.is_server = is_server
-	self.world = world
-	self.entity_manager = entity_manager
-	self.network_event_delegate = network_event_delegate
+	arg_1_0.is_server = var_1_0
+	arg_1_0.world = arg_1_1
+	arg_1_0.entity_manager = arg_1_2
+	arg_1_0.network_event_delegate = arg_1_3
 
-	network_event_delegate:register(self, "rpc_breed_freeze_units", "rpc_breed_unfreeze_breed", "rpc_breed_freezer_sync_breeds")
+	arg_1_3:register(arg_1_0, "rpc_breed_freeze_units", "rpc_breed_unfreeze_breed", "rpc_breed_freezer_sync_breeds")
 
-	self._enemy_package_loader = enemy_package_loader
-	self.breed_spawn_queues = {}
-	self.extensions = {}
-	self.systems_by_breed = {}
-	self.extension_names_by_breed = {}
-	self.count = 0
-	self.units_to_freeze = {}
-	self.num_to_freeze = 0
-	self.breed_offsets = {}
-	self.breed_template_units = {}
+	arg_1_0._enemy_package_loader = arg_1_4
+	arg_1_0.breed_spawn_queues = {}
+	arg_1_0.extensions = {}
+	arg_1_0.systems_by_breed = {}
+	arg_1_0.extension_names_by_breed = {}
+	arg_1_0.count = 0
+	arg_1_0.units_to_freeze = {}
+	arg_1_0.num_to_freeze = 0
+	arg_1_0.breed_offsets = {}
+	arg_1_0.breed_template_units = {}
 
-	if is_server then
-		self._breed_freezer_settings = self:_setup_freezable_breeds(enemy_package_loader)
+	if var_1_0 then
+		arg_1_0._breed_freezer_settings = arg_1_0:_setup_freezable_breeds(arg_1_4)
 	end
 end
 
-BreedFreezer._setup_freezable_breeds = function (self, enemy_package_loader)
-	local breed_freezer_settings = table.clone(BreedFreezerSettings)
-	local startup_breeds = enemy_package_loader:get_startup_breeds()
-	local breeds = breed_freezer_settings.breeds
+function BreedFreezer._setup_freezable_breeds(arg_2_0, arg_2_1)
+	local var_2_0 = table.clone(BreedFreezerSettings)
+	local var_2_1 = arg_2_1:get_startup_breeds()
+	local var_2_2 = var_2_0.breeds
 
-	for breed_name, data in pairs(breeds) do
-		if not startup_breeds[breed_name] then
-			breeds[breed_name] = nil
+	for iter_2_0, iter_2_1 in pairs(var_2_2) do
+		if not var_2_1[iter_2_0] then
+			var_2_2[iter_2_0] = nil
 		end
 	end
 
-	local ordered = table.keys(breeds)
+	local var_2_3 = table.keys(var_2_2)
 
-	table.sort(ordered)
-	printf("[BreedFreezer] Setting up freezable breeds: (%s)", table.concat(ordered, ", "))
+	table.sort(var_2_3)
+	printf("[BreedFreezer] Setting up freezable breeds: (%s)", table.concat(var_2_3, ", "))
 
-	breed_freezer_settings.num_pools = #ordered
-	breed_freezer_settings.max_pool_size = 0
+	var_2_0.num_pools = #var_2_3
+	var_2_0.max_pool_size = 0
 
-	local breeds_index_lookup = breed_freezer_settings.breeds_index_lookup
+	local var_2_4 = var_2_0.breeds_index_lookup
 
-	for i = 1, #ordered do
-		local breed_name = ordered[i]
-		local settings = breeds[breed_name]
+	for iter_2_2 = 1, #var_2_3 do
+		local var_2_5 = var_2_3[iter_2_2]
+		local var_2_6 = var_2_2[var_2_5]
 
-		breeds_index_lookup[i] = breed_name
-		breed_freezer_settings.max_pool_size = math.max(breed_freezer_settings.max_pool_size, settings.pool_size)
+		var_2_4[iter_2_2] = var_2_5
+		var_2_0.max_pool_size = math.max(var_2_0.max_pool_size, var_2_6.pool_size)
 	end
 
-	for _, settings in pairs(breed_freezer_settings.breeds) do
-		fassert(settings.pool_size <= NetworkConstants.max_breed_freezer_units_per_rpc, "Pool size too large to sync!")
+	for iter_2_3, iter_2_4 in pairs(var_2_0.breeds) do
+		fassert(iter_2_4.pool_size <= NetworkConstants.max_breed_freezer_units_per_rpc, "Pool size too large to sync!")
 	end
 
-	self:_setup_freeze_box(breed_freezer_settings)
+	arg_2_0:_setup_freeze_box(var_2_0)
 
-	return breed_freezer_settings
+	return var_2_0
 end
 
-BreedFreezer._setup_freeze_box = function (self, breed_freezer_settings)
-	local offset_z = 0
-	local freezer_pos = script_data.debug_breed_freeze and Vector3Aux.unbox(breed_freezer_settings.freezer_pos_debug) or Vector3Aux.unbox(breed_freezer_settings.freezer_pos)
-	local freezer_offset = script_data.debug_breed_freeze and Vector3Aux.unbox(breed_freezer_settings.freezer_offset_debug) or Vector3Aux.unbox(breed_freezer_settings.freezer_offset)
+function BreedFreezer._setup_freeze_box(arg_3_0, arg_3_1)
+	local var_3_0 = 0
+	local var_3_1 = script_data.debug_breed_freeze and Vector3Aux.unbox(arg_3_1.freezer_pos_debug) or Vector3Aux.unbox(arg_3_1.freezer_pos)
+	local var_3_2 = script_data.debug_breed_freeze and Vector3Aux.unbox(arg_3_1.freezer_offset_debug) or Vector3Aux.unbox(arg_3_1.freezer_offset)
 
-	self.freezer_pos = Vector3Box(freezer_pos)
-	self.freezer_offset = Vector3Box(freezer_offset)
+	arg_3_0.freezer_pos = Vector3Box(var_3_1)
+	arg_3_0.freezer_offset = Vector3Box(var_3_2)
 
-	local world = self.world
-	local is_server = self.is_server
-	local entity_manager = self.entity_manager
+	local var_3_3 = arg_3_0.world
+	local var_3_4 = arg_3_0.is_server
+	local var_3_5 = arg_3_0.entity_manager
 
-	for breed_name, settings in pairs(breed_freezer_settings.breeds) do
-		self.breed_offsets[breed_name] = offset_z
-		self.units_to_freeze[breed_name] = {}
-		self.breed_spawn_queues[breed_name] = CircularQueue:new(settings.pool_size)
+	for iter_3_0, iter_3_1 in pairs(arg_3_1.breeds) do
+		arg_3_0.breed_offsets[iter_3_0] = var_3_0
+		arg_3_0.units_to_freeze[iter_3_0] = {}
+		arg_3_0.breed_spawn_queues[iter_3_0] = CircularQueue:new(iter_3_1.pool_size)
 
-		local breed = Breeds[breed_name]
-		local is_husk = not is_server
-		local extension_names, num_extension_names = unit_templates.get_extensions(breed.unit_template, is_husk, is_server)
+		local var_3_6 = Breeds[iter_3_0]
+		local var_3_7 = not var_3_4
+		local var_3_8, var_3_9 = var_0_0.get_extensions(var_3_6.unit_template, var_3_7, var_3_4)
 
-		self.systems_by_breed[breed_name] = {}
-		self.extension_names_by_breed[breed_name] = {}
+		arg_3_0.systems_by_breed[iter_3_0] = {}
+		arg_3_0.extension_names_by_breed[iter_3_0] = {}
 
-		local systems = self.systems_by_breed[breed_name]
-		local breed_extension_names = self.extension_names_by_breed[breed_name]
+		local var_3_10 = arg_3_0.systems_by_breed[iter_3_0]
+		local var_3_11 = arg_3_0.extension_names_by_breed[iter_3_0]
 
-		for i = 1, num_extension_names do
-			local ext_name = extension_names[i]
-			local system = entity_manager:system_by_extension(ext_name)
+		for iter_3_2 = 1, var_3_9 do
+			local var_3_12 = var_3_8[iter_3_2]
+			local var_3_13 = var_3_5:system_by_extension(var_3_12)
 
-			if system ~= nil then
-				systems[#systems + 1] = system
+			if var_3_13 ~= nil then
+				var_3_10[#var_3_10 + 1] = var_3_13
 
-				fassert(system.freeze, "System '%s' that should be able to freeze and unfreeze breed extensions doesn't have the required function(s).", system.NAME)
+				fassert(var_3_13.freeze, "System '%s' that should be able to freeze and unfreeze breed extensions doesn't have the required function(s).", var_3_13.NAME)
 
-				breed_extension_names[#breed_extension_names + 1] = ext_name
+				var_3_11[#var_3_11 + 1] = var_3_12
 			end
 		end
 
-		local base_unit = script_data.use_optimized_breed_units and breed.opt_base_unit or breed.base_unit
-		local variants = 0
+		local var_3_14 = script_data.use_optimized_breed_units and var_3_6.opt_base_unit or var_3_6.base_unit
+		local var_3_15 = 0
 
-		if base_unit and type(base_unit) == "table" then
-			for _, unit_name in ipairs(base_unit) do
-				local template_pos = freezer_pos + Vector3(variants, -3, offset_z)
+		if var_3_14 and type(var_3_14) == "table" then
+			for iter_3_3, iter_3_4 in ipairs(var_3_14) do
+				local var_3_16 = var_3_1 + Vector3(var_3_15, -3, var_3_0)
 
-				self:_spawn_template_unit(world, unit_name, template_pos)
+				arg_3_0:_spawn_template_unit(var_3_3, iter_3_4, var_3_16)
 			end
 
-			variants = variants + 1
+			local var_3_17 = var_3_15 + 1
 		else
-			local template_pos = freezer_pos + Vector3(0, -3, offset_z)
+			local var_3_18 = var_3_1 + Vector3(0, -3, var_3_0)
 
-			self:_spawn_template_unit(world, base_unit, template_pos)
+			arg_3_0:_spawn_template_unit(var_3_3, var_3_14, var_3_18)
 		end
 
-		offset_z = offset_z + freezer_offset.z
+		var_3_0 = var_3_0 + var_3_2.z
 	end
 
-	breed_freezer_settings.freezer_size[1] = 4
-	breed_freezer_settings.freezer_size[2] = freezer_offset[2] * (breed_freezer_settings.max_pool_size + 1)
-	breed_freezer_settings.freezer_size[3] = freezer_offset[3] * (breed_freezer_settings.num_pools + 1)
-	self.spawn_data = {
+	arg_3_1.freezer_size[1] = 4
+	arg_3_1.freezer_size[2] = var_3_2[2] * (arg_3_1.max_pool_size + 1)
+	arg_3_1.freezer_size[3] = var_3_2[3] * (arg_3_1.num_pools + 1)
+	arg_3_0.spawn_data = {
 		nil,
 		Vector3Box(),
-		QuaternionBox(),
+		QuaternionBox()
 	}
-	self._freezer_initialized = true
+	arg_3_0._freezer_initialized = true
 end
 
-BreedFreezer._spawn_template_unit = function (self, world, unit_name, pos)
-	local unit = World.spawn_unit(world, unit_name, pos)
+function BreedFreezer._spawn_template_unit(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	local var_4_0 = World.spawn_unit(arg_4_1, arg_4_2, arg_4_3)
 
-	self.breed_template_units[unit_name] = unit
+	arg_4_0.breed_template_units[arg_4_2] = var_4_0
 
-	Unit.disable_animation_state_machine(unit)
-	Unit.disable_physics(unit)
-	Unit.set_unit_visibility(unit, false)
+	Unit.disable_animation_state_machine(var_4_0)
+	Unit.disable_physics(var_4_0)
+	Unit.set_unit_visibility(var_4_0, false)
 
 	if script_data.debug_breed_freeze then
-		QuickDrawerStay:sphere(pos, 1, Color(0, 200, 0))
+		QuickDrawerStay:sphere(arg_4_3, 1, Color(0, 200, 0))
 	end
 end
 
-BreedFreezer.destroy = function (self)
-	self.network_event_delegate:unregister(self)
+function BreedFreezer.destroy(arg_5_0)
+	arg_5_0.network_event_delegate:unregister(arg_5_0)
 end
 
-BreedFreezer.try_mark_unit_for_freeze = function (self, breed, unit)
-	assert(self._breed_freezer_settings, "[BreedFreezer] 'try_mark_unit_for_freeze' was called before we've initialized the breed freezer")
+function BreedFreezer.try_mark_unit_for_freeze(arg_6_0, arg_6_1, arg_6_2)
+	assert(arg_6_0._breed_freezer_settings, "[BreedFreezer] 'try_mark_unit_for_freeze' was called before we've initialized the breed freezer")
 
-	local breed_name = breed.name
+	local var_6_0 = arg_6_1.name
 
-	if self._breed_freezer_settings.breeds[breed_name] == nil then
+	if arg_6_0._breed_freezer_settings.breeds[var_6_0] == nil then
 		return false
 	end
 
-	local units_to_freeze = self.units_to_freeze[breed_name]
+	local var_6_1 = arg_6_0.units_to_freeze[var_6_0]
 
-	if self.breed_spawn_queues[breed_name]:available() <= #units_to_freeze then
+	if arg_6_0.breed_spawn_queues[var_6_0]:available() <= #var_6_1 then
 		return false
 	end
 
-	for i = 1, #units_to_freeze do
-		if units_to_freeze[i] == unit then
+	for iter_6_0 = 1, #var_6_1 do
+		if var_6_1[iter_6_0] == arg_6_2 then
 			rawset(_G, "DoubleFreezeContext", rawget(_G, "DoubleFreezeContext") or {})
 
-			DoubleFreezeContext[unit] = true
+			DoubleFreezeContext[arg_6_2] = true
 
 			print("ERROR: Tried to freeze unit twice in the same frame.", Script.callstack())
 
@@ -256,336 +256,326 @@ BreedFreezer.try_mark_unit_for_freeze = function (self, breed, unit)
 		end
 	end
 
-	local queue = self.breed_spawn_queues[breed_name]
-
-	if queue:contains(unit) then
+	if arg_6_0.breed_spawn_queues[var_6_0]:contains(arg_6_2) then
 		print("ERROR: Tried to freeze unit twice (it was already in queue).")
 
 		return false
 	end
 
-	self.num_to_freeze = self.num_to_freeze + 1
-	units_to_freeze[#units_to_freeze + 1] = unit
+	arg_6_0.num_to_freeze = arg_6_0.num_to_freeze + 1
+	var_6_1[#var_6_1 + 1] = arg_6_2
 
 	return true
 end
 
-BreedFreezer.rpc_breed_freeze_units = function (self, channel_id, unit_go_ids)
-	fassert(self._freezer_initialized, "Received freeze before freezer was initialized!")
+function BreedFreezer.rpc_breed_freeze_units(arg_7_0, arg_7_1, arg_7_2)
+	fassert(arg_7_0._freezer_initialized, "Received freeze before freezer was initialized!")
 
-	local unit_storage = Managers.state.unit_storage
+	local var_7_0 = Managers.state.unit_storage
 
-	for i = 1, #unit_go_ids do
-		local go_id = unit_go_ids[i]
-		local unit = unit_storage:unit(go_id)
-		local ai_extension = ScriptUnit.has_extension(unit, "ai_system")
-		local breed = ai_extension:breed()
-		local breed_name = breed.name
+	for iter_7_0 = 1, #arg_7_2 do
+		local var_7_1 = arg_7_2[iter_7_0]
+		local var_7_2 = var_7_0:unit(var_7_1)
+		local var_7_3 = ScriptUnit.has_extension(var_7_2, "ai_system"):breed().name
 
-		fassert(self._breed_freezer_settings.breeds[breed_name], "Can't freeze unit of breed %s", breed_name)
+		fassert(arg_7_0._breed_freezer_settings.breeds[var_7_3], "Can't freeze unit of breed %s", var_7_3)
 
-		local units_to_freeze = self.units_to_freeze[breed_name]
+		local var_7_4 = arg_7_0.units_to_freeze[var_7_3]
 
-		fassert(self.breed_spawn_queues[breed_name]:available() > #units_to_freeze, "Breed freeze queue for breed %s is full.", breed_name)
+		fassert(arg_7_0.breed_spawn_queues[var_7_3]:available() > #var_7_4, "Breed freeze queue for breed %s is full.", var_7_3)
 
-		self.num_to_freeze = self.num_to_freeze + 1
-		units_to_freeze[#units_to_freeze + 1] = unit
+		arg_7_0.num_to_freeze = arg_7_0.num_to_freeze + 1
+		var_7_4[#var_7_4 + 1] = var_7_2
 	end
 
-	self:commit_freezes()
+	arg_7_0:commit_freezes()
 end
 
-local GameSession_set_game_object_field = GameSession.set_game_object_field
+local var_0_1 = GameSession.set_game_object_field
 
-BreedFreezer.commit_freezes = function (self)
-	if self.num_to_freeze == 0 then
+function BreedFreezer.commit_freezes(arg_8_0)
+	if arg_8_0.num_to_freeze == 0 then
 		return
 	end
 
-	local freezer_offset = self.freezer_offset:unbox()
-	local freezer_pos = self.freezer_pos:unbox()
-	local freezer_size = Vector3Aux.unbox(self._breed_freezer_settings.freezer_size)
-	local is_server = self.is_server
-	local network_manager = Managers.state.network
-	local in_game_session = network_manager:in_game_session()
-	local game = network_manager:game()
-	local breed_go_ids = FrameTable.alloc_table()
-	local max_breed_freezer_units_per_rpc = NetworkConstants.max_breed_freezer_units_per_rpc
+	local var_8_0 = arg_8_0.freezer_offset:unbox()
+	local var_8_1 = arg_8_0.freezer_pos:unbox()
+	local var_8_2 = Vector3Aux.unbox(arg_8_0._breed_freezer_settings.freezer_size)
+	local var_8_3 = arg_8_0.is_server
+	local var_8_4 = Managers.state.network
+	local var_8_5 = var_8_4:in_game_session()
+	local var_8_6 = var_8_4:game()
+	local var_8_7 = FrameTable.alloc_table()
+	local var_8_8 = NetworkConstants.max_breed_freezer_units_per_rpc
 
-	for breed_name, units in pairs(self.units_to_freeze) do
-		local queue = self.breed_spawn_queues[breed_name]
+	for iter_8_0, iter_8_1 in pairs(arg_8_0.units_to_freeze) do
+		local var_8_9 = arg_8_0.breed_spawn_queues[iter_8_0]
 
-		for i = 1, #units do
-			local unit = units[i]
+		for iter_8_2 = 1, #iter_8_1 do
+			local var_8_10 = iter_8_1[iter_8_2]
 
-			units[i] = nil
+			iter_8_1[iter_8_2] = nil
 
-			queue:push_back(unit)
-			Managers.state.event:trigger_referenced(unit, "on_unit_freeze")
+			var_8_9:push_back(var_8_10)
+			Managers.state.event:trigger_referenced(var_8_10, "on_unit_freeze")
 
-			local systems = self.systems_by_breed[breed_name]
-			local breed_extension_names = self.extension_names_by_breed[breed_name]
+			local var_8_11 = arg_8_0.systems_by_breed[iter_8_0]
+			local var_8_12 = arg_8_0.extension_names_by_breed[iter_8_0]
 
-			for j = #systems, 1, -1 do
-				local system = systems[j]
-
-				system:freeze(unit, breed_extension_names[j], "reason_unspawn")
+			for iter_8_3 = #var_8_11, 1, -1 do
+				var_8_11[iter_8_3]:freeze(var_8_10, var_8_12[iter_8_3], "reason_unspawn")
 			end
 
-			if Unit.has_animation_state_machine(unit) then
-				Unit.disable_animation_state_machine(unit)
+			if Unit.has_animation_state_machine(var_8_10) then
+				Unit.disable_animation_state_machine(var_8_10)
 			end
 
-			Unit.flow_event(unit, "lua_freeze_unit")
-			Unit.disable_physics(unit)
+			Unit.flow_event(var_8_10, "lua_freeze_unit")
+			Unit.disable_physics(var_8_10)
 
-			local unit_name = Unit.get_data(unit, "unit_name")
-			local source_unit = self.breed_template_units[unit_name]
+			local var_8_13 = Unit.get_data(var_8_10, "unit_name")
+			local var_8_14 = arg_8_0.breed_template_units[var_8_13]
 
-			Unit.copy_scene_graph_local_from(unit, source_unit)
+			Unit.copy_scene_graph_local_from(var_8_10, var_8_14)
 
 			if not script_data.debug_breed_freeze then
-				Unit.set_unit_visibility(unit, false)
+				Unit.set_unit_visibility(var_8_10, false)
 			end
 
-			local offset = Vector3(freezer_size[1] * 0.5, queue.last * freezer_offset[2], self.breed_offsets[breed_name] + freezer_offset[3] * 0.5)
+			local var_8_15 = Vector3(var_8_2[1] * 0.5, var_8_9.last * var_8_0[2], arg_8_0.breed_offsets[iter_8_0] + var_8_0[3] * 0.5)
 
-			Unit.set_local_position(unit, 0, freezer_pos + offset)
+			Unit.set_local_position(var_8_10, 0, var_8_1 + var_8_15)
 
-			FROZEN[unit] = true
-			POSITION_LOOKUP[unit] = nil
+			FROZEN[var_8_10] = true
+			POSITION_LOOKUP[var_8_10] = nil
 
-			Unit.reload_flow(unit)
+			Unit.reload_flow(var_8_10)
 
-			self.count = self.count + 1
+			arg_8_0.count = arg_8_0.count + 1
 
-			Unit.set_frozen(unit, true)
+			Unit.set_frozen(var_8_10, true)
 
-			if is_server and in_game_session then
-				local unit_id = network_manager:unit_game_object_id(unit)
+			if var_8_3 and var_8_5 then
+				local var_8_16 = var_8_4:unit_game_object_id(var_8_10)
 
-				breed_go_ids[#breed_go_ids + 1] = unit_id
+				var_8_7[#var_8_7 + 1] = var_8_16
 
-				GameSession_set_game_object_field(game, unit_id, "position", freezer_pos + offset)
+				var_0_1(var_8_6, var_8_16, "position", var_8_1 + var_8_15)
 
-				if max_breed_freezer_units_per_rpc <= #breed_go_ids then
-					fassert(#breed_go_ids == max_breed_freezer_units_per_rpc, "More than one unit id was added during loop!")
-					network_manager.network_transmit:send_rpc_clients("rpc_breed_freeze_units", breed_go_ids)
-					table.clear(breed_go_ids)
+				if var_8_8 <= #var_8_7 then
+					fassert(#var_8_7 == var_8_8, "More than one unit id was added during loop!")
+					var_8_4.network_transmit:send_rpc_clients("rpc_breed_freeze_units", var_8_7)
+					table.clear(var_8_7)
 				end
 			end
 
-			Managers.state.unit_storage:freeze(unit)
+			Managers.state.unit_storage:freeze(var_8_10)
 		end
 	end
 
-	if is_server and in_game_session and #breed_go_ids > 0 then
-		network_manager.network_transmit:send_rpc_clients("rpc_breed_freeze_units", breed_go_ids)
+	if var_8_3 and var_8_5 and #var_8_7 > 0 then
+		var_8_4.network_transmit:send_rpc_clients("rpc_breed_freeze_units", var_8_7)
 	end
 
-	self.num_to_freeze = 0
+	arg_8_0.num_to_freeze = 0
 end
 
-BreedFreezer.try_unfreeze_breed = function (self, breed, data)
-	assert(self._breed_freezer_settings, "[BreedFreezer] 'try_unfreeze_breed' was called before the breed freezer was initialized")
+function BreedFreezer.try_unfreeze_breed(arg_9_0, arg_9_1, arg_9_2)
+	assert(arg_9_0._breed_freezer_settings, "[BreedFreezer] 'try_unfreeze_breed' was called before the breed freezer was initialized")
 
-	local breed_name = breed.name
+	local var_9_0 = arg_9_1.name
 
-	if self._breed_freezer_settings.breeds[breed_name] == nil then
+	if arg_9_0._breed_freezer_settings.breeds[var_9_0] == nil then
 		return nil
 	end
 
-	local queue = self.breed_spawn_queues[breed_name]
+	local var_9_1 = arg_9_0.breed_spawn_queues[var_9_0]
 
-	if queue:is_empty() then
+	if var_9_1:is_empty() then
 		return nil
 	end
 
-	local unit = queue:pop_first()
+	local var_9_2 = var_9_1:pop_first()
 
-	Managers.state.unit_storage:unfreeze(unit)
+	Managers.state.unit_storage:unfreeze(var_9_2)
 
-	local optional_data = data[7]
-	local side_id = optional_data.side_id
-	local network_manager = Managers.state.network
-	local unit_id = network_manager:unit_game_object_id(unit)
+	local var_9_3 = arg_9_2[7].side_id
+	local var_9_4 = Managers.state.network
+	local var_9_5 = var_9_4:unit_game_object_id(var_9_2)
 
-	network_manager.network_transmit:send_rpc_clients("rpc_breed_unfreeze_breed", NetworkLookup.breeds[breed_name], data[2]:unbox(), data[3]:unbox(), side_id, unit_id)
-	self:unfreeze_unit(unit, breed_name, data)
+	var_9_4.network_transmit:send_rpc_clients("rpc_breed_unfreeze_breed", NetworkLookup.breeds[var_9_0], arg_9_2[2]:unbox(), arg_9_2[3]:unbox(), var_9_3, var_9_5)
+	arg_9_0:unfreeze_unit(var_9_2, var_9_0, arg_9_2)
 
-	return unit
+	return var_9_2
 end
 
-BreedFreezer.rpc_breed_unfreeze_breed = function (self, channel_id, breed_id, pos, rot, side_id, go_id)
-	fassert(self._freezer_initialized, "Received unfreeze before freezer was initialized!")
+function BreedFreezer.rpc_breed_unfreeze_breed(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
+	fassert(arg_10_0._freezer_initialized, "Received unfreeze before freezer was initialized!")
 
-	local breed_name = NetworkLookup.breeds[breed_id]
-	local queue = self.breed_spawn_queues[breed_name]
-	local unit = queue:pop_first()
+	local var_10_0 = NetworkLookup.breeds[arg_10_2]
+	local var_10_1 = arg_10_0.breed_spawn_queues[var_10_0]:pop_first()
 
-	fassert(self._breed_freezer_settings.breeds[breed_name], "Can't unfreeze unit of breed %s", breed_name)
-	Managers.state.unit_storage:unfreeze(unit)
+	fassert(arg_10_0._breed_freezer_settings.breeds[var_10_0], "Can't unfreeze unit of breed %s", var_10_0)
+	Managers.state.unit_storage:unfreeze(var_10_1)
 
-	local check_go_id = Managers.state.unit_storage:go_id(unit)
+	local var_10_2 = Managers.state.unit_storage:go_id(var_10_1)
 
-	fassert(go_id == check_go_id, "Server unfreeze unit didn't match local unit in spawn queue")
+	fassert(arg_10_6 == var_10_2, "Server unfreeze unit didn't match local unit in spawn queue")
 
-	local ai_extension = ScriptUnit.has_extension(unit, "ai_system")
-	local breed = ai_extension:breed()
-	local optional_data = {
-		side_id = side_id,
+	local var_10_3 = ScriptUnit.has_extension(var_10_1, "ai_system"):breed()
+	local var_10_4 = {
+		side_id = arg_10_5
 	}
-	local data = self.spawn_data
+	local var_10_5 = arg_10_0.spawn_data
 
-	data[1] = breed
+	var_10_5[1] = var_10_3
 
-	data[2]:store(pos)
-	data[3]:store(rot)
+	var_10_5[2]:store(arg_10_3)
+	var_10_5[3]:store(arg_10_4)
 
-	data[7] = optional_data
+	var_10_5[7] = var_10_4
 
-	self:unfreeze_unit(unit, breed_name, data)
+	arg_10_0:unfreeze_unit(var_10_1, var_10_0, var_10_5)
 end
 
-BreedFreezer.unfreeze_unit = function (self, unit, breed_name, data)
-	Unit.set_frozen(unit, false)
+function BreedFreezer.unfreeze_unit(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+	Unit.set_frozen(arg_11_1, false)
 
-	local pos = data[2]:unbox()
-	local rot = data[3]:unbox()
+	local var_11_0 = arg_11_3[2]:unbox()
+	local var_11_1 = arg_11_3[3]:unbox()
 
-	Unit.set_local_position(unit, 0, pos)
-	Unit.set_local_rotation(unit, 0, rot)
+	Unit.set_local_position(arg_11_1, 0, var_11_0)
+	Unit.set_local_rotation(arg_11_1, 0, var_11_1)
 
-	POSITION_LOOKUP[unit] = pos
-	FROZEN[unit] = nil
+	POSITION_LOOKUP[arg_11_1] = var_11_0
+	FROZEN[arg_11_1] = nil
 
-	Unit.enable_animation_state_machine(unit)
-	Unit.enable_physics(unit)
-	Unit.flow_event(unit, "lua_unfreeze_unit")
-	Unit.set_unit_visibility(unit, true)
-	Managers.state.blood:clear_unit_decals(unit)
-	Unit.trigger_flow_unit_spawned(unit)
-	World.update_unit(self.world, unit)
+	Unit.enable_animation_state_machine(arg_11_1)
+	Unit.enable_physics(arg_11_1)
+	Unit.flow_event(arg_11_1, "lua_unfreeze_unit")
+	Unit.set_unit_visibility(arg_11_1, true)
+	Managers.state.blood:clear_unit_decals(arg_11_1)
+	Unit.trigger_flow_unit_spawned(arg_11_1)
+	World.update_unit(arg_11_0.world, arg_11_1)
 
-	self.count = self.count - 1
+	arg_11_0.count = arg_11_0.count - 1
 
-	local systems = self.systems_by_breed[breed_name]
-	local breed_extension_names = self.extension_names_by_breed[breed_name]
+	local var_11_2 = arg_11_0.systems_by_breed[arg_11_2]
+	local var_11_3 = arg_11_0.extension_names_by_breed[arg_11_2]
 
-	for i = 1, #systems do
-		local system = systems[i]
+	for iter_11_0 = 1, #var_11_2 do
+		local var_11_4 = var_11_2[iter_11_0]
 
-		if system.unfreeze then
-			system:unfreeze(unit, breed_extension_names[i], data)
+		if var_11_4.unfreeze then
+			var_11_4:unfreeze(arg_11_1, var_11_3[iter_11_0], arg_11_3)
 		end
 	end
 
-	Unit.flow_event(unit, "lua_trigger_variation")
+	Unit.flow_event(arg_11_1, "lua_trigger_variation")
 
-	return unit
+	return arg_11_1
 end
 
-function store_go_ids_in_array_func(breed_go_ids, unit, frozen_goids)
-	breed_go_ids[#breed_go_ids + 1] = frozen_goids[unit]
+function store_go_ids_in_array_func(arg_12_0, arg_12_1, arg_12_2)
+	arg_12_0[#arg_12_0 + 1] = arg_12_2[arg_12_1]
 end
 
-BreedFreezer.hot_join_sync = function (self, peer_id)
+function BreedFreezer.hot_join_sync(arg_13_0, arg_13_1)
 	print("Breedfreezer (server) starting a hot join sync")
 
-	local starts = {}
-	local breed_go_ids = {}
-	local unit_count = 0
-	local breed_index = 1
-	local max_breed_freezer_units_per_rpc = NetworkConstants.max_breed_freezer_units_per_rpc
-	local channel_id = PEER_ID_TO_CHANNEL[peer_id]
-	local frozen_goids = Managers.state.unit_storage.frozen_bimap_goid_unit
-	local indexed_lookup = self._breed_freezer_settings.breeds_index_lookup
+	local var_13_0 = {}
+	local var_13_1 = {}
+	local var_13_2 = 0
+	local var_13_3 = 1
+	local var_13_4 = NetworkConstants.max_breed_freezer_units_per_rpc
+	local var_13_5 = PEER_ID_TO_CHANNEL[arg_13_1]
+	local var_13_6 = Managers.state.unit_storage.frozen_bimap_goid_unit
+	local var_13_7 = arg_13_0._breed_freezer_settings.breeds_index_lookup
 
-	for i = 1, #indexed_lookup do
-		local breed_name = indexed_lookup[i]
-		local queue = self.breed_spawn_queues[breed_name]
-		local num_units_of_breed = queue:size()
+	for iter_13_0 = 1, #var_13_7 do
+		local var_13_8 = var_13_7[iter_13_0]
+		local var_13_9 = arg_13_0.breed_spawn_queues[var_13_8]
+		local var_13_10 = var_13_9:size()
 
-		if max_breed_freezer_units_per_rpc <= num_units_of_breed + unit_count then
+		if var_13_4 <= var_13_10 + var_13_2 then
 			printf("\t--> rpc-package size reached, sending rpc now")
-			RPC.rpc_breed_freezer_sync_breeds(channel_id, starts, breed_go_ids)
-			table.clear(breed_go_ids)
-			table.clear(starts)
+			RPC.rpc_breed_freezer_sync_breeds(var_13_5, var_13_0, var_13_1)
+			table.clear(var_13_1)
+			table.clear(var_13_0)
 
-			unit_count = 0
-			breed_index = 1
+			var_13_2 = 0
+			var_13_3 = 1
 		end
 
-		starts[breed_index * 2 - 1] = queue.first
-		starts[breed_index * 2 - 0] = num_units_of_breed
+		var_13_0[var_13_3 * 2 - 1] = var_13_9.first
+		var_13_0[var_13_3 * 2 - 0] = var_13_10
 
-		printf("\tpacking %d units of breed %s", num_units_of_breed, breed_name)
-		queue:foreach(breed_go_ids, store_go_ids_in_array_func, frozen_goids)
+		printf("\tpacking %d units of breed %s", var_13_10, var_13_8)
+		var_13_9:foreach(var_13_1, store_go_ids_in_array_func, var_13_6)
 
-		unit_count = unit_count + num_units_of_breed
-		breed_index = breed_index + 1
+		var_13_2 = var_13_2 + var_13_10
+		var_13_3 = var_13_3 + 1
 	end
 
-	if #starts > 0 then
+	if #var_13_0 > 0 then
 		printf("\t--> rpc-package size reached, sending rpc now (last package)")
-		RPC.rpc_breed_freezer_sync_breeds(channel_id, starts, breed_go_ids)
-		table.dump(starts, "starts")
-		table.dump(breed_go_ids, "breed_go_ids")
+		RPC.rpc_breed_freezer_sync_breeds(var_13_5, var_13_0, var_13_1)
+		table.dump(var_13_0, "starts")
+		table.dump(var_13_1, "breed_go_ids")
 	end
 end
 
-BreedFreezer.rpc_breed_freezer_sync_breeds = function (self, channel_id, starts, unit_go_ids)
-	if not self._current_synced_breed_index then
-		self._current_synced_breed_index = 0
-		self._breed_freezer_settings = self:_setup_freezable_breeds(self._enemy_package_loader)
+function BreedFreezer.rpc_breed_freezer_sync_breeds(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+	if not arg_14_0._current_synced_breed_index then
+		arg_14_0._current_synced_breed_index = 0
+		arg_14_0._breed_freezer_settings = arg_14_0:_setup_freezable_breeds(arg_14_0._enemy_package_loader)
 	end
 
-	printf("Breedfreezer (client) received breed syncs num_breeds:%d, total_units:%d", #starts / 2, #unit_go_ids)
+	printf("Breedfreezer (client) received breed syncs num_breeds:%d, total_units:%d", #arg_14_2 / 2, #arg_14_3)
 
-	local breed_index = self._current_synced_breed_index
-	local unit_count = 1
+	local var_14_0 = arg_14_0._current_synced_breed_index
+	local var_14_1 = 1
 
-	for i = 1, #starts, 2 do
-		breed_index = breed_index + 1
+	for iter_14_0 = 1, #arg_14_2, 2 do
+		var_14_0 = var_14_0 + 1
 
-		local breed_name = self._breed_freezer_settings.breeds_index_lookup[breed_index]
+		local var_14_2 = arg_14_0._breed_freezer_settings.breeds_index_lookup[var_14_0]
 
-		fassert(self._breed_freezer_settings.breeds[breed_name], "Can't freeze unit of breed %s", breed_name)
+		fassert(arg_14_0._breed_freezer_settings.breeds[var_14_2], "Can't freeze unit of breed %s", var_14_2)
 
-		local queue_start = starts[i]
-		local amount = starts[i + 1]
-		local queue = self.breed_spawn_queues[breed_name]
+		local var_14_3 = arg_14_2[iter_14_0]
+		local var_14_4 = arg_14_2[iter_14_0 + 1]
+		local var_14_5 = arg_14_0.breed_spawn_queues[var_14_2]
 
-		queue.first = queue_start
-		queue.last = queue:index_before(queue.first)
+		var_14_5.first = var_14_3
+		var_14_5.last = var_14_5:index_before(var_14_5.first)
 
-		printf("-->\tgot %d of %s", amount, breed_name)
-		fassert(queue:is_empty(), "Breed freeze queue for breed %s was not empty!", breed_name)
+		printf("-->\tgot %d of %s", var_14_4, var_14_2)
+		fassert(var_14_5:is_empty(), "Breed freeze queue for breed %s was not empty!", var_14_2)
 
-		local units_to_freeze = self.units_to_freeze[breed_name]
+		local var_14_6 = arg_14_0.units_to_freeze[var_14_2]
 
-		for j = 1, amount do
-			local go_id = unit_go_ids[unit_count]
-			local unit = Managers.state.unit_storage:unit(go_id)
+		for iter_14_1 = 1, var_14_4 do
+			local var_14_7 = arg_14_3[var_14_1]
+			local var_14_8 = Managers.state.unit_storage:unit(var_14_7)
 
-			units_to_freeze[#units_to_freeze + 1] = unit
-			self.num_to_freeze = self.num_to_freeze + 1
+			var_14_6[#var_14_6 + 1] = var_14_8
+			arg_14_0.num_to_freeze = arg_14_0.num_to_freeze + 1
 
-			local ai_extension = ScriptUnit.has_extension(unit, "ai_system")
-			local breed = ai_extension:breed()
+			local var_14_9 = ScriptUnit.has_extension(var_14_8, "ai_system"):breed()
 
-			fassert(breed.name == breed_name, "Got wrong expected breed in rpc_breed_freezer_sync_breeds %q ~= %q", breed.name, breed_name)
+			fassert(var_14_9.name == var_14_2, "Got wrong expected breed in rpc_breed_freezer_sync_breeds %q ~= %q", var_14_9.name, var_14_2)
 
-			unit_count = unit_count + 1
+			var_14_1 = var_14_1 + 1
 		end
 	end
 
-	self._current_synced_breed_index = breed_index
+	arg_14_0._current_synced_breed_index = var_14_0
 
-	print("Breed freezer counts: ", self._current_synced_breed_index, #self._breed_freezer_settings.breeds_index_lookup)
+	print("Breed freezer counts: ", arg_14_0._current_synced_breed_index, #arg_14_0._breed_freezer_settings.breeds_index_lookup)
 
-	if self._current_synced_breed_index == #self._breed_freezer_settings.breeds_index_lookup then
+	if arg_14_0._current_synced_breed_index == #arg_14_0._breed_freezer_settings.breeds_index_lookup then
 		print("Comitting breed freezer frozen units")
-		self:commit_freezes()
+		arg_14_0:commit_freezes()
 	end
 end

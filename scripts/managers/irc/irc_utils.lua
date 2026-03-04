@@ -1,9 +1,9 @@
-﻿-- chunkname: @scripts/managers/irc/irc_utils.lua
+-- chunkname: @scripts/managers/irc/irc_utils.lua
 
 IrcUtils = {}
 
-IrcUtils.convert_steam_user_id_to_base_64 = function (steam_user_id)
-	local base_64_table = {
+function IrcUtils.convert_steam_user_id_to_base_64(arg_1_0)
+	local var_1_0 = {
 		"0",
 		"1",
 		"2",
@@ -67,20 +67,20 @@ IrcUtils.convert_steam_user_id_to_base_64 = function (steam_user_id)
 		"y",
 		"z",
 		"[",
-		"]",
+		"]"
 	}
-	local steam_user_id_base_10 = Application.hex64_to_dec(steam_user_id)
-	local values = Math.base_10_to_base(steam_user_id_base_10, 64)
+	local var_1_1 = Application.hex64_to_dec(arg_1_0)
+	local var_1_2 = Math.base_10_to_base(var_1_1, 64)
 
-	table.reverse(values)
+	table.reverse(var_1_2)
 
-	local str = ""
+	local var_1_3 = ""
 
-	for _, value in ipairs(values) do
-		local index = tonumber(value) + 1
+	for iter_1_0, iter_1_1 in ipairs(var_1_2) do
+		local var_1_4 = tonumber(iter_1_1) + 1
 
-		str = str .. base_64_table[index]
+		var_1_3 = var_1_3 .. var_1_0[var_1_4]
 	end
 
-	return str
+	return var_1_3
 end

@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/ui/views/popup_handler.lua
+-- chunkname: @scripts/ui/views/popup_handler.lua
 
 require("scripts/managers/input/mock_input_manager")
 require("scripts/settings/ui_settings")
@@ -8,392 +8,392 @@ require("scripts/helpers/ui_utils")
 require("scripts/ui/ui_elements")
 require("scripts/ui/ui_widgets")
 
-local scenegraph_definition = {
+local var_0_0 = {
 	root = {
 		is_root = true,
 		position = {
 			0,
 			0,
-			UILayer.popup + 1,
+			UILayer.popup + 1
 		},
 		size = {
 			1920,
-			1080,
-		},
+			1080
+		}
 	},
 	screen = {
 		scale = "fit",
 		position = {
 			0,
 			0,
-			UILayer.popup,
+			UILayer.popup
 		},
 		size = {
 			1920,
-			1080,
-		},
+			1080
+		}
 	},
 	popup_root = {
-		horizontal_alignment = "center",
-		parent = "root",
 		vertical_alignment = "center",
+		parent = "root",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			100,
-			1,
+			1
 		},
 		size = {
 			800,
-			610,
-		},
+			610
+		}
 	},
 	title_box = {
-		horizontal_alignment = "center",
-		parent = "popup_root",
 		vertical_alignment = "top",
+		parent = "popup_root",
+		horizontal_alignment = "center",
 		size = {
 			700,
-			100,
+			100
 		},
 		position = {
 			0,
 			-20,
-			40,
-		},
+			40
+		}
 	},
 	popup_password_box = {
-		horizontal_alignment = "center",
-		parent = "popup_root",
 		vertical_alignment = "center",
+		parent = "popup_root",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			0,
-			1,
+			1
 		},
 		size = {
 			600,
-			50,
-		},
+			50
+		}
 	},
 	popup_password_input = {
-		horizontal_alignment = "center",
-		parent = "popup_password_box",
 		vertical_alignment = "center",
+		parent = "popup_password_box",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			0,
-			2,
+			2
 		},
 		size = {
 			580,
-			40,
-		},
+			40
+		}
 	},
 	popup_password_text = {
-		horizontal_alignment = "center",
-		parent = "popup_password_box",
 		vertical_alignment = "bottom",
+		parent = "popup_password_box",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			50,
-			2,
+			2
 		},
 		size = {
 			520,
-			200,
-		},
+			200
+		}
 	},
 	popup_text_box = {
-		horizontal_alignment = "center",
-		parent = "popup_root",
 		vertical_alignment = "top",
+		parent = "popup_root",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			-120,
-			1,
+			1
 		},
 		size = {
 			700,
-			340,
-		},
+			340
+		}
 	},
 	popup_text = {
-		horizontal_alignment = "center",
-		parent = "popup_text_box",
 		vertical_alignment = "top",
+		parent = "popup_text_box",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			-35,
-			2,
+			2
 		},
 		size = {
 			520,
-			260,
-		},
+			260
+		}
 	},
 	buttons_root = {
-		horizontal_alignment = "center",
-		parent = "popup_root",
 		vertical_alignment = "bottom",
+		parent = "popup_root",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			83,
-			1,
+			1
 		},
 		size = {
 			1,
-			1,
-		},
+			1
+		}
 	},
 	button_1_1 = {
-		horizontal_alignment = "center",
-		parent = "buttons_root",
 		vertical_alignment = "center",
+		parent = "buttons_root",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			0,
-			1,
+			1
 		},
 		size = {
 			270,
-			70,
-		},
+			70
+		}
 	},
 	button_2_1 = {
-		horizontal_alignment = "center",
-		parent = "buttons_root",
 		vertical_alignment = "center",
+		parent = "buttons_root",
+		horizontal_alignment = "center",
 		position = {
 			-170,
 			0,
-			1,
+			1
 		},
 		size = {
 			270,
-			70,
-		},
+			70
+		}
 	},
 	button_2_2 = {
-		horizontal_alignment = "center",
-		parent = "buttons_root",
 		vertical_alignment = "center",
+		parent = "buttons_root",
+		horizontal_alignment = "center",
 		position = {
 			170,
 			0,
-			1,
+			1
 		},
 		size = {
 			270,
-			70,
-		},
+			70
+		}
 	},
 	button_3_1 = {
-		horizontal_alignment = "center",
-		parent = "buttons_root",
 		vertical_alignment = "center",
+		parent = "buttons_root",
+		horizontal_alignment = "center",
 		position = {
 			-200,
 			18,
-			1,
+			1
 		},
 		size = {
 			270,
-			70,
-		},
+			70
+		}
 	},
 	button_3_2 = {
-		horizontal_alignment = "center",
-		parent = "buttons_root",
 		vertical_alignment = "center",
+		parent = "buttons_root",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			-15,
-			1,
+			1
 		},
 		size = {
 			270,
-			70,
-		},
+			70
+		}
 	},
 	button_3_3 = {
-		horizontal_alignment = "center",
-		parent = "buttons_root",
 		vertical_alignment = "center",
+		parent = "buttons_root",
+		horizontal_alignment = "center",
 		position = {
 			200,
 			18,
-			1,
+			1
 		},
 		size = {
 			270,
-			70,
-		},
+			70
+		}
 	},
 	timer = {
-		horizontal_alignment = "right",
-		parent = "popup_root",
 		vertical_alignment = "top",
+		parent = "popup_root",
+		horizontal_alignment = "right"
 	},
 	center_timer = {
-		horizontal_alignment = "center",
-		parent = "popup_text_box",
 		vertical_alignment = "bottom",
+		parent = "popup_text_box",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			20,
-			1,
+			1
 		},
 		size = {
 			700,
-			30,
-		},
-	},
+			30
+		}
+	}
 }
 
-local function create_default_window(scenegraph_id, size)
-	local background_texture = "menu_frame_bg_01"
-	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local frame_settings = UIFrameSettings.menu_frame_11
-	local inner_frame_settings = UIFrameSettings.menu_frame_06
-	local widget = {
-		element = {},
+local function var_0_1(arg_1_0, arg_1_1)
+	local var_1_0 = "menu_frame_bg_01"
+	local var_1_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_1_0)
+	local var_1_2 = UIFrameSettings.menu_frame_11
+	local var_1_3 = UIFrameSettings.menu_frame_06
+	local var_1_4 = {
+		element = {}
 	}
-	local passes = {
+	local var_1_5 = {
 		{
-			content_id = "background",
-			pass_type = "texture_uv",
 			style_id = "background",
+			pass_type = "texture_uv",
+			content_id = "background"
 		},
 		{
 			pass_type = "texture",
 			style_id = "background_fade",
-			texture_id = "background_fade",
+			texture_id = "background_fade"
 		},
 		{
 			pass_type = "texture_frame",
 			style_id = "frame",
-			texture_id = "frame",
+			texture_id = "frame"
 		},
 		{
 			pass_type = "texture_frame",
 			style_id = "inner_frame",
-			texture_id = "inner_frame",
+			texture_id = "inner_frame"
 		},
 		{
 			pass_type = "rect",
-			style_id = "inner_rect",
+			style_id = "inner_rect"
 		},
 		{
 			pass_type = "texture",
 			style_id = "background_tint",
-			texture_id = "background_tint",
+			texture_id = "background_tint"
 		},
 		{
-			pass_type = "text",
 			style_id = "title_text",
-			text_id = "title_text",
+			pass_type = "text",
+			text_id = "title_text"
 		},
 		{
-			pass_type = "text",
 			style_id = "title_text_shadow",
-			text_id = "title_text",
+			pass_type = "text",
+			text_id = "title_text"
 		},
 		{
-			pass_type = "text",
 			style_id = "text",
-			text_id = "text_field",
+			pass_type = "text",
+			text_id = "text_field"
 		},
 		{
-			pass_type = "text",
 			style_id = "text_shadow",
-			text_id = "text_field",
+			pass_type = "text",
+			text_id = "text_field"
 		},
 		{
-			pass_type = "text",
 			style_id = "timer",
-			text_id = "timer_field",
+			pass_type = "text",
+			text_id = "timer_field"
 		},
 		{
-			pass_type = "text",
 			style_id = "timer_shadow",
-			text_id = "timer_field",
+			pass_type = "text",
+			text_id = "timer_field"
 		},
 		{
-			pass_type = "text",
 			style_id = "center_timer",
-			text_id = "center_timer_field",
+			pass_type = "text",
+			text_id = "center_timer_field"
 		},
 		{
-			pass_type = "text",
 			style_id = "center_timer_shadow",
-			text_id = "center_timer_field",
-		},
+			pass_type = "text",
+			text_id = "center_timer_field"
+		}
 	}
-	local content = {
+	local var_1_6 = {
+		timer_field = "",
+		title_text = "",
+		text_start_offset = 0,
+		text_field = "",
 		background_fade = "options_window_fade_01",
 		background_tint = "gradient_dice_game_reward",
 		center_timer_field = "",
-		text_field = "",
-		text_start_offset = 0,
-		timer_field = "",
-		title_text = "",
-		frame = frame_settings.texture,
-		inner_frame = inner_frame_settings.texture,
+		frame = var_1_2.texture,
+		inner_frame = var_1_3.texture,
 		background = {
 			uvs = {
 				{
 					0,
-					0,
+					0
 				},
 				{
-					math.min(size[1] / background_texture_settings.size[1], 1),
-					math.min(size[2] / background_texture_settings.size[2], 1),
-				},
+					math.min(arg_1_1[1] / var_1_1.size[1], 1),
+					math.min(arg_1_1[2] / var_1_1.size[2], 1)
+				}
 			},
-			texture_id = background_texture,
-		},
+			texture_id = var_1_0
+		}
 	}
-	local style = {
+	local var_1_7 = {
 		background = {
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
 				0,
 				0,
-				1,
-			},
+				1
+			}
 		},
 		background_fade = {
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
 				0,
 				0,
-				2,
-			},
+				2
+			}
 		},
 		frame = {
-			texture_size = frame_settings.texture_size,
-			texture_sizes = frame_settings.texture_sizes,
+			texture_size = var_1_2.texture_size,
+			texture_sizes = var_1_2.texture_sizes,
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
 				0,
 				0,
-				5,
-			},
+				5
+			}
 		},
 		inner_rect = {
 			scenegraph_id = "popup_text_box",
@@ -401,675 +401,673 @@ local function create_default_window(scenegraph_id, size)
 				200,
 				10,
 				10,
-				10,
+				10
 			},
 			offset = {
 				0,
 				0,
-				3,
-			},
+				3
+			}
 		},
 		inner_frame = {
 			scenegraph_id = "popup_text_box",
-			texture_size = inner_frame_settings.texture_size,
-			texture_sizes = inner_frame_settings.texture_sizes,
+			texture_size = var_1_3.texture_size,
+			texture_sizes = var_1_3.texture_sizes,
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
 				0,
 				0,
-				4,
-			},
+				4
+			}
 		},
 		background_tint = {
 			scenegraph_id = "screen",
 			offset = {
 				0,
 				0,
-				0,
+				0
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		title_text = {
+			word_wrap = false,
+			scenegraph_id = "title_box",
+			font_size = 50,
+			pixel_perfect = true,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
 			dynamic_font = true,
 			dynamic_font_size = true,
-			font_size = 50,
 			font_type = "hell_shark_header",
-			horizontal_alignment = "center",
-			pixel_perfect = true,
-			scenegraph_id = "title_box",
-			vertical_alignment = "center",
-			word_wrap = false,
 			text_color = Colors.get_color_table_with_alpha("font_title", 255),
 			offset = {
 				0,
 				0,
-				6,
-			},
+				6
+			}
 		},
 		title_text_shadow = {
+			word_wrap = false,
+			scenegraph_id = "title_box",
+			font_size = 50,
+			pixel_perfect = true,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
 			dynamic_font = true,
 			dynamic_font_size = true,
-			font_size = 50,
 			font_type = "hell_shark_header",
-			horizontal_alignment = "center",
-			pixel_perfect = true,
-			scenegraph_id = "title_box",
-			vertical_alignment = "center",
-			word_wrap = false,
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				2,
 				-2,
-				5,
-			},
+				5
+			}
 		},
 		text = {
-			dynamic_font = true,
-			font_size = 28,
-			font_type = "hell_shark",
-			horizontal_alignment = "center",
-			pixel_perfect = true,
-			scenegraph_id = "popup_text",
-			vertical_alignment = "center",
 			word_wrap = true,
+			scenegraph_id = "popup_text",
+			font_size = 28,
+			pixel_perfect = true,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
+			dynamic_font = true,
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			offset = {
 				0,
 				0,
-				6,
-			},
+				6
+			}
 		},
 		text_shadow = {
-			dynamic_font = true,
-			font_size = 28,
-			font_type = "hell_shark",
-			horizontal_alignment = "center",
-			pixel_perfect = true,
-			scenegraph_id = "popup_text",
-			vertical_alignment = "center",
 			word_wrap = true,
+			scenegraph_id = "popup_text",
+			font_size = 28,
+			pixel_perfect = true,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
+			dynamic_font = true,
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				2,
 				-2,
-				5,
-			},
+				5
+			}
 		},
 		timer = {
-			dynamic_font = true,
 			font_size = 36,
-			font_type = "hell_shark",
-			horizontal_alignment = "center",
-			pixel_perfect = true,
 			scenegraph_id = "timer",
+			pixel_perfect = true,
+			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			dynamic_font = true,
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			offset = {
 				320,
 				203,
-				8,
-			},
+				8
+			}
 		},
 		timer_shadow = {
-			dynamic_font = true,
 			font_size = 36,
-			font_type = "hell_shark",
-			horizontal_alignment = "center",
-			pixel_perfect = true,
 			scenegraph_id = "timer",
+			pixel_perfect = true,
+			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			dynamic_font = true,
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				322,
 				201,
-				7,
-			},
+				7
+			}
 		},
 		center_timer = {
-			dynamic_font = true,
 			font_size = 44,
-			font_type = "hell_shark",
-			horizontal_alignment = "center",
-			pixel_perfect = true,
 			scenegraph_id = "center_timer",
+			pixel_perfect = true,
+			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			dynamic_font = true,
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			offset = {
 				0,
 				0,
-				6,
-			},
+				6
+			}
 		},
 		center_timer_shadow = {
-			dynamic_font = true,
 			font_size = 44,
-			font_type = "hell_shark",
-			horizontal_alignment = "center",
-			pixel_perfect = true,
 			scenegraph_id = "center_timer",
+			pixel_perfect = true,
+			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			dynamic_font = true,
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				2,
 				-2,
-				5,
-			},
-		},
+				5
+			}
+		}
 	}
 
-	widget.element.passes = passes
-	widget.content = content
-	widget.style = style
-	widget.offset = {
+	var_1_4.element.passes = var_1_5
+	var_1_4.content = var_1_6
+	var_1_4.style = var_1_7
+	var_1_4.offset = {
 		0,
 		0,
-		0,
+		0
 	}
-	widget.scenegraph_id = scenegraph_id
+	var_1_4.scenegraph_id = arg_1_0
 
-	return widget
+	return var_1_4
 end
 
-local function create_password_window(scenegraph_id, size)
-	local background_texture = "menu_frame_bg_01"
-	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local frame_settings = UIFrameSettings.menu_frame_11
-	local inner_frame_settings = UIFrameSettings.menu_frame_06
-	local checkbox_frame_settings = UIFrameSettings.menu_frame_06
-	local widget = {
-		element = {},
+local function var_0_2(arg_2_0, arg_2_1)
+	local var_2_0 = "menu_frame_bg_01"
+	local var_2_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_2_0)
+	local var_2_2 = UIFrameSettings.menu_frame_11
+	local var_2_3 = UIFrameSettings.menu_frame_06
+	local var_2_4 = UIFrameSettings.menu_frame_06
+	local var_2_5 = {
+		element = {}
 	}
-	local passes = {
+	local var_2_6 = {
 		{
-			content_id = "background",
-			pass_type = "texture_uv",
 			style_id = "background",
+			pass_type = "texture_uv",
+			content_id = "background"
 		},
 		{
 			pass_type = "texture",
 			style_id = "background_fade",
-			texture_id = "background_fade",
+			texture_id = "background_fade"
 		},
 		{
 			pass_type = "texture_frame",
 			style_id = "frame",
-			texture_id = "frame",
+			texture_id = "frame"
 		},
 		{
 			pass_type = "texture_frame",
 			style_id = "inner_frame",
-			texture_id = "inner_frame",
+			texture_id = "inner_frame"
 		},
 		{
 			pass_type = "rect",
-			style_id = "inner_rect",
+			style_id = "inner_rect"
 		},
 		{
 			pass_type = "texture",
 			style_id = "background_tint",
-			texture_id = "background_tint",
+			texture_id = "background_tint"
 		},
 		{
-			pass_type = "text",
 			style_id = "title_text",
-			text_id = "title_text",
+			pass_type = "text",
+			text_id = "title_text"
 		},
 		{
-			pass_type = "text",
 			style_id = "title_text_shadow",
-			text_id = "title_text",
+			pass_type = "text",
+			text_id = "title_text"
 		},
 		{
-			pass_type = "text",
 			style_id = "timer",
-			text_id = "timer_field",
+			pass_type = "text",
+			text_id = "timer_field"
 		},
 		{
-			pass_type = "text",
 			style_id = "timer_shadow",
-			text_id = "timer_field",
+			pass_type = "text",
+			text_id = "timer_field"
 		},
 		{
-			pass_type = "text",
 			style_id = "center_timer",
-			text_id = "center_timer_field",
+			pass_type = "text",
+			text_id = "center_timer_field"
 		},
 		{
-			pass_type = "text",
 			style_id = "center_timer_shadow",
-			text_id = "center_timer_field",
+			pass_type = "text",
+			text_id = "center_timer_field"
 		},
 		{
-			pass_type = "text",
 			style_id = "text",
-			text_id = "text_field",
+			pass_type = "text",
+			text_id = "text_field"
 		},
 		{
-			pass_type = "text",
 			style_id = "text_shadow",
-			text_id = "text_field",
+			pass_type = "text",
+			text_id = "text_field"
 		},
 		{
-			input_text_id = "input",
 			pass_type = "keystrokes",
+			input_text_id = "input"
 		},
 		{
-			pass_type = "text",
 			style_id = "input",
-			text_id = "input",
+			pass_type = "text",
+			text_id = "input"
 		},
 		{
-			pass_type = "text",
 			style_id = "input_shadow",
-			text_id = "input",
+			pass_type = "text",
+			text_id = "input"
 		},
 		{
-			pass_type = "texture",
-			style_id = "status_texture_glow",
 			texture_id = "status_texture_glow",
-			content_check_function = function (content)
-				return not content.active
-			end,
-		},
-		{
+			style_id = "status_texture_glow",
 			pass_type = "texture",
-			style_id = "status_texture_frame",
+			content_check_function = function(arg_3_0)
+				return not arg_3_0.active
+			end
+		},
+		{
 			texture_id = "status_texture_frame",
-			content_check_function = function (content)
-				return not content.active
-			end,
+			style_id = "status_texture_frame",
+			pass_type = "texture",
+			content_check_function = function(arg_4_0)
+				return not arg_4_0.active
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "placeholder_input",
+			pass_type = "text",
 			text_id = "placeholder_input",
-			content_check_function = function (content)
-				return content.input == ""
-			end,
+			content_check_function = function(arg_5_0)
+				return arg_5_0.input == ""
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "placeholder_input_shadow",
+			pass_type = "text",
 			text_id = "placeholder_input",
-			content_check_function = function (content)
-				return content.input == ""
-			end,
+			content_check_function = function(arg_6_0)
+				return arg_6_0.input == ""
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "status_message",
+			pass_type = "text",
 			text_id = "status_message",
-			content_check_function = function (content)
-				return content.status_message and not content.error_message
-			end,
+			content_check_function = function(arg_7_0)
+				return arg_7_0.status_message and not arg_7_0.error_message
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "error_message",
-			text_id = "status_message",
-			content_check_function = function (content)
-				return content.status_message and content.error_message
-			end,
-		},
-		{
 			pass_type = "text",
-			style_id = "status_message_shadow",
 			text_id = "status_message",
-			content_check_function = function (content)
-				return content.status_message
-			end,
+			content_check_function = function(arg_8_0)
+				return arg_8_0.status_message and arg_8_0.error_message
+			end
 		},
 		{
-			content_id = "checkbox_hotspot",
-			pass_type = "hotspot",
+			style_id = "status_message_shadow",
+			pass_type = "text",
+			text_id = "status_message",
+			content_check_function = function(arg_9_0)
+				return arg_9_0.status_message
+			end
+		},
+		{
 			style_id = "checkbox_background",
-			content_change_function = function (content, style)
-				local parent_style = style.parent
+			pass_type = "hotspot",
+			content_id = "checkbox_hotspot",
+			content_change_function = function(arg_10_0, arg_10_1)
+				local var_10_0 = arg_10_1.parent
 
-				if content.on_pressed then
-					content.is_selected = not content.is_selected
+				if arg_10_0.on_pressed then
+					arg_10_0.is_selected = not arg_10_0.is_selected
 
-					if content.is_selected then
-						parent_style.input.replacing_character = nil
-						parent_style.input_shadow.replacing_character = nil
+					if arg_10_0.is_selected then
+						var_10_0.input.replacing_character = nil
+						var_10_0.input_shadow.replacing_character = nil
 					else
-						parent_style.input.replacing_character = "*"
-						parent_style.input_shadow.replacing_character = "*"
+						var_10_0.input.replacing_character = "*"
+						var_10_0.input_shadow.replacing_character = "*"
 					end
 				end
-			end,
+			end
 		},
 		{
 			pass_type = "rect",
-			style_id = "checkbox_background",
+			style_id = "checkbox_background"
 		},
 		{
 			pass_type = "texture_frame",
 			style_id = "checkbox_frame",
-			texture_id = "checkbox_frame",
+			texture_id = "checkbox_frame"
 		},
 		{
 			pass_type = "texture",
 			style_id = "checkbox",
 			texture_id = "checkbox",
-			content_check_function = function (content)
-				local checkbox_hotspot = content.checkbox_hotspot
-
-				return checkbox_hotspot.is_selected
-			end,
+			content_check_function = function(arg_11_0)
+				return arg_11_0.checkbox_hotspot.is_selected
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "checkbox_text",
-			text_id = "checkbox_text",
+			pass_type = "text",
+			text_id = "checkbox_text"
 		},
 		{
-			pass_type = "text",
 			style_id = "checkbox_text_shadow",
-			text_id = "checkbox_text",
-		},
+			pass_type = "text",
+			text_id = "checkbox_text"
+		}
 	}
-	local content = {
-		active = true,
-		background_fade = "options_window_fade_01",
-		background_tint = "gradient_dice_game_reward",
-		caret_index = 1,
-		center_timer_field = "",
-		checkbox = "matchmaking_checkbox",
+	local var_2_7 = {
 		checkbox_text = "popup_info_show_password",
 		input = "",
-		input_mode = "insert",
-		placeholder_input = "popup_info_type_password",
-		status_texture_frame = "loading_title_divider_background",
-		status_texture_glow = "loading_title_divider",
+		background_tint = "gradient_dice_game_reward",
+		checkbox = "matchmaking_checkbox",
 		text_field = "",
-		text_index = 1,
-		text_start_offset = 0,
-		timer_field = "",
+		input_mode = "insert",
 		title_text = "",
+		timer_field = "",
+		text_start_offset = 0,
+		text_index = 1,
+		center_timer_field = "",
+		status_texture_glow = "loading_title_divider",
+		status_texture_frame = "loading_title_divider_background",
+		background_fade = "options_window_fade_01",
+		caret_index = 1,
+		placeholder_input = "popup_info_type_password",
+		active = true,
 		checkbox_hotspot = {
-			is_selected = false,
+			is_selected = false
 		},
-		checkbox_frame = checkbox_frame_settings.texture,
-		frame = frame_settings.texture,
-		inner_frame = inner_frame_settings.texture,
+		checkbox_frame = var_2_4.texture,
+		frame = var_2_2.texture,
+		inner_frame = var_2_3.texture,
 		background = {
 			uvs = {
 				{
 					0,
-					0,
+					0
 				},
 				{
-					math.min(size[1] / background_texture_settings.size[1], 1),
-					math.min(size[2] / background_texture_settings.size[2], 1),
-				},
+					math.min(arg_2_1[1] / var_2_1.size[1], 1),
+					math.min(arg_2_1[2] / var_2_1.size[2], 1)
+				}
 			},
-			texture_id = background_texture,
-		},
+			texture_id = var_2_0
+		}
 	}
-	local style = {
+	local var_2_8 = {
 		checkbox = {
-			horizontal_alignment = "right",
-			scenegraph_id = "popup_password_box",
 			vertical_alignment = "top",
+			scenegraph_id = "popup_password_box",
+			horizontal_alignment = "right",
 			texture_size = {
 				22,
-				16,
+				16
 			},
 			offset = {
 				0,
 				27,
-				6,
+				6
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		checkbox_frame = {
-			horizontal_alignment = "right",
 			scenegraph_id = "popup_password_box",
+			horizontal_alignment = "right",
 			vertical_alignment = "top",
 			area_size = {
 				25,
-				25,
+				25
 			},
-			texture_size = checkbox_frame_settings.texture_size,
-			texture_sizes = checkbox_frame_settings.texture_sizes,
+			texture_size = var_2_4.texture_size,
+			texture_sizes = var_2_4.texture_sizes,
 			offset = {
 				0,
 				30,
-				5,
+				5
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		checkbox_background = {
 			scenegraph_id = "popup_password_box",
 			size = {
 				25,
-				25,
+				25
 			},
 			offset = {
 				575,
 				55,
-				5,
+				5
 			},
 			color = {
 				200,
 				10,
 				10,
-				10,
-			},
+				10
+			}
 		},
 		checkbox_text = {
-			dynamic_font = true,
-			font_size = 18,
-			font_type = "hell_shark",
-			horizontal_alignment = "right",
+			word_wrap = true,
+			scenegraph_id = "popup_password_box",
 			localize = true,
 			pixel_perfect = true,
-			scenegraph_id = "popup_password_box",
+			horizontal_alignment = "right",
+			font_size = 18,
 			vertical_alignment = "center",
-			word_wrap = true,
+			dynamic_font = true,
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			offset = {
 				-30,
 				45,
-				6,
-			},
+				6
+			}
 		},
 		checkbox_text_shadow = {
-			dynamic_font = true,
-			font_size = 18,
-			font_type = "hell_shark",
-			horizontal_alignment = "right",
+			word_wrap = true,
+			scenegraph_id = "popup_password_box",
 			localize = true,
 			pixel_perfect = true,
-			scenegraph_id = "popup_password_box",
+			horizontal_alignment = "right",
+			font_size = 18,
 			vertical_alignment = "center",
-			word_wrap = true,
+			dynamic_font = true,
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				-28,
 				43,
-				5,
-			},
+				5
+			}
 		},
 		text = {
-			dynamic_font = true,
-			font_size = 28,
-			font_type = "hell_shark",
-			horizontal_alignment = "center",
-			pixel_perfect = true,
-			scenegraph_id = "popup_password_text",
-			vertical_alignment = "center",
 			word_wrap = true,
+			scenegraph_id = "popup_password_text",
+			font_size = 28,
+			pixel_perfect = true,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
+			dynamic_font = true,
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			offset = {
 				0,
 				0,
-				6,
-			},
+				6
+			}
 		},
 		text_shadow = {
-			dynamic_font = true,
-			font_size = 28,
-			font_type = "hell_shark",
-			horizontal_alignment = "center",
-			pixel_perfect = true,
-			scenegraph_id = "popup_password_text",
-			vertical_alignment = "center",
 			word_wrap = true,
+			scenegraph_id = "popup_password_text",
+			font_size = 28,
+			pixel_perfect = true,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
+			dynamic_font = true,
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				2,
 				-2,
-				5,
-			},
+				5
+			}
 		},
 		error_message = {
-			dynamic_font = true,
-			font_size = 22,
-			font_type = "hell_shark",
-			horizontal_alignment = "center",
-			pixel_perfect = true,
-			scenegraph_id = "popup_password_box",
-			vertical_alignment = "top",
 			word_wrap = true,
+			scenegraph_id = "popup_password_box",
+			font_size = 22,
+			pixel_perfect = true,
+			horizontal_alignment = "center",
+			vertical_alignment = "top",
+			dynamic_font = true,
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("red", 255),
 			offset = {
 				0,
 				-55,
-				6,
-			},
+				6
+			}
 		},
 		status_message = {
-			dynamic_font = true,
-			font_size = 22,
-			font_type = "hell_shark",
-			horizontal_alignment = "center",
-			pixel_perfect = true,
-			scenegraph_id = "popup_password_box",
-			vertical_alignment = "top",
 			word_wrap = true,
+			scenegraph_id = "popup_password_box",
+			font_size = 22,
+			pixel_perfect = true,
+			horizontal_alignment = "center",
+			vertical_alignment = "top",
+			dynamic_font = true,
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			offset = {
 				0,
 				-55,
-				6,
-			},
+				6
+			}
 		},
 		status_message_shadow = {
-			dynamic_font = true,
-			font_size = 22,
-			font_type = "hell_shark",
-			horizontal_alignment = "center",
-			pixel_perfect = true,
-			scenegraph_id = "popup_password_box",
-			vertical_alignment = "top",
 			word_wrap = true,
+			scenegraph_id = "popup_password_box",
+			font_size = 22,
+			pixel_perfect = true,
+			horizontal_alignment = "center",
+			vertical_alignment = "top",
+			dynamic_font = true,
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				2,
 				-57,
-				5,
-			},
+				5
+			}
 		},
 		status_texture_frame = {
-			horizontal_alignment = "center",
 			vertical_alignment = "bottom",
+			horizontal_alignment = "center",
 			texture_size = {
 				314,
-				33,
+				33
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
 				0,
 				160,
-				1,
-			},
+				1
+			}
 		},
 		status_texture_glow = {
-			horizontal_alignment = "center",
 			vertical_alignment = "bottom",
+			horizontal_alignment = "center",
 			texture_size = {
 				314,
-				33,
+				33
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
 				0,
 				160,
-				2,
-			},
+				2
+			}
 		},
 		background = {
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
 				0,
 				0,
-				1,
-			},
+				1
+			}
 		},
 		background_fade = {
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
 				0,
 				0,
-				2,
-			},
+				2
+			}
 		},
 		frame = {
-			texture_size = frame_settings.texture_size,
-			texture_sizes = frame_settings.texture_sizes,
+			texture_size = var_2_2.texture_size,
+			texture_sizes = var_2_2.texture_sizes,
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
 				0,
 				0,
-				5,
-			},
+				5
+			}
 		},
 		inner_rect = {
 			scenegraph_id = "popup_password_box",
@@ -1077,886 +1075,880 @@ local function create_password_window(scenegraph_id, size)
 				200,
 				10,
 				10,
-				10,
+				10
 			},
 			offset = {
 				0,
 				0,
-				3,
-			},
+				3
+			}
 		},
 		inner_frame = {
 			scenegraph_id = "popup_password_box",
-			texture_size = inner_frame_settings.texture_size,
-			texture_sizes = inner_frame_settings.texture_sizes,
+			texture_size = var_2_3.texture_size,
+			texture_sizes = var_2_3.texture_sizes,
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
 				0,
 				0,
-				4,
-			},
+				4
+			}
 		},
 		background_tint = {
 			scenegraph_id = "screen",
 			offset = {
 				0,
 				0,
-				0,
+				0
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		title_text = {
+			word_wrap = true,
+			scenegraph_id = "title_box",
+			font_size = 50,
+			pixel_perfect = true,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
 			dynamic_font = true,
 			dynamic_font_size = true,
-			font_size = 50,
 			font_type = "hell_shark_header",
-			horizontal_alignment = "center",
-			pixel_perfect = true,
-			scenegraph_id = "title_box",
-			vertical_alignment = "center",
-			word_wrap = true,
 			text_color = Colors.get_color_table_with_alpha("font_title", 255),
 			offset = {
 				0,
 				0,
-				6,
-			},
+				6
+			}
 		},
 		title_text_shadow = {
+			word_wrap = true,
+			scenegraph_id = "title_box",
+			font_size = 50,
+			pixel_perfect = true,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
 			dynamic_font = true,
 			dynamic_font_size = true,
-			font_size = 50,
 			font_type = "hell_shark_header",
-			horizontal_alignment = "center",
-			pixel_perfect = true,
-			scenegraph_id = "title_box",
-			vertical_alignment = "center",
-			word_wrap = true,
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				2,
 				-2,
-				5,
-			},
+				5
+			}
 		},
 		placeholder_input = {
-			dynamic_font = true,
-			font_size = 28,
-			font_type = "hell_shark",
-			horizontal_alignment = "center",
+			word_wrap = false,
+			scenegraph_id = "popup_password_input",
 			localize = true,
 			pixel_perfect = true,
-			scenegraph_id = "popup_password_input",
+			horizontal_alignment = "center",
+			font_size = 28,
 			vertical_alignment = "center",
-			word_wrap = false,
+			dynamic_font = true,
+			font_type = "hell_shark",
 			text_color = {
 				200,
 				40,
 				40,
-				40,
+				40
 			},
 			offset = {
 				0,
 				0,
-				7,
-			},
+				7
+			}
 		},
 		placeholder_input_shadow = {
-			dynamic_font = true,
-			font_size = 28,
-			font_type = "hell_shark",
-			horizontal_alignment = "center",
+			word_wrap = false,
+			scenegraph_id = "popup_password_input",
 			localize = true,
 			pixel_perfect = true,
-			scenegraph_id = "popup_password_input",
+			horizontal_alignment = "center",
+			font_size = 28,
 			vertical_alignment = "center",
-			word_wrap = false,
+			dynamic_font = true,
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 200),
 			offset = {
 				2,
 				-2,
-				6,
-			},
+				6
+			}
 		},
 		input = {
-			dynamic_font = true,
+			word_wrap = false,
+			scenegraph_id = "popup_password_input",
 			font_size = 28,
-			font_type = "hell_shark",
+			pixel_perfect = true,
 			horizontal_alignment = "center",
 			horizontal_scroll = true,
-			pixel_perfect = true,
-			scenegraph_id = "popup_password_input",
 			vertical_alignment = "center",
-			word_wrap = false,
+			dynamic_font = true,
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			offset = {
 				0,
 				10,
-				6,
+				6
 			},
 			caret_size = {
 				3,
-				35,
+				35
 			},
 			caret_offset = {
 				-5,
 				-7,
-				8,
+				8
 			},
-			caret_color = Colors.get_color_table_with_alpha("gray", 255),
+			caret_color = Colors.get_color_table_with_alpha("gray", 255)
 		},
 		input_shadow = {
-			dynamic_font = true,
+			word_wrap = false,
+			scenegraph_id = "popup_password_input",
 			font_size = 28,
-			font_type = "hell_shark",
+			pixel_perfect = true,
 			horizontal_alignment = "center",
 			horizontal_scroll = true,
-			pixel_perfect = true,
-			scenegraph_id = "popup_password_input",
 			vertical_alignment = "center",
-			word_wrap = false,
+			dynamic_font = true,
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				2,
 				8,
-				5,
+				5
 			},
 			caret_size = {
 				3,
-				35,
+				35
 			},
 			caret_offset = {
 				-5,
 				-9,
-				7,
+				7
 			},
-			caret_color = Colors.get_color_table_with_alpha("black", 255),
+			caret_color = Colors.get_color_table_with_alpha("black", 255)
 		},
 		timer = {
-			dynamic_font = true,
 			font_size = 36,
-			font_type = "hell_shark",
-			horizontal_alignment = "center",
-			pixel_perfect = true,
 			scenegraph_id = "timer",
+			pixel_perfect = true,
+			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			dynamic_font = true,
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			offset = {
 				320,
 				203,
-				8,
-			},
+				8
+			}
 		},
 		timer_shadow = {
-			dynamic_font = true,
 			font_size = 36,
-			font_type = "hell_shark",
-			horizontal_alignment = "center",
-			pixel_perfect = true,
 			scenegraph_id = "timer",
+			pixel_perfect = true,
+			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			dynamic_font = true,
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				322,
 				201,
-				7,
-			},
+				7
+			}
 		},
 		center_timer = {
-			dynamic_font = true,
 			font_size = 44,
-			font_type = "hell_shark",
-			horizontal_alignment = "center",
-			pixel_perfect = true,
 			scenegraph_id = "center_timer",
+			pixel_perfect = true,
+			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			dynamic_font = true,
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			offset = {
 				0,
 				0,
-				6,
-			},
+				6
+			}
 		},
 		center_timer_shadow = {
-			dynamic_font = true,
 			font_size = 44,
-			font_type = "hell_shark",
-			horizontal_alignment = "center",
-			pixel_perfect = true,
 			scenegraph_id = "center_timer",
+			pixel_perfect = true,
+			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			dynamic_font = true,
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				2,
 				-2,
-				5,
-			},
-		},
+				5
+			}
+		}
 	}
 
-	widget.element.passes = passes
-	widget.content = content
-	widget.style = style
-	widget.offset = {
+	var_2_5.element.passes = var_2_6
+	var_2_5.content = var_2_7
+	var_2_5.style = var_2_8
+	var_2_5.offset = {
 		0,
 		0,
-		0,
+		0
 	}
-	widget.scenegraph_id = scenegraph_id
+	var_2_5.scenegraph_id = arg_2_0
 
-	return widget
+	return var_2_5
 end
 
-local default_window_widget = create_default_window("popup_root", scenegraph_definition.popup_root.size)
-local password_window_widget = create_password_window("popup_root", scenegraph_definition.popup_root.size)
+local var_0_3 = var_0_1("popup_root", var_0_0.popup_root.size)
+local var_0_4 = var_0_2("popup_root", var_0_0.popup_root.size)
 
-local function create_gamepad_button(input_action, scenegraph_id)
+local function var_0_5(arg_12_0, arg_12_1)
 	return {
 		element = {
 			passes = {
 				{
-					pass_type = "text",
 					style_id = "text",
-					text_id = "text",
+					pass_type = "text",
+					text_id = "text"
 				},
 				{
 					pass_type = "texture",
 					style_id = "icon",
-					texture_id = "icon",
-				},
-			},
+					texture_id = "icon"
+				}
+			}
 		},
 		content = {
 			text = "",
-			input_action = input_action,
+			input_action = arg_12_0
 		},
 		style = {
 			text = {
+				vertical_alignment = "center",
 				font_size = 24,
 				font_type = "hell_shark",
 				horizontal_alignment = "center",
-				vertical_alignment = "center",
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					0,
 					0,
-					1,
+					1
 				},
-				scenegraph_id = scenegraph_id,
+				scenegraph_id = arg_12_1
 			},
 			icon = {
 				size = {
 					34,
-					34,
+					34
 				},
 				offset = {
 					0,
 					15,
-					1,
+					1
 				},
-				scenegraph_id = scenegraph_id,
-			},
+				scenegraph_id = arg_12_1
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_12_1
 	}
 end
 
 PopupHandler = class(PopupHandler)
 
-PopupHandler.init = function (self, context, from_manager)
-	fassert(from_manager, "Not created by the popoup manager")
+function PopupHandler.init(arg_13_0, arg_13_1, arg_13_2)
+	fassert(arg_13_2, "Not created by the popoup manager")
 
-	self.ui_renderer = context.ui_renderer
-	self.render_settings = {
-		snap_pixel_positions = true,
+	arg_13_0.ui_renderer = arg_13_1.ui_renderer
+	arg_13_0.render_settings = {
+		snap_pixel_positions = true
 	}
-	self.wwise_world = Managers.world:wwise_world(context.world)
-	self.debug_num_updates = 0
-	self.popup_results = {}
-	self.popups = {}
-	self.n_popups = 0
-	self.popup_ids = 0
+	arg_13_0.wwise_world = Managers.world:wwise_world(arg_13_1.world)
+	arg_13_0.debug_num_updates = 0
+	arg_13_0.popup_results = {}
+	arg_13_0.popups = {}
+	arg_13_0.n_popups = 0
+	arg_13_0.popup_ids = 0
 
-	self:create_ui_elements()
+	arg_13_0:create_ui_elements()
 
-	self.gamepad_button_colors = {
+	arg_13_0.gamepad_button_colors = {
 		enabled = Colors.get_color_table_with_alpha("white", 255),
-		disabled = Colors.get_color_table_with_alpha("gray", 255),
+		disabled = Colors.get_color_table_with_alpha("gray", 255)
 	}
-	self.mock_input_manager = MockInputManager:new()
+	arg_13_0.mock_input_manager = MockInputManager:new()
 end
 
-PopupHandler.set_input_manager = function (self, input_manager)
-	self.input_manager = input_manager
+function PopupHandler.set_input_manager(arg_14_0, arg_14_1)
+	arg_14_0.input_manager = arg_14_1
 
-	local block_reasons = {
-		popup = true,
+	local var_14_0 = {
+		popup = true
 	}
 
-	input_manager:create_input_service("popup", "IngameMenuKeymaps", "IngameMenuFilters", block_reasons)
-	input_manager:map_device_to_service("popup", "keyboard")
-	input_manager:map_device_to_service("popup", "mouse")
-	input_manager:map_device_to_service("popup", "gamepad")
+	arg_14_1:create_input_service("popup", "IngameMenuKeymaps", "IngameMenuFilters", var_14_0)
+	arg_14_1:map_device_to_service("popup", "keyboard")
+	arg_14_1:map_device_to_service("popup", "mouse")
+	arg_14_1:map_device_to_service("popup", "gamepad")
 
-	if self:has_popup() then
-		self:acquire_input()
+	if arg_14_0:has_popup() then
+		arg_14_0:acquire_input()
 	end
 end
 
-PopupHandler.get_input_manager = function (self)
-	return self.input_manager
+function PopupHandler.get_input_manager(arg_15_0)
+	return arg_15_0.input_manager
 end
 
-PopupHandler.remove_input_manager = function (self, application_shutdown)
-	if self:has_popup() then
-		self:release_input()
+function PopupHandler.remove_input_manager(arg_16_0, arg_16_1)
+	if arg_16_0:has_popup() then
+		arg_16_0:release_input()
 	end
 
-	if not application_shutdown and self:has_popup() then
-		local popup_id, popup = self:active_popup()
+	if not arg_16_1 and arg_16_0:has_popup() then
+		local var_16_0, var_16_1 = arg_16_0:active_popup()
 
-		error(string.format("Trying to proceed to next gamestate without handling popup %q: %q", popup.topic or "nil", popup.text or "nil"))
+		error(string.format("Trying to proceed to next gamestate without handling popup %q: %q", var_16_1.topic or "nil", var_16_1.text or "nil"))
 	end
 
-	self.input_manager = nil
+	arg_16_0.input_manager = nil
 end
 
-PopupHandler.create_ui_elements = function (self)
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-	self._popup_widgets_by_name = {
-		default = UIWidget.init(default_window_widget),
-		password = UIWidget.init(password_window_widget),
+function PopupHandler.create_ui_elements(arg_17_0)
+	arg_17_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0)
+	arg_17_0._popup_widgets_by_name = {
+		default = UIWidget.init(var_0_3),
+		password = UIWidget.init(var_0_4)
 	}
 
-	local button_widgets = {
+	local var_17_0 = {
 		{},
 		{},
-		{},
+		{}
 	}
-	local gamepad_button_widgets = {
+	local var_17_1 = {
 		{},
 		{},
-		{},
+		{}
 	}
-	local disable_localization = true
-	local font_size
+	local var_17_2 = true
+	local var_17_3
 
-	button_widgets[1][1] = UIWidget.init(UIWidgets.create_default_button("button_1_1", scenegraph_definition.button_1_1.size, "n/a", font_size))
-	button_widgets[2][1] = UIWidget.init(UIWidgets.create_default_button("button_2_1", scenegraph_definition.button_2_1.size, "n/a", font_size))
-	button_widgets[2][2] = UIWidget.init(UIWidgets.create_default_button("button_2_2", scenegraph_definition.button_2_2.size, "n/a", font_size))
-	button_widgets[3][1] = UIWidget.init(UIWidgets.create_default_button("button_3_1", scenegraph_definition.button_3_1.size, "n/a", font_size))
-	button_widgets[3][2] = UIWidget.init(UIWidgets.create_default_button("button_3_2", scenegraph_definition.button_3_2.size, "n/a", font_size))
-	button_widgets[3][3] = UIWidget.init(UIWidgets.create_default_button("button_3_3", scenegraph_definition.button_3_3.size, "n/a", font_size))
-	gamepad_button_widgets[1][1] = UIWidget.init(create_gamepad_button("confirm_press", "button_1_1"))
-	gamepad_button_widgets[2][1] = UIWidget.init(create_gamepad_button("confirm_press", "button_2_1"))
-	gamepad_button_widgets[2][2] = UIWidget.init(create_gamepad_button("back", "button_2_2"))
-	gamepad_button_widgets[3][1] = UIWidget.init(create_gamepad_button("confirm_press", "button_3_1"))
-	gamepad_button_widgets[3][2] = UIWidget.init(create_gamepad_button("back", "button_3_2"))
-	gamepad_button_widgets[3][3] = UIWidget.init(create_gamepad_button("refresh", "button_3_3"))
-	self.button_widgets = button_widgets
-	self.gamepad_button_widgets = gamepad_button_widgets
+	var_17_0[1][1] = UIWidget.init(UIWidgets.create_default_button("button_1_1", var_0_0.button_1_1.size, "n/a", var_17_3))
+	var_17_0[2][1] = UIWidget.init(UIWidgets.create_default_button("button_2_1", var_0_0.button_2_1.size, "n/a", var_17_3))
+	var_17_0[2][2] = UIWidget.init(UIWidgets.create_default_button("button_2_2", var_0_0.button_2_2.size, "n/a", var_17_3))
+	var_17_0[3][1] = UIWidget.init(UIWidgets.create_default_button("button_3_1", var_0_0.button_3_1.size, "n/a", var_17_3))
+	var_17_0[3][2] = UIWidget.init(UIWidgets.create_default_button("button_3_2", var_0_0.button_3_2.size, "n/a", var_17_3))
+	var_17_0[3][3] = UIWidget.init(UIWidgets.create_default_button("button_3_3", var_0_0.button_3_3.size, "n/a", var_17_3))
+	var_17_1[1][1] = UIWidget.init(var_0_5("confirm_press", "button_1_1"))
+	var_17_1[2][1] = UIWidget.init(var_0_5("confirm_press", "button_2_1"))
+	var_17_1[2][2] = UIWidget.init(var_0_5("back", "button_2_2"))
+	var_17_1[3][1] = UIWidget.init(var_0_5("confirm_press", "button_3_1"))
+	var_17_1[3][2] = UIWidget.init(var_0_5("back", "button_3_2"))
+	var_17_1[3][3] = UIWidget.init(var_0_5("refresh", "button_3_3"))
+	arg_17_0.button_widgets = var_17_0
+	arg_17_0.gamepad_button_widgets = var_17_1
 end
 
-PopupHandler.acquire_input = function (self, ignore_cursor_stack)
-	local input_manager = self.input_manager
+function PopupHandler.acquire_input(arg_18_0, arg_18_1)
+	local var_18_0 = arg_18_0.input_manager
 
-	self:release_input(true)
-	input_manager:capture_input({
+	arg_18_0:release_input(true)
+	var_18_0:capture_input({
 		"keyboard",
 		"gamepad",
-		"mouse",
+		"mouse"
 	}, 1, "popup", "PopupHandler")
 
-	if not ignore_cursor_stack then
+	if not arg_18_1 then
 		ShowCursorStack.show("PopupHandler")
 	end
 end
 
-PopupHandler.release_input = function (self, ignore_cursor_stack)
-	local input_manager = self.input_manager
-	local block_reason = "popup"
+function PopupHandler.release_input(arg_19_0, arg_19_1)
+	local var_19_0 = arg_19_0.input_manager
+	local var_19_1 = "popup"
 
-	input_manager:release_input({
+	var_19_0:release_input({
 		"keyboard",
 		"gamepad",
-		"mouse",
-	}, 1, "popup", "PopupHandler", block_reason)
+		"mouse"
+	}, 1, "popup", "PopupHandler", var_19_1)
 
-	if not ignore_cursor_stack then
+	if not arg_19_1 then
 		ShowCursorStack.hide("PopupHandler")
 	end
 end
 
-PopupHandler.update = function (self, dt, from_manager)
-	fassert(from_manager, "Update does not come from the popup manager")
+function PopupHandler.update(arg_20_0, arg_20_1, arg_20_2)
+	fassert(arg_20_2, "Update does not come from the popup manager")
 
-	self.debug_num_updates = self.debug_num_updates + 1
+	arg_20_0.debug_num_updates = arg_20_0.debug_num_updates + 1
 
-	local n_popups = self.n_popups
-	local current_popup = self.popups[n_popups]
+	local var_20_0 = arg_20_0.n_popups
+	local var_20_1 = arg_20_0.popups[var_20_0]
 
-	if current_popup then
-		if not current_popup.initialized then
-			self:_initialize_popup(current_popup)
+	if var_20_1 then
+		if not var_20_1.initialized then
+			arg_20_0:_initialize_popup(var_20_1)
 		end
 
-		local ui_renderer, input_manager = self.ui_renderer, self.input_manager or self.mock_input_manager
-		local input_service = input_manager:get_service("popup")
-		local gamepad_active = input_manager:is_device_active("gamepad")
-		local widget = current_popup.widget
+		local var_20_2 = arg_20_0.ui_renderer
+		local var_20_3 = arg_20_0.input_manager or arg_20_0.mock_input_manager
+		local var_20_4 = var_20_3:get_service("popup")
+		local var_20_5 = var_20_3:is_device_active("gamepad")
+		local var_20_6 = var_20_1.widget
 
-		widget.style.text.font_size = current_popup.text_font_size
-		widget.style.text_shadow.font_size = current_popup.text_font_size
-		widget.content.text_field = current_popup.text
-		widget.content.title_text = current_popup.topic
+		var_20_6.style.text.font_size = var_20_1.text_font_size
+		var_20_6.style.text_shadow.font_size = var_20_1.text_font_size
+		var_20_6.content.text_field = var_20_1.text
+		var_20_6.content.title_text = var_20_1.topic
 
-		local result
+		local var_20_7
 
-		if current_popup.timer then
-			local timer = string.format("%d", math.floor(current_popup.timer))
+		if var_20_1.timer then
+			local var_20_8 = string.format("%d", math.floor(var_20_1.timer))
 
-			if current_popup.timer_format_func then
-				timer = current_popup.timer_format_func(timer)
+			if var_20_1.timer_format_func then
+				var_20_8 = var_20_1.timer_format_func(var_20_8)
 			end
 
-			local timer_field, timer_style, timer_shadow_style
+			local var_20_9
+			local var_20_10
+			local var_20_11
 
-			if current_popup.timer_alignment == "center" then
-				widget.content.center_timer_field = timer
-				timer_style = widget.style.center_timer
-				timer_shadow_style = widget.style.center_timer_shadow
-				widget.content.timer_field = ""
+			if var_20_1.timer_alignment == "center" then
+				var_20_6.content.center_timer_field = var_20_8
+				var_20_10 = var_20_6.style.center_timer
+
+				local var_20_12 = var_20_6.style.center_timer_shadow
+
+				var_20_6.content.timer_field = ""
 			else
-				widget.content.center_timer_field = ""
-				widget.content.timer_field = timer
-				timer_style = widget.style.timer
-				timer_shadow_style = widget.style.timer_shadow
+				var_20_6.content.center_timer_field = ""
+				var_20_6.content.timer_field = var_20_8
+				var_20_10 = var_20_6.style.timer
+
+				local var_20_13 = var_20_6.style.timer_shadow
 			end
 
-			if current_popup.timer_font_size then
-				widget.style.timer.font_size = current_popup.timer_font_size
-				widget.style.center_timer.font_size = current_popup.timer_font_size
+			if var_20_1.timer_font_size then
+				var_20_6.style.timer.font_size = var_20_1.timer_font_size
+				var_20_6.style.center_timer.font_size = var_20_1.timer_font_size
 			end
 
-			if current_popup.timer_blink then
-				timer_style.text_color = Colors.lerp_color_tables(Colors.get_color_table_with_alpha("white", 255), Colors.get_color_table_with_alpha("cheeseburger", 255), current_popup.timer % 15 % 1)
+			if var_20_1.timer_blink then
+				var_20_10.text_color = Colors.lerp_color_tables(Colors.get_color_table_with_alpha("white", 255), Colors.get_color_table_with_alpha("cheeseburger", 255), var_20_1.timer % 15 % 1)
 			end
 
-			current_popup.timer = current_popup.timer - dt
+			var_20_1.timer = var_20_1.timer - arg_20_1
 
-			if current_popup.timer <= 0 then
-				result = current_popup.default_result
+			if var_20_1.timer <= 0 then
+				var_20_7 = var_20_1.default_result
 			end
 		else
-			widget.content.timer_field = ""
-			widget.content.center_timer_field = ""
-			widget.style.timer.font_size = 36
-			widget.style.center_timer.font_size = 44
+			var_20_6.content.timer_field = ""
+			var_20_6.content.center_timer_field = ""
+			var_20_6.style.timer.font_size = 36
+			var_20_6.style.center_timer.font_size = 44
 		end
 
-		UIRenderer.begin_pass(ui_renderer, self.ui_scenegraph, input_service, dt, nil, self.render_settings)
-		UIRenderer.draw_widget(ui_renderer, widget)
+		UIRenderer.begin_pass(var_20_2, arg_20_0.ui_scenegraph, var_20_4, arg_20_1, nil, arg_20_0.render_settings)
+		UIRenderer.draw_widget(var_20_2, var_20_6)
 
-		local n_args = current_popup.n_args
+		local var_20_14 = var_20_1.n_args
 
-		if n_args then
-			local args = current_popup.args
-			local buttons = self.button_widgets[n_args]
-			local gamepad_buttons = self.gamepad_button_widgets[n_args]
+		if var_20_14 then
+			local var_20_15 = var_20_1.args
+			local var_20_16 = arg_20_0.button_widgets[var_20_14]
+			local var_20_17 = arg_20_0.gamepad_button_widgets[var_20_14]
 
-			for i = 1, n_args do
-				local button_text = " " .. args[i * 2]
-				local button_enabled = current_popup.button_enabled_state[i] == true
+			for iter_20_0 = 1, var_20_14 do
+				local var_20_18 = " " .. var_20_15[iter_20_0 * 2]
+				local var_20_19 = var_20_1.button_enabled_state[iter_20_0] == true
 
-				if gamepad_active then
-					local gamepad_button = gamepad_buttons[i]
-					local button_content = gamepad_button.content
-					local input_action = button_content.input_action
+				if var_20_5 then
+					local var_20_20 = var_20_17[iter_20_0]
+					local var_20_21 = var_20_20.content
+					local var_20_22 = var_20_21.input_action
 
-					if not button_content.icon then
-						local action_texture_data = self:get_gamepad_input_texture_data(input_service, input_action)
-
-						button_content.icon = action_texture_data.texture
+					if not var_20_21.icon then
+						var_20_21.icon = arg_20_0:get_gamepad_input_texture_data(var_20_4, var_20_22).texture
 					end
 
-					button_content.text = button_text
+					var_20_21.text = var_20_18
 
-					local button_style = gamepad_button.style
-					local text_style = button_style.text
+					local var_20_23 = var_20_20.style
+					local var_20_24 = var_20_23.text
 
-					text_style.text_color = button_enabled and self.gamepad_button_colors.enabled or self.gamepad_button_colors.disabled
+					var_20_24.text_color = var_20_19 and arg_20_0.gamepad_button_colors.enabled or arg_20_0.gamepad_button_colors.disabled
 
-					local font, scaled_font_size = UIFontByResolution(text_style)
-					local text_width, text_height, min = UIRenderer.text_size(ui_renderer, button_text, font[1], scaled_font_size)
+					local var_20_25, var_20_26 = UIFontByResolution(var_20_24)
+					local var_20_27, var_20_28, var_20_29 = UIRenderer.text_size(var_20_2, var_20_18, var_20_25[1], var_20_26)
 
-					button_style.icon.offset[1] = 80 - text_width * 0.5
+					var_20_23.icon.offset[1] = 80 - var_20_27 * 0.5
 
-					UIRenderer.draw_widget(ui_renderer, gamepad_button)
+					UIRenderer.draw_widget(var_20_2, var_20_20)
 
-					if input_service:get(input_action, true) then
-						result = args[i * 2 - 1]
+					if var_20_4:get(var_20_22, true) then
+						var_20_7 = var_20_15[iter_20_0 * 2 - 1]
 
-						self:play_sound("Play_hud_select")
+						arg_20_0:play_sound("Play_hud_select")
 					end
 				else
-					local button = buttons[i]
+					local var_20_30 = var_20_16[iter_20_0]
 
-					UIWidgetUtils.animate_default_button(button, dt)
+					UIWidgetUtils.animate_default_button(var_20_30, arg_20_1)
 
-					button.content.title_text = button_text
+					var_20_30.content.title_text = var_20_18
 
-					local button_hotspot = button.content.button_hotspot
+					local var_20_31 = var_20_30.content.button_hotspot
 
-					button_hotspot.disable_button = not button_enabled
+					var_20_31.disable_button = not var_20_19
 
-					UIRenderer.draw_widget(ui_renderer, button)
+					UIRenderer.draw_widget(var_20_2, var_20_30)
 
-					if button_hotspot.on_hover_enter then
-						self:play_sound("Play_hud_hover")
+					if var_20_31.on_hover_enter then
+						arg_20_0:play_sound("Play_hud_hover")
 					end
 
-					if button_hotspot.on_release then
-						table.clear(button.content.button_hotspot)
+					if var_20_31.on_release then
+						table.clear(var_20_30.content.button_hotspot)
 
-						result = args[i * 2 - 1]
+						var_20_7 = var_20_15[iter_20_0 * 2 - 1]
 
-						self:play_sound("Play_hud_select")
+						arg_20_0:play_sound("Play_hud_select")
 					end
 
-					result = result or self:_handle_keyboard_input(current_popup)
+					var_20_7 = var_20_7 or arg_20_0:_handle_keyboard_input(var_20_1)
 				end
 			end
 		end
 
-		if result then
-			local result_params
-			local result_param_ids = current_popup.result_param_ids
+		if var_20_7 then
+			local var_20_32
+			local var_20_33 = var_20_1.result_param_ids
 
-			if result_param_ids then
-				result_params = {}
+			if var_20_33 then
+				var_20_32 = {}
 
-				local widget_content = widget.content
+				local var_20_34 = var_20_6.content
 
-				for _, param_id in ipairs(result_param_ids) do
-					result_params[param_id] = widget_content[param_id]
+				for iter_20_1, iter_20_2 in ipairs(var_20_33) do
+					var_20_32[iter_20_2] = var_20_34[iter_20_2]
 				end
 			end
 
-			self.popup_results[current_popup.popup_id] = {
-				result,
-				result_params,
+			arg_20_0.popup_results[var_20_1.popup_id] = {
+				var_20_7,
+				var_20_32
 			}
-			n_popups = n_popups - 1
-			self.n_popups = n_popups
 
-			if n_popups == 0 then
-				self:release_input()
+			local var_20_35 = var_20_0 - 1
+
+			arg_20_0.n_popups = var_20_35
+
+			if var_20_35 == 0 then
+				arg_20_0:release_input()
 			end
 		end
 
-		UIRenderer.end_pass(ui_renderer)
+		UIRenderer.end_pass(var_20_2)
 	end
 end
 
-PopupHandler._handle_keyboard_input = function (self, current_popup)
-	local n_args = current_popup.n_args
-	local button_widgets = self.button_widgets[n_args]
-	local mouse_active = Managers.input:is_device_active("mouse")
+function PopupHandler._handle_keyboard_input(arg_21_0, arg_21_1)
+	local var_21_0 = arg_21_1.n_args
+	local var_21_1 = arg_21_0.button_widgets[var_21_0]
 
-	if mouse_active then
-		for _, button_data in pairs(button_widgets) do
-			local button_widget = button_data
-
-			button_widget.content.button_hotspot.is_selected = false
+	if Managers.input:is_device_active("mouse") then
+		for iter_21_0, iter_21_1 in pairs(var_21_1) do
+			iter_21_1.content.button_hotspot.is_selected = false
 		end
 
-		current_popup.button_index = nil
+		arg_21_1.button_index = nil
 
 		return
 	end
 
-	local index = current_popup.button_index or 1
-	local input_service = Managers.input:get_service("popup")
+	local var_21_2 = arg_21_1.button_index or 1
+	local var_21_3 = Managers.input:get_service("popup")
 
-	if input_service:get("move_right_hold_continuous") then
-		index = math.clamp(index + 1, 1, n_args)
-	elseif input_service:get("move_left_hold_continuous") then
-		index = math.clamp(index - 1, 1, n_args)
-	elseif input_service:get("confirm_press") and current_popup.button_enabled_state[index] then
-		local args = current_popup.args
+	if var_21_3:get("move_right_hold_continuous") then
+		var_21_2 = math.clamp(var_21_2 + 1, 1, var_21_0)
+	elseif var_21_3:get("move_left_hold_continuous") then
+		var_21_2 = math.clamp(var_21_2 - 1, 1, var_21_0)
+	elseif var_21_3:get("confirm_press") and arg_21_1.button_enabled_state[var_21_2] then
+		local var_21_4 = arg_21_1.args
 
-		self:play_sound("Play_hud_select")
-		print("Popup Choice:", args[index * 2 - 1])
+		arg_21_0:play_sound("Play_hud_select")
+		print("Popup Choice:", var_21_4[var_21_2 * 2 - 1])
 
-		current_popup.button_index = nil
+		arg_21_1.button_index = nil
 
-		return args[index * 2 - 1]
+		return var_21_4[var_21_2 * 2 - 1]
 	end
 
-	if index ~= current_popup.button_index then
-		for idx, button_data in ipairs(button_widgets) do
-			local button_widget = button_data
-
-			button_widget.content.button_hotspot.is_selected = index == idx
+	if var_21_2 ~= arg_21_1.button_index then
+		for iter_21_2, iter_21_3 in ipairs(var_21_1) do
+			iter_21_3.content.button_hotspot.is_selected = var_21_2 == iter_21_2
 		end
 
-		current_popup.button_index = index
+		arg_21_1.button_index = var_21_2
 
-		self:play_sound("Play_hud_hover")
+		arg_21_0:play_sound("Play_hud_hover")
 	end
 end
 
-PopupHandler.get_gamepad_input_texture_data = function (self, input_service, input_action, ignore_keybinding)
-	local platform = PLATFORM
+function PopupHandler.get_gamepad_input_texture_data(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+	local var_22_0 = PLATFORM
 
 	if IS_WINDOWS then
-		platform = "xb1"
+		var_22_0 = "xb1"
 	end
 
-	if ignore_keybinding then
-		return ButtonTextureByName(input_action, platform)
+	if arg_22_3 then
+		return ButtonTextureByName(arg_22_2, var_22_0)
 	else
-		return UISettings.get_gamepad_input_texture_data(input_service, input_action, true)
+		return UISettings.get_gamepad_input_texture_data(arg_22_1, arg_22_2, true)
 	end
 end
 
-PopupHandler.set_button_enabled = function (self, popup_id, button_index, enabled)
-	local popup
+function PopupHandler.set_button_enabled(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+	local var_23_0
 
-	for i = 1, self.n_popups do
-		local temp_popup = self.popups[i]
+	for iter_23_0 = 1, arg_23_0.n_popups do
+		local var_23_1 = arg_23_0.popups[iter_23_0]
 
-		if temp_popup.popup_id == popup_id then
-			popup = temp_popup
+		if var_23_1.popup_id == arg_23_1 then
+			var_23_0 = var_23_1
 		end
 	end
 
-	popup.button_enabled_state[button_index] = enabled
+	var_23_0.button_enabled_state[arg_23_2] = arg_23_3
 end
 
-PopupHandler.active_popup = function (self)
-	local popup = self.popups[self.n_popups]
+function PopupHandler.active_popup(arg_24_0)
+	local var_24_0 = arg_24_0.popups[arg_24_0.n_popups]
 
-	if popup then
-		return popup.popup_id, popup
+	if var_24_0 then
+		return var_24_0.popup_id, var_24_0
 	end
 end
 
-PopupHandler.queue_popup = function (self, popup_type, text, topic, ...)
-	local n_popups, popups = self.n_popups, self.popups
+function PopupHandler.queue_popup(arg_25_0, arg_25_1, arg_25_2, arg_25_3, ...)
+	local var_25_0 = arg_25_0.n_popups
+	local var_25_1 = arg_25_0.popups
+	local var_25_2 = var_25_0 + 1
 
-	n_popups = n_popups + 1
-	self.n_popups = n_popups
+	arg_25_0.n_popups = var_25_2
 
-	local new_popup = popups[n_popups] or {
-		args = {},
+	local var_25_3 = var_25_1[var_25_2] or {
+		args = {}
 	}
 
-	self.popup_ids = self.popup_ids + 1
+	arg_25_0.popup_ids = arg_25_0.popup_ids + 1
 
-	local popup_id = tostring(self.popup_ids)
+	local var_25_4 = tostring(arg_25_0.popup_ids)
 
-	new_popup.popup_id = popup_id
+	var_25_3.popup_id = var_25_4
 
-	local widget = self._popup_widgets_by_name[popup_type]
-	local text_style = widget.style.text
-	local scaled_text_field_size = UIScaleVectorToResolution(scenegraph_definition.popup_text.size)
-	local number_of_text_rows = self:get_number_of_rows(text, text_style, scaled_text_field_size[1])
+	local var_25_5 = arg_25_0._popup_widgets_by_name[arg_25_1]
+	local var_25_6 = var_25_5.style.text
+	local var_25_7 = UIScaleVectorToResolution(var_0_0.popup_text.size)
 
-	new_popup.text_font_size = number_of_text_rows >= 7 and 20 or 28
-	new_popup.text = text
-	new_popup.topic = topic
-	new_popup.widget = widget
-	new_popup.type = popup_type
+	var_25_3.text_font_size = arg_25_0:get_number_of_rows(arg_25_2, var_25_6, var_25_7[1]) >= 7 and 20 or 28
+	var_25_3.text = arg_25_2
+	var_25_3.topic = arg_25_3
+	var_25_3.widget = var_25_5
+	var_25_3.type = arg_25_1
 
-	local n_args = select("#", ...)
+	local var_25_8 = select("#", ...)
 
-	assert(math.floor(n_args / 2) * 2 == n_args, "Need one action for each button text")
-	assert(n_args > 0, "Need at least one button...")
+	assert(math.floor(var_25_8 / 2) * 2 == var_25_8, "Need one action for each button text")
+	assert(var_25_8 > 0, "Need at least one button...")
 
-	new_popup.n_args = n_args / 2
-	new_popup.button_enabled_state = {}
+	var_25_3.n_args = var_25_8 / 2
+	var_25_3.button_enabled_state = {}
 
-	for i = 1, new_popup.n_args do
-		new_popup.button_enabled_state[i] = true
+	for iter_25_0 = 1, var_25_3.n_args do
+		var_25_3.button_enabled_state[iter_25_0] = true
 	end
 
-	new_popup.timer = nil
-	new_popup.default_result = nil
+	var_25_3.timer = nil
+	var_25_3.default_result = nil
 
-	pack_index[n_args](new_popup.args, 1, ...)
+	pack_index[var_25_8](var_25_3.args, 1, ...)
 
-	local ignore_cursor_stack = n_popups > 1
+	local var_25_9 = var_25_2 > 1
 
-	if self.input_manager then
-		self:acquire_input(ignore_cursor_stack)
+	if arg_25_0.input_manager then
+		arg_25_0:acquire_input(var_25_9)
 	end
 
-	popups[n_popups] = new_popup
+	var_25_1[var_25_2] = var_25_3
 
-	self:_reset_popup_initialized()
+	arg_25_0:_reset_popup_initialized()
 
-	return popup_id
+	return var_25_4
 end
 
-PopupHandler._initialize_popup = function (self, popup)
-	local popup_type = popup.type
-
-	if popup_type == "password" then
-		self:_initialize_password_popup(popup)
+function PopupHandler._initialize_popup(arg_26_0, arg_26_1)
+	if arg_26_1.type == "password" then
+		arg_26_0:_initialize_password_popup(arg_26_1)
 	end
 
-	popup.initialized = true
+	arg_26_1.initialized = true
 end
 
-PopupHandler._initialize_password_popup = function (self, popup)
-	local widget = popup.widget
-	local content = widget.content
-	local style = widget.style
+function PopupHandler._initialize_password_popup(arg_27_0, arg_27_1)
+	local var_27_0 = arg_27_1.widget
+	local var_27_1 = var_27_0.content
+	local var_27_2 = var_27_0.style
 
-	content.input = ""
-	content.active = true
-	content.text_index = 1
-	content.caret_index = 1
-	content.input_mode = "insert"
-	content.status_message = nil
-	content.error_message = nil
+	var_27_1.input = ""
+	var_27_1.active = true
+	var_27_1.text_index = 1
+	var_27_1.caret_index = 1
+	var_27_1.input_mode = "insert"
+	var_27_1.status_message = nil
+	var_27_1.error_message = nil
 
-	table.clear(content.checkbox_hotspot)
+	table.clear(var_27_1.checkbox_hotspot)
 
-	style.input.replacing_character = "*"
-	style.input_shadow.replacing_character = "*"
-	style.input.input_color = Colors.get_color_table_with_alpha("font_default", 255)
+	var_27_2.input.replacing_character = "*"
+	var_27_2.input_shadow.replacing_character = "*"
+	var_27_2.input.input_color = Colors.get_color_table_with_alpha("font_default", 255)
 
-	local animations = widget.animations
-	local caret_anim = self:_animate_element_pulse(style.input.caret_color, 1, 60, 255, 2)
-	local caret_shadow_anim = self:_animate_element_pulse(style.input_shadow.caret_color, 1, 60, 255, 2)
+	local var_27_3 = var_27_0.animations
+	local var_27_4 = arg_27_0:_animate_element_pulse(var_27_2.input.caret_color, 1, 60, 255, 2)
+	local var_27_5 = arg_27_0:_animate_element_pulse(var_27_2.input_shadow.caret_color, 1, 60, 255, 2)
 
-	animations[caret_anim] = true
-	animations[caret_shadow_anim] = true
-
-	local result_param_ids = {
-		"input",
+	var_27_3[var_27_4] = true
+	var_27_3[var_27_5] = true
+	arg_27_1.result_param_ids = {
+		"input"
 	}
-
-	popup.result_param_ids = result_param_ids
-	popup.initialized = true
+	arg_27_1.initialized = true
 end
 
-PopupHandler.set_popup_verifying_password = function (self, popup_id, is_verifying, status_message, error_message)
-	local active_popup_id, popup = self:active_popup()
+function PopupHandler.set_popup_verifying_password(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+	local var_28_0, var_28_1 = arg_28_0:active_popup()
 
-	if active_popup_id ~= popup_id then
+	if var_28_0 ~= arg_28_1 then
 		return
 	end
 
-	local widget = popup.widget
-	local content = widget.content
+	local var_28_2 = var_28_1.widget
+	local var_28_3 = var_28_2.content
 
-	content.status_message = error_message or status_message
-	content.error_message = error_message
-	content.active = not is_verifying
+	var_28_3.status_message = arg_28_4 or arg_28_3
+	var_28_3.error_message = arg_28_4
+	var_28_3.active = not arg_28_2
 
-	local animations = widget.animations
+	local var_28_4 = var_28_2.animations
 
-	table.clear(animations)
+	table.clear(var_28_4)
 
-	local caret_color = widget.style.input.caret_color
-	local caret_shadow_color = widget.style.input_shadow.caret_color
-	local input_color = widget.style.input.text_color
+	local var_28_5 = var_28_2.style.input.caret_color
+	local var_28_6 = var_28_2.style.input_shadow.caret_color
+	local var_28_7 = var_28_2.style.input.text_color
 
-	if is_verifying then
-		caret_color[1] = 0
-		caret_shadow_color[1] = 0
-		input_color[1] = 200
-		input_color[2] = 40
-		input_color[3] = 40
-		input_color[4] = 40
+	if arg_28_2 then
+		var_28_5[1] = 0
+		var_28_6[1] = 0
+		var_28_7[1] = 200
+		var_28_7[2] = 40
+		var_28_7[3] = 40
+		var_28_7[4] = 40
 	else
-		local caret_anim = self:_animate_element_pulse(caret_color, 1, 60, 255, 2)
-		local caret_shadow_anim = self:_animate_element_pulse(caret_shadow_color, 1, 60, 255, 2)
+		local var_28_8 = arg_28_0:_animate_element_pulse(var_28_5, 1, 60, 255, 2)
+		local var_28_9 = arg_28_0:_animate_element_pulse(var_28_6, 1, 60, 255, 2)
 
-		animations[caret_anim] = true
-		animations[caret_shadow_anim] = true
+		var_28_4[var_28_8] = true
+		var_28_4[var_28_9] = true
 
-		local default_color = Colors.get_color_table_with_alpha("font_default", 255)
+		local var_28_10 = Colors.get_color_table_with_alpha("font_default", 255)
 
-		input_color[1] = default_color[1]
-		input_color[2] = default_color[2]
-		input_color[3] = default_color[3]
-		input_color[4] = default_color[4]
+		var_28_7[1] = var_28_10[1]
+		var_28_7[2] = var_28_10[2]
+		var_28_7[3] = var_28_10[3]
+		var_28_7[4] = var_28_10[4]
 	end
 
-	local n_args = popup.n_args
+	local var_28_11 = var_28_1.n_args
 
-	for i = 1, n_args do
-		self:set_button_enabled(popup_id, i, not is_verifying)
+	for iter_28_0 = 1, var_28_11 do
+		arg_28_0:set_button_enabled(arg_28_1, iter_28_0, not arg_28_2)
 	end
 end
 
-PopupHandler._animate_element_pulse = function (self, target, target_index, from, to, time)
-	local new_animation = UIAnimation.init(UIAnimation.pulse_animation, target, target_index, from, to, time)
-
-	return new_animation
+function PopupHandler._animate_element_pulse(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5)
+	return (UIAnimation.init(UIAnimation.pulse_animation, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5))
 end
 
-PopupHandler.activate_timer = function (self, popup_id, time, default_result, alignment, blink, optional_timer_format_func, optional_font_size)
-	local n_popups = self.n_popups
-	local popups = self.popups
-	local popup
+function PopupHandler.activate_timer(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5, arg_30_6, arg_30_7)
+	local var_30_0 = arg_30_0.n_popups
+	local var_30_1 = arg_30_0.popups
+	local var_30_2
 
-	for i = 1, n_popups do
-		local temp_popup = popups[i]
+	for iter_30_0 = 1, var_30_0 do
+		local var_30_3 = var_30_1[iter_30_0]
 
-		if temp_popup.popup_id == popup_id then
-			popup = temp_popup
+		if var_30_3.popup_id == arg_30_1 then
+			var_30_2 = var_30_3
 		end
 	end
 
-	assert(popup, string.format("[PopupHandler:activate_timer] There is no popup with id %s", popup_id))
+	assert(var_30_2, string.format("[PopupHandler:activate_timer] There is no popup with id %s", arg_30_1))
 
-	local index
+	local var_30_4
 
-	for idx, value in ipairs(popup.args) do
-		if value == default_result then
-			index = idx
+	for iter_30_1, iter_30_2 in ipairs(var_30_2.args) do
+		if iter_30_2 == arg_30_3 then
+			var_30_4 = iter_30_1
 
 			break
 		end
 	end
 
-	if default_result == "timeout" then
-		index = 1
+	if arg_30_3 == "timeout" then
+		var_30_4 = 1
 	end
 
-	assert(index, string.format("[PopupHandler:activate_timer] There is no result named %s in popup declaration %s", default_result, popup.topic))
-	assert(index % 2 == 1, string.format("[PopupHandler:activate_timer] You need to pass the result - not the text %s in popup declaration %s", default_result, popup.topic))
+	assert(var_30_4, string.format("[PopupHandler:activate_timer] There is no result named %s in popup declaration %s", arg_30_3, var_30_2.topic))
+	assert(var_30_4 % 2 == 1, string.format("[PopupHandler:activate_timer] You need to pass the result - not the text %s in popup declaration %s", arg_30_3, var_30_2.topic))
 
-	popup.timer = time
-	popup.default_result = default_result
-	popup.timer_alignment = alignment or "right"
-	popup.timer_blink = blink == nil and true or blink
-	popup.timer_format_func = optional_timer_format_func
-	popup.timer_font_size = optional_font_size
+	var_30_2.timer = arg_30_2
+	var_30_2.default_result = arg_30_3
+	var_30_2.timer_alignment = arg_30_4 or "right"
+	var_30_2.timer_blink = arg_30_5 == nil and true or arg_30_5
+	var_30_2.timer_format_func = arg_30_6
+	var_30_2.timer_font_size = arg_30_7
 end
 
-PopupHandler.has_popup = function (self)
-	return self.n_popups > 0
+function PopupHandler.has_popup(arg_31_0)
+	return arg_31_0.n_popups > 0
 end
 
-PopupHandler.has_popup_with_id = function (self, popup_id)
-	for _, popup in pairs(self.popups) do
-		if popup.popup_id == popup_id then
+function PopupHandler.has_popup_with_id(arg_32_0, arg_32_1)
+	for iter_32_0, iter_32_1 in pairs(arg_32_0.popups) do
+		if iter_32_1.popup_id == arg_32_1 then
 			return true
 		end
 	end
@@ -1964,28 +1956,25 @@ PopupHandler.has_popup_with_id = function (self, popup_id)
 	return false
 end
 
-PopupHandler._reset_popup_initialized = function (self)
-	for _, popup in pairs(self.popups) do
-		popup.initialized = false
+function PopupHandler._reset_popup_initialized(arg_33_0)
+	for iter_33_0, iter_33_1 in pairs(arg_33_0.popups) do
+		iter_33_1.initialized = false
 	end
 end
 
-PopupHandler.cancel_popup = function (self, popup_id)
-	local n_popups = self.n_popups
-	local popups = self.popups
+function PopupHandler.cancel_popup(arg_34_0, arg_34_1)
+	local var_34_0 = arg_34_0.n_popups
+	local var_34_1 = arg_34_0.popups
 
-	for i = 1, n_popups do
-		local popup = popups[i]
+	for iter_34_0 = 1, var_34_0 do
+		local var_34_2 = var_34_1[iter_34_0]
 
-		if popup.popup_id == popup_id then
-			local temp = popups[n_popups]
+		if var_34_2.popup_id == arg_34_1 then
+			var_34_1[iter_34_0], var_34_1[var_34_0] = var_34_1[var_34_0], var_34_2
+			arg_34_0.n_popups = var_34_0 - 1
 
-			popups[n_popups] = popup
-			popups[i] = temp
-			self.n_popups = n_popups - 1
-
-			if self.n_popups == 0 then
-				self:release_input()
+			if arg_34_0.n_popups == 0 then
+				arg_34_0:release_input()
 			end
 
 			return
@@ -1993,44 +1982,43 @@ PopupHandler.cancel_popup = function (self, popup_id)
 	end
 end
 
-PopupHandler.cancel_all_popups = function (self)
-	local n_popups = self.n_popups
-	local popups = self.popups
+function PopupHandler.cancel_all_popups(arg_35_0)
+	local var_35_0 = arg_35_0.n_popups
+	local var_35_1 = arg_35_0.popups
 
-	for i = 1, n_popups do
-		popups[i] = nil
+	for iter_35_0 = 1, var_35_0 do
+		var_35_1[iter_35_0] = nil
 	end
 
-	if n_popups > 0 then
-		self:release_input()
+	if var_35_0 > 0 then
+		arg_35_0:release_input()
 	end
 
-	self.n_popups = 0
+	arg_35_0.n_popups = 0
 end
 
-PopupHandler.query_result = function (self, popup_id)
-	local result = self.popup_results[popup_id]
+function PopupHandler.query_result(arg_36_0, arg_36_1)
+	local var_36_0 = arg_36_0.popup_results[arg_36_1]
 
-	self.popup_results[popup_id] = nil
+	arg_36_0.popup_results[arg_36_1] = nil
 
-	if result then
-		return unpack(result)
+	if var_36_0 then
+		return unpack(var_36_0)
 	end
 end
 
-PopupHandler.play_sound = function (self, event)
-	WwiseWorld.trigger_event(self.wwise_world, event)
+function PopupHandler.play_sound(arg_37_0, arg_37_1)
+	WwiseWorld.trigger_event(arg_37_0.wwise_world, arg_37_1)
 end
 
-PopupHandler.fit_text_width_to_popup = function (self, text)
-	local widget = self._popup_widgets_by_name.default
+function PopupHandler.fit_text_width_to_popup(arg_38_0, arg_38_1)
+	local var_38_0 = arg_38_0._popup_widgets_by_name.default
 
-	return UIRenderer.crop_text_width(self.ui_renderer, text, 500, widget.style.text)
+	return UIRenderer.crop_text_width(arg_38_0.ui_renderer, arg_38_1, 500, var_38_0.style.text)
 end
 
-PopupHandler.get_number_of_rows = function (self, localized_text, text_style, text_area_width)
-	local font, scaled_font_size = UIFontByResolution(text_style)
-	local lines = UIRenderer.word_wrap(self.ui_renderer, localized_text, font[1], scaled_font_size, text_area_width)
+function PopupHandler.get_number_of_rows(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+	local var_39_0, var_39_1 = UIFontByResolution(arg_39_2)
 
-	return #lines
+	return #UIRenderer.word_wrap(arg_39_0.ui_renderer, arg_39_1, var_39_0[1], var_39_1, arg_39_3)
 end

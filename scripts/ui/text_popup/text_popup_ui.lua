@@ -1,324 +1,311 @@
-﻿-- chunkname: @scripts/ui/text_popup/text_popup_ui.lua
+-- chunkname: @scripts/ui/text_popup/text_popup_ui.lua
 
-local definitions = local_require("scripts/ui/text_popup/text_popup_ui_definitions")
-local scenegraph_definition = definitions.scenegraph_definition
-local generic_input_actions = definitions.generic_input_actions
-local WINDOW_INSIDE_HEIGHT = scenegraph_definition.text_entry.size[2]
+local var_0_0 = local_require("scripts/ui/text_popup/text_popup_ui_definitions")
+local var_0_1 = var_0_0.scenegraph_definition
+local var_0_2 = var_0_0.generic_input_actions
+local var_0_3 = var_0_1.text_entry.size[2]
 
 TextPopupUI = class(TextPopupUI)
 
-TextPopupUI.init = function (self, ui_context)
-	self._ui_top_renderer = ui_context.ui_top_renderer
-	self._input_manager = ui_context.input_manager
-	self._render_settings = {
-		snap_pixel_positions = true,
+function TextPopupUI.init(arg_1_0, arg_1_1)
+	arg_1_0._ui_top_renderer = arg_1_1.ui_top_renderer
+	arg_1_0._input_manager = arg_1_1.input_manager
+	arg_1_0._render_settings = {
+		snap_pixel_positions = true
 	}
 
-	self:_create_ui_elements()
-	self:_setup_input()
+	arg_1_0:_create_ui_elements()
+	arg_1_0:_setup_input()
 
-	local input_service = self._input_manager:get_service("Text")
+	local var_1_0 = arg_1_0._input_manager:get_service("Text")
 
-	self._menu_input_description = MenuInputDescriptionUI:new(ui_context, self._ui_top_renderer, input_service, 3, 900, generic_input_actions.default)
+	arg_1_0._menu_input_description = MenuInputDescriptionUI:new(arg_1_1, arg_1_0._ui_top_renderer, var_1_0, 3, 900, var_0_2.default)
 
-	self._menu_input_description:set_input_description(nil)
+	arg_1_0._menu_input_description:set_input_description(nil)
 end
 
-TextPopupUI._setup_input = function (self)
-	self._input_manager:create_input_service("Text", "IngameMenuKeymaps", "IngameMenuFilters")
-	self._input_manager:map_device_to_service("Text", "keyboard")
-	self._input_manager:map_device_to_service("Text", "mouse")
-	self._input_manager:map_device_to_service("Text", "gamepad")
+function TextPopupUI._setup_input(arg_2_0)
+	arg_2_0._input_manager:create_input_service("Text", "IngameMenuKeymaps", "IngameMenuFilters")
+	arg_2_0._input_manager:map_device_to_service("Text", "keyboard")
+	arg_2_0._input_manager:map_device_to_service("Text", "mouse")
+	arg_2_0._input_manager:map_device_to_service("Text", "gamepad")
 end
 
-TextPopupUI._create_ui_elements = function (self)
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+function TextPopupUI._create_ui_elements(arg_3_0)
+	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 
-	local widget_definitions = definitions.widget_definitions
+	local var_3_0 = var_0_0.widget_definitions
 
-	self._widgets = {}
-	self._widgets_by_name = {}
-	self._buttons = {}
+	arg_3_0._widgets = {}
+	arg_3_0._widgets_by_name = {}
+	arg_3_0._buttons = {}
 
-	for key, widget in pairs(widget_definitions) do
-		local w = UIWidget.init(widget)
+	for iter_3_0, iter_3_1 in pairs(var_3_0) do
+		local var_3_1 = UIWidget.init(iter_3_1)
 
-		self._widgets[#self._widgets + 1] = w
+		arg_3_0._widgets[#arg_3_0._widgets + 1] = var_3_1
 
-		if string.ends_with(key, "_button") then
-			self._buttons[key] = w
+		if string.ends_with(iter_3_0, "_button") then
+			arg_3_0._buttons[iter_3_0] = var_3_1
 		else
-			self._widgets_by_name[key] = w
+			arg_3_0._widgets_by_name[iter_3_0] = var_3_1
 		end
 	end
 end
 
-TextPopupUI.show = function (self, header_localization_key, text_localization_key, on_close_callback)
-	if self._draw_widgets and self.is_visible then
+function TextPopupUI.show(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	if arg_4_0._draw_widgets and arg_4_0.is_visible then
 		print("TextPopupUI is already visible")
 
 		return
 	end
 
-	if on_close_callback then
-		self._on_close_callback = on_close_callback
+	if arg_4_3 then
+		arg_4_0._on_close_callback = arg_4_3
 	end
 
-	self._widgets_by_name.title_text.content.text = Localize(header_localization_key)
-	self._widgets_by_name.overlay_text.content.text = Localize(text_localization_key)
+	arg_4_0._widgets_by_name.title_text.content.text = Localize(arg_4_1)
+	arg_4_0._widgets_by_name.overlay_text.content.text = Localize(arg_4_2)
 
-	self:_update_scroll_height(0)
+	arg_4_0:_update_scroll_height(0)
 
-	self._draw_widgets = true
-	self.is_visible = true
+	arg_4_0._draw_widgets = true
+	arg_4_0.is_visible = true
 
 	ShowCursorStack.show("TextPopupUI")
-	self._input_manager:capture_input({
+	arg_4_0._input_manager:capture_input({
 		"keyboard",
 		"gamepad",
-		"mouse",
+		"mouse"
 	}, 1, "Text", "TextPopupUI")
 end
 
-TextPopupUI.hide = function (self)
-	if not self._draw_widgets and not self.is_visible then
+function TextPopupUI.hide(arg_5_0)
+	if not arg_5_0._draw_widgets and not arg_5_0.is_visible then
 		return
 	end
 
-	self._draw_widgets = false
-	self.is_visible = false
+	arg_5_0._draw_widgets = false
+	arg_5_0.is_visible = false
 
 	ShowCursorStack.hide("TextPopupUI")
-	self._input_manager:release_input({
+	arg_5_0._input_manager:release_input({
 		"keyboard",
 		"gamepad",
-		"mouse",
+		"mouse"
 	}, 1, "Text", "TextPopupUI")
 
-	if self._on_close_callback then
-		self._on_close_callback()
+	if arg_5_0._on_close_callback then
+		arg_5_0._on_close_callback()
 
-		self._on_close_callback = nil
+		arg_5_0._on_close_callback = nil
 	end
 end
 
-TextPopupUI.update = function (self, dt)
-	if not self.is_visible or not self._draw_widgets then
+function TextPopupUI.update(arg_6_0, arg_6_1)
+	if not arg_6_0.is_visible or not arg_6_0._draw_widgets then
 		return
 	end
 
-	if self:_button_clicked("ok_button") then
-		self:hide()
+	if arg_6_0:_button_clicked("ok_button") then
+		arg_6_0:hide()
 
 		return
 	end
 
-	self:_update_mouse_scroll_input()
-	self:_update_gamepad_scroll_input()
-	self:_draw(dt)
+	arg_6_0:_update_mouse_scroll_input()
+	arg_6_0:_update_gamepad_scroll_input()
+	arg_6_0:_draw(arg_6_1)
 end
 
-TextPopupUI.post_update = function (self, dt)
+function TextPopupUI.post_update(arg_7_0, arg_7_1)
 	return
 end
 
-TextPopupUI.post_render = function (self)
+function TextPopupUI.post_render(arg_8_0)
 	return
 end
 
-TextPopupUI._update_scroll_height = function (self, optional_scroll_value)
-	local total_height = UIUtils.get_text_height(self._ui_top_renderer, definitions.scenegraph_definition.text_entry.size, definitions.scroll_text_style, self._widgets_by_name.overlay_text.content.text)
+function TextPopupUI._update_scroll_height(arg_9_0, arg_9_1)
+	local var_9_0 = UIUtils.get_text_height(arg_9_0._ui_top_renderer, var_0_0.scenegraph_definition.text_entry.size, var_0_0.scroll_text_style, arg_9_0._widgets_by_name.overlay_text.content.text)
 
-	self._total_scroll_height = math.max(total_height - WINDOW_INSIDE_HEIGHT, 0)
+	arg_9_0._total_scroll_height = math.max(var_9_0 - var_0_3, 0)
 
-	self:_setup_scrollbar(total_height, optional_scroll_value)
+	arg_9_0:_setup_scrollbar(var_9_0, arg_9_1)
 end
 
-TextPopupUI._setup_scrollbar = function (self, height, optional_value)
-	local widget = self._widgets_by_name.scrollbar
-	local scenegraph_id = widget.scenegraph_id
-	local scrollbar_size_y = self._ui_scenegraph[scenegraph_id].size[2]
-	local percentage = math.min(scrollbar_size_y / height, 1)
+function TextPopupUI._setup_scrollbar(arg_10_0, arg_10_1, arg_10_2)
+	local var_10_0 = arg_10_0._widgets_by_name.scrollbar
+	local var_10_1 = var_10_0.scenegraph_id
+	local var_10_2 = arg_10_0._ui_scenegraph[var_10_1].size[2]
+	local var_10_3 = math.min(var_10_2 / arg_10_1, 1)
 
-	widget.content.scroll_bar_info.bar_height_percentage = percentage
+	var_10_0.content.scroll_bar_info.bar_height_percentage = var_10_3
 
-	self:_set_scrollbar_value(optional_value or 0)
+	arg_10_0:_set_scrollbar_value(arg_10_2 or 0)
 
-	local scroll_step_multiplier = 2
-	local scroll_amount = math.max(WINDOW_INSIDE_HEIGHT / self._total_scroll_height, 0) * scroll_step_multiplier
+	local var_10_4 = 2
+	local var_10_5 = math.max(var_0_3 / arg_10_0._total_scroll_height, 0) * var_10_4
 
-	self._widgets_by_name.scroll_content.content.scroll_amount = scroll_amount
+	arg_10_0._widgets_by_name.scroll_content.content.scroll_amount = var_10_5
 end
 
-TextPopupUI._update_mouse_scroll_input = function (self)
-	local widgets_by_name = self._widgets_by_name
-	local widget = widgets_by_name.scrollbar
-	local window_widget = widgets_by_name.scroll_content
+function TextPopupUI._update_mouse_scroll_input(arg_11_0)
+	local var_11_0 = arg_11_0._widgets_by_name
+	local var_11_1 = var_11_0.scrollbar
+	local var_11_2 = var_11_0.scroll_content
 
-	if widget.content.scroll_bar_info.on_pressed then
-		window_widget.content.scroll_add = nil
+	if var_11_1.content.scroll_bar_info.on_pressed then
+		var_11_2.content.scroll_add = nil
 	end
 
-	local mouse_scroll_value = window_widget.content.scroll_value
+	local var_11_3 = var_11_2.content.scroll_value
 
-	if not mouse_scroll_value then
+	if not var_11_3 then
 		return
 	end
 
-	local scroll_bar_value = widget.content.scroll_bar_info.value
-	local current_scroll_value = self._scroll_value or 0
+	local var_11_4 = var_11_1.content.scroll_bar_info.value
+	local var_11_5 = arg_11_0._scroll_value or 0
 
-	if current_scroll_value ~= mouse_scroll_value then
-		self:_set_scrollbar_value(mouse_scroll_value)
-	elseif current_scroll_value ~= scroll_bar_value then
-		self:_set_scrollbar_value(scroll_bar_value)
+	if var_11_5 ~= var_11_3 then
+		arg_11_0:_set_scrollbar_value(var_11_3)
+	elseif var_11_5 ~= var_11_4 then
+		arg_11_0:_set_scrollbar_value(var_11_4)
 	end
 end
 
-TextPopupUI._update_gamepad_scroll_input = function (self)
-	local gamepad_active = Managers.input:is_device_active("gamepad")
-
-	if not gamepad_active then
+function TextPopupUI._update_gamepad_scroll_input(arg_12_0)
+	if not Managers.input:is_device_active("gamepad") then
 		return
 	end
 
-	local input_service = self._input_manager:get_service("Text")
-	local gamepad_scroll_value = input_service:get("gamepad_left_axis")
+	local var_12_0 = arg_12_0._input_manager:get_service("Text"):get("gamepad_left_axis")
 
-	if math.abs(gamepad_scroll_value.y) == 0 then
+	if math.abs(var_12_0.y) == 0 then
 		return
 	end
 
-	local widgets_by_name = self._widgets_by_name
-	local scroll_content = widgets_by_name.scroll_content
-	local scroll_content_content = scroll_content.content
+	local var_12_1 = arg_12_0._widgets_by_name.scroll_content.content
 
-	scroll_content_content.scroll_add = scroll_content_content.scroll_amount * gamepad_scroll_value.y * -1 * 0.1
+	var_12_1.scroll_add = var_12_1.scroll_amount * var_12_0.y * -1 * 0.1
 end
 
-TextPopupUI._set_scrollbar_value = function (self, value)
-	if value then
-		local widgets_by_name = self._widgets_by_name
-		local widget = widgets_by_name.scrollbar
-		local widget_scroll_bar_info = widget.content.scroll_bar_info
+function TextPopupUI._set_scrollbar_value(arg_13_0, arg_13_1)
+	if arg_13_1 then
+		local var_13_0 = arg_13_0._widgets_by_name
 
-		widget_scroll_bar_info.value = value
-		widgets_by_name.scroll_content.content.scroll_value = value
-		self._scroll_value = value
+		var_13_0.scrollbar.content.scroll_bar_info.value = arg_13_1
+		var_13_0.scroll_content.content.scroll_value = arg_13_1
+		arg_13_0._scroll_value = arg_13_1
 
-		local scenegraph_id_to_move = "text_entry"
-		local ui_scenegraph = self._ui_scenegraph
-		local default_scenegraph = scenegraph_definition[scenegraph_id_to_move]
-		local default_position = default_scenegraph.position
+		local var_13_1 = "text_entry"
+		local var_13_2 = arg_13_0._ui_scenegraph
+		local var_13_3 = var_0_1[var_13_1].position
 
-		ui_scenegraph[scenegraph_id_to_move].local_position[2] = default_position[2] + value * self._total_scroll_height
+		var_13_2[var_13_1].local_position[2] = var_13_3[2] + arg_13_1 * arg_13_0._total_scroll_height
 	end
 end
 
-TextPopupUI._draw = function (self, dt)
-	local ui_top_renderer = self._ui_top_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local input_service = self._input_manager:get_service("Text")
-	local gamepad_active = Managers.input:is_device_active("gamepad")
-	local render_settings = self._render_settings
+function TextPopupUI._draw(arg_14_0, arg_14_1)
+	local var_14_0 = arg_14_0._ui_top_renderer
+	local var_14_1 = arg_14_0._ui_scenegraph
+	local var_14_2 = arg_14_0._input_manager:get_service("Text")
+	local var_14_3 = Managers.input:is_device_active("gamepad")
+	local var_14_4 = arg_14_0._render_settings
 
-	for _, b in pairs(self._buttons) do
-		self:_animate_button(b, dt)
+	for iter_14_0, iter_14_1 in pairs(arg_14_0._buttons) do
+		arg_14_0:_animate_button(iter_14_1, arg_14_1)
 	end
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+	UIRenderer.begin_pass(var_14_0, var_14_1, var_14_2, arg_14_1, nil, var_14_4)
 
-	for _, widget in ipairs(self._widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, widget)
+	for iter_14_2, iter_14_3 in ipairs(arg_14_0._widgets) do
+		UIRenderer.draw_widget(var_14_0, iter_14_3)
 	end
 
-	UIRenderer.end_pass(ui_top_renderer)
+	UIRenderer.end_pass(var_14_0)
 
-	if gamepad_active then
-		self._menu_input_description:draw(ui_top_renderer, dt)
+	if var_14_3 then
+		arg_14_0._menu_input_description:draw(var_14_0, arg_14_1)
 	end
 end
 
-TextPopupUI._button_clicked = function (self, button_name)
-	local is_pressed = self._buttons[button_name].content.button_hotspot.on_release
-	local gamepad_active = Managers.input:is_device_active("gamepad")
+function TextPopupUI._button_clicked(arg_15_0, arg_15_1)
+	local var_15_0 = arg_15_0._buttons[arg_15_1].content.button_hotspot.on_release
 
-	if gamepad_active and button_name == "ok_button" then
-		local input_service = self._input_manager:get_service("Text")
+	var_15_0 = Managers.input:is_device_active("gamepad") and arg_15_1 == "ok_button" and arg_15_0._input_manager:get_service("Text"):get("confirm") or var_15_0
 
-		is_pressed = input_service:get("confirm") or is_pressed
+	if var_15_0 then
+		arg_15_0._buttons[arg_15_1].content.button_hotspot.on_release = false
 	end
 
-	if is_pressed then
-		self._buttons[button_name].content.button_hotspot.on_release = false
-	end
-
-	return is_pressed
+	return var_15_0
 end
 
-TextPopupUI._animate_button = function (self, widget, dt)
-	local content = widget.content
-	local style = widget.style
-	local hotspot = content.button_hotspot
-	local is_hover = hotspot.is_hover
-	local is_selected = hotspot.is_selected
-	local input_pressed = hotspot.is_clicked and hotspot.is_clicked == 0
-	local input_progress = hotspot.input_progress or 0
-	local hover_progress = hotspot.hover_progress or 0
-	local selection_progress = hotspot.selection_progress or 0
-	local speed = 8
-	local input_speed = 20
+function TextPopupUI._animate_button(arg_16_0, arg_16_1, arg_16_2)
+	local var_16_0 = arg_16_1.content
+	local var_16_1 = arg_16_1.style
+	local var_16_2 = var_16_0.button_hotspot
+	local var_16_3 = var_16_2.is_hover
+	local var_16_4 = var_16_2.is_selected
+	local var_16_5 = var_16_2.is_clicked and var_16_2.is_clicked == 0
+	local var_16_6 = var_16_2.input_progress or 0
+	local var_16_7 = var_16_2.hover_progress or 0
+	local var_16_8 = var_16_2.selection_progress or 0
+	local var_16_9 = 8
+	local var_16_10 = 20
 
-	if input_pressed then
-		input_progress = math.min(input_progress + dt * input_speed, 1)
+	if var_16_5 then
+		var_16_6 = math.min(var_16_6 + arg_16_2 * var_16_10, 1)
 	else
-		input_progress = math.max(input_progress - dt * input_speed, 0)
+		var_16_6 = math.max(var_16_6 - arg_16_2 * var_16_10, 0)
 	end
 
-	if is_hover then
-		hover_progress = math.min(hover_progress + dt * speed, 1)
+	if var_16_3 then
+		var_16_7 = math.min(var_16_7 + arg_16_2 * var_16_9, 1)
 	else
-		hover_progress = math.max(hover_progress - dt * speed, 0)
+		var_16_7 = math.max(var_16_7 - arg_16_2 * var_16_9, 0)
 	end
 
-	if is_selected then
-		selection_progress = math.min(selection_progress + dt * speed, 1)
+	if var_16_4 then
+		var_16_8 = math.min(var_16_8 + arg_16_2 * var_16_9, 1)
 	else
-		selection_progress = math.max(selection_progress - dt * speed, 0)
+		var_16_8 = math.max(var_16_8 - arg_16_2 * var_16_9, 0)
 	end
 
-	local combined_progress = math.max(hover_progress, selection_progress)
+	local var_16_11 = math.max(var_16_7, var_16_8)
 
-	style.clicked_rect.color[1] = 100 * input_progress
+	var_16_1.clicked_rect.color[1] = 100 * var_16_6
 
-	local hover_alpha = 255 * hover_progress
+	local var_16_12 = 255 * var_16_7
 
-	style.hover_glow.color[1] = hover_alpha
+	var_16_1.hover_glow.color[1] = var_16_12
 
-	local text_disabled_style = style.title_text_disabled
-	local disabled_default_text_color = text_disabled_style.default_text_color
-	local disabled_text_color = text_disabled_style.text_color
+	local var_16_13 = var_16_1.title_text_disabled
+	local var_16_14 = var_16_13.default_text_color
+	local var_16_15 = var_16_13.text_color
 
-	disabled_text_color[2] = disabled_default_text_color[2] * 0.4
-	disabled_text_color[3] = disabled_default_text_color[3] * 0.4
-	disabled_text_color[4] = disabled_default_text_color[4] * 0.4
-	hotspot.hover_progress = hover_progress
-	hotspot.input_progress = input_progress
-	hotspot.selection_progress = selection_progress
+	var_16_15[2] = var_16_14[2] * 0.4
+	var_16_15[3] = var_16_14[3] * 0.4
+	var_16_15[4] = var_16_14[4] * 0.4
+	var_16_2.hover_progress = var_16_7
+	var_16_2.input_progress = var_16_6
+	var_16_2.selection_progress = var_16_8
 
-	local title_text_style = style.title_text
-	local title_text_color = title_text_style.text_color
-	local title_default_text_color = title_text_style.default_text_color
-	local title_select_text_color = title_text_style.select_text_color
+	local var_16_16 = var_16_1.title_text
+	local var_16_17 = var_16_16.text_color
+	local var_16_18 = var_16_16.default_text_color
+	local var_16_19 = var_16_16.select_text_color
 
-	Colors.lerp_color_tables(title_default_text_color, title_select_text_color, combined_progress, title_text_color)
+	Colors.lerp_color_tables(var_16_18, var_16_19, var_16_11, var_16_17)
 end
 
-TextPopupUI.destroy = function (self)
-	self._draw_widgets = false
-	self.is_visible = false
-	self._widgets = nil
-	self._widgets_by_name = nil
-	self._buttons = nil
-	self._on_close_callback = nil
+function TextPopupUI.destroy(arg_17_0)
+	arg_17_0._draw_widgets = false
+	arg_17_0.is_visible = false
+	arg_17_0._widgets = nil
+	arg_17_0._widgets_by_name = nil
+	arg_17_0._buttons = nil
+	arg_17_0._on_close_callback = nil
 end

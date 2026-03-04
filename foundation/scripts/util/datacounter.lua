@@ -1,72 +1,72 @@
-﻿-- chunkname: @foundation/scripts/util/datacounter.lua
+-- chunkname: @foundation/scripts/util/datacounter.lua
 
 DataCounter = {}
 
-local function count_table(t, seen_data, count)
-	if seen_data[t] then
+local function var_0_0(arg_1_0, arg_1_1, arg_1_2)
+	if arg_1_1[arg_1_0] then
 		return 0, 0
 	end
 
-	seen_data[t] = true
+	arg_1_1[arg_1_0] = true
 
-	local type = type
-	local table_count = 0
-	local value_count = 0
+	local var_1_0 = type
+	local var_1_1 = 0
+	local var_1_2 = 0
 
-	for k, v in pairs(t) do
-		local k_type = type(k)
-		local v_type = type(v)
+	for iter_1_0, iter_1_1 in pairs(arg_1_0) do
+		local var_1_3 = var_1_0(iter_1_0)
+		local var_1_4 = var_1_0(iter_1_1)
 
-		if k_type == "table" then
-			local recursed_table_count, recursed_value_count = count_table(k, seen_data, count + 1)
+		if var_1_3 == "table" then
+			local var_1_5, var_1_6 = var_0_0(iter_1_0, arg_1_1, arg_1_2 + 1)
 
-			table_count = table_count + recursed_table_count + 1
-			value_count = value_count + recursed_value_count
+			var_1_1 = var_1_1 + var_1_5 + 1
+			var_1_2 = var_1_2 + var_1_6
 
-			local str = ""
+			local var_1_7 = ""
 
-			for i = 1, count do
-				str = str .. "\t"
+			for iter_1_2 = 1, arg_1_2 do
+				var_1_7 = var_1_7 .. "\t"
 			end
 
-			printf(str .. "%s[%6d, %6d]", tostring(k), recursed_table_count, recursed_value_count)
+			printf(var_1_7 .. "%s[%6d, %6d]", tostring(iter_1_0), var_1_5, var_1_6)
 		end
 
-		if v_type == "table" then
-			local recursed_table_count, recursed_value_count = count_table(v, seen_data, count + 1)
+		if var_1_4 == "table" then
+			local var_1_8, var_1_9 = var_0_0(iter_1_1, arg_1_1, arg_1_2 + 1)
 
-			table_count = table_count + recursed_table_count + 1
-			value_count = value_count + recursed_value_count
+			var_1_1 = var_1_1 + var_1_8 + 1
+			var_1_2 = var_1_2 + var_1_9
 
-			local str = ""
+			local var_1_10 = ""
 
-			for i = 1, count do
-				str = str .. "\t"
+			for iter_1_3 = 1, arg_1_2 do
+				var_1_10 = var_1_10 .. "\t"
 			end
 
-			printf(str .. "%s[%6d, %6d]", tostring(k), recursed_table_count, recursed_value_count)
+			printf(var_1_10 .. "%s[%6d, %6d]", tostring(iter_1_0), var_1_8, var_1_9)
 		else
-			value_count = value_count + 1
+			var_1_2 = var_1_2 + 1
 		end
 	end
 
-	return table_count, value_count
+	return var_1_1, var_1_2
 end
 
-DataCounter.analyze_table = function (t, name, ...)
-	local seen_data = {}
+function DataCounter.analyze_table(arg_2_0, arg_2_1, ...)
+	local var_2_0 = {}
 
-	for i = 1, select("#", ...) do
-		local value = select(i, ...)
+	for iter_2_0 = 1, select("#", ...) do
+		local var_2_1 = select(iter_2_0, ...)
 
-		if value then
-			seen_data[value] = true
+		if var_2_1 then
+			var_2_0[var_2_1] = true
 		end
 	end
 
-	print(name)
+	print(arg_2_1)
 
-	local num_tables, num_values = count_table(t, seen_data, 1)
+	local var_2_2, var_2_3 = var_0_0(arg_2_0, var_2_0, 1)
 
-	printf("Analyzed table %q with %d table counts and value counts of %d", name or "unknown", num_tables, num_values)
+	printf("Analyzed table %q with %d table counts and value counts of %d", arg_2_1 or "unknown", var_2_2, var_2_3)
 end

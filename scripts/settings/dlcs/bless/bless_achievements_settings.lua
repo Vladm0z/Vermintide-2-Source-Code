@@ -1,13 +1,13 @@
-﻿-- chunkname: @scripts/settings/dlcs/bless/bless_achievements_settings.lua
+-- chunkname: @scripts/settings/dlcs/bless/bless_achievements_settings.lua
 
-local settings = DLCSettings.bless
+local var_0_0 = DLCSettings.bless
 
-settings.achievement_outline = {
+var_0_0.achievement_outline = {
 	heroes = {
 		categories = {
 			{
-				name = "inventory_name_witch_hunter",
 				sorting = 4,
+				name = "inventory_name_witch_hunter",
 				entries = {
 					"bless_complete_all_helmgart_levels_wh_priest",
 					"bless_complete_25_missions_wh_priest",
@@ -29,13 +29,13 @@ settings.achievement_outline = {
 					"bless_righteous_stagger",
 					"bless_charged_hammer",
 					"bless_protected_killing",
-					"complete_all_warrior_priest_challenges",
-				},
-			},
-		},
-	},
+					"complete_all_warrior_priest_challenges"
+				}
+			}
+		}
+	}
 }
-settings.achievement_template_file_names = {
-	"scripts/managers/achievements/achievement_templates_bless",
+var_0_0.achievement_template_file_names = {
+	"scripts/managers/achievements/achievement_templates_bless"
 }
-settings.achievement_events = {}
+var_0_0.achievement_events = {}

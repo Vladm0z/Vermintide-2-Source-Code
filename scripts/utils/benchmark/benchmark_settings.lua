@@ -1,96 +1,96 @@
-﻿-- chunkname: @scripts/utils/benchmark/benchmark_settings.lua
+-- chunkname: @scripts/utils/benchmark/benchmark_settings.lua
 
 require("scripts/settings/level_settings")
 
 BenchmarkSettings = {
+	cycle_view_time = 30,
+	main_path_teleport_time = 2,
+	initial_cycle_time = 30,
+	debug = false,
+	bot_selection_timer = 3,
+	cycle_views = true,
+	overview_downtime = 60,
 	attract_benchmark = false,
+	overview_duration = 10,
+	cycle_time = 90,
+	is_story_based = true,
+	destroy_close_enemies_radius = 20,
 	auto_host_level = "military",
 	bot_damage_multiplier = 5,
-	bot_selection_timer = 3,
-	cycle_time = 90,
-	cycle_view_time = 30,
-	cycle_views = true,
-	debug = false,
-	destroy_close_enemies_radius = 20,
-	destroy_close_enemies_timer = 90,
 	game_seed = 846387,
-	initial_cycle_time = 30,
-	is_story_based = true,
-	main_path_teleport_time = 2,
-	overview_downtime = 60,
-	overview_duration = 10,
+	destroy_close_enemies_timer = 90,
 	initial_overview_time = math.huge,
 	parameters = {
-		debug_interactions = false,
-		disable_debug_draw = true,
-		disable_gutter_runner = true,
-		disable_intro_trailer = true,
-		disable_pack_master = true,
-		disable_tutorial_at_start = true,
-		force_steam = true,
-		hide_fps = true,
-		hide_version_info = true,
-		honduras_demo = false,
-		infinite_ammo = true,
-		network_debug = false,
-		network_debug_connections = false,
-		network_log_messages = false,
 		player_invincible = true,
-		screen_space_player_camera_reactions = false,
+		network_debug = false,
+		disable_tutorial_at_start = true,
+		disable_gutter_runner = true,
+		hide_version_info = true,
+		network_debug_connections = false,
 		spawn_empty_chest = true,
+		disable_debug_draw = true,
+		disable_pack_master = true,
+		network_log_messages = false,
+		disable_intro_trailer = true,
+		force_steam = true,
+		debug_interactions = false,
+		screen_space_player_camera_reactions = false,
+		infinite_ammo = true,
+		honduras_demo = false,
+		hide_fps = true
 	},
 	attract_mode_settings = {
 		display_name = "intel_loading_screen_attract_mode",
-		loading_screen_wwise_events = {},
+		loading_screen_wwise_events = {}
 	},
 	benchmark_mode_settings = {
 		display_name = "intel_loading_screen_benchmark_mode",
-		loading_screen_wwise_events = {},
-	},
+		loading_screen_wwise_events = {}
+	}
 }
 
-local function setup_parameters(parameters)
-	for parameter, value in pairs(parameters) do
-		Development.set_parameter(parameter, value)
+local function var_0_0(arg_1_0)
+	for iter_1_0, iter_1_1 in pairs(arg_1_0) do
+		Development.set_parameter(iter_1_0, iter_1_1)
 
-		script_data[parameter] = value
+		script_data[iter_1_0] = iter_1_1
 	end
 end
 
-local function override_display_name(mode_settings)
-	local level_key = BenchmarkSettings.auto_host_level
-	local level_settings = LevelSettings[level_key]
+local function var_0_1(arg_2_0)
+	local var_2_0 = BenchmarkSettings.auto_host_level
+	local var_2_1 = LevelSettings[var_2_0]
 
-	level_settings.display_name = mode_settings.display_name
-	level_settings.loading_screen_wwise_events = mode_settings.loading_screen_wwise_events
+	var_2_1.display_name = arg_2_0.display_name
+	var_2_1.loading_screen_wwise_events = arg_2_0.loading_screen_wwise_events
 	script_data.no_loading_screen_tip_texts = true
 end
 
-local function override_development_parameter_func(parameters)
-	local function development_parameter(param)
-		return parameters[param]
+local function var_0_2(arg_3_0)
+	local function var_3_0(arg_4_0)
+		return arg_3_0[arg_4_0]
 	end
 
-	Development.parameter = development_parameter
+	Development.parameter = var_3_0
 end
 
-local DEMO_MODE = false
-local args = {
-	Application.argv(),
+local var_0_3 = false
+local var_0_4 = {
+	Application.argv()
 }
 
-for _, arg in pairs(args) do
-	if arg == "-attract-mode" then
+for iter_0_0, iter_0_1 in pairs(var_0_4) do
+	if iter_0_1 == "-attract-mode" then
 		LAUNCH_MODE = "attract"
 
 		Development.set_parameter("attract_mode", true)
-		setup_parameters(BenchmarkSettings.parameters)
-		override_display_name(BenchmarkSettings.attract_mode_settings)
+		var_0_0(BenchmarkSettings.parameters)
+		var_0_1(BenchmarkSettings.attract_mode_settings)
 
 		break
 	end
 
-	if arg == "-benchmark-mode" then
+	if iter_0_1 == "-benchmark-mode" then
 		LAUNCH_MODE = "attract_benchmark"
 		BenchmarkSettings.attract_benchmark = true
 		BenchmarkSettings.parameters.hide_fps = false
@@ -98,35 +98,35 @@ for _, arg in pairs(args) do
 		BenchmarkSettings.parameters.attract_mode = true
 		BenchmarkSettings.parameters.skip_start_screen = true
 
-		override_display_name(BenchmarkSettings.benchmark_mode_settings)
-		override_development_parameter_func(BenchmarkSettings.parameters)
+		var_0_1(BenchmarkSettings.benchmark_mode_settings)
+		var_0_2(BenchmarkSettings.parameters)
 
 		break
 	end
 
-	if arg == "-demo-mode" then
-		DEMO_MODE = true
+	if iter_0_1 == "-demo-mode" then
+		var_0_3 = true
 	end
 end
 
-BenchmarkSettings.demo_mode_overrides = function ()
-	if DEMO_MODE then
+function BenchmarkSettings.demo_mode_overrides()
+	if var_0_3 then
 		print("Entering demo mode")
 
-		for setting_name, setting in pairs(PackSpawningSettings) do
-			setting.area_density_coefficient = setting.area_density_coefficient * 0.75
+		for iter_5_0, iter_5_1 in pairs(PackSpawningSettings) do
+			iter_5_1.area_density_coefficient = iter_5_1.area_density_coefficient * 0.75
 		end
 
-		for setting_name, setting in pairs(BreedPacks) do
-			if setting.patrol_overrides then
-				setting.patrol_overrides.patrol_chance = 0
+		for iter_5_2, iter_5_3 in pairs(BreedPacks) do
+			if iter_5_3.patrol_overrides then
+				iter_5_3.patrol_overrides.patrol_chance = 0
 			end
 		end
 
 		SpecialsSettings.chaos.breeds = {
 			"skaven_pack_master",
 			"skaven_gutter_runner",
-			"skaven_warpfire_thrower",
+			"skaven_warpfire_thrower"
 		}
 	end
 end

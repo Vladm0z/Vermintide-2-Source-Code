@@ -1,116 +1,116 @@
-﻿-- chunkname: @scripts/settings/sound_quality_settings.lua
+-- chunkname: @scripts/settings/sound_quality_settings.lua
 
-local platform = PLATFORM
+local var_0_0 = PLATFORM
 
 if IS_WINDOWS then
 	SoundQualitySettings = {
 		templates = {
 			low = {
 				max_num_voices = 28,
-				occlusion = false,
 				sound_performance = 1,
+				occlusion = false
 			},
 			medium = {
 				max_num_voices = 64,
-				occlusion = false,
 				sound_performance = 0.5,
+				occlusion = false
 			},
 			high = {
 				max_num_voices = 80,
-				occlusion = true,
 				sound_performance = 0,
-			},
-		},
+				occlusion = true
+			}
+		}
 	}
 elseif IS_LINUX then
 	SoundQualitySettings = {
 		templates = {
 			low = {
 				max_num_voices = 28,
-				occlusion = false,
 				sound_performance = 1,
+				occlusion = false
 			},
 			medium = {
 				max_num_voices = 64,
-				occlusion = false,
 				sound_performance = 0.5,
+				occlusion = false
 			},
 			high = {
 				max_num_voices = 80,
-				occlusion = true,
 				sound_performance = 0,
-			},
-		},
+				occlusion = true
+			}
+		}
 	}
 elseif IS_XB1 then
 	SoundQualitySettings = {
 		templates = {
 			low = {
 				max_num_voices = 28,
-				occlusion = false,
 				sound_performance = 1,
+				occlusion = false
 			},
 			medium = {
 				max_num_voices = 64,
-				occlusion = false,
 				sound_performance = 0.5,
+				occlusion = false
 			},
 			high = {
 				max_num_voices = 80,
-				occlusion = true,
 				sound_performance = 0,
-			},
-		},
+				occlusion = true
+			}
+		}
 	}
 elseif IS_PS4 then
 	SoundQualitySettings = {
 		templates = {
 			low = {
 				max_num_voices = 28,
-				occlusion = false,
 				sound_performance = 1,
+				occlusion = false
 			},
 			medium = {
 				max_num_voices = 64,
-				occlusion = false,
 				sound_performance = 0.5,
+				occlusion = false
 			},
 			high = {
 				max_num_voices = 80,
-				occlusion = true,
 				sound_performance = 0,
-			},
-		},
+				occlusion = true
+			}
+		}
 	}
 end
 
 assert(SoundQualitySettings, "No SoundQualitySettings set?")
 
-SoundQualitySettings.get_quality_template = function (sound_quality)
-	local quality_template = SoundQualitySettings.templates[sound_quality]
+function SoundQualitySettings.get_quality_template(arg_1_0)
+	local var_1_0 = SoundQualitySettings.templates[arg_1_0]
 
-	if not quality_template then
-		local default_sound_quality = DefaultUserSettings.get("user_settings", "sound_quality")
+	if not var_1_0 then
+		local var_1_1 = DefaultUserSettings.get("user_settings", "sound_quality")
 
-		quality_template = SoundQualitySettings.templates[default_sound_quality]
+		var_1_0 = SoundQualitySettings.templates[var_1_1]
 
 		if not LEVEL_EDITOR_TEST then
-			printf("[SoundQualitySettings] No quality template for %q, using default %q", sound_quality, default_sound_quality)
+			printf("[SoundQualitySettings] No quality template for %q, using default %q", arg_1_0, var_1_1)
 		end
 	end
 
-	return quality_template
+	return var_1_0
 end
 
-SoundQualitySettings.set_sound_quality = function (wwise_world, sound_quality)
-	local quality_template = SoundQualitySettings.get_quality_template(sound_quality)
-	local sound_performance = quality_template.sound_performance
+function SoundQualitySettings.set_sound_quality(arg_2_0, arg_2_1)
+	local var_2_0 = SoundQualitySettings.get_quality_template(arg_2_1)
+	local var_2_1 = var_2_0.sound_performance
 
-	WwiseWorld.set_global_parameter(wwise_world, "sound_performance", sound_performance)
+	WwiseWorld.set_global_parameter(arg_2_0, "sound_performance", var_2_1)
 
-	local max_num_voices = quality_template.max_num_voices
+	local var_2_2 = var_2_0.max_num_voices
 
-	Wwise.set_max_num_voices(max_num_voices)
+	Wwise.set_max_num_voices(var_2_2)
 
-	local occlusion = quality_template.occlusion
+	local var_2_3 = var_2_0.occlusion
 end

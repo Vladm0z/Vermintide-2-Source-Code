@@ -1,195 +1,195 @@
-﻿-- chunkname: @foundation/scripts/managers/managers.lua
+-- chunkname: @foundation/scripts/managers/managers.lua
 
-local function debug_print(format, ...)
+local function var_0_0(arg_1_0, ...)
 	if script_data.network_debug then
-		printf("[Managers] " .. format, ...)
+		printf("[Managers] " .. arg_1_0, ...)
 	end
 end
 
-local PROFILE_MANAGERS = BUILD == "dev" or BUILD == "debug"
-local MANAGER_GROUP_ORDER = {
+local var_0_1 = BUILD == "dev" or BUILD == "debug"
+local var_0_2 = {
 	"global",
 	"venture",
-	"state",
+	"state"
 }
 
 Managers = Managers or {
 	state = {},
-	venture = {},
+	venture = {}
 }
 ManagersCreationOrder = ManagersCreationOrder or {
 	global = {},
 	state = {},
-	venture = {},
+	venture = {}
 }
 
-local function destroy_manager_group(manager_group_name)
-	debug_print("Destroying manager group: %s", manager_group_name)
+local function var_0_3(arg_2_0)
+	var_0_0("Destroying manager group: %s", arg_2_0)
 
-	local manager_group = manager_group_name == "global" and Managers or Managers[manager_group_name]
-	local manager_group_order = ManagersCreationOrder[manager_group_name]
+	local var_2_0 = arg_2_0 == "global" and Managers or Managers[arg_2_0]
+	local var_2_1 = ManagersCreationOrder[arg_2_0]
 
-	table.reverse(manager_group_order)
+	table.reverse(var_2_1)
 
-	for index, alias in ipairs(manager_group_order) do
-		local manager = manager_group[alias]
+	for iter_2_0, iter_2_1 in ipairs(var_2_1) do
+		local var_2_2 = var_2_0[iter_2_1]
 
-		if manager and type(manager.destroy) == "function" then
-			manager:destroy()
+		if var_2_2 and type(var_2_2.destroy) == "function" then
+			var_2_2:destroy()
 		end
 
-		manager_group[alias] = nil
-		manager_group_order[index] = nil
+		var_2_0[iter_2_1] = nil
+		var_2_1[iter_2_0] = nil
 	end
 end
 
-local function get_iterator_forwards(array)
-	return 1, #array, 1
+local function var_0_4(arg_3_0)
+	return 1, #arg_3_0, 1
 end
 
-local function get_iterator_backwards(array)
-	return #array, 1, -1
+local function var_0_5(arg_4_0)
+	return #arg_4_0, 1, -1
 end
 
-local function call_on_managers(func_name, inverse_order, ...)
-	debug_print("Calling function on all managers:", func_name, "inverse_order:", inverse_order)
+local function var_0_6(arg_5_0, arg_5_1, ...)
+	var_0_0("Calling function on all managers:", arg_5_0, "inverse_order:", arg_5_1)
 
-	local iterator_type = inverse_order and get_iterator_backwards or get_iterator_forwards
-	local group_id_start, group_id_end, group_id_direction = iterator_type(MANAGER_GROUP_ORDER)
+	local var_5_0 = arg_5_1 and var_0_5 or var_0_4
+	local var_5_1, var_5_2, var_5_3 = var_5_0(var_0_2)
 
-	for group_id = group_id_start, group_id_end, group_id_direction do
-		local manager_group_name = MANAGER_GROUP_ORDER[group_id]
-		local manager_group = manager_group_name == "global" and Managers or Managers[manager_group_name]
-		local manager_names = ManagersCreationOrder[manager_group_name]
-		local manager_id_start, manager_id_end, manager_id_direction = iterator_type(manager_names)
+	for iter_5_0 = var_5_1, var_5_2, var_5_3 do
+		local var_5_4 = var_0_2[iter_5_0]
+		local var_5_5 = var_5_4 == "global" and Managers or Managers[var_5_4]
+		local var_5_6 = ManagersCreationOrder[var_5_4]
+		local var_5_7, var_5_8, var_5_9 = var_5_0(var_5_6)
 
-		for manager_id = manager_id_start, manager_id_end, manager_id_direction do
-			local manager = manager_group[manager_names[manager_id]]
+		for iter_5_1 = var_5_7, var_5_8, var_5_9 do
+			local var_5_10 = var_5_5[var_5_6[iter_5_1]]
 
-			if manager and manager[func_name] then
-				manager[func_name](manager, ...)
+			if var_5_10 and var_5_10[arg_5_0] then
+				var_5_10[arg_5_0](var_5_10, ...)
 			end
 		end
 	end
 end
 
-Managers.destroy = function (self)
-	for i = #MANAGER_GROUP_ORDER, 1, -1 do
-		destroy_manager_group(MANAGER_GROUP_ORDER[i])
+function Managers.destroy(arg_6_0)
+	for iter_6_0 = #var_0_2, 1, -1 do
+		var_0_3(var_0_2[iter_6_0])
 	end
 end
 
-Managers.state.destroy = function (self)
-	destroy_manager_group("state")
+function Managers.state.destroy(arg_7_0)
+	var_0_3("state")
 end
 
-Managers.venture.destroy = function (self)
-	destroy_manager_group("venture")
+function Managers.venture.destroy(arg_8_0)
+	var_0_3("venture")
 end
 
-Managers.on_round_start = function (self, ...)
-	call_on_managers("on_round_start", false, ...)
+function Managers.on_round_start(arg_9_0, ...)
+	var_0_6("on_round_start", false, ...)
 end
 
-Managers.on_round_end = function (self, ...)
-	call_on_managers("on_round_end", true, ...)
+function Managers.on_round_end(arg_10_0, ...)
+	var_0_6("on_round_end", true, ...)
 end
 
-Managers.on_venture_start = function (self, ...)
-	call_on_managers("on_venture_start", false, ...)
+function Managers.on_venture_start(arg_11_0, ...)
+	var_0_6("on_venture_start", false, ...)
 end
 
-Managers.on_venture_end = function (self, ...)
-	call_on_managers("on_venture_end", true, ...)
+function Managers.on_venture_end(arg_12_0, ...)
+	var_0_6("on_venture_end", true, ...)
 end
 
-local mt_global = {
-	__newindex = function (managers, alias, manager)
-		rawset(ManagersCreationOrder.global, #ManagersCreationOrder.global + 1, alias)
-		rawset(managers, alias, manager)
+local var_0_7 = {
+	__newindex = function(arg_13_0, arg_13_1, arg_13_2)
+		rawset(ManagersCreationOrder.global, #ManagersCreationOrder.global + 1, arg_13_1)
+		rawset(arg_13_0, arg_13_1, arg_13_2)
 
-		if manager and PROFILE_MANAGERS then
-			local scope_name = alias .. "_update"
-			local mt = getmetatable(manager)
+		if arg_13_2 and var_0_1 then
+			local var_13_0 = arg_13_1 .. "_update"
+			local var_13_1 = getmetatable(arg_13_2)
 
-			if mt then
-				manager.update = function (...)
-					local ret1, ret2, ret3 = mt.update(...)
+			if var_13_1 then
+				function arg_13_2.update(...)
+					local var_14_0, var_14_1, var_14_2 = var_13_1.update(...)
 
-					return ret1, ret2, ret3
+					return var_14_0, var_14_1, var_14_2
 				end
 			end
 		end
 	end,
-	__tostring = function (managers)
-		local s = "\n"
+	__tostring = function(arg_15_0)
+		local var_15_0 = "\n"
 
-		for alias, manager in pairs(managers) do
-			if type(manager) == "table" and alias ~= "state" and alias ~= "venture" then
-				s = s .. "\t" .. alias .. "\n"
+		for iter_15_0, iter_15_1 in pairs(arg_15_0) do
+			if type(iter_15_1) == "table" and iter_15_0 ~= "state" and iter_15_0 ~= "venture" then
+				var_15_0 = var_15_0 .. "\t" .. iter_15_0 .. "\n"
 			end
 		end
 
-		return s
-	end,
+		return var_15_0
+	end
 }
-local mt_venture = {
-	__newindex = function (managers, alias, manager)
-		rawset(ManagersCreationOrder.venture, #ManagersCreationOrder.venture + 1, alias)
-		rawset(managers, alias, manager)
+local var_0_8 = {
+	__newindex = function(arg_16_0, arg_16_1, arg_16_2)
+		rawset(ManagersCreationOrder.venture, #ManagersCreationOrder.venture + 1, arg_16_1)
+		rawset(arg_16_0, arg_16_1, arg_16_2)
 
-		if manager and PROFILE_MANAGERS then
-			local scope_name = alias .. "_update"
-			local mt = getmetatable(manager)
+		if arg_16_2 and var_0_1 then
+			local var_16_0 = arg_16_1 .. "_update"
+			local var_16_1 = getmetatable(arg_16_2)
 
-			manager.update = function (...)
-				local ret1, ret2, ret3 = mt.update(...)
+			function arg_16_2.update(...)
+				local var_17_0, var_17_1, var_17_2 = var_16_1.update(...)
 
-				return ret1, ret2, ret3
+				return var_17_0, var_17_1, var_17_2
 			end
 		end
 	end,
-	__tostring = function (managers)
-		local s = "\n"
+	__tostring = function(arg_18_0)
+		local var_18_0 = "\n"
 
-		for alias, manager in pairs(managers) do
-			if type(manager) == "table" then
-				s = s .. "\t" .. alias .. "\n"
+		for iter_18_0, iter_18_1 in pairs(arg_18_0) do
+			if type(iter_18_1) == "table" then
+				var_18_0 = var_18_0 .. "\t" .. iter_18_0 .. "\n"
 			end
 		end
 
-		return s
-	end,
+		return var_18_0
+	end
 }
-local mt_state = {
-	__newindex = function (managers, alias, manager)
-		rawset(ManagersCreationOrder.state, #ManagersCreationOrder.state + 1, alias)
-		rawset(managers, alias, manager)
+local var_0_9 = {
+	__newindex = function(arg_19_0, arg_19_1, arg_19_2)
+		rawset(ManagersCreationOrder.state, #ManagersCreationOrder.state + 1, arg_19_1)
+		rawset(arg_19_0, arg_19_1, arg_19_2)
 
-		if manager and PROFILE_MANAGERS then
-			local scope_name = alias .. "_update"
-			local mt = getmetatable(manager)
+		if arg_19_2 and var_0_1 then
+			local var_19_0 = arg_19_1 .. "_update"
+			local var_19_1 = getmetatable(arg_19_2)
 
-			manager.update = function (...)
-				local ret1, ret2, ret3 = mt.update(...)
+			function arg_19_2.update(...)
+				local var_20_0, var_20_1, var_20_2 = var_19_1.update(...)
 
-				return ret1, ret2, ret3
+				return var_20_0, var_20_1, var_20_2
 			end
 		end
 	end,
-	__tostring = function (managers)
-		local s = "\n"
+	__tostring = function(arg_21_0)
+		local var_21_0 = "\n"
 
-		for alias, manager in pairs(managers) do
-			if type(manager) == "table" then
-				s = s .. "\t" .. alias .. "\n"
+		for iter_21_0, iter_21_1 in pairs(arg_21_0) do
+			if type(iter_21_1) == "table" then
+				var_21_0 = var_21_0 .. "\t" .. iter_21_0 .. "\n"
 			end
 		end
 
-		return s
-	end,
+		return var_21_0
+	end
 }
 
-setmetatable(Managers, mt_global)
-setmetatable(Managers.venture, mt_venture)
-setmetatable(Managers.state, mt_state)
+setmetatable(Managers, var_0_7)
+setmetatable(Managers.venture, var_0_8)
+setmetatable(Managers.state, var_0_9)

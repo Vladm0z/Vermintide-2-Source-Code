@@ -1,155 +1,149 @@
-﻿-- chunkname: @foundation/scripts/util/path.lua
+-- chunkname: @foundation/scripts/util/path.lua
 
 Path = {}
 
-Path.normalize_path = function (string_path)
-	string_path = string_path:gsub("\\", "/")
-	string_path = string_path:gsub("//", "/")
+function Path.normalize_path(arg_1_0)
+	arg_1_0 = arg_1_0:gsub("\\", "/")
+	arg_1_0 = arg_1_0:gsub("//", "/")
 
-	return string_path
+	return arg_1_0
 end
 
-Path.path_from_string = function (string_path)
-	string_path = Path.normalize_path(string_path)
+function Path.path_from_string(arg_2_0)
+	arg_2_0 = Path.normalize_path(arg_2_0)
 
-	local path = {
-		size = 0,
+	local var_2_0 = {
+		size = 0
 	}
-	local path_n = 0
-	local string_path_len = #string_path
-	local index = 0
+	local var_2_1 = 0
+	local var_2_2 = #arg_2_0
+	local var_2_3 = 0
 
-	while index ~= nil do
-		local next_slash_index = string_path:find("/", index)
-		local path_part = string_path:sub(index, next_slash_index and next_slash_index - 1 or nil)
+	while var_2_3 ~= nil do
+		local var_2_4 = arg_2_0:find("/", var_2_3)
 
-		path_n = path_n + 1
-		path[path_n] = path_part
+		var_2_0[var_2_1], var_2_1 = arg_2_0:sub(var_2_3, var_2_4 and var_2_4 - 1 or nil), var_2_1 + 1
 
-		if next_slash_index == nil or next_slash_index == string_path_len then
+		if var_2_4 == nil or var_2_4 == var_2_2 then
 			break
 		end
 
-		index = next_slash_index + 1
+		var_2_3 = var_2_4 + 1
 	end
 
-	path.size = path_n
+	var_2_0.size = var_2_1
 
-	return path
+	return var_2_0
 end
 
-Path.path_from_parts = function (...)
-	local path_n = select("#", ...)
-	local path = {
-		size = path_n,
+function Path.path_from_parts(...)
+	local var_3_0 = select("#", ...)
+	local var_3_1 = {
+		size = var_3_0
 	}
 
-	for i = 1, path_n do
-		local part = select(i, ...)
-
-		path[i] = part
+	for iter_3_0 = 1, var_3_0 do
+		var_3_1[iter_3_0] = select(iter_3_0, ...)
 	end
 
-	return path
+	return var_3_1
 end
 
-Path.copy = function (path)
-	local path_new = {
-		size = path.size,
+function Path.copy(arg_4_0)
+	local var_4_0 = {
+		size = arg_4_0.size
 	}
 
-	for i = 1, path.size do
-		path_new[i] = path[i]
+	for iter_4_0 = 1, arg_4_0.size do
+		var_4_0[iter_4_0] = arg_4_0[iter_4_0]
 	end
 
-	return path_new
+	return var_4_0
 end
 
-Path.change_dir_up = function (path)
-	assert(path.size > 0)
+function Path.change_dir_up(arg_5_0)
+	assert(arg_5_0.size > 0)
 
-	path.size = path.size - 1
+	arg_5_0.size = arg_5_0.size - 1
 end
 
-Path.add_path_part = function (path, path_part)
-	path.size = path.size + 1
-	path[path.size] = path_part
+function Path.add_path_part(arg_6_0, arg_6_1)
+	arg_6_0.size = arg_6_0.size + 1
+	arg_6_0[arg_6_0.size] = arg_6_1
 end
 
-Path.join = function (path1, path2, result)
-	result = result or {}
-	result.size = 0
+function Path.join(arg_7_0, arg_7_1, arg_7_2)
+	arg_7_2 = arg_7_2 or {}
+	arg_7_2.size = 0
 
-	for i = 1, path1.size do
-		result.size = result.size + 1
-		result[result.size] = path1[i]
+	for iter_7_0 = 1, arg_7_0.size do
+		arg_7_2.size = arg_7_2.size + 1
+		arg_7_2[arg_7_2.size] = arg_7_0[iter_7_0]
 	end
 
-	for i = 1, path2.size do
-		result.size = result.size + 1
-		result[result.size] = path2[i]
+	for iter_7_1 = 1, arg_7_1.size do
+		arg_7_2.size = arg_7_2.size + 1
+		arg_7_2[arg_7_2.size] = arg_7_1[iter_7_1]
 	end
 
-	return result
+	return arg_7_2
 end
 
-Path.tostring = function (path, separator)
-	separator = separator or "/"
+function Path.tostring(arg_8_0, arg_8_1)
+	arg_8_1 = arg_8_1 or "/"
 
-	local string_path = ""
+	local var_8_0 = ""
 
-	for i = 1, path.size - 1 do
-		string_path = string_path .. path[i] .. separator
+	for iter_8_0 = 1, arg_8_0.size - 1 do
+		var_8_0 = var_8_0 .. arg_8_0[iter_8_0] .. arg_8_1
 	end
 
-	string_path = string_path .. path[path.size]
-
-	return string_path
+	return var_8_0 .. arg_8_0[arg_8_0.size]
 end
 
-local UNIT_TEST = true
+local var_0_0 = true
 
-if UNIT_TEST then
-	local lols = math.random()
-	local p1 = Path.path_from_string("hej")
+if var_0_0 then
+	local var_0_1 = math.random()
+	local var_0_2 = Path.path_from_string("hej")
 
-	assert(p1.size == 1)
+	assert(var_0_2.size == 1)
 
-	local p2 = Path.path_from_string("hej/apa")
+	local var_0_3 = Path.path_from_string("hej/apa")
 
-	assert(p2.size == 2)
-	assert(p2[p2.size] == "apa")
+	assert(var_0_3.size == 2)
+	assert(var_0_3[var_0_3.size] == "apa")
 
-	local p3 = Path.path_from_string("hej\\apa\\")
+	local var_0_4 = Path.path_from_string("hej\\apa\\")
 
-	assert(p3.size == 2)
-	assert(p3[p3.size] == "apa")
+	assert(var_0_4.size == 2)
+	assert(var_0_4[var_0_4.size] == "apa")
 
-	local p4 = Path.path_from_parts("hej", "apa")
+	local var_0_5 = Path.path_from_parts("hej", "apa")
 
-	assert(p4.size == 2)
-	Path.change_dir_up(p4)
-	assert(p4.size == 1)
-	Path.add_path_part(p4, "lols")
-	assert(p4.size == 2)
-	assert(p4[p4.size] == "lols")
+	assert(var_0_5.size == 2)
+	Path.change_dir_up(var_0_5)
+	assert(var_0_5.size == 1)
+	Path.add_path_part(var_0_5, "lols")
+	assert(var_0_5.size == 2)
+	assert(var_0_5[var_0_5.size] == "lols")
 
-	local p5 = Path.path_from_parts("anders", "isn't", "best")
-	local result = {}
+	local var_0_6 = Path.path_from_parts("anders", "isn't", "best")
+	local var_0_7 = {}
 
-	Path.join(p4, p5, result)
-	assert(result.size == p4.size + p5.size)
-	assert(result[result.size] == "best")
+	Path.join(var_0_5, var_0_6, var_0_7)
+	assert(var_0_7.size == var_0_5.size + var_0_6.size)
+	assert(var_0_7[var_0_7.size] == "best")
 
-	local string_path = Path.tostring(result)
+	local var_0_8 = Path.tostring(var_0_7)
 
-	assert(string_path == "hej/lols/anders/isn't/best")
+	assert(var_0_8 == "hej/lols/anders/isn't/best")
 
-	local p6 = Path.path_from_string("C:\\trunk/lols/")
+	local var_0_9 = Path.path_from_string("C:\\trunk/lols/")
 
-	assert(p6.size == 3)
+	assert(var_0_9.size == 3)
 
-	local p6_string_path = Path.tostring(p6)
+	local var_0_10 = Path.tostring(var_0_9)
 
-	assert(p6_string_path == "C:/trunk/lols")
+	assert(var_0_10 == "C:/trunk/lols")
 end

@@ -1,1123 +1,1114 @@
-﻿-- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_prestige_definitions.lua
+-- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_prestige_definitions.lua
 
-local window_default_settings = UISettings.game_start_windows
-local window_background = window_default_settings.background
-local window_frame = window_default_settings.frame
-local window_size = window_default_settings.size
-local window_spacing = window_default_settings.spacing
-local window_frame_width = UIFrameSettings[window_frame].texture_sizes.vertical[1]
-local window_frame_height = UIFrameSettings[window_frame].texture_sizes.horizontal[2]
-local window_width_offset = window_size[1] * 2 + window_spacing * 2
-local window_text_width = window_size[1] - (window_frame_width * 2 + 60)
-local scenegraph_definition = {
+local var_0_0 = UISettings.game_start_windows
+local var_0_1 = var_0_0.background
+local var_0_2 = var_0_0.frame
+local var_0_3 = var_0_0.size
+local var_0_4 = var_0_0.spacing
+local var_0_5 = UIFrameSettings[var_0_2].texture_sizes.vertical[1]
+local var_0_6 = UIFrameSettings[var_0_2].texture_sizes.horizontal[2]
+local var_0_7 = var_0_3[1] * 2 + var_0_4 * 2
+local var_0_8 = var_0_3[1] - (var_0_5 * 2 + 60)
+local var_0_9 = {
 	root = {
 		is_root = true,
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			UILayer.default,
-		},
+			UILayer.default
+		}
 	},
 	root_fit = {
 		scale = "fit",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			UILayer.default,
-		},
+			UILayer.default
+		}
 	},
 	menu_root = {
-		horizontal_alignment = "center",
-		parent = "root",
 		vertical_alignment = "center",
+		parent = "root",
+		horizontal_alignment = "center",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	window = {
-		horizontal_alignment = "center",
-		parent = "menu_root",
 		vertical_alignment = "center",
-		size = window_size,
+		parent = "menu_root",
+		horizontal_alignment = "center",
+		size = var_0_3,
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	window_frame = {
-		horizontal_alignment = "left",
-		parent = "window",
 		vertical_alignment = "center",
+		parent = "window",
+		horizontal_alignment = "left",
 		size = {
-			window_size[1] * 2 + window_spacing,
-			window_size[2],
+			var_0_3[1] * 2 + var_0_4,
+			var_0_3[2]
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	title_text_glow = {
-		horizontal_alignment = "center",
-		parent = "window_frame",
 		vertical_alignment = "top",
+		parent = "window_frame",
+		horizontal_alignment = "center",
 		size = {
 			544,
-			16,
+			16
 		},
 		position = {
 			0,
 			15,
-			-1,
-		},
+			-1
+		}
 	},
 	title_text = {
-		horizontal_alignment = "center",
-		parent = "title_text_glow",
 		vertical_alignment = "center",
+		parent = "title_text_glow",
+		horizontal_alignment = "center",
 		size = {
-			window_size[1],
-			50,
+			var_0_3[1],
+			50
 		},
 		position = {
 			0,
 			15,
-			1,
-		},
+			1
+		}
 	},
 	reward_window = {
-		horizontal_alignment = "right",
-		parent = "window_frame",
 		vertical_alignment = "top",
+		parent = "window_frame",
+		horizontal_alignment = "right",
 		size = {
 			450,
-			500,
+			500
 		},
 		position = {
 			-50,
 			-100,
-			1,
-		},
+			1
+		}
 	},
 	reward_title_text = {
-		horizontal_alignment = "center",
-		parent = "reward_window",
 		vertical_alignment = "top",
+		parent = "reward_window",
+		horizontal_alignment = "center",
 		size = {
 			450,
-			50,
+			50
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	reward_description_text = {
-		horizontal_alignment = "center",
-		parent = "reward_window",
 		vertical_alignment = "top",
+		parent = "reward_window",
+		horizontal_alignment = "center",
 		size = {
 			400,
-			225,
+			225
 		},
 		position = {
 			0,
 			-50,
-			1,
-		},
+			1
+		}
 	},
 	reward_portrait_root = {
-		horizontal_alignment = "center",
-		parent = "reward_window",
 		vertical_alignment = "center",
+		parent = "reward_window",
+		horizontal_alignment = "center",
 		size = {
 			0,
-			0,
+			0
 		},
 		position = {
 			0,
 			0,
-			5,
-		},
+			5
+		}
 	},
 	reward_item_text_detail = {
-		horizontal_alignment = "center",
-		parent = "reward_portrait_root",
 		vertical_alignment = "top",
+		parent = "reward_portrait_root",
+		horizontal_alignment = "center",
 		size = {
 			264,
-			32,
+			32
 		},
 		position = {
 			0,
 			-120,
-			10,
-		},
+			10
+		}
 	},
 	reward_item_text = {
-		horizontal_alignment = "center",
-		parent = "reward_item_text_detail",
 		vertical_alignment = "center",
+		parent = "reward_item_text_detail",
+		horizontal_alignment = "center",
 		size = {
 			400,
-			0,
+			0
 		},
 		position = {
 			0,
 			30,
-			1,
-		},
+			1
+		}
 	},
 	info_window = {
-		horizontal_alignment = "left",
-		parent = "window_frame",
 		vertical_alignment = "top",
+		parent = "window_frame",
+		horizontal_alignment = "left",
 		size = {
 			450,
-			500,
+			500
 		},
 		position = {
 			50,
 			-100,
-			1,
-		},
+			1
+		}
 	},
 	info_title_text = {
-		horizontal_alignment = "center",
-		parent = "info_window",
 		vertical_alignment = "top",
+		parent = "info_window",
+		horizontal_alignment = "center",
 		size = {
 			450,
-			50,
+			50
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	info_description_text = {
-		horizontal_alignment = "center",
-		parent = "info_window",
 		vertical_alignment = "top",
+		parent = "info_window",
+		horizontal_alignment = "center",
 		size = {
 			400,
-			225,
+			225
 		},
 		position = {
 			0,
 			-50,
-			1,
-		},
+			1
+		}
 	},
 	prestige_button = {
-		horizontal_alignment = "center",
-		parent = "window_frame",
 		vertical_alignment = "bottom",
+		parent = "window_frame",
+		horizontal_alignment = "center",
 		size = {
 			370,
-			70,
+			70
 		},
 		position = {
 			0,
 			30,
-			1,
-		},
+			1
+		}
 	},
 	impact_title_text = {
-		horizontal_alignment = "center",
-		parent = "info_window",
 		vertical_alignment = "bottom",
+		parent = "info_window",
+		horizontal_alignment = "center",
 		size = {
 			400,
-			50,
+			50
 		},
 		position = {
 			0,
 			200,
-			1,
-		},
+			1
+		}
 	},
 	impact_description_text = {
-		horizontal_alignment = "center",
-		parent = "info_window",
 		vertical_alignment = "bottom",
+		parent = "info_window",
+		horizontal_alignment = "center",
 		size = {
 			400,
-			50,
+			50
 		},
 		position = {
 			0,
 			150,
-			1,
-		},
+			1
+		}
 	},
 	unable_description_text = {
-		horizontal_alignment = "center",
-		parent = "window_frame",
 		vertical_alignment = "bottom",
+		parent = "window_frame",
+		horizontal_alignment = "center",
 		size = {
 			800,
-			50,
+			50
 		},
 		position = {
 			0,
 			130,
-			1,
-		},
+			1
+		}
 	},
 	warning_popup_background = {
-		horizontal_alignment = "center",
-		parent = "menu_root",
 		vertical_alignment = "center",
+		parent = "menu_root",
+		horizontal_alignment = "center",
 		size = {
 			800,
-			700,
+			700
 		},
 		position = {
 			0,
 			0,
-			25,
-		},
+			25
+		}
 	},
 	warning_popup_title_text = {
-		horizontal_alignment = "center",
-		parent = "warning_popup_background",
 		vertical_alignment = "top",
+		parent = "warning_popup_background",
+		horizontal_alignment = "center",
 		size = {
 			800,
-			50,
+			50
 		},
 		position = {
 			0,
 			0,
-			2,
-		},
+			2
+		}
 	},
 	warning_popup_desc = {
-		horizontal_alignment = "center",
-		parent = "warning_popup_background",
 		vertical_alignment = "top",
+		parent = "warning_popup_background",
+		horizontal_alignment = "center",
 		size = {
 			750,
-			650,
+			650
 		},
 		position = {
 			0,
 			-100,
-			2,
-		},
+			2
+		}
 	},
 	warning_popup_accept_button = {
-		horizontal_alignment = "center",
-		parent = "warning_popup_background",
 		vertical_alignment = "bottom",
+		parent = "warning_popup_background",
+		horizontal_alignment = "center",
 		size = {
 			280,
-			70,
+			70
 		},
 		position = {
 			-200,
 			50,
-			2,
-		},
+			2
+		}
 	},
 	warning_popup_decline_button = {
-		horizontal_alignment = "center",
-		parent = "warning_popup_background",
 		vertical_alignment = "bottom",
+		parent = "warning_popup_background",
+		horizontal_alignment = "center",
 		size = {
 			280,
-			70,
+			70
 		},
 		position = {
 			200,
 			50,
-			2,
-		},
+			2
+		}
 	},
 	debug_level_up_button = {
-		horizontal_alignment = "center",
-		parent = "window_frame",
 		vertical_alignment = "top",
+		parent = "window_frame",
+		horizontal_alignment = "center",
 		size = {
-			window_size[1] * 2 + window_spacing,
-			35,
+			var_0_3[1] * 2 + var_0_4,
+			35
 		},
 		position = {
 			0,
 			-5,
-			2,
-		},
-	},
+			2
+		}
+	}
 }
-local title_text_style = {
+local var_0_10 = {
+	vertical_alignment = "bottom",
+	upper_case = true,
+	localize = false,
+	horizontal_alignment = "center",
 	font_size = 42,
 	font_type = "hell_shark_header",
-	horizontal_alignment = "center",
-	localize = false,
-	upper_case = true,
-	vertical_alignment = "bottom",
 	text_color = Colors.get_color_table_with_alpha("font_title", 255),
 	offset = {
 		0,
 		0,
-		2,
-	},
+		2
+	}
 }
-local reward_title_text_style = {
+local var_0_11 = {
+	word_wrap = true,
+	upper_case = true,
+	localize = false,
 	font_size = 28,
-	font_type = "hell_shark_header",
 	horizontal_alignment = "center",
-	localize = false,
-	upper_case = true,
 	vertical_alignment = "center",
-	word_wrap = true,
+	font_type = "hell_shark_header",
 	text_color = Colors.get_color_table_with_alpha("font_title", 255),
 	offset = {
 		0,
 		0,
-		2,
-	},
+		2
+	}
 }
-local description_text_style = {
-	font_size = 18,
-	font_type = "hell_shark",
-	horizontal_alignment = "center",
-	localize = false,
+local var_0_12 = {
 	vertical_alignment = "top",
+	font_size = 18,
+	localize = false,
+	horizontal_alignment = "center",
 	word_wrap = true,
+	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	offset = {
 		0,
 		0,
-		2,
-	},
+		2
+	}
 }
-local impact_text_style = {
-	font_size = 24,
-	font_type = "hell_shark",
-	horizontal_alignment = "center",
-	localize = false,
-	upper_case = true,
-	vertical_alignment = "center",
+local var_0_13 = {
 	word_wrap = true,
+	upper_case = true,
+	localize = false,
+	font_size = 24,
+	horizontal_alignment = "center",
+	vertical_alignment = "center",
+	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_title", 255),
 	offset = {
 		0,
 		0,
-		2,
-	},
+		2
+	}
 }
-local unable_description_text_style = {
-	font_size = 24,
-	font_type = "hell_shark",
-	horizontal_alignment = "center",
-	localize = false,
-	upper_case = true,
-	vertical_alignment = "center",
+local var_0_14 = {
 	word_wrap = true,
+	upper_case = true,
+	localize = false,
+	font_size = 24,
+	horizontal_alignment = "center",
+	vertical_alignment = "center",
+	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("red", 255),
 	offset = {
 		0,
 		0,
-		2,
-	},
+		2
+	}
 }
 
-local function create_window_button(scenegraph_id, size, button_text, font_size, use_bottom_edge, optional_color_name)
-	local button_color_name
+local function var_0_15(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	local var_1_0
 
-	if optional_color_name then
-		button_color_name = "button_" .. optional_color_name
+	if arg_1_5 then
+		var_1_0 = "button_" .. arg_1_5
 	else
-		button_color_name = "button_normal"
+		var_1_0 = "button_normal"
 	end
 
-	local background_color = Colors.get_color_table_with_alpha(button_color_name, 255)
-	local button_background_texture = "button_bg_01"
-	local button_background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(button_background_texture)
-	local widget = {
+	local var_1_1 = Colors.get_color_table_with_alpha(var_1_0, 255)
+	local var_1_2 = "button_bg_01"
+	local var_1_3 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_1_2)
+
+	return {
 		element = {
 			passes = {
 				{
-					content_id = "button_hotspot",
+					style_id = "button_background",
 					pass_type = "hotspot",
-					style_id = "button_background",
+					content_id = "button_hotspot"
 				},
 				{
-					content_id = "button_background",
+					style_id = "button_background",
 					pass_type = "texture_uv",
-					style_id = "button_background",
+					content_id = "button_background"
 				},
 				{
-					pass_type = "tiled_texture",
+					texture_id = "bottom_edge",
 					style_id = "button_edge",
-					texture_id = "bottom_edge",
+					pass_type = "tiled_texture"
 				},
 				{
-					pass_type = "texture",
-					style_id = "glass_top",
 					texture_id = "glass_top",
+					style_id = "glass_top",
+					pass_type = "texture"
 				},
 				{
-					pass_type = "texture",
-					style_id = "glow",
 					texture_id = "glow",
+					style_id = "glow",
+					pass_type = "texture"
 				},
 				{
-					pass_type = "texture",
-					style_id = "hover_glow",
 					texture_id = "hover_glow",
-					content_check_function = function (content)
-						local button_hotspot = content.button_hotspot
+					style_id = "hover_glow",
+					pass_type = "texture",
+					content_check_function = function(arg_2_0)
+						local var_2_0 = arg_2_0.button_hotspot
 
-						return not button_hotspot.disable_button and (button_hotspot.is_selected or button_hotspot.is_hover)
-					end,
+						return not var_2_0.disable_button and (var_2_0.is_selected or var_2_0.is_hover)
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "button_text",
+					pass_type = "text",
 					text_id = "button_text",
-					content_check_function = function (content)
-						local button_hotspot = content.button_hotspot
-
-						return not button_hotspot.disable_button
-					end,
+					content_check_function = function(arg_3_0)
+						return not arg_3_0.button_hotspot.disable_button
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "button_text_disabled",
-					text_id = "button_text",
-					content_check_function = function (content)
-						local button_hotspot = content.button_hotspot
-
-						return button_hotspot.disable_button
-					end,
-				},
-				{
 					pass_type = "text",
-					style_id = "button_text_shadow",
 					text_id = "button_text",
+					content_check_function = function(arg_4_0)
+						return arg_4_0.button_hotspot.disable_button
+					end
 				},
 				{
-					pass_type = "rect",
+					style_id = "button_text_shadow",
+					pass_type = "text",
+					text_id = "button_text"
+				},
+				{
 					style_id = "button_clicked_rect",
-					content_check_function = function (content)
-						local button_hotspot = content.button_hotspot
-						local is_clicked = button_hotspot.is_clicked
-
-						return not is_clicked or is_clicked == 0
-					end,
-				},
-				{
 					pass_type = "rect",
-					style_id = "button_disabled_rect",
-					content_check_function = function (content)
-						local button_hotspot = content.button_hotspot
+					content_check_function = function(arg_5_0)
+						local var_5_0 = arg_5_0.button_hotspot.is_clicked
 
-						return button_hotspot.disable_button
-					end,
+						return not var_5_0 or var_5_0 == 0
+					end
 				},
 				{
-					pass_type = "tiled_texture",
-					style_id = "bottom_edge",
+					style_id = "button_disabled_rect",
+					pass_type = "rect",
+					content_check_function = function(arg_6_0)
+						return arg_6_0.button_hotspot.disable_button
+					end
+				},
+				{
 					texture_id = "bottom_edge",
-					content_check_function = function (content)
-						return content.use_bottom_edge
-					end,
+					style_id = "bottom_edge",
+					pass_type = "tiled_texture",
+					content_check_function = function(arg_7_0)
+						return arg_7_0.use_bottom_edge
+					end
 				},
 				{
-					pass_type = "texture",
-					style_id = "edge_holder_left",
 					texture_id = "edge_holder_left",
-					content_check_function = function (content)
-						return content.use_bottom_edge
-					end,
+					style_id = "edge_holder_left",
+					pass_type = "texture",
+					content_check_function = function(arg_8_0)
+						return arg_8_0.use_bottom_edge
+					end
 				},
 				{
-					pass_type = "texture",
-					style_id = "edge_holder_right",
 					texture_id = "edge_holder_right",
-					content_check_function = function (content)
-						return content.use_bottom_edge
-					end,
-				},
-			},
+					style_id = "edge_holder_right",
+					pass_type = "texture",
+					content_check_function = function(arg_9_0)
+						return arg_9_0.use_bottom_edge
+					end
+				}
+			}
 		},
 		content = {
-			bottom_edge = "menu_frame_09_divider",
 			edge_holder_left = "menu_frame_09_divider_left",
 			edge_holder_right = "menu_frame_09_divider_right",
 			glass_top = "button_glass_01",
-			use_bottom_edge = use_bottom_edge,
+			bottom_edge = "menu_frame_09_divider",
+			use_bottom_edge = arg_1_4,
 			button_hotspot = {},
-			button_text = button_text or "n/a",
-			hover_glow = optional_color_name and "button_state_hover_" .. optional_color_name or "button_state_hover",
-			glow = optional_color_name and "button_state_normal_" .. optional_color_name or "button_state_normal",
+			button_text = arg_1_2 or "n/a",
+			hover_glow = arg_1_5 and "button_state_hover_" .. arg_1_5 or "button_state_hover",
+			glow = arg_1_5 and "button_state_normal_" .. arg_1_5 or "button_state_normal",
 			button_background = {
 				uvs = {
 					{
 						0,
-						1 - math.min(size[2] / button_background_texture_settings.size[2], 1),
+						1 - math.min(arg_1_1[2] / var_1_3.size[2], 1)
 					},
 					{
-						math.min(size[1] / button_background_texture_settings.size[1], 1),
-						1,
-					},
+						math.min(arg_1_1[1] / var_1_3.size[1], 1),
+						1
+					}
 				},
-				texture_id = button_background_texture,
-			},
+				texture_id = var_1_2
+			}
 		},
 		style = {
 			button_background = {
-				color = background_color,
+				color = var_1_1,
 				offset = {
 					0,
 					0,
-					2,
+					2
 				},
-				size = size,
+				size = arg_1_1
 			},
 			button_edge = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
-					size[2],
-					3,
+					arg_1_1[2],
+					3
 				},
 				size = {
-					size[1],
-					5,
+					arg_1_1[1],
+					5
 				},
 				texture_tiling_size = {
 					1,
-					5,
-				},
+					5
+				}
 			},
 			glass_top = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
-					size[2] - 4,
-					3,
+					arg_1_1[2] - 4,
+					3
 				},
 				size = {
-					size[1],
-					5,
-				},
+					arg_1_1[1],
+					5
+				}
 			},
 			glow = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					5,
-					3,
+					3
 				},
 				size = {
-					size[1],
-					size[2] - 5,
-				},
+					arg_1_1[1],
+					arg_1_1[2] - 5
+				}
 			},
 			hover_glow = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					5,
-					2,
+					2
 				},
 				size = {
-					size[1],
-					size[2] - 5,
-				},
+					arg_1_1[1],
+					arg_1_1[2] - 5
+				}
 			},
 			bottom_edge = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					5,
 					0,
-					6,
+					6
 				},
 				size = {
-					size[1] - 10,
-					5,
+					arg_1_1[1] - 10,
+					5
 				},
 				texture_tiling_size = {
 					1,
-					5,
-				},
+					5
+				}
 			},
 			edge_holder_left = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					3,
 					-6,
-					10,
+					10
 				},
 				size = {
 					9,
-					17,
-				},
+					17
+				}
 			},
 			edge_holder_right = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					size[1] - 12,
+					arg_1_1[1] - 12,
 					-6,
-					10,
+					10
 				},
 				size = {
 					9,
-					17,
-				},
+					17
+				}
 			},
 			button_text = {
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
 				upper_case = true,
-				vertical_alignment = "center",
 				word_wrap = true,
-				font_size = font_size or 24,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				font_type = "hell_shark",
+				font_size = arg_1_3 or 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				offset = {
 					0,
 					5,
-					4,
+					4
 				},
-				size = size,
+				size = arg_1_1
 			},
 			button_text_disabled = {
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
 				upper_case = true,
-				vertical_alignment = "center",
 				word_wrap = true,
-				font_size = font_size or 24,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				font_type = "hell_shark",
+				font_size = arg_1_3 or 24,
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				offset = {
 					0,
 					5,
-					4,
+					4
 				},
-				size = size,
+				size = arg_1_1
 			},
 			button_text_shadow = {
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
 				upper_case = true,
-				vertical_alignment = "center",
 				word_wrap = true,
-				font_size = font_size or 24,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				font_type = "hell_shark",
+				font_size = arg_1_3 or 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					2,
 					3,
-					3,
+					3
 				},
-				size = size,
+				size = arg_1_1
 			},
 			button_clicked_rect = {
 				color = {
 					100,
 					0,
 					0,
-					0,
+					0
 				},
 				offset = {
 					5,
 					0,
-					5,
+					5
 				},
 				size = {
-					size[1] - 10,
-					size[2],
-				},
+					arg_1_1[1] - 10,
+					arg_1_1[2]
+				}
 			},
 			button_disabled_rect = {
 				color = {
 					150,
 					5,
 					5,
-					5,
+					5
 				},
 				offset = {
 					5,
 					0,
-					5,
+					5
 				},
 				size = {
-					size[1] - 10,
-					size[2],
-				},
-			},
+					arg_1_1[1] - 10,
+					arg_1_1[2]
+				}
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_1_0,
 		offset = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	}
-
-	return widget
 end
 
-local function talent_row(scenegraph_id, size, amount, optional_color_name)
-	local button_color_name
+local function var_0_16(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	local var_10_0
 
-	if optional_color_name then
-		button_color_name = "button_" .. optional_color_name
+	if arg_10_3 then
+		var_10_0 = "button_" .. arg_10_3
 	else
-		button_color_name = "button_normal"
+		var_10_0 = "button_normal"
 	end
 
-	local background_color = Colors.get_color_table_with_alpha(button_color_name, 255)
-	local background_texture = "talent_slot_bg"
-	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local default_color = {
+	local var_10_1 = Colors.get_color_table_with_alpha(var_10_0, 255)
+	local var_10_2 = "talent_slot_bg"
+	local var_10_3 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_10_2)
+	local var_10_4 = {
 		255,
 		255,
 		255,
-		255,
+		255
 	}
-	local select_color = Colors.get_color_table_with_alpha("font_title", 255)
-	local widget = {
-		element = {},
+	local var_10_5 = Colors.get_color_table_with_alpha("font_title", 255)
+	local var_10_6 = {
+		element = {}
 	}
-	local passes = {}
-	local content = {
-		amount = amount,
+	local var_10_7 = {}
+	local var_10_8 = {
+		amount = arg_10_2
 	}
-	local style = {}
-	local slot_width_spacing = 0
-	local offset_layer = 0
-	local total_length = -slot_width_spacing
-	local length_with_spacing = size[1] - slot_width_spacing * (amount - 1)
-	local tab_width = length_with_spacing / amount
-	local button_size = {
-		tab_width,
-		size[2],
+	local var_10_9 = {}
+	local var_10_10 = 0
+	local var_10_11 = 0
+	local var_10_12 = -var_10_10
+	local var_10_13 = (arg_10_1[1] - var_10_10 * (arg_10_2 - 1)) / arg_10_2
+	local var_10_14 = {
+		var_10_13,
+		arg_10_1[2]
 	}
-	local icon_size = {
+	local var_10_15 = {
 		80,
-		80,
+		80
 	}
-	local start_width_offset = 0
+	local var_10_16 = 0
 
-	for k = 1, amount do
-		local name_suffix = "_" .. tostring(k)
-		local row_start_index = k - 1
+	for iter_10_0 = 1, arg_10_2 do
+		local var_10_17 = "_" .. tostring(iter_10_0)
+		local var_10_18 = iter_10_0 - 1
 
-		total_length = total_length + button_size[1] + slot_width_spacing
+		var_10_12 = var_10_12 + var_10_14[1] + var_10_10
 
-		local offset = {
-			start_width_offset,
+		local var_10_19 = {
+			var_10_16,
 			0,
-			offset_layer,
+			var_10_11
 		}
-		local hotspot_name = "hotspot" .. name_suffix
+		local var_10_20 = "hotspot" .. var_10_17
 
-		passes[#passes + 1] = {
+		var_10_7[#var_10_7 + 1] = {
 			pass_type = "hotspot",
-			content_id = hotspot_name,
-			style_id = hotspot_name,
+			content_id = var_10_20,
+			style_id = var_10_20
 		}
-		style[hotspot_name] = {
-			size = button_size,
-			offset = offset,
+		var_10_9[var_10_20] = {
+			size = var_10_14,
+			offset = var_10_19
 		}
-		content[hotspot_name] = {}
+		var_10_8[var_10_20] = {}
 
-		local hotspot_content = content[hotspot_name]
-		local background_name = "background" .. name_suffix
+		local var_10_21 = var_10_8[var_10_20]
+		local var_10_22 = "background" .. var_10_17
 
-		passes[#passes + 1] = {
+		var_10_7[#var_10_7 + 1] = {
 			pass_type = "texture_uv",
-			content_id = background_name,
-			style_id = background_name,
+			content_id = var_10_22,
+			style_id = var_10_22
 		}
-		style[background_name] = {
-			size = button_size,
-			color = default_color,
+		var_10_9[var_10_22] = {
+			size = var_10_14,
+			color = var_10_4,
 			offset = {
-				offset[1],
-				offset[2],
-				0,
-			},
+				var_10_19[1],
+				var_10_19[2],
+				0
+			}
 		}
-		content[background_name] = {
+		var_10_8[var_10_22] = {
 			uvs = {
 				{
 					0,
-					1 - math.min(button_size[2] / background_texture_settings.size[2], 1),
+					1 - math.min(var_10_14[2] / var_10_3.size[2], 1)
 				},
 				{
-					math.min(button_size[1] / background_texture_settings.size[1], 1),
-					1,
-				},
+					math.min(var_10_14[1] / var_10_3.size[1], 1),
+					1
+				}
 			},
-			texture_id = background_texture,
+			texture_id = var_10_2
 		}
 
-		local title_text_name = "title_text" .. name_suffix
+		local var_10_23 = "title_text" .. var_10_17
 
-		passes[#passes + 1] = {
+		var_10_7[#var_10_7 + 1] = {
 			pass_type = "text",
-			text_id = title_text_name,
-			style_id = title_text_name,
+			text_id = var_10_23,
+			style_id = var_10_23
 		}
-		style[title_text_name] = {
-			font_size = 18,
-			font_type = "hell_shark",
-			horizontal_alignment = "left",
-			localize = false,
-			vertical_alignment = "center",
+		var_10_9[var_10_23] = {
 			word_wrap = true,
+			font_size = 18,
+			localize = false,
+			horizontal_alignment = "left",
+			vertical_alignment = "center",
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			size = {
-				button_size[1] - 100,
-				button_size[2],
+				var_10_14[1] - 100,
+				var_10_14[2]
 			},
 			offset = {
-				offset[1] + 100,
-				offset[2],
-				2,
-			},
+				var_10_19[1] + 100,
+				var_10_19[2],
+				2
+			}
 		}
-		content[title_text_name] = "n/a"
+		var_10_8[var_10_23] = "n/a"
 
-		local title_text_shadow_name = "title_text_shadow" .. name_suffix
+		local var_10_24 = "title_text_shadow" .. var_10_17
 
-		passes[#passes + 1] = {
+		var_10_7[#var_10_7 + 1] = {
 			pass_type = "text",
-			text_id = title_text_name,
-			style_id = title_text_shadow_name,
+			text_id = var_10_23,
+			style_id = var_10_24
 		}
-		style[title_text_shadow_name] = {
-			font_size = 18,
-			font_type = "hell_shark",
-			horizontal_alignment = "left",
-			localize = false,
-			vertical_alignment = "center",
+		var_10_9[var_10_24] = {
 			word_wrap = true,
+			font_size = 18,
+			localize = false,
+			horizontal_alignment = "left",
+			vertical_alignment = "center",
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			size = {
-				button_size[1] - 100,
-				button_size[2],
+				var_10_14[1] - 100,
+				var_10_14[2]
 			},
 			offset = {
-				offset[1] + 100 + 2,
-				offset[2] - 2,
-				1,
-			},
+				var_10_19[1] + 100 + 2,
+				var_10_19[2] - 2,
+				1
+			}
 		}
 
-		local background_glow_name = "background_glow" .. name_suffix
+		local var_10_25 = "background_glow" .. var_10_17
 
-		passes[#passes + 1] = {
+		var_10_7[#var_10_7 + 1] = {
 			pass_type = "texture",
-			texture_id = background_glow_name,
-			style_id = background_glow_name,
-			content_check_function = function (content)
-				local hotspot = content[hotspot_name]
+			texture_id = var_10_25,
+			style_id = var_10_25,
+			content_check_function = function(arg_11_0)
+				local var_11_0 = arg_11_0[var_10_20]
 
-				return hotspot.is_selected or hotspot.is_hover
-			end,
+				return var_11_0.is_selected or var_11_0.is_hover
+			end
 		}
-		style[background_glow_name] = {
+		var_10_9[var_10_25] = {
 			size = {
-				button_size[1],
-				button_size[2],
+				var_10_14[1],
+				var_10_14[2]
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
-				offset[1],
-				offset[2] + 5,
-				2,
-			},
+				var_10_19[1],
+				var_10_19[2] + 5,
+				2
+			}
 		}
-		content[background_glow_name] = "button_state_normal"
+		var_10_8[var_10_25] = "button_state_normal"
 
-		local glass_top_name = "glass_top" .. name_suffix
+		local var_10_26 = "glass_top" .. var_10_17
 
-		passes[#passes + 1] = {
+		var_10_7[#var_10_7 + 1] = {
 			pass_type = "texture",
-			texture_id = glass_top_name,
-			style_id = glass_top_name,
+			texture_id = var_10_26,
+			style_id = var_10_26
 		}
-		style[glass_top_name] = {
+		var_10_9[var_10_26] = {
 			size = {
-				button_size[1],
-				3,
+				var_10_14[1],
+				3
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
-				offset[1],
-				offset[2] + button_size[2] - 3,
-				1,
-			},
+				var_10_19[1],
+				var_10_19[2] + var_10_14[2] - 3,
+				1
+			}
 		}
-		content[glass_top_name] = "button_glass_01"
+		var_10_8[var_10_26] = "button_glass_01"
 
-		local icon_name = "icon" .. name_suffix
+		local var_10_27 = "icon" .. var_10_17
 
-		passes[#passes + 1] = {
+		var_10_7[#var_10_7 + 1] = {
 			pass_type = "texture",
-			texture_id = icon_name,
-			style_id = icon_name,
+			texture_id = var_10_27,
+			style_id = var_10_27
 		}
-		style[icon_name] = {
-			size = icon_size,
+		var_10_9[var_10_27] = {
+			size = var_10_15,
 			color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
-				offset[1] + 10,
-				offset[2] + button_size[2] / 2 - icon_size[2] / 2,
-				2,
-			},
+				var_10_19[1] + 10,
+				var_10_19[2] + var_10_14[2] / 2 - var_10_15[2] / 2,
+				2
+			}
 		}
-		content[icon_name] = "talent_damage_dwarf"
+		var_10_8[var_10_27] = "talent_damage_dwarf"
 
-		local icon_frame_name = "icon_frame" .. name_suffix
+		local var_10_28 = "icon_frame" .. var_10_17
 
-		passes[#passes + 1] = {
+		var_10_7[#var_10_7 + 1] = {
 			pass_type = "texture",
-			texture_id = icon_frame_name,
-			style_id = icon_frame_name,
+			texture_id = var_10_28,
+			style_id = var_10_28
 		}
-		style[icon_frame_name] = {
-			size = icon_size,
+		var_10_9[var_10_28] = {
+			size = var_10_15,
 			color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
-				offset[1] + 10,
-				offset[2] + button_size[2] / 2 - icon_size[2] / 2,
-				3,
-			},
+				var_10_19[1] + 10,
+				var_10_19[2] + var_10_14[2] / 2 - var_10_15[2] / 2,
+				3
+			}
 		}
-		content[icon_frame_name] = "icon_talent_frame"
+		var_10_8[var_10_28] = "icon_talent_frame"
 
-		local tooltip_name = "tooltip" .. name_suffix
+		local var_10_29 = "tooltip" .. var_10_17
 
-		passes[#passes + 1] = {
-			pass_type = "talent_tooltip",
+		var_10_7[#var_10_7 + 1] = {
 			talent_id = "talent",
-			content_id = hotspot_name,
-			style_id = tooltip_name,
-			content_check_function = function (content)
-				return content.talent and content.is_hover
-			end,
+			pass_type = "talent_tooltip",
+			content_id = var_10_20,
+			style_id = var_10_29,
+			content_check_function = function(arg_12_0)
+				return arg_12_0.talent and arg_12_0.is_hover
+			end
 		}
-		style[tooltip_name] = {
-			size = button_size,
+		var_10_9[var_10_29] = {
+			size = var_10_14,
 			offset = {
-				offset[1],
-				offset[2],
-				offset[3] + 10,
-			},
+				var_10_19[1],
+				var_10_19[2],
+				var_10_19[3] + 10
+			}
 		}
-		content[tooltip_name] = nil
-		start_width_offset = start_width_offset + tab_width + slot_width_spacing
+		var_10_8[var_10_29] = nil
+		var_10_16 = var_10_16 + var_10_13 + var_10_10
 	end
 
-	widget.element.passes = passes
-	widget.content = content
-	widget.style = style
-	widget.offset = {
+	var_10_6.element.passes = var_10_7
+	var_10_6.content = var_10_8
+	var_10_6.style = var_10_9
+	var_10_6.offset = {
 		0,
 		0,
-		0,
+		0
 	}
-	widget.scenegraph_id = scenegraph_id
+	var_10_6.scenegraph_id = arg_10_0
 
-	return widget
+	return var_10_6
 end
 
-local function create_window_divider(scenegraph_id, size)
-	local widget = {
+local function var_0_17(arg_13_0, arg_13_1)
+	return {
 		element = {
 			passes = {
 				{
-					pass_type = "tiled_texture",
-					style_id = "bottom_edge",
 					texture_id = "bottom_edge",
+					style_id = "bottom_edge",
+					pass_type = "tiled_texture"
 				},
 				{
-					pass_type = "texture",
-					style_id = "edge_holder_left",
 					texture_id = "edge_holder_left",
+					style_id = "edge_holder_left",
+					pass_type = "texture"
 				},
 				{
-					pass_type = "texture",
-					style_id = "edge_holder_right",
 					texture_id = "edge_holder_right",
-				},
-			},
+					style_id = "edge_holder_right",
+					pass_type = "texture"
+				}
+			}
 		},
 		content = {
-			bottom_edge = "menu_frame_09_divider",
-			edge_holder_left = "menu_frame_09_divider_left",
 			edge_holder_right = "menu_frame_09_divider_right",
+			edge_holder_left = "menu_frame_09_divider_left",
+			bottom_edge = "menu_frame_09_divider"
 		},
 		style = {
 			bottom_edge = {
@@ -1125,93 +1116,91 @@ local function create_window_divider(scenegraph_id, size)
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					5,
 					0,
-					6,
+					6
 				},
 				size = {
-					size[1] - 10,
-					5,
+					arg_13_1[1] - 10,
+					5
 				},
 				texture_tiling_size = {
-					size[1] - 10,
-					5,
-				},
+					arg_13_1[1] - 10,
+					5
+				}
 			},
 			edge_holder_left = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					3,
 					-6,
-					10,
+					10
 				},
 				size = {
 					9,
-					17,
-				},
+					17
+				}
 			},
 			edge_holder_right = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					size[1] - 12,
+					arg_13_1[1] - 12,
 					-6,
-					10,
+					10
 				},
 				size = {
 					9,
-					17,
-				},
-			},
+					17
+				}
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_13_0,
 		offset = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	}
-
-	return widget
 end
 
-local function create_vertical_window_divider(scenegraph_id, size)
-	local widget = {
+local function var_0_18(arg_14_0, arg_14_1)
+	return {
 		element = {
 			passes = {
 				{
-					pass_type = "tiled_texture",
-					style_id = "edge",
 					texture_id = "edge",
+					style_id = "edge",
+					pass_type = "tiled_texture"
 				},
 				{
-					pass_type = "texture",
-					style_id = "edge_holder_top",
 					texture_id = "edge_holder_top",
+					style_id = "edge_holder_top",
+					pass_type = "texture"
 				},
 				{
-					pass_type = "texture",
-					style_id = "edge_holder_bottom",
 					texture_id = "edge_holder_bottom",
-				},
-			},
+					style_id = "edge_holder_bottom",
+					pass_type = "texture"
+				}
+			}
 		},
 		content = {
 			edge = "menu_frame_09_divider_vertical",
-			edge_holder_bottom = "menu_frame_09_divider_bottom",
 			edge_holder_top = "menu_frame_09_divider_top",
+			edge_holder_bottom = "menu_frame_09_divider_bottom"
 		},
 		style = {
 			edge = {
@@ -1219,153 +1208,151 @@ local function create_vertical_window_divider(scenegraph_id, size)
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					6,
-					6,
+					6
 				},
 				size = {
 					5,
-					size[2] - 9,
+					arg_14_1[2] - 9
 				},
 				texture_tiling_size = {
 					5,
-					size[2] - 9,
-				},
+					arg_14_1[2] - 9
+				}
 			},
 			edge_holder_top = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					-6,
-					size[2] - 7,
-					10,
+					arg_14_1[2] - 7,
+					10
 				},
 				size = {
 					17,
-					9,
-				},
+					9
+				}
 			},
 			edge_holder_bottom = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					-6,
 					3,
-					10,
+					10
 				},
 				size = {
 					17,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_14_0,
 		offset = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	}
-
-	return widget
 end
 
-local info_description_text = Localize("hero_view_prestige_information_description")
-local impact_description_text = Localize("hero_view_prestige_impact_description")
-local reward_description_text = Localize("hero_view_prestige_reward_description")
-local unable_description_text = Localize("hero_view_prestige_unable_description")
-local reward_experience_title_text = Localize("hero_view_prestige_experience_required")
-local reward_experience_value_text = "586020/600000"
-local center_banner_holder_text = Localize("hero_view_prestige_current_prestige_level")
-local warning_widgets = {
-	warning_popup_accept_button = UIWidgets.create_default_button("warning_popup_accept_button", scenegraph_definition.warning_popup_accept_button.size, nil, nil, "Accept"),
-	warning_popup_decline_button = UIWidgets.create_default_button("warning_popup_decline_button", scenegraph_definition.warning_popup_decline_button.size, nil, nil, "Decline"),
-	warning_popup_background = UIWidgets.create_background_with_frame("warning_popup_background", scenegraph_definition.warning_popup_background.size),
-	warning_popup_title_text = UIWidgets.create_title_widget("warning_popup_title_text", scenegraph_definition.warning_popup_title_text.size, "WARNING", true),
-	warning_popup_desc = UIWidgets.create_simple_text("Increasing your Prestige level will: \n - Reset character level", "warning_popup_desc", nil, nil, description_text_style),
+local var_0_19 = Localize("hero_view_prestige_information_description")
+local var_0_20 = Localize("hero_view_prestige_impact_description")
+local var_0_21 = Localize("hero_view_prestige_reward_description")
+local var_0_22 = Localize("hero_view_prestige_unable_description")
+local var_0_23 = Localize("hero_view_prestige_experience_required")
+local var_0_24 = "586020/600000"
+local var_0_25 = Localize("hero_view_prestige_current_prestige_level")
+local var_0_26 = {
+	warning_popup_accept_button = UIWidgets.create_default_button("warning_popup_accept_button", var_0_9.warning_popup_accept_button.size, nil, nil, "Accept"),
+	warning_popup_decline_button = UIWidgets.create_default_button("warning_popup_decline_button", var_0_9.warning_popup_decline_button.size, nil, nil, "Decline"),
+	warning_popup_background = UIWidgets.create_background_with_frame("warning_popup_background", var_0_9.warning_popup_background.size),
+	warning_popup_title_text = UIWidgets.create_title_widget("warning_popup_title_text", var_0_9.warning_popup_title_text.size, "WARNING", true),
+	warning_popup_desc = UIWidgets.create_simple_text("Increasing your Prestige level will: \n - Reset character level", "warning_popup_desc", nil, nil, var_0_12)
 }
-local widgets = {
-	window_frame = UIWidgets.create_frame("window_frame", scenegraph_definition.window_frame.size, window_frame, 10),
-	window = UIWidgets.create_background("window_frame", scenegraph_definition.window_frame.size, "talent_tree_bg_01"),
-	prestige_button = UIWidgets.create_default_button("prestige_button", scenegraph_definition.prestige_button.size, nil, nil, Localize("hero_view_prestige"), 32),
-	info_window_frame = UIWidgets.create_frame("info_window", scenegraph_definition.info_window.size, "menu_frame_06"),
+local var_0_27 = {
+	window_frame = UIWidgets.create_frame("window_frame", var_0_9.window_frame.size, var_0_2, 10),
+	window = UIWidgets.create_background("window_frame", var_0_9.window_frame.size, "talent_tree_bg_01"),
+	prestige_button = UIWidgets.create_default_button("prestige_button", var_0_9.prestige_button.size, nil, nil, Localize("hero_view_prestige"), 32),
+	info_window_frame = UIWidgets.create_frame("info_window", var_0_9.info_window.size, "menu_frame_06"),
 	info_window = UIWidgets.create_simple_rect("info_window", {
 		100,
 		0,
 		0,
-		0,
+		0
 	}),
-	info_title_text = UIWidgets.create_title_widget("info_title_text", scenegraph_definition.info_title_text.size, Localize("hero_view_prestige_information"), true, true),
-	info_description_text = UIWidgets.create_simple_text(info_description_text, "info_description_text", nil, nil, description_text_style),
-	impact_title_text = UIWidgets.create_simple_text(Localize("hero_view_impact"), "impact_title_text", nil, nil, impact_text_style),
-	impact_description_text = UIWidgets.create_simple_text(impact_description_text, "impact_description_text", nil, nil, description_text_style),
-	reward_window_frame = UIWidgets.create_frame("reward_window", scenegraph_definition.reward_window.size, "menu_frame_06"),
+	info_title_text = UIWidgets.create_title_widget("info_title_text", var_0_9.info_title_text.size, Localize("hero_view_prestige_information"), true, true),
+	info_description_text = UIWidgets.create_simple_text(var_0_19, "info_description_text", nil, nil, var_0_12),
+	impact_title_text = UIWidgets.create_simple_text(Localize("hero_view_impact"), "impact_title_text", nil, nil, var_0_13),
+	impact_description_text = UIWidgets.create_simple_text(var_0_20, "impact_description_text", nil, nil, var_0_12),
+	reward_window_frame = UIWidgets.create_frame("reward_window", var_0_9.reward_window.size, "menu_frame_06"),
 	reward_window = UIWidgets.create_simple_rect("reward_window", {
 		100,
 		0,
 		0,
-		0,
+		0
 	}),
-	reward_title_text = UIWidgets.create_title_widget("reward_title_text", scenegraph_definition.reward_title_text.size, Localize("hero_view_prestige_reward"), true, true),
-	reward_description_text = UIWidgets.create_simple_text(reward_description_text, "reward_description_text", nil, nil, description_text_style),
-	reward_item_text = UIWidgets.create_simple_text("n/a", "reward_item_text", nil, nil, reward_title_text_style),
+	reward_title_text = UIWidgets.create_title_widget("reward_title_text", var_0_9.reward_title_text.size, Localize("hero_view_prestige_reward"), true, true),
+	reward_description_text = UIWidgets.create_simple_text(var_0_21, "reward_description_text", nil, nil, var_0_12),
+	reward_item_text = UIWidgets.create_simple_text("n/a", "reward_item_text", nil, nil, var_0_11),
 	reward_item_text_detail = UIWidgets.create_simple_texture("divider_01_top", "reward_item_text_detail"),
-	unable_description_text = UIWidgets.create_simple_text(unable_description_text, "unable_description_text", nil, nil, unable_description_text_style),
-	debug_level_up_button = create_window_button("debug_level_up_button", scenegraph_definition.debug_level_up_button.size, "DEBUG: Get Max Experience", 18, true),
+	unable_description_text = UIWidgets.create_simple_text(var_0_22, "unable_description_text", nil, nil, var_0_14),
+	debug_level_up_button = var_0_15("debug_level_up_button", var_0_9.debug_level_up_button.size, "DEBUG: Get Max Experience", 18, true)
 }
-local animation_definitions = {
+local var_0_28 = {
 	on_enter = {
 		{
-			end_progress = 0.3,
 			name = "fade_in",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 0
+			end_progress = 0.3,
+			init = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+				arg_15_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+				local var_16_0 = math.easeOutCubic(arg_16_3)
 
-				params.render_settings.alpha_multiplier = anim_progress
+				arg_16_4.render_settings.alpha_multiplier = var_16_0
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 				return
-			end,
-		},
+			end
+		}
 	},
 	on_exit = {
 		{
-			end_progress = 0.3,
 			name = "fade_out",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 1
+			end_progress = 0.3,
+			init = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+				arg_18_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+				local var_19_0 = math.easeOutCubic(arg_19_3)
 
-				params.render_settings.alpha_multiplier = 1 - anim_progress
+				arg_19_4.render_settings.alpha_multiplier = 1 - var_19_0
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 				return
-			end,
-		},
-	},
+			end
+		}
+	}
 }
 
 return {
-	widgets = widgets,
-	warning_widgets = warning_widgets,
-	scenegraph_definition = scenegraph_definition,
-	animation_definitions = animation_definitions,
+	widgets = var_0_27,
+	warning_widgets = var_0_26,
+	scenegraph_definition = var_0_9,
+	animation_definitions = var_0_28
 }

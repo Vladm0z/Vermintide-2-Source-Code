@@ -1,80 +1,76 @@
-﻿-- chunkname: @scripts/ui/gift_popup/gift_popup_ui.lua
+-- chunkname: @scripts/ui/gift_popup/gift_popup_ui.lua
 
 require("scripts/ui/reward_popup/reward_popup_ui")
 
-local UNLOCK_MANAGER_POLL_INTERVAL = 1.5
+local var_0_0 = 1.5
 
 GiftPopupUI = class(GiftPopupUI)
 
-GiftPopupUI.init = function (self, parent, ingame_ui_context)
-	self._parent = parent
-	self._is_in_inn = ingame_ui_context.is_in_inn
+function GiftPopupUI.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0._parent = arg_1_1
+	arg_1_0._is_in_inn = arg_1_2.is_in_inn
 
-	local reward_popup = RewardPopupUI:new(ingame_ui_context)
+	local var_1_0 = RewardPopupUI:new(arg_1_2)
 
-	self._reward_popup = reward_popup
+	arg_1_0._reward_popup = var_1_0
 
-	reward_popup:set_input_manager(ingame_ui_context.input_manager)
+	var_1_0:set_input_manager(arg_1_2.input_manager)
 
-	self._next_poll_time = 0
-	self._presentation_queue = {}
+	arg_1_0._next_poll_time = 0
+	arg_1_0._presentation_queue = {}
 
-	local event_manager = Managers.state.event
-
-	event_manager:register(self, "level_start_local_player_spawned", "event_initialize_poll")
+	Managers.state.event:register(arg_1_0, "level_start_local_player_spawned", "event_initialize_poll")
 end
 
-GiftPopupUI.event_initialize_poll = function (self)
-	self._poll_initialized = true
+function GiftPopupUI.event_initialize_poll(arg_2_0)
+	arg_2_0._poll_initialized = true
 end
 
-GiftPopupUI.update = function (self, dt, t)
+function GiftPopupUI.update(arg_3_0, arg_3_1, arg_3_2)
 	return
 end
 
-GiftPopupUI.post_update = function (self, dt, t)
-	local reward_popup = self._reward_popup
-	local presentation_queue = self._presentation_queue
+function GiftPopupUI.post_update(arg_4_0, arg_4_1, arg_4_2)
+	local var_4_0 = arg_4_0._reward_popup
+	local var_4_1 = arg_4_0._presentation_queue
 
-	if self._poll_initialized and self._is_in_inn then
-		local next_poll_time = self._next_poll_time
-
-		if next_poll_time <= t then
-			self._next_poll_time = t + UNLOCK_MANAGER_POLL_INTERVAL
+	if arg_4_0._poll_initialized and arg_4_0._is_in_inn then
+		if arg_4_2 >= arg_4_0._next_poll_time then
+			arg_4_0._next_poll_time = arg_4_2 + var_0_0
 
 			while true do
-				local reward_data = Managers.unlock:poll_rewards()
+				local var_4_2 = Managers.unlock:poll_rewards()
 
-				if not reward_data then
+				if not var_4_2 then
 					break
 				end
 
-				presentation_queue[#presentation_queue + 1] = self:_generate_presentation_data(reward_data)
+				var_4_1[#var_4_1 + 1] = arg_4_0:_generate_presentation_data(var_4_2)
 			end
 		end
 
-		if #presentation_queue > 0 and self:_can_present_reward() then
-			local presentation_data = table.remove(presentation_queue, 1)
+		if #var_4_1 > 0 and arg_4_0:_can_present_reward() then
+			local var_4_3 = table.remove(var_4_1, 1)
 
-			reward_popup:display_presentation(presentation_data)
+			var_4_0:display_presentation(var_4_3)
 		end
 
-		reward_popup:update(dt)
+		var_4_0:update(arg_4_1)
 	end
 end
 
-GiftPopupUI.has_presentation_data = function (self)
-	return #self._presentation_queue > 0 or self._reward_popup:is_presentation_active()
+function GiftPopupUI.has_presentation_data(arg_5_0)
+	return #arg_5_0._presentation_queue > 0 or arg_5_0._reward_popup:is_presentation_active()
 end
 
-GiftPopupUI._can_present_reward = function (self)
-	if self._reward_popup:is_presentation_active() then
+function GiftPopupUI._can_present_reward(arg_6_0)
+	if arg_6_0._reward_popup:is_presentation_active() then
 		return false
 	end
 
-	local popup_manager = Managers.popup
+	local var_6_0 = Managers.popup
 
-	if popup_manager and popup_manager:has_popup() then
+	if var_6_0 and var_6_0:has_popup() then
 		return false
 	end
 
@@ -85,40 +81,38 @@ GiftPopupUI._can_present_reward = function (self)
 	return true
 end
 
-GiftPopupUI._generate_presentation_data = function (self, reward_data)
-	local presentation_data = {}
-
-	presentation_data.animation_data = {
-		claim_button = true,
-	}
-	presentation_data[1] = {
+function GiftPopupUI._generate_presentation_data(arg_7_0, arg_7_1)
+	return {
+		animation_data = {
+			claim_button = true
+		},
 		{
-			widget_type = "description",
-			value = {
-				Localize(reward_data.presentation_text),
-				Localize("gift_popup_sub_title_halloween"),
+			{
+				widget_type = "description",
+				value = {
+					Localize(arg_7_1.presentation_text),
+					Localize("gift_popup_sub_title_halloween")
+				}
 			},
-		},
-		{
-			widget_type = "item_list",
-			value = reward_data.items,
-		},
+			{
+				widget_type = "item_list",
+				value = arg_7_1.items
+			}
+		}
 	}
-
-	return presentation_data
 end
 
-GiftPopupUI.active = function (self)
-	return self._reward_popup:is_presentation_active()
+function GiftPopupUI.active(arg_8_0)
+	return arg_8_0._reward_popup:is_presentation_active()
 end
 
-GiftPopupUI.active_input_service = function (self)
-	return self._reward_popup:input_service()
+function GiftPopupUI.active_input_service(arg_9_0)
+	return arg_9_0._reward_popup:input_service()
 end
 
-GiftPopupUI.destroy = function (self)
-	self._reward_popup:destroy()
+function GiftPopupUI.destroy(arg_10_0)
+	arg_10_0._reward_popup:destroy()
 
-	self._reward_popup = nil
-	self._presentation_queue = nil
+	arg_10_0._reward_popup = nil
+	arg_10_0._presentation_queue = nil
 end

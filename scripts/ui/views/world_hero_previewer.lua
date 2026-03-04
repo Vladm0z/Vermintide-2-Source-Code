@@ -1,1403 +1,1375 @@
-﻿-- chunkname: @scripts/ui/views/world_hero_previewer.lua
+-- chunkname: @scripts/ui/views/world_hero_previewer.lua
 
 HeroPreviewer = class(HeroPreviewer)
 
-HeroPreviewer.init = function (self, ingame_ui_context, unique_id, delayed_spawn)
-	self.profile_synchronizer = ingame_ui_context.profile_synchronizer
-	self.character_unit = nil
-	self.mesh_unit = nil
-	self.world = nil
-	self._item_info_by_slot = {}
-	self._props_data = {}
-	self._equipment_units = {}
-	self._hidden_units = {}
-	self._delayed_material_changes = {}
-	self.character_location = {
+function HeroPreviewer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.profile_synchronizer = arg_1_1.profile_synchronizer
+	arg_1_0.character_unit = nil
+	arg_1_0.mesh_unit = nil
+	arg_1_0.world = nil
+	arg_1_0._item_info_by_slot = {}
+	arg_1_0._props_data = {}
+	arg_1_0._equipment_units = {}
+	arg_1_0._hidden_units = {}
+	arg_1_0._delayed_material_changes = {}
+	arg_1_0.character_location = {
 		0,
 		0,
-		0,
+		0
 	}
-	self.character_look_target = {
+	arg_1_0.character_look_target = {
 		0,
 		3,
-		1,
+		1
 	}
-	self.character_rotation = 0
-	self.unique_id = unique_id
-	self._session_id = 0
-	self._requested_mip_streaming_units = {}
-	self._delayed_spawn = delayed_spawn
-	self._activated = not delayed_spawn
-	self._loading_done = false
-	self._delayed_pose_animation = false
-	self._equipment_units[InventorySettings.slots_by_name.slot_melee.slot_index] = {}
-	self._equipment_units[InventorySettings.slots_by_name.slot_ranged.slot_index] = {}
+	arg_1_0.character_rotation = 0
+	arg_1_0.unique_id = arg_1_2
+	arg_1_0._session_id = 0
+	arg_1_0._requested_mip_streaming_units = {}
+	arg_1_0._delayed_spawn = arg_1_3
+	arg_1_0._activated = not arg_1_3
+	arg_1_0._loading_done = false
+	arg_1_0._delayed_pose_animation = false
+	arg_1_0._equipment_units[InventorySettings.slots_by_name.slot_melee.slot_index] = {}
+	arg_1_0._equipment_units[InventorySettings.slots_by_name.slot_ranged.slot_index] = {}
 end
 
-HeroPreviewer.activate = function (self, activate, world)
-	if not self._delayed_spawn then
+function HeroPreviewer.activate(arg_2_0, arg_2_1, arg_2_2)
+	if not arg_2_0._delayed_spawn then
 		return
 	end
 
-	if activate == self._activated then
+	if arg_2_1 == arg_2_0._activated then
 		return
 	end
 
-	if activate then
-		self:on_enter(world)
+	if arg_2_1 then
+		arg_2_0:on_enter(arg_2_2)
 	else
-		self.world = nil
+		arg_2_0.world = nil
 	end
 
-	self._activated = activate
+	arg_2_0._activated = arg_2_1
 end
 
-HeroPreviewer.destroy = function (self)
-	self._session_id = self._session_id + 1
+function HeroPreviewer.destroy(arg_3_0)
+	arg_3_0._session_id = arg_3_0._session_id + 1
 
-	GarbageLeakDetector.register_object(self, "HeroPreviewer")
+	GarbageLeakDetector.register_object(arg_3_0, "HeroPreviewer")
 end
 
-local EMPTY_TABLE = {}
+local var_0_0 = {}
 
-HeroPreviewer.on_enter = function (self, world)
-	table.clear(self._requested_mip_streaming_units)
-	table.clear(self._hidden_units)
+function HeroPreviewer.on_enter(arg_4_0, arg_4_1)
+	table.clear(arg_4_0._requested_mip_streaming_units)
+	table.clear(arg_4_0._hidden_units)
 
-	self.world = world
+	arg_4_0.world = arg_4_1
 
 	Application.set_render_setting("max_shadow_casting_lights", 16)
 
-	self._session_id = self._session_id or 0
+	arg_4_0._session_id = arg_4_0._session_id or 0
 
-	if self._delayed_spawn then
-		self._requested_hero_spawn_data = self._delayed_hero_spawn_data or EMPTY_TABLE
+	if arg_4_0._delayed_spawn then
+		arg_4_0._requested_hero_spawn_data = arg_4_0._delayed_hero_spawn_data or var_0_0
 	end
 end
 
-HeroPreviewer.prepare_exit = function (self)
-	self:clear_units()
+function HeroPreviewer.prepare_exit(arg_5_0)
+	arg_5_0:clear_units()
 end
 
-HeroPreviewer.on_exit = function (self)
-	self:_unload_all_packages()
+function HeroPreviewer.on_exit(arg_6_0)
+	arg_6_0:_unload_all_packages()
 
-	self._hero_loading_package_data = nil
+	arg_6_0._hero_loading_package_data = nil
 
-	local max_shadow_casting_lights = Application.user_setting("render_settings", "max_shadow_casting_lights")
+	local var_6_0 = Application.user_setting("render_settings", "max_shadow_casting_lights")
 
-	Application.set_render_setting("max_shadow_casting_lights", max_shadow_casting_lights)
+	Application.set_render_setting("max_shadow_casting_lights", var_6_0)
 
-	self._session_id = self._session_id + 1
+	arg_6_0._session_id = arg_6_0._session_id + 1
 end
 
-HeroPreviewer.update = function (self, dt, t)
+function HeroPreviewer.update(arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-HeroPreviewer.post_update = function (self, dt, t)
-	self:_update_units_visibility(dt)
-	self:_update_lerped_location(t)
-	self:_handle_hero_spawn_request()
-	self:_poll_hero_package_loading()
-	self:_poll_item_package_loading()
-	self:_update_delayed_material_changes()
+function HeroPreviewer.post_update(arg_8_0, arg_8_1, arg_8_2)
+	arg_8_0:_update_units_visibility(arg_8_1)
+	arg_8_0:_update_lerped_location(arg_8_2)
+	arg_8_0:_handle_hero_spawn_request()
+	arg_8_0:_poll_hero_package_loading()
+	arg_8_0:_poll_item_package_loading()
+	arg_8_0:_update_delayed_material_changes()
 end
 
-HeroPreviewer._update_lerped_location = function (self, t)
-	if not self._character_destination_location then
+function HeroPreviewer._update_lerped_location(arg_9_0, arg_9_1)
+	if not arg_9_0._character_destination_location then
 		return
 	end
 
-	if t < self._lerp_end_time then
-		local diff = self._lerp_end_time - t
-		local progress = 1 - diff / self._lerp_time
-		local eased_progress = math.easeOutCubic(progress)
-		local x = math.lerp(self.character_location[1], self._character_destination_location[1], eased_progress)
-		local y = math.lerp(self.character_location[2], self._character_destination_location[2], eased_progress)
-		local z = math.lerp(self.character_location[3], self._character_destination_location[3], eased_progress)
-		local character_unit = self.character_unit
+	if arg_9_1 < arg_9_0._lerp_end_time then
+		local var_9_0 = 1 - (arg_9_0._lerp_end_time - arg_9_1) / arg_9_0._lerp_time
+		local var_9_1 = math.easeOutCubic(var_9_0)
+		local var_9_2 = math.lerp(arg_9_0.character_location[1], arg_9_0._character_destination_location[1], var_9_1)
+		local var_9_3 = math.lerp(arg_9_0.character_location[2], arg_9_0._character_destination_location[2], var_9_1)
+		local var_9_4 = math.lerp(arg_9_0.character_location[3], arg_9_0._character_destination_location[3], var_9_1)
+		local var_9_5 = arg_9_0.character_unit
 
-		if character_unit and Unit.alive(character_unit) then
-			Unit.set_local_position(character_unit, 0, Vector3(x, y, z))
+		if var_9_5 and Unit.alive(var_9_5) then
+			Unit.set_local_position(var_9_5, 0, Vector3(var_9_2, var_9_3, var_9_4))
 		end
 	else
-		self.character_location = self._character_destination_location
-		self._character_destination_location = nil
-		self._lerp_time = nil
-		self._lerp_end_time = nil
+		arg_9_0.character_location = arg_9_0._character_destination_location
+		arg_9_0._character_destination_location = nil
+		arg_9_0._lerp_time = nil
+		arg_9_0._lerp_end_time = nil
 	end
 end
 
-HeroPreviewer._update_unit_mip_streaming = function (self)
-	local mip_streaming_completed = true
-	local num_units_handled = 0
-	local requested_mip_streaming_units = self._requested_mip_streaming_units
+function HeroPreviewer._update_unit_mip_streaming(arg_10_0)
+	local var_10_0 = true
+	local var_10_1 = 0
+	local var_10_2 = arg_10_0._requested_mip_streaming_units
 
-	for unit, _ in pairs(requested_mip_streaming_units) do
-		local unit_mip_streaming_completed = Renderer.is_all_mips_loaded_for_unit(unit)
-
-		if unit_mip_streaming_completed then
-			requested_mip_streaming_units[unit] = nil
+	for iter_10_0, iter_10_1 in pairs(var_10_2) do
+		if Renderer.is_all_mips_loaded_for_unit(iter_10_0) then
+			var_10_2[iter_10_0] = nil
 		else
-			mip_streaming_completed = false
+			var_10_0 = false
 		end
 
-		num_units_handled = num_units_handled + 1
+		var_10_1 = var_10_1 + 1
 	end
 
-	if not mip_streaming_completed then
+	if not var_10_0 then
 		return true
-	elseif num_units_handled > 0 then
+	elseif var_10_1 > 0 then
 		Renderer.set_automatic_streaming(true)
 	end
 end
 
-HeroPreviewer._update_delayed_material_changes = function (self)
-	if not self._activated then
+function HeroPreviewer._update_delayed_material_changes(arg_11_0)
+	if not arg_11_0._activated then
 		return
 	end
 
-	local character_unit = self.character_unit
-	local mesh_unit = self.mesh_unit
+	local var_11_0 = arg_11_0.character_unit
+	local var_11_1 = arg_11_0.mesh_unit
 
-	if not Unit.alive(character_unit) then
+	if not Unit.alive(var_11_0) then
 		return
 	end
 
-	if not self._delayed_material_changes[character_unit] or self.character_unit_hidden_after_spawn then
+	if not arg_11_0._delayed_material_changes[var_11_0] or arg_11_0.character_unit_hidden_after_spawn then
 		return
 	end
 
-	local hero_material_changed = false
-	local delayed_material_changes = self._delayed_material_changes[character_unit]
+	local var_11_2 = false
+	local var_11_3 = arg_11_0._delayed_material_changes[var_11_0]
 
-	for i = 1, #delayed_material_changes do
-		local third_person_changes = delayed_material_changes[i]
+	for iter_11_0 = 1, #var_11_3 do
+		local var_11_4 = var_11_3[iter_11_0]
 
-		for slot_name, material_name in pairs(third_person_changes) do
-			Unit.set_material(mesh_unit, slot_name, material_name)
+		for iter_11_1, iter_11_2 in pairs(var_11_4) do
+			Unit.set_material(var_11_1, iter_11_1, iter_11_2)
 
-			hero_material_changed = true
+			var_11_2 = true
 		end
 	end
 
-	if hero_material_changed and self._use_highest_mip_levels or UISettings.wait_for_mip_streaming_character then
-		self:_request_mip_streaming_for_unit(character_unit)
+	if var_11_2 and arg_11_0._use_highest_mip_levels or UISettings.wait_for_mip_streaming_character then
+		arg_11_0:_request_mip_streaming_for_unit(var_11_0)
 	end
 
-	self._delayed_material_changes[character_unit] = nil
+	arg_11_0._delayed_material_changes[var_11_0] = nil
 end
 
-HeroPreviewer._request_mip_streaming_for_unit = function (self, unit)
-	local requested_mip_streaming_units = self._requested_mip_streaming_units
+function HeroPreviewer._request_mip_streaming_for_unit(arg_12_0, arg_12_1)
+	local var_12_0 = arg_12_0._requested_mip_streaming_units
 
-	requested_mip_streaming_units[unit] = true
+	var_12_0[arg_12_1] = true
 
 	Renderer.set_automatic_streaming(false)
 
-	for requested_unit, _ in pairs(requested_mip_streaming_units) do
-		Renderer.request_to_stream_all_mips_for_unit(requested_unit)
+	for iter_12_0, iter_12_1 in pairs(var_12_0) do
+		Renderer.request_to_stream_all_mips_for_unit(iter_12_0)
 	end
 end
 
-HeroPreviewer._update_units_visibility = function (self, dt)
-	if not self._activated then
+function HeroPreviewer._update_units_visibility(arg_13_0, arg_13_1)
+	if not arg_13_0._activated then
 		return
 	end
 
-	local items_loaded = self:_is_all_items_loaded()
-
-	if not items_loaded then
+	if not arg_13_0:_is_all_items_loaded() then
 		return
 	end
 
-	if self:_update_unit_mip_streaming() then
+	if arg_13_0:_update_unit_mip_streaming() then
 		return
 	end
 
-	local character_unit = self.character_unit
+	local var_13_0 = arg_13_0.character_unit
 
-	if not Unit.alive(character_unit) then
+	if not Unit.alive(var_13_0) then
 		return
 	end
 
-	if self._stored_character_animation then
-		local force_play_animation = true
+	if arg_13_0._stored_character_animation then
+		local var_13_1 = true
 
-		self:play_character_animation(self._stored_character_animation, force_play_animation)
+		arg_13_0:play_character_animation(arg_13_0._stored_character_animation, var_13_1)
 
-		self._stored_character_animation = nil
+		arg_13_0._stored_character_animation = nil
 
 		return
 	end
 
-	if self.character_unit_hidden_after_spawn then
-		self.character_unit_hidden_after_spawn = false
+	if arg_13_0.character_unit_hidden_after_spawn then
+		arg_13_0.character_unit_hidden_after_spawn = false
 
-		if Unit.has_animation_state_machine(self.mesh_unit) and Unit.has_animation_event(self.mesh_unit, "enable") then
-			Unit.animation_event(self.mesh_unit, "enable")
+		if Unit.has_animation_state_machine(arg_13_0.mesh_unit) and Unit.has_animation_event(arg_13_0.mesh_unit, "enable") then
+			Unit.animation_event(arg_13_0.mesh_unit, "enable")
 		end
 
-		if self._draw_character == false then
-			self:_set_character_visibility(false)
+		if arg_13_0._draw_character == false then
+			arg_13_0:_set_character_visibility(false)
 		else
-			self:_set_character_visibility(true)
+			arg_13_0:_set_character_visibility(true)
 		end
 	end
 
-	if self._draw_character and not table.is_empty(self._hidden_units) then
-		for unit, _ in pairs(self._hidden_units) do
-			if Unit.alive(unit) then
-				Unit.set_unit_visibility(unit, true)
+	if arg_13_0._draw_character and not table.is_empty(arg_13_0._hidden_units) then
+		for iter_13_0, iter_13_1 in pairs(arg_13_0._hidden_units) do
+			if Unit.alive(iter_13_0) then
+				Unit.set_unit_visibility(iter_13_0, true)
 			end
 
-			self._hidden_units[unit] = nil
+			arg_13_0._hidden_units[iter_13_0] = nil
 		end
 
-		self:_trigger_equip_events()
+		arg_13_0:_trigger_equip_events()
 	end
 
-	if self._draw_character then
-		for _, data in pairs(self._props_data) do
-			if not data.visible and data.unit then
-				data.visible = true
+	if arg_13_0._draw_character then
+		for iter_13_2, iter_13_3 in pairs(arg_13_0._props_data) do
+			if not iter_13_3.visible and iter_13_3.unit then
+				iter_13_3.visible = true
 
-				Unit.set_unit_visibility(data.unit, true)
+				Unit.set_unit_visibility(iter_13_3.unit, true)
 
-				local settings = data.settings
+				local var_13_2 = iter_13_3.settings
 
-				if settings.animation_event then
-					Unit.animation_event(data.unit, settings.animation_event)
+				if var_13_2.animation_event then
+					Unit.animation_event(iter_13_3.unit, var_13_2.animation_event)
 				end
 
-				if settings.spawn_callback then
-					settings.spawn_callback(data.unit)
+				if var_13_2.spawn_callback then
+					var_13_2.spawn_callback(iter_13_3.unit)
 				end
 			end
 		end
 	end
 
-	self._loading_done = true
+	arg_13_0._loading_done = true
 end
 
-HeroPreviewer.loading_done = function (self)
-	return self._loading_done
+function HeroPreviewer.loading_done(arg_14_0)
+	return arg_14_0._loading_done
 end
 
-HeroPreviewer._set_character_visibility = function (self, visible)
-	self._draw_character = visible
+function HeroPreviewer._set_character_visibility(arg_15_0, arg_15_1)
+	arg_15_0._draw_character = arg_15_1
 
-	if self.character_unit_hidden_after_spawn then
+	if arg_15_0.character_unit_hidden_after_spawn then
 		return
 	end
 
-	local character_unit = self.character_unit
-	local mesh_unit = self.mesh_unit
+	local var_15_0 = arg_15_0.character_unit
+	local var_15_1 = arg_15_0.mesh_unit
 
-	if Unit.alive(mesh_unit) then
-		Unit.set_unit_visibility(mesh_unit, visible)
+	if Unit.alive(var_15_1) then
+		Unit.set_unit_visibility(var_15_1, arg_15_1)
 
-		local slots_by_slot_index = InventorySettings.slots_by_slot_index
-		local attachment_lua_event = visible and "lua_attachment_unhidden" or "lua_attachment_hidden"
+		local var_15_2 = InventorySettings.slots_by_slot_index
+		local var_15_3 = arg_15_1 and "lua_attachment_unhidden" or "lua_attachment_hidden"
 
-		Unit.flow_event(mesh_unit, attachment_lua_event)
+		Unit.flow_event(var_15_1, var_15_3)
 
-		local vfx_lua_event = visible and "lua_ui_vfx_unhidden" or "lua_ui_vfx_hidden"
+		local var_15_4 = arg_15_1 and "lua_ui_vfx_unhidden" or "lua_ui_vfx_hidden"
 
-		Unit.flow_event(mesh_unit, vfx_lua_event)
+		Unit.flow_event(var_15_1, var_15_4)
 
-		local equipment_units = self._equipment_units
+		local var_15_5 = arg_15_0._equipment_units
 
-		for slot_index, data in pairs(equipment_units) do
-			local slot = slots_by_slot_index[slot_index]
-			local category = slot.category
-			local slot_type = slot.type
-			local is_weapon = category == "weapon"
-			local show_unit
+		for iter_15_0, iter_15_1 in pairs(var_15_5) do
+			local var_15_6 = var_15_2[iter_15_0]
+			local var_15_7 = var_15_6.category
+			local var_15_8 = var_15_6.type
+			local var_15_9 = var_15_7 == "weapon"
+			local var_15_10
 
-			if is_weapon then
-				show_unit = visible and slot_type == self._wielded_slot_type
+			if var_15_9 then
+				var_15_10 = arg_15_1 and var_15_8 == arg_15_0._wielded_slot_type
 			else
-				show_unit = visible
+				var_15_10 = arg_15_1
 			end
 
-			local weapon_lua_event = show_unit and "lua_wield" or "lua_unwield"
+			local var_15_11 = var_15_10 and "lua_wield" or "lua_unwield"
 
-			if type(data) == "table" then
-				local left_unit = data.left
-				local right_unit = data.right
+			if type(iter_15_1) == "table" then
+				local var_15_12 = iter_15_1.left
+				local var_15_13 = iter_15_1.right
 
-				if Unit.alive(left_unit) then
-					Unit.flow_event(left_unit, weapon_lua_event)
-					Unit.set_unit_visibility(left_unit, show_unit)
+				if Unit.alive(var_15_12) then
+					Unit.flow_event(var_15_12, var_15_11)
+					Unit.set_unit_visibility(var_15_12, var_15_10)
 
-					self._hidden_units[left_unit] = nil
+					arg_15_0._hidden_units[var_15_12] = nil
 				end
 
-				if Unit.alive(right_unit) then
-					Unit.flow_event(right_unit, weapon_lua_event)
-					Unit.set_unit_visibility(right_unit, show_unit)
+				if Unit.alive(var_15_13) then
+					Unit.flow_event(var_15_13, var_15_11)
+					Unit.set_unit_visibility(var_15_13, var_15_10)
 
-					self._hidden_units[right_unit] = nil
+					arg_15_0._hidden_units[var_15_13] = nil
 				end
-			elseif Unit.alive(data) then
-				if not is_weapon then
-					local non_weapon_attachment_lua_event = show_unit and "lua_attachment_unhidden" or "lua_attachment_hidden"
+			elseif Unit.alive(iter_15_1) then
+				if not var_15_9 then
+					local var_15_14 = var_15_10 and "lua_attachment_unhidden" or "lua_attachment_hidden"
 
-					Unit.flow_event(data, non_weapon_attachment_lua_event)
+					Unit.flow_event(iter_15_1, var_15_14)
 				end
 
-				Unit.flow_event(data, weapon_lua_event)
-				Unit.set_unit_visibility(data, show_unit)
+				Unit.flow_event(iter_15_1, var_15_11)
+				Unit.set_unit_visibility(iter_15_1, var_15_10)
 
-				if slot_type == "hat" then
-					local equip_hat_event = self.character_unit_skin_data.equip_hat_event or "using_skin_default"
+				if var_15_8 == "hat" then
+					local var_15_15 = arg_15_0.character_unit_skin_data.equip_hat_event or "using_skin_default"
 
-					if equip_hat_event then
-						Unit.flow_event(data, equip_hat_event)
+					if var_15_15 then
+						Unit.flow_event(iter_15_1, var_15_15)
 					end
 				end
 
-				self._hidden_units[data] = nil
+				arg_15_0._hidden_units[iter_15_1] = nil
 			end
 		end
 
-		if visible then
-			local skin_data = self.character_unit_skin_data
-			local material_changes = skin_data.material_changes
-			local equip_skin_event = skin_data.equip_skin_event or "using_skin_default"
+		if arg_15_1 then
+			local var_15_16 = arg_15_0.character_unit_skin_data
+			local var_15_17 = var_15_16.material_changes
+			local var_15_18 = var_15_16.equip_skin_event or "using_skin_default"
 
-			Unit.flow_event(character_unit, equip_skin_event)
+			Unit.flow_event(var_15_0, var_15_18)
 
-			if material_changes then
-				local third_person_changes = material_changes.third_person
+			if var_15_17 then
+				local var_15_19 = var_15_17.third_person
 
-				for slot_name, material_name in pairs(third_person_changes) do
-					Unit.set_material(mesh_unit, slot_name, material_name)
+				for iter_15_2, iter_15_3 in pairs(var_15_19) do
+					Unit.set_material(var_15_1, iter_15_2, iter_15_3)
 				end
 			end
 
-			for slot_name, data in pairs(self._item_info_by_slot) do
-				if data.loaded then
-					local item_name = data.name
-					local item_template = ItemHelper.get_template_by_item_name(item_name)
-					local show_attachments_event = item_template.show_attachments_event
+			for iter_15_4, iter_15_5 in pairs(arg_15_0._item_info_by_slot) do
+				if iter_15_5.loaded then
+					local var_15_20 = iter_15_5.name
+					local var_15_21 = ItemHelper.get_template_by_item_name(var_15_20).show_attachments_event
 
-					if show_attachments_event then
-						Unit.flow_event(mesh_unit, show_attachments_event)
-						Unit.flow_event(character_unit, show_attachments_event)
+					if var_15_21 then
+						Unit.flow_event(var_15_1, var_15_21)
+						Unit.flow_event(var_15_0, var_15_21)
 					end
 				end
 			end
 		end
 
-		self.character_unit_visible = visible
+		arg_15_0.character_unit_visible = arg_15_1
 	end
 end
 
-HeroPreviewer.character_visible = function (self)
-	return self.character_unit_visible and Unit.alive(self.character_unit)
+function HeroPreviewer.character_visible(arg_16_0)
+	return arg_16_0.character_unit_visible and Unit.alive(arg_16_0.character_unit)
 end
 
-HeroPreviewer.play_character_animation = function (self, animation_event, force_play_animation)
-	local character_unit = self.character_unit
+function HeroPreviewer.play_character_animation(arg_17_0, arg_17_1, arg_17_2)
+	local var_17_0 = arg_17_0.character_unit
 
-	if character_unit == nil then
+	if var_17_0 == nil then
 		return
 	end
 
-	if not self.character_unit_visible and not force_play_animation then
-		self._stored_character_animation = animation_event
+	if not arg_17_0.character_unit_visible and not arg_17_2 then
+		arg_17_0._stored_character_animation = arg_17_1
 	else
-		Unit.animation_event(character_unit, animation_event)
+		Unit.animation_event(var_17_0, arg_17_1)
 	end
 end
 
-HeroPreviewer.clear_asynchronous_data = function (self)
-	self._delayed_pose_animation = false
-	self._pose_animation_event = nil
+function HeroPreviewer.clear_asynchronous_data(arg_18_0)
+	arg_18_0._delayed_pose_animation = false
+	arg_18_0._pose_animation_event = nil
 end
 
-HeroPreviewer.request_spawn_hero_unit = function (self, profile_name, career_index, callback, optional_skin, optional_breed)
-	self:clear_asynchronous_data()
+function HeroPreviewer.request_spawn_hero_unit(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
+	arg_19_0:clear_asynchronous_data()
 
-	self._requested_hero_spawn_data = {
+	arg_19_0._requested_hero_spawn_data = {
 		frame_delay = 1,
-		profile_name = profile_name,
-		career_index = career_index,
-		callback = callback,
-		optional_skin = optional_skin,
-		optional_breed = optional_breed,
+		profile_name = arg_19_1,
+		career_index = arg_19_2,
+		callback = arg_19_3,
+		optional_skin = arg_19_4,
+		optional_breed = arg_19_5
 	}
 
-	if self._delayed_spawn then
-		self._delayed_hero_spawn_data = table.clone(self._requested_hero_spawn_data)
+	if arg_19_0._delayed_spawn then
+		arg_19_0._delayed_hero_spawn_data = table.clone(arg_19_0._requested_hero_spawn_data)
 	end
 
-	self:clear_units()
+	arg_19_0:clear_units()
 end
 
-HeroPreviewer._handle_hero_spawn_request = function (self)
-	if self._requested_hero_spawn_data then
-		local requested_hero_spawn_data = self._requested_hero_spawn_data
-		local frame_delay = requested_hero_spawn_data.frame_delay
+function HeroPreviewer._handle_hero_spawn_request(arg_20_0)
+	if arg_20_0._requested_hero_spawn_data then
+		local var_20_0 = arg_20_0._requested_hero_spawn_data
+		local var_20_1 = var_20_0.frame_delay
 
-		if frame_delay == 0 then
-			local profile_name = requested_hero_spawn_data.profile_name
-			local career_index = requested_hero_spawn_data.career_index
-			local callback = requested_hero_spawn_data.callback
-			local optional_skin = requested_hero_spawn_data.optional_skin
-			local optional_breed = requested_hero_spawn_data.optional_breed
+		if var_20_1 == 0 then
+			local var_20_2 = var_20_0.profile_name
+			local var_20_3 = var_20_0.career_index
+			local var_20_4 = var_20_0.callback
+			local var_20_5 = var_20_0.optional_skin
+			local var_20_6 = var_20_0.optional_breed
 
-			self:_load_hero_unit(profile_name, career_index, callback, optional_skin, nil, optional_breed)
+			arg_20_0:_load_hero_unit(var_20_2, var_20_3, var_20_4, var_20_5, nil, var_20_6)
 
-			self._requested_hero_spawn_data = nil
+			arg_20_0._requested_hero_spawn_data = nil
 		else
-			requested_hero_spawn_data.frame_delay = frame_delay - 1
+			var_20_0.frame_delay = var_20_1 - 1
 		end
 	end
 end
 
-HeroPreviewer._load_hero_unit = function (self, profile_name, career_index, callback, optional_skin, optional_scale, optional_breed)
-	self:_unload_all_packages()
+function HeroPreviewer._load_hero_unit(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6)
+	arg_21_0:_unload_all_packages()
 
-	self._current_profile_name = optional_breed and optional_breed.name or profile_name
+	arg_21_0._current_profile_name = arg_21_6 and arg_21_6.name or arg_21_1
 
-	local profile_index = FindProfileIndex(profile_name)
-	local profile = SPProfiles[profile_index]
-	local career = profile.careers[career_index]
-	local career_name = career.name
-	local skin_item = BackendUtils.get_loadout_item(career_name, "slot_skin")
-	local item_data = skin_item and skin_item.data
-	local skin_name = optional_skin or item_data and item_data.name or career.base_skin
+	local var_21_0 = FindProfileIndex(arg_21_1)
+	local var_21_1 = SPProfiles[var_21_0].careers[arg_21_2]
+	local var_21_2 = var_21_1.name
+	local var_21_3 = BackendUtils.get_loadout_item(var_21_2, "slot_skin")
+	local var_21_4 = var_21_3 and var_21_3.data
+	local var_21_5 = arg_21_4 or var_21_4 and var_21_4.name or var_21_1.base_skin
 
-	GlobalShaderFlags.set_global_shader_flag("NECROMANCER_CAREER_REMAP", career_name == "bw_necromancer")
+	GlobalShaderFlags.set_global_shader_flag("NECROMANCER_CAREER_REMAP", var_21_2 == "bw_necromancer")
 
-	self._current_career_name = career_name
-	self.character_unit_skin_data = nil
+	arg_21_0._current_career_name = var_21_2
+	arg_21_0.character_unit_skin_data = nil
 
-	local package_names = CosmeticsUtils.retrieve_skin_packages_for_preview(skin_name)
-	local skin_data = Cosmetics[skin_name]
-	local data = {
+	local var_21_6 = CosmeticsUtils.retrieve_skin_packages_for_preview(var_21_5)
+	local var_21_7 = Cosmetics[var_21_5]
+
+	arg_21_0._hero_loading_package_data = {
 		num_loaded_packages = 0,
-		career_name = career_name,
-		skin_data = skin_data,
-		career_index = career_index,
-		optional_scale = optional_scale,
-		package_names = package_names,
-		num_packages = #package_names,
-		callback = callback,
-	}
-
-	self:_load_packages(package_names)
-
-	self._hero_loading_package_data = data
+		career_name = var_21_2,
+		skin_data = var_21_7,
+		career_index = arg_21_2,
+		optional_scale = arg_21_5,
+		package_names = var_21_6,
+		num_packages = #var_21_6,
+		callback = arg_21_3
+	}, arg_21_0:_load_packages(var_21_6)
 end
 
-HeroPreviewer._poll_hero_package_loading = function (self)
-	local data = self._hero_loading_package_data
+function HeroPreviewer._poll_hero_package_loading(arg_22_0)
+	local var_22_0 = arg_22_0._hero_loading_package_data
 
-	if not data or data.loaded then
+	if not var_22_0 or var_22_0.loaded then
 		return
 	end
 
-	local requested_hero_spawn_data = self._requested_hero_spawn_data
-
-	if requested_hero_spawn_data then
+	if arg_22_0._requested_hero_spawn_data then
 		return
 	end
 
-	local reference_name = self:_reference_name()
-	local package_manager = Managers.package
-	local package_names = data.package_names
-	local all_packages_loaded = true
+	local var_22_1 = arg_22_0:_reference_name()
+	local var_22_2 = Managers.package
+	local var_22_3 = var_22_0.package_names
+	local var_22_4 = true
 
-	for i = 1, #package_names do
-		local package_name = package_names[i]
+	for iter_22_0 = 1, #var_22_3 do
+		local var_22_5 = var_22_3[iter_22_0]
 
-		if not package_manager:has_loaded(package_name, reference_name) then
-			all_packages_loaded = false
+		if not var_22_2:has_loaded(var_22_5, var_22_1) then
+			var_22_4 = false
 
 			break
 		end
 	end
 
-	if all_packages_loaded and self._activated then
-		local skin_data = data.skin_data
-		local optional_scale = data.optional_scale
-		local career_index = data.career_index
+	if var_22_4 and arg_22_0._activated then
+		local var_22_6 = var_22_0.skin_data
+		local var_22_7 = var_22_0.optional_scale
+		local var_22_8 = var_22_0.career_index
 
-		self:_spawn_hero_unit(skin_data, optional_scale, career_index)
+		arg_22_0:_spawn_hero_unit(var_22_6, var_22_7, var_22_8)
 
-		local callback = data.callback
+		local var_22_9 = var_22_0.callback
 
-		if callback then
-			callback()
+		if var_22_9 then
+			var_22_9()
 		end
 
-		data.loaded = true
+		var_22_0.loaded = true
 	end
 end
 
-HeroPreviewer._spawn_hero_unit = function (self, skin_data, optional_scale, career_index)
-	local world = self.world
-	local unit_name = skin_data.third_person
-	local mesh_unit_name = skin_data.third_person_attachment.unit
-	local mesh_node_linking = skin_data.third_person_attachment.attachment_node_linking
-	local character_unit = World.spawn_unit(world, unit_name, Vector3Aux.unbox(self.character_location), Quaternion.axis_angle(Vector3.up(), self.character_rotation))
-	local mesh_unit = World.spawn_unit(world, mesh_unit_name, Vector3Aux.unbox(self.character_location), Quaternion.axis_angle(Vector3.up(), self.character_rotation))
+function HeroPreviewer._spawn_hero_unit(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+	local var_23_0 = arg_23_0.world
+	local var_23_1 = arg_23_1.third_person
+	local var_23_2 = arg_23_1.third_person_attachment.unit
+	local var_23_3 = arg_23_1.third_person_attachment.attachment_node_linking
+	local var_23_4 = World.spawn_unit(var_23_0, var_23_1, Vector3Aux.unbox(arg_23_0.character_location), Quaternion.axis_angle(Vector3.up(), arg_23_0.character_rotation))
+	local var_23_5 = World.spawn_unit(var_23_0, var_23_2, Vector3Aux.unbox(arg_23_0.character_location), Quaternion.axis_angle(Vector3.up(), arg_23_0.character_rotation))
 
-	Unit.set_flow_variable(character_unit, "lua_third_person_mesh_unit", mesh_unit)
-	AttachmentUtils.link(world, character_unit, mesh_unit, mesh_node_linking)
+	Unit.set_flow_variable(var_23_4, "lua_third_person_mesh_unit", var_23_5)
+	AttachmentUtils.link(var_23_0, var_23_4, var_23_5, var_23_3)
 
-	local material_changes = skin_data.material_changes
+	local var_23_6 = arg_23_1.material_changes
 
-	if material_changes then
-		local third_person_changes = material_changes.third_person
+	if var_23_6 then
+		local var_23_7 = var_23_6.third_person
 
-		for slot_name, material_name in pairs(third_person_changes) do
-			Unit.set_material(mesh_unit, slot_name, material_name)
+		for iter_23_0, iter_23_1 in pairs(var_23_7) do
+			Unit.set_material(var_23_5, iter_23_0, iter_23_1)
 		end
 	end
 
-	local material_settings = skin_data.material_settings
+	local var_23_8 = arg_23_1.material_settings_name
 
-	if material_settings then
-		CosmeticUtils.apply_material_settings(mesh_unit, material_settings)
+	if var_23_8 then
+		CosmeticUtils.apply_material_settings(var_23_5, var_23_8)
 	end
 
-	local tint_data = skin_data.color_tint
+	local var_23_9 = arg_23_1.color_tint
 
-	if tint_data then
-		local gradient_variation = tint_data.gradient_variation
-		local gradient_value = tint_data.gradient_value
+	if var_23_9 then
+		local var_23_10 = var_23_9.gradient_variation
+		local var_23_11 = var_23_9.gradient_value
 
-		CosmeticUtils.color_tint_unit(mesh_unit, self._current_profile_name, gradient_variation, gradient_value)
+		CosmeticUtils.color_tint_unit(var_23_5, arg_23_0._current_profile_name, var_23_10, var_23_11)
 	end
 
-	Unit.set_unit_visibility(mesh_unit, false)
+	Unit.set_unit_visibility(var_23_5, false)
 
-	self.character_unit = character_unit
-	self.mesh_unit = mesh_unit
-	self.character_unit_hidden_after_spawn = true
-	self.character_unit_visible = false
-	self.character_unit_skin_data = skin_data
-	self._stored_character_animation = nil
+	arg_23_0.character_unit = var_23_4
+	arg_23_0.mesh_unit = var_23_5
+	arg_23_0.character_unit_hidden_after_spawn = true
+	arg_23_0.character_unit_visible = false
+	arg_23_0.character_unit_skin_data = arg_23_1
+	arg_23_0._stored_character_animation = nil
 
-	if Unit.has_lod_object(mesh_unit, "lod") then
-		local lod_object = Unit.lod_object(mesh_unit, "lod")
+	if Unit.has_lod_object(var_23_5, "lod") then
+		local var_23_12 = Unit.lod_object(var_23_5, "lod")
 
-		LODObject.set_static_height(lod_object, 1)
+		LODObject.set_static_height(var_23_12, 1)
 	end
 
-	local look_target = Vector3Aux.unbox(self.character_look_target)
-	local aim_constraint_anim_var = Unit.animation_find_constraint_target(character_unit, "aim_constraint_target")
+	local var_23_13 = Vector3Aux.unbox(arg_23_0.character_look_target)
+	local var_23_14 = Unit.animation_find_constraint_target(var_23_4, "aim_constraint_target")
 
-	Unit.animation_set_constraint_target(character_unit, aim_constraint_anim_var, look_target)
+	Unit.animation_set_constraint_target(var_23_4, var_23_14, var_23_13)
 
-	local _, box_dimension = Unit.box(character_unit)
+	local var_23_15, var_23_16 = Unit.box(var_23_4)
 
-	if box_dimension then
-		local default_unit_height_dimension = 1.7
-
-		self.unit_max_look_height = default_unit_height_dimension < box_dimension.z and 1.5 or 0.9
+	if var_23_16 then
+		arg_23_0.unit_max_look_height = 1.7 < var_23_16.z and 1.5 or 0.9
 	else
-		self.unit_max_look_height = 0.9
+		arg_23_0.unit_max_look_height = 0.9
 	end
 
-	if optional_scale then
-		local scale = Vector3(optional_scale, optional_scale, optional_scale)
+	if arg_23_2 then
+		local var_23_17 = Vector3(arg_23_2, arg_23_2, arg_23_2)
 
-		Unit.set_local_scale(character_unit, 0, scale)
+		Unit.set_local_scale(var_23_4, 0, var_23_17)
 	end
 
-	if Unit.animation_has_variable(character_unit, "career_index") then
-		local variable_index = Unit.animation_find_variable(character_unit, "career_index")
+	if Unit.animation_has_variable(var_23_4, "career_index") then
+		local var_23_18 = Unit.animation_find_variable(var_23_4, "career_index")
 
-		Unit.animation_set_variable(character_unit, variable_index, career_index)
-	end
-end
-
-HeroPreviewer.respawn_hero_unit = function (self, profile_name, career_index, callback)
-	self:request_spawn_hero_unit(profile_name, career_index, callback, nil, nil)
-end
-
-HeroPreviewer.get_equipped_item_info = function (self, slot)
-	local item_slot_type = slot.type
-	local item_info_by_slot = self._item_info_by_slot
-
-	return item_info_by_slot[item_slot_type]
-end
-
-HeroPreviewer.spawn_all_props = function (self, prop_spawn_settings_list)
-	for _, prop_spawn_settings in pairs(prop_spawn_settings_list) do
-		self:spawn_prop(prop_spawn_settings)
+		Unit.animation_set_variable(var_23_4, var_23_18, arg_23_3)
 	end
 end
 
-HeroPreviewer.spawn_prop = function (self, prop_spawn_settings)
-	self._props_data[#self._props_data + 1] = {
-		loaded = false,
+function HeroPreviewer.respawn_hero_unit(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+	arg_24_0:request_spawn_hero_unit(arg_24_1, arg_24_2, arg_24_3, nil, nil)
+end
+
+function HeroPreviewer.get_equipped_item_info(arg_25_0, arg_25_1)
+	local var_25_0 = arg_25_1.type
+
+	return arg_25_0._item_info_by_slot[var_25_0]
+end
+
+function HeroPreviewer.spawn_all_props(arg_26_0, arg_26_1)
+	for iter_26_0, iter_26_1 in pairs(arg_26_1) do
+		arg_26_0:spawn_prop(iter_26_1)
+	end
+end
+
+function HeroPreviewer.spawn_prop(arg_27_0, arg_27_1)
+	arg_27_0._props_data[#arg_27_0._props_data + 1] = {
 		visible = false,
-		settings = prop_spawn_settings,
+		loaded = false,
+		settings = arg_27_1
 	}
 
-	self:_load_packages(prop_spawn_settings.package_names)
+	arg_27_0:_load_packages(arg_27_1.package_names)
 end
 
-HeroPreviewer.equip_item = function (self, item_name, slot, backend_id, skin, skip_wield_anim)
-	local skin_data = self.character_unit_skin_data
+function HeroPreviewer.equip_item(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
+	local var_28_0 = arg_28_0.character_unit_skin_data
 
-	if skin_data and skin_data.always_hide_attachment_slots then
-		local hide_slot = false
+	if var_28_0 and var_28_0.always_hide_attachment_slots then
+		local var_28_1 = false
 
-		for _, slot_name in ipairs(skin_data.always_hide_attachment_slots) do
-			if slot.name == slot_name then
-				printf("[HeroPreviewer]:equip_item() - Skipping equipping of item(%s), because equipped skin(%s) wants to hide it", item_name, skin_data.name)
+		for iter_28_0, iter_28_1 in ipairs(var_28_0.always_hide_attachment_slots) do
+			if arg_28_2.name == iter_28_1 then
+				printf("[HeroPreviewer]:equip_item() - Skipping equipping of item(%s), because equipped skin(%s) wants to hide it", arg_28_1, var_28_0.name)
 
-				hide_slot = true
+				var_28_1 = true
 
 				break
 			end
 		end
 
-		if hide_slot then
+		if var_28_1 then
 			return
 		end
 	end
 
-	self._loading_done = false
+	arg_28_0._loading_done = false
 
-	local item_slot_type = slot.type
-	local slot_index = slot.slot_index
-	local item_data = ItemMasterList[item_name]
-	local item_units = BackendUtils.get_item_units(item_data, backend_id, skin, self._current_career_name)
-	local item_template = ItemHelper.get_template_by_item_name(item_name)
-	local spawn_data = {}
-	local package_names = {}
+	local var_28_2 = arg_28_2.type
+	local var_28_3 = arg_28_2.slot_index
+	local var_28_4 = ItemMasterList[arg_28_1]
+	local var_28_5 = BackendUtils.get_item_units(var_28_4, arg_28_3, arg_28_4, arg_28_0._current_career_name)
+	local var_28_6 = ItemHelper.get_template_by_item_name(arg_28_1)
+	local var_28_7 = {}
+	local var_28_8 = {}
 
-	if item_slot_type == "melee" or item_slot_type == "ranged" then
-		local left_hand_unit = item_units.left_hand_unit
-		local right_hand_unit = item_units.right_hand_unit
-		local material_settings = item_units.material_settings
-		local despawn_both_hands_units = right_hand_unit == nil or left_hand_unit == nil
+	if var_28_2 == "melee" or var_28_2 == "ranged" then
+		local var_28_9 = var_28_5.left_hand_unit
+		local var_28_10 = var_28_5.right_hand_unit
+		local var_28_11 = var_28_5.material_settings_name
+		local var_28_12 = var_28_10 == nil or var_28_9 == nil
 
-		if left_hand_unit then
-			local unit_attachment_node_linking = item_template.left_hand_attachment_node_linking.third_person
+		if var_28_9 then
+			local var_28_13 = var_28_6.left_hand_attachment_node_linking.third_person
 
-			if item_units.is_ammo_weapon then
-				left_hand_unit = item_units.ammo_unit
-
-				local ammo_data = item_template.ammo_data
-
-				unit_attachment_node_linking = ammo_data.ammo_unit_attachment_node_linking.third_person
+			if var_28_5.is_ammo_weapon then
+				var_28_9 = var_28_5.ammo_unit
+				var_28_13 = var_28_6.ammo_data.ammo_unit_attachment_node_linking.third_person
 			end
 
-			local left_unit = left_hand_unit .. "_3p"
+			local var_28_14 = var_28_9 .. "_3p"
 
-			spawn_data[#spawn_data + 1] = {
+			var_28_7[#var_28_7 + 1] = {
 				left_hand = true,
-				despawn_both_hands_units = despawn_both_hands_units,
-				unit_name = left_unit,
-				item_slot_type = item_slot_type,
-				slot_index = slot_index,
-				unit_attachment_node_linking = unit_attachment_node_linking,
-				material_settings = material_settings,
-				is_ammo_unit = item_units.ammo_unit ~= nil,
-				skip_wield_anim = skip_wield_anim,
+				despawn_both_hands_units = var_28_12,
+				unit_name = var_28_14,
+				item_slot_type = var_28_2,
+				slot_index = var_28_3,
+				unit_attachment_node_linking = var_28_13,
+				material_settings_name = var_28_11,
+				is_ammo_unit = var_28_5.ammo_unit ~= nil,
+				skip_wield_anim = arg_28_5
 			}
-			package_names[#package_names + 1] = left_unit
+			var_28_8[#var_28_8 + 1] = var_28_14
 		end
 
-		if right_hand_unit then
-			local unit_attachment_node_linking = item_template.right_hand_attachment_node_linking.third_person
+		if var_28_10 then
+			local var_28_15 = var_28_6.right_hand_attachment_node_linking.third_person
 
-			if item_units.is_ammo_weapon then
-				right_hand_unit = item_units.ammo_unit
-				unit_attachment_node_linking = item_template.right_hand_attachment_node_linking.third_person
+			if var_28_5.is_ammo_weapon then
+				var_28_10 = var_28_5.ammo_unit
+				var_28_15 = var_28_6.right_hand_attachment_node_linking.third_person
 			end
 
-			local right_unit = right_hand_unit .. "_3p"
+			local var_28_16 = var_28_10 .. "_3p"
 
-			spawn_data[#spawn_data + 1] = {
+			var_28_7[#var_28_7 + 1] = {
 				right_hand = true,
-				despawn_both_hands_units = despawn_both_hands_units,
-				unit_name = right_unit,
-				item_slot_type = item_slot_type,
-				slot_index = slot_index,
-				unit_attachment_node_linking = unit_attachment_node_linking,
-				material_settings = material_settings,
-				is_ammo_unit = item_units.ammo_unit ~= nil,
-				skip_wield_anim = skip_wield_anim,
+				despawn_both_hands_units = var_28_12,
+				unit_name = var_28_16,
+				item_slot_type = var_28_2,
+				slot_index = var_28_3,
+				unit_attachment_node_linking = var_28_15,
+				material_settings_name = var_28_11,
+				is_ammo_unit = var_28_5.ammo_unit ~= nil,
+				skip_wield_anim = arg_28_5
 			}
 
-			if right_hand_unit ~= left_hand_unit then
-				package_names[#package_names + 1] = right_unit
+			if var_28_10 ~= var_28_9 then
+				var_28_8[#var_28_8 + 1] = var_28_16
 			end
 		end
-	elseif item_slot_type == "hat" then
-		local unit = item_units.unit
+	elseif var_28_2 == "hat" then
+		local var_28_17 = var_28_5.unit
 
-		if unit then
-			local attachment_slot_lookup_index = 3
+		if var_28_17 then
+			local var_28_18 = 3
 
-			if item_slot_type == "hat" then
-				attachment_slot_lookup_index = 1
+			if var_28_2 == "hat" then
+				var_28_18 = 1
 			end
 
-			local attachment_slot_name = item_template.slots[attachment_slot_lookup_index]
-			local character_material_changes = item_template.character_material_changes
+			local var_28_19 = var_28_6.slots[var_28_18]
+			local var_28_20 = var_28_6.character_material_changes
 
-			spawn_data[#spawn_data + 1] = {
-				unit_name = unit,
-				item_slot_type = item_slot_type,
-				slot_index = slot_index,
-				unit_attachment_node_linking = item_template.attachment_node_linking[attachment_slot_name],
-				character_material_changes = character_material_changes,
+			var_28_7[#var_28_7 + 1] = {
+				unit_name = var_28_17,
+				item_slot_type = var_28_2,
+				slot_index = var_28_3,
+				unit_attachment_node_linking = var_28_6.attachment_node_linking[var_28_19],
+				character_material_changes = var_28_20
 			}
-			package_names[#package_names + 1] = unit
+			var_28_8[#var_28_8 + 1] = var_28_17
 
-			if character_material_changes then
-				package_names[#package_names + 1] = character_material_changes.package_name
+			if var_28_20 then
+				var_28_8[#var_28_8 + 1] = var_28_20.package_name
 			end
 		end
 	end
 
-	if #package_names > 0 then
-		local item_info_by_slot = self._item_info_by_slot
-		local previous_slot_data = item_info_by_slot[item_slot_type]
+	if #var_28_8 > 0 then
+		local var_28_21 = arg_28_0._item_info_by_slot
 
-		if previous_slot_data then
-			self:_destroy_item_units_by_slot(item_slot_type)
-			self:_unload_item_packages_by_slot(item_slot_type)
+		if var_28_21[var_28_2] then
+			arg_28_0:_destroy_item_units_by_slot(var_28_2)
+			arg_28_0:_unload_item_packages_by_slot(var_28_2)
 		end
 
-		item_info_by_slot[item_slot_type] = {
-			name = item_name,
-			backend_id = backend_id,
-			skin_name = skin,
-			package_names = package_names,
-			spawn_data = spawn_data,
+		var_28_21[var_28_2] = {
+			name = arg_28_1,
+			backend_id = arg_28_3,
+			skin_name = arg_28_4,
+			package_names = var_28_8,
+			spawn_data = var_28_7
 		}
 
-		self:_load_packages(package_names)
+		arg_28_0:_load_packages(var_28_8)
 	end
 end
 
-HeroPreviewer._poll_item_package_loading = function (self)
-	local character_unit = self.character_unit
+function HeroPreviewer._poll_item_package_loading(arg_29_0)
+	local var_29_0 = arg_29_0.character_unit
 
-	if not Unit.alive(character_unit) then
+	if not Unit.alive(var_29_0) then
 		return
 	end
 
-	local requested_hero_spawn_data = self._requested_hero_spawn_data
-
-	if requested_hero_spawn_data then
+	if arg_29_0._requested_hero_spawn_data then
 		return
 	end
 
-	local reference_name = self:_reference_name()
-	local package_manager = Managers.package
+	local var_29_1 = arg_29_0:_reference_name()
+	local var_29_2 = Managers.package
 
-	for _, data in pairs(self._props_data) do
-		if not data.loaded then
-			local package_names = data.settings.package_names
-			local all_packages_loaded = true
+	for iter_29_0, iter_29_1 in pairs(arg_29_0._props_data) do
+		if not iter_29_1.loaded then
+			local var_29_3 = iter_29_1.settings.package_names
+			local var_29_4 = true
 
-			for i = 1, #package_names do
-				if not package_manager:has_loaded(package_names[i], reference_name) then
-					all_packages_loaded = false
+			for iter_29_2 = 1, #var_29_3 do
+				if not var_29_2:has_loaded(var_29_3[iter_29_2], var_29_1) then
+					var_29_4 = false
 
 					break
 				end
 			end
 
-			if all_packages_loaded and self._activated then
-				data.loaded = true
+			if var_29_4 and arg_29_0._activated then
+				iter_29_1.loaded = true
 
-				self:_spawn_prop(data)
+				arg_29_0:_spawn_prop(iter_29_1)
 			end
 		end
 	end
 
-	local item_info_by_slot = self._item_info_by_slot
-	local all_items_loaded = true
+	local var_29_5 = arg_29_0._item_info_by_slot
+	local var_29_6 = true
 
-	for slot_name, data in pairs(item_info_by_slot) do
-		if not data.loaded then
-			local package_names = data.package_names
-			local all_packages_loaded = true
+	for iter_29_3, iter_29_4 in pairs(var_29_5) do
+		if not iter_29_4.loaded then
+			local var_29_7 = iter_29_4.package_names
+			local var_29_8 = true
 
-			for i = 1, #package_names do
-				local package_name = package_names[i]
+			for iter_29_5 = 1, #var_29_7 do
+				local var_29_9 = var_29_7[iter_29_5]
 
-				if not package_manager:has_loaded(package_name, reference_name) then
-					all_packages_loaded = false
+				if not var_29_2:has_loaded(var_29_9, var_29_1) then
+					var_29_8 = false
 
 					break
 				end
 			end
 
-			if all_packages_loaded and self._activated then
-				data.loaded = true
+			if var_29_8 and arg_29_0._activated then
+				iter_29_4.loaded = true
 
-				local item_name = data.name
-				local spawn_data = data.spawn_data
+				local var_29_10 = iter_29_4.name
+				local var_29_11 = iter_29_4.spawn_data
 
-				self:_spawn_item(item_name, spawn_data)
+				arg_29_0:_spawn_item(var_29_10, var_29_11)
 			else
-				all_items_loaded = false
+				var_29_6 = false
 			end
 		end
 	end
 
-	if all_items_loaded and self._delayed_pose_animation then
-		self:trigger_pose_animation()
+	if var_29_6 and arg_29_0._delayed_pose_animation then
+		arg_29_0:trigger_pose_animation()
 	end
 end
 
-HeroPreviewer._is_all_items_loaded = function (self)
-	local item_info_by_slot = self._item_info_by_slot
-	local all_loaded = true
+function HeroPreviewer._is_all_items_loaded(arg_30_0)
+	local var_30_0 = arg_30_0._item_info_by_slot
+	local var_30_1 = true
 
-	for slot_name, data in pairs(item_info_by_slot) do
-		if not data.loaded then
-			all_loaded = false
+	for iter_30_0, iter_30_1 in pairs(var_30_0) do
+		if not iter_30_1.loaded then
+			var_30_1 = false
 
 			break
 		end
 	end
 
-	return all_loaded
+	return var_30_1
 end
 
-HeroPreviewer._spawn_prop = function (self, data)
-	local settings = data.settings
-	local world = self.world
-	local unit = World.spawn_unit(world, settings.unit_name)
+function HeroPreviewer._spawn_prop(arg_31_0, arg_31_1)
+	local var_31_0 = arg_31_1.settings
+	local var_31_1 = arg_31_0.world
+	local var_31_2 = World.spawn_unit(var_31_1, var_31_0.unit_name)
 
-	if Unit.has_lod_object(unit, "lod") then
-		local lod_object = Unit.lod_object(unit, "lod")
+	if Unit.has_lod_object(var_31_2, "lod") then
+		local var_31_3 = Unit.lod_object(var_31_2, "lod")
 
-		LODObject.set_static_height(lod_object, 1)
+		LODObject.set_static_height(var_31_3, 1)
 	end
 
-	data.unit = unit
+	arg_31_1.unit = var_31_2
 
-	local offset = settings.offset
+	local var_31_4 = var_31_0.offset
 
-	Unit.set_local_position(unit, 0, Vector3(offset[1], offset[2], offset[3]))
-	Unit.set_unit_visibility(unit, false)
+	Unit.set_local_position(var_31_2, 0, Vector3(var_31_4[1], var_31_4[2], var_31_4[3]))
+	Unit.set_unit_visibility(var_31_2, false)
 end
 
-HeroPreviewer._spawn_item = function (self, item_name, spawn_data)
-	local world = self.world
-	local character_unit = self.character_unit
-	local mesh_unit = self.mesh_unit
-	local scene_graph_links = {}
-	local item_template = ItemHelper.get_template_by_item_name(item_name)
-	local hero_material_changed = false
-	local equipment_changed = false
-	local equipment = {}
+function HeroPreviewer._spawn_item(arg_32_0, arg_32_1, arg_32_2)
+	local var_32_0 = arg_32_0.world
+	local var_32_1 = arg_32_0.character_unit
+	local var_32_2 = arg_32_0.mesh_unit
+	local var_32_3 = {}
+	local var_32_4 = ItemHelper.get_template_by_item_name(arg_32_1)
+	local var_32_5 = false
+	local var_32_6 = false
+	local var_32_7 = {}
 
-	for _, unit_spawn_data in ipairs(spawn_data) do
-		local unit_name = unit_spawn_data.unit_name
-		local item_slot_type = unit_spawn_data.item_slot_type
-		local slot_index = unit_spawn_data.slot_index
-		local unit_attachment_node_linking = unit_spawn_data.unit_attachment_node_linking
-		local character_material_changes = unit_spawn_data.character_material_changes
-		local material_settings = unit_spawn_data.material_settings
-		local skip_wield_anim = unit_spawn_data.skip_wield_anim
+	for iter_32_0, iter_32_1 in ipairs(arg_32_2) do
+		local var_32_8 = iter_32_1.unit_name
+		local var_32_9 = iter_32_1.item_slot_type
+		local var_32_10 = iter_32_1.slot_index
+		local var_32_11 = iter_32_1.unit_attachment_node_linking
+		local var_32_12 = iter_32_1.character_material_changes
+		local var_32_13 = iter_32_1.material_settings_name
+		local var_32_14 = iter_32_1.skip_wield_anim
 
-		if item_slot_type == "melee" or item_slot_type == "ranged" then
-			local unit = World.spawn_unit(world, unit_name)
+		if var_32_9 == "melee" or var_32_9 == "ranged" then
+			local var_32_15 = World.spawn_unit(var_32_0, var_32_8)
 
-			self:_spawn_item_unit(unit, item_slot_type, item_template, unit_attachment_node_linking, scene_graph_links, material_settings, skip_wield_anim)
+			arg_32_0:_spawn_item_unit(var_32_15, var_32_9, var_32_4, var_32_11, var_32_3, var_32_13, var_32_14)
 
-			local should_wield = self._wielded_slot_type == item_slot_type
+			local var_32_16 = arg_32_0._wielded_slot_type == var_32_9
 
-			if unit_spawn_data.right_hand then
-				self._equipment_units[slot_index].right = unit
+			if iter_32_1.right_hand then
+				arg_32_0._equipment_units[var_32_10].right = var_32_15
 
-				if should_wield then
-					if unit_spawn_data.is_ammo_unit then
-						equipment.right_hand_ammo_unit_3p = unit
+				if var_32_16 then
+					if iter_32_1.is_ammo_unit then
+						var_32_7.right_hand_ammo_unit_3p = var_32_15
 					else
-						equipment.right_hand_wielded_unit_3p = unit
+						var_32_7.right_hand_wielded_unit_3p = var_32_15
 					end
 
-					equipment_changed = true
+					var_32_6 = true
 				end
-			elseif unit_spawn_data.left_hand then
-				self._equipment_units[slot_index].left = unit
+			elseif iter_32_1.left_hand then
+				arg_32_0._equipment_units[var_32_10].left = var_32_15
 
-				if should_wield then
-					if unit_spawn_data.is_ammo_unit then
-						equipment.left_hand_ammo_unit_3p = unit
+				if var_32_16 then
+					if iter_32_1.is_ammo_unit then
+						var_32_7.left_hand_ammo_unit_3p = var_32_15
 					else
-						equipment.left_hand_wielded_unit_3p = unit
+						var_32_7.left_hand_wielded_unit_3p = var_32_15
 					end
 
-					equipment_changed = true
+					var_32_6 = true
 				end
 			end
 		else
-			local unit = World.spawn_unit(world, unit_name)
+			local var_32_17 = World.spawn_unit(var_32_0, var_32_8)
 
-			self._equipment_units[slot_index] = unit
+			arg_32_0._equipment_units[var_32_10] = var_32_17
 
-			self:_spawn_item_unit(unit, item_slot_type, item_template, unit_attachment_node_linking, scene_graph_links, nil, skip_wield_anim)
+			arg_32_0:_spawn_item_unit(var_32_17, var_32_9, var_32_4, var_32_11, var_32_3, nil, var_32_14)
 		end
 
-		local show_attachments_event = item_template.show_attachments_event
+		local var_32_18 = var_32_4.show_attachments_event
 
-		if show_attachments_event and self.character_unit_visible then
-			Unit.flow_event(mesh_unit, show_attachments_event)
-			Unit.flow_event(character_unit, show_attachments_event)
+		if var_32_18 and arg_32_0.character_unit_visible then
+			Unit.flow_event(var_32_2, var_32_18)
+			Unit.flow_event(var_32_1, var_32_18)
 		end
 
-		if character_material_changes then
-			if self.character_unit_hidden_after_spawn then
-				self._delayed_material_changes[character_unit] = self._delayed_material_changes[character_unit] or {}
-				self._delayed_material_changes[character_unit][#self._delayed_material_changes[character_unit] + 1] = character_material_changes.third_person
+		if var_32_12 then
+			if arg_32_0.character_unit_hidden_after_spawn then
+				arg_32_0._delayed_material_changes[var_32_1] = arg_32_0._delayed_material_changes[var_32_1] or {}
+				arg_32_0._delayed_material_changes[var_32_1][#arg_32_0._delayed_material_changes[var_32_1] + 1] = var_32_12.third_person
 			else
-				local third_person_changes = character_material_changes.third_person
+				local var_32_19 = var_32_12.third_person
 
-				for slot_name, material_name in pairs(third_person_changes) do
-					Unit.set_material(mesh_unit, slot_name, material_name)
+				for iter_32_2, iter_32_3 in pairs(var_32_19) do
+					Unit.set_material(var_32_2, iter_32_2, iter_32_3)
 
-					hero_material_changed = true
+					var_32_5 = true
 				end
 			end
 		end
 	end
 
-	if equipment_changed then
-		Unit.set_data(character_unit, "equipment", equipment)
+	if var_32_6 then
+		Unit.set_data(var_32_1, "equipment", var_32_7)
 	end
 
-	return hero_material_changed
+	return var_32_5
 end
 
-local function get_wield_anim(default, optional_switch, career_name)
-	return optional_switch and optional_switch[career_name] or default
+local function var_0_1(arg_33_0, arg_33_1, arg_33_2)
+	return arg_33_1 and arg_33_1[arg_33_2] or arg_33_0
 end
 
-HeroPreviewer.reset_pose_animation = function (self)
-	if not self._pose_animation_event then
+function HeroPreviewer.reset_pose_animation(arg_34_0)
+	if not arg_34_0._pose_animation_event then
 		return
 	end
 
-	local wielded_slot_type = self._wielded_slot_type
-	local item_slot_info = self._item_info_by_slot[wielded_slot_type]
-	local item_name = item_slot_info.name
-	local item_template = ItemHelper.get_template_by_item_name(item_name)
-	local spawn_data = item_slot_info.spawn_data
-	local character_unit = self.character_unit
-	local character_visible = self:character_visible()
-	local wield_anim = item_template.wield_anim
+	local var_34_0 = arg_34_0._wielded_slot_type
+	local var_34_1 = arg_34_0._item_info_by_slot[var_34_0]
+	local var_34_2 = var_34_1.name
+	local var_34_3 = ItemHelper.get_template_by_item_name(var_34_2)
+	local var_34_4 = var_34_1.spawn_data
+	local var_34_5 = arg_34_0.character_unit
+	local var_34_6 = arg_34_0:character_visible()
+	local var_34_7 = var_34_3.wield_anim
 
-	if wield_anim then
-		local wield_anim = get_wield_anim(nil, item_template.wield_anim_career_3p, self._current_career_name) or get_wield_anim(wield_anim, item_template.wield_anim_career, self._current_career_name)
+	if var_34_7 then
+		local var_34_8 = var_0_1(nil, var_34_3.wield_anim_career_3p, arg_34_0._current_career_name) or var_0_1(var_34_7, var_34_3.wield_anim_career, arg_34_0._current_career_name)
 
-		Unit.animation_event(character_unit, wield_anim)
+		Unit.animation_event(var_34_5, var_34_8)
 	end
 
-	self._pose_animation_event = nil
+	arg_34_0._pose_animation_event = nil
 end
 
-HeroPreviewer.set_pose_animation = function (self, pose_animation_event, play_animation)
-	self._pose_animation_event = pose_animation_event
+function HeroPreviewer.set_pose_animation(arg_35_0, arg_35_1, arg_35_2)
+	arg_35_0._pose_animation_event = arg_35_1
 
-	if play_animation then
-		local character_unit = self.character_unit
+	if arg_35_2 then
+		local var_35_0 = arg_35_0.character_unit
 
-		if character_unit == nil then
+		if var_35_0 == nil then
 			return
 		end
 
-		local loading_done = self._loading_done
-
-		if not loading_done then
-			self._delayed_pose_animation = true
+		if not arg_35_0._loading_done then
+			arg_35_0._delayed_pose_animation = true
 
 			return
 		end
 
-		if pose_animation_event then
-			Unit.animation_event(character_unit, pose_animation_event)
+		if arg_35_1 then
+			Unit.animation_event(var_35_0, arg_35_1)
 		else
-			self:reset_animation()
+			arg_35_0:reset_animation()
 		end
 	end
 end
 
-HeroPreviewer.trigger_pose_animation = function (self)
-	local pose_animation_event = self._pose_animation_event
-	local character_unit = self.character_unit
+function HeroPreviewer.trigger_pose_animation(arg_36_0)
+	local var_36_0 = arg_36_0._pose_animation_event
+	local var_36_1 = arg_36_0.character_unit
 
-	if character_unit == nil or pose_animation_event == nil then
+	if var_36_1 == nil or var_36_0 == nil then
 		return
 	end
 
-	Unit.animation_event(character_unit, pose_animation_event)
+	Unit.animation_event(var_36_1, var_36_0)
 
-	self._delayed_pose_animation = false
+	arg_36_0._delayed_pose_animation = false
 end
 
-HeroPreviewer._spawn_item_unit = function (self, unit, item_slot_type, item_template, unit_attachment_node_linking, scene_graph_links, material_settings, skip_wield_anim)
-	local world = self.world
-	local character_unit = self.character_unit
-	local character_visible = self:character_visible()
+function HeroPreviewer._spawn_item_unit(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5, arg_37_6, arg_37_7)
+	local var_37_0 = arg_37_0.world
+	local var_37_1 = arg_37_0.character_unit
+	local var_37_2 = arg_37_0:character_visible()
 
-	if item_slot_type == "melee" or item_slot_type == "ranged" then
-		if self._wielded_slot_type == item_slot_type then
-			unit_attachment_node_linking = unit_attachment_node_linking.wielded
+	if arg_37_2 == "melee" or arg_37_2 == "ranged" then
+		if arg_37_0._wielded_slot_type == arg_37_2 then
+			arg_37_4 = arg_37_4.wielded
 
 			if not script_data.disable_third_person_weapon_animation_events then
-				local wield_anim = not skip_wield_anim and item_template.wield_anim
+				local var_37_3 = not arg_37_7 and arg_37_3.wield_anim
 
-				if wield_anim then
-					local wield_anim = get_wield_anim(nil, item_template.wield_anim_career_3p, self._current_career_name) or get_wield_anim(wield_anim, item_template.wield_anim_career, self._current_career_name)
+				if var_37_3 then
+					local var_37_4 = var_0_1(nil, arg_37_3.wield_anim_career_3p, arg_37_0._current_career_name) or var_0_1(var_37_3, arg_37_3.wield_anim_career, arg_37_0._current_career_name)
 
-					Unit.animation_event(character_unit, wield_anim)
+					Unit.animation_event(var_37_1, var_37_4)
 				end
 			end
 
-			self._hidden_units[unit] = true
+			arg_37_0._hidden_units[arg_37_1] = true
 
-			local flow_event = character_visible and "lua_wield" or "lua_unwield"
+			local var_37_5 = var_37_2 and "lua_wield" or "lua_unwield"
 
-			Unit.flow_event(unit, flow_event)
+			Unit.flow_event(arg_37_1, var_37_5)
 		else
-			unit_attachment_node_linking = unit_attachment_node_linking.unwielded
+			arg_37_4 = arg_37_4.unwielded
 
-			Unit.flow_event(unit, "lua_unwield")
+			Unit.flow_event(arg_37_1, "lua_unwield")
 		end
 	else
-		local attachment_lua_event = character_visible and "lua_attachment_unhidden" or "lua_attachment_hidden"
+		local var_37_6 = var_37_2 and "lua_attachment_unhidden" or "lua_attachment_hidden"
 
-		Unit.flow_event(unit, attachment_lua_event)
+		Unit.flow_event(arg_37_1, var_37_6)
 
-		self._hidden_units[unit] = true
+		arg_37_0._hidden_units[arg_37_1] = true
 	end
 
-	Unit.set_unit_visibility(unit, false)
+	Unit.set_unit_visibility(arg_37_1, false)
 
-	if Unit.has_lod_object(unit, "lod") then
-		local lod_object = Unit.lod_object(unit, "lod")
+	if Unit.has_lod_object(arg_37_1, "lod") then
+		local var_37_7 = Unit.lod_object(arg_37_1, "lod")
 
-		LODObject.set_static_height(lod_object, 1)
+		LODObject.set_static_height(var_37_7, 1)
 	end
 
-	local parent_unit = character_unit
+	local var_37_8 = var_37_1
 
-	if item_template.link_to_skin then
-		parent_unit = self.mesh_unit
+	if arg_37_3.link_to_skin then
+		var_37_8 = arg_37_0.mesh_unit
 	end
 
-	GearUtils.link(world, unit_attachment_node_linking, scene_graph_links, parent_unit, unit)
+	GearUtils.link(var_37_0, arg_37_4, arg_37_5, var_37_8, arg_37_1)
 
-	if material_settings then
-		GearUtils.apply_material_settings(unit, material_settings)
+	if arg_37_6 then
+		GearUtils.apply_material_settings(arg_37_1, arg_37_6)
 	end
 end
 
-HeroPreviewer._destroy_item_units_by_slot = function (self, slot_type)
-	local world = self.world
-	local hidden_units = self._hidden_units
-	local requested_mip_streaming_units = self._requested_mip_streaming_units
-	local item_info_by_slot = self._item_info_by_slot
-	local data = item_info_by_slot[slot_type]
-	local spawn_data = data.spawn_data
+function HeroPreviewer._destroy_item_units_by_slot(arg_38_0, arg_38_1)
+	local var_38_0 = arg_38_0.world
+	local var_38_1 = arg_38_0._hidden_units
+	local var_38_2 = arg_38_0._requested_mip_streaming_units
+	local var_38_3 = arg_38_0._item_info_by_slot[arg_38_1].spawn_data
 
-	if spawn_data then
-		for _, unit_spawn_data in ipairs(spawn_data) do
-			local item_slot_type = unit_spawn_data.item_slot_type
-			local slot_index = unit_spawn_data.slot_index
+	if var_38_3 then
+		for iter_38_0, iter_38_1 in ipairs(var_38_3) do
+			local var_38_4 = iter_38_1.item_slot_type
+			local var_38_5 = iter_38_1.slot_index
 
-			if item_slot_type == "melee" or item_slot_type == "ranged" then
-				if unit_spawn_data.right_hand or unit_spawn_data.despawn_both_hands_units then
-					local old_unit_right = self._equipment_units[slot_index].right
+			if var_38_4 == "melee" or var_38_4 == "ranged" then
+				if iter_38_1.right_hand or iter_38_1.despawn_both_hands_units then
+					local var_38_6 = arg_38_0._equipment_units[var_38_5].right
 
-					if old_unit_right ~= nil then
-						hidden_units[old_unit_right] = nil
-						requested_mip_streaming_units[old_unit_right] = nil
+					if var_38_6 ~= nil then
+						var_38_1[var_38_6] = nil
+						var_38_2[var_38_6] = nil
 
-						World.destroy_unit(world, old_unit_right)
+						World.destroy_unit(var_38_0, var_38_6)
 
-						self._equipment_units[slot_index].right = nil
+						arg_38_0._equipment_units[var_38_5].right = nil
 					end
 				end
 
-				if unit_spawn_data.left_hand or unit_spawn_data.despawn_both_hands_units then
-					local old_unit_left = self._equipment_units[slot_index].left
+				if iter_38_1.left_hand or iter_38_1.despawn_both_hands_units then
+					local var_38_7 = arg_38_0._equipment_units[var_38_5].left
 
-					if old_unit_left ~= nil then
-						hidden_units[old_unit_left] = nil
-						requested_mip_streaming_units[old_unit_left] = nil
+					if var_38_7 ~= nil then
+						var_38_1[var_38_7] = nil
+						var_38_2[var_38_7] = nil
 
-						World.destroy_unit(world, old_unit_left)
+						World.destroy_unit(var_38_0, var_38_7)
 
-						self._equipment_units[slot_index].left = nil
+						arg_38_0._equipment_units[var_38_5].left = nil
 					end
 				end
 			else
-				local old_unit = self._equipment_units[slot_index]
+				local var_38_8 = arg_38_0._equipment_units[var_38_5]
 
-				if old_unit ~= nil then
-					hidden_units[old_unit] = nil
-					requested_mip_streaming_units[old_unit] = nil
+				if var_38_8 ~= nil then
+					var_38_1[var_38_8] = nil
+					var_38_2[var_38_8] = nil
 
-					World.destroy_unit(world, old_unit)
+					World.destroy_unit(var_38_0, var_38_8)
 
-					self._equipment_units[slot_index] = nil
+					arg_38_0._equipment_units[var_38_5] = nil
 				end
 			end
 		end
 	end
 end
 
-HeroPreviewer.wield_weapon_slot = function (self, slot_type)
-	self._wielded_slot_type = slot_type
+function HeroPreviewer.wield_weapon_slot(arg_39_0, arg_39_1)
+	arg_39_0._wielded_slot_type = arg_39_1
 
-	local melee_slot_info = self._item_info_by_slot.melee
+	local var_39_0 = arg_39_0._item_info_by_slot.melee
 
-	if melee_slot_info then
-		local item_name = melee_slot_info.name
-		local backend_id = melee_slot_info.backend_id
-		local skin_name = melee_slot_info.skin_name
+	if var_39_0 then
+		local var_39_1 = var_39_0.name
+		local var_39_2 = var_39_0.backend_id
+		local var_39_3 = var_39_0.skin_name
 
-		self:equip_item(item_name, InventorySettings.slots_by_name.slot_melee, backend_id, skin_name)
+		arg_39_0:equip_item(var_39_1, InventorySettings.slots_by_name.slot_melee, var_39_2, var_39_3)
 	end
 
-	local ranged_slot_info = self._item_info_by_slot.ranged
+	local var_39_4 = arg_39_0._item_info_by_slot.ranged
 
-	if ranged_slot_info then
-		local item_name = ranged_slot_info.name
-		local backend_id = ranged_slot_info.backend_id
-		local skin_name = ranged_slot_info.skin_name
+	if var_39_4 then
+		local var_39_5 = var_39_4.name
+		local var_39_6 = var_39_4.backend_id
+		local var_39_7 = var_39_4.skin_name
 
-		self:equip_item(item_name, InventorySettings.slots_by_name.slot_ranged, backend_id, skin_name)
+		arg_39_0:equip_item(var_39_5, InventorySettings.slots_by_name.slot_ranged, var_39_6, var_39_7)
 	end
 end
 
-HeroPreviewer.set_wielded_weapon_slot = function (self, slot_type)
-	self._wielded_slot_type = slot_type
+function HeroPreviewer.set_wielded_weapon_slot(arg_40_0, arg_40_1)
+	arg_40_0._wielded_slot_type = arg_40_1
 end
 
-HeroPreviewer.item_name_by_slot_type = function (self, item_slot_type)
-	local item_info = self._item_info_by_slot[item_slot_type]
+function HeroPreviewer.item_name_by_slot_type(arg_41_0, arg_41_1)
+	local var_41_0 = arg_41_0._item_info_by_slot[arg_41_1]
 
-	return item_info and item_info.name
+	return var_41_0 and var_41_0.name
 end
 
-HeroPreviewer.wielded_slot_type = function (self)
-	return self._wielded_slot_type
+function HeroPreviewer.wielded_slot_type(arg_42_0)
+	return arg_42_0._wielded_slot_type
 end
 
-HeroPreviewer._reference_name = function (self)
-	local reference_name = "HeroPreviewer"
+function HeroPreviewer._reference_name(arg_43_0)
+	local var_43_0 = "HeroPreviewer"
 
-	if self.unique_id then
-		reference_name = reference_name .. tostring(self.unique_id)
+	if arg_43_0.unique_id then
+		var_43_0 = var_43_0 .. tostring(arg_43_0.unique_id)
 	end
 
-	return reference_name
+	return var_43_0
 end
 
-HeroPreviewer._trigger_equip_events = function (self)
-	if not Unit.alive(self.mesh_unit) then
+function HeroPreviewer._trigger_equip_events(arg_44_0)
+	if not Unit.alive(arg_44_0.mesh_unit) then
 		return
 	end
 
-	local equipment_units = self._equipment_units
-	local character_unit_skin_data = self.character_unit_skin_data
+	local var_44_0 = arg_44_0._equipment_units
 
-	if character_unit_skin_data then
-		local hat_index = InventorySettings.slots_by_name.slot_hat.slot_index
-		local hat_data = equipment_units[hat_index]
-		local equip_hat_event = self.character_unit_skin_data.equip_hat_event or "using_skin_default"
+	if arg_44_0.character_unit_skin_data then
+		local var_44_1 = var_44_0[InventorySettings.slots_by_name.slot_hat.slot_index]
+		local var_44_2 = arg_44_0.character_unit_skin_data.equip_hat_event or "using_skin_default"
 
-		if hat_data and equip_hat_event then
-			Unit.flow_event(hat_data, equip_hat_event)
+		if var_44_1 and var_44_2 then
+			Unit.flow_event(var_44_1, var_44_2)
 		end
 	end
 end
 
-HeroPreviewer._load_packages = function (self, package_names)
-	local reference_name = self:_reference_name()
-	local package_manager = Managers.package
+function HeroPreviewer._load_packages(arg_45_0, arg_45_1)
+	local var_45_0 = arg_45_0:_reference_name()
+	local var_45_1 = Managers.package
 
-	for index, package_name in ipairs(package_names) do
-		package_manager:load(package_name, reference_name, nil, true, true)
+	for iter_45_0, iter_45_1 in ipairs(arg_45_1) do
+		var_45_1:load(iter_45_1, var_45_0, nil, true, true)
 	end
 end
 
-HeroPreviewer._unload_all_packages = function (self)
-	self:_unload_hero_packages()
-	self:_unload_all_items()
-	self:_unload_all_prop_packages()
+function HeroPreviewer._unload_all_packages(arg_46_0)
+	arg_46_0:_unload_hero_packages()
+	arg_46_0:_unload_all_items()
+	arg_46_0:_unload_all_prop_packages()
 end
 
-HeroPreviewer._unload_all_prop_packages = function (self)
-	local props_data = self._props_data
+function HeroPreviewer._unload_all_prop_packages(arg_47_0)
+	local var_47_0 = arg_47_0._props_data
 
-	for i, data in pairs(props_data) do
-		self:_unload_prop_packages(data)
+	for iter_47_0, iter_47_1 in pairs(var_47_0) do
+		arg_47_0:_unload_prop_packages(iter_47_1)
 
-		props_data[i] = nil
+		var_47_0[iter_47_0] = nil
 	end
 end
 
-HeroPreviewer._unload_hero_packages = function (self)
-	local data = self._hero_loading_package_data
+function HeroPreviewer._unload_hero_packages(arg_48_0)
+	local var_48_0 = arg_48_0._hero_loading_package_data
 
-	if not data then
+	if not var_48_0 then
 		return
 	end
 
-	local package_names = data.package_names
-	local package_manager = Managers.package
-	local reference_name = self:_reference_name()
+	local var_48_1 = var_48_0.package_names
+	local var_48_2 = Managers.package
+	local var_48_3 = arg_48_0:_reference_name()
 
-	for _, package_name in pairs(package_names) do
-		if package_manager:has_loaded(package_name, reference_name) or package_manager:is_loading(package_name, reference_name) then
-			package_manager:unload(package_name, reference_name)
+	for iter_48_0, iter_48_1 in pairs(var_48_1) do
+		if var_48_2:has_loaded(iter_48_1, var_48_3) or var_48_2:is_loading(iter_48_1, var_48_3) then
+			var_48_2:unload(iter_48_1, var_48_3)
 		end
 	end
 
-	self._hero_loading_package_data = nil
+	arg_48_0._hero_loading_package_data = nil
 end
 
-HeroPreviewer._unload_all_items = function (self)
-	local item_info_by_slot = self._item_info_by_slot
+function HeroPreviewer._unload_all_items(arg_49_0)
+	local var_49_0 = arg_49_0._item_info_by_slot
 
-	for slot_type, data in pairs(item_info_by_slot) do
-		self:_unload_item_packages_by_slot(slot_type)
+	for iter_49_0, iter_49_1 in pairs(var_49_0) do
+		arg_49_0:_unload_item_packages_by_slot(iter_49_0)
 	end
 end
 
-HeroPreviewer._unload_prop_packages = function (self, data)
-	local package_manager = Managers.package
-	local reference_name = self:_reference_name()
+function HeroPreviewer._unload_prop_packages(arg_50_0, arg_50_1)
+	local var_50_0 = Managers.package
+	local var_50_1 = arg_50_0:_reference_name()
 
-	for _, package_name in ipairs(data.settings.package_names) do
-		if package_manager:has_loaded(package_name, reference_name) or package_manager:is_loading(package_name, reference_name) then
-			package_manager:unload(package_name, reference_name)
+	for iter_50_0, iter_50_1 in ipairs(arg_50_1.settings.package_names) do
+		if var_50_0:has_loaded(iter_50_1, var_50_1) or var_50_0:is_loading(iter_50_1, var_50_1) then
+			var_50_0:unload(iter_50_1, var_50_1)
 		end
 	end
 end
 
-HeroPreviewer._unload_item_packages_by_slot = function (self, slot_type)
-	local item_info_by_slot = self._item_info_by_slot
+function HeroPreviewer._unload_item_packages_by_slot(arg_51_0, arg_51_1)
+	local var_51_0 = arg_51_0._item_info_by_slot
 
-	if item_info_by_slot[slot_type] then
-		local slot_type_data = item_info_by_slot[slot_type]
-		local package_names = slot_type_data.package_names
-		local package_manager = Managers.package
-		local reference_name = self:_reference_name()
+	if var_51_0[arg_51_1] then
+		local var_51_1 = var_51_0[arg_51_1].package_names
+		local var_51_2 = Managers.package
+		local var_51_3 = arg_51_0:_reference_name()
 
-		for _, package_name in ipairs(package_names) do
-			if package_manager:has_loaded(package_name, reference_name) or package_manager:is_loading(package_name, reference_name) then
-				package_manager:unload(package_name, reference_name)
+		for iter_51_0, iter_51_1 in ipairs(var_51_1) do
+			if var_51_2:has_loaded(iter_51_1, var_51_3) or var_51_2:is_loading(iter_51_1, var_51_3) then
+				var_51_2:unload(iter_51_1, var_51_3)
 			end
 		end
 
-		item_info_by_slot[slot_type] = nil
+		var_51_0[arg_51_1] = nil
 	end
 end
 
-HeroPreviewer.clear_units = function (self)
-	table.clear(self._requested_mip_streaming_units)
+function HeroPreviewer.clear_units(arg_52_0)
+	table.clear(arg_52_0._requested_mip_streaming_units)
 
-	local world = self.world
+	local var_52_0 = arg_52_0.world
 
-	for i = 1, 6 do
-		if type(self._equipment_units[i]) == "table" then
-			if self._equipment_units[i].left then
-				World.destroy_unit(world, self._equipment_units[i].left)
+	for iter_52_0 = 1, 6 do
+		if type(arg_52_0._equipment_units[iter_52_0]) == "table" then
+			if arg_52_0._equipment_units[iter_52_0].left then
+				World.destroy_unit(var_52_0, arg_52_0._equipment_units[iter_52_0].left)
 
-				self._equipment_units[i].left = nil
+				arg_52_0._equipment_units[iter_52_0].left = nil
 			end
 
-			if self._equipment_units[i].right then
-				World.destroy_unit(world, self._equipment_units[i].right)
+			if arg_52_0._equipment_units[iter_52_0].right then
+				World.destroy_unit(var_52_0, arg_52_0._equipment_units[iter_52_0].right)
 
-				self._equipment_units[i].right = nil
+				arg_52_0._equipment_units[iter_52_0].right = nil
 			end
-		elseif self._equipment_units[i] then
-			World.destroy_unit(world, self._equipment_units[i])
+		elseif arg_52_0._equipment_units[iter_52_0] then
+			World.destroy_unit(var_52_0, arg_52_0._equipment_units[iter_52_0])
 
-			self._equipment_units[i] = nil
+			arg_52_0._equipment_units[iter_52_0] = nil
 		end
 	end
 
-	if self.mesh_unit then
-		World.destroy_unit(world, self.mesh_unit)
+	if arg_52_0.mesh_unit then
+		World.destroy_unit(var_52_0, arg_52_0.mesh_unit)
 
-		self.mesh_unit = nil
+		arg_52_0.mesh_unit = nil
 	end
 
-	if self.character_unit then
-		World.destroy_unit(world, self.character_unit)
+	if arg_52_0.character_unit then
+		World.destroy_unit(var_52_0, arg_52_0.character_unit)
 
-		self.character_unit = nil
+		arg_52_0.character_unit = nil
 	end
 
-	for _, data in pairs(self._props_data) do
-		if data.unit then
-			World.destroy_unit(world, data.unit)
+	for iter_52_1, iter_52_2 in pairs(arg_52_0._props_data) do
+		if iter_52_2.unit then
+			World.destroy_unit(var_52_0, iter_52_2.unit)
 
-			data.unit = nil
-		end
-	end
-end
-
-HeroPreviewer.set_hero_location = function (self, location)
-	if location then
-		self.character_location = location
-
-		local character_unit = self.character_unit
-
-		if character_unit and Unit.alive(character_unit) then
-			Unit.set_local_position(character_unit, 0, Vector3Aux.unbox(location))
+			iter_52_2.unit = nil
 		end
 	end
 end
 
-HeroPreviewer.set_hero_location_lerped = function (self, location, lerp_time)
-	self._character_destination_location = location
-	self._lerp_time = lerp_time
-	self._lerp_end_time = Managers.time:time("game") + lerp_time
-end
+function HeroPreviewer.set_hero_location(arg_53_0, arg_53_1)
+	if arg_53_1 then
+		arg_53_0.character_location = arg_53_1
 
-HeroPreviewer.set_hero_rotation = function (self, angle)
-	if angle then
-		self.character_rotation = angle
+		local var_53_0 = arg_53_0.character_unit
 
-		local character_unit = self.character_unit
-
-		if character_unit and Unit.alive(character_unit) then
-			local rotation_quat = Quaternion.axis_angle(Vector3.up(), angle)
-
-			Unit.set_local_rotation(character_unit, 0, rotation_quat)
+		if var_53_0 and Unit.alive(var_53_0) then
+			Unit.set_local_position(var_53_0, 0, Vector3Aux.unbox(arg_53_1))
 		end
 	end
 end
 
-HeroPreviewer.set_hero_look_target = function (self, look_target)
-	if look_target then
-		self.character_look_target = look_target
+function HeroPreviewer.set_hero_location_lerped(arg_54_0, arg_54_1, arg_54_2)
+	arg_54_0._character_destination_location = arg_54_1
+	arg_54_0._lerp_time = arg_54_2
+	arg_54_0._lerp_end_time = Managers.time:time("game") + arg_54_2
+end
+
+function HeroPreviewer.set_hero_rotation(arg_55_0, arg_55_1)
+	if arg_55_1 then
+		arg_55_0.character_rotation = arg_55_1
+
+		local var_55_0 = arg_55_0.character_unit
+
+		if var_55_0 and Unit.alive(var_55_0) then
+			local var_55_1 = Quaternion.axis_angle(Vector3.up(), arg_55_1)
+
+			Unit.set_local_rotation(var_55_0, 0, var_55_1)
+		end
 	end
 end
 
-HeroPreviewer.get_character_unit = function (self)
-	return Unit.alive(self.character_unit) and self.character_unit or nil
+function HeroPreviewer.set_hero_look_target(arg_56_0, arg_56_1)
+	if arg_56_1 then
+		arg_56_0.character_look_target = arg_56_1
+	end
 end
 
-HeroPreviewer.current_profile_name = function (self)
-	return self._current_profile_name
+function HeroPreviewer.get_character_unit(arg_57_0)
+	return Unit.alive(arg_57_0.character_unit) and arg_57_0.character_unit or nil
+end
+
+function HeroPreviewer.current_profile_name(arg_58_0)
+	return arg_58_0._current_profile_name
 end

@@ -1,183 +1,175 @@
-﻿-- chunkname: @scripts/unit_extensions/camera/states/camera_state_helper.lua
+-- chunkname: @scripts/unit_extensions/camera/states/camera_state_helper.lua
 
 CameraStateHelper = CameraStateHelper or {}
 
-CameraStateHelper.set_local_pose = function (camera_unit, unit, node)
-	local pose = Unit.local_pose(unit, node)
-	local current_node = node
+function CameraStateHelper.set_local_pose(arg_1_0, arg_1_1, arg_1_2)
+	local var_1_0 = Unit.local_pose(arg_1_1, arg_1_2)
+	local var_1_1 = arg_1_2
 
-	assert(Matrix4x4.is_valid(pose), "Camera unit pose invalid.")
+	assert(Matrix4x4.is_valid(var_1_0), "Camera unit pose invalid.")
 
-	while current_node ~= 0 do
-		local parent_node = Unit.scene_graph_parent(unit, current_node)
-		local parent_pose = Unit.local_pose(unit, parent_node)
+	while var_1_1 ~= 0 do
+		local var_1_2 = Unit.scene_graph_parent(arg_1_1, var_1_1)
+		local var_1_3 = Unit.local_pose(arg_1_1, var_1_2)
 
-		assert(Matrix4x4.is_valid(parent_pose), "Camera unit parent pose invalid.")
+		assert(Matrix4x4.is_valid(var_1_3), "Camera unit parent pose invalid.")
 
-		pose = Matrix4x4.multiply(pose, parent_pose)
-		current_node = parent_node
+		var_1_0 = Matrix4x4.multiply(var_1_0, var_1_3)
+		var_1_1 = var_1_2
 	end
 
-	Unit.set_local_pose(camera_unit, 0, pose)
+	Unit.set_local_pose(arg_1_0, 0, var_1_0)
 end
 
-local MAX_MIN_PITCH = math.pi / 2 - math.pi / 15
+local var_0_0 = math.pi / 2 - math.pi / 15
 
-CameraStateHelper.set_camera_rotation = function (camera_unit, camera_extension)
-	local input_manager = Managers.input
-	local camera_manager = Managers.state.camera
-	local input_source = input_manager:get_service("Player")
-	local gamepad_active = input_manager:is_device_active("gamepad")
-	local look_input = gamepad_active and input_source:get("look_controller_3p") or input_source:get("look")
-	local look_delta = Vector3.zero()
+function CameraStateHelper.set_camera_rotation(arg_2_0, arg_2_1)
+	local var_2_0 = Managers.input
+	local var_2_1 = Managers.state.camera
+	local var_2_2 = var_2_0:get_service("Player")
+	local var_2_3 = var_2_0:is_device_active("gamepad") and var_2_2:get("look_controller_3p") or var_2_2:get("look")
+	local var_2_4 = Vector3.zero()
 
-	if look_input then
-		local viewport_name = camera_extension.viewport_name
-		local look_sensitivity = camera_manager:has_viewport(viewport_name) and camera_manager:fov(viewport_name) / 0.785 or 1
+	if var_2_3 then
+		local var_2_5 = arg_2_1.viewport_name
 
-		look_delta = look_delta + look_input * look_sensitivity
+		var_2_4 = var_2_4 + var_2_3 * (var_2_1:has_viewport(var_2_5) and var_2_1:fov(var_2_5) / 0.785 or 1)
 	end
 
-	local rotation = Unit.local_rotation(camera_unit, 0)
-	local yaw = Quaternion.yaw(rotation) - look_delta.x
-	local pitch = math.clamp(Quaternion.pitch(rotation) + look_delta.y, -MAX_MIN_PITCH, MAX_MIN_PITCH)
-	local yaw_rotation = Quaternion(Vector3.up(), yaw)
-	local pitch_rotation = Quaternion(Vector3.right(), pitch)
-	local look_rotation = Quaternion.multiply(yaw_rotation, pitch_rotation)
+	local var_2_6 = Unit.local_rotation(arg_2_0, 0)
+	local var_2_7 = Quaternion.yaw(var_2_6) - var_2_4.x
+	local var_2_8 = math.clamp(Quaternion.pitch(var_2_6) + var_2_4.y, -var_0_0, var_0_0)
+	local var_2_9 = Quaternion(Vector3.up(), var_2_7)
+	local var_2_10 = Quaternion(Vector3.right(), var_2_8)
+	local var_2_11 = Quaternion.multiply(var_2_9, var_2_10)
 
-	Unit.set_local_rotation(camera_unit, 0, look_rotation)
+	Unit.set_local_rotation(arg_2_0, 0, var_2_11)
 
-	return Vector3.length_squared(look_delta) > 0
+	return Vector3.length_squared(var_2_4) > 0
 end
 
-CameraStateHelper.set_follow_camera_position = function (camera_unit, position, position_offset, snap_camera, dt)
-	if position_offset then
-		position = position + position_offset
+function CameraStateHelper.set_follow_camera_position(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	if arg_3_2 then
+		arg_3_1 = arg_3_1 + arg_3_2
 	end
 
-	local new_position
+	local var_3_0
 
-	if snap_camera then
-		new_position = position
+	if arg_3_3 then
+		var_3_0 = arg_3_1
 
 		Managers.state.event:trigger("camera_teleported")
 	else
-		local previous_position = Unit.world_position(camera_unit, 0)
-		local lerp_t = math.min(dt * 10, 1)
+		local var_3_1 = Unit.world_position(arg_3_0, 0)
+		local var_3_2 = math.min(arg_3_4 * 10, 1)
 
-		new_position = Vector3.lerp(previous_position, position, lerp_t)
+		var_3_0 = Vector3.lerp(var_3_1, arg_3_1, var_3_2)
 	end
 
-	fassert(Vector3.is_valid(new_position), "Camera position invalid.")
-	Unit.set_local_position(camera_unit, 0, new_position)
+	fassert(Vector3.is_valid(var_3_0), "Camera position invalid.")
+	Unit.set_local_position(arg_3_0, 0, var_3_0)
 end
 
-CameraStateHelper.set_camera_rotation_observe_static = function (camera_unit, target_unit)
-	local target_rotation = Unit.local_rotation(target_unit, 0)
+function CameraStateHelper.set_camera_rotation_observe_static(arg_4_0, arg_4_1)
+	local var_4_0 = Unit.local_rotation(arg_4_1, 0)
+	local var_4_1 = Quaternion.look(Quaternion.forward(var_4_0), Vector3.up())
+	local var_4_2 = Quaternion.right(var_4_1)
+	local var_4_3 = Quaternion.axis_angle(var_4_2, -math.pi * 0.07)
+	local var_4_4 = Quaternion.multiply(var_4_3, var_4_1)
 
-	target_rotation = Quaternion.look(Quaternion.forward(target_rotation), Vector3.up())
-
-	local right = Quaternion.right(target_rotation)
-	local offset = Quaternion.axis_angle(right, -math.pi * 0.07)
-	local new_rotation = Quaternion.multiply(offset, target_rotation)
-
-	Unit.set_local_rotation(camera_unit, 0, new_rotation)
+	Unit.set_local_rotation(arg_4_0, 0, var_4_4)
 end
 
-CameraStateHelper.get_valid_unit_to_observe = function (reverse, optional_side, optional_current_unit, optional_observer_player)
-	local units_to_spectate = FrameTable.alloc_table()
-	local players = table.values(Managers.player:human_and_bot_players())
+function CameraStateHelper.get_valid_unit_to_observe(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	local var_5_0 = FrameTable.alloc_table()
+	local var_5_1 = table.values(Managers.player:human_and_bot_players())
 
-	table.sort(players, function (a, b)
-		local a_id = a:network_id()
-		local b_id = b:network_id()
+	table.sort(var_5_1, function(arg_6_0, arg_6_1)
+		local var_6_0 = arg_6_0:network_id()
+		local var_6_1 = arg_6_1:network_id()
 
-		if a_id == b_id then
-			return a:local_player_id() < b:local_player_id()
+		if var_6_0 == var_6_1 then
+			return arg_6_0:local_player_id() < arg_6_1:local_player_id()
 		end
 
-		return PlayerUtils.peer_id_compare(a_id, b_id)
+		return PlayerUtils.peer_id_compare(var_6_0, var_6_1)
 	end)
 
-	for i = 1, #players do
-		units_to_spectate[#units_to_spectate + 1] = players[i].player_unit
+	for iter_5_0 = 1, #var_5_1 do
+		var_5_0[#var_5_0 + 1] = var_5_1[iter_5_0].player_unit
 	end
 
-	local game_mode = Managers.state.game_mode:game_mode()
+	local var_5_2 = Managers.state.game_mode:game_mode()
 
-	if game_mode.get_extra_observer_units then
-		local optional_slot_id
+	if var_5_2.get_extra_observer_units then
+		local var_5_3
 
-		if optional_observer_player then
-			local player_status = Managers.party:get_status_from_unique_id(optional_observer_player:unique_id())
-
-			optional_slot_id = player_status.slot_id
+		if arg_5_3 then
+			var_5_3 = Managers.party:get_status_from_unique_id(arg_5_3:unique_id()).slot_id
 		end
 
-		local game_mode_units = game_mode:get_extra_observer_units(optional_slot_id)
+		local var_5_4 = var_5_2:get_extra_observer_units(var_5_3)
 
-		if game_mode_units then
-			table.append(units_to_spectate, game_mode_units)
+		if var_5_4 then
+			table.append(var_5_0, var_5_4)
 		end
 	end
 
-	local side_manager = Managers.state.side
-	local side_name = optional_side and optional_side:name()
-	local observe_sides
+	local var_5_5 = Managers.state.side
+	local var_5_6 = arg_5_1 and arg_5_1:name()
+	local var_5_7
 
-	if side_name then
-		local game_settings = Managers.state.game_mode:settings()
-		local side_settings = game_settings.side_settings and game_settings.side_settings[side_name]
+	if var_5_6 then
+		local var_5_8 = Managers.state.game_mode:settings()
+		local var_5_9 = var_5_8.side_settings and var_5_8.side_settings[var_5_6]
 
-		observe_sides = side_settings and side_settings.observe_sides
+		var_5_7 = var_5_9 and var_5_9.observe_sides
 	end
 
-	local num_units = #units_to_spectate
+	local var_5_10 = #var_5_0
 
-	if num_units <= 0 then
+	if var_5_10 <= 0 then
 		return
 	end
 
-	local index = optional_current_unit and table.index_of(units_to_spectate, optional_current_unit)
+	local var_5_11 = arg_5_2 and table.index_of(var_5_0, arg_5_2)
 
-	if not index or index < 1 then
-		index = 1
+	if not var_5_11 or var_5_11 < 1 then
+		var_5_11 = 1
 	end
 
-	index = math.index_wrapper(index, num_units)
-
-	local first_index = index
-	local last_valid_unit = units_to_spectate[index]
-	local diff = reverse and -1 or 1
+	local var_5_12 = math.index_wrapper(var_5_11, var_5_10)
+	local var_5_13 = var_5_12
+	local var_5_14 = var_5_0[var_5_12]
+	local var_5_15 = arg_5_0 and -1 or 1
 
 	repeat
-		index = math.index_wrapper(index + diff, num_units)
+		var_5_12 = math.index_wrapper(var_5_12 + var_5_15, var_5_10)
 
-		local next_unit = units_to_spectate[index]
-		local valid_unit = Unit.alive(next_unit)
+		local var_5_16 = var_5_0[var_5_12]
+		local var_5_17 = Unit.alive(var_5_16)
 
-		if observe_sides then
-			local as_player = Managers.player:owner(next_unit)
-			local valid_player = as_player and as_player.player_unit
+		if var_5_7 then
+			local var_5_18 = Managers.player:owner(var_5_16)
 
-			if valid_player then
-				local player_side = as_player and side_manager:get_side_from_player_unique_id(as_player:unique_id())
-				local valid_func = player_side and observe_sides[player_side:name()]
+			if var_5_18 and var_5_18.player_unit then
+				local var_5_19 = var_5_18 and var_5_5:get_side_from_player_unique_id(var_5_18:unique_id())
+				local var_5_20 = var_5_19 and var_5_7[var_5_19:name()]
 
-				valid_unit = not valid_func or valid_func()
+				var_5_17 = not var_5_20 or var_5_20()
 			end
 		end
 
-		if valid_unit then
-			last_valid_unit = next_unit
+		if var_5_17 then
+			var_5_14 = var_5_16
 
 			break
 		end
 
-		if index == first_index then
+		if var_5_12 == var_5_13 then
 			break
 		end
 	until false
 
-	return last_valid_unit
+	return var_5_14
 end

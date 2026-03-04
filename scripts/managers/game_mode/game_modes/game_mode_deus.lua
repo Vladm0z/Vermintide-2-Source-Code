@@ -1,377 +1,361 @@
-﻿-- chunkname: @scripts/managers/game_mode/game_modes/game_mode_deus.lua
+-- chunkname: @scripts/managers/game_mode/game_modes/game_mode_deus.lua
 
 require("scripts/managers/game_mode/game_modes/game_mode_base")
 require("scripts/managers/game_mode/spawning_components/deus_spawning")
 require("scripts/settings/dlcs/morris/deus_soft_currency_settings")
 require("scripts/utils/hash_utils")
 
-local REAL_PLAYER_LOCAL_ID = 1
-local INTRO_VO_DIALOGUE_PROFILE = "ferry_lady"
-local INTRO_VO_VOLUME_ID = "volume_intro_vo"
+local var_0_0 = 1
+local var_0_1 = "ferry_lady"
+local var_0_2 = "volume_intro_vo"
 
-local function play_curse_intro_vo(vo_unit, curse)
-	local dialogue_input = ScriptUnit.extension_input(vo_unit, "dialogue_system")
-	local event_data = FrameTable.alloc_table()
+local function var_0_3(arg_1_0, arg_1_1)
+	local var_1_0 = ScriptUnit.extension_input(arg_1_0, "dialogue_system")
+	local var_1_1 = FrameTable.alloc_table()
 
-	if curse then
-		dialogue_input:trigger_dialogue_event("curse_intro", event_data)
+	if arg_1_1 then
+		var_1_0:trigger_dialogue_event("curse_intro", var_1_1)
 	else
-		dialogue_input:trigger_dialogue_event("no_curse_intro", event_data)
+		var_1_0:trigger_dialogue_event("no_curse_intro", var_1_1)
 	end
 end
 
 GameModeDeus = class(GameModeDeus, GameModeBase)
 
-GameModeDeus.init = function (self, settings, world, network_handler, is_server, profile_synchronizer, level_key, statistics_db, game_mode_settings)
-	GameModeDeus.super.init(self, settings, world, network_handler, is_server, profile_synchronizer, level_key, statistics_db)
-	fassert(game_mode_settings, "game mode settings can not be nil")
-	fassert(game_mode_settings.deus_run_controller, "game mode settings must provide a deus run controller")
+function GameModeDeus.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
+	GameModeDeus.super.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	fassert(arg_2_8, "game mode settings can not be nil")
+	fassert(arg_2_8.deus_run_controller, "game mode settings must provide a deus run controller")
 
-	self._lost_condition_timer = nil
-	self._adventure_profile_rules = AdventureProfileRules:new(self._profile_synchronizer, self._network_server)
+	arg_2_0._lost_condition_timer = nil
+	arg_2_0._adventure_profile_rules = AdventureProfileRules:new(arg_2_0._profile_synchronizer, arg_2_0._network_server)
 
-	local hero_side = Managers.state.side:get_side_from_name("heroes")
+	local var_2_0 = Managers.state.side:get_side_from_name("heroes")
 
-	self._mutators = game_mode_settings.mutators
-	self._deus_run_controller = game_mode_settings.deus_run_controller
-	self._deus_spawning = DeusSpawning:new(self._profile_synchronizer, hero_side, self._is_server, self._network_server, self._deus_run_controller)
+	arg_2_0._mutators = arg_2_8.mutators
+	arg_2_0._deus_run_controller = arg_2_8.deus_run_controller
+	arg_2_0._deus_spawning = DeusSpawning:new(arg_2_0._profile_synchronizer, var_2_0, arg_2_0._is_server, arg_2_0._network_server, arg_2_0._deus_run_controller)
 
-	self:_register_player_spawner(self._deus_spawning)
+	arg_2_0:_register_player_spawner(arg_2_0._deus_spawning)
 
-	self._bot_players = {}
+	arg_2_0._bot_players = {}
 
-	self:_setup_bot_spawn_priority_lookup()
+	arg_2_0:_setup_bot_spawn_priority_lookup()
 
-	self._available_profiles = table.clone(PROFILES_BY_AFFILIATION.heroes)
+	arg_2_0._available_profiles = table.clone(PROFILES_BY_AFFILIATION.heroes)
 
-	local event_manager = Managers.state.event
+	local var_2_1 = Managers.state.event
 
-	event_manager:register(self, "level_start_local_player_spawned", "event_local_player_spawned")
-	event_manager:register(self, "statistics_database_unregister_player", "event_statistics_database_unregister_player")
+	var_2_1:register(arg_2_0, "level_start_local_player_spawned", "event_local_player_spawned")
+	var_2_1:register(arg_2_0, "statistics_database_unregister_player", "event_statistics_database_unregister_player")
 
-	self._local_player_spawned = false
+	arg_2_0._local_player_spawned = false
 end
 
-GameModeDeus.on_round_end = function (self)
-	local volume_system = Managers.state.entity:system("volume_system")
-	local level = LevelHelper:current_level(self._world)
-	local has_volume = Level.has_volume(level, INTRO_VO_VOLUME_ID)
+function GameModeDeus.on_round_end(arg_3_0)
+	local var_3_0 = Managers.state.entity:system("volume_system")
+	local var_3_1 = LevelHelper:current_level(arg_3_0._world)
+	local var_3_2 = Level.has_volume(var_3_1, var_0_2)
 
-	if volume_system and has_volume then
-		volume_system:unregister_volume(INTRO_VO_VOLUME_ID)
+	if var_3_0 and var_3_2 then
+		var_3_0:unregister_volume(var_0_2)
 	end
 end
 
-GameModeDeus.destroy = function (self)
-	local event_manager = Managers.state.event
+function GameModeDeus.destroy(arg_4_0)
+	local var_4_0 = Managers.state.event
 
-	if event_manager then
-		event_manager:unregister("level_start_local_player_spawned", self)
-		event_manager:unregister("statistics_database_unregister_player", self)
+	if var_4_0 then
+		var_4_0:unregister("level_start_local_player_spawned", arg_4_0)
+		var_4_0:unregister("statistics_database_unregister_player", arg_4_0)
 	end
 end
 
-GameModeDeus.cleanup_game_mode_units = function (self)
-	local update_safe = false
+function GameModeDeus.cleanup_game_mode_units(arg_5_0)
+	local var_5_0 = false
 
-	self:_clear_bots(update_safe)
+	arg_5_0:_clear_bots(var_5_0)
 end
 
-GameModeDeus.register_rpcs = function (self, network_event_delegate, network_transmit)
-	GameModeDeus.super.register_rpcs(self, network_event_delegate, network_transmit)
-	self._deus_spawning:register_rpcs(network_event_delegate, network_transmit)
+function GameModeDeus.register_rpcs(arg_6_0, arg_6_1, arg_6_2)
+	GameModeDeus.super.register_rpcs(arg_6_0, arg_6_1, arg_6_2)
+	arg_6_0._deus_spawning:register_rpcs(arg_6_1, arg_6_2)
 end
 
-GameModeDeus.unregister_rpcs = function (self)
-	self._deus_spawning:unregister_rpcs()
-	GameModeDeus.super.unregister_rpcs(self)
+function GameModeDeus.unregister_rpcs(arg_7_0)
+	arg_7_0._deus_spawning:unregister_rpcs()
+	GameModeDeus.super.unregister_rpcs(arg_7_0)
 end
 
-GameModeDeus.event_local_player_spawned = function (self, is_initial_spawn)
-	self._local_player_spawned = true
-	self._is_initial_spawn = is_initial_spawn
+function GameModeDeus.event_local_player_spawned(arg_8_0, arg_8_1)
+	arg_8_0._local_player_spawned = true
+	arg_8_0._is_initial_spawn = arg_8_1
 end
 
-GameModeDeus.update = function (self, t, dt)
-	self._deus_spawning:update(t, dt)
+function GameModeDeus.update(arg_9_0, arg_9_1, arg_9_2)
+	arg_9_0._deus_spawning:update(arg_9_1, arg_9_2)
 end
 
-GameModeDeus.server_update = function (self, t, dt)
-	GameModeDeus.super.server_update(self, t, dt)
-	self:_handle_bots(t, dt)
-	self._deus_spawning:server_update(t, dt)
-	self:_update_morris_music_intensity()
+function GameModeDeus.server_update(arg_10_0, arg_10_1, arg_10_2)
+	GameModeDeus.super.server_update(arg_10_0, arg_10_1, arg_10_2)
+	arg_10_0:_handle_bots(arg_10_1, arg_10_2)
+	arg_10_0._deus_spawning:server_update(arg_10_1, arg_10_2)
+	arg_10_0:_update_morris_music_intensity()
 end
 
-GameModeDeus.evaluate_end_conditions = function (self, round_started, dt, t, mutator_handler)
+function GameModeDeus.evaluate_end_conditions(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	if script_data.disable_gamemode_end then
 		return false
 	end
 
-	if self._won then
+	if arg_11_0._won then
 		return true, "won"
 	end
 
-	local party = Managers.state.side:get_party_from_side_name("heroes")
-	local human_players_present = false
-	local occupied_slots = party.occupied_slots
+	local var_11_0 = Managers.state.side:get_party_from_side_name("heroes")
+	local var_11_1 = false
+	local var_11_2 = var_11_0.occupied_slots
 
-	for i = 1, #occupied_slots do
-		human_players_present = human_players_present or not occupied_slots[i].is_bot
+	for iter_11_0 = 1, #var_11_2 do
+		var_11_1 = var_11_1 or not var_11_2[iter_11_0].is_bot
 	end
 
-	if not human_players_present then
+	if not var_11_1 then
 		return false
 	end
 
-	local ignore_bots = true
-	local humans_dead = GameModeHelper.side_is_dead("heroes", ignore_bots)
-	local players_disabled = GameModeHelper.side_is_disabled("heroes") and not GameModeHelper.side_delaying_loss("heroes")
-	local mutator_lost, mutator_lost_delay = mutator_handler:evaluate_lose_conditions()
-	local lost = not self._lose_condition_disabled and (mutator_lost or humans_dead or players_disabled or self._level_failed or self:_is_time_up())
+	local var_11_3 = true
+	local var_11_4 = GameModeHelper.side_is_dead("heroes", var_11_3)
+	local var_11_5 = GameModeHelper.side_is_disabled("heroes") and not GameModeHelper.side_delaying_loss("heroes")
+	local var_11_6, var_11_7 = arg_11_4:evaluate_lose_conditions()
+	local var_11_8 = not arg_11_0._lose_condition_disabled and (var_11_6 or var_11_4 or var_11_5 or arg_11_0._level_failed or arg_11_0:_is_time_up())
 
-	if self:is_about_to_end_game_early() then
-		if lost then
-			if t > self._lost_condition_timer then
+	if arg_11_0:is_about_to_end_game_early() then
+		if var_11_8 then
+			if arg_11_3 > arg_11_0._lost_condition_timer then
 				return true, "lost"
 			else
 				return false
 			end
 		else
-			self:set_about_to_end_game_early(false)
+			arg_11_0:set_about_to_end_game_early(false)
 
-			self._lost_condition_timer = nil
+			arg_11_0._lost_condition_timer = nil
 		end
 	end
 
-	local won = false
+	local var_11_9 = false
 
-	if lost then
-		self:set_about_to_end_game_early(true)
+	if var_11_8 then
+		arg_11_0:set_about_to_end_game_early(true)
 
-		if mutator_lost and mutator_lost_delay then
-			self._lost_condition_timer = t + mutator_lost_delay
-		elseif humans_dead then
-			self._lost_condition_timer = t + GameModeSettings.adventure.lose_condition_time_dead
+		if var_11_6 and var_11_7 then
+			arg_11_0._lost_condition_timer = arg_11_3 + var_11_7
+		elseif var_11_4 then
+			arg_11_0._lost_condition_timer = arg_11_3 + GameModeSettings.adventure.lose_condition_time_dead
 		else
-			self._lost_condition_timer = t + GameModeSettings.adventure.lose_condition_time
+			arg_11_0._lost_condition_timer = arg_11_3 + GameModeSettings.adventure.lose_condition_time
 		end
 
 		return false
-	elseif self:update_end_level_areas() then
-		won = true
-	elseif self._level_completed then
+	elseif arg_11_0:update_end_level_areas() then
+		var_11_9 = true
+	elseif arg_11_0._level_completed then
 		if Managers.deed:has_deed() and Managers.deed:is_session_faulty() then
 			return true, "lost"
 		else
-			won = true
+			var_11_9 = true
 		end
 	end
 
-	if won then
+	if var_11_9 then
 		return true, "won"
 	end
 
 	return false
 end
 
-GameModeDeus.gm_event_end_conditions_met = function (self, reason, checkpoint_available, percentages_completed)
-	local deus_run_controller = self._deus_run_controller
-	local player_manager = Managers.player
+function GameModeDeus.gm_event_end_conditions_met(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	local var_12_0 = arg_12_0._deus_run_controller
+	local var_12_1 = Managers.player
 
-	for _, player in pairs(player_manager:players()) do
-		local statistics_db = self._statistics_db
-		local peer_id = player:network_id()
-		local local_player_id = player:local_player_id()
+	for iter_12_0, iter_12_1 in pairs(var_12_1:players()) do
+		local var_12_2 = arg_12_0._statistics_db
+		local var_12_3 = iter_12_1:network_id()
+		local var_12_4 = iter_12_1:local_player_id()
 
-		deus_run_controller:save_persisted_score(statistics_db, PlayerUtils.unique_player_id(peer_id, local_player_id))
+		var_12_0:save_persisted_score(var_12_2, PlayerUtils.unique_player_id(var_12_3, var_12_4))
 	end
 
-	local scoreboard = ScoreboardHelper.get_grouped_topic_statistics(self._statistics_db, self._profile_synchronizer, {})
+	local var_12_5 = ScoreboardHelper.get_grouped_topic_statistics(arg_12_0._statistics_db, arg_12_0._profile_synchronizer, {})
 
-	deus_run_controller:save_scoreboard(scoreboard)
+	var_12_0:save_scoreboard(var_12_5)
 
-	local current_node = deus_run_controller:get_current_node()
-	local level_type = current_node.level_type
+	if var_12_0:get_current_node().level_type ~= "ARENA" then
+		local var_12_6 = Managers.world:wwise_world(arg_12_0._world)
 
-	if level_type ~= "ARENA" then
-		local wwise_world = Managers.world:wwise_world(self._world)
-
-		WwiseWorld.trigger_event(wwise_world, "Play_morris_run_level_complete")
+		WwiseWorld.trigger_event(var_12_6, "Play_morris_run_level_complete")
 	end
 end
 
-GameModeDeus.player_entered_game_session = function (self, peer_id, local_player_id, requested_party_index)
-	GameModeDeus.super.player_entered_game_session(self, peer_id, local_player_id, requested_party_index)
-	self._adventure_profile_rules:handle_profile_delegation_for_joining_player(peer_id, local_player_id)
-	self._deus_spawning:add_delayed_client(peer_id, local_player_id)
-	self._deus_run_controller:restore_persisted_score(self._statistics_db, peer_id, local_player_id)
+function GameModeDeus.player_entered_game_session(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	GameModeDeus.super.player_entered_game_session(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	arg_13_0._adventure_profile_rules:handle_profile_delegation_for_joining_player(arg_13_1, arg_13_2)
+	arg_13_0._deus_spawning:add_delayed_client(arg_13_1, arg_13_2)
+	arg_13_0._deus_run_controller:restore_persisted_score(arg_13_0._statistics_db, arg_13_1, arg_13_2)
 end
 
-GameModeDeus.player_left_game_session = function (self, peer_id, local_player_id)
-	GameModeDeus.super.player_left_game_session(self, peer_id, local_player_id)
-	self._deus_spawning:remove_delayed_client(peer_id, local_player_id)
+function GameModeDeus.player_left_game_session(arg_14_0, arg_14_1, arg_14_2)
+	GameModeDeus.super.player_left_game_session(arg_14_0, arg_14_1, arg_14_2)
+	arg_14_0._deus_spawning:remove_delayed_client(arg_14_1, arg_14_2)
 end
 
-GameModeDeus.event_statistics_database_unregister_player = function (self, stat_id)
-	if self._is_server then
-		self._deus_run_controller:save_persisted_score(self._statistics_db, stat_id)
+function GameModeDeus.event_statistics_database_unregister_player(arg_15_0, arg_15_1)
+	if arg_15_0._is_server then
+		arg_15_0._deus_run_controller:save_persisted_score(arg_15_0._statistics_db, arg_15_1)
 	end
 end
 
-GameModeDeus.remove_bot = function (self, party_id, peer_id, local_player_id, update_safe)
-	update_safe = update_safe or false
+function GameModeDeus.remove_bot(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+	arg_16_4 = arg_16_4 or false
 
-	if #self._bot_players > 0 then
-		local profile_index = self._profile_synchronizer:profile_by_peer(peer_id, local_player_id)
-		local removed, bot_player = self:_remove_bot_by_profile(profile_index, update_safe)
+	if #arg_16_0._bot_players > 0 then
+		local var_16_0 = arg_16_0._profile_synchronizer:profile_by_peer(arg_16_2, arg_16_3)
+		local var_16_1, var_16_2 = arg_16_0:_remove_bot_by_profile(var_16_0, arg_16_4)
 
-		if not removed then
-			bot_player = self._bot_players[#self._bot_players]
+		if not var_16_1 then
+			var_16_2 = arg_16_0._bot_players[#arg_16_0._bot_players]
 
-			self:_remove_bot(bot_player, update_safe)
+			arg_16_0:_remove_bot(var_16_2, arg_16_4)
 		end
 
-		return bot_player
+		return var_16_2
 	end
 end
 
-GameModeDeus.get_end_screen_config = function (self, game_won, game_lost, player)
-	if Managers.mechanism:is_final_round() or game_lost then
-		local statistics_db = self._statistics_db
-		local journey_name = self._deus_run_controller:get_journey_name()
-		local own_peer_id = self._deus_run_controller:get_own_peer_id()
-		local profile_index, _ = self._deus_run_controller:get_player_profile(own_peer_id, REAL_PLAYER_LOCAL_ID)
-		local local_player = Managers.player:local_player()
-		local stats_id = local_player:stats_id()
-		local previous_completed_difficulty_index = LevelUnlockUtils.completed_journey_difficulty_index(statistics_db, stats_id, journey_name)
+function GameModeDeus.get_end_screen_config(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+	if Managers.mechanism:is_final_round() or arg_17_2 then
+		local var_17_0 = arg_17_0._statistics_db
+		local var_17_1 = arg_17_0._deus_run_controller:get_journey_name()
+		local var_17_2 = arg_17_0._deus_run_controller:get_own_peer_id()
+		local var_17_3, var_17_4 = arg_17_0._deus_run_controller:get_player_profile(var_17_2, var_0_0)
+		local var_17_5 = Managers.player:local_player():stats_id()
+		local var_17_6 = LevelUnlockUtils.completed_journey_difficulty_index(var_17_0, var_17_5, var_17_1)
 
-		return game_won and "deus_victory" or "defeat", {
-			journey_name = journey_name,
-			profile_index = profile_index,
-			previous_completed_difficulty_index = previous_completed_difficulty_index,
+		return arg_17_1 and "deus_victory" or "defeat", {
+			journey_name = var_17_1,
+			profile_index = var_17_3,
+			previous_completed_difficulty_index = var_17_6
 		}
 	else
-		local rewards = {}
-		local granted_power_ups = self._deus_run_controller:try_grant_end_of_level_deus_power_ups()
+		local var_17_7 = {}
+		local var_17_8 = arg_17_0._deus_run_controller:try_grant_end_of_level_deus_power_ups()
 
-		if granted_power_ups then
-			for i = 1, #granted_power_ups do
-				local granted_power_up = granted_power_ups[i]
-				local reward = {
+		if var_17_8 then
+			for iter_17_0 = 1, #var_17_8 do
+				local var_17_9 = var_17_8[iter_17_0]
+				local var_17_10 = {
 					type = "deus_power_up_end_of_level",
 					sounds = {
 						"hud_morris_weapon_chest_unlock",
-						"morris_reliquarys_get_boon",
+						"morris_reliquarys_get_boon"
 					},
-					power_up = granted_power_up,
+					power_up = var_17_9
 				}
 
-				rewards[#rewards + 1] = reward
+				var_17_7[#var_17_7 + 1] = var_17_10
 			end
 		end
 
 		return "none", {}, {
-			rewards = rewards,
+			rewards = var_17_7
 		}
 	end
 end
 
-GameModeDeus.ended = function (self, reason)
-	local all_peers_ingame = self._network_server:are_all_peers_ingame()
-
-	if not all_peers_ingame then
-		self._network_server:disconnect_joining_peers()
+function GameModeDeus.ended(arg_18_0, arg_18_1)
+	if not arg_18_0._network_server:are_all_peers_ingame() then
+		arg_18_0._network_server:disconnect_joining_peers()
 	end
 end
 
-GameModeDeus.local_player_ready_to_start = function (self, player)
-	local peer_id = player.peer_id
-	local local_player_id = player:local_player_id()
-	local profile_index, career_index = self._deus_run_controller:get_player_profile(peer_id, REAL_PLAYER_LOCAL_ID)
+function GameModeDeus.local_player_ready_to_start(arg_19_0, arg_19_1)
+	local var_19_0 = arg_19_1.peer_id
+	local var_19_1 = arg_19_1:local_player_id()
+	local var_19_2, var_19_3 = arg_19_0._deus_run_controller:get_player_profile(var_19_0, var_0_0)
 
-	if profile_index == 0 or career_index == 0 then
+	if var_19_2 == 0 or var_19_3 == 0 then
 		return false
 	end
 
-	local health_state = self._deus_run_controller:get_player_health_state(peer_id, local_player_id)
+	local var_19_4 = arg_19_0._deus_run_controller:get_player_health_state(var_19_0, var_19_1)
 
-	if self._local_player_spawned or health_state == "dead" or health_state == "respawn" then
+	if arg_19_0._local_player_spawned or var_19_4 == "dead" or var_19_4 == "respawn" then
 		return true
 	end
 
 	return false
 end
 
-GameModeDeus.local_player_game_starts = function (self, player, loading_context)
-	local deus_run_controller = self._deus_run_controller
-	local world = self._world
-	local current_level = LevelHelper:current_level(world)
-	local current_node = deus_run_controller:get_current_node()
-	local theme = current_node.theme
+function GameModeDeus.local_player_game_starts(arg_20_0, arg_20_1, arg_20_2)
+	local var_20_0 = arg_20_0._deus_run_controller
+	local var_20_1 = arg_20_0._world
+	local var_20_2 = LevelHelper:current_level(var_20_1)
+	local var_20_3 = var_20_0:get_current_node()
+	local var_20_4 = var_20_3.theme
 
-	if self._is_initial_spawn then
-		LevelHelper:flow_event(world, "local_player_spawned")
-		LevelHelper:flow_event(world, "level_start_local_player_spawned")
+	if arg_20_0._is_initial_spawn then
+		LevelHelper:flow_event(var_20_1, "local_player_spawned")
+		LevelHelper:flow_event(var_20_1, "level_start_local_player_spawned")
 	end
 
-	local has_volume = Level.has_volume(current_level, INTRO_VO_VOLUME_ID)
+	local var_20_5 = Level.has_volume(var_20_2, var_0_2)
 
-	if self._is_server and has_volume and theme == DEUS_THEME_TYPES.BELAKOR then
-		local volume_system = Managers.state.entity:system("volume_system")
-
-		volume_system:register_volume(INTRO_VO_VOLUME_ID, "trigger_volume", {
+	if arg_20_0._is_server and var_20_5 and var_20_4 == DEUS_THEME_TYPES.BELAKOR then
+		Managers.state.entity:system("volume_system"):register_volume(var_0_2, "trigger_volume", {
 			sub_type = "players_inside",
-			on_triggered = function ()
-				if self._enter_vo_has_triggered then
+			on_triggered = function()
+				if arg_20_0._enter_vo_has_triggered then
 					return
 				end
 
-				local intro_vo_unit = LevelHelper:find_dialogue_unit(self._world, INTRO_VO_DIALOGUE_PROFILE)
-				local dialogue_extension = intro_vo_unit and ScriptUnit.has_extension(intro_vo_unit, "dialogue_system")
+				local var_21_0 = LevelHelper:find_dialogue_unit(arg_20_0._world, var_0_1)
 
-				if dialogue_extension then
-					self._enter_vo_has_triggered = true
+				if var_21_0 and ScriptUnit.has_extension(var_21_0, "dialogue_system") then
+					arg_20_0._enter_vo_has_triggered = true
 
-					play_curse_intro_vo(intro_vo_unit, current_node.curse)
+					var_0_3(var_21_0, var_20_3.curse)
 				else
 					print("GameModeDeus:local_player_game_starts - No unit for curse intro vo")
 				end
-			end,
+			end
 		})
 	end
 
-	if not player.player_unit then
-		local camera_system = Managers.state.entity:system("camera_system")
-
-		camera_system:external_state_change(player, "observer", {})
+	if not arg_20_1.player_unit then
+		Managers.state.entity:system("camera_system"):external_state_change(arg_20_1, "observer", {})
 	end
 
-	local level_type = current_node.level_type
-
-	if level_type == "ARENA" then
-		local dialogue_system = Managers.state.entity:system("dialogue_system")
-
-		dialogue_system:freeze_story_trigger()
+	if var_20_3.level_type == "ARENA" then
+		Managers.state.entity:system("dialogue_system"):freeze_story_trigger()
 	end
 
-	local probe_tint = DeusThemeSettings[theme].light_probe_tint
-	local color = Vector3(probe_tint[1], probe_tint[2], probe_tint[3])
-	local units = Level.units(current_level)
-	local num_units = #units
+	local var_20_6 = DeusThemeSettings[var_20_4].light_probe_tint
+	local var_20_7 = Vector3(var_20_6[1], var_20_6[2], var_20_6[3])
+	local var_20_8 = Level.units(var_20_2)
+	local var_20_9 = #var_20_8
 
-	for j = 1, num_units do
-		local level_unit = units[j]
-		local is_reflection_probe = Unit.is_a(level_unit, "core/stingray_renderer/helper_units/reflection_probe/reflection_probe")
+	for iter_20_0 = 1, var_20_9 do
+		local var_20_10 = var_20_8[iter_20_0]
 
-		if is_reflection_probe then
-			local num_lights = Unit.num_lights(level_unit)
+		if Unit.is_a(var_20_10, "core/stingray_renderer/helper_units/reflection_probe/reflection_probe") then
+			local var_20_11 = Unit.num_lights(var_20_10)
 
-			if num_lights then
-				for i = 1, num_lights do
-					local light = Unit.light(level_unit, i - 1)
+			if var_20_11 then
+				for iter_20_1 = 1, var_20_11 do
+					local var_20_12 = Unit.light(var_20_10, iter_20_1 - 1)
 
-					Light.set_color(light, color)
+					Light.set_color(var_20_12, var_20_7)
 				end
 			end
 		end
@@ -380,440 +364,420 @@ GameModeDeus.local_player_game_starts = function (self, player, loading_context)
 	Managers.state.event:trigger("local_player_game_starts")
 end
 
-GameModeDeus.disable_player_spawning = function (self)
-	self._deus_spawning:set_spawning_disabled(true)
+function GameModeDeus.disable_player_spawning(arg_22_0)
+	arg_22_0._deus_spawning:set_spawning_disabled(true)
 end
 
-GameModeDeus.enable_player_spawning = function (self, safe_position, safe_rotation)
-	self._deus_spawning:set_spawning_disabled(false)
-	self._deus_spawning:force_update_spawn_positions(safe_position, safe_rotation)
+function GameModeDeus.enable_player_spawning(arg_23_0, arg_23_1, arg_23_2)
+	arg_23_0._deus_spawning:set_spawning_disabled(false)
+	arg_23_0._deus_spawning:force_update_spawn_positions(arg_23_1, arg_23_2)
 end
 
-GameModeDeus.teleport_despawned_players = function (self, position)
-	self._deus_spawning:teleport_despawned_players(position)
+function GameModeDeus.teleport_despawned_players(arg_24_0, arg_24_1)
+	arg_24_0._deus_spawning:teleport_despawned_players(arg_24_1)
 end
 
-GameModeDeus.flow_callback_add_spawn_point = function (self, unit)
-	self._deus_spawning:add_spawn_point(unit)
+function GameModeDeus.flow_callback_add_spawn_point(arg_25_0, arg_25_1)
+	arg_25_0._deus_spawning:add_spawn_point(arg_25_1)
 end
 
-GameModeDeus.set_override_respawn_group = function (self, respawn_group_name, active)
-	self._deus_spawning:set_override_respawn_group(respawn_group_name, active)
+function GameModeDeus.set_override_respawn_group(arg_26_0, arg_26_1, arg_26_2)
+	arg_26_0._deus_spawning:set_override_respawn_group(arg_26_1, arg_26_2)
 end
 
-GameModeDeus.set_respawn_group_enabled = function (self, respawn_group_name, active)
-	self._deus_spawning:set_respawn_group_enabled(respawn_group_name, active)
+function GameModeDeus.set_respawn_group_enabled(arg_27_0, arg_27_1, arg_27_2)
+	arg_27_0._deus_spawning:set_respawn_group_enabled(arg_27_1, arg_27_2)
 end
 
-GameModeDeus.set_respawn_gate_enabled = function (self, respawn_gate_unit, enabled)
-	self._deus_spawning:set_respawn_gate_enabled(respawn_gate_unit, enabled)
+function GameModeDeus.set_respawn_gate_enabled(arg_28_0, arg_28_1, arg_28_2)
+	arg_28_0._deus_spawning:set_respawn_gate_enabled(arg_28_1, arg_28_2)
 end
 
-GameModeDeus.respawn_unit_spawned = function (self, unit)
-	self._deus_spawning:respawn_unit_spawned(unit)
+function GameModeDeus.respawn_unit_spawned(arg_29_0, arg_29_1)
+	arg_29_0._deus_spawning:respawn_unit_spawned(arg_29_1)
 end
 
-GameModeDeus.get_respawn_handler = function (self)
-	return self._deus_spawning:get_respawn_handler()
+function GameModeDeus.get_respawn_handler(arg_30_0)
+	return arg_30_0._deus_spawning:get_respawn_handler()
 end
 
-GameModeDeus.respawn_gate_unit_spawned = function (self, unit)
-	self._deus_spawning:respawn_gate_unit_spawned(unit)
+function GameModeDeus.respawn_gate_unit_spawned(arg_31_0, arg_31_1)
+	arg_31_0._deus_spawning:respawn_gate_unit_spawned(arg_31_1)
 end
 
-GameModeDeus.set_respawning_enabled = function (self, enabled)
-	self._deus_spawning:set_respawning_enabled(enabled)
+function GameModeDeus.set_respawning_enabled(arg_32_0, arg_32_1)
+	arg_32_0._deus_spawning:set_respawning_enabled(arg_32_1)
 end
 
-GameModeDeus.remove_respawn_units_due_to_crossroads = function (self, removed_path_distances, total_main_path_length)
-	self._deus_spawning:remove_respawn_units_due_to_crossroads(removed_path_distances, total_main_path_length)
+function GameModeDeus.remove_respawn_units_due_to_crossroads(arg_33_0, arg_33_1, arg_33_2)
+	arg_33_0._deus_spawning:remove_respawn_units_due_to_crossroads(arg_33_1, arg_33_2)
 end
 
-GameModeDeus.recalc_respawner_dist_due_to_crossroads = function (self)
-	self._deus_spawning:recalc_respawner_dist_due_to_crossroads()
+function GameModeDeus.recalc_respawner_dist_due_to_crossroads(arg_34_0)
+	arg_34_0._deus_spawning:recalc_respawner_dist_due_to_crossroads()
 end
 
-GameModeDeus.profile_changed = function (self, peer_id, local_player_id, profile_index, career_index)
-	self._deus_spawning:profile_changed(peer_id, local_player_id, profile_index, career_index)
+function GameModeDeus.profile_changed(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
+	arg_35_0._deus_spawning:profile_changed(arg_35_1, arg_35_2, arg_35_3, arg_35_4)
 end
 
-GameModeDeus.force_respawn = function (self, peer_id, local_player_id)
-	local status = Managers.party:get_player_status(peer_id, local_player_id)
+function GameModeDeus.force_respawn(arg_36_0, arg_36_1, arg_36_2)
+	if Managers.party:get_player_status(arg_36_1, arg_36_2).party_id == 0 then
+		local var_36_0 = 1
 
-	if status.party_id == 0 then
-		local party_id = 1
-
-		Managers.party:assign_peer_to_party(peer_id, local_player_id, party_id)
+		Managers.party:assign_peer_to_party(arg_36_1, arg_36_2, var_36_0)
 	end
 
-	self._deus_spawning:force_respawn(peer_id, local_player_id)
+	arg_36_0._deus_spawning:force_respawn(arg_36_1, arg_36_2)
 end
 
-GameModeDeus.force_respawn_dead_players = function (self)
-	self._deus_spawning:force_respawn_dead_players()
+function GameModeDeus.force_respawn_dead_players(arg_37_0)
+	arg_37_0._deus_spawning:force_respawn_dead_players()
 end
 
-GameModeDeus._get_first_available_bot_profile = function (self)
-	local available_profiles = self._available_profiles
-	local profile_synchronizer = self._profile_synchronizer
-	local available_profile_by_priority = {}
+function GameModeDeus._get_first_available_bot_profile(arg_38_0)
+	local var_38_0 = arg_38_0._available_profiles
+	local var_38_1 = arg_38_0._profile_synchronizer
+	local var_38_2 = {}
 
-	for i = 1, #available_profiles do
-		local profile_name = available_profiles[i]
-		local profile_index = FindProfileIndex(profile_name)
+	for iter_38_0 = 1, #var_38_0 do
+		local var_38_3 = var_38_0[iter_38_0]
+		local var_38_4 = FindProfileIndex(var_38_3)
 
-		if not profile_synchronizer:is_profile_in_use(profile_index) then
-			available_profile_by_priority[#available_profile_by_priority + 1] = profile_index
+		if not var_38_1:is_profile_in_use(var_38_4) then
+			var_38_2[#var_38_2 + 1] = var_38_4
 		end
 	end
 
-	local bot_profile_id_to_priority_id = self._bot_profile_id_to_priority_id
+	local var_38_5 = arg_38_0._bot_profile_id_to_priority_id
 
-	table.sort(available_profile_by_priority, function (a, b)
-		return (bot_profile_id_to_priority_id[a] or math.huge) < (bot_profile_id_to_priority_id[b] or math.huge)
+	table.sort(var_38_2, function(arg_39_0, arg_39_1)
+		return (var_38_5[arg_39_0] or math.huge) < (var_38_5[arg_39_1] or math.huge)
 	end)
 
-	local profile_index = available_profile_by_priority[1]
-	local profile = SPProfiles[profile_index]
-	local display_name = profile.display_name
-	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-	local career_index = hero_attributes:get(display_name, "career")
-	local bot_career_index = hero_attributes:get(display_name, "bot_career") or career_index or 1
-	local career = profile.careers[bot_career_index]
-	local hero_experience = hero_attributes:get(display_name, "experience") or 0
-	local hero_level = ExperienceSettings.get_level(hero_experience)
+	local var_38_6 = var_38_2[1]
+	local var_38_7 = SPProfiles[var_38_6]
+	local var_38_8 = var_38_7.display_name
+	local var_38_9 = Managers.backend:get_interface("hero_attributes")
+	local var_38_10 = var_38_9:get(var_38_8, "career")
+	local var_38_11 = var_38_9:get(var_38_8, "bot_career") or var_38_10 or 1
+	local var_38_12 = var_38_7.careers[var_38_11]
+	local var_38_13 = var_38_9:get(var_38_8, "experience") or 0
+	local var_38_14 = ExperienceSettings.get_level(var_38_13)
 
-	if not career or not career:is_unlocked_function(display_name, hero_level) then
-		career_index = 1
-		bot_career_index = 1
+	if not var_38_12 or not var_38_12:is_unlocked_function(var_38_8, var_38_14) then
+		local var_38_15 = 1
 
-		hero_attributes:set(display_name, "career", career_index)
-		hero_attributes:set(display_name, "bot_career", bot_career_index)
+		var_38_11 = 1
+
+		var_38_9:set(var_38_8, "career", var_38_15)
+		var_38_9:set(var_38_8, "bot_career", var_38_11)
 	end
 
-	return profile_index, bot_career_index
+	return var_38_6, var_38_11
 end
 
-GameModeDeus._setup_bot_spawn_priority_lookup = function (self)
-	local saved_priority = PlayerData.bot_spawn_priority
-	local num_saved_priority = #saved_priority
+function GameModeDeus._setup_bot_spawn_priority_lookup(arg_40_0)
+	local var_40_0 = PlayerData.bot_spawn_priority
+	local var_40_1 = #var_40_0
 
 	if LAUNCH_MODE == "game" then
-		if num_saved_priority > 0 then
-			self._bot_profile_id_to_priority_id = {}
+		if var_40_1 > 0 then
+			arg_40_0._bot_profile_id_to_priority_id = {}
 
-			for i = 1, num_saved_priority do
-				local profile_id = saved_priority[i]
+			for iter_40_0 = 1, var_40_1 do
+				local var_40_2 = var_40_0[iter_40_0]
 
-				self._bot_profile_id_to_priority_id[profile_id] = i
+				arg_40_0._bot_profile_id_to_priority_id[var_40_2] = iter_40_0
 			end
 		else
-			self._bot_profile_id_to_priority_id = ProfileIndexToPriorityIndex
+			arg_40_0._bot_profile_id_to_priority_id = ProfileIndexToPriorityIndex
 		end
 	elseif LAUNCH_MODE == "attract_benchmark" then
-		self._bot_profile_id_to_priority_id = ProfileIndexToPriorityIndex
+		arg_40_0._bot_profile_id_to_priority_id = ProfileIndexToPriorityIndex
 	else
-		self._bot_profile_id_to_priority_id = ProfileIndexToPriorityIndex
+		arg_40_0._bot_profile_id_to_priority_id = ProfileIndexToPriorityIndex
 	end
 end
 
-GameModeDeus._handle_bots = function (self, t, dt)
-	local in_session = Managers.state.network ~= nil and not Managers.state.network.game_session_shutdown
-
-	if not in_session then
+function GameModeDeus._handle_bots(arg_41_0, arg_41_1, arg_41_2)
+	if not (Managers.state.network ~= nil and not Managers.state.network.game_session_shutdown) then
 		return
 	end
 
 	if script_data.ai_bots_disabled then
-		if #self._bot_players > 0 then
-			local update_safe = true
+		if #arg_41_0._bot_players > 0 then
+			local var_41_0 = true
 
-			self:_clear_bots(update_safe)
+			arg_41_0:_clear_bots(var_41_0)
 		end
 
 		return
 	end
 
-	local party = Managers.party:get_party(1)
-	local num_slots = party.num_slots
-	local max_bots = num_slots
+	local var_41_1 = Managers.party:get_party(1)
+	local var_41_2 = var_41_1.num_slots
+	local var_41_3 = var_41_2
 
 	if script_data.cap_num_bots then
-		max_bots = math.min(max_bots, script_data.cap_num_bots)
+		var_41_3 = math.min(var_41_3, script_data.cap_num_bots)
 	end
 
-	local bot_players = self._bot_players
-	local num_bot_players = #bot_players
-	local delta = max_bots - num_bot_players
+	local var_41_4 = arg_41_0._bot_players
+	local var_41_5 = var_41_3 - #var_41_4
 
-	if delta > 0 then
-		local num_used_slots = party.num_used_slots
-		local open_slots = num_slots - num_used_slots
-		local num_bots_to_add = math.min(delta, open_slots)
+	if var_41_5 > 0 then
+		local var_41_6 = var_41_2 - var_41_1.num_used_slots
+		local var_41_7 = math.min(var_41_5, var_41_6)
 
-		for i = 1, num_bots_to_add do
-			self:_add_bot()
+		for iter_41_0 = 1, var_41_7 do
+			arg_41_0:_add_bot()
 		end
-	elseif delta < 0 then
-		local num_bots_to_remove = math.abs(delta)
+	elseif var_41_5 < 0 then
+		local var_41_8 = math.abs(var_41_5)
 
-		for i = 1, num_bots_to_remove do
-			local update_safe = true
+		for iter_41_1 = 1, var_41_8 do
+			local var_41_9 = true
 
-			self:_remove_bot(bot_players[#bot_players], update_safe)
+			arg_41_0:_remove_bot(var_41_4[#var_41_4], var_41_9)
 		end
 	end
 end
 
-GameModeDeus._add_bot = function (self)
-	local bot_players = self._bot_players
-	local party_id = 1
-	local party = Managers.party:get_party(party_id)
-	local profile_index, career_index = self:_get_first_available_bot_profile(party)
+function GameModeDeus._add_bot(arg_42_0)
+	local var_42_0 = arg_42_0._bot_players
+	local var_42_1 = 1
+	local var_42_2 = Managers.party:get_party(var_42_1)
+	local var_42_3, var_42_4 = arg_42_0:_get_first_available_bot_profile(var_42_2)
 
 	if LAUNCH_MODE == "attract_benchmark" then
-		career_index = 1
+		var_42_4 = 1
 	end
 
-	local bot_player = self:_add_bot_to_party(party_id, profile_index, career_index)
+	local var_42_5 = arg_42_0:_add_bot_to_party(var_42_1, var_42_3, var_42_4)
 
-	bot_players[#bot_players + 1] = bot_player
+	var_42_0[#var_42_0 + 1] = var_42_5
 
-	local peer_id = bot_player:network_id()
-	local local_player_id = bot_player:local_player_id()
+	local var_42_6 = var_42_5:network_id()
+	local var_42_7 = var_42_5:local_player_id()
 
-	self._deus_run_controller:restore_persisted_score(self._statistics_db, peer_id, local_player_id)
+	arg_42_0._deus_run_controller:restore_persisted_score(arg_42_0._statistics_db, var_42_6, var_42_7)
 end
 
-GameModeDeus._remove_bot = function (self, bot_player, update_safe)
-	local peer_id = bot_player:network_id()
-	local local_player_id = bot_player:local_player_id()
+function GameModeDeus._remove_bot(arg_43_0, arg_43_1, arg_43_2)
+	local var_43_0 = arg_43_1:network_id()
+	local var_43_1 = arg_43_1:local_player_id()
 
-	self._deus_run_controller:save_persisted_score(self._statistics_db, PlayerUtils.unique_player_id(peer_id, local_player_id))
+	arg_43_0._deus_run_controller:save_persisted_score(arg_43_0._statistics_db, PlayerUtils.unique_player_id(var_43_0, var_43_1))
 
-	local bot_players = self._bot_players
-	local index = table.index_of(bot_players, bot_player)
+	local var_43_2 = arg_43_0._bot_players
+	local var_43_3 = table.index_of(var_43_2, arg_43_1)
 
-	if update_safe then
-		self:_remove_bot_update_safe(bot_player)
+	if arg_43_2 then
+		arg_43_0:_remove_bot_update_safe(arg_43_1)
 	else
-		self:_remove_bot_instant(bot_player)
+		arg_43_0:_remove_bot_instant(arg_43_1)
 	end
 
-	local last = #bot_players
+	local var_43_4 = #var_43_2
 
-	bot_players[index] = bot_players[last]
-	bot_players[last] = nil
+	var_43_2[var_43_3] = var_43_2[var_43_4]
+	var_43_2[var_43_4] = nil
 end
 
-GameModeDeus._remove_bot_by_profile = function (self, profile_index, update_safe)
-	local bot_players = self._bot_players
-	local bot_index
-	local num_current_bots = #bot_players
+function GameModeDeus._remove_bot_by_profile(arg_44_0, arg_44_1, arg_44_2)
+	local var_44_0 = arg_44_0._bot_players
+	local var_44_1
+	local var_44_2 = #var_44_0
 
-	for i = 1, num_current_bots do
-		local bot_player = bot_players[i]
-		local bot_profile_index = bot_player:profile_index()
-
-		if bot_profile_index == profile_index then
-			bot_index = i
+	for iter_44_0 = 1, var_44_2 do
+		if var_44_0[iter_44_0]:profile_index() == arg_44_1 then
+			var_44_1 = iter_44_0
 
 			break
 		end
 	end
 
-	local bot_player
-	local removed = false
+	local var_44_3
+	local var_44_4 = false
 
-	if bot_index then
-		bot_player = bot_players[bot_index]
+	if var_44_1 then
+		var_44_3 = var_44_0[var_44_1]
 
-		self:_remove_bot(bot_player, update_safe or false)
+		arg_44_0:_remove_bot(var_44_3, arg_44_2 or false)
 
-		removed = true
+		var_44_4 = true
 	end
 
-	return removed, bot_player
+	return var_44_4, var_44_3
 end
 
-GameModeDeus._clear_bots = function (self, update_safe)
-	local bot_players = self._bot_players
-	local num_bot_players = #bot_players
+function GameModeDeus._clear_bots(arg_45_0, arg_45_1)
+	local var_45_0 = arg_45_0._bot_players
 
-	for i = num_bot_players, 1, -1 do
-		self:_remove_bot(bot_players[i], update_safe)
+	for iter_45_0 = #var_45_0, 1, -1 do
+		arg_45_0:_remove_bot(var_45_0[iter_45_0], arg_45_1)
 	end
 end
 
-GameModeDeus.get_active_respawn_units = function (self)
-	return self._deus_spawning:get_active_respawn_units()
+function GameModeDeus.get_active_respawn_units(arg_46_0)
+	return arg_46_0._deus_spawning:get_active_respawn_units()
 end
 
-GameModeDeus.get_available_and_active_respawn_units = function (self)
-	return self._deus_spawning:get_available_and_active_respawn_units()
+function GameModeDeus.get_available_and_active_respawn_units(arg_47_0)
+	return arg_47_0._deus_spawning:get_available_and_active_respawn_units()
 end
 
-GameModeDeus.get_player_wounds = function (self, profile)
+function GameModeDeus.get_player_wounds(arg_48_0, arg_48_1)
 	if Managers.state.game_mode:has_activated_mutator("instant_death") then
 		return 1
 	end
 
-	local difficulty_manager = Managers.state.difficulty
-	local difficulty_settings = difficulty_manager:get_difficulty_settings()
-
-	return difficulty_settings.wounds
+	return Managers.state.difficulty:get_difficulty_settings().wounds
 end
 
-GameModeDeus.mutators = function (self)
-	local mutators_list = table.shallow_copy(self._mutators)
+function GameModeDeus.mutators(arg_49_0)
+	local var_49_0 = table.shallow_copy(arg_49_0._mutators)
 
-	self:append_live_event_mutators(mutators_list)
+	arg_49_0:append_live_event_mutators(var_49_0)
 
-	local event_mutators = self._deus_run_controller:get_event_mutators()
+	local var_49_1 = arg_49_0._deus_run_controller:get_event_mutators()
 
-	if event_mutators then
-		local mutators_list_keys = table.set(mutators_list)
+	if var_49_1 then
+		local var_49_2 = table.set(var_49_0)
 
-		for i = 1, #event_mutators do
-			local event_mutator = event_mutators[i]
+		for iter_49_0 = 1, #var_49_1 do
+			local var_49_3 = var_49_1[iter_49_0]
 
-			if not mutators_list_keys[event_mutator] then
-				mutators_list[#mutators_list + 1] = event_mutator
+			if not var_49_2[var_49_3] then
+				var_49_0[#var_49_0 + 1] = var_49_3
 			end
 		end
 	end
 
-	return mutators_list
+	return var_49_0
 end
 
-GameModeDeus.on_picked_up_soft_currency = function (self, interactable_unit, interactor_unit, override_amount, override_type)
-	local deus_run_controller = self._deus_run_controller
-	local granted_coins_amount, type
+function GameModeDeus.on_picked_up_soft_currency(arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
+	local var_50_0 = arg_50_0._deus_run_controller
+	local var_50_1
+	local var_50_2
 
-	if override_amount then
-		granted_coins_amount, type = override_amount, override_type or DeusSoftCurrencySettings.types.GROUND
+	if arg_50_3 then
+		var_50_1, var_50_2 = arg_50_3, arg_50_4 or DeusSoftCurrencySettings.types.GROUND
 	else
-		granted_coins_amount, type = self:_get_coins_amount_and_type(interactable_unit)
+		var_50_1, var_50_2 = arg_50_0:_get_coins_amount_and_type(arg_50_1)
 	end
 
-	local player_manager = Managers.player
-	local interactor_player = player_manager:unit_owner(interactor_unit)
+	local var_50_3 = Managers.player:unit_owner(arg_50_2)
 
-	if interactor_player.bot_player or interactor_player.remote then
-		local audio_system = Managers.state.entity:system("audio_system")
-
-		audio_system:play_2d_audio_event("hud_morris_currency_added")
+	if var_50_3.bot_player or var_50_3.remote then
+		Managers.state.entity:system("audio_system"):play_2d_audio_event("hud_morris_currency_added")
 	else
-		local wwise_world = Managers.world:wwise_world(self._world)
+		local var_50_4 = Managers.world:wwise_world(arg_50_0._world)
 
-		WwiseWorld.trigger_event(wwise_world, "hud_morris_pickup_chest")
+		WwiseWorld.trigger_event(var_50_4, "hud_morris_pickup_chest")
 	end
 
-	local local_player = Managers.player:local_player()
-	local player_unit = local_player and local_player.player_unit
-	local buff_extension = player_unit and ScriptUnit.has_extension(player_unit, "buff_system")
+	local var_50_5 = Managers.player:local_player()
+	local var_50_6 = var_50_5 and var_50_5.player_unit
+	local var_50_7 = var_50_6 and ScriptUnit.has_extension(var_50_6, "buff_system")
 
-	if buff_extension then
-		granted_coins_amount = buff_extension:apply_buffs_to_value(granted_coins_amount, "deus_coins_greed")
-		granted_coins_amount = math.floor(granted_coins_amount)
+	if var_50_7 then
+		var_50_1 = var_50_7:apply_buffs_to_value(var_50_1, "deus_coins_greed")
+		var_50_1 = math.floor(var_50_1)
 	end
 
-	deus_run_controller:on_soft_currency_picked_up(granted_coins_amount, type)
+	var_50_0:on_soft_currency_picked_up(var_50_1, var_50_2)
 
 	if UISettings.deus.show_coin_pickup_in_chat then
-		local interactor_name
+		local var_50_8
 
-		if interactor_player:is_player_controlled() then
-			interactor_name = deus_run_controller:get_player_name(interactor_player.peer_id)
+		if var_50_3:is_player_controlled() then
+			var_50_8 = var_50_0:get_player_name(var_50_3.peer_id)
 		else
-			interactor_name = interactor_player:name()
+			var_50_8 = var_50_3:name()
 		end
 
-		local pop_chat = true
-		local message
+		local var_50_9 = true
+		local var_50_10
 
-		if not interactor_player.bot_player and not interactor_player.remote then
-			message = string.format(Localize("system_chat_local_player_picked_up_deus_currency"), granted_coins_amount)
+		if not var_50_3.bot_player and not var_50_3.remote then
+			var_50_10 = string.format(Localize("system_chat_local_player_picked_up_deus_currency"), var_50_1)
 		else
-			message = string.format(Localize("system_chat_other_player_picked_up_deus_currency"), interactor_name, granted_coins_amount)
+			var_50_10 = string.format(Localize("system_chat_other_player_picked_up_deus_currency"), var_50_8, var_50_1)
 		end
 
-		Managers.chat:add_local_system_message(1, message, pop_chat)
+		Managers.chat:add_local_system_message(1, var_50_10, var_50_9)
 	end
 end
 
-GameModeDeus.get_boss_loot_pickup = function (self)
+function GameModeDeus.get_boss_loot_pickup(arg_51_0)
 	return "deus_soft_currency"
 end
 
-GameModeDeus._get_coins_amount_and_type = function (self, interactable_unit)
-	local pickup_extension = ScriptUnit.has_extension(interactable_unit, "pickup_system")
+function GameModeDeus._get_coins_amount_and_type(arg_52_0, arg_52_1)
+	local var_52_0 = ScriptUnit.has_extension(arg_52_1, "pickup_system")
 
-	if not pickup_extension then
+	if not var_52_0 then
 		return 0
 	end
 
-	local deus_run_controller = self._deus_run_controller
-	local current_node = deus_run_controller:get_current_node()
-	local pickups_seed = current_node.system_seeds.pickups or 0
-	local seed = HashUtils.fnv32_hash(Managers.state.unit_storage:go_id(interactable_unit) .. "_" .. pickups_seed)
-	local _, random = Math.next_random(seed)
-	local ingame_players = #deus_run_controller:get_peers()
-	local dropped_by_breed = pickup_extension:get_dropped_by_breed()
-	local loot_amount_settings = DeusSoftCurrencySettings.loot_amount[dropped_by_breed]
-	local loot_amount_by_player = loot_amount_settings[ingame_players] or loot_amount_settings[#loot_amount_settings]
-	local min_amount = loot_amount_by_player.min
-	local max_amount = loot_amount_by_player.max
-	local coins_amount = math.lerp(min_amount, max_amount, random)
-	local type
+	local var_52_1 = arg_52_0._deus_run_controller
+	local var_52_2 = var_52_1:get_current_node().system_seeds.pickups or 0
+	local var_52_3 = HashUtils.fnv32_hash(Managers.state.unit_storage:go_id(arg_52_1) .. "_" .. var_52_2)
+	local var_52_4, var_52_5 = Math.next_random(var_52_3)
+	local var_52_6 = #var_52_1:get_peers()
+	local var_52_7 = var_52_0:get_dropped_by_breed()
+	local var_52_8 = DeusSoftCurrencySettings.loot_amount[var_52_7]
+	local var_52_9 = var_52_8[var_52_6] or var_52_8[#var_52_8]
+	local var_52_10 = var_52_9.min
+	local var_52_11 = var_52_9.max
+	local var_52_12 = math.lerp(var_52_10, var_52_11, var_52_5)
+	local var_52_13
 
-	if not dropped_by_breed or dropped_by_breed == "n/a" then
-		type = DeusSoftCurrencySettings.types.GROUND
+	if not var_52_7 or var_52_7 == "n/a" then
+		var_52_13 = DeusSoftCurrencySettings.types.GROUND
 	else
-		type = DeusSoftCurrencySettings.types.MONSTER
+		var_52_13 = DeusSoftCurrencySettings.types.MONSTER
 	end
 
-	return math.round(coins_amount), type
+	return math.round(var_52_12), var_52_13
 end
 
-GameModeDeus.players_left_safe_zone = function (self)
-	local mechanism = Managers.mechanism:game_mechanism()
-	local theme = mechanism and mechanism:get_current_node_theme()
+function GameModeDeus.players_left_safe_zone(arg_53_0)
+	local var_53_0 = Managers.mechanism:game_mechanism()
 
-	if theme == DEUS_THEME_TYPES.BELAKOR then
+	if (var_53_0 and var_53_0:get_current_node_theme()) == DEUS_THEME_TYPES.BELAKOR then
 		return
 	end
 
-	local intro_vo_unit = LevelHelper:find_dialogue_unit(self._world, INTRO_VO_DIALOGUE_PROFILE)
-	local dialogue_extension = intro_vo_unit and ScriptUnit.has_extension(intro_vo_unit, "dialogue_system")
+	local var_53_1 = LevelHelper:find_dialogue_unit(arg_53_0._world, var_0_1)
 
-	if dialogue_extension then
-		local node = self._deus_run_controller:get_current_node()
-		local curse = node.curse
+	if var_53_1 and ScriptUnit.has_extension(var_53_1, "dialogue_system") then
+		local var_53_2 = arg_53_0._deus_run_controller:get_current_node().curse
 
-		play_curse_intro_vo(intro_vo_unit, curse)
+		var_0_3(var_53_1, var_53_2)
 	else
 		print("GameModeDeus:players_left_safe_zone - no unit for curse intro vo")
 	end
 end
 
-GameModeDeus._update_morris_music_intensity = function (self)
-	local conflict_director = Managers.state.conflict
-	local pacing = conflict_director.pacing
-	local intensity = pacing.total_intensity
-	local audio_system = Managers.state.entity:system("audio_system")
-	local parameter_id = NetworkLookup.global_parameter_names.morris_music_intensity
-	local clamped_intensity = math.round(math.clamp(intensity, 0, 100))
+function GameModeDeus._update_morris_music_intensity(arg_54_0)
+	local var_54_0 = Managers.state.conflict.pacing.total_intensity
+	local var_54_1 = Managers.state.entity:system("audio_system")
+	local var_54_2 = NetworkLookup.global_parameter_names.morris_music_intensity
+	local var_54_3 = math.round(math.clamp(var_54_0, 0, 100))
 
-	if self._sent_intensity and self._sent_intensity == clamped_intensity then
+	if arg_54_0._sent_intensity and arg_54_0._sent_intensity == var_54_3 then
 		return
 	end
 
-	audio_system:set_global_parameter_with_lerp("morris_music_intensity", clamped_intensity)
+	var_54_1:set_global_parameter_with_lerp("morris_music_intensity", var_54_3)
 
-	if self._network_transmit then
-		self._network_transmit:send_rpc_clients("rpc_client_audio_set_global_parameter_with_lerp", parameter_id, clamped_intensity / 100)
+	if arg_54_0._network_transmit then
+		arg_54_0._network_transmit:send_rpc_clients("rpc_client_audio_set_global_parameter_with_lerp", var_54_2, var_54_3 / 100)
 	end
 
-	self._sent_intensity = clamped_intensity
+	arg_54_0._sent_intensity = var_54_3
 end

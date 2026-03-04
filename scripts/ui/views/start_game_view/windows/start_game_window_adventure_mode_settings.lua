@@ -1,346 +1,324 @@
-﻿-- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_adventure_mode_settings.lua
+-- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_adventure_mode_settings.lua
 
-local definitions = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_adventure_mode_settings_definitions")
-local widget_definitions = definitions.widgets
-local scenegraph_definition = definitions.scenegraph_definition
-local animation_definitions = definitions.animation_definitions
+local var_0_0 = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_adventure_mode_settings_definitions")
+local var_0_1 = var_0_0.widgets
+local var_0_2 = var_0_0.scenegraph_definition
+local var_0_3 = var_0_0.animation_definitions
 
 StartGameWindowAdventureModeSettings = class(StartGameWindowAdventureModeSettings)
 StartGameWindowAdventureModeSettings.NAME = "StartGameWindowAdventureModeSettings"
 
-StartGameWindowAdventureModeSettings.on_enter = function (self, params, offset)
+function StartGameWindowAdventureModeSettings.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowAdventureModeSettings")
 
-	self.parent = params.parent
+	arg_1_0.parent = arg_1_1.parent
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_1_0 = arg_1_1.ingame_ui_context
 
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self.input_manager = ingame_ui_context.input_manager
-	self.statistics_db = ingame_ui_context.statistics_db
-	self.render_settings = {
-		snap_pixel_positions = true,
+	arg_1_0.ui_renderer = var_1_0.ui_renderer
+	arg_1_0.input_manager = var_1_0.input_manager
+	arg_1_0.statistics_db = var_1_0.statistics_db
+	arg_1_0.render_settings = {
+		snap_pixel_positions = true
 	}
 
-	local player_manager = Managers.player
-	local local_player = player_manager:local_player()
+	local var_1_1 = Managers.player
 
-	self._stats_id = local_player:stats_id()
-	self.player_manager = player_manager
-	self.peer_id = ingame_ui_context.peer_id
-	self._enable_play = false
-	self._animations = {}
-	self._ui_animations = {}
+	arg_1_0._stats_id = var_1_1:local_player():stats_id()
+	arg_1_0.player_manager = var_1_1
+	arg_1_0.peer_id = var_1_0.peer_id
+	arg_1_0._enable_play = false
+	arg_1_0._animations = {}
+	arg_1_0._ui_animations = {}
 
-	self:create_ui_elements(params, offset)
-	self:_update_difficulty_option()
-	self:_update_next_level_option()
+	arg_1_0:create_ui_elements(arg_1_1, arg_1_2)
+	arg_1_0:_update_difficulty_option()
+	arg_1_0:_update_next_level_option()
 end
 
-StartGameWindowAdventureModeSettings.create_ui_elements = function (self, params, offset)
-	local ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+function StartGameWindowAdventureModeSettings.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+	local var_2_0 = UISceneGraph.init_scenegraph(var_0_2)
 
-	self.ui_scenegraph = ui_scenegraph
+	arg_2_0.ui_scenegraph = var_2_0
 
-	local widgets = {}
-	local widgets_by_name = {}
+	local var_2_1 = {}
+	local var_2_2 = {}
 
-	for name, widget_definition in pairs(widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_2_0, iter_2_1 in pairs(var_0_1) do
+		local var_2_3 = UIWidget.init(iter_2_1)
 
-		widgets[#widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_2_1[#var_2_1 + 1] = var_2_3
+		var_2_2[iter_2_0] = var_2_3
 	end
 
-	self._widgets = widgets
-	self._widgets_by_name = widgets_by_name
+	arg_2_0._widgets = var_2_1
+	arg_2_0._widgets_by_name = var_2_2
 
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_renderer)
 
-	self.ui_animator = UIAnimator:new(ui_scenegraph, animation_definitions)
+	arg_2_0.ui_animator = UIAnimator:new(var_2_0, var_0_3)
 
-	if offset then
-		local window_position = ui_scenegraph.window.local_position
+	if arg_2_2 then
+		local var_2_4 = var_2_0.window.local_position
 
-		window_position[1] = window_position[1] + offset[1]
-		window_position[2] = window_position[2] + offset[2]
-		window_position[3] = window_position[3] + offset[3]
+		var_2_4[1] = var_2_4[1] + arg_2_2[1]
+		var_2_4[2] = var_2_4[2] + arg_2_2[2]
+		var_2_4[3] = var_2_4[3] + arg_2_2[3]
 	end
 
-	widgets_by_name.play_button.content.button_hotspot.disable_button = true
-	widgets_by_name.game_option_next_mission.content.button_hotspot.disable_button = false
+	var_2_2.play_button.content.button_hotspot.disable_button = true
+	var_2_2.game_option_next_mission.content.button_hotspot.disable_button = false
 
-	local game_option_difficulty = widgets_by_name.game_option_difficulty
-	local anim = self:_animate_pulse(game_option_difficulty.style.glow_frame.color, 1, 255, 100, 2)
+	local var_2_5 = var_2_2.game_option_difficulty
+	local var_2_6 = arg_2_0:_animate_pulse(var_2_5.style.glow_frame.color, 1, 255, 100, 2)
 
-	UIWidget.animate(game_option_difficulty, anim)
+	UIWidget.animate(var_2_5, var_2_6)
 end
 
-StartGameWindowAdventureModeSettings.on_exit = function (self, params)
+function StartGameWindowAdventureModeSettings.on_exit(arg_3_0, arg_3_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowAdventureModeSettings")
 
-	self.ui_animator = nil
+	arg_3_0.ui_animator = nil
 end
 
-StartGameWindowAdventureModeSettings.update = function (self, dt, t)
-	self:_update_difficulty_option()
-	self:_update_animations(dt)
-	self:_handle_input(dt, t)
-	self:draw(dt)
+function StartGameWindowAdventureModeSettings.update(arg_4_0, arg_4_1, arg_4_2)
+	arg_4_0:_update_difficulty_option()
+	arg_4_0:_update_animations(arg_4_1)
+	arg_4_0:_handle_input(arg_4_1, arg_4_2)
+	arg_4_0:draw(arg_4_1)
 end
 
-StartGameWindowAdventureModeSettings.post_update = function (self, dt, t)
+function StartGameWindowAdventureModeSettings.post_update(arg_5_0, arg_5_1, arg_5_2)
 	return
 end
 
-StartGameWindowAdventureModeSettings._update_animations = function (self, dt)
-	self:_update_game_options_hover_effect()
+function StartGameWindowAdventureModeSettings._update_animations(arg_6_0, arg_6_1)
+	arg_6_0:_update_game_options_hover_effect()
 
-	local ui_animations = self._ui_animations
+	local var_6_0 = arg_6_0._ui_animations
 
-	for name, animation in pairs(ui_animations) do
-		UIAnimation.update(animation, dt)
+	for iter_6_0, iter_6_1 in pairs(var_6_0) do
+		UIAnimation.update(iter_6_1, arg_6_1)
 
-		if UIAnimation.completed(animation) then
-			ui_animations[name] = nil
+		if UIAnimation.completed(iter_6_1) then
+			var_6_0[iter_6_0] = nil
 		end
 	end
 
-	local ui_animator = self.ui_animator
+	local var_6_1 = arg_6_0.ui_animator
 
-	ui_animator:update(dt)
+	var_6_1:update(arg_6_1)
 
-	local animations = self._animations
+	local var_6_2 = arg_6_0._animations
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_6_2, iter_6_3 in pairs(var_6_2) do
+		if var_6_1:is_animation_completed(iter_6_3) then
+			var_6_1:stop_animation(iter_6_3)
 
-			animations[animation_name] = nil
+			var_6_2[iter_6_2] = nil
 		end
 	end
 end
 
-StartGameWindowAdventureModeSettings._is_button_released = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
+function StartGameWindowAdventureModeSettings._is_button_released(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_1.content.button_hotspot
 
-	if hotspot.on_release then
-		hotspot.on_release = false
+	if var_7_0.on_release then
+		var_7_0.on_release = false
 
 		return true
 	end
 end
 
-StartGameWindowAdventureModeSettings._is_button_hover_enter = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	return hotspot.on_hover_enter
+function StartGameWindowAdventureModeSettings._is_button_hover_enter(arg_8_0, arg_8_1)
+	return arg_8_1.content.button_hotspot.on_hover_enter
 end
 
-StartGameWindowAdventureModeSettings._is_button_hover_exit = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	return hotspot.on_hover_exit
+function StartGameWindowAdventureModeSettings._is_button_hover_exit(arg_9_0, arg_9_1)
+	return arg_9_1.content.button_hotspot.on_hover_exit
 end
 
-StartGameWindowAdventureModeSettings._handle_input = function (self, dt, t)
-	local widgets_by_name = self._widgets_by_name
+function StartGameWindowAdventureModeSettings._handle_input(arg_10_0, arg_10_1, arg_10_2)
+	local var_10_0 = arg_10_0._widgets_by_name
 
-	if self:_is_button_hover_enter(widgets_by_name.game_option_difficulty) or self:_is_button_hover_enter(widgets_by_name.play_button) then
-		self:_play_sound("play_gui_lobby_button_01_difficulty_confirm_hover")
+	if arg_10_0:_is_button_hover_enter(var_10_0.game_option_difficulty) or arg_10_0:_is_button_hover_enter(var_10_0.play_button) then
+		arg_10_0:_play_sound("play_gui_lobby_button_01_difficulty_confirm_hover")
 	end
 
-	local parent = self.parent
+	local var_10_1 = arg_10_0.parent
 
-	if self:_is_button_released(widgets_by_name.game_option_difficulty) then
-		parent:set_layout_by_name("difficulty_selection_adventure")
+	if arg_10_0:_is_button_released(var_10_0.game_option_difficulty) then
+		var_10_1:set_layout_by_name("difficulty_selection_adventure")
 	end
 
-	local input_service = self.parent:window_input_service()
-	local gamepad_active = Managers.input:is_device_active("gamepad")
-	local play_pressed = gamepad_active and self._enable_play and input_service:get("refresh_press")
+	local var_10_2 = arg_10_0.parent:window_input_service()
+	local var_10_3 = Managers.input:is_device_active("gamepad") and arg_10_0._enable_play and var_10_2:get("refresh_press")
 
-	if self:_is_button_released(widgets_by_name.play_button) or play_pressed then
-		parent:set_private_option_enabled(true)
-		parent:play(t, "adventure_mode")
+	if arg_10_0:_is_button_released(var_10_0.play_button) or var_10_3 then
+		var_10_1:set_private_option_enabled(true)
+		var_10_1:play(arg_10_2, "adventure_mode")
 	end
 end
 
-StartGameWindowAdventureModeSettings._play_sound = function (self, event)
-	self.parent:play_sound(event)
+function StartGameWindowAdventureModeSettings._play_sound(arg_11_0, arg_11_1)
+	arg_11_0.parent:play_sound(arg_11_1)
 end
 
-StartGameWindowAdventureModeSettings._update_difficulty_option = function (self)
-	local parent = self.parent
-	local difficulty_key = parent:get_difficulty_option()
+function StartGameWindowAdventureModeSettings._update_difficulty_option(arg_12_0)
+	local var_12_0 = arg_12_0.parent
+	local var_12_1 = var_12_0:get_difficulty_option()
 
-	if difficulty_key == nil then
-		parent:set_difficulty_option(DefaultAdventureModeStartingDifficulty)
+	if var_12_1 == nil then
+		var_12_0:set_difficulty_option(DefaultAdventureModeStartingDifficulty)
 	end
 
-	if difficulty_key ~= self._difficulty_key then
-		self:_set_difficulty_option(difficulty_key)
+	if var_12_1 ~= arg_12_0._difficulty_key then
+		arg_12_0:_set_difficulty_option(var_12_1)
 
-		self._difficulty_key = difficulty_key
-		self._enable_play = DifficultySettings[difficulty_key] ~= nil and rawget(LevelSettings, self._selected_level_id) ~= nil
-		self._widgets_by_name.play_button.content.button_hotspot.disable_button = not self._enable_play
+		arg_12_0._difficulty_key = var_12_1
+		arg_12_0._enable_play = DifficultySettings[var_12_1] ~= nil and rawget(LevelSettings, arg_12_0._selected_level_id) ~= nil
+		arg_12_0._widgets_by_name.play_button.content.button_hotspot.disable_button = not arg_12_0._enable_play
 
-		if self._enable_play then
-			self.parent:set_input_description("play_available")
+		if arg_12_0._enable_play then
+			arg_12_0.parent:set_input_description("play_available")
 		else
-			self.parent:set_input_description(nil)
+			arg_12_0.parent:set_input_description(nil)
 		end
 	end
 end
 
-StartGameWindowAdventureModeSettings._update_next_level_option = function (self)
-	local next_level_id = LevelUnlockUtils.get_next_adventure_level(self.statistics_db, self._stats_id)
+function StartGameWindowAdventureModeSettings._update_next_level_option(arg_13_0)
+	local var_13_0 = LevelUnlockUtils.get_next_adventure_level(arg_13_0.statistics_db, arg_13_0._stats_id)
 
-	self.parent:set_selected_level_id(next_level_id)
-	self:_set_selected_level(next_level_id)
+	arg_13_0.parent:set_selected_level_id(var_13_0)
+	arg_13_0:_set_selected_level(var_13_0)
 end
 
-StartGameWindowAdventureModeSettings._set_selected_level = function (self, level_id)
-	local widget = self._widgets_by_name.game_option_next_mission
-	local text = "n/a"
+function StartGameWindowAdventureModeSettings._set_selected_level(arg_14_0, arg_14_1)
+	local var_14_0 = arg_14_0._widgets_by_name.game_option_next_mission
+	local var_14_1 = "n/a"
 
-	if level_id then
-		local level_settings = LevelSettings[level_id]
-		local display_name = level_settings.display_name
-		local level_image = level_settings.level_image
+	if arg_14_1 then
+		local var_14_2 = LevelSettings[arg_14_1]
+		local var_14_3 = var_14_2.display_name
+		local var_14_4 = var_14_2.level_image
 
-		text = Localize(display_name)
+		var_14_1 = Localize(var_14_3)
 
-		local icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(level_image)
-		local texture_size = widget.style.icon.texture_size
+		local var_14_5 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_14_4)
+		local var_14_6 = var_14_0.style.icon.texture_size
 
-		texture_size[1] = icon_texture_settings.size[1]
-		texture_size[2] = icon_texture_settings.size[2]
-		widget.content.icon = level_image
+		var_14_6[1] = var_14_5.size[1]
+		var_14_6[2] = var_14_5.size[2]
+		var_14_0.content.icon = var_14_4
 
-		local completed_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(self.statistics_db, self._stats_id, level_id) or 0
-		local level_frame = UIWidgetUtils.get_level_frame_by_difficulty_index(completed_difficulty_index)
+		local var_14_7 = LevelUnlockUtils.completed_level_difficulty_index(arg_14_0.statistics_db, arg_14_0._stats_id, arg_14_1) or 0
+		local var_14_8 = UIWidgetUtils.get_level_frame_by_difficulty_index(var_14_7)
 
-		widget.content.icon_frame = level_frame
+		var_14_0.content.icon_frame = var_14_8
 	end
 
-	widget.content.option_text = text
+	var_14_0.content.option_text = var_14_1
 end
 
-StartGameWindowAdventureModeSettings._set_difficulty_option = function (self, difficulty_key)
-	local difficulty_settings = DifficultySettings[difficulty_key]
-	local display_name = difficulty_settings and difficulty_settings.display_name
-	local display_image = difficulty_settings and difficulty_settings.display_image
-	local completed_frame_texture = difficulty_settings and difficulty_settings.completed_frame_texture or "map_frame_00"
-	local widgets_by_name = self._widgets_by_name
+function StartGameWindowAdventureModeSettings._set_difficulty_option(arg_15_0, arg_15_1)
+	local var_15_0 = DifficultySettings[arg_15_1]
+	local var_15_1 = var_15_0 and var_15_0.display_name
+	local var_15_2 = var_15_0 and var_15_0.display_image
+	local var_15_3 = var_15_0 and var_15_0.completed_frame_texture or "map_frame_00"
+	local var_15_4 = arg_15_0._widgets_by_name
 
-	widgets_by_name.game_option_difficulty.content.option_text = display_name and Localize(display_name) or ""
-	widgets_by_name.game_option_difficulty.content.icon = display_image or nil
-	widgets_by_name.game_option_difficulty.content.icon_frame = completed_frame_texture
+	var_15_4.game_option_difficulty.content.option_text = var_15_1 and Localize(var_15_1) or ""
+	var_15_4.game_option_difficulty.content.icon = var_15_2 or nil
+	var_15_4.game_option_difficulty.content.icon_frame = var_15_3
 end
 
-StartGameWindowAdventureModeSettings.draw = function (self, dt)
-	local ui_renderer = self.ui_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self.parent:window_input_service()
+function StartGameWindowAdventureModeSettings.draw(arg_16_0, arg_16_1)
+	local var_16_0 = arg_16_0.ui_renderer
+	local var_16_1 = arg_16_0.ui_scenegraph
+	local var_16_2 = arg_16_0.parent:window_input_service()
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
+	UIRenderer.begin_pass(var_16_0, var_16_1, var_16_2, arg_16_1, nil, arg_16_0.render_settings)
 
-	local widgets = self._widgets
+	local var_16_3 = arg_16_0._widgets
 
-	for i = 1, #widgets do
-		local widget = widgets[i]
+	for iter_16_0 = 1, #var_16_3 do
+		local var_16_4 = var_16_3[iter_16_0]
 
-		UIRenderer.draw_widget(ui_renderer, widget)
+		UIRenderer.draw_widget(var_16_0, var_16_4)
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_16_0)
 end
 
-StartGameWindowAdventureModeSettings._play_sound = function (self, event)
-	self.parent:play_sound(event)
+function StartGameWindowAdventureModeSettings._play_sound(arg_17_0, arg_17_1)
+	arg_17_0.parent:play_sound(arg_17_1)
 end
 
-StartGameWindowAdventureModeSettings._update_game_options_hover_effect = function (self)
-	local widgets_by_name = self._widgets_by_name
-	local widget = widgets_by_name.game_option_difficulty
+function StartGameWindowAdventureModeSettings._update_game_options_hover_effect(arg_18_0)
+	local var_18_0 = arg_18_0._widgets_by_name.game_option_difficulty
 
-	if self:_is_button_hover_enter(widget) then
-		self:_on_option_button_hover_enter(widget, 1)
-	elseif self:_is_button_hover_exit(widget) then
-		self:_on_option_button_hover_exit(widget, 1)
+	if arg_18_0:_is_button_hover_enter(var_18_0) then
+		arg_18_0:_on_option_button_hover_enter(var_18_0, 1)
+	elseif arg_18_0:_is_button_hover_exit(var_18_0) then
+		arg_18_0:_on_option_button_hover_exit(var_18_0, 1)
 	end
 end
 
-StartGameWindowAdventureModeSettings._on_option_button_hover_enter = function (self, widget, index, instant)
-	self:_create_style_animation_enter(widget, 255, "glow", index, instant)
-	self:_create_style_animation_enter(widget, 255, "icon_glow", index, instant)
-	self:_create_style_animation_exit(widget, 0, "button_hover_rect", index, instant)
+function StartGameWindowAdventureModeSettings._on_option_button_hover_enter(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+	arg_19_0:_create_style_animation_enter(arg_19_1, 255, "glow", arg_19_2, arg_19_3)
+	arg_19_0:_create_style_animation_enter(arg_19_1, 255, "icon_glow", arg_19_2, arg_19_3)
+	arg_19_0:_create_style_animation_exit(arg_19_1, 0, "button_hover_rect", arg_19_2, arg_19_3)
 end
 
-StartGameWindowAdventureModeSettings._on_option_button_hover_exit = function (self, widget, index, instant)
-	self:_create_style_animation_exit(widget, 0, "glow", index, instant)
-	self:_create_style_animation_exit(widget, 0, "icon_glow", index, instant)
-	self:_create_style_animation_enter(widget, 30, "button_hover_rect", index, instant)
+function StartGameWindowAdventureModeSettings._on_option_button_hover_exit(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+	arg_20_0:_create_style_animation_exit(arg_20_1, 0, "glow", arg_20_2, arg_20_3)
+	arg_20_0:_create_style_animation_exit(arg_20_1, 0, "icon_glow", arg_20_2, arg_20_3)
+	arg_20_0:_create_style_animation_enter(arg_20_1, 30, "button_hover_rect", arg_20_2, arg_20_3)
 end
 
-StartGameWindowAdventureModeSettings._create_style_animation_enter = function (self, widget, target_value, style_id, widget_index, instant)
-	local widget_style = widget.style
-	local pass_style = widget_style[style_id]
+function StartGameWindowAdventureModeSettings._create_style_animation_enter(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
+	local var_21_0 = arg_21_1.style[arg_21_3]
 
-	if not pass_style then
+	if not var_21_0 then
 		return
 	end
 
-	local current_color_value = pass_style.color[1]
-	local target_color_value = target_value
-	local total_time = 0.2
-	local animation_duration = (1 - current_color_value / target_color_value) * total_time
+	local var_21_1 = var_21_0.color[1]
+	local var_21_2 = arg_21_2
+	local var_21_3 = 0.2
+	local var_21_4 = (1 - var_21_1 / var_21_2) * var_21_3
 
-	if animation_duration > 0 and not instant then
-		local ui_animations = self._ui_animations
-		local animation_name = "game_option_" .. style_id
-
-		ui_animations[animation_name .. "_hover_" .. widget_index] = self:_animate_element_by_time(pass_style.color, 1, current_color_value, target_color_value, animation_duration)
+	if var_21_4 > 0 and not arg_21_5 then
+		arg_21_0._ui_animations[("game_option_" .. arg_21_3) .. "_hover_" .. arg_21_4] = arg_21_0:_animate_element_by_time(var_21_0.color, 1, var_21_1, var_21_2, var_21_4)
 	else
-		pass_style.color[1] = target_color_value
+		var_21_0.color[1] = var_21_2
 	end
 end
 
-StartGameWindowAdventureModeSettings._create_style_animation_exit = function (self, widget, target_value, style_id, widget_index, instant)
-	local widget_style = widget.style
-	local pass_style = widget_style[style_id]
+function StartGameWindowAdventureModeSettings._create_style_animation_exit(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
+	local var_22_0 = arg_22_1.style[arg_22_3]
 
-	if not pass_style then
+	if not var_22_0 then
 		return
 	end
 
-	local current_color_value = pass_style.color[1]
-	local target_color_value = target_value
-	local total_time = 0.2
-	local animation_duration = current_color_value / 255 * total_time
+	local var_22_1 = var_22_0.color[1]
+	local var_22_2 = arg_22_2
+	local var_22_3 = 0.2
+	local var_22_4 = var_22_1 / 255 * var_22_3
 
-	if animation_duration > 0 and not instant then
-		local ui_animations = self._ui_animations
-		local animation_name = "game_option_" .. style_id
-
-		ui_animations[animation_name .. "_hover_" .. widget_index] = self:_animate_element_by_time(pass_style.color, 1, current_color_value, target_color_value, animation_duration)
+	if var_22_4 > 0 and not arg_22_5 then
+		arg_22_0._ui_animations[("game_option_" .. arg_22_3) .. "_hover_" .. arg_22_4] = arg_22_0:_animate_element_by_time(var_22_0.color, 1, var_22_1, var_22_2, var_22_4)
 	else
-		pass_style.color[1] = target_color_value
+		var_22_0.color[1] = var_22_2
 	end
 end
 
-StartGameWindowAdventureModeSettings._animate_pulse = function (self, target, target_index, from, to, speed)
-	local new_animation = UIAnimation.init(UIAnimation.pulse_animation, target, target_index, from, to, speed)
-
-	return new_animation
+function StartGameWindowAdventureModeSettings._animate_pulse(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
+	return (UIAnimation.init(UIAnimation.pulse_animation, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5))
 end
 
-StartGameWindowAdventureModeSettings._animate_element_by_time = function (self, target, target_index, from, to, time)
-	local new_animation = UIAnimation.init(UIAnimation.function_by_time, target, target_index, from, to, time, math.ease_out_quad)
-
-	return new_animation
+function StartGameWindowAdventureModeSettings._animate_element_by_time(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
+	return (UIAnimation.init(UIAnimation.function_by_time, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, math.ease_out_quad))
 end

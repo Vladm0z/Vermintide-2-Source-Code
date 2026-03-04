@@ -1,123 +1,122 @@
-﻿-- chunkname: @scripts/unit_extensions/objectives/versus_volume_objective_extension.lua
+-- chunkname: @scripts/unit_extensions/objectives/versus_volume_objective_extension.lua
 
-local versus_volume_objective_extension_testify = script_data.testify and require("scripts/unit_extensions/objectives/testify/versus_volume_objective_extension_testify")
+local var_0_0 = script_data.testify and require("scripts/unit_extensions/objectives/testify/versus_volume_objective_extension_testify")
 
 VersusVolumeObjectiveExtension = class(VersusVolumeObjectiveExtension, BaseObjectiveExtension)
 VersusVolumeObjectiveExtension.NAME = "VersusVolumeObjectiveExtension"
 
-local VOLUME_TYPE_TO_FUNC_NAME = {
+local var_0_1 = {
 	all_alive = "all_alive_human_players_inside",
-	any_alive = "any_alive_human_players_inside",
+	any_alive = "any_alive_human_players_inside"
 }
 
-VersusVolumeObjectiveExtension.init = function (self, ...)
-	VersusVolumeObjectiveExtension.super.init(self, ...)
+function VersusVolumeObjectiveExtension.init(arg_1_0, ...)
+	VersusVolumeObjectiveExtension.super.init(arg_1_0, ...)
 
-	self._volume_system = Managers.state.entity:system("volume_system")
-	self._percentage = 0
+	arg_1_0._volume_system = Managers.state.entity:system("volume_system")
+	arg_1_0._percentage = 0
 end
 
-VersusVolumeObjectiveExtension._set_objective_data = function (self, objective_data)
-	local volume_default_settings = GameModeSettings.versus.objectives.volume
+function VersusVolumeObjectiveExtension._set_objective_data(arg_2_0, arg_2_1)
+	local var_2_0 = GameModeSettings.versus.objectives.volume
 
-	self._score_for_completion = objective_data.score_for_completion or volume_default_settings.score_for_completion
-	self._time_for_completion = objective_data.time_for_completion or volume_default_settings.time_for_completion
-	self._score_for_each_player_inside = objective_data.score_for_each_player_inside or volume_default_settings.score_for_each_player_inside
-	self._time_for_each_player_inside = objective_data.time_for_each_player_inside or volume_default_settings.time_for_each_player_inside
-	self._volume_name = objective_data.volume_name
-	self._volume_type = objective_data.volume_type or volume_default_settings.volume_type
-	self._on_last_leaf_complete_sound_event = objective_data.on_last_leaf_complete_sound_event or volume_default_settings.on_last_leaf_complete_sound_event
-	self._on_leaf_complete_sound_event = objective_data.on_leaf_complete_sound_event or volume_default_settings.on_leaf_complete_sound_event
+	arg_2_0._score_for_completion = arg_2_1.score_for_completion or var_2_0.score_for_completion
+	arg_2_0._time_for_completion = arg_2_1.time_for_completion or var_2_0.time_for_completion
+	arg_2_0._score_for_each_player_inside = arg_2_1.score_for_each_player_inside or var_2_0.score_for_each_player_inside
+	arg_2_0._time_for_each_player_inside = arg_2_1.time_for_each_player_inside or var_2_0.time_for_each_player_inside
+	arg_2_0._volume_name = arg_2_1.volume_name
+	arg_2_0._volume_type = arg_2_1.volume_type or var_2_0.volume_type
+	arg_2_0._on_last_leaf_complete_sound_event = arg_2_1.on_last_leaf_complete_sound_event or var_2_0.on_last_leaf_complete_sound_event
+	arg_2_0._on_leaf_complete_sound_event = arg_2_1.on_leaf_complete_sound_event or var_2_0.on_leaf_complete_sound_event
 
-	local name = VOLUME_TYPE_TO_FUNC_NAME[self._volume_type]
+	local var_2_1 = var_0_1[arg_2_0._volume_type]
 
-	fassert(name ~= nil, "Invalid volume type ", self._volume_type)
+	fassert(var_2_1 ~= nil, "Invalid volume type ", arg_2_0._volume_type)
 
-	self._condition_func = self._volume_system[name]
+	arg_2_0._condition_func = arg_2_0._volume_system[var_2_1]
 end
 
-VersusVolumeObjectiveExtension._activate = function (self)
-	if self._is_server then
-		self._volume_system:register_volume(self._volume_name, "trigger_volume", {
-			sub_type = "players_inside",
+function VersusVolumeObjectiveExtension._activate(arg_3_0)
+	if arg_3_0._is_server then
+		arg_3_0._volume_system:register_volume(arg_3_0._volume_name, "trigger_volume", {
+			sub_type = "players_inside"
 		})
 	end
 end
 
-VersusVolumeObjectiveExtension._deactivate = function (self)
+function VersusVolumeObjectiveExtension._deactivate(arg_4_0)
 	return
 end
 
-VersusVolumeObjectiveExtension._server_update = function (self, dt, t)
-	local completed = self._condition_func(self._volume_system, self._volume_name)
+function VersusVolumeObjectiveExtension._server_update(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = arg_5_0._condition_func(arg_5_0._volume_system, arg_5_0._volume_name)
 
-	if self._percentage < 1 and completed then
-		self._percentage = 1
+	if arg_5_0._percentage < 1 and var_5_0 then
+		arg_5_0._percentage = 1
 
-		self:server_set_value(self._percentage)
+		arg_5_0:server_set_value(arg_5_0._percentage)
 	end
 end
 
-VersusVolumeObjectiveExtension._client_update = function (self, dt, t)
-	self._percentage = self:client_get_value()
+function VersusVolumeObjectiveExtension._client_update(arg_6_0, arg_6_1, arg_6_2)
+	arg_6_0._percentage = arg_6_0:client_get_value()
 end
 
-VersusVolumeObjectiveExtension.update_testify = function (self, dt, t)
-	Testify:poll_requests_through_handler(versus_volume_objective_extension_testify, self)
+function VersusVolumeObjectiveExtension.update_testify(arg_7_0, arg_7_1, arg_7_2)
+	Testify:poll_requests_through_handler(var_0_0, arg_7_0)
 end
 
-VersusVolumeObjectiveExtension.get_percentage_done = function (self)
-	return self._percentage
+function VersusVolumeObjectiveExtension.get_percentage_done(arg_8_0)
+	return arg_8_0._percentage
 end
 
-VersusVolumeObjectiveExtension._get_num_players_inside = function (self)
-	local side = Managers.state.side:get_side_from_name("heroes")
-	local player_and_bot_units = side.PLAYER_AND_BOT_UNITS
-	local num_players = 0
+function VersusVolumeObjectiveExtension._get_num_players_inside(arg_9_0)
+	local var_9_0 = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_UNITS
+	local var_9_1 = 0
 
-	if self._volume_type == "all_alive_human_players_inside" then
-		for i = 1, #player_and_bot_units do
-			local player_unit = player_and_bot_units[i]
-			local status_ext = ALIVE[player_unit] and ScriptUnit.has_extension(player_unit, "status_system")
+	if arg_9_0._volume_type == "all_alive_human_players_inside" then
+		for iter_9_0 = 1, #var_9_0 do
+			local var_9_2 = var_9_0[iter_9_0]
+			local var_9_3 = ALIVE[var_9_2] and ScriptUnit.has_extension(var_9_2, "status_system")
 
-			if status_ext and not status_ext:is_disabled() then
-				num_players = num_players + 1
+			if var_9_3 and not var_9_3:is_disabled() then
+				var_9_1 = var_9_1 + 1
 			end
 		end
 	else
-		for i = 1, #player_and_bot_units do
-			local player_unit = player_and_bot_units[i]
-			local status_ext = ALIVE[player_unit] and ScriptUnit.has_extension(player_unit, "status_system")
+		for iter_9_1 = 1, #var_9_0 do
+			local var_9_4 = var_9_0[iter_9_1]
+			local var_9_5 = ALIVE[var_9_4] and ScriptUnit.has_extension(var_9_4, "status_system")
 
-			if status_ext and not status_ext:is_disabled() and (status_ext.is_bot or self._volume_system:player_inside(self._volume_name, player_unit)) then
-				num_players = num_players + 1
+			if var_9_5 and not var_9_5:is_disabled() and (var_9_5.is_bot or arg_9_0._volume_system:player_inside(arg_9_0._volume_name, var_9_4)) then
+				var_9_1 = var_9_1 + 1
 			end
 		end
 	end
 
-	return num_players
+	return var_9_1
 end
 
-VersusVolumeObjectiveExtension.get_score_for_completion = function (self)
-	if not self:is_done() then
+function VersusVolumeObjectiveExtension.get_score_for_completion(arg_10_0)
+	if not arg_10_0:is_done() then
 		return 0
 	end
 
-	if self._score_for_each_player_inside == 0 then
-		return self._score_for_completion
+	if arg_10_0._score_for_each_player_inside == 0 then
+		return arg_10_0._score_for_completion
 	end
 
-	return self._score_for_completion + self:_get_num_players_inside() * self._score_for_each_player_inside
+	return arg_10_0._score_for_completion + arg_10_0:_get_num_players_inside() * arg_10_0._score_for_each_player_inside
 end
 
-VersusVolumeObjectiveExtension.get_time_for_completion = function (self)
-	if not self:is_done() then
+function VersusVolumeObjectiveExtension.get_time_for_completion(arg_11_0)
+	if not arg_11_0:is_done() then
 		return 0
 	end
 
-	if self._time_for_each_player_inside == 0 then
-		return self._time_for_completion
+	if arg_11_0._time_for_each_player_inside == 0 then
+		return arg_11_0._time_for_completion
 	end
 
-	return self._time_for_completion + self:_get_num_players_inside() * self._time_for_each_player_inside
+	return arg_11_0._time_for_completion + arg_11_0:_get_num_players_inside() * arg_11_0._time_for_each_player_inside
 end

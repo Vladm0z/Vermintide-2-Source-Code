@@ -1,60 +1,60 @@
-﻿-- chunkname: @foundation/scripts/util/patches.lua
+-- chunkname: @foundation/scripts/util/patches.lua
 
 require("foundation/scripts/util/misc_util")
 
-local function auto_patch_missing_methods(library_name)
-	local library = rawget(_G, library_name) or {}
+local function var_0_0(arg_1_0)
+	local var_1_0 = rawget(_G, arg_1_0) or {}
 
-	assert(getmetatable(library) == nil, "It's not safe auto-patching methods on a table that already has a metatable. Set them to NOP manually.")
+	assert(getmetatable(var_1_0) == nil, "It's not safe auto-patching methods on a table that already has a metatable. Set them to NOP manually.")
 
-	return rawset(_G, library_name, setmetatable(library, {
-		__index = function (self, key)
+	return rawset(_G, arg_1_0, setmetatable(var_1_0, {
+		__index = function(arg_2_0, arg_2_1)
 			if not script_data.disable_auto_patch_missing_methods then
-				Application.error("Missing method key autovivified with NOP: %s.%s\n%s", library_name, key, Script.callstack())
+				Application.error("Missing method key autovivified with NOP: %s.%s\n%s", arg_1_0, arg_2_1, Script.callstack())
 
-				self[key] = NOP
+				arg_2_0[arg_2_1] = NOP
 
 				return NOP
 			end
-		end,
+		end
 	}))
 end
 
 MockClass = MockClass or {}
 
-MockClass.new = function ()
+function MockClass.new()
 	return MockClass
 end
 
-local mt = {
-	__index = function (self, name)
+local var_0_1 = {
+	__index = function(arg_4_0, arg_4_1)
 		return NOP
 	end,
-	update = NOP,
+	update = NOP
 }
 
-setmetatable(MockClass, mt)
+setmetatable(MockClass, var_0_1)
 
 if not _G.FOUNDATION_patches_applied and (IS_CONSOLE or DEDICATED_SERVER) then
 	_G.FOUNDATION_patches_applied = true
 
 	if not Wwise then
-		auto_patch_missing_methods("Wwise")
+		var_0_0("Wwise")
 	end
 
 	if not WwiseWorld then
-		auto_patch_missing_methods("WwiseWorld")
+		var_0_0("WwiseWorld")
 	end
 
 	if not TerrainDecoration then
-		auto_patch_missing_methods("TerrainDecoration")
+		var_0_0("TerrainDecoration")
 	end
 
 	if not LandscapeDecoration then
-		auto_patch_missing_methods("LandscapeDecoration")
+		var_0_0("LandscapeDecoration")
 	end
 
-	auto_patch_missing_methods("Application")
+	var_0_0("Application")
 
 	Application.apply_user_settings = NOP
 	Application.enum_display_modes = TNEW
@@ -65,7 +65,7 @@ if not _G.FOUNDATION_patches_applied and (IS_CONSOLE or DEDICATED_SERVER) then
 	Application.set_max_frame_stacking = NOP
 	Application.user_settings_load_error = NOP
 
-	auto_patch_missing_methods("Window")
+	var_0_0("Window")
 
 	Window.KEYSTROKE_ALT_ENTER = 0
 	Window.KEYSTROKE_ALT_F4 = 0
@@ -91,19 +91,19 @@ if not _G.FOUNDATION_patches_applied and (IS_CONSOLE or DEDICATED_SERVER) then
 	Window.set_title = NOP
 	Window.show_cursor = NOP
 
-	auto_patch_missing_methods("DisplayAdapter")
+	var_0_0("DisplayAdapter")
 
 	DisplayAdapter.num_adapters = CONST(0)
 	DisplayAdapter.name = CONST("function patched out")
 	DisplayAdapter.num_outputs = CONST(0)
 	DisplayAdapter.num_modes = CONST(0)
 
-	DisplayAdapter.mode = function ()
+	function DisplayAdapter.mode()
 		return 1, 1
 	end
 
 	if not DEDICATED_SERVER then
-		auto_patch_missing_methods("CommandWindow")
+		var_0_0("CommandWindow")
 
 		CommandWindow.close = NOP
 		CommandWindow.open = NOP
@@ -115,14 +115,14 @@ if not _G.FOUNDATION_patches_applied and (IS_CONSOLE or DEDICATED_SERVER) then
 end
 
 if not Clipboard then
-	auto_patch_missing_methods("Clipboard")
+	var_0_0("Clipboard")
 
 	Clipboard.get = CONST("")
 	Clipboard.put = NOP
 end
 
 if not Presence then
-	auto_patch_missing_methods("Presence")
+	var_0_0("Presence")
 
 	Presence.set_presence = NOP
 end
@@ -131,33 +131,33 @@ ColorBox = QuaternionBox
 __STRING_FORMAT = __STRING_FORMAT or nil
 
 if not __STRING_FORMAT then
-	local VALIDATED_STRINGS = {}
-	local INVALID_STRINGS = {}
+	local var_0_2 = {}
+	local var_0_3 = {}
 
 	__STRING_FORMAT = __STRING_FORMAT or string.format
 	string._format = string.format
 
-	string.format = function (str, ...)
-		if VALIDATED_STRINGS[str] then
-			return __STRING_FORMAT(str, ...)
+	function string.format(arg_6_0, ...)
+		if var_0_2[arg_6_0] then
+			return __STRING_FORMAT(arg_6_0, ...)
 		end
 
-		if INVALID_STRINGS[str] then
+		if var_0_3[arg_6_0] then
 			return "<Invalid string format>"
 		end
 
-		local success, result = pcall(__STRING_FORMAT, str, ...)
+		local var_6_0, var_6_1 = pcall(__STRING_FORMAT, arg_6_0, ...)
 
-		if not success then
-			INVALID_STRINGS[str] = true
+		if not var_6_0 then
+			var_0_3[arg_6_0] = true
 
-			Crashify.print_exception("string.format", "Invalid string format for string %q", str)
+			Crashify.print_exception("string.format", "Invalid string format for string %q", arg_6_0)
 
 			return "<Invalid string format>"
 		else
-			VALIDATED_STRINGS[str] = true
+			var_0_2[arg_6_0] = true
 
-			return result
+			return var_6_1
 		end
 	end
 end

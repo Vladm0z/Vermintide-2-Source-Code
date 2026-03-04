@@ -1,57 +1,50 @@
-﻿-- chunkname: @scripts/managers/game_mode/game_modes/game_mode_versus_testify.lua
+-- chunkname: @scripts/managers/game_mode/game_modes/game_mode_versus_testify.lua
 
-local GameModeVersusTestify = {
-	versus_has_lost = function (game_mode_versus)
-		return game_mode_versus:is_about_to_end_game_early()
+return {
+	versus_has_lost = function(arg_1_0)
+		return arg_1_0:is_about_to_end_game_early()
 	end,
-	versus_wait_for_local_player_hero_picking_turn = function (game_mode_versus)
-		local party_selection_logic = game_mode_versus:party_selection_logic()
+	versus_wait_for_local_player_hero_picking_turn = function(arg_2_0)
+		local var_2_0 = arg_2_0:party_selection_logic()
 
-		if not party_selection_logic then
+		if not var_2_0 then
 			return Testify.RETRY
 		end
 
-		local peer_id = Network.peer_id()
-		local local_player_id = 1
-		local party_manager = Managers.party
-		local party, party_id = party_manager:get_party_from_player_id(peer_id, local_player_id)
+		local var_2_1 = Network.peer_id()
+		local var_2_2 = 1
+		local var_2_3 = Managers.party
+		local var_2_4, var_2_5 = var_2_3:get_party_from_player_id(var_2_1, var_2_2)
 
-		if not party or party_id < 1 then
+		if not var_2_4 or var_2_5 < 1 then
 			return Testify.RETRY
 		end
 
-		local party_data = party_selection_logic:get_party_data(party_id)
+		local var_2_6 = var_2_0:get_party_data(var_2_5)
 
-		if not party_data then
+		if not var_2_6 then
 			return Testify.RETRY
 		end
 
-		local current_picker_index = party_data.current_picker_index
+		local var_2_7 = var_2_6.current_picker_index
 
-		if current_picker_index <= 0 then
+		if var_2_7 <= 0 then
 			return Testify.RETRY
 		end
 
-		local player_status = party_manager:get_player_status(peer_id, local_player_id)
-		local picker_list = party_data.picker_list
-		local player_data = picker_list[current_picker_index]
-		local status = player_data.status
-		local is_picking = party_id == party_data.party_id and player_status.slot_id == status.slot_id
+		local var_2_8 = var_2_3:get_player_status(var_2_1, var_2_2)
+		local var_2_9 = var_2_6.picker_list[var_2_7].status
 
-		if not is_picking then
+		if not (var_2_5 == var_2_6.party_id and var_2_8.slot_id == var_2_9.slot_id) then
 			return Testify.RETRY
 		end
 	end,
-	versus_set_time = function (_, time)
-		local win_conditions = Managers.mechanism:game_mechanism():win_conditions()
-
-		win_conditions:set_time(time)
+	versus_set_time = function(arg_3_0, arg_3_1)
+		Managers.mechanism:game_mechanism():win_conditions():set_time(arg_3_1)
 	end,
-	versus_wait_for_initial_peers_spawned = function (game_mode_versus)
-		if not game_mode_versus:initial_peers_spawned() then
+	versus_wait_for_initial_peers_spawned = function(arg_4_0)
+		if not arg_4_0:initial_peers_spawned() then
 			return Testify.RETRY
 		end
-	end,
+	end
 }
-
-return GameModeVersusTestify

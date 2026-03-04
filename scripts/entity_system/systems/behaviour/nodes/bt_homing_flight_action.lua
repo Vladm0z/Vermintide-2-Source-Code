@@ -1,45 +1,45 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_homing_flight_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_homing_flight_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTHomingFlightAction = class(BTHomingFlightAction, BTNode)
 
-BTHomingFlightAction.init = function (self, ...)
-	BTHomingFlightAction.super.init(self, ...)
+function BTHomingFlightAction.init(arg_1_0, ...)
+	BTHomingFlightAction.super.init(arg_1_0, ...)
 end
 
 BTHomingFlightAction.name = "BTHomingFlightAction"
 
-BTHomingFlightAction.enter = function (self)
-	self._ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
+function BTHomingFlightAction.enter(arg_2_0)
+	arg_2_0._ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
 end
 
-BTHomingFlightAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	local old_target_unit = blackboard.homing_target_unit
+function BTHomingFlightAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	local var_3_0 = arg_3_2.homing_target_unit
 
-	if old_target_unit then
-		self._ai_bot_group_system:ranged_attack_ended(unit, old_target_unit, "shadow_skull")
+	if var_3_0 then
+		arg_3_0._ai_bot_group_system:ranged_attack_ended(arg_3_1, var_3_0, "shadow_skull")
 
-		blackboard.homing_target_unit = nil
+		arg_3_2.homing_target_unit = nil
 	end
 end
 
-BTHomingFlightAction.run = function (self, unit, blackboard, t, dt, bt_name)
-	local old_target_unit = blackboard.homing_target_unit
-	local new_target_unit = blackboard.target_unit
+function BTHomingFlightAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	local var_4_0 = arg_4_2.homing_target_unit
+	local var_4_1 = arg_4_2.target_unit
 
-	if new_target_unit ~= old_target_unit then
-		local ai_bot_group_system = self._ai_bot_group_system
+	if var_4_1 ~= var_4_0 then
+		local var_4_2 = arg_4_0._ai_bot_group_system
 
-		if old_target_unit then
-			ai_bot_group_system:ranged_attack_ended(unit, old_target_unit, "shadow_skull")
+		if var_4_0 then
+			var_4_2:ranged_attack_ended(arg_4_1, var_4_0, "shadow_skull")
 		end
 
-		if new_target_unit then
-			ai_bot_group_system:ranged_attack_started(unit, new_target_unit, "shadow_skull")
+		if var_4_1 then
+			var_4_2:ranged_attack_started(arg_4_1, var_4_1, "shadow_skull")
 		end
 
-		blackboard.homing_target_unit = new_target_unit
+		arg_4_2.homing_target_unit = var_4_1
 	end
 
 	return "running"

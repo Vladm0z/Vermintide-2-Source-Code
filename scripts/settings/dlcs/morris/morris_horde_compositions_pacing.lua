@@ -1,6 +1,6 @@
-﻿-- chunkname: @scripts/settings/dlcs/morris/morris_horde_compositions_pacing.lua
+-- chunkname: @scripts/settings/dlcs/morris/morris_horde_compositions_pacing.lua
 
-local morris_compositions = {
+return {
 	curse_blood_for_the_blood_god_horde = {
 		sound_settings = HordeCompositionsSoundSettings.chaos,
 		{
@@ -12,14 +12,14 @@ local morris_compositions = {
 				"skaven_clan_rat",
 				{
 					2,
-					4,
+					4
 				},
 				"skaven_slave",
 				{
 					10,
-					15,
-				},
-			},
+					15
+				}
+			}
 		},
 		{
 			name = "plain",
@@ -30,16 +30,14 @@ local morris_compositions = {
 				"skaven_clan_rat",
 				{
 					4,
-					6,
+					6
 				},
 				"skaven_slave",
 				{
 					8,
-					10,
-				},
-			},
-		},
-	},
+					10
+				}
+			}
+		}
+	}
 }
-
-return morris_compositions

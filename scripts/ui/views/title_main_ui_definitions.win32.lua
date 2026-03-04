@@ -1,1354 +1,1353 @@
-﻿-- chunkname: @scripts/ui/views/title_main_ui_definitions.win32.lua
+-- chunkname: @scripts/ui/views/title_main_ui_definitions.win32.lua
 
-local scenegraph_definition = {
+local var_0_0 = {
 	root = {
 		is_root = true,
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	dead_space_filler = {
 		scale = "fit",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	screen = {
 		scale = "fit",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	info_icon = {
-		horizontal_alignment = "left",
-		parent = "screen",
 		vertical_alignment = "top",
+		parent = "screen",
+		horizontal_alignment = "left",
 		position = {
 			100,
 			-350,
-			30,
+			30
 		},
 		size = {
 			87,
-			87,
-		},
+			87
+		}
 	},
 	info_icon_text = {
-		horizontal_alignment = "left",
-		parent = "info_icon",
 		vertical_alignment = "top",
+		parent = "info_icon",
+		horizontal_alignment = "left",
 		position = {
 			95,
 			-15,
-			0,
+			0
 		},
 		size = {
 			400,
-			100,
-		},
+			100
+		}
 	},
 	background = {
-		horizontal_alignment = "center",
-		parent = "root",
 		vertical_alignment = "center",
+		parent = "root",
+		horizontal_alignment = "center",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	engage_prompt = {
-		horizontal_alignment = "center",
-		parent = "background",
 		vertical_alignment = "center",
+		parent = "background",
+		horizontal_alignment = "center",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			10,
-		},
+			10
+		}
 	},
 	sidebar = {
-		horizontal_alignment = "left",
 		parent = "background",
+		horizontal_alignment = "left",
 		size = {
 			544,
-			1080,
+			1080
 		},
 		position = {
 			-800,
 			0,
-			2,
-		},
+			2
+		}
 	},
 	sidebar_fade_bg = {
-		horizontal_alignment = "right",
 		parent = "sidebar",
+		horizontal_alignment = "right",
 		size = {
 			256,
-			1080,
+			1080
 		},
 		position = {
 			256,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	sidebar_mask = {
-		horizontal_alignment = "left",
 		parent = "sidebar",
+		horizontal_alignment = "left",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			1080,
-			3,
-		},
+			3
+		}
 	},
 	info_slate = {
-		horizontal_alignment = "center",
-		parent = "background",
 		vertical_alignment = "bottom",
+		parent = "background",
+		horizontal_alignment = "center",
 		size = {
 			1920,
-			50,
+			50
 		},
 		position = {
 			-620,
 			200,
-			100,
-		},
+			100
+		}
 	},
 	game_type_tag = {
-		horizontal_alignment = "center",
-		parent = "info_slate",
 		vertical_alignment = "bottom",
+		parent = "info_slate",
+		horizontal_alignment = "center",
 		size = {
 			1920,
-			50,
+			50
 		},
 		position = {
 			0,
 			-50,
-			0,
-		},
+			0
+		}
 	},
 	game_type_description = {
-		horizontal_alignment = "center",
-		parent = "game_type_tag",
 		vertical_alignment = "top",
+		parent = "game_type_tag",
+		horizontal_alignment = "center",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			-40,
-			0,
-		},
+			0
+		}
 	},
 	information_text = {
-		horizontal_alignment = "center",
-		parent = "background",
 		vertical_alignment = "center",
+		parent = "background",
+		horizontal_alignment = "center",
 		size = {
 			600,
-			62,
+			62
 		},
 		position = {
 			0,
 			-375,
-			2,
-		},
+			2
+		}
 	},
 	splash_video = {
 		parent = "background",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			700,
-		},
+			700
+		}
 	},
 	start_screen_video = {
-		horizontal_alignment = "center",
-		parent = "background",
 		vertical_alignment = "center",
+		parent = "background",
+		horizontal_alignment = "center",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	start_screen_video_fade = {
 		parent = "background",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			2,
-		},
+			2
+		}
 	},
 	logo = {
-		horizontal_alignment = "left",
-		parent = "background",
 		vertical_alignment = "top",
+		parent = "background",
+		horizontal_alignment = "left",
 		size = {
 			682,
-			383.90000000000003,
+			383.90000000000003
 		},
 		position = {
 			0,
 			20,
-			5,
-		},
+			5
+		}
 	},
 	sub_logo = {
-		horizontal_alignment = "center",
-		parent = "logo",
 		vertical_alignment = "bottom",
+		parent = "logo",
+		horizontal_alignment = "center"
 	},
 	legal_text = {
-		horizontal_alignment = "center",
-		parent = "background",
 		vertical_alignment = "bottom",
+		parent = "background",
+		horizontal_alignment = "center",
 		size = {
 			1400,
-			300,
+			300
 		},
 		position = {
 			0,
 			10,
-			2,
-		},
+			2
+		}
 	},
 	game_type_text = {
-		horizontal_alignment = "left",
-		parent = "change_profile_input_icon",
 		vertical_alignment = "bottom",
+		parent = "change_profile_input_icon",
+		horizontal_alignment = "left",
 		size = {
 			1200,
-			50,
+			50
 		},
 		position = {
 			0,
 			60,
-			2,
-		},
+			2
+		}
 	},
 	user_gamertag = {
-		horizontal_alignment = "left",
-		parent = "change_profile_input_icon",
 		vertical_alignment = "bottom",
+		parent = "change_profile_input_icon",
+		horizontal_alignment = "left",
 		size = {
 			1200,
-			50,
+			50
 		},
 		position = {
 			0,
 			35,
-			2,
-		},
+			2
+		}
 	},
 	change_profile_input_icon = {
-		horizontal_alignment = "left",
-		parent = "background",
 		vertical_alignment = "bottom",
+		parent = "background",
+		horizontal_alignment = "left",
 		size = {
 			26,
-			26,
+			26
 		},
 		position = {
 			35,
 			15,
-			30,
-		},
+			30
+		}
 	},
 	change_profile_input_text = {
-		horizontal_alignment = "left",
-		parent = "change_profile_input_icon",
 		vertical_alignment = "center",
+		parent = "change_profile_input_icon",
+		horizontal_alignment = "left",
 		size = {
 			1200,
-			1,
+			1
 		},
 		position = {
 			30,
 			-5,
-			2,
-		},
+			2
+		}
 	},
 	update_offline_data_input_icon = {
-		horizontal_alignment = "left",
-		parent = "background",
 		vertical_alignment = "bottom",
+		parent = "background",
+		horizontal_alignment = "left",
 		size = {
 			26,
-			26,
+			26
 		},
 		position = {
 			250,
 			15,
-			30,
-		},
+			30
+		}
 	},
 	update_offline_data_input_text = {
-		horizontal_alignment = "left",
-		parent = "update_offline_data_input_icon",
 		vertical_alignment = "center",
+		parent = "update_offline_data_input_icon",
+		horizontal_alignment = "left",
 		size = {
 			1200,
-			1,
+			1
 		},
 		position = {
 			30,
 			-5,
-			2,
-		},
+			2
+		}
 	},
 	playgo_status = {
-		horizontal_alignment = "left",
-		parent = "background",
 		vertical_alignment = "top",
+		parent = "background",
+		horizontal_alignment = "left",
 		size = {
 			1200,
-			50,
+			50
 		},
 		position = {
 			35,
 			-5,
-			30,
-		},
+			30
+		}
 	},
 	menu_anchor_point = {
-		horizontal_alignment = "left",
-		parent = "background",
 		vertical_alignment = "center",
+		parent = "background",
+		horizontal_alignment = "left",
 		size = {
 			0,
-			0,
+			0
 		},
 		position = {
 			340,
 			-100,
-			4,
-		},
+			4
+		}
 	},
 	frame_top = {
-		horizontal_alignment = "center",
-		parent = "menu_anchor_point",
 		vertical_alignment = "bottom",
+		parent = "menu_anchor_point",
+		horizontal_alignment = "center",
 		size = {
 			960,
-			96,
+			96
 		},
 		position = {
 			0,
 			0,
-			7,
-		},
+			7
+		}
 	},
 	frame_bottom = {
-		horizontal_alignment = "center",
-		parent = "menu_anchor_point",
 		vertical_alignment = "top",
+		parent = "menu_anchor_point",
+		horizontal_alignment = "center",
 		size = {
 			960,
-			85,
+			85
 		},
 		position = {
 			0,
 			-3,
-			6,
-		},
+			6
+		}
 	},
 	frame_background = {
-		horizontal_alignment = "center",
-		parent = "frame_bottom",
 		vertical_alignment = "bottom",
+		parent = "frame_bottom",
+		horizontal_alignment = "center",
 		size = {
 			660,
-			0,
+			0
 		},
 		position = {
 			0,
 			83,
-			-1,
-		},
+			-1
+		}
 	},
 	frame_circle_glow = {
-		horizontal_alignment = "center",
-		parent = "frame_bottom",
 		vertical_alignment = "bottom",
+		parent = "frame_bottom",
+		horizontal_alignment = "center",
 		size = {
 			205,
-			184,
+			184
 		},
 		position = {
 			4,
 			-7,
-			15,
-		},
+			15
+		}
 	},
 	frame_line_glow = {
-		horizontal_alignment = "center",
-		parent = "frame_circle_glow",
 		vertical_alignment = "center",
+		parent = "frame_circle_glow",
+		horizontal_alignment = "center",
 		size = {
 			730,
-			26,
+			26
 		},
 		position = {
 			-4,
 			-2,
-			1,
-		},
+			1
+		}
 	},
 	input_icon = {
-		horizontal_alignment = "center",
-		parent = "frame_circle_glow",
 		vertical_alignment = "center",
+		parent = "frame_circle_glow",
+		horizontal_alignment = "center",
 		size = {
 			50,
-			50,
+			50
 		},
 		position = {
 			-4,
 			-2,
-			-10,
-		},
+			-10
+		}
 	},
 	lock_center = {
-		horizontal_alignment = "center",
-		parent = "input_icon",
 		vertical_alignment = "center",
+		parent = "input_icon",
+		horizontal_alignment = "center",
 		size = {
 			50,
-			50,
+			50
 		},
 		position = {
 			0,
 			1,
-			-1,
-		},
+			-1
+		}
 	},
 	lock_middle_top = {
-		horizontal_alignment = "center",
-		parent = "frame_top",
 		vertical_alignment = "bottom",
+		parent = "frame_top",
+		horizontal_alignment = "center",
 		size = {
 			50,
-			50,
+			50
 		},
 		position = {
 			0,
 			-29,
-			2,
-		},
+			2
+		}
 	},
 	lock_middle_bottom = {
-		horizontal_alignment = "center",
-		parent = "input_icon",
 		vertical_alignment = "center",
+		parent = "input_icon",
+		horizontal_alignment = "center",
 		size = {
 			50,
-			50,
+			50
 		},
 		position = {
 			0,
 			1,
-			-2,
-		},
+			-2
+		}
 	},
 	lock_outer_top = {
-		horizontal_alignment = "center",
-		parent = "frame_top",
 		vertical_alignment = "bottom",
+		parent = "frame_top",
+		horizontal_alignment = "center",
 		size = {
 			50,
-			50,
+			50
 		},
 		position = {
 			0,
 			-29,
-			1,
-		},
+			1
+		}
 	},
 	lock_outer_bottom = {
-		horizontal_alignment = "center",
-		parent = "input_icon",
 		vertical_alignment = "center",
+		parent = "input_icon",
+		horizontal_alignment = "center",
 		size = {
 			50,
-			50,
+			50
 		},
 		position = {
 			0,
 			1,
-			-3,
-		},
+			-3
+		}
 	},
 	selection_anchor = {
-		horizontal_alignment = "center",
-		parent = "menu_anchor_point",
 		vertical_alignment = "center",
+		parent = "menu_anchor_point",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			0,
-			10,
+			10
 		},
 		size = {
 			0,
-			60,
-		},
+			60
+		}
 	},
 	selection_glow_left = {
-		horizontal_alignment = "left",
-		parent = "selection_anchor",
 		vertical_alignment = "center",
+		parent = "selection_anchor",
+		horizontal_alignment = "left",
 		position = {
 			-98,
 			0,
-			10,
+			10
 		},
 		size = {
 			98,
-			60,
-		},
+			60
+		}
 	},
 	selection_glow_right = {
-		horizontal_alignment = "right",
-		parent = "selection_anchor",
 		vertical_alignment = "center",
+		parent = "selection_anchor",
+		horizontal_alignment = "right",
 		position = {
 			98,
 			0,
-			10,
+			10
 		},
 		size = {
 			98,
-			60,
-		},
+			60
+		}
 	},
 	online_button = {
-		horizontal_alignment = "center",
-		parent = "menu_anchor_point",
 		vertical_alignment = "center",
+		parent = "menu_anchor_point",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			-100,
-			10,
+			10
 		},
 		size = {
 			300,
-			60,
-		},
+			60
+		}
 	},
 	offline_button = {
-		horizontal_alignment = "center",
-		parent = "menu_anchor_point",
 		vertical_alignment = "center",
+		parent = "menu_anchor_point",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			-150,
-			10,
+			10
 		},
 		size = {
 			300,
-			60,
-		},
+			60
+		}
 	},
 	menu_option_1 = {
-		horizontal_alignment = "center",
-		parent = "menu_anchor_point",
 		vertical_alignment = "center",
+		parent = "menu_anchor_point",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			90,
-			10,
+			10
 		},
 		size = {
 			300,
-			50,
-		},
+			50
+		}
 	},
 	menu_option_2 = {
-		horizontal_alignment = "center",
-		parent = "menu_anchor_point",
 		vertical_alignment = "center",
+		parent = "menu_anchor_point",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			40,
-			10,
+			10
 		},
 		size = {
 			300,
-			50,
-		},
+			50
+		}
 	},
 	menu_option_3 = {
-		horizontal_alignment = "center",
-		parent = "menu_anchor_point",
 		vertical_alignment = "center",
+		parent = "menu_anchor_point",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			-10,
-			10,
+			10
 		},
 		size = {
 			300,
-			50,
-		},
+			50
+		}
 	},
 	menu_option_4 = {
-		horizontal_alignment = "center",
-		parent = "menu_anchor_point",
 		vertical_alignment = "center",
+		parent = "menu_anchor_point",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			-60,
-			10,
+			10
 		},
 		size = {
 			300,
-			50,
-		},
+			50
+		}
 	},
 	menu_option_5 = {
-		horizontal_alignment = "center",
-		parent = "menu_anchor_point",
 		vertical_alignment = "center",
+		parent = "menu_anchor_point",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			-110,
-			10,
+			10
 		},
 		size = {
 			300,
-			50,
-		},
+			50
+		}
 	},
 	menu_option_6 = {
-		horizontal_alignment = "center",
-		parent = "menu_anchor_point",
 		vertical_alignment = "center",
+		parent = "menu_anchor_point",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			-160,
-			10,
+			10
 		},
 		size = {
 			300,
-			50,
-		},
+			50
+		}
 	},
 	ai_benchmark = {
-		horizontal_alignment = "center",
-		parent = "menu_anchor_point",
 		vertical_alignment = "center",
+		parent = "menu_anchor_point",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			-240,
-			10,
+			10
 		},
 		size = {
 			1000,
-			60,
-		},
+			60
+		}
 	},
 	ai_benchmark_cycle = {
-		horizontal_alignment = "center",
-		parent = "menu_anchor_point",
 		vertical_alignment = "center",
+		parent = "menu_anchor_point",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			-300,
-			10,
+			10
 		},
 		size = {
 			1000,
-			60,
-		},
+			60
+		}
 	},
 	whitebox_combat = {
-		horizontal_alignment = "center",
-		parent = "menu_anchor_point",
 		vertical_alignment = "center",
+		parent = "menu_anchor_point",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			-360,
-			10,
+			10
 		},
 		size = {
 			1000,
-			60,
-		},
+			60
+		}
 	},
 	support_info = {
-		horizontal_alignment = "center",
-		parent = "background",
 		vertical_alignment = "top",
+		parent = "background",
+		horizontal_alignment = "center",
 		size = {
 			1200,
-			50,
+			50
 		},
 		position = {
 			0,
 			-20,
-			30,
-		},
-	},
+			30
+		}
+	}
 }
-local info_slate_text_style = {
+local var_0_1 = {
 	font_size = 22,
-	font_type = "hell_shark_header",
-	horizontal_alignment = "center",
-	localize = true,
 	upper_case = false,
-	vertical_alignment = "center",
+	localize = true,
 	word_wrap = false,
+	horizontal_alignment = "center",
+	vertical_alignment = "center",
+	font_type = "hell_shark_header",
 	text_color = {
 		255,
 		0,
 		0,
-		0,
+		0
 	},
 	offset = {
 		0,
 		-1,
-		2,
-	},
+		2
+	}
 }
-local game_type_tag_text_style = {
+local var_0_2 = {
 	font_size = 32,
-	font_type = "hell_shark_header",
-	horizontal_alignment = "center",
-	localize = true,
 	upper_case = false,
-	vertical_alignment = "top",
+	localize = true,
 	word_wrap = false,
-	text_color = {
-		255,
-		255,
-		255,
-		255,
-	},
-	offset = {
-		0,
-		0,
-		2,
-	},
-}
-local game_type_description_text_style = {
-	font_size = 18,
-	font_type = "hell_shark_header",
 	horizontal_alignment = "center",
-	localize = true,
-	upper_case = false,
 	vertical_alignment = "top",
-	word_wrap = true,
+	font_type = "hell_shark_header",
 	text_color = {
 		255,
-		128,
-		128,
-		128,
+		255,
+		255,
+		255
 	},
 	offset = {
 		0,
 		0,
-		2,
+		2
+	}
+}
+local var_0_3 = {
+	font_size = 18,
+	upper_case = false,
+	localize = true,
+	word_wrap = true,
+	horizontal_alignment = "center",
+	vertical_alignment = "top",
+	font_type = "hell_shark_header",
+	text_color = {
+		255,
+		128,
+		128,
+		128
+	},
+	offset = {
+		0,
+		0,
+		2
 	},
 	area_size = {
 		600,
-		300,
-	},
+		300
+	}
 }
 
-local function create_engage_prompt(ui_renderer)
-	local font_type = "hell_shark"
-	local font_size = 52
-	local button_size = {
+local function var_0_4(arg_1_0)
+	local var_1_0 = "hell_shark"
+	local var_1_1 = 52
+	local var_1_2 = {
 		50,
-		50,
+		50
 	}
-	local press_str = Localize("interaction_prefix_press")
-	local to_start_str = Localize("to_start_game")
-	local spacing = 10
-	local button_alignment = 7.5
-	local font, scaled_font_size = UIFontByResolution({
-		font_type = font_type,
-		font_size = font_size,
+	local var_1_3 = Localize("interaction_prefix_press")
+	local var_1_4 = Localize("to_start_game")
+	local var_1_5 = 10
+	local var_1_6 = 7.5
+	local var_1_7, var_1_8 = UIFontByResolution({
+		font_type = var_1_0,
+		font_size = var_1_1
 	})
-	local press_text_width = UIRenderer.text_size(ui_renderer, press_str, font[1], scaled_font_size)
-	local to_start_width = UIRenderer.text_size(ui_renderer, to_start_str, font[1], scaled_font_size)
-	local total_size = press_text_width + spacing + button_size[1] + spacing + to_start_width + button_alignment
-	local press_offset_x = -total_size * 0.5 + press_text_width * 0.5
-	local button_offset = -total_size * 0.5 + button_size[1] * 0.5 + press_text_width + spacing + button_alignment
-	local to_start_offset = button_offset + button_size[1] * 0.5 + spacing + to_start_width * 0.5
+	local var_1_9 = UIRenderer.text_size(arg_1_0, var_1_3, var_1_7[1], var_1_8)
+	local var_1_10 = UIRenderer.text_size(arg_1_0, var_1_4, var_1_7[1], var_1_8)
+	local var_1_11 = var_1_9 + var_1_5 + var_1_2[1] + var_1_5 + var_1_10 + var_1_6
+	local var_1_12 = -var_1_11 * 0.5 + var_1_9 * 0.5
+	local var_1_13 = -var_1_11 * 0.5 + var_1_2[1] * 0.5 + var_1_9 + var_1_5 + var_1_6
+	local var_1_14 = var_1_13 + var_1_2[1] * 0.5 + var_1_5 + var_1_10 * 0.5
 
 	return {
 		scenegraph_id = "engage_prompt",
 		element = {
 			passes = {
 				{
-					pass_type = "text",
 					style_id = "press_to_start",
+					pass_type = "text",
 					text_id = "press_to_start",
-					content_change_function = function (content, style)
-						local t = Managers.time:time("main")
-						local alpha = 192 + math.sin(t * 5) * 63
+					content_change_function = function(arg_2_0, arg_2_1)
+						local var_2_0 = Managers.time:time("main")
+						local var_2_1 = 192 + math.sin(var_2_0 * 5) * 63
 
-						style.text_color[2] = alpha
-						style.text_color[3] = alpha
-						style.text_color[4] = alpha
+						arg_2_1.text_color[2] = var_2_1
+						arg_2_1.text_color[3] = var_2_1
+						arg_2_1.text_color[4] = var_2_1
 					end,
-					content_check_function = function (content, style)
+					content_check_function = function(arg_3_0, arg_3_1)
 						return not Managers.input:is_device_active("gamepad")
-					end,
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "press",
-					text_id = "press_str",
-					content_change_function = function (content, style)
-						local t = Managers.time:time("main")
-						local alpha = 192 + math.sin(t * 5) * 63
-
-						style.text_color[2] = alpha
-						style.text_color[3] = alpha
-						style.text_color[4] = alpha
-					end,
-					content_check_function = function (content, style)
-						return Managers.input:is_device_active("gamepad")
-					end,
-				},
-				{
 					pass_type = "text",
-					style_id = "to_start",
-					text_id = "to_start_str",
-					content_change_function = function (content, style)
-						local t = Managers.time:time("main")
-						local alpha = 192 + math.sin(t * 5) * 63
+					text_id = "press_str",
+					content_change_function = function(arg_4_0, arg_4_1)
+						local var_4_0 = Managers.time:time("main")
+						local var_4_1 = 192 + math.sin(var_4_0 * 5) * 63
 
-						style.text_color[2] = alpha
-						style.text_color[3] = alpha
-						style.text_color[4] = alpha
+						arg_4_1.text_color[2] = var_4_1
+						arg_4_1.text_color[3] = var_4_1
+						arg_4_1.text_color[4] = var_4_1
 					end,
-					content_check_function = function (content, style)
+					content_check_function = function(arg_5_0, arg_5_1)
 						return Managers.input:is_device_active("gamepad")
-					end,
+					end
 				},
 				{
-					pass_type = "texture",
-					style_id = "button",
-					texture_id = "button_id",
-					content_change_function = function (content, style)
-						local t = Managers.time:time("main")
-						local alpha = 192 + math.sin(t * 5) * 63
+					style_id = "to_start",
+					pass_type = "text",
+					text_id = "to_start_str",
+					content_change_function = function(arg_6_0, arg_6_1)
+						local var_6_0 = Managers.time:time("main")
+						local var_6_1 = 192 + math.sin(var_6_0 * 5) * 63
 
-						style.color[2] = alpha
-						style.color[3] = alpha
-						style.color[4] = alpha
+						arg_6_1.text_color[2] = var_6_1
+						arg_6_1.text_color[3] = var_6_1
+						arg_6_1.text_color[4] = var_6_1
 					end,
-					content_check_function = function (content, style)
+					content_check_function = function(arg_7_0, arg_7_1)
 						return Managers.input:is_device_active("gamepad")
-					end,
+					end
 				},
-			},
+				{
+					style_id = "button",
+					pass_type = "texture",
+					texture_id = "button_id",
+					content_change_function = function(arg_8_0, arg_8_1)
+						local var_8_0 = Managers.time:time("main")
+						local var_8_1 = 192 + math.sin(var_8_0 * 5) * 63
+
+						arg_8_1.color[2] = var_8_1
+						arg_8_1.color[3] = var_8_1
+						arg_8_1.color[4] = var_8_1
+					end,
+					content_check_function = function(arg_9_0, arg_9_1)
+						return Managers.input:is_device_active("gamepad")
+					end
+				}
+			}
 		},
 		content = {
 			press_to_start = "press_any_button_to_continue",
-			press_str = press_str,
+			press_str = var_1_3,
 			button_id = IS_PS4 and "ps4_button_icon_cross_large" or "xbone_button_icon_a_large",
-			to_start_str = to_start_str,
+			to_start_str = var_1_4
 		},
 		style = {
 			press_to_start = {
-				horizontal_alignment = "center",
-				localize = true,
 				vertical_alignment = "center",
+				localize = true,
+				horizontal_alignment = "center",
 				word_wrap = false,
-				font_size = font_size,
-				font_type = font_type,
+				font_size = var_1_1,
+				font_type = var_1_0,
 				text_color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					0,
-				},
+					0
+				}
 			},
 			press = {
-				horizontal_alignment = "center",
-				localize = false,
 				vertical_alignment = "center",
+				localize = false,
+				horizontal_alignment = "center",
 				word_wrap = false,
-				font_size = font_size,
-				font_type = font_type,
+				font_size = var_1_1,
+				font_type = var_1_0,
 				text_color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					press_offset_x,
+					var_1_12,
 					0,
-					0,
-				},
+					0
+				}
 			},
 			to_start = {
-				horizontal_alignment = "center",
-				localize = false,
 				vertical_alignment = "center",
+				localize = false,
+				horizontal_alignment = "center",
 				word_wrap = false,
-				font_size = font_size,
-				font_type = font_type,
+				font_size = var_1_1,
+				font_type = var_1_0,
 				text_color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					to_start_offset,
+					var_1_14,
 					0,
-					0,
-				},
+					0
+				}
 			},
 			button = {
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
-				texture_size = button_size,
+				horizontal_alignment = "center",
+				texture_size = var_1_2,
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					button_offset,
+					var_1_13,
 					0,
-					0,
-				},
+					0
+				}
 			},
 			rect_press = {
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
+				horizontal_alignment = "center",
 				texture_size = {
-					press_text_width,
-					30,
+					var_1_9,
+					30
 				},
 				color = {
 					255,
 					255,
 					0,
-					0,
+					0
 				},
 				offset = {
-					press_offset_x,
+					var_1_12,
 					50,
-					0,
-				},
+					0
+				}
 			},
 			rect_button = {
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
+				horizontal_alignment = "center",
 				texture_size = {
-					button_size[1],
-					30,
+					var_1_2[1],
+					30
 				},
 				color = {
 					255,
 					0,
 					255,
-					0,
+					0
 				},
 				offset = {
-					button_offset,
+					var_1_13,
 					50,
-					0,
-				},
+					0
+				}
 			},
 			rect_to_start = {
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
+				horizontal_alignment = "center",
 				texture_size = {
-					to_start_width,
-					30,
+					var_1_10,
+					30
 				},
 				color = {
 					255,
 					0,
 					0,
-					255,
+					255
 				},
 				offset = {
-					to_start_offset,
+					var_1_14,
 					50,
-					0,
-				},
+					0
+				}
 			},
 			rect_total = {
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
+				horizontal_alignment = "center",
 				texture_size = {
-					total_size,
-					30,
+					var_1_11,
+					30
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					100,
-					0,
-				},
-			},
+					0
+				}
+			}
 		},
 		offset = {
 			0,
 			-375,
-			0,
-		},
+			0
+		}
 	}
 end
 
-UIWidgets.create_game_type_text = function (text, scenegraph_id, size, color)
-	local text_color = color or {
+function UIWidgets.create_game_type_text(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	local var_10_0 = arg_10_3 or {
 		255,
 		255,
 		255,
-		255,
+		255
 	}
 
 	return {
 		element = {
 			passes = {
 				{
-					pass_type = "text",
 					style_id = "text",
-					text_id = "text",
+					pass_type = "text",
+					text_id = "text"
 				},
 				{
-					pass_type = "text",
 					style_id = "status_text",
+					pass_type = "text",
 					text_id = "status_text",
-					content_check_function = function (content, style)
-						return content.text ~= ""
-					end,
-				},
-			},
+					content_check_function = function(arg_11_0, arg_11_1)
+						return arg_11_0.text ~= ""
+					end
+				}
+			}
 		},
 		content = {
-			text = text,
+			text = arg_10_0,
 			status_text = Localize("lb_status") .. ":",
-			color = text_color,
+			color = var_10_0
 		},
 		style = {
 			text = {
-				font_type = "hell_shark",
 				localize = false,
 				word_wrap = true,
-				font_size = size,
-				text_color = text_color,
+				font_type = "hell_shark",
+				font_size = arg_10_2,
+				text_color = var_10_0,
 				offset = {
 					0,
 					0,
-					2,
-				},
+					2
+				}
 			},
 			status_text = {
-				font_type = "hell_shark",
 				localize = false,
 				word_wrap = true,
-				font_size = size * 0.4,
+				font_type = "hell_shark",
+				font_size = arg_10_2 * 0.4,
 				text_color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
-					size,
-					2,
-				},
-			},
+					arg_10_2,
+					2
+				}
+			}
 		},
 		offset = {
 			0,
 			0,
-			0,
+			0
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_10_1
 	}
 end
 
-local function create_info_text(text, scenegraph_id, font_size)
+local function var_0_5(arg_12_0, arg_12_1, arg_12_2)
 	return {
 		element = {
 			passes = {
 				{
-					pass_type = "text",
 					style_id = "text",
-					text_id = "text",
+					pass_type = "text",
+					text_id = "text"
 				},
 				{
 					pass_type = "texture",
-					scenegraph_id = "info_icon",
 					style_id = "icon",
 					texture_id = "texture_id",
-				},
-			},
+					scenegraph_id = "info_icon"
+				}
+			}
 		},
 		content = {
 			texture_id = "info",
-			text = text,
+			text = arg_12_0
 		},
 		style = {
 			text = {
+				localize = true,
+				word_wrap = true,
+				pixel_perfect = true,
+				horizontal_alignment = "left",
+				vertical_alignment = "top",
 				dynamic_font = true,
 				font_type = "hell_shark_header",
-				horizontal_alignment = "left",
-				localize = true,
-				pixel_perfect = true,
-				vertical_alignment = "top",
-				word_wrap = true,
-				font_size = font_size,
+				font_size = arg_12_2,
 				text_color = Colors.get_table("dark_gray"),
 				offset = {
 					0,
 					0,
-					1,
-				},
+					1
+				}
 			},
 			icon = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					0,
-				},
-			},
+					0
+				}
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_12_1
 	}
 end
 
-local function create_menu_button(scenegraph_id, text, callback, menu_option_data)
-	local localized_text = Localize(text)
-	local upper_case = not string.find(localized_text, "{#")
+local function var_0_6(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	local var_13_0 = Localize(arg_13_1)
+	local var_13_1 = not string.find(var_13_0, "{#")
 
 	return {
 		element = {
 			passes = {
 				{
-					content_id = "button_text",
 					pass_type = "hotspot",
+					content_id = "button_text"
 				},
 				{
-					pass_type = "text",
 					style_id = "text",
+					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (content)
+					content_check_function = function(arg_14_0)
 						if Managers.input:is_device_active("mouse") then
 							return
 						end
 
-						return not content.button_text.disable_button and not content.button_text.is_selected
-					end,
+						return not arg_14_0.button_text.disable_button and not arg_14_0.button_text.is_selected
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "text",
+					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (content)
+					content_check_function = function(arg_15_0)
 						if not Managers.input:is_device_active("mouse") then
 							return
 						end
 
-						return not content.button_text.disable_button
-					end,
+						return not arg_15_0.button_text.disable_button
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "text_disabled",
+					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (content)
-						return content.button_text.disable_button
-					end,
+					content_check_function = function(arg_16_0)
+						return arg_16_0.button_text.disable_button
+					end
 				},
 				{
-					content_id = "icon_content",
-					pass_type = "texture_uv",
-					style_id = "icon",
 					texture_id = "icon_id",
-					content_check_function = function (content)
-						local parent_content = content.parent
+					style_id = "icon",
+					pass_type = "texture_uv",
+					content_id = "icon_content",
+					content_check_function = function(arg_17_0)
+						local var_17_0 = arg_17_0.parent
 
-						if not parent_content.show_icon or parent_content.disabled then
+						if not var_17_0.show_icon or var_17_0.disabled then
 							return false
 						end
 
-						if parent_content.selection_callback then
-							local current_index = parent_content.selection_callback()
+						if var_17_0.selection_callback then
+							local var_17_1 = var_17_0.selection_callback()
 
-							return parent_content.index ~= current_index
+							return var_17_0.index ~= var_17_1
 						end
 
 						return false
-					end,
-				},
-			},
+					end
+				}
+			}
 		},
 		content = {
-			alpha_value = 255,
 			default_font_size = 24,
 			show_icon = false,
-			callback = callback,
-			menu_option_data = menu_option_data,
+			alpha_value = 255,
+			callback = arg_13_2,
+			menu_option_data = arg_13_3,
 			button_text = {},
-			text_field = localized_text,
+			text_field = var_13_0,
 			icon_content = {
 				icon_id = "info",
 				uvs = {
 					{
 						0,
-						1,
+						1
 					},
 					{
 						1,
-						0,
-					},
-				},
-			},
+						0
+					}
+				}
+			}
 		},
 		style = {
 			text = {
-				font_size = 24,
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
-				localize = false,
-				vertical_alignment = "center",
 				word_wrap = false,
-				upper_case = upper_case,
+				localize = false,
+				font_size = 24,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				font_type = "hell_shark",
+				upper_case = var_13_1,
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
 					0,
 					0,
-					4,
-				},
+					4
+				}
 			},
 			text_hover = {
-				font_size = 24,
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
-				localize = false,
-				vertical_alignment = "center",
 				word_wrap = false,
-				upper_case = upper_case,
+				localize = false,
+				font_size = 24,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				font_type = "hell_shark",
+				upper_case = var_13_1,
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					0,
 					0,
-					4,
-				},
+					4
+				}
 			},
 			text_disabled = {
-				font_size = 24,
-				font_type = "hell_shark",
-				horizontal_alignment = "left",
-				localize = false,
-				vertical_alignment = "center",
 				word_wrap = false,
-				upper_case = upper_case,
+				localize = false,
+				font_size = 24,
+				horizontal_alignment = "left",
+				vertical_alignment = "center",
+				font_type = "hell_shark",
+				upper_case = var_13_1,
 				text_color = Colors.get_color_table_with_alpha("gray", 50),
 				offset = {
 					0,
 					0,
-					4,
-				},
+					4
+				}
 			},
 			icon = {
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
+				horizontal_alignment = "center",
 				texture_size = {
 					36,
-					36,
+					36
 				},
 				offset = {
 					0,
 					2,
-					4,
+					4
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
-				},
-			},
+					255
+				}
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_13_0
 	}
 end
 
-function create_sub_logo(texture)
-	local texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(texture)
-	local settings_size = texture_settings.size
-	local texture_size = {
-		settings_size[1],
-		settings_size[2],
+function create_sub_logo(arg_18_0)
+	local var_18_0 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_18_0).size
+	local var_18_1 = {
+		var_18_0[1],
+		var_18_0[2]
 	}
 
 	return {
@@ -1356,259 +1355,252 @@ function create_sub_logo(texture)
 		element = {
 			passes = {
 				{
-					pass_type = "texture",
-					style_id = "texture_id",
 					texture_id = "texture_id",
-				},
-			},
+					style_id = "texture_id",
+					pass_type = "texture"
+				}
+			}
 		},
 		content = {
-			texture_id = texture,
+			texture_id = arg_18_0
 		},
 		style = {
 			texture_id = {
-				horizontal_alignment = "center",
 				vertical_alignment = "top",
+				horizontal_alignment = "center",
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					0,
+					0
 				},
-				texture_size = texture_size,
-			},
+				texture_size = var_18_1
+			}
 		},
 		offset = {
 			0,
 			-250,
-			0,
-		},
+			0
+		}
 	}
 end
 
-local function create_optional_text(text, scenegraph_id, text_style)
+local function var_0_7(arg_19_0, arg_19_1, arg_19_2)
 	return {
 		element = {
 			passes = {
 				{
-					pass_type = "text",
 					style_id = "text",
+					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (content, style)
-						if content.text == nil then
+					content_check_function = function(arg_20_0, arg_20_1)
+						if arg_20_0.text == nil then
 							return false
 						end
 
-						return content.text ~= ""
-					end,
-				},
-			},
+						return arg_20_0.text ~= ""
+					end
+				}
+			}
 		},
 		content = {
-			text = text,
+			text = arg_19_0
 		},
 		style = {
-			text = text_style,
+			text = arg_19_2
 		},
 		offset = {
 			0,
 			0,
-			0,
+			0
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_19_1
 	}
 end
 
-local function create_info_slate(scenegraph_id)
+local function var_0_8(arg_21_0)
 	return {
 		element = {
 			passes = {
 				{
-					pass_type = "text",
 					style_id = "text",
+					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (content, style)
-						if content.text == nil then
+					content_check_function = function(arg_22_0, arg_22_1)
+						if arg_22_0.text == nil then
 							return false
 						end
 
-						return content.text ~= ""
-					end,
+						return arg_22_0.text ~= ""
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "background",
 					texture_id = "texture_id",
-					content_check_function = function (content, style)
-						if content.text == nil then
+					content_check_function = function(arg_23_0, arg_23_1)
+						if arg_23_0.text == nil then
 							return false
 						end
 
-						return content.text ~= ""
-					end,
-				},
-			},
+						return arg_23_0.text ~= ""
+					end
+				}
+			}
 		},
 		content = {
 			text = "test",
-			texture_id = "start_screen_info_tag",
+			texture_id = "start_screen_info_tag"
 		},
 		style = {
-			text = info_slate_text_style,
+			text = var_0_1,
 			background = {
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
+				horizontal_alignment = "center",
 				texture_size = {
 					481,
-					20,
+					20
 				},
-				color = Colors.get_color_table_with_alpha("font_title", 255),
-			},
+				color = Colors.get_color_table_with_alpha("font_title", 255)
+			}
 		},
 		offset = {
 			0,
 			0,
-			1,
+			1
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_21_0
 	}
 end
 
-local background_widget_definitions = {
+local var_0_9 = {
 	dead_space_filler_widget = UIWidgets.create_simple_rect("dead_space_filler", {
 		255,
 		0,
 		0,
-		0,
+		0
 	}),
 	sidebar_fill = UIWidgets.create_simple_rect("sidebar", {
 		245,
 		0,
 		0,
-		0,
+		0
 	}),
 	sidebar_fade_bg = UIWidgets.create_shader_tiled_texture("sidebar_fade_bg", "fade_bg_unmasked", {
 		256,
-		256,
+		256
 	}, nil, nil, {
 		245,
 		255,
 		255,
-		255,
+		255
 	}),
 	start_screen_video_fade = UIWidgets.create_simple_rect("start_screen_video_fade", {
 		0,
 		0,
 		0,
-		0,
-	}),
+		0
+	})
 }
-local single_widget_definitions = {
+local var_0_10 = {
 	logo = UIWidgets.create_simple_texture("vermintide_logo_title", "logo"),
 	legal_text = UIWidgets.create_simple_text("n/a", "legal_text", 12, {
 		255,
 		255,
 		255,
-		255,
+		255
 	}),
 	information_text = UIWidgets.create_simple_text("n/a", "information_text", 18, {
 		255,
 		255,
 		255,
-		255,
+		255
 	}),
 	start_screen_selection_left = UIWidgets.create_simple_texture("start_screen_selection_left", "selection_glow_left"),
 	start_screen_selection_right = UIWidgets.create_simple_texture("start_screen_selection_right", "selection_glow_right"),
-	create_engage_prompt = create_engage_prompt,
-	info_icon_text = create_info_text("", "info_icon_text", 23),
-	info_slate = create_info_slate("info_slate"),
-	game_type = create_optional_text("start_menu_adventure_tag", "game_type_tag", game_type_tag_text_style),
-	game_type_description = create_optional_text("start_menu_adventure_description", "game_type_description", game_type_description_text_style),
+	create_engage_prompt = var_0_4,
+	info_icon_text = var_0_5("", "info_icon_text", 23),
+	info_slate = var_0_8("info_slate"),
+	game_type = var_0_7("start_menu_adventure_tag", "game_type_tag", var_0_2),
+	game_type_description = var_0_7("start_menu_adventure_description", "game_type_description", var_0_3)
 }
-local menu_videos = {
+local var_0_11 = {
 	main = {
 		loop = true,
-		main_menu = true,
-		material_name = "start_1",
 		scenegraph_id = "start_screen_video",
 		video_name = "video/start_1",
+		main_menu = true,
+		material_name = "start_1"
 	},
 	main_menu = {
 		loop = true,
-		main_menu = true,
-		material_name = "start_2",
 		scenegraph_id = "start_screen_video",
 		video_name = "video/start_2",
+		main_menu = true,
+		material_name = "start_2"
 	},
 	adventure = {
 		loop = true,
-		main_menu = true,
-		material_name = "start_2_drachenfels",
 		scenegraph_id = "start_screen_video",
 		video_name = "video/start_2_drachenfels",
+		main_menu = true,
+		material_name = "start_2_drachenfels"
 	},
 	chaos_wastes = {
 		loop = true,
-		main_menu = true,
-		material_name = "start_2_chaos_wastes",
 		scenegraph_id = "start_screen_video",
 		video_name = "video/start_2_chaos_wastes",
+		main_menu = true,
+		material_name = "start_2_chaos_wastes"
 	},
 	versus = {
 		loop = true,
-		main_menu = true,
-		material_name = "start_2_versus",
 		scenegraph_id = "start_screen_video",
 		video_name = "video/start_2_versus",
-	},
+		main_menu = true,
+		material_name = "start_2_versus"
+	}
 }
-local legal_texts = {
+local var_0_12 = {
 	"fatshark_legal_1",
 	"gw_legal_1",
 	"gw_legal_2",
 	"gw_legal_3",
-	"gw_legal_4",
+	"gw_legal_4"
 }
-local animation_definitions = {
+local var_0_13 = {
 	video_fade_in = {
 		{
-			end_progress = 0.5,
 			name = "video_fade_in",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				local widget = widgets.start_screen_video_fade
-				local style = widget.style
-				local rect_style = style.rect
-
-				rect_style.color[1] = 255
+			end_progress = 0.5,
+			init = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+				arg_24_2.start_screen_video_fade.style.rect.color[1] = 255
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeInCubic(progress)
-				local widget = widgets.start_screen_video_fade
-				local style = widget.style
-				local rect_style = style.rect
+			update = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+				local var_25_0 = math.easeInCubic(arg_25_3)
 
-				rect_style.color[1] = math.clamp(255 * (1 - anim_progress), 0, 255)
+				arg_25_2.start_screen_video_fade.style.rect.color[1] = math.clamp(255 * (1 - var_25_0), 0, 255)
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 				return
-			end,
-		},
-	},
+			end
+		}
+	}
 }
 
 return {
-	background_widget_definitions = background_widget_definitions,
-	single_widget_definitions = single_widget_definitions,
-	scenegraph_definition = scenegraph_definition,
-	menu_videos = menu_videos,
-	create_menu_button_func = create_menu_button,
-	legal_texts = legal_texts,
+	background_widget_definitions = var_0_9,
+	single_widget_definitions = var_0_10,
+	scenegraph_definition = var_0_0,
+	menu_videos = var_0_11,
+	create_menu_button_func = var_0_6,
+	legal_texts = var_0_12,
 	create_sub_logo_func = create_sub_logo,
-	animation_definitions = animation_definitions,
+	animation_definitions = var_0_13
 }

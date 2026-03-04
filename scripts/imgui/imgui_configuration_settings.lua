@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/imgui/imgui_configuration_settings.lua
+-- chunkname: @scripts/imgui/imgui_configuration_settings.lua
 
 ImguiConfigurationSettings = {}
 

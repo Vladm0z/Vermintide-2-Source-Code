@@ -1,350 +1,350 @@
-﻿-- chunkname: @scripts/ui/views/hero_view/windows/hero_window_gotwf_background.lua
+-- chunkname: @scripts/ui/views/hero_view/windows/hero_window_gotwf_background.lua
 
 require("scripts/ui/views/menu_world_previewer")
 require("scripts/settings/hero_statistics_template")
 
-local definitions = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_gotwf_background_definitions")
-local widget_definitions = definitions.widgets
-local viewport_widget_definitions = definitions.viewport_widgets
-local background_rect = definitions.background_rect
-local scenegraph_definition = definitions.scenegraph_definition
-local animation_definitions = definitions.animation_definitions
-local camera_position_by_character = definitions.camera_position_by_character
-local loading_overlay_widget_definitions = definitions.loading_overlay_widgets
+local var_0_0 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_gotwf_background_definitions")
+local var_0_1 = var_0_0.widgets
+local var_0_2 = var_0_0.viewport_widgets
+local var_0_3 = var_0_0.background_rect
+local var_0_4 = var_0_0.scenegraph_definition
+local var_0_5 = var_0_0.animation_definitions
+local var_0_6 = var_0_0.camera_position_by_character
+local var_0_7 = var_0_0.loading_overlay_widgets
 
 HeroWindowGotwfBackground = class(HeroWindowGotwfBackground)
 HeroWindowGotwfBackground.NAME = "HeroWindowGotwfBackground"
 
-HeroWindowGotwfBackground.on_enter = function (self, params, offset)
+function HeroWindowGotwfBackground.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowGotwfBackground")
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_1_0 = arg_1_1.ingame_ui_context
 
-	self._params = params
-	self._parent = params.parent
-	self._world = ingame_ui_context.world
-	self._ingame_ui_context = ingame_ui_context
-	self._ui_renderer = ingame_ui_context.ui_renderer
-	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self._render_settings = {
-		snap_pixel_positions = true,
+	arg_1_0._params = arg_1_1
+	arg_1_0._parent = arg_1_1.parent
+	arg_1_0._world = var_1_0.world
+	arg_1_0._ingame_ui_context = var_1_0
+	arg_1_0._ui_renderer = var_1_0.ui_renderer
+	arg_1_0._ui_top_renderer = var_1_0.ui_top_renderer
+	arg_1_0._render_settings = {
+		snap_pixel_positions = true
 	}
-	self._is_in_inn = ingame_ui_context.is_in_inn
-	self._hero_name = params.hero_name
-	self._career_index = params.career_index
-	self._skin_sync_id = self._parent.skin_sync_id
-	self._camera_move_duration = UISettings.console_menu_camera_move_duration
-	self._animations = {}
-	self._animation_callbacks = {}
+	arg_1_0._is_in_inn = var_1_0.is_in_inn
+	arg_1_0._hero_name = arg_1_1.hero_name
+	arg_1_0._career_index = arg_1_1.career_index
+	arg_1_0._skin_sync_id = arg_1_0._parent.skin_sync_id
+	arg_1_0._camera_move_duration = UISettings.console_menu_camera_move_duration
+	arg_1_0._animations = {}
+	arg_1_0._animation_callbacks = {}
 
-	self:_create_ui_elements(params, offset)
+	arg_1_0:_create_ui_elements(arg_1_1, arg_1_2)
 end
 
-HeroWindowGotwfBackground._start_animation = function (self, animation_name)
-	local params = {
-		parent = self._parent,
-		render_settings = self._render_settings,
+function HeroWindowGotwfBackground._start_animation(arg_2_0, arg_2_1)
+	local var_2_0 = {
+		parent = arg_2_0._parent,
+		render_settings = arg_2_0._render_settings
 	}
-	local widgets = self._widgets_by_name
-	local anim_id = self._ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
+	local var_2_1 = arg_2_0._widgets_by_name
+	local var_2_2 = arg_2_0._ui_animator:start_animation(arg_2_1, var_2_1, var_0_4, var_2_0)
 
-	self._animations[animation_name] = anim_id
+	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-HeroWindowGotwfBackground._create_viewport_definition = function (self)
+function HeroWindowGotwfBackground._create_viewport_definition(arg_3_0)
 	return {
 		scenegraph_id = "screen",
 		element = UIElements.Viewport,
 		style = {
 			viewport = {
+				layer = 2,
+				viewport_name = "character_preview_viewport",
 				clear_screen_on_create = true,
+				level_name = "levels/gifts_of_the_wolf_father/gifts_of_wolf_father",
 				enable_sub_gui = false,
 				fov = 50,
-				layer = 2,
-				level_name = "levels/gifts_of_the_wolf_father/gifts_of_wolf_father",
-				viewport_name = "character_preview_viewport",
 				world_name = "character_preview",
 				world_flags = {
 					Application.DISABLE_SOUND,
 					Application.DISABLE_ESRAM,
-					Application.ENABLE_VOLUMETRICS,
+					Application.ENABLE_VOLUMETRICS
 				},
 				object_sets = LevelResource.object_set_names("levels/gifts_of_the_wolf_father/gifts_of_wolf_father"),
 				camera_position = {
 					10,
 					0,
-					0,
+					0
 				},
 				camera_lookat = {
 					0,
 					0,
-					0,
-				},
-			},
+					0
+				}
+			}
 		},
 		content = {
 			button_hotspot = {
-				allow_multi_hover = true,
-			},
-		},
+				allow_multi_hover = true
+			}
+		}
 	}
 end
 
-HeroWindowGotwfBackground._create_ui_elements = function (self, params, offset)
-	if self._viewport_widget then
-		UIWidget.destroy(self._ui_renderer, self._viewport_widget)
+function HeroWindowGotwfBackground._create_ui_elements(arg_4_0, arg_4_1, arg_4_2)
+	if arg_4_0._viewport_widget then
+		UIWidget.destroy(arg_4_0._ui_renderer, arg_4_0._viewport_widget)
 
-		self._viewport_widget = nil
+		arg_4_0._viewport_widget = nil
 	end
 
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	arg_4_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_4)
 
-	local viewport_widgets = {}
-	local widgets_by_name = {}
+	local var_4_0 = {}
+	local var_4_1 = {}
 
-	for name, widget_definition in pairs(viewport_widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_4_0, iter_4_1 in pairs(var_0_2) do
+		local var_4_2 = UIWidget.init(iter_4_1)
 
-		viewport_widgets[#viewport_widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_4_0[#var_4_0 + 1] = var_4_2
+		var_4_1[iter_4_0] = var_4_2
 	end
 
-	self._viewport_widgets = viewport_widgets
-	self._widgets_by_name = widgets_by_name
+	arg_4_0._viewport_widgets = var_4_0
+	arg_4_0._widgets_by_name = var_4_1
 
-	local loading_overlay_widgets = {}
-	local loading_overlay_widgets_by_name = {}
+	local var_4_3 = {}
+	local var_4_4 = {}
 
-	for name, widget_definition in pairs(loading_overlay_widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_4_2, iter_4_3 in pairs(var_0_7) do
+		local var_4_5 = UIWidget.init(iter_4_3)
 
-		loading_overlay_widgets[#loading_overlay_widgets + 1] = widget
-		loading_overlay_widgets_by_name[name] = widget
+		var_4_3[#var_4_3 + 1] = var_4_5
+		var_4_4[iter_4_2] = var_4_5
 	end
 
-	self._loading_overlay_widgets = loading_overlay_widgets
-	self._loading_overlay_widgets_by_name = loading_overlay_widgets_by_name
+	arg_4_0._loading_overlay_widgets = var_4_3
+	arg_4_0._loading_overlay_widgets_by_name = var_4_4
 
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_4_0._ui_renderer)
 
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
+	arg_4_0._ui_animator = UIAnimator:new(arg_4_0._ui_scenegraph, var_0_5)
 
-	if offset then
-		local window_position = self._ui_scenegraph.window.local_position
+	if arg_4_2 then
+		local var_4_6 = arg_4_0._ui_scenegraph.window.local_position
 
-		window_position[1] = window_position[1] + offset[1]
-		window_position[2] = window_position[2] + offset[2]
-		window_position[3] = window_position[3] + offset[3]
+		var_4_6[1] = var_4_6[1] + arg_4_2[1]
+		var_4_6[2] = var_4_6[2] + arg_4_2[2]
+		var_4_6[3] = var_4_6[3] + arg_4_2[3]
 	end
 
-	if self._is_in_inn then
-		local package_name = "resource_packages/dlcs/gotwf_store_resources"
-		local package_reference_name = "gotwf_store_resources"
-		local load_cb = callback(self, "_package_loaded")
-		local asynchronous = true
-		local prioritize = true
+	if arg_4_0._is_in_inn then
+		local var_4_7 = "resource_packages/dlcs/gotwf_store_resources"
+		local var_4_8 = "gotwf_store_resources"
+		local var_4_9 = callback(arg_4_0, "_package_loaded")
+		local var_4_10 = true
+		local var_4_11 = true
 
-		Managers.package:load(package_name, package_reference_name, load_cb, asynchronous, prioritize)
+		Managers.package:load(var_4_7, var_4_8, var_4_9, var_4_10, var_4_11)
 
-		self._package_name = package_name
-		self._package_reference_name = package_reference_name
-		self._show_loading_overlay = true
-		self._params.loading_package = true
+		arg_4_0._package_name = var_4_7
+		arg_4_0._package_reference_name = var_4_8
+		arg_4_0._show_loading_overlay = true
+		arg_4_0._params.loading_package = true
 	else
-		self._background_widget = UIWidget.init(background_rect)
+		arg_4_0._background_widget = UIWidget.init(var_0_3)
 	end
 end
 
-HeroWindowGotwfBackground._package_loaded = function (self)
-	self._viewport_widget_definition = self:_create_viewport_definition()
-	self._fadeout_loading_overlay = true
+function HeroWindowGotwfBackground._package_loaded(arg_5_0)
+	arg_5_0._viewport_widget_definition = arg_5_0:_create_viewport_definition()
+	arg_5_0._fadeout_loading_overlay = true
 end
 
-HeroWindowGotwfBackground.on_exit = function (self, params)
+function HeroWindowGotwfBackground.on_exit(arg_6_0, arg_6_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowGotwfBackground")
 
-	self._ui_animator = nil
+	arg_6_0._ui_animator = nil
 
-	if self._world_previewer then
-		self._world_previewer:prepare_exit()
-		self._world_previewer:on_exit()
-		self._world_previewer:destroy()
+	if arg_6_0._world_previewer then
+		arg_6_0._world_previewer:prepare_exit()
+		arg_6_0._world_previewer:on_exit()
+		arg_6_0._world_previewer:destroy()
 	end
 
-	if self._viewport_widget then
-		UIWidget.destroy(self._ui_renderer, self._viewport_widget)
+	if arg_6_0._viewport_widget then
+		UIWidget.destroy(arg_6_0._ui_renderer, arg_6_0._viewport_widget)
 
-		self._viewport_widget = nil
+		arg_6_0._viewport_widget = nil
 	end
 
-	if self._package_reference_name and Managers.package:has_loaded(self._package_name, self._package_reference_name) then
-		Managers.package:unload(self._package_name, self._package_reference_name)
+	if arg_6_0._package_reference_name and Managers.package:has_loaded(arg_6_0._package_name, arg_6_0._package_reference_name) then
+		Managers.package:unload(arg_6_0._package_name, arg_6_0._package_reference_name)
 
-		self._package_name = nil
-		self._package_reference_name = nil
+		arg_6_0._package_name = nil
+		arg_6_0._package_reference_name = nil
 	end
 end
 
-HeroWindowGotwfBackground.update = function (self, dt, t)
-	self:_update_pan(dt, t)
-	self:_update_animations(dt, t)
-	self:_draw(dt, t)
+function HeroWindowGotwfBackground.update(arg_7_0, arg_7_1, arg_7_2)
+	arg_7_0:_update_pan(arg_7_1, arg_7_2)
+	arg_7_0:_update_animations(arg_7_1, arg_7_2)
+	arg_7_0:_draw(arg_7_1, arg_7_2)
 end
 
-HeroWindowGotwfBackground._update_pan = function (self, dt, t)
-	if not self._world_previewer then
+function HeroWindowGotwfBackground._update_pan(arg_8_0, arg_8_1, arg_8_2)
+	if not arg_8_0._world_previewer then
 		return
 	end
 
-	self._start_t = self._start_t or 0
+	arg_8_0._start_t = arg_8_0._start_t or 0
 
-	local speed = 0.0025
-	local pan_length = 38
-	local fade_time = 1
-	local pan_time = 1 / speed
+	local var_8_0 = 0.0025
+	local var_8_1 = 38
+	local var_8_2 = 1
+	local var_8_3 = 1 / var_8_0
 
-	self._start_t = self._start_t + dt * speed
+	arg_8_0._start_t = arg_8_0._start_t + arg_8_1 * var_8_0
 
-	local offset = self._start_t * pan_length % pan_length
+	local var_8_4 = arg_8_0._start_t * var_8_1 % var_8_1
 
-	self._world_previewer:set_default_position({
-		y = 266,
+	arg_8_0._world_previewer:set_default_position({
 		z = 53,
-		x = -62 + offset,
+		y = 266,
+		x = -62 + var_8_4
 	})
-	self._world_previewer:set_lookat_target(Vector3Box(offset, 0, 53))
+	arg_8_0._world_previewer:set_lookat_target(Vector3Box(var_8_4, 0, 53))
 
-	local disable_hero_unit_input = true
+	local var_8_5 = true
 
-	self._world_previewer:update(dt, t, disable_hero_unit_input)
+	arg_8_0._world_previewer:update(arg_8_1, arg_8_2, var_8_5)
 
-	local widget = self._widgets_by_name.background_fade
+	local var_8_6 = arg_8_0._widgets_by_name.background_fade
 
-	widget.content.progress = offset / pan_length
-	widget.content.fade_start = (pan_time - fade_time) / pan_time
+	var_8_6.content.progress = var_8_4 / var_8_1
+	var_8_6.content.fade_start = (var_8_3 - var_8_2) / var_8_3
 end
 
-HeroWindowGotwfBackground.post_update = function (self, dt, t)
-	if self._viewport_widget_definition and not self._viewport_widget then
-		self._viewport_widget = UIWidget.init(self._viewport_widget_definition)
+function HeroWindowGotwfBackground.post_update(arg_9_0, arg_9_1, arg_9_2)
+	if arg_9_0._viewport_widget_definition and not arg_9_0._viewport_widget then
+		arg_9_0._viewport_widget = UIWidget.init(arg_9_0._viewport_widget_definition)
 
-		local world = Managers.world:world("character_preview")
-		local is_tutorial = false
-		local is_in_inn = self._is_in_inn
-		local mechanism_key = Managers.mechanism:current_mechanism_name()
-		local current_layout_name = self._parent:get_layout_name()
+		local var_9_0 = Managers.world:world("character_preview")
+		local var_9_1 = false
+		local var_9_2 = arg_9_0._is_in_inn
+		local var_9_3 = Managers.mechanism:current_mechanism_name()
+		local var_9_4 = arg_9_0._parent:get_layout_name()
 
-		self._parent:create_layout_renderer(current_layout_name, world, is_tutorial, is_in_inn, mechanism_key)
+		arg_9_0._parent:create_layout_renderer(var_9_4, var_9_0, var_9_1, var_9_2, var_9_3)
 	end
 
-	self:_update_loading_overlay_fadeout_animation(dt)
+	arg_9_0:_update_loading_overlay_fadeout_animation(arg_9_1)
 
-	if not self._initialized and self._viewport_widget then
-		local world_previewer = MenuWorldPreviewer:new(self._ingame_ui_context, camera_position_by_character, "HeroWindowGotwfBackground")
+	if not arg_9_0._initialized and arg_9_0._viewport_widget then
+		local var_9_5 = MenuWorldPreviewer:new(arg_9_0._ingame_ui_context, var_0_6, "HeroWindowGotwfBackground")
 
-		world_previewer:on_enter(self._viewport_widget, self._hero_name)
-		world_previewer:set_default_position({
-			x = -62,
-			y = 266,
+		var_9_5:on_enter(arg_9_0._viewport_widget, arg_9_0._hero_name)
+		var_9_5:set_default_position({
 			z = 53,
+			x = -62,
+			y = 266
 		})
-		world_previewer:set_lookat_target(Vector3Box(0, 0, 53))
+		var_9_5:set_lookat_target(Vector3Box(0, 0, 53))
 
-		self._world_previewer = world_previewer
-		self._initialized = true
+		arg_9_0._world_previewer = var_9_5
+		arg_9_0._initialized = true
 	end
 
-	if self._world_previewer then
-		self._world_previewer:post_update(dt, t)
+	if arg_9_0._world_previewer then
+		arg_9_0._world_previewer:post_update(arg_9_1, arg_9_2)
 	end
 end
 
-HeroWindowGotwfBackground._update_animations = function (self, dt)
-	self._ui_animator:update(dt)
+function HeroWindowGotwfBackground._update_animations(arg_10_0, arg_10_1)
+	arg_10_0._ui_animator:update(arg_10_1)
 
-	local animations = self._animations
-	local animation_callbacks = self._animation_callbacks
-	local ui_animator = self._ui_animator
+	local var_10_0 = arg_10_0._animations
+	local var_10_1 = arg_10_0._animation_callbacks
+	local var_10_2 = arg_10_0._ui_animator
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_10_0, iter_10_1 in pairs(var_10_0) do
+		if var_10_2:is_animation_completed(iter_10_1) then
+			var_10_2:stop_animation(iter_10_1)
 
-			animations[animation_name] = nil
+			var_10_0[iter_10_0] = nil
 
-			local anim_cb = animation_callbacks[animation_name]
+			local var_10_3 = var_10_1[iter_10_0]
 
-			if anim_cb then
-				anim_cb()
+			if var_10_3 then
+				var_10_3()
 
-				animation_callbacks[animation_name] = nil
+				var_10_1[iter_10_0] = nil
 			end
 		end
 	end
 end
 
-HeroWindowGotwfBackground._draw = function (self, dt)
-	local ui_renderer = self._ui_renderer
-	local viewport_renderer = self._parent:get_layout_renderer()
-	local ui_top_renderer = self._ui_top_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local input_service = self._parent:window_input_service()
+function HeroWindowGotwfBackground._draw(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_0._ui_renderer
+	local var_11_1 = arg_11_0._parent:get_layout_renderer()
+	local var_11_2 = arg_11_0._ui_top_renderer
+	local var_11_3 = arg_11_0._ui_scenegraph
+	local var_11_4 = arg_11_0._parent:window_input_service()
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self._render_settings)
+	UIRenderer.begin_pass(var_11_2, var_11_3, var_11_4, arg_11_1, nil, arg_11_0._render_settings)
 
-	if self._show_loading_overlay then
-		for _, widget in ipairs(self._loading_overlay_widgets) do
-			UIRenderer.draw_widget(ui_top_renderer, widget)
+	if arg_11_0._show_loading_overlay then
+		for iter_11_0, iter_11_1 in ipairs(arg_11_0._loading_overlay_widgets) do
+			UIRenderer.draw_widget(var_11_2, iter_11_1)
 		end
 	end
 
-	UIRenderer.end_pass(ui_top_renderer)
+	UIRenderer.end_pass(var_11_2)
 
-	if self._viewport_widget then
-		UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self._render_settings)
-		UIRenderer.draw_widget(ui_renderer, self._viewport_widget)
-		UIRenderer.end_pass(ui_renderer)
-	elseif self._background_widget then
-		UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self._render_settings)
-		UIRenderer.draw_widget(ui_renderer, self._background_widget)
-		UIRenderer.end_pass(ui_renderer)
+	if arg_11_0._viewport_widget then
+		UIRenderer.begin_pass(var_11_0, var_11_3, var_11_4, arg_11_1, nil, arg_11_0._render_settings)
+		UIRenderer.draw_widget(var_11_0, arg_11_0._viewport_widget)
+		UIRenderer.end_pass(var_11_0)
+	elseif arg_11_0._background_widget then
+		UIRenderer.begin_pass(var_11_0, var_11_3, var_11_4, arg_11_1, nil, arg_11_0._render_settings)
+		UIRenderer.draw_widget(var_11_0, arg_11_0._background_widget)
+		UIRenderer.end_pass(var_11_0)
 	end
 
-	if viewport_renderer then
-		UIRenderer.begin_pass(viewport_renderer, ui_scenegraph, input_service, dt, nil, self._render_settings)
+	if var_11_1 then
+		UIRenderer.begin_pass(var_11_1, var_11_3, var_11_4, arg_11_1, nil, arg_11_0._render_settings)
 
-		for _, widget in ipairs(self._viewport_widgets) do
-			UIRenderer.draw_widget(viewport_renderer, widget)
+		for iter_11_2, iter_11_3 in ipairs(arg_11_0._viewport_widgets) do
+			UIRenderer.draw_widget(var_11_1, iter_11_3)
 		end
 
-		UIRenderer.end_pass(viewport_renderer)
+		UIRenderer.end_pass(var_11_1)
 	end
 end
 
-HeroWindowGotwfBackground._update_loading_overlay_fadeout_animation = function (self, dt)
-	if not self._fadeout_loading_overlay then
+function HeroWindowGotwfBackground._update_loading_overlay_fadeout_animation(arg_12_0, arg_12_1)
+	if not arg_12_0._fadeout_loading_overlay then
 		return
 	end
 
-	local loading_overlay_widgets_by_name = self._loading_overlay_widgets_by_name
-	local start = 255
-	local target = 0
-	local speed = 2
-	local progress = math.min(1, (self._fadeout_progress or 0) + speed * dt)
-	local alpha = math.lerp(start, target, math.easeInCubic(progress))
-	local loading_overlay = loading_overlay_widgets_by_name.loading_overlay
-	local loading_overlay_loading_glow = loading_overlay_widgets_by_name.loading_overlay_loading_glow
-	local loading_overlay_loading_frame = loading_overlay_widgets_by_name.loading_overlay_loading_frame
+	local var_12_0 = arg_12_0._loading_overlay_widgets_by_name
+	local var_12_1 = 255
+	local var_12_2 = 0
+	local var_12_3 = 2
+	local var_12_4 = math.min(1, (arg_12_0._fadeout_progress or 0) + var_12_3 * arg_12_1)
+	local var_12_5 = math.lerp(var_12_1, var_12_2, math.easeInCubic(var_12_4))
+	local var_12_6 = var_12_0.loading_overlay
+	local var_12_7 = var_12_0.loading_overlay_loading_glow
+	local var_12_8 = var_12_0.loading_overlay_loading_frame
 
-	loading_overlay.style.rect.color[1] = alpha
-	loading_overlay_loading_glow.style.texture_id.color[1] = alpha
-	loading_overlay_loading_frame.style.texture_id.color[1] = alpha
-	self._fadeout_progress = progress
+	var_12_6.style.rect.color[1] = var_12_5
+	var_12_7.style.texture_id.color[1] = var_12_5
+	var_12_8.style.texture_id.color[1] = var_12_5
+	arg_12_0._fadeout_progress = var_12_4
 
-	if progress == 1 then
-		self._fadeout_loading_overlay = nil
-		self._fadeout_progress = nil
-		self._show_loading_overlay = false
-		self._params.loading_package = false
+	if var_12_4 == 1 then
+		arg_12_0._fadeout_loading_overlay = nil
+		arg_12_0._fadeout_progress = nil
+		arg_12_0._show_loading_overlay = false
+		arg_12_0._params.loading_package = false
 	end
 end

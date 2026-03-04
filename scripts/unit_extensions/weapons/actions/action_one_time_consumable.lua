@@ -1,51 +1,51 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/actions/action_one_time_consumable.lua
+-- chunkname: @scripts/unit_extensions/weapons/actions/action_one_time_consumable.lua
 
 ActionOneTimeConsumable = class(ActionOneTimeConsumable, ActionBase)
 
-ActionOneTimeConsumable.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionOneTimeConsumable.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionOneTimeConsumable.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionOneTimeConsumable.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	self._buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
-	self._ammo_extension = ScriptUnit.has_extension(weapon_unit, "ammo_system")
+	arg_1_0._buff_extension = ScriptUnit.extension(arg_1_4, "buff_system")
+	arg_1_0._ammo_extension = ScriptUnit.has_extension(arg_1_7, "ammo_system")
 end
 
-ActionOneTimeConsumable.client_owner_start_action = function (self, new_action, t)
-	ActionOneTimeConsumable.super.client_owner_start_action(self, new_action, t)
+function ActionOneTimeConsumable.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
+	ActionOneTimeConsumable.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
 
-	self.current_action = new_action
+	arg_2_0.current_action = arg_2_1
 end
 
-ActionOneTimeConsumable.client_owner_post_update = function (self, dt, t, world, can_damage)
+function ActionOneTimeConsumable.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	return
 end
 
-ActionOneTimeConsumable.finish = function (self, reason)
-	if reason ~= "action_complete" and reason ~= "hungover" then
+function ActionOneTimeConsumable.finish(arg_4_0, arg_4_1)
+	if arg_4_1 ~= "action_complete" and arg_4_1 ~= "hungover" then
 		return
 	end
 
-	local owner_unit = self.owner_unit
-	local current_action = self.current_action
-	local buff_template = current_action.buff_template
+	local var_4_0 = arg_4_0.owner_unit
+	local var_4_1 = arg_4_0.current_action
+	local var_4_2 = var_4_1.buff_template
 
-	if buff_template then
-		local network_manager = self.network_manager
-		local buff_template_name_id = NetworkLookup.buff_templates[buff_template]
-		local owner_unit_id = network_manager:unit_game_object_id(owner_unit)
+	if var_4_2 then
+		local var_4_3 = arg_4_0.network_manager
+		local var_4_4 = NetworkLookup.buff_templates[var_4_2]
+		local var_4_5 = var_4_3:unit_game_object_id(var_4_0)
 
-		if self.is_server then
-			self._buff_extension:add_buff(buff_template)
-			network_manager.network_transmit:send_rpc_clients("rpc_add_buff", owner_unit_id, buff_template_name_id, owner_unit_id, 0, false)
+		if arg_4_0.is_server then
+			arg_4_0._buff_extension:add_buff(var_4_2)
+			var_4_3.network_transmit:send_rpc_clients("rpc_add_buff", var_4_5, var_4_4, var_4_5, 0, false)
 		else
-			network_manager.network_transmit:send_rpc_server("rpc_add_buff", owner_unit_id, buff_template_name_id, owner_unit_id, 0, true)
+			var_4_3.network_transmit:send_rpc_server("rpc_add_buff", var_4_5, var_4_4, var_4_5, 0, true)
 		end
 	end
 
-	local ammo_extension = self._ammo_extension
+	local var_4_6 = arg_4_0._ammo_extension
 
-	if ammo_extension then
-		local ammo_usage = current_action.ammo_usage
+	if var_4_6 then
+		local var_4_7 = var_4_1.ammo_usage
 
-		ammo_extension:use_ammo(ammo_usage)
+		var_4_6:use_ammo(var_4_7)
 	end
 end

@@ -1,379 +1,356 @@
-﻿-- chunkname: @scripts/ui/views/hero_view/windows/store/store_window_item_details.lua
+-- chunkname: @scripts/ui/views/hero_view/windows/store/store_window_item_details.lua
 
-local definitions = local_require("scripts/ui/views/hero_view/windows/store/definitions/store_window_item_details_definitions")
-local widget_definitions = definitions.widgets
-local scenegraph_definition = definitions.scenegraph_definition
-local animation_definitions = definitions.animation_definitions
-local create_career_icon = definitions.create_career_icon
+local var_0_0 = local_require("scripts/ui/views/hero_view/windows/store/definitions/store_window_item_details_definitions")
+local var_0_1 = var_0_0.widgets
+local var_0_2 = var_0_0.scenegraph_definition
+local var_0_3 = var_0_0.animation_definitions
+local var_0_4 = var_0_0.create_career_icon
 
 StoreWindowItemDetails = class(StoreWindowItemDetails)
 StoreWindowItemDetails.NAME = "StoreWindowItemDetails"
 
-StoreWindowItemDetails.on_enter = function (self, params, offset)
+function StoreWindowItemDetails.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate StoreWindowItemDetails")
 
-	self._params = params
-	self._parent = params.parent
+	arg_1_0._params = arg_1_1
+	arg_1_0._parent = arg_1_1.parent
 
-	local ui_renderer, ui_top_renderer = self._parent:get_renderers()
+	local var_1_0, var_1_1 = arg_1_0._parent:get_renderers()
 
-	self._ui_renderer = ui_renderer
-	self._ui_top_renderer = ui_top_renderer
-	self._render_settings = {
-		snap_pixel_positions = true,
+	arg_1_0._ui_renderer = var_1_0
+	arg_1_0._ui_top_renderer = var_1_1
+	arg_1_0._render_settings = {
+		snap_pixel_positions = true
 	}
-	self._layout_settings = params.layout_settings
-	self._animations = {}
-	self._ui_animations = {}
+	arg_1_0._layout_settings = arg_1_1.layout_settings
+	arg_1_0._animations = {}
+	arg_1_0._ui_animations = {}
 
-	self:_create_ui_elements(params, offset)
-	self:_start_transition_animation("on_enter")
-	self._parent:set_list_details_visibility(true)
-	self._parent:set_list_details_length(680, 0.3)
-	self._parent:change_generic_actions("default")
+	arg_1_0:_create_ui_elements(arg_1_1, arg_1_2)
+	arg_1_0:_start_transition_animation("on_enter")
+	arg_1_0._parent:set_list_details_visibility(true)
+	arg_1_0._parent:set_list_details_length(680, 0.3)
+	arg_1_0._parent:change_generic_actions("default")
 end
 
-StoreWindowItemDetails._start_transition_animation = function (self, animation_name)
-	local params = {
-		render_settings = self._render_settings,
+function StoreWindowItemDetails._start_transition_animation(arg_2_0, arg_2_1)
+	local var_2_0 = {
+		render_settings = arg_2_0._render_settings
 	}
-	local widgets = self._widgets_by_name
-	local anim_id = self._ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
+	local var_2_1 = arg_2_0._widgets_by_name
+	local var_2_2 = arg_2_0._ui_animator:start_animation(arg_2_1, var_2_1, var_0_2, var_2_0)
 
-	self._animations[animation_name] = anim_id
+	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-StoreWindowItemDetails._create_ui_elements = function (self, params, offset)
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+function StoreWindowItemDetails._create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 
-	local widgets = {}
-	local widgets_by_name = {}
+	local var_3_0 = {}
+	local var_3_1 = {}
 
-	for name, widget_definition in pairs(widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_3_0, iter_3_1 in pairs(var_0_1) do
+		local var_3_2 = UIWidget.init(iter_3_1)
 
-		widgets[#widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_3_0[#var_3_0 + 1] = var_3_2
+		var_3_1[iter_3_0] = var_3_2
 	end
 
-	self._widgets = widgets
-	self._widgets_by_name = widgets_by_name
+	arg_3_0._widgets = var_3_0
+	arg_3_0._widgets_by_name = var_3_1
 
-	UIRenderer.clear_scenegraph_queue(self._ui_top_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_3_0._ui_top_renderer)
 
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
+	arg_3_0._ui_animator = UIAnimator:new(arg_3_0._ui_scenegraph, var_0_3)
 end
 
-StoreWindowItemDetails.on_exit = function (self, params)
+function StoreWindowItemDetails.on_exit(arg_4_0, arg_4_1)
 	print("[HeroViewWindow] Exit Substate StoreWindowItemDetails")
 
-	self._ui_animator = nil
+	arg_4_0._ui_animator = nil
 end
 
-StoreWindowItemDetails.update = function (self, dt, t)
-	self:_sync_presentation_item()
-	self:_update_animations(dt)
-	self:_draw(dt)
+function StoreWindowItemDetails.update(arg_5_0, arg_5_1, arg_5_2)
+	arg_5_0:_sync_presentation_item()
+	arg_5_0:_update_animations(arg_5_1)
+	arg_5_0:_draw(arg_5_1)
 end
 
-StoreWindowItemDetails.post_update = function (self, dt, t)
-	self:_handle_input(dt, t)
+function StoreWindowItemDetails.post_update(arg_6_0, arg_6_1, arg_6_2)
+	arg_6_0:_handle_input(arg_6_1, arg_6_2)
 end
 
-StoreWindowItemDetails._update_animations = function (self, dt)
-	local ui_animations = self._ui_animations
-	local animations = self._animations
-	local ui_animator = self._ui_animator
+function StoreWindowItemDetails._update_animations(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_0._ui_animations
+	local var_7_1 = arg_7_0._animations
+	local var_7_2 = arg_7_0._ui_animator
 
-	for name, animation in pairs(self._ui_animations) do
-		UIAnimation.update(animation, dt)
+	for iter_7_0, iter_7_1 in pairs(arg_7_0._ui_animations) do
+		UIAnimation.update(iter_7_1, arg_7_1)
 
-		if UIAnimation.completed(animation) then
-			self._ui_animations[name] = nil
+		if UIAnimation.completed(iter_7_1) then
+			arg_7_0._ui_animations[iter_7_0] = nil
 		end
 	end
 
-	ui_animator:update(dt)
+	var_7_2:update(arg_7_1)
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_7_2, iter_7_3 in pairs(var_7_1) do
+		if var_7_2:is_animation_completed(iter_7_3) then
+			var_7_2:stop_animation(iter_7_3)
 
-			animations[animation_name] = nil
+			var_7_1[iter_7_2] = nil
 		end
 	end
 end
 
-StoreWindowItemDetails._sync_presentation_item = function (self)
-	local params = self._params
-	local selected_product = params.selected_product
+function StoreWindowItemDetails._sync_presentation_item(arg_8_0)
+	local var_8_0 = arg_8_0._params.selected_product
 
-	if selected_product ~= self._selected_product then
-		local reset_presentation = not self._selected_product or self._selected_product.product_id ~= selected_product.product_id
+	if var_8_0 ~= arg_8_0._selected_product then
+		local var_8_1 = not arg_8_0._selected_product or arg_8_0._selected_product.product_id ~= var_8_0.product_id
 
-		self._selected_product = selected_product
+		arg_8_0._selected_product = var_8_0
 
-		if reset_presentation then
-			local product_type = selected_product.type
+		if var_8_1 then
+			local var_8_2 = var_8_0.type
 
-			if product_type == "item" then
-				local item = selected_product.item
+			if var_8_2 == "item" then
+				local var_8_3 = var_8_0.item
 
-				self:_present_item(item)
+				arg_8_0:_present_item(var_8_3)
 
-				self._show_loading_overlay = true
-			elseif product_type == "dlc" then
-				local dlc_settings = selected_product.dlc_settings
+				arg_8_0._show_loading_overlay = true
+			elseif var_8_2 == "dlc" then
+				local var_8_4 = var_8_0.dlc_settings
 
-				self:_present_dlc(dlc_settings)
+				arg_8_0:_present_dlc(var_8_4)
 			end
 		end
 	end
 end
 
-StoreWindowItemDetails._present_dlc = function (self, settings)
-	local title_text = settings.name
-	local description_text = settings.information_text
-	local sub_title_text = "dlc1_2_dlc_level_locked_tooltip"
+function StoreWindowItemDetails._present_dlc(arg_9_0, arg_9_1)
+	local var_9_0 = arg_9_1.name
+	local var_9_1 = arg_9_1.information_text
+	local var_9_2 = "dlc1_2_dlc_level_locked_tooltip"
 
-	self:_set_title_text(Localize(title_text))
-	self:_set_sub_title_text(Localize(sub_title_text))
-	self:_set_description_text(Localize(description_text))
+	arg_9_0:_set_title_text(Localize(var_9_0))
+	arg_9_0:_set_sub_title_text(Localize(var_9_2))
+	arg_9_0:_set_description_text(Localize(var_9_1))
 end
 
-StoreWindowItemDetails._present_item = function (self, item)
-	local item_data = item.data
-	local item_key = item_data.key
-	local item_rarity = item_data.rarity
-	local item_type = item_data.item_type
-	local can_wield = item_data.can_wield
-	local can_wield_all = table.compare(can_wield, CanWieldAllItemTemplates)
-	local profile_name, profile_index, career_name, career_index = self:_get_hero_wield_info_by_item(item)
-	local profile = SPProfiles[profile_index]
-	local hero_display_name = can_wield_all and "store_can_be_wielded_by_all" or profile.character_name
-	local sub_title_text = ""
+function StoreWindowItemDetails._present_item(arg_10_0, arg_10_1)
+	local var_10_0 = arg_10_1.data
+	local var_10_1 = var_10_0.key
+	local var_10_2 = var_10_0.rarity
+	local var_10_3 = var_10_0.item_type
+	local var_10_4 = var_10_0.can_wield
+	local var_10_5 = table.compare(var_10_4, CanWieldAllItemTemplates)
+	local var_10_6, var_10_7, var_10_8, var_10_9 = arg_10_0:_get_hero_wield_info_by_item(arg_10_1)
+	local var_10_10 = SPProfiles[var_10_7]
+	local var_10_11 = var_10_5 and "store_can_be_wielded_by_all" or var_10_10.character_name
+	local var_10_12 = ""
 
-	if item_type == "weapon_skin" then
-		sub_title_text = Localize(item_data.matching_item_key)
-	elseif item_type == "cosmetic_bundle" then
-		sub_title_text = Localize("dark_pact_skin")
+	if var_10_3 == "weapon_skin" then
+		var_10_12 = Localize(var_10_0.matching_item_key)
+	elseif var_10_3 == "cosmetic_bundle" then
+		var_10_12 = Localize("dark_pact_skin")
 	else
-		sub_title_text = Localize(item_type)
+		var_10_12 = Localize(var_10_3)
 	end
 
-	local inventory_icon, display_name, description = UIUtils.get_ui_information_from_item(item)
-	local title_text_color = Colors.get_color_table_with_alpha(item_rarity, 255)
+	local var_10_13, var_10_14, var_10_15 = UIUtils.get_ui_information_from_item(arg_10_1)
+	local var_10_16 = Colors.get_color_table_with_alpha(var_10_2, 255)
 
-	if not can_wield_all then
-		self:_setup_career_icons(can_wield)
+	if not var_10_5 then
+		arg_10_0:_setup_career_icons(var_10_4)
 	end
 
-	self:_set_title_text(Localize(display_name))
-	self:_set_title_text_color(title_text_color)
-	self:_set_hero_text(Localize(hero_display_name))
-	self:_set_sub_title_text(sub_title_text)
-	self:_set_description_text(Localize(description))
-	self:_set_item_icon(inventory_icon)
+	arg_10_0:_set_title_text(Localize(var_10_14))
+	arg_10_0:_set_title_text_color(var_10_16)
+	arg_10_0:_set_hero_text(Localize(var_10_11))
+	arg_10_0:_set_sub_title_text(var_10_12)
+	arg_10_0:_set_description_text(Localize(var_10_15))
+	arg_10_0:_set_item_icon(var_10_13)
 end
 
-StoreWindowItemDetails._get_hero_wield_info_by_item = function (self, item)
-	local item_data = item.data
-	local can_wield = item_data.can_wield
-	local career_name = can_wield[1]
+function StoreWindowItemDetails._get_hero_wield_info_by_item(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_1.data.can_wield[1]
 
-	for _, profile_settings in ipairs(SPProfiles) do
-		local careers = profile_settings.careers
+	for iter_11_0, iter_11_1 in ipairs(SPProfiles) do
+		local var_11_1 = iter_11_1.careers
 
-		for index, career_settings in ipairs(careers) do
-			if career_settings.name == career_name then
-				local profile_name = profile_settings.display_name
-				local profile_index = FindProfileIndex(profile_name)
-				local career_index = career_settings.sort_order
+		for iter_11_2, iter_11_3 in ipairs(var_11_1) do
+			if iter_11_3.name == var_11_0 then
+				local var_11_2 = iter_11_1.display_name
+				local var_11_3 = FindProfileIndex(var_11_2)
+				local var_11_4 = iter_11_3.sort_order
 
-				return profile_name, profile_index, career_name, career_index
+				return var_11_2, var_11_3, var_11_0, var_11_4
 			end
 		end
 	end
 end
 
-StoreWindowItemDetails._setup_career_icons = function (self, careers)
-	local scenegraph_id = "career_icons"
-	local widget_definition = create_career_icon(scenegraph_id)
-	local career_icon_widgets = {}
+function StoreWindowItemDetails._setup_career_icons(arg_12_0, arg_12_1)
+	local var_12_0 = "career_icons"
+	local var_12_1 = var_0_4(var_12_0)
+	local var_12_2 = {}
 
-	if careers then
-		local amount = #careers
-		local step_size = 60
-		local total_length = step_size * amount
-		local offset_x = -(total_length / 2 + step_size / 2)
+	if arg_12_1 then
+		local var_12_3 = #arg_12_1
+		local var_12_4 = 60
+		local var_12_5 = -(var_12_4 * var_12_3 / 2 + var_12_4 / 2)
 
-		for i = 1, amount do
-			local career_name = careers[i]
-			local settings = CareerSettings[career_name]
-			local display_name = settings.display_name
+		for iter_12_0 = 1, var_12_3 do
+			local var_12_6 = arg_12_1[iter_12_0]
+			local var_12_7 = CareerSettings[var_12_6]
+			local var_12_8 = var_12_7.display_name
 
-			offset_x = offset_x + step_size
+			var_12_5 = var_12_5 + var_12_4
 
-			local widget = UIWidget.init(widget_definition)
+			local var_12_9 = UIWidget.init(var_12_1)
 
-			widget.offset[1] = offset_x
+			var_12_9.offset[1] = var_12_5
 
-			local tooltip_data = widget.content.tooltip
+			local var_12_10 = var_12_9.content.tooltip
 
-			tooltip_data.title = Localize(display_name)
-			tooltip_data.description = Localize("menu_store_product_wieldable_tooltip_desc")
-			widget.content.icon = settings.store_tag_icon or "store_tag_icon_" .. career_name
-			career_icon_widgets[i] = widget
+			var_12_10.title = Localize(var_12_8)
+			var_12_10.description = Localize("menu_store_product_wieldable_tooltip_desc")
+			var_12_9.content.icon = var_12_7.store_tag_icon or "store_tag_icon_" .. var_12_6
+			var_12_2[iter_12_0] = var_12_9
 		end
 	end
 
-	self._career_icon_widgets = career_icon_widgets
+	arg_12_0._career_icon_widgets = var_12_2
 end
 
-StoreWindowItemDetails._set_item_icon = function (self, texture)
-	local widget = self._widgets_by_name.item_icon
-
-	widget.content.texture_id = texture
+function StoreWindowItemDetails._set_item_icon(arg_13_0, arg_13_1)
+	arg_13_0._widgets_by_name.item_icon.content.texture_id = arg_13_1
 end
 
-StoreWindowItemDetails._set_title_text_color = function (self, text_color)
-	local widget = self._widgets_by_name.title_text
-
-	widget.style.text.text_color = text_color
+function StoreWindowItemDetails._set_title_text_color(arg_14_0, arg_14_1)
+	arg_14_0._widgets_by_name.title_text.style.text.text_color = arg_14_1
 end
 
-StoreWindowItemDetails._set_title_text = function (self, text)
-	local widget = self._widgets_by_name.title_text
+function StoreWindowItemDetails._set_title_text(arg_15_0, arg_15_1)
+	local var_15_0 = arg_15_0._widgets_by_name.title_text
 
-	widget.content.text = text
+	var_15_0.content.text = arg_15_1
 
-	local scenegraph_id = widget.scenegraph_id
-	local default_scenegraph = scenegraph_definition[scenegraph_id]
-	local default_size = default_scenegraph.size
-	local ui_top_renderer = self._ui_top_renderer
-	local text_style = widget.style.text
-	local height = UIUtils.get_text_height(ui_top_renderer, default_size, text_style, text)
-	local ui_scenegraph = self._ui_scenegraph
+	local var_15_1 = var_15_0.scenegraph_id
+	local var_15_2 = var_0_2[var_15_1].size
+	local var_15_3 = arg_15_0._ui_top_renderer
+	local var_15_4 = var_15_0.style.text
+	local var_15_5 = UIUtils.get_text_height(var_15_3, var_15_2, var_15_4, arg_15_1)
+	local var_15_6 = arg_15_0._ui_scenegraph
 
-	ui_scenegraph[scenegraph_id].size[2] = height
-	ui_scenegraph.description_text.size[2] = 250 - height
+	var_15_6[var_15_1].size[2] = var_15_5
+	var_15_6.description_text.size[2] = 250 - var_15_5
 end
 
-StoreWindowItemDetails._set_hero_text = function (self, text)
-	local widget = self._widgets_by_name.hero_text
-
-	widget.content.text = text
+function StoreWindowItemDetails._set_hero_text(arg_16_0, arg_16_1)
+	arg_16_0._widgets_by_name.hero_text.content.text = arg_16_1
 end
 
-StoreWindowItemDetails._set_sub_title_text = function (self, text)
-	local widget = self._widgets_by_name.sub_title_text
+function StoreWindowItemDetails._set_sub_title_text(arg_17_0, arg_17_1)
+	local var_17_0 = arg_17_0._widgets_by_name.sub_title_text
 
-	widget.content.text = text
+	var_17_0.content.text = arg_17_1
 
-	local ui_top_renderer = self._ui_top_renderer
-	local text_style = widget.style.text
-	local length = UIUtils.get_text_width(ui_top_renderer, text_style, text)
-	local scenegraph_id = widget.scenegraph_id
-	local ui_scenegraph = self._ui_scenegraph
+	local var_17_1 = arg_17_0._ui_top_renderer
+	local var_17_2 = var_17_0.style.text
+	local var_17_3 = UIUtils.get_text_width(var_17_1, var_17_2, arg_17_1)
+	local var_17_4 = var_17_0.scenegraph_id
 
-	ui_scenegraph[scenegraph_id].size[1] = length + 20
+	arg_17_0._ui_scenegraph[var_17_4].size[1] = var_17_3 + 20
 end
 
-StoreWindowItemDetails._set_description_text = function (self, text)
-	local widget = self._widgets_by_name.description_text
-
-	widget.content.text = text
+function StoreWindowItemDetails._set_description_text(arg_18_0, arg_18_1)
+	arg_18_0._widgets_by_name.description_text.content.text = arg_18_1
 end
 
-StoreWindowItemDetails._is_button_pressed = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot or content.button_text
+function StoreWindowItemDetails._is_button_pressed(arg_19_0, arg_19_1)
+	local var_19_0 = arg_19_1.content
+	local var_19_1 = var_19_0.button_hotspot or var_19_0.button_text
 
-	if hotspot.on_release then
-		hotspot.on_release = false
+	if var_19_1.on_release then
+		var_19_1.on_release = false
 
 		return true
 	end
 end
 
-StoreWindowItemDetails._is_stepper_button_pressed = function (self, widget)
-	local content = widget.content
-	local hotspot_left = content.button_hotspot_left
-	local hotspot_right = content.button_hotspot_right
+function StoreWindowItemDetails._is_stepper_button_pressed(arg_20_0, arg_20_1)
+	local var_20_0 = arg_20_1.content
+	local var_20_1 = var_20_0.button_hotspot_left
+	local var_20_2 = var_20_0.button_hotspot_right
 
-	if hotspot_left.on_release then
-		hotspot_left.on_release = false
+	if var_20_1.on_release then
+		var_20_1.on_release = false
 
 		return true, -1
-	elseif hotspot_right.on_release then
-		hotspot_right.on_release = false
+	elseif var_20_2.on_release then
+		var_20_2.on_release = false
 
 		return true, 1
 	end
 end
 
-StoreWindowItemDetails._is_button_hover_enter = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	return hotspot.on_hover_enter
+function StoreWindowItemDetails._is_button_hover_enter(arg_21_0, arg_21_1)
+	return arg_21_1.content.button_hotspot.on_hover_enter
 end
 
-StoreWindowItemDetails._is_button_hover_exit = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	return hotspot.on_hover_exit
+function StoreWindowItemDetails._is_button_hover_exit(arg_22_0, arg_22_1)
+	return arg_22_1.content.button_hotspot.on_hover_exit
 end
 
-StoreWindowItemDetails._is_button_selected = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	return hotspot.is_selected
+function StoreWindowItemDetails._is_button_selected(arg_23_0, arg_23_1)
+	return arg_23_1.content.button_hotspot.is_selected
 end
 
-StoreWindowItemDetails._handle_input = function (self, dt, t)
-	local parent = self._parent
-	local widgets_by_name = self._widgets_by_name
-	local input_service = self._parent:window_input_service()
+function StoreWindowItemDetails._handle_input(arg_24_0, arg_24_1, arg_24_2)
+	local var_24_0 = arg_24_0._parent
+	local var_24_1 = arg_24_0._widgets_by_name
+	local var_24_2 = arg_24_0._parent:window_input_service()
 end
 
-StoreWindowItemDetails._draw = function (self, dt)
-	local ui_top_renderer = self._ui_top_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local input_service = self._parent:window_input_service()
+function StoreWindowItemDetails._draw(arg_25_0, arg_25_1)
+	local var_25_0 = arg_25_0._ui_top_renderer
+	local var_25_1 = arg_25_0._ui_scenegraph
+	local var_25_2 = arg_25_0._parent:window_input_service()
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self._render_settings)
+	UIRenderer.begin_pass(var_25_0, var_25_1, var_25_2, arg_25_1, nil, arg_25_0._render_settings)
 
-	for _, widget in ipairs(self._widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, widget)
+	for iter_25_0, iter_25_1 in ipairs(arg_25_0._widgets) do
+		UIRenderer.draw_widget(var_25_0, iter_25_1)
 	end
 
-	local career_icon_widgets = self._career_icon_widgets
+	local var_25_3 = arg_25_0._career_icon_widgets
 
-	if career_icon_widgets then
-		for _, widget in ipairs(career_icon_widgets) do
-			UIRenderer.draw_widget(ui_top_renderer, widget)
+	if var_25_3 then
+		for iter_25_2, iter_25_3 in ipairs(var_25_3) do
+			UIRenderer.draw_widget(var_25_0, iter_25_3)
 		end
 	end
 
-	UIRenderer.end_pass(ui_top_renderer)
+	UIRenderer.end_pass(var_25_0)
 end
 
-StoreWindowItemDetails._play_sound = function (self, event)
-	self._parent:play_sound(event)
+function StoreWindowItemDetails._play_sound(arg_26_0, arg_26_1)
+	arg_26_0._parent:play_sound(arg_26_1)
 end
 
-StoreWindowItemDetails._handle_gamepad_activity = function (self)
-	local gamepad_active = Managers.input:is_device_active("gamepad")
-	local force_update = self._gamepad_active_last_frame == nil
+function StoreWindowItemDetails._handle_gamepad_activity(arg_27_0)
+	local var_27_0 = Managers.input:is_device_active("gamepad")
+	local var_27_1 = arg_27_0._gamepad_active_last_frame == nil
 
-	if gamepad_active then
-		if not self._gamepad_active_last_frame or force_update then
-			self._gamepad_active_last_frame = true
+	if var_27_0 then
+		if not arg_27_0._gamepad_active_last_frame or var_27_1 then
+			arg_27_0._gamepad_active_last_frame = true
 		end
-	elseif self._gamepad_active_last_frame or force_update then
-		self._gamepad_active_last_frame = false
+	elseif arg_27_0._gamepad_active_last_frame or var_27_1 then
+		arg_27_0._gamepad_active_last_frame = false
 	end
 end

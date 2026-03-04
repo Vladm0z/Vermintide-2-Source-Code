@@ -1,28 +1,26 @@
-﻿-- chunkname: @scripts/ui/cutscene_overlay_templates/cutscene_utils.lua
+-- chunkname: @scripts/ui/cutscene_overlay_templates/cutscene_utils.lua
 
-local M = {}
+local var_0_0 = {}
 
-function _convert_string_timestamp_to_seconds(string_timestamp)
-	local minutes, seconds, hundredths = string.match(string_timestamp, "(%d+)%:(%d+)%:(%d+)")
-	local time_in_seconds = minutes * 60 + seconds + hundredths * 0.01
+function _convert_string_timestamp_to_seconds(arg_1_0)
+	local var_1_0, var_1_1, var_1_2 = string.match(arg_1_0, "(%d+)%:(%d+)%:(%d+)")
 
-	return time_in_seconds
+	return var_1_0 * 60 + var_1_1 + var_1_2 * 0.01
 end
 
-M.convert_string_timestamps_to_seconds = function (cutscene_template_settings)
-	for template_name, template in pairs(cutscene_template_settings) do
-		for index, entry in ipairs(template) do
-			local start_timestamp = entry.start_timestamp
-			local end_timestamp = entry.end_timestamp
-			local start_time_in_seconds = _convert_string_timestamp_to_seconds(start_timestamp)
-			local end_time_in_seconds = _convert_string_timestamp_to_seconds(end_timestamp)
-			local duration = end_time_in_seconds - start_time_in_seconds
+function var_0_0.convert_string_timestamps_to_seconds(arg_2_0)
+	for iter_2_0, iter_2_1 in pairs(arg_2_0) do
+		for iter_2_2, iter_2_3 in ipairs(iter_2_1) do
+			local var_2_0 = iter_2_3.start_timestamp
+			local var_2_1 = iter_2_3.end_timestamp
+			local var_2_2 = _convert_string_timestamp_to_seconds(var_2_0)
+			local var_2_3 = _convert_string_timestamp_to_seconds(var_2_1)
 
-			entry.duration = duration
-			entry.start_time = start_time_in_seconds
-			entry.end_time = end_time_in_seconds
+			iter_2_3.duration = var_2_3 - var_2_2
+			iter_2_3.start_time = var_2_2
+			iter_2_3.end_time = var_2_3
 		end
 	end
 end
 
-return M
+return var_0_0

@@ -1,82 +1,82 @@
-﻿-- chunkname: @scripts/settings/dlcs/belladonna/belladonna_ai_settings.lua
+-- chunkname: @scripts/settings/dlcs/belladonna/belladonna_ai_settings.lua
 
-local settings = DLCSettings.belladonna
+local var_0_0 = DLCSettings.belladonna
 
-settings.breeds = {
+var_0_0.breeds = {
 	"scripts/settings/breeds/breed_beastmen_gor",
 	"scripts/settings/breeds/breed_beastmen_ungor",
 	"scripts/settings/breeds/breed_beastmen_ungor_archer",
 	"scripts/settings/breeds/breed_beastmen_bestigor",
-	"scripts/settings/breeds/breed_beastmen_standard_bearer",
+	"scripts/settings/breeds/breed_beastmen_standard_bearer"
 }
-settings.behaviour_trees_precompiled = {
+var_0_0.behaviour_trees_precompiled = {
 	"scripts/entity_system/systems/behaviour/nodes/generated/bt_selector_gor",
 	"scripts/entity_system/systems/behaviour/nodes/generated/bt_selector_ungor",
 	"scripts/entity_system/systems/behaviour/nodes/generated/bt_selector_ungor_archer",
 	"scripts/entity_system/systems/behaviour/nodes/generated/bt_selector_bestigor",
 	"scripts/entity_system/systems/behaviour/nodes/generated/bt_selector_standard_bearer",
-	"scripts/entity_system/systems/behaviour/nodes/generated/bt_selector_beastmen_dummy",
+	"scripts/entity_system/systems/behaviour/nodes/generated/bt_selector_beastmen_dummy"
 }
-settings.behaviour_tree_nodes = {
+var_0_0.behaviour_tree_nodes = {
 	"scripts/entity_system/systems/behaviour/nodes/bt_charge_attack_action",
 	"scripts/entity_system/systems/behaviour/nodes/bt_fire_projectile_action",
 	"scripts/entity_system/systems/behaviour/nodes/bt_pick_up_standard_action",
 	"scripts/entity_system/systems/behaviour/nodes/bt_place_standard_action",
-	"scripts/entity_system/systems/behaviour/nodes/bt_defend_standard_action",
+	"scripts/entity_system/systems/behaviour/nodes/bt_defend_standard_action"
 }
-settings.behaviour_trees = {
+var_0_0.behaviour_trees = {
 	"scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_gor_behavior",
 	"scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_ungor_behavior",
 	"scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_ungor_archer_behavior",
 	"scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_bestigor_behavior",
 	"scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_standard_bearer_behavior",
-	"scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_dummy_behavior",
+	"scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_dummy_behavior"
 }
-settings.health_extension_files = {
-	"scripts/unit_extensions/health/beastmen_standard_health_extension",
+var_0_0.health_extension_files = {
+	"scripts/unit_extensions/health/beastmen_standard_health_extension"
 }
-settings.health_extensions = {
-	"BeastmenStandardHealthExtension",
+var_0_0.health_extensions = {
+	"BeastmenStandardHealthExtension"
 }
-settings.enemy_package_loader_breed_categories = {
+var_0_0.enemy_package_loader_breed_categories = {
 	specials = {
-		"beastmen_standard_bearer",
-	},
+		"beastmen_standard_bearer"
+	}
 }
-settings.alias_to_breed = {
+var_0_0.alias_to_breed = {
+	beastmen_ungor_dummy = "beastmen_ungor",
 	beastmen_bestigor_dummy = "beastmen_bestigor",
 	beastmen_gor_dummy = "beastmen_gor",
-	beastmen_standard_bearer_crater = "beastmen_standard_bearer",
-	beastmen_ungor_dummy = "beastmen_ungor",
+	beastmen_standard_bearer_crater = "beastmen_standard_bearer"
 }
-settings.opt_lookup_breed_names = {
-	beastmen_gor = "beastmen_gor_opt",
+var_0_0.opt_lookup_breed_names = {
 	beastmen_ungor = "beastmen_ungor_opt",
-	beastmen_ungor_archer = "beastmen_ungor_archer_opt",
+	beastmen_gor = "beastmen_gor_opt",
+	beastmen_ungor_archer = "beastmen_ungor_archer_opt"
 }
-settings.ai_breed_snippets_file_names = {
-	"scripts/settings/dlcs/belladonna/belladonna_ai_breed_snippets",
+var_0_0.ai_breed_snippets_file_names = {
+	"scripts/settings/dlcs/belladonna/belladonna_ai_breed_snippets"
 }
-settings.animation_movement_templates_file_names = {
-	"scripts/settings/dlcs/belladonna/belladonna_animation_movement_templates",
+var_0_0.animation_movement_templates_file_names = {
+	"scripts/settings/dlcs/belladonna/belladonna_animation_movement_templates"
 }
-settings.slot_templates_file_names = {
-	"scripts/settings/dlcs/belladonna/belladonna_slot_templates",
+var_0_0.slot_templates_file_names = {
+	"scripts/settings/dlcs/belladonna/belladonna_slot_templates"
 }
-settings.utility_considerations_file_names = {
-	"scripts/settings/dlcs/belladonna/belladonna_utility_considerations",
+var_0_0.utility_considerations_file_names = {
+	"scripts/settings/dlcs/belladonna/belladonna_utility_considerations"
 }
-settings.aim_templates_file_names = {
-	"scripts/settings/dlcs/belladonna/belladonna_aim_templates",
+var_0_0.aim_templates_file_names = {
+	"scripts/settings/dlcs/belladonna/belladonna_aim_templates"
 }
-settings.network_sound_events = {
+var_0_0.network_sound_events = {
 	"Play_enemy_beastmen_standar_chanting_loop",
 	"Stop_enemy_beastmen_standar_chanting_loop",
 	"Play_enemy_minotaur_charge_attack_miss",
 	"Play_enemy_bestigor_charge_attack_miss",
-	"Play_boss_aggro_enter",
+	"Play_boss_aggro_enter"
 }
-settings.anim_lookup = {
+var_0_0.anim_lookup = {
 	"stagger_fwd_cheer_1",
 	"stagger_fwd_cheer_2",
 	"stagger_fwd_cheer_3",
@@ -108,384 +108,384 @@ settings.anim_lookup = {
 	"attack_step",
 	"attack_step_2",
 	"attack_step_head",
-	"attack_punch",
+	"attack_punch"
 }
 
-local beastmen_formation_settings = {
+local var_0_1 = {
 	sounds = {
-		CHARGE = "beastmen_patrol_charge",
-		FOLEY = "beastmen_patrol_foley",
-		FORMATE = "beastmen_patrol_formate",
-		FORMATED = "beastmen_patrol_formated",
-		FORMING = "beastmen_patrol_forming",
 		PLAYER_SPOTTED = "beastmen_patrol_player_spotted",
-		VOICE = "beastmen_patrol_voice",
+		FORMING = "beastmen_patrol_forming",
+		FOLEY = "beastmen_patrol_foley",
+		FORMATED = "beastmen_patrol_formated",
+		FORMATE = "beastmen_patrol_formate",
+		CHARGE = "beastmen_patrol_charge",
+		VOICE = "beastmen_patrol_voice"
 	},
 	offsets = {
 		ANCHOR_OFFSET = {
 			x = 1.4,
-			y = 0.6,
-		},
+			y = 0.6
+		}
 	},
 	speeds = {
 		FAST_WALK_SPEED = 2.6,
 		MEDIUM_WALK_SPEED = 2.35,
-		SLOW_SPLINE_SPEED = 0.1,
-		SPLINE_SPEED = 2.22,
 		WALK_SPEED = 2.12,
-	},
+		SPLINE_SPEED = 2.22,
+		SLOW_SPLINE_SPEED = 0.1
+	}
 }
 
-settings.patrol_formation_settings = {
-	default_beastmen_settings = beastmen_formation_settings,
+var_0_0.patrol_formation_settings = {
+	default_beastmen_settings = var_0_1
 }
-settings.patrol_formations = {
+var_0_0.patrol_formations = {
 	beastmen_standard = {
-		settings = beastmen_formation_settings,
+		settings = var_0_1,
 		normal = {
 			{
-				"beastmen_standard_bearer",
+				"beastmen_standard_bearer"
 			},
 			{
-				"beastmen_bestigor",
+				"beastmen_bestigor"
 			},
 			{
-				"beastmen_bestigor",
-			},
-			{
-				"beastman_ungor",
-				"beastman_ungor",
+				"beastmen_bestigor"
 			},
 			{
 				"beastman_ungor",
-				"beastman_ungor",
+				"beastman_ungor"
 			},
 			{
-				"beastmen_bestigor",
+				"beastman_ungor",
+				"beastman_ungor"
+			},
+			{
+				"beastmen_bestigor"
 			},
 			{
 				"beastmen_gor",
-				"beastmen_gor",
-			},
+				"beastmen_gor"
+			}
 		},
 		hard = {
 			{
-				"beastmen_standard_bearer",
+				"beastmen_standard_bearer"
 			},
 			{
-				"beastmen_bestigor",
-			},
-			{
-				"beastman_ungor",
-				"beastman_ungor",
-			},
-			{
-				"beastmen_bestigor",
-				"beastmen_bestigor",
+				"beastmen_bestigor"
 			},
 			{
 				"beastman_ungor",
-				"beastman_ungor",
+				"beastman_ungor"
 			},
 			{
 				"beastmen_bestigor",
+				"beastmen_bestigor"
+			},
+			{
+				"beastman_ungor",
+				"beastman_ungor"
+			},
+			{
+				"beastmen_bestigor"
 			},
 			{
 				"beastmen_gor",
-				"beastmen_gor",
-			},
+				"beastmen_gor"
+			}
 		},
 		harder = {
 			{
-				"beastmen_standard_bearer",
+				"beastmen_standard_bearer"
 			},
 			{
 				"beastmen_bestigor",
-				"beastmen_bestigor",
+				"beastmen_bestigor"
 			},
 			{
 				"beastmen_gor",
-				"beastmen_gor",
+				"beastmen_gor"
 			},
 			{
 				"beastmen_bestigor",
-				"beastmen_bestigor",
+				"beastmen_bestigor"
 			},
 			{
 				"beastmen_gor",
-				"beastmen_gor",
+				"beastmen_gor"
 			},
 			{
 				"beastmen_bestigor",
-				"beastmen_bestigor",
+				"beastmen_bestigor"
 			},
 			{
 				"beastmen_gor",
-				"beastmen_gor",
-			},
+				"beastmen_gor"
+			}
 		},
 		hardest = {
 			{
-				"beastmen_standard_bearer",
+				"beastmen_standard_bearer"
 			},
 			{
 				"beastmen_gor",
-				"beastmen_gor",
-			},
-			{
-				"beastmen_bestigor",
-				"beastmen_bestigor",
-			},
-			{
-				"beastmen_gor",
-				"beastmen_gor",
+				"beastmen_gor"
 			},
 			{
 				"beastmen_bestigor",
-				"beastmen_bestigor",
+				"beastmen_bestigor"
+			},
+			{
+				"beastmen_gor",
+				"beastmen_gor"
 			},
 			{
 				"beastmen_bestigor",
+				"beastmen_bestigor"
+			},
+			{
 				"beastmen_bestigor",
+				"beastmen_bestigor"
 			},
 			{
 				"beastmen_gor",
-				"beastmen_gor",
+				"beastmen_gor"
 			},
 			{
 				"beastmen_gor",
-				"beastmen_gor",
+				"beastmen_gor"
 			},
 			{
 				"beastmen_gor",
-				"beastmen_gor",
-			},
+				"beastmen_gor"
+			}
 		},
 		cataclysm = {
 			{
-				"beastmen_standard_bearer",
+				"beastmen_standard_bearer"
 			},
 			{
 				"beastmen_gor",
-				"beastmen_gor",
+				"beastmen_gor"
 			},
 			{
 				"beastmen_bestigor",
-				"beastmen_bestigor",
+				"beastmen_bestigor"
 			},
 			{
 				"beastmen_gor",
-				"beastmen_gor",
+				"beastmen_gor"
 			},
 			{
 				"beastmen_bestigor",
-				"beastmen_bestigor",
+				"beastmen_bestigor"
 			},
 			{
 				"beastmen_bestigor",
-				"beastmen_bestigor",
+				"beastmen_bestigor"
 			},
 			{
 				"beastmen_gor",
-				"beastmen_gor",
+				"beastmen_gor"
 			},
 			{
 				"beastmen_bestigor",
-				"beastmen_bestigor",
+				"beastmen_bestigor"
 			},
 			{
 				"beastmen_gor",
-				"beastmen_gor",
-			},
-		},
+				"beastmen_gor"
+			}
+		}
 	},
 	beastmen_archers = {
-		settings = beastmen_formation_settings,
+		settings = var_0_1,
 		normal = {
 			{
-				"beastmen_standard_bearer",
+				"beastmen_standard_bearer"
 			},
 			{
-				"beastmen_bestigor",
+				"beastmen_bestigor"
 			},
 			{
-				"beastmen_bestigor",
-			},
-			{
-				"beastman_ungor",
-				"beastman_ungor",
+				"beastmen_bestigor"
 			},
 			{
 				"beastman_ungor",
+				"beastman_ungor"
+			},
+			{
 				"beastman_ungor",
+				"beastman_ungor"
 			},
 			{
 				"beastmen_ungor_archer",
-				"beastmen_ungor_archer",
+				"beastmen_ungor_archer"
 			},
 			{
 				"beastmen_ungor_archer",
-				"beastmen_ungor_archer",
-			},
+				"beastmen_ungor_archer"
+			}
 		},
 		hard = {
 			{
-				"beastmen_standard_bearer",
+				"beastmen_standard_bearer"
+			},
+			{
+				"beastmen_bestigor"
+			},
+			{
+				"beastman_ungor",
+				"beastman_ungor"
 			},
 			{
 				"beastmen_bestigor",
+				"beastmen_bestigor"
 			},
 			{
 				"beastman_ungor",
-				"beastman_ungor",
-			},
-			{
-				"beastmen_bestigor",
-				"beastmen_bestigor",
-			},
-			{
-				"beastman_ungor",
-				"beastman_ungor",
+				"beastman_ungor"
 			},
 			{
 				"beastmen_ungor_archer",
-				"beastmen_ungor_archer",
+				"beastmen_ungor_archer"
 			},
 			{
 				"beastmen_ungor_archer",
-				"beastmen_ungor_archer",
+				"beastmen_ungor_archer"
 			},
 			{
 				"beastmen_ungor_archer",
-				"beastmen_ungor_archer",
-			},
+				"beastmen_ungor_archer"
+			}
 		},
 		harder = {
 			{
-				"beastmen_standard_bearer",
+				"beastmen_standard_bearer"
 			},
 			{
 				"beastmen_bestigor",
-				"beastmen_bestigor",
+				"beastmen_bestigor"
 			},
 			{
 				"beastmen_gor",
-				"beastmen_gor",
+				"beastmen_gor"
 			},
 			{
 				"beastmen_bestigor",
-				"beastmen_bestigor",
+				"beastmen_bestigor"
 			},
 			{
 				"beastmen_ungor_archer",
-				"beastmen_ungor_archer",
+				"beastmen_ungor_archer"
 			},
 			{
 				"beastmen_ungor_archer",
-				"beastmen_ungor_archer",
+				"beastmen_ungor_archer"
 			},
 			{
 				"beastmen_ungor_archer",
-				"beastmen_ungor_archer",
+				"beastmen_ungor_archer"
 			},
 			{
 				"beastmen_ungor_archer",
-				"beastmen_ungor_archer",
-			},
+				"beastmen_ungor_archer"
+			}
 		},
 		hardest = {
 			{
-				"beastmen_standard_bearer",
+				"beastmen_standard_bearer"
 			},
 			{
 				"beastmen_gor",
-				"beastmen_gor",
+				"beastmen_gor"
 			},
 			{
 				"beastmen_bestigor",
-				"beastmen_bestigor",
-			},
-			{
-				"beastmen_gor",
-				"beastmen_gor",
-			},
-			{
-				"beastmen_bestigor",
-				"beastmen_bestigor",
-			},
-			{
-				"beastmen_bestigor",
-				"beastmen_bestigor",
+				"beastmen_bestigor"
 			},
 			{
 				"beastmen_gor",
+				"beastmen_gor"
+			},
+			{
+				"beastmen_bestigor",
+				"beastmen_bestigor"
+			},
+			{
+				"beastmen_bestigor",
+				"beastmen_bestigor"
+			},
+			{
 				"beastmen_gor",
+				"beastmen_gor"
 			},
 			{
 				"beastmen_ungor_archer",
 				"beastmen_ungor_archer",
-				"beastmen_ungor_archer",
+				"beastmen_ungor_archer"
 			},
 			{
 				"beastmen_ungor_archer",
 				"beastmen_ungor_archer",
-				"beastmen_ungor_archer",
+				"beastmen_ungor_archer"
 			},
 			{
 				"beastmen_ungor_archer",
 				"beastmen_ungor_archer",
-				"beastmen_ungor_archer",
-			},
+				"beastmen_ungor_archer"
+			}
 		},
 		cataclysm = {
 			{
-				"beastmen_standard_bearer",
+				"beastmen_standard_bearer"
 			},
 			{
 				"beastmen_gor",
+				"beastmen_gor"
+			},
+			{
+				"beastmen_bestigor",
+				"beastmen_bestigor"
+			},
+			{
 				"beastmen_gor",
+				"beastmen_gor"
 			},
 			{
 				"beastmen_bestigor",
-				"beastmen_bestigor",
-			},
-			{
-				"beastmen_gor",
-				"beastmen_gor",
+				"beastmen_bestigor"
 			},
 			{
 				"beastmen_bestigor",
-				"beastmen_bestigor",
-			},
-			{
-				"beastmen_bestigor",
-				"beastmen_bestigor",
+				"beastmen_bestigor"
 			},
 			{
 				"beastmen_ungor_archer",
 				"beastmen_ungor_archer",
-				"beastmen_ungor_archer",
+				"beastmen_ungor_archer"
 			},
 			{
 				"beastmen_ungor_archer",
 				"beastmen_ungor_archer",
-				"beastmen_ungor_archer",
+				"beastmen_ungor_archer"
 			},
 			{
 				"beastmen_ungor_archer",
 				"beastmen_ungor_archer",
-				"beastmen_ungor_archer",
+				"beastmen_ungor_archer"
 			},
 			{
 				"beastmen_ungor_archer",
 				"beastmen_ungor_archer",
-				"beastmen_ungor_archer",
+				"beastmen_ungor_archer"
 			},
 			{
 				"beastmen_ungor_archer",
 				"beastmen_ungor_archer",
-				"beastmen_ungor_archer",
-			},
-		},
-	},
+				"beastmen_ungor_archer"
+			}
+		}
+	}
 }

@@ -1,654 +1,652 @@
-﻿-- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_heroic_deed_overview_console_definitions.lua
+-- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_heroic_deed_overview_console_definitions.lua
 
-local window_default_settings = UISettings.game_start_windows
-local window_frame = window_default_settings.frame
-local window_size = window_default_settings.size
-local window_frame_height = UIFrameSettings[window_frame].texture_sizes.horizontal[2]
-local game_option_size = {
-	window_size[1],
-	194,
+local var_0_0 = UISettings.game_start_windows
+local var_0_1 = var_0_0.frame
+local var_0_2 = var_0_0.size
+local var_0_3 = UIFrameSettings[var_0_1].texture_sizes.horizontal[2]
+local var_0_4 = {
+	var_0_2[1],
+	194
 }
-local window_text_width = window_size[1]
-local animation_definitions = {
+local var_0_5 = var_0_2[1]
+local var_0_6 = {
 	on_enter = {
 		{
-			end_progress = 0.3,
 			name = "fade_in",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 0
+			end_progress = 0.3,
+			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				local var_2_0 = math.easeOutCubic(arg_2_3)
 
-				params.render_settings.alpha_multiplier = anim_progress
+				arg_2_4.render_settings.alpha_multiplier = var_2_0
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				return
-			end,
-		},
+			end
+		}
 	},
 	on_exit = {
 		{
-			end_progress = 0.3,
 			name = "fade_out",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 1
+			end_progress = 0.3,
+			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				arg_4_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				params.render_settings.alpha_multiplier = 1
+			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				arg_5_4.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				return
-			end,
-		},
-	},
+			end
+		}
+	}
 }
-local scenegraph_definition = {
+local var_0_7 = {
 	root = {
 		is_root = true,
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			UILayer.default,
-		},
+			UILayer.default
+		}
 	},
 	root_fit = {
 		scale = "fit",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			UILayer.default,
-		},
+			UILayer.default
+		}
 	},
 	menu_root = {
-		horizontal_alignment = "center",
-		parent = "root",
 		vertical_alignment = "center",
+		parent = "root",
+		horizontal_alignment = "center",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	window = {
-		horizontal_alignment = "left",
-		parent = "menu_root",
 		vertical_alignment = "center",
-		size = window_size,
+		parent = "menu_root",
+		horizontal_alignment = "left",
+		size = var_0_2,
 		position = {
 			220,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	window_game_mode_root = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "top",
+		parent = "window",
+		horizontal_alignment = "center",
 		size = {
-			window_size[1],
-			window_frame_height,
+			var_0_2[1],
+			var_0_3
 		},
 		position = {
 			0,
-			-window_frame_height,
-			1,
-		},
+			-var_0_3,
+			1
+		}
 	},
 	heroic_deed_background = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "top",
+		parent = "window",
+		horizontal_alignment = "center",
 		size = {
-			window_size[1] + 70,
-			500,
+			var_0_2[1] + 70,
+			500
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	heroic_deed_title = {
-		horizontal_alignment = "center",
-		parent = "heroic_deed_background",
 		vertical_alignment = "top",
+		parent = "heroic_deed_background",
+		horizontal_alignment = "center",
 		size = {
-			window_text_width,
-			50,
+			var_0_5,
+			50
 		},
 		position = {
 			0,
 			-30,
-			1,
-		},
+			1
+		}
 	},
 	heroic_deed_divider = {
-		horizontal_alignment = "center",
-		parent = "heroic_deed_title",
 		vertical_alignment = "top",
+		parent = "heroic_deed_title",
+		horizontal_alignment = "center",
 		size = {
 			264,
-			32,
+			32
 		},
 		position = {
 			0,
 			-36,
-			1,
-		},
+			1
+		}
 	},
 	heroic_deed_description = {
-		horizontal_alignment = "center",
-		parent = "heroic_deed_divider",
 		vertical_alignment = "top",
+		parent = "heroic_deed_divider",
+		horizontal_alignment = "center",
 		size = {
-			window_text_width,
-			200,
+			var_0_5,
+			200
 		},
 		position = {
 			0,
 			-36,
-			1,
-		},
+			1
+		}
 	},
 	game_option_3 = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "bottom",
+		parent = "window",
+		horizontal_alignment = "center",
 		size = {
-			game_option_size[1],
-			game_option_size[2],
+			var_0_4[1],
+			var_0_4[2]
 		},
 		position = {
 			-15,
 			-90,
-			1,
-		},
+			1
+		}
 	},
 	game_option_2 = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "bottom",
+		parent = "window",
+		horizontal_alignment = "center",
 		size = {
-			game_option_size[1],
-			game_option_size[2],
+			var_0_4[1],
+			var_0_4[2]
 		},
 		position = {
 			-15,
-			-90 + game_option_size[2],
-			1,
-		},
+			-90 + var_0_4[2],
+			1
+		}
 	},
 	game_option_1 = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "bottom",
+		parent = "window",
+		horizontal_alignment = "center",
 		size = {
-			game_option_size[1],
-			game_option_size[2],
+			var_0_4[1],
+			var_0_4[2]
 		},
 		position = {
 			-15,
-			-90 + game_option_size[2] * 2,
-			1,
-		},
+			-90 + var_0_4[2] * 2,
+			1
+		}
 	},
 	play_button_console = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "bottom",
+		parent = "window",
+		horizontal_alignment = "center",
 		size = {
-			game_option_size[1],
-			game_option_size[2],
+			var_0_4[1],
+			var_0_4[2]
 		},
 		position = {
 			0,
 			-58,
-			1,
-		},
+			1
+		}
 	},
 	play_button = {
-		horizontal_alignment = "center",
-		parent = "play_button_console",
 		vertical_alignment = "center",
+		parent = "play_button_console",
+		horizontal_alignment = "center",
 		size = {
 			0,
-			0,
+			0
 		},
 		position = {
 			-165,
 			0,
-			1,
-		},
-	},
+			1
+		}
+	}
 }
 
-local function create_setting_button(scenegraph_id, title_text, input_text, icon_texture, icon_frame_texture)
-	icon_texture = icon_texture or "level_icon_01"
+local function var_0_8(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	arg_7_3 = arg_7_3 or "level_icon_01"
 
-	local icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(icon_texture)
-	local icon_texture_size = icon_texture_settings and icon_texture_settings.size or {
+	local var_7_0 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_7_3)
+	local var_7_1 = var_7_0 and var_7_0.size or {
 		150,
-		150,
+		150
 	}
-	local button_size = scenegraph_definition[scenegraph_id].size
-	local passes = {}
-	local content = {}
-	local style = {}
-	local hotspot_name = "button_hotspot"
+	local var_7_2 = var_0_7[arg_7_0].size
+	local var_7_3 = {}
+	local var_7_4 = {}
+	local var_7_5 = {}
+	local var_7_6 = "button_hotspot"
 
-	passes[#passes + 1] = {
+	var_7_3[#var_7_3 + 1] = {
 		pass_type = "hotspot",
-		content_id = hotspot_name,
+		content_id = var_7_6
 	}
-	content[hotspot_name] = {}
+	var_7_4[var_7_6] = {}
 
-	local background_name = "selection_background"
+	local var_7_7 = "selection_background"
 
-	passes[#passes + 1] = {
+	var_7_3[#var_7_3 + 1] = {
 		pass_type = "texture_uv",
-		content_id = background_name,
-		style_id = background_name,
+		content_id = var_7_7,
+		style_id = var_7_7
 	}
-	content[background_name] = {
+	var_7_4[var_7_7] = {
 		texture_id = "item_slot_side_fade",
 		uvs = {
 			{
 				0,
-				0,
+				0
 			},
 			{
 				1,
-				1,
-			},
-		},
+				1
+			}
+		}
 	}
 
-	local bg_offset = {
+	local var_7_8 = {
 		168,
 		0,
-		-2,
+		-2
 	}
 
-	style[background_name] = {
-		horizontal_alignment = "left",
+	var_7_5[var_7_7] = {
 		vertical_alignment = "center",
+		horizontal_alignment = "left",
 		texture_size = {
 			414,
-			118,
+			118
 		},
 		color = UISettings.console_start_game_menu_rect_color,
-		offset = bg_offset,
+		offset = var_7_8
 	}
 
-	local bg_effect_name = "bg_effect"
+	local var_7_9 = "bg_effect"
 
-	passes[#passes + 1] = {
+	var_7_3[#var_7_3 + 1] = {
 		pass_type = "texture",
-		texture_id = bg_effect_name,
-		style_id = bg_effect_name,
-		content_check_function = function (content)
-			return content.is_selected
-		end,
+		texture_id = var_7_9,
+		style_id = var_7_9,
+		content_check_function = function(arg_8_0)
+			return arg_8_0.is_selected
+		end
 	}
-	style[bg_effect_name] = {
-		horizontal_alignment = "left",
+	var_7_5[var_7_9] = {
 		vertical_alignment = "center",
+		horizontal_alignment = "left",
 		texture_size = {
 			414,
-			126,
+			126
 		},
 		color = Colors.get_color_table_with_alpha("font_title", 255),
 		offset = {
-			bg_offset[1],
-			bg_offset[2],
-			bg_offset[3] + 1,
-		},
+			var_7_8[1],
+			var_7_8[2],
+			var_7_8[3] + 1
+		}
 	}
-	content[bg_effect_name] = "item_slot_side_effect"
+	var_7_4[var_7_9] = "item_slot_side_effect"
 
-	local text_title_name = "text_title"
-	local text_title_shadow_name = text_title_name .. "_shadow"
+	local var_7_10 = "text_title"
+	local var_7_11 = var_7_10 .. "_shadow"
 
-	passes[#passes + 1] = {
+	var_7_3[#var_7_3 + 1] = {
 		pass_type = "text",
-		text_id = text_title_name,
-		style_id = text_title_name,
-		content_change_function = function (content, style)
-			if content.is_selected then
-				style.text_color = style.selected_color
+		text_id = var_7_10,
+		style_id = var_7_10,
+		content_change_function = function(arg_9_0, arg_9_1)
+			if arg_9_0.is_selected then
+				arg_9_1.text_color = arg_9_1.selected_color
 			else
-				style.text_color = style.default_color
+				arg_9_1.text_color = arg_9_1.default_color
 			end
-		end,
+		end
 	}
-	passes[#passes + 1] = {
+	var_7_3[#var_7_3 + 1] = {
 		pass_type = "text",
-		text_id = text_title_name,
-		style_id = text_title_shadow_name,
+		text_id = var_7_10,
+		style_id = var_7_11
 	}
-	content[text_title_name] = title_text
+	var_7_4[var_7_10] = arg_7_1
 
-	local title_text_offset = {
+	local var_7_12 = {
 		225,
 		16,
-		5,
+		5
 	}
-	local title_text_style = {
-		font_size = 32,
-		font_type = "hell_shark_header",
-		horizontal_alignment = "left",
-		localize = false,
-		upper_case = true,
-		vertical_alignment = "center",
+	local var_7_13 = {
 		word_wrap = false,
+		upper_case = true,
+		localize = false,
+		font_size = 32,
+		horizontal_alignment = "left",
+		vertical_alignment = "center",
+		font_type = "hell_shark_header",
 		text_color = Colors.get_color_table_with_alpha("font_title", 255),
 		selected_color = Colors.get_color_table_with_alpha("white", 255),
 		default_color = Colors.get_color_table_with_alpha("font_title", 255),
 		offset = {
-			title_text_offset[1],
-			title_text_offset[2],
-			title_text_offset[3],
-		},
+			var_7_12[1],
+			var_7_12[2],
+			var_7_12[3]
+		}
 	}
-	local title_text_shadow_style = table.clone(title_text_style)
+	local var_7_14 = table.clone(var_7_13)
 
-	title_text_shadow_style.text_color = {
+	var_7_14.text_color = {
 		255,
 		0,
 		0,
-		0,
+		0
 	}
-	title_text_shadow_style.offset = {
-		title_text_offset[1] + 2,
-		title_text_offset[2] - 2,
-		title_text_offset[3] - 1,
+	var_7_14.offset = {
+		var_7_12[1] + 2,
+		var_7_12[2] - 2,
+		var_7_12[3] - 1
 	}
-	style[text_title_name] = title_text_style
-	style[text_title_shadow_name] = title_text_shadow_style
+	var_7_5[var_7_10] = var_7_13
+	var_7_5[var_7_11] = var_7_14
 
-	local input_text_name = "input_text"
-	local input_text_shadow_name = input_text_name .. "shadow"
+	local var_7_15 = "input_text"
+	local var_7_16 = var_7_15 .. "shadow"
 
-	passes[#passes + 1] = {
+	var_7_3[#var_7_3 + 1] = {
 		pass_type = "text",
-		text_id = input_text_name,
-		style_id = input_text_name,
+		text_id = var_7_15,
+		style_id = var_7_15
 	}
-	passes[#passes + 1] = {
+	var_7_3[#var_7_3 + 1] = {
 		pass_type = "text",
-		text_id = input_text_name,
-		style_id = input_text_shadow_name,
+		text_id = var_7_15,
+		style_id = var_7_16
 	}
-	content[input_text_name] = Localize("not_assigned")
+	var_7_4[var_7_15] = Localize("not_assigned")
 
-	local input_text_style = {
-		font_size = 22,
-		font_type = "hell_shark",
-		horizontal_alignment = "left",
-		localize = false,
+	local var_7_17 = {
 		vertical_alignment = "center",
+		font_size = 22,
+		localize = false,
+		horizontal_alignment = "left",
 		word_wrap = false,
+		font_type = "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
-			title_text_offset[1],
+			var_7_12[1],
 			-18,
-			title_text_offset[3],
-		},
+			var_7_12[3]
+		}
 	}
-	local input_text_offset = input_text_style.offset
-	local input_text_shadow_style = table.clone(input_text_style)
+	local var_7_18 = var_7_17.offset
+	local var_7_19 = table.clone(var_7_17)
 
-	input_text_shadow_style.text_color = {
+	var_7_19.text_color = {
 		255,
 		0,
 		0,
-		0,
+		0
 	}
-	input_text_shadow_style.offset = {
-		input_text_offset[1] + 2,
-		input_text_offset[2] - 2,
-		input_text_offset[3] - 1,
+	var_7_19.offset = {
+		var_7_18[1] + 2,
+		var_7_18[2] - 2,
+		var_7_18[3] - 1
 	}
-	style[input_text_name] = input_text_style
-	style[input_text_shadow_name] = input_text_shadow_style
+	var_7_5[var_7_15] = var_7_17
+	var_7_5[var_7_16] = var_7_19
 
-	local icon_offset = {
-		-(button_size[1] / 2) + 108,
+	local var_7_20 = {
+		-(var_7_2[1] / 2) + 108,
 		0,
-		5,
+		5
 	}
-	local icon_background_offset = {
-		icon_offset[1],
-		icon_offset[2],
-		icon_offset[3] - 2,
+	local var_7_21 = {
+		var_7_20[1],
+		var_7_20[2],
+		var_7_20[3] - 2
 	}
-	local icon_frame_offset = {
-		icon_offset[1],
-		icon_offset[2],
-		icon_offset[3] + 2,
+	local var_7_22 = {
+		var_7_20[1],
+		var_7_20[2],
+		var_7_20[3] + 2
 	}
-	local icon_glow_offset = {
-		icon_offset[1],
-		icon_offset[2],
-		icon_offset[3] - 1,
+	local var_7_23 = {
+		var_7_20[1],
+		var_7_20[2],
+		var_7_20[3] - 1
 	}
-	local icon_texture_name = "icon_texture"
-	local icon_texture_frame_name = "icon_texture_frame"
+	local var_7_24 = "icon_texture"
+	local var_7_25 = "icon_texture_frame"
 
-	passes[#passes + 1] = {
+	var_7_3[#var_7_3 + 1] = {
 		pass_type = "texture",
-		style_id = icon_texture_name,
-		texture_id = icon_texture_name,
-		content_check_function = function (content, style)
-			return content[icon_texture_name]
+		style_id = var_7_24,
+		texture_id = var_7_24,
+		content_check_function = function(arg_10_0, arg_10_1)
+			return arg_10_0[var_7_24]
 		end,
-		content_change_function = function (content, style)
-			if content.button_hotspot.disable_button then
-				style.saturated = true
+		content_change_function = function(arg_11_0, arg_11_1)
+			if arg_11_0.button_hotspot.disable_button then
+				arg_11_1.saturated = true
 			else
-				style.saturated = false
+				arg_11_1.saturated = false
 			end
-		end,
+		end
 	}
-	passes[#passes + 1] = {
+	var_7_3[#var_7_3 + 1] = {
 		pass_type = "texture",
-		texture_id = icon_texture_frame_name,
-		style_id = icon_texture_frame_name,
-		content_check_function = function (content, style)
-			return content[icon_texture_name]
-		end,
+		texture_id = var_7_25,
+		style_id = var_7_25,
+		content_check_function = function(arg_12_0, arg_12_1)
+			return arg_12_0[var_7_24]
+		end
 	}
-	content[icon_texture_name] = nil
-	content[icon_texture_frame_name] = "item_frame"
-	style[icon_texture_name] = {
-		horizontal_alignment = "center",
+	var_7_4[var_7_24] = nil
+	var_7_4[var_7_25] = "item_frame"
+	var_7_5[var_7_24] = {
 		vertical_alignment = "center",
-		texture_size = icon_texture_size,
+		horizontal_alignment = "center",
+		texture_size = var_7_1,
 		color = {
 			255,
 			255,
 			255,
-			255,
+			255
 		},
-		offset = icon_offset,
+		offset = var_7_20
 	}
-	style[icon_texture_frame_name] = {
-		horizontal_alignment = "center",
+	var_7_5[var_7_25] = {
 		vertical_alignment = "center",
+		horizontal_alignment = "center",
 		texture_size = {
 			80,
-			80,
+			80
 		},
 		color = {
 			255,
 			255,
 			255,
-			255,
+			255
 		},
-		offset = icon_offset,
+		offset = var_7_20
 	}
 
-	local icon_background_name = "icon_background"
+	local var_7_26 = "icon_background"
 
-	passes[#passes + 1] = {
+	var_7_3[#var_7_3 + 1] = {
 		pass_type = "texture",
-		texture_id = icon_background_name,
-		style_id = icon_background_name,
+		texture_id = var_7_26,
+		style_id = var_7_26
 	}
-	content[icon_background_name] = "level_icon_09"
-	style[icon_background_name] = {
-		horizontal_alignment = "center",
+	var_7_4[var_7_26] = "level_icon_09"
+	var_7_5[var_7_26] = {
 		vertical_alignment = "center",
+		horizontal_alignment = "center",
 		texture_size = {
 			150,
-			150,
+			150
 		},
 		color = UISettings.console_start_game_menu_rect_color,
-		offset = icon_background_offset,
+		offset = var_7_21
 	}
 
-	local icon_frame_texture_name = "icon_frame_texture"
+	local var_7_27 = "icon_frame_texture"
 
-	passes[#passes + 1] = {
+	var_7_3[#var_7_3 + 1] = {
 		pass_type = "texture",
-		style_id = icon_frame_texture_name,
-		texture_id = icon_frame_texture_name,
-		content_check_function = function (content, style)
-			return content[icon_frame_texture_name]
+		style_id = var_7_27,
+		texture_id = var_7_27,
+		content_check_function = function(arg_13_0, arg_13_1)
+			return arg_13_0[var_7_27]
 		end,
-		content_change_function = function (content, style)
-			if content.button_hotspot.disable_button then
-				style.saturated = true
+		content_change_function = function(arg_14_0, arg_14_1)
+			if arg_14_0.button_hotspot.disable_button then
+				arg_14_1.saturated = true
 			else
-				style.saturated = false
+				arg_14_1.saturated = false
 			end
-		end,
+		end
 	}
-	content[icon_frame_texture_name] = icon_frame_texture or "map_frame_00"
-	style[icon_frame_texture_name] = {
-		horizontal_alignment = "center",
+	var_7_4[var_7_27] = arg_7_4 or "map_frame_00"
+	var_7_5[var_7_27] = {
 		vertical_alignment = "center",
+		horizontal_alignment = "center",
 		texture_size = {
 			180,
-			180,
+			180
 		},
 		color = {
 			255,
 			255,
 			255,
-			255,
+			255
 		},
-		offset = icon_frame_offset,
+		offset = var_7_22
 	}
 
-	local icon_texture_glow_name = "icon_texture_glow"
+	local var_7_28 = "icon_texture_glow"
 
-	passes[#passes + 1] = {
+	var_7_3[#var_7_3 + 1] = {
 		pass_type = "texture",
-		style_id = icon_texture_glow_name,
-		texture_id = icon_texture_glow_name,
-		content_check_function = function (content)
-			return content.is_selected
-		end,
+		style_id = var_7_28,
+		texture_id = var_7_28,
+		content_check_function = function(arg_15_0)
+			return arg_15_0.is_selected
+		end
 	}
-	content[icon_texture_glow_name] = "map_frame_glow_02"
-	style[icon_texture_glow_name] = {
-		horizontal_alignment = "center",
+	var_7_4[var_7_28] = "map_frame_glow_02"
+	var_7_5[var_7_28] = {
 		vertical_alignment = "center",
+		horizontal_alignment = "center",
 		texture_size = {
 			270,
-			270,
+			270
 		},
 		color = {
 			255,
 			255,
 			255,
-			255,
+			255
 		},
-		offset = icon_glow_offset,
+		offset = var_7_23
 	}
 
-	local widget = {}
-
-	widget.element = {
-		passes = passes,
+	return {
+		element = {
+			passes = var_7_3
+		},
+		content = var_7_4,
+		style = var_7_5,
+		offset = {
+			0,
+			0,
+			0
+		},
+		scenegraph_id = arg_7_0
 	}
-	widget.content = content
-	widget.style = style
-	widget.offset = {
-		0,
-		0,
-		0,
-	}
-	widget.scenegraph_id = scenegraph_id
-
-	return widget
 end
 
-local heroic_deed_title_style = {
-	dynamic_font_size = true,
+local var_0_9 = {
 	font_size = 50,
-	font_type = "hell_shark_header",
-	horizontal_alignment = "center",
-	localize = false,
 	upper_case = true,
+	localize = false,
 	use_shadow = true,
-	vertical_alignment = "bottom",
 	word_wrap = false,
+	horizontal_alignment = "center",
+	vertical_alignment = "bottom",
+	dynamic_font_size = true,
+	font_type = "hell_shark_header",
 	text_color = Colors.get_color_table_with_alpha("font_title", 255),
 	offset = {
 		0,
 		0,
-		2,
-	},
+		2
+	}
 }
-local heroic_deed_description_style = {
+local var_0_10 = {
 	font_size = 28,
-	font_type = "hell_shark_header",
-	horizontal_alignment = "center",
-	localize = false,
 	upper_case = false,
+	localize = false,
 	use_shadow = true,
-	vertical_alignment = "top",
 	word_wrap = true,
+	horizontal_alignment = "center",
+	vertical_alignment = "top",
+	font_type = "hell_shark_header",
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	offset = {
 		0,
 		0,
-		2,
-	},
+		2
+	}
 }
-local widgets = {
-	heroic_deed_description_background = UIWidgets.create_rect_with_outer_frame("heroic_deed_background", scenegraph_definition.heroic_deed_background.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
-	heroic_deed_title = UIWidgets.create_simple_text(Localize("start_game_window_mutator_title"), "heroic_deed_title", nil, nil, heroic_deed_title_style),
+local var_0_11 = {
+	heroic_deed_description_background = UIWidgets.create_rect_with_outer_frame("heroic_deed_background", var_0_7.heroic_deed_background.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
+	heroic_deed_title = UIWidgets.create_simple_text(Localize("start_game_window_mutator_title"), "heroic_deed_title", nil, nil, var_0_9),
 	heroic_deed_divider = UIWidgets.create_simple_texture("divider_01_top", "heroic_deed_divider"),
-	heroic_deed_description = UIWidgets.create_simple_text(Localize("start_game_window_mutator_desc"), "heroic_deed_description", nil, nil, heroic_deed_description_style),
-	heroic_deed_setting = create_setting_button("game_option_2", Localize("start_game_window_mutator_title"), nil, "icon_deed_normal_01"),
-	play_button = UIWidgets.create_icon_and_name_button("play_button", "options_button_icon_quickplay", Localize("start_game_window_play")),
+	heroic_deed_description = UIWidgets.create_simple_text(Localize("start_game_window_mutator_desc"), "heroic_deed_description", nil, nil, var_0_10),
+	heroic_deed_setting = var_0_8("game_option_2", Localize("start_game_window_mutator_title"), nil, "icon_deed_normal_01"),
+	play_button = UIWidgets.create_icon_and_name_button("play_button", "options_button_icon_quickplay", Localize("start_game_window_play"))
 }
-local selector_input_definition = {
+local var_0_12 = {
 	"heroic_deed_setting",
-	"play_button",
+	"play_button"
 }
 
 return {
-	scenegraph_definition = scenegraph_definition,
-	widgets = widgets,
-	animation_definitions = animation_definitions,
-	selector_input_definition = selector_input_definition,
+	scenegraph_definition = var_0_7,
+	widgets = var_0_11,
+	animation_definitions = var_0_6,
+	selector_input_definition = var_0_12
 }

@@ -1,56 +1,55 @@
-﻿-- chunkname: @scripts/ui/hud_ui/component_list_definitions/hud_component_list_deus_common.lua
+-- chunkname: @scripts/ui/hud_ui/component_list_definitions/hud_component_list_deus_common.lua
 
-local components = {
+local var_0_0 = {
 	{
+		use_hud_scale = true,
 		class_name = "DeusSoftCurrencyIndicatorUI",
 		filename = "scripts/ui/hud_ui/deus_soft_currency_indicator_ui",
-		use_hud_scale = true,
 		visibility_groups = {
 			"dead",
-			"alive",
-		},
-	},
+			"alive"
+		}
+	}
 }
 
 if BUILD ~= "release" or script_data.debug_enabled then
-	table.insert(components, {
+	table.insert(var_0_0, {
+		use_hud_scale = true,
 		class_name = "DeusDebugUI",
 		filename = "scripts/ui/hud_ui/deus_debug_ui",
-		use_hud_scale = true,
 		visibility_groups = {
 			"dead",
-			"alive",
-		},
+			"alive"
+		}
 	})
-	table.insert(components, {
+	table.insert(var_0_0, {
+		use_hud_scale = true,
 		class_name = "DeusDebugMapUI",
 		filename = "scripts/ui/hud_ui/deus_debug_map_ui",
-		use_hud_scale = true,
 		visibility_groups = {
 			"dead",
-			"alive",
-		},
+			"alive"
+		}
 	})
 end
 
-local visibility_groups = {
+local var_0_1 = {
 	{
 		name = "deus_run_stats",
 		order = 7,
-		validation_function = function (ingame_hud)
-			local component = ingame_hud:component("DeusRunStatsView")
-			local is_active = component and component:is_ui_active()
+		validation_function = function(arg_1_0)
+			local var_1_0 = arg_1_0:component("DeusRunStatsView")
 
-			return is_active
-		end,
-	},
+			return var_1_0 and var_1_0:is_ui_active()
+		end
+	}
 }
 
-for i = 1, #components do
-	require(components[i].filename)
+for iter_0_0 = 1, #var_0_0 do
+	require(var_0_0[iter_0_0].filename)
 end
 
 return {
-	components = components,
-	visibility_groups = visibility_groups,
+	components = var_0_0,
+	visibility_groups = var_0_1
 }

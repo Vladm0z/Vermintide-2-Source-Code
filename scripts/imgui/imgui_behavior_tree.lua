@@ -1,353 +1,350 @@
-﻿-- chunkname: @scripts/imgui/imgui_behavior_tree.lua
+-- chunkname: @scripts/imgui/imgui_behavior_tree.lua
 
 ImguiBehaviorTree = class(ImguiBehaviorTree)
 
-ImguiBehaviorTree.init = function (self, world, ...)
-	self._window_width = 1800
-	self._window_height = 1000
-	self._padding = 38
-	self._show_graph_settings = false
-	self._show_considerations = false
-	self._left_panel_width = 600
-	self._scrolling = {
+function ImguiBehaviorTree.init(arg_1_0, arg_1_1, ...)
+	arg_1_0._window_width = 1800
+	arg_1_0._window_height = 1000
+	arg_1_0._padding = 38
+	arg_1_0._show_graph_settings = false
+	arg_1_0._show_considerations = false
+	arg_1_0._left_panel_width = 600
+	arg_1_0._scrolling = {
 		x = 0,
-		y = 0,
+		y = 0
 	}
-	self._node_size = {
-		height = 0,
+	arg_1_0._node_size = {
 		width = 150,
+		height = 0
 	}
-	self._grid_size = 64
-	self._offset = {
+	arg_1_0._grid_size = 64
+	arg_1_0._offset = {
 		x = 0,
-		y = 0,
+		y = 0
 	}
-	self._zoom = 1
-	self._node_inner_padding = {
+	arg_1_0._zoom = 1
+	arg_1_0._node_inner_padding = {
 		x = 5,
-		y = 5,
+		y = 5
 	}
-	self._node_font_size = 10
-	self._node_text_distance = 10
-	self._use_width_padding_zoom = true
-	self._use_height_padding_zoom = true
-	self._zoom_speed = 0.1
-	self._original_font_size = Imgui.get_font_size()
-	self._curve_in_offset = {
+	arg_1_0._node_font_size = 10
+	arg_1_0._node_text_distance = 10
+	arg_1_0._use_width_padding_zoom = true
+	arg_1_0._use_height_padding_zoom = true
+	arg_1_0._zoom_speed = 0.1
+	arg_1_0._original_font_size = Imgui.get_font_size()
+	arg_1_0._curve_in_offset = {
 		x = -50,
-		y = 0,
+		y = 0
 	}
-	self._curve_out_offset = {
+	arg_1_0._curve_out_offset = {
 		x = 50,
-		y = 0,
+		y = 0
 	}
-	self._running_blackboard = nil
-	self._last_leaf_node_run = nil
-	self._running_leaf_history = {}
-	self._max_history_quantity = 5
-	self._history_id = 1
-	self._use_history_slider = false
-	self._history_stack = {}
+	arg_1_0._running_blackboard = nil
+	arg_1_0._last_leaf_node_run = nil
+	arg_1_0._running_leaf_history = {}
+	arg_1_0._max_history_quantity = 5
+	arg_1_0._history_id = 1
+	arg_1_0._use_history_slider = false
+	arg_1_0._history_stack = {}
 end
 
-ImguiBehaviorTree._update_leaf_history = function (self, running_node_name)
-	self._running_leaf_history[#self._running_leaf_history + 1] = running_node_name
+function ImguiBehaviorTree._update_leaf_history(arg_2_0, arg_2_1)
+	arg_2_0._running_leaf_history[#arg_2_0._running_leaf_history + 1] = arg_2_1
 
-	if #self._running_leaf_history > self._max_history_quantity then
-		local overflow_quantity = #self._running_leaf_history - self._max_history_quantity
+	if #arg_2_0._running_leaf_history > arg_2_0._max_history_quantity then
+		local var_2_0 = #arg_2_0._running_leaf_history - arg_2_0._max_history_quantity
 
-		for i = 1, overflow_quantity do
-			table.remove(self._running_leaf_history, i)
+		for iter_2_0 = 1, var_2_0 do
+			table.remove(arg_2_0._running_leaf_history, iter_2_0)
 		end
 	end
 end
 
-ImguiBehaviorTree._calculate_rect_box = function (self, txt_1, txt_2, txt_3)
-	local txt_1_width, txt_1_height = Imgui.calculate_text_size(txt_1)
-	local txt_2_width, txt_2_height = Imgui.calculate_text_size(txt_2)
-	local txt_3_width, txt_3_height = Imgui.calculate_text_size(txt_3)
-	local max_width = math.max(txt_1_width, txt_2_width, txt_3_width)
-	local max_height = txt_1_height + txt_2_height + txt_3_height
+function ImguiBehaviorTree._calculate_rect_box(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	local var_3_0, var_3_1 = Imgui.calculate_text_size(arg_3_1)
+	local var_3_2, var_3_3 = Imgui.calculate_text_size(arg_3_2)
+	local var_3_4, var_3_5 = Imgui.calculate_text_size(arg_3_3)
+	local var_3_6 = math.max(var_3_0, var_3_2, var_3_4)
+	local var_3_7 = var_3_1 + var_3_3 + var_3_5
 
-	return max_width, max_height
+	return var_3_6, var_3_7
 end
 
-ImguiBehaviorTree._draw_node = function (self, x, y, node, link_out)
-	local node_name = node._identifier
-	local class_name = node.name
-	local enter_condition = node._condition_name
-	local node_class_text_color = Color(500, 255, 255, 255)
-	local node_name_text_color = Color(255, 0, 0, 0)
-	local node_condition_text_color = Color(255, 0, 0, 200)
-	local node_color = Color(255, 100, 100, 100)
-	local node_outline_color = Color(255, 255, 255, 255)
-	local line_color = Color(255, 255, 255, 255)
-	local running_node_color = Color(255, 240, 130, 10)
-	local node_outline_thickness = 1
-	local line_thickness = 1
+function ImguiBehaviorTree._draw_node(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = arg_4_3._identifier
+	local var_4_1 = arg_4_3.name
+	local var_4_2 = arg_4_3._condition_name
+	local var_4_3 = Color(500, 255, 255, 255)
+	local var_4_4 = Color(255, 0, 0, 0)
+	local var_4_5 = Color(255, 0, 0, 200)
+	local var_4_6 = Color(255, 100, 100, 100)
+	local var_4_7 = Color(255, 255, 255, 255)
+	local var_4_8 = Color(255, 255, 255, 255)
+	local var_4_9 = Color(255, 240, 130, 10)
+	local var_4_10 = 1
+	local var_4_11 = 1
 
-	if #self._history_stack > 0 then
-		if not self._use_history_slider then
-			self._history_id = #self._history_stack
+	if #arg_4_0._history_stack > 0 then
+		if not arg_4_0._use_history_slider then
+			arg_4_0._history_id = #arg_4_0._history_stack
 		end
 
-		local current_history_selected = self._history_stack[self._history_id]
+		local var_4_12 = arg_4_0._history_stack[arg_4_0._history_id]
 
-		if table.contains(current_history_selected.blackboard.running_nodes, node) then
-			node_color = running_node_color
-			line_color = running_node_color
-			line_thickness = 4
+		if table.contains(var_4_12.blackboard.running_nodes, arg_4_3) then
+			var_4_6 = var_4_9
+			var_4_8 = var_4_9
+			var_4_11 = 4
 		end
 	end
 
-	Imgui.set_window_font_scale(self._node_font_size / self._original_font_size * self._zoom)
+	Imgui.set_window_font_scale(arg_4_0._node_font_size / arg_4_0._original_font_size * arg_4_0._zoom)
 	Imgui.channel_set_current(1)
 
-	local box_width, box_height = self:_calculate_rect_box(class_name, node_name, enter_condition)
-	local text_padding = self._node_text_distance * self._zoom
-	local txt_start_box_x = self._offset.x + x
-	local txt_start_box_y = self._offset.y + y
-	local txt_end_box_x = txt_start_box_x + box_width
-	local txt_end_box_y = txt_start_box_y + box_height
+	local var_4_13, var_4_14 = arg_4_0:_calculate_rect_box(var_4_1, var_4_0, var_4_2)
+	local var_4_15 = arg_4_0._node_text_distance * arg_4_0._zoom
+	local var_4_16 = arg_4_0._offset.x + arg_4_1
+	local var_4_17 = arg_4_0._offset.y + arg_4_2
+	local var_4_18 = var_4_16 + var_4_13
+	local var_4_19 = var_4_17 + var_4_14
 
-	Imgui.add_text(class_name, txt_start_box_x, txt_start_box_y, node_class_text_color, self._node_font_size * self._zoom)
-	Imgui.add_text(node_name, txt_start_box_x, txt_start_box_y + text_padding, node_name_text_color, self._node_font_size * self._zoom)
-	Imgui.add_text(enter_condition, txt_start_box_x, txt_start_box_y + text_padding + text_padding, node_condition_text_color, self._node_font_size * self._zoom)
+	Imgui.add_text(var_4_1, var_4_16, var_4_17, var_4_3, arg_4_0._node_font_size * arg_4_0._zoom)
+	Imgui.add_text(var_4_0, var_4_16, var_4_17 + var_4_15, var_4_4, arg_4_0._node_font_size * arg_4_0._zoom)
+	Imgui.add_text(var_4_2, var_4_16, var_4_17 + var_4_15 + var_4_15, var_4_5, arg_4_0._node_font_size * arg_4_0._zoom)
 
-	local rect_start_box_x = txt_start_box_x - self._node_inner_padding.x
-	local rect_start_box_y = txt_start_box_y - self._node_inner_padding.y
-	local rect_end_box_x = txt_end_box_x + self._node_inner_padding.x
-	local rect_end_box_y = txt_end_box_y + self._node_inner_padding.y
+	local var_4_20 = var_4_16 - arg_4_0._node_inner_padding.x
+	local var_4_21 = var_4_17 - arg_4_0._node_inner_padding.y
+	local var_4_22 = var_4_18 + arg_4_0._node_inner_padding.x
+	local var_4_23 = var_4_19 + arg_4_0._node_inner_padding.y
 
 	Imgui.channel_set_current(0)
-	Imgui.add_rect_filled(rect_start_box_x, rect_start_box_y, rect_end_box_x, rect_end_box_y, node_color, 5)
-	Imgui.add_rect(rect_start_box_x, rect_start_box_y, rect_end_box_x, rect_end_box_y, node_outline_color, 5, node_outline_thickness)
+	Imgui.add_rect_filled(var_4_20, var_4_21, var_4_22, var_4_23, var_4_6, 5)
+	Imgui.add_rect(var_4_20, var_4_21, var_4_22, var_4_23, var_4_7, 5, var_4_10)
 	Imgui.channel_set_current(1)
 
-	local link_in_x = rect_start_box_x
-	local link_in_y = rect_start_box_y + (rect_end_box_y - rect_start_box_y) / 2
+	local var_4_24 = var_4_20
+	local var_4_25 = var_4_21 + (var_4_23 - var_4_21) / 2
 
-	if link_out ~= nil then
-		Imgui.add_bezier_curve(link_out.x, link_out.y, link_in_x, link_in_y, self._curve_out_offset.x, self._curve_out_offset.y, self._curve_in_offset.x, self._curve_in_offset.y, line_color, line_thickness)
+	if arg_4_4 ~= nil then
+		Imgui.add_bezier_curve(arg_4_4.x, arg_4_4.y, var_4_24, var_4_25, arg_4_0._curve_out_offset.x, arg_4_0._curve_out_offset.y, arg_4_0._curve_in_offset.x, arg_4_0._curve_in_offset.y, var_4_8, var_4_11)
 	end
 
-	local next_link_out = {
+	local var_4_26 = {
 		x = 0,
 		y = 0,
+		x = var_4_16 + (var_4_22 - var_4_16),
+		y = var_4_21 + (var_4_23 - var_4_21) / 2
 	}
 
-	next_link_out.x = txt_start_box_x + (rect_end_box_x - txt_start_box_x)
-	next_link_out.y = rect_start_box_y + (rect_end_box_y - rect_start_box_y) / 2
-
-	return rect_end_box_x - txt_start_box_x, next_link_out
+	return var_4_22 - var_4_16, var_4_26
 end
 
-ImguiBehaviorTree._draw_nodes = function (self, node, x, y, link_out)
-	local node_width, link_out = self:_draw_node(x, y, node, link_out)
-	local children_counter = 0
+function ImguiBehaviorTree._draw_nodes(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	local var_5_0, var_5_1 = arg_5_0:_draw_node(arg_5_2, arg_5_3, arg_5_1, arg_5_4)
+	local var_5_2 = 0
 
-	if node._children then
-		local padding = self._padding
-		local use_width_padding_zoom = self._use_width_padding_zoom
-		local zoom = self._zoom
-		local width_padding_modifier = use_width_padding_zoom and zoom or 1
-		local height_padding_modifier = use_width_padding_zoom and zoom or 1
+	if arg_5_1._children then
+		local var_5_3 = arg_5_0._padding
+		local var_5_4 = arg_5_0._use_width_padding_zoom
+		local var_5_5 = arg_5_0._zoom
+		local var_5_6 = var_5_4 and var_5_5 or 1
+		local var_5_7 = var_5_4 and var_5_5 or 1
 
-		x = x + node_width + padding * width_padding_modifier
+		arg_5_2 = arg_5_2 + var_5_0 + var_5_3 * var_5_6
 
-		for _, child in pairs(node._children) do
-			y = self:_draw_nodes(child, x, y, link_out)
-			children_counter = children_counter + 1
+		for iter_5_0, iter_5_1 in pairs(arg_5_1._children) do
+			arg_5_3 = arg_5_0:_draw_nodes(iter_5_1, arg_5_2, arg_5_3, var_5_1)
+			var_5_2 = var_5_2 + 1
 
-			if children_counter < table.size(node._children) then
-				y = y + padding * height_padding_modifier
+			if var_5_2 < table.size(arg_5_1._children) then
+				arg_5_3 = arg_5_3 + var_5_3 * var_5_7
 			end
 		end
 	end
 
-	return y
+	return arg_5_3
 end
 
-ImguiBehaviorTree._get_blackboard_value_type = function (self, key, entry, out)
-	for k, v in pairs(entry) do
-		if k == key then
-			out = entry[key]
+function ImguiBehaviorTree._get_blackboard_value_type(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	for iter_6_0, iter_6_1 in pairs(arg_6_2) do
+		if iter_6_0 == arg_6_1 then
+			arg_6_3 = arg_6_2[arg_6_1]
 
-			return out
+			return arg_6_3
 		end
 
-		if type(v) == "table" then
-			out = self:_get_blackboard_value_type(key, v, out)
+		if type(iter_6_1) == "table" then
+			arg_6_3 = arg_6_0:_get_blackboard_value_type(arg_6_1, iter_6_1, arg_6_3)
 
-			if out ~= nil then
-				return out
+			if arg_6_3 ~= nil then
+				return arg_6_3
 			end
 		end
 	end
 
-	return out
+	return arg_6_3
 end
 
-ImguiBehaviorTree._draw_blackboard_element = function (self, key, value)
-	local value_type = type(value)
+function ImguiBehaviorTree._draw_blackboard_element(arg_7_0, arg_7_1, arg_7_2)
+	local var_7_0 = type(arg_7_2)
 
 	Imgui.indent(10)
 
-	if value_type == "Vector3Box" then
-		local vec = value:unbox()
+	if var_7_0 == "Vector3Box" then
+		local var_7_1 = arg_7_2:unbox()
 
-		Imgui.text(tostring(key) .. ": " .. "X:" .. tostring(vec.x) .. " Y:" .. tostring(vec.y) .. " Z:" .. tostring(vec.z))
-	elseif type(value) == "boolean" then
-		Imgui.text(tostring(key) .. ": " .. tostring(value))
-	elseif type(value) == "string" then
-		Imgui.text(tostring(key) .. ": " .. tostring(value))
-	elseif value_type == "number" then
-		Imgui.text(tostring(key) .. ": " .. tostring(value))
-	elseif value_type == "float" then
-		Imgui.text(tostring(key) .. ": " .. tostring(value))
-	elseif value_type == "Unit" then
-		Imgui.text(key .. ": " .. tostring(value))
+		Imgui.text(tostring(arg_7_1) .. ": " .. "X:" .. tostring(var_7_1.x) .. " Y:" .. tostring(var_7_1.y) .. " Z:" .. tostring(var_7_1.z))
+	elseif type(arg_7_2) == "boolean" then
+		Imgui.text(tostring(arg_7_1) .. ": " .. tostring(arg_7_2))
+	elseif type(arg_7_2) == "string" then
+		Imgui.text(tostring(arg_7_1) .. ": " .. tostring(arg_7_2))
+	elseif var_7_0 == "number" then
+		Imgui.text(tostring(arg_7_1) .. ": " .. tostring(arg_7_2))
+	elseif var_7_0 == "float" then
+		Imgui.text(tostring(arg_7_1) .. ": " .. tostring(arg_7_2))
+	elseif var_7_0 == "Unit" then
+		Imgui.text(arg_7_1 .. ": " .. tostring(arg_7_2))
 	end
 
 	Imgui.unindent(10)
 end
 
-ImguiBehaviorTree._draw_blackboard_value = function (self, data)
-	for key, value in pairs(data) do
-		if key ~= "running_nodes" then
-			local value_type = type(value)
+function ImguiBehaviorTree._draw_blackboard_value(arg_8_0, arg_8_1)
+	for iter_8_0, iter_8_1 in pairs(arg_8_1) do
+		if iter_8_0 ~= "running_nodes" then
+			if type(iter_8_1) == "table" then
+				Imgui.text_colored(iter_8_0, 255, 153, 102, 255)
 
-			if value_type == "table" then
-				Imgui.text_colored(key, 255, 153, 102, 255)
-
-				for key, value in pairs(value) do
-					self:_draw_blackboard_element(key, value)
+				for iter_8_2, iter_8_3 in pairs(iter_8_1) do
+					arg_8_0:_draw_blackboard_element(iter_8_2, iter_8_3)
 				end
 			else
-				self:_draw_blackboard_element(key, value)
+				arg_8_0:_draw_blackboard_element(iter_8_0, iter_8_1)
 			end
 		end
 	end
 end
 
-ImguiBehaviorTree._save_history = function (self, brain, running_node_name)
-	local leaf
+function ImguiBehaviorTree._save_history(arg_9_0, arg_9_1, arg_9_2)
+	local var_9_0
 
-	for _, value in pairs(brain._blackboard.running_nodes) do
-		if value._identifier == running_node_name then
-			leaf = value
+	for iter_9_0, iter_9_1 in pairs(arg_9_1._blackboard.running_nodes) do
+		if iter_9_1._identifier == arg_9_2 then
+			var_9_0 = iter_9_1
 		end
 	end
 
-	if leaf == nil then
+	if var_9_0 == nil then
 		return
 	end
 
-	self._last_leaf_node_run = running_node_name
+	arg_9_0._last_leaf_node_run = arg_9_2
 
-	local i = 1
-	local node_iterator = leaf
-	local running_hierarchy = {}
+	local var_9_1 = 1
+	local var_9_2 = var_9_0
+	local var_9_3 = {}
 
-	if node_iterator ~= nil then
-		while node_iterator do
-			running_hierarchy[i] = node_iterator
-			i = i + 1
-			node_iterator = node_iterator._parent
+	if var_9_2 ~= nil then
+		while var_9_2 do
+			var_9_3[var_9_1] = var_9_2
+			var_9_1 = var_9_1 + 1
+			var_9_2 = var_9_2._parent
 		end
 	end
 
-	local blackboard_copy = {}
+	local var_9_4 = {}
 
-	for key, value in pairs(brain._blackboard) do
-		blackboard_copy[key] = value
+	for iter_9_2, iter_9_3 in pairs(arg_9_1._blackboard) do
+		var_9_4[iter_9_2] = iter_9_3
 
-		if type(value) == "table" then
-			for sub_key, sub_value in pairs(value) do
-				if type(sub_value) ~= "table" then
-					value[sub_key] = sub_value
+		if type(iter_9_3) == "table" then
+			for iter_9_4, iter_9_5 in pairs(iter_9_3) do
+				if type(iter_9_5) ~= "table" then
+					iter_9_3[iter_9_4] = iter_9_5
 				end
 			end
 		end
 	end
 
-	blackboard_copy.running_nodes = running_hierarchy
+	var_9_4.running_nodes = var_9_3
 
-	local new_history_entry = {
-		blackboard = blackboard_copy,
+	local var_9_5 = {
+		blackboard = var_9_4
 	}
 
-	self._history_stack[#self._history_stack + 1] = new_history_entry
+	arg_9_0._history_stack[#arg_9_0._history_stack + 1] = var_9_5
 end
 
-ImguiBehaviorTree.update = function (self)
+function ImguiBehaviorTree.update(arg_10_0)
 	return
 end
 
-ImguiBehaviorTree.draw = function (self)
-	local do_close = Imgui.begin_window("Behavior Tree")
+function ImguiBehaviorTree.draw(arg_11_0)
+	local var_11_0 = Imgui.begin_window("Behavior Tree")
 
-	Imgui.set_window_size(self._window_width, self._window_height, "once")
+	Imgui.set_window_size(arg_11_0._window_width, arg_11_0._window_height, "once")
 
-	self._show_considerations = Imgui.checkbox("Show considerations", self._show_considerations)
-
-	Imgui.same_line(10)
-
-	self._use_history_slider = Imgui.checkbox("Use History Slider", self._use_history_slider)
+	arg_11_0._show_considerations = Imgui.checkbox("Show considerations", arg_11_0._show_considerations)
 
 	Imgui.same_line(10)
 
-	self._history_id = Imgui.slider_int("", self._history_id, 1, table.size(self._history_stack))
+	arg_11_0._use_history_slider = Imgui.checkbox("Use History Slider", arg_11_0._use_history_slider)
 
-	Imgui.begin_child_window("Settings", self._left_panel_width, 0, true)
+	Imgui.same_line(10)
 
-	self._show_graph_settings = Imgui.checkbox("Show Graph Settings", self._show_graph_settings)
+	arg_11_0._history_id = Imgui.slider_int("", arg_11_0._history_id, 1, table.size(arg_11_0._history_stack))
 
-	if self._show_graph_settings then
+	Imgui.begin_child_window("Settings", arg_11_0._left_panel_width, 0, true)
+
+	arg_11_0._show_graph_settings = Imgui.checkbox("Show Graph Settings", arg_11_0._show_graph_settings)
+
+	if arg_11_0._show_graph_settings then
 		Imgui.text_colored("Graph Settings:", 255, 51, 204, 255)
 
-		self._left_panel_width = Imgui.input_int("Panel width", self._left_panel_width)
-		self._zoom = Imgui.input_float("Zoom", self._zoom)
-		self._zoom_speed = Imgui.input_float("Zoom speed", self._zoom_speed)
-		self._padding = Imgui.input_int("Node padding", self._padding)
-		self._use_width_padding_zoom = Imgui.checkbox("Use width padding zoom", self._use_width_padding_zoom)
-		self._use_height_padding_zoom = Imgui.checkbox("Use height padding zoom", self._use_height_padding_zoom)
-		self._max_history_quantity = Imgui.input_int("#Max history", self._max_history_quantity)
-		self._node_size.height = Imgui.input_int("Node Height", self._node_size.height)
-		self._node_font_size = Imgui.input_int("Node font size", self._node_font_size)
-		self._node_text_distance = Imgui.input_int("Node text distance", self._node_text_distance)
-		self._node_inner_padding.x, self._node_inner_padding.y = Imgui.input_int_2("Inner Padding", self._node_inner_padding.x, self._node_inner_padding.y)
+		arg_11_0._left_panel_width = Imgui.input_int("Panel width", arg_11_0._left_panel_width)
+		arg_11_0._zoom = Imgui.input_float("Zoom", arg_11_0._zoom)
+		arg_11_0._zoom_speed = Imgui.input_float("Zoom speed", arg_11_0._zoom_speed)
+		arg_11_0._padding = Imgui.input_int("Node padding", arg_11_0._padding)
+		arg_11_0._use_width_padding_zoom = Imgui.checkbox("Use width padding zoom", arg_11_0._use_width_padding_zoom)
+		arg_11_0._use_height_padding_zoom = Imgui.checkbox("Use height padding zoom", arg_11_0._use_height_padding_zoom)
+		arg_11_0._max_history_quantity = Imgui.input_int("#Max history", arg_11_0._max_history_quantity)
+		arg_11_0._node_size.height = Imgui.input_int("Node Height", arg_11_0._node_size.height)
+		arg_11_0._node_font_size = Imgui.input_int("Node font size", arg_11_0._node_font_size)
+		arg_11_0._node_text_distance = Imgui.input_int("Node text distance", arg_11_0._node_text_distance)
+		arg_11_0._node_inner_padding.x, arg_11_0._node_inner_padding.y = Imgui.input_int_2("Inner Padding", arg_11_0._node_inner_padding.x, arg_11_0._node_inner_padding.y)
 	end
 
 	Imgui.text_colored("---------------------------------------------------------------------------------------", 255, 51, 204, 255)
 	Imgui.text_colored("History leaf nodes:", 255, 51, 204, 255)
 	Imgui.indent(10)
 
-	local running_leaf_history = self._running_leaf_history
+	local var_11_1 = arg_11_0._running_leaf_history
 
-	for i = 1, self._max_history_quantity do
-		local item = running_leaf_history[i]
+	for iter_11_0 = 1, arg_11_0._max_history_quantity do
+		local var_11_2 = var_11_1[iter_11_0]
 
-		if item == nil then
-			item = ""
+		if var_11_2 == nil then
+			var_11_2 = ""
 		end
 
-		Imgui.text_colored(item, 250, 250, 250, 250)
+		Imgui.text_colored(var_11_2, 250, 250, 250, 250)
 	end
 
 	Imgui.unindent(10)
 	Imgui.text_colored("---------------------------------------------------------------------------------------", 255, 51, 204, 255)
 	Imgui.text_colored("Blackboard:", 255, 51, 204, 255)
 
-	if #self._history_stack > 0 then
-		if not self._use_history_slider then
-			self._history_id = #self._history_stack
+	if #arg_11_0._history_stack > 0 then
+		if not arg_11_0._use_history_slider then
+			arg_11_0._history_id = #arg_11_0._history_stack
 		end
 
-		local current_history_selected = self._history_stack[self._history_id]
+		local var_11_3 = arg_11_0._history_stack[arg_11_0._history_id]
 
-		if current_history_selected ~= nil then
-			self:_draw_blackboard_value(current_history_selected.blackboard)
+		if var_11_3 ~= nil then
+			arg_11_0:_draw_blackboard_value(var_11_3.blackboard)
 		end
 	end
 
@@ -356,78 +353,77 @@ ImguiBehaviorTree.draw = function (self)
 	Imgui.begin_child_window("Graph", 0, 0, true, "no_scroll_bar")
 	Imgui.channel_split(2)
 
-	local window_pos_x, window_pos_y = Imgui.get_cursor_screen_pos()
-	local window_width, window_height = Imgui.get_window_size()
+	local var_11_4, var_11_5 = Imgui.get_cursor_screen_pos()
+	local var_11_6, var_11_7 = Imgui.get_window_size()
 
-	self._offset.x = window_pos_x + self._scrolling.x
-	self._offset.y = window_pos_y + self._scrolling.y
+	arg_11_0._offset.x = var_11_4 + arg_11_0._scrolling.x
+	arg_11_0._offset.y = var_11_5 + arg_11_0._scrolling.y
 
-	local temp_x_grid = math.fmod(self._scrolling.x, self._grid_size * self._zoom)
-	local temp_y_grid = math.fmod(self._scrolling.y, self._grid_size * self._zoom)
-	local grid_color = Color(255, 100, 100, 100)
+	local var_11_8 = math.fmod(arg_11_0._scrolling.x, arg_11_0._grid_size * arg_11_0._zoom)
+	local var_11_9 = math.fmod(arg_11_0._scrolling.y, arg_11_0._grid_size * arg_11_0._zoom)
+	local var_11_10 = Color(255, 100, 100, 100)
 
-	while temp_x_grid < window_width do
-		local x_start = temp_x_grid + window_pos_x
-		local y_start = window_pos_y
-		local x_end = temp_x_grid + window_pos_x
-		local y_end = window_height + window_pos_y
+	while var_11_8 < var_11_6 do
+		local var_11_11 = var_11_8 + var_11_4
+		local var_11_12 = var_11_5
+		local var_11_13 = var_11_8 + var_11_4
+		local var_11_14 = var_11_7 + var_11_5
 
-		Imgui.add_line(x_start, y_start, x_end, y_end, grid_color, 1)
+		Imgui.add_line(var_11_11, var_11_12, var_11_13, var_11_14, var_11_10, 1)
 
-		temp_x_grid = temp_x_grid + self._grid_size * self._zoom
+		var_11_8 = var_11_8 + arg_11_0._grid_size * arg_11_0._zoom
 	end
 
-	while temp_y_grid < window_height do
-		local x_start = window_pos_x
-		local y_start = window_pos_y + temp_y_grid
-		local x_end = window_width + window_pos_x
-		local y_end = window_pos_y + temp_y_grid
+	while var_11_9 < var_11_7 do
+		local var_11_15 = var_11_4
+		local var_11_16 = var_11_5 + var_11_9
+		local var_11_17 = var_11_6 + var_11_4
+		local var_11_18 = var_11_5 + var_11_9
 
-		Imgui.add_line(x_start, y_start, x_end, y_end, grid_color, 1)
+		Imgui.add_line(var_11_15, var_11_16, var_11_17, var_11_18, var_11_10, 1)
 
-		temp_y_grid = temp_y_grid + self._grid_size * self._zoom
+		var_11_9 = var_11_9 + arg_11_0._grid_size * arg_11_0._zoom
 	end
 
-	local behavior_extension = ScriptUnit.has_extension(script_data.debug_unit, "ai_system")
+	local var_11_19 = ScriptUnit.has_extension(script_data.debug_unit, "ai_system")
 
-	if behavior_extension then
-		local brain = behavior_extension:brain()
-		local behavior_tree = brain:bt()
-		local root_node = behavior_tree:root()
-		local blackboard = brain._blackboard
+	if var_11_19 then
+		local var_11_20 = var_11_19:brain()
+		local var_11_21 = var_11_20:bt():root()
+		local var_11_22 = var_11_20._blackboard
 
-		if self._running_blackboard ~= blackboard then
-			self._running_blackboard = blackboard
+		if arg_11_0._running_blackboard ~= var_11_22 then
+			arg_11_0._running_blackboard = var_11_22
 
-			table.clear(self._running_leaf_history)
-			table.clear(self._history_stack)
+			table.clear(arg_11_0._running_leaf_history)
+			table.clear(arg_11_0._history_stack)
 
-			self._last_leaf_node_run = nil
-			self._use_history_slider = false
+			arg_11_0._last_leaf_node_run = nil
+			arg_11_0._use_history_slider = false
 		end
 
-		local running_node_name = brain._leaf_node and brain._leaf_node._identifier or blackboard.btnode_name
+		local var_11_23 = var_11_20._leaf_node and var_11_20._leaf_node._identifier or var_11_22.btnode_name
 
-		if running_node_name ~= nil and running_node_name ~= self._last_leaf_node_run then
-			self:_save_history(brain, running_node_name)
-			self:_update_leaf_history(running_node_name)
+		if var_11_23 ~= nil and var_11_23 ~= arg_11_0._last_leaf_node_run then
+			arg_11_0:_save_history(var_11_20, var_11_23)
+			arg_11_0:_update_leaf_history(var_11_23)
 		end
 
-		self:_draw_nodes(root_node, 0, 0)
+		arg_11_0:_draw_nodes(var_11_21, 0, 0)
 	end
 
 	if Imgui.is_window_hovered() and Imgui.is_mouse_dragging(2, 0) then
-		local delta_x, delta_y = Imgui.get_mouse_delta()
+		local var_11_24, var_11_25 = Imgui.get_mouse_delta()
 
-		self._scrolling.x = self._scrolling.x + delta_x
-		self._scrolling.y = self._scrolling.y + delta_y
+		arg_11_0._scrolling.x = arg_11_0._scrolling.x + var_11_24
+		arg_11_0._scrolling.y = arg_11_0._scrolling.y + var_11_25
 	end
 
-	local mouse_wheel = Imgui.get_mouse_wheel_value()
+	local var_11_26 = Imgui.get_mouse_wheel_value()
 
-	if Imgui.is_window_hovered() and mouse_wheel ~= 0 then
-		self._zoom = self._zoom * (1 + mouse_wheel * self._zoom_speed)
-		self._zoom = math.clamp(self._zoom, 0.3, 10)
+	if Imgui.is_window_hovered() and var_11_26 ~= 0 then
+		arg_11_0._zoom = arg_11_0._zoom * (1 + var_11_26 * arg_11_0._zoom_speed)
+		arg_11_0._zoom = math.clamp(arg_11_0._zoom, 0.3, 10)
 	end
 
 	Imgui.channels_merge()
@@ -435,144 +431,148 @@ ImguiBehaviorTree.draw = function (self)
 	Imgui.same_line(10)
 	Imgui.end_window()
 
-	if self._show_considerations then
+	if arg_11_0._show_considerations then
 		Imgui.begin_window("Considerations")
 
-		if behavior_extension then
-			local brain = behavior_extension:brain()
-			local behavior_tree = brain:bt()
-			local action_data = behavior_tree:action_data()
-			local blackboard = brain._blackboard
+		if var_11_19 then
+			local var_11_27 = var_11_19:brain()
+			local var_11_28 = var_11_27:bt():action_data()
+			local var_11_29 = var_11_27._blackboard
 
-			self:_draw_action_data(action_data, blackboard)
+			arg_11_0:_draw_action_data(var_11_28, var_11_29)
 		end
 
 		Imgui.end_window()
 	end
 
-	return do_close
+	return var_11_0
 end
 
-ImguiBehaviorTree._draw_graph = function (self, consideration_key, consideration_val, blackboard, action_data)
-	local node_color = Color(180, 100, 100, 100)
-	local outline_color = Color(255, 255, 255, 255)
-	local axis_color = Color(255, 255, 255, 255)
-	local line_color = Color(255, 255, 255, 255)
-	local val_line_color = Color(255, 255, 0, 0)
-	local margin_x, margin_y = 10, 10
-	local size_x, size_y = 300, 150
-	local axis_margin_x, axis_margin_y = 50, 20
-	local axis_offset_x, axis_offset_y = -20, 0
-	local line_thickness = 1
-	local axis_thickness = 2
-	local axis_oversize = 10
-	local spline = consideration_val.spline
-	local value_key = consideration_val.blackboard_input
+function ImguiBehaviorTree._draw_graph(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+	local var_12_0 = Color(180, 100, 100, 100)
+	local var_12_1 = Color(255, 255, 255, 255)
+	local var_12_2 = Color(255, 255, 255, 255)
+	local var_12_3 = Color(255, 255, 255, 255)
+	local var_12_4 = Color(255, 255, 0, 0)
+	local var_12_5 = 10
+	local var_12_6 = 10
+	local var_12_7 = 300
+	local var_12_8 = 150
+	local var_12_9 = 50
+	local var_12_10 = 20
+	local var_12_11 = -20
+	local var_12_12 = 0
+	local var_12_13 = 1
+	local var_12_14 = 2
+	local var_12_15 = 10
+	local var_12_16 = arg_12_2.spline
+	local var_12_17 = arg_12_2.blackboard_input
 
-	Imgui.text(value_key)
+	Imgui.text(var_12_17)
 	Imgui.channel_split(2)
 	Imgui.channel_set_current(0)
 
-	local x, y = Imgui.get_cursor_screen_pos()
+	local var_12_18, var_12_19 = Imgui.get_cursor_screen_pos()
 
-	Imgui.add_rect_filled(x + margin_x, y + margin_y, x + size_x - margin_x, y + size_y - margin_y, node_color, 3)
-	Imgui.add_rect(x + margin_x, y + margin_y, x + size_x - margin_x, y + size_y - margin_y, outline_color, 3, 1)
+	Imgui.add_rect_filled(var_12_18 + var_12_5, var_12_19 + var_12_6, var_12_18 + var_12_7 - var_12_5, var_12_19 + var_12_8 - var_12_6, var_12_0, 3)
+	Imgui.add_rect(var_12_18 + var_12_5, var_12_19 + var_12_6, var_12_18 + var_12_7 - var_12_5, var_12_19 + var_12_8 - var_12_6, var_12_1, 3, 1)
 
-	local axis_start_x = x + margin_x + axis_margin_x + axis_offset_x
-	local axis_start_y = y + margin_y + axis_margin_y + axis_offset_y
-	local axis_end_x = x - margin_x - axis_margin_x + size_x + axis_offset_x
-	local axis_end_y = y - margin_y - axis_margin_y + size_y + axis_offset_y
-	local axis_size_x = axis_end_x - axis_start_x
-	local axis_size_y = axis_end_y - axis_start_y
+	local var_12_20 = var_12_18 + var_12_5 + var_12_9 + var_12_11
+	local var_12_21 = var_12_19 + var_12_6 + var_12_10 + var_12_12
+	local var_12_22 = var_12_18 - var_12_5 - var_12_9 + var_12_7 + var_12_11
+	local var_12_23 = var_12_19 - var_12_6 - var_12_10 + var_12_8 + var_12_12
+	local var_12_24 = var_12_22 - var_12_20
+	local var_12_25 = var_12_23 - var_12_21
 
-	Imgui.add_line(axis_start_x - axis_oversize, axis_end_y, axis_end_x + axis_oversize, axis_end_y, axis_color, axis_thickness)
-	Imgui.add_line(axis_start_x, axis_start_y - axis_oversize, axis_start_x, axis_end_y + axis_oversize, axis_color, axis_thickness)
+	Imgui.add_line(var_12_20 - var_12_15, var_12_23, var_12_22 + var_12_15, var_12_23, var_12_2, var_12_14)
+	Imgui.add_line(var_12_20, var_12_21 - var_12_15, var_12_20, var_12_23 + var_12_15, var_12_2, var_12_14)
 
-	local max_value = consideration_val.max_value
-	local max_val_text = string.format("%.2f", max_value)
-	local txt_width, text_height = Imgui.calculate_text_size(max_val_text)
+	local var_12_26 = arg_12_2.max_value
+	local var_12_27 = string.format("%.2f", var_12_26)
+	local var_12_28, var_12_29 = Imgui.calculate_text_size(var_12_27)
 
-	Imgui.add_text(max_val_text, axis_end_x + axis_thickness, axis_end_y - text_height, axis_color)
+	Imgui.add_text(var_12_27, var_12_22 + var_12_14, var_12_23 - var_12_29, var_12_2)
 	Imgui.channel_set_current(1)
 
-	local blackboard_value = action_data[value_key] or blackboard[value_key] or 0
-	local blackboard_norm_value = math.clamp(blackboard_value / max_value, 0, 1)
-	local blackboard_value_y = 0
-	local line_start_x = axis_start_x + spline[1] * axis_size_x
-	local line_start_y = axis_start_y + axis_size_y - spline[2] * axis_size_y
+	local var_12_30 = arg_12_4[var_12_17] or arg_12_3[var_12_17] or 0
+	local var_12_31 = math.clamp(var_12_30 / var_12_26, 0, 1)
+	local var_12_32 = 0
+	local var_12_33 = var_12_20 + var_12_16[1] * var_12_24
+	local var_12_34 = var_12_21 + var_12_25 - var_12_16[2] * var_12_25
 
-	for i = 3, #spline, 2 do
-		local line_end_x = axis_start_x + spline[i] * axis_size_x
-		local line_end_y = axis_start_y + axis_size_y - spline[i + 1] * axis_size_y
+	for iter_12_0 = 3, #var_12_16, 2 do
+		local var_12_35 = var_12_20 + var_12_16[iter_12_0] * var_12_24
+		local var_12_36 = var_12_21 + var_12_25 - var_12_16[iter_12_0 + 1] * var_12_25
 
-		Imgui.add_line(line_start_x, line_start_y, line_end_x, line_end_y, line_color, line_thickness)
+		Imgui.add_line(var_12_33, var_12_34, var_12_35, var_12_36, var_12_3, var_12_13)
 
-		if blackboard_norm_value >= spline[i - 2] and blackboard_norm_value <= spline[i] then
-			local spline_x_t = (blackboard_norm_value - spline[i - 2]) / (spline[i] - spline[i - 2])
+		if var_12_31 >= var_12_16[iter_12_0 - 2] and var_12_31 <= var_12_16[iter_12_0] then
+			local var_12_37 = (var_12_31 - var_12_16[iter_12_0 - 2]) / (var_12_16[iter_12_0] - var_12_16[iter_12_0 - 2])
 
-			blackboard_value_y = spline[i - 1] + (spline[i + 1] - spline[i - 1]) * spline_x_t
+			var_12_32 = var_12_16[iter_12_0 - 1] + (var_12_16[iter_12_0 + 1] - var_12_16[iter_12_0 - 1]) * var_12_37
 		end
 
-		line_start_x = line_end_x
-		line_start_y = line_end_y
+		var_12_33 = var_12_35
+		var_12_34 = var_12_36
 	end
 
-	if blackboard_value then
-		local current_val_x = axis_start_x + blackboard_norm_value * axis_size_x
+	if var_12_30 then
+		local var_12_38 = var_12_20 + var_12_31 * var_12_24
 
-		Imgui.add_line(current_val_x, axis_start_y, current_val_x, axis_end_y + axis_oversize, val_line_color, axis_thickness)
+		Imgui.add_line(var_12_38, var_12_21, var_12_38, var_12_23 + var_12_15, var_12_4, var_12_14)
 
-		local val_text = string.format("%.2f", blackboard_value)
+		local var_12_39 = string.format("%.2f", var_12_30)
 
-		Imgui.add_text(val_text, current_val_x + axis_thickness, axis_end_y, val_line_color)
+		Imgui.add_text(var_12_39, var_12_38 + var_12_14, var_12_23, var_12_4)
 
-		local norm_text = string.format("%.2f", blackboard_value_y)
+		local var_12_40 = string.format("%.2f", var_12_32)
 
-		Imgui.add_text(norm_text, current_val_x + axis_thickness, axis_start_y, val_line_color)
+		Imgui.add_text(var_12_40, var_12_38 + var_12_14, var_12_21, var_12_4)
 	end
 
 	Imgui.channels_merge()
-	Imgui.dummy(size_x, size_y)
+	Imgui.dummy(var_12_7, var_12_8)
 end
 
-ImguiBehaviorTree._draw_action_data = function (self, action_data, blackboard)
-	if not action_data then
+function ImguiBehaviorTree._draw_action_data(arg_13_0, arg_13_1, arg_13_2)
+	if not arg_13_1 then
 		return
 	end
 
-	local condition_pass = Color(255, 0, 255, 0)
-	local condition_fail = Color(255, 255, 0, 0)
+	local var_13_0 = Color(255, 0, 255, 0)
+	local var_13_1 = Color(255, 255, 0, 0)
 
-	for key, val in pairs(action_data) do
-		local consideration = val.considerations
+	for iter_13_0, iter_13_1 in pairs(arg_13_1) do
+		local var_13_2 = iter_13_1.considerations
 
-		if consideration and Imgui.tree_node(key) then
-			for consideration_key, consideration_val in pairs(consideration) do
-				if consideration_val.spline then
-					self:_draw_graph(consideration_key, consideration_val, blackboard, action_data)
-				elseif consideration_val.is_condition then
-					local input_key = consideration_val.blackboard_input
-					local blackboard_value = action_data[input_key] or blackboard[input_key]
-					local is_inverted = consideration.invert
+		if var_13_2 and Imgui.tree_node(iter_13_0) then
+			for iter_13_2, iter_13_3 in pairs(var_13_2) do
+				if iter_13_3.spline then
+					arg_13_0:_draw_graph(iter_13_2, iter_13_3, arg_13_2, arg_13_1)
+				elseif iter_13_3.is_condition then
+					local var_13_3 = iter_13_3.blackboard_input
+					local var_13_4 = arg_13_1[var_13_3] or arg_13_2[var_13_3]
 
-					if is_inverted then
-						blackboard_value = not blackboard_value
+					if var_13_2.invert then
+						var_13_4 = not var_13_4
 					end
 
-					local result = blackboard_value and "true" or "false"
+					local var_13_5
 
-					Imgui.text(consideration_key)
+					var_13_5 = var_13_4 and "true" or "false"
 
-					if consideration_key ~= input_key then
+					Imgui.text(iter_13_2)
+
+					if iter_13_2 ~= var_13_3 then
 						Imgui.same_line()
 						Imgui.text("(")
-						Imgui.text(input_key)
+						Imgui.text(var_13_3)
 						Imgui.text(")")
 					end
 
 					Imgui.same_line()
 
-					if blackboard_value then
+					if var_13_4 then
 						Imgui.text_colored("true", 0, 255, 0, 255)
 					else
 						Imgui.text_colored("false", 255, 0, 0, 255)
@@ -588,7 +588,7 @@ ImguiBehaviorTree._draw_action_data = function (self, action_data, blackboard)
 	end
 end
 
-ImguiBehaviorTree.is_persistent = function (self)
+function ImguiBehaviorTree.is_persistent(arg_14_0)
 	return true
 end
 

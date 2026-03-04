@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/managers/game_mode/mechanisms/deus_mechanism.lua
+-- chunkname: @scripts/managers/game_mode/mechanisms/deus_mechanism.lua
 
 require("scripts/managers/game_mode/mechanisms/deus_run_controller")
 require("scripts/settings/dlcs/morris/deus_default_graph_settings")
@@ -8,1397 +8,1345 @@ require("scripts/settings/dlcs/morris/deus_theme_settings")
 DeusMechanism = class(DeusMechanism)
 DeusMechanism.name = "Deus"
 
-local RPCS = {
-	"rpc_deus_setup_run",
+local var_0_0 = {
+	"rpc_deus_setup_run"
 }
-local DEUS_CAREERS = {}
-local EMPTY_TABLE = {}
+local var_0_1 = {}
+local var_0_2 = {}
 
-for _, profile_settings in ipairs(SPProfiles) do
-	if profile_settings.affiliation == "heroes" then
-		local careers = profile_settings.careers
+for iter_0_0, iter_0_1 in ipairs(SPProfiles) do
+	if iter_0_1.affiliation == "heroes" then
+		local var_0_3 = iter_0_1.careers
 
-		for _, career_settings in ipairs(careers) do
-			DEUS_CAREERS[#DEUS_CAREERS + 1] = career_settings.name
+		for iter_0_2, iter_0_3 in ipairs(var_0_3) do
+			var_0_1[#var_0_1 + 1] = iter_0_3.name
 		end
 	end
 end
 
-local REAL_PLAYER_LOCAL_ID = 1
-local HUB_LEVEL_NAME = "morris_hub"
-local HUB_GAME_MODE_KEY = "inn_deus"
-local HUB_STATE = "inn_deus"
-local MAP_LEVEL_NAME = "dlc_morris_map"
-local MAP_GAME_MODE_KEY = "map_deus"
-local MAP_STATE = "map_deus"
-local INGAME_GAME_MODE_KEY = "deus"
-local INGAME_STATE = "ingame_deus"
+local var_0_4 = 1
+local var_0_5 = "morris_hub"
+local var_0_6 = "inn_deus"
+local var_0_7 = "inn_deus"
+local var_0_8 = "dlc_morris_map"
+local var_0_9 = "map_deus"
+local var_0_10 = "map_deus"
+local var_0_11 = "deus"
+local var_0_12 = "ingame_deus"
 
-local function node_type_to_state(node_type)
-	local current_node_config = DeusNodeSettings[node_type]
-
-	return current_node_config.mechanism_state
+local function var_0_13(arg_1_0)
+	return DeusNodeSettings[arg_1_0].mechanism_state
 end
 
-local function node_type_to_game_mode(node_type)
-	local current_node_config = DeusNodeSettings[node_type]
-
-	return current_node_config.game_mode_key
+local function var_0_14(arg_2_0)
+	return DeusNodeSettings[arg_2_0].game_mode_key
 end
 
-local function level_to_node_type(level)
-	if level == MAP_LEVEL_NAME then
+local function var_0_15(arg_3_0)
+	if arg_3_0 == var_0_8 then
 		return "map"
 	end
 
-	if level == HUB_LEVEL_NAME then
+	if arg_3_0 == var_0_5 then
 		return "inn"
 	end
 
 	return "ingame"
 end
 
-local function print_vote_request(params)
-	local level_key = params.mission_id
-	local difficulty_key = params.difficulty
-	local quick_game = params.quick_game
-	local private_game = params.private_game
-	local always_host = params.always_host
-	local strict_matchmaking = params.strict_matchmaking
-	local matchmaking_type = params.matchmaking_type
-	local twitch_enabled = params.twitch_enabled
+local function var_0_16(arg_4_0)
+	local var_4_0 = arg_4_0.mission_id
+	local var_4_1 = arg_4_0.difficulty
+	local var_4_2 = arg_4_0.quick_game
+	local var_4_3 = arg_4_0.private_game
+	local var_4_4 = arg_4_0.always_host
+	local var_4_5 = arg_4_0.strict_matchmaking
+	local var_4_6 = arg_4_0.matchmaking_type
+	local var_4_7 = arg_4_0.twitch_enabled
 
 	print("............................................................................................................")
 	print("............................................................................................................")
-	printf("GAME START SETTINGS -> Level: %s | Difficulty: %s | Private: %s | Always Host: %s | Strict Matchmaking: %s | Quick Game: %s | Matchmaking Type: %s | Twitch: %s", level_key and level_key or "Not specified", difficulty_key, private_game and "yes" or "no", always_host and "yes" or "no", strict_matchmaking and "yes" or "no", quick_game and "yes" or "no", matchmaking_type or "Not specified", twitch_enabled and "Yes" or "No")
+	printf("GAME START SETTINGS -> Level: %s | Difficulty: %s | Private: %s | Always Host: %s | Strict Matchmaking: %s | Quick Game: %s | Matchmaking Type: %s | Twitch: %s", var_4_0 and var_4_0 or "Not specified", var_4_1, var_4_3 and "yes" or "no", var_4_4 and "yes" or "no", var_4_5 and "yes" or "no", var_4_2 and "yes" or "no", var_4_6 or "Not specified", var_4_7 and "Yes" or "No")
 	print("............................................................................................................")
 	print("............................................................................................................")
 end
 
-local vote_requests = {
-	deus_quickplay = function (request_type, params)
-		local vote_data = {
+local var_0_17 = {
+	deus_quickplay = function(arg_5_0, arg_5_1)
+		local var_5_0 = {
 			mechanism = "deus",
-			difficulty = params.difficulty,
-			quick_game = params.quick_game,
-			private_game = params.private_game,
-			always_host = params.always_host,
-			strict_matchmaking = params.strict_matchmaking,
-			matchmaking_type = params.matchmaking_type,
-			vote_type = params.request_type,
+			difficulty = arg_5_1.difficulty,
+			quick_game = arg_5_1.quick_game,
+			private_game = arg_5_1.private_game,
+			always_host = arg_5_1.always_host,
+			strict_matchmaking = arg_5_1.strict_matchmaking,
+			matchmaking_type = arg_5_1.matchmaking_type,
+			vote_type = arg_5_1.request_type
 		}
 
-		Managers.state.voting:request_vote("deus_settings_vote", vote_data, Network.peer_id())
+		Managers.state.voting:request_vote("deus_settings_vote", var_5_0, Network.peer_id())
 	end,
-	deus_custom = function (request_type, params)
-		local vote_data = {
+	deus_custom = function(arg_6_0, arg_6_1)
+		local var_6_0 = {
 			mechanism = "deus",
-			mission_id = params.mission_id,
-			difficulty = params.difficulty,
-			quick_game = params.quick_game,
-			private_game = params.private_game,
-			always_host = params.always_host,
-			strict_matchmaking = params.strict_matchmaking,
-			dominant_god = params.dominant_god,
-			matchmaking_type = params.matchmaking_type,
-			vote_type = params.request_type,
+			mission_id = arg_6_1.mission_id,
+			difficulty = arg_6_1.difficulty,
+			quick_game = arg_6_1.quick_game,
+			private_game = arg_6_1.private_game,
+			always_host = arg_6_1.always_host,
+			strict_matchmaking = arg_6_1.strict_matchmaking,
+			dominant_god = arg_6_1.dominant_god,
+			matchmaking_type = arg_6_1.matchmaking_type,
+			vote_type = arg_6_1.request_type
 		}
 
-		Managers.state.voting:request_vote("deus_settings_vote", vote_data, Network.peer_id())
+		Managers.state.voting:request_vote("deus_settings_vote", var_6_0, Network.peer_id())
 	end,
-	deus_twitch = function (request_type, params)
-		local vote_data = {
+	deus_twitch = function(arg_7_0, arg_7_1)
+		local var_7_0 = {
 			mechanism = "deus",
-			mission_id = params.mission_id,
-			difficulty = params.difficulty,
-			quick_game = params.quick_game,
-			private_game = params.private_game,
-			always_host = params.always_host,
-			strict_matchmaking = params.strict_matchmaking,
-			dominant_god = params.dominant_god,
-			matchmaking_type = params.matchmaking_type,
-			vote_type = params.request_type,
+			mission_id = arg_7_1.mission_id,
+			difficulty = arg_7_1.difficulty,
+			quick_game = arg_7_1.quick_game,
+			private_game = arg_7_1.private_game,
+			always_host = arg_7_1.always_host,
+			strict_matchmaking = arg_7_1.strict_matchmaking,
+			dominant_god = arg_7_1.dominant_god,
+			matchmaking_type = arg_7_1.matchmaking_type,
+			vote_type = arg_7_1.request_type
 		}
 
-		Managers.state.voting:request_vote("deus_settings_vote", vote_data, Network.peer_id())
+		Managers.state.voting:request_vote("deus_settings_vote", var_7_0, Network.peer_id())
 	end,
-	deus_weekly = function (request_type, params)
-		local vote_data = {
+	deus_weekly = function(arg_8_0, arg_8_1)
+		local var_8_0 = {
 			mechanism = "deus",
-			mission_id = params.mission_id,
-			event_data = params.event_data,
-			difficulty = params.difficulty,
-			quick_game = params.quick_game,
-			private_game = params.private_game,
-			always_host = params.always_host,
-			strict_matchmaking = params.strict_matchmaking,
-			dominant_god = params.dominant_god,
-			matchmaking_type = params.matchmaking_type,
-			vote_type = params.request_type,
+			mission_id = arg_8_1.mission_id,
+			event_data = arg_8_1.event_data,
+			difficulty = arg_8_1.difficulty,
+			quick_game = arg_8_1.quick_game,
+			private_game = arg_8_1.private_game,
+			always_host = arg_8_1.always_host,
+			strict_matchmaking = arg_8_1.strict_matchmaking,
+			dominant_god = arg_8_1.dominant_god,
+			matchmaking_type = arg_8_1.matchmaking_type,
+			vote_type = arg_8_1.request_type
 		}
 
-		Managers.state.voting:request_vote("deus_settings_vote", vote_data, Network.peer_id())
-	end,
+		Managers.state.voting:request_vote("deus_settings_vote", var_8_0, Network.peer_id())
+	end
 }
 
-local function get_difficulty_tweak_for_progress(run_progress)
-	return math.round(math.lerp(-DifficultyTweak.range, DifficultyTweak.range, run_progress))
+local function var_0_18(arg_9_0)
+	return math.round(math.lerp(-DifficultyTweak.range, DifficultyTweak.range, arg_9_0))
 end
 
-local function get_next_level_data(deus_run_controller, in_map)
-	local level_key, environment_variation_id, level_seed
-	local mechanism = "deus"
-	local game_mode_key, conflict_settings, locked_director_functions, run_difficulty, difficulty_tweak
-	local extra_packages = {}
+local function var_0_19(arg_10_0, arg_10_1)
+	local var_10_0
+	local var_10_1
+	local var_10_2
+	local var_10_3 = "deus"
+	local var_10_4
+	local var_10_5
+	local var_10_6
+	local var_10_7
+	local var_10_8
+	local var_10_9 = {}
 
-	if not deus_run_controller or deus_run_controller:get_run_ended() then
-		level_key = HUB_LEVEL_NAME
-	elseif in_map then
-		level_key = MAP_LEVEL_NAME
+	if not arg_10_0 or arg_10_0:get_run_ended() then
+		var_10_0 = var_0_5
+	elseif arg_10_1 then
+		var_10_0 = var_0_8
 	else
-		local current_node = deus_run_controller:get_current_node()
-		local current_node_type = current_node.node_type
+		local var_10_10 = arg_10_0:get_current_node()
+		local var_10_11 = var_10_10.node_type
 
-		level_key = current_node.level
-		level_seed = current_node.level_seed
-		environment_variation_id = LevelHelper:get_random_variation_id(level_key)
-		game_mode_key = node_type_to_game_mode(current_node_type)
-		run_difficulty = deus_run_controller:get_run_difficulty()
+		var_10_0 = var_10_10.level
+		var_10_2 = var_10_10.level_seed
+		var_10_1 = LevelHelper:get_random_variation_id(var_10_0)
+		var_10_4 = var_0_14(var_10_11)
+		var_10_7 = arg_10_0:get_run_difficulty()
 
-		local current_run_progress = current_node.run_progress
+		local var_10_12 = var_10_10.run_progress
 
-		difficulty_tweak = get_difficulty_tweak_for_progress(current_run_progress)
-		conflict_settings = current_node.conflict_settings
-		locked_director_functions = nil
+		var_10_8 = var_0_18(var_10_12)
+		var_10_5 = var_10_10.conflict_settings
+		var_10_6 = nil
 
-		local curse_name = current_node.curse
+		local var_10_13 = var_10_10.curse
 
-		if curse_name then
-			local curse = MutatorTemplates[curse_name]
-			local curse_packages = curse.packages
+		if var_10_13 then
+			local var_10_14 = MutatorTemplates[var_10_13].packages
 
-			if curse_packages then
-				table.append(extra_packages, curse_packages)
+			if var_10_14 then
+				table.append(var_10_9, var_10_14)
 			end
 		end
 	end
 
-	return level_key, environment_variation_id, level_seed, mechanism, game_mode_key, conflict_settings, locked_director_functions, run_difficulty, difficulty_tweak, extra_packages
+	return var_10_0, var_10_1, var_10_2, var_10_3, var_10_4, var_10_5, var_10_6, var_10_7, var_10_8, var_10_9
 end
 
-DeusMechanism.init = function (self, settings)
-	self._is_server = true
-	self._hero_profiles = table.clone(PROFILES_BY_AFFILIATION.heroes)
-	self._state = HUB_STATE
+function DeusMechanism.init(arg_11_0, arg_11_1)
+	arg_11_0._is_server = true
+	arg_11_0._hero_profiles = table.clone(PROFILES_BY_AFFILIATION.heroes)
+	arg_11_0._state = var_0_7
 end
 
-DeusMechanism._reset = function (self, settings)
-	if self._deus_run_controller then
-		self._deus_run_controller:destroy()
+function DeusMechanism._reset(arg_12_0, arg_12_1)
+	if arg_12_0._deus_run_controller then
+		arg_12_0._deus_run_controller:destroy()
 
-		self._deus_run_controller = nil
+		arg_12_0._deus_run_controller = nil
 	end
 
-	self._run_id = nil
-	self._run_seed = nil
-	self._final_round = false
+	arg_12_0._run_id = nil
+	arg_12_0._run_seed = nil
+	arg_12_0._final_round = false
 
-	if self._is_server then
-		self:_update_current_state(true)
+	if arg_12_0._is_server then
+		arg_12_0:_update_current_state(true)
 	end
 end
 
-DeusMechanism.network_context_created = function (self, lobby, server_peer_id, own_peer_id, is_server, network_handler)
-	self._is_server = is_server
+function DeusMechanism.network_context_created(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+	arg_13_0._is_server = arg_13_4
 
-	if self._deus_run_controller then
+	if arg_13_0._deus_run_controller then
 		Managers.mechanism:manual_end_venture()
 
-		local current_level = Managers.level_transition_handler:get_current_level_key()
-		local level_settings = LevelSettings[current_level]
+		local var_13_0 = Managers.level_transition_handler:get_current_level_key()
+		local var_13_1 = LevelSettings[var_13_0]
 
-		if is_server and not self._deus_run_controller:get_run_ended() and not level_settings.hub_level then
-			self._deus_run_controller:network_context_created(lobby, server_peer_id, own_peer_id, is_server, network_handler)
+		if arg_13_4 and not arg_13_0._deus_run_controller:get_run_ended() and not var_13_1.hub_level then
+			arg_13_0._deus_run_controller:network_context_created(arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
 		else
-			self._deus_run_controller:destroy()
+			arg_13_0._deus_run_controller:destroy()
 
-			self._deus_run_controller = nil
+			arg_13_0._deus_run_controller = nil
 		end
 	end
 
-	if is_server then
-		self:_update_current_state()
+	if arg_13_4 then
+		arg_13_0:_update_current_state()
 	end
 end
 
-DeusMechanism.network_context_destroyed = function (self)
+function DeusMechanism.network_context_destroyed(arg_14_0)
 	return
 end
 
-DeusMechanism.handle_ingame_enter = function (self, game_mode)
-	if self._deus_run_controller then
-		self._deus_run_controller:full_sync()
-		self:_update_own_avatar_info()
-		self._deus_run_controller:handle_level_start()
+function DeusMechanism.handle_ingame_enter(arg_15_0, arg_15_1)
+	if arg_15_0._deus_run_controller then
+		arg_15_0._deus_run_controller:full_sync()
+		arg_15_0:_update_own_avatar_info()
+		arg_15_0._deus_run_controller:handle_level_start()
 
-		if game_mode == INGAME_GAME_MODE_KEY and self._deus_run_controller:is_server() then
-			self:_send_level_started_tracking_data()
+		if arg_15_1 == var_0_11 and arg_15_0._deus_run_controller:is_server() then
+			arg_15_0:_send_level_started_tracking_data()
 		end
 	end
 
-	if Development.parameter("deus-auto-host") and game_mode == HUB_GAME_MODE_KEY then
+	if Development.parameter("deus-auto-host") and arg_15_1 == var_0_6 then
 		Managers.state.game_mode:complete_level()
 	end
 end
 
-DeusMechanism.handle_ingame_exit = function (self, exit_type)
-	if exit_type == "join_lobby_failed" or exit_type == "left_game" or exit_type == "lobby_state_failed" or exit_type == "kicked_by_server" or exit_type == "afk_kick" or exit_type == "quit_game" or exit_type == "return_to_pc_menu" or exit_type == "backend_disconnected" then
-		self:_reset()
+function DeusMechanism.handle_ingame_exit(arg_16_0, arg_16_1)
+	if arg_16_1 == "join_lobby_failed" or arg_16_1 == "left_game" or arg_16_1 == "lobby_state_failed" or arg_16_1 == "kicked_by_server" or arg_16_1 == "afk_kick" or arg_16_1 == "quit_game" or arg_16_1 == "return_to_pc_menu" or arg_16_1 == "backend_disconnected" then
+		arg_16_0:_reset()
 	end
 end
 
-DeusMechanism.create_host_migration_info = function (self, gm_event_end_conditions_met, gm_event_end_reason)
-	local network_handler = Managers.mechanism:network_handler()
-	local deus_run_controller = self._deus_run_controller
-	local new_host = network_handler.host_to_migrate_to
+function DeusMechanism.create_host_migration_info(arg_17_0, arg_17_1, arg_17_2)
+	local var_17_0 = Managers.mechanism:network_handler()
+	local var_17_1 = arg_17_0._deus_run_controller
+	local var_17_2 = var_17_0.host_to_migrate_to
 
-	if deus_run_controller and new_host then
-		local new_host_peer_id = new_host.peer_id
-		local profile_index = deus_run_controller:get_player_profile(new_host_peer_id, REAL_PLAYER_LOCAL_ID)
-		local health_state = profile_index ~= 0 and deus_run_controller:get_player_health_state(new_host_peer_id, REAL_PLAYER_LOCAL_ID)
+	if var_17_1 and var_17_2 then
+		local var_17_3 = var_17_2.peer_id
 
-		if health_state ~= "alive" then
-			deus_run_controller = nil
+		if (var_17_1:get_player_profile(var_17_3, var_0_4) ~= 0 and var_17_1:get_player_health_state(var_17_3, var_0_4)) ~= "alive" then
+			var_17_1 = nil
 		end
 	end
 
-	if deus_run_controller and deus_run_controller:get_run_ended() then
-		deus_run_controller = nil
+	if var_17_1 and var_17_1:get_run_ended() then
+		var_17_1 = nil
 	end
 
-	if deus_run_controller and not new_host then
-		deus_run_controller = nil
+	if var_17_1 and not var_17_2 then
+		var_17_1 = nil
 	end
 
-	local in_map = self._state == MAP_STATE
-	local game_mode_event_data = network_handler:get_network_state():get_game_mode_event_data()
-	local host_migration_info = {
-		host_to_migrate_to = new_host,
-		game_mode_event_data = not table.is_empty(game_mode_event_data) and game_mode_event_data or nil,
+	local var_17_4 = arg_17_0._state == var_0_10
+	local var_17_5 = var_17_0:get_network_state():get_game_mode_event_data()
+	local var_17_6 = {
+		host_to_migrate_to = var_17_2,
+		game_mode_event_data = not table.is_empty(var_17_5) and var_17_5 or nil
 	}
-	local level_key, environment_variation_id, level_seed, mechanism, game_mode_key, conflict_settings, locked_director_functions, run_difficulty, difficulty_tweak, extra_packages = get_next_level_data(deus_run_controller, in_map)
+	local var_17_7, var_17_8, var_17_9, var_17_10, var_17_11, var_17_12, var_17_13, var_17_14, var_17_15, var_17_16 = var_0_19(var_17_1, var_17_4)
 
-	host_migration_info.level_data = {
-		level_key = level_key,
-		environment_variation_id = environment_variation_id,
-		level_seed = level_seed,
-		mechanism = mechanism,
-		game_mode_key = game_mode_key,
-		conflict_settings = conflict_settings,
-		locked_director_functions = locked_director_functions,
-		difficulty = run_difficulty,
-		difficulty_tweak = difficulty_tweak,
-		extra_packages = extra_packages,
+	var_17_6.level_data = {
+		level_key = var_17_7,
+		environment_variation_id = var_17_8,
+		level_seed = var_17_9,
+		mechanism = var_17_10,
+		game_mode_key = var_17_11,
+		conflict_settings = var_17_12,
+		locked_director_functions = var_17_13,
+		difficulty = var_17_14,
+		difficulty_tweak = var_17_15,
+		extra_packages = var_17_16
 	}
 
-	local is_private = network_handler.lobby_client:lobby_data("is_private")
-	local matchmaking_type
+	local var_17_17 = var_17_0.lobby_client:lobby_data("is_private")
+	local var_17_18
 
 	if IS_PS4 then
-		matchmaking_type = "n/a"
-	elseif deus_run_controller then
-		matchmaking_type = NetworkLookup.matchmaking_types["n/a"]
+		var_17_18 = "n/a"
+	elseif var_17_1 then
+		var_17_18 = NetworkLookup.matchmaking_types["n/a"]
 	else
-		matchmaking_type = network_handler.lobby_client:lobby_data("matchmaking_type") or NetworkLookup.matchmaking_types["n/a"]
+		var_17_18 = var_17_0.lobby_client:lobby_data("matchmaking_type") or NetworkLookup.matchmaking_types["n/a"]
 	end
 
-	host_migration_info.lobby_data = {
-		is_private = is_private,
-		difficulty = run_difficulty,
-		difficulty_tweak = difficulty_tweak,
-		selected_mission_id = level_key,
-		mission_id = level_key,
-		matchmaking_type = matchmaking_type,
-		mechanism = mechanism,
+	var_17_6.lobby_data = {
+		is_private = var_17_17,
+		difficulty = var_17_14,
+		difficulty_tweak = var_17_15,
+		selected_mission_id = var_17_7,
+		mission_id = var_17_7,
+		matchmaking_type = var_17_18,
+		mechanism = var_17_10
 	}
 
-	return host_migration_info
+	return var_17_6
 end
 
-DeusMechanism.register_rpcs = function (self, network_event_delegate)
-	self:unregister_rpcs()
+function DeusMechanism.register_rpcs(arg_18_0, arg_18_1)
+	arg_18_0:unregister_rpcs()
 
-	self._network_event_delegate = network_event_delegate
+	arg_18_0._network_event_delegate = arg_18_1
 
-	network_event_delegate:register(self, unpack(RPCS))
+	arg_18_1:register(arg_18_0, unpack(var_0_0))
 
-	if self._deus_run_controller then
-		self._deus_run_controller:register_rpcs(self._network_event_delegate)
+	if arg_18_0._deus_run_controller then
+		arg_18_0._deus_run_controller:register_rpcs(arg_18_0._network_event_delegate)
 	end
 end
 
-DeusMechanism.unregister_rpcs = function (self)
-	if self._network_event_delegate then
-		self._network_event_delegate:unregister(self)
+function DeusMechanism.unregister_rpcs(arg_19_0)
+	if arg_19_0._network_event_delegate then
+		arg_19_0._network_event_delegate:unregister(arg_19_0)
 
-		self._network_event_delegate = nil
+		arg_19_0._network_event_delegate = nil
 	end
 
-	if self._deus_run_controller then
-		self._deus_run_controller:unregister_rpcs()
+	if arg_19_0._deus_run_controller then
+		arg_19_0._deus_run_controller:unregister_rpcs()
 	end
 end
 
-DeusMechanism.can_resync_loadout = function (self)
-	local level_transition_handler = Managers.level_transition_handler
-	local game_mode = level_transition_handler:get_current_game_mode()
-
-	if game_mode == "deus" then
-		return self._deus_run_controller ~= nil
+function DeusMechanism.can_resync_loadout(arg_20_0)
+	if Managers.level_transition_handler:get_current_game_mode() == "deus" then
+		return arg_20_0._deus_run_controller ~= nil
 	else
 		return true
 	end
 end
 
-DeusMechanism.update_loadout = function (self)
-	local deus_run_controller = self._deus_run_controller
+function DeusMechanism.update_loadout(arg_21_0)
+	local var_21_0 = arg_21_0._deus_run_controller
 
-	if deus_run_controller and not deus_run_controller:get_run_ended() then
-		local own_peer_id = deus_run_controller:get_own_peer_id()
-		local current_profile_index, current_career_index = deus_run_controller:get_player_profile(own_peer_id, REAL_PLAYER_LOCAL_ID)
+	if var_21_0 and not var_21_0:get_run_ended() then
+		local var_21_1 = var_21_0:get_own_peer_id()
+		local var_21_2, var_21_3 = var_21_0:get_player_profile(var_21_1, var_0_4)
 
-		if current_profile_index ~= 0 then
-			local profile = SPProfiles[current_profile_index]
-			local careers = profile.careers
-			local career = careers[current_career_index]
-			local career_name = career.name
+		if var_21_2 ~= 0 then
+			local var_21_4 = SPProfiles[var_21_2].careers[var_21_3].name
 
-			self:_update_career_loadout(REAL_PLAYER_LOCAL_ID, career_name)
+			arg_21_0:_update_career_loadout(var_0_4, var_21_4)
 		end
 	end
 end
 
-DeusMechanism._update_career_loadout = function (self, local_player_id, career_name, is_bot)
-	local deus_run_controller = self._deus_run_controller
+function DeusMechanism._update_career_loadout(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+	local var_22_0 = arg_22_0._deus_run_controller
 
-	if not deus_run_controller or deus_run_controller:get_run_ended() then
+	if not var_22_0 or var_22_0:get_run_ended() then
 		return
 	end
 
-	local own_peer_id = deus_run_controller:get_own_peer_id()
-	local deus_backend = Managers.backend:get_interface("deus")
-	local career_settings = CareerSettings[career_name]
-	local profile_name = career_settings.profile_name
-	local profile_index = FindProfileIndex(career_settings.profile_name)
-	local profile_careers = SPProfiles[profile_index].careers
-	local career_index = table.index_of(profile_careers, career_settings)
-	local talent_tree_index = career_settings.talent_tree_index
-	local melee_item, ranged_item = deus_run_controller:get_loadout(own_peer_id, local_player_id, profile_index, career_index)
+	local var_22_1 = var_22_0:get_own_peer_id()
+	local var_22_2 = Managers.backend:get_interface("deus")
+	local var_22_3 = CareerSettings[arg_22_2]
+	local var_22_4 = var_22_3.profile_name
+	local var_22_5 = FindProfileIndex(var_22_3.profile_name)
+	local var_22_6 = SPProfiles[var_22_5].careers
+	local var_22_7 = table.index_of(var_22_6, var_22_3)
+	local var_22_8 = var_22_3.talent_tree_index
+	local var_22_9, var_22_10 = var_22_0:get_loadout(var_22_1, arg_22_1, var_22_5, var_22_7)
 
-	if melee_item then
-		deus_backend:grant_deus_weapon(melee_item)
-		deus_backend:set_loadout_item(melee_item.backend_id, career_name, "slot_melee")
+	if var_22_9 then
+		var_22_2:grant_deus_weapon(var_22_9)
+		var_22_2:set_loadout_item(var_22_9.backend_id, arg_22_2, "slot_melee")
 	end
 
-	if ranged_item then
-		deus_backend:grant_deus_weapon(ranged_item)
-		deus_backend:set_loadout_item(ranged_item.backend_id, career_name, "slot_ranged")
+	if var_22_10 then
+		var_22_2:grant_deus_weapon(var_22_10)
+		var_22_2:set_loadout_item(var_22_10.backend_id, arg_22_2, "slot_ranged")
 	end
 
-	local power_ups = deus_run_controller:get_power_ups(own_peer_id, local_player_id, profile_index, career_index, is_bot)
-	local talent_ids = {}
+	local var_22_11 = var_22_0:get_power_ups(var_22_1, arg_22_1, var_22_5, var_22_7, arg_22_3)
+	local var_22_12 = {}
 
-	for _, power_up_instance in ipairs(power_ups) do
-		local power_up = DeusPowerUps[power_up_instance.rarity][power_up_instance.name]
+	for iter_22_0, iter_22_1 in ipairs(var_22_11) do
+		local var_22_13 = DeusPowerUps[iter_22_1.rarity][iter_22_1.name]
 
-		if power_up.talent then
-			local talent_index = power_up.talent_index
-			local talent_tier = power_up.talent_tier
-			local talent_name = TalentTrees[profile_name][talent_tree_index][talent_tier][talent_index]
-			local lookup = TalentIDLookup[talent_name]
-			local talent_id = lookup.talent_id
+		if var_22_13.talent then
+			local var_22_14 = var_22_13.talent_index
+			local var_22_15 = var_22_13.talent_tier
+			local var_22_16 = TalentTrees[var_22_4][var_22_8][var_22_15][var_22_14]
+			local var_22_17 = TalentIDLookup[var_22_16].talent_id
 
-			talent_ids[#talent_ids + 1] = talent_id
+			var_22_12[#var_22_12 + 1] = var_22_17
 		end
 	end
 
-	deus_backend:set_deus_talent_ids(career_name, talent_ids, is_bot)
-	deus_backend:refresh_deus_weapons_in_items_backend()
+	var_22_2:set_deus_talent_ids(arg_22_2, var_22_12, arg_22_3)
+	var_22_2:refresh_deus_weapons_in_items_backend()
 end
 
-DeusMechanism.choose_next_state = function (self, next_state)
-	self._next_state = next_state
+function DeusMechanism.choose_next_state(arg_23_0, arg_23_1)
+	arg_23_0._next_state = arg_23_1
 end
 
-DeusMechanism.reset_choose_next_state = function (self)
-	self._next_state = nil
+function DeusMechanism.reset_choose_next_state(arg_24_0)
+	arg_24_0._next_state = nil
 end
 
-DeusMechanism.progress_state = function (self)
-	self._prior_state = self._state
+function DeusMechanism.progress_state(arg_25_0)
+	arg_25_0._prior_state = arg_25_0._state
 
-	if self._next_state then
-		self._state = self._next_state
-		self._next_state = nil
+	if arg_25_0._next_state then
+		arg_25_0._state = arg_25_0._next_state
+		arg_25_0._next_state = nil
 	else
-		self._state = HUB_STATE
+		arg_25_0._state = var_0_7
 	end
 
-	return self._state
+	return arg_25_0._state
 end
 
-DeusMechanism.get_prior_state = function (self)
-	local prior_state = self._prior_state
+function DeusMechanism.get_prior_state(arg_26_0)
+	local var_26_0 = arg_26_0._prior_state
 
-	if prior_state == MAP_STATE or prior_state == INGAME_STATE then
+	if var_26_0 == var_0_10 or var_26_0 == var_0_12 then
 		return "deus"
 	end
 
-	return prior_state
+	return var_26_0
 end
 
-DeusMechanism.set_current_state = function (self, state)
-	self._prior_state = self._state
-	self._state = state
+function DeusMechanism.set_current_state(arg_27_0, arg_27_1)
+	arg_27_0._prior_state = arg_27_0._state
+	arg_27_0._state = arg_27_1
 end
 
-DeusMechanism.get_hub_level_key = function (self)
-	return HUB_LEVEL_NAME
+function DeusMechanism.get_hub_level_key(arg_28_0)
+	return var_0_5
 end
 
-DeusMechanism.get_end_of_level_rewards_arguments = function (self, game_won, quickplay, statistics_db, stats_id, level_key, hero_name)
-	local end_of_level_rewards_arguments = self._deus_run_controller:get_end_of_level_rewards_arguments(game_won, quickplay)
-	local ignore_dlc_check = false
-	local current_weave = LevelUnlockUtils.current_weave(statistics_db, stats_id, ignore_dlc_check)
-	local weave_template = WeaveSettings.templates[current_weave]
-	local weave_templates_ordererd = WeaveSettings.templates_ordered
-	local current_weave_index = table.find(weave_templates_ordererd, weave_template)
+function DeusMechanism.get_end_of_level_rewards_arguments(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6)
+	local var_29_0 = arg_29_0._deus_run_controller:get_end_of_level_rewards_arguments(arg_29_1, arg_29_2)
+	local var_29_1 = false
+	local var_29_2 = LevelUnlockUtils.current_weave(arg_29_3, arg_29_4, var_29_1)
+	local var_29_3 = WeaveSettings.templates[var_29_2]
+	local var_29_4 = WeaveSettings.templates_ordered
 
-	end_of_level_rewards_arguments.current_weave_index = current_weave_index
+	var_29_0.current_weave_index = table.find(var_29_4, var_29_3)
+	var_29_0.kill_count = arg_29_3:get_stat(arg_29_4, "kills_total")
 
-	local kill_count = statistics_db:get_stat(stats_id, "kills_total")
-
-	end_of_level_rewards_arguments.kill_count = kill_count
-
-	return end_of_level_rewards_arguments
+	return var_29_0
 end
 
-DeusMechanism.get_end_of_level_extra_mission_results = function (self)
-	return self._deus_run_controller:get_mission_results()
+function DeusMechanism.get_end_of_level_extra_mission_results(arg_30_0)
+	return arg_30_0._deus_run_controller:get_mission_results()
 end
 
-DeusMechanism.get_players_session_score = function (self, statistics_db, profile_synchronizer, saved_scoreboard_stats)
-	return self._deus_run_controller and self._deus_run_controller:get_scoreboard()
+function DeusMechanism.get_players_session_score(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+	return arg_31_0._deus_run_controller and arg_31_0._deus_run_controller:get_scoreboard()
 end
 
-DeusMechanism.on_final_round_won = function (self, statistics_db, stats_id)
-	local player = Managers.player:local_player()
-	local journey_name = self._deus_run_controller:get_journey_name()
-	local difficulty_name = self._deus_run_controller:get_run_difficulty()
-	local dominant_god = self._deus_run_controller:get_dominant_god()
+function DeusMechanism.on_final_round_won(arg_32_0, arg_32_1, arg_32_2)
+	local var_32_0 = Managers.player:local_player()
+	local var_32_1 = arg_32_0._deus_run_controller:get_journey_name()
+	local var_32_2 = arg_32_0._deus_run_controller:get_run_difficulty()
+	local var_32_3 = arg_32_0._deus_run_controller:get_dominant_god()
 
-	StatisticsUtil.register_journey_complete(statistics_db, player, journey_name, dominant_god, difficulty_name)
+	StatisticsUtil.register_journey_complete(arg_32_1, var_32_0, var_32_1, var_32_3, var_32_2)
 end
 
-DeusMechanism.request_vote = function (self, params)
-	print_vote_request(params)
+function DeusMechanism.request_vote(arg_33_0, arg_33_1)
+	var_0_16(arg_33_1)
 
-	local vote_data = {
-		mission_id = params.mission_id,
-		event_data = params.event_data,
-		difficulty = params.difficulty,
-		quick_game = params.quick_game,
-		private_game = params.private_game,
-		always_host = params.always_host,
-		strict_matchmaking = params.strict_matchmaking,
-		dominant_god = params.dominant_god,
-		matchmaking_type = params.matchmaking_type,
-		mechanism = params.mechanism,
-		vote_type = params.request_type,
+	local var_33_0 = {
+		mission_id = arg_33_1.mission_id,
+		event_data = arg_33_1.event_data,
+		difficulty = arg_33_1.difficulty,
+		quick_game = arg_33_1.quick_game,
+		private_game = arg_33_1.private_game,
+		always_host = arg_33_1.always_host,
+		strict_matchmaking = arg_33_1.strict_matchmaking,
+		dominant_god = arg_33_1.dominant_god,
+		matchmaking_type = arg_33_1.matchmaking_type,
+		mechanism = arg_33_1.mechanism,
+		vote_type = arg_33_1.request_type
 	}
 
-	Managers.state.voting:request_vote("deus_settings_vote", vote_data, Network.peer_id())
+	Managers.state.voting:request_vote("deus_settings_vote", var_33_0, Network.peer_id())
 end
 
-DeusMechanism.get_deus_run_controller = function (self)
-	return self._deus_run_controller
+function DeusMechanism.get_deus_run_controller(arg_34_0)
+	return arg_34_0._deus_run_controller
 end
 
-DeusMechanism.is_final_round = function (self)
-	return self._final_round
+function DeusMechanism.is_final_round(arg_35_0)
+	return arg_35_0._final_round
 end
 
-DeusMechanism.is_venture_over = function (self)
-	local reason = self._game_round_ended_reason
-	local game_mode_ended = reason == "won" or reason == "lost"
+function DeusMechanism.is_venture_over(arg_36_0)
+	local var_36_0 = arg_36_0._game_round_ended_reason
 
-	return game_mode_ended and (reason == "lost" or self._final_round)
+	return (var_36_0 == "won" or var_36_0 == "lost") and (var_36_0 == "lost" or arg_36_0._final_round)
 end
 
-DeusMechanism.game_round_ended = function (self, t, dt, reason, reason_data)
-	fassert(reason == "reload" or reason == "won" or reason == "lost" or reason == "start_game", "unsupported reason for game end")
+function DeusMechanism.game_round_ended(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+	fassert(arg_37_3 == "reload" or arg_37_3 == "won" or arg_37_3 == "lost" or arg_37_3 == "start_game", "unsupported reason for game end")
 
-	self._game_round_ended_reason = reason
+	arg_37_0._game_round_ended_reason = arg_37_3
 
-	local next_state
+	local var_37_0
 
-	if reason == "reload" then
+	if arg_37_3 == "reload" then
 		Managers.level_transition_handler:reload_level()
 		Managers.level_transition_handler:promote_next_level_data()
 
-		self._next_state = self._state
-	elseif reason == "start_game" then
-		local difficulty, journey_name, dominant_god
-		local mutators = EMPTY_TABLE
-		local boons = EMPTY_TABLE
+		arg_37_0._next_state = arg_37_0._state
+	elseif arg_37_3 == "start_game" then
+		local var_37_1
+		local var_37_2
+		local var_37_3
+		local var_37_4 = var_0_2
+		local var_37_5 = var_0_2
 
-		if self._vote_data then
-			difficulty = self._vote_data.difficulty
-			journey_name = self._vote_data.mission_id
-			dominant_god = self._vote_data.dominant_god
+		if arg_37_0._vote_data then
+			var_37_1 = arg_37_0._vote_data.difficulty
+			var_37_2 = arg_37_0._vote_data.mission_id
+			var_37_3 = arg_37_0._vote_data.dominant_god
 
-			local event_data = self._vote_data.event_data or EMPTY_TABLE
+			local var_37_6 = arg_37_0._vote_data.event_data or var_0_2
 
-			mutators = event_data.mutators or EMPTY_TABLE
-			boons = event_data.boons or EMPTY_TABLE
+			var_37_4 = var_37_6.mutators or var_0_2
+			var_37_5 = var_37_6.boons or var_0_2
 		else
-			difficulty = "normal"
-			journey_name = AvailableJourneyOrder[1]
-			dominant_god = DeusJourneyCycleGods[1]
+			var_37_1 = "normal"
+			var_37_2 = AvailableJourneyOrder[1]
+			var_37_3 = DeusJourneyCycleGods[1]
 		end
 
-		local run_id = string.sub(tostring(math.random_seed()), 0, 8)
-		local run_seed
+		local var_37_7 = string.sub(tostring(math.random_seed()), 0, 8)
+		local var_37_8
 
 		if script_data.deus_seed then
-			run_seed = script_data.deus_seed
+			var_37_8 = script_data.deus_seed
 		elseif DEUS_MAP_SEED_WHITELIST.use_full_gen_whitelist then
-			local seed_whitelist = DEUS_MAP_SEED_WHITELIST.full_gen_whitelist[journey_name] or DEUS_MAP_SEED_WHITELIST.full_gen_whitelist.default
-			local _, index = Math.next_random(math.random_seed(), 1, #seed_whitelist)
+			local var_37_9 = DEUS_MAP_SEED_WHITELIST.full_gen_whitelist[var_37_2] or DEUS_MAP_SEED_WHITELIST.full_gen_whitelist.default
+			local var_37_10, var_37_11 = Math.next_random(math.random_seed(), 1, #var_37_9)
 
-			run_seed = seed_whitelist[index]
+			var_37_8 = var_37_9[var_37_11]
 		else
-			run_seed = tostring(math.random_seed())
+			var_37_8 = tostring(math.random_seed())
 		end
 
-		journey_name = script_data.deus_journey or journey_name
-		dominant_god = script_data.deus_dominant_god or dominant_god
+		var_37_2 = script_data.deus_journey or var_37_2
+		var_37_3 = script_data.deus_dominant_god or var_37_3
 
-		local with_belakor = false
-		local deus_backend = Managers.backend:get_interface("deus")
+		local var_37_12 = false
+		local var_37_13 = Managers.backend:get_interface("deus")
 
-		if deus_backend then
-			deus_backend:get_belakor_cycle()
+		if var_37_13 then
+			var_37_13:get_belakor_cycle()
 
-			with_belakor = deus_backend:deus_journey_with_belakor(journey_name)
+			var_37_12 = var_37_13:deus_journey_with_belakor(var_37_2)
 		end
 
-		self:_setup_run(run_id, run_seed, true, Network.peer_id(), difficulty, journey_name, dominant_god, with_belakor, mutators, boons)
+		arg_37_0:_setup_run(var_37_7, var_37_8, true, Network.peer_id(), var_37_1, var_37_2, var_37_3, var_37_12, var_37_4, var_37_5)
 
-		local difficulty_id = NetworkLookup.difficulties[difficulty]
-		local journey_name_id = NetworkLookup.deus_journeys[journey_name]
-		local dominant_god_id = NetworkLookup.deus_themes[dominant_god]
-		local mutator_ids = {}
+		local var_37_14 = NetworkLookup.difficulties[var_37_1]
+		local var_37_15 = NetworkLookup.deus_journeys[var_37_2]
+		local var_37_16 = NetworkLookup.deus_themes[var_37_3]
+		local var_37_17 = {}
 
-		for i = 1, #mutators do
-			local mutator_name = mutators[i]
-			local mutator_id = NetworkLookup.mutator_templates[mutator_name]
+		for iter_37_0 = 1, #var_37_4 do
+			local var_37_18 = var_37_4[iter_37_0]
+			local var_37_19 = NetworkLookup.mutator_templates[var_37_18]
 
-			mutator_ids[#mutator_ids + 1] = mutator_id
+			var_37_17[#var_37_17 + 1] = var_37_19
 		end
 
-		local boon_ids = {}
+		local var_37_20 = {}
 
-		for i = 1, #boons do
-			local boon_name = boons[i]
-			local boon = DeusPowerUpsLookup[boon_name]
+		for iter_37_1 = 1, #var_37_5 do
+			local var_37_21 = var_37_5[iter_37_1]
+			local var_37_22 = DeusPowerUpsLookup[var_37_21]
 
-			boon_ids[#boon_ids + 1] = boon.lookup_id
+			var_37_20[#var_37_20 + 1] = var_37_22.lookup_id
 		end
 
-		Managers.mechanism:send_rpc_clients("rpc_deus_setup_run", run_id, run_seed, difficulty_id, journey_name_id, dominant_god_id, with_belakor, mutator_ids, boon_ids)
+		Managers.mechanism:send_rpc_clients("rpc_deus_setup_run", var_37_7, var_37_8, var_37_14, var_37_15, var_37_16, var_37_12, var_37_17, var_37_20)
 
-		next_state = self:_transition_next_node("start")
+		var_37_0 = arg_37_0:_transition_next_node("start")
 	else
-		local state = self._state
+		local var_37_23 = arg_37_0._state
 
-		if state == INGAME_STATE or state == MAP_STATE then
-			local game_won = reason == "won"
+		if var_37_23 == var_0_12 or var_37_23 == var_0_10 then
+			local var_37_24 = arg_37_3 == "won"
 
-			if state == INGAME_STATE then
-				self:_send_level_ended_tracking_data(game_won)
+			if var_37_23 == var_0_12 then
+				arg_37_0:_send_level_ended_tracking_data(var_37_24)
 			end
 
-			if reason == "lost" then
-				self:_send_run_tracking_data(game_won)
-				self._deus_run_controller:handle_run_ended()
+			if arg_37_3 == "lost" then
+				arg_37_0:_send_run_tracking_data(var_37_24)
+				arg_37_0._deus_run_controller:handle_run_ended()
 
-				next_state = self:_transition_to_inn()
-			elseif game_won then
-				if state == INGAME_STATE then
-					self._deus_run_controller:handle_level_won()
+				var_37_0 = arg_37_0:_transition_to_inn()
+			elseif var_37_24 then
+				if var_37_23 == var_0_12 then
+					arg_37_0._deus_run_controller:handle_level_won()
 				end
 
-				local current_node = self._deus_run_controller:get_current_node()
+				if #arg_37_0._deus_run_controller:get_current_node().next > 0 then
+					if var_37_23 == var_0_10 then
+						local var_37_25 = arg_37_4
 
-				if #current_node.next > 0 then
-					if state == MAP_STATE then
-						local next_node_key = reason_data
-
-						if next_node_key == nil then
-							next_node_key = self._deus_run_controller:get_current_node().next[1]
+						if var_37_25 == nil then
+							var_37_25 = arg_37_0._deus_run_controller:get_current_node().next[1]
 						end
 
-						next_state = self:_transition_next_node(next_node_key)
+						var_37_0 = arg_37_0:_transition_next_node(var_37_25)
 					else
-						next_state = self:_transition_map()
+						var_37_0 = arg_37_0:_transition_map()
 					end
 				else
-					self:_send_run_tracking_data(game_won)
-					self._deus_run_controller:handle_run_ended()
+					arg_37_0:_send_run_tracking_data(var_37_24)
+					arg_37_0._deus_run_controller:handle_run_ended()
 
-					next_state = self:_transition_to_inn()
+					var_37_0 = arg_37_0:_transition_to_inn()
 				end
 			end
 		end
 	end
 
-	if next_state then
-		self._next_state = next_state
+	if var_37_0 then
+		arg_37_0._next_state = var_37_0
 	end
 end
 
-DeusMechanism._transition_next_node = function (self, next_node_key)
-	local deus_run_controller = self._deus_run_controller
-	local level_transition_handler = Managers.level_transition_handler
+function DeusMechanism._transition_next_node(arg_38_0, arg_38_1)
+	local var_38_0 = arg_38_0._deus_run_controller
+	local var_38_1 = Managers.level_transition_handler
 
-	deus_run_controller:set_current_node_key(next_node_key)
+	var_38_0:set_current_node_key(arg_38_1)
 
-	local current_node = deus_run_controller:get_current_node()
-	local current_node_type = current_node.node_type
-	local in_map = false
-	local level_key, environment_variation_id, level_seed, mechanism, game_mode_key, conflict_settings, locked_director_functions, run_difficulty, difficulty_tweak, extra_packages = get_next_level_data(deus_run_controller, in_map)
+	local var_38_2 = var_38_0:get_current_node().node_type
+	local var_38_3 = false
+	local var_38_4, var_38_5, var_38_6, var_38_7, var_38_8, var_38_9, var_38_10, var_38_11, var_38_12, var_38_13 = var_0_19(var_38_0, var_38_3)
 
-	level_transition_handler:set_next_level(level_key, environment_variation_id, level_seed, mechanism, game_mode_key, conflict_settings, locked_director_functions, run_difficulty, difficulty_tweak, extra_packages)
-	level_transition_handler:promote_next_level_data()
+	var_38_1:set_next_level(var_38_4, var_38_5, var_38_6, var_38_7, var_38_8, var_38_9, var_38_10, var_38_11, var_38_12, var_38_13)
+	var_38_1:promote_next_level_data()
 
-	local next_state = node_type_to_state(current_node_type)
-
-	return next_state
+	return (var_0_13(var_38_2))
 end
 
-DeusMechanism._transition_map = function (self)
-	local deus_run_controller = self._deus_run_controller
-	local level_transition_handler = Managers.level_transition_handler
-	local in_map = true
-	local level_key, environment_variation_id, level_seed, mechanism, game_mode_key, conflict_settings, locked_director_functions, run_difficulty, difficulty_tweak, extra_packages = get_next_level_data(deus_run_controller, in_map)
+function DeusMechanism._transition_map(arg_39_0)
+	local var_39_0 = arg_39_0._deus_run_controller
+	local var_39_1 = Managers.level_transition_handler
+	local var_39_2 = true
+	local var_39_3, var_39_4, var_39_5, var_39_6, var_39_7, var_39_8, var_39_9, var_39_10, var_39_11, var_39_12 = var_0_19(var_39_0, var_39_2)
 
-	level_transition_handler:set_next_level(level_key, environment_variation_id, level_seed, mechanism, game_mode_key, conflict_settings, locked_director_functions, run_difficulty, difficulty_tweak, extra_packages)
+	var_39_1:set_next_level(var_39_3, var_39_4, var_39_5, var_39_6, var_39_7, var_39_8, var_39_9, var_39_10, var_39_11, var_39_12)
 
-	local next_state = MAP_STATE
-
-	return next_state
+	return var_0_10
 end
 
-DeusMechanism._transition_to_inn = function (self)
-	local level_transition_handler = Managers.level_transition_handler
-	local in_map = false
-	local deus_run_controller
-	local level_key, environment_variation_id, level_seed, mechanism, game_mode_key, conflict_settings, locked_director_functions, run_difficulty, difficulty_tweak, extra_packages = get_next_level_data(deus_run_controller, in_map)
+function DeusMechanism._transition_to_inn(arg_40_0)
+	local var_40_0 = Managers.level_transition_handler
+	local var_40_1 = false
+	local var_40_2
+	local var_40_3, var_40_4, var_40_5, var_40_6, var_40_7, var_40_8, var_40_9, var_40_10, var_40_11, var_40_12 = var_0_19(var_40_2, var_40_1)
 
-	level_transition_handler:set_next_level(level_key, environment_variation_id, level_seed, mechanism, game_mode_key, conflict_settings, locked_director_functions, run_difficulty, difficulty_tweak, extra_packages)
+	var_40_0:set_next_level(var_40_3, var_40_4, var_40_5, var_40_6, var_40_7, var_40_8, var_40_9, var_40_10, var_40_11, var_40_12)
 
-	self._post_match = true
+	arg_40_0._post_match = true
 
-	return HUB_STATE
+	return var_0_7
 end
 
-DeusMechanism.should_run_tutorial = function (self)
+function DeusMechanism.should_run_tutorial(arg_41_0)
 	return true, "tutorial"
 end
 
-DeusMechanism.get_level_end_view = function (self)
+function DeusMechanism.get_level_end_view(arg_42_0)
 	return "LevelEndViewDeus"
 end
 
-DeusMechanism.get_level_end_view_packages = function (self)
+function DeusMechanism.get_level_end_view_packages(arg_43_0)
 	return {
-		"resource_packages/levels/ui_end_screen",
+		"resource_packages/levels/ui_end_screen"
 	}
 end
 
-DeusMechanism._get_next_game_mode_key = function (self)
-	local game_mode_key
-	local state = self._state
+function DeusMechanism._get_next_game_mode_key(arg_44_0)
+	local var_44_0
+	local var_44_1 = arg_44_0._state
 
-	if state == HUB_STATE then
-		game_mode_key = HUB_GAME_MODE_KEY
-	elseif state == INGAME_STATE then
-		local current_node = self._deus_run_controller:get_current_node()
+	if var_44_1 == var_0_7 then
+		var_44_0 = var_0_6
+	elseif var_44_1 == var_0_12 then
+		local var_44_2 = arg_44_0._deus_run_controller:get_current_node()
 
-		game_mode_key = node_type_to_game_mode(current_node.node_type)
-	elseif state == MAP_STATE then
-		game_mode_key = MAP_GAME_MODE_KEY
+		var_44_0 = var_0_14(var_44_2.node_type)
+	elseif var_44_1 == var_0_10 then
+		var_44_0 = var_0_9
 	end
 
-	return game_mode_key
+	return var_44_0
 end
 
-DeusMechanism.start_next_round = function (self)
-	local deus_run_controller = self._deus_run_controller
+function DeusMechanism.start_next_round(arg_45_0)
+	local var_45_0 = arg_45_0._deus_run_controller
 
-	self._game_round_ended_reason = nil
-	self._final_round = false
+	arg_45_0._game_round_ended_reason = nil
+	arg_45_0._final_round = false
 
-	local state = self._state
-	local side_compositions = self:_build_side_compositions(state)
-	local game_mode_key = self:_get_next_game_mode_key()
-	local blessings = script_data.debug_activated_blessings or deus_run_controller and deus_run_controller:get_blessings() or {}
-	local mutators = {}
+	local var_45_1 = arg_45_0._state
+	local var_45_2 = arg_45_0:_build_side_compositions(var_45_1)
+	local var_45_3 = arg_45_0:_get_next_game_mode_key()
+	local var_45_4 = script_data.debug_activated_blessings or var_45_0 and var_45_0:get_blessings() or {}
+	local var_45_5 = {}
 
-	for _, blessing in ipairs(blessings) do
-		local config = DeusBlessingSettings[blessing]
+	for iter_45_0, iter_45_1 in ipairs(var_45_4) do
+		local var_45_6 = DeusBlessingSettings[iter_45_1]
 
-		if config.mutators then
-			for _, mutator in ipairs(config.mutators) do
-				mutators[#mutators + 1] = mutator
+		if var_45_6.mutators then
+			for iter_45_2, iter_45_3 in ipairs(var_45_6.mutators) do
+				var_45_5[#var_45_5 + 1] = iter_45_3
 			end
 		end
 	end
 
-	if state == HUB_STATE then
-		if deus_run_controller then
-			deus_run_controller:destroy()
+	if var_45_1 == var_0_7 then
+		if var_45_0 then
+			var_45_0:destroy()
 
-			self._deus_run_controller = nil
+			arg_45_0._deus_run_controller = nil
 		end
-	elseif state == INGAME_STATE then
-		local current_node = deus_run_controller:get_current_node()
-		local has_next_node = current_node.next and #current_node.next > 0
+	elseif var_45_1 == var_0_12 then
+		local var_45_7 = var_45_0:get_current_node()
 
-		self._final_round = not has_next_node
+		arg_45_0._final_round = not (var_45_7.next and #var_45_7.next > 0)
 
-		local curse = current_node.curse
+		local var_45_8 = var_45_7.curse
 
-		if curse then
-			mutators[#mutators + 1] = curse
+		if var_45_8 then
+			var_45_5[#var_45_5 + 1] = var_45_8
 		end
 
-		local minor_modifier_group = current_node.minor_modifier_group
+		local var_45_9 = var_45_7.minor_modifier_group
 
-		if minor_modifier_group then
-			for _, minor_modifier in ipairs(minor_modifier_group) do
-				mutators[#mutators + 1] = minor_modifier
+		if var_45_9 then
+			for iter_45_4, iter_45_5 in ipairs(var_45_9) do
+				var_45_5[#var_45_5 + 1] = iter_45_5
 			end
 		end
 
-		local theme = current_node.theme
-		local theme_mutators = DeusThemeSettings[theme].mutators
+		local var_45_10 = var_45_7.theme
+		local var_45_11 = DeusThemeSettings[var_45_10].mutators
 
-		if theme_mutators then
-			for _, mutator in ipairs(theme_mutators) do
-				mutators[#mutators + 1] = mutator
+		if var_45_11 then
+			for iter_45_6, iter_45_7 in ipairs(var_45_11) do
+				var_45_5[#var_45_5 + 1] = iter_45_7
 			end
 		end
 
-		if current_node.mutators then
-			for _, mutator in ipairs(current_node.mutators) do
-				mutators[#mutators + 1] = mutator
+		if var_45_7.mutators then
+			for iter_45_8, iter_45_9 in ipairs(var_45_7.mutators) do
+				var_45_5[#var_45_5 + 1] = iter_45_9
 			end
 		end
 
-		deus_run_controller:handle_start_next_round()
+		var_45_0:handle_start_next_round()
 	end
 
-	local game_mode_settings = {
-		mutators = mutators,
-		deus_run_controller = deus_run_controller,
+	local var_45_12 = {
+		mutators = var_45_5,
+		deus_run_controller = var_45_0
 	}
 
-	return game_mode_key, side_compositions, game_mode_settings
+	return var_45_3, var_45_2, var_45_12
 end
 
-DeusMechanism._build_side_compositions = function (self, state)
-	local available_profiles = self._hero_profiles
-	local party_manager = Managers.party
-	local side_compositions = {
+function DeusMechanism._build_side_compositions(arg_46_0, arg_46_1)
+	local var_46_0 = arg_46_0._hero_profiles
+	local var_46_1 = Managers.party
+
+	return {
 		{
 			name = "heroes",
 			relations = {
 				enemy = {
-					"dark_pact",
-				},
+					"dark_pact"
+				}
 			},
-			party = party_manager:get_party(1),
+			party = var_46_1:get_party(1),
 			add_these_settings = {
+				using_grims_and_tomes = true,
 				show_damage_feedback = false,
 				using_enemy_recycler = true,
-				using_grims_and_tomes = true,
-				available_profiles = available_profiles,
-			},
+				available_profiles = var_46_0
+			}
 		},
 		{
 			name = "dark_pact",
 			relations = {
 				enemy = {
-					"heroes",
-				},
-			},
+					"heroes"
+				}
+			}
 		},
 		{
 			name = "neutral",
 			relations = {
-				enemy = {},
-			},
-		},
+				enemy = {}
+			}
+		}
 	}
-
-	return side_compositions
 end
 
-DeusMechanism.get_state = function (self)
-	return self._state
+function DeusMechanism.get_state(arg_47_0)
+	return arg_47_0._state
 end
 
-DeusMechanism.generate_level_seed = function (self)
-	local deus_run_controller = self._deus_run_controller
-	local current_node = deus_run_controller and deus_run_controller:get_current_node()
+function DeusMechanism.generate_level_seed(arg_48_0)
+	local var_48_0 = arg_48_0._deus_run_controller
+	local var_48_1 = var_48_0 and var_48_0:get_current_node()
 
-	return current_node and current_node.level_seed or 0
+	return var_48_1 and var_48_1.level_seed or 0
 end
 
-DeusMechanism.get_current_node_curse = function (self)
-	local deus_run_controller = self._deus_run_controller
-	local current_node = deus_run_controller and deus_run_controller:get_current_node()
+function DeusMechanism.get_current_node_curse(arg_49_0)
+	local var_49_0 = arg_49_0._deus_run_controller
+	local var_49_1 = var_49_0 and var_49_0:get_current_node()
 
-	return current_node and current_node.curse or nil
+	return var_49_1 and var_49_1.curse or nil
 end
 
-DeusMechanism.get_current_node_theme = function (self)
-	local deus_run_controller = self._deus_run_controller
-	local current_node = deus_run_controller and deus_run_controller:get_current_node()
+function DeusMechanism.get_current_node_theme(arg_50_0)
+	local var_50_0 = arg_50_0._deus_run_controller
+	local var_50_1 = var_50_0 and var_50_0:get_current_node()
 
-	return current_node and current_node.theme or nil
+	return var_50_1 and var_50_1.theme or nil
 end
 
-DeusMechanism.get_level_seed = function (self, level_seed, optional_system)
-	local deus_run_controller = self._deus_run_controller
-	local current_node = deus_run_controller and deus_run_controller:get_current_node()
+function DeusMechanism.get_level_seed(arg_51_0, arg_51_1, arg_51_2)
+	local var_51_0 = arg_51_0._deus_run_controller
+	local var_51_1 = var_51_0 and var_51_0:get_current_node()
 
-	if optional_system then
-		return current_node and current_node.system_seeds[optional_system] or 0
+	if arg_51_2 then
+		return var_51_1 and var_51_1.system_seeds[arg_51_2] or 0
 	end
 
-	return current_node and current_node.level_seed or 0
+	return var_51_1 and var_51_1.level_seed or 0
 end
 
-DeusMechanism.can_spawn_pickup = function (self, spawner_unit, pickup_name)
-	local can_spawn
+function DeusMechanism.can_spawn_pickup(arg_52_0, arg_52_1, arg_52_2)
+	local var_52_0
 
-	if Pickups.deus_potions[pickup_name] then
-		can_spawn = Unit.get_data(spawner_unit, "deus_potion")
+	if Pickups.deus_potions[arg_52_2] then
+		var_52_0 = Unit.get_data(arg_52_1, "deus_potion")
 	end
 
-	if pickup_name == "deus_02" then
-		can_spawn = Unit.get_data(spawner_unit, "deus_cursed_chest") or Unit.get_data(spawner_unit, "deus_02")
+	if arg_52_2 == "deus_02" then
+		var_52_0 = Unit.get_data(arg_52_1, "deus_cursed_chest") or Unit.get_data(arg_52_1, "deus_02")
 	end
 
-	return can_spawn
+	return var_52_0
 end
 
-DeusMechanism.uses_random_directors = function (self)
+function DeusMechanism.uses_random_directors(arg_53_0)
 	return false
 end
 
-DeusMechanism.profile_changed = function (self, peer_id, local_player_id, profile_index, career_index, is_bot)
-	if self._deus_run_controller and not self._deus_run_controller:get_run_ended() then
-		self._deus_run_controller:profile_changed(peer_id, local_player_id, profile_index, career_index, is_bot)
+function DeusMechanism.profile_changed(arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5)
+	if arg_54_0._deus_run_controller and not arg_54_0._deus_run_controller:get_run_ended() then
+		arg_54_0._deus_run_controller:profile_changed(arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5)
 
-		if peer_id == self._deus_run_controller:get_own_peer_id() and local_player_id == REAL_PLAYER_LOCAL_ID then
-			self:_update_own_avatar_info()
+		if arg_54_1 == arg_54_0._deus_run_controller:get_own_peer_id() and arg_54_2 == var_0_4 then
+			arg_54_0:_update_own_avatar_info()
 		end
 
-		local profile = SPProfiles[profile_index]
-		local careers = profile.careers
-		local career = careers[career_index]
-		local career_name = career.name
+		local var_54_0 = SPProfiles[arg_54_3].careers[arg_54_4].name
 
-		self:_update_career_loadout(local_player_id, career_name, is_bot)
+		arg_54_0:_update_career_loadout(arg_54_2, var_54_0, arg_54_5)
 	end
 end
 
-DeusMechanism.sync_mechanism_data = function (self, peer_id, mechanism_newly_initialized)
-	if not mechanism_newly_initialized then
+function DeusMechanism.sync_mechanism_data(arg_55_0, arg_55_1, arg_55_2)
+	if not arg_55_2 then
 		return
 	end
 
-	local deus_run_controller = self._deus_run_controller
+	local var_55_0 = arg_55_0._deus_run_controller
 
-	if deus_run_controller and not deus_run_controller:get_run_ended() then
-		local difficulty_id = NetworkLookup.difficulties[deus_run_controller:get_run_difficulty()]
-		local journey_name_id = NetworkLookup.deus_journeys[deus_run_controller:get_journey_name()]
-		local dominant_god_id = NetworkLookup.deus_themes[deus_run_controller:get_dominant_god()]
-		local with_belakor = deus_run_controller:get_belakor_enabled()
-		local mutators = deus_run_controller:get_event_mutators()
-		local boons = deus_run_controller:get_event_boons()
-		local mutator_ids = {}
+	if var_55_0 and not var_55_0:get_run_ended() then
+		local var_55_1 = NetworkLookup.difficulties[var_55_0:get_run_difficulty()]
+		local var_55_2 = NetworkLookup.deus_journeys[var_55_0:get_journey_name()]
+		local var_55_3 = NetworkLookup.deus_themes[var_55_0:get_dominant_god()]
+		local var_55_4 = var_55_0:get_belakor_enabled()
+		local var_55_5 = var_55_0:get_event_mutators()
+		local var_55_6 = var_55_0:get_event_boons()
+		local var_55_7 = {}
 
-		for i = 1, #mutators do
-			local mutator_name = mutators[i]
-			local mutator_id = NetworkLookup.mutator_templates[mutator_name]
+		for iter_55_0 = 1, #var_55_5 do
+			local var_55_8 = var_55_5[iter_55_0]
+			local var_55_9 = NetworkLookup.mutator_templates[var_55_8]
 
-			mutator_ids[#mutator_ids + 1] = mutator_id
+			var_55_7[#var_55_7 + 1] = var_55_9
 		end
 
-		local boon_ids = {}
+		local var_55_10 = {}
 
-		for i = 1, #boons do
-			local boon_name = boons[i].name
-			local boon = DeusPowerUpsLookup[boon_name]
+		for iter_55_1 = 1, #var_55_6 do
+			local var_55_11 = var_55_6[iter_55_1].name
+			local var_55_12 = DeusPowerUpsLookup[var_55_11]
 
-			boon_ids[#boon_ids + 1] = boon.lookup_id
+			var_55_10[#var_55_10 + 1] = var_55_12.lookup_id
 		end
 
-		local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+		local var_55_13 = PEER_ID_TO_CHANNEL[arg_55_1]
 
-		RPC.rpc_deus_setup_run(channel_id, self._run_id, self._run_seed, difficulty_id, journey_name_id, dominant_god_id, not not with_belakor, mutator_ids, boon_ids)
+		RPC.rpc_deus_setup_run(var_55_13, arg_55_0._run_id, arg_55_0._run_seed, var_55_1, var_55_2, var_55_3, not not var_55_4, var_55_7, var_55_10)
 	end
 end
 
-DeusMechanism._send_level_started_tracking_data = function (self)
-	local statistics_db = Managers.player:statistics_db()
-	local bots = Managers.player:bots()
-	local num_bots = #bots
-	local level_tracking_data = self._deus_run_controller:get_level_started_tracking_data(statistics_db, num_bots)
+function DeusMechanism._send_level_started_tracking_data(arg_56_0)
+	local var_56_0 = Managers.player:statistics_db()
+	local var_56_1 = #Managers.player:bots()
+	local var_56_2 = arg_56_0._deus_run_controller:get_level_started_tracking_data(var_56_0, var_56_1)
 
-	Managers.telemetry_events:deus_level_started(level_tracking_data)
+	Managers.telemetry_events:deus_level_started(var_56_2)
 end
 
-DeusMechanism._send_level_ended_tracking_data = function (self, game_won)
-	local statistics_db = Managers.player:statistics_db()
-	local bots = Managers.player:bots()
-	local num_bots = #bots
-	local level_tracking_data = self._deus_run_controller:get_level_ended_tracking_data(statistics_db, game_won, num_bots)
+function DeusMechanism._send_level_ended_tracking_data(arg_57_0, arg_57_1)
+	local var_57_0 = Managers.player:statistics_db()
+	local var_57_1 = #Managers.player:bots()
+	local var_57_2 = arg_57_0._deus_run_controller:get_level_ended_tracking_data(var_57_0, arg_57_1, var_57_1)
 
-	Managers.telemetry_events:deus_level_ended(level_tracking_data)
+	Managers.telemetry_events:deus_level_ended(var_57_2)
 end
 
-DeusMechanism._send_run_tracking_data = function (self, game_won)
-	local run_tracking_data = self._deus_run_controller:get_run_tracking_data(game_won)
+function DeusMechanism._send_run_tracking_data(arg_58_0, arg_58_1)
+	local var_58_0 = arg_58_0._deus_run_controller:get_run_tracking_data(arg_58_1)
 
-	Managers.telemetry_events:deus_run_ended(run_tracking_data)
+	Managers.telemetry_events:deus_run_ended(var_58_0)
 end
 
-DeusMechanism.debug_load_shrine_node = function (self)
-	local run_seed = "DEBUG_SHRINE_NODE"
+function DeusMechanism.debug_load_shrine_node(arg_59_0)
+	local var_59_0 = "DEBUG_SHRINE_NODE"
 
-	self:_debug_load_seed(run_seed, script_data.current_difficulty_setting or "normal")
+	arg_59_0:_debug_load_seed(var_59_0, script_data.current_difficulty_setting or "normal")
 end
 
-DeusMechanism.debug_load_map = function (self)
-	self:_debug_load_seed(script_data.deus_seed or tostring(math.random_seed()), script_data.current_difficulty_setting or "normal")
+function DeusMechanism.debug_load_map(arg_60_0)
+	arg_60_0:_debug_load_seed(script_data.deus_seed or tostring(math.random_seed()), script_data.current_difficulty_setting or "normal")
 end
 
-DeusMechanism.debug_load_level = function (self, level_name)
-	local level_settings = LevelSettings[level_name]
+function DeusMechanism.debug_load_level(arg_61_0, arg_61_1)
+	local var_61_0 = LevelSettings[arg_61_1]
 
-	if level_settings and level_settings.hub_level then
-		local level_transition_handler = Managers.level_transition_handler
+	if var_61_0 and var_61_0.hub_level then
+		local var_61_1 = Managers.level_transition_handler
 
-		level_transition_handler:set_next_level(level_name)
-		level_transition_handler:promote_next_level_data()
+		var_61_1:set_next_level(arg_61_1)
+		var_61_1:promote_next_level_data()
 	else
-		local run_seed = "DEBUG_SPECIFIC_NODE" .. (script_data.deus_force_load_run_progress or 0) .. "_" .. level_name .. "SEED" .. 0 .. "SEED_END"
+		local var_61_2 = "DEBUG_SPECIFIC_NODE" .. (script_data.deus_force_load_run_progress or 0) .. "_" .. arg_61_1 .. "SEED" .. 0 .. "SEED_END"
 
-		self:_debug_load_seed(run_seed, script_data.current_difficulty_setting or "normal")
+		arg_61_0:_debug_load_seed(var_61_2, script_data.current_difficulty_setting or "normal")
 	end
 end
 
-DeusMechanism.debug_load_deus_level = function (self, level_name, difficulty, progress, level_seed, with_belakor)
-	local run_seed = "DEBUG_SPECIFIC_NODE" .. math.floor(progress * 1000) .. "_" .. level_name .. "SEED" .. level_seed .. "SEED_END"
+function DeusMechanism.debug_load_deus_level(arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4, arg_62_5)
+	local var_62_0 = "DEBUG_SPECIFIC_NODE" .. math.floor(arg_62_3 * 1000) .. "_" .. arg_62_1 .. "SEED" .. arg_62_4 .. "SEED_END"
 
-	self:_debug_load_seed(run_seed, difficulty, with_belakor)
+	arg_62_0:_debug_load_seed(var_62_0, arg_62_2, arg_62_5)
 end
 
-DeusMechanism._debug_load_seed = function (self, run_seed, difficulty, with_belakor)
-	local run_id = string.sub(tostring(math.random_seed()), 0, 8)
-	local journey_name = script_data.deus_journey or AvailableJourneyOrder[1]
-	local dominant_god = script_data.deus_dominant_god or DeusJourneyCycleGods[1]
-	local event_mutator_array = {}
-	local event_boon_array = {}
+function DeusMechanism._debug_load_seed(arg_63_0, arg_63_1, arg_63_2, arg_63_3)
+	local var_63_0 = string.sub(tostring(math.random_seed()), 0, 8)
+	local var_63_1 = script_data.deus_journey or AvailableJourneyOrder[1]
+	local var_63_2 = script_data.deus_dominant_god or DeusJourneyCycleGods[1]
+	local var_63_3 = {}
+	local var_63_4 = {}
 
-	self:_setup_run(run_id, run_seed, true, Network.peer_id(), difficulty, journey_name, dominant_god, not not with_belakor, event_mutator_array, event_boon_array)
+	arg_63_0:_setup_run(var_63_0, arg_63_1, true, Network.peer_id(), arg_63_2, var_63_1, var_63_2, not not arg_63_3, var_63_3, var_63_4)
 
-	local difficulty_id = NetworkLookup.difficulties[difficulty]
-	local journey_name_id = NetworkLookup.deus_journeys[journey_name]
-	local dominant_god_id = NetworkLookup.deus_themes[dominant_god]
-	local event_mutator_ids = {}
-	local event_boon_ids = {}
+	local var_63_5 = NetworkLookup.difficulties[arg_63_2]
+	local var_63_6 = NetworkLookup.deus_journeys[var_63_1]
+	local var_63_7 = NetworkLookup.deus_themes[var_63_2]
+	local var_63_8 = {}
+	local var_63_9 = {}
 
-	Managers.mechanism:send_rpc_clients("rpc_deus_setup_run", run_id, run_seed, difficulty_id, journey_name_id, dominant_god_id, not not with_belakor, event_mutator_ids, event_boon_ids)
+	Managers.mechanism:send_rpc_clients("rpc_deus_setup_run", var_63_0, arg_63_1, var_63_5, var_63_6, var_63_7, not not arg_63_3, var_63_8, var_63_9)
 
-	if string.starts_with(run_seed, "DEBUG_SHRINE_NODE") then
-		self._deus_run_controller:debug_shrine_setup()
+	if string.starts_with(arg_63_1, "DEBUG_SHRINE_NODE") then
+		arg_63_0._deus_run_controller:debug_shrine_setup()
 	end
 
-	local in_map = false
-	local deus_run_controller = self._deus_run_controller
-	local level_key, environment_variation_id, level_seed, mechanism, game_mode_key, conflict_settings, locked_director_functions, run_difficulty, difficulty_tweak, extra_packages = get_next_level_data(deus_run_controller, in_map)
-	local level_transition_handler = Managers.level_transition_handler
+	local var_63_10 = false
+	local var_63_11 = arg_63_0._deus_run_controller
+	local var_63_12, var_63_13, var_63_14, var_63_15, var_63_16, var_63_17, var_63_18, var_63_19, var_63_20, var_63_21 = var_0_19(var_63_11, var_63_10)
+	local var_63_22 = Managers.level_transition_handler
 
-	level_transition_handler:set_next_level(level_key, environment_variation_id, level_seed, mechanism, game_mode_key, conflict_settings, locked_director_functions, run_difficulty, difficulty_tweak, extra_packages)
-	self:_update_current_state()
-	level_transition_handler:promote_next_level_data()
+	var_63_22:set_next_level(var_63_12, var_63_13, var_63_14, var_63_15, var_63_16, var_63_17, var_63_18, var_63_19, var_63_20, var_63_21)
+	arg_63_0:_update_current_state()
+	var_63_22:promote_next_level_data()
 end
 
-DeusMechanism._setup_run = function (self, run_id, run_seed, is_server, server_peer_id, difficulty, journey_name, dominant_god, with_belakor, mutators, boons)
-	local deus_backend = Managers.backend:get_interface("deus")
-	local own_peer_id = Network.peer_id()
+function DeusMechanism._setup_run(arg_64_0, arg_64_1, arg_64_2, arg_64_3, arg_64_4, arg_64_5, arg_64_6, arg_64_7, arg_64_8, arg_64_9, arg_64_10)
+	local var_64_0 = Managers.backend:get_interface("deus")
+	local var_64_1 = Network.peer_id()
 
-	self._run_id = run_id
-	self._run_seed = run_seed
+	arg_64_0._run_id = arg_64_1
+	arg_64_0._run_seed = arg_64_2
 
-	if self._deus_run_controller then
-		self._deus_run_controller:destroy()
+	if arg_64_0._deus_run_controller then
+		arg_64_0._deus_run_controller:destroy()
 	end
 
-	mutators = mutators or EMPTY_TABLE
-	boons = boons or EMPTY_TABLE
+	arg_64_9 = arg_64_9 or var_0_2
+	arg_64_10 = arg_64_10 or var_0_2
 
-	local backend_items = Managers.backend:get_interface("items")
-	local talent_interface = Managers.backend:get_interface("talents")
-	local bot_loadout = backend_items:get_bot_loadout()
-	local initial_bot_loadout = {}
-	local initial_bot_talents = {}
+	local var_64_2 = Managers.backend:get_interface("items")
+	local var_64_3 = Managers.backend:get_interface("talents")
+	local var_64_4 = var_64_2:get_bot_loadout()
+	local var_64_5 = {}
+	local var_64_6 = {}
 
-	for _, career in ipairs(DEUS_CAREERS) do
-		local talents_for_career = talent_interface:get_bot_talents(career)
+	for iter_64_0, iter_64_1 in ipairs(var_0_1) do
+		var_64_6[iter_64_1] = var_64_3:get_bot_talents(iter_64_1)
 
-		initial_bot_talents[career] = talents_for_career
+		local var_64_7 = var_64_4[iter_64_1]
+		local var_64_8 = {}
 
-		local slots = bot_loadout[career]
-		local initial_loadout_slots = {}
+		var_64_5[iter_64_1] = var_64_8
 
-		initial_bot_loadout[career] = initial_loadout_slots
+		for iter_64_2, iter_64_3 in pairs(var_64_7) do
+			if iter_64_2 == "slot_melee" or iter_64_2 == "slot_ranged" then
+				local var_64_9 = var_64_2:get_item_from_id(iter_64_3)
+				local var_64_10 = var_64_9 and var_64_9.key
+				local var_64_11 = DeusStartingWeaponTypeMapping[var_64_10]
 
-		for slot, backend_id in pairs(slots) do
-			if slot == "slot_melee" or slot == "slot_ranged" then
-				local item_data = backend_items:get_item_from_id(backend_id)
-				local item_key = item_data and item_data.key
-				local deus_item_key = DeusStartingWeaponTypeMapping[item_key]
+				if not var_64_11 then
+					fassert(DeusDefaultLoadout[iter_64_1], "career %s is not properly configured for Morris.", iter_64_1)
 
-				if not deus_item_key then
-					fassert(DeusDefaultLoadout[career], "career %s is not properly configured for Morris.", career)
+					var_64_11 = DeusDefaultLoadout[iter_64_1][iter_64_2]
 
-					deus_item_key = DeusDefaultLoadout[career][slot]
-
-					Application.warning("Unknown weapon " .. (item_key or "unknown") .. " in slot " .. slot .. ", can't convert to deus weapon. Using " .. deus_item_key)
+					Application.warning("Unknown weapon " .. (var_64_10 or "unknown") .. " in slot " .. iter_64_2 .. ", can't convert to deus weapon. Using " .. var_64_11)
 				end
 
-				local item = DeusWeaponGeneration.generate_item_from_item_key(deus_item_key, difficulty, 0, "plentiful", 0)
+				local var_64_12 = DeusWeaponGeneration.generate_item_from_item_key(var_64_11, arg_64_5, 0, "plentiful", 0)
 
-				item.power_level = DeusStarterWeaponPowerLevels[difficulty] or DeusStarterWeaponPowerLevels.default
-				initial_loadout_slots[slot] = item
+				var_64_12.power_level = DeusStarterWeaponPowerLevels[arg_64_5] or DeusStarterWeaponPowerLevels.default
+				var_64_8[iter_64_2] = var_64_12
 			end
 		end
 	end
 
-	local hero_loadout = backend_items:get_loadout()
-	local initial_loadout = {}
-	local initial_talents = {}
+	local var_64_13 = var_64_2:get_loadout()
+	local var_64_14 = {}
+	local var_64_15 = {}
 
-	for _, career in ipairs(DEUS_CAREERS) do
-		local talents_for_career = talent_interface:get_talents(career)
+	for iter_64_4, iter_64_5 in ipairs(var_0_1) do
+		var_64_15[iter_64_5] = var_64_3:get_talents(iter_64_5)
 
-		initial_talents[career] = talents_for_career
+		local var_64_16 = var_64_13[iter_64_5]
+		local var_64_17 = {}
 
-		local slots = hero_loadout[career]
-		local initial_loadout_slots = {}
+		var_64_14[iter_64_5] = var_64_17
 
-		initial_loadout[career] = initial_loadout_slots
+		for iter_64_6, iter_64_7 in pairs(var_64_16) do
+			if iter_64_6 == "slot_melee" or iter_64_6 == "slot_ranged" then
+				local var_64_18 = var_64_2:get_item_from_id(iter_64_7)
+				local var_64_19 = var_64_18 and var_64_18.key
+				local var_64_20 = DeusStartingWeaponTypeMapping[var_64_19]
 
-		for slot, backend_id in pairs(slots) do
-			if slot == "slot_melee" or slot == "slot_ranged" then
-				local item_data = backend_items:get_item_from_id(backend_id)
-				local item_key = item_data and item_data.key
-				local deus_item_key = DeusStartingWeaponTypeMapping[item_key]
+				if not var_64_20 then
+					fassert(DeusDefaultLoadout[iter_64_5], "career %s is not properly configured for Morris.", iter_64_5)
 
-				if not deus_item_key then
-					fassert(DeusDefaultLoadout[career], "career %s is not properly configured for Morris.", career)
+					var_64_20 = DeusDefaultLoadout[iter_64_5][iter_64_6]
 
-					deus_item_key = DeusDefaultLoadout[career][slot]
-
-					Application.warning("Unknown weapon " .. (item_key or "unknown") .. " in slot " .. slot .. ", can't convert to deus weapon. Using " .. deus_item_key)
+					Application.warning("Unknown weapon " .. (var_64_19 or "unknown") .. " in slot " .. iter_64_6 .. ", can't convert to deus weapon. Using " .. var_64_20)
 				end
 
-				local item = DeusWeaponGeneration.generate_item_from_item_key(deus_item_key, difficulty, 0, "plentiful", 0)
+				local var_64_21 = DeusWeaponGeneration.generate_item_from_item_key(var_64_20, arg_64_5, 0, "plentiful", 0)
 
-				item.power_level = DeusStarterWeaponPowerLevels[difficulty] or DeusStarterWeaponPowerLevels.default
-				initial_loadout_slots[slot] = item
-				initial_bot_loadout[career][slot] = initial_bot_loadout[career][slot] or item
+				var_64_21.power_level = DeusStarterWeaponPowerLevels[arg_64_5] or DeusStarterWeaponPowerLevels.default
+				var_64_17[iter_64_6] = var_64_21
+				var_64_5[iter_64_5][iter_64_6] = var_64_5[iter_64_5][iter_64_6] or var_64_21
 			end
 		end
 	end
 
-	deus_backend:reset_deus_inventory()
+	var_64_0:reset_deus_inventory()
 
-	local backend_deus_loadout = {}
+	local var_64_22 = {}
 
-	for career, slots in pairs(initial_loadout) do
-		local backend_deus_loadout_slots = {}
+	for iter_64_8, iter_64_9 in pairs(var_64_14) do
+		local var_64_23 = {}
 
-		backend_deus_loadout[career] = backend_deus_loadout_slots
+		var_64_22[iter_64_8] = var_64_23
 
-		for slot, item_data in pairs(slots) do
-			local new_backend_id = deus_backend:grant_deus_weapon(item_data)
-
-			backend_deus_loadout_slots[slot] = new_backend_id
+		for iter_64_10, iter_64_11 in pairs(iter_64_9) do
+			var_64_23[iter_64_10] = var_64_0:grant_deus_weapon(iter_64_11)
 		end
 	end
 
-	local backend_deus_bot_loadout = {}
+	local var_64_24 = {}
 
-	for career, slots in pairs(initial_bot_loadout) do
-		local backend_deus_loadout_slots = {}
+	for iter_64_12, iter_64_13 in pairs(var_64_5) do
+		local var_64_25 = {}
 
-		backend_deus_bot_loadout[career] = backend_deus_loadout_slots
+		var_64_24[iter_64_12] = var_64_25
 
-		for slot, item_data in pairs(slots) do
-			local new_backend_id = deus_backend:grant_deus_weapon(item_data)
-
-			backend_deus_loadout_slots[slot] = new_backend_id
+		for iter_64_14, iter_64_15 in pairs(iter_64_13) do
+			var_64_25[iter_64_14] = var_64_0:grant_deus_weapon(iter_64_15)
 		end
 	end
 
-	deus_backend:refresh_deus_weapons_in_items_backend()
-	deus_backend:set_deus_loadout(backend_deus_loadout)
-	deus_backend:set_deus_bot_loadout(backend_deus_bot_loadout)
+	var_64_0:refresh_deus_weapons_in_items_backend()
+	var_64_0:set_deus_loadout(var_64_22)
+	var_64_0:set_deus_bot_loadout(var_64_24)
 
-	local network_handler = Managers.mechanism:network_handler()
+	local var_64_26 = Managers.mechanism:network_handler()
 
 	Managers.backend:set_loadout_interface_override(nil)
 
-	local weapon_group_whitelist = {}
+	local var_64_27 = {}
 
-	for weapon_group_name, _ in pairs(DeusWeaponGroups) do
-		local is_weapon_unlocked = backend_items:has_item(weapon_group_name)
-
-		if is_weapon_unlocked then
-			weapon_group_whitelist[weapon_group_name] = true
+	for iter_64_16, iter_64_17 in pairs(DeusWeaponGroups) do
+		if var_64_2:has_item(iter_64_16) then
+			var_64_27[iter_64_16] = true
 		end
 	end
 
-	self._deus_run_controller = DeusRunController:new(run_id, is_server, network_handler, server_peer_id, own_peer_id, initial_loadout, initial_talents, initial_bot_loadout, initial_bot_talents, weapon_group_whitelist)
+	arg_64_0._deus_run_controller = DeusRunController:new(arg_64_1, arg_64_3, var_64_26, arg_64_4, var_64_1, var_64_14, var_64_15, var_64_5, var_64_6, var_64_27)
 
-	self._deus_run_controller:register_rpcs(self._network_event_delegate)
+	arg_64_0._deus_run_controller:register_rpcs(arg_64_0._network_event_delegate)
 
-	local rolled_over_coins = deus_backend:get_rolled_over_soft_currency()
-	local backend_id = Managers.backend:player_id() or ""
+	local var_64_28 = var_64_0:get_rolled_over_soft_currency()
+	local var_64_29 = Managers.backend:player_id() or ""
 
-	self._deus_run_controller:setup_run(run_seed, difficulty, journey_name, dominant_god, rolled_over_coins, backend_id, with_belakor, mutators, boons)
-	self._deus_run_controller:full_sync()
-	self:_update_own_avatar_info()
+	arg_64_0._deus_run_controller:setup_run(arg_64_2, arg_64_5, arg_64_6, arg_64_7, var_64_28, var_64_29, arg_64_8, arg_64_9, arg_64_10)
+	arg_64_0._deus_run_controller:full_sync()
+	arg_64_0:_update_own_avatar_info()
 
-	local current_profile_index, current_career_index = self._deus_run_controller:get_player_profile(own_peer_id, REAL_PLAYER_LOCAL_ID)
+	local var_64_30, var_64_31 = arg_64_0._deus_run_controller:get_player_profile(var_64_1, var_0_4)
 
-	if current_profile_index ~= 0 then
-		local profile = SPProfiles[current_profile_index]
-		local careers = profile.careers
-		local career = careers[current_career_index]
-		local career_name = career.name
+	if var_64_30 ~= 0 then
+		local var_64_32 = SPProfiles[var_64_30].careers[var_64_31].name
 
-		self:_update_career_loadout(REAL_PLAYER_LOCAL_ID, career_name)
+		arg_64_0:_update_career_loadout(var_0_4, var_64_32)
 	end
 
-	deus_backend:deus_run_started()
+	var_64_0:deus_run_started()
 end
 
-DeusMechanism._update_own_avatar_info = function (self)
-	local own_peer_id = self._deus_run_controller:get_own_peer_id()
-	local profile_index, career_index = self._deus_run_controller:get_player_profile(own_peer_id, REAL_PLAYER_LOCAL_ID)
-	local local_player = Managers.player:local_player()
+function DeusMechanism._update_own_avatar_info(arg_65_0)
+	local var_65_0 = arg_65_0._deus_run_controller:get_own_peer_id()
+	local var_65_1, var_65_2 = arg_65_0._deus_run_controller:get_player_profile(var_65_0, var_0_4)
+	local var_65_3 = Managers.player:local_player()
 
-	if profile_index == 0 or not local_player then
+	if var_65_1 == 0 or not var_65_3 then
 		return
 	end
 
-	local profile = SPProfiles[profile_index]
-	local career = profile.careers[career_index]
-	local display_name = profile.display_name
-	local career_name = career.name
-	local experience = ExperienceSettings.get_experience(display_name)
-	local level = ExperienceSettings.get_level(experience)
-	local versus_level = Application.user_setting("toggle_versus_level_in_all_game_modes") and ExperienceSettings.get_versus_level() or 0
-	local frame_item = BackendUtils.get_loadout_item(career_name, "slot_frame")
-	local frame_name = frame_item and frame_item.data.name or "default"
-	local name = local_player:name() or ""
+	local var_65_4 = SPProfiles[var_65_1]
+	local var_65_5 = var_65_4.careers[var_65_2]
+	local var_65_6 = var_65_4.display_name
+	local var_65_7 = var_65_5.name
+	local var_65_8 = ExperienceSettings.get_experience(var_65_6)
+	local var_65_9 = ExperienceSettings.get_level(var_65_8)
+	local var_65_10 = Application.user_setting("toggle_versus_level_in_all_game_modes") and ExperienceSettings.get_versus_level() or 0
+	local var_65_11 = BackendUtils.get_loadout_item(var_65_7, "slot_frame")
+	local var_65_12 = var_65_11 and var_65_11.data.name or "default"
+	local var_65_13 = var_65_3:name() or ""
 
-	self._deus_run_controller:set_own_player_avatar_info(level, name, frame_name, versus_level)
+	arg_65_0._deus_run_controller:set_own_player_avatar_info(var_65_9, var_65_13, var_65_12, var_65_10)
 end
 
-DeusMechanism.rpc_deus_setup_run = function (self, channel_id, run_id, run_seed, difficulty_id, journey_name_id, dominant_god_id, with_belakor, mutator_array, boon_array)
-	local difficulty = NetworkLookup.difficulties[difficulty_id]
-	local journey_name = NetworkLookup.deus_journeys[journey_name_id]
-	local dominant_god = NetworkLookup.deus_themes[dominant_god_id]
-	local server_peer_id = CHANNEL_TO_PEER_ID[channel_id]
-	local mutators = {}
+function DeusMechanism.rpc_deus_setup_run(arg_66_0, arg_66_1, arg_66_2, arg_66_3, arg_66_4, arg_66_5, arg_66_6, arg_66_7, arg_66_8, arg_66_9)
+	local var_66_0 = NetworkLookup.difficulties[arg_66_4]
+	local var_66_1 = NetworkLookup.deus_journeys[arg_66_5]
+	local var_66_2 = NetworkLookup.deus_themes[arg_66_6]
+	local var_66_3 = CHANNEL_TO_PEER_ID[arg_66_1]
+	local var_66_4 = {}
 
-	for i = 1, #mutator_array do
-		local mutator_id = mutator_array[i]
+	for iter_66_0 = 1, #arg_66_8 do
+		local var_66_5 = arg_66_8[iter_66_0]
 
-		mutators[#mutators + 1] = NetworkLookup.mutator_templates[mutator_id]
+		var_66_4[#var_66_4 + 1] = NetworkLookup.mutator_templates[var_66_5]
 	end
 
-	local boons = {}
+	local var_66_6 = {}
 
-	for i = 1, #boon_array do
-		local boon_id = boon_array[i]
-		local boon = DeusPowerUpsLookup[boon_id]
+	for iter_66_1 = 1, #arg_66_9 do
+		local var_66_7 = arg_66_9[iter_66_1]
+		local var_66_8 = DeusPowerUpsLookup[var_66_7]
 
-		boons[#boons + 1] = boon.name
+		var_66_6[#var_66_6 + 1] = var_66_8.name
 	end
 
-	self:_setup_run(run_id, run_seed, false, server_peer_id, difficulty, journey_name, dominant_god, with_belakor, mutators, boons)
+	arg_66_0:_setup_run(arg_66_2, arg_66_3, false, var_66_3, var_66_0, var_66_1, var_66_2, arg_66_7, var_66_4, var_66_6)
 end
 
-DeusMechanism.should_play_level_introduction = function (self)
+function DeusMechanism.should_play_level_introduction(arg_67_0)
 	return false
 end
 
-DeusMechanism.set_vote_data = function (self, data)
-	self._vote_data = data
+function DeusMechanism.set_vote_data(arg_68_0, arg_68_1)
+	arg_68_0._vote_data = arg_68_1
 end
 
-DeusMechanism._get_vote_data = function (self)
-	return self._vote_data
+function DeusMechanism._get_vote_data(arg_69_0)
+	return arg_69_0._vote_data
 end
 
-DeusMechanism.get_loading_tip = function (self)
-	local loading_tips_file = DLCSettings.morris.loading_tips_file
-	local loading_tips = local_require(loading_tips_file)
-	local theme = self:get_current_node_theme()
-	local themed_tips = loading_tips[theme] or loading_tips.general
+function DeusMechanism.get_loading_tip(arg_70_0)
+	local var_70_0 = DLCSettings.morris.loading_tips_file
+	local var_70_1 = local_require(var_70_0)
+	local var_70_2 = var_70_1[arg_70_0:get_current_node_theme()] or var_70_1.general
 
-	if self._state == MAP_STATE then
-		themed_tips = loading_tips.general
+	if arg_70_0._state == var_0_10 then
+		var_70_2 = var_70_1.general
 	end
 
-	local random_index = math.random(1, #themed_tips)
-	local loading_tip = themed_tips[random_index]
-
-	return loading_tip
+	return var_70_2[math.random(1, #var_70_2)]
 end
 
-DeusMechanism.post_match = function (self)
-	return self._post_match
+function DeusMechanism.post_match(arg_71_0)
+	return arg_71_0._post_match
 end
 
-DeusMechanism.get_level_dialogue_context = function (self)
-	local times_map_visited = 0
-	local times_shrine_was_in_range = 0
-	local times_shrine_visited = 0
-	local level_theme
-	local map_has_belakor = false
-	local deus_run_controller = self._deus_run_controller
+function DeusMechanism.get_level_dialogue_context(arg_72_0)
+	local var_72_0 = 0
+	local var_72_1 = 0
+	local var_72_2 = 0
+	local var_72_3
+	local var_72_4 = false
+	local var_72_5 = arg_72_0._deus_run_controller
 
-	if deus_run_controller then
-		local traversed_nodes = deus_run_controller:get_traversed_nodes()
+	if var_72_5 then
+		var_72_0 = #var_72_5:get_traversed_nodes() + 1
 
-		times_map_visited = #traversed_nodes + 1
+		local var_72_6 = var_72_5:get_visited_nodes()
 
-		local visited_nodes = deus_run_controller:get_visited_nodes()
+		for iter_72_0, iter_72_1 in ipairs(var_72_6) do
+			local var_72_7 = var_72_5:get_node(iter_72_1)
 
-		for _, node_key in ipairs(visited_nodes) do
-			local node = deus_run_controller:get_node(node_key)
-
-			if node.node_type == "shop" then
-				times_shrine_visited = times_shrine_visited + 1
+			if var_72_7.node_type == "shop" then
+				var_72_2 = var_72_2 + 1
 			end
 
-			for _, next_node_key in ipairs(node.next) do
-				local next_node = deus_run_controller:get_node(next_node_key)
-
-				if next_node.node_type == "shop" then
-					times_shrine_was_in_range = times_shrine_was_in_range + 1
+			for iter_72_2, iter_72_3 in ipairs(var_72_7.next) do
+				if var_72_5:get_node(iter_72_3).node_type == "shop" then
+					var_72_1 = var_72_1 + 1
 
 					break
 				end
 			end
 		end
 
-		local level_name = deus_run_controller:get_current_node().level
-		local level_settings = LevelSettings[level_name]
+		local var_72_8 = var_72_5:get_current_node().level
 
-		level_theme = level_settings.theme
+		var_72_3 = LevelSettings[var_72_8].theme
 
-		local journey_name = deus_run_controller:get_journey_name()
-		local backend_deus = Managers.backend:get_interface("deus")
+		local var_72_9 = var_72_5:get_journey_name()
 
-		map_has_belakor = backend_deus:deus_journey_with_belakor(journey_name)
+		var_72_4 = Managers.backend:get_interface("deus"):deus_journey_with_belakor(var_72_9)
 	end
 
 	return {
-		times_map_visited = times_map_visited,
-		times_shrine_was_in_range = times_shrine_was_in_range,
-		current_theme = level_theme,
-		times_shrine_visited = times_shrine_visited,
-		deus_current_curse = self:get_current_node_curse(),
-		is_final_round = self:is_final_round(),
-		map_has_belakor = map_has_belakor,
+		times_map_visited = var_72_0,
+		times_shrine_was_in_range = var_72_1,
+		current_theme = var_72_3,
+		times_shrine_visited = var_72_2,
+		deus_current_curse = arg_72_0:get_current_node_curse(),
+		is_final_round = arg_72_0:is_final_round(),
+		map_has_belakor = var_72_4
 	}
 end
 
-DeusMechanism.is_packages_loaded = function (self)
-	if not self._deus_run_controller then
+function DeusMechanism.is_packages_loaded(arg_73_0)
+	if not arg_73_0._deus_run_controller then
 		return true
 	end
 
-	return self._deus_run_controller:is_weekly_event_packages_loaded()
+	return arg_73_0._deus_run_controller:is_weekly_event_packages_loaded()
 end
 
-DeusMechanism._update_current_state = function (self, skip_sync)
-	local new_state
+function DeusMechanism._update_current_state(arg_74_0, arg_74_1)
+	local var_74_0
 
-	if not self._deus_run_controller or self._deus_run_controller:get_run_ended() then
-		new_state = HUB_STATE
-	elseif self._deus_run_controller:has_completed_current_node() then
-		new_state = MAP_STATE
+	if not arg_74_0._deus_run_controller or arg_74_0._deus_run_controller:get_run_ended() then
+		var_74_0 = var_0_7
+	elseif arg_74_0._deus_run_controller:has_completed_current_node() then
+		var_74_0 = var_0_10
+	elseif arg_74_0._deus_run_controller:get_current_node().level_type == "SHOP" then
+		var_74_0 = var_0_10
 	else
-		local current_node = self._deus_run_controller:get_current_node()
-
-		if current_node.level_type == "SHOP" then
-			new_state = MAP_STATE
-		else
-			new_state = INGAME_STATE
-		end
+		var_74_0 = var_0_12
 	end
 
-	Managers.mechanism:choose_next_state(new_state)
-	Managers.mechanism:progress_state(skip_sync)
+	Managers.mechanism:choose_next_state(var_74_0)
+	Managers.mechanism:progress_state(arg_74_1)
 end
 
-DeusMechanism.get_player_level_fallback = function (self, player)
-	if self._deus_run_controller and player then
-		local peer_id = player.peer_id
+function DeusMechanism.get_player_level_fallback(arg_75_0, arg_75_1)
+	if arg_75_0._deus_run_controller and arg_75_1 then
+		local var_75_0 = arg_75_1.peer_id
 
-		return self._deus_run_controller:get_player_level(peer_id)
+		return arg_75_0._deus_run_controller:get_player_level(var_75_0)
 	end
 end
 
-DeusMechanism.get_starting_level = function ()
-	return HUB_LEVEL_NAME
+function DeusMechanism.get_starting_level()
+	return var_0_5
 end
 
-DeusMechanism.reserved_party_id_by_peer = function (self, peer_id)
+function DeusMechanism.reserved_party_id_by_peer(arg_77_0, arg_77_1)
 	return 1
 end
 
-DeusMechanism.try_reserve_profile_for_peer_by_mechanism = function (self, profile_synchronizer, peer_id, profile_index, career_index, allow_switching)
-	local party_id = self:reserved_party_id_by_peer(peer_id)
+function DeusMechanism.try_reserve_profile_for_peer_by_mechanism(arg_78_0, arg_78_1, arg_78_2, arg_78_3, arg_78_4, arg_78_5)
+	local var_78_0 = arg_78_0:reserved_party_id_by_peer(arg_78_2)
 
-	return profile_synchronizer:try_reserve_profile_for_peer(party_id, peer_id, profile_index, career_index)
+	return arg_78_1:try_reserve_profile_for_peer(var_78_0, arg_78_2, arg_78_3, arg_78_4)
 end
 
-DeusMechanism.entered_mechanism_due_to_switch = function (self)
+function DeusMechanism.entered_mechanism_due_to_switch(arg_79_0)
 	Managers.chat:set_chat_enabled(true)
 end

@@ -1,21 +1,21 @@
-﻿-- chunkname: @scripts/managers/debug/debug_event_manager_rpc.lua
+-- chunkname: @scripts/managers/debug/debug_event_manager_rpc.lua
 
 DebugEventManagerRPC = class(DebugEventManagerRPC)
 
-DebugEventManagerRPC.init = function (self, network_event_delegate)
-	self._event_delegate = network_event_delegate
+function DebugEventManagerRPC.init(arg_1_0, arg_1_1)
+	arg_1_0._event_delegate = arg_1_1
 
-	self._event_delegate:register(self, "rpc_event_manager_event")
+	arg_1_0._event_delegate:register(arg_1_0, "rpc_event_manager_event")
 end
 
-DebugEventManagerRPC.rpc_event_manager_event = function (self, channel_id, ...)
-	local event_manager = Managers.state.event
+function DebugEventManagerRPC.rpc_event_manager_event(arg_2_0, arg_2_1, ...)
+	local var_2_0 = Managers.state.event
 
-	if event_manager then
-		event_manager:trigger(...)
+	if var_2_0 then
+		var_2_0:trigger(...)
 	end
 end
 
-DebugEventManagerRPC.destroy = function (self)
-	self._event_delegate:unregister(self)
+function DebugEventManagerRPC.destroy(arg_3_0)
+	arg_3_0._event_delegate:unregister(arg_3_0)
 end

@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/managers/splitscreen/splitscreen_tester.lua
+-- chunkname: @scripts/managers/splitscreen/splitscreen_tester.lua
 
 SPLITSCREEN_ENABLED = false
 
@@ -13,10 +13,10 @@ if IS_WINDOWS then
 				{
 					"keyboard",
 					"j",
-					"pressed",
-				},
-			},
-		},
+					"pressed"
+				}
+			}
+		}
 	}
 elseif IS_XB1 then
 	SplitScreenTesterKeymaps = {
@@ -26,15 +26,15 @@ elseif IS_XB1 then
 				{
 					"gamepad",
 					"left_thumb",
-					"held",
+					"held"
 				},
 				{
 					"gamepad",
 					"right_thumb",
-					"pressed",
-				},
-			},
-		},
+					"pressed"
+				}
+			}
+		}
 	}
 elseif IS_PS4 then
 	SplitScreenTesterKeymaps = {
@@ -44,15 +44,15 @@ elseif IS_PS4 then
 				{
 					"gamepad",
 					"l3",
-					"held",
+					"held"
 				},
 				{
 					"gamepad",
 					"r3",
-					"pressed",
-				},
-			},
-		},
+					"pressed"
+				}
+			}
+		}
 	}
 end
 
@@ -67,210 +67,212 @@ SPLITSCREEN_OTHER_HEIGHT = 0.5
 SPLITSCREEN_RES_X = 1920 * SPLITSCREEN_WIDTH
 SPLITSCREEN_RES_Y = 1080 * SPLITSCREEN_HEIGHT
 
-SplitscreenTester.init = function (self)
-	self:_setup_names()
-	self:_setup_background()
-	self:_setup_input()
+function SplitscreenTester.init(arg_1_0)
+	arg_1_0:_setup_names()
+	arg_1_0:_setup_background()
+	arg_1_0:_setup_input()
 
-	self._splitscreen_active = false
+	arg_1_0._splitscreen_active = false
 end
 
-SplitscreenTester._setup_names = function (self)
-	self._world_name = "splitscreen_background"
-	self._viewport_name = "splitscreen_viewport"
+function SplitscreenTester._setup_names(arg_2_0)
+	arg_2_0._world_name = "splitscreen_background"
+	arg_2_0._viewport_name = "splitscreen_viewport"
 end
 
-SplitscreenTester._setup_background = function (self)
-	self._world = Managers.world:create_world(self._world_name, GameSettingsDevelopment.default_environment, nil, 0, Application.DISABLE_PHYSICS, Application.DISABLE_APEX_CLOTH)
+function SplitscreenTester._setup_background(arg_3_0)
+	arg_3_0._world = Managers.world:create_world(arg_3_0._world_name, GameSettingsDevelopment.default_environment, nil, 0, Application.DISABLE_PHYSICS, Application.DISABLE_APEX_CLOTH)
 
-	ScriptWorld.deactivate(self._world)
+	ScriptWorld.deactivate(arg_3_0._world)
 
-	self._viewport = ScriptWorld.create_viewport(self._world, self._viewport_name, "overlay", 1, nil, nil, nil, true)
+	arg_3_0._viewport = ScriptWorld.create_viewport(arg_3_0._world, arg_3_0._viewport_name, "overlay", 1, nil, nil, nil, true)
 
-	ScriptWorld.deactivate_viewport(self._world, self._viewport)
+	ScriptWorld.deactivate_viewport(arg_3_0._world, arg_3_0._viewport)
 
-	self._gui = World.create_screen_gui(self._world, "immediate")
+	arg_3_0._gui = World.create_screen_gui(arg_3_0._world, "immediate")
 end
 
-SplitscreenTester._setup_input = function (self)
-	self.input_manager = InputManager:new()
+function SplitscreenTester._setup_input(arg_4_0)
+	arg_4_0.input_manager = InputManager:new()
 
-	self.input_manager:initialize_device("keyboard", 1)
-	self.input_manager:initialize_device("mouse", 1)
-	self.input_manager:initialize_device("gamepad")
+	arg_4_0.input_manager:initialize_device("keyboard", 1)
+	arg_4_0.input_manager:initialize_device("mouse", 1)
+	arg_4_0.input_manager:initialize_device("gamepad")
 
 	if not IS_CONSOLE then
-		-- Nothing
+		-- block empty
 	end
 
-	self.input_manager:create_input_service("splitscreen_tester", "SplitScreenTesterKeymaps")
-	self.input_manager:map_device_to_service("splitscreen_tester", "keyboard")
-	self.input_manager:map_device_to_service("splitscreen_tester", "gamepad")
+	arg_4_0.input_manager:create_input_service("splitscreen_tester", "SplitScreenTesterKeymaps")
+	arg_4_0.input_manager:map_device_to_service("splitscreen_tester", "keyboard")
+	arg_4_0.input_manager:map_device_to_service("splitscreen_tester", "gamepad")
 end
 
-SplitscreenTester.add_splitscreen_viewport = function (self, world)
-	self._splitscreen_viewport = ScriptWorld.create_viewport(world, "splitscreen_viewport", "default", 2, Vector3.zero(), Quaternion.identity(), true)
-	self._splitscreen_world = world
+function SplitscreenTester.add_splitscreen_viewport(arg_5_0, arg_5_1)
+	arg_5_0._splitscreen_viewport = ScriptWorld.create_viewport(arg_5_1, "splitscreen_viewport", "default", 2, Vector3.zero(), Quaternion.identity(), true)
+	arg_5_0._splitscreen_world = arg_5_1
 
-	Viewport.set_data(self._splitscreen_viewport, "avoid_shading_callback", true)
-	Viewport.set_data(self._splitscreen_viewport, "no_scaling", true)
-	Viewport.set_rect(self._splitscreen_viewport, SPLITSCREEN_OTHER_OFFSET_X, SPLITSCREEN_OTHER_OFFSET_Y, SPLITSCREEN_OTHER_WIDTH, SPLITSCREEN_OTHER_HEIGHT)
+	Viewport.set_data(arg_5_0._splitscreen_viewport, "avoid_shading_callback", true)
+	Viewport.set_data(arg_5_0._splitscreen_viewport, "no_scaling", true)
+	Viewport.set_rect(arg_5_0._splitscreen_viewport, SPLITSCREEN_OTHER_OFFSET_X, SPLITSCREEN_OTHER_OFFSET_Y, SPLITSCREEN_OTHER_WIDTH, SPLITSCREEN_OTHER_HEIGHT)
 
-	if not self._splitscreen_active then
-		ScriptWorld.deactivate_viewport(world, self._splitscreen_viewport)
-		ScriptWorld.deactivate_viewport(self._world, self._viewport)
-	end
-end
-
-SplitscreenTester.remove_splitscreen_viewport = function (self)
-	self._splitscreen_viewport = nil
-	self._splitscreen_world = nil
-end
-
-SplitscreenTester.update = function (self, dt, t)
-	self:_update_input(dt, t)
-
-	if self._splitscreen_active then
-		self:_fill_background(dt, t)
-		self:_update_splitscreen_camera(dt, t)
-	elseif self._splitscreen_viewport and self._splitscreen_world then
-		ScriptWorld.deactivate_viewport(self._splitscreen_world, self._splitscreen_viewport)
-		ScriptWorld.deactivate_viewport(self._world, self._viewport)
+	if not arg_5_0._splitscreen_active then
+		ScriptWorld.deactivate_viewport(arg_5_1, arg_5_0._splitscreen_viewport)
+		ScriptWorld.deactivate_viewport(arg_5_0._world, arg_5_0._viewport)
 	end
 end
 
-SplitscreenTester._fill_background = function (self, dt, t)
-	local w, h = Application.screen_resolution()
-
-	Gui.rect(self._gui, Vector3(0, 0, 0), Vector2(w, h), Color(0, 0, 0))
+function SplitscreenTester.remove_splitscreen_viewport(arg_6_0)
+	arg_6_0._splitscreen_viewport = nil
+	arg_6_0._splitscreen_world = nil
 end
 
-SplitscreenTester._update_splitscreen_camera = function (self, dt, t)
-	if self._splitscreen_world and self._splitscreen_viewport then
-		local active = Viewport.get_data(self._splitscreen_viewport, "active")
-		local splitscreen_bot = Managers.player:bots()[1]
+function SplitscreenTester.update(arg_7_0, arg_7_1, arg_7_2)
+	arg_7_0:_update_input(arg_7_1, arg_7_2)
 
-		if splitscreen_bot then
-			local bot_unit = splitscreen_bot.player_unit
+	if arg_7_0._splitscreen_active then
+		arg_7_0:_fill_background(arg_7_1, arg_7_2)
+		arg_7_0:_update_splitscreen_camera(arg_7_1, arg_7_2)
+	elseif arg_7_0._splitscreen_viewport and arg_7_0._splitscreen_world then
+		ScriptWorld.deactivate_viewport(arg_7_0._splitscreen_world, arg_7_0._splitscreen_viewport)
+		ScriptWorld.deactivate_viewport(arg_7_0._world, arg_7_0._viewport)
+	end
+end
 
-			if Unit.alive(bot_unit) then
-				if not active then
-					ScriptWorld.activate_viewport(self._splitscreen_world, self._splitscreen_viewport)
-					ScriptWorld.activate_viewport(self._world, self._viewport)
+function SplitscreenTester._fill_background(arg_8_0, arg_8_1, arg_8_2)
+	local var_8_0, var_8_1 = Application.screen_resolution()
+
+	Gui.rect(arg_8_0._gui, Vector3(0, 0, 0), Vector2(var_8_0, var_8_1), Color(0, 0, 0))
+end
+
+function SplitscreenTester._update_splitscreen_camera(arg_9_0, arg_9_1, arg_9_2)
+	if arg_9_0._splitscreen_world and arg_9_0._splitscreen_viewport then
+		local var_9_0 = Viewport.get_data(arg_9_0._splitscreen_viewport, "active")
+		local var_9_1 = Managers.player:bots()[1]
+
+		if var_9_1 then
+			local var_9_2 = var_9_1.player_unit
+
+			if Unit.alive(var_9_2) then
+				if not var_9_0 then
+					ScriptWorld.activate_viewport(arg_9_0._splitscreen_world, arg_9_0._splitscreen_viewport)
+					ScriptWorld.activate_viewport(arg_9_0._world, arg_9_0._viewport)
 				end
 
-				local bot_unit = splitscreen_bot.player_unit
-				local node = Unit.node(bot_unit, "j_head")
-				local bot_fwd = Vector3.flat(Quaternion.forward(Unit.world_rotation(bot_unit, node)))
-				local camera_rot = Quaternion.look(bot_fwd, Vector3.up())
-				local camera_pos = Unit.world_position(bot_unit, node) + bot_fwd * 0.1
-				local camera = ScriptViewport.camera(self._splitscreen_viewport)
+				local var_9_3 = var_9_1.player_unit
+				local var_9_4 = Unit.node(var_9_3, "j_head")
+				local var_9_5 = Vector3.flat(Quaternion.forward(Unit.world_rotation(var_9_3, var_9_4)))
+				local var_9_6 = Quaternion.look(var_9_5, Vector3.up())
+				local var_9_7 = Unit.world_position(var_9_3, var_9_4) + var_9_5 * 0.1
+				local var_9_8 = ScriptViewport.camera(arg_9_0._splitscreen_viewport)
 
-				ScriptCamera.set_local_position(camera, camera_pos)
-				ScriptCamera.set_local_rotation(camera, camera_rot)
+				ScriptCamera.set_local_position(var_9_8, var_9_7)
+				ScriptCamera.set_local_rotation(var_9_8, var_9_6)
 
-				local camera_unit = Camera.get_data(camera, "unit")
+				local var_9_9 = Camera.get_data(var_9_8, "unit")
 
-				World.update_unit(self._splitscreen_world, camera_unit)
+				World.update_unit(arg_9_0._splitscreen_world, var_9_9)
 			end
-		elseif active then
-			ScriptWorld.deactivate_viewport(self._splitscreen_world, self._splitscreen_viewport)
+		elseif var_9_0 then
+			ScriptWorld.deactivate_viewport(arg_9_0._splitscreen_world, arg_9_0._splitscreen_viewport)
 		end
 	end
 end
 
-SplitscreenTester._update_input = function (self, dt, t)
-	self.input_manager:update(dt, t)
+function SplitscreenTester._update_input(arg_10_0, arg_10_1, arg_10_2)
+	arg_10_0.input_manager:update(arg_10_1, arg_10_2)
 
-	local input_service = self.input_manager:get_service("splitscreen_tester")
+	local var_10_0 = arg_10_0.input_manager:get_service("splitscreen_tester")
 
-	if input_service and input_service:get("toggle_splitscreen") then
-		self._splitscreen_active = not self._splitscreen_active
+	if var_10_0 and var_10_0:get("toggle_splitscreen") then
+		arg_10_0._splitscreen_active = not arg_10_0._splitscreen_active
 
-		self:_resize_viewports()
+		arg_10_0:_resize_viewports()
 	end
 end
 
-SplitscreenTester._resize_viewports = function (self)
-	local multiplier_x = self._splitscreen_active and SPLITSCREEN_WIDTH or 1 / SPLITSCREEN_WIDTH
-	local multiplier_y = self._splitscreen_active and SPLITSCREEN_HEIGHT or 1 / SPLITSCREEN_HEIGHT
-	local extra_offset_x = self._splitscreen_active and SPLITSCREEN_OFFSET_X or 0
-	local extra_offset_y = self._splitscreen_active and SPLITSCREEN_OFFSET_Y or 0
-	local worlds = Managers.world._worlds
+function SplitscreenTester._resize_viewports(arg_11_0)
+	local var_11_0 = arg_11_0._splitscreen_active and SPLITSCREEN_WIDTH or 1 / SPLITSCREEN_WIDTH
+	local var_11_1 = arg_11_0._splitscreen_active and SPLITSCREEN_HEIGHT or 1 / SPLITSCREEN_HEIGHT
+	local var_11_2 = arg_11_0._splitscreen_active and SPLITSCREEN_OFFSET_X or 0
 
-	for _, world in pairs(worlds) do
-		local viewports = World.get_data(world, "viewports")
+	if not arg_11_0._splitscreen_active or not SPLITSCREEN_OFFSET_Y then
+		local var_11_3 = 0
+	end
 
-		for _, viewport in pairs(viewports) do
-			local no_scaling = Viewport.get_data(viewport, "no_scaling")
+	local var_11_4 = Managers.world._worlds
 
-			if not no_scaling then
-				local rect = Viewport.get_data(viewport, "rect")
+	for iter_11_0, iter_11_1 in pairs(var_11_4) do
+		local var_11_5 = World.get_data(iter_11_1, "viewports")
 
-				Viewport.set_rect(viewport, rect[1] * multiplier_x, rect[2] * multiplier_y, rect[3] * multiplier_x, rect[4] * multiplier_y, extra_offset_x)
-				print("Resizing: " .. Viewport.get_data(viewport, "name"), rect[1] * multiplier_x, rect[2] * multiplier_y, rect[3] * multiplier_x, rect[4] * multiplier_y)
+		for iter_11_2, iter_11_3 in pairs(var_11_5) do
+			if not Viewport.get_data(iter_11_3, "no_scaling") then
+				local var_11_6 = Viewport.get_data(iter_11_3, "rect")
+
+				Viewport.set_rect(iter_11_3, var_11_6[1] * var_11_0, var_11_6[2] * var_11_1, var_11_6[3] * var_11_0, var_11_6[4] * var_11_1, var_11_2)
+				print("Resizing: " .. Viewport.get_data(iter_11_3, "name"), var_11_6[1] * var_11_0, var_11_6[2] * var_11_1, var_11_6[3] * var_11_0, var_11_6[4] * var_11_1)
 			end
 		end
 	end
 end
 
-SplitscreenTester.active = function (self)
-	return self._splitscreen_active
+function SplitscreenTester.active(arg_12_0)
+	return arg_12_0._splitscreen_active
 end
 
-SplitscreenTester.destroy = function (self)
-	Managers.world:destroy_world(self._world_name)
+function SplitscreenTester.destroy(arg_13_0)
+	Managers.world:destroy_world(arg_13_0._world_name)
 end
 
 viewport_set_rect = viewport_set_rect or Viewport.set_rect
 
-Viewport.set_rect = function (viewport, offset_x, offset_y, size_x, size_y, extra_offset_x, extra_offset_y)
-	local extra_offset_x = extra_offset_x or 0
-	local extra_offset_y = extra_offset_y or 0
+function Viewport.set_rect(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
+	local var_14_0 = arg_14_5 or 0
+	local var_14_1 = arg_14_6 or 0
 
-	Viewport.set_data(viewport, "rect", {
-		offset_x,
-		offset_y,
-		size_x,
-		size_y,
+	Viewport.set_data(arg_14_0, "rect", {
+		arg_14_1,
+		arg_14_2,
+		arg_14_3,
+		arg_14_4
 	})
-	viewport_set_rect(viewport, offset_x + extra_offset_x, offset_y + extra_offset_y, size_x, size_y)
+	viewport_set_rect(arg_14_0, arg_14_1 + var_14_0, arg_14_2 + var_14_1, arg_14_3, arg_14_4)
 end
 
 application_resolution = application_resolution or Application.resolution
 
-Application.resolution = function ()
-	local splitscreen = Managers.splitscreen and Managers.splitscreen:active() or false
-	local multiplier_x = splitscreen and SPLITSCREEN_WIDTH or 1
-	local multiplier_y = splitscreen and SPLITSCREEN_HEIGHT or 1
-	local w, h = application_resolution()
+function Application.resolution()
+	local var_15_0 = Managers.splitscreen and Managers.splitscreen:active() or false
+	local var_15_1 = var_15_0 and SPLITSCREEN_WIDTH or 1
+	local var_15_2 = var_15_0 and SPLITSCREEN_HEIGHT or 1
+	local var_15_3, var_15_4 = application_resolution()
 
-	return w * multiplier_x, h * multiplier_y
+	return var_15_3 * var_15_1, var_15_4 * var_15_2
 end
 
 gui_resolution = gui_resolution or Gui.resolution
 
-Gui.resolution = function ()
-	local splitscreen = Managers.splitscreen and Managers.splitscreen:active() or false
-	local multiplier_x = splitscreen and SPLITSCREEN_WIDTH or 1
-	local multiplier_y = splitscreen and SPLITSCREEN_HEIGHT or 1
-	local w, h = gui_resolution()
+function Gui.resolution()
+	local var_16_0 = Managers.splitscreen and Managers.splitscreen:active() or false
+	local var_16_1 = var_16_0 and SPLITSCREEN_WIDTH or 1
+	local var_16_2 = var_16_0 and SPLITSCREEN_HEIGHT or 1
+	local var_16_3, var_16_4 = gui_resolution()
 
-	return w * multiplier_x, h * multiplier_y
+	return var_16_3 * var_16_1, var_16_4 * var_16_2
 end
 
-Application.screen_resolution = function ()
+function Application.screen_resolution()
 	return application_resolution()
 end
 
 camera_world_to_screen = camera_world_to_screen or Camera.world_to_screen
 
-Camera.world_to_screen = function (...)
-	local pos = camera_world_to_screen(...)
+function Camera.world_to_screen(...)
+	local var_18_0 = camera_world_to_screen(...)
 
 	if Managers.splitscreen and Managers.splitscreen:active() then
-		pos[1] = pos[1] * SPLITSCREEN_WIDTH
+		var_18_0[1] = var_18_0[1] * SPLITSCREEN_WIDTH
 	end
 
-	return pos
+	return var_18_0
 end

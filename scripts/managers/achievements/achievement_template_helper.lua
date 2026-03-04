@@ -1,30 +1,29 @@
-﻿-- chunkname: @scripts/managers/achievements/achievement_template_helper.lua
+-- chunkname: @scripts/managers/achievements/achievement_template_helper.lua
 
 AchievementTemplateHelper = AchievementTemplateHelper or {}
 AchievementTemplateHelper.rarity_index = {
 	common = 2,
-	exotic = 4,
 	plentiful = 1,
+	exotic = 4,
 	rare = 3,
-	unique = 5,
+	unique = 5
 }
 AchievementTemplateHelper.PLACEHOLDER_ICON = "icons_placeholder"
 
-AchievementTemplateHelper.check_level = function (statistics_db, stats_id, level_id)
-	local level_stat = statistics_db:get_persistent_stat(stats_id, "completed_levels", level_id)
-	local not_completed = not level_stat or level_stat == 0
+function AchievementTemplateHelper.check_level(arg_1_0, arg_1_1, arg_1_2)
+	local var_1_0 = arg_1_0:get_persistent_stat(arg_1_1, "completed_levels", arg_1_2)
 
-	return not not_completed
+	return not (not var_1_0 or var_1_0 == 0)
 end
 
-AchievementTemplateHelper.check_level_list = function (statistics_db, stats_id, levels_to_complete)
-	assert(type(levels_to_complete) == "table" and #levels_to_complete > 0, "levels_to_complete needs to be a list of levels with at least 1 element")
+function AchievementTemplateHelper.check_level_list(arg_2_0, arg_2_1, arg_2_2)
+	assert(type(arg_2_2) == "table" and #arg_2_2 > 0, "levels_to_complete needs to be a list of levels with at least 1 element")
 
-	for i = 1, #levels_to_complete do
-		local level_id = levels_to_complete[i]
-		local level_stat = statistics_db:get_persistent_stat(stats_id, "completed_levels", level_id)
+	for iter_2_0 = 1, #arg_2_2 do
+		local var_2_0 = arg_2_2[iter_2_0]
+		local var_2_1 = arg_2_0:get_persistent_stat(arg_2_1, "completed_levels", var_2_0)
 
-		if not level_stat or level_stat == 0 then
+		if not var_2_1 or var_2_1 == 0 then
 			return false
 		end
 	end
@@ -32,99 +31,94 @@ AchievementTemplateHelper.check_level_list = function (statistics_db, stats_id, 
 	return true
 end
 
-AchievementTemplateHelper.rpc_increment_stat = function (unit, stat_name)
-	local player = Managers.player:unit_owner(unit)
+function AchievementTemplateHelper.rpc_increment_stat(arg_3_0, arg_3_1)
+	local var_3_0 = Managers.player:unit_owner(arg_3_0)
 
-	if player and not player.bot_player then
-		local peer_id = player:network_id()
-		local network_manager = Managers.state.network
-		local stat_id = NetworkLookup.statistics[stat_name]
+	if var_3_0 and not var_3_0.bot_player then
+		local var_3_1 = var_3_0:network_id()
+		local var_3_2 = Managers.state.network
+		local var_3_3 = NetworkLookup.statistics[arg_3_1]
 
-		network_manager.network_transmit:send_rpc("rpc_increment_stat", peer_id, stat_id)
+		var_3_2.network_transmit:send_rpc("rpc_increment_stat", var_3_1, var_3_3)
 	end
 end
 
-AchievementTemplateHelper.rpc_increment_stat_unique_id = function (unique_id, stat_name)
-	local player = Managers.player:player_from_unique_id(unique_id)
+function AchievementTemplateHelper.rpc_increment_stat_unique_id(arg_4_0, arg_4_1)
+	local var_4_0 = Managers.player:player_from_unique_id(arg_4_0)
 
-	if player and not player.bot_player then
-		local peer_id = player:network_id()
-		local network_manager = Managers.state.network
-		local stat_id = NetworkLookup.statistics[stat_name]
+	if var_4_0 and not var_4_0.bot_player then
+		local var_4_1 = var_4_0:network_id()
+		local var_4_2 = Managers.state.network
+		local var_4_3 = NetworkLookup.statistics[arg_4_1]
 
-		network_manager.network_transmit:send_rpc("rpc_increment_stat", peer_id, stat_id)
+		var_4_2.network_transmit:send_rpc("rpc_increment_stat", var_4_1, var_4_3)
 	end
 end
 
-AchievementTemplateHelper.rpc_modify_stat = function (unit, stat_name, amount)
-	local player = Managers.player:unit_owner(unit)
+function AchievementTemplateHelper.rpc_modify_stat(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = Managers.player:unit_owner(arg_5_0)
 
-	if player and not player.bot_player then
-		local peer_id = player:network_id()
-		local network_manager = Managers.state.network
-		local stat_id = NetworkLookup.statistics[stat_name]
+	if var_5_0 and not var_5_0.bot_player then
+		local var_5_1 = var_5_0:network_id()
+		local var_5_2 = Managers.state.network
+		local var_5_3 = NetworkLookup.statistics[arg_5_1]
 
-		network_manager.network_transmit:send_rpc("rpc_modify_stat", peer_id, stat_id, amount)
+		var_5_2.network_transmit:send_rpc("rpc_modify_stat", var_5_1, var_5_3, arg_5_2)
 	end
 end
 
-AchievementTemplateHelper.check_level_difficulty = function (statistics_db, stats_id, level_id, difficulty_rank, career)
-	local difficulty_manager = Managers.state.difficulty
+function AchievementTemplateHelper.check_level_difficulty(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	local var_6_0 = Managers.state.difficulty
 
-	if not difficulty_manager then
+	if not var_6_0 then
 		return false
 	end
 
-	local difficulties = difficulty_manager:get_default_difficulties()
-	local difficulty_index
+	local var_6_1 = var_6_0:get_default_difficulties()
+	local var_6_2
 
-	if not career then
-		difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(statistics_db, stats_id, level_id)
+	if not arg_6_4 then
+		var_6_2 = LevelUnlockUtils.completed_level_difficulty_index(arg_6_0, arg_6_1, arg_6_2)
 	else
-		for i = #difficulties, 1, -1 do
-			local wins = statistics_db:get_persistent_stat(stats_id, "completed_career_levels", career, level_id, difficulties[i])
-
-			if wins > 0 then
-				difficulty_index = i
+		for iter_6_0 = #var_6_1, 1, -1 do
+			if arg_6_0:get_persistent_stat(arg_6_1, "completed_career_levels", arg_6_4, arg_6_2, var_6_1[iter_6_0]) > 0 then
+				var_6_2 = iter_6_0
 
 				break
 			end
 		end
 	end
 
-	local difficulty_key = difficulties[difficulty_index]
+	local var_6_3 = var_6_1[var_6_2]
 
-	if not difficulty_key then
+	if not var_6_3 then
 		return false
 	end
 
-	if not DefaultDifficultyLookup[difficulty_key] then
+	if not DefaultDifficultyLookup[var_6_3] then
 		return false
 	end
 
-	local completed_rank = DifficultySettings[difficulty_key].rank
-
-	return difficulty_rank <= completed_rank
+	return arg_6_3 <= DifficultySettings[var_6_3].rank
 end
 
-AchievementTemplateHelper.check_level_table_difficulty = function (statistics_db, stats_id, level_to_complete, difficulty_rank, career)
-	assert(type(level_to_complete) == "table" and level_to_complete.level_id, "level_to_complete needs to be a table with a level_id field")
+function AchievementTemplateHelper.check_level_table_difficulty(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	assert(type(arg_7_2) == "table" and arg_7_2.level_id, "level_to_complete needs to be a table with a level_id field")
 
-	local level_id = level_to_complete.level_id
+	local var_7_0 = arg_7_2.level_id
 
-	return AchievementTemplateHelper.check_level_difficulty(statistics_db, stats_id, level_id, difficulty_rank, career)
+	return AchievementTemplateHelper.check_level_difficulty(arg_7_0, arg_7_1, var_7_0, arg_7_3, arg_7_4)
 end
 
-AchievementTemplateHelper.check_level_list_difficulty = function (statistics_db, stats_id, levels_to_complete, difficulty_rank, career)
-	assert(type(levels_to_complete) == "table" and #levels_to_complete > 0, "levels_to_complete needs to be a list of levels with at least 1 element")
+function AchievementTemplateHelper.check_level_list_difficulty(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	assert(type(arg_8_2) == "table" and #arg_8_2 > 0, "levels_to_complete needs to be a list of levels with at least 1 element")
 
-	local check_level_difficulty = AchievementTemplateHelper.check_level_difficulty
+	local var_8_0 = AchievementTemplateHelper.check_level_difficulty
 
-	for i = 1, #levels_to_complete do
-		local level_id = levels_to_complete[i]
-		local completed = check_level_difficulty(statistics_db, stats_id, level_id, difficulty_rank, career)
+	for iter_8_0 = 1, #arg_8_2 do
+		local var_8_1 = arg_8_2[iter_8_0]
 
-		if not completed then
+		if not var_8_0(arg_8_0, arg_8_1, var_8_1, arg_8_3, arg_8_4) then
 			return false
 		end
 	end
@@ -132,534 +126,510 @@ AchievementTemplateHelper.check_level_list_difficulty = function (statistics_db,
 	return true
 end
 
-AchievementTemplateHelper.hero_level = function (hero_name)
-	local experience = ExperienceSettings.get_experience(hero_name)
+function AchievementTemplateHelper.hero_level(arg_9_0)
+	local var_9_0 = ExperienceSettings.get_experience(arg_9_0)
 
-	return ExperienceSettings.get_level(experience)
+	return ExperienceSettings.get_level(var_9_0)
 end
 
-local equipment_slots = {
+local var_0_0 = {
 	"melee",
 	"ranged",
 	"necklace",
 	"ring",
-	"trinket",
+	"trinket"
 }
 
-AchievementTemplateHelper.equipped_items_of_rarity = function (statistics_db, stats_id, required_rarity)
-	local required_rarity_index = AchievementTemplateHelper.rarity_index[required_rarity]
+function AchievementTemplateHelper.equipped_items_of_rarity(arg_10_0, arg_10_1, arg_10_2)
+	local var_10_0 = AchievementTemplateHelper.rarity_index[arg_10_2]
 
-	assert(required_rarity_index, "Invalid rarity %s", required_rarity)
+	assert(var_10_0, "Invalid rarity %s", arg_10_2)
 
-	local count = 0
+	local var_10_1 = 0
 
-	for _, slot in ipairs(equipment_slots) do
-		local slot_rarity = statistics_db:get_persistent_stat(stats_id, "highest_equipped_rarity", slot)
-
-		if required_rarity_index <= slot_rarity then
-			count = count + 1
+	for iter_10_0, iter_10_1 in ipairs(var_0_0) do
+		if var_10_0 <= arg_10_0:get_persistent_stat(arg_10_1, "highest_equipped_rarity", iter_10_1) then
+			var_10_1 = var_10_1 + 1
 		end
 	end
 
-	return count
+	return var_10_1
 end
 
-AchievementTemplateHelper.add_stat_count_challenge = function (achievements, id, stat_name, count, career, icon, dlc, id_xb1, id_ps4)
-	achievements[id] = {
+function AchievementTemplateHelper.add_stat_count_challenge(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8)
+	arg_11_0[arg_11_1] = {
 		display_completion_ui = true,
-		name = "achv_" .. id .. "_name",
-		desc = function ()
-			local description = "achv_" .. id .. "_desc"
+		name = "achv_" .. arg_11_1 .. "_name",
+		desc = function()
+			local var_12_0 = "achv_" .. arg_11_1 .. "_desc"
 
-			return string.format(Localize(description), count)
+			return string.format(Localize(var_12_0), arg_11_3)
 		end,
-		icon = icon or "achievement_trophy_" .. id,
-		required_dlc = dlc,
-		ID_XB1 = id_xb1,
-		ID_PS4 = id_ps4,
-		completed = function (statistics_db, stats_id)
-			if career then
-				return statistics_db:get_persistent_stat(stats_id, stat_name, career) >= count
+		icon = arg_11_5 or "achievement_trophy_" .. arg_11_1,
+		required_dlc = arg_11_6,
+		ID_XB1 = arg_11_7,
+		ID_PS4 = arg_11_8,
+		completed = function(arg_13_0, arg_13_1)
+			if arg_11_4 then
+				return arg_13_0:get_persistent_stat(arg_13_1, arg_11_2, arg_11_4) >= arg_11_3
 			else
-				return statistics_db:get_persistent_stat(stats_id, stat_name) >= count
+				return arg_13_0:get_persistent_stat(arg_13_1, arg_11_2) >= arg_11_3
 			end
 		end,
-		progress = function (statistics_db, stats_id)
-			if career then
-				local completed = statistics_db:get_persistent_stat(stats_id, stat_name, career)
+		progress = function(arg_14_0, arg_14_1)
+			if arg_11_4 then
+				local var_14_0 = arg_14_0:get_persistent_stat(arg_14_1, arg_11_2, arg_11_4)
 
 				return {
-					completed,
-					count,
+					var_14_0,
+					arg_11_3
 				}
 			else
-				local completed = statistics_db:get_persistent_stat(stats_id, stat_name)
+				local var_14_1 = arg_14_0:get_persistent_stat(arg_14_1, arg_11_2)
 
 				return {
-					completed,
-					count,
+					var_14_1,
+					arg_11_3
 				}
 			end
-		end,
+		end
 	}
 end
 
-AchievementTemplateHelper.add_health_challenge = function (achievements, id, career, threshold, icon, dlc, id_xb1, id_ps4)
-	achievements[id] = {
+function AchievementTemplateHelper.add_health_challenge(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7)
+	arg_15_0[arg_15_1] = {
 		display_completion_ui = true,
-		name = "achv_" .. id .. "_name",
-		desc = "achv_" .. id .. "_desc",
-		icon = icon or "achievement_trophy_" .. id,
-		required_dlc = dlc,
-		ID_XB1 = id_xb1,
-		ID_PS4 = id_ps4,
-		completed = function (statistics_db, stats_id)
-			local stat = statistics_db:get_persistent_stat(stats_id, "min_health_completed", career)
-			local completed = stat >= threshold
-
-			return completed
-		end,
+		name = "achv_" .. arg_15_1 .. "_name",
+		desc = "achv_" .. arg_15_1 .. "_desc",
+		icon = arg_15_4 or "achievement_trophy_" .. arg_15_1,
+		required_dlc = arg_15_5,
+		ID_XB1 = arg_15_6,
+		ID_PS4 = arg_15_7,
+		completed = function(arg_16_0, arg_16_1)
+			return arg_16_0:get_persistent_stat(arg_16_1, "min_health_completed", arg_15_2) >= arg_15_3
+		end
 	}
 end
 
-AchievementTemplateHelper.add_weapon_kills_per_breeds_challenge = function (achievements, id, weapons, breeds_to_kill, count, icon, dlc, show_complete, id_xb1, id_ps4)
-	assert(type(breeds_to_kill) == "table", "breeds_to_kill needs to be a list of breeds")
+function AchievementTemplateHelper.add_weapon_kills_per_breeds_challenge(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9)
+	assert(type(arg_17_3) == "table", "breeds_to_kill needs to be a list of breeds")
 
-	achievements[id] = {
-		name = "achv_" .. id .. "_name",
-		desc = function ()
-			local description = "achv_" .. id .. "_desc"
+	arg_17_0[arg_17_1] = {
+		name = "achv_" .. arg_17_1 .. "_name",
+		desc = function()
+			local var_18_0 = "achv_" .. arg_17_1 .. "_desc"
 
-			return string.format(Localize(description), count)
+			return string.format(Localize(var_18_0), arg_17_4)
 		end,
-		icon = icon or "achievement_trophy_" .. id,
-		required_dlc = dlc,
-		ID_XB1 = id_xb1,
-		ID_PS4 = id_ps4,
-		display_completion_ui = show_complete,
-		completed = function (statistics_db, stats_id)
-			local stat_name = "weapon_kills_per_breed"
-			local max_count = 0
+		icon = arg_17_5 or "achievement_trophy_" .. arg_17_1,
+		required_dlc = arg_17_6,
+		ID_XB1 = arg_17_8,
+		ID_PS4 = arg_17_9,
+		display_completion_ui = arg_17_7,
+		completed = function(arg_19_0, arg_19_1)
+			local var_19_0 = "weapon_kills_per_breed"
+			local var_19_1 = 0
 
-			for i = 1, #breeds_to_kill do
-				for j = 1, #weapons do
-					local test = statistics_db:get_persistent_stat(stats_id, stat_name, weapons[j], breeds_to_kill[i])
-
-					max_count = max_count + test
+			for iter_19_0 = 1, #arg_17_3 do
+				for iter_19_1 = 1, #arg_17_2 do
+					var_19_1 = var_19_1 + arg_19_0:get_persistent_stat(arg_19_1, var_19_0, arg_17_2[iter_19_1], arg_17_3[iter_19_0])
 				end
 			end
 
-			return max_count >= count
+			return var_19_1 >= arg_17_4
 		end,
-		progress = function (statistics_db, stats_id)
-			local stat_name = "weapon_kills_per_breed"
-			local max_count = 0
+		progress = function(arg_20_0, arg_20_1)
+			local var_20_0 = "weapon_kills_per_breed"
+			local var_20_1 = 0
 
-			for i = 1, #breeds_to_kill do
-				for j = 1, #weapons do
-					max_count = max_count + statistics_db:get_persistent_stat(stats_id, stat_name, weapons[j], breeds_to_kill[i])
+			for iter_20_0 = 1, #arg_17_3 do
+				for iter_20_1 = 1, #arg_17_2 do
+					var_20_1 = var_20_1 + arg_20_0:get_persistent_stat(arg_20_1, var_20_0, arg_17_2[iter_20_1], arg_17_3[iter_20_0])
 				end
 			end
 
-			if max_count > count then
-				max_count = count
+			if var_20_1 > arg_17_4 then
+				var_20_1 = arg_17_4
 			end
 
 			return {
-				max_count,
-				count,
+				var_20_1,
+				arg_17_4
 			}
-		end,
+		end
 	}
 end
 
-AchievementTemplateHelper.add_career_mission_count_challenge = function (achievements, id, stat_name, career_name, difficulty_ranks, count, min_health, icon, dlc, id_xb1, id_ps4)
-	achievements[id .. "_" .. career_name] = {
+function AchievementTemplateHelper.add_career_mission_count_challenge(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8, arg_21_9, arg_21_10)
+	arg_21_0[arg_21_1 .. "_" .. arg_21_3] = {
 		display_completion_ui = true,
-		name = "achv_" .. id .. "_" .. career_name .. "_name",
-		desc = "achv_" .. id .. "_" .. career_name .. "_desc",
-		icon = icon or "achievement_trophy_" .. id .. "_" .. career_name,
-		required_dlc = dlc,
-		ID_XB1 = id_xb1,
-		ID_PS4 = id_ps4,
-		completed = function (statistics_db, stats_id)
-			local max_count = 0
+		name = "achv_" .. arg_21_1 .. "_" .. arg_21_3 .. "_name",
+		desc = "achv_" .. arg_21_1 .. "_" .. arg_21_3 .. "_desc",
+		icon = arg_21_7 or "achievement_trophy_" .. arg_21_1 .. "_" .. arg_21_3,
+		required_dlc = arg_21_8,
+		ID_XB1 = arg_21_9,
+		ID_PS4 = arg_21_10,
+		completed = function(arg_22_0, arg_22_1)
+			local var_22_0 = 0
 
-			for i = 1, #difficulty_ranks do
-				for j = 1, #UnlockableLevels do
-					max_count = max_count + statistics_db:get_persistent_stat(stats_id, stat_name, career_name, UnlockableLevels[j], difficulty_ranks[i])
+			for iter_22_0 = 1, #arg_21_4 do
+				for iter_22_1 = 1, #UnlockableLevels do
+					var_22_0 = var_22_0 + arg_22_0:get_persistent_stat(arg_22_1, arg_21_2, arg_21_3, UnlockableLevels[iter_22_1], arg_21_4[iter_22_0])
 				end
 			end
 
-			return max_count >= count
+			return var_22_0 >= arg_21_5
 		end,
-		progress = function (statistics_db, stats_id)
-			local max_count = 0
+		progress = function(arg_23_0, arg_23_1)
+			local var_23_0 = 0
 
-			for i = 1, #difficulty_ranks do
-				for j = 1, #UnlockableLevels do
-					max_count = max_count + statistics_db:get_persistent_stat(stats_id, stat_name, career_name, UnlockableLevels[j], difficulty_ranks[i])
+			for iter_23_0 = 1, #arg_21_4 do
+				for iter_23_1 = 1, #UnlockableLevels do
+					var_23_0 = var_23_0 + arg_23_0:get_persistent_stat(arg_23_1, arg_21_2, arg_21_3, UnlockableLevels[iter_23_1], arg_21_4[iter_23_0])
 				end
 			end
 
-			if max_count > count then
-				max_count = count
+			if var_23_0 > arg_21_5 then
+				var_23_0 = arg_21_5
 			end
 
 			return {
-				max_count,
-				count,
+				var_23_0,
+				arg_21_5
 			}
-		end,
+		end
 	}
 end
 
-AchievementTemplateHelper.add_multi_stat_count_challenge = function (achievements, id, stat_names, count, icon, dlc, id_xb1, id_ps4)
-	achievements[id] = {
+function AchievementTemplateHelper.add_multi_stat_count_challenge(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6, arg_24_7)
+	arg_24_0[arg_24_1] = {
 		display_completion_ui = true,
-		name = "achv_" .. id .. "_name",
-		desc = "achv_" .. id .. "_desc",
-		icon = icon or "achievement_trophy_" .. id,
-		required_dlc = dlc,
-		ID_XB1 = id_xb1,
-		ID_PS4 = id_ps4,
-		completed = function (statistics_db, stats_id)
-			local max_count = 0
-			local num_stats = #stat_names
+		name = "achv_" .. arg_24_1 .. "_name",
+		desc = "achv_" .. arg_24_1 .. "_desc",
+		icon = arg_24_4 or "achievement_trophy_" .. arg_24_1,
+		required_dlc = arg_24_5,
+		ID_XB1 = arg_24_6,
+		ID_PS4 = arg_24_7,
+		completed = function(arg_25_0, arg_25_1)
+			local var_25_0 = 0
+			local var_25_1 = #arg_24_2
 
-			for i = 1, num_stats do
-				max_count = max_count + statistics_db:get_persistent_stat(stats_id, stat_names[i])
+			for iter_25_0 = 1, var_25_1 do
+				var_25_0 = var_25_0 + arg_25_0:get_persistent_stat(arg_25_1, arg_24_2[iter_25_0])
 			end
 
-			return max_count >= count
+			return var_25_0 >= arg_24_3
 		end,
-		progress = function (statistics_db, stats_id)
-			local max_count = 0
-			local num_stats = #stat_names
+		progress = function(arg_26_0, arg_26_1)
+			local var_26_0 = 0
+			local var_26_1 = #arg_24_2
 
-			for i = 1, num_stats do
-				max_count = max_count + statistics_db:get_persistent_stat(stats_id, stat_names[i])
+			for iter_26_0 = 1, var_26_1 do
+				var_26_0 = var_26_0 + arg_26_0:get_persistent_stat(arg_26_1, arg_24_2[iter_26_0])
 			end
 
-			if max_count > count then
-				max_count = count
+			if var_26_0 > arg_24_3 then
+				var_26_0 = arg_24_3
 			end
 
 			return {
-				max_count,
-				count,
+				var_26_0,
+				arg_24_3
+			}
+		end
+	}
+end
+
+function AchievementTemplateHelper.add_weapon_kill_challenge(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6, arg_27_7)
+	local var_27_0 = (arg_27_5 or "") .. "_kills_" .. arg_27_2
+
+	AchievementTemplateHelper.add_stat_count_challenge(arg_27_0, arg_27_1, var_27_0, arg_27_3, nil, arg_27_4, arg_27_5, arg_27_6, arg_27_7)
+end
+
+function AchievementTemplateHelper.add_weapon_levels_challenge(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6, arg_28_7, arg_28_8)
+	local var_28_0 = {}
+	local var_28_1 = arg_28_3 and #arg_28_3 or 0
+
+	for iter_28_0 = 1, var_28_1 do
+		local var_28_2 = arg_28_3[iter_28_0]
+
+		var_28_0[iter_28_0] = (arg_28_6 or "") .. "_" .. var_28_2 .. "_" .. arg_28_2
+	end
+
+	local var_28_3 = DifficultySettings[arg_28_4]
+	local var_28_4 = DifficultySettings[arg_28_4].rank
+
+	arg_28_0[arg_28_1] = {
+		name = "achv_" .. arg_28_1 .. "_name",
+		desc = "achv_" .. arg_28_1 .. "_desc",
+		icon = arg_28_5 or "achievement_trophy_" .. arg_28_1,
+		required_dlc = arg_28_6,
+		required_dlc_extra = var_28_3.dlc_requirement,
+		ID_XB1 = arg_28_7,
+		ID_PS4 = arg_28_8,
+		completed = function(arg_29_0, arg_29_1)
+			for iter_29_0 = 1, var_28_1 do
+				if arg_29_0:get_persistent_stat(arg_29_1, var_28_0[iter_29_0]) < var_28_4 then
+					return false
+				end
+			end
+
+			return true
+		end,
+		progress = function(arg_30_0, arg_30_1)
+			local var_30_0 = 0
+
+			for iter_30_0 = 1, var_28_1 do
+				local var_30_1 = var_28_0[iter_30_0]
+
+				if arg_30_0:get_persistent_stat(arg_30_1, var_30_1) >= var_28_4 then
+					var_30_0 = var_30_0 + 1
+				end
+			end
+
+			return {
+				var_30_0,
+				var_28_1
 			}
 		end,
+		requirements = function(arg_31_0, arg_31_1)
+			local var_31_0 = {}
+
+			for iter_31_0 = 1, var_28_1 do
+				local var_31_1 = arg_28_3[iter_31_0]
+				local var_31_2 = LevelSettings[var_31_1].display_name
+				local var_31_3 = {
+					name = var_31_2,
+					completed = arg_31_0:get_persistent_stat(arg_31_1, var_28_0[iter_31_0]) >= var_28_4
+				}
+
+				table.insert(var_31_0, var_31_3)
+			end
+
+			return var_31_0
+		end
 	}
 end
 
-AchievementTemplateHelper.add_weapon_kill_challenge = function (achievements, id, weapon, count, icon, dlc, id_xb1, id_ps4)
-	local stat_name = (dlc or "") .. "_kills_" .. weapon
-
-	AchievementTemplateHelper.add_stat_count_challenge(achievements, id, stat_name, count, nil, icon, dlc, id_xb1, id_ps4)
-end
-
-AchievementTemplateHelper.add_weapon_levels_challenge = function (achievements, id, weapon, levels, difficuty, icon, dlc, id_xb1, id_ps4)
-	local stat_names = {}
-	local num_levels = levels and #levels or 0
-
-	for i = 1, num_levels do
-		local level_name = levels[i]
-		local stat_name = (dlc or "") .. "_" .. level_name .. "_" .. weapon
-
-		stat_names[i] = stat_name
-	end
-
-	local difficulty_setting = DifficultySettings[difficuty]
-	local rank = DifficultySettings[difficuty].rank
-	local template = {
-		name = "achv_" .. id .. "_name",
-		desc = "achv_" .. id .. "_desc",
-		icon = icon or "achievement_trophy_" .. id,
-		required_dlc = dlc,
-		required_dlc_extra = difficulty_setting.dlc_requirement,
-		ID_XB1 = id_xb1,
-		ID_PS4 = id_ps4,
-	}
-
-	template.completed = function (statistics_db, stats_id)
-		for i = 1, num_levels do
-			if statistics_db:get_persistent_stat(stats_id, stat_names[i]) < rank then
-				return false
-			end
-		end
-
-		return true
-	end
-
-	template.progress = function (statistics_db, stats_id)
-		local completed = 0
-
-		for i = 1, num_levels do
-			local name = stat_names[i]
-			local stat = statistics_db:get_persistent_stat(stats_id, name)
-
-			if stat >= rank then
-				completed = completed + 1
-			end
-		end
-
-		return {
-			completed,
-			num_levels,
-		}
-	end
-
-	template.requirements = function (statistics_db, stats_id)
-		local out_table = {}
-
-		for i = 1, num_levels do
-			local level_name = levels[i]
-			local level_display_name = LevelSettings[level_name].display_name
-			local entry = {
-				name = level_display_name,
-				completed = statistics_db:get_persistent_stat(stats_id, stat_names[i]) >= rank,
-			}
-
-			table.insert(out_table, entry)
-		end
-
-		return out_table
-	end
-
-	achievements[id] = template
-end
-
-AchievementTemplateHelper.add_event_challenge = function (achievements, id, icon, description_args, dlc, id_xb1, id_ps4)
-	local template = {
+function AchievementTemplateHelper.add_event_challenge(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6)
+	local var_32_0 = {
 		display_completion_ui = true,
-		name = "achv_" .. id .. "_name",
-		icon = icon or "achievement_trophy_" .. id,
-		required_dlc = dlc,
-		ID_XB1 = id_xb1,
-		ID_PS4 = id_ps4,
-		completed = function (statistics_db, stats_id)
-			return statistics_db:get_persistent_stat(stats_id, id) > 0
-		end,
+		name = "achv_" .. arg_32_1 .. "_name",
+		icon = arg_32_2 or "achievement_trophy_" .. arg_32_1,
+		required_dlc = arg_32_4,
+		ID_XB1 = arg_32_5,
+		ID_PS4 = arg_32_6,
+		completed = function(arg_33_0, arg_33_1)
+			return arg_33_0:get_persistent_stat(arg_33_1, arg_32_1) > 0
+		end
 	}
-	local desc_id = "achv_" .. id .. "_desc"
+	local var_32_1 = "achv_" .. arg_32_1 .. "_desc"
 
-	if description_args then
-		template.desc = function ()
-			return string.format(Localize(desc_id), unpack(description_args))
+	if arg_32_3 then
+		function var_32_0.desc()
+			return string.format(Localize(var_32_1), unpack(arg_32_3))
 		end
 	else
-		template.desc = desc_id
+		var_32_0.desc = var_32_1
 	end
 
-	achievements[id] = template
+	arg_32_0[arg_32_1] = var_32_0
 end
 
-AchievementTemplateHelper.add_levels_complete_challenge = function (achievements, id, levels, difficulty_rank, icon, dlc, id_xb1, id_ps4)
-	local num_levels = levels and #levels or 0
-	local difficulty_key = DifficultyRankLookup[difficulty_rank]
-	local difficulty_settings = DifficultySettings[difficulty_key]
-	local template = {
-		name = "achv_" .. id .. "_name",
-		desc = "achv_" .. id .. "_desc",
-		icon = icon or "achievement_trophy_" .. id,
-		required_dlc = dlc,
-		required_dlc_extra = difficulty_settings.dlc_requirement,
-		ID_XB1 = id_xb1,
-		ID_PS4 = id_ps4,
-		completed = function (statistics_db, stats_id)
-			local count = 0
+function AchievementTemplateHelper.add_levels_complete_challenge(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6, arg_35_7)
+	local var_35_0 = arg_35_2 and #arg_35_2 or 0
+	local var_35_1 = DifficultyRankLookup[arg_35_3]
+	local var_35_2 = DifficultySettings[var_35_1]
+	local var_35_3 = {
+		name = "achv_" .. arg_35_1 .. "_name",
+		desc = "achv_" .. arg_35_1 .. "_desc",
+		icon = arg_35_4 or "achievement_trophy_" .. arg_35_1,
+		required_dlc = arg_35_5,
+		required_dlc_extra = var_35_2.dlc_requirement,
+		ID_XB1 = arg_35_6,
+		ID_PS4 = arg_35_7,
+		completed = function(arg_36_0, arg_36_1)
+			local var_36_0 = 0
 
-			for i = 1, num_levels do
-				if AchievementTemplateHelper.check_level_table_difficulty(statistics_db, stats_id, levels[i], difficulty_rank) then
-					count = count + 1
+			for iter_36_0 = 1, var_35_0 do
+				if AchievementTemplateHelper.check_level_table_difficulty(arg_36_0, arg_36_1, arg_35_2[iter_36_0], arg_35_3) then
+					var_36_0 = var_36_0 + 1
 				end
 			end
 
-			return count >= num_levels
-		end,
+			return var_36_0 >= var_35_0
+		end
 	}
 
-	if num_levels > 1 then
-		template.progress = function (statistics_db, stats_id)
-			local count = 0
+	if var_35_0 > 1 then
+		function var_35_3.progress(arg_37_0, arg_37_1)
+			local var_37_0 = 0
 
-			for i = 1, num_levels do
-				if AchievementTemplateHelper.check_level_table_difficulty(statistics_db, stats_id, levels[i], difficulty_rank) then
-					count = count + 1
+			for iter_37_0 = 1, var_35_0 do
+				if AchievementTemplateHelper.check_level_table_difficulty(arg_37_0, arg_37_1, arg_35_2[iter_37_0], arg_35_3) then
+					var_37_0 = var_37_0 + 1
 				end
 			end
 
 			return {
-				count,
-				num_levels,
+				var_37_0,
+				var_35_0
 			}
 		end
 
-		template.requirements = function (statistics_db, stats_id)
-			local out_table = {}
+		function var_35_3.requirements(arg_38_0, arg_38_1)
+			local var_38_0 = {}
 
-			for i = 1, num_levels do
-				local entry = {
-					name = levels[i].display_name,
-					completed = AchievementTemplateHelper.check_level_table_difficulty(statistics_db, stats_id, levels[i], difficulty_rank),
+			for iter_38_0 = 1, var_35_0 do
+				local var_38_1 = {
+					name = arg_35_2[iter_38_0].display_name,
+					completed = AchievementTemplateHelper.check_level_table_difficulty(arg_38_0, arg_38_1, arg_35_2[iter_38_0], arg_35_3)
 				}
 
-				table.insert(out_table, entry)
+				table.insert(var_38_0, var_38_1)
 			end
 
-			return out_table
+			return var_38_0
 		end
 	end
 
-	achievements[id] = template
+	arg_35_0[arg_35_1] = var_35_3
 end
 
-AchievementTemplateHelper.add_levels_complete_per_hero_challenge = function (achievements, id, levels, difficulty_rank, career_name, streak, icon, dlc, id_xb1, id_ps4)
-	fassert(CareerSettings[career_name] ~= nil, "No career with such name (%s)", career_name)
+function AchievementTemplateHelper.add_levels_complete_per_hero_challenge(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6, arg_39_7, arg_39_8, arg_39_9)
+	fassert(CareerSettings[arg_39_4] ~= nil, "No career with such name (%s)", arg_39_4)
 
-	local num_levels = levels and #levels or 0
-	local difficulty_key = DifficultyRankLookup[difficulty_rank]
-	local difficulty_settings = DifficultySettings[difficulty_key]
-	local template = {
-		name = "achv_" .. id .. "_" .. career_name .. "_name",
-		desc = "achv_" .. id .. "_" .. career_name .. "_desc",
-		icon = icon or "achievement_trophy_" .. id .. "_" .. career_name,
-		required_dlc = dlc,
-		required_dlc_extra = difficulty_settings.dlc_requirement,
-		ID_XB1 = id_xb1,
-		ID_PS4 = id_ps4,
-		completed = function (statistics_db, stats_id)
-			return AchievementTemplateHelper.check_level_list_difficulty(statistics_db, stats_id, levels, difficulty_rank, career_name, streak)
-		end,
+	local var_39_0 = arg_39_2 and #arg_39_2 or 0
+	local var_39_1 = DifficultyRankLookup[arg_39_3]
+	local var_39_2 = DifficultySettings[var_39_1]
+	local var_39_3 = {
+		name = "achv_" .. arg_39_1 .. "_" .. arg_39_4 .. "_name",
+		desc = "achv_" .. arg_39_1 .. "_" .. arg_39_4 .. "_desc",
+		icon = arg_39_6 or "achievement_trophy_" .. arg_39_1 .. "_" .. arg_39_4,
+		required_dlc = arg_39_7,
+		required_dlc_extra = var_39_2.dlc_requirement,
+		ID_XB1 = arg_39_8,
+		ID_PS4 = arg_39_9,
+		completed = function(arg_40_0, arg_40_1)
+			return AchievementTemplateHelper.check_level_list_difficulty(arg_40_0, arg_40_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5)
+		end
 	}
 
-	if num_levels > 1 then
-		template.progress = function (statistics_db, stats_id)
-			local num_completed = 0
+	if var_39_0 > 1 then
+		function var_39_3.progress(arg_41_0, arg_41_1)
+			local var_41_0 = 0
 
-			for i = 1, num_levels do
-				if AchievementTemplateHelper.check_level_list_difficulty(statistics_db, stats_id, {
-					levels[i],
-				}, difficulty_rank, career_name, streak) then
-					num_completed = num_completed + 1
+			for iter_41_0 = 1, var_39_0 do
+				if AchievementTemplateHelper.check_level_list_difficulty(arg_41_0, arg_41_1, {
+					arg_39_2[iter_41_0]
+				}, arg_39_3, arg_39_4, arg_39_5) then
+					var_41_0 = var_41_0 + 1
 				end
 			end
 
 			return {
-				num_completed,
-				num_levels,
+				var_41_0,
+				var_39_0
 			}
 		end
 
-		template.requirements = function (statistics_db, stats_id)
-			local out_table = {}
+		function var_39_3.requirements(arg_42_0, arg_42_1)
+			local var_42_0 = {}
 
-			for i = 1, num_levels do
-				local entry = {
-					name = LevelSettings[levels[i]].display_name,
-					completed = AchievementTemplateHelper.check_level_list_difficulty(statistics_db, stats_id, {
-						levels[i],
-					}, difficulty_rank, career_name, streak),
+			for iter_42_0 = 1, var_39_0 do
+				local var_42_1 = {
+					name = LevelSettings[arg_39_2[iter_42_0]].display_name,
+					completed = AchievementTemplateHelper.check_level_list_difficulty(arg_42_0, arg_42_1, {
+						arg_39_2[iter_42_0]
+					}, arg_39_3, arg_39_4, arg_39_5)
 				}
 
-				table.insert(out_table, entry)
+				table.insert(var_42_0, var_42_1)
 			end
 
-			return out_table
+			return var_42_0
 		end
 	end
 
-	achievements[id .. "_" .. career_name] = template
+	arg_39_0[arg_39_1 .. "_" .. arg_39_4] = var_39_3
 end
 
-AchievementTemplateHelper.add_meta_challenge = function (achievements, id, achievement_ids, icon, dlc, id_xb1, id_ps4)
-	local template = {
+function AchievementTemplateHelper.add_meta_challenge(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5, arg_43_6)
+	arg_43_0[arg_43_1] = {
 		display_completion_ui = true,
-		name = "achv_" .. id .. "_name",
-		desc = "achv_" .. id .. "_desc",
-		icon = icon or "achievement_trophy_" .. id,
-		required_dlc = dlc,
-		ID_XB1 = id_xb1,
-		ID_PS4 = id_ps4,
+		name = "achv_" .. arg_43_1 .. "_name",
+		desc = "achv_" .. arg_43_1 .. "_desc",
+		icon = arg_43_3 or "achievement_trophy_" .. arg_43_1,
+		required_dlc = arg_43_4,
+		ID_XB1 = arg_43_5,
+		ID_PS4 = arg_43_6,
+		completed = function(arg_44_0, arg_44_1)
+			local var_44_0 = Managers.backend:get_interface("loot")
+
+			for iter_44_0 = 1, #arg_43_2 do
+				local var_44_1 = arg_43_2[iter_44_0]
+
+				if not arg_43_0[var_44_1].completed(arg_44_0, arg_44_1) and not var_44_0:achievement_rewards_claimed(var_44_1) then
+					return false
+				end
+			end
+
+			return true
+		end,
+		progress = function(arg_45_0, arg_45_1)
+			local var_45_0 = Managers.backend:get_interface("loot")
+			local var_45_1 = 0
+			local var_45_2 = #arg_43_2
+
+			for iter_45_0 = 1, var_45_2 do
+				local var_45_3 = arg_43_2[iter_45_0]
+
+				if arg_43_0[var_45_3].completed(arg_45_0, arg_45_1) or var_45_0:achievement_rewards_claimed(var_45_3) then
+					var_45_1 = var_45_1 + 1
+				end
+			end
+
+			return {
+				var_45_1,
+				var_45_2
+			}
+		end,
+		requirements = function(arg_46_0, arg_46_1)
+			local var_46_0 = Managers.backend:get_interface("loot")
+			local var_46_1 = {}
+
+			for iter_46_0 = 1, #arg_43_2 do
+				local var_46_2 = arg_43_2[iter_46_0]
+				local var_46_3 = arg_43_0[var_46_2].name
+				local var_46_4 = arg_43_0[var_46_2].completed(arg_46_0, arg_46_1) or var_46_0:achievement_rewards_claimed(var_46_2)
+
+				table.insert(var_46_1, {
+					name = var_46_3,
+					completed = var_46_4
+				})
+			end
+
+			return var_46_1
+		end
 	}
-
-	template.completed = function (statistics_db, stats_id)
-		local backend_interface_loot = Managers.backend:get_interface("loot")
-
-		for i = 1, #achievement_ids do
-			local achievement_id = achievement_ids[i]
-			local completed = achievements[achievement_id].completed(statistics_db, stats_id)
-
-			if not completed and not backend_interface_loot:achievement_rewards_claimed(achievement_id) then
-				return false
-			end
-		end
-
-		return true
-	end
-
-	template.progress = function (statistics_db, stats_id)
-		local backend_interface_loot = Managers.backend:get_interface("loot")
-		local count = 0
-		local num_achievements = #achievement_ids
-
-		for i = 1, num_achievements do
-			local achievement_id = achievement_ids[i]
-			local completed = achievements[achievement_id].completed(statistics_db, stats_id)
-
-			completed = completed or backend_interface_loot:achievement_rewards_claimed(achievement_id)
-
-			if completed then
-				count = count + 1
-			end
-		end
-
-		return {
-			count,
-			num_achievements,
-		}
-	end
-
-	template.requirements = function (statistics_db, stats_id)
-		local backend_interface_loot = Managers.backend:get_interface("loot")
-		local reqs = {}
-
-		for i = 1, #achievement_ids do
-			local achievement_id = achievement_ids[i]
-			local achv_name = achievements[achievement_id].name
-			local completed = achievements[achievement_id].completed(statistics_db, stats_id)
-
-			completed = completed or backend_interface_loot:achievement_rewards_claimed(achievement_id)
-
-			table.insert(reqs, {
-				name = achv_name,
-				completed = completed,
-			})
-		end
-
-		return reqs
-	end
-
-	achievements[id] = template
 end
 
-AchievementTemplateHelper.add_console_achievements = function (xb1_achievements, ps4_achievements)
-	local achievements = AchievementTemplates.achievements
+function AchievementTemplateHelper.add_console_achievements(arg_47_0, arg_47_1)
+	local var_47_0 = AchievementTemplates.achievements
 
-	for name, id in pairs(xb1_achievements) do
-		if achievements[name] then
-			achievements[name].ID_XB1 = id
+	for iter_47_0, iter_47_1 in pairs(arg_47_0) do
+		if var_47_0[iter_47_0] then
+			var_47_0[iter_47_0].ID_XB1 = iter_47_1
 		else
-			Application.error(string.format("Missing xbox achievement %q", name))
+			Application.error(string.format("Missing xbox achievement %q", iter_47_0))
 		end
 	end
 
-	for name, id in pairs(ps4_achievements) do
-		if achievements[name] then
-			achievements[name].ID_PS4 = id
+	for iter_47_2, iter_47_3 in pairs(arg_47_1) do
+		if var_47_0[iter_47_2] then
+			var_47_0[iter_47_2].ID_PS4 = iter_47_3
 		else
-			Application.error(string.format("Missing xbox achievement %q", name))
+			Application.error(string.format("Missing xbox achievement %q", iter_47_2))
 		end
 	end
 end

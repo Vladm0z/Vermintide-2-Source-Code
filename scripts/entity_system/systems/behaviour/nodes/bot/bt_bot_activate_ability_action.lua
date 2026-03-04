@@ -1,175 +1,156 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bot/bt_bot_activate_ability_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bot/bt_bot_activate_ability_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTBotActivateAbilityAction = class(BTBotActivateAbilityAction, BTNode)
 
-BTBotActivateAbilityAction.init = function (self, ...)
-	BTBotActivateAbilityAction.super.init(self, ...)
+function BTBotActivateAbilityAction.init(arg_1_0, ...)
+	BTBotActivateAbilityAction.super.init(arg_1_0, ...)
 end
 
 BTBotActivateAbilityAction.name = "BTBotActivateAbilityAction"
 
-BTBotActivateAbilityAction.enter = function (self, unit, blackboard, t)
-	local action_data = self._tree_node.action_data
-	local career_extension = blackboard.career_extension
-	local career_name = career_extension:career_name()
-	local ability_action_data = action_data[career_name]
-	local inventory_extension = blackboard.inventory_extension
-	local activate_ability_data = blackboard.activate_ability_data
+function BTBotActivateAbilityAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_0._tree_node.action_data[arg_2_2.career_extension:career_name()]
+	local var_2_1 = arg_2_2.inventory_extension
+	local var_2_2 = arg_2_2.activate_ability_data
 
-	activate_ability_data.is_using_ability = true
-	activate_ability_data.do_start_input = true
-	activate_ability_data.started = false
-	activate_ability_data.enter_time = t
-	activate_ability_data.next_repath_t = t
-	activate_ability_data.activation = ability_action_data.activation
-	activate_ability_data.wait_action = ability_action_data.wait_action
-	activate_ability_data.end_condition = ability_action_data.end_condition
-	activate_ability_data.is_weapon_ability = inventory_extension:get_slot_data("slot_career_skill_weapon") ~= nil
+	var_2_2.is_using_ability = true
+	var_2_2.do_start_input = true
+	var_2_2.started = false
+	var_2_2.enter_time = arg_2_3
+	var_2_2.next_repath_t = arg_2_3
+	var_2_2.activation = var_2_0.activation
+	var_2_2.wait_action = var_2_0.wait_action
+	var_2_2.end_condition = var_2_0.end_condition
+	var_2_2.is_weapon_ability = var_2_1:get_slot_data("slot_career_skill_weapon") ~= nil
 
-	if activate_ability_data.activation.action == "aim_at_target" then
-		local aim_position = activate_ability_data.aim_position:unbox()
-		local input_extension = blackboard.input_extension
-		local soft_aim = not ability_action_data.fast_aim
+	if var_2_2.activation.action == "aim_at_target" then
+		local var_2_3 = var_2_2.aim_position:unbox()
+		local var_2_4 = arg_2_2.input_extension
+		local var_2_5 = not var_2_0.fast_aim
 
-		input_extension:set_aiming(true, soft_aim, false)
-		input_extension:set_aim_position(aim_position)
+		var_2_4:set_aiming(true, var_2_5, false)
+		var_2_4:set_aim_position(var_2_3)
 	end
 end
 
-BTBotActivateAbilityAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	local activate_ability_data = blackboard.activate_ability_data
+function BTBotActivateAbilityAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	local var_3_0 = arg_3_2.activate_ability_data
 
-	if activate_ability_data.activation.action == "aim_at_target" then
-		local input_extension = blackboard.input_extension
-
-		input_extension:set_aiming(false)
+	if var_3_0.activation.action == "aim_at_target" then
+		arg_3_2.input_extension:set_aiming(false)
 	end
 
-	activate_ability_data.is_using_ability = false
-	activate_ability_data.move_to_position_set = false
+	var_3_0.is_using_ability = false
+	var_3_0.move_to_position_set = false
 
-	if reason ~= "done" then
-		self:_cancel_ability(activate_ability_data, blackboard, t)
+	if arg_3_4 ~= "done" then
+		arg_3_0:_cancel_ability(var_3_0, arg_3_2, arg_3_3)
 	end
 end
 
-BTBotActivateAbilityAction._start_ability = function (self, activate_ability_data, blackboard, t)
-	local started = false
-	local do_start_input = activate_ability_data.do_start_input
-	local activation_data = activate_ability_data.activation
-	local activation_action = activation_data.action
+function BTBotActivateAbilityAction._start_ability(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	local var_4_0 = false
+	local var_4_1 = arg_4_1.do_start_input
+	local var_4_2 = arg_4_1.activation
+	local var_4_3 = var_4_2.action
 
-	if do_start_input then
-		local input_extension = blackboard.input_extension
+	if var_4_1 then
+		arg_4_2.input_extension:activate_ability()
 
-		input_extension:activate_ability()
+		if arg_4_3 >= arg_4_1.enter_time + (var_4_2.min_hold_time or 0) then
+			if var_4_3 == "aim_at_target" then
+				local var_4_4 = arg_4_2.first_person_extension
+				local var_4_5 = var_4_4:current_position()
+				local var_4_6 = var_4_4:current_rotation()
+				local var_4_7 = Quaternion.forward(var_4_6)
+				local var_4_8 = arg_4_1.aim_position:unbox()
+				local var_4_9 = Vector3.normalize(var_4_8 - var_4_5)
 
-		local enter_time = activate_ability_data.enter_time
-		local min_hold_time = activation_data.min_hold_time or 0
-
-		if t >= enter_time + min_hold_time then
-			if activation_action == "aim_at_target" then
-				local first_person_extension = blackboard.first_person_extension
-				local camera_position = first_person_extension:current_position()
-				local current_rotation = first_person_extension:current_rotation()
-				local current_forward = Quaternion.forward(current_rotation)
-				local aim_position = activate_ability_data.aim_position:unbox()
-				local aim_direction = Vector3.normalize(aim_position - camera_position)
-				local aim_dot = Vector3.dot(current_forward, aim_direction)
-
-				if aim_dot >= 0.995 then
-					do_start_input = activation_data.max_distance_sq and Vector3.distance_squared(camera_position, aim_position) > activation_data.max_distance_sq
+				if Vector3.dot(var_4_7, var_4_9) >= 0.995 then
+					var_4_1 = var_4_2.max_distance_sq and Vector3.distance_squared(var_4_5, var_4_8) > var_4_2.max_distance_sq
 				else
-					do_start_input = true
+					var_4_1 = true
 				end
 			else
-				do_start_input = false
+				var_4_1 = false
 			end
 		else
-			do_start_input = true
+			var_4_1 = true
 		end
-	elseif activate_ability_data.is_weapon_ability then
-		local inventory_extension = blackboard.inventory_extension
-		local wielded_slot_data = inventory_extension:get_wielded_slot_data()
-
-		if wielded_slot_data.id ~= "slot_career_skill_weapon" then
-			do_start_input, started = true, false
+	elseif arg_4_1.is_weapon_ability then
+		if arg_4_2.inventory_extension:get_wielded_slot_data().id ~= "slot_career_skill_weapon" then
+			var_4_1, var_4_0 = true, false
 		else
-			do_start_input, started = false, true
+			var_4_1, var_4_0 = false, true
 		end
 	else
-		do_start_input, started = false, true
+		var_4_1, var_4_0 = false, true
 	end
 
-	return do_start_input, started
+	return var_4_1, var_4_0
 end
 
-BTBotActivateAbilityAction._cancel_ability = function (self, activate_ability_data, blackboard, t)
-	local input_extension = blackboard.input_extension
-
-	input_extension:cancel_ability()
+function BTBotActivateAbilityAction._cancel_ability(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	arg_5_2.input_extension:cancel_ability()
 end
 
-BTBotActivateAbilityAction._perform_wait_action = function (self, activate_ability_data, unit, blackboard)
-	local wait_action = activate_ability_data.wait_action
+function BTBotActivateAbilityAction._perform_wait_action(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	local var_6_0 = arg_6_1.wait_action
 
-	if wait_action.input then
-		local input_extension = blackboard.input_extension
+	if var_6_0.input then
+		local var_6_1 = arg_6_3.input_extension
 
-		input_extension[wait_action.input](input_extension)
+		var_6_1[var_6_0.input](var_6_1)
 	end
 end
 
-BTBotActivateAbilityAction._evaluate_end_condition = function (self, activate_ability_data, unit, blackboard, t)
-	local end_condition = activate_ability_data.end_condition
+function BTBotActivateAbilityAction._evaluate_end_condition(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	local var_7_0 = arg_7_1.end_condition
 
-	if end_condition == nil then
+	if var_7_0 == nil then
 		return "done"
 	end
 
-	if end_condition.is_slot_not_wielded then
-		local wielded_slot = blackboard.inventory_extension:equipment().wielded_slot
+	if var_7_0.is_slot_not_wielded then
+		local var_7_1 = arg_7_3.inventory_extension:equipment().wielded_slot
 
-		if not table.contains(end_condition.is_slot_not_wielded, wielded_slot) then
+		if not table.contains(var_7_0.is_slot_not_wielded, var_7_1) then
 			return "done"
 		end
 	end
 
-	if end_condition.buffs then
-		local buff_extension = ScriptUnit.extension(unit, "buff_system")
-		local ability_buff
-		local buffs = end_condition.buffs
-		local num_buffs = #buffs
+	if var_7_0.buffs then
+		local var_7_2 = ScriptUnit.extension(arg_7_2, "buff_system")
+		local var_7_3
+		local var_7_4 = var_7_0.buffs
+		local var_7_5 = #var_7_4
 
-		for i = 1, num_buffs do
-			local buff_name = buffs[i]
+		for iter_7_0 = 1, var_7_5 do
+			local var_7_6 = var_7_4[iter_7_0]
 
-			ability_buff = buff_extension:get_non_stacking_buff(buff_name)
+			var_7_3 = var_7_2:get_non_stacking_buff(var_7_6)
 
-			if ability_buff then
+			if var_7_3 then
 				break
 			end
 		end
 
-		local offset_time = end_condition.offset_time
+		local var_7_7 = var_7_0.offset_time
 
-		if ability_buff == nil or offset_time and ability_buff and ability_buff.end_time and t > ability_buff.end_time - offset_time then
+		if var_7_3 == nil or var_7_7 and var_7_3 and var_7_3.end_time and arg_7_4 > var_7_3.end_time - var_7_7 then
 			return "done"
 		end
 	end
 
-	if end_condition.done_when_arriving_at_destination then
-		local navigation_extension = blackboard.navigation_extension
-		local locomotion_extension = blackboard.locomotion_extension
-		local current_velocitiy = locomotion_extension:current_velocity()
-		local speed_sq = Vector3.length_squared(current_velocitiy)
-		local min_speed_sq = 0.04000000000000001
-		local duration = t - activate_ability_data.enter_time
-		local min_duration = 0.5
+	if var_7_0.done_when_arriving_at_destination then
+		local var_7_8 = arg_7_3.navigation_extension
+		local var_7_9 = arg_7_3.locomotion_extension:current_velocity()
+		local var_7_10 = Vector3.length_squared(var_7_9)
+		local var_7_11 = 0.04000000000000001
 
-		if min_duration < duration and (navigation_extension:destination_reached() or speed_sq <= min_speed_sq) then
+		if arg_7_4 - arg_7_1.enter_time > 0.5 and (var_7_8:destination_reached() or var_7_10 <= var_7_11) then
 			return "done"
 		end
 	end
@@ -177,37 +158,37 @@ BTBotActivateAbilityAction._evaluate_end_condition = function (self, activate_ab
 	return "running"
 end
 
-BTBotActivateAbilityAction.run = function (self, unit, blackboard, t, dt)
-	local data = blackboard.activate_ability_data
-	local activation_data = data.activation
+function BTBotActivateAbilityAction.run(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	local var_8_0 = arg_8_2.activate_ability_data
+	local var_8_1 = var_8_0.activation
 
-	if activation_data.dynamic_target_unit then
-		local target_unit = activation_data.custom_target_unit and data.target_unit or blackboard.target_unit
+	if var_8_1.dynamic_target_unit then
+		local var_8_2 = var_8_1.custom_target_unit and var_8_0.target_unit or arg_8_2.target_unit
 
-		if ALIVE[target_unit] then
-			if target_unit == unit then
-				local input_extension = blackboard.input_extension
+		if ALIVE[var_8_2] then
+			if var_8_2 == arg_8_1 then
+				local var_8_3 = arg_8_2.input_extension
 
-				input_extension:set_aiming(true, true, false)
+				var_8_3:set_aiming(true, true, false)
 
-				local first_person_extension = blackboard.first_person_extension
-				local camera_position = first_person_extension:current_position()
-				local current_rotation = first_person_extension:current_rotation()
-				local current_forward = Quaternion.forward(current_rotation)
+				local var_8_4 = arg_8_2.first_person_extension
+				local var_8_5 = var_8_4:current_position()
+				local var_8_6 = var_8_4:current_rotation()
+				local var_8_7 = Quaternion.forward(var_8_6)
 
-				input_extension:set_aim_position(camera_position + current_forward)
+				var_8_3:set_aim_position(var_8_5 + var_8_7)
 			else
-				local aim_position = AiUtils.bot_melee_aim_pos(unit, target_unit, data.aim_position)
-				local input_extension = blackboard.input_extension
+				local var_8_8 = AiUtils.bot_melee_aim_pos(arg_8_1, var_8_2, var_8_0.aim_position)
+				local var_8_9 = arg_8_2.input_extension
 
-				input_extension:set_aiming(true, true, false)
-				input_extension:set_aim_position(aim_position)
+				var_8_9:set_aiming(true, true, false)
+				var_8_9:set_aim_position(var_8_8)
 
-				if activation_data.move_to_target_unit and t >= data.next_repath_t then
-					blackboard.navigation_destination_override:store(aim_position)
+				if var_8_1.move_to_target_unit and arg_8_3 >= var_8_0.next_repath_t then
+					arg_8_2.navigation_destination_override:store(var_8_8)
 
-					data.move_to_position_set = true
-					data.next_repath_t = t + 0.5
+					var_8_0.move_to_position_set = true
+					var_8_0.next_repath_t = arg_8_3 + 0.5
 				end
 			end
 		else
@@ -215,23 +196,23 @@ BTBotActivateAbilityAction.run = function (self, unit, blackboard, t, dt)
 		end
 	end
 
-	if blackboard.status_extension:is_disabled() then
+	if arg_8_2.status_extension:is_disabled() then
 		return "failed"
 	end
 
-	if not data.started then
-		data.do_start_input, data.started = self:_start_ability(data, blackboard, t)
+	if not var_8_0.started then
+		var_8_0.do_start_input, var_8_0.started = arg_8_0:_start_ability(var_8_0, arg_8_2, arg_8_3)
 
 		return "running"
 	end
 
-	if data.is_weapon_ability and data.started then
-		blackboard.input_extension:release_ability_hold()
+	if var_8_0.is_weapon_ability and var_8_0.started then
+		arg_8_2.input_extension:release_ability_hold()
 	end
 
-	if data.wait_action then
-		self:_perform_wait_action(data, unit, blackboard)
+	if var_8_0.wait_action then
+		arg_8_0:_perform_wait_action(var_8_0, arg_8_1, arg_8_2)
 	end
 
-	return self:_evaluate_end_condition(data, unit, blackboard, t)
+	return arg_8_0:_evaluate_end_condition(var_8_0, arg_8_1, arg_8_2, arg_8_3)
 end

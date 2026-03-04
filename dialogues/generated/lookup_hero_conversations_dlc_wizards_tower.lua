@@ -1,4 +1,4 @@
-﻿-- chunkname: @dialogues/generated/lookup_hero_conversations_dlc_wizards_tower.lua
+-- chunkname: @dialogues/generated/lookup_hero_conversations_dlc_wizards_tower.lua
 
 assert(DialogueLookup[DialogueLookup_n + 1] == nil)
 assert(DialogueLookup[DialogueLookup_n + 2] == nil)

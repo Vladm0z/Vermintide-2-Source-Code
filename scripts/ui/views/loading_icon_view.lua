@@ -1,127 +1,123 @@
-﻿-- chunkname: @scripts/ui/views/loading_icon_view.lua
+-- chunkname: @scripts/ui/views/loading_icon_view.lua
 
 require("foundation/scripts/util/local_require")
 require("scripts/ui/ui_renderer")
 require("scripts/ui/ui_elements")
 require("scripts/ui/ui_widgets")
 
-local definitions = require("scripts/ui/views/loading_icon_view_definitions")
-local FADE_TIME = 0.5
-local loading_icon_data = {
-	frames_per_second = 30,
+local var_0_0 = require("scripts/ui/views/loading_icon_view_definitions")
+local var_0_1 = 0.5
+local var_0_2 = {
+	frames_per_second = 30
 }
-local LOADING_ICON_BASE_NAME = "loadingicon_0000"
-local FRAME_COUNT = 86
+local var_0_3 = "loadingicon_0000"
+local var_0_4 = 86
 
-loading_icon_data.image_db = {}
+var_0_2.image_db = {}
 
-local image_db = loading_icon_data.image_db
+local var_0_5 = var_0_2.image_db
 
-for i = 0, FRAME_COUNT - 1 do
-	image_db[#image_db + 1] = LOADING_ICON_BASE_NAME .. string.format("%02d", i)
+for iter_0_0 = 0, var_0_4 - 1 do
+	var_0_5[#var_0_5 + 1] = var_0_3 .. string.format("%02d", iter_0_0)
 end
 
 LoadingIconView = class(LoadingIconView)
 
-LoadingIconView.init = function (self, world)
-	self._world = world
-	self._ui_renderer = UIRenderer.create(world, "material", "materials/ui/ui_1080p_loading")
-	self._render_settings = {
-		snap_pixel_positions = true,
+function LoadingIconView.init(arg_1_0, arg_1_1)
+	arg_1_0._world = arg_1_1
+	arg_1_0._ui_renderer = UIRenderer.create(arg_1_1, "material", "materials/ui/ui_1080p_loading")
+	arg_1_0._render_settings = {
+		snap_pixel_positions = true
 	}
 
-	self:_create_ui_elements()
+	arg_1_0:_create_ui_elements()
 
-	self._icon_fade_timer = 0
-	self._show_loading_icon = false
+	arg_1_0._icon_fade_timer = 0
+	arg_1_0._show_loading_icon = false
 end
 
-LoadingIconView._create_ui_elements = function (self)
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
-	self._loading_icon_widget = UIWidget.init(definitions.loading_icon)
+function LoadingIconView._create_ui_elements(arg_2_0)
+	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	arg_2_0._loading_icon_widget = UIWidget.init(var_0_0.loading_icon)
 end
 
-LoadingIconView.show_loading_icon = function (self)
-	self._show_loading_icon = true
+function LoadingIconView.show_loading_icon(arg_3_0)
+	arg_3_0._show_loading_icon = true
 end
 
-LoadingIconView.hide_loading_icon = function (self)
-	self._show_loading_icon = false
+function LoadingIconView.hide_loading_icon(arg_4_0)
+	arg_4_0._show_loading_icon = false
 end
 
-LoadingIconView.show_icon_background = function (self)
-	local widget = self._loading_icon_widget
-
-	widget.style.background_rect.color[1] = 255
+function LoadingIconView.show_icon_background(arg_5_0)
+	arg_5_0._loading_icon_widget.style.background_rect.color[1] = 255
 end
 
-LoadingIconView.hide_icon_background = function (self)
-	local widget = self._loading_icon_widget
-
-	widget.style.background_rect.color[1] = 0
+function LoadingIconView.hide_icon_background(arg_6_0)
+	arg_6_0._loading_icon_widget.style.background_rect.color[1] = 0
 end
 
-LoadingIconView.active = function (self)
-	return self._show_loading_icon or self._icon_fade_timer > 0
+function LoadingIconView.active(arg_7_0)
+	return arg_7_0._show_loading_icon or arg_7_0._icon_fade_timer > 0
 end
 
-local DO_RELOAD = true
+local var_0_6 = true
 
-LoadingIconView.update = function (self, dt)
-	if DO_RELOAD then
-		DO_RELOAD = false
+function LoadingIconView.update(arg_8_0, arg_8_1)
+	if var_0_6 then
+		var_0_6 = false
 
-		self:_create_ui_elements()
+		arg_8_0:_create_ui_elements()
 	end
 
-	if self:active() then
-		self:_update_loading_icon(dt)
-		self:_draw(dt)
+	if arg_8_0:active() then
+		arg_8_0:_update_loading_icon(arg_8_1)
+		arg_8_0:_draw(arg_8_1)
 	end
 end
 
-LoadingIconView._update_loading_icon = function (self, dt)
-	local widget = self._loading_icon_widget
-	local loading_icon_content = widget.content
-	local loading_icon_style = widget.style.loading_icon
-	local current_index = loading_icon_content.current_index
-	local icon_data = loading_icon_data
-	local speed = 1 / icon_data.frames_per_second
+function LoadingIconView._update_loading_icon(arg_9_0, arg_9_1)
+	local var_9_0 = arg_9_0._loading_icon_widget
+	local var_9_1 = var_9_0.content
+	local var_9_2 = var_9_0.style.loading_icon
+	local var_9_3 = var_9_1.current_index
+	local var_9_4 = var_0_2
+	local var_9_5 = 1 / var_9_4.frames_per_second
 
-	if not self.icon_timer then
-		self.icon_timer = speed
+	if not arg_9_0.icon_timer then
+		arg_9_0.icon_timer = var_9_5
 	else
-		local timer = self.icon_timer - math.min(dt, 0.05)
+		local var_9_6 = arg_9_0.icon_timer - math.min(arg_9_1, 0.05)
 
-		if timer <= 0 then
-			local new_index = 1 + current_index % #icon_data.image_db
+		if var_9_6 <= 0 then
+			local var_9_7 = 1 + var_9_3 % #var_9_4.image_db
 
-			loading_icon_content.current_index = new_index
-			loading_icon_content.loading_icon_id = icon_data.image_db[new_index]
-			self.icon_timer = timer + speed
+			var_9_1.current_index = var_9_7
+			var_9_1.loading_icon_id = var_9_4.image_db[var_9_7]
+			arg_9_0.icon_timer = var_9_6 + var_9_5
 		else
-			self.icon_timer = timer
+			arg_9_0.icon_timer = var_9_6
 		end
 	end
 
-	if self._show_loading_icon then
-		self._icon_fade_timer = math.clamp(self._icon_fade_timer + dt, 0, FADE_TIME)
+	if arg_9_0._show_loading_icon then
+		arg_9_0._icon_fade_timer = math.clamp(arg_9_0._icon_fade_timer + arg_9_1, 0, var_0_1)
 	else
-		self._icon_fade_timer = math.clamp(self._icon_fade_timer - dt, 0, FADE_TIME)
+		arg_9_0._icon_fade_timer = math.clamp(arg_9_0._icon_fade_timer - arg_9_1, 0, var_0_1)
 	end
 
-	loading_icon_style.color[1] = self._icon_fade_timer / FADE_TIME * 255
+	var_9_2.color[1] = arg_9_0._icon_fade_timer / var_0_1 * 255
 end
 
-LoadingIconView._draw = function (self, dt)
-	local ui_renderer = self._ui_renderer
-	local ui_scenegraph = self._ui_scenegraph
+function LoadingIconView._draw(arg_10_0, arg_10_1)
+	local var_10_0 = arg_10_0._ui_renderer
+	local var_10_1 = arg_10_0._ui_scenegraph
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, FAKE_INPUT_SERVICE, dt, nil, self._render_settings)
-	UIRenderer.draw_widget(ui_renderer, self._loading_icon_widget)
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.begin_pass(var_10_0, var_10_1, FAKE_INPUT_SERVICE, arg_10_1, nil, arg_10_0._render_settings)
+	UIRenderer.draw_widget(var_10_0, arg_10_0._loading_icon_widget)
+	UIRenderer.end_pass(var_10_0)
 end
 
-LoadingIconView.destroy = function (self)
-	UIRenderer.destroy(self._ui_renderer, self._world)
+function LoadingIconView.destroy(arg_11_0)
+	UIRenderer.destroy(arg_11_0._ui_renderer, arg_11_0._world)
 end

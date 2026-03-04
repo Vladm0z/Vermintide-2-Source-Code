@@ -1,6 +1,6 @@
-﻿-- chunkname: @scripts/utils/function_call_profiler.lua
+-- chunkname: @scripts/utils/function_call_profiler.lua
 
-local script_data = script_data
+local var_0_0 = script_data
 
 if _G.FunctionCallProfiler == nil then
 	FunctionCallProfiler = {}
@@ -8,73 +8,73 @@ if _G.FunctionCallProfiler == nil then
 	FunctionCallProfiler.num_frames = 10
 	FunctionCallProfiler.frames = {}
 
-	for i = 1, FunctionCallProfiler.num_frames do
-		FunctionCallProfiler.frames[i] = {}
+	for iter_0_0 = 1, FunctionCallProfiler.num_frames do
+		FunctionCallProfiler.frames[iter_0_0] = {}
 	end
 end
 
-FunctionCallProfiler.setup = function (world)
-	FunctionCallProfiler.world = world
-	FunctionCallProfiler.gui = World.create_screen_gui(world, "material", "materials/fonts/gw_fonts", "immediate")
+function FunctionCallProfiler.setup(arg_1_0)
+	FunctionCallProfiler.world = arg_1_0
+	FunctionCallProfiler.gui = World.create_screen_gui(arg_1_0, "material", "materials/fonts/gw_fonts", "immediate")
 end
 
-FunctionCallProfiler.destroy = function ()
+function FunctionCallProfiler.destroy()
 	World.destroy_gui(FunctionCallProfiler.gui)
 
 	FunctionCallProfiler.world = nil
 end
 
-local font_size = 16
-local font = "arial"
-local font_mtrl = "materials/fonts/" .. font
+local var_0_1 = 16
+local var_0_2 = "arial"
+local var_0_3 = "materials/fonts/" .. var_0_2
 
-FunctionCallProfiler.render = function ()
-	if not script_data.profile_function_calls then
+function FunctionCallProfiler.render()
+	if not var_0_0.profile_function_calls then
 		return
 	end
 
-	local num_frames = FunctionCallProfiler.num_frames
-	local key_color = Color(250, 255, 120, 0)
-	local res_x, res_y = Application.resolution()
-	local gui = FunctionCallProfiler.gui
-	local render_frame_index = FunctionCallProfiler.current_frame - 1
-	local frames = FunctionCallProfiler.frames
-	local start_x = res_x / 2
-	local start_y = res_y / 2
-	local pos = Vector3(start_x, start_y - font_size, 200)
+	local var_3_0 = FunctionCallProfiler.num_frames
+	local var_3_1 = Color(250, 255, 120, 0)
+	local var_3_2, var_3_3 = Application.resolution()
+	local var_3_4 = FunctionCallProfiler.gui
+	local var_3_5 = FunctionCallProfiler.current_frame - 1
+	local var_3_6 = FunctionCallProfiler.frames
+	local var_3_7 = var_3_2 / 2
+	local var_3_8 = var_3_3 / 2
+	local var_3_9 = Vector3(var_3_7, var_3_8 - var_0_1, 200)
 
-	for i = 1, num_frames do
-		render_frame_index = render_frame_index % num_frames + 1
+	for iter_3_0 = 1, var_3_0 do
+		var_3_5 = var_3_5 % var_3_0 + 1
 
-		local frame = frames[render_frame_index]
+		local var_3_10 = var_3_6[var_3_5]
 
-		for frame_name, count in pairs(frame) do
-			Gui.text(gui, frame_name .. "    " .. tostring(count), font_mtrl, font_size, font, pos, key_color)
+		for iter_3_1, iter_3_2 in pairs(var_3_10) do
+			Gui.text(var_3_4, iter_3_1 .. "    " .. tostring(iter_3_2), var_0_3, var_0_1, var_0_2, var_3_9, var_3_1)
 
-			pos.y = pos.y - font_size * 1.5
+			var_3_9.y = var_3_9.y - var_0_1 * 1.5
 		end
 
-		pos.y = pos.y - font_size * 1.5
+		var_3_9.y = var_3_9.y - var_0_1 * 1.5
 	end
 
-	Gui.rect(gui, Vector3(start_x, pos.y + font_size, 100), Vector2(250, start_y - pos.y), Color(240, 25, 50, 25))
+	Gui.rect(var_3_4, Vector3(var_3_7, var_3_9.y + var_0_1, 100), Vector2(250, var_3_8 - var_3_9.y), Color(240, 25, 50, 25))
 end
 
-FunctionCallProfiler.log_function_call = function (name)
-	if not script_data.profile_function_calls then
+function FunctionCallProfiler.log_function_call(arg_4_0)
+	if not var_0_0.profile_function_calls then
 		return
 	end
 
-	local current_frame = FunctionCallProfiler.current_frame
-	local frame = FunctionCallProfiler.frames[current_frame]
+	local var_4_0 = FunctionCallProfiler.current_frame
+	local var_4_1 = FunctionCallProfiler.frames[var_4_0]
 
-	if frame[name] == nil then
-		frame[name] = 0
+	if var_4_1[arg_4_0] == nil then
+		var_4_1[arg_4_0] = 0
 	end
 
-	frame[name] = frame[name] + 1
+	var_4_1[arg_4_0] = var_4_1[arg_4_0] + 1
 end
 
-function LogFunctionCall(name)
-	FunctionCallProfiler.log_function_call(name)
+function LogFunctionCall(arg_5_0)
+	FunctionCallProfiler.log_function_call(arg_5_0)
 end

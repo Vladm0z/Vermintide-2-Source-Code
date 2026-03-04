@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/network/lobby_lan.lua
+-- chunkname: @scripts/network/lobby_lan.lua
 
 require("scripts/network/lobby_aux")
 require("scripts/network/lobby_host")
@@ -14,150 +14,148 @@ if IS_XB1 then
 		[LobbyState.WORKING] = LobbyState.WORKING,
 		[LobbyState.SHUTDOWN] = LobbyState.SHUTDOWN,
 		[LobbyState.JOINED] = LobbyState.JOINED,
-		[LobbyState.FAILED] = LobbyState.FAILED,
+		[LobbyState.FAILED] = LobbyState.FAILED
 	}
 end
 
 LobbyInternal.TYPE = "lan"
 
-LobbyInternal.network_initialized = function ()
-	local client = LobbyInternal.client
-
-	return not not client
+function LobbyInternal.network_initialized()
+	return not not LobbyInternal.client
 end
 
-LobbyInternal.create_lobby = function (network_options)
-	return Network.create_lan_lobby(network_options.max_members)
+function LobbyInternal.create_lobby(arg_2_0)
+	return Network.create_lan_lobby(arg_2_0.max_members)
 end
 
-LobbyInternal.join_lobby = function (lobby_data)
-	return Network.join_lan_lobby(lobby_data.id)
+function LobbyInternal.join_lobby(arg_3_0)
+	return Network.join_lan_lobby(arg_3_0.id)
 end
 
 LobbyInternal.leave_lobby = Network.leave_lan_lobby
 
-LobbyInternal.open_channel = function (lobby, peer)
-	local channel_id = LanLobby.open_channel(lobby, peer)
+function LobbyInternal.open_channel(arg_4_0, arg_4_1)
+	local var_4_0 = LanLobby.open_channel(arg_4_0, arg_4_1)
 
-	print("LobbyInternal.open_channel lobby: %s, to peer: %s channel: %s", lobby, peer, channel_id)
+	print("LobbyInternal.open_channel lobby: %s, to peer: %s channel: %s", arg_4_0, arg_4_1, var_4_0)
 
-	return channel_id
+	return var_4_0
 end
 
-LobbyInternal.close_channel = function (lobby, channel)
-	printf("LobbyInternal.close_channel lobby: %s, channel: %s", lobby, channel)
-	LanLobby.close_channel(lobby, channel)
+function LobbyInternal.close_channel(arg_5_0, arg_5_1)
+	printf("LobbyInternal.close_channel lobby: %s, channel: %s", arg_5_0, arg_5_1)
+	LanLobby.close_channel(arg_5_0, arg_5_1)
 end
 
-LobbyInternal.is_orphaned = function (engine_lobby)
+function LobbyInternal.is_orphaned(arg_6_0)
 	return false
 end
 
-LobbyInternal.game_session_host = function (engine_lobby)
-	return LanLobby.game_session_host(engine_lobby)
+function LobbyInternal.game_session_host(arg_7_0)
+	return LanLobby.game_session_host(arg_7_0)
 end
 
-LobbyInternal.init_client = function (network_options)
-	local game_port = network_options.server_port
+function LobbyInternal.init_client(arg_8_0)
+	local var_8_0 = arg_8_0.server_port
 
 	if Development.parameter("client") then
-		game_port = 0
+		var_8_0 = 0
 	end
 
-	local peer_id = Development.parameter("lan_peer_id")
+	local var_8_1 = Development.parameter("lan_peer_id")
 
-	if peer_id then
-		print("Forcing LAN peer_id ", peer_id)
+	if var_8_1 then
+		print("Forcing LAN peer_id ", var_8_1)
 
-		LobbyInternal.client = Network.init_lan_client(network_options.config_file_name, game_port, peer_id)
+		LobbyInternal.client = Network.init_lan_client(arg_8_0.config_file_name, var_8_0, var_8_1)
 	else
-		LobbyInternal.client = Network.init_lan_client(network_options.config_file_name, game_port)
+		LobbyInternal.client = Network.init_lan_client(arg_8_0.config_file_name, var_8_0)
 	end
 
 	fassert(LobbyInternal.client, "Failed to initialize the network. The port is most likely in use, which means that another game instance is running at the same time.")
 	GameSettingsDevelopment.set_ignored_rpc_logs()
 end
 
-LobbyInternal.shutdown_client = function ()
+function LobbyInternal.shutdown_client()
 	Network.shutdown_lan_client(LobbyInternal.client)
 
 	LobbyInternal.client = nil
 end
 
-LobbyInternal.get_lobby_data_from_id = function (id)
+function LobbyInternal.get_lobby_data_from_id(arg_10_0)
 	return nil
 end
 
-LobbyInternal.get_lobby_data_from_id_by_key = function (id, key)
+function LobbyInternal.get_lobby_data_from_id_by_key(arg_11_0, arg_11_1)
 	return nil
 end
 
-LobbyInternal.ping = function (peer_id)
-	return Network.ping(peer_id)
+function LobbyInternal.ping(arg_12_0)
+	return Network.ping(arg_12_0)
 end
 
 LobbyInternal.get_lobby = LanLobbyBrowser.lobby
 
-local XBOX_MOCK_LOBBY_BROWSER = {
-	is_refreshing = function ()
+local var_0_0 = {
+	is_refreshing = function()
 		return false
 	end,
-	refresh = function ()
+	refresh = function()
 		return
 	end,
-	num_lobbies = function ()
+	num_lobbies = function()
 		return 0
-	end,
+	end
 }
 
-LobbyInternal.lobby_browser = function ()
-	return XBOX_MOCK_LOBBY_BROWSER
+function LobbyInternal.lobby_browser()
+	return var_0_0
 end
 
-LobbyInternal.clear_filter_requirements = function ()
+function LobbyInternal.clear_filter_requirements()
 	return
 end
 
-LobbyInternal.add_filter_requirements = function (requirements)
+function LobbyInternal.add_filter_requirements(arg_18_0)
 	return
 end
 
-LobbyInternal.user_name = function (user)
+function LobbyInternal.user_name(arg_19_0)
 	return Network.peer_id()
 end
 
-LobbyInternal.lobby_id = function (lobby)
+function LobbyInternal.lobby_id(arg_20_0)
 	return 10000
 end
 
-LobbyInternal.is_friend = function (peer_id)
-	local Steam = rawget(_G, "Steam") or stingray.Steam
+function LobbyInternal.is_friend(arg_21_0)
+	local var_21_0 = rawget(_G, "Steam") or stingray.Steam
 
-	if Steam and Steam.user_id() == peer_id then
+	if var_21_0 and var_21_0.user_id() == arg_21_0 then
 		return true
 	end
 
-	local Friends = rawget(_G, "Friends") or stingray.Friends
+	local var_21_1 = rawget(_G, "Friends") or stingray.Friends
 
-	if Friends and Friends.in_category(peer_id, Friends.FRIEND_FLAG) then
+	if var_21_1 and var_21_1.in_category(arg_21_0, var_21_1.FRIEND_FLAG) then
 		return true
 	end
 
 	return false
 end
 
-LobbyInternal.client_ready = function ()
+function LobbyInternal.client_ready()
 	return false
 end
 
-LobbyInternal.set_max_members = function (lobby, max_members)
-	LanLobby.set_max_members(lobby, max_members)
+function LobbyInternal.set_max_members(arg_23_0, arg_23_1)
+	LanLobby.set_max_members(arg_23_0, arg_23_1)
 end
 
-LobbyInternal.lobby_id_match = function (id1, id2)
-	if id1 == nil or id2 == nil then
+function LobbyInternal.lobby_id_match(arg_24_0, arg_24_1)
+	if arg_24_0 == nil or arg_24_1 == nil then
 		return true
 	end
 
-	return id1 == id2
+	return arg_24_0 == arg_24_1
 end

@@ -1,221 +1,216 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/enemy_character_state_climbing.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/enemy_character_state_climbing.lua
 
 EnemyCharacterStateClimbing = class(EnemyCharacterStateClimbing, EnemyCharacterStateAnimatedJump)
 
-local function randomize(event)
-	if type(event) == "table" then
-		return event[Math.random(1, #event)]
+local function var_0_0(arg_1_0)
+	if type(arg_1_0) == "table" then
+		return arg_1_0[Math.random(1, #arg_1_0)]
 	else
-		return event
+		return arg_1_0
 	end
 end
 
-EnemyCharacterStateClimbing.init = function (self, character_state_init_context)
-	EnemyCharacterStateClimbing.super.init(self, character_state_init_context, "climbing")
+function EnemyCharacterStateClimbing.init(arg_2_0, arg_2_1)
+	EnemyCharacterStateClimbing.super.init(arg_2_0, arg_2_1, "climbing")
 end
 
-EnemyCharacterStateClimbing.setup_transition = function (self, unit, smart_object_data, entrance_pos, exit_pos)
-	self.smart_object_data = smart_object_data
+function EnemyCharacterStateClimbing.setup_transition(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	arg_3_0.smart_object_data = arg_3_2
 
-	local unit_position = POSITION_LOOKUP[unit]
+	local var_3_0 = POSITION_LOOKUP[arg_3_1]
 
-	entrance_pos.z = unit_position.z
+	arg_3_3.z = var_3_0.z
 
-	local ledge_position = Vector3Aux.unbox(smart_object_data.ledge_position)
+	local var_3_1 = Vector3Aux.unbox(arg_3_2.ledge_position)
 
-	self._ledge_position = Vector3Box(ledge_position)
-	self._entrance_pos = Vector3Box(entrance_pos)
-	self._exit_pos = Vector3Box(exit_pos)
-	self._climb_upwards = true
-	self.jump_ledge_lookat_direction = Vector3Box(Vector3.normalize(Vector3.flat(exit_pos - entrance_pos)))
+	arg_3_0._ledge_position = Vector3Box(var_3_1)
+	arg_3_0._entrance_pos = Vector3Box(arg_3_3)
+	arg_3_0._exit_pos = Vector3Box(arg_3_4)
+	arg_3_0._climb_upwards = true
+	arg_3_0.jump_ledge_lookat_direction = Vector3Box(Vector3.normalize(Vector3.flat(arg_3_4 - arg_3_3)))
 
-	local correction_vector = entrance_pos - unit_position
-	local correction_amount = Vector3.length(correction_vector)
+	local var_3_2 = arg_3_3 - var_3_0
+	local var_3_3 = Vector3.length(var_3_2)
 
-	self._correction_dir = Vector3Box(correction_amount > 0 and Vector3.divide(correction_vector, correction_amount) or Vector3.zero())
-	self._correction_amount = correction_amount
+	arg_3_0._correction_dir = Vector3Box(var_3_3 > 0 and Vector3.divide(var_3_2, var_3_3) or Vector3.zero())
+	arg_3_0._correction_amount = var_3_3
 
-	if not smart_object_data.is_on_edge then
-		if smart_object_data.ledge_position1 then
-			local ledge_position1 = Vector3Aux.unbox(smart_object_data.ledge_position1)
-			local ledge_position2 = Vector3Aux.unbox(smart_object_data.ledge_position2)
-			local closest_ledge_position = Vector3.distance_squared(ledge_position1, entrance_pos) < Vector3.distance_squared(ledge_position2, entrance_pos) and ledge_position1 or ledge_position2
+	if not arg_3_2.is_on_edge then
+		if arg_3_2.ledge_position1 then
+			local var_3_4 = Vector3Aux.unbox(arg_3_2.ledge_position1)
+			local var_3_5 = Vector3Aux.unbox(arg_3_2.ledge_position2)
+			local var_3_6 = Vector3.distance_squared(var_3_4, arg_3_3) < Vector3.distance_squared(var_3_5, arg_3_3) and var_3_4 or var_3_5
 
-			self._climb_jump_height = closest_ledge_position.z - entrance_pos.z
+			arg_3_0._climb_jump_height = var_3_6.z - arg_3_3.z
 
-			self._ledge_position:store(closest_ledge_position)
+			arg_3_0._ledge_position:store(var_3_6)
 		else
-			self._climb_jump_height = ledge_position.z - entrance_pos.z
+			arg_3_0._climb_jump_height = var_3_1.z - arg_3_3.z
 
-			if self._climb_jump_height < 0 then
-				smart_object_data.is_on_edge = true
+			if arg_3_0._climb_jump_height < 0 then
+				arg_3_2.is_on_edge = true
 			end
 		end
 	end
 
-	if smart_object_data.is_on_edge then
-		if entrance_pos.z > exit_pos.z then
-			self._climb_jump_height = entrance_pos.z - exit_pos.z
-			self._climb_upwards = false
+	if arg_3_2.is_on_edge then
+		if arg_3_3.z > arg_3_4.z then
+			arg_3_0._climb_jump_height = arg_3_3.z - arg_3_4.z
+			arg_3_0._climb_upwards = false
 		else
-			self._climb_jump_height = exit_pos.z - entrance_pos.z
+			arg_3_0._climb_jump_height = arg_3_4.z - arg_3_3.z
 		end
 	end
 
-	self._sub_state = "moving_to_to_entrance"
+	arg_3_0._sub_state = "moving_to_to_entrance"
 end
 
-EnemyCharacterStateClimbing.do_the_transition = function (self, unit, t, dt, locomotion_extension)
-	local unit_position = POSITION_LOOKUP[unit]
-	local blackboard = BLACKBOARDS[unit]
-	local is_on_edge = self.smart_object_data.is_on_edge
+function EnemyCharacterStateClimbing.do_the_transition(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = POSITION_LOOKUP[arg_4_1]
+	local var_4_1 = BLACKBOARDS[arg_4_1]
+	local var_4_2 = arg_4_0.smart_object_data.is_on_edge
 
-	if self._sub_state == "moving_to_to_entrance" then
-		local entrance_pos = self._entrance_pos:unbox()
-		local exit_pos = self._exit_pos:unbox()
+	if arg_4_0._sub_state == "moving_to_to_entrance" then
+		local var_4_3 = arg_4_0._entrance_pos:unbox()
+		local var_4_4 = arg_4_0._exit_pos:unbox()
 
-		locomotion_extension:enable_animation_driven_movement_entrance_and_exit_no_mover(entrance_pos, exit_pos)
+		arg_4_4:enable_animation_driven_movement_entrance_and_exit_no_mover(var_4_3, var_4_4)
 
-		local look_direction_wanted = self.jump_ledge_lookat_direction:unbox()
-		local wanted_rotation = Quaternion.look(look_direction_wanted)
+		local var_4_5 = arg_4_0.jump_ledge_lookat_direction:unbox()
+		local var_4_6 = Quaternion.look(var_4_5)
 
-		self._first_person_extension:set_rotation(wanted_rotation)
+		arg_4_0._first_person_extension:set_rotation(var_4_6)
 
-		local smart_object_settings = SmartObjectSettings.templates[self._breed.smart_object_template]
+		local var_4_7 = SmartObjectSettings.templates[arg_4_0._breed.smart_object_template]
 
-		if self._climb_upwards or not is_on_edge then
-			local animation_translation_scale = 1
-			local jump_anim_thresholds = smart_object_settings.jump_up_anim_thresholds
-			local climb_jump_height = self._climb_jump_height
+		if arg_4_0._climb_upwards or not var_4_2 then
+			local var_4_8 = 1
+			local var_4_9 = var_4_7.jump_up_anim_thresholds
+			local var_4_10 = arg_4_0._climb_jump_height
 
-			for i = 1, #jump_anim_thresholds do
-				local jump_anim_threshold = jump_anim_thresholds[i]
+			for iter_4_0 = 1, #var_4_9 do
+				local var_4_11 = var_4_9[iter_4_0]
 
-				if climb_jump_height < jump_anim_threshold.height_threshold then
-					local jump_anim_name = is_on_edge and jump_anim_threshold.animation_edge or jump_anim_threshold.animation_fence
+				if var_4_10 < var_4_11.height_threshold then
+					local var_4_12 = var_4_2 and var_4_11.animation_edge or var_4_11.animation_fence
 
-					Managers.state.network:anim_event(unit, randomize(jump_anim_name))
+					Managers.state.network:anim_event(arg_4_1, var_0_0(var_4_12))
 
-					local fence_vertical_length = jump_anim_threshold.fence_vertical_length or jump_anim_threshold.vertical_length
-					local edge_vertical_length = jump_anim_threshold.vertical_length
-					local anim_distance = is_on_edge and edge_vertical_length or fence_vertical_length
+					local var_4_13 = var_4_11.fence_vertical_length or var_4_11.vertical_length
+					local var_4_14 = var_4_11.vertical_length
+					local var_4_15 = var_4_2 and var_4_14 or var_4_13
 
-					animation_translation_scale = animation_translation_scale * climb_jump_height / anim_distance
+					var_4_8 = var_4_8 * var_4_10 / var_4_15
 
-					locomotion_extension:set_animation_translation_scale(Vector3(1, 1, animation_translation_scale))
+					arg_4_4:set_animation_translation_scale(Vector3(1, 1, var_4_8))
 
 					break
 				end
 			end
 
-			locomotion_extension:set_wanted_velocity(Vector3.zero())
+			arg_4_4:set_wanted_velocity(Vector3.zero())
 
-			self._sub_state = "waiting_for_finished_climb_anim"
+			arg_4_0._sub_state = "waiting_for_finished_climb_anim"
 		else
-			local jump_anim_thresholds = smart_object_settings.jump_down_anim_thresholds
-			local climb_jump_height = math.abs(self._climb_jump_height)
+			local var_4_16 = var_4_7.jump_down_anim_thresholds
+			local var_4_17 = math.abs(arg_4_0._climb_jump_height)
 
-			for i = 1, #jump_anim_thresholds do
-				local jump_anim_threshold = jump_anim_thresholds[i]
+			for iter_4_1 = 1, #var_4_16 do
+				local var_4_18 = var_4_16[iter_4_1]
 
-				if climb_jump_height < jump_anim_threshold.height_threshold then
-					local jump_anim_name = is_on_edge and jump_anim_threshold.animation_edge or jump_anim_threshold.animation_fence
+				if var_4_17 < var_4_18.height_threshold then
+					local var_4_19 = var_4_2 and var_4_18.animation_edge or var_4_18.animation_fence
 
-					Managers.state.network:anim_event(unit, randomize(jump_anim_name))
+					Managers.state.network:anim_event(arg_4_1, var_0_0(var_4_19))
 
-					local land_animations = jump_anim_threshold.animation_land or "jump_down_land"
+					local var_4_20 = var_4_18.animation_land or "jump_down_land"
 
-					self._jump_down_land_animation = randomize(land_animations)
+					arg_4_0._jump_down_land_animation = var_0_0(var_4_20)
 
 					break
 				end
 			end
 
-			self._sub_state = "waiting_to_reach_ground"
+			arg_4_0._sub_state = "waiting_to_reach_ground"
 		end
 	end
 
-	if self._sub_state == "waiting_for_finished_climb_anim" then
-		self:_apply_position_correction(unit, unit_position, dt)
+	if arg_4_0._sub_state == "waiting_for_finished_climb_anim" then
+		arg_4_0:_apply_position_correction(arg_4_1, var_4_0, arg_4_3)
 
-		if blackboard.jump_climb_finished then
-			blackboard.jump_climb_finished = nil
+		if var_4_1.jump_climb_finished then
+			var_4_1.jump_climb_finished = nil
 
-			local exit_pos = self._exit_pos:unbox()
-			local move_target = is_on_edge and exit_pos or self._ledge_position:unbox()
+			local var_4_21 = arg_4_0._exit_pos:unbox()
+			local var_4_22 = var_4_2 and var_4_21 or arg_4_0._ledge_position:unbox()
 
-			if is_on_edge then
-				self._sub_state = "done"
+			if var_4_2 then
+				arg_4_0._sub_state = "done"
 			else
-				local jump_anim_thresholds = SmartObjectSettings.templates[self._breed.smart_object_template].jump_down_anim_thresholds
-				local climb_jump_height = move_target.z - exit_pos.z
+				local var_4_23 = SmartObjectSettings.templates[arg_4_0._breed.smart_object_template].jump_down_anim_thresholds
+				local var_4_24 = var_4_22.z - var_4_21.z
 
-				for i = 1, #jump_anim_thresholds do
-					local jump_anim_threshold = jump_anim_thresholds[i]
+				for iter_4_2 = 1, #var_4_23 do
+					local var_4_25 = var_4_23[iter_4_2]
 
-					if climb_jump_height < jump_anim_threshold.height_threshold then
-						local ai_size_variation = 1
-						local animation_length = jump_anim_threshold.fence_horizontal_length
-						local flat_distance_to_jump = Vector3.length(Vector3.flat(unit_position - exit_pos))
+					if var_4_24 < var_4_25.height_threshold then
+						local var_4_26 = 1
+						local var_4_27 = var_4_25.fence_horizontal_length
+						local var_4_28 = (Vector3.length(Vector3.flat(var_4_0 - var_4_21)) - var_4_25.fence_land_length) / (var_4_27 * var_4_26)
 
-						flat_distance_to_jump = flat_distance_to_jump - jump_anim_threshold.fence_land_length
+						arg_4_4:set_animation_translation_scale(Vector3(var_4_28, var_4_28, 1))
 
-						local animation_translation_scale = flat_distance_to_jump / (animation_length * ai_size_variation)
+						local var_4_29 = var_4_25.animation_fence
 
-						locomotion_extension:set_animation_translation_scale(Vector3(animation_translation_scale, animation_translation_scale, 1))
+						Managers.state.network:anim_event(arg_4_1, var_0_0(var_4_29))
 
-						local jump_anim_name = jump_anim_threshold.animation_fence
+						local var_4_30 = var_4_25.animation_land or "jump_down_land"
 
-						Managers.state.network:anim_event(unit, randomize(jump_anim_name))
-
-						local land_animations = jump_anim_threshold.animation_land or "jump_down_land"
-
-						self._jump_down_land_animation = randomize(land_animations)
+						arg_4_0._jump_down_land_animation = var_0_0(var_4_30)
 
 						break
 					end
 				end
 
-				self._sub_state = "waiting_to_reach_ground"
+				arg_4_0._sub_state = "waiting_to_reach_ground"
 			end
 		end
 	end
 
-	if self._sub_state == "waiting_to_reach_ground" then
-		local move_target = self._exit_pos:unbox()
-		local velocity = locomotion_extension:current_velocity()
+	if arg_4_0._sub_state == "waiting_to_reach_ground" then
+		local var_4_31 = arg_4_0._exit_pos:unbox()
+		local var_4_32 = arg_4_4:current_velocity()
 
-		if unit_position.z + velocity.z * dt * 2 <= move_target.z then
-			locomotion_extension:set_animation_translation_scale(Vector3(1, 1, 1))
+		if var_4_0.z + var_4_32.z * arg_4_3 * 2 <= var_4_31.z then
+			arg_4_4:set_animation_translation_scale(Vector3(1, 1, 1))
 
-			local land_animation = self._jump_down_land_animation
+			local var_4_33 = arg_4_0._jump_down_land_animation
 
-			Managers.state.network:anim_event(unit, land_animation)
+			Managers.state.network:anim_event(arg_4_1, var_4_33)
 
-			self._sub_state = "done"
+			arg_4_0._sub_state = "done"
 		end
 	end
 
-	if self._sub_state == "done" or t > self._fail_timer then
-		if t > self._fail_timer then
-			Application.warning("Breed " .. Unit.get_data(unit, "breed").name .. " failed to climb at position %q", self._entrance_pos:unbox())
+	if arg_4_0._sub_state == "done" or arg_4_2 > arg_4_0._fail_timer then
+		if arg_4_2 > arg_4_0._fail_timer then
+			Application.warning("Breed " .. Unit.get_data(arg_4_1, "breed").name .. " failed to climb at position %q", arg_4_0._entrance_pos:unbox())
 		end
 
 		return true
 	end
 end
 
-EnemyCharacterStateClimbing._apply_position_correction = function (self, unit, unit_position, dt)
-	local correction_str = self._correction_amount * math.min(3 * dt, 1)
+function EnemyCharacterStateClimbing._apply_position_correction(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	local var_5_0 = arg_5_0._correction_amount * math.min(3 * arg_5_3, 1)
 
-	self._correction_amount = self._correction_amount - correction_str
+	arg_5_0._correction_amount = arg_5_0._correction_amount - var_5_0
 
-	local correction_amount = Vector3.multiply(self._correction_dir:unbox(), correction_str)
-	local corrected_pos = unit_position + correction_amount
-	local mover = Unit.mover(unit)
+	local var_5_1 = arg_5_2 + Vector3.multiply(arg_5_0._correction_dir:unbox(), var_5_0)
+	local var_5_2 = Unit.mover(arg_5_1)
 
-	if mover then
-		Mover.set_position(mover, corrected_pos)
-		Unit.set_local_position(unit, 0, corrected_pos)
+	if var_5_2 then
+		Mover.set_position(var_5_2, var_5_1)
+		Unit.set_local_position(arg_5_1, 0, var_5_1)
 	end
 end

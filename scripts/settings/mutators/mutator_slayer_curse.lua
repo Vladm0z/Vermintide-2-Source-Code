@@ -1,95 +1,95 @@
-﻿-- chunkname: @scripts/settings/mutators/mutator_slayer_curse.lua
+-- chunkname: @scripts/settings/mutators/mutator_slayer_curse.lua
 
 return {
-	decay_start = 5,
-	decay_tick = 1,
 	description = "description_mutator_slayer_curse",
 	display_name = "display_name_mutator_slayer_curse",
+	decay_tick = 1,
 	icon = "mutator_icon_slayer_curse",
-	add_buff = function (buffs, buff_system, player_unit)
-		local is_server_controlled = true
-		local server_buff_id = buff_system:add_buff(player_unit, "slayer_curse_debuff", player_unit, is_server_controlled)
+	decay_start = 5,
+	add_buff = function(arg_1_0, arg_1_1, arg_1_2)
+		local var_1_0 = true
+		local var_1_1 = arg_1_1:add_buff(arg_1_2, "slayer_curse_debuff", arg_1_2, var_1_0)
 
-		buffs[#buffs + 1] = server_buff_id
+		arg_1_0[#arg_1_0 + 1] = var_1_1
 	end,
-	remove_buff = function (buffs, buff_system, player_unit)
-		local num_buffs = #buffs
-		local server_buff_id = buffs[num_buffs]
+	remove_buff = function(arg_2_0, arg_2_1, arg_2_2)
+		local var_2_0 = #arg_2_0
+		local var_2_1 = arg_2_0[var_2_0]
 
-		buff_system:remove_server_controlled_buff(player_unit, server_buff_id)
+		arg_2_1:remove_server_controlled_buff(arg_2_2, var_2_1)
 
-		buffs[num_buffs] = nil
+		arg_2_0[var_2_0] = nil
 	end,
-	server_start_function = function (context, data)
-		data.player_units = {}
-		data.buff_system = Managers.state.entity:system("buff_system")
-		data.player_manager = Managers.player
+	server_start_function = function(arg_3_0, arg_3_1)
+		arg_3_1.player_units = {}
+		arg_3_1.buff_system = Managers.state.entity:system("buff_system")
+		arg_3_1.player_manager = Managers.player
 	end,
-	server_update_function = function (context, data)
-		local t = Managers.time:time("game")
-		local template = data.template
-		local player_units = data.player_units
+	server_update_function = function(arg_4_0, arg_4_1)
+		local var_4_0 = Managers.time:time("game")
+		local var_4_1 = arg_4_1.template
+		local var_4_2 = arg_4_1.player_units
 
-		for unit, unit_data in pairs(player_units) do
-			if not Unit.alive(unit) then
-				player_units[unit] = nil
-			elseif AiUtils.unit_knocked_down(unit) then
-				local buffs = unit_data.buffs
-				local num_buffs = #buffs
+		for iter_4_0, iter_4_1 in pairs(var_4_2) do
+			if not Unit.alive(iter_4_0) then
+				var_4_2[iter_4_0] = nil
+			elseif AiUtils.unit_knocked_down(iter_4_0) then
+				local var_4_3 = iter_4_1.buffs
+				local var_4_4 = #var_4_3
 
-				for i = 1, num_buffs do
-					template.remove_buff(buffs, data.buff_system, unit)
+				for iter_4_2 = 1, var_4_4 do
+					var_4_1.remove_buff(var_4_3, arg_4_1.buff_system, iter_4_0)
 				end
 
-				player_units[unit] = nil
-			elseif t >= unit_data.next_decay then
-				local buffs = unit_data.buffs
+				var_4_2[iter_4_0] = nil
+			elseif var_4_0 >= iter_4_1.next_decay then
+				local var_4_5 = iter_4_1.buffs
 
-				template.remove_buff(buffs, data.buff_system, unit)
+				var_4_1.remove_buff(var_4_5, arg_4_1.buff_system, iter_4_0)
 
-				if #buffs > 0 then
-					unit_data.next_decay = t + template.decay_tick
+				if #var_4_5 > 0 then
+					iter_4_1.next_decay = var_4_0 + var_4_1.decay_tick
 				else
-					player_units[unit] = nil
+					var_4_2[iter_4_0] = nil
 				end
 			end
 		end
 	end,
-	server_ai_killed_function = function (context, data, killed_unit, killer_unit)
-		if not data.player_manager:is_player_unit(killer_unit) then
+	server_ai_killed_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+		if not arg_5_1.player_manager:is_player_unit(arg_5_3) then
 			return
 		end
 
-		local player_units = data.player_units
+		local var_5_0 = arg_5_1.player_units
 
-		if not player_units[killer_unit] then
-			player_units[killer_unit] = {
+		if not var_5_0[arg_5_3] then
+			var_5_0[arg_5_3] = {
 				next_decay = 0,
-				buffs = {},
+				buffs = {}
 			}
 		end
 
-		local unit_data = player_units[killer_unit]
+		local var_5_1 = var_5_0[arg_5_3]
 
-		data.template.add_buff(unit_data.buffs, data.buff_system, killer_unit)
+		arg_5_1.template.add_buff(var_5_1.buffs, arg_5_1.buff_system, arg_5_3)
 
-		unit_data.next_decay = Managers.time:time("game") + data.template.decay_start
+		var_5_1.next_decay = Managers.time:time("game") + arg_5_1.template.decay_start
 	end,
-	server_stop_function = function (context, data, is_destroy)
-		local template = data.template
-		local player_units = data.player_units
+	server_stop_function = function(arg_6_0, arg_6_1, arg_6_2)
+		local var_6_0 = arg_6_1.template
+		local var_6_1 = arg_6_1.player_units
 
-		if not is_destroy then
-			for unit, unit_data in pairs(player_units) do
-				local buffs = unit_data.buffs
-				local num_buffs = #buffs
+		if not arg_6_2 then
+			for iter_6_0, iter_6_1 in pairs(var_6_1) do
+				local var_6_2 = iter_6_1.buffs
+				local var_6_3 = #var_6_2
 
-				for i = 1, num_buffs do
-					template.remove_buff(buffs, data.buff_system, unit)
+				for iter_6_2 = 1, var_6_3 do
+					var_6_0.remove_buff(var_6_2, arg_6_1.buff_system, iter_6_0)
 				end
 
-				player_units[unit] = nil
+				var_6_1[iter_6_0] = nil
 			end
 		end
-	end,
+	end
 }

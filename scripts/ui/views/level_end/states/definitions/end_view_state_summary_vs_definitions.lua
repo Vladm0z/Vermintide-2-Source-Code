@@ -1,7 +1,5 @@
-﻿-- chunkname: @scripts/ui/views/level_end/states/definitions/end_view_state_summary_vs_definitions.lua
+-- chunkname: @scripts/ui/views/level_end/states/definitions/end_view_state_summary_vs_definitions.lua
 
-local definitions = local_require("scripts/ui/views/level_end/states/definitions/end_view_state_summary_definitions")
+local var_0_0 = local_require("scripts/ui/views/level_end/states/definitions/end_view_state_summary_definitions")
 
-definitions = table.clone(definitions)
-
-return definitions
+return (table.clone(var_0_0))

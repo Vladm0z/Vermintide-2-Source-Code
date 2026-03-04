@@ -1,76 +1,70 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/projectiles/projectile_extrapolated_husk_locomotion_extension.lua
+-- chunkname: @scripts/unit_extensions/weapons/projectiles/projectile_extrapolated_husk_locomotion_extension.lua
 
 ProjectileExtrapolatedHuskLocomotionExtension = class(ProjectileExtrapolatedHuskLocomotionExtension)
 
-ProjectileExtrapolatedHuskLocomotionExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	local t = Managers.time:time("game")
-
-	self._spawn_time = t
-	self._last_lerp_position = Vector3Box(Unit.local_position(unit, 0))
-	self._last_lerp_position_offset = Vector3Box()
-	self._accumulated_movement = Vector3Box()
-	self._pos_lerp_time = 0
+function ProjectileExtrapolatedHuskLocomotionExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._spawn_time = Managers.time:time("game")
+	arg_1_0._last_lerp_position = Vector3Box(Unit.local_position(arg_1_2, 0))
+	arg_1_0._last_lerp_position_offset = Vector3Box()
+	arg_1_0._accumulated_movement = Vector3Box()
+	arg_1_0._pos_lerp_time = 0
 end
 
-local POS_EPSILON = 0.01
-local POS_EPSILON_SQ = POS_EPSILON * POS_EPSILON
-local POS_LERP_TIME = 0.1
+local var_0_0 = 0.01
+local var_0_1 = var_0_0 * var_0_0
+local var_0_2 = 0.1
 
-ProjectileExtrapolatedHuskLocomotionExtension.update = function (self, unit, input, dt, context, t)
-	if self._stopped then
+function ProjectileExtrapolatedHuskLocomotionExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	if arg_2_0._stopped then
 		return
 	end
 
-	local game = Managers.state.network:game()
-	local id = Managers.state.unit_storage:go_id(unit)
+	local var_2_0 = Managers.state.network:game()
+	local var_2_1 = Managers.state.unit_storage:go_id(arg_2_1)
 
-	if game and id then
-		local network_pos = GameSession.game_object_field(game, id, "position")
-		local network_rotation = GameSession.game_object_field(game, id, "rotation")
-		local network_velocity = GameSession.game_object_field(game, id, "velocity")
-		local VELOCITY_EPSILON_SQ = NetworkConstants.VELOCITY_EPSILON * NetworkConstants.VELOCITY_EPSILON
+	if var_2_0 and var_2_1 then
+		local var_2_2 = GameSession.game_object_field(var_2_0, var_2_1, "position")
+		local var_2_3 = GameSession.game_object_field(var_2_0, var_2_1, "rotation")
+		local var_2_4 = GameSession.game_object_field(var_2_0, var_2_1, "velocity")
 
-		if VELOCITY_EPSILON_SQ > Vector3.length_squared(network_velocity) then
-			network_velocity = Vector3(0, 0, 0)
+		if NetworkConstants.VELOCITY_EPSILON * NetworkConstants.VELOCITY_EPSILON > Vector3.length_squared(var_2_4) then
+			var_2_4 = Vector3(0, 0, 0)
 		end
 
-		local last_pos = self._last_lerp_position:unbox()
-		local last_pos_offset = self._last_lerp_position_offset:unbox()
-		local accumulated_movement = self._accumulated_movement:unbox()
+		local var_2_5 = arg_2_0._last_lerp_position:unbox()
+		local var_2_6 = arg_2_0._last_lerp_position_offset:unbox()
+		local var_2_7 = arg_2_0._accumulated_movement:unbox()
 
-		self._pos_lerp_time = self._pos_lerp_time + dt
+		arg_2_0._pos_lerp_time = arg_2_0._pos_lerp_time + arg_2_3
 
-		local lerp_t = self._pos_lerp_time / POS_LERP_TIME
-		local move_delta = network_velocity * dt
+		local var_2_8 = arg_2_0._pos_lerp_time / var_0_2
+		local var_2_9 = var_2_7 + var_2_4 * arg_2_3
+		local var_2_10 = Vector3.lerp(var_2_6, Vector3.zero(), math.min(var_2_8, 1))
+		local var_2_11 = var_2_5 + var_2_9 + var_2_10
 
-		accumulated_movement = accumulated_movement + move_delta
+		if Vector3.length_squared(var_2_2 - var_2_5) > var_0_1 then
+			arg_2_0._pos_lerp_time = 0
 
-		local lerp_pos_offset = Vector3.lerp(last_pos_offset, Vector3.zero(), math.min(lerp_t, 1))
-		local lerp_pos = last_pos + accumulated_movement + lerp_pos_offset
-
-		if Vector3.length_squared(network_pos - last_pos) > POS_EPSILON_SQ then
-			self._pos_lerp_time = 0
-
-			self._last_lerp_position:store(network_pos)
-			self._last_lerp_position_offset:store(lerp_pos - network_pos)
-			self._accumulated_movement:store(Vector3.zero())
+			arg_2_0._last_lerp_position:store(var_2_2)
+			arg_2_0._last_lerp_position_offset:store(var_2_11 - var_2_2)
+			arg_2_0._accumulated_movement:store(Vector3.zero())
 		else
-			self._accumulated_movement:store(accumulated_movement)
+			arg_2_0._accumulated_movement:store(var_2_9)
 		end
 
-		Unit.set_local_position(unit, 0, lerp_pos)
+		Unit.set_local_position(arg_2_1, 0, var_2_11)
 
-		local old_rot = Unit.local_rotation(unit, 0)
-		local rotation_lerp_amount = math.min(dt * 15, 1)
+		local var_2_12 = Unit.local_rotation(arg_2_1, 0)
+		local var_2_13 = math.min(arg_2_3 * 15, 1)
 
-		Unit.set_local_rotation(unit, 0, Quaternion.lerp(old_rot, network_rotation, rotation_lerp_amount))
+		Unit.set_local_rotation(arg_2_1, 0, Quaternion.lerp(var_2_12, var_2_3, var_2_13))
 	end
 end
 
-ProjectileExtrapolatedHuskLocomotionExtension.destroy = function (self)
+function ProjectileExtrapolatedHuskLocomotionExtension.destroy(arg_3_0)
 	return
 end
 
-ProjectileExtrapolatedHuskLocomotionExtension.stop = function (self)
-	self._stopped = true
+function ProjectileExtrapolatedHuskLocomotionExtension.stop(arg_4_0)
+	arg_4_0._stopped = true
 end

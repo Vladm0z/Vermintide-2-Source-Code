@@ -1,528 +1,462 @@
-﻿-- chunkname: @scripts/ui/ui_cleanui.lua
+-- chunkname: @scripts/ui/ui_cleanui.lua
 
 UICleanUI = class(UICleanUI)
 
-local fade_delay = 1
-local fade_duration = 1.5
-local fade_min = 0.1
-local margin = 50
-local lost_gaze_threshhold = 1
+local var_0_0 = 1
+local var_0_1 = 1.5
+local var_0_2 = 0.1
+local var_0_3 = 50
+local var_0_4 = 1
 
-UICleanUI.create = function (peer_id, hud)
+function UICleanUI.create(arg_1_0, arg_1_1)
 	return {
-		dirty = true,
 		off_window_clock = 0,
 		was_enabled = false,
+		dirty = true,
 		areas = {},
 		widget_area_map = {},
 		clocks = {},
-		peer_id = peer_id,
-		hud = hud,
+		peer_id = arg_1_0,
+		hud = arg_1_1
 	}
 end
 
-local function get_world_bounding_box(bounding_boxes)
-	local rx, ry = Application.resolution()
-	local x = rx
-	local y = ry
-	local xx = 0
-	local yy = 0
+local function var_0_5(arg_2_0)
+	local var_2_0, var_2_1 = Application.resolution()
+	local var_2_2 = var_2_0
+	local var_2_3 = var_2_1
+	local var_2_4 = 0
+	local var_2_5 = 0
 
-	for _, bounding_box in ipairs(bounding_boxes) do
-		x = math.min(x, bounding_box[1][1])
-		y = math.min(y, bounding_box[1][2])
-		xx = math.max(xx, bounding_box[1][1] + bounding_box[2][1])
-		yy = math.max(yy, bounding_box[1][2] + bounding_box[2][2])
+	for iter_2_0, iter_2_1 in ipairs(arg_2_0) do
+		var_2_2 = math.min(var_2_2, iter_2_1[1][1])
+		var_2_3 = math.min(var_2_3, iter_2_1[1][2])
+		var_2_4 = math.max(var_2_4, iter_2_1[1][1] + iter_2_1[2][1])
+		var_2_5 = math.max(var_2_5, iter_2_1[1][2] + iter_2_1[2][2])
 	end
 
-	local ui_scale = RESOLUTION_LOOKUP.scale
+	local var_2_6 = RESOLUTION_LOOKUP.scale
 
 	return {
-		x * ui_scale,
-		y * ui_scale,
-		xx * ui_scale,
-		yy * ui_scale,
+		var_2_2 * var_2_6,
+		var_2_3 * var_2_6,
+		var_2_4 * var_2_6,
+		var_2_5 * var_2_6
 	}
 end
 
-local function pad_bounding_box(bounding_box, margin)
+local function var_0_6(arg_3_0, arg_3_1)
 	return {
-		bounding_box[1] - margin,
-		bounding_box[2] - margin,
-		bounding_box[3] + margin,
-		bounding_box[4] + margin,
+		arg_3_0[1] - arg_3_1,
+		arg_3_0[2] - arg_3_1,
+		arg_3_0[3] + arg_3_1,
+		arg_3_0[4] + arg_3_1
 	}
 end
 
-local function point_in_bounding_box(x, y, bounding_box)
-	return x > bounding_box[1] and x < bounding_box[3] and y > bounding_box[2] and y < bounding_box[4]
+local function var_0_7(arg_4_0, arg_4_1, arg_4_2)
+	return arg_4_0 > arg_4_2[1] and arg_4_0 < arg_4_2[3] and arg_4_1 > arg_4_2[2] and arg_4_1 < arg_4_2[4]
 end
 
-UICleanUI.update = function (self, dt)
-	local tobii_active = false
-	local peer_id = self.peer_id
-	local player_manager = Managers.player
-	local player = player_manager:player_from_peer_id(peer_id)
-	local player_unit = player and player.player_unit
+function UICleanUI.update(arg_5_0, arg_5_1)
+	local var_5_0 = false
+	local var_5_1 = arg_5_0.peer_id
+	local var_5_2 = Managers.player:player_from_peer_id(var_5_1)
+	local var_5_3 = var_5_2 and var_5_2.player_unit
 
-	if Unit.alive(player_unit) and ScriptUnit.has_extension(player_unit, "eyetracking_system") then
-		local eyetracking_extension = ScriptUnit.extension(player_unit, "eyetracking_system")
-
-		tobii_active = eyetracking_extension:get_is_feature_enabled("tobii_clean_ui")
+	if Unit.alive(var_5_3) and ScriptUnit.has_extension(var_5_3, "eyetracking_system") then
+		var_5_0 = ScriptUnit.extension(var_5_3, "eyetracking_system"):get_is_feature_enabled("tobii_clean_ui")
 	end
 
-	local gaze_x, gaze_y = Tobii.get_gaze_point()
+	local var_5_4, var_5_5 = Tobii.get_gaze_point()
+	local var_5_6 = var_5_4 * 0.5 + 0.5
+	local var_5_7 = var_5_5 * 0.5 + 0.5
+	local var_5_8, var_5_9 = Application.resolution()
+	local var_5_10 = var_5_6 * var_5_8
+	local var_5_11 = var_5_7 * var_5_9
+	local var_5_12 = var_5_6 >= 0 and var_5_6 <= 1 and var_5_7 >= 0 and var_5_7 <= 1
+	local var_5_13 = false
 
-	gaze_x = gaze_x * 0.5 + 0.5
-	gaze_y = gaze_y * 0.5 + 0.5
-
-	local res_x, res_y = Application.resolution()
-	local gaze_gx = gaze_x * res_x
-	local gaze_gy = gaze_y * res_y
-	local on_window = gaze_x >= 0 and gaze_x <= 1 and gaze_y >= 0 and gaze_y <= 1
-	local off_window_override = false
-
-	if on_window then
-		self.off_window_clock = 0
+	if var_5_12 then
+		arg_5_0.off_window_clock = 0
 	else
-		self.off_window_clock = self.off_window_clock + dt
-		off_window_override = self.off_window_clock > lost_gaze_threshhold
+		arg_5_0.off_window_clock = arg_5_0.off_window_clock + arg_5_1
+		var_5_13 = arg_5_0.off_window_clock > var_0_4
 
-		if off_window_override then
-			self.off_window_clock = lost_gaze_threshhold
+		if var_5_13 then
+			arg_5_0.off_window_clock = var_0_4
 		end
 	end
 
-	local hud = self.hud
-	local portrait_size = {
+	local var_5_14 = arg_5_0.hud
+	local var_5_15 = {
 		86,
-		108,
+		108
 	}
-	local portrait_bounding_boxes = {}
-	local unit_frames_handler = hud:component("UnitFramesHandler")
-	local unit_frame_amount = unit_frames_handler:unit_frame_amount()
+	local var_5_16 = {}
+	local var_5_17 = var_5_14:component("UnitFramesHandler")
+	local var_5_18 = var_5_17:unit_frame_amount()
 
-	for i = 1, unit_frame_amount do
-		local widget = unit_frames_handler:get_unit_widget(i)
-		local centre_pos = widget.ui_scenegraph.portrait_pivot.world_position
+	for iter_5_0 = 1, var_5_18 do
+		local var_5_19 = var_5_17:get_unit_widget(iter_5_0).ui_scenegraph.portrait_pivot.world_position
 
-		portrait_bounding_boxes[i] = {
+		var_5_16[iter_5_0] = {
 			{
-				centre_pos[1] - portrait_size[1] * 0.5,
-				centre_pos[2] - portrait_size[2],
+				var_5_19[1] - var_5_15[1] * 0.5,
+				var_5_19[2] - var_5_15[2]
 			},
-			portrait_size,
+			var_5_15
 		}
 	end
 
-	local equipment_background = hud:component("EquipmentUI")
-	local gamepad_equipment_background = hud:component("GamePadEquipmentUI")
+	local var_5_20 = var_5_14:component("EquipmentUI")
+	local var_5_21 = var_5_14:component("GamePadEquipmentUI")
 
-	if not equipment_background or not gamepad_equipment_background then
+	if not var_5_20 or not var_5_21 then
 		return
 	end
 
-	local ammo_world_position = equipment_background.ui_scenegraph.ammo_background.world_position
-	local ammo_background_size = equipment_background.ui_scenegraph.ammo_background.size
-	local equipment_world_position = equipment_background.ui_scenegraph.background_panel.world_position
-	local gamepad_equipment_world_position = gamepad_equipment_background.ui_scenegraph.background_panel.world_position
-	local equipment_size = equipment_background.ui_scenegraph.background_panel.size
-	local gamepad_equipment_size = gamepad_equipment_background.ui_scenegraph.background_panel.size
-	local bottom_bounding_boxes = {
+	local var_5_22 = var_5_20.ui_scenegraph.ammo_background.world_position
+	local var_5_23 = var_5_20.ui_scenegraph.ammo_background.size
+	local var_5_24 = var_5_20.ui_scenegraph.background_panel.world_position
+	local var_5_25 = var_5_21.ui_scenegraph.background_panel.world_position
+	local var_5_26 = var_5_20.ui_scenegraph.background_panel.size
+	local var_5_27 = var_5_21.ui_scenegraph.background_panel.size
+	local var_5_28 = {
 		{
 			{
-				equipment_world_position[1],
-				equipment_world_position[2],
-				equipment_world_position[3],
+				var_5_24[1],
+				var_5_24[2],
+				var_5_24[3]
 			},
 			{
-				equipment_size[1],
-				equipment_size[2],
-			},
-		},
+				var_5_26[1],
+				var_5_26[2]
+			}
+		}
 	}
-	local bottom_right_bounding_boxes = {
+	local var_5_29 = {
 		{
 			{
-				ammo_world_position[1],
-				ammo_world_position[2],
-				ammo_world_position[3],
+				var_5_22[1],
+				var_5_22[2],
+				var_5_22[3]
 			},
 			{
-				ammo_background_size[1],
-				ammo_background_size[2],
-			},
-		},
+				var_5_23[1],
+				var_5_23[2]
+			}
+		}
 	}
-	local gamepad_bottom_bounding_boxes = {
+	local var_5_30 = {
 		{
 			{
-				gamepad_equipment_world_position[1],
-				gamepad_equipment_world_position[2],
-				gamepad_equipment_world_position[3],
+				var_5_25[1],
+				var_5_25[2],
+				var_5_25[3]
 			},
 			{
-				gamepad_equipment_size[1],
-				gamepad_equipment_size[2],
-			},
-		},
+				var_5_27[1],
+				var_5_27[2]
+			}
+		}
 	}
-	local left_portrait_bounding_boxes = {
-		portrait_bounding_boxes[2],
-		portrait_bounding_boxes[3],
-		portrait_bounding_boxes[4],
+	local var_5_31 = {
+		var_5_16[2],
+		var_5_16[3],
+		var_5_16[4]
 	}
-	local bottom_left_bounding_boxes = {
-		portrait_bounding_boxes[1],
+	local var_5_32 = {
+		var_5_16[1]
 	}
 
-	if not self.clusters or RESOLUTION_LOOKUP.modified or self.dirty then
-		local hud = self.hud
+	if not arg_5_0.clusters or RESOLUTION_LOOKUP.modified or arg_5_0.dirty then
+		local var_5_33 = arg_5_0.hud
 
-		if self.gamepadclusters then
-			self.gamepadclusters.bottom.bounding_box = pad_bounding_box(get_world_bounding_box(gamepad_bottom_bounding_boxes), margin)
-			self.gamepadclusters.left.bounding_box = pad_bounding_box(get_world_bounding_box(left_portrait_bounding_boxes), margin)
-			self.gamepadclusters.bottom_left.bounding_box = pad_bounding_box(get_world_bounding_box(bottom_left_bounding_boxes), margin)
-			self.gamepadclusters.bottom_right.bounding_box = pad_bounding_box(get_world_bounding_box(bottom_right_bounding_boxes), margin)
+		if arg_5_0.gamepadclusters then
+			arg_5_0.gamepadclusters.bottom.bounding_box = var_0_6(var_0_5(var_5_30), var_0_3)
+			arg_5_0.gamepadclusters.left.bounding_box = var_0_6(var_0_5(var_5_31), var_0_3)
+			arg_5_0.gamepadclusters.bottom_left.bounding_box = var_0_6(var_0_5(var_5_32), var_0_3)
+			arg_5_0.gamepadclusters.bottom_right.bounding_box = var_0_6(var_0_5(var_5_29), var_0_3)
 		else
-			self.gamepadclusters = {
+			arg_5_0.gamepadclusters = {
 				mission = {
 					bounding_box = {
 						0,
 						0,
 						10,
-						10,
+						10
 					},
-					widgets = {},
+					widgets = {}
 				},
 				bottom = {
-					bounding_box = pad_bounding_box(get_world_bounding_box(bottom_bounding_boxes), margin),
+					bounding_box = var_0_6(var_0_5(var_5_28), var_0_3),
 					widgets = {
 						{
 							alpha = -1,
 							set_alpha_function = "set_health_alpha",
-							get_widget_function = function (self)
-								local hud = self.hud
-								local unit_frames_handler = hud:component("UnitFramesHandler")
-								local widget = unit_frames_handler:get_unit_widget(1)
-
-								return widget
-							end,
+							get_widget_function = function(arg_6_0)
+								return (arg_6_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
+							end
 						},
 						{
-							alpha = -1,
 							set_alpha_function = "set_frame_alpha",
-							widget = hud:component("GamepadEquipmentUI"),
-						},
-					},
+							alpha = -1,
+							widget = var_5_33:component("GamepadEquipmentUI")
+						}
+					}
 				},
 				left = {
-					bounding_box = pad_bounding_box(get_world_bounding_box(left_portrait_bounding_boxes), margin),
+					bounding_box = var_0_6(var_0_5(var_5_31), var_0_3),
 					widgets = {
 						{
 							alpha = 1,
-							get_widget_function = function (self)
-								local hud = self.hud
-								local unit_frames_handler = hud:component("UnitFramesHandler")
-								local widget = unit_frames_handler:get_unit_widget(2)
-
-								return widget
-							end,
+							get_widget_function = function(arg_7_0)
+								return (arg_7_0.hud:component("UnitFramesHandler"):get_unit_widget(2))
+							end
 						},
 						{
 							alpha = -1,
-							get_widget_function = function (self)
-								local hud = self.hud
-								local unit_frames_handler = hud:component("UnitFramesHandler")
-								local widget = unit_frames_handler:get_unit_widget(3)
-
-								return widget
-							end,
+							get_widget_function = function(arg_8_0)
+								return (arg_8_0.hud:component("UnitFramesHandler"):get_unit_widget(3))
+							end
 						},
 						{
 							alpha = -1,
-							get_widget_function = function (self)
-								local hud = self.hud
-								local unit_frames_handler = hud:component("UnitFramesHandler")
-								local widget = unit_frames_handler:get_unit_widget(4)
-
-								return widget
-							end,
-						},
-					},
+							get_widget_function = function(arg_9_0)
+								return (arg_9_0.hud:component("UnitFramesHandler"):get_unit_widget(4))
+							end
+						}
+					}
 				},
 				bottom_left = {
-					bounding_box = pad_bounding_box(get_world_bounding_box(left_portrait_bounding_boxes), margin),
+					bounding_box = var_0_6(var_0_5(var_5_31), var_0_3),
 					widgets = {
 						{
 							alpha = -1,
 							set_alpha_function = "set_default_alpha",
-							get_widget_function = function (self)
-								local hud = self.hud
-								local unit_frames_handler = hud:component("UnitFramesHandler")
-								local widget = unit_frames_handler:get_unit_widget(1)
-
-								return widget
-							end,
+							get_widget_function = function(arg_10_0)
+								return (arg_10_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
+							end
 						},
 						{
 							alpha = -1,
 							set_alpha_function = "set_portrait_alpha",
-							get_widget_function = function (self)
-								local hud = self.hud
-								local unit_frames_handler = hud:component("UnitFramesHandler")
-								local widget = unit_frames_handler:get_unit_widget(1)
-
-								return widget
-							end,
+							get_widget_function = function(arg_11_0)
+								return (arg_11_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
+							end
 						},
 						{
 							alpha = -1,
-							widget = hud:component("BuffUI"),
-						},
-					},
+							widget = var_5_33:component("BuffUI")
+						}
+					}
 				},
 				bottom_right = {
-					bounding_box = pad_bounding_box(get_world_bounding_box(bottom_right_bounding_boxes), margin),
+					bounding_box = var_0_6(var_0_5(var_5_29), var_0_3),
 					widgets = {
 						{
-							alpha = -1,
 							set_alpha_function = "set_panel_alpha",
-							widget = hud:component("GamePadEquipmentUI"),
+							alpha = -1,
+							widget = var_5_33:component("GamePadEquipmentUI")
 						},
 						{
 							alpha = -1,
 							set_alpha_function = "set_ability_alpha",
-							get_widget_function = function (self)
-								local hud = self.hud
-								local unit_frames_handler = hud:component("UnitFramesHandler")
-								local widget = unit_frames_handler:get_unit_widget(1)
-
-								return widget
-							end,
+							get_widget_function = function(arg_12_0)
+								return (arg_12_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
+							end
 						},
 						{
 							alpha = -1,
-							widget = hud:component("GamePadAbilityUI"),
-						},
-					},
-				},
+							widget = var_5_33:component("GamePadAbilityUI")
+						}
+					}
+				}
 			}
 		end
 
-		if self.clusters then
-			self.clusters.bottom.bounding_box = pad_bounding_box(get_world_bounding_box(bottom_bounding_boxes), margin)
-			self.clusters.left.bounding_box = pad_bounding_box(get_world_bounding_box(left_portrait_bounding_boxes), margin)
-			self.clusters.bottom_left.bounding_box = pad_bounding_box(get_world_bounding_box(bottom_left_bounding_boxes), margin)
-			self.clusters.bottom_right.bounding_box = pad_bounding_box(get_world_bounding_box(bottom_right_bounding_boxes), margin)
+		if arg_5_0.clusters then
+			arg_5_0.clusters.bottom.bounding_box = var_0_6(var_0_5(var_5_28), var_0_3)
+			arg_5_0.clusters.left.bounding_box = var_0_6(var_0_5(var_5_31), var_0_3)
+			arg_5_0.clusters.bottom_left.bounding_box = var_0_6(var_0_5(var_5_32), var_0_3)
+			arg_5_0.clusters.bottom_right.bounding_box = var_0_6(var_0_5(var_5_29), var_0_3)
 		else
-			self.clusters = {
+			arg_5_0.clusters = {
 				mission = {
 					bounding_box = {
 						0,
 						0,
 						10,
-						10,
+						10
 					},
-					widgets = {},
+					widgets = {}
 				},
 				bottom = {
-					bounding_box = pad_bounding_box(get_world_bounding_box(bottom_bounding_boxes), margin),
+					bounding_box = var_0_6(var_0_5(var_5_28), var_0_3),
 					widgets = {
 						{
-							alpha = -1,
 							set_alpha_function = "set_panel_alpha",
-							widget = hud:component("EquipmentUI"),
+							alpha = -1,
+							widget = var_5_33:component("EquipmentUI")
 						},
 						{
 							alpha = -1,
 							set_alpha_function = "set_equipment_alpha",
-							get_widget_function = function (self)
-								local hud = self.hud
-								local unit_frames_handler = hud:component("UnitFramesHandler")
-								local widget = unit_frames_handler:get_unit_widget(1)
-
-								return widget
-							end,
+							get_widget_function = function(arg_13_0)
+								return (arg_13_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
+							end
 						},
 						{
 							alpha = -1,
 							set_alpha_function = "set_health_alpha",
-							get_widget_function = function (self)
-								local hud = self.hud
-								local unit_frames_handler = hud:component("UnitFramesHandler")
-								local widget = unit_frames_handler:get_unit_widget(1)
-
-								return widget
-							end,
+							get_widget_function = function(arg_14_0)
+								return (arg_14_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
+							end
 						},
 						{
 							alpha = -1,
 							set_alpha_function = "set_ability_alpha",
-							get_widget_function = function (self)
-								local hud = self.hud
-								local unit_frames_handler = hud:component("UnitFramesHandler")
-								local widget = unit_frames_handler:get_unit_widget(1)
-
-								return widget
-							end,
+							get_widget_function = function(arg_15_0)
+								return (arg_15_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
+							end
 						},
 						{
 							alpha = -1,
-							widget = hud:component("AbilityUI"),
-						},
-					},
+							widget = var_5_33:component("AbilityUI")
+						}
+					}
 				},
 				left = {
-					bounding_box = pad_bounding_box(get_world_bounding_box(left_portrait_bounding_boxes), margin),
+					bounding_box = var_0_6(var_0_5(var_5_31), var_0_3),
 					widgets = {
 						{
 							alpha = 1,
-							get_widget_function = function (self)
-								local hud = self.hud
-								local unit_frames_handler = hud:component("UnitFramesHandler")
-								local widget = unit_frames_handler:get_unit_widget(2)
-
-								return widget
-							end,
+							get_widget_function = function(arg_16_0)
+								return (arg_16_0.hud:component("UnitFramesHandler"):get_unit_widget(2))
+							end
 						},
 						{
 							alpha = -1,
-							get_widget_function = function (self)
-								local hud = self.hud
-								local unit_frames_handler = hud:component("UnitFramesHandler")
-								local widget = unit_frames_handler:get_unit_widget(3)
-
-								return widget
-							end,
+							get_widget_function = function(arg_17_0)
+								return (arg_17_0.hud:component("UnitFramesHandler"):get_unit_widget(3))
+							end
 						},
 						{
 							alpha = -1,
-							get_widget_function = function (self)
-								local hud = self.hud
-								local unit_frames_handler = hud:component("UnitFramesHandler")
-								local widget = unit_frames_handler:get_unit_widget(4)
-
-								return widget
-							end,
-						},
-					},
+							get_widget_function = function(arg_18_0)
+								return (arg_18_0.hud:component("UnitFramesHandler"):get_unit_widget(4))
+							end
+						}
+					}
 				},
 				bottom_left = {
-					bounding_box = pad_bounding_box(get_world_bounding_box(left_portrait_bounding_boxes), margin),
+					bounding_box = var_0_6(var_0_5(var_5_31), var_0_3),
 					widgets = {
 						{
 							alpha = -1,
 							set_alpha_function = "set_default_alpha",
-							get_widget_function = function (self)
-								local hud = self.hud
-								local unit_frames_handler = hud:component("UnitFramesHandler")
-								local widget = unit_frames_handler:get_unit_widget(1)
-
-								return widget
-							end,
+							get_widget_function = function(arg_19_0)
+								return (arg_19_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
+							end
 						},
 						{
 							alpha = -1,
 							set_alpha_function = "set_portrait_alpha",
-							get_widget_function = function (self)
-								local hud = self.hud
-								local unit_frames_handler = hud:component("UnitFramesHandler")
-								local widget = unit_frames_handler:get_unit_widget(1)
-
-								return widget
-							end,
+							get_widget_function = function(arg_20_0)
+								return (arg_20_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
+							end
 						},
 						{
 							alpha = -1,
-							widget = hud:component("BuffUI"),
-						},
-					},
+							widget = var_5_33:component("BuffUI")
+						}
+					}
 				},
 				bottom_right = {
-					bounding_box = pad_bounding_box(get_world_bounding_box(bottom_right_bounding_boxes), margin),
+					bounding_box = var_0_6(var_0_5(var_5_29), var_0_3),
 					widgets = {
 						{
-							alpha = -1,
 							set_alpha_function = "set_ammo_alpha",
-							widget = hud:component("EquipmentUI"),
-						},
-					},
-				},
+							alpha = -1,
+							widget = var_5_33:component("EquipmentUI")
+						}
+					}
+				}
 			}
 		end
 	end
 
-	local clocks_empty = true
+	local var_5_34 = true
 
-	for clock, time in pairs(self.clocks) do
-		clocks_empty = false
+	for iter_5_1, iter_5_2 in pairs(arg_5_0.clocks) do
+		var_5_34 = false
 	end
 
-	local cutscene_system = Managers.state.entity:system("cutscene_system")
-	local in_cutscene = cutscene_system and cutscene_system.active_camera
-	local gamepad_active = Managers.input:is_device_active("gamepad")
-	local clusters = self.clusters
+	local var_5_35 = Managers.state.entity:system("cutscene_system")
+	local var_5_36 = var_5_35 and var_5_35.active_camera
+	local var_5_37 = Managers.input:is_device_active("gamepad")
+	local var_5_38 = arg_5_0.clusters
 
-	if gamepad_active then
-		clusters = self.gamepadclusters
+	if var_5_37 then
+		var_5_38 = arg_5_0.gamepadclusters
 	end
 
-	local clocks = self.clocks
+	local var_5_39 = arg_5_0.clocks
 
-	for name, cluster in pairs(clusters) do
-		local clock = clocks[name]
-		local visibility = point_in_bounding_box(gaze_gx, gaze_gy, cluster.bounding_box)
+	for iter_5_3, iter_5_4 in pairs(var_5_38) do
+		local var_5_40 = var_5_39[iter_5_3]
+		local var_5_41 = var_0_7(var_5_10, var_5_11, iter_5_4.bounding_box)
 
-		cluster.visible = visibility
+		iter_5_4.visible = var_5_41
 
-		if visibility or clocks_empty or off_window_override or in_cutscene then
-			clock = fade_delay + fade_duration
+		if var_5_41 or var_5_34 or var_5_13 or var_5_36 then
+			var_5_40 = var_0_0 + var_0_1
 		else
-			clock = math.max(0, clock - dt)
+			var_5_40 = math.max(0, var_5_40 - arg_5_1)
 		end
 
-		local alpha = 1
+		local var_5_42 = 1
 
-		if tobii_active then
-			alpha = clock / fade_duration
-			alpha = alpha * (1 - fade_min) + fade_min
-			alpha = math.clamp(alpha, 0, 1)
+		if var_5_0 then
+			var_5_42 = var_5_40 / var_0_1
+			var_5_42 = var_5_42 * (1 - var_0_2) + var_0_2
+			var_5_42 = math.clamp(var_5_42, 0, 1)
 		end
 
-		local widgets = cluster.widgets
+		local var_5_43 = iter_5_4.widgets
 
-		for _, box in pairs(widgets) do
-			local widget = box.widget
-			local get_widget_function = box.get_widget_function
+		for iter_5_5, iter_5_6 in pairs(var_5_43) do
+			local var_5_44 = iter_5_6.widget
+			local var_5_45 = iter_5_6.get_widget_function
 
-			if get_widget_function then
-				widget = get_widget_function(self)
+			if var_5_45 then
+				var_5_44 = var_5_45(arg_5_0)
 			end
 
-			if box.alpha ~= alpha then
-				if widget then
-					local set_alpha_function = box.set_alpha_function
+			if iter_5_6.alpha ~= var_5_42 then
+				if var_5_44 then
+					local var_5_46 = iter_5_6.set_alpha_function
 
-					if set_alpha_function then
-						if widget[set_alpha_function] then
-							widget[set_alpha_function](widget, alpha)
+					if var_5_46 then
+						if var_5_44[var_5_46] then
+							var_5_44[var_5_46](var_5_44, var_5_42)
 						end
 					else
-						if widget.set_panel_alpha then
-							widget:set_panel_alpha(alpha)
+						if var_5_44.set_panel_alpha then
+							var_5_44:set_panel_alpha(var_5_42)
 						end
 
-						if widget.set_alpha then
-							widget:set_alpha(alpha)
+						if var_5_44.set_alpha then
+							var_5_44:set_alpha(var_5_42)
 						end
 					end
 				end
 
-				box.alpha = alpha
+				iter_5_6.alpha = var_5_42
 			end
 		end
 
-		clocks[name] = clock
+		var_5_39[iter_5_3] = var_5_40
 	end
 end

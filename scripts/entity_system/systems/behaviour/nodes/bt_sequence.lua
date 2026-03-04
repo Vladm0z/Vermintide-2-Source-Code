@@ -1,59 +1,58 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_sequence.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_sequence.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTSequence = class(BTSequence, BTNode)
 
-BTSequence.init = function (self, ...)
-	BTSequence.super.init(self, ...)
+function BTSequence.init(arg_1_0, ...)
+	BTSequence.super.init(arg_1_0, ...)
 
-	self._children = {}
+	arg_1_0._children = {}
 end
 
 BTSequence.name = "BTSequence"
 
-BTSequence.leave = function (self, unit, blackboard, t)
-	self:set_running_child(unit, blackboard, t, nil, "aborted")
+function BTSequence.leave(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	arg_2_0:set_running_child(arg_2_1, arg_2_2, arg_2_3, nil, "aborted")
 
-	blackboard.node_data[self._identifier] = nil
+	arg_2_2.node_data[arg_2_0._identifier] = nil
 end
 
-BTSequence.run = function (self, unit, blackboard, t, dt)
-	local node_data = blackboard.node_data[self._identifier]
-	local child_to_run_index = node_data or 1
-	local num_children = #self._children
+function BTSequence.run(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local var_3_0 = arg_3_2.node_data[arg_3_0._identifier] or 1
+	local var_3_1 = #arg_3_0._children
 
-	for i = child_to_run_index, num_children do
-		local child = self._children[i]
+	for iter_3_0 = var_3_0, var_3_1 do
+		local var_3_2 = arg_3_0._children[iter_3_0]
 
-		if not child:condition(blackboard) then
-			self:set_running_child(unit, blackboard, t, nil, "failed")
+		if not var_3_2:condition(arg_3_2) then
+			arg_3_0:set_running_child(arg_3_1, arg_3_2, arg_3_3, nil, "failed")
 
 			return "failed"
 		end
 
-		self:set_running_child(unit, blackboard, t, child, "aborted")
+		arg_3_0:set_running_child(arg_3_1, arg_3_2, arg_3_3, var_3_2, "aborted")
 
-		local result = child:run(unit, blackboard, t, dt)
+		local var_3_3 = var_3_2:run(arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 
-		if result == "running" then
-			blackboard.node_data[self._identifier] = i
+		if var_3_3 == "running" then
+			arg_3_2.node_data[arg_3_0._identifier] = iter_3_0
 
-			return result
+			return var_3_3
 		else
-			self:set_running_child(unit, blackboard, t, nil, result)
+			arg_3_0:set_running_child(arg_3_1, arg_3_2, arg_3_3, nil, var_3_3)
 
-			if result == "failed" then
+			if var_3_3 == "failed" then
 				return "failed"
 			end
 		end
 	end
 
-	assert(self:current_running_child(blackboard) == nil)
+	assert(arg_3_0:current_running_child(arg_3_2) == nil)
 
 	return "done"
 end
 
-BTSequence.add_child = function (self, node)
-	self._children[#self._children + 1] = node
+function BTSequence.add_child(arg_4_0, arg_4_1)
+	arg_4_0._children[#arg_4_0._children + 1] = arg_4_1
 end

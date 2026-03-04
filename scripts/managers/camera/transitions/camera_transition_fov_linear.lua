@@ -1,35 +1,35 @@
-﻿-- chunkname: @scripts/managers/camera/transitions/camera_transition_fov_linear.lua
+-- chunkname: @scripts/managers/camera/transitions/camera_transition_fov_linear.lua
 
 require("scripts/managers/camera/transitions/camera_transition_base")
 
 CameraTransitionFOVLinear = class(CameraTransitionFOVLinear, CameraTransitionBase)
 
-CameraTransitionFOVLinear.init = function (self, node_1, node_2, duration, speed)
-	CameraTransitionBase.init(self, node_1, node_2, duration, speed)
+function CameraTransitionFOVLinear.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	CameraTransitionBase.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 end
 
-CameraTransitionFOVLinear.update = function (self, dt, fov, update_time)
-	CameraTransitionBase.update(self, dt, update_time)
+function CameraTransitionFOVLinear.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	CameraTransitionBase.update(arg_2_0, arg_2_1, arg_2_3)
 
-	local node_1_fov = fov
-	local node_2_fov = self._node_2:vertical_fov()
-	local duration = self._duration
-	local speed = self._speed
-	local fov_diff = node_2_fov - node_1_fov
-	local fov_delta
+	local var_2_0 = arg_2_2
+	local var_2_1 = arg_2_0._node_2:vertical_fov()
+	local var_2_2 = arg_2_0._duration
+	local var_2_3 = arg_2_0._speed
+	local var_2_4 = var_2_1 - var_2_0
+	local var_2_5
 
-	if duration then
-		fov_delta = fov_diff / duration
+	if var_2_2 then
+		var_2_5 = var_2_4 / var_2_2
 	else
-		fov_delta = speed
+		var_2_5 = var_2_3
 	end
 
-	local fov = node_1_fov + self._time * fov_delta
-	local done = node_1_fov < node_2_fov and node_2_fov <= fov or node_2_fov < node_1_fov and fov <= node_2_fov or node_1_fov == node_2_fov
+	local var_2_6 = var_2_0 + arg_2_0._time * var_2_5
+	local var_2_7 = var_2_0 < var_2_1 and var_2_1 <= var_2_6 or var_2_1 < var_2_0 and var_2_6 <= var_2_1 or var_2_0 == var_2_1
 
-	if done then
-		fov = node_2_fov
+	if var_2_7 then
+		var_2_6 = var_2_1
 	end
 
-	return fov, done
+	return var_2_6, var_2_7
 end

@@ -1,197 +1,190 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/packmaster/packmaster_state_grabbing.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/packmaster/packmaster_state_grabbing.lua
 
 PackmasterStateGrabbing = class(PackmasterStateGrabbing, EnemyCharacterState)
 
-PackmasterStateGrabbing.init = function (self, character_state_init_context)
-	EnemyCharacterState.init(self, character_state_init_context, "packmaster_grabbing")
+function PackmasterStateGrabbing.init(arg_1_0, arg_1_1)
+	EnemyCharacterState.init(arg_1_0, arg_1_1, "packmaster_grabbing")
 
-	self.current_movement_speed_scale = 0
-	self.last_input_direction = Vector3Box(0, 0, 0)
+	arg_1_0.current_movement_speed_scale = 0
+	arg_1_0.last_input_direction = Vector3Box(0, 0, 0)
 end
 
-local position_lookup = POSITION_LOOKUP
+local var_0_0 = POSITION_LOOKUP
 
-PackmasterStateGrabbing.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
-	table.clear(self._temp_params)
+function PackmasterStateGrabbing.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	table.clear(arg_2_0._temp_params)
 
-	self._unit = unit
+	arg_2_0._unit = arg_2_1
 
-	local breed = Unit.get_data(unit, "breed")
+	local var_2_0 = Unit.get_data(arg_2_1, "breed")
 
-	self._breed = breed
-	self._hook_range = breed.grab_hook_range
-	self._grab_movement_speed_multiplier_initial = breed.grab_movement_speed_multiplier_initial
-	self._grab_movement_speed_multiplier_target = breed.grab_movement_speed_multiplier_target
-	self._move_slow_lerp_constant = 0.5
-	self._dot_threshold = breed.grab_hook_cone_dot
-	self._physics_world = World.physics_world(self._world)
-	self.highest_dot_value = 0
+	arg_2_0._breed = var_2_0
+	arg_2_0._hook_range = var_2_0.grab_hook_range
+	arg_2_0._grab_movement_speed_multiplier_initial = var_2_0.grab_movement_speed_multiplier_initial
+	arg_2_0._grab_movement_speed_multiplier_target = var_2_0.grab_movement_speed_multiplier_target
+	arg_2_0._move_slow_lerp_constant = 0.5
+	arg_2_0._dot_threshold = var_2_0.grab_hook_cone_dot
+	arg_2_0._physics_world = World.physics_world(arg_2_0._world)
+	arg_2_0.highest_dot_value = 0
 
-	local first_person_extension = self._first_person_extension
+	local var_2_1 = arg_2_0._first_person_extension
 
-	self._first_person_unit = first_person_extension:get_first_person_unit()
+	arg_2_0._first_person_unit = var_2_1:get_first_person_unit()
 
-	CharacterStateHelper.play_animation_event(unit, "attack_grab")
-	CharacterStateHelper.play_animation_event_first_person(first_person_extension, "attack_grab")
+	CharacterStateHelper.play_animation_event(arg_2_1, "attack_grab")
+	CharacterStateHelper.play_animation_event_first_person(var_2_1, "attack_grab")
 
-	self._grab_time = t + breed.grab_anim_time
-	self._grab_grace_period = breed.grab_grace_period
+	arg_2_0._grab_time = arg_2_5 + var_2_0.grab_anim_time
+	arg_2_0._grab_grace_period = var_2_0.grab_grace_period
 
-	self._status_extension:set_is_packmaster_grabbing(true)
-	self:set_breed_action("initial_pull")
+	arg_2_0._status_extension:set_is_packmaster_grabbing(true)
+	arg_2_0:set_breed_action("initial_pull")
 end
 
-PackmasterStateGrabbing.on_exit = function (self, unit, input, dt, context, t, next_state)
-	local status_extension = self._status_extension
-
-	status_extension:set_is_packmaster_grabbing(false)
-	self._career_extension:start_activated_ability_cooldown(1)
-	self:set_breed_action("n/a")
+function PackmasterStateGrabbing.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	arg_3_0._status_extension:set_is_packmaster_grabbing(false)
+	arg_3_0._career_extension:start_activated_ability_cooldown(1)
+	arg_3_0:set_breed_action("n/a")
 end
 
-PackmasterStateGrabbing.update = function (self, unit, input, dt, context, t)
-	local csm = self._csm
-	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local status_extension = self._status_extension
-	local first_person_extension = self._first_person_extension
-	local locomotion_extension = self._locomotion_extension
+function PackmasterStateGrabbing.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	local var_4_0 = arg_4_0._csm
+	local var_4_1 = PlayerUnitMovementSettings.get_movement_settings_table(arg_4_1)
+	local var_4_2 = arg_4_0._status_extension
+	local var_4_3 = arg_4_0._first_person_extension
+	local var_4_4 = arg_4_0._locomotion_extension
 
-	if CharacterStateHelper.do_common_state_transitions(status_extension, csm) then
+	if CharacterStateHelper.do_common_state_transitions(var_4_2, var_4_0) then
 		return
 	end
 
-	if CharacterStateHelper.is_using_transport(status_extension) then
-		csm:change_state("using_transport")
-
-		return
-	end
-
-	if CharacterStateHelper.is_pushed(status_extension) then
-		status_extension:set_pushed(false)
-
-		local params = movement_settings_table.stun_settings.pushed
-		local hit_react_type = status_extension:hit_react_type()
-
-		params.hit_react_type = hit_react_type .. "_push"
-
-		csm:change_state("stunned", params)
+	if CharacterStateHelper.is_using_transport(var_4_2) then
+		var_4_0:change_state("using_transport")
 
 		return
 	end
 
-	if CharacterStateHelper.is_block_broken(status_extension) then
-		status_extension:set_block_broken(false)
+	if CharacterStateHelper.is_pushed(var_4_2) then
+		var_4_2:set_pushed(false)
 
-		local params = movement_settings_table.stun_settings.parry_broken
+		local var_4_5 = var_4_1.stun_settings.pushed
 
-		params.hit_react_type = "medium_push"
+		var_4_5.hit_react_type = var_4_2:hit_react_type() .. "_push"
 
-		csm:change_state("stunned", params)
+		var_4_0:change_state("stunned", var_4_5)
 
 		return
 	end
 
-	local grab_time = self._grab_time
-	local grab_grace_period = {
-		before = grab_time - self._grab_grace_period.before,
-		after = grab_time + self._grab_grace_period.after,
+	if CharacterStateHelper.is_block_broken(var_4_2) then
+		var_4_2:set_block_broken(false)
+
+		local var_4_6 = var_4_1.stun_settings.parry_broken
+
+		var_4_6.hit_react_type = "medium_push"
+
+		var_4_0:change_state("stunned", var_4_6)
+
+		return
+	end
+
+	local var_4_7 = arg_4_0._grab_time
+	local var_4_8 = {
+		before = var_4_7 - arg_4_0._grab_grace_period.before,
+		after = var_4_7 + arg_4_0._grab_grace_period.after
 	}
-	local grab_target = self:_grab()
+	local var_4_9 = arg_4_0:_grab()
 
-	if grab_time and t >= grab_grace_period.before then
-		if grab_target or grab_time <= t then
-			CharacterStateHelper.play_animation_event_first_person(first_person_extension, "claw_closed")
+	if var_4_7 and arg_4_5 >= var_4_8.before then
+		if var_4_9 or var_4_7 <= arg_4_5 then
+			CharacterStateHelper.play_animation_event_first_person(var_4_3, "claw_closed")
 		end
 
-		local ghost_mode_extension = ScriptUnit.extension(unit, "ghost_mode_system")
-		local is_in_ghost_mode = ghost_mode_extension:is_in_ghost_mode()
+		local var_4_10 = ScriptUnit.extension(arg_4_1, "ghost_mode_system"):is_in_ghost_mode()
 
-		if grab_target and not is_in_ghost_mode then
-			local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
-			local event_data = FrameTable.alloc_table()
+		if var_4_9 and not var_4_10 then
+			local var_4_11 = ScriptUnit.extension_input(arg_4_1, "dialogue_system")
+			local var_4_12 = FrameTable.alloc_table()
 
-			dialogue_input:trigger_networked_dialogue_event("hook_success", event_data)
-			csm:change_state("packmaster_dragging", grab_target)
-		elseif t >= grab_grace_period.after then
-			local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
-			local event_data = FrameTable.alloc_table()
+			var_4_11:trigger_networked_dialogue_event("hook_success", var_4_12)
+			var_4_0:change_state("packmaster_dragging", var_4_9)
+		elseif arg_4_5 >= var_4_8.after then
+			local var_4_13 = ScriptUnit.extension_input(arg_4_1, "dialogue_system")
+			local var_4_14 = FrameTable.alloc_table()
 
-			dialogue_input:trigger_networked_dialogue_event("hook_fail", event_data)
-			csm:change_state("walking")
+			var_4_13:trigger_networked_dialogue_event("hook_fail", var_4_14)
+			var_4_0:change_state("walking")
 		end
 	end
 
-	locomotion_extension:set_disable_rotation_update()
-	self:_update_movement(unit, t, dt)
+	var_4_4:set_disable_rotation_update()
+	arg_4_0:_update_movement(arg_4_1, arg_4_5, arg_4_3)
 end
 
-PackmasterStateGrabbing._grab = function (self)
-	if not self._locomotion_extension:is_on_ground() then
+function PackmasterStateGrabbing._grab(arg_5_0)
+	if not arg_5_0._locomotion_extension:is_on_ground() then
 		return nil
 	end
 
-	local unit = self._unit
-	local first_person_unit = self._first_person_unit
-	local physics_world = self._physics_world
-	local enemy_unit_in_range = EnemyCharacterStateHelper.get_enemies_in_line_of_sight(unit, first_person_unit, physics_world)
+	local var_5_0 = arg_5_0._unit
+	local var_5_1 = arg_5_0._first_person_unit
+	local var_5_2 = arg_5_0._physics_world
 
-	return enemy_unit_in_range
+	return (EnemyCharacterStateHelper.get_enemies_in_line_of_sight(var_5_0, var_5_1, var_5_2))
 end
 
-PackmasterStateGrabbing._update_movement = function (self, unit, t, dt)
-	local buff_extension = self._buff_extension
-	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local input_extension = self._input_extension
-	local first_person_extension = self._first_person_extension
-	local move_input = CharacterStateHelper.get_movement_input(input_extension)
-	local is_moving = CharacterStateHelper.has_move_input(input_extension)
-	local current_movement_speed_scale = self.current_movement_speed_scale
+function PackmasterStateGrabbing._update_movement(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	local var_6_0 = arg_6_0._buff_extension
+	local var_6_1 = PlayerUnitMovementSettings.get_movement_settings_table(arg_6_1)
+	local var_6_2 = arg_6_0._input_extension
+	local var_6_3 = arg_6_0._first_person_extension
+	local var_6_4 = CharacterStateHelper.get_movement_input(var_6_2)
+	local var_6_5 = CharacterStateHelper.has_move_input(var_6_2)
+	local var_6_6 = arg_6_0.current_movement_speed_scale
 
-	if not self.is_bot then
-		local breed_move_acceleration_up = self._breed and self._breed.breed_move_acceleration_up
-		local breed_move_acceleration_down = self._breed and self._breed.breed_move_acceleration_down
-		local move_acceleration_up_dt = breed_move_acceleration_up * dt or movement_settings_table.move_acceleration_up * dt
-		local move_acceleration_down_dt = breed_move_acceleration_down * dt or movement_settings_table.move_acceleration_down * dt
+	if not arg_6_0.is_bot then
+		local var_6_7 = arg_6_0._breed and arg_6_0._breed.breed_move_acceleration_up
+		local var_6_8 = arg_6_0._breed and arg_6_0._breed.breed_move_acceleration_down
+		local var_6_9 = var_6_7 * arg_6_3 or var_6_1.move_acceleration_up * arg_6_3
+		local var_6_10 = var_6_8 * arg_6_3 or var_6_1.move_acceleration_down * arg_6_3
 
-		if is_moving then
-			current_movement_speed_scale = math.min(1, current_movement_speed_scale + move_acceleration_up_dt)
+		if var_6_5 then
+			var_6_6 = math.min(1, var_6_6 + var_6_9)
 		else
-			current_movement_speed_scale = math.max(0, current_movement_speed_scale - move_acceleration_down_dt)
+			var_6_6 = math.max(0, var_6_6 - var_6_10)
 		end
 	else
-		current_movement_speed_scale = is_moving and 1 or 0
+		var_6_6 = var_6_5 and 1 or 0
 	end
 
-	local movement_speed_multiplier = math.lerp(self._grab_movement_speed_multiplier_initial, self._grab_movement_speed_multiplier_target, self._move_slow_lerp_constant * dt)
-	local current_max_move_speed = movement_settings_table.move_speed * movement_speed_multiplier
-	local buffed_move_speed = buff_extension:apply_buffs_to_value(current_max_move_speed, "movement_speed")
-	local final_move_speed = buffed_move_speed * current_movement_speed_scale * movement_settings_table.player_speed_scale
-	local movement = Vector3(0, 0, 0)
+	local var_6_11 = math.lerp(arg_6_0._grab_movement_speed_multiplier_initial, arg_6_0._grab_movement_speed_multiplier_target, arg_6_0._move_slow_lerp_constant * arg_6_3)
+	local var_6_12 = var_6_1.move_speed * var_6_11
+	local var_6_13 = var_6_0:apply_buffs_to_value(var_6_12, "movement_speed") * var_6_6 * var_6_1.player_speed_scale
+	local var_6_14 = Vector3(0, 0, 0)
 
-	if move_input then
-		movement = movement + move_input
+	if var_6_4 then
+		var_6_14 = var_6_14 + var_6_4
 	end
 
-	local move_input_direction
+	local var_6_15
+	local var_6_16 = Vector3.normalize(var_6_14)
 
-	move_input_direction = Vector3.normalize(movement)
-
-	if Vector3.length(move_input_direction) == 0 then
-		move_input_direction = self.last_input_direction:unbox()
+	if Vector3.length(var_6_16) == 0 then
+		var_6_16 = arg_6_0.last_input_direction:unbox()
 	else
-		self.last_input_direction:store(move_input_direction)
+		arg_6_0.last_input_direction:store(var_6_16)
 	end
 
-	local move_anim_3p = CharacterStateHelper.get_move_animation(self._locomotion_extension, input_extension, self._status_extension, self.move_anim_3p)
+	local var_6_17 = CharacterStateHelper.get_move_animation(arg_6_0._locomotion_extension, var_6_2, arg_6_0._status_extension, arg_6_0.move_anim_3p)
 
-	if move_anim_3p ~= self.move_anim_3p then
-		CharacterStateHelper.play_animation_event(unit, move_anim_3p)
+	if var_6_17 ~= arg_6_0.move_anim_3p then
+		CharacterStateHelper.play_animation_event(arg_6_1, var_6_17)
 
-		self.move_anim_3p = move_anim_3p
+		arg_6_0.move_anim_3p = var_6_17
 	end
 
-	CharacterStateHelper.move_on_ground(first_person_extension, input_extension, self._locomotion_extension, move_input_direction, final_move_speed, unit)
-	CharacterStateHelper.look(input_extension, self._player.viewport_name, first_person_extension, self._status_extension, self._inventory_extension)
+	CharacterStateHelper.move_on_ground(var_6_3, var_6_2, arg_6_0._locomotion_extension, var_6_16, var_6_13, arg_6_1)
+	CharacterStateHelper.look(var_6_2, arg_6_0._player.viewport_name, var_6_3, arg_6_0._status_extension, arg_6_0._inventory_extension)
 
-	self.current_movement_speed_scale = current_movement_speed_scale
+	arg_6_0.current_movement_speed_scale = var_6_6
 end

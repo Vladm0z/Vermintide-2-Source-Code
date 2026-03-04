@@ -1,842 +1,841 @@
-﻿-- chunkname: @scripts/ui/views/options_view_definitions.lua
+-- chunkname: @scripts/ui/views/options_view_definitions.lua
 
-local INPUT_FIELD_WIDTH = 400
-local INPUT_FIELD_COLOR = {
+local var_0_0 = 400
+local var_0_1 = {
 	200,
 	0,
 	0,
-	0,
+	0
 }
-local CHECKBOX_SIZE = {
+local var_0_2 = {
 	14,
-	14,
+	14
 }
-local SLIDER_SIZE = {
-	INPUT_FIELD_WIDTH,
-	10,
+local var_0_3 = {
+	var_0_0,
+	10
 }
-local SLIDER_BORDER_THICKNESS = 2
-local DROP_DOWN_SIZE = {
-	INPUT_FIELD_WIDTH,
-	30,
+local var_0_4 = 2
+local var_0_5 = {
+	var_0_0,
+	30
 }
-local WINDOW_WIDTH = 1400
-local WINDOW_HEIGHT = 900
-local BOTTOM_EDGE_THICKNESS = 2
-local BOTTOM_EDGE_COLOR = Colors.get_color_table_with_alpha("font_default", 50)
-local scenegraph_definition = {
+local var_0_6 = 1400
+local var_0_7 = 900
+local var_0_8 = 2
+local var_0_9 = Colors.get_color_table_with_alpha("font_default", 50)
+local var_0_10 = {
 	root = {
 		scale = "fit",
 		position = {
 			0,
 			0,
-			UILayer.options_menu + 10,
+			UILayer.options_menu + 10
 		},
 		size = {
 			1920,
-			1080,
-		},
+			1080
+		}
 	},
 	safe_rect = {
 		scale = "fit",
 		position = {
 			0,
 			0,
-			0,
+			0
 		},
 		size = {
 			1920,
-			1080,
-		},
+			1080
+		}
 	},
 	dead_space_filler = {
 		scale = "fit",
 		position = {
 			0,
 			0,
-			0,
+			0
 		},
 		size = {
 			1920,
-			1080,
-		},
+			1080
+		}
 	},
 	logo = {
-		horizontal_alignment = "left",
-		parent = "root",
 		vertical_alignment = "top",
+		parent = "root",
+		horizontal_alignment = "left",
 		position = {
 			45,
 			-45,
-			0,
+			0
 		},
 		size = {
 			280,
-			200,
-		},
+			200
+		}
 	},
 	background = {
-		horizontal_alignment = "center",
-		parent = "root",
 		vertical_alignment = "center",
+		parent = "root",
+		horizontal_alignment = "center",
 		size = {
-			WINDOW_WIDTH,
-			WINDOW_HEIGHT,
+			var_0_6,
+			var_0_7
 		},
 		position = {
 			0,
 			0,
-			2,
-		},
+			2
+		}
 	},
 	window = {
-		horizontal_alignment = "center",
-		parent = "root",
 		vertical_alignment = "center",
+		parent = "root",
+		horizontal_alignment = "center",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			3,
-		},
+			3
+		}
 	},
 	back_button = {
-		horizontal_alignment = "left",
-		parent = "window",
 		vertical_alignment = "top",
+		parent = "window",
+		horizontal_alignment = "left",
 		size = {
 			0,
-			0,
+			0
 		},
 		position = {
 			40,
 			-50,
-			3,
-		},
+			3
+		}
 	},
 	background_frame = {
-		horizontal_alignment = "center",
-		parent = "background",
 		vertical_alignment = "center",
+		parent = "background",
+		horizontal_alignment = "center",
 		size = {
-			WINDOW_WIDTH,
-			WINDOW_HEIGHT,
+			var_0_6,
+			var_0_7
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	background_top_panel = {
-		horizontal_alignment = "center",
-		parent = "background",
 		vertical_alignment = "top",
+		parent = "background",
+		horizontal_alignment = "center",
 		size = {
-			WINDOW_WIDTH,
-			50,
+			var_0_6,
+			50
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	background_top_panel_edge = {
-		horizontal_alignment = "center",
-		parent = "background_top_panel",
 		vertical_alignment = "bottom",
+		parent = "background_top_panel",
+		horizontal_alignment = "center",
 		size = {
-			WINDOW_WIDTH,
-			0,
+			var_0_6,
+			0
 		},
 		position = {
 			0,
 			-5,
-			1,
-		},
+			1
+		}
 	},
 	background_bottom_panel = {
-		horizontal_alignment = "center",
-		parent = "background",
 		vertical_alignment = "bottom",
+		parent = "background",
+		horizontal_alignment = "center",
 		size = {
-			WINDOW_WIDTH,
-			50,
+			var_0_6,
+			50
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	background_bottom_panel_edge = {
-		horizontal_alignment = "center",
-		parent = "background_bottom_panel",
 		vertical_alignment = "top",
+		parent = "background_bottom_panel",
+		horizontal_alignment = "center",
 		size = {
-			WINDOW_WIDTH,
-			0,
+			var_0_6,
+			0
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	frame_divider = {
-		horizontal_alignment = "left",
-		parent = "background",
 		vertical_alignment = "top",
+		parent = "background",
+		horizontal_alignment = "left",
 		position = {
 			420,
 			-90,
-			2,
+			2
 		},
 		size = {
 			36,
-			746,
-		},
+			746
+		}
 	},
 	button_pivot = {
-		horizontal_alignment = "left",
-		parent = "background_top_panel",
 		vertical_alignment = "bottom",
+		parent = "background_top_panel",
+		horizontal_alignment = "left",
 		position = {
 			65,
 			9,
-			2,
+			2
 		},
 		size = {
 			0,
-			0,
-		},
+			0
+		}
 	},
 	menu_symbol = {
-		horizontal_alignment = "left",
-		parent = "background_top_panel",
 		vertical_alignment = "bottom",
+		parent = "background_top_panel",
+		horizontal_alignment = "left",
 		position = {
 			10,
 			4,
-			2,
+			2
 		},
 		size = {
 			40,
-			40,
-		},
+			40
+		}
 	},
 	right_frame = {
-		horizontal_alignment = "right",
-		parent = "background",
 		vertical_alignment = "top",
+		parent = "background",
+		horizontal_alignment = "right",
 		position = {
 			0,
 			0,
-			2,
+			2
 		},
 		size = {
 			1420,
-			902,
-		},
+			902
+		}
 	},
 	gamepad_tooltip_text = {
-		horizontal_alignment = "left",
-		parent = "right_frame",
 		vertical_alignment = "top",
+		parent = "right_frame",
+		horizontal_alignment = "left",
 		position = {
 			20,
 			-60,
-			3,
+			3
 		},
 		size = {
 			820,
-			762,
-		},
+			762
+		}
 	},
 	title_text = {
-		horizontal_alignment = "center",
-		parent = "background",
 		vertical_alignment = "top",
+		parent = "background",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			-10,
-			2,
+			2
 		},
 		size = {
 			480,
-			28,
-		},
+			28
+		}
 	},
 	list_mask = {
-		horizontal_alignment = "left",
-		parent = "background_frame",
 		vertical_alignment = "center",
+		parent = "background_frame",
+		horizontal_alignment = "left",
 		position = {
 			18,
 			0,
-			2,
+			2
 		},
 		size = {
-			WINDOW_WIDTH,
-			WINDOW_HEIGHT - 140,
-		},
+			var_0_6,
+			var_0_7 - 140
+		}
 	},
 	list_edge_fade_bottom = {
-		horizontal_alignment = "center",
-		parent = "list_mask",
 		vertical_alignment = "bottom",
+		parent = "list_mask",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			-15,
-			2,
+			2
 		},
 		size = {
-			WINDOW_WIDTH,
-			15,
-		},
+			var_0_6,
+			15
+		}
 	},
 	list_edge_fade_top = {
-		horizontal_alignment = "center",
-		parent = "list_mask",
 		vertical_alignment = "top",
+		parent = "list_mask",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			15,
-			2,
+			2
 		},
 		size = {
-			WINDOW_WIDTH,
-			15,
-		},
+			var_0_6,
+			15
+		}
 	},
 	scrollbar_root = {
-		horizontal_alignment = "right",
-		parent = "background",
 		vertical_alignment = "center",
+		parent = "background",
+		horizontal_alignment = "right",
 		position = {
 			-15,
 			0,
-			10,
+			10
 		},
 		size = {
 			8,
-			WINDOW_HEIGHT - 120,
-		},
+			var_0_7 - 120
+		}
 	},
 	exit_button = {
-		horizontal_alignment = "right",
-		parent = "background_top_panel",
 		vertical_alignment = "bottom",
+		parent = "background_top_panel",
+		horizontal_alignment = "right",
 		position = {
 			-8,
 			8,
-			1,
+			1
 		},
 		size = {
 			32,
-			32,
-		},
+			32
+		}
 	},
 	apply_button = {
-		horizontal_alignment = "right",
-		parent = "background_bottom_panel",
 		vertical_alignment = "top",
+		parent = "background_bottom_panel",
+		horizontal_alignment = "right",
 		position = {
 			-30,
 			-7,
-			1,
+			1
 		},
 		size = {
 			150,
-			30,
-		},
+			30
+		}
 	},
 	reset_to_default = {
-		horizontal_alignment = "right",
-		parent = "apply_button",
 		vertical_alignment = "bottom",
+		parent = "apply_button",
+		horizontal_alignment = "right",
 		position = {
 			0,
 			0,
-			0,
+			0
 		},
 		size = {
 			150,
-			30,
-		},
+			30
+		}
 	},
 	keybind_info = {
-		horizontal_alignment = "left",
-		parent = "background_bottom_panel",
 		vertical_alignment = "top",
+		parent = "background_bottom_panel",
+		horizontal_alignment = "left",
 		position = {
 			30,
 			-7,
-			1,
+			1
 		},
 		size = {
 			1000,
-			30,
-		},
+			30
+		}
 	},
 	settings_button_1 = {
-		horizontal_alignment = "left",
-		parent = "button_pivot",
 		vertical_alignment = "bottom",
+		parent = "button_pivot",
+		horizontal_alignment = "left",
 		position = {
 			0,
 			0,
-			1,
+			1
 		},
 		size = {
 			220,
-			30,
-		},
+			30
+		}
 	},
 	settings_button_2 = {
-		horizontal_alignment = "left",
-		parent = "button_pivot",
 		vertical_alignment = "bottom",
+		parent = "button_pivot",
+		horizontal_alignment = "left",
 		position = {
 			0,
 			0,
-			1,
+			1
 		},
 		size = {
 			220,
-			30,
-		},
+			30
+		}
 	},
 	settings_button_3 = {
-		horizontal_alignment = "left",
-		parent = "button_pivot",
 		vertical_alignment = "bottom",
+		parent = "button_pivot",
+		horizontal_alignment = "left",
 		position = {
 			0,
 			0,
-			1,
+			1
 		},
 		size = {
 			220,
-			30,
-		},
+			30
+		}
 	},
 	settings_button_4 = {
-		horizontal_alignment = "left",
-		parent = "button_pivot",
 		vertical_alignment = "bottom",
+		parent = "button_pivot",
+		horizontal_alignment = "left",
 		position = {
 			0,
 			0,
-			1,
+			1
 		},
 		size = {
 			220,
-			30,
-		},
+			30
+		}
 	},
 	settings_button_5 = {
-		horizontal_alignment = "left",
-		parent = "button_pivot",
 		vertical_alignment = "bottom",
+		parent = "button_pivot",
+		horizontal_alignment = "left",
 		position = {
 			0,
 			0,
-			1,
+			1
 		},
 		size = {
 			220,
-			30,
-		},
+			30
+		}
 	},
 	settings_button_6 = {
-		horizontal_alignment = "left",
-		parent = "button_pivot",
 		vertical_alignment = "bottom",
+		parent = "button_pivot",
+		horizontal_alignment = "left",
 		position = {
 			0,
 			0,
-			1,
+			1
 		},
 		size = {
 			220,
-			30,
-		},
+			30
+		}
 	},
 	settings_button_7 = {
-		horizontal_alignment = "left",
-		parent = "button_pivot",
 		vertical_alignment = "bottom",
+		parent = "button_pivot",
+		horizontal_alignment = "left",
 		position = {
 			0,
 			0,
-			1,
+			1
 		},
 		size = {
 			220,
-			30,
-		},
+			30
+		}
 	},
 	settings_button_8 = {
-		horizontal_alignment = "left",
-		parent = "button_pivot",
 		vertical_alignment = "bottom",
+		parent = "button_pivot",
+		horizontal_alignment = "left",
 		position = {
 			0,
 			0,
-			1,
+			1
 		},
 		size = {
 			220,
-			30,
-		},
+			30
+		}
 	},
 	settings_button_9 = {
-		horizontal_alignment = "left",
-		parent = "button_pivot",
 		vertical_alignment = "bottom",
+		parent = "button_pivot",
+		horizontal_alignment = "left",
 		position = {
 			0,
 			0,
-			1,
+			1
 		},
 		size = {
 			220,
-			30,
-		},
+			30
+		}
 	},
 	settings_button_10 = {
-		horizontal_alignment = "left",
-		parent = "button_pivot",
 		vertical_alignment = "bottom",
+		parent = "button_pivot",
+		horizontal_alignment = "left",
 		position = {
 			0,
 			0,
-			1,
+			1
 		},
 		size = {
 			220,
-			30,
-		},
+			30
+		}
 	},
 	calibrate_ui_dummy = {
 		position = {
 			0,
 			0,
-			1,
+			1
 		},
 		size = {
 			1,
-			1,
-		},
-	},
+			1
+		}
+	}
 }
 
-local function calculate_indent(indent_level)
-	if indent_level then
-		return 25 * indent_level
+local function var_0_11(arg_1_0)
+	if arg_1_0 then
+		return 25 * arg_1_0
 	else
 		return 0
 	end
 end
 
-local function create_safe_rect_widget(scenegraph_id)
-	local extra_offset = {
+local function var_0_12(arg_2_0)
+	local var_2_0 = {
 		0,
-		0,
+		0
 	}
-	local border_size = {
+	local var_2_1 = {
 		5,
-		5,
+		5
 	}
-	local widget = {
+
+	return {
 		scenegraph_id = "safe_rect",
 		element = {
 			passes = {
 				{
-					pass_type = "triangle",
 					style_id = "bottom_left_triangle",
-					content_change_function = function (content, style)
-						local safe_rect = (Application.user_setting("safe_rect") or 0) * 0.01
+					pass_type = "triangle",
+					content_change_function = function(arg_3_0, arg_3_1)
+						local var_3_0 = (Application.user_setting("safe_rect") or 0) * 0.01
 
-						style.offset[1] = border_size[1] + 1920 * safe_rect * 0.5
-						style.offset[2] = border_size[2] + 1080 * safe_rect * 0.5
-					end,
+						arg_3_1.offset[1] = var_2_1[1] + 1920 * var_3_0 * 0.5
+						arg_3_1.offset[2] = var_2_1[2] + 1080 * var_3_0 * 0.5
+					end
 				},
 				{
-					pass_type = "triangle",
 					style_id = "bottom_right_triangle",
-					content_change_function = function (content, style)
-						local safe_rect = (Application.user_setting("safe_rect") or 0) * 0.01
+					pass_type = "triangle",
+					content_change_function = function(arg_4_0, arg_4_1)
+						local var_4_0 = (Application.user_setting("safe_rect") or 0) * 0.01
 
-						style.offset[1] = -border_size[1] - 1920 * safe_rect * 0.5
-						style.offset[2] = border_size[2] + 1080 * safe_rect * 0.5
-					end,
+						arg_4_1.offset[1] = -var_2_1[1] - 1920 * var_4_0 * 0.5
+						arg_4_1.offset[2] = var_2_1[2] + 1080 * var_4_0 * 0.5
+					end
 				},
 				{
-					pass_type = "triangle",
 					style_id = "top_right_triangle",
-					content_change_function = function (content, style)
-						local safe_rect = (Application.user_setting("safe_rect") or 0) * 0.01
-
-						style.offset[1] = -border_size[1] - 1920 * safe_rect * 0.5
-						style.offset[2] = -border_size[2] - 1080 * safe_rect * 0.5
-					end,
-				},
-				{
 					pass_type = "triangle",
+					content_change_function = function(arg_5_0, arg_5_1)
+						local var_5_0 = (Application.user_setting("safe_rect") or 0) * 0.01
+
+						arg_5_1.offset[1] = -var_2_1[1] - 1920 * var_5_0 * 0.5
+						arg_5_1.offset[2] = -var_2_1[2] - 1080 * var_5_0 * 0.5
+					end
+				},
+				{
 					style_id = "top_left_triangle",
-					content_change_function = function (content, style)
-						local safe_rect = (Application.user_setting("safe_rect") or 0) * 0.01
+					pass_type = "triangle",
+					content_change_function = function(arg_6_0, arg_6_1)
+						local var_6_0 = (Application.user_setting("safe_rect") or 0) * 0.01
 
-						style.offset[1] = border_size[1] + 1920 * safe_rect * 0.5
-						style.offset[2] = -border_size[2] - 1080 * safe_rect * 0.5
-					end,
+						arg_6_1.offset[1] = var_2_1[1] + 1920 * var_6_0 * 0.5
+						arg_6_1.offset[2] = -var_2_1[2] - 1080 * var_6_0 * 0.5
+					end
 				},
 				{
-					pass_type = "rect",
 					style_id = "left_line",
-					content_change_function = function (content, style)
-						local safe_rect = (Application.user_setting("safe_rect") or 0) * 0.01
+					pass_type = "rect",
+					content_change_function = function(arg_7_0, arg_7_1)
+						local var_7_0 = (Application.user_setting("safe_rect") or 0) * 0.01
 
-						style.offset[1] = 1920 * safe_rect * 0.5
-						style.offset[2] = border_size[1] + 1080 * safe_rect * 0.5
-						style.texture_size[2] = 1080 - 1080 * safe_rect - border_size[2] * 2 - extra_offset[2]
-					end,
+						arg_7_1.offset[1] = 1920 * var_7_0 * 0.5
+						arg_7_1.offset[2] = var_2_1[1] + 1080 * var_7_0 * 0.5
+						arg_7_1.texture_size[2] = 1080 - 1080 * var_7_0 - var_2_1[2] * 2 - var_2_0[2]
+					end
 				},
 				{
-					pass_type = "rect",
 					style_id = "right_line",
-					content_change_function = function (content, style)
-						local safe_rect = (Application.user_setting("safe_rect") or 0) * 0.01
+					pass_type = "rect",
+					content_change_function = function(arg_8_0, arg_8_1)
+						local var_8_0 = (Application.user_setting("safe_rect") or 0) * 0.01
 
-						style.offset[1] = -1920 * safe_rect * 0.5
-						style.offset[2] = border_size[1] + 1080 * safe_rect * 0.5
-						style.texture_size[2] = 1080 - 1080 * safe_rect - border_size[2] * 2 - extra_offset[2]
-					end,
+						arg_8_1.offset[1] = -1920 * var_8_0 * 0.5
+						arg_8_1.offset[2] = var_2_1[1] + 1080 * var_8_0 * 0.5
+						arg_8_1.texture_size[2] = 1080 - 1080 * var_8_0 - var_2_1[2] * 2 - var_2_0[2]
+					end
 				},
 				{
-					pass_type = "rect",
 					style_id = "top_line",
-					content_change_function = function (content, style)
-						local safe_rect = (Application.user_setting("safe_rect") or 0) * 0.01
+					pass_type = "rect",
+					content_change_function = function(arg_9_0, arg_9_1)
+						local var_9_0 = (Application.user_setting("safe_rect") or 0) * 0.01
 
-						style.offset[1] = 1920 * safe_rect * 0.5
-						style.offset[2] = -1080 * safe_rect * 0.5
-						style.texture_size[1] = 1920 - 1920 * safe_rect - extra_offset[1]
-					end,
+						arg_9_1.offset[1] = 1920 * var_9_0 * 0.5
+						arg_9_1.offset[2] = -1080 * var_9_0 * 0.5
+						arg_9_1.texture_size[1] = 1920 - 1920 * var_9_0 - var_2_0[1]
+					end
 				},
 				{
-					pass_type = "rect",
 					style_id = "bottom_line",
-					content_change_function = function (content, style)
-						local safe_rect = (Application.user_setting("safe_rect") or 0) * 0.01
+					pass_type = "rect",
+					content_change_function = function(arg_10_0, arg_10_1)
+						local var_10_0 = (Application.user_setting("safe_rect") or 0) * 0.01
 
-						style.offset[1] = 1920 * safe_rect * 0.5
-						style.offset[2] = 1080 * safe_rect * 0.5
-						style.texture_size[1] = 1920 - 1920 * safe_rect - extra_offset[1]
-					end,
-				},
-			},
+						arg_10_1.offset[1] = 1920 * var_10_0 * 0.5
+						arg_10_1.offset[2] = 1080 * var_10_0 * 0.5
+						arg_10_1.texture_size[1] = 1920 - 1920 * var_10_0 - var_2_0[1]
+					end
+				}
+			}
 		},
 		content = {},
 		style = {
 			left_line = {
-				horizontal_alignment = "left",
 				vertical_alignment = "bottom",
+				horizontal_alignment = "left",
 				texture_size = {
 					5,
-					1080,
+					1080
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					0,
-				},
+					0
+				}
 			},
 			right_line = {
-				horizontal_alignment = "right",
 				vertical_alignment = "bottom",
+				horizontal_alignment = "right",
 				texture_size = {
 					5,
-					1080,
+					1080
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					0,
-				},
+					0
+				}
 			},
 			top_line = {
-				horizontal_alignment = "left",
 				vertical_alignment = "top",
+				horizontal_alignment = "left",
 				texture_size = {
 					1920,
-					5,
+					5
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					0,
-				},
+					0
+				}
 			},
 			bottom_line = {
-				horizontal_alignment = "left",
 				vertical_alignment = "bottom",
+				horizontal_alignment = "left",
 				texture_size = {
 					1920,
-					5,
+					5
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					0,
-				},
+					0
+				}
 			},
 			bottom_left_triangle = {
+				vertical_alignment = "bottom",
 				horizontal_alignment = "left",
 				triangle_alignment = "bottom_left",
-				vertical_alignment = "bottom",
 				texture_size = {
 					100,
-					100,
+					100
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					500,
 					500,
-					0,
-				},
+					0
+				}
 			},
 			bottom_right_triangle = {
+				vertical_alignment = "bottom",
 				horizontal_alignment = "right",
 				triangle_alignment = "bottom_right",
-				vertical_alignment = "bottom",
 				texture_size = {
 					100,
-					100,
+					100
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					500,
 					500,
-					0,
-				},
+					0
+				}
 			},
 			top_left_triangle = {
+				vertical_alignment = "top",
 				horizontal_alignment = "left",
 				triangle_alignment = "top_left",
-				vertical_alignment = "top",
 				texture_size = {
 					100,
-					100,
+					100
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					500,
 					500,
-					0,
-				},
+					0
+				}
 			},
 			top_right_triangle = {
+				vertical_alignment = "top",
 				horizontal_alignment = "right",
 				triangle_alignment = "top_right",
-				vertical_alignment = "top",
 				texture_size = {
 					100,
-					100,
+					100
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					500,
 					500,
-					0,
-				},
-			},
+					0
+				}
+			}
 		},
 		offset = {
 			0,
 			0,
-			999,
-		},
+			999
+		}
 	}
-
-	return widget
 end
 
-local function create_window_divider(scenegraph_id, size)
-	local widget = {
+local function var_0_13(arg_11_0, arg_11_1)
+	return {
 		element = {
 			passes = {
 				{
-					pass_type = "tiled_texture",
-					style_id = "bottom_edge",
 					texture_id = "bottom_edge",
+					style_id = "bottom_edge",
+					pass_type = "tiled_texture"
 				},
 				{
-					pass_type = "texture",
-					style_id = "edge_holder_left",
 					texture_id = "edge_holder_left",
+					style_id = "edge_holder_left",
+					pass_type = "texture"
 				},
 				{
-					pass_type = "texture",
-					style_id = "edge_holder_right",
 					texture_id = "edge_holder_right",
-				},
-			},
+					style_id = "edge_holder_right",
+					pass_type = "texture"
+				}
+			}
 		},
 		content = {
-			bottom_edge = "menu_frame_12_divider",
-			edge_holder_left = "menu_frame_12_divider_left",
 			edge_holder_right = "menu_frame_12_divider_right",
+			edge_holder_left = "menu_frame_12_divider_left",
+			bottom_edge = "menu_frame_12_divider"
 		},
 		style = {
 			bottom_edge = {
@@ -844,93 +843,91 @@ local function create_window_divider(scenegraph_id, size)
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					5,
 					0,
-					6,
+					6
 				},
 				size = {
-					size[1] - 10,
-					5,
+					arg_11_1[1] - 10,
+					5
 				},
 				texture_tiling_size = {
-					size[1] - 10,
-					5,
-				},
+					arg_11_1[1] - 10,
+					5
+				}
 			},
 			edge_holder_left = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					3,
 					-6,
-					10,
+					10
 				},
 				size = {
 					9,
-					17,
-				},
+					17
+				}
 			},
 			edge_holder_right = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					size[1] - 12,
+					arg_11_1[1] - 12,
 					-6,
-					10,
+					10
 				},
 				size = {
 					9,
-					17,
-				},
-			},
+					17
+				}
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_11_0,
 		offset = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	}
-
-	return widget
 end
 
-local function create_vertical_window_divider(scenegraph_id, size)
-	local widget = {
+local function var_0_14(arg_12_0, arg_12_1)
+	return {
 		element = {
 			passes = {
 				{
-					pass_type = "tiled_texture",
-					style_id = "edge",
 					texture_id = "edge",
+					style_id = "edge",
+					pass_type = "tiled_texture"
 				},
 				{
-					pass_type = "texture",
-					style_id = "edge_holder_top",
 					texture_id = "edge_holder_top",
+					style_id = "edge_holder_top",
+					pass_type = "texture"
 				},
 				{
-					pass_type = "texture",
-					style_id = "edge_holder_bottom",
 					texture_id = "edge_holder_bottom",
-				},
-			},
+					style_id = "edge_holder_bottom",
+					pass_type = "texture"
+				}
+			}
 		},
 		content = {
 			edge = "menu_frame_12_divider_vertical",
-			edge_holder_bottom = "menu_frame_12_divider_bottom",
 			edge_holder_top = "menu_frame_12_divider_top",
+			edge_holder_bottom = "menu_frame_12_divider_bottom"
 		},
 		style = {
 			edge = {
@@ -938,142 +935,140 @@ local function create_vertical_window_divider(scenegraph_id, size)
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					6,
-					6,
+					6
 				},
 				size = {
 					5,
-					size[2] - 9,
+					arg_12_1[2] - 9
 				},
 				texture_tiling_size = {
 					5,
-					size[2] - 9,
-				},
+					arg_12_1[2] - 9
+				}
 			},
 			edge_holder_top = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					-6,
-					size[2] - 7,
-					10,
+					arg_12_1[2] - 7,
+					10
 				},
 				size = {
 					17,
-					9,
-				},
+					9
+				}
 			},
 			edge_holder_bottom = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					-6,
 					3,
-					10,
+					10
 				},
 				size = {
 					17,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_12_0,
 		offset = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	}
-
-	return widget
 end
 
-local gamepad_tooltip_style = {
-	font_size = 28,
-	font_type = "hell_shark",
-	horizontal_alignment = "left",
-	localize = true,
-	vertical_alignment = "top",
+local var_0_15 = {
 	word_wrap = true,
+	font_size = 28,
+	localize = true,
+	horizontal_alignment = "left",
+	vertical_alignment = "top",
+	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	line_colors = {
-		(Colors.get_color_table_with_alpha("font_title", 255)),
+		(Colors.get_color_table_with_alpha("font_title", 255))
 	},
 	offset = {
 		32,
 		-11,
-		10,
-	},
+		10
+	}
 }
-local gamepad_frame_widget_definitions = {
-	gamepad_tooltip_text = UIWidgets.create_simple_text("", "gamepad_tooltip_text", nil, nil, gamepad_tooltip_style),
+local var_0_16 = {
+	gamepad_tooltip_text = UIWidgets.create_simple_text("", "gamepad_tooltip_text", nil, nil, var_0_15)
 }
-local background_widget_definitions = {
+local var_0_17 = {
 	menu_symbol = UIWidgets.create_simple_texture("cogwheel_small", "menu_symbol", nil, nil, Colors.get_color_table_with_alpha("font_title", 255)),
-	background_frame = UIWidgets.create_frame("background_frame", scenegraph_definition.background_frame.size, "menu_frame_12"),
+	background_frame = UIWidgets.create_frame("background_frame", var_0_10.background_frame.size, "menu_frame_12"),
 	background = UIWidgets.create_simple_rect("background", {
 		255,
 		15,
 		15,
-		15,
+		15
 	}),
 	background_bottom_panel = UIWidgets.create_simple_rect("background_bottom_panel", {
 		255,
 		10,
 		10,
-		10,
+		10
 	}),
-	background_bottom_panel_edge = create_window_divider("background_bottom_panel_edge", scenegraph_definition.background_bottom_panel_edge.size),
+	background_bottom_panel_edge = var_0_13("background_bottom_panel_edge", var_0_10.background_bottom_panel_edge.size),
 	background_top_panel = UIWidgets.create_simple_rect("background_top_panel", {
 		255,
 		10,
 		10,
-		10,
+		10
 	}),
-	background_top_panel_edge = create_window_divider("background_top_panel_edge", scenegraph_definition.background_top_panel_edge.size),
+	background_top_panel_edge = var_0_13("background_top_panel_edge", var_0_10.background_top_panel_edge.size),
 	right_frame = {
 		scenegraph_id = "right_frame",
 		element = {
 			passes = {
 				{
-					content_id = "edge_fade_top_id",
-					pass_type = "texture_uv",
 					style_id = "edge_fade_top_id",
+					pass_type = "texture_uv",
+					content_id = "edge_fade_top_id"
 				},
 				{
-					content_id = "edge_fade_bottom_id",
-					pass_type = "texture_uv",
 					style_id = "edge_fade_bottom_id",
+					pass_type = "texture_uv",
+					content_id = "edge_fade_bottom_id"
 				},
 				{
 					pass_type = "scroll",
-					scroll_function = function (ui_scenegraph, ui_style, ui_content, input_service, scroll_axis)
-						local gamepad_active = Managers.input:is_device_active("gamepad")
-						local scroll_step = ui_content.scroll_step or 0.1
-						local current_scroll_value = ui_content.internal_scroll_value
+					scroll_function = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+						local var_13_0 = Managers.input:is_device_active("gamepad")
+						local var_13_1 = arg_13_2.scroll_step or 0.1
+						local var_13_2 = arg_13_2.internal_scroll_value
 
-						if not gamepad_active and IS_XB1 then
-							current_scroll_value = current_scroll_value + scroll_step * -scroll_axis.x * 0.01
+						if not var_13_0 and IS_XB1 then
+							var_13_2 = var_13_2 + var_13_1 * -arg_13_4.x * 0.01
 						else
-							current_scroll_value = current_scroll_value + scroll_step * -scroll_axis.y
+							var_13_2 = var_13_2 + var_13_1 * -arg_13_4.y
 						end
 
-						ui_content.internal_scroll_value = math.clamp(current_scroll_value, 0, 1)
-					end,
-				},
-			},
+						arg_13_2.internal_scroll_value = math.clamp(var_13_2, 0, 1)
+					end
+				}
+			}
 		},
 		content = {
 			internal_scroll_value = 0,
@@ -1083,27 +1078,27 @@ local background_widget_definitions = {
 				uvs = {
 					{
 						0,
-						0,
+						0
 					},
 					{
 						1,
-						1,
-					},
-				},
+						1
+					}
+				}
 			},
 			edge_fade_bottom_id = {
 				texture_id = "mask_rect_edge_fade",
 				uvs = {
 					{
 						0,
-						1,
+						1
 					},
 					{
 						1,
-						0,
-					},
-				},
-			},
+						0
+					}
+				}
+			}
 		},
 		style = {
 			edge_fade_bottom_id = {
@@ -1112,8 +1107,8 @@ local background_widget_definitions = {
 					255,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			edge_fade_top_id = {
 				scenegraph_id = "list_edge_fade_top",
@@ -1121,797 +1116,793 @@ local background_widget_definitions = {
 					255,
 					255,
 					255,
-					255,
-				},
-			},
-		},
+					255
+				}
+			}
+		}
 	},
 	list_mask = {
 		scenegraph_id = "list_mask",
 		element = UIElements.SimpleTexture,
 		content = {
-			texture_id = "mask_rect",
+			texture_id = "mask_rect"
 		},
 		style = {
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
-		},
+				255
+			}
+		}
 	},
 	dead_space_filler = {
 		scenegraph_id = "dead_space_filler",
 		element = UIElements.SimpleTexture,
 		content = {
-			texture_id = "gradient_dice_game_reward",
+			texture_id = "gradient_dice_game_reward"
 		},
 		style = {
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
-		},
-	},
+				255
+			}
+		}
+	}
 }
-local widget_definitions = {
+local var_0_18 = {
 	keybind_info = UIWidgets.create_simple_text("Hello world", "keybind_info", nil, nil, {
-		font_size = 24,
-		font_type = "hell_shark",
-		horizontal_alignment = "left",
 		vertical_alignment = "center",
-		text_color = Colors.get_color_table_with_alpha("font_default", 255),
-	}),
+		font_type = "hell_shark",
+		font_size = 24,
+		horizontal_alignment = "left",
+		text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	})
 }
-local button_element_template = {
-	passes = {
-		{
-			content_id = "hotspot",
-			pass_type = "hotspot",
-		},
-		{
-			pass_type = "texture",
-			texture_id = "texture_id",
-			content_check_function = function (content)
-				return not content.hotspot.is_hover and content.hotspot.is_clicked > 0
-			end,
-		},
-		{
-			pass_type = "texture",
-			texture_id = "texture_hover_id",
-			content_check_function = function (content)
-				return content.hotspot.is_hover and content.hotspot.is_clicked > 0
-			end,
-		},
-		{
-			pass_type = "texture",
-			texture_id = "texture_click_id",
-			content_check_function = function (content)
-				return content.hotspot.is_clicked == 0 or content.hotspot.is_selected
-			end,
-		},
-		{
-			pass_type = "text",
-			style_id = "text",
-			text_id = "text_field",
-			content_check_function = function (content, style)
-				if content.hotspot.is_hover then
-					style.text_color = style.hover_color
-				else
-					style.text_color = style.default_color
-				end
 
-				return true
-			end,
-		},
+;({}).passes = {
+	{
+		pass_type = "hotspot",
+		content_id = "hotspot"
 	},
+	{
+		pass_type = "texture",
+		texture_id = "texture_id",
+		content_check_function = function(arg_14_0)
+			return not arg_14_0.hotspot.is_hover and arg_14_0.hotspot.is_clicked > 0
+		end
+	},
+	{
+		pass_type = "texture",
+		texture_id = "texture_hover_id",
+		content_check_function = function(arg_15_0)
+			return arg_15_0.hotspot.is_hover and arg_15_0.hotspot.is_clicked > 0
+		end
+	},
+	{
+		pass_type = "texture",
+		texture_id = "texture_click_id",
+		content_check_function = function(arg_16_0)
+			return arg_16_0.hotspot.is_clicked == 0 or arg_16_0.hotspot.is_selected
+		end
+	},
+	{
+		style_id = "text",
+		pass_type = "text",
+		text_id = "text_field",
+		content_check_function = function(arg_17_0, arg_17_1)
+			if arg_17_0.hotspot.is_hover then
+				arg_17_1.text_color = arg_17_1.hover_color
+			else
+				arg_17_1.text_color = arg_17_1.default_color
+			end
+
+			return true
+		end
+	}
 }
 
-local function create_exit_button(scenegraph_id, texture)
-	local size = scenegraph_definition[scenegraph_id].size
-	local element = {
+local function var_0_19(arg_18_0, arg_18_1)
+	local var_18_0 = var_0_10[arg_18_0].size
+	local var_18_1 = {
 		passes = {
 			{
-				content_id = "button_hotspot",
 				pass_type = "hotspot",
+				content_id = "button_hotspot"
 			},
 			{
 				pass_type = "texture",
 				style_id = "button_texture",
 				texture_id = "button_texture",
-				content_check_function = function (content)
-					return not content.button_hotspot.is_hover
-				end,
+				content_check_function = function(arg_19_0)
+					return not arg_19_0.button_hotspot.is_hover
+				end
 			},
 			{
 				pass_type = "texture",
 				style_id = "button_texture_hover",
 				texture_id = "button_texture",
-				content_check_function = function (content)
-					return content.button_hotspot.is_hover
-				end,
-			},
-		},
+				content_check_function = function(arg_20_0)
+					return arg_20_0.button_hotspot.is_hover
+				end
+			}
+		}
 	}
-	local content = {
-		button_texture = texture,
-		button_hotspot = {},
+	local var_18_2 = {
+		button_texture = arg_18_1,
+		button_hotspot = {}
 	}
-	local style = {
+	local var_18_3 = {
 		size = {
-			size[1],
-			size[2],
+			var_18_0[1],
+			var_18_0[2]
 		},
 		color = {
 			255,
 			255,
 			255,
-			255,
+			255
 		},
 		button_texture_hover = {
 			size = {
-				size[1],
-				size[2],
+				var_18_0[1],
+				var_18_0[2]
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		button_texture = {
 			size = {
-				size[1],
-				size[2],
+				var_18_0[1],
+				var_18_0[2]
 			},
-			color = Colors.get_color_table_with_alpha("font_button_normal", 255),
+			color = Colors.get_color_table_with_alpha("font_button_normal", 255)
+		}
+	}
+
+	return {
+		element = var_18_1,
+		content = var_18_2,
+		style = var_18_3,
+		offset = {
+			0,
+			0,
+			0
 		},
+		scenegraph_id = arg_18_0
 	}
-	local widget = {}
-
-	widget.element = element
-	widget.content = content
-	widget.style = style
-	widget.offset = {
-		0,
-		0,
-		0,
-	}
-	widget.scenegraph_id = scenegraph_id
-
-	return widget
 end
 
-local button_definitions = {
-	exit_button = create_exit_button("exit_button", "friends_icon_close"),
+local var_0_20 = {
+	exit_button = var_0_19("exit_button", "friends_icon_close"),
 	back_button = UIWidgets.create_layout_button("back_button", "layout_button_back", "layout_button_back_glow"),
 	apply_button = UIWidgets.create_text_button("apply_button", "menu_settings_apply", 22, nil, "center"),
-	reset_to_default = UIWidgets.create_text_button("reset_to_default", "menu_settings_reset_to_default", 22, nil, "center"),
+	reset_to_default = UIWidgets.create_text_button("reset_to_default", "menu_settings_reset_to_default", 22, nil, "center")
 }
-local list_size_x = scenegraph_definition.list_mask.size[1]
-local scrollbar_size = scenegraph_definition.scrollbar_root.size
-local scrollbar_definition = UIWidgets.create_scrollbar("scrollbar_root", scrollbar_size)
-local DEBUG_WIDGETS = false
-local CHECKBOX_WIDGET_SIZE = {
-	list_size_x,
-	30,
+local var_0_21 = var_0_10.list_mask.size[1]
+local var_0_22 = var_0_10.scrollbar_root.size
+local var_0_23 = UIWidgets.create_scrollbar("scrollbar_root", var_0_22)
+local var_0_24 = false
+local var_0_25 = {
+	var_0_21,
+	30
 }
 
-local function create_checkbox_widget(text, scenegraph_id, base_offset)
-	base_offset[2] = base_offset[2] - CHECKBOX_WIDGET_SIZE[2]
+local function var_0_26(arg_21_0, arg_21_1, arg_21_2)
+	arg_21_2[2] = arg_21_2[2] - var_0_25[2]
 
-	local definition = {
+	local var_21_0 = {
 		element = {
 			passes = {
 				{
-					content_id = "highlight_hotspot",
 					pass_type = "hotspot",
+					content_id = "highlight_hotspot"
 				},
 				{
-					content_id = "hotspot",
-					pass_type = "hotspot",
 					style_id = "checkbox",
+					pass_type = "hotspot",
+					content_id = "hotspot"
 				},
 				{
 					pass_type = "texture",
 					style_id = "bottom_edge",
-					texture_id = "rect_masked",
+					texture_id = "rect_masked"
 				},
 				{
 					pass_type = "texture",
 					style_id = "highlight_texture",
 					texture_id = "highlight_texture",
-					content_check_function = function (content)
-						return content.is_highlighted
-					end,
+					content_check_function = function(arg_22_0)
+						return arg_22_0.is_highlighted
+					end
 				},
 				{
 					pass_type = "local_offset",
-					offset_function = function (ui_scenegraph, ui_style, ui_content, ui_renderer)
-						if ui_content.hotspot.on_release then
-							ui_content.flag = not ui_content.flag
+					offset_function = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+						if arg_23_2.hotspot.on_release then
+							arg_23_2.flag = not arg_23_2.flag
 						end
 
-						local flag = ui_content.flag
-
-						if flag then
-							ui_content.checkbox = "checkbox_checked"
+						if arg_23_2.flag then
+							arg_23_2.checkbox = "checkbox_checked"
 						else
-							ui_content.checkbox = "checkbox_unchecked"
+							arg_23_2.checkbox = "checkbox_unchecked"
 						end
-					end,
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "checkbox",
-					texture_id = "checkbox",
+					texture_id = "checkbox"
 				},
 				{
-					pass_type = "text",
 					style_id = "text",
-					text_id = "text",
+					pass_type = "text",
+					text_id = "text"
 				},
 				{
 					pass_type = "rect",
-					content_check_function = function (content)
-						return DEBUG_WIDGETS
-					end,
+					content_check_function = function(arg_24_0)
+						return var_0_24
+					end
 				},
 				{
 					pass_type = "border",
-					content_check_function = function (content, style)
-						if DEBUG_WIDGETS then
-							style.thickness = 1
+					content_check_function = function(arg_25_0, arg_25_1)
+						if var_0_24 then
+							arg_25_1.thickness = 1
 						end
 
-						return DEBUG_WIDGETS
-					end,
+						return var_0_24
+					end
 				},
 				{
-					pass_type = "rect",
 					style_id = "debug_middle_line",
-					content_check_function = function (content)
-						return DEBUG_WIDGETS
-					end,
-				},
-			},
+					pass_type = "rect",
+					content_check_function = function(arg_26_0)
+						return var_0_24
+					end
+				}
+			}
 		},
 		content = {
-			checkbox = "checkbox_unchecked",
-			flag = false,
-			highlight_texture = "playerlist_hover",
 			rect_masked = "rect_masked",
+			flag = false,
+			checkbox = "checkbox_unchecked",
+			highlight_texture = "playerlist_hover",
 			hotspot = {},
 			highlight_hotspot = {
-				allow_multi_hover = true,
+				allow_multi_hover = true
 			},
-			text = text,
+			text = arg_21_0,
 			hotspot_content_ids = {
-				"hotspot",
-			},
+				"hotspot"
+			}
 		},
 		style = {
 			highlight_texture = {
 				masked = true,
 				offset = {
-					base_offset[1],
-					base_offset[2],
-					base_offset[3],
+					arg_21_2[1],
+					arg_21_2[2],
+					arg_21_2[3]
 				},
 				color = Colors.get_table("white"),
 				size = {
-					CHECKBOX_WIDGET_SIZE[1],
-					CHECKBOX_WIDGET_SIZE[2],
-				},
+					var_0_25[1],
+					var_0_25[2]
+				}
 			},
 			checkbox = {
 				masked = true,
 				offset = {
-					base_offset[1] + 642,
-					base_offset[2] + 17,
-					base_offset[3],
+					arg_21_2[1] + 642,
+					arg_21_2[2] + 17,
+					arg_21_2[3]
 				},
 				size = {
 					16,
-					16,
-				},
+					16
+				}
 			},
 			text = {
+				upper_case = true,
+				localize = true,
 				dynamic_font = true,
 				font_size = 28,
 				font_type = "hell_shark_masked",
-				localize = true,
-				upper_case = true,
 				offset = {
-					base_offset[1] + 2,
-					base_offset[2] + 5,
-					base_offset[3],
+					arg_21_2[1] + 2,
+					arg_21_2[2] + 5,
+					arg_21_2[3]
 				},
-				text_color = Colors.get_color_table_with_alpha("font_default", 255),
+				text_color = Colors.get_color_table_with_alpha("font_default", 255)
 			},
 			offset = {
-				base_offset[1],
-				base_offset[2],
-				base_offset[3],
+				arg_21_2[1],
+				arg_21_2[2],
+				arg_21_2[3]
 			},
-			size = table.clone(CHECKBOX_WIDGET_SIZE),
+			size = table.clone(var_0_25),
 			color = {
 				50,
 				255,
 				255,
-				255,
+				255
 			},
 			debug_middle_line = {
 				offset = {
-					base_offset[1],
-					base_offset[2] + CHECKBOX_WIDGET_SIZE[2] / 2 - 1,
-					base_offset[3] + 10,
+					arg_21_2[1],
+					arg_21_2[2] + var_0_25[2] / 2 - 1,
+					arg_21_2[3] + 10
 				},
 				size = {
-					CHECKBOX_WIDGET_SIZE[1],
-					2,
+					var_0_25[1],
+					2
 				},
 				color = {
 					200,
 					0,
 					255,
-					0,
-				},
+					0
+				}
 			},
 			bottom_edge = {
 				offset = {
-					base_offset[1],
-					base_offset[2],
-					base_offset[3] + 1,
+					arg_21_2[1],
+					arg_21_2[2],
+					arg_21_2[3] + 1
 				},
-				color = BOTTOM_EDGE_COLOR,
+				color = var_0_9,
 				size = {
-					CHECKBOX_WIDGET_SIZE[1],
-					BOTTOM_EDGE_THICKNESS,
-				},
-			},
+					var_0_25[1],
+					var_0_8
+				}
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_21_1
 	}
 
-	return UIWidget.init(definition)
+	return UIWidget.init(var_21_0)
 end
 
-local function create_simple_texture_widget(texture, texture_size, scenegraph_id, base_offset)
-	base_offset[2] = base_offset[2] - texture_size[2]
+local function var_0_27(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+	arg_27_3[2] = arg_27_3[2] - arg_27_1[2]
 
-	local definition = {
+	local var_27_0 = {
 		element = {
 			passes = {
 				{
-					pass_type = "texture",
-					style_id = "texture_id",
 					texture_id = "texture_id",
-				},
-			},
+					style_id = "texture_id",
+					pass_type = "texture"
+				}
+			}
 		},
 		content = {
 			rect_masked = "rect_masked",
-			texture_id = texture,
+			texture_id = arg_27_0
 		},
 		style = {
 			size = {
-				texture_size[1],
-				texture_size[2],
+				arg_27_1[1],
+				arg_27_1[2]
 			},
 			offset = {
-				base_offset[1],
-				base_offset[2],
-				base_offset[3],
+				arg_27_3[1],
+				arg_27_3[2],
+				arg_27_3[3]
 			},
 			texture_id = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					base_offset[1],
-					base_offset[2],
-					base_offset[3] + 15,
+					arg_27_3[1],
+					arg_27_3[2],
+					arg_27_3[3] + 15
 				},
 				size = {
-					texture_size[1],
-					texture_size[2],
-				},
+					arg_27_1[1],
+					arg_27_1[2]
+				}
 			},
 			bottom_edge = {
 				offset = {
-					base_offset[1],
-					base_offset[2],
-					base_offset[3] + 1,
+					arg_27_3[1],
+					arg_27_3[2],
+					arg_27_3[3] + 1
 				},
-				color = BOTTOM_EDGE_COLOR,
+				color = var_0_9,
 				size = {
-					texture_size[1],
-					BOTTOM_EDGE_THICKNESS,
-				},
-			},
+					arg_27_1[1],
+					var_0_8
+				}
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_27_2
 	}
 
-	return UIWidget.init(definition)
+	return UIWidget.init(var_27_0)
 end
 
-local function create_gamepad_layout_widget(texture, texture_size, texture2, texture_size2, scenegraph_id, base_offset)
-	base_offset[2] = base_offset[2] - texture_size[2]
+local function var_0_28(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
+	arg_28_5[2] = arg_28_5[2] - arg_28_1[2]
 
-	local platform = PLATFORM
-	local definition
+	local var_28_0 = PLATFORM
+	local var_28_1
 
 	if IS_WINDOWS then
-		definition = UIWidgets.create_gamepad_layout_win32(texture, texture_size, texture2, texture_size2, base_offset, scenegraph_id)
+		var_28_1 = UIWidgets.create_gamepad_layout_win32(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_5, arg_28_4)
 	elseif IS_XB1 then
-		definition = UIWidgets.create_gamepad_layout_xb1(texture, texture_size, base_offset, scenegraph_id)
+		var_28_1 = UIWidgets.create_gamepad_layout_xb1(arg_28_0, arg_28_1, arg_28_5, arg_28_4)
 	elseif IS_PS4 then
-		definition = UIWidgets.create_gamepad_layout_ps4(texture, texture_size, base_offset, scenegraph_id)
+		var_28_1 = UIWidgets.create_gamepad_layout_ps4(arg_28_0, arg_28_1, arg_28_5, arg_28_4)
 	end
 
-	return UIWidget.init(definition)
+	return UIWidget.init(var_28_1)
 end
 
-local SLIDER_WIDGET_SIZE = {
-	list_size_x - 100,
-	30,
+local var_0_29 = {
+	var_0_21 - 100,
+	30
 }
 
-local function create_slider_widget(text, tooltip_text, scenegraph_id, base_offset, slider_image, slider_image_text)
-	base_offset[2] = base_offset[2] - SLIDER_WIDGET_SIZE[2]
+local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5)
+	arg_29_3[2] = arg_29_3[2] - var_0_29[2]
 
-	local definition = {
+	local var_29_0 = {
 		element = {
 			passes = {
 				{
 					pass_type = "texture",
 					style_id = "slider_box",
 					texture_id = "rect_masked",
-					content_check_function = function (content)
-						return not content.disabled
-					end,
+					content_check_function = function(arg_30_0)
+						return not arg_30_0.disabled
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "disabled_slider_box",
 					texture_id = "rect_masked",
-					content_check_function = function (content)
-						return content.disabled
-					end,
+					content_check_function = function(arg_31_0)
+						return arg_31_0.disabled
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "text",
-					text_id = "text",
+					pass_type = "text",
+					text_id = "text"
 				},
 				{
 					pass_type = "texture",
 					style_id = "bottom_edge",
-					texture_id = "rect_masked",
+					texture_id = "rect_masked"
 				},
 				{
 					pass_type = "texture",
 					style_id = "input_field_background",
-					texture_id = "rect_masked",
+					texture_id = "rect_masked"
 				},
 				{
 					pass_type = "texture",
 					style_id = "input_field_background_2",
-					texture_id = "rect_masked",
+					texture_id = "rect_masked"
 				},
 				{
-					content_id = "highlight_hotspot",
 					pass_type = "hotspot",
+					content_id = "highlight_hotspot"
 				},
 				{
 					pass_type = "texture",
 					style_id = "highlight_texture",
 					texture_id = "highlight_texture",
-					content_check_function = function (content)
-						return content.is_highlighted
-					end,
+					content_check_function = function(arg_32_0)
+						return arg_32_0.is_highlighted
+					end
 				},
 				{
 					pass_type = "option_tooltip",
 					text_id = "tooltip_text",
-					content_check_function = function (content)
-						return content.tooltip_text and content.highlight_hotspot.is_hover and not Managers.input:is_device_active("gamepad")
-					end,
+					content_check_function = function(arg_33_0)
+						return arg_33_0.tooltip_text and arg_33_0.highlight_hotspot.is_hover and not Managers.input:is_device_active("gamepad")
+					end
 				},
 				{
 					content_check_hover = "hotspot",
 					pass_type = "held",
 					style_id = "slider_box",
-					held_function = function (ui_scenegraph, ui_style, ui_content, input_service)
-						local cursor
-						local gamepad_active = Managers.input:is_device_active("gamepad")
+					held_function = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+						local var_34_0
+						local var_34_1 = Managers.input:is_device_active("gamepad")
 
-						if gamepad_active then
-							cursor = input_service:get("cursor")
-						elseif IS_XB1 and GameSettingsDevelopment.allow_keyboard_mouse and not gamepad_active then
-							cursor = input_service:get("cursor")
+						if var_34_1 then
+							var_34_0 = arg_34_3:get("cursor")
+						elseif IS_XB1 and GameSettingsDevelopment.allow_keyboard_mouse and not var_34_1 then
+							var_34_0 = arg_34_3:get("cursor")
 						else
-							cursor = UIInverseScaleVectorToResolution(input_service:get("cursor"))
+							var_34_0 = UIInverseScaleVectorToResolution(arg_34_3:get("cursor"))
 						end
 
-						local scenegraph_id = ui_content.scenegraph_id
-						local world_position = UISceneGraph.get_world_position(ui_scenegraph, scenegraph_id)
-						local size_x = ui_style.size[1]
-						local cursor_x = cursor[1]
-						local pos_start = world_position[1] + ui_style.offset[1]
-						local old_value = ui_content.internal_value
-						local cursor_x_norm = cursor_x - pos_start
-						local value = math.clamp(cursor_x_norm / size_x, 0, 1)
+						local var_34_2 = arg_34_2.scenegraph_id
+						local var_34_3 = UISceneGraph.get_world_position(arg_34_0, var_34_2)
+						local var_34_4 = arg_34_1.size[1]
+						local var_34_5 = var_34_0[1]
+						local var_34_6 = var_34_3[1] + arg_34_1.offset[1]
+						local var_34_7 = arg_34_2.internal_value
+						local var_34_8 = var_34_5 - var_34_6
+						local var_34_9 = math.clamp(var_34_8 / var_34_4, 0, 1)
 
-						ui_content.internal_value = value
+						arg_34_2.internal_value = var_34_9
 
-						if old_value ~= value and not ui_content.callback_on_release then
-							ui_content.callback(ui_content, ui_style.parent)
+						if var_34_7 ~= var_34_9 and not arg_34_2.callback_on_release then
+							arg_34_2.callback(arg_34_2, arg_34_1.parent)
 						end
 					end,
-					release_function = function (ui_scenegraph, ui_style, ui_content, input_service)
-						ui_content.callback(ui_content, ui_style.parent)
-					end,
+					release_function = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+						arg_35_2.callback(arg_35_2, arg_35_1.parent)
+					end
 				},
 				{
-					content_id = "hotspot",
-					pass_type = "hotspot",
 					style_id = "slider_box_hotspot",
-					content_check_function = function (content)
-						return not content.parent.disabled
-					end,
+					pass_type = "hotspot",
+					content_id = "hotspot",
+					content_check_function = function(arg_36_0)
+						return not arg_36_0.parent.disabled
+					end
 				},
 				{
 					pass_type = "local_offset",
-					offset_function = function (ui_scenegraph, ui_style, ui_content)
-						local internal_value = ui_content.internal_value
-						local min = ui_content.min
-						local max = ui_content.max
-						local real_value = math.round_with_precision(min + (max - min) * internal_value, ui_content.num_decimals or 0)
+					offset_function = function(arg_37_0, arg_37_1, arg_37_2)
+						local var_37_0 = arg_37_2.internal_value
+						local var_37_1 = arg_37_2.min
+						local var_37_2 = arg_37_2.max
+						local var_37_3 = math.round_with_precision(var_37_1 + (var_37_2 - var_37_1) * var_37_0, arg_37_2.num_decimals or 0)
 
-						ui_content.value = real_value
-						ui_content.value_text = real_value
+						arg_37_2.value = var_37_3
+						arg_37_2.value_text = var_37_3
 
-						local slider_box_style = ui_style.slider_box
-						local slider_box_size = slider_box_style.size
-						local base_offset_x = slider_box_style.offset[1]
-						local size_x = slider_box_size[1] * internal_value
-						local slider_icon_style = ui_style.slider
-						local slider_icon_hover_style = ui_style.slider_hover
-						local slider_icon_offset = slider_icon_style.offset
-						local slider_icon_size = slider_icon_style.size
-						local slider_icon_x = math.max(0, math.min(size_x - slider_icon_size[1], slider_box_size[1] - slider_icon_size[1]))
+						local var_37_4 = arg_37_1.slider_box
+						local var_37_5 = var_37_4.size
+						local var_37_6 = var_37_4.offset[1]
+						local var_37_7 = var_37_5[1] * var_37_0
+						local var_37_8 = arg_37_1.slider
+						local var_37_9 = arg_37_1.slider_hover
+						local var_37_10 = var_37_8.offset
+						local var_37_11 = var_37_8.size
+						local var_37_12 = math.max(0, math.min(var_37_7 - var_37_11[1], var_37_5[1] - var_37_11[1]))
 
-						slider_icon_style.offset[1] = base_offset_x + size_x - slider_icon_style.size[1] / 2
-						slider_icon_hover_style.offset[1] = slider_icon_style.offset[1] + slider_icon_size[1] / 2 - slider_icon_hover_style.size[1] / 2
+						var_37_8.offset[1] = var_37_6 + var_37_7 - var_37_8.size[1] / 2
+						var_37_9.offset[1] = var_37_8.offset[1] + var_37_11[1] / 2 - var_37_9.size[1] / 2
 
-						if ui_content.hotspot.is_hover or ui_content.altering_value then
-							ui_style.value_text.text_color = ui_style.value_text.hover_color
+						if arg_37_2.hotspot.is_hover or arg_37_2.altering_value then
+							arg_37_1.value_text.text_color = arg_37_1.value_text.hover_color
 						else
-							ui_style.value_text.text_color = ui_style.value_text.default_color
+							arg_37_1.value_text.text_color = arg_37_1.value_text.default_color
 						end
-					end,
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "value_text",
+					pass_type = "text",
 					text_id = "value_text",
-					content_check_function = function (content)
-						return not content.disabled
-					end,
+					content_check_function = function(arg_38_0)
+						return not arg_38_0.disabled
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "disabled_value_text",
+					pass_type = "text",
 					text_id = "value_text",
-					content_check_function = function (content)
-						return content.disabled
-					end,
+					content_check_function = function(arg_39_0)
+						return arg_39_0.disabled
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "slider",
 					texture_id = "slider",
-					content_check_function = function (content)
-						return not content.disabled
-					end,
+					content_check_function = function(arg_40_0)
+						return not arg_40_0.disabled
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "slider_hover",
 					texture_id = "slider_hover",
-					content_check_function = function (content)
-						if content.disabled then
+					content_check_function = function(arg_41_0)
+						if arg_41_0.disabled then
 							return false
 						end
 
-						return content.hotspot.is_hover
-					end,
+						return arg_41_0.hotspot.is_hover
+					end
 				},
 				{
 					pass_type = "rect",
-					content_check_function = function (content)
-						return DEBUG_WIDGETS
-					end,
+					content_check_function = function(arg_42_0)
+						return var_0_24
+					end
 				},
 				{
-					pass_type = "rect",
 					style_id = "slider_box",
-					content_check_function = function (content)
-						return DEBUG_WIDGETS
-					end,
+					pass_type = "rect",
+					content_check_function = function(arg_43_0)
+						return var_0_24
+					end
 				},
 				{
 					pass_type = "border",
-					content_check_function = function (content, style)
-						if DEBUG_WIDGETS then
-							style.thickness = 1
+					content_check_function = function(arg_44_0, arg_44_1)
+						if var_0_24 then
+							arg_44_1.thickness = 1
 						end
 
-						return DEBUG_WIDGETS
-					end,
+						return var_0_24
+					end
 				},
 				{
-					pass_type = "rect",
 					style_id = "debug_middle_line",
-					content_check_function = function (content)
-						return DEBUG_WIDGETS
-					end,
+					pass_type = "rect",
+					content_check_function = function(arg_45_0)
+						return var_0_24
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "slider_image",
 					texture_id = "slider_image",
-					content_check_function = function (content)
-						return content.slider_image ~= ""
-					end,
+					content_check_function = function(arg_46_0)
+						return arg_46_0.slider_image ~= ""
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "slider_image_text",
+					pass_type = "text",
 					text_id = "slider_image_text",
-					content_check_function = function (content)
-						return content.slider_image_text ~= ""
-					end,
+					content_check_function = function(arg_47_0)
+						return arg_47_0.slider_image_text ~= ""
+					end
 				},
 				{
+					style_id = "left_arrow",
+					pass_type = "hotspot",
 					content_id = "left_hotspot",
-					pass_type = "hotspot",
-					style_id = "left_arrow",
-					content_check_function = function (content)
-						return not content.parent.disabled
-					end,
+					content_check_function = function(arg_48_0)
+						return not arg_48_0.parent.disabled
+					end
 				},
 				{
+					style_id = "right_arrow",
+					pass_type = "hotspot",
 					content_id = "right_hotspot",
-					pass_type = "hotspot",
-					style_id = "right_arrow",
-					content_check_function = function (content)
-						return not content.parent.disabled
-					end,
+					content_check_function = function(arg_49_0)
+						return not arg_49_0.parent.disabled
+					end
 				},
 				{
-					content_id = "arrow",
-					pass_type = "texture",
+					texture_id = "texture_id",
 					style_id = "left_arrow",
-					texture_id = "texture_id",
-					content_check_function = function (content)
-						return not content.parent.disabled
-					end,
-				},
-				{
-					content_id = "arrow",
-					pass_type = "texture_uv",
-					style_id = "right_arrow",
-					texture_id = "texture_id",
-					content_check_function = function (content)
-						return not content.parent.disabled
-					end,
-				},
-				{
-					content_id = "arrow_hover",
 					pass_type = "texture",
-					style_id = "left_arrow_hover",
-					texture_id = "texture_id",
-					content_check_function = function (content)
-						return not content.parent.disabled
-					end,
+					content_id = "arrow",
+					content_check_function = function(arg_50_0)
+						return not arg_50_0.parent.disabled
+					end
 				},
 				{
-					content_id = "arrow_hover",
-					pass_type = "texture_uv",
-					style_id = "right_arrow_hover",
 					texture_id = "texture_id",
-					content_check_function = function (content)
-						return not content.parent.disabled
-					end,
+					style_id = "right_arrow",
+					pass_type = "texture_uv",
+					content_id = "arrow",
+					content_check_function = function(arg_51_0)
+						return not arg_51_0.parent.disabled
+					end
+				},
+				{
+					texture_id = "texture_id",
+					style_id = "left_arrow_hover",
+					pass_type = "texture",
+					content_id = "arrow_hover",
+					content_check_function = function(arg_52_0)
+						return not arg_52_0.parent.disabled
+					end
+				},
+				{
+					texture_id = "texture_id",
+					style_id = "right_arrow_hover",
+					pass_type = "texture_uv",
+					content_id = "arrow_hover",
+					content_check_function = function(arg_53_0)
+						return not arg_53_0.parent.disabled
+					end
 				},
 				{
 					pass_type = "local_offset",
-					offset_function = function (ui_scenegraph, ui_style, ui_content, ui_renderer)
-						local left_hotspot = ui_content.left_hotspot
-						local right_hotspot = ui_content.right_hotspot
+					offset_function = function(arg_54_0, arg_54_1, arg_54_2, arg_54_3)
+						local var_54_0 = arg_54_2.left_hotspot
+						local var_54_1 = arg_54_2.right_hotspot
 
-						if left_hotspot.on_hover_enter then
-							local on_hover_enter_callback = ui_content.on_hover_enter_callback
+						if var_54_0.on_hover_enter then
+							local var_54_2 = arg_54_2.on_hover_enter_callback
 
-							if on_hover_enter_callback then
-								on_hover_enter_callback("left_arrow_hover")
+							if var_54_2 then
+								var_54_2("left_arrow_hover")
 							end
 						end
 
-						if left_hotspot.on_hover_exit then
-							local on_hover_exit_callback = ui_content.on_hover_exit_callback
+						if var_54_0.on_hover_exit then
+							local var_54_3 = arg_54_2.on_hover_exit_callback
 
-							if on_hover_exit_callback then
-								on_hover_exit_callback("left_arrow_hover")
+							if var_54_3 then
+								var_54_3("left_arrow_hover")
 							end
 						end
 
-						if left_hotspot.on_release then
-							local on_pressed_callback = ui_content.on_pressed_callback
+						if var_54_0.on_release then
+							local var_54_4 = arg_54_2.on_pressed_callback
 
-							if on_pressed_callback then
-								on_pressed_callback("left_arrow")
-								on_pressed_callback("left_arrow_hover")
+							if var_54_4 then
+								var_54_4("left_arrow")
+								var_54_4("left_arrow_hover")
 							end
 						end
 
-						if right_hotspot.on_hover_enter then
-							local on_hover_enter_callback = ui_content.on_hover_enter_callback
+						if var_54_1.on_hover_enter then
+							local var_54_5 = arg_54_2.on_hover_enter_callback
 
-							if on_hover_enter_callback then
-								on_hover_enter_callback("right_arrow_hover")
+							if var_54_5 then
+								var_54_5("right_arrow_hover")
 							end
 						end
 
-						if right_hotspot.on_hover_exit then
-							local on_hover_exit_callback = ui_content.on_hover_exit_callback
+						if var_54_1.on_hover_exit then
+							local var_54_6 = arg_54_2.on_hover_exit_callback
 
-							if on_hover_exit_callback then
-								on_hover_exit_callback("right_arrow_hover")
+							if var_54_6 then
+								var_54_6("right_arrow_hover")
 							end
 						end
 
-						if right_hotspot.on_release then
-							local on_pressed_callback = ui_content.on_pressed_callback
+						if var_54_1.on_release then
+							local var_54_7 = arg_54_2.on_pressed_callback
 
-							if on_pressed_callback then
-								on_pressed_callback("right_arrow")
-								on_pressed_callback("right_arrow_hover")
+							if var_54_7 then
+								var_54_7("right_arrow")
+								var_54_7("right_arrow_hover")
 							end
 						end
-					end,
-				},
-			},
+					end
+				}
+			}
 		},
 		content = {
-			highlight_texture = "playerlist_hover",
+			slider = "slider_thumb",
 			internal_value = 0.5,
 			rect_masked = "rect_masked",
-			slider = "slider_thumb",
 			slider_hover = "slider_thumb_hover",
 			value = 0.5,
-			scenegraph_id = scenegraph_id,
-			text = text,
-			slider_image = slider_image and slider_image.slider_image or "",
-			slider_image_text = slider_image_text and slider_image_text.text or "",
-			tooltip_text = tooltip_text,
+			highlight_texture = "playerlist_hover",
+			scenegraph_id = arg_29_2,
+			text = arg_29_0,
+			slider_image = arg_29_4 and arg_29_4.slider_image or "",
+			slider_image_text = arg_29_5 and arg_29_5.text or "",
+			tooltip_text = arg_29_1,
 			hotspot = {},
 			highlight_hotspot = {
-				allow_multi_hover = true,
+				allow_multi_hover = true
 			},
 			hotspot_content_ids = {
-				"hotspot",
+				"hotspot"
 			},
 			left_hotspot = {},
 			right_hotspot = {},
@@ -1920,3771 +1911,3724 @@ local function create_slider_widget(text, tooltip_text, scenegraph_id, base_offs
 				uvs = {
 					{
 						1,
-						0,
+						0
 					},
 					{
 						0,
-						1,
-					},
-				},
+						1
+					}
+				}
 			},
 			arrow_hover = {
 				texture_id = "settings_arrow_clicked",
 				uvs = {
 					{
 						1,
-						0,
+						0
 					},
 					{
 						0,
-						1,
-					},
-				},
-			},
+						1
+					}
+				}
+			}
 		},
 		style = {
 			offset = {
-				base_offset[1],
-				base_offset[2] - (slider_image and slider_image.size[2] or 0),
-				base_offset[3],
+				arg_29_3[1],
+				arg_29_3[2] - (arg_29_4 and arg_29_4.size[2] or 0),
+				arg_29_3[3]
 			},
 			size = {
-				SLIDER_WIDGET_SIZE[1],
-				SLIDER_WIDGET_SIZE[2] + (slider_image and slider_image.size[2] or 0),
+				var_0_29[1],
+				var_0_29[2] + (arg_29_4 and arg_29_4.size[2] or 0)
 			},
 			color = {
 				50,
 				255,
 				255,
-				255,
+				255
 			},
 			highlight_texture = {
 				masked = true,
 				offset = {
-					base_offset[1],
-					base_offset[2],
-					base_offset[3],
+					arg_29_3[1],
+					arg_29_3[2],
+					arg_29_3[3]
 				},
 				color = Colors.get_table("white"),
 				size = {
-					SLIDER_WIDGET_SIZE[1],
-					SLIDER_WIDGET_SIZE[2],
-				},
+					var_0_29[1],
+					var_0_29[2]
+				}
 			},
 			tooltip_text = {
 				font_size = 24,
-				font_type = "hell_shark",
-				horizontal_alignment = "left",
-				localize = true,
-				vertical_alignment = "top",
 				width = 500,
+				localize = true,
+				horizontal_alignment = "left",
+				vertical_alignment = "top",
+				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				line_colors = {
-					(Colors.get_color_table_with_alpha("font_title", 255)),
+					(Colors.get_color_table_with_alpha("font_title", 255))
 				},
 				offset = {
 					0,
 					0,
-					0,
-				},
+					0
+				}
 			},
 			text = {
+				upper_case = true,
+				localize = true,
 				dynamic_font = true,
 				font_size = 16,
 				font_type = "hell_shark_masked",
-				localize = true,
-				upper_case = true,
 				offset = {
-					base_offset[1],
-					base_offset[2] + 5,
-					base_offset[3],
+					arg_29_3[1],
+					arg_29_3[2] + 5,
+					arg_29_3[3]
 				},
-				text_color = Colors.get_color_table_with_alpha("font_default", 255),
+				text_color = Colors.get_color_table_with_alpha("font_default", 255)
 			},
 			slider_box = {
 				offset = {
-					base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH + 30,
-					base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - 4,
-					base_offset[3] + 10,
+					arg_29_3[1] + var_0_29[1] - var_0_0 + 30,
+					arg_29_3[2] + var_0_29[2] / 2 - 4,
+					arg_29_3[3] + 10
 				},
 				size = {
-					INPUT_FIELD_WIDTH - 112,
-					10,
+					var_0_0 - 112,
+					10
 				},
 				color = {
 					255,
 					5,
 					5,
-					5,
-				},
+					5
+				}
 			},
 			disabled_slider_box = {
 				offset = {
-					base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH + 30,
-					base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - 4,
-					base_offset[3] + 10,
+					arg_29_3[1] + var_0_29[1] - var_0_0 + 30,
+					arg_29_3[2] + var_0_29[2] / 2 - 4,
+					arg_29_3[3] + 10
 				},
 				size = {
-					INPUT_FIELD_WIDTH - 112,
-					10,
+					var_0_0 - 112,
+					10
 				},
 				color = {
 					255,
 					20,
 					20,
-					20,
-				},
+					20
+				}
 			},
 			slider_box_hotspot = {
 				offset = {
-					base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH + 19,
-					base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - 13.5,
-					base_offset[3] + 10,
+					arg_29_3[1] + var_0_29[1] - var_0_0 + 19,
+					arg_29_3[2] + var_0_29[2] / 2 - 13.5,
+					arg_29_3[3] + 10
 				},
 				size = {
-					INPUT_FIELD_WIDTH - 90,
-					27,
-				},
+					var_0_0 - 90,
+					27
+				}
 			},
 			slider = {
 				masked = true,
 				color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
-					base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH,
-					base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - 13.5,
-					base_offset[3] + 15,
+					arg_29_3[1] + var_0_29[1] - var_0_0,
+					arg_29_3[2] + var_0_29[2] / 2 - 13.5,
+					arg_29_3[3] + 15
 				},
 				size = {
 					14,
-					27,
-				},
+					27
+				}
 			},
 			slider_hover = {
 				masked = true,
 				color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
-					base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH,
-					base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - 12.5,
-					base_offset[3] + 15,
+					arg_29_3[1] + var_0_29[1] - var_0_0,
+					arg_29_3[2] + var_0_29[2] / 2 - 12.5,
+					arg_29_3[3] + 15
 				},
 				size = {
 					34,
-					25,
-				},
+					25
+				}
 			},
 			input_field_background = {
 				offset = {
-					base_offset[1] + SLIDER_WIDGET_SIZE[1] - 50 - 2,
-					base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - (SLIDER_WIDGET_SIZE[2] - 10) / 2,
-					base_offset[3],
+					arg_29_3[1] + var_0_29[1] - 50 - 2,
+					arg_29_3[2] + var_0_29[2] / 2 - (var_0_29[2] - 10) / 2,
+					arg_29_3[3]
 				},
-				color = INPUT_FIELD_COLOR,
+				color = var_0_1,
 				size = {
 					52,
-					SLIDER_WIDGET_SIZE[2] - 10 + 2,
-				},
+					var_0_29[2] - 10 + 2
+				}
 			},
 			input_field_background_2 = {
 				offset = {
-					base_offset[1] + SLIDER_WIDGET_SIZE[1] - 50,
-					base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - (SLIDER_WIDGET_SIZE[2] - 10) / 2,
-					base_offset[3] + 1,
+					arg_29_3[1] + var_0_29[1] - 50,
+					arg_29_3[2] + var_0_29[2] / 2 - (var_0_29[2] - 10) / 2,
+					arg_29_3[3] + 1
 				},
 				color = {
 					255,
 					10,
 					10,
-					10,
+					10
 				},
 				size = {
 					50,
-					SLIDER_WIDGET_SIZE[2] - 10,
-				},
+					var_0_29[2] - 10
+				}
 			},
 			value_text = {
-				dynamic_font = true,
 				font_size = 16,
-				font_type = "hell_shark_masked",
-				horizontal_alignment = "center",
-				localize = false,
 				upper_case = true,
+				localize = false,
+				horizontal_alignment = "center",
+				dynamic_font = true,
+				font_type = "hell_shark_masked",
 				offset = {
-					base_offset[1] + SLIDER_WIDGET_SIZE[1] - 25,
-					base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - (SLIDER_WIDGET_SIZE[2] - 10) / 2 - 2,
-					base_offset[3] + 2,
+					arg_29_3[1] + var_0_29[1] - 25,
+					arg_29_3[2] + var_0_29[2] / 2 - (var_0_29[2] - 10) / 2 - 2,
+					arg_29_3[3] + 2
 				},
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				default_color = Colors.get_color_table_with_alpha("font_default", 255),
-				hover_color = Colors.get_color_table_with_alpha("font_default", 255),
+				hover_color = Colors.get_color_table_with_alpha("font_default", 255)
 			},
 			disabled_value_text = {
-				dynamic_font = true,
 				font_size = 16,
-				font_type = "hell_shark_masked",
-				horizontal_alignment = "center",
-				localize = false,
 				upper_case = true,
+				localize = false,
+				horizontal_alignment = "center",
+				dynamic_font = true,
+				font_type = "hell_shark_masked",
 				offset = {
-					base_offset[1] + SLIDER_WIDGET_SIZE[1] - 25,
-					base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - (SLIDER_WIDGET_SIZE[2] - 10) / 2 - 2,
-					base_offset[3] + 2,
+					arg_29_3[1] + var_0_29[1] - 25,
+					arg_29_3[2] + var_0_29[2] / 2 - (var_0_29[2] - 10) / 2 - 2,
+					arg_29_3[3] + 2
 				},
 				text_color = Colors.get_color_table_with_alpha("font_default", 50),
 				default_color = Colors.get_color_table_with_alpha("font_default", 255),
-				hover_color = Colors.get_color_table_with_alpha("font_default", 255),
+				hover_color = Colors.get_color_table_with_alpha("font_default", 255)
 			},
 			debug_middle_line = {
 				offset = {
-					base_offset[1],
-					base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - 1,
-					base_offset[3] + 10,
+					arg_29_3[1],
+					arg_29_3[2] + var_0_29[2] / 2 - 1,
+					arg_29_3[3] + 10
 				},
 				size = {
-					SLIDER_WIDGET_SIZE[1],
-					2,
+					var_0_29[1],
+					2
 				},
 				color = {
 					200,
 					0,
 					255,
-					0,
-				},
+					0
+				}
 			},
 			slider_image = {
 				masked = true,
-				color = slider_image and slider_image.color or nil,
-				size = slider_image and slider_image.size or {
+				color = arg_29_4 and arg_29_4.color or nil,
+				size = arg_29_4 and arg_29_4.size or {
 					0,
-					0,
+					0
 				},
 				offset = {
-					base_offset[1] + SLIDER_WIDGET_SIZE[1] - (slider_image and slider_image.size[1] or 0),
-					base_offset[2] - (slider_image and slider_image.size[2] or 0),
-					base_offset[3] + 15,
-				},
+					arg_29_3[1] + var_0_29[1] - (arg_29_4 and arg_29_4.size[1] or 0),
+					arg_29_3[2] - (arg_29_4 and arg_29_4.size[2] or 0),
+					arg_29_3[3] + 15
+				}
 			},
 			slider_image_text = {
-				dynamic_font = true,
 				horizontal_alignment = "left",
 				vertical_alignment = "center",
+				dynamic_font = true,
 				offset = {
-					base_offset[1] + SLIDER_WIDGET_SIZE[1] - (slider_image and slider_image.size[1] or 0) + 5,
-					base_offset[2] - (slider_image and slider_image.size[2] / 2 or 0),
-					base_offset[3] + 16,
+					arg_29_3[1] + var_0_29[1] - (arg_29_4 and arg_29_4.size[1] or 0) + 5,
+					arg_29_3[2] - (arg_29_4 and arg_29_4.size[2] / 2 or 0),
+					arg_29_3[3] + 16
 				},
-				text_color = slider_image_text and slider_image_text.color or Colors.get_color_table_with_alpha("font_default", 255),
-				upper_case = slider_image_text and slider_image_text.upper_case or false,
-				font_type = slider_image_text and slider_image_text.font or "hell_shark_masked",
-				font_size = slider_image_text and slider_image_text.font_size or 16,
-				localize = slider_image_text and slider_image_text.localize or false,
+				text_color = arg_29_5 and arg_29_5.color or Colors.get_color_table_with_alpha("font_default", 255),
+				upper_case = arg_29_5 and arg_29_5.upper_case or false,
+				font_type = arg_29_5 and arg_29_5.font or "hell_shark_masked",
+				font_size = arg_29_5 and arg_29_5.font_size or 16,
+				localize = arg_29_5 and arg_29_5.localize or false
 			},
 			bottom_edge = {
 				offset = {
-					base_offset[1],
-					base_offset[2],
-					base_offset[3] + 1,
+					arg_29_3[1],
+					arg_29_3[2],
+					arg_29_3[3] + 1
 				},
-				color = BOTTOM_EDGE_COLOR,
+				color = var_0_9,
 				size = {
-					SLIDER_WIDGET_SIZE[1],
-					BOTTOM_EDGE_THICKNESS,
-				},
+					var_0_29[1],
+					var_0_8
+				}
 			},
 			left_arrow = {
 				masked = true,
 				offset = {
-					base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH,
-					base_offset[2] + (SLIDER_WIDGET_SIZE[2] / 2 - 13.5),
-					base_offset[3] + 1,
+					arg_29_3[1] + var_0_29[1] - var_0_0,
+					arg_29_3[2] + (var_0_29[2] / 2 - 13.5),
+					arg_29_3[3] + 1
 				},
 				size = {
 					19,
-					27,
+					27
 				},
-				color = Colors.get_color_table_with_alpha("font_default", 255),
+				color = Colors.get_color_table_with_alpha("font_default", 255)
 			},
 			left_arrow_hover = {
 				masked = true,
 				offset = {
-					base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH + 6,
-					base_offset[2] + (SLIDER_WIDGET_SIZE[2] / 2 - 17.5),
-					base_offset[3],
+					arg_29_3[1] + var_0_29[1] - var_0_0 + 6,
+					arg_29_3[2] + (var_0_29[2] / 2 - 17.5),
+					arg_29_3[3]
 				},
 				size = {
 					30,
-					35,
+					35
 				},
 				color = {
 					0,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			left_arrow_hotspot = {
 				offset = {
-					base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH,
-					base_offset[2] + (SLIDER_WIDGET_SIZE[2] / 2 - 13.5),
-					base_offset[3],
+					arg_29_3[1] + var_0_29[1] - var_0_0,
+					arg_29_3[2] + (var_0_29[2] / 2 - 13.5),
+					arg_29_3[3]
 				},
 				size = {
-					INPUT_FIELD_WIDTH / 2,
-					27,
-				},
+					var_0_0 / 2,
+					27
+				}
 			},
 			right_arrow = {
 				masked = true,
 				offset = {
-					base_offset[1] + SLIDER_WIDGET_SIZE[1] - 19 - 52,
-					base_offset[2] + (SLIDER_WIDGET_SIZE[2] / 2 - 13.5),
-					base_offset[3],
+					arg_29_3[1] + var_0_29[1] - 19 - 52,
+					arg_29_3[2] + (var_0_29[2] / 2 - 13.5),
+					arg_29_3[3]
 				},
 				size = {
 					19,
-					27,
+					27
 				},
 				color = Colors.get_color_table_with_alpha("font_default", 255),
 				pivot = {
 					9.5,
-					13.5,
-				},
+					13.5
+				}
 			},
 			right_arrow_hover = {
 				masked = true,
 				offset = {
-					base_offset[1] + SLIDER_WIDGET_SIZE[1] - 30 - 52 - 5,
-					base_offset[2] + (SLIDER_WIDGET_SIZE[2] / 2 - 17.5),
-					base_offset[3],
+					arg_29_3[1] + var_0_29[1] - 30 - 52 - 5,
+					arg_29_3[2] + (var_0_29[2] / 2 - 17.5),
+					arg_29_3[3]
 				},
 				size = {
 					30,
-					35,
+					35
 				},
 				color = {
 					0,
 					255,
 					255,
-					255,
+					255
 				},
 				pivot = {
 					9.5,
-					13.5,
-				},
+					13.5
+				}
 			},
 			right_arrow_hotspot = {
 				offset = {
-					base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH / 2,
-					base_offset[2] + (SLIDER_WIDGET_SIZE[2] / 2 - 13.5),
-					base_offset[3],
+					arg_29_3[1] + var_0_29[1] - var_0_0 / 2,
+					arg_29_3[2] + (var_0_29[2] / 2 - 13.5),
+					arg_29_3[3]
 				},
 				size = {
-					INPUT_FIELD_WIDTH / 2,
-					27,
-				},
-			},
+					var_0_0 / 2,
+					27
+				}
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_29_2
 	}
 
-	base_offset[2] = base_offset[2] - SLIDER_WIDGET_SIZE[2] - (slider_image and slider_image.size[2] or 0)
+	arg_29_3[2] = arg_29_3[2] - var_0_29[2] - (arg_29_4 and arg_29_4.size[2] or 0)
 
-	return UIWidget.init(definition)
+	return UIWidget.init(var_29_0)
 end
 
-local DROP_DOWN_WIDGET_SIZE = {
-	list_size_x - 100,
-	30,
+local var_0_31 = {
+	var_0_21 - 100,
+	30
 }
 
-local function create_drop_down_widget(text, options, selected_option, tooltip_text, disabled_tooltip_text, scenegraph_id, base_offset, indent_level, ignore_upper_case)
-	local options_texts = {}
-	local options_values = {}
-	local options_n = #options
+local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5, arg_55_6, arg_55_7, arg_55_8)
+	local var_55_0 = {}
+	local var_55_1 = {}
+	local var_55_2 = #arg_55_1
 
-	for i = 1, options_n do
-		options_texts[i] = options[i].text
-		options_values[i] = options[i].value
+	for iter_55_0 = 1, var_55_2 do
+		var_55_0[iter_55_0] = arg_55_1[iter_55_0].text
+		var_55_1[iter_55_0] = arg_55_1[iter_55_0].value
 	end
 
-	base_offset[2] = base_offset[2] - DROP_DOWN_WIDGET_SIZE[2]
+	arg_55_6[2] = arg_55_6[2] - var_0_31[2]
 
-	local item_size = {
-		INPUT_FIELD_WIDTH - 56,
-		24,
+	local var_55_3 = {
+		var_0_0 - 56,
+		24
 	}
-	local item_styles = {}
-	local item_contents = {}
-	local max_draw_count = math.min(options_n, 10)
-	local selected_bg_y = item_size[2] * max_draw_count
-	local using_scrollbar = max_draw_count < options_n
+	local var_55_4 = {}
+	local var_55_5 = {}
+	local var_55_6 = math.min(var_55_2, 10)
+	local var_55_7 = var_55_3[2] * var_55_6
+	local var_55_8 = var_55_6 < var_55_2
 
-	if using_scrollbar then
-		item_size[1] = item_size[1] - 25
+	if var_55_8 then
+		var_55_3[1] = var_55_3[1] - 25
 	end
 
-	for i = 1, options_n do
-		local content = {
-			highlight_texture = "playerlist_hover",
+	for iter_55_1 = 1, var_55_2 do
+		var_55_5[iter_55_1], var_55_4[iter_55_1] = {
 			selected = false,
+			highlight_texture = "playerlist_hover",
 			hotspot = {},
-			text = options_texts[i],
-		}
-		local style = {
+			text = var_55_0[iter_55_1]
+		}, {
 			text = {
-				dynamic_font = true,
-				font_size = 16,
-				font_type = "hell_shark",
 				horizontal_alignment = "center",
+				font_size = 16,
+				dynamic_font = true,
+				font_type = "hell_shark",
 				offset = {
 					0,
 					0,
-					25,
+					25
 				},
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				default_color = Colors.get_color_table_with_alpha("font_default", 255),
 				hover_color = Colors.get_color_table_with_alpha("font_default", 255),
 				disabled_color = Colors.get_color_table_with_alpha("font_default", 75),
-				upper_case = not ignore_upper_case,
-				size = item_size,
+				upper_case = not arg_55_8,
+				size = var_55_3
 			},
 			highlight_texture = {
 				offset = {
 					0,
 					0,
-					24,
+					24
 				},
 				color = Colors.get_table("white"),
-				size = item_size,
+				size = var_55_3
 			},
-			size = item_size,
+			size = var_55_3,
 			color = {
 				50,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		}
-
-		item_styles[i] = style
-		item_contents[i] = content
 	end
 
-	local pi = math.pi
-	local definition = {
+	local var_55_9 = math.pi
+	local var_55_10 = {
 		element = {
 			passes = {
 				{
-					pass_type = "text",
 					style_id = "text",
+					pass_type = "text",
 					text_id = "text",
-					content_change_function = function (content, style)
-						if content.disabled then
-							style.text_color = style.disabled_color
+					content_change_function = function(arg_56_0, arg_56_1)
+						if arg_56_0.disabled then
+							arg_56_1.text_color = arg_56_1.disabled_color
 						else
-							style.text_color = style.default_color
+							arg_56_1.text_color = arg_56_1.default_color
 						end
-					end,
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "bottom_edge",
-					texture_id = "rect_masked",
+					texture_id = "rect_masked"
 				},
 				{
-					content_id = "highlight_hotspot",
 					pass_type = "hotspot",
+					content_id = "highlight_hotspot"
 				},
 				{
 					pass_type = "texture",
 					style_id = "highlight_texture",
 					texture_id = "highlight_texture",
-					content_check_function = function (content)
-						return content.is_highlighted
-					end,
+					content_check_function = function(arg_57_0)
+						return arg_57_0.is_highlighted
+					end
 				},
 				{
 					pass_type = "option_tooltip",
 					text_id = "tooltip_text",
-					content_check_function = function (ui_content)
-						if not ui_content.highlight_hotspot.is_hover or Managers.input:is_device_active("gamepad") then
+					content_check_function = function(arg_58_0)
+						if not arg_58_0.highlight_hotspot.is_hover or Managers.input:is_device_active("gamepad") then
 							return false
 						end
 
-						if not ui_content.disabled then
-							return ui_content.tooltip_text
+						if not arg_58_0.disabled then
+							return arg_58_0.tooltip_text
 						else
-							return not ui_content.disabled_tooltip_text
+							return not arg_58_0.disabled_tooltip_text
 						end
-					end,
+					end
 				},
 				{
-					pass_type = "option_tooltip",
 					style_id = "disabled_tooltip_text",
+					pass_type = "option_tooltip",
 					text_id = "disabled_tooltip_text",
-					content_check_function = function (ui_content)
-						if not ui_content.disabled or not ui_content.highlight_hotspot.is_hover or Managers.input:is_device_active("gamepad") then
+					content_check_function = function(arg_59_0)
+						if not arg_59_0.disabled or not arg_59_0.highlight_hotspot.is_hover or Managers.input:is_device_active("gamepad") then
 							return false
 						end
 
-						if ui_content.overriden_reason then
-							ui_content.disabled_tooltip_text = ui_content.overriden_reason
+						if arg_59_0.overriden_reason then
+							arg_59_0.disabled_tooltip_text = arg_59_0.overriden_reason
 						end
 
-						if ui_content.disabled_tooltip_text then
+						if arg_59_0.disabled_tooltip_text then
 							return true
 						end
-					end,
+					end
 				},
 				{
-					content_id = "hotspot",
-					pass_type = "hotspot",
 					style_id = "hotspot",
+					pass_type = "hotspot",
+					content_id = "hotspot"
 				},
 				{
-					content_id = "arrow",
-					pass_type = "texture_uv",
-					style_id = "arrow",
 					texture_id = "texture_id",
-					content_check_function = function (content, style)
-						local parent_content = content.parent
+					style_id = "arrow",
+					pass_type = "texture_uv",
+					content_id = "arrow",
+					content_check_function = function(arg_60_0, arg_60_1)
+						local var_60_0 = arg_60_0.parent
 
-						if parent_content.disabled then
+						if var_60_0.disabled then
 							return false
 						end
 
-						return parent_content.active
-					end,
+						return var_60_0.active
+					end
 				},
 				{
-					content_id = "arrow",
+					texture_id = "texture_id",
+					style_id = "arrow",
 					pass_type = "texture",
-					style_id = "arrow",
-					texture_id = "texture_id",
-					content_check_function = function (content, style)
-						local parent_content = content.parent
+					content_id = "arrow",
+					content_check_function = function(arg_61_0, arg_61_1)
+						local var_61_0 = arg_61_0.parent
 
-						if parent_content.disabled then
+						if var_61_0.disabled then
 							return false
 						end
 
-						return not parent_content.active
-					end,
+						return not var_61_0.active
+					end
 				},
 				{
-					content_id = "arrow_hover",
-					pass_type = "texture_uv",
+					texture_id = "texture_id",
 					style_id = "arrow_hover_flipped",
-					texture_id = "texture_id",
-					content_check_function = function (content, style)
-						local parent_content = content.parent
-						local hotspot = parent_content.hotspot
-
-						if hotspot.is_hover then
-							if parent_content.disabled then
-								return false
-							end
-
-							return parent_content.active
-						end
-					end,
-				},
-				{
+					pass_type = "texture_uv",
 					content_id = "arrow_hover",
-					pass_type = "texture",
-					style_id = "arrow_hover",
-					texture_id = "texture_id",
-					content_check_function = function (content, style)
-						local parent_content = content.parent
-						local hotspot = parent_content.hotspot
+					content_check_function = function(arg_62_0, arg_62_1)
+						local var_62_0 = arg_62_0.parent
 
-						if hotspot.is_hover then
-							if parent_content.disabled then
+						if var_62_0.hotspot.is_hover then
+							if var_62_0.disabled then
 								return false
 							end
 
-							return not parent_content.active
+							return var_62_0.active
 						end
-					end,
+					end
 				},
 				{
-					pass_type = "text",
+					texture_id = "texture_id",
+					style_id = "arrow_hover",
+					pass_type = "texture",
+					content_id = "arrow_hover",
+					content_check_function = function(arg_63_0, arg_63_1)
+						local var_63_0 = arg_63_0.parent
+
+						if var_63_0.hotspot.is_hover then
+							if var_63_0.disabled then
+								return false
+							end
+
+							return not var_63_0.active
+						end
+					end
+				},
+				{
 					style_id = "selected_option",
+					pass_type = "text",
 					text_id = "selected_option",
-					content_check_function = function (content, style)
-						if content.disabled then
-							style.text_color = style.disabled_color
-						elseif content.hotspot.is_hover or content.active then
-							style.text_color = style.hover_color
+					content_check_function = function(arg_64_0, arg_64_1)
+						if arg_64_0.disabled then
+							arg_64_1.text_color = arg_64_1.disabled_color
+						elseif arg_64_0.hotspot.is_hover or arg_64_0.active then
+							arg_64_1.text_color = arg_64_1.hover_color
 						else
-							style.text_color = style.default_color
+							arg_64_1.text_color = arg_64_1.default_color
 						end
 
-						if content._last_selection ~= content.current_selection or content._last_overriden_setting ~= content.overriden_setting then
-							content._last_selection = content.current_selection
-							content._last_overriden_setting = content.overriden_setting
+						if arg_64_0._last_selection ~= arg_64_0.current_selection or arg_64_0._last_overriden_setting ~= arg_64_0.overriden_setting then
+							arg_64_0._last_selection = arg_64_0.current_selection
+							arg_64_0._last_overriden_setting = arg_64_0.overriden_setting
 
-							local option_text = Utf8.upper(content.options_texts[content.current_selection] or "n/a")
-							local overriden_setting = content.overriden_setting
+							local var_64_0 = Utf8.upper(arg_64_0.options_texts[arg_64_0.current_selection] or "n/a")
+							local var_64_1 = arg_64_0.overriden_setting
 
-							if overriden_setting then
-								local override_color = content.disabled and style.override_color or style.default_color
-								local disabled_color = style.disabled_color
+							if var_64_1 then
+								local var_64_2 = arg_64_0.disabled and arg_64_1.override_color or arg_64_1.default_color
+								local var_64_3 = arg_64_1.disabled_color
 
-								content.selected_option = string.format("{#color(%d,%d,%d,%d)}%s {#color(%d,%d,%d,%d);strike(true)}%s{#strike(false)}", override_color[2], override_color[3], override_color[4], override_color[1], option_text, disabled_color[2], disabled_color[3], disabled_color[4], disabled_color[1], Utf8.upper(overriden_setting))
+								arg_64_0.selected_option = string.format("{#color(%d,%d,%d,%d)}%s {#color(%d,%d,%d,%d);strike(true)}%s{#strike(false)}", var_64_2[2], var_64_2[3], var_64_2[4], var_64_2[1], var_64_0, var_64_3[2], var_64_3[3], var_64_3[4], var_64_3[1], Utf8.upper(var_64_1))
 							else
-								content.selected_option = option_text
+								arg_64_0.selected_option = var_64_0
 							end
 						end
 
-						if content.selected_option == nil then
-							content.selected_option = ""
+						if arg_64_0.selected_option == nil then
+							arg_64_0.selected_option = ""
 						end
 
 						return true
-					end,
+					end
 				},
 				{
-					content_id = "list_content",
-					pass_type = "list_pass",
 					style_id = "list_style",
-					content_check_function = function (content, style)
-						return style.active
+					pass_type = "list_pass",
+					content_id = "list_content",
+					content_check_function = function(arg_65_0, arg_65_1)
+						return arg_65_1.active
 					end,
 					passes = {
 						{
-							content_id = "hotspot",
 							pass_type = "hotspot",
+							content_id = "hotspot"
 						},
 						{
 							pass_type = "local_offset",
-							offset_function = function (ui_scenegraph, ui_style, ui_content, ui_renderer)
-								local hotspot = ui_content.hotspot
-								local text_style = ui_style.text
+							offset_function = function(arg_66_0, arg_66_1, arg_66_2, arg_66_3)
+								local var_66_0 = arg_66_2.hotspot
+								local var_66_1 = arg_66_1.text
 
-								if hotspot.on_hover_enter then
-									hotspot.is_selected = true
-								elseif hotspot.on_hover_exit then
-									hotspot.is_selected = false
+								if var_66_0.on_hover_enter then
+									var_66_0.is_selected = true
+								elseif var_66_0.on_hover_exit then
+									var_66_0.is_selected = false
 								end
 
-								if hotspot.disabled then
-									text_style.text_color = text_style.disabled_color
-								elseif hotspot.is_selected then
-									text_style.text_color = text_style.hover_color
+								if var_66_0.disabled then
+									var_66_1.text_color = var_66_1.disabled_color
+								elseif var_66_0.is_selected then
+									var_66_1.text_color = var_66_1.hover_color
 								else
-									text_style.text_color = text_style.default_color
+									var_66_1.text_color = var_66_1.default_color
 								end
-							end,
+							end
 						},
 						{
-							pass_type = "text",
 							style_id = "text",
-							text_id = "text",
+							pass_type = "text",
+							text_id = "text"
 						},
 						{
 							pass_type = "texture",
 							style_id = "highlight_texture",
 							texture_id = "highlight_texture",
-							content_check_function = function (content)
-								local hotspot = content.hotspot
+							content_check_function = function(arg_67_0)
+								local var_67_0 = arg_67_0.hotspot
 
-								if hotspot.disabled then
+								if var_67_0.disabled then
 									return false
 								end
 
-								return hotspot.is_hover or Managers.input:is_device_active("gamepad") and hotspot.is_selected
-							end,
-						},
-					},
+								return var_67_0.is_hover or Managers.input:is_device_active("gamepad") and var_67_0.is_selected
+							end
+						}
+					}
 				},
 				{
-					pass_type = "rect",
 					style_id = "selected_bg",
-					content_check_function = function (content, style)
-						return content.active
-					end,
+					pass_type = "rect",
+					content_check_function = function(arg_68_0, arg_68_1)
+						return arg_68_0.active
+					end
 				},
 				{
-					pass_type = "rect",
 					style_id = "selected_bg_shade",
-					content_check_function = function (content, style)
-						return content.active
-					end,
+					pass_type = "rect",
+					content_check_function = function(arg_69_0, arg_69_1)
+						return arg_69_0.active
+					end
 				},
 				{
 					pass_type = "rect",
-					content_check_function = function (content)
-						return DEBUG_WIDGETS
-					end,
+					content_check_function = function(arg_70_0)
+						return var_0_24
+					end
 				},
 				{
 					pass_type = "border",
-					content_check_function = function (content, style)
-						if DEBUG_WIDGETS then
-							style.thickness = 1
+					content_check_function = function(arg_71_0, arg_71_1)
+						if var_0_24 then
+							arg_71_1.thickness = 1
 						end
 
-						return DEBUG_WIDGETS
-					end,
+						return var_0_24
+					end
 				},
 				{
-					pass_type = "rect",
 					style_id = "debug_middle_line",
-					content_check_function = function (content)
-						return DEBUG_WIDGETS
-					end,
-				},
-			},
+					pass_type = "rect",
+					content_check_function = function(arg_72_0)
+						return var_0_24
+					end
+				}
+			}
 		},
 		content = {
-			active = false,
-			disabled = false,
+			selected_bg = "drop_down_menu_selected_bg",
 			highlight_texture = "playerlist_hover",
 			rect_masked = "rect_masked",
-			selected_bg = "drop_down_menu_selected_bg",
-			using_scrollbar = using_scrollbar,
+			disabled = false,
+			active = false,
+			using_scrollbar = var_55_8,
 			hotspot = {},
 			highlight_hotspot = {},
-			list_content = item_contents,
-			text = text,
-			selected_option = options_texts[selected_option],
-			current_selection = selected_option,
-			options_texts = options_texts,
-			options_values = options_values,
-			tooltip_text = tooltip_text,
-			disabled_tooltip_text = disabled_tooltip_text and Localize(disabled_tooltip_text),
+			list_content = var_55_5,
+			text = arg_55_0,
+			selected_option = var_55_0[arg_55_2],
+			current_selection = arg_55_2,
+			options_texts = var_55_0,
+			options_values = var_55_1,
+			tooltip_text = arg_55_3,
+			disabled_tooltip_text = arg_55_4 and Localize(arg_55_4),
 			arrow = {
 				texture_id = "drop_down_menu_arrow",
 				uvs = {
 					{
 						0,
-						1,
+						1
 					},
 					{
 						1,
-						0,
-					},
-				},
+						0
+					}
+				}
 			},
 			arrow_hover = {
 				texture_id = "drop_down_menu_arrow_clicked",
 				uvs = {
 					{
 						0,
-						1,
+						1
 					},
 					{
 						1,
-						0,
-					},
-				},
+						0
+					}
+				}
 			},
 			hotspot_content_ids = {
-				"hotspot",
-			},
+				"hotspot"
+			}
 		},
 		style = {
 			offset = {
-				base_offset[1],
-				base_offset[2],
-				base_offset[3],
+				arg_55_6[1],
+				arg_55_6[2],
+				arg_55_6[3]
 			},
 			list_style = {
 				active = false,
 				start_index = 1,
 				offset = {
-					base_offset[1] + DROP_DOWN_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH + 28,
-					base_offset[2] - item_size[2],
-					base_offset[3] + 5,
+					arg_55_6[1] + var_0_31[1] - var_0_0 + 28,
+					arg_55_6[2] - var_55_3[2],
+					arg_55_6[3] + 5
 				},
-				num_draws = max_draw_count,
-				total_draws = options_n,
+				num_draws = var_55_6,
+				total_draws = var_55_2,
 				list_member_offset = {
 					0,
-					-item_size[2],
-					0,
+					-var_55_3[2],
+					0
 				},
-				item_styles = item_styles,
+				item_styles = var_55_4
 			},
 			highlight_texture = {
 				masked = true,
 				offset = {
-					base_offset[1],
-					base_offset[2],
-					base_offset[3],
+					arg_55_6[1],
+					arg_55_6[2],
+					arg_55_6[3]
 				},
 				color = Colors.get_table("white"),
 				size = {
-					DROP_DOWN_WIDGET_SIZE[1],
-					DROP_DOWN_WIDGET_SIZE[2],
-				},
+					var_0_31[1],
+					var_0_31[2]
+				}
 			},
 			tooltip_text = {
-				cursor_side = "left",
-				font_size = 24,
 				font_type = "hell_shark",
-				horizontal_alignment = "left",
 				localize = true,
-				max_width = 600,
+				font_size = 24,
+				horizontal_alignment = "left",
 				vertical_alignment = "top",
+				cursor_side = "left",
+				max_width = 600,
 				cursor_offset = {
 					-10,
-					-27,
+					-27
 				},
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				line_colors = {
-					(Colors.get_color_table_with_alpha("font_title", 255)),
+					(Colors.get_color_table_with_alpha("font_title", 255))
 				},
 				offset = {
 					0,
 					0,
-					base_offset[3] + 20,
-				},
+					arg_55_6[3] + 20
+				}
 			},
 			disabled_tooltip_text = {
 				localize = false,
 				offset = {
-					base_offset[1],
-					base_offset[2],
-					base_offset[3],
+					arg_55_6[1],
+					arg_55_6[2],
+					arg_55_6[3]
 				},
 				size = {
-					DROP_DOWN_WIDGET_SIZE[1],
-					DROP_DOWN_WIDGET_SIZE[2],
-				},
+					var_0_31[1],
+					var_0_31[2]
+				}
 			},
 			hotspot = {
 				offset = {
-					base_offset[1] + DROP_DOWN_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH,
-					base_offset[2],
-					base_offset[3],
+					arg_55_6[1] + var_0_31[1] - var_0_0,
+					arg_55_6[2],
+					arg_55_6[3]
 				},
 				size = {
-					INPUT_FIELD_WIDTH,
-					DROP_DOWN_WIDGET_SIZE[2],
-				},
+					var_0_0,
+					var_0_31[2]
+				}
 			},
 			text = {
-				dynamic_font = true,
 				font_size = 16,
-				font_type = "hell_shark_masked",
-				localize = true,
 				upper_case = true,
+				localize = true,
+				dynamic_font = true,
+				font_type = "hell_shark_masked",
 				offset = {
-					base_offset[1] + 2 + calculate_indent(indent_level),
-					base_offset[2] + 5,
-					base_offset[3] + 10,
+					arg_55_6[1] + 2 + var_0_11(arg_55_7),
+					arg_55_6[2] + 5,
+					arg_55_6[3] + 10
 				},
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				default_color = Colors.get_color_table_with_alpha("font_default", 255),
-				disabled_color = Colors.get_color_table_with_alpha("font_default", 50),
+				disabled_color = Colors.get_color_table_with_alpha("font_default", 50)
 			},
 			arrow = {
 				masked = true,
 				offset = {
-					base_offset[1] + DROP_DOWN_WIDGET_SIZE[1] - 31,
-					base_offset[2] + (DROP_DOWN_WIDGET_SIZE[2] / 2 - 7.5),
-					base_offset[3] + 1,
+					arg_55_6[1] + var_0_31[1] - 31,
+					arg_55_6[2] + (var_0_31[2] / 2 - 7.5),
+					arg_55_6[3] + 1
 				},
 				size = {
 					31,
-					15,
+					15
 				},
-				color = Colors.get_color_table_with_alpha("font_default", 255),
+				color = Colors.get_color_table_with_alpha("font_default", 255)
 			},
 			arrow_hover = {
 				masked = true,
 				offset = {
-					base_offset[1] + DROP_DOWN_WIDGET_SIZE[1] - 31,
-					base_offset[2] + (DROP_DOWN_WIDGET_SIZE[2] / 2 - 14) + 13,
-					base_offset[3],
+					arg_55_6[1] + var_0_31[1] - 31,
+					arg_55_6[2] + (var_0_31[2] / 2 - 14) + 13,
+					arg_55_6[3]
 				},
 				size = {
 					31,
-					28,
+					28
 				},
-				color = Colors.get_color_table_with_alpha("font_default", 255),
+				color = Colors.get_color_table_with_alpha("font_default", 255)
 			},
 			arrow_hover_flipped = {
 				masked = true,
 				offset = {
-					base_offset[1] + DROP_DOWN_WIDGET_SIZE[1] - 31,
-					base_offset[2] + (DROP_DOWN_WIDGET_SIZE[2] / 2 - 14) - 12,
-					base_offset[3],
+					arg_55_6[1] + var_0_31[1] - 31,
+					arg_55_6[2] + (var_0_31[2] / 2 - 14) - 12,
+					arg_55_6[3]
 				},
 				size = {
 					31,
-					28,
+					28
 				},
-				color = Colors.get_color_table_with_alpha("font_default", 255),
+				color = Colors.get_color_table_with_alpha("font_default", 255)
 			},
 			selected_option = {
-				dynamic_font = true,
-				font_size = 16,
-				font_type = "hell_shark_masked",
 				horizontal_alignment = "center",
+				font_size = 16,
+				dynamic_font = true,
+				font_type = "hell_shark_masked",
 				offset = {
-					base_offset[1] + DROP_DOWN_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH / 2,
-					base_offset[2] + 2,
-					base_offset[3] + 3,
+					arg_55_6[1] + var_0_31[1] - var_0_0 / 2,
+					arg_55_6[2] + 2,
+					arg_55_6[3] + 3
 				},
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				default_color = Colors.get_color_table_with_alpha("font_default", 255),
 				hover_color = Colors.get_color_table_with_alpha("font_default", 255),
 				disabled_color = Colors.get_color_table_with_alpha("font_default", 50),
-				override_color = Colors.get_color_table_with_alpha("font_default", 155),
+				override_color = Colors.get_color_table_with_alpha("font_default", 155)
 			},
 			selected_bg = {
 				masked = true,
 				offset = {
-					base_offset[1] + DROP_DOWN_WIDGET_SIZE[1] - (INPUT_FIELD_WIDTH - 28),
-					base_offset[2] - selected_bg_y,
-					base_offset[3] + 20,
+					arg_55_6[1] + var_0_31[1] - (var_0_0 - 28),
+					arg_55_6[2] - var_55_7,
+					arg_55_6[3] + 20
 				},
 				size = {
-					INPUT_FIELD_WIDTH - 56,
-					selected_bg_y,
+					var_0_0 - 56,
+					var_55_7
 				},
 				color = {
 					255,
 					10,
 					10,
-					10,
-				},
+					10
+				}
 			},
 			selected_bg_shade = {
 				masked = true,
 				offset = {
-					base_offset[1] + DROP_DOWN_WIDGET_SIZE[1] - (INPUT_FIELD_WIDTH - 28) - 2,
-					base_offset[2] - (selected_bg_y + 2),
-					base_offset[3] + 19,
+					arg_55_6[1] + var_0_31[1] - (var_0_0 - 28) - 2,
+					arg_55_6[2] - (var_55_7 + 2),
+					arg_55_6[3] + 19
 				},
 				size = {
-					INPUT_FIELD_WIDTH - 56 + 4,
-					selected_bg_y + 2,
+					var_0_0 - 56 + 4,
+					var_55_7 + 2
 				},
 				color = {
 					255,
 					80,
 					80,
-					80,
-				},
+					80
+				}
 			},
 			debug_middle_line = {
 				offset = {
-					base_offset[1],
-					base_offset[2] + DROP_DOWN_WIDGET_SIZE[2] / 2 - 1,
-					base_offset[3] + 10,
+					arg_55_6[1],
+					arg_55_6[2] + var_0_31[2] / 2 - 1,
+					arg_55_6[3] + 10
 				},
 				size = {
-					DROP_DOWN_WIDGET_SIZE[1],
-					2,
+					var_0_31[1],
+					2
 				},
 				color = {
 					200,
 					0,
 					255,
-					0,
-				},
+					0
+				}
 			},
 			bottom_edge = {
 				offset = {
-					base_offset[1],
-					base_offset[2],
-					base_offset[3] + 1,
+					arg_55_6[1],
+					arg_55_6[2],
+					arg_55_6[3] + 1
 				},
-				color = BOTTOM_EDGE_COLOR,
+				color = var_0_9,
 				size = {
-					DROP_DOWN_WIDGET_SIZE[1],
-					BOTTOM_EDGE_THICKNESS,
-				},
+					var_0_31[1],
+					var_0_8
+				}
 			},
-			size = table.clone(DROP_DOWN_WIDGET_SIZE),
+			size = table.clone(var_0_31),
 			color = {
 				50,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_55_5
 	}
 
-	if using_scrollbar then
-		local thumbnail_fraction = (options_n - max_draw_count) / options_n
-		local thumbnail_height = selected_bg_y * thumbnail_fraction
-		local total_scroll_distance = selected_bg_y - thumbnail_height
-		local step_size = total_scroll_distance / (options_n - max_draw_count) - 1
-		local hotspot_pass = {
-			content_id = "thumbnail_hotspot",
+	if var_55_8 then
+		local var_55_11 = (var_55_2 - var_55_6) / var_55_2
+		local var_55_12 = var_55_7 * var_55_11
+		local var_55_13 = var_55_7 - var_55_12
+		local var_55_14 = var_55_13 / (var_55_2 - var_55_6) - 1
+		local var_55_15 = {
+			style_id = "thumbnail",
 			pass_type = "hotspot",
-			style_id = "thumbnail",
-			content_check_function = function (content)
-				return content.parent.active
-			end,
-		}
-		local held_pass = {
 			content_id = "thumbnail_hotspot",
-			pass_type = "held",
+			content_check_function = function(arg_73_0)
+				return arg_73_0.parent.active
+			end
+		}
+		local var_55_16 = {
 			style_id = "thumbnail",
-			content_check_function = function (content)
-				return content.parent.active
+			pass_type = "held",
+			content_id = "thumbnail_hotspot",
+			content_check_function = function(arg_74_0)
+				return arg_74_0.parent.active
 			end,
-			held_function = function (ui_scenegraph, ui_style, ui_content, input_service)
-				local gamepad_active = Managers.input:is_device_active("gamepad")
-
-				if gamepad_active then
+			held_function = function(arg_75_0, arg_75_1, arg_75_2, arg_75_3)
+				if Managers.input:is_device_active("gamepad") then
 					return
 				end
 
-				local thumbnail_fraction = ui_content.thumbnail_fraction
-				local thumbnail_length = ui_content.thumbnail_length
-				local scroll_length = ui_content.scroll_length
-				local parent_style = ui_style.parent
-				local parent_offest = parent_style.offset
-				local default_offset_y = ui_style.default_offset_y
-				local offset = ui_style.offset
-				local axis = 2
-				local base_cursor = input_service:get("cursor")
-				local cursor = UIInverseScaleVectorToResolution(base_cursor)
-				local cursor_y = cursor[axis]
+				local var_75_0 = arg_75_2.thumbnail_fraction
+				local var_75_1 = arg_75_2.thumbnail_length
+				local var_75_2 = arg_75_2.scroll_length
+				local var_75_3 = arg_75_1.parent.offset
+				local var_75_4 = arg_75_1.default_offset_y
+				local var_75_5 = arg_75_1.offset
+				local var_75_6 = 2
+				local var_75_7 = arg_75_3:get("cursor")
+				local var_75_8 = UIInverseScaleVectorToResolution(var_75_7)[var_75_6]
 
-				if not ui_content.cursor_y then
-					ui_content.cursor_y = cursor_y
-					ui_content.parent.dragging = true
+				if not arg_75_2.cursor_y then
+					arg_75_2.cursor_y = var_75_8
+					arg_75_2.parent.dragging = true
 				end
 
-				local diff_y = cursor_y - ui_content.cursor_y
+				local var_75_9 = var_75_8 - arg_75_2.cursor_y
 
-				ui_content.cursor_y = cursor_y
+				arg_75_2.cursor_y = var_75_8
 
-				local start_position = 0
-				local end_position = scroll_length
-				local current_position = default_offset_y - offset[axis] - diff_y
+				local var_75_10 = 0
+				local var_75_11 = var_75_2
+				local var_75_12 = var_75_4 - var_75_5[var_75_6] - var_75_9
+				local var_75_13 = math.clamp(var_75_12, var_75_10, var_75_11) / var_75_11
+				local var_75_14 = arg_75_1.parent.list_style
+				local var_75_15 = var_75_14.num_draws
+				local var_75_16 = 1 / (var_75_14.total_draws - var_75_15)
 
-				current_position = math.clamp(current_position, start_position, end_position)
-
-				local percentage = current_position / end_position
-				local list_style = ui_style.parent.list_style
-				local num_draws = list_style.num_draws
-				local total_draws = list_style.total_draws
-				local draw_amount_diff = total_draws - num_draws
-				local step_percent = 1 / draw_amount_diff
-				local steps_scrolled = math.floor(percentage / step_percent)
-
-				list_style.start_index = steps_scrolled + 1
-				ui_content.scroll_progress = percentage
+				var_75_14.start_index = math.floor(var_75_13 / var_75_16) + 1
+				arg_75_2.scroll_progress = var_75_13
 			end,
-			release_function = function (ui_scenegraph, ui_style, ui_content, input_service)
-				ui_content.cursor_y = nil
-				ui_content.parent.dragging = nil
-			end,
+			release_function = function(arg_76_0, arg_76_1, arg_76_2, arg_76_3)
+				arg_76_2.cursor_y = nil
+				arg_76_2.parent.dragging = nil
+			end
 		}
-		local pass = {
-			pass_type = "texture",
+		local var_55_17 = {
 			style_id = "thumbnail",
 			texture_id = "rect_masked",
-			content_check_function = function (content, style)
-				return content.active
+			pass_type = "texture",
+			content_check_function = function(arg_77_0, arg_77_1)
+				return arg_77_0.active
 			end,
-			content_change_function = function (content, style)
-				local default_offset_y = style.default_offset_y
-				local offset = style.offset
-				local step_size = style.step_size
-				local size = style.size
-				local axis = 2
-				local hotspot = content.thumbnail_hotspot
-				local scroll_progress = hotspot.scroll_progress
-				local scroll_length = hotspot.scroll_length
-				local thumb_length = hotspot.thumbnail_length
-				local start_position = 0
-				local end_position = scroll_length - thumb_length
-				local current_position = scroll_length * scroll_progress
+			content_change_function = function(arg_78_0, arg_78_1)
+				local var_78_0 = arg_78_1.default_offset_y
+				local var_78_1 = arg_78_1.offset
+				local var_78_2 = arg_78_1.step_size
+				local var_78_3 = arg_78_1.size
+				local var_78_4 = 2
+				local var_78_5 = arg_78_0.thumbnail_hotspot
+				local var_78_6 = var_78_5.scroll_progress
+				local var_78_7 = var_78_5.scroll_length
+				local var_78_8 = var_78_5.thumbnail_length
+				local var_78_9 = 0
+				local var_78_10 = var_78_7 - var_78_8
 
-				offset[axis] = default_offset_y - current_position
-			end,
+				var_78_1[var_78_4] = var_78_0 - var_78_7 * var_78_6
+			end
 		}
-		local style = {
-			horizontal_alignment = "center",
+		local var_55_18 = {
 			vertical_alignment = "bottom",
-			step_size = step_size,
-			default_offset_y = base_offset[2] - thumbnail_height,
+			horizontal_alignment = "center",
+			step_size = var_55_14,
+			default_offset_y = arg_55_6[2] - var_55_12,
 			offset = {
-				base_offset[1] + DROP_DOWN_WIDGET_SIZE[1] - 50,
-				base_offset[2] - thumbnail_height,
-				base_offset[3] + 25,
+				arg_55_6[1] + var_0_31[1] - 50,
+				arg_55_6[2] - var_55_12,
+				arg_55_6[3] + 25
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			size = {
 				20,
-				thumbnail_height,
+				var_55_12
 			},
 			texture_size = {
 				5,
-				thumbnail_height,
-			},
+				var_55_12
+			}
 		}
 
-		definition.element.passes[#definition.element.passes + 1] = pass
-		definition.element.passes[#definition.element.passes + 1] = held_pass
-		definition.element.passes[#definition.element.passes + 1] = hotspot_pass
-		definition.content.thumbnail_hotspot = {
+		var_55_10.element.passes[#var_55_10.element.passes + 1] = var_55_17
+		var_55_10.element.passes[#var_55_10.element.passes + 1] = var_55_16
+		var_55_10.element.passes[#var_55_10.element.passes + 1] = var_55_15
+		var_55_10.content.thumbnail_hotspot = {
 			scroll_progress = 0,
-			thumbnail_fraction = thumbnail_fraction,
-			thumbnail_length = thumbnail_height,
-			scroll_length = total_scroll_distance,
-			scenegraph_id = scenegraph_id,
+			thumbnail_fraction = var_55_11,
+			thumbnail_length = var_55_12,
+			scroll_length = var_55_13,
+			scenegraph_id = arg_55_5
 		}
-		definition.style.thumbnail = style
+		var_55_10.style.thumbnail = var_55_18
 	end
 
-	return UIWidget.init(definition)
+	return UIWidget.init(var_55_10)
 end
 
-local STEPPER_WIDGET_SIZE = {
-	list_size_x - 100,
-	30,
+local var_0_33 = {
+	var_0_21 - 100,
+	30
 }
 
-local function create_stepper_widget(text, options, selected_option, tooltip_text, disabled_tooltip_text, scenegraph_id, base_offset, indent_level)
-	local options_texts = {}
-	local options_values = {}
-	local num_options = #options
+local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79_5, arg_79_6, arg_79_7)
+	local var_79_0 = {}
+	local var_79_1 = {}
+	local var_79_2 = #arg_79_1
 
-	for i = 1, num_options do
-		options_texts[i] = options[i].text
-		options_values[i] = options[i].value
+	for iter_79_0 = 1, var_79_2 do
+		var_79_0[iter_79_0] = arg_79_1[iter_79_0].text
+		var_79_1[iter_79_0] = arg_79_1[iter_79_0].value
 	end
 
-	base_offset[2] = base_offset[2] - STEPPER_WIDGET_SIZE[2]
+	arg_79_6[2] = arg_79_6[2] - var_0_33[2]
 
-	local definition = {
+	local var_79_3 = {
 		element = {
 			passes = {
 				{
 					pass_type = "local_offset",
-					offset_function = function (ui_scenegraph, ui_style, ui_content, ui_renderer)
-						if ui_content._last_selection ~= ui_content.current_selection or ui_content._last_overriden_setting ~= ui_content.overriden_setting then
-							ui_content._last_selection = ui_content.current_selection
-							ui_content._last_overriden_setting = ui_content.overriden_setting
+					offset_function = function(arg_80_0, arg_80_1, arg_80_2, arg_80_3)
+						if arg_80_2._last_selection ~= arg_80_2.current_selection or arg_80_2._last_overriden_setting ~= arg_80_2.overriden_setting then
+							arg_80_2._last_selection = arg_80_2.current_selection
+							arg_80_2._last_overriden_setting = arg_80_2.overriden_setting
 
-							local option_text = Utf8.upper(ui_content.options_texts[ui_content.current_selection] or "n/a")
-							local overriden_setting = ui_content.overriden_setting
+							local var_80_0 = Utf8.upper(arg_80_2.options_texts[arg_80_2.current_selection] or "n/a")
+							local var_80_1 = arg_80_2.overriden_setting
 
-							if overriden_setting then
-								local override_color = ui_style.selection_text.override_color
-								local disabled_color = ui_style.selection_text.disabled_color
+							if var_80_1 then
+								local var_80_2 = arg_80_1.selection_text.override_color
+								local var_80_3 = arg_80_1.selection_text.disabled_color
 
-								ui_content.selection_text = string.format("{#color(%d,%d,%d,%d)}%s {#color(%d,%d,%d,%d);strike(true)}%s{#strike(false)}", override_color[2], override_color[3], override_color[4], override_color[1], option_text, disabled_color[2], disabled_color[3], disabled_color[4], disabled_color[1], Utf8.upper(overriden_setting))
+								arg_80_2.selection_text = string.format("{#color(%d,%d,%d,%d)}%s {#color(%d,%d,%d,%d);strike(true)}%s{#strike(false)}", var_80_2[2], var_80_2[3], var_80_2[4], var_80_2[1], var_80_0, var_80_3[2], var_80_3[3], var_80_3[4], var_80_3[1], Utf8.upper(var_80_1))
 							else
-								ui_content.selection_text = option_text
+								arg_80_2.selection_text = var_80_0
 							end
 						end
-					end,
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "bottom_edge",
-					texture_id = "rect_masked",
+					texture_id = "rect_masked"
 				},
 				{
-					content_id = "highlight_hotspot",
 					pass_type = "hotspot",
-					content_check_function = function (content)
-						return not content.disabled
-					end,
+					content_id = "highlight_hotspot",
+					content_check_function = function(arg_81_0)
+						return not arg_81_0.disabled
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "highlight_texture",
 					texture_id = "highlight_texture",
-					content_check_function = function (content)
-						return content.is_highlighted
-					end,
+					content_check_function = function(arg_82_0)
+						return arg_82_0.is_highlighted
+					end
 				},
 				{
 					pass_type = "option_tooltip",
 					text_id = "tooltip_text",
-					content_check_function = function (ui_content)
-						if not ui_content.highlight_hotspot.is_hover or Managers.input:is_device_active("gamepad") then
+					content_check_function = function(arg_83_0)
+						if not arg_83_0.highlight_hotspot.is_hover or Managers.input:is_device_active("gamepad") then
 							return false
 						end
 
-						if not ui_content.disabled then
-							return ui_content.tooltip_text
+						if not arg_83_0.disabled then
+							return arg_83_0.tooltip_text
 						else
-							return not ui_content.disabled_tooltip_text
+							return not arg_83_0.disabled_tooltip_text
 						end
-					end,
+					end
 				},
 				{
-					pass_type = "option_tooltip",
 					style_id = "disabled_tooltip_text",
+					pass_type = "option_tooltip",
 					text_id = "disabled_tooltip_text",
-					content_check_function = function (ui_content)
-						if not ui_content.disabled or not ui_content.highlight_hotspot.is_hover or Managers.input:is_device_active("gamepad") then
+					content_check_function = function(arg_84_0)
+						if not arg_84_0.disabled or not arg_84_0.highlight_hotspot.is_hover or Managers.input:is_device_active("gamepad") then
 							return false
 						end
 
-						if ui_content.overriden_reason then
-							ui_content.disabled_tooltip_text = ui_content.overriden_reason
+						if arg_84_0.overriden_reason then
+							arg_84_0.disabled_tooltip_text = arg_84_0.overriden_reason
 						end
 
-						if ui_content.disabled_tooltip_text then
+						if arg_84_0.disabled_tooltip_text then
 							return true
 						end
-					end,
+					end
 				},
 				{
 					pass_type = "local_offset",
-					offset_function = function (ui_scenegraph, ui_style, ui_content, ui_renderer)
-						local left_hotspot = ui_content.left_hotspot
-						local right_hotspot = ui_content.right_hotspot
+					offset_function = function(arg_85_0, arg_85_1, arg_85_2, arg_85_3)
+						local var_85_0 = arg_85_2.left_hotspot
+						local var_85_1 = arg_85_2.right_hotspot
 
-						if left_hotspot.on_hover_enter then
-							local on_hover_enter_callback = ui_content.on_hover_enter_callback
+						if var_85_0.on_hover_enter then
+							local var_85_2 = arg_85_2.on_hover_enter_callback
 
-							if on_hover_enter_callback then
-								on_hover_enter_callback("left_arrow_hover")
+							if var_85_2 then
+								var_85_2("left_arrow_hover")
 							end
 						end
 
-						if left_hotspot.on_hover_exit then
-							local on_hover_exit_callback = ui_content.on_hover_exit_callback
+						if var_85_0.on_hover_exit then
+							local var_85_3 = arg_85_2.on_hover_exit_callback
 
-							if on_hover_exit_callback then
-								on_hover_exit_callback("left_arrow_hover")
+							if var_85_3 then
+								var_85_3("left_arrow_hover")
 							end
 						end
 
-						if left_hotspot.on_release then
-							local on_pressed_callback = ui_content.on_pressed_callback
+						if var_85_0.on_release then
+							local var_85_4 = arg_85_2.on_pressed_callback
 
-							if on_pressed_callback then
-								on_pressed_callback("left_arrow")
-								on_pressed_callback("left_arrow_hover")
+							if var_85_4 then
+								var_85_4("left_arrow")
+								var_85_4("left_arrow_hover")
 							end
 						end
 
-						if right_hotspot.on_hover_enter then
-							local on_hover_enter_callback = ui_content.on_hover_enter_callback
+						if var_85_1.on_hover_enter then
+							local var_85_5 = arg_85_2.on_hover_enter_callback
 
-							if on_hover_enter_callback then
-								on_hover_enter_callback("right_arrow_hover")
+							if var_85_5 then
+								var_85_5("right_arrow_hover")
 							end
 						end
 
-						if right_hotspot.on_hover_exit then
-							local on_hover_exit_callback = ui_content.on_hover_exit_callback
+						if var_85_1.on_hover_exit then
+							local var_85_6 = arg_85_2.on_hover_exit_callback
 
-							if on_hover_exit_callback then
-								on_hover_exit_callback("right_arrow_hover")
+							if var_85_6 then
+								var_85_6("right_arrow_hover")
 							end
 						end
 
-						if right_hotspot.on_release then
-							local on_pressed_callback = ui_content.on_pressed_callback
+						if var_85_1.on_release then
+							local var_85_7 = arg_85_2.on_pressed_callback
 
-							if on_pressed_callback then
-								on_pressed_callback("right_arrow")
-								on_pressed_callback("right_arrow_hover")
+							if var_85_7 then
+								var_85_7("right_arrow")
+								var_85_7("right_arrow_hover")
 							end
 						end
 
-						if ui_content.disabled then
-							ui_style.selection_text.text_color = ui_style.selection_text.disabled_color
-						elseif left_hotspot.is_hover or right_hotspot.is_hover then
-							ui_style.selection_text.text_color = ui_style.selection_text.highlight_color
+						if arg_85_2.disabled then
+							arg_85_1.selection_text.text_color = arg_85_1.selection_text.disabled_color
+						elseif var_85_0.is_hover or var_85_1.is_hover then
+							arg_85_1.selection_text.text_color = arg_85_1.selection_text.highlight_color
 						else
-							ui_style.selection_text.text_color = ui_style.selection_text.default_color
+							arg_85_1.selection_text.text_color = arg_85_1.selection_text.default_color
 						end
-					end,
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "text",
-					text_id = "text",
-					content_change_function = function (content, style)
-						if content.disabled then
-							style.text_color = style.disabled_color
-						else
-							style.text_color = style.default_color
-						end
-					end,
-				},
-				{
-					content_id = "left_hotspot",
-					pass_type = "hotspot",
-					style_id = "left_arrow_hotspot",
-					content_check_function = function (content)
-						return not content.disabled
-					end,
-				},
-				{
-					content_id = "right_hotspot",
-					pass_type = "hotspot",
-					style_id = "right_arrow_hotspot",
-					content_check_function = function (content)
-						return not content.disabled
-					end,
-				},
-				{
-					content_id = "arrow",
-					pass_type = "texture",
-					style_id = "left_arrow",
-					texture_id = "texture_id",
-					content_check_function = function (content)
-						return not content.parent.disabled
-					end,
-				},
-				{
-					content_id = "arrow",
-					pass_type = "texture_uv",
-					style_id = "right_arrow",
-					texture_id = "texture_id",
-					content_check_function = function (content)
-						return not content.parent.disabled
-					end,
-				},
-				{
-					content_id = "arrow_hover",
-					pass_type = "texture",
-					style_id = "left_arrow_hover",
-					texture_id = "texture_id",
-				},
-				{
-					content_id = "arrow_hover",
-					pass_type = "texture_uv",
-					style_id = "right_arrow_hover",
-					texture_id = "texture_id",
-				},
-				{
 					pass_type = "text",
+					text_id = "text",
+					content_change_function = function(arg_86_0, arg_86_1)
+						if arg_86_0.disabled then
+							arg_86_1.text_color = arg_86_1.disabled_color
+						else
+							arg_86_1.text_color = arg_86_1.default_color
+						end
+					end
+				},
+				{
+					style_id = "left_arrow_hotspot",
+					pass_type = "hotspot",
+					content_id = "left_hotspot",
+					content_check_function = function(arg_87_0)
+						return not arg_87_0.disabled
+					end
+				},
+				{
+					style_id = "right_arrow_hotspot",
+					pass_type = "hotspot",
+					content_id = "right_hotspot",
+					content_check_function = function(arg_88_0)
+						return not arg_88_0.disabled
+					end
+				},
+				{
+					texture_id = "texture_id",
+					style_id = "left_arrow",
+					pass_type = "texture",
+					content_id = "arrow",
+					content_check_function = function(arg_89_0)
+						return not arg_89_0.parent.disabled
+					end
+				},
+				{
+					texture_id = "texture_id",
+					style_id = "right_arrow",
+					pass_type = "texture_uv",
+					content_id = "arrow",
+					content_check_function = function(arg_90_0)
+						return not arg_90_0.parent.disabled
+					end
+				},
+				{
+					texture_id = "texture_id",
+					style_id = "left_arrow_hover",
+					pass_type = "texture",
+					content_id = "arrow_hover"
+				},
+				{
+					texture_id = "texture_id",
+					style_id = "right_arrow_hover",
+					pass_type = "texture_uv",
+					content_id = "arrow_hover"
+				},
+				{
 					style_id = "selection_text",
+					pass_type = "text",
 					text_id = "selection_text",
-					content_check_function = function (content)
-						local selection_text = content.selection_text
+					content_check_function = function(arg_91_0)
+						local var_91_0 = arg_91_0.selection_text
 
-						return selection_text and selection_text ~= ""
-					end,
+						return var_91_0 and var_91_0 ~= ""
+					end
 				},
 				{
 					pass_type = "rect",
-					content_check_function = function (content)
-						return DEBUG_WIDGETS
-					end,
+					content_check_function = function(arg_92_0)
+						return var_0_24
+					end
 				},
 				{
 					pass_type = "border",
-					content_check_function = function (content, style)
-						if DEBUG_WIDGETS then
-							style.thickness = 1
+					content_check_function = function(arg_93_0, arg_93_1)
+						if var_0_24 then
+							arg_93_1.thickness = 1
 						end
 
-						return DEBUG_WIDGETS
-					end,
+						return var_0_24
+					end
 				},
 				{
-					pass_type = "rect",
 					style_id = "debug_middle_line",
-					content_check_function = function (content)
-						return DEBUG_WIDGETS
-					end,
-				},
-			},
+					pass_type = "rect",
+					content_check_function = function(arg_94_0)
+						return var_0_24
+					end
+				}
+			}
 		},
 		content = {
-			disabled = false,
-			highlight_texture = "playerlist_hover",
 			left_arrow = "settings_arrow_normal",
-			left_arrow_hover = "settings_arrow_clicked",
-			rect_masked = "rect_masked",
-			right_arrow = "settings_arrow_normal",
 			right_arrow_hover = "settings_arrow_clicked",
+			right_arrow = "settings_arrow_normal",
+			left_arrow_hover = "settings_arrow_clicked",
 			selection_text = "",
+			highlight_texture = "playerlist_hover",
+			rect_masked = "rect_masked",
+			disabled = false,
 			left_hotspot = {},
 			right_hotspot = {},
 			highlight_hotspot = {
-				allow_multi_hover = true,
+				allow_multi_hover = true
 			},
-			text = text,
+			text = arg_79_0,
 			arrow = {
 				texture_id = "settings_arrow_normal",
 				uvs = {
 					{
 						1,
-						0,
+						0
 					},
 					{
 						0,
-						1,
-					},
-				},
+						1
+					}
+				}
 			},
 			arrow_hover = {
 				texture_id = "settings_arrow_clicked",
 				uvs = {
 					{
 						1,
-						0,
+						0
 					},
 					{
 						0,
-						1,
-					},
-				},
+						1
+					}
+				}
 			},
-			tooltip_text = tooltip_text,
-			disabled_tooltip_text = disabled_tooltip_text and Localize(disabled_tooltip_text),
-			current_selection = selected_option,
-			options_texts = options_texts,
-			options_values = options_values,
-			num_options = num_options,
+			tooltip_text = arg_79_3,
+			disabled_tooltip_text = arg_79_4 and Localize(arg_79_4),
+			current_selection = arg_79_2,
+			options_texts = var_79_0,
+			options_values = var_79_1,
+			num_options = var_79_2,
 			hotspot_content_ids = {
 				"left_hotspot",
-				"right_hotspot",
-			},
+				"right_hotspot"
+			}
 		},
 		style = {
-			offset = table.clone(base_offset),
-			size = table.clone(STEPPER_WIDGET_SIZE),
+			offset = table.clone(arg_79_6),
+			size = table.clone(var_0_33),
 			highlight_texture = {
-				masked = true,
 				upper_case = true,
+				masked = true,
 				offset = {
-					base_offset[1],
-					base_offset[2],
-					base_offset[3],
+					arg_79_6[1],
+					arg_79_6[2],
+					arg_79_6[3]
 				},
 				color = Colors.get_table("white"),
 				size = {
-					STEPPER_WIDGET_SIZE[1],
-					STEPPER_WIDGET_SIZE[2],
-				},
+					var_0_33[1],
+					var_0_33[2]
+				}
 			},
 			tooltip_text = {
-				cursor_side = "left",
-				font_size = 24,
 				font_type = "hell_shark",
-				horizontal_alignment = "left",
 				localize = true,
-				max_width = 600,
+				font_size = 24,
+				horizontal_alignment = "left",
 				vertical_alignment = "top",
+				cursor_side = "left",
+				max_width = 600,
 				cursor_offset = {
 					-10,
-					-27,
+					-27
 				},
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				line_colors = {
-					(Colors.get_color_table_with_alpha("font_title", 255)),
+					(Colors.get_color_table_with_alpha("font_title", 255))
 				},
 				offset = {
 					0,
 					0,
-					base_offset[3] + 20,
-				},
+					arg_79_6[3] + 20
+				}
 			},
 			disabled_tooltip_text = {
 				localize = false,
 				offset = {
-					base_offset[1],
-					base_offset[2],
-					base_offset[3],
+					arg_79_6[1],
+					arg_79_6[2],
+					arg_79_6[3]
 				},
 				size = {
-					STEPPER_WIDGET_SIZE[1],
-					STEPPER_WIDGET_SIZE[2],
-				},
+					var_0_33[1],
+					var_0_33[2]
+				}
 			},
 			left_arrow = {
 				masked = true,
 				offset = {
-					base_offset[1] + STEPPER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH,
-					base_offset[2] + (STEPPER_WIDGET_SIZE[2] / 2 - 13.5),
-					base_offset[3] + 1,
+					arg_79_6[1] + var_0_33[1] - var_0_0,
+					arg_79_6[2] + (var_0_33[2] / 2 - 13.5),
+					arg_79_6[3] + 1
 				},
 				size = {
 					19,
-					27,
+					27
 				},
-				color = Colors.get_color_table_with_alpha("font_default", 255),
+				color = Colors.get_color_table_with_alpha("font_default", 255)
 			},
 			left_arrow_hover = {
 				masked = true,
 				offset = {
-					base_offset[1] + STEPPER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH + 6,
-					base_offset[2] + (STEPPER_WIDGET_SIZE[2] / 2 - 17.5),
-					base_offset[3],
+					arg_79_6[1] + var_0_33[1] - var_0_0 + 6,
+					arg_79_6[2] + (var_0_33[2] / 2 - 17.5),
+					arg_79_6[3]
 				},
 				size = {
 					30,
-					35,
+					35
 				},
 				color = {
 					0,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			left_arrow_hotspot = {
 				offset = {
-					base_offset[1] + STEPPER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH,
-					base_offset[2] + (STEPPER_WIDGET_SIZE[2] / 2 - 13.5),
-					base_offset[3],
+					arg_79_6[1] + var_0_33[1] - var_0_0,
+					arg_79_6[2] + (var_0_33[2] / 2 - 13.5),
+					arg_79_6[3]
 				},
 				size = {
-					INPUT_FIELD_WIDTH / 2,
-					27,
-				},
+					var_0_0 / 2,
+					27
+				}
 			},
 			right_arrow = {
 				masked = true,
 				offset = {
-					base_offset[1] + STEPPER_WIDGET_SIZE[1] - 19,
-					base_offset[2] + (STEPPER_WIDGET_SIZE[2] / 2 - 13.5),
-					base_offset[3] + 1,
+					arg_79_6[1] + var_0_33[1] - 19,
+					arg_79_6[2] + (var_0_33[2] / 2 - 13.5),
+					arg_79_6[3] + 1
 				},
 				size = {
 					19,
-					27,
+					27
 				},
-				color = Colors.get_color_table_with_alpha("font_default", 255),
+				color = Colors.get_color_table_with_alpha("font_default", 255)
 			},
 			right_arrow_hover = {
 				masked = true,
 				offset = {
-					base_offset[1] + STEPPER_WIDGET_SIZE[1] - 30 - 5,
-					base_offset[2] + (STEPPER_WIDGET_SIZE[2] / 2 - 17.5),
-					base_offset[3],
+					arg_79_6[1] + var_0_33[1] - 30 - 5,
+					arg_79_6[2] + (var_0_33[2] / 2 - 17.5),
+					arg_79_6[3]
 				},
 				size = {
 					30,
-					35,
+					35
 				},
 				color = {
 					0,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			right_arrow_hotspot = {
 				offset = {
-					base_offset[1] + STEPPER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH / 2,
-					base_offset[2] + (STEPPER_WIDGET_SIZE[2] / 2 - 13.5),
-					base_offset[3],
+					arg_79_6[1] + var_0_33[1] - var_0_0 / 2,
+					arg_79_6[2] + (var_0_33[2] / 2 - 13.5),
+					arg_79_6[3]
 				},
 				size = {
-					INPUT_FIELD_WIDTH / 2,
-					27,
-				},
+					var_0_0 / 2,
+					27
+				}
 			},
 			text = {
-				dynamic_font = true,
 				font_size = 16,
-				font_type = "hell_shark_masked",
-				localize = true,
 				upper_case = true,
+				localize = true,
+				dynamic_font = true,
+				font_type = "hell_shark_masked",
 				offset = {
-					base_offset[1] + 2 + calculate_indent(indent_level),
-					base_offset[2] + 2,
-					base_offset[3],
+					arg_79_6[1] + 2 + var_0_11(arg_79_7),
+					arg_79_6[2] + 2,
+					arg_79_6[3]
 				},
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				default_color = Colors.get_color_table_with_alpha("font_default", 255),
-				disabled_color = Colors.get_color_table_with_alpha("font_default", 50),
+				disabled_color = Colors.get_color_table_with_alpha("font_default", 50)
 			},
 			selection_text = {
-				dynamic_font = true,
 				font_size = 16,
-				font_type = "hell_shark_masked",
 				horizontal_alignment = "center",
+				dynamic_font = true,
+				font_type = "hell_shark_masked",
 				offset = {
-					base_offset[1] + STEPPER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH / 2,
-					base_offset[2] + 2,
-					base_offset[3],
+					arg_79_6[1] + var_0_33[1] - var_0_0 / 2,
+					arg_79_6[2] + 2,
+					arg_79_6[3]
 				},
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				highlight_color = Colors.get_color_table_with_alpha("font_default", 255),
 				default_color = Colors.get_color_table_with_alpha("font_default", 255),
 				disabled_color = Colors.get_color_table_with_alpha("font_default", 50),
-				override_color = Colors.get_color_table_with_alpha("font_default", 155),
+				override_color = Colors.get_color_table_with_alpha("font_default", 155)
 			},
 			debug_middle_line = {
 				offset = {
-					base_offset[1],
-					base_offset[2] + STEPPER_WIDGET_SIZE[2] / 2 - 1,
-					base_offset[3] + 10,
+					arg_79_6[1],
+					arg_79_6[2] + var_0_33[2] / 2 - 1,
+					arg_79_6[3] + 10
 				},
 				size = {
-					STEPPER_WIDGET_SIZE[1],
-					2,
+					var_0_33[1],
+					2
 				},
 				color = {
 					200,
 					0,
 					255,
-					0,
-				},
+					0
+				}
 			},
 			bottom_edge = {
 				offset = {
-					base_offset[1],
-					base_offset[2],
-					base_offset[3] + 1,
+					arg_79_6[1],
+					arg_79_6[2],
+					arg_79_6[3] + 1
 				},
-				color = BOTTOM_EDGE_COLOR,
+				color = var_0_9,
 				size = {
-					STEPPER_WIDGET_SIZE[1],
-					BOTTOM_EDGE_THICKNESS,
-				},
+					var_0_33[1],
+					var_0_8
+				}
 			},
 			input_field_background = {
 				offset = {
-					base_offset[1] + STEPPER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH,
-					base_offset[2],
-					base_offset[3],
+					arg_79_6[1] + var_0_33[1] - var_0_0,
+					arg_79_6[2],
+					arg_79_6[3]
 				},
-				color = INPUT_FIELD_COLOR,
+				color = var_0_1,
 				size = {
-					INPUT_FIELD_WIDTH,
-					STEPPER_WIDGET_SIZE[2],
-				},
+					var_0_0,
+					var_0_33[2]
+				}
 			},
 			color = {
 				50,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_79_5
 	}
 
-	return UIWidget.init(definition)
+	return UIWidget.init(var_79_3)
 end
 
-local TITLE_WIDGET_SIZE = {
-	list_size_x - 100,
-	50,
+local var_0_35 = {
+	var_0_21 - 100,
+	50
 }
 
-local function create_title_widget(text, optional_font_size, optional_text_color, optional_horizontal_alignment, scenegraph_id, base_offset)
-	base_offset[2] = base_offset[2] - TITLE_WIDGET_SIZE[2]
+local function var_0_36(arg_95_0, arg_95_1, arg_95_2, arg_95_3, arg_95_4, arg_95_5)
+	arg_95_5[2] = arg_95_5[2] - var_0_35[2]
 
-	local definition = {
+	local var_95_0 = {
 		element = {
 			passes = {
 				{
-					content_id = "highlight_hotspot",
 					pass_type = "hotspot",
+					content_id = "highlight_hotspot"
 				},
 				{
-					pass_type = "text",
 					style_id = "text",
-					text_id = "text",
+					pass_type = "text",
+					text_id = "text"
 				},
 				{
 					pass_type = "texture",
 					style_id = "bottom_edge",
-					texture_id = "rect_masked",
+					texture_id = "rect_masked"
 				},
 				{
 					pass_type = "rect",
-					content_check_function = function (content)
-						return DEBUG_WIDGETS
-					end,
+					content_check_function = function(arg_96_0)
+						return var_0_24
+					end
 				},
 				{
 					pass_type = "border",
-					content_check_function = function (content, style)
-						if DEBUG_WIDGETS then
-							style.thickness = 1
+					content_check_function = function(arg_97_0, arg_97_1)
+						if var_0_24 then
+							arg_97_1.thickness = 1
 						end
 
-						return DEBUG_WIDGETS
-					end,
+						return var_0_24
+					end
 				},
 				{
-					pass_type = "rect",
 					style_id = "debug_middle_line",
-					content_check_function = function (content)
-						return DEBUG_WIDGETS
-					end,
-				},
-			},
+					pass_type = "rect",
+					content_check_function = function(arg_98_0)
+						return var_0_24
+					end
+				}
+			}
 		},
 		content = {
 			rect_masked = "rect_masked",
 			highlight_hotspot = {
-				allow_multi_hover = true,
+				allow_multi_hover = true
 			},
-			text = text,
+			text = arg_95_0
 		},
 		style = {
-			offset = table.clone(base_offset),
-			size = table.clone(TITLE_WIDGET_SIZE),
+			offset = table.clone(arg_95_5),
+			size = table.clone(var_0_35),
 			text = {
+				upper_case = true,
+				localize = true,
 				dynamic_font_size = true,
 				font_type = "hell_shark_header_masked",
-				localize = true,
-				upper_case = true,
 				offset = {
-					base_offset[1] + 2,
-					base_offset[2] + 5,
-					base_offset[3],
+					arg_95_5[1] + 2,
+					arg_95_5[2] + 5,
+					arg_95_5[3]
 				},
-				text_color = optional_text_color or Colors.get_color_table_with_alpha("font_title", 255),
-				font_size = optional_font_size or 18,
-				horizontal_alignment = optional_horizontal_alignment or "left",
-				size = table.clone(TITLE_WIDGET_SIZE),
+				text_color = arg_95_2 or Colors.get_color_table_with_alpha("font_title", 255),
+				font_size = arg_95_1 or 18,
+				horizontal_alignment = arg_95_3 or "left",
+				size = table.clone(var_0_35)
 			},
 			debug_middle_line = {
 				offset = {
-					base_offset[1],
-					base_offset[2] + TITLE_WIDGET_SIZE[2] / 2 - 1,
-					base_offset[3] + 10,
+					arg_95_5[1],
+					arg_95_5[2] + var_0_35[2] / 2 - 1,
+					arg_95_5[3] + 10
 				},
 				size = {
-					TITLE_WIDGET_SIZE[1],
-					2,
+					var_0_35[1],
+					2
 				},
 				color = {
 					200,
 					0,
 					255,
-					0,
-				},
+					0
+				}
 			},
 			bottom_edge = {
 				offset = {
-					base_offset[1],
-					base_offset[2],
-					base_offset[3] + 1,
+					arg_95_5[1],
+					arg_95_5[2],
+					arg_95_5[3] + 1
 				},
-				color = BOTTOM_EDGE_COLOR,
+				color = var_0_9,
 				size = {
-					TITLE_WIDGET_SIZE[1],
-					BOTTOM_EDGE_THICKNESS,
-				},
+					var_0_35[1],
+					var_0_8
+				}
 			},
 			color = {
 				50,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_95_4
 	}
 
-	return UIWidget.init(definition)
+	return UIWidget.init(var_95_0)
 end
 
-local TEXT_LINK_WIDGET_SIZE = {
-	list_size_x - 100,
-	50,
+local var_0_37 = {
+	var_0_21 - 100,
+	50
 }
 
-local function create_text_link_widget(text, url, optional_font_size, optional_text_color, optional_horizontal_alignment, scenegraph_id, base_offset)
-	base_offset[2] = base_offset[2] - TEXT_LINK_WIDGET_SIZE[2]
+local function var_0_38(arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99_5, arg_99_6)
+	arg_99_6[2] = arg_99_6[2] - var_0_37[2]
 
-	local definition = {
+	local var_99_0 = {
 		element = {
 			passes = {
 				{
-					content_id = "hotspot",
 					pass_type = "hotspot",
+					content_id = "hotspot"
 				},
 				{
-					content_id = "highlight_hotspot",
 					pass_type = "hotspot",
+					content_id = "highlight_hotspot"
 				},
 				{
 					pass_type = "texture",
 					style_id = "highlight_texture",
 					texture_id = "highlight_texture",
-					content_check_function = function (content)
-						return content.is_highlighted
-					end,
+					content_check_function = function(arg_100_0)
+						return arg_100_0.is_highlighted
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "text",
+					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (content)
-						return not content.hotspot.is_hover
-					end,
+					content_check_function = function(arg_101_0)
+						return not arg_101_0.hotspot.is_hover
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "text_hover",
+					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (content)
-						return content.hotspot.is_hover
-					end,
+					content_check_function = function(arg_102_0)
+						return arg_102_0.hotspot.is_hover
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "bottom_edge",
-					texture_id = "rect_masked",
+					texture_id = "rect_masked"
 				},
 				{
 					pass_type = "rect",
-					content_check_function = function (content)
-						return DEBUG_WIDGETS
-					end,
+					content_check_function = function(arg_103_0)
+						return var_0_24
+					end
 				},
 				{
 					pass_type = "border",
-					content_check_function = function (content, style)
-						if DEBUG_WIDGETS then
-							style.thickness = 1
+					content_check_function = function(arg_104_0, arg_104_1)
+						if var_0_24 then
+							arg_104_1.thickness = 1
 						end
 
-						return DEBUG_WIDGETS
-					end,
+						return var_0_24
+					end
 				},
 				{
-					pass_type = "rect",
 					style_id = "debug_middle_line",
-					content_check_function = function (content)
-						return DEBUG_WIDGETS
-					end,
-				},
-			},
+					pass_type = "rect",
+					content_check_function = function(arg_105_0)
+						return var_0_24
+					end
+				}
+			}
 		},
 		content = {
-			highlight_texture = "playerlist_hover",
 			rect_masked = "rect_masked",
+			highlight_texture = "playerlist_hover",
 			hotspot = {},
 			highlight_hotspot = {
-				allow_multi_hover = true,
+				allow_multi_hover = true
 			},
-			text = text,
-			url = url,
+			text = arg_99_0,
+			url = arg_99_1
 		},
 		style = {
-			offset = table.clone(base_offset),
-			size = table.clone(TEXT_LINK_WIDGET_SIZE),
+			offset = table.clone(arg_99_6),
+			size = table.clone(var_0_37),
 			highlight_texture = {
 				masked = true,
 				offset = {
-					base_offset[1],
-					base_offset[2],
-					base_offset[3],
+					arg_99_6[1],
+					arg_99_6[2],
+					arg_99_6[3]
 				},
 				color = Colors.get_table("white"),
 				size = {
-					TEXT_LINK_WIDGET_SIZE[1],
-					TEXT_LINK_WIDGET_SIZE[2],
-				},
+					var_0_37[1],
+					var_0_37[2]
+				}
 			},
 			text = {
+				upper_case = true,
+				localize = true,
 				dynamic_font_size = true,
 				font_type = "hell_shark_header_masked",
-				localize = true,
-				upper_case = true,
 				offset = {
-					base_offset[1] + 2,
-					base_offset[2] + 5,
-					base_offset[3],
+					arg_99_6[1] + 2,
+					arg_99_6[2] + 5,
+					arg_99_6[3]
 				},
-				text_color = optional_text_color or Colors.get_color_table_with_alpha("font_title", 255),
-				font_size = optional_font_size or 18,
-				horizontal_alignment = optional_horizontal_alignment or "left",
-				size = table.clone(TEXT_LINK_WIDGET_SIZE),
+				text_color = arg_99_3 or Colors.get_color_table_with_alpha("font_title", 255),
+				font_size = arg_99_2 or 18,
+				horizontal_alignment = arg_99_4 or "left",
+				size = table.clone(var_0_37)
 			},
 			text_hover = {
+				upper_case = true,
+				localize = true,
 				dynamic_font_size = true,
 				font_type = "hell_shark_header_masked",
-				localize = true,
-				upper_case = true,
 				offset = {
-					base_offset[1] + 2,
-					base_offset[2] + 5,
-					base_offset[3],
+					arg_99_6[1] + 2,
+					arg_99_6[2] + 5,
+					arg_99_6[3]
 				},
-				text_color = optional_text_color or Colors.get_color_table_with_alpha("font_default", 255),
-				font_size = optional_font_size or 18,
-				horizontal_alignment = optional_horizontal_alignment or "left",
-				size = table.clone(TEXT_LINK_WIDGET_SIZE),
+				text_color = arg_99_3 or Colors.get_color_table_with_alpha("font_default", 255),
+				font_size = arg_99_2 or 18,
+				horizontal_alignment = arg_99_4 or "left",
+				size = table.clone(var_0_37)
 			},
 			debug_middle_line = {
 				offset = {
-					base_offset[1],
-					base_offset[2] + TEXT_LINK_WIDGET_SIZE[2] / 2 - 1,
-					base_offset[3] + 10,
+					arg_99_6[1],
+					arg_99_6[2] + var_0_37[2] / 2 - 1,
+					arg_99_6[3] + 10
 				},
 				size = {
-					TEXT_LINK_WIDGET_SIZE[1],
-					2,
+					var_0_37[1],
+					2
 				},
 				color = {
 					200,
 					0,
 					255,
-					0,
-				},
+					0
+				}
 			},
 			bottom_edge = {
 				offset = {
-					base_offset[1],
-					base_offset[2],
-					base_offset[3] + 1,
+					arg_99_6[1],
+					arg_99_6[2],
+					arg_99_6[3] + 1
 				},
-				color = BOTTOM_EDGE_COLOR,
+				color = var_0_9,
 				size = {
-					TEXT_LINK_WIDGET_SIZE[1],
-					BOTTOM_EDGE_THICKNESS,
-				},
+					var_0_37[1],
+					var_0_8
+				}
 			},
 			color = {
 				50,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_99_5
 	}
 
-	return UIWidget.init(definition)
+	return UIWidget.init(var_99_0)
 end
 
-local OPTION_WIDGET_SIZE = {
-	list_size_x - 100,
-	50,
+local var_0_39 = {
+	var_0_21 - 100,
+	50
 }
 
-local function create_option_widget(ui_renderer, text, options, selected_option, tooltip_text, scenegraph_id, base_offset)
-	local options_texts = {}
-	local options_values = {}
-	local num_options = #options
+local function var_0_40(arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4, arg_106_5, arg_106_6)
+	local var_106_0 = {}
+	local var_106_1 = {}
+	local var_106_2 = #arg_106_2
 
-	for i = 1, num_options do
-		options_texts[i] = options[i].text
-		options_values[i] = options[i].value
+	for iter_106_0 = 1, var_106_2 do
+		var_106_0[iter_106_0] = arg_106_2[iter_106_0].text
+		var_106_1[iter_106_0] = arg_106_2[iter_106_0].value
 	end
 
-	base_offset[2] = base_offset[2] - OPTION_WIDGET_SIZE[2]
+	arg_106_6[2] = arg_106_6[2] - var_0_39[2]
 
-	local passes = {}
-	local element = {
-		passes = passes,
+	local var_106_3 = {}
+	local var_106_4 = {
+		passes = var_106_3
 	}
-	local content = {}
-	local style = {}
-	local definition = {
-		element = element,
-		content = content,
-		style = style,
-		scenegraph_id = scenegraph_id,
+	local var_106_5 = {}
+	local var_106_6 = {}
+	local var_106_7 = {
+		element = var_106_4,
+		content = var_106_5,
+		style = var_106_6,
+		scenegraph_id = arg_106_5
 	}
 
-	passes[#passes + 1] = {
+	var_106_3[#var_106_3 + 1] = {
 		pass_type = "local_offset",
-		offset_function = function (ui_scenegraph, ui_style, ui_content, ui_renderer)
-			local current_selection = ui_content.current_selection
+		offset_function = function(arg_107_0, arg_107_1, arg_107_2, arg_107_3)
+			local var_107_0 = arg_107_2.current_selection
 
-			if current_selection ~= ui_content.local_selection then
-				ui_content.local_selection = current_selection
+			if var_107_0 ~= arg_107_2.local_selection then
+				arg_107_2.local_selection = var_107_0
 
-				local num_options = ui_content.num_options
+				local var_107_1 = arg_107_2.num_options
 
-				for i = 1, num_options do
-					local option_background_id = "option_" .. i
-					local option_text_id = "option_text_" .. i
-					local is_selected = i == current_selection
+				for iter_107_0 = 1, var_107_1 do
+					local var_107_2 = "option_" .. iter_107_0
+					local var_107_3 = "option_text_" .. iter_107_0
+					local var_107_4 = iter_107_0 == var_107_0
 
-					ui_content[option_background_id].is_selected = is_selected
-					ui_style[option_text_id].text_color = is_selected and ui_style[option_text_id].highlight_color or ui_style[option_text_id].default_color
+					arg_107_2[var_107_2].is_selected = var_107_4
+					arg_107_1[var_107_3].text_color = var_107_4 and arg_107_1[var_107_3].highlight_color or arg_107_1[var_107_3].default_color
 				end
 			end
-		end,
+		end
 	}
-	passes[#passes + 1] = {
+	var_106_3[#var_106_3 + 1] = {
 		pass_type = "texture",
 		style_id = "highlight_texture",
 		texture_id = "highlight_texture",
-		content_check_function = function (content)
-			return content.is_highlighted
-		end,
+		content_check_function = function(arg_108_0)
+			return arg_108_0.is_highlighted
+		end
 	}
-	passes[#passes + 1] = {
-		content_id = "highlight_hotspot",
+	var_106_3[#var_106_3 + 1] = {
 		pass_type = "hotspot",
+		content_id = "highlight_hotspot"
 	}
-	passes[#passes + 1] = {
+	var_106_3[#var_106_3 + 1] = {
 		pass_type = "option_tooltip",
 		text_id = "tooltip_text",
-		content_check_function = function (ui_content)
-			return ui_content.tooltip_text and ui_content.highlight_hotspot.is_hover and not Managers.input:is_device_active("gamepad")
-		end,
+		content_check_function = function(arg_109_0)
+			return arg_109_0.tooltip_text and arg_109_0.highlight_hotspot.is_hover and not Managers.input:is_device_active("gamepad")
+		end
 	}
-	passes[#passes + 1] = {
+	var_106_3[#var_106_3 + 1] = {
 		pass_type = "texture",
 		style_id = "bottom_edge",
-		texture_id = "rect_masked",
+		texture_id = "rect_masked"
 	}
-	passes[#passes + 1] = {
-		pass_type = "text",
+	var_106_3[#var_106_3 + 1] = {
 		style_id = "text",
-		text_id = "text",
+		pass_type = "text",
+		text_id = "text"
 	}
-	passes[#passes + 1] = {
+	var_106_3[#var_106_3 + 1] = {
 		pass_type = "rect",
-		content_check_function = function (content)
-			return DEBUG_WIDGETS
-		end,
+		content_check_function = function(arg_110_0)
+			return var_0_24
+		end
 	}
-	passes[#passes + 1] = {
+	var_106_3[#var_106_3 + 1] = {
 		pass_type = "border",
-		content_check_function = function (content, style)
-			if DEBUG_WIDGETS then
-				style.thickness = 1
+		content_check_function = function(arg_111_0, arg_111_1)
+			if var_0_24 then
+				arg_111_1.thickness = 1
 			end
 
-			return DEBUG_WIDGETS
-		end,
+			return var_0_24
+		end
 	}
-	passes[#passes + 1] = {
-		pass_type = "rect",
+	var_106_3[#var_106_3 + 1] = {
 		style_id = "debug_middle_line",
-		content_check_function = function (content)
-			return DEBUG_WIDGETS
-		end,
+		pass_type = "rect",
+		content_check_function = function(arg_112_0)
+			return var_0_24
+		end
 	}
-	content.text = text
-	content.tooltip_text = tooltip_text
-	content.current_selection = selected_option
-	content.options_texts = options_texts
-	content.options_values = options_values
-	content.num_options = num_options
-	content.highlight_hotspot = {
-		allow_multi_hover = true,
+	var_106_5.text = arg_106_1
+	var_106_5.tooltip_text = arg_106_4
+	var_106_5.current_selection = arg_106_3
+	var_106_5.options_texts = var_106_0
+	var_106_5.options_values = var_106_1
+	var_106_5.num_options = var_106_2
+	var_106_5.highlight_hotspot = {
+		allow_multi_hover = true
 	}
-	content.highlight_texture = "playerlist_hover"
-	content.rect_masked = "rect_masked"
+	var_106_5.highlight_texture = "playerlist_hover"
+	var_106_5.rect_masked = "rect_masked"
 
-	local hotspot_content_ids = {}
+	local var_106_8 = {}
 
-	content.hotspot_content_ids = hotspot_content_ids
-	style.offset = table.clone(base_offset)
-	style.size = table.clone(OPTION_WIDGET_SIZE)
-	style.highlight_texture = {
-		masked = true,
+	var_106_5.hotspot_content_ids = var_106_8
+	var_106_6.offset = table.clone(arg_106_6)
+	var_106_6.size = table.clone(var_0_39)
+	var_106_6.highlight_texture = {
 		upper_case = true,
+		masked = true,
 		offset = {
-			base_offset[1],
-			base_offset[2],
-			base_offset[3],
+			arg_106_6[1],
+			arg_106_6[2],
+			arg_106_6[3]
 		},
 		color = Colors.get_table("white"),
 		size = {
-			OPTION_WIDGET_SIZE[1],
-			OPTION_WIDGET_SIZE[2],
-		},
+			var_0_39[1],
+			var_0_39[2]
+		}
 	}
-	style.tooltip_text = {
-		cursor_side = "left",
-		font_size = 24,
+	var_106_6.tooltip_text = {
 		font_type = "hell_shark",
-		horizontal_alignment = "left",
 		localize = true,
-		max_width = 600,
+		font_size = 24,
+		horizontal_alignment = "left",
 		vertical_alignment = "top",
+		cursor_side = "left",
+		max_width = 600,
 		cursor_offset = {
 			-10,
-			-27,
+			-27
 		},
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		line_colors = {
-			(Colors.get_color_table_with_alpha("font_title", 255)),
+			(Colors.get_color_table_with_alpha("font_title", 255))
 		},
 		offset = {
 			0,
 			0,
-			base_offset[3] + 20,
-		},
+			arg_106_6[3] + 20
+		}
 	}
-	style.text = {
+	var_106_6.text = {
+		upper_case = true,
+		localize = true,
 		dynamic_font = true,
 		font_size = 22,
 		font_type = "hell_shark_masked",
-		localize = true,
-		upper_case = true,
 		offset = {
-			base_offset[1] + 2,
-			base_offset[2] + 5,
-			base_offset[3],
+			arg_106_6[1] + 2,
+			arg_106_6[2] + 5,
+			arg_106_6[3]
 		},
-		text_color = Colors.get_color_table_with_alpha("font_default", 255),
+		text_color = Colors.get_color_table_with_alpha("font_default", 255)
 	}
-	style.debug_middle_line = {
+	var_106_6.debug_middle_line = {
 		offset = {
-			base_offset[1],
-			base_offset[2] + OPTION_WIDGET_SIZE[2] / 2 - 1,
-			base_offset[3] + 10,
+			arg_106_6[1],
+			arg_106_6[2] + var_0_39[2] / 2 - 1,
+			arg_106_6[3] + 10
 		},
 		size = {
-			OPTION_WIDGET_SIZE[1],
-			2,
+			var_0_39[1],
+			2
 		},
 		color = {
 			200,
 			0,
 			255,
-			0,
-		},
+			0
+		}
 	}
-	style.color = {
+	var_106_6.color = {
 		50,
 		255,
 		255,
-		255,
+		255
 	}
-	style.bottom_edge = {
+	var_106_6.bottom_edge = {
 		offset = {
-			base_offset[1],
-			base_offset[2],
-			base_offset[3] + 1,
+			arg_106_6[1],
+			arg_106_6[2],
+			arg_106_6[3] + 1
 		},
-		color = BOTTOM_EDGE_COLOR,
+		color = var_0_9,
 		size = {
-			OPTION_WIDGET_SIZE[1],
-			BOTTOM_EDGE_THICKNESS,
-		},
+			var_0_39[1],
+			var_0_8
+		}
 	}
 
-	local options_spacing = 20
-	local options_text_margin = 20
-	local options_text_min_size = 120
-	local option_start_offset = base_offset[1] + OPTION_WIDGET_SIZE[1]
-	local options_total_length = -options_spacing
+	local var_106_9 = 20
+	local var_106_10 = 20
+	local var_106_11 = 120
+	local var_106_12 = arg_106_6[1] + var_0_39[1]
+	local var_106_13 = -var_106_9
 
-	for i = 1, num_options do
-		local option_text = options[i].text
-		local option_text_id = "option_text_" .. i
+	for iter_106_1 = 1, var_106_2 do
+		local var_106_14 = arg_106_2[iter_106_1].text
+		local var_106_15 = "option_text_" .. iter_106_1
 
-		passes[#passes + 1] = {
+		var_106_3[#var_106_3 + 1] = {
 			pass_type = "text",
-			style_id = option_text_id,
-			text_id = option_text_id,
-			content_change_function = function (content, style)
-				local hotspot_content = content["option_" .. i]
+			style_id = var_106_15,
+			text_id = var_106_15,
+			content_change_function = function(arg_113_0, arg_113_1)
+				local var_113_0 = arg_113_0["option_" .. iter_106_1]
 
-				if not hotspot_content.is_selected then
-					if hotspot_content.is_hover then
-						style.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+				if not var_113_0.is_selected then
+					if var_113_0.is_hover then
+						arg_113_1.text_color = Colors.get_color_table_with_alpha("font_default", 255)
 					else
-						style.text_color = Colors.get_color_table_with_alpha("font_title", 255)
+						arg_113_1.text_color = Colors.get_color_table_with_alpha("font_title", 255)
 					end
 				end
-			end,
+			end
 		}
-		style[option_text_id] = {
-			dynamic_font = true,
-			font_size = 22,
-			font_type = "hell_shark_masked",
-			horizontal_alignment = "center",
+		var_106_6[var_106_15] = {
 			upper_case = true,
+			horizontal_alignment = "center",
+			font_size = 22,
 			vertical_alignment = "center",
+			dynamic_font = true,
+			font_type = "hell_shark_masked",
 			size = {
 				500,
-				OPTION_WIDGET_SIZE[2],
+				var_0_39[2]
 			},
 			offset = {
-				option_start_offset - options_total_length,
-				base_offset[2],
-				base_offset[3] + 1,
+				var_106_12 - var_106_13,
+				arg_106_6[2],
+				arg_106_6[3] + 1
 			},
 			text_color = Colors.get_color_table_with_alpha("font_title", 255),
 			highlight_color = Colors.get_color_table_with_alpha("black", 255),
-			default_color = Colors.get_color_table_with_alpha("font_title", 255),
+			default_color = Colors.get_color_table_with_alpha("font_title", 255)
 		}
-		content[option_text_id] = option_text
+		var_106_5[var_106_15] = var_106_14
 
-		if style[option_text_id].upper_case then
-			option_text = TextToUpper(option_text)
+		if var_106_6[var_106_15].upper_case then
+			var_106_14 = TextToUpper(var_106_14)
 		end
 
-		local font, scaled_font_size = UIFontByResolution(style[option_text_id])
-		local text_width, text_height, min = UIRenderer.text_size(ui_renderer, option_text, font[1], scaled_font_size)
-		local option_text_length = math.max(text_width + options_text_margin, options_text_min_size)
+		local var_106_16, var_106_17 = UIFontByResolution(var_106_6[var_106_15])
+		local var_106_18, var_106_19, var_106_20 = UIRenderer.text_size(arg_106_0, var_106_14, var_106_16[1], var_106_17)
+		local var_106_21 = math.max(var_106_18 + var_106_10, var_106_11)
 
-		options_total_length = options_total_length + option_text_length + options_spacing
-		style[option_text_id].size[1] = option_text_length
-		style[option_text_id].offset[1] = option_start_offset - options_total_length
+		var_106_13 = var_106_13 + var_106_21 + var_106_9
+		var_106_6[var_106_15].size[1] = var_106_21
+		var_106_6[var_106_15].offset[1] = var_106_12 - var_106_13
 
-		local option_background_id = "option_" .. i
+		local var_106_22 = "option_" .. iter_106_1
 
-		passes[#passes + 1] = {
+		var_106_3[#var_106_3 + 1] = {
 			pass_type = "hotspot",
-			style_id = option_background_id,
-			content_id = option_background_id,
+			style_id = var_106_22,
+			content_id = var_106_22
 		}
-		content[option_background_id] = {}
-		passes[#passes + 1] = {
-			pass_type = "texture",
+		var_106_5[var_106_22] = {}
+		var_106_3[#var_106_3 + 1] = {
 			texture_id = "rect_texture",
-			style_id = option_background_id,
-			content_check_function = function (content)
-				return content[option_background_id].is_selected
+			pass_type = "texture",
+			style_id = var_106_22,
+			content_check_function = function(arg_114_0)
+				return arg_114_0[var_106_22].is_selected
 			end,
-			content_change_function = function (content, style)
-				local hotspot_content = content["option_" .. i]
+			content_change_function = function(arg_115_0, arg_115_1)
+				local var_115_0 = arg_115_0["option_" .. iter_106_1]
 
-				if hotspot_content.is_selected then
-					if hotspot_content.is_hover then
-						style.color = Colors.get_color_table_with_alpha("font_default", 255)
+				if var_115_0.is_selected then
+					if var_115_0.is_hover then
+						arg_115_1.color = Colors.get_color_table_with_alpha("font_default", 255)
 					else
-						style.color = Colors.get_color_table_with_alpha("font_title", 255)
+						arg_115_1.color = Colors.get_color_table_with_alpha("font_title", 255)
 					end
 				end
-			end,
+			end
 		}
-		content.rect_texture = "rect_masked"
-		style[option_background_id] = {
+		var_106_5.rect_texture = "rect_masked"
+		var_106_6[var_106_22] = {
 			size = {
-				option_text_length,
-				OPTION_WIDGET_SIZE[2] - 10,
+				var_106_21,
+				var_0_39[2] - 10
 			},
 			offset = {
-				option_start_offset - options_total_length,
-				base_offset[2] + 5,
-				base_offset[3],
+				var_106_12 - var_106_13,
+				arg_106_6[2] + 5,
+				arg_106_6[3]
 			},
-			color = Colors.get_color_table_with_alpha("font_title", 255),
+			color = Colors.get_color_table_with_alpha("font_title", 255)
 		}
-		hotspot_content_ids[#hotspot_content_ids + 1] = option_background_id
+		var_106_8[#var_106_8 + 1] = var_106_22
 	end
 
-	return UIWidget.init(definition)
+	return UIWidget.init(var_106_7)
 end
 
-local KEYBIND_WIDGET_SIZE = {
-	list_size_x - 100,
-	30,
+local var_0_41 = {
+	var_0_21 - 100,
+	30
 }
 
-local function create_keybind_widget(selected_key_1, selected_key_2, keybind_description, actions, actions_info, scenegraph_id, base_offset)
-	base_offset[2] = base_offset[2] - KEYBIND_WIDGET_SIZE[2]
+local function var_0_42(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4, arg_116_5, arg_116_6)
+	arg_116_6[2] = arg_116_6[2] - var_0_41[2]
 
-	local definition = {
+	local var_116_0 = {
 		element = {
 			passes = {
 				{
-					content_id = "hotspot_1",
-					pass_type = "hotspot",
 					style_id = "hotspot_1",
-					content_check_function = function (content)
+					pass_type = "hotspot",
+					content_id = "hotspot_1",
+					content_check_function = function(arg_117_0)
 						return not Managers.input:is_device_active("gamepad")
-					end,
+					end
 				},
 				{
-					content_id = "hotspot_2",
-					pass_type = "hotspot",
 					style_id = "hotspot_2",
-					content_check_function = function (content)
+					pass_type = "hotspot",
+					content_id = "hotspot_2",
+					content_check_function = function(arg_118_0)
 						return not Managers.input:is_device_active("gamepad")
-					end,
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "bottom_edge",
-					texture_id = "rect_masked",
+					texture_id = "rect_masked"
 				},
 				{
-					pass_type = "text",
 					style_id = "text",
-					text_id = "text",
+					pass_type = "text",
+					text_id = "text"
 				},
 				{
-					content_id = "highlight_hotspot",
 					pass_type = "hotspot",
-					content_check_function = function (content)
+					content_id = "highlight_hotspot",
+					content_check_function = function(arg_119_0)
 						return not Managers.input:is_device_active("gamepad")
-					end,
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "highlight_texture",
 					texture_id = "highlight_texture",
-					content_check_function = function (content)
-						return content.is_highlighted and not Managers.input:is_device_active("gamepad")
-					end,
+					content_check_function = function(arg_120_0)
+						return arg_120_0.is_highlighted and not Managers.input:is_device_active("gamepad")
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "selected_key_1",
-					text_id = "selected_key_1",
-					content_check_function = function (content)
-						return not content.active_1
-					end,
-					content_change_function = function (ui_content, selected_key_style)
-						if ui_content.active_1 or ui_content.hotspot_1.is_hover then
-							selected_key_style.text_color = selected_key_style.hover_color
-						elseif ui_content.is_unassigned_1 then
-							selected_key_style.text_color = selected_key_style.unassigned_color
-						else
-							selected_key_style.text_color = selected_key_style.default_color
-						end
-
-						if ui_content.active_1 then
-							ui_content.active_t = ui_content.active_t + ui_renderer.dt * 2.5
-
-							local i = math.sirp(0, 1, ui_content.active_t)
-
-							selected_key_style.parent.selected_rect_1.color[1] = i * 255
-						else
-							selected_key_style.parent.selected_rect_1.color[1] = 255
-						end
-					end,
-				},
-				{
 					pass_type = "text",
+					text_id = "selected_key_1",
+					content_check_function = function(arg_121_0)
+						return not arg_121_0.active_1
+					end,
+					content_change_function = function(arg_122_0, arg_122_1)
+						if arg_122_0.active_1 or arg_122_0.hotspot_1.is_hover then
+							arg_122_1.text_color = arg_122_1.hover_color
+						elseif arg_122_0.is_unassigned_1 then
+							arg_122_1.text_color = arg_122_1.unassigned_color
+						else
+							arg_122_1.text_color = arg_122_1.default_color
+						end
+
+						if arg_122_0.active_1 then
+							arg_122_0.active_t = arg_122_0.active_t + ui_renderer.dt * 2.5
+
+							local var_122_0 = math.sirp(0, 1, arg_122_0.active_t)
+
+							arg_122_1.parent.selected_rect_1.color[1] = var_122_0 * 255
+						else
+							arg_122_1.parent.selected_rect_1.color[1] = 255
+						end
+					end
+				},
+				{
 					style_id = "selected_key_2",
+					pass_type = "text",
 					text_id = "selected_key_2",
-					content_check_function = function (content)
-						return not content.active_2
+					content_check_function = function(arg_123_0)
+						return not arg_123_0.active_2
 					end,
-					content_change_function = function (ui_content, selected_key_style)
-						if ui_content.active_2 or ui_content.hotspot_2.is_hover then
-							selected_key_style.text_color = selected_key_style.hover_color
-						elseif ui_content.is_unassigned_2 then
-							selected_key_style.text_color = selected_key_style.unassigned_color
+					content_change_function = function(arg_124_0, arg_124_1)
+						if arg_124_0.active_2 or arg_124_0.hotspot_2.is_hover then
+							arg_124_1.text_color = arg_124_1.hover_color
+						elseif arg_124_0.is_unassigned_2 then
+							arg_124_1.text_color = arg_124_1.unassigned_color
 						else
-							selected_key_style.text_color = selected_key_style.default_color
+							arg_124_1.text_color = arg_124_1.default_color
 						end
 
-						if ui_content.active_2 then
-							ui_content.active_t = ui_content.active_t + ui_renderer.dt * 2.5
+						if arg_124_0.active_2 then
+							arg_124_0.active_t = arg_124_0.active_t + ui_renderer.dt * 2.5
 
-							local i = math.sirp(0, 1, ui_content.active_t)
+							local var_124_0 = math.sirp(0, 1, arg_124_0.active_t)
 
-							selected_key_style.parent.selected_rect_2.color[1] = i * 255
+							arg_124_1.parent.selected_rect_2.color[1] = var_124_0 * 255
 						else
-							selected_key_style.parent.selected_rect_2.color[1] = 255
+							arg_124_1.parent.selected_rect_2.color[1] = 255
 						end
-					end,
+					end
 				},
 				{
-					pass_type = "rect",
 					style_id = "selected_rect_1",
-					content_check_function = function (content)
-						return content.active_1
-					end,
+					pass_type = "rect",
+					content_check_function = function(arg_125_0)
+						return arg_125_0.active_1
+					end
 				},
 				{
-					pass_type = "rect",
 					style_id = "selected_rect_2",
-					content_check_function = function (content)
-						return content.active_2
-					end,
+					pass_type = "rect",
+					content_check_function = function(arg_126_0)
+						return arg_126_0.active_2
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "input_field_1_background_bevel",
-					texture_id = "rect_masked",
+					texture_id = "rect_masked"
 				},
 				{
 					pass_type = "texture",
 					style_id = "input_field_1_background",
-					texture_id = "rect_masked",
+					texture_id = "rect_masked"
 				},
 				{
 					pass_type = "texture",
 					style_id = "input_field_2_background_bevel",
-					texture_id = "rect_masked",
+					texture_id = "rect_masked"
 				},
 				{
 					pass_type = "texture",
 					style_id = "input_field_2_background",
-					texture_id = "rect_masked",
-				},
-			},
+					texture_id = "rect_masked"
+				}
+			}
 		},
 		content = {
 			active_t = 0,
-			highlight_texture = "playerlist_hover",
 			rect_masked = "rect_masked",
+			highlight_texture = "playerlist_hover",
 			hotspot_1 = {},
 			hotspot_2 = {},
 			highlight_hotspot = {
-				allow_multi_hover = true,
+				allow_multi_hover = true
 			},
-			text = keybind_description or actions[1],
-			actions = actions,
-			actions_info = actions_info,
-			selected_key_1 = selected_key_1,
-			selected_key_2 = selected_key_2,
+			text = arg_116_2 or arg_116_3[1],
+			actions = arg_116_3,
+			actions_info = arg_116_4,
+			selected_key_1 = arg_116_0,
+			selected_key_2 = arg_116_1,
 			hotspot_content_ids = {
 				"hotspot_1",
-				"hotspot_2",
-			},
+				"hotspot_2"
+			}
 		},
 		style = {
-			offset = table.clone(base_offset),
+			offset = table.clone(arg_116_6),
 			hotspot_1 = {
 				offset = {
-					base_offset[1] + KEYBIND_WIDGET_SIZE[1] - 2 * (20 + INPUT_FIELD_WIDTH - 2),
-					base_offset[2] + KEYBIND_WIDGET_SIZE[2] / 2 - (KEYBIND_WIDGET_SIZE[2] - 10) / 2,
-					base_offset[3] + 2,
+					arg_116_6[1] + var_0_41[1] - 2 * (20 + var_0_0 - 2),
+					arg_116_6[2] + var_0_41[2] / 2 - (var_0_41[2] - 10) / 2,
+					arg_116_6[3] + 2
 				},
 				area_size = {
-					INPUT_FIELD_WIDTH - 2,
-					KEYBIND_WIDGET_SIZE[2] - 10,
-				},
+					var_0_0 - 2,
+					var_0_41[2] - 10
+				}
 			},
 			hotspot_2 = {
 				offset = {
-					base_offset[1] + KEYBIND_WIDGET_SIZE[1] - (INPUT_FIELD_WIDTH - 2),
-					base_offset[2] + KEYBIND_WIDGET_SIZE[2] / 2 - (KEYBIND_WIDGET_SIZE[2] - 10) / 2,
-					base_offset[3] + 2,
+					arg_116_6[1] + var_0_41[1] - (var_0_0 - 2),
+					arg_116_6[2] + var_0_41[2] / 2 - (var_0_41[2] - 10) / 2,
+					arg_116_6[3] + 2
 				},
 				area_size = {
-					INPUT_FIELD_WIDTH - 2,
-					KEYBIND_WIDGET_SIZE[2] - 10,
-				},
+					var_0_0 - 2,
+					var_0_41[2] - 10
+				}
 			},
 			highlight_texture = {
 				masked = true,
 				offset = {
-					base_offset[1],
-					base_offset[2],
-					base_offset[3],
+					arg_116_6[1],
+					arg_116_6[2],
+					arg_116_6[3]
 				},
 				color = Colors.get_table("white"),
 				size = {
-					KEYBIND_WIDGET_SIZE[1],
-					KEYBIND_WIDGET_SIZE[2],
-				},
+					var_0_41[1],
+					var_0_41[2]
+				}
 			},
 			text = {
+				upper_case = true,
+				localize = true,
 				dynamic_font = true,
 				font_size = 16,
 				font_type = "hell_shark_masked",
-				localize = true,
-				upper_case = true,
 				offset = {
-					base_offset[1] + 2,
-					base_offset[2] + 5,
-					base_offset[3] + 1,
+					arg_116_6[1] + 2,
+					arg_116_6[2] + 5,
+					arg_116_6[3] + 1
 				},
-				text_color = Colors.get_color_table_with_alpha("font_default", 255),
+				text_color = Colors.get_color_table_with_alpha("font_default", 255)
 			},
 			selected_key_1 = {
-				dynamic_font = true,
-				font_size = 16,
-				font_type = "hell_shark_masked",
-				horizontal_alignment = "center",
 				upper_case = true,
+				horizontal_alignment = "center",
+				font_size = 16,
+				dynamic_font = true,
+				font_type = "hell_shark_masked",
 				offset = {
-					base_offset[1] + KEYBIND_WIDGET_SIZE[1] - 2 * (20 + INPUT_FIELD_WIDTH),
-					base_offset[2] + 2,
-					base_offset[3] + 5,
+					arg_116_6[1] + var_0_41[1] - 2 * (20 + var_0_0),
+					arg_116_6[2] + 2,
+					arg_116_6[3] + 5
 				},
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				hover_color = Colors.get_color_table_with_alpha("font_title", 255),
 				default_color = Colors.get_color_table_with_alpha("font_default", 255),
 				unassigned_color = Colors.get_color_table_with_alpha("dim_gray", 255),
 				size = {
-					INPUT_FIELD_WIDTH,
-					KEYBIND_WIDGET_SIZE[2] - 10,
-				},
+					var_0_0,
+					var_0_41[2] - 10
+				}
 			},
 			selected_key_2 = {
-				dynamic_font = true,
-				font_size = 16,
-				font_type = "hell_shark_masked",
-				horizontal_alignment = "center",
 				upper_case = true,
+				horizontal_alignment = "center",
+				font_size = 16,
+				dynamic_font = true,
+				font_type = "hell_shark_masked",
 				offset = {
-					base_offset[1] + KEYBIND_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH,
-					base_offset[2] + 2,
-					base_offset[3] + 5,
+					arg_116_6[1] + var_0_41[1] - var_0_0,
+					arg_116_6[2] + 2,
+					arg_116_6[3] + 5
 				},
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				hover_color = Colors.get_color_table_with_alpha("font_title", 255),
 				default_color = Colors.get_color_table_with_alpha("font_default", 255),
 				unassigned_color = Colors.get_color_table_with_alpha("dim_gray", 255),
 				size = {
-					INPUT_FIELD_WIDTH,
-					KEYBIND_WIDGET_SIZE[2] - 10,
-				},
+					var_0_0,
+					var_0_41[2] - 10
+				}
 			},
 			selected_rect_1 = {
 				offset = {
-					base_offset[1] + KEYBIND_WIDGET_SIZE[1] - 2 * (20 + INPUT_FIELD_WIDTH - 2),
-					base_offset[2] + KEYBIND_WIDGET_SIZE[2] / 2 - (KEYBIND_WIDGET_SIZE[2] - 10) / 2,
-					base_offset[3] + 2,
+					arg_116_6[1] + var_0_41[1] - 2 * (20 + var_0_0 - 2),
+					arg_116_6[2] + var_0_41[2] / 2 - (var_0_41[2] - 10) / 2,
+					arg_116_6[3] + 2
 				},
 				size = {
-					INPUT_FIELD_WIDTH - 2,
-					KEYBIND_WIDGET_SIZE[2] - 10,
+					var_0_0 - 2,
+					var_0_41[2] - 10
 				},
-				color = Colors.get_color_table_with_alpha("font_default", 100),
+				color = Colors.get_color_table_with_alpha("font_default", 100)
 			},
 			selected_rect_2 = {
 				offset = {
-					base_offset[1] + KEYBIND_WIDGET_SIZE[1] - (INPUT_FIELD_WIDTH - 2),
-					base_offset[2] + KEYBIND_WIDGET_SIZE[2] / 2 - (KEYBIND_WIDGET_SIZE[2] - 10) / 2,
-					base_offset[3] + 2,
+					arg_116_6[1] + var_0_41[1] - (var_0_0 - 2),
+					arg_116_6[2] + var_0_41[2] / 2 - (var_0_41[2] - 10) / 2,
+					arg_116_6[3] + 2
 				},
 				size = {
-					INPUT_FIELD_WIDTH - 2,
-					KEYBIND_WIDGET_SIZE[2] - 10,
+					var_0_0 - 2,
+					var_0_41[2] - 10
 				},
-				color = Colors.get_color_table_with_alpha("font_default", 100),
+				color = Colors.get_color_table_with_alpha("font_default", 100)
 			},
 			debug_middle_line = {
 				offset = {
-					base_offset[1],
-					base_offset[2] + KEYBIND_WIDGET_SIZE[2] / 2 - 1,
-					base_offset[3] + 10,
+					arg_116_6[1],
+					arg_116_6[2] + var_0_41[2] / 2 - 1,
+					arg_116_6[3] + 10
 				},
 				size = {
-					KEYBIND_WIDGET_SIZE[1],
-					2,
+					var_0_41[1],
+					2
 				},
 				color = {
 					200,
 					0,
 					255,
-					0,
-				},
+					0
+				}
 			},
 			bottom_edge = {
 				offset = {
-					base_offset[1],
-					base_offset[2],
-					base_offset[3] + 1,
+					arg_116_6[1],
+					arg_116_6[2],
+					arg_116_6[3] + 1
 				},
-				color = BOTTOM_EDGE_COLOR,
+				color = var_0_9,
 				size = {
-					KEYBIND_WIDGET_SIZE[1],
-					BOTTOM_EDGE_THICKNESS,
-				},
+					var_0_41[1],
+					var_0_8
+				}
 			},
 			input_field_1_background_bevel = {
 				offset = {
-					base_offset[1] + KEYBIND_WIDGET_SIZE[1] - 2 * (20 + INPUT_FIELD_WIDTH),
-					base_offset[2] + KEYBIND_WIDGET_SIZE[2] / 2 - (KEYBIND_WIDGET_SIZE[2] - 10) / 2,
-					base_offset[3] + 1,
+					arg_116_6[1] + var_0_41[1] - 2 * (20 + var_0_0),
+					arg_116_6[2] + var_0_41[2] / 2 - (var_0_41[2] - 10) / 2,
+					arg_116_6[3] + 1
 				},
-				color = INPUT_FIELD_COLOR,
+				color = var_0_1,
 				size = {
-					INPUT_FIELD_WIDTH,
-					KEYBIND_WIDGET_SIZE[2] - 10 + 2,
-				},
+					var_0_0,
+					var_0_41[2] - 10 + 2
+				}
 			},
 			input_field_1_background = {
 				offset = {
-					base_offset[1] + KEYBIND_WIDGET_SIZE[1] - 2 * (20 + INPUT_FIELD_WIDTH - 2),
-					base_offset[2] + KEYBIND_WIDGET_SIZE[2] / 2 - (KEYBIND_WIDGET_SIZE[2] - 10) / 2,
-					base_offset[3] + 2,
+					arg_116_6[1] + var_0_41[1] - 2 * (20 + var_0_0 - 2),
+					arg_116_6[2] + var_0_41[2] / 2 - (var_0_41[2] - 10) / 2,
+					arg_116_6[3] + 2
 				},
 				color = {
 					255,
 					10,
 					10,
-					10,
+					10
 				},
 				size = {
-					INPUT_FIELD_WIDTH - 2,
-					KEYBIND_WIDGET_SIZE[2] - 10,
-				},
+					var_0_0 - 2,
+					var_0_41[2] - 10
+				}
 			},
 			input_field_2_background_bevel = {
 				offset = {
-					base_offset[1] + KEYBIND_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH,
-					base_offset[2] + KEYBIND_WIDGET_SIZE[2] / 2 - (KEYBIND_WIDGET_SIZE[2] - 10) / 2,
-					base_offset[3] + 1,
+					arg_116_6[1] + var_0_41[1] - var_0_0,
+					arg_116_6[2] + var_0_41[2] / 2 - (var_0_41[2] - 10) / 2,
+					arg_116_6[3] + 1
 				},
-				color = INPUT_FIELD_COLOR,
+				color = var_0_1,
 				size = {
-					INPUT_FIELD_WIDTH,
-					KEYBIND_WIDGET_SIZE[2] - 10 + 2,
-				},
+					var_0_0,
+					var_0_41[2] - 10 + 2
+				}
 			},
 			input_field_2_background = {
 				offset = {
-					base_offset[1] + KEYBIND_WIDGET_SIZE[1] - (INPUT_FIELD_WIDTH - 2),
-					base_offset[2] + KEYBIND_WIDGET_SIZE[2] / 2 - (KEYBIND_WIDGET_SIZE[2] - 10) / 2,
-					base_offset[3] + 2,
+					arg_116_6[1] + var_0_41[1] - (var_0_0 - 2),
+					arg_116_6[2] + var_0_41[2] / 2 - (var_0_41[2] - 10) / 2,
+					arg_116_6[3] + 2
 				},
 				color = {
 					255,
 					10,
 					10,
-					10,
+					10
 				},
 				size = {
-					INPUT_FIELD_WIDTH - 2,
-					KEYBIND_WIDGET_SIZE[2] - 10,
-				},
+					var_0_0 - 2,
+					var_0_41[2] - 10
+				}
 			},
-			size = table.clone(KEYBIND_WIDGET_SIZE),
+			size = table.clone(var_0_41),
 			color = {
 				50,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_116_5
 	}
 
-	return UIWidget.init(definition)
+	return UIWidget.init(var_116_0)
 end
 
-local SORTED_LIST_WIDGET_WIDTH = list_size_x - 100
-local SORTED_LIST_TITLE_TEXT_OFFSET = 28
+local var_0_43 = var_0_21 - 100
+local var_0_44 = 28
 
-local function create_sorted_list_widget(text, tooltip_text, item_contents, item_styles, item_size, item_content_change_function, scenegraph_id, base_offset)
-	local num_items = #item_contents
-	local PADDING = 10
-	local SORTED_LIST_WIDGET_SIZE = {
-		SORTED_LIST_WIDGET_WIDTH,
-		num_items * item_size[2] + PADDING,
+local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, arg_127_5, arg_127_6, arg_127_7)
+	local var_127_0 = #arg_127_2
+	local var_127_1 = 10
+	local var_127_2 = {
+		var_0_43,
+		var_127_0 * arg_127_4[2] + var_127_1
 	}
-	local SORTED_LIST_BACKGROUND_HEIGHT = SORTED_LIST_WIDGET_SIZE[2] - PADDING
-	local SORTED_LIST_ARROW_BACKGROUND_SIZE = {
+	local var_127_3 = var_127_2[2] - var_127_1
+	local var_127_4 = {
 		35,
-		(SORTED_LIST_WIDGET_SIZE[2] - PADDING) / 2 - 2,
+		(var_127_2[2] - var_127_1) / 2 - 2
 	}
 
-	base_offset[2] = base_offset[2] - SORTED_LIST_WIDGET_SIZE[2]
+	arg_127_7[2] = arg_127_7[2] - var_127_2[2]
 
-	local enabled_color = Colors.get_color_table_with_alpha("font_default", 255)
-	local disabled_color = Colors.get_color_table_with_alpha("font_default", 100)
-	local definition = {
+	local var_127_5 = Colors.get_color_table_with_alpha("font_default", 255)
+	local var_127_6 = Colors.get_color_table_with_alpha("font_default", 100)
+	local var_127_7 = {
 		element = {
 			passes = {
 				{
-					pass_type = "text",
 					style_id = "text",
-					text_id = "text",
+					pass_type = "text",
+					text_id = "text"
 				},
 				{
 					pass_type = "texture",
 					style_id = "background",
 					texture_id = "rect_masked",
-					content_check_function = function (content, style)
+					content_check_function = function(arg_128_0, arg_128_1)
 						return not Managers.input:is_device_active("gamepad")
-					end,
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "background_fg",
 					texture_id = "rect_masked",
-					content_check_function = function (content, style)
+					content_check_function = function(arg_129_0, arg_129_1)
 						return not Managers.input:is_device_active("gamepad")
-					end,
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "bottom_edge",
 					texture_id = "rect_masked",
-					content_check_function = function (content, style)
+					content_check_function = function(arg_130_0, arg_130_1)
 						return not Managers.input:is_device_active("gamepad")
-					end,
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "arrow_buttons_edge_horizontal",
 					texture_id = "rect_masked",
-					content_check_function = function (content, style)
+					content_check_function = function(arg_131_0, arg_131_1)
 						return not Managers.input:is_device_active("gamepad")
-					end,
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "arrow_buttons_edge_vertical",
 					texture_id = "rect_masked",
-					content_check_function = function (content, style)
+					content_check_function = function(arg_132_0, arg_132_1)
 						return not Managers.input:is_device_active("gamepad")
-					end,
+					end
 				},
 				{
-					content_id = "highlight_hotspot",
 					pass_type = "hotspot",
+					content_id = "highlight_hotspot"
 				},
 				{
 					pass_type = "texture",
 					style_id = "highlight_texture",
 					texture_id = "highlight_texture",
-					content_check_function = function (content)
-						return content.is_highlighted and Managers.input:is_device_active("gamepad") and not content.active
-					end,
+					content_check_function = function(arg_133_0)
+						return arg_133_0.is_highlighted and Managers.input:is_device_active("gamepad") and not arg_133_0.active
+					end
 				},
 				{
-					pass_type = "option_tooltip",
 					style_id = "tooltip_text",
+					pass_type = "option_tooltip",
 					text_id = "tooltip_text",
-					content_check_function = function (content)
-						return content.tooltip_text and content.highlight_hotspot.is_hover and not Managers.input:is_device_active("gamepad")
-					end,
+					content_check_function = function(arg_134_0)
+						return arg_134_0.tooltip_text and arg_134_0.highlight_hotspot.is_hover and not Managers.input:is_device_active("gamepad")
+					end
 				},
 				{
+					style_id = "down_arrow_background",
+					pass_type = "hotspot",
 					content_id = "down_hotspot",
-					pass_type = "hotspot",
-					style_id = "down_arrow_background",
-					content_check_function = function (content)
-						return content.active
-					end,
+					content_check_function = function(arg_135_0)
+						return arg_135_0.active
+					end
 				},
 				{
+					style_id = "up_arrow_background",
+					pass_type = "hotspot",
 					content_id = "up_hotspot",
-					pass_type = "hotspot",
-					style_id = "up_arrow_background",
-					content_check_function = function (content)
-						return content.active
-					end,
+					content_check_function = function(arg_136_0)
+						return arg_136_0.active
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "down_arrow_background",
 					texture_id = "rect_masked",
-					content_check_function = function (content)
+					content_check_function = function(arg_137_0)
 						if Managers.input:is_device_active("gamepad") then
 							return false
 						end
 
-						local down_hotspot = content.down_hotspot
+						local var_137_0 = arg_137_0.down_hotspot
 
-						return down_hotspot.active and down_hotspot.is_hover
-					end,
+						return var_137_0.active and var_137_0.is_hover
+					end
 				},
 				{
-					content_id = "arrow",
-					pass_type = "texture",
-					style_id = "down_arrow",
 					texture_id = "texture_id",
-					content_check_function = function (content, style)
+					style_id = "down_arrow",
+					pass_type = "texture",
+					content_id = "arrow",
+					content_check_function = function(arg_138_0, arg_138_1)
 						if Managers.input:is_device_active("gamepad") then
 							return false
 						end
 
-						local parent_content = content.parent
-						local parent_style = style.parent
-						local down_hotspot = parent_content.down_hotspot
+						local var_138_0 = arg_138_0.parent
+						local var_138_1 = arg_138_1.parent
 
-						style.color = down_hotspot.active and parent_style.enabled_color or parent_style.disabled_color
+						arg_138_1.color = var_138_0.down_hotspot.active and var_138_1.enabled_color or var_138_1.disabled_color
 
 						return true
-					end,
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "up_arrow_background",
 					texture_id = "rect_masked",
-					content_check_function = function (content)
+					content_check_function = function(arg_139_0)
 						if Managers.input:is_device_active("gamepad") then
 							return false
 						end
 
-						local up_hotspot = content.up_hotspot
+						local var_139_0 = arg_139_0.up_hotspot
 
-						return up_hotspot.active and up_hotspot.is_hover
-					end,
+						return var_139_0.active and var_139_0.is_hover
+					end
 				},
 				{
-					content_id = "arrow",
-					pass_type = "texture_uv",
-					style_id = "up_arrow",
 					texture_id = "texture_id",
-					content_check_function = function (content, style)
+					style_id = "up_arrow",
+					pass_type = "texture_uv",
+					content_id = "arrow",
+					content_check_function = function(arg_140_0, arg_140_1)
 						if Managers.input:is_device_active("gamepad") then
 							return false
 						end
 
-						local parent_content = content.parent
-						local parent_style = style.parent
-						local up_hotspot = parent_content.up_hotspot
+						local var_140_0 = arg_140_0.parent
+						local var_140_1 = arg_140_1.parent
 
-						style.color = up_hotspot.active and parent_style.enabled_color or parent_style.disabled_color
+						arg_140_1.color = var_140_0.up_hotspot.active and var_140_1.enabled_color or var_140_1.disabled_color
 
 						return true
-					end,
+					end
 				},
 				{
-					content_id = "arrow_hover",
-					pass_type = "texture",
+					texture_id = "texture_id",
 					style_id = "down_arrow_hover",
-					texture_id = "texture_id",
-					content_check_function = function (content)
-						local parent_content = content.parent
-						local down_hotspot = parent_content.down_hotspot
-
-						return down_hotspot.active and down_hotspot.is_hover
-					end,
-				},
-				{
+					pass_type = "texture",
 					content_id = "arrow_hover",
-					pass_type = "texture_uv",
-					style_id = "up_arrow_hover",
-					texture_id = "texture_id",
-					content_check_function = function (content)
-						local parent_content = content.parent
-						local up_hotspot = parent_content.up_hotspot
+					content_check_function = function(arg_141_0)
+						local var_141_0 = arg_141_0.parent.down_hotspot
 
-						return up_hotspot.active and up_hotspot.is_hover
-					end,
+						return var_141_0.active and var_141_0.is_hover
+					end
 				},
 				{
-					content_id = "list_content",
-					pass_type = "list_pass",
+					texture_id = "texture_id",
+					style_id = "up_arrow_hover",
+					pass_type = "texture_uv",
+					content_id = "arrow_hover",
+					content_check_function = function(arg_142_0)
+						local var_142_0 = arg_142_0.parent.up_hotspot
+
+						return var_142_0.active and var_142_0.is_hover
+					end
+				},
+				{
 					style_id = "list_style",
+					pass_type = "list_pass",
+					content_id = "list_content",
 					passes = {
 						{
-							content_id = "hotspot",
 							pass_type = "hotspot",
+							content_id = "hotspot"
 						},
 						{
-							pass_type = "texture",
 							style_id = "texture",
 							texture_id = "texture",
-							content_check_function = function (content)
-								return not content.hotspot.is_hover and not content.hotspot.is_selected
+							pass_type = "texture",
+							content_check_function = function(arg_143_0)
+								return not arg_143_0.hotspot.is_hover and not arg_143_0.hotspot.is_selected
 							end,
-							content_change_function = item_content_change_function,
+							content_change_function = arg_127_5
 						},
 						{
-							pass_type = "texture",
 							style_id = "highlight_texture",
 							texture_id = "highlight_texture",
-							content_check_function = function (content, style, index)
-								return content.hotspot.is_hover or content.hotspot.is_selected
+							pass_type = "texture",
+							content_check_function = function(arg_144_0, arg_144_1, arg_144_2)
+								return arg_144_0.hotspot.is_hover or arg_144_0.hotspot.is_selected
 							end,
-							content_change_function = item_content_change_function,
+							content_change_function = arg_127_5
 						},
 						{
-							pass_type = "texture",
 							style_id = "background_highlight_texture",
 							texture_id = "background_highlight_texture",
-							content_check_function = function (content, style, index)
-								return content.hotspot.is_hover and not content.hotspot.is_selected
+							pass_type = "texture",
+							content_check_function = function(arg_145_0, arg_145_1, arg_145_2)
+								return arg_145_0.hotspot.is_hover and not arg_145_0.hotspot.is_selected
 							end,
-							content_change_function = item_content_change_function,
+							content_change_function = arg_127_5
 						},
 						{
-							pass_type = "texture",
 							style_id = "background_selected_texture",
 							texture_id = "background_highlight_texture",
-							content_check_function = function (content, style, index)
-								return content.hotspot.is_selected
+							pass_type = "texture",
+							content_check_function = function(arg_146_0, arg_146_1, arg_146_2)
+								return arg_146_0.hotspot.is_selected
 							end,
-							content_change_function = item_content_change_function,
+							content_change_function = arg_127_5
 						},
 						{
-							pass_type = "text",
 							style_id = "index_text",
+							pass_type = "text",
 							text_id = "index_text",
-							content_change_function = item_content_change_function,
+							content_change_function = arg_127_5
 						},
 						{
-							pass_type = "text",
 							style_id = "text",
+							pass_type = "text",
 							text_id = "text",
-							content_change_function = item_content_change_function,
-						},
-					},
-				},
-			},
+							content_change_function = arg_127_5
+						}
+					}
+				}
+			}
 		},
 		content = {
 			highlight_texture = "playerlist_hover",
 			rect_masked = "rect_masked",
-			text = text,
-			tooltip_text = tooltip_text,
+			text = arg_127_0,
+			tooltip_text = arg_127_1,
 			up_hotspot = {
-				active = false,
+				active = false
 			},
 			down_hotspot = {
-				active = false,
+				active = false
 			},
 			highlight_hotspot = {
-				allow_multi_hover = true,
+				allow_multi_hover = true
 			},
 			arrow = {
 				texture_id = "drop_down_menu_arrow",
 				uvs = {
 					{
 						0,
-						1,
+						1
 					},
 					{
 						1,
-						0,
-					},
-				},
+						0
+					}
+				}
 			},
 			arrow_hover = {
 				texture_id = "drop_down_menu_arrow_clicked",
 				uvs = {
 					{
 						0,
-						1,
+						1
 					},
 					{
 						1,
-						0,
-					},
-				},
+						0
+					}
+				}
 			},
 			hotspot_content_ids = {
 				"up_hotspot",
-				"down_hotspot",
+				"down_hotspot"
 			},
-			list_content = item_contents,
+			list_content = arg_127_2
 		},
 		style = {
-			offset = table.clone(base_offset),
-			size = table.clone(SORTED_LIST_WIDGET_SIZE),
+			offset = table.clone(arg_127_7),
+			size = table.clone(var_127_2),
 			color = {
 				50,
 				255,
 				255,
-				255,
+				255
 			},
-			enabled_color = enabled_color,
-			disabled_color = disabled_color,
+			enabled_color = var_127_5,
+			disabled_color = var_127_6,
 			background = {
 				offset = {
-					base_offset[1] + 7 * SORTED_LIST_WIDGET_SIZE[1] / 10,
-					base_offset[2] + PADDING / 2,
-					base_offset[3],
+					arg_127_7[1] + 7 * var_127_2[1] / 10,
+					arg_127_7[2] + var_127_1 / 2,
+					arg_127_7[3]
 				},
-				color = INPUT_FIELD_COLOR,
+				color = var_0_1,
 				size = {
-					3 * SORTED_LIST_WIDGET_SIZE[1] / 10,
-					SORTED_LIST_BACKGROUND_HEIGHT,
-				},
+					3 * var_127_2[1] / 10,
+					var_127_3
+				}
 			},
 			background_fg = {
 				offset = {
-					base_offset[1] + 7 * SORTED_LIST_WIDGET_SIZE[1] / 10 + 2,
-					base_offset[2] + PADDING / 2,
-					base_offset[3] + 1,
+					arg_127_7[1] + 7 * var_127_2[1] / 10 + 2,
+					arg_127_7[2] + var_127_1 / 2,
+					arg_127_7[3] + 1
 				},
 				color = {
 					255,
 					10,
 					10,
-					10,
+					10
 				},
 				size = {
-					3 * SORTED_LIST_WIDGET_SIZE[1] / 10 - 2,
-					SORTED_LIST_BACKGROUND_HEIGHT - 2,
-				},
+					3 * var_127_2[1] / 10 - 2,
+					var_127_3 - 2
+				}
 			},
 			text = {
+				upper_case = true,
+				localize = true,
 				dynamic_font = true,
 				font_size = 16,
 				font_type = "hell_shark_masked",
-				localize = true,
-				upper_case = true,
 				offset = {
-					base_offset[1] + 2,
-					base_offset[2] + SORTED_LIST_WIDGET_SIZE[2] - (SORTED_LIST_TITLE_TEXT_OFFSET + 4),
-					base_offset[3],
+					arg_127_7[1] + 2,
+					arg_127_7[2] + var_127_2[2] - (var_0_44 + 4),
+					arg_127_7[3]
 				},
-				text_color = Colors.get_color_table_with_alpha("font_default", 255),
+				text_color = Colors.get_color_table_with_alpha("font_default", 255)
 			},
 			tooltip_text = {
-				cursor_side = "left",
-				font_size = 24,
 				font_type = "hell_shark",
-				horizontal_alignment = "left",
 				localize = true,
-				max_width = 600,
+				font_size = 24,
+				horizontal_alignment = "left",
 				vertical_alignment = "top",
+				cursor_side = "left",
+				max_width = 600,
 				cursor_offset = {
 					-10,
-					-27,
+					-27
 				},
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				line_colors = {
-					(Colors.get_color_table_with_alpha("font_title", 255)),
+					(Colors.get_color_table_with_alpha("font_title", 255))
 				},
 				offset = {
 					0,
-					base_offset[2] + SORTED_LIST_WIDGET_SIZE[2] - SORTED_LIST_TITLE_TEXT_OFFSET - 50,
-					base_offset[3] + 20,
-				},
+					arg_127_7[2] + var_127_2[2] - var_0_44 - 50,
+					arg_127_7[3] + 20
+				}
 			},
 			up_arrow = {
 				masked = true,
 				offset = {
-					base_offset[1] + SORTED_LIST_WIDGET_SIZE[1] - (SORTED_LIST_ARROW_BACKGROUND_SIZE[1] + 31) / 2,
-					base_offset[2] + 1.5 * SORTED_LIST_ARROW_BACKGROUND_SIZE[2] - 7.5 + PADDING / 2,
-					base_offset[3] + 2,
+					arg_127_7[1] + var_127_2[1] - (var_127_4[1] + 31) / 2,
+					arg_127_7[2] + 1.5 * var_127_4[2] - 7.5 + var_127_1 / 2,
+					arg_127_7[3] + 2
 				},
 				size = {
 					31,
-					15,
+					15
 				},
-				color = enabled_color,
+				color = var_127_5
 			},
 			up_arrow_hover = {
 				masked = true,
 				offset = {
-					base_offset[1] + SORTED_LIST_WIDGET_SIZE[1] - (SORTED_LIST_ARROW_BACKGROUND_SIZE[1] + 31) / 2,
-					base_offset[2] + 1.5 * SORTED_LIST_ARROW_BACKGROUND_SIZE[2] - 27 + PADDING / 2,
-					base_offset[3] + 1,
+					arg_127_7[1] + var_127_2[1] - (var_127_4[1] + 31) / 2,
+					arg_127_7[2] + 1.5 * var_127_4[2] - 27 + var_127_1 / 2,
+					arg_127_7[3] + 1
 				},
 				size = {
 					31,
-					28,
+					28
 				},
-				color = enabled_color,
+				color = var_127_5
 			},
 			up_arrow_background = {
 				offset = {
-					base_offset[1] + SORTED_LIST_WIDGET_SIZE[1] - SORTED_LIST_ARROW_BACKGROUND_SIZE[1],
-					base_offset[2] + SORTED_LIST_ARROW_BACKGROUND_SIZE[2] + 2 + PADDING / 2,
-					base_offset[3] + 1,
+					arg_127_7[1] + var_127_2[1] - var_127_4[1],
+					arg_127_7[2] + var_127_4[2] + 2 + var_127_1 / 2,
+					arg_127_7[3] + 1
 				},
 				color = {
 					200,
 					20,
 					20,
-					20,
+					20
 				},
-				size = SORTED_LIST_ARROW_BACKGROUND_SIZE,
+				size = var_127_4
 			},
 			arrow_buttons_edge_horizontal = {
 				offset = {
-					base_offset[1] + SORTED_LIST_WIDGET_SIZE[1] - SORTED_LIST_ARROW_BACKGROUND_SIZE[1] - 2,
-					base_offset[2] + SORTED_LIST_ARROW_BACKGROUND_SIZE[2] + PADDING / 2,
-					base_offset[3] + 1,
+					arg_127_7[1] + var_127_2[1] - var_127_4[1] - 2,
+					arg_127_7[2] + var_127_4[2] + var_127_1 / 2,
+					arg_127_7[3] + 1
 				},
-				color = INPUT_FIELD_COLOR,
+				color = var_0_1,
 				size = {
-					SORTED_LIST_ARROW_BACKGROUND_SIZE[1],
-					2,
-				},
+					var_127_4[1],
+					2
+				}
 			},
 			arrow_buttons_edge_vertical = {
 				offset = {
-					base_offset[1] + SORTED_LIST_WIDGET_SIZE[1] - SORTED_LIST_ARROW_BACKGROUND_SIZE[1] - 2,
-					base_offset[2] + PADDING / 2,
-					base_offset[3] + 1,
+					arg_127_7[1] + var_127_2[1] - var_127_4[1] - 2,
+					arg_127_7[2] + var_127_1 / 2,
+					arg_127_7[3] + 1
 				},
-				color = INPUT_FIELD_COLOR,
+				color = var_0_1,
 				size = {
 					2,
-					SORTED_LIST_BACKGROUND_HEIGHT,
-				},
+					var_127_3
+				}
 			},
 			down_arrow = {
 				masked = true,
 				offset = {
-					base_offset[1] + SORTED_LIST_WIDGET_SIZE[1] - (SORTED_LIST_ARROW_BACKGROUND_SIZE[1] + 31) / 2,
-					base_offset[2] + (SORTED_LIST_ARROW_BACKGROUND_SIZE[2] - 15) / 2 + PADDING / 2,
-					base_offset[3] + 2,
+					arg_127_7[1] + var_127_2[1] - (var_127_4[1] + 31) / 2,
+					arg_127_7[2] + (var_127_4[2] - 15) / 2 + var_127_1 / 2,
+					arg_127_7[3] + 2
 				},
 				size = {
 					31,
-					15,
+					15
 				},
-				color = enabled_color,
+				color = var_127_5
 			},
 			down_arrow_hover = {
 				masked = true,
 				offset = {
-					base_offset[1] + SORTED_LIST_WIDGET_SIZE[1] - (SORTED_LIST_ARROW_BACKGROUND_SIZE[1] + 31) / 2,
-					base_offset[2] + SORTED_LIST_ARROW_BACKGROUND_SIZE[2] / 2 + PADDING / 2 - 1,
-					base_offset[3] + 1,
+					arg_127_7[1] + var_127_2[1] - (var_127_4[1] + 31) / 2,
+					arg_127_7[2] + var_127_4[2] / 2 + var_127_1 / 2 - 1,
+					arg_127_7[3] + 1
 				},
 				size = {
 					31,
-					28,
+					28
 				},
-				color = enabled_color,
+				color = var_127_5
 			},
 			down_arrow_background = {
 				offset = {
-					base_offset[1] + SORTED_LIST_WIDGET_SIZE[1] - SORTED_LIST_ARROW_BACKGROUND_SIZE[1],
-					base_offset[2] + PADDING / 2,
-					base_offset[3] + 1,
+					arg_127_7[1] + var_127_2[1] - var_127_4[1],
+					arg_127_7[2] + var_127_1 / 2,
+					arg_127_7[3] + 1
 				},
 				color = {
 					200,
 					20,
 					20,
-					20,
+					20
 				},
-				size = SORTED_LIST_ARROW_BACKGROUND_SIZE,
+				size = var_127_4
 			},
 			bottom_edge = {
 				offset = {
-					base_offset[1],
-					base_offset[2] - BOTTOM_EDGE_THICKNESS,
-					base_offset[3] + 1,
+					arg_127_7[1],
+					arg_127_7[2] - var_0_8,
+					arg_127_7[3] + 1
 				},
-				color = BOTTOM_EDGE_COLOR,
+				color = var_0_9,
 				size = {
-					SORTED_LIST_WIDGET_SIZE[1],
-					BOTTOM_EDGE_THICKNESS,
-				},
+					var_127_2[1],
+					var_0_8
+				}
 			},
 			list_style = {
 				active = true,
 				start_index = 1,
 				offset = {
-					base_offset[1] + 7 * SORTED_LIST_WIDGET_SIZE[1] / 10 + 5,
-					base_offset[2] + SORTED_LIST_WIDGET_SIZE[2] - item_size[2] - PADDING / 2,
-					base_offset[3] + 5,
+					arg_127_7[1] + 7 * var_127_2[1] / 10 + 5,
+					arg_127_7[2] + var_127_2[2] - arg_127_4[2] - var_127_1 / 2,
+					arg_127_7[3] + 5
 				},
-				num_draws = num_items,
+				num_draws = var_127_0,
 				list_member_offset = {
 					0,
-					-item_size[2],
-					0,
+					-arg_127_4[2],
+					0
 				},
-				item_styles = item_styles,
+				item_styles = arg_127_3
 			},
 			highlight_texture = {
 				masked = true,
 				offset = {
-					base_offset[1],
-					base_offset[2],
-					base_offset[3],
+					arg_127_7[1],
+					arg_127_7[2],
+					arg_127_7[3]
 				},
 				color = Colors.get_table("white"),
 				size = {
-					SORTED_LIST_WIDGET_SIZE[1],
-					SORTED_LIST_WIDGET_SIZE[2],
-				},
-			},
+					var_127_2[1],
+					var_127_2[2]
+				}
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_127_6
 	}
 
-	return UIWidget.init(definition)
+	return UIWidget.init(var_127_7)
 end
 
 SettingsWidgetTypeTemplate = {
 	drop_down = {
-		input_function = function (widget, input_service)
-			local content = widget.content
-			local style = widget.style
-			local list_content = content.list_content
-			local list_style = style.list_style
-			local start_index = list_style.start_index
-			local num_draws = list_style.num_draws
-			local total_draws = list_style.total_draws
-			local using_scrollbar = content.using_scrollbar
-			local thumbnail_hotspot = content.thumbnail_hotspot
+		input_function = function(arg_147_0, arg_147_1)
+			local var_147_0 = arg_147_0.content
+			local var_147_1 = arg_147_0.style
+			local var_147_2 = var_147_0.list_content
+			local var_147_3 = var_147_1.list_style
+			local var_147_4 = var_147_3.start_index
+			local var_147_5 = var_147_3.num_draws
+			local var_147_6 = var_147_3.total_draws
+			local var_147_7 = var_147_0.using_scrollbar
+			local var_147_8 = var_147_0.thumbnail_hotspot
 
-			if content.active then
-				local selection_input_done = false
+			if var_147_0.active then
+				local var_147_9 = false
 
-				if input_service:get("move_up_hold_continuous") then
-					local selected_index
+				if arg_147_1:get("move_up_hold_continuous") then
+					local var_147_10
 
-					for i = 1, total_draws do
-						local entry_hotspot = list_content[i].hotspot
-
-						if entry_hotspot.is_selected then
-							selected_index = i
+					for iter_147_0 = 1, var_147_6 do
+						if var_147_2[iter_147_0].hotspot.is_selected then
+							var_147_10 = iter_147_0
 
 							break
 						end
 					end
 
-					if selected_index then
-						if selected_index > 1 then
-							list_content[selected_index].hotspot.is_selected = false
-							list_content[selected_index - 1].hotspot.is_selected = true
+					if var_147_10 then
+						if var_147_10 > 1 then
+							var_147_2[var_147_10].hotspot.is_selected = false
+							var_147_2[var_147_10 - 1].hotspot.is_selected = true
 
-							if using_scrollbar and start_index >= selected_index - 1 then
-								list_style.start_index = math.max(start_index - 1, 1)
+							if var_147_7 and var_147_4 >= var_147_10 - 1 then
+								var_147_3.start_index = math.max(var_147_4 - 1, 1)
 							end
 						end
 					else
-						list_content[1].hotspot.is_selected = true
+						var_147_2[1].hotspot.is_selected = true
 					end
 
-					selection_input_done = true
-				elseif input_service:get("move_down_hold_continuous") then
-					local selected_index
+					var_147_9 = true
+				elseif arg_147_1:get("move_down_hold_continuous") then
+					local var_147_11
 
-					for i = 1, total_draws do
-						local entry_hotspot = list_content[i].hotspot
-
-						if entry_hotspot.is_selected then
-							selected_index = i
+					for iter_147_1 = 1, var_147_6 do
+						if var_147_2[iter_147_1].hotspot.is_selected then
+							var_147_11 = iter_147_1
 
 							break
 						end
 					end
 
-					if selected_index then
-						if selected_index < total_draws then
-							list_content[selected_index].hotspot.is_selected = false
-							list_content[selected_index + 1].hotspot.is_selected = true
+					if var_147_11 then
+						if var_147_11 < var_147_6 then
+							var_147_2[var_147_11].hotspot.is_selected = false
+							var_147_2[var_147_11 + 1].hotspot.is_selected = true
 
-							if using_scrollbar and num_draws <= selected_index + 1 then
-								list_style.start_index = math.min(start_index + 1, total_draws - num_draws + 1)
+							if var_147_7 and var_147_5 <= var_147_11 + 1 then
+								var_147_3.start_index = math.min(var_147_4 + 1, var_147_6 - var_147_5 + 1)
 							end
 						end
 					else
-						list_content[1].hotspot.is_selected = true
+						var_147_2[1].hotspot.is_selected = true
 					end
 
-					selection_input_done = true
+					var_147_9 = true
 				end
 
-				if selection_input_done then
-					if using_scrollbar then
-						local start_index = list_style.start_index
-						local draw_amount_diff = total_draws - num_draws
-						local scroll_percent = (start_index - 1) / draw_amount_diff
+				if var_147_9 then
+					if var_147_7 then
+						local var_147_12 = var_147_3.start_index
+						local var_147_13 = var_147_6 - var_147_5
 
-						thumbnail_hotspot.scroll_progress = scroll_percent
+						var_147_8.scroll_progress = (var_147_12 - 1) / var_147_13
 					end
 
 					return true
 				end
 			end
 
-			if input_service:get("confirm") then
-				if not content.active then
-					content.active = true
-					list_style.active = true
+			if arg_147_1:get("confirm") then
+				if not var_147_0.active then
+					var_147_0.active = true
+					var_147_3.active = true
 
 					if not Managers.input:is_device_active("mouse") then
-						local current_selection = content.current_selection
+						local var_147_14 = var_147_0.current_selection
 
-						if current_selection then
-							local list_content_entry = list_content[current_selection]
+						if var_147_14 then
+							var_147_2[var_147_14].hotspot.is_selected = true
 
-							list_content_entry.hotspot.is_selected = true
+							if var_147_7 then
+								local var_147_15 = var_147_6 - var_147_5
 
-							if using_scrollbar then
-								local draw_amount_diff = total_draws - num_draws
-
-								list_style.start_index = math.min(current_selection, draw_amount_diff)
-
-								local start_index = list_style.start_index
-								local scroll_percent = (start_index - 1) / draw_amount_diff
-
-								thumbnail_hotspot.scroll_progress = scroll_percent
+								var_147_3.start_index = math.min(var_147_14, var_147_15)
+								var_147_8.scroll_progress = (var_147_3.start_index - 1) / var_147_15
 							end
 						end
 					end
 				else
-					content.active = false
-					list_style.active = false
+					var_147_0.active = false
+					var_147_3.active = false
 
-					local num_draws = list_style.num_draws
-					local selected_index
+					local var_147_16 = var_147_3.num_draws
+					local var_147_17
 
-					for i = 1, total_draws do
-						local entry_hotspot = list_content[i].hotspot
+					for iter_147_2 = 1, var_147_6 do
+						local var_147_18 = var_147_2[iter_147_2].hotspot
 
-						if entry_hotspot.is_selected then
-							entry_hotspot.is_selected = false
-							selected_index = i
+						if var_147_18.is_selected then
+							var_147_18.is_selected = false
+							var_147_17 = iter_147_2
 
 							break
 						end
 					end
 
-					if selected_index then
-						content.current_selection = selected_index
+					if var_147_17 then
+						var_147_0.current_selection = var_147_17
 
-						content.callback(content)
+						var_147_0.callback(var_147_0)
 					end
 				end
 
-				return true, content.active
+				return true, var_147_0.active
 			end
 
-			if content.active and input_service:get("back") then
-				content.active = false
-				list_style.active = false
+			if var_147_0.active and arg_147_1:get("back") then
+				var_147_0.active = false
+				var_147_3.active = false
 
-				local num_draws = list_style.num_draws
+				local var_147_19 = var_147_3.num_draws
 
-				for i = 1, num_draws do
-					local entry_hotspot = list_content[i].hotspot
+				for iter_147_3 = 1, var_147_19 do
+					local var_147_20 = var_147_2[iter_147_3].hotspot
 
-					if entry_hotspot.is_selected then
-						entry_hotspot.is_selected = false
+					if var_147_20.is_selected then
+						var_147_20.is_selected = false
 
 						break
 					end
 				end
 
-				return true, content.active
+				return true, var_147_0.active
 			end
 
-			return content.active
+			return var_147_0.active
 		end,
 		input_description = {
-			gamepad_support = true,
 			name = "drop_down",
+			gamepad_support = true,
 			actions = {
 				{
-					description_text = "input_description_open",
 					input_action = "confirm",
 					priority = 3,
-				},
-			},
+					description_text = "input_description_open"
+				}
+			}
 		},
 		active_input_description = {
-			gamepad_support = true,
 			ignore_generic_actions = true,
 			name = "drop_down",
+			gamepad_support = true,
 			actions = {
 				{
-					description_text = "input_description_back",
 					input_action = "back",
 					priority = 3,
+					description_text = "input_description_back"
 				},
 				{
-					description_text = "input_description_confirm",
 					input_action = "confirm",
 					priority = 2,
+					description_text = "input_description_confirm"
 				},
 				{
-					description_text = "input_description_change",
-					ignore_keybinding = true,
 					input_action = "d_vertical",
 					priority = 1,
-				},
-			},
-		},
+					description_text = "input_description_change",
+					ignore_keybinding = true
+				}
+			}
+		}
 	},
 	checkbox = {
-		input_function = function (widget, input_service)
-			local content = widget.content
+		input_function = function(arg_148_0, arg_148_1)
+			local var_148_0 = arg_148_0.content
 
-			if input_service:get("confirm") then
-				content.hotspot.on_release = true
+			if arg_148_1:get("confirm") then
+				var_148_0.hotspot.on_release = true
 
 				return true
 			end
 		end,
 		input_description = {
-			gamepad_support = true,
 			name = "checkbox",
+			gamepad_support = true,
 			actions = {
 				{
-					description_text = "input_description_toggle",
 					input_action = "confirm",
 					priority = 3,
-				},
-			},
-		},
+					description_text = "input_description_toggle"
+				}
+			}
+		}
 	},
 	option = {
-		input_function = function (widget, input_service)
-			local content = widget.content
-			local num_options = content.num_options
-			local current_selection = content.current_selection
+		input_function = function(arg_149_0, arg_149_1)
+			local var_149_0 = arg_149_0.content
+			local var_149_1 = var_149_0.num_options
+			local var_149_2 = var_149_0.current_selection
 
-			if input_service:get("move_left") then
-				if current_selection > 1 then
-					local new_selection_index = current_selection - 1
+			if arg_149_1:get("move_left") then
+				if var_149_2 > 1 then
+					local var_149_3 = var_149_2 - 1
 
-					content["option_" .. new_selection_index].on_release = true
+					var_149_0["option_" .. var_149_3].on_release = true
 				end
 
 				return true
-			elseif input_service:get("move_right") then
-				if current_selection < num_options then
-					local new_selection_index = current_selection + 1
+			elseif arg_149_1:get("move_right") then
+				if var_149_2 < var_149_1 then
+					local var_149_4 = var_149_2 + 1
 
-					content["option_" .. new_selection_index].on_release = true
+					var_149_0["option_" .. var_149_4].on_release = true
 				end
 
 				return true
 			end
-		end,
+		end
 	},
 	keybind = {
-		input_function = function (widget, input_service)
-			local content = widget.content
-			local style = widget.style
+		input_function = function(arg_150_0, arg_150_1)
+			local var_150_0 = arg_150_0.content
+			local var_150_1 = arg_150_0.style
 
-			if content.active and input_service:get("back", true) then
-				content.controller_input_pressed = true
+			if var_150_0.active and arg_150_1:get("back", true) then
+				var_150_0.controller_input_pressed = true
 
 				return true
 			end
 
-			if content.active and (input_service:get("move_up") or input_service:get("move_down") or input_service:get("move_up_hold") or input_service:get("move_down_hold")) then
+			if var_150_0.active and (arg_150_1:get("move_up") or arg_150_1:get("move_down") or arg_150_1:get("move_up_hold") or arg_150_1:get("move_down_hold")) then
 				return true
 			end
 		end,
 		input_description = {
-			gamepad_support = true,
 			name = "keybind",
-			actions = {},
-		},
+			gamepad_support = true,
+			actions = {}
+		}
 	},
 	sorted_list = {
 		input_description = {
-			gamepad_support = true,
 			name = "sorted_list",
+			gamepad_support = true,
 			actions = {
 				{
-					description_text = "input_description_select",
 					input_action = "confirm",
 					priority = 2,
-				},
-			},
+					description_text = "input_description_select"
+				}
+			}
 		},
 		active_input_description = {
-			gamepad_support = true,
 			name = "sorted_list",
+			gamepad_support = true,
 			actions = {
 				{
-					description_text = "input_description_select",
-					ignore_keybinding = true,
 					input_action = "d_vertical",
 					priority = 2,
+					description_text = "input_description_select",
+					ignore_keybinding = true
 				},
 				{
-					description_text = "input_description_move_to_top",
 					input_action = "confirm",
 					priority = 3,
-				},
-			},
+					description_text = "input_description_move_to_top"
+				}
+			}
 		},
-		input_function = function (widget, input_service)
-			local content = widget.content
-			local list_content = content.list_content
-			local style = widget.style
-			local gamepad_active = Managers.input:is_device_active("gamepad")
+		input_function = function(arg_151_0, arg_151_1)
+			local var_151_0 = arg_151_0.content
+			local var_151_1 = var_151_0.list_content
+			local var_151_2 = arg_151_0.style
 
-			if not gamepad_active and content.active then
-				content.controller_input_pressed = true
-				content.active = false
+			if not Managers.input:is_device_active("gamepad") and var_151_0.active then
+				var_151_0.controller_input_pressed = true
+				var_151_0.active = false
 				hotspot.is_selected = true
 
-				local num_profiles = #list_content
+				local var_151_3 = #var_151_1
 
-				for i = 1, num_profiles do
-					local entry_hotspot = list_content[i].hotspot
-
-					entry_hotspot.is_selected = false
+				for iter_151_0 = 1, var_151_3 do
+					var_151_1[iter_151_0].hotspot.is_selected = false
 				end
 
-				return true, content.active
+				return true, var_151_0.active
 			end
 
-			if not content.active and input_service:get("confirm") then
-				content.active = true
-				content.controller_input_pressed = true
-
-				local hotspot = list_content[1].hotspot
-
-				hotspot.is_selected = true
+			if not var_151_0.active and arg_151_1:get("confirm") then
+				var_151_0.active = true
+				var_151_0.controller_input_pressed = true
+				var_151_1[1].hotspot.is_selected = true
 
 				Managers.music:trigger_event("Play_hud_select")
 
 				return true
-			elseif content.active then
-				if input_service:get("move_up") then
-					local num_profiles = #list_content
-					local selected_index
+			elseif var_151_0.active then
+				if arg_151_1:get("move_up") then
+					local var_151_4 = #var_151_1
+					local var_151_5
 
-					for i = 1, num_profiles do
-						local entry_hotspot = list_content[i].hotspot
-
-						if entry_hotspot.is_selected then
-							selected_index = i
+					for iter_151_1 = 1, var_151_4 do
+						if var_151_1[iter_151_1].hotspot.is_selected then
+							var_151_5 = iter_151_1
 
 							break
 						end
 					end
 
-					if selected_index then
-						if selected_index > 1 then
-							list_content[selected_index].hotspot.is_selected = false
-							list_content[selected_index - 1].hotspot.is_selected = true
+					if var_151_5 then
+						if var_151_5 > 1 then
+							var_151_1[var_151_5].hotspot.is_selected = false
+							var_151_1[var_151_5 - 1].hotspot.is_selected = true
 
 							Managers.music:trigger_event("Play_hud_select")
 						end
 					else
-						list_content[1].hotspot.is_selected = true
+						var_151_1[1].hotspot.is_selected = true
 					end
 
 					return true
-				elseif input_service:get("move_down") then
-					local num_profiles = #list_content
-					local selected_index
+				elseif arg_151_1:get("move_down") then
+					local var_151_6 = #var_151_1
+					local var_151_7
 
-					for i = 1, num_profiles do
-						local entry_hotspot = list_content[i].hotspot
-
-						if entry_hotspot.is_selected then
-							selected_index = i
+					for iter_151_2 = 1, var_151_6 do
+						if var_151_1[iter_151_2].hotspot.is_selected then
+							var_151_7 = iter_151_2
 
 							break
 						end
 					end
 
-					if selected_index then
-						if selected_index < num_profiles then
-							list_content[selected_index].hotspot.is_selected = false
-							list_content[selected_index + 1].hotspot.is_selected = true
+					if var_151_7 then
+						if var_151_7 < var_151_6 then
+							var_151_1[var_151_7].hotspot.is_selected = false
+							var_151_1[var_151_7 + 1].hotspot.is_selected = true
 
 							Managers.music:trigger_event("Play_hud_select")
 						end
 					else
-						list_content[1].hotspot.is_selected = true
+						var_151_1[1].hotspot.is_selected = true
 					end
 
 					return true
-				elseif input_service:get("back", true) then
-					content.controller_input_pressed = true
-					content.active = false
+				elseif arg_151_1:get("back", true) then
+					var_151_0.controller_input_pressed = true
+					var_151_0.active = false
 
-					local num_profiles = #list_content
+					local var_151_8 = #var_151_1
 
-					for i = 1, num_profiles do
-						local entry_hotspot = list_content[i].hotspot
-
-						entry_hotspot.is_selected = false
+					for iter_151_3 = 1, var_151_8 do
+						var_151_1[iter_151_3].hotspot.is_selected = false
 					end
 
 					Managers.music:trigger_event("Play_hud_select")
 
-					return true, content.active
-				elseif input_service:get("confirm", true) then
-					local selected_index
-					local num_profiles = #list_content
+					return true, var_151_0.active
+				elseif arg_151_1:get("confirm", true) then
+					local var_151_9
+					local var_151_10 = #var_151_1
 
-					for i = 1, num_profiles do
-						local entry_hotspot = list_content[i].hotspot
-
-						if entry_hotspot.is_selected then
-							selected_index = i
+					for iter_151_4 = 1, var_151_10 do
+						if var_151_1[iter_151_4].hotspot.is_selected then
+							var_151_9 = iter_151_4
 
 							break
 						end
 					end
 
-					if selected_index then
-						local temp_content = list_content[selected_index]
+					if var_151_9 then
+						local var_151_11 = var_151_1[var_151_9]
 
-						table.remove(list_content, selected_index)
-						table.insert(list_content, 1, temp_content)
-						content.callback(content, style)
+						table.remove(var_151_1, var_151_9)
+						table.insert(var_151_1, 1, var_151_11)
+						var_151_0.callback(var_151_0, var_151_2)
 						Managers.music:trigger_event("Play_hud_select")
 
-						for idx, content in ipairs(list_content) do
-							content.index_text = idx .. "."
+						for iter_151_5, iter_151_6 in ipairs(var_151_1) do
+							iter_151_6.index_text = iter_151_5 .. "."
 						end
 					end
 				end
 
-				return true, content.active
+				return true, var_151_0.active
 			end
 
-			return false, content.active
-		end,
+			return false, var_151_0.active
+		end
 	},
 	stepper = {
-		input_function = function (widget, input_service)
-			local content = widget.content
+		input_function = function(arg_152_0, arg_152_1)
+			local var_152_0 = arg_152_0.content
 
-			if input_service:get("move_left") then
-				content.controller_on_release_left = true
+			if arg_152_1:get("move_left") then
+				var_152_0.controller_on_release_left = true
 
 				return true
-			elseif input_service:get("move_right") then
-				content.controller_on_release_right = true
+			elseif arg_152_1:get("move_right") then
+				var_152_0.controller_on_release_right = true
 
 				return true
 			end
 		end,
 		input_description = {
-			gamepad_support = true,
 			name = "stepper",
+			gamepad_support = true,
 			actions = {
 				{
-					description_text = "input_description_change",
-					ignore_keybinding = true,
 					input_action = "d_horizontal",
 					priority = 2,
-				},
-			},
-		},
+					description_text = "input_description_change",
+					ignore_keybinding = true
+				}
+			}
+		}
 	},
 	slider = {
-		input_function = function (widget, input_service, dt)
-			local content = widget.content
-			local input_cooldown = content.input_cooldown
-			local input_cooldown_multiplier = content.input_cooldown_multiplier
-			local on_cooldown_last_frame = false
+		input_function = function(arg_153_0, arg_153_1, arg_153_2)
+			local var_153_0 = arg_153_0.content
+			local var_153_1 = var_153_0.input_cooldown
+			local var_153_2 = var_153_0.input_cooldown_multiplier
+			local var_153_3 = false
 
-			if input_cooldown then
-				on_cooldown_last_frame = true
+			if var_153_1 then
+				var_153_3 = true
 
-				local new_cooldown = math.max(input_cooldown - dt, 0)
+				local var_153_4 = math.max(var_153_1 - arg_153_2, 0)
 
-				input_cooldown = new_cooldown > 0 and new_cooldown or nil
-				content.input_cooldown = input_cooldown
+				var_153_1 = var_153_4 > 0 and var_153_4 or nil
+				var_153_0.input_cooldown = var_153_1
 			end
 
-			local internal_value = content.internal_value
-			local num_decimals = content.num_decimals
-			local min = content.min
-			local max = content.max
-			local diff = max - min
-			local total_step = diff * 10^num_decimals
-			local step = 1 / total_step
-			local input_been_made = false
+			local var_153_5 = var_153_0.internal_value
+			local var_153_6 = var_153_0.num_decimals
+			local var_153_7 = var_153_0.min
+			local var_153_8 = 1 / ((var_153_0.max - var_153_7) * 10^var_153_6)
+			local var_153_9 = false
 
-			if input_service:get("move_left_hold") then
-				if not input_cooldown then
-					content.internal_value = math.clamp(internal_value - step, 0, 1)
-					input_been_made = true
+			if arg_153_1:get("move_left_hold") then
+				if not var_153_1 then
+					var_153_0.internal_value = math.clamp(var_153_5 - var_153_8, 0, 1)
+					var_153_9 = true
 				end
-			elseif input_service:get("move_right_hold") and not input_cooldown then
-				content.internal_value = math.clamp(internal_value + step, 0, 1)
-				input_been_made = true
+			elseif arg_153_1:get("move_right_hold") and not var_153_1 then
+				var_153_0.internal_value = math.clamp(var_153_5 + var_153_8, 0, 1)
+				var_153_9 = true
 			end
 
-			if input_been_made then
-				content.changed = true
+			if var_153_9 then
+				var_153_0.changed = true
 
-				if on_cooldown_last_frame then
-					input_cooldown_multiplier = math.max(input_cooldown_multiplier - 0.1, 0.1)
-					content.input_cooldown = 0.2 * math.ease_in_exp(input_cooldown_multiplier)
-					content.input_cooldown_multiplier = input_cooldown_multiplier
+				if var_153_3 then
+					local var_153_10 = math.max(var_153_2 - 0.1, 0.1)
+
+					var_153_0.input_cooldown = 0.2 * math.ease_in_exp(var_153_10)
+					var_153_0.input_cooldown_multiplier = var_153_10
 				else
-					input_cooldown_multiplier = 1
-					content.input_cooldown = 0.2 * math.ease_in_exp(input_cooldown_multiplier)
-					content.input_cooldown_multiplier = input_cooldown_multiplier
+					local var_153_11 = 1
+
+					var_153_0.input_cooldown = 0.2 * math.ease_in_exp(var_153_11)
+					var_153_0.input_cooldown_multiplier = var_153_11
 				end
 
 				return true
 			end
 		end,
 		input_description = {
-			gamepad_support = true,
 			name = "slider",
+			gamepad_support = true,
 			actions = {
 				{
-					description_text = "input_description_change",
-					ignore_keybinding = true,
 					input_action = "d_horizontal",
 					priority = 2,
-				},
-			},
-		},
+					description_text = "input_description_change",
+					ignore_keybinding = true
+				}
+			}
+		}
 	},
 	image = {
-		input_function = function ()
+		input_function = function()
 			return
 		end,
 		input_description = {
-			gamepad_support = true,
 			name = "image",
-			actions = {},
-		},
+			gamepad_support = true,
+			actions = {}
+		}
 	},
 	title = {
-		input_function = function ()
+		input_function = function()
 			return
 		end,
 		input_description = {
-			gamepad_support = true,
 			name = "title",
-			actions = {},
-		},
+			gamepad_support = true,
+			actions = {}
+		}
 	},
 	text_link = {
-		input_function = function (widget, input_service)
-			local content = widget.content
+		input_function = function(arg_156_0, arg_156_1)
+			local var_156_0 = arg_156_0.content
 
-			content.controller_input_pressed = nil
+			var_156_0.controller_input_pressed = nil
 
-			if input_service:get("confirm") then
-				content.controller_input_pressed = true
+			if arg_156_1:get("confirm") then
+				var_156_0.controller_input_pressed = true
 
 				return true
 			end
 		end,
 		input_description = {
-			gamepad_support = true,
 			name = "title",
+			gamepad_support = true,
 			actions = {
 				{
-					description_text = "input_description_open",
 					input_action = "confirm",
 					priority = 3,
-				},
-			},
-		},
+					description_text = "input_description_open"
+				}
+			}
+		}
 	},
 	gamepad_layout = {
-		input_function = function ()
+		input_function = function()
 			return
 		end,
 		input_description = {
-			gamepad_support = true,
 			name = "gamepad_layout",
-			actions = {},
-		},
-	},
+			gamepad_support = true,
+			actions = {}
+		}
+	}
 }
 
-local animation_definitions = {
+local var_0_46 = {
 	on_enter = {
 		{
-			end_progress = 0.25,
 			name = "fade_in",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition_data, widgets, params)
-				params.render_settings.alpha_multiplier = 0
+			end_progress = 0.25,
+			init = function(arg_158_0, arg_158_1, arg_158_2, arg_158_3)
+				arg_158_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function (ui_scenegraph, scenegraph_definition_data, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_159_0, arg_159_1, arg_159_2, arg_159_3, arg_159_4)
+				local var_159_0 = math.easeOutCubic(arg_159_3)
 
-				params.render_settings.alpha_multiplier = anim_progress
+				arg_159_4.render_settings.alpha_multiplier = var_159_0
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition_data, widgets, params)
-				params.render_settings.alpha_multiplier = 1
-			end,
-		},
-	},
+			on_complete = function(arg_160_0, arg_160_1, arg_160_2, arg_160_3)
+				arg_160_3.render_settings.alpha_multiplier = 1
+			end
+		}
+	}
 }
 
 return {
-	scenegraph_definition = scenegraph_definition,
-	background_widget_definitions = background_widget_definitions,
-	gamepad_frame_widget_definitions = gamepad_frame_widget_definitions,
-	widget_definitions = widget_definitions,
-	button_definitions = button_definitions,
-	scrollbar_definition = scrollbar_definition,
-	animation_definitions = animation_definitions,
-	create_title_widget = create_title_widget,
-	create_checkbox_widget = create_checkbox_widget,
-	create_slider_widget = create_slider_widget,
-	create_drop_down_widget = create_drop_down_widget,
-	create_stepper_widget = create_stepper_widget,
-	create_option_widget = create_option_widget,
-	create_text_link_widget = create_text_link_widget,
-	create_keybind_widget = create_keybind_widget,
-	create_sorted_list_widget = create_sorted_list_widget,
-	create_simple_texture_widget = create_simple_texture_widget,
-	create_gamepad_layout_widget = create_gamepad_layout_widget,
-	create_safe_rect_widget = create_safe_rect_widget,
+	scenegraph_definition = var_0_10,
+	background_widget_definitions = var_0_17,
+	gamepad_frame_widget_definitions = var_0_16,
+	widget_definitions = var_0_18,
+	button_definitions = var_0_20,
+	scrollbar_definition = var_0_23,
+	animation_definitions = var_0_46,
+	create_title_widget = var_0_36,
+	create_checkbox_widget = var_0_26,
+	create_slider_widget = var_0_30,
+	create_drop_down_widget = var_0_32,
+	create_stepper_widget = var_0_34,
+	create_option_widget = var_0_40,
+	create_text_link_widget = var_0_38,
+	create_keybind_widget = var_0_42,
+	create_sorted_list_widget = var_0_45,
+	create_simple_texture_widget = var_0_27,
+	create_gamepad_layout_widget = var_0_28,
+	create_safe_rect_widget = var_0_12
 }

@@ -1,10 +1,10 @@
-﻿-- chunkname: @scripts/settings/decal_settings.lua
+-- chunkname: @scripts/settings/decal_settings.lua
 
 DecalSettings = {
 	default = {
 		life_time = 60,
 		pool_size = 50,
-		units = {},
+		units = {}
 	},
 	blood_decals = {
 		life_time = 60,
@@ -26,7 +26,7 @@ DecalSettings = {
 			"units/decals/projection_blood_14",
 			"units/decals/projection_blood_15",
 			"units/decals/projection_blood_16",
-			"units/decals/projection_blood_17",
-		},
-	},
+			"units/decals/projection_blood_17"
+		}
+	}
 }

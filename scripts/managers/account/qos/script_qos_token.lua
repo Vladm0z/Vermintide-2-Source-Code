@@ -1,43 +1,43 @@
-﻿-- chunkname: @scripts/managers/account/qos/script_qos_token.lua
+-- chunkname: @scripts/managers/account/qos/script_qos_token.lua
 
 ScriptQoSToken = class(ScriptQoSToken)
 
-ScriptQoSToken.init = function (self, token)
-	self._token = token
-	self._result = {}
-	self._done = false
+function ScriptQoSToken.init(arg_1_0, arg_1_1)
+	arg_1_0._token = arg_1_1
+	arg_1_0._result = {}
+	arg_1_0._done = false
 end
 
-ScriptQoSToken.update = function (self)
-	local in_progress, done, error_code, result_code = QoS.status(self._token)
+function ScriptQoSToken.update(arg_2_0)
+	local var_2_0, var_2_1, var_2_2, var_2_3 = QoS.status(arg_2_0._token)
 
-	self._done = done
-	self._result_code = result_code
+	arg_2_0._done = var_2_1
+	arg_2_0._result_code = var_2_3
 end
 
-ScriptQoSToken.info = function (self)
-	local info = {}
-	local up_failed = bit.band(self._result_code, QoS.UP_FAILED) > 0
-	local down_failed = bit.band(self._result_code, QoS.DOWN_FAILED) > 0
+function ScriptQoSToken.info(arg_3_0)
+	local var_3_0 = {}
+	local var_3_1 = bit.band(arg_3_0._result_code, QoS.UP_FAILED) > 0
+	local var_3_2 = bit.band(arg_3_0._result_code, QoS.DOWN_FAILED) > 0
 
-	info.up_failed = up_failed
-	info.down_failed = down_failed
+	var_3_0.up_failed = var_3_1
+	var_3_0.down_failed = var_3_2
 
-	if up_failed or down_failed then
-		local str = "Your"
-		local up_str = up_failed and " upload bandwidth " or ""
-		local down_str = down_failed and " download bandwidth " or ""
+	if var_3_1 or var_3_2 then
+		local var_3_3 = "Your"
+		local var_3_4 = var_3_1 and " upload bandwidth " or ""
+		local var_3_5 = var_3_2 and " download bandwidth " or ""
 
-		info.error = str .. up_str .. (up_failed and down_failed and "and" or "") .. down_str .. (up_failed and down_failed and "are too low" or "is too low")
+		var_3_0.error = var_3_3 .. var_3_4 .. (var_3_1 and var_3_2 and "and" or "") .. var_3_5 .. (var_3_1 and var_3_2 and "are too low" or "is too low")
 	end
 
-	return info
+	return var_3_0
 end
 
-ScriptQoSToken.done = function (self)
-	return self._done
+function ScriptQoSToken.done(arg_4_0)
+	return arg_4_0._done
 end
 
-ScriptQoSToken.close = function (self)
-	QoS.release(self._token)
+function ScriptQoSToken.close(arg_5_0)
+	QoS.release(arg_5_0._token)
 end

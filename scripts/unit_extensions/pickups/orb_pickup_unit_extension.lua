@@ -1,232 +1,222 @@
-﻿-- chunkname: @scripts/unit_extensions/pickups/orb_pickup_unit_extension.lua
+-- chunkname: @scripts/unit_extensions/pickups/orb_pickup_unit_extension.lua
 
-local HIGHEST_Z_OFFSET = 1
-local ANIMATION_DURATION = 1
-local DEFAULT_PICKUP_ORB_SOUND = "boon_orb_pickup"
+local var_0_0 = 1
+local var_0_1 = 1
+local var_0_2 = "boon_orb_pickup"
 
 OrbPickupUnitExtension = class(OrbPickupUnitExtension, PickupUnitExtension)
 
-OrbPickupUnitExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	OrbPickupUnitExtension.super.init(self, extension_init_context, unit, extension_init_data)
+function OrbPickupUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	OrbPickupUnitExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
-	self._is_server = Managers.player.is_server
-	self._unit = unit
+	arg_1_0._is_server = Managers.player.is_server
+	arg_1_0._unit = arg_1_2
+	arg_1_0._hero_side = Managers.state.side:get_side_from_name("heroes")
+	arg_1_0._pickup_settings = AllPickups[arg_1_0.pickup_name]
+	arg_1_0._orb_flight_target_position = arg_1_3.flight_enabled and arg_1_3.orb_flight_target_position or nil
 
-	local side = Managers.state.side:get_side_from_name("heroes")
+	if arg_1_0._orb_flight_target_position then
+		local var_1_0 = arg_1_0._pickup_settings.orb_offset
 
-	self._hero_side = side
-	self._pickup_settings = AllPickups[self.pickup_name]
-	self._orb_flight_target_position = extension_init_data.flight_enabled and extension_init_data.orb_flight_target_position or nil
+		if var_1_0 then
+			local var_1_1 = arg_1_0._orb_flight_target_position
 
-	if self._orb_flight_target_position then
-		local orb_offset = self._pickup_settings.orb_offset
-
-		if orb_offset then
-			local target_pos = self._orb_flight_target_position
-
-			target_pos:store(target_pos:unbox() + Vector3Aux.unbox(orb_offset))
+			var_1_1:store(var_1_1:unbox() + Vector3Aux.unbox(var_1_0))
 		end
 	end
 
-	local custom_color = self._pickup_settings.custom_orb_color
+	local var_1_2 = arg_1_0._pickup_settings.custom_orb_color
 
-	if custom_color then
-		self:_set_custom_orb_color(custom_color.core, custom_color.shell)
+	if var_1_2 then
+		arg_1_0:_set_custom_orb_color(var_1_2.core, var_1_2.shell)
 	else
-		Unit.flow_event(unit, "update_visuals")
+		Unit.flow_event(arg_1_2, "update_visuals")
 	end
 
-	self._hover = self._pickup_settings.hover_settings
-	self._hover_from = self._orb_flight_target_position or Vector3Box(POSITION_LOOKUP[unit])
-	self._magnetic = self._pickup_settings.magnetic_settings
-	self._buff_params = {
-		attacker_unit = unit,
+	arg_1_0._hover = arg_1_0._pickup_settings.hover_settings
+	arg_1_0._hover_from = arg_1_0._orb_flight_target_position or Vector3Box(POSITION_LOOKUP[arg_1_2])
+	arg_1_0._magnetic = arg_1_0._pickup_settings.magnetic_settings
+	arg_1_0._buff_params = {
+		attacker_unit = arg_1_2
 	}
 end
 
-OrbPickupUnitExtension.game_object_initialized = function (self, unit, go_id)
+function OrbPickupUnitExtension.game_object_initialized(arg_2_0, arg_2_1, arg_2_2)
 	return
 end
 
-OrbPickupUnitExtension.extensions_ready = function (self, world, unit)
+function OrbPickupUnitExtension.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
 	return
 end
 
-OrbPickupUnitExtension.destroy = function (self)
+function OrbPickupUnitExtension.destroy(arg_4_0)
 	return
 end
 
-OrbPickupUnitExtension.update = function (self, unit, input, dt, context, t)
-	if self._done then
+function OrbPickupUnitExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	if arg_5_0._done then
 		return
 	end
 
-	local side = self._hero_side
-	local player_units = side.PLAYER_AND_BOT_UNITS
-	local num_player_units = #player_units
-	local positions = POSITION_LOOKUP
-	local orb_position = Unit.world_position(unit, 0)
-	local pickup_settings = self._pickup_settings
-	local local_only = pickup_settings.local_only
+	local var_5_0 = arg_5_0._hero_side.PLAYER_AND_BOT_UNITS
+	local var_5_1 = #var_5_0
+	local var_5_2 = POSITION_LOOKUP
+	local var_5_3 = Unit.world_position(arg_5_1, 0)
+	local var_5_4 = arg_5_0._pickup_settings
+	local var_5_5 = var_5_4.local_only
 
-	if self._is_server or local_only then
-		for i = 1, num_player_units do
-			local player_unit = player_units[i]
+	if arg_5_0._is_server or var_5_5 then
+		for iter_5_0 = 1, var_5_1 do
+			local var_5_6 = var_5_0[iter_5_0]
 
-			if Unit.alive(player_unit) then
-				local position = positions[player_unit]
-				local delta_pos = position - orb_position
+			if Unit.alive(var_5_6) then
+				local var_5_7 = var_5_2[var_5_6] - var_5_3
 
-				if math.abs(delta_pos.z) < 2 then
-					delta_pos.z = 0
+				if math.abs(var_5_7.z) < 2 then
+					var_5_7.z = 0
 				end
 
-				local distance = Vector3.length(delta_pos)
-				local status_extension = ScriptUnit.extension(player_unit, "status_system")
-				local can_pickup = not status_extension:is_disabled() and (not pickup_settings.can_pickup_orb or pickup_settings.can_pickup_orb(pickup_settings, player_unit))
+				local var_5_8 = Vector3.length(var_5_7)
 
-				if can_pickup then
-					local pickup_radius = pickup_settings.pickup_radius or 1
+				if not ScriptUnit.extension(var_5_6, "status_system"):is_disabled() and (not var_5_4.can_pickup_orb or var_5_4.can_pickup_orb(var_5_4, var_5_6)) then
+					if var_5_8 < (var_5_4.pickup_radius or 1) then
+						if var_5_4.granted_buff then
+							local var_5_9 = Managers.state.entity:system("buff_system")
 
-					if distance < pickup_radius then
-						if pickup_settings.granted_buff then
-							local buff_system = Managers.state.entity:system("buff_system")
+							if var_5_9 then
+								local var_5_10 = var_5_4.buff_sync_type or BuffSyncType.All
 
-							if buff_system then
-								local sync_type = pickup_settings.buff_sync_type or BuffSyncType.All
-
-								buff_system:add_buff_synced(player_unit, pickup_settings.granted_buff, sync_type, self._buff_params)
+								var_5_9:add_buff_synced(var_5_6, var_5_4.granted_buff, var_5_10, arg_5_0._buff_params)
 							end
 						end
 
-						local audio_system = Managers.state.entity:system("audio_system")
+						local var_5_11 = Managers.state.entity:system("audio_system")
 
-						if audio_system then
-							local player = Managers.player:owner(player_unit)
-							local peer_id = player:network_id()
-							local pickup_sound = pickup_settings.pickup_sound or DEFAULT_PICKUP_ORB_SOUND
+						if var_5_11 then
+							local var_5_12 = Managers.player:owner(var_5_6):network_id()
+							local var_5_13 = var_5_4.pickup_sound or var_0_2
 
-							audio_system:play_2d_audio_unit_event_for_peer(pickup_sound, peer_id)
+							var_5_11:play_2d_audio_unit_event_for_peer(var_5_13, var_5_12)
 						end
 
-						if pickup_settings.on_orb_pickup then
-							pickup_settings.on_orb_pickup(unit)
+						if var_5_4.on_orb_pickup then
+							var_5_4.on_orb_pickup(arg_5_1)
 						end
 
-						Managers.state.unit_spawner:mark_for_deletion(unit)
+						Managers.state.unit_spawner:mark_for_deletion(arg_5_1)
 
-						self._done = true
+						arg_5_0._done = true
 
 						break
-					elseif self._magnetic and distance < self._magnetic.radius and not self._magnetic_target then
-						self:ensure_magnetic_target(player_unit)
+					elseif arg_5_0._magnetic and var_5_8 < arg_5_0._magnetic.radius and not arg_5_0._magnetic_target then
+						arg_5_0:ensure_magnetic_target(var_5_6)
 					end
 				end
 			end
 		end
-	elseif self._magnetic and not self._magnetic_target then
-		local game = Managers.state.network:game()
-		local go_id = Managers.state.unit_storage:go_id(unit)
-		local target_go_id = GameSession.game_object_field(game, go_id, "magnetic_target_id")
+	elseif arg_5_0._magnetic and not arg_5_0._magnetic_target then
+		local var_5_14 = Managers.state.network:game()
+		local var_5_15 = Managers.state.unit_storage:go_id(arg_5_1)
+		local var_5_16 = GameSession.game_object_field(var_5_14, var_5_15, "magnetic_target_id")
 
-		self._magnetic_target = Managers.state.unit_storage:unit(target_go_id)
+		arg_5_0._magnetic_target = Managers.state.unit_storage:unit(var_5_16)
 	end
 
-	if not self._flight_done and self._orb_flight_target_position then
-		if not self._start_time then
-			self._start_time = t
-			self._orb_starting_position = Vector3Box(Unit.local_position(unit, 0))
+	if not arg_5_0._flight_done and arg_5_0._orb_flight_target_position then
+		if not arg_5_0._start_time then
+			arg_5_0._start_time = arg_5_5
+			arg_5_0._orb_starting_position = Vector3Box(Unit.local_position(arg_5_1, 0))
 		end
 
-		local ratio = (t - self._start_time) / ANIMATION_DURATION
+		local var_5_17 = (arg_5_5 - arg_5_0._start_time) / var_0_1
 
-		if ratio > 1 then
-			ratio = 1
-			self._flight_done = true
+		if var_5_17 > 1 then
+			var_5_17 = 1
+			arg_5_0._flight_done = true
 		end
 
-		local start = self._orb_starting_position:unbox()
-		local destination = self._orb_flight_target_position:unbox()
-		local next_position = Vector3.lerp(start, destination, ratio)
-		local z_offset = math.sin(math.pi * math.pow(ratio, 0.8)) * HIGHEST_Z_OFFSET
+		local var_5_18 = arg_5_0._orb_starting_position:unbox()
+		local var_5_19 = arg_5_0._orb_flight_target_position:unbox()
+		local var_5_20 = Vector3.lerp(var_5_18, var_5_19, var_5_17)
+		local var_5_21 = math.sin(math.pi * math.pow(var_5_17, 0.8)) * var_0_0
 
-		next_position.z = next_position.z + z_offset
+		var_5_20.z = var_5_20.z + var_5_21
 
-		Unit.set_local_position(unit, 0, next_position)
-	elseif ALIVE[self._magnetic_target] then
-		local magnetic_settings = self._magnetic
-		local max_speed = magnetic_settings.max_speed
-		local time_to_max_speed = magnetic_settings.time_to_max_speed
+		Unit.set_local_position(arg_5_1, 0, var_5_20)
+	elseif ALIVE[arg_5_0._magnetic_target] then
+		local var_5_22 = arg_5_0._magnetic
+		local var_5_23 = var_5_22.max_speed
+		local var_5_24 = var_5_22.time_to_max_speed
 
-		self._magnetic_start_t = self._magnetic_start_t or t
+		arg_5_0._magnetic_start_t = arg_5_0._magnetic_start_t or arg_5_5
 
-		local speed
+		local var_5_25
 
-		if time_to_max_speed < math.epsilon then
-			speed = max_speed
+		if var_5_24 < math.epsilon then
+			var_5_25 = var_5_23
 		else
-			speed = math.lerp_clamped(0, max_speed, (t - self._magnetic_start_t) / time_to_max_speed)
+			var_5_25 = math.lerp_clamped(0, var_5_23, (arg_5_5 - arg_5_0._magnetic_start_t) / var_5_24)
 		end
 
-		local target_pos = POSITION_LOOKUP[self._magnetic_target] + Vector3.up()
-		local dir_to_target, dist_to_target = Vector3.direction_length(target_pos - POSITION_LOOKUP[unit])
-		local dist_to_travel = math.min(dist_to_target, speed * dt)
-		local next_position = POSITION_LOOKUP[unit] + dir_to_target * dist_to_travel
+		local var_5_26 = POSITION_LOOKUP[arg_5_0._magnetic_target] + Vector3.up()
+		local var_5_27, var_5_28 = Vector3.direction_length(var_5_26 - POSITION_LOOKUP[arg_5_1])
+		local var_5_29 = math.min(var_5_28, var_5_25 * arg_5_3)
+		local var_5_30 = POSITION_LOOKUP[arg_5_1] + var_5_27 * var_5_29
 
-		Unit.set_local_position(unit, 0, next_position)
-	elseif self._hover then
-		local hover_frequency = self._hover.frequency
-		local hover_amplitude = self._hover.amplitude
+		Unit.set_local_position(arg_5_1, 0, var_5_30)
+	elseif arg_5_0._hover then
+		local var_5_31 = arg_5_0._hover.frequency
+		local var_5_32 = arg_5_0._hover.amplitude
 
-		self._hover_t_start = self._hover_t_start or t
+		arg_5_0._hover_t_start = arg_5_0._hover_t_start or arg_5_5
 
-		local hover_t = t - self._hover_t_start
-		local hover_from = self._hover_from:unbox()
-		local hover_to = hover_from + Vector3(0, 0, hover_amplitude)
-		local z_scale = (math.cos(hover_t * math.tau * hover_frequency + math.pi) + 1) * 0.5 * hover_amplitude
-		local next_position = Vector3.lerp(hover_from, hover_to, z_scale)
+		local var_5_33 = arg_5_5 - arg_5_0._hover_t_start
+		local var_5_34 = arg_5_0._hover_from:unbox()
+		local var_5_35 = var_5_34 + Vector3(0, 0, var_5_32)
+		local var_5_36 = (math.cos(var_5_33 * math.tau * var_5_31 + math.pi) + 1) * 0.5 * var_5_32
+		local var_5_37 = Vector3.lerp(var_5_34, var_5_35, var_5_36)
 
-		Unit.set_local_position(unit, 0, next_position)
+		Unit.set_local_position(arg_5_1, 0, var_5_37)
 	end
 end
 
-OrbPickupUnitExtension.get_orb_flight_target_position = function (self)
-	return self._orb_flight_target_position
+function OrbPickupUnitExtension.get_orb_flight_target_position(arg_6_0)
+	return arg_6_0._orb_flight_target_position
 end
 
-OrbPickupUnitExtension._set_custom_orb_color = function (self, boxed_color_core, boxed_color_shell)
-	local color_core = Color(boxed_color_core[1], boxed_color_core[2], boxed_color_core[3], boxed_color_core[4] or 1)
-	local color_shell = Vector3(boxed_color_shell[1], boxed_color_shell[2], boxed_color_shell[3])
-	local unit = self._unit
+function OrbPickupUnitExtension._set_custom_orb_color(arg_7_0, arg_7_1, arg_7_2)
+	local var_7_0 = Color(arg_7_1[1], arg_7_1[2], arg_7_1[3], arg_7_1[4] or 1)
+	local var_7_1 = Vector3(arg_7_2[1], arg_7_2[2], arg_7_2[3])
+	local var_7_2 = arg_7_0._unit
 
-	for i = 0, Unit.num_meshes(unit) - 1 do
-		local mesh = Unit.mesh(unit, i)
+	for iter_7_0 = 0, Unit.num_meshes(var_7_2) - 1 do
+		local var_7_3 = Unit.mesh(var_7_2, iter_7_0)
 
-		if Mesh.has_material(mesh, "deus_orb_core_01") then
-			local material = Mesh.material(mesh, "deus_orb_core_01")
+		if Mesh.has_material(var_7_3, "deus_orb_core_01") then
+			local var_7_4 = Mesh.material(var_7_3, "deus_orb_core_01")
 
-			Material.set_vector3(material, "material_variable", color_core)
+			Material.set_vector3(var_7_4, "material_variable", var_7_0)
 		end
 
-		if Mesh.has_material(mesh, "deus_orb_shell_01") then
-			local material = Mesh.material(mesh, "deus_orb_shell_01")
+		if Mesh.has_material(var_7_3, "deus_orb_shell_01") then
+			local var_7_5 = Mesh.material(var_7_3, "deus_orb_shell_01")
 
-			Material.set_vector3(material, "emissive_color", color_shell)
+			Material.set_vector3(var_7_5, "emissive_color", var_7_1)
 		end
 	end
 end
 
-OrbPickupUnitExtension.ensure_magnetic_target = function (self, target_unit)
-	self._magnetic_target = target_unit
+function OrbPickupUnitExtension.ensure_magnetic_target(arg_8_0, arg_8_1)
+	arg_8_0._magnetic_target = arg_8_1
 
-	if not self._pickup_settings.local_only then
-		local target_id = Managers.state.unit_storage:go_id(target_unit)
+	if not arg_8_0._pickup_settings.local_only then
+		local var_8_0 = Managers.state.unit_storage:go_id(arg_8_1)
 
-		if target_id then
-			local game = Managers.state.network:game()
-			local go_id = Managers.state.unit_storage:go_id(self._unit)
+		if var_8_0 then
+			local var_8_1 = Managers.state.network:game()
+			local var_8_2 = Managers.state.unit_storage:go_id(arg_8_0._unit)
 
-			GameSession.set_game_object_field(game, go_id, "magnetic_target_id", target_id)
+			GameSession.set_game_object_field(var_8_1, var_8_2, "magnetic_target_id", var_8_0)
 		end
 	end
 end

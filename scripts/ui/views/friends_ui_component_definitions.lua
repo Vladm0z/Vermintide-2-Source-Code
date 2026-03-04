@@ -1,336 +1,335 @@
-﻿-- chunkname: @scripts/ui/views/friends_ui_component_definitions.lua
+-- chunkname: @scripts/ui/views/friends_ui_component_definitions.lua
 
-local ui_size = {
+local var_0_0 = {
 	400,
-	550,
+	550
 }
-local top_info_box_size = {
-	ui_size[1],
-	50,
+local var_0_1 = {
+	var_0_0[1],
+	50
 }
-local top_info_box_divider = {
-	top_info_box_size[1] - 6,
-	0,
+local var_0_2 = {
+	var_0_1[1] - 6,
+	0
 }
-local tabs_size = {
-	ui_size[1],
-	50,
+local var_0_3 = {
+	var_0_0[1],
+	50
 }
-local tabs_active_size = {
-	ui_size[1],
-	ui_size[2] - top_info_box_size[2] - tabs_size[2] * 1,
+local var_0_4 = {
+	var_0_0[1],
+	var_0_0[2] - var_0_1[2] - var_0_3[2] * 1
 }
-local scenegraph_info = {
-	ui_size = ui_size,
-	tabs_size = tabs_size,
-	tabs_active_size = tabs_active_size,
+local var_0_5 = {
+	ui_size = var_0_0,
+	tabs_size = var_0_3,
+	tabs_active_size = var_0_4
 }
-local FRIEND_LIST_LIMIT = 400
+local var_0_6 = 400
 
 if IS_XB1 then
-	FRIEND_LIST_LIMIT = 1000
+	var_0_6 = 1000
 elseif IS_PS4 then
-	FRIEND_LIST_LIMIT = 2000
+	var_0_6 = 2000
 end
 
-local friends_entry_size = {
-	ui_size[1],
-	40,
+local var_0_7 = {
+	var_0_0[1],
+	40
 }
-local list_info = {
-	friend_list_limit = FRIEND_LIST_LIMIT,
-	friends_entry_size = friends_entry_size,
+local var_0_8 = {
+	friend_list_limit = var_0_6,
+	friends_entry_size = var_0_7
 }
-local scenegraph_definition = {
+local var_0_9 = {
 	screen = {
 		scale = "fit",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			UILayer.chat,
-		},
+			UILayer.chat
+		}
 	},
 	friends_button_root = {
-		horizontal_alignment = "left",
-		parent = "screen",
 		vertical_alignment = "bottom",
+		parent = "screen",
+		horizontal_alignment = "left",
 		size = {
 			60,
-			60,
+			60
 		},
 		position = {
 			90,
 			20,
-			1,
-		},
+			1
+		}
 	},
 	main_background = {
-		horizontal_alignment = "left",
-		parent = "screen",
 		vertical_alignment = "bottom",
-		size = ui_size,
+		parent = "screen",
+		horizontal_alignment = "left",
+		size = var_0_0,
 		position = {
 			20,
 			100,
-			1,
-		},
+			1
+		}
 	},
 	top_info_box = {
-		horizontal_alignment = "center",
-		parent = "main_background",
 		vertical_alignment = "top",
-		size = top_info_box_size,
+		parent = "main_background",
+		horizontal_alignment = "center",
+		size = var_0_1,
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	top_info_box_divider = {
-		horizontal_alignment = "center",
-		parent = "top_info_box",
 		vertical_alignment = "bottom",
-		size = top_info_box_divider,
+		parent = "top_info_box",
+		horizontal_alignment = "center",
+		size = var_0_2,
 		position = {
 			0,
 			0,
-			5,
-		},
+			5
+		}
 	},
 	exit_button = {
-		horizontal_alignment = "right",
-		parent = "top_info_box",
 		vertical_alignment = "center",
+		parent = "top_info_box",
+		horizontal_alignment = "right",
 		size = {
 			32,
-			32,
+			32
 		},
 		position = {
 			-10,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	refresh_button = {
-		horizontal_alignment = "left",
-		parent = "exit_button",
 		vertical_alignment = "center",
+		parent = "exit_button",
+		horizontal_alignment = "left",
 		size = {
 			32,
-			32,
+			32
 		},
 		position = {
 			-29,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	online_tab = {
-		horizontal_alignment = "center",
-		parent = "top_info_box",
 		vertical_alignment = "bottom",
+		parent = "top_info_box",
+		horizontal_alignment = "center",
 		size = {
-			tabs_size[1],
-			tabs_size[2],
+			var_0_3[1],
+			var_0_3[2]
 		},
 		position = {
 			0,
-			-tabs_size[2],
-			0,
-		},
+			-var_0_3[2],
+			0
+		}
 	},
 	offline_tab = {
-		horizontal_alignment = "center",
-		parent = "online_tab",
 		vertical_alignment = "bottom",
+		parent = "online_tab",
+		horizontal_alignment = "center",
 		size = {
-			tabs_size[1],
-			tabs_size[2],
+			var_0_3[1],
+			var_0_3[2]
 		},
 		position = {
 			0,
-			-tabs_size[2],
-			0,
-		},
+			-var_0_3[2],
+			0
+		}
 	},
 	online_tab_list = {
-		horizontal_alignment = "center",
-		parent = "online_tab",
 		vertical_alignment = "top",
+		parent = "online_tab",
+		horizontal_alignment = "center",
 		size = {
-			friends_entry_size[1],
-			friends_entry_size[2] * FRIEND_LIST_LIMIT,
+			var_0_7[1],
+			var_0_7[2] * var_0_6
 		},
 		position = {
 			0,
-			-tabs_size[2],
-			1,
-		},
+			-var_0_3[2],
+			1
+		}
 	},
 	offline_tab_list = {
-		horizontal_alignment = "center",
-		parent = "offline_tab",
 		vertical_alignment = "top",
+		parent = "offline_tab",
+		horizontal_alignment = "center",
 		size = {
-			friends_entry_size[1],
-			friends_entry_size[2] * FRIEND_LIST_LIMIT,
+			var_0_7[1],
+			var_0_7[2] * var_0_6
 		},
 		position = {
 			0,
-			-tabs_size[2],
-			1,
-		},
-	},
+			-var_0_3[2],
+			1
+		}
+	}
 }
 
-local function create_friends_button(scenegraph_id, size)
-	local frame_settings = UIFrameSettings.menu_frame_12
-	local element = {
+local function var_0_10(arg_1_0, arg_1_1)
+	local var_1_0 = UIFrameSettings.menu_frame_12
+	local var_1_1 = {
 		passes = {
 			{
-				content_id = "button_hotspot",
-				pass_type = "hotspot",
 				style_id = "button",
+				pass_type = "hotspot",
+				content_id = "button_hotspot"
 			},
 			{
 				pass_type = "rect",
-				style_id = "button",
+				style_id = "button"
 			},
 			{
 				pass_type = "texture_frame",
 				style_id = "frame",
-				texture_id = "frame",
+				texture_id = "frame"
 			},
 			{
 				pass_type = "texture",
 				style_id = "icon",
 				texture_id = "icon",
-				content_check_function = function (content)
-					return not content.button_hotspot.is_hover
-				end,
+				content_check_function = function(arg_2_0)
+					return not arg_2_0.button_hotspot.is_hover
+				end
 			},
 			{
 				pass_type = "texture",
 				style_id = "icon_hover",
 				texture_id = "icon",
-				content_check_function = function (content)
-					return content.button_hotspot.is_hover
-				end,
+				content_check_function = function(arg_3_0)
+					return arg_3_0.button_hotspot.is_hover
+				end
 			},
 			{
 				pass_type = "texture",
 				style_id = "hover",
 				texture_id = "hover",
-				content_check_function = function (content)
-					return content.button_hotspot.is_hover
-				end,
-			},
-		},
+				content_check_function = function(arg_4_0)
+					return arg_4_0.button_hotspot.is_hover
+				end
+			}
+		}
 	}
-	local content = {
-		hover = "button_state_default_2",
+	local var_1_2 = {
 		icon = "friends_icon_01",
+		hover = "button_state_default_2",
 		button_hotspot = {},
-		frame = frame_settings.texture,
+		frame = var_1_0.texture
 	}
-	local style = {
+	local var_1_3 = {
 		button = {
 			color = Colors.get_color_table_with_alpha("black", 200),
 			offset = {
 				0,
 				0,
-				0,
-			},
+				0
+			}
 		},
 		icon = {
 			color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 			offset = {
 				0,
 				0,
-				3,
-			},
+				3
+			}
 		},
 		icon_hover = {
 			color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
 				0,
 				0,
-				3,
-			},
+				3
+			}
 		},
 		frame = {
-			texture_size = frame_settings.texture_size,
-			texture_sizes = frame_settings.texture_sizes,
+			texture_size = var_1_0.texture_size,
+			texture_sizes = var_1_0.texture_sizes,
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
 				0,
 				0,
-				2,
-			},
+				2
+			}
 		},
 		hover = {
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
 				0,
 				0,
-				1,
-			},
+				1
+			}
+		}
+	}
+
+	return {
+		element = var_1_1,
+		content = var_1_2,
+		style = var_1_3,
+		offset = {
+			0,
+			0,
+			0
 		},
+		scenegraph_id = arg_1_0
 	}
-	local widget = {}
-
-	widget.element = element
-	widget.content = content
-	widget.style = style
-	widget.offset = {
-		0,
-		0,
-		0,
-	}
-	widget.scenegraph_id = scenegraph_id
-
-	return widget
 end
 
-local function create_window_divider(scenegraph_id, size)
-	local widget = {
+local function var_0_11(arg_5_0, arg_5_1)
+	return {
 		element = {
 			passes = {
 				{
-					pass_type = "tiled_texture",
-					style_id = "bottom_edge",
 					texture_id = "bottom_edge",
+					style_id = "bottom_edge",
+					pass_type = "tiled_texture"
 				},
 				{
-					pass_type = "texture",
-					style_id = "edge_holder_left",
 					texture_id = "edge_holder_left",
+					style_id = "edge_holder_left",
+					pass_type = "texture"
 				},
 				{
-					pass_type = "texture",
-					style_id = "edge_holder_right",
 					texture_id = "edge_holder_right",
-				},
-			},
+					style_id = "edge_holder_right",
+					pass_type = "texture"
+				}
+			}
 		},
 		content = {
-			bottom_edge = "menu_frame_12_divider",
-			edge_holder_left = "menu_frame_12_divider_left",
 			edge_holder_right = "menu_frame_12_divider_right",
+			edge_holder_left = "menu_frame_12_divider_left",
+			bottom_edge = "menu_frame_12_divider"
 		},
 		style = {
 			bottom_edge = {
@@ -338,790 +337,784 @@ local function create_window_divider(scenegraph_id, size)
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					6,
+					6
 				},
 				size = {
-					size[1],
-					5,
+					arg_5_1[1],
+					5
 				},
 				texture_tiling_size = {
-					size[1] - 10,
-					5,
-				},
+					arg_5_1[1] - 10,
+					5
+				}
 			},
 			edge_holder_left = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					-6,
-					10,
+					10
 				},
 				size = {
 					9,
-					17,
-				},
+					17
+				}
 			},
 			edge_holder_right = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					size[1] - 9,
+					arg_5_1[1] - 9,
 					-6,
-					10,
+					10
 				},
 				size = {
 					9,
-					17,
-				},
-			},
+					17
+				}
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_5_0,
 		offset = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	}
-
-	return widget
 end
 
-local function create_tab(scenegraph_id, size, text, list_scenegraph_id, edge_tab)
-	local divider_size = {
-		size[1] - 6,
-		size[2],
+local function var_0_12(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	local var_6_0 = {
+		arg_6_1[1] - 6,
+		arg_6_1[2]
 	}
-	local element = {
+	local var_6_1 = {
 		passes = {
 			{
-				content_id = "button_hotspot",
-				pass_type = "hotspot",
 				style_id = "hotspot",
+				pass_type = "hotspot",
+				content_id = "button_hotspot"
 			},
 			{
-				pass_type = "text",
 				style_id = "text",
+				pass_type = "text",
 				text_id = "real_text",
-				content_check_function = function (content)
-					return not content.active and not content.button_hotspot.is_hover
-				end,
+				content_check_function = function(arg_7_0)
+					return not arg_7_0.active and not arg_7_0.button_hotspot.is_hover
+				end
 			},
 			{
-				pass_type = "text",
 				style_id = "text_hover",
+				pass_type = "text",
 				text_id = "real_text",
-				content_check_function = function (content)
-					return content.active or content.button_hotspot.is_hover
-				end,
+				content_check_function = function(arg_8_0)
+					return arg_8_0.active or arg_8_0.button_hotspot.is_hover
+				end
 			},
 			{
 				pass_type = "rotated_texture",
 				style_id = "drop_down_arrow",
-				texture_id = "drop_down_arrow",
+				texture_id = "drop_down_arrow"
 			},
 			{
-				content_id = "scrollbar",
+				style_id = "scrollbar",
 				pass_type = "scrollbar_hotspot",
-				style_id = "scrollbar",
-				content_check_function = function (content)
-					return content.active
-				end,
+				content_id = "scrollbar",
+				content_check_function = function(arg_9_0)
+					return arg_9_0.active
+				end
 			},
 			{
-				content_id = "scrollbar",
-				pass_type = "scrollbar",
 				style_id = "scrollbar",
-				content_check_function = function (content)
-					return content.active
-				end,
+				pass_type = "scrollbar",
+				content_id = "scrollbar",
+				content_check_function = function(arg_10_0)
+					return arg_10_0.active
+				end
 			},
 			{
 				pass_type = "texture",
 				style_id = "mask",
 				texture_id = "mask_texture",
-				content_check_function = function (content)
-					return content.active
-				end,
+				content_check_function = function(arg_11_0)
+					return arg_11_0.active
+				end
 			},
 			{
-				content_id = "list_content",
-				pass_type = "list_pass",
 				style_id = "list_style",
-				content_check_function = function (content)
-					return content.active
+				pass_type = "list_pass",
+				content_id = "list_content",
+				content_check_function = function(arg_12_0)
+					return arg_12_0.active
 				end,
 				passes = {
 					{
-						pass_type = "text",
 						style_id = "name",
-						text_id = "name",
+						pass_type = "text",
+						text_id = "name"
 					},
 					{
-						content_id = "invite_button",
+						style_id = "invite_button",
 						pass_type = "hotspot",
-						style_id = "invite_button",
-						content_check_function = function (content)
-							return content.allow_invite
-						end,
+						content_id = "invite_button",
+						content_check_function = function(arg_13_0)
+							return arg_13_0.allow_invite
+						end
 					},
 					{
-						content_id = "invite_button",
-						pass_type = "texture",
-						style_id = "invite_button",
 						texture_id = "invite_button_texture",
-						content_check_function = function (content)
-							return content.allow_invite and not content.is_hover
-						end,
+						style_id = "invite_button",
+						pass_type = "texture",
+						content_id = "invite_button",
+						content_check_function = function(arg_14_0)
+							return arg_14_0.allow_invite and not arg_14_0.is_hover
+						end
 					},
 					{
-						content_id = "invite_button",
-						pass_type = "texture",
+						texture_id = "invite_button_texture",
 						style_id = "invite_button_hover",
-						texture_id = "invite_button_texture",
-						content_check_function = function (content)
-							return content.allow_invite and content.is_hover
-						end,
+						pass_type = "texture",
+						content_id = "invite_button",
+						content_check_function = function(arg_15_0)
+							return arg_15_0.allow_invite and arg_15_0.is_hover
+						end
 					},
 					{
-						content_id = "profile_button",
+						style_id = "profile_button",
 						pass_type = "hotspot",
-						style_id = "profile_button",
-						content_check_function = function (content)
-							return content.allow_profile
-						end,
+						content_id = "profile_button",
+						content_check_function = function(arg_16_0)
+							return arg_16_0.allow_profile
+						end
 					},
 					{
-						content_id = "profile_button",
-						pass_type = "texture",
-						style_id = "profile_button",
 						texture_id = "profile_button_texture",
-						content_check_function = function (content)
-							return content.allow_profile and not content.is_hover
-						end,
+						style_id = "profile_button",
+						pass_type = "texture",
+						content_id = "profile_button",
+						content_check_function = function(arg_17_0)
+							return arg_17_0.allow_profile and not arg_17_0.is_hover
+						end
 					},
 					{
-						content_id = "profile_button",
-						pass_type = "texture",
+						texture_id = "profile_button_texture",
 						style_id = "profile_button_hover",
-						texture_id = "profile_button_texture",
-						content_check_function = function (content)
-							return content.allow_profile and content.is_hover
-						end,
+						pass_type = "texture",
+						content_id = "profile_button",
+						content_check_function = function(arg_18_0)
+							return arg_18_0.allow_profile and arg_18_0.is_hover
+						end
 					},
 					{
-						content_id = "join_button",
+						style_id = "join_button",
 						pass_type = "hotspot",
-						style_id = "join_button",
-						content_check_function = function (content)
-							return content.allow_join
-						end,
+						content_id = "join_button",
+						content_check_function = function(arg_19_0)
+							return arg_19_0.allow_join
+						end
 					},
 					{
-						content_id = "join_button",
-						pass_type = "texture",
-						style_id = "join_button",
 						texture_id = "join_button_texture",
-						content_check_function = function (content)
-							return content.allow_join and not content.is_hover
-						end,
+						style_id = "join_button",
+						pass_type = "texture",
+						content_id = "join_button",
+						content_check_function = function(arg_20_0)
+							return arg_20_0.allow_join and not arg_20_0.is_hover
+						end
 					},
 					{
-						content_id = "join_button",
-						pass_type = "texture",
+						texture_id = "join_button_texture",
 						style_id = "join_button_hover",
-						texture_id = "join_button_texture",
-						content_check_function = function (content)
-							return content.allow_join and content.is_hover
-						end,
-					},
-				},
+						pass_type = "texture",
+						content_id = "join_button",
+						content_check_function = function(arg_21_0)
+							return arg_21_0.allow_join and arg_21_0.is_hover
+						end
+					}
+				}
 			},
 			{
-				pass_type = "tiled_texture",
-				style_id = "bottom_edge",
 				texture_id = "bottom_edge",
-			},
-		},
+				style_id = "bottom_edge",
+				pass_type = "tiled_texture"
+			}
+		}
 	}
-	local content = {
-		bottom_edge = "menu_frame_12_divider",
+	local var_6_2 = {
 		drop_down_arrow = "drop_down_menu_arrow",
+		mask_texture = "mask_rect",
 		edge_holder_left = "menu_frame_12_divider_left",
 		edge_holder_right = "menu_frame_12_divider_right",
+		bottom_edge = "menu_frame_12_divider",
 		edge_tab = true,
-		mask_texture = "mask_rect",
 		button_hotspot = {},
-		text = text,
-		real_text = text .. " (0)",
+		text = arg_6_2,
+		real_text = arg_6_2 .. " (0)",
 		scrollbar = {
-			percentage = 0.1,
 			scroll_amount = 0.1,
-			scroll_value = 1,
+			percentage = 0.1,
+			scroll_value = 1
 		},
 		list_content = {
-			allow_multi_hover = true,
-		},
+			allow_multi_hover = true
+		}
 	}
-	local list_content = content.list_content
+	local var_6_3 = var_6_2.list_content
 
-	for i = 1, FRIEND_LIST_LIMIT do
-		list_content[i] = {
+	for iter_6_0 = 1, var_0_6 do
+		var_6_3[iter_6_0] = {
 			name = "friends_view_unknown",
 			button_hotspot = {},
 			invite_button = {
 				allow_invite = true,
-				invite_button_texture = "friends_icon_invite",
+				invite_button_texture = "friends_icon_invite"
 			},
 			profile_button = {
-				allow_profile = true,
 				profile_button_texture = "friends_icon_profile",
+				allow_profile = true
 			},
 			join_button = {
-				allow_join = true,
 				join_button_texture = "friends_icon_join",
-			},
+				allow_join = true
+			}
 		}
 	end
 
-	local style = {
+	local var_6_4 = {
 		hotspot = {
 			size = {
-				size[1],
-				size[2],
+				arg_6_1[1],
+				arg_6_1[2]
 			},
 			offset = {
 				0,
 				0,
-				0,
-			},
+				0
+			}
 		},
 		text = {
-			font_size = 22,
-			font_type = "hell_shark",
-			horizontal_alignment = "left",
-			localize = false,
-			vertical_alignment = "top",
 			word_wrap = true,
+			font_size = 22,
+			localize = false,
+			horizontal_alignment = "left",
+			vertical_alignment = "top",
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 			normal_color = Colors.get_color_table_with_alpha("font_default", 255),
 			highlighted_color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
 				13,
 				-8,
-				5,
-			},
+				5
+			}
 		},
 		text_hover = {
-			font_size = 22,
-			font_type = "hell_shark",
-			horizontal_alignment = "left",
-			localize = false,
-			vertical_alignment = "top",
 			word_wrap = true,
+			font_size = 22,
+			localize = false,
+			horizontal_alignment = "left",
+			vertical_alignment = "top",
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("white", 255),
 			normal_color = Colors.get_color_table_with_alpha("font_default", 255),
 			highlighted_color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
 				13,
 				-8,
-				5,
-			},
+				5
+			}
 		},
 		drop_down_arrow = {
-			angle = 0,
-			horizontal_alignment = "right",
 			vertical_alignment = "top",
+			horizontal_alignment = "right",
+			angle = 0,
 			texture_size = {
 				31,
-				15,
+				15
 			},
 			pivot = {
 				15.5,
-				7.5,
+				7.5
 			},
 			offset = {
 				-12,
 				-14,
-				1,
+				1
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		scrollbar = {
 			hotspot_width_modifier = 5,
 			min_scrollbar_height = 30,
 			size = {
 				2,
-				tabs_active_size[2] - tabs_size[2] - 10,
+				var_0_4[2] - var_0_3[2] - 10
 			},
 			offset = {
-				tabs_active_size[1] - 15,
+				var_0_4[1] - 15,
 				10,
-				100,
+				100
 			},
 			background_color = Colors.get_color_table_with_alpha("very_dark_gray", 255),
 			scrollbar_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 			scroll_area_size = {
-				ui_size[1],
-				tabs_active_size[2] - tabs_size[2],
+				var_0_0[1],
+				var_0_4[2] - var_0_3[2]
 			},
 			scroll_area_offset = {
-				-ui_size[1] + 19,
+				-var_0_0[1] + 19,
 				-10,
-				0,
-			},
+				0
+			}
 		},
 		scrollbar_scroll_area = {},
 		mask = {
 			size = {
-				size[1],
-				tabs_active_size[2] - tabs_size[2],
+				arg_6_1[1],
+				var_0_4[2] - var_0_3[2]
 			},
 			color = {
 				150,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
 				0,
 				0,
-				10,
-			},
+				10
+			}
 		},
 		list_style = {
-			horizontal_alignment = "center",
+			vertical_alignment = "top",
 			num_draws = 0,
 			start_index = 1,
-			vertical_alignment = "top",
+			horizontal_alignment = "center",
 			list_member_offset = {
 				0,
-				friends_entry_size[2],
-				0,
+				var_0_7[2],
+				0
 			},
 			size = {
-				friends_entry_size[1],
-				friends_entry_size[2],
+				var_0_7[1],
+				var_0_7[2]
 			},
-			scenegraph_id = list_scenegraph_id,
-			item_styles = {},
+			scenegraph_id = arg_6_3,
+			item_styles = {}
 		},
 		bottom_edge = {
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
 				3,
 				0,
-				6,
+				6
 			},
 			size = {
-				divider_size[1],
-				5,
+				var_6_0[1],
+				5
 			},
 			texture_tiling_size = {
-				divider_size[1] - 10,
-				5,
+				var_6_0[1] - 10,
+				5
 			},
-			content_check_function = function (content)
-				return not content.edge_tab or not content.active
-			end,
-		},
+			content_check_function = function(arg_22_0)
+				return not arg_22_0.edge_tab or not arg_22_0.active
+			end
+		}
 	}
-	local item_styles = style.list_style.item_styles
+	local var_6_5 = var_6_4.list_style.item_styles
 
-	for i = 1, FRIEND_LIST_LIMIT do
-		item_styles[i] = {
+	for iter_6_1 = 1, var_0_6 do
+		var_6_5[iter_6_1] = {
 			list_member_offset = {
 				0,
-				-friends_entry_size[2],
-				0,
+				-var_0_7[2],
+				0
 			},
 			size = {
-				friends_entry_size[1],
-				friends_entry_size[2],
+				var_0_7[1],
+				var_0_7[2]
 			},
 			name = {
-				font_size = 22,
-				font_type = "hell_shark_masked",
-				horizontal_alignment = "left",
-				localize = false,
-				vertical_alignment = "center",
 				word_wrap = true,
+				font_size = 22,
+				localize = false,
+				horizontal_alignment = "left",
+				vertical_alignment = "center",
+				font_type = "hell_shark_masked",
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				normal_color = Colors.get_color_table_with_alpha("font_default", 255),
 				highlighted_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					13,
 					0,
-					1,
-				},
+					1
+				}
 			},
 			join_button = {
 				masked = true,
 				size = {
 					32,
-					32,
+					32
 				},
 				color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				offset = {
-					tabs_size[1] - 112,
+					var_0_3[1] - 112,
 					3,
-					1,
-				},
+					1
+				}
 			},
 			join_button_hover = {
 				masked = true,
 				size = {
 					32,
-					32,
+					32
 				},
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
-					tabs_size[1] - 112,
+					var_0_3[1] - 112,
 					3,
-					1,
-				},
+					1
+				}
 			},
 			invite_button = {
 				masked = true,
 				size = {
 					32,
-					32,
+					32
 				},
 				color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				offset = {
-					tabs_size[1] - 80,
+					var_0_3[1] - 80,
 					3,
-					1,
-				},
+					1
+				}
 			},
 			invite_button_hover = {
 				masked = true,
 				size = {
 					32,
-					32,
+					32
 				},
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
-					tabs_size[1] - 80,
+					var_0_3[1] - 80,
 					3,
-					1,
-				},
+					1
+				}
 			},
 			profile_button = {
 				masked = true,
 				size = {
 					32,
-					32,
+					32
 				},
 				color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				offset = {
-					tabs_size[1] - 48,
+					var_0_3[1] - 48,
 					3,
-					1,
-				},
+					1
+				}
 			},
 			profile_button_hover = {
 				masked = true,
 				size = {
 					32,
-					32,
+					32
 				},
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
-					tabs_size[1] - 48,
+					var_0_3[1] - 48,
 					3,
-					1,
-				},
+					1
+				}
 			},
 			rect = {
 				size = {
-					friends_entry_size[1],
-					friends_entry_size[2],
+					var_0_7[1],
+					var_0_7[2]
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					100,
-				},
-			},
+					100
+				}
+			}
 		}
 	end
 
-	local widget = {}
-
-	widget.element = element
-	widget.content = content
-	widget.style = style
-	widget.offset = {
-		0,
-		0,
-		0,
+	return {
+		element = var_6_1,
+		content = var_6_2,
+		style = var_6_4,
+		offset = {
+			0,
+			0,
+			0
+		},
+		scenegraph_id = arg_6_0
 	}
-	widget.scenegraph_id = scenegraph_id
-
-	return widget
 end
 
-local function create_info_box_button(scenegraph_id, texture)
-	local size = scenegraph_definition[scenegraph_id].size
-	local element = {
+local function var_0_13(arg_23_0, arg_23_1)
+	local var_23_0 = var_0_9[arg_23_0].size
+	local var_23_1 = {
 		passes = {
 			{
-				pass_type = "hotspot",
+				pass_type = "hotspot"
 			},
 			{
 				pass_type = "texture",
 				style_id = "button_texture",
 				texture_id = "button_texture",
-				content_check_function = function (content)
-					return not content.is_hover
-				end,
+				content_check_function = function(arg_24_0)
+					return not arg_24_0.is_hover
+				end
 			},
 			{
 				pass_type = "texture",
 				style_id = "button_texture_hover",
 				texture_id = "button_texture",
-				content_check_function = function (content)
-					return content.is_hover
-				end,
-			},
-		},
+				content_check_function = function(arg_25_0)
+					return arg_25_0.is_hover
+				end
+			}
+		}
 	}
-	local content = {
-		button_texture = texture,
+	local var_23_2 = {
+		button_texture = arg_23_1
 	}
-	local style = {
+	local var_23_3 = {
 		size = {
-			size[1],
-			size[2],
+			var_23_0[1],
+			var_23_0[2]
 		},
 		color = {
 			255,
 			255,
 			255,
-			255,
+			255
 		},
 		button_texture_hover = {
 			size = {
-				size[1],
-				size[2],
+				var_23_0[1],
+				var_23_0[2]
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		button_texture = {
 			size = {
-				size[1],
-				size[2],
+				var_23_0[1],
+				var_23_0[2]
 			},
-			color = Colors.get_color_table_with_alpha("font_button_normal", 255),
+			color = Colors.get_color_table_with_alpha("font_button_normal", 255)
+		}
+	}
+
+	return {
+		element = var_23_1,
+		content = var_23_2,
+		style = var_23_3,
+		offset = {
+			0,
+			0,
+			0
 		},
+		scenegraph_id = arg_23_0
 	}
-	local widget = {}
-
-	widget.element = element
-	widget.content = content
-	widget.style = style
-	widget.offset = {
-		0,
-		0,
-		0,
-	}
-	widget.scenegraph_id = scenegraph_id
-
-	return widget
 end
 
-local function create_info_box_button_rotated_texture(scenegraph_id, texture)
-	local size = scenegraph_definition[scenegraph_id].size
-	local element = {
+local function var_0_14(arg_26_0, arg_26_1)
+	local var_26_0 = var_0_9[arg_26_0].size
+	local var_26_1 = {
 		passes = {
 			{
-				pass_type = "hotspot",
+				pass_type = "hotspot"
 			},
 			{
 				pass_type = "rotated_texture",
 				style_id = "button_texture",
 				texture_id = "button_texture",
-				content_check_function = function (content)
-					return not content.is_hover
-				end,
+				content_check_function = function(arg_27_0)
+					return not arg_27_0.is_hover
+				end
 			},
 			{
 				pass_type = "rotated_texture",
 				style_id = "button_texture_hover",
 				texture_id = "button_texture",
-				content_check_function = function (content)
-					return content.is_hover
-				end,
-			},
-		},
+				content_check_function = function(arg_28_0)
+					return arg_28_0.is_hover
+				end
+			}
+		}
 	}
-	local content = {
-		button_texture = texture,
+	local var_26_2 = {
+		button_texture = arg_26_1
 	}
-	local style = {
+	local var_26_3 = {
 		size = {
-			size[1],
-			size[2],
+			var_26_0[1],
+			var_26_0[2]
 		},
 		color = {
 			255,
 			255,
 			255,
-			255,
+			255
 		},
 		button_texture_hover = {
 			size = {
-				size[1],
-				size[2],
+				var_26_0[1],
+				var_26_0[2]
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			angle = math.pi,
 			pivot = {
-				size[1] * 0.5,
-				size[2] * 0.5,
+				var_26_0[1] * 0.5,
+				var_26_0[2] * 0.5
 			},
 			offset = {
 				0,
 				0,
-				1,
-			},
+				1
+			}
 		},
 		button_texture = {
 			angle = 0,
 			size = {
-				size[1],
-				size[2],
+				var_26_0[1],
+				var_26_0[2]
 			},
 			color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 			pivot = {
-				size[1] * 0.5,
-				size[2] * 0.5,
+				var_26_0[1] * 0.5,
+				var_26_0[2] * 0.5
 			},
 			offset = {
 				0,
 				0,
-				1,
-			},
+				1
+			}
+		}
+	}
+
+	return {
+		element = var_26_1,
+		content = var_26_2,
+		style = var_26_3,
+		offset = {
+			0,
+			0,
+			0
 		},
+		scenegraph_id = arg_26_0
 	}
-	local widget = {}
-
-	widget.element = element
-	widget.content = content
-	widget.style = style
-	widget.offset = {
-		0,
-		0,
-		0,
-	}
-	widget.scenegraph_id = scenegraph_id
-
-	return widget
 end
 
-local function create_hotspot_area(scenegraph_id, size)
-	local passes = {}
-	local content = {
-		allow_multi_hover = true,
+local function var_0_15(arg_29_0, arg_29_1)
+	local var_29_0 = {}
+	local var_29_1 = {
+		allow_multi_hover = true
 	}
-	local style = {}
+	local var_29_2 = {}
 
-	passes[#passes + 1] = {
+	var_29_0[#var_29_0 + 1] = {
 		pass_type = "hotspot",
-		style_id = "hotspot",
+		style_id = "hotspot"
 	}
-	style.hotspot = {
+	var_29_2.hotspot = {
 		allow_multi_hover = true,
-		size = size,
+		size = arg_29_1
 	}
 
-	local widget = {
-		element = {},
+	local var_29_3 = {
+		element = {}
 	}
 
-	widget.element.passes = passes
-	widget.content = content
-	widget.style = style
-	widget.offset = {
+	var_29_3.element.passes = var_29_0
+	var_29_3.content = var_29_1
+	var_29_3.style = var_29_2
+	var_29_3.offset = {
 		0,
 		0,
-		0,
+		0
 	}
-	widget.scenegraph_id = scenegraph_id
+	var_29_3.scenegraph_id = arg_29_0
 
-	return widget
+	return var_29_3
 end
 
-local info_box_text_style = {
-	font_size = 22,
-	font_type = "hell_shark",
-	horizontal_alignment = "left",
-	localize = false,
+local var_0_16 = {
 	vertical_alignment = "center",
+	font_size = 22,
+	localize = false,
+	horizontal_alignment = "left",
 	word_wrap = true,
+	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_title", 255),
 	offset = {
 		13,
 		2,
-		5,
-	},
+		5
+	}
 }
-local widget_definitions = {
-	friends_button = create_friends_button("friends_button_root", scenegraph_definition.friends_button_root.size),
+local var_0_17 = {
+	friends_button = var_0_10("friends_button_root", var_0_9.friends_button_root.size),
 	main_background = UIWidgets.create_simple_rect("main_background", Colors.get_color_table_with_alpha("black", 220)),
-	main_background_frame = UIWidgets.create_frame("main_background", scenegraph_definition.main_background.size, "menu_frame_12", 20),
-	top_info_box_text = UIWidgets.create_simple_text(Localize("friends_view"), "top_info_box", 22, nil, info_box_text_style),
-	top_info_box_divider = create_window_divider("top_info_box_divider", scenegraph_definition.top_info_box_divider.size),
-	exit_button = create_info_box_button("exit_button", "friends_icon_close"),
-	refresh_button = create_info_box_button_rotated_texture("refresh_button", "friends_icon_refresh"),
-	online_tab = create_tab("online_tab", scenegraph_definition.online_tab.size, Localize("friends_view_online"), "online_tab_list"),
-	offline_tab = create_tab("offline_tab", scenegraph_definition.offline_tab.size, Localize("friends_view_offline"), "offline_tab_list", true),
-	hotspot_area = create_hotspot_area("main_background", scenegraph_definition.main_background.size),
+	main_background_frame = UIWidgets.create_frame("main_background", var_0_9.main_background.size, "menu_frame_12", 20),
+	top_info_box_text = UIWidgets.create_simple_text(Localize("friends_view"), "top_info_box", 22, nil, var_0_16),
+	top_info_box_divider = var_0_11("top_info_box_divider", var_0_9.top_info_box_divider.size),
+	exit_button = var_0_13("exit_button", "friends_icon_close"),
+	refresh_button = var_0_14("refresh_button", "friends_icon_refresh"),
+	online_tab = var_0_12("online_tab", var_0_9.online_tab.size, Localize("friends_view_online"), "online_tab_list"),
+	offline_tab = var_0_12("offline_tab", var_0_9.offline_tab.size, Localize("friends_view_offline"), "offline_tab_list", true),
+	hotspot_area = var_0_15("main_background", var_0_9.main_background.size)
 }
 
 return {
-	scenegraph_definition = scenegraph_definition,
-	widget_definitions = widget_definitions,
-	scenegraph_info = scenegraph_info,
-	list_info = list_info,
+	scenegraph_definition = var_0_9,
+	widget_definitions = var_0_17,
+	scenegraph_info = var_0_5,
+	list_info = var_0_8
 }

@@ -1,17 +1,17 @@
-﻿-- chunkname: @scripts/helpers/deus_gen_utils.lua
+-- chunkname: @scripts/helpers/deus_gen_utils.lua
 
 DeusGenUtils = DeusGenUtils or {}
 
-DeusGenUtils.create_random_generator = function (seed)
-	return function (first_bound, second_bound)
-		local val
+function DeusGenUtils.create_random_generator(arg_1_0)
+	return function(arg_2_0, arg_2_1)
+		local var_2_0
 
-		if first_bound then
-			seed, val = Math.next_random(seed, first_bound, second_bound)
+		if arg_2_0 then
+			arg_1_0, var_2_0 = Math.next_random(arg_1_0, arg_2_0, arg_2_1)
 		else
-			seed, val = Math.next_random(seed)
+			arg_1_0, var_2_0 = Math.next_random(arg_1_0)
 		end
 
-		return val, seed
+		return var_2_0, arg_1_0
 	end
 end

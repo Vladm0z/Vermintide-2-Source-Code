@@ -1,38 +1,36 @@
-﻿-- chunkname: @scripts/managers/backend/backend_interface_title_properties.lua
+-- chunkname: @scripts/managers/backend/backend_interface_title_properties.lua
 
 BackendInterfaceTitleProperties = class(BackendInterfaceTitleProperties)
 
-BackendInterfaceTitleProperties.init = function (self)
+function BackendInterfaceTitleProperties.init(arg_1_0)
 	return
 end
 
-BackendInterfaceTitleProperties._refresh_if_needed = function (self)
-	if not self._properties then
-		local data = Backend.get_title_properties()
-		local properties = {}
+function BackendInterfaceTitleProperties._refresh_if_needed(arg_2_0)
+	if not arg_2_0._properties then
+		local var_2_0 = Backend.get_title_properties()
+		local var_2_1 = {}
 
-		for key, value in pairs(data) do
-			properties[key] = cjson.decode(value)
+		for iter_2_0, iter_2_1 in pairs(var_2_0) do
+			var_2_1[iter_2_0] = cjson.decode(iter_2_1)
 		end
 
-		self._properties = properties
+		arg_2_0._properties = var_2_1
 	end
 end
 
-BackendInterfaceTitleProperties.get = function (self)
-	self:_refresh_if_needed()
+function BackendInterfaceTitleProperties.get(arg_3_0)
+	arg_3_0:_refresh_if_needed()
 
-	return self._properties
+	return arg_3_0._properties
 end
 
-BackendInterfaceTitleProperties.get_value = function (self, key)
-	self:_refresh_if_needed()
+function BackendInterfaceTitleProperties.get_value(arg_4_0, arg_4_1)
+	arg_4_0:_refresh_if_needed()
 
-	local value = self._properties[key]
+	local var_4_0 = arg_4_0._properties[arg_4_1]
 
-	fassert(value ~= nil, "No such key '%s'", key)
+	fassert(var_4_0 ~= nil, "No such key '%s'", arg_4_1)
 
-	local decoded = cjson.decode(value)
-
-	return decoded
+	return (cjson.decode(var_4_0))
 end

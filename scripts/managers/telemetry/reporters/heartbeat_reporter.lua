@@ -1,28 +1,28 @@
-﻿-- chunkname: @scripts/managers/telemetry/reporters/heartbeat_reporter.lua
+-- chunkname: @scripts/managers/telemetry/reporters/heartbeat_reporter.lua
 
 HeartbeatReporter = class(HeartbeatReporter)
 HeartbeatReporter.NAME = "HeartbeatReporter"
 
-local SAMPLE_INTERVAL = 300
+local var_0_0 = 300
 
-HeartbeatReporter.init = function (self)
-	self._last_sample_time = 0
+function HeartbeatReporter.init(arg_1_0)
+	arg_1_0._last_sample_time = 0
 
 	Managers.telemetry_events:heartbeat()
 end
 
-HeartbeatReporter.destroy = function (self)
+function HeartbeatReporter.destroy(arg_2_0)
 	return
 end
 
-HeartbeatReporter.update = function (self, dt, t)
-	if t - self._last_sample_time > SAMPLE_INTERVAL then
+function HeartbeatReporter.update(arg_3_0, arg_3_1, arg_3_2)
+	if arg_3_2 - arg_3_0._last_sample_time > var_0_0 then
 		Managers.telemetry_events:heartbeat()
 
-		self._last_sample_time = math.floor(t)
+		arg_3_0._last_sample_time = math.floor(arg_3_2)
 	end
 end
 
-HeartbeatReporter.report = function (self)
+function HeartbeatReporter.report(arg_4_0)
 	return
 end

@@ -1,52 +1,52 @@
-﻿-- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_climbing.lua
+-- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_climbing.lua
 
-local NAME = "climbing"
+local var_0_0 = "climbing"
 
 WorldMarkerTemplates = WorldMarkerTemplates or {}
 
-local template = WorldMarkerTemplates[NAME] or {}
+local var_0_1 = WorldMarkerTemplates[var_0_0] or {}
 
-WorldMarkerTemplates[NAME] = template
-template.check_line_of_sight = true
-template.position_offset = {
+WorldMarkerTemplates[var_0_0] = var_0_1
+var_0_1.check_line_of_sight = true
+var_0_1.position_offset = {
 	0,
 	0,
-	0,
+	0
 }
-template.screen_clamp = false
-template.max_distance = 15
-template.fade_distance = 3
-template.scale_settings = {
+var_0_1.screen_clamp = false
+var_0_1.max_distance = 15
+var_0_1.fade_distance = 3
+var_0_1.scale_settings = {
 	end_scale_distance = 4,
-	min_scale = 0.25,
 	start_scale_distance = 2,
+	min_scale = 0.25
 }
 
-template.create_widget_definition = function (scenegraph_id)
+function var_0_1.create_widget_definition(arg_1_0)
 	return {
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_1_0,
 		offset = {
 			0,
 			0,
-			-5,
+			-5
 		},
 		element = {
 			passes = {
 				{
 					pass_type = "texture",
 					style_id = "background",
-					texture_id = "background",
+					texture_id = "background"
 				},
 				{
 					pass_type = "texture",
 					style_id = "icon",
-					texture_id = "icon",
-				},
-			},
+					texture_id = "icon"
+				}
+			}
 		},
 		content = {
 			background = "world_marker_versus_pactsworn_background",
-			icon = "world_marker_versus_pactsworn_interact_climbing",
+			icon = "world_marker_versus_pactsworn_interact_climbing"
 		},
 		style = {
 			icon = {
@@ -54,118 +54,115 @@ template.create_widget_definition = function (scenegraph_id)
 				vertical_alignment = "center",
 				texture_size = {
 					0,
-					0,
+					0
 				},
 				offset = {
 					0,
 					0,
-					1,
+					1
 				},
 				default_size = {
 					100,
-					100,
+					100
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				color_disabled = {
 					10,
 					190,
 					190,
-					190,
+					190
 				},
 				color_occluded = {
 					100,
 					190,
 					190,
-					190,
+					190
 				},
 				color_inactive = {
 					200,
 					255,
 					255,
-					255,
+					255
 				},
 				color_active = {
 					200,
 					128,
 					255,
-					36,
-				},
+					36
+				}
 			},
 			background = {
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
+				horizontal_alignment = "center",
 				texture_size = {
 					0,
-					0,
+					0
 				},
 				offset = {
 					0,
 					0,
-					0,
+					0
 				},
 				default_size = {
 					96,
-					192,
+					192
 				},
 				default_offset = {
 					-2,
 					4,
-					0,
+					0
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
-				},
-			},
-		},
+					255
+				}
+			}
+		}
 	}
 end
 
-template.on_enter = function (widget)
-	local content = widget.content
-
-	content.progress = 0
+function var_0_1.on_enter(arg_2_0)
+	arg_2_0.content.progress = 0
 end
 
-template.update_function = function (ui_renderer, widget, marker, settings, dt, t)
-	local content = widget.content
-	local style = widget.style
-	local icon_style = style.icon
-	local distance = content.distance
-	local progress = content.progress
-	local climb_unit = marker.unit
-	local interactable_extension = ScriptUnit.extension(climb_unit, "interactable_system")
-	local enabled = interactable_extension:is_enabled()
-	local attack_held = Managers.input:get_service("Player"):get("action_one_hold")
+function var_0_1.update_function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	local var_3_0 = arg_3_1.content
+	local var_3_1 = arg_3_1.style
+	local var_3_2 = var_3_1.icon
+	local var_3_3 = var_3_0.distance
+	local var_3_4 = var_3_0.progress
+	local var_3_5 = arg_3_2.unit
+	local var_3_6 = ScriptUnit.extension(var_3_5, "interactable_system"):is_enabled()
+	local var_3_7 = Managers.input:get_service("Player"):get("action_one_hold")
 
-	if distance <= 3 and not marker.raycast_result and not attack_held and enabled then
-		progress = math.min(1, progress + dt * 3.5)
+	if var_3_3 <= 3 and not arg_3_2.raycast_result and not var_3_7 and var_3_6 then
+		var_3_4 = math.min(1, var_3_4 + arg_3_4 * 3.5)
 	else
-		progress = math.max(0, progress - dt * 15)
+		var_3_4 = math.max(0, var_3_4 - arg_3_4 * 15)
 	end
 
-	content.progress = progress
-	style.background.color[1] = 175 * progress
+	var_3_0.progress = var_3_4
+	var_3_1.background.color[1] = 175 * var_3_4
 
-	if not enabled then
-		Colors.copy_to(icon_style.color, icon_style.color_disabled)
-	elseif marker.raycast_result or attack_held or not enabled then
-		Colors.copy_to(icon_style.color, icon_style.color_occluded)
+	if not var_3_6 then
+		Colors.copy_to(var_3_2.color, var_3_2.color_disabled)
+	elseif arg_3_2.raycast_result or var_3_7 or not var_3_6 then
+		Colors.copy_to(var_3_2.color, var_3_2.color_occluded)
 	else
-		Colors.lerp_color_tables(icon_style.color_inactive, icon_style.color_active, progress, icon_style.color)
+		Colors.lerp_color_tables(var_3_2.color_inactive, var_3_2.color_active, var_3_4, var_3_2.color)
 	end
 
-	local fade_progress = (settings.max_distance - distance) / settings.fade_distance
+	local var_3_8 = (arg_3_3.max_distance - var_3_3) / arg_3_3.fade_distance
 
-	if fade_progress < 1 then
-		icon_style.color[1] = icon_style.color[1] * fade_progress
+	if var_3_8 < 1 then
+		var_3_2.color[1] = var_3_2.color[1] * var_3_8
 	end
 
 	return false

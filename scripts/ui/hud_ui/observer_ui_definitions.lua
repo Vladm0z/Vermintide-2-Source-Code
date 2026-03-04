@@ -1,198 +1,198 @@
-﻿-- chunkname: @scripts/ui/hud_ui/observer_ui_definitions.lua
+-- chunkname: @scripts/ui/hud_ui/observer_ui_definitions.lua
 
-local RETAINED_MODE_ENABLED = true
-local scenegraph_definition = {
+local var_0_0 = true
+local var_0_1 = {
 	root = {
 		is_root = true,
 		position = {
 			0,
 			0,
-			UILayer.hud_inventory,
+			UILayer.hud_inventory
 		},
 		size = {
 			1920,
-			1080,
-		},
+			1080
+		}
 	},
 	observer_root = {
-		horizontal_alignment = "center",
-		parent = "root",
 		vertical_alignment = "bottom",
+		parent = "root",
+		horizontal_alignment = "center",
 		size = {
 			1,
-			1,
+			1
 		},
 		position = {
 			0,
 			115,
-			0,
-		},
+			0
+		}
 	},
 	divider = {
-		horizontal_alignment = "center",
-		parent = "observer_root",
 		vertical_alignment = "center",
+		parent = "observer_root",
+		horizontal_alignment = "center",
 		size = {
 			386,
-			22,
+			22
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	player_name = {
-		horizontal_alignment = "center",
-		parent = "divider",
 		vertical_alignment = "top",
+		parent = "divider",
+		horizontal_alignment = "center",
 		size = {
 			800,
-			40,
+			40
 		},
 		position = {
 			0,
 			-18,
-			0,
-		},
+			0
+		}
 	},
 	hero_name = {
-		horizontal_alignment = "center",
-		parent = "divider",
 		vertical_alignment = "bottom",
+		parent = "divider",
+		horizontal_alignment = "center",
 		size = {
 			800,
-			40,
+			40
 		},
 		position = {
 			0,
 			20,
-			0,
-		},
+			0
+		}
 	},
 	hp_bar = {
-		horizontal_alignment = "center",
-		parent = "divider",
 		vertical_alignment = "top",
+		parent = "divider",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			-60,
-			0,
+			0
 		},
 		size = {
 			198,
-			24,
-		},
+			24
+		}
 	},
 	hp_bar_bg = {
 		parent = "hp_bar",
 		position = {
 			0,
 			0,
-			2,
+			2
 		},
 		size = {
 			198,
-			24,
-		},
+			24
+		}
 	},
 	hp_bar_fg = {
 		parent = "hp_bar_bg",
 		position = {
 			0,
 			0,
-			2,
+			2
 		},
 		size = {
 			198,
-			24,
-		},
+			24
+		}
 	},
 	hp_bar_fill = {
 		parent = "hp_bar_bg",
 		position = {
 			10,
 			0,
-			1,
+			1
 		},
 		size = {
 			178,
-			24,
-		},
+			24
+		}
 	},
 	hp_bar_grimoire_debuff_fill = {
 		parent = "hp_bar_bg",
 		position = {
 			6,
 			0,
-			4,
+			4
 		},
 		size = {
 			188,
-			24,
-		},
+			24
+		}
 	},
 	hp_bar_shield_fill = {
 		parent = "hp_bar_bg",
 		position = {
 			10,
 			0,
-			1,
+			1
 		},
 		size = {
 			178,
-			24,
-		},
+			24
+		}
 	},
 	hp_bar_divider = {
-		parent = "hp_bar_fg",
 		vertical_alignment = "center",
+		parent = "hp_bar_fg",
 		position = {
 			10,
 			0,
-			1,
+			1
 		},
 		size = {
 			178,
-			14,
-		},
+			14
+		}
 	},
 	hp_bar_max_health_divider = {
-		parent = "hp_bar_grimoire_debuff_fill",
 		vertical_alignment = "center",
+		parent = "hp_bar_grimoire_debuff_fill",
 		position = {
 			186,
 			0,
-			5,
+			5
 		},
 		size = {
 			2,
-			24,
-		},
+			24
+		}
 	},
 	hp_bar_grimoire_icon = {
-		parent = "hp_bar_grimoire_debuff_fill",
 		vertical_alignment = "center",
+		parent = "hp_bar_grimoire_debuff_fill",
 		position = {
 			174,
 			0,
-			1,
+			1
 		},
 		size = {
 			24,
-			16,
-		},
-	},
+			16
+		}
+	}
 }
-local temp_offext = {
+local var_0_2 = {
 	0,
 	0,
-	0,
+	0
 }
-local widget_definitions = {
-	divider = UIWidgets.create_simple_texture("summary_screen_line_breaker", "divider", false, RETAINED_MODE_ENABLED),
-	player_name = UIWidgets.create_simple_text("n/a", "player_name", 28, Colors.get_table("white"), nil, nil, RETAINED_MODE_ENABLED),
-	hero_name = UIWidgets.create_simple_text("n/a", "hero_name", 24, Colors.get_table("cheeseburger"), nil, nil, RETAINED_MODE_ENABLED),
+local var_0_3 = {
+	divider = UIWidgets.create_simple_texture("summary_screen_line_breaker", "divider", false, var_0_0),
+	player_name = UIWidgets.create_simple_text("n/a", "player_name", 28, Colors.get_table("white"), nil, nil, var_0_0),
+	hero_name = UIWidgets.create_simple_text("n/a", "hero_name", 24, Colors.get_table("cheeseburger"), nil, nil, var_0_0),
 	hp_bar = {
 		scenegraph_id = "hp_bar",
 		element = {
@@ -201,307 +201,307 @@ local widget_definitions = {
 					pass_type = "texture",
 					style_id = "hp_bar_bg",
 					texture_id = "hp_bar_bg",
-					retained_mode = RETAINED_MODE_ENABLED,
+					retained_mode = var_0_0
 				},
 				{
 					pass_type = "texture",
 					style_id = "hp_bar_fg",
 					texture_id = "hp_bar_fg",
-					retained_mode = RETAINED_MODE_ENABLED,
+					retained_mode = var_0_0
 				},
 				{
 					pass_type = "texture",
 					style_id = "hp_bar_highlight",
 					texture_id = "hp_bar_highlight",
-					retained_mode = RETAINED_MODE_ENABLED,
+					retained_mode = var_0_0
 				},
 				{
-					content_id = "hp_bar",
-					pass_type = "texture_uv_dynamic_color_uvs_size_offset",
 					style_id = "hp_bar",
-					content_check_function = function (content)
-						return content.draw_health_bar
+					pass_type = "texture_uv_dynamic_color_uvs_size_offset",
+					content_id = "hp_bar",
+					content_check_function = function(arg_1_0)
+						return arg_1_0.draw_health_bar
 					end,
-					dynamic_function = function (content, style, size, dt, ui_renderer)
-						local bar_value = content.bar_value
-						local is_wounded = content.is_wounded
-						local inverted_bar_value = 1 - bar_value
+					dynamic_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+						local var_2_0 = arg_2_0.bar_value
+						local var_2_1 = arg_2_0.is_wounded
+						local var_2_2 = 1 - var_2_0
 
-						if is_wounded then
-							content.texture_id = content.wounded_texture_id
+						if var_2_1 then
+							arg_2_0.texture_id = arg_2_0.wounded_texture_id
 						else
-							content.texture_id = content.normal_texture_id
+							arg_2_0.texture_id = arg_2_0.normal_texture_id
 
-							local gui = ui_renderer.gui
-							local gui_material = Gui.material(gui, content.texture_id)
+							local var_2_3 = arg_2_4.gui
+							local var_2_4 = Gui.material(var_2_3, arg_2_0.texture_id)
 
-							if content.is_knocked_down then
-								Material.set_vector2(gui_material, "color_tint_uv", Vector2(1, 0.5))
+							if arg_2_0.is_knocked_down then
+								Material.set_vector2(var_2_4, "color_tint_uv", Vector2(1, 0.5))
 							else
-								Material.set_vector2(gui_material, "color_tint_uv", Vector2(inverted_bar_value, 0.5))
+								Material.set_vector2(var_2_4, "color_tint_uv", Vector2(var_2_2, 0.5))
 							end
 						end
 
-						local uv_start_pixels = style.uv_start_pixels
-						local uv_scale_pixels = style.uv_scale_pixels
-						local uv_pixels = uv_start_pixels + uv_scale_pixels * bar_value
-						local uvs = style.uvs
-						local uv_scale_axis = style.scale_axis
-						local offset_scale = style.offset_scale
+						local var_2_5 = arg_2_1.uv_start_pixels
+						local var_2_6 = arg_2_1.uv_scale_pixels
+						local var_2_7 = var_2_5 + var_2_6 * var_2_0
+						local var_2_8 = arg_2_1.uvs
+						local var_2_9 = arg_2_1.scale_axis
+						local var_2_10 = arg_2_1.offset_scale
 
-						uvs[2][uv_scale_axis] = uv_pixels / (uv_start_pixels + uv_scale_pixels)
-						size[uv_scale_axis] = uv_pixels
+						var_2_8[2][var_2_9] = var_2_7 / (var_2_5 + var_2_6)
+						arg_2_2[var_2_9] = var_2_7
 
-						return style.color, uvs, size
-					end,
+						return arg_2_1.color, var_2_8, arg_2_2
+					end
 				},
 				{
-					content_id = "hp_bar_grimoire_debuff",
-					pass_type = "texture_uv_dynamic_color_uvs_size_offset",
 					style_id = "hp_bar_grimoire_debuff",
-					dynamic_function = function (content, style, size, dt)
-						local bar_value = content.bar_value
-						local alpha_value = 0
-						local color = style.color
+					pass_type = "texture_uv_dynamic_color_uvs_size_offset",
+					content_id = "hp_bar_grimoire_debuff",
+					dynamic_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+						local var_3_0 = arg_3_0.bar_value
+						local var_3_1 = 0
+						local var_3_2 = arg_3_1.color
 
-						color[2] = 255
-						color[3] = 255
-						color[4] = 255
+						var_3_2[2] = 255
+						var_3_2[3] = 255
+						var_3_2[4] = 255
 
-						local uv_start_pixels = style.uv_start_pixels
-						local uv_scale_pixels = style.uv_scale_pixels
-						local uv_pixels = uv_start_pixels + uv_scale_pixels * bar_value
-						local uvs = style.uvs
-						local uv_scale_axis = style.scale_axis
-						local offset_scale = style.offset_scale
-						local offset = temp_offext
+						local var_3_3 = arg_3_1.uv_start_pixels
+						local var_3_4 = arg_3_1.uv_scale_pixels
+						local var_3_5 = var_3_3 + var_3_4 * var_3_0
+						local var_3_6 = arg_3_1.uvs
+						local var_3_7 = arg_3_1.scale_axis
+						local var_3_8 = arg_3_1.offset_scale
+						local var_3_9 = var_0_2
 
-						offset[1] = 0
-						offset[2] = 0
-						offset[3] = 0
-						uvs[2][uv_scale_axis] = uv_pixels / (uv_start_pixels + uv_scale_pixels)
-						size[uv_scale_axis] = uv_pixels
-						offset[uv_scale_axis] = (uv_start_pixels + uv_scale_pixels - uv_pixels) * offset_scale
+						var_3_9[1] = 0
+						var_3_9[2] = 0
+						var_3_9[3] = 0
+						var_3_6[2][var_3_7] = var_3_5 / (var_3_3 + var_3_4)
+						arg_3_2[var_3_7] = var_3_5
+						var_3_9[var_3_7] = (var_3_3 + var_3_4 - var_3_5) * var_3_8
 
-						return color, uvs, size, offset
-					end,
+						return var_3_2, var_3_6, arg_3_2, var_3_9
+					end
 				},
 				{
-					content_id = "hp_bar_shield",
-					pass_type = "texture_uv_dynamic_color_uvs_size_offset",
 					style_id = "hp_bar_shield",
-					dynamic_function = function (content, style, size, dt, ui_renderer)
-						local bar_value_position = content.bar_value_position
-						local bar_value_offset = content.bar_value_offset
-						local bar_value_size = content.bar_value_size
-						local uv_start_pixels = style.uv_start_pixels
-						local uv_scale_pixels = style.uv_scale_pixels
-						local uv_pixels = uv_start_pixels + uv_scale_pixels * bar_value_position
-						local uvs = style.uvs
-						local uv_scale_axis = style.scale_axis
-						local offset_scale = style.offset_scale
-						local offset = temp_offext
+					pass_type = "texture_uv_dynamic_color_uvs_size_offset",
+					content_id = "hp_bar_shield",
+					dynamic_function = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+						local var_4_0 = arg_4_0.bar_value_position
+						local var_4_1 = arg_4_0.bar_value_offset
+						local var_4_2 = arg_4_0.bar_value_size
+						local var_4_3 = arg_4_1.uv_start_pixels
+						local var_4_4 = arg_4_1.uv_scale_pixels
+						local var_4_5 = var_4_3 + var_4_4 * var_4_0
+						local var_4_6 = arg_4_1.uvs
+						local var_4_7 = arg_4_1.scale_axis
+						local var_4_8 = arg_4_1.offset_scale
+						local var_4_9 = var_0_2
 
-						offset[1] = 0
-						offset[2] = 0
-						offset[3] = 0
-						uvs[2][uv_scale_axis] = uv_pixels / (uv_start_pixels + uv_scale_pixels)
+						var_4_9[1] = 0
+						var_4_9[2] = 0
+						var_4_9[3] = 0
+						var_4_6[2][var_4_7] = var_4_5 / (var_4_3 + var_4_4)
 
-						local shield_size = uv_start_pixels + uv_scale_pixels * bar_value_size
+						local var_4_10 = var_4_3 + var_4_4 * var_4_2
 
-						size[uv_scale_axis] = shield_size
+						arg_4_2[var_4_7] = var_4_10
 
-						local bar_offset = bar_value_offset * uv_scale_pixels
-						local pos = uv_scale_pixels - shield_size - bar_offset
+						local var_4_11 = var_4_1 * var_4_4
+						local var_4_12 = var_4_4 - var_4_10 - var_4_11
 
-						if shield_size + uv_pixels < uv_scale_pixels - bar_offset then
-							pos = uv_pixels
+						if var_4_10 + var_4_5 < var_4_4 - var_4_11 then
+							var_4_12 = var_4_5
 						end
 
-						offset[uv_scale_axis] = pos
+						var_4_9[var_4_7] = var_4_12
 
-						return style.color, uvs, size, offset
-					end,
+						return arg_4_1.color, var_4_6, arg_4_2, var_4_9
+					end
 				},
 				{
 					pass_type = "centered_texture_amount",
 					style_id = "hp_bar_divider",
 					texture_id = "hp_bar_divider",
-					content_check_function = function (content, style)
-						return style.texture_amount > 0
-					end,
+					content_check_function = function(arg_5_0, arg_5_1)
+						return arg_5_1.texture_amount > 0
+					end
 				},
 				{
-					content_id = "hp_bar_grimoire_icon",
 					pass_type = "texture",
 					style_id = "hp_bar_grimoire_icon",
 					texture_id = "hp_bar_grimoire_icon",
-					retained_mode = RETAINED_MODE_ENABLED,
-					content_check_function = function (content, style)
-						return content.active
-					end,
+					content_id = "hp_bar_grimoire_icon",
+					retained_mode = var_0_0,
+					content_check_function = function(arg_6_0, arg_6_1)
+						return arg_6_0.active
+					end
 				},
 				{
-					content_id = "hp_bar_max_health_divider",
 					pass_type = "texture",
 					style_id = "hp_bar_max_health_divider",
 					texture_id = "hp_bar_max_health_divider",
-					retained_mode = RETAINED_MODE_ENABLED,
-					content_check_function = function (content, style)
-						return content.active
-					end,
-				},
-			},
+					content_id = "hp_bar_max_health_divider",
+					retained_mode = var_0_0,
+					content_check_function = function(arg_7_0, arg_7_1)
+						return arg_7_0.active
+					end
+				}
+			}
 		},
 		content = {
 			hp_bar_bg = "player_hp_bar_bg",
+			hp_bar_highlight = "player_hp_bar_highlight",
 			hp_bar_divider = "player_hp_bar_divider",
 			hp_bar_fg = "player_hp_bar_fg",
-			hp_bar_highlight = "player_hp_bar_highlight",
 			hp_bar = {
-				bar_value = 1,
+				low_health = false,
+				wounded_texture_id = "player_hp_bar",
+				texture_id = "player_hp_bar",
 				draw_health_bar = true,
+				bar_value = 1,
 				is_knocked_down = false,
 				is_wounded = false,
-				low_health = false,
-				normal_texture_id = "player_hp_bar_color_tint",
-				texture_id = "player_hp_bar",
-				wounded_texture_id = "player_hp_bar",
+				normal_texture_id = "player_hp_bar_color_tint"
 			},
 			hp_bar_grimoire_debuff = {
-				bar_value = 0,
 				texture_id = "player_hp_bar_overlay",
+				bar_value = 0
 			},
 			hp_bar_shield = {
+				texture_id = "player_hp_bar",
 				bar_value_offset = 0,
 				bar_value_position = 0,
-				bar_value_size = 0,
-				texture_id = "player_hp_bar",
+				bar_value_size = 0
 			},
 			hp_bar_grimoire_icon = {
-				active = false,
 				hp_bar_grimoire_icon = "grimoire_icon",
+				active = false
 			},
 			hp_bar_max_health_divider = {
-				active = false,
 				hp_bar_max_health_divider = "max_health_divider",
-			},
+				active = false
+			}
 		},
 		style = {
 			hp_bar_fg = {
-				scenegraph_id = "hp_bar_fg",
+				scenegraph_id = "hp_bar_fg"
 			},
 			hp_bar_bg = {
-				scenegraph_id = "hp_bar_bg",
+				scenegraph_id = "hp_bar_bg"
 			},
 			hp_bar = {
-				offset_scale = 1,
-				scale_axis = 1,
+				uv_start_pixels = 0,
 				scenegraph_id = "hp_bar_fill",
 				uv_scale_pixels = 178,
-				uv_start_pixels = 0,
+				offset_scale = 1,
+				scale_axis = 1,
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				uvs = {
 					{
 						0,
-						0,
+						0
 					},
 					{
 						1,
-						1,
-					},
+						1
+					}
 				},
 				offset = {
 					0,
 					0,
-					0,
-				},
+					0
+				}
 			},
 			hp_bar_grimoire_debuff = {
-				offset_scale = 1,
-				scale_axis = 1,
+				uv_start_pixels = 0,
 				scenegraph_id = "hp_bar_grimoire_debuff_fill",
 				uv_scale_pixels = 188,
-				uv_start_pixels = 0,
+				offset_scale = 1,
+				scale_axis = 1,
 				color = {
 					255,
 					0,
 					0,
-					0,
+					0
 				},
 				uvs = {
 					{
 						0,
-						0,
+						0
 					},
 					{
 						1,
-						1,
-					},
+						1
+					}
 				},
 				offset = {
 					0,
 					0,
-					0,
-				},
+					0
+				}
 			},
 			hp_bar_shield = {
-				offset_scale = 1,
-				scale_axis = 1,
+				uv_start_pixels = 0,
 				scenegraph_id = "hp_bar_shield_fill",
 				uv_scale_pixels = 178,
-				uv_start_pixels = 0,
+				offset_scale = 1,
+				scale_axis = 1,
 				color = {
 					255,
 					0,
 					166,
-					255,
+					255
 				},
 				uvs = {
 					{
 						0,
-						0,
+						0
 					},
 					{
 						1,
-						1,
-					},
+						1
+					}
 				},
 				offset = {
 					0,
 					0,
-					0,
-				},
+					0
+				}
 			},
 			hp_bar_divider = {
+				texture_axis = 1,
 				scenegraph_id = "hp_bar_divider",
 				texture_amount = 9,
-				texture_axis = 1,
 				texture_size = {
 					4,
-					14,
-				},
+					14
+				}
 			},
 			hp_bar_grimoire_icon = {
 				scenegraph_id = "hp_bar_grimoire_icon",
 				offset = {
 					0,
 					0,
-					0,
-				},
+					0
+				}
 			},
 			hp_bar_max_health_divider = {
 				scenegraph_id = "hp_bar_max_health_divider",
 				offset = {
 					0,
 					0,
-					0,
-				},
+					0
+				}
 			},
 			hp_bar_highlight = {
 				scenegraph_id = "hp_bar_fg",
@@ -509,14 +509,14 @@ local widget_definitions = {
 					0,
 					255,
 					255,
-					255,
-				},
-			},
-		},
-	},
+					255
+				}
+			}
+		}
+	}
 }
 
 return {
-	scenegraph_definition = scenegraph_definition,
-	widget_definitions = widget_definitions,
+	scenegraph_definition = var_0_1,
+	widget_definitions = var_0_3
 }

@@ -1,44 +1,42 @@
-﻿-- chunkname: @scripts/settings/dlcs/woods/woods_death_reactions.lua
+-- chunkname: @scripts/settings/dlcs/woods/woods_death_reactions.lua
 
-local death_reactions = {
+return {
 	thorn_wall = {
 		unit = {
-			pre_start = function (unit, context, t, killing_blow)
+			pre_start = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				return
 			end,
-			start = function (unit, context, t, killing_blow, is_server)
-				local door_extension = ScriptUnit.extension(unit, "door_system")
+			start = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				local var_2_0 = ScriptUnit.extension(arg_2_0, "door_system")
 
-				door_extension.dead = true
+				var_2_0.dead = true
 
-				door_extension:update_nav_graphs()
+				var_2_0:update_nav_graphs()
 
-				local thorn_wall_extension = ScriptUnit.has_extension(unit, "props_system")
+				local var_2_1 = ScriptUnit.has_extension(arg_2_0, "props_system")
 
-				if thorn_wall_extension then
-					thorn_wall_extension:die()
+				if var_2_1 then
+					var_2_1:die()
 				end
 			end,
-			update = function (unit, dt, context, t, data)
+			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 				return DeathReactions.IS_DONE
-			end,
+			end
 		},
 		husk = {
-			pre_start = function (unit, context, t, killing_blow)
+			pre_start = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				return
 			end,
-			start = function (unit, context, t, killing_blow, is_server)
-				local thorn_wall_extension = ScriptUnit.has_extension(unit, "props_system")
+			start = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				local var_5_0 = ScriptUnit.has_extension(arg_5_0, "props_system")
 
-				if thorn_wall_extension then
-					thorn_wall_extension:die()
+				if var_5_0 then
+					var_5_0:die()
 				end
 			end,
-			update = function (unit, dt, context, t, data)
+			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				return DeathReactions.IS_DONE
-			end,
-		},
-	},
+			end
+		}
+	}
 }
-
-return death_reactions

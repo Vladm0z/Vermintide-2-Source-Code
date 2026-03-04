@@ -1,4 +1,4 @@
-﻿-- chunkname: @dialogues/generated/lookup_dwarf_ranger_dlc_drachenfels_bastion.lua
+-- chunkname: @dialogues/generated/lookup_dwarf_ranger_dlc_drachenfels_bastion.lua
 
 assert(DialogueLookup[DialogueLookup_n + 1] == nil)
 assert(DialogueLookup[DialogueLookup_n + 2] == nil)

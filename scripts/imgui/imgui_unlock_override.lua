@@ -1,27 +1,27 @@
-﻿-- chunkname: @scripts/imgui/imgui_unlock_override.lua
+-- chunkname: @scripts/imgui/imgui_unlock_override.lua
 
 ImguiUnlockOverride = class(ImguiUnlockOverride)
 
-ImguiUnlockOverride.init = function (self)
+function ImguiUnlockOverride.init(arg_1_0)
 	return
 end
 
-ImguiUnlockOverride.update = function (self)
+function ImguiUnlockOverride.update(arg_2_0)
 	return
 end
 
-local dlc_list = {}
+local var_0_0 = {}
 
-local function set_all(t, k, v)
-	for i = 1, #k do
-		t[k[i]] = v
+local function var_0_1(arg_3_0, arg_3_1, arg_3_2)
+	for iter_3_0 = 1, #arg_3_1 do
+		arg_3_0[arg_3_1[iter_3_0]] = arg_3_2
 	end
 end
 
-ImguiUnlockOverride.draw = function (self)
+function ImguiUnlockOverride.draw(arg_4_0)
 	return
 end
 
-ImguiUnlockOverride.is_persistent = function (self)
+function ImguiUnlockOverride.is_persistent(arg_5_0)
 	return false
 end

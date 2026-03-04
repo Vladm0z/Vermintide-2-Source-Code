@@ -1,154 +1,147 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/skaven_ratling_gunner/bt_ratling_gunner_windup_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/skaven_ratling_gunner/bt_ratling_gunner_windup_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTRatlingGunnerWindUpAction = class(BTRatlingGunnerWindUpAction, BTNode)
 BTRatlingGunnerWindUpAction.name = "BTRatlingGunnerWindUpAction"
 
-BTRatlingGunnerWindUpAction.init = function (self, ...)
-	BTRatlingGunnerWindUpAction.super.init(self, ...)
+function BTRatlingGunnerWindUpAction.init(arg_1_0, ...)
+	BTRatlingGunnerWindUpAction.super.init(arg_1_0, ...)
 end
 
-BTRatlingGunnerWindUpAction.enter = function (self, unit, blackboard, t)
-	local action = self._tree_node.action_data
-	local data = blackboard.attack_pattern_data or {}
-	local target_unit, node_name, old_target_visible = PerceptionUtils.pick_ratling_gun_target(unit, blackboard)
+function BTRatlingGunnerWindUpAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_0._tree_node.action_data
+	local var_2_1 = arg_2_2.attack_pattern_data or {}
+	local var_2_2, var_2_3, var_2_4 = PerceptionUtils.pick_ratling_gun_target(arg_2_1, arg_2_2)
 
-	if target_unit then
-		data.target_unit = target_unit
-		data.target_node_name = node_name
-		data.last_known_target_position = data.last_known_target_position or Vector3Box()
-		data.last_known_unit_position = data.last_known_unit_position or Vector3Box()
+	if var_2_2 then
+		var_2_1.target_unit = var_2_2
+		var_2_1.target_node_name = var_2_3
+		var_2_1.last_known_target_position = var_2_1.last_known_target_position or Vector3Box()
+		var_2_1.last_known_unit_position = var_2_1.last_known_unit_position or Vector3Box()
 
-		local unit_position = Unit.world_position(unit, Unit.node(unit, "c_spine"))
-		local target_position = Unit.world_position(target_unit, Unit.node(target_unit, node_name))
+		local var_2_5 = Unit.world_position(arg_2_1, Unit.node(arg_2_1, "c_spine"))
+		local var_2_6 = Unit.world_position(var_2_2, Unit.node(var_2_2, var_2_3))
 
-		data.last_known_target_position:store(target_position)
-		data.last_known_unit_position:store(unit_position)
+		var_2_1.last_known_target_position:store(var_2_6)
+		var_2_1.last_known_unit_position:store(var_2_5)
 
-		data.target_obscured = false
-		data.target_check = t + 0.05 + Math.random() * 0.025
+		var_2_1.target_obscured = false
+		var_2_1.target_check = arg_2_3 + 0.05 + Math.random() * 0.025
 	else
-		data.abort_windup = true
-		blackboard.attack_pattern_data = data
-		blackboard.action = action
+		var_2_1.abort_windup = true
+		arg_2_2.attack_pattern_data = var_2_1
+		arg_2_2.action = var_2_0
 
 		return
 	end
 
-	data.wind_up_timer = AiUtils.random(action.wind_up_time[1], action.wind_up_time[2])
-	data.wind_up_time = data.wind_up_timer
-	data.constraint_target = data.constraint_target or Unit.animation_find_constraint_target(unit, "aim_target")
-	blackboard.attack_pattern_data = data
-	blackboard.action = action
+	var_2_1.wind_up_timer = AiUtils.random(var_2_0.wind_up_time[1], var_2_0.wind_up_time[2])
+	var_2_1.wind_up_time = var_2_1.wind_up_timer
+	var_2_1.constraint_target = var_2_1.constraint_target or Unit.animation_find_constraint_target(arg_2_1, "aim_target")
+	arg_2_2.attack_pattern_data = var_2_1
+	arg_2_2.action = var_2_0
 
-	blackboard.navigation_extension:set_enabled(false)
-	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
+	arg_2_2.navigation_extension:set_enabled(false)
+	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-	blackboard.move_state = "attacking"
+	arg_2_2.move_state = "attacking"
 
-	AiUtils.anim_event(unit, data, "wind_up_start")
+	AiUtils.anim_event(arg_2_1, var_2_1, "wind_up_start")
 
 	if script_data.ai_ratling_gunner_debug then
-		AiUtils.temp_anim_event(unit, "wind_up_start")
+		AiUtils.temp_anim_event(arg_2_1, "wind_up_start")
 	end
 
-	local inventory_template = blackboard.breed.default_inventory_template
-	local inventory_extension = ScriptUnit.extension(unit, "ai_inventory_system")
-	local ratling_gun_unit = inventory_extension:get_unit(inventory_template)
+	local var_2_7 = arg_2_2.breed.default_inventory_template
 
-	data.ratling_gun_unit = ratling_gun_unit
+	var_2_1.ratling_gun_unit = ScriptUnit.extension(arg_2_1, "ai_inventory_system"):get_unit(var_2_7)
 
-	local ai_navigation = blackboard.navigation_extension
-
-	ai_navigation:set_max_speed(blackboard.breed.walk_speed)
+	arg_2_2.navigation_extension:set_max_speed(arg_2_2.breed.walk_speed)
 end
 
-BTRatlingGunnerWindUpAction._update_target = function (self, unit, blackboard, data, t)
-	local target_unit, node_name, old_target_visible = PerceptionUtils.pick_ratling_gun_target(unit, blackboard)
+function BTRatlingGunnerWindUpAction._update_target(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local var_3_0, var_3_1, var_3_2 = PerceptionUtils.pick_ratling_gun_target(arg_3_1, arg_3_2)
 
-	if target_unit then
-		data.target_unit = target_unit
-		data.target_node_name = node_name
+	if var_3_0 then
+		arg_3_3.target_unit = var_3_0
+		arg_3_3.target_node_name = var_3_1
 
-		local unit_position = Unit.world_position(unit, Unit.node(unit, "c_spine"))
-		local target_position = Unit.world_position(target_unit, Unit.node(target_unit, node_name))
+		local var_3_3 = Unit.world_position(arg_3_1, Unit.node(arg_3_1, "c_spine"))
+		local var_3_4 = Unit.world_position(var_3_0, Unit.node(var_3_0, var_3_1))
 
-		data.last_known_target_position:store(target_position)
-		data.last_known_unit_position:store(unit_position)
+		arg_3_3.last_known_target_position:store(var_3_4)
+		arg_3_3.last_known_unit_position:store(var_3_3)
 
-		data.target_obscured = false
-	elseif old_target_visible then
-		target_unit = data.target_unit
+		arg_3_3.target_obscured = false
+	elseif var_3_2 then
+		local var_3_5 = arg_3_3.target_unit
+		local var_3_6 = Unit.world_position(arg_3_1, Unit.node(arg_3_1, "c_spine"))
+		local var_3_7 = Unit.world_position(var_3_5, Unit.node(var_3_5, var_3_1))
 
-		local unit_position = Unit.world_position(unit, Unit.node(unit, "c_spine"))
-		local target_position = Unit.world_position(target_unit, Unit.node(target_unit, node_name))
+		arg_3_3.last_known_target_position:store(var_3_7)
+		arg_3_3.last_known_unit_position:store(var_3_6)
 
-		data.last_known_target_position:store(target_position)
-		data.last_known_unit_position:store(unit_position)
-
-		data.target_obscured = false
+		arg_3_3.target_obscured = false
 	else
-		data.target_obscured = true
+		arg_3_3.target_obscured = true
 	end
 
-	if data.target_obscured then
-		data.target_check = t + 0.5 + Math.random() * 0.25
+	if arg_3_3.target_obscured then
+		arg_3_3.target_check = arg_3_4 + 0.5 + Math.random() * 0.25
 	else
-		data.target_check = t + 0.1 + Math.random() * 0.05
+		arg_3_3.target_check = arg_3_4 + 0.1 + Math.random() * 0.05
 	end
 end
 
-BTRatlingGunnerWindUpAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	AiUtils.clear_temp_anim_event(unit)
+function BTRatlingGunnerWindUpAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	AiUtils.clear_temp_anim_event(arg_4_1)
 
-	blackboard.anim_cb_attack_windup_start_finished = nil
+	arg_4_2.anim_cb_attack_windup_start_finished = nil
 
-	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
-	local navigation_extension = blackboard.navigation_extension
+	local var_4_0 = AiUtils.get_default_breed_move_speed(arg_4_1, arg_4_2)
+	local var_4_1 = arg_4_2.navigation_extension
 
-	navigation_extension:set_enabled(true)
-	navigation_extension:set_max_speed(default_move_speed)
+	var_4_1:set_enabled(true)
+	var_4_1:set_max_speed(var_4_0)
 
-	local data = blackboard.attack_pattern_data or {}
+	local var_4_2 = arg_4_2.attack_pattern_data or {}
 
-	AiUtils.clear_anim_event(data)
+	AiUtils.clear_anim_event(var_4_2)
 end
 
-BTRatlingGunnerWindUpAction.run = function (self, unit, blackboard, t, dt)
-	local data = blackboard.attack_pattern_data
+function BTRatlingGunnerWindUpAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	local var_5_0 = arg_5_2.attack_pattern_data
 
-	if data.abort_windup then
-		data.abort_windup = nil
+	if var_5_0.abort_windup then
+		var_5_0.abort_windup = nil
 
 		return "failed"
 	end
 
-	if not blackboard.first_shots_fired then
-		self:_update_target(unit, blackboard, data, t)
+	if not arg_5_2.first_shots_fired then
+		arg_5_0:_update_target(arg_5_1, arg_5_2, var_5_0, arg_5_3)
 
 		return "done"
 	end
 
-	data.wind_up_timer = data.wind_up_timer - dt
+	var_5_0.wind_up_timer = var_5_0.wind_up_timer - arg_5_4
 
-	if t > data.target_check then
-		self:_update_target(unit, blackboard, data, t)
+	if arg_5_3 > var_5_0.target_check then
+		arg_5_0:_update_target(arg_5_1, arg_5_2, var_5_0, arg_5_3)
 	end
 
-	local windup_start_finished = blackboard.anim_cb_attack_windup_start_finished
-
-	if not windup_start_finished then
+	if not arg_5_2.anim_cb_attack_windup_start_finished then
 		return "running"
 	end
 
-	AiUtils.anim_event(unit, data, "wind_up_loop")
+	AiUtils.anim_event(arg_5_1, var_5_0, "wind_up_loop")
 
 	if script_data.ai_ratling_gunner_debug then
-		AiUtils.temp_anim_event(unit, "wind_up_loop", data.wind_up_timer)
+		AiUtils.temp_anim_event(arg_5_1, "wind_up_loop", var_5_0.wind_up_timer)
 	end
 
-	if data.wind_up_timer < 0 then
+	if var_5_0.wind_up_timer < 0 then
 		return "done"
 	end
 

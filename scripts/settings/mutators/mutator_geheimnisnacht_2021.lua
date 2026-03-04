@@ -1,48 +1,47 @@
-﻿-- chunkname: @scripts/settings/mutators/mutator_geheimnisnacht_2021.lua
+-- chunkname: @scripts/settings/mutators/mutator_geheimnisnacht_2021.lua
 
-local GeheimnisnachtUtils = require("scripts/settings/dlcs/geheimnisnacht_2025/geheimnisnacht_utils")
-local map_settings = require("scripts/settings/dlcs/geheimnisnacht_2025/geheimnisnacht_map_settings")
-local spawn_lists = {
+local var_0_0 = require("scripts/settings/dlcs/geheimnisnacht_2025/geheimnisnacht_utils")
+local var_0_1 = require("scripts/settings/dlcs/geheimnisnacht_2025/geheimnisnacht_map_settings")
+local var_0_2 = {
 	skaven = {
 		"skaven_plague_monk",
 		"skaven_clan_rat",
 		"skaven_plague_monk",
 		"skaven_clan_rat",
 		"skaven_plague_monk",
-		"skaven_clan_rat",
+		"skaven_clan_rat"
 	},
 	chaos = {
 		"chaos_marauder",
 		"chaos_marauder",
 		"chaos_marauder",
 		"chaos_marauder",
-		"chaos_marauder",
-	},
+		"chaos_marauder"
+	}
 }
-local spawn_categories = table.keys(spawn_lists)
-local hard_mode_mutators = {
-	"geheimnisnacht_2021_hard_mode",
+local var_0_3 = table.keys(var_0_2)
+local var_0_4 = {
+	"geheimnisnacht_2021_hard_mode"
 }
 
-local function side_objective_picked_up()
-	local mutator_handler = Managers.state.game_mode._mutator_handler
+local function var_0_5()
+	local var_1_0 = Managers.state.game_mode._mutator_handler
 
-	mutator_handler:initialize_mutators(hard_mode_mutators)
+	var_1_0:initialize_mutators(var_0_4)
 
-	for i = 1, #hard_mode_mutators do
-		mutator_handler:activate_mutator(hard_mode_mutators[i])
+	for iter_1_0 = 1, #var_0_4 do
+		var_1_0:activate_mutator(var_0_4[iter_1_0])
 	end
 end
 
-local function side_objective_picked_dropped()
-	local mutator_handler = Managers.state.game_mode._mutator_handler
+local function var_0_6()
+	local var_2_0 = Managers.state.game_mode._mutator_handler
 
-	for i = 1, #hard_mode_mutators do
-		local mutator_name = hard_mode_mutators[i]
-		local mutator_active = mutator_handler:has_activated_mutator(mutator_name)
+	for iter_2_0 = 1, #var_0_4 do
+		local var_2_1 = var_0_4[iter_2_0]
 
-		if mutator_active then
-			mutator_handler:deactivate_mutator(mutator_name)
+		if var_2_0:has_activated_mutator(var_2_1) then
+			var_2_0:deactivate_mutator(var_2_1)
 		end
 	end
 end
@@ -52,139 +51,132 @@ return {
 	display_name = "display_name_mutator_geheimnisnacht_2021",
 	icon = "mutator_icon_death_spirits",
 	packages = {
-		"resource_packages/dlcs/geheimnisnacht_2021_event",
+		"resource_packages/dlcs/geheimnisnacht_2021_event"
 	},
-	server_start_function = function (context, data)
-		local live_events_interface = Managers.backend:get_interface("live_events")
-		local live_events = live_events_interface and live_events_interface:get_active_events()
-		local event_levels, fallback_event_name
+	server_start_function = function(arg_3_0, arg_3_1)
+		local var_3_0 = Managers.backend:get_interface("live_events")
+		local var_3_1 = var_3_0 and var_3_0:get_active_events()
+		local var_3_2
+		local var_3_3
 
-		if live_events then
-			for i = 1, #live_events do
-				local live_event = live_events[i]
+		if var_3_1 then
+			for iter_3_0 = 1, #var_3_1 do
+				local var_3_4 = var_3_1[iter_3_0]
 
-				event_levels = GeheimnisnachtUtils.maps_by_event(live_event)
+				var_3_2 = var_0_0.maps_by_event(var_3_4)
 
-				if not fallback_event_name and string.find(live_event, "geheimnisnacht_%d+") then
-					fallback_event_name = live_event
+				if not var_3_3 and string.find(var_3_4, "geheimnisnacht_%d+") then
+					var_3_3 = var_3_4
 				end
 			end
 		end
 
-		if not event_levels and fallback_event_name then
-			event_levels = GeheimnisnachtUtils.maps_by_event(fallback_event_name, true)
+		if not var_3_2 and var_3_3 then
+			var_3_2 = var_0_0.maps_by_event(var_3_3, true)
 		end
 
-		if not event_levels then
+		if not var_3_2 then
 			return
 		end
 
-		local level_key = Managers.state.game_mode:level_key()
+		local var_3_5 = Managers.state.game_mode:level_key()
 
-		if not table.contains(event_levels, level_key) then
+		if not table.contains(var_3_2, var_3_5) then
 			return
 		end
 
-		local settings = map_settings[level_key]
-		local ritual_locations = settings.ritual_locations
-		local up = Vector3.up()
+		local var_3_6 = var_0_1[var_3_5].ritual_locations
+		local var_3_7 = Vector3.up()
 
-		for i = 1, #ritual_locations do
-			local location = ritual_locations[i]
-			local pos = Vector3(location[1], location[2], location[3])
-			local rot = Quaternion.axis_angle(up, math.rad(location[4]))
+		for iter_3_1 = 1, #var_3_6 do
+			local var_3_8 = var_3_6[iter_3_1]
+			local var_3_9 = Vector3(var_3_8[1], var_3_8[2], var_3_8[3])
+			local var_3_10 = Quaternion.axis_angle(var_3_7, math.rad(var_3_8[4]))
 
-			data.template.spawn_ritual_ring(pos, rot)
+			arg_3_1.template.spawn_ritual_ring(var_3_9, var_3_10)
 		end
 
-		local inventory_system = Managers.state.entity:system("inventory_system")
-
-		inventory_system:register_event_objective("wpn_geheimnisnacht_2021_side_objective", side_objective_picked_up, side_objective_picked_dropped)
+		Managers.state.entity:system("inventory_system"):register_event_objective("wpn_geheimnisnacht_2021_side_objective", var_0_5, var_0_6)
 	end,
-	spawn_ritual_ring = function (position, rotation)
-		local unit_name = "units/gameplay/ritual_site_01"
-		local extension_init_data = {
+	spawn_ritual_ring = function(arg_4_0, arg_4_1)
+		local var_4_0 = "units/gameplay/ritual_site_01"
+		local var_4_1 = {
 			health_system = {
 				damage_cap_per_hit = 1,
-				health = 15,
+				health = 15
 			},
 			death_system = {
-				death_reaction_template = "geheimnisnacht_2021_altar",
+				death_reaction_template = "geheimnisnacht_2021_altar"
 			},
 			hit_reaction_system = {
-				hit_reaction_template = "level_object",
-			},
+				hit_reaction_template = "level_object"
+			}
 		}
-		local altar_unit = Managers.state.unit_spawner:spawn_network_unit(unit_name, "geheimnisnacht_2021_altar", extension_init_data, position, rotation)
-		local spread = 2.5
-		local idle_variations = {
+		local var_4_2 = Managers.state.unit_spawner:spawn_network_unit(var_4_0, "geheimnisnacht_2021_altar", var_4_1, arg_4_0, arg_4_1)
+		local var_4_3 = 2.5
+		local var_4_4 = {
 			"idle_pray_01",
 			"idle_pray_02",
 			"idle_pray_03",
 			"idle_pray_04",
-			"idle_pray_05",
+			"idle_pray_05"
 		}
-		local optional_data_base = {
+		local var_4_5 = {
 			far_off_despawn_immunity = true,
 			ignore_breed_limits = true,
-			spawned_func = function (unit, breed, optional_data)
-				local ai_extension = ScriptUnit.extension(unit, "ai_system")
+			spawned_func = function(arg_5_0, arg_5_1, arg_5_2)
+				ScriptUnit.extension(arg_5_0, "ai_system"):set_perception("perception_regular", "pick_closest_target_with_spillover_wakeup_group")
 
-				ai_extension:set_perception("perception_regular", "pick_closest_target_with_spillover_wakeup_group")
+				local var_5_0 = BLACKBOARDS[arg_5_0]
 
-				local blackboard = BLACKBOARDS[unit]
-
-				if blackboard then
-					blackboard.ignore_interest_points = true
-					blackboard.only_trust_your_own_eyes = true
+				if var_5_0 then
+					var_5_0.ignore_interest_points = true
+					var_5_0.only_trust_your_own_eyes = true
 				end
 
-				local buff_system = Managers.state.entity:system("buff_system")
+				Managers.state.entity:system("buff_system"):add_buff(arg_5_0, "geheimnisnacht_2021_event_cultist_buff", arg_5_0)
 
-				buff_system:add_buff(unit, "geheimnisnacht_2021_event_cultist_buff", unit)
+				if arg_5_1 == Breeds.chaos_marauder and ScriptUnit.has_extension(arg_5_0, "ai_inventory_system") then
+					local var_5_1 = Managers.state.network
+					local var_5_2 = var_5_1:unit_game_object_id(arg_5_0)
 
-				if breed == Breeds.chaos_marauder and ScriptUnit.has_extension(unit, "ai_inventory_system") then
-					local network_manager = Managers.state.network
-					local unit_id = network_manager:unit_game_object_id(unit)
-
-					network_manager.network_transmit:send_rpc_all("rpc_ai_inventory_wield", unit_id, 1)
+					var_5_1.network_transmit:send_rpc_all("rpc_ai_inventory_wield", var_5_2, 1)
 				end
-			end,
+			end
 		}
-		local spawn_category = "event"
-		local spawn_type = "event"
-		local faction = spawn_categories[math.random(#spawn_categories)]
-		local spawn_list = spawn_lists[faction]
-		local num_cultists = #spawn_list
-		local spawn_animation
-		local conflict_director = Managers.state.conflict
-		local forward = Vector3.forward() * spread
-		local up = Vector3.up()
-		local rot_offset = Quaternion.axis_angle(up, math.pi)
-		local angle_increment = math.pi * 2 / num_cultists
-		local group_data = {
+		local var_4_6 = "event"
+		local var_4_7 = "event"
+		local var_4_8 = var_0_3[math.random(#var_0_3)]
+		local var_4_9 = var_0_2[var_4_8]
+		local var_4_10 = #var_4_9
+		local var_4_11
+		local var_4_12 = Managers.state.conflict
+		local var_4_13 = Vector3.forward() * var_4_3
+		local var_4_14 = Vector3.up()
+		local var_4_15 = Quaternion.axis_angle(var_4_14, math.pi)
+		local var_4_16 = math.pi * 2 / var_4_10
+		local var_4_17 = {
 			template = "geheimnisnacht_2021_altar_cultists",
 			id = Managers.state.entity:system("ai_group_system"):generate_group_id(),
-			size = num_cultists,
+			size = var_4_10
 		}
 
-		for i = 1, num_cultists do
-			local breed = Breeds[spawn_list[i]]
-			local optional_data = table.shallow_copy(optional_data_base)
+		for iter_4_0 = 1, var_4_10 do
+			local var_4_18 = Breeds[var_4_9[iter_4_0]]
+			local var_4_19 = table.shallow_copy(var_4_5)
 
-			optional_data.idle_animation = idle_variations[math.random(#idle_variations)]
+			var_4_19.idle_animation = var_4_4[math.random(#var_4_4)]
 
-			local spawn_rot = Quaternion.multiply(rotation, Quaternion.axis_angle(up, angle_increment * (i - 1)))
-			local spawn_pos = position + Quaternion.rotate(spawn_rot, forward)
+			local var_4_20 = Quaternion.multiply(arg_4_1, Quaternion.axis_angle(var_4_14, var_4_16 * (iter_4_0 - 1)))
+			local var_4_21 = arg_4_0 + Quaternion.rotate(var_4_20, var_4_13)
+			local var_4_22 = Quaternion.multiply(var_4_20, var_4_15)
 
-			spawn_rot = Quaternion.multiply(spawn_rot, rot_offset)
-
-			conflict_director:spawn_queued_unit(breed, Vector3Box(spawn_pos), QuaternionBox(spawn_rot), spawn_category, spawn_animation, spawn_type, optional_data, group_data)
+			var_4_12:spawn_queued_unit(var_4_18, Vector3Box(var_4_21), QuaternionBox(var_4_22), var_4_6, var_4_11, var_4_7, var_4_19, var_4_17)
 		end
 
-		local altar_extension = ScriptUnit.extension(altar_unit, "props_system")
+		local var_4_23 = ScriptUnit.extension(var_4_2, "props_system")
 
-		altar_extension:assign_cultist_group_id(group_data.id)
-		altar_extension:setup_faction(faction)
-	end,
+		var_4_23:assign_cultist_group_id(var_4_17.id)
+		var_4_23:setup_faction(var_4_8)
+	end
 }

@@ -1,33 +1,33 @@
-﻿-- chunkname: @scripts/managers/curl/curl_token.lua
+-- chunkname: @scripts/managers/curl/curl_token.lua
 
 CurlToken = class(CurlToken)
 
-CurlToken.init = function (self, token)
-	self._token = token
-	self._info = {}
+function CurlToken.init(arg_1_0, arg_1_1)
+	arg_1_0._token = arg_1_1
+	arg_1_0._info = {}
 
-	if not token then
-		self._info.done = true
-		self._info.error = "Not a valid token"
+	if not arg_1_1 then
+		arg_1_0._info.done = true
+		arg_1_0._info.error = "Not a valid token"
 	end
 end
 
-CurlToken.info = function (self)
-	return self._info
+function CurlToken.info(arg_2_0)
+	return arg_2_0._info
 end
 
-CurlToken.update = function (self)
-	if self._token then
-		self._info = Curl.progress(self._token)
+function CurlToken.update(arg_3_0)
+	if arg_3_0._token then
+		arg_3_0._info = Curl.progress(arg_3_0._token)
 	end
 end
 
-CurlToken.done = function (self)
-	return self._info.done
+function CurlToken.done(arg_4_0)
+	return arg_4_0._info.done
 end
 
-CurlToken.close = function (self)
-	if self._token then
-		Curl.close(self._token)
+function CurlToken.close(arg_5_0)
+	if arg_5_0._token then
+		Curl.close(arg_5_0._token)
 	end
 end

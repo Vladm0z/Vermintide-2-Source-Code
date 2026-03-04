@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/network_lookup/inventory_package_list.lua
+-- chunkname: @scripts/network_lookup/inventory_package_list.lua
 
 return {
 	"units/beings/player/bright_wizard/first_person_base/chr_first_person_mesh",
@@ -1509,5 +1509,5 @@ return {
 	"wwise/coghammer",
 	"wwise/steampistol",
 	"wwise/javelin",
-	"wwise/scythe",
+	"wwise/scythe"
 }

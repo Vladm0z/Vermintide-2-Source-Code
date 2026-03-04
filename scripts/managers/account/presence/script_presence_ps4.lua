@@ -1,19 +1,19 @@
-﻿-- chunkname: @scripts/managers/account/presence/script_presence_ps4.lua
+-- chunkname: @scripts/managers/account/presence/script_presence_ps4.lua
 
 ScriptPresence = class(ScriptPresence)
 
-ScriptPresence.init = function (self)
+function ScriptPresence.init(arg_1_0)
 	return
 end
 
-ScriptPresence.set_user_id = function (self, id)
+function ScriptPresence.set_user_id(arg_2_0, arg_2_1)
 	return
 end
 
-ScriptPresence.set_presence_idle = function (self)
+function ScriptPresence.set_presence_idle(arg_3_0)
 	return
 end
 
-ScriptPresence.set_presence_ingame = function (self, level_key)
+function ScriptPresence.set_presence_ingame(arg_4_0, arg_4_1)
 	return
 end

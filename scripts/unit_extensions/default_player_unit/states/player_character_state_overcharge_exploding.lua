@@ -1,266 +1,254 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_overcharge_exploding.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_overcharge_exploding.lua
 
 PlayerCharacterStateOverchargeExploding = class(PlayerCharacterStateOverchargeExploding, PlayerCharacterState)
 
-PlayerCharacterStateOverchargeExploding.init = function (self, character_state_init_context)
-	PlayerCharacterState.init(self, character_state_init_context, "overcharge_exploding")
+function PlayerCharacterStateOverchargeExploding.init(arg_1_0, arg_1_1)
+	PlayerCharacterState.init(arg_1_0, arg_1_1, "overcharge_exploding")
 
-	self.movement_speed = 0
-	self.movement_speed_limit = 1
-	self.last_input_direction = Vector3Box(0, 0, 0)
-	self.inside_inn = global_is_inside_inn
+	arg_1_0.movement_speed = 0
+	arg_1_0.movement_speed_limit = 1
+	arg_1_0.last_input_direction = Vector3Box(0, 0, 0)
+	arg_1_0.inside_inn = global_is_inside_inn
 end
 
-PlayerCharacterStateOverchargeExploding.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
-	CharacterStateHelper.stop_weapon_actions(self.inventory_extension, "exploding")
-	CharacterStateHelper.stop_career_abilities(self.career_extension, "exploding")
+function PlayerCharacterStateOverchargeExploding.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	CharacterStateHelper.stop_weapon_actions(arg_2_0.inventory_extension, "exploding")
+	CharacterStateHelper.stop_career_abilities(arg_2_0.career_extension, "exploding")
 
-	local input_extension = self.input_extension
-	local first_person_extension = self.first_person_extension
-	local status_extension = self.status_extension
+	local var_2_0 = arg_2_0.input_extension
+	local var_2_1 = arg_2_0.first_person_extension
+	local var_2_2 = arg_2_0.status_extension
 
-	self.damage_timer = t + 0.5
-	self.movement_speed = 0.2
+	arg_2_0.damage_timer = arg_2_5 + 0.5
+	arg_2_0.movement_speed = 0.2
 
-	local move_anim_3p, _ = CharacterStateHelper.get_move_animation(self.locomotion_extension, input_extension, status_extension)
+	local var_2_3, var_2_4 = CharacterStateHelper.get_move_animation(arg_2_0.locomotion_extension, var_2_0, var_2_2)
 
-	self.move_anim_3p = move_anim_3p
+	arg_2_0.move_anim_3p = var_2_3
 
-	CharacterStateHelper.play_animation_event(unit, "explode_start")
-	CharacterStateHelper.play_animation_event_first_person(first_person_extension, "explode_start")
-	self.last_input_direction:store(Vector3.zero())
+	CharacterStateHelper.play_animation_event(arg_2_1, "explode_start")
+	CharacterStateHelper.play_animation_event_first_person(var_2_1, "explode_start")
+	arg_2_0.last_input_direction:store(Vector3.zero())
 
-	self.has_exploded = false
+	arg_2_0.has_exploded = false
 
-	local overcharge_extension = ScriptUnit.extension(unit, "overcharge_system")
+	local var_2_5 = ScriptUnit.extension(arg_2_1, "overcharge_system")
 
-	self.explosion_template = overcharge_extension.explosion_template
-	self.no_forced_movement = overcharge_extension.no_forced_movement
-	self.no_explosion = overcharge_extension.no_explosion
-	self.explosion_time = t + (overcharge_extension.overcharge_explosion_time or 3)
-	self.percent_health_lost = overcharge_extension.percent_health_lost
-	self._explode_vfx_name = overcharge_extension.explode_vfx_name
-	self.walking = false
-	self.falling = false
+	arg_2_0.explosion_template = var_2_5.explosion_template
+	arg_2_0.no_forced_movement = var_2_5.no_forced_movement
+	arg_2_0.no_explosion = var_2_5.no_explosion
+	arg_2_0.explosion_time = arg_2_5 + (var_2_5.overcharge_explosion_time or 3)
+	arg_2_0.percent_health_lost = var_2_5.percent_health_lost
+	arg_2_0._explode_vfx_name = var_2_5.explode_vfx_name
+	arg_2_0.walking = false
+	arg_2_0.falling = false
 end
 
-PlayerCharacterStateOverchargeExploding.on_exit = function (self, unit, input, dt, context, t, next_state)
-	if not Managers.state.network:game() or not next_state then
+function PlayerCharacterStateOverchargeExploding.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	if not Managers.state.network:game() or not arg_3_6 then
 		return
 	end
 
-	CharacterStateHelper.play_animation_event(unit, "cooldown_end")
-	CharacterStateHelper.play_animation_event_first_person(self.first_person_extension, "cooldown_end")
+	CharacterStateHelper.play_animation_event(arg_3_1, "cooldown_end")
+	CharacterStateHelper.play_animation_event_first_person(arg_3_0.first_person_extension, "cooldown_end")
 
-	local career_extension = ScriptUnit.extension(unit, "career_system")
-	local career_name = career_extension:career_name()
+	local var_3_0 = ScriptUnit.extension(arg_3_1, "career_system")
+	local var_3_1 = var_3_0:career_name()
 
-	if not self.has_exploded and (career_name ~= "bw_unchained" or career_extension:get_state() ~= "sienna_activate_unchained") then
-		self:explode()
+	if not arg_3_0.has_exploded and (var_3_1 ~= "bw_unchained" or var_3_0:get_state() ~= "sienna_activate_unchained") then
+		arg_3_0:explode()
 	end
 
-	if self.falling and next_state ~= "falling" then
-		ScriptUnit.extension(unit, "whereabouts_system"):set_no_landing()
+	if arg_3_0.falling and arg_3_6 ~= "falling" then
+		ScriptUnit.extension(arg_3_1, "whereabouts_system"):set_no_landing()
 	end
 end
 
-PlayerCharacterStateOverchargeExploding.explode = function (self)
-	self.has_exploded = true
+function PlayerCharacterStateOverchargeExploding.explode(arg_4_0)
+	arg_4_0.has_exploded = true
 
-	local unit = self.unit
+	local var_4_0 = arg_4_0.unit
 
-	StatusUtils.set_overcharge_exploding(unit, false)
+	StatusUtils.set_overcharge_exploding(var_4_0, false)
 
-	local overcharge_extension = ScriptUnit.extension(unit, "overcharge_system")
+	local var_4_1 = ScriptUnit.extension(var_4_0, "overcharge_system")
 
-	if overcharge_extension.lockout_overcharge_decay_rate then
-		overcharge_extension:set_lockout(true)
+	if var_4_1.lockout_overcharge_decay_rate then
+		var_4_1:set_lockout(true)
 	else
-		overcharge_extension:reset()
+		var_4_1:reset()
 	end
 
-	if not self.inside_inn and not self.status_extension:is_knocked_down() then
-		local health_extension = ScriptUnit.extension(unit, "health_system")
-		local self_damage = health_extension:get_max_health()
+	if not arg_4_0.inside_inn and not arg_4_0.status_extension:is_knocked_down() then
+		local var_4_2 = ScriptUnit.extension(var_4_0, "health_system"):get_max_health() * (arg_4_0.percent_health_lost or 1)
+		local var_4_3, var_4_4 = ScriptUnit.extension(var_4_0, "buff_system"):apply_buffs_to_value(0, "overcharge_damage_immunity")
 
-		self_damage = self_damage * (self.percent_health_lost or 1)
-
-		local buff_extension = ScriptUnit.extension(unit, "buff_system")
-		local _, procced = buff_extension:apply_buffs_to_value(0, "overcharge_damage_immunity")
-
-		if not procced then
-			DamageUtils.add_damage_network(unit, unit, self_damage, "torso", "life_tap", nil, Vector3(0, 0, 0), "life_tap", nil, unit, nil, nil, nil, nil, nil, nil, nil, nil, 1)
+		if not var_4_4 then
+			DamageUtils.add_damage_network(var_4_0, var_4_0, var_4_2, "torso", "life_tap", nil, Vector3(0, 0, 0), "life_tap", nil, var_4_0, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 		end
 	end
 
-	local position = POSITION_LOOKUP[unit] + Vector3(0, 1.5, 0)
-	local rotation = Unit.local_rotation(unit, 0)
-	local explosion_template = self.explosion_template
-	local scale = 1
+	local var_4_5 = POSITION_LOOKUP[var_4_0] + Vector3(0, 1.5, 0)
+	local var_4_6 = Unit.local_rotation(var_4_0, 0)
+	local var_4_7 = arg_4_0.explosion_template
+	local var_4_8 = 1
 
-	if not self.no_explosion then
-		Managers.state.entity:system("area_damage_system"):create_explosion(unit, position, rotation, explosion_template, scale, "overcharge", nil, false)
+	if not arg_4_0.no_explosion then
+		Managers.state.entity:system("area_damage_system"):create_explosion(var_4_0, var_4_5, var_4_6, var_4_7, var_4_8, "overcharge", nil, false)
 	end
 
-	if self._explode_vfx_name then
-		local effect_name = self._explode_vfx_name
-		local effect_name_id = NetworkLookup.effects[effect_name]
-		local game_object_id = NetworkConstants.invalid_game_object_id
-		local node_id = 0
+	if arg_4_0._explode_vfx_name then
+		local var_4_9 = arg_4_0._explode_vfx_name
+		local var_4_10 = NetworkLookup.effects[var_4_9]
+		local var_4_11 = NetworkConstants.invalid_game_object_id
+		local var_4_12 = 0
 
-		Managers.state.event:trigger("event_play_particle_effect", effect_name, nil, node_id, POSITION_LOOKUP[unit], rotation, false)
+		Managers.state.event:trigger("event_play_particle_effect", var_4_9, nil, var_4_12, POSITION_LOOKUP[var_4_0], var_4_6, false)
 
-		local network_transmit = Managers.state.network.network_transmit
+		local var_4_13 = Managers.state.network.network_transmit
 
 		if Managers.player.is_server then
-			network_transmit:send_rpc_clients("rpc_play_particle_effect", effect_name_id, game_object_id, node_id, POSITION_LOOKUP[unit], rotation, false)
+			var_4_13:send_rpc_clients("rpc_play_particle_effect", var_4_10, var_4_11, var_4_12, POSITION_LOOKUP[var_4_0], var_4_6, false)
 		else
-			network_transmit:send_rpc_server("rpc_play_particle_effect", effect_name_id, game_object_id, node_id, POSITION_LOOKUP[unit], rotation, false)
+			var_4_13:send_rpc_server("rpc_play_particle_effect", var_4_10, var_4_11, var_4_12, POSITION_LOOKUP[var_4_0], var_4_6, false)
 		end
 	end
 end
 
-PlayerCharacterStateOverchargeExploding.update = function (self, unit, input, dt, context, t)
-	local csm = self.csm
-	local world = self.world
-	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local input_extension = self.input_extension
-	local status_extension = self.status_extension
-	local locomotion_extension = self.locomotion_extension
-	local whereabouts_extension = ScriptUnit.extension(unit, "whereabouts_system")
-	local first_person_extension = self.first_person_extension
+function PlayerCharacterStateOverchargeExploding.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	local var_5_0 = arg_5_0.csm
+	local var_5_1 = arg_5_0.world
+	local var_5_2 = PlayerUnitMovementSettings.get_movement_settings_table(arg_5_1)
+	local var_5_3 = arg_5_0.input_extension
+	local var_5_4 = arg_5_0.status_extension
+	local var_5_5 = arg_5_0.locomotion_extension
+	local var_5_6 = ScriptUnit.extension(arg_5_1, "whereabouts_system")
+	local var_5_7 = arg_5_0.first_person_extension
 
-	if locomotion_extension:is_on_ground() then
-		if self.falling then
-			self.falling = false
+	if var_5_5:is_on_ground() then
+		if arg_5_0.falling then
+			arg_5_0.falling = false
 
-			whereabouts_extension:set_landed()
+			var_5_6:set_landed()
 		end
 
-		whereabouts_extension:set_is_onground()
-	elseif not self.falling then
-		self.falling = true
+		var_5_6:set_is_onground()
+	elseif not arg_5_0.falling then
+		arg_5_0.falling = true
 
-		whereabouts_extension:set_fell()
+		var_5_6:set_fell()
 	end
 
-	if CharacterStateHelper.do_common_state_transitions(status_extension, csm) then
+	if CharacterStateHelper.do_common_state_transitions(var_5_4, var_5_0) then
 		return
 	end
 
-	local params = self.temp_params
+	local var_5_8 = arg_5_0.temp_params
 
-	if t >= self.explosion_time and not self.has_exploded or not status_extension:is_overcharge_exploding() then
-		if status_extension:is_overcharge_exploding() then
-			self:explode()
+	if arg_5_5 >= arg_5_0.explosion_time and not arg_5_0.has_exploded or not var_5_4:is_overcharge_exploding() then
+		if var_5_4:is_overcharge_exploding() then
+			arg_5_0:explode()
 		end
 
-		if locomotion_extension:is_on_ground() then
-			local is_moving = CharacterStateHelper.has_move_input(input_extension)
-
-			if is_moving then
-				csm:change_state("walking", params)
-				first_person_extension:change_state("walking")
+		if var_5_5:is_on_ground() then
+			if CharacterStateHelper.has_move_input(var_5_3) then
+				var_5_0:change_state("walking", var_5_8)
+				var_5_7:change_state("walking")
 			else
-				csm:change_state("standing", params)
-				first_person_extension:change_state("standing")
+				var_5_0:change_state("standing", var_5_8)
+				var_5_7:change_state("standing")
 			end
 		else
-			csm:change_state("falling", params)
-			first_person_extension:change_state("falling")
+			var_5_0:change_state("falling", var_5_8)
+			var_5_7:change_state("falling")
 		end
 
 		return
 	end
 
-	if t > self.damage_timer then
-		self.damage_timer = t + 0.5
+	if arg_5_5 > arg_5_0.damage_timer then
+		arg_5_0.damage_timer = arg_5_5 + 0.5
 
-		if not self.inside_inn then
-			DamageUtils.add_damage_network(unit, unit, 10, "torso", "overcharge", nil, Vector3(0, 0, 1), "overcharge", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
+		if not arg_5_0.inside_inn then
+			DamageUtils.add_damage_network(arg_5_1, arg_5_1, 10, "torso", "overcharge", nil, Vector3(0, 0, 1), "overcharge", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 		end
 
 		Managers.state.controller_features:add_effect("rumble", {
-			rumble_effect = "overcharge_rumble_crit",
+			rumble_effect = "overcharge_rumble_crit"
 		})
 
-		local player_locomotion = ScriptUnit.extension(unit, "locomotion_system")
-		local push_direction = Vector3.normalize(Vector3(2 * (math.random() - 0.5), 2 * (math.random() - 0.5), 0))
+		local var_5_9 = ScriptUnit.extension(arg_5_1, "locomotion_system")
+		local var_5_10 = Vector3.normalize(Vector3(2 * (math.random() - 0.5), 2 * (math.random() - 0.5), 0))
 
-		player_locomotion:add_external_velocity(push_direction, 10)
+		var_5_9:add_external_velocity(var_5_10, 10)
 
-		self.movement_speed = math.random() * 0.5 + 0.15
-		self.movement_speed_limit = self.movement_speed
+		arg_5_0.movement_speed = math.random() * 0.5 + 0.15
+		arg_5_0.movement_speed_limit = arg_5_0.movement_speed
 
-		first_person_extension:animation_event("overheat_indicator")
+		var_5_7:animation_event("overheat_indicator")
 	end
 
-	if self.no_forced_movement then
+	if arg_5_0.no_forced_movement then
 		return
 	end
 
-	local player = Managers.player:owner(unit)
-	local is_moving = CharacterStateHelper.has_move_input(input_extension)
+	local var_5_11 = Managers.player:owner(arg_5_1)
 
-	if is_moving then
-		self.movement_speed = math.min(1, self.movement_speed + movement_settings_table.move_acceleration_up * dt)
-	elseif player and player.bot_player then
-		self.movement_speed = 0
+	if CharacterStateHelper.has_move_input(var_5_3) then
+		arg_5_0.movement_speed = math.min(1, arg_5_0.movement_speed + var_5_2.move_acceleration_up * arg_5_3)
+	elseif var_5_11 and var_5_11.bot_player then
+		arg_5_0.movement_speed = 0
 	else
-		self.movement_speed = math.max(self.movement_speed_limit, self.movement_speed - movement_settings_table.move_acceleration_down * dt)
+		arg_5_0.movement_speed = math.max(arg_5_0.movement_speed_limit, arg_5_0.movement_speed - var_5_2.move_acceleration_down * arg_5_3)
 	end
 
-	local walking = input_extension:get("walk")
-	local move_speed = status_extension:is_crouching() and movement_settings_table.crouch_move_speed or walking and movement_settings_table.walk_move_speed or movement_settings_table.move_speed
-	local move_speed_multiplier = status_extension:current_move_speed_multiplier()
+	local var_5_12 = var_5_3:get("walk")
+	local var_5_13 = var_5_4:is_crouching() and var_5_2.crouch_move_speed or var_5_12 and var_5_2.walk_move_speed or var_5_2.move_speed
+	local var_5_14 = var_5_4:current_move_speed_multiplier()
 
-	if walking ~= self.walking then
-		status_extension:set_slowed(walking)
+	if var_5_12 ~= arg_5_0.walking then
+		var_5_4:set_slowed(var_5_12)
 	end
 
-	move_speed = move_speed * move_speed_multiplier
-	move_speed = move_speed * movement_settings_table.player_speed_scale
-	move_speed = move_speed * self.movement_speed
+	local var_5_15 = var_5_13 * var_5_14 * var_5_2.player_speed_scale * arg_5_0.movement_speed
+	local var_5_16 = Vector3(0, 0.9, 0)
+	local var_5_17 = var_5_3:get("move")
 
-	local movement = Vector3(0, 0.9, 0)
-	local move_input = input_extension:get("move")
-
-	if move_input then
-		movement = movement + move_input
+	if var_5_17 then
+		var_5_16 = var_5_16 + var_5_17
 	end
 
-	local move_input_controller = input_extension:get("move_controller")
+	local var_5_18 = var_5_3:get("move_controller")
 
-	if move_input_controller then
-		local controller_length = Vector3.length(move_input_controller)
+	if var_5_18 then
+		local var_5_19 = Vector3.length(var_5_18)
 
-		if controller_length > 0 then
-			move_speed = move_speed * controller_length
+		if var_5_19 > 0 then
+			var_5_15 = var_5_15 * var_5_19
 		end
 
-		movement = movement + move_input_controller
+		var_5_16 = var_5_16 + var_5_18
 	end
 
-	local move_input_direction
+	local var_5_20
+	local var_5_21 = Vector3.normalize(var_5_16)
 
-	move_input_direction = Vector3.normalize(movement)
-
-	if Vector3.length(move_input_direction) == 0 then
-		move_input_direction = self.last_input_direction:unbox()
+	if Vector3.length(var_5_21) == 0 then
+		var_5_21 = arg_5_0.last_input_direction:unbox()
 	else
-		self.last_input_direction:store(move_input_direction)
+		arg_5_0.last_input_direction:store(var_5_21)
 	end
 
-	CharacterStateHelper.move_on_ground(first_person_extension, input_extension, locomotion_extension, move_input_direction, move_speed, unit)
-	CharacterStateHelper.look(input_extension, self.player.viewport_name, first_person_extension, status_extension, self.inventory_extension)
+	CharacterStateHelper.move_on_ground(var_5_7, var_5_3, var_5_5, var_5_21, var_5_15, arg_5_1)
+	CharacterStateHelper.look(var_5_3, arg_5_0.player.viewport_name, var_5_7, var_5_4, arg_5_0.inventory_extension)
 
-	local move_anim_3p, _ = CharacterStateHelper.get_move_animation(locomotion_extension, input_extension, status_extension, self.move_anim_3p)
+	local var_5_22, var_5_23 = CharacterStateHelper.get_move_animation(var_5_5, var_5_3, var_5_4, arg_5_0.move_anim_3p)
 
-	if move_anim_3p ~= self.move_anim_3p then
-		CharacterStateHelper.play_animation_event(unit, move_anim_3p)
+	if var_5_22 ~= arg_5_0.move_anim_3p then
+		CharacterStateHelper.play_animation_event(arg_5_1, var_5_22)
 
-		self.move_anim_3p = move_anim_3p
+		arg_5_0.move_anim_3p = var_5_22
 	end
 
-	self.walking = walking
+	arg_5_0.walking = var_5_12
 end

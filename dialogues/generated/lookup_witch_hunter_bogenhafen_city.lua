@@ -1,4 +1,4 @@
-﻿-- chunkname: @dialogues/generated/lookup_witch_hunter_bogenhafen_city.lua
+-- chunkname: @dialogues/generated/lookup_witch_hunter_bogenhafen_city.lua
 
 assert(DialogueLookup[DialogueLookup_n + 1] == nil)
 assert(DialogueLookup[DialogueLookup_n + 2] == nil)

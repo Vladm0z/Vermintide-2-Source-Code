@@ -1,8 +1,6 @@
-﻿-- chunkname: @scripts/settings/dlcs/carousel/carousel_character_state_settings.lua
+-- chunkname: @scripts/settings/dlcs/carousel/carousel_character_state_settings.lua
 
-local settings = DLCSettings.carousel
-
-settings.character_states = {
+DLCSettings.carousel.character_states = {
 	"scripts/unit_extensions/default_player_unit/enemy_states/enemy_character_state",
 	"scripts/unit_extensions/default_player_unit/enemy_states/enemy_character_state_catapulted",
 	"scripts/unit_extensions/default_player_unit/enemy_states/enemy_character_state_animated_jump",
@@ -62,5 +60,5 @@ settings.character_states = {
 	"scripts/unit_extensions/default_player_unit/enemy_states/warpfire_thrower/warpfire_thrower_state_standing",
 	"scripts/unit_extensions/default_player_unit/enemy_states/warpfire_thrower/warpfire_thrower_state_walking",
 	"scripts/unit_extensions/default_player_unit/enemy_states/warpfire_thrower/warpfire_thrower_state_jumping",
-	"scripts/unit_extensions/default_player_unit/enemy_states/warpfire_thrower/warpfire_thrower_state_falling",
+	"scripts/unit_extensions/default_player_unit/enemy_states/warpfire_thrower/warpfire_thrower_state_falling"
 }

@@ -1,31 +1,29 @@
-﻿-- chunkname: @scripts/unit_extensions/generic/kill_volume_handler_extension.lua
+-- chunkname: @scripts/unit_extensions/generic/kill_volume_handler_extension.lua
 
 KillVolumeHandlerExtension = class(KillVolumeHandlerExtension)
 
-KillVolumeHandlerExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self._callbacks = {}
+function KillVolumeHandlerExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._callbacks = {}
 end
 
-KillVolumeHandlerExtension.game_object_initialized = function (self, unit, go_id)
+function KillVolumeHandlerExtension.game_object_initialized(arg_2_0, arg_2_1, arg_2_2)
 	return
 end
 
-KillVolumeHandlerExtension.destroy = function (self)
+function KillVolumeHandlerExtension.destroy(arg_3_0)
 	return
 end
 
-KillVolumeHandlerExtension.add_handler = function (self, on_hit_kill_volume_cb)
-	self._callbacks[#self._callbacks + 1] = on_hit_kill_volume_cb
+function KillVolumeHandlerExtension.add_handler(arg_4_0, arg_4_1)
+	arg_4_0._callbacks[#arg_4_0._callbacks + 1] = arg_4_1
 end
 
-KillVolumeHandlerExtension.on_hit_kill_volume = function (self)
-	local handled = false
+function KillVolumeHandlerExtension.on_hit_kill_volume(arg_5_0)
+	local var_5_0 = false
 
-	for i = 1, #self._callbacks do
-		local cb = self._callbacks[i]
-
-		handled = cb() or handled
+	for iter_5_0 = 1, #arg_5_0._callbacks do
+		var_5_0 = arg_5_0._callbacks[iter_5_0]() or var_5_0
 	end
 
-	return handled
+	return var_5_0
 end

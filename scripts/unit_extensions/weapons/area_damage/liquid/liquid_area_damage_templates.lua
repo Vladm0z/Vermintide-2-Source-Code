@@ -1,36 +1,36 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/area_damage/liquid/liquid_area_damage_templates.lua
+-- chunkname: @scripts/unit_extensions/weapons/area_damage/liquid/liquid_area_damage_templates.lua
 
 LiquidAreaDamageTemplates = {}
 LiquidAreaDamageTemplates.templates = {
 	bile_troll_vomit_near = {
-		apply_buff_to_ai = false,
-		apply_buff_to_player = true,
-		buff_condition_function = "bile_troll_vomit_ground_base_condition",
-		buff_template_name = "bile_troll_vomit_ground_base",
-		buff_template_type = "troll_bile_ground",
-		cell_size = 1,
-		damage_type = "vomit_ground",
 		do_direct_damage_ai = true,
+		sfx_name_stop = "Stop_enemy_troll_puke_loop",
+		cell_size = 1,
+		liquid_spread_function = "pour_spread",
+		starting_pressure = 20,
+		apply_buff_to_player = true,
 		do_direct_damage_player = false,
+		buff_template_name = "bile_troll_vomit_ground_base",
+		linearized_flow = false,
+		damage_type = "vomit_ground",
+		sfx_name_start = "Play_enemy_troll_puke_loop",
+		init_function = "bile_troll_vomit_init",
 		end_pressure = 3,
 		fx_name_filled = "fx/wpnfx_troll_vomit_impact_01",
-		init_function = "bile_troll_vomit_init",
-		linearized_flow = false,
-		liquid_spread_function = "pour_spread",
-		max_liquid = 30,
-		nav_cost_map_cost_type = "troll_bile",
-		sfx_name_start = "Play_enemy_troll_puke_loop",
-		sfx_name_stop = "Stop_enemy_troll_puke_loop",
-		starting_pressure = 20,
+		apply_buff_to_ai = false,
 		time_of_life = 7,
+		max_liquid = 30,
 		update_function = "bile_troll_vomit_update",
 		use_nav_cost_map_volumes = true,
+		buff_template_type = "troll_bile_ground",
+		nav_cost_map_cost_type = "troll_bile",
+		buff_condition_function = "bile_troll_vomit_ground_base_condition",
 		immune_breeds = {
+			chaos_troll = true,
 			chaos_dummy_troll = true,
 			chaos_spawn = true,
-			chaos_troll = true,
 			skaven_rat_ogre = true,
-			skaven_stormfiend = true,
+			skaven_stormfiend = true
 		},
 		difficulty_direct_damage = {
 			easy = {
@@ -38,95 +38,95 @@ LiquidAreaDamageTemplates.templates = {
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			normal = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			hard = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			harder = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			hardest = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			cataclysm = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			cataclysm_2 = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			cataclysm_3 = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			versus_base = {
 				1,
 				1,
 				0,
 				0,
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	bile_troll_vomit = {
-		apply_buff_to_ai = false,
-		apply_buff_to_player = true,
-		buff_condition_function = "bile_troll_vomit_ground_base_condition",
-		buff_template_name = "bile_troll_vomit_ground_base",
-		buff_template_type = "troll_bile_ground",
-		cell_size = 1,
-		damage_type = "vomit_ground",
 		do_direct_damage_ai = true,
+		sfx_name_stop = "Stop_enemy_troll_puke_loop",
+		cell_size = 1,
+		liquid_spread_function = "default_spread",
+		starting_pressure = 20,
+		apply_buff_to_player = true,
 		do_direct_damage_player = false,
+		buff_template_name = "bile_troll_vomit_ground_base",
+		linearized_flow = false,
+		damage_type = "vomit_ground",
+		sfx_name_start = "Play_enemy_troll_puke_loop",
+		init_function = "bile_troll_vomit_init",
 		end_pressure = 3,
 		fx_name_filled = "fx/wpnfx_troll_vomit_impact_01",
-		init_function = "bile_troll_vomit_init",
-		linearized_flow = false,
-		liquid_spread_function = "default_spread",
-		max_liquid = 20,
-		nav_cost_map_cost_type = "troll_bile",
-		sfx_name_start = "Play_enemy_troll_puke_loop",
-		sfx_name_stop = "Stop_enemy_troll_puke_loop",
-		starting_pressure = 20,
+		apply_buff_to_ai = false,
 		time_of_life = 7,
+		max_liquid = 20,
 		update_function = "bile_troll_vomit_update",
 		use_nav_cost_map_volumes = true,
+		buff_template_type = "troll_bile_ground",
+		nav_cost_map_cost_type = "troll_bile",
+		buff_condition_function = "bile_troll_vomit_ground_base_condition",
 		immune_breeds = {
+			chaos_troll = true,
 			chaos_dummy_troll = true,
 			chaos_spawn = true,
-			chaos_troll = true,
 			skaven_rat_ogre = true,
-			skaven_stormfiend = true,
+			skaven_stormfiend = true
 		},
 		difficulty_direct_damage = {
 			easy = {
@@ -134,104 +134,104 @@ LiquidAreaDamageTemplates.templates = {
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			normal = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			hard = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			harder = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			hardest = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			cataclysm = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			cataclysm_2 = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			cataclysm_3 = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			versus_base = {
 				1,
 				1,
 				0,
 				0,
-				1,
-			},
+				1
+			}
 		},
-		hit_player_function = function (player_unit, player_and_bot_units, source_unit)
-			if Unit.alive(source_unit) then
-				local blackboard = BLACKBOARDS[source_unit]
+		hit_player_function = function(arg_1_0, arg_1_1, arg_1_2)
+			if Unit.alive(arg_1_2) then
+				local var_1_0 = BLACKBOARDS[arg_1_2]
 
-				if blackboard then
-					blackboard.has_done_bile_damage = true
+				if var_1_0 then
+					var_1_0.has_done_bile_damage = true
 				end
 			end
-		end,
+		end
 	},
 	bile_troll_chief_downed_vomit = {
-		apply_buff_to_ai = false,
-		apply_buff_to_player = true,
-		buff_condition_function = "bile_troll_vomit_ground_base_condition",
-		buff_template_name = "bile_troll_vomit_ground_downed",
-		buff_template_type = "troll_bile_ground",
-		cell_size = 1,
-		damage_type = "vomit_ground",
 		do_direct_damage_ai = true,
+		sfx_name_stop = "Stop_enemy_troll_puke_loop",
+		cell_size = 1,
+		liquid_spread_function = "pour_spread",
+		starting_pressure = 30,
+		apply_buff_to_player = true,
 		do_direct_damage_player = false,
+		buff_template_name = "bile_troll_vomit_ground_downed",
+		linearized_flow = false,
+		damage_type = "vomit_ground",
+		sfx_name_start = "Play_enemy_troll_puke_loop",
+		init_function = "bile_troll_vomit_init",
 		end_pressure = 3,
 		fx_name_filled = "fx/wpnfx_troll_vomit_impact_01",
-		init_function = "bile_troll_vomit_init",
-		linearized_flow = false,
-		liquid_spread_function = "pour_spread",
-		max_liquid = 160,
-		nav_cost_map_cost_type = "troll_bile",
-		sfx_name_start = "Play_enemy_troll_puke_loop",
-		sfx_name_stop = "Stop_enemy_troll_puke_loop",
-		starting_pressure = 30,
+		apply_buff_to_ai = false,
 		time_of_life = 7,
+		max_liquid = 160,
 		update_function = "bile_troll_vomit_update",
 		use_nav_cost_map_volumes = true,
+		buff_template_type = "troll_bile_ground",
+		nav_cost_map_cost_type = "troll_bile",
+		buff_condition_function = "bile_troll_vomit_ground_base_condition",
 		immune_breeds = {
+			chaos_troll = true,
 			chaos_dummy_troll = true,
 			chaos_spawn = true,
-			chaos_troll = true,
 			skaven_rat_ogre = true,
-			skaven_stormfiend = true,
+			skaven_stormfiend = true
 		},
 		difficulty_direct_damage = {
 			easy = {
@@ -239,101 +239,101 @@ LiquidAreaDamageTemplates.templates = {
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			normal = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			hard = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			harder = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			hardest = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			cataclysm = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			cataclysm_2 = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			cataclysm_3 = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			versus_base = {
 				1,
 				1,
 				0,
 				0,
-				1,
-			},
-		},
+				1
+			}
+		}
 	},
 	vs_bile_troll_vomit_near = {
-		apply_buff_to_ai = false,
-		apply_buff_to_player = true,
-		buff_condition_function = "bile_troll_vomit_ground_base_condition",
-		buff_template_name = "bile_troll_vomit_ground_base",
-		buff_template_type = "troll_bile_ground",
-		cell_size = 1,
-		damage_type = "vomit_ground",
 		do_direct_damage_ai = true,
+		sfx_name_stop = "Stop_enemy_troll_puke_loop",
+		cell_size = 1,
+		liquid_spread_function = "pour_spread",
+		starting_pressure = 30,
+		apply_buff_to_player = true,
 		do_direct_damage_player = false,
+		buff_template_name = "bile_troll_vomit_ground_base",
+		linearized_flow = false,
+		damage_type = "vomit_ground",
+		sfx_name_start = "Play_enemy_troll_puke_loop",
+		init_function = "vs_bile_troll_vomit_init",
 		end_pressure = 3,
 		fx_name_filled = "fx/wpnfx_troll_vomit_impact_01",
-		init_function = "vs_bile_troll_vomit_init",
-		linearized_flow = false,
-		liquid_spread_function = "pour_spread",
-		max_liquid = 80,
-		nav_cost_map_cost_type = "troll_bile",
-		sfx_name_start = "Play_enemy_troll_puke_loop",
-		sfx_name_stop = "Stop_enemy_troll_puke_loop",
-		starting_pressure = 30,
+		apply_buff_to_ai = false,
 		time_of_life = 7,
+		max_liquid = 80,
 		update_function = "vs_bile_troll_vomit_update",
 		use_nav_cost_map_volumes = true,
+		buff_template_type = "troll_bile_ground",
+		nav_cost_map_cost_type = "troll_bile",
+		buff_condition_function = "bile_troll_vomit_ground_base_condition",
 		immune_breeds = {
-			chaos_dummy_troll = true,
-			chaos_spawn = true,
-			chaos_troll = true,
-			skaven_rat_ogre = true,
-			skaven_stormfiend = true,
-			vs_chaos_troll = true,
-			vs_gutter_runner = true,
-			vs_packmaster = true,
-			vs_poison_wind_globadier = true,
-			vs_ratling_gunner = true,
 			vs_warpfire_thrower = true,
+			vs_chaos_troll = true,
+			chaos_dummy_troll = true,
+			vs_ratling_gunner = true,
+			chaos_spawn = true,
+			skaven_rat_ogre = true,
+			chaos_troll = true,
+			vs_gutter_runner = true,
+			vs_poison_wind_globadier = true,
+			vs_packmaster = true,
+			skaven_stormfiend = true
 		},
 		difficulty_direct_damage = {
 			easy = {
@@ -341,101 +341,101 @@ LiquidAreaDamageTemplates.templates = {
 				2,
 				0,
 				0,
-				2,
+				2
 			},
 			normal = {
 				2,
 				2,
 				0,
 				0,
-				2,
+				2
 			},
 			hard = {
 				2,
 				2,
 				0,
 				0,
-				2,
+				2
 			},
 			harder = {
 				2,
 				2,
 				0,
 				0,
-				2,
+				2
 			},
 			hardest = {
 				2,
 				2,
 				0,
 				0,
-				2,
+				2
 			},
 			cataclysm = {
 				2,
 				2,
 				0,
 				0,
-				2,
+				2
 			},
 			cataclysm_2 = {
 				2,
 				2,
 				0,
 				0,
-				2,
+				2
 			},
 			cataclysm_3 = {
 				2,
 				2,
 				0,
 				0,
-				2,
+				2
 			},
 			versus_base = {
 				2,
 				2,
 				0,
 				0,
-				2,
-			},
-		},
+				2
+			}
+		}
 	},
 	vs_bile_troll_vomit = {
-		apply_buff_to_ai = false,
-		apply_buff_to_player = true,
-		buff_condition_function = "bile_troll_vomit_ground_base_condition",
-		buff_template_name = "bile_troll_vomit_ground_base",
-		buff_template_type = "troll_bile_ground",
-		cell_size = 1,
-		damage_type = "vomit_ground",
 		do_direct_damage_ai = true,
+		sfx_name_stop = "Stop_enemy_troll_puke_loop",
+		cell_size = 1,
+		liquid_spread_function = "pour_spread",
+		starting_pressure = 30,
+		apply_buff_to_player = true,
 		do_direct_damage_player = false,
+		buff_template_name = "bile_troll_vomit_ground_base",
+		linearized_flow = false,
+		damage_type = "vomit_ground",
+		sfx_name_start = "Play_enemy_troll_puke_loop",
+		init_function = "vs_bile_troll_vomit_init",
 		end_pressure = 3,
 		fx_name_filled = "fx/wpnfx_troll_vomit_impact_01",
-		init_function = "vs_bile_troll_vomit_init",
-		linearized_flow = false,
-		liquid_spread_function = "pour_spread",
-		max_liquid = 80,
-		nav_cost_map_cost_type = "troll_bile",
-		sfx_name_start = "Play_enemy_troll_puke_loop",
-		sfx_name_stop = "Stop_enemy_troll_puke_loop",
-		starting_pressure = 30,
+		apply_buff_to_ai = false,
 		time_of_life = 7,
+		max_liquid = 80,
 		update_function = "vs_bile_troll_vomit_update",
 		use_nav_cost_map_volumes = true,
+		buff_template_type = "troll_bile_ground",
+		nav_cost_map_cost_type = "troll_bile",
+		buff_condition_function = "bile_troll_vomit_ground_base_condition",
 		immune_breeds = {
-			chaos_dummy_troll = true,
-			chaos_spawn = true,
-			chaos_troll = true,
-			skaven_rat_ogre = true,
-			skaven_stormfiend = true,
-			vs_chaos_troll = true,
-			vs_gutter_runner = true,
-			vs_packmaster = true,
-			vs_poison_wind_globadier = true,
-			vs_ratling_gunner = true,
 			vs_warpfire_thrower = true,
+			vs_chaos_troll = true,
+			chaos_dummy_troll = true,
+			vs_ratling_gunner = true,
+			chaos_spawn = true,
+			skaven_rat_ogre = true,
+			chaos_troll = true,
+			vs_gutter_runner = true,
+			vs_poison_wind_globadier = true,
+			vs_packmaster = true,
+			skaven_stormfiend = true
 		},
 		difficulty_direct_damage = {
 			easy = {
@@ -443,104 +443,104 @@ LiquidAreaDamageTemplates.templates = {
 				2.8,
 				0,
 				0,
-				2.8,
+				2.8
 			},
 			normal = {
 				2.8,
 				2.8,
 				0,
 				0,
-				2.8,
+				2.8
 			},
 			hard = {
 				2.8,
 				2.8,
 				0,
 				0,
-				2.8,
+				2.8
 			},
 			harder = {
 				2.8,
 				2.8,
 				0,
 				0,
-				2.8,
+				2.8
 			},
 			hardest = {
 				2.8,
 				2.8,
 				0,
 				0,
-				2.8,
+				2.8
 			},
 			cataclysm = {
 				2.8,
 				2.8,
 				0,
 				0,
-				2.8,
+				2.8
 			},
 			cataclysm_2 = {
 				2.8,
 				2.8,
 				0,
 				0,
-				2.8,
+				2.8
 			},
 			cataclysm_3 = {
 				2.8,
 				2.8,
 				0,
 				0,
-				2.8,
+				2.8
 			},
 			versus_base = {
 				2.8,
 				2.8,
 				0,
 				0,
-				2.8,
-			},
+				2.8
+			}
 		},
-		hit_player_function = function (player_unit, player_and_bot_units, source_unit)
-			if Unit.alive(source_unit) then
-				local blackboard = BLACKBOARDS[source_unit]
+		hit_player_function = function(arg_2_0, arg_2_1, arg_2_2)
+			if Unit.alive(arg_2_2) then
+				local var_2_0 = BLACKBOARDS[arg_2_2]
 
-				if blackboard then
-					blackboard.has_done_bile_damage = true
+				if var_2_0 then
+					var_2_0.has_done_bile_damage = true
 				end
 			end
-		end,
+		end
 	},
 	nurgle_liquid = {
-		apply_buff_to_ai = false,
-		apply_buff_to_player = true,
-		buff_condition_function = "bile_troll_vomit_ground_base_condition",
-		buff_template_name = "bile_troll_vomit_ground_base",
-		buff_template_type = "troll_bile_ground",
-		cell_size = 0.6,
-		damage_type = "vomit_ground",
 		do_direct_damage_ai = true,
+		sfx_name_stop = "Stop_nurgle_infection_loop",
+		cell_size = 0.6,
+		liquid_spread_function = "pour_spread",
+		starting_pressure = 10,
+		apply_buff_to_player = true,
 		do_direct_damage_player = false,
+		buff_template_name = "bile_troll_vomit_ground_base",
+		linearized_flow = false,
+		damage_type = "vomit_ground",
+		sfx_name_start = "Play_nurgle_infection_loop",
+		init_function = "bile_troll_vomit_init",
 		end_pressure = 3,
 		fx_name_filled = "fx/nurgle_liquid_blob_ground_01",
-		init_function = "bile_troll_vomit_init",
-		linearized_flow = false,
-		liquid_spread_function = "pour_spread",
-		max_liquid = 12,
-		nav_cost_map_cost_type = "troll_bile",
-		sfx_name_start = "Play_nurgle_infection_loop",
-		sfx_name_stop = "Stop_nurgle_infection_loop",
-		starting_pressure = 10,
+		apply_buff_to_ai = false,
 		time_of_life = 10,
+		max_liquid = 12,
 		update_function = "bile_troll_vomit_update",
 		use_nav_cost_map_volumes = true,
+		buff_template_type = "troll_bile_ground",
+		nav_cost_map_cost_type = "troll_bile",
+		buff_condition_function = "bile_troll_vomit_ground_base_condition",
 		immune_breeds = {
+			chaos_troll = true,
 			chaos_dummy_troll = true,
 			chaos_spawn = true,
-			chaos_troll = true,
 			skaven_rat_ogre = true,
-			skaven_stormfiend = true,
+			skaven_stormfiend = true
 		},
 		difficulty_direct_damage = {
 			easy = {
@@ -548,149 +548,141 @@ LiquidAreaDamageTemplates.templates = {
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			normal = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			hard = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			harder = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			hardest = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			cataclysm = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			cataclysm_2 = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			cataclysm_3 = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			versus_base = {
 				1,
 				1,
 				0,
 				0,
-				1,
-			},
+				1
+			}
 		},
-		hit_player_function = function (hit_player_unit, player_and_bot_units)
-			local stat_names = {
+		hit_player_function = function(arg_3_0, arg_3_1)
+			local var_3_0 = {
 				"nurgle_bathed_all",
-				"nurgle_bathed_all_cata",
+				"nurgle_bathed_all_cata"
 			}
 
-			for h = 1, #stat_names do
-				local current_difficulty = Managers.state.difficulty:get_difficulty()
-				local stat_name = stat_names[h]
-				local allowed_difficulties = QuestSettings.allowed_difficulties[stat_name]
-				local allowed_difficulty = allowed_difficulties[current_difficulty]
+			for iter_3_0 = 1, #var_3_0 do
+				local var_3_1 = Managers.state.difficulty:get_difficulty()
+				local var_3_2 = var_3_0[iter_3_0]
 
-				if allowed_difficulty then
-					local status_extension = ScriptUnit.extension(hit_player_unit, "status_system")
-					local num_times_bathed_in_nurgle_liquid = status_extension.num_times_bathed_in_nurgle_liquid or 0
+				if QuestSettings.allowed_difficulties[var_3_2][var_3_1] then
+					local var_3_3 = ScriptUnit.extension(arg_3_0, "status_system")
 
-					status_extension.num_times_bathed_in_nurgle_liquid = num_times_bathed_in_nurgle_liquid + 1
+					var_3_3.num_times_bathed_in_nurgle_liquid = (var_3_3.num_times_bathed_in_nurgle_liquid or 0) + 1
 
-					local completed_challenge = false
+					local var_3_4 = false
 
-					for i = 0, #player_and_bot_units do
-						local player_unit = player_and_bot_units[i]
+					for iter_3_1 = 0, #arg_3_1 do
+						local var_3_5 = arg_3_1[iter_3_1]
 
-						if Unit.alive(player_unit) then
-							local player_unit_status_extension = ScriptUnit.extension(player_unit, "status_system")
-							local num_times_bathed = player_unit_status_extension.num_times_bathed_in_nurgle_liquid
+						if Unit.alive(var_3_5) then
+							local var_3_6 = ScriptUnit.extension(var_3_5, "status_system").num_times_bathed_in_nurgle_liquid
 
-							if num_times_bathed and num_times_bathed >= QuestSettings.nurgle_bathed_all then
-								local statistics_db = Managers.player:statistics_db()
+							if var_3_6 and var_3_6 >= QuestSettings.nurgle_bathed_all then
+								Managers.player:statistics_db():increment_stat_and_sync_to_clients(var_3_0[iter_3_0])
 
-								statistics_db:increment_stat_and_sync_to_clients(stat_names[h])
-
-								completed_challenge = true
+								var_3_4 = true
 
 								break
 							end
 						end
 					end
 
-					if completed_challenge then
-						for i = 0, #player_and_bot_units do
-							local player_unit = player_and_bot_units[i]
+					if var_3_4 then
+						for iter_3_2 = 0, #arg_3_1 do
+							local var_3_7 = arg_3_1[iter_3_2]
 
-							if Unit.alive(player_unit) then
-								local player_unit_status_extension = ScriptUnit.extension(player_unit, "status_system")
-
-								player_unit_status_extension.num_times_bathed_in_nurgle_liquid = nil
+							if Unit.alive(var_3_7) then
+								ScriptUnit.extension(var_3_7, "status_system").num_times_bathed_in_nurgle_liquid = nil
 							end
 						end
 					end
 				end
 			end
-		end,
+		end
 	},
 	stormfiend_firewall = {
-		apply_buff_to_ai = false,
-		apply_buff_to_player = true,
-		buff_condition_function = "stormfiend_warpfire_ground_base_condition",
-		buff_template_name = "stormfiend_warpfire_ground_base",
-		buff_template_type = "stormfiend_warpfire_ground",
-		cell_size = 1,
-		damage_type = "warpfire_ground",
 		do_direct_damage_ai = true,
+		sfx_name_stop = "Stop_enemy_stormfiend_fire_ground_loop",
+		cell_size = 1,
+		liquid_spread_function = "forward_spread",
+		starting_pressure = 30,
+		apply_buff_to_player = true,
 		do_direct_damage_player = false,
+		buff_template_name = "stormfiend_warpfire_ground_base",
+		linearized_flow = true,
+		fx_name_rim = "fx/wpnfx_warp_fire_remains_rim",
+		damage_type = "warpfire_ground",
+		sfx_name_start = "Play_enemy_stormfiend_fire_ground_loop",
 		end_pressure = 2,
 		fx_name_filled = "fx/wpnfx_warp_fire_remains",
-		fx_name_rim = "fx/wpnfx_warp_fire_remains_rim",
-		linearized_flow = true,
-		liquid_spread_function = "forward_spread",
-		max_liquid = 20,
-		nav_cost_map_cost_type = "stormfiend_warpfire",
-		sfx_name_start = "Play_enemy_stormfiend_fire_ground_loop",
-		sfx_name_stop = "Stop_enemy_stormfiend_fire_ground_loop",
-		starting_pressure = 30,
+		apply_buff_to_ai = false,
 		time_of_life = 8,
+		max_liquid = 20,
 		use_nav_cost_map_volumes = true,
+		buff_template_type = "stormfiend_warpfire_ground",
+		nav_cost_map_cost_type = "stormfiend_warpfire",
+		buff_condition_function = "stormfiend_warpfire_ground_base_condition",
 		immune_breeds = {
-			chaos_dummy_troll = true,
-			chaos_spawn = true,
 			chaos_troll = true,
+			chaos_dummy_troll = true,
 			skaven_grey_seer = true,
-			skaven_rat_ogre = true,
-			skaven_stormfiend = true,
+			chaos_spawn = true,
 			skaven_warpfire_thrower = true,
+			skaven_rat_ogre = true,
+			skaven_stormfiend = true
 		},
 		difficulty_direct_damage = {
 			easy = {
@@ -698,90 +690,88 @@ LiquidAreaDamageTemplates.templates = {
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			normal = {
 				2,
 				2,
 				0,
 				0,
-				1,
+				1
 			},
 			hard = {
 				4,
 				4,
 				0,
 				0,
-				3,
+				3
 			},
 			harder = {
 				6,
 				6,
 				0,
 				0,
-				6,
+				6
 			},
 			hardest = {
 				8,
 				8,
 				0,
 				0,
-				8,
+				8
 			},
 			cataclysm = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			cataclysm_2 = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			cataclysm_3 = {
 				1,
 				1,
 				0,
 				0,
-				1,
+				1
 			},
 			versus_base = {
 				1,
 				1,
 				0,
 				0,
-				1,
-			},
+				1
+			}
 		},
-		hit_player_function = function (player_unit, player_and_bot_units, source_unit)
-			if Unit.alive(source_unit) then
-				local blackboard = BLACKBOARDS[source_unit]
-
-				blackboard.has_dealt_burn_damage = true
+		hit_player_function = function(arg_4_0, arg_4_1, arg_4_2)
+			if Unit.alive(arg_4_2) then
+				BLACKBOARDS[arg_4_2].has_dealt_burn_damage = true
 			end
-		end,
+		end
 	},
 	lamp_oil_fire = {
-		cell_size = 1,
-		damage_type = "burn",
 		do_direct_damage_ai = true,
+		sfx_name_stop = "Stop_props_lamp_oil_fire",
+		cell_size = 1,
+		liquid_spread_function = "pour_spread",
+		starting_pressure = 15,
 		do_direct_damage_player = true,
+		linearized_flow = false,
+		fx_name_rim = "fx/wpnfx_lamp_oil_remains_rim",
+		damage_type = "burn",
+		sfx_name_start = "Play_props_lamp_oil_fire",
 		end_pressure = 2,
 		fx_name_filled = "fx/wpnfx_lamp_oil_remains",
-		fx_name_rim = "fx/wpnfx_lamp_oil_remains_rim",
-		linearized_flow = false,
-		liquid_spread_function = "pour_spread",
-		max_liquid = 50,
-		nav_cost_map_cost_type = "lamp_oil_fire",
-		sfx_name_start = "Play_props_lamp_oil_fire",
-		sfx_name_stop = "Stop_props_lamp_oil_fire",
-		starting_pressure = 15,
 		time_of_life = 10,
+		max_liquid = 50,
 		use_nav_cost_map_volumes = true,
+		nav_cost_map_cost_type = "lamp_oil_fire",
 		immune_breeds = {},
 		difficulty_direct_damage = {
 			easy = {
@@ -789,83 +779,83 @@ LiquidAreaDamageTemplates.templates = {
 				10,
 				10,
 				2,
-				10,
+				10
 			},
 			normal = {
 				10,
 				10,
 				10,
 				5,
-				10,
+				10
 			},
 			hard = {
 				10,
 				10,
 				10,
 				6,
-				10,
+				10
 			},
 			harder = {
 				10,
 				10,
 				10,
 				7,
-				10,
+				10
 			},
 			hardest = {
 				10,
 				10,
 				10,
 				8,
-				10,
+				10
 			},
 			cataclysm = {
 				10,
 				10,
 				10,
 				6,
-				10,
+				10
 			},
 			cataclysm_2 = {
 				10,
 				10,
 				10,
 				7,
-				10,
+				10
 			},
 			cataclysm_3 = {
 				10,
 				10,
 				10,
 				8,
-				10,
+				10
 			},
 			versus_base = {
 				10,
 				10,
 				10,
 				5,
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	warpfire_death_fire = {
-		cell_size = 0.75,
-		damage_type = "warpfire_ground",
 		do_direct_damage_ai = true,
+		sfx_name_stop = "Stop_enemy_stormfiend_fire_ground_loop",
+		cell_size = 0.75,
+		liquid_spread_function = "pour_spread",
+		starting_pressure = 15,
 		do_direct_damage_player = true,
+		linearized_flow = false,
+		fx_name_rim = "fx/wpnfx_warp_fire_remains_rim",
+		damage_type = "warpfire_ground",
+		sfx_name_start = "Play_enemy_stormfiend_fire_ground_loop",
 		end_pressure = 2,
 		fx_name_filled = "fx/chr_warp_fire_flamethrower_remains_01",
-		fx_name_rim = "fx/wpnfx_warp_fire_remains_rim",
-		linearized_flow = false,
-		liquid_spread_function = "pour_spread",
-		max_liquid = 20,
-		nav_cost_map_cost_type = "warpfire_thrower_warpfire",
-		sfx_name_start = "Play_enemy_stormfiend_fire_ground_loop",
-		sfx_name_stop = "Stop_enemy_stormfiend_fire_ground_loop",
-		starting_pressure = 15,
 		time_of_life = 5,
+		max_liquid = 20,
 		use_nav_cost_map_volumes = true,
+		nav_cost_map_cost_type = "warpfire_thrower_warpfire",
 		immune_breeds = {},
 		difficulty_direct_damage = {
 			easy = {
@@ -873,84 +863,84 @@ LiquidAreaDamageTemplates.templates = {
 				10,
 				10,
 				2,
-				10,
+				10
 			},
 			normal = {
 				10,
 				10,
 				10,
 				5,
-				10,
+				10
 			},
 			hard = {
 				10,
 				10,
 				10,
 				6,
-				10,
+				10
 			},
 			harder = {
 				10,
 				10,
 				10,
 				7,
-				10,
+				10
 			},
 			hardest = {
 				10,
 				10,
 				10,
 				8,
-				10,
+				10
 			},
 			cataclysm = {
 				10,
 				10,
 				10,
 				6,
-				10,
+				10
 			},
 			cataclysm_2 = {
 				10,
 				10,
 				10,
 				7,
-				10,
+				10
 			},
 			cataclysm_3 = {
 				10,
 				10,
 				10,
 				8,
-				10,
+				10
 			},
 			versus_base = {
 				10,
 				10,
 				10,
 				5,
-				10,
-			},
-		},
+				10
+			}
+		}
 	},
 	sienna_unchained_ability_patch = {
-		above = 2,
-		below = 30,
-		cell_size = 1,
-		damage_buff_template_name = "burning_dot_1tick",
-		damage_type = "burninating",
 		do_direct_damage_ai = false,
+		cell_size = 1,
+		max_liquid = 10,
+		below = 30,
+		starting_pressure = 15,
 		do_direct_damage_player = false,
+		damage_buff_template_name = "burning_dot_1tick",
+		linearized_flow = false,
+		fx_name_rim = "fx/chr_unchained_living_bomb_lingering",
+		liquid_spread_function = "pour_spread",
+		damage_type = "burninating",
+		sfx_name_start = "Play_props_lamp_oil_fire",
 		end_pressure = 2,
 		fx_name_filled = "fx/chr_unchained_living_bomb_lingering_rim",
-		fx_name_rim = "fx/chr_unchained_living_bomb_lingering",
-		linearized_flow = false,
-		liquid_spread_function = "pour_spread",
-		max_liquid = 10,
-		sfx_name_start = "Play_props_lamp_oil_fire",
-		sfx_name_stop = "Stop_props_lamp_oil_fire",
-		starting_pressure = 15,
 		time_of_life = 3,
+		above = 2,
+		sfx_name_stop = "Stop_props_lamp_oil_fire",
 		immune_breeds = {},
 		difficulty_direct_damage = {
 			easy = {
@@ -958,84 +948,84 @@ LiquidAreaDamageTemplates.templates = {
 				0,
 				0,
 				0,
-				0,
+				0
 			},
 			normal = {
 				0,
 				0,
 				0,
 				0,
-				0,
+				0
 			},
 			hard = {
 				0,
 				0,
 				0,
 				0,
-				0,
+				0
 			},
 			harder = {
 				0,
 				0,
 				0,
 				0,
-				0,
+				0
 			},
 			hardest = {
 				0,
 				0,
 				0,
 				0,
-				0,
+				0
 			},
 			cataclysm = {
 				0,
 				0,
 				0,
 				0,
-				0,
+				0
 			},
 			cataclysm_2 = {
 				0,
 				0,
 				0,
 				0,
-				0,
+				0
 			},
 			cataclysm_3 = {
 				0,
 				0,
 				0,
 				0,
-				0,
+				0
 			},
 			versus_base = {
 				0,
 				0,
 				0,
 				0,
-				0,
-			},
-		},
+				0
+			}
+		}
 	},
 	sienna_unchained_ability_patch_increased_damage = {
-		above = 2,
-		below = 30,
-		cell_size = 1,
-		damage_buff_template_name = "burning_dot_1tick",
-		damage_type = "burninating",
 		do_direct_damage_ai = false,
+		cell_size = 1,
+		max_liquid = 10,
+		below = 30,
+		starting_pressure = 15,
 		do_direct_damage_player = false,
+		damage_buff_template_name = "burning_dot_1tick",
+		linearized_flow = false,
+		fx_name_rim = "fx/chr_unchained_living_bomb_lingering",
+		liquid_spread_function = "pour_spread",
+		damage_type = "burninating",
+		sfx_name_start = "Play_props_lamp_oil_fire",
 		end_pressure = 2,
 		fx_name_filled = "fx/chr_unchained_living_bomb_lingering_rim",
-		fx_name_rim = "fx/chr_unchained_living_bomb_lingering",
-		linearized_flow = false,
-		liquid_spread_function = "pour_spread",
-		max_liquid = 10,
-		sfx_name_start = "Play_props_lamp_oil_fire",
-		sfx_name_stop = "Stop_props_lamp_oil_fire",
-		starting_pressure = 15,
 		time_of_life = 3,
+		above = 2,
+		sfx_name_stop = "Stop_props_lamp_oil_fire",
 		immune_breeds = {},
 		difficulty_direct_damage = {
 			easy = {
@@ -1043,238 +1033,223 @@ LiquidAreaDamageTemplates.templates = {
 				10,
 				10,
 				0,
-				10,
+				10
 			},
 			normal = {
 				10,
 				10,
 				10,
 				0,
-				10,
+				10
 			},
 			hard = {
 				10,
 				10,
 				10,
 				0,
-				10,
+				10
 			},
 			harder = {
 				10,
 				10,
 				10,
 				0,
-				10,
+				10
 			},
 			hardest = {
 				10,
 				10,
 				10,
 				0,
-				10,
+				10
 			},
 			cataclysm = {
 				10,
 				10,
 				10,
 				0,
-				10,
+				10
 			},
 			cataclysm_2 = {
 				10,
 				10,
 				10,
 				0,
-				10,
+				10
 			},
 			cataclysm_3 = {
 				10,
 				10,
 				10,
 				0,
-				10,
+				10
 			},
 			versus_base = {
 				10,
 				10,
 				10,
 				0,
-				10,
-			},
-		},
-	},
+				10
+			}
+		}
+	}
 }
 LiquidAreaDamageTemplates.templates.troll_chief_vomit = table.clone(LiquidAreaDamageTemplates.templates.bile_troll_vomit)
 LiquidAreaDamageTemplates.templates.troll_chief_vomit.fx_name_filled = "fx/wpnfx_troll_chief_vomit_impact_01"
 LiquidAreaDamageTemplates.templates.troll_chief_vomit_near = table.clone(LiquidAreaDamageTemplates.templates.bile_troll_vomit_near)
 LiquidAreaDamageTemplates.templates.troll_chief_vomit_near.fx_name_filled = "fx/wpnfx_troll_chief_vomit_impact_01"
 
-LiquidAreaDamageTemplates.pour_spread = function (angle)
+function LiquidAreaDamageTemplates.pour_spread(arg_5_0)
 	return 1
 end
 
-LiquidAreaDamageTemplates.default_spread = function (angle)
-	return math.max((1 - angle / math.pi)^2 - 0.45, 0)
+function LiquidAreaDamageTemplates.default_spread(arg_6_0)
+	return math.max((1 - arg_6_0 / math.pi)^2 - 0.45, 0)
 end
 
-LiquidAreaDamageTemplates.forward_spread = function (angle)
-	return math.max(1 - angle / (math.pi * 0.25), 0)
+function LiquidAreaDamageTemplates.forward_spread(arg_7_0)
+	return math.max(1 - arg_7_0 / (math.pi * 0.25), 0)
 end
 
-LiquidAreaDamageTemplates.flamethrower_spread = function (angle)
-	return math.max((1 - angle / math.pi)^2, 0)
+function LiquidAreaDamageTemplates.flamethrower_spread(arg_8_0)
+	return math.max((1 - arg_8_0 / math.pi)^2, 0)
 end
 
-LiquidAreaDamageTemplates.bile_troll_vomit_init = function (self, t)
-	local troll_unit = self._source_attacker_unit
+function LiquidAreaDamageTemplates.bile_troll_vomit_init(arg_9_0, arg_9_1)
+	local var_9_0 = arg_9_0._source_attacker_unit
 
-	if HEALTH_ALIVE[troll_unit] then
-		local world = self._world
-		local tongue_node = Unit.node(troll_unit, "j_tongue_01")
-		local tongue_pos = Unit.world_position(troll_unit, tongue_node)
-		local vomit_unit_name = "units/weapons/enemy/wpn_troll_vomit/wpn_troll_vomit"
-		local unit_spawner = Managers.state.unit_spawner
-		local vomit_unit = unit_spawner:spawn_local_unit(vomit_unit_name, tongue_pos, nil, nil)
+	if HEALTH_ALIVE[var_9_0] then
+		local var_9_1 = arg_9_0._world
+		local var_9_2 = Unit.node(var_9_0, "j_tongue_01")
+		local var_9_3 = Unit.world_position(var_9_0, var_9_2)
+		local var_9_4 = "units/weapons/enemy/wpn_troll_vomit/wpn_troll_vomit"
+		local var_9_5 = Managers.state.unit_spawner:spawn_local_unit(var_9_4, var_9_3, nil, nil)
 
-		World.link_unit(world, vomit_unit, troll_unit, tongue_node)
-		Unit.flow_event(vomit_unit, "fade_in")
+		World.link_unit(var_9_1, var_9_5, var_9_0, var_9_2)
+		Unit.flow_event(var_9_5, "fade_in")
 
-		self._vomit_unit = vomit_unit
-
-		local action = BreedActions.chaos_troll.vomit
-		local firing_time = action.firing_time
-
-		self._firing_time_deadline = t + firing_time
+		arg_9_0._vomit_unit = var_9_5
+		arg_9_0._firing_time_deadline = arg_9_1 + BreedActions.chaos_troll.vomit.firing_time
 	end
 end
 
-LiquidAreaDamageTemplates.vs_bile_troll_vomit_init = function (self, t)
-	local troll_unit = self._source_attacker_unit
+function LiquidAreaDamageTemplates.vs_bile_troll_vomit_init(arg_10_0, arg_10_1)
+	local var_10_0 = arg_10_0._source_attacker_unit
 
-	if HEALTH_ALIVE[troll_unit] then
-		local world = self._world
-		local vomit_unit_name = "units/weapons/enemy/wpn_troll_vomit/wpn_troll_vomit"
-		local unit_spawner = Managers.state.unit_spawner
-		local vomit_unit
-		local player = Managers.player:unit_owner(troll_unit)
+	if HEALTH_ALIVE[var_10_0] then
+		local var_10_1 = arg_10_0._world
+		local var_10_2 = "units/weapons/enemy/wpn_troll_vomit/wpn_troll_vomit"
+		local var_10_3 = Managers.state.unit_spawner
+		local var_10_4
+		local var_10_5 = Managers.player:unit_owner(var_10_0)
 
-		if player and player.remote then
-			local tongue_node = Unit.node(troll_unit, "j_tongue_01")
-			local tongue_pos = Unit.world_position(troll_unit, tongue_node)
+		if var_10_5 and var_10_5.remote then
+			local var_10_6 = Unit.node(var_10_0, "j_tongue_01")
+			local var_10_7 = Unit.world_position(var_10_0, var_10_6)
 
-			vomit_unit = unit_spawner:spawn_local_unit(vomit_unit_name, tongue_pos, nil, nil)
+			var_10_4 = var_10_3:spawn_local_unit(var_10_2, var_10_7, nil, nil)
 
-			World.link_unit(world, vomit_unit, troll_unit, tongue_node)
-			Unit.flow_event(vomit_unit, "fade_in")
+			World.link_unit(var_10_1, var_10_4, var_10_0, var_10_6)
+			Unit.flow_event(var_10_4, "fade_in")
 
-			self._fade_out_vomit = true
+			arg_10_0._fade_out_vomit = true
 		else
-			local first_person_extension = ScriptUnit.has_extension(troll_unit, "first_person_system")
-			local local_player = Managers.player:local_player()
+			local var_10_8 = ScriptUnit.has_extension(var_10_0, "first_person_system")
+			local var_10_9 = Managers.player:local_player()
 
-			if local_player then
-				local vp_name = local_player.viewport_name
-				local vp = ScriptWorld.viewport(self._world, vp_name, true)
-				local camera = ScriptViewport.camera(vp)
-				local camera_unit = Camera.get_data(camera, "unit")
-				local camera_position = first_person_extension:current_position()
+			if var_10_9 then
+				local var_10_10 = var_10_9.viewport_name
+				local var_10_11 = ScriptWorld.viewport(arg_10_0._world, var_10_10, true)
+				local var_10_12 = ScriptViewport.camera(var_10_11)
+				local var_10_13 = Camera.get_data(var_10_12, "unit")
+				local var_10_14 = var_10_8:current_position()
 
-				vomit_unit = unit_spawner:spawn_local_unit(vomit_unit_name, camera_position, nil, nil)
+				var_10_4 = var_10_3:spawn_local_unit(var_10_2, var_10_14, nil, nil)
 
-				World.link_unit(world, vomit_unit, camera_unit, 0)
-				Unit.set_local_position(vomit_unit, 0, Vector3(0, 0, -0.5))
-				Unit.set_local_rotation(vomit_unit, 0, Quaternion.axis_angle(Vector3.up(), math.pi / 2))
-				Unit.flow_event(vomit_unit, "spawn_1p_effect")
+				World.link_unit(var_10_1, var_10_4, var_10_13, 0)
+				Unit.set_local_position(var_10_4, 0, Vector3(0, 0, -0.5))
+				Unit.set_local_rotation(var_10_4, 0, Quaternion.axis_angle(Vector3.up(), math.pi / 2))
+				Unit.flow_event(var_10_4, "spawn_1p_effect")
 			end
 		end
 
-		self._vomit_unit = vomit_unit
-
-		local action = BreedActions.chaos_troll.vomit
-		local firing_time = action.firing_time
-
-		self._firing_time_deadline = t + firing_time
+		arg_10_0._vomit_unit = var_10_4
+		arg_10_0._firing_time_deadline = arg_10_1 + BreedActions.chaos_troll.vomit.firing_time
 	end
 end
 
-LiquidAreaDamageTemplates.nurgle_noxious_init = function (self, t)
-	local unit = self._source_attacker_unit
+function LiquidAreaDamageTemplates.nurgle_noxious_init(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_0._source_attacker_unit
 
-	if HEALTH_ALIVE[unit] then
-		local world = self._world
-		local node = Unit.node(unit, "j_spine")
-		local pos = Unit.world_position(unit, node)
-		local rotation
+	if HEALTH_ALIVE[var_11_0] then
+		local var_11_1 = arg_11_0._world
+		local var_11_2 = Unit.node(var_11_0, "j_spine")
+		local var_11_3 = Unit.world_position(var_11_0, var_11_2)
+		local var_11_4
 
-		if self._flow_dir then
-			local dir = self._flow_dir:unbox()
-
-			rotation = Quaternion.look(dir, Vector3.up())
+		if arg_11_0._flow_dir then
+			local var_11_5 = arg_11_0._flow_dir:unbox()
+			local var_11_6 = Quaternion.look(var_11_5, Vector3.up())
 		else
-			rotation = Quaternion.identity()
+			local var_11_7 = Quaternion.identity()
 		end
 
-		local vomit_unit_name = "units/weapons/enemy/wpn_troll_vomit/wpn_troll_vomit"
-		local unit_spawner = Managers.state.unit_spawner
-		local vomit_unit = unit_spawner:spawn_local_unit(vomit_unit_name, pos, nil, nil)
+		local var_11_8 = "units/weapons/enemy/wpn_troll_vomit/wpn_troll_vomit"
+		local var_11_9 = Managers.state.unit_spawner:spawn_local_unit(var_11_8, var_11_3, nil, nil)
 
-		World.link_unit(world, vomit_unit, unit, node)
-		Unit.set_local_scale(vomit_unit, 0, Vector3(0.6, 0.6, 0.6))
-		Unit.flow_event(vomit_unit, "fade_in")
+		World.link_unit(var_11_1, var_11_9, var_11_0, var_11_2)
+		Unit.set_local_scale(var_11_9, 0, Vector3(0.6, 0.6, 0.6))
+		Unit.flow_event(var_11_9, "fade_in")
 
-		self._vomit_unit = vomit_unit
-		self._firing_time_deadline = t + 1
+		arg_11_0._vomit_unit = var_11_9
+		arg_11_0._firing_time_deadline = arg_11_1 + 1
 	end
 end
 
-LiquidAreaDamageTemplates.bile_troll_vomit_update = function (self, t, dt)
-	local vomit_unit = self._vomit_unit
-	local troll_unit = self._source_attacker_unit
-	local source_unit_is_alive = HEALTH_ALIVE[troll_unit]
-	local firing_time_deadline = self._firing_time_deadline
+function LiquidAreaDamageTemplates.bile_troll_vomit_update(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = arg_12_0._vomit_unit
+	local var_12_1 = arg_12_0._source_attacker_unit
+	local var_12_2 = HEALTH_ALIVE[var_12_1]
+	local var_12_3 = arg_12_0._firing_time_deadline
 
-	if source_unit_is_alive and vomit_unit ~= nil and t < firing_time_deadline then
+	if var_12_2 and var_12_0 ~= nil and arg_12_1 < var_12_3 then
 		return true
 	else
-		if vomit_unit ~= nil then
-			Unit.flow_event(vomit_unit, "fade_out")
+		if var_12_0 ~= nil then
+			Unit.flow_event(var_12_0, "fade_out")
 
-			self._vomit_unit = nil
+			arg_12_0._vomit_unit = nil
 		end
 
 		return false
 	end
 end
 
-LiquidAreaDamageTemplates.vs_bile_troll_vomit_update = function (self, t, dt)
-	local vomit_unit = self._vomit_unit
-	local troll_unit = self._source_attacker_unit
-	local source_unit_is_alive = HEALTH_ALIVE[troll_unit]
-	local firing_time_deadline = self._firing_time_deadline
+function LiquidAreaDamageTemplates.vs_bile_troll_vomit_update(arg_13_0, arg_13_1, arg_13_2)
+	local var_13_0 = arg_13_0._vomit_unit
+	local var_13_1 = arg_13_0._source_attacker_unit
+	local var_13_2 = HEALTH_ALIVE[var_13_1]
+	local var_13_3 = arg_13_0._firing_time_deadline
 
-	if source_unit_is_alive and vomit_unit ~= nil and t < firing_time_deadline then
+	if var_13_2 and var_13_0 ~= nil and arg_13_1 < var_13_3 then
 		return true
 	else
-		if vomit_unit ~= nil then
-			if self._fade_out_vomit then
-				Unit.flow_event(vomit_unit, "fade_out")
+		if var_13_0 ~= nil then
+			if arg_13_0._fade_out_vomit then
+				Unit.flow_event(var_13_0, "fade_out")
 			end
 
-			self._vomit_unit = nil
+			arg_13_0._vomit_unit = nil
 		end
 
 		return false
 	end
 end
 
-LiquidAreaDamageTemplates.bile_troll_vomit_ground_base_condition = function (unit)
-	local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
-
-	return not buff_extension:has_buff_type("troll_bile_face")
+function LiquidAreaDamageTemplates.bile_troll_vomit_ground_base_condition(arg_14_0)
+	return not ScriptUnit.has_extension(arg_14_0, "buff_system"):has_buff_type("troll_bile_face")
 end
 
-LiquidAreaDamageTemplates.stormfiend_warpfire_ground_base_condition = function (unit)
-	local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
-
-	return not buff_extension:has_buff_type("stormfiend_warpfire_face")
+function LiquidAreaDamageTemplates.stormfiend_warpfire_ground_base_condition(arg_15_0)
+	return not ScriptUnit.has_extension(arg_15_0, "buff_system"):has_buff_type("stormfiend_warpfire_face")
 end

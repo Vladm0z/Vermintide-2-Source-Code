@@ -1,899 +1,881 @@
-﻿-- chunkname: @scripts/ui/dlc_morris/views/start_game_view/windows/start_game_window_deus_weekly_event.lua
+-- chunkname: @scripts/ui/dlc_morris/views/start_game_view/windows/start_game_window_deus_weekly_event.lua
 
-local definitions = local_require("scripts/ui/dlc_morris/views/start_game_view/windows/definitions/start_game_window_deus_weekly_event_definitions")
-local scenegraph_definition = definitions.scenegraph_definition
-local widget_definitions = definitions.widget_definitions
-local animation_definitions = definitions.animation_definitions
-local create_weekly_event_information_box = definitions.create_weekly_event_information_box
-local selector_input_definitions = definitions.selector_input_definitions
-local START_GAME_INPUT = "refresh_press"
-local SELECTION_INPUT = "confirm_press"
+local var_0_0 = local_require("scripts/ui/dlc_morris/views/start_game_view/windows/definitions/start_game_window_deus_weekly_event_definitions")
+local var_0_1 = var_0_0.scenegraph_definition
+local var_0_2 = var_0_0.widget_definitions
+local var_0_3 = var_0_0.animation_definitions
+local var_0_4 = var_0_0.create_weekly_event_information_box
+local var_0_5 = var_0_0.selector_input_definitions
+local var_0_6 = "refresh_press"
+local var_0_7 = "confirm_press"
 
 StartGameWindowDeusWeeklyEvent = class(StartGameWindowDeusWeeklyEvent)
 StartGameWindowDeusWeeklyEvent.NAME = "StartGameWindowDeusWeeklyEvent"
 
-StartGameWindowDeusWeeklyEvent.on_enter = function (self, params, offset)
+function StartGameWindowDeusWeeklyEvent.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameViewWindow] Enter Substate StartGameWindowDeusWeeklyEvent")
 
-	self._parent = params.parent
+	arg_1_0._parent = arg_1_1.parent
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_1_0 = arg_1_1.ingame_ui_context
 
-	self._ingame_ui_context = ingame_ui_context
-	self._ui_renderer = ingame_ui_context.ui_renderer
-	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self._input_index = params.input_index or 1
-	self._input_manager = ingame_ui_context.input_manager
-	self._render_settings = {
-		snap_pixel_positions = true,
+	arg_1_0._ingame_ui_context = var_1_0
+	arg_1_0._ui_renderer = var_1_0.ui_renderer
+	arg_1_0._ui_top_renderer = var_1_0.ui_top_renderer
+	arg_1_0._input_index = arg_1_1.input_index or 1
+	arg_1_0._input_manager = var_1_0.input_manager
+	arg_1_0._render_settings = {
+		snap_pixel_positions = true
 	}
-	self._animations = {}
+	arg_1_0._animations = {}
 
-	self:_create_ui_elements(params, offset)
-	self:_handle_new_selection(self._input_index)
+	arg_1_0:_create_ui_elements(arg_1_1, arg_1_2)
+	arg_1_0:_handle_new_selection(arg_1_0._input_index)
 
-	self._current_difficulty = self._parent:get_difficulty_option(true) or Managers.state.difficulty:get_difficulty()
+	arg_1_0._current_difficulty = arg_1_0._parent:get_difficulty_option(true) or Managers.state.difficulty:get_difficulty()
 
-	self:_update_difficulty_option(self._current_difficulty)
-	self:_fetch_event_data()
+	arg_1_0:_update_difficulty_option(arg_1_0._current_difficulty)
+	arg_1_0:_fetch_event_data()
 
-	self._is_focused = false
-	self._play_button_pressed = false
-	self._show_additional_settings = false
-	self._previous_can_play = nil
-	self._num_requests = 0
+	arg_1_0._is_focused = false
+	arg_1_0._play_button_pressed = false
+	arg_1_0._show_additional_settings = false
+	arg_1_0._previous_can_play = nil
+	arg_1_0._num_requests = 0
 
-	self._parent:change_generic_actions("deus_default")
-	self:_start_transition_animation("on_enter")
+	arg_1_0._parent:change_generic_actions("deus_default")
+	arg_1_0:_start_transition_animation("on_enter")
 end
 
-local EMPTY_TABLE = {}
+local var_0_8 = {}
 
-StartGameWindowDeusWeeklyEvent._fetch_event_data = function (self)
-	local live_event_interface = Managers.backend:get_interface("live_events")
-	local game_mode_data, information = live_event_interface:get_weekly_chaos_wastes_game_mode_data()
-	local rewards = live_event_interface:get_weekly_chaos_wastes_rewards_data() or EMPTY_TABLE
+function StartGameWindowDeusWeeklyEvent._fetch_event_data(arg_2_0)
+	local var_2_0 = Managers.backend:get_interface("live_events")
+	local var_2_1, var_2_2 = var_2_0:get_weekly_chaos_wastes_game_mode_data()
+	local var_2_3 = var_2_0:get_weekly_chaos_wastes_rewards_data() or var_0_8
 
-	self._refresh_time = os.time(os.date("!*t", information.end_timestamp / 1000))
-	self._weekly_journey_name = game_mode_data and game_mode_data.journey_name
+	arg_2_0._refresh_time = os.time(os.date("!*t", var_2_2.end_timestamp / 1000))
+	arg_2_0._weekly_journey_name = var_2_1 and var_2_1.journey_name
 
-	local widget_definition = create_weekly_event_information_box(game_mode_data)
-	local widget = UIWidget.init(widget_definition)
+	local var_2_4 = var_0_4(var_2_1)
+	local var_2_5 = UIWidget.init(var_2_4)
 
-	self._widgets[#self._widgets + 1] = widget
-	self._widgets_by_name.weekly_info_box = widget
+	arg_2_0._widgets[#arg_2_0._widgets + 1] = var_2_5
+	arg_2_0._widgets_by_name.weekly_info_box = var_2_5
 
-	local spacing = 10
-	local offset_y = 0
+	local var_2_6 = 10
+	local var_2_7 = 0
 
-	self._info_box_widgets = {}
-	offset_y = self:_setup_curses(game_mode_data, spacing, offset_y)
-	offset_y = self:_setup_boons(game_mode_data, spacing, offset_y)
-	offset_y = self:_setup_rewards(rewards, spacing, offset_y)
+	arg_2_0._info_box_widgets = {}
 
-	local excess_area = math.abs(scenegraph_definition.info_box.size[2] - math.abs(offset_y))
+	local var_2_8 = arg_2_0:_setup_curses(var_2_1, var_2_6, var_2_7)
+	local var_2_9 = arg_2_0:_setup_boons(var_2_1, var_2_6, var_2_8)
+	local var_2_10 = arg_2_0:_setup_rewards(var_2_3, var_2_6, var_2_9)
+	local var_2_11 = math.abs(var_0_1.info_box.size[2] - math.abs(var_2_10))
 
-	if excess_area > 0 then
-		local ui_scenegraph = self._ui_scenegraph
-		local scroll_area_scenegraph_id = "info_box_anchor"
-		local scroll_area_anchor_scenegraph_id = "scrollbar_window"
-		local enable_auto_scroll = true
-		local optional_scroll_area_hotspot_widget, horizontal_scrollbar
+	if var_2_11 > 0 then
+		local var_2_12 = arg_2_0._ui_scenegraph
+		local var_2_13 = "info_box_anchor"
+		local var_2_14 = "scrollbar_window"
+		local var_2_15 = true
+		local var_2_16
+		local var_2_17
 
-		self._scrollbar_ui = ScrollbarUI:new(ui_scenegraph, scroll_area_scenegraph_id, scroll_area_anchor_scenegraph_id, excess_area, enable_auto_scroll, optional_scroll_area_hotspot_widget, horizontal_scrollbar)
+		arg_2_0._scrollbar_ui = ScrollbarUI:new(var_2_12, var_2_13, var_2_14, var_2_11, var_2_15, var_2_16, var_2_17)
 	end
 end
 
-StartGameWindowDeusWeeklyEvent._setup_curses = function (self, game_mode_data, spacing, offset_y)
-	local header_type = "curse"
-	local widget_definition = definitions.create_header("cw_weekly_expedition_modifier_negative", offset_y, header_type)
-	local widget = UIWidget.init(widget_definition)
+function StartGameWindowDeusWeeklyEvent._setup_curses(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	local var_3_0 = "curse"
+	local var_3_1 = var_0_0.create_header("cw_weekly_expedition_modifier_negative", arg_3_3, var_3_0)
+	local var_3_2 = UIWidget.init(var_3_1)
 
-	self._info_box_widgets[#self._info_box_widgets + 1] = widget
-	self._widgets_by_name.curse_header = widget
-	offset_y = offset_y - 40 - spacing
+	arg_3_0._info_box_widgets[#arg_3_0._info_box_widgets + 1] = var_3_2
+	arg_3_0._widgets_by_name.curse_header = var_3_2
+	arg_3_3 = arg_3_3 - 40 - arg_3_2
 
-	local mutators = game_mode_data.mutators or EMPTY_TABLE
-	local inv_scale = RESOLUTION_LOOKUP.inv_scale
+	local var_3_3 = arg_3_1.mutators or var_0_8
+	local var_3_4 = RESOLUTION_LOOKUP.inv_scale
 
-	for idx, mutator_name in ipairs(mutators) do
-		local mutator_template = MutatorTemplates[mutator_name]
-		local title = mutator_template.display_name
-		local icon = mutator_template.icon
-		local desc = Localize(mutator_template.description)
-		local widget_definition = definitions.create_entry_widget(icon, title, desc, offset_y, spacing)
-		local widget = UIWidget.init(widget_definition)
+	for iter_3_0, iter_3_1 in ipairs(var_3_3) do
+		local var_3_5 = MutatorTemplates[iter_3_1]
+		local var_3_6 = var_3_5.display_name
+		local var_3_7 = var_3_5.icon
+		local var_3_8 = Localize(var_3_5.description)
+		local var_3_9 = var_0_0.create_entry_widget(var_3_7, var_3_6, var_3_8, arg_3_3, arg_3_2)
+		local var_3_10 = UIWidget.init(var_3_9)
 
-		self._info_box_widgets[#self._info_box_widgets + 1] = widget
-		self._widgets_by_name["curse_" .. idx] = widget
+		arg_3_0._info_box_widgets[#arg_3_0._info_box_widgets + 1] = var_3_10
+		arg_3_0._widgets_by_name["curse_" .. iter_3_0] = var_3_10
 
-		local text_style = widget.style.desc
-		local font, size_of_font = UIFontByResolution(text_style)
-		local font_material, font_size = font[1], size_of_font
-		local gui = self._ui_top_renderer.gui
-		local _, font_min, font_max = UIGetFontHeight(gui, text_style.font_type, font_size)
-		local full_font_height = (font_max - font_min) * inv_scale
-		local rows, return_indices = UIRenderer.word_wrap(self._ui_top_renderer, desc, font_material, font_size, text_style.area_size[1])
+		local var_3_11 = var_3_10.style.desc
+		local var_3_12, var_3_13 = UIFontByResolution(var_3_11)
+		local var_3_14 = var_3_12[1]
+		local var_3_15 = var_3_13
+		local var_3_16 = arg_3_0._ui_top_renderer.gui
+		local var_3_17, var_3_18, var_3_19 = UIGetFontHeight(var_3_16, var_3_11.font_type, var_3_15)
+		local var_3_20 = (var_3_19 - var_3_18) * var_3_4
+		local var_3_21, var_3_22 = UIRenderer.word_wrap(arg_3_0._ui_top_renderer, var_3_8, var_3_14, var_3_15, var_3_11.area_size[1])
 
-		offset_y = offset_y - full_font_height * #rows
+		arg_3_3 = arg_3_3 - var_3_20 * #var_3_21
 
-		local text_style = widget.style.title
-		local font, size_of_font = UIFontByResolution(text_style)
-		local font_material, font_size = font[1], size_of_font
-		local _, font_min, font_max = UIGetFontHeight(gui, text_style.font_type, font_size)
-		local full_font_height = (font_max - font_min) * inv_scale
-		local rows, return_indices = UIRenderer.word_wrap(self._ui_top_renderer, Localize(title), font_material, font_size, text_style.area_size[1])
+		local var_3_23 = var_3_10.style.title
+		local var_3_24, var_3_25 = UIFontByResolution(var_3_23)
+		local var_3_26 = var_3_24[1]
+		local var_3_27 = var_3_25
+		local var_3_28, var_3_29, var_3_30 = UIGetFontHeight(var_3_16, var_3_23.font_type, var_3_27)
+		local var_3_31 = (var_3_30 - var_3_29) * var_3_4
+		local var_3_32, var_3_33 = UIRenderer.word_wrap(arg_3_0._ui_top_renderer, Localize(var_3_6), var_3_26, var_3_27, var_3_23.area_size[1])
 
-		offset_y = offset_y - full_font_height * #rows - spacing
+		arg_3_3 = arg_3_3 - var_3_31 * #var_3_32 - arg_3_2
 	end
 
-	return offset_y - spacing
+	return arg_3_3 - arg_3_2
 end
 
-StartGameWindowDeusWeeklyEvent._setup_boons = function (self, game_mode_data, spacing, offset_y)
-	local header_type = "boon"
-	local widget_definition = definitions.create_header("cw_weekly_expedition_modifier_positive", offset_y, header_type)
-	local widget = UIWidget.init(widget_definition)
+function StartGameWindowDeusWeeklyEvent._setup_boons(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	local var_4_0 = "boon"
+	local var_4_1 = var_0_0.create_header("cw_weekly_expedition_modifier_positive", arg_4_3, var_4_0)
+	local var_4_2 = UIWidget.init(var_4_1)
 
-	self._info_box_widgets[#self._info_box_widgets + 1] = widget
-	self._widgets_by_name.boon_header = widget
-	offset_y = offset_y - 40 - spacing
+	arg_4_0._info_box_widgets[#arg_4_0._info_box_widgets + 1] = var_4_2
+	arg_4_0._widgets_by_name.boon_header = var_4_2
+	arg_4_3 = arg_4_3 - 40 - arg_4_2
 
-	local player = Managers.player:local_player()
-	local profile_index = player:profile_index()
-	local career_index = player:career_index()
-	local boons = game_mode_data.boons or EMPTY_TABLE
-	local inv_scale = RESOLUTION_LOOKUP.inv_scale
+	local var_4_3 = Managers.player:local_player()
+	local var_4_4 = var_4_3:profile_index()
+	local var_4_5 = var_4_3:career_index()
+	local var_4_6 = arg_4_1.boons or var_0_8
+	local var_4_7 = RESOLUTION_LOOKUP.inv_scale
 
-	for idx, boon_name in ipairs(boons) do
-		local power_up = DeusPowerUpsLookup[boon_name]
-		local title = power_up.display_name
-		local icon = DeusPowerUpUtils.get_power_up_icon(power_up, profile_index, career_index)
-		local desc = DeusPowerUpUtils.get_power_up_description(power_up, profile_index, career_index)
-		local widget_definition = definitions.create_entry_widget(icon, title, desc, offset_y)
-		local widget = UIWidget.init(widget_definition)
+	for iter_4_0, iter_4_1 in ipairs(var_4_6) do
+		local var_4_8 = DeusPowerUpsLookup[iter_4_1]
+		local var_4_9 = var_4_8.display_name
+		local var_4_10 = DeusPowerUpUtils.get_power_up_icon(var_4_8, var_4_4, var_4_5)
+		local var_4_11 = DeusPowerUpUtils.get_power_up_description(var_4_8, var_4_4, var_4_5)
+		local var_4_12 = var_0_0.create_entry_widget(var_4_10, var_4_9, var_4_11, arg_4_3)
+		local var_4_13 = UIWidget.init(var_4_12)
 
-		self._info_box_widgets[#self._info_box_widgets + 1] = widget
-		self._widgets_by_name["boon_" .. idx] = widget
+		arg_4_0._info_box_widgets[#arg_4_0._info_box_widgets + 1] = var_4_13
+		arg_4_0._widgets_by_name["boon_" .. iter_4_0] = var_4_13
 
-		local text_style = widget.style.desc
-		local font, size_of_font = UIFontByResolution(text_style)
-		local font_material, font_size = font[1], size_of_font
-		local gui = self._ui_top_renderer.gui
-		local _, font_min, font_max = UIGetFontHeight(gui, text_style.font_type, font_size)
-		local full_font_height = (font_max - font_min) * inv_scale
-		local rows, return_indices = UIRenderer.word_wrap(self._ui_top_renderer, desc, font_material, font_size, text_style.area_size[1])
+		local var_4_14 = var_4_13.style.desc
+		local var_4_15, var_4_16 = UIFontByResolution(var_4_14)
+		local var_4_17 = var_4_15[1]
+		local var_4_18 = var_4_16
+		local var_4_19 = arg_4_0._ui_top_renderer.gui
+		local var_4_20, var_4_21, var_4_22 = UIGetFontHeight(var_4_19, var_4_14.font_type, var_4_18)
+		local var_4_23 = (var_4_22 - var_4_21) * var_4_7
+		local var_4_24, var_4_25 = UIRenderer.word_wrap(arg_4_0._ui_top_renderer, var_4_11, var_4_17, var_4_18, var_4_14.area_size[1])
 
-		offset_y = offset_y - full_font_height * #rows
+		arg_4_3 = arg_4_3 - var_4_23 * #var_4_24
 
-		local text_style = widget.style.title
-		local font, size_of_font = UIFontByResolution(text_style)
-		local font_material, font_size = font[1], size_of_font
-		local _, font_min, font_max = UIGetFontHeight(gui, text_style.font_type, font_size)
-		local full_font_height = (font_max - font_min) * inv_scale
-		local rows, return_indices = UIRenderer.word_wrap(self._ui_top_renderer, Localize(title), font_material, font_size, text_style.area_size[1])
+		local var_4_26 = var_4_13.style.title
+		local var_4_27, var_4_28 = UIFontByResolution(var_4_26)
+		local var_4_29 = var_4_27[1]
+		local var_4_30 = var_4_28
+		local var_4_31, var_4_32, var_4_33 = UIGetFontHeight(var_4_19, var_4_26.font_type, var_4_30)
+		local var_4_34 = (var_4_33 - var_4_32) * var_4_7
+		local var_4_35, var_4_36 = UIRenderer.word_wrap(arg_4_0._ui_top_renderer, Localize(var_4_9), var_4_29, var_4_30, var_4_26.area_size[1])
 
-		offset_y = offset_y - full_font_height * #rows - spacing
+		arg_4_3 = arg_4_3 - var_4_34 * #var_4_35 - arg_4_2
 	end
 
-	return offset_y - spacing
+	return arg_4_3 - arg_4_2
 end
 
-StartGameWindowDeusWeeklyEvent._setup_rewards = function (self, rewards, spacing, offset_y)
-	local header_type
-	local widget_definition = definitions.create_header("cw_weekly_expedition_rewards_name", offset_y, header_type)
-	local widget = UIWidget.init(widget_definition)
-	local widget_style = widget.style
+function StartGameWindowDeusWeeklyEvent._setup_rewards(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	local var_5_0
+	local var_5_1 = var_0_0.create_header("cw_weekly_expedition_rewards_name", arg_5_3, var_5_0)
+	local var_5_2 = UIWidget.init(var_5_1)
 
-	widget_style.header.text_color = Colors.get_color_table_with_alpha("white", 255)
-	self._info_box_widgets[#self._info_box_widgets + 1] = widget
-	self._widgets_by_name.rewards_header = widget
-	offset_y = offset_y - 40 - spacing
+	var_5_2.style.header.text_color = Colors.get_color_table_with_alpha("white", 255)
+	arg_5_0._info_box_widgets[#arg_5_0._info_box_widgets + 1] = var_5_2
+	arg_5_0._widgets_by_name.rewards_header = var_5_2
+	arg_5_3 = arg_5_3 - 40 - arg_5_2
 
-	local rewards = rewards
-	local inv_scale = RESOLUTION_LOOKUP.inv_scale
+	local var_5_3 = arg_5_1
+	local var_5_4 = RESOLUTION_LOOKUP.inv_scale
 
-	for index, difficulty_name in ipairs(DefaultDifficulties) do
-		local reward = rewards and rewards[difficulty_name]
+	for iter_5_0, iter_5_1 in ipairs(DefaultDifficulties) do
+		local var_5_5 = var_5_3 and var_5_3[iter_5_1]
 
-		if reward then
-			local reward_data = self:_evaluate_rewards(reward, difficulty_name)
-			local widget_definition = definitions.create_reward_widget(reward_data, offset_y)
-			local widget = UIWidget.init(widget_definition)
+		if var_5_5 then
+			local var_5_6 = arg_5_0:_evaluate_rewards(var_5_5, iter_5_1)
+			local var_5_7 = var_0_0.create_reward_widget(var_5_6, arg_5_3)
+			local var_5_8 = UIWidget.init(var_5_7)
 
-			self._info_box_widgets[#self._info_box_widgets + 1] = widget
-			self._widgets_by_name["reward_" .. index] = widget
+			arg_5_0._info_box_widgets[#arg_5_0._info_box_widgets + 1] = var_5_8
+			arg_5_0._widgets_by_name["reward_" .. iter_5_0] = var_5_8
 
-			local text_style = widget.style.desc
-			local font, size_of_font = UIFontByResolution(text_style)
-			local font_material, font_size = font[1], size_of_font
-			local gui = self._ui_top_renderer.gui
-			local _, font_min, font_max = UIGetFontHeight(gui, text_style.font_type, font_size)
-			local full_font_height = (font_max - font_min) * inv_scale
-			local rows, return_indices = UIRenderer.word_wrap(self._ui_top_renderer, Localize(reward_data.desc or " "), font_material, font_size, text_style.area_size[1])
+			local var_5_9 = var_5_8.style.desc
+			local var_5_10, var_5_11 = UIFontByResolution(var_5_9)
+			local var_5_12 = var_5_10[1]
+			local var_5_13 = var_5_11
+			local var_5_14 = arg_5_0._ui_top_renderer.gui
+			local var_5_15, var_5_16, var_5_17 = UIGetFontHeight(var_5_14, var_5_9.font_type, var_5_13)
+			local var_5_18 = (var_5_17 - var_5_16) * var_5_4
+			local var_5_19, var_5_20 = UIRenderer.word_wrap(arg_5_0._ui_top_renderer, Localize(var_5_6.desc or " "), var_5_12, var_5_13, var_5_9.area_size[1])
 
-			offset_y = offset_y - full_font_height * #rows - spacing - 20
+			arg_5_3 = arg_5_3 - var_5_18 * #var_5_19 - arg_5_2 - 20
 		end
 	end
 
-	return offset_y - spacing
+	return arg_5_3 - arg_5_2
 end
 
-StartGameWindowDeusWeeklyEvent._evaluate_rewards = function (self, data, difficulty_name)
-	local rewards = data.rewards
-	local claimed = data.claimed
-	local reward_data = {
-		difficulty_name = Localize(DifficultySettings[difficulty_name] and DifficultySettings[difficulty_name].display_name or "lb_unknown"),
-		num_rewards = #rewards,
-		collected = claimed,
+function StartGameWindowDeusWeeklyEvent._evaluate_rewards(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = arg_6_1.rewards
+	local var_6_1 = arg_6_1.claimed
+	local var_6_2 = {
+		difficulty_name = Localize(DifficultySettings[arg_6_2] and DifficultySettings[arg_6_2].display_name or "lb_unknown"),
+		num_rewards = #var_6_0,
+		collected = var_6_1
 	}
-	local first_reward = rewards[1]
-	local reward_type = first_reward and first_reward.reward_type
+	local var_6_3 = var_6_0[1]
+	local var_6_4 = var_6_3 and var_6_3.reward_type
 
-	if reward_type == "experience" then
-		local amount = tonumber(first_reward.amount) or 0
+	if var_6_4 == "experience" then
+		local var_6_5 = tonumber(var_6_3.amount) or 0
 
-		reward_data.icon = "experience"
+		var_6_2.icon = "experience"
 
-		local desc = Localize("cw_weekly_expedition_xp_reward")
+		local var_6_6 = Localize("cw_weekly_expedition_xp_reward")
 
-		reward_data.desc = string.format(desc, amount)
-	elseif reward_type == "item" or reward_type == "loot_chest" then
-		local item_name = first_reward.item_name or first_reward.weapon_skin_name
-		local item = item_name and ItemMasterList[item_name]
+		var_6_2.desc = string.format(var_6_6, var_6_5)
+	elseif var_6_4 == "item" or var_6_4 == "loot_chest" then
+		local var_6_7 = var_6_3.item_name or var_6_3.weapon_skin_name
+		local var_6_8 = var_6_7 and ItemMasterList[var_6_7]
 
-		reward_data.desc = Localize(item and item.display_name or "lb_unkown")
-		reward_data.icon = item and item.inventory_icon or "icons_placeholder"
-	elseif reward_type == "weapon_skin" then
-		local item_name = first_reward.item_name or first_reward.weapon_skin_name
-		local backend_crafting = Managers.backend:get_interface("crafting")
-		local unlocked_weapon_skins = backend_crafting:get_unlocked_weapon_skins()
+		var_6_2.desc = Localize(var_6_8 and var_6_8.display_name or "lb_unkown")
+		var_6_2.icon = var_6_8 and var_6_8.inventory_icon or "icons_placeholder"
+	elseif var_6_4 == "weapon_skin" then
+		local var_6_9 = var_6_3.item_name or var_6_3.weapon_skin_name
+		local var_6_10 = Managers.backend:get_interface("crafting"):get_unlocked_weapon_skins()
 
-		reward_data.collected = claimed or unlocked_weapon_skins[item_name] ~= nil
+		var_6_2.collected = var_6_1 or var_6_10[var_6_9] ~= nil
 
-		local item = WeaponSkins.skins[item_name] or ItemMasterList[item_name]
+		local var_6_11 = WeaponSkins.skins[var_6_9] or ItemMasterList[var_6_9]
 
-		reward_data.desc = Localize(item and item.display_name or "lb_unkown")
-		reward_data.icon = item and item.inventory_icon or "icons_placeholder"
+		var_6_2.desc = Localize(var_6_11 and var_6_11.display_name or "lb_unkown")
+		var_6_2.icon = var_6_11 and var_6_11.inventory_icon or "icons_placeholder"
 	else
-		reward_data.icon = "icons_placeholder"
-		reward_data.desc = Localize("lb_unkown")
+		var_6_2.icon = "icons_placeholder"
+		var_6_2.desc = Localize("lb_unkown")
 	end
 
-	return reward_data
+	return var_6_2
 end
 
-StartGameWindowDeusWeeklyEvent._setup_debug_texts = function (self, scenegraph_id, spacing, offset_y)
-	local scenegraph_id = "info_box_anchor"
-	local temp_text_style = {
-		dynamic_font_size = false,
+function StartGameWindowDeusWeeklyEvent._setup_debug_texts(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	local var_7_0 = "info_box_anchor"
+	local var_7_1 = {
 		font_size = 20,
-		font_type = "hell_shark_masked",
-		horizontal_alignment = "left",
-		localize = false,
 		upper_case = false,
+		localize = false,
 		use_shadow = false,
-		vertical_alignment = "top",
 		word_wrap = true,
+		horizontal_alignment = "left",
+		vertical_alignment = "top",
+		dynamic_font_size = false,
+		font_type = "hell_shark_masked",
 		text_color = Colors.get_color_table_with_alpha("white", 255),
 		offset = {
 			0,
 			0,
-			2,
-		},
+			2
+		}
 	}
-	local font, size_of_font = UIFontByResolution(temp_text_style)
-	local font_material, font_size = font[1], size_of_font
-	local gui = self._ui_top_renderer.gui
-	local _, font_min, font_max = UIGetFontHeight(gui, temp_text_style.font_type, font_size)
-	local inv_scale = RESOLUTION_LOOKUP.inv_scale
-	local full_font_height = (font_max - font_min) * inv_scale
-	local text = "This is just a temporary text This is just a temporary text This is just a temporary text"
+	local var_7_2, var_7_3 = UIFontByResolution(var_7_1)
+	local var_7_4 = var_7_2[1]
+	local var_7_5 = var_7_3
+	local var_7_6 = arg_7_0._ui_top_renderer.gui
+	local var_7_7, var_7_8, var_7_9 = UIGetFontHeight(var_7_6, var_7_1.font_type, var_7_5)
+	local var_7_10 = RESOLUTION_LOOKUP.inv_scale
+	local var_7_11 = (var_7_9 - var_7_8) * var_7_10
+	local var_7_12 = "This is just a temporary text This is just a temporary text This is just a temporary text"
 
-	for i = 1, 50 do
-		local index_text = text .. " " .. i
-		local widget_definition = UIWidgets.create_simple_text(index_text, scenegraph_id, font_size, nil, temp_text_style)
-		local widget = UIWidget.init(widget_definition)
+	for iter_7_0 = 1, 50 do
+		local var_7_13 = var_7_12 .. " " .. iter_7_0
+		local var_7_14 = UIWidgets.create_simple_text(var_7_13, var_7_0, var_7_5, nil, var_7_1)
+		local var_7_15 = UIWidget.init(var_7_14)
 
-		widget.offset[2] = offset_y
-		self._widgets[#self._widgets + 1] = widget
-		self._widgets_by_name["temp_text_" .. i] = widget
+		var_7_15.offset[2] = arg_7_3
+		arg_7_0._widgets[#arg_7_0._widgets + 1] = var_7_15
+		arg_7_0._widgets_by_name["temp_text_" .. iter_7_0] = var_7_15
 
-		local rows, return_indices = UIRenderer.word_wrap(self._ui_top_renderer, index_text, font_material, font_size, scenegraph_definition.info_box.size[1])
+		local var_7_16, var_7_17 = UIRenderer.word_wrap(arg_7_0._ui_top_renderer, var_7_13, var_7_4, var_7_5, var_0_1.info_box.size[1])
 
-		offset_y = offset_y - full_font_height * #rows - spacing
+		arg_7_3 = arg_7_3 - var_7_11 * #var_7_16 - arg_7_2
 	end
 
-	return offset_y
+	return arg_7_3
 end
 
-StartGameWindowDeusWeeklyEvent._start_transition_animation = function (self, animation_name)
-	local params = {
-		render_settings = self._render_settings,
+function StartGameWindowDeusWeeklyEvent._start_transition_animation(arg_8_0, arg_8_1)
+	local var_8_0 = {
+		render_settings = arg_8_0._render_settings
 	}
-	local widgets = {}
-	local anim_id = self._ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
+	local var_8_1 = {}
+	local var_8_2 = arg_8_0._ui_animator:start_animation(arg_8_1, var_8_1, var_0_1, var_8_0)
 
-	self._animations[animation_name] = anim_id
+	arg_8_0._animations[arg_8_1] = var_8_2
 end
 
-StartGameWindowDeusWeeklyEvent._create_ui_elements = function (self, params, offset)
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-	self._widgets, self._widgets_by_name = UIUtils.create_widgets(definitions.widget_definitions)
+function StartGameWindowDeusWeeklyEvent._create_ui_elements(arg_9_0, arg_9_1, arg_9_2)
+	arg_9_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
+	arg_9_0._widgets, arg_9_0._widgets_by_name = UIUtils.create_widgets(var_0_0.widget_definitions)
 
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_9_0._ui_renderer)
 
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
+	arg_9_0._ui_animator = UIAnimator:new(arg_9_0._ui_scenegraph, var_0_3)
 
-	if offset then
-		local window_position = self._ui_scenegraph.window.local_position
+	if arg_9_2 then
+		local var_9_0 = arg_9_0._ui_scenegraph.window.local_position
 
-		window_position[1] = window_position[1] + offset[1]
-		window_position[2] = window_position[2] + offset[2]
-		window_position[3] = window_position[3] + offset[3]
+		var_9_0[1] = var_9_0[1] + arg_9_2[1]
+		var_9_0[2] = var_9_0[2] + arg_9_2[2]
+		var_9_0[3] = var_9_0[3] + arg_9_2[3]
 	end
 
-	self._widgets_by_name.difficulty_info.content.visible = false
+	arg_9_0._widgets_by_name.difficulty_info.content.visible = false
 end
 
-StartGameWindowDeusWeeklyEvent.on_exit = function (self, params)
+function StartGameWindowDeusWeeklyEvent.on_exit(arg_10_0, arg_10_1)
 	print("[StartGameViewWindow] Exit Substate StartGameWindowDeusWeeklyEvent")
 
-	self._ui_animator = nil
+	arg_10_0._ui_animator = nil
 
-	if self._play_button_pressed then
-		params.input_index = nil
+	if arg_10_0._play_button_pressed then
+		arg_10_1.input_index = nil
 	else
-		params.input_index = self._input_index
+		arg_10_1.input_index = arg_10_0._input_index
 	end
 
-	self._parent:set_difficulty_option(self._current_difficulty)
+	arg_10_0._parent:set_difficulty_option(arg_10_0._current_difficulty)
 end
 
-StartGameWindowDeusWeeklyEvent.set_focus = function (self, focused)
-	self._is_focused = focused
+function StartGameWindowDeusWeeklyEvent.set_focus(arg_11_0, arg_11_1)
+	arg_11_0._is_focused = arg_11_1
 end
 
-StartGameWindowDeusWeeklyEvent.update = function (self, dt, t)
-	self:_update_can_play()
-	self:_update_animations(dt)
-	self:_update_time_left()
-	self:_handle_gamepad_activity()
-	self:_handle_input(dt, t)
-	self:_draw(dt, t)
+function StartGameWindowDeusWeeklyEvent.update(arg_12_0, arg_12_1, arg_12_2)
+	arg_12_0:_update_can_play()
+	arg_12_0:_update_animations(arg_12_1)
+	arg_12_0:_update_time_left()
+	arg_12_0:_handle_gamepad_activity()
+	arg_12_0:_handle_input(arg_12_1, arg_12_2)
+	arg_12_0:_draw(arg_12_1, arg_12_2)
 end
 
-StartGameWindowDeusWeeklyEvent.post_update = function (self, dt, t)
+function StartGameWindowDeusWeeklyEvent.post_update(arg_13_0, arg_13_1, arg_13_2)
 	return
 end
 
-StartGameWindowDeusWeeklyEvent._handle_gamepad_activity = function (self)
-	local force_update = self.gamepad_active_last_frame == nil
-	local mouse_active = Managers.input:is_device_active("mouse")
+function StartGameWindowDeusWeeklyEvent._handle_gamepad_activity(arg_14_0)
+	local var_14_0 = arg_14_0.gamepad_active_last_frame == nil
 
-	if not mouse_active then
-		if not self.gamepad_active_last_frame or force_update then
-			self.gamepad_active_last_frame = true
-			self._input_index = 1
+	if not Managers.input:is_device_active("mouse") then
+		if not arg_14_0.gamepad_active_last_frame or var_14_0 then
+			arg_14_0.gamepad_active_last_frame = true
+			arg_14_0._input_index = 1
 
-			local input_funcs = selector_input_definitions[self._input_index]
+			local var_14_1 = var_0_5[arg_14_0._input_index]
 
-			if input_funcs and input_funcs.enter_requirements(self) then
-				input_funcs.on_enter(self)
+			if var_14_1 and var_14_1.enter_requirements(arg_14_0) then
+				var_14_1.on_enter(arg_14_0)
 			end
 		end
-	elseif self.gamepad_active_last_frame or force_update then
-		self.gamepad_active_last_frame = false
+	elseif arg_14_0.gamepad_active_last_frame or var_14_0 then
+		arg_14_0.gamepad_active_last_frame = false
 
-		local input_funcs = selector_input_definitions[self._input_index]
-
-		input_funcs.on_exit(self)
+		var_0_5[arg_14_0._input_index].on_exit(arg_14_0)
 	end
 end
 
-StartGameWindowDeusWeeklyEvent._update_can_play = function (self)
-	local can_play = self:_can_play()
-	local play_button = self._widgets_by_name.play_button
+function StartGameWindowDeusWeeklyEvent._update_can_play(arg_15_0)
+	local var_15_0 = arg_15_0:_can_play()
 
-	play_button.content.button_hotspot.disable_button = not can_play
+	arg_15_0._widgets_by_name.play_button.content.button_hotspot.disable_button = not var_15_0
 
-	local input_desc = "deus_default"
+	local var_15_1 = "deus_default"
 
-	if can_play then
-		input_desc = "deus_default_play"
-	elseif self._dlc_locked then
-		input_desc = "deus_default_buy"
+	if var_15_0 then
+		var_15_1 = "deus_default_play"
+	elseif arg_15_0._dlc_locked then
+		var_15_1 = "deus_default_buy"
 	end
 
-	if input_desc ~= self._prev_input_desc then
-		self._parent:set_input_description(input_desc)
+	if var_15_1 ~= arg_15_0._prev_input_desc then
+		arg_15_0._parent:set_input_description(var_15_1)
 
-		self._prev_input_desc = input_desc
+		arg_15_0._prev_input_desc = var_15_1
 	end
 end
 
-StartGameWindowDeusWeeklyEvent._handle_input = function (self, dt, t)
-	local parent = self._parent
-	local input_service = parent:window_input_service()
-	local mouse_active = Managers.input:is_device_active("mouse")
+function StartGameWindowDeusWeeklyEvent._handle_input(arg_16_0, arg_16_1, arg_16_2)
+	local var_16_0 = arg_16_0._parent
+	local var_16_1 = var_16_0:window_input_service()
+	local var_16_2 = Managers.input:is_device_active("mouse")
 
-	if not mouse_active then
-		local input_index = self._input_index
-		local input_change
+	if not var_16_2 then
+		local var_16_3 = arg_16_0._input_index
+		local var_16_4
 
-		if input_service:get("move_down") then
-			input_index = input_index + 1
-			input_change = 1
-		elseif input_service:get("move_up") then
-			input_index = input_index - 1
-			input_change = -1
+		if var_16_1:get("move_down") then
+			var_16_3 = var_16_3 + 1
+			var_16_4 = 1
+		elseif var_16_1:get("move_up") then
+			var_16_3 = var_16_3 - 1
+			var_16_4 = -1
 		else
-			local input_funcs = selector_input_definitions[input_index]
-
-			input_funcs.update(self, input_service, dt, t)
+			var_0_5[var_16_3].update(arg_16_0, var_16_1, arg_16_1, arg_16_2)
 		end
 
-		if input_index ~= self._input_index then
-			self:_gamepad_selector_input_func(input_index, input_change)
+		if var_16_3 ~= arg_16_0._input_index then
+			arg_16_0:_gamepad_selector_input_func(var_16_3, var_16_4)
 		end
 
-		local gamepad_confirm_pressed = input_service:get(SELECTION_INPUT, true)
-
-		if gamepad_confirm_pressed and self._dlc_locked then
-			Managers.unlock:open_dlc_page(self._dlc_name)
+		if var_16_1:get(var_0_7, true) and arg_16_0._dlc_locked then
+			Managers.unlock:open_dlc_page(arg_16_0._dlc_name)
 		end
 
-		if self:_can_play() and input_service:get(START_GAME_INPUT) then
-			self._parent:set_difficulty_option(self._current_difficulty)
+		if arg_16_0:_can_play() and var_16_1:get(var_0_6) then
+			arg_16_0._parent:set_difficulty_option(arg_16_0._current_difficulty)
 
-			self._play_button_pressed = true
+			arg_16_0._play_button_pressed = true
 
-			self._parent:play(t, "deus_weekly")
+			arg_16_0._parent:play(arg_16_2, "deus_weekly")
 		end
 	else
-		local widgets_by_name = self._widgets_by_name
+		local var_16_5 = arg_16_0._widgets_by_name
 
-		for i = 1, #selector_input_definitions do
-			local widget_name = selector_input_definitions[i].widget_name
-			local widget = widgets_by_name[widget_name]
-			local is_selected = widget.content.is_selected
+		for iter_16_0 = 1, #var_0_5 do
+			local var_16_6 = var_0_5[iter_16_0].widget_name
+			local var_16_7 = var_16_5[var_16_6]
+			local var_16_8 = var_16_7.content.is_selected
 
-			if widget_name == "difficulty_stepper" then
-				if not is_selected and UIUtils.is_button_hover_enter(widget, "left_arrow_hotspot") then
-					self:_handle_new_selection(i)
-					self:_play_sound("Play_hud_hover")
+			if var_16_6 == "difficulty_stepper" then
+				if not var_16_8 and UIUtils.is_button_hover_enter(var_16_7, "left_arrow_hotspot") then
+					arg_16_0:_handle_new_selection(iter_16_0)
+					arg_16_0:_play_sound("Play_hud_hover")
 				end
 
-				if not is_selected and UIUtils.is_button_hover_enter(widget, "right_arrow_hotspot") then
-					self:_handle_new_selection(i)
-					self:_play_sound("Play_hud_hover")
+				if not var_16_8 and UIUtils.is_button_hover_enter(var_16_7, "right_arrow_hotspot") then
+					arg_16_0:_handle_new_selection(iter_16_0)
+					arg_16_0:_play_sound("Play_hud_hover")
 				end
 
-				if UIUtils.is_button_hover(widget, "info_hotspot") or UIUtils.is_button_hover(self._widgets_by_name.difficulty_info, "widget_hotspot") or not mouse_active and is_selected then
-					local widgets = {
-						difficulty_info = self._widgets_by_name.difficulty_info,
-						upsell_button = self._widgets_by_name.upsell_button,
+				if UIUtils.is_button_hover(var_16_7, "info_hotspot") or UIUtils.is_button_hover(arg_16_0._widgets_by_name.difficulty_info, "widget_hotspot") or not var_16_2 and var_16_8 then
+					local var_16_9 = {
+						difficulty_info = arg_16_0._widgets_by_name.difficulty_info,
+						upsell_button = arg_16_0._widgets_by_name.upsell_button
 					}
 
-					if not self._diff_info_anim_played then
-						self._diff_anim_id = self._ui_animator:start_animation("difficulty_info_enter", widgets, scenegraph_definition)
-						self._diff_info_anim_played = true
+					if not arg_16_0._diff_info_anim_played then
+						arg_16_0._diff_anim_id = arg_16_0._ui_animator:start_animation("difficulty_info_enter", var_16_9, var_0_1)
+						arg_16_0._diff_info_anim_played = true
 					end
 
-					self:_handle_difficulty_info(true)
+					arg_16_0:_handle_difficulty_info(true)
 				else
-					if self._diff_anim_id then
-						self._ui_animator:stop_animation(self._diff_anim_id)
+					if arg_16_0._diff_anim_id then
+						arg_16_0._ui_animator:stop_animation(arg_16_0._diff_anim_id)
 					end
 
-					self._diff_info_anim_played = false
-					self._widgets_by_name.upsell_button.content.visible = false
-					self._widgets_by_name.difficulty_info.content.visible = false
+					arg_16_0._diff_info_anim_played = false
+					arg_16_0._widgets_by_name.upsell_button.content.visible = false
+					arg_16_0._widgets_by_name.difficulty_info.content.visible = false
 
-					self:_handle_difficulty_info(false)
+					arg_16_0:_handle_difficulty_info(false)
 				end
 
-				if UIUtils.is_button_pressed(widget, "left_arrow_hotspot") or input_service:get("move_left") then
-					self:_option_selected(widget_name, "left_arrow", t)
-				elseif UIUtils.is_button_pressed(widget, "right_arrow_hotspot") or input_service:get("move_right") then
-					self:_option_selected(widget_name, "right_arrow", t)
+				if UIUtils.is_button_pressed(var_16_7, "left_arrow_hotspot") or var_16_1:get("move_left") then
+					arg_16_0:_option_selected(var_16_6, "left_arrow", arg_16_2)
+				elseif UIUtils.is_button_pressed(var_16_7, "right_arrow_hotspot") or var_16_1:get("move_right") then
+					arg_16_0:_option_selected(var_16_6, "right_arrow", arg_16_2)
 				end
-			elseif widget_name == "play_button" and self:_can_play() then
-				if not is_selected and UIUtils.is_button_hover_enter(widgets_by_name.play_button) then
-					self:_handle_new_selection(i)
-					self:_play_sound("Play_hud_hover")
+			elseif var_16_6 == "play_button" and arg_16_0:_can_play() then
+				if not var_16_8 and UIUtils.is_button_hover_enter(var_16_5.play_button) then
+					arg_16_0:_handle_new_selection(iter_16_0)
+					arg_16_0:_play_sound("Play_hud_hover")
 				end
 
-				if UIUtils.is_button_pressed(widgets_by_name.play_button) then
-					self:_option_selected(widget_name, "play_button", t)
+				if UIUtils.is_button_pressed(var_16_5.play_button) then
+					arg_16_0:_option_selected(var_16_6, "play_button", arg_16_2)
 				end
 			end
 		end
 
-		local upsell_button = self._widgets_by_name.upsell_button
+		local var_16_10 = arg_16_0._widgets_by_name.upsell_button
 
-		if UIUtils.is_button_pressed(upsell_button) then
-			Managers.unlock:open_dlc_page(self._dlc_name)
+		if UIUtils.is_button_pressed(var_16_10) then
+			Managers.unlock:open_dlc_page(arg_16_0._dlc_name)
 		end
 	end
 
-	local consume = true
+	local var_16_11 = true
 
-	if DLCSettings.quick_play_preferences and input_service:get("right_stick_press", consume) then
-		parent:set_layout_by_name("adventure_level_preferences")
+	if DLCSettings.quick_play_preferences and var_16_1:get("right_stick_press", var_16_11) then
+		var_16_0:set_layout_by_name("adventure_level_preferences")
 	end
 end
 
-StartGameWindowDeusWeeklyEvent._play_sound = function (self, event)
-	return self._parent:play_sound(event)
+function StartGameWindowDeusWeeklyEvent._play_sound(arg_17_0, arg_17_1)
+	return arg_17_0._parent:play_sound(arg_17_1)
 end
 
-StartGameWindowDeusWeeklyEvent._can_play = function (self)
-	local selected_difficulty_key = self._current_difficulty
-	local can_play = selected_difficulty_key ~= nil and not self._dlc_locked
-
-	if not can_play then
+function StartGameWindowDeusWeeklyEvent._can_play(arg_18_0)
+	if not (arg_18_0._current_difficulty ~= nil and not arg_18_0._dlc_locked) then
 		return false
 	end
 
-	return self._weekly_journey_name and not LevelUnlockUtils.is_journey_disabled(self._weekly_journey_name)
+	return arg_18_0._weekly_journey_name and not LevelUnlockUtils.is_journey_disabled(arg_18_0._weekly_journey_name)
 end
 
-StartGameWindowDeusWeeklyEvent._set_info_window = function (self, difficulty_key)
-	local difficulty_settings = DifficultySettings[difficulty_key]
-	local description = difficulty_settings.description
-	local chest_max_power_level = difficulty_settings.max_chest_power_level
-	local selected_difficulty_info_widget = self._widgets_by_name.difficulty_info
+function StartGameWindowDeusWeeklyEvent._set_info_window(arg_19_0, arg_19_1)
+	local var_19_0 = DifficultySettings[arg_19_1]
+	local var_19_1 = var_19_0.description
+	local var_19_2 = var_19_0.max_chest_power_level
+	local var_19_3 = arg_19_0._widgets_by_name.difficulty_info
 
-	selected_difficulty_info_widget.content.difficulty_description = Localize(description)
-	selected_difficulty_info_widget.content.highest_obtainable_level = Localize("difficulty_chest_max_powerlevel") .. ": " .. tostring(chest_max_power_level)
+	var_19_3.content.difficulty_description = Localize(var_19_1)
+	var_19_3.content.highest_obtainable_level = Localize("difficulty_chest_max_powerlevel") .. ": " .. tostring(var_19_2)
 end
 
-StartGameWindowDeusWeeklyEvent._update_difficulty_option = function (self, difficulty_key)
-	if difficulty_key then
-		local difficulty_settings = DifficultySettings[difficulty_key]
-		local difficulty_widget = self._widgets_by_name.difficulty_stepper
+function StartGameWindowDeusWeeklyEvent._update_difficulty_option(arg_20_0, arg_20_1)
+	if arg_20_1 then
+		local var_20_0 = DifficultySettings[arg_20_1]
+		local var_20_1 = arg_20_0._widgets_by_name.difficulty_stepper
 
-		difficulty_widget.content.selected_difficulty_text = Localize(difficulty_settings.display_name)
+		var_20_1.content.selected_difficulty_text = Localize(var_20_0.display_name)
 
-		local display_image = difficulty_settings.display_image
+		local var_20_2 = var_20_0.display_image
 
-		difficulty_widget.content.difficulty_icon = display_image
+		var_20_1.content.difficulty_icon = var_20_2
 
-		self:_set_info_window(difficulty_key)
+		arg_20_0:_set_info_window(arg_20_1)
 
-		self._current_difficulty = difficulty_key
+		arg_20_0._current_difficulty = arg_20_1
 	end
 end
 
-StartGameWindowDeusWeeklyEvent._option_selected = function (self, widget_name, button_name, t)
-	if widget_name == "difficulty_stepper" then
-		local difficulty_key = self._current_difficulty
-		local difficulty_list = GameModeSettings.deus.difficulties
-		local current_difficulty_index = table.find(difficulty_list, difficulty_key)
-		local new_current_index = 0
+function StartGameWindowDeusWeeklyEvent._option_selected(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+	if arg_21_1 == "difficulty_stepper" then
+		local var_21_0 = arg_21_0._current_difficulty
+		local var_21_1 = GameModeSettings.deus.difficulties
+		local var_21_2 = table.find(var_21_1, var_21_0)
+		local var_21_3 = 0
 
-		if button_name == "left_arrow" then
-			if current_difficulty_index - 1 >= 1 then
-				new_current_index = current_difficulty_index - 1
+		if arg_21_2 == "left_arrow" then
+			if var_21_2 - 1 >= 1 then
+				var_21_3 = var_21_2 - 1
 
-				self._parent:play_sound("hud_morris_start_menu_set")
+				arg_21_0._parent:play_sound("hud_morris_start_menu_set")
 			end
-		elseif button_name == "right_arrow" and current_difficulty_index + 1 <= #difficulty_list then
-			new_current_index = current_difficulty_index + 1
+		elseif arg_21_2 == "right_arrow" and var_21_2 + 1 <= #var_21_1 then
+			var_21_3 = var_21_2 + 1
 
-			self._parent:play_sound("hud_morris_start_menu_set")
+			arg_21_0._parent:play_sound("hud_morris_start_menu_set")
 		end
 
-		self:_update_difficulty_option(difficulty_list[new_current_index])
-	elseif widget_name == "play_button" then
-		self._parent:set_difficulty_option(self._current_difficulty)
+		arg_21_0:_update_difficulty_option(var_21_1[var_21_3])
+	elseif arg_21_1 == "play_button" then
+		arg_21_0._parent:set_difficulty_option(arg_21_0._current_difficulty)
 
-		self._play_button_pressed = true
+		arg_21_0._play_button_pressed = true
 
-		self._parent:play(t, "deus_weekly")
+		arg_21_0._parent:play(arg_21_3, "deus_weekly")
 	else
-		ferror("Unknown selector_input_definition: %s", widget_name)
+		ferror("Unknown selector_input_definition: %s", arg_21_1)
 	end
 end
 
-StartGameWindowDeusWeeklyEvent._verify_selection_index = function (self, input_index, input_change)
-	local verified_index = self._input_index
-	local num_inputs = #selector_input_definitions
+function StartGameWindowDeusWeeklyEvent._verify_selection_index(arg_22_0, arg_22_1, arg_22_2)
+	local var_22_0 = arg_22_0._input_index
+	local var_22_1 = #var_0_5
 
-	input_index = math.clamp(input_index, 1, num_inputs)
+	arg_22_1 = math.clamp(arg_22_1, 1, var_22_1)
 
-	if not input_change then
-		return input_index
+	if not arg_22_2 then
+		return arg_22_1
 	end
 
-	local input_funcs = selector_input_definitions[input_index]
+	local var_22_2 = var_0_5[arg_22_1]
 
-	while input_funcs and input_index < num_inputs and not input_funcs.enter_requirements() do
-		input_index = input_index + input_change
-		input_funcs = selector_input_definitions[input_index]
+	while var_22_2 and arg_22_1 < var_22_1 and not var_22_2.enter_requirements() do
+		arg_22_1 = arg_22_1 + arg_22_2
+		var_22_2 = var_0_5[arg_22_1]
 	end
 
-	if input_funcs and input_funcs.enter_requirements() then
-		verified_index = input_index
+	if var_22_2 and var_22_2.enter_requirements() then
+		var_22_0 = arg_22_1
 	end
 
-	return verified_index
+	return var_22_0
 end
 
-StartGameWindowDeusWeeklyEvent._gamepad_selector_input_func = function (self, input_index, input_change)
-	local mouse_active = Managers.input:is_device_active("mouse")
+function StartGameWindowDeusWeeklyEvent._gamepad_selector_input_func(arg_23_0, arg_23_1, arg_23_2)
+	local var_23_0 = Managers.input:is_device_active("mouse")
 
-	input_index = self:_verify_selection_index(input_index, input_change)
+	arg_23_1 = arg_23_0:_verify_selection_index(arg_23_1, arg_23_2)
 
-	if self._input_index ~= input_index and not mouse_active then
-		self._parent:play_sound("play_gui_lobby_button_02_mission_act_click")
+	if arg_23_0._input_index ~= arg_23_1 and not var_23_0 then
+		arg_23_0._parent:play_sound("play_gui_lobby_button_02_mission_act_click")
 
-		if self._input_index then
-			local input_funcs = selector_input_definitions[self._input_index]
-
-			input_funcs.on_exit(self)
+		if arg_23_0._input_index then
+			var_0_5[arg_23_0._input_index].on_exit(arg_23_0)
 		end
 
-		local input_funcs = selector_input_definitions[input_index]
-
-		input_funcs.on_enter(self)
+		var_0_5[arg_23_1].on_enter(arg_23_0)
 	end
 
-	self._input_index = input_index
+	arg_23_0._input_index = arg_23_1
 end
 
-StartGameWindowDeusWeeklyEvent._handle_new_selection = function (self, input_index, input_change)
-	local num_inputs = #selector_input_definitions
+function StartGameWindowDeusWeeklyEvent._handle_new_selection(arg_24_0, arg_24_1, arg_24_2)
+	local var_24_0 = #var_0_5
 
-	input_index = math.clamp(input_index, 1, num_inputs)
+	arg_24_1 = math.clamp(arg_24_1, 1, var_24_0)
 
-	local widgets_by_name = self._widgets_by_name
+	local var_24_1 = arg_24_0._widgets_by_name
 
-	for i = 1, #selector_input_definitions do
-		local widget_name = selector_input_definitions[i].widget_name
-		local widget = widgets_by_name[widget_name]
-		local is_selected = i == input_index
+	for iter_24_0 = 1, #var_0_5 do
+		local var_24_2 = var_24_1[var_0_5[iter_24_0].widget_name]
+		local var_24_3 = iter_24_0 == arg_24_1
 
-		widget.content.is_selected = is_selected
+		var_24_2.content.is_selected = var_24_3
 	end
 
-	self._input_index = input_index
+	arg_24_0._input_index = arg_24_1
 end
 
-StartGameWindowDeusWeeklyEvent._update_animations = function (self, dt)
-	local ui_animator = self._ui_animator
+function StartGameWindowDeusWeeklyEvent._update_animations(arg_25_0, arg_25_1)
+	local var_25_0 = arg_25_0._ui_animator
 
-	ui_animator:update(dt)
+	var_25_0:update(arg_25_1)
 
 	if not Managers.input:is_device_active("gamepad") then
-		self:_update_button_animations(dt)
+		arg_25_0:_update_button_animations(arg_25_1)
 	end
 
-	local animations = self._animations
+	local var_25_1 = arg_25_0._animations
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_25_0, iter_25_1 in pairs(var_25_1) do
+		if var_25_0:is_animation_completed(iter_25_1) then
+			var_25_0:stop_animation(iter_25_1)
 
-			animations[animation_name] = nil
+			var_25_1[iter_25_0] = nil
 		end
 	end
 end
 
-StartGameWindowDeusWeeklyEvent._refresh_data = function (self)
-	if self._num_requests > 0 then
+function StartGameWindowDeusWeeklyEvent._refresh_data(arg_26_0)
+	if arg_26_0._num_requests > 0 then
 		return
 	end
 
-	local live_event_interface = Managers.backend:get_interface("live_events")
-	local cb = callback(self, "_refresh_data_cb")
+	local var_26_0 = Managers.backend:get_interface("live_events")
+	local var_26_1 = callback(arg_26_0, "_refresh_data_cb")
 
-	live_event_interface:request_live_events(cb)
-	live_event_interface:request_weekly_event_rewards(cb)
+	var_26_0:request_live_events(var_26_1)
+	var_26_0:request_weekly_event_rewards(var_26_1)
 
-	self._num_requests = 2
+	arg_26_0._num_requests = 2
 end
 
-StartGameWindowDeusWeeklyEvent._refresh_data_cb = function (self, result)
-	self._num_requests = self._num_requests - 1
+function StartGameWindowDeusWeeklyEvent._refresh_data_cb(arg_27_0, arg_27_1)
+	arg_27_0._num_requests = arg_27_0._num_requests - 1
 
-	if self._num_requests <= 0 then
-		self:_fetch_event_data()
+	if arg_27_0._num_requests <= 0 then
+		arg_27_0:_fetch_event_data()
 	end
 end
 
-StartGameWindowDeusWeeklyEvent._update_time_left = function (self)
-	local now = os.time(os.date("!*t"))
-	local remaining_time = self._refresh_time - now
-	local widget = self._widgets_by_name.timer
-	local widget_content = widget.content
+function StartGameWindowDeusWeeklyEvent._update_time_left(arg_28_0)
+	local var_28_0 = os.time(os.date("!*t"))
+	local var_28_1 = arg_28_0._refresh_time - var_28_0
+	local var_28_2 = arg_28_0._widgets_by_name.timer.content
 
-	if remaining_time > 120 then
-		local days = remaining_time / 86400
-		local hours = remaining_time / 3600 % 24
-		local minutes = remaining_time / 60 % 60
-		local fmt = Localize("deus_start_game_mod_timer")
+	if var_28_1 > 120 then
+		local var_28_3 = var_28_1 / 86400
+		local var_28_4 = var_28_1 / 3600 % 24
+		local var_28_5 = var_28_1 / 60 % 60
+		local var_28_6 = Localize("deus_start_game_mod_timer")
 
-		widget_content.text = string.format(fmt, days, hours, minutes)
+		var_28_2.text = string.format(var_28_6, var_28_3, var_28_4, var_28_5)
 	else
-		local fmt = Localize("deus_start_game_mod_timer_seconds")
+		local var_28_7 = Localize("deus_start_game_mod_timer_seconds")
 
-		if remaining_time < 0 then
-			remaining_time = 0
+		if var_28_1 < 0 then
+			var_28_1 = 0
 
-			self:_refresh_data()
+			arg_28_0:_refresh_data()
 		end
 
-		widget_content.text = string.format(fmt, remaining_time)
+		var_28_2.text = string.format(var_28_7, var_28_1)
 	end
 end
 
-StartGameWindowDeusWeeklyEvent._update_button_animations = function (self, dt)
-	local widgets_by_name = self._widgets_by_name
+function StartGameWindowDeusWeeklyEvent._update_button_animations(arg_29_0, arg_29_1)
+	local var_29_0 = arg_29_0._widgets_by_name
 
-	UIWidgetUtils.animate_default_button(widgets_by_name.upsell_button, dt)
+	UIWidgetUtils.animate_default_button(var_29_0.upsell_button, arg_29_1)
 end
 
-StartGameWindowDeusWeeklyEvent._draw = function (self, dt, t)
-	local ui_top_renderer = self._ui_top_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local input_service = self._parent:window_input_service()
-	local render_settings = self._render_settings
-	local parent_scenegraph_id
+function StartGameWindowDeusWeeklyEvent._draw(arg_30_0, arg_30_1, arg_30_2)
+	local var_30_0 = arg_30_0._ui_top_renderer
+	local var_30_1 = arg_30_0._ui_scenegraph
+	local var_30_2 = arg_30_0._parent:window_input_service()
+	local var_30_3 = arg_30_0._render_settings
+	local var_30_4
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, parent_scenegraph_id, render_settings)
-	UIRenderer.draw_all_widgets(ui_top_renderer, self._widgets)
+	UIRenderer.begin_pass(var_30_0, var_30_1, var_30_2, arg_30_1, var_30_4, var_30_3)
+	UIRenderer.draw_all_widgets(var_30_0, arg_30_0._widgets)
 
-	if not table.is_empty(self._info_box_widgets) then
-		UIRenderer.draw_all_widgets(ui_top_renderer, self._info_box_widgets)
+	if not table.is_empty(arg_30_0._info_box_widgets) then
+		UIRenderer.draw_all_widgets(var_30_0, arg_30_0._info_box_widgets)
 	end
 
-	UIRenderer.end_pass(ui_top_renderer)
+	UIRenderer.end_pass(var_30_0)
 
-	if self._scrollbar_ui then
-		self._scrollbar_ui:update(dt, t, ui_top_renderer, input_service, render_settings)
+	if arg_30_0._scrollbar_ui then
+		arg_30_0._scrollbar_ui:update(arg_30_1, arg_30_2, var_30_0, var_30_2, var_30_3)
 	end
 end
 
-StartGameWindowDeusWeeklyEvent._update_difficulty_lock = function (self)
-	local selected_difficulty_key = self._current_difficulty
-	local difficulty_info_widget = self._widgets_by_name.difficulty_info
-	local upsell_button = self._widgets_by_name.upsell_button
+function StartGameWindowDeusWeeklyEvent._update_difficulty_lock(arg_31_0)
+	local var_31_0 = arg_31_0._current_difficulty
+	local var_31_1 = arg_31_0._widgets_by_name.difficulty_info
+	local var_31_2 = arg_31_0._widgets_by_name.upsell_button
 
-	if selected_difficulty_key then
-		local approved, extra_requirement_failed, dlc_locked, below_power_level = self._parent:is_difficulty_approved(selected_difficulty_key)
+	if var_31_0 then
+		local var_31_3, var_31_4, var_31_5, var_31_6 = arg_31_0._parent:is_difficulty_approved(var_31_0)
 
-		if not approved then
-			if extra_requirement_failed then
-				difficulty_info_widget.content.should_show_diff_lock_text = true
-				difficulty_info_widget.content.difficulty_lock_text = extra_requirement_failed and Localize(extra_requirement_failed) or ""
+		if not var_31_3 then
+			if var_31_4 then
+				var_31_1.content.should_show_diff_lock_text = true
+				var_31_1.content.difficulty_lock_text = var_31_4 and Localize(var_31_4) or ""
 			else
-				difficulty_info_widget.content.should_show_diff_lock_text = false
+				var_31_1.content.should_show_diff_lock_text = false
 			end
 
-			if dlc_locked then
-				difficulty_info_widget.content.should_show_dlc_lock = true
-				self._dlc_locked = dlc_locked
-				self._dlc_name = dlc_locked
-				upsell_button.content.visible = true
+			if var_31_5 then
+				var_31_1.content.should_show_dlc_lock = true
+				arg_31_0._dlc_locked = var_31_5
+				arg_31_0._dlc_name = var_31_5
+				var_31_2.content.visible = true
 			else
-				difficulty_info_widget.content.should_show_dlc_lock = false
-				upsell_button.content.visible = false
-				self._dlc_locked = nil
-				self._dlc_name = nil
+				var_31_1.content.should_show_dlc_lock = false
+				var_31_2.content.visible = false
+				arg_31_0._dlc_locked = nil
+				arg_31_0._dlc_name = nil
 			end
 		else
-			difficulty_info_widget.content.should_show_dlc_lock = false
-			difficulty_info_widget.content.should_show_diff_lock_text = false
-			difficulty_info_widget.content.should_resize = false
-			upsell_button.content.visible = false
-			self._dlc_locked = nil
-			self._dlc_name = nil
+			var_31_1.content.should_show_dlc_lock = false
+			var_31_1.content.should_show_diff_lock_text = false
+			var_31_1.content.should_resize = false
+			var_31_2.content.visible = false
+			arg_31_0._dlc_locked = nil
+			arg_31_0._dlc_name = nil
 		end
 
-		self._difficulty_approved = approved
+		arg_31_0._difficulty_approved = var_31_3
 	else
-		difficulty_info_widget.content.should_show_dlc_lock = false
-		upsell_button.content.visible = false
+		var_31_1.content.should_show_dlc_lock = false
+		var_31_2.content.visible = false
 	end
 
-	local widget_height = self:_calculate_difficulty_info_widget_size(difficulty_info_widget)
-	local offset_y = (math.floor(widget_height) - scenegraph_definition.difficulty_info.size[2]) / 2
+	local var_31_7 = arg_31_0:_calculate_difficulty_info_widget_size(var_31_1)
+	local var_31_8 = (math.floor(var_31_7) - var_0_1.difficulty_info.size[2]) / 2
 
-	self:_resize_difficulty_info({
-		math.floor(scenegraph_definition.difficulty_info.size[1]),
-		math.floor(widget_height),
+	arg_31_0:_resize_difficulty_info({
+		math.floor(var_0_1.difficulty_info.size[1]),
+		math.floor(var_31_7)
 	}, {
 		0,
-		-offset_y,
-		1,
+		-var_31_8,
+		1
 	})
 
-	upsell_button.offset[2] = -math.floor(widget_height) / 2 + 24
+	var_31_2.offset[2] = -math.floor(var_31_7) / 2 + 24
 end
 
-StartGameWindowDeusWeeklyEvent._handle_difficulty_info = function (self, show_widget)
-	if show_widget then
-		self:_update_difficulty_lock()
+function StartGameWindowDeusWeeklyEvent._handle_difficulty_info(arg_32_0, arg_32_1)
+	if arg_32_1 then
+		arg_32_0:_update_difficulty_lock()
 	end
 end
 
-StartGameWindowDeusWeeklyEvent._calculate_difficulty_info_widget_size = function (self, diff_widget)
-	local spacing = 20
-	local description_text_style = diff_widget.style.difficulty_description
-	local description_text = diff_widget.content.difficulty_description
-	local description_text_height = UIUtils.get_text_height(self._ui_renderer, description_text_style.size, description_text_style, description_text)
+function StartGameWindowDeusWeeklyEvent._calculate_difficulty_info_widget_size(arg_33_0, arg_33_1)
+	local var_33_0 = 20
+	local var_33_1 = arg_33_1.style.difficulty_description
+	local var_33_2 = arg_33_1.content.difficulty_description
+	local var_33_3 = UIUtils.get_text_height(arg_33_0._ui_renderer, var_33_1.size, var_33_1, var_33_2)
 
-	diff_widget.content.difficulty_description_text_size = description_text_height
+	arg_33_1.content.difficulty_description_text_size = var_33_3
 
-	local chest_text_style = diff_widget.style.highest_obtainable_level
-	local chest_text = diff_widget.content.highest_obtainable_level
-	local chest_text_height = UIUtils.get_text_height(self._ui_renderer, chest_text_style.size, chest_text_style, chest_text) + spacing
-	local difficulty_lock_text_style = diff_widget.style.difficulty_lock_text
-	local difficulty_lock_text = diff_widget.content.difficulty_lock_text
-	local difficulty_lock_text_height = 0
+	local var_33_4 = arg_33_1.style.highest_obtainable_level
+	local var_33_5 = arg_33_1.content.highest_obtainable_level
+	local var_33_6 = UIUtils.get_text_height(arg_33_0._ui_renderer, var_33_4.size, var_33_4, var_33_5) + var_33_0
+	local var_33_7 = arg_33_1.style.difficulty_lock_text
+	local var_33_8 = arg_33_1.content.difficulty_lock_text
+	local var_33_9 = 0
 
-	if diff_widget.content.should_show_diff_lock_text then
-		difficulty_lock_text_height = UIUtils.get_text_height(self._ui_renderer, difficulty_lock_text_style.size, difficulty_lock_text_style, difficulty_lock_text) + spacing
-		diff_widget.content.difficulty_lock_text_height = difficulty_lock_text_height
+	if arg_33_1.content.should_show_diff_lock_text then
+		var_33_9 = UIUtils.get_text_height(arg_33_0._ui_renderer, var_33_7.size, var_33_7, var_33_8) + var_33_0
+		arg_33_1.content.difficulty_lock_text_height = var_33_9
 	end
 
-	local dlc_lock_text_style = diff_widget.style.dlc_lock_text
-	local dlc_lock_text = diff_widget.content.dlc_lock_text
-	local dlc_lock_text_height = 0
+	local var_33_10 = arg_33_1.style.dlc_lock_text
+	local var_33_11 = arg_33_1.content.dlc_lock_text
+	local var_33_12 = 0
 
-	if diff_widget.content.should_show_dlc_lock then
-		dlc_lock_text_height = UIUtils.get_text_height(self._ui_renderer, dlc_lock_text_style.size, dlc_lock_text_style, dlc_lock_text) + spacing
+	if arg_33_1.content.should_show_dlc_lock then
+		var_33_12 = UIUtils.get_text_height(arg_33_0._ui_renderer, var_33_10.size, var_33_10, var_33_11) + var_33_0
 	end
 
-	local widget_height = chest_text_height + description_text_height + difficulty_lock_text_height + dlc_lock_text_height + 50
-
-	return widget_height
+	return var_33_6 + var_33_3 + var_33_9 + var_33_12 + 50
 end
 
-StartGameWindowDeusWeeklyEvent._resize_difficulty_info = function (self, new_size, new_offset)
-	local difficulty_info_widget = self._widgets_by_name.difficulty_info
+function StartGameWindowDeusWeeklyEvent._resize_difficulty_info(arg_34_0, arg_34_1, arg_34_2)
+	local var_34_0 = arg_34_0._widgets_by_name.difficulty_info
 
-	difficulty_info_widget.content.should_resize = true
-	difficulty_info_widget.content.resize_size = new_size
-	difficulty_info_widget.content.resize_offset = new_offset
-	difficulty_info_widget.style.widget_hotspot.size = new_size
-	difficulty_info_widget.style.widget_hotspot.offset = new_offset
+	var_34_0.content.should_resize = true
+	var_34_0.content.resize_size = arg_34_1
+	var_34_0.content.resize_offset = arg_34_2
+	var_34_0.style.widget_hotspot.size = arg_34_1
+	var_34_0.style.widget_hotspot.offset = arg_34_2
 end
 
-StartGameWindowDeusWeeklyEvent._handle_difficulty_stepper_gamepad = function (self, widget, input_service, t)
-	local anim_params = {}
+function StartGameWindowDeusWeeklyEvent._handle_difficulty_stepper_gamepad(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+	local var_35_0 = {}
 
-	if input_service:get("move_left") and widget.content.is_selected then
-		self:_option_selected(self._input_index, "left_arrow", t)
+	if arg_35_2:get("move_left") and arg_35_1.content.is_selected then
+		arg_35_0:_option_selected(arg_35_0._input_index, "left_arrow", arg_35_3)
 
-		widget.content.left_arrow_pressed = true
-		anim_params.left_key = widget.style.left_arrow_gamepad_highlight
+		arg_35_1.content.left_arrow_pressed = true
+		var_35_0.left_key = arg_35_1.style.left_arrow_gamepad_highlight
 
-		if self._arrow_anim_id then
-			self._ui_animator:stop_animation(self._arrow_anim_id)
+		if arg_35_0._arrow_anim_id then
+			arg_35_0._ui_animator:stop_animation(arg_35_0._arrow_anim_id)
 
-			widget.style.right_arrow_gamepad_highlight.color[1] = 0
+			arg_35_1.style.right_arrow_gamepad_highlight.color[1] = 0
 		end
 
-		local anim_id = self._ui_animator:start_animation("left_arrow_flick", widget, scenegraph_definition, anim_params)
+		arg_35_0._arrow_anim_id = arg_35_0._ui_animator:start_animation("left_arrow_flick", arg_35_1, var_0_1, var_35_0)
+	elseif arg_35_2:get("move_right") and arg_35_1.content.is_selected then
+		arg_35_0:_option_selected(arg_35_0._input_index, "right_arrow", arg_35_3)
 
-		self._arrow_anim_id = anim_id
-	elseif input_service:get("move_right") and widget.content.is_selected then
-		self:_option_selected(self._input_index, "right_arrow", t)
+		arg_35_1.content.right_arrow_pressed = true
+		var_35_0.right_key = arg_35_1.style.right_arrow_gamepad_highlight
 
-		widget.content.right_arrow_pressed = true
-		anim_params.right_key = widget.style.right_arrow_gamepad_highlight
+		if arg_35_0._arrow_anim_id then
+			arg_35_0._ui_animator:stop_animation(arg_35_0._arrow_anim_id)
 
-		if self._arrow_anim_id then
-			self._ui_animator:stop_animation(self._arrow_anim_id)
-
-			widget.style.left_arrow_gamepad_highlight.color[1] = 0
+			arg_35_1.style.left_arrow_gamepad_highlight.color[1] = 0
 		end
 
-		local anim_id = self._ui_animator:start_animation("right_arrow_flick", widget, scenegraph_definition, anim_params)
-
-		self._arrow_anim_id = anim_id
+		arg_35_0._arrow_anim_id = arg_35_0._ui_animator:start_animation("right_arrow_flick", arg_35_1, var_0_1, var_35_0)
 	end
 end

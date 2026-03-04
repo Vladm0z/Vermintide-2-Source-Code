@@ -1,345 +1,331 @@
-﻿-- chunkname: @scripts/managers/input/input_service.lua
+-- chunkname: @scripts/managers/input/input_service.lua
 
 InputService = class(InputService)
 
-InputService.init = function (self, input_service_name, keymaps_name, filters_name, block_reasons)
-	self.platform = PLATFORM
-	self.mapped_devices = {
+function InputService.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	arg_1_0.platform = PLATFORM
+	arg_1_0.mapped_devices = {
 		gamepad = {},
 		ps_pad = {},
 		mouse = {},
 		keyboard = {},
 		network = {},
-		recording = {},
+		recording = {}
 	}
-	self.input_devices_data = {}
-	self.name = input_service_name
-	self.controller_select = Vector3Box()
-	self.block_reasons = block_reasons
-	self.keymaps_name = keymaps_name
-	self.filters_name = filters_name
-	self.input_manager = Managers.input
-	self.blocked_input = {}
+	arg_1_0.input_devices_data = {}
+	arg_1_0.name = arg_1_1
+	arg_1_0.controller_select = Vector3Box()
+	arg_1_0.block_reasons = arg_1_4
+	arg_1_0.keymaps_name = arg_1_2
+	arg_1_0.filters_name = arg_1_3
+	arg_1_0.input_manager = Managers.input
+	arg_1_0.blocked_input = {}
 end
 
-InputService.map_device = function (self, input_device_type, input_device, input_device_data)
-	local input_device_type_list = self.mapped_devices[input_device_type]
+function InputService.map_device(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_0.mapped_devices[arg_2_1]
 
-	input_device_type_list[#input_device_type_list + 1] = input_device
-	input_device_type_list.n = #input_device_type_list
-	self.input_devices_data[input_device] = input_device_data
+	var_2_0[#var_2_0 + 1] = arg_2_2
+	var_2_0.n = #var_2_0
+	arg_2_0.input_devices_data[arg_2_2] = arg_2_3
 end
 
-InputService.unmap_device = function (self, input_device_type, input_device)
-	local input_device_type_list = self.mapped_devices[input_device_type]
-	local index = table.find(input_device_type_list, input_device)
+function InputService.unmap_device(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0 = arg_3_0.mapped_devices[arg_3_1]
+	local var_3_1 = table.find(var_3_0, arg_3_2)
 
-	if not index then
-		Application.warning("[InputService] No mapped input called %s for input service %s", input_device.name(), self.name)
+	if not var_3_1 then
+		Application.warning("[InputService] No mapped input called %s for input service %s", arg_3_2.name(), arg_3_0.name)
 
 		return
 	end
 
-	table.remove(input_device_type_list, index)
+	table.remove(var_3_0, var_3_1)
 
-	input_device_type_list.n = #input_device_type_list
+	var_3_0.n = #var_3_0
 end
 
-local math_max = math.max
+local var_0_0 = math.max
 
-InputService.get = function (self, input_data_name, consume)
-	local keymaps, default_data_types = self:get_active_keymaps(nil, input_data_name)
-	local keymap_binding = keymaps[input_data_name]
-	local input_filters = self:get_active_filters(nil, input_data_name)
-	local filter_binding = input_filters and input_filters[input_data_name]
+function InputService.get(arg_4_0, arg_4_1, arg_4_2)
+	local var_4_0, var_4_1 = arg_4_0:get_active_keymaps(nil, arg_4_1)
+	local var_4_2 = var_4_0[arg_4_1]
+	local var_4_3 = arg_4_0:get_active_filters(nil, arg_4_1)
+	local var_4_4 = var_4_3 and var_4_3[arg_4_1]
 
-	if keymap_binding and (keymap_binding.n > 0 or not filter_binding) then
-		local mapped_devices = self.mapped_devices
-		local input_devices_data = self.input_devices_data
-		local name = self.name
-		local disabled_input_group = self.disabled_input_group
-		local action_value
-		local n = keymap_binding.n
+	if var_4_2 and (var_4_2.n > 0 or not var_4_4) then
+		local var_4_5 = arg_4_0.mapped_devices
+		local var_4_6 = arg_4_0.input_devices_data
+		local var_4_7 = arg_4_0.name
+		local var_4_8 = arg_4_0.disabled_input_group
+		local var_4_9
+		local var_4_10 = var_4_2.n
 
-		if disabled_input_group then
-			action_value = nil
-		elseif n then
-			for j = 1, n, 3 do
-				local device_type = keymap_binding[j]
-				local key_index = keymap_binding[j + 1]
-				local key_action_type = keymap_binding[j + 2]
+		if var_4_8 then
+			var_4_9 = nil
+		elseif var_4_10 then
+			for iter_4_0 = 1, var_4_10, 3 do
+				local var_4_11 = var_4_2[iter_4_0]
+				local var_4_12 = var_4_2[iter_4_0 + 1]
+				local var_4_13 = var_4_2[iter_4_0 + 2]
 
-				if key_index ~= UNASSIGNED_KEY then
-					local device_list = mapped_devices[device_type]
+				if var_4_12 ~= UNASSIGNED_KEY then
+					local var_4_14 = var_4_5[var_4_11]
 
-					if device_list and device_list.n then
-						for k = 1, device_list.n do
-							local input_device = device_list[k]
-							local input_device_data = input_devices_data[input_device]
+					if var_4_14 and var_4_14.n then
+						for iter_4_1 = 1, var_4_14.n do
+							local var_4_15 = var_4_14[iter_4_1]
+							local var_4_16 = var_4_6[var_4_15]
 
-							if input_device:active() and not input_device_data.blocked_access[name] then
-								if key_action_type == "soft_button" then
-									action_value = math_max(action_value or 0, input_device_data[key_action_type][key_index])
-								elseif key_action_type == "axis" and (not action_value or action_value and Vector3.length_squared(action_value) < 0.01) then
-									action_value = input_device_data[key_action_type][key_index]
+							if var_4_15:active() and not var_4_16.blocked_access[var_4_7] then
+								if var_4_13 == "soft_button" then
+									var_4_9 = var_0_0(var_4_9 or 0, var_4_16[var_4_13][var_4_12])
+								elseif var_4_13 == "axis" and (not var_4_9 or var_4_9 and Vector3.length_squared(var_4_9) < 0.01) then
+									var_4_9 = var_4_16[var_4_13][var_4_12]
 								else
-									action_value = action_value or input_device_data[key_action_type][key_index]
+									var_4_9 = var_4_9 or var_4_16[var_4_13][var_4_12]
 								end
 
-								if action_value == true then
-									if input_device_data.consumed_input[key_index] then
-										action_value = nil
-									elseif consume then
-										input_device_data.consumed_input[key_index] = true
+								if var_4_9 == true then
+									if var_4_16.consumed_input[var_4_12] then
+										var_4_9 = nil
+									elseif arg_4_2 then
+										var_4_16.consumed_input[var_4_12] = true
 									end
 								end
-							elseif input_device:active() then
-								action_value = nil
+							elseif var_4_15:active() then
+								var_4_9 = nil
 
 								break
 							end
 						end
 
-						action_value = device_list.n > 0 and action_value or nil
+						var_4_9 = var_4_14.n > 0 and var_4_9 or nil
 					end
 				end
 			end
 		end
 
-		if action_value == nil or self.blocked_input[input_data_name] then
-			action_value = InputAux.default_values_for_types[default_data_types[input_data_name]]
+		if var_4_9 == nil or arg_4_0.blocked_input[arg_4_1] then
+			var_4_9 = InputAux.default_values_for_types[var_4_1[arg_4_1]]
 		end
 
-		return action_value
-	elseif filter_binding then
-		local most_recent_device = Managers.input:get_most_recent_device()
-		local input_device_data = self.input_devices_data[most_recent_device]
-		local function_data = filter_binding.function_data
-		local value = InputFilters[function_data.filter_type].update(function_data, self)
+		return var_4_9
+	elseif var_4_4 then
+		local var_4_17 = Managers.input:get_most_recent_device()
+		local var_4_18 = arg_4_0.input_devices_data[var_4_17]
+		local var_4_19 = var_4_4.function_data
+		local var_4_20 = InputFilters[var_4_19.filter_type].update(var_4_19, arg_4_0)
 
-		if self.blocked_input[input_data_name] or input_device_data and input_device_data.consumed_input[input_data_name] then
-			if type(value) == "boolean" then
-				value = false
-			elseif type(value) == "userdata" then
-				value = Vector3.zero()
-			elseif type(value) == "number" then
-				value = 0
+		if arg_4_0.blocked_input[arg_4_1] or var_4_18 and var_4_18.consumed_input[arg_4_1] then
+			if type(var_4_20) == "boolean" then
+				var_4_20 = false
+			elseif type(var_4_20) == "userdata" then
+				var_4_20 = Vector3.zero()
+			elseif type(var_4_20) == "number" then
+				var_4_20 = 0
 			end
-		elseif consume then
-			input_device_data.consumed_input[input_data_name] = true
+		elseif arg_4_2 then
+			var_4_18.consumed_input[arg_4_1] = true
 		end
 
-		return value
+		return var_4_20
 	end
 end
 
-InputService.get_controller_cursor_position = function (self)
-	return self.controller_select:unbox()
+function InputService.get_controller_cursor_position(arg_5_0)
+	return arg_5_0.controller_select:unbox()
 end
 
-InputService.set_controller_cursor_position = function (self, x, y, z)
-	self.controller_select:store(x, y, z)
+function InputService.set_controller_cursor_position(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	arg_6_0.controller_select:store(arg_6_1, arg_6_2, arg_6_3)
 end
 
-InputService.get_active_keymaps = function (self, optional_platform, optional_input_name)
-	local platform = optional_platform or self.platform
+function InputService.get_active_keymaps(arg_7_0, arg_7_1, arg_7_2)
+	local var_7_0 = arg_7_1 or arg_7_0.platform
 
-	if not optional_platform and IS_WINDOWS and self.input_manager:is_device_active("gamepad") then
-		local active_controller = Managers.input:get_most_recent_device()
-		local controller_type = active_controller and active_controller.type()
-		local is_ps_pad = controller_type == "sce_pad"
+	if not arg_7_1 and IS_WINDOWS and arg_7_0.input_manager:is_device_active("gamepad") then
+		local var_7_1 = Managers.input:get_most_recent_device()
 
-		platform = is_ps_pad and "ps_pad" or "xb1"
+		var_7_0 = (var_7_1 and var_7_1.type()) == "sce_pad" and "ps_pad" or "xb1"
 	end
 
-	if not optional_platform and IS_XB1 and (self.input_manager:is_device_active("keyboard") or self.input_manager:is_device_active("mouse")) then
-		local keymaps_name = self.keymaps_name
-		local keymaps_data = self.input_manager:keymaps_data(keymaps_name)
-		local data = keymaps_data.win32
+	if not arg_7_1 and IS_XB1 and (arg_7_0.input_manager:is_device_active("keyboard") or arg_7_0.input_manager:is_device_active("mouse")) then
+		local var_7_2 = arg_7_0.keymaps_name
+		local var_7_3 = arg_7_0.input_manager:keymaps_data(var_7_2)
+		local var_7_4 = var_7_3.win32
 
-		if not data.keymaps[optional_input_name] then
-			data = keymaps_data[platform]
+		if not var_7_4.keymaps[arg_7_2] then
+			var_7_4 = var_7_3[var_7_0]
 		end
 
-		return data.keymaps, data.default_data_types
+		return var_7_4.keymaps, var_7_4.default_data_types
 	end
 
-	local keymaps_name = self.keymaps_name
-	local keymaps_data = self.input_manager:keymaps_data(keymaps_name)
-	local data = keymaps_data[platform]
+	local var_7_5 = arg_7_0.keymaps_name
+	local var_7_6 = arg_7_0.input_manager:keymaps_data(var_7_5)[var_7_0]
 
-	return data.keymaps, data.default_data_types
+	return var_7_6.keymaps, var_7_6.default_data_types
 end
 
-InputService.get_active_filters = function (self, optional_platform, optional_input_name)
-	local filters_name = self.filters_name
+function InputService.get_active_filters(arg_8_0, arg_8_1, arg_8_2)
+	local var_8_0 = arg_8_0.filters_name
 
-	if not filters_name then
+	if not var_8_0 then
 		return
 	end
 
-	local platform = optional_platform or self.platform
+	local var_8_1 = arg_8_1 or arg_8_0.platform
 
-	if not optional_platform and IS_WINDOWS and self.input_manager:is_device_active("gamepad") then
-		platform = "xb1"
-
-		local most_recent_device = Managers.input:get_most_recent_device()
-
-		platform = most_recent_device.type() == "sce_pad" and "ps_pad" or platform
+	if not arg_8_1 and IS_WINDOWS and arg_8_0.input_manager:is_device_active("gamepad") then
+		var_8_1 = "xb1"
+		var_8_1 = Managers.input:get_most_recent_device().type() == "sce_pad" and "ps_pad" or var_8_1
 	end
 
-	if not optional_platform and IS_XB1 and (self.input_manager:is_device_active("keyboard") or self.input_manager:is_device_active("mouse")) then
-		local filters_data = self.input_manager:filters_data(filters_name)
-		local filters = filters_data.win32
+	if not arg_8_1 and IS_XB1 and (arg_8_0.input_manager:is_device_active("keyboard") or arg_8_0.input_manager:is_device_active("mouse")) then
+		local var_8_2 = arg_8_0.input_manager:filters_data(var_8_0)
+		local var_8_3 = var_8_2.win32
 
-		if not filters[optional_input_name] then
-			return filters_data[platform]
+		if not var_8_3[arg_8_2] then
+			return var_8_2[var_8_1]
 		else
-			return filters
+			return var_8_3
 		end
 	end
 
-	local filters_data = self.input_manager:filters_data(filters_name)
-	local filters = filters_data[platform]
-
-	return filters
+	return arg_8_0.input_manager:filters_data(var_8_0)[var_8_1]
 end
 
-InputService.get_keymapping = function (self, keymap_name, optional_platform)
-	local keymaps = self:get_active_keymaps(optional_platform, keymap_name)
-
-	return keymaps[keymap_name]
+function InputService.get_keymapping(arg_9_0, arg_9_1, arg_9_2)
+	return arg_9_0:get_active_keymaps(arg_9_2, arg_9_1)[arg_9_1]
 end
 
-InputService.add_keymap = function (self, keymap_name)
-	local keymaps = self:get_active_keymaps()
-	local keymapping = not keymaps[keymap_name]
+function InputService.add_keymap(arg_10_0, arg_10_1)
+	local var_10_0 = arg_10_0:get_active_keymaps()
+	local var_10_1 = not var_10_0[arg_10_1]
 
-	fassert(keymapping, "Keymap already exists: name %s in service %s", keymap_name, input_service_name)
+	fassert(var_10_1, "Keymap already exists: name %s in service %s", arg_10_1, input_service_name)
 
-	keymaps[keymap_name] = {
+	var_10_0[arg_10_1] = {
 		input_mappings = {
-			n = 0,
-		},
+			n = 0
+		}
 	}
 end
 
-InputService.remove_keymap = function (self, keymap_name)
-	local keymaps = self:get_active_keymaps()
-	local keymapping = keymaps[keymap_name]
+function InputService.remove_keymap(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_0:get_active_keymaps()
+	local var_11_1 = var_11_0[arg_11_1]
 
-	fassert(keymapping, "No such keymap name %s in service %s", keymap_name, self.name)
+	fassert(var_11_1, "No such keymap name %s in service %s", arg_11_1, arg_11_0.name)
 
-	keymaps[keymap_name] = nil
+	var_11_0[arg_11_1] = nil
 end
 
-InputService.generate_keybinding_setting = function (self)
-	local new_keymaps = {}
-	local keymaps = self:get_active_keymaps()
+function InputService.generate_keybinding_setting(arg_12_0)
+	local var_12_0 = {}
+	local var_12_1 = arg_12_0:get_active_keymaps()
 
-	for keymap_name, keymap_data in pairs(keymaps) do
-		local new_keymap_data = {}
+	for iter_12_0, iter_12_1 in pairs(var_12_1) do
+		local var_12_2 = {}
 
-		new_keymaps[keymap_name] = {
-			input_mappings = new_keymap_data,
-			combination_type = keymap_data.combination_type,
+		var_12_0[iter_12_0] = {
+			input_mappings = var_12_2,
+			combination_type = iter_12_1.combination_type
 		}
 
-		for i = 1, keymap_data.input_mappings.n do
-			local new_binding = {}
+		for iter_12_2 = 1, iter_12_1.input_mappings.n do
+			local var_12_3 = {}
 
-			new_keymap_data[i] = new_binding
+			var_12_2[iter_12_2] = var_12_3
 
-			local current_binding = keymap_data.input_mappings[i]
+			local var_12_4 = iter_12_1.input_mappings[iter_12_2]
 
-			for j = 1, current_binding.n, 3 do
-				local device_type = current_binding[j]
+			for iter_12_3 = 1, var_12_4.n, 3 do
+				local var_12_5 = var_12_4[iter_12_3]
 
-				new_binding[j] = device_type
+				var_12_3[iter_12_3] = var_12_5
 
-				local input_device = InputAux.input_device_mapping[device_type][1]
-				local key_name
+				local var_12_6 = InputAux.input_device_mapping[var_12_5][1]
+				local var_12_7
 
-				if current_binding[j + 2] == "axis" then
-					key_name = input_device.axis_name(current_binding[j + 1])
+				if var_12_4[iter_12_3 + 2] == "axis" then
+					var_12_7 = var_12_6.axis_name(var_12_4[iter_12_3 + 1])
 				else
-					key_name = input_device.button_name(current_binding[j + 1])
+					var_12_7 = var_12_6.button_name(var_12_4[iter_12_3 + 1])
 
-					assert(current_binding[j + 1] == input_device.button_index(key_name))
+					assert(var_12_4[iter_12_3 + 1] == var_12_6.button_index(var_12_7))
 				end
 
-				new_binding[j + 1] = key_name
-				new_binding[j + 2] = current_binding[j + 2]
+				var_12_3[iter_12_3 + 1] = var_12_7
+				var_12_3[iter_12_3 + 2] = var_12_4[iter_12_3 + 2]
 			end
 		end
 	end
 
-	return new_keymaps
+	return var_12_0
 end
 
-InputService.generate_filters_setting = function (self)
-	local new_filters = {}
-	local input_filters = self:get_active_filters()
+function InputService.generate_filters_setting(arg_13_0)
+	local var_13_0 = {}
+	local var_13_1 = arg_13_0:get_active_filters()
 
-	if input_filters then
-		for filter_output, filter_data in pairs(input_filters) do
-			local new_filter_data = table.clone(filter_data.function_data)
+	if var_13_1 then
+		for iter_13_0, iter_13_1 in pairs(var_13_1) do
+			local var_13_2 = table.clone(iter_13_1.function_data)
 
-			new_filter_data.filter_type = filter_data.filter_type
-			new_filters[filter_output] = new_filter_data
+			var_13_2.filter_type = iter_13_1.filter_type
+			var_13_0[iter_13_0] = var_13_2
 		end
 	end
 
-	return new_filters
+	return var_13_0
 end
 
-InputService.has = function (self, keymap_name)
-	local keymaps = self:get_active_keymaps(nil, keymap_name)
-	local input_filters = self:get_active_filters(nil, keymap_name)
+function InputService.has(arg_14_0, arg_14_1)
+	local var_14_0 = arg_14_0:get_active_keymaps(nil, arg_14_1)
+	local var_14_1 = arg_14_0:get_active_filters(nil, arg_14_1)
 
-	return keymaps[keymap_name] or input_filters and input_filters[keymap_name] and true or false
+	return var_14_0[arg_14_1] or var_14_1 and var_14_1[arg_14_1] and true or false
 end
 
-InputService.is_blocked = function (self)
-	return self.service_is_blocked or self.disabled_input_group
+function InputService.is_blocked(arg_15_0)
+	return arg_15_0.service_is_blocked or arg_15_0.disabled_input_group
 end
 
-InputService.set_blocked = function (self, is_blocked, disabled_input_group)
-	self.service_is_blocked = is_blocked
+function InputService.set_blocked(arg_16_0, arg_16_1, arg_16_2)
+	arg_16_0.service_is_blocked = arg_16_1
 end
 
-InputService.set_disabled_input_group = function (self, disabled_input_group)
-	self.disabled_input_group = disabled_input_group
+function InputService.set_disabled_input_group(arg_17_0, arg_17_1)
+	arg_17_0.disabled_input_group = arg_17_1
 end
 
-InputService.set_input_blocked = function (self, input_data_name, blocked, optional_reason, optional_debug_reason)
-	local blocked_input = self.blocked_input
-	local reasons = blocked_input[input_data_name]
+function InputService.set_input_blocked(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+	local var_18_0 = arg_18_0.blocked_input
+	local var_18_1 = var_18_0[arg_18_1]
 
-	if not reasons and not blocked then
+	if not var_18_1 and not arg_18_2 then
 		return
 	end
 
-	reasons = reasons or {}
-	blocked_input[input_data_name] = reasons
+	var_18_1 = var_18_1 or {}
+	var_18_0[arg_18_1] = var_18_1
+	var_18_1[arg_18_3 or "_no_reason"] = arg_18_2 or nil
 
-	local reason = optional_reason or "_no_reason"
-
-	reasons[reason] = blocked or nil
-
-	if not next(reasons) then
-		blocked_input[input_data_name] = nil
+	if not next(var_18_1) then
+		var_18_0[arg_18_1] = nil
 	end
 
 	if Application.user_setting("debug_blocked_input") then
-		printf("[InputService] Blocked input changed (%s): %s", optional_debug_reason, cjson.encode(self.blocked_input))
+		printf("[InputService] Blocked input changed (%s): %s", arg_18_4, cjson.encode(arg_18_0.blocked_input))
 	end
 end
 
-InputService.set_hover = function (self, hover)
-	self.hovering = self.hovering or hover
+function InputService.set_hover(arg_19_0, arg_19_1)
+	arg_19_0.hovering = arg_19_0.hovering or arg_19_1
 end
 
-InputService.is_hovering = function (self)
-	return self.hovering
+function InputService.is_hovering(arg_20_0)
+	return arg_20_0.hovering
 end

@@ -1,180 +1,171 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/gutter_runner/gutter_runner_state_pinning.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/gutter_runner/gutter_runner_state_pinning.lua
 
 GutterRunnerStatePinning = class(GutterRunnerStatePinning, EnemyCharacterState)
 
-GutterRunnerStatePinning.init = function (self, character_state_init_context)
-	EnemyCharacterState.init(self, character_state_init_context, "pinning_enemy")
+function GutterRunnerStatePinning.init(arg_1_0, arg_1_1)
+	EnemyCharacterState.init(arg_1_0, arg_1_1, "pinning_enemy")
 
-	self.lerp_target_position = Vector3Box()
-	self.lerp_start_position = Vector3Box()
-	self.breed = Unit.get_data(self._unit, "breed")
-	self._foff_ability_id = self._career_extension:ability_id("foff")
+	arg_1_0.lerp_target_position = Vector3Box()
+	arg_1_0.lerp_start_position = Vector3Box()
+	arg_1_0.breed = Unit.get_data(arg_1_0._unit, "breed")
+	arg_1_0._foff_ability_id = arg_1_0._career_extension:ability_id("foff")
 end
 
-GutterRunnerStatePinning.change_to_third_person_camera = function (self)
-	CharacterStateHelper.change_camera_state(self._player, "follow_third_person")
-
-	local first_person_extension = self._first_person_extension
-
-	first_person_extension:set_first_person_mode(false)
+function GutterRunnerStatePinning.change_to_third_person_camera(arg_2_0)
+	CharacterStateHelper.change_camera_state(arg_2_0._player, "follow_third_person")
+	arg_2_0._first_person_extension:set_first_person_mode(false)
 end
 
-GutterRunnerStatePinning.pounce_down = function (self, unit, target_unit, t)
-	local locomotion_extension = self._locomotion_extension
-	local target_position = POSITION_LOOKUP[target_unit]
+function GutterRunnerStatePinning.pounce_down(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	local var_3_0 = arg_3_0._locomotion_extension
+	local var_3_1 = POSITION_LOOKUP[arg_3_2]
 
-	locomotion_extension:set_wanted_velocity(Vector3.zero())
+	var_3_0:set_wanted_velocity(Vector3.zero())
 
-	local mover = Unit.mover(unit)
+	local var_3_2 = Unit.mover(arg_3_1)
 
-	Mover.set_position(mover, target_position)
-	LocomotionUtils.separate_mover_fallbacks(mover, 1)
+	Mover.set_position(var_3_2, var_3_1)
+	LocomotionUtils.separate_mover_fallbacks(var_3_2, 1)
 
-	local mover_position = Mover.position(mover)
+	local var_3_3 = Mover.position(var_3_2)
 
-	locomotion_extension:teleport_to(mover_position)
+	var_3_0:teleport_to(var_3_3)
 
-	local flat_unit_rot = Quaternion.flat_no_roll(Unit.local_rotation(unit, 0))
+	local var_3_4 = Quaternion.flat_no_roll(Unit.local_rotation(arg_3_1, 0))
 
-	Unit.set_local_rotation(unit, 0, flat_unit_rot)
-	self._locomotion_extension:set_disable_rotation_update()
+	Unit.set_local_rotation(arg_3_1, 0, var_3_4)
+	arg_3_0._locomotion_extension:set_disable_rotation_update()
 
-	local network_manager = Managers.state.network
-	local unit_id = network_manager:unit_game_object_id(unit)
+	local var_3_5 = Managers.state.network
+	local var_3_6 = var_3_5:unit_game_object_id(arg_3_1)
 
 	if Managers.state.network.is_server then
-		network_manager.network_transmit:send_rpc_clients("rpc_teleport_unit_to", unit_id, mover_position, flat_unit_rot)
+		var_3_5.network_transmit:send_rpc_clients("rpc_teleport_unit_to", var_3_6, var_3_3, var_3_4)
 	else
-		network_manager.network_transmit:send_rpc_server("rpc_teleport_unit_to", unit_id, mover_position, flat_unit_rot)
+		var_3_5.network_transmit:send_rpc_server("rpc_teleport_unit_to", var_3_6, var_3_3, var_3_4)
 	end
 
-	StatusUtils.set_pounced_down_network("pounced_down", target_unit, true, unit)
+	StatusUtils.set_pounced_down_network("pounced_down", arg_3_2, true, arg_3_1)
+	ScriptUnit.extension(arg_3_2, "status_system"):add_pacing_intensity(CurrentIntensitySettings.intensity_add_pounced_down)
 
-	local target_status_extension = ScriptUnit.extension(target_unit, "status_system")
+	local var_3_7 = arg_3_0._blackboard
+	local var_3_8 = var_3_7.breed
+	local var_3_9 = arg_3_3 - var_3_7.pounce_start_time
+	local var_3_10 = var_3_8.name
+	local var_3_11 = var_3_9 / var_3_8.pounce_max_damage_time
+	local var_3_12 = math.clamp(var_3_11 * var_3_8.max_pounce_damage, var_3_8.min_pounce_damage, var_3_8.max_pounce_damage)
+	local var_3_13
 
-	target_status_extension:add_pacing_intensity(CurrentIntensitySettings.intensity_add_pounced_down)
+	DamageUtils.add_damage_network(arg_3_2, arg_3_1, var_3_12, "torso", "cutting", nil, Vector3(1, 0, 0), var_3_10, nil, nil, nil, var_3_13, nil, nil, nil, nil, nil, nil, 1)
 
-	local blackboard = self._blackboard
-	local breed = blackboard.breed
-	local in_air_time = t - blackboard.pounce_start_time
-	local breed_name = breed.name
-	local impact_damage_scaler = in_air_time / breed.pounce_max_damage_time
-	local impact_damage = math.clamp(impact_damage_scaler * breed.max_pounce_damage, breed.min_pounce_damage, breed.max_pounce_damage)
-	local hit_react_type
+	local var_3_14 = BreedActions.skaven_gutter_runner.target_pounced
 
-	DamageUtils.add_damage_network(target_unit, unit, impact_damage, "torso", "cutting", nil, Vector3(1, 0, 0), breed_name, nil, nil, nil, hit_react_type, nil, nil, nil, nil, nil, nil, 1)
-
-	local action = BreedActions.skaven_gutter_runner.target_pounced
-
-	BTTargetPouncedAction.impact_pushback(unit, target_position, action.close_impact_radius, action.far_impact_radius, action.impact_speed_given, blackboard.target_unit)
+	BTTargetPouncedAction.impact_pushback(arg_3_1, var_3_1, var_3_14.close_impact_radius, var_3_14.far_impact_radius, var_3_14.impact_speed_given, var_3_7.target_unit)
 end
 
-GutterRunnerStatePinning.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
-	local unit = self._unit
-	local first_person_extension = self._first_person_extension
-	local target_unit = params.target_unit
+function GutterRunnerStatePinning.on_enter(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7)
+	local var_4_0 = arg_4_0._unit
+	local var_4_1 = arg_4_0._first_person_extension
+	local var_4_2 = arg_4_7.target_unit
 
-	self._blackboard = BLACKBOARDS[unit]
-	self._blackboard.start_pouncing_time = t
+	arg_4_0._blackboard = BLACKBOARDS[var_4_0]
+	arg_4_0._blackboard.start_pouncing_time = arg_4_5
 
-	self:set_breed_action("target_pounced")
-	first_person_extension:play_unit_sound_event("Play_versus_gutterrunner_jump_attack_hit", unit, 0)
-	self:pounce_down(unit, target_unit, t)
+	arg_4_0:set_breed_action("target_pounced")
+	var_4_1:play_unit_sound_event("Play_versus_gutterrunner_jump_attack_hit", var_4_0, 0)
+	arg_4_0:pounce_down(var_4_0, var_4_2, arg_4_5)
 
-	self.target_unit = target_unit
-	self.target_status_extension = ScriptUnit.extension(target_unit, "status_system")
+	arg_4_0.target_unit = var_4_2
+	arg_4_0.target_status_extension = ScriptUnit.extension(var_4_2, "status_system")
 
-	CharacterStateHelper.stop_weapon_actions(self._inventory_extension, "pinning_enemy")
-	CharacterStateHelper.stop_career_abilities(self._career_extension, "pinning_enemy")
-	self._locomotion_extension:set_forced_velocity(Vector3:zero())
-	self:change_to_third_person_camera()
+	CharacterStateHelper.stop_weapon_actions(arg_4_0._inventory_extension, "pinning_enemy")
+	CharacterStateHelper.stop_career_abilities(arg_4_0._career_extension, "pinning_enemy")
+	arg_4_0._locomotion_extension:set_forced_velocity(Vector3:zero())
+	arg_4_0:change_to_third_person_camera()
 
-	self._next_stab_time = t
+	arg_4_0._next_stab_time = arg_4_5
 
-	self._status_extension:set_pinning_enemy(true, target_unit)
+	arg_4_0._status_extension:set_pinning_enemy(true, var_4_2)
 end
 
-GutterRunnerStatePinning.on_exit = function (self, unit, input, dt, context, t, next_state)
-	CharacterStateHelper.change_camera_state(self._player, "follow")
-	self._first_person_extension:toggle_visibility(CameraTransitionSettings.perspective_transition_time)
+function GutterRunnerStatePinning.on_exit(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
+	CharacterStateHelper.change_camera_state(arg_5_0._player, "follow")
+	arg_5_0._first_person_extension:toggle_visibility(CameraTransitionSettings.perspective_transition_time)
 
-	if ALIVE[self.target_unit] then
-		StatusUtils.set_pounced_down_network("pounced_down", self.target_unit, false, unit)
+	if ALIVE[arg_5_0.target_unit] then
+		StatusUtils.set_pounced_down_network("pounced_down", arg_5_0.target_unit, false, arg_5_1)
 	else
-		self._status_extension:set_pinning_enemy(false, self.target_unit)
+		arg_5_0._status_extension:set_pinning_enemy(false, arg_5_0.target_unit)
 	end
 
-	self:set_breed_action("n/a")
+	arg_5_0:set_breed_action("n/a")
 
-	local current_cooldown = self._career_extension:current_ability_cooldown(self._foff_ability_id)
+	local var_5_0 = arg_5_0._career_extension:current_ability_cooldown(arg_5_0._foff_ability_id)
 
-	if current_cooldown < 1 then
-		self._career_extension:reduce_activated_ability_cooldown((1 - current_cooldown) * -1, self._foff_ability_id)
+	if var_5_0 < 1 then
+		arg_5_0._career_extension:reduce_activated_ability_cooldown((1 - var_5_0) * -1, arg_5_0._foff_ability_id)
 	end
 end
 
-GutterRunnerStatePinning.update = function (self, unit, input, dt, context, t)
-	local csm = self._csm
-	local unit = self._unit
-	local locomotion_extension = self._locomotion_extension
-	local input_extension = self._input_extension
-	local status_extension = self._status_extension
-	local first_person_extension = self._first_person_extension
-	local target_unit = self.target_unit
-	local target_status_extension = self.target_status_extension
+function GutterRunnerStatePinning.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+	local var_6_0 = arg_6_0._csm
+	local var_6_1 = arg_6_0._unit
+	local var_6_2 = arg_6_0._locomotion_extension
+	local var_6_3 = arg_6_0._input_extension
+	local var_6_4 = arg_6_0._status_extension
+	local var_6_5 = arg_6_0._first_person_extension
+	local var_6_6 = arg_6_0.target_unit
+	local var_6_7 = arg_6_0.target_status_extension
 
-	if not HEALTH_ALIVE[target_unit] then
-		local params = self._temp_params
+	if not HEALTH_ALIVE[var_6_6] then
+		local var_6_8 = arg_6_0._temp_params
 
-		csm:change_state("standing", params)
-
-		return
-	end
-
-	if target_status_extension:is_knocked_down() then
-		local params = self._temp_params
-
-		csm:change_state("standing", params)
+		var_6_0:change_state("standing", var_6_8)
 
 		return
 	end
 
-	local buff_extension = self._buff_extension
-	local unmount_buff = buff_extension:has_buff_type("vs_gutter_runner_allow_dismount")
+	if var_6_7:is_knocked_down() then
+		local var_6_9 = arg_6_0._temp_params
 
-	if not CharacterStateHelper.is_viable_stab_target(unit, target_unit, target_status_extension) or (input_extension:get("jump") or input_extension:get("action_two")) and unmount_buff then
-		target_status_extension:set_pounced_down(false, unit)
-
-		local params = self._temp_params
-
-		csm:change_state("standing", params)
+		var_6_0:change_state("standing", var_6_9)
 
 		return
 	end
 
-	self:update_stabbing(t, dt, unit, target_unit)
+	local var_6_10 = arg_6_0._buff_extension:has_buff_type("vs_gutter_runner_allow_dismount")
 
-	if CharacterStateHelper.do_common_state_transitions(status_extension, csm) then
+	if not CharacterStateHelper.is_viable_stab_target(var_6_1, var_6_6, var_6_7) or (var_6_3:get("jump") or var_6_3:get("action_two")) and var_6_10 then
+		var_6_7:set_pounced_down(false, var_6_1)
+
+		local var_6_11 = arg_6_0._temp_params
+
+		var_6_0:change_state("standing", var_6_11)
+
 		return
 	end
 
-	self._locomotion_extension:set_disable_rotation_update()
-	CharacterStateHelper.look(input_extension, self._player.viewport_name, self._first_person_extension, status_extension, self._inventory_extension)
+	arg_6_0:update_stabbing(arg_6_5, arg_6_3, var_6_1, var_6_6)
+
+	if CharacterStateHelper.do_common_state_transitions(var_6_4, var_6_0) then
+		return
+	end
+
+	arg_6_0._locomotion_extension:set_disable_rotation_update()
+	CharacterStateHelper.look(var_6_3, arg_6_0._player.viewport_name, arg_6_0._first_person_extension, var_6_4, arg_6_0._inventory_extension)
 end
 
-GutterRunnerStatePinning.update_stabbing = function (self, t, dt, unit, target_unit)
-	local time_between_damage = 0.5
+function GutterRunnerStatePinning.update_stabbing(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	local var_7_0 = 0.5
 
-	if t > self._next_stab_time then
-		local action = BreedActions.skaven_gutter_runner.target_pounced
-		local pounced_time = (t - self._blackboard.start_pouncing_time - self.breed.time_before_ramping_damage) / self.breed.time_to_reach_max_damage
-		local normalized_time = math.clamp(pounced_time, 0, 1)
-		local base_damage = self.breed.base_damage
-		local multiplier = 1 + normalized_time * self.breed.final_damage_multiplier
-		local stab_damage = base_damage * multiplier
+	if arg_7_1 > arg_7_0._next_stab_time then
+		local var_7_1 = BreedActions.skaven_gutter_runner.target_pounced
+		local var_7_2 = (arg_7_1 - arg_7_0._blackboard.start_pouncing_time - arg_7_0.breed.time_before_ramping_damage) / arg_7_0.breed.time_to_reach_max_damage
+		local var_7_3 = math.clamp(var_7_2, 0, 1)
+		local var_7_4 = arg_7_0.breed.base_damage * (1 + var_7_3 * arg_7_0.breed.final_damage_multiplier)
 
-		AiUtils.damage_target(target_unit, unit, action, stab_damage)
+		AiUtils.damage_target(arg_7_4, arg_7_3, var_7_1, var_7_4)
 
-		self._next_stab_time = t + time_between_damage
+		arg_7_0._next_stab_time = arg_7_1 + var_7_0
 	end
 end

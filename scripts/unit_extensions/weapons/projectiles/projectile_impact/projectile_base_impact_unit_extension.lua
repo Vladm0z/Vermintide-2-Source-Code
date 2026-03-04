@@ -1,48 +1,48 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/projectiles/projectile_impact/projectile_base_impact_unit_extension.lua
+-- chunkname: @scripts/unit_extensions/weapons/projectiles/projectile_impact/projectile_base_impact_unit_extension.lua
 
 ProjectileBaseImpactUnitExtension = class(ProjectileBaseImpactUnitExtension)
 ProjectileImpactDataIndex = {
-	ACTOR_INDEX = 5,
-	DIRECTION = 3,
-	NORMAL = 4,
 	POSITION = 2,
-	STRIDE = 5,
+	ACTOR_INDEX = 5,
 	UNIT = 1,
+	STRIDE = 5,
+	DIRECTION = 3,
+	NORMAL = 4
 }
 
-ProjectileBaseImpactUnitExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	local world = extension_init_context.world
+function ProjectileBaseImpactUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	local var_1_0 = arg_1_1.world
 
-	self.world = world
-	self.unit = unit
-	self.physics_world = World.get_data(world, "physics_world")
-	self.impact_buffer = pdArray.new()
+	arg_1_0.world = var_1_0
+	arg_1_0.unit = arg_1_2
+	arg_1_0.physics_world = World.get_data(var_1_0, "physics_world")
+	arg_1_0.impact_buffer = pdArray.new()
 end
 
-ProjectileBaseImpactUnitExtension.update = function (self, unit, input, dt, context, t)
-	pdArray.set_empty(self.impact_buffer)
+function ProjectileBaseImpactUnitExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	pdArray.set_empty(arg_2_0.impact_buffer)
 end
 
-local temp_table = {}
+local var_0_0 = {}
 
-ProjectileBaseImpactUnitExtension.impact = function (self, hit_unit, hit_position, hit_direction, hit_normal, hit_actor_index)
-	local impact_buffer = self.impact_buffer
+function ProjectileBaseImpactUnitExtension.impact(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	local var_3_0 = arg_3_0.impact_buffer
 
-	temp_table[ProjectileImpactDataIndex.UNIT] = hit_unit
-	temp_table[ProjectileImpactDataIndex.POSITION] = Vector3Box(hit_position)
-	temp_table[ProjectileImpactDataIndex.DIRECTION] = Vector3Box(hit_direction)
-	temp_table[ProjectileImpactDataIndex.NORMAL] = Vector3Box(hit_normal)
-	temp_table[ProjectileImpactDataIndex.ACTOR_INDEX] = hit_actor_index
+	var_0_0[ProjectileImpactDataIndex.UNIT] = arg_3_1
+	var_0_0[ProjectileImpactDataIndex.POSITION] = Vector3Box(arg_3_2)
+	var_0_0[ProjectileImpactDataIndex.DIRECTION] = Vector3Box(arg_3_3)
+	var_0_0[ProjectileImpactDataIndex.NORMAL] = Vector3Box(arg_3_4)
+	var_0_0[ProjectileImpactDataIndex.ACTOR_INDEX] = arg_3_5
 
-	pdArray.push_back5(impact_buffer, unpack(temp_table))
+	pdArray.push_back5(var_3_0, unpack(var_0_0))
 
-	if Unit.actor(hit_unit, hit_actor_index) == nil then
+	if Unit.actor(arg_3_1, arg_3_5) == nil then
 		print("hitting pickup?")
-		print(hit_actor_index)
-		print(Unit.find_actor(hit_unit, "c_afro"))
+		print(arg_3_5)
+		print(Unit.find_actor(arg_3_1, "c_afro"))
 	end
 end
 
-ProjectileBaseImpactUnitExtension.recent_impacts = function (self)
-	return pdArray.data(self.impact_buffer)
+function ProjectileBaseImpactUnitExtension.recent_impacts(arg_4_0)
+	return pdArray.data(arg_4_0.impact_buffer)
 end

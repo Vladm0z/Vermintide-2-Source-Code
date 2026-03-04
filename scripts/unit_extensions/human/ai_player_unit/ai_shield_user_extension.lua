@@ -1,126 +1,120 @@
-﻿-- chunkname: @scripts/unit_extensions/human/ai_player_unit/ai_shield_user_extension.lua
+-- chunkname: @scripts/unit_extensions/human/ai_player_unit/ai_shield_user_extension.lua
 
 AIShieldUserExtension = class(AIShieldUserExtension)
 
-AIShieldUserExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self._unit = unit
-	self.is_blocking = extension_init_data.is_blocking or true
-	self.is_dodging = extension_init_data.is_dodging or false
-	self.shield_broken = false
+function AIShieldUserExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._unit = arg_1_2
+	arg_1_0.is_blocking = arg_1_3.is_blocking or true
+	arg_1_0.is_dodging = arg_1_3.is_dodging or false
+	arg_1_0.shield_broken = false
 end
 
-AIShieldUserExtension.destroy = function (self)
+function AIShieldUserExtension.destroy(arg_2_0)
 	return
 end
 
-AIShieldUserExtension.extensions_ready = function (self, world, unit)
+function AIShieldUserExtension.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
 	assert(Managers.state.network.is_server)
 
-	local ai_base_extension = ScriptUnit.extension(unit, "ai_system")
-	local blackboard = ai_base_extension:blackboard()
-	local spawn_type = blackboard.spawn_type
-	local is_blocking = spawn_type == "horde" or spawn_type == "horde_hidden"
+	local var_3_0 = ScriptUnit.extension(arg_3_2, "ai_system"):blackboard()
+	local var_3_1 = var_3_0.spawn_type
 
-	self.is_blocking = is_blocking
-	self._blackboard = blackboard
-	self.blocked_previous_attack = false
-	blackboard.shield_user = true
+	arg_3_0.is_blocking = var_3_1 == "horde" or var_3_1 == "horde_hidden"
+	arg_3_0._blackboard = var_3_0
+	arg_3_0.blocked_previous_attack = false
+	var_3_0.shield_user = true
 end
 
-AIShieldUserExtension.set_is_blocking = function (self, is_blocking)
-	local shield_broken = self.shield_broken
-
-	if shield_broken then
+function AIShieldUserExtension.set_is_blocking(arg_4_0, arg_4_1)
+	if arg_4_0.shield_broken then
 		return
 	end
 
-	local unit = self._unit
-	local game_object_id = Managers.state.unit_storage:go_id(unit)
-	local game = Managers.state.network:game()
+	local var_4_0 = arg_4_0._unit
+	local var_4_1 = Managers.state.unit_storage:go_id(var_4_0)
+	local var_4_2 = Managers.state.network:game()
 
-	if game and game_object_id then
-		GameSession.set_game_object_field(game, game_object_id, "is_blocking", is_blocking)
+	if var_4_2 and var_4_1 then
+		GameSession.set_game_object_field(var_4_2, var_4_1, "is_blocking", arg_4_1)
 	end
 
-	self.is_blocking = is_blocking
+	arg_4_0.is_blocking = arg_4_1
 end
 
-AIShieldUserExtension.set_is_dodging = function (self, is_dodging)
-	local shield_broken = self.shield_broken
-
-	if shield_broken then
+function AIShieldUserExtension.set_is_dodging(arg_5_0, arg_5_1)
+	if arg_5_0.shield_broken then
 		return
 	end
 
-	local unit = self._unit
-	local game_object_id = Managers.state.unit_storage:go_id(unit)
-	local game = Managers.state.network:game()
+	local var_5_0 = arg_5_0._unit
+	local var_5_1 = Managers.state.unit_storage:go_id(var_5_0)
+	local var_5_2 = Managers.state.network:game()
 
-	if game and game_object_id then
-		GameSession.set_game_object_field(game, game_object_id, "is_dodging", is_dodging)
+	if var_5_2 and var_5_1 then
+		GameSession.set_game_object_field(var_5_2, var_5_1, "is_dodging", arg_5_1)
 	end
 
-	self.is_dodging = is_dodging
+	arg_5_0.is_dodging = arg_5_1
 end
 
-AIShieldUserExtension.break_shield = function (self)
-	self:set_is_blocking(false)
+function AIShieldUserExtension.break_shield(arg_6_0)
+	arg_6_0:set_is_blocking(false)
 
-	self.shield_broken = true
+	arg_6_0.shield_broken = true
 
-	local unit = self._unit
-	local blackboard = self._blackboard
+	local var_6_0 = arg_6_0._unit
+	local var_6_1 = arg_6_0._blackboard
 
-	blackboard.shield_breaking_hit = true
-	blackboard.shield_user = false
+	var_6_1.shield_breaking_hit = true
+	var_6_1.shield_user = false
 
-	local ai_inventory_extension = ScriptUnit.extension(unit, "ai_inventory_system")
-	local inventory_item_definitions = ai_inventory_extension.inventory_item_definitions
-	local reason = "shield_break"
-	local network_transmit = Managers.state.network.network_transmit
-	local game_object_id = Managers.state.unit_storage:go_id(unit)
-	local reason_id = NetworkLookup.item_drop_reasons[reason]
-	local item_dropped = false
+	local var_6_2 = ScriptUnit.extension(var_6_0, "ai_inventory_system")
+	local var_6_3 = var_6_2.inventory_item_definitions
+	local var_6_4 = "shield_break"
+	local var_6_5 = Managers.state.network.network_transmit
+	local var_6_6 = Managers.state.unit_storage:go_id(var_6_0)
+	local var_6_7 = NetworkLookup.item_drop_reasons[var_6_4]
+	local var_6_8 = false
 
-	for i = 1, #inventory_item_definitions do
-		local item = inventory_item_definitions[i]
-		local success, item_unit = ai_inventory_extension:drop_single_item(i, reason)
+	for iter_6_0 = 1, #var_6_3 do
+		local var_6_9 = var_6_3[iter_6_0]
+		local var_6_10, var_6_11 = var_6_2:drop_single_item(iter_6_0, var_6_4)
 
-		if success then
-			item_dropped = true
+		if var_6_10 then
+			var_6_8 = true
 
-			network_transmit:send_rpc_clients("rpc_ai_drop_single_item", game_object_id, i, reason_id)
+			var_6_5:send_rpc_clients("rpc_ai_drop_single_item", var_6_6, iter_6_0, var_6_7)
 		end
 	end
 
-	return item_dropped
+	return var_6_8
 end
 
-AIShieldUserExtension.can_block_attack = function (self, attacker_unit, trueflight_blocking, hit_direction)
-	assert(attacker_unit)
+function AIShieldUserExtension.can_block_attack(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	assert(arg_7_1)
 
-	local unit = self._unit
-	local can_block = self.is_blocking
+	local var_7_0 = arg_7_0._unit
 
-	if not can_block or not HEALTH_ALIVE[unit] then
+	if not arg_7_0.is_blocking or not HEALTH_ALIVE[var_7_0] then
 		return false
 	end
 
-	local attacker_unit_pos = Unit.world_position(attacker_unit, 0)
-	local hit_unit_pos = Unit.world_position(unit, 0)
-	local attacker_to_hit_dir = Vector3.normalize(hit_unit_pos - attacker_unit_pos)
-	local hit_unit_direction = Quaternion.forward(Unit.local_rotation(unit, 0))
-	local hit_angle, behind_target
+	local var_7_1 = Unit.world_position(arg_7_1, 0)
+	local var_7_2 = Unit.world_position(var_7_0, 0)
+	local var_7_3 = Vector3.normalize(var_7_2 - var_7_1)
+	local var_7_4 = Quaternion.forward(Unit.local_rotation(var_7_0, 0))
+	local var_7_5
+	local var_7_6
 
-	if trueflight_blocking then
-		hit_angle = Vector3.dot(hit_unit_direction, hit_direction)
-		behind_target = hit_angle >= -0.75 and hit_angle <= 1
+	if arg_7_2 then
+		local var_7_7 = Vector3.dot(var_7_4, arg_7_3)
+
+		var_7_6 = var_7_7 >= -0.75 and var_7_7 <= 1
 	else
-		hit_angle = Vector3.dot(hit_unit_direction, attacker_to_hit_dir)
-		behind_target = hit_angle >= 0.55 and hit_angle <= 1
+		local var_7_8 = Vector3.dot(var_7_4, var_7_3)
+
+		var_7_6 = var_7_8 >= 0.55 and var_7_8 <= 1
 	end
 
-	local can_block_attack = not behind_target
-
-	return can_block_attack
+	return not var_7_6
 end

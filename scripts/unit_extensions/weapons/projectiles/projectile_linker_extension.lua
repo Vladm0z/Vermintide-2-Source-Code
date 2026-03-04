@@ -1,56 +1,54 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/projectiles/projectile_linker_extension.lua
+-- chunkname: @scripts/unit_extensions/weapons/projectiles/projectile_linker_extension.lua
 
 ProjectileLinkerExtension = class(ProjectileLinkerExtension)
 
-ProjectileLinkerExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self._world = extension_init_context.world
-	self._owner_unit = unit
-	self.linked_projectiles = {}
+function ProjectileLinkerExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._world = arg_1_1.world
+	arg_1_0._owner_unit = arg_1_2
+	arg_1_0.linked_projectiles = {}
 end
 
-ProjectileLinkerExtension.extensions_ready = function (self)
+function ProjectileLinkerExtension.extensions_ready(arg_2_0)
 	return
 end
 
-ProjectileLinkerExtension.link_projectile = function (self, projectile_unit, offset_position, rotation, actor_node)
-	local owner_unit = self._owner_unit
-	local world = self._world
-	local hit_node_rot = Unit.world_rotation(owner_unit, actor_node)
-	local local_rot = Quaternion.multiply(Quaternion.inverse(hit_node_rot), rotation)
+function ProjectileLinkerExtension.link_projectile(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local var_3_0 = arg_3_0._owner_unit
+	local var_3_1 = arg_3_0._world
+	local var_3_2 = Unit.world_rotation(var_3_0, arg_3_4)
+	local var_3_3 = Quaternion.multiply(Quaternion.inverse(var_3_2), arg_3_3)
 
-	World.link_unit(world, projectile_unit, 0, owner_unit, actor_node)
-	Unit.set_local_position(projectile_unit, 0, offset_position)
-	Unit.set_local_rotation(projectile_unit, 0, local_rot)
-	World.update_unit(world, projectile_unit)
+	World.link_unit(var_3_1, arg_3_1, 0, var_3_0, arg_3_4)
+	Unit.set_local_position(arg_3_1, 0, arg_3_2)
+	Unit.set_local_rotation(arg_3_1, 0, var_3_3)
+	World.update_unit(var_3_1, arg_3_1)
 
-	self.linked_projectiles[#self.linked_projectiles + 1] = projectile_unit
+	arg_3_0.linked_projectiles[#arg_3_0.linked_projectiles + 1] = arg_3_1
 end
 
-ProjectileLinkerExtension.unlink_projectile = function (self, projectile_unit)
-	if not Unit.alive(projectile_unit) then
+function ProjectileLinkerExtension.unlink_projectile(arg_4_0, arg_4_1)
+	if not Unit.alive(arg_4_1) then
 		return
 	end
 
-	local index = table.index_of(self.linked_projectiles, projectile_unit)
-
-	if index == -1 then
+	if table.index_of(arg_4_0.linked_projectiles, arg_4_1) == -1 then
 		return
 	end
 
-	local world = self._world
+	local var_4_0 = arg_4_0._world
 
-	World.unlink_unit(world, projectile_unit)
+	World.unlink_unit(var_4_0, arg_4_1)
 
-	if Unit.find_actor(projectile_unit, "throw") then
-		Unit.create_actor(projectile_unit, "throw")
+	if Unit.find_actor(arg_4_1, "throw") then
+		Unit.create_actor(arg_4_1, "throw")
 	end
 
-	Unit.set_local_position(projectile_unit, 0, Unit.world_position(projectile_unit, 0))
-	Unit.set_local_rotation(projectile_unit, 0, Unit.world_rotation(projectile_unit, 0))
-	World.update_unit(world, projectile_unit)
-	table.remove(self.linked_projectiles, table.index_of(self.linked_projectiles, projectile_unit))
+	Unit.set_local_position(arg_4_1, 0, Unit.world_position(arg_4_1, 0))
+	Unit.set_local_rotation(arg_4_1, 0, Unit.world_rotation(arg_4_1, 0))
+	World.update_unit(var_4_0, arg_4_1)
+	table.remove(arg_4_0.linked_projectiles, table.index_of(arg_4_0.linked_projectiles, arg_4_1))
 end
 
-ProjectileLinkerExtension.destroy = function (self)
+function ProjectileLinkerExtension.destroy(arg_5_0)
 	return
 end

@@ -1,155 +1,143 @@
-﻿-- chunkname: @scripts/managers/events/xbox_event_manager.lua
+-- chunkname: @scripts/managers/events/xbox_event_manager.lua
 
 XboxEventManager = class(XboxEventManager)
 
-local TIME_BETWEEN_EVENTS = 2
+local var_0_0 = 2
 
-XboxEventManager.init = function (self)
-	self._events_to_write_queue = {}
-	self._priority_events_queue = {}
-	self._immediate_queue = {}
-	self._timer = TIME_BETWEEN_EVENTS
+function XboxEventManager.init(arg_1_0)
+	arg_1_0._events_to_write_queue = {}
+	arg_1_0._priority_events_queue = {}
+	arg_1_0._immediate_queue = {}
+	arg_1_0._timer = var_0_0
 end
 
-XboxEventManager.write = function (self, event, event_data, debug_string, debug_print_func, prioritize, skip_wait_time)
+function XboxEventManager.write(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
 	Application.warning("[XboxEventManager:write] No Stats are implemented yet")
 
 	do return end
 
-	Application.error(string.format("Adding%sEvent: %s", prioritize and " prioritized " or " ", event))
+	Application.error(string.format("Adding%sEvent: %s", arg_2_5 and " prioritized " or " ", arg_2_1))
 
-	if skip_wait_time then
-		self._immediate_queue[#self._immediate_queue + 1] = {
-			event = event,
-			event_data = event_data,
-			debug_string = string.format("Skipping wait time for event: %s", event),
-			debug_print_func = Application.warning,
+	if arg_2_6 then
+		arg_2_0._immediate_queue[#arg_2_0._immediate_queue + 1] = {
+			event = arg_2_1,
+			event_data = arg_2_2,
+			debug_string = string.format("Skipping wait time for event: %s", arg_2_1),
+			debug_print_func = Application.warning
 		}
-	elseif prioritize then
-		self._priority_events_queue[#self._priority_events_queue + 1] = {
-			event = event,
-			event_data = event_data,
-			debug_string = debug_string,
-			debug_print_func = debug_print_func,
+	elseif arg_2_5 then
+		arg_2_0._priority_events_queue[#arg_2_0._priority_events_queue + 1] = {
+			event = arg_2_1,
+			event_data = arg_2_2,
+			debug_string = arg_2_3,
+			debug_print_func = arg_2_4
 		}
 	else
-		self._events_to_write_queue[#self._events_to_write_queue + 1] = {
-			event = event,
-			event_data = event_data,
-			debug_string = debug_string,
-			debug_print_func = debug_print_func,
+		arg_2_0._events_to_write_queue[#arg_2_0._events_to_write_queue + 1] = {
+			event = arg_2_1,
+			event_data = arg_2_2,
+			debug_string = arg_2_3,
+			debug_print_func = arg_2_4
 		}
 	end
 end
 
-XboxEventManager.update = function (self, dt)
-	local priority_event = self._priority_events_queue[1]
+function XboxEventManager.update(arg_3_0, arg_3_1)
+	local var_3_0 = arg_3_0._priority_events_queue[1]
 
-	if not priority_event and self._timer > 0 then
-		self:_handle_immediate_event()
-	elseif self._timer <= 0 then
-		if priority_event then
-			self:_handle_priority_event(priority_event)
+	if not var_3_0 and arg_3_0._timer > 0 then
+		arg_3_0:_handle_immediate_event()
+	elseif arg_3_0._timer <= 0 then
+		if var_3_0 then
+			arg_3_0:_handle_priority_event(var_3_0)
 		else
-			self:_handle_event()
+			arg_3_0:_handle_event()
 		end
 
-		self._timer = TIME_BETWEEN_EVENTS
+		arg_3_0._timer = var_0_0
 	end
 
-	self._timer = self._timer - dt
+	arg_3_0._timer = arg_3_0._timer - arg_3_1
 end
 
-XboxEventManager._handle_priority_event = function (self, priority_event)
-	Application.error(string.format("Writing Prioritized Event: %s", priority_event.event))
-	Events.write(priority_event.event, priority_event.event_data)
+function XboxEventManager._handle_priority_event(arg_4_0, arg_4_1)
+	Application.error(string.format("Writing Prioritized Event: %s", arg_4_1.event))
+	Events.write(arg_4_1.event, arg_4_1.event_data)
 
-	if priority_event.debug_string then
-		local print_func = priority_event.debug_print_func or print
-
-		print_func(priority_event.debug_string)
+	if arg_4_1.debug_string then
+		(arg_4_1.debug_print_func or print)(arg_4_1.debug_string)
 	end
 
-	table.remove(self._priority_events_queue, 1)
+	table.remove(arg_4_0._priority_events_queue, 1)
 end
 
-XboxEventManager._handle_event = function (self)
-	local current_event = self._events_to_write_queue[1]
+function XboxEventManager._handle_event(arg_5_0)
+	local var_5_0 = arg_5_0._events_to_write_queue[1]
 
-	if current_event then
-		Application.error(string.format("Writing Event: %s", current_event.event))
-		Events.write(current_event.event, current_event.event_data)
+	if var_5_0 then
+		Application.error(string.format("Writing Event: %s", var_5_0.event))
+		Events.write(var_5_0.event, var_5_0.event_data)
 
-		if current_event.debug_string then
-			local print_func = current_event.debug_print_func or print
-
-			print_func(current_event.debug_string)
+		if var_5_0.debug_string then
+			(var_5_0.debug_print_func or print)(var_5_0.debug_string)
 		end
 
-		table.remove(self._events_to_write_queue, 1)
+		table.remove(arg_5_0._events_to_write_queue, 1)
 	end
 end
 
-XboxEventManager._handle_immediate_event = function (self)
-	local immediate_event = self._immediate_queue[1]
+function XboxEventManager._handle_immediate_event(arg_6_0)
+	local var_6_0 = arg_6_0._immediate_queue[1]
 
-	if immediate_event then
-		Application.error(string.format("Writing Event: %s", immediate_event.event))
-		Events.write(immediate_event.event, immediate_event.event_data)
+	if var_6_0 then
+		Application.error(string.format("Writing Event: %s", var_6_0.event))
+		Events.write(var_6_0.event, var_6_0.event_data)
 
-		if immediate_event.debug_string then
-			local print_func = immediate_event.debug_print_func or print
-
-			print_func(immediate_event.debug_string)
+		if var_6_0.debug_string then
+			(var_6_0.debug_print_func or print)(var_6_0.debug_string)
 		end
 
-		table.remove(self._immediate_queue, 1)
+		table.remove(arg_6_0._immediate_queue, 1)
 	end
 end
 
-XboxEventManager.flush = function (self)
+function XboxEventManager.flush(arg_7_0)
 	Application.warning("[XboxEventManager:flush] No Stats are implemented yet")
 
 	do return end
 
-	for _, current_priority_event in pairs(self._priority_events_queue) do
-		Application.error(string.format("Writing Event: %s", current_priority_event.event))
-		Events.write(current_priority_event.event, current_priority_event.event_data)
+	for iter_7_0, iter_7_1 in pairs(arg_7_0._priority_events_queue) do
+		Application.error(string.format("Writing Event: %s", iter_7_1.event))
+		Events.write(iter_7_1.event, iter_7_1.event_data)
 
-		if current_priority_event.debug_string then
-			local print_func = current_priority_event.debug_print_func or print
-
-			print_func(current_priority_event.debug_string)
+		if iter_7_1.debug_string then
+			(iter_7_1.debug_print_func or print)(iter_7_1.debug_string)
 		end
 	end
 
-	for _, current_event in pairs(self._events_to_write_queue) do
-		Application.error(string.format("Writing Event: %s", current_event.event))
-		Events.write(current_event.event, current_event.event_data)
+	for iter_7_2, iter_7_3 in pairs(arg_7_0._events_to_write_queue) do
+		Application.error(string.format("Writing Event: %s", iter_7_3.event))
+		Events.write(iter_7_3.event, iter_7_3.event_data)
 
-		if current_event.debug_string then
-			local print_func = current_event.debug_print_func or print
-
-			print_func(current_event.debug_string)
+		if iter_7_3.debug_string then
+			(iter_7_3.debug_print_func or print)(iter_7_3.debug_string)
 		end
 	end
 
-	for _, immediate_event in pairs(self._immediate_queue) do
-		Application.error(string.format("Writing Event: %s", immediate_event.event))
-		Events.write(immediate_event.event, immediate_event.event_data)
+	for iter_7_4, iter_7_5 in pairs(arg_7_0._immediate_queue) do
+		Application.error(string.format("Writing Event: %s", iter_7_5.event))
+		Events.write(iter_7_5.event, iter_7_5.event_data)
 
-		if immediate_event.debug_string then
-			local print_func = immediate_event.debug_print_func or print
-
-			print_func(immediate_event.debug_string)
+		if iter_7_5.debug_string then
+			(iter_7_5.debug_print_func or print)(iter_7_5.debug_string)
 		end
 	end
 
-	table.clear(self._events_to_write_queue)
-	table.clear(self._priority_events_queue)
-	table.clear(self._immediate_queue)
+	table.clear(arg_7_0._events_to_write_queue)
+	table.clear(arg_7_0._priority_events_queue)
+	table.clear(arg_7_0._immediate_queue)
 end
 
-XboxEventManager.destroy = function (self)
+function XboxEventManager.destroy(arg_8_0)
 	return
 end

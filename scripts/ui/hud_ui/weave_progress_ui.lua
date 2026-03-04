@@ -1,212 +1,206 @@
-﻿-- chunkname: @scripts/ui/hud_ui/weave_progress_ui.lua
+-- chunkname: @scripts/ui/hud_ui/weave_progress_ui.lua
 
-local definitions = local_require("scripts/ui/hud_ui/weave_progress_ui_definitions")
-local widget_definitions = definitions.widgets
-local scenegraph_definition = definitions.scenegraph_definition
+local var_0_0 = local_require("scripts/ui/hud_ui/weave_progress_ui_definitions")
+local var_0_1 = var_0_0.widgets
+local var_0_2 = var_0_0.scenegraph_definition
 
 WeaveProgressUI = class(WeaveProgressUI)
 
-WeaveProgressUI.init = function (self, parent, ingame_ui_context)
-	self._parent = parent
-	self._ui_renderer = ingame_ui_context.ui_renderer
-	self._ingame_ui_context = ingame_ui_context
-	self._render_settings = {}
-	self._progress = 0
-	self._animations = {}
-	self._animation_callbacks = {}
+function WeaveProgressUI.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0._parent = arg_1_1
+	arg_1_0._ui_renderer = arg_1_2.ui_renderer
+	arg_1_0._ingame_ui_context = arg_1_2
+	arg_1_0._render_settings = {}
+	arg_1_0._progress = 0
+	arg_1_0._animations = {}
+	arg_1_0._animation_callbacks = {}
 
-	self:_create_ui_elements()
+	arg_1_0:_create_ui_elements()
 end
 
-WeaveProgressUI.destroy = function (self)
+function WeaveProgressUI.destroy(arg_2_0)
 	return
 end
 
-WeaveProgressUI._create_ui_elements = function (self)
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-	self._render_settings = self._render_settings or {}
-	self._bonus_objective_widgets = {}
-	self._bonus_objective_stack_widgets = {}
-	self._bonus_objective_lookup = {}
-	self._widgets = {}
+function WeaveProgressUI._create_ui_elements(arg_3_0)
+	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
+	arg_3_0._render_settings = arg_3_0._render_settings or {}
+	arg_3_0._bonus_objective_widgets = {}
+	arg_3_0._bonus_objective_stack_widgets = {}
+	arg_3_0._bonus_objective_lookup = {}
+	arg_3_0._widgets = {}
 
-	for name, widget_def in pairs(widget_definitions) do
-		self._widgets[name] = UIWidget.init(widget_def)
+	for iter_3_0, iter_3_1 in pairs(var_0_1) do
+		arg_3_0._widgets[iter_3_0] = UIWidget.init(iter_3_1)
 	end
 
-	self._bonus_header_widget = UIWidget.init(definitions.create_bonus_objective_header_func())
+	arg_3_0._bonus_header_widget = UIWidget.init(var_0_0.create_bonus_objective_header_func())
 
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_3_0._ui_renderer)
 
-	self._progress = 0
+	arg_3_0._progress = 0
 end
 
-WeaveProgressUI._sync_weave_objectives = function (self)
-	local objective_template = Managers.weave:get_active_objective_template()
+function WeaveProgressUI._sync_weave_objectives(arg_4_0)
+	local var_4_0 = Managers.weave:get_active_objective_template()
 
-	if not objective_template then
+	if not var_4_0 then
 		return
 	end
 
-	local bar_cutoff = objective_template.bar_cutoff
+	local var_4_1 = var_4_0.bar_cutoff
 
-	if not bar_cutoff or bar_cutoff == 100 then
-		local prior_objective_index = math.max(Managers.weave:get_active_objective() - 1, 1)
-		local weave_template = Managers.weave:get_active_weave_template()
-		local objectives = weave_template.objectives
+	if not var_4_1 or var_4_1 == 100 then
+		local var_4_2 = math.max(Managers.weave:get_active_objective() - 1, 1)
+		local var_4_3 = Managers.weave:get_active_weave_template().objectives
 
-		for i = prior_objective_index, 1, -1 do
-			bar_cutoff = objectives[i].bar_cutoff
+		for iter_4_0 = var_4_2, 1, -1 do
+			var_4_1 = var_4_3[iter_4_0].bar_cutoff
 
-			if bar_cutoff and bar_cutoff < 100 then
+			if var_4_1 and var_4_1 < 100 then
 				break
 			end
 		end
 	end
 
-	bar_cutoff = bar_cutoff or 100
+	var_4_1 = var_4_1 or 100
 
-	local widget = self._widgets.progress_ui
-	local content = widget.content
+	local var_4_4 = arg_4_0._widgets.progress_ui
+	local var_4_5 = var_4_4.content
 
-	content.bar_cutoff = bar_cutoff
+	var_4_5.bar_cutoff = var_4_1
 
-	local bar_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name("weaves_essence_bar_fill")
-	local bubble_icon_style = widget.style.bubble_icon
-	local base_offset_x = bubble_icon_style.base_offset_x
+	local var_4_6 = UIAtlasHelper.get_atlas_settings_by_texture_name("weaves_essence_bar_fill")
+	local var_4_7 = var_4_4.style.bubble_icon
+	local var_4_8 = var_4_7.base_offset_x
 
-	bubble_icon_style.offset[1] = base_offset_x + bar_texture_settings.size[1] * (bar_cutoff * 0.01)
+	var_4_7.offset[1] = var_4_8 + var_4_6.size[1] * (var_4_1 * 0.01)
 
-	local bonus_time_text = ""
-	local bonus_time = objective_template.bonus_time_on_complete
+	local var_4_9 = ""
+	local var_4_10 = var_4_0.bonus_time_on_complete
 
-	if bonus_time then
-		local seconds = math.max(bonus_time, 0)
+	if var_4_10 then
+		local var_4_11 = math.max(var_4_10, 0)
 
-		bonus_time_text = string.format("+ %d:%02d", math.floor(seconds / 60), seconds % 60)
+		var_4_9 = string.format("+ %d:%02d", math.floor(var_4_11 / 60), var_4_11 % 60)
 	end
 
-	content.bonus_time = bonus_time_text
-	self._initiated = true
+	var_4_5.bonus_time = var_4_9
+	arg_4_0._initiated = true
 end
 
-WeaveProgressUI.update = function (self, dt, t)
-	if not self._initiated then
-		self:_sync_weave_objectives()
+function WeaveProgressUI.update(arg_5_0, arg_5_1, arg_5_2)
+	if not arg_5_0._initiated then
+		arg_5_0:_sync_weave_objectives()
 	end
 
-	self:_update_bonus_objectives(dt, t)
-	self:_update_animations(dt, t)
-	self:_update_bar(dt, t)
-	self:_draw(dt, t)
+	arg_5_0:_update_bonus_objectives(arg_5_1, arg_5_2)
+	arg_5_0:_update_animations(arg_5_1, arg_5_2)
+	arg_5_0:_update_bar(arg_5_1, arg_5_2)
+	arg_5_0:_draw(arg_5_1, arg_5_2)
 end
 
-local function objective_sort_func(a, b)
-	return a.sort_index < b.sort_index
+local function var_0_3(arg_6_0, arg_6_1)
+	return arg_6_0.sort_index < arg_6_1.sort_index
 end
 
-local TEMP_TABLE = {}
-local OBJECTIVES_TO_ADD = {}
-local STACKS_ADDED = {}
+local var_0_4 = {}
+local var_0_5 = {}
+local var_0_6 = {}
 
-WeaveProgressUI._update_bonus_objectives = function (self, dt, t)
-	table.clear(TEMP_TABLE)
-	table.clear(OBJECTIVES_TO_ADD)
-	table.clear(STACKS_ADDED)
+function WeaveProgressUI._update_bonus_objectives(arg_7_0, arg_7_1, arg_7_2)
+	table.clear(var_0_4)
+	table.clear(var_0_5)
+	table.clear(var_0_6)
 
-	local bonus_objective_lookup = self._bonus_objective_lookup
-	local bonus_objective_widgets = self._bonus_objective_widgets
-	local bonus_objective_stack_widgets = self._bonus_objective_stack_widgets
-	local weave_template = Managers.weave:get_active_weave_template()
+	local var_7_0 = arg_7_0._bonus_objective_lookup
+	local var_7_1 = arg_7_0._bonus_objective_widgets
+	local var_7_2 = arg_7_0._bonus_objective_stack_widgets
+	local var_7_3 = Managers.weave:get_active_weave_template()
 
-	if not weave_template then
+	if not var_7_3 then
 		return
 	end
 
-	local entity_system = Managers.state and Managers.state.entity
-	local objective_system = entity_system and entity_system:system("objective_system")
-	local current_objective_index = Managers.weave:get_active_objective()
-	local objectives_ordered = weave_template.objectives_ordered
-	local current_objective_ordered = objectives_ordered[current_objective_index]
+	local var_7_4 = Managers.state and Managers.state.entity
+	local var_7_5 = var_7_4 and var_7_4:system("objective_system")
+	local var_7_6 = Managers.weave:get_active_objective()
+	local var_7_7 = var_7_3.objectives_ordered[var_7_6]
 
-	if objective_system then
-		local active_objectives = objective_system:active_objectives()
+	if var_7_5 then
+		local var_7_8 = var_7_5:active_objectives()
 
-		for _, objective_name in ipairs(active_objectives) do
-			local objective = objective_system:extension_by_objective_name(objective_name)
+		for iter_7_0, iter_7_1 in ipairs(var_7_8) do
+			local var_7_9 = var_7_5:extension_by_objective_name(iter_7_1)
 
-			TEMP_TABLE[objective_name] = true
+			var_0_4[iter_7_1] = true
 
-			if not bonus_objective_lookup[objective_name] then
-				local display_name = objective:display_name()
+			if not var_7_0[iter_7_1] and var_7_9:display_name() then
+				local var_7_10 = table.find(var_7_7, iter_7_1)
 
-				if display_name then
-					local sort_index = table.find(current_objective_ordered, objective_name)
-
-					OBJECTIVES_TO_ADD[#OBJECTIVES_TO_ADD + 1] = {
-						sort_index = sort_index,
-						objective = objective,
-					}
-				end
+				var_0_5[#var_0_5 + 1] = {
+					sort_index = var_7_10,
+					objective = var_7_9
+				}
 			end
 		end
 
-		table.sort(OBJECTIVES_TO_ADD, objective_sort_func)
+		table.sort(var_0_5, var_0_3)
 
-		for _, objective_data in ipairs(OBJECTIVES_TO_ADD) do
-			local objective_name = objective_data.objective:objective_name()
-			local display_name = objective_data.objective:display_name()
-			local stack = objective_data.objective:is_stacking_objective()
+		for iter_7_2, iter_7_3 in ipairs(var_0_5) do
+			local var_7_11 = iter_7_3.objective:objective_name()
+			local var_7_12 = iter_7_3.objective:display_name()
+			local var_7_13 = iter_7_3.objective:is_stacking_objective()
 
-			if stack then
-				if not STACKS_ADDED[stack] then
-					local widget_definition = definitions.create_bonus_objective_func(display_name, table.size(bonus_objective_widgets) + table.size(bonus_objective_stack_widgets), stack, objective_name)
-					local stack_widgets = bonus_objective_stack_widgets[stack] or {}
+			if var_7_13 then
+				if not var_0_6[var_7_13] then
+					local var_7_14 = var_0_0.create_bonus_objective_func(var_7_12, table.size(var_7_1) + table.size(var_7_2), var_7_13, var_7_11)
+					local var_7_15 = var_7_2[var_7_13] or {}
 
-					stack_widgets[#stack_widgets + 1] = UIWidget.init(widget_definition)
-					bonus_objective_stack_widgets[stack] = stack_widgets
-					bonus_objective_lookup[objective_name] = stack_widgets[#stack_widgets]
-					STACKS_ADDED[stack] = true
+					var_7_15[#var_7_15 + 1] = UIWidget.init(var_7_14)
+					var_7_2[var_7_13] = var_7_15
+					var_7_0[var_7_11] = var_7_15[#var_7_15]
+					var_0_6[var_7_13] = true
 				else
-					local bonus_objective = bonus_objective_stack_widgets[stack][#bonus_objective_stack_widgets[stack]]
+					local var_7_16 = var_7_2[var_7_13][#var_7_2[var_7_13]]
 
-					bonus_objective.content.stack[#bonus_objective.content.stack + 1] = objective_name
-					bonus_objective_lookup[objective_name] = bonus_objective
+					var_7_16.content.stack[#var_7_16.content.stack + 1] = var_7_11
+					var_7_0[var_7_11] = var_7_16
 				end
 			else
-				local widget_definition = definitions.create_bonus_objective_func(display_name, table.size(bonus_objective_widgets) + table.size(bonus_objective_stack_widgets))
+				local var_7_17 = var_0_0.create_bonus_objective_func(var_7_12, table.size(var_7_1) + table.size(var_7_2))
 
-				bonus_objective_widgets[objective_name] = UIWidget.init(widget_definition)
-				bonus_objective_lookup[objective_name] = bonus_objective_widgets[objective_name]
+				var_7_1[var_7_11] = UIWidget.init(var_7_17)
+				var_7_0[var_7_11] = var_7_1[var_7_11]
 			end
 		end
 
-		for objective_name, widget in pairs(bonus_objective_lookup) do
-			if not TEMP_TABLE[objective_name] and not widget.content:is_done_func(objective_name) and self:_handle_stacks(widget, objective_name) then
-				widget.content.is_done = true
+		for iter_7_4, iter_7_5 in pairs(var_7_0) do
+			if not var_0_4[iter_7_4] and not iter_7_5.content:is_done_func(iter_7_4) and arg_7_0:_handle_stacks(iter_7_5, iter_7_4) then
+				iter_7_5.content.is_done = true
 
-				local text = widget.content.objective_name_id
-				local objective_style = widget.style.objective_name
-				local font, scaled_font_size = UIFontByResolution(objective_style)
-				local text_width = UIRenderer.text_size(self._ui_renderer, text, font[1], scaled_font_size)
-				local texture_size = table.clone(widget.style.checkmark.texture_size)
+				local var_7_18 = iter_7_5.content.objective_name_id
+				local var_7_19 = iter_7_5.style.objective_name
+				local var_7_20, var_7_21 = UIFontByResolution(var_7_19)
+				local var_7_22 = UIRenderer.text_size(arg_7_0._ui_renderer, var_7_18, var_7_20[1], var_7_21)
+				local var_7_23 = table.clone(iter_7_5.style.checkmark.texture_size)
 
-				self._animations["checkmark_x_" .. objective_name] = UIAnimation.init(UIAnimation.function_by_time, widget.style.checkmark.texture_size, 1, texture_size[1] * 3, texture_size[1], 0.4, math.easeOutCubic)
-				self._animations["checkmark_y_" .. objective_name] = UIAnimation.init(UIAnimation.function_by_time, widget.style.checkmark.texture_size, 2, texture_size[2] * 3, texture_size[2], 0.4, math.easeOutCubic)
-				self._animations["checkmark_shadow_x_" .. objective_name] = UIAnimation.init(UIAnimation.function_by_time, widget.style.checkmark_shadow.texture_size, 1, texture_size[1] * 3, texture_size[1], 0.4, math.easeOutCubic)
-				self._animations["checkmark_shadow_y_" .. objective_name] = UIAnimation.init(UIAnimation.function_by_time, widget.style.checkmark_shadow.texture_size, 2, texture_size[2] * 3, texture_size[2], 0.4, math.easeOutCubic)
-				self._animations["checkmark_color_r_" .. objective_name] = UIAnimation.init(UIAnimation.function_by_time, widget.style.checkmark.color, 2, 255, 192, 0.4, math.easeOutCubic)
-				self._animations["checkmark_color_g_" .. objective_name] = UIAnimation.init(UIAnimation.function_by_time, widget.style.checkmark.color, 3, 255, 192, 0.4, math.easeOutCubic)
-				self._animations["checkmark_color_b_" .. objective_name] = UIAnimation.init(UIAnimation.function_by_time, widget.style.checkmark.color, 4, 255, 192, 0.4, math.easeOutCubic)
-				self._animation_callbacks["checkmark_x_" .. objective_name] = function ()
-					self._animations["stroke_" .. objective_name] = UIAnimation.init(UIAnimation.function_by_time, widget.style.stroke.texture_size, 1, 0, text_width, 0.25, math.easeInCubic)
-					self._animations["essence_icon_r_" .. objective_name] = UIAnimation.init(UIAnimation.function_by_time, widget.style.essence_icon.color, 2, 255, 60, 0.4, math.easeOutCubic)
-					self._animations["essence_icon_g_" .. objective_name] = UIAnimation.init(UIAnimation.function_by_time, widget.style.essence_icon.color, 3, 255, 60, 0.4, math.easeOutCubic)
-					self._animations["essence_icon_b_" .. objective_name] = UIAnimation.init(UIAnimation.function_by_time, widget.style.essence_icon.color, 4, 255, 60, 0.4, math.easeOutCubic)
-					self._animation_callbacks["stroke_" .. objective_name] = function ()
-						self._animations["objective_color_r_" .. objective_name] = UIAnimation.init(UIAnimation.function_by_time, objective_style.text_color, 2, 255, 192, 0.5, math.easeInCubic)
-						self._animations["objective_color_g_" .. objective_name] = UIAnimation.init(UIAnimation.function_by_time, objective_style.text_color, 3, 255, 192, 0.5, math.easeInCubic)
-						self._animations["objective_color_b_" .. objective_name] = UIAnimation.init(UIAnimation.function_by_time, objective_style.text_color, 4, 255, 192, 0.5, math.easeInCubic)
+				arg_7_0._animations["checkmark_x_" .. iter_7_4] = UIAnimation.init(UIAnimation.function_by_time, iter_7_5.style.checkmark.texture_size, 1, var_7_23[1] * 3, var_7_23[1], 0.4, math.easeOutCubic)
+				arg_7_0._animations["checkmark_y_" .. iter_7_4] = UIAnimation.init(UIAnimation.function_by_time, iter_7_5.style.checkmark.texture_size, 2, var_7_23[2] * 3, var_7_23[2], 0.4, math.easeOutCubic)
+				arg_7_0._animations["checkmark_shadow_x_" .. iter_7_4] = UIAnimation.init(UIAnimation.function_by_time, iter_7_5.style.checkmark_shadow.texture_size, 1, var_7_23[1] * 3, var_7_23[1], 0.4, math.easeOutCubic)
+				arg_7_0._animations["checkmark_shadow_y_" .. iter_7_4] = UIAnimation.init(UIAnimation.function_by_time, iter_7_5.style.checkmark_shadow.texture_size, 2, var_7_23[2] * 3, var_7_23[2], 0.4, math.easeOutCubic)
+				arg_7_0._animations["checkmark_color_r_" .. iter_7_4] = UIAnimation.init(UIAnimation.function_by_time, iter_7_5.style.checkmark.color, 2, 255, 192, 0.4, math.easeOutCubic)
+				arg_7_0._animations["checkmark_color_g_" .. iter_7_4] = UIAnimation.init(UIAnimation.function_by_time, iter_7_5.style.checkmark.color, 3, 255, 192, 0.4, math.easeOutCubic)
+				arg_7_0._animations["checkmark_color_b_" .. iter_7_4] = UIAnimation.init(UIAnimation.function_by_time, iter_7_5.style.checkmark.color, 4, 255, 192, 0.4, math.easeOutCubic)
+				arg_7_0._animation_callbacks["checkmark_x_" .. iter_7_4] = function()
+					arg_7_0._animations["stroke_" .. iter_7_4] = UIAnimation.init(UIAnimation.function_by_time, iter_7_5.style.stroke.texture_size, 1, 0, var_7_22, 0.25, math.easeInCubic)
+					arg_7_0._animations["essence_icon_r_" .. iter_7_4] = UIAnimation.init(UIAnimation.function_by_time, iter_7_5.style.essence_icon.color, 2, 255, 60, 0.4, math.easeOutCubic)
+					arg_7_0._animations["essence_icon_g_" .. iter_7_4] = UIAnimation.init(UIAnimation.function_by_time, iter_7_5.style.essence_icon.color, 3, 255, 60, 0.4, math.easeOutCubic)
+					arg_7_0._animations["essence_icon_b_" .. iter_7_4] = UIAnimation.init(UIAnimation.function_by_time, iter_7_5.style.essence_icon.color, 4, 255, 60, 0.4, math.easeOutCubic)
+					arg_7_0._animation_callbacks["stroke_" .. iter_7_4] = function()
+						arg_7_0._animations["objective_color_r_" .. iter_7_4] = UIAnimation.init(UIAnimation.function_by_time, var_7_19.text_color, 2, 255, 192, 0.5, math.easeInCubic)
+						arg_7_0._animations["objective_color_g_" .. iter_7_4] = UIAnimation.init(UIAnimation.function_by_time, var_7_19.text_color, 3, 255, 192, 0.5, math.easeInCubic)
+						arg_7_0._animations["objective_color_b_" .. iter_7_4] = UIAnimation.init(UIAnimation.function_by_time, var_7_19.text_color, 4, 255, 192, 0.5, math.easeInCubic)
 					end
 				end
 			end
@@ -214,115 +208,115 @@ WeaveProgressUI._update_bonus_objectives = function (self, dt, t)
 	end
 end
 
-WeaveProgressUI._handle_stacks = function (self, widget, objective_name)
-	local widget_content = widget.content
+function WeaveProgressUI._handle_stacks(arg_10_0, arg_10_1, arg_10_2)
+	local var_10_0 = arg_10_1.content
 
-	if not widget_content.stack then
+	if not var_10_0.stack then
 		return true
 	end
 
-	local stack = widget_content.stack
-	local done_stack = widget_content.done_stack
+	local var_10_1 = var_10_0.stack
+	local var_10_2 = var_10_0.done_stack
 
-	done_stack[#done_stack + 1] = objective_name
+	var_10_2[#var_10_2 + 1] = arg_10_2
 
-	return table.size(done_stack) == table.size(stack)
+	return table.size(var_10_2) == table.size(var_10_1)
 end
 
-WeaveProgressUI._update_animations = function (self, dt)
-	local animations = self._animations
-	local animation_callbacks = self._animation_callbacks
+function WeaveProgressUI._update_animations(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_0._animations
+	local var_11_1 = arg_11_0._animation_callbacks
 
-	for animation_name, anmation in pairs(animations) do
-		UIAnimation.update(anmation, dt)
+	for iter_11_0, iter_11_1 in pairs(var_11_0) do
+		UIAnimation.update(iter_11_1, arg_11_1)
 
-		if UIAnimation.completed(anmation) then
-			animations[animation_name] = nil
+		if UIAnimation.completed(iter_11_1) then
+			var_11_0[iter_11_0] = nil
 
-			local cb = animation_callbacks[animation_name]
+			local var_11_2 = var_11_1[iter_11_0]
 
-			if cb then
-				cb()
+			if var_11_2 then
+				var_11_2()
 
-				animation_callbacks[animation_name] = nil
+				var_11_1[iter_11_0] = nil
 			end
 		end
 	end
 end
 
-local WEAVE_SCORE = DEBUG and 0 or nil
+local var_0_7
 
-WeaveProgressUI._update_bar = function (self, dt, t)
-	local weave_manager = Managers.weave
-	local weave_name = weave_manager:get_active_weave()
+var_0_7 = DEBUG and 0 or nil
 
-	if weave_name then
-		local score = weave_manager:current_bar_score()
-		local old_progress = self._old_progress
+function WeaveProgressUI._update_bar(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = Managers.weave
 
-		self._progress = score / 100
+	if var_12_0:get_active_weave() then
+		local var_12_1 = var_12_0:current_bar_score()
+		local var_12_2 = arg_12_0._old_progress
 
-		if not old_progress or old_progress < self._progress then
-			local widget = self._widgets.progress_ui
-			local widget_content = widget.content
-			local widget_style = widget.style
+		arg_12_0._progress = var_12_1 / 100
 
-			self._animations.update_bar_glow = UIAnimation.init(UIAnimation.function_by_time, widget_style.bar_glow.color, 1, 255, 0, 0.5, math.easeInCubic)
+		if not var_12_2 or var_12_2 < arg_12_0._progress then
+			local var_12_3 = arg_12_0._widgets.progress_ui
+			local var_12_4 = var_12_3.content
+			local var_12_5 = var_12_3.style
 
-			self._animation_callbacks.update_bar_glow = function ()
-				self._animations.update_bar = UIAnimation.init(UIAnimation.function_by_time, widget_content, "bar_progress", widget_content.bar_progress, self._progress, 0.5, math.easeOutCubic)
+			arg_12_0._animations.update_bar_glow = UIAnimation.init(UIAnimation.function_by_time, var_12_5.bar_glow.color, 1, 255, 0, 0.5, math.easeInCubic)
+
+			function arg_12_0._animation_callbacks.update_bar_glow()
+				arg_12_0._animations.update_bar = UIAnimation.init(UIAnimation.function_by_time, var_12_4, "bar_progress", var_12_4.bar_progress, arg_12_0._progress, 0.5, math.easeOutCubic)
 			end
 
-			self._animations.update_effect = UIAnimation.init(UIAnimation.function_by_time, widget_style.background_filled.color, 1, 255, 0, 2, math.easeOutCubic)
+			arg_12_0._animations.update_effect = UIAnimation.init(UIAnimation.function_by_time, var_12_5.background_filled.color, 1, 255, 0, 2, math.easeOutCubic)
 		end
 
-		local widget = self._widgets.progress_ui
-		local widget_content = widget.content
+		local var_12_6 = arg_12_0._widgets.progress_ui.content
 
-		widget_content.progress = self._progress
-		self._old_progress = self._progress
+		var_12_6.progress = arg_12_0._progress
+		arg_12_0._old_progress = arg_12_0._progress
 
-		if score >= widget_content.bar_cutoff then
-			widget_content.bonus_time = ""
+		if var_12_1 >= var_12_6.bar_cutoff then
+			var_12_6.bonus_time = ""
 		end
 	end
 end
 
-WeaveProgressUI._draw = function (self, dt, t)
-	local ui_renderer = self._ui_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local render_settings = self._render_settings
-	local input_service = Managers.input:get_service("ingame_menu")
+function WeaveProgressUI._draw(arg_14_0, arg_14_1, arg_14_2)
+	local var_14_0 = arg_14_0._ui_renderer
+	local var_14_1 = arg_14_0._ui_scenegraph
+	local var_14_2 = arg_14_0._render_settings
+	local var_14_3 = Managers.input:get_service("ingame_menu")
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+	UIRenderer.begin_pass(var_14_0, var_14_1, var_14_3, arg_14_1, nil, var_14_2)
 
-	for _, widget in pairs(self._widgets) do
-		UIRenderer.draw_widget(ui_renderer, widget)
+	for iter_14_0, iter_14_1 in pairs(arg_14_0._widgets) do
+		UIRenderer.draw_widget(var_14_0, iter_14_1)
 	end
 
-	local bonus_objective_widgets = self._bonus_objective_widgets
+	local var_14_4 = arg_14_0._bonus_objective_widgets
 
-	if table.size(bonus_objective_widgets) > 0 then
-		UIRenderer.draw_widget(ui_renderer, self._bonus_header_widget)
+	if table.size(var_14_4) > 0 then
+		UIRenderer.draw_widget(var_14_0, arg_14_0._bonus_header_widget)
 
-		for _, widget in pairs(bonus_objective_widgets) do
-			UIRenderer.draw_widget(ui_renderer, widget)
+		for iter_14_2, iter_14_3 in pairs(var_14_4) do
+			UIRenderer.draw_widget(var_14_0, iter_14_3)
 		end
 	end
 
-	local bonus_objective_stack_widgets = self._bonus_objective_stack_widgets
+	local var_14_5 = arg_14_0._bonus_objective_stack_widgets
 
-	if table.size(bonus_objective_stack_widgets) > 0 then
-		for _, stack in pairs(bonus_objective_stack_widgets) do
-			for _, widget in pairs(stack) do
-				UIRenderer.draw_widget(ui_renderer, widget)
+	if table.size(var_14_5) > 0 then
+		for iter_14_4, iter_14_5 in pairs(var_14_5) do
+			for iter_14_6, iter_14_7 in pairs(iter_14_5) do
+				UIRenderer.draw_widget(var_14_0, iter_14_7)
 			end
 		end
 	end
 
-	if table.size(bonus_objective_widgets) > 0 or table.size(bonus_objective_stack_widgets) > 0 then
-		UIRenderer.draw_widget(ui_renderer, self._bonus_header_widget)
+	if table.size(var_14_4) > 0 or table.size(var_14_5) > 0 then
+		UIRenderer.draw_widget(var_14_0, arg_14_0._bonus_header_widget)
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_14_0)
 end

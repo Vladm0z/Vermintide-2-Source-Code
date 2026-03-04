@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/imgui/imgui_cat_tester_tools.lua
+-- chunkname: @scripts/imgui/imgui_cat_tester_tools.lua
 
 ImguiCatTesterTools = class(ImguiCatTesterTools)
 ImguiCatTesterTools.curated_pickup_list = ImguiCatTesterTools.curated_pickup_list or {
@@ -18,7 +18,7 @@ ImguiCatTesterTools.curated_pickup_list = ImguiCatTesterTools.curated_pickup_lis
 	"lamp_oil",
 	"speed_boost_potion",
 	"tome",
-	"torch",
+	"torch"
 }
 ImguiCatTesterTools.curated_breed_list = ImguiCatTesterTools.curated_breed_list or {
 	"beastmen_bestigor",
@@ -51,84 +51,84 @@ ImguiCatTesterTools.curated_breed_list = ImguiCatTesterTools.curated_breed_list 
 	"skaven_storm_vermin_with_shield",
 	"skaven_storm_vermin",
 	"skaven_stormfiend",
-	"skaven_warpfire_thrower",
+	"skaven_warpfire_thrower"
 }
 
-local localization_placeholders = {
+local var_0_0 = {
+	beastmen_ungor = "Ungor",
 	_UNKNOWN = "Unknown",
 	beastmen_bestigor = "Bestigor",
-	beastmen_gor = "Gor",
-	beastmen_ungor = "Ungor",
-	beastmen_ungor_archer = "Ungor Archer",
-	chaos_fanatic = "Fanatic",
 	critter_pig = "xdd",
 	skaven_clan_rat_with_shield = "Clan Rat w/ Shield",
-	skaven_storm_vermin_with_shield = "Stormvermin w/ Shield",
+	beastmen_ungor_archer = "Ungor Archer",
+	chaos_fanatic = "Fanatic",
+	beastmen_gor = "Gor",
+	skaven_storm_vermin_with_shield = "Stormvermin w/ Shield"
 }
 
-local function custom_localize(key)
-	local val = localization_placeholders[key]
+local function var_0_1(arg_1_0)
+	local var_1_0 = var_0_0[arg_1_0]
 
-	if not val then
-		val = Localize(key)
-		localization_placeholders[key] = val
+	if not var_1_0 then
+		var_1_0 = Localize(arg_1_0)
+		var_0_0[arg_1_0] = var_1_0
 	end
 
-	return val
+	return var_1_0
 end
 
-local function cmp_localized_strings(a, b)
-	return custom_localize(a) < custom_localize(b)
+local function var_0_2(arg_2_0, arg_2_1)
+	return var_0_1(arg_2_0) < var_0_1(arg_2_1)
 end
 
-ImguiCatTesterTools.init = function (self)
-	table.sort(ImguiCatTesterTools.curated_breed_list, cmp_localized_strings)
+function ImguiCatTesterTools.init(arg_3_0)
+	table.sort(ImguiCatTesterTools.curated_breed_list, var_0_2)
 
-	self._breed_index = 0
-	self._breed_filter_text = ""
-	self._breed_names = table.map(ImguiCatTesterTools.curated_breed_list, custom_localize)
-	self._breed_results = table.shallow_copy(self._breed_names)
+	arg_3_0._breed_index = 0
+	arg_3_0._breed_filter_text = ""
+	arg_3_0._breed_names = table.map(ImguiCatTesterTools.curated_breed_list, var_0_1)
+	arg_3_0._breed_results = table.shallow_copy(arg_3_0._breed_names)
 
-	table.sort(ImguiCatTesterTools.curated_pickup_list, cmp_localized_strings)
+	table.sort(ImguiCatTesterTools.curated_pickup_list, var_0_2)
 
-	self._pickup_index = 0
-	self._pickup_filter_text = ""
-	self._pickup_names = table.map(ImguiCatTesterTools.curated_pickup_list, function (pickup_name)
-		local pickup_settings = AllPickups[pickup_name]
+	arg_3_0._pickup_index = 0
+	arg_3_0._pickup_filter_text = ""
+	arg_3_0._pickup_names = table.map(ImguiCatTesterTools.curated_pickup_list, function(arg_4_0)
+		local var_4_0 = AllPickups[arg_4_0]
 
-		return custom_localize(pickup_settings and pickup_settings.hud_description or "_UNKNOWN")
+		return var_0_1(var_4_0 and var_4_0.hud_description or "_UNKNOWN")
 	end)
-	self._pickup_results = table.shallow_copy(self._pickup_names)
+	arg_3_0._pickup_results = table.shallow_copy(arg_3_0._pickup_names)
 
-	table.sort(self._pickup_names)
+	table.sort(arg_3_0._pickup_names)
 end
 
-ImguiCatTesterTools.update = function (self)
+function ImguiCatTesterTools.update(arg_5_0)
 	return
 end
 
-ImguiCatTesterTools.draw = function (self)
-	local do_close = Imgui.begin_window("CAT Tester Tools")
+function ImguiCatTesterTools.draw(arg_6_0)
+	local var_6_0 = Imgui.begin_window("CAT Tester Tools")
 
 	Imgui.begin_child_window("Pickups", 0, 150, false)
 
-	self._pickup_index, self._pickup_results, self._pickup_filter_text = ImguiX.combo_search(self._pickup_index, self._pickup_results, self._pickup_filter_text, self._pickup_names)
+	arg_6_0._pickup_index, arg_6_0._pickup_results, arg_6_0._pickup_filter_text = ImguiX.combo_search(arg_6_0._pickup_index, arg_6_0._pickup_results, arg_6_0._pickup_filter_text, arg_6_0._pickup_names)
 
-	local pickup_name = ImguiCatTesterTools.curated_pickup_list[self._pickup_index]
+	local var_6_1 = ImguiCatTesterTools.curated_pickup_list[arg_6_0._pickup_index]
 
-	if Imgui.button("Spawn Pickup", 100, 20) and pickup_name then
-		self:_spawn_pickup(pickup_name)
+	if Imgui.button("Spawn Pickup", 100, 20) and var_6_1 then
+		arg_6_0:_spawn_pickup(var_6_1)
 	end
 
 	Imgui.end_child_window()
 	Imgui.begin_child_window("Breeds", 0, 150, false)
 
-	self._breed_index, self._breed_results, self._breed_filter_text = ImguiX.combo_search(self._breed_index, self._breed_results, self._breed_filter_text, self._breed_names)
+	arg_6_0._breed_index, arg_6_0._breed_results, arg_6_0._breed_filter_text = ImguiX.combo_search(arg_6_0._breed_index, arg_6_0._breed_results, arg_6_0._breed_filter_text, arg_6_0._breed_names)
 
-	local breed_name = ImguiCatTesterTools.curated_breed_list[self._breed_index]
+	local var_6_2 = ImguiCatTesterTools.curated_breed_list[arg_6_0._breed_index]
 
-	if Imgui.button("Spawn Breed", 100, 20) and breed_name then
-		self:_spawn_breed(breed_name)
+	if Imgui.button("Spawn Breed", 100, 20) and var_6_2 then
+		arg_6_0:_spawn_breed(var_6_2)
 	end
 
 	Imgui.end_child_window()
@@ -154,24 +154,22 @@ ImguiCatTesterTools.draw = function (self)
 	Imgui.end_child_window()
 	Imgui.end_window()
 
-	return do_close
+	return var_6_0
 end
 
-ImguiCatTesterTools._spawn_pickup = function (self, pickup_name)
-	local world = Application.main_world()
-	local position = Managers.state.conflict:player_aim_raycast(world, false, "filter_ray_horde_spawn")
+function ImguiCatTesterTools._spawn_pickup(arg_7_0, arg_7_1)
+	local var_7_0 = Application.main_world()
+	local var_7_1 = Managers.state.conflict:player_aim_raycast(var_7_0, false, "filter_ray_horde_spawn")
 
-	if position then
-		Managers.state.network.network_transmit:send_rpc_server("rpc_spawn_pickup_with_physics", NetworkLookup.pickup_names[pickup_name], position, Quaternion.identity(), NetworkLookup.pickup_spawn_types.dropped)
+	if var_7_1 then
+		Managers.state.network.network_transmit:send_rpc_server("rpc_spawn_pickup_with_physics", NetworkLookup.pickup_names[arg_7_1], var_7_1, Quaternion.identity(), NetworkLookup.pickup_spawn_types.dropped)
 	end
 end
 
-ImguiCatTesterTools._spawn_breed = function (self, breed_name)
-	local conflict_director = Managers.state.conflict
-
-	conflict_director:aim_spawning(Breeds[breed_name], true)
+function ImguiCatTesterTools._spawn_breed(arg_8_0, arg_8_1)
+	Managers.state.conflict:aim_spawning(Breeds[arg_8_1], true)
 end
 
-ImguiCatTesterTools.is_persistent = function (self)
+function ImguiCatTesterTools.is_persistent(arg_9_0)
 	return false
 end

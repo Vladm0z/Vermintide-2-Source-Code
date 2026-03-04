@@ -1,58 +1,58 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_ungor_behavior.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_ungor_behavior.lua
 
-local ACTIONS = BreedActions.beastmen_ungor
-local UNGOR_COMBAT = {
+local var_0_0 = BreedActions.beastmen_ungor
+local var_0_1 = {
 	"BTUtilityNode",
 	{
 		"BTClanRatFollowAction",
 		name = "follow",
-		action_data = ACTIONS.follow,
+		action_data = var_0_0.follow
 	},
 	{
 		"BTAttackAction",
-		condition = "ask_target_before_attacking",
 		name = "running_attack",
-		action_data = ACTIONS.running_attack,
+		condition = "ask_target_before_attacking",
+		action_data = var_0_0.running_attack
 	},
 	{
 		"BTAttackAction",
-		condition = "ask_target_before_attacking",
 		name = "normal_attack",
-		action_data = ACTIONS.normal_attack,
+		condition = "ask_target_before_attacking",
+		action_data = var_0_0.normal_attack
 	},
 	{
 		"BTCombatShoutAction",
 		name = "combat_shout",
-		action_data = ACTIONS.combat_shout,
+		action_data = var_0_0.combat_shout
 	},
 	condition = "confirmed_player_sighting",
-	name = "in_combat",
+	name = "in_combat"
 }
-local UNGOR_SMART_OBJECT = {
+local var_0_2 = {
 	"BTSelector",
 	{
 		"BTTeleportAction",
 		condition = "at_teleport_smartobject",
-		name = "teleport",
+		name = "teleport"
 	},
 	{
 		"BTClimbAction",
 		condition = "at_climb_smartobject",
-		name = "climb",
+		name = "climb"
 	},
 	{
 		"BTJumpAcrossAction",
 		condition = "at_jump_smartobject",
-		name = "jump_across",
+		name = "jump_across"
 	},
 	{
 		"BTSmashDoorAction",
-		condition = "at_door_smartobject",
 		name = "smash_door",
-		action_data = ACTIONS.smash_door,
+		condition = "at_door_smartobject",
+		action_data = var_0_0.smash_door
 	},
 	condition = "at_smartobject",
-	name = "smartobject",
+	name = "smartobject"
 }
 
 BreedBehaviors.ungor = {
@@ -60,57 +60,57 @@ BreedBehaviors.ungor = {
 	{
 		"BTSpawningAction",
 		condition = "spawn",
-		name = "spawn",
+		name = "spawn"
 	},
 	{
 		"BTInVortexAction",
 		condition = "in_vortex",
-		name = "in_vortex",
+		name = "in_vortex"
 	},
 	{
 		"BTInGravityWellAction",
 		condition = "in_gravity_well",
-		name = "in_gravity_well",
+		name = "in_gravity_well"
 	},
 	{
 		"BTFallAction",
 		condition = "is_falling",
-		name = "falling",
+		name = "falling"
 	},
 	{
 		"BTStaggerAction",
-		condition = "stagger",
 		name = "stagger",
-		action_data = ACTIONS.stagger,
+		condition = "stagger",
+		action_data = var_0_0.stagger
 	},
 	{
 		"BTBlockedAction",
-		condition = "blocked",
 		name = "blocked",
-		action_data = ACTIONS.blocked,
+		condition = "blocked",
+		action_data = var_0_0.blocked
 	},
-	UNGOR_SMART_OBJECT,
-	UNGOR_COMBAT,
+	var_0_2,
+	var_0_1,
 	{
 		"BTMoveToGoalAction",
-		condition = "has_goal_destination",
 		name = "move_to_goal",
-		action_data = ACTIONS.follow,
+		condition = "has_goal_destination",
+		action_data = var_0_0.follow
 	},
 	{
 		"BTAlertedAction",
-		condition = "player_spotted",
 		name = "alerted",
-		action_data = ACTIONS.alerted,
+		condition = "player_spotted",
+		action_data = var_0_0.alerted
 	},
 	{
 		"BTIdleAction",
 		condition = "no_target",
-		name = "idle",
+		name = "idle"
 	},
 	{
 		"BTFallbackIdleAction",
-		name = "fallback_idle",
+		name = "fallback_idle"
 	},
-	name = "ungor",
+	name = "ungor"
 }

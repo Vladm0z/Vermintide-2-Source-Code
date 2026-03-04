@@ -1,96 +1,94 @@
-﻿-- chunkname: @scripts/ui/hud_ui/deus_soft_currency_indicator_ui.lua
+-- chunkname: @scripts/ui/hud_ui/deus_soft_currency_indicator_ui.lua
 
-local definitions = local_require("scripts/ui/hud_ui/deus_soft_currency_indicator_ui_definitions")
+local var_0_0 = local_require("scripts/ui/hud_ui/deus_soft_currency_indicator_ui_definitions")
 
 DeusSoftCurrencyIndicatorUI = class(DeusSoftCurrencyIndicatorUI)
 
-DeusSoftCurrencyIndicatorUI.init = function (self, parent, ingame_ui_context)
-	self._ui_renderer = ingame_ui_context.ui_renderer
-	self._ingame_ui_context = ingame_ui_context
+function DeusSoftCurrencyIndicatorUI.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0._ui_renderer = arg_1_2.ui_renderer
+	arg_1_0._ingame_ui_context = arg_1_2
 
-	self:_create_ui_elements()
+	arg_1_0:_create_ui_elements()
 end
 
-DeusSoftCurrencyIndicatorUI._create_ui_elements = function (self)
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
-	self._cached_coin_count = nil
-	self._animation_id = nil
-	self._coin_widget = UIWidget.init(definitions.coin_widget_definition)
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, definitions.animation_definitions)
+function DeusSoftCurrencyIndicatorUI._create_ui_elements(arg_2_0)
+	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	arg_2_0._cached_coin_count = nil
+	arg_2_0._animation_id = nil
+	arg_2_0._coin_widget = UIWidget.init(var_0_0.coin_widget_definition)
+	arg_2_0._ui_animator = UIAnimator:new(arg_2_0._ui_scenegraph, var_0_0.animation_definitions)
 
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_2_0._ui_renderer)
 end
 
-DeusSoftCurrencyIndicatorUI.play_animation = function (self, animation_name, from_coin_count, to_coin_count)
-	local params = {
-		from_coin_count = from_coin_count,
-		to_coin_count = to_coin_count,
-		coin_delta = to_coin_count - from_coin_count,
+function DeusSoftCurrencyIndicatorUI.play_animation(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	local var_3_0 = {
+		from_coin_count = arg_3_2,
+		to_coin_count = arg_3_3,
+		coin_delta = arg_3_3 - arg_3_2
 	}
-	local initial_delay = 0
+	local var_3_1 = 0
 
-	self._animation_id = self._ui_animator:start_animation(animation_name, self._coin_widget, definitions.scenegraph_definition, params, nil, initial_delay)
+	arg_3_0._animation_id = arg_3_0._ui_animator:start_animation(arg_3_1, arg_3_0._coin_widget, var_0_0.scenegraph_definition, var_3_0, nil, var_3_1)
 end
 
-DeusSoftCurrencyIndicatorUI._update_animations = function (self, dt)
-	local ui_animator = self._ui_animator
+function DeusSoftCurrencyIndicatorUI._update_animations(arg_4_0, arg_4_1)
+	local var_4_0 = arg_4_0._ui_animator
 
-	ui_animator:update(dt)
+	var_4_0:update(arg_4_1)
 
-	local id = self._animation_id
+	local var_4_1 = arg_4_0._animation_id
 
-	if id and ui_animator:is_animation_completed(id) then
-		self._animation_id = nil
+	if var_4_1 and var_4_0:is_animation_completed(var_4_1) then
+		arg_4_0._animation_id = nil
 	end
 end
 
-DeusSoftCurrencyIndicatorUI.set_visible = function (self, status)
+function DeusSoftCurrencyIndicatorUI.set_visible(arg_5_0, arg_5_1)
 	return
 end
 
-DeusSoftCurrencyIndicatorUI._get_coins = function (self)
-	local mechanism = Managers.mechanism:game_mechanism()
+function DeusSoftCurrencyIndicatorUI._get_coins(arg_6_0)
+	local var_6_0 = Managers.mechanism:game_mechanism()
 
-	if not mechanism or not mechanism.get_deus_run_controller then
+	if not var_6_0 or not var_6_0.get_deus_run_controller then
 		return 0
 	end
 
-	local deus_run_controller = mechanism:get_deus_run_controller()
+	local var_6_1 = var_6_0:get_deus_run_controller()
 
-	if deus_run_controller then
-		local peer_id = deus_run_controller:get_own_peer_id()
+	if var_6_1 then
+		local var_6_2 = var_6_1:get_own_peer_id()
 
-		return deus_run_controller:get_player_soft_currency(peer_id)
+		return var_6_1:get_player_soft_currency(var_6_2)
 	else
-		local deus_backend = Managers.backend:get_interface("deus")
-
-		return deus_backend:get_rolled_over_soft_currency()
+		return Managers.backend:get_interface("deus"):get_rolled_over_soft_currency()
 	end
 end
 
-DeusSoftCurrencyIndicatorUI.update = function (self, dt, t)
-	local coin_count = self:_get_coins()
+function DeusSoftCurrencyIndicatorUI.update(arg_7_0, arg_7_1, arg_7_2)
+	local var_7_0 = arg_7_0:_get_coins()
 
-	if not self._animation_id and self._cached_coin_count ~= coin_count then
-		if self._cached_coin_count ~= nil then
-			self:play_animation("coin_change", self._cached_coin_count, coin_count)
+	if not arg_7_0._animation_id and arg_7_0._cached_coin_count ~= var_7_0 then
+		if arg_7_0._cached_coin_count ~= nil then
+			arg_7_0:play_animation("coin_change", arg_7_0._cached_coin_count, var_7_0)
 		else
-			self._coin_widget.content.coin_count_text = math.floor(coin_count)
+			arg_7_0._coin_widget.content.coin_count_text = math.floor(var_7_0)
 		end
 
-		self._cached_coin_count = coin_count
+		arg_7_0._cached_coin_count = var_7_0
 	end
 
-	self:_update_animations(dt)
-	self:_draw(dt, t)
+	arg_7_0:_update_animations(arg_7_1)
+	arg_7_0:_draw(arg_7_1, arg_7_2)
 end
 
-DeusSoftCurrencyIndicatorUI._draw = function (self, dt, t)
-	local ui_renderer = self._ui_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local input_service = Managers.input:get_service("ingame_menu")
+function DeusSoftCurrencyIndicatorUI._draw(arg_8_0, arg_8_1, arg_8_2)
+	local var_8_0 = arg_8_0._ui_renderer
+	local var_8_1 = arg_8_0._ui_scenegraph
+	local var_8_2 = Managers.input:get_service("ingame_menu")
 
-	UIRenderer.begin_pass(ui_renderer, self._ui_scenegraph, input_service, dt)
-	UIRenderer.draw_widget(ui_renderer, self._coin_widget)
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.begin_pass(var_8_0, arg_8_0._ui_scenegraph, var_8_2, arg_8_1)
+	UIRenderer.draw_widget(var_8_0, arg_8_0._coin_widget)
+	UIRenderer.end_pass(var_8_0)
 end

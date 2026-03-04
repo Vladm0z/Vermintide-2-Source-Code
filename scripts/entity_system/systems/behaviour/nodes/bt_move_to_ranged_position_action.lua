@@ -1,66 +1,59 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_move_to_ranged_position_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_move_to_ranged_position_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTMoveToRangedPositionAction = class(BTMoveToRangedPositionAction, BTNode)
 
-BTMoveToRangedPositionAction.init = function (self, ...)
-	BTMoveToRangedPositionAction.super.init(self, ...)
+function BTMoveToRangedPositionAction.init(arg_1_0, ...)
+	BTMoveToRangedPositionAction.super.init(arg_1_0, ...)
 end
 
 BTMoveToRangedPositionAction.name = "BTMoveToRangedPositionAction"
 
-BTMoveToRangedPositionAction.enter = function (self, unit, blackboard, t)
-	local action = self._tree_node.action_data
+function BTMoveToRangedPositionAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_0._tree_node.action_data
 
-	blackboard.action = action
-	blackboard.move_state = "moving"
+	arg_2_2.action = var_2_0
+	arg_2_2.move_state = "moving"
 
-	local navigation_extension = blackboard.navigation_extension
-	local move_animation = action.move_animation
-	local network_manager = Managers.state.network
+	local var_2_1 = arg_2_2.navigation_extension
+	local var_2_2 = var_2_0.move_animation
 
-	network_manager:anim_event(unit, move_animation)
+	Managers.state.network:anim_event(arg_2_1, var_2_2)
+	Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_2_1, false)
 
-	local ai_slot_system = Managers.state.entity:system("ai_slot_system")
+	arg_2_2.next_t_to_evaluate = arg_2_3 + 0.5
 
-	ai_slot_system:do_slot_search(unit, false)
+	local var_2_3 = var_2_1._nav_bot
 
-	blackboard.next_t_to_evaluate = t + 0.5
-
-	local nav_bot = navigation_extension._nav_bot
-
-	GwNavBot.set_use_avoidance(nav_bot, true)
+	GwNavBot.set_use_avoidance(var_2_3, true)
 end
 
-BTMoveToRangedPositionAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	blackboard.ranged_position = nil
-	blackboard.action = nil
-	blackboard.next_t_to_evaluate = nil
+function BTMoveToRangedPositionAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	arg_3_2.ranged_position = nil
+	arg_3_2.action = nil
+	arg_3_2.next_t_to_evaluate = nil
 
-	local nav_bot = blackboard.navigation_extension._nav_bot
+	local var_3_0 = arg_3_2.navigation_extension._nav_bot
 
-	GwNavBot.set_use_avoidance(nav_bot, false)
+	GwNavBot.set_use_avoidance(var_3_0, false)
 end
 
-BTMoveToRangedPositionAction.run = function (self, unit, blackboard, t, dt)
-	if not Unit.alive(blackboard.target_unit) then
+function BTMoveToRangedPositionAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	if not Unit.alive(arg_4_2.target_unit) then
 		return "done"
 	end
 
-	local wanted_position = blackboard.ranged_position:unbox()
-	local distance = Vector3.distance(POSITION_LOOKUP[unit], wanted_position)
+	local var_4_0 = arg_4_2.ranged_position:unbox()
 
-	if distance < 1.5 then
-		local ai_slot_system = Managers.state.entity:system("ai_slot_system")
-
-		ai_slot_system:do_slot_search(unit, true)
+	if Vector3.distance(POSITION_LOOKUP[arg_4_1], var_4_0) < 1.5 then
+		Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_4_1, true)
 
 		return "done"
 	end
 
-	if t > blackboard.next_t_to_evaluate then
-		blackboard.next_t_to_evaluate = t + Math.random_range(1.2, 2)
+	if arg_4_3 > arg_4_2.next_t_to_evaluate then
+		arg_4_2.next_t_to_evaluate = arg_4_3 + Math.random_range(1.2, 2)
 
 		return "running", "evaluate"
 	end

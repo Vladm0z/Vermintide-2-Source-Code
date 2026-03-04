@@ -1,6 +1,6 @@
-﻿-- chunkname: @scripts/unit_extensions/generic/generic_health_extension.lua
+-- chunkname: @scripts/unit_extensions/generic/generic_health_extension.lua
 
-local data_fields = {
+local var_0_0 = {
 	"DAMAGE_AMOUNT",
 	"DAMAGE_TYPE",
 	"ATTACKER",
@@ -16,576 +16,555 @@ local data_fields = {
 	"TOTAL_HITS",
 	"ATTACK_TYPE",
 	"BACKSTAB_MULTIPLIER",
-	"TARGET_INDEX",
+	"TARGET_INDEX"
 }
 
 DamageDataIndex = {}
 
-local DamageDataIndex = DamageDataIndex
+local var_0_1 = DamageDataIndex
 
-for index, field_name in ipairs(data_fields) do
-	DamageDataIndex[field_name] = index
+for iter_0_0, iter_0_1 in ipairs(var_0_0) do
+	var_0_1[iter_0_1] = iter_0_0
 end
 
-DamageDataIndex.STRIDE = #data_fields
-data_fields = nil
+var_0_1.STRIDE = #var_0_0
 
-local RECENT_ATTACKER_DAMAGE_WINDOW = 5
+local var_0_2
+local var_0_3 = 5
 
 GenericHealthExtension = class(GenericHealthExtension)
 
-GenericHealthExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self.unit = unit
-	self.is_server = Managers.player.is_server
-	self.system_data = extension_init_context.system_data
-	self.statistics_db = extension_init_context.statistics_db
-	self.damage_buffers = {
+function GenericHealthExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.unit = arg_1_2
+	arg_1_0.is_server = Managers.player.is_server
+	arg_1_0.system_data = arg_1_1.system_data
+	arg_1_0.statistics_db = arg_1_1.statistics_db
+	arg_1_0.damage_buffers = {
 		pdArray.new(),
-		pdArray.new(),
+		pdArray.new()
 	}
-	self.network_transmit = extension_init_context.network_transmit
-	self._breed = extension_init_data.breed
+	arg_1_0.network_transmit = arg_1_1.network_transmit
+	arg_1_0._breed = arg_1_3.breed
 
-	local health = extension_init_data.health or Unit.get_data(unit, "health")
+	local var_1_0 = arg_1_3.health or Unit.get_data(arg_1_2, "health")
 
-	if health == -1 then
-		self.is_invincible = true
-		health = math.huge
+	if var_1_0 == -1 then
+		arg_1_0.is_invincible = true
+		var_1_0 = math.huge
 	else
-		self.is_invincible = false
+		arg_1_0.is_invincible = false
 	end
 
-	self.dead = false
-	self.predicted_dead = false
-	self.state = "alive"
-	self.damage = extension_init_data.damage or 0
-	self.predicted_damage = 0
-	self.last_damage_data = {}
-	self._health_system = extension_init_context.owning_system
-	self._recent_attackers = {}
-	health = self:set_max_health(health)
-	self.unmodified_max_health = health
-	self._min_health_percentage = nil
-	self._recent_damage_type = nil
-	self._recent_hit_react_type = nil
-	self._last_damage_t = nil
-	self._damage_cap = extension_init_data.damage_cap_per_hit or Unit.get_data(unit, "damage_cap_per_hit")
-	self._damage_cap_per_hit = self._damage_cap or health
+	arg_1_0.dead = false
+	arg_1_0.predicted_dead = false
+	arg_1_0.state = "alive"
+	arg_1_0.damage = arg_1_3.damage or 0
+	arg_1_0.predicted_damage = 0
+	arg_1_0.last_damage_data = {}
+	arg_1_0._health_system = arg_1_1.owning_system
+	arg_1_0._recent_attackers = {}
+
+	local var_1_1 = arg_1_0:set_max_health(var_1_0)
+
+	arg_1_0.unmodified_max_health = var_1_1
+	arg_1_0._min_health_percentage = nil
+	arg_1_0._recent_damage_type = nil
+	arg_1_0._recent_hit_react_type = nil
+	arg_1_0._last_damage_t = nil
+	arg_1_0._damage_cap = arg_1_3.damage_cap_per_hit or Unit.get_data(arg_1_2, "damage_cap_per_hit")
+	arg_1_0._damage_cap_per_hit = arg_1_0._damage_cap or var_1_1
 end
 
-GenericHealthExtension.destroy = function (self)
-	if self._recent_attackers then
-		for unique_id, data in pairs(self._recent_attackers) do
-			self._health_system:return_recent_attacker(data)
+function GenericHealthExtension.destroy(arg_2_0)
+	if arg_2_0._recent_attackers then
+		for iter_2_0, iter_2_1 in pairs(arg_2_0._recent_attackers) do
+			arg_2_0._health_system:return_recent_attacker(iter_2_1)
 
-			self._recent_attackers[unique_id] = nil
+			arg_2_0._recent_attackers[iter_2_0] = nil
 		end
 	end
 end
 
-GenericHealthExtension.freeze = function (self)
-	self:set_dead()
+function GenericHealthExtension.freeze(arg_3_0)
+	arg_3_0:set_dead()
 end
 
-GenericHealthExtension.unfreeze = function (self)
-	self:reset()
+function GenericHealthExtension.unfreeze(arg_4_0)
+	arg_4_0:reset()
 end
 
-GenericHealthExtension.reset = function (self)
-	self.state = "alive"
-	self.dead = false
-	self.predicted_dead = false
-	self.damage = 0
-	self.predicted_damage = 0
-	self._recent_damage_type = nil
-	self._recent_hit_react_type = nil
+function GenericHealthExtension.reset(arg_5_0)
+	arg_5_0.state = "alive"
+	arg_5_0.dead = false
+	arg_5_0.predicted_dead = false
+	arg_5_0.damage = 0
+	arg_5_0.predicted_damage = 0
+	arg_5_0._recent_damage_type = nil
+	arg_5_0._recent_hit_react_type = nil
 
-	pdArray.set_empty(self.damage_buffers[1])
-	pdArray.set_empty(self.damage_buffers[2])
-	self:set_max_health(self.unmodified_max_health)
-	table.clear(self.last_damage_data)
+	pdArray.set_empty(arg_5_0.damage_buffers[1])
+	pdArray.set_empty(arg_5_0.damage_buffers[2])
+	arg_5_0:set_max_health(arg_5_0.unmodified_max_health)
+	table.clear(arg_5_0.last_damage_data)
 
-	HEALTH_ALIVE[self.unit] = true
+	HEALTH_ALIVE[arg_5_0.unit] = true
 
-	if self._recent_attackers then
-		for unique_id, data in pairs(self._recent_attackers) do
-			self._health_system:return_recent_attacker(data)
+	if arg_5_0._recent_attackers then
+		for iter_5_0, iter_5_1 in pairs(arg_5_0._recent_attackers) do
+			arg_5_0._health_system:return_recent_attacker(iter_5_1)
 
-			self._recent_attackers[unique_id] = nil
+			arg_5_0._recent_attackers[iter_5_0] = nil
 		end
 	end
 end
 
-GenericHealthExtension.hot_join_sync = function (self, peer_id)
-	local unit = self.unit
-	local network_manager = Managers.state.network
-	local go_id, is_level_unit = network_manager:game_object_or_level_id(unit)
+function GenericHealthExtension.hot_join_sync(arg_6_0, arg_6_1)
+	local var_6_0 = arg_6_0.unit
+	local var_6_1, var_6_2 = Managers.state.network:game_object_or_level_id(var_6_0)
 
-	if go_id then
-		local state_id = NetworkLookup.health_statuses[self.state]
-		local damage_taken = self:get_damage_taken()
-		local damage = NetworkUtils.get_network_safe_damage_hotjoin_sync(damage_taken)
-		local network_transmit = self.network_transmit
+	if var_6_1 then
+		local var_6_3 = NetworkLookup.health_statuses[arg_6_0.state]
+		local var_6_4 = arg_6_0:get_damage_taken()
+		local var_6_5 = NetworkUtils.get_network_safe_damage_hotjoin_sync(var_6_4)
+		local var_6_6 = arg_6_0.network_transmit
 
-		network_transmit:send_rpc("rpc_sync_damage_taken", peer_id, go_id, is_level_unit, false, damage, state_id)
+		var_6_6:send_rpc("rpc_sync_damage_taken", arg_6_1, var_6_1, var_6_2, false, var_6_5, var_6_3)
 
-		if self.dead then
-			local damage_amount = 0
-			local hit_zone_id = NetworkLookup.hit_zones.full
-			local damage_type_id = NetworkLookup.damage_types.sync_health
-			local hit_position = Unit.world_position(unit, 0)
-			local damage_direction = Vector3.up()
-			local source_attacker_unit_id = NetworkConstants.invalid_game_object_id
-			local damage_source_id = NetworkLookup.damage_sources["n/a"]
-			local hit_ragdoll_actor_id = NetworkLookup.hit_ragdoll_actors["n/a"]
-			local hit_react_type_id = NetworkLookup.hit_react_types.light
-			local attack_type_id = NetworkLookup.buff_attack_types["n/a"]
-			local is_dead = true
-			local is_critical_strike = false
-			local added_dot = false
-			local first_hit = false
-			local total_hits = 0
-			local backstab_multiplier = 1
-			local target_index = 0
+		if arg_6_0.dead then
+			local var_6_7 = 0
+			local var_6_8 = NetworkLookup.hit_zones.full
+			local var_6_9 = NetworkLookup.damage_types.sync_health
+			local var_6_10 = Unit.world_position(var_6_0, 0)
+			local var_6_11 = Vector3.up()
+			local var_6_12 = NetworkConstants.invalid_game_object_id
+			local var_6_13 = NetworkLookup.damage_sources["n/a"]
+			local var_6_14 = NetworkLookup.hit_ragdoll_actors["n/a"]
+			local var_6_15 = NetworkLookup.hit_react_types.light
+			local var_6_16 = NetworkLookup.buff_attack_types["n/a"]
+			local var_6_17 = true
+			local var_6_18 = false
+			local var_6_19 = false
+			local var_6_20 = false
+			local var_6_21 = 0
+			local var_6_22 = 1
+			local var_6_23 = 0 or 1
 
-			target_index = target_index or 1
-
-			network_transmit:send_rpc("rpc_add_damage", peer_id, go_id, is_level_unit, go_id, is_level_unit, source_attacker_unit_id, damage_amount, hit_zone_id, damage_type_id, hit_position, damage_direction, damage_source_id, hit_ragdoll_actor_id, hit_react_type_id, is_dead, is_critical_strike, added_dot, first_hit, total_hits, attack_type_id, backstab_multiplier, target_index)
+			var_6_6:send_rpc("rpc_add_damage", arg_6_1, var_6_1, var_6_2, var_6_1, var_6_2, var_6_12, var_6_7, var_6_8, var_6_9, var_6_10, var_6_11, var_6_13, var_6_14, var_6_15, var_6_17, var_6_18, var_6_19, var_6_20, var_6_21, var_6_16, var_6_22, var_6_23)
 		end
 	end
 end
 
-GenericHealthExtension.set_server_damage_taken = function (self, damage_taken)
-	fassert(self.is_server, "[GenericHealthExtension] Only server is allowed to call this function")
+function GenericHealthExtension.set_server_damage_taken(arg_7_0, arg_7_1)
+	fassert(arg_7_0.is_server, "[GenericHealthExtension] Only server is allowed to call this function")
 
-	local unit = self.unit
-	local network_manager = Managers.state.network
-	local go_id, is_level_unit = network_manager:game_object_or_level_id(unit)
+	local var_7_0 = arg_7_0.unit
+	local var_7_1, var_7_2 = Managers.state.network:game_object_or_level_id(var_7_0)
 
-	if go_id then
-		local state_id = NetworkLookup.health_statuses[self.state]
-		local network_transmit = self.network_transmit
+	if var_7_1 then
+		local var_7_3 = NetworkLookup.health_statuses[arg_7_0.state]
 
-		network_transmit:send_rpc_clients("rpc_sync_damage_taken", go_id, is_level_unit, false, damage_taken, state_id)
+		arg_7_0.network_transmit:send_rpc_clients("rpc_sync_damage_taken", var_7_1, var_7_2, false, arg_7_1, var_7_3)
 	end
 
-	self.damage = damage_taken
+	arg_7_0.damage = arg_7_1
 end
 
-GenericHealthExtension.is_alive = function (self)
-	return not self.dead
+function GenericHealthExtension.is_alive(arg_8_0)
+	return not arg_8_0.dead
 end
 
-GenericHealthExtension.client_predicted_is_alive = function (self)
-	return not self.dead and not self.predicted_dead
+function GenericHealthExtension.client_predicted_is_alive(arg_9_0)
+	return not arg_9_0.dead and not arg_9_0.predicted_dead
 end
 
-GenericHealthExtension.current_health_percent = function (self)
-	return 1 - self.damage / self.health
+function GenericHealthExtension.current_health_percent(arg_10_0)
+	return 1 - arg_10_0.damage / arg_10_0.health
 end
 
-GenericHealthExtension.current_health = function (self)
-	return self.health - self.damage
+function GenericHealthExtension.current_health(arg_11_0)
+	return arg_11_0.health - arg_11_0.damage
 end
 
-GenericHealthExtension.get_damage_taken = function (self)
-	return self.damage
+function GenericHealthExtension.get_damage_taken(arg_12_0)
+	return arg_12_0.damage
 end
 
-GenericHealthExtension.set_current_damage = function (self, damage)
-	self.damage = damage
+function GenericHealthExtension.set_current_damage(arg_13_0, arg_13_1)
+	arg_13_0.damage = arg_13_1
 end
 
-GenericHealthExtension.set_min_health_percentage = function (self, min_health_percentage)
-	self._min_health_percentage = min_health_percentage
+function GenericHealthExtension.set_min_health_percentage(arg_14_0, arg_14_1)
+	arg_14_0._min_health_percentage = arg_14_1
 end
 
-GenericHealthExtension.get_max_health = function (self)
-	return self.health
+function GenericHealthExtension.get_max_health(arg_15_0)
+	return arg_15_0.health
 end
 
-GenericHealthExtension.is_dead = function (self)
-	return self.dead
+function GenericHealthExtension.is_dead(arg_16_0)
+	return arg_16_0.dead
 end
 
-GenericHealthExtension.current_max_health_percent = function (self)
+function GenericHealthExtension.current_max_health_percent(arg_17_0)
 	return 1
 end
 
-GenericHealthExtension.set_max_health = function (self, health)
-	local health_constant = NetworkConstants.health
-	local network_health = math.clamp(health, health_constant.min, health_constant.max)
-	local decimal = network_health % 1
-	local rounded_decimal = math.round(decimal * 4) * 0.25
+function GenericHealthExtension.set_max_health(arg_18_0, arg_18_1)
+	local var_18_0 = NetworkConstants.health
+	local var_18_1 = math.clamp(arg_18_1, var_18_0.min, var_18_0.max)
+	local var_18_2 = var_18_1 % 1
+	local var_18_3 = math.round(var_18_2 * 4) * 0.25
+	local var_18_4 = math.floor(var_18_1) + var_18_3
 
-	network_health = math.floor(network_health) + rounded_decimal
-	network_health = network_health <= 0 and 1 or network_health
-	self.health = network_health
-	self._damage_cap_per_hit = self._damage_cap or self.health
+	var_18_4 = var_18_4 <= 0 and 1 or var_18_4
+	arg_18_0.health = var_18_4
+	arg_18_0._damage_cap_per_hit = arg_18_0._damage_cap or arg_18_0.health
 
-	local network_manager = Managers.state.network
-	local go_id, is_level_unit = network_manager:game_object_or_level_id(self.unit)
+	local var_18_5, var_18_6 = Managers.state.network:game_object_or_level_id(arg_18_0.unit)
 
-	if self.is_server and go_id then
-		local state = NetworkLookup.health_statuses[self.state]
+	if arg_18_0.is_server and var_18_5 then
+		local var_18_7 = NetworkLookup.health_statuses[arg_18_0.state]
 
-		self.network_transmit:send_rpc_clients("rpc_sync_damage_taken", go_id, is_level_unit, true, network_health, state)
+		arg_18_0.network_transmit:send_rpc_clients("rpc_sync_damage_taken", var_18_5, var_18_6, true, var_18_4, var_18_7)
 	end
 
-	return network_health
+	return var_18_4
 end
 
-GenericHealthExtension._add_to_damage_history_buffer = function (self, unit, attacker_unit, damage_amount, hit_zone_name, damage_type, hit_position, damage_direction, damage_source_name, hit_ragdoll_actor, source_attacker_unit, hit_react_type, is_critical_strike, first_hit, total_hits, attack_type, backstab_multiplier, target_index)
-	local hit_position_table = hit_position and {
-		hit_position.x,
-		hit_position.y,
-		hit_position.z,
+function GenericHealthExtension._add_to_damage_history_buffer(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9, arg_19_10, arg_19_11, arg_19_12, arg_19_13, arg_19_14, arg_19_15, arg_19_16, arg_19_17)
+	local var_19_0 = arg_19_6 and {
+		arg_19_6.x,
+		arg_19_6.y,
+		arg_19_6.z
 	} or nil
-	local damage_direction_table = damage_direction and {
-		damage_direction.x,
-		damage_direction.y,
-		damage_direction.z,
+	local var_19_1 = arg_19_7 and {
+		arg_19_7.x,
+		arg_19_7.y,
+		arg_19_7.z
 	} or nil
-	local damage_buffers = self.damage_buffers
-	local system_data = self.system_data
-	local active_damage_buffer_index = system_data.active_damage_buffer_index
-	local damage_queue = damage_buffers[active_damage_buffer_index]
-	local temp_table = FrameTable.alloc_table()
+	local var_19_2 = arg_19_0.damage_buffers[arg_19_0.system_data.active_damage_buffer_index]
+	local var_19_3 = FrameTable.alloc_table()
 
-	temp_table[DamageDataIndex.DAMAGE_AMOUNT] = damage_amount
-	temp_table[DamageDataIndex.DAMAGE_TYPE] = damage_type
-	temp_table[DamageDataIndex.ATTACKER] = attacker_unit
-	temp_table[DamageDataIndex.HIT_ZONE] = hit_zone_name
-	temp_table[DamageDataIndex.POSITION] = hit_position_table
-	temp_table[DamageDataIndex.DIRECTION] = damage_direction_table
-	temp_table[DamageDataIndex.DAMAGE_SOURCE_NAME] = damage_source_name or "n/a"
-	temp_table[DamageDataIndex.HIT_RAGDOLL_ACTOR_NAME] = hit_ragdoll_actor or "n/a"
-	temp_table[DamageDataIndex.SOURCE_ATTACKER_UNIT] = source_attacker_unit or attacker_unit
-	temp_table[DamageDataIndex.HIT_REACT_TYPE] = hit_react_type or "light"
-	temp_table[DamageDataIndex.CRITICAL_HIT] = is_critical_strike or false
-	temp_table[DamageDataIndex.FIRST_HIT] = first_hit or false
-	temp_table[DamageDataIndex.TOTAL_HITS] = total_hits or 0
-	temp_table[DamageDataIndex.ATTACK_TYPE] = attack_type or "n/a"
-	temp_table[DamageDataIndex.BACKSTAB_MULTIPLIER] = backstab_multiplier or false
-	temp_table[DamageDataIndex.TARGET_INDEX] = target_index or 1
+	var_19_3[var_0_1.DAMAGE_AMOUNT] = arg_19_3
+	var_19_3[var_0_1.DAMAGE_TYPE] = arg_19_5
+	var_19_3[var_0_1.ATTACKER] = arg_19_2
+	var_19_3[var_0_1.HIT_ZONE] = arg_19_4
+	var_19_3[var_0_1.POSITION] = var_19_0
+	var_19_3[var_0_1.DIRECTION] = var_19_1
+	var_19_3[var_0_1.DAMAGE_SOURCE_NAME] = arg_19_8 or "n/a"
+	var_19_3[var_0_1.HIT_RAGDOLL_ACTOR_NAME] = arg_19_9 or "n/a"
+	var_19_3[var_0_1.SOURCE_ATTACKER_UNIT] = arg_19_10 or arg_19_2
+	var_19_3[var_0_1.HIT_REACT_TYPE] = arg_19_11 or "light"
+	var_19_3[var_0_1.CRITICAL_HIT] = arg_19_12 or false
+	var_19_3[var_0_1.FIRST_HIT] = arg_19_13 or false
+	var_19_3[var_0_1.TOTAL_HITS] = arg_19_14 or 0
+	var_19_3[var_0_1.ATTACK_TYPE] = arg_19_15 or "n/a"
+	var_19_3[var_0_1.BACKSTAB_MULTIPLIER] = arg_19_16 or false
+	var_19_3[var_0_1.TARGET_INDEX] = arg_19_17 or 1
 
-	pdArray.push_back16(damage_queue, unpack(temp_table))
+	pdArray.push_back16(var_19_2, unpack(var_19_3))
 
-	return temp_table
+	return var_19_3
 end
 
-GenericHealthExtension._should_die = function (self)
-	return self.damage >= self.health
+function GenericHealthExtension._should_die(arg_20_0)
+	return arg_20_0.damage >= arg_20_0.health
 end
 
-GenericHealthExtension.apply_client_predicted_damage = function (self, predicted_damage)
-	fassert(not self.is_server, "This should only be used for the clients!")
+function GenericHealthExtension.apply_client_predicted_damage(arg_21_0, arg_21_1)
+	fassert(not arg_21_0.is_server, "This should only be used for the clients!")
 
-	if not self:get_is_invincible() then
-		local damage_mod = math.min(predicted_damage, self._damage_cap_per_hit)
+	if not arg_21_0:get_is_invincible() then
+		local var_21_0 = math.min(arg_21_1, arg_21_0._damage_cap_per_hit)
 
-		self.predicted_damage = self.predicted_damage + damage_mod
-		self.predicted_dead = self.damage + self.predicted_damage >= self.health
+		arg_21_0.predicted_damage = arg_21_0.predicted_damage + var_21_0
+		arg_21_0.predicted_dead = arg_21_0.damage + arg_21_0.predicted_damage >= arg_21_0.health
 	else
-		self.predicted_dead = false
+		arg_21_0.predicted_dead = false
 	end
 end
 
-GenericHealthExtension.add_damage = function (self, attacker_unit, damage_amount, hit_zone_name, damage_type, hit_position, damage_direction, damage_source_name, hit_ragdoll_actor, source_attacker_unit, hit_react_type, is_critical_strike, added_dot, first_hit, total_hits, attack_type, backstab_multiplier, target_index)
-	local unit = self.unit
-	local network_manager = Managers.state.network
-	local unit_id, is_level_unit = network_manager:game_object_or_level_id(unit)
+function GenericHealthExtension.add_damage(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_9, arg_22_10, arg_22_11, arg_22_12, arg_22_13, arg_22_14, arg_22_15, arg_22_16, arg_22_17)
+	local var_22_0 = arg_22_0.unit
+	local var_22_1, var_22_2 = Managers.state.network:game_object_or_level_id(var_22_0)
 
-	if self._min_health_percentage then
-		local health = self:current_health()
-		local min_health = math.max(self._min_health_percentage * self.health, 0.25)
-		local predicted_health = health - damage_amount
-		local clamped_health = math.max(predicted_health, min_health)
-		local raw_damage = math.max(health - clamped_health, 0)
+	if arg_22_0._min_health_percentage then
+		local var_22_3 = arg_22_0:current_health()
+		local var_22_4 = math.max(arg_22_0._min_health_percentage * arg_22_0.health, 0.25)
+		local var_22_5 = var_22_3 - arg_22_2
+		local var_22_6 = math.max(var_22_5, var_22_4)
+		local var_22_7 = math.max(var_22_3 - var_22_6, 0)
 
-		damage_amount = DamageUtils.networkify_damage(raw_damage)
+		arg_22_2 = DamageUtils.networkify_damage(var_22_7)
 	end
 
-	local attacker_player = AiUtils.get_actual_attacker_player(attacker_unit, unit, damage_source_name)
+	local var_22_8 = AiUtils.get_actual_attacker_player(arg_22_1, var_22_0, arg_22_7)
 
-	if not source_attacker_unit then
-		if attacker_player and ALIVE[attacker_player.player_unit] then
-			source_attacker_unit = attacker_player.player_unit
+	if not arg_22_9 then
+		if var_22_8 and ALIVE[var_22_8.player_unit] then
+			arg_22_9 = var_22_8.player_unit
 		end
 
-		if not source_attacker_unit then
-			local last_attacker_id = self.last_damage_data.attacker_unit_id
+		if not arg_22_9 then
+			local var_22_9 = arg_22_0.last_damage_data.attacker_unit_id
 
-			source_attacker_unit = last_attacker_id and Managers.state.unit_storage:unit(last_attacker_id)
+			arg_22_9 = var_22_9 and Managers.state.unit_storage:unit(var_22_9)
 		end
 
-		source_attacker_unit = AiUtils.get_actual_attacker_unit(source_attacker_unit or attacker_unit)
+		arg_22_9 = AiUtils.get_actual_attacker_unit(arg_22_9 or arg_22_1)
 	end
 
-	if attacker_player then
-		local bb = BLACKBOARDS[source_attacker_unit]
-		local attacker_breed = ALIVE[source_attacker_unit] and Unit.get_data(source_attacker_unit, "breed") or bb and bb.breed or ALIVE[attacker_unit] and Unit.get_data(attacker_unit, "breed")
-		local attacker_player_unique_id = attacker_player:unique_id()
-		local owner_player = Managers.player:owner(unit)
-		local owner_player_unique_id = owner_player and owner_player:unique_id()
+	if var_22_8 then
+		local var_22_10 = BLACKBOARDS[arg_22_9]
+		local var_22_11 = ALIVE[arg_22_9] and Unit.get_data(arg_22_9, "breed") or var_22_10 and var_22_10.breed or ALIVE[arg_22_1] and Unit.get_data(arg_22_1, "breed")
+		local var_22_12 = var_22_8:unique_id()
+		local var_22_13 = Managers.player:owner(var_22_0)
 
-		if attacker_player_unique_id ~= owner_player_unique_id and attacker_breed and attacker_breed.is_player then
-			local damage_t = Managers.time:time("game")
+		if var_22_12 ~= (var_22_13 and var_22_13:unique_id()) and var_22_11 and var_22_11.is_player then
+			local var_22_14 = Managers.time:time("game")
 
-			self:_register_attacker(attacker_player_unique_id, attacker_breed, damage_t)
+			arg_22_0:_register_attacker(var_22_12, var_22_11, var_22_14)
 		end
 	end
 
-	local damage_table = self:_add_to_damage_history_buffer(unit, attacker_unit, damage_amount, hit_zone_name, damage_type, hit_position, damage_direction, damage_source_name, hit_ragdoll_actor, source_attacker_unit, hit_react_type, is_critical_strike, first_hit, total_hits, attack_type, backstab_multiplier, target_index)
+	local var_22_15 = arg_22_0:_add_to_damage_history_buffer(var_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_9, arg_22_10, arg_22_11, arg_22_13, arg_22_14, arg_22_15, arg_22_16, arg_22_17)
 
-	fassert(damage_type, "No damage_type!")
+	fassert(arg_22_4, "No damage_type!")
 
-	self._recent_damage_type = damage_type
-	self._recent_hit_react_type = hit_react_type
-	self._recent_damage_source_name = damage_source_name
+	arg_22_0._recent_damage_type = arg_22_4
+	arg_22_0._recent_hit_react_type = arg_22_10
+	arg_22_0._recent_damage_source_name = arg_22_7
+	arg_22_0._last_damage_t = Managers.time:time("game")
 
-	local damage_t = Managers.time:time("game")
+	StatisticsUtil.register_damage(var_22_0, var_22_15, arg_22_0.statistics_db)
+	arg_22_0:save_kill_feed_data(arg_22_1, var_22_15, arg_22_3, arg_22_4, arg_22_7, arg_22_9)
+	DamageUtils.handle_hit_indication(arg_22_1, var_22_0, arg_22_2, arg_22_3, arg_22_12)
 
-	self._last_damage_t = damage_t
+	local var_22_16 = 0
+	local var_22_17 = ScriptUnit.has_extension(var_22_0, "buff_system")
 
-	StatisticsUtil.register_damage(unit, damage_table, self.statistics_db)
-	self:save_kill_feed_data(attacker_unit, damage_table, hit_zone_name, damage_type, damage_source_name, source_attacker_unit)
-	DamageUtils.handle_hit_indication(attacker_unit, unit, damage_amount, hit_zone_name, added_dot)
-
-	local min_health = 0
-	local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
-
-	if buff_extension then
-		min_health = buff_extension:has_buff_perk("ignore_death") and 1 or 0
+	if var_22_17 then
+		var_22_16 = var_22_17:has_buff_perk("ignore_death") and 1 or 0
 	end
 
-	if not self:get_is_invincible() and not self.dead then
-		local damage_mod = math.min(damage_amount, self._damage_cap_per_hit)
+	if not arg_22_0:get_is_invincible() and not arg_22_0.dead then
+		local var_22_18 = math.min(arg_22_2, arg_22_0._damage_cap_per_hit)
 
-		if min_health > 0 then
-			local current_health = self:current_health()
+		if var_22_16 > 0 then
+			local var_22_19 = arg_22_0:current_health()
 
-			damage_mod = current_health <= damage_mod and current_health - min_health or damage_mod
+			var_22_18 = var_22_19 <= var_22_18 and var_22_19 - var_22_16 or var_22_18
 		end
 
-		self.damage = self.damage + damage_mod
-		self.predicted_damage = math.max(self.predicted_damage - damage_mod, 0)
+		arg_22_0.damage = arg_22_0.damage + var_22_18
+		arg_22_0.predicted_damage = math.max(arg_22_0.predicted_damage - var_22_18, 0)
 
-		if self:_should_die() and (self.is_server or not unit_id) then
-			local breed = Unit.get_data(unit, "breed")
+		if arg_22_0:_should_die() and (arg_22_0.is_server or not var_22_1) then
+			local var_22_20 = Unit.get_data(var_22_0, "breed")
 
-			if breed and breed.name == "skaven_poison_wind_globadier" then
-				printf("[HON-43348] Globadier (%s) died. damage_table:\n\t%s", Unit.get_data(unit, "globadier_43348"), table.tostring(damage_table))
+			if var_22_20 and var_22_20.name == "skaven_poison_wind_globadier" then
+				printf("[HON-43348] Globadier (%s) died. damage_table:\n\t%s", Unit.get_data(var_22_0, "globadier_43348"), table.tostring(var_22_15))
 			end
 
-			local death_system = Managers.state.entity:system("death_system")
-
-			death_system:kill_unit(unit, damage_table)
+			Managers.state.entity:system("death_system"):kill_unit(var_22_0, var_22_15)
 		end
 	end
 
-	local attacker_buff_extension = ScriptUnit.has_extension(source_attacker_unit, "buff_system")
+	local var_22_21 = ScriptUnit.has_extension(arg_22_9, "buff_system")
 
-	if attacker_buff_extension and damage_source_name == "dot_debuff" then
-		attacker_buff_extension:trigger_procs("on_dot_damage_dealt", unit, source_attacker_unit, damage_type, damage_source_name)
+	if var_22_21 and arg_22_7 == "dot_debuff" then
+		var_22_21:trigger_procs("on_dot_damage_dealt", var_22_0, arg_22_9, arg_22_4, arg_22_7)
 	end
 
-	if buff_extension and damage_amount > 0 and damage_source_name ~= "temporary_health_degen" then
-		buff_extension:trigger_procs("on_damage_taken", attacker_unit, damage_amount, damage_type, attack_type)
+	if var_22_17 and arg_22_2 > 0 and arg_22_7 ~= "temporary_health_degen" then
+		var_22_17:trigger_procs("on_damage_taken", arg_22_1, arg_22_2, arg_22_4, arg_22_15)
 	end
 
-	self:_sync_out_damage(attacker_unit, unit_id, is_level_unit, source_attacker_unit, damage_amount, hit_zone_name, damage_type, hit_position, damage_direction, damage_source_name, hit_ragdoll_actor, hit_react_type, is_critical_strike, added_dot, first_hit, total_hits, attack_type, backstab_multiplier, target_index)
+	arg_22_0:_sync_out_damage(arg_22_1, var_22_1, var_22_2, arg_22_9, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_10, arg_22_11, arg_22_12, arg_22_13, arg_22_14, arg_22_15, arg_22_16, arg_22_17)
 end
 
-GenericHealthExtension._sync_out_damage = function (self, attacker_unit, unit_id, is_level_unit, source_attacker_unit, damage_amount, hit_zone_name, damage_type, hit_position, damage_direction, damage_source_name, hit_ragdoll_actor, hit_react_type, is_critical_strike, added_dot, first_hit, total_hits, attack_type, backstab_multiplier, target_index)
-	if self.is_server and unit_id then
-		local network_manager = Managers.state.network
-		local attacker_unit_id, attacker_is_level_unit = network_manager:game_object_or_level_id(attacker_unit)
-		local source_attacker_unit_id = network_manager:unit_game_object_id(source_attacker_unit) or NetworkConstants.invalid_game_object_id
-		local hit_zone_id = NetworkLookup.hit_zones[hit_zone_name]
-		local damage_type_id = NetworkLookup.damage_types[damage_type]
-		local damage_source_id = NetworkLookup.damage_sources[damage_source_name or "n/a"]
-		local hit_ragdoll_actor_id = NetworkLookup.hit_ragdoll_actors[hit_ragdoll_actor or "n/a"]
-		local hit_react_type_id = NetworkLookup.hit_react_types[hit_react_type or "light"]
-		local attack_type_id = NetworkLookup.buff_attack_types[attack_type or "n/a"]
-		local network_transmit = self.network_transmit
-		local is_dead = self.dead or false
+function GenericHealthExtension._sync_out_damage(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9, arg_23_10, arg_23_11, arg_23_12, arg_23_13, arg_23_14, arg_23_15, arg_23_16, arg_23_17, arg_23_18, arg_23_19)
+	if arg_23_0.is_server and arg_23_2 then
+		local var_23_0 = Managers.state.network
+		local var_23_1, var_23_2 = var_23_0:game_object_or_level_id(arg_23_1)
+		local var_23_3 = var_23_0:unit_game_object_id(arg_23_4) or NetworkConstants.invalid_game_object_id
+		local var_23_4 = NetworkLookup.hit_zones[arg_23_6]
+		local var_23_5 = NetworkLookup.damage_types[arg_23_7]
+		local var_23_6 = NetworkLookup.damage_sources[arg_23_10 or "n/a"]
+		local var_23_7 = NetworkLookup.hit_ragdoll_actors[arg_23_11 or "n/a"]
+		local var_23_8 = NetworkLookup.hit_react_types[arg_23_12 or "light"]
+		local var_23_9 = NetworkLookup.buff_attack_types[arg_23_17 or "n/a"]
+		local var_23_10 = arg_23_0.network_transmit
+		local var_23_11 = arg_23_0.dead or false
 
-		is_critical_strike = is_critical_strike or false
-		added_dot = added_dot or false
-		first_hit = first_hit or false
-		total_hits = total_hits or 0
-		backstab_multiplier = backstab_multiplier or 1
-		target_index = target_index or 1
+		arg_23_13 = arg_23_13 or false
+		arg_23_14 = arg_23_14 or false
+		arg_23_15 = arg_23_15 or false
+		arg_23_16 = arg_23_16 or 0
+		arg_23_18 = arg_23_18 or 1
+		arg_23_19 = arg_23_19 or 1
 
-		network_transmit:send_rpc_clients("rpc_add_damage", unit_id, is_level_unit, attacker_unit_id, attacker_is_level_unit, source_attacker_unit_id, damage_amount, hit_zone_id, damage_type_id, hit_position, damage_direction, damage_source_id, hit_ragdoll_actor_id, hit_react_type_id, is_dead, is_critical_strike, added_dot, first_hit, total_hits, attack_type_id, backstab_multiplier, target_index)
+		var_23_10:send_rpc_clients("rpc_add_damage", arg_23_2, arg_23_3, var_23_1, var_23_2, var_23_3, arg_23_5, var_23_4, var_23_5, arg_23_8, arg_23_9, var_23_6, var_23_7, var_23_8, var_23_11, arg_23_13, arg_23_14, arg_23_15, arg_23_16, var_23_9, arg_23_18, arg_23_19)
 	end
 end
 
-GenericHealthExtension.add_heal = function (self, healer_unit, heal_amount, heal_source_name, heal_type)
-	local unit = self.unit
-	local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
+function GenericHealthExtension.add_heal(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+	local var_24_0 = arg_24_0.unit
+	local var_24_1 = ScriptUnit.has_extension(var_24_0, "buff_system")
 
-	if buff_extension and buff_extension:has_buff_perk("healing_immune") then
+	if var_24_1 and var_24_1:has_buff_perk("healing_immune") then
 		return
 	end
 
-	self:_add_to_damage_history_buffer(unit, healer_unit, -heal_amount, nil, "heal", nil, nil, heal_source_name, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+	arg_24_0:_add_to_damage_history_buffer(var_24_0, arg_24_1, -arg_24_2, nil, "heal", nil, nil, arg_24_3, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 
-	if not self.dead then
-		self.damage = math.max(0, self.damage - heal_amount)
+	if not arg_24_0.dead then
+		arg_24_0.damage = math.max(0, arg_24_0.damage - arg_24_2)
 
-		local unit_id, is_level_unit = Managers.state.network:game_object_or_level_id(unit)
+		local var_24_2, var_24_3 = Managers.state.network:game_object_or_level_id(var_24_0)
 
-		if unit_id and self.is_server then
-			local network_manager = Managers.state.network
-			local healer_unit_id, healer_is_level_unit = network_manager:game_object_or_level_id(healer_unit)
-			local heal_type_id = NetworkLookup.heal_types[heal_type]
-			local network_transmit = self.network_transmit
+		if var_24_2 and arg_24_0.is_server then
+			local var_24_4, var_24_5 = Managers.state.network:game_object_or_level_id(arg_24_1)
+			local var_24_6 = NetworkLookup.heal_types[arg_24_4]
 
-			network_transmit:send_rpc_clients("rpc_heal", unit_id, is_level_unit, healer_unit_id, healer_is_level_unit, heal_amount, heal_type_id)
+			arg_24_0.network_transmit:send_rpc_clients("rpc_heal", var_24_2, var_24_3, var_24_4, var_24_5, arg_24_2, var_24_6)
 		end
 	end
 end
 
-GenericHealthExtension.die = function (self, damage_type)
-	if self.is_server then
-		local unit = self.unit
+function GenericHealthExtension.die(arg_25_0, arg_25_1)
+	if arg_25_0.is_server then
+		local var_25_0 = arg_25_0.unit
 
-		if ScriptUnit.has_extension(unit, "ai_system") then
-			damage_type = damage_type or "undefined"
+		if ScriptUnit.has_extension(var_25_0, "ai_system") then
+			arg_25_1 = arg_25_1 or "undefined"
 
-			AiUtils.kill_unit(unit, nil, nil, damage_type, nil)
+			AiUtils.kill_unit(var_25_0, nil, nil, arg_25_1, nil)
 		end
 	end
 end
 
-GenericHealthExtension.entered_kill_volume = function (self, t)
-	self:die("volume_insta_kill")
+function GenericHealthExtension.entered_kill_volume(arg_26_0, arg_26_1)
+	arg_26_0:die("volume_insta_kill")
 end
 
-GenericHealthExtension.set_dead = function (self)
-	self.damage = self.health
-	self.dead = true
-	HEALTH_ALIVE[self.unit] = nil
+function GenericHealthExtension.set_dead(arg_27_0)
+	arg_27_0.damage = arg_27_0.health
+	arg_27_0.dead = true
+	HEALTH_ALIVE[arg_27_0.unit] = nil
 end
 
-GenericHealthExtension.has_assist_shield = function (self)
+function GenericHealthExtension.has_assist_shield(arg_28_0)
 	return false
 end
 
-GenericHealthExtension.recent_damages = function (self)
-	local previous_buffer_index = 3 - self.system_data.active_damage_buffer_index
-	local damage_queue = self.damage_buffers[previous_buffer_index]
+function GenericHealthExtension.recent_damages(arg_29_0)
+	local var_29_0 = 3 - arg_29_0.system_data.active_damage_buffer_index
+	local var_29_1 = arg_29_0.damage_buffers[var_29_0]
 
-	return pdArray.data(damage_queue)
+	return pdArray.data(var_29_1)
 end
 
-GenericHealthExtension.recent_damage_source = function (self)
-	return self._recent_damage_source_name
+function GenericHealthExtension.recent_damage_source(arg_30_0)
+	return arg_30_0._recent_damage_source_name
 end
 
-GenericHealthExtension.recently_damaged = function (self)
-	return self._recent_damage_type, self._recent_hit_react_type
+function GenericHealthExtension.recently_damaged(arg_31_0)
+	return arg_31_0._recent_damage_type, arg_31_0._recent_hit_react_type
 end
 
-GenericHealthExtension.last_damage_t = function (self)
-	return self._last_damage_t
+function GenericHealthExtension.last_damage_t(arg_32_0)
+	return arg_32_0._last_damage_t
 end
 
-GenericHealthExtension.get_is_invincible = function (self)
-	local unit = self.unit
-	local has_invincibility_buff = false
-	local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
+function GenericHealthExtension.get_is_invincible(arg_33_0)
+	local var_33_0 = arg_33_0.unit
+	local var_33_1 = false
+	local var_33_2 = ScriptUnit.has_extension(var_33_0, "buff_system")
 
-	if buff_extension then
-		has_invincibility_buff = buff_extension:has_buff_perk("invulnerable")
+	if var_33_2 then
+		var_33_1 = var_33_2:has_buff_perk("invulnerable")
 	end
 
-	local dlc_is_invincible = false
-	local ghost_mode_extension = ScriptUnit.has_extension(unit, "ghost_mode_system")
+	local var_33_3 = false
+	local var_33_4 = ScriptUnit.has_extension(var_33_0, "ghost_mode_system")
 
-	if ghost_mode_extension then
-		dlc_is_invincible = ghost_mode_extension:is_in_ghost_mode()
+	if var_33_4 then
+		var_33_3 = var_33_4:is_in_ghost_mode()
 	end
 
-	return self.is_invincible or has_invincibility_buff or dlc_is_invincible
+	return arg_33_0.is_invincible or var_33_1 or var_33_3
 end
 
-GenericHealthExtension.save_kill_feed_data = function (self, attacker_unit, damage_table, hit_zone_name, damage_type, damage_source_name, source_attacker_unit)
-	local unit = self.unit
-	local last_damage_data = self.last_damage_data
-	local registered_damage = false
-	local current_health = self:current_health()
+function GenericHealthExtension.save_kill_feed_data(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5, arg_34_6)
+	local var_34_0 = arg_34_0.unit
+	local var_34_1 = arg_34_0.last_damage_data
+	local var_34_2 = false
+	local var_34_3 = arg_34_0:current_health()
 
-	if damage_type ~= "temporary_health_degen" and damage_type ~= "knockdown_bleed" and current_health > 0 then
-		local attacker_unit = source_attacker_unit or AiUtils.get_actual_attacker_unit(attacker_unit)
+	if arg_34_4 ~= "temporary_health_degen" and arg_34_4 ~= "knockdown_bleed" and var_34_3 > 0 then
+		local var_34_4 = arg_34_6 or AiUtils.get_actual_attacker_unit(arg_34_1)
 
-		if HEALTH_ALIVE[attacker_unit] then
-			local breed = Unit.get_data(attacker_unit, "breed")
-			local ai_suicide = attacker_unit == unit and breed and not breed.is_player
+		if HEALTH_ALIVE[var_34_4] then
+			local var_34_5 = Unit.get_data(var_34_4, "breed")
 
-			if not ai_suicide and (attacker_unit ~= unit or damage_type ~= "cutting") and breed then
-				last_damage_data.breed = breed
-				last_damage_data.damage_type = damage_type
+			if not (var_34_4 == var_34_0 and var_34_5 and not var_34_5.is_player) and (var_34_4 ~= var_34_0 or arg_34_4 ~= "cutting") and var_34_5 then
+				var_34_1.breed = var_34_5
+				var_34_1.damage_type = arg_34_4
+				var_34_1.attacker_unit_id = Managers.state.network:unit_game_object_id(var_34_4)
+				var_34_2 = true
 
-				local network_manager = Managers.state.network
+				local var_34_6 = Managers.player:owner(var_34_4)
 
-				last_damage_data.attacker_unit_id = network_manager:unit_game_object_id(attacker_unit)
-				registered_damage = true
-
-				local player = Managers.player:owner(attacker_unit)
-
-				if player then
-					last_damage_data.attacker_unique_id = player:unique_id()
-					last_damage_data.attacker_side = Managers.state.side.side_by_unit[attacker_unit]
+				if var_34_6 then
+					var_34_1.attacker_unique_id = var_34_6:unique_id()
+					var_34_1.attacker_side = Managers.state.side.side_by_unit[var_34_4]
 				else
-					last_damage_data.attacker_unique_id = nil
-					last_damage_data.attacker_side = nil
+					var_34_1.attacker_unique_id = nil
+					var_34_1.attacker_side = nil
 				end
 			end
 		end
 	end
 
-	if not registered_damage then
-		local area_damage_system = Managers.state.entity:system("area_damage_system")
-		local source_attacker_unit_data = area_damage_system:has_source_attacker_unit_data(attacker_unit)
+	if not var_34_2 then
+		local var_34_7 = Managers.state.entity:system("area_damage_system"):has_source_attacker_unit_data(arg_34_1)
 
-		if source_attacker_unit_data then
-			last_damage_data.breed = source_attacker_unit_data.breed
-			last_damage_data.attacker_unique_id = source_attacker_unit_data.attacker_unique_id
-			last_damage_data.attacker_side = source_attacker_unit_data.attacker_side
+		if var_34_7 then
+			var_34_1.breed = var_34_7.breed
+			var_34_1.attacker_unique_id = var_34_7.attacker_unique_id
+			var_34_1.attacker_side = var_34_7.attacker_side
 		end
 	end
 end
 
-GenericHealthExtension._register_attacker = function (self, attacker_player_unique_id, attacker_breed, damage_t)
-	local recent_attackers = self._recent_attackers
-	local recent = recent_attackers[attacker_player_unique_id]
-	local last_until = damage_t + RECENT_ATTACKER_DAMAGE_WINDOW
+function GenericHealthExtension._register_attacker(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+	local var_35_0 = arg_35_0._recent_attackers
+	local var_35_1 = var_35_0[arg_35_1]
+	local var_35_2 = arg_35_3 + var_0_3
 
-	if recent then
-		self._health_system:refresh_recent_attacker(recent, attacker_breed, last_until)
+	if var_35_1 then
+		arg_35_0._health_system:refresh_recent_attacker(var_35_1, arg_35_2, var_35_2)
 	else
-		recent_attackers[attacker_player_unique_id] = self._health_system:rent_recent_attacker(attacker_breed, last_until)
+		var_35_0[arg_35_1] = arg_35_0._health_system:rent_recent_attacker(arg_35_2, var_35_2)
 	end
 end
 
-GenericHealthExtension.was_attacked_by = function (self, player_unique_id)
-	local t = Managers.time:time("game")
-	local recent_data = self._recent_attackers[player_unique_id]
+function GenericHealthExtension.was_attacked_by(arg_36_0, arg_36_1)
+	local var_36_0 = Managers.time:time("game")
+	local var_36_1 = arg_36_0._recent_attackers[arg_36_1]
 
-	if recent_data and t > recent_data.t then
-		self._health_system:return_recent_attacker(recent_data)
+	if var_36_1 and var_36_0 > var_36_1.t then
+		arg_36_0._health_system:return_recent_attacker(var_36_1)
 
-		self._recent_attackers[player_unique_id] = nil
+		arg_36_0._recent_attackers[arg_36_1] = nil
 
 		return false
 	end
 
-	return recent_data
+	return var_36_1
 end
 
-GenericHealthExtension.recent_attackers = function (self)
-	return self._recent_attackers
+function GenericHealthExtension.recent_attackers(arg_37_0)
+	return arg_37_0._recent_attackers
 end

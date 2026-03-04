@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/entity_system/systems/weapon/weapon_system.lua
+-- chunkname: @scripts/entity_system/systems/weapon/weapon_system.lua
 
 require("scripts/unit_extensions/weapons/weapon_unit_extension")
 require("scripts/unit_extensions/weapons/husk_weapon_unit_extension")
@@ -8,7 +8,7 @@ require("scripts/unit_extensions/weapons/single_weapon_unit_extension")
 WeaponSystem = class(WeaponSystem, ExtensionSystemBase)
 global_is_inside_inn = false
 
-local RPCS = {
+local var_0_0 = {
 	"rpc_attack_hit",
 	"rpc_alert_enemy",
 	"rpc_ai_weapon_shoot_start",
@@ -28,355 +28,339 @@ local RPCS = {
 	"rpc_summon_vortex",
 	"rpc_start_soul_rip",
 	"rpc_stop_soul_rip",
-	"rpc_soul_rip_burst",
+	"rpc_soul_rip_burst"
 }
-local extensions = {
+local var_0_1 = {
 	"WeaponUnitExtension",
 	"HuskWeaponUnitExtension",
 	"AiWeaponUnitExtension",
-	"SingleWeaponUnitExtension",
+	"SingleWeaponUnitExtension"
 }
 
-WeaponSystem.init = function (self, entity_system_creation_context, system_name)
-	WeaponSystem.super.init(self, entity_system_creation_context, system_name, extensions)
+function WeaponSystem.init(arg_1_0, arg_1_1, arg_1_2)
+	WeaponSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
-	local network_event_delegate = entity_system_creation_context.network_event_delegate
+	local var_1_0 = arg_1_1.network_event_delegate
 
-	self.network_event_delegate = network_event_delegate
+	arg_1_0.network_event_delegate = var_1_0
 
-	network_event_delegate:register(self, unpack(RPCS))
+	var_1_0:register(arg_1_0, unpack(var_0_0))
 
-	local level_setting = LevelSettings[entity_system_creation_context.startup_data.level_key]
-
-	global_is_inside_inn = level_setting.hub_level or false
-	self._player_damage_forbidden = Managers.state.game_mode:setting("player_damage_forbidden")
-	self.game = Managers.state.network:game()
-	self.network_manager = Managers.state.network
-	self._beam_particle_effects = {}
-	self._geiser_particle_effects = {}
-	self._flamethrower_particle_effects = {}
-	self._soul_rip_spline_ids_lookup = {}
-	self._soul_rip_particle_effects = {}
-	self._chained_projectiles = {}
+	global_is_inside_inn = LevelSettings[arg_1_1.startup_data.level_key].hub_level or false
+	arg_1_0._player_damage_forbidden = Managers.state.game_mode:setting("player_damage_forbidden")
+	arg_1_0.game = Managers.state.network:game()
+	arg_1_0.network_manager = Managers.state.network
+	arg_1_0._beam_particle_effects = {}
+	arg_1_0._geiser_particle_effects = {}
+	arg_1_0._flamethrower_particle_effects = {}
+	arg_1_0._soul_rip_spline_ids_lookup = {}
+	arg_1_0._soul_rip_particle_effects = {}
+	arg_1_0._chained_projectiles = {}
 end
 
-WeaponSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
-	extension_init_data.weapon_system = self
+function WeaponSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	arg_2_4.weapon_system = arg_2_0
 
-	local extension = WeaponSystem.super.on_add_extension(self, world, unit, extension_name, extension_init_data)
+	local var_2_0 = WeaponSystem.super.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
-	extension_init_data.weapon_system = nil
+	arg_2_4.weapon_system = nil
 
-	return extension
+	return var_2_0
 end
 
-WeaponSystem.rpc_alert_enemy = function (self, channel_id, alert_unit_id, attacker_unit_id)
-	local alert_unit = self.unit_storage:unit(alert_unit_id)
+function WeaponSystem.rpc_alert_enemy(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	local var_3_0 = arg_3_0.unit_storage:unit(arg_3_2)
 
-	if not HEALTH_ALIVE[alert_unit] then
+	if not HEALTH_ALIVE[var_3_0] then
 		return
 	end
 
-	local attacker_unit = self.unit_storage:unit(attacker_unit_id)
+	local var_3_1 = arg_3_0.unit_storage:unit(arg_3_3)
 
-	AiUtils.alert_unit_of_enemy(alert_unit, attacker_unit)
+	AiUtils.alert_unit_of_enemy(var_3_0, var_3_1)
 end
 
-local ARGS = {
+local var_0_2 = {
 	{
 		default = 0,
 		name = "power_level",
 		min = MIN_POWER_LEVEL,
-		max = MAX_POWER_LEVEL,
+		max = MAX_POWER_LEVEL
 	},
 	{
 		default = 0,
-		name = "hit_target_index",
+		name = "hit_target_index"
 	},
 	{
 		default = 0,
-		name = "boost_curve_multiplier",
+		name = "boost_curve_multiplier"
 	},
 	{
 		default = false,
-		name = "is_critical_strike",
+		name = "is_critical_strike"
 	},
 	{
 		default = true,
-		name = "can_damage",
+		name = "can_damage"
 	},
 	{
 		default = true,
-		name = "can_stagger",
+		name = "can_stagger"
 	},
 	{
 		default = 1,
-		name = "hit_ragdoll_actor",
+		name = "hit_ragdoll_actor"
 	},
 	{
 		default = false,
-		name = "blocking",
+		name = "blocking"
 	},
 	{
 		default = false,
-		name = "shield_break_procced",
+		name = "shield_break_procced"
 	},
 	{
 		default = 1,
-		name = "backstab_multiplier",
+		name = "backstab_multiplier"
 	},
 	{
 		default = false,
-		name = "attacker_is_level_unit",
+		name = "attacker_is_level_unit"
 	},
 	{
 		default = false,
-		name = "first_hit",
+		name = "first_hit"
 	},
 	{
 		default = 0,
-		name = "total_hits",
-	},
+		name = "total_hits"
+	}
 }
 
-for i = 1, #ARGS do
-	ARGS[ARGS[i].name] = i
+for iter_0_0 = 1, #var_0_2 do
+	var_0_2[var_0_2[iter_0_0].name] = iter_0_0
 end
 
-local RPC_ATTACK_HIT_TEMP = {}
+local var_0_3 = {}
 
-WeaponSystem.send_rpc_attack_hit = function (self, damage_source_id, attacker_unit_id, hit_unit_id, hit_zone_id, hit_position, attack_direction, damage_profile_id, ...)
-	table.clear(RPC_ATTACK_HIT_TEMP)
+function WeaponSystem.send_rpc_attack_hit(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, ...)
+	table.clear(var_0_3)
 
-	local num_args = select("#", ...)
+	local var_4_0 = select("#", ...)
 
-	for i = 1, num_args, 2 do
-		local arg = select(i, ...)
-		local val = select(i + 1, ...)
+	for iter_4_0 = 1, var_4_0, 2 do
+		local var_4_1 = select(iter_4_0, ...)
+		local var_4_2 = select(iter_4_0 + 1, ...)
 
-		RPC_ATTACK_HIT_TEMP[ARGS[arg]] = val
+		var_0_3[var_0_2[var_4_1]] = var_4_2
 	end
 
-	for i = 1, #ARGS do
-		local setting = ARGS[i]
-		local val = RPC_ATTACK_HIT_TEMP[i]
+	for iter_4_1 = 1, #var_0_2 do
+		local var_4_3 = var_0_2[iter_4_1]
+		local var_4_4 = var_0_3[iter_4_1]
 
-		if val == nil then
-			val = setting.default
+		if var_4_4 == nil then
+			var_4_4 = var_4_3.default
 		end
 
-		if setting.min and setting.max then
-			val = math.clamp(val, setting.min, setting.max)
-		elseif setting.min then
-			val = math.max(val, setting.min)
-		elseif setting.max then
-			val = math.min(val, setting.max)
+		if var_4_3.min and var_4_3.max then
+			var_4_4 = math.clamp(var_4_4, var_4_3.min, var_4_3.max)
+		elseif var_4_3.min then
+			var_4_4 = math.max(var_4_4, var_4_3.min)
+		elseif var_4_3.max then
+			var_4_4 = math.min(var_4_4, var_4_3.max)
 		end
 
-		RPC_ATTACK_HIT_TEMP[i] = val
+		var_0_3[iter_4_1] = var_4_4
 	end
 
-	if self.is_server or LEVEL_EDITOR_TEST then
-		self:rpc_attack_hit(nil, damage_source_id, attacker_unit_id, hit_unit_id, hit_zone_id, hit_position, attack_direction, damage_profile_id, unpack(RPC_ATTACK_HIT_TEMP))
+	if arg_4_0.is_server or LEVEL_EDITOR_TEST then
+		arg_4_0:rpc_attack_hit(nil, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, unpack(var_0_3))
 	else
-		Managers.state.network.network_transmit:send_rpc_server("rpc_attack_hit", damage_source_id, attacker_unit_id, hit_unit_id, hit_zone_id, hit_position, attack_direction, damage_profile_id, unpack(RPC_ATTACK_HIT_TEMP))
+		Managers.state.network.network_transmit:send_rpc_server("rpc_attack_hit", arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, unpack(var_0_3))
 	end
 
-	local hit_unit = self.unit_storage:unit(hit_unit_id)
-	local attacker_unit = self.unit_storage:unit(attacker_unit_id)
+	local var_4_5 = arg_4_0.unit_storage:unit(arg_4_3)
+	local var_4_6 = arg_4_0.unit_storage:unit(arg_4_2)
 
-	if Managers.player:is_player_unit(attacker_unit) then
-		local owner_player = Managers.player:owner(attacker_unit)
+	if Managers.player:is_player_unit(var_4_6) then
+		local var_4_7 = Managers.player:owner(var_4_6)
 
-		if owner_player.local_player and not owner_player.bot_player then
-			local breed = Unit.get_data(hit_unit, "breed")
-			local ai_system = Managers.state.entity:system("ai_system")
-			local attributes = ai_system:get_attributes(hit_unit)
+		if var_4_7.local_player and not var_4_7.bot_player then
+			local var_4_8 = Unit.get_data(var_4_5, "breed")
+			local var_4_9 = Managers.state.entity:system("ai_system"):get_attributes(var_4_5)
 
-			if breed and breed.show_health_bar or attributes.grudge_marked then
-				Managers.state.event:trigger("boss_health_bar_register_unit", hit_unit, "damage_done")
+			if var_4_8 and var_4_8.show_health_bar or var_4_9.grudge_marked then
+				Managers.state.event:trigger("boss_health_bar_register_unit", var_4_5, "damage_done")
 			end
 		end
 	end
 end
 
-local BLACKBOARDS = BLACKBOARDS
+local var_0_4 = BLACKBOARDS
 
-WeaponSystem.rpc_attack_hit = function (self, channel_id, damage_source_id, attacker_unit_id, hit_unit_id, hit_zone_id, hit_position, attack_direction, damage_profile_id, power_level, target_index, boost_curve_multiplier, is_critical_strike, can_damage, can_stagger, hit_ragdoll_actor_id, blocking, shield_break_procced, backstab_multiplier, attacker_is_level_unit, first_hit, total_hits)
-	local hit_unit = self.unit_storage:unit(hit_unit_id)
-	local attacker_unit = self.network_manager:game_object_or_level_unit(attacker_unit_id, attacker_is_level_unit)
+function WeaponSystem.rpc_attack_hit(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10, arg_5_11, arg_5_12, arg_5_13, arg_5_14, arg_5_15, arg_5_16, arg_5_17, arg_5_18, arg_5_19, arg_5_20, arg_5_21)
+	local var_5_0 = arg_5_0.unit_storage:unit(arg_5_4)
+	local var_5_1 = arg_5_0.network_manager:game_object_or_level_unit(arg_5_3, arg_5_19)
 
-	if not Unit.alive(hit_unit) or not Unit.alive(attacker_unit) then
+	if not Unit.alive(var_5_0) or not Unit.alive(var_5_1) then
 		return
 	end
 
-	local damage_source = NetworkLookup.damage_sources[damage_source_id]
-	local player_manager = Managers.player
-	local attacker_player = player_manager:is_player_unit(attacker_unit)
-	local hit_player = player_manager:is_player_unit(hit_unit)
-	local player_hitting_player = hit_player and attacker_player
+	local var_5_2 = NetworkLookup.damage_sources[arg_5_2]
+	local var_5_3 = Managers.player
+	local var_5_4 = var_5_3:is_player_unit(var_5_1)
+	local var_5_5 = var_5_3:is_player_unit(var_5_0) and var_5_4
 
-	if player_hitting_player then
-		if self._player_damage_forbidden then
+	if var_5_5 then
+		if arg_5_0._player_damage_forbidden then
 			return
 		end
 
-		if damage_source == "vs_ratling_gunner_gun" then
-			local status_extension = ScriptUnit.extension(hit_unit, "status_system")
-
-			if status_extension:is_grabbed_by_pack_master() then
-				local dialogue_input = ScriptUnit.extension_input(attacker_unit, "dialogue_system")
-
-				dialogue_input:trigger_dialogue_event("vs_shooting_hooked_hero")
-			end
+		if var_5_2 == "vs_ratling_gunner_gun" and ScriptUnit.extension(var_5_0, "status_system"):is_grabbed_by_pack_master() then
+			ScriptUnit.extension_input(var_5_1, "dialogue_system"):trigger_dialogue_event("vs_shooting_hooked_hero")
 		end
 	end
 
-	local hit_zone_name = NetworkLookup.hit_zones[hit_zone_id]
-	local blackboard = BLACKBOARDS[hit_unit]
-	local uses_slot_system = ScriptUnit.has_extension(hit_unit, "ai_slot_system")
-	local target_override_extension = ScriptUnit.has_extension(attacker_unit, "target_override_system") and ScriptUnit.extension(attacker_unit, "target_override_system") or nil
-	local status_extension = ScriptUnit.has_extension(attacker_unit, "status_system") and ScriptUnit.extension(attacker_unit, "status_system") or nil
-	local attacker_not_incapacitated = status_extension and not status_extension:is_disabled() or nil
-	local hit_unit_is_enemy = DamageUtils.is_enemy(attacker_unit, hit_unit)
-	local hit_ragdoll_actor = NetworkLookup.hit_ragdoll_actors[hit_ragdoll_actor_id]
-	local damage_profile_name = NetworkLookup.damage_profiles[damage_profile_id]
-	local damage_profile = DamageProfileTemplates[damage_profile_name]
+	local var_5_6 = NetworkLookup.hit_zones[arg_5_5]
+	local var_5_7 = var_0_4[var_5_0]
+	local var_5_8 = ScriptUnit.has_extension(var_5_0, "ai_slot_system")
+	local var_5_9 = ScriptUnit.has_extension(var_5_1, "target_override_system") and ScriptUnit.extension(var_5_1, "target_override_system") or nil
+	local var_5_10 = ScriptUnit.has_extension(var_5_1, "status_system") and ScriptUnit.extension(var_5_1, "status_system") or nil
+	local var_5_11 = var_5_10 and not var_5_10:is_disabled() or nil
+	local var_5_12 = DamageUtils.is_enemy(var_5_1, var_5_0)
+	local var_5_13 = NetworkLookup.hit_ragdoll_actors[arg_5_15]
+	local var_5_14 = NetworkLookup.damage_profiles[arg_5_8]
+	local var_5_15 = DamageProfileTemplates[var_5_14]
 
-	if hit_ragdoll_actor == "n/a" then
-		hit_ragdoll_actor = nil
+	if var_5_13 == "n/a" then
+		var_5_13 = nil
 	end
 
-	if target_index == 0 then
-		target_index = nil
+	if arg_5_10 == 0 then
+		arg_5_10 = nil
 	end
 
-	if player_hitting_player and blocking then
-		local fatigue_type = damage_profile.fatigue_type
-		local fatigue_point_costs_multiplier = 1
-		local improved_block = true
-		local enemy_weapon_direction = "left"
-		local network_manager = Managers.state.network
+	if var_5_5 and arg_5_16 then
+		local var_5_16 = var_5_15.fatigue_type
+		local var_5_17 = 1
+		local var_5_18 = true
+		local var_5_19 = "left"
+		local var_5_20 = Managers.state.network
 
-		if self.is_server then
-			local fatigue_type_id = NetworkLookup.fatigue_types[fatigue_type]
+		if arg_5_0.is_server then
+			local var_5_21 = NetworkLookup.fatigue_types[var_5_16]
 
-			network_manager.network_transmit:send_rpc_server("rpc_player_blocked_attack", hit_unit_id, fatigue_type_id, attacker_unit_id, fatigue_point_costs_multiplier, improved_block, enemy_weapon_direction, attacker_is_level_unit)
+			var_5_20.network_transmit:send_rpc_server("rpc_player_blocked_attack", arg_5_4, var_5_21, arg_5_3, var_5_17, var_5_18, var_5_19, arg_5_19)
 		end
 	end
 
-	local optional_predicted_damage
-	local shield_breaking_hit = false
+	local var_5_22
+	local var_5_23 = false
 
-	if blackboard and blackboard.breed and blackboard.breed.is_ai then
-		if blackboard.breed.use_predicted_damage_in_stagger_calculation then
-			local target_settings = damage_profile.targets and damage_profile.targets[target_index] or damage_profile.default_target
+	if var_5_7 and var_5_7.breed and var_5_7.breed.is_ai then
+		if var_5_7.breed.use_predicted_damage_in_stagger_calculation then
+			local var_5_24 = var_5_15.targets and var_5_15.targets[arg_5_10] or var_5_15.default_target
 
-			if target_settings then
-				local boost_curve = BoostCurves[target_settings.boost_curve_type]
+			if var_5_24 then
+				local var_5_25 = BoostCurves[var_5_24.boost_curve_type]
 
-				optional_predicted_damage = DamageUtils.calculate_damage(DamageOutput, hit_unit, attacker_unit, hit_zone_name, power_level, boost_curve, boost_curve_multiplier, is_critical_strike, damage_profile, target_index, backstab_multiplier, damage_source)
+				var_5_22 = DamageUtils.calculate_damage(DamageOutput, var_5_0, var_5_1, var_5_6, arg_5_9, var_5_25, arg_5_11, arg_5_12, var_5_15, arg_5_10, arg_5_18, var_5_2)
 			end
 		end
 
-		if hit_unit_is_enemy and uses_slot_system and target_override_extension and attacker_not_incapacitated then
-			local has_override_targets = next(blackboard.override_targets)
+		if var_5_12 and var_5_8 and var_5_9 and var_5_11 and next(var_5_7.override_targets) and HEALTH_ALIVE[var_5_0] then
+			local var_5_26 = Managers.time:time("game")
 
-			if has_override_targets and HEALTH_ALIVE[hit_unit] then
-				local t = Managers.time:time("game")
-
-				target_override_extension:add_to_override_targets(hit_unit, attacker_unit, blackboard, t)
-			end
+			var_5_9:add_to_override_targets(var_5_0, var_5_1, var_5_7, var_5_26)
 		end
 
-		local unbreakable_shield = blackboard.breed.unbreakable_shield
-
-		shield_breaking_hit = not unbreakable_shield and (damage_profile.shield_break or shield_break_procced)
+		var_5_23 = not var_5_7.breed.unbreakable_shield and (var_5_15.shield_break or arg_5_17)
 	end
 
-	local t = self.t
+	local var_5_27 = arg_5_0.t
 
-	DamageUtils.server_apply_hit(t, attacker_unit, hit_unit, hit_zone_name or "full", hit_position, attack_direction, hit_ragdoll_actor, damage_source, power_level, damage_profile, target_index, boost_curve_multiplier, is_critical_strike, can_damage, can_stagger, blocking, shield_breaking_hit, backstab_multiplier, first_hit, total_hits, nil, optional_predicted_damage)
+	DamageUtils.server_apply_hit(var_5_27, var_5_1, var_5_0, var_5_6 or "full", arg_5_6, arg_5_7, var_5_13, var_5_2, arg_5_9, var_5_15, arg_5_10, arg_5_11, arg_5_12, arg_5_13, arg_5_14, arg_5_16, var_5_23, arg_5_18, arg_5_20, arg_5_21, nil, var_5_22)
 end
 
-WeaponSystem.destroy = function (self)
-	local world = self.world
+function WeaponSystem.destroy(arg_6_0)
+	local var_6_0 = arg_6_0.world
 
-	for _, data in pairs(self._beam_particle_effects) do
-		World.destroy_particles(world, data.beam_effect)
-		World.destroy_particles(world, data.beam_end_effect)
+	for iter_6_0, iter_6_1 in pairs(arg_6_0._beam_particle_effects) do
+		World.destroy_particles(var_6_0, iter_6_1.beam_effect)
+		World.destroy_particles(var_6_0, iter_6_1.beam_end_effect)
 	end
 
-	self._beam_particle_effects = nil
+	arg_6_0._beam_particle_effects = nil
 
-	self.network_event_delegate:unregister(self)
+	arg_6_0.network_event_delegate:unregister(arg_6_0)
 end
 
-WeaponSystem.update = function (self, context, t)
-	WeaponSystem.super.update(self, context, t)
+function WeaponSystem.update(arg_7_0, arg_7_1, arg_7_2)
+	WeaponSystem.super.update(arg_7_0, arg_7_1, arg_7_2)
 
-	self.t = t
+	arg_7_0.t = arg_7_2
 
-	self:update_synced_beam_particle_effects()
-	self:update_synced_geiser_particle_effects(context, t)
-	self:update_synced_flamethrower_particle_effects()
-	self:_update_chained_projectiles(t)
-	self:update_synced_soul_rip_particle_effects()
+	arg_7_0:update_synced_beam_particle_effects()
+	arg_7_0:update_synced_geiser_particle_effects(arg_7_1, arg_7_2)
+	arg_7_0:update_synced_flamethrower_particle_effects()
+	arg_7_0:_update_chained_projectiles(arg_7_2)
+	arg_7_0:update_synced_soul_rip_particle_effects()
 end
 
-local INDEX_POSITION = 1
-local INDEX_ACTOR = 4
+local var_0_5 = 1
+local var_0_6 = 4
 
-WeaponSystem.update_synced_beam_particle_effects = function (self)
-	local game = self.game
-	local network_manager = self.network_manager
-	local physics_world = World.get_data(self.world, "physics_world")
+function WeaponSystem.update_synced_beam_particle_effects(arg_8_0)
+	local var_8_0 = arg_8_0.game
+	local var_8_1 = arg_8_0.network_manager
+	local var_8_2 = World.get_data(arg_8_0.world, "physics_world")
 
-	for unit, data in pairs(self._beam_particle_effects) do
-		local unit_id = network_manager:unit_game_object_id(unit)
-		local weapon_unit = data.weapon_unit
+	for iter_8_0, iter_8_1 in pairs(arg_8_0._beam_particle_effects) do
+		local var_8_3 = var_8_1:unit_game_object_id(iter_8_0)
+		local var_8_4 = iter_8_1.weapon_unit
 
-		if not unit_id or not Unit.alive(weapon_unit) then
-			World.destroy_particles(self.world, data.beam_effect)
-			World.destroy_particles(self.world, data.beam_end_effect)
+		if not var_8_3 or not Unit.alive(var_8_4) then
+			World.destroy_particles(arg_8_0.world, iter_8_1.beam_effect)
+			World.destroy_particles(arg_8_0.world, iter_8_1.beam_end_effect)
 
-			self._beam_particle_effects[unit] = nil
+			arg_8_0._beam_particle_effects[iter_8_0] = nil
 		else
-			local aim_direction = GameSession.game_object_field(game, unit_id, "aim_direction")
-			local aim_position = GameSession.game_object_field(game, unit_id, "aim_position")
-			local range = data.range
-			local result = PhysicsWorld.immediate_raycast_actors(physics_world, aim_position, aim_direction, range, "static_collision_filter", "filter_player_ray_projectile_static_only", "dynamic_collision_filter", "filter_player_ray_projectile_ai_only", "dynamic_collision_filter", "filter_player_ray_projectile_hitbox_only")
-			local beam_end_position = aim_position + aim_direction * range
-			local hit_position, hit_unit
+			local var_8_5 = GameSession.game_object_field(var_8_0, var_8_3, "aim_direction")
+			local var_8_6 = GameSession.game_object_field(var_8_0, var_8_3, "aim_position")
+			local var_8_7 = iter_8_1.range
+			local var_8_8 = PhysicsWorld.immediate_raycast_actors(var_8_2, var_8_6, var_8_5, var_8_7, "static_collision_filter", "filter_player_ray_projectile_static_only", "dynamic_collision_filter", "filter_player_ray_projectile_ai_only", "dynamic_collision_filter", "filter_player_ray_projectile_hitbox_only")
+			local var_8_9 = var_8_6 + var_8_5 * var_8_7
+			local var_8_10
+			local var_8_11
 
-			if result then
-				local difficulty_settings = Managers.state.difficulty:get_difficulty_settings()
-				local player = Managers.player:owner(unit)
-				local allow_friendly_fire = player and DamageUtils.allow_friendly_fire_ranged(difficulty_settings, player)
+			if var_8_8 then
+				local var_8_12 = Managers.state.difficulty:get_difficulty_settings()
+				local var_8_13 = Managers.player:owner(iter_8_0)
+				local var_8_14 = var_8_13 and DamageUtils.allow_friendly_fire_ranged(var_8_12, var_8_13)
 
-				for _, hit in pairs(result) do
-					local potential_hit_position = hit[INDEX_POSITION]
-					local hit_actor = hit[INDEX_ACTOR]
-					local potential_hit_unit = Actor.unit(hit_actor)
+				for iter_8_2, iter_8_3 in pairs(var_8_8) do
+					local var_8_15 = iter_8_3[var_0_5]
+					local var_8_16 = iter_8_3[var_0_6]
+					local var_8_17 = Actor.unit(var_8_16)
 
-					if potential_hit_unit ~= unit then
-						local breed = Unit.get_data(potential_hit_unit, "breed")
-						local valid_hit
+					if var_8_17 ~= iter_8_0 then
+						local var_8_18 = Unit.get_data(var_8_17, "breed")
+						local var_8_19
 
-						if breed then
-							local is_enemy = DamageUtils.is_enemy(unit, potential_hit_unit)
-							local node = Actor.node(hit_actor)
-							local hit_zone = breed.hit_zones_lookup[node]
-							local hit_zone_name = hit_zone.name
+						if var_8_18 then
+							local var_8_20 = DamageUtils.is_enemy(iter_8_0, var_8_17)
+							local var_8_21 = Actor.node(var_8_16)
+							local var_8_22 = var_8_18.hit_zones_lookup[var_8_21].name
 
-							valid_hit = (allow_friendly_fire and breed.is_player or is_enemy) and hit_zone_name ~= "afro"
+							var_8_19 = (var_8_14 and var_8_18.is_player or var_8_20) and var_8_22 ~= "afro"
 						else
-							valid_hit = true
+							var_8_19 = true
 						end
 
-						if valid_hit then
-							hit_position = potential_hit_position
-							hit_unit = potential_hit_unit
+						if var_8_19 then
+							var_8_10 = var_8_15
+							var_8_11 = var_8_17
 						end
 
 						break
@@ -384,835 +368,816 @@ WeaponSystem.update_synced_beam_particle_effects = function (self)
 				end
 			end
 
-			if hit_unit then
-				beam_end_position = hit_position
+			if var_8_11 then
+				var_8_9 = var_8_10
 			end
 
-			local end_of_staff_position = Unit.world_position(weapon_unit, Unit.node(weapon_unit, "fx_muzzle"))
-			local distance = Vector3.distance(end_of_staff_position, beam_end_position)
-			local direction = Vector3.normalize(end_of_staff_position - beam_end_position)
-			local rotation = Quaternion.look(direction)
-			local world = self.world
+			local var_8_23 = Unit.world_position(var_8_4, Unit.node(var_8_4, "fx_muzzle"))
+			local var_8_24 = Vector3.distance(var_8_23, var_8_9)
+			local var_8_25 = Vector3.normalize(var_8_23 - var_8_9)
+			local var_8_26 = Quaternion.look(var_8_25)
+			local var_8_27 = arg_8_0.world
 
-			World.move_particles(world, data.beam_end_effect, beam_end_position)
-			World.move_particles(world, data.beam_effect, beam_end_position, rotation)
-			World.set_particles_variable(world, data.beam_effect, data.beam_effect_length_id, Vector3(0.3, distance, 0))
+			World.move_particles(var_8_27, iter_8_1.beam_end_effect, var_8_9)
+			World.move_particles(var_8_27, iter_8_1.beam_effect, var_8_9, var_8_26)
+			World.set_particles_variable(var_8_27, iter_8_1.beam_effect, iter_8_1.beam_effect_length_id, Vector3(0.3, var_8_24, 0))
 		end
 	end
 end
 
-local function ballistic_raycast(physics_world, max_steps, max_time, position, velocity, gravity, collision_filter, visualize)
-	local time_step = max_time / max_steps
+local function var_0_7(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
+	local var_9_0 = arg_9_2 / arg_9_1
 
-	for i = 1, max_steps do
-		local new_position = position + velocity * time_step
-		local delta = new_position - position
-		local direction = Vector3.normalize(delta)
-		local distance = Vector3.length(delta)
-		local result, hit_position, hit_distance, normal, actor = PhysicsWorld.immediate_raycast(physics_world, position, direction, distance, "closest", "collision_filter", collision_filter)
+	for iter_9_0 = 1, arg_9_1 do
+		local var_9_1 = arg_9_3 + arg_9_4 * var_9_0
+		local var_9_2 = var_9_1 - arg_9_3
+		local var_9_3 = Vector3.normalize(var_9_2)
+		local var_9_4 = Vector3.length(var_9_2)
+		local var_9_5, var_9_6, var_9_7, var_9_8, var_9_9 = PhysicsWorld.immediate_raycast(arg_9_0, arg_9_3, var_9_3, var_9_4, "closest", "collision_filter", arg_9_6)
 
-		if hit_position then
-			return result, hit_position, hit_distance, normal, actor
+		if var_9_6 then
+			return var_9_5, var_9_6, var_9_7, var_9_8, var_9_9
 		end
 
-		velocity = velocity + gravity * time_step
-		position = new_position
+		arg_9_4 = arg_9_4 + arg_9_5 * var_9_0
+		arg_9_3 = var_9_1
 	end
 
-	return false, position
+	return false, arg_9_3
 end
 
-WeaponSystem.update_synced_geiser_particle_effects = function (self, context, t)
-	local game = self.game
-	local network_manager = self.network_manager
-	local world = self.world
-	local physics_world = World.get_data(world, "physics_world")
+function WeaponSystem.update_synced_geiser_particle_effects(arg_10_0, arg_10_1, arg_10_2)
+	local var_10_0 = arg_10_0.game
+	local var_10_1 = arg_10_0.network_manager
+	local var_10_2 = arg_10_0.world
+	local var_10_3 = World.get_data(var_10_2, "physics_world")
 
-	for unit_id, data in pairs(self._geiser_particle_effects) do
+	for iter_10_0, iter_10_1 in pairs(arg_10_0._geiser_particle_effects) do
 		repeat
-			local unit = network_manager:game_object_or_level_unit(unit_id)
+			local var_10_4 = var_10_1:game_object_or_level_unit(iter_10_0)
 
-			if not ALIVE[unit] then
-				if data.geiser_effect then
-					World.destroy_particles(world, data.geiser_effect)
+			if not ALIVE[var_10_4] then
+				if iter_10_1.geiser_effect then
+					World.destroy_particles(var_10_2, iter_10_1.geiser_effect)
 				end
 
-				self._geiser_particle_effects[unit_id] = nil
+				arg_10_0._geiser_particle_effects[iter_10_0] = nil
 
 				break
 			end
 
-			if not data.geiser_effect then
+			if not iter_10_1.geiser_effect then
 				break
 			end
 
-			local charge_value = (t - data.time_to_shoot) / data.charge_time
-			local radius = math.min(data.max_radius, data.max_radius * charge_value + data.min_radius)
-			local player_position = GameSession.game_object_field(game, unit_id, "aim_position")
-			local up = Vector3(0, 0, 1)
-			local player_rotation = Quaternion.look(GameSession.game_object_field(game, unit_id, "aim_direction"), up)
-			local max_steps = 10
-			local max_time = 1.5
-			local speed = 15
-			local angle = data.angle
-			local velocity = Quaternion.forward(Quaternion.multiply(player_rotation, Quaternion(Vector3.right(), angle))) * speed
-			local gravity = Vector3(0, 0, -9.82)
-			local collision_filter = "filter_geiser_check"
-			local _, hit_position, _, _ = ballistic_raycast(physics_world, max_steps, max_time, player_position, velocity, gravity, collision_filter, false)
-			local position = hit_position
+			local var_10_5 = (arg_10_2 - iter_10_1.time_to_shoot) / iter_10_1.charge_time
+			local var_10_6 = math.min(iter_10_1.max_radius, iter_10_1.max_radius * var_10_5 + iter_10_1.min_radius)
+			local var_10_7 = GameSession.game_object_field(var_10_0, iter_10_0, "aim_position")
+			local var_10_8 = Vector3(0, 0, 1)
+			local var_10_9 = Quaternion.look(GameSession.game_object_field(var_10_0, iter_10_0, "aim_direction"), var_10_8)
+			local var_10_10 = 10
+			local var_10_11 = 1.5
+			local var_10_12 = 15
+			local var_10_13 = iter_10_1.angle
+			local var_10_14 = Quaternion.forward(Quaternion.multiply(var_10_9, Quaternion(Vector3.right(), var_10_13))) * var_10_12
+			local var_10_15 = Vector3(0, 0, -9.82)
+			local var_10_16 = "filter_geiser_check"
+			local var_10_17, var_10_18, var_10_19, var_10_20 = var_0_7(var_10_3, var_10_10, var_10_11, var_10_7, var_10_14, var_10_15, var_10_16, false)
+			local var_10_21 = var_10_18
 
-			World.move_particles(world, data.geiser_effect, position)
-			World.set_particles_variable(world, data.geiser_effect, data.geiser_effect_variable, Vector3(radius * 2, radius * 2, 1))
+			World.move_particles(var_10_2, iter_10_1.geiser_effect, var_10_21)
+			World.set_particles_variable(var_10_2, iter_10_1.geiser_effect, iter_10_1.geiser_effect_variable, Vector3(var_10_6 * 2, var_10_6 * 2, 1))
 		until true
 	end
 end
 
-WeaponSystem.update_synced_flamethrower_particle_effects = function (self)
-	local network_manager = self.network_manager
+function WeaponSystem.update_synced_flamethrower_particle_effects(arg_11_0)
+	local var_11_0 = arg_11_0.network_manager
 
-	for unit, data in pairs(self._flamethrower_particle_effects) do
-		local unit_id = network_manager:unit_game_object_id(unit)
-		local weapon_unit = data.weapon_unit
+	for iter_11_0, iter_11_1 in pairs(arg_11_0._flamethrower_particle_effects) do
+		local var_11_1 = var_11_0:unit_game_object_id(iter_11_0)
+		local var_11_2 = iter_11_1.weapon_unit
 
-		if not unit_id or not Unit.alive(weapon_unit) then
-			World.stop_spawning_particles(self.world, data.flamethrower_effect)
+		if not var_11_1 or not Unit.alive(var_11_2) then
+			World.stop_spawning_particles(arg_11_0.world, iter_11_1.flamethrower_effect)
 
-			self._flamethrower_particle_effects[unit] = nil
+			arg_11_0._flamethrower_particle_effects[iter_11_0] = nil
 		else
-			local world = self.world
-			local muzzle_position = Unit.world_position(weapon_unit, Unit.node(weapon_unit, "fx_muzzle"))
-			local muzzle_rotation = Unit.world_rotation(weapon_unit, Unit.node(weapon_unit, "fx_muzzle"))
+			local var_11_3 = arg_11_0.world
+			local var_11_4 = Unit.world_position(var_11_2, Unit.node(var_11_2, "fx_muzzle"))
+			local var_11_5 = Unit.world_rotation(var_11_2, Unit.node(var_11_2, "fx_muzzle"))
 
-			World.move_particles(world, data.flamethrower_effect, muzzle_position, muzzle_rotation)
+			World.move_particles(var_11_3, iter_11_1.flamethrower_effect, var_11_4, var_11_5)
 		end
 	end
 end
 
-WeaponSystem.rpc_ai_weapon_shoot_start = function (self, channel_id, owner_unit_id, shoot_time)
-	local owner_unit = Managers.state.unit_storage:unit(owner_unit_id)
+function WeaponSystem.rpc_ai_weapon_shoot_start(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	local var_12_0 = Managers.state.unit_storage:unit(arg_12_2)
 
-	if not owner_unit then
+	if not var_12_0 then
 		return
 	end
 
-	local breed = Unit.get_data(owner_unit, "breed")
-	local inventory_extension = ScriptUnit.extension(owner_unit, "ai_inventory_system")
-	local inventory_template = breed.default_inventory_template
-	local weapon_unit = inventory_extension:get_unit(inventory_template)
-	local ai_weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
+	local var_12_1 = Unit.get_data(var_12_0, "breed")
+	local var_12_2 = ScriptUnit.extension(var_12_0, "ai_inventory_system")
+	local var_12_3 = var_12_1.default_inventory_template
+	local var_12_4 = var_12_2:get_unit(var_12_3)
 
-	ai_weapon_extension:shoot_start(owner_unit, shoot_time / 100)
+	ScriptUnit.extension(var_12_4, "weapon_system"):shoot_start(var_12_0, arg_12_3 / 100)
 end
 
-WeaponSystem.rpc_ai_weapon_shoot = function (self, channel_id, owner_unit_id)
-	local owner_unit = Managers.state.unit_storage:unit(owner_unit_id)
+function WeaponSystem.rpc_ai_weapon_shoot(arg_13_0, arg_13_1, arg_13_2)
+	local var_13_0 = Managers.state.unit_storage:unit(arg_13_2)
 
-	if not owner_unit then
+	if not var_13_0 then
 		return
 	end
 
-	local breed = Unit.get_data(owner_unit, "breed")
-	local inventory_extension = ScriptUnit.extension(owner_unit, "ai_inventory_system")
-	local inventory_template = breed.default_inventory_template
-	local weapon_unit = inventory_extension:get_unit(inventory_template)
-	local ai_weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
+	local var_13_1 = Unit.get_data(var_13_0, "breed")
+	local var_13_2 = ScriptUnit.extension(var_13_0, "ai_inventory_system")
+	local var_13_3 = var_13_1.default_inventory_template
+	local var_13_4 = var_13_2:get_unit(var_13_3)
 
-	ai_weapon_extension:shoot(owner_unit)
+	ScriptUnit.extension(var_13_4, "weapon_system"):shoot(var_13_0)
 end
 
-WeaponSystem.rpc_ai_weapon_shoot_end = function (self, channel_id, owner_unit_id)
-	local owner_unit = Managers.state.unit_storage:unit(owner_unit_id)
+function WeaponSystem.rpc_ai_weapon_shoot_end(arg_14_0, arg_14_1, arg_14_2)
+	local var_14_0 = Managers.state.unit_storage:unit(arg_14_2)
 
-	if not owner_unit then
+	if not var_14_0 then
 		return
 	end
 
-	local breed = Unit.get_data(owner_unit, "breed")
-	local inventory_extension = ScriptUnit.extension(owner_unit, "ai_inventory_system")
-	local inventory_template = breed.default_inventory_template
-	local weapon_unit = inventory_extension:get_unit(inventory_template)
-	local ai_weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
+	local var_14_1 = Unit.get_data(var_14_0, "breed")
+	local var_14_2 = ScriptUnit.extension(var_14_0, "ai_inventory_system")
+	local var_14_3 = var_14_1.default_inventory_template
+	local var_14_4 = var_14_2:get_unit(var_14_3)
 
-	ai_weapon_extension:shoot_end(owner_unit)
+	ScriptUnit.extension(var_14_4, "weapon_system"):shoot_end(var_14_0)
 end
 
-WeaponSystem.rpc_change_single_weapon_state = function (self, channel_id, owner_unit_id, state_id)
-	local owner_unit = Managers.state.unit_storage:unit(owner_unit_id)
+function WeaponSystem.rpc_change_single_weapon_state(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+	local var_15_0 = Managers.state.unit_storage:unit(arg_15_2)
 
-	if not owner_unit then
+	if not var_15_0 then
 		return
 	end
 
-	local single_weapon_state = NetworkLookup.single_weapon_states[state_id]
-	local received_via_network = true
-	local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+	local var_15_1 = NetworkLookup.single_weapon_states[arg_15_3]
+	local var_15_2 = true
+	local var_15_3 = CHANNEL_TO_PEER_ID[arg_15_1]
 
-	self:change_single_weapon_state(owner_unit, single_weapon_state, peer_id, received_via_network)
+	arg_15_0:change_single_weapon_state(var_15_0, var_15_1, var_15_3, var_15_2)
 end
 
-WeaponSystem.change_single_weapon_state = function (self, owner_unit, state, except_peer, received_via_network)
-	local blackboard = BLACKBOARDS[owner_unit]
+function WeaponSystem.change_single_weapon_state(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+	local var_16_0 = var_0_4[arg_16_1]
 
-	if blackboard then
-		local weapon_unit = blackboard.weapon_unit
+	if var_16_0 then
+		local var_16_1 = var_16_0.weapon_unit
 
-		if weapon_unit then
-			local single_weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
-
-			single_weapon_extension:change_state(state)
+		if var_16_1 then
+			ScriptUnit.extension(var_16_1, "weapon_system"):change_state(arg_16_2)
 		end
 	end
 
-	local owner_unit_id = Managers.state.unit_storage:go_id(owner_unit)
-	local state_id = NetworkLookup.single_weapon_states[state]
+	local var_16_2 = Managers.state.unit_storage:go_id(arg_16_1)
+	local var_16_3 = NetworkLookup.single_weapon_states[arg_16_2]
 
-	if self.is_server then
-		self.network_transmit:send_rpc_clients_except("rpc_change_single_weapon_state", except_peer, owner_unit_id, state_id)
-	elseif not received_via_network then
-		self.network_transmit:send_rpc_server("rpc_change_single_weapon_state", owner_unit_id, state_id)
+	if arg_16_0.is_server then
+		arg_16_0.network_transmit:send_rpc_clients_except("rpc_change_single_weapon_state", arg_16_3, var_16_2, var_16_3)
+	elseif not arg_16_4 then
+		arg_16_0.network_transmit:send_rpc_server("rpc_change_single_weapon_state", var_16_2, var_16_3)
 	end
 end
 
-WeaponSystem.rpc_change_synced_weapon_state = function (self, channel_id, owner_unit_id, state_id)
-	local owner_unit = Managers.state.unit_storage:unit(owner_unit_id)
+function WeaponSystem.rpc_change_synced_weapon_state(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+	local var_17_0 = Managers.state.unit_storage:unit(arg_17_2)
 
-	if not owner_unit then
+	if not var_17_0 then
 		return
 	end
 
-	local skip_sync = true
-	local state_name = NetworkLookup.weapon_synced_states[state_id]
+	local var_17_1 = true
+	local var_17_2 = NetworkLookup.weapon_synced_states[arg_17_3]
 
-	if state_name == "n/a" then
-		state_name = nil
+	if var_17_2 == "n/a" then
+		var_17_2 = nil
 	end
 
-	local weapon_unit = self:_first_wielded_weapon_unit(owner_unit)
-	local weapon_extension = ScriptUnit.has_extension(weapon_unit, "weapon_system")
+	local var_17_3 = arg_17_0:_first_wielded_weapon_unit(var_17_0)
+	local var_17_4 = ScriptUnit.has_extension(var_17_3, "weapon_system")
 
-	if not weapon_extension then
+	if not var_17_4 then
 		return
 	end
 
-	weapon_extension:change_synced_state(state_name, skip_sync)
+	var_17_4:change_synced_state(var_17_2, var_17_1)
 
-	if self.is_server then
-		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+	if arg_17_0.is_server then
+		local var_17_5 = CHANNEL_TO_PEER_ID[arg_17_1]
 
-		self.network_transmit:send_rpc_clients_except("rpc_change_synced_weapon_state", peer_id, owner_unit_id, state_id)
+		arg_17_0.network_transmit:send_rpc_clients_except("rpc_change_synced_weapon_state", var_17_5, arg_17_2, arg_17_3)
 	end
 end
 
-WeaponSystem.get_synced_weapon_state = function (self, owner_unit)
-	local weapon_unit = self:_first_wielded_weapon_unit(owner_unit)
+function WeaponSystem.get_synced_weapon_state(arg_18_0, arg_18_1)
+	local var_18_0 = arg_18_0:_first_wielded_weapon_unit(arg_18_1)
 
-	if not weapon_unit then
+	if not var_18_0 then
 		return nil
 	end
 
-	local weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
+	local var_18_1 = ScriptUnit.extension(var_18_0, "weapon_system")
 
-	if not weapon_extension.current_synced_state then
+	if not var_18_1.current_synced_state then
 		return nil
 	end
 
-	return weapon_extension:current_synced_state()
+	return var_18_1:current_synced_state()
 end
 
-WeaponSystem._first_wielded_weapon_unit = function (self, owner_unit)
-	local inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
-	local equipment = inventory_extension:equipment()
-	local weapon_unit = equipment.left_hand_wielded_unit or equipment.right_hand_wielded_unit or equipment.left_hand_wielded_unit_3p or equipment.right_hand_wielded_unit_3p
+function WeaponSystem._first_wielded_weapon_unit(arg_19_0, arg_19_1)
+	local var_19_0 = ScriptUnit.extension(arg_19_1, "inventory_system"):equipment()
 
-	return weapon_unit
+	return var_19_0.left_hand_wielded_unit or var_19_0.right_hand_wielded_unit or var_19_0.left_hand_wielded_unit_3p or var_19_0.right_hand_wielded_unit_3p
 end
 
-WeaponSystem.rpc_start_beam = function (self, channel_id, unit_id, beam_effect_id, beam_end_effect_id, range)
+function WeaponSystem.rpc_start_beam(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
 	if not LEVEL_EDITOR_TEST then
-		local unit = self.unit_storage:unit(unit_id)
-		local beam_effect = NetworkLookup.effects[beam_effect_id]
-		local beam_end_effect = NetworkLookup.effects[beam_end_effect_id]
-		local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
-		local equipment = inventory_extension:equipment()
-		local weapon_unit = equipment.right_hand_wielded_unit_3p or equipment.left_hand_wielded_unit_3p
-		local world = self.world
+		local var_20_0 = arg_20_0.unit_storage:unit(arg_20_2)
+		local var_20_1 = NetworkLookup.effects[arg_20_3]
+		local var_20_2 = NetworkLookup.effects[arg_20_4]
+		local var_20_3 = ScriptUnit.extension(var_20_0, "inventory_system"):equipment()
+		local var_20_4 = var_20_3.right_hand_wielded_unit_3p or var_20_3.left_hand_wielded_unit_3p
+		local var_20_5 = arg_20_0.world
 
-		self._beam_particle_effects[unit] = {
-			beam_effect = World.create_particles(world, beam_effect, Vector3.zero()),
-			beam_end_effect = World.create_particles(world, beam_end_effect, Vector3.zero()),
-			beam_effect_length_id = World.find_particles_variable(world, beam_effect, "trail_length"),
-			beam_effect_name = beam_effect,
-			beam_end_effect_name = beam_end_effect,
-			range = range,
-			weapon_unit = weapon_unit,
+		arg_20_0._beam_particle_effects[var_20_0] = {
+			beam_effect = World.create_particles(var_20_5, var_20_1, Vector3.zero()),
+			beam_end_effect = World.create_particles(var_20_5, var_20_2, Vector3.zero()),
+			beam_effect_length_id = World.find_particles_variable(var_20_5, var_20_1, "trail_length"),
+			beam_effect_name = var_20_1,
+			beam_end_effect_name = var_20_2,
+			range = arg_20_5,
+			weapon_unit = var_20_4
 		}
 
-		if self.is_server then
-			local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+		if arg_20_0.is_server then
+			local var_20_6 = CHANNEL_TO_PEER_ID[arg_20_1]
 
-			self.network_transmit:send_rpc_clients_except("rpc_start_beam", peer_id, unit_id, beam_effect_id, beam_end_effect_id, range)
+			arg_20_0.network_transmit:send_rpc_clients_except("rpc_start_beam", var_20_6, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
 		end
 	end
 end
 
-WeaponSystem.rpc_end_beam = function (self, channel_id, unit_id)
+function WeaponSystem.rpc_end_beam(arg_21_0, arg_21_1, arg_21_2)
 	if not LEVEL_EDITOR_TEST then
-		local world = self.world
-		local unit = self.unit_storage:unit(unit_id)
-		local data = self._beam_particle_effects[unit]
+		local var_21_0 = arg_21_0.world
+		local var_21_1 = arg_21_0.unit_storage:unit(arg_21_2)
+		local var_21_2 = arg_21_0._beam_particle_effects[var_21_1]
 
-		if data then
-			World.destroy_particles(world, data.beam_effect)
-			World.destroy_particles(world, data.beam_end_effect)
+		if var_21_2 then
+			World.destroy_particles(var_21_0, var_21_2.beam_effect)
+			World.destroy_particles(var_21_0, var_21_2.beam_end_effect)
 
-			self._beam_particle_effects[unit] = nil
+			arg_21_0._beam_particle_effects[var_21_1] = nil
 
-			if self.is_server then
-				local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+			if arg_21_0.is_server then
+				local var_21_3 = CHANNEL_TO_PEER_ID[arg_21_1]
 
-				self.network_transmit:send_rpc_clients_except("rpc_end_beam", peer_id, unit_id)
+				arg_21_0.network_transmit:send_rpc_clients_except("rpc_end_beam", var_21_3, arg_21_2)
 			end
 		end
 	end
 end
 
-WeaponSystem.rpc_start_geiser = function (self, channel_id, unit_id, geiser_effect_id, min_radius, max_radius, charge_time, angle)
+function WeaponSystem.rpc_start_geiser(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7)
 	if not LEVEL_EDITOR_TEST then
-		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+		local var_22_0 = CHANNEL_TO_PEER_ID[arg_22_1]
 
-		if not peer_id then
+		if not var_22_0 then
 			return
 		end
 
-		local side_manager = Managers.state.side
-		local side = side_manager:get_side_from_player_unique_id(peer_id .. ":1")
-		local geiser_effect_name = NetworkLookup.effects[geiser_effect_id]
-		local geiser_data = {
-			side = side,
-			min_radius = min_radius,
-			max_radius = max_radius,
-			charge_time = charge_time,
-			angle = angle,
+		local var_22_1 = Managers.state.side
+		local var_22_2 = var_22_1:get_side_from_player_unique_id(var_22_0 .. ":1")
+		local var_22_3 = NetworkLookup.effects[arg_22_3]
+		local var_22_4 = {
+			side = var_22_2,
+			min_radius = arg_22_4,
+			max_radius = arg_22_5,
+			charge_time = arg_22_6,
+			angle = arg_22_7,
 			time_to_shoot = Managers.time:time("game"),
 			start_time = Managers.time:time("game"),
-			geiser_effect_name = geiser_effect_name,
+			geiser_effect_name = var_22_3
 		}
 
-		self._geiser_particle_effects[unit_id] = geiser_data
+		arg_22_0._geiser_particle_effects[arg_22_2] = var_22_4
 
-		if self.is_server then
-			self.network_transmit:send_rpc_side_clients_except("rpc_start_geiser", side, true, true, peer_id, unit_id, geiser_effect_id, min_radius, max_radius, charge_time, angle)
+		if arg_22_0.is_server then
+			arg_22_0.network_transmit:send_rpc_side_clients_except("rpc_start_geiser", var_22_2, true, true, var_22_0, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7)
 
 			if DEDICATED_SERVER then
 				return
 			end
 
-			local local_player = Managers.player:local_player()
-			local local_side = side_manager:get_side_from_player_unique_id(local_player:unique_id())
+			local var_22_5 = Managers.player:local_player()
+			local var_22_6 = var_22_1:get_side_from_player_unique_id(var_22_5:unique_id())
 
-			if side_manager:is_enemy_by_side(side, local_side) then
+			if var_22_1:is_enemy_by_side(var_22_2, var_22_6) then
 				return
 			end
 		end
 
-		local world = self.world
+		local var_22_7 = arg_22_0.world
 
-		geiser_data.geiser_effect = World.create_particles(world, geiser_effect_name, Vector3.zero())
-		geiser_data.geiser_effect_variable = World.find_particles_variable(world, geiser_effect_name, "charge_radius")
+		var_22_4.geiser_effect = World.create_particles(var_22_7, var_22_3, Vector3.zero())
+		var_22_4.geiser_effect_variable = World.find_particles_variable(var_22_7, var_22_3, "charge_radius")
 	end
 end
 
-WeaponSystem.rpc_end_geiser = function (self, channel_id, unit_id)
+function WeaponSystem.rpc_end_geiser(arg_23_0, arg_23_1, arg_23_2)
 	if not LEVEL_EDITOR_TEST then
-		local world = self.world
-		local data = self._geiser_particle_effects[unit_id]
+		local var_23_0 = arg_23_0.world
+		local var_23_1 = arg_23_0._geiser_particle_effects[arg_23_2]
 
-		if data and data.geiser_effect then
-			World.destroy_particles(world, data.geiser_effect)
+		if var_23_1 and var_23_1.geiser_effect then
+			World.destroy_particles(var_23_0, var_23_1.geiser_effect)
 		end
 
-		self._geiser_particle_effects[unit_id] = nil
+		arg_23_0._geiser_particle_effects[arg_23_2] = nil
 
-		if self.is_server then
-			local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+		if arg_23_0.is_server then
+			local var_23_2 = CHANNEL_TO_PEER_ID[arg_23_1]
 
-			self.network_transmit:send_rpc_clients_except("rpc_end_geiser", peer_id, unit_id)
+			arg_23_0.network_transmit:send_rpc_clients_except("rpc_end_geiser", var_23_2, arg_23_2)
 		end
 	end
 end
 
-WeaponSystem.rpc_start_flamethrower = function (self, channel_id, unit_id, flamethrower_effect_id)
+function WeaponSystem.rpc_start_flamethrower(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	if not LEVEL_EDITOR_TEST then
-		local unit = self.unit_storage:unit(unit_id)
-		local flamethrower_effect = NetworkLookup.effects[flamethrower_effect_id]
-		local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
-		local equipment = inventory_extension:equipment()
-		local weapon_unit = equipment.right_hand_wielded_unit_3p or equipment.left_hand_wielded_unit_3p
-		local muzzle_position = Unit.world_position(weapon_unit, Unit.node(weapon_unit, "fx_muzzle"))
-		local muzzle_rotation = Unit.world_rotation(weapon_unit, Unit.node(weapon_unit, "fx_muzzle"))
-		local world = self.world
-		local current_data = self._flamethrower_particle_effects[unit]
+		local var_24_0 = arg_24_0.unit_storage:unit(arg_24_2)
+		local var_24_1 = NetworkLookup.effects[arg_24_3]
+		local var_24_2 = ScriptUnit.extension(var_24_0, "inventory_system"):equipment()
+		local var_24_3 = var_24_2.right_hand_wielded_unit_3p or var_24_2.left_hand_wielded_unit_3p
+		local var_24_4 = Unit.world_position(var_24_3, Unit.node(var_24_3, "fx_muzzle"))
+		local var_24_5 = Unit.world_rotation(var_24_3, Unit.node(var_24_3, "fx_muzzle"))
+		local var_24_6 = arg_24_0.world
+		local var_24_7 = arg_24_0._flamethrower_particle_effects[var_24_0]
 
-		if current_data then
-			World.stop_spawning_particles(world, current_data.flamethrower_effect)
+		if var_24_7 then
+			World.stop_spawning_particles(var_24_6, var_24_7.flamethrower_effect)
 
-			current_data.flamethrower_effect = World.create_particles(world, flamethrower_effect, muzzle_position, muzzle_rotation)
-			current_data.flamethrower_effect_name = flamethrower_effect
-			current_data.weapon_unit = weapon_unit
+			var_24_7.flamethrower_effect = World.create_particles(var_24_6, var_24_1, var_24_4, var_24_5)
+			var_24_7.flamethrower_effect_name = var_24_1
+			var_24_7.weapon_unit = var_24_3
 		else
-			self._flamethrower_particle_effects[unit] = {
-				flamethrower_effect = World.create_particles(world, flamethrower_effect, muzzle_position, muzzle_rotation),
-				flamethrower_effect_name = flamethrower_effect,
-				weapon_unit = weapon_unit,
+			arg_24_0._flamethrower_particle_effects[var_24_0] = {
+				flamethrower_effect = World.create_particles(var_24_6, var_24_1, var_24_4, var_24_5),
+				flamethrower_effect_name = var_24_1,
+				weapon_unit = var_24_3
 			}
 		end
 
-		if self.is_server then
-			local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+		if arg_24_0.is_server then
+			local var_24_8 = CHANNEL_TO_PEER_ID[arg_24_1]
 
-			self.network_transmit:send_rpc_clients_except("rpc_start_flamethrower", peer_id, unit_id, flamethrower_effect_id)
+			arg_24_0.network_transmit:send_rpc_clients_except("rpc_start_flamethrower", var_24_8, arg_24_2, arg_24_3)
 		end
 	end
 end
 
-WeaponSystem.rpc_end_flamethrower = function (self, channel_id, unit_id)
+function WeaponSystem.rpc_end_flamethrower(arg_25_0, arg_25_1, arg_25_2)
 	if not LEVEL_EDITOR_TEST then
-		local world = self.world
-		local unit = self.unit_storage:unit(unit_id)
-		local data = self._flamethrower_particle_effects[unit]
+		local var_25_0 = arg_25_0.world
+		local var_25_1 = arg_25_0.unit_storage:unit(arg_25_2)
+		local var_25_2 = arg_25_0._flamethrower_particle_effects[var_25_1]
 
-		if data then
-			World.stop_spawning_particles(world, data.flamethrower_effect)
+		if var_25_2 then
+			World.stop_spawning_particles(var_25_0, var_25_2.flamethrower_effect)
 
-			self._flamethrower_particle_effects[unit] = nil
+			arg_25_0._flamethrower_particle_effects[var_25_1] = nil
 
-			if self.is_server then
-				local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+			if arg_25_0.is_server then
+				local var_25_3 = CHANNEL_TO_PEER_ID[arg_25_1]
 
-				self.network_transmit:send_rpc_clients_except("rpc_end_flamethrower", peer_id, unit_id)
+				arg_25_0.network_transmit:send_rpc_clients_except("rpc_end_flamethrower", var_25_3, arg_25_2)
 			end
 		end
 	end
 end
 
-WeaponSystem.rpc_summon_vortex = function (self, channel_id, owner_unit_id, target_unit_id)
+function WeaponSystem.rpc_summon_vortex(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 	if not LEVEL_EDITOR_TEST then
-		local unit = self.unit_storage:unit(owner_unit_id)
-		local target_unit = self.unit_storage:unit(target_unit_id)
-		local bb = BLACKBOARDS[target_unit]
+		local var_26_0 = arg_26_0.unit_storage:unit(arg_26_2)
+		local var_26_1 = arg_26_0.unit_storage:unit(arg_26_3)
+		local var_26_2 = var_0_4[var_26_1]
 
-		if bb then
-			local vext = bb.thornsister_vortex_ext
+		if var_26_2 then
+			local var_26_3 = var_26_2.thornsister_vortex_ext
 
-			if vext then
-				vext:refresh_duration()
+			if var_26_3 then
+				var_26_3:refresh_duration()
 			else
-				local storm_spawn_position = POSITION_LOOKUP[target_unit]
+				local var_26_4 = POSITION_LOOKUP[var_26_1]
 
-				if storm_spawn_position then
-					self:_summon_vortex(storm_spawn_position, target_unit, unit)
+				if var_26_4 then
+					arg_26_0:_summon_vortex(var_26_4, var_26_1, var_26_0)
 				end
 			end
 		end
 	end
 end
 
-WeaponSystem._summon_vortex = function (self, position, target_unit, owner_unit)
-	local unit_name = "units/weapons/enemy/wpn_chaos_plague_vortex/wpn_chaos_plague_vortex"
-	local vortex_template_name = "spirit_storm"
-	local side_id = Managers.state.side.side_by_unit[owner_unit].side_id
-	local UNIT_TEMPLATE_NAME = "vortex_unit"
-	local extension_init_data = {
+function WeaponSystem._summon_vortex(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+	local var_27_0 = "units/weapons/enemy/wpn_chaos_plague_vortex/wpn_chaos_plague_vortex"
+	local var_27_1 = "spirit_storm"
+	local var_27_2 = Managers.state.side.side_by_unit[arg_27_3].side_id
+	local var_27_3 = "vortex_unit"
+	local var_27_4 = {
 		area_damage_system = {
-			vortex_template_name = vortex_template_name,
-			owner_unit = owner_unit,
-			side_id = side_id,
-			target_unit = target_unit,
-		},
+			vortex_template_name = var_27_1,
+			owner_unit = arg_27_3,
+			side_id = var_27_2,
+			target_unit = arg_27_2
+		}
 	}
 
-	Managers.state.unit_spawner:spawn_network_unit(unit_name, UNIT_TEMPLATE_NAME, extension_init_data, position, Quaternion.identity())
+	Managers.state.unit_spawner:spawn_network_unit(var_27_0, var_27_3, var_27_4, arg_27_1, Quaternion.identity())
 end
 
-WeaponSystem.rpc_set_stormfiend_beam = function (self, channel_id, unit_id, arm_id, active)
-	local unit = self.unit_storage:unit(unit_id)
+function WeaponSystem.rpc_set_stormfiend_beam(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+	local var_28_0 = arg_28_0.unit_storage:unit(arg_28_2)
 
-	if ALIVE[unit] then
-		local beam_extension = ScriptUnit.extension(unit, "ai_beam_effect_system")
+	if ALIVE[var_28_0] then
+		local var_28_1 = ScriptUnit.extension(var_28_0, "ai_beam_effect_system")
 
-		if beam_extension then
-			local arm = NetworkLookup.attack_arm[arm_id]
+		if var_28_1 then
+			local var_28_2 = NetworkLookup.attack_arm[arg_28_3]
 
-			beam_extension:set_beam(arm, active)
+			var_28_1:set_beam(var_28_2, arg_28_4)
 		end
 	end
 end
 
-WeaponSystem.rpc_weapon_blood = function (self, channel_id, attacker_unit_id, attack_template_damage_type_id)
-	local attacker_unit = self.unit_storage:unit(attacker_unit_id)
+function WeaponSystem.rpc_weapon_blood(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+	local var_29_0 = arg_29_0.unit_storage:unit(arg_29_2)
 
-	if not Unit.alive(attacker_unit) then
+	if not Unit.alive(var_29_0) then
 		return
 	end
 
-	Managers.state.blood:add_weapon_blood(attacker_unit, NetworkLookup.attack_templates[attack_template_damage_type_id])
+	Managers.state.blood:add_weapon_blood(var_29_0, NetworkLookup.attack_templates[arg_29_3])
 
-	if self.is_server then
-		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+	if arg_29_0.is_server then
+		local var_29_1 = CHANNEL_TO_PEER_ID[arg_29_1]
 
-		self.network_transmit:send_rpc_clients_except("rpc_weapon_blood", peer_id, attacker_unit_id, attack_template_damage_type_id)
+		arg_29_0.network_transmit:send_rpc_clients_except("rpc_weapon_blood", var_29_1, arg_29_2, arg_29_3)
 	end
 end
 
-WeaponSystem.rpc_play_fx = function (self, channel_id, vfx_array, sfx_array, position_array)
-	local world = self.world
-	local World_create_particles = World.create_particles
-	local vfx_lookup = NetworkLookup.effects
-	local sfx_lookup = NetworkLookup.sound_events
+function WeaponSystem.rpc_play_fx(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+	local var_30_0 = arg_30_0.world
+	local var_30_1 = World.create_particles
+	local var_30_2 = NetworkLookup.effects
+	local var_30_3 = NetworkLookup.sound_events
 
-	if #sfx_array > 0 then
-		local wwise_world = Managers.world:wwise_world(world)
-		local wwise_trigger_event = WwiseWorld.trigger_event
-		local wwise_make_source = WwiseWorld.make_auto_source
-		local sound_env_system = Managers.state.entity:system("sound_environment_system")
-		local set_source_env = sound_env_system.set_source_environment
+	if #arg_30_3 > 0 then
+		local var_30_4 = Managers.world:wwise_world(var_30_0)
+		local var_30_5 = WwiseWorld.trigger_event
+		local var_30_6 = WwiseWorld.make_auto_source
+		local var_30_7 = Managers.state.entity:system("sound_environment_system")
+		local var_30_8 = var_30_7.set_source_environment
 
-		for i = 1, #vfx_array do
-			local vfx = vfx_lookup[vfx_array[i]]
-			local sfx = sfx_lookup[sfx_array[i]]
-			local pos = position_array[i]
+		for iter_30_0 = 1, #arg_30_2 do
+			local var_30_9 = var_30_2[arg_30_2[iter_30_0]]
+			local var_30_10 = var_30_3[arg_30_3[iter_30_0]]
+			local var_30_11 = arg_30_4[iter_30_0]
 
-			World_create_particles(world, vfx, pos)
+			var_30_1(var_30_0, var_30_9, var_30_11)
 
-			local source = wwise_make_source(wwise_world, pos)
+			local var_30_12 = var_30_6(var_30_4, var_30_11)
 
-			wwise_trigger_event(wwise_world, sfx, source)
-			set_source_env(sound_env_system, source, pos)
+			var_30_5(var_30_4, var_30_10, var_30_12)
+			var_30_8(var_30_7, var_30_12, var_30_11)
 		end
 	else
-		for i = 1, #vfx_array do
-			local vfx = vfx_lookup[vfx_array[i]]
+		for iter_30_1 = 1, #arg_30_2 do
+			local var_30_13 = var_30_2[arg_30_2[iter_30_1]]
 
-			World_create_particles(world, vfx, position_array[i])
+			var_30_1(var_30_0, var_30_13, arg_30_4[iter_30_1])
 		end
 	end
 end
 
-WeaponSystem.hot_join_sync = function (self, peer_id)
-	local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+function WeaponSystem.hot_join_sync(arg_31_0, arg_31_1)
+	local var_31_0 = PEER_ID_TO_CHANNEL[arg_31_1]
 
-	for unit, data in pairs(self._beam_particle_effects) do
-		local unit_id = Managers.state.network:unit_game_object_id(unit)
-		local beam_effect_id = NetworkLookup.effects[data.beam_effect_name]
-		local beam_end_effect_id = NetworkLookup.effects[data.beam_end_effect_name]
+	for iter_31_0, iter_31_1 in pairs(arg_31_0._beam_particle_effects) do
+		local var_31_1 = Managers.state.network:unit_game_object_id(iter_31_0)
+		local var_31_2 = NetworkLookup.effects[iter_31_1.beam_effect_name]
+		local var_31_3 = NetworkLookup.effects[iter_31_1.beam_end_effect_name]
 
-		RPC.rpc_start_beam(channel_id, unit_id, beam_effect_id, beam_end_effect_id, data.range)
+		RPC.rpc_start_beam(var_31_0, var_31_1, var_31_2, var_31_3, iter_31_1.range)
 	end
 
-	for unit_id, data in pairs(self._geiser_particle_effects) do
-		local geiser_effect_id = NetworkLookup.effects[data.geiser_effect_name]
-		local min_radius = data.min_radius
-		local max_radius = data.max_radius
-		local charge_time = data.charge_time
-		local angle = data.angle
-		local time_to_shoot = data.time_to_shoot - data.start_time
+	for iter_31_2, iter_31_3 in pairs(arg_31_0._geiser_particle_effects) do
+		local var_31_4 = NetworkLookup.effects[iter_31_3.geiser_effect_name]
+		local var_31_5 = iter_31_3.min_radius
+		local var_31_6 = iter_31_3.max_radius
+		local var_31_7 = iter_31_3.charge_time
+		local var_31_8 = iter_31_3.angle
+		local var_31_9 = iter_31_3.time_to_shoot - iter_31_3.start_time
 
-		RPC.rpc_start_geiser(channel_id, unit_id, geiser_effect_id, min_radius, max_radius, charge_time, angle, time_to_shoot)
+		RPC.rpc_start_geiser(var_31_0, iter_31_2, var_31_4, var_31_5, var_31_6, var_31_7, var_31_8, var_31_9)
 	end
 end
 
-WeaponSystem.start_soul_rip = function (self, owner_unit, target_unit, target_node_id, seed, net_sync)
-	local world = self.world
-	local current_data = self._soul_rip_particle_effects[owner_unit]
+function WeaponSystem.start_soul_rip(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5)
+	local var_32_0 = arg_32_0.world
 
-	if current_data then
-		self:cleanup_soul_rip(owner_unit)
+	if arg_32_0._soul_rip_particle_effects[arg_32_1] then
+		arg_32_0:cleanup_soul_rip(arg_32_1)
 	end
 
-	current_data = Script.new_map(7)
-	self._soul_rip_particle_effects[owner_unit] = current_data
+	local var_32_1 = Script.new_map(7)
 
-	local owner_unit_id = self.unit_storage:go_id(owner_unit)
+	arg_32_0._soul_rip_particle_effects[arg_32_1] = var_32_1
 
-	current_data.owner_unit_id = owner_unit_id
-	current_data.target_unit = target_unit
-	current_data.target_node_id = target_node_id
-	current_data.seed = seed
+	local var_32_2 = arg_32_0.unit_storage:go_id(arg_32_1)
 
-	local source_unit = owner_unit
-	local first_person = false
-	local fp_extension = ScriptUnit.has_extension(owner_unit, "first_person_system")
+	var_32_1.owner_unit_id = var_32_2
+	var_32_1.target_unit = arg_32_2
+	var_32_1.target_node_id = arg_32_3
+	var_32_1.seed = arg_32_4
 
-	if fp_extension then
-		source_unit = fp_extension:get_first_person_unit()
+	local var_32_3 = arg_32_1
+	local var_32_4 = false
+	local var_32_5 = ScriptUnit.has_extension(arg_32_1, "first_person_system")
 
-		local anticipation_fx_name = "fx/wpnfx_necromancer_skullstaff_anticipation"
-		local node = Unit.has_node(source_unit, "j_leftweaponattach") and Unit.node(source_unit, "j_leftweaponattach") or 0
+	if var_32_5 then
+		var_32_3 = var_32_5:get_first_person_unit()
 
-		current_data.anticipation_fx = ScriptWorld.create_particles_linked(world, anticipation_fx_name, source_unit, node, "destroy")
-		first_person = fp_extension:first_person_mode_active()
+		local var_32_6 = "fx/wpnfx_necromancer_skullstaff_anticipation"
+		local var_32_7 = Unit.has_node(var_32_3, "j_leftweaponattach") and Unit.node(var_32_3, "j_leftweaponattach") or 0
+
+		var_32_1.anticipation_fx = ScriptWorld.create_particles_linked(var_32_0, var_32_6, var_32_3, var_32_7, "destroy")
+		var_32_4 = var_32_5:first_person_mode_active()
 	end
 
-	local hand_unit_name = first_person and "units/test_unit/cup_test" or "units/test_unit/cup_test_3p"
+	local var_32_8 = var_32_4 and "units/test_unit/cup_test" or "units/test_unit/cup_test_3p"
 
-	current_data.weapon_unit = source_unit
-	current_data.weapon_node_id = Unit.has_node(source_unit, "j_leftweaponattach") and Unit.node(source_unit, "j_leftweaponattach") or 0
-	current_data.weapon_fx_unit = World.spawn_unit(world, hand_unit_name)
-	current_data.target_node_id = Unit.has_node(target_unit, "j_spine") and Unit.node(target_unit, "j_spine") or 0
-	current_data.target_fx_unit = World.spawn_unit(world, "units/test_unit/cup_test_3p")
+	var_32_1.weapon_unit = var_32_3
+	var_32_1.weapon_node_id = Unit.has_node(var_32_3, "j_leftweaponattach") and Unit.node(var_32_3, "j_leftweaponattach") or 0
+	var_32_1.weapon_fx_unit = World.spawn_unit(var_32_0, var_32_8)
+	var_32_1.target_node_id = Unit.has_node(arg_32_2, "j_spine") and Unit.node(arg_32_2, "j_spine") or 0
+	var_32_1.target_fx_unit = World.spawn_unit(var_32_0, "units/test_unit/cup_test_3p")
 
-	local anticipation_scale = Vector3(2, 2, 2)
+	local var_32_9 = Vector3(2, 2, 2)
 
-	Unit.set_local_scale(current_data.weapon_fx_unit, 0, anticipation_scale)
+	Unit.set_local_scale(var_32_1.weapon_fx_unit, 0, var_32_9)
 
-	local target_fx_scale = Vector3(5, 5, 5)
+	local var_32_10 = Vector3(5, 5, 5)
 
-	Unit.set_local_scale(current_data.target_fx_unit, 0, target_fx_scale)
+	Unit.set_local_scale(var_32_1.target_fx_unit, 0, var_32_10)
 
-	if net_sync then
-		local target_unit_id = self.unit_storage:go_id(target_unit)
+	if arg_32_5 then
+		local var_32_11 = arg_32_0.unit_storage:go_id(arg_32_2)
 
-		if self.is_server then
-			self.network_transmit:send_rpc_clients("rpc_start_soul_rip", owner_unit_id, target_unit_id, target_node_id, seed)
+		if arg_32_0.is_server then
+			arg_32_0.network_transmit:send_rpc_clients("rpc_start_soul_rip", var_32_2, var_32_11, arg_32_3, arg_32_4)
 		else
-			self.network_transmit:send_rpc_server("rpc_start_soul_rip", owner_unit_id, target_unit_id, target_node_id, seed)
+			arg_32_0.network_transmit:send_rpc_server("rpc_start_soul_rip", var_32_2, var_32_11, arg_32_3, arg_32_4)
 		end
 	end
 end
 
-WeaponSystem.update_synced_soul_rip_particle_effects = function (self)
-	for owner_unit, data in pairs(self._soul_rip_particle_effects) do
-		if not ALIVE[owner_unit] or not ALIVE[data.target_unit] then
-			self:cleanup_soul_rip(owner_unit)
+function WeaponSystem.update_synced_soul_rip_particle_effects(arg_33_0)
+	for iter_33_0, iter_33_1 in pairs(arg_33_0._soul_rip_particle_effects) do
+		if not ALIVE[iter_33_0] or not ALIVE[iter_33_1.target_unit] then
+			arg_33_0:cleanup_soul_rip(iter_33_0)
 		else
-			local position = Unit.world_position(data.target_unit, data.target_node_id)
-			local directional_from = Unit.world_position(data.weapon_unit, data.weapon_node_id)
-			local directional_to = position
-			local dir = Vector3.normalize(directional_to - directional_from)
-			local weapon_fx_unit = data.weapon_fx_unit
-			local weapon_fx_pos = Unit.world_position(data.weapon_unit, data.weapon_node_id)
+			local var_33_0, var_33_1 = Unit.world_position(iter_33_1.target_unit, iter_33_1.target_node_id), Unit.world_position(iter_33_1.weapon_unit, iter_33_1.weapon_node_id)
+			local var_33_2 = Vector3.normalize(var_33_0 - var_33_1)
+			local var_33_3 = iter_33_1.weapon_fx_unit
+			local var_33_4 = Unit.world_position(iter_33_1.weapon_unit, iter_33_1.weapon_node_id)
 
-			Unit.set_local_position(weapon_fx_unit, 0, weapon_fx_pos)
+			Unit.set_local_position(var_33_3, 0, var_33_4)
 
-			local weapon_fx_rot = Quaternion.look(dir)
+			local var_33_5 = Quaternion.look(var_33_2)
 
-			Unit.set_local_rotation(weapon_fx_unit, 0, weapon_fx_rot)
+			Unit.set_local_rotation(var_33_3, 0, var_33_5)
 
-			local target_fx_unit = data.target_fx_unit
-			local target_fx_pos = Unit.world_position(data.target_unit, data.target_node_id)
+			local var_33_6 = iter_33_1.target_fx_unit
+			local var_33_7 = Unit.world_position(iter_33_1.target_unit, iter_33_1.target_node_id)
 
-			Unit.set_local_position(target_fx_unit, 0, target_fx_pos)
+			Unit.set_local_position(var_33_6, 0, var_33_7)
 
-			local target_fx_rot = Quaternion.look(-dir)
+			local var_33_8 = Quaternion.look(-var_33_2)
 
-			Unit.set_local_rotation(target_fx_unit, 0, target_fx_rot)
+			Unit.set_local_rotation(var_33_6, 0, var_33_8)
 		end
 	end
 end
 
-WeaponSystem.stop_soul_rip = function (self, owner_unit, net_sync)
-	local current_data = self._soul_rip_particle_effects[owner_unit]
+function WeaponSystem.stop_soul_rip(arg_34_0, arg_34_1, arg_34_2)
+	local var_34_0 = arg_34_0._soul_rip_particle_effects[arg_34_1]
 
-	if current_data then
-		self:cleanup_soul_rip(owner_unit)
+	if var_34_0 then
+		arg_34_0:cleanup_soul_rip(arg_34_1)
 
-		if net_sync then
-			if self.is_server then
-				self.network_transmit:send_rpc_clients("rpc_stop_soul_rip", current_data.owner_unit_id)
+		if arg_34_2 then
+			if arg_34_0.is_server then
+				arg_34_0.network_transmit:send_rpc_clients("rpc_stop_soul_rip", var_34_0.owner_unit_id)
 			else
-				self.network_transmit:send_rpc_server("rpc_stop_soul_rip", current_data.owner_unit_id)
+				arg_34_0.network_transmit:send_rpc_server("rpc_stop_soul_rip", var_34_0.owner_unit_id)
 			end
 		end
 	end
 end
 
-WeaponSystem.cleanup_soul_rip = function (self, owner_unit)
-	local current_data = self._soul_rip_particle_effects[owner_unit]
+function WeaponSystem.cleanup_soul_rip(arg_35_0, arg_35_1)
+	local var_35_0 = arg_35_0._soul_rip_particle_effects[arg_35_1]
 
-	if current_data then
-		local world = self.world
+	if var_35_0 then
+		local var_35_1 = arg_35_0.world
 
-		if current_data.anticipation_fx then
-			World.destroy_particles(world, current_data.anticipation_fx)
+		if var_35_0.anticipation_fx then
+			World.destroy_particles(var_35_1, var_35_0.anticipation_fx)
 		end
 
-		World.destroy_unit(world, current_data.weapon_fx_unit)
-		World.destroy_unit(world, current_data.target_fx_unit)
+		World.destroy_unit(var_35_1, var_35_0.weapon_fx_unit)
+		World.destroy_unit(var_35_1, var_35_0.target_fx_unit)
 
-		self._soul_rip_particle_effects[owner_unit] = nil
+		arg_35_0._soul_rip_particle_effects[arg_35_1] = nil
 	end
 end
 
-WeaponSystem.soul_rip_burst = function (self, owner_unit, target_unit, target_node_id, fx_name, seed, net_sync)
-	local world = self.world
-	local owner_unit_id = self.unit_storage:go_id(owner_unit)
-	local position = Unit.world_position(target_unit, target_node_id)
-	local aim_position = GameSession.game_object_field(self.game, owner_unit_id, "aim_position")
-	local from_target = Vector3.normalize(aim_position - position)
-	local rotation = Quaternion.look(from_target)
-	local right = Quaternion.right(rotation)
-	local forward = Quaternion.forward(rotation)
-	local up = Vector3.up()
-	local fx_id = World.create_particles(world, fx_name, position, Quaternion.look(up * 0.5 + right * 0.5))
-	local spline_ids_lookup = self._soul_rip_spline_ids_lookup
+function WeaponSystem.soul_rip_burst(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6)
+	local var_36_0 = arg_36_0.world
+	local var_36_1 = arg_36_0.unit_storage:go_id(arg_36_1)
+	local var_36_2 = Unit.world_position(arg_36_2, arg_36_3)
+	local var_36_3 = GameSession.game_object_field(arg_36_0.game, var_36_1, "aim_position")
+	local var_36_4 = Vector3.normalize(var_36_3 - var_36_2)
+	local var_36_5 = Quaternion.look(var_36_4)
+	local var_36_6 = Quaternion.right(var_36_5)
+	local var_36_7 = Quaternion.forward(var_36_5)
+	local var_36_8 = Vector3.up()
+	local var_36_9 = World.create_particles(var_36_0, arg_36_4, var_36_2, Quaternion.look(var_36_8 * 0.5 + var_36_6 * 0.5))
+	local var_36_10 = arg_36_0._soul_rip_spline_ids_lookup
 
-	if not spline_ids_lookup[fx_name] then
-		spline_ids_lookup[fx_name] = {
-			World.find_particles_variable(world, fx_name, "spline_1"),
-			World.find_particles_variable(world, fx_name, "spline_2"),
-			World.find_particles_variable(world, fx_name, "spline_3"),
-			World.find_particles_variable(world, fx_name, "spline_4"),
+	if not var_36_10[arg_36_4] then
+		var_36_10[arg_36_4] = {
+			World.find_particles_variable(var_36_0, arg_36_4, "spline_1"),
+			World.find_particles_variable(var_36_0, arg_36_4, "spline_2"),
+			World.find_particles_variable(var_36_0, arg_36_4, "spline_3"),
+			World.find_particles_variable(var_36_0, arg_36_4, "spline_4")
 		}
 	end
 
-	local spline_pos_1 = position
-	local spline_pos_2 = spline_pos_1 + up + right * 2
-	local next_seed, rand_x, rand_y
+	local var_36_11 = var_36_2
+	local var_36_12 = var_36_11 + var_36_8 + var_36_6 * 2
+	local var_36_13
+	local var_36_14
+	local var_36_15
+	local var_36_16, var_36_17 = Math.next_random(arg_36_5)
+	local var_36_18, var_36_19 = Math.next_random(var_36_16)
+	local var_36_20 = var_36_11 + var_36_7 + Vector3(var_36_17 * 2 - 1, var_36_19 * 2 - 1, 2) + var_36_6 * 0.5
+	local var_36_21, var_36_22 = Math.next_random(var_36_18)
+	local var_36_23, var_36_24 = Math.next_random(var_36_21)
+	local var_36_25 = var_36_11 + Vector3(var_36_22 * 2 - 1, var_36_24 * 2 - 1, 5) + var_36_6 * 0.5
+	local var_36_26 = var_36_10[arg_36_4]
 
-	next_seed, rand_x = Math.next_random(seed)
-	next_seed, rand_y = Math.next_random(next_seed)
-
-	local spline_pos_3 = spline_pos_1 + forward + Vector3(rand_x * 2 - 1, rand_y * 2 - 1, 2) + right * 0.5
-
-	next_seed, rand_x = Math.next_random(next_seed)
-	next_seed, rand_y = Math.next_random(next_seed)
-
-	local spline_pos_4 = spline_pos_1 + Vector3(rand_x * 2 - 1, rand_y * 2 - 1, 5) + right * 0.5
-	local spline_ids = spline_ids_lookup[fx_name]
-
-	World.set_particles_variable(world, fx_id, spline_ids[1], spline_pos_1)
-	World.set_particles_variable(world, fx_id, spline_ids[2], spline_pos_2)
-	World.set_particles_variable(world, fx_id, spline_ids[3], spline_pos_3)
-	World.set_particles_variable(world, fx_id, spline_ids[4], spline_pos_4)
+	World.set_particles_variable(var_36_0, var_36_9, var_36_26[1], var_36_11)
+	World.set_particles_variable(var_36_0, var_36_9, var_36_26[2], var_36_12)
+	World.set_particles_variable(var_36_0, var_36_9, var_36_26[3], var_36_20)
+	World.set_particles_variable(var_36_0, var_36_9, var_36_26[4], var_36_25)
 
 	if script_data.debug_soulrip then
-		QuickDrawerStay:line(spline_pos_1, spline_pos_2, Color(255, 0, 0))
-		QuickDrawerStay:line(spline_pos_2, spline_pos_3, Color(255, 0, 0))
-		QuickDrawerStay:line(spline_pos_3, spline_pos_4, Color(255, 0, 0))
+		QuickDrawerStay:line(var_36_11, var_36_12, Color(255, 0, 0))
+		QuickDrawerStay:line(var_36_12, var_36_20, Color(255, 0, 0))
+		QuickDrawerStay:line(var_36_20, var_36_25, Color(255, 0, 0))
 	end
 
-	if net_sync then
-		local target_unit_id = self.unit_storage:go_id(target_unit)
-		local fx_name_id = NetworkLookup.effects[fx_name]
+	if arg_36_6 then
+		local var_36_27 = arg_36_0.unit_storage:go_id(arg_36_2)
+		local var_36_28 = NetworkLookup.effects[arg_36_4]
 
-		if self.is_server then
-			self.network_transmit:send_rpc_clients("rpc_soul_rip_burst", owner_unit_id, target_unit_id, target_node_id, fx_name_id, seed)
+		if arg_36_0.is_server then
+			arg_36_0.network_transmit:send_rpc_clients("rpc_soul_rip_burst", var_36_1, var_36_27, arg_36_3, var_36_28, arg_36_5)
 		else
-			self.network_transmit:send_rpc_server("rpc_soul_rip_burst", owner_unit_id, target_unit_id, target_node_id, fx_name_id, seed)
+			arg_36_0.network_transmit:send_rpc_server("rpc_soul_rip_burst", var_36_1, var_36_27, arg_36_3, var_36_28, arg_36_5)
 		end
 	end
 end
 
-WeaponSystem.rpc_start_soul_rip = function (self, channel_id, owner_unit_id, target_unit_id, target_node_id, seed)
-	local owner_unit = self.unit_storage:unit(owner_unit_id)
-	local target_unit = self.unit_storage:unit(target_unit_id)
+function WeaponSystem.rpc_start_soul_rip(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
+	local var_37_0 = arg_37_0.unit_storage:unit(arg_37_2)
+	local var_37_1 = arg_37_0.unit_storage:unit(arg_37_3)
 
-	if not target_unit then
+	if not var_37_1 then
 		return
 	end
 
-	self:start_soul_rip(owner_unit, target_unit, target_node_id, seed, false)
+	arg_37_0:start_soul_rip(var_37_0, var_37_1, arg_37_4, arg_37_5, false)
 
-	if self.is_server then
-		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+	if arg_37_0.is_server then
+		local var_37_2 = CHANNEL_TO_PEER_ID[arg_37_1]
 
-		self.network_transmit:send_rpc_clients_except("rpc_start_soul_rip", peer_id, owner_unit_id, target_unit_id, target_node_id, seed)
+		arg_37_0.network_transmit:send_rpc_clients_except("rpc_start_soul_rip", var_37_2, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
 	end
 end
 
-WeaponSystem.rpc_stop_soul_rip = function (self, channel_id, owner_unit_id)
-	local owner_unit = self.unit_storage:unit(owner_unit_id)
+function WeaponSystem.rpc_stop_soul_rip(arg_38_0, arg_38_1, arg_38_2)
+	local var_38_0 = arg_38_0.unit_storage:unit(arg_38_2)
 
-	self:stop_soul_rip(owner_unit, false)
+	arg_38_0:stop_soul_rip(var_38_0, false)
 
-	if self.is_server then
-		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+	if arg_38_0.is_server then
+		local var_38_1 = CHANNEL_TO_PEER_ID[arg_38_1]
 
-		self.network_transmit:send_rpc_clients_except("rpc_stop_soul_rip", peer_id, owner_unit_id)
+		arg_38_0.network_transmit:send_rpc_clients_except("rpc_stop_soul_rip", var_38_1, arg_38_2)
 	end
 end
 
-WeaponSystem.rpc_soul_rip_burst = function (self, channel_id, owner_unit_id, target_unit_id, target_node_id, fx_name_id, seed)
-	local target_unit = self.unit_storage:unit(target_unit_id)
-	local owner_unit = self.unit_storage:unit(owner_unit_id)
+function WeaponSystem.rpc_soul_rip_burst(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6)
+	local var_39_0 = arg_39_0.unit_storage:unit(arg_39_3)
+	local var_39_1 = arg_39_0.unit_storage:unit(arg_39_2)
 
-	if not ALIVE[target_unit] or not ALIVE[owner_unit] then
+	if not ALIVE[var_39_0] or not ALIVE[var_39_1] then
 		return
 	end
 
-	local fx_name = NetworkLookup.effects[fx_name_id]
+	local var_39_2 = NetworkLookup.effects[arg_39_5]
 
-	self:soul_rip_burst(owner_unit, target_unit, target_node_id, fx_name, seed, false)
+	arg_39_0:soul_rip_burst(var_39_1, var_39_0, arg_39_4, var_39_2, arg_39_6, false)
 
-	if self.is_server then
-		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+	if arg_39_0.is_server then
+		local var_39_3 = CHANNEL_TO_PEER_ID[arg_39_1]
 
-		self.network_transmit:send_rpc_clients_except("rpc_soul_rip_burst", peer_id, owner_unit_id, target_unit_id, target_node_id, fx_name_id, seed)
+		arg_39_0.network_transmit:send_rpc_clients_except("rpc_soul_rip_burst", var_39_3, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6)
 	end
 end
 
-WeaponSystem._update_chained_projectiles = function (self, t)
-	local chained_projectiles = self._chained_projectiles
-	local ai_broadphase = Managers.state.entity:system("ai_system").broadphase
+function WeaponSystem._update_chained_projectiles(arg_40_0, arg_40_1)
+	local var_40_0 = arg_40_0._chained_projectiles
+	local var_40_1 = Managers.state.entity:system("ai_system").broadphase
 
-	for projectile in pairs(chained_projectiles) do
-		if not projectile.next_target_unit and t >= projectile.target_selection_t then
-			local chain_next = self:_select_next_chained_projectile_target(projectile, ai_broadphase)
-
-			if not chain_next then
-				self._chained_projectiles[projectile] = nil
+	for iter_40_0 in pairs(var_40_0) do
+		if not iter_40_0.next_target_unit and arg_40_1 >= iter_40_0.target_selection_t then
+			if not arg_40_0:_select_next_chained_projectile_target(iter_40_0, var_40_1) then
+				arg_40_0._chained_projectiles[iter_40_0] = nil
 			end
-		elseif t >= projectile.next_chain_t then
-			local chain_next = self:_apply_chained_projectile_damage(projectile)
-
-			if chain_next then
-				projectile.next_target_unit = nil
-				projectile.next_chain_t = t + projectile.settings.chain_delay
-				projectile.target_selection_t = t + projectile.settings.target_selection_delay
+		elseif arg_40_1 >= iter_40_0.next_chain_t then
+			if arg_40_0:_apply_chained_projectile_damage(iter_40_0) then
+				iter_40_0.next_target_unit = nil
+				iter_40_0.next_chain_t = arg_40_1 + iter_40_0.settings.chain_delay
+				iter_40_0.target_selection_t = arg_40_1 + iter_40_0.settings.target_selection_delay
 			else
-				self._chained_projectiles[projectile] = nil
+				arg_40_0._chained_projectiles[iter_40_0] = nil
 			end
 		end
 	end
 end
 
-WeaponSystem.is_chained_projectile_active = function (self, projectile)
-	return not not self._chained_projectiles[projectile]
+function WeaponSystem.is_chained_projectile_active(arg_41_0, arg_41_1)
+	return not not arg_41_0._chained_projectiles[arg_41_1]
 end
 
-local BROADPHASE_QUERY_TEMP = {}
+local var_0_8 = {}
 
-WeaponSystem._select_next_chained_projectile_target = function (self, chain_data, ai_broadphase)
-	local settings = chain_data.settings
-	local hit_units = chain_data.hit_units
-	local last_chain_pos = chain_data.last_chain_pos:unbox()
-	local nearby_enemy_units = BROADPHASE_QUERY_TEMP
-	local world = self.world
-	local fx_spline_ids = {
-		World.find_particles_variable(world, "fx/wpnfx_staff_death/curse_spirit", "spline_1"),
-		World.find_particles_variable(world, "fx/wpnfx_staff_death/curse_spirit", "spline_2"),
-		World.find_particles_variable(world, "fx/wpnfx_staff_death/curse_spirit", "spline_3"),
+function WeaponSystem._select_next_chained_projectile_target(arg_42_0, arg_42_1, arg_42_2)
+	local var_42_0 = arg_42_1.settings
+	local var_42_1 = arg_42_1.hit_units
+	local var_42_2 = arg_42_1.last_chain_pos:unbox()
+	local var_42_3 = var_0_8
+	local var_42_4 = arg_42_0.world
+	local var_42_5 = {
+		World.find_particles_variable(var_42_4, "fx/wpnfx_staff_death/curse_spirit", "spline_1"),
+		World.find_particles_variable(var_42_4, "fx/wpnfx_staff_death/curse_spirit", "spline_2"),
+		World.find_particles_variable(var_42_4, "fx/wpnfx_staff_death/curse_spirit", "spline_3")
 	}
-	local side_manager = Managers.state.side
-	local side_by_unit = side_manager.side_by_unit
-	local side = side_by_unit[chain_data.owner_unit]
-	local enemy_categories = side and side.enemy_broadphase_categories
-	local num_enemies = Broadphase.query(ai_broadphase, last_chain_pos, settings.chain_distance, nearby_enemy_units, enemy_categories)
+	local var_42_6 = Managers.state.side.side_by_unit[arg_42_1.owner_unit]
+	local var_42_7 = var_42_6 and var_42_6.enemy_broadphase_categories
+	local var_42_8 = Broadphase.query(arg_42_2, var_42_2, var_42_0.chain_distance, var_42_3, var_42_7)
 
-	for target_id = 1, num_enemies do
-		local target_unit = nearby_enemy_units[target_id]
+	for iter_42_0 = 1, var_42_8 do
+		local var_42_9 = var_42_3[iter_42_0]
 
-		if not hit_units[target_unit] and HEALTH_ALIVE[target_unit] then
-			hit_units[target_unit] = true
+		if not var_42_1[var_42_9] and HEALTH_ALIVE[var_42_9] then
+			var_42_1[var_42_9] = true
 
-			local node = Unit.has_node(target_unit, "j_spine") and Unit.node(target_unit, "j_spine") or 0
-			local next_chain_pos = Unit.world_position(target_unit, node)
-			local mid_offset = Vector3(math.lerp(-0.5, 0.5, math.random()), math.lerp(-0.5, 0.5, math.random()), math.lerp(-0.5, 0.5, math.random()))
-			local mid_point = last_chain_pos + (next_chain_pos - last_chain_pos) / 2 + mid_offset
+			local var_42_10 = Unit.has_node(var_42_9, "j_spine") and Unit.node(var_42_9, "j_spine") or 0
+			local var_42_11 = Unit.world_position(var_42_9, var_42_10)
+			local var_42_12 = Vector3(math.lerp(-0.5, 0.5, math.random()), math.lerp(-0.5, 0.5, math.random()), math.lerp(-0.5, 0.5, math.random()))
+			local var_42_13 = var_42_2 + (var_42_11 - var_42_2) / 2 + var_42_12
 
-			self:_play_chained_projectile_fx("fx/wpnfx_staff_death/curse_spirit", fx_spline_ids, last_chain_pos, mid_point, next_chain_pos, true)
+			arg_42_0:_play_chained_projectile_fx("fx/wpnfx_staff_death/curse_spirit", var_42_5, var_42_2, var_42_13, var_42_11, true)
 
-			chain_data.next_target_unit = target_unit
+			arg_42_1.next_target_unit = var_42_9
 
 			return true
 		end
@@ -1221,126 +1186,124 @@ WeaponSystem._select_next_chained_projectile_target = function (self, chain_data
 	return false
 end
 
-WeaponSystem._play_chained_projectile_fx = function (self, fx_name, fx_spline_ids, point_1, point_2, point_3)
-	local fx_name_id = NetworkLookup.effects[fx_name]
-	local spline_points = {
-		point_1,
-		point_2,
-		point_3,
+function WeaponSystem._play_chained_projectile_fx(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5)
+	local var_43_0 = NetworkLookup.effects[arg_43_1]
+	local var_43_1 = {
+		arg_43_3,
+		arg_43_4,
+		arg_43_5
 	}
 
-	if self._fire_sound_event and self.first_person_extension then
-		self.first_person_extension:play_hud_sound_event(self._fire_sound_event)
+	if arg_43_0._fire_sound_event and arg_43_0.first_person_extension then
+		arg_43_0.first_person_extension:play_hud_sound_event(arg_43_0._fire_sound_event)
 	end
 
-	if self.is_server then
-		Managers.state.network:rpc_play_particle_effect_spline(nil, fx_name_id, fx_spline_ids, spline_points)
+	if arg_43_0.is_server then
+		Managers.state.network:rpc_play_particle_effect_spline(nil, var_43_0, arg_43_2, var_43_1)
 	else
-		Managers.state.network.network_transmit:send_rpc_server("rpc_play_particle_effect_spline", fx_name_id, fx_spline_ids, spline_points)
+		Managers.state.network.network_transmit:send_rpc_server("rpc_play_particle_effect_spline", var_43_0, arg_43_2, var_43_1)
 	end
 end
 
-WeaponSystem.try_fire_chained_projectile = function (self, chain_hit_settings, damage_source, is_critical_strike, power_level, boost_curve_multiplier, t, owner_unit, source_pos, optional_target_unit, optional_ignore_unit, target_index)
-	local chain_data = {
+function WeaponSystem.try_fire_chained_projectile(arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4, arg_44_5, arg_44_6, arg_44_7, arg_44_8, arg_44_9, arg_44_10, arg_44_11)
+	local var_44_0 = {
 		chain_count = 0,
-		settings = chain_hit_settings,
-		is_critical_strike = is_critical_strike,
-		power_level = power_level,
-		boost_curve_multiplier = boost_curve_multiplier,
-		damage_source = damage_source,
-		next_chain_t = t + (chain_hit_settings.chain_delay - chain_hit_settings.target_selection_delay),
+		settings = arg_44_1,
+		is_critical_strike = arg_44_3,
+		power_level = arg_44_4,
+		boost_curve_multiplier = arg_44_5,
+		damage_source = arg_44_2,
+		next_chain_t = arg_44_6 + (arg_44_1.chain_delay - arg_44_1.target_selection_delay),
 		target_selection_t = math.huge,
-		owner_unit = owner_unit,
+		owner_unit = arg_44_7,
 		hit_units = {},
-		last_chain_pos = Vector3Box(source_pos),
-		base_target_index = target_index,
+		last_chain_pos = Vector3Box(arg_44_8),
+		base_target_index = arg_44_11
 	}
 
-	if optional_ignore_unit then
-		chain_data.hit_units[optional_ignore_unit] = true
+	if arg_44_10 then
+		var_44_0.hit_units[arg_44_10] = true
 	end
 
-	if not optional_target_unit then
-		local ai_broadphase = Managers.state.entity:system("ai_system").broadphase
+	if not arg_44_9 then
+		local var_44_1 = Managers.state.entity:system("ai_system").broadphase
 
-		optional_target_unit = self:_select_next_chained_projectile_target(chain_data, ai_broadphase)
+		arg_44_9 = arg_44_0:_select_next_chained_projectile_target(var_44_0, var_44_1)
 
-		if not optional_target_unit then
+		if not arg_44_9 then
 			return
 		end
 	end
 
-	chain_data.hit_units[optional_target_unit] = true
-	self._chained_projectiles[chain_data] = true
+	var_44_0.hit_units[arg_44_9] = true
+	arg_44_0._chained_projectiles[var_44_0] = true
 
-	Managers.state.achievement:trigger_event("chained_projectile_fired", chain_data, owner_unit)
+	Managers.state.achievement:trigger_event("chained_projectile_fired", var_44_0, arg_44_7)
 end
 
-WeaponSystem._apply_chained_projectile_damage = function (self, chain_data)
-	local settings = chain_data.settings
-	local chain_count = chain_data.chain_count + 1
-	local target_unit = chain_data.next_target_unit
-	local target_index = chain_data.base_target_index + chain_count
+function WeaponSystem._apply_chained_projectile_damage(arg_45_0, arg_45_1)
+	local var_45_0 = arg_45_1.settings
+	local var_45_1 = arg_45_1.chain_count + 1
+	local var_45_2 = arg_45_1.next_target_unit
+	local var_45_3 = arg_45_1.base_target_index + var_45_1
 
-	if HEALTH_ALIVE[target_unit] then
-		local last_chain_pos = chain_data.last_chain_pos:unbox()
-		local is_critical_strike = chain_data.is_critical_strike
-		local power_level = chain_data.power_level
-		local boost_curve_multiplier = chain_data.boost_curve_multiplier
-		local damage_profile = settings.damage_profile
-		local network_manager = Managers.state.network
-		local attacker_unit_id = network_manager:unit_game_object_id(chain_data.owner_unit)
+	if HEALTH_ALIVE[var_45_2] then
+		local var_45_4 = arg_45_1.last_chain_pos:unbox()
+		local var_45_5 = arg_45_1.is_critical_strike
+		local var_45_6 = arg_45_1.power_level
+		local var_45_7 = arg_45_1.boost_curve_multiplier
+		local var_45_8 = var_45_0.damage_profile
+		local var_45_9 = Managers.state.network
+		local var_45_10 = var_45_9:unit_game_object_id(arg_45_1.owner_unit)
 
-		if not attacker_unit_id then
+		if not var_45_10 then
 			return
 		end
 
-		local damage_profile_id = NetworkLookup.damage_profiles[damage_profile]
-		local target_unit_id, is_level_unit = network_manager:game_object_or_level_id(target_unit)
-		local damage_source_id = NetworkLookup.damage_sources[chain_data.damage_source]
-		local hit_zone_id = NetworkLookup.hit_zones.torso
-		local hit_position = Unit.world_position(target_unit, 0) + Vector3.up()
-		local attack_direction, attack_distance = Vector3.direction_length(hit_position - last_chain_pos)
+		local var_45_11 = NetworkLookup.damage_profiles[var_45_8]
+		local var_45_12, var_45_13 = var_45_9:game_object_or_level_id(var_45_2)
+		local var_45_14 = NetworkLookup.damage_sources[arg_45_1.damage_source]
+		local var_45_15 = NetworkLookup.hit_zones.torso
+		local var_45_16 = Unit.world_position(var_45_2, 0) + Vector3.up()
+		local var_45_17, var_45_18 = Vector3.direction_length(var_45_16 - var_45_4)
 
-		if is_level_unit then
-			local hit_zone_name = "full"
-			local target_index = 1
-			local damage_source = self.item_name
-			local damage_profile_template = DamageProfileTemplates[damage_profile]
+		if var_45_13 then
+			local var_45_19 = "full"
+			local var_45_20 = 1
+			local var_45_21 = arg_45_0.item_name
+			local var_45_22 = DamageProfileTemplates[var_45_8]
 
-			DamageUtils.damage_level_unit(target_unit, chain_data.owner_unit, hit_zone_name, power_level, self.melee_boost_curve_multiplier, is_critical_strike, damage_profile_template, target_index, attack_direction, damage_source)
+			DamageUtils.damage_level_unit(var_45_2, arg_45_1.owner_unit, var_45_19, var_45_6, arg_45_0.melee_boost_curve_multiplier, var_45_5, var_45_22, var_45_20, var_45_17, var_45_21)
 		else
-			self:send_rpc_attack_hit(damage_source_id, attacker_unit_id, target_unit_id, hit_zone_id, hit_position, attack_direction, damage_profile_id, "power_level", power_level, "hit_target_index", target_index, "blocking", false, "shield_break_procced", false, "boost_curve_multiplier", boost_curve_multiplier, "is_critical_strike", is_critical_strike, "can_damage", true, "can_stagger", true, "first_hit", target_index == 1)
+			arg_45_0:send_rpc_attack_hit(var_45_14, var_45_10, var_45_12, var_45_15, var_45_16, var_45_17, var_45_11, "power_level", var_45_6, "hit_target_index", var_45_3, "blocking", false, "shield_break_procced", false, "boost_curve_multiplier", var_45_7, "is_critical_strike", var_45_5, "can_damage", true, "can_stagger", true, "first_hit", var_45_3 == 1)
 		end
 
-		local fx_id = NetworkLookup.effects["fx/wpnfx_staff_death/curse_spirit_impact"]
-		local rotation = Quaternion.look(attack_direction)
+		local var_45_23 = NetworkLookup.effects["fx/wpnfx_staff_death/curse_spirit_impact"]
+		local var_45_24 = Quaternion.look(var_45_17)
 
-		if self.is_server then
-			Managers.state.network:rpc_play_particle_effect(nil, fx_id, NetworkConstants.invalid_game_object_id, 0, hit_position, rotation, false)
+		if arg_45_0.is_server then
+			Managers.state.network:rpc_play_particle_effect(nil, var_45_23, NetworkConstants.invalid_game_object_id, 0, var_45_16, var_45_24, false)
 		else
-			Managers.state.network.network_transmit:send_rpc_server("rpc_play_particle_effect", fx_id, NetworkConstants.invalid_game_object_id, 0, hit_position, rotation, false)
+			Managers.state.network.network_transmit:send_rpc_server("rpc_play_particle_effect", var_45_23, NetworkConstants.invalid_game_object_id, 0, var_45_16, var_45_24, false)
 		end
 
-		local audio_system = Managers.state.entity:system("audio_system")
-
-		audio_system:play_audio_unit_event("Play_career_necro_passive_shadow_blood", target_unit)
+		Managers.state.entity:system("audio_system"):play_audio_unit_event("Play_career_necro_passive_shadow_blood", var_45_2)
 	end
 
-	if ALIVE[target_unit] and chain_count < settings.max_chain_count then
-		local next_chain_pos
+	if ALIVE[var_45_2] and var_45_1 < var_45_0.max_chain_count then
+		local var_45_25
 
-		if Unit.has_node(target_unit, "j_spine") then
-			local node = Unit.node(target_unit, "j_spine")
+		if Unit.has_node(var_45_2, "j_spine") then
+			local var_45_26 = Unit.node(var_45_2, "j_spine")
 
-			next_chain_pos = Unit.world_position(target_unit, node)
+			var_45_25 = Unit.world_position(var_45_2, var_45_26)
 		else
-			next_chain_pos = Unit.world_position(target_unit, 0) + Vector3.up() * 0.8
+			var_45_25 = Unit.world_position(var_45_2, 0) + Vector3.up() * 0.8
 		end
 
-		chain_data.chain_count = chain_count
+		arg_45_1.chain_count = var_45_1
 
-		chain_data.last_chain_pos:store(next_chain_pos)
+		arg_45_1.last_chain_pos:store(var_45_25)
 
 		return true
 	else

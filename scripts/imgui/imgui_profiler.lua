@@ -1,255 +1,249 @@
-﻿-- chunkname: @scripts/imgui/imgui_profiler.lua
+-- chunkname: @scripts/imgui/imgui_profiler.lua
 
 ImguiProfiler = class(ImguiProfiler)
 
-ImguiProfiler.init = function (self)
-	self._filter = ""
-	self._filter_applied = false
-	self._auto_update_filter = false
+function ImguiProfiler.init(arg_1_0)
+	arg_1_0._filter = ""
+	arg_1_0._filter_applied = false
+	arg_1_0._auto_update_filter = false
 end
 
-ImguiProfiler.is_persistent = function (self)
+function ImguiProfiler.is_persistent(arg_2_0)
 	return true
 end
 
-ImguiProfiler.on_show = function (self)
+function ImguiProfiler.on_show(arg_3_0)
 	CALCULATE_AVERAGE = true
 end
 
-ImguiProfiler.on_hide = function (self)
+function ImguiProfiler.on_hide(arg_4_0)
 	CALCULATE_AVERAGE = false
 end
 
-ImguiProfiler.update = function (self, t, dt)
+function ImguiProfiler.update(arg_5_0, arg_5_1, arg_5_2)
 	return
 end
 
-ImguiProfiler.draw = function (self)
+function ImguiProfiler.draw(arg_6_0)
 	return
 end
 
-local INDEX = 1
+local var_0_0 = 1
 
 FILTERED_SCOPES = {}
 FILTERED_SCOPES_INDEX = 1
 
-ImguiProfiler.post_draw = function (self)
-	local do_close = Imgui.begin_window("Profiler")
+function ImguiProfiler.post_draw(arg_7_0)
+	local var_7_0 = Imgui.begin_window("Profiler")
 
 	Imgui.set_window_size(700, 512, "once")
 
-	local new_profiler_frames, confirmed = Imgui.input_int("Average over number of frames", PROFILE_FRAMES)
+	local var_7_1, var_7_2 = Imgui.input_int("Average over number of frames", PROFILE_FRAMES)
 
-	if confirmed then
-		PROFILE_FRAMES = new_profiler_frames
+	if var_7_2 then
+		PROFILE_FRAMES = var_7_1
 	end
 
-	local update_filter = false
-	local new_filter_text, confirmed = Imgui.input_text("Filter", self._filter)
+	local var_7_3 = false
+	local var_7_4, var_7_5 = Imgui.input_text("Filter", arg_7_0._filter)
 
-	if confirmed then
-		self._filter = new_filter_text
-		self._filter_applied = self._filter ~= ""
-		update_filter = true
+	if var_7_5 then
+		arg_7_0._filter = var_7_4
+		arg_7_0._filter_applied = arg_7_0._filter ~= ""
+		var_7_3 = true
 	end
 
-	self._auto_update_filter = Imgui.checkbox("Auto Update Filter (affects performance)", self._auto_update_filter)
+	arg_7_0._auto_update_filter = Imgui.checkbox("Auto Update Filter (affects performance)", arg_7_0._auto_update_filter)
 
-	if update_filter or self._auto_update_filter then
+	if var_7_3 or arg_7_0._auto_update_filter then
 		FILTERED_SCOPES_INDEX = 1
 
-		local SCOPES = PROFILER_SCOPE_LOOKUP
+		local var_7_6 = PROFILER_SCOPE_LOOKUP
 
-		if self._filter ~= "" then
-			self:_apply_filter(SCOPES, false)
+		if arg_7_0._filter ~= "" then
+			arg_7_0:_apply_filter(var_7_6, false)
 		end
 	end
 
 	Imgui.begin_child_window("Profiler Tree", 0, 0, true)
 
-	INDEX = 1
+	var_0_0 = 1
 
-	if self._filter_applied then
-		self:_draw_filtered_scopes()
+	if arg_7_0._filter_applied then
+		arg_7_0:_draw_filtered_scopes()
 	else
-		self:_draw_lookup_table(PROFILER_SCOPE_LOOKUP, false)
+		arg_7_0:_draw_lookup_table(PROFILER_SCOPE_LOOKUP, false)
 	end
 
 	Imgui.end_child_window()
 	Imgui.end_window()
 
-	return do_close
+	return var_7_0
 end
 
-ImguiProfiler._draw_filtered_scopes = function (self)
+function ImguiProfiler._draw_filtered_scopes(arg_8_0)
 	if FILTERED_SCOPES_INDEX > 1 then
-		local is_open = Imgui.tree_node("root", true)
+		local var_8_0 = Imgui.tree_node("root", true)
 
-		for i = 1, FILTERED_SCOPES_INDEX - 1 do
-			local filtered_scope = FILTERED_SCOPES[i]
+		for iter_8_0 = 1, FILTERED_SCOPES_INDEX - 1 do
+			local var_8_1 = FILTERED_SCOPES[iter_8_0]
 
-			self:_draw_lookup_table(filtered_scope, false)
+			arg_8_0:_draw_lookup_table(var_8_1, false)
 		end
 
 		Imgui.tree_pop()
 	else
-		Imgui.text_colored(string.format("No scope includes the text %q", self._filter), 255, 128, 128, 255)
+		Imgui.text_colored(string.format("No scope includes the text %q", arg_8_0._filter), 255, 128, 128, 255)
 	end
 end
 
-ImguiProfiler._draw_lookup_table = function (self, in_scope, is_top_scope)
-	local parent = in_scope.name
+function ImguiProfiler._draw_lookup_table(arg_9_0, arg_9_1, arg_9_2)
+	local var_9_0 = arg_9_1.name
 
-	if in_scope.frame_index and in_scope.frame_index < CURRENT_FRAME_INDEX then
+	if arg_9_1.frame_index and arg_9_1.frame_index < CURRENT_FRAME_INDEX then
 		return
 	end
 
-	local is_root = false
-	local is_leaf = in_scope.is_leaf ~= false
-	local profiler_suffix = in_scope.average_profiler_scope and string.format("%.3f", in_scope.average_profiler_scope) or ""
-	local header
+	local var_9_1 = false
+	local var_9_2 = arg_9_1.is_leaf ~= false
+	local var_9_3 = arg_9_1.average_profiler_scope and string.format("%.3f", arg_9_1.average_profiler_scope) or ""
+	local var_9_4
 
-	if is_leaf then
-		header = string.format("%s", in_scope.name, INDEX)
+	if var_9_2 then
+		var_9_4 = string.format("%s", arg_9_1.name, var_0_0)
 
-		if is_top_scope then
-			Imgui.text_colored(header, 0, 255, 0, 255)
+		if arg_9_2 then
+			Imgui.text_colored(var_9_4, 0, 255, 0, 255)
 		else
-			Imgui.text(header)
+			Imgui.text(var_9_4)
 		end
 
 		Imgui.same_line()
 
-		if is_top_scope then
-			Imgui.text_colored(profiler_suffix, 0, 255, 0, 255)
+		if arg_9_2 then
+			Imgui.text_colored(var_9_3, 0, 255, 0, 255)
 		else
-			Imgui.text_colored(profiler_suffix, 192, 128, 128, 255)
+			Imgui.text_colored(var_9_3, 192, 128, 128, 255)
 		end
 
 		return
-	elseif in_scope.name then
-		header = string.format("%s ##%s", in_scope.name, INDEX)
+	elseif arg_9_1.name then
+		var_9_4 = string.format("%s ##%s", arg_9_1.name, var_0_0)
 	else
-		header = "root"
-		is_root = true
+		var_9_4 = "root"
+		var_9_1 = true
 	end
 
-	INDEX = INDEX + 1
+	var_0_0 = var_0_0 + 1
 
-	local is_open = Imgui.tree_node(header, is_root)
+	local var_9_5 = Imgui.tree_node(var_9_4, var_9_1)
 
 	Imgui.same_line()
 
-	if is_top_scope then
-		Imgui.text_colored(profiler_suffix, 0, 255, 0, 255)
+	if arg_9_2 then
+		Imgui.text_colored(var_9_3, 0, 255, 0, 255)
 	else
-		Imgui.text_colored(profiler_suffix, 192, 128, 128, 255)
+		Imgui.text_colored(var_9_3, 192, 128, 128, 255)
 	end
 
-	if is_open then
-		local top_value = -1
-		local top_scope = ""
-		local SORTED_SCOPES = {}
+	if var_9_5 then
+		local var_9_6 = -1
+		local var_9_7 = ""
+		local var_9_8 = {}
 
-		for _, scope in pairs(in_scope) do
-			if type(scope) == "table" then
-				if scope.parent == parent and scope.frame_index == CURRENT_FRAME_INDEX then
-					SORTED_SCOPES[#SORTED_SCOPES + 1] = scope
+		for iter_9_0, iter_9_1 in pairs(arg_9_1) do
+			if type(iter_9_1) == "table" then
+				if iter_9_1.parent == var_9_0 and iter_9_1.frame_index == CURRENT_FRAME_INDEX then
+					var_9_8[#var_9_8 + 1] = iter_9_1
 
-					local value = scope.average_profiler_scope or 0
+					local var_9_9 = iter_9_1.average_profiler_scope or 0
 
-					if top_value < value then
-						top_value = value
-						top_scope = scope
+					if var_9_6 < var_9_9 then
+						var_9_6 = var_9_9
+						var_9_7 = iter_9_1
 					end
 				end
 
-				local stack = scope.stack
+				local var_9_10 = iter_9_1.stack
 
-				if stack then
-					for i = 1, stack.stack_index do
-						local entry = stack[i]
+				if var_9_10 then
+					for iter_9_2 = 1, var_9_10.stack_index do
+						local var_9_11 = var_9_10[iter_9_2]
 
-						SORTED_SCOPES[#SORTED_SCOPES + 1] = entry
+						var_9_8[#var_9_8 + 1] = var_9_11
 
-						local value = entry.average_profiler_scope or 0
+						local var_9_12 = var_9_11.average_profiler_scope or 0
 
-						if top_value < value then
-							top_value = value
-							top_scope = entry
+						if var_9_6 < var_9_12 then
+							var_9_6 = var_9_12
+							var_9_7 = var_9_11
 						end
 					end
 				end
 			end
 		end
 
-		local function sort_func(a, b)
-			local a_name = a.name
-			local b_name = b.name
-
-			return a_name < b_name
+		local function var_9_13(arg_10_0, arg_10_1)
+			return arg_10_0.name < arg_10_1.name
 		end
 
-		table.sort(SORTED_SCOPES, sort_func)
+		table.sort(var_9_8, var_9_13)
 
-		for _, scope in ipairs(SORTED_SCOPES) do
-			self:_draw_lookup_table(scope, scope == top_scope)
+		for iter_9_3, iter_9_4 in ipairs(var_9_8) do
+			arg_9_0:_draw_lookup_table(iter_9_4, iter_9_4 == var_9_7)
 		end
 
 		Imgui.tree_pop()
 	end
 end
 
-ImguiProfiler._apply_filter = function (self, in_scope)
-	local parent = in_scope.name
+function ImguiProfiler._apply_filter(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_1.name
 
-	if in_scope.frame_index and in_scope.frame_index < CURRENT_FRAME_INDEX then
+	if arg_11_1.frame_index and arg_11_1.frame_index < CURRENT_FRAME_INDEX then
 		return
 	end
 
-	INDEX = INDEX + 1
+	var_0_0 = var_0_0 + 1
 
-	if parent and string.find(string.lower(parent), string.lower(self._filter)) ~= nil then
-		FILTERED_SCOPES[FILTERED_SCOPES_INDEX] = in_scope
+	if var_11_0 and string.find(string.lower(var_11_0), string.lower(arg_11_0._filter)) ~= nil then
+		FILTERED_SCOPES[FILTERED_SCOPES_INDEX] = arg_11_1
 		FILTERED_SCOPES_INDEX = FILTERED_SCOPES_INDEX + 1
 
 		return
 	end
 
-	local SORTED_SCOPES = {}
+	local var_11_1 = {}
 
-	for _, scope in pairs(in_scope) do
-		if type(scope) == "table" then
-			if scope.parent == parent and scope.frame_index == CURRENT_FRAME_INDEX then
-				SORTED_SCOPES[#SORTED_SCOPES + 1] = scope
+	for iter_11_0, iter_11_1 in pairs(arg_11_1) do
+		if type(iter_11_1) == "table" then
+			if iter_11_1.parent == var_11_0 and iter_11_1.frame_index == CURRENT_FRAME_INDEX then
+				var_11_1[#var_11_1 + 1] = iter_11_1
 			end
 
-			local stack = scope.stack
+			local var_11_2 = iter_11_1.stack
 
-			if stack then
-				for i = 1, stack.stack_index do
-					local entry = stack[i]
+			if var_11_2 then
+				for iter_11_2 = 1, var_11_2.stack_index do
+					local var_11_3 = var_11_2[iter_11_2]
 
-					SORTED_SCOPES[#SORTED_SCOPES + 1] = entry
+					var_11_1[#var_11_1 + 1] = var_11_3
 				end
 			end
 		end
 	end
 
-	local function sort_func(a, b)
-		local a_name = a.name
-		local b_name = b.name
-
-		return a_name < b_name
+	local function var_11_4(arg_12_0, arg_12_1)
+		return arg_12_0.name < arg_12_1.name
 	end
 
-	table.sort(SORTED_SCOPES, sort_func)
+	table.sort(var_11_1, var_11_4)
 
-	for _, scope in ipairs(SORTED_SCOPES) do
-		self:_apply_filter(scope)
+	for iter_11_3, iter_11_4 in ipairs(var_11_1) do
+		arg_11_0:_apply_filter(iter_11_4)
 	end
 end
 
-ImguiProfiler.post_update = function (self, t, dt)
+function ImguiProfiler.post_update(arg_13_0, arg_13_1, arg_13_2)
 	return
 end

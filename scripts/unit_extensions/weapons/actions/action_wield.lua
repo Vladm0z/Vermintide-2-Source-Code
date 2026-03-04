@@ -1,66 +1,62 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/actions/action_wield.lua
+-- chunkname: @scripts/unit_extensions/weapons/actions/action_wield.lua
 
 ActionWield = class(ActionWield, ActionBase)
 
-ActionWield.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionWield.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionWield.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionWield.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	self.input_extension = ScriptUnit.extension(owner_unit, "input_system")
-	self.inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
-	self.status_extension = ScriptUnit.extension(owner_unit, "status_system")
+	arg_1_0.input_extension = ScriptUnit.extension(arg_1_4, "input_system")
+	arg_1_0.inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
+	arg_1_0.status_extension = ScriptUnit.extension(arg_1_4, "status_system")
 end
 
-ActionWield.client_owner_start_action = function (self, new_action, t, chain_attack_data)
-	ActionWield.super.client_owner_start_action(self, new_action, t, chain_attack_data)
+function ActionWield.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	ActionWield.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 
-	local inventory_extension = self.inventory_extension
-	local input_extension = self.input_extension
+	local var_2_0 = arg_2_0.inventory_extension
+	local var_2_1 = arg_2_0.input_extension
 
-	self.current_action = new_action
-	self.action_time_started = t
+	arg_2_0.current_action = arg_2_1
+	arg_2_0.action_time_started = arg_2_2
 
-	if self.current_action.reset_aim_on_attack then
-		local first_person_extension = ScriptUnit.extension(self.owner_unit, "first_person_system")
-
-		first_person_extension:reset_aim_assist_multiplier()
+	if arg_2_0.current_action.reset_aim_on_attack then
+		ScriptUnit.extension(arg_2_0.owner_unit, "first_person_system"):reset_aim_assist_multiplier()
 	end
 
-	local new_slot, scroll_value, swap_from_storage_type = CharacterStateHelper.wield_input(input_extension, inventory_extension, "action_wield")
+	local var_2_2, var_2_3, var_2_4 = CharacterStateHelper.wield_input(var_2_1, var_2_0, "action_wield")
 
-	self.new_slot = new_slot
+	arg_2_0.new_slot = var_2_2
 
-	assert(self.new_slot, "went into wield action without input")
+	assert(arg_2_0.new_slot, "went into wield action without input")
 
-	if new_slot == inventory_extension:get_wielded_slot_name() or swap_from_storage_type then
-		inventory_extension:swap_equipment_from_storage(new_slot, swap_from_storage_type)
-		Managers.state.event:trigger("swap_equipment_from_storage", new_slot, inventory_extension:get_additional_items(new_slot))
+	if var_2_2 == var_2_0:get_wielded_slot_name() or var_2_4 then
+		var_2_0:swap_equipment_from_storage(var_2_2, var_2_4)
+		Managers.state.event:trigger("swap_equipment_from_storage", var_2_2, var_2_0:get_additional_items(var_2_2))
 	end
 
-	input_extension:set_last_scroll_value(scroll_value)
+	var_2_1:set_last_scroll_value(var_2_3)
 
-	local clear_input_buffer_from_wield = true
+	local var_2_5 = true
 
-	input_extension:clear_input_buffer(clear_input_buffer_from_wield)
+	var_2_1:clear_input_buffer(var_2_5)
 
-	local equipment = inventory_extension:equipment()
-	local slot_data = equipment.slots[new_slot]
-	local item_data = slot_data.item_data
-	local item_template = BackendUtils.get_item_template(item_data)
+	local var_2_6 = var_2_0:equipment().slots[var_2_2].item_data
+	local var_2_7 = BackendUtils.get_item_template(var_2_6)
 
-	item_template.next_action = item_template.action_on_wield
+	var_2_7.next_action = var_2_7.action_on_wield
 
-	input_extension:add_wield_cooldown(t + new_action.wield_cooldown)
-	inventory_extension:wield(self.new_slot)
+	var_2_1:add_wield_cooldown(arg_2_2 + arg_2_1.wield_cooldown)
+	var_2_0:wield(arg_2_0.new_slot)
 end
 
-ActionWield.client_owner_post_update = function (self, dt, t, world, can_damage)
+function ActionWield.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	return
 end
 
-ActionWield.finish = function (self, reason)
-	local status_extension = self.status_extension
+function ActionWield.finish(arg_4_0, arg_4_1)
+	local var_4_0 = arg_4_0.status_extension
 
-	if status_extension:is_zooming() then
-		status_extension:set_zooming(false)
+	if var_4_0:is_zooming() then
+		var_4_0:set_zooming(false)
 	end
 end

@@ -1,42 +1,40 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/actions/action_instant_wield.lua
+-- chunkname: @scripts/unit_extensions/weapons/actions/action_instant_wield.lua
 
 ActionInstantWield = class(ActionInstantWield, ActionBase)
 
-ActionInstantWield.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionInstantWield.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionInstantWield.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionInstantWield.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	self.input_extension = ScriptUnit.extension(owner_unit, "input_system")
-	self.inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
-	self.status_extension = ScriptUnit.extension(owner_unit, "status_system")
+	arg_1_0.input_extension = ScriptUnit.extension(arg_1_4, "input_system")
+	arg_1_0.inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
+	arg_1_0.status_extension = ScriptUnit.extension(arg_1_4, "status_system")
 end
 
-ActionInstantWield.client_owner_start_action = function (self, new_action, t, chain_attack_data)
-	ActionInstantWield.super.client_owner_start_action(self, new_action, t)
+function ActionInstantWield.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	ActionInstantWield.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
 
-	local slot = new_action.slot_to_wield
-	local action_on_wield = new_action.action_on_wield
-	local equipment = self.inventory_extension:equipment()
-	local slot_data = equipment.slots[slot]
+	local var_2_0 = arg_2_1.slot_to_wield
+	local var_2_1 = arg_2_1.action_on_wield
+	local var_2_2 = arg_2_0.inventory_extension:equipment().slots[var_2_0]
 
-	if slot_data then
-		local item_data = slot_data.item_data
-		local item_template = BackendUtils.get_item_template(item_data)
+	if var_2_2 then
+		local var_2_3 = var_2_2.item_data
 
-		item_template.next_action = action_on_wield
+		BackendUtils.get_item_template(var_2_3).next_action = var_2_1
 
-		self.inventory_extension:wield(slot)
-		self.input_extension:add_wield_cooldown(t)
+		arg_2_0.inventory_extension:wield(var_2_0)
+		arg_2_0.input_extension:add_wield_cooldown(arg_2_2)
 	end
 end
 
-ActionInstantWield.client_owner_post_update = function (self, dt, t, world, can_damage)
+function ActionInstantWield.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	return
 end
 
-ActionInstantWield.finish = function (self)
-	local status_extension = self.status_extension
+function ActionInstantWield.finish(arg_4_0)
+	local var_4_0 = arg_4_0.status_extension
 
-	if status_extension:is_zooming() then
-		status_extension:set_zooming(false)
+	if var_4_0:is_zooming() then
+		var_4_0:set_zooming(false)
 	end
 end

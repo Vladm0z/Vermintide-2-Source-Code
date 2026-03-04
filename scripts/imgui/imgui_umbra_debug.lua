@@ -1,192 +1,192 @@
-﻿-- chunkname: @scripts/imgui/imgui_umbra_debug.lua
+-- chunkname: @scripts/imgui/imgui_umbra_debug.lua
 
 ImguiUmbraDebug = class(ImguiUmbraDebug)
 
-local SHOULD_RELOAD = true
+local var_0_0 = true
 
-ImguiUmbraDebug.init = function (self)
-	self.enable_debug = false
-	self.debug_options = {
+function ImguiUmbraDebug.init(arg_1_0)
+	arg_1_0.enable_debug = false
+	arg_1_0.debug_options = {
 		{
-			enabled = false,
 			mask = 16,
 			name = "Draw Viewcell",
-			query = 0,
+			enabled = false,
+			query = 0
 		},
 		{
-			enabled = false,
 			mask = 32,
 			name = "Draw Portals",
-			query = 0,
+			enabled = false,
+			query = 0
 		},
 		{
-			enabled = false,
 			mask = 64,
 			name = "Draw Visibility Lines",
-			query = 0,
+			enabled = false,
+			query = 0
 		},
 		{
-			enabled = false,
 			mask = 128,
 			name = "Draw Object bounds",
-			query = 0,
+			enabled = false,
+			query = 0
 		},
 		{
-			enabled = false,
 			mask = 256,
 			name = "Draw Visible Volume",
-			query = 0,
+			enabled = false,
+			query = 0
 		},
 		{
-			enabled = false,
 			mask = 512,
 			name = "Draw View Frustum",
-			query = 0,
+			enabled = false,
+			query = 0
 		},
 		{
-			enabled = false,
 			mask = 32,
 			name = "Draw Shadow Projection",
-			query = 1,
+			enabled = false,
+			query = 1
 		},
 		{
-			enabled = false,
 			mask = 1024,
 			name = "Show Statistics",
-			query = 0,
+			enabled = false,
+			query = 0
 		},
 		{
-			enabled = false,
 			mask = 1,
 			name = "Single Threaded Query",
-			query = 2,
+			enabled = false,
+			query = 2
 		},
 		{
-			enabled = false,
 			mask = 2,
 			name = "Show Occlusion Buffer",
-			query = 2,
+			enabled = false,
+			query = 2
 		},
 		{
-			enabled = false,
 			mask = 4,
 			name = "Show Shadow Mask Buffer",
-			query = 2,
+			enabled = false,
+			query = 2
 		},
 		{
-			enabled = false,
 			mask = 8,
 			name = "Draw Visible Objects",
-			query = 2,
+			enabled = false,
+			query = 2
 		},
 		{
-			enabled = false,
 			mask = 16,
 			name = "Draw Culled Shadow Casters",
-			query = 2,
+			enabled = false,
+			query = 2
 		},
 		{
-			enabled = false,
 			mask = 32,
 			name = "Draw Visible Shadow Casters",
-			query = 2,
-		},
+			enabled = false,
+			query = 2
+		}
 	}
-	self.debug_config = {}
-	self.debug_config.portal_query_distance = {
+	arg_1_0.debug_config = {}
+	arg_1_0.debug_config.portal_query_distance = {
+		speed = 1,
 		idx = 0,
-		max = 100,
 		min = 0,
-		speed = 1,
+		max = 100
 	}
-	self.debug_config.portal_query_accurate_occlusion_threshold = {
+	arg_1_0.debug_config.portal_query_accurate_occlusion_threshold = {
+		speed = 1,
 		idx = 1,
-		max = 255,
 		min = 0,
-		speed = 1,
+		max = 255
 	}
-	self.debug_config.portal_query_contribution_threshold_distance = {
+	arg_1_0.debug_config.portal_query_contribution_threshold_distance = {
+		speed = 1,
 		idx = 2,
-		max = 255,
 		min = 0,
-		speed = 1,
+		max = 255
 	}
-	self.debug_config.portal_query_contribution_threshold = {
+	arg_1_0.debug_config.portal_query_contribution_threshold = {
+		speed = 1,
 		idx = 3,
-		max = 1,
 		min = 0,
-		speed = 1,
+		max = 1
 	}
-	self.sub_windows = {
+	arg_1_0.sub_windows = {
 		{
-			option = self.debug_options[10],
-			draw = World.imgui_draw_umbra_debug_occlusion_buffer,
+			option = arg_1_0.debug_options[10],
+			draw = World.imgui_draw_umbra_debug_occlusion_buffer
 		},
 		{
-			option = self.debug_options[11],
-			draw = World.imgui_draw_umbra_debug_shadowmask_buffer,
+			option = arg_1_0.debug_options[11],
+			draw = World.imgui_draw_umbra_debug_shadowmask_buffer
 		},
 		{
-			option = self.debug_options[8],
-			draw = World.imgui_draw_umbra_debug_statistics,
-		},
+			option = arg_1_0.debug_options[8],
+			draw = World.imgui_draw_umbra_debug_statistics
+		}
 	}
 end
 
-ImguiUmbraDebug.update = function (self)
-	if SHOULD_RELOAD then
+function ImguiUmbraDebug.update(arg_2_0)
+	if var_0_0 then
 		ImguiUmbraDebug:init()
 
-		SHOULD_RELOAD = false
+		var_0_0 = false
 	end
 end
 
-ImguiUmbraDebug.is_persistent = function (self)
-	return self:_has_floater()
+function ImguiUmbraDebug.is_persistent(arg_3_0)
+	return arg_3_0:_has_floater()
 end
 
-ImguiUmbraDebug._has_floater = function (self)
-	local subwindow_count = 0
+function ImguiUmbraDebug._has_floater(arg_4_0)
+	local var_4_0 = 0
 
-	if self.enable_debug == false then
+	if arg_4_0.enable_debug == false then
 		return false
 	end
 
-	for i, v in ipairs(self.sub_windows) do
-		subwindow_count = subwindow_count + (v.option.enabled == true and 1 or 0)
+	for iter_4_0, iter_4_1 in ipairs(arg_4_0.sub_windows) do
+		var_4_0 = var_4_0 + (iter_4_1.option.enabled == true and 1 or 0)
 	end
 
-	return subwindow_count > 0
+	return var_4_0 > 0
 end
 
-ImguiUmbraDebug.draw = function (self, is_open)
+function ImguiUmbraDebug.draw(arg_5_0, arg_5_1)
 	if not Managers.world:has_world("level_world") then
 		return
 	end
 
-	local world = Managers.world:world("level_world")
-	local do_close = false
+	local var_5_0 = Managers.world:world("level_world")
+	local var_5_1 = false
 
-	if is_open then
-		do_close = Imgui.begin_window("Umbra Debug")
-		self.enable_debug = Imgui.checkbox("Enable Debug", self.enable_debug)
+	if arg_5_1 then
+		var_5_1 = Imgui.begin_window("Umbra Debug")
+		arg_5_0.enable_debug = Imgui.checkbox("Enable Debug", arg_5_0.enable_debug)
 
-		if self.enable_debug then
+		if arg_5_0.enable_debug then
 			if Imgui.tree_node("Debug render options", true) then
-				for i, v in ipairs(self.debug_options) do
-					v.enabled = Imgui.checkbox(v.name, v.enabled)
+				for iter_5_0, iter_5_1 in ipairs(arg_5_0.debug_options) do
+					iter_5_1.enabled = Imgui.checkbox(iter_5_1.name, iter_5_1.enabled)
 				end
 
 				Imgui.tree_pop()
 			end
 
 			if Imgui.tree_node("Config parameters") then
-				for k, v in pairs(self.debug_config) do
-					local val = World.get_umbra_debug_config_value(world, v.idx)
-					local new_val = Imgui.slider_float(k, val, v.min, v.max, v.speed)
+				for iter_5_2, iter_5_3 in pairs(arg_5_0.debug_config) do
+					local var_5_2 = World.get_umbra_debug_config_value(var_5_0, iter_5_3.idx)
+					local var_5_3 = Imgui.slider_float(iter_5_2, var_5_2, iter_5_3.min, iter_5_3.max, iter_5_3.speed)
 
-					if val ~= new_val then
-						World.set_umbra_debug_config_value(world, v.idx, new_val)
+					if var_5_2 ~= var_5_3 then
+						World.set_umbra_debug_config_value(var_5_0, iter_5_3.idx, var_5_3)
 					end
 				end
 
@@ -197,27 +197,27 @@ ImguiUmbraDebug.draw = function (self, is_open)
 		Imgui.end_window("Umbra Debug")
 	end
 
-	World.set_umbra_debug_enable(world, self.enable_debug)
+	World.set_umbra_debug_enable(var_5_0, arg_5_0.enable_debug)
 
-	if self.enable_debug then
-		for k, v in pairs(self.debug_options) do
-			World.set_umbra_debug_flag(world, v.query, v.mask, v.enabled)
+	if arg_5_0.enable_debug then
+		for iter_5_4, iter_5_5 in pairs(arg_5_0.debug_options) do
+			World.set_umbra_debug_flag(var_5_0, iter_5_5.query, iter_5_5.mask, iter_5_5.enabled)
 		end
 	end
 
-	if self:_has_floater() then
-		self:_update_floater(world)
+	if arg_5_0:_has_floater() then
+		arg_5_0:_update_floater(var_5_0)
 	end
 
-	return do_close
+	return var_5_1
 end
 
-ImguiUmbraDebug._update_floater = function (self, world)
+function ImguiUmbraDebug._update_floater(arg_6_0, arg_6_1)
 	Imgui.begin_window("Umbra Floater")
 
-	for i, v in ipairs(self.sub_windows) do
-		if v.option.enabled then
-			v.draw(world)
+	for iter_6_0, iter_6_1 in ipairs(arg_6_0.sub_windows) do
+		if iter_6_1.option.enabled then
+			iter_6_1.draw(arg_6_1)
 		end
 	end
 

@@ -1,201 +1,201 @@
-﻿-- chunkname: @scripts/unit_extensions/ai_supplementary/corruptor_beam_extension.lua
+-- chunkname: @scripts/unit_extensions/ai_supplementary/corruptor_beam_extension.lua
 
 CorruptorBeamExtension = class(CorruptorBeamExtension)
 
-local position_lookup = POSITION_LOOKUP
+local var_0_0 = POSITION_LOOKUP
 
-CorruptorBeamExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	local world = extension_init_context.world
-
-	self.world = world
-	self.unit = unit
-	self.is_server = Managers.player.is_server
-	self.state = "no_state"
-	self.projectile_speed = BreedActions.chaos_corruptor_sorcerer.grab_attack.projectile_speed
-	self.projectile_unit_name = "units/hub_elements/empty"
-	self.projectile_effect_name = "fx/chr_corruptor_projectile"
-	self.beam_effect_name = "fx/chr_corruptor_beam"
-	self.beam_effect_name_start = "fx/chr_corruptor_in"
-	self.beam_effect_name_end = "fx/chr_corruptor_out"
-	self.projectile_sound = "Play_enemy_corruptor_sorcerer_throw_magic"
-	self.stop_projectile_sound = "Stop_enemy_corruptor_sorcerer_throw_magic"
-	self.beam_start_sound = "Play_enemy_corruptor_sorcerer_sucking_magic"
-	self.stop_beam_start_sound = "Stop_enemy_corruptor_sorcerer_sucking_magic"
-	self.beam_end_sound = "Play_enemy_corruptor_sorcerer_pull_magic"
-	self.stop_beam_end_sound = "Stop_enemy_corruptor_sorcerer_pull_magic"
-	self.aimed_at_position = nil
+function CorruptorBeamExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.world = arg_1_1.world
+	arg_1_0.unit = arg_1_2
+	arg_1_0.is_server = Managers.player.is_server
+	arg_1_0.state = "no_state"
+	arg_1_0.projectile_speed = BreedActions.chaos_corruptor_sorcerer.grab_attack.projectile_speed
+	arg_1_0.projectile_unit_name = "units/hub_elements/empty"
+	arg_1_0.projectile_effect_name = "fx/chr_corruptor_projectile"
+	arg_1_0.beam_effect_name = "fx/chr_corruptor_beam"
+	arg_1_0.beam_effect_name_start = "fx/chr_corruptor_in"
+	arg_1_0.beam_effect_name_end = "fx/chr_corruptor_out"
+	arg_1_0.projectile_sound = "Play_enemy_corruptor_sorcerer_throw_magic"
+	arg_1_0.stop_projectile_sound = "Stop_enemy_corruptor_sorcerer_throw_magic"
+	arg_1_0.beam_start_sound = "Play_enemy_corruptor_sorcerer_sucking_magic"
+	arg_1_0.stop_beam_start_sound = "Stop_enemy_corruptor_sorcerer_sucking_magic"
+	arg_1_0.beam_end_sound = "Play_enemy_corruptor_sorcerer_pull_magic"
+	arg_1_0.stop_beam_end_sound = "Stop_enemy_corruptor_sorcerer_pull_magic"
+	arg_1_0.aimed_at_position = nil
 end
 
-CorruptorBeamExtension.destroy = function (self)
-	self:remove_vfx_and_sfx()
+function CorruptorBeamExtension.destroy(arg_2_0)
+	arg_2_0:remove_vfx_and_sfx()
 end
 
-CorruptorBeamExtension.on_remove_extension = function (self, unit, extension_name)
-	self:remove_vfx_and_sfx(unit)
+function CorruptorBeamExtension.on_remove_extension(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_0:remove_vfx_and_sfx(arg_3_1)
 end
 
-CorruptorBeamExtension.remove_vfx_and_sfx = function (self, unit)
-	local world = self.world
-	local target_unit = self.target_unit
-	local self_unit = unit or self.unit
-	local wwise_world = Managers.world:wwise_world(world)
+function CorruptorBeamExtension.remove_vfx_and_sfx(arg_4_0, arg_4_1)
+	local var_4_0 = arg_4_0.world
+	local var_4_1 = arg_4_0.target_unit
+	local var_4_2
 
-	if self.beam_start_sound_id and WwiseWorld.is_playing(wwise_world, self.beam_start_sound_id) then
-		WwiseWorld.stop_event(wwise_world, self.beam_start_sound_id)
+	var_4_2 = arg_4_1 or arg_4_0.unit
 
-		self.beam_start_sound_id = nil
+	local var_4_3 = Managers.world:wwise_world(var_4_0)
+
+	if arg_4_0.beam_start_sound_id and WwiseWorld.is_playing(var_4_3, arg_4_0.beam_start_sound_id) then
+		WwiseWorld.stop_event(var_4_3, arg_4_0.beam_start_sound_id)
+
+		arg_4_0.beam_start_sound_id = nil
 	end
 
-	if self.beam_end_sound_id and WwiseWorld.is_playing(wwise_world, self.beam_end_sound_id) then
-		WwiseWorld.stop_event(wwise_world, self.beam_end_sound_id)
+	if arg_4_0.beam_end_sound_id and WwiseWorld.is_playing(var_4_3, arg_4_0.beam_end_sound_id) then
+		WwiseWorld.stop_event(var_4_3, arg_4_0.beam_end_sound_id)
 
-		self.beam_end_sound_id = nil
+		arg_4_0.beam_end_sound_id = nil
 	end
 
-	if self.projectile_unit then
-		World.destroy_unit(world, self.projectile_unit)
+	if arg_4_0.projectile_unit then
+		World.destroy_unit(var_4_0, arg_4_0.projectile_unit)
 
-		self.projectile_unit = nil
+		arg_4_0.projectile_unit = nil
 	end
 
-	if self.beam_effect then
-		World.destroy_particles(world, self.beam_effect)
+	if arg_4_0.beam_effect then
+		World.destroy_particles(var_4_0, arg_4_0.beam_effect)
 
-		self.target_unit = nil
-		self.beam_effect = nil
+		arg_4_0.target_unit = nil
+		arg_4_0.beam_effect = nil
 	end
 
-	if self.beam_effect_start then
-		World.stop_spawning_particles(world, self.beam_effect_start)
-		World.stop_spawning_particles(world, self.beam_effect_end)
+	if arg_4_0.beam_effect_start then
+		World.stop_spawning_particles(var_4_0, arg_4_0.beam_effect_start)
+		World.stop_spawning_particles(var_4_0, arg_4_0.beam_effect_end)
 
-		self.beam_effect_start = nil
-		self.beam_effect_end = nil
+		arg_4_0.beam_effect_start = nil
+		arg_4_0.beam_effect_end = nil
 	end
 
-	self.state = nil
-	self.projectile_position = nil
-	self.aimed_at_position = nil
+	arg_4_0.state = nil
+	arg_4_0.projectile_position = nil
+	arg_4_0.aimed_at_position = nil
 end
 
-CorruptorBeamExtension.set_state = function (self, state, target_unit)
-	if not target_unit then
+function CorruptorBeamExtension.set_state(arg_5_0, arg_5_1, arg_5_2)
+	if not arg_5_2 then
 		print("Corruptor beam tried to set state to nil target unit")
-		self:remove_vfx_and_sfx()
+		arg_5_0:remove_vfx_and_sfx()
 
 		return
 	end
 
-	local self_pos = position_lookup[self.unit] + Vector3.up()
-	local world = self.world
+	local var_5_0 = var_0_0[arg_5_0.unit] + Vector3.up()
+	local var_5_1 = arg_5_0.world
 
-	if state == "projectile" and Unit.alive(target_unit) then
-		self.beam_effect = World.create_particles(world, self.beam_effect_name, self_pos)
-		self.beam_effect_variable_id = World.find_particles_variable(world, self.beam_effect_name, "trail_length")
+	if arg_5_1 == "projectile" and Unit.alive(arg_5_2) then
+		arg_5_0.beam_effect = World.create_particles(var_5_1, arg_5_0.beam_effect_name, var_5_0)
+		arg_5_0.beam_effect_variable_id = World.find_particles_variable(var_5_1, arg_5_0.beam_effect_name, "trail_length")
 
-		local projectile_unit = World.spawn_unit(world, self.projectile_unit_name, self_pos, Quaternion.identity())
-		local pose = Matrix4x4.identity()
+		local var_5_2 = World.spawn_unit(var_5_1, arg_5_0.projectile_unit_name, var_5_0, Quaternion.identity())
+		local var_5_3 = Matrix4x4.identity()
 
-		self.projectile_effect = World.create_particles(world, self.projectile_effect_name, self_pos)
-		self.state = state
-		self.target_unit = target_unit
+		arg_5_0.projectile_effect = World.create_particles(var_5_1, arg_5_0.projectile_effect_name, var_5_0)
+		arg_5_0.state = arg_5_1
+		arg_5_0.target_unit = arg_5_2
 
-		World.link_particles(world, self.projectile_effect, projectile_unit, 0, pose, "stop")
+		World.link_particles(var_5_1, arg_5_0.projectile_effect, var_5_2, 0, var_5_3, "stop")
 
-		self.projectile_unit = projectile_unit
+		arg_5_0.projectile_unit = var_5_2
 
-		WwiseUtils.trigger_unit_event(world, self.projectile_sound, projectile_unit, 0)
-	elseif state == "start_beam" and Unit.alive(target_unit) then
-		self.beam_effect_start = World.create_particles(world, self.beam_effect_name_start, self_pos)
-		self.beam_effect_end = World.create_particles(world, self.beam_effect_name_end, self_pos)
-		self.target_unit = target_unit
+		WwiseUtils.trigger_unit_event(var_5_1, arg_5_0.projectile_sound, var_5_2, 0)
+	elseif arg_5_1 == "start_beam" and Unit.alive(arg_5_2) then
+		arg_5_0.beam_effect_start = World.create_particles(var_5_1, arg_5_0.beam_effect_name_start, var_5_0)
+		arg_5_0.beam_effect_end = World.create_particles(var_5_1, arg_5_0.beam_effect_name_end, var_5_0)
+		arg_5_0.target_unit = arg_5_2
 
-		if self.projectile_unit then
-			WwiseUtils.trigger_unit_event(world, self.stop_projectile_sound, self.projectile_unit, 0)
+		if arg_5_0.projectile_unit then
+			WwiseUtils.trigger_unit_event(var_5_1, arg_5_0.stop_projectile_sound, arg_5_0.projectile_unit, 0)
 
-			local start_sound_id, start_source = WwiseUtils.trigger_unit_event(world, self.beam_start_sound, self.unit, Unit.node(self.unit, "a_voice"))
+			local var_5_4, var_5_5 = WwiseUtils.trigger_unit_event(var_5_1, arg_5_0.beam_start_sound, arg_5_0.unit, Unit.node(arg_5_0.unit, "a_voice"))
 
-			self.beam_start_sound_id = start_sound_id
+			arg_5_0.beam_start_sound_id = var_5_4
 
-			local end_sound_id, end_source = WwiseUtils.trigger_unit_event(world, self.beam_end_sound, target_unit, Unit.node(target_unit, "j_neck"))
+			local var_5_6, var_5_7 = WwiseUtils.trigger_unit_event(var_5_1, arg_5_0.beam_end_sound, arg_5_2, Unit.node(arg_5_2, "j_neck"))
 
-			self.beam_end_sound_id = end_sound_id
+			arg_5_0.beam_end_sound_id = var_5_6
 		end
 
-		self.state = state
-	elseif state == "stop_beam" then
-		self:remove_vfx_and_sfx()
+		arg_5_0.state = arg_5_1
+	elseif arg_5_1 == "stop_beam" then
+		arg_5_0:remove_vfx_and_sfx()
 
-		self.state = state
+		arg_5_0.state = arg_5_1
 	end
 end
 
-CorruptorBeamExtension._get_positions = function (self, dt, self_pos, real_target_position)
-	if not self.aimed_at_position then
-		self.aimed_at_position = Vector3Box(real_target_position + 1 * Vector3.normalize(real_target_position - self_pos))
+function CorruptorBeamExtension._get_positions(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	if not arg_6_0.aimed_at_position then
+		arg_6_0.aimed_at_position = Vector3Box(arg_6_3 + 1 * Vector3.normalize(arg_6_3 - arg_6_2))
 	end
 
-	local aimed_at_position = self.aimed_at_position:unbox()
-	local current_pos = Unit.local_position(self.projectile_unit, 0)
-	local projectile_direction = Vector3.normalize(aimed_at_position - current_pos)
-	local wanted_position = current_pos + projectile_direction * self.projectile_speed * dt
+	local var_6_0 = arg_6_0.aimed_at_position:unbox()
+	local var_6_1 = Unit.local_position(arg_6_0.projectile_unit, 0)
+	local var_6_2 = var_6_1 + Vector3.normalize(var_6_0 - var_6_1) * arg_6_0.projectile_speed * arg_6_1
 
-	return aimed_at_position, wanted_position
+	return var_6_0, var_6_2
 end
 
-CorruptorBeamExtension.update = function (self, unit, input, dt, context, t)
-	local state = self.state
-	local target_unit = self.target_unit
-	local projectile_unit = self.projectile_unit
+function CorruptorBeamExtension.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+	local var_7_0 = arg_7_0.state
+	local var_7_1 = arg_7_0.target_unit
+	local var_7_2 = arg_7_0.projectile_unit
 
-	if Unit.alive(target_unit) then
-		local world = self.world
-		local self_pos = Unit.world_position(unit, Unit.node(unit, "a_voice"))
-		local real_target_position = Unit.world_position(target_unit, Unit.node(target_unit, "j_neck"))
-		local direction = Vector3.normalize(real_target_position - self_pos)
-		local distance = Vector3.distance(self_pos, real_target_position)
-		local rotation = Quaternion.look(direction)
-		local material_name = "beam"
-		local variable_name = "uv_dynamic_scaling"
+	if Unit.alive(var_7_1) then
+		local var_7_3 = arg_7_0.world
+		local var_7_4 = Unit.world_position(arg_7_1, Unit.node(arg_7_1, "a_voice"))
+		local var_7_5 = Unit.world_position(var_7_1, Unit.node(var_7_1, "j_neck"))
+		local var_7_6 = Vector3.normalize(var_7_5 - var_7_4)
+		local var_7_7 = Vector3.distance(var_7_4, var_7_5)
+		local var_7_8 = Quaternion.look(var_7_6)
+		local var_7_9 = "beam"
+		local var_7_10 = "uv_dynamic_scaling"
 
-		if state == "projectile" and self.beam_effect then
-			local aimed_at_position, wanted_position = self:_get_positions(dt, self_pos, real_target_position)
-			local distance_to_particle = Vector3.distance(self_pos, wanted_position)
-			local caster_to_projectile_direction = Vector3.normalize(wanted_position - self_pos)
-			local caster_to_projectile_rotation = Quaternion.look(caster_to_projectile_direction)
+		if var_7_0 == "projectile" and arg_7_0.beam_effect then
+			local var_7_11, var_7_12 = arg_7_0:_get_positions(arg_7_3, var_7_4, var_7_5)
+			local var_7_13 = Vector3.distance(var_7_4, var_7_12)
+			local var_7_14 = Vector3.normalize(var_7_12 - var_7_4)
+			local var_7_15 = Quaternion.look(var_7_14)
 
-			Unit.set_local_position(projectile_unit, 0, wanted_position)
-			World.move_particles(world, self.beam_effect, self_pos, caster_to_projectile_rotation)
-			World.set_particles_variable(world, self.beam_effect, self.beam_effect_variable_id, Vector3(0.3, distance_to_particle, 0))
-			World.set_particles_material_scalar(world, self.beam_effect, material_name, variable_name, distance_to_particle * 1)
+			Unit.set_local_position(var_7_2, 0, var_7_12)
+			World.move_particles(var_7_3, arg_7_0.beam_effect, var_7_4, var_7_15)
+			World.set_particles_variable(var_7_3, arg_7_0.beam_effect, arg_7_0.beam_effect_variable_id, Vector3(0.3, var_7_13, 0))
+			World.set_particles_material_scalar(var_7_3, arg_7_0.beam_effect, var_7_9, var_7_10, var_7_13 * 1)
 
-			if self.is_server then
-				local blackboard = BLACKBOARDS[unit]
+			if arg_7_0.is_server then
+				local var_7_16 = BLACKBOARDS[arg_7_1]
 
-				if blackboard.projectile_position then
-					blackboard.projectile_position:store(wanted_position)
+				if var_7_16.projectile_position then
+					var_7_16.projectile_position:store(var_7_12)
 				end
 
-				if not blackboard.projectile_target_position then
-					blackboard.projectile_target_position = Vector3Box(aimed_at_position)
+				if not var_7_16.projectile_target_position then
+					var_7_16.projectile_target_position = Vector3Box(var_7_11)
 				else
-					blackboard.projectile_target_position:store(aimed_at_position)
+					var_7_16.projectile_target_position:store(var_7_11)
 				end
 			end
-		elseif state == "start_beam" and self.beam_effect and self.beam_effect_start and self.beam_effect_end then
-			if projectile_unit then
-				World.destroy_unit(world, projectile_unit)
+		elseif var_7_0 == "start_beam" and arg_7_0.beam_effect and arg_7_0.beam_effect_start and arg_7_0.beam_effect_end then
+			if var_7_2 then
+				World.destroy_unit(var_7_3, var_7_2)
 
-				self.projectile_unit = nil
+				arg_7_0.projectile_unit = nil
 			end
 
-			local rotation_inverse = Quaternion.look(-direction)
+			local var_7_17 = Quaternion.look(-var_7_6)
 
-			World.move_particles(world, self.beam_effect, self_pos, rotation)
-			World.set_particles_variable(world, self.beam_effect, self.beam_effect_variable_id, Vector3(0.3, distance, 0))
-			World.set_particles_material_scalar(world, self.beam_effect, material_name, variable_name, distance * 1)
-			World.move_particles(world, self.beam_effect_start, self_pos, rotation)
-			World.move_particles(world, self.beam_effect_end, real_target_position, rotation_inverse)
+			World.move_particles(var_7_3, arg_7_0.beam_effect, var_7_4, var_7_8)
+			World.set_particles_variable(var_7_3, arg_7_0.beam_effect, arg_7_0.beam_effect_variable_id, Vector3(0.3, var_7_7, 0))
+			World.set_particles_material_scalar(var_7_3, arg_7_0.beam_effect, var_7_9, var_7_10, var_7_7 * 1)
+			World.move_particles(var_7_3, arg_7_0.beam_effect_start, var_7_4, var_7_8)
+			World.move_particles(var_7_3, arg_7_0.beam_effect_end, var_7_5, var_7_17)
 		end
 	end
 end

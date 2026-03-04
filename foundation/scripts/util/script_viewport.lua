@@ -1,15 +1,15 @@
-﻿-- chunkname: @foundation/scripts/util/script_viewport.lua
+-- chunkname: @foundation/scripts/util/script_viewport.lua
 
 ScriptViewport = ScriptViewport or {}
 
-ScriptViewport.active = function (viewport)
-	return Viewport.get_data(viewport, "active")
+function ScriptViewport.active(arg_1_0)
+	return Viewport.get_data(arg_1_0, "active")
 end
 
-ScriptViewport.camera = function (viewport)
-	return Viewport.get_data(viewport, "camera")
+function ScriptViewport.camera(arg_2_0)
+	return Viewport.get_data(arg_2_0, "camera")
 end
 
-ScriptViewport.shadow_cull_camera = function (viewport)
-	return Viewport.get_data(viewport, "shadow_cull_camera")
+function ScriptViewport.shadow_cull_camera(arg_3_0)
+	return Viewport.get_data(arg_3_0, "shadow_cull_camera")
 end

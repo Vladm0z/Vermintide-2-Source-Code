@@ -1,2477 +1,2351 @@
-﻿-- chunkname: @scripts/ui/views/hero_view/windows/hero_window_item_customization.lua
+-- chunkname: @scripts/ui/views/hero_view/windows/hero_window_item_customization.lua
 
 require("scripts/ui/views/menu_world_previewer")
 
-local crafting_recipes, crafting_recipes_by_name, crafting_recipes_lookup = dofile("scripts/settings/crafting/crafting_recipes")
-local definitions = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_item_customization_definitions")
-local scenegraph_definition = definitions.scenegraph_definition
-local animation_definitions = definitions.animation_definitions
-local widget_definitions = definitions.widgets
-local crafting_widget_definitions = definitions.crafting_widgets
-local info_widget_definitions = definitions.info_widgets
-local weapon_illusion_base_widgets_definitions = definitions.weapon_illusion_base_widgets
-local trait_reroll_widget_definitions = definitions.trait_reroll_widgets
-local upgrade_widget_definitions = definitions.upgrade_widgets
-local property_reroll_widget_definitions = definitions.property_reroll_widgets
-local viewport_widget_definition = definitions.viewport_widget
-local create_property_option = definitions.create_property_option
-local create_trait_option = definitions.create_trait_option
-local create_illusion_button = definitions.create_illusion_button
-local background_rect_definition = definitions.background_rect
-local generic_input_actions = definitions.generic_input_actions
-local states = {
+local var_0_0, var_0_1, var_0_2 = dofile("scripts/settings/crafting/crafting_recipes")
+local var_0_3 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_item_customization_definitions")
+local var_0_4 = var_0_3.scenegraph_definition
+local var_0_5 = var_0_3.animation_definitions
+local var_0_6 = var_0_3.widgets
+local var_0_7 = var_0_3.crafting_widgets
+local var_0_8 = var_0_3.info_widgets
+local var_0_9 = var_0_3.weapon_illusion_base_widgets
+local var_0_10 = var_0_3.trait_reroll_widgets
+local var_0_11 = var_0_3.upgrade_widgets
+local var_0_12 = var_0_3.property_reroll_widgets
+local var_0_13 = var_0_3.viewport_widget
+local var_0_14 = var_0_3.create_property_option
+local var_0_15 = var_0_3.create_trait_option
+local var_0_16 = var_0_3.create_illusion_button
+local var_0_17 = var_0_3.background_rect
+local var_0_18 = var_0_3.generic_input_actions
+local var_0_19 = {
 	item_setting = {
-		craft_complete_func_name = "_apply_weapon_skin_craft_complete",
-		draw_function = "_state_draw_overview",
-		fov = 30,
-		gamepad_input_func = "_update_skin_gamepad_input",
 		setup_function = "_state_setup_overview",
+		craft_complete_func_name = "_apply_weapon_skin_craft_complete",
+		gamepad_input_func = "_update_skin_gamepad_input",
 		transition_time = 0.3,
+		fov = 30,
+		draw_function = "_state_draw_overview",
 		camera_position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	item_properties = {
-		craft_complete_func_name = "_state_setup_property_reroll",
-		draw_function = "_state_draw_property_reroll",
-		fov = 30,
 		setup_function = "_state_setup_property_reroll",
+		craft_complete_func_name = "_state_setup_property_reroll",
 		transition_time = 0.3,
+		fov = 30,
+		draw_function = "_state_draw_property_reroll",
 		camera_position = {
 			0,
 			-1,
-			0,
+			0
 		},
 		recipe_by_slot_type = {
-			melee = "reroll_weapon_properties",
-			necklace = "reroll_jewellery_properties",
-			ranged = "reroll_weapon_properties",
-			ring = "reroll_jewellery_properties",
 			trinket = "reroll_jewellery_properties",
-		},
+			ranged = "reroll_weapon_properties",
+			necklace = "reroll_jewellery_properties",
+			ring = "reroll_jewellery_properties",
+			melee = "reroll_weapon_properties"
+		}
 	},
 	item_trait = {
-		craft_complete_func_name = "_state_setup_trait_reroll",
-		draw_function = "_state_draw_trait_reroll",
-		fov = 30,
 		setup_function = "_state_setup_trait_reroll",
+		craft_complete_func_name = "_state_setup_trait_reroll",
 		transition_time = 0.3,
+		fov = 30,
+		draw_function = "_state_draw_trait_reroll",
 		camera_position = {
 			0,
 			-1,
-			0,
+			0
 		},
 		recipe_by_slot_type = {
-			melee = "reroll_weapon_traits",
-			necklace = "reroll_jewellery_traits",
-			ranged = "reroll_weapon_traits",
-			ring = "reroll_jewellery_traits",
 			trinket = "reroll_jewellery_traits",
-		},
+			ranged = "reroll_weapon_traits",
+			necklace = "reroll_jewellery_traits",
+			ring = "reroll_jewellery_traits",
+			melee = "reroll_weapon_traits"
+		}
 	},
 	item_upgrade = {
-		craft_complete_func_name = "_upgrade_item_craft_complete",
-		draw_function = "_state_draw_upgrade",
-		fov = 30,
 		setup_function = "_state_setup_upgrade",
+		craft_complete_func_name = "_upgrade_item_craft_complete",
 		transition_time = 0.3,
+		fov = 30,
+		draw_function = "_state_draw_upgrade",
 		camera_position = {
 			0,
 			-1,
-			0,
+			0
 		},
 		recipe_by_rarity = {
 			common = "upgrade_item_rarity_rare",
-			exotic = "upgrade_item_rarity_unique",
 			plentiful = "upgrade_item_rarity_common",
 			rare = "upgrade_item_rarity_exotic",
-		},
-	},
+			exotic = "upgrade_item_rarity_unique"
+		}
+	}
 }
 
 HeroWindowItemCustomization = class(HeroWindowItemCustomization)
 HeroWindowItemCustomization.NAME = "HeroWindowItemCustomization"
 
-HeroWindowItemCustomization.on_enter = function (self, params)
+function HeroWindowItemCustomization.on_enter(arg_1_0, arg_1_1)
 	print("[HeroViewWindow] Enter Substate HeroWindowItemCustomization")
 
-	self._params = params
-	self._parent = params.parent
+	arg_1_0._params = arg_1_1
+	arg_1_0._parent = arg_1_1.parent
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_1_0 = arg_1_1.ingame_ui_context
 
-	self._ui_renderer = ingame_ui_context.ui_renderer
-	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self._career_index = params.career_index
-	self._profile_index = params.profile_index
-
-	local hero_data = SPProfiles[self._profile_index]
-	local career_data = hero_data.careers[self._career_index]
-
-	self._career_name = career_data.name
-	self._render_settings = {
+	arg_1_0._ui_renderer = var_1_0.ui_renderer
+	arg_1_0._ui_top_renderer = var_1_0.ui_top_renderer
+	arg_1_0._career_index = arg_1_1.career_index
+	arg_1_0._profile_index = arg_1_1.profile_index
+	arg_1_0._career_name = SPProfiles[arg_1_0._profile_index].careers[arg_1_0._career_index].name
+	arg_1_0._render_settings = {
 		alpha_multiplier = 1,
-		snap_pixel_positions = true,
+		snap_pixel_positions = true
 	}
-	self._state_render_settings = {
-		alpha_multiplier = 0,
+	arg_1_0._state_render_settings = {
+		alpha_multiplier = 0
 	}
-	self._animations = {}
-	self._ui_animations = {}
-	self._animation_callbacks = {}
-	self._craft_progress = 0
+	arg_1_0._animations = {}
+	arg_1_0._ui_animations = {}
+	arg_1_0._animation_callbacks = {}
+	arg_1_0._craft_progress = 0
 
-	local item = params.item_to_customize
+	local var_1_1 = arg_1_1.item_to_customize
 
-	self._item_backend_id = item.backend_id
+	arg_1_0._item_backend_id = var_1_1.backend_id
 
-	self:_create_ui_elements()
-	self:_setup_menu_input_description()
-	self:_present_item(item)
-	self:_find_equipment_slot()
-	self:_setup_availble_states(item)
-	self:_option_selected(1, true)
-	self:_start_transition_animation("on_enter")
+	arg_1_0:_create_ui_elements()
+	arg_1_0:_setup_menu_input_description()
+	arg_1_0:_present_item(var_1_1)
+	arg_1_0:_find_equipment_slot()
+	arg_1_0:_setup_availble_states(var_1_1)
+	arg_1_0:_option_selected(1, true)
+	arg_1_0:_start_transition_animation("on_enter")
 end
 
-HeroWindowItemCustomization._setup_menu_input_description = function (self)
-	local gui_layer = UILayer.default + 300
-	local input_service = self._parent:window_input_service()
+function HeroWindowItemCustomization._setup_menu_input_description(arg_2_0)
+	local var_2_0 = UILayer.default + 300
+	local var_2_1 = arg_2_0._parent:window_input_service()
 
-	self._menu_input_description = MenuInputDescriptionUI:new(nil, self._ui_top_renderer, input_service, 5, gui_layer, generic_input_actions.default, true)
+	arg_2_0._menu_input_description = MenuInputDescriptionUI:new(nil, arg_2_0._ui_top_renderer, var_2_1, 5, var_2_0, var_0_18.default, true)
 
-	self._menu_input_description:set_input_description(nil)
+	arg_2_0._menu_input_description:set_input_description(nil)
 end
 
-HeroWindowItemCustomization._find_equipment_slot = function (self)
-	local backend_items = Managers.backend:get_interface("items")
-	local equipment_slot_name
+function HeroWindowItemCustomization._find_equipment_slot(arg_3_0)
+	local var_3_0 = Managers.backend:get_interface("items")
+	local var_3_1
 
-	for _, slot_data in pairs(InventorySettings.equipment_slots) do
-		equipment_slot_name = slot_data.name
+	for iter_3_0, iter_3_1 in pairs(InventorySettings.equipment_slots) do
+		var_3_1 = iter_3_1.name
 
-		local equipped_item_backend_id = backend_items:get_loadout_item_id(self._career_name, equipment_slot_name)
-
-		if equipped_item_backend_id == self._item_backend_id then
+		if var_3_0:get_loadout_item_id(arg_3_0._career_name, var_3_1) == arg_3_0._item_backend_id then
 			break
 		end
 	end
 
-	if not equipment_slot_name then
-		local item = self:_get_item(self._item_backend_id)
-		local item_data = item.data
-		local slot_type = item_data.slot_type
+	if not var_3_1 then
+		local var_3_2 = arg_3_0:_get_item(arg_3_0._item_backend_id).data.slot_type
 
-		equipment_slot_name = InventorySettings.slot_names_by_type[slot_type][1]
+		var_3_1 = InventorySettings.slot_names_by_type[var_3_2][1]
 	end
 
-	self._equipment_slot_name = equipment_slot_name
+	arg_3_0._equipment_slot_name = var_3_1
 end
 
-HeroWindowItemCustomization._setup_availble_states = function (self, item)
-	local item_data = item.data
-	local item_rarity = item.rarity or item_data.rarity or "default"
-	local rarity_rating_table = UISettings.item_rarity_order
-	local rarity_rating = rarity_rating_table[item_rarity] or rarity_rating_table.default
+function HeroWindowItemCustomization._setup_availble_states(arg_4_0, arg_4_1)
+	local var_4_0 = arg_4_1.data
+	local var_4_1 = arg_4_1.rarity or var_4_0.rarity or "default"
+	local var_4_2 = UISettings.item_rarity_order
+	local var_4_3 = var_4_2[var_4_1] or var_4_2.default
 
-	if item_rarity == "default" or item_rarity == "promo" then
-		self._available_states = {
-			"item_setting",
+	if var_4_1 == "default" or var_4_1 == "promo" then
+		arg_4_0._available_states = {
+			"item_setting"
 		}
-	elseif rarity_rating <= rarity_rating_table.unique then
-		self._available_states = {
+	elseif var_4_3 <= var_4_2.unique then
+		arg_4_0._available_states = {
+			"item_setting",
+			"item_properties",
+			"item_trait"
+		}
+	elseif var_4_3 <= var_4_2.exotic then
+		arg_4_0._available_states = {
 			"item_setting",
 			"item_properties",
 			"item_trait",
+			"item_upgrade"
 		}
-	elseif rarity_rating <= rarity_rating_table.exotic then
-		self._available_states = {
+	elseif var_4_3 <= var_4_2.common then
+		arg_4_0._available_states = {
 			"item_setting",
 			"item_properties",
-			"item_trait",
-			"item_upgrade",
+			"item_upgrade"
 		}
-	elseif rarity_rating <= rarity_rating_table.common then
-		self._available_states = {
+	elseif var_4_3 <= var_4_2.plentiful then
+		arg_4_0._available_states = {
 			"item_setting",
-			"item_properties",
-			"item_upgrade",
-		}
-	elseif rarity_rating <= rarity_rating_table.plentiful then
-		self._available_states = {
-			"item_setting",
-			"item_upgrade",
+			"item_upgrade"
 		}
 	end
 
-	self._states = {}
+	arg_4_0._states = {}
 
-	local widgets_by_name = self._widgets_by_name
+	local var_4_4 = arg_4_0._widgets_by_name
 
-	for state_name, _ in pairs(states) do
-		local available = table.find(self._available_states, state_name)
+	for iter_4_0, iter_4_1 in pairs(var_0_19) do
+		local var_4_5 = table.find(arg_4_0._available_states, iter_4_0)
 
-		if available then
-			self._states[state_name] = states[state_name]
+		if var_4_5 then
+			arg_4_0._states[iter_4_0] = var_0_19[iter_4_0]
 		end
 
-		local widget = widgets_by_name[state_name]
-
-		widget.content.visible = available
+		var_4_4[iter_4_0].content.visible = var_4_5
 	end
 
-	if self._state and not self._states[self._state] then
-		local widget = self._widgets_by_name[self._state]
+	if arg_4_0._state and not arg_4_0._states[arg_4_0._state] then
+		local var_4_6 = arg_4_0._widgets_by_name[arg_4_0._state]
 
-		widget.content.button_hotspot.is_selected = false
-		widget.style.hover_frame.saturated = false
+		var_4_6.content.button_hotspot.is_selected = false
+		var_4_6.style.hover_frame.saturated = false
 
-		self:_option_selected(1, true)
+		arg_4_0:_option_selected(1, true)
 	end
 end
 
-HeroWindowItemCustomization._set_camera_position = function (self, camera_position)
-	local preview_widget = self._preview_widget
-	local previewer_pass_data = preview_widget.element.pass_data[1]
-	local viewport = previewer_pass_data.viewport
-	local camera = ScriptViewport.camera(viewport)
+function HeroWindowItemCustomization._set_camera_position(arg_5_0, arg_5_1)
+	local var_5_0 = arg_5_0._preview_widget.element.pass_data[1].viewport
+	local var_5_1 = ScriptViewport.camera(var_5_0)
 
-	ScriptCamera.set_local_position(camera, camera_position)
+	ScriptCamera.set_local_position(var_5_1, arg_5_1)
 end
 
-HeroWindowItemCustomization._camera_position = function (self)
-	local preview_widget = self._preview_widget
-	local previewer_pass_data = preview_widget.element.pass_data[1]
-	local viewport = previewer_pass_data.viewport
-	local camera = ScriptViewport.camera(viewport)
+function HeroWindowItemCustomization._camera_position(arg_6_0)
+	local var_6_0 = arg_6_0._preview_widget.element.pass_data[1].viewport
+	local var_6_1 = ScriptViewport.camera(var_6_0)
 
-	return ScriptCamera.position(camera)
+	return ScriptCamera.position(var_6_1)
 end
 
-HeroWindowItemCustomization._set_camera_fov = function (self, fov)
-	local preview_widget = self._preview_widget
-	local previewer_pass_data = preview_widget.element.pass_data[1]
-	local viewport = previewer_pass_data.viewport
-	local camera = ScriptViewport.camera(viewport)
+function HeroWindowItemCustomization._set_camera_fov(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_0._preview_widget.element.pass_data[1].viewport
+	local var_7_1 = ScriptViewport.camera(var_7_0)
 
-	Camera.set_vertical_fov(camera, math.pi * fov / 180)
+	Camera.set_vertical_fov(var_7_1, math.pi * arg_7_1 / 180)
 end
 
-HeroWindowItemCustomization._camera_fov = function (self)
-	local preview_widget = self._preview_widget
-	local previewer_pass_data = preview_widget.element.pass_data[1]
-	local viewport = previewer_pass_data.viewport
-	local camera = ScriptViewport.camera(viewport)
-	local vertical_fov = Camera.vertical_fov(camera)
+function HeroWindowItemCustomization._camera_fov(arg_8_0)
+	local var_8_0 = arg_8_0._preview_widget.element.pass_data[1].viewport
+	local var_8_1 = ScriptViewport.camera(var_8_0)
+	local var_8_2 = Camera.vertical_fov(var_8_1)
 
-	return math.floor(vertical_fov * 180 / math.pi)
+	return math.floor(var_8_2 * 180 / math.pi)
 end
 
-HeroWindowItemCustomization._change_state = function (self, new_state)
-	local same_state = self._state == new_state
+function HeroWindowItemCustomization._change_state(arg_9_0, arg_9_1)
+	if not (arg_9_0._state == arg_9_1) then
+		local var_9_0 = arg_9_0._states[arg_9_1]
 
-	if not same_state then
-		local states = self._states
-		local state_data = states[new_state]
+		fassert(var_9_0, "[HeroWindowItemCustomization:_change_state] There is no state called %s", tostring(arg_9_1))
 
-		fassert(state_data, "[HeroWindowItemCustomization:_change_state] There is no state called %s", tostring(new_state))
+		arg_9_0._state = arg_9_1
 
-		self._state = new_state
+		local var_9_1 = var_9_0.setup_function
 
-		local setup_function = state_data.setup_function
-
-		if setup_function then
-			self[setup_function](self)
+		if var_9_1 then
+			arg_9_0[var_9_1](arg_9_0)
 		end
 
-		self._state_render_settings.alpha_multiplier = 0
+		arg_9_0._state_render_settings.alpha_multiplier = 0
 	end
 
-	self._state_start_fov = self:_camera_fov()
+	arg_9_0._state_start_fov = arg_9_0:_camera_fov()
 
-	local camera_position = self:_camera_position()
+	local var_9_2 = arg_9_0:_camera_position()
 
-	self._state_start_camera_position = {
-		camera_position.x,
-		camera_position.y,
-		camera_position.z,
+	arg_9_0._state_start_camera_position = {
+		var_9_2.x,
+		var_9_2.y,
+		var_9_2.z
 	}
-	self._state_transition_timer = 0
+	arg_9_0._state_transition_timer = 0
 
-	if self._skin_dirty then
-		local item = self:_get_item(self._item_backend_id)
+	if arg_9_0._skin_dirty then
+		local var_9_3 = arg_9_0:_get_item(arg_9_0._item_backend_id)
 
-		self:_present_item(item, true)
+		arg_9_0:_present_item(var_9_3, true)
 
-		self._skin_dirty = nil
+		arg_9_0._skin_dirty = nil
 	end
 end
 
-HeroWindowItemCustomization._get_item = function (self, backend_id)
-	self._item_backend_id = backend_id
+function HeroWindowItemCustomization._get_item(arg_10_0, arg_10_1)
+	arg_10_0._item_backend_id = arg_10_1
 
-	local backend_items = Managers.backend:get_interface("items")
-
-	return backend_items:get_item_from_id(backend_id)
+	return Managers.backend:get_interface("items"):get_item_from_id(arg_10_1)
 end
 
-HeroWindowItemCustomization._start_transition_animation = function (self, animation_name)
-	local params = {
-		render_settings = self._render_settings,
-		state_render_settings = self._state_render_settings,
+function HeroWindowItemCustomization._start_transition_animation(arg_11_0, arg_11_1)
+	local var_11_0 = {
+		render_settings = arg_11_0._render_settings,
+		state_render_settings = arg_11_0._state_render_settings
 	}
-	local widgets = {}
-	local anim_id = self._ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
+	local var_11_1 = {}
+	local var_11_2 = arg_11_0._ui_animator:start_animation(arg_11_1, var_11_1, var_0_4, var_11_0)
 
-	self._animations[animation_name] = anim_id
+	arg_11_0._animations[arg_11_1] = var_11_2
 end
 
-HeroWindowItemCustomization._create_ui_elements = function (self)
-	if self._preview_widget then
-		UIWidget.destroy(self._ui_top_renderer, self._preview_widget)
+function HeroWindowItemCustomization._create_ui_elements(arg_12_0)
+	if arg_12_0._preview_widget then
+		UIWidget.destroy(arg_12_0._ui_top_renderer, arg_12_0._preview_widget)
 
-		self._preview_widget = nil
+		arg_12_0._preview_widget = nil
 	end
 
-	local ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	local var_12_0 = UISceneGraph.init_scenegraph(var_0_4)
 
-	self._ui_scenegraph = ui_scenegraph
-	self._background_widget = UIWidget.init(background_rect_definition)
+	arg_12_0._ui_scenegraph = var_12_0
+	arg_12_0._background_widget = UIWidget.init(var_0_17)
 
-	local widgets = {}
-	local widgets_by_name = {}
+	local var_12_1 = {}
+	local var_12_2 = {}
 
-	for name, widget_definition in pairs(widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_12_0, iter_12_1 in pairs(var_0_6) do
+		local var_12_3 = UIWidget.init(iter_12_1)
 
-		widgets[#widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_12_1[#var_12_1 + 1] = var_12_3
+		var_12_2[iter_12_0] = var_12_3
 	end
 
-	self._widgets = widgets
-	self._widgets_by_name = widgets_by_name
+	arg_12_0._widgets = var_12_1
+	arg_12_0._widgets_by_name = var_12_2
 
-	local crafting_widgets = {}
+	local var_12_4 = {}
 
-	for name, widget_definition in pairs(crafting_widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_12_2, iter_12_3 in pairs(var_0_7) do
+		local var_12_5 = UIWidget.init(iter_12_3)
 
-		crafting_widgets[#crafting_widgets + 1] = widget
-		self._widgets_by_name[name] = widget
+		var_12_4[#var_12_4 + 1] = var_12_5
+		arg_12_0._widgets_by_name[iter_12_2] = var_12_5
 	end
 
-	self._crafting_widgets = crafting_widgets
+	arg_12_0._crafting_widgets = var_12_4
 
-	self:_create_preview_widget()
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	arg_12_0:_create_preview_widget()
+	UIRenderer.clear_scenegraph_queue(arg_12_0._ui_renderer)
 
-	self._ui_animator = UIAnimator:new(ui_scenegraph, animation_definitions)
+	arg_12_0._ui_animator = UIAnimator:new(var_12_0, var_0_5)
 end
 
-HeroWindowItemCustomization._create_preview_widget = function (self)
-	local item_preview_definition = self:_create_item_preview_widget_definition()
-	local item_preview_widget = UIWidget.init(item_preview_definition)
+function HeroWindowItemCustomization._create_preview_widget(arg_13_0)
+	local var_13_0 = arg_13_0:_create_item_preview_widget_definition()
 
-	self._preview_widget = item_preview_widget
+	arg_13_0._preview_widget = UIWidget.init(var_13_0)
 
-	self:_register_object_sets(self._preview_widget, item_preview_definition)
+	arg_13_0:_register_object_sets(arg_13_0._preview_widget, var_13_0)
 end
 
-HeroWindowItemCustomization._create_item_preview_widget_definition = function (self)
-	local widget = {
-		element = {},
+function HeroWindowItemCustomization._create_item_preview_widget_definition(arg_14_0)
+	local var_14_0 = {
+		element = {}
 	}
-	local passes = {
+	local var_14_1 = {
 		{
 			pass_type = "viewport",
-			style_id = "viewport",
+			style_id = "viewport"
 		},
 		{
-			content_id = "button_hotspot",
 			pass_type = "hotspot",
-		},
+			content_id = "button_hotspot"
+		}
 	}
-	local content = {
+	local var_14_2 = {
 		activated = true,
-		button_hotspot = {},
+		button_hotspot = {}
 	}
-	local style = {
+	local var_14_3 = {
 		viewport = {
-			enable_sub_gui = true,
-			fov = 65,
+			viewport_type = "default_forward",
 			layer = 962,
-			level_name = "levels/ui_store_preview/world",
 			shading_environment = "environment/ui_store_preview",
 			viewport_name = "item_preview",
-			viewport_type = "default_forward",
+			level_name = "levels/ui_store_preview/world",
+			enable_sub_gui = true,
+			fov = 65,
 			world_name = "item_preview",
 			object_sets = LevelResource.object_set_names("levels/ui_store_preview/world"),
 			camera_position = {
 				0,
 				0,
-				0,
+				0
 			},
 			camera_lookat = {
 				0,
 				0,
-				0,
-			},
-		},
+				0
+			}
+		}
 	}
 
-	widget.element.passes = passes
-	widget.content = content
-	widget.style = style
-	widget.offset = {
+	var_14_0.element.passes = var_14_1
+	var_14_0.content = var_14_2
+	var_14_0.style = var_14_3
+	var_14_0.offset = {
 		0,
 		0,
-		0,
+		0
 	}
-	widget.scenegraph_id = "item_preview"
+	var_14_0.scenegraph_id = "item_preview"
 
-	return widget
+	return var_14_0
 end
 
-HeroWindowItemCustomization.on_exit = function (self, params)
+function HeroWindowItemCustomization.on_exit(arg_15_0, arg_15_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowItemCustomization")
 
-	self._ui_animator = nil
+	arg_15_0._ui_animator = nil
 
-	if self._previewer then
-		self._previewer:destroy()
+	if arg_15_0._previewer then
+		arg_15_0._previewer:destroy()
 	end
 
-	if self._preview_widget then
-		UIWidget.destroy(self._ui_top_renderer, self._preview_widget)
+	if arg_15_0._preview_widget then
+		UIWidget.destroy(arg_15_0._ui_top_renderer, arg_15_0._preview_widget)
 	end
 
-	if self._character_dirty then
-		self._parent:update_skin_sync()
-	end
-end
-
-HeroWindowItemCustomization.play_sound = function (self, sound_event)
-	self._parent:play_sound(sound_event)
-end
-
-HeroWindowItemCustomization.update = function (self, dt, t)
-	self:_handle_gamepad_activity()
-	self:_update_craft_response()
-
-	if self._item_dirty then
-		self:_update_item_rarity()
-		self:_update_property_option()
-		self:_update_trait_option()
-		self:_update_upgrade_option()
-
-		self._item_dirty = false
-	end
-
-	self:_update_active_preview()
-	self:_update_animations(dt)
-
-	local parent = self._parent
-	local input_service = parent:window_input_service()
-
-	self:_handle_gamepad_input(input_service, dt, t)
-	self:_handle_input(input_service, dt, t)
-
-	if self._previewer then
-		self._previewer:update(dt, t, input_service)
-	end
-
-	local scrollbar_logic = self._scrollbar_logic
-
-	if scrollbar_logic then
-		scrollbar_logic:update(dt, t)
-	end
-
-	self:_update_scroll_position()
-	self:_draw(input_service, dt)
-end
-
-HeroWindowItemCustomization.post_update = function (self, dt, t)
-	if self._previewer then
-		self._previewer:post_update(dt, t)
+	if arg_15_0._character_dirty then
+		arg_15_0._parent:update_skin_sync()
 	end
 end
 
-HeroWindowItemCustomization._register_object_sets = function (self, viewport_widget, viewport_definition)
-	local viewport_definition_style = viewport_definition.style.viewport
-	local viewport_widget_content = viewport_widget.content
-	local viewport_widget_element = viewport_widget.element
-	local pass_data = viewport_widget_element.pass_data[1]
-	local level_name = viewport_definition_style.level_name
-	local object_sets = {}
-	local available_level_sets = LevelResource.object_set_names(level_name)
+function HeroWindowItemCustomization.play_sound(arg_16_0, arg_16_1)
+	arg_16_0._parent:play_sound(arg_16_1)
+end
 
-	for _, set_name in ipairs(available_level_sets) do
-		object_sets[set_name] = {
+function HeroWindowItemCustomization.update(arg_17_0, arg_17_1, arg_17_2)
+	arg_17_0:_handle_gamepad_activity()
+	arg_17_0:_update_craft_response()
+
+	if arg_17_0._item_dirty then
+		arg_17_0:_update_item_rarity()
+		arg_17_0:_update_property_option()
+		arg_17_0:_update_trait_option()
+		arg_17_0:_update_upgrade_option()
+
+		arg_17_0._item_dirty = false
+	end
+
+	arg_17_0:_update_active_preview()
+	arg_17_0:_update_animations(arg_17_1)
+
+	local var_17_0 = arg_17_0._parent:window_input_service()
+
+	arg_17_0:_handle_gamepad_input(var_17_0, arg_17_1, arg_17_2)
+	arg_17_0:_handle_input(var_17_0, arg_17_1, arg_17_2)
+
+	if arg_17_0._previewer then
+		arg_17_0._previewer:update(arg_17_1, arg_17_2, var_17_0)
+	end
+
+	local var_17_1 = arg_17_0._scrollbar_logic
+
+	if var_17_1 then
+		var_17_1:update(arg_17_1, arg_17_2)
+	end
+
+	arg_17_0:_update_scroll_position()
+	arg_17_0:_draw(var_17_0, arg_17_1)
+end
+
+function HeroWindowItemCustomization.post_update(arg_18_0, arg_18_1, arg_18_2)
+	if arg_18_0._previewer then
+		arg_18_0._previewer:post_update(arg_18_1, arg_18_2)
+	end
+end
+
+function HeroWindowItemCustomization._register_object_sets(arg_19_0, arg_19_1, arg_19_2)
+	local var_19_0 = arg_19_2.style.viewport
+	local var_19_1 = arg_19_1.content
+	local var_19_2 = arg_19_1.element.pass_data[1]
+	local var_19_3 = var_19_0.level_name
+	local var_19_4 = {}
+	local var_19_5 = LevelResource.object_set_names(var_19_3)
+
+	for iter_19_0, iter_19_1 in ipairs(var_19_5) do
+		var_19_4[iter_19_1] = {
 			set_enabled = true,
-			units = LevelResource.unit_indices_in_object_set(level_name, set_name),
+			units = LevelResource.unit_indices_in_object_set(var_19_3, iter_19_1)
 		}
 	end
 
-	viewport_widget_content.object_set_data = {
-		world = pass_data.world,
-		level = pass_data.level,
-		object_sets = object_sets,
-		level_name = level_name,
+	var_19_1.object_set_data = {
+		world = var_19_2.world,
+		level = var_19_2.level,
+		object_sets = var_19_4,
+		level_name = var_19_3
 	}
 
-	self:_show_object_set(nil, true)
+	arg_19_0:_show_object_set(nil, true)
 end
 
-HeroWindowItemCustomization._show_object_set = function (self, object_set_name, force_disable)
-	if not self._preview_widget then
+function HeroWindowItemCustomization._show_object_set(arg_20_0, arg_20_1, arg_20_2)
+	if not arg_20_0._preview_widget then
 		print("[StoreWindowItemPreview:show_object_set] Viewport not initiated")
 
 		return
 	end
 
-	local viewport_widget_content = self._preview_widget.content
-	local object_set_data = viewport_widget_content.object_set_data
-	local world = object_set_data.world
-	local level = object_set_data.level
-	local level_name = object_set_data.level_name
-	local object_sets = object_set_data.object_sets
+	local var_20_0 = arg_20_0._preview_widget.content.object_set_data
+	local var_20_1 = var_20_0.world
+	local var_20_2 = var_20_0.level
+	local var_20_3 = var_20_0.level_name
+	local var_20_4 = var_20_0.object_sets
 
-	if not object_sets[object_set_name] and not force_disable then
-		print(string.format("[StoreWindowItemPreview:show_object_set] No object set called %q in level %q", object_set_name, level_name))
+	if not var_20_4[arg_20_1] and not arg_20_2 then
+		print(string.format("[StoreWindowItemPreview:show_object_set] No object set called %q in level %q", arg_20_1, var_20_3))
 
 		return
 	end
 
-	for set_name, object_set_data in pairs(object_sets) do
-		local set_enabled = object_set_data.set_enabled
+	for iter_20_0, iter_20_1 in pairs(var_20_4) do
+		local var_20_5 = iter_20_1.set_enabled
 
-		if set_enabled and set_name ~= object_set_name then
-			local units = object_set_data.units
+		if var_20_5 and iter_20_0 ~= arg_20_1 then
+			local var_20_6 = iter_20_1.units
 
-			for _, unit_index in ipairs(units) do
-				local unit = Level.unit_by_index(level, unit_index)
+			for iter_20_2, iter_20_3 in ipairs(var_20_6) do
+				local var_20_7 = Level.unit_by_index(var_20_2, iter_20_3)
 
-				Unit.set_unit_visibility(unit, false)
+				Unit.set_unit_visibility(var_20_7, false)
 			end
 
-			object_set_data.set_enabled = false
-		elseif not set_enabled and set_name == object_set_name then
-			local units = object_set_data.units
+			iter_20_1.set_enabled = false
+		elseif not var_20_5 and iter_20_0 == arg_20_1 then
+			local var_20_8 = iter_20_1.units
 
-			for _, unit_index in ipairs(units) do
-				local unit = Level.unit_by_index(level, unit_index)
+			for iter_20_4, iter_20_5 in ipairs(var_20_8) do
+				local var_20_9 = Level.unit_by_index(var_20_2, iter_20_5)
 
-				Unit.set_unit_visibility(unit, true)
+				Unit.set_unit_visibility(var_20_9, true)
 
-				if Unit.has_data(unit, "LevelEditor", "is_gizmo_unit") then
-					local is_gizmo = Unit.get_data(unit, "LevelEditor", "is_gizmo_unit")
-					local is_reflection_probe = Unit.is_a(unit, "core/stingray_renderer/helper_units/reflection_probe/reflection_probe")
+				if Unit.has_data(var_20_9, "LevelEditor", "is_gizmo_unit") then
+					local var_20_10 = Unit.get_data(var_20_9, "LevelEditor", "is_gizmo_unit")
+					local var_20_11 = Unit.is_a(var_20_9, "core/stingray_renderer/helper_units/reflection_probe/reflection_probe")
 
-					if is_gizmo and not is_reflection_probe then
-						Unit.flow_event(unit, "hide_helper_mesh")
+					if var_20_10 and not var_20_11 then
+						Unit.flow_event(var_20_9, "hide_helper_mesh")
 					end
 				end
 			end
 
-			object_set_data.set_enabled = true
+			iter_20_1.set_enabled = true
 		end
 	end
 end
 
-HeroWindowItemCustomization._update_environment = function (self, item_preview_environment, force_default)
-	if not self._preview_widget then
+function HeroWindowItemCustomization._update_environment(arg_21_0, arg_21_1, arg_21_2)
+	if not arg_21_0._preview_widget then
 		return
 	end
 
-	local item_preview_environment = item_preview_environment or "default"
-	local viewport_widget_content = self._preview_widget.content
-	local object_set_data = viewport_widget_content.object_set_data
-	local world = object_set_data.world
-	local shading_settings = World.get_data(world, "shading_settings")
+	local var_21_0 = arg_21_1 or "default"
+	local var_21_1 = arg_21_0._preview_widget.content.object_set_data.world
 
-	shading_settings[1] = force_default and "default" or item_preview_environment
+	World.get_data(var_21_1, "shading_settings")[1] = arg_21_2 and "default" or var_21_0
 end
 
-HeroWindowItemCustomization._is_button_hover = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	return hotspot.is_hover
+function HeroWindowItemCustomization._is_button_hover(arg_22_0, arg_22_1)
+	return arg_22_1.content.button_hotspot.is_hover
 end
 
-HeroWindowItemCustomization._is_button_hover_enter = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	return hotspot.on_hover_enter
+function HeroWindowItemCustomization._is_button_hover_enter(arg_23_0, arg_23_1)
+	return arg_23_1.content.button_hotspot.on_hover_enter
 end
 
-HeroWindowItemCustomization._is_button_pressed = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
+function HeroWindowItemCustomization._is_button_pressed(arg_24_0, arg_24_1)
+	local var_24_0 = arg_24_1.content.button_hotspot
 
-	if hotspot.on_release then
-		hotspot.on_release = false
+	if var_24_0.on_release then
+		var_24_0.on_release = false
 
 		return true
 	end
 end
 
-HeroWindowItemCustomization._navigation_menu_disabled = function (self)
-	local disabled = self._mission_selection_grid ~= nil
-
-	return disabled
+function HeroWindowItemCustomization._navigation_menu_disabled(arg_25_0)
+	return arg_25_0._mission_selection_grid ~= nil
 end
 
-HeroWindowItemCustomization._handle_gamepad_input = function (self, input_service, dt, t)
-	local parent = self._parent
-	local input_handled = false
-	local navigation_menu_disabled = self:_navigation_menu_disabled()
-	local widgets_by_name = self._widgets_by_name
+function HeroWindowItemCustomization._handle_gamepad_input(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+	local var_26_0 = arg_26_0._parent
+	local var_26_1 = false
+	local var_26_2 = arg_26_0:_navigation_menu_disabled()
+	local var_26_3 = arg_26_0._widgets_by_name
 
-	if not navigation_menu_disabled then
-		local state_data = self._states[self._state]
-		local gamepad_input_func = state_data.gamepad_input_func
+	if not var_26_2 then
+		local var_26_4 = arg_26_0._states[arg_26_0._state].gamepad_input_func
 
-		if gamepad_input_func then
-			input_handled = self[gamepad_input_func](self, input_service, dt, t)
+		if var_26_4 then
+			var_26_1 = arg_26_0[var_26_4](arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 		end
 
-		if not input_handled then
-			local input_move_up = input_service:get("move_up_hold_continuous")
-			local input_move_down = input_service:get("move_down_hold_continuous")
-			local input_index = self._input_index or 1
+		if not var_26_1 then
+			local var_26_5 = arg_26_1:get("move_up_hold_continuous")
+			local var_26_6 = arg_26_1:get("move_down_hold_continuous")
+			local var_26_7 = arg_26_0._input_index or 1
 
-			if input_move_down then
-				input_index = math.min(input_index + 1, #self._available_states)
-			elseif input_move_up then
-				input_index = math.max(input_index - 1, 1)
+			if var_26_6 then
+				var_26_7 = math.min(var_26_7 + 1, #arg_26_0._available_states)
+			elseif var_26_5 then
+				var_26_7 = math.max(var_26_7 - 1, 1)
 			end
 
-			if input_index ~= self._input_index then
-				self:_handle_new_selection(input_index)
-				self:_option_selected(self._input_index)
+			if var_26_7 ~= arg_26_0._input_index then
+				arg_26_0:_handle_new_selection(var_26_7)
+				arg_26_0:_option_selected(arg_26_0._input_index)
 
-				input_handled = true
+				var_26_1 = true
 			end
 
-			local widget = self._info_widgets_by_name.weapon_diagram
+			local var_26_8 = arg_26_0._info_widgets_by_name.weapon_diagram
 
-			if widget then
-				widget.content.show_info = not input_handled and input_service:get("trigger_cycle_previous_hold")
+			if var_26_8 then
+				var_26_8.content.show_info = not var_26_1 and arg_26_1:get("trigger_cycle_previous_hold")
 			end
 
-			if self._material_items and self._current_recipe_name and self._has_all_crafting_requirements then
-				local craft_button = widgets_by_name.craft_button
-				local experience_bar = widgets_by_name.experience_bar
-				local craft_progress = self._craft_progress
+			if arg_26_0._material_items and arg_26_0._current_recipe_name and arg_26_0._has_all_crafting_requirements then
+				local var_26_9 = var_26_3.craft_button
+				local var_26_10 = var_26_3.experience_bar
+				local var_26_11 = arg_26_0._craft_progress
 
-				if craft_button.content.visible then
-					local speed = 2
+				if var_26_9.content.visible then
+					local var_26_12 = 2
 
-					if not UIUtils.is_button_held(craft_button) then
-						if input_service:get("refresh_hold") or input_service:get("skip") then
-							craft_progress = math.clamp(craft_progress + dt * speed, 0, 1)
+					if not UIUtils.is_button_held(var_26_9) then
+						if arg_26_1:get("refresh_hold") or arg_26_1:get("skip") then
+							var_26_11 = math.clamp(var_26_11 + arg_26_2 * var_26_12, 0, 1)
 						else
-							craft_progress = math.max(craft_progress - dt * speed, 0)
+							var_26_11 = math.max(var_26_11 - arg_26_2 * var_26_12, 0)
 						end
 					end
 
-					local progress = math.easeOutCubic(craft_progress)
+					local var_26_13 = math.easeOutCubic(var_26_11)
 
-					self._ui_scenegraph.experience_bar.size[1] = 390 * progress
-					experience_bar.content.texture_id.uvs[2][1] = progress
-					experience_bar.content.visible = true
+					arg_26_0._ui_scenegraph.experience_bar.size[1] = 390 * var_26_13
+					var_26_10.content.texture_id.uvs[2][1] = var_26_13
+					var_26_10.content.visible = true
 
-					if craft_progress >= 1 then
-						self:_craft(self._material_items, self._current_recipe_name)
+					if var_26_11 >= 1 then
+						arg_26_0:_craft(arg_26_0._material_items, arg_26_0._current_recipe_name)
 
-						craft_progress = 0
+						var_26_11 = 0
 					end
 
-					self._craft_progress = craft_progress
+					arg_26_0._craft_progress = var_26_11
 				end
 			end
 		end
 	end
 end
 
-HeroWindowItemCustomization._handle_input = function (self, input_service, dt, t)
-	local parent = self._parent
-	local input_handled = false
-	local widgets_by_name = self._widgets_by_name
-	local hover_index
+function HeroWindowItemCustomization._handle_input(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+	local var_27_0 = arg_27_0._parent
+	local var_27_1 = false
+	local var_27_2 = arg_27_0._widgets_by_name
+	local var_27_3
 
-	for i = 1, #self._available_states do
-		local widget_name = self._available_states[i]
-		local widget = widgets_by_name[widget_name]
-		local is_selected = widget.content.button_hotspot.is_selected
+	for iter_27_0 = 1, #arg_27_0._available_states do
+		local var_27_4 = var_27_2[arg_27_0._available_states[iter_27_0]]
 
-		if not is_selected and self:_is_button_hover_enter(widget) then
-			self:play_sound("Play_hud_hover")
+		if not var_27_4.content.button_hotspot.is_selected and arg_27_0:_is_button_hover_enter(var_27_4) then
+			arg_27_0:play_sound("Play_hud_hover")
 		end
 
-		if self:_is_button_hover(widget) then
-			hover_index = i
+		if arg_27_0:_is_button_hover(var_27_4) then
+			var_27_3 = iter_27_0
 		end
 
-		if self:_is_button_pressed(widget) then
-			self:_option_selected(i)
+		if arg_27_0:_is_button_pressed(var_27_4) then
+			arg_27_0:_option_selected(iter_27_0)
 
-			input_handled = true
+			local var_27_5 = true
 		end
 	end
 
-	local item = self:_get_item(self._item_backend_id)
-	local item_key = item.key
-	local default_skin = WeaponSkins.default_skins[item_key]
-	local item_skin = item.skin
-	local illusion_widgets = self._illusion_widgets
-	local weapon_illusion_base_widgets_by_name = self._weapon_illusion_base_widgets_by_name
-	local illusions_name_content = weapon_illusion_base_widgets_by_name.illusions_name.content
-	local selected_skin, hover_skin
+	local var_27_6 = arg_27_0:_get_item(arg_27_0._item_backend_id)
+	local var_27_7 = var_27_6.key
+	local var_27_8 = WeaponSkins.default_skins[var_27_7]
+	local var_27_9 = var_27_6.skin
+	local var_27_10 = arg_27_0._illusion_widgets
+	local var_27_11 = arg_27_0._weapon_illusion_base_widgets_by_name.illusions_name.content
+	local var_27_12
+	local var_27_13
 
-	for i = 1, #illusion_widgets do
-		local widget = illusion_widgets[i]
+	for iter_27_1 = 1, #var_27_10 do
+		local var_27_14 = var_27_10[iter_27_1]
 
-		if UIUtils.is_button_hover(widget) then
-			hover_skin = widget.content.skin_key
-		elseif UIUtils.is_button_selected(widget) then
-			selected_skin = widget.content.skin_key
+		if UIUtils.is_button_hover(var_27_14) then
+			var_27_13 = var_27_14.content.skin_key
+		elseif UIUtils.is_button_selected(var_27_14) then
+			var_27_12 = var_27_14.content.skin_key
 		end
 	end
 
-	local current_skin = hover_skin or selected_skin or item_skin or default_skin
-	local skin_data = current_skin and WeaponSkins.skins[current_skin]
+	local var_27_15 = var_27_13 or var_27_12 or var_27_9 or var_27_8
+	local var_27_16 = var_27_15 and WeaponSkins.skins[var_27_15]
 
-	illusions_name_content.text = skin_data and Localize(skin_data.display_name) or ""
+	var_27_11.text = var_27_16 and Localize(var_27_16.display_name) or ""
 
-	if self._material_items and self._current_recipe_name then
-		local craft_button = widgets_by_name.craft_button
-		local experience_bar = widgets_by_name.experience_bar
-		local craft_progress = self._craft_progress
-		local speed = 2
+	if arg_27_0._material_items and arg_27_0._current_recipe_name then
+		local var_27_17 = var_27_2.craft_button
+		local var_27_18 = var_27_2.experience_bar
+		local var_27_19 = arg_27_0._craft_progress
+		local var_27_20 = 2
 
-		if not input_service:get("refresh_hold") and not input_service:get("skip") then
-			if UIUtils.is_button_held(craft_button) then
-				craft_progress = math.clamp(craft_progress + dt * speed, 0, 1)
+		if not arg_27_1:get("refresh_hold") and not arg_27_1:get("skip") then
+			if UIUtils.is_button_held(var_27_17) then
+				var_27_19 = math.clamp(var_27_19 + arg_27_2 * var_27_20, 0, 1)
 
-				if not self._playing_craft_sound then
-					self:_play_sound("play_gui_craft_forge_button_begin_qol")
+				if not arg_27_0._playing_craft_sound then
+					arg_27_0:_play_sound("play_gui_craft_forge_button_begin_qol")
 
-					self._playing_craft_sound = true
+					arg_27_0._playing_craft_sound = true
 				end
 			else
-				craft_progress = math.max(craft_progress - dt * speed, 0)
+				var_27_19 = math.max(var_27_19 - arg_27_2 * var_27_20, 0)
 
-				if self._playing_craft_sound and not self._waiting_for_craft then
-					self:_play_sound("play_gui_craft_forge_button_aborted_qol")
+				if arg_27_0._playing_craft_sound and not arg_27_0._waiting_for_craft then
+					arg_27_0:_play_sound("play_gui_craft_forge_button_aborted_qol")
 
-					self._playing_craft_sound = false
+					arg_27_0._playing_craft_sound = false
 				end
 			end
 		end
 
-		local progress = math.easeOutCubic(craft_progress)
+		local var_27_21 = math.easeOutCubic(var_27_19)
 
-		self._ui_scenegraph.experience_bar.size[1] = 390 * progress
-		experience_bar.content.texture_id.uvs[2][1] = progress
-		experience_bar.content.visible = true
+		arg_27_0._ui_scenegraph.experience_bar.size[1] = 390 * var_27_21
+		var_27_18.content.texture_id.uvs[2][1] = var_27_21
+		var_27_18.content.visible = true
 
-		if craft_progress >= 1 then
-			self:_craft(self._material_items, self._current_recipe_name)
+		if var_27_19 >= 1 then
+			arg_27_0:_craft(arg_27_0._material_items, arg_27_0._current_recipe_name)
 
-			craft_progress = 0
+			var_27_19 = 0
 		end
 
-		self._craft_progress = craft_progress
+		arg_27_0._craft_progress = var_27_19
 	end
 
-	self._hover_index = hover_index
+	arg_27_0._hover_index = var_27_3
 end
 
-HeroWindowItemCustomization._update_active_preview = function (self)
-	local input_index = self._active_selection_index or self._hover_index or self._input_index
-	local selector_name = self._available_states[input_index]
+function HeroWindowItemCustomization._update_active_preview(arg_28_0)
+	local var_28_0 = arg_28_0._active_selection_index or arg_28_0._hover_index or arg_28_0._input_index
 
-	self._active_selector_preview = selector_name
+	arg_28_0._active_selector_preview = arg_28_0._available_states[var_28_0]
 end
 
-HeroWindowItemCustomization._option_selected = function (self, input_index, ignore_sound)
-	local parent = self._parent
-	local selected_widget_name = self._available_states[input_index]
-	local select_option = false
-	local index_already_selected = input_index and self._active_selection_index == input_index
+function HeroWindowItemCustomization._option_selected(arg_29_0, arg_29_1, arg_29_2)
+	local var_29_0 = arg_29_0._parent
+	local var_29_1 = arg_29_0._available_states[arg_29_1]
+	local var_29_2 = false
+	local var_29_3 = arg_29_1 and arg_29_0._active_selection_index == arg_29_1
 
-	if not ignore_sound then
-		self:play_sound("Play_hud_select")
+	if not arg_29_2 then
+		arg_29_0:play_sound("Play_hud_select")
 	end
 
-	if not index_already_selected then
-		select_option = true
+	if not var_29_3 then
+		var_29_2 = true
 
-		self:_change_state(selected_widget_name)
+		arg_29_0:_change_state(var_29_1)
 	end
 
-	local mouse_active = Managers.input:is_device_active("mouse")
-	local old_selection_index = self._active_selection_index
+	local var_29_4 = Managers.input:is_device_active("mouse")
+	local var_29_5 = arg_29_0._active_selection_index
 
-	self._active_selection_index = select_option and input_index
+	arg_29_0._active_selection_index = var_29_2 and arg_29_1
 
-	local widgets_by_name = self._widgets_by_name
+	local var_29_6 = arg_29_0._widgets_by_name
 
-	for i = 1, #self._available_states do
-		local widget_state_name = self._available_states[i]
-		local widget = widgets_by_name[widget_state_name]
-
-		widget.style.hover_frame.saturated = select_option and input_index == i or not mouse_active and i == old_selection_index
+	for iter_29_0 = 1, #arg_29_0._available_states do
+		var_29_6[arg_29_0._available_states[iter_29_0]].style.hover_frame.saturated = var_29_2 and arg_29_1 == iter_29_0 or not var_29_4 and iter_29_0 == var_29_5
 	end
 
-	if select_option then
-		self:_handle_new_selection(self._active_selection_index)
-	elseif self._input_index then
-		local gamepad_active = Managers.input:is_device_active("gamepad")
-
-		if not gamepad_active then
-			self:_handle_new_selection(nil)
-		end
+	if var_29_2 then
+		arg_29_0:_handle_new_selection(arg_29_0._active_selection_index)
+	elseif arg_29_0._input_index and not Managers.input:is_device_active("gamepad") then
+		arg_29_0:_handle_new_selection(nil)
 	end
 end
 
-HeroWindowItemCustomization._setting_option_pressed = function (self, widget)
-	local content = widget.content
-	local num_options = content.num_options
+function HeroWindowItemCustomization._setting_option_pressed(arg_30_0, arg_30_1)
+	local var_30_0 = arg_30_1.content
+	local var_30_1 = var_30_0.num_options
 
-	for i = 1, num_options do
-		local hotspot_name = "button_hotspot_" .. i
-		local hotspot = content[hotspot_name]
+	for iter_30_0 = 1, var_30_1 do
+		local var_30_2 = var_30_0["button_hotspot_" .. iter_30_0]
 
-		if hotspot.on_release or hotspot.is_selected then
-			local option_key_name = "option_key_" .. i
-
-			return content[option_key_name], hotspot.marked
+		if var_30_2.on_release or var_30_2.is_selected then
+			return var_30_0["option_key_" .. iter_30_0], var_30_2.marked
 		end
 	end
 end
 
-HeroWindowItemCustomization._set_setting_option_selected = function (self, widget, index, select_all)
-	local content = widget.content
-	local num_options = content.num_options
+function HeroWindowItemCustomization._set_setting_option_selected(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+	local var_31_0 = arg_31_1.content
+	local var_31_1 = var_31_0.num_options
 
-	if num_options then
-		for i = 1, num_options do
-			local hotspot_name = "button_hotspot_" .. i
-			local hotspot = content[hotspot_name]
-			local is_selected = select_all or i == index
-
-			hotspot.is_selected = is_selected
+	if var_31_1 then
+		for iter_31_0 = 1, var_31_1 do
+			var_31_0["button_hotspot_" .. iter_31_0].is_selected = arg_31_3 or iter_31_0 == arg_31_2
 		end
 	end
 end
 
-HeroWindowItemCustomization._handle_new_selection = function (self, input_index)
-	local num_inputs = #self._available_states
+function HeroWindowItemCustomization._handle_new_selection(arg_32_0, arg_32_1)
+	local var_32_0 = #arg_32_0._available_states
 
-	input_index = input_index and math.clamp(input_index, 1, num_inputs)
+	arg_32_1 = arg_32_1 and math.clamp(arg_32_1, 1, var_32_0)
 
-	local mouse_active = Managers.input:is_device_active("mouse")
-	local widgets_by_name = self._widgets_by_name
+	local var_32_1 = Managers.input:is_device_active("mouse")
+	local var_32_2 = arg_32_0._widgets_by_name
 
-	for i = 1, #self._available_states do
-		local widget_name = self._available_states[i]
-		local widget = widgets_by_name[widget_name]
-		local is_selected = i == input_index
+	for iter_32_0 = 1, #arg_32_0._available_states do
+		local var_32_3 = var_32_2[arg_32_0._available_states[iter_32_0]]
+		local var_32_4 = iter_32_0 == arg_32_1
 
-		widget.content.button_hotspot.is_selected = is_selected or i == self._active_selection_index
+		var_32_3.content.button_hotspot.is_selected = var_32_4 or iter_32_0 == arg_32_0._active_selection_index
 
-		if not mouse_active then
-			widget.style.hover_frame.saturated = not is_selected
+		if not var_32_1 then
+			var_32_3.style.hover_frame.saturated = not var_32_4
 		end
 
-		self:_set_setting_option_selected(widget, is_selected and 1, is_selected)
+		arg_32_0:_set_setting_option_selected(var_32_3, var_32_4 and 1, var_32_4)
 	end
 
-	if input_index and self._input_index ~= input_index then
-		self:play_sound("Play_hud_hover")
+	if arg_32_1 and arg_32_0._input_index ~= arg_32_1 then
+		arg_32_0:play_sound("Play_hud_hover")
 	end
 
-	self._input_index = input_index
+	arg_32_0._input_index = arg_32_1
 end
 
-HeroWindowItemCustomization._update_animations = function (self, dt)
-	local ui_animator = self._ui_animator
+function HeroWindowItemCustomization._update_animations(arg_33_0, arg_33_1)
+	local var_33_0 = arg_33_0._ui_animator
 
-	ui_animator:update(dt)
+	var_33_0:update(arg_33_1)
 
-	local animations = self._animations
+	local var_33_1 = arg_33_0._animations
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_33_0, iter_33_1 in pairs(var_33_1) do
+		if var_33_0:is_animation_completed(iter_33_1) then
+			var_33_0:stop_animation(iter_33_1)
 
-			animations[animation_name] = nil
+			var_33_1[iter_33_0] = nil
 		end
 	end
 
-	local ui_animations = self._ui_animations
-	local animation_callbacks = self._animation_callbacks
+	local var_33_2 = arg_33_0._ui_animations
+	local var_33_3 = arg_33_0._animation_callbacks
 
-	for anmation_name, animation in pairs(ui_animations) do
-		UIAnimation.update(animation, dt)
+	for iter_33_2, iter_33_3 in pairs(var_33_2) do
+		UIAnimation.update(iter_33_3, arg_33_1)
 
-		if UIAnimation.completed(animation) then
-			ui_animations[anmation_name] = nil
+		if UIAnimation.completed(iter_33_3) then
+			var_33_2[iter_33_2] = nil
 
-			if animation_callbacks[anmation_name] then
-				animation_callbacks[anmation_name]()
+			if var_33_3[iter_33_2] then
+				var_33_3[iter_33_2]()
 
-				animation_callbacks[anmation_name] = nil
+				var_33_3[iter_33_2] = nil
 			end
 		end
 	end
 
-	local widgets_by_name = self._widgets_by_name
+	local var_33_4 = arg_33_0._widgets_by_name
 
-	UIWidgetUtils.animate_default_button(widgets_by_name.craft_button, dt)
-	UIWidgetUtils.animate_game_option_button(widgets_by_name.item_setting, dt)
-	UIWidgetUtils.animate_game_option_button(widgets_by_name.item_properties, dt)
-	UIWidgetUtils.animate_game_option_button(widgets_by_name.item_trait, dt)
-	UIWidgetUtils.animate_game_option_button(widgets_by_name.item_upgrade, dt)
-	self:_animate_state_transition(dt)
+	UIWidgetUtils.animate_default_button(var_33_4.craft_button, arg_33_1)
+	UIWidgetUtils.animate_game_option_button(var_33_4.item_setting, arg_33_1)
+	UIWidgetUtils.animate_game_option_button(var_33_4.item_properties, arg_33_1)
+	UIWidgetUtils.animate_game_option_button(var_33_4.item_trait, arg_33_1)
+	UIWidgetUtils.animate_game_option_button(var_33_4.item_upgrade, arg_33_1)
+	arg_33_0:_animate_state_transition(arg_33_1)
 end
 
-HeroWindowItemCustomization._animate_state_transition = function (self, dt)
-	local state_transition_timer = self._state_transition_timer
+function HeroWindowItemCustomization._animate_state_transition(arg_34_0, arg_34_1)
+	local var_34_0 = arg_34_0._state_transition_timer
 
-	if not state_transition_timer then
+	if not var_34_0 then
 		return
 	end
 
-	local state = self._state
-	local states = self._states
-	local state_data = states[state]
-	local transition_time = state_data.transition_time
+	local var_34_1 = arg_34_0._state
+	local var_34_2 = arg_34_0._states[var_34_1]
+	local var_34_3 = var_34_2.transition_time
+	local var_34_4 = var_34_0 + arg_34_1
+	local var_34_5 = math.clamp(var_34_4 / var_34_3, 0, 1)
+	local var_34_6 = math.smoothstep(var_34_5, 0, 1)
+	local var_34_7 = arg_34_0._state_start_fov
 
-	state_transition_timer = state_transition_timer + dt
+	if var_34_7 then
+		local var_34_8 = var_34_7 + (var_34_2.fov - arg_34_0._state_start_fov) * var_34_6
 
-	local progress = math.clamp(state_transition_timer / transition_time, 0, 1)
-	local anim_progress = math.smoothstep(progress, 0, 1)
-	local start_fov = self._state_start_fov
-
-	if start_fov then
-		local fov = state_data.fov
-		local fov_difference = fov - self._state_start_fov
-		local new_fov = start_fov + fov_difference * anim_progress
-
-		self:_set_camera_fov(new_fov)
+		arg_34_0:_set_camera_fov(var_34_8)
 	end
 
-	local state_start_camera_position = self._state_start_camera_position
+	local var_34_9 = arg_34_0._state_start_camera_position
 
-	if state_start_camera_position then
-		local camera_position = state_data.camera_position
-		local target_x = camera_position and camera_position[1] or 0
-		local target_y = camera_position and camera_position[2] or 0
-		local target_z = camera_position and camera_position[3] or 0
-		local start_x = state_start_camera_position[1]
-		local start_y = state_start_camera_position[2]
-		local start_z = state_start_camera_position[3]
-		local x_difference = target_x - start_x
-		local y_difference = target_y - start_y
-		local z_difference = target_z - start_z
-		local new_x = start_x + x_difference * anim_progress
-		local new_y = start_y + y_difference * anim_progress
-		local new_z = start_z + z_difference * anim_progress
+	if var_34_9 then
+		local var_34_10 = var_34_2.camera_position
+		local var_34_11 = var_34_10 and var_34_10[1] or 0
+		local var_34_12 = var_34_10 and var_34_10[2] or 0
+		local var_34_13 = var_34_10 and var_34_10[3] or 0
+		local var_34_14 = var_34_9[1]
+		local var_34_15 = var_34_9[2]
+		local var_34_16 = var_34_9[3]
+		local var_34_17 = var_34_11 - var_34_14
+		local var_34_18 = var_34_12 - var_34_15
+		local var_34_19 = var_34_13 - var_34_16
+		local var_34_20 = var_34_14 + var_34_17 * var_34_6
+		local var_34_21 = var_34_15 + var_34_18 * var_34_6
+		local var_34_22 = var_34_16 + var_34_19 * var_34_6
 
-		if x_difference ~= 0 or y_difference ~= 0 or z_difference ~= 0 then
-			local new_position = Vector3(new_x, new_y, new_z)
+		if var_34_17 ~= 0 or var_34_18 ~= 0 or var_34_19 ~= 0 then
+			local var_34_23 = Vector3(var_34_20, var_34_21, var_34_22)
 
-			self:_set_camera_position(new_position)
+			arg_34_0:_set_camera_position(var_34_23)
 		end
 	end
 
-	self._state_render_settings.alpha_multiplier = math.max(anim_progress, self._state_render_settings.alpha_multiplier)
+	arg_34_0._state_render_settings.alpha_multiplier = math.max(var_34_6, arg_34_0._state_render_settings.alpha_multiplier)
 
-	if progress == 1 then
-		self._state_transition_timer = nil
+	if var_34_5 == 1 then
+		arg_34_0._state_transition_timer = nil
 	else
-		self._state_transition_timer = state_transition_timer
+		arg_34_0._state_transition_timer = var_34_4
 	end
 end
 
-HeroWindowItemCustomization._draw = function (self, input_service, dt)
-	local ui_renderer = self._ui_renderer
-	local ui_top_renderer = self._ui_top_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local render_settings = self._render_settings
-	local parent_scenegraph_id
-	local gamepad_active = Managers.input:is_device_active("gamepad")
-	local alpha_multiplier = render_settings.alpha_multiplier or 1
+function HeroWindowItemCustomization._draw(arg_35_0, arg_35_1, arg_35_2)
+	local var_35_0 = arg_35_0._ui_renderer
+	local var_35_1 = arg_35_0._ui_top_renderer
+	local var_35_2 = arg_35_0._ui_scenegraph
+	local var_35_3 = arg_35_0._render_settings
+	local var_35_4
+	local var_35_5 = Managers.input:is_device_active("gamepad")
+	local var_35_6 = var_35_3.alpha_multiplier or 1
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, parent_scenegraph_id, render_settings)
+	UIRenderer.begin_pass(var_35_1, var_35_2, arg_35_1, arg_35_2, var_35_4, var_35_3)
 
-	local widgets = self._widgets
+	local var_35_7 = arg_35_0._widgets
 
-	for i = 1, #widgets do
-		local widget = widgets[i]
+	for iter_35_0 = 1, #var_35_7 do
+		local var_35_8 = var_35_7[iter_35_0]
 
-		UIRenderer.draw_widget(ui_top_renderer, widget)
+		UIRenderer.draw_widget(var_35_1, var_35_8)
 	end
 
-	local state = self._state
+	local var_35_9 = arg_35_0._state
 
-	if state then
-		local states = self._states
-		local state_data = states[state]
-		local state_draw_function = state_data.draw_function
+	if var_35_9 then
+		local var_35_10 = arg_35_0._states[var_35_9]
 
-		if state_draw_function then
-			render_settings.alpha_multiplier = self._state_render_settings.alpha_multiplier or 0
+		if var_35_10.draw_function then
+			var_35_3.alpha_multiplier = arg_35_0._state_render_settings.alpha_multiplier or 0
 
-			self[state_data.draw_function](self, ui_top_renderer, dt)
+			arg_35_0[var_35_10.draw_function](arg_35_0, var_35_1, arg_35_2)
 
-			render_settings.alpha_multiplier = alpha_multiplier
+			var_35_3.alpha_multiplier = var_35_6
 		end
 	end
 
-	render_settings.alpha_multiplier = self._state_render_settings.alpha_multiplier or 0
+	var_35_3.alpha_multiplier = arg_35_0._state_render_settings.alpha_multiplier or 0
 
-	for _, widget in ipairs(self._crafting_widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, widget)
+	for iter_35_1, iter_35_2 in ipairs(arg_35_0._crafting_widgets) do
+		UIRenderer.draw_widget(var_35_1, iter_35_2)
 	end
 
-	render_settings.alpha_multiplier = alpha_multiplier
+	var_35_3.alpha_multiplier = var_35_6
 
-	if self._previewer then
-		UIRenderer.draw_widget(ui_top_renderer, self._preview_widget)
+	if arg_35_0._previewer then
+		UIRenderer.draw_widget(var_35_1, arg_35_0._preview_widget)
 	end
 
-	UIRenderer.end_pass(ui_top_renderer)
+	UIRenderer.end_pass(var_35_1)
 
-	render_settings.alpha_multiplier = alpha_multiplier
+	var_35_3.alpha_multiplier = var_35_6
 
-	if gamepad_active then
-		self._menu_input_description:draw(ui_top_renderer, dt)
+	if var_35_5 then
+		arg_35_0._menu_input_description:draw(var_35_1, arg_35_2)
 	end
 end
 
-HeroWindowItemCustomization._state_draw_overview = function (self, ui_renderer, dt)
-	local info_widgets = self._info_widgets
+function HeroWindowItemCustomization._state_draw_overview(arg_36_0, arg_36_1, arg_36_2)
+	local var_36_0 = arg_36_0._info_widgets
 
-	if info_widgets then
-		for _, widget in ipairs(info_widgets) do
-			UIRenderer.draw_widget(ui_renderer, widget)
+	if var_36_0 then
+		for iter_36_0, iter_36_1 in ipairs(var_36_0) do
+			UIRenderer.draw_widget(arg_36_1, iter_36_1)
 		end
 	end
 
-	local illusion_widgets = self._illusion_widgets
+	local var_36_1 = arg_36_0._illusion_widgets
 
-	if illusion_widgets and #illusion_widgets > 0 then
-		local weapon_illusion_base_widgets = self._weapon_illusion_base_widgets
+	if var_36_1 and #var_36_1 > 0 then
+		local var_36_2 = arg_36_0._weapon_illusion_base_widgets
 
-		for _, widget in ipairs(weapon_illusion_base_widgets) do
-			UIRenderer.draw_widget(ui_renderer, widget)
+		for iter_36_2, iter_36_3 in ipairs(var_36_2) do
+			UIRenderer.draw_widget(arg_36_1, iter_36_3)
 		end
 
-		for _, widget in ipairs(illusion_widgets) do
-			UIRenderer.draw_widget(ui_renderer, widget)
+		for iter_36_4, iter_36_5 in ipairs(var_36_1) do
+			UIRenderer.draw_widget(arg_36_1, iter_36_5)
 		end
 
-		local illusion_widgets = self._illusion_widgets
+		local var_36_3 = arg_36_0._illusion_widgets
 
-		for index, widget in ipairs(illusion_widgets) do
-			if self:_is_button_pressed(widget) then
-				self:_on_illusion_index_pressed(index)
+		for iter_36_6, iter_36_7 in ipairs(var_36_3) do
+			if arg_36_0:_is_button_pressed(iter_36_7) then
+				arg_36_0:_on_illusion_index_pressed(iter_36_6)
 
 				break
-			elseif self:_is_button_hover_enter(widget) then
-				self:_play_sound("play_gui_equipment_inventory_hover")
+			elseif arg_36_0:_is_button_hover_enter(iter_36_7) then
+				arg_36_0:_play_sound("play_gui_equipment_inventory_hover")
 			end
 		end
 	end
 end
 
-HeroWindowItemCustomization._state_draw_property_reroll = function (self, ui_renderer, dt)
-	local property_reroll_widgets = self._property_reroll_widgets
+function HeroWindowItemCustomization._state_draw_property_reroll(arg_37_0, arg_37_1, arg_37_2)
+	local var_37_0 = arg_37_0._property_reroll_widgets
 
-	if property_reroll_widgets then
-		for _, widget in ipairs(property_reroll_widgets) do
-			UIRenderer.draw_widget(ui_renderer, widget)
+	if var_37_0 then
+		for iter_37_0, iter_37_1 in ipairs(var_37_0) do
+			UIRenderer.draw_widget(arg_37_1, iter_37_1)
 		end
 
-		local property_reroll_option_widgets = self._property_reroll_option_widgets
+		local var_37_1 = arg_37_0._property_reroll_option_widgets
 
-		if property_reroll_option_widgets then
-			for _, widget in ipairs(property_reroll_option_widgets) do
-				UIRenderer.draw_widget(ui_renderer, widget)
+		if var_37_1 then
+			for iter_37_2, iter_37_3 in ipairs(var_37_1) do
+				UIRenderer.draw_widget(arg_37_1, iter_37_3)
 			end
 		end
 
-		local material_widgets = self._material_widgets
+		local var_37_2 = arg_37_0._material_widgets
 
-		if material_widgets then
-			for _, widget in ipairs(material_widgets) do
-				UIRenderer.draw_widget(ui_renderer, widget)
+		if var_37_2 then
+			for iter_37_4, iter_37_5 in ipairs(var_37_2) do
+				UIRenderer.draw_widget(arg_37_1, iter_37_5)
 			end
 		end
 	end
 end
 
-HeroWindowItemCustomization._handle_gamepad_activity = function (self)
-	local force_update = self.gamepad_active_last_frame == nil
-	local mouse_active = Managers.input:is_device_active("mouse")
+function HeroWindowItemCustomization._handle_gamepad_activity(arg_38_0)
+	local var_38_0 = arg_38_0.gamepad_active_last_frame == nil
 
-	if not mouse_active then
-		if not self.gamepad_active_last_frame or force_update then
-			self.gamepad_active_last_frame = true
+	if not Managers.input:is_device_active("mouse") then
+		if not arg_38_0.gamepad_active_last_frame or var_38_0 then
+			arg_38_0.gamepad_active_last_frame = true
 
-			local widgets_by_name = self._widgets_by_name
+			local var_38_1 = arg_38_0._widgets_by_name
 
-			if not self._input_index then
-				self._input_index = self._input_index or 1
+			if not arg_38_0._input_index then
+				arg_38_0._input_index = arg_38_0._input_index or 1
 
-				self:_handle_new_selection(self._input_index)
+				arg_38_0:_handle_new_selection(arg_38_0._input_index)
 			end
 		end
-	elseif self.gamepad_active_last_frame or force_update then
-		self.gamepad_active_last_frame = false
+	elseif arg_38_0.gamepad_active_last_frame or var_38_0 then
+		arg_38_0.gamepad_active_last_frame = false
 
-		local widgets_by_name = self._widgets_by_name
+		local var_38_2 = arg_38_0._widgets_by_name
 
-		if not self._active_selection_index then
-			self:_handle_new_selection(nil)
+		if not arg_38_0._active_selection_index then
+			arg_38_0:_handle_new_selection(nil)
 		end
 	end
 end
 
-HeroWindowItemCustomization._update_item_rarity = function (self)
-	local item = self:_get_item(self._item_backend_id)
-	local item_data = item.data
-	local rarity = item.rarity or item_data.rarity
-	local widgets_by_name = self._widgets_by_name
-	local rarity_display_widget = widgets_by_name.rarity_display
-	local rarity_display_content = rarity_display_widget.content
-	local rarity_display_textures = rarity_display_content.texture_id
-	local count = 0
-	local rarity_order = UISettings.item_rarity_order[rarity]
-	local item_rarities = UISettings.item_rarities
-	local rarity_index = table.index_of(item_rarities, rarity)
+function HeroWindowItemCustomization._update_item_rarity(arg_39_0)
+	local var_39_0 = arg_39_0:_get_item(arg_39_0._item_backend_id)
+	local var_39_1 = var_39_0.data
+	local var_39_2 = var_39_0.rarity or var_39_1.rarity
+	local var_39_3 = arg_39_0._widgets_by_name
+	local var_39_4 = var_39_3.rarity_display.content.texture_id
+	local var_39_5 = 0
+	local var_39_6 = UISettings.item_rarity_order[var_39_2]
+	local var_39_7 = UISettings.item_rarities
+	local var_39_8 = table.index_of(var_39_7, var_39_2)
 
-	for i = 1, #item_rarities do
-		local rarity_name = item_rarities[i]
-		local rarity_texture
+	for iter_39_0 = 1, #var_39_7 do
+		local var_39_9 = var_39_7[iter_39_0]
+		local var_39_10
+		local var_39_11 = var_39_8 < iter_39_0 and "item_tier_empty" or "item_tier_" .. var_39_9
 
-		rarity_texture = rarity_index < i and "item_tier_empty" or "item_tier_" .. rarity_name
-
-		if UIAtlasHelper.has_texture_by_name(rarity_texture) then
-			count = count + 1
-			rarity_display_textures[count] = rarity_texture
+		if UIAtlasHelper.has_texture_by_name(var_39_11) then
+			var_39_5 = var_39_5 + 1
+			var_39_4[var_39_5] = var_39_11
 		end
 	end
 
-	local rarity_color = Colors.get_color_table_with_alpha(rarity, 255)
-	local item_setting_widget = widgets_by_name.item_setting
-	local item_setting_content = item_setting_widget.content
-	local item_setting_style = item_setting_widget.style
-	local item_setting_input_text_style = item_setting_style.input_text
-	local color_multiplier = 0.8
-	local active_color = {
+	local var_39_12 = Colors.get_color_table_with_alpha(var_39_2, 255)
+	local var_39_13 = var_39_3.item_setting
+	local var_39_14 = var_39_13.content
+	local var_39_15 = var_39_13.style.input_text
+	local var_39_16 = 0.8
+	local var_39_17 = {
 		255,
-		math.floor(rarity_color[2] * color_multiplier),
-		math.floor(rarity_color[3] * color_multiplier),
-		math.floor(rarity_color[4] * color_multiplier),
+		math.floor(var_39_12[2] * var_39_16),
+		math.floor(var_39_12[3] * var_39_16),
+		math.floor(var_39_12[4] * var_39_16)
 	}
 
-	item_setting_input_text_style.text_color = active_color
-	item_setting_input_text_style.default_text_color = active_color
-	item_setting_input_text_style.select_text_color = rarity_color
+	var_39_15.text_color = var_39_17
+	var_39_15.default_text_color = var_39_17
+	var_39_15.select_text_color = var_39_12
 end
 
-HeroWindowItemCustomization._update_property_option = function (self)
-	local item = self:_get_item(self._item_backend_id)
-	local properties = item.properties
+function HeroWindowItemCustomization._update_property_option(arg_40_0)
+	local var_40_0 = arg_40_0:_get_item(arg_40_0._item_backend_id).properties
 
-	if properties then
-		local properties_widget = self._widgets_by_name.item_properties
-		local content = properties_widget.content
-		local property_count = 0
+	if var_40_0 then
+		local var_40_1 = arg_40_0._widgets_by_name.item_properties.content
+		local var_40_2 = 0
 
-		for property_key, property_value in pairs(properties) do
-			property_count = property_count + 1
+		for iter_40_0, iter_40_1 in pairs(var_40_0) do
+			var_40_2 = var_40_2 + 1
 
-			local property_data = WeaponProperties.properties[property_key]
-			local buff_name = property_data.buff_name
-			local buff_template = BuffUtils.get_buff_template(buff_name)
-			local buff_data = buff_template.buffs[1]
-			local has_multiplier = buff_data.variable_multiplier ~= nil
-			local property_title_text, advanced_description = UIUtils.get_property_description(property_key, property_value)
-			local option_hotspot_name = "button_hotspot_" .. property_count
-			local option_text_name = "option_text_" .. property_count
+			local var_40_3 = WeaponProperties.properties[iter_40_0].buff_name
+			local var_40_4
 
-			content[option_hotspot_name].disable_button = false
-			content[option_text_name] = property_title_text
+			var_40_4 = BuffUtils.get_buff_template(var_40_3).buffs[1].variable_multiplier ~= nil
+
+			local var_40_5, var_40_6 = UIUtils.get_property_description(iter_40_0, iter_40_1)
+			local var_40_7 = "button_hotspot_" .. var_40_2
+			local var_40_8 = "option_text_" .. var_40_2
+
+			var_40_1[var_40_7].disable_button = false
+			var_40_1[var_40_8] = var_40_5
 		end
 	end
 end
 
-HeroWindowItemCustomization._update_upgrade_option = function (self)
-	local ui_renderer = self._ui_top_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local item = self:_get_item(self._item_backend_id)
-	local item_data = item.data
-	local rarity = item.rarity or item_data.rarity
-	local upgrade_widget = self._widgets_by_name.item_upgrade
-	local scenegraph_id = upgrade_widget.scenegraph_id
-	local scenegraph = scenegraph_definition[scenegraph_id]
-	local default_size = scenegraph.size
-	local new_height = default_size[2]
-	local content = upgrade_widget.content
-	local style = upgrade_widget.style
-	local rarity_name = ""
-	local rarity_name_color = Colors.get_color_table_with_alpha("plentiful", 255)
-	local upgrade_icons = {}
+function HeroWindowItemCustomization._update_upgrade_option(arg_41_0)
+	local var_41_0 = arg_41_0._ui_top_renderer
+	local var_41_1 = arg_41_0._ui_scenegraph
+	local var_41_2 = arg_41_0:_get_item(arg_41_0._item_backend_id)
+	local var_41_3 = var_41_2.data
+	local var_41_4 = var_41_2.rarity or var_41_3.rarity
+	local var_41_5 = arg_41_0._widgets_by_name.item_upgrade
+	local var_41_6 = var_41_5.scenegraph_id
+	local var_41_7 = var_0_4[var_41_6].size
+	local var_41_8 = var_41_7[2]
+	local var_41_9 = var_41_5.content
+	local var_41_10 = var_41_5.style
+	local var_41_11 = ""
+	local var_41_12 = Colors.get_color_table_with_alpha("plentiful", 255)
+	local var_41_13 = {}
 
-	if rarity == "plentiful" then
-		rarity_name = Localize("forge_screen_common_token_tooltip")
-		rarity_name_color = Colors.get_color_table_with_alpha("common", 255)
-		upgrade_icons[1] = "icon_add_property"
-	elseif rarity == "common" then
-		rarity_name = Localize("forge_screen_rare_token_tooltip")
-		rarity_name_color = Colors.get_color_table_with_alpha("rare", 255)
-		upgrade_icons[1] = "icon_add_property"
-	elseif rarity == "rare" then
-		rarity_name = Localize("forge_screen_exotic_token_tooltip")
-		rarity_name_color = Colors.get_color_table_with_alpha("exotic", 255)
-		upgrade_icons[1] = "icon_add_trait"
-	elseif rarity == "exotic" then
-		upgrade_icons[1] = "icon_upgrade_property"
-		upgrade_icons[2] = "icon_upgrade_property"
-		rarity_name = Localize("difficulty_veteran")
-		rarity_name_color = Colors.get_color_table_with_alpha("unique", 255)
+	if var_41_4 == "plentiful" then
+		local var_41_14 = Localize("forge_screen_common_token_tooltip")
+
+		var_41_12 = Colors.get_color_table_with_alpha("common", 255)
+		var_41_13[1] = "icon_add_property"
+	elseif var_41_4 == "common" then
+		local var_41_15 = Localize("forge_screen_rare_token_tooltip")
+
+		var_41_12 = Colors.get_color_table_with_alpha("rare", 255)
+		var_41_13[1] = "icon_add_property"
+	elseif var_41_4 == "rare" then
+		local var_41_16 = Localize("forge_screen_exotic_token_tooltip")
+
+		var_41_12 = Colors.get_color_table_with_alpha("exotic", 255)
+		var_41_13[1] = "icon_add_trait"
+	elseif var_41_4 == "exotic" then
+		var_41_13[1] = "icon_upgrade_property"
+		var_41_13[2] = "icon_upgrade_property"
+
+		local var_41_17 = Localize("difficulty_veteran")
+
+		var_41_12 = Colors.get_color_table_with_alpha("unique", 255)
 	end
 
-	local upgrade_description_text = Localize("upgrade_description_text_" .. rarity)
+	local var_41_18 = Localize("upgrade_description_text_" .. var_41_4)
 
-	content.sub_title = upgrade_description_text
-	content.locked = rarity == "unique" or rarity == "default"
-	content.input_text_locked = rarity == "unique" and string.upper(Localize("menu_weave_forge_upgrade_loadout_button_cap")) or Localize("search_filter_locked")
+	var_41_9.sub_title = var_41_18
+	var_41_9.locked = var_41_4 == "unique" or var_41_4 == "default"
+	var_41_9.input_text_locked = var_41_4 == "unique" and string.upper(Localize("menu_weave_forge_upgrade_loadout_button_cap")) or Localize("search_filter_locked")
 
-	if rarity_name_color then
-		local color_multiplier = 0.8
-		local sub_title_style = style.sub_title
-		local active_color = {
+	if var_41_12 then
+		local var_41_19 = 0.8
+		local var_41_20 = var_41_10.sub_title
+		local var_41_21 = {
 			255,
-			math.floor(rarity_name_color[1] * color_multiplier),
-			math.floor(rarity_name_color[2] * color_multiplier),
-			math.floor(rarity_name_color[3] * color_multiplier),
+			math.floor(var_41_12[1] * var_41_19),
+			math.floor(var_41_12[2] * var_41_19),
+			math.floor(var_41_12[3] * var_41_19)
 		}
 
-		sub_title_style.text_color = rarity_name_color
-		sub_title_style.default_text_color = active_color
-		sub_title_style.select_text_color = active_color
+		var_41_20.text_color = var_41_12
+		var_41_20.default_text_color = var_41_21
+		var_41_20.select_text_color = var_41_21
 	end
 
-	local text_style = style.sub_title
-	local text_height = math.floor(UIUtils.get_text_height(ui_renderer, default_size, text_style, upgrade_description_text)) + 50
+	local var_41_22 = var_41_10.sub_title
+	local var_41_23 = var_41_8 + (math.floor(UIUtils.get_text_height(var_41_0, var_41_7, var_41_22, var_41_18)) + 50)
 
-	new_height = new_height + text_height
-	style.title_text.size[2] = new_height
-	style.title_text_shadow.size[2] = new_height
-	style.input_text.size[2] = new_height
-	style.input_text_shadow.size[2] = new_height
-	style.input_text_locked.size[2] = new_height
-	style.input_text_locked_shadow.size[2] = new_height
-	style.sub_title.size[2] = new_height
-	style.sub_title_shadow.size[2] = new_height
-
-	local size = ui_scenegraph[scenegraph_id].size
-
-	size[2] = new_height
+	var_41_10.title_text.size[2] = var_41_23
+	var_41_10.title_text_shadow.size[2] = var_41_23
+	var_41_10.input_text.size[2] = var_41_23
+	var_41_10.input_text_shadow.size[2] = var_41_23
+	var_41_10.input_text_locked.size[2] = var_41_23
+	var_41_10.input_text_locked_shadow.size[2] = var_41_23
+	var_41_10.sub_title.size[2] = var_41_23
+	var_41_10.sub_title_shadow.size[2] = var_41_23
+	var_41_1[var_41_6].size[2] = var_41_23
 end
 
-HeroWindowItemCustomization._update_trait_option = function (self)
-	local ui_renderer = self._ui_top_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local item = self:_get_item(self._item_backend_id)
-	local traits = item.traits
-	local properties_widget = self._widgets_by_name.item_trait
-	local scenegraph_id = properties_widget.scenegraph_id
-	local scenegraph = scenegraph_definition[scenegraph_id]
-	local default_size = scenegraph.size
-	local new_height = default_size[2]
+function HeroWindowItemCustomization._update_trait_option(arg_42_0)
+	local var_42_0 = arg_42_0._ui_top_renderer
+	local var_42_1 = arg_42_0._ui_scenegraph
+	local var_42_2 = arg_42_0:_get_item(arg_42_0._item_backend_id).traits
+	local var_42_3 = arg_42_0._widgets_by_name.item_trait
+	local var_42_4 = var_42_3.scenegraph_id
+	local var_42_5 = var_0_4[var_42_4].size
+	local var_42_6 = var_42_5[2]
 
-	if traits then
-		local content = properties_widget.content
-		local style = properties_widget.style
+	if var_42_2 then
+		local var_42_7 = var_42_3.content
+		local var_42_8 = var_42_3.style
 
-		for index, trait_key in ipairs(traits) do
-			local trait_data = WeaponTraits.traits[trait_key]
-			local trait_name = trait_data.display_name
-			local trait_advanced_description = trait_data.advanced_description
-			local trait_icon = trait_data.icon
-			local title_text = Localize(trait_name)
-			local description_text = UIUtils.get_trait_description(trait_key)
+		for iter_42_0, iter_42_1 in ipairs(var_42_2) do
+			local var_42_9 = WeaponTraits.traits[iter_42_1]
+			local var_42_10 = var_42_9.display_name
+			local var_42_11 = var_42_9.advanced_description
+			local var_42_12 = var_42_9.icon
+			local var_42_13 = Localize(var_42_10)
+			local var_42_14 = UIUtils.get_trait_description(iter_42_1)
 
-			content.icon_texture = trait_icon
-			content.input_text = title_text
-			content.sub_title = description_text
-			content.locked = false
+			var_42_7.icon_texture = var_42_12
+			var_42_7.input_text = var_42_13
+			var_42_7.sub_title = var_42_14
+			var_42_7.locked = false
 
-			local text_style = style.sub_title
-			local text_height = math.floor(UIUtils.get_text_height(ui_renderer, default_size, text_style, description_text))
+			local var_42_15 = var_42_8.sub_title
 
-			new_height = new_height + text_height
+			var_42_6 = var_42_6 + math.floor(UIUtils.get_text_height(var_42_0, var_42_5, var_42_15, var_42_14))
 
-			if new_height ~= content.size[2] then
-				-- Nothing
+			if var_42_6 ~= var_42_7.size[2] then
+				-- block empty
 			end
 
-			style.title_text.size[2] = new_height
-			style.title_text_shadow.size[2] = new_height
-			style.input_text.size[2] = new_height
-			style.input_text_shadow.size[2] = new_height
-			style.sub_title.size[2] = new_height
-			style.sub_title_shadow.size[2] = new_height
+			var_42_8.title_text.size[2] = var_42_6
+			var_42_8.title_text_shadow.size[2] = var_42_6
+			var_42_8.input_text.size[2] = var_42_6
+			var_42_8.input_text_shadow.size[2] = var_42_6
+			var_42_8.sub_title.size[2] = var_42_6
+			var_42_8.sub_title_shadow.size[2] = var_42_6
 		end
 	end
 
-	local size = ui_scenegraph[scenegraph_id].size
-	local local_position = ui_scenegraph[scenegraph_id].local_position
+	local var_42_16 = var_42_1[var_42_4].size
+	local var_42_17 = var_42_1[var_42_4].local_position
 
-	size[2] = new_height
-	local_position[2] = -new_height
+	var_42_16[2] = var_42_6
+	var_42_17[2] = -var_42_6
 end
 
-HeroWindowItemCustomization._present_item = function (self, item, ignore_spin, custom_spawn_position)
-	self._item_dirty = true
+function HeroWindowItemCustomization._present_item(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+	arg_43_0._item_dirty = true
 
-	self:_spawn_item_unit(item, ignore_spin, custom_spawn_position)
+	arg_43_0:_spawn_item_unit(arg_43_1, arg_43_2, arg_43_3)
 
-	local inventory_icon, display_name, description, _ = UIUtils.get_ui_information_from_item(item)
-	local item_data = item.data
-	local item_type = item_data.item_type
-	local slot_type = item_data.slot_type
-	local backend_id = item.backend_id
-	local item_template = BackendUtils.get_item_template(item_data, backend_id)
-	local rarity = item.rarity or item_data.rarity
-	local power_level = item.power_level
-	local can_upgrade = false
+	local var_43_0, var_43_1, var_43_2, var_43_3 = UIUtils.get_ui_information_from_item(arg_43_1)
+	local var_43_4 = arg_43_1.data
+	local var_43_5 = var_43_4.item_type
+	local var_43_6 = var_43_4.slot_type
+	local var_43_7 = arg_43_1.backend_id
+	local var_43_8 = BackendUtils.get_item_template(var_43_4, var_43_7)
+	local var_43_9 = arg_43_1.rarity or var_43_4.rarity
+	local var_43_10 = arg_43_1.power_level
+	local var_43_11 = false
 
-	if rarity == "plentiful" or rarity == "common" or rarity == "rare" or rarity == "exotic" then
-		can_upgrade = true
+	if var_43_9 == "plentiful" or var_43_9 == "common" or var_43_9 == "rare" or var_43_9 == "exotic" then
+		local var_43_12 = true
 	end
 
-	local rarity_icon_background = UISettings.item_rarity_textures[rarity]
-	local widgets_by_name = self._widgets_by_name
-	local item_setting_widget = widgets_by_name.item_setting
-	local item_setting_content = item_setting_widget.content
+	local var_43_13 = UISettings.item_rarity_textures[var_43_9]
+	local var_43_14 = arg_43_0._widgets_by_name.item_setting.content
 
-	item_setting_content.input_text = Localize(display_name)
-	item_setting_content.sub_title = Localize(slot_type)
-	item_setting_content.icon_texture = inventory_icon or "icons_placeholder"
-	item_setting_content.icon_bg = rarity_icon_background or "icons_placeholder"
-	item_setting_content.item = item
+	var_43_14.input_text = Localize(var_43_1)
+	var_43_14.sub_title = Localize(var_43_6)
+	var_43_14.icon_texture = var_43_0 or "icons_placeholder"
+	var_43_14.icon_bg = var_43_13 or "icons_placeholder"
+	var_43_14.item = arg_43_1
 
-	local item_preview_object_set_name = item_data.item_preview_object_set_name or "flow_weapon_lights"
-	local item_preview_environment = item_data.item_preview_environment or "weapons_default_01"
+	local var_43_15 = var_43_4.item_preview_object_set_name or "flow_weapon_lights"
+	local var_43_16 = var_43_4.item_preview_environment or "weapons_default_01"
 
-	self:_show_object_set(item_preview_object_set_name)
-	self:_update_environment(item_preview_environment)
+	arg_43_0:_show_object_set(var_43_15)
+	arg_43_0:_update_environment(var_43_16)
 end
 
-HeroWindowItemCustomization._spawn_item_unit = function (self, item, ignore_spin, custom_spawn_position)
-	if self._previewer then
-		self._previewer:destroy()
+function HeroWindowItemCustomization._spawn_item_unit(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+	if arg_44_0._previewer then
+		arg_44_0._previewer:destroy()
 	end
 
-	local item_data = item.data
-	local item_key = item.key or item_data.key
-	local preview_widget = self._preview_widget
-	local previewer_pass_data = preview_widget.element.pass_data[1]
-	local viewport = previewer_pass_data.viewport
-	local world = previewer_pass_data.world
-	local preview_position = custom_spawn_position or {
+	local var_44_0 = arg_44_1.data
+	local var_44_1 = arg_44_1.key or var_44_0.key
+	local var_44_2 = arg_44_0._preview_widget.element.pass_data[1]
+	local var_44_3 = var_44_2.viewport
+	local var_44_4 = var_44_2.world
+	local var_44_5 = arg_44_3 or {
 		0,
 		1,
-		0,
+		0
 	}
-	local unique_id, invert_start_rotation, display_unit_key, use_highest_mip_levels, delayed_spawn
-	local career_name_override = self._career_name
-	local item_previewer = LootItemUnitPreviewer:new(item, preview_position, world, viewport, unique_id, invert_start_rotation, display_unit_key, use_highest_mip_levels, delayed_spawn, career_name_override)
-	local spawn_callback = callback(self, "cb_on_item_loaded", item_key, ignore_spin)
+	local var_44_6
+	local var_44_7
+	local var_44_8
+	local var_44_9
+	local var_44_10
+	local var_44_11 = arg_44_0._career_name
+	local var_44_12 = LootItemUnitPreviewer:new(arg_44_1, var_44_5, var_44_4, var_44_3, var_44_6, var_44_7, var_44_8, var_44_9, var_44_10, var_44_11)
+	local var_44_13 = callback(arg_44_0, "cb_on_item_loaded", var_44_1, arg_44_2)
 
-	item_previewer:register_spawn_callback(spawn_callback)
+	var_44_12:register_spawn_callback(var_44_13)
 
-	self._previewer = item_previewer
+	arg_44_0._previewer = var_44_12
 end
 
-HeroWindowItemCustomization.cb_on_item_loaded = function (self, item_key, ignore_spin)
-	print("cb_on_item_loaded", item_key)
-
-	local previewer = self._previewer
-
-	previewer:present_item(item_key, ignore_spin)
+function HeroWindowItemCustomization.cb_on_item_loaded(arg_45_0, arg_45_1, arg_45_2)
+	print("cb_on_item_loaded", arg_45_1)
+	arg_45_0._previewer:present_item(arg_45_1, arg_45_2)
 end
 
-HeroWindowItemCustomization._select_illusion_by_key = function (self, key, ignore_item_spawn, mark_as_equipped)
-	if not key then
+function HeroWindowItemCustomization._select_illusion_by_key(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+	if not arg_46_1 then
 		return
 	end
 
-	local widgets = self._illusion_widgets
+	local var_46_0 = arg_46_0._illusion_widgets
 
-	for i, widget in ipairs(widgets) do
-		local content = widget.content
-		local skin_key = content.skin_key
-
-		if skin_key == key then
-			self:_on_illusion_index_pressed(i, ignore_item_spawn, mark_as_equipped)
+	for iter_46_0, iter_46_1 in ipairs(var_46_0) do
+		if iter_46_1.content.skin_key == arg_46_1 then
+			arg_46_0:_on_illusion_index_pressed(iter_46_0, arg_46_2, arg_46_3)
 
 			break
 		end
 	end
 end
 
-HeroWindowItemCustomization._on_illusion_index_pressed = function (self, index, ignore_item_spawn, mark_as_equipped)
-	local illusion_widgets = self._illusion_widgets
-	local widget = illusion_widgets[index]
-	local content = widget.content
-	local skin_key = content.skin_key
+function HeroWindowItemCustomization._on_illusion_index_pressed(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
+	local var_47_0 = arg_47_0._illusion_widgets[arg_47_1].content
+	local var_47_1 = var_47_0.skin_key
 
-	self._skin_dirty = false
+	arg_47_0._skin_dirty = false
 
-	if not ignore_item_spawn then
-		local locked = content.locked
-		local item_data = ItemMasterList[skin_key]
-		local item = {
-			data = item_data,
-			skin = skin_key,
+	if not arg_47_2 then
+		local var_47_2 = var_47_0.locked
+		local var_47_3 = ItemMasterList[var_47_1]
+		local var_47_4 = {
+			data = var_47_3,
+			skin = var_47_1
 		}
 
-		self:_spawn_item_unit(item, true)
-		table.clear(self._material_items)
+		arg_47_0:_spawn_item_unit(var_47_4, true)
+		table.clear(arg_47_0._material_items)
 
-		if not locked then
-			local current_item = self:_get_item(self._item_backend_id)
-			local current_item_key = current_item.key
-			local default_skin = WeaponSkins.default_skins[current_item_key]
-			local item_skin = current_item.skin or default_skin
+		if not var_47_2 then
+			local var_47_5 = arg_47_0:_get_item(arg_47_0._item_backend_id)
+			local var_47_6 = var_47_5.key
+			local var_47_7 = WeaponSkins.default_skins[var_47_6]
 
-			if skin_key ~= item_skin then
-				local item_interface = Managers.backend:get_interface("items")
-				local skin_backend_id, _ = item_interface:get_weapon_skin_from_skin_key(skin_key)
+			if var_47_1 ~= (var_47_5.skin or var_47_7) then
+				local var_47_8, var_47_9 = Managers.backend:get_interface("items"):get_weapon_skin_from_skin_key(var_47_1)
 
-				self._material_items[#self._material_items + 1] = skin_backend_id
+				arg_47_0._material_items[#arg_47_0._material_items + 1] = var_47_8
 
-				self:_enable_craft_button(true, true)
+				arg_47_0:_enable_craft_button(true, true)
 
-				self._skin_dirty = true
+				arg_47_0._skin_dirty = true
 			else
-				self:_enable_craft_button(false)
+				arg_47_0:_enable_craft_button(false)
 			end
 		else
-			self:_enable_craft_button(false)
+			arg_47_0:_enable_craft_button(false)
 		end
 	end
 
-	local weapon_illusion_base_widgets_by_name = self._weapon_illusion_base_widgets_by_name
-	local skin_data = WeaponSkins.skins[skin_key]
+	local var_47_10 = arg_47_0._weapon_illusion_base_widgets_by_name
+	local var_47_11 = WeaponSkins.skins[var_47_1]
 
-	weapon_illusion_base_widgets_by_name.illusions_name.content.text = Localize(skin_data.display_name)
+	var_47_10.illusions_name.content.text = Localize(var_47_11.display_name)
 
-	local widgets = self._illusion_widgets
+	local var_47_12 = arg_47_0._illusion_widgets
 
-	for i, widget in ipairs(widgets) do
-		local is_selected = i == index
-		local content = widget.content
-		local button_hotspot = content.button_hotspot
+	for iter_47_0, iter_47_1 in ipairs(var_47_12) do
+		local var_47_13 = iter_47_0 == arg_47_1
+		local var_47_14 = iter_47_1.content
 
-		button_hotspot.is_selected = is_selected
+		var_47_14.button_hotspot.is_selected = var_47_13
 
-		if mark_as_equipped then
-			content.equipped = is_selected
+		if arg_47_3 then
+			var_47_14.equipped = var_47_13
 		end
 	end
 
-	self._selected_skin_index = index
+	arg_47_0._selected_skin_index = arg_47_1
 
-	self:_play_sound("play_gui_equipment_equip")
+	arg_47_0:_play_sound("play_gui_equipment_equip")
 end
 
-local function sort_illusion_widgets(a, b)
-	local skins = WeaponSkins.skins
-	local item_rarity_order = UISettings.item_rarity_order
-	local a_content = a.content
-	local b_content = b.content
-	local a_rarity = a_content.rarity
-	local b_rarity = b_content.rarity
-	local a_order = item_rarity_order[a_rarity] or 0
-	local b_order = item_rarity_order[b_rarity] or 0
+local function var_0_20(arg_48_0, arg_48_1)
+	local var_48_0 = WeaponSkins.skins
+	local var_48_1 = UISettings.item_rarity_order
+	local var_48_2 = arg_48_0.content
+	local var_48_3 = arg_48_1.content
+	local var_48_4 = var_48_2.rarity
+	local var_48_5 = var_48_3.rarity
 
-	return b_order < a_order
+	return (var_48_1[var_48_4] or 0) > (var_48_1[var_48_5] or 0)
 end
 
-local EMPTY_TABLE = {}
+local var_0_21 = {}
 
-HeroWindowItemCustomization._setup_illusions = function (self, item)
-	local item_key = item.key
-	local item_data = item.data
-	local num_unlocked_skins = 0
-	local skin_combination_table = item_data.skin_combination_table
-	local weapon_skin_combinations_tables = WeaponSkins.skin_combinations[skin_combination_table] or EMPTY_TABLE
-	local quest_interface = Managers.backend:get_interface("quests")
-	local backend_crafting = Managers.backend:get_interface("crafting")
-	local unlocked_weapon_skins = backend_crafting:get_unlocked_weapon_skins()
-	local item_key = string.gsub(item.ItemId, "^vs_", "")
-	local default_skin = WeaponSkins.default_skins[item_key]
-	local default_skin_key
-	local width = 51
-	local spacing = -5
-	local total_width = -spacing
-	local widgets = {}
-	local used_skins = {}
-	local rarity_settings = RaritySettings
-	local widget_definition = create_illusion_button()
+function HeroWindowItemCustomization._setup_illusions(arg_49_0, arg_49_1)
+	local var_49_0 = arg_49_1.key
+	local var_49_1 = arg_49_1.data
+	local var_49_2 = 0
+	local var_49_3 = var_49_1.skin_combination_table
+	local var_49_4 = WeaponSkins.skin_combinations[var_49_3] or var_0_21
+	local var_49_5 = Managers.backend:get_interface("quests")
+	local var_49_6 = Managers.backend:get_interface("crafting"):get_unlocked_weapon_skins()
+	local var_49_7 = string.gsub(arg_49_1.ItemId, "^vs_", "")
+	local var_49_8 = WeaponSkins.default_skins[var_49_7]
+	local var_49_9
+	local var_49_10 = 51
+	local var_49_11 = -5
+	local var_49_12 = -var_49_11
+	local var_49_13 = {}
+	local var_49_14 = {}
+	local var_49_15 = RaritySettings
+	local var_49_16 = var_0_16()
 
-	for weapon_skins_rarity, weapon_skins in pairs(weapon_skin_combinations_tables) do
-		for _, skin in ipairs(weapon_skins) do
-			if not used_skins[skin] then
-				if not rarity_settings[weapon_skins_rarity] then
-					local weapon_skin_data = WeaponSkins.skins[skin]
+	for iter_49_0, iter_49_1 in pairs(var_49_4) do
+		for iter_49_2, iter_49_3 in ipairs(iter_49_1) do
+			if not var_49_14[iter_49_3] then
+				if not var_49_15[iter_49_0] then
+					local var_49_17 = WeaponSkins.skins[iter_49_3]
 
-					weapon_skins_rarity = weapon_skin_data and weapon_skin_data.rarity or weapon_skins_rarity
+					iter_49_0 = var_49_17 and var_49_17.rarity or iter_49_0
 				end
 
-				local unlocked = unlocked_weapon_skins[skin] or skin == default_skin
-				local event_skin_available = true
-				local skin_item = ItemMasterList[skin] or EMPTY_TABLE
-				local event_quest_requirement = skin_item.event_quest_requirement
+				local var_49_18 = var_49_6[iter_49_3] or iter_49_3 == var_49_8
+				local var_49_19 = true
+				local var_49_20 = (ItemMasterList[iter_49_3] or var_0_21).event_quest_requirement
 
-				if not unlocked and event_quest_requirement then
-					event_skin_available = quest_interface:get_quest_key(event_quest_requirement)
+				if not var_49_18 and var_49_20 then
+					var_49_19 = var_49_5:get_quest_key(var_49_20)
 				end
 
-				if event_skin_available then
-					local icon_texture = "button_illusion_" .. weapon_skins_rarity
+				if var_49_19 then
+					local var_49_21 = "button_illusion_" .. iter_49_0
 
-					if not UIAtlasHelper.has_texture_by_name(icon_texture) then
-						icon_texture = "button_illusion_default"
+					if not UIAtlasHelper.has_texture_by_name(var_49_21) then
+						var_49_21 = "button_illusion_default"
 					end
 
-					if unlocked then
-						num_unlocked_skins = num_unlocked_skins + 1
+					if var_49_18 then
+						var_49_2 = var_49_2 + 1
 					else
-						icon_texture = "button_illusion_locked"
+						var_49_21 = "button_illusion_locked"
 					end
 
-					local widget = UIWidget.init(widget_definition)
+					local var_49_22 = UIWidget.init(var_49_16)
 
-					widgets[#widgets + 1] = widget
+					var_49_13[#var_49_13 + 1] = var_49_22
 
-					local content = widget.content
+					local var_49_23 = var_49_22.content
 
-					content.skin_key = skin
-					content.icon_texture = icon_texture
-					content.locked = not unlocked
-					content.rarity = weapon_skins_rarity
-					total_width = total_width + spacing + width
-					used_skins[skin] = true
+					var_49_23.skin_key = iter_49_3
+					var_49_23.icon_texture = var_49_21
+					var_49_23.locked = not var_49_18
+					var_49_23.rarity = iter_49_0
+					var_49_12 = var_49_12 + var_49_11 + var_49_10
+					var_49_14[iter_49_3] = true
 				end
 			end
 		end
 	end
 
-	if default_skin and not used_skins[default_skin] then
-		local unlocked = true
-		local weapon_skins_rarity = "plentiful"
-		local icon_texture = "button_illusion_" .. weapon_skins_rarity
+	if var_49_8 and not var_49_14[var_49_8] then
+		local var_49_24 = true
+		local var_49_25 = "plentiful"
+		local var_49_26 = "button_illusion_" .. var_49_25
 
-		if not UIAtlasHelper.has_texture_by_name(icon_texture) then
-			icon_texture = "button_illusion_default"
+		if not UIAtlasHelper.has_texture_by_name(var_49_26) then
+			var_49_26 = "button_illusion_default"
 		end
 
-		local widget = UIWidget.init(widget_definition)
+		local var_49_27 = UIWidget.init(var_49_16)
 
-		widgets[#widgets + 1] = widget
+		var_49_13[#var_49_13 + 1] = var_49_27
 
-		local content = widget.content
+		local var_49_28 = var_49_27.content
 
-		content.skin_key = default_skin
-		content.icon_texture = icon_texture
-		content.locked = not unlocked
-		content.rarity = weapon_skins_rarity
-		total_width = total_width + spacing + width
-		num_unlocked_skins = num_unlocked_skins + 1
+		var_49_28.skin_key = var_49_8
+		var_49_28.icon_texture = var_49_26
+		var_49_28.locked = not var_49_24
+		var_49_28.rarity = var_49_25
+		var_49_12 = var_49_12 + var_49_11 + var_49_10
+		var_49_2 = var_49_2 + 1
 	end
 
-	table.sort(widgets, sort_illusion_widgets)
+	table.sort(var_49_13, var_0_20)
 
-	local x_offset = width / 2
+	local var_49_29 = var_49_10 / 2
 
-	for _, widget in ipairs(widgets) do
-		local offset = widget.offset
-
-		offset[1] = -total_width / 2 + x_offset
-		x_offset = x_offset + width + spacing
+	for iter_49_4, iter_49_5 in ipairs(var_49_13) do
+		iter_49_5.offset[1] = -var_49_12 / 2 + var_49_29
+		var_49_29 = var_49_29 + var_49_10 + var_49_11
 	end
 
-	self._illusion_widgets = widgets
+	arg_49_0._illusion_widgets = var_49_13
 
-	local item_skin = item.skin or default_skin
-	local ignore_item_spawn = true
-	local mark_as_equipped = true
+	local var_49_30 = arg_49_1.skin or var_49_8
+	local var_49_31 = true
+	local var_49_32 = true
 
-	self:_select_illusion_by_key(item_skin, ignore_item_spawn, mark_as_equipped)
+	arg_49_0:_select_illusion_by_key(var_49_30, var_49_31, var_49_32)
 
-	local weapon_illusion_base_widgets_by_name = self._weapon_illusion_base_widgets_by_name
-
-	weapon_illusion_base_widgets_by_name.illusions_counter.content.text = "(" .. tostring(num_unlocked_skins) .. "/" .. tostring(#widgets) .. ")"
+	arg_49_0._weapon_illusion_base_widgets_by_name.illusions_counter.content.text = "(" .. tostring(var_49_2) .. "/" .. tostring(#var_49_13) .. ")"
 end
 
-HeroWindowItemCustomization._state_setup_overview = function (self)
-	local info_widgets = {}
-	local info_widgets_by_name = {}
+function HeroWindowItemCustomization._state_setup_overview(arg_50_0)
+	local var_50_0 = {}
+	local var_50_1 = {}
 
-	for name, widget_definition in pairs(info_widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_50_0, iter_50_1 in pairs(var_0_8) do
+		local var_50_2 = UIWidget.init(iter_50_1)
 
-		info_widgets[#info_widgets + 1] = widget
-		info_widgets_by_name[name] = widget
+		var_50_0[#var_50_0 + 1] = var_50_2
+		var_50_1[iter_50_0] = var_50_2
 	end
 
-	self._info_widgets = info_widgets
-	self._info_widgets_by_name = info_widgets_by_name
+	arg_50_0._info_widgets = var_50_0
+	arg_50_0._info_widgets_by_name = var_50_1
 
-	local weapon_illusion_base_widgets = {}
-	local weapon_illusion_base_widgets_by_name = {}
+	local var_50_3 = {}
+	local var_50_4 = {}
 
-	for name, widget_definition in pairs(weapon_illusion_base_widgets_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_50_2, iter_50_3 in pairs(var_0_9) do
+		local var_50_5 = UIWidget.init(iter_50_3)
 
-		weapon_illusion_base_widgets[#weapon_illusion_base_widgets + 1] = widget
-		weapon_illusion_base_widgets_by_name[name] = widget
+		var_50_3[#var_50_3 + 1] = var_50_5
+		var_50_4[iter_50_2] = var_50_5
 	end
 
-	self._weapon_illusion_base_widgets = weapon_illusion_base_widgets
-	self._weapon_illusion_base_widgets_by_name = weapon_illusion_base_widgets_by_name
+	arg_50_0._weapon_illusion_base_widgets = var_50_3
+	arg_50_0._weapon_illusion_base_widgets_by_name = var_50_4
 
-	local item = self:_get_item(self._item_backend_id)
-	local inventory_icon, display_name, description, _ = UIUtils.get_ui_information_from_item(item)
-	local item_data = item.data
-	local slot_type = item_data.slot_type
-	local backend_id = item.backend_id
-	local item_template = BackendUtils.get_item_template(item_data, backend_id)
-	local rarity = item.rarity or item_data.rarity
-	local power_level = item.power_level
-	local feature_widgets = {}
-	local widget_power = self:_create_item_feature_widget(Localize("tooltips_power"), power_level)
+	local var_50_6 = arg_50_0:_get_item(arg_50_0._item_backend_id)
+	local var_50_7, var_50_8, var_50_9, var_50_10 = UIUtils.get_ui_information_from_item(var_50_6)
+	local var_50_11 = var_50_6.data
+	local var_50_12 = var_50_11.slot_type
+	local var_50_13 = var_50_6.backend_id
+	local var_50_14 = BackendUtils.get_item_template(var_50_11, var_50_13)
 
-	feature_widgets[#feature_widgets + 1] = widget_power
+	if not var_50_6.rarity then
+		local var_50_15 = var_50_11.rarity
+	end
 
-	local is_weapon = slot_type == "melee" or slot_type == "ranged"
+	local var_50_16 = var_50_6.power_level
+	local var_50_17 = {}
+	local var_50_18 = arg_50_0:_create_item_feature_widget(Localize("tooltips_power"), var_50_16)
 
-	if is_weapon then
-		local keywords = item_template.tooltip_keywords
+	var_50_17[#var_50_17 + 1] = var_50_18
 
-		if keywords then
-			local keyword_text = ""
-			local key_word_count = #keywords
+	local var_50_19 = var_50_12 == "melee" or var_50_12 == "ranged"
 
-			for index, keyword in ipairs(keywords) do
-				keyword_text = keyword_text .. Localize(keyword)
-				key_word_count = key_word_count - 1
+	if var_50_19 then
+		local var_50_20 = var_50_14.tooltip_keywords
 
-				if key_word_count > 0 then
-					keyword_text = keyword_text .. ", "
+		if var_50_20 then
+			local var_50_21 = ""
+			local var_50_22 = #var_50_20
+
+			for iter_50_4, iter_50_5 in ipairs(var_50_20) do
+				var_50_21 = var_50_21 .. Localize(iter_50_5)
+				var_50_22 = var_50_22 - 1
+
+				if var_50_22 > 0 then
+					var_50_21 = var_50_21 .. ", "
 				end
 			end
 
-			local text_style = {
+			local var_50_23 = {
+				word_wrap = true,
 				font_size = 28,
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
 				localize = false,
 				use_shadow = true,
+				horizontal_alignment = "center",
 				vertical_alignment = "center",
-				word_wrap = true,
+				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					0,
 					0,
-					2,
-				},
+					2
+				}
 			}
-			local widget_keywords, description_size = self:_create_description_widget("info_keyword_text", keyword_text, text_style)
+			local var_50_24, var_50_25 = arg_50_0:_create_description_widget("info_keyword_text", var_50_21, var_50_23)
 
-			info_widgets[#info_widgets + 1] = widget_keywords
+			var_50_0[#var_50_0 + 1] = var_50_24
 		end
 	else
-		self._ui_scenegraph.info_keyword_text.size[2] = 0
+		arg_50_0._ui_scenegraph.info_keyword_text.size[2] = 0
 	end
 
-	self._info_widgets_by_name.keyword_divider_top.content.visible = is_weapon
+	arg_50_0._info_widgets_by_name.keyword_divider_top.content.visible = var_50_19
 
-	if slot_type == "melee" then
-		local block_angle = item_template.block_angle
-		local widget_block_angle = self:_create_item_feature_widget(Localize("tutorial_tooltip_block"), block_angle)
+	if var_50_12 == "melee" then
+		local var_50_26 = var_50_14.block_angle
+		local var_50_27 = arg_50_0:_create_item_feature_widget(Localize("tutorial_tooltip_block"), var_50_26)
 
-		feature_widgets[#feature_widgets + 1] = widget_block_angle
+		var_50_17[#var_50_17 + 1] = var_50_27
 
-		local max_fatigue_points = item_template.max_fatigue_points
-		local widget_stamina = self:_create_item_feature_widget(Localize("tooltips_stamina"), max_fatigue_points)
+		local var_50_28 = var_50_14.max_fatigue_points
+		local var_50_29 = arg_50_0:_create_item_feature_widget(Localize("tooltips_stamina"), var_50_28)
 
-		feature_widgets[#feature_widgets + 1] = widget_stamina
-	elseif slot_type == "ranged" then
-		local ammo_text, ammo_texture
-		local ammo_data = item_template.ammo_data
+		var_50_17[#var_50_17 + 1] = var_50_29
+	elseif var_50_12 == "ranged" then
+		local var_50_30
+		local var_50_31
+		local var_50_32 = var_50_14.ammo_data
 
-		if ammo_data and not ammo_data.hide_ammo_ui then
-			local single_clip = ammo_data.single_clip
-			local reload_time = ammo_data.reload_time
-			local max_ammo = ammo_data.max_ammo
-			local ammo_per_clip = ammo_data.ammo_per_clip
+		if var_50_32 and not var_50_32.hide_ammo_ui then
+			local var_50_33 = var_50_32.single_clip
+			local var_50_34 = var_50_32.reload_time
+			local var_50_35 = var_50_32.max_ammo
+			local var_50_36 = var_50_32.ammo_per_clip
 
-			ammo_text = tostring(max_ammo)
+			var_50_30 = tostring(var_50_35)
 		else
-			ammo_texture = "icon_fire"
+			var_50_31 = "icon_fire"
 		end
 
-		local widget_ammunition = self:_create_item_feature_widget(Localize("tooltips_ammunition"), ammo_text, ammo_texture)
+		local var_50_37 = arg_50_0:_create_item_feature_widget(Localize("tooltips_ammunition"), var_50_30, var_50_31)
 
-		feature_widgets[#feature_widgets + 1] = widget_ammunition
+		var_50_17[#var_50_17 + 1] = var_50_37
 
-		local crosshairs = UISettings.crosshair_styles.ranged
-		local crosshair_style = item_template.crosshair_style
-		local crosshair_data = crosshairs[crosshair_style] or UISettings.crosshair_types.default
-		local widget_crosshair = self:_create_item_feature_widget("Crosshair", nil, crosshair_data.crosshair_icon)
+		local var_50_38 = UISettings.crosshair_styles.ranged[var_50_14.crosshair_style] or UISettings.crosshair_types.default
+		local var_50_39 = arg_50_0:_create_item_feature_widget("Crosshair", nil, var_50_38.crosshair_icon)
 
-		feature_widgets[#feature_widgets + 1] = widget_crosshair
+		var_50_17[#var_50_17 + 1] = var_50_39
 	end
 
-	local num_feature_widgets = #feature_widgets
+	local var_50_40 = #var_50_17
 
-	for i = 1, num_feature_widgets do
-		local widget = feature_widgets[i]
+	for iter_50_6 = 1, var_50_40 do
+		local var_50_41 = var_50_17[iter_50_6]
 
-		widget.offset[1] = widget.content.size[1] * (i - 1)
-		info_widgets[#info_widgets + 1] = widget
+		var_50_41.offset[1] = var_50_41.content.size[1] * (iter_50_6 - 1)
+		var_50_0[#var_50_0 + 1] = var_50_41
 	end
 
-	if is_weapon then
-		local widget_diagram = self:_create_weapon_diagram_widget(item_template)
+	if var_50_19 then
+		local var_50_42 = arg_50_0:_create_weapon_diagram_widget(var_50_14)
 
-		info_widgets[#info_widgets + 1] = widget_diagram
-		info_widgets_by_name.weapon_diagram = widget_diagram
+		var_50_0[#var_50_0 + 1] = var_50_42
+		var_50_1.weapon_diagram = var_50_42
 	end
 
-	local widget_description, description_size = self:_create_description_widget("info_description_text", Localize(description))
+	local var_50_43, var_50_44 = arg_50_0:_create_description_widget("info_description_text", Localize(var_50_9))
 
-	info_widgets[#info_widgets + 1] = widget_description
-	self._ui_scenegraph.info_description_text.local_position[2] = -(description_size[2] + 10)
-	self._ui_scenegraph.keyword_divider_bottom.local_position[2] = is_weapon and -10 or 350
+	var_50_0[#var_50_0 + 1] = var_50_43
+	arg_50_0._ui_scenegraph.info_description_text.local_position[2] = -(var_50_44[2] + 10)
+	arg_50_0._ui_scenegraph.keyword_divider_bottom.local_position[2] = var_50_19 and -10 or 350
 
-	self:_destroy_scrollbar()
-	self:_setup_illusions(item)
+	arg_50_0:_destroy_scrollbar()
+	arg_50_0:_setup_illusions(var_50_6)
 
-	self._current_recipe_name = "apply_weapon_skin"
+	arg_50_0._current_recipe_name = "apply_weapon_skin"
 
-	self:_update_state_craft_button(self._current_recipe_name, Localize("input_description_apply"), nil, nil, {
+	arg_50_0:_update_state_craft_button(arg_50_0._current_recipe_name, Localize("input_description_apply"), nil, nil, {
 		0,
 		-40,
-		0,
+		0
 	})
-	self:_enable_craft_button(false)
-	self._menu_input_description:change_generic_actions(generic_input_actions.default)
+	arg_50_0:_enable_craft_button(false)
+	arg_50_0._menu_input_description:change_generic_actions(var_0_18.default)
 end
 
-HeroWindowItemCustomization._state_setup_property_reroll = function (self)
-	local property_reroll_widgets = {}
-	local property_reroll_widgets_by_name = {}
+function HeroWindowItemCustomization._state_setup_property_reroll(arg_51_0)
+	local var_51_0 = {}
+	local var_51_1 = {}
 
-	for name, widget_definition in pairs(property_reroll_widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_51_0, iter_51_1 in pairs(var_0_12) do
+		local var_51_2 = UIWidget.init(iter_51_1)
 
-		property_reroll_widgets[#property_reroll_widgets + 1] = widget
-		property_reroll_widgets_by_name[name] = widget
+		var_51_0[#var_51_0 + 1] = var_51_2
+		var_51_1[iter_51_0] = var_51_2
 	end
 
-	self._property_reroll_widgets = property_reroll_widgets
-	self._property_reroll_widgets_by_name = property_reroll_widgets_by_name
+	arg_51_0._property_reroll_widgets = var_51_0
+	arg_51_0._property_reroll_widgets_by_name = var_51_1
 
-	local item = self:_get_item(self._item_backend_id)
-	local item_data = item.data
-	local slot_type = item_data.slot_type
-	local rarity = item.rarity or item_data.rarity
-	local property_table_name = item_data.property_table_name
+	local var_51_3 = arg_51_0:_get_item(arg_51_0._item_backend_id)
+	local var_51_4 = var_51_3.data
+	local var_51_5 = var_51_4.slot_type
+	local var_51_6 = var_51_3.rarity or var_51_4.rarity
+	local var_51_7 = var_51_4.property_table_name
 
-	if not property_table_name then
+	if not var_51_7 then
 		return
 	end
 
-	local widgets = {}
-	local edge_spacing = 45
-	local spacing = 30
-	local y_offset = edge_spacing
-	local property_tables = WeaponProperties.combinations[property_table_name]
-	local property_combinations = property_tables[rarity] or property_tables.common
+	local var_51_8 = {}
+	local var_51_9 = 45
+	local var_51_10 = 30
+	local var_51_11 = var_51_9
+	local var_51_12 = WeaponProperties.combinations[var_51_7]
+	local var_51_13 = var_51_12[var_51_6] or var_51_12.common
 
-	for property_key, property_data in pairs(WeaponProperties.properties) do
-		local approved = false
+	for iter_51_2, iter_51_3 in pairs(WeaponProperties.properties) do
+		local var_51_14 = false
 
-		for _, property_combo in ipairs(property_combinations) do
-			if table.contains(property_combo, property_key) then
-				approved = true
+		for iter_51_4, iter_51_5 in ipairs(var_51_13) do
+			if table.contains(iter_51_5, iter_51_2) then
+				var_51_14 = true
 
 				break
 			end
 		end
 
-		if approved then
-			local buff_name = property_data.buff_name
-			local buff_template = BuffUtils.get_buff_template(buff_name)
-			local buff_data = buff_template.buffs[1]
-			local has_multiplier = buff_data.variable_multiplier ~= nil
-			local property_name = property_data.display_name
-			local value = 1
-			local property_title_text, advanced_description = UIUtils.get_property_description(property_key, value)
+		if var_51_14 then
+			local var_51_15 = iter_51_3.buff_name
+			local var_51_16
 
-			property_title_text = string.gsub(property_title_text, "%d", "")
-			property_title_text = string.gsub(property_title_text, "%p", "")
+			var_51_16 = BuffUtils.get_buff_template(var_51_15).buffs[1].variable_multiplier ~= nil
 
-			local text = property_title_text
-			local widget = self:_create_property_option_entry(property_title_text, advanced_description)
+			local var_51_17 = iter_51_3.display_name
+			local var_51_18 = 1
+			local var_51_19, var_51_20 = UIUtils.get_property_description(iter_51_2, var_51_18)
+			local var_51_21 = string.gsub(var_51_19, "%d", "")
+			local var_51_22 = string.gsub(var_51_21, "%p", "")
+			local var_51_23 = var_51_22
+			local var_51_24 = arg_51_0:_create_property_option_entry(var_51_22, var_51_20)
 
-			widgets[#widgets + 1] = widget
-			widget.offset[2] = -y_offset
-			y_offset = y_offset + spacing
+			var_51_8[#var_51_8 + 1] = var_51_24
+			var_51_24.offset[2] = -var_51_11
+			var_51_11 = var_51_11 + var_51_10
 		end
 	end
 
-	y_offset = y_offset - edge_spacing
-	self._property_reroll_option_widgets = widgets
+	local var_51_25 = var_51_11 - var_51_9
 
-	local widget_description, description_size = self:_create_description_widget("info_description_text_2", Localize("description_crafting_recipe_weapon_reroll_properties"))
+	arg_51_0._property_reroll_option_widgets = var_51_8
 
-	property_reroll_widgets[#property_reroll_widgets + 1] = widget_description
+	local var_51_26, var_51_27 = arg_51_0:_create_description_widget("info_description_text_2", Localize("description_crafting_recipe_weapon_reroll_properties"))
 
-	local description_text_height = description_size[2] + 10
+	var_51_0[#var_51_0 + 1] = var_51_26
 
-	self._ui_scenegraph.info_description_text_2.local_position[2] = -description_text_height
+	local var_51_28 = var_51_27[2] + 10
 
-	local step_size = spacing * 2
+	arg_51_0._ui_scenegraph.info_description_text_2.local_position[2] = -var_51_28
 
-	self:_initialize_scrollbar(y_offset, step_size)
+	local var_51_29 = var_51_10 * 2
 
-	local state_data = self._states[self._state]
-	local recipe_by_slot_type = state_data.recipe_by_slot_type
-	local recipe_name = recipe_by_slot_type[slot_type]
+	arg_51_0:_initialize_scrollbar(var_51_25, var_51_29)
 
-	self._current_recipe_name = recipe_name
+	local var_51_30 = arg_51_0._states[arg_51_0._state].recipe_by_slot_type[var_51_5]
 
-	self:_update_state_craft_button(recipe_name, Localize("crafting_recipe_weapon_reroll_properties"), Colors.get_color_table_with_alpha("corn_flower_blue", 255))
-	self._menu_input_description:change_generic_actions(generic_input_actions[self._state])
+	arg_51_0._current_recipe_name = var_51_30
+
+	arg_51_0:_update_state_craft_button(var_51_30, Localize("crafting_recipe_weapon_reroll_properties"), Colors.get_color_table_with_alpha("corn_flower_blue", 255))
+	arg_51_0._menu_input_description:change_generic_actions(var_0_18[arg_51_0._state])
 end
 
-HeroWindowItemCustomization._enable_craft_button = function (self, enable, disable_edges)
+function HeroWindowItemCustomization._enable_craft_button(arg_52_0, arg_52_1, arg_52_2)
 	if script_data["eac-untrusted"] then
-		enable = false
+		arg_52_1 = false
 	end
 
-	local widgets_by_name = self._widgets_by_name
+	local var_52_0 = arg_52_0._widgets_by_name
 
-	widgets_by_name.button_top_edge_left.content.visible = not disable_edges and enable or false
-	widgets_by_name.button_top_edge_right.content.visible = not disable_edges and enable or false
-	widgets_by_name.button_top_edge_glow.content.visible = not disable_edges and enable or false
+	var_52_0.button_top_edge_left.content.visible = not arg_52_2 and arg_52_1 or false
+	var_52_0.button_top_edge_right.content.visible = not arg_52_2 and arg_52_1 or false
+	var_52_0.button_top_edge_glow.content.visible = not arg_52_2 and arg_52_1 or false
 
-	local widget_craft_button = widgets_by_name.craft_button
+	local var_52_1 = var_52_0.craft_button
 
-	widget_craft_button.content.visible = enable
-	widget_craft_button.content.button_hotspot.disable_button = not enable
+	var_52_1.content.visible = arg_52_1
+	var_52_1.content.button_hotspot.disable_button = not arg_52_1
+	var_52_0.experience_bar.content.visible = arg_52_1
+	var_52_0.experience_bar_edge.content.visible = arg_52_1
 
-	local widget_experience_bar = widgets_by_name.experience_bar
-
-	widget_experience_bar.content.visible = enable
-
-	local widget_experience_bar_edge = widgets_by_name.experience_bar_edge
-
-	widget_experience_bar_edge.content.visible = enable
-
-	if not enable then
-		self._menu_input_description:change_generic_actions(generic_input_actions.default)
+	if not arg_52_1 then
+		arg_52_0._menu_input_description:change_generic_actions(var_0_18.default)
 	else
-		self._menu_input_description:change_generic_actions(generic_input_actions[self._state])
+		arg_52_0._menu_input_description:change_generic_actions(var_0_18[arg_52_0._state])
 	end
 end
 
-HeroWindowItemCustomization._update_state_craft_button = function (self, recipe_name, button_text, glow_color, force_disable, offset)
-	local has_all_requirements, total_width = self:_create_material_requirement_widgets(recipe_name)
+function HeroWindowItemCustomization._update_state_craft_button(arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4, arg_53_5)
+	local var_53_0, var_53_1 = arg_53_0:_create_material_requirement_widgets(arg_53_1)
+	local var_53_2 = math.max(var_53_1 + 30, 100)
+	local var_53_3 = arg_53_0._widgets_by_name
+	local var_53_4 = var_53_3.button_top_edge_left
+	local var_53_5 = var_53_3.button_top_edge_right
+	local var_53_6 = var_53_3.button_top_edge_glow
 
-	total_width = math.max(total_width + 30, 100)
+	var_53_4.offset[1] = -var_53_2 / 2
+	var_53_5.offset[1] = var_53_2 / 2
+	arg_53_0._ui_scenegraph.button_top_edge_glow.size[1] = var_53_2
 
-	local widgets_by_name = self._widgets_by_name
-	local widget_button_edge_left = widgets_by_name.button_top_edge_left
-	local widget_button_edge_right = widgets_by_name.button_top_edge_right
-	local widget_button_top_edge_glow = widgets_by_name.button_top_edge_glow
-
-	widget_button_edge_left.offset[1] = -total_width / 2
-	widget_button_edge_right.offset[1] = total_width / 2
-	self._ui_scenegraph.button_top_edge_glow.size[1] = total_width
-
-	if glow_color then
-		widget_button_top_edge_glow.style.texture_id.color = glow_color
+	if arg_53_3 then
+		var_53_6.style.texture_id.color = arg_53_3
 	end
 
-	local widget_craft_button = widgets_by_name.craft_button
+	local var_53_7 = var_53_3.craft_button
 
-	widget_craft_button.content.button_hotspot.disable_button = force_disable or not has_all_requirements or script_data["eac-untrusted"]
-	widget_craft_button.content.title_text = button_text
-	self._has_all_crafting_requirements = has_all_requirements
+	var_53_7.content.button_hotspot.disable_button = arg_53_4 or not var_53_0 or script_data["eac-untrusted"]
+	var_53_7.content.title_text = arg_53_2
+	arg_53_0._has_all_crafting_requirements = var_53_0
 
-	local visible = true
+	local var_53_8 = true
 
-	widget_button_edge_left.content.visible = visible
-	widget_button_edge_right.content.visible = visible
-	widget_button_top_edge_glow.content.visible = visible
-	widget_craft_button.content.visible = visible
-	self._ui_scenegraph.craft_button.local_position = offset or {
+	var_53_4.content.visible = var_53_8
+	var_53_5.content.visible = var_53_8
+	var_53_6.content.visible = var_53_8
+	var_53_7.content.visible = var_53_8
+	arg_53_0._ui_scenegraph.craft_button.local_position = arg_53_5 or {
 		0,
 		0,
-		0,
+		0
 	}
 end
 
-local FALLBACK_WEAPON_DIAGRAM = {
+local var_0_22 = {
 	0,
 	0,
 	0,
 	0,
-	0,
+	0
 }
 
-HeroWindowItemCustomization._create_weapon_diagram_widget = function (self, item_template)
-	local starting_offset = 0.25
-	local num_steps = 8
-	local step_size = (1 - starting_offset) / num_steps
-	local epsilon = 0.0125
-	local nodes = {}
-	local weapon_diagram_data = item_template.weapon_diagram
-	local light_attack = weapon_diagram_data and weapon_diagram_data.light_attack
+function HeroWindowItemCustomization._create_weapon_diagram_widget(arg_54_0, arg_54_1)
+	local var_54_0 = 0.25
+	local var_54_1 = 8
+	local var_54_2 = (1 - var_54_0) / var_54_1
+	local var_54_3 = 0.0125
+	local var_54_4 = {}
+	local var_54_5 = arg_54_1.weapon_diagram
+	local var_54_6 = var_54_5 and var_54_5.light_attack
 
-	if not light_attack then
-		Application.error(string.format("[HeroWindowItemCustomization] Missing light attack weapon diagram data for %q - Defaulting to zeros", item_template.name))
+	if not var_54_6 then
+		Application.error(string.format("[HeroWindowItemCustomization] Missing light attack weapon diagram data for %q - Defaulting to zeros", arg_54_1.name))
 
-		light_attack = FALLBACK_WEAPON_DIAGRAM
+		var_54_6 = var_0_22
 	end
 
-	local armor_piercing = math.clamp(math.floor(light_attack[DamageTypes.ARMOR_PIERCING] + 0.5), 0, num_steps - 1)
-	local cleave = math.clamp(math.floor(light_attack[DamageTypes.CLEAVE] + 0.5), 0, num_steps - 1)
-	local speed = math.clamp(math.floor(light_attack[DamageTypes.SPEED] + 0.5), 0, num_steps - 1)
-	local stagger = math.clamp(math.floor(light_attack[DamageTypes.STAGGER] + 0.5), 0, num_steps - 1)
-	local damage = math.clamp(math.floor(light_attack[DamageTypes.DAMAGE] + 0.5), 0, num_steps - 1)
+	local var_54_7 = math.clamp(math.floor(var_54_6[DamageTypes.ARMOR_PIERCING] + 0.5), 0, var_54_1 - 1)
+	local var_54_8 = math.clamp(math.floor(var_54_6[DamageTypes.CLEAVE] + 0.5), 0, var_54_1 - 1)
+	local var_54_9 = math.clamp(math.floor(var_54_6[DamageTypes.SPEED] + 0.5), 0, var_54_1 - 1)
+	local var_54_10 = math.clamp(math.floor(var_54_6[DamageTypes.STAGGER] + 0.5), 0, var_54_1 - 1)
+	local var_54_11 = math.clamp(math.floor(var_54_6[DamageTypes.DAMAGE] + 0.5), 0, var_54_1 - 1)
 
-	nodes[#nodes + 1] = starting_offset + step_size * armor_piercing + armor_piercing * epsilon
-	nodes[#nodes + 1] = starting_offset + step_size * cleave + cleave * epsilon
-	nodes[#nodes + 1] = starting_offset + step_size * speed + speed * epsilon
-	nodes[#nodes + 1] = starting_offset + step_size * stagger + stagger * epsilon
-	nodes[#nodes + 1] = starting_offset + step_size * damage + damage * epsilon
+	var_54_4[#var_54_4 + 1] = var_54_0 + var_54_2 * var_54_7 + var_54_7 * var_54_3
+	var_54_4[#var_54_4 + 1] = var_54_0 + var_54_2 * var_54_8 + var_54_8 * var_54_3
+	var_54_4[#var_54_4 + 1] = var_54_0 + var_54_2 * var_54_9 + var_54_9 * var_54_3
+	var_54_4[#var_54_4 + 1] = var_54_0 + var_54_2 * var_54_10 + var_54_10 * var_54_3
+	var_54_4[#var_54_4 + 1] = var_54_0 + var_54_2 * var_54_11 + var_54_11 * var_54_3
 
-	local heavy_attack = weapon_diagram_data and weapon_diagram_data.heavy_attack
+	local var_54_12 = var_54_5 and var_54_5.heavy_attack
 
-	if not heavy_attack then
-		Application.error(string.format("[HeroWindowItemCustomization] Missing heavy attack weapon diagram data for %q - Defaulting to zeros", item_template.name))
+	if not var_54_12 then
+		Application.error(string.format("[HeroWindowItemCustomization] Missing heavy attack weapon diagram data for %q - Defaulting to zeros", arg_54_1.name))
 
-		heavy_attack = FALLBACK_WEAPON_DIAGRAM
+		var_54_12 = var_0_22
 	end
 
-	local armor_piercing = math.clamp(math.floor(heavy_attack[DamageTypes.ARMOR_PIERCING] + 0.5), 0, num_steps - 1)
-	local cleave = math.clamp(math.floor(heavy_attack[DamageTypes.CLEAVE] + 0.5), 0, num_steps - 1)
-	local speed = math.clamp(math.floor(heavy_attack[DamageTypes.SPEED] + 0.5), 0, num_steps - 1)
-	local stagger = math.clamp(math.floor(heavy_attack[DamageTypes.STAGGER] + 0.5), 0, num_steps - 1)
-	local damage = math.clamp(math.floor(heavy_attack[DamageTypes.DAMAGE] + 0.5), 0, num_steps - 1)
+	local var_54_13 = math.clamp(math.floor(var_54_12[DamageTypes.ARMOR_PIERCING] + 0.5), 0, var_54_1 - 1)
+	local var_54_14 = math.clamp(math.floor(var_54_12[DamageTypes.CLEAVE] + 0.5), 0, var_54_1 - 1)
+	local var_54_15 = math.clamp(math.floor(var_54_12[DamageTypes.SPEED] + 0.5), 0, var_54_1 - 1)
+	local var_54_16 = math.clamp(math.floor(var_54_12[DamageTypes.STAGGER] + 0.5), 0, var_54_1 - 1)
+	local var_54_17 = math.clamp(math.floor(var_54_12[DamageTypes.DAMAGE] + 0.5), 0, var_54_1 - 1)
 
-	nodes[#nodes + 1] = starting_offset + step_size * armor_piercing + armor_piercing * epsilon
-	nodes[#nodes + 1] = starting_offset + step_size * cleave + cleave * epsilon
-	nodes[#nodes + 1] = starting_offset + step_size * speed + speed * epsilon
-	nodes[#nodes + 1] = starting_offset + step_size * stagger + stagger * epsilon
-	nodes[#nodes + 1] = starting_offset + step_size * damage + damage * epsilon
+	var_54_4[#var_54_4 + 1] = var_54_0 + var_54_2 * var_54_13 + var_54_13 * var_54_3
+	var_54_4[#var_54_4 + 1] = var_54_0 + var_54_2 * var_54_14 + var_54_14 * var_54_3
+	var_54_4[#var_54_4 + 1] = var_54_0 + var_54_2 * var_54_15 + var_54_15 * var_54_3
+	var_54_4[#var_54_4 + 1] = var_54_0 + var_54_2 * var_54_16 + var_54_16 * var_54_3
+	var_54_4[#var_54_4 + 1] = var_54_0 + var_54_2 * var_54_17 + var_54_17 * var_54_3
 
-	local masked = false
-	local scenegraph_id = "weapon_stats_diagram"
-	local size = scenegraph_definition[scenegraph_id].size
-	local widget_definition = UIWidgets.create_weapon_diagram_widget("weapon_stats_diagram", size, nodes, masked, starting_offset)
-	local widget = UIWidget.init(widget_definition)
+	local var_54_18 = false
+	local var_54_19 = "weapon_stats_diagram"
+	local var_54_20 = var_0_4[var_54_19].size
+	local var_54_21 = UIWidgets.create_weapon_diagram_widget("weapon_stats_diagram", var_54_20, var_54_4, var_54_18, var_54_0)
 
-	return widget, size
+	return UIWidget.init(var_54_21), var_54_20
 end
 
-HeroWindowItemCustomization._create_item_feature_widget = function (self, title_text, value_text, value_texture)
-	local masked = false
-	local scenegraph_id = "item_feature"
-	local size = scenegraph_definition[scenegraph_id].size
-	local widget_definition = UIWidgets.create_item_feature(scenegraph_id, size, title_text, value_text, value_texture, masked)
-	local widget = UIWidget.init(widget_definition)
+function HeroWindowItemCustomization._create_item_feature_widget(arg_55_0, arg_55_1, arg_55_2, arg_55_3)
+	local var_55_0 = false
+	local var_55_1 = "item_feature"
+	local var_55_2 = var_0_4[var_55_1].size
+	local var_55_3 = UIWidgets.create_item_feature(var_55_1, var_55_2, arg_55_1, arg_55_2, arg_55_3, var_55_0)
 
-	return widget, size
+	return UIWidget.init(var_55_3), var_55_2
 end
 
-HeroWindowItemCustomization._create_description_widget = function (self, scenegraph_id, text, text_style)
-	local masked = false
+function HeroWindowItemCustomization._create_description_widget(arg_56_0, arg_56_1, arg_56_2, arg_56_3)
+	local var_56_0 = false
 
-	text_style = text_style or {
+	arg_56_3 = arg_56_3 or {
+		word_wrap = true,
 		font_size = 20,
-		horizontal_alignment = "left",
 		localize = false,
 		use_shadow = true,
+		horizontal_alignment = "left",
 		vertical_alignment = "top",
-		word_wrap = true,
-		font_type = masked and "hell_shark_masked" or "hell_shark",
+		font_type = var_56_0 and "hell_shark_masked" or "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
 			0,
 			0,
-			2,
-		},
+			2
+		}
 	}
 
-	local widget_definition = UIWidgets.create_simple_text(text, scenegraph_id, nil, nil, text_style)
-	local widget = UIWidget.init(widget_definition)
-	local ui_renderer = self._ui_top_renderer
-	local default_size = scenegraph_definition[scenegraph_id].size
-	local text_height = math.floor(UIUtils.get_text_height(ui_renderer, default_size, text_style, text))
-	local size = self._ui_scenegraph[scenegraph_id].size
+	local var_56_1 = UIWidgets.create_simple_text(arg_56_2, arg_56_1, nil, nil, arg_56_3)
+	local var_56_2 = UIWidget.init(var_56_1)
+	local var_56_3 = arg_56_0._ui_top_renderer
+	local var_56_4 = var_0_4[arg_56_1].size
+	local var_56_5
 
-	size[2] = text_height
+	var_56_5[2], var_56_5 = math.floor(UIUtils.get_text_height(var_56_3, var_56_4, arg_56_3, arg_56_2)), arg_56_0._ui_scenegraph[arg_56_1].size
 
-	return widget, size
+	return var_56_2, var_56_5
 end
 
-HeroWindowItemCustomization._create_property_option_entry = function (self, text, value_range_text)
-	local scenegraph_id = "property_options"
-	local display_text = text .. value_range_text
-	local definition = create_property_option(scenegraph_id, display_text)
-	local widget = UIWidget.init(definition)
-	local style = widget.style
-	local text_style = style.text
-	local color_override_table = text_style.color_override_table
-	local value_text_length = value_range_text and UTF8Utils.string_length(value_range_text) or 0
-	local default_text_length = UTF8Utils.string_length(text) or 0
+function HeroWindowItemCustomization._create_property_option_entry(arg_57_0, arg_57_1, arg_57_2)
+	local var_57_0 = "property_options"
+	local var_57_1 = arg_57_1 .. arg_57_2
+	local var_57_2 = var_0_14(var_57_0, var_57_1)
+	local var_57_3 = UIWidget.init(var_57_2)
+	local var_57_4 = var_57_3.style.text
+	local var_57_5 = var_57_4.color_override_table
+	local var_57_6 = arg_57_2 and UTF8Utils.string_length(arg_57_2) or 0
+	local var_57_7 = UTF8Utils.string_length(arg_57_1) or 0
 
-	color_override_table.start_index = default_text_length + 1
-	color_override_table.end_index = default_text_length + value_text_length
-	text_style.color_override[1] = color_override_table
+	var_57_5.start_index = var_57_7 + 1
+	var_57_5.end_index = var_57_7 + var_57_6
+	var_57_4.color_override[1] = var_57_5
 
-	return widget
+	return var_57_3
 end
 
-HeroWindowItemCustomization._set_scroll_area_height = function (self, widget, height)
-	self._ui_scenegraph.scroll_area.size[2] = height
-	widget.style.mask.size[2] = height
+function HeroWindowItemCustomization._set_scroll_area_height(arg_58_0, arg_58_1, arg_58_2)
+	arg_58_0._ui_scenegraph.scroll_area.size[2] = arg_58_2
+	arg_58_1.style.mask.size[2] = arg_58_2
 end
 
-HeroWindowItemCustomization._destroy_scrollbar = function (self)
-	if self._scrollbar_logic then
-		self._scrollbar_logic = nil
+function HeroWindowItemCustomization._destroy_scrollbar(arg_59_0)
+	if arg_59_0._scrollbar_logic then
+		arg_59_0._scrollbar_logic = nil
 	end
 
-	local widgets_by_name = self._widgets_by_name
-	local scrollbar_widget = widgets_by_name.scrollbar
-
-	scrollbar_widget.content.visible = false
+	arg_59_0._widgets_by_name.scrollbar.content.visible = false
 end
 
-HeroWindowItemCustomization._initialize_scrollbar = function (self, content_length, step_size)
-	local widgets_by_name = self._widgets_by_name
-	local ui_scenegraph = self._ui_scenegraph
+function HeroWindowItemCustomization._initialize_scrollbar(arg_60_0, arg_60_1, arg_60_2)
+	local var_60_0 = arg_60_0._widgets_by_name
+	local var_60_1 = arg_60_0._ui_scenegraph
 
-	UISceneGraph.update_scenegraph(ui_scenegraph)
+	UISceneGraph.update_scenegraph(var_60_1)
 
-	local info_window_world_y = ui_scenegraph.info_window.world_position[2]
-	local scroll_area_world_y = ui_scenegraph.property_options_title.world_position[2]
-	local draw_length = scroll_area_world_y - info_window_world_y
-	local draw = draw_length < content_length
+	local var_60_2 = var_60_1.info_window.world_position[2]
+	local var_60_3 = var_60_1.property_options_title.world_position[2] - var_60_2
+	local var_60_4 = var_60_3 < arg_60_1
 
-	ui_scenegraph.scrollbar.size[2] = draw_length
+	var_60_1.scrollbar.size[2] = var_60_3
 
-	local scrollbar_widget = widgets_by_name.scrollbar
+	local var_60_5 = var_60_0.scrollbar
 
-	scrollbar_widget.content.visible = draw
+	var_60_5.content.visible = var_60_4
 
-	local scrollbar_logic = ScrollBarLogic:new(scrollbar_widget)
+	local var_60_6 = ScrollBarLogic:new(var_60_5)
 
-	self._scrollbar_logic = scrollbar_logic
+	arg_60_0._scrollbar_logic = var_60_6
 
-	local scroll_step_multiplier = 1
-	local scrollbar_length = draw_length
+	local var_60_7 = 1
+	local var_60_8 = var_60_3
 
-	scrollbar_logic:set_scrollbar_values(draw_length, content_length, scrollbar_length, step_size, scroll_step_multiplier)
-	scrollbar_logic:set_scroll_percentage(0)
+	var_60_6:set_scrollbar_values(var_60_3, arg_60_1, var_60_8, arg_60_2, var_60_7)
+	var_60_6:set_scroll_percentage(0)
 
-	local scroll_area_widget = widgets_by_name.scroll_area
+	local var_60_9 = var_60_0.scroll_area
 
-	self:_set_scroll_area_height(scroll_area_widget, draw_length)
+	arg_60_0:_set_scroll_area_height(var_60_9, var_60_3)
 
-	self._scrolled_length = nil
+	arg_60_0._scrolled_length = nil
 
-	return draw
+	return var_60_4
 end
 
-HeroWindowItemCustomization._update_scroll_position = function (self)
-	local scrollbar_logic = self._scrollbar_logic
+function HeroWindowItemCustomization._update_scroll_position(arg_61_0)
+	local var_61_0 = arg_61_0._scrollbar_logic
 
-	if not scrollbar_logic then
+	if not var_61_0 then
 		return
 	end
 
-	local length = scrollbar_logic:get_scrolled_length()
+	local var_61_1 = var_61_0:get_scrolled_length()
 
-	if length ~= self._scrolled_length then
-		self._ui_scenegraph.scroll_root.local_position[2] = length
-		self._scrolled_length = length
+	if var_61_1 ~= arg_61_0._scrolled_length then
+		arg_61_0._ui_scenegraph.scroll_root.local_position[2] = var_61_1
+		arg_61_0._scrolled_length = var_61_1
 	end
 end
 
-HeroWindowItemCustomization._create_material_requirement_widgets = function (self, recipe_name)
-	local recipe = crafting_recipes_by_name[recipe_name]
-	local ingredients = recipe.ingredients
-	local widget_definition = UIWidgets.create_craft_material_widget("material_root")
-	local item_interface = Managers.backend:get_interface("items")
-	local crafting_material_items = item_interface:get_filtered_items("item_type == crafting_material")
-	local material_textures = UISettings.crafting_material_icons_small
-	local widgets = {}
-	local has_all_requirements = true
+function HeroWindowItemCustomization._create_material_requirement_widgets(arg_62_0, arg_62_1)
+	local var_62_0 = var_0_1[arg_62_1].ingredients
+	local var_62_1 = UIWidgets.create_craft_material_widget("material_root")
+	local var_62_2 = Managers.backend:get_interface("items")
+	local var_62_3 = var_62_2:get_filtered_items("item_type == crafting_material")
+	local var_62_4 = UISettings.crafting_material_icons_small
+	local var_62_5 = {}
+	local var_62_6 = true
 
-	if not self._material_items then
-		self._material_items = {}
+	if not arg_62_0._material_items then
+		arg_62_0._material_items = {}
 	end
 
-	local material_items = self._material_items
+	local var_62_7 = arg_62_0._material_items
 
-	table.clear(material_items)
+	table.clear(var_62_7)
 
-	for index, data in ipairs(ingredients) do
-		if not data.catergory then
-			local widget = UIWidget.init(widget_definition)
+	for iter_62_0, iter_62_1 in ipairs(var_62_0) do
+		if not iter_62_1.catergory then
+			local var_62_8 = UIWidget.init(var_62_1)
 
-			widgets[#widgets + 1] = widget
+			var_62_5[#var_62_5 + 1] = var_62_8
 
-			local item_key = data.name
-			local required_amount = data.amount
-			local texture = material_textures[item_key]
-			local amount_owned = 0
-			local required_backend_id
+			local var_62_9 = iter_62_1.name
+			local var_62_10 = iter_62_1.amount
+			local var_62_11 = var_62_4[var_62_9]
+			local var_62_12 = 0
+			local var_62_13
 
-			for _, item in ipairs(crafting_material_items) do
-				local backend_id = item.backend_id
-				local item_data = item.data
+			for iter_62_2, iter_62_3 in ipairs(var_62_3) do
+				local var_62_14 = iter_62_3.backend_id
 
-				if item_data.key == item_key then
-					required_backend_id = backend_id
-					amount_owned = item_interface:get_item_amount(backend_id)
+				if iter_62_3.data.key == var_62_9 then
+					var_62_13 = var_62_14
+					var_62_12 = var_62_2:get_item_amount(var_62_14)
 
 					break
 				end
 			end
 
-			local has_required_amount = required_amount <= amount_owned
-			local presentation_amount = (amount_owned < UISettings.max_craft_material_presentation_amount and tostring(amount_owned) or "*") .. "/" .. tostring(required_amount)
-			local content = widget.content
+			local var_62_15 = var_62_10 <= var_62_12
+			local var_62_16
 
-			content.text = presentation_amount
-			content.icon = texture
-			content.warning = not has_required_amount
-			content.item = {
-				data = table.clone(ItemMasterList[item_key]),
+			var_62_16.text, var_62_16 = (var_62_12 < UISettings.max_craft_material_presentation_amount and tostring(var_62_12) or "*") .. "/" .. tostring(var_62_10), var_62_8.content
+			var_62_16.icon = var_62_11
+			var_62_16.warning = not var_62_15
+			var_62_16.item = {
+				data = table.clone(ItemMasterList[var_62_9])
 			}
-			material_items[#material_items + 1] = required_backend_id
+			var_62_7[#var_62_7 + 1] = var_62_13
 
-			local is_red_dust = item_key == "crafting_material_dust_4"
-
-			if is_red_dust and ExperienceSettings.get_highest_character_level() < LootChestData.LEVEL_USED_FOR_POOL_LEVELS then
-				has_all_requirements = false
-			elseif not has_required_amount then
-				has_all_requirements = false
+			if var_62_9 == "crafting_material_dust_4" and ExperienceSettings.get_highest_character_level() < LootChestData.LEVEL_USED_FOR_POOL_LEVELS then
+				var_62_6 = false
+			elseif not var_62_15 then
+				var_62_6 = false
 			end
 		end
 	end
 
-	local num_materials = #material_items
-	local spacing = 80
-	local total_widgets_width = num_materials * spacing
-	local offset_x = -(total_widgets_width / 2) + spacing / 2
+	local var_62_17 = #var_62_7
+	local var_62_18 = 80
+	local var_62_19 = var_62_17 * var_62_18
+	local var_62_20 = -(var_62_19 / 2) + var_62_18 / 2
 
-	for i = 1, num_materials do
-		local widget = widgets[i]
-		local offset = widget.offset
-
-		offset[1] = offset_x
-		offset_x = offset_x + spacing
+	for iter_62_4 = 1, var_62_17 do
+		var_62_5[iter_62_4].offset[1] = var_62_20
+		var_62_20 = var_62_20 + var_62_18
 	end
 
-	self._material_widgets = widgets
+	arg_62_0._material_widgets = var_62_5
 
-	return has_all_requirements, total_widgets_width
+	return var_62_6, var_62_19
 end
 
-HeroWindowItemCustomization._play_sound = function (self, event)
-	self._parent:play_sound(event)
+function HeroWindowItemCustomization._play_sound(arg_63_0, arg_63_1)
+	arg_63_0._parent:play_sound(arg_63_1)
 end
 
-HeroWindowItemCustomization._state_setup_trait_reroll = function (self)
-	local trait_reroll_widgets = {}
-	local trait_reroll_widgets_by_name = {}
+function HeroWindowItemCustomization._state_setup_trait_reroll(arg_64_0)
+	local var_64_0 = {}
+	local var_64_1 = {}
 
-	for name, widget_definition in pairs(trait_reroll_widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_64_0, iter_64_1 in pairs(var_0_10) do
+		local var_64_2 = UIWidget.init(iter_64_1)
 
-		trait_reroll_widgets[#trait_reroll_widgets + 1] = widget
-		trait_reroll_widgets_by_name[name] = widget
+		var_64_0[#var_64_0 + 1] = var_64_2
+		var_64_1[iter_64_0] = var_64_2
 	end
 
-	self._trait_reroll_widgets = trait_reroll_widgets
-	self._trait_reroll_widgets_by_name = trait_reroll_widgets_by_name
+	arg_64_0._trait_reroll_widgets = var_64_0
+	arg_64_0._trait_reroll_widgets_by_name = var_64_1
 
-	local item = self:_get_item(self._item_backend_id)
-	local item_data = item.data
-	local slot_type = item_data.slot_type
-	local rarity = item.rarity or item_data.rarity
-	local trait_table_name = item_data.trait_table_name
+	local var_64_3 = arg_64_0:_get_item(arg_64_0._item_backend_id)
+	local var_64_4 = var_64_3.data
+	local var_64_5 = var_64_4.slot_type
+	local var_64_6 = var_64_3.rarity or var_64_4.rarity
+	local var_64_7 = var_64_4.trait_table_name
 
-	if not trait_table_name then
-		self:_enable_craft_button(false)
+	if not var_64_7 then
+		arg_64_0:_enable_craft_button(false)
 
 		return
 	end
 
-	self:_enable_craft_button(rarity)
+	arg_64_0:_enable_craft_button(var_64_6)
 
-	local widgets = {}
-	local edge_spacing = 45
-	local spacing = 30
-	local y_offset = edge_spacing
-	local trait_combinations = WeaponTraits.combinations[trait_table_name]
+	local var_64_8 = {}
+	local var_64_9 = 45
+	local var_64_10 = 30
+	local var_64_11 = var_64_9
+	local var_64_12 = WeaponTraits.combinations[var_64_7]
 
-	for trait_key, trait_data in pairs(WeaponTraits.traits) do
-		local approved = false
+	for iter_64_2, iter_64_3 in pairs(WeaponTraits.traits) do
+		local var_64_13 = false
 
-		for _, trait_combo in ipairs(trait_combinations) do
-			if table.contains(trait_combo, trait_key) and not trait_data.crafting_disabled then
-				approved = true
+		for iter_64_4, iter_64_5 in ipairs(var_64_12) do
+			if table.contains(iter_64_5, iter_64_2) and not iter_64_3.crafting_disabled then
+				var_64_13 = true
 
 				break
 			end
 		end
 
-		if approved then
-			local trait_name = trait_data.display_name
-			local trait_advanced_description = trait_data.advanced_description
-			local trait_icon = trait_data.icon
-			local title_text = Localize(trait_name)
-			local description_text = UIUtils.get_trait_description(trait_key)
-			local widget, additional_height = self:_create_trait_option_entry(title_text, description_text, trait_icon)
+		if var_64_13 then
+			local var_64_14 = iter_64_3.display_name
+			local var_64_15 = iter_64_3.advanced_description
+			local var_64_16 = iter_64_3.icon
+			local var_64_17 = Localize(var_64_14)
+			local var_64_18 = UIUtils.get_trait_description(iter_64_2)
+			local var_64_19, var_64_20 = arg_64_0:_create_trait_option_entry(var_64_17, var_64_18, var_64_16)
 
-			widgets[#widgets + 1] = widget
-			widget.offset[2] = -y_offset
-			y_offset = y_offset + spacing + additional_height
+			var_64_8[#var_64_8 + 1] = var_64_19
+			var_64_19.offset[2] = -var_64_11
+			var_64_11 = var_64_11 + var_64_10 + var_64_20
 		end
 	end
 
-	y_offset = y_offset - edge_spacing
-	self._trait_reroll_option_widgets = widgets
+	local var_64_21 = var_64_11 - var_64_9
 
-	local widget_description, description_size = self:_create_description_widget("info_description_text_2", Localize("description_crafting_recipe_weapon_reroll_traits"))
+	arg_64_0._trait_reroll_option_widgets = var_64_8
 
-	trait_reroll_widgets[#trait_reroll_widgets + 1] = widget_description
+	local var_64_22, var_64_23 = arg_64_0:_create_description_widget("info_description_text_2", Localize("description_crafting_recipe_weapon_reroll_traits"))
 
-	local description_text_height = description_size[2] + 10
-	local ui_scenegraph = self._ui_scenegraph
+	var_64_0[#var_64_0 + 1] = var_64_22
 
-	ui_scenegraph.info_description_text_2.local_position[2] = -description_text_height
+	local var_64_24 = var_64_23[2] + 10
 
-	local step_size = spacing * 2
+	arg_64_0._ui_scenegraph.info_description_text_2.local_position[2] = -var_64_24
 
-	self:_initialize_scrollbar(y_offset, step_size)
+	local var_64_25 = var_64_10 * 2
 
-	local state_data = self._states[self._state]
-	local recipe_by_slot_type = state_data.recipe_by_slot_type
-	local recipe_name = recipe_by_slot_type[slot_type]
+	arg_64_0:_initialize_scrollbar(var_64_21, var_64_25)
 
-	self._current_recipe_name = recipe_name
+	local var_64_26 = arg_64_0._states[arg_64_0._state].recipe_by_slot_type[var_64_5]
 
-	self:_update_state_craft_button(recipe_name, Localize("crafting_recipe_weapon_reroll_traits"), Colors.get_color_table_with_alpha("font_title", 255))
-	self._menu_input_description:change_generic_actions(generic_input_actions[self._state])
+	arg_64_0._current_recipe_name = var_64_26
+
+	arg_64_0:_update_state_craft_button(var_64_26, Localize("crafting_recipe_weapon_reroll_traits"), Colors.get_color_table_with_alpha("font_title", 255))
+	arg_64_0._menu_input_description:change_generic_actions(var_0_18[arg_64_0._state])
 end
 
-HeroWindowItemCustomization._create_trait_option_entry = function (self, title_text, description_text, icon)
-	local ui_top_renderer = self._ui_top_renderer
-	local scenegraph_id = "trait_options"
-	local definition = create_trait_option(scenegraph_id, title_text, description_text, icon)
-	local widget = UIWidget.init(definition)
-	local content = widget.content
-	local style = widget.style
-	local text_style = style.text
-	local description_text_style = style.description_text
-	local description_text_size = description_text_style.size
-	local text_height = math.floor(UIUtils.get_text_height(ui_top_renderer, description_text_size, description_text_style, description_text))
-	local additional_height = math.floor(text_height)
+function HeroWindowItemCustomization._create_trait_option_entry(arg_65_0, arg_65_1, arg_65_2, arg_65_3)
+	local var_65_0 = arg_65_0._ui_top_renderer
+	local var_65_1 = "trait_options"
+	local var_65_2 = var_0_15(var_65_1, arg_65_1, arg_65_2, arg_65_3)
+	local var_65_3 = UIWidget.init(var_65_2)
+	local var_65_4 = var_65_3.content
+	local var_65_5 = var_65_3.style
+	local var_65_6 = var_65_5.text
+	local var_65_7 = var_65_5.description_text
+	local var_65_8 = var_65_7.size
+	local var_65_9 = math.floor(UIUtils.get_text_height(var_65_0, var_65_8, var_65_7, arg_65_2))
+	local var_65_10 = math.floor(var_65_9)
 
-	return widget, additional_height
+	return var_65_3, var_65_10
 end
 
-HeroWindowItemCustomization._state_draw_trait_reroll = function (self, ui_renderer, dt)
-	local trait_reroll_widgets = self._trait_reroll_widgets
+function HeroWindowItemCustomization._state_draw_trait_reroll(arg_66_0, arg_66_1, arg_66_2)
+	local var_66_0 = arg_66_0._trait_reroll_widgets
 
-	if trait_reroll_widgets then
-		for _, widget in ipairs(trait_reroll_widgets) do
-			UIRenderer.draw_widget(ui_renderer, widget)
+	if var_66_0 then
+		for iter_66_0, iter_66_1 in ipairs(var_66_0) do
+			UIRenderer.draw_widget(arg_66_1, iter_66_1)
 		end
 
-		local trait_reroll_option_widgets = self._trait_reroll_option_widgets
+		local var_66_1 = arg_66_0._trait_reroll_option_widgets
 
-		if trait_reroll_option_widgets then
-			for _, widget in ipairs(trait_reroll_option_widgets) do
-				UIRenderer.draw_widget(ui_renderer, widget)
+		if var_66_1 then
+			for iter_66_2, iter_66_3 in ipairs(var_66_1) do
+				UIRenderer.draw_widget(arg_66_1, iter_66_3)
 			end
 		end
 
-		local material_widgets = self._material_widgets
+		local var_66_2 = arg_66_0._material_widgets
 
-		if material_widgets then
-			for _, widget in ipairs(material_widgets) do
-				UIRenderer.draw_widget(ui_renderer, widget)
+		if var_66_2 then
+			for iter_66_4, iter_66_5 in ipairs(var_66_2) do
+				UIRenderer.draw_widget(arg_66_1, iter_66_5)
 			end
 		end
 	end
 end
 
-HeroWindowItemCustomization._state_setup_upgrade = function (self)
-	self:_destroy_scrollbar()
+function HeroWindowItemCustomization._state_setup_upgrade(arg_67_0)
+	arg_67_0:_destroy_scrollbar()
 
-	local upgrade_widgets = {}
-	local upgrade_widgets_by_name = {}
+	local var_67_0 = {}
+	local var_67_1 = {}
 
-	for name, widget_definition in pairs(upgrade_widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_67_0, iter_67_1 in pairs(var_0_11) do
+		local var_67_2 = UIWidget.init(iter_67_1)
 
-		upgrade_widgets[#upgrade_widgets + 1] = widget
-		upgrade_widgets_by_name[name] = widget
+		var_67_0[#var_67_0 + 1] = var_67_2
+		var_67_1[iter_67_0] = var_67_2
 	end
 
-	self._upgrade_widgets = upgrade_widgets
-	self._upgrade_widgets_by_name = upgrade_widgets_by_name
+	arg_67_0._upgrade_widgets = var_67_0
+	arg_67_0._upgrade_widgets_by_name = var_67_1
 
-	local item = self:_get_item(self._item_backend_id)
-	local item_data = item.data
-	local rarity = item.rarity or item_data.rarity
-	local rarity_name = ""
-	local rarity_name_color = Colors.get_color_table_with_alpha("plentiful", 255)
-	local upgrade_icons = {}
+	local var_67_3 = arg_67_0:_get_item(arg_67_0._item_backend_id)
+	local var_67_4 = var_67_3.data
+	local var_67_5 = var_67_3.rarity or var_67_4.rarity
+	local var_67_6 = ""
+	local var_67_7 = Colors.get_color_table_with_alpha("plentiful", 255)
+	local var_67_8 = {}
 
-	if rarity == "plentiful" then
-		rarity_name = Localize("forge_screen_common_token_tooltip")
-		rarity_name_color = Colors.get_color_table_with_alpha("common", 255)
-		upgrade_icons[1] = "icon_add_property"
-	elseif rarity == "common" then
-		rarity_name = Localize("forge_screen_rare_token_tooltip")
-		rarity_name_color = Colors.get_color_table_with_alpha("rare", 255)
-		upgrade_icons[1] = "icon_add_property"
-	elseif rarity == "rare" then
-		rarity_name = Localize("forge_screen_exotic_token_tooltip")
-		rarity_name_color = Colors.get_color_table_with_alpha("exotic", 255)
-		upgrade_icons[1] = "icon_add_trait"
-	elseif rarity == "exotic" then
-		upgrade_icons[1] = "icon_upgrade_property"
-		upgrade_icons[2] = "icon_upgrade_property"
-		rarity_name = Localize("difficulty_veteran")
-		rarity_name_color = Colors.get_color_table_with_alpha("unique", 255)
+	if var_67_5 == "plentiful" then
+		var_67_6 = Localize("forge_screen_common_token_tooltip")
+		var_67_7 = Colors.get_color_table_with_alpha("common", 255)
+		var_67_8[1] = "icon_add_property"
+	elseif var_67_5 == "common" then
+		var_67_6 = Localize("forge_screen_rare_token_tooltip")
+		var_67_7 = Colors.get_color_table_with_alpha("rare", 255)
+		var_67_8[1] = "icon_add_property"
+	elseif var_67_5 == "rare" then
+		var_67_6 = Localize("forge_screen_exotic_token_tooltip")
+		var_67_7 = Colors.get_color_table_with_alpha("exotic", 255)
+		var_67_8[1] = "icon_add_trait"
+	elseif var_67_5 == "exotic" then
+		var_67_8[1] = "icon_upgrade_property"
+		var_67_8[2] = "icon_upgrade_property"
+		var_67_6 = Localize("difficulty_veteran")
+		var_67_7 = Colors.get_color_table_with_alpha("unique", 255)
 	else
 		return
 	end
 
-	local upgrade_description_text = Localize("upgrade_description_text_" .. rarity)
-	local rarity_title_widget = upgrade_widgets_by_name.upgrade_rarity_name
+	local var_67_9 = Localize("upgrade_description_text_" .. var_67_5)
+	local var_67_10 = var_67_1.upgrade_rarity_name
 
-	rarity_title_widget.content.text = rarity_name
-	rarity_title_widget.style.text.text_color = rarity_name_color
+	var_67_10.content.text = var_67_6
+	var_67_10.style.text.text_color = var_67_7
 
-	local upgrade_icons_widget = upgrade_widgets_by_name.upgrade_icons
+	local var_67_11 = var_67_1.upgrade_icons
 
-	upgrade_icons_widget.content.texture_id = upgrade_icons
+	var_67_11.content.texture_id = var_67_8
+	var_67_1.upgrade_description_text.content.text = var_67_9
 
-	local upgrade_description_widget = upgrade_widgets_by_name.upgrade_description_text
+	local var_67_12 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_67_8[1]).size
 
-	upgrade_description_widget.content.text = upgrade_description_text
+	var_67_11.style.texture_id.texture_size[1] = var_67_12[1]
+	var_67_11.style.texture_id.texture_size[2] = var_67_12[2]
+	var_67_11.style.texture_id.texture_amount = #var_67_8
 
-	local upgrade_icon_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(upgrade_icons[1])
-	local upgrade_icon_size = upgrade_icon_settings.size
+	local var_67_13, var_67_14 = arg_67_0:_create_description_widget("info_description_text_2", Localize("description_crafting_upgrade_item_rarity_common"))
 
-	upgrade_icons_widget.style.texture_id.texture_size[1] = upgrade_icon_size[1]
-	upgrade_icons_widget.style.texture_id.texture_size[2] = upgrade_icon_size[2]
-	upgrade_icons_widget.style.texture_id.texture_amount = #upgrade_icons
+	var_67_0[#var_67_0 + 1] = var_67_13
 
-	local widget_description, description_size = self:_create_description_widget("info_description_text_2", Localize("description_crafting_upgrade_item_rarity_common"))
+	local var_67_15 = var_67_14[2] + 10
 
-	upgrade_widgets[#upgrade_widgets + 1] = widget_description
+	arg_67_0._ui_scenegraph.info_description_text_2.local_position[2] = -var_67_15
 
-	local description_text_height = description_size[2] + 10
-	local ui_scenegraph = self._ui_scenegraph
+	local var_67_16 = arg_67_0._states[arg_67_0._state].recipe_by_rarity[var_67_5]
 
-	ui_scenegraph.info_description_text_2.local_position[2] = -description_text_height
+	arg_67_0._current_recipe_name = var_67_16
 
-	local state_data = self._states[self._state]
-	local recipe_by_rarity = state_data.recipe_by_rarity
-	local recipe_name = recipe_by_rarity[rarity]
-
-	self._current_recipe_name = recipe_name
-
-	self:_update_state_craft_button(recipe_name, Localize("hero_view_crafting_upgrade"), rarity_name_color)
-	self._menu_input_description:change_generic_actions(generic_input_actions[self._state])
+	arg_67_0:_update_state_craft_button(var_67_16, Localize("hero_view_crafting_upgrade"), var_67_7)
+	arg_67_0._menu_input_description:change_generic_actions(var_0_18[arg_67_0._state])
 end
 
-HeroWindowItemCustomization._state_draw_upgrade = function (self, ui_renderer, dt)
-	local upgrade_widgets = self._upgrade_widgets
+function HeroWindowItemCustomization._state_draw_upgrade(arg_68_0, arg_68_1, arg_68_2)
+	local var_68_0 = arg_68_0._upgrade_widgets
 
-	if upgrade_widgets then
-		for _, widget in ipairs(upgrade_widgets) do
-			UIRenderer.draw_widget(ui_renderer, widget)
+	if var_68_0 then
+		for iter_68_0, iter_68_1 in ipairs(var_68_0) do
+			UIRenderer.draw_widget(arg_68_1, iter_68_1)
 		end
 
-		local material_widgets = self._material_widgets
+		local var_68_1 = arg_68_0._material_widgets
 
-		if material_widgets then
-			for _, widget in ipairs(material_widgets) do
-				UIRenderer.draw_widget(ui_renderer, widget)
+		if var_68_1 then
+			for iter_68_2, iter_68_3 in ipairs(var_68_1) do
+				UIRenderer.draw_widget(arg_68_1, iter_68_3)
 			end
 		end
 	end
 end
 
-HeroWindowItemCustomization._craft = function (self, ingredients, recipe_override)
-	local item = self:_get_item(self._item_backend_id)
-	local backend_id = item.backend_id
-	local items = table.clone(ingredients)
+function HeroWindowItemCustomization._craft(arg_69_0, arg_69_1, arg_69_2)
+	local var_69_0 = arg_69_0:_get_item(arg_69_0._item_backend_id).backend_id
+	local var_69_1 = table.clone(arg_69_1)
 
-	items[#items + 1] = backend_id
+	var_69_1[#var_69_1 + 1] = var_69_0
 
-	local craft_id = Managers.state.crafting:craft(items, recipe_override)
+	local var_69_2 = Managers.state.crafting:craft(var_69_1, arg_69_2)
 
-	if craft_id then
-		self._waiting_for_craft = true
+	if var_69_2 then
+		arg_69_0._waiting_for_craft = true
 
-		self._parent:block_input()
+		arg_69_0._parent:block_input()
 
-		self._current_crafting_data = {
-			craft_id = craft_id,
-			state_name = self._state,
+		arg_69_0._current_crafting_data = {
+			craft_id = var_69_2,
+			state_name = arg_69_0._state
 		}
 
-		local widget = self._widgets_by_name.loading_icon
+		local var_69_3 = arg_69_0._widgets_by_name.loading_icon
 
-		self:_start_transition_animation("on_crafting_enter")
+		arg_69_0:_start_transition_animation("on_crafting_enter")
 
-		self._ui_animations.on_crafting_enter = UIAnimation.init(UIAnimation.function_by_time, widget.style.texture_id.color, 1, 0, 255, 0.3, math.easeOutCubic)
-		widget.content.active = true
+		arg_69_0._ui_animations.on_crafting_enter = UIAnimation.init(UIAnimation.function_by_time, var_69_3.style.texture_id.color, 1, 0, 255, 0.3, math.easeOutCubic)
+		var_69_3.content.active = true
 
 		return true
 	end
@@ -2479,136 +2353,130 @@ HeroWindowItemCustomization._craft = function (self, ingredients, recipe_overrid
 	return false
 end
 
-HeroWindowItemCustomization._update_craft_response = function (self)
-	local craft_id = self._current_crafting_data and self._current_crafting_data.craft_id
+function HeroWindowItemCustomization._update_craft_response(arg_70_0)
+	local var_70_0 = arg_70_0._current_crafting_data and arg_70_0._current_crafting_data.craft_id
 
-	if not craft_id then
+	if not var_70_0 then
 		return
 	end
 
-	local crafting_interface = Managers.backend:get_interface("crafting")
-	local craft_complete = crafting_interface:is_craft_complete(craft_id)
+	local var_70_1 = Managers.backend:get_interface("crafting")
 
-	if craft_complete then
-		local craft_result = crafting_interface:get_craft_result(craft_id)
+	if var_70_1:is_craft_complete(var_70_0) then
+		local var_70_2 = var_70_1:get_craft_result(var_70_0)
 
-		self:_craft_completed(craft_result)
+		arg_70_0:_craft_completed(var_70_2)
 
-		self._current_crafting_data = nil
-		self._character_dirty = true
+		arg_70_0._current_crafting_data = nil
+		arg_70_0._character_dirty = true
 	end
 end
 
-HeroWindowItemCustomization._craft_completed = function (self, result)
-	self._waiting_for_craft = false
+function HeroWindowItemCustomization._craft_completed(arg_71_0, arg_71_1)
+	arg_71_0._waiting_for_craft = false
 
-	self._parent:unblock_input()
+	arg_71_0._parent:unblock_input()
 
-	local state = self._state
-	local state_data = self._states[state]
-	local craft_complete_func_name = state_data.craft_complete_func_name
+	local var_71_0 = arg_71_0._state
+	local var_71_1 = arg_71_0._states[var_71_0].craft_complete_func_name
 
-	if craft_complete_func_name then
-		self[craft_complete_func_name](self, result)
+	if var_71_1 then
+		arg_71_0[var_71_1](arg_71_0, arg_71_1)
 	end
 
-	local widget = self._widgets_by_name.loading_icon
+	local var_71_2 = arg_71_0._widgets_by_name.loading_icon
 
-	self:_start_transition_animation("on_crafting_exit")
+	arg_71_0:_start_transition_animation("on_crafting_exit")
 
-	self._ui_animations.on_crafting_exit = UIAnimation.init(UIAnimation.function_by_time, widget.style.texture_id.color, 1, 255, 0, 0.3, math.easeOutCubic)
+	arg_71_0._ui_animations.on_crafting_exit = UIAnimation.init(UIAnimation.function_by_time, var_71_2.style.texture_id.color, 1, 255, 0, 0.3, math.easeOutCubic)
 
-	self._animation_callbacks.on_crafting_exit = function ()
-		widget.content.active = false
+	function arg_71_0._animation_callbacks.on_crafting_exit()
+		var_71_2.content.active = false
 	end
 
-	self._item_dirty = true
+	arg_71_0._item_dirty = true
 
-	self:_play_sound("play_gui_craft_forge_end_console_qol")
+	arg_71_0:_play_sound("play_gui_craft_forge_end_console_qol")
 
-	self._playing_craft_sound = false
+	arg_71_0._playing_craft_sound = false
 end
 
-HeroWindowItemCustomization._apply_weapon_skin_craft_complete = function (self, result)
-	local item = self:_get_item(self._item_backend_id)
-	local item_key = item.key
-	local item_skin = item.skin or WeaponSkins.default_skins[item_key]
-	local item_data = item.data
-	local slot_type = item_data.slot_type
-	local slot_name = self._equipment_slot_name or InventorySettings.slot_names_by_type[slot_type][1]
+function HeroWindowItemCustomization._apply_weapon_skin_craft_complete(arg_73_0, arg_73_1)
+	local var_73_0 = arg_73_0:_get_item(arg_73_0._item_backend_id)
+	local var_73_1 = var_73_0.key
+	local var_73_2 = var_73_0.skin or WeaponSkins.default_skins[var_73_1]
+	local var_73_3 = var_73_0.data.slot_type
+	local var_73_4 = arg_73_0._equipment_slot_name or InventorySettings.slot_names_by_type[var_73_3][1]
 
-	self._parent:_set_loadout_item(item, slot_name)
-	self:_present_item(item, true)
+	arg_73_0._parent:_set_loadout_item(var_73_0, var_73_4)
+	arg_73_0:_present_item(var_73_0, true)
 
-	local ignore_item_spawn = true
-	local mark_as_equipped = true
+	local var_73_5 = true
+	local var_73_6 = true
 
-	self:_select_illusion_by_key(item_skin, ignore_item_spawn, mark_as_equipped)
-	self._menu_input_description:change_generic_actions(generic_input_actions.default)
-	self:_enable_craft_button(false)
+	arg_73_0:_select_illusion_by_key(var_73_2, var_73_5, var_73_6)
+	arg_73_0._menu_input_description:change_generic_actions(var_0_18.default)
+	arg_73_0:_enable_craft_button(false)
 end
 
-HeroWindowItemCustomization._update_skin_gamepad_input = function (self, input_service, dt, t)
-	local skin_index = self._selected_skin_index or 1
-	local current_skin_index = self._selected_skin_index
-	local illusion_widgets = self._illusion_widgets
+function HeroWindowItemCustomization._update_skin_gamepad_input(arg_74_0, arg_74_1, arg_74_2, arg_74_3)
+	local var_74_0 = arg_74_0._selected_skin_index or 1
+	local var_74_1 = arg_74_0._selected_skin_index
+	local var_74_2 = arg_74_0._illusion_widgets
 
-	if #illusion_widgets == 0 then
+	if #var_74_2 == 0 then
 		return
 	end
 
-	local num_illusions = #illusion_widgets
-	local input_handled = false
+	local var_74_3 = #var_74_2
+	local var_74_4 = false
 
-	if input_service:get("move_left") then
-		skin_index = math.clamp(skin_index - 1, 1, num_illusions)
-	elseif input_service:get("move_right") then
-		skin_index = math.clamp(skin_index + 1, 1, num_illusions)
+	if arg_74_1:get("move_left") then
+		var_74_0 = math.clamp(var_74_0 - 1, 1, var_74_3)
+	elseif arg_74_1:get("move_right") then
+		var_74_0 = math.clamp(var_74_0 + 1, 1, var_74_3)
 	end
 
-	if skin_index ~= current_skin_index then
-		local ignore_item_spawn = false
-		local mark_as_equipped = false
+	if var_74_0 ~= var_74_1 then
+		local var_74_5 = false
+		local var_74_6 = false
 
-		self:_on_illusion_index_pressed(skin_index, ignore_item_spawn, mark_as_equipped)
+		arg_74_0:_on_illusion_index_pressed(var_74_0, var_74_5, var_74_6)
 
-		input_handled = true
+		var_74_4 = true
 	end
 
-	return input_handled
+	return var_74_4
 end
 
-HeroWindowItemCustomization._upgrade_item_craft_complete = function (self, result)
-	local old_item_backend_id = self._item_backend_id
-	local backend_dlcs = Managers.backend:get_interface("dlcs")
-	local backend_items = Managers.backend:get_interface("items")
-	local backend_id = result[1][1]
-	local item = self:_get_item(backend_id)
+function HeroWindowItemCustomization._upgrade_item_craft_complete(arg_75_0, arg_75_1)
+	local var_75_0 = arg_75_0._item_backend_id
+	local var_75_1 = Managers.backend:get_interface("dlcs")
+	local var_75_2 = Managers.backend:get_interface("items")
+	local var_75_3 = arg_75_1[1][1]
+	local var_75_4 = arg_75_0:_get_item(var_75_3)
 
-	self:_present_item(item, nil, {
+	arg_75_0:_present_item(var_75_4, nil, {
 		0,
 		2,
-		0,
+		0
 	})
 
-	for i, profile_index in ipairs(ProfilePriority) do
-		local profile_settings = SPProfiles[profile_index]
-		local careers = profile_settings.careers
+	for iter_75_0, iter_75_1 in ipairs(ProfilePriority) do
+		local var_75_5 = SPProfiles[iter_75_1].careers
 
-		for _, career in pairs(careers) do
-			local career_name = career.name
+		for iter_75_2, iter_75_3 in pairs(var_75_5) do
+			local var_75_6 = iter_75_3.name
 
-			if career and not backend_dlcs:is_unreleased_career(career_name) then
-				local career_loadouts = backend_items:get_career_loadouts(career_name)
+			if iter_75_3 and not var_75_1:is_unreleased_career(var_75_6) then
+				local var_75_7 = var_75_2:get_career_loadouts(var_75_6)
 
-				for _, slot_data in pairs(InventorySettings.equipment_slots) do
-					local equipment_slot_name = slot_data.name
+				for iter_75_4, iter_75_5 in pairs(InventorySettings.equipment_slots) do
+					local var_75_8 = iter_75_5.name
 
-					for loadout_index, loadout in ipairs(career_loadouts) do
-						local equipped_item_backend_id = loadout[equipment_slot_name]
-
-						if equipped_item_backend_id == old_item_backend_id then
-							backend_items:set_loadout_item(backend_id, career_name, equipment_slot_name, loadout_index)
+					for iter_75_6, iter_75_7 in ipairs(var_75_7) do
+						if iter_75_7[var_75_8] == var_75_0 then
+							var_75_2:set_loadout_item(var_75_3, var_75_6, var_75_8, iter_75_6)
 						end
 					end
 				end
@@ -2616,7 +2484,7 @@ HeroWindowItemCustomization._upgrade_item_craft_complete = function (self, resul
 		end
 	end
 
-	self._parent:_set_loadout_item(item, self._equipment_slot_name)
-	self:_state_setup_upgrade()
-	self:_setup_availble_states(item)
+	arg_75_0._parent:_set_loadout_item(var_75_4, arg_75_0._equipment_slot_name)
+	arg_75_0:_state_setup_upgrade()
+	arg_75_0:_setup_availble_states(var_75_4)
 end

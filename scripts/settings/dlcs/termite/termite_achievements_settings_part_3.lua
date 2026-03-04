@@ -1,14 +1,14 @@
-﻿-- chunkname: @scripts/settings/dlcs/termite/termite_achievements_settings_part_3.lua
+-- chunkname: @scripts/settings/dlcs/termite/termite_achievements_settings_part_3.lua
 
-local settings = DLCSettings.termite_part_3
+local var_0_0 = DLCSettings.termite_part_3
 
-settings.achievement_outline = {
+var_0_0.achievement_outline = {
 	levels = {
 		entries = {},
 		categories = {
 			{
-				name = "area_selection_termite_name",
 				sorting = 9,
+				name = "area_selection_termite_name",
 				entries = {
 					"termite3_collectible_challenge",
 					"termite3_searchlight_challenge",
@@ -19,12 +19,12 @@ settings.achievement_outline = {
 					"termite3_complete_champion",
 					"termite3_complete_legend",
 					"termite3_complete_cataclysm",
-					"termite3_all_challenges",
-				},
-			},
-		},
-	},
+					"termite3_all_challenges"
+				}
+			}
+		}
+	}
 }
-settings.achievement_template_file_names = {
-	"scripts/managers/achievements/achievement_templates_termite_part_3",
+var_0_0.achievement_template_file_names = {
+	"scripts/managers/achievements/achievement_templates_termite_part_3"
 }

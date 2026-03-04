@@ -1,50 +1,53 @@
-﻿-- chunkname: @scripts/utils/utf8_utils.lua
+-- chunkname: @scripts/utils/utf8_utils.lua
 
 UTF8Utils = UTF8Utils or {}
 
-UTF8Utils.string_length = function (text)
-	local length = #text
-	local index = 1
-	local num_chars = 0
-	local _
+function UTF8Utils.string_length(arg_1_0)
+	local var_1_0 = #arg_1_0
+	local var_1_1 = 1
+	local var_1_2 = 0
+	local var_1_3
 
-	while index <= length do
-		_, index = Utf8.location(text, index)
-		num_chars = num_chars + 1
+	while var_1_1 <= var_1_0 do
+		local var_1_4
+
+		var_1_4, var_1_1 = Utf8.location(arg_1_0, var_1_1)
+		var_1_2 = var_1_2 + 1
 	end
 
-	return num_chars
+	return var_1_2
 end
 
-UTF8Utils.sub_string = function (text, char_from, char_to)
-	if char_to <= 0 or text == "" then
+function UTF8Utils.sub_string(arg_2_0, arg_2_1, arg_2_2)
+	if arg_2_2 <= 0 or arg_2_0 == "" then
 		return ""
 	end
 
-	local byte_index = 1
-	local byte_count = #text
-	local byte_from, byte_to = -1, -1
-	local char_index = 1
+	local var_2_0 = 1
+	local var_2_1 = #arg_2_0
+	local var_2_2 = -1
+	local var_2_3 = -1
+	local var_2_4 = 1
 
-	while byte_index <= byte_count do
-		local tmp_byte_from, tmp_byte_to = Utf8.location(text, byte_index)
+	while var_2_0 <= var_2_1 do
+		local var_2_5, var_2_6 = Utf8.location(arg_2_0, var_2_0)
 
-		if char_index == char_from then
-			byte_from = tmp_byte_from
+		if var_2_4 == arg_2_1 then
+			var_2_2 = var_2_5
 		end
 
-		if char_index == char_to then
-			byte_to = tmp_byte_to - 1
+		if var_2_4 == arg_2_2 then
+			var_2_3 = var_2_6 - 1
 
 			break
 		end
 
-		char_index = char_index + 1
-		byte_index = tmp_byte_to
+		var_2_4 = var_2_4 + 1
+		var_2_0 = var_2_6
 	end
 
-	if byte_from then
-		return string.sub(text, byte_from, byte_to)
+	if var_2_2 then
+		return string.sub(arg_2_0, var_2_2, var_2_3)
 	else
 		return ""
 	end

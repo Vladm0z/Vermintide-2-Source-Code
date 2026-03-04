@@ -1,540 +1,519 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/chaos_troll/chaos_troll_state_vomiting.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/chaos_troll/chaos_troll_state_vomiting.lua
 
 ChaosTrollStateVomiting = class(ChaosTrollStateVomiting, EnemyCharacterState)
 
-ChaosTrollStateVomiting.init = function (self, character_state_init_context)
-	EnemyCharacterState.init(self, character_state_init_context, "troll_vomiting")
+function ChaosTrollStateVomiting.init(arg_1_0, arg_1_1)
+	EnemyCharacterState.init(arg_1_0, arg_1_1, "troll_vomiting")
 
-	self._vomit_ability_id = self._career_extension:ability_id("vomit")
-	self.current_movement_speed_scale = 0
-	self.last_input_direction = Vector3Box(0, 0, 0)
-	self._vomit_ability_id = self._career_extension:ability_id("vomit")
-	self._indicator_fx_unit_name = "fx/units/aoe_globadier"
-	self._position = Vector3Box()
-	self._angle = 0
-	self._impact_data = {}
+	arg_1_0._vomit_ability_id = arg_1_0._career_extension:ability_id("vomit")
+	arg_1_0.current_movement_speed_scale = 0
+	arg_1_0.last_input_direction = Vector3Box(0, 0, 0)
+	arg_1_0._vomit_ability_id = arg_1_0._career_extension:ability_id("vomit")
+	arg_1_0._indicator_fx_unit_name = "fx/units/aoe_globadier"
+	arg_1_0._position = Vector3Box()
+	arg_1_0._angle = 0
+	arg_1_0._impact_data = {}
 
-	self._safe_pos_puke_callback = function ()
-		if ALIVE[self._unit] then
-			local puke_position, puke_distance_sq, puke_direction = self:_get_vomit_position(self._unit)
+	function arg_1_0._safe_pos_puke_callback()
+		if ALIVE[arg_1_0._unit] then
+			local var_2_0, var_2_1, var_2_2 = arg_1_0:_get_vomit_position(arg_1_0._unit)
 
-			self._puke_position_on_nav = puke_position and Vector3Box(puke_position) or nil
-			self._puke_direction = puke_direction and Vector3Box(puke_direction) or nil
-			self._puke_distance_sq = puke_distance_sq and puke_distance_sq or nil
+			arg_1_0._puke_position_on_nav = var_2_0 and Vector3Box(var_2_0) or nil
+			arg_1_0._puke_direction = var_2_2 and Vector3Box(var_2_2) or nil
+			arg_1_0._puke_distance_sq = var_2_1 and var_2_1 or nil
 		end
 	end
 end
 
-ChaosTrollStateVomiting.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
-	self._unit = unit
-	self._status_extension.is_vomiting = true
-	self._puke_direction = Vector3Box(0, 0, 0)
-	self._state_end = t + 2.5
-	self._state = "priming"
+function ChaosTrollStateVomiting.on_enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+	arg_3_0._unit = arg_3_1
+	arg_3_0._status_extension.is_vomiting = true
+	arg_3_0._puke_direction = Vector3Box(0, 0, 0)
+	arg_3_0._state_end = arg_3_5 + 2.5
+	arg_3_0._state = "priming"
 
-	local local_player = Managers.player:local_player()
-	local vp_name = local_player.viewport_name
-	local vp = ScriptWorld.viewport(self._world, vp_name, true)
+	local var_3_0 = Managers.player:local_player().viewport_name
+	local var_3_1 = ScriptWorld.viewport(arg_3_0._world, var_3_0, true)
 
-	self._camera = ScriptViewport.camera(vp)
-	self._max_dist = self._breed.max_vomit_distance
-	self._troll_head_node = Unit.node(unit, "j_head")
+	arg_3_0._camera = ScriptViewport.camera(var_3_1)
+	arg_3_0._max_dist = arg_3_0._breed.max_vomit_distance
+	arg_3_0._troll_head_node = Unit.node(arg_3_1, "j_head")
 
-	local vomit_animation = "attack_vomit_into"
+	local var_3_2 = "attack_vomit_into"
 
-	Managers.state.network:anim_event(unit, vomit_animation)
-	CharacterStateHelper.play_animation_event_first_person(self._first_person_extension, vomit_animation)
+	Managers.state.network:anim_event(arg_3_1, var_3_2)
+	CharacterStateHelper.play_animation_event_first_person(arg_3_0._first_person_extension, var_3_2)
 
-	self._puke_position_on_nav = nil
-	self._puke_direction = nil
-	self._puke_distance_sq = nil
-	self._ray_hit_pos = nil
-	self._ray_hit_distance = nil
+	arg_3_0._puke_position_on_nav = nil
+	arg_3_0._puke_direction = nil
+	arg_3_0._puke_distance_sq = nil
+	arg_3_0._ray_hit_pos = nil
+	arg_3_0._ray_hit_distance = nil
 
-	table.clear(self._impact_data)
+	table.clear(arg_3_0._impact_data)
 
-	self._impact_data.position = Vector3Box()
-	self._impact_data.direction = Vector3Box()
-	self._impact_data.hit_normal = Vector3Box()
+	arg_3_0._impact_data.position = Vector3Box()
+	arg_3_0._impact_data.direction = Vector3Box()
+	arg_3_0._impact_data.hit_normal = Vector3Box()
 end
 
-ChaosTrollStateVomiting.handle_hit_indicator = function (self)
-	local unit_name = self._indicator_fx_unit_name
+function ChaosTrollStateVomiting.handle_hit_indicator(arg_4_0)
+	local var_4_0 = arg_4_0._indicator_fx_unit_name
 
-	if self._impact_data.position and self._puke_position_on_nav then
-		local impact_data = self._impact_data
-		local impact_position = impact_data.position:unbox()
+	if arg_4_0._impact_data.position and arg_4_0._puke_position_on_nav then
+		local var_4_1 = arg_4_0._impact_data.position:unbox()
 
-		if self._indicator_unit then
-			Unit.set_local_position(self._indicator_unit, 0, impact_position)
+		if arg_4_0._indicator_unit then
+			Unit.set_local_position(arg_4_0._indicator_unit, 0, var_4_1)
 		else
-			self._indicator_unit = World.spawn_unit(self._world, unit_name, impact_position)
+			arg_4_0._indicator_unit = World.spawn_unit(arg_4_0._world, var_4_0, var_4_1)
 
-			local radius = self._breed.puke_in_face_indicator_raidus
+			local var_4_2 = arg_4_0._breed.puke_in_face_indicator_raidus
 
-			Unit.set_local_scale(self._indicator_unit, 0, Vector3(radius, radius, radius))
+			Unit.set_local_scale(arg_4_0._indicator_unit, 0, Vector3(var_4_2, var_4_2, var_4_2))
 		end
 	else
-		self:destroy_indicator_unit()
+		arg_4_0:destroy_indicator_unit()
 	end
 end
 
-ChaosTrollStateVomiting.destroy_indicator_unit = function (self)
-	if Unit.alive(self._indicator_unit) then
-		World.destroy_unit(self._world, self._indicator_unit)
+function ChaosTrollStateVomiting.destroy_indicator_unit(arg_5_0)
+	if Unit.alive(arg_5_0._indicator_unit) then
+		World.destroy_unit(arg_5_0._world, arg_5_0._indicator_unit)
 
-		self._indicator_unit = nil
+		arg_5_0._indicator_unit = nil
 	end
 end
 
-ChaosTrollStateVomiting.update = function (self, unit, input, dt, context, t)
-	local csm = self._csm
-	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local input_extension = self._input_extension
-	local status_extension = self._status_extension
-	local first_person_extension = self._first_person_extension
-	local inventory_extension = self._inventory_extension
-	local state = self._state
+function ChaosTrollStateVomiting.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+	local var_6_0 = arg_6_0._csm
+	local var_6_1 = PlayerUnitMovementSettings.get_movement_settings_table(arg_6_1)
+	local var_6_2 = arg_6_0._input_extension
+	local var_6_3 = arg_6_0._status_extension
+	local var_6_4 = arg_6_0._first_person_extension
+	local var_6_5 = arg_6_0._inventory_extension
+	local var_6_6 = arg_6_0._state
 
-	if not input_extension then
+	if not var_6_2 then
 		return
 	end
 
-	Debug.text("PUKE STATE: %s", self._state)
+	Debug.text("PUKE STATE: %s", arg_6_0._state)
 
-	if self._state == "fail" then
-		self:destroy_indicator_unit()
-		self._career_extension:reduce_activated_ability_cooldown_percent(1, self._vomit_ability_id)
-		Managers.state.network:anim_event(unit, "interrupt")
-		CharacterStateHelper.play_animation_event_first_person(self._first_person_extension, "interrupt")
-		csm:change_state("walking")
+	if arg_6_0._state == "fail" then
+		arg_6_0:destroy_indicator_unit()
+		arg_6_0._career_extension:reduce_activated_ability_cooldown_percent(1, arg_6_0._vomit_ability_id)
+		Managers.state.network:anim_event(arg_6_1, "interrupt")
+		CharacterStateHelper.play_animation_event_first_person(arg_6_0._first_person_extension, "interrupt")
+		var_6_0:change_state("walking")
 
 		return
-	elseif self._state == "priming" then
-		local input_cancel_vomit = input_extension:get("dark_pact_action_one_release")
-
-		if input_cancel_vomit then
-			self._state = "fail"
+	elseif arg_6_0._state == "priming" then
+		if var_6_2:get("dark_pact_action_one_release") then
+			arg_6_0._state = "fail"
 
 			return
 		end
 
-		self:_calculate_trajectory()
+		arg_6_0:_calculate_trajectory()
+		Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(arg_6_0._safe_pos_puke_callback)
 
-		local ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
+		if arg_6_0._impact_data.position and arg_6_0._puke_position_on_nav then
+			local var_6_7 = arg_6_0._impact_data.position:unbox()
 
-		ai_navigation_system:add_safe_navigation_callback(self._safe_pos_puke_callback)
+			if arg_6_0._indicator_unit then
+				local var_6_8 = POSITION_LOOKUP[Managers.player:local_player().player_unit]
+				local var_6_9 = Quaternion.multiply(Quaternion.axis_angle(Vector3.up(), math.pi * 0.5), Quaternion.look(var_6_8 - var_6_7, Vector3.up()))
 
-		if self._impact_data.position and self._puke_position_on_nav then
-			local impact_data = self._impact_data
-			local impact_position = impact_data.position:unbox()
-
-			if self._indicator_unit then
-				local player_pos = POSITION_LOOKUP[Managers.player:local_player().player_unit]
-				local desired_rot = Quaternion.multiply(Quaternion.axis_angle(Vector3.up(), math.pi * 0.5), Quaternion.look(player_pos - impact_position, Vector3.up()))
-
-				Unit.set_local_rotation(self._indicator_unit, 0, desired_rot)
+				Unit.set_local_rotation(arg_6_0._indicator_unit, 0, var_6_9)
 			end
 		end
 
-		local input_vomit_released = not input_extension:get("dark_pact_action_two_hold")
-
-		if input_vomit_released then
-			if ALIVE[self._unit] then
-				if not self._puke_position_on_nav or not self._puke_direction then
-					self._state = "fail"
+		if not var_6_2:get("dark_pact_action_two_hold") then
+			if ALIVE[arg_6_0._unit] then
+				if not arg_6_0._puke_position_on_nav or not arg_6_0._puke_direction then
+					arg_6_0._state = "fail"
 				else
-					self._state = "start_vomit"
+					arg_6_0._state = "start_vomit"
 				end
 			end
 
-			self._attack_started_at_t = t
-
-			local attack_duration = 1.9
-
-			self._vomit_end_time = t + attack_duration
+			arg_6_0._attack_started_at_t = arg_6_5
+			arg_6_0._vomit_end_time = arg_6_5 + 1.9
 		end
 
-		self:handle_hit_indicator()
-		self:_update_movement(unit, dt, t)
-	elseif self._state == "start_vomit" then
-		if not self:_init_puke_attack(unit, t) then
-			self._state = "fail"
+		arg_6_0:handle_hit_indicator()
+		arg_6_0:_update_movement(arg_6_1, arg_6_3, arg_6_5)
+	elseif arg_6_0._state == "start_vomit" then
+		if not arg_6_0:_init_puke_attack(arg_6_1, arg_6_5) then
+			arg_6_0._state = "fail"
 		else
-			self._locomotion_extension:set_wanted_velocity(Vector3.zero())
-			self:destroy_indicator_unit()
+			arg_6_0._locomotion_extension:set_wanted_velocity(Vector3.zero())
+			arg_6_0:destroy_indicator_unit()
 
-			if ALIVE[self._unit] then
-				self:spawn_vomit(unit)
+			if ALIVE[arg_6_0._unit] then
+				arg_6_0:spawn_vomit(arg_6_1)
 
-				self._state = "vomiting"
+				arg_6_0._state = "vomiting"
 
-				local career_extension = self._career_extension
-
-				career_extension:start_activated_ability_cooldown(self._vomit_ability_id)
+				arg_6_0._career_extension:start_activated_ability_cooldown(arg_6_0._vomit_ability_id)
 			end
 
-			self._do_sweep_for_heroes = true
-			self._check_puke_time = t + 100
+			arg_6_0._do_sweep_for_heroes = true
+			arg_6_0._check_puke_time = arg_6_5 + 100
 		end
-	elseif self._state == "vomiting" then
-		if self._do_sweep_for_heroes then
-			self._do_sweep_for_heroes = false
+	elseif arg_6_0._state == "vomiting" then
+		if arg_6_0._do_sweep_for_heroes then
+			arg_6_0._do_sweep_for_heroes = false
 
-			self:player_vomit_hit_check(unit, self._impact_data.position:unbox(), self._physics_world)
+			arg_6_0:player_vomit_hit_check(arg_6_1, arg_6_0._impact_data.position:unbox(), arg_6_0._physics_world)
 		end
 
-		if t > self._vomit_end_time then
-			self._state = "done"
+		if arg_6_5 > arg_6_0._vomit_end_time then
+			arg_6_0._state = "done"
 		end
-	elseif self._state == "done" or t > self._state_end then
-		csm:change_state("standing")
+	elseif arg_6_0._state == "done" or arg_6_5 > arg_6_0._state_end then
+		var_6_0:change_state("standing")
 
 		return
 	end
 
-	if CharacterStateHelper.do_common_state_transitions(status_extension, csm) then
+	if CharacterStateHelper.do_common_state_transitions(var_6_3, var_6_0) then
 		return
 	end
 
-	if CharacterStateHelper.is_using_transport(status_extension) then
-		csm:change_state("using_transport")
-
-		return
-	end
-
-	if CharacterStateHelper.is_pushed(status_extension) then
-		status_extension:set_pushed(false)
-
-		local params = movement_settings_table.stun_settings.pushed
-		local hit_react_type = status_extension:hit_react_type()
-
-		params.hit_react_type = hit_react_type .. "_push"
-
-		csm:change_state("stunned", params)
+	if CharacterStateHelper.is_using_transport(var_6_3) then
+		var_6_0:change_state("using_transport")
 
 		return
 	end
 
-	if CharacterStateHelper.is_block_broken(status_extension) then
-		status_extension:set_block_broken(false)
+	if CharacterStateHelper.is_pushed(var_6_3) then
+		var_6_3:set_pushed(false)
 
-		local params = movement_settings_table.stun_settings.parry_broken
+		local var_6_10 = var_6_1.stun_settings.pushed
 
-		params.hit_react_type = "medium_push"
+		var_6_10.hit_react_type = var_6_3:hit_react_type() .. "_push"
 
-		csm:change_state("stunned", params)
+		var_6_0:change_state("stunned", var_6_10)
 
 		return
 	end
 
-	local look_sense_override = self._breed.look_sense_override
+	if CharacterStateHelper.is_block_broken(var_6_3) then
+		var_6_3:set_block_broken(false)
 
-	CharacterStateHelper.look(input_extension, self._player.viewport_name, first_person_extension, status_extension, inventory_extension, look_sense_override)
+		local var_6_11 = var_6_1.stun_settings.parry_broken
+
+		var_6_11.hit_react_type = "medium_push"
+
+		var_6_0:change_state("stunned", var_6_11)
+
+		return
+	end
+
+	local var_6_12 = arg_6_0._breed.look_sense_override
+
+	CharacterStateHelper.look(var_6_2, arg_6_0._player.viewport_name, var_6_4, var_6_3, var_6_5, var_6_12)
 end
 
-ChaosTrollStateVomiting.on_exit = function (self, unit, input, dt, context, t, next_state)
-	local status_extension = self._status_extension
+function ChaosTrollStateVomiting.on_exit(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+	arg_7_0._status_extension.is_vomiting = false
 
-	status_extension.is_vomiting = false
-
-	self:destroy_indicator_unit()
+	arg_7_0:destroy_indicator_unit()
 end
 
-local TRAJECTORY_INTERVAL = 0.3
+local var_0_0 = 0.3
 
-ChaosTrollStateVomiting._calculate_trajectory = function (self)
-	local first_person_unit = self._first_person_unit
-	local breed = self._breed
-	local rotation = Unit.local_rotation(first_person_unit, 0)
-	local angle = ActionUtils.pitch_from_rotation(rotation)
-	local initial_position = Unit.world_position(first_person_unit, self._troll_head_node)
-	local current_position = initial_position
-	local prev_position = self._position:unbox()
+function ChaosTrollStateVomiting._calculate_trajectory(arg_8_0)
+	local var_8_0 = arg_8_0._first_person_unit
+	local var_8_1 = arg_8_0._breed
+	local var_8_2 = Unit.local_rotation(var_8_0, 0)
+	local var_8_3 = ActionUtils.pitch_from_rotation(var_8_2)
+	local var_8_4 = Unit.world_position(var_8_0, arg_8_0._troll_head_node)
+	local var_8_5 = var_8_4
+	local var_8_6 = arg_8_0._position:unbox()
 
-	if Vector3.equal(initial_position, prev_position) and angle == self._angle then
+	if Vector3.equal(var_8_4, var_8_6) and var_8_3 == arg_8_0._angle then
 		return
 	end
 
-	self._position:store(initial_position)
+	arg_8_0._position:store(var_8_4)
 
-	self._angle = angle
+	arg_8_0._angle = var_8_3
 
-	local radians = math.degrees_to_radians(angle)
-	local target_vector = Vector3.normalize(Vector3.flat(Quaternion.forward(rotation)))
+	local var_8_7 = math.degrees_to_radians(var_8_3)
+	local var_8_8 = Vector3.normalize(Vector3.flat(Quaternion.forward(var_8_2)))
+	local var_8_9 = Vector3.normalize(var_8_8 + Vector3(0, 0, var_8_1.vomit_upwards_amount))
+	local var_8_10 = var_8_1.vomit_projectile_speed
+	local var_8_11 = ProjectileGravitySettings.default
+	local var_8_12 = arg_8_0._physics_world
+	local var_8_13 = 0.05
+	local var_8_14 = 5
+	local var_8_15 = Managers.state.network
+	local var_8_16 = false
 
-	target_vector = Vector3.normalize(target_vector + Vector3(0, 0, breed.vomit_upwards_amount))
+	arg_8_0._impact_data.sweep_positions = {}
 
-	local speed = breed.vomit_projectile_speed
-	local gravity = ProjectileGravitySettings.default
-	local physics_world = self._physics_world
-	local radius = 0.05
-	local max_hits = 5
-	local network_manager = Managers.state.network
-	local pos_set = false
+	local var_8_17 = arg_8_0._impact_data.sweep_positions
 
-	self._impact_data.sweep_positions = {}
+	var_8_17[1] = Vector3Box(var_8_4)
 
-	local sweep_positions = self._impact_data.sweep_positions
+	for iter_8_0 = var_0_0, 10, var_0_0 do
+		local var_8_18 = WeaponHelper:position_on_trajectory(var_8_4, var_8_9, var_8_10, var_8_7, var_8_11, iter_8_0)
 
-	sweep_positions[1] = Vector3Box(initial_position)
+		var_8_17[#var_8_17 + 1] = Vector3Box(var_8_18)
 
-	for t = TRAJECTORY_INTERVAL, 10, TRAJECTORY_INTERVAL do
-		local new_position = WeaponHelper:position_on_trajectory(initial_position, target_vector, speed, radians, gravity, t)
+		local var_8_19 = PhysicsWorld.linear_sphere_sweep(var_8_12, var_8_5, var_8_18, var_8_13, var_8_14, "collision_filter", "filter_player_ray_projectile_static_only")
+		local var_8_20 = var_8_19 and #var_8_19 or 0
 
-		sweep_positions[#sweep_positions + 1] = Vector3Box(new_position)
+		if var_8_20 > 0 then
+			local var_8_21 = false
 
-		local result = PhysicsWorld.linear_sphere_sweep(physics_world, current_position, new_position, radius, max_hits, "collision_filter", "filter_player_ray_projectile_static_only")
-		local num_results = result and #result or 0
+			for iter_8_1 = 1, var_8_20 do
+				local var_8_22 = var_8_19[iter_8_1]
+				local var_8_23 = var_8_22.position
+				local var_8_24 = var_8_22.normal
+				local var_8_25 = var_8_22.actor
+				local var_8_26 = var_8_22.distance
+				local var_8_27 = Vector3.normalize(var_8_23 - var_8_5)
 
-		if num_results > 0 then
-			local done = false
+				if var_8_26 > 0 then
+					local var_8_28 = Actor.unit(var_8_25)
 
-			for i = 1, num_results do
-				local hit = result[i]
-				local position = hit.position
-				local hit_normal = hit.normal
-				local hit_actor = hit.actor
-				local distance = hit.distance
-				local direction = Vector3.normalize(position - current_position)
+					if var_8_15:level_object_id(var_8_28) then
+						local var_8_29 = arg_8_0._impact_data
 
-				if distance > 0 then
-					local hit_unit = Actor.unit(hit_actor)
+						var_8_29.position:store(var_8_23)
 
-					if network_manager:level_object_id(hit_unit) then
-						local impact_data = self._impact_data
+						var_8_16 = true
 
-						impact_data.position:store(position)
+						var_8_29.hit_normal:store(var_8_24)
+						var_8_29.direction:store(var_8_27)
 
-						pos_set = true
-
-						impact_data.hit_normal:store(hit_normal)
-						impact_data.direction:store(direction)
-
-						impact_data.num_intervals = t
-						impact_data.hit_unit = hit_unit
-						done = true
+						var_8_29.num_intervals = iter_8_0
+						var_8_29.hit_unit = var_8_28
+						var_8_21 = true
 
 						break
 					end
 				end
 			end
 
-			if done then
+			if var_8_21 then
 				break
 			end
 		end
 
-		current_position = new_position
+		var_8_5 = var_8_18
 
-		if not pos_set then
-			self._impact_data.position:store(Vector3(0, 0, 0))
+		if not var_8_16 then
+			arg_8_0._impact_data.position:store(Vector3(0, 0, 0))
 		end
 	end
 end
 
-ChaosTrollStateVomiting._sweep_trajectory_for_heroes = function (self)
-	local heroes_hit = {}
-	local physics_world = self._physics_world
-	local radius = self._breed.puke_in_face_sweep_radius
-	local max_hits = 10
-	local sweep_positions = self._impact_data.sweep_positions
+function ChaosTrollStateVomiting._sweep_trajectory_for_heroes(arg_9_0)
+	local var_9_0 = {}
+	local var_9_1 = arg_9_0._physics_world
+	local var_9_2 = arg_9_0._breed.puke_in_face_sweep_radius
+	local var_9_3 = 10
+	local var_9_4 = arg_9_0._impact_data.sweep_positions
 
-	for i = 1, #sweep_positions - 1 do
-		local from_pos = sweep_positions[i]:unbox()
-		local to_pos = sweep_positions[i + 1]:unbox()
-		local result = PhysicsWorld.linear_sphere_sweep(physics_world, from_pos, to_pos, radius, max_hits, "collision_filter", "filter_player")
-		local num_results = result and #result or 0
+	for iter_9_0 = 1, #var_9_4 - 1 do
+		local var_9_5 = var_9_4[iter_9_0]:unbox()
+		local var_9_6 = var_9_4[iter_9_0 + 1]:unbox()
+		local var_9_7 = PhysicsWorld.linear_sphere_sweep(var_9_1, var_9_5, var_9_6, var_9_2, var_9_3, "collision_filter", "filter_player")
+		local var_9_8 = var_9_7 and #var_9_7 or 0
 
-		if num_results > 0 then
-			local hero_hit_index = 1
+		if var_9_8 > 0 then
+			local var_9_9 = 1
 
-			for i = 1, num_results do
-				local hit = result[i]
-				local hit_actor = hit.actor
-				local hit_unit = Actor.unit(hit_actor)
-				local is_hero = Managers.state.side:versus_is_hero(hit_unit)
+			for iter_9_1 = 1, var_9_8 do
+				local var_9_10 = var_9_7[iter_9_1].actor
+				local var_9_11 = Actor.unit(var_9_10)
 
-				if is_hero and not table.contains(heroes_hit, hit_unit) then
-					heroes_hit[hero_hit_index] = hit_unit
-					hero_hit_index = hero_hit_index + 1
+				if Managers.state.side:versus_is_hero(var_9_11) and not table.contains(var_9_0, var_9_11) then
+					var_9_0[var_9_9] = var_9_11
+					var_9_9 = var_9_9 + 1
 				end
 			end
 		end
 	end
 
-	return heroes_hit
+	return var_9_0
 end
 
-ChaosTrollStateVomiting._init_puke_attack = function (self, unit, t)
-	if not self._puke_position_on_nav or not self._puke_distance_sq or not self._puke_direction then
+function ChaosTrollStateVomiting._init_puke_attack(arg_10_0, arg_10_1, arg_10_2)
+	if not arg_10_0._puke_position_on_nav or not arg_10_0._puke_distance_sq or not arg_10_0._puke_direction then
 		return false
 	end
 
-	local puke_position, puke_distance_sq, puke_direction = self._puke_position_on_nav:unbox(), self._puke_distance_sq, self._puke_direction:unbox()
-	local down_dot = Vector3.dot(puke_direction, Vector3.down())
-	local near_vomit_distance = 25
-	local near_vomit_max_angle = 0.45
-	local needs_to_crouch = false
-	local use_near_vomit = near_vomit_max_angle <= down_dot and puke_distance_sq < near_vomit_distance and not needs_to_crouch
-	local vomit_animation
+	local var_10_0 = arg_10_0._puke_position_on_nav:unbox()
+	local var_10_1 = arg_10_0._puke_distance_sq
+	local var_10_2 = arg_10_0._puke_direction:unbox()
+	local var_10_3 = Vector3.dot(var_10_2, Vector3.down())
+	local var_10_4 = 25
+	local var_10_5 = 0.45
+	local var_10_6 = false
+	local var_10_7 = var_10_5 <= var_10_3 and var_10_1 < var_10_4 and not var_10_6
+	local var_10_8
 
-	if use_near_vomit then
-		vomit_animation = "attack_vomit"
-		self._near_vomit = true
+	if var_10_7 then
+		var_10_8 = "attack_vomit"
+		arg_10_0._near_vomit = true
 	else
-		vomit_animation = "attack_vomit_high"
+		var_10_8 = "attack_vomit_high"
 	end
 
-	Managers.state.entity:system("surrounding_aware_system"):add_system_event(unit, "enemy_attack", DialogueSettings.pounced_down_broadcast_range, "attack_tag", "before_puke")
-	Managers.state.network:anim_event(unit, vomit_animation)
-	CharacterStateHelper.play_animation_event_first_person(self._first_person_extension, vomit_animation)
+	Managers.state.entity:system("surrounding_aware_system"):add_system_event(arg_10_1, "enemy_attack", DialogueSettings.pounced_down_broadcast_range, "attack_tag", "before_puke")
+	Managers.state.network:anim_event(arg_10_1, var_10_8)
+	CharacterStateHelper.play_animation_event_first_person(arg_10_0._first_person_extension, var_10_8)
 
-	self._attack_started_at_t = t
+	arg_10_0._attack_started_at_t = arg_10_2
 
 	return true
 end
 
-local MAX_HITS = 10
+local var_0_1 = 10
 
-ChaosTrollStateVomiting.player_vomit_hit_check = function (self, unit, puke_pos, physics_world, blackboard)
-	local troll_head_pos = Unit.world_position(unit, self._troll_head_node)
-	local offset_dir = 2 * Vector3.normalize(puke_pos - POSITION_LOOKUP[unit]) + Vector3(0, 0, 1)
-	local to_puke = puke_pos + offset_dir - troll_head_pos
-	local puke_direction = Vector3.normalize(to_puke)
-	local puke_distance = Vector3.length(to_puke)
-	local sweep_radius = self._breed.vomit_in_face_sweep_radius
-	local hit_heroes = self:_sweep_trajectory_for_heroes()
+function ChaosTrollStateVomiting.player_vomit_hit_check(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	local var_11_0 = Unit.world_position(arg_11_1, arg_11_0._troll_head_node)
+	local var_11_1 = arg_11_2 + (2 * Vector3.normalize(arg_11_2 - POSITION_LOOKUP[arg_11_1]) + Vector3(0, 0, 1)) - var_11_0
+	local var_11_2 = Vector3.normalize(var_11_1)
+	local var_11_3 = Vector3.length(var_11_1)
+	local var_11_4 = arg_11_0._breed.vomit_in_face_sweep_radius
+	local var_11_5 = arg_11_0:_sweep_trajectory_for_heroes()
 
-	if hit_heroes and not table.is_empty(hit_heroes) then
-		local num_hits = #hit_heroes
-		local buff_system = Managers.state.entity:system("buff_system")
+	if var_11_5 and not table.is_empty(var_11_5) then
+		local var_11_6 = #var_11_5
+		local var_11_7 = Managers.state.entity:system("buff_system")
 
-		for i = 1, num_hits do
-			local hit_unit = hit_heroes[i]
-			local buff_extension = ScriptUnit.extension(hit_unit, "buff_system")
+		for iter_11_0 = 1, var_11_6 do
+			local var_11_8 = var_11_5[iter_11_0]
 
-			if not buff_extension:has_buff_type("vs_troll_bile_face") then
-				buff_system:add_buff(hit_unit, "vs_bile_troll_vomit_face_base", unit)
-				Managers.state.achievement:trigger_event("on_troll_vomit_hit", hit_unit, unit)
+			if not ScriptUnit.extension(var_11_8, "buff_system"):has_buff_type("vs_troll_bile_face") then
+				var_11_7:add_buff(var_11_8, "vs_bile_troll_vomit_face_base", arg_11_1)
+				Managers.state.achievement:trigger_event("on_troll_vomit_hit", var_11_8, arg_11_1)
 			end
 		end
 	end
 end
 
-ChaosTrollStateVomiting.position_on_navmesh = function (position, nav_world, above, below)
-	local success, z = GwNavQueries.triangle_from_position(nav_world, position, above or 0.5, below or 1)
+function ChaosTrollStateVomiting.position_on_navmesh(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	local var_12_0, var_12_1 = GwNavQueries.triangle_from_position(arg_12_1, arg_12_0, arg_12_2 or 0.5, arg_12_3 or 1)
 
-	if success then
-		position = Vector3.copy(position)
-		position.z = z
+	if var_12_0 then
+		arg_12_0 = Vector3.copy(arg_12_0)
+		arg_12_0.z = var_12_1
 	else
-		above = 1.5
-		below = 4
+		arg_12_2 = 1.5
+		arg_12_3 = 4
 
-		local horizontal = 4
-		local dist_from_obstacle = 0.5
+		local var_12_2 = 4
+		local var_12_3 = 0.5
 
-		position = GwNavQueries.inside_position_from_outside_position(nav_world, position, above, below, horizontal, dist_from_obstacle)
+		arg_12_0 = GwNavQueries.inside_position_from_outside_position(arg_12_1, arg_12_0, arg_12_2, arg_12_3, var_12_2, var_12_3)
 	end
 
-	return position
+	return arg_12_0
 end
 
-ChaosTrollStateVomiting.spawn_vomit = function (self, unit)
-	local puke_pos = self._puke_position_on_nav:unbox()
+function ChaosTrollStateVomiting.spawn_vomit(arg_13_0, arg_13_1)
+	local var_13_0 = arg_13_0._puke_position_on_nav:unbox()
 
-	if puke_pos then
-		local dir = self._puke_direction:unbox()
-		local puke_rot = Quaternion.look(dir)
-		local state_int = self._near_vomit and 1 or 2
+	if var_13_0 then
+		local var_13_1 = arg_13_0._puke_direction:unbox()
+		local var_13_2 = Quaternion.look(var_13_1)
+		local var_13_3 = arg_13_0._near_vomit and 1 or 2
 
-		Managers.state.unit_spawner:request_spawn_template_unit("troll_puke", puke_pos, puke_rot, unit, state_int)
+		Managers.state.unit_spawner:request_spawn_template_unit("troll_puke", var_13_0, var_13_2, arg_13_1, var_13_3)
 	end
 end
 
-ChaosTrollStateVomiting._get_vomit_position = function (self, unit)
-	local troll_head_pos = Unit.world_position(unit, self._troll_head_node)
-	local pos = ScriptCamera.position(self._camera)
-	local rot = ScriptCamera.rotation(self._camera)
-	local forward = Quaternion.forward(rot)
-	local max_dist = self._max_dist
-	local pos_to_test, puke_distance_sq, puke_direction
-	local above, below = 1, 5
-	local puke_pos = ChaosTrollStateVomiting.position_on_navmesh(self._impact_data.position:unbox(), self._nav_world, above, below)
-	local to_puke_pos
+function ChaosTrollStateVomiting._get_vomit_position(arg_14_0, arg_14_1)
+	local var_14_0 = Unit.world_position(arg_14_1, arg_14_0._troll_head_node)
+	local var_14_1 = ScriptCamera.position(arg_14_0._camera)
+	local var_14_2 = ScriptCamera.rotation(arg_14_0._camera)
+	local var_14_3 = Quaternion.forward(var_14_2)
+	local var_14_4 = arg_14_0._max_dist
+	local var_14_5
+	local var_14_6
+	local var_14_7
+	local var_14_8 = 1
+	local var_14_9 = 5
+	local var_14_10 = ChaosTrollStateVomiting.position_on_navmesh(arg_14_0._impact_data.position:unbox(), arg_14_0._nav_world, var_14_8, var_14_9)
+	local var_14_11
 
-	if puke_pos then
-		to_puke_pos = puke_pos - troll_head_pos
-		puke_direction = Vector3.normalize(to_puke_pos)
-		puke_distance_sq = Vector3.length_squared(to_puke_pos)
+	if var_14_10 then
+		local var_14_12 = var_14_10 - var_14_0
+
+		var_14_7 = Vector3.normalize(var_14_12)
+		var_14_6 = Vector3.length_squared(var_14_12)
 	end
 
-	return puke_pos, puke_distance_sq, puke_direction
+	return var_14_10, var_14_6, var_14_7
 end
 
-ChaosTrollStateVomiting._update_movement = function (self, unit, t, dt, progress)
-	local input_extension = self._input_extension
-	local buff_extension = self._buff_extension
-	local first_person_extension = self._first_person_extension
-	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local move_input = CharacterStateHelper.get_movement_input(input_extension)
-	local is_moving = CharacterStateHelper.has_move_input(input_extension)
-	local current_movement_speed_scale = self.current_movement_speed_scale
+function ChaosTrollStateVomiting._update_movement(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+	local var_15_0 = arg_15_0._input_extension
+	local var_15_1 = arg_15_0._buff_extension
+	local var_15_2 = arg_15_0._first_person_extension
+	local var_15_3 = PlayerUnitMovementSettings.get_movement_settings_table(arg_15_1)
+	local var_15_4 = CharacterStateHelper.get_movement_input(var_15_0)
+	local var_15_5 = CharacterStateHelper.has_move_input(var_15_0)
+	local var_15_6 = arg_15_0.current_movement_speed_scale
 
-	if not self.is_bot then
-		local move_acceleration_up_dt = movement_settings_table.move_acceleration_up * dt
-		local move_acceleration_down_dt = movement_settings_table.move_acceleration_down * dt
+	if not arg_15_0.is_bot then
+		local var_15_7 = var_15_3.move_acceleration_up * arg_15_3
+		local var_15_8 = var_15_3.move_acceleration_down * arg_15_3
 
-		if is_moving then
-			current_movement_speed_scale = math.min(1, current_movement_speed_scale + move_acceleration_up_dt)
+		if var_15_5 then
+			var_15_6 = math.min(1, var_15_6 + var_15_7)
 		else
-			current_movement_speed_scale = math.max(0, current_movement_speed_scale - move_acceleration_down_dt)
+			var_15_6 = math.max(0, var_15_6 - var_15_8)
 		end
 	else
-		current_movement_speed_scale = is_moving and 1 or 0
+		var_15_6 = var_15_5 and 1 or 0
 	end
 
-	local vomit_speed = self._breed.vomit_movement_speed
-	local movement_speed = math.lerp(0.6, vomit_speed, (progress or 1)^2)
-	local current_max_move_speed = movement_speed
-	local buffed_move_speed = buff_extension:apply_buffs_to_value(current_max_move_speed, "movement_speed")
-	local final_move_speed = buffed_move_speed * current_movement_speed_scale * movement_settings_table.player_speed_scale
-	local movement = Vector3(0, 0, 0)
+	local var_15_9 = arg_15_0._breed.vomit_movement_speed
+	local var_15_10 = math.lerp(0.6, var_15_9, (arg_15_4 or 1)^2)
+	local var_15_11 = var_15_1:apply_buffs_to_value(var_15_10, "movement_speed") * var_15_6 * var_15_3.player_speed_scale
+	local var_15_12 = Vector3(0, 0, 0)
 
-	if move_input then
-		movement = movement + move_input
+	if var_15_4 then
+		var_15_12 = var_15_12 + var_15_4
 	end
 
-	local move_input_direction
+	local var_15_13
+	local var_15_14 = Vector3.normalize(var_15_12)
 
-	move_input_direction = Vector3.normalize(movement)
-
-	if Vector3.length(move_input_direction) == 0 then
-		move_input_direction = self.last_input_direction:unbox()
+	if Vector3.length(var_15_14) == 0 then
+		var_15_14 = arg_15_0.last_input_direction:unbox()
 	else
-		self.last_input_direction:store(move_input_direction)
+		arg_15_0.last_input_direction:store(var_15_14)
 	end
 
-	local move_anim_3p, move_anim_1p = CharacterStateHelper.get_move_animation(self._locomotion_extension, input_extension, self._status_extension, self.move_anim_3p)
+	local var_15_15, var_15_16 = CharacterStateHelper.get_move_animation(arg_15_0._locomotion_extension, var_15_0, arg_15_0._status_extension, arg_15_0.move_anim_3p)
 
-	if move_anim_3p ~= self.move_anim_3p then
-		CharacterStateHelper.play_animation_event(unit, move_anim_3p)
+	if var_15_15 ~= arg_15_0.move_anim_3p then
+		CharacterStateHelper.play_animation_event(arg_15_1, var_15_15)
 
-		self.move_anim_3p = move_anim_3p
+		arg_15_0.move_anim_3p = var_15_15
 	end
 
-	if move_anim_1p ~= self.move_anim_1p then
-		self.move_anim_1p = move_anim_1p
+	if var_15_16 ~= arg_15_0.move_anim_1p then
+		arg_15_0.move_anim_1p = var_15_16
 
-		CharacterStateHelper.play_animation_event_first_person(first_person_extension, move_anim_1p)
+		CharacterStateHelper.play_animation_event_first_person(var_15_2, var_15_16)
 	end
 
-	if self._previous_state == "jumping" or self._previous_state == "falling" then
-		CharacterStateHelper.move_in_air_pactsworn(self._first_person_extension, input_extension, self._locomotion_extension, final_move_speed, unit)
+	if arg_15_0._previous_state == "jumping" or arg_15_0._previous_state == "falling" then
+		CharacterStateHelper.move_in_air_pactsworn(arg_15_0._first_person_extension, var_15_0, arg_15_0._locomotion_extension, var_15_11, arg_15_1)
 	else
-		CharacterStateHelper.move_on_ground(first_person_extension, input_extension, self._locomotion_extension, move_input_direction, final_move_speed, unit)
+		CharacterStateHelper.move_on_ground(var_15_2, var_15_0, arg_15_0._locomotion_extension, var_15_14, var_15_11, arg_15_1)
 	end
 
-	self.current_movement_speed_scale = current_movement_speed_scale
+	arg_15_0.current_movement_speed_scale = var_15_6
 end

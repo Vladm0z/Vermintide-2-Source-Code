@@ -1,485 +1,467 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/actions/action_true_flight_bow_aim.lua
+-- chunkname: @scripts/unit_extensions/weapons/actions/action_true_flight_bow_aim.lua
 
 require("scripts/unit_extensions/weapons/projectiles/true_flight_templates")
 require("scripts/unit_extensions/weapons/projectiles/true_flight_utility")
 
 ActionTrueFlightBowAim = class(ActionTrueFlightBowAim, ActionBase)
 
-local actor_unit = Actor.unit
-local actor_node = Actor.node
-local unit_actor = Unit.actor
-local unit_has_node = Unit.has_node
-local unit_node = Unit.node
-local unit_get_data = Unit.get_data
-local unit_world_position = Unit.world_position
-local vector3_distance_squared = Vector3.distance_squared
-local vector3_length = Vector3.length
-local vector3_dot = Vector3.dot
-local RAYCAST_INDEX_POSITION = 1
-local RAYCAST_INDEX_DISTANCE = 2
-local RAYCAST_INDEX_NORMAL = 3
-local RAYCAST_INDEX_ACTOR = 4
+local var_0_0 = Actor.unit
+local var_0_1 = Actor.node
+local var_0_2 = Unit.actor
+local var_0_3 = Unit.has_node
+local var_0_4 = Unit.node
+local var_0_5 = Unit.get_data
+local var_0_6 = Unit.world_position
+local var_0_7 = Vector3.distance_squared
+local var_0_8 = Vector3.length
+local var_0_9 = Vector3.dot
+local var_0_10 = 1
+local var_0_11 = 2
+local var_0_12 = 3
+local var_0_13 = 4
 
-ActionTrueFlightBowAim.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionTrueFlightBowAim.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionTrueFlightBowAim.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionTrueFlightBowAim.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	if ScriptUnit.has_extension(self.weapon_unit, "spread_system") then
-		self.spread_extension = ScriptUnit.extension(self.weapon_unit, "spread_system")
+	if ScriptUnit.has_extension(arg_1_0.weapon_unit, "spread_system") then
+		arg_1_0.spread_extension = ScriptUnit.extension(arg_1_0.weapon_unit, "spread_system")
 	end
 
-	self.overcharge_extension = ScriptUnit.extension(owner_unit, "overcharge_system")
-	self.first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
-	self._weapon_extension = ScriptUnit.extension(self.weapon_unit, "weapon_system")
+	arg_1_0.overcharge_extension = ScriptUnit.extension(arg_1_4, "overcharge_system")
+	arg_1_0.first_person_extension = ScriptUnit.extension(arg_1_4, "first_person_system")
+	arg_1_0._weapon_extension = ScriptUnit.extension(arg_1_0.weapon_unit, "weapon_system")
 end
 
-ActionTrueFlightBowAim.client_owner_start_action = function (self, new_action, t, chain_action_data)
-	ActionTrueFlightBowAim.super.client_owner_start_action(self, new_action, t, chain_action_data)
+function ActionTrueFlightBowAim.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	ActionTrueFlightBowAim.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 
-	self._marked_target = {}
-	self.current_action = new_action
-	self.aim_timer = 0
-	self.aim_sticky_timer = 0
-	self._is_sticky_target = false
-	self._current_target_priority = -1
-	self.target = chain_action_data and chain_action_data.target or nil
-	self.targets = chain_action_data and chain_action_data.targets or {}
-	self.aimed_target = chain_action_data and chain_action_data.target or nil
+	arg_2_0._marked_target = {}
+	arg_2_0.current_action = arg_2_1
+	arg_2_0.aim_timer = 0
+	arg_2_0.aim_sticky_timer = 0
+	arg_2_0._is_sticky_target = false
+	arg_2_0._current_target_priority = -1
+	arg_2_0.target = arg_2_3 and arg_2_3.target or nil
+	arg_2_0.targets = arg_2_3 and arg_2_3.targets or {}
+	arg_2_0.aimed_target = arg_2_3 and arg_2_3.target or nil
 
-	self:_mark_target(self.target)
+	arg_2_0:_mark_target(arg_2_0.target)
 
-	self.time_to_shoot = t
+	arg_2_0.time_to_shoot = arg_2_2
 
-	local owner_unit = self.owner_unit
+	local var_2_0 = arg_2_0.owner_unit
 
-	self.side = Managers.state.side.side_by_unit[owner_unit]
-	self.target_broadphase_categories = self.side and self.side.enemy_broadphase_categories
+	arg_2_0.side = Managers.state.side.side_by_unit[var_2_0]
+	arg_2_0.target_broadphase_categories = arg_2_0.side and arg_2_0.side.enemy_broadphase_categories
 
-	local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
+	local var_2_1 = ScriptUnit.extension(var_2_0, "buff_system")
 
-	self._ignored_breeds = new_action.ignored_breeds or {}
-	self.charge_time = buff_extension:apply_buffs_to_value(new_action.charge_time or 0, "reduced_ranged_charge_time")
-	self.overcharge_timer = 0
-	self.zoom_condition_function = new_action.zoom_condition_function
-	self.prioritized_breeds = new_action.prioritized_breeds
-	self.played_aim_sound = false
-	self.aim_sound_time = t + (new_action.aim_sound_delay or 0)
-	self.aim_zoom_time = t + (new_action.aim_zoom_delay or 0)
+	arg_2_0._ignored_breeds = arg_2_1.ignored_breeds or {}
+	arg_2_0.charge_time = var_2_1:apply_buffs_to_value(arg_2_1.charge_time or 0, "reduced_ranged_charge_time")
+	arg_2_0.overcharge_timer = 0
+	arg_2_0.zoom_condition_function = arg_2_1.zoom_condition_function
+	arg_2_0.prioritized_breeds = arg_2_1.prioritized_breeds
+	arg_2_0.played_aim_sound = false
+	arg_2_0.aim_sound_time = arg_2_2 + (arg_2_1.aim_sound_delay or 0)
+	arg_2_0.aim_zoom_time = arg_2_2 + (arg_2_1.aim_zoom_delay or 0)
 
-	local loaded_projectile_settings = new_action.loaded_projectile_settings
+	local var_2_2 = arg_2_1.loaded_projectile_settings
 
-	if loaded_projectile_settings then
-		local inventory_extension = ScriptUnit.extension(self.owner_unit, "inventory_system")
-
-		inventory_extension:set_loaded_projectile_override(loaded_projectile_settings)
+	if var_2_2 then
+		ScriptUnit.extension(arg_2_0.owner_unit, "inventory_system"):set_loaded_projectile_override(var_2_2)
 	end
 
-	self.charge_ready_sound_event = self.current_action.charge_ready_sound_event
+	arg_2_0.charge_ready_sound_event = arg_2_0.current_action.charge_ready_sound_event
 
-	self:_start_charge_sound()
+	arg_2_0:_start_charge_sound()
 
-	local spread_template_override = new_action.spread_template_override
+	local var_2_3 = arg_2_1.spread_template_override
 
-	if spread_template_override then
-		self.spread_extension:override_spread_template(spread_template_override)
+	if var_2_3 then
+		arg_2_0.spread_extension:override_spread_template(var_2_3)
 	end
 end
 
-ActionTrueFlightBowAim._start_charge_sound = function (self)
-	local current_action = self.current_action
-	local owner_unit = self.owner_unit
-	local owner_player = self.owner_player
-	local is_bot = owner_player and owner_player.bot_player
-	local is_local = owner_player and not owner_player.remote
-	local wwise_world = self.wwise_world
+function ActionTrueFlightBowAim._start_charge_sound(arg_3_0)
+	local var_3_0 = arg_3_0.current_action
+	local var_3_1 = arg_3_0.owner_unit
+	local var_3_2 = arg_3_0.owner_player
+	local var_3_3 = var_3_2 and var_3_2.bot_player
+	local var_3_4 = var_3_2 and not var_3_2.remote
+	local var_3_5 = arg_3_0.wwise_world
 
-	if is_local and not is_bot then
-		local wwise_playing_id, wwise_source_id = ActionUtils.start_charge_sound(wwise_world, self.weapon_unit, owner_unit, current_action)
+	if var_3_4 and not var_3_3 then
+		local var_3_6, var_3_7 = ActionUtils.start_charge_sound(var_3_5, arg_3_0.weapon_unit, var_3_1, var_3_0)
 
-		self.charging_sound_id = wwise_playing_id
-		self.wwise_source_id = wwise_source_id
+		arg_3_0.charging_sound_id = var_3_6
+		arg_3_0.wwise_source_id = var_3_7
 	end
 
-	ActionUtils.play_husk_sound_event(wwise_world, current_action.charge_sound_husk_name, owner_unit, is_bot)
+	ActionUtils.play_husk_sound_event(var_3_5, var_3_0.charge_sound_husk_name, var_3_1, var_3_3)
 end
 
-ActionTrueFlightBowAim._stop_charge_sound = function (self)
-	local current_action = self.current_action
-	local owner_unit = self.owner_unit
-	local owner_player = self.owner_player
-	local is_bot = owner_player and owner_player.bot_player
-	local is_local = owner_player and not owner_player.remote
-	local wwise_world = self.wwise_world
+function ActionTrueFlightBowAim._stop_charge_sound(arg_4_0)
+	local var_4_0 = arg_4_0.current_action
+	local var_4_1 = arg_4_0.owner_unit
+	local var_4_2 = arg_4_0.owner_player
+	local var_4_3 = var_4_2 and var_4_2.bot_player
+	local var_4_4 = var_4_2 and not var_4_2.remote
+	local var_4_5 = arg_4_0.wwise_world
 
-	if is_local and not is_bot then
-		ActionUtils.stop_charge_sound(wwise_world, self.charging_sound_id, self.wwise_source_id, current_action)
+	if var_4_4 and not var_4_3 then
+		ActionUtils.stop_charge_sound(var_4_5, arg_4_0.charging_sound_id, arg_4_0.wwise_source_id, var_4_0)
 
-		self.charging_sound_id = nil
-		self.wwise_source_id = nil
+		arg_4_0.charging_sound_id = nil
+		arg_4_0.wwise_source_id = nil
 	end
 
-	ActionUtils.play_husk_sound_event(wwise_world, current_action.charge_sound_husk_stop_event, owner_unit, is_bot)
+	ActionUtils.play_husk_sound_event(var_4_5, var_4_0.charge_sound_husk_stop_event, var_4_1, var_4_3)
 end
 
-local function is_target_invisible(unit)
-	local status_extension = ScriptUnit.has_extension(unit, "status_system")
+local function var_0_14(arg_5_0)
+	local var_5_0 = ScriptUnit.has_extension(arg_5_0, "status_system")
 
-	return status_extension and status_extension:is_invisible()
+	return var_5_0 and var_5_0:is_invisible()
 end
 
-local EMPTY_TABLE = {}
+local var_0_15 = {}
 
-ActionTrueFlightBowAim.client_owner_post_update = function (self, dt, t, world, can_damage)
-	local current_action = self.current_action
-	local owner_unit = self.owner_unit
-	local time_to_shoot = self.time_to_shoot
-	local current_target = self.target
-	local owner_player = Managers.player:owner(owner_unit)
-	local is_bot = owner_player and owner_player.bot_player
+function ActionTrueFlightBowAim.client_owner_post_update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	local var_6_0 = arg_6_0.current_action
+	local var_6_1 = arg_6_0.owner_unit
+	local var_6_2 = arg_6_0.time_to_shoot
+	local var_6_3 = arg_6_0.target
+	local var_6_4 = Managers.player:owner(var_6_1)
+	local var_6_5 = var_6_4 and var_6_4.bot_player
 
-	if current_action.overcharge_interval then
-		self.overcharge_timer = self.overcharge_timer + dt
+	if var_6_0.overcharge_interval then
+		arg_6_0.overcharge_timer = arg_6_0.overcharge_timer + arg_6_1
 
-		if self.overcharge_timer >= current_action.overcharge_interval then
-			if self.overcharge_extension then
-				local overcharge_amount = PlayerUnitStatusSettings.overcharge_values[current_action.overcharge_type]
+		if arg_6_0.overcharge_timer >= var_6_0.overcharge_interval then
+			if arg_6_0.overcharge_extension then
+				local var_6_6 = PlayerUnitStatusSettings.overcharge_values[var_6_0.overcharge_type]
 
-				self.overcharge_extension:add_charge(overcharge_amount)
+				arg_6_0.overcharge_extension:add_charge(var_6_6)
 			end
 
-			self.overcharge_timer = 0
+			arg_6_0.overcharge_timer = 0
 		end
 	end
 
-	if not self.zoom_condition_function or self.zoom_condition_function() then
-		local status_extension = ScriptUnit.extension(owner_unit, "status_system")
-		local input_extension = ScriptUnit.extension(owner_unit, "input_system")
-		local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
+	if not arg_6_0.zoom_condition_function or arg_6_0.zoom_condition_function() then
+		local var_6_7 = ScriptUnit.extension(var_6_1, "status_system")
+		local var_6_8 = ScriptUnit.extension(var_6_1, "input_system")
+		local var_6_9 = ScriptUnit.extension(var_6_1, "buff_system")
 
-		if not status_extension:is_zooming() and t >= self.aim_zoom_time then
-			status_extension:set_zooming(true, current_action.default_zoom)
+		if not var_6_7:is_zooming() and arg_6_2 >= arg_6_0.aim_zoom_time then
+			var_6_7:set_zooming(true, var_6_0.default_zoom)
 		end
 
-		if buff_extension:has_buff_type("increased_zoom") and status_extension:is_zooming() and input_extension:get("action_three") then
-			status_extension:switch_variable_zoom(current_action.buffed_zoom_thresholds)
-		elseif current_action.zoom_thresholds and status_extension:is_zooming() and input_extension:get("action_three") then
-			status_extension:switch_variable_zoom(current_action.zoom_thresholds)
+		if var_6_9:has_buff_type("increased_zoom") and var_6_7:is_zooming() and var_6_8:get("action_three") then
+			var_6_7:switch_variable_zoom(var_6_0.buffed_zoom_thresholds)
+		elseif var_6_0.zoom_thresholds and var_6_7:is_zooming() and var_6_8:get("action_three") then
+			var_6_7:switch_variable_zoom(var_6_0.zoom_thresholds)
 		end
 	end
 
-	if not self.played_aim_sound and t >= self.aim_sound_time and not is_bot then
-		local sound_event = current_action.aim_sound_event
+	if not arg_6_0.played_aim_sound and arg_6_2 >= arg_6_0.aim_sound_time and not var_6_5 then
+		local var_6_10 = var_6_0.aim_sound_event
 
-		if sound_event then
-			local wwise_world = self.wwise_world
+		if var_6_10 then
+			local var_6_11 = arg_6_0.wwise_world
 
-			WwiseWorld.trigger_event(wwise_world, sound_event)
+			WwiseWorld.trigger_event(var_6_11, var_6_10)
 		end
 
-		self.played_aim_sound = true
+		arg_6_0.played_aim_sound = true
 	end
 
-	if current_target and (not HEALTH_ALIVE[current_target] or is_target_invisible(current_target)) then
-		if not is_bot then
-			self:_mark_target(nil)
+	if var_6_3 and (not HEALTH_ALIVE[var_6_3] or var_0_14(var_6_3)) then
+		if not var_6_5 then
+			arg_6_0:_mark_target(nil)
 		end
 
-		self.target = nil
-		self.aimed_target = nil
-		current_target = nil
+		arg_6_0.target = nil
+		arg_6_0.aimed_target = nil
+		var_6_3 = nil
 	end
 
-	local required_aim_time = current_action.aim_time or 0.1
-	local aim_sticky_time = current_action.aim_sticky_time or 0
+	local var_6_12 = var_6_0.aim_time or 0.1
+	local var_6_13 = var_6_0.aim_sticky_time or 0
 
-	if required_aim_time <= self.aim_timer and (not current_target or aim_sticky_time <= self.aim_sticky_timer) then
-		local physics_world = World.get_data(world, "physics_world")
-		local first_person_extension = self.first_person_extension
-		local player_position, player_rotation = first_person_extension:get_projectile_start_position_rotation()
-		local direction = Vector3.normalize(Quaternion.forward(player_rotation))
-		local results, num_results
+	if var_6_12 <= arg_6_0.aim_timer and (not var_6_3 or var_6_13 <= arg_6_0.aim_sticky_timer) then
+		local var_6_14 = World.get_data(arg_6_3, "physics_world")
+		local var_6_15, var_6_16 = arg_6_0.first_person_extension:get_projectile_start_position_rotation()
+		local var_6_17 = Vector3.normalize(Quaternion.forward(var_6_16))
+		local var_6_18
+		local var_6_19
 
-		if current_action.aim_obstructed_by_walls then
-			results, num_results = PhysicsWorld.immediate_raycast_actors(physics_world, player_position, direction, "dynamic_collision_filter", "filter_ray_true_flight_ai_only", "dynamic_collision_filter", "filter_ray_true_flight_hitbox_only", "static_collision_filter", "filter_player_ray_projectile_static_only")
+		if var_6_0.aim_obstructed_by_walls then
+			var_6_18, var_6_19 = PhysicsWorld.immediate_raycast_actors(var_6_14, var_6_15, var_6_17, "dynamic_collision_filter", "filter_ray_true_flight_ai_only", "dynamic_collision_filter", "filter_ray_true_flight_hitbox_only", "static_collision_filter", "filter_player_ray_projectile_static_only")
 		else
-			results, num_results = PhysicsWorld.immediate_raycast_actors(physics_world, player_position, direction, "dynamic_collision_filter", "filter_ray_true_flight_ai_only", "dynamic_collision_filter", "filter_ray_true_flight_hitbox_only")
+			var_6_18, var_6_19 = PhysicsWorld.immediate_raycast_actors(var_6_14, var_6_15, var_6_17, "dynamic_collision_filter", "filter_ray_true_flight_ai_only", "dynamic_collision_filter", "filter_ray_true_flight_hitbox_only")
 		end
 
-		local can_target_players = true
+		local var_6_20 = true
 
-		if current_action.can_target_players then
-			can_target_players = current_action.can_target_players(self.owner_unit)
+		if var_6_0.can_target_players then
+			var_6_20 = var_6_0.can_target_players(arg_6_0.owner_unit)
 		end
 
-		local ignored_breeds = self._ignored_breeds
-		local side_manager = Managers.state.side
-		local side_by_unit = side_manager.side_by_unit
-		local hit_unit
-		local higest_priority = -1
-		local side = self.side
+		local var_6_21 = arg_6_0._ignored_breeds
+		local var_6_22 = Managers.state.side
+		local var_6_23 = var_6_22.side_by_unit
+		local var_6_24
+		local var_6_25 = -1
+		local var_6_26 = arg_6_0.side
 
-		if num_results > 0 then
-			local prio_breeds = self.prioritized_breeds or EMPTY_TABLE
-			local ignore_bosses = current_action.ignore_bosses
+		if var_6_19 > 0 then
+			local var_6_27 = arg_6_0.prioritized_breeds or var_0_15
+			local var_6_28 = var_6_0.ignore_bosses
 
-			for i = 1, num_results do
+			for iter_6_0 = 1, var_6_19 do
 				repeat
-					local result = results[i]
-					local hit_actor = result[RAYCAST_INDEX_ACTOR]
+					local var_6_29 = var_6_18[iter_6_0][var_0_13]
 
-					if not hit_actor then
+					if not var_6_29 then
 						break
 					end
 
-					local unit = actor_unit(hit_actor)
+					local var_6_30 = var_0_0(var_6_29)
 
-					if not HEALTH_ALIVE[unit] then
+					if not HEALTH_ALIVE[var_6_30] then
 						break
 					end
 
-					local hit_unit_side = side_by_unit[unit]
+					local var_6_31 = var_6_23[var_6_30]
 
-					if hit_unit_side and not side_manager:is_enemy_by_side(side, hit_unit_side) then
+					if var_6_31 and not var_6_22:is_enemy_by_side(var_6_26, var_6_31) then
 						break
 					end
 
-					local node = actor_node(hit_actor)
-					local breed = AiUtils.unit_breed(unit)
+					local var_6_32 = var_0_1(var_6_29)
+					local var_6_33 = AiUtils.unit_breed(var_6_30)
 
-					if not breed or ignored_breeds[breed.name] then
+					if not var_6_33 or var_6_21[var_6_33.name] then
 						break
 					end
 
-					if breed.is_player and not can_target_players then
+					if var_6_33.is_player and not var_6_20 then
 						break
 					end
 
-					local hit_zone = breed.hit_zones_lookup[node]
+					local var_6_34 = var_6_33.hit_zones_lookup[var_6_32]
 
-					if not hit_zone or hit_zone.name == "afro" then
+					if not var_6_34 or var_6_34.name == "afro" then
 						break
 					end
 
-					if breed.no_autoaim or ignore_bosses and breed.boss then
+					if var_6_33.no_autoaim or var_6_28 and var_6_33.boss then
 						break
 					end
 
-					if is_target_invisible(unit) then
+					if var_0_14(var_6_30) then
 						break
 					end
 
-					local priority = prio_breeds[breed.name] or -1
+					local var_6_35 = var_6_27[var_6_33.name] or -1
 
-					if priority > 0 and higest_priority < priority then
-						hit_unit = unit
-						higest_priority = priority
+					if var_6_35 > 0 and var_6_25 < var_6_35 then
+						var_6_24 = var_6_30
+						var_6_25 = var_6_35
 
 						break
 					end
 
-					hit_unit = hit_unit or unit
+					var_6_24 = var_6_24 or var_6_30
 				until true
 			end
 		end
 
-		if current_action.aim_sticky_target_size and POSITION_LOOKUP[current_target] and self._is_sticky_target and higest_priority <= self._current_target_priority then
-			local old_target_distance_sq = vector3_distance_squared(POSITION_LOOKUP[current_target], player_position)
-			local new_target_distance_sq = hit_unit and vector3_distance_squared(POSITION_LOOKUP[hit_unit], player_position) or math.huge
+		if var_6_0.aim_sticky_target_size and POSITION_LOOKUP[var_6_3] and arg_6_0._is_sticky_target and var_6_25 <= arg_6_0._current_target_priority and var_0_7(POSITION_LOOKUP[var_6_3], var_6_15) < (var_6_24 and var_0_7(POSITION_LOOKUP[var_6_24], var_6_15) or math.huge) then
+			local var_6_36 = var_0_3(var_6_3, "j_spine1") and var_0_4(var_6_3, "j_spine1") or 0
+			local var_6_37 = var_0_6(var_6_3, var_6_36) - var_6_15
+			local var_6_38 = var_0_8(var_6_37)
+			local var_6_39 = var_6_38 > 0 and var_6_37 / var_6_38 or 0
+			local var_6_40 = var_6_0.aim_sticky_target_size
 
-			if old_target_distance_sq < new_target_distance_sq then
-				local target_node = unit_has_node(current_target, "j_spine1") and unit_node(current_target, "j_spine1") or 0
-				local position = unit_world_position(current_target, target_node)
-				local to_old_target = position - player_position
-				local dist_to_old_target = vector3_length(to_old_target)
-				local dir_to_old_target = dist_to_old_target > 0 and to_old_target / dist_to_old_target or 0
-				local radius = current_action.aim_sticky_target_size
-				local sticky_target_threshold = math.cos(math.atan2(radius, dist_to_old_target))
-				local aim_dir = vector3_dot(direction, dir_to_old_target)
-
-				if sticky_target_threshold < aim_dir then
-					hit_unit = current_target
-				else
-					self._is_sticky_target = false
-				end
+			if math.cos(math.atan2(var_6_40, var_6_38)) < var_0_9(var_6_17, var_6_39) then
+				var_6_24 = var_6_3
+			else
+				arg_6_0._is_sticky_target = false
 			end
 		end
 
-		if hit_unit then
-			if self.aimed_target ~= hit_unit then
-				self.aimed_target = hit_unit
-				self.aim_timer = 0
+		if var_6_24 then
+			if arg_6_0.aimed_target ~= var_6_24 then
+				arg_6_0.aimed_target = var_6_24
+				arg_6_0.aim_timer = 0
 
-				if ALIVE[hit_unit] and current_target ~= hit_unit then
-					self.target = hit_unit
+				if ALIVE[var_6_24] and var_6_3 ~= var_6_24 then
+					arg_6_0.target = var_6_24
 
-					self:_mark_target(hit_unit)
+					arg_6_0:_mark_target(var_6_24)
 
-					self.aim_sticky_timer = 0
-					self._is_sticky_target = higest_priority > 0
-					self._current_target_priority = higest_priority
+					arg_6_0.aim_sticky_timer = 0
+					arg_6_0._is_sticky_target = var_6_25 > 0
+					arg_6_0._current_target_priority = var_6_25
 				end
 			end
-		elseif current_action.target_break_size and current_target then
-			local target_node = unit_has_node(current_target, "j_spine1") and unit_node(current_target, "j_spine1") or 0
-			local position = unit_world_position(current_target, target_node)
-			local dir_to_target, dist_to_target = Vector3.direction_length(position - player_position)
-			local radius = current_action.target_break_size
-			local target_break_threshold = math.cos(math.atan2(radius, dist_to_target))
-			local aim_dir = vector3_dot(direction, dir_to_target)
+		elseif var_6_0.target_break_size and var_6_3 then
+			local var_6_41 = var_0_3(var_6_3, "j_spine1") and var_0_4(var_6_3, "j_spine1") or 0
+			local var_6_42 = var_0_6(var_6_3, var_6_41)
+			local var_6_43, var_6_44 = Vector3.direction_length(var_6_42 - var_6_15)
+			local var_6_45 = var_6_0.target_break_size
 
-			if aim_dir < target_break_threshold then
-				self:_mark_target(nil)
+			if math.cos(math.atan2(var_6_45, var_6_44)) > var_0_9(var_6_17, var_6_43) then
+				arg_6_0:_mark_target(nil)
 
-				self.target = nil
-				self.aimed_target = nil
+				arg_6_0.target = nil
+				arg_6_0.aimed_target = nil
 			end
 		end
 	end
 
-	self.charge_value = math.min(math.max(t - time_to_shoot, 0) / self.charge_time, 1)
+	arg_6_0.charge_value = math.min(math.max(arg_6_2 - var_6_2, 0) / arg_6_0.charge_time, 1)
 
-	if not is_bot then
-		local charge_sound_parameter_name = current_action.charge_sound_parameter_name
+	if not var_6_5 then
+		local var_6_46 = var_6_0.charge_sound_parameter_name
 
-		if charge_sound_parameter_name then
-			local wwise_world = self.wwise_world
-			local wwise_source_id = self.wwise_source_id
+		if var_6_46 then
+			local var_6_47 = arg_6_0.wwise_world
+			local var_6_48 = arg_6_0.wwise_source_id
 
-			WwiseWorld.set_source_parameter(wwise_world, wwise_source_id, charge_sound_parameter_name, self.charge_value)
+			WwiseWorld.set_source_parameter(var_6_47, var_6_48, var_6_46, arg_6_0.charge_value)
 		end
 
-		if self.charge_ready_sound_event and self.charge_value >= 1 then
-			self.first_person_extension:play_hud_sound_event(self.charge_ready_sound_event)
+		if arg_6_0.charge_ready_sound_event and arg_6_0.charge_value >= 1 then
+			arg_6_0.first_person_extension:play_hud_sound_event(arg_6_0.charge_ready_sound_event)
 
-			self.charge_ready_sound_event = nil
+			arg_6_0.charge_ready_sound_event = nil
 		end
 	end
 
-	self.aim_timer = self.aim_timer + dt
-	self.aim_sticky_timer = self.aim_sticky_timer + dt
+	arg_6_0.aim_timer = arg_6_0.aim_timer + arg_6_1
+	arg_6_0.aim_sticky_timer = arg_6_0.aim_sticky_timer + arg_6_1
 end
 
-ActionTrueFlightBowAim._get_visible_targets = function (self, aimed_target, num_targets, is_bot)
-	local first_person_extension = self.first_person_extension
-	local range = 50
-	local max_angle = math.pi * 0.2
-	local own_position, look_rotation = first_person_extension:get_projectile_start_position_rotation()
-	local look_direction = Quaternion.forward(look_rotation)
-	local min_dot = math.cos(max_angle)
-	local targets = {}
-	local nearby_ai_units = FrameTable.alloc_table()
-	local ai_units_n = AiUtils.broadphase_query(own_position, range, nearby_ai_units, self.target_broadphase_categories)
+function ActionTrueFlightBowAim._get_visible_targets(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	local var_7_0 = arg_7_0.first_person_extension
+	local var_7_1 = 50
+	local var_7_2 = math.pi * 0.2
+	local var_7_3, var_7_4 = var_7_0:get_projectile_start_position_rotation()
+	local var_7_5 = Quaternion.forward(var_7_4)
+	local var_7_6 = math.cos(var_7_2)
+	local var_7_7 = {}
+	local var_7_8 = FrameTable.alloc_table()
+	local var_7_9 = AiUtils.broadphase_query(var_7_3, var_7_1, var_7_8, arg_7_0.target_broadphase_categories)
 
-	if ai_units_n > 0 then
-		for i = 1, ai_units_n do
-			local unit = nearby_ai_units[i]
+	if var_7_9 > 0 then
+		for iter_7_0 = 1, var_7_9 do
+			local var_7_10 = var_7_8[iter_7_0]
 
-			if HEALTH_ALIVE[unit] then
-				local breed = unit_get_data(unit, "breed")
+			if HEALTH_ALIVE[var_7_10] then
+				local var_7_11 = var_0_5(var_7_10, "breed")
 
-				if breed and not breed.no_autoaim then
-					local enemy_dir = Vector3.normalize(POSITION_LOOKUP[unit] - own_position)
-					local dot_angle = Vector3.dot(look_direction, enemy_dir)
+				if var_7_11 and not var_7_11.no_autoaim then
+					local var_7_12 = Vector3.normalize(POSITION_LOOKUP[var_7_10] - var_7_3)
 
-					if min_dot < dot_angle and unit ~= aimed_target and not is_target_invisible(unit) then
-						targets[#targets + 1] = unit
+					if var_7_6 < Vector3.dot(var_7_5, var_7_12) and var_7_10 ~= arg_7_1 and not var_0_14(var_7_10) then
+						var_7_7[#var_7_7 + 1] = var_7_10
 					end
 				end
 			end
 		end
 	else
-		targets = self.targets
+		var_7_7 = arg_7_0.targets
 
-		for i = #targets, 1, -1 do
-			if not ALIVE[targets[i]] or is_target_invisible(targets[i]) then
-				table.remove(targets, i)
+		for iter_7_1 = #var_7_7, 1, -1 do
+			if not ALIVE[var_7_7[iter_7_1]] or var_0_14(var_7_7[iter_7_1]) then
+				table.remove(var_7_7, iter_7_1)
 			end
 		end
 	end
 
-	TrueFlightUtility.sort_prioritize_specials(targets)
+	TrueFlightUtility.sort_prioritize_specials(var_7_7)
 
-	if aimed_target and not is_target_invisible(aimed_target) then
-		table.insert(targets, 1, aimed_target)
+	if arg_7_1 and not var_0_14(arg_7_1) then
+		table.insert(var_7_7, 1, arg_7_1)
 	end
 
-	return targets
+	return var_7_7
 end
 
-ActionTrueFlightBowAim.finish = function (self, reason, data)
-	local current_action = self.current_action
-	local owner_unit = self.owner_unit
-	local unzoom_condition_function = current_action.unzoom_condition_function
+function ActionTrueFlightBowAim.finish(arg_8_0, arg_8_1, arg_8_2)
+	local var_8_0 = arg_8_0.current_action
+	local var_8_1 = arg_8_0.owner_unit
+	local var_8_2 = var_8_0.unzoom_condition_function
 
-	if self.spread_extension then
-		self.spread_extension:reset_spread_template()
+	if arg_8_0.spread_extension then
+		arg_8_0.spread_extension:reset_spread_template()
 	end
 
-	if not unzoom_condition_function or unzoom_condition_function(reason) then
-		local status_extension = ScriptUnit.extension(owner_unit, "status_system")
-
-		status_extension:set_zooming(false)
+	if not var_8_2 or var_8_2(arg_8_1) then
+		ScriptUnit.extension(var_8_1, "status_system"):set_zooming(false)
 	end
 
-	local sound_event = current_action.unaim_sound_event
+	local var_8_3 = var_8_0.unaim_sound_event
 
-	if sound_event then
-		local wwise_world = self.wwise_world
+	if var_8_3 then
+		local var_8_4 = arg_8_0.wwise_world
 
-		WwiseWorld.trigger_event(wwise_world, sound_event)
+		WwiseWorld.trigger_event(var_8_4, var_8_3)
 	end
 
-	local chain_action_data = {}
+	local var_8_5 = {}
 
-	if current_action.num_projectiles and current_action.num_projectiles > 1 then
-		local owner_player = Managers.player:owner(owner_unit)
-		local is_bot = owner_player and owner_player.bot_player
+	if var_8_0.num_projectiles and var_8_0.num_projectiles > 1 then
+		local var_8_6 = Managers.player:owner(var_8_1)
+		local var_8_7 = var_8_6 and var_8_6.bot_player
 
-		chain_action_data.targets = self:_get_visible_targets(self.target, current_action.num_projectiles, is_bot)
+		var_8_5.targets = arg_8_0:_get_visible_targets(arg_8_0.target, var_8_0.num_projectiles, var_8_7)
 	end
 
-	chain_action_data.target = self.target
+	var_8_5.target = arg_8_0.target
 
-	self:_stop_charge_sound()
-	self:_mark_target(nil)
+	arg_8_0:_stop_charge_sound()
+	arg_8_0:_mark_target(nil)
 
-	self.targets = nil
-	self.target = nil
+	arg_8_0.targets = nil
+	arg_8_0.target = nil
 
-	local inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
+	ScriptUnit.extension(var_8_1, "inventory_system"):set_loaded_projectile_override(nil)
 
-	inventory_extension:set_loaded_projectile_override(nil)
-
-	return chain_action_data
+	return var_8_5
 end
 
-ActionTrueFlightBowAim._mark_target = function (self, unit)
-	if self.is_bot then
+function ActionTrueFlightBowAim._mark_target(arg_9_0, arg_9_1)
+	if arg_9_0.is_bot then
 		return
 	end
 
-	if self.current_action.weapon_mode_target_swap then
-		if unit then
-			self._weapon_extension:set_mode(true)
+	if arg_9_0.current_action.weapon_mode_target_swap then
+		if arg_9_1 then
+			arg_9_0._weapon_extension:set_mode(true)
 		else
-			self._weapon_extension:set_mode(false)
+			arg_9_0._weapon_extension:set_mode(false)
 		end
 	end
 
-	local old_marked_target = self._marked_target
+	local var_9_0 = arg_9_0._marked_target
 
-	if old_marked_target.outline_extension then
-		old_marked_target.outline_extension:remove_outline(old_marked_target.outline_id)
+	if var_9_0.outline_extension then
+		var_9_0.outline_extension:remove_outline(var_9_0.outline_id)
 
-		old_marked_target.outline_extension = nil
-		old_marked_target.outline_id = nil
+		var_9_0.outline_extension = nil
+		var_9_0.outline_id = nil
 	end
 
-	if unit and ALIVE[unit] then
-		local target_outline_extenson = ScriptUnit.has_extension(self.target, "outline_system")
+	if arg_9_1 and ALIVE[arg_9_1] then
+		local var_9_1 = ScriptUnit.has_extension(arg_9_0.target, "outline_system")
 
-		if target_outline_extenson then
-			old_marked_target.outline_extension = target_outline_extenson
-			old_marked_target.outline_id = target_outline_extenson:add_outline(OutlineSettings.templates.target_enemy)
+		if var_9_1 then
+			var_9_0.outline_extension = var_9_1
+			var_9_0.outline_id = var_9_1:add_outline(OutlineSettings.templates.target_enemy)
 		end
 	end
 end

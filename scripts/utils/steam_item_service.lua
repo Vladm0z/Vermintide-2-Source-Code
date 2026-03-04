@@ -1,58 +1,54 @@
-﻿-- chunkname: @scripts/utils/steam_item_service.lua
+-- chunkname: @scripts/utils/steam_item_service.lua
 
 SteamItemService = SteamItemService or {}
 
-local function make_price_table(str_data, out)
-	for currency_amount in string.gmatch(str_data, "[^,]+") do
-		local currency = string.sub(currency_amount, 1, 3)
-		local amount = tonumber(string.sub(currency_amount, 4))
-
-		out[currency] = amount
+local function var_0_0(arg_1_0, arg_1_1)
+	for iter_1_0 in string.gmatch(arg_1_0, "[^,]+") do
+		arg_1_1[string.sub(iter_1_0, 1, 3)] = tonumber(string.sub(iter_1_0, 4))
 	end
 
-	return out
+	return arg_1_1
 end
 
-local _price_chunks = {}
+local var_0_1 = {}
 
-SteamItemService.parse = function (price_data_string)
-	string.split_deprecated(price_data_string, ";", _price_chunks)
+function SteamItemService.parse(arg_2_0)
+	string.split_deprecated(arg_2_0, ";", var_0_1)
 
-	if _price_chunks[1] ~= "1" then
-		table.clear(_price_chunks)
+	if var_0_1[1] ~= "1" then
+		table.clear(var_0_1)
 
 		return nil, "unknown version"
 	end
 
-	local out = {}
+	local var_2_0 = {
+		regular_prices = var_0_0(var_0_1[2], {})
+	}
+	local var_2_1 = var_0_1[3]
 
-	out.regular_prices = make_price_table(_price_chunks[2], {})
+	if var_2_1 then
+		var_2_0.discount_prices = var_0_0(string.sub(var_2_1, 34), {})
 
-	local discounts_string = _price_chunks[3]
+		local var_2_2 = string.sub(var_2_1, 1, 16)
+		local var_2_3 = string.sub(var_2_1, 18, 33)
+		local var_2_4 = os.date("!%Y%m%dT%H%M%SZ")
 
-	if discounts_string then
-		out.discount_prices = make_price_table(string.sub(discounts_string, 34), {})
-
-		local discount_start = string.sub(discounts_string, 1, 16)
-		local discount_end = string.sub(discounts_string, 18, 33)
-		local current_date = os.date("!%Y%m%dT%H%M%SZ")
-
-		out.discount_is_active = discount_start <= current_date and current_date < discount_end
-		out.discount_start = discount_start
-		out.discount_end = discount_end
+		var_2_0.discount_is_active = var_2_2 <= var_2_4 and var_2_4 < var_2_3
+		var_2_0.discount_start = var_2_2
+		var_2_0.discount_end = var_2_3
 	end
 
-	table.clear(_price_chunks)
+	table.clear(var_0_1)
 
-	return out
+	return var_2_0
 end
 
-SteamItemService.get_item_data = function (id)
-	local price_data_string = SteamInventory.get_item_definition_property(id, "price")
+function SteamItemService.get_item_data(arg_3_0)
+	local var_3_0 = SteamInventory.get_item_definition_property(arg_3_0, "price")
 
-	if not price_data_string then
+	if not var_3_0 then
 		return nil, "unknown item"
 	end
 
-	return SteamItemService.parse(price_data_string)
+	return SteamItemService.parse(var_3_0)
 end

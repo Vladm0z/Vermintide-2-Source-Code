@@ -1,26 +1,26 @@
-﻿-- chunkname: @scripts/managers/camera/cameras/offset_camera.lua
+-- chunkname: @scripts/managers/camera/cameras/offset_camera.lua
 
 require("scripts/managers/camera/cameras/base_camera")
 
 OffsetCamera = class(OffsetCamera, BaseCamera)
 
-OffsetCamera.init = function (self, root_node)
-	BaseCamera.init(self, root_node)
+function OffsetCamera.init(arg_1_0, arg_1_1)
+	BaseCamera.init(arg_1_0, arg_1_1)
 
-	self._offset_position = Vector3(0, 0, 0)
+	arg_1_0._offset_position = Vector3(0, 0, 0)
 end
 
-OffsetCamera.parse_parameters = function (self, camera_settings, parent_node)
-	BaseCamera.parse_parameters(self, camera_settings, parent_node)
+function OffsetCamera.parse_parameters(arg_2_0, arg_2_1, arg_2_2)
+	BaseCamera.parse_parameters(arg_2_0, arg_2_1, arg_2_2)
 end
 
-OffsetCamera.update = function (self, dt, position, rotation, data)
-	local offset_position = data.offset_position or Vector3(0, 0, 0)
-	local offset_x = offset_position.x * Quaternion.right(rotation)
-	local offset_y = offset_position.y * Quaternion.forward(rotation)
-	local offset_z = offset_position.z * Quaternion.up(rotation)
+function OffsetCamera.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local var_3_0 = arg_3_4.offset_position or Vector3(0, 0, 0)
+	local var_3_1 = var_3_0.x * Quaternion.right(arg_3_3)
+	local var_3_2 = var_3_0.y * Quaternion.forward(arg_3_3)
+	local var_3_3 = var_3_0.z * Quaternion.up(arg_3_3)
 
-	position = position + offset_x + offset_y + offset_z
+	arg_3_2 = arg_3_2 + var_3_1 + var_3_2 + var_3_3
 
-	BaseCamera.update(self, dt, position, rotation, data)
+	BaseCamera.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 end

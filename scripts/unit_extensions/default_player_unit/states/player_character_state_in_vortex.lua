@@ -1,194 +1,185 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_in_vortex.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_in_vortex.lua
 
 PlayerCharacterStateInVortex = class(PlayerCharacterStateInVortex, PlayerCharacterState)
 
-PlayerCharacterStateInVortex.init = function (self, character_state_init_context)
-	PlayerCharacterState.init(self, character_state_init_context, "in_vortex")
+function PlayerCharacterStateInVortex.init(arg_1_0, arg_1_1)
+	PlayerCharacterState.init(arg_1_0, arg_1_1, "in_vortex")
 end
 
-PlayerCharacterStateInVortex.on_enter = function (self, unit, input, dt, context, t, previous_state)
-	local game = Managers.state.network:game()
+function PlayerCharacterStateInVortex.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+	arg_2_0.game = Managers.state.network:game()
 
-	self.game = game
+	local var_2_0 = arg_2_0.unit_storage
+	local var_2_1 = arg_2_0.status_extension.in_vortex_unit
+	local var_2_2 = var_2_0:go_id(var_2_1)
+	local var_2_3 = ScriptUnit.extension(var_2_1, "ai_supplementary_system")
+	local var_2_4 = var_2_3.vortex_template
 
-	local unit_storage = self.unit_storage
-	local status_extension = self.status_extension
-	local vortex_unit = status_extension.in_vortex_unit
-	local vortex_go_id = unit_storage:go_id(vortex_unit)
-	local vortex_extension = ScriptUnit.extension(vortex_unit, "ai_supplementary_system")
-	local vortex_template = vortex_extension.vortex_template
+	arg_2_0.vortex_unit = var_2_1
+	arg_2_0.vortex_unit_go_id = var_2_2
+	arg_2_0.vortex_owner_unit = var_2_3._owner_unit
 
-	self.vortex_unit = vortex_unit
-	self.vortex_unit_go_id = vortex_go_id
-	self.vortex_owner_unit = vortex_extension._owner_unit
+	local var_2_5 = var_2_4.player_actions_allowed
 
-	local player_actions_allowed = vortex_template.player_actions_allowed
+	arg_2_0.vortex_full_inner_radius = var_2_4.full_inner_radius
+	arg_2_0.ascend_speed = var_2_4.player_ascend_speed
+	arg_2_0.rotation_speed = var_2_4.player_rotation_speed
+	arg_2_0.radius_change_speed = var_2_4.player_radius_change_speed
+	arg_2_0.player_actions_allowed = var_2_5
+	arg_2_0.vortex_max_height = var_2_4.max_height
 
-	self.vortex_full_inner_radius = vortex_template.full_inner_radius
-	self.ascend_speed = vortex_template.player_ascend_speed
-	self.rotation_speed = vortex_template.player_rotation_speed
-	self.radius_change_speed = vortex_template.player_radius_change_speed
-	self.player_actions_allowed = player_actions_allowed
-	self.vortex_max_height = vortex_template.max_height
+	arg_2_0.interactor_extension:abort_interaction()
 
-	local interactor_extension = self.interactor_extension
+	local var_2_6 = arg_2_0.locomotion_extension
 
-	interactor_extension:abort_interaction()
+	var_2_6:set_maximum_upwards_velocity(10)
+	var_2_6:enable_drag(false)
 
-	local locomotion_extension = self.locomotion_extension
+	local var_2_7 = arg_2_0.first_person_extension
 
-	locomotion_extension:set_maximum_upwards_velocity(10)
-	locomotion_extension:enable_drag(false)
+	arg_2_0.screenspace_effect_particle_id = var_2_7:create_screen_particles("fx/screenspace_inside_plague_vortex")
 
-	local first_person_extension = self.first_person_extension
+	var_2_7:play_hud_sound_event("sfx_player_in_vortex_true")
 
-	self.screenspace_effect_particle_id = first_person_extension:create_screen_particles("fx/screenspace_inside_plague_vortex")
+	local var_2_8
 
-	first_person_extension:play_hud_sound_event("sfx_player_in_vortex_true")
-
-	local animation_event
-
-	if player_actions_allowed then
-		animation_event = "idle"
+	if var_2_5 then
+		var_2_8 = "idle"
 	else
-		local inventory_extension = self.inventory_extension
-		local career_extension = self.career_extension
+		local var_2_9 = arg_2_0.inventory_extension
+		local var_2_10 = arg_2_0.career_extension
 
-		CharacterStateHelper.stop_weapon_actions(inventory_extension, "stunned")
-		CharacterStateHelper.stop_career_abilities(career_extension, "stunned")
+		CharacterStateHelper.stop_weapon_actions(var_2_9, "stunned")
+		CharacterStateHelper.stop_career_abilities(var_2_10, "stunned")
 
-		local direction = "backward"
-		local directions = PlayerUnitMovementSettings.catapulted.directions
+		local var_2_11 = "backward"
 
-		animation_event = directions[direction].start_animation
+		var_2_8 = PlayerUnitMovementSettings.catapulted.directions[var_2_11].start_animation
 
-		first_person_extension:hide_weapons("in_vortex")
+		var_2_7:hide_weapons("in_vortex")
 
-		local include_local_player = false
+		local var_2_12 = false
 
-		CharacterStateHelper.show_inventory_3p(unit, false, include_local_player, self.is_server, inventory_extension)
+		CharacterStateHelper.show_inventory_3p(arg_2_1, false, var_2_12, arg_2_0.is_server, var_2_9)
 	end
 
-	CharacterStateHelper.play_animation_event(unit, animation_event)
-	CharacterStateHelper.play_animation_event_first_person(first_person_extension, animation_event)
+	CharacterStateHelper.play_animation_event(arg_2_1, var_2_8)
+	CharacterStateHelper.play_animation_event_first_person(var_2_7, var_2_8)
 end
 
-PlayerCharacterStateInVortex.on_exit = function (self, unit, input, dt, context, t, next_state)
-	self.vortex_unit_go_id = nil
-	self.vortex_full_inner_radius = nil
+function PlayerCharacterStateInVortex.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	arg_3_0.vortex_unit_go_id = nil
+	arg_3_0.vortex_full_inner_radius = nil
 
-	if next_state then
-		local locomotion_extension = self.locomotion_extension
+	if arg_3_6 then
+		local var_3_0 = arg_3_0.locomotion_extension
 
-		locomotion_extension:reset_maximum_upwards_velocity()
-		locomotion_extension:enable_drag(true)
+		var_3_0:reset_maximum_upwards_velocity()
+		var_3_0:enable_drag(true)
 
-		local first_person_extension = self.first_person_extension
+		local var_3_1 = arg_3_0.first_person_extension
 
-		first_person_extension:stop_spawning_screen_particles(self.screenspace_effect_particle_id)
-		first_person_extension:play_hud_sound_event("sfx_player_in_vortex_false")
+		var_3_1:stop_spawning_screen_particles(arg_3_0.screenspace_effect_particle_id)
+		var_3_1:play_hud_sound_event("sfx_player_in_vortex_false")
 
-		self.screenspace_effect_particle_id = nil
+		arg_3_0.screenspace_effect_particle_id = nil
 
-		local attacker_unit = Unit.alive(self.vortex_owner_unit) and self.vortex_owner_unit or unit
-		local buff_system = Managers.state.entity:system("buff_system")
+		local var_3_2 = Unit.alive(arg_3_0.vortex_owner_unit) and arg_3_0.vortex_owner_unit or arg_3_1
 
-		buff_system:add_buff(unit, "vortex_base", attacker_unit)
+		Managers.state.entity:system("buff_system"):add_buff(arg_3_1, "vortex_base", var_3_2)
 
-		if not self.player_actions_allowed then
-			first_person_extension:unhide_weapons("in_vortex")
+		if not arg_3_0.player_actions_allowed then
+			var_3_1:unhide_weapons("in_vortex")
 
 			if Managers.state.network:game() then
-				local include_local_player = false
+				local var_3_3 = false
 
-				CharacterStateHelper.show_inventory_3p(unit, true, include_local_player, self.is_server, self.inventory_extension)
-				CharacterStateHelper.play_animation_event(unit, "airtime_end")
+				CharacterStateHelper.show_inventory_3p(arg_3_1, true, var_3_3, arg_3_0.is_server, arg_3_0.inventory_extension)
+				CharacterStateHelper.play_animation_event(arg_3_1, "airtime_end")
 			end
 		end
 	end
 
-	self.vortex_owner_unit = nil
+	arg_3_0.vortex_owner_unit = nil
 end
 
-PlayerCharacterStateInVortex.update_spin_velocity = function (self, unit, vortex_unit, vortex_unit_go_id, dt)
-	local game = self.game
-	local radius_percentage = GameSession.game_object_field(game, vortex_unit_go_id, "inner_radius_percentage")
-	local wanted_inner_radius = self.vortex_full_inner_radius * radius_percentage * 0.75
-	local ascend_speed = self.ascend_speed
-	local rotation_speed = self.rotation_speed
-	local radius_change_speed = self.radius_change_speed
-	local unit_position = POSITION_LOOKUP[unit]
-	local vortex_position = POSITION_LOOKUP[vortex_unit]
-	local velocity, _, new_height = LocomotionUtils.get_vortex_spin_velocity(unit_position, vortex_position, wanted_inner_radius, Vector3.up(), rotation_speed, radius_change_speed, ascend_speed, dt)
-	local height_percentage = GameSession.game_object_field(game, vortex_unit_go_id, "height_percentage")
-	local vortex_height = self.vortex_max_height * height_percentage
+function PlayerCharacterStateInVortex.update_spin_velocity(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = arg_4_0.game
+	local var_4_1 = GameSession.game_object_field(var_4_0, arg_4_3, "inner_radius_percentage")
+	local var_4_2 = arg_4_0.vortex_full_inner_radius * var_4_1 * 0.75
+	local var_4_3 = arg_4_0.ascend_speed
+	local var_4_4 = arg_4_0.rotation_speed
+	local var_4_5 = arg_4_0.radius_change_speed
+	local var_4_6 = POSITION_LOOKUP[arg_4_1]
+	local var_4_7 = POSITION_LOOKUP[arg_4_2]
+	local var_4_8, var_4_9, var_4_10 = LocomotionUtils.get_vortex_spin_velocity(var_4_6, var_4_7, var_4_2, Vector3.up(), var_4_4, var_4_5, var_4_3, arg_4_4)
+	local var_4_11 = GameSession.game_object_field(var_4_0, arg_4_3, "height_percentage")
 
-	if vortex_height < new_height then
-		velocity.z = 0
+	if var_4_10 > arg_4_0.vortex_max_height * var_4_11 then
+		var_4_8.z = 0
 	end
 
-	local locomotion_extension = self.locomotion_extension
+	local var_4_12 = arg_4_0.locomotion_extension
 
-	locomotion_extension:set_forced_velocity(velocity)
-	locomotion_extension:set_wanted_velocity(velocity)
+	var_4_12:set_forced_velocity(var_4_8)
+	var_4_12:set_wanted_velocity(var_4_8)
 end
 
-PlayerCharacterStateInVortex.update = function (self, unit, input, dt, context, t)
-	local csm = self.csm
-	local status_extension = self.status_extension
-	local first_person_extension = self.first_person_extension
-	local is_catapulted, direction = CharacterStateHelper.is_catapulted(status_extension)
+function PlayerCharacterStateInVortex.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	local var_5_0 = arg_5_0.csm
+	local var_5_1 = arg_5_0.status_extension
+	local var_5_2 = arg_5_0.first_person_extension
+	local var_5_3, var_5_4 = CharacterStateHelper.is_catapulted(var_5_1)
 
-	if is_catapulted then
-		local params = {
+	if var_5_3 then
+		local var_5_5 = {
 			sound_event = "Play_enemy_sorcerer_vortex_throw_player",
-			direction = direction,
+			direction = var_5_4
 		}
 
-		csm:change_state("catapulted", params)
+		var_5_0:change_state("catapulted", var_5_5)
 
 		return
 	end
 
-	if not status_extension:is_valid_vortex_target() then
-		CharacterStateHelper.do_common_state_transitions(status_extension, csm)
+	if not var_5_1:is_valid_vortex_target() then
+		CharacterStateHelper.do_common_state_transitions(var_5_1, var_5_0)
 
 		return
 	end
 
-	if not CharacterStateHelper.is_in_vortex(status_extension) then
-		if CharacterStateHelper.is_colliding_down(unit) then
-			csm:change_state("standing")
+	if not CharacterStateHelper.is_in_vortex(var_5_1) then
+		if CharacterStateHelper.is_colliding_down(arg_5_1) then
+			var_5_0:change_state("standing")
 		else
-			csm:change_state("falling")
+			var_5_0:change_state("falling")
 		end
 
 		return
 	end
 
-	local input_extension = self.input_extension
-	local interactor_extension = self.interactor_extension
-	local player_actions_allowed = self.player_actions_allowed
+	local var_5_6 = arg_5_0.input_extension
+	local var_5_7 = arg_5_0.interactor_extension
+	local var_5_8 = arg_5_0.player_actions_allowed
 
-	if player_actions_allowed and CharacterStateHelper.is_starting_interaction(input_extension, interactor_extension) and interactor_extension:allow_movement_during_interaction() then
-		local _, hold_input = InteractionHelper.interaction_action_names(unit)
+	if var_5_8 and CharacterStateHelper.is_starting_interaction(var_5_6, var_5_7) and var_5_7:allow_movement_during_interaction() then
+		local var_5_9, var_5_10 = InteractionHelper.interaction_action_names(arg_5_1)
 
-		interactor_extension:start_interaction(hold_input)
+		var_5_7:start_interaction(var_5_10)
 	end
 
-	if Unit.alive(self.vortex_unit) then
-		self:update_spin_velocity(unit, self.vortex_unit, self.vortex_unit_go_id, dt)
+	if Unit.alive(arg_5_0.vortex_unit) then
+		arg_5_0:update_spin_velocity(arg_5_1, arg_5_0.vortex_unit, arg_5_0.vortex_unit_go_id, arg_5_3)
 	end
 
-	local player = self.player
-	local viewport_name = player.viewport_name
-	local inventory_extension = self.inventory_extension
+	local var_5_11 = arg_5_0.player.viewport_name
+	local var_5_12 = arg_5_0.inventory_extension
 
-	CharacterStateHelper.look(input_extension, viewport_name, first_person_extension, status_extension, inventory_extension)
+	CharacterStateHelper.look(var_5_6, var_5_11, var_5_2, var_5_1, var_5_12)
 
-	if player_actions_allowed then
-		local health_extension = self.health_extension
+	if var_5_8 then
+		local var_5_13 = arg_5_0.health_extension
 
-		CharacterStateHelper.update_weapon_actions(t, unit, input_extension, inventory_extension, health_extension)
+		CharacterStateHelper.update_weapon_actions(arg_5_5, arg_5_1, var_5_6, var_5_12, var_5_13)
 	end
 end

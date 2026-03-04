@@ -1,170 +1,159 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/chaos_sorcerer/bt_corruptor_grab_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/chaos_sorcerer/bt_corruptor_grab_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTCorruptorGrabAction = class(BTCorruptorGrabAction, BTNode)
 
-BTCorruptorGrabAction.init = function (self, ...)
-	BTCorruptorGrabAction.super.init(self, ...)
+function BTCorruptorGrabAction.init(arg_1_0, ...)
+	BTCorruptorGrabAction.super.init(arg_1_0, ...)
 end
 
 BTCorruptorGrabAction.name = "BTCorruptorGrabAction"
 
-BTCorruptorGrabAction.enter = function (self, unit, blackboard, t)
-	local action = self._tree_node.action_data
+function BTCorruptorGrabAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	arg_2_2.action = arg_2_0._tree_node.action_data
+	arg_2_2.active_node = BTCorruptorGrabAction
+	arg_2_2.attacks_done = 0
+	arg_2_2.attack_aborted = nil
+	arg_2_2.attack_success = nil
+	arg_2_2.drain_life_at = arg_2_3
+	arg_2_2.has_dealed_damage = false
+	arg_2_2.projectile_position = Vector3Box()
+	arg_2_2.corruptor_target = arg_2_2.target_unit
+	arg_2_2.target_unit_status_extension = ScriptUnit.has_extension(arg_2_2.corruptor_target, "status_system") or nil
 
-	blackboard.action = action
-	blackboard.active_node = BTCorruptorGrabAction
-	blackboard.attacks_done = 0
-	blackboard.attack_aborted = nil
-	blackboard.attack_success = nil
-	blackboard.drain_life_at = t
-	blackboard.has_dealed_damage = false
-	blackboard.projectile_position = Vector3Box()
-	blackboard.corruptor_target = blackboard.target_unit
-	blackboard.target_unit_status_extension = ScriptUnit.has_extension(blackboard.corruptor_target, "status_system") or nil
-
-	blackboard.navigation_extension:set_enabled(false)
-	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
+	arg_2_2.navigation_extension:set_enabled(false)
+	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
 end
 
-BTCorruptorGrabAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	local action = blackboard.action
-
-	if not action.ignore_bot_threat then
-		Managers.state.entity:system("ai_bot_group_system"):ranged_attack_ended(unit, blackboard.corruptor_target, "corruptor_grabbed", 2)
+function BTCorruptorGrabAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	if not arg_3_2.action.ignore_bot_threat then
+		Managers.state.entity:system("ai_bot_group_system"):ranged_attack_ended(arg_3_1, arg_3_2.corruptor_target, "corruptor_grabbed", 2)
 	end
 
-	blackboard.move_state = nil
+	arg_3_2.move_state = nil
 
-	blackboard.navigation_extension:set_enabled(true)
+	arg_3_2.navigation_extension:set_enabled(true)
 
-	blackboard.target_unit_status_extension = nil
-	blackboard.active_node = nil
-	blackboard.attack_aborted = nil
-	blackboard.attack_finished = nil
-	blackboard.attack_success = nil
-	blackboard.attack_cooldown = t + blackboard.action.cooldown
-	blackboard.action = nil
-	blackboard.ready_to_summon = nil
-	blackboard.disable_player_timer = nil
-	blackboard.play_grabbed_loop = nil
-	blackboard.drain_life_at = nil
-	blackboard.has_grabbed_unit = nil
-	blackboard.projectile_position = nil
-	blackboard.target_dodged = nil
-	blackboard.projectile_target_position = nil
+	arg_3_2.target_unit_status_extension = nil
+	arg_3_2.active_node = nil
+	arg_3_2.attack_aborted = nil
+	arg_3_2.attack_finished = nil
+	arg_3_2.attack_success = nil
+	arg_3_2.attack_cooldown = arg_3_3 + arg_3_2.action.cooldown
+	arg_3_2.action = nil
+	arg_3_2.ready_to_summon = nil
+	arg_3_2.disable_player_timer = nil
+	arg_3_2.play_grabbed_loop = nil
+	arg_3_2.drain_life_at = nil
+	arg_3_2.has_grabbed_unit = nil
+	arg_3_2.projectile_position = nil
+	arg_3_2.target_dodged = nil
+	arg_3_2.projectile_target_position = nil
 
-	if not destroy then
-		blackboard.locomotion_extension:use_lerp_rotation(false)
-		LocomotionUtils.set_animation_driven_movement(unit, false)
+	if not arg_3_5 then
+		arg_3_2.locomotion_extension:use_lerp_rotation(false)
+		LocomotionUtils.set_animation_driven_movement(arg_3_1, false)
 	end
 
-	if reason == "aborted" and blackboard.stagger and blackboard.play_grabbed_loop then
-		blackboard.corruptor_grab_stagger = true
+	if arg_3_4 == "aborted" and arg_3_2.stagger and arg_3_2.play_grabbed_loop then
+		arg_3_2.corruptor_grab_stagger = true
 	end
 
-	if Unit.alive(blackboard.grabbed_unit) then
-		StatusUtils.set_grabbed_by_corruptor_network("chaos_corruptor_released", blackboard.grabbed_unit, false, unit)
-		self:set_beam_state(unit, blackboard, "stop_beam")
+	if Unit.alive(arg_3_2.grabbed_unit) then
+		StatusUtils.set_grabbed_by_corruptor_network("chaos_corruptor_released", arg_3_2.grabbed_unit, false, arg_3_1)
+		arg_3_0:set_beam_state(arg_3_1, arg_3_2, "stop_beam")
 	else
-		self:set_beam_state(unit, blackboard, "stop_beam")
+		arg_3_0:set_beam_state(arg_3_1, arg_3_2, "stop_beam")
 	end
 
-	blackboard.corruptor_target = nil
-	blackboard.grabbed_unit = nil
-	blackboard.vanish_countdown = t
+	arg_3_2.corruptor_target = nil
+	arg_3_2.grabbed_unit = nil
+	arg_3_2.vanish_countdown = arg_3_3
 end
 
-BTCorruptorGrabAction.run = function (self, unit, blackboard, t, dt)
-	local action = blackboard.action
-	local corruptor_target = blackboard.corruptor_target
+function BTCorruptorGrabAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = arg_4_2.action
+	local var_4_1 = arg_4_2.corruptor_target
 
-	if not AiUtils.is_of_interest_to_corruptor(unit, corruptor_target) then
+	if not AiUtils.is_of_interest_to_corruptor(arg_4_1, var_4_1) then
 		return "failed"
 	end
 
-	if blackboard.attack_aborted then
-		local network_manager = Managers.state.network
-
-		network_manager:anim_event(unit, "idle")
+	if arg_4_2.attack_aborted then
+		Managers.state.network:anim_event(arg_4_1, "idle")
 
 		return "failed"
 	end
 
-	if blackboard.attack_success then
-		StatusUtils.set_grabbed_by_corruptor_network("chaos_corruptor_grabbed", corruptor_target, true, unit)
+	if arg_4_2.attack_success then
+		StatusUtils.set_grabbed_by_corruptor_network("chaos_corruptor_grabbed", var_4_1, true, arg_4_1)
 
-		blackboard.attack_success = nil
-		blackboard.play_grabbed_loop = true
-		blackboard.disable_player_timer = t + action.disable_player_time
+		arg_4_2.attack_success = nil
+		arg_4_2.play_grabbed_loop = true
+		arg_4_2.disable_player_timer = arg_4_3 + var_4_0.disable_player_time
 
-		self:set_beam_state(unit, blackboard, "start_beam")
+		arg_4_0:set_beam_state(arg_4_1, arg_4_2, "start_beam")
 
-		if not action.ignore_bot_threat then
-			Managers.state.entity:system("ai_bot_group_system"):ranged_attack_started(unit, corruptor_target, "corruptor_grabbed")
+		if not var_4_0.ignore_bot_threat then
+			Managers.state.entity:system("ai_bot_group_system"):ranged_attack_started(arg_4_1, var_4_1, "corruptor_grabbed")
 		end
 
-		Managers.state.network:anim_event(unit, action.drag_in_anim)
+		Managers.state.network:anim_event(arg_4_1, var_4_0.drag_in_anim)
 	end
 
-	local success = self:attack(unit, t, dt, blackboard)
+	local var_4_2 = arg_4_0:attack(arg_4_1, arg_4_3, arg_4_4, arg_4_2)
 
-	if not blackboard.grabbed_unit then
-		local target_status_ext = blackboard.target_unit_status_extension
+	if not arg_4_2.grabbed_unit then
+		local var_4_3 = arg_4_2.target_unit_status_extension
 
-		if target_status_ext and target_status_ext:get_is_dodging() then
-			blackboard.target_dodged = true
+		if var_4_3 and var_4_3:get_is_dodging() then
+			arg_4_2.target_dodged = true
 		end
 
-		self:overlap_players(unit, t, dt, blackboard)
+		arg_4_0:overlap_players(arg_4_1, arg_4_3, arg_4_4, arg_4_2)
 	end
 
-	if blackboard.attack_finished and blackboard.play_grabbed_loop then
-		blackboard.attack_finished = nil
+	if arg_4_2.attack_finished and arg_4_2.play_grabbed_loop then
+		arg_4_2.attack_finished = nil
 
-		StatusUtils.set_grabbed_by_corruptor_network("chaos_corruptor_dragging", corruptor_target, true, unit)
+		StatusUtils.set_grabbed_by_corruptor_network("chaos_corruptor_dragging", var_4_1, true, arg_4_1)
 	end
 
-	if blackboard.grabbed_unit and corruptor_target and t > blackboard.drain_life_at then
-		local distance_to_corruptor_target = Vector3.distance(POSITION_LOOKUP[corruptor_target], POSITION_LOOKUP[unit])
+	if arg_4_2.grabbed_unit and var_4_1 and arg_4_3 > arg_4_2.drain_life_at and Vector3.distance(POSITION_LOOKUP[var_4_1], POSITION_LOOKUP[arg_4_1]) < 2.5 then
+		arg_4_0:drain_life(arg_4_1, arg_4_2)
 
-		if distance_to_corruptor_target < 2.5 then
-			self:drain_life(unit, blackboard)
-
-			blackboard.drain_life_at = t + action.drain_life_tick_rate
-		end
+		arg_4_2.drain_life_at = arg_4_3 + var_4_0.drain_life_tick_rate
 	end
 
-	if not success or blackboard.attack_finished and not blackboard.play_grabbed_loop or blackboard.disable_player_timer and t > blackboard.disable_player_timer then
+	if not var_4_2 or arg_4_2.attack_finished and not arg_4_2.play_grabbed_loop or arg_4_2.disable_player_timer and arg_4_3 > arg_4_2.disable_player_timer then
 		return "done"
 	end
 
 	return "running"
 end
 
-BTCorruptorGrabAction.attack = function (self, unit, t, dt, blackboard)
-	local action = blackboard.action
-	local locomotion_extension = blackboard.locomotion_extension
-	local corruptor_target = blackboard.corruptor_target
-	local self_pos = POSITION_LOOKUP[unit] + Vector3.up()
-	local target_unit_pos = POSITION_LOOKUP[corruptor_target] + Vector3.up()
-	local world = blackboard.world
-	local physics_world = World.physics_world(world)
-	local is_target_in_line_of_sight = PerceptionUtils.is_position_in_line_of_sight(unit, self_pos, target_unit_pos, physics_world)
+function BTCorruptorGrabAction.attack(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	local var_5_0 = arg_5_4.action
+	local var_5_1 = arg_5_4.locomotion_extension
+	local var_5_2 = arg_5_4.corruptor_target
+	local var_5_3 = POSITION_LOOKUP[arg_5_1] + Vector3.up()
+	local var_5_4 = POSITION_LOOKUP[var_5_2] + Vector3.up()
+	local var_5_5 = arg_5_4.world
+	local var_5_6 = World.physics_world(var_5_5)
 
-	if is_target_in_line_of_sight then
-		if blackboard.move_state ~= "attacking" then
-			blackboard.move_state = "attacking"
+	if PerceptionUtils.is_position_in_line_of_sight(arg_5_1, var_5_3, var_5_4, var_5_6) then
+		if arg_5_4.move_state ~= "attacking" then
+			arg_5_4.move_state = "attacking"
 
-			locomotion_extension:use_lerp_rotation(true)
-			LocomotionUtils.set_animation_driven_movement(unit, true, false, true)
-			Managers.state.network:anim_event(unit, action.attack_anim)
+			var_5_1:use_lerp_rotation(true)
+			LocomotionUtils.set_animation_driven_movement(arg_5_1, true, false, true)
+			Managers.state.network:anim_event(arg_5_1, var_5_0.attack_anim)
 		end
 
-		local rotation = LocomotionUtils.rotation_towards_unit(unit, blackboard.corruptor_target)
+		local var_5_7 = LocomotionUtils.rotation_towards_unit(arg_5_1, arg_5_4.corruptor_target)
 
-		locomotion_extension:set_wanted_rotation(rotation)
+		var_5_1:set_wanted_rotation(var_5_7)
 
 		return true
 	end
@@ -172,119 +161,114 @@ BTCorruptorGrabAction.attack = function (self, unit, t, dt, blackboard)
 	return false
 end
 
-BTCorruptorGrabAction.drain_life = function (self, unit, blackboard)
-	local corruptor_target = blackboard.corruptor_target
-	local action = blackboard.action
+function BTCorruptorGrabAction.drain_life(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = arg_6_2.corruptor_target
+	local var_6_1 = arg_6_2.action
 
-	AiUtils.damage_target(corruptor_target, unit, action, action.damage)
+	AiUtils.damage_target(var_6_0, arg_6_1, var_6_1, var_6_1.damage)
 
-	if action.health_leech then
-		local heal_type = "leech"
-		local difficulty_level = Managers.state.difficulty:get_difficulty()
-		local heal_amount = action.health_leech[difficulty_level]
+	if var_6_1.health_leech then
+		local var_6_2 = "leech"
+		local var_6_3 = Managers.state.difficulty:get_difficulty()
+		local var_6_4 = var_6_1.health_leech[var_6_3]
+		local var_6_5 = DamageUtils.networkify_damage(var_6_4)
 
-		heal_amount = DamageUtils.networkify_damage(heal_amount)
-
-		local health_extension = ScriptUnit.extension(unit, "health_system")
-
-		health_extension:add_heal(unit, heal_amount, nil, heal_type)
+		ScriptUnit.extension(arg_6_1, "health_system"):add_heal(arg_6_1, var_6_5, nil, var_6_2)
 	end
 
-	blackboard.has_dealed_damage = true
+	arg_6_2.has_dealed_damage = true
 end
 
-BTCorruptorGrabAction.anim_cb_damage = function (self, unit, blackboard)
-	if blackboard.active_node and blackboard.active_node == BTCorruptorGrabAction then
-		self:set_beam_state(unit, blackboard, "projectile")
+function BTCorruptorGrabAction.anim_cb_damage(arg_7_0, arg_7_1, arg_7_2)
+	if arg_7_2.active_node and arg_7_2.active_node == BTCorruptorGrabAction then
+		arg_7_0:set_beam_state(arg_7_1, arg_7_2, "projectile")
 	end
 end
 
-BTCorruptorGrabAction.overlap_players = function (self, unit, t, dt, blackboard)
-	if not blackboard.projectile_target_position then
+function BTCorruptorGrabAction.overlap_players(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	if not arg_8_4.projectile_target_position then
 		return
 	end
 
-	local target_unit = blackboard.corruptor_target
-	local projectile_position = blackboard.projectile_position:unbox()
-	local projectile_target_position = blackboard.projectile_target_position:unbox()
-	local action = blackboard.action
-	local radius = 2
-	local target_position = projectile_target_position
-	local to_target = projectile_target_position - projectile_position
-	local dist = Vector3.length(Vector3.flat(to_target))
+	local var_8_0 = arg_8_4.corruptor_target
+	local var_8_1 = arg_8_4.projectile_position:unbox()
+	local var_8_2 = arg_8_4.projectile_target_position:unbox()
+	local var_8_3 = arg_8_4.action
+	local var_8_4 = 2
+	local var_8_5 = var_8_2
+	local var_8_6 = var_8_2 - var_8_1
 
-	if dist < radius then
-		self:grab_player(t, unit, blackboard)
+	if var_8_4 > Vector3.length(Vector3.flat(var_8_6)) then
+		arg_8_0:grab_player(arg_8_2, arg_8_1, arg_8_4)
 	end
 end
 
-BTCorruptorGrabAction.grab_player = function (self, t, unit, blackboard)
-	local target_unit = blackboard.corruptor_target
-	local self_pos = POSITION_LOOKUP[unit]
-	local target_unit_pos = POSITION_LOOKUP[target_unit]
-	local action = blackboard.action
+function BTCorruptorGrabAction.grab_player(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	local var_9_0 = arg_9_3.corruptor_target
+	local var_9_1 = POSITION_LOOKUP[arg_9_2]
+	local var_9_2 = POSITION_LOOKUP[var_9_0]
+	local var_9_3 = arg_9_3.action
 
-	if action.grab_delay then
-		if not blackboard.grab_at then
-			blackboard.grab_at = t + action.grab_delay
+	if var_9_3.grab_delay then
+		if not arg_9_3.grab_at then
+			arg_9_3.grab_at = arg_9_1 + var_9_3.grab_delay
 		end
 
-		if blackboard.grab_at and t >= blackboard.grab_at then
-			blackboard.grab_at = nil
+		if arg_9_3.grab_at and arg_9_1 >= arg_9_3.grab_at then
+			arg_9_3.grab_at = nil
 		else
 			return
 		end
 	end
 
-	local projectile_position = blackboard.projectile_position:unbox()
-	local projectile_target_position = blackboard.projectile_target_position:unbox()
-	local target_status_ext = blackboard.target_unit_status_extension
-	local world = blackboard.world
-	local physics_world = World.physics_world(world)
-	local target_distance_squared = Vector3.distance_squared(projectile_target_position, target_unit_pos)
+	local var_9_4 = arg_9_3.projectile_position:unbox()
+	local var_9_5 = arg_9_3.projectile_target_position:unbox()
+	local var_9_6 = arg_9_3.target_unit_status_extension
+	local var_9_7 = arg_9_3.world
+	local var_9_8 = World.physics_world(var_9_7)
+	local var_9_9 = Vector3.distance_squared(var_9_5, var_9_2)
 
-	if not action.ignore_dodge and blackboard.target_dodged or target_status_ext:is_invisible() then
-		local dodge_pos = target_unit_pos
-		local dir = Vector3.normalize(Vector3.flat(dodge_pos - self_pos))
-		local forward = Quaternion.forward(Unit.local_rotation(unit, 0))
-		local dot_value = Vector3.dot(dir, forward)
-		local angle = math.acos(dot_value)
-		local distance_squared = Vector3.distance_squared(self_pos, dodge_pos)
+	if not var_9_3.ignore_dodge and arg_9_3.target_dodged or var_9_6:is_invisible() then
+		local var_9_10 = var_9_2
+		local var_9_11 = Vector3.normalize(Vector3.flat(var_9_10 - var_9_1))
+		local var_9_12 = Quaternion.forward(Unit.local_rotation(arg_9_2, 0))
+		local var_9_13 = Vector3.dot(var_9_11, var_9_12)
+		local var_9_14 = math.acos(var_9_13)
 
-		if distance_squared < blackboard.action.min_dodge_angle_squared and math.radians_to_degrees(angle) <= blackboard.action.dodge_angle or target_distance_squared < blackboard.action.dodge_distance * blackboard.action.dodge_distance then
-			blackboard.attack_success = PerceptionUtils.is_position_in_line_of_sight(unit, self_pos, target_unit_pos, physics_world)
+		if Vector3.distance_squared(var_9_1, var_9_10) < arg_9_3.action.min_dodge_angle_squared and math.radians_to_degrees(var_9_14) <= arg_9_3.action.dodge_angle or var_9_9 < arg_9_3.action.dodge_distance * arg_9_3.action.dodge_distance then
+			arg_9_3.attack_success = PerceptionUtils.is_position_in_line_of_sight(arg_9_2, var_9_1, var_9_2, var_9_8)
 		else
-			QuestSettings.check_corruptor_dodge(target_unit)
+			QuestSettings.check_corruptor_dodge(var_9_0)
 
-			blackboard.attack_success = false
+			arg_9_3.attack_success = false
 		end
-	elseif not not action.ignore_dodge and Vector3.distance_squared(self_pos, target_unit_pos) > blackboard.action.max_distance_squared or target_distance_squared > 25 then
-		blackboard.attack_success = false
+	elseif not not var_9_3.ignore_dodge and Vector3.distance_squared(var_9_1, var_9_2) > arg_9_3.action.max_distance_squared or var_9_9 > 25 then
+		arg_9_3.attack_success = false
 	else
-		blackboard.attack_success = PerceptionUtils.is_position_in_line_of_sight(unit, self_pos + Vector3.up(), target_unit_pos + Vector3.up(), physics_world)
+		arg_9_3.attack_success = PerceptionUtils.is_position_in_line_of_sight(arg_9_2, var_9_1 + Vector3.up(), var_9_2 + Vector3.up(), var_9_8)
 	end
 
-	if blackboard.attack_success then
-		local first_person_extension = ScriptUnit.has_extension(blackboard.corruptor_target, "first_person_system")
+	if arg_9_3.attack_success then
+		local var_9_15 = ScriptUnit.has_extension(arg_9_3.corruptor_target, "first_person_system")
 
-		if blackboard.attack_success and first_person_extension then
-			first_person_extension:animation_event("shake_get_hit")
+		if arg_9_3.attack_success and var_9_15 then
+			var_9_15:animation_event("shake_get_hit")
 		end
 
-		blackboard.grabbed_unit = blackboard.corruptor_target
+		arg_9_3.grabbed_unit = arg_9_3.corruptor_target
 
-		local sound_event = blackboard.action.grabbed_sound_event_2d
+		local var_9_16 = arg_9_3.action.grabbed_sound_event_2d
 	else
-		blackboard.attack_aborted = true
+		arg_9_3.attack_aborted = true
 	end
 end
 
-BTCorruptorGrabAction.set_beam_state = function (self, unit, blackboard, state)
-	local network_manager = Managers.state.network
-	local unit_id = network_manager:unit_game_object_id(unit)
-	local target_unit_id = network_manager:unit_game_object_id(blackboard.corruptor_target or blackboard.grabbed_unit)
+function BTCorruptorGrabAction.set_beam_state(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	local var_10_0 = Managers.state.network
+	local var_10_1 = var_10_0:unit_game_object_id(arg_10_1)
+	local var_10_2 = var_10_0:unit_game_object_id(arg_10_2.corruptor_target or arg_10_2.grabbed_unit)
 
-	if unit_id then
-		Managers.state.network.network_transmit:send_rpc_all("rpc_set_corruptor_beam_state", unit_id, state, target_unit_id or unit_id)
+	if var_10_1 then
+		Managers.state.network.network_transmit:send_rpc_all("rpc_set_corruptor_beam_state", var_10_1, arg_10_3, var_10_2 or var_10_1)
 	end
 end

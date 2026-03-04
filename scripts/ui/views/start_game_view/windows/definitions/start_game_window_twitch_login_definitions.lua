@@ -1,427 +1,425 @@
-﻿-- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_twitch_login_definitions.lua
+-- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_twitch_login_definitions.lua
 
-local window_default_settings = UISettings.game_start_windows
-local window_frame = window_default_settings.frame
-local window_size = window_default_settings.size
-local window_frame_width = UIFrameSettings[window_frame].texture_sizes.vertical[1]
-local window_text_width = window_size[1] - window_frame_width * 2
-local login_text_area_size = {
-	window_text_width - 20 - 160,
-	50,
+local var_0_0 = UISettings.game_start_windows
+local var_0_1 = var_0_0.frame
+local var_0_2 = var_0_0.size
+local var_0_3 = UIFrameSettings[var_0_1].texture_sizes.vertical[1]
+local var_0_4 = var_0_2[1] - var_0_3 * 2
+local var_0_5 = {
+	var_0_4 - 20 - 160,
+	50
 }
-local scenegraph_definition = {
+local var_0_6 = {
 	root = {
 		is_root = true,
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			UILayer.default,
-		},
+			UILayer.default
+		}
 	},
 	root_fit = {
 		scale = "fit",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			UILayer.default,
-		},
+			UILayer.default
+		}
 	},
 	menu_root = {
-		horizontal_alignment = "center",
-		parent = "root",
 		vertical_alignment = "center",
+		parent = "root",
+		horizontal_alignment = "center",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	window = {
-		horizontal_alignment = "center",
-		parent = "menu_root",
 		vertical_alignment = "center",
-		size = window_size,
+		parent = "menu_root",
+		horizontal_alignment = "center",
+		size = var_0_2,
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	description_text = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "bottom",
+		parent = "window",
+		horizontal_alignment = "center",
 		size = {
-			window_text_width,
-			window_size[2] / 2,
+			var_0_4,
+			var_0_2[2] / 2
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	texture_frame = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "top",
+		parent = "window",
+		horizontal_alignment = "center",
 		size = {
 			383,
-			383,
+			383
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	twitch_texture = {
-		horizontal_alignment = "center",
-		parent = "texture_frame",
 		vertical_alignment = "center",
+		parent = "texture_frame",
+		horizontal_alignment = "center",
 		size = {
 			294,
-			98,
+			98
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	twitch_title_divider = {
-		horizontal_alignment = "center",
-		parent = "texture_frame",
 		vertical_alignment = "bottom",
+		parent = "texture_frame",
+		horizontal_alignment = "center",
 		size = {
 			264,
-			32,
+			32
 		},
 		position = {
 			0,
 			-20,
-			2,
-		},
+			2
+		}
 	},
 	login_text_area = {
-		horizontal_alignment = "center",
-		parent = "twitch_title_divider",
 		vertical_alignment = "bottom",
+		parent = "twitch_title_divider",
+		horizontal_alignment = "center",
 		size = {
-			window_text_width,
-			50,
+			var_0_4,
+			50
 		},
 		position = {
 			0,
 			35,
-			1,
-		},
+			1
+		}
 	},
 	login_text_frame = {
-		horizontal_alignment = "left",
-		parent = "login_text_area",
 		vertical_alignment = "center",
-		size = login_text_area_size,
+		parent = "login_text_area",
+		horizontal_alignment = "left",
+		size = var_0_5,
 		position = {
 			10,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	login_text_box = {
-		horizontal_alignment = "center",
-		parent = "login_text_frame",
 		vertical_alignment = "center",
+		parent = "login_text_frame",
+		horizontal_alignment = "center",
 		size = {
 			300,
-			42,
+			42
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	connect_button = {
-		horizontal_alignment = "right",
-		parent = "login_text_area",
 		vertical_alignment = "center",
+		parent = "login_text_area",
+		horizontal_alignment = "right",
 		size = {
 			160,
-			45,
+			45
 		},
 		position = {
 			-10,
 			-2,
-			1,
-		},
+			1
+		}
 	},
 	connect_button_frame = {
-		horizontal_alignment = "center",
-		parent = "connect_button",
 		vertical_alignment = "center",
+		parent = "connect_button",
+		horizontal_alignment = "center",
 		size = {
 			160,
-			50,
+			50
 		},
 		position = {
 			0,
 			2,
-			10,
-		},
+			10
+		}
 	},
 	disconnect_button = {
-		horizontal_alignment = "center",
-		parent = "login_text_area",
 		vertical_alignment = "center",
+		parent = "login_text_area",
+		horizontal_alignment = "center",
 		size = {
-			window_size[1] - 20,
-			45,
+			var_0_2[1] - 20,
+			45
 		},
 		position = {
 			0,
 			-2,
-			1,
-		},
+			1
+		}
 	},
 	disconnect_button_frame = {
-		horizontal_alignment = "center",
-		parent = "disconnect_button",
 		vertical_alignment = "center",
+		parent = "disconnect_button",
+		horizontal_alignment = "center",
 		size = {
-			window_size[1] - 20,
-			50,
+			var_0_2[1] - 20,
+			50
 		},
 		position = {
 			0,
 			2,
-			10,
-		},
+			10
+		}
 	},
 	connecting = {
-		horizontal_alignment = "center",
-		parent = "login_text_area",
 		vertical_alignment = "center",
-		size = login_text_area_size,
+		parent = "login_text_area",
+		horizontal_alignment = "center",
+		size = var_0_5,
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	chat_feed_frame = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "bottom",
+		parent = "window",
+		horizontal_alignment = "center",
 		size = {
-			window_size[1] - 20,
-			window_size[2] / 2,
+			var_0_2[1] - 20,
+			var_0_2[2] / 2
 		},
 		position = {
 			0,
 			10,
-			1,
-		},
+			1
+		}
 	},
 	chat_feed_area_mask = {
-		horizontal_alignment = "center",
-		parent = "chat_feed_frame",
 		vertical_alignment = "center",
+		parent = "chat_feed_frame",
+		horizontal_alignment = "center",
 		size = {
-			window_size[1] - 40,
-			window_size[2] / 2,
-		},
+			var_0_2[1] - 40,
+			var_0_2[2] / 2
+		}
 	},
 	chat_feed_area = {
-		horizontal_alignment = "center",
-		parent = "chat_feed_area_mask",
 		vertical_alignment = "center",
+		parent = "chat_feed_area_mask",
+		horizontal_alignment = "center",
 		size = {
-			window_size[1] - 20,
-			window_size[2] / 2,
-		},
+			var_0_2[1] - 20,
+			var_0_2[2] / 2
+		}
 	},
 	chat_text_box = {
-		horizontal_alignment = "center",
-		parent = "chat_feed_area",
 		vertical_alignment = "top",
+		parent = "chat_feed_area",
+		horizontal_alignment = "center",
 		size = {
-			window_size[1] - 40,
-			window_size[2] / 2,
+			var_0_2[1] - 40,
+			var_0_2[2] / 2
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
-	},
+			1
+		}
+	}
 }
 
-local function create_window(scenegraph_id, size)
-	local background_texture = "menu_frame_bg_01"
-	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local frame_settings = UIFrameSettings.menu_frame_02
-	local widget = {
-		element = {},
+local function var_0_7(arg_1_0, arg_1_1)
+	local var_1_0 = "menu_frame_bg_01"
+	local var_1_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_1_0)
+	local var_1_2 = UIFrameSettings.menu_frame_02
+	local var_1_3 = {
+		element = {}
 	}
-	local passes = {
+	local var_1_4 = {
 		{
-			content_id = "text_input_hotspot",
-			pass_type = "hotspot",
 			scenegraph_id = "login_text_box",
+			pass_type = "hotspot",
+			content_id = "text_input_hotspot"
 		},
 		{
-			content_id = "screen_hotspot",
-			pass_type = "hotspot",
 			scenegraph_id = "menu_root",
+			pass_type = "hotspot",
+			content_id = "screen_hotspot"
 		},
 		{
-			content_id = "frame_hotspot",
-			pass_type = "hotspot",
 			scenegraph_id = "window",
+			pass_type = "hotspot",
+			content_id = "frame_hotspot"
 		},
 		{
 			pass_type = "texture",
 			style_id = "twitch_texture",
-			texture_id = "twitch_texture",
+			texture_id = "twitch_texture"
 		},
 		{
-			pass_type = "rect",
 			style_id = "login_rect_bg",
-			content_check_function = function (content, style)
+			pass_type = "rect",
+			content_check_function = function(arg_2_0, arg_2_1)
 				return not Managers.twitch:is_connected() and not Managers.twitch:is_connecting()
-			end,
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "login_hint",
+			pass_type = "text",
 			text_id = "login_hint",
-			content_check_function = function (content, style)
-				local hotspot = content.text_input_hotspot
-
-				if hotspot.is_hover then
-					style.text_color = {
+			content_check_function = function(arg_3_0, arg_3_1)
+				if arg_3_0.text_input_hotspot.is_hover then
+					arg_3_1.text_color = {
 						128,
 						255,
 						255,
-						255,
+						255
 					}
 				else
-					style.text_color = {
+					arg_3_1.text_color = {
 						60,
 						255,
 						255,
-						255,
+						255
 					}
 				end
 
-				return content.twitch_name == "" and not Managers.twitch:is_connected() and not content.text_field_active and not Managers.twitch:is_connecting()
-			end,
+				return arg_3_0.twitch_name == "" and not Managers.twitch:is_connected() and not arg_3_0.text_field_active and not Managers.twitch:is_connecting()
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "twitch_name",
+			pass_type = "text",
 			text_id = "twitch_name",
-			content_check_function = function (content, style)
-				if not content.text_field_active then
-					style.caret_color[1] = 0
+			content_check_function = function(arg_4_0, arg_4_1)
+				if not arg_4_0.text_field_active then
+					arg_4_1.caret_color[1] = 0
 				else
-					style.caret_color[1] = 128 + math.sin(Managers.time:time("ui") * 5) * 128
+					arg_4_1.caret_color[1] = 128 + math.sin(Managers.time:time("ui") * 5) * 128
 				end
 
 				return not Managers.twitch:is_connected() and not Managers.twitch:is_connecting()
-			end,
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "connecting",
+			pass_type = "text",
 			text_id = "connecting_id",
-			content_check_function = function (content, style)
+			content_check_function = function(arg_5_0, arg_5_1)
 				if not Managers.twitch:is_connecting() then
 					return
 				end
 
-				local timer = 10 * Managers.time:time("ui")
-				local dot_str = string.rep(".", timer % 5)
+				local var_5_0 = 10 * Managers.time:time("ui")
+				local var_5_1 = string.rep(".", var_5_0 % 5)
 
-				content.connecting_id = Localize("start_game_window_twitch_connecting") .. dot_str
+				arg_5_0.connecting_id = Localize("start_game_window_twitch_connecting") .. var_5_1
 
 				return true
-			end,
-		},
+			end
+		}
 	}
-	local content = {
-		caret_index = 1,
-		connecting_id = "Connecting",
-		error_id = "",
-		text_field_active = false,
-		text_index = 1,
+	local var_1_5 = {
 		text_start_offset = 0,
+		connecting_id = "Connecting",
+		text_field_active = false,
 		twitch_name = "",
+		error_id = "",
+		caret_index = 1,
 		twitch_texture = "twitch_logo",
-		frame = frame_settings.texture,
+		text_index = 1,
+		frame = var_1_2.texture,
 		background = {
 			uvs = {
 				{
 					0,
-					0,
+					0
 				},
 				{
-					math.min(size[1] / background_texture_settings.size[1], 1),
-					math.min(size[2] / background_texture_settings.size[2], 1),
-				},
+					math.min(arg_1_1[1] / var_1_1.size[1], 1),
+					math.min(arg_1_1[2] / var_1_1.size[2], 1)
+				}
 			},
-			texture_id = background_texture,
+			texture_id = var_1_0
 		},
 		login_hint = Localize("start_game_window_twitch_login_hint"),
 		text_input_hotspot = {},
 		screen_hotspot = {
-			allow_multi_hover = true,
+			allow_multi_hover = true
 		},
 		frame_hotspot = {
-			allow_multi_hover = true,
-		},
+			allow_multi_hover = true
+		}
 	}
-	local style = {
+	local var_1_6 = {
 		background = {
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
 				0,
 				0,
-				1,
-			},
+				1
+			}
 		},
 		frame = {
-			texture_size = frame_settings.texture_size,
-			texture_sizes = frame_settings.texture_sizes,
+			texture_size = var_1_2.texture_size,
+			texture_sizes = var_1_2.texture_sizes,
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
 				0,
 				0,
-				5,
-			},
+				5
+			}
 		},
 		login_rect_bg = {
 			scenegraph_id = "login_text_frame",
@@ -429,120 +427,120 @@ local function create_window(scenegraph_id, size)
 				255,
 				0,
 				0,
-				0,
+				0
 			},
 			offset = {
 				0,
 				0,
-				-1,
+				-1
 			},
-			size = login_text_area_size,
+			size = var_0_5
 		},
 		twitch_texture = {
-			horizontal_alignment = "center",
-			scenegraph_id = "twitch_texture",
 			vertical_alignment = "center",
+			scenegraph_id = "twitch_texture",
+			horizontal_alignment = "center",
 			offset = {
 				0,
 				0,
-				1,
+				1
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		login_hint = {
-			dynamic_font_size = true,
-			font_size = 24,
-			font_type = "hell_shark",
-			horizontal_alignment = "center",
-			pixel_perfect = true,
-			scenegraph_id = "login_text_box",
-			vertical_alignment = "center",
 			word_wrap = true,
+			scenegraph_id = "login_text_box",
+			font_size = 24,
+			pixel_perfect = true,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
+			dynamic_font_size = true,
+			font_type = "hell_shark",
 			text_color = {
 				60,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
 				5,
 				0,
-				10,
+				10
 			},
 			size = {
 				290,
-				42,
-			},
+				42
+			}
 		},
 		connecting = {
-			dynamic_font = true,
-			font_size = 24,
-			font_type = "hell_shark",
-			horizontal_alignment = "center",
-			pixel_perfect = true,
-			scenegraph_id = "connecting",
-			vertical_alignment = "center",
 			word_wrap = false,
+			scenegraph_id = "connecting",
+			font_size = 24,
+			pixel_perfect = true,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
+			dynamic_font = true,
+			font_type = "hell_shark",
 			text_color = {
 				90,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
 				0,
 				0,
-				10,
-			},
+				10
+			}
 		},
 		twitch_name = {
-			dynamic_font = true,
-			font_size = 28,
-			font_type = "hell_shark_arial",
-			horizontal_alignment = "left",
+			word_wrap = false,
+			scenegraph_id = "login_text_box",
 			horizontal_scroll = true,
 			pixel_perfect = true,
-			scenegraph_id = "login_text_box",
+			horizontal_alignment = "left",
+			font_size = 28,
 			vertical_alignment = "center",
-			word_wrap = false,
+			dynamic_font = true,
+			font_type = "hell_shark_arial",
 			text_color = Colors.get_table("white"),
 			offset = {
 				10,
 				10,
-				10,
+				10
 			},
 			caret_size = {
 				2,
-				26,
+				26
 			},
 			caret_offset = {
 				0,
 				-4,
-				4,
+				4
 			},
-			caret_color = Colors.get_table("white"),
-		},
+			caret_color = Colors.get_table("white")
+		}
 	}
 
-	widget.element.passes = passes
-	widget.content = content
-	widget.style = style
-	widget.offset = {
+	var_1_3.element.passes = var_1_4
+	var_1_3.content = var_1_5
+	var_1_3.style = var_1_6
+	var_1_3.offset = {
 		0,
 		0,
-		0,
+		0
 	}
-	widget.scenegraph_id = scenegraph_id
+	var_1_3.scenegraph_id = arg_1_0
 
-	return widget
+	return var_1_3
 end
 
-local chat_output_widget = {
+local var_0_8 = {
 	scenegraph_id = "chat_feed_area",
 	element = {
 		passes = {
@@ -550,31 +548,31 @@ local chat_output_widget = {
 				pass_type = "texture",
 				style_id = "mask",
 				texture_id = "mask_id",
-				content_check_function = function (content)
+				content_check_function = function(arg_6_0)
 					return Managers.twitch:is_connected()
-				end,
+				end
 			},
 			{
-				pass_type = "rect",
 				style_id = "background",
-				content_check_function = function (content)
+				pass_type = "rect",
+				content_check_function = function(arg_7_0)
 					return Managers.twitch:is_connected()
-				end,
+				end
 			},
 			{
-				pass_type = "text_area_chat",
 				style_id = "chat_text_box",
+				pass_type = "text_area_chat",
 				text_id = "text_field",
-				content_check_function = function (content)
+				content_check_function = function(arg_8_0)
 					return Managers.twitch:is_connected()
-				end,
-			},
-		},
+				end
+			}
+		}
 	},
 	content = {
 		mask_id = "mask_rect",
 		text_start_offset = 0,
-		message_tables = {},
+		message_tables = {}
 	},
 	style = {
 		mask = {
@@ -583,38 +581,38 @@ local chat_output_widget = {
 			offset = {
 				0,
 				0,
-				0,
+				0
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		background = {
 			scenegraph_id = "chat_feed_area",
 			offset = {
 				0,
 				0,
-				-1,
+				-1
 			},
 			color = {
 				255,
 				0,
 				0,
-				0,
-			},
+				0
+			}
 		},
 		chat_text_box = {
+			word_wrap = true,
+			scenegraph_id = "chat_text_box",
+			spacing = 0,
+			pixel_perfect = false,
+			vertical_alignment = "top",
 			dynamic_font = true,
 			font_size = 18,
 			font_type = "chat_output_font_masked",
-			pixel_perfect = false,
-			scenegraph_id = "chat_text_box",
-			spacing = 0,
-			vertical_alignment = "top",
-			word_wrap = true,
 			text_color = Colors.get_table("white"),
 			name_color = Colors.get_table("sky_blue"),
 			name_color_dev = Colors.get_table("cheeseburger"),
@@ -622,347 +620,347 @@ local chat_output_widget = {
 			offset = {
 				0,
 				-10,
-				0,
-			},
-		},
-	},
+				0
+			}
+		}
+	}
 }
 
-function create_button(scenegraph_id, size, text, font_size, content_check_function)
-	local background_texture = "button_bg_01"
-	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local widget = {
-		element = {},
+function create_button(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	local var_9_0 = "button_bg_01"
+	local var_9_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_9_0)
+	local var_9_2 = {
+		element = {}
 	}
-	local passes = {}
-	local content = {}
-	local style = {}
-	local offset = {
+	local var_9_3 = {}
+	local var_9_4 = {}
+	local var_9_5 = {}
+	local var_9_6 = {
 		0,
 		0,
-		0,
+		0
 	}
-	local hotspot_name = "button_hotspot"
+	local var_9_7 = "button_hotspot"
 
-	passes[#passes + 1] = {
+	var_9_3[#var_9_3 + 1] = {
 		pass_type = "hotspot",
-		content_id = hotspot_name,
-		style_id = hotspot_name,
-		content_check_function = content_check_function,
+		content_id = var_9_7,
+		style_id = var_9_7,
+		content_check_function = arg_9_4
 	}
-	style[hotspot_name] = {
-		size = size,
-		offset = offset,
+	var_9_5[var_9_7] = {
+		size = arg_9_1,
+		offset = var_9_6
 	}
-	content[hotspot_name] = {}
+	var_9_4[var_9_7] = {}
 
-	local hotspot_content = content[hotspot_name]
-	local background_name = "background"
+	local var_9_8 = var_9_4[var_9_7]
+	local var_9_9 = "background"
 
-	passes[#passes + 1] = {
+	var_9_3[#var_9_3 + 1] = {
 		pass_type = "texture_uv",
-		content_id = background_name,
-		style_id = background_name,
-		content_check_function = content_check_function,
+		content_id = var_9_9,
+		style_id = var_9_9,
+		content_check_function = arg_9_4
 	}
-	style[background_name] = {
-		size = size,
+	var_9_5[var_9_9] = {
+		size = arg_9_1,
 		color = {
 			255,
 			255,
 			255,
-			255,
+			255
 		},
 		offset = {
-			offset[1],
-			offset[2],
-			0,
-		},
+			var_9_6[1],
+			var_9_6[2],
+			0
+		}
 	}
-	content[background_name] = {
+	var_9_4[var_9_9] = {
 		uvs = {
 			{
 				0,
-				1 - math.min(size[2] / background_texture_settings.size[2], 1),
+				1 - math.min(arg_9_1[2] / var_9_1.size[2], 1)
 			},
 			{
-				math.min(size[1] / background_texture_settings.size[1], 1),
-				1,
-			},
+				math.min(arg_9_1[1] / var_9_1.size[1], 1),
+				1
+			}
 		},
-		texture_id = background_texture,
+		texture_id = var_9_0
 	}
 
-	local background_fade_name = "background_fade"
+	local var_9_10 = "background_fade"
 
-	passes[#passes + 1] = {
+	var_9_3[#var_9_3 + 1] = {
 		pass_type = "texture",
-		content_id = hotspot_name,
-		texture_id = background_fade_name,
-		style_id = background_fade_name,
-		content_check_function = content_check_function,
+		content_id = var_9_7,
+		texture_id = var_9_10,
+		style_id = var_9_10,
+		content_check_function = arg_9_4
 	}
-	style[background_fade_name] = {
+	var_9_5[var_9_10] = {
 		size = {
-			size[1],
-			size[2],
+			arg_9_1[1],
+			arg_9_1[2]
 		},
 		color = {
 			255,
 			255,
 			255,
-			255,
+			255
 		},
 		offset = {
-			offset[1],
-			offset[2],
-			1,
-		},
+			var_9_6[1],
+			var_9_6[2],
+			1
+		}
 	}
-	hotspot_content[background_fade_name] = "button_bg_fade"
+	var_9_8[var_9_10] = "button_bg_fade"
 
-	local hover_glow_name = "hover_glow"
+	local var_9_11 = "hover_glow"
 
-	passes[#passes + 1] = {
+	var_9_3[#var_9_3 + 1] = {
 		pass_type = "texture",
-		content_id = hotspot_name,
-		texture_id = hover_glow_name,
-		style_id = hover_glow_name,
-		content_check_function = content_check_function,
+		content_id = var_9_7,
+		texture_id = var_9_11,
+		style_id = var_9_11,
+		content_check_function = arg_9_4
 	}
-	style[hover_glow_name] = {
+	var_9_5[var_9_11] = {
 		size = {
-			size[1],
-			math.min(size[2] - 5, 80),
+			arg_9_1[1],
+			math.min(arg_9_1[2] - 5, 80)
 		},
 		color = {
 			255,
 			255,
 			255,
-			255,
+			255
 		},
 		offset = {
-			offset[1],
-			offset[2] + 5,
-			2,
-		},
+			var_9_6[1],
+			var_9_6[2] + 5,
+			2
+		}
 	}
-	hotspot_content[hover_glow_name] = "button_state_default"
+	var_9_8[var_9_11] = "button_state_default"
 
-	local clicked_rect_name = "clicked_rect"
+	local var_9_12 = "clicked_rect"
 
-	passes[#passes + 1] = {
+	var_9_3[#var_9_3 + 1] = {
 		pass_type = "rect",
-		content_id = hotspot_name,
-		style_id = clicked_rect_name,
-		content_check_function = content_check_function,
+		content_id = var_9_7,
+		style_id = var_9_12,
+		content_check_function = arg_9_4
 	}
-	style[clicked_rect_name] = {
-		size = size,
+	var_9_5[var_9_12] = {
+		size = arg_9_1,
 		color = {
 			100,
 			0,
 			0,
-			0,
+			0
 		},
 		offset = {
-			offset[1],
-			offset[2],
-			6,
-		},
+			var_9_6[1],
+			var_9_6[2],
+			6
+		}
 	}
 
-	local glass_top_name = "glass_top"
+	local var_9_13 = "glass_top"
 
-	passes[#passes + 1] = {
+	var_9_3[#var_9_3 + 1] = {
 		pass_type = "texture",
-		content_id = hotspot_name,
-		texture_id = glass_top_name,
-		style_id = glass_top_name,
-		content_check_function = content_check_function,
+		content_id = var_9_7,
+		texture_id = var_9_13,
+		style_id = var_9_13,
+		content_check_function = arg_9_4
 	}
-	style[glass_top_name] = {
+	var_9_5[var_9_13] = {
 		size = {
-			size[1],
-			11,
+			arg_9_1[1],
+			11
 		},
 		color = {
 			255,
 			255,
 			255,
-			255,
+			255
 		},
 		offset = {
-			offset[1],
-			offset[2] + size[2] - 11,
-			5,
-		},
+			var_9_6[1],
+			var_9_6[2] + arg_9_1[2] - 11,
+			5
+		}
 	}
-	hotspot_content[glass_top_name] = "button_glass_02"
+	var_9_8[var_9_13] = "button_glass_02"
 
-	local glass_bottom_name = "glass_bottom"
+	local var_9_14 = "glass_bottom"
 
-	passes[#passes + 1] = {
+	var_9_3[#var_9_3 + 1] = {
 		pass_type = "texture",
-		content_id = hotspot_name,
-		texture_id = glass_bottom_name,
-		style_id = glass_bottom_name,
-		content_check_function = content_check_function,
+		content_id = var_9_7,
+		texture_id = var_9_14,
+		style_id = var_9_14,
+		content_check_function = arg_9_4
 	}
-	style[glass_bottom_name] = {
+	var_9_5[var_9_14] = {
 		size = {
-			size[1],
-			11,
+			arg_9_1[1],
+			11
 		},
 		color = {
 			100,
 			255,
 			255,
-			255,
+			255
 		},
 		offset = {
-			offset[1],
-			offset[2] - 3,
-			5,
-		},
+			var_9_6[1],
+			var_9_6[2] - 3,
+			5
+		}
 	}
-	hotspot_content[glass_bottom_name] = "button_glass_02"
+	var_9_8[var_9_14] = "button_glass_02"
 
-	local text_name = "text"
+	local var_9_15 = "text"
 
-	passes[#passes + 1] = {
+	var_9_3[#var_9_3 + 1] = {
 		pass_type = "text",
-		content_id = hotspot_name,
-		text_id = text_name,
-		style_id = text_name,
-		content_check_function = content_check_function,
+		content_id = var_9_7,
+		text_id = var_9_15,
+		style_id = var_9_15,
+		content_check_function = arg_9_4
 	}
-	style[text_name] = {
+	var_9_5[var_9_15] = {
+		word_wrap = true,
+		upper_case = true,
+		localize = false,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
 		dynamic_font_size = true,
 		font_type = "hell_shark",
-		horizontal_alignment = "center",
-		localize = false,
-		upper_case = true,
-		vertical_alignment = "center",
-		word_wrap = true,
-		font_size = font_size,
+		font_size = arg_9_3,
 		text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 		default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 		select_text_color = Colors.get_color_table_with_alpha("white", 255),
 		offset = {
-			10 + offset[1],
-			offset[2] + 3,
-			4,
+			10 + var_9_6[1],
+			var_9_6[2] + 3,
+			4
 		},
 		size = {
-			size[1] - 20,
-			size[2],
-		},
+			arg_9_1[1] - 20,
+			arg_9_1[2]
+		}
 	}
-	hotspot_content[text_name] = text
+	var_9_8[var_9_15] = arg_9_2
 
-	local text_shadow_name = "text_shadow"
+	local var_9_16 = "text_shadow"
 
-	passes[#passes + 1] = {
+	var_9_3[#var_9_3 + 1] = {
 		pass_type = "text",
-		content_id = hotspot_name,
-		text_id = text_name,
-		style_id = text_shadow_name,
-		content_check_function = content_check_function,
+		content_id = var_9_7,
+		text_id = var_9_15,
+		style_id = var_9_16,
+		content_check_function = arg_9_4
 	}
-	style[text_shadow_name] = {
+	var_9_5[var_9_16] = {
+		word_wrap = true,
+		upper_case = true,
+		localize = false,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
 		dynamic_font_size = true,
 		font_type = "hell_shark",
-		horizontal_alignment = "center",
-		localize = false,
-		upper_case = true,
-		vertical_alignment = "center",
-		word_wrap = true,
-		font_size = font_size,
+		font_size = arg_9_3,
 		text_color = Colors.get_color_table_with_alpha("black", 255),
 		offset = {
-			10 + offset[1] + 2,
-			offset[2] + 2,
-			3,
+			10 + var_9_6[1] + 2,
+			var_9_6[2] + 2,
+			3
 		},
 		size = {
-			size[1] - 20,
-			size[2],
-		},
+			arg_9_1[1] - 20,
+			arg_9_1[2]
+		}
 	}
-	widget.element.passes = passes
-	widget.content = content
-	widget.style = style
-	widget.offset = {
+	var_9_2.element.passes = var_9_3
+	var_9_2.content = var_9_4
+	var_9_2.style = var_9_5
+	var_9_2.offset = {
 		0,
 		0,
-		0,
+		0
 	}
-	widget.scenegraph_id = scenegraph_id
+	var_9_2.scenegraph_id = arg_9_0
 
-	return widget
+	return var_9_2
 end
 
-local description_text_style = {
+local var_0_9 = {
+	word_wrap = true,
 	font_size = 22,
-	font_type = "hell_shark",
-	horizontal_alignment = "center",
 	localize = false,
 	use_shadow = true,
+	horizontal_alignment = "center",
 	vertical_alignment = "top",
-	word_wrap = true,
+	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	offset = {
 		0,
 		0,
-		2,
-	},
+		2
+	}
 }
 
-local function connected_content_check_function(content)
+local function var_0_10(arg_10_0)
 	return not Managers.twitch:is_connecting() and not Managers.twitch:is_connected()
 end
 
-local function disconnected_content_check_function(content)
+local function var_0_11(arg_11_0)
 	return not Managers.twitch:is_connecting() and Managers.twitch:is_connected()
 end
 
-local function connecting_content_check_function(content)
+local function var_0_12(arg_12_0)
 	return Managers.twitch:is_connecting() or not Managers.twitch:is_connected()
 end
 
-local streaming_desc_str = "start_game_window_twitch_connect_description"
-local widgets = {
+local var_0_13 = "start_game_window_twitch_connect_description"
+local var_0_14 = {
 	background_fade = UIWidgets.create_simple_texture("options_window_fade_01", "window"),
 	background_mask = UIWidgets.create_simple_texture("mask_rect", "window"),
-	window = UIWidgets.create_frame("window", window_size, window_frame, 20),
-	frame_widget = create_window("window", scenegraph_definition.window.size),
+	window = UIWidgets.create_frame("window", var_0_2, var_0_1, 20),
+	frame_widget = var_0_7("window", var_0_6.window.size),
 	login_text_frame = UIWidgets.create_frame("login_text_frame", {
-		window_text_width,
-		50,
+		var_0_4,
+		50
 	}, "menu_frame_09", 1),
 	chat_feed_frame = UIWidgets.create_frame("chat_feed_frame", {
-		window_text_width - 20,
-		250,
+		var_0_4 - 20,
+		250
 	}, "menu_frame_09", 1),
-	description_text = UIWidgets.create_simple_text(Localize(streaming_desc_str), "description_text", nil, nil, description_text_style),
+	description_text = UIWidgets.create_simple_text(Localize(var_0_13), "description_text", nil, nil, var_0_9),
 	twitch_texture = UIWidgets.create_simple_texture("twitch_logo", "twitch_texture"),
 	twitch_title_divider = UIWidgets.create_simple_texture("divider_01_top", "twitch_title_divider"),
-	chat_output_widget = chat_output_widget,
-	button_1 = create_button("connect_button", scenegraph_definition.connect_button.size, Localize("start_game_window_twitch_connect"), 24, connected_content_check_function),
-	button_2 = create_button("disconnect_button", scenegraph_definition.disconnect_button.size, string.format(Localize("start_game_window_twitch_disconnect"), "N/A"), 24, disconnected_content_check_function),
-	connect_button_frame = UIWidgets.create_frame("connect_button_frame", scenegraph_definition.connect_button_frame.size, window_frame, 1),
-	disconnect_button_frame = UIWidgets.create_frame("disconnect_button_frame", scenegraph_definition.disconnect_button_frame.size, window_frame, 1),
+	chat_output_widget = var_0_8,
+	button_1 = create_button("connect_button", var_0_6.connect_button.size, Localize("start_game_window_twitch_connect"), 24, var_0_10),
+	button_2 = create_button("disconnect_button", var_0_6.disconnect_button.size, string.format(Localize("start_game_window_twitch_disconnect"), "N/A"), 24, var_0_11),
+	connect_button_frame = UIWidgets.create_frame("connect_button_frame", var_0_6.connect_button_frame.size, var_0_1, 1),
+	disconnect_button_frame = UIWidgets.create_frame("disconnect_button_frame", var_0_6.disconnect_button_frame.size, var_0_1, 1)
 }
 
-widgets.login_text_frame.element.passes[1].content_check_function = connected_content_check_function
-widgets.connect_button_frame.element.passes[1].content_check_function = connected_content_check_function
-widgets.disconnect_button_frame.element.passes[1].content_check_function = disconnected_content_check_function
-widgets.chat_feed_frame.element.passes[1].content_check_function = disconnected_content_check_function
-widgets.description_text.element.passes[1].content_check_function = connecting_content_check_function
-widgets.description_text.element.passes[2].content_check_function = connecting_content_check_function
+var_0_14.login_text_frame.element.passes[1].content_check_function = var_0_10
+var_0_14.connect_button_frame.element.passes[1].content_check_function = var_0_10
+var_0_14.disconnect_button_frame.element.passes[1].content_check_function = var_0_11
+var_0_14.chat_feed_frame.element.passes[1].content_check_function = var_0_11
+var_0_14.description_text.element.passes[1].content_check_function = var_0_12
+var_0_14.description_text.element.passes[2].content_check_function = var_0_12
 
 return {
-	widgets = widgets,
-	scenegraph_definition = scenegraph_definition,
+	widgets = var_0_14,
+	scenegraph_definition = var_0_6
 }

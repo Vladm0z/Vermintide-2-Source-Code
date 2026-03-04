@@ -1,256 +1,250 @@
-﻿-- chunkname: @scripts/game_state/components/transient_package_loader.lua
+-- chunkname: @scripts/game_state/components/transient_package_loader.lua
 
 TransientPackageLoader = class(TransientPackageLoader)
 
-local UNLOAD_GRACE_PERIOD = 60
-local Unit_get_data = Unit.get_data
+local var_0_0 = 60
+local var_0_1 = Unit.get_data
 
-local function clear_all_refs(t)
-	table.clear(t.units)
-	table.clear(t.refs)
+local function var_0_2(arg_1_0)
+	table.clear(arg_1_0.units)
+	table.clear(arg_1_0.refs)
 end
 
-local function add_ref(unit, value, t)
-	t.units[unit] = value
-	t.refs[value] = (t.refs[value] or 0) + 1
+local function var_0_3(arg_2_0, arg_2_1, arg_2_2)
+	arg_2_2.units[arg_2_0] = arg_2_1
+	arg_2_2.refs[arg_2_1] = (arg_2_2.refs[arg_2_1] or 0) + 1
 end
 
-local function remove_ref(unit, t)
-	local value = t.units[unit]
+local function var_0_4(arg_3_0, arg_3_1)
+	local var_3_0 = arg_3_1.units[arg_3_0]
 
-	if value then
-		t.units[unit] = nil
+	if var_3_0 then
+		arg_3_1.units[arg_3_0] = nil
 
-		local t_refs = t.refs
+		local var_3_1 = arg_3_1.refs
 
-		if t_refs[value] <= 1 then
-			t_refs[value] = nil
+		if var_3_1[var_3_0] <= 1 then
+			var_3_1[var_3_0] = nil
 		else
-			t_refs[value] = t_refs[value] - 1
+			var_3_1[var_3_0] = var_3_1[var_3_0] - 1
 		end
 	end
 end
 
-TransientPackageLoader.init = function (self)
-	self._unload_package_queue = {}
-	self._load_package_queue = {}
-	self._tracked_projectiles = {
+function TransientPackageLoader.init(arg_4_0)
+	arg_4_0._unload_package_queue = {}
+	arg_4_0._load_package_queue = {}
+	arg_4_0._tracked_projectiles = {
 		units = {},
-		refs = {},
+		refs = {}
 	}
-	self._tracked_units = {
+	arg_4_0._tracked_units = {
 		units = {},
-		refs = {},
+		refs = {}
 	}
 end
 
-local rpcs = {
+local var_0_5 = {
 	"rpc_sync_transient_projectile_packages",
 	"rpc_sync_transient_unit_packages",
-	"rpc_sync_transient_ready",
+	"rpc_sync_transient_ready"
 }
 
-TransientPackageLoader.register_rpcs = function (self, network_event_delegate)
-	self.network_event_delegate = network_event_delegate
+function TransientPackageLoader.register_rpcs(arg_5_0, arg_5_1)
+	arg_5_0.network_event_delegate = arg_5_1
 
-	network_event_delegate:register(self, unpack(rpcs))
+	arg_5_1:register(arg_5_0, unpack(var_0_5))
 end
 
-TransientPackageLoader.unregister_rpcs = function (self)
-	self.network_event_delegate:unregister(self)
+function TransientPackageLoader.unregister_rpcs(arg_6_0)
+	arg_6_0.network_event_delegate:unregister(arg_6_0)
 
-	self.network_event_delegate = nil
+	arg_6_0.network_event_delegate = nil
 end
 
-TransientPackageLoader.network_context_created = function (self, lobby, server_peer_id, own_peer_id)
-	printf("[TransientPackageLoader] network_context_created (server_peer_id=%s, own_peer_id=%s)", server_peer_id, own_peer_id)
+function TransientPackageLoader.network_context_created(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	printf("[TransientPackageLoader] network_context_created (server_peer_id=%s, own_peer_id=%s)", arg_7_2, arg_7_3)
 
-	self._sync_ready = server_peer_id == own_peer_id
-	self._loaded = server_peer_id == own_peer_id
-	self._loading_started = self._loaded
-	self._should_unload_packages_t = nil
-	self._last_package_checked = nil
+	arg_7_0._sync_ready = arg_7_2 == arg_7_3
+	arg_7_0._loaded = arg_7_2 == arg_7_3
+	arg_7_0._loading_started = arg_7_0._loaded
+	arg_7_0._should_unload_packages_t = nil
+	arg_7_0._last_package_checked = nil
 end
 
-TransientPackageLoader.network_context_destroyed = function (self)
+function TransientPackageLoader.network_context_destroyed(arg_8_0)
 	print("[TransientPackageLoader] network_context_destroyed")
 
-	self._should_unload_packages_t = nil
-	self._last_package_checked = nil
+	arg_8_0._should_unload_packages_t = nil
+	arg_8_0._last_package_checked = nil
 
-	clear_all_refs(self._tracked_projectiles)
-	clear_all_refs(self._tracked_units)
+	var_0_2(arg_8_0._tracked_projectiles)
+	var_0_2(arg_8_0._tracked_units)
 end
 
-TransientPackageLoader.update = function (self)
-	if self._should_unload_packages_t and self._should_unload_packages_t < Managers.time:time("game") then
-		local unload_queue = self._unload_package_queue
-		local package_manager = Managers.package
-		local package_name = next(unload_queue, self._last_package_checked)
+function TransientPackageLoader.update(arg_9_0)
+	if arg_9_0._should_unload_packages_t and arg_9_0._should_unload_packages_t < Managers.time:time("game") then
+		local var_9_0 = arg_9_0._unload_package_queue
+		local var_9_1 = Managers.package
+		local var_9_2 = next(var_9_0, arg_9_0._last_package_checked)
 
-		self._last_package_checked = package_name
+		arg_9_0._last_package_checked = var_9_2
 
-		if package_name and (package_manager:num_references(package_name) > 1 or package_manager:can_unload(package_name)) then
-			Managers.package:unload(package_name, "TransientPackageLoader")
+		if var_9_2 and (var_9_1:num_references(var_9_2) > 1 or var_9_1:can_unload(var_9_2)) then
+			Managers.package:unload(var_9_2, "TransientPackageLoader")
 
-			unload_queue[package_name] = nil
+			var_9_0[var_9_2] = nil
 		end
 
-		if package_name == nil and next(unload_queue) == nil then
-			self._should_unload_packages_t = nil
-			self._last_package_checked = nil
+		if var_9_2 == nil and next(var_9_0) == nil then
+			arg_9_0._should_unload_packages_t = nil
+			arg_9_0._last_package_checked = nil
 		end
-	elseif not self._loaded and self._sync_ready then
-		local package_manager = Managers.package
+	elseif not arg_9_0._loaded and arg_9_0._sync_ready then
+		local var_9_3 = Managers.package
 
-		if self._loading_started then
-			for name in pairs(self._load_package_queue) do
-				if not package_manager:has_loaded(name) then
+		if arg_9_0._loading_started then
+			for iter_9_0 in pairs(arg_9_0._load_package_queue) do
+				if not var_9_3:has_loaded(iter_9_0) then
 					return false
 				else
-					self._unload_package_queue[name] = self._load_package_queue[name]
-					self._load_package_queue[name] = nil
+					arg_9_0._unload_package_queue[iter_9_0] = arg_9_0._load_package_queue[iter_9_0]
+					arg_9_0._load_package_queue[iter_9_0] = nil
 				end
 			end
 
-			self._loaded = true
+			arg_9_0._loaded = true
 		else
-			for package_name in pairs(self._load_package_queue) do
-				Managers.package:load(package_name, "TransientPackageLoader", nil, true)
+			for iter_9_1 in pairs(arg_9_0._load_package_queue) do
+				Managers.package:load(iter_9_1, "TransientPackageLoader", nil, true)
 			end
 
-			self._loading_started = true
+			arg_9_0._loading_started = true
 		end
 	end
 end
 
-TransientPackageLoader.signal_in_game = function (self)
-	self._should_unload_packages_t = Managers.time:time("game") + UNLOAD_GRACE_PERIOD
+function TransientPackageLoader.signal_in_game(arg_10_0)
+	arg_10_0._should_unload_packages_t = Managers.time:time("game") + var_0_0
 end
 
-TransientPackageLoader.unload_all_packages = function (self)
-	for package_name in pairs(self._load_package_queue) do
-		Managers.package:unload(package_name, "TransientPackageLoader")
+function TransientPackageLoader.unload_all_packages(arg_11_0)
+	for iter_11_0 in pairs(arg_11_0._load_package_queue) do
+		Managers.package:unload(iter_11_0, "TransientPackageLoader")
 	end
 
-	for package_name in pairs(self._unload_package_queue) do
-		Managers.package:unload(package_name, "TransientPackageLoader")
+	for iter_11_1 in pairs(arg_11_0._unload_package_queue) do
+		Managers.package:unload(iter_11_1, "TransientPackageLoader")
 	end
 
-	table.clear(self._load_package_queue)
-	table.clear(self._unload_package_queue)
-	clear_all_refs(self._tracked_projectiles)
-	clear_all_refs(self._tracked_units)
+	table.clear(arg_11_0._load_package_queue)
+	table.clear(arg_11_0._unload_package_queue)
+	var_0_2(arg_11_0._tracked_projectiles)
+	var_0_2(arg_11_0._tracked_units)
 
-	self._last_package_checked = nil
-	self._should_unload_packages_t = nil
+	arg_11_0._last_package_checked = nil
+	arg_11_0._should_unload_packages_t = nil
 end
 
-TransientPackageLoader.loading_completed = function (self)
-	return self._loaded
+function TransientPackageLoader.loading_completed(arg_12_0)
+	return arg_12_0._loaded
 end
 
-TransientPackageLoader.add_projectile = function (self, unit)
-	local unit_name = Unit_get_data(unit, "unit_name")
-	local projectile_units_template = ProjectileUnitsFromUnitName[unit_name]
-	local template = ProjectileUnits[projectile_units_template]
+function TransientPackageLoader.add_projectile(arg_13_0, arg_13_1)
+	local var_13_0 = var_0_1(arg_13_1, "unit_name")
+	local var_13_1 = ProjectileUnitsFromUnitName[var_13_0]
+	local var_13_2 = ProjectileUnits[var_13_1]
 
-	if template and not template.transient_package_loader_ignore then
-		add_ref(unit, projectile_units_template, self._tracked_projectiles)
+	if var_13_2 and not var_13_2.transient_package_loader_ignore then
+		var_0_3(arg_13_1, var_13_1, arg_13_0._tracked_projectiles)
 	end
 end
 
-TransientPackageLoader.add_unit = function (self, unit, unit_name)
-	add_ref(unit, unit_name or Unit_get_data(unit, "unit_name"), self._tracked_units)
+function TransientPackageLoader.add_unit(arg_14_0, arg_14_1, arg_14_2)
+	var_0_3(arg_14_1, arg_14_2 or var_0_1(arg_14_1, "unit_name"), arg_14_0._tracked_units)
 end
 
-TransientPackageLoader.remove_projectile = function (self, unit)
-	remove_ref(unit, self._tracked_projectiles)
+function TransientPackageLoader.remove_projectile(arg_15_0, arg_15_1)
+	var_0_4(arg_15_1, arg_15_0._tracked_projectiles)
 end
 
-TransientPackageLoader.remove_unit = function (self, unit)
-	remove_ref(unit, self._tracked_units)
+function TransientPackageLoader.remove_unit(arg_16_0, arg_16_1)
+	var_0_4(arg_16_1, arg_16_0._tracked_units)
 end
 
-TransientPackageLoader.hot_join_sync = function (self, peer_id)
-	local channel_id = PEER_ID_TO_CHANNEL[peer_id]
-	local ids_to_sync = {}
-	local ids_to_sync_n = 0
+function TransientPackageLoader.hot_join_sync(arg_17_0, arg_17_1)
+	local var_17_0 = PEER_ID_TO_CHANNEL[arg_17_1]
+	local var_17_1 = {}
+	local var_17_2 = 0
+	local var_17_3 = arg_17_0._tracked_projectiles.refs
 
-	do
-		local tracked_projectile_refs = self._tracked_projectiles.refs
+	table.clear(var_17_1)
 
-		table.clear(ids_to_sync)
+	local var_17_4 = 0
 
-		ids_to_sync_n = 0
-
-		for name in pairs(tracked_projectile_refs) do
-			ids_to_sync_n = ids_to_sync_n + 1
-			ids_to_sync[ids_to_sync_n] = NetworkLookup.projectile_units[name]
-		end
-
-		if ids_to_sync_n > 0 then
-			RPC.rpc_sync_transient_projectile_packages(channel_id, ids_to_sync)
-		end
+	for iter_17_0 in pairs(var_17_3) do
+		var_17_4 = var_17_4 + 1
+		var_17_1[var_17_4] = NetworkLookup.projectile_units[iter_17_0]
 	end
 
-	do
-		local tracked_units_refs = self._tracked_units.refs
-
-		table.clear(ids_to_sync)
-
-		ids_to_sync_n = 0
-
-		for name in pairs(tracked_units_refs) do
-			ids_to_sync_n = ids_to_sync_n + 1
-			ids_to_sync[ids_to_sync_n] = NetworkLookup.husks[name]
-		end
-
-		if ids_to_sync_n > 0 then
-			RPC.rpc_sync_transient_unit_packages(channel_id, ids_to_sync)
-		end
+	if var_17_4 > 0 then
+		RPC.rpc_sync_transient_projectile_packages(var_17_0, var_17_1)
 	end
 
-	RPC.rpc_sync_transient_ready(channel_id)
+	local var_17_5 = arg_17_0._tracked_units.refs
+
+	table.clear(var_17_1)
+
+	local var_17_6 = 0
+
+	for iter_17_1 in pairs(var_17_5) do
+		var_17_6 = var_17_6 + 1
+		var_17_1[var_17_6] = NetworkLookup.husks[iter_17_1]
+	end
+
+	if var_17_6 > 0 then
+		RPC.rpc_sync_transient_unit_packages(var_17_0, var_17_1)
+	end
+
+	RPC.rpc_sync_transient_ready(var_17_0)
 end
 
-TransientPackageLoader.rpc_sync_transient_projectile_packages = function (self, channel_id, projectile_unit_ids)
-	local packages = self._load_package_queue
+function TransientPackageLoader.rpc_sync_transient_projectile_packages(arg_18_0, arg_18_1, arg_18_2)
+	local var_18_0 = arg_18_0._load_package_queue
 
-	for unit_id_idx = 1, #projectile_unit_ids do
-		local template_id = projectile_unit_ids[unit_id_idx]
-		local projectile_unit_template_name = NetworkLookup.projectile_units[template_id]
-		local projectile_units = ProjectileUnits[projectile_unit_template_name]
+	for iter_18_0 = 1, #arg_18_2 do
+		local var_18_1 = arg_18_2[iter_18_0]
+		local var_18_2 = NetworkLookup.projectile_units[var_18_1]
+		local var_18_3 = ProjectileUnits[var_18_2]
 
-		if projectile_units.projectile_unit_name then
-			packages[projectile_units.projectile_unit_name] = true
+		if var_18_3.projectile_unit_name then
+			var_18_0[var_18_3.projectile_unit_name] = true
 		end
 
-		if projectile_units.dummy_linker_unit_name then
-			packages[projectile_units.dummy_linker_unit_name] = true
+		if var_18_3.dummy_linker_unit_name then
+			var_18_0[var_18_3.dummy_linker_unit_name] = true
 		end
 
-		local dummy_linker_broken_units = projectile_units.dummy_linker_broken_units
+		local var_18_4 = var_18_3.dummy_linker_broken_units
 
-		if dummy_linker_broken_units then
-			for broken_unit_package_idx = 1, #dummy_linker_broken_units do
-				packages[dummy_linker_broken_units[broken_unit_package_idx]] = true
+		if var_18_4 then
+			for iter_18_1 = 1, #var_18_4 do
+				var_18_0[var_18_4[iter_18_1]] = true
 			end
 		end
 	end
 end
 
-TransientPackageLoader.rpc_sync_transient_unit_packages = function (self, channel_id, husk_unit_name_ids)
-	local packages = self._load_package_queue
+function TransientPackageLoader.rpc_sync_transient_unit_packages(arg_19_0, arg_19_1, arg_19_2)
+	local var_19_0 = arg_19_0._load_package_queue
 
-	for i = 1, #husk_unit_name_ids do
-		local husk_unit_name_id = husk_unit_name_ids[i]
-		local package_name = NetworkLookup.husks[husk_unit_name_id]
+	for iter_19_0 = 1, #arg_19_2 do
+		local var_19_1 = arg_19_2[iter_19_0]
 
-		packages[package_name] = true
+		var_19_0[NetworkLookup.husks[var_19_1]] = true
 	end
 end
 
-TransientPackageLoader.rpc_sync_transient_ready = function (self, channel_id)
-	self._sync_ready = true
+function TransientPackageLoader.rpc_sync_transient_ready(arg_20_0, arg_20_1)
+	arg_20_0._sync_ready = true
 end

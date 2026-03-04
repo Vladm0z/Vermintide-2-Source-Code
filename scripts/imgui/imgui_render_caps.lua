@@ -1,58 +1,58 @@
-﻿-- chunkname: @scripts/imgui/imgui_render_caps.lua
+-- chunkname: @scripts/imgui/imgui_render_caps.lua
 
-local RENDER_CAPS = {
+local var_0_0 = {
 	"d3d12",
 	"dlss_supported",
 	"dlss_g_supported",
 	"reflex_supported",
-	"use_deferred_contexts",
+	"use_deferred_contexts"
 }
 
 ImguiRenderCaps = class(ImguiRenderCaps)
 
-ImguiRenderCaps.init = function (self)
+function ImguiRenderCaps.init(arg_1_0)
 	return
 end
 
-ImguiRenderCaps.update = function (self)
+function ImguiRenderCaps.update(arg_2_0)
 	return
 end
 
-local function set_all(t, k, v)
-	for i = 1, #k do
-		t[k[i]] = v
+local function var_0_1(arg_3_0, arg_3_1, arg_3_2)
+	for iter_3_0 = 1, #arg_3_1 do
+		arg_3_0[arg_3_1[iter_3_0]] = arg_3_2
 	end
 end
 
-ImguiRenderCaps.draw = function (self)
-	local do_close = Imgui.begin_window("Render Caps", "menu_bar")
+function ImguiRenderCaps.draw(arg_4_0)
+	local var_4_0 = Imgui.begin_window("Render Caps", "menu_bar")
 
 	if Imgui.begin_menu_bar() then
-		local flush = false
+		local var_4_1 = false
 
 		if Imgui.menu_item("Save") then
-			flush = true
+			var_4_1 = true
 		end
 
 		if Imgui.menu_item("Enable all") then
-			set_all(RENDER_CAPS_OVERRIDES, RENDER_CAPS, true)
+			var_0_1(RENDER_CAPS_OVERRIDES, var_0_0, true)
 
-			flush = true
+			var_4_1 = true
 		end
 
 		if Imgui.menu_item("Disable all") then
-			set_all(RENDER_CAPS_OVERRIDES, RENDER_CAPS, false)
+			var_0_1(RENDER_CAPS_OVERRIDES, var_0_0, false)
 
-			flush = true
+			var_4_1 = true
 		end
 
 		if Imgui.menu_item("Clear all") then
 			table.clear(RENDER_CAPS_OVERRIDES)
 
-			flush = true
+			var_4_1 = true
 		end
 
-		if flush then
+		if var_4_1 then
 			Application.set_user_setting("render_caps_overrides", RENDER_CAPS_OVERRIDES)
 			Application.save_user_settings()
 		end
@@ -62,51 +62,51 @@ ImguiRenderCaps.draw = function (self)
 
 	Imgui.begin_child_window("Caps", 0, 0, true)
 
-	for i = 1, #RENDER_CAPS do
-		local cap = RENDER_CAPS[i]
+	for iter_4_0 = 1, #var_0_0 do
+		local var_4_2 = var_0_0[iter_4_0]
 
-		Imgui.text(cap .. ":")
+		Imgui.text(var_4_2 .. ":")
 		Imgui.same_line()
 
-		local val = Application_render_caps(cap)
+		local var_4_3 = Application_render_caps(var_4_2)
 
-		if val == true then
+		if var_4_3 == true then
 			Imgui.text_colored("true", 0, 255, 0, 255)
-		elseif val == false then
+		elseif var_4_3 == false then
 			Imgui.text_colored("false", 255, 0, 0, 255)
-		elseif val == nil then
+		elseif var_4_3 == nil then
 			Imgui.text_colored("nil", 127, 127, 127, 255)
 		end
 
-		Imgui.same_line(360 - Imgui.calculate_text_size(cap .. ":" .. tostring(val)))
+		Imgui.same_line(360 - Imgui.calculate_text_size(var_4_2 .. ":" .. tostring(var_4_3)))
 
-		local val = RENDER_CAPS_OVERRIDES[cap]
+		local var_4_4 = RENDER_CAPS_OVERRIDES[var_4_2]
 
-		if Imgui.radio_button("false##" .. cap, val == false) then
-			val = false
+		if Imgui.radio_button("false##" .. var_4_2, var_4_4 == false) then
+			var_4_4 = false
 		end
 
 		Imgui.same_line()
 
-		if Imgui.radio_button("true##" .. cap, val == true) then
-			val = true
+		if Imgui.radio_button("true##" .. var_4_2, var_4_4 == true) then
+			var_4_4 = true
 		end
 
 		Imgui.same_line(30)
 
-		if Imgui.small_button("Clear##" .. cap) then
-			val = nil
+		if Imgui.small_button("Clear##" .. var_4_2) then
+			var_4_4 = nil
 		end
 
-		RENDER_CAPS_OVERRIDES[cap] = val
+		RENDER_CAPS_OVERRIDES[var_4_2] = var_4_4
 	end
 
 	Imgui.end_child_window()
 	Imgui.end_window()
 
-	return do_close
+	return var_4_0
 end
 
-ImguiRenderCaps.is_persistent = function (self)
+function ImguiRenderCaps.is_persistent(arg_5_0)
 	return false
 end

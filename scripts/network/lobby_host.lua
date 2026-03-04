@@ -1,268 +1,267 @@
-﻿-- chunkname: @scripts/network/lobby_host.lua
+-- chunkname: @scripts/network/lobby_host.lua
 
 require("scripts/network/lobby_aux")
 
-local DEBUG_LOBBY_HOST = true
+local var_0_0 = true
 
-local function dprintf(text, ...)
-	if DEBUG_LOBBY_HOST then
-		printf(text, ...)
+local function var_0_1(arg_1_0, ...)
+	if var_0_0 then
+		printf(arg_1_0, ...)
 	end
 end
 
 LobbyHost = class(LobbyHost)
 
-LobbyHost.init = function (self, network_options, lobby)
+function LobbyHost.init(arg_2_0, arg_2_1, arg_2_2)
 	print("[LobbyHost] Creating")
 
-	local config_file_name = network_options.config_file_name
-	local project_hash = network_options.project_hash
+	local var_2_0 = arg_2_1.config_file_name
+	local var_2_1 = arg_2_1.project_hash
 
-	self.network_hash = LobbyAux.create_network_hash(config_file_name, project_hash)
+	arg_2_0.network_hash = LobbyAux.create_network_hash(var_2_0, var_2_1)
 
 	if IS_WINDOWS or IS_LINUX then
-		fassert(network_options.max_members, "Must provide max members to LobbyHost")
+		fassert(arg_2_1.max_members, "Must provide max members to LobbyHost")
 	end
 
-	self.max_members = (IS_WINDOWS or IS_LINUX) and network_options.max_members
-	self.lobby = lobby or LobbyInternal.create_lobby(network_options)
-	self.peer_id = Network.peer_id()
-	self._network_initialized = false
-	self.platform = PLATFORM
-	self.is_host = true
+	arg_2_0.max_members = (IS_WINDOWS or IS_LINUX) and arg_2_1.max_members
+	arg_2_0.lobby = arg_2_2 or LobbyInternal.create_lobby(arg_2_1)
+	arg_2_0.peer_id = Network.peer_id()
+	arg_2_0._network_initialized = false
+	arg_2_0.platform = PLATFORM
+	arg_2_0.is_host = true
 end
 
-LobbyHost.kick_all_except = function (self, ignored_peers)
-	if self.lobby ~= nil and self.lobby.kick then
-		ignored_peers = ignored_peers or {}
+function LobbyHost.kick_all_except(arg_3_0, arg_3_1)
+	if arg_3_0.lobby ~= nil and arg_3_0.lobby.kick then
+		arg_3_1 = arg_3_1 or {}
 
-		local my_peer_id = self.peer_id
+		local var_3_0 = arg_3_0.peer_id
 
-		for _, peer_id in ipairs(self.lobby:members()) do
-			if peer_id ~= my_peer_id and not ignored_peers[peer_id] then
-				self.lobby:kick(peer_id)
+		for iter_3_0, iter_3_1 in ipairs(arg_3_0.lobby:members()) do
+			if iter_3_1 ~= var_3_0 and not arg_3_1[iter_3_1] then
+				arg_3_0.lobby:kick(iter_3_1)
 			end
 		end
 	end
 end
 
-LobbyHost.destroy = function (self)
+function LobbyHost.destroy(arg_4_0)
 	print("[LobbyHost] Destroying")
-	self:kick_all_except()
+	arg_4_0:kick_all_except()
 
-	self.lobby_members = nil
+	arg_4_0.lobby_members = nil
 
-	self:_free_lobby()
-	GarbageLeakDetector.register_object(self, "Lobby Host")
+	arg_4_0:_free_lobby()
+	GarbageLeakDetector.register_object(arg_4_0, "Lobby Host")
 end
 
-LobbyHost.update = function (self, dt)
-	local lobby = self.lobby
-	local new_state = lobby:state()
-	local old_state = self.state or 0
+function LobbyHost.update(arg_5_0, arg_5_1)
+	local var_5_0 = arg_5_0.lobby
+	local var_5_1 = var_5_0:state()
+	local var_5_2 = arg_5_0.state or 0
 
-	if new_state ~= old_state then
-		printf("[LobbyHost] Changed state from %s to %s", old_state, new_state)
+	if var_5_1 ~= var_5_2 then
+		printf("[LobbyHost] Changed state from %s to %s", var_5_2, var_5_1)
 
-		self.state = new_state
+		arg_5_0.state = var_5_1
 
-		if new_state == LobbyState.JOINED then
+		if var_5_1 == LobbyState.JOINED then
 			if IS_PS4 then
-				local lobby_data_table = self.lobby_data_table or {}
+				local var_5_3 = arg_5_0.lobby_data_table or {}
 
-				lobby_data_table.network_hash = self.network_hash
+				var_5_3.network_hash = arg_5_0.network_hash
 
-				lobby:set_data_table(lobby_data_table)
+				var_5_0:set_data_table(var_5_3)
 			else
-				local lobby_data_table = self.lobby_data_table
+				local var_5_4 = arg_5_0.lobby_data_table
 
-				lobby_data_table.network_hash = self.network_hash
+				var_5_4.network_hash = arg_5_0.network_hash
 
-				if lobby_data_table then
-					for key, value in pairs(lobby_data_table) do
-						lobby:set_data(key, value)
+				if var_5_4 then
+					for iter_5_0, iter_5_1 in pairs(var_5_4) do
+						var_5_0:set_data(iter_5_0, iter_5_1)
 					end
 				end
 			end
 
-			self.lobby_members = self.lobby_members or LobbyMembers:new(lobby)
+			arg_5_0.lobby_members = arg_5_0.lobby_members or LobbyMembers:new(var_5_0)
 
-			Managers.party:set_leader(lobby:lobby_host())
+			Managers.party:set_leader(var_5_0:lobby_host())
 			Managers.account:update_presence()
-		elseif old_state == LobbyState.JOINED then
+		elseif var_5_2 == LobbyState.JOINED then
 			Managers.party:set_leader(nil)
 
-			if self.lobby_members then
-				self.lobby_members:clear()
+			if arg_5_0.lobby_members then
+				arg_5_0.lobby_members:clear()
 			end
 		end
 	end
 
-	if self.lobby_members then
-		self.lobby_members:update()
+	if arg_5_0.lobby_members then
+		arg_5_0.lobby_members:update()
 	end
 end
 
-LobbyHost.ping_by_peer = function (self, peer_id)
-	return LobbyInternal.ping(peer_id)
+function LobbyHost.ping_by_peer(arg_6_0, arg_6_1)
+	return LobbyInternal.ping(arg_6_1)
 end
 
-LobbyHost._update_debug = function (self)
-	local my_peer_id = self.peer_id
-	local lobby = self.lobby
-	local members = lobby:members()
-	local num_members = #members
+function LobbyHost._update_debug(arg_7_0)
+	local var_7_0 = arg_7_0.peer_id
+	local var_7_1 = arg_7_0.lobby:members()
+	local var_7_2 = #var_7_1
 
-	if num_members > 0 then
+	if var_7_2 > 0 then
 		Debug.text("Reliable Send Buffer Left (peer : bytes):")
 
-		for i = 1, num_members do
-			local peer_id = members[i]
+		for iter_7_0 = 1, var_7_2 do
+			local var_7_3 = var_7_1[iter_7_0]
 
-			if peer_id ~= my_peer_id then
-				self._min_remaining_buffer = self._min_remaining_buffer or {}
+			if var_7_3 ~= var_7_0 then
+				arg_7_0._min_remaining_buffer = arg_7_0._min_remaining_buffer or {}
 
-				local remaining_buffer_size = Network.reliable_send_buffer_left(peer_id)
-				local min_buffer = self._min_remaining_buffer[peer_id]
+				local var_7_4 = Network.reliable_send_buffer_left(var_7_3)
+				local var_7_5 = arg_7_0._min_remaining_buffer[var_7_3]
 
-				if min_buffer and remaining_buffer_size < min_buffer or min_buffer == nil and remaining_buffer_size > 0 then
-					min_buffer = remaining_buffer_size
-					self._min_remaining_buffer[peer_id] = min_buffer
+				if var_7_5 and var_7_4 < var_7_5 or var_7_5 == nil and var_7_4 > 0 then
+					var_7_5 = var_7_4
+					arg_7_0._min_remaining_buffer[var_7_3] = var_7_5
 				end
 
-				Debug.text("    %s : %d %s", peer_id, remaining_buffer_size, min_buffer and string.format("(min: %d)", min_buffer) or "")
+				Debug.text("    %s : %d %s", var_7_3, var_7_4, var_7_5 and string.format("(min: %d)", var_7_5) or "")
 			end
 		end
 	end
 end
 
-LobbyHost.set_lobby_data = function (self, lobby_data_table)
-	fassert(lobby_data_table.Host == nil, "Tell Staffan about this!!")
-	dprintf("Set lobby begin:")
+function LobbyHost.set_lobby_data(arg_8_0, arg_8_1)
+	fassert(arg_8_1.Host == nil, "Tell Staffan about this!!")
+	var_0_1("Set lobby begin:")
 
-	self.lobby_data_table = lobby_data_table
+	arg_8_0.lobby_data_table = arg_8_1
 
-	if self.state == LobbyState.JOINED then
-		local lobby = self.lobby
+	if arg_8_0.state == LobbyState.JOINED then
+		local var_8_0 = arg_8_0.lobby
 
 		if IS_PS4 then
-			lobby:set_data_table(lobby_data_table)
+			var_8_0:set_data_table(arg_8_1)
 		else
-			for key, value in pairs(lobby_data_table) do
-				dprintf("\tLobby data %s = %s", key, tostring(value))
-				lobby:set_data(key, value)
+			for iter_8_0, iter_8_1 in pairs(arg_8_1) do
+				var_0_1("\tLobby data %s = %s", iter_8_0, tostring(iter_8_1))
+				var_8_0:set_data(iter_8_0, iter_8_1)
 			end
 		end
 	end
 
-	dprintf("Set lobby end.")
+	var_0_1("Set lobby end.")
 end
 
-LobbyHost.set_network_initialized = function (self, initialized)
-	self._network_initialized = initialized
+function LobbyHost.set_network_initialized(arg_9_0, arg_9_1)
+	arg_9_0._network_initialized = arg_9_1
 end
 
-LobbyHost.network_initialized = function (self)
-	return self._network_initialized
+function LobbyHost.network_initialized(arg_10_0)
+	return arg_10_0._network_initialized
 end
 
-LobbyHost.get_stored_lobby_data = function (self)
-	return self.lobby_data_table
+function LobbyHost.get_stored_lobby_data(arg_11_0)
+	return arg_11_0.lobby_data_table
 end
 
-LobbyHost.attempting_reconnect = function (self)
+function LobbyHost.attempting_reconnect(arg_12_0)
 	return false
 end
 
-LobbyHost.members = function (self)
-	return self.lobby_members
+function LobbyHost.members(arg_13_0)
+	return arg_13_0.lobby_members
 end
 
-LobbyHost.lobby_data = function (self, key)
-	return self.lobby:data(key)
+function LobbyHost.lobby_data(arg_14_0, arg_14_1)
+	return arg_14_0.lobby:data(arg_14_1)
 end
 
-LobbyHost.invite_target = function (self)
-	return self.lobby
+function LobbyHost.invite_target(arg_15_0)
+	return arg_15_0.lobby
 end
 
-LobbyHost.is_dedicated_server = function (self)
+function LobbyHost.is_dedicated_server(arg_16_0)
 	return false
 end
 
-LobbyHost.lobby_host = function (self)
-	return self.lobby:lobby_host()
+function LobbyHost.lobby_host(arg_17_0)
+	return arg_17_0.lobby:lobby_host()
 end
 
-LobbyHost.user_name = function (self, peer_id)
+function LobbyHost.user_name(arg_18_0, arg_18_1)
 	if HAS_STEAM then
 		return string.gsub(Steam.user_name(), "%c", "")
 	elseif IS_PS4 then
-		return string.gsub(self.lobby:user_name(peer_id), "%c", "")
+		return string.gsub(arg_18_0.lobby:user_name(arg_18_1), "%c", "")
 	else
-		return peer_id
+		return arg_18_1
 	end
 end
 
-LobbyHost.id = function (self)
-	return LobbyInternal.lobby_id and LobbyInternal.lobby_id(self.lobby) or "no_id"
+function LobbyHost.id(arg_19_0)
+	return LobbyInternal.lobby_id and LobbyInternal.lobby_id(arg_19_0.lobby) or "no_id"
 end
 
-LobbyHost.is_joined = function (self)
-	return self.state == LobbyState.JOINED
+function LobbyHost.is_joined(arg_20_0)
+	return arg_20_0.state == LobbyState.JOINED
 end
 
-LobbyHost.get_network_hash = function (self)
-	return self.network_hash
+function LobbyHost.get_network_hash(arg_21_0)
+	return arg_21_0.network_hash
 end
 
-LobbyHost.get_max_members = function (self)
-	return self.max_members
+function LobbyHost.get_max_members(arg_22_0)
+	return arg_22_0.max_members
 end
 
-LobbyHost.set_max_members = function (self, max_members)
-	self.max_members = max_members
+function LobbyHost.set_max_members(arg_23_0, arg_23_1)
+	arg_23_0.max_members = arg_23_1
 
-	LobbyInternal.set_max_members(self.lobby, max_members)
+	LobbyInternal.set_max_members(arg_23_0.lobby, arg_23_1)
 end
 
-LobbyHost.set_lobby = function (self, lobby)
+function LobbyHost.set_lobby(arg_24_0, arg_24_1)
 	print("leaving old lobby")
-	self:_free_lobby()
+	arg_24_0:_free_lobby()
 
-	self.lobby = lobby
+	arg_24_0.lobby = arg_24_1
 
-	local lobby_data_table = self.lobby_data_table or {}
+	local var_24_0 = arg_24_0.lobby_data_table or {}
 
-	self:set_lobby_data(lobby_data_table)
+	arg_24_0:set_lobby_data(var_24_0)
 
-	self.lobby_members = LobbyMembers:new(lobby)
+	arg_24_0.lobby_members = LobbyMembers:new(arg_24_1)
 end
 
-LobbyHost.steal_lobby = function (self)
-	local lobby = self.lobby
+function LobbyHost.steal_lobby(arg_25_0)
+	local var_25_0 = arg_25_0.lobby
 
-	self.lobby = nil
+	arg_25_0.lobby = nil
 
-	return lobby
+	return var_25_0
 end
 
-LobbyHost.failed = function (self)
-	return self.state == LobbyState.FAILED
+function LobbyHost.failed(arg_26_0)
+	return arg_26_0.state == LobbyState.FAILED
 end
 
-LobbyHost._free_lobby = function (self)
-	if self.lobby ~= nil then
-		LobbyInternal.leave_lobby(self.lobby)
+function LobbyHost._free_lobby(arg_27_0)
+	if arg_27_0.lobby ~= nil then
+		LobbyInternal.leave_lobby(arg_27_0.lobby)
 
-		self.lobby = nil
+		arg_27_0.lobby = nil
 	end
 end
 
-LobbyHost.lost_connection_to_lobby = function (self)
-	return LobbyInternal.is_orphaned(self.lobby)
+function LobbyHost.lost_connection_to_lobby(arg_28_0)
+	return LobbyInternal.is_orphaned(arg_28_0.lobby)
 end
 
-LobbyHost.close_channel = function (self, channel_id)
-	LobbyInternal.close_channel(self.lobby, channel_id)
+function LobbyHost.close_channel(arg_29_0, arg_29_1)
+	LobbyInternal.close_channel(arg_29_0.lobby, arg_29_1)
 end

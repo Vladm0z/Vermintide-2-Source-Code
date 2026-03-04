@@ -1,391 +1,362 @@
-﻿-- chunkname: @scripts/unit_extensions/deus/deus_cursed_chest_extension.lua
+-- chunkname: @scripts/unit_extensions/deus/deus_cursed_chest_extension.lua
 
 DeusCursedChestExtension = class(DeusCursedChestExtension)
 
-local RPCS = {
-	"rpc_deus_chest_looted",
+local var_0_0 = {
+	"rpc_deus_chest_looted"
 }
-local STATES = {
-	HOTJOIN_OPEN = 4,
-	INITIALIZING = 0,
+local var_0_1 = {
 	OPEN = 3,
-	RUNNING = 2,
+	HOTJOIN_OPEN = 4,
 	WAITING = 1,
+	INITIALIZING = 0,
+	RUNNING = 2
 }
-local DIALOGUE_DELAY = 4
-local SOUND_EVENTS = {
-	finish_cursed_chest = "finish_cursed_chest",
+local var_0_2 = 4
+local var_0_3 = {
 	trigger_cursed_chest = "trigger_cursed_chest",
+	finish_cursed_chest = "finish_cursed_chest"
 }
-local OBJECTIVE_MARKER_TIMEOUT = 60
+local var_0_4 = 60
 
-local function drop_pickup(pickup_system, chest_unit, pickup_name)
-	local position = POSITION_LOOKUP[chest_unit] + Vector3(math.random(-0.5, 0.5), math.random(-0.5, 0.5), 2)
+local function var_0_5(arg_1_0, arg_1_1, arg_1_2)
+	local var_1_0 = POSITION_LOOKUP[arg_1_1] + Vector3(math.random(-0.5, 0.5), math.random(-0.5, 0.5), 2)
 
-	pickup_system:spawn_pickup(pickup_name, position, Quaternion.identity(), true, "dropped")
+	arg_1_0:spawn_pickup(arg_1_2, var_1_0, Quaternion.identity(), true, "dropped")
 end
 
-DeusCursedChestExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self._unit = unit
-	self._is_server = Managers.player.is_server
+function DeusCursedChestExtension.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	arg_2_0._unit = arg_2_2
+	arg_2_0._is_server = Managers.player.is_server
 
-	self:register_rpcs(extension_init_context.network_transmit.network_event_delegate)
+	arg_2_0:register_rpcs(arg_2_1.network_transmit.network_event_delegate)
 end
 
-DeusCursedChestExtension.game_object_initialized = function (self, unit, go_id)
-	self:_set_state(STATES.WAITING)
+function DeusCursedChestExtension.game_object_initialized(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_0:_set_state(var_0_1.WAITING)
 end
 
-DeusCursedChestExtension.extensions_ready = function (self, world, unit)
-	local mechanism = Managers.mechanism:game_mechanism()
+function DeusCursedChestExtension.extensions_ready(arg_4_0, arg_4_1, arg_4_2)
+	arg_4_0._deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
 
-	self._deus_run_controller = mechanism:get_deus_run_controller()
+	fassert(arg_4_0._deus_run_controller, "deus pickup unit can only be used in a deus run")
 
-	fassert(self._deus_run_controller, "deus pickup unit can only be used in a deus run")
-
-	self._telemetry_data = {
+	arg_4_0._telemetry_data = {
 		activated = "not_found",
-		challenge_name = "n/a",
-		chosen_boon = "n/a",
 		success = false,
-		level_count = self._deus_run_controller:get_completed_level_count() + 1,
-		run_id = self._deus_run_controller:get_run_id(),
+		chosen_boon = "n/a",
+		challenge_name = "n/a",
+		level_count = arg_4_0._deus_run_controller:get_completed_level_count() + 1,
+		run_id = arg_4_0._deus_run_controller:get_run_id()
 	}
 end
 
-DeusCursedChestExtension.destroy = function (self)
-	if self._objective_unit then
-		self:_clear_objective_unit()
+function DeusCursedChestExtension.destroy(arg_5_0)
+	if arg_5_0._objective_unit then
+		arg_5_0:_clear_objective_unit()
 	end
 
-	self:unregister_rpcs()
+	arg_5_0:unregister_rpcs()
 
-	if self._telemetry_data.activated ~= "not_found" and not self._telemetry_data.hotjoined_late then
-		Managers.telemetry_events:cursed_chest_passed(self._telemetry_data)
+	if arg_5_0._telemetry_data.activated ~= "not_found" and not arg_5_0._telemetry_data.hotjoined_late then
+		Managers.telemetry_events:cursed_chest_passed(arg_5_0._telemetry_data)
 	end
 end
 
-DeusCursedChestExtension.register_rpcs = function (self, network_event_delegate)
-	network_event_delegate:register(self, unpack(RPCS))
+function DeusCursedChestExtension.register_rpcs(arg_6_0, arg_6_1)
+	arg_6_1:register(arg_6_0, unpack(var_0_0))
 
-	self._network_event_delegate = network_event_delegate
+	arg_6_0._network_event_delegate = arg_6_1
 end
 
-DeusCursedChestExtension.unregister_rpcs = function (self)
-	self._network_event_delegate:unregister(self)
+function DeusCursedChestExtension.unregister_rpcs(arg_7_0)
+	arg_7_0._network_event_delegate:unregister(arg_7_0)
 
-	self._network_event_delegate = nil
+	arg_7_0._network_event_delegate = nil
 end
 
-DeusCursedChestExtension.update = function (self, unit, input, dt, context, t)
-	local prev_state = self._prev_state
-	local current_state = self:_get_state()
+function DeusCursedChestExtension.update(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+	local var_8_0 = arg_8_0._prev_state
+	local var_8_1 = arg_8_0:_get_state()
 
-	if prev_state ~= current_state then
-		if current_state == STATES.WAITING then
-			Unit.flow_event(self._unit, "state_WAITING")
-		elseif current_state == STATES.RUNNING then
-			Unit.flow_event(self._unit, "state_RUNNING")
+	if var_8_0 ~= var_8_1 then
+		if var_8_1 == var_0_1.WAITING then
+			Unit.flow_event(arg_8_0._unit, "state_WAITING")
+		elseif var_8_1 == var_0_1.RUNNING then
+			Unit.flow_event(arg_8_0._unit, "state_RUNNING")
 
-			if prev_state == STATES.INITIALIZING then
-				local mission_system = Managers.state.entity:system("mission_system")
-				local active_missions = mission_system:get_missions()
-				local challenge_name = table.find_func(active_missions, function (mission_name)
-					return string.sub(mission_name, 1, string.len("cursed_chest_challenge")) == "cursed_chest_challenge"
+			if var_8_0 == var_0_1.INITIALIZING then
+				local var_8_2 = Managers.state.entity:system("mission_system"):get_missions()
+				local var_8_3 = table.find_func(var_8_2, function(arg_9_0)
+					return string.sub(arg_9_0, 1, string.len("cursed_chest_challenge")) == "cursed_chest_challenge"
 				end)
 
-				self._telemetry_data.challenge_name = challenge_name or "hotjoin"
+				arg_8_0._telemetry_data.challenge_name = var_8_3 or "hotjoin"
 			else
-				Managers.state.event:register(self, "ui_event_add_mission_objective", "_ui_event_add_mission_objective")
+				Managers.state.event:register(arg_8_0, "ui_event_add_mission_objective", "_ui_event_add_mission_objective")
 			end
 
-			self._telemetry_data.activated = true
+			arg_8_0._telemetry_data.activated = true
 
-			if self._is_server then
-				self._terror_event_name = "cursed_chest_prototype"
+			if arg_8_0._is_server then
+				arg_8_0._terror_event_name = "cursed_chest_prototype"
 
-				local seed = Managers.mechanism:get_level_seed()
+				local var_8_4 = Managers.mechanism:get_level_seed()
 
-				Managers.state.conflict:start_terror_event(self._terror_event_name, seed, unit)
+				Managers.state.conflict:start_terror_event(arg_8_0._terror_event_name, var_8_4, arg_8_1)
 
-				local side = Managers.state.side:get_side_from_name("heroes")
-				local player_units = side.PLAYER_UNITS
+				local var_8_5 = Managers.state.side:get_side_from_name("heroes").PLAYER_UNITS
 
-				for i = 1, #player_units do
-					if ALIVE[player_units[i]] then
-						local buff_extension = ScriptUnit.extension(player_units[i], "buff_system")
-
-						buff_extension:trigger_procs("cursed_chest_running", self._unit)
+				for iter_8_0 = 1, #var_8_5 do
+					if ALIVE[var_8_5[iter_8_0]] then
+						ScriptUnit.extension(var_8_5[iter_8_0], "buff_system"):trigger_procs("cursed_chest_running", arg_8_0._unit)
 					end
 				end
 			end
 
-			local position = POSITION_LOOKUP[self._unit]
+			local var_8_6 = POSITION_LOOKUP[arg_8_0._unit]
 
-			WwiseUtils.trigger_position_event(context.world, SOUND_EVENTS.trigger_cursed_chest, position)
-		elseif current_state == STATES.HOTJOIN_OPEN then
-			Unit.flow_event(self._unit, "state_HOTJOIN_OPEN")
+			WwiseUtils.trigger_position_event(arg_8_4.world, var_0_3.trigger_cursed_chest, var_8_6)
+		elseif var_8_1 == var_0_1.HOTJOIN_OPEN then
+			Unit.flow_event(arg_8_0._unit, "state_HOTJOIN_OPEN")
 
-			self._reward_collected = true
-			self._telemetry_data.hotjoined_late = true
-		elseif current_state == STATES.OPEN then
-			if self._is_server then
-				local deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
+			arg_8_0._reward_collected = true
+			arg_8_0._telemetry_data.hotjoined_late = true
+		elseif var_8_1 == var_0_1.OPEN then
+			if arg_8_0._is_server then
+				Managers.mechanism:game_mechanism():get_deus_run_controller():record_cursed_chest_purified()
 
-				deus_run_controller:record_cursed_chest_purified()
-
-				self._play_dialogue_at = t + DIALOGUE_DELAY
+				arg_8_0._play_dialogue_at = arg_8_5 + var_0_2
 			end
 
-			local position = POSITION_LOOKUP[self._unit]
+			local var_8_7 = POSITION_LOOKUP[arg_8_0._unit]
 
-			WwiseUtils.trigger_position_event(context.world, SOUND_EVENTS.finish_cursed_chest, position)
+			WwiseUtils.trigger_position_event(arg_8_4.world, var_0_3.finish_cursed_chest, var_8_7)
 
-			local unit_name = "units/hub_elements/objective_unit"
-			local objective_unit = Managers.state.unit_spawner:spawn_local_unit(unit_name, POSITION_LOOKUP[unit])
+			local var_8_8 = "units/hub_elements/objective_unit"
+			local var_8_9 = Managers.state.unit_spawner:spawn_local_unit(var_8_8, POSITION_LOOKUP[arg_8_1])
 
-			Unit.set_data(objective_unit, "objective_server_only", true)
-			Managers.state.unit_spawner:create_unit_extensions(Unit.world(objective_unit), objective_unit, "objective_unit")
+			Unit.set_data(var_8_9, "objective_server_only", true)
+			Managers.state.unit_spawner:create_unit_extensions(Unit.world(var_8_9), var_8_9, "objective_unit")
+			ScriptUnit.extension(var_8_9, "tutorial_system"):set_active(true)
+			World.link_unit(Unit.world(arg_8_1), var_8_9, 0, arg_8_1, 0)
 
-			local objective_unit_extension = ScriptUnit.extension(objective_unit, "tutorial_system")
+			arg_8_0._objective_unit = var_8_9
+			arg_8_0._objective_unit_timeout = arg_8_5 + var_0_4
+			arg_8_0._objective_unit_astar = GwNavAStar.create()
 
-			objective_unit_extension:set_active(true)
-			World.link_unit(Unit.world(unit), objective_unit, 0, unit, 0)
+			Unit.flow_event(arg_8_0._unit, "state_OPEN")
 
-			self._objective_unit = objective_unit
-			self._objective_unit_timeout = t + OBJECTIVE_MARKER_TIMEOUT
-			self._objective_unit_astar = GwNavAStar.create()
+			local var_8_10 = Managers.player:local_player()
 
-			Unit.flow_event(self._unit, "state_OPEN")
+			Managers.state.event:trigger("player_cleansed_deus_cursed_chest", var_8_10)
 
-			local player = Managers.player:local_player()
-
-			Managers.state.event:trigger("player_cleansed_deus_cursed_chest", player)
-
-			self._telemetry_data.success = true
+			arg_8_0._telemetry_data.success = true
 		end
 
-		if current_state == STATES.HOTJOIN_OPEN then
-			self._prev_state = STATES.OPEN
+		if var_8_1 == var_0_1.HOTJOIN_OPEN then
+			arg_8_0._prev_state = var_0_1.OPEN
 		else
-			self._prev_state = current_state
+			arg_8_0._prev_state = var_8_1
 		end
-	elseif current_state == STATES.RUNNING and self._is_server and not TerrorEventMixer.find_event(self._terror_event_name) then
-		self:_set_state(STATES.OPEN)
+	elseif var_8_1 == var_0_1.RUNNING and arg_8_0._is_server and not TerrorEventMixer.find_event(arg_8_0._terror_event_name) then
+		arg_8_0:_set_state(var_0_1.OPEN)
 	end
 
-	if self._objective_unit then
-		if t > self._objective_unit_timeout then
-			self:_clear_objective_unit()
-		elseif self._objective_unit_running_astar then
-			if GwNavAStar.processing_finished(self._objective_unit_astar) then
-				self._objective_unit_running_astar = false
+	if arg_8_0._objective_unit then
+		if arg_8_5 > arg_8_0._objective_unit_timeout then
+			arg_8_0:_clear_objective_unit()
+		elseif arg_8_0._objective_unit_running_astar then
+			if GwNavAStar.processing_finished(arg_8_0._objective_unit_astar) then
+				arg_8_0._objective_unit_running_astar = false
 
-				if not GwNavAStar.path_found(self._objective_unit_astar) then
-					self:_set_objective_unit_activate(false)
+				if not GwNavAStar.path_found(arg_8_0._objective_unit_astar) then
+					arg_8_0:_set_objective_unit_activate(false)
 				else
-					self:_set_objective_unit_activate(true)
+					arg_8_0:_set_objective_unit_activate(true)
 				end
 			end
 		else
-			local chest_position = POSITION_LOOKUP[unit]
-			local local_player = Managers.player:local_player()
-			local local_player_unit = local_player and local_player.player_unit
+			local var_8_11 = POSITION_LOOKUP[arg_8_1]
+			local var_8_12 = Managers.player:local_player()
+			local var_8_13 = var_8_12 and var_8_12.player_unit
 
-			if local_player_unit then
-				local player_position = POSITION_LOOKUP[local_player_unit]
-				local bot_traverse_logic = Managers.state.bot_nav_transition:traverse_logic()
-				local nav_world = Managers.state.entity:system("ai_system"):nav_world()
+			if var_8_13 then
+				local var_8_14 = POSITION_LOOKUP[var_8_13]
+				local var_8_15 = Managers.state.bot_nav_transition:traverse_logic()
+				local var_8_16 = Managers.state.entity:system("ai_system"):nav_world()
 
-				GwNavAStar.start_with_propagation_box(self._objective_unit_astar, nav_world, player_position, chest_position, 30, bot_traverse_logic)
+				GwNavAStar.start_with_propagation_box(arg_8_0._objective_unit_astar, var_8_16, var_8_14, var_8_11, 30, var_8_15)
 
-				self._objective_unit_running_astar = true
+				arg_8_0._objective_unit_running_astar = true
 			end
 		end
 	end
 
-	if self._play_dialogue_at and t >= self._play_dialogue_at then
-		self._play_dialogue_at = nil
+	if arg_8_0._play_dialogue_at and arg_8_5 >= arg_8_0._play_dialogue_at then
+		arg_8_0._play_dialogue_at = nil
 
-		local vo_unit = LevelHelper:find_dialogue_unit(context.world, "ferry_lady")
+		local var_8_17 = LevelHelper:find_dialogue_unit(arg_8_4.world, "ferry_lady")
 
-		if vo_unit then
-			local dialogue_input = ScriptUnit.extension_input(vo_unit, "dialogue_system")
-			local event_data = FrameTable.alloc_table()
+		if var_8_17 then
+			local var_8_18 = ScriptUnit.extension_input(var_8_17, "dialogue_system")
+			local var_8_19 = FrameTable.alloc_table()
 
-			dialogue_input:trigger_dialogue_event("cursed_chest_purified", event_data)
+			var_8_18:trigger_dialogue_event("cursed_chest_purified", var_8_19)
 		end
 	end
 
-	self:_update_telemetry(unit)
+	arg_8_0:_update_telemetry(arg_8_1)
 end
 
-DeusCursedChestExtension.on_reward_collected = function (self, power_up)
-	if self._objective_unit then
-		self:_clear_objective_unit()
+function DeusCursedChestExtension.on_reward_collected(arg_10_0, arg_10_1)
+	if arg_10_0._objective_unit then
+		arg_10_0:_clear_objective_unit()
 	end
 
-	Unit.flow_event(self._unit, "state_LOOTED")
+	Unit.flow_event(arg_10_0._unit, "state_LOOTED")
 
-	self._reward_collected = true
+	arg_10_0._reward_collected = true
 
-	if not self._is_server then
-		local go_id = Managers.state.unit_storage:go_id(self._unit)
+	if not arg_10_0._is_server then
+		local var_10_0 = Managers.state.unit_storage:go_id(arg_10_0._unit)
 
-		Managers.state.network.network_transmit:send_rpc_server("rpc_deus_chest_looted", go_id)
+		Managers.state.network.network_transmit:send_rpc_server("rpc_deus_chest_looted", var_10_0)
 	end
 
-	self._telemetry_data.chosen_boon = power_up.name
+	arg_10_0._telemetry_data.chosen_boon = arg_10_1.name
 end
 
-DeusCursedChestExtension._clear_objective_unit = function (self)
-	World.unlink_unit(Unit.world(self._objective_unit), self._objective_unit)
-	Managers.state.unit_spawner:mark_for_deletion(self._objective_unit)
+function DeusCursedChestExtension._clear_objective_unit(arg_11_0)
+	World.unlink_unit(Unit.world(arg_11_0._objective_unit), arg_11_0._objective_unit)
+	Managers.state.unit_spawner:mark_for_deletion(arg_11_0._objective_unit)
 
-	self._objective_unit = nil
-	self._objective_unit_timeout = nil
+	arg_11_0._objective_unit = nil
+	arg_11_0._objective_unit_timeout = nil
 
-	GwNavAStar.destroy(self._objective_unit_astar)
+	GwNavAStar.destroy(arg_11_0._objective_unit_astar)
 
-	self._objective_unit_astar = nil
-	self._objective_unit_running_astar = nil
+	arg_11_0._objective_unit_astar = nil
+	arg_11_0._objective_unit_running_astar = nil
 end
 
-DeusCursedChestExtension._set_objective_unit_activate = function (self, active)
-	if self._objective_unit then
-		local objective_unit_extension = ScriptUnit.extension(self._objective_unit, "tutorial_system")
-
-		objective_unit_extension:set_active(active)
+function DeusCursedChestExtension._set_objective_unit_activate(arg_12_0, arg_12_1)
+	if arg_12_0._objective_unit then
+		ScriptUnit.extension(arg_12_0._objective_unit, "tutorial_system"):set_active(arg_12_1)
 	end
 end
 
-DeusCursedChestExtension.can_interact = function (self)
-	local state = self:_get_state()
+function DeusCursedChestExtension.can_interact(arg_13_0)
+	local var_13_0 = arg_13_0:_get_state()
 
-	return (state == STATES.WAITING or state == STATES.OPEN) and not self._reward_collected
+	return (var_13_0 == var_0_1.WAITING or var_13_0 == var_0_1.OPEN) and not arg_13_0._reward_collected
 end
 
-DeusCursedChestExtension.get_interaction_length = function (self)
-	local state = self:_get_state()
+function DeusCursedChestExtension.get_interaction_length(arg_14_0)
+	if arg_14_0:_get_state() == var_0_1.WAITING then
+		local var_14_0 = arg_14_0._unit
+		local var_14_1 = Unit.get_data(var_14_0, "interaction_data", "interaction_length")
 
-	if state == STATES.WAITING then
-		local unit = self._unit
-		local duration = Unit.get_data(unit, "interaction_data", "interaction_length")
+		fassert(var_14_1, "Interacting with %q that has no interaction length", var_14_0)
 
-		fassert(duration, "Interacting with %q that has no interaction length", unit)
-
-		return duration
+		return var_14_1
 	else
 		return 0
 	end
 end
 
-DeusCursedChestExtension.get_interaction_action = function (self)
-	local state = self:_get_state()
-
-	if state == STATES.OPEN then
+function DeusCursedChestExtension.get_interaction_action(arg_15_0)
+	if arg_15_0:_get_state() == var_0_1.OPEN then
 		return "deus_cursed_chest_get_reward_hud_desc"
 	else
 		return "interaction_action_cursed_chest"
 	end
 end
 
-DeusCursedChestExtension.on_server_interact = function (self, world, interactor_unit, interactable_unit, data, config, t, result)
-	local state = self:_get_state()
-
-	if state == STATES.WAITING then
-		local dialogue_input = ScriptUnit.extension_input(interactor_unit, "dialogue_system")
-
-		dialogue_input:trigger_networked_dialogue_event("deus_cursed_chest_activated")
-		self:_set_state(STATES.RUNNING)
+function DeusCursedChestExtension.on_server_interact(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7)
+	if arg_16_0:_get_state() == var_0_1.WAITING then
+		ScriptUnit.extension_input(arg_16_2, "dialogue_system"):trigger_networked_dialogue_event("deus_cursed_chest_activated")
+		arg_16_0:_set_state(var_0_1.RUNNING)
 	end
 end
 
-DeusCursedChestExtension.on_client_interact = function (self, world, interactor_unit, interactable_unit, data, config, t, result)
-	local state = self:_get_state()
-
-	if state == STATES.OPEN then
+function DeusCursedChestExtension.on_client_interact(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7)
+	if arg_17_0:_get_state() == var_0_1.OPEN then
 		Managers.ui:handle_transition("deus_cursed_chest", {
-			interactable_unit = interactable_unit,
+			interactable_unit = arg_17_3
 		})
-
-		local inventory_extension = ScriptUnit.extension(interactor_unit, "inventory_system")
-
-		inventory_extension:check_and_drop_pickups("deus_cursed_chest")
+		ScriptUnit.extension(arg_17_2, "inventory_system"):check_and_drop_pickups("deus_cursed_chest")
 	end
 end
 
-DeusCursedChestExtension._get_state = function (self)
-	local game_session = Managers.state.network:game()
-	local go_id = Managers.state.unit_storage:go_id(self._unit)
+function DeusCursedChestExtension._get_state(arg_18_0)
+	local var_18_0 = Managers.state.network:game()
+	local var_18_1 = Managers.state.unit_storage:go_id(arg_18_0._unit)
 
-	if not game_session or not go_id then
-		return STATES.INITIALIZING
+	if not var_18_0 or not var_18_1 then
+		return var_0_1.INITIALIZING
 	end
 
-	local collected_by_peers = GameSession.game_object_field(game_session, go_id, "collected_by_peers")
-	local mechanism = Managers.mechanism:game_mechanism()
-	local deus_run_controller = mechanism:get_deus_run_controller()
-	local peer_id = deus_run_controller:get_own_peer_id()
-	local reward_collected = self._reward_collected
-	local new_reward_collected = table.contains(collected_by_peers, peer_id)
+	local var_18_2 = GameSession.game_object_field(var_18_0, var_18_1, "collected_by_peers")
+	local var_18_3 = Managers.mechanism:game_mechanism():get_deus_run_controller():get_own_peer_id()
+	local var_18_4 = arg_18_0._reward_collected
+	local var_18_5 = table.contains(var_18_2, var_18_3)
 
-	if new_reward_collected ~= reward_collected and new_reward_collected == true then
-		return STATES.HOTJOIN_OPEN
+	if var_18_5 ~= var_18_4 and var_18_5 == true then
+		return var_0_1.HOTJOIN_OPEN
 	end
 
-	return GameSession.game_object_field(game_session, go_id, "deus_cursed_chest_state")
+	return GameSession.game_object_field(var_18_0, var_18_1, "deus_cursed_chest_state")
 end
 
-DeusCursedChestExtension._update_telemetry = function (self, chest_unit)
-	local player = Managers.player:local_player()
-	local player_unit = player and player.player_unit
-	local local_player_pos = POSITION_LOOKUP[player_unit]
+function DeusCursedChestExtension._update_telemetry(arg_19_0, arg_19_1)
+	local var_19_0 = Managers.player:local_player()
+	local var_19_1 = var_19_0 and var_19_0.player_unit
+	local var_19_2 = POSITION_LOOKUP[var_19_1]
 
-	if not local_player_pos then
+	if not var_19_2 then
 		return
 	end
 
-	local telemetry_data = self._telemetry_data
+	local var_19_3 = arg_19_0._telemetry_data
 
-	if telemetry_data.activated == "not_found" then
-		local chest_unit_pos = POSITION_LOOKUP[chest_unit]
-		local distance_squared = Vector3.distance_squared(local_player_pos, chest_unit_pos)
+	if var_19_3.activated == "not_found" then
+		local var_19_4 = POSITION_LOOKUP[arg_19_1]
 
-		if distance_squared < 625 then
-			telemetry_data.activated = false
+		if Vector3.distance_squared(var_19_2, var_19_4) < 625 then
+			var_19_3.activated = false
 		end
 	end
 end
 
-DeusCursedChestExtension._ui_event_add_mission_objective = function (self, mission_name)
-	self._telemetry_data.challenge_name = mission_name
+function DeusCursedChestExtension._ui_event_add_mission_objective(arg_20_0, arg_20_1)
+	arg_20_0._telemetry_data.challenge_name = arg_20_1
 
-	Managers.state.event:unregister("ui_event_add_mission_objective", self)
+	Managers.state.event:unregister("ui_event_add_mission_objective", arg_20_0)
 end
 
-DeusCursedChestExtension._set_state = function (self, state)
-	local game = Managers.state.network:game()
-	local go_id = Managers.state.unit_storage:go_id(self._unit)
+function DeusCursedChestExtension._set_state(arg_21_0, arg_21_1)
+	local var_21_0 = Managers.state.network:game()
+	local var_21_1 = Managers.state.unit_storage:go_id(arg_21_0._unit)
 
-	fassert(game and go_id, "setting state without network setup done")
-	GameSession.set_game_object_field(game, go_id, "deus_cursed_chest_state", state)
+	fassert(var_21_0 and var_21_1, "setting state without network setup done")
+	GameSession.set_game_object_field(var_21_0, var_21_1, "deus_cursed_chest_state", arg_21_1)
 end
 
-DeusCursedChestExtension.rpc_deus_chest_looted = function (self, channel_id, go_id)
-	local own_go_id = Managers.state.unit_storage:go_id(self._unit)
+function DeusCursedChestExtension.rpc_deus_chest_looted(arg_22_0, arg_22_1, arg_22_2)
+	local var_22_0 = Managers.state.unit_storage:go_id(arg_22_0._unit)
 
-	if go_id ~= own_go_id then
+	if arg_22_2 ~= var_22_0 then
 		return
 	end
 
-	local game = Managers.state.network:game()
+	local var_22_1 = Managers.state.network:game()
 
-	fassert(game and own_go_id, "setting state without network setup done")
+	fassert(var_22_1 and var_22_0, "setting state without network setup done")
 
-	local collected_by_peers = GameSession.game_object_field(game, own_go_id, "collected_by_peers")
-	local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+	local var_22_2 = GameSession.game_object_field(var_22_1, var_22_0, "collected_by_peers")
+	local var_22_3 = CHANNEL_TO_PEER_ID[arg_22_1]
 
-	table.insert(collected_by_peers, peer_id)
-	GameSession.set_game_object_field(game, own_go_id, "collected_by_peers", collected_by_peers)
+	table.insert(var_22_2, var_22_3)
+	GameSession.set_game_object_field(var_22_1, var_22_0, "collected_by_peers", var_22_2)
 end

@@ -1,296 +1,288 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/player_sound_effect_extension.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/player_sound_effect_extension.lua
 
 PlayerSoundEffectExtension = class(PlayerSoundEffectExtension)
 
-local unit_get_data = Unit.get_data
-local HIT_COOLDOWN = 1.8
-local KILL_COOLDOWN = 3.5
-local MAX_HITS = 100
-local MAX_KILLS = 10
-local aggro_breed_ranges_sq = {
-	beastmen_minotaur = 100,
-	chaos_exalted_champion_norsca = 100,
+local var_0_0 = Unit.get_data
+local var_0_1 = 1.8
+local var_0_2 = 3.5
+local var_0_3 = 100
+local var_0_4 = 10
+local var_0_5 = {
+	skaven_storm_vermin_champion = 100,
 	chaos_exalted_champion_warcamp = 100,
 	chaos_exalted_sorcerer = 400,
-	chaos_spawn = 100,
-	chaos_spawn_exalted_champion_norsca = 100,
-	chaos_troll = 100,
 	chaos_warrior = 100,
-	skaven_rat_ogre = 100,
-	skaven_storm_vermin_champion = 100,
 	skaven_storm_vermin_warlord = 100,
-	skaven_stormfiend = 100,
+	skaven_rat_ogre = 100,
+	chaos_exalted_champion_norsca = 100,
+	beastmen_minotaur = 100,
+	chaos_troll = 100,
+	chaos_spawn = 100,
 	skaven_stormfiend_boss = 100,
+	chaos_spawn_exalted_champion_norsca = 100,
+	skaven_stormfiend = 100
 }
-local BROADPHASE_NEAR_RANGE = 7
-local BROADPHASE_MEDIUM_RANGE = 14
-local BROADPHASE_UPDATE_TIMER = 0.5
+local var_0_6 = 7
+local var_0_7 = 14
+local var_0_8 = 0.5
 
-PlayerSoundEffectExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self._unit = unit
-	self._world = extension_init_context.world
-	self._wwise_world = Managers.world:wwise_world(self._world)
-	self._player = Managers.player
-	self._is_server = Managers.player.is_server
-	self._local_player = Managers.player.local_player
-	self._num_recent_hits = 0
-	self._num_recent_kills = 0
-	self._recent_hit_cooldown = 0
-	self._recent_kill_cooldown = 0
-	self._aggro_unit = nil
-	self._aggro_breed = nil
-	self._current_aggro_value = 0
-
-	local ai_system = Managers.state.entity:system("ai_system")
-
-	self._ai_broadphase = ai_system.broadphase
-	self._broadphase_update_timer = 0
-	self._nearby_ai_units = {}
-	self._music_manager = Managers.music
+function PlayerSoundEffectExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._unit = arg_1_2
+	arg_1_0._world = arg_1_1.world
+	arg_1_0._wwise_world = Managers.world:wwise_world(arg_1_0._world)
+	arg_1_0._player = Managers.player
+	arg_1_0._is_server = Managers.player.is_server
+	arg_1_0._local_player = Managers.player.local_player
+	arg_1_0._num_recent_hits = 0
+	arg_1_0._num_recent_kills = 0
+	arg_1_0._recent_hit_cooldown = 0
+	arg_1_0._recent_kill_cooldown = 0
+	arg_1_0._aggro_unit = nil
+	arg_1_0._aggro_breed = nil
+	arg_1_0._current_aggro_value = 0
+	arg_1_0._ai_broadphase = Managers.state.entity:system("ai_system").broadphase
+	arg_1_0._broadphase_update_timer = 0
+	arg_1_0._nearby_ai_units = {}
+	arg_1_0._music_manager = Managers.music
 end
 
-PlayerSoundEffectExtension.extensions_ready = function (self, world, unit)
-	self._first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
+function PlayerSoundEffectExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+	arg_2_0._first_person_extension = ScriptUnit.has_extension(arg_2_2, "first_person_system")
 
-	if self._first_person_extension then
-		self._first_person_unit = self._first_person_extension:get_first_person_unit()
+	if arg_2_0._first_person_extension then
+		arg_2_0._first_person_unit = arg_2_0._first_person_extension:get_first_person_unit()
 	end
 end
 
-PlayerSoundEffectExtension.update = function (self, unit, input, dt, context, t)
-	if not self._local_player then
+function PlayerSoundEffectExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	if not arg_3_0._local_player then
 		return
 	end
 
-	self:_update_recent_hits(dt)
-	self:_update_recent_kills(dt)
-	self:_update_aggro_ranges(dt)
-	self:_update_camera_look_angle()
-	self:_update_specials_proximity(dt)
+	arg_3_0:_update_recent_hits(arg_3_3)
+	arg_3_0:_update_recent_kills(arg_3_3)
+	arg_3_0:_update_aggro_ranges(arg_3_3)
+	arg_3_0:_update_camera_look_angle()
+	arg_3_0:_update_specials_proximity(arg_3_3)
 end
 
-PlayerSoundEffectExtension.destroy = function (self)
+function PlayerSoundEffectExtension.destroy(arg_4_0)
 	return
 end
 
-PlayerSoundEffectExtension._update_recent_hits = function (self, dt)
-	if self._recent_hit_cooldown <= 0 then
+function PlayerSoundEffectExtension._update_recent_hits(arg_5_0, arg_5_1)
+	if arg_5_0._recent_hit_cooldown <= 0 then
 		return
 	end
 
-	self._recent_hit_cooldown = math.max(self._recent_hit_cooldown - dt, 0)
+	arg_5_0._recent_hit_cooldown = math.max(arg_5_0._recent_hit_cooldown - arg_5_1, 0)
 
-	if self._recent_hit_cooldown == 0 then
-		self:_set_hit_count(0)
+	if arg_5_0._recent_hit_cooldown == 0 then
+		arg_5_0:_set_hit_count(0)
 	end
 end
 
-PlayerSoundEffectExtension._update_recent_kills = function (self, dt)
-	if self._recent_kill_cooldown <= 0 then
+function PlayerSoundEffectExtension._update_recent_kills(arg_6_0, arg_6_1)
+	if arg_6_0._recent_kill_cooldown <= 0 then
 		return
 	end
 
-	self._recent_kill_cooldown = math.max(self._recent_kill_cooldown - dt, 0)
+	arg_6_0._recent_kill_cooldown = math.max(arg_6_0._recent_kill_cooldown - arg_6_1, 0)
 
-	if self._recent_kill_cooldown == 0 then
-		self:_set_kill_count(0)
+	if arg_6_0._recent_kill_cooldown == 0 then
+		arg_6_0:_set_kill_count(0)
 	end
 end
 
-PlayerSoundEffectExtension._update_aggro_ranges = function (self, dt)
-	if not self._aggro_unit then
-		local wwise_world = self._wwise_world
+function PlayerSoundEffectExtension._update_aggro_ranges(arg_7_0, arg_7_1)
+	if not arg_7_0._aggro_unit then
+		local var_7_0 = arg_7_0._wwise_world
 
-		WwiseWorld.set_global_parameter(wwise_world, "combat_combo_has_aggro", 0)
-	elseif not HEALTH_ALIVE[self._aggro_unit] then
-		self._aggro_unit = nil
+		WwiseWorld.set_global_parameter(var_7_0, "combat_combo_has_aggro", 0)
+	elseif not HEALTH_ALIVE[arg_7_0._aggro_unit] then
+		arg_7_0._aggro_unit = nil
 
-		local wwise_world = self._wwise_world
+		local var_7_1 = arg_7_0._wwise_world
 
-		WwiseWorld.set_global_parameter(wwise_world, "combat_combo_has_aggro", 0)
-		WwiseWorld.trigger_event(wwise_world, "Play_boss_aggro_exit")
+		WwiseWorld.set_global_parameter(var_7_1, "combat_combo_has_aggro", 0)
+		WwiseWorld.trigger_event(var_7_1, "Play_boss_aggro_exit")
 	end
 
-	if self._waiting_aggro_unit then
-		if not HEALTH_ALIVE[self._waiting_aggro_unit] then
-			self._waiting_aggro_unit = nil
+	if arg_7_0._waiting_aggro_unit then
+		if not HEALTH_ALIVE[arg_7_0._waiting_aggro_unit] then
+			arg_7_0._waiting_aggro_unit = nil
 
 			return
 		end
 
-		local breed = unit_get_data(self._waiting_aggro_unit, "breed")
-		local breed_name = breed.name
-		local max_distance_sq = aggro_breed_ranges_sq[breed_name]
+		local var_7_2 = var_0_0(arg_7_0._waiting_aggro_unit, "breed").name
+		local var_7_3 = var_0_5[var_7_2]
 
-		if not max_distance_sq then
+		if not var_7_3 then
 			return
 		end
 
-		local unit_position = POSITION_LOOKUP[self._unit]
-		local enemy_position = POSITION_LOOKUP[self._waiting_aggro_unit]
-		local distance_sq = Vector3.distance_squared(unit_position, enemy_position)
+		local var_7_4 = POSITION_LOOKUP[arg_7_0._unit]
+		local var_7_5 = POSITION_LOOKUP[arg_7_0._waiting_aggro_unit]
 
-		if distance_sq <= max_distance_sq then
-			local wwise_world = self._wwise_world
+		if var_7_3 >= Vector3.distance_squared(var_7_4, var_7_5) then
+			local var_7_6 = arg_7_0._wwise_world
 
-			WwiseWorld.set_global_parameter(wwise_world, "combat_combo_has_aggro", 1)
-			WwiseWorld.trigger_event(wwise_world, "Play_boss_aggro_enter")
+			WwiseWorld.set_global_parameter(var_7_6, "combat_combo_has_aggro", 1)
+			WwiseWorld.trigger_event(var_7_6, "Play_boss_aggro_enter")
 
-			self._aggro_unit = self._waiting_aggro_unit
-			self._waiting_aggro_unit = nil
+			arg_7_0._aggro_unit = arg_7_0._waiting_aggro_unit
+			arg_7_0._waiting_aggro_unit = nil
 		end
 	end
 end
 
-PlayerSoundEffectExtension._set_hit_count = function (self, num_hits)
-	self._num_recent_hits = num_hits
+function PlayerSoundEffectExtension._set_hit_count(arg_8_0, arg_8_1)
+	arg_8_0._num_recent_hits = arg_8_1
 
-	local wwise_world = self._wwise_world
+	local var_8_0 = arg_8_0._wwise_world
 
-	WwiseWorld.set_global_parameter(wwise_world, "combat_combo_hits", num_hits)
+	WwiseWorld.set_global_parameter(var_8_0, "combat_combo_hits", arg_8_1)
 end
 
-PlayerSoundEffectExtension._set_kill_count = function (self, num_kills)
-	self._num_recent_kills = num_kills
+function PlayerSoundEffectExtension._set_kill_count(arg_9_0, arg_9_1)
+	arg_9_0._num_recent_kills = arg_9_1
 
-	local wwise_world = self._wwise_world
+	local var_9_0 = arg_9_0._wwise_world
 
-	WwiseWorld.set_global_parameter(wwise_world, "combat_combo_kills", num_kills)
+	WwiseWorld.set_global_parameter(var_9_0, "combat_combo_kills", arg_9_1)
 end
 
-PlayerSoundEffectExtension._update_camera_look_angle = function (self)
-	local unit = self._unit
-	local network_manager = Managers.state.network
-	local game = network_manager:game()
-	local unit_id = network_manager:unit_game_object_id(unit)
-	local aim_direction = GameSession.game_object_field(game, unit_id, "aim_direction")
-	local forward_direction = Vector3.normalize(Vector3.flat(aim_direction))
-	local dot = Vector3.dot(forward_direction, aim_direction)
-	local angle = math.acos(math.clamp(dot, -1, 1))
-	local degrees = math.radians_to_degrees(angle) * math.sign(aim_direction.z)
-	local wwise_world = self._wwise_world
+function PlayerSoundEffectExtension._update_camera_look_angle(arg_10_0)
+	local var_10_0 = arg_10_0._unit
+	local var_10_1 = Managers.state.network
+	local var_10_2 = var_10_1:game()
+	local var_10_3 = var_10_1:unit_game_object_id(var_10_0)
+	local var_10_4 = GameSession.game_object_field(var_10_2, var_10_3, "aim_direction")
+	local var_10_5 = Vector3.normalize(Vector3.flat(var_10_4))
+	local var_10_6 = Vector3.dot(var_10_5, var_10_4)
+	local var_10_7 = math.acos(math.clamp(var_10_6, -1, 1))
+	local var_10_8 = math.radians_to_degrees(var_10_7) * math.sign(var_10_4.z)
+	local var_10_9 = arg_10_0._wwise_world
 
-	WwiseWorld.set_global_parameter(wwise_world, "player_camera_horizon_angle", degrees)
+	WwiseWorld.set_global_parameter(var_10_9, "player_camera_horizon_angle", var_10_8)
 end
 
-local NEARBY_AI_UNITS = {}
+local var_0_9 = {}
 
-PlayerSoundEffectExtension._update_specials_proximity = function (self, dt)
-	self._broadphase_update_timer = self._broadphase_update_timer - dt
+function PlayerSoundEffectExtension._update_specials_proximity(arg_11_0, arg_11_1)
+	arg_11_0._broadphase_update_timer = arg_11_0._broadphase_update_timer - arg_11_1
 
-	if self._broadphase_update_timer <= 0 then
-		self._broadphase_update_timer = BROADPHASE_UPDATE_TIMER
+	if arg_11_0._broadphase_update_timer <= 0 then
+		arg_11_0._broadphase_update_timer = var_0_8
 
-		local own_position = POSITION_LOOKUP[self._unit]
+		local var_11_0 = POSITION_LOOKUP[arg_11_0._unit]
 
-		table.clear(NEARBY_AI_UNITS)
+		table.clear(var_0_9)
 
-		local num_nearby_ai_units = Broadphase.query(self._ai_broadphase, own_position, BROADPHASE_MEDIUM_RANGE, NEARBY_AI_UNITS)
-		local state
+		local var_11_1 = Broadphase.query(arg_11_0._ai_broadphase, var_11_0, var_0_7, var_0_9)
+		local var_11_2
 
-		for i = 1, num_nearby_ai_units do
+		for iter_11_0 = 1, var_11_1 do
 			repeat
-				local ai_unit = NEARBY_AI_UNITS[i]
+				local var_11_3 = var_0_9[iter_11_0]
 
-				if not HEALTH_ALIVE[ai_unit] then
+				if not HEALTH_ALIVE[var_11_3] then
 					break
 				end
 
-				local breed = unit_get_data(ai_unit, "breed")
-
-				if not breed.special then
+				if not var_0_0(var_11_3, "breed").special then
 					break
 				end
 
-				local ai_position = POSITION_LOOKUP[ai_unit]
+				local var_11_4 = POSITION_LOOKUP[var_11_3]
 
-				state = Vector3.distance_squared(own_position, ai_position) <= BROADPHASE_NEAR_RANGE^2 and "close" or state or "medium"
+				var_11_2 = Vector3.distance_squared(var_11_0, var_11_4) <= var_0_6^2 and "close" or var_11_2 or "medium"
 			until true
 		end
 
-		state = state or "far"
+		var_11_2 = var_11_2 or "far"
 
-		self._music_manager:set_wwise_state("specials_proximity", state)
+		arg_11_0._music_manager:set_wwise_state("specials_proximity", var_11_2)
 	end
 end
 
-PlayerSoundEffectExtension.add_hit = function (self)
-	self._recent_hit_cooldown = HIT_COOLDOWN
+function PlayerSoundEffectExtension.add_hit(arg_12_0)
+	arg_12_0._recent_hit_cooldown = var_0_1
 
-	local num_hits = math.min(self._num_recent_hits + 1, MAX_HITS)
+	local var_12_0 = math.min(arg_12_0._num_recent_hits + 1, var_0_3)
 
-	self:_set_hit_count(num_hits)
+	arg_12_0:_set_hit_count(var_12_0)
 end
 
-PlayerSoundEffectExtension.add_kill = function (self)
-	self._recent_kill_cooldown = KILL_COOLDOWN
+function PlayerSoundEffectExtension.add_kill(arg_13_0)
+	arg_13_0._recent_kill_cooldown = var_0_2
 
-	local num_kills = math.min(self._num_recent_kills + 1, MAX_KILLS)
+	local var_13_0 = math.min(arg_13_0._num_recent_kills + 1, var_0_4)
 
-	self:_set_kill_count(num_kills)
+	arg_13_0:_set_kill_count(var_13_0)
 end
 
-PlayerSoundEffectExtension.dodge = function (self)
-	if self._first_person_unit then
-		Unit.flow_event(self._first_person_unit, "lua_dodge")
+function PlayerSoundEffectExtension.dodge(arg_14_0)
+	if arg_14_0._first_person_unit then
+		Unit.flow_event(arg_14_0._first_person_unit, "lua_dodge")
 	end
 end
 
-PlayerSoundEffectExtension.dodged_attack = function (self)
-	if self._first_person_unit then
-		Unit.flow_event(self._first_person_unit, "lua_dodged_attack")
+function PlayerSoundEffectExtension.dodged_attack(arg_15_0)
+	if arg_15_0._first_person_unit then
+		Unit.flow_event(arg_15_0._first_person_unit, "lua_dodged_attack")
 	end
 end
 
-PlayerSoundEffectExtension.melee_kill = function (self)
-	if self._first_person_unit then
-		Unit.flow_event(self._first_person_unit, "lua_melee_kill")
+function PlayerSoundEffectExtension.melee_kill(arg_16_0)
+	if arg_16_0._first_person_unit then
+		Unit.flow_event(arg_16_0._first_person_unit, "lua_melee_kill")
 	end
 end
 
-PlayerSoundEffectExtension.aggro_unit_changed = function (self, enemy_unit, has_aggro)
-	local breed = Unit.get_data(enemy_unit, "breed")
+function PlayerSoundEffectExtension.aggro_unit_changed(arg_17_0, arg_17_1, arg_17_2)
+	local var_17_0 = Unit.get_data(arg_17_1, "breed")
 
-	if not breed then
+	if not var_17_0 then
 		return
 	end
 
-	local breed_name = breed.name
-	local max_distance_sq = aggro_breed_ranges_sq[breed_name]
+	local var_17_1 = var_17_0.name
+	local var_17_2 = var_0_5[var_17_1]
 
-	if not max_distance_sq then
+	if not var_17_2 then
 		return
 	end
 
-	if has_aggro and self._aggro_unit ~= enemy_unit then
-		self._aggro_unit = enemy_unit
+	if arg_17_2 and arg_17_0._aggro_unit ~= arg_17_1 then
+		arg_17_0._aggro_unit = arg_17_1
 
-		local unit_position = POSITION_LOOKUP[self._unit]
-		local enemy_position = POSITION_LOOKUP[enemy_unit]
-		local distance_sq = Vector3.distance_squared(unit_position, enemy_position)
+		local var_17_3 = POSITION_LOOKUP[arg_17_0._unit]
+		local var_17_4 = POSITION_LOOKUP[arg_17_1]
 
-		if distance_sq <= max_distance_sq then
-			local wwise_world = self._wwise_world
+		if var_17_2 >= Vector3.distance_squared(var_17_3, var_17_4) then
+			local var_17_5 = arg_17_0._wwise_world
 
-			WwiseWorld.set_global_parameter(wwise_world, "combat_combo_has_aggro", 1)
-			WwiseWorld.trigger_event(wwise_world, "Play_boss_aggro_enter")
+			WwiseWorld.set_global_parameter(var_17_5, "combat_combo_has_aggro", 1)
+			WwiseWorld.trigger_event(var_17_5, "Play_boss_aggro_enter")
 		else
-			self._aggro_unit = nil
-			self._waiting_aggro_unit = enemy_unit
+			arg_17_0._aggro_unit = nil
+			arg_17_0._waiting_aggro_unit = arg_17_1
 		end
-	elseif not has_aggro and self._aggro_unit == enemy_unit then
-		self._aggro_unit = nil
-		self._waiting_aggro_unit = nil
+	elseif not arg_17_2 and arg_17_0._aggro_unit == arg_17_1 then
+		arg_17_0._aggro_unit = nil
+		arg_17_0._waiting_aggro_unit = nil
 
-		local wwise_world = self._wwise_world
+		local var_17_6 = arg_17_0._wwise_world
 
-		WwiseWorld.set_global_parameter(wwise_world, "combat_combo_has_aggro", 0)
-		WwiseWorld.trigger_event(wwise_world, "Play_boss_aggro_exit")
+		WwiseWorld.set_global_parameter(var_17_6, "combat_combo_has_aggro", 0)
+		WwiseWorld.trigger_event(var_17_6, "Play_boss_aggro_exit")
 	end
 end
 
-PlayerSoundEffectExtension.get_music_aggro_state = function (self)
-	if self._aggro_unit then
+function PlayerSoundEffectExtension.get_music_aggro_state(arg_18_0)
+	if arg_18_0._aggro_unit then
 		return "player"
 	end
 

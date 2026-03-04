@@ -1,885 +1,852 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/projectiles/player_projectile_husk_extension.lua
+-- chunkname: @scripts/unit_extensions/weapons/projectiles/player_projectile_husk_extension.lua
 
 PlayerProjectileHuskExtension = class(PlayerProjectileHuskExtension)
 
-PlayerProjectileHuskExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	local owner_unit = extension_init_data.owner_unit
-	local item_name = extension_init_data.item_name
+function PlayerProjectileHuskExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	local var_1_0 = arg_1_3.owner_unit
+	local var_1_1 = arg_1_3.item_name
 
-	self._world = extension_init_context.world
-	self._wwise_world = Managers.world:wwise_world(self._world)
-	self._projectile_unit = unit
-	self._owner_unit = owner_unit
-	self._owner_player = Managers.player:owner(owner_unit)
-	self.item_name = item_name
+	arg_1_0._world = arg_1_1.world
+	arg_1_0._wwise_world = Managers.world:wwise_world(arg_1_0._world)
+	arg_1_0._projectile_unit = arg_1_2
+	arg_1_0._owner_unit = var_1_0
+	arg_1_0._owner_player = Managers.player:owner(var_1_0)
+	arg_1_0.item_name = var_1_1
 
-	local owner_inventory_extension = ScriptUnit.has_extension(owner_unit, "inventory_system")
+	local var_1_2 = ScriptUnit.has_extension(var_1_0, "inventory_system")
 
-	if owner_inventory_extension then
-		local equipment = owner_inventory_extension:equipment()
+	if var_1_2 then
+		local var_1_3 = var_1_2:equipment()
 
-		if equipment then
-			local wielded_item_data = equipment.wielded
+		if var_1_3 then
+			local var_1_4 = var_1_3.wielded
 
-			if wielded_item_data then
-				local skin_material_settings
+			if var_1_4 then
+				local var_1_5
 
-				self._skin_projectile_units_template = wielded_item_data.projectile_units_template
+				arg_1_0._skin_projectile_units_template = var_1_4.projectile_units_template
 
-				local slot_data = owner_inventory_extension:get_slot_data(equipment.wielded_slot)
+				local var_1_6 = var_1_2:get_slot_data(var_1_3.wielded_slot)
 
-				if slot_data then
-					local skin = slot_data.skin
-					local weapon_skin_data = WeaponSkins.skins[skin]
+				if var_1_6 then
+					local var_1_7 = var_1_6.skin
+					local var_1_8 = WeaponSkins.skins[var_1_7]
 
-					if weapon_skin_data then
-						skin_material_settings = weapon_skin_data.material_settings
-						self._skin_projectile_units_template = weapon_skin_data.projectile_units_template
+					if var_1_8 then
+						var_1_5 = var_1_8.material_settings_name
+						arg_1_0._skin_projectile_units_template = var_1_8.projectile_units_template
 					end
 				end
 
-				local item_units = BackendUtils.get_item_units(wielded_item_data)
-				local is_ammo_weapon = item_units and item_units.is_ammo_weapon
+				local var_1_9 = BackendUtils.get_item_units(var_1_4)
 
-				if is_ammo_weapon then
-					local wielded_item_template = BackendUtils.get_item_template(wielded_item_data)
-					local material_settings = skin_material_settings or item_units.material_settings or wielded_item_template.material_settings
+				if var_1_9 and var_1_9.is_ammo_weapon then
+					local var_1_10 = BackendUtils.get_item_template(var_1_4)
+					local var_1_11 = var_1_5 or var_1_9.material_settings_name or var_1_10.material_settings_name
 
-					if material_settings then
-						GearUtils.apply_material_settings(unit, material_settings)
+					if var_1_11 then
+						GearUtils.apply_material_settings(arg_1_2, var_1_11)
 
-						self._material_settings = material_settings
+						arg_1_0._material_settings_name = var_1_11
 					end
 				end
 			end
 		end
 	end
 
-	if not self._skin_projectile_units_template then
-		local unit_name = Unit.get_data(unit, "unit_name")
-		local projectile_units_template = ProjectileUnitsFromUnitName[unit_name]
+	if not arg_1_0._skin_projectile_units_template then
+		local var_1_12 = Unit.get_data(arg_1_2, "unit_name")
 
-		self._skin_projectile_units_template = projectile_units_template
+		arg_1_0._skin_projectile_units_template = ProjectileUnitsFromUnitName[var_1_12]
 	end
 
-	local item_data = ItemMasterList[item_name]
-	local item_template = BackendUtils.get_item_template(item_data)
-	local item_template_name = extension_init_data.item_template_name
-	local action_name = extension_init_data.action_name
-	local sub_action_name = extension_init_data.sub_action_name
-	local owner_buff_extension = ScriptUnit.has_extension(self._owner_unit, "buff_system")
+	local var_1_13 = ItemMasterList[var_1_1]
+	local var_1_14 = BackendUtils.get_item_template(var_1_13)
+	local var_1_15 = arg_1_3.item_template_name
+	local var_1_16 = arg_1_3.action_name
+	local var_1_17 = arg_1_3.sub_action_name
+	local var_1_18 = ScriptUnit.has_extension(arg_1_0._owner_unit, "buff_system")
 
-	self.action_lookup_data = {
-		item_template_name = item_template_name,
-		action_name = action_name,
-		sub_action_name = sub_action_name,
+	arg_1_0.action_lookup_data = {
+		item_template_name = var_1_15,
+		action_name = var_1_16,
+		sub_action_name = var_1_17
 	}
 
-	local current_action = item_template.actions[action_name][sub_action_name]
+	local var_1_19 = var_1_14.actions[var_1_16][var_1_17]
 
-	self._current_action = current_action
+	arg_1_0._current_action = var_1_19
 
-	local projectile_info = current_action.projectile_info
-	local impact_data = current_action.impact_data
-	local timed_data = current_action.timed_data
+	local var_1_20 = var_1_19.projectile_info
+	local var_1_21 = var_1_19.impact_data
+	local var_1_22 = var_1_19.timed_data
 
-	self.charge_data = current_action.charge_data
+	arg_1_0.charge_data = var_1_19.charge_data
 
-	if impact_data.grenade and owner_buff_extension and owner_buff_extension:has_buff_perk("frag_fire_grenades") then
-		impact_data = table.shallow_copy(impact_data)
-		impact_data.aoe = ExplosionUtils.get_template("frag_fire_grenade")
+	if var_1_21.grenade and var_1_18 and var_1_18:has_buff_perk("frag_fire_grenades") then
+		var_1_21 = table.shallow_copy(var_1_21)
+		var_1_21.aoe = ExplosionUtils.get_template("frag_fire_grenade")
 	end
 
-	self.power_level = extension_init_data.power_level
-	self.projectile_info = projectile_info
-	self._impact_data = impact_data
-	self._timed_data = timed_data
-	self._time_initialized = extension_init_data.time_initialized
-	self.scale = extension_init_data.scale
-	self.charge_level = (extension_init_data.charge_level or 0) / 100
-	self._num_targets_hit = 0
-	self._hit_units = {}
+	arg_1_0.power_level = arg_1_3.power_level
+	arg_1_0.projectile_info = var_1_20
+	arg_1_0._impact_data = var_1_21
+	arg_1_0._timed_data = var_1_22
+	arg_1_0._time_initialized = arg_1_3.time_initialized
+	arg_1_0.scale = arg_1_3.scale
+	arg_1_0.charge_level = (arg_1_3.charge_level or 0) / 100
+	arg_1_0._num_targets_hit = 0
+	arg_1_0._hit_units = {}
+	arg_1_0.projectile_linker_system = Managers.state.entity:system("projectile_linker_system")
+	arg_1_0._is_server = Managers.player.is_server
+	arg_1_0._active = true
+	arg_1_0._was_active = true
+	arg_1_0._did_damage = false
+	arg_1_0._num_bounces = 0
+	arg_1_0._num_additional_penetrations = var_1_18:apply_buffs_to_value(0, "ranged_additional_penetrations")
+	arg_1_0._is_critical_strike = not not arg_1_3.is_critical_strike
 
-	local entity_manager = Managers.state.entity
-
-	self.projectile_linker_system = entity_manager:system("projectile_linker_system")
-	self._is_server = Managers.player.is_server
-	self._active = true
-	self._was_active = true
-	self._did_damage = false
-	self._num_bounces = 0
-	self._num_additional_penetrations = owner_buff_extension:apply_buffs_to_value(0, "ranged_additional_penetrations")
-	self._is_critical_strike = not not extension_init_data.is_critical_strike
-
-	self:initialize_projectile(projectile_info, impact_data)
+	arg_1_0:initialize_projectile(var_1_20, var_1_21)
 end
 
-PlayerProjectileHuskExtension.destroy = function (self)
-	if self._projectile_unit and self._active and not self.is_server then
-		self:stop()
+function PlayerProjectileHuskExtension.destroy(arg_2_0)
+	if arg_2_0._projectile_unit and arg_2_0._active and not arg_2_0.is_server then
+		arg_2_0:stop()
 	end
 end
 
-PlayerProjectileHuskExtension.extensions_ready = function (self, world, unit)
-	self.locomotion_extension = ScriptUnit.extension(unit, "projectile_locomotion_system")
+function PlayerProjectileHuskExtension.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_0.locomotion_extension = ScriptUnit.extension(arg_3_2, "projectile_locomotion_system")
 end
 
-PlayerProjectileHuskExtension.initialize_projectile = function (self, projectile_info, impact_data)
-	local unit = self._projectile_unit
+function PlayerProjectileHuskExtension.initialize_projectile(arg_4_0, arg_4_1, arg_4_2)
+	local var_4_0 = arg_4_0._projectile_unit
 
-	if impact_data then
-		self._is_impact = true
-		self._stop_impacts = false
-		self._amount_of_mass_hit = 0
+	if arg_4_2 then
+		arg_4_0._is_impact = true
+		arg_4_0._stop_impacts = false
+		arg_4_0._amount_of_mass_hit = 0
 
-		local damage_profile_name = impact_data.damage_profile or "default"
-		local damage_profile = DamageProfileTemplates[damage_profile_name]
-		local owner_unit = self._owner_unit
-		local difficulty_level = Managers.state.difficulty:get_difficulty()
-		local cleave_power_level = ActionUtils.scale_power_levels(self.power_level, "cleave", owner_unit, difficulty_level)
-		local max_mass_attack, max_mass_impact = ActionUtils.get_max_targets(damage_profile, cleave_power_level)
+		local var_4_1 = arg_4_2.damage_profile or "default"
+		local var_4_2 = DamageProfileTemplates[var_4_1]
+		local var_4_3 = arg_4_0._owner_unit
+		local var_4_4 = Managers.state.difficulty:get_difficulty()
+		local var_4_5 = ActionUtils.scale_power_levels(arg_4_0.power_level, "cleave", var_4_3, var_4_4)
+		local var_4_6, var_4_7 = ActionUtils.get_max_targets(var_4_2, var_4_5)
 
-		self._max_mass = max_mass_impact < max_mass_attack and max_mass_attack or max_mass_impact
+		arg_4_0._max_mass = var_4_7 < var_4_6 and var_4_6 or var_4_7
 	end
 
-	local timed_data = self._timed_data
+	local var_4_8 = arg_4_0._timed_data
 
-	if timed_data then
-		self._is_timed = true
+	if var_4_8 then
+		arg_4_0._is_timed = true
 
-		if timed_data.activate_life_time_on_impact then
-			self._life_time = math.huge
+		if var_4_8.activate_life_time_on_impact then
+			arg_4_0._life_time = math.huge
 		else
-			self:_activate_life_time(self._time_initialized)
+			arg_4_0:_activate_life_time(arg_4_0._time_initialized)
 		end
 
-		if timed_data.charge_time then
-			self._charge_t = self._time_initialized + timed_data.charge_time * (1 - self.charge_level)
+		if var_4_8.charge_time then
+			arg_4_0._charge_t = arg_4_0._time_initialized + var_4_8.charge_time * (1 - arg_4_0.charge_level)
 		end
 	end
 
-	if projectile_info.times_bigger then
-		local scale = self.scale
+	if arg_4_1.times_bigger then
+		local var_4_9 = arg_4_0.scale
 
-		Unit.set_flow_variable(unit, "scale", scale)
+		Unit.set_flow_variable(var_4_0, "scale", var_4_9)
 
-		local times_bigger = projectile_info.times_bigger
-		local unit_scale = math.lerp(1, times_bigger, scale)
+		local var_4_10 = arg_4_1.times_bigger
+		local var_4_11 = math.lerp(1, var_4_10, var_4_9)
 
-		Unit.set_local_scale(unit, 0, Vector3(unit_scale, unit_scale, unit_scale))
+		Unit.set_local_scale(var_4_0, 0, Vector3(var_4_11, var_4_11, var_4_11))
 	end
 
-	Unit.flow_event(unit, "lua_projectile_init")
-	self:_handle_critical_strike(unit, self._is_critical_strike)
-	Unit.flow_event(unit, "lua_trail")
+	Unit.flow_event(var_4_0, "lua_projectile_init")
+	arg_4_0:_handle_critical_strike(var_4_0, arg_4_0._is_critical_strike)
+	Unit.flow_event(var_4_0, "lua_trail")
 end
 
-PlayerProjectileHuskExtension._handle_critical_strike = function (self, unit, is_critical_strike)
-	if self._is_critical_strike then
-		Unit.flow_event(unit, "vfx_critical_strike")
+function PlayerProjectileHuskExtension._handle_critical_strike(arg_5_0, arg_5_1, arg_5_2)
+	if arg_5_0._is_critical_strike then
+		Unit.flow_event(arg_5_1, "vfx_critical_strike")
 	end
 end
 
-PlayerProjectileHuskExtension.update = function (self, unit, input, _, context, t)
-	if not self._active then
-		if self._was_active then
-			self._was_active = false
+function PlayerProjectileHuskExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+	if not arg_6_0._active then
+		if arg_6_0._was_active then
+			arg_6_0._was_active = false
 		end
 
 		return
 	end
 
-	if self._is_timed then
-		self:handle_timed_events(t)
+	if arg_6_0._is_timed then
+		arg_6_0:handle_timed_events(arg_6_5)
 	end
 end
 
-PlayerProjectileHuskExtension.stop = function (self, hit_unit, hit_zone_name)
-	local custom_stop_func = self.projectile_info.custom_stop_func
+function PlayerProjectileHuskExtension.stop(arg_7_0, arg_7_1, arg_7_2)
+	local var_7_0 = arg_7_0.projectile_info.custom_stop_func
 
-	if custom_stop_func and custom_stop_func(self, hit_unit, hit_zone_name) then
-		self._stop_impacts = true
+	if var_7_0 and var_7_0(arg_7_0, arg_7_1, arg_7_2) then
+		arg_7_0._stop_impacts = true
 
 		return
 	end
 
-	local timed_data = self._timed_data
-	local activate_life_time_on_impact = timed_data and timed_data.activate_life_time_on_impact
+	local var_7_1 = arg_7_0._timed_data
 
-	if not activate_life_time_on_impact then
-		Unit.flow_event(self._projectile_unit, "lua_projectile_end")
+	if not (var_7_1 and var_7_1.activate_life_time_on_impact) then
+		Unit.flow_event(arg_7_0._projectile_unit, "lua_projectile_end")
 
-		self._active = false
+		arg_7_0._active = false
 	end
 
-	self.locomotion_extension:stop()
+	arg_7_0.locomotion_extension:stop()
 
-	self._stop_impacts = true
+	arg_7_0._stop_impacts = true
 end
 
-PlayerProjectileHuskExtension._stop_by_life_time = function (self)
-	Unit.flow_event(self._projectile_unit, "lua_projectile_end")
+function PlayerProjectileHuskExtension._stop_by_life_time(arg_8_0)
+	Unit.flow_event(arg_8_0._projectile_unit, "lua_projectile_end")
 
-	self._active = false
+	arg_8_0._active = false
 
-	self.locomotion_extension:stop()
+	arg_8_0.locomotion_extension:stop()
 
-	self._stop_impacts = true
+	arg_8_0._stop_impacts = true
 end
 
-PlayerProjectileHuskExtension.handle_timed_events = function (self, t)
-	if t >= self._life_time then
-		local unit = self._projectile_unit
-		local timed_data = self._timed_data
-		local aoe_data = timed_data.aoe
+function PlayerProjectileHuskExtension.handle_timed_events(arg_9_0, arg_9_1)
+	if arg_9_1 >= arg_9_0._life_time then
+		local var_9_0 = arg_9_0._projectile_unit
+		local var_9_1 = arg_9_0._timed_data
+		local var_9_2 = var_9_1.aoe
 
-		if aoe_data then
-			local position = POSITION_LOOKUP[unit]
+		if var_9_2 then
+			local var_9_3 = POSITION_LOOKUP[var_9_0]
 
-			self:do_aoe(aoe_data, position)
+			arg_9_0:do_aoe(var_9_2, var_9_3)
 
-			local grenade = timed_data.grenade
+			if var_9_1.grenade then
+				local var_9_4 = arg_9_0._owner_unit
+				local var_9_5 = ScriptUnit.has_extension(var_9_4, "buff_system")
+				local var_9_6 = Unit.local_rotation(var_9_0, 0)
 
-			if grenade then
-				local owner_unit = self._owner_unit
-				local owner_buff_extension = ScriptUnit.has_extension(owner_unit, "buff_system")
-				local rotation = Unit.local_rotation(unit, 0)
-
-				if owner_buff_extension then
-					owner_buff_extension:trigger_procs("on_grenade_exploded", timed_data, position, self._is_critical_strike, self.item_name, rotation, self.scale, self.power_level)
+				if var_9_5 then
+					var_9_5:trigger_procs("on_grenade_exploded", var_9_1, var_9_3, arg_9_0._is_critical_strike, arg_9_0.item_name, var_9_6, arg_9_0.scale, arg_9_0.power_level)
 				end
 			end
 		end
 
-		local sound_event = self._timed_data.life_time_activate_sound_stop_event
+		local var_9_7 = arg_9_0._timed_data.life_time_activate_sound_stop_event
 
-		if sound_event then
-			WwiseWorld.trigger_event(self._wwise_world, sound_event)
+		if var_9_7 then
+			WwiseWorld.trigger_event(arg_9_0._wwise_world, var_9_7)
 		end
 
-		self:_stop_by_life_time()
+		arg_9_0:_stop_by_life_time()
 	end
 
-	if self._charge_t and t >= self._charge_t then
-		self._charge_t = nil
-		self.is_charged = true
+	if arg_9_0._charge_t and arg_9_1 >= arg_9_0._charge_t then
+		arg_9_0._charge_t = nil
+		arg_9_0.is_charged = true
 
-		local flow_event_name = self._timed_data.charged_flow_event
+		local var_9_8 = arg_9_0._timed_data.charged_flow_event
 
-		Unit.flow_event(self._projectile_unit, flow_event_name)
-	end
-end
-
-PlayerProjectileHuskExtension.impact_level = function (self, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, level_index)
-	local impact_data = self._impact_data
-
-	self:hit_level_unit(impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, self._hit_units, level_index)
-	self:_on_impact()
-end
-
-PlayerProjectileHuskExtension._on_impact = function (self)
-	local timed_data = self._timed_data
-
-	if timed_data and timed_data.activate_life_time_on_impact then
-		local time = Managers.time:time("game")
-
-		self:_activate_life_time(time)
+		Unit.flow_event(arg_9_0._projectile_unit, var_9_8)
 	end
 end
 
-PlayerProjectileHuskExtension._activate_life_time = function (self, game_time)
-	local timed_data = self._timed_data
-	local sound_event = timed_data.life_time_activate_sound_start_event
+function PlayerProjectileHuskExtension.impact_level(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
+	local var_10_0 = arg_10_0._impact_data
 
-	if sound_event then
-		WwiseWorld.trigger_event(self._wwise_world, sound_event)
-	end
-
-	self._life_time = game_time + timed_data.life_time
+	arg_10_0:hit_level_unit(var_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_0._hit_units, arg_10_6)
+	arg_10_0:_on_impact()
 end
 
-PlayerProjectileHuskExtension.impact_dynamic = function (self, hit_unit, hit_position, hit_direction, hit_normal, hit_actor)
-	local impact_data = self._impact_data
-	local breed = Unit.get_data(hit_unit, "breed")
-	local has_ranged_boost, ranged_boost_curve_multiplier = false, 0
-	local ranged_boost_curve_multiplier = 0
+function PlayerProjectileHuskExtension._on_impact(arg_11_0)
+	local var_11_0 = arg_11_0._timed_data
 
-	if breed then
-		local is_player = breed.is_player
-		local is_enemy = DamageUtils.is_enemy(self._owner_unit, hit_unit)
+	if var_11_0 and var_11_0.activate_life_time_on_impact then
+		local var_11_1 = Managers.time:time("game")
 
-		if is_enemy then
-			self:hit_enemy(impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, breed, self._hit_units, ranged_boost_curve_multiplier)
-		elseif is_player then
-			self:hit_player(impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, self._hit_units, ranged_boost_curve_multiplier)
+		arg_11_0:_activate_life_time(var_11_1)
+	end
+end
+
+function PlayerProjectileHuskExtension._activate_life_time(arg_12_0, arg_12_1)
+	local var_12_0 = arg_12_0._timed_data
+	local var_12_1 = var_12_0.life_time_activate_sound_start_event
+
+	if var_12_1 then
+		WwiseWorld.trigger_event(arg_12_0._wwise_world, var_12_1)
+	end
+
+	arg_12_0._life_time = arg_12_1 + var_12_0.life_time
+end
+
+function PlayerProjectileHuskExtension.impact_dynamic(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+	local var_13_0 = arg_13_0._impact_data
+	local var_13_1 = Unit.get_data(arg_13_1, "breed")
+	local var_13_2 = false
+	local var_13_3 = 0
+	local var_13_4 = 0
+
+	if var_13_1 then
+		local var_13_5 = var_13_1.is_player
+
+		if DamageUtils.is_enemy(arg_13_0._owner_unit, arg_13_1) then
+			arg_13_0:hit_enemy(var_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, var_13_1, arg_13_0._hit_units, var_13_4)
+		elseif var_13_5 then
+			arg_13_0:hit_player(var_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_0._hit_units, var_13_4)
 		end
 	else
-		local network_manager = Managers.state.network
-		local go_id, is_level_unit = network_manager:game_object_or_level_id(hit_unit)
+		local var_13_6, var_13_7 = Managers.state.network:game_object_or_level_id(arg_13_1)
 
-		if is_level_unit then
-			local level_index
+		if var_13_7 then
+			local var_13_8
 
-			self:hit_level_unit(impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, self._hit_units, level_index, has_ranged_boost, ranged_boost_curve_multiplier)
-		elseif not is_level_unit then
-			self:hit_non_level_unit(impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, self._hit_units, ranged_boost_curve_multiplier)
+			arg_13_0:hit_level_unit(var_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_0._hit_units, var_13_8, var_13_2, var_13_4)
+		elseif not var_13_7 then
+			arg_13_0:hit_non_level_unit(var_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_0._hit_units, var_13_4)
 		end
 	end
 
-	self:_on_impact()
+	arg_13_0:_on_impact()
 end
 
-PlayerProjectileHuskExtension.hit_afro = function (self, breed, hit_actor)
-	local node = Actor.node(hit_actor)
-	local hit_zone = breed.hit_zones_lookup[node]
-	local hit_zone_name = hit_zone.name
+function PlayerProjectileHuskExtension.hit_afro(arg_14_0, arg_14_1, arg_14_2)
+	local var_14_0 = Actor.node(arg_14_2)
+	local var_14_1 = arg_14_1.hit_zones_lookup[var_14_0].name
 
-	return hit_zone_name == "afro", hit_zone_name
+	return var_14_1 == "afro", var_14_1
 end
 
-PlayerProjectileHuskExtension.hit_enemy = function (self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, breed, hit_units, ranged_boost_curve_multiplier)
-	if hit_actor == nil then
+function PlayerProjectileHuskExtension.hit_enemy(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8, arg_15_9)
+	if arg_15_6 == nil then
 		return
 	end
 
-	local hit_afro, hit_zone_name = self:hit_afro(breed, hit_actor)
+	local var_15_0, var_15_1 = arg_15_0:hit_afro(arg_15_7, arg_15_6)
 
-	if hit_afro then
+	if var_15_0 then
 		return
 	end
 
-	local damage_profile_name = impact_data.damage_profile or "default"
-	local damage_profile = DamageProfileTemplates[damage_profile_name]
-	local allow_link = true
-	local aoe_data = impact_data.aoe
-	local forced_penetration = false
+	local var_15_2 = arg_15_1.damage_profile or "default"
+	local var_15_3 = DamageProfileTemplates[var_15_2]
+	local var_15_4 = true
+	local var_15_5 = arg_15_1.aoe
+	local var_15_6 = false
 
-	if damage_profile then
-		allow_link, forced_penetration = self:hit_enemy_damage(damage_profile, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, breed, ranged_boost_curve_multiplier, hit_units)
+	if var_15_3 then
+		var_15_4, var_15_6 = arg_15_0:hit_enemy_damage(var_15_3, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_9, arg_15_8)
 	end
 
-	local grenade = impact_data.grenade
+	local var_15_7 = arg_15_1.grenade
 
-	if aoe_data and (grenade or self._amount_of_mass_hit >= self._max_mass) then
-		self:do_aoe(aoe_data, hit_position)
+	if var_15_5 and (var_15_7 or arg_15_0._amount_of_mass_hit >= arg_15_0._max_mass) then
+		arg_15_0:do_aoe(var_15_5, arg_15_3)
 
-		if grenade then
-			local owner_unit = self._owner_unit
-			local owner_buff_extension = ScriptUnit.has_extension(owner_unit, "buff_system")
+		if var_15_7 then
+			local var_15_8 = arg_15_0._owner_unit
+			local var_15_9 = ScriptUnit.has_extension(var_15_8, "buff_system")
 
-			if owner_buff_extension then
-				owner_buff_extension:trigger_procs("on_grenade_exploded", impact_data, hit_position, self._is_critical_strike, self.item_name, Unit.local_rotation(self._projectile_unit, 0), self.scale, self.power_level)
+			if var_15_9 then
+				var_15_9:trigger_procs("on_grenade_exploded", arg_15_1, arg_15_3, arg_15_0._is_critical_strike, arg_15_0.item_name, Unit.local_rotation(arg_15_0._projectile_unit, 0), arg_15_0.scale, arg_15_0.power_level)
 			end
 		end
 
-		self:stop(hit_unit, hit_zone_name)
+		arg_15_0:stop(arg_15_2, var_15_1)
 	end
 
-	if self._amount_of_mass_hit >= self._max_mass then
-		if self._num_additional_penetrations > 0 then
-			forced_penetration = true
+	if arg_15_0._amount_of_mass_hit >= arg_15_0._max_mass then
+		if arg_15_0._num_additional_penetrations > 0 then
+			var_15_6 = true
 		else
-			if allow_link then
-				self:_handle_linking(impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, self._did_damage, true)
+			if var_15_4 then
+				arg_15_0:_handle_linking(arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_0._did_damage, true)
 			end
 
-			self:stop(hit_unit, hit_zone_name)
+			arg_15_0:stop(arg_15_2, var_15_1)
 		end
 	end
 
-	if forced_penetration then
-		self._num_additional_penetrations = self._num_additional_penetrations - 1
+	if var_15_6 then
+		arg_15_0._num_additional_penetrations = arg_15_0._num_additional_penetrations - 1
 	end
 end
 
-PlayerProjectileHuskExtension.hit_enemy_damage = function (self, damage_profile, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, breed, ranged_boost_curve_multiplier, hit_units)
-	local owner = self._owner_player
-	local owner_unit = self._owner_unit
-	local action = self._current_action
-	local node = Actor.node(hit_actor)
-	local hit_zone = breed.hit_zones_lookup[node]
-	local hit_zone_name = action.projectile_info.forced_hitzone or hit_zone.name
-	local was_alive = HEALTH_ALIVE[hit_unit]
+function PlayerProjectileHuskExtension.hit_enemy_damage(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9)
+	local var_16_0 = arg_16_0._owner_player
+	local var_16_1 = arg_16_0._owner_unit
+	local var_16_2 = arg_16_0._current_action
+	local var_16_3 = Actor.node(arg_16_6)
+	local var_16_4 = arg_16_7.hit_zones_lookup[var_16_3]
+	local var_16_5 = var_16_2.projectile_info.forced_hitzone or var_16_4.name
+	local var_16_6 = HEALTH_ALIVE[arg_16_2]
 
-	if was_alive then
-		self._num_targets_hit = self._num_targets_hit + 1
-		hit_units[hit_unit] = true
+	if var_16_6 then
+		arg_16_0._num_targets_hit = arg_16_0._num_targets_hit + 1
+		arg_16_9[arg_16_2] = true
 	end
 
-	local target_settings = damage_profile.default_target
-	local is_critical_strike = self._is_critical_strike
-	local attack_template = DamageUtils.get_attack_template(target_settings.attack_template)
-	local shield_blocked = false
-	local forced_penetration = false
-	local trueflight_blocking = target_settings.trueflight_blocking
+	local var_16_7 = arg_16_1.default_target
+	local var_16_8 = arg_16_0._is_critical_strike
+	local var_16_9 = DamageUtils.get_attack_template(var_16_7.attack_template)
+	local var_16_10 = false
+	local var_16_11 = false
+	local var_16_12 = var_16_7.trueflight_blocking
 
-	if not action.ignore_shield_hit then
-		shield_blocked = AiUtils.attack_is_shield_blocked(hit_unit, owner_unit, trueflight_blocking, hit_direction)
+	if not var_16_2.ignore_shield_hit then
+		var_16_10 = AiUtils.attack_is_shield_blocked(arg_16_2, var_16_1, var_16_12, arg_16_4)
 	end
 
-	if was_alive then
-		local action_mass_override = action.hit_mass_count
-		local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-		local hit_mass_total = shield_blocked and (breed.hit_mass_counts_block and (breed.hit_mass_counts_block[difficulty_rank] or breed.hit_mass_counts_block[2]) or breed.hit_mass_count_block) or breed.hit_mass_counts and (breed.hit_mass_counts[difficulty_rank] or breed.hit_mass_counts[2]) or breed.hit_mass_count or 1
+	if var_16_6 then
+		local var_16_13 = var_16_2.hit_mass_count
+		local var_16_14 = Managers.state.difficulty:get_difficulty_rank()
+		local var_16_15 = var_16_10 and (arg_16_7.hit_mass_counts_block and (arg_16_7.hit_mass_counts_block[var_16_14] or arg_16_7.hit_mass_counts_block[2]) or arg_16_7.hit_mass_count_block) or arg_16_7.hit_mass_counts and (arg_16_7.hit_mass_counts[var_16_14] or arg_16_7.hit_mass_counts[2]) or arg_16_7.hit_mass_count or 1
 
-		if self.ignore_mass_and_armour then
-			hit_mass_total = 1
-		elseif action_mass_override and action_mass_override[breed.name] then
-			local mass_cost_multiplier = action_mass_override[breed.name]
-
-			hit_mass_total = hit_mass_total * (mass_cost_multiplier or 1)
+		if arg_16_0.ignore_mass_and_armour then
+			var_16_15 = 1
+		elseif var_16_13 and var_16_13[arg_16_7.name] then
+			var_16_15 = var_16_15 * (var_16_13[arg_16_7.name] or 1)
 		end
 
-		self._amount_of_mass_hit = self._amount_of_mass_hit + hit_mass_total
+		arg_16_0._amount_of_mass_hit = arg_16_0._amount_of_mass_hit + var_16_15
 	end
 
-	local actual_target_index = math.ceil(self._amount_of_mass_hit)
-	local hit_effect = action.hit_effect
-	local is_husk = not owner.local_player
-	local damage_sound = attack_template.sound_type
-	local enemy_type = breed.name
-	local hit_rotation = Quaternion.look(hit_normal)
-	local power_level = self.power_level
-	local damage_source = self.item_name
-	local predicted_damage, invulnerable = DamageUtils.calculate_damage(DamageOutput, hit_unit, owner_unit, hit_zone_name, power_level, BoostCurves[target_settings.boost_curve_type], ranged_boost_curve_multiplier, is_critical_strike, damage_profile, actual_target_index, nil, damage_source)
-	local no_damage = predicted_damage <= 0
+	local var_16_16 = math.ceil(arg_16_0._amount_of_mass_hit)
+	local var_16_17 = var_16_2.hit_effect
+	local var_16_18 = not var_16_0.local_player
+	local var_16_19 = var_16_9.sound_type
+	local var_16_20 = arg_16_7.name
+	local var_16_21 = Quaternion.look(arg_16_5)
+	local var_16_22 = arg_16_0.power_level
+	local var_16_23 = arg_16_0.item_name
+	local var_16_24, var_16_25 = DamageUtils.calculate_damage(DamageOutput, arg_16_2, var_16_1, var_16_5, var_16_22, BoostCurves[var_16_7.boost_curve_type], arg_16_8, var_16_8, arg_16_1, var_16_16, nil, var_16_23)
+	local var_16_26 = var_16_24 <= 0
 
-	if was_alive and no_damage then
-		self._did_damage = predicted_damage
+	if var_16_6 and var_16_26 then
+		arg_16_0._did_damage = var_16_24
 
-		if self._num_additional_penetrations > 0 then
-			forced_penetration = true
+		if arg_16_0._num_additional_penetrations > 0 then
+			var_16_11 = true
 		else
-			self._amount_of_mass_hit = self._max_mass
+			arg_16_0._amount_of_mass_hit = arg_16_0._max_mass
 
-			self:stop(hit_unit, hit_zone_name)
+			arg_16_0:stop(arg_16_2, var_16_5)
 		end
-	elseif was_alive and not action.ignore_armor and (breed.armor_category == 2 or breed.armor_category == 3 or shield_blocked) then
-		self._did_damage = predicted_damage
+	elseif var_16_6 and not var_16_2.ignore_armor and (arg_16_7.armor_category == 2 or arg_16_7.armor_category == 3 or var_16_10) then
+		arg_16_0._did_damage = var_16_24
 
-		if self._num_additional_penetrations > 0 then
-			forced_penetration = true
+		if arg_16_0._num_additional_penetrations > 0 then
+			var_16_11 = true
 		else
-			self._amount_of_mass_hit = self._max_mass
+			arg_16_0._amount_of_mass_hit = arg_16_0._max_mass
 
-			self:stop(hit_unit, hit_zone_name)
+			arg_16_0:stop(arg_16_2, var_16_5)
 		end
 	else
-		self._did_damage = predicted_damage
+		arg_16_0._did_damage = var_16_24
 
-		if hit_zone_name == "head" or hit_zone_name == "neck" then
-			self._did_damage = predicted_damage - 1
+		if var_16_5 == "head" or var_16_5 == "neck" then
+			arg_16_0._did_damage = var_16_24 - 1
 		end
 
-		EffectHelper.player_critical_hit(self._world, is_critical_strike, owner_unit, hit_unit, hit_position)
+		EffectHelper.player_critical_hit(arg_16_0._world, var_16_8, var_16_1, arg_16_2, arg_16_3)
 	end
 
-	if invulnerable then
-		hit_effect = "invulnerable"
+	if var_16_25 then
+		var_16_17 = "invulnerable"
 	end
 
-	if hit_effect then
-		EffectHelper.play_skinned_surface_material_effects(hit_effect, self._world, hit_unit, hit_position, hit_rotation, hit_normal, is_husk, enemy_type, damage_sound, no_damage, hit_zone_name, shield_blocked, breed)
+	if var_16_17 then
+		EffectHelper.play_skinned_surface_material_effects(var_16_17, arg_16_0._world, arg_16_2, arg_16_3, var_16_21, arg_16_5, var_16_18, var_16_20, var_16_19, var_16_26, var_16_5, var_16_10, arg_16_7)
 	end
 
-	return hit_zone_name ~= "ward", forced_penetration
+	return var_16_5 ~= "ward", var_16_11
 end
 
-PlayerProjectileHuskExtension.hit_player = function (self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, hit_units, ranged_boost_curve_multiplier)
-	if hit_actor == nil then
+function PlayerProjectileHuskExtension.hit_player(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8)
+	if arg_17_6 == nil then
 		return
 	end
 
-	local difficulty_settings = Managers.state.difficulty:get_difficulty_settings()
-	local hit = false
-	local forced_penetration = false
-	local owner_player = self._owner_player
-	local damage_profile_name = impact_data.damage_profile or "default"
-	local damage_profile = DamageProfileTemplates[damage_profile_name]
+	local var_17_0 = Managers.state.difficulty:get_difficulty_settings()
+	local var_17_1 = false
+	local var_17_2 = false
+	local var_17_3 = arg_17_0._owner_player
+	local var_17_4 = arg_17_1.damage_profile or "default"
+	local var_17_5 = DamageProfileTemplates[var_17_4]
 
-	if damage_profile and DamageUtils.allow_friendly_fire_ranged(difficulty_settings, owner_player) and hit_units[hit_unit] == nil then
-		self:hit_player_damage(damage_profile, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, ranged_boost_curve_multiplier, hit_units)
+	if var_17_5 and DamageUtils.allow_friendly_fire_ranged(var_17_0, var_17_3) and arg_17_7[arg_17_2] == nil then
+		arg_17_0:hit_player_damage(var_17_5, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_8, arg_17_7)
 
-		hit = true
+		var_17_1 = true
 	end
 
-	if hit then
-		local aoe_data = impact_data.aoe
+	if var_17_1 then
+		local var_17_6 = arg_17_1.aoe
 
-		if aoe_data and self._amount_of_mass_hit >= self._max_mass then
-			if self._num_additional_penetrations > 0 then
-				forced_penetration = true
+		if var_17_6 and arg_17_0._amount_of_mass_hit >= arg_17_0._max_mass then
+			if arg_17_0._num_additional_penetrations > 0 then
+				var_17_2 = true
 			else
-				self:do_aoe(aoe_data, hit_position)
+				arg_17_0:do_aoe(var_17_6, arg_17_3)
 
-				if impact_data.grenade then
-					local owner_unit = self._owner_unit
-					local owner_buff_extension = ScriptUnit.has_extension(owner_unit, "buff_system")
+				if arg_17_1.grenade then
+					local var_17_7 = arg_17_0._owner_unit
+					local var_17_8 = ScriptUnit.has_extension(var_17_7, "buff_system")
 
-					if owner_buff_extension then
-						owner_buff_extension:trigger_procs("on_grenade_exploded", impact_data, hit_position, self._is_critical_strike, self.item_name, Unit.local_rotation(self._projectile_unit, 0), self.scale, self.power_level)
+					if var_17_8 then
+						var_17_8:trigger_procs("on_grenade_exploded", arg_17_1, arg_17_3, arg_17_0._is_critical_strike, arg_17_0.item_name, Unit.local_rotation(arg_17_0._projectile_unit, 0), arg_17_0.scale, arg_17_0.power_level)
 					end
 				end
 
-				self:stop()
+				arg_17_0:stop()
 			end
 		end
 
-		if self._amount_of_mass_hit >= self._max_mass then
-			if self._num_additional_penetrations > 0 then
-				forced_penetration = true
+		if arg_17_0._amount_of_mass_hit >= arg_17_0._max_mass then
+			if arg_17_0._num_additional_penetrations > 0 then
+				var_17_2 = true
 			else
-				self:stop()
+				arg_17_0:stop()
 			end
 		end
 	end
 
-	if forced_penetration then
-		self._num_additional_penetrations = self._num_additional_penetrations - 1
+	if var_17_2 then
+		arg_17_0._num_additional_penetrations = arg_17_0._num_additional_penetrations - 1
 	end
 end
 
-PlayerProjectileHuskExtension.hit_player_damage = function (self, damage_profile, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, ranged_boost_curve_multiplier, hit_units)
-	local owner_unit = self._owner_unit
+function PlayerProjectileHuskExtension.hit_player_damage(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8)
+	local var_18_0 = arg_18_0._owner_unit
 
-	hit_units[hit_unit] = true
+	arg_18_8[arg_18_2] = true
+	arg_18_0._num_targets_hit = arg_18_0._num_targets_hit + 1
+	arg_18_0._amount_of_mass_hit = arg_18_0._amount_of_mass_hit + 1
 
-	local num_targets_hit = self._num_targets_hit + 1
+	local var_18_1 = math.ceil(arg_18_0._amount_of_mass_hit)
+	local var_18_2 = arg_18_1.default_target
+	local var_18_3 = arg_18_0._current_action.hit_effect
+	local var_18_4 = not arg_18_0._owner_player.local_player
+	local var_18_5 = Quaternion.look(arg_18_4, Vector3.up())
+	local var_18_6 = arg_18_0.power_level
+	local var_18_7 = "torso"
+	local var_18_8 = arg_18_0._is_critical_strike
+	local var_18_9 = arg_18_0.item_name
+	local var_18_10, var_18_11 = DamageUtils.calculate_damage(DamageOutput, arg_18_2, var_18_0, var_18_7, var_18_6, BoostCurves[var_18_2.boost_curve_type], arg_18_7, var_18_8, arg_18_1, var_18_1, nil, var_18_9)
 
-	self._num_targets_hit = num_targets_hit
-	self._amount_of_mass_hit = self._amount_of_mass_hit + 1
-
-	local actual_target_index = math.ceil(self._amount_of_mass_hit)
-	local target_settings = damage_profile.default_target
-	local action = self._current_action
-	local hit_effect = action.hit_effect
-	local owner = self._owner_player
-	local is_husk = not owner.local_player
-	local hit_rotation = Quaternion.look(hit_direction, Vector3.up())
-	local power_level = self.power_level
-	local hit_zone_name = "torso"
-	local is_critical_strike = self._is_critical_strike
-	local damage_source = self.item_name
-	local predicted_damage, invulnerable = DamageUtils.calculate_damage(DamageOutput, hit_unit, owner_unit, hit_zone_name, power_level, BoostCurves[target_settings.boost_curve_type], ranged_boost_curve_multiplier, is_critical_strike, damage_profile, actual_target_index, nil, damage_source)
-	local no_damage = predicted_damage <= 0
-
-	if no_damage then
-		self._did_damage = false
-		self._stop_impacts = true
+	if var_18_10 <= 0 then
+		arg_18_0._did_damage = false
+		arg_18_0._stop_impacts = true
 	else
-		self._did_damage = predicted_damage
+		arg_18_0._did_damage = var_18_10
 	end
 
-	if invulnerable then
-		hit_effect = "invulnerable"
+	if var_18_11 then
+		var_18_3 = "invulnerable"
 	end
 
-	if hit_effect then
-		EffectHelper.play_skinned_surface_material_effects(hit_effect, self._world, hit_unit, hit_position, hit_rotation, hit_normal, is_husk)
+	if var_18_3 then
+		EffectHelper.play_skinned_surface_material_effects(var_18_3, arg_18_0._world, arg_18_2, arg_18_3, var_18_5, arg_18_5, var_18_4)
 	end
 end
 
-PlayerProjectileHuskExtension.hit_level_unit = function (self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, hit_units, level_index, ranged_boost_curve_multiplier)
-	local has_health_extension = ScriptUnit.has_extension(hit_unit, "health_system")
-	local damage_profile_name = impact_data.damage_profile_prop or impact_data.damage_profile or "default"
-	local damage_profile = DamageProfileTemplates[damage_profile_name]
-	local allow_ranged_damage = Unit.get_data(hit_unit, "allow_ranged_damage") ~= false
+function PlayerProjectileHuskExtension.hit_level_unit(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9)
+	local var_19_0 = ScriptUnit.has_extension(arg_19_2, "health_system")
+	local var_19_1 = arg_19_1.damage_profile_prop or arg_19_1.damage_profile or "default"
+	local var_19_2 = DamageProfileTemplates[var_19_1]
+	local var_19_3 = Unit.get_data(arg_19_2, "allow_ranged_damage") ~= false
 
-	if damage_profile and (GameSettingsDevelopment.allow_ranged_attacks_to_damage_props or allow_ranged_damage) then
-		if has_health_extension and hit_units[hit_unit] == nil then
-			self:hit_damagable_prop(damage_profile, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, hit_units, level_index, ranged_boost_curve_multiplier)
-		elseif hit_unit and Unit.alive(hit_unit) and hit_actor then
-			local unit_set_flow_variable = Unit.set_flow_variable
+	if var_19_2 and (GameSettingsDevelopment.allow_ranged_attacks_to_damage_props or var_19_3) then
+		if var_19_0 and arg_19_7[arg_19_2] == nil then
+			arg_19_0:hit_damagable_prop(var_19_2, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9)
+		elseif arg_19_2 and Unit.alive(arg_19_2) and arg_19_6 then
+			local var_19_4 = Unit.set_flow_variable
 
-			unit_set_flow_variable(hit_unit, "hit_actor", hit_actor)
-			unit_set_flow_variable(hit_unit, "hit_direction", hit_direction)
-			unit_set_flow_variable(hit_unit, "hit_position", hit_position)
-			Unit.flow_event(hit_unit, "lua_simple_damage")
+			var_19_4(arg_19_2, "hit_actor", arg_19_6)
+			var_19_4(arg_19_2, "hit_direction", arg_19_4)
+			var_19_4(arg_19_2, "hit_position", arg_19_3)
+			Unit.flow_event(arg_19_2, "lua_simple_damage")
 		end
 	end
 
-	local action = self._current_action
-	local hit_effect = action.hit_effect
+	local var_19_5 = arg_19_0._current_action.hit_effect
 
-	if hit_effect then
-		local world = self._world
-		local hit_rotation = Quaternion.look(hit_direction)
-		local owner = self._owner_player
-		local is_husk = not owner.local_player
+	if var_19_5 then
+		local var_19_6 = arg_19_0._world
+		local var_19_7 = Quaternion.look(arg_19_4)
+		local var_19_8 = not arg_19_0._owner_player.local_player
 
-		EffectHelper.play_surface_material_effects(hit_effect, world, hit_unit, hit_position, hit_rotation, hit_normal, nil, is_husk, nil, hit_actor)
+		EffectHelper.play_surface_material_effects(var_19_5, var_19_6, arg_19_2, arg_19_3, var_19_7, arg_19_5, nil, var_19_8, nil, arg_19_6)
 	end
 
-	local bounce = impact_data.bounce_on_level_units
-	local owner_buff_extension = ScriptUnit.has_extension(self._owner_unit, "buff_system")
-	local buffed_bounces = 0
+	local var_19_9 = arg_19_1.bounce_on_level_units
+	local var_19_10 = ScriptUnit.has_extension(arg_19_0._owner_unit, "buff_system")
+	local var_19_11 = 0
 
-	if not impact_data.grenade and owner_buff_extension and not bounce then
-		bounce = owner_buff_extension:has_buff_perk("add_projectile_bounces")
-		buffed_bounces = owner_buff_extension:apply_buffs_to_value(buffed_bounces, "projectile_bounces")
+	if not arg_19_1.grenade and var_19_10 and not var_19_9 then
+		var_19_9 = var_19_10:has_buff_perk("add_projectile_bounces")
+		var_19_11 = var_19_10:apply_buffs_to_value(var_19_11, "projectile_bounces")
 	end
 
-	local finished_bouncing = false
+	local var_19_12 = false
 
-	if bounce then
-		local num_bounces = self._num_bounces
-		local max_bounces = impact_data.max_bounces or 1
+	if var_19_9 then
+		local var_19_13 = arg_19_0._num_bounces
+		local var_19_14 = (arg_19_1.max_bounces or 1) + var_19_11
+		local var_19_15 = arg_19_0.locomotion_extension
 
-		max_bounces = max_bounces + buffed_bounces
+		if var_19_15.bounce and var_19_13 < var_19_14 then
+			var_19_15:bounce(arg_19_3, arg_19_4, arg_19_5)
 
-		local locomotion_extension = self.locomotion_extension
-
-		if locomotion_extension.bounce and num_bounces < max_bounces then
-			locomotion_extension:bounce(hit_position, hit_direction, hit_normal)
-
-			self._num_bounces = self._num_bounces + 1
+			arg_19_0._num_bounces = arg_19_0._num_bounces + 1
 		else
-			finished_bouncing = true
+			var_19_12 = true
 		end
 	end
 
-	local aoe_data = impact_data.aoe
-	local aoe_on_bounce = impact_data.aoe_on_bounce
+	local var_19_16 = arg_19_1.aoe
+	local var_19_17 = arg_19_1.aoe_on_bounce
 
-	if aoe_data and (not bounce or finished_bouncing or aoe_on_bounce) then
-		self:do_aoe(aoe_data, hit_position)
+	if var_19_16 and (not var_19_9 or var_19_12 or var_19_17) then
+		arg_19_0:do_aoe(var_19_16, arg_19_3)
 
-		if impact_data.grenade and owner_buff_extension then
-			owner_buff_extension:trigger_procs("on_grenade_exploded", impact_data, hit_position, self._is_critical_strike, self.item_name, Unit.local_rotation(self._projectile_unit, 0), self.scale, self.power_level)
+		if arg_19_1.grenade and var_19_10 then
+			var_19_10:trigger_procs("on_grenade_exploded", arg_19_1, arg_19_3, arg_19_0._is_critical_strike, arg_19_0.item_name, Unit.local_rotation(arg_19_0._projectile_unit, 0), arg_19_0.scale, arg_19_0.power_level)
 		end
 	end
 
-	if bounce and not finished_bouncing then
+	if var_19_9 and not var_19_12 then
 		return
-	elseif hit_actor then
-		self:_handle_linking(impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor)
+	elseif arg_19_6 then
+		arg_19_0:_handle_linking(arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
 	end
 
-	self:stop()
+	arg_19_0:stop()
 end
 
-PlayerProjectileHuskExtension.hit_damagable_prop = function (self, damage_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, hit_units, level_index, ranged_boost_curve_multiplier)
-	hit_units[hit_unit] = true
+function PlayerProjectileHuskExtension.hit_damagable_prop(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7, arg_20_8, arg_20_9)
+	arg_20_7[arg_20_2] = true
 end
 
-PlayerProjectileHuskExtension.hit_non_level_unit = function (self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, hit_units, ranged_boost_curve_multiplier)
-	local damage_profile_name = impact_data.damage_profile_prop or impact_data.damage_profile or "default"
-	local damage_profile = DamageProfileTemplates[damage_profile_name]
-	local stop_impacts = false
+function PlayerProjectileHuskExtension.hit_non_level_unit(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8)
+	local var_21_0 = arg_21_1.damage_profile_prop or arg_21_1.damage_profile or "default"
+	local var_21_1 = DamageProfileTemplates[var_21_0]
+	local var_21_2 = false
 
-	if damage_profile then
-		if ScriptUnit.has_extension(hit_unit, "health_system") and hit_units[hit_unit] == nil then
-			self:hit_non_level_damagable_unit(damage_profile, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, hit_units, ranged_boost_curve_multiplier)
+	if var_21_1 then
+		if ScriptUnit.has_extension(arg_21_2, "health_system") and arg_21_7[arg_21_2] == nil then
+			arg_21_0:hit_non_level_damagable_unit(var_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8)
 
-			stop_impacts = true
-		elseif hit_unit and Unit.alive(hit_unit) and hit_actor then
-			local unit_set_flow_variable = Unit.set_flow_variable
+			var_21_2 = true
+		elseif arg_21_2 and Unit.alive(arg_21_2) and arg_21_6 then
+			local var_21_3 = Unit.set_flow_variable
 
-			unit_set_flow_variable(hit_unit, "hit_actor", hit_actor)
-			unit_set_flow_variable(hit_unit, "hit_direction", hit_direction)
-			unit_set_flow_variable(hit_unit, "hit_position", hit_position)
-			Unit.flow_event(hit_unit, "lua_simple_damage")
+			var_21_3(arg_21_2, "hit_actor", arg_21_6)
+			var_21_3(arg_21_2, "hit_direction", arg_21_4)
+			var_21_3(arg_21_2, "hit_position", arg_21_3)
+			Unit.flow_event(arg_21_2, "lua_simple_damage")
 		end
 	end
 
-	local aoe_data = impact_data.aoe
+	local var_21_4 = arg_21_1.aoe
 
-	if aoe_data then
-		self:do_aoe(aoe_data, hit_position)
+	if var_21_4 then
+		arg_21_0:do_aoe(var_21_4, arg_21_3)
 
-		if impact_data.grenade then
-			local owner_unit = self._owner_unit
-			local owner_buff_extension = ScriptUnit.has_extension(owner_unit, "buff_system")
+		if arg_21_1.grenade then
+			local var_21_5 = arg_21_0._owner_unit
+			local var_21_6 = ScriptUnit.has_extension(var_21_5, "buff_system")
 
-			if owner_buff_extension then
-				owner_buff_extension:trigger_procs("on_grenade_exploded", impact_data, hit_position, self._is_critical_strike, self.item_name, Unit.local_rotation(self._projectile_unit, 0), self.scale, self.power_level)
+			if var_21_6 then
+				var_21_6:trigger_procs("on_grenade_exploded", arg_21_1, arg_21_3, arg_21_0._is_critical_strike, arg_21_0.item_name, Unit.local_rotation(arg_21_0._projectile_unit, 0), arg_21_0.scale, arg_21_0.power_level)
 			end
 		end
 
-		stop_impacts = true
+		var_21_2 = true
 	end
 
-	if stop_impacts then
-		if self._num_additional_penetrations > 0 then
-			self._num_additional_penetrations = self._num_additional_penetrations - 1
+	if var_21_2 then
+		if arg_21_0._num_additional_penetrations > 0 then
+			arg_21_0._num_additional_penetrations = arg_21_0._num_additional_penetrations - 1
 		else
-			self:stop()
+			arg_21_0:stop()
 		end
 	end
 end
 
-PlayerProjectileHuskExtension.hit_non_level_damagable_unit = function (self, damage_profile, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, hit_units, ranged_boost_curve_multiplier)
-	hit_units[hit_unit] = true
+function PlayerProjectileHuskExtension.hit_non_level_damagable_unit(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8)
+	arg_22_7[arg_22_2] = true
 
-	local action = self._current_action
-	local hit_effect = action.hit_effect
+	local var_22_0 = arg_22_0._current_action.hit_effect
 
-	if hit_effect then
-		local world = self._world
-		local hit_rotation = Quaternion.look(hit_direction)
-		local owner = self._owner_player
-		local is_husk = not owner.local_player
+	if var_22_0 then
+		local var_22_1 = arg_22_0._world
+		local var_22_2 = Quaternion.look(arg_22_4)
+		local var_22_3 = not arg_22_0._owner_player.local_player
 
-		EffectHelper.play_surface_material_effects(hit_effect, world, hit_unit, hit_position, hit_rotation, hit_normal, nil, is_husk, nil, hit_actor)
+		EffectHelper.play_surface_material_effects(var_22_0, var_22_1, arg_22_2, arg_22_3, var_22_2, arg_22_5, nil, var_22_3, nil, arg_22_6)
 	end
 end
 
-PlayerProjectileHuskExtension._get_projectile_units_names = function (self, projectile_info)
-	local projectile_units_template = projectile_info.projectile_units_template
+function PlayerProjectileHuskExtension._get_projectile_units_names(arg_23_0, arg_23_1)
+	local var_23_0 = arg_23_1.projectile_units_template
 
-	projectile_units_template = projectile_info.use_weapon_skin and self._skin_projectile_units_template or projectile_units_template
+	var_23_0 = arg_23_1.use_weapon_skin and arg_23_0._skin_projectile_units_template or var_23_0
 
-	local projectile_units = ProjectileUnits[projectile_units_template]
-
-	return projectile_units
+	return ProjectileUnits[var_23_0]
 end
 
-PlayerProjectileHuskExtension._handle_linking = function (self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, damage_amount, hit_enemy)
-	if not impact_data.link and not impact_data.link_pickup then
+function PlayerProjectileHuskExtension._handle_linking(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6, arg_24_7, arg_24_8)
+	if not arg_24_1.link and not arg_24_1.link_pickup then
 		return
 	end
 
-	local allow_link = true
-	local unit_data_allow_link = Unit.get_data(hit_unit, "allow_link")
+	local var_24_0 = true
+	local var_24_1 = Unit.get_data(arg_24_2, "allow_link")
 
-	if unit_data_allow_link ~= nil then
-		allow_link = unit_data_allow_link
+	if var_24_1 ~= nil then
+		var_24_0 = var_24_1
 	end
 
-	if not allow_link then
+	if not var_24_0 then
 		return
 	end
 
-	local projectile_info = self.projectile_info
-	local projectile_units = self:_get_projectile_units_names(projectile_info)
-	local dummy_linker_unit_name = projectile_units and projectile_units.dummy_linker_unit_name
+	local var_24_2 = arg_24_0.projectile_info
+	local var_24_3 = arg_24_0:_get_projectile_units_names(var_24_2)
+	local var_24_4 = var_24_3 and var_24_3.dummy_linker_unit_name
 
-	if dummy_linker_unit_name then
-		local depth = impact_data.depth or 0.15
-		local depth_offset = impact_data.depth_offset or 0.15
+	if var_24_4 then
+		local var_24_5 = arg_24_1.depth or 0.15
+		local var_24_6 = arg_24_1.depth_offset or 0.15
 
-		if projectile_units.dummy_linker_broken_units then
-			local broken_chance = Math.random()
+		if var_24_3.dummy_linker_broken_units then
+			local var_24_7 = Math.random()
 
-			if damage_amount then
-				broken_chance = broken_chance * math.clamp(damage_amount / 2, 0.75, 1.25)
+			if arg_24_7 then
+				var_24_7 = var_24_7 * math.clamp(arg_24_7 / 2, 0.75, 1.25)
 			else
-				broken_chance = broken_chance * 2
+				var_24_7 = var_24_7 * 2
 			end
 
-			if broken_chance <= 0.5 then
-				local num_variations = #projectile_units.dummy_linker_broken_units
-				local random_pick = Math.random(1, num_variations)
+			if var_24_7 <= 0.5 then
+				local var_24_8 = #var_24_3.dummy_linker_broken_units
+				local var_24_9 = Math.random(1, var_24_8)
 
-				dummy_linker_unit_name = projectile_units.dummy_linker_broken_units[random_pick]
+				var_24_4 = var_24_3.dummy_linker_broken_units[var_24_9]
 
-				if random_pick == 1 then
-					depth = 0.05
-					depth_offset = 0.1
+				if var_24_9 == 1 then
+					var_24_5 = 0.05
+					var_24_6 = 0.1
 				else
-					depth_offset = 0.15
+					var_24_6 = 0.15
 				end
 			end
-		elseif damage_amount then
-			depth = depth * math.clamp(damage_amount, 1, 3)
+		elseif arg_24_7 then
+			var_24_5 = var_24_5 * math.clamp(arg_24_7, 1, 3)
 		end
 
-		depth = depth + depth_offset
+		local var_24_10 = var_24_5 + var_24_6
 
-		self:_link_projectile(hit_unit, hit_actor, dummy_linker_unit_name, hit_position, hit_direction, depth, impact_data.flow_event_on_init, impact_data.flow_event_on_walls)
+		arg_24_0:_link_projectile(arg_24_2, arg_24_6, var_24_4, arg_24_3, arg_24_4, var_24_10, arg_24_1.flow_event_on_init, arg_24_1.flow_event_on_walls)
 	end
 end
 
-PlayerProjectileHuskExtension._link_projectile = function (self, hit_unit, hit_actor, linker_unit_name, hit_position, hit_direction, depth, flow_event_on_init, flow_event_on_walls)
-	local is_packsworn_player = Managers.state.side:versus_is_dark_pact(hit_unit)
+function PlayerProjectileHuskExtension._link_projectile(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7, arg_25_8)
+	if Managers.state.side:versus_is_dark_pact(arg_25_1) then
+		local var_25_0 = Managers.player:unit_owner(arg_25_1)
 
-	if is_packsworn_player then
-		local hit_player = Managers.player:unit_owner(hit_unit)
-
-		if hit_player and hit_player.local_player and not hit_player.bot_player then
+		if var_25_0 and var_25_0.local_player and not var_25_0.bot_player then
 			return
 		end
 	end
 
-	local unit_spawner = Managers.state.unit_spawner
-	local projectile_linker_system = self.projectile_linker_system
-	local random_bank = Math.random() * 2.14 - 0.5
-	local normalized_direction = Vector3.normalize(hit_direction)
-	local depth_position_offset = normalized_direction * depth
-	local link_position = hit_position + depth_position_offset
-	local link_rotation = Quaternion.multiply(Quaternion.look(normalized_direction), Quaternion(Vector3.forward(), random_bank))
-	local projectile_dummy
+	local var_25_1 = Managers.state.unit_spawner
+	local var_25_2 = arg_25_0.projectile_linker_system
+	local var_25_3 = Math.random() * 2.14 - 0.5
+	local var_25_4 = Vector3.normalize(arg_25_5)
+	local var_25_5 = arg_25_4 + var_25_4 * arg_25_6
+	local var_25_6 = Quaternion.multiply(Quaternion.look(var_25_4), Quaternion(Vector3.forward(), var_25_3))
+	local var_25_7
 
-	if ScriptUnit.has_extension(hit_unit, "projectile_linker_system") then
-		local node_index = Actor.node(hit_actor)
+	if ScriptUnit.has_extension(arg_25_1, "projectile_linker_system") then
+		local var_25_8 = Actor.node(arg_25_2)
 
-		projectile_dummy = unit_spawner:spawn_local_unit(linker_unit_name, link_position, link_rotation)
+		var_25_7 = var_25_1:spawn_local_unit(arg_25_3, var_25_5, var_25_6)
 
-		local hit_node_rot = Unit.world_rotation(hit_unit, node_index)
-		local hit_node_pos = Unit.world_position(hit_unit, node_index)
-		local rel_pos = link_position - hit_node_pos
-		local offset_position = Vector3(Vector3.dot(Quaternion.right(hit_node_rot), rel_pos), Vector3.dot(Quaternion.forward(hit_node_rot), rel_pos), Vector3.dot(Quaternion.up(hit_node_rot), rel_pos))
+		local var_25_9 = Unit.world_rotation(arg_25_1, var_25_8)
+		local var_25_10 = var_25_5 - Unit.world_position(arg_25_1, var_25_8)
+		local var_25_11 = Vector3(Vector3.dot(Quaternion.right(var_25_9), var_25_10), Vector3.dot(Quaternion.forward(var_25_9), var_25_10), Vector3.dot(Quaternion.up(var_25_9), var_25_10))
 
-		if flow_event_on_init then
-			Unit.flow_event(projectile_dummy, flow_event_on_init)
+		if arg_25_7 then
+			Unit.flow_event(var_25_7, arg_25_7)
 		end
 
-		local linker_extension = ScriptUnit.extension(hit_unit, "projectile_linker_system")
-
-		linker_extension:link_projectile(projectile_dummy, offset_position, link_rotation, node_index)
-		projectile_linker_system:add_linked_projectile_reference(hit_unit, projectile_dummy)
+		ScriptUnit.extension(arg_25_1, "projectile_linker_system"):link_projectile(var_25_7, var_25_11, var_25_6, var_25_8)
+		var_25_2:add_linked_projectile_reference(arg_25_1, var_25_7)
 	else
-		projectile_dummy = unit_spawner:spawn_local_unit(linker_unit_name, link_position, link_rotation)
+		var_25_7 = var_25_1:spawn_local_unit(arg_25_3, var_25_5, var_25_6)
 
-		projectile_linker_system:add_linked_projectile_reference(hit_unit, projectile_dummy)
+		var_25_2:add_linked_projectile_reference(arg_25_1, var_25_7)
 
-		if flow_event_on_init then
-			Unit.flow_event(projectile_dummy, flow_event_on_init)
+		if arg_25_7 then
+			Unit.flow_event(var_25_7, arg_25_7)
 		end
 
-		if flow_event_on_walls then
-			Unit.flow_event(projectile_dummy, flow_event_on_walls)
+		if arg_25_8 then
+			Unit.flow_event(var_25_7, arg_25_8)
 		end
 	end
 
-	if self._material_settings then
-		GearUtils.apply_material_settings(projectile_dummy, self._material_settings)
-	end
-end
-
-PlayerProjectileHuskExtension.do_aoe = function (self, aoe_data, position)
-	local world = self._world
-	local unit = self._projectile_unit
-	local owner_unit = self._owner_unit
-	local item_name = self.item_name
-	local is_server = self._is_server
-	local source_attacker_unit = self._owner_unit
-
-	if aoe_data.explosion then
-		local rotation = Unit.local_rotation(unit, 0)
-		local scale = self.scale
-		local power_level = self.power_level
-		local is_husk = true
-
-		DamageUtils.create_explosion(world, owner_unit, position, rotation, aoe_data, scale, item_name, is_server, is_husk, unit, power_level, self._is_critical_strike, source_attacker_unit)
-	end
-
-	if is_server then
-		if aoe_data.aoe then
-			DamageUtils.create_aoe(world, owner_unit, position, item_name, aoe_data)
-		end
-
-		if aoe_data.taunt then
-			DamageUtils.create_taunt(world, owner_unit, unit, position, aoe_data)
-		end
+	if arg_25_0._material_settings_name then
+		GearUtils.apply_material_settings(var_25_7, arg_25_0._material_settings_name)
 	end
 end
 
-PlayerProjectileHuskExtension.trigger_external_event = function (self, event_name, network_sync)
-	local external_events = self.projectile_info.external_events
-	local event = external_events and external_events[event_name]
+function PlayerProjectileHuskExtension.do_aoe(arg_26_0, arg_26_1, arg_26_2)
+	local var_26_0 = arg_26_0._world
+	local var_26_1 = arg_26_0._projectile_unit
+	local var_26_2 = arg_26_0._owner_unit
+	local var_26_3 = arg_26_0.item_name
+	local var_26_4 = arg_26_0._is_server
+	local var_26_5 = arg_26_0._owner_unit
 
-	if event then
-		event(self)
+	if arg_26_1.explosion then
+		local var_26_6 = Unit.local_rotation(var_26_1, 0)
+		local var_26_7 = arg_26_0.scale
+		local var_26_8 = arg_26_0.power_level
+		local var_26_9 = true
+
+		DamageUtils.create_explosion(var_26_0, var_26_2, arg_26_2, var_26_6, arg_26_1, var_26_7, var_26_3, var_26_4, var_26_9, var_26_1, var_26_8, arg_26_0._is_critical_strike, var_26_5)
+	end
+
+	if var_26_4 then
+		if arg_26_1.aoe then
+			DamageUtils.create_aoe(var_26_0, var_26_2, arg_26_2, var_26_3, arg_26_1)
+		end
+
+		if arg_26_1.taunt then
+			DamageUtils.create_taunt(var_26_0, var_26_2, var_26_1, arg_26_2, arg_26_1)
+		end
+	end
+end
+
+function PlayerProjectileHuskExtension.trigger_external_event(arg_27_0, arg_27_1, arg_27_2)
+	local var_27_0 = arg_27_0.projectile_info.external_events
+	local var_27_1 = var_27_0 and var_27_0[arg_27_1]
+
+	if var_27_1 then
+		var_27_1(arg_27_0)
 	end
 end

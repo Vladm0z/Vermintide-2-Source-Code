@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/unit_extensions/generic/generic_character_state_machine_extension.lua
+-- chunkname: @scripts/unit_extensions/generic/generic_character_state_machine_extension.lua
 
 require("scripts/unit_extensions/generic/generic_state_machine")
 require("scripts/unit_extensions/default_player_unit/states/player_character_state_helper")
@@ -39,59 +39,59 @@ DLCUtils.dofile_list("character_states")
 
 GenericCharacterStateMachineExtension = class(GenericCharacterStateMachineExtension)
 
-GenericCharacterStateMachineExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self.world = extension_init_context.world
-	self.network_transmit = extension_init_context.network_transmit
-	self.unit_storage = extension_init_context.unit_storage
-	self.unit = unit
-	self.player = extension_init_data.player
-	self.start_state = extension_init_data.start_state
-	self.character_state_class_list = extension_init_data.character_state_class_list
-	self.nav_world = extension_init_data.nav_world
-	self.state_machine = GenericStateMachine:new(self.world, self.unit)
+function GenericCharacterStateMachineExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.world = arg_1_1.world
+	arg_1_0.network_transmit = arg_1_1.network_transmit
+	arg_1_0.unit_storage = arg_1_1.unit_storage
+	arg_1_0.unit = arg_1_2
+	arg_1_0.player = arg_1_3.player
+	arg_1_0.start_state = arg_1_3.start_state
+	arg_1_0.character_state_class_list = arg_1_3.character_state_class_list
+	arg_1_0.nav_world = arg_1_3.nav_world
+	arg_1_0.state_machine = GenericStateMachine:new(arg_1_0.world, arg_1_0.unit)
 end
 
-GenericCharacterStateMachineExtension.extensions_ready = function (self)
-	local character_state_init_context = {
-		world = self.world,
-		unit = self.unit,
-		player = self.player,
-		csm = self.state_machine,
-		network_transmit = self.network_transmit,
-		unit_storage = self.unit_storage,
-		nav_world = self.nav_world,
+function GenericCharacterStateMachineExtension.extensions_ready(arg_2_0)
+	local var_2_0 = {
+		world = arg_2_0.world,
+		unit = arg_2_0.unit,
+		player = arg_2_0.player,
+		csm = arg_2_0.state_machine,
+		network_transmit = arg_2_0.network_transmit,
+		unit_storage = arg_2_0.unit_storage,
+		nav_world = arg_2_0.nav_world
 	}
-	local states = {}
-	local character_state_class_list = self.character_state_class_list
+	local var_2_1 = {}
+	local var_2_2 = arg_2_0.character_state_class_list
 
-	for i = 1, #character_state_class_list do
-		local state_instance = character_state_class_list[i]:new(character_state_init_context)
-		local name = state_instance.name
+	for iter_2_0 = 1, #var_2_2 do
+		local var_2_3 = var_2_2[iter_2_0]:new(var_2_0)
+		local var_2_4 = var_2_3.name
 
-		assert(name and states[name] == nil)
+		assert(var_2_4 and var_2_1[var_2_4] == nil)
 
-		states[name] = state_instance
+		var_2_1[var_2_4] = var_2_3
 	end
 
-	local start_state = self.start_state
+	local var_2_5 = arg_2_0.start_state
 
-	self.state_machine:post_init(states, start_state)
+	arg_2_0.state_machine:post_init(var_2_1, var_2_5)
 end
 
-GenericCharacterStateMachineExtension.destroy = function (self)
-	local is_destroy = true
+function GenericCharacterStateMachineExtension.destroy(arg_3_0)
+	local var_3_0 = true
 
-	self.state_machine:exit_current_state(is_destroy)
+	arg_3_0.state_machine:exit_current_state(var_3_0)
 end
 
-GenericCharacterStateMachineExtension.reset = function (self)
-	self.state_machine:reset()
+function GenericCharacterStateMachineExtension.reset(arg_4_0)
+	arg_4_0.state_machine:reset()
 end
 
-GenericCharacterStateMachineExtension.update = function (self, unit, input, dt, context, t)
-	self.state_machine:update(unit, input, dt, context, t)
+function GenericCharacterStateMachineExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	arg_5_0.state_machine:update(arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 end
 
-GenericCharacterStateMachineExtension.current_state = function (self)
-	return self.state_machine:current_state()
+function GenericCharacterStateMachineExtension.current_state(arg_6_0)
+	return arg_6_0.state_machine:current_state()
 end

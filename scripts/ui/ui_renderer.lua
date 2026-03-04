@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/ui/ui_renderer.lua
+-- chunkname: @scripts/ui/ui_renderer.lua
 
 print("[UIRenderer] Loading")
 require("scripts/utils/strict_table")
@@ -11,246 +11,255 @@ script_data.ui_debug_scenegraph = script_data.ui_debug_scenegraph or Development
 script_data.ui_debug_pixeldistance = script_data.ui_debug_pixeldistance or Development.parameter("ui_debug_pixeldistance")
 script_data.ui_debug_draw_texture = script_data.ui_debug_draw_texture or Development.parameter("ui_debug_draw_texture")
 
-local Color, Vector2, Vector3 = Color, Vector2, Vector3
-local Gui_bitmap_uv, Gui_bitmap = Gui.bitmap_uv, Gui.bitmap
-local Gui_update_bitmap_uv, Gui_update_bitmap = Gui.update_bitmap_uv, Gui.update_bitmap
-local RESOLUTION_LOOKUP = RESOLUTION_LOOKUP
-local UIAtlasHelper = UIAtlasHelper
+local var_0_0 = Color
+local var_0_1 = Vector2
+local var_0_2 = Vector3
+local var_0_3 = Gui.bitmap_uv
+local var_0_4 = Gui.bitmap
+local var_0_5 = Gui.update_bitmap_uv
+local var_0_6 = Gui.update_bitmap
+local var_0_7 = RESOLUTION_LOOKUP
+local var_0_8 = UIAtlasHelper
 
 UIRenderer = {}
 
-local UIRenderer = UIRenderer
+local var_0_9 = UIRenderer
 
 SNAP_PIXEL_POSITIONS = true
 
-local relative_uvs = {
+local var_0_10 = {
 	{
 		0,
-		0,
+		0
 	},
 	{
 		1,
-		1,
-	},
+		1
+	}
 }
 
-local function get_relative_uvs(global_uv00, global_uv11, local_uvs)
-	local size_x = global_uv11[2] - global_uv00[2]
-	local size_y = global_uv11[1] - global_uv00[1]
+local function var_0_11(arg_1_0, arg_1_1, arg_1_2)
+	local var_1_0 = arg_1_1[2] - arg_1_0[2]
+	local var_1_1 = arg_1_1[1] - arg_1_0[1]
 
-	relative_uvs[1][2] = global_uv00[2] + size_x * local_uvs[1][2]
-	relative_uvs[2][2] = global_uv00[2] + size_x * local_uvs[2][2]
-	relative_uvs[1][1] = global_uv00[1] + size_y * local_uvs[1][1]
-	relative_uvs[2][1] = global_uv00[1] + size_y * local_uvs[2][1]
+	var_0_10[1][2] = arg_1_0[2] + var_1_0 * arg_1_2[1][2]
+	var_0_10[2][2] = arg_1_0[2] + var_1_0 * arg_1_2[2][2]
+	var_0_10[1][1] = arg_1_0[1] + var_1_1 * arg_1_2[1][1]
+	var_0_10[2][1] = arg_1_0[1] + var_1_1 * arg_1_2[2][1]
 
-	return relative_uvs
+	return var_0_10
 end
 
-local function snap_to_position(position)
-	local ui_scale = RESOLUTION_LOOKUP.scale
-
-	if ui_scale >= 1 then
-		position[1] = math.round(position[1])
-		position[2] = math.round(position[2])
+local function var_0_12(arg_2_0)
+	if var_0_7.scale >= 1 then
+		arg_2_0[1] = math.round(arg_2_0[1])
+		arg_2_0[2] = math.round(arg_2_0[2])
 	end
 
-	return position
+	return arg_2_0
 end
 
-UIRenderer.script_draw_bitmap = function (gui, render_settings, material, gui_position, gui_size, color, masked, saturated, retained_id, point_sample, viewport_mask)
-	local snap_pixel_positions = render_settings and render_settings.snap_pixel_positions
+function var_0_9.script_draw_bitmap(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8, arg_3_9, arg_3_10)
+	local var_3_0 = arg_3_1 and arg_3_1.snap_pixel_positions
 
-	if snap_pixel_positions == nil then
-		snap_pixel_positions = SNAP_PIXEL_POSITIONS
+	if var_3_0 == nil then
+		var_3_0 = SNAP_PIXEL_POSITIONS
 	end
 
-	if snap_pixel_positions then
-		gui_position = snap_to_position(gui_position)
+	if var_3_0 then
+		arg_3_3 = var_0_12(arg_3_3)
 	end
 
-	local alpha_multiplier = render_settings and render_settings.alpha_multiplier or 1
-	local texture_settings
+	local var_3_1 = arg_3_1 and arg_3_1.alpha_multiplier or 1
+	local var_3_2
 
-	if UIAtlasHelper.has_atlas_settings_by_texture_name(material) then
-		texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(material)
+	if var_0_8.has_atlas_settings_by_texture_name(arg_3_2) then
+		var_3_2 = var_0_8.get_atlas_settings_by_texture_name(arg_3_2)
 	end
 
-	if not color then
-		color = Color(255 * alpha_multiplier, 255, 255, 255)
+	if not arg_3_5 then
+		arg_3_5 = var_0_0(255 * var_3_1, 255, 255, 255)
 	else
-		color = Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
+		arg_3_5 = var_0_0(arg_3_5[1] * var_3_1, arg_3_5[2], arg_3_5[3], arg_3_5[4])
 	end
 
-	if texture_settings then
-		local uv00_table = texture_settings.uv00
-		local uv11_table = texture_settings.uv11
-		local uv00 = Vector2(uv00_table[1], uv00_table[2])
-		local uv11 = Vector2(uv11_table[1], uv11_table[2])
-		local material_name
+	if var_3_2 then
+		local var_3_3 = var_3_2.uv00
+		local var_3_4 = var_3_2.uv11
+		local var_3_5 = var_0_1(var_3_3[1], var_3_3[2])
+		local var_3_6 = var_0_1(var_3_4[1], var_3_4[2])
+		local var_3_7
 
-		if not masked then
-			if saturated then
-				material_name = texture_settings.saturated_material_name
-			elseif point_sample then
-				material_name = texture_settings.point_sample_material_name
-			elseif viewport_mask then
-				material_name = texture_settings.viewport_mask_material_name
+		if not arg_3_6 then
+			if arg_3_7 then
+				var_3_7 = var_3_2.saturated_material_name
+			elseif arg_3_9 then
+				var_3_7 = var_3_2.point_sample_material_name
+			elseif arg_3_10 then
+				var_3_7 = var_3_2.viewport_mask_material_name
 			else
-				material_name = texture_settings.material_name
+				var_3_7 = var_3_2.material_name
 			end
-		elseif saturated then
-			material_name = texture_settings.masked_saturated_material_name
-		elseif point_sample then
-			material_name = texture_settings.masked_point_sample_material_name
+		elseif arg_3_7 then
+			var_3_7 = var_3_2.masked_saturated_material_name
+		elseif arg_3_9 then
+			var_3_7 = var_3_2.masked_point_sample_material_name
 		else
-			material_name = texture_settings.masked_material_name
+			var_3_7 = var_3_2.masked_material_name
 		end
 
-		if retained_id then
-			Gui_update_bitmap_uv(gui, retained_id, material_name, uv00, uv11, gui_position, gui_size, color)
+		if arg_3_8 then
+			var_0_5(arg_3_0, arg_3_8, var_3_7, var_3_5, var_3_6, arg_3_3, arg_3_4, arg_3_5)
 		else
-			return Gui_bitmap_uv(gui, material_name, uv00, uv11, gui_position, gui_size, color)
+			return var_0_3(arg_3_0, var_3_7, var_3_5, var_3_6, arg_3_3, arg_3_4, arg_3_5)
 		end
-	elseif retained_id then
-		Gui_update_bitmap(gui, retained_id, material, gui_position, gui_size, color)
+	elseif arg_3_8 then
+		var_0_6(arg_3_0, arg_3_8, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	else
-		return Gui_bitmap(gui, material, gui_position, gui_size, color)
+		return var_0_4(arg_3_0, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	end
 end
 
-UIRenderer.script_draw_bitmap_uv = function (gui, render_settings, material, uvs, gui_position, gui_size, color, masked, saturated, retained_id, point_sample, viewport_mask)
-	local snap_pixel_positions = render_settings and render_settings.snap_pixel_positions
+function var_0_9.script_draw_bitmap_uv(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, arg_4_8, arg_4_9, arg_4_10, arg_4_11)
+	local var_4_0 = arg_4_1 and arg_4_1.snap_pixel_positions
 
-	if snap_pixel_positions == nil then
-		snap_pixel_positions = SNAP_PIXEL_POSITIONS
+	if var_4_0 == nil then
+		var_4_0 = SNAP_PIXEL_POSITIONS
 	end
 
-	if snap_pixel_positions then
-		gui_position = snap_to_position(gui_position)
+	if var_4_0 then
+		arg_4_4 = var_0_12(arg_4_4)
 	end
 
-	local alpha_multiplier = render_settings and render_settings.alpha_multiplier or 1
+	local var_4_1 = arg_4_1 and arg_4_1.alpha_multiplier or 1
 
-	color = color and Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
+	arg_4_6 = arg_4_6 and var_0_0(arg_4_6[1] * var_4_1, arg_4_6[2], arg_4_6[3], arg_4_6[4])
 
-	local texture_settings
+	local var_4_2
 
-	if UIAtlasHelper.has_atlas_settings_by_texture_name(material) then
-		texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(material)
+	if var_0_8.has_atlas_settings_by_texture_name(arg_4_2) then
+		var_4_2 = var_0_8.get_atlas_settings_by_texture_name(arg_4_2)
 	end
 
-	if texture_settings then
-		local new_uvs = get_relative_uvs(texture_settings.uv00, texture_settings.uv11, uvs)
-		local new_uvs1, new_uvs2 = new_uvs[1], new_uvs[2]
-		local uv00 = Vector2(new_uvs1[1], new_uvs1[2])
-		local uv11 = Vector2(new_uvs2[1], new_uvs2[2])
-		local material_name
+	if var_4_2 then
+		local var_4_3 = var_0_11(var_4_2.uv00, var_4_2.uv11, arg_4_3)
+		local var_4_4 = var_4_3[1]
+		local var_4_5 = var_4_3[2]
+		local var_4_6 = var_0_1(var_4_4[1], var_4_4[2])
+		local var_4_7 = var_0_1(var_4_5[1], var_4_5[2])
+		local var_4_8
 
-		if masked then
-			material_name = texture_settings.masked_material_name
-		elseif saturated then
-			material_name = texture_settings.saturated_material_name
-		elseif viewport_mask then
-			material_name = texture_settings.viewport_mask_material_name
+		if arg_4_7 then
+			var_4_8 = var_4_2.masked_material_name
+		elseif arg_4_8 then
+			var_4_8 = var_4_2.saturated_material_name
+		elseif arg_4_11 then
+			var_4_8 = var_4_2.viewport_mask_material_name
 		else
-			material_name = texture_settings.material_name
+			var_4_8 = var_4_2.material_name
 		end
 
-		if retained_id then
-			Gui_update_bitmap_uv(gui, retained_id, material_name, uv00, uv11, gui_position, gui_size, color)
+		if arg_4_9 then
+			var_0_5(arg_4_0, arg_4_9, var_4_8, var_4_6, var_4_7, arg_4_4, arg_4_5, arg_4_6)
 		else
-			return Gui_bitmap_uv(gui, material_name, uv00, uv11, gui_position, gui_size, color)
+			return var_0_3(arg_4_0, var_4_8, var_4_6, var_4_7, arg_4_4, arg_4_5, arg_4_6)
 		end
 	else
-		local uv00 = uvs[1]
-		local uv11 = uvs[2]
+		local var_4_9 = arg_4_3[1]
+		local var_4_10 = arg_4_3[2]
 
-		if retained_id then
-			Gui_update_bitmap_uv(gui, retained_id, material, Vector2(uv00[1], uv00[2]), Vector2(uv11[1], uv11[2]), gui_position, gui_size, color)
+		if arg_4_9 then
+			var_0_5(arg_4_0, arg_4_9, arg_4_2, var_0_1(var_4_9[1], var_4_9[2]), var_0_1(var_4_10[1], var_4_10[2]), arg_4_4, arg_4_5, arg_4_6)
 		else
-			return Gui_bitmap_uv(gui, material, Vector2(uv00[1], uv00[2]), Vector2(uv11[1], uv11[2]), gui_position, gui_size, color)
+			return var_0_3(arg_4_0, arg_4_2, var_0_1(var_4_9[1], var_4_9[2]), var_0_1(var_4_10[1], var_4_10[2]), arg_4_4, arg_4_5, arg_4_6)
 		end
 	end
 end
 
-local Gui_update_bitmap_3d_uv, Gui_bitmap_3d_uv, Gui_update_bitmap_3d, Gui_bitmap_3d = Gui.update_bitmap_3d_uv, Gui.bitmap_3d_uv, Gui.update_bitmap_3d, Gui.bitmap_3d
+local var_0_13 = Gui.update_bitmap_3d_uv
+local var_0_14 = Gui.bitmap_3d_uv
+local var_0_15 = Gui.update_bitmap_3d
+local var_0_16 = Gui.bitmap_3d
 
-UIRenderer.script_draw_bitmap_3d = function (gui, render_settings, material, tm, gui_layer, gui_size, color, optional_uvs, masked, retained_id)
-	local alpha_multiplier = render_settings and render_settings.alpha_multiplier or 1
+function var_0_9.script_draw_bitmap_3d(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9)
+	local var_5_0 = arg_5_1 and arg_5_1.alpha_multiplier or 1
 
-	color = color and Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
+	arg_5_6 = arg_5_6 and var_0_0(arg_5_6[1] * var_5_0, arg_5_6[2], arg_5_6[3], arg_5_6[4])
 
-	local texture_settings
+	local var_5_1
 
-	if UIAtlasHelper.has_atlas_settings_by_texture_name(material) then
-		texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(material)
+	if var_0_8.has_atlas_settings_by_texture_name(arg_5_2) then
+		var_5_1 = var_0_8.get_atlas_settings_by_texture_name(arg_5_2)
 	end
 
-	if texture_settings then
-		local material_name
+	if var_5_1 then
+		local var_5_2
 
-		if masked then
-			material_name = texture_settings.masked_material_name
+		if arg_5_8 then
+			var_5_2 = var_5_1.masked_material_name
 		else
-			material_name = texture_settings.material_name
+			var_5_2 = var_5_1.material_name
 		end
 
-		local uv00, uv11
+		local var_5_3
+		local var_5_4
 
-		if optional_uvs then
-			local new_uvs = get_relative_uvs(texture_settings.uv00, texture_settings.uv11, optional_uvs)
-			local new_uvs1, new_uvs2 = new_uvs[1], new_uvs[2]
+		if arg_5_7 then
+			local var_5_5 = var_0_11(var_5_1.uv00, var_5_1.uv11, arg_5_7)
+			local var_5_6 = var_5_5[1]
+			local var_5_7 = var_5_5[2]
 
-			uv00 = Vector2(new_uvs1[1], new_uvs1[2])
-			uv11 = Vector2(new_uvs2[1], new_uvs2[2])
+			var_5_3 = var_0_1(var_5_6[1], var_5_6[2])
+			var_5_4 = var_0_1(var_5_7[1], var_5_7[2])
 		else
-			uv00, uv11 = texture_settings.uv00, texture_settings.uv11
+			var_5_3, var_5_4 = var_5_1.uv00, var_5_1.uv11
 		end
 
-		if retained_id then
-			return Gui_update_bitmap_3d_uv(gui, retained_id, material_name, Vector2(uv00[1], uv00[2]), Vector2(uv11[1], uv11[2]), tm, Vector3.zero(), gui_layer, gui_size, color)
+		if arg_5_9 then
+			return var_0_13(arg_5_0, arg_5_9, var_5_2, var_0_1(var_5_3[1], var_5_3[2]), var_0_1(var_5_4[1], var_5_4[2]), arg_5_3, var_0_2.zero(), arg_5_4, arg_5_5, arg_5_6)
 		else
-			return Gui_bitmap_3d_uv(gui, material_name, Vector2(uv00[1], uv00[2]), Vector2(uv11[1], uv11[2]), tm, Vector3.zero(), gui_layer, gui_size, color)
+			return var_0_14(arg_5_0, var_5_2, var_0_1(var_5_3[1], var_5_3[2]), var_0_1(var_5_4[1], var_5_4[2]), arg_5_3, var_0_2.zero(), arg_5_4, arg_5_5, arg_5_6)
 		end
-	elseif optional_uvs then
-		local new_uvs1, new_uvs2 = optional_uvs[1], optional_uvs[2]
-		local uv00, uv11
+	elseif arg_5_7 then
+		local var_5_8 = arg_5_7[1]
+		local var_5_9 = arg_5_7[2]
+		local var_5_10
+		local var_5_11
+		local var_5_12 = var_0_1(var_5_8[1], var_5_8[2])
+		local var_5_13 = var_0_1(var_5_9[1], var_5_9[2])
 
-		uv00 = Vector2(new_uvs1[1], new_uvs1[2])
-		uv11 = Vector2(new_uvs2[1], new_uvs2[2])
-
-		if retained_id then
-			return Gui_update_bitmap_3d_uv(gui, retained_id, material, Vector2(uv00[1], uv00[2]), Vector2(uv11[1], uv11[2]), tm, Vector3.zero(), gui_layer, gui_size, color)
+		if arg_5_9 then
+			return var_0_13(arg_5_0, arg_5_9, arg_5_2, var_0_1(var_5_12[1], var_5_12[2]), var_0_1(var_5_13[1], var_5_13[2]), arg_5_3, var_0_2.zero(), arg_5_4, arg_5_5, arg_5_6)
 		else
-			return Gui_bitmap_3d_uv(gui, material, Vector2(uv00[1], uv00[2]), Vector2(uv11[1], uv11[2]), tm, Vector3.zero(), gui_layer, gui_size, color)
+			return var_0_14(arg_5_0, arg_5_2, var_0_1(var_5_12[1], var_5_12[2]), var_0_1(var_5_13[1], var_5_13[2]), arg_5_3, var_0_2.zero(), arg_5_4, arg_5_5, arg_5_6)
 		end
-	elseif retained_id then
-		return Gui_update_bitmap_3d(gui, retained_id, material, tm, Vector3.zero(), gui_layer, gui_size, color)
+	elseif arg_5_9 then
+		return var_0_15(arg_5_0, arg_5_9, arg_5_2, arg_5_3, var_0_2.zero(), arg_5_4, arg_5_5, arg_5_6)
 	else
-		return Gui_bitmap_3d(gui, material, tm, Vector3.zero(), gui_layer, gui_size, color)
+		return var_0_16(arg_5_0, arg_5_2, arg_5_3, var_0_2.zero(), arg_5_4, arg_5_5, arg_5_6)
 	end
 end
 
-UIRenderer._injected_material_sets = {}
+var_0_9._injected_material_sets = {}
 
-local function inject_materials(i, ...)
-	local material = UIRenderer._injected_material_sets[i]
+local function var_0_17(arg_6_0, ...)
+	local var_6_0 = var_0_9._injected_material_sets[arg_6_0]
 
-	if material then
-		return "material", material, inject_materials(i + 1, ...)
+	if var_6_0 then
+		return "material", var_6_0, var_0_17(arg_6_0 + 1, ...)
 	end
 
 	return ...
 end
 
-UIRenderer.create = function (world, ...)
-	local gui = World.create_screen_gui(world, "immediate", inject_materials(1, ...))
-	local gui_retained = World.create_screen_gui(world, inject_materials(1, ...))
+function var_0_9.create(arg_7_0, ...)
+	local var_7_0 = World.create_screen_gui(arg_7_0, "immediate", var_0_17(1, ...))
+	local var_7_1 = World.create_screen_gui(arg_7_0, var_0_17(1, ...))
 
-	return UIRenderer.create_ui_renderer(world, gui, gui_retained)
+	return var_0_9.create_ui_renderer(arg_7_0, var_7_0, var_7_1)
 end
 
-local UI_RENDERER_INTERFACE = table.set({
+local var_0_18 = table.set({
 	"gui",
 	"gui_retained",
 	"ui_scenegraph",
@@ -261,1653 +270,1637 @@ local UI_RENDERER_INTERFACE = table.set({
 	"world",
 	"wwise_world",
 	"render_settings",
-	"debug_startpoint",
+	"debug_startpoint"
 })
 
-UIRenderer.create_ui_renderer = function (world, gui, gui_retained)
+function var_0_9.create_ui_renderer(arg_8_0, arg_8_1, arg_8_2)
 	return table.make_strict({
-		gui = gui,
-		gui_retained = gui_retained,
+		gui = arg_8_1,
+		gui_retained = arg_8_2,
 		scenegraph_queue = {},
 		video_players = {},
-		world = world,
-		wwise_world = Managers.world:wwise_world(world),
-	}, UI_RENDERER_INTERFACE)
+		world = arg_8_0,
+		wwise_world = Managers.world:wwise_world(arg_8_0)
+	}, var_0_18)
 end
 
-UIRenderer.create_video_player = function (self, reference_name, world, resource, set_loop)
+function var_0_9.create_video_player(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	if script_data.disable_video_player then
 		return
 	end
 
-	local video_players = self.video_players
+	local var_9_0 = arg_9_0.video_players
 
-	assert(not video_players[reference_name])
+	assert(not var_9_0[arg_9_1])
 
-	local video_world = world or self.world
-	local video_player = World.create_video_player(video_world, resource, set_loop)
+	local var_9_1 = arg_9_2 or arg_9_0.world
+	local var_9_2 = World.create_video_player(var_9_1, arg_9_3, arg_9_4)
 
-	video_players[reference_name] = video_player
+	var_9_0[arg_9_1] = var_9_2
 
-	if set_loop == false then
-		VideoPlayer.set_loop(video_player, false)
+	if arg_9_4 == false then
+		VideoPlayer.set_loop(var_9_2, false)
 	end
 end
 
-UIRenderer.destroy_video_player = function (self, reference_name, world)
+function var_0_9.destroy_video_player(arg_10_0, arg_10_1, arg_10_2)
 	if script_data.disable_video_player then
 		return
 	end
 
-	local video_players = self.video_players
-	local video_player = video_players[reference_name]
+	local var_10_0 = arg_10_0.video_players
+	local var_10_1 = var_10_0[arg_10_1]
 
-	assert(video_player)
-	World.destroy_video_player(world or self.world, video_player)
+	assert(var_10_1)
+	World.destroy_video_player(arg_10_2 or arg_10_0.world, var_10_1)
 
-	video_players[reference_name] = nil
+	var_10_0[arg_10_1] = nil
 end
 
-UIRenderer.destroy = function (self, world)
-	local video_players = self.video_players
+function var_0_9.destroy(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_0.video_players
 
-	for reference_name, video_player in pairs(video_players) do
-		World.destroy_video_player(world or self.world, video_player)
+	for iter_11_0, iter_11_1 in pairs(var_11_0) do
+		World.destroy_video_player(arg_11_1 or arg_11_0.world, iter_11_1)
 
-		video_players[reference_name] = nil
+		var_11_0[iter_11_0] = nil
 	end
 
-	world = world or self.world
+	arg_11_1 = arg_11_1 or arg_11_0.world
 
-	World.destroy_gui(world, self.gui)
-	World.destroy_gui(world, self.gui_retained)
+	World.destroy_gui(arg_11_1, arg_11_0.gui)
+	World.destroy_gui(arg_11_1, arg_11_0.gui_retained)
 end
 
-UIRenderer.clear_scenegraph_queue = function (self)
-	self.ui_scenegraph = nil
+function var_0_9.clear_scenegraph_queue(arg_12_0)
+	arg_12_0.ui_scenegraph = nil
 
-	table.clear(self.scenegraph_queue)
+	table.clear(arg_12_0.scenegraph_queue)
 end
 
-UIRenderer.begin_pass = function (self, ui_scenegraph, input_service, dt, parent_scenegraph_id, render_settings)
-	if self.ui_scenegraph then
-		local old_scenegraph = self.ui_scenegraph
+function var_0_9.begin_pass(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+	if arg_13_0.ui_scenegraph then
+		local var_13_0 = arg_13_0.ui_scenegraph
 
-		self.scenegraph_queue[#self.scenegraph_queue + 1] = old_scenegraph
-		self.ui_scenegraph = ui_scenegraph
+		arg_13_0.scenegraph_queue[#arg_13_0.scenegraph_queue + 1] = var_13_0
+		arg_13_0.ui_scenegraph = arg_13_1
 
-		assert(parent_scenegraph_id, "Must provide parent scenegraph id when building multiple depth passes.")
-		UISceneGraph.update_scenegraph(ui_scenegraph, old_scenegraph, parent_scenegraph_id)
+		assert(arg_13_4, "Must provide parent scenegraph id when building multiple depth passes.")
+		UISceneGraph.update_scenegraph(arg_13_1, var_13_0, arg_13_4)
 	else
-		self.ui_scenegraph = ui_scenegraph
+		arg_13_0.ui_scenegraph = arg_13_1
 
-		UISceneGraph.update_scenegraph(ui_scenegraph)
+		UISceneGraph.update_scenegraph(arg_13_1)
 	end
 
-	self.ui_scenegraph = ui_scenegraph
-	self.input_service = input_service
-	self.dt = dt
-	self.render_settings = render_settings
+	arg_13_0.ui_scenegraph = arg_13_1
+	arg_13_0.input_service = arg_13_2
+	arg_13_0.dt = arg_13_3
+	arg_13_0.render_settings = arg_13_5
 end
 
-UIRenderer.end_pass = function (self)
-	self.render_settings = nil
+function var_0_9.end_pass(arg_14_0)
+	arg_14_0.render_settings = nil
 
-	local queue = self.scenegraph_queue
-	local n_queue = #queue
+	local var_14_0 = arg_14_0.scenegraph_queue
+	local var_14_1 = #var_14_0
 
-	if n_queue > 0 then
-		self.ui_scenegraph = queue[n_queue]
-		queue[n_queue] = nil
+	if var_14_1 > 0 then
+		arg_14_0.ui_scenegraph = var_14_0[var_14_1]
+		var_14_0[var_14_1] = nil
 	else
-		self.ui_scenegraph = nil
+		arg_14_0.ui_scenegraph = nil
 	end
 end
 
-local DUMMY = {
-	alpha_multiplier = 1,
+local var_0_19 = {
+	alpha_multiplier = 1
 }
 
-UIRenderer.draw_all_widgets = function (self, widget_list)
-	local render_settings = self.render_settings or DUMMY
-	local base_alpha_multiplier = render_settings.alpha_multiplier or 1
-	local draw_widget = UIRenderer.draw_widget
+function var_0_9.draw_all_widgets(arg_15_0, arg_15_1)
+	local var_15_0 = arg_15_0.render_settings or var_0_19
+	local var_15_1 = var_15_0.alpha_multiplier or 1
+	local var_15_2 = var_0_9.draw_widget
 
-	for _, widget in pairs(widget_list) do
-		render_settings.alpha_multiplier = (widget.content.alpha_multiplier or 1) * base_alpha_multiplier
+	for iter_15_0, iter_15_1 in pairs(arg_15_1) do
+		var_15_0.alpha_multiplier = (iter_15_1.content.alpha_multiplier or 1) * var_15_1
 
-		draw_widget(self, widget)
+		var_15_2(arg_15_0, iter_15_1)
 	end
 
-	render_settings.alpha_multiplier = base_alpha_multiplier
+	var_15_0.alpha_multiplier = var_15_1
 end
 
-local Profiler_start, Profiler_stop = Profiler.start, Profiler.stop
+local var_0_20 = Profiler.start
+local var_0_21 = Profiler.stop
 
-UIRenderer.draw_widget = function (self, widget)
-	local ui_animations = widget.animations
+function var_0_9.draw_widget(arg_16_0, arg_16_1)
+	local var_16_0 = arg_16_1.animations
 
-	if next(ui_animations) then
-		for ui_animation in pairs(ui_animations) do
-			UIAnimation.update(ui_animation, self.dt)
+	if next(var_16_0) then
+		for iter_16_0 in pairs(var_16_0) do
+			UIAnimation.update(iter_16_0, arg_16_0.dt)
 
-			if UIAnimation.completed(ui_animation) then
-				ui_animations[ui_animation] = nil
+			if UIAnimation.completed(iter_16_0) then
+				var_16_0[iter_16_0] = nil
 			end
 		end
 	end
 
-	local UIPasses = UIPasses
-	local UISceneGraph_get_size_scaled = UISceneGraph.get_size_scaled
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self.input_service
-	local dt = self.dt
-	local scenegraph_id = widget.scenegraph_id
-	local world_pos = ui_scenegraph[scenegraph_id].world_position
-	local offset = widget.offset or UISceneGraph.ZERO_VECTOR3
-	local pos_x = world_pos[1] + offset[1]
-	local pos_y = world_pos[2] + offset[2]
-	local pos_z = world_pos[3] + offset[3]
-	local widget_content = widget.content
-	local widget_style = widget.style
-	local size = UISceneGraph_get_size_scaled(ui_scenegraph, scenegraph_id)
-	local widget_visible = true
-	local input_manager = Managers.input
+	local var_16_1 = UIPasses
+	local var_16_2 = UISceneGraph.get_size_scaled
+	local var_16_3 = arg_16_0.ui_scenegraph
+	local var_16_4 = arg_16_0.input_service
+	local var_16_5 = arg_16_0.dt
+	local var_16_6 = arg_16_1.scenegraph_id
+	local var_16_7 = var_16_3[var_16_6].world_position
+	local var_16_8 = arg_16_1.offset or UISceneGraph.ZERO_VECTOR3
+	local var_16_9 = var_16_7[1] + var_16_8[1]
+	local var_16_10 = var_16_7[2] + var_16_8[2]
+	local var_16_11 = var_16_7[3] + var_16_8[3]
+	local var_16_12 = arg_16_1.content
+	local var_16_13 = arg_16_1.style
+	local var_16_14 = var_16_2(var_16_3, var_16_6)
+	local var_16_15 = true
+	local var_16_16 = Managers.input
 
-	if input_manager then
-		local gamepad_active = input_manager:is_device_active("gamepad")
+	if var_16_16 then
+		local var_16_17 = var_16_16:is_device_active("gamepad")
 
-		widget_content.is_gamepad_active = gamepad_active
+		var_16_12.is_gamepad_active = var_16_17
 
-		if widget_content.disable_with_gamepad then
-			widget_visible = not gamepad_active
+		if var_16_12.disable_with_gamepad then
+			var_16_15 = not var_16_17
 		end
 	end
 
-	local widget_element = widget.element
-	local widget_dirty = widget_element.dirty
-	local passes = widget_element.passes
-	local pass_datas = widget_element.pass_data
+	local var_16_18 = arg_16_1.element
+	local var_16_19 = var_16_18.dirty
+	local var_16_20 = var_16_18.passes
+	local var_16_21 = var_16_18.pass_data
 
-	for i = 1, #passes do
-		do
-			local pass = passes[i]
-			local pass_type = pass.pass_type
-			local visible = widget_visible
+	for iter_16_1 = 1, #var_16_20 do
+		local var_16_22 = var_16_20[iter_16_1]
+		local var_16_23 = var_16_22.pass_type
+		local var_16_24 = var_16_15
 
-			if widget_content.visible == false then
-				visible = false
-			end
+		if var_16_12.visible == false then
+			var_16_24 = false
+		end
 
-			local pass_content = widget_content
+		local var_16_25 = var_16_12
+		local var_16_26 = var_16_22.content_id
 
-			do
-				local content_id = pass.content_id
+		if var_16_26 then
+			var_16_25 = var_16_12[var_16_26]
 
-				if content_id then
-					pass_content = widget_content[content_id]
+			if not var_16_25 then
+				var_16_25 = var_16_12
+			else
+				var_16_25.parent = var_16_12
 
-					if not pass_content then
-						pass_content = widget_content
-					else
-						pass_content.parent = widget_content
-
-						if pass_content.visible == false then
-							visible = false
-						end
-					end
+				if var_16_25.visible == false then
+					var_16_24 = false
 				end
-			end
-
-			local pass_style = widget_style
-
-			do
-				local style_id = pass.style_id
-
-				if style_id then
-					pass_style = widget_style[style_id]
-
-					if pass_style then
-						pass_style.parent = widget_style
-					else
-						pass_style = widget_style
-					end
-				end
-			end
-
-			if visible then
-				do
-					local content_check_function = pass.content_check_function
-
-					if content_check_function then
-						visible = not not content_check_function(pass_content, pass_style)
-					end
-				end
-
-				if visible then
-					local content_change_function = pass.content_change_function
-
-					if content_change_function then
-						content_change_function(pass_content, pass_style, ui_animations, dt, self.render_settings)
-					end
-				end
-			end
-
-			local ui_pass = UIPasses[pass_type]
-			local pass_data = pass_datas[i]
-
-			if ui_pass.update then
-				ui_pass.update(self, pass_data, ui_scenegraph, pass, pass_style, pass_content, input_service, dt, visible)
-			end
-
-			if pass.retained_mode then
-				if visible == not pass_data.visible then
-					pass_data.visible = visible
-
-					if visible then
-						pass_data.dirty = true
-					else
-						ui_pass.destroy(self, pass_data, pass)
-
-						goto label_1_0
-					end
-				end
-
-				if not widget_dirty and not pass_data.dirty then
-					goto label_1_0
-				end
-			end
-
-			if visible then
-				local pass_size = size
-				local pass_pos_x, pass_pos_y, pass_pos_z = pos_x, pos_y, pos_z
-
-				do
-					local pass_scenegraph_id = pass_style.scenegraph_id or pass.scenegraph_id
-
-					if pass_scenegraph_id then
-						pass_size = UISceneGraph_get_size_scaled(ui_scenegraph, pass_scenegraph_id)
-
-						local pass_world_pos = ui_scenegraph[pass_scenegraph_id].world_position
-
-						pass_pos_x, pass_pos_y, pass_pos_z = pass_world_pos[1], pass_world_pos[2], pass_world_pos[3]
-					end
-				end
-
-				do
-					local pass_style_size = pass_style.size
-
-					if pass_style_size then
-						pass_size = Vector2(pass_style_size[1] or pass_size[1], pass_style_size[2] or pass_size[2])
-					end
-				end
-
-				do
-					local style_offset = pass_style.offset
-
-					if style_offset then
-						pass_pos_x = pass_pos_x + style_offset[1]
-						pass_pos_y = pass_pos_y + style_offset[2]
-						pass_pos_z = pass_pos_z + (style_offset[3] or 0)
-					end
-				end
-
-				ui_pass.draw(self, pass_data, ui_scenegraph, pass, pass_style, pass_content, Vector3(pass_pos_x, pass_pos_y, pass_pos_z), pass_size, input_service, dt)
 			end
 		end
 
-		::label_1_0::
-	end
+		local var_16_27 = var_16_13
+		local var_16_28 = var_16_22.style_id
 
-	widget_element.dirty = nil
-end
+		if var_16_28 then
+			var_16_27 = var_16_13[var_16_28]
 
-UIRenderer.set_element_visible = function (self, ui_element, visible)
-	local UIPasses = UIPasses
-	local pass_datas = ui_element.pass_data
-	local element_passes = ui_element.passes
+			if var_16_27 then
+				var_16_27.parent = var_16_13
+			else
+				var_16_27 = var_16_13
+			end
+		end
 
-	for i = 1, #element_passes do
-		local pass_info = element_passes[i]
+		if var_16_24 then
+			local var_16_29 = var_16_22.content_check_function
 
-		if pass_info.retained_mode then
-			local pass_data = pass_datas[i]
+			if var_16_29 then
+				var_16_24 = not not var_16_29(var_16_25, var_16_27)
+			end
 
-			if visible ~= pass_data.visible then
-				if visible then
-					pass_data.dirty = true
+			if var_16_24 then
+				local var_16_30 = var_16_22.content_change_function
+
+				if var_16_30 then
+					var_16_30(var_16_25, var_16_27, var_16_0, var_16_5, arg_16_0.render_settings)
+				end
+			end
+		end
+
+		local var_16_31 = var_16_1[var_16_23]
+		local var_16_32 = var_16_21[iter_16_1]
+
+		if var_16_31.update then
+			var_16_31.update(arg_16_0, var_16_32, var_16_3, var_16_22, var_16_27, var_16_25, var_16_4, var_16_5, var_16_24)
+		end
+
+		if var_16_22.retained_mode then
+			if var_16_24 == not var_16_32.visible then
+				var_16_32.visible = var_16_24
+
+				if var_16_24 then
+					var_16_32.dirty = true
 				else
-					local pass_type = pass_info.pass_type
-					local ui_pass = UIPasses[pass_type]
+					var_16_31.destroy(arg_16_0, var_16_32, var_16_22)
 
-					ui_pass.destroy(self, pass_data, pass_info)
+					goto label_16_0
+				end
+			end
+
+			if not var_16_19 and not var_16_32.dirty then
+				goto label_16_0
+			end
+		end
+
+		if var_16_24 then
+			local var_16_33 = var_16_14
+			local var_16_34 = var_16_9
+			local var_16_35 = var_16_10
+			local var_16_36 = var_16_11
+			local var_16_37 = var_16_27.scenegraph_id or var_16_22.scenegraph_id
+
+			if var_16_37 then
+				var_16_33 = var_16_2(var_16_3, var_16_37)
+
+				local var_16_38 = var_16_3[var_16_37].world_position
+
+				var_16_34, var_16_35, var_16_36 = var_16_38[1], var_16_38[2], var_16_38[3]
+			end
+
+			local var_16_39 = var_16_27.size
+
+			if var_16_39 then
+				var_16_33 = var_0_1(var_16_39[1] or var_16_33[1], var_16_39[2] or var_16_33[2])
+			end
+
+			local var_16_40 = var_16_27.offset
+
+			if var_16_40 then
+				var_16_34 = var_16_34 + var_16_40[1]
+				var_16_35 = var_16_35 + var_16_40[2]
+				var_16_36 = var_16_36 + (var_16_40[3] or 0)
+			end
+
+			var_16_31.draw(arg_16_0, var_16_32, var_16_3, var_16_22, var_16_27, var_16_25, var_0_2(var_16_34, var_16_35, var_16_36), var_16_33, var_16_4, var_16_5)
+		end
+
+		::label_16_0::
+	end
+
+	var_16_18.dirty = nil
+end
+
+function var_0_9.set_element_visible(arg_17_0, arg_17_1, arg_17_2)
+	local var_17_0 = UIPasses
+	local var_17_1 = arg_17_1.pass_data
+	local var_17_2 = arg_17_1.passes
+
+	for iter_17_0 = 1, #var_17_2 do
+		local var_17_3 = var_17_2[iter_17_0]
+
+		if var_17_3.retained_mode then
+			local var_17_4 = var_17_1[iter_17_0]
+
+			if arg_17_2 ~= var_17_4.visible then
+				if arg_17_2 then
+					var_17_4.dirty = true
+				else
+					var_17_0[var_17_3.pass_type].destroy(arg_17_0, var_17_4, var_17_3)
 				end
 
-				pass_data.visible = visible
+				var_17_4.visible = arg_17_2
 			end
 		end
 	end
 end
 
-UIRenderer.draw_rect = function (self, lower_left_corner, size, color, retained_id)
-	local render_settings = self.render_settings
-	local snap_pixel_positions = render_settings and render_settings.snap_pixel_positions
+function var_0_9.draw_rect(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+	local var_18_0 = arg_18_0.render_settings
+	local var_18_1 = var_18_0 and var_18_0.snap_pixel_positions
 
-	if snap_pixel_positions == nil then
-		snap_pixel_positions = SNAP_PIXEL_POSITIONS
+	if var_18_1 == nil then
+		var_18_1 = SNAP_PIXEL_POSITIONS
 	end
 
-	if snap_pixel_positions then
-		lower_left_corner = snap_to_position(lower_left_corner)
+	if var_18_1 then
+		arg_18_1 = var_0_12(arg_18_1)
 	end
 
-	local scaled_position = UIScaleVectorToResolution(lower_left_corner)
-	local scaled_size = UIScaleVectorToResolution(size)
-	local alpha_multiplier = render_settings and render_settings.alpha_multiplier or 1
+	local var_18_2 = UIScaleVectorToResolution(arg_18_1)
+	local var_18_3 = UIScaleVectorToResolution(arg_18_2)
+	local var_18_4 = var_18_0 and var_18_0.alpha_multiplier or 1
 
-	color = Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
+	arg_18_3 = var_0_0(arg_18_3[1] * var_18_4, arg_18_3[2], arg_18_3[3], arg_18_3[4])
 
-	if retained_id == true then
-		return Gui.rect(self.gui_retained, scaled_position, scaled_size, color)
-	elseif retained_id then
-		return Gui.update_rect(self.gui_retained, retained_id, scaled_position, scaled_size, color)
+	if arg_18_4 == true then
+		return Gui.rect(arg_18_0.gui_retained, var_18_2, var_18_3, arg_18_3)
+	elseif arg_18_4 then
+		return Gui.update_rect(arg_18_0.gui_retained, arg_18_4, var_18_2, var_18_3, arg_18_3)
 	else
-		return Gui.rect(self.gui, scaled_position, scaled_size, color)
+		return Gui.rect(arg_18_0.gui, var_18_2, var_18_3, arg_18_3)
 	end
 end
 
-UIRenderer.draw_triangle = function (self, lower_left_corner, size, ui_style, retained_id)
-	local render_settings = self.render_settings
-	local alpha_multiplier = render_settings and render_settings.alpha_multiplier or 1
-	local color = Color(ui_style.color[1] * alpha_multiplier, ui_style.color[2], ui_style.color[3], ui_style.color[4])
-	local layer = lower_left_corner[3]
-	local base_pos = Vector3(lower_left_corner[1], 0, lower_left_corner[2])
-	local pos1, pos2, pos3
+function var_0_9.draw_triangle(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+	local var_19_0 = arg_19_0.render_settings
+	local var_19_1 = var_19_0 and var_19_0.alpha_multiplier or 1
+	local var_19_2 = var_0_0(arg_19_3.color[1] * var_19_1, arg_19_3.color[2], arg_19_3.color[3], arg_19_3.color[4])
+	local var_19_3 = arg_19_1[3]
+	local var_19_4 = var_0_2(arg_19_1[1], 0, arg_19_1[2])
+	local var_19_5
+	local var_19_6
+	local var_19_7
 
-	if ui_style.triangle_alignment == "top_left" then
-		pos1 = base_pos
-		pos2 = base_pos + Vector3(0, 0, size[2])
-		pos3 = base_pos + Vector3(size[1], 0, size[2])
-	elseif ui_style.triangle_alignment == "top_right" then
-		pos1 = base_pos + Vector3(0, 0, size[2])
-		pos2 = base_pos + Vector3(size[1], 0, size[2])
-		pos3 = base_pos + Vector3(size[1], 0, 0)
-	elseif ui_style.triangle_alignment == "bottom_left" then
-		pos1 = base_pos
-		pos2 = base_pos + Vector3(size[1], 0, 0)
-		pos3 = base_pos + Vector3(0, 0, size[2])
-	elseif ui_style.triangle_alignment == "up" then
-		pos1 = base_pos
-		pos2 = base_pos + Vector3(size[1], 0, 0)
-		pos3 = base_pos + Vector3(size[1] * 0.5, 0, size[2])
-	elseif ui_style.triangle_alignment == "down" then
-		pos1 = base_pos + Vector3(0, 0, size[2])
-		pos2 = base_pos + Vector3(size[1] * 0.5, 0, 0)
-		pos3 = base_pos + Vector3(size[1], 0, size[2])
-	elseif ui_style.triangle_alignment == "left" then
-		pos1 = base_pos + Vector3(0, 0, size[2] * 0.5)
-		pos2 = base_pos + Vector3(size[1], 0, 0)
-		pos3 = base_pos + Vector3(0, 0, size[2])
-	elseif ui_style.triangle_alignment == "right" then
-		pos1 = base_pos + Vector3(0, 0, size[2])
-		pos2 = base_pos + Vector3(size[1], 0, size[2] * 0.5)
-		pos3 = base_pos + Vector3(0, 0, 0)
+	if arg_19_3.triangle_alignment == "top_left" then
+		var_19_5 = var_19_4
+		var_19_6 = var_19_4 + var_0_2(0, 0, arg_19_2[2])
+		var_19_7 = var_19_4 + var_0_2(arg_19_2[1], 0, arg_19_2[2])
+	elseif arg_19_3.triangle_alignment == "top_right" then
+		var_19_5 = var_19_4 + var_0_2(0, 0, arg_19_2[2])
+		var_19_6 = var_19_4 + var_0_2(arg_19_2[1], 0, arg_19_2[2])
+		var_19_7 = var_19_4 + var_0_2(arg_19_2[1], 0, 0)
+	elseif arg_19_3.triangle_alignment == "bottom_left" then
+		var_19_5 = var_19_4
+		var_19_6 = var_19_4 + var_0_2(arg_19_2[1], 0, 0)
+		var_19_7 = var_19_4 + var_0_2(0, 0, arg_19_2[2])
+	elseif arg_19_3.triangle_alignment == "up" then
+		var_19_5 = var_19_4
+		var_19_6 = var_19_4 + var_0_2(arg_19_2[1], 0, 0)
+		var_19_7 = var_19_4 + var_0_2(arg_19_2[1] * 0.5, 0, arg_19_2[2])
+	elseif arg_19_3.triangle_alignment == "down" then
+		var_19_5 = var_19_4 + var_0_2(0, 0, arg_19_2[2])
+		var_19_6 = var_19_4 + var_0_2(arg_19_2[1] * 0.5, 0, 0)
+		var_19_7 = var_19_4 + var_0_2(arg_19_2[1], 0, arg_19_2[2])
+	elseif arg_19_3.triangle_alignment == "left" then
+		var_19_5 = var_19_4 + var_0_2(0, 0, arg_19_2[2] * 0.5)
+		var_19_6 = var_19_4 + var_0_2(arg_19_2[1], 0, 0)
+		var_19_7 = var_19_4 + var_0_2(0, 0, arg_19_2[2])
+	elseif arg_19_3.triangle_alignment == "right" then
+		var_19_5 = var_19_4 + var_0_2(0, 0, arg_19_2[2])
+		var_19_6 = var_19_4 + var_0_2(arg_19_2[1], 0, arg_19_2[2] * 0.5)
+		var_19_7 = var_19_4 + var_0_2(0, 0, 0)
 	else
-		pos1 = base_pos
-		pos2 = base_pos + Vector3(size[1], 0, 0)
-		pos3 = base_pos + Vector3(size[1], 0, size[2])
+		var_19_5 = var_19_4
+		var_19_6 = var_19_4 + var_0_2(arg_19_2[1], 0, 0)
+		var_19_7 = var_19_4 + var_0_2(arg_19_2[1], 0, arg_19_2[2])
 	end
 
-	if retained_id == true then
-		return Gui.triangle(self.gui_retained, UIScaleVectorToResolutionRealCoordinates(pos1), UIScaleVectorToResolutionRealCoordinates(pos2), UIScaleVectorToResolutionRealCoordinates(pos3), layer, color)
-	elseif retained_id then
-		return Gui.update_triangle(self.gui_retained, retained_id, UIScaleVectorToResolutionRealCoordinates(pos1), UIScaleVectorToResolutionRealCoordinates(pos2), UIScaleVectorToResolutionRealCoordinates(pos3), layer, color)
+	if arg_19_4 == true then
+		return Gui.triangle(arg_19_0.gui_retained, UIScaleVectorToResolutionRealCoordinates(var_19_5), UIScaleVectorToResolutionRealCoordinates(var_19_6), UIScaleVectorToResolutionRealCoordinates(var_19_7), var_19_3, var_19_2)
+	elseif arg_19_4 then
+		return Gui.update_triangle(arg_19_0.gui_retained, arg_19_4, UIScaleVectorToResolutionRealCoordinates(var_19_5), UIScaleVectorToResolutionRealCoordinates(var_19_6), UIScaleVectorToResolutionRealCoordinates(var_19_7), var_19_3, var_19_2)
 	else
-		return Gui.triangle(self.gui, UIScaleVectorToResolutionRealCoordinates(pos1), UIScaleVectorToResolutionRealCoordinates(pos2), UIScaleVectorToResolutionRealCoordinates(pos3), layer, color)
+		return Gui.triangle(arg_19_0.gui, UIScaleVectorToResolutionRealCoordinates(var_19_5), UIScaleVectorToResolutionRealCoordinates(var_19_6), UIScaleVectorToResolutionRealCoordinates(var_19_7), var_19_3, var_19_2)
 	end
 end
 
-UIRenderer.draw_rect_rotated = function (self, size, position, angle, pivot, color)
-	size = UIScaleVectorToResolution(size)
+function var_0_9.draw_rect_rotated(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+	arg_20_1 = UIScaleVectorToResolution(arg_20_1)
 
-	local scaled_pivot = UIScaleVectorToResolution(pivot)
-	local tm = Rotation2D(Vector3.zero(), angle, Vector2(scaled_pivot[1], scaled_pivot[2]))
-	local translation = Matrix4x4.translation(tm)
-	local scaled_position = UIScaleVectorToResolution(position)
+	local var_20_0 = UIScaleVectorToResolution(arg_20_4)
+	local var_20_1 = Rotation2D(var_0_2.zero(), arg_20_3, var_0_1(var_20_0[1], var_20_0[2]))
+	local var_20_2 = Matrix4x4.translation(var_20_1)
+	local var_20_3 = UIScaleVectorToResolution(arg_20_2)
 
-	translation.x = translation.x + scaled_position.x
-	translation.z = translation.z + scaled_position.y
+	var_20_2.x = var_20_2.x + var_20_3.x
+	var_20_2.z = var_20_2.z + var_20_3.y
 
-	Matrix4x4.set_translation(tm, translation)
+	Matrix4x4.set_translation(var_20_1, var_20_2)
 
-	local render_settings = self.render_settings
-	local alpha_multiplier = render_settings and render_settings.alpha_multiplier or 1
+	local var_20_4 = arg_20_0.render_settings
+	local var_20_5 = var_20_4 and var_20_4.alpha_multiplier or 1
 
-	color = Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
+	arg_20_5 = var_0_0(arg_20_5[1] * var_20_5, arg_20_5[2], arg_20_5[3], arg_20_5[4])
 
-	Gui.rect_3d(self.gui, tm, Vector3.zero(), position[3], size, color)
+	Gui.rect_3d(arg_20_0.gui, var_20_1, var_0_2.zero(), arg_20_2[3], arg_20_1, arg_20_5)
 end
 
-local DEBUG_FONT_NAME = "arial"
-local DEBUG_FONT_MTRL = "materials/fonts/" .. DEBUG_FONT_NAME
+local var_0_22 = "arial"
+local var_0_23 = "materials/fonts/" .. var_0_22
 
-local function debug_draw_texture(self, pos, size, texture)
-	local layer = tostring(pos[3])
-	local position = {
-		pos[1],
-		pos[2],
-		990,
+local function var_0_24(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+	local var_21_0 = tostring(arg_21_1[3])
+	local var_21_1 = {
+		arg_21_1[1],
+		arg_21_1[2],
+		990
 	}
-	local color = {
+	local var_21_2 = {
 		64,
 		255,
 		0,
-		0,
+		0
 	}
-	local frame_color = {
+	local var_21_3 = {
 		192,
 		255,
 		0,
-		0,
+		0
 	}
 
-	UIRenderer.draw_rect(self, position, {
-		size[1],
+	var_0_9.draw_rect(arg_21_0, var_21_1, {
+		arg_21_2[1],
+		1
+	}, var_21_3)
+	var_0_9.draw_rect(arg_21_0, var_21_1, {
 		1,
-	}, frame_color)
-	UIRenderer.draw_rect(self, position, {
-		1,
-		size[2],
-	}, frame_color)
-	UIRenderer.draw_rect(self, {
-		position[1] + size[1],
-		position[2] + size[2],
-		position[3],
+		arg_21_2[2]
+	}, var_21_3)
+	var_0_9.draw_rect(arg_21_0, {
+		var_21_1[1] + arg_21_2[1],
+		var_21_1[2] + arg_21_2[2],
+		var_21_1[3]
 	}, {
-		-size[1],
-		1,
-	}, frame_color)
-	UIRenderer.draw_rect(self, {
-		position[1] + size[1],
-		position[2] + size[2],
-		position[3],
+		-arg_21_2[1],
+		1
+	}, var_21_3)
+	var_0_9.draw_rect(arg_21_0, {
+		var_21_1[1] + arg_21_2[1],
+		var_21_1[2] + arg_21_2[2],
+		var_21_1[3]
 	}, {
 		1,
-		-size[2],
-	}, frame_color)
+		-arg_21_2[2]
+	}, var_21_3)
 
-	local inv_scale = RESOLUTION_LOOKUP.inv_scale
+	local var_21_4 = var_0_7.inv_scale
 
-	if math.point_is_inside_2d_box(inv_scale * Mouse.axis(2), pos, size) then
-		UIRenderer.draw_rect(self, position, size, color)
+	if math.point_is_inside_2d_box(var_21_4 * Mouse.axis(2), arg_21_1, arg_21_2) then
+		var_0_9.draw_rect(arg_21_0, var_21_1, arg_21_2, var_21_2)
 
-		local text = string.format("%s : %s", layer, texture)
-		local text_w, text_h = UIRenderer.text_size(self, text, DEBUG_FONT_MTRL, 12)
+		local var_21_5 = string.format("%s : %s", var_21_0, arg_21_3)
+		local var_21_6, var_21_7 = var_0_9.text_size(arg_21_0, var_21_5, var_0_23, 12)
 
-		position[2] = position[2] - text_h
+		var_21_1[2] = var_21_1[2] - var_21_7
 
-		if position[1] + text_w > 1920 then
-			position[1] = position[1] - text_w + size[1]
+		if var_21_1[1] + var_21_6 > 1920 then
+			var_21_1[1] = var_21_1[1] - var_21_6 + arg_21_2[1]
 		end
 
-		if position[2] < 0 then
-			position[2] = position[2] + size[2]
+		if var_21_1[2] < 0 then
+			var_21_1[2] = var_21_1[2] + arg_21_2[2]
 		end
 
-		UIRenderer.draw_rect(self, position, {
-			text_w,
-			text_h,
-		}, frame_color)
-		UIRenderer.draw_text(self, text, DEBUG_FONT_MTRL, 12, DEBUG_FONT_NAME, {
-			position[1],
-			position[2] + 6,
-			position[3],
+		var_0_9.draw_rect(arg_21_0, var_21_1, {
+			var_21_6,
+			var_21_7
+		}, var_21_3)
+		var_0_9.draw_text(arg_21_0, var_21_5, var_0_23, 12, var_0_22, {
+			var_21_1[1],
+			var_21_1[2] + 6,
+			var_21_1[3]
 		})
 	end
 end
 
-local uvs_draw_texture_flip_horizontal = {
+local var_0_25 = {
 	{
 		1,
-		0,
+		0
 	},
 	{
 		0,
-		1,
-	},
+		1
+	}
 }
 
-UIRenderer.draw_texture_flip_horizontal = function (self, material, lower_left_corner, size, color, masked, saturated)
+function var_0_9.draw_texture_flip_horizontal(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
 	if script_data.ui_debug_draw_texture and Keyboard.button(Keyboard.button_index("v")) > 0 then
-		debug_draw_texture(self, lower_left_corner, size, material)
+		var_0_24(arg_22_0, arg_22_2, arg_22_3, arg_22_1)
 	end
 
-	local gui_position = UIScaleVectorToResolution(lower_left_corner)
+	local var_22_0 = UIScaleVectorToResolution(arg_22_2)
 
-	size = UIScaleVectorToResolution(size)
+	arg_22_3 = UIScaleVectorToResolution(arg_22_3)
 
-	return UIRenderer.script_draw_bitmap_uv(self.gui, self.render_settings, material, uvs_draw_texture_flip_horizontal, gui_position, size, color, masked, saturated)
+	return var_0_9.script_draw_bitmap_uv(arg_22_0.gui, arg_22_0.render_settings, arg_22_1, var_0_25, var_22_0, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
 end
 
-UIRenderer.draw_texture = function (self, material, position, size, color, masked, saturated, retained_id, point_sample, viewport_mask)
-	local gui = self.gui
+function var_0_9.draw_texture(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9)
+	local var_23_0 = arg_23_0.gui
 
-	if retained_id then
-		gui = self.gui_retained
+	if arg_23_7 then
+		var_23_0 = arg_23_0.gui_retained
 
-		if retained_id == true then
-			retained_id = nil
+		if arg_23_7 == true then
+			arg_23_7 = nil
 		end
 	end
 
-	local scale = RESOLUTION_LOOKUP.scale
+	local var_23_1 = var_0_7.scale
 
-	return UIRenderer.script_draw_bitmap(gui, self.render_settings, material, Vector3(position[1] * scale, position[2] * scale, position[3] or 0), Vector3(size[1] * scale, size[2] * scale, size[3] or 0), color, masked, saturated, retained_id, point_sample, viewport_mask)
+	return var_0_9.script_draw_bitmap(var_23_0, arg_23_0.render_settings, arg_23_1, var_0_2(arg_23_2[1] * var_23_1, arg_23_2[2] * var_23_1, arg_23_2[3] or 0), var_0_2(arg_23_3[1] * var_23_1, arg_23_3[2] * var_23_1, arg_23_3[3] or 0), arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9)
 end
 
-UIRenderer.draw_texture_uv = function (self, material, lower_left_corner, size, uvs, color, masked, saturated, retained_id, point_sample, viewport_mask)
+function var_0_9.draw_texture_uv(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6, arg_24_7, arg_24_8, arg_24_9, arg_24_10)
 	if script_data.ui_debug_draw_texture and Keyboard.button(Keyboard.button_index("v")) > 0 then
-		debug_draw_texture(self, lower_left_corner, size, material)
+		var_0_24(arg_24_0, arg_24_2, arg_24_3, arg_24_1)
 	end
 
-	local gui_position = UIScaleVectorToResolution(lower_left_corner)
+	local var_24_0 = UIScaleVectorToResolution(arg_24_2)
 
-	size = UIScaleVectorToResolution(size)
+	arg_24_3 = UIScaleVectorToResolution(arg_24_3)
 
-	if retained_id == true then
-		return UIRenderer.script_draw_bitmap_uv(self.gui_retained, self.render_settings, material, uvs, gui_position, size, color, masked, saturated, nil, point_sample, viewport_mask)
-	elseif retained_id then
-		return UIRenderer.script_draw_bitmap_uv(self.gui_retained, self.render_settings, material, uvs, gui_position, size, color, masked, saturated, retained_id, point_sample, viewport_mask)
+	if arg_24_8 == true then
+		return var_0_9.script_draw_bitmap_uv(arg_24_0.gui_retained, arg_24_0.render_settings, arg_24_1, arg_24_4, var_24_0, arg_24_3, arg_24_5, arg_24_6, arg_24_7, nil, arg_24_9, arg_24_10)
+	elseif arg_24_8 then
+		return var_0_9.script_draw_bitmap_uv(arg_24_0.gui_retained, arg_24_0.render_settings, arg_24_1, arg_24_4, var_24_0, arg_24_3, arg_24_5, arg_24_6, arg_24_7, arg_24_8, arg_24_9, arg_24_10)
 	else
-		return UIRenderer.script_draw_bitmap_uv(self.gui, self.render_settings, material, uvs, gui_position, size, color, masked, saturated, nil, point_sample, viewport_mask)
+		return var_0_9.script_draw_bitmap_uv(arg_24_0.gui, arg_24_0.render_settings, arg_24_1, arg_24_4, var_24_0, arg_24_3, arg_24_5, arg_24_6, arg_24_7, nil, arg_24_9, arg_24_10)
 	end
 end
 
-UIRenderer.draw_gradient_mask_texture = function (self, material, lower_left_corner, size, color, masked, gradient_threshold, retained_id)
+function var_0_9.draw_gradient_mask_texture(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7)
 	if script_data.ui_debug_draw_texture and Keyboard.button(Keyboard.button_index("v")) > 0 then
-		debug_draw_texture(self, lower_left_corner, size, material)
+		var_0_24(arg_25_0, arg_25_2, arg_25_3, arg_25_1)
 	end
 
-	local gui = self.gui
-	local gui_retained = self.gui_retained
-	local gui_position = UIScaleVectorToResolution(lower_left_corner)
-	local gui_size = UIScaleVectorToResolution(size)
-	local texture_settings = UIAtlasHelper.has_atlas_settings_by_texture_name(material) and UIAtlasHelper.get_atlas_settings_by_texture_name(material)
-	local gui_material = Gui.material(retained_id and gui_retained or gui, texture_settings and texture_settings.material_name or material)
+	local var_25_0 = arg_25_0.gui
+	local var_25_1 = arg_25_0.gui_retained
+	local var_25_2 = UIScaleVectorToResolution(arg_25_2)
+	local var_25_3 = UIScaleVectorToResolution(arg_25_3)
+	local var_25_4 = var_0_8.has_atlas_settings_by_texture_name(arg_25_1) and var_0_8.get_atlas_settings_by_texture_name(arg_25_1)
+	local var_25_5 = Gui.material(arg_25_7 and var_25_1 or var_25_0, var_25_4 and var_25_4.material_name or arg_25_1)
 
-	Material.set_scalar(gui_material, "gradient_threshold", gradient_threshold)
+	Material.set_scalar(var_25_5, "gradient_threshold", arg_25_6)
 
-	if retained_id == true then
-		return UIRenderer.script_draw_bitmap(self.gui_retained, self.render_settings, material, gui_position, gui_size, color, masked, nil, nil)
-	elseif retained_id then
-		return UIRenderer.script_draw_bitmap(self.gui_retained, self.render_settings, material, gui_position, gui_size, color, masked, nil, retained_id)
+	if arg_25_7 == true then
+		return var_0_9.script_draw_bitmap(arg_25_0.gui_retained, arg_25_0.render_settings, arg_25_1, var_25_2, var_25_3, arg_25_4, arg_25_5, nil, nil)
+	elseif arg_25_7 then
+		return var_0_9.script_draw_bitmap(arg_25_0.gui_retained, arg_25_0.render_settings, arg_25_1, var_25_2, var_25_3, arg_25_4, arg_25_5, nil, arg_25_7)
 	else
-		return UIRenderer.script_draw_bitmap(self.gui, self.render_settings, material, gui_position, gui_size, color, masked, nil)
+		return var_0_9.script_draw_bitmap(arg_25_0.gui, arg_25_0.render_settings, arg_25_1, var_25_2, var_25_3, arg_25_4, arg_25_5, nil)
 	end
 end
 
-local tile_sizes_dummy = {}
+local var_0_26 = {}
 
-UIRenderer.draw_multi_texture = function (self, materials, lower_left_corner, texture_size, texture_sizes, texture_offsets, tile_sizes, axis, spacing, direction, draw_count, texture_colors, color, masked, texture_saturation, saturated, retained_ids)
-	local UIRenderer_script_draw_bitmap = UIRenderer.script_draw_bitmap
-	local UIRenderer_draw_tiled_texture = UIRenderer.draw_tiled_texture
+function var_0_9.draw_multi_texture(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6, arg_26_7, arg_26_8, arg_26_9, arg_26_10, arg_26_11, arg_26_12, arg_26_13, arg_26_14, arg_26_15, arg_26_16)
+	local var_26_0 = var_0_9.script_draw_bitmap
+	local var_26_1 = var_0_9.draw_tiled_texture
 
-	axis = axis or 1
-	direction = direction or 1
+	arg_26_7 = arg_26_7 or 1
+	arg_26_9 = arg_26_9 or 1
 
-	local position = UIScaleVectorToResolution(lower_left_corner)
-	local draw_position = Vector3(lower_left_corner[1], lower_left_corner[2], lower_left_corner[3])
-	local unscaled_position = Vector3(lower_left_corner[1], lower_left_corner[2], lower_left_corner[3])
+	local var_26_2 = UIScaleVectorToResolution(arg_26_2)
+	local var_26_3 = var_0_2(arg_26_2[1], arg_26_2[2], arg_26_2[3])
+	local var_26_4 = var_0_2(arg_26_2[1], arg_26_2[2], arg_26_2[3])
 
-	spacing = spacing and UIScaleVectorToResolution(spacing)
+	arg_26_8 = arg_26_8 and UIScaleVectorToResolution(arg_26_8)
 
-	local gui = self.gui
-	local gui_retained = self.gui_retained
+	local var_26_5 = arg_26_0.gui
+	local var_26_6 = arg_26_0.gui_retained
 
-	tile_sizes = tile_sizes or tile_sizes_dummy
+	arg_26_6 = arg_26_6 or var_0_26
 
-	local draw_backwards = direction == 2
-	local num_draws = draw_count or #materials
+	local var_26_7 = arg_26_9 == 2
+	local var_26_8 = arg_26_10 or #arg_26_1
 
-	if num_draws <= 0 then
+	if var_26_8 <= 0 then
 		return
 	end
 
-	local new_retained_ids
+	local var_26_9
 
-	if retained_ids == true then
-		new_retained_ids = {}
+	if arg_26_16 == true then
+		var_26_9 = {}
 	end
 
-	for i = 1, num_draws do
-		local material = materials[i]
+	for iter_26_0 = 1, var_26_8 do
+		local var_26_10 = arg_26_1[iter_26_0]
 
-		texture_size = texture_sizes and texture_sizes[i] or texture_size
+		arg_26_3 = arg_26_4 and arg_26_4[iter_26_0] or arg_26_3
 
-		local draw_color = color
-		local draw_saturated = saturated
+		local var_26_11 = arg_26_12
+		local var_26_12 = arg_26_15
 
-		if texture_colors then
-			draw_color = texture_colors[i] or color
+		if arg_26_11 then
+			var_26_11 = arg_26_11[iter_26_0] or arg_26_12
 		end
 
-		if texture_saturation then
-			draw_saturated = texture_saturation[i] or saturated
+		if arg_26_14 then
+			var_26_12 = arg_26_14[iter_26_0] or arg_26_15
 		end
 
-		local tile_size = tile_sizes[i]
+		local var_26_13 = arg_26_6[iter_26_0]
 
-		if tile_size then
-			local scaled_tile_size = UIScaleVectorToResolution(tile_size)
+		if var_26_13 then
+			local var_26_14 = UIScaleVectorToResolution(var_26_13)
 
-			if i == 1 and draw_backwards then
-				position[axis] = position[axis] - scaled_tile_size[axis]
-				unscaled_position[axis] = unscaled_position[axis] - tile_size[axis]
+			if iter_26_0 == 1 and var_26_7 then
+				var_26_2[arg_26_7] = var_26_2[arg_26_7] - var_26_14[arg_26_7]
+				var_26_4[arg_26_7] = var_26_4[arg_26_7] - var_26_13[arg_26_7]
 			end
 
-			local texture_offset = texture_offsets and texture_offsets[i]
+			local var_26_15 = arg_26_5 and arg_26_5[iter_26_0]
 
-			if texture_offset then
-				local offset = UIScaleVectorToResolution(texture_offset)
+			if var_26_15 then
+				local var_26_16 = UIScaleVectorToResolution(var_26_15)
 
-				draw_position[1] = unscaled_position[1] + offset[1]
-				draw_position[2] = unscaled_position[2] + offset[2]
-				draw_position[3] = unscaled_position[3] + offset[3]
+				var_26_3[1] = var_26_4[1] + var_26_16[1]
+				var_26_3[2] = var_26_4[2] + var_26_16[2]
+				var_26_3[3] = var_26_4[3] + var_26_16[3]
 			else
-				draw_position[1] = unscaled_position[1]
-				draw_position[2] = unscaled_position[2]
-				draw_position[3] = unscaled_position[3]
+				var_26_3[1] = var_26_4[1]
+				var_26_3[2] = var_26_4[2]
+				var_26_3[3] = var_26_4[3]
 			end
 
-			local retained_id
+			local var_26_17
 
-			if retained_ids == true then
-				retained_id = UIRenderer_draw_tiled_texture(self, material, draw_position, tile_size, texture_size, draw_color, masked, retained_ids)
-			elseif retained_ids then
-				retained_id = retained_ids[i]
+			if arg_26_16 == true then
+				var_26_17 = var_26_1(arg_26_0, var_26_10, var_26_3, var_26_13, arg_26_3, var_26_11, arg_26_13, arg_26_16)
+			elseif arg_26_16 then
+				var_26_17 = arg_26_16[iter_26_0]
 
-				UIRenderer_draw_tiled_texture(self, material, draw_position, tile_size, texture_size, draw_color, masked, retained_id)
+				var_26_1(arg_26_0, var_26_10, var_26_3, var_26_13, arg_26_3, var_26_11, arg_26_13, var_26_17)
 			else
-				UIRenderer_draw_tiled_texture(self, material, draw_position, tile_size, texture_size, draw_color, masked)
+				var_26_1(arg_26_0, var_26_10, var_26_3, var_26_13, arg_26_3, var_26_11, arg_26_13)
 			end
 
-			if new_retained_ids then
-				new_retained_ids[i] = retained_id
+			if var_26_9 then
+				var_26_9[iter_26_0] = var_26_17
 			end
 
-			if draw_backwards then
-				position[axis] = position[axis] - scaled_tile_size[axis]
-				unscaled_position[axis] = unscaled_position[axis] - tile_size[axis]
+			if var_26_7 then
+				var_26_2[arg_26_7] = var_26_2[arg_26_7] - var_26_14[arg_26_7]
+				var_26_4[arg_26_7] = var_26_4[arg_26_7] - var_26_13[arg_26_7]
 			else
-				position[axis] = position[axis] + scaled_tile_size[axis]
-				unscaled_position[axis] = unscaled_position[axis] + tile_size[axis]
+				var_26_2[arg_26_7] = var_26_2[arg_26_7] + var_26_14[arg_26_7]
+				var_26_4[arg_26_7] = var_26_4[arg_26_7] + var_26_13[arg_26_7]
 			end
 		else
-			local scaled_texture_size = UIScaleVectorToResolution(texture_size)
+			local var_26_18 = UIScaleVectorToResolution(arg_26_3)
 
-			if i == 1 and draw_backwards then
-				position[axis] = position[axis] - scaled_texture_size[axis]
-				unscaled_position[axis] = unscaled_position[axis] - texture_size[axis]
+			if iter_26_0 == 1 and var_26_7 then
+				var_26_2[arg_26_7] = var_26_2[arg_26_7] - var_26_18[arg_26_7]
+				var_26_4[arg_26_7] = var_26_4[arg_26_7] - arg_26_3[arg_26_7]
 			end
 
-			local texture_offset = texture_offsets and texture_offsets[i]
+			local var_26_19 = arg_26_5 and arg_26_5[iter_26_0]
 
-			if texture_offset then
-				local offset = UIScaleVectorToResolution(texture_offset)
+			if var_26_19 then
+				local var_26_20 = UIScaleVectorToResolution(var_26_19)
 
-				draw_position[1] = position[1] + offset[1]
-				draw_position[2] = position[2] + offset[2]
-				draw_position[3] = position[3] + offset[3]
+				var_26_3[1] = var_26_2[1] + var_26_20[1]
+				var_26_3[2] = var_26_2[2] + var_26_20[2]
+				var_26_3[3] = var_26_2[3] + var_26_20[3]
 			else
-				draw_position[1] = position[1]
-				draw_position[2] = position[2]
-				draw_position[3] = position[3]
+				var_26_3[1] = var_26_2[1]
+				var_26_3[2] = var_26_2[2]
+				var_26_3[3] = var_26_2[3]
 			end
 
-			local retained_id
+			local var_26_21
 
-			if retained_ids == true then
-				retained_id = UIRenderer_script_draw_bitmap(gui_retained, self.render_settings, material, draw_position, scaled_texture_size, draw_color, masked, draw_saturated, nil)
-			elseif retained_ids then
-				retained_id = retained_ids[i]
+			if arg_26_16 == true then
+				var_26_21 = var_26_0(var_26_6, arg_26_0.render_settings, var_26_10, var_26_3, var_26_18, var_26_11, arg_26_13, var_26_12, nil)
+			elseif arg_26_16 then
+				var_26_21 = arg_26_16[iter_26_0]
 
-				UIRenderer_script_draw_bitmap(gui_retained, self.render_settings, material, draw_position, scaled_texture_size, draw_color, masked, draw_saturated, retained_id)
+				var_26_0(var_26_6, arg_26_0.render_settings, var_26_10, var_26_3, var_26_18, var_26_11, arg_26_13, var_26_12, var_26_21)
 			else
-				UIRenderer_script_draw_bitmap(gui, self.render_settings, material, draw_position, scaled_texture_size, draw_color, masked, draw_saturated)
+				var_26_0(var_26_5, arg_26_0.render_settings, var_26_10, var_26_3, var_26_18, var_26_11, arg_26_13, var_26_12)
 			end
 
-			if new_retained_ids then
-				new_retained_ids[i] = retained_id
+			if var_26_9 then
+				var_26_9[iter_26_0] = var_26_21
 			end
 
-			if draw_backwards then
-				position[axis] = position[axis] - scaled_texture_size[axis]
-				unscaled_position[axis] = unscaled_position[axis] - texture_size[axis]
+			if var_26_7 then
+				var_26_2[arg_26_7] = var_26_2[arg_26_7] - var_26_18[arg_26_7]
+				var_26_4[arg_26_7] = var_26_4[arg_26_7] - arg_26_3[arg_26_7]
 			else
-				position[axis] = position[axis] + scaled_texture_size[axis]
-				unscaled_position[axis] = unscaled_position[axis] + texture_size[axis]
+				var_26_2[arg_26_7] = var_26_2[arg_26_7] + var_26_18[arg_26_7]
+				var_26_4[arg_26_7] = var_26_4[arg_26_7] + arg_26_3[arg_26_7]
 			end
 		end
 
-		if spacing then
-			if direction == 2 then
-				position[1] = position[1] - spacing[1]
-				position[2] = position[2] - spacing[2]
+		if arg_26_8 then
+			if arg_26_9 == 2 then
+				var_26_2[1] = var_26_2[1] - arg_26_8[1]
+				var_26_2[2] = var_26_2[2] - arg_26_8[2]
 			else
-				position[1] = position[1] + spacing[1]
-				position[2] = position[2] + spacing[2]
+				var_26_2[1] = var_26_2[1] + arg_26_8[1]
+				var_26_2[2] = var_26_2[2] + arg_26_8[2]
 			end
 		end
 	end
 
-	return new_retained_ids
+	return var_26_9
 end
 
-local uvs_draw_tiled_texture = {
+local var_0_27 = {
 	{
 		0,
-		0,
+		0
 	},
 	{
 		1,
-		1,
-	},
+		1
+	}
 }
 
-UIRenderer.draw_tiled_texture = function (self, material, position, total_size, texture_size, color, masked, saturated, retained_ids)
-	local scale = RESOLUTION_LOOKUP.scale
-	local position_x = scale * position[1]
-	local position_y = scale * position[2]
+function var_0_9.draw_tiled_texture(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6, arg_27_7, arg_27_8)
+	local var_27_0 = var_0_7.scale
+	local var_27_1 = var_27_0 * arg_27_2[1]
+	local var_27_2 = var_27_0 * arg_27_2[2]
 
-	position = Vector3(position_x, position_y, position[3] or 0)
+	arg_27_2 = var_0_2(var_27_1, var_27_2, arg_27_2[3] or 0)
 
-	local texture_size_x = texture_size[1]
-	local texture_size_y = texture_size[2]
-	local num_x = total_size[1] / texture_size_x
-	local num_y = total_size[2] / texture_size_y
+	local var_27_3 = arg_27_4[1]
+	local var_27_4 = arg_27_4[2]
+	local var_27_5 = arg_27_3[1] / var_27_3
+	local var_27_6 = arg_27_3[2] / var_27_4
+	local var_27_7 = var_27_0 * var_27_3
+	local var_27_8 = var_27_0 * var_27_4
 
-	texture_size_x = scale * texture_size_x
-	texture_size_y = scale * texture_size_y
-	texture_size = Vector2(texture_size_x, texture_size_y)
+	arg_27_4 = var_0_1(var_27_7, var_27_8)
 
-	local script_draw_bitmap_uv = UIRenderer.script_draw_bitmap_uv
-	local gui = self.gui
-	local render_settings = self.render_settings
-	local uvs = uvs_draw_tiled_texture
+	local var_27_9 = var_0_9.script_draw_bitmap_uv
+	local var_27_10 = arg_27_0.gui
+	local var_27_11 = arg_27_0.render_settings
+	local var_27_12 = var_0_27
 
-	uvs[2][1] = 1
+	var_27_12[2][1] = 1
 
-	while num_x > 0 do
-		if num_x < 1 then
-			uvs[2][1] = num_x
-			texture_size[1] = num_x * texture_size_x
+	while var_27_5 > 0 do
+		if var_27_5 < 1 then
+			var_27_12[2][1] = var_27_5
+			arg_27_4[1] = var_27_5 * var_27_7
 		end
 
-		local new_position_y = position_y
+		local var_27_13 = var_27_2
 
-		position[2] = new_position_y
-		uvs[2][2] = 1
-		texture_size[2] = texture_size_y
+		arg_27_2[2] = var_27_13
+		var_27_12[2][2] = 1
+		arg_27_4[2] = var_27_8
 
-		local new_num_y = num_y
+		local var_27_14 = var_27_6
 
-		while new_num_y > 0 do
-			if new_num_y < 1 then
-				uvs[2][2] = new_num_y
-				texture_size[2] = new_num_y * texture_size_y
+		while var_27_14 > 0 do
+			if var_27_14 < 1 then
+				var_27_12[2][2] = var_27_14
+				arg_27_4[2] = var_27_14 * var_27_8
 			end
 
-			script_draw_bitmap_uv(gui, render_settings, material, uvs, position, texture_size, color, masked, saturated)
+			var_27_9(var_27_10, var_27_11, arg_27_1, var_27_12, arg_27_2, arg_27_4, arg_27_5, arg_27_6, arg_27_7)
 
-			new_position_y = new_position_y + texture_size_y
-			position[2] = new_position_y
-			new_num_y = new_num_y - 1
+			var_27_13 = var_27_13 + var_27_8
+			arg_27_2[2] = var_27_13
+			var_27_14 = var_27_14 - 1
 		end
 
-		position_x = position_x + texture_size_x
-		position[1] = position_x
-		num_x = num_x - 1
+		var_27_1 = var_27_1 + var_27_7
+		arg_27_2[1] = var_27_1
+		var_27_5 = var_27_5 - 1
 	end
 end
 
-UIRenderer.draw_centered_texture_amount = function (self, material, lower_left_corner, size, texture_size, texture_amount, axis, spacing, color, texture_colors, masked, retained_ids)
-	local position = UIScaleVectorToResolution(lower_left_corner)
-	local area_size = UIScaleVectorToResolution(size)
+function var_0_9.draw_centered_texture_amount(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6, arg_28_7, arg_28_8, arg_28_9, arg_28_10, arg_28_11)
+	local var_28_0 = UIScaleVectorToResolution(arg_28_2)
+	local var_28_1 = UIScaleVectorToResolution(arg_28_3)
 
-	texture_size = UIScaleVectorToResolution(texture_size)
+	arg_28_4 = UIScaleVectorToResolution(arg_28_4)
 
-	local draw_size = Vector2(texture_size[1], texture_size[2])
-	local distance_between_textures = area_size[axis] / (texture_amount + 1)
-	local is_material_table = type(material) == "table"
-	local gui = self.gui
-	local gui_retained = self.gui_retained
-	local new_retained_ids
+	local var_28_2 = var_0_1(arg_28_4[1], arg_28_4[2])
+	local var_28_3 = var_28_1[arg_28_6] / (arg_28_5 + 1)
+	local var_28_4 = type(arg_28_1) == "table"
+	local var_28_5 = arg_28_0.gui
+	local var_28_6 = arg_28_0.gui_retained
+	local var_28_7
 
-	if retained_ids == true then
-		new_retained_ids = {}
+	if arg_28_11 == true then
+		var_28_7 = {}
 	end
 
-	for i = 1, texture_amount do
-		local texture_color = texture_colors and texture_colors[i] and texture_colors[i] or color
-		local texture_position = Vector3(position.x, position.y, position.z)
+	for iter_28_0 = 1, arg_28_5 do
+		local var_28_8 = arg_28_9 and arg_28_9[iter_28_0] and arg_28_9[iter_28_0] or arg_28_8
+		local var_28_9 = var_0_2(var_28_0.x, var_28_0.y, var_28_0.z)
 
-		texture_position[axis] = texture_position[axis] + (distance_between_textures * i - texture_size[axis] * 0.5)
+		var_28_9[arg_28_6] = var_28_9[arg_28_6] + (var_28_3 * iter_28_0 - arg_28_4[arg_28_6] * 0.5)
 
-		if retained_ids == true then
-			local retained_id = UIRenderer.script_draw_bitmap(gui_retained, self.render_settings, is_material_table and material[i] or material, texture_position, draw_size, texture_color, masked, nil, nil)
+		if arg_28_11 == true then
+			var_28_7[iter_28_0] = var_0_9.script_draw_bitmap(var_28_6, arg_28_0.render_settings, var_28_4 and arg_28_1[iter_28_0] or arg_28_1, var_28_9, var_28_2, var_28_8, arg_28_10, nil, nil)
+		elseif arg_28_11 then
+			local var_28_10 = arg_28_11[iter_28_0]
 
-			new_retained_ids[i] = retained_id
-		elseif retained_ids then
-			local retained_id = retained_ids[i]
-
-			UIRenderer.script_draw_bitmap(gui_retained, self.render_settings, is_material_table and material[i] or material, texture_position, draw_size, texture_color, masked, nil, retained_id)
+			var_0_9.script_draw_bitmap(var_28_6, arg_28_0.render_settings, var_28_4 and arg_28_1[iter_28_0] or arg_28_1, var_28_9, var_28_2, var_28_8, arg_28_10, nil, var_28_10)
 		else
-			UIRenderer.script_draw_bitmap(gui, self.render_settings, is_material_table and material[i] or material, texture_position, draw_size, texture_color, masked, nil)
+			var_0_9.script_draw_bitmap(var_28_5, arg_28_0.render_settings, var_28_4 and arg_28_1[iter_28_0] or arg_28_1, var_28_9, var_28_2, var_28_8, arg_28_10, nil)
 		end
 	end
 
-	return new_retained_ids
+	return var_28_7
 end
 
-UIRenderer.draw_texture_rotated = function (self, material, size, position, angle, pivot, color, optional_uvs, masked, retained_id)
-	size = UIScaleVectorToResolution(size)
+function var_0_9.draw_texture_rotated(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8, arg_29_9)
+	arg_29_2 = UIScaleVectorToResolution(arg_29_2)
 
-	local scaled_pivot = UIScaleVectorToResolution(pivot)
-	local tm = Rotation2D(Vector3.zero(), angle, Vector2(scaled_pivot[1], scaled_pivot[2]))
-	local translation = Matrix4x4.translation(tm)
-	local scaled_position = UIScaleVectorToResolution(position)
+	local var_29_0 = UIScaleVectorToResolution(arg_29_5)
+	local var_29_1 = Rotation2D(var_0_2.zero(), arg_29_4, var_0_1(var_29_0[1], var_29_0[2]))
+	local var_29_2 = Matrix4x4.translation(var_29_1)
+	local var_29_3 = UIScaleVectorToResolution(arg_29_3)
 
-	translation.x = translation.x + scaled_position.x
-	translation.z = translation.z + scaled_position.y
+	var_29_2.x = var_29_2.x + var_29_3.x
+	var_29_2.z = var_29_2.z + var_29_3.y
 
-	local render_settings = self.render_settings
-	local snap_pixel_positions = render_settings and render_settings.snap_pixel_positions
+	local var_29_4 = arg_29_0.render_settings
+	local var_29_5 = var_29_4 and var_29_4.snap_pixel_positions
 
-	if snap_pixel_positions == nil then
-		snap_pixel_positions = SNAP_PIXEL_POSITIONS
+	if var_29_5 == nil then
+		var_29_5 = SNAP_PIXEL_POSITIONS
 	end
 
-	if snap_pixel_positions then
-		translation = snap_to_position(translation)
+	if var_29_5 then
+		var_29_2 = var_0_12(var_29_2)
 	end
 
-	Matrix4x4.set_translation(tm, translation)
+	Matrix4x4.set_translation(var_29_1, var_29_2)
 
-	local gui = self.gui
-	local gui_retained = self.gui_retained
+	local var_29_6 = arg_29_0.gui
+	local var_29_7 = arg_29_0.gui_retained
 
-	if retained_id == true then
-		return UIRenderer.script_draw_bitmap_3d(gui_retained, render_settings, material, tm, position[3], size, color, optional_uvs, masked, nil)
-	elseif retained_id then
-		return UIRenderer.script_draw_bitmap_3d(gui_retained, render_settings, material, tm, position[3], size, color, optional_uvs, masked, retained_id)
+	if arg_29_9 == true then
+		return var_0_9.script_draw_bitmap_3d(var_29_7, var_29_4, arg_29_1, var_29_1, arg_29_3[3], arg_29_2, arg_29_6, arg_29_7, arg_29_8, nil)
+	elseif arg_29_9 then
+		return var_0_9.script_draw_bitmap_3d(var_29_7, var_29_4, arg_29_1, var_29_1, arg_29_3[3], arg_29_2, arg_29_6, arg_29_7, arg_29_8, arg_29_9)
 	else
-		return UIRenderer.script_draw_bitmap_3d(gui, render_settings, material, tm, position[3], size, color, optional_uvs, masked)
+		return var_0_9.script_draw_bitmap_3d(var_29_6, var_29_4, arg_29_1, var_29_1, arg_29_3[3], arg_29_2, arg_29_6, arg_29_7, arg_29_8)
 	end
 end
 
-local draw_text_var_args = {}
+local var_0_28 = {}
 
-UIRenderer.draw_text = function (self, text, font_material, font_size, font_name, position, color, retained_id, color_override)
-	local ui_position = UIScaleVectorToResolution(position)
-	local use_color_override = color_override and #color_override > 0 or nil
+function var_0_9.draw_text(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5, arg_30_6, arg_30_7, arg_30_8)
+	local var_30_0 = UIScaleVectorToResolution(arg_30_5)
 
-	if use_color_override then
-		draw_text_var_args[#draw_text_var_args + 1] = "color_override"
-		draw_text_var_args[#draw_text_var_args + 1] = color_override
+	if arg_30_8 and #arg_30_8 > 0 or nil then
+		var_0_28[#var_0_28 + 1] = "color_override"
+		var_0_28[#var_0_28 + 1] = arg_30_8
 	end
 
-	local use_var_args = #draw_text_var_args > 0
-	local return_value
-	local render_settings = self.render_settings
-	local alpha_multiplier = render_settings and render_settings.alpha_multiplier or 1
+	local var_30_1 = #var_0_28 > 0
+	local var_30_2
+	local var_30_3 = arg_30_0.render_settings
+	local var_30_4 = var_30_3 and var_30_3.alpha_multiplier or 1
 
-	color = color and Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
+	arg_30_6 = arg_30_6 and var_0_0(arg_30_6[1] * var_30_4, arg_30_6[2], arg_30_6[3], arg_30_6[4])
 
-	local offscreen_target = render_settings and render_settings.offscreen_target
-
-	if offscreen_target then
-		font_name = font_name .. "_offscreen"
+	if var_30_3 and var_30_3.offscreen_target then
+		arg_30_4 = arg_30_4 .. "_offscreen"
 	end
 
-	local flags = Gui.FormatDirectives
-	local font = Fonts[font_name]
-	local font_flags = font and font[4]
+	local var_30_5 = Gui.FormatDirectives
+	local var_30_6 = Fonts[arg_30_4]
+	local var_30_7 = var_30_6 and var_30_6[4]
 
-	if font_flags then
-		flags = bit.bor(flags, font_flags)
+	if var_30_7 then
+		var_30_5 = bit.bor(var_30_5, var_30_7)
 	end
 
-	if use_var_args then
-		if retained_id == true then
-			return_value = Gui.text(self.gui_retained, text, font_material, font_size, font_name, ui_position, color, flags, unpack(draw_text_var_args))
-		elseif retained_id then
-			Gui.update_text(self.gui_retained, retained_id, text, font_material, font_size, font_name, ui_position, color, flags, unpack(draw_text_var_args))
+	if var_30_1 then
+		if arg_30_7 == true then
+			var_30_2 = Gui.text(arg_30_0.gui_retained, arg_30_1, arg_30_2, arg_30_3, arg_30_4, var_30_0, arg_30_6, var_30_5, unpack(var_0_28))
+		elseif arg_30_7 then
+			Gui.update_text(arg_30_0.gui_retained, arg_30_7, arg_30_1, arg_30_2, arg_30_3, arg_30_4, var_30_0, arg_30_6, var_30_5, unpack(var_0_28))
 		else
-			Gui.text(self.gui, text, font_material, font_size, font_name, ui_position, color, flags, unpack(draw_text_var_args))
+			Gui.text(arg_30_0.gui, arg_30_1, arg_30_2, arg_30_3, arg_30_4, var_30_0, arg_30_6, var_30_5, unpack(var_0_28))
 		end
-	elseif retained_id == true then
-		return_value = Gui.text(self.gui_retained, text, font_material, font_size, font_name, ui_position, color, flags)
-	elseif retained_id then
-		Gui.update_text(self.gui_retained, retained_id, text, font_material, font_size, font_name, ui_position, color, flags)
+	elseif arg_30_7 == true then
+		var_30_2 = Gui.text(arg_30_0.gui_retained, arg_30_1, arg_30_2, arg_30_3, arg_30_4, var_30_0, arg_30_6, var_30_5)
+	elseif arg_30_7 then
+		Gui.update_text(arg_30_0.gui_retained, arg_30_7, arg_30_1, arg_30_2, arg_30_3, arg_30_4, var_30_0, arg_30_6, var_30_5)
 	else
-		Gui.text(self.gui, text, font_material, font_size, font_name, ui_position, color, flags)
+		Gui.text(arg_30_0.gui, arg_30_1, arg_30_2, arg_30_3, arg_30_4, var_30_0, arg_30_6, var_30_5)
 	end
 
-	if use_var_args then
-		table.clear(draw_text_var_args)
+	if var_30_1 then
+		table.clear(var_0_28)
 	end
 
-	return return_value
+	return var_30_2
 end
 
-UIRenderer.draw_justified_text = function (self, text, font_material, font_size, font_name, position, color, retained_id, justify_width, ...)
-	local ui_position = UIScaleVectorToResolution(position)
-	local render_settings = self.render_settings
-	local alpha_multiplier = render_settings and render_settings.alpha_multiplier or 1
+function var_0_9.draw_justified_text(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5, arg_31_6, arg_31_7, arg_31_8, ...)
+	local var_31_0 = UIScaleVectorToResolution(arg_31_5)
+	local var_31_1 = arg_31_0.render_settings
+	local var_31_2 = var_31_1 and var_31_1.alpha_multiplier or 1
 
-	color = color and Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
+	arg_31_6 = arg_31_6 and var_0_0(arg_31_6[1] * var_31_2, arg_31_6[2], arg_31_6[3], arg_31_6[4])
 
-	local flags = Gui.FormatDirectives
-	local font = Fonts[font_name]
-	local font_flags = font and font[4]
+	local var_31_3 = Gui.FormatDirectives
+	local var_31_4 = Fonts[arg_31_4]
+	local var_31_5 = var_31_4 and var_31_4[4]
 
-	if font_flags then
-		flags = bit.bor(flags, font_flags)
+	if var_31_5 then
+		var_31_3 = bit.bor(var_31_3, var_31_5)
 	end
 
-	local scaled_justify_width = justify_width * RESOLUTION_LOOKUP.scale
+	local var_31_6 = arg_31_8 * var_0_7.scale
 
-	if retained_id == true then
-		return Gui.text(self.gui_retained, text, font_material, font_size, font_name, ui_position, color, flags, "justify", scaled_justify_width, ...)
-	elseif retained_id then
-		Gui.update_text(self.gui_retained, retained_id, text, font_material, font_size, font_name, ui_position, color, flags, "justify", scaled_justify_width, ...)
+	if arg_31_7 == true then
+		return Gui.text(arg_31_0.gui_retained, arg_31_1, arg_31_2, arg_31_3, arg_31_4, var_31_0, arg_31_6, var_31_3, "justify", var_31_6, ...)
+	elseif arg_31_7 then
+		Gui.update_text(arg_31_0.gui_retained, arg_31_7, arg_31_1, arg_31_2, arg_31_3, arg_31_4, var_31_0, arg_31_6, var_31_3, "justify", var_31_6, ...)
 	else
-		Gui.text(self.gui, text, font_material, font_size, font_name, ui_position, color, flags, "justify", scaled_justify_width, ...)
+		Gui.text(arg_31_0.gui, arg_31_1, arg_31_2, arg_31_3, arg_31_4, var_31_0, arg_31_6, var_31_3, "justify", var_31_6, ...)
 	end
 end
 
-UIRenderer.word_wrap = function (self, text, font_material, size, width, option, optional_font_name)
-	local whitespace, soft_dividers, return_dividers = " 。，", " -+&/*", "\n"
-	local reuse_global_table = true
-	local scale = RESOLUTION_LOOKUP.scale
-	local rows, return_indices
-	local flags = Gui.FormatDirectives
+function var_0_9.word_wrap(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6)
+	local var_32_0 = " 。，"
+	local var_32_1 = " -+&/*"
+	local var_32_2 = "\n"
+	local var_32_3 = true
+	local var_32_4 = var_0_7.scale
+	local var_32_5
+	local var_32_6
+	local var_32_7 = Gui.FormatDirectives
 
-	if optional_font_name then
-		local font = Fonts[optional_font_name]
-		local font_flags = font and font[4]
+	if arg_32_6 then
+		local var_32_8 = Fonts[arg_32_6]
+		local var_32_9 = var_32_8 and var_32_8[4]
 
-		if font[4] then
-			flags = bit.bor(flags, font_flags)
+		if var_32_8[4] then
+			var_32_7 = bit.bor(var_32_7, var_32_9)
 		end
 	end
 
-	if option then
-		rows, return_indices = Gui.word_wrap(self.gui, text, font_material, size, width * scale, whitespace, soft_dividers, return_dividers, reuse_global_table, option, flags)
+	if arg_32_5 then
+		var_32_5, var_32_6 = Gui.word_wrap(arg_32_0.gui, arg_32_1, arg_32_2, arg_32_3, arg_32_4 * var_32_4, var_32_0, var_32_1, var_32_2, var_32_3, arg_32_5, var_32_7)
 	else
-		rows, return_indices = Gui.word_wrap(self.gui, text, font_material, size, width * scale, whitespace, soft_dividers, return_dividers, reuse_global_table, flags)
+		var_32_5, var_32_6 = Gui.word_wrap(arg_32_0.gui, arg_32_1, arg_32_2, arg_32_3, arg_32_4 * var_32_4, var_32_0, var_32_1, var_32_2, var_32_3, var_32_7)
 	end
 
-	return rows, return_indices
+	return var_32_5, var_32_6
 end
 
-UIRenderer.text_size = function (self, text, font_material, font_size, ...)
-	local min, max = Gui.text_extents(self.gui, text, font_material, font_size, Gui.FormatDirectives, ...)
-	local inv_scaling = RESOLUTION_LOOKUP.inv_scale
-	local width = (max.x + min.x) * inv_scaling
-	local height = (max.y - min.y) * inv_scaling
+function var_0_9.text_size(arg_33_0, arg_33_1, arg_33_2, arg_33_3, ...)
+	local var_33_0, var_33_1 = Gui.text_extents(arg_33_0.gui, arg_33_1, arg_33_2, arg_33_3, Gui.FormatDirectives, ...)
+	local var_33_2 = var_0_7.inv_scale
+	local var_33_3 = (var_33_1.x + var_33_0.x) * var_33_2
+	local var_33_4 = (var_33_1.y - var_33_0.y) * var_33_2
 
-	return width, height, min
+	return var_33_3, var_33_4, var_33_0
 end
 
-UIRenderer.text_alignment_size = function (self, text, font_material, font_size, ...)
-	local min, max = Gui.text_extents(self.gui, text, font_material, font_size, Gui.FormatDirectives, ...)
-	local inv_scaling = RESOLUTION_LOOKUP.inv_scale
-	local width = (max.x + 0) * inv_scaling
-	local height = (max.y - min.y) * inv_scaling
+function var_0_9.text_alignment_size(arg_34_0, arg_34_1, arg_34_2, arg_34_3, ...)
+	local var_34_0, var_34_1 = Gui.text_extents(arg_34_0.gui, arg_34_1, arg_34_2, arg_34_3, Gui.FormatDirectives, ...)
+	local var_34_2 = var_0_7.inv_scale
+	local var_34_3 = (var_34_1.x + 0) * var_34_2
+	local var_34_4 = (var_34_1.y - var_34_0.y) * var_34_2
 
-	return width, height, min
+	return var_34_3, var_34_4, var_34_0
 end
 
-UIRenderer.break_paragraphs = function (text, paragraphs)
-	local n = 1
+function var_0_9.break_paragraphs(arg_35_0, arg_35_1)
+	local var_35_0 = 1
 
-	for line in string.gmatch(text, "[^\n]+") do
-		paragraphs[n] = line
-		n = n + 1
+	for iter_35_0 in string.gmatch(arg_35_0, "[^\n]+") do
+		arg_35_1[var_35_0] = iter_35_0
+		var_35_0 = var_35_0 + 1
 	end
 
-	return paragraphs, n
+	return arg_35_1, var_35_0
 end
 
-UIRenderer.draw_video = function (self, material_name, position, size, color, video_player_reference, optional_video_player)
+function var_0_9.draw_video(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6)
 	if script_data.disable_video_player then
 		return true
 	end
 
-	local gui = self.gui
-	local video_player = optional_video_player or self.video_players[video_player_reference]
-	local pixel_snap = true
-	local render_settings = self.render_settings
-	local alpha_multiplier = render_settings and render_settings.alpha_multiplier or 1
+	local var_36_0 = arg_36_0.gui
+	local var_36_1 = arg_36_6 or arg_36_0.video_players[arg_36_5]
+	local var_36_2 = true
+	local var_36_3 = arg_36_0.render_settings
+	local var_36_4 = var_36_3 and var_36_3.alpha_multiplier or 1
 
-	color = color and Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
+	arg_36_4 = arg_36_4 and var_0_0(arg_36_4[1] * var_36_4, arg_36_4[2], arg_36_4[3], arg_36_4[4])
 
-	Gui.video(gui, material_name, video_player, UIScaleVectorToResolution(position), UIScaleVectorToResolution(size, pixel_snap), color)
+	Gui.video(var_36_0, arg_36_1, var_36_1, UIScaleVectorToResolution(arg_36_2), UIScaleVectorToResolution(arg_36_3, var_36_2), arg_36_4)
 
-	local is_complete = VideoPlayer.current_frame(video_player) == VideoPlayer.number_of_frames(video_player)
-
-	return is_complete
+	return VideoPlayer.current_frame(var_36_1) == VideoPlayer.number_of_frames(var_36_1)
 end
 
-UIRenderer.draw_splash_video = function (self, material_name, position, size, color, video_player_reference, optional_video_player)
+function var_0_9.draw_splash_video(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5, arg_37_6)
 	if script_data.disable_video_player then
 		return true
 	end
 
-	local video_player = optional_video_player or self.video_players[video_player_reference]
+	local var_37_0 = arg_37_6 or arg_37_0.video_players[arg_37_5]
 
-	if VideoPlayer.current_frame(video_player) == VideoPlayer.number_of_frames(video_player) then
+	if VideoPlayer.current_frame(var_37_0) == VideoPlayer.number_of_frames(var_37_0) then
 		return true
 	end
 
-	local gui = self.gui
-	local w, h = Gui.resolution()
-	local aspect_ratio = w / h
-	local default_aspect_ratio = 1.7777777777777777
-	local height = h
-	local width = w
+	local var_37_1 = arg_37_0.gui
+	local var_37_2, var_37_3 = Gui.resolution()
+	local var_37_4 = var_37_2 / var_37_3
+	local var_37_5 = 1.7777777777777777
+	local var_37_6 = var_37_3
+	local var_37_7 = var_37_2
 
-	if math.abs(aspect_ratio - default_aspect_ratio) > 0.005 then
-		width = w
-		height = width / default_aspect_ratio
+	if math.abs(var_37_4 - var_37_5) > 0.005 then
+		var_37_7 = var_37_2
+		var_37_6 = var_37_7 / var_37_5
 
-		if h < height then
-			width = h * default_aspect_ratio
-			height = h
+		if var_37_3 < var_37_6 then
+			var_37_7 = var_37_3 * var_37_5
+			var_37_6 = var_37_3
 		end
 	end
 
-	local render_settings = self.render_settings
-	local alpha_multiplier = render_settings and render_settings.alpha_multiplier or 1
+	local var_37_8 = arg_37_0.render_settings
+	local var_37_9 = var_37_8 and var_37_8.alpha_multiplier or 1
 
-	color = color and Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
+	arg_37_4 = arg_37_4 and var_0_0(arg_37_4[1] * var_37_9, arg_37_4[2], arg_37_4[3], arg_37_4[4])
 
-	Gui.video(gui, material_name, video_player, Vector3(w * 0.5 - width * 0.5, h * 0.5 - height * 0.5, position[3]), Vector2(width, height), color)
+	Gui.video(var_37_1, arg_37_1, var_37_0, var_0_2(var_37_2 * 0.5 - var_37_7 * 0.5, var_37_3 * 0.5 - var_37_6 * 0.5, arg_37_2[3]), var_0_1(var_37_7, var_37_6), arg_37_4)
 end
 
-local circleVerts = {}
-local CIRCLE_VERTS = 32
+local var_0_29 = {}
+local var_0_30 = 32
 
-for i = 1, CIRCLE_VERTS do
-	local a = i / CIRCLE_VERTS * math.pi * 2
+for iter_0_0 = 1, var_0_30 do
+	local var_0_31 = iter_0_0 / var_0_30 * math.pi * 2
 
-	circleVerts[i * 2 - 1] = math.cos(a)
-	circleVerts[i * 2] = math.sin(a)
+	var_0_29[iter_0_0 * 2 - 1] = math.cos(var_0_31)
+	var_0_29[iter_0_0 * 2] = math.sin(var_0_31)
 end
 
-UIRenderer.draw_circle = function (self, position, radius, size, color)
-	local gui = self.gui
-	local Gui_triangle = Gui.triangle
-	local render_settings = self.render_settings
-	local alpha_multiplier = render_settings and render_settings.alpha_multiplier or 1
+function var_0_9.draw_circle(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+	local var_38_0 = arg_38_0.gui
+	local var_38_1 = Gui.triangle
+	local var_38_2 = arg_38_0.render_settings
+	local var_38_3 = var_38_2 and var_38_2.alpha_multiplier or 1
 
-	color = color and Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
+	arg_38_4 = arg_38_4 and var_0_0(arg_38_4[1] * var_38_3, arg_38_4[2], arg_38_4[3], arg_38_4[4])
 
-	local layer = 999
-	local p1 = Vector3(unpack(position))
+	local var_38_4 = 999
+	local var_38_5 = var_0_2(unpack(arg_38_1))
 
-	p1.z = p1.y
+	var_38_5.z = var_38_5.y
 
-	local x = p1.x
-	local y = p1.y
-	local p2 = Vector3(x + circleVerts[1] * radius, 0, y + circleVerts[2] * radius)
+	local var_38_6 = var_38_5.x
+	local var_38_7 = var_38_5.y
+	local var_38_8 = var_0_2(var_38_6 + var_0_29[1] * arg_38_2, 0, var_38_7 + var_0_29[2] * arg_38_2)
 
-	for i = 2, CIRCLE_VERTS do
-		local p3 = Vector3(x + circleVerts[i * 2 - 1] * radius, 0, y + circleVerts[i * 2] * radius)
+	for iter_38_0 = 2, var_0_30 do
+		local var_38_9 = var_0_2(var_38_6 + var_0_29[iter_38_0 * 2 - 1] * arg_38_2, 0, var_38_7 + var_0_29[iter_38_0 * 2] * arg_38_2)
 
-		Gui_triangle(gui, p1, p2, p3, layer, color)
+		var_38_1(var_38_0, var_38_5, var_38_8, var_38_9, var_38_4, arg_38_4)
 
-		p2 = p3
+		var_38_8 = var_38_9
 	end
 
-	local p3 = Vector3(x + circleVerts[1] * radius, 0, y + circleVerts[2] * radius)
+	local var_38_10 = var_0_2(var_38_6 + var_0_29[1] * arg_38_2, 0, var_38_7 + var_0_29[2] * arg_38_2)
 
-	Gui_triangle(gui, p1, p2, p3, layer, color)
+	var_38_1(var_38_0, var_38_5, var_38_8, var_38_10, var_38_4, arg_38_4)
 end
 
-UIRenderer.draw_rounded_rect = function (self, position, size, radius, color)
-	local scale = RESOLUTION_LOOKUP.scale
-	local Gui_triangle = Gui.triangle
+function var_0_9.draw_rounded_rect(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+	local var_39_0 = var_0_7.scale
+	local var_39_1 = Gui.triangle
 
-	position = UIScaleVectorToResolution(position)
-	size = UIScaleVectorToResolution(size)
-	radius = radius * scale
+	arg_39_1 = UIScaleVectorToResolution(arg_39_1)
+	arg_39_2 = UIScaleVectorToResolution(arg_39_2)
+	arg_39_3 = arg_39_3 * var_39_0
 
-	local n = CIRCLE_VERTS / 4
-	local x = position[1]
-	local y = position[2]
-	local w = size[1]
-	local h = size[2]
-	local gui = self.gui
-	local layer = position[3]
-	local p1 = Vector3(position[1] + w / 2, 0, position[2] + h / 2)
-	local p2 = Vector3(x + w - radius + circleVerts[1] * radius, 0, y + h - radius + circleVerts[2] * radius)
-	local render_settings = self.render_settings
-	local alpha_multiplier = render_settings and render_settings.alpha_multiplier or 1
+	local var_39_2 = var_0_30 / 4
+	local var_39_3 = arg_39_1[1]
+	local var_39_4 = arg_39_1[2]
+	local var_39_5 = arg_39_2[1]
+	local var_39_6 = arg_39_2[2]
+	local var_39_7 = arg_39_0.gui
+	local var_39_8 = arg_39_1[3]
+	local var_39_9 = var_0_2(arg_39_1[1] + var_39_5 / 2, 0, arg_39_1[2] + var_39_6 / 2)
+	local var_39_10 = var_0_2(var_39_3 + var_39_5 - arg_39_3 + var_0_29[1] * arg_39_3, 0, var_39_4 + var_39_6 - arg_39_3 + var_0_29[2] * arg_39_3)
+	local var_39_11 = arg_39_0.render_settings
+	local var_39_12 = var_39_11 and var_39_11.alpha_multiplier or 1
 
-	color = color and Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
+	arg_39_4 = arg_39_4 and var_0_0(arg_39_4[1] * var_39_12, arg_39_4[2], arg_39_4[3], arg_39_4[4])
 
-	for i = 2, n do
-		local p3 = Vector3(x + w - radius + circleVerts[i * 2 - 1] * radius, 0, y + h - radius + circleVerts[i * 2] * radius)
+	for iter_39_0 = 2, var_39_2 do
+		local var_39_13 = var_0_2(var_39_3 + var_39_5 - arg_39_3 + var_0_29[iter_39_0 * 2 - 1] * arg_39_3, 0, var_39_4 + var_39_6 - arg_39_3 + var_0_29[iter_39_0 * 2] * arg_39_3)
 
-		Gui_triangle(gui, p1, p2, p3, layer, color)
+		var_39_1(var_39_7, var_39_9, var_39_10, var_39_13, var_39_8, arg_39_4)
 
-		p2 = p3
+		var_39_10 = var_39_13
 	end
 
-	for i = n, n * 2 do
-		local p3 = Vector3(x + radius + circleVerts[i * 2 - 1] * radius, 0, y + h - radius + circleVerts[i * 2] * radius)
+	for iter_39_1 = var_39_2, var_39_2 * 2 do
+		local var_39_14 = var_0_2(var_39_3 + arg_39_3 + var_0_29[iter_39_1 * 2 - 1] * arg_39_3, 0, var_39_4 + var_39_6 - arg_39_3 + var_0_29[iter_39_1 * 2] * arg_39_3)
 
-		Gui_triangle(gui, p1, p2, p3, layer, color)
+		var_39_1(var_39_7, var_39_9, var_39_10, var_39_14, var_39_8, arg_39_4)
 
-		p2 = p3
+		var_39_10 = var_39_14
 	end
 
-	for i = n * 2, n * 3 do
-		local p3 = Vector3(x + radius + circleVerts[i * 2 - 1] * radius, 0, y + radius + circleVerts[i * 2] * radius)
+	for iter_39_2 = var_39_2 * 2, var_39_2 * 3 do
+		local var_39_15 = var_0_2(var_39_3 + arg_39_3 + var_0_29[iter_39_2 * 2 - 1] * arg_39_3, 0, var_39_4 + arg_39_3 + var_0_29[iter_39_2 * 2] * arg_39_3)
 
-		Gui_triangle(gui, p1, p2, p3, layer, color)
+		var_39_1(var_39_7, var_39_9, var_39_10, var_39_15, var_39_8, arg_39_4)
 
-		p2 = p3
+		var_39_10 = var_39_15
 	end
 
-	for i = n * 3, n * 4 do
-		local p3 = Vector3(x + w - radius + circleVerts[i * 2 - 1] * radius, 0, y + radius + circleVerts[i * 2] * radius)
+	for iter_39_3 = var_39_2 * 3, var_39_2 * 4 do
+		local var_39_16 = var_0_2(var_39_3 + var_39_5 - arg_39_3 + var_0_29[iter_39_3 * 2 - 1] * arg_39_3, 0, var_39_4 + arg_39_3 + var_0_29[iter_39_3 * 2] * arg_39_3)
 
-		Gui_triangle(gui, p1, p2, p3, layer, color)
+		var_39_1(var_39_7, var_39_9, var_39_10, var_39_16, var_39_8, arg_39_4)
 
-		p2 = p3
+		var_39_10 = var_39_16
 	end
 
-	local p3 = Vector3(x + w - radius + circleVerts[1] * radius, 0, y + radius + circleVerts[2] * radius)
+	local var_39_17 = var_0_2(var_39_3 + var_39_5 - arg_39_3 + var_0_29[1] * arg_39_3, 0, var_39_4 + arg_39_3 + var_0_29[2] * arg_39_3)
 
-	Gui_triangle(gui, p1, p2, p3, layer, color)
+	var_39_1(var_39_7, var_39_9, var_39_10, var_39_17, var_39_8, arg_39_4)
 
-	p2 = p3
-	p3 = Vector3(x + w - radius + circleVerts[1] * radius, 0, y + h - radius + circleVerts[2] * radius)
+	local var_39_18 = var_39_17
+	local var_39_19 = var_0_2(var_39_3 + var_39_5 - arg_39_3 + var_0_29[1] * arg_39_3, 0, var_39_4 + var_39_6 - arg_39_3 + var_0_29[2] * arg_39_3)
 
-	Gui_triangle(gui, p1, p2, p3, layer, color)
+	var_39_1(var_39_7, var_39_9, var_39_18, var_39_19, var_39_8, arg_39_4)
 end
 
-local NilCursor = {
+local var_0_32 = {
 	0,
 	0,
-	0,
+	0
 }
 
-UIRenderer.scaled_cursor_position_by_scenegraph = function (input_service, scenegraph, scenegraph_id, ignore_scale)
-	local cursor = input_service:get("cursor") or NilCursor
-	local scaled_cursor = not ignore_scale and UIInverseScaleVectorToResolution(cursor) or cursor
-	local scenegraph_position = UISceneGraph.get_world_position(scenegraph, scenegraph_id)
+function var_0_9.scaled_cursor_position_by_scenegraph(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+	local var_40_0 = arg_40_0:get("cursor") or var_0_32
+	local var_40_1 = not arg_40_3 and UIInverseScaleVectorToResolution(var_40_0) or var_40_0
+	local var_40_2 = UISceneGraph.get_world_position(arg_40_1, arg_40_2)
 
-	scaled_cursor.x = scaled_cursor.x - scenegraph_position[1]
-	scaled_cursor.y = scaled_cursor.y - scenegraph_position[2]
+	var_40_1.x = var_40_1.x - var_40_2[1]
+	var_40_1.y = var_40_1.y - var_40_2[2]
 
-	return scaled_cursor
+	return var_40_1
 end
 
-UIRenderer.crop_text = function (text, max_chars)
-	local text_length = UTF8Utils.string_length(text)
-
-	if max_chars < text_length then
-		local cropped_text = UTF8Utils.sub_string(text, 1, max_chars) .. "..."
-
-		return cropped_text
+function var_0_9.crop_text(arg_41_0, arg_41_1)
+	if arg_41_1 < UTF8Utils.string_length(arg_41_0) then
+		return UTF8Utils.sub_string(arg_41_0, 1, arg_41_1) .. "..."
 	end
 
-	return text
+	return arg_41_0
 end
 
-local crop_suffix = "..."
+local var_0_33 = "..."
 
-UIRenderer.crop_text_width = function (self, text, max_width, style)
-	local font, scaled_font_size = UIFontByResolution(style)
-	local text_width = UIRenderer.text_size(self, text, font[1], scaled_font_size)
-	local crop_suffix_width = UIRenderer.text_size(self, crop_suffix, font[1], scaled_font_size)
+function var_0_9.crop_text_width(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+	local var_42_0, var_42_1 = UIFontByResolution(arg_42_3)
+	local var_42_2 = var_0_9.text_size(arg_42_0, arg_42_1, var_42_0[1], var_42_1)
+	local var_42_3 = var_0_9.text_size(arg_42_0, var_0_33, var_42_0[1], var_42_1)
 
-	if max_width < text_width then
+	if arg_42_2 < var_42_2 then
 		repeat
-			local width_percent = 1 - (1 - (max_width - crop_suffix_width) / text_width) * 0.5
-			local num_char = UTF8Utils.string_length(text)
+			local var_42_4 = 1 - (1 - (arg_42_2 - var_42_3) / var_42_2) * 0.5
+			local var_42_5 = UTF8Utils.string_length(arg_42_1)
+			local var_42_6 = math.floor(var_42_5 * var_42_4)
 
-			num_char = math.floor(num_char * width_percent)
-			text = UTF8Utils.sub_string(text, 1, num_char)
+			arg_42_1 = UTF8Utils.sub_string(arg_42_1, 1, var_42_6)
 
-			if num_char <= 0 then
-				return text
+			if var_42_6 <= 0 then
+				return arg_42_1
 			end
 
-			text_width = math.floor(UIRenderer.text_size(self, text, font[1], scaled_font_size))
-		until text_width <= max_width
+			var_42_2 = math.floor(var_0_9.text_size(arg_42_0, arg_42_1, var_42_0[1], var_42_1))
+		until var_42_2 <= arg_42_2
 
-		local num_char = UTF8Utils.string_length(text)
+		local var_42_7 = UTF8Utils.string_length(arg_42_1)
 
-		text = UTF8Utils.sub_string(text, 1, num_char) .. "..."
+		arg_42_1 = UTF8Utils.sub_string(arg_42_1, 1, var_42_7) .. "..."
 	end
 
-	return text
+	return arg_42_1
 end
 
-UIRenderer.scaled_font_size_by_area = function (self, text, area_size, style)
-	local area_width = area_size[1]
-	local area_height = area_size[2]
-	local font_type = style.font_type
-	local font_material = Fonts[font_type][1]
-	local gui = self.gui
+function var_0_9.scaled_font_size_by_area(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+	local var_43_0 = arg_43_2[1]
+	local var_43_1 = arg_43_2[2]
+	local var_43_2 = arg_43_3.font_type
+	local var_43_3 = Fonts[var_43_2][1]
+	local var_43_4 = arg_43_0.gui
 
-	for font_size = style.font_size, 1, -0.5 do
-		local _, font_min, font_max = UIGetFontHeight(gui, font_type, font_size)
-		local texts = Gui.word_wrap(gui, text, font_material, font_size, area_width, " 。，", "-+&/*", "\n", true, Gui.FormatDirectives)
-		local text_height = math.ceil(1.05 * (font_max - font_min) * #texts)
+	for iter_43_0 = arg_43_3.font_size, 1, -0.5 do
+		local var_43_5, var_43_6, var_43_7 = UIGetFontHeight(var_43_4, var_43_2, iter_43_0)
+		local var_43_8 = Gui.word_wrap(var_43_4, arg_43_1, var_43_3, iter_43_0, var_43_0, " 。，", "-+&/*", "\n", true, Gui.FormatDirectives)
 
-		if text_height < area_height then
-			return font_size
+		if var_43_1 > math.ceil(1.05 * (var_43_7 - var_43_6) * #var_43_8) then
+			return iter_43_0
 		end
 	end
 
 	return 1
 end
 
-UIRenderer.scaled_font_size_by_width = function (self, text, max_width, style)
-	local font, scaled_font_size = UIFontByResolution(style)
-	local text_width = UIRenderer.text_size(self, text, font[1], scaled_font_size)
-	local min_font_size = 1
-	local current_font_size = style.font_size
+function var_0_9.scaled_font_size_by_width(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+	local var_44_0, var_44_1 = UIFontByResolution(arg_44_3)
+	local var_44_2 = var_0_9.text_size(arg_44_0, arg_44_1, var_44_0[1], var_44_1)
+	local var_44_3 = 1
+	local var_44_4 = arg_44_3.font_size
 
-	while max_width < text_width do
-		if min_font_size >= style.font_size then
+	while arg_44_2 < var_44_2 do
+		if var_44_3 >= arg_44_3.font_size then
 			break
 		end
 
-		style.font_size = math.max(style.font_size - 1, min_font_size)
-		font, scaled_font_size = UIFontByResolution(style)
-		text_width = math.floor(UIRenderer.text_size(self, text, font[1], scaled_font_size))
+		arg_44_3.font_size = math.max(arg_44_3.font_size - 1, var_44_3)
+
+		local var_44_5, var_44_6 = UIFontByResolution(arg_44_3)
+
+		var_44_2 = math.floor(var_0_9.text_size(arg_44_0, arg_44_1, var_44_5[1], var_44_6))
 	end
 
-	local new_font_size = style.font_size
+	local var_44_7 = arg_44_3.font_size
 
-	style.font_size = current_font_size
+	arg_44_3.font_size = var_44_4
 
-	return new_font_size
+	return var_44_7
 end
 
-local uvs = {
+local var_0_34 = {
 	{
 		0,
-		0,
+		0
 	},
 	{
 		0,
-		0,
-	},
+		0
+	}
 }
-local uvs_r = {
+local var_0_35 = {
 	{
 		0,
-		0,
+		0
 	},
 	{
 		0,
-		0,
-	},
+		0
+	}
 }
-local uvs_u = {
+local var_0_36 = {
 	{
 		0,
-		0,
+		0
 	},
 	{
 		0,
-		0,
-	},
+		0
+	}
 }
 
-UIRenderer.draw_texture_frame = function (self, position, size, texture_id, texture_size, texture_sizes, color, masked, saturated, only_corners, use_tiling, mirrored_tiling, skip_background, retained_ids)
-	local gui = self.gui
-	local gui_retained = self.gui_retained
+function var_0_9.draw_texture_frame(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6, arg_45_7, arg_45_8, arg_45_9, arg_45_10, arg_45_11, arg_45_12, arg_45_13)
+	local var_45_0 = arg_45_0.gui
+	local var_45_1 = arg_45_0.gui_retained
 
-	position = UIScaleVectorToResolution(position)
-	size = UIScaleVectorToResolution(size)
-	texture_size = UIScaleVectorToResolution(texture_size)
+	arg_45_1 = UIScaleVectorToResolution(arg_45_1)
+	arg_45_2 = UIScaleVectorToResolution(arg_45_2)
+	arg_45_4 = UIScaleVectorToResolution(arg_45_4)
 
-	local layer = position[3]
-	local corner_size_vec = UIScaleVectorToResolution(texture_sizes.corner)
-	local corner_size_x, corner_size_y = corner_size_vec[1], corner_size_vec[2]
-	local x_pos, y_pos = position.x, position.y
-	local texture_size_x, texture_size_y = texture_size[1], texture_size[2]
-	local x_size, y_size = size.x, size.y
-	local retained_id_index = 1
-	local new_retained_ids
+	local var_45_2 = arg_45_1[3]
+	local var_45_3 = UIScaleVectorToResolution(arg_45_5.corner)
+	local var_45_4 = var_45_3[1]
+	local var_45_5 = var_45_3[2]
+	local var_45_6 = arg_45_1.x
+	local var_45_7 = arg_45_1.y
+	local var_45_8 = arg_45_4[1]
+	local var_45_9 = arg_45_4[2]
+	local var_45_10 = arg_45_2.x
+	local var_45_11 = arg_45_2.y
+	local var_45_12 = 1
+	local var_45_13
 
-	if retained_ids == true then
-		new_retained_ids = {}
+	if arg_45_13 == true then
+		var_45_13 = {}
 	end
 
-	local corner_uv_size_x, corner_uv_size_y = corner_size_x / texture_size_x, corner_size_y / texture_size_y
+	local var_45_14 = var_45_4 / var_45_8
+	local var_45_15 = var_45_5 / var_45_9
 
-	uvs[1][1] = 0
-	uvs[1][2] = 1 - corner_uv_size_y
-	uvs[2][1] = corner_uv_size_x
-	uvs[2][2] = 1
+	var_0_34[1][1] = 0
+	var_0_34[1][2] = 1 - var_45_15
+	var_0_34[2][1] = var_45_14
+	var_0_34[2][2] = 1
 
-	if retained_ids == true then
-		new_retained_ids[#new_retained_ids + 1] = UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs, Vector3(x_pos, y_pos, layer), corner_size_vec, color, masked, saturated, nil)
-	elseif retained_ids then
-		local retained_id = retained_ids[retained_id_index]
+	if arg_45_13 == true then
+		var_45_13[#var_45_13 + 1] = var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_6, var_45_7, var_45_2), var_45_3, arg_45_6, arg_45_7, arg_45_8, nil)
+	elseif arg_45_13 then
+		local var_45_16 = arg_45_13[var_45_12]
 
-		UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs, Vector3(x_pos, y_pos, layer), corner_size_vec, color, masked, saturated, retained_id)
+		var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_6, var_45_7, var_45_2), var_45_3, arg_45_6, arg_45_7, arg_45_8, var_45_16)
 
-		retained_id_index = retained_id_index + 1
+		var_45_12 = var_45_12 + 1
 	else
-		UIRenderer.script_draw_bitmap_uv(gui, self.render_settings, texture_id, uvs, Vector3(x_pos, y_pos, layer), corner_size_vec, color, masked, saturated)
+		var_0_9.script_draw_bitmap_uv(var_45_0, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_6, var_45_7, var_45_2), var_45_3, arg_45_6, arg_45_7, arg_45_8)
 	end
 
-	uvs[1][1] = 0
-	uvs[1][2] = 0
-	uvs[2][1] = corner_uv_size_x
-	uvs[2][2] = corner_uv_size_y
+	var_0_34[1][1] = 0
+	var_0_34[1][2] = 0
+	var_0_34[2][1] = var_45_14
+	var_0_34[2][2] = var_45_15
 
-	if retained_ids == true then
-		new_retained_ids[#new_retained_ids + 1] = UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs, Vector3(x_pos, y_pos + y_size - corner_size_y, layer), corner_size_vec, color, masked, saturated, nil)
-	elseif retained_ids then
-		local retained_id = retained_ids[retained_id_index]
+	if arg_45_13 == true then
+		var_45_13[#var_45_13 + 1] = var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_6, var_45_7 + var_45_11 - var_45_5, var_45_2), var_45_3, arg_45_6, arg_45_7, arg_45_8, nil)
+	elseif arg_45_13 then
+		local var_45_17 = arg_45_13[var_45_12]
 
-		UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs, Vector3(x_pos, y_pos + y_size - corner_size_y, layer), corner_size_vec, color, masked, saturated, retained_id)
+		var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_6, var_45_7 + var_45_11 - var_45_5, var_45_2), var_45_3, arg_45_6, arg_45_7, arg_45_8, var_45_17)
 
-		retained_id_index = retained_id_index + 1
+		var_45_12 = var_45_12 + 1
 	else
-		UIRenderer.script_draw_bitmap_uv(gui, self.render_settings, texture_id, uvs, Vector3(x_pos, y_pos + y_size - corner_size_y, layer), corner_size_vec, color, masked, saturated)
+		var_0_9.script_draw_bitmap_uv(var_45_0, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_6, var_45_7 + var_45_11 - var_45_5, var_45_2), var_45_3, arg_45_6, arg_45_7, arg_45_8)
 	end
 
-	uvs[1][1] = 1 - corner_uv_size_x
-	uvs[1][2] = 0
-	uvs[2][1] = 1
-	uvs[2][2] = corner_uv_size_y
+	var_0_34[1][1] = 1 - var_45_14
+	var_0_34[1][2] = 0
+	var_0_34[2][1] = 1
+	var_0_34[2][2] = var_45_15
 
-	if retained_ids == true then
-		new_retained_ids[#new_retained_ids + 1] = UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs, Vector3(x_pos + x_size - corner_size_x, y_pos + y_size - corner_size_y, layer), corner_size_vec, color, masked, saturated, nil)
-	elseif retained_ids then
-		local retained_id = retained_ids[retained_id_index]
+	if arg_45_13 == true then
+		var_45_13[#var_45_13 + 1] = var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_6 + var_45_10 - var_45_4, var_45_7 + var_45_11 - var_45_5, var_45_2), var_45_3, arg_45_6, arg_45_7, arg_45_8, nil)
+	elseif arg_45_13 then
+		local var_45_18 = arg_45_13[var_45_12]
 
-		UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs, Vector3(x_pos + x_size - corner_size_x, y_pos + y_size - corner_size_y, layer), corner_size_vec, color, masked, saturated, retained_id)
+		var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_6 + var_45_10 - var_45_4, var_45_7 + var_45_11 - var_45_5, var_45_2), var_45_3, arg_45_6, arg_45_7, arg_45_8, var_45_18)
 
-		retained_id_index = retained_id_index + 1
+		var_45_12 = var_45_12 + 1
 	else
-		UIRenderer.script_draw_bitmap_uv(gui, self.render_settings, texture_id, uvs, Vector3(x_pos + x_size - corner_size_x, y_pos + y_size - corner_size_y, layer), corner_size_vec, color, masked, saturated)
+		var_0_9.script_draw_bitmap_uv(var_45_0, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_6 + var_45_10 - var_45_4, var_45_7 + var_45_11 - var_45_5, var_45_2), var_45_3, arg_45_6, arg_45_7, arg_45_8)
 	end
 
-	uvs[1][1] = 1 - corner_uv_size_x
-	uvs[1][2] = 1 - corner_uv_size_y
-	uvs[2][1] = 1
-	uvs[2][2] = 1
+	var_0_34[1][1] = 1 - var_45_14
+	var_0_34[1][2] = 1 - var_45_15
+	var_0_34[2][1] = 1
+	var_0_34[2][2] = 1
 
-	if retained_ids == true then
-		new_retained_ids[#new_retained_ids + 1] = UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs, Vector3(x_pos + x_size - corner_size_x, y_pos, layer), corner_size_vec, color, masked, saturated, nil)
-	elseif retained_ids then
-		local retained_id = retained_ids[retained_id_index]
+	if arg_45_13 == true then
+		var_45_13[#var_45_13 + 1] = var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_6 + var_45_10 - var_45_4, var_45_7, var_45_2), var_45_3, arg_45_6, arg_45_7, arg_45_8, nil)
+	elseif arg_45_13 then
+		local var_45_19 = arg_45_13[var_45_12]
 
-		UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs, Vector3(x_pos + x_size - corner_size_x, y_pos, layer), corner_size_vec, color, masked, saturated, retained_id)
+		var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_6 + var_45_10 - var_45_4, var_45_7, var_45_2), var_45_3, arg_45_6, arg_45_7, arg_45_8, var_45_19)
 
-		retained_id_index = retained_id_index + 1
+		var_45_12 = var_45_12 + 1
 	else
-		UIRenderer.script_draw_bitmap_uv(gui, self.render_settings, texture_id, uvs, Vector3(x_pos + x_size - corner_size_x, y_pos, layer), corner_size_vec, color, masked, saturated)
+		var_0_9.script_draw_bitmap_uv(var_45_0, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_6 + var_45_10 - var_45_4, var_45_7, var_45_2), var_45_3, arg_45_6, arg_45_7, arg_45_8)
 	end
 
-	if not skip_background then
-		uvs[1][1] = corner_uv_size_x
-		uvs[1][2] = corner_uv_size_y
-		uvs[2][1] = 1 - corner_uv_size_x
-		uvs[2][2] = 1 - corner_uv_size_y
+	if not arg_45_12 then
+		var_0_34[1][1] = var_45_14
+		var_0_34[1][2] = var_45_15
+		var_0_34[2][1] = 1 - var_45_14
+		var_0_34[2][2] = 1 - var_45_15
 
-		if retained_ids == true then
-			new_retained_ids[#new_retained_ids + 1] = UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs, Vector3(x_pos + corner_size_x, y_pos + corner_size_y, layer), size - corner_size_vec * 2, color, masked, saturated, nil)
-		elseif retained_ids then
-			local retained_id = retained_ids[retained_id_index]
+		if arg_45_13 == true then
+			var_45_13[#var_45_13 + 1] = var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_6 + var_45_4, var_45_7 + var_45_5, var_45_2), arg_45_2 - var_45_3 * 2, arg_45_6, arg_45_7, arg_45_8, nil)
+		elseif arg_45_13 then
+			local var_45_20 = arg_45_13[var_45_12]
 
-			UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs, Vector3(x_pos + corner_size_x, y_pos + corner_size_y, layer), size - corner_size_vec * 2, color, masked, saturated, retained_id)
+			var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_6 + var_45_4, var_45_7 + var_45_5, var_45_2), arg_45_2 - var_45_3 * 2, arg_45_6, arg_45_7, arg_45_8, var_45_20)
 
-			retained_id_index = retained_id_index + 1
+			var_45_12 = var_45_12 + 1
 		else
-			UIRenderer.script_draw_bitmap_uv(gui, self.render_settings, texture_id, uvs, Vector3(x_pos + corner_size_x, y_pos + corner_size_y, layer), size - corner_size_vec * 2, color, masked, saturated)
+			var_0_9.script_draw_bitmap_uv(var_45_0, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_6 + var_45_4, var_45_7 + var_45_5, var_45_2), arg_45_2 - var_45_3 * 2, arg_45_6, arg_45_7, arg_45_8)
 		end
 	end
 
-	if only_corners then
+	if arg_45_9 then
 		return
 	end
 
-	if use_tiling then
-		local tile_vertical_size_vec = UIScaleVectorToResolution(texture_sizes.vertical)
-		local tile_vertical_size_x, tile_vertical_size_y = tile_vertical_size_vec[1], tile_vertical_size_vec[2]
-		local bar_height = size[2] - corner_size_y * 2
+	if arg_45_10 then
+		local var_45_21 = UIScaleVectorToResolution(arg_45_5.vertical)
+		local var_45_22 = var_45_21[1]
+		local var_45_23 = var_45_21[2]
+		local var_45_24 = arg_45_2[2] - var_45_5 * 2
 
-		tile_vertical_size_vec[2] = bar_height
+		var_45_21[2] = var_45_24
 
-		local total_size = bar_height
-		local tile_pos_y = y_pos + corner_size_y
-		local segments = math.max(math.ceil(total_size / tile_vertical_size_y), 1)
+		local var_45_25 = var_45_24
+		local var_45_26 = var_45_7 + var_45_5
+		local var_45_27 = math.max(math.ceil(var_45_25 / var_45_23), 1)
 
-		for i = 1, segments do
-			local segment_size = math.clamp(total_size / tile_vertical_size_y, 0, 1)
-			local mirrored = i % 2 == 0
+		for iter_45_0 = 1, var_45_27 do
+			local var_45_28 = math.clamp(var_45_25 / var_45_23, 0, 1)
+			local var_45_29 = iter_45_0 % 2 == 0
 
-			uvs[1][1] = 0
-			uvs[2][1] = tile_vertical_size_x / texture_size_x
+			var_0_34[1][1] = 0
+			var_0_34[2][1] = var_45_22 / var_45_8
 
-			if mirrored and mirrored_tiling then
-				uvs[1][2] = math.lerp(corner_size_y / texture_size_y, 1 - corner_size_y / texture_size_y, segment_size)
-				uvs[2][2] = corner_size_y / texture_size_y
+			if var_45_29 and arg_45_11 then
+				var_0_34[1][2] = math.lerp(var_45_5 / var_45_9, 1 - var_45_5 / var_45_9, var_45_28)
+				var_0_34[2][2] = var_45_5 / var_45_9
 			else
-				uvs[1][2] = math.lerp(1 - corner_size_y / texture_size_y, corner_size_y / texture_size_y, segment_size)
-				uvs[2][2] = 1 - corner_size_y / texture_size_y
+				var_0_34[1][2] = math.lerp(1 - var_45_5 / var_45_9, var_45_5 / var_45_9, var_45_28)
+				var_0_34[2][2] = 1 - var_45_5 / var_45_9
 			end
 
-			uvs_r[1][1] = 1 - tile_vertical_size_x / texture_size_x
-			uvs_r[2][1] = 1
+			var_0_35[1][1] = 1 - var_45_22 / var_45_8
+			var_0_35[2][1] = 1
 
-			if mirrored and mirrored_tiling then
-				uvs_r[1][2] = math.lerp(corner_size_y / texture_size_y, 1 - corner_size_y / texture_size_y, segment_size)
-				uvs_r[2][2] = corner_size_y / texture_size_y
+			if var_45_29 and arg_45_11 then
+				var_0_35[1][2] = math.lerp(var_45_5 / var_45_9, 1 - var_45_5 / var_45_9, var_45_28)
+				var_0_35[2][2] = var_45_5 / var_45_9
 			else
-				uvs_r[1][2] = math.lerp(1 - corner_size_y / texture_size_y, corner_size_y / texture_size_y, segment_size)
-				uvs_r[2][2] = 1 - corner_size_y / texture_size_y
+				var_0_35[1][2] = math.lerp(1 - var_45_5 / var_45_9, var_45_5 / var_45_9, var_45_28)
+				var_0_35[2][2] = 1 - var_45_5 / var_45_9
 			end
 
-			tile_vertical_size_vec[2] = segment_size * tile_vertical_size_y
+			var_45_21[2] = var_45_28 * var_45_23
 
-			if retained_ids == true then
-				new_retained_ids[#new_retained_ids + 1] = UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs, Vector3(x_pos, tile_pos_y, layer), tile_vertical_size_vec, color, masked, saturated, nil)
-			elseif retained_ids then
-				local retained_id = retained_ids[retained_id_index]
+			if arg_45_13 == true then
+				var_45_13[#var_45_13 + 1] = var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_6, var_45_26, var_45_2), var_45_21, arg_45_6, arg_45_7, arg_45_8, nil)
+			elseif arg_45_13 then
+				local var_45_30 = arg_45_13[var_45_12]
 
-				UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs, Vector3(x_pos, tile_pos_y, layer), tile_vertical_size_vec, color, masked, saturated, retained_id)
+				var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_6, var_45_26, var_45_2), var_45_21, arg_45_6, arg_45_7, arg_45_8, var_45_30)
 
-				retained_id_index = retained_id_index + 1
+				var_45_12 = var_45_12 + 1
 			else
-				UIRenderer.script_draw_bitmap_uv(gui, self.render_settings, texture_id, uvs, Vector3(x_pos, tile_pos_y, layer), tile_vertical_size_vec, color, masked, saturated)
+				var_0_9.script_draw_bitmap_uv(var_45_0, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_6, var_45_26, var_45_2), var_45_21, arg_45_6, arg_45_7, arg_45_8)
 			end
 
-			if retained_ids == true then
-				new_retained_ids[#new_retained_ids + 1] = UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs_r, Vector3(x_pos + x_size - tile_vertical_size_x, tile_pos_y, layer), tile_vertical_size_vec, color, masked, saturated, nil)
-			elseif retained_ids then
-				local retained_id = retained_ids[retained_id_index]
+			if arg_45_13 == true then
+				var_45_13[#var_45_13 + 1] = var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_35, var_0_2(var_45_6 + var_45_10 - var_45_22, var_45_26, var_45_2), var_45_21, arg_45_6, arg_45_7, arg_45_8, nil)
+			elseif arg_45_13 then
+				local var_45_31 = arg_45_13[var_45_12]
 
-				UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs_r, Vector3(x_pos + x_size - tile_vertical_size_x, tile_pos_y, layer), tile_vertical_size_vec, color, masked, saturated, retained_id)
+				var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_35, var_0_2(var_45_6 + var_45_10 - var_45_22, var_45_26, var_45_2), var_45_21, arg_45_6, arg_45_7, arg_45_8, var_45_31)
 
-				retained_id_index = retained_id_index + 1
+				var_45_12 = var_45_12 + 1
 			else
-				UIRenderer.script_draw_bitmap_uv(gui, self.render_settings, texture_id, uvs_r, Vector3(x_pos + x_size - tile_vertical_size_x, tile_pos_y, layer), tile_vertical_size_vec, color, masked, saturated)
+				var_0_9.script_draw_bitmap_uv(var_45_0, arg_45_0.render_settings, arg_45_3, var_0_35, var_0_2(var_45_6 + var_45_10 - var_45_22, var_45_26, var_45_2), var_45_21, arg_45_6, arg_45_7, arg_45_8)
 			end
 
-			tile_pos_y = tile_pos_y + tile_vertical_size_y
-			total_size = total_size - tile_vertical_size_y
+			var_45_26 = var_45_26 + var_45_23
+			var_45_25 = var_45_25 - var_45_23
 		end
 
-		local tile_horizontal_size_vec = UIScaleVectorToResolution(texture_sizes.horizontal)
-		local tile_horizontal_size_x, tile_horizontal_size_y = tile_horizontal_size_vec[1], tile_horizontal_size_vec[2]
-		local bar_width = size[1] - corner_size_x * 2
+		local var_45_32 = UIScaleVectorToResolution(arg_45_5.horizontal)
+		local var_45_33 = var_45_32[1]
+		local var_45_34 = var_45_32[2]
+		local var_45_35 = arg_45_2[1] - var_45_4 * 2
 
-		tile_horizontal_size_vec[1] = bar_width
-		total_size = bar_width
+		var_45_32[1] = var_45_35
 
-		local tile_pos_x = x_pos + corner_size_x
+		local var_45_36 = var_45_35
+		local var_45_37 = var_45_6 + var_45_4
+		local var_45_38 = math.max(math.ceil(var_45_36 / var_45_23), 1)
 
-		segments = math.max(math.ceil(total_size / tile_vertical_size_y), 1)
+		for iter_45_1 = 1, var_45_38 do
+			local var_45_39 = math.clamp(var_45_36 / var_45_33, 0, 1)
+			local var_45_40 = iter_45_1 % 2 == 0
 
-		for i = 1, segments do
-			local segment_size = math.clamp(total_size / tile_horizontal_size_x, 0, 1)
-			local mirrored = i % 2 == 0
-
-			if mirrored and mirrored_tiling then
-				uvs[1][1] = 1 - corner_size_x / texture_size_x
-				uvs[2][1] = math.lerp(1 - corner_size_x / texture_size_x, corner_size_x / texture_size_x, segment_size)
+			if var_45_40 and arg_45_11 then
+				var_0_34[1][1] = 1 - var_45_4 / var_45_8
+				var_0_34[2][1] = math.lerp(1 - var_45_4 / var_45_8, var_45_4 / var_45_8, var_45_39)
 			else
-				uvs[1][1] = corner_size_x / texture_size_x
-				uvs[2][1] = math.lerp(corner_size_x / texture_size_x, 1 - corner_size_x / texture_size_x, segment_size)
+				var_0_34[1][1] = var_45_4 / var_45_8
+				var_0_34[2][1] = math.lerp(var_45_4 / var_45_8, 1 - var_45_4 / var_45_8, var_45_39)
 			end
 
-			uvs[1][2] = 1 - corner_size_y / texture_size_y
-			uvs[2][2] = 1
+			var_0_34[1][2] = 1 - var_45_5 / var_45_9
+			var_0_34[2][2] = 1
 
-			if mirrored and mirrored_tiling then
-				uvs_u[1][1] = 1 - corner_size_x / texture_size_x
-				uvs_u[2][1] = math.lerp(1 - corner_size_x / texture_size_x, corner_size_x / texture_size_x, segment_size)
+			if var_45_40 and arg_45_11 then
+				var_0_36[1][1] = 1 - var_45_4 / var_45_8
+				var_0_36[2][1] = math.lerp(1 - var_45_4 / var_45_8, var_45_4 / var_45_8, var_45_39)
 			else
-				uvs_u[1][1] = corner_size_x / texture_size_x
-				uvs_u[2][1] = math.lerp(corner_size_x / texture_size_x, 1 - corner_size_x / texture_size_x, segment_size)
+				var_0_36[1][1] = var_45_4 / var_45_8
+				var_0_36[2][1] = math.lerp(var_45_4 / var_45_8, 1 - var_45_4 / var_45_8, var_45_39)
 			end
 
-			uvs_u[1][2] = 0
-			uvs_u[2][2] = corner_size_y / texture_size_y
-			tile_horizontal_size_vec[1] = segment_size * tile_horizontal_size_x
+			var_0_36[1][2] = 0
+			var_0_36[2][2] = var_45_5 / var_45_9
+			var_45_32[1] = var_45_39 * var_45_33
 
-			if retained_ids == true then
-				new_retained_ids[#new_retained_ids + 1] = UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs, Vector3(tile_pos_x, y_pos, layer), tile_horizontal_size_vec, color, masked, saturated, nil)
-			elseif retained_ids then
-				local retained_id = retained_ids[retained_id_index]
+			if arg_45_13 == true then
+				var_45_13[#var_45_13 + 1] = var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_37, var_45_7, var_45_2), var_45_32, arg_45_6, arg_45_7, arg_45_8, nil)
+			elseif arg_45_13 then
+				local var_45_41 = arg_45_13[var_45_12]
 
-				UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs, Vector3(tile_pos_x, y_pos, layer), tile_horizontal_size_vec, color, masked, saturated, retained_id)
+				var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_37, var_45_7, var_45_2), var_45_32, arg_45_6, arg_45_7, arg_45_8, var_45_41)
 
-				retained_id_index = retained_id_index + 1
+				var_45_12 = var_45_12 + 1
 			else
-				UIRenderer.script_draw_bitmap_uv(gui, self.render_settings, texture_id, uvs, Vector3(tile_pos_x, y_pos, layer), tile_horizontal_size_vec, color, masked, saturated)
+				var_0_9.script_draw_bitmap_uv(var_45_0, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_37, var_45_7, var_45_2), var_45_32, arg_45_6, arg_45_7, arg_45_8)
 			end
 
-			if retained_ids == true then
-				new_retained_ids[#new_retained_ids + 1] = UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs_u, Vector3(tile_pos_x, y_pos + y_size - tile_horizontal_size_y, layer), tile_horizontal_size_vec, color, masked, saturated, nil)
-			elseif retained_ids then
-				local retained_id = retained_ids[retained_id_index]
+			if arg_45_13 == true then
+				var_45_13[#var_45_13 + 1] = var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_36, var_0_2(var_45_37, var_45_7 + var_45_11 - var_45_34, var_45_2), var_45_32, arg_45_6, arg_45_7, arg_45_8, nil)
+			elseif arg_45_13 then
+				local var_45_42 = arg_45_13[var_45_12]
 
-				UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs_u, Vector3(tile_pos_x, y_pos + y_size - tile_horizontal_size_y, layer), tile_horizontal_size_vec, color, masked, saturated, retained_id)
+				var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_36, var_0_2(var_45_37, var_45_7 + var_45_11 - var_45_34, var_45_2), var_45_32, arg_45_6, arg_45_7, arg_45_8, var_45_42)
 
-				retained_id_index = retained_id_index + 1
+				var_45_12 = var_45_12 + 1
 			else
-				UIRenderer.script_draw_bitmap_uv(gui, self.render_settings, texture_id, uvs_u, Vector3(tile_pos_x, y_pos + y_size - tile_horizontal_size_y, layer), tile_horizontal_size_vec, color, masked, saturated)
+				var_0_9.script_draw_bitmap_uv(var_45_0, arg_45_0.render_settings, arg_45_3, var_0_36, var_0_2(var_45_37, var_45_7 + var_45_11 - var_45_34, var_45_2), var_45_32, arg_45_6, arg_45_7, arg_45_8)
 			end
 
-			tile_pos_x = tile_pos_x + tile_horizontal_size_x
-			total_size = total_size - tile_horizontal_size_x
+			var_45_37 = var_45_37 + var_45_33
+			var_45_36 = var_45_36 - var_45_33
 		end
 	else
-		local tile_vertical_size_vec = UIScaleVectorToResolution(texture_sizes.vertical)
-		local tile_vertical_size_x, tile_vertical_size_y = tile_vertical_size_vec[1], tile_vertical_size_vec[2]
-		local bar_height = size[2] - corner_size_y * 2
+		local var_45_43 = UIScaleVectorToResolution(arg_45_5.vertical)
+		local var_45_44 = var_45_43[1]
+		local var_45_45 = var_45_43[2]
 
-		tile_vertical_size_vec[2] = bar_height
-		uvs[1][1] = 0
-		uvs[1][2] = 0.5 - tile_vertical_size_y / size[2] * 0.5
-		uvs[2][1] = tile_vertical_size_x / texture_size_x
-		uvs[2][2] = 0.5 + tile_vertical_size_y / size[2] * 0.5
-		uvs_r[1][1] = 1 - tile_vertical_size_x / texture_size_x
-		uvs_r[1][2] = 0.5 - tile_vertical_size_y / size[2] * 0.5
-		uvs_r[2][1] = 1
-		uvs_r[2][2] = 0.5 + tile_vertical_size_y / size[2] * 0.5
+		var_45_43[2] = arg_45_2[2] - var_45_5 * 2
+		var_0_34[1][1] = 0
+		var_0_34[1][2] = 0.5 - var_45_45 / arg_45_2[2] * 0.5
+		var_0_34[2][1] = var_45_44 / var_45_8
+		var_0_34[2][2] = 0.5 + var_45_45 / arg_45_2[2] * 0.5
+		var_0_35[1][1] = 1 - var_45_44 / var_45_8
+		var_0_35[1][2] = 0.5 - var_45_45 / arg_45_2[2] * 0.5
+		var_0_35[2][1] = 1
+		var_0_35[2][2] = 0.5 + var_45_45 / arg_45_2[2] * 0.5
 
-		local tile_pos_y = y_pos + corner_size_y
+		local var_45_46 = var_45_7 + var_45_5
 
-		if retained_ids == true then
-			new_retained_ids[#new_retained_ids + 1] = UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs, Vector3(x_pos, tile_pos_y, layer), tile_vertical_size_vec, color, masked, saturated, nil)
-		elseif retained_ids then
-			local retained_id = retained_ids[retained_id_index]
+		if arg_45_13 == true then
+			var_45_13[#var_45_13 + 1] = var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_6, var_45_46, var_45_2), var_45_43, arg_45_6, arg_45_7, arg_45_8, nil)
+		elseif arg_45_13 then
+			local var_45_47 = arg_45_13[var_45_12]
 
-			UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs, Vector3(x_pos, tile_pos_y, layer), tile_vertical_size_vec, color, masked, saturated, retained_id)
+			var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_6, var_45_46, var_45_2), var_45_43, arg_45_6, arg_45_7, arg_45_8, var_45_47)
 
-			retained_id_index = retained_id_index + 1
+			var_45_12 = var_45_12 + 1
 		else
-			UIRenderer.script_draw_bitmap_uv(gui, self.render_settings, texture_id, uvs, Vector3(x_pos, tile_pos_y, layer), tile_vertical_size_vec, color, masked, saturated)
+			var_0_9.script_draw_bitmap_uv(var_45_0, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_6, var_45_46, var_45_2), var_45_43, arg_45_6, arg_45_7, arg_45_8)
 		end
 
-		if retained_ids == true then
-			new_retained_ids[#new_retained_ids + 1] = UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs_r, Vector3(x_pos + x_size - tile_vertical_size_x, tile_pos_y, layer), tile_vertical_size_vec, color, masked, saturated, nil)
-		elseif retained_ids then
-			local retained_id = retained_ids[retained_id_index]
+		if arg_45_13 == true then
+			var_45_13[#var_45_13 + 1] = var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_35, var_0_2(var_45_6 + var_45_10 - var_45_44, var_45_46, var_45_2), var_45_43, arg_45_6, arg_45_7, arg_45_8, nil)
+		elseif arg_45_13 then
+			local var_45_48 = arg_45_13[var_45_12]
 
-			UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs_r, Vector3(x_pos + x_size - tile_vertical_size_x, tile_pos_y, layer), tile_vertical_size_vec, color, masked, saturated, retained_id)
+			var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_35, var_0_2(var_45_6 + var_45_10 - var_45_44, var_45_46, var_45_2), var_45_43, arg_45_6, arg_45_7, arg_45_8, var_45_48)
 
-			retained_id_index = retained_id_index + 1
+			var_45_12 = var_45_12 + 1
 		else
-			UIRenderer.script_draw_bitmap_uv(gui, self.render_settings, texture_id, uvs_r, Vector3(x_pos + x_size - tile_vertical_size_x, tile_pos_y, layer), tile_vertical_size_vec, color, masked, saturated)
+			var_0_9.script_draw_bitmap_uv(var_45_0, arg_45_0.render_settings, arg_45_3, var_0_35, var_0_2(var_45_6 + var_45_10 - var_45_44, var_45_46, var_45_2), var_45_43, arg_45_6, arg_45_7, arg_45_8)
 		end
 
-		local tile_horizontal_size_vec = UIScaleVectorToResolution(texture_sizes.horizontal)
-		local tile_horizontal_size_x, tile_horizontal_size_y = tile_horizontal_size_vec[1], tile_horizontal_size_vec[2]
-		local bar_width = size[1] - corner_size_x * 2
+		local var_45_49 = UIScaleVectorToResolution(arg_45_5.horizontal)
+		local var_45_50 = var_45_49[1]
+		local var_45_51 = var_45_49[2]
 
-		tile_horizontal_size_vec[1] = bar_width
-		uvs_u[1][1] = 0.5 - tile_horizontal_size_x / size[1] * 0.5
-		uvs_u[1][2] = 0
-		uvs_u[2][1] = 0.5 + tile_horizontal_size_x / size[1] * 0.5
-		uvs_u[2][2] = tile_horizontal_size_y / texture_size_y
-		uvs[1][1] = 0.5 - tile_horizontal_size_x / size[1] * 0.5
-		uvs[1][2] = 1 - tile_horizontal_size_y / texture_size_y
-		uvs[2][1] = 0.5 + tile_horizontal_size_x / size[1] * 0.5
-		uvs[2][2] = 1
+		var_45_49[1] = arg_45_2[1] - var_45_4 * 2
+		var_0_36[1][1] = 0.5 - var_45_50 / arg_45_2[1] * 0.5
+		var_0_36[1][2] = 0
+		var_0_36[2][1] = 0.5 + var_45_50 / arg_45_2[1] * 0.5
+		var_0_36[2][2] = var_45_51 / var_45_9
+		var_0_34[1][1] = 0.5 - var_45_50 / arg_45_2[1] * 0.5
+		var_0_34[1][2] = 1 - var_45_51 / var_45_9
+		var_0_34[2][1] = 0.5 + var_45_50 / arg_45_2[1] * 0.5
+		var_0_34[2][2] = 1
 
-		local tile_pos_x = x_pos + corner_size_x
+		local var_45_52 = var_45_6 + var_45_4
 
-		if retained_ids == true then
-			new_retained_ids[#new_retained_ids + 1] = UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs, Vector3(tile_pos_x, y_pos, layer), tile_horizontal_size_vec, color, masked, saturated, nil)
-		elseif retained_ids then
-			local retained_id = retained_ids[retained_id_index]
+		if arg_45_13 == true then
+			var_45_13[#var_45_13 + 1] = var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_52, var_45_7, var_45_2), var_45_49, arg_45_6, arg_45_7, arg_45_8, nil)
+		elseif arg_45_13 then
+			local var_45_53 = arg_45_13[var_45_12]
 
-			UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs, Vector3(tile_pos_x, y_pos, layer), tile_horizontal_size_vec, color, masked, saturated, retained_id)
+			var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_52, var_45_7, var_45_2), var_45_49, arg_45_6, arg_45_7, arg_45_8, var_45_53)
 
-			retained_id_index = retained_id_index + 1
+			var_45_12 = var_45_12 + 1
 		else
-			UIRenderer.script_draw_bitmap_uv(gui, self.render_settings, texture_id, uvs, Vector3(tile_pos_x, y_pos, layer), tile_horizontal_size_vec, color, masked, saturated)
+			var_0_9.script_draw_bitmap_uv(var_45_0, arg_45_0.render_settings, arg_45_3, var_0_34, var_0_2(var_45_52, var_45_7, var_45_2), var_45_49, arg_45_6, arg_45_7, arg_45_8)
 		end
 
-		if retained_ids == true then
-			new_retained_ids[#new_retained_ids + 1] = UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs_u, Vector3(tile_pos_x, y_pos + y_size - tile_horizontal_size_y, layer), tile_horizontal_size_vec, color, masked, saturated, nil)
-		elseif retained_ids then
-			local retained_id = retained_ids[retained_id_index]
+		if arg_45_13 == true then
+			var_45_13[#var_45_13 + 1] = var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_36, var_0_2(var_45_52, var_45_7 + var_45_11 - var_45_51, var_45_2), var_45_49, arg_45_6, arg_45_7, arg_45_8, nil)
+		elseif arg_45_13 then
+			local var_45_54 = arg_45_13[var_45_12]
 
-			UIRenderer.script_draw_bitmap_uv(gui_retained, self.render_settings, texture_id, uvs_u, Vector3(tile_pos_x, y_pos + y_size - tile_horizontal_size_y, layer), tile_horizontal_size_vec, color, masked, saturated, retained_id)
+			var_0_9.script_draw_bitmap_uv(var_45_1, arg_45_0.render_settings, arg_45_3, var_0_36, var_0_2(var_45_52, var_45_7 + var_45_11 - var_45_51, var_45_2), var_45_49, arg_45_6, arg_45_7, arg_45_8, var_45_54)
 		else
-			UIRenderer.script_draw_bitmap_uv(gui, self.render_settings, texture_id, uvs_u, Vector3(tile_pos_x, y_pos + y_size - tile_horizontal_size_y, layer), tile_horizontal_size_vec, color, masked, saturated)
+			var_0_9.script_draw_bitmap_uv(var_45_0, arg_45_0.render_settings, arg_45_3, var_0_36, var_0_2(var_45_52, var_45_7 + var_45_11 - var_45_51, var_45_2), var_45_49, arg_45_6, arg_45_7, arg_45_8)
 		end
 	end
 
-	return new_retained_ids
+	return var_45_13
 end
 
-UIRenderer.destroy_bitmap = function (self, retained_id)
-	Gui.destroy_bitmap(self.gui_retained, retained_id)
+function var_0_9.destroy_bitmap(arg_46_0, arg_46_1)
+	Gui.destroy_bitmap(arg_46_0.gui_retained, arg_46_1)
 end
 
-UIRenderer.destroy_text = function (self, retained_id)
-	Gui.destroy_text(self.gui_retained, retained_id)
+function var_0_9.destroy_text(arg_47_0, arg_47_1)
+	Gui.destroy_text(arg_47_0.gui_retained, arg_47_1)
 end
 
 require("scripts/ui/ui_passes")

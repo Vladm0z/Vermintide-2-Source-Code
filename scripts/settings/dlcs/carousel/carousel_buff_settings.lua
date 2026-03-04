@@ -1,767 +1,737 @@
-﻿-- chunkname: @scripts/settings/dlcs/carousel/carousel_buff_settings.lua
+-- chunkname: @scripts/settings/dlcs/carousel/carousel_buff_settings.lua
 
-local settings = DLCSettings.carousel
-local buff_perks = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local var_0_0 = DLCSettings.carousel
+local var_0_1 = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
 
-local function is_local(unit)
-	local player = Managers.player:owner(unit)
+local function var_0_2(arg_1_0)
+	local var_1_0 = Managers.player:owner(arg_1_0)
 
-	return player and not player.remote
+	return var_1_0 and not var_1_0.remote
 end
 
-local function is_bot(unit)
-	local player = Managers.player:owner(unit)
+local function var_0_3(arg_2_0)
+	local var_2_0 = Managers.player:owner(arg_2_0)
 
-	return player and player.bot_player
+	return var_2_0 and var_2_0.bot_player
 end
 
-settings.buff_templates = {
+var_0_0.buff_templates = {
 	vs_core_attack_speed_melee = {
 		buffs = {
 			{
 				multiplier = 0.1,
 				name = "vs_core_attack_speed_melee",
-				stat_buff = "attack_speed_melee",
-			},
-		},
+				stat_buff = "attack_speed_melee"
+			}
+		}
 	},
 	vs_core_reduced_overcharge = {
 		buffs = {
 			{
 				multiplier = 0.2,
 				name = "vs_core_reduced_overcharge",
-				stat_buff = "reduced_overcharge",
-			},
-		},
+				stat_buff = "reduced_overcharge"
+			}
+		}
 	},
 	vs_core_critical_strike_chance = {
 		buffs = {
 			{
-				bonus = 0.1,
 				name = "vs_core_critical_strike_chance",
 				stat_buff = "critical_strike_chance",
-			},
-		},
+				bonus = 0.1
+			}
+		}
 	},
 	vs_gutter_runner_allow_dismount = {
 		buffs = {
 			{
-				name = "vs_gutter_runner_allow_dismount",
-			},
-		},
+				name = "vs_gutter_runner_allow_dismount"
+			}
+		}
 	},
 	vs_gutter_runner_smoke_bomb_invisible = {
 		deactivation_effect = "fx/screenspace_ranger_skill_02",
 		buffs = {
 			{
-				apply_buff_func = "start_vs_gutter_runner_smoke_bomb_invisibility",
-				continuous_effect = "fx/screenspace_ranger_skill_01",
-				duration = 4,
-				icon = "bardin_ranger_activated_ability",
-				max_stacks = 1,
-				name = "vs_gutter_runner_smoke_bomb_invisible",
-				priority_buff = true,
-				refresh_durations = true,
 				remove_buff_func = "end_vs_gutter_runner_smoke_bomb_invisibility",
+				name = "vs_gutter_runner_smoke_bomb_invisible",
+				apply_buff_func = "start_vs_gutter_runner_smoke_bomb_invisibility",
+				duration = 4,
+				refresh_durations = true,
+				priority_buff = true,
+				continuous_effect = "fx/screenspace_ranger_skill_01",
+				max_stacks = 1,
+				icon = "bardin_ranger_activated_ability",
 				perks = {
-					buff_perks.invulnerable,
-				},
-			},
-		},
+					var_0_1.invulnerable
+				}
+			}
+		}
 	},
 	vs_ratling_gunner_slow = {
 		buffs = {
 			{
-				apply_buff_func = "apply_action_lerp_movement_buff",
-				debuff = true,
-				duration = 0.8,
-				icon = "troll_vomit_debuff",
-				lerp_time = 0.1,
-				max_stacks = 1,
+				update_func = "update_action_lerp_movement_buff",
 				multiplier = 0.5,
 				name = "vs_ratling_gunner_slow",
 				refresh_durations = true,
 				remove_buff_func = "remove_action_lerp_movement_buff",
+				apply_buff_func = "apply_action_lerp_movement_buff",
+				icon = "troll_vomit_debuff",
 				remove_buff_name = "planted_return_to_normal_movement",
-				update_func = "update_action_lerp_movement_buff",
+				lerp_time = 0.1,
+				debuff = true,
+				max_stacks = 1,
+				duration = 0.8,
 				path_to_movement_setting_to_modify = {
-					"move_speed",
-				},
+					"move_speed"
+				}
 			},
 			{
-				apply_buff_func = "apply_action_lerp_movement_buff",
-				duration = 0.8,
-				lerp_time = 0.1,
-				max_stacks = 1,
+				update_func = "update_charging_action_lerp_movement_buff",
 				multiplier = 0.5,
 				name = "decrease_crouch_speed_vs_ratling_gunner",
 				refresh_durations = true,
 				remove_buff_func = "remove_action_lerp_movement_buff",
-				remove_buff_name = "planted_return_to_normal_crouch_movement",
-				update_func = "update_charging_action_lerp_movement_buff",
-				path_to_movement_setting_to_modify = {
-					"crouch_move_speed",
-				},
-			},
-			{
 				apply_buff_func = "apply_action_lerp_movement_buff",
-				duration = 0.8,
+				remove_buff_name = "planted_return_to_normal_crouch_movement",
 				lerp_time = 0.1,
 				max_stacks = 1,
+				duration = 0.8,
+				path_to_movement_setting_to_modify = {
+					"crouch_move_speed"
+				}
+			},
+			{
+				update_func = "update_charging_action_lerp_movement_buff",
 				multiplier = 0.5,
 				name = "decrease_walk_speed_vs_ratling_gunner",
 				refresh_durations = true,
 				remove_buff_func = "remove_action_lerp_movement_buff",
+				apply_buff_func = "apply_action_lerp_movement_buff",
 				remove_buff_name = "planted_return_to_normal_walk_movement",
-				update_func = "update_charging_action_lerp_movement_buff",
+				lerp_time = 0.1,
+				max_stacks = 1,
+				duration = 0.8,
 				path_to_movement_setting_to_modify = {
-					"walk_move_speed",
-				},
+					"walk_move_speed"
+				}
 			},
 			{
-				apply_buff_func = "apply_movement_buff",
+				name = "decrease_jump_speed_vs_ratling_gunner",
+				multiplier = 0.6,
 				duration = 0.8,
 				max_stacks = 1,
-				multiplier = 0.6,
-				name = "decrease_jump_speed_vs_ratling_gunner",
-				refresh_durations = true,
 				remove_buff_func = "remove_movement_buff",
+				apply_buff_func = "apply_movement_buff",
+				refresh_durations = true,
 				path_to_movement_setting_to_modify = {
 					"jump",
-					"initial_vertical_speed",
-				},
+					"initial_vertical_speed"
+				}
 			},
 			{
-				apply_buff_func = "apply_movement_buff",
-				duration = 0.8,
-				max_stacks = 1,
-				multiplier = 0.8,
 				name = "decrease_dodge_speed_vs_ratling_gunner",
-				refresh_durations = true,
-				remove_buff_func = "remove_movement_buff",
-				path_to_movement_setting_to_modify = {
-					"dodging",
-					"speed_modifier",
-				},
-			},
-			{
-				apply_buff_func = "apply_movement_buff",
+				multiplier = 0.8,
 				duration = 0.8,
 				max_stacks = 1,
-				multiplier = 0.8,
-				name = "decrease_dodge_distance_vs_ratling_gunner",
-				refresh_durations = true,
 				remove_buff_func = "remove_movement_buff",
+				apply_buff_func = "apply_movement_buff",
+				refresh_durations = true,
 				path_to_movement_setting_to_modify = {
 					"dodging",
-					"distance_modifier",
-				},
+					"speed_modifier"
+				}
 			},
-		},
+			{
+				name = "decrease_dodge_distance_vs_ratling_gunner",
+				multiplier = 0.8,
+				duration = 0.8,
+				max_stacks = 1,
+				remove_buff_func = "remove_movement_buff",
+				apply_buff_func = "apply_movement_buff",
+				refresh_durations = true,
+				path_to_movement_setting_to_modify = {
+					"dodging",
+					"distance_modifier"
+				}
+			}
+		}
 	},
 	vs_warpfire_thrower_long_distance_damage = {
 		buffs = {
 			{
-				apply_buff_func = "apply_vs_warpfirethrower_long_distance_damage",
-				duration = 0.3,
-				icon = "troll_vomit_debuff",
-				name = "vs_warpfire_thrower_long_distance_damage",
-				refresh_durations = true,
 				remove_buff_func = "remove_vs_warpfirethrower_long_distance_damage",
+				name = "vs_warpfire_thrower_long_distance_damage",
+				icon = "troll_vomit_debuff",
+				duration = 0.3,
+				refresh_durations = true,
+				apply_buff_func = "apply_vs_warpfirethrower_long_distance_damage",
+				update_start_delay = 0.1,
 				time_between_dot_damages = 0.35,
 				timed_status_effect_time = 2,
 				update_func = "update_vs_warpfirethrower_long_distance_damage",
-				update_start_delay = 0.1,
 				perks = {
-					buff_perks.burning_warpfire,
-				},
-			},
-		},
+					var_0_1.burning_warpfire
+				}
+			}
+		}
 	},
 	vs_warpfire_thrower_short_distance_damage = {
 		buffs = {
 			{
-				apply_buff_func = "apply_warpfirethrower_in_face_versus",
-				damage_type = "warpfire_ground",
-				debuff = true,
-				dormant = true,
-				duration = 0.15,
-				fatigue_type = "warpfire_ground",
-				icon = "troll_vomit_debuff",
-				name = "vs_warpfire_thrower_base",
-				push_speed = 9,
-				remove_buff_func = "remove_warpfirethrower_in_face",
 				slowdown_buff_name = "warpfire_thrower_fire_slowdown",
+				name = "vs_warpfire_thrower_base",
+				update_func = "update_warpfirethrower_in_face",
+				dormant = true,
+				damage_type = "warpfire_ground",
+				remove_buff_func = "remove_warpfirethrower_in_face",
+				apply_buff_func = "apply_warpfirethrower_in_face_versus",
+				fatigue_type = "warpfire_ground",
+				duration = 0.15,
 				time_between_dot_damages = 0.15,
 				timed_status_effect_time = 2,
-				update_func = "update_warpfirethrower_in_face",
+				debuff = true,
+				icon = "troll_vomit_debuff",
+				push_speed = 9,
 				perks = {
-					buff_perks.burning_warpfire,
-				},
-			},
-		},
+					var_0_1.burning_warpfire
+				}
+			}
+		}
 	},
 	vs_pactsworn_melee_damage_taken = {
 		buffs = {
 			{
 				multiplier = 1,
 				name = "defence_debuff_enemies",
-				stat_buff = "damage_taken_melee",
-			},
-		},
+				stat_buff = "damage_taken_melee"
+			}
+		}
 	},
 	vs_boss_stagger_immune = {
 		buffs = {
 			{
-				duration = 3,
-				max_stacks = 1,
 				multiplier = -1,
 				name = "vs_boss_stagger_immune",
 				stat_buff = "impact_vulnerability",
-			},
-		},
+				max_stacks = 1,
+				duration = 3
+			}
+		}
 	},
 	vs_rat_ogre_start_leap_stagger_immune = {
 		buffs = {
 			{
-				duration = 5,
-				max_stacks = 1,
 				multiplier = -1,
 				name = "vs_rat_ogre_start_leap_stagger_immune",
 				stat_buff = "impact_vulnerability",
-			},
-		},
+				max_stacks = 1,
+				duration = 5
+			}
+		}
 	},
 	vs_rat_ogre_finish_leap_stagger_immune = {
 		buffs = {
 			{
-				duration = 8,
-				max_stacks = 1,
 				multiplier = -1,
 				name = "vs_rat_ogre_finish_leap_stagger_immune",
 				stat_buff = "impact_vulnerability",
-			},
-		},
+				max_stacks = 1,
+				duration = 8
+			}
+		}
 	},
 	vs_damage_taken = {
 		buffs = {
 			{
-				duration = 10,
 				multiplier = -1,
 				name = "vs_damage_taken",
 				stat_buff = "damage_taken",
-			},
-		},
+				duration = 10
+			}
+		}
 	},
 	vs_stagger_immune = {
 		buffs = {
 			{
-				duration = 10,
 				multiplier = -1,
 				name = "vs_stagger_immune",
 				stat_buff = "impact_vulnerability",
-			},
-		},
+				duration = 10
+			}
+		}
 	},
 	vs_boss_health_degeneration = {
 		buffs = {
 			{
 				multiplier = 0.1,
 				name = "vs_boss_health_degeneration",
-				stat_buff = "healing_received",
-			},
-		},
+				stat_buff = "healing_received"
+			}
+		}
 	},
 	vs_boss_mood = {
 		buffs = {
 			{
-				mood = "playable_boss",
-				name = "vs_boss_mood",
 				update_func = "update_vs_boss_mood",
-			},
-		},
+				name = "vs_boss_mood",
+				mood = "playable_boss"
+			}
+		}
 	},
 	rat_ogre_planted_decrease_movement = {
 		buffs = {
 			{
-				apply_buff_func = "apply_action_lerp_movement_buff",
+				remove_buff_name = "planted_return_to_normal_movement",
+				name = "decrease_speed",
 				lerp_time = 0.5,
 				multiplier = 1,
-				name = "decrease_speed",
-				remove_buff_func = "remove_action_lerp_movement_buff",
-				remove_buff_name = "planted_return_to_normal_movement",
 				update_func = "update_action_lerp_movement_buff",
+				remove_buff_func = "remove_action_lerp_movement_buff",
+				apply_buff_func = "apply_action_lerp_movement_buff",
 				path_to_movement_setting_to_modify = {
-					"move_speed",
-				},
-			},
-		},
+					"move_speed"
+				}
+			}
+		}
 	},
 	vs_ability_buff_chaos_troll_regen = {
 		buffs = {
 			{
-				duration = 5,
 				multiplier = -1,
 				name = "vs_stagger_immune",
 				stat_buff = "impact_vulnerability",
+				duration = 5
 			},
 			{
-				duration = 5,
 				multiplier = -0.5,
 				name = "vs_damage_taken",
 				stat_buff = "damage_taken",
+				duration = 5
 			},
 			{
-				apply_buff_func = "apply_vs_chaos_troll_regen",
 				duration = 5,
-				heal_percentage = 0.5,
 				name = "vs_chaos_troll_regen",
 				particle_vfx = "fx/chr_chaos_troll_healing",
 				remove_buff_func = "remove_vs_chaos_troll_regen",
+				apply_buff_func = "apply_vs_chaos_troll_regen",
 				screen_space_effect = "fx/screenspace_chaos_troll_healing",
 				tick_rate = 0.05,
-				update_func = "update_vs_chaos_troll_regen",
-			},
-		},
+				heal_percentage = 0.5,
+				update_func = "update_vs_chaos_troll_regen"
+			}
+		}
 	},
 	vs_warpfire_thrower_no_charge_explotion = {
 		buffs = {
 			{
-				icon = "sienna_scholar_overcharge_no_slow",
 				name = "vs_warpfire_thrower_no_charge_explotion",
+				icon = "sienna_scholar_overcharge_no_slow",
 				perks = {
-					buff_perks.no_overcharge_explosion,
-				},
-			},
-		},
+					var_0_1.no_overcharge_explosion
+				}
+			}
+		}
 	},
 	staff_life_player_target_cooldown = {
 		buffs = {
 			{
-				duration = 40,
 				icon = "icon_wpn_we_life_staff_01",
-				is_cooldown = true,
 				name = "staff_life_player_target_cooldown",
+				is_cooldown = true,
+				duration = 40,
 				priority_buff = true,
 				perks = {
-					buff_perks.sister_no_player_lift,
-				},
-			},
-		},
+					var_0_1.sister_no_player_lift
+				}
+			}
+		}
 	},
 	vs_bile_troll_vomit_face_base = {
 		buffs = {
 			{
-				apply_buff_func = "apply_vomit_in_face",
-				damage_type = "vomit_face",
-				debuff = true,
-				duration = 5,
-				fatigue_type = "vomit_face",
-				icon = "troll_vomit_debuff",
-				max_stacks = 1,
-				name = "vs_troll_bile_face",
-				push_speed = 6,
-				refresh_durations = true,
-				remove_buff_func = "remove_vomit_in_face",
 				slowdown_buff_name = "vs_bile_troll_vomit_face_slowdown",
-				time_between_dot_damages = 0.65,
+				name = "vs_troll_bile_face",
+				debuff = true,
 				update_func = "update_vomit_in_face",
+				fatigue_type = "vomit_face",
+				remove_buff_func = "remove_vomit_in_face",
+				apply_buff_func = "apply_vomit_in_face",
+				duration = 5,
+				time_between_dot_damages = 0.65,
+				refresh_durations = true,
+				damage_type = "vomit_face",
+				max_stacks = 1,
+				icon = "troll_vomit_debuff",
+				push_speed = 6,
 				difficulty_damage = {
 					easy = {
 						1,
 						1,
 						0,
 						0.5,
-						1,
+						1
 					},
 					normal = {
 						1,
 						1,
 						0,
 						1,
-						1,
+						1
 					},
 					hard = {
 						1,
 						1,
 						0,
 						1,
-						1,
+						1
 					},
 					harder = {
 						1,
 						1,
 						0,
 						2,
-						1,
+						1
 					},
 					hardest = {
 						1,
 						1,
 						0,
 						4,
-						1,
+						1
 					},
 					cataclysm = {
 						1,
 						1,
 						0,
 						4,
-						1,
+						1
 					},
 					cataclysm_2 = {
 						1,
 						1,
 						0,
 						4,
-						1,
+						1
 					},
 					cataclysm_3 = {
 						1,
 						1,
 						0,
 						4,
-						1,
+						1
 					},
 					versus_base = {
 						1,
 						1,
 						0,
 						1,
-						1,
-					},
-				},
+						1
+					}
+				}
 			},
 			{
-				apply_buff_func = "apply_movement_buff",
-				duration = 7,
-				multiplier = 0.3,
 				name = "decrease_jump_speed",
+				multiplier = 0.3,
+				duration = 7,
 				remove_buff_func = "remove_movement_buff",
+				apply_buff_func = "apply_movement_buff",
 				path_to_movement_setting_to_modify = {
 					"jump",
-					"initial_vertical_speed",
-				},
+					"initial_vertical_speed"
+				}
 			},
 			{
-				apply_buff_func = "apply_movement_buff",
-				duration = 7,
-				multiplier = 0.3,
 				name = "decrease_dodge_speed",
+				multiplier = 0.3,
+				duration = 7,
 				remove_buff_func = "remove_movement_buff",
+				apply_buff_func = "apply_movement_buff",
 				path_to_movement_setting_to_modify = {
 					"dodging",
-					"speed_modifier",
-				},
+					"speed_modifier"
+				}
 			},
 			{
-				apply_buff_func = "apply_movement_buff",
-				duration = 7,
-				multiplier = 0.3,
 				name = "decrease_dodge_distance",
+				multiplier = 0.3,
+				duration = 7,
 				remove_buff_func = "remove_movement_buff",
+				apply_buff_func = "apply_movement_buff",
 				path_to_movement_setting_to_modify = {
 					"dodging",
-					"distance_modifier",
-				},
-			},
-		},
+					"distance_modifier"
+				}
+			}
+		}
 	},
 	vs_bile_troll_vomit_face_slowdown = {
 		buffs = {
 			{
-				apply_buff_func = "apply_action_lerp_movement_buff",
-				duration = 0.5,
-				lerp_time = 0.1,
-				max_stacks = 1,
+				update_func = "update_action_lerp_movement_buff",
 				multiplier = 0.3,
 				name = "decrease_speed",
 				refresh_durations = true,
 				remove_buff_func = "remove_action_lerp_movement_buff",
-				remove_buff_name = "planted_return_to_normal_movement",
-				update_func = "update_action_lerp_movement_buff",
-				path_to_movement_setting_to_modify = {
-					"move_speed",
-				},
-			},
-			{
 				apply_buff_func = "apply_action_lerp_movement_buff",
-				duration = 0.5,
+				remove_buff_name = "planted_return_to_normal_movement",
 				lerp_time = 0.1,
 				max_stacks = 1,
+				duration = 0.5,
+				path_to_movement_setting_to_modify = {
+					"move_speed"
+				}
+			},
+			{
+				update_func = "update_charging_action_lerp_movement_buff",
 				multiplier = 0.3,
 				name = "decrease_crouch_speed",
 				refresh_durations = true,
 				remove_buff_func = "remove_action_lerp_movement_buff",
-				remove_buff_name = "planted_return_to_normal_crouch_movement",
-				update_func = "update_charging_action_lerp_movement_buff",
-				path_to_movement_setting_to_modify = {
-					"crouch_move_speed",
-				},
-			},
-			{
 				apply_buff_func = "apply_action_lerp_movement_buff",
-				duration = 0.5,
+				remove_buff_name = "planted_return_to_normal_crouch_movement",
 				lerp_time = 0.1,
 				max_stacks = 1,
+				duration = 0.5,
+				path_to_movement_setting_to_modify = {
+					"crouch_move_speed"
+				}
+			},
+			{
+				update_func = "update_charging_action_lerp_movement_buff",
 				multiplier = 0.3,
 				name = "decrease_walk_speed",
 				refresh_durations = true,
 				remove_buff_func = "remove_action_lerp_movement_buff",
+				apply_buff_func = "apply_action_lerp_movement_buff",
 				remove_buff_name = "planted_return_to_normal_walk_movement",
-				update_func = "update_charging_action_lerp_movement_buff",
+				lerp_time = 0.1,
+				max_stacks = 1,
+				duration = 0.5,
 				path_to_movement_setting_to_modify = {
-					"walk_move_speed",
-				},
-			},
-		},
-	},
+					"walk_move_speed"
+				}
+			}
+		}
+	}
 }
 
-local function is_grail_knight_blocking(unit, attacker_unit, buff, params, world)
-	local unit_id = Managers.state.unit_storage:go_id(unit)
-	local game = Managers.state.network:game()
-	local unit_forward = GameSession.game_object_field(game, unit_id, "aim_direction")
-	local unit_pos = POSITION_LOOKUP[unit]
-	local attacker_pos = POSITION_LOOKUP[attacker_unit]
-	local to_attacker = Vector3.flat(attacker_pos - unit_pos)
-	local to_attacker_normalized, distance = Vector3.direction_length(to_attacker)
+local function var_0_4(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local var_3_0 = Managers.state.unit_storage:go_id(arg_3_0)
+	local var_3_1 = Managers.state.network:game()
+	local var_3_2 = GameSession.game_object_field(var_3_1, var_3_0, "aim_direction")
+	local var_3_3 = POSITION_LOOKUP[arg_3_0]
+	local var_3_4 = POSITION_LOOKUP[arg_3_1]
+	local var_3_5 = Vector3.flat(var_3_4 - var_3_3)
+	local var_3_6, var_3_7 = Vector3.direction_length(var_3_5)
 
-	if distance < math.epsilon then
+	if var_3_7 < math.epsilon then
 		return true, 1
 	end
 
-	local unit_facing_attacker_dot = Vector3.dot(unit_forward, to_attacker_normalized)
-	local max_block_angle = math.cos(math.pi * 0.6666666666666666)
-	local is_power_blocking = max_block_angle < unit_facing_attacker_dot
-
-	return is_power_blocking
+	return Vector3.dot(var_3_2, var_3_6) > math.cos(math.pi * 0.6666666666666666)
 end
 
-settings.buff_function_templates = {
-	apply_vs_chaos_troll_regen = function (unit, buff, params, world)
-		local buff_template = buff.template
-		local health_extension = ScriptUnit.extension(unit, "health_system")
-		local max_health = health_extension:get_max_health()
-		local current_health = health_extension:current_permanent_health()
-		local missing_health = max_health - current_health
-		local health_to_heal = missing_health * buff_template.heal_percentage
-		local health_to_heal_per_sec = health_to_heal / buff.duration
+var_0_0.buff_function_templates = {
+	apply_vs_chaos_troll_regen = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+		local var_4_0 = arg_4_1.template
+		local var_4_1 = ScriptUnit.extension(arg_4_0, "health_system")
+		local var_4_2 = var_4_1:get_max_health() - var_4_1:current_permanent_health()
+		local var_4_3 = var_4_2 * var_4_0.heal_percentage
+		local var_4_4 = var_4_3 / arg_4_1.duration
 
-		params.health_to_heal = health_to_heal
-		params.tick_rate = buff_template.tick_rate
-		params.health_to_heal_per_tick = buff_template.tick_rate and health_to_heal_per_sec * buff_template.tick_rate
-		params.missing_health = missing_health
-		params.next_tick = params.t + buff_template.tick_rate
+		arg_4_2.health_to_heal = var_4_3
+		arg_4_2.tick_rate = var_4_0.tick_rate
+		arg_4_2.health_to_heal_per_tick = var_4_0.tick_rate and var_4_4 * var_4_0.tick_rate
+		arg_4_2.missing_health = var_4_2
+		arg_4_2.next_tick = arg_4_2.t + var_4_0.tick_rate
 
-		local particle_vfx = buff_template.particle_vfx
+		local var_4_5 = var_4_0.particle_vfx
 
 		if not DEDICATED_SERVER then
-			local player = Managers.player:unit_owner(unit)
+			local var_4_6 = Managers.player:unit_owner(arg_4_0)
 
-			if player and player.remote then
-				local skin_unit = CosmeticsUtils.get_third_person_mesh_unit(unit)
-				local node = 0
+			if var_4_6 and var_4_6.remote then
+				local var_4_7 = CosmeticsUtils.get_third_person_mesh_unit(arg_4_0)
+				local var_4_8 = 0
 
-				params.particle_id = ScriptWorld.create_particles_linked(world, particle_vfx, skin_unit, node, "destroy")
+				arg_4_2.particle_id = ScriptWorld.create_particles_linked(arg_4_3, var_4_5, var_4_7, var_4_8, "destroy")
 
-				World.set_particles_life_time(world, params.particle_id, buff.duration)
-			elseif player and player.local_player and not player.bot_player then
-				local screen_space_effect = buff_template.screen_space_effect
-				local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
+				World.set_particles_life_time(arg_4_3, arg_4_2.particle_id, arg_4_1.duration)
+			elseif var_4_6 and var_4_6.local_player and not var_4_6.bot_player then
+				local var_4_9 = var_4_0.screen_space_effect
 
-				params.screen_space_id = first_person_extension:create_screen_particles(screen_space_effect)
+				arg_4_2.screen_space_id = ScriptUnit.has_extension(arg_4_0, "first_person_system"):create_screen_particles(var_4_9)
 
-				World.set_particles_life_time(world, params.screen_space_id, buff.duration)
+				World.set_particles_life_time(arg_4_3, arg_4_2.screen_space_id, arg_4_1.duration)
 			end
 		end
 	end,
-	update_vs_chaos_troll_regen = function (unit, buff, params, world)
-		if params.t > params.next_tick then
-			params.next_tick = params.t + params.tick_rate
+	update_vs_chaos_troll_regen = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+		if arg_5_2.t > arg_5_2.next_tick then
+			arg_5_2.next_tick = arg_5_2.t + arg_5_2.tick_rate
 
-			local is_server = Managers.state.network.is_server
-
-			if is_server then
-				DamageUtils.heal_network(unit, unit, params.health_to_heal_per_tick, "health_regen")
+			if Managers.state.network.is_server then
+				DamageUtils.heal_network(arg_5_0, arg_5_0, arg_5_2.health_to_heal_per_tick, "health_regen")
 			end
 		end
 	end,
-	remove_vs_chaos_troll_regen = function (unit, buff, params, world)
+	remove_vs_chaos_troll_regen = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 		return
 	end,
-	update_vs_boss_mood = function (unit, buff, params, world)
-		if is_local(unit) then
-			local buff_template = buff.template
-			local player = Managers.player:unit_owner(unit)
-			local camera_system = Managers.state.entity:system("camera_system")
-			local camera_unit = camera_system and player and camera_system.camera_units and camera_system.camera_units[player]
-			local camera_state
+	update_vs_boss_mood = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+		if var_0_2(arg_7_0) then
+			local var_7_0 = arg_7_1.template
+			local var_7_1 = Managers.player:unit_owner(arg_7_0)
+			local var_7_2 = Managers.state.entity:system("camera_system")
+			local var_7_3 = var_7_2 and var_7_1 and var_7_2.camera_units and var_7_2.camera_units[var_7_1]
+			local var_7_4
 
-			if camera_unit then
-				local camera_state_ext = ScriptUnit.extension(camera_unit, "camera_state_machine_system")
+			if var_7_3 then
+				local var_7_5 = ScriptUnit.extension(var_7_3, "camera_state_machine_system")
 
-				camera_state = camera_state_ext.state_machine.state_current and camera_state_ext.state_machine.state_current.name
+				var_7_4 = var_7_5.state_machine.state_current and var_7_5.state_machine.state_current.name
 			end
 
-			if camera_state and camera_state ~= params.previous_camera_state then
-				Managers.state.camera:set_mood(buff_template.mood, buff, camera_state == "follow")
+			if var_7_4 and var_7_4 ~= arg_7_2.previous_camera_state then
+				Managers.state.camera:set_mood(var_7_0.mood, arg_7_1, var_7_4 == "follow")
 			end
 
-			params.previous_camera_state = camera_state
+			arg_7_2.previous_camera_state = var_7_4
 		end
 	end,
-	start_vs_gutter_runner_smoke_bomb_invisibility = function (unit, buff, params, world)
-		if is_local(unit) then
-			local status_extension = ScriptUnit.extension(unit, "status_system")
-
-			status_extension:set_invisible(true, nil, buff)
-			Managers.state.camera:set_mood("gutter_runner_f", buff, true)
+	start_vs_gutter_runner_smoke_bomb_invisibility = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+		if var_0_2(arg_8_0) then
+			ScriptUnit.extension(arg_8_0, "status_system"):set_invisible(true, nil, arg_8_1)
+			Managers.state.camera:set_mood("gutter_runner_f", arg_8_1, true)
 		end
 	end,
-	end_vs_gutter_runner_smoke_bomb_invisibility = function (unit, buff, params, world)
-		if is_local(unit) then
-			local first_person_extension = ScriptUnit.extension(unit, "first_person_system")
+	end_vs_gutter_runner_smoke_bomb_invisibility = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+		if var_0_2(arg_9_0) then
+			ScriptUnit.extension(arg_9_0, "first_person_system"):play_unit_sound_event("Play_versus_gutterrunner_vanish_fps_end", arg_9_0, 0)
 
-			first_person_extension:play_unit_sound_event("Play_versus_gutterrunner_vanish_fps_end", unit, 0)
+			local var_9_0 = ScriptUnit.extension(arg_9_0, "career_system")
 
-			local career_extension = ScriptUnit.extension(unit, "career_system")
-
-			career_extension:set_state("default")
-			career_extension:start_activated_ability_cooldown(1)
-
-			local status_extension = ScriptUnit.extension(unit, "status_system")
-
-			status_extension:set_invisible(false, nil, buff)
+			var_9_0:set_state("default")
+			var_9_0:start_activated_ability_cooldown(1)
+			ScriptUnit.extension(arg_9_0, "status_system"):set_invisible(false, nil, arg_9_1)
 
 			if Managers.state.network:game() then
-				local status_extension = ScriptUnit.extension(unit, "status_system")
+				ScriptUnit.extension(arg_9_0, "status_system"):set_is_dodging(false)
 
-				status_extension:set_is_dodging(false)
+				local var_9_1 = Managers.state.network
+				local var_9_2 = var_9_1.network_transmit
+				local var_9_3 = var_9_1:unit_game_object_id(arg_9_0)
 
-				local network_manager = Managers.state.network
-				local network_transmit = network_manager.network_transmit
-				local unit_id = network_manager:unit_game_object_id(unit)
-
-				network_transmit:send_rpc_server("rpc_status_change_bool", NetworkLookup.statuses.dodging, false, unit_id, 0)
+				var_9_2:send_rpc_server("rpc_status_change_bool", NetworkLookup.statuses.dodging, false, var_9_3, 0)
 			end
 
-			Managers.state.camera:set_mood("gutter_runner_f", buff, false)
+			Managers.state.camera:set_mood("gutter_runner_f", arg_9_1, false)
 		end
 	end,
-	apply_vs_warpfirethrower_long_distance_damage = function (unit, buff, params, world)
-		local breed = Unit.get_data(unit, "breed")
+	apply_vs_warpfirethrower_long_distance_damage = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+		arg_10_1.armor_type = Unit.get_data(arg_10_0, "breed").armor_category or 1
 
-		buff.armor_type = breed.armor_category or 1
+		local var_10_0 = ScriptUnit.has_extension(arg_10_0, "first_person_system")
 
-		local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
-
-		if first_person_extension then
-			buff.warpfire_particle_id = first_person_extension:create_screen_particles("fx/screenspace_warpfire_hit_onfeet")
+		if var_10_0 then
+			arg_10_1.warpfire_particle_id = var_10_0:create_screen_particles("fx/screenspace_warpfire_hit_onfeet")
 		end
 
-		local attacker_unit_is_alive = ALIVE[params.attacker_unit]
-		local attacker_unit = attacker_unit_is_alive and params.attacker_unit or unit
+		local var_10_1 = ALIVE[arg_10_2.attacker_unit] and arg_10_2.attacker_unit or arg_10_0
 
-		if Unit.alive(attacker_unit) then
-			local warpfire_unit_breed = Unit.get_data(attacker_unit, "breed")
-			local damage = warpfire_unit_breed.shoot_warpfire_long_attack_damage
+		if Unit.alive(var_10_1) then
+			local var_10_2 = Unit.get_data(var_10_1, "breed")
 
-			buff.damage = damage
-			buff.damage_source = warpfire_unit_breed and warpfire_unit_breed.name or "dot_debuff"
+			arg_10_1.damage = var_10_2.shoot_warpfire_long_attack_damage
+			arg_10_1.damage_source = var_10_2 and var_10_2.name or "dot_debuff"
 		end
 	end,
-	update_vs_warpfirethrower_long_distance_damage = function (unit, buff, params, world)
-		local t = params.t
-		local buff_template = buff.template
+	update_vs_warpfirethrower_long_distance_damage = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+		local var_11_0 = arg_11_2.t
+		local var_11_1 = arg_11_1.template
 
 		if Managers.state.network.is_server then
-			local attacker_unit = params.attacker_unit
-			local target_buff_extension = ScriptUnit.has_extension(unit, "buff_system")
-			local target_power_block_perk = target_buff_extension:has_buff_perk("power_block")
-			local is_power_blocking = false
+			local var_11_2 = arg_11_2.attacker_unit
+			local var_11_3 = ScriptUnit.has_extension(arg_11_0, "buff_system"):has_buff_perk("power_block")
+			local var_11_4 = false
 
-			if target_power_block_perk then
-				is_power_blocking = is_grail_knight_blocking(unit, attacker_unit, buff, params, world)
+			if var_11_3 then
+				var_11_4 = var_0_4(arg_11_0, var_11_2, arg_11_1, arg_11_2, arg_11_3)
 			end
 
-			if (not is_power_blocking or not DamageUtils.check_ranged_block(attacker_unit, unit, "blocked_berzerker")) and HEALTH_ALIVE[unit] then
-				local armor_type = buff.armor_type
-				local damage_type = buff_template.damage_type
-				local damage = buff.damage[armor_type]
-				local damage_source = buff.damage_source
+			if (not var_11_4 or not DamageUtils.check_ranged_block(var_11_2, arg_11_0, "blocked_berzerker")) and HEALTH_ALIVE[arg_11_0] then
+				local var_11_5 = arg_11_1.armor_type
+				local var_11_6 = var_11_1.damage_type
+				local var_11_7 = arg_11_1.damage[var_11_5]
+				local var_11_8 = arg_11_1.damage_source
 
-				DamageUtils.add_damage_network(unit, attacker_unit, damage, "torso", damage_type, nil, Vector3(1, 0, 0), damage_source, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
+				DamageUtils.add_damage_network(arg_11_0, var_11_2, var_11_7, "torso", var_11_6, nil, Vector3(1, 0, 0), var_11_8, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 			end
 		end
 
-		local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
+		local var_11_9 = ScriptUnit.has_extension(arg_11_0, "first_person_system")
 
-		if first_person_extension then
-			first_person_extension:play_hud_sound_event("Play_player_damage_puke")
+		if var_11_9 then
+			var_11_9:play_hud_sound_event("Play_player_damage_puke")
 		end
 
-		local warpfire_next_t = t + buff_template.time_between_dot_damages
-
-		return warpfire_next_t
+		return var_11_0 + var_11_1.time_between_dot_damages
 	end,
-	remove_vs_warpfirethrower_long_distance_damage = function (unit, buff, params, world)
-		local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
+	remove_vs_warpfirethrower_long_distance_damage = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+		local var_12_0 = ScriptUnit.has_extension(arg_12_0, "first_person_system")
 
-		if first_person_extension then
-			first_person_extension:stop_spawning_screen_particles(buff.warpfire_particle_id)
+		if var_12_0 then
+			var_12_0:stop_spawning_screen_particles(arg_12_1.warpfire_particle_id)
 		end
 	end,
-	apply_warpfirethrower_in_face_versus = function (unit, buff, params, world)
-		local buff_template = buff.template
-		local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
+	apply_warpfirethrower_in_face_versus = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+		local var_13_0 = arg_13_1.template
+		local var_13_1 = ScriptUnit.has_extension(arg_13_0, "first_person_system")
 
-		if first_person_extension then
-			buff.warpfire_particle_id = first_person_extension:create_screen_particles("fx/screenspace_warpfire_flamethrower_01")
-			buff.warpfire_particle_id_2 = first_person_extension:create_screen_particles("fx/screenspace_warpfire_hit_inface")
+		if var_13_1 then
+			arg_13_1.warpfire_particle_id = var_13_1:create_screen_particles("fx/screenspace_warpfire_flamethrower_01")
+			arg_13_1.warpfire_particle_id_2 = var_13_1:create_screen_particles("fx/screenspace_warpfire_hit_inface")
 
-			first_person_extension:play_hud_sound_event("Play_player_hit_warpfire_thrower")
+			var_13_1:play_hud_sound_event("Play_player_hit_warpfire_thrower")
 		end
 
-		local attacker_unit = params.attacker_unit
+		local var_13_2 = arg_13_2.attacker_unit
 
-		if Unit.alive(attacker_unit) then
-			local warpfire_unit_breed = Unit.get_data(attacker_unit, "breed")
-			local damage = warpfire_unit_breed.shoot_warpfire_long_attack_damage
+		if Unit.alive(var_13_2) then
+			local var_13_3 = Unit.get_data(var_13_2, "breed")
 
-			buff.damage = damage
-			buff.damage_source = warpfire_unit_breed and warpfire_unit_breed.name or "dot_debuff"
+			arg_13_1.damage = var_13_3.shoot_warpfire_long_attack_damage
+			arg_13_1.damage_source = var_13_3 and var_13_3.name or "dot_debuff"
 		end
 
-		local breed = Unit.get_data(unit, "breed")
+		local var_13_4 = Unit.get_data(arg_13_0, "breed")
 
-		buff.armor_type = breed.armor_category or 1
+		arg_13_1.armor_type = var_13_4.armor_category or 1
 
-		if breed.is_hero and first_person_extension then
-			local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
-			local status_extension = ScriptUnit.has_extension(unit, "status_system")
-			local no_ranged_knockback = buff_extension and buff_extension:has_buff_perk("no_ranged_knockback")
-			local is_valid_push_target = not no_ranged_knockback and not status_extension:is_disabled() and not status_extension:has_noclip()
+		if var_13_4.is_hero and var_13_1 then
+			local var_13_5 = ScriptUnit.has_extension(arg_13_0, "buff_system")
+			local var_13_6 = ScriptUnit.has_extension(arg_13_0, "status_system")
 
-			if is_valid_push_target then
-				local locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
-				local push_speed = buff_template.push_speed
-				local pushed_direction
+			if not (var_13_5 and var_13_5:has_buff_perk("no_ranged_knockback")) and not var_13_6:is_disabled() and not var_13_6:has_noclip() then
+				local var_13_7 = ScriptUnit.extension(arg_13_0, "locomotion_system")
+				local var_13_8 = var_13_0.push_speed
+				local var_13_9
 
-				if ALIVE[attacker_unit] then
-					local victim_position = POSITION_LOOKUP[unit]
-					local attacker_position = POSITION_LOOKUP[attacker_unit]
-					local to_victim = victim_position - attacker_position
+				if ALIVE[var_13_2] then
+					local var_13_10 = POSITION_LOOKUP[arg_13_0] - POSITION_LOOKUP[var_13_2]
 
-					pushed_direction = Vector3.normalize(to_victim)
+					var_13_9 = Vector3.normalize(var_13_10)
 				else
-					pushed_direction = Vector3.backward()
+					var_13_9 = Vector3.backward()
 				end
 
-				local pushed_velocity = pushed_direction * push_speed
+				local var_13_11 = var_13_9 * var_13_8
 
-				locomotion_extension:add_external_velocity(pushed_velocity)
+				var_13_7:add_external_velocity(var_13_11)
 			end
 		end
-	end,
+	end
 }

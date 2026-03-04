@@ -1,162 +1,157 @@
-﻿-- chunkname: @scripts/settings/mutators/mutator_nurgle_storm.lua
+-- chunkname: @scripts/settings/mutators/mutator_nurgle_storm.lua
 
 return {
 	description = "description_nurgle_storm",
 	display_name = "display_name_nurgle_storm",
 	icon = "mutator_icon_nurgle_storm",
-	server_start_function = function (context, data)
-		data.spawn_nurgle_storm_at = Managers.time:time("game") + 30
-		data.vortex_template_name = "nurgle_storm_mutator"
-		data.vortex_template = VortexTemplates[data.vortex_template_name]
-		data.inner_decal_unit_name = "units/decals/decal_vortex_circle_inner"
-		data.outer_decal_unit_name = "units/decals/decal_vortex_circle_outer"
-		data.storm_spawn_position = Vector3Box()
-		data.offset_spawn_distance = 20
-		data.delay_between_spawns = 5
-		data.unchecked_positions = {}
-		data.astar = GwNavAStar.create()
+	server_start_function = function(arg_1_0, arg_1_1)
+		arg_1_1.spawn_nurgle_storm_at = Managers.time:time("game") + 30
+		arg_1_1.vortex_template_name = "nurgle_storm_mutator"
+		arg_1_1.vortex_template = VortexTemplates[arg_1_1.vortex_template_name]
+		arg_1_1.inner_decal_unit_name = "units/decals/decal_vortex_circle_inner"
+		arg_1_1.outer_decal_unit_name = "units/decals/decal_vortex_circle_outer"
+		arg_1_1.storm_spawn_position = Vector3Box()
+		arg_1_1.offset_spawn_distance = 20
+		arg_1_1.delay_between_spawns = 5
+		arg_1_1.unchecked_positions = {}
+		arg_1_1.astar = GwNavAStar.create()
 	end,
-	server_pre_update_function = function (context, data)
+	server_pre_update_function = function(arg_2_0, arg_2_1)
 		if Network.game_session() == nil or global_is_inside_inn then
 			return
 		end
 
-		local time = Managers.time:time("game")
-		local has_unchecked_positions = table.size(data.unchecked_positions) > 0
+		local var_2_0 = Managers.time:time("game")
+		local var_2_1 = table.size(arg_2_1.unchecked_positions) > 0
 
-		if data.summoning_vortex_t and time > data.summoning_vortex_t and not ALIVE[data.summoned_vortex_unit] then
-			data.template.spawn_storm(data)
-		elseif ALIVE[data.summoned_vortex_unit] then
-			data.spawn_nurgle_storm_at = time + data.delay_between_spawns
-		elseif time > data.spawn_nurgle_storm_at and not has_unchecked_positions then
-			local conflict_director = Managers.state.conflict
-			local main_path_info = conflict_director.main_path_info
-			local spawn_ahead = math.random() > 0.5
-			local player_unit = spawn_ahead and main_path_info.ahead_unit or main_path_info.behind_unit
+		if arg_2_1.summoning_vortex_t and var_2_0 > arg_2_1.summoning_vortex_t and not ALIVE[arg_2_1.summoned_vortex_unit] then
+			arg_2_1.template.spawn_storm(arg_2_1)
+		elseif ALIVE[arg_2_1.summoned_vortex_unit] then
+			arg_2_1.spawn_nurgle_storm_at = var_2_0 + arg_2_1.delay_between_spawns
+		elseif var_2_0 > arg_2_1.spawn_nurgle_storm_at and not var_2_1 then
+			local var_2_2 = Managers.state.conflict
+			local var_2_3 = var_2_2.main_path_info
+			local var_2_4 = math.random() > 0.5
+			local var_2_5 = var_2_4 and var_2_3.ahead_unit or var_2_3.behind_unit
 
-			if player_unit then
-				local nav_world = Managers.state.entity:system("ai_system"):nav_world()
-				local offset_spawn_distance = data.offset_spawn_distance
-				local player_info = conflict_director.main_path_player_info[player_unit]
-				local player_travel_dist = player_info.travel_dist
-				local dist = math.max(player_travel_dist + offset_spawn_distance * (spawn_ahead and 1 or -1), 0)
-				local wanted_position = MainPathUtils.point_on_mainpath(nil, dist)
-				local storm_spawn_position = wanted_position and LocomotionUtils.pos_on_mesh(nav_world, wanted_position, 1, 1)
-				local backup_wanted_position = POSITION_LOOKUP[player_unit]
-				local backup_storm_spawn_position = wanted_position and LocomotionUtils.pos_on_mesh(nav_world, backup_wanted_position, 1, 1)
+			if var_2_5 then
+				local var_2_6 = Managers.state.entity:system("ai_system"):nav_world()
+				local var_2_7 = arg_2_1.offset_spawn_distance
+				local var_2_8 = var_2_2.main_path_player_info[var_2_5].travel_dist
+				local var_2_9 = math.max(var_2_8 + var_2_7 * (var_2_4 and 1 or -1), 0)
+				local var_2_10 = MainPathUtils.point_on_mainpath(nil, var_2_9)
+				local var_2_11 = var_2_10 and LocomotionUtils.pos_on_mesh(var_2_6, var_2_10, 1, 1)
+				local var_2_12 = POSITION_LOOKUP[var_2_5]
+				local var_2_13 = var_2_10 and LocomotionUtils.pos_on_mesh(var_2_6, var_2_12, 1, 1)
 
-				if not storm_spawn_position and wanted_position then
-					local p = GwNavQueries.inside_position_from_outside_position(nav_world, wanted_position, 6, 6, 8, 0.5)
+				if not var_2_11 and var_2_10 then
+					local var_2_14 = GwNavQueries.inside_position_from_outside_position(var_2_6, var_2_10, 6, 6, 8, 0.5)
 
-					if p then
-						storm_spawn_position = p
+					if var_2_14 then
+						var_2_11 = var_2_14
 					end
 				end
 
-				if not backup_storm_spawn_position and backup_wanted_position then
-					local p = GwNavQueries.inside_position_from_outside_position(nav_world, backup_wanted_position, 6, 6, 8, 0.5)
+				if not var_2_13 and var_2_12 then
+					local var_2_15 = GwNavQueries.inside_position_from_outside_position(var_2_6, var_2_12, 6, 6, 8, 0.5)
 
-					if p then
-						backup_storm_spawn_position = p
+					if var_2_15 then
+						var_2_13 = var_2_15
 					end
 				end
 
-				if storm_spawn_position and backup_storm_spawn_position then
-					local directed_wander_distance = player_travel_dist + offset_spawn_distance * 2 * (spawn_ahead and -1 or 1)
-					local directed_wander_position = MainPathUtils.point_on_mainpath(nil, directed_wander_distance)
+				if var_2_11 and var_2_13 then
+					local var_2_16 = var_2_8 + var_2_7 * 2 * (var_2_4 and -1 or 1)
+					local var_2_17 = MainPathUtils.point_on_mainpath(nil, var_2_16)
 
-					data.unchecked_positions.storm_spawn_position = Vector3Box(storm_spawn_position)
-					data.unchecked_positions.directed_wander_position = Vector3Box(directed_wander_position)
-					data.unchecked_positions.backup_storm_spawn_position = Vector3Box(backup_storm_spawn_position)
+					arg_2_1.unchecked_positions.storm_spawn_position = Vector3Box(var_2_11)
+					arg_2_1.unchecked_positions.directed_wander_position = Vector3Box(var_2_17)
+					arg_2_1.unchecked_positions.backup_storm_spawn_position = Vector3Box(var_2_13)
 
-					local bot_traverse_logic = Managers.state.bot_nav_transition:traverse_logic()
+					local var_2_18 = Managers.state.bot_nav_transition:traverse_logic()
 
-					GwNavAStar.start_with_propagation_box(data.astar, nav_world, storm_spawn_position, directed_wander_position, 30, bot_traverse_logic)
+					GwNavAStar.start_with_propagation_box(arg_2_1.astar, var_2_6, var_2_11, var_2_17, 30, var_2_18)
 				end
 			else
-				data.spawn_nurgle_storm_at = time + 1
+				arg_2_1.spawn_nurgle_storm_at = var_2_0 + 1
 			end
 		end
 
-		if has_unchecked_positions and GwNavAStar.processing_finished(data.astar) then
-			local positions = data.unchecked_positions
-			local template = data.template
+		if var_2_1 and GwNavAStar.processing_finished(arg_2_1.astar) then
+			local var_2_19 = arg_2_1.unchecked_positions
+			local var_2_20 = arg_2_1.template
 
-			if GwNavAStar.path_found(data.astar) then
-				template.prepare_spawning_storm(data, positions.storm_spawn_position, positions.directed_wander_position)
+			if GwNavAStar.path_found(arg_2_1.astar) then
+				var_2_20.prepare_spawning_storm(arg_2_1, var_2_19.storm_spawn_position, var_2_19.directed_wander_position)
 			else
-				template.prepare_spawning_storm(data, positions.backup_storm_spawn_position, positions.backup_storm_spawn_position)
+				var_2_20.prepare_spawning_storm(arg_2_1, var_2_19.backup_storm_spawn_position, var_2_19.backup_storm_spawn_position)
 			end
 
-			table.clear(data.unchecked_positions)
+			table.clear(arg_2_1.unchecked_positions)
 		end
 	end,
-	prepare_spawning_storm = function (data, spawn_position, destination)
-		local vortex_template = data.vortex_template
-		local spawn_radius = 2
-		local inner_radius_p = math.min(spawn_radius / vortex_template.full_inner_radius, 1)
-		local inner_decal_unit_name = data.inner_decal_unit_name
-		local inner_decal_unit
-		local storm_spawn_position_unboxed = spawn_position:unbox()
+	prepare_spawning_storm = function(arg_3_0, arg_3_1, arg_3_2)
+		local var_3_0 = arg_3_0.vortex_template
+		local var_3_1 = 2
+		local var_3_2 = math.min(var_3_1 / var_3_0.full_inner_radius, 1)
+		local var_3_3 = arg_3_0.inner_decal_unit_name
+		local var_3_4
+		local var_3_5 = arg_3_1:unbox()
 
-		if inner_decal_unit_name then
-			local inner_spawn_pose = Matrix4x4.from_quaternion_position(Quaternion.identity(), storm_spawn_position_unboxed)
-			local inner_radius = math.max(vortex_template.min_inner_radius, inner_radius_p * vortex_template.full_inner_radius)
+		if var_3_3 then
+			local var_3_6 = Matrix4x4.from_quaternion_position(Quaternion.identity(), var_3_5)
+			local var_3_7 = math.max(var_3_0.min_inner_radius, var_3_2 * var_3_0.full_inner_radius)
 
-			Matrix4x4.set_scale(inner_spawn_pose, Vector3(inner_radius, inner_radius, inner_radius))
+			Matrix4x4.set_scale(var_3_6, Vector3(var_3_7, var_3_7, var_3_7))
 
-			inner_decal_unit = Managers.state.unit_spawner:spawn_network_unit(inner_decal_unit_name, "network_synched_dummy_unit", nil, inner_spawn_pose)
+			var_3_4 = Managers.state.unit_spawner:spawn_network_unit(var_3_3, "network_synched_dummy_unit", nil, var_3_6)
 		end
 
-		local outer_decal_unit_name = data.outer_decal_unit_name
-		local outer_decal_unit
+		local var_3_8 = arg_3_0.outer_decal_unit_name
+		local var_3_9
 
-		if outer_decal_unit_name then
-			local outer_spawn_pose = Matrix4x4.from_quaternion_position(Quaternion.identity(), storm_spawn_position_unboxed)
-			local outer_radius = math.max(vortex_template.min_outer_radius, inner_radius_p * vortex_template.full_outer_radius)
+		if var_3_8 then
+			local var_3_10 = Matrix4x4.from_quaternion_position(Quaternion.identity(), var_3_5)
+			local var_3_11 = math.max(var_3_0.min_outer_radius, var_3_2 * var_3_0.full_outer_radius)
 
-			Matrix4x4.set_scale(outer_spawn_pose, Vector3(outer_radius, outer_radius, outer_radius))
+			Matrix4x4.set_scale(var_3_10, Vector3(var_3_11, var_3_11, var_3_11))
 
-			outer_decal_unit = Managers.state.unit_spawner:spawn_network_unit(outer_decal_unit_name, "network_synched_dummy_unit", nil, outer_spawn_pose)
+			var_3_9 = Managers.state.unit_spawner:spawn_network_unit(var_3_8, "network_synched_dummy_unit", nil, var_3_10)
 		end
 
-		local t = Managers.time:time("game")
+		local var_3_12 = Managers.time:time("game")
 
-		data.summoning_vortex_inner_decal_unit = inner_decal_unit
-		data.summoning_vortex_outer_decal_unit = outer_decal_unit
-		data.summoning_vortex_t = t + 2.5
-		data.storm_spawn_position = spawn_position
-		data.spawn_nurgle_storm_at = t + 5
-		data.directed_wander_position_boxed = destination
+		arg_3_0.summoning_vortex_inner_decal_unit = var_3_4
+		arg_3_0.summoning_vortex_outer_decal_unit = var_3_9
+		arg_3_0.summoning_vortex_t = var_3_12 + 2.5
+		arg_3_0.storm_spawn_position = arg_3_1
+		arg_3_0.spawn_nurgle_storm_at = var_3_12 + 5
+		arg_3_0.directed_wander_position_boxed = arg_3_2
 	end,
-	spawn_storm = function (data)
-		local vortex_template = data.vortex_template
-		local breed_name = vortex_template.breed_name
-		local breed = Breeds[breed_name]
-		local spawn_category = "vortex"
-		local optional_data = {
-			prepare_func = function (breed, extension_init_data)
-				extension_init_data.ai_supplementary_system = {
-					vortex_template_name = data.vortex_template_name,
-					inner_decal_unit = data.summoning_vortex_inner_decal_unit,
-					outer_decal_unit = data.summoning_vortex_outer_decal_unit,
+	spawn_storm = function(arg_4_0)
+		local var_4_0 = arg_4_0.vortex_template.breed_name
+		local var_4_1 = Breeds[var_4_0]
+		local var_4_2 = "vortex"
+		local var_4_3 = {
+			prepare_func = function(arg_5_0, arg_5_1)
+				arg_5_1.ai_supplementary_system = {
+					vortex_template_name = arg_4_0.vortex_template_name,
+					inner_decal_unit = arg_4_0.summoning_vortex_inner_decal_unit,
+					outer_decal_unit = arg_4_0.summoning_vortex_outer_decal_unit
 				}
 			end,
-			spawned_func = function (vortex_unit, breed, optional_data)
-				data.summoned_vortex_unit = vortex_unit
-
-				local blackboard = BLACKBOARDS[vortex_unit]
-
-				blackboard.directed_wander_position_boxed = data.directed_wander_position_boxed
-			end,
+			spawned_func = function(arg_6_0, arg_6_1, arg_6_2)
+				arg_4_0.summoned_vortex_unit = arg_6_0
+				BLACKBOARDS[arg_6_0].directed_wander_position_boxed = arg_4_0.directed_wander_position_boxed
+			end
 		}
-		local spawn_pos = data.storm_spawn_position
+		local var_4_4 = arg_4_0.storm_spawn_position
 
-		Managers.state.conflict:spawn_queued_unit(breed, spawn_pos, QuaternionBox(Quaternion.identity()), spawn_category, nil, nil, optional_data)
+		Managers.state.conflict:spawn_queued_unit(var_4_1, var_4_4, QuaternionBox(Quaternion.identity()), var_4_2, nil, nil, var_4_3)
 
-		data.summoning_vortex_t = nil
+		arg_4_0.summoning_vortex_t = nil
 	end,
-	server_stop_function = function (context, data)
-		GwNavAStar.destroy(data.astar)
-	end,
+	server_stop_function = function(arg_7_0, arg_7_1)
+		GwNavAStar.destroy(arg_7_1.astar)
+	end
 }

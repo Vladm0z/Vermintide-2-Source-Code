@@ -1,159 +1,153 @@
-﻿-- chunkname: @scripts/utils/byte_array.lua
+-- chunkname: @scripts/utils/byte_array.lua
 
-local ByteArray
+local var_0_0
 
-ByteArray = {
-	write_int32 = function (array, value, index)
-		fassert(value <= 2147483647 and value >= -2147483648 and value % 1 == 0, "number %f has to be within the 32bit signed range", value)
+var_0_0 = {
+	write_int32 = function(arg_1_0, arg_1_1, arg_1_2)
+		fassert(arg_1_1 <= 2147483647 and arg_1_1 >= -2147483648 and arg_1_1 % 1 == 0, "number %f has to be within the 32bit signed range", arg_1_1)
 
-		index = index or #array + 1
-		value = bit.tobit(value)
+		arg_1_2 = arg_1_2 or #arg_1_0 + 1
+		arg_1_1 = bit.tobit(arg_1_1)
 
-		local first_byte = bit.band(value, 255)
-		local second_byte = bit.rshift(bit.band(value, 65280), 8)
-		local third_byte = bit.rshift(bit.band(value, 16711680), 16)
-		local fourth_byte = bit.rshift(bit.band(value, 4278190080), 24)
+		local var_1_0 = bit.band(arg_1_1, 255)
+		local var_1_1 = bit.rshift(bit.band(arg_1_1, 65280), 8)
+		local var_1_2 = bit.rshift(bit.band(arg_1_1, 16711680), 16)
+		local var_1_3 = bit.rshift(bit.band(arg_1_1, 4278190080), 24)
 
-		array[index] = first_byte
-		index = index + 1
-		array[index] = second_byte
-		index = index + 1
-		array[index] = third_byte
-		index = index + 1
-		array[index] = fourth_byte
-		index = index + 1
+		arg_1_0[arg_1_2] = var_1_0
+		arg_1_2 = arg_1_2 + 1
+		arg_1_0[arg_1_2] = var_1_1
+		arg_1_2 = arg_1_2 + 1
+		arg_1_0[arg_1_2] = var_1_2
+		arg_1_2 = arg_1_2 + 1
+		arg_1_0[arg_1_2] = var_1_3
+		arg_1_2 = arg_1_2 + 1
 
-		return array, index
+		return arg_1_0, arg_1_2
 	end,
-	read_int32 = function (array, index)
-		index = index or 1
+	read_int32 = function(arg_2_0, arg_2_1)
+		arg_2_1 = arg_2_1 or 1
 
-		local first_byte = array[index]
+		local var_2_0 = arg_2_0[arg_2_1]
 
-		index = index + 1
+		arg_2_1 = arg_2_1 + 1
 
-		local second_byte = bit.lshift(array[index], 8)
+		local var_2_1 = bit.lshift(arg_2_0[arg_2_1], 8)
 
-		index = index + 1
+		arg_2_1 = arg_2_1 + 1
 
-		local third_byte = bit.lshift(array[index], 16)
+		local var_2_2 = bit.lshift(arg_2_0[arg_2_1], 16)
 
-		index = index + 1
+		arg_2_1 = arg_2_1 + 1
 
-		local fourth_byte = bit.lshift(array[index], 24)
+		local var_2_3 = bit.lshift(arg_2_0[arg_2_1], 24)
 
-		index = index + 1
+		arg_2_1 = arg_2_1 + 1
 
-		return bit.bor(first_byte, second_byte, third_byte, fourth_byte), index
+		return bit.bor(var_2_0, var_2_1, var_2_2, var_2_3), arg_2_1
 	end,
-	write_uint8 = function (array, value, index)
-		fassert(value % 1 == 0, "number %f must be an integer", value)
-		fassert(value >= 0 and value <= 255, "number %d has to be within the 8bit unsigned range", value)
+	write_uint8 = function(arg_3_0, arg_3_1, arg_3_2)
+		fassert(arg_3_1 % 1 == 0, "number %f must be an integer", arg_3_1)
+		fassert(arg_3_1 >= 0 and arg_3_1 <= 255, "number %d has to be within the 8bit unsigned range", arg_3_1)
 
-		index = index or #array + 1
-		array[index] = value
+		arg_3_2 = arg_3_2 or #arg_3_0 + 1
+		arg_3_0[arg_3_2] = arg_3_1
 
-		return array, index + 1
+		return arg_3_0, arg_3_2 + 1
 	end,
-	read_uint8 = function (array, index)
-		return array[index or 1], index + 1
+	read_uint8 = function(arg_4_0, arg_4_1)
+		return arg_4_0[arg_4_1 or 1], arg_4_1 + 1
 	end,
-	pack_uint8 = function (number, value, index)
-		index = index or 1
-		number = number or 0
-		number = bit.bor(number, bit.lshift(value, (index - 1) * 8))
+	pack_uint8 = function(arg_5_0, arg_5_1, arg_5_2)
+		arg_5_2 = arg_5_2 or 1
+		arg_5_0 = arg_5_0 or 0
+		arg_5_0 = bit.bor(arg_5_0, bit.lshift(arg_5_1, (arg_5_2 - 1) * 8))
 
-		return number, index + 1
+		return arg_5_0, arg_5_2 + 1
 	end,
-	unpack_uint8 = function (number, index)
-		index = index or 1
+	unpack_uint8 = function(arg_6_0, arg_6_1)
+		arg_6_1 = arg_6_1 or 1
 
-		local value = bit.rshift(number, (index - 1) * 8)
+		local var_6_0 = bit.rshift(arg_6_0, (arg_6_1 - 1) * 8)
 
-		value = bit.band(value, 255)
-
-		return value, index + 1
+		return bit.band(var_6_0, 255), arg_6_1 + 1
 	end,
-	pack_uint16 = function (number, value, index)
-		index = index or 1
-		number = number or 0
-		number = bit.bor(number, bit.lshift(value, (index - 1) * 16))
+	pack_uint16 = function(arg_7_0, arg_7_1, arg_7_2)
+		arg_7_2 = arg_7_2 or 1
+		arg_7_0 = arg_7_0 or 0
+		arg_7_0 = bit.bor(arg_7_0, bit.lshift(arg_7_1, (arg_7_2 - 1) * 16))
 
-		return number, index + 1
+		return arg_7_0, arg_7_2 + 1
 	end,
-	unpack_uint16 = function (number, index)
-		index = index or 1
+	unpack_uint16 = function(arg_8_0, arg_8_1)
+		arg_8_1 = arg_8_1 or 1
 
-		fassert(index >= 1 and index <= 2, "unpacking uint16 out of bounds")
+		fassert(arg_8_1 >= 1 and arg_8_1 <= 2, "unpacking uint16 out of bounds")
 
-		local value = bit.rshift(number, (index - 1) * 16)
+		local var_8_0 = bit.rshift(arg_8_0, (arg_8_1 - 1) * 16)
 
-		value = bit.band(value, 65535)
-
-		return value, index + 1
+		return bit.band(var_8_0, 65535), arg_8_1 + 1
 	end,
-	write_uint16 = function (array, value, index)
-		fassert(value % 1 == 0, "number %f must be an integer", value)
-		fassert(value >= 0 and value <= 65535, "number %d has to be within the 8bit unsigned range", value)
+	write_uint16 = function(arg_9_0, arg_9_1, arg_9_2)
+		fassert(arg_9_1 % 1 == 0, "number %f must be an integer", arg_9_1)
+		fassert(arg_9_1 >= 0 and arg_9_1 <= 65535, "number %d has to be within the 8bit unsigned range", arg_9_1)
 
-		index = index or 1
-		array[index] = ByteArray.unpack_uint8(value, 1)
-		index = index + 1
-		array[index] = ByteArray.unpack_uint8(value, 2)
-		index = index + 1
+		arg_9_2 = arg_9_2 or 1
+		arg_9_0[arg_9_2] = var_0_0.unpack_uint8(arg_9_1, 1)
+		arg_9_2 = arg_9_2 + 1
+		arg_9_0[arg_9_2] = var_0_0.unpack_uint8(arg_9_1, 2)
+		arg_9_2 = arg_9_2 + 1
 
-		return array, index
+		return arg_9_0, arg_9_2
 	end,
-	read_uint16 = function (array, index)
-		index = index or 1
+	read_uint16 = function(arg_10_0, arg_10_1)
+		arg_10_1 = arg_10_1 or 1
 
-		local first_byte = ByteArray.pack_uint8(0, array[index], 1)
+		local var_10_0 = var_0_0.pack_uint8(0, arg_10_0[arg_10_1], 1)
 
-		index = index + 1
+		arg_10_1 = arg_10_1 + 1
 
-		local second_byte = ByteArray.pack_uint8(0, array[index], 2)
+		local var_10_1 = var_0_0.pack_uint8(0, arg_10_0[arg_10_1], 2)
 
-		index = index + 1
+		arg_10_1 = arg_10_1 + 1
 
-		return bit.bor(first_byte, second_byte), index
+		return bit.bor(var_10_0, var_10_1), arg_10_1
 	end,
-	write_hash = function (array, value, index)
-		index = index or #array + 1
+	write_hash = function(arg_11_0, arg_11_1, arg_11_2)
+		arg_11_2 = arg_11_2 or #arg_11_0 + 1
 
-		for i = 1, 16, 2 do
-			local byte = tonumber(value:sub(i, i + 1), 16)
-
-			array[index] = byte
-			index = index + 1
+		for iter_11_0 = 1, 16, 2 do
+			arg_11_0[arg_11_2] = tonumber(arg_11_1:sub(iter_11_0, iter_11_0 + 1), 16)
+			arg_11_2 = arg_11_2 + 1
 		end
 
-		return array, index
+		return arg_11_0, arg_11_2
 	end,
-	read_hash = function (array, index)
-		return string.format("%02x%02x%02x%02x%02x%02x%02x%02x", array[index], array[index + 1], array[index + 2], array[index + 3], array[index + 4], array[index + 5], array[index + 6], array[index + 7]), index + 8
+	read_hash = function(arg_12_0, arg_12_1)
+		return string.format("%02x%02x%02x%02x%02x%02x%02x%02x", arg_12_0[arg_12_1], arg_12_0[arg_12_1 + 1], arg_12_0[arg_12_1 + 2], arg_12_0[arg_12_1 + 3], arg_12_0[arg_12_1 + 4], arg_12_0[arg_12_1 + 5], arg_12_0[arg_12_1 + 6], arg_12_0[arg_12_1 + 7]), arg_12_1 + 8
 	end,
-	read_string = function (array, start_index, end_index, out_array)
-		start_index = start_index or 1
-		end_index = end_index or #array
-		out_array = out_array or {}
+	read_string = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+		arg_13_1 = arg_13_1 or 1
+		arg_13_2 = arg_13_2 or #arg_13_0
+		arg_13_3 = arg_13_3 or {}
 
-		for i = start_index, end_index do
-			out_array[i] = string.char(array[i])
+		for iter_13_0 = arg_13_1, arg_13_2 do
+			arg_13_3[iter_13_0] = string.char(arg_13_0[iter_13_0])
 		end
 
-		return table.concat(out_array, "", 1, end_index), end_index + 1
+		return table.concat(arg_13_3, "", 1, arg_13_2), arg_13_2 + 1
 	end,
-	write_string = function (array, str, start_index, str_start_index, str_end_index)
-		start_index = start_index or 1
-		str_start_index = str_start_index or 1
-		str_end_index = str_end_index or #str
+	write_string = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+		arg_14_2 = arg_14_2 or 1
+		arg_14_3 = arg_14_3 or 1
+		arg_14_4 = arg_14_4 or #arg_14_1
 
-		for i = str_start_index, str_end_index do
-			array[start_index + i - 1] = string.byte(str, i)
+		for iter_14_0 = arg_14_3, arg_14_4 do
+			arg_14_0[arg_14_2 + iter_14_0 - 1] = string.byte(arg_14_1, iter_14_0)
 		end
 
-		return array, str_end_index + 1
-	end,
+		return arg_14_0, arg_14_4 + 1
+	end
 }
 
-return ByteArray
+return var_0_0

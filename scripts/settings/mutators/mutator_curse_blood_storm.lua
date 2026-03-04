@@ -1,101 +1,95 @@
-﻿-- chunkname: @scripts/settings/mutators/mutator_curse_blood_storm.lua
+-- chunkname: @scripts/settings/mutators/mutator_curse_blood_storm.lua
 
-local refactored_mutator
+local var_0_0
+local var_0_1 = require("scripts/settings/mutators/mutator_curse_blood_storm_v2")
 
-refactored_mutator = require("scripts/settings/mutators/mutator_curse_blood_storm_v2")
-
-if refactored_mutator then
-	return refactored_mutator
+if var_0_1 then
+	return var_0_1
 end
 
-local base_nurgle_storm = require("scripts/settings/mutators/mutator_nurgle_storm")
-local curse_blood_storm = table.clone(base_nurgle_storm)
+local var_0_2 = require("scripts/settings/mutators/mutator_nurgle_storm")
+local var_0_3 = table.clone(var_0_2)
 
-curse_blood_storm.packages = {
-	"resource_packages/mutators/mutator_curse_blood_storm",
+var_0_3.packages = {
+	"resource_packages/mutators/mutator_curse_blood_storm"
 }
-curse_blood_storm.display_name = "curse_blood_storm_name"
-curse_blood_storm.description = "curse_blood_storm_desc"
-curse_blood_storm.icon = "deus_curse_khorne_01"
+var_0_3.display_name = "curse_blood_storm_name"
+var_0_3.description = "curse_blood_storm_desc"
+var_0_3.icon = "deus_curse_khorne_01"
 
-local DIFFICULTY_POWER_LEVEL = {
-	cataclysm = 100,
-	cataclysm_2 = 110,
-	cataclysm_3 = 130,
-	easy = 20,
-	hard = 45,
+local var_0_4 = {
 	harder = 60,
-	hardest = 80,
+	hard = 45,
 	normal = 30,
+	hardest = 80,
+	cataclysm = 100,
+	cataclysm_3 = 130,
+	cataclysm_2 = 110,
+	easy = 20
 }
 
-curse_blood_storm.server_start_function = function (context, data)
-	local time = Managers.time:time("game")
-
-	data.spawn_nurgle_storm_at = time + 30
-	data.next_bleed_time = 0
-	data.bleed_rate = 0.2
-	data.bleed_buff = "curse_blood_storm_dot"
-	data.bleed_buff_bots = "curse_blood_storm_dot_bots"
-	data.vortex_template_name = "blood_storm"
-	data.vortex_template = VortexTemplates[data.vortex_template_name]
-	data.inner_decal_unit_name = "units/decals/deus_decal_bloodstorm_inner"
-	data.outer_decal_unit_name = "units/decals/deus_decal_bloodstorm_outer"
-	data.storm_spawn_position = Vector3Box()
-	data.offset_spawn_distance = 3
-	data.delay_between_spawns = 2
-	data.unchecked_positions = {}
-	data.astar = GwNavAStar.create()
+function var_0_3.server_start_function(arg_1_0, arg_1_1)
+	arg_1_1.spawn_nurgle_storm_at = Managers.time:time("game") + 30
+	arg_1_1.next_bleed_time = 0
+	arg_1_1.bleed_rate = 0.2
+	arg_1_1.bleed_buff = "curse_blood_storm_dot"
+	arg_1_1.bleed_buff_bots = "curse_blood_storm_dot_bots"
+	arg_1_1.vortex_template_name = "blood_storm"
+	arg_1_1.vortex_template = VortexTemplates[arg_1_1.vortex_template_name]
+	arg_1_1.inner_decal_unit_name = "units/decals/deus_decal_bloodstorm_inner"
+	arg_1_1.outer_decal_unit_name = "units/decals/deus_decal_bloodstorm_outer"
+	arg_1_1.storm_spawn_position = Vector3Box()
+	arg_1_1.offset_spawn_distance = 3
+	arg_1_1.delay_between_spawns = 2
+	arg_1_1.unchecked_positions = {}
+	arg_1_1.astar = GwNavAStar.create()
 end
 
-local base_update_function = curse_blood_storm.server_pre_update_function
+local var_0_5 = var_0_3.server_pre_update_function
 
-curse_blood_storm.server_update_function = function (context, data, dt, t)
-	base_update_function(context, data)
+function var_0_3.server_update_function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	var_0_5(arg_2_0, arg_2_1)
 
-	if t < data.next_bleed_time then
+	if arg_2_3 < arg_2_1.next_bleed_time then
 		return
 	else
-		data.next_bleed_time = t + data.bleed_rate
+		arg_2_1.next_bleed_time = arg_2_3 + arg_2_1.bleed_rate
 	end
 
-	local vortex_unit = data.summoned_vortex_unit
-	local vortex_extension = ALIVE[vortex_unit] and ScriptUnit.has_extension(vortex_unit, "ai_supplementary_system")
+	local var_2_0 = arg_2_1.summoned_vortex_unit
+	local var_2_1 = ALIVE[var_2_0] and ScriptUnit.has_extension(var_2_0, "ai_supplementary_system")
 
-	if not vortex_extension then
+	if not var_2_1 then
 		return
 	end
 
-	local players = Managers.player:players()
+	local var_2_2 = Managers.player:players()
 
-	for _, player in pairs(players) do
-		local player_unit = player.player_unit
+	for iter_2_0, iter_2_1 in pairs(var_2_2) do
+		local var_2_3 = iter_2_1.player_unit
 
-		if ALIVE[player_unit] then
-			local position = POSITION_LOOKUP[player_unit]
-			local is_inside = vortex_extension:is_position_inside(position)
+		if ALIVE[var_2_3] then
+			local var_2_4 = POSITION_LOOKUP[var_2_3]
 
-			if is_inside then
-				local buff_system = Managers.state.entity:system("buff_system")
-				local difficulty = Managers.state.difficulty:get_difficulty()
-				local power_level = DIFFICULTY_POWER_LEVEL[difficulty]
-				local buff = player.bot_player and data.bleed_buff_bots or data.bleed_buff
+			if var_2_1:is_position_inside(var_2_4) then
+				local var_2_5 = Managers.state.entity:system("buff_system")
+				local var_2_6 = Managers.state.difficulty:get_difficulty()
+				local var_2_7 = var_0_4[var_2_6]
+				local var_2_8 = iter_2_1.bot_player and arg_2_1.bleed_buff_bots or arg_2_1.bleed_buff
 
-				buff_system:add_buff(player_unit, buff, vortex_unit, false, power_level)
+				var_2_5:add_buff(var_2_3, var_2_8, var_2_0, false, var_2_7)
 			end
 		end
 	end
 end
 
-curse_blood_storm.server_player_hit_function = function (context, data, hit_unit, attacker_unit, hit_data)
-	local damage_type = hit_data[2]
+function var_0_3.server_player_hit_function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	if arg_3_4[2] == "blood_storm" then
+		local var_3_0 = ScriptUnit.extension_input(arg_3_2, "dialogue_system")
+		local var_3_1 = FrameTable.alloc_table()
 
-	if damage_type == "blood_storm" then
-		local dialogue_input = ScriptUnit.extension_input(hit_unit, "dialogue_system")
-		local event_data = FrameTable.alloc_table()
-
-		dialogue_input:trigger_dialogue_event("curse_damage_taken", event_data)
+		var_3_0:trigger_dialogue_event("curse_damage_taken", var_3_1)
 	end
 end
 
-return curse_blood_storm
+return var_0_3

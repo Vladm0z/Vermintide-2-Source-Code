@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/unit_extensions/generic/generic_unit_interactor_extension.lua
+-- chunkname: @scripts/unit_extensions/generic/generic_unit_interactor_extension.lua
 
 require("scripts/helpers/interaction_helper")
 require("scripts/unit_extensions/generic/interactions")
@@ -6,355 +6,352 @@ require("scripts/unit_extensions/generic/interactions")
 GenericUnitInteractorExtension = class(GenericUnitInteractorExtension)
 INTERACT_RAY_DISTANCE = 2.5
 
-local chest_interactables = {}
+local var_0_0 = {}
 
-GenericUnitInteractorExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	local world = extension_init_context.world
-	local dice_keeper = extension_init_context.dice_keeper
-	local statistics_db = extension_init_context.statistics_db
+function GenericUnitInteractorExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	local var_1_0 = arg_1_1.world
+	local var_1_1 = arg_1_1.dice_keeper
+	local var_1_2 = arg_1_1.statistics_db
 
-	self.world = world
-	self.unit = unit
-	self.state = "waiting_to_interact"
-	self.interaction_context = {
+	arg_1_0.world = var_1_0
+	arg_1_0.unit = arg_1_2
+	arg_1_0.state = "waiting_to_interact"
+	arg_1_0.interaction_context = {
 		data = {
-			world = world,
-			dice_keeper = dice_keeper,
-			statistics_db = statistics_db,
-			interactor_data = {},
-		},
+			world = var_1_0,
+			dice_keeper = var_1_1,
+			statistics_db = var_1_2,
+			interactor_data = {}
+		}
 	}
 
-	local player = Managers.player:owner(unit)
+	local var_1_3 = Managers.player:owner(arg_1_2)
 
-	self.is_bot = player and player.bot_player
+	arg_1_0.is_bot = var_1_3 and var_1_3.bot_player
+	arg_1_0.physics_world = World.get_data(var_1_0, "physics_world")
+	arg_1_0.is_server = Managers.player.is_server
+	arg_1_0._interactions_enabled = true
+	arg_1_0.exclusive_interaction_unit = nil
+	arg_1_0.units_in_range = {}
+	arg_1_0.units_in_range_back_buffer = {}
 
-	local physics_world = World.get_data(world, "physics_world")
+	function arg_1_0.interactable_unit_destroy_callback(arg_2_0)
+		local var_2_0 = Managers.time:time("game")
 
-	self.physics_world = physics_world
-	self.is_server = Managers.player.is_server
-	self._interactions_enabled = true
-	self.exclusive_interaction_unit = nil
-	self.units_in_range = {}
-	self.units_in_range_back_buffer = {}
-
-	self.interactable_unit_destroy_callback = function (destroyed_interactable_unit)
-		local t = Managers.time:time("game")
-
-		self:_stop_interaction(destroyed_interactable_unit, t)
+		arg_1_0:_stop_interaction(arg_2_0, var_2_0)
 	end
 end
 
-GenericUnitInteractorExtension.extensions_ready = function (self)
-	self.status_extension = ScriptUnit.extension(self.unit, "status_system")
-	self.health_extension = ScriptUnit.extension(self.unit, "health_system")
-	self.buff_extension = ScriptUnit.extension(self.unit, "buff_system")
+function GenericUnitInteractorExtension.extensions_ready(arg_3_0)
+	arg_3_0.status_extension = ScriptUnit.extension(arg_3_0.unit, "status_system")
+	arg_3_0.health_extension = ScriptUnit.extension(arg_3_0.unit, "health_system")
+	arg_3_0.buff_extension = ScriptUnit.extension(arg_3_0.unit, "buff_system")
 end
 
-GenericUnitInteractorExtension.set_exclusive_interaction_unit = function (self, unit)
-	fassert(self.is_bot, "Trying to set exclusive interaction unit as player.")
+function GenericUnitInteractorExtension.set_exclusive_interaction_unit(arg_4_0, arg_4_1)
+	fassert(arg_4_0.is_bot, "Trying to set exclusive interaction unit as player.")
 
-	self.exclusive_interaction_unit = unit
+	arg_4_0.exclusive_interaction_unit = arg_4_1
 end
 
-GenericUnitInteractorExtension.destroy = function (self)
-	self:abort_interaction()
+function GenericUnitInteractorExtension.destroy(arg_5_0)
+	arg_5_0:abort_interaction()
 
-	local interactable_unit = self.interaction_context.interactable_unit
+	local var_5_0 = arg_5_0.interaction_context.interactable_unit
 
-	if Unit.alive(interactable_unit) then
-		Managers.state.unit_spawner:remove_destroy_listener(interactable_unit, "interactable_unit")
+	if Unit.alive(var_5_0) then
+		Managers.state.unit_spawner:remove_destroy_listener(var_5_0, "interactable_unit")
 	end
 end
 
-local IGNORED_DAMAGE_TYPES = {
-	aoe_poison_dot = true,
-	arrow_poison_dot = true,
-	buff = true,
+local var_0_1 = {
 	buff_shared_medpack = true,
 	buff_shared_medpack_temp_health = true,
-	burninating = true,
+	buff = true,
+	arrow_poison_dot = true,
+	volume_generic_dot = true,
+	warpfire_ground = true,
 	damage_over_time = true,
+	life_tap = true,
+	aoe_poison_dot = true,
+	plague_ground = true,
+	level = true,
+	temporary_health_degen = true,
+	health_degen = true,
+	poison = true,
+	vomit_ground = true,
+	wounded_dot = true,
 	gas = true,
 	heal = true,
-	health_degen = true,
-	level = true,
-	life_drain = true,
-	life_tap = true,
-	plague_ground = true,
-	poison = true,
-	temporary_health_degen = true,
-	volume_generic_dot = true,
-	vomit_ground = true,
-	warpfire_ground = true,
-	wounded_dot = true,
+	burninating = true,
+	life_drain = true
 }
 
-GenericUnitInteractorExtension.update = function (self, unit, input, dt, context, t)
-	local world = self.world
+function GenericUnitInteractorExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+	local var_6_0 = arg_6_0.world
 
-	table.clear(chest_interactables)
+	table.clear(var_0_0)
 
-	if self.state ~= "waiting_to_interact" and not Unit.alive(self.interaction_context.interactable_unit) then
+	if arg_6_0.state ~= "waiting_to_interact" and not Unit.alive(arg_6_0.interaction_context.interactable_unit) then
 		InteractionHelper.printf("[GenericUnitInteractorExtension] not Unit.alive(self.interaction_context.interactable_unit)")
-		self:abort_interaction()
+		arg_6_0:abort_interaction()
 	end
 
-	if self.state ~= "waiting_to_interact" and (self.status_extension:is_disabled() or self.status_extension:is_catapulted()) then
-		self:abort_interaction()
+	if arg_6_0.state ~= "waiting_to_interact" and (arg_6_0.status_extension:is_disabled() or arg_6_0.status_extension:is_catapulted()) then
+		arg_6_0:abort_interaction()
 	end
 
-	if self.state ~= "waiting_to_interact" then
-		local damage_datas, num_damages = self.health_extension:recent_damages()
-		local interrupted = false
+	if arg_6_0.state ~= "waiting_to_interact" then
+		local var_6_1, var_6_2 = arg_6_0.health_extension:recent_damages()
+		local var_6_3 = false
 
-		for i = 1, num_damages / DamageDataIndex.STRIDE do
-			local zero_index = i - 1
-			local damage_amount = damage_datas[zero_index * DamageDataIndex.STRIDE + DamageDataIndex.DAMAGE_AMOUNT]
-			local damage_type = damage_datas[zero_index * DamageDataIndex.STRIDE + DamageDataIndex.DAMAGE_TYPE]
+		for iter_6_0 = 1, var_6_2 / DamageDataIndex.STRIDE do
+			local var_6_4 = iter_6_0 - 1
+			local var_6_5 = var_6_1[var_6_4 * DamageDataIndex.STRIDE + DamageDataIndex.DAMAGE_AMOUNT]
+			local var_6_6 = var_6_1[var_6_4 * DamageDataIndex.STRIDE + DamageDataIndex.DAMAGE_TYPE]
 
-			if damage_amount > 0 and not IGNORED_DAMAGE_TYPES[damage_type] then
-				interrupted = true
+			if var_6_5 > 0 and not var_0_1[var_6_6] then
+				var_6_3 = true
 			end
 		end
 
-		if interrupted then
-			local abort = true
-			local interaction_type = self.interaction_context.interaction_type
-			local buff_extension = self.buff_extension
+		if var_6_3 then
+			local var_6_7 = true
+			local var_6_8 = arg_6_0.interaction_context.interaction_type
+			local var_6_9 = arg_6_0.buff_extension
 
-			if interaction_type == "heal" then
-				abort = not buff_extension:has_buff_type("no_interruption_bandage")
+			if var_6_8 == "heal" then
+				var_6_7 = not var_6_9:has_buff_type("no_interruption_bandage")
 			end
 
-			if abort and interaction_type == "revive" then
-				abort = not buff_extension:has_buff_perk("uninterruptible_revive")
+			if var_6_7 and var_6_8 == "revive" then
+				var_6_7 = not var_6_9:has_buff_perk("uninterruptible_revive")
 			end
 
-			if abort then
-				self:abort_interaction()
+			if var_6_7 then
+				arg_6_0:abort_interaction()
 			end
 		end
 	end
 
-	if self.state == "waiting_to_interact" and not self.status_extension:is_disabled() then
-		local interaction_context = self.interaction_context
+	if arg_6_0.state == "waiting_to_interact" and not arg_6_0.status_extension:is_disabled() then
+		local var_6_10 = arg_6_0.interaction_context
 
-		if interaction_context.interactable_unit then
-			interaction_context.interactable_unit = nil
-			interaction_context.interaction_type = nil
+		if var_6_10.interactable_unit then
+			var_6_10.interactable_unit = nil
+			var_6_10.interaction_type = nil
 		end
 
-		if self.is_bot then
-			local exl_unit = self.exclusive_interaction_unit
+		if arg_6_0.is_bot then
+			local var_6_11 = arg_6_0.exclusive_interaction_unit
 
-			if exl_unit then
-				local target_extension = ScriptUnit.has_extension(exl_unit, "interactable_system")
+			if var_6_11 then
+				local var_6_12 = ScriptUnit.has_extension(var_6_11, "interactable_system")
 
-				if target_extension then
-					interaction_context.interactable_unit = exl_unit
-					interaction_context.interaction_type = target_extension:interaction_type()
+				if var_6_12 then
+					var_6_10.interactable_unit = var_6_11
+					var_6_10.interaction_type = var_6_12:interaction_type()
 
 					return
 				end
 			end
 		else
-			local res_w, res_h = RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h
-			local center_x, center_y = res_w * 0.5, res_h * 0.5
+			local var_6_13 = RESOLUTION_LOOKUP.res_w
+			local var_6_14 = RESOLUTION_LOOKUP.res_h
+			local var_6_15 = var_6_13 * 0.5
+			local var_6_16 = var_6_14 * 0.5
 
-			self.ray_casted = true
+			arg_6_0.ray_casted = true
 
-			local first_person_extension = ScriptUnit.extension(unit, "first_person_system")
-			local camera_position = first_person_extension:current_position()
-			local camera_rotation = first_person_extension:current_rotation()
-			local camera_forward = Quaternion.forward(camera_rotation)
-			local hits, hits_n = self.physics_world:immediate_raycast(camera_position, camera_forward, INTERACT_RAY_DISTANCE, "all", "collision_filter", "filter_ray_interaction")
-			local hit_non_interaction_unit = false
-			local camera = self:_get_player_camera()
-			local distance_score = math.huge
-			local selected_interaction_unit, selected_interaction_type
-			local new_units_in_range = self.units_in_range_back_buffer
+			local var_6_17 = ScriptUnit.extension(arg_6_1, "first_person_system")
+			local var_6_18 = var_6_17:current_position()
+			local var_6_19 = var_6_17:current_rotation()
+			local var_6_20 = Quaternion.forward(var_6_19)
+			local var_6_21, var_6_22 = arg_6_0.physics_world:immediate_raycast(var_6_18, var_6_20, INTERACT_RAY_DISTANCE, "all", "collision_filter", "filter_ray_interaction")
+			local var_6_23 = false
+			local var_6_24 = arg_6_0:_get_player_camera()
+			local var_6_25 = math.huge
+			local var_6_26
+			local var_6_27
+			local var_6_28 = arg_6_0.units_in_range_back_buffer
 
-			for i = 1, hits_n do
-				local hit = hits[i]
-				local actor = hit[4]
+			for iter_6_1 = 1, var_6_22 do
+				local var_6_29 = var_6_21[iter_6_1][4]
 
-				if actor then
-					local hit_unit = Actor.unit(actor)
+				if var_6_29 then
+					local var_6_30 = Actor.unit(var_6_29)
 
-					if hit_unit and hit_unit ~= self.unit then
-						if ScriptUnit.has_extension(hit_unit, "interactable_system") then
-							local interact_actor = Unit.get_data(hit_unit, "interaction_data", "interact_actor")
+					if var_6_30 and var_6_30 ~= arg_6_0.unit then
+						if ScriptUnit.has_extension(var_6_30, "interactable_system") then
+							local var_6_31 = Unit.get_data(var_6_30, "interaction_data", "interact_actor")
 
-							if not interact_actor or Unit.actor(hit_unit, interact_actor) == actor then
-								local target_extension = ScriptUnit.extension(hit_unit, "interactable_system")
+							if not var_6_31 or Unit.actor(var_6_30, var_6_31) == var_6_29 then
+								local var_6_32 = ScriptUnit.extension(var_6_30, "interactable_system")
 
-								if target_extension:is_enabled() then
-									local target_interaction_type = target_extension:interaction_type()
-									local can_interact, fail_reason, interaction_type = self:can_interact(hit_unit, target_interaction_type)
-									local is_in_chest = self:_check_if_interactable_in_chest(hit_unit, camera_position)
+								if var_6_32:is_enabled() then
+									local var_6_33 = var_6_32:interaction_type()
+									local var_6_34, var_6_35, var_6_36 = arg_6_0:can_interact(var_6_30, var_6_33)
+									local var_6_37 = arg_6_0:_check_if_interactable_in_chest(var_6_30, var_6_18)
 
-									if (can_interact or fail_reason) and not is_in_chest then
-										local interaction_template = InteractionDefinitions[interaction_type]
-										local config = interaction_template.config or interaction_template.get_config()
-										local does_not_require_line_of_sight = config.does_not_require_line_of_sight
-										local score = self:_claculate_interaction_distance_score(hit_unit, camera_position, center_x, center_y, camera)
-										local block_other_interactions = config.block_other_interactions
+									if (var_6_34 or var_6_35) and not var_6_37 then
+										local var_6_38 = InteractionDefinitions[var_6_36]
+										local var_6_39 = var_6_38.config or var_6_38.get_config()
+										local var_6_40 = var_6_39.does_not_require_line_of_sight
+										local var_6_41 = arg_6_0:_claculate_interaction_distance_score(var_6_30, var_6_18, var_6_15, var_6_16, var_6_24)
+										local var_6_42 = var_6_39.block_other_interactions
 
-										if does_not_require_line_of_sight or not hit_non_interaction_unit then
-											if block_other_interactions then
-												interaction_context.interactable_unit = hit_unit
-												interaction_context.interaction_type = interaction_type
+										if var_6_40 or not var_6_23 then
+											if var_6_42 then
+												var_6_10.interactable_unit = var_6_30
+												var_6_10.interaction_type = var_6_36
 
 												return
-											elseif score < distance_score then
-												selected_interaction_unit = hit_unit
-												selected_interaction_type = interaction_type
-												distance_score = score
+											elseif var_6_41 < var_6_25 then
+												var_6_26 = var_6_30
+												var_6_27 = var_6_36
+												var_6_25 = var_6_41
 											end
 										end
 
-										if can_interact then
-											new_units_in_range[hit_unit] = target_interaction_type
+										if var_6_34 then
+											var_6_28[var_6_30] = var_6_33
 
-											if self.units_in_range[hit_unit] == nil then
-												self:in_range(hit_unit, target_interaction_type, true)
+											if arg_6_0.units_in_range[var_6_30] == nil then
+												arg_6_0:in_range(var_6_30, var_6_33, true)
 											end
 										end
 									end
 								end
 							else
-								hit_non_interaction_unit = true
+								var_6_23 = true
 							end
 						else
-							hit_non_interaction_unit = true
+							var_6_23 = true
 						end
 					end
 				end
 			end
 
-			for old_hit_unit, target_interaction_type in pairs(self.units_in_range) do
-				if new_units_in_range[old_hit_unit] == nil then
-					self:in_range(old_hit_unit, target_interaction_type, false)
+			for iter_6_2, iter_6_3 in pairs(arg_6_0.units_in_range) do
+				if var_6_28[iter_6_2] == nil then
+					arg_6_0:in_range(iter_6_2, iter_6_3, false)
 				end
 			end
 
-			self.units_in_range, self.units_in_range_back_buffer = new_units_in_range, self.units_in_range
+			arg_6_0.units_in_range, arg_6_0.units_in_range_back_buffer = var_6_28, arg_6_0.units_in_range
 
-			table.clear(self.units_in_range_back_buffer)
+			table.clear(arg_6_0.units_in_range_back_buffer)
 
-			if selected_interaction_unit then
-				interaction_context.interactable_unit = selected_interaction_unit
-				interaction_context.interaction_type = selected_interaction_type
+			if var_6_26 then
+				var_6_10.interactable_unit = var_6_26
+				var_6_10.interaction_type = var_6_27
 
 				return
 			end
 
-			local self_pos = POSITION_LOOKUP[self.unit]
-			local hits, num_hits = PhysicsWorld.immediate_overlap(self.physics_world, "position", self_pos, "shape", "sphere", "size", 0.3, "collision_filter", "filter_overlap_interaction")
-			local best_unit
-			local best_dist = math.huge
+			local var_6_43 = POSITION_LOOKUP[arg_6_0.unit]
+			local var_6_44, var_6_45 = PhysicsWorld.immediate_overlap(arg_6_0.physics_world, "position", var_6_43, "shape", "sphere", "size", 0.3, "collision_filter", "filter_overlap_interaction")
+			local var_6_46
+			local var_6_47 = math.huge
 
-			for i = 1, num_hits do
-				local actor = hits[i]
+			for iter_6_4 = 1, var_6_45 do
+				local var_6_48 = var_6_44[iter_6_4]
 
-				if actor then
-					local hit_unit = Actor.unit(actor)
+				if var_6_48 then
+					local var_6_49 = Actor.unit(var_6_48)
 
-					if hit_unit and hit_unit ~= self.unit then
-						local is_in_chest = self:_check_if_interactable_in_chest(hit_unit, camera_position)
-						local target_extension = ScriptUnit.has_extension(hit_unit, "interactable_system")
+					if var_6_49 and var_6_49 ~= arg_6_0.unit then
+						local var_6_50 = arg_6_0:_check_if_interactable_in_chest(var_6_49, var_6_18)
+						local var_6_51 = ScriptUnit.has_extension(var_6_49, "interactable_system")
 
-						if target_extension and not is_in_chest and target_extension:is_enabled() then
-							local pos = POSITION_LOOKUP[hit_unit] or Unit.local_position(hit_unit, 0)
-							local dist = Vector3.distance_squared(self_pos, pos)
+						if var_6_51 and not var_6_50 and var_6_51:is_enabled() then
+							local var_6_52 = POSITION_LOOKUP[var_6_49] or Unit.local_position(var_6_49, 0)
+							local var_6_53 = Vector3.distance_squared(var_6_43, var_6_52)
 
-							if dist < best_dist then
-								best_dist = dist
-								best_unit = hit_unit
+							if var_6_53 < var_6_47 then
+								var_6_47 = var_6_53
+								var_6_46 = var_6_49
 							end
 						end
 					end
 				end
 			end
 
-			if best_unit then
-				local target_extension = ScriptUnit.has_extension(best_unit, "interactable_system")
+			if var_6_46 then
+				local var_6_54 = ScriptUnit.has_extension(var_6_46, "interactable_system")
 
-				if target_extension then
-					local target_interaction_type = target_extension:interaction_type()
-					local can_interact, fail_reason, interaction_type = self:can_interact(best_unit, target_interaction_type)
+				if var_6_54 then
+					local var_6_55 = var_6_54:interaction_type()
+					local var_6_56, var_6_57, var_6_58 = arg_6_0:can_interact(var_6_46, var_6_55)
 
-					if can_interact then
-						interaction_context.interactable_unit = best_unit
-						interaction_context.interaction_type = interaction_type
+					if var_6_56 then
+						var_6_10.interactable_unit = var_6_46
+						var_6_10.interaction_type = var_6_58
 					end
 				end
 			end
 		end
 	end
 
-	local interaction_context = self.interaction_context
-	local interactable_unit = interaction_context.interactable_unit
-	local interaction_data = interaction_context.data
+	local var_6_59 = arg_6_0.interaction_context
+	local var_6_60 = var_6_59.interactable_unit
+	local var_6_61 = var_6_59.data
 
-	interaction_data.is_server = self.is_server
+	var_6_61.is_server = arg_6_0.is_server
 
-	local interaction_type = interaction_context.interaction_type
-	local interaction_template = InteractionDefinitions[interaction_type]
-	local interaction_config = interaction_template and (interaction_template.config or interaction_template.get_config()) or nil
-	local local_only = interaction_context.local_only
+	local var_6_62 = var_6_59.interaction_type
+	local var_6_63 = InteractionDefinitions[var_6_62]
+	local var_6_64 = var_6_63 and (var_6_63.config or var_6_63.get_config()) or nil
+	local var_6_65 = var_6_59.local_only
 
-	if self.state == "starting_interaction" then
-		interaction_template.client.start(world, unit, interactable_unit, interaction_data, interaction_config, t)
+	if arg_6_0.state == "starting_interaction" then
+		var_6_63.client.start(var_6_0, arg_6_1, var_6_60, var_6_61, var_6_64, arg_6_5)
 
-		if self.is_server and not local_only then
-			interaction_template.server.start(world, unit, interactable_unit, interaction_data, interaction_config, t)
+		if arg_6_0.is_server and not var_6_65 then
+			var_6_63.server.start(var_6_0, arg_6_1, var_6_60, var_6_61, var_6_64, arg_6_5)
 		end
 
-		self.state = "doing_interaction"
+		arg_6_0.state = "doing_interaction"
 	end
 
-	if self.state == "doing_interaction" then
-		local interaction_result = interaction_template.client.update(world, unit, interactable_unit, interaction_data, interaction_config, dt, t)
+	if arg_6_0.state == "doing_interaction" then
+		local var_6_66 = var_6_63.client.update(var_6_0, arg_6_1, var_6_60, var_6_61, var_6_64, arg_6_3, arg_6_5)
 
-		interaction_result = local_only and interaction_result or nil
+		var_6_66 = var_6_65 and var_6_66 or nil
 
-		if self.is_server and not local_only then
-			interaction_result = interaction_template.server.update(world, unit, interactable_unit, interaction_data, interaction_config, dt, t)
+		if arg_6_0.is_server and not var_6_65 then
+			var_6_66 = var_6_63.server.update(var_6_0, arg_6_1, var_6_60, var_6_61, var_6_64, arg_6_3, arg_6_5)
 		end
 
-		interaction_context.result = interaction_result
+		var_6_59.result = var_6_66
 
-		if interaction_result and interaction_result ~= InteractionResult.ONGOING then
-			InteractionHelper:complete_interaction(unit, interactable_unit, interaction_result)
+		if var_6_66 and var_6_66 ~= InteractionResult.ONGOING then
+			InteractionHelper:complete_interaction(arg_6_1, var_6_60, var_6_66)
 		end
 	end
 end
 
-GenericUnitInteractorExtension._check_if_interactable_in_chest = function (self, interactable_unit, camera_position)
-	if chest_interactables[interactable_unit] then
+function GenericUnitInteractorExtension._check_if_interactable_in_chest(arg_7_0, arg_7_1, arg_7_2)
+	if var_0_0[arg_7_1] then
 		return true
 	end
 
-	local has_pickup_extension = ScriptUnit.has_extension(interactable_unit, "pickup_system")
-
-	if not has_pickup_extension then
+	if not ScriptUnit.has_extension(arg_7_1, "pickup_system") then
 		return false
 	end
 
-	local unit_center_matrix, _ = Unit.box(interactable_unit)
-	local unit_pos = Matrix4x4.translation(unit_center_matrix)
-	local dir, distance = Vector3.direction_length(unit_pos - camera_position)
+	local var_7_0, var_7_1 = Unit.box(arg_7_1)
+	local var_7_2 = Matrix4x4.translation(var_7_0)
+	local var_7_3, var_7_4 = Vector3.direction_length(var_7_2 - arg_7_2)
 
-	if distance < math.epsilon then
+	if var_7_4 < math.epsilon then
 		return true
 	end
 
-	local found_collision, collisionPos, distance, normal, hit_actor = PhysicsWorld.immediate_raycast(self.physics_world, unit_pos, dir, distance, "closest", "types", "both", "collision_filter", "filter_interactable_in_chest")
+	local var_7_5, var_7_6, var_7_7, var_7_8, var_7_9 = PhysicsWorld.immediate_raycast(arg_7_0.physics_world, var_7_2, var_7_3, var_7_4, "closest", "types", "both", "collision_filter", "filter_interactable_in_chest")
 
-	if found_collision then
-		chest_interactables[interactable_unit] = true
+	if var_7_5 then
+		var_0_0[arg_7_1] = true
 
 		return true
 	end
@@ -362,332 +359,319 @@ GenericUnitInteractorExtension._check_if_interactable_in_chest = function (self,
 	return false
 end
 
-GenericUnitInteractorExtension._claculate_interaction_distance_score = function (self, interactable_unit, camera_position, half_width, half_height, camera)
-	local unit_pos = Unit.world_position(interactable_unit, 0)
-	local ray_distance = INTERACT_RAY_DISTANCE
-	local world_score = Vector3.distance_squared(unit_pos, camera_position) / (ray_distance * ray_distance)
-	local unit_screen_pos = Camera.world_to_screen(camera, unit_pos)
-	local middle_offset = Vector3(half_width - unit_screen_pos.x, half_height - unit_screen_pos.z, 0)
-	local screen_score = Vector3.length(middle_offset) / (half_width * 2)
+function GenericUnitInteractorExtension._claculate_interaction_distance_score(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+	local var_8_0 = Unit.world_position(arg_8_1, 0)
+	local var_8_1 = INTERACT_RAY_DISTANCE
+	local var_8_2 = Vector3.distance_squared(var_8_0, arg_8_2) / (var_8_1 * var_8_1)
+	local var_8_3 = Camera.world_to_screen(arg_8_5, var_8_0)
+	local var_8_4 = Vector3(arg_8_3 - var_8_3.x, arg_8_4 - var_8_3.z, 0)
 
-	return world_score * screen_score
+	return var_8_2 * (Vector3.length(var_8_4) / (arg_8_3 * 2))
 end
 
-GenericUnitInteractorExtension._get_player_camera = function (self)
-	local player = Managers.player:owner(self.unit)
-	local viewport_name = player.viewport_name
-	local viewport = ScriptWorld.viewport(self.world, viewport_name)
-	local camera = ScriptViewport.camera(viewport)
+function GenericUnitInteractorExtension._get_player_camera(arg_9_0)
+	local var_9_0 = Managers.player:owner(arg_9_0.unit).viewport_name
+	local var_9_1 = ScriptWorld.viewport(arg_9_0.world, var_9_0)
 
-	return camera
+	return (ScriptViewport.camera(var_9_1))
 end
 
-GenericUnitInteractorExtension._stop_interaction = function (self, interactable_unit, t)
-	Managers.state.unit_spawner:remove_destroy_listener(interactable_unit, "interactable_unit")
+function GenericUnitInteractorExtension._stop_interaction(arg_10_0, arg_10_1, arg_10_2)
+	Managers.state.unit_spawner:remove_destroy_listener(arg_10_1, "interactable_unit")
 
-	local world = self.world
-	local unit = self.unit
-	local interaction_context = self.interaction_context
-	local interaction_data = interaction_context.data
+	local var_10_0 = arg_10_0.world
+	local var_10_1 = arg_10_0.unit
+	local var_10_2 = arg_10_0.interaction_context
+	local var_10_3 = var_10_2.data
 
-	interaction_data.is_server = self.is_server
+	var_10_3.is_server = arg_10_0.is_server
 
-	local interaction_type = interaction_context.interaction_type
-	local interaction_template = InteractionDefinitions[interaction_type]
-	local interaction_config = interaction_template and (interaction_template.config or interaction_template.get_config()) or nil
-	local local_only = interaction_context.local_only
+	local var_10_4 = var_10_2.interaction_type
+	local var_10_5 = InteractionDefinitions[var_10_4]
+	local var_10_6 = var_10_5 and (var_10_5.config or var_10_5.get_config()) or nil
+	local var_10_7 = var_10_2.local_only
 
-	if not local_only then
-		local go_id, is_level_unit = Managers.state.network:game_object_or_level_id(interactable_unit)
+	if not var_10_7 then
+		local var_10_8, var_10_9 = Managers.state.network:game_object_or_level_id(arg_10_1)
 
-		if not is_level_unit and go_id == nil then
-			InteractionHelper.printf("[GenericUnitInteractorExtension] game object doesnt exist, changing result from %s to %s", InteractionResult[interaction_context.result], InteractionResult[InteractionResult.FAILURE])
+		if not var_10_9 and var_10_8 == nil then
+			InteractionHelper.printf("[GenericUnitInteractorExtension] game object doesnt exist, changing result from %s to %s", InteractionResult[var_10_2.result], InteractionResult[InteractionResult.FAILURE])
 
-			interaction_context.result = InteractionResult.FAILURE
+			var_10_2.result = InteractionResult.FAILURE
 		end
 	end
 
-	local interaction_result = interaction_context.result
+	local var_10_10 = var_10_2.result
 
-	if interaction_result == InteractionResult.ONGOING or interaction_result == nil then
-		interaction_result = InteractionResult.FAILURE
-		interaction_context.result = interaction_result
+	if var_10_10 == InteractionResult.ONGOING or var_10_10 == nil then
+		var_10_10 = InteractionResult.FAILURE
+		var_10_2.result = var_10_10
 	end
 
-	InteractionHelper.printf("[GenericUnitInteractorExtension] Stopping interaction %s with result %s", interaction_type, InteractionResult[interaction_result])
-	interaction_template.client.stop(world, unit, interactable_unit, interaction_data, interaction_config, t, interaction_result)
+	InteractionHelper.printf("[GenericUnitInteractorExtension] Stopping interaction %s with result %s", var_10_4, InteractionResult[var_10_10])
+	var_10_5.client.stop(var_10_0, var_10_1, arg_10_1, var_10_3, var_10_6, arg_10_2, var_10_10)
 
-	if self.is_server and not local_only then
-		interaction_template.server.stop(world, unit, interactable_unit, interaction_data, interaction_config, t, interaction_result)
+	if arg_10_0.is_server and not var_10_7 then
+		var_10_5.server.stop(var_10_0, var_10_1, arg_10_1, var_10_3, var_10_6, arg_10_2, var_10_10)
 	end
 
-	self.state = "waiting_to_interact"
+	arg_10_0.state = "waiting_to_interact"
 end
 
-GenericUnitInteractorExtension.is_interacting = function (self)
-	local interaction_context = self.interaction_context
-	local interaction_type = interaction_context.interaction_type
+function GenericUnitInteractorExtension.is_interacting(arg_11_0)
+	local var_11_0 = arg_11_0.interaction_context.interaction_type
 
-	return self.state ~= "waiting_to_interact", interaction_type
+	return arg_11_0.state ~= "waiting_to_interact", var_11_0
 end
 
-GenericUnitInteractorExtension.is_stopping = function (self)
-	return self.state == "stopping_interaction"
+function GenericUnitInteractorExtension.is_stopping(arg_12_0)
+	return arg_12_0.state == "stopping_interaction"
 end
 
-GenericUnitInteractorExtension.is_waiting_for_interaction_approval = function (self)
-	return self.state == "waiting_for_confirmation"
+function GenericUnitInteractorExtension.is_waiting_for_interaction_approval(arg_13_0)
+	return arg_13_0.state == "waiting_for_confirmation"
 end
 
-GenericUnitInteractorExtension.is_aborting_interaction = function (self)
-	return self.state == "waiting_for_abort"
+function GenericUnitInteractorExtension.is_aborting_interaction(arg_14_0)
+	return arg_14_0.state == "waiting_for_abort"
 end
 
-GenericUnitInteractorExtension.is_looking_at_interactable = function (self)
-	return self.interaction_context.interactable_unit ~= nil
+function GenericUnitInteractorExtension.is_looking_at_interactable(arg_15_0)
+	return arg_15_0.interaction_context.interactable_unit ~= nil
 end
 
-GenericUnitInteractorExtension.in_range = function (self, interactable_unit, interaction_type, is_in_range)
-	local interaction_context = self.interaction_context
-	local unit_to_interact_with = interactable_unit or interaction_context.interactable_unit
+function GenericUnitInteractorExtension.in_range(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+	local var_16_0 = arg_16_0.interaction_context
+	local var_16_1 = arg_16_1 or var_16_0.interactable_unit
 
-	interaction_type = interaction_type or interaction_context.interaction_type
+	arg_16_2 = arg_16_2 or var_16_0.interaction_type
 
-	local interaction_data = interaction_context.data
-	local interaction_template = InteractionDefinitions[interaction_type]
-	local in_range_func = interaction_template.client.in_range
+	local var_16_2 = var_16_0.data
+	local var_16_3 = InteractionDefinitions[arg_16_2]
+	local var_16_4 = var_16_3.client.in_range
 
-	if in_range_func then
-		in_range_func(self.unit, unit_to_interact_with, interaction_data, interaction_template.config, self.world, is_in_range)
+	if var_16_4 then
+		var_16_4(arg_16_0.unit, var_16_1, var_16_2, var_16_3.config, arg_16_0.world, arg_16_3)
 	end
 end
 
-GenericUnitInteractorExtension.enable_interactions = function (self, enable)
-	self._interactions_enabled = enable
+function GenericUnitInteractorExtension.enable_interactions(arg_17_0, arg_17_1)
+	arg_17_0._interactions_enabled = arg_17_1
 end
 
-GenericUnitInteractorExtension.can_interact = function (self, interactable_unit, interaction_type)
-	local interaction_context = self.interaction_context
-	local unit_to_interact_with = interactable_unit or interaction_context.interactable_unit
-	local buff_extension = self.buff_extension
-	local disable_interactions = buff_extension:has_buff_perk("disable_interactions")
+function GenericUnitInteractorExtension.can_interact(arg_18_0, arg_18_1, arg_18_2)
+	local var_18_0 = arg_18_0.interaction_context
+	local var_18_1 = arg_18_1 or var_18_0.interactable_unit
 
-	if disable_interactions then
+	if arg_18_0.buff_extension:has_buff_perk("disable_interactions") then
 		return false
 	end
 
-	if self.state ~= "waiting_to_interact" then
+	if arg_18_0.state ~= "waiting_to_interact" then
 		return false
 	end
 
-	if unit_to_interact_with == nil then
+	if var_18_1 == nil then
 		return false
 	end
 
-	if not Unit.alive(unit_to_interact_with) then
+	if not Unit.alive(var_18_1) then
 		return false
 	end
 
-	if self.status_extension:is_disabled() then
+	if arg_18_0.status_extension:is_disabled() then
 		return false
 	end
 
-	if not self._interactions_enabled then
+	if not arg_18_0._interactions_enabled then
 		return false
 	end
 
-	interaction_type = interaction_type or interaction_context.interaction_type
+	arg_18_2 = arg_18_2 or var_18_0.interaction_type
 
-	local game_mode = Managers.state.game_mode:game_mode()
+	local var_18_2 = Managers.state.game_mode:game_mode()
 
-	if game_mode.allowed_interactions and not game_mode:allowed_interactions(self.unit, interaction_type) then
+	if var_18_2.allowed_interactions and not var_18_2:allowed_interactions(arg_18_0.unit, arg_18_2) then
 		return false
 	end
 
-	local interaction_data = interaction_context.data
-	local interaction_template = InteractionDefinitions[interaction_type]
+	local var_18_3 = var_18_0.data
+	local var_18_4 = InteractionDefinitions[arg_18_2]
 
-	if not interaction_template then
+	if not var_18_4 then
 		return false
 	end
 
-	local can_interact_func = interaction_template.client.can_interact
+	local var_18_5 = var_18_4.client.can_interact
 
-	if can_interact_func then
-		local can_interact, failure_reason, interact_type = can_interact_func(self.unit, unit_to_interact_with, interaction_data, interaction_template.config, self.world)
+	if var_18_5 then
+		local var_18_6, var_18_7, var_18_8 = var_18_5(arg_18_0.unit, var_18_1, var_18_3, var_18_4.config, arg_18_0.world)
 
-		interact_type = interact_type or interaction_type
+		var_18_8 = var_18_8 or arg_18_2
 
-		return can_interact, failure_reason, interact_type, unit_to_interact_with
+		return var_18_6, var_18_7, var_18_8, var_18_1
 	end
 
-	return true, nil, interaction_type, unit_to_interact_with
+	return true, nil, arg_18_2, var_18_1
 end
 
-GenericUnitInteractorExtension.interaction_config = function (self)
-	local interaction_type = self.interaction_context.interaction_type
-	local interaction_template = InteractionDefinitions[interaction_type]
-	local interaction_config = interaction_template and (interaction_template.config or interaction_template.get_config()) or nil
+function GenericUnitInteractorExtension.interaction_config(arg_19_0)
+	local var_19_0 = arg_19_0.interaction_context.interaction_type
+	local var_19_1 = InteractionDefinitions[var_19_0]
 
-	return interaction_config
+	return var_19_1 and (var_19_1.config or var_19_1.get_config()) or nil
 end
 
-GenericUnitInteractorExtension.interaction_description = function (self, fail_reason)
-	local interaction_context = self.interaction_context
-	local interactable_unit = interaction_context.interactable_unit
-	local interaction_data = interaction_context.data
-	local interaction_type = interaction_context.interaction_type
-	local interaction_template = InteractionDefinitions[interaction_type]
-	local template_config = interaction_template.config
+function GenericUnitInteractorExtension.interaction_description(arg_20_0, arg_20_1)
+	local var_20_0 = arg_20_0.interaction_context
+	local var_20_1 = var_20_0.interactable_unit
+	local var_20_2 = var_20_0.data
+	local var_20_3 = var_20_0.interaction_type
+	local var_20_4 = InteractionDefinitions[var_20_3]
+	local var_20_5 = var_20_4.config
 
-	return interaction_template.client.hud_description(interactable_unit, interaction_data, template_config, fail_reason, self.unit)
+	return var_20_4.client.hud_description(var_20_1, var_20_2, var_20_5, arg_20_1, arg_20_0.unit)
 end
 
-GenericUnitInteractorExtension.interaction_hold_input = function (self)
-	return self.interaction_context.hold_input
+function GenericUnitInteractorExtension.interaction_hold_input(arg_21_0)
+	return arg_21_0.interaction_context.hold_input
 end
 
-GenericUnitInteractorExtension.is_interacting_with_local_only_interact = function (self)
-	return self.interaction_context.local_only
+function GenericUnitInteractorExtension.is_interacting_with_local_only_interact(arg_22_0)
+	return arg_22_0.interaction_context.local_only
 end
 
-GenericUnitInteractorExtension.interaction_camera_node = function (self)
-	local interaction_type = self.interaction_context.interaction_type
-	local interaction_template = InteractionDefinitions[interaction_type]
+function GenericUnitInteractorExtension.interaction_camera_node(arg_23_0)
+	local var_23_0 = arg_23_0.interaction_context.interaction_type
 
-	return interaction_template.client.camera_node(self.unit, self.interaction_context.interactable_unit)
+	return InteractionDefinitions[var_23_0].client.camera_node(arg_23_0.unit, arg_23_0.interaction_context.interactable_unit)
 end
 
-GenericUnitInteractorExtension.interactable_unit = function (self)
-	return self.interaction_context.interactable_unit
+function GenericUnitInteractorExtension.interactable_unit(arg_24_0)
+	return arg_24_0.interaction_context.interactable_unit
 end
 
-GenericUnitInteractorExtension.get_progress = function (self, t)
-	fassert(self:is_interacting(), "Attempted to get interaction progress when interactor unit wasn't interacting.")
+function GenericUnitInteractorExtension.get_progress(arg_25_0, arg_25_1)
+	fassert(arg_25_0:is_interacting(), "Attempted to get interaction progress when interactor unit wasn't interacting.")
 
-	local interaction_context = self.interaction_context
-	local interaction_data = interaction_context.data
-	local interaction_type = interaction_context.interaction_type
-	local interaction_template = InteractionDefinitions[interaction_type]
-	local interaction_config = interaction_template and interaction_template.config or nil
+	local var_25_0 = arg_25_0.interaction_context
+	local var_25_1 = var_25_0.data
+	local var_25_2 = var_25_0.interaction_type
+	local var_25_3 = InteractionDefinitions[var_25_2]
+	local var_25_4 = var_25_3 and var_25_3.config or nil
 
-	return interaction_template.client.get_progress(interaction_data, interaction_config, t)
+	return var_25_3.client.get_progress(var_25_1, var_25_4, arg_25_1)
 end
 
-GenericUnitInteractorExtension.start_interaction = function (self, hold_input, interactable_unit, interaction_type, forced)
-	local interaction_context = self.interaction_context
+function GenericUnitInteractorExtension.start_interaction(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+	local var_26_0 = arg_26_0.interaction_context
 
-	interactable_unit = interactable_unit or interaction_context.interactable_unit
-	interaction_type = interaction_type or interaction_context.interaction_type
+	arg_26_2 = arg_26_2 or var_26_0.interactable_unit
+	arg_26_3 = arg_26_3 or var_26_0.interaction_type
 
-	InteractionHelper.printf("[GenericUnitInteractorExtension] start_interaction(interactable_unit=%s, interaction_type=%s)", interactable_unit, interaction_type)
+	InteractionHelper.printf("[GenericUnitInteractorExtension] start_interaction(interactable_unit=%s, interaction_type=%s)", arg_26_2, arg_26_3)
 
-	interaction_context.interactable_unit = interactable_unit
-	interaction_context.interaction_type = interaction_type
-	interaction_context.hold_input = hold_input
+	var_26_0.interactable_unit = arg_26_2
+	var_26_0.interaction_type = arg_26_3
+	var_26_0.hold_input = arg_26_1
 
-	fassert(forced or self:can_interact(interactable_unit, interaction_type), "Attempted to start interaction even though the interaction wasn't allowed.")
+	fassert(arg_26_4 or arg_26_0:can_interact(arg_26_2, arg_26_3), "Attempted to start interaction even though the interaction wasn't allowed.")
 
-	interaction_type = InteractionHelper.player_modify_interaction_type(self.unit, interactable_unit, interaction_type)
-	interaction_context.interaction_type = interaction_type
+	arg_26_3 = InteractionHelper.player_modify_interaction_type(arg_26_0.unit, arg_26_2, arg_26_3)
+	var_26_0.interaction_type = arg_26_3
 
-	local unit = self.unit
-	local interactable_extension = ScriptUnit.has_extension(interactable_unit, "interactable_system")
-	local local_only = interactable_extension and interactable_extension:local_only()
+	local var_26_1 = arg_26_0.unit
+	local var_26_2 = ScriptUnit.has_extension(arg_26_2, "interactable_system")
+	local var_26_3 = var_26_2 and var_26_2:local_only()
 
-	interaction_context.local_only = local_only
+	var_26_0.local_only = var_26_3
 
-	local interaction_data = interaction_context.data
-	local interactor_data = interaction_data.interactor_data
-	local interaction_template = InteractionDefinitions[interaction_type]
-	local client_functions = interaction_template.client
+	local var_26_4 = var_26_0.data.interactor_data
+	local var_26_5 = InteractionDefinitions[arg_26_3].client
 
-	table.clear(interactor_data)
+	table.clear(var_26_4)
 
-	if client_functions.set_interactor_data then
-		client_functions.set_interactor_data(unit, interactable_unit, interactor_data)
+	if var_26_5.set_interactor_data then
+		var_26_5.set_interactor_data(var_26_1, arg_26_2, var_26_4)
 	end
 
-	self.state = "waiting_for_confirmation"
+	arg_26_0.state = "waiting_for_confirmation"
 
-	InteractionHelper:request(interaction_type, unit, interactable_unit, self.is_server, local_only)
+	InteractionHelper:request(arg_26_3, var_26_1, arg_26_2, arg_26_0.is_server, var_26_3)
 end
 
-GenericUnitInteractorExtension.abort_interaction = function (self)
-	if self:is_interacting() and self.state ~= "waiting_for_abort" then
-		self.state = "waiting_for_abort"
+function GenericUnitInteractorExtension.abort_interaction(arg_27_0)
+	if arg_27_0:is_interacting() and arg_27_0.state ~= "waiting_for_abort" then
+		arg_27_0.state = "waiting_for_abort"
 
-		InteractionHelper.printf("[GenericUnitInteractorExtension] abort_interaction in state=%s", self.state)
-		InteractionHelper:abort(self.unit, self.is_server)
+		InteractionHelper.printf("[GenericUnitInteractorExtension] abort_interaction in state=%s", arg_27_0.state)
+		InteractionHelper:abort(arg_27_0.unit, arg_27_0.is_server)
 	end
 end
 
-GenericUnitInteractorExtension.interaction_approved = function (self, interaction_type, interactable_unit)
-	InteractionHelper.printf("[GenericUnitInteractorExtension] interaction_approved during state %s type=%s on %s", self.state, interaction_type, tostring(interactable_unit))
-	fassert(interaction_type == self.interaction_context.interaction_type, "Got wrong type of interaction approved")
-	fassert(interactable_unit == self.interaction_context.interactable_unit, "Got wrong interactable approved")
-	Managers.state.unit_spawner:add_destroy_listener(interactable_unit, "interactable_unit", self.interactable_unit_destroy_callback)
+function GenericUnitInteractorExtension.interaction_approved(arg_28_0, arg_28_1, arg_28_2)
+	InteractionHelper.printf("[GenericUnitInteractorExtension] interaction_approved during state %s type=%s on %s", arg_28_0.state, arg_28_1, tostring(arg_28_2))
+	fassert(arg_28_1 == arg_28_0.interaction_context.interaction_type, "Got wrong type of interaction approved")
+	fassert(arg_28_2 == arg_28_0.interaction_context.interactable_unit, "Got wrong interactable approved")
+	Managers.state.unit_spawner:add_destroy_listener(arg_28_2, "interactable_unit", arg_28_0.interactable_unit_destroy_callback)
 
-	local interaction_data = self.interaction_context.data
-	local interaction_template = InteractionDefinitions[interaction_type]
-	local interaction_config = interaction_template.config
+	local var_28_0 = arg_28_0.interaction_context.data
 
-	interaction_data.duration = interaction_config.duration
-	interaction_data.start_time = Managers.time:time("game")
-	self.state = "starting_interaction"
+	var_28_0.duration = InteractionDefinitions[arg_28_1].config.duration
+	var_28_0.start_time = Managers.time:time("game")
+	arg_28_0.state = "starting_interaction"
 end
 
-GenericUnitInteractorExtension.interaction_denied = function (self)
+function GenericUnitInteractorExtension.interaction_denied(arg_29_0)
 	InteractionHelper.printf("[GenericUnitInteractorExtension] interaction_denied")
 
-	local state = self.state
+	local var_29_0 = arg_29_0.state
 
-	fassert(state == "waiting_for_confirmation" or state == "waiting_for_abort", "Was in wrong state when getting interaction denied.")
+	fassert(var_29_0 == "waiting_for_confirmation" or var_29_0 == "waiting_for_abort", "Was in wrong state when getting interaction denied.")
 
-	self.state = "waiting_to_interact"
+	arg_29_0.state = "waiting_to_interact"
 end
 
-GenericUnitInteractorExtension.interaction_completed = function (self, interaction_result)
-	local state = self.state
+function GenericUnitInteractorExtension.interaction_completed(arg_30_0, arg_30_1)
+	local var_30_0 = arg_30_0.state
 
-	InteractionHelper.printf("[GenericUnitInteractorExtension] interaction_completed during state %s with result %s", state, InteractionResult[interaction_result])
-	fassert(state ~= "waiting_to_interact", "Was in wrong state when getting interaction completed.")
+	InteractionHelper.printf("[GenericUnitInteractorExtension] interaction_completed during state %s with result %s", var_30_0, InteractionResult[arg_30_1])
+	fassert(var_30_0 ~= "waiting_to_interact", "Was in wrong state when getting interaction completed.")
 
-	self.interaction_context.result = interaction_result
+	arg_30_0.interaction_context.result = arg_30_1
 
-	local interactable_unit = self.interaction_context.interactable_unit
-	local t = Managers.time:time("game")
+	local var_30_1 = arg_30_0.interaction_context.interactable_unit
+	local var_30_2 = Managers.time:time("game")
 
-	self:_stop_interaction(interactable_unit, t)
+	arg_30_0:_stop_interaction(var_30_1, var_30_2)
 end
 
-GenericUnitInteractorExtension.hot_join_sync = function (self, sender)
-	if not self:is_interacting() then
+function GenericUnitInteractorExtension.hot_join_sync(arg_31_0, arg_31_1)
+	if not arg_31_0:is_interacting() then
 		return
 	end
 
-	local context = self.interaction_context
+	local var_31_0 = arg_31_0.interaction_context
 
-	if context.local_only then
+	if var_31_0.local_only then
 		return
 	end
 
-	local network_manager = Managers.state.network
-	local state_id = NetworkLookup.interaction_states[self.state]
-	local interaction_type_id = NetworkLookup.interactions[context.interaction_type]
-	local interactable_unit_id, is_level_unit = network_manager:game_object_or_level_id(context.interactable_unit)
-	local data = context.data
-	local start_time = data.start_time
-	local duration = data.duration or 0
-	local unit_id = network_manager:unit_game_object_id(self.unit)
-	local channel_id = PEER_ID_TO_CHANNEL[sender]
+	local var_31_1 = Managers.state.network
+	local var_31_2 = NetworkLookup.interaction_states[arg_31_0.state]
+	local var_31_3 = NetworkLookup.interactions[var_31_0.interaction_type]
+	local var_31_4, var_31_5 = var_31_1:game_object_or_level_id(var_31_0.interactable_unit)
+	local var_31_6 = var_31_0.data
+	local var_31_7 = var_31_6.start_time
+	local var_31_8 = var_31_6.duration or 0
+	local var_31_9 = var_31_1:unit_game_object_id(arg_31_0.unit)
+	local var_31_10 = PEER_ID_TO_CHANNEL[arg_31_1]
 
-	RPC.rpc_sync_interaction_state(channel_id, unit_id, state_id, interaction_type_id, interactable_unit_id, start_time, duration, is_level_unit)
+	RPC.rpc_sync_interaction_state(var_31_10, var_31_9, var_31_2, var_31_3, var_31_4, var_31_7, var_31_8, var_31_5)
 end
 
-GenericUnitInteractorExtension.allow_movement_during_interaction = function (self)
-	local interactable_unit = self.interaction_context.interactable_unit
-	local allow_movement = Unit.alive(interactable_unit) and (Unit.get_data(interactable_unit, "interaction_data", "allow_movement") or self:interaction_config().allow_movement)
+function GenericUnitInteractorExtension.allow_movement_during_interaction(arg_32_0)
+	local var_32_0 = arg_32_0.interaction_context.interactable_unit
 
-	return allow_movement
+	return Unit.alive(var_32_0) and (Unit.get_data(var_32_0, "interaction_data", "allow_movement") or arg_32_0:interaction_config().allow_movement)
 end

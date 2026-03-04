@@ -1,117 +1,117 @@
-﻿-- chunkname: @scripts/managers/invite/invite_manager.lua
+-- chunkname: @scripts/managers/invite/invite_manager.lua
 
 InviteManager = class(InviteManager)
 
-local REFRESH_TIME = 1
+local var_0_0 = 1
 
-InviteManager.init = function (self)
-	self.lobby_data = nil
-	self._pending_lobby_data = {}
-	self.is_steam = rawget(_G, "Steam") and rawget(_G, "Friends") and true or false
-	self._refresh_timer = REFRESH_TIME
+function InviteManager.init(arg_1_0)
+	arg_1_0.lobby_data = nil
+	arg_1_0._pending_lobby_data = {}
+	arg_1_0.is_steam = rawget(_G, "Steam") and rawget(_G, "Friends") and true or false
+	arg_1_0._refresh_timer = var_0_0
 end
 
-InviteManager.update = function (self, dt, t)
-	self:_update_pending_lobby_data(dt, t)
-	self:_poll_invite(dt, t)
+function InviteManager.update(arg_2_0, arg_2_1, arg_2_2)
+	arg_2_0:_update_pending_lobby_data(arg_2_1, arg_2_2)
+	arg_2_0:_poll_invite(arg_2_1, arg_2_2)
 end
 
-InviteManager._poll_invite = function (self, dt, t)
-	if self.is_steam then
-		local invite_type, lobby_id, params, invitee = Friends.next_invite()
+function InviteManager._poll_invite(arg_3_0, arg_3_1, arg_3_2)
+	if arg_3_0.is_steam then
+		local var_3_0, var_3_1, var_3_2, var_3_3 = Friends.next_invite()
 
-		if invite_type == Friends.INVITE_SERVER then
-			self:_handle_invitation(invite_type, lobby_id, params, invitee)
-		elseif invite_type == Friends.INVITE_LOBBY then
-			print("Got invite to lobby from " .. invitee .. " - fetching lobby data")
+		if var_3_0 == Friends.INVITE_SERVER then
+			arg_3_0:_handle_invitation(var_3_0, var_3_1, var_3_2, var_3_3)
+		elseif var_3_0 == Friends.INVITE_LOBBY then
+			print("Got invite to lobby from " .. var_3_3 .. " - fetching lobby data")
 
-			self._pending_lobby_data.invite_type = invite_type
-			self._pending_lobby_data.lobby_id = lobby_id
-			self._pending_lobby_data.params = params
-			self._pending_lobby_data.invitee = invitee
-			self._refresh_timer = t + REFRESH_TIME
+			arg_3_0._pending_lobby_data.invite_type = var_3_0
+			arg_3_0._pending_lobby_data.lobby_id = var_3_1
+			arg_3_0._pending_lobby_data.params = var_3_2
+			arg_3_0._pending_lobby_data.invitee = var_3_3
+			arg_3_0._refresh_timer = arg_3_2 + var_0_0
 
-			SteamLobby.request_lobby_data(lobby_id)
+			SteamLobby.request_lobby_data(var_3_1)
 		end
 	end
 end
 
-InviteManager._handle_invitation = function (self, invite_type, lobby_id, params, invitee, lobby_data)
-	local illegal_combination = Development.parameter("use_lan_backend") and invite_type ~= Friends.NO_INVITE
+function InviteManager._handle_invitation(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	local var_4_0 = Development.parameter("use_lan_backend") and arg_4_1 ~= Friends.NO_INVITE
 
-	assert(not illegal_combination, "You cannot use Steam invites in combination with LAN backend.")
+	assert(not var_4_0, "You cannot use Steam invites in combination with LAN backend.")
 
-	if invite_type == Friends.INVITE_LOBBY then
-		print("Got invite to lobby from " .. invitee)
+	if arg_4_1 == Friends.INVITE_LOBBY then
+		print("Got invite to lobby from " .. arg_4_4)
 
-		lobby_data.is_server_invite = false
-		lobby_data.id = lobby_id
-		self.lobby_data = lobby_data
-	elseif invite_type == Friends.INVITE_SERVER then
-		print("Got invite to server from " .. invitee)
+		arg_4_5.is_server_invite = false
+		arg_4_5.id = arg_4_2
+		arg_4_0.lobby_data = arg_4_5
+	elseif arg_4_1 == Friends.INVITE_SERVER then
+		print("Got invite to server from " .. arg_4_4)
 
-		local lobby_data = {}
+		local var_4_1 = {}
 
-		lobby_data.is_server_invite = true
-		lobby_data.id = lobby_id
-		lobby_data.server_info = {
-			ip_port = lobby_id,
-			invitee = invitee,
+		var_4_1.is_server_invite = true
+		var_4_1.id = arg_4_2
+		var_4_1.server_info = {
+			ip_port = arg_4_2,
+			invitee = arg_4_4
 		}
-		self.lobby_data = lobby_data
+		arg_4_0.lobby_data = var_4_1
 	end
 end
 
-InviteManager._update_pending_lobby_data = function (self, dt, t)
-	if not self._pending_lobby_data.lobby_id then
+function InviteManager._update_pending_lobby_data(arg_5_0, arg_5_1, arg_5_2)
+	if not arg_5_0._pending_lobby_data.lobby_id then
 		return
 	end
 
-	local invite_type = self._pending_lobby_data.invite_type
-	local lobby_id = self._pending_lobby_data.lobby_id
-	local params = self._pending_lobby_data.params
-	local invitee = self._pending_lobby_data.invitee
-	local lobby_data = SteamMisc.get_lobby_data(lobby_id)
+	local var_5_0 = arg_5_0._pending_lobby_data.invite_type
+	local var_5_1 = arg_5_0._pending_lobby_data.lobby_id
+	local var_5_2 = arg_5_0._pending_lobby_data.params
+	local var_5_3 = arg_5_0._pending_lobby_data.invitee
+	local var_5_4 = SteamMisc.get_lobby_data(var_5_1)
 
-	if not table.is_empty(lobby_data) and t > self._refresh_timer then
-		table.clear(self._pending_lobby_data)
-		self:_handle_invitation(invite_type, lobby_id, params, invitee, lobby_data)
+	if not table.is_empty(var_5_4) and arg_5_2 > arg_5_0._refresh_timer then
+		table.clear(arg_5_0._pending_lobby_data)
+		arg_5_0:_handle_invitation(var_5_0, var_5_1, var_5_2, var_5_3, var_5_4)
 	end
 end
 
-InviteManager.has_invitation = function (self)
-	if self.lobby_data == nil then
-		local t, dt = Managers.time:time_and_delta("main")
+function InviteManager.has_invitation(arg_6_0)
+	if arg_6_0.lobby_data == nil then
+		local var_6_0, var_6_1 = Managers.time:time_and_delta("main")
 
-		self:_poll_invite(dt, t)
+		arg_6_0:_poll_invite(var_6_1, var_6_0)
 	end
 
-	return self.lobby_data ~= nil
+	return arg_6_0.lobby_data ~= nil
 end
 
-InviteManager.get_invited_lobby_data = function (self)
-	local lobby_data = self.lobby_data
+function InviteManager.get_invited_lobby_data(arg_7_0)
+	local var_7_0 = arg_7_0.lobby_data
 
-	self.lobby_data = nil
+	arg_7_0.lobby_data = nil
 
-	return lobby_data
+	return var_7_0
 end
 
-InviteManager.set_invited_lobby_data = function (self, lobby_id)
-	local lobby_data = LobbyInternal.get_lobby_data_from_id(lobby_id)
+function InviteManager.set_invited_lobby_data(arg_8_0, arg_8_1)
+	local var_8_0 = LobbyInternal.get_lobby_data_from_id(arg_8_1)
 
-	lobby_data.id = lobby_id
-	self.lobby_data = lobby_data
+	var_8_0.id = arg_8_1
+	arg_8_0.lobby_data = var_8_0
 end
 
-InviteManager.clear_invites = function (self)
+function InviteManager.clear_invites(arg_9_0)
 	return
 end
 
-InviteManager.invites_handled = function (self)
+function InviteManager.invites_handled(arg_10_0)
 	return true
 end
 
-InviteManager.get_invite_error = function (self)
+function InviteManager.get_invite_error(arg_11_0)
 	return
 end

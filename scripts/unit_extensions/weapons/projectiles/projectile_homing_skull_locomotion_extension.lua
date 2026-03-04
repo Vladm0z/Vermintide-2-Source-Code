@@ -1,39 +1,38 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/projectiles/projectile_homing_skull_locomotion_extension.lua
+-- chunkname: @scripts/unit_extensions/weapons/projectiles/projectile_homing_skull_locomotion_extension.lua
 
 ProjectileHomingSkullLocomotionExtension = class(ProjectileHomingSkullLocomotionExtension)
 
-ProjectileHomingSkullLocomotionExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	local t = Managers.time:time("game")
+function ProjectileHomingSkullLocomotionExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._spawn_time = Managers.time:time("game")
 
-	self._spawn_time = t
+	local var_1_0 = BelakorBalancing.homing_skulls_min_speed_multiplier
+	local var_1_1 = BelakorBalancing.homing_skulls_max_speed_multiplier
+	local var_1_2 = var_1_0 - var_1_1
 
-	local max_speed_multiplier = BelakorBalancing.homing_skulls_min_speed_multiplier
-	local min_speed_multiplier = BelakorBalancing.homing_skulls_max_speed_multiplier
-	local delta = max_speed_multiplier - min_speed_multiplier
-
-	self._speed_multiplier = min_speed_multiplier + math.random() * delta
-	self._use_sin_for_vertical_trajectory = Math.random(1, 2) == 1
-	self._base_position = Vector3Box(Unit.local_position(unit, 0))
+	arg_1_0._speed_multiplier = var_1_1 + math.random() * var_1_2
+	arg_1_0._use_sin_for_vertical_trajectory = Math.random(1, 2) == 1
+	arg_1_0._base_position = Vector3Box(Unit.local_position(arg_1_2, 0))
 end
 
-local function get_target_head_node_position(unit, node_name)
-	local blackboard = BLACKBOARDS[unit]
-	local breed = blackboard and blackboard.breed
+local function var_0_0(arg_2_0, arg_2_1)
+	local var_2_0 = BLACKBOARDS[arg_2_0]
+	local var_2_1 = var_2_0 and var_2_0.breed
 
-	if breed and breed.target_head_node then
-		return Unit.world_position(unit, Unit.node(unit, breed.target_head_node))
+	if var_2_1 and var_2_1.target_head_node then
+		return Unit.world_position(arg_2_0, Unit.node(arg_2_0, var_2_1.target_head_node))
 	else
-		return Unit.world_position(unit, Unit.node(unit, node_name))
+		return Unit.world_position(arg_2_0, Unit.node(arg_2_0, arg_2_1))
 	end
 end
 
-local function valid_position(position)
-	local pmin, pmax = NetworkConstants.position.min, NetworkConstants.position.max
+local function var_0_1(arg_3_0)
+	local var_3_0 = NetworkConstants.position.min
+	local var_3_1 = NetworkConstants.position.max
 
-	for i = 1, 3 do
-		local coord = position[i]
+	for iter_3_0 = 1, 3 do
+		local var_3_2 = arg_3_0[iter_3_0]
 
-		if coord < pmin or pmax < coord then
+		if var_3_2 < var_3_0 or var_3_1 < var_3_2 then
 			print("[ProjectileHomingSkullLocomotionExtension] position is not valid, outside of NetworkConstants.position")
 
 			return false
@@ -43,93 +42,85 @@ local function valid_position(position)
 	return true
 end
 
-ProjectileHomingSkullLocomotionExtension.update = function (self, unit, input, dt, context, t)
-	self.moved = false
+function ProjectileHomingSkullLocomotionExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	arg_4_0.moved = false
 
-	if self.stopped then
+	if arg_4_0.stopped then
 		return
 	end
 
-	local blackboard = BLACKBOARDS[unit]
-	local target_unit = blackboard.target_unit
+	local var_4_0 = BLACKBOARDS[arg_4_1].target_unit
 
-	if not target_unit or not ALIVE[target_unit] then
+	if not var_4_0 or not ALIVE[var_4_0] then
 		return
 	end
 
-	local base_position = self._base_position:unbox()
-	local current_rotation = Unit.local_rotation(unit, 0)
-	local target_position = get_target_head_node_position(target_unit, "c_head")
-	local target_vector = target_position - base_position
-	local target_direction = Vector3.normalize(target_vector)
-	local target_movement_rotation = Quaternion.look(target_direction)
-	local lerp_value = dt * BelakorBalancing.homing_skulls_lerp_constant
-	local new_rotation = Quaternion.lerp(current_rotation, target_movement_rotation, lerp_value)
-	local new_direction = Quaternion.forward(new_rotation)
-	local speed_multiplier = self._speed_multiplier
-	local speed = BelakorBalancing.homing_skulls_base_speed * speed_multiplier
-	local spawn_time = self._spawn_time
-	local lifetime = t - spawn_time
+	local var_4_1 = arg_4_0._base_position:unbox()
+	local var_4_2 = Unit.local_rotation(arg_4_1, 0)
+	local var_4_3 = var_0_0(var_4_0, "c_head") - var_4_1
+	local var_4_4 = Vector3.normalize(var_4_3)
+	local var_4_5 = Quaternion.look(var_4_4)
+	local var_4_6 = arg_4_3 * BelakorBalancing.homing_skulls_lerp_constant
+	local var_4_7 = Quaternion.lerp(var_4_2, var_4_5, var_4_6)
+	local var_4_8 = Quaternion.forward(var_4_7)
+	local var_4_9 = arg_4_0._speed_multiplier
+	local var_4_10 = BelakorBalancing.homing_skulls_base_speed * var_4_9
+	local var_4_11 = arg_4_5 - arg_4_0._spawn_time
+	local var_4_12 = var_4_10 * BelakorBalancing.homing_skulls_speed_multiplier_curve_func(var_4_11)
+	local var_4_13 = Vector3(var_4_4.x, var_4_4.y, math.abs(var_4_8.z) + 1)
+	local var_4_14 = Vector3.cross(var_4_4, var_4_13)
+	local var_4_15 = Vector3.cross(var_4_4, var_4_14)
+	local var_4_16 = arg_4_0._use_sin_for_vertical_trajectory and math.sin or math.cos
+	local var_4_17 = Vector3.normalize(var_4_15) * BelakorBalancing.homing_skulls_vertical_offset_multiplier * var_4_16(var_4_11 * BelakorBalancing.homing_skulls_vertical_offset_frequency_multiplier)
+	local var_4_18 = var_4_1 + var_4_8 * var_4_12 * arg_4_3
 
-	speed = speed * BelakorBalancing.homing_skulls_speed_multiplier_curve_func(lifetime)
+	arg_4_0._base_position:store(var_4_18)
 
-	local cross_vector = Vector3(target_direction.x, target_direction.y, math.abs(new_direction.z) + 1)
-	local u_vector = Vector3.cross(target_direction, cross_vector)
-	local v_vector = Vector3.cross(target_direction, u_vector)
-	local curve_func = self._use_sin_for_vertical_trajectory and math.sin or math.cos
-	local v_offset = Vector3.normalize(v_vector) * BelakorBalancing.homing_skulls_vertical_offset_multiplier * curve_func(lifetime * BelakorBalancing.homing_skulls_vertical_offset_frequency_multiplier)
-	local new_base_position = base_position + new_direction * speed * dt
+	local var_4_19 = var_4_18 + var_4_17
 
-	self._base_position:store(new_base_position)
-
-	local new_position = new_base_position + v_offset
-
-	if not valid_position(new_position) then
-		self:stop()
+	if not var_0_1(var_4_19) then
+		arg_4_0:stop()
 
 		return
 	end
 
-	local current_position = Unit.local_position(unit, 0)
-	local velocity = new_position - current_position
-	local length = Vector3.length(velocity)
+	local var_4_20 = var_4_19 - Unit.local_position(arg_4_1, 0)
 
-	if length <= 0.001 then
+	if Vector3.length(var_4_20) <= 0.001 then
 		return
 	end
 
-	Unit.set_local_rotation(unit, 0, new_rotation)
-	Unit.set_local_position(unit, 0, new_position)
+	Unit.set_local_rotation(arg_4_1, 0, var_4_7)
+	Unit.set_local_position(arg_4_1, 0, var_4_19)
 
-	local game = Managers.state.network:game()
-	local id = Managers.state.unit_storage:go_id(unit)
+	local var_4_21 = Managers.state.network:game()
+	local var_4_22 = Managers.state.unit_storage:go_id(arg_4_1)
 
-	if game and id then
-		GameSession.set_game_object_field(game, id, "position", new_position)
-		GameSession.set_game_object_field(game, id, "rotation", new_rotation)
+	if var_4_21 and var_4_22 then
+		GameSession.set_game_object_field(var_4_21, var_4_22, "position", var_4_19)
+		GameSession.set_game_object_field(var_4_21, var_4_22, "rotation", var_4_7)
 
-		local constant = NetworkConstants.enemy_velocity
-		local vel_min = constant.min
-		local vel_max = constant.max
-		local vel_min_v3 = Vector3(vel_min, vel_min, vel_min)
-		local vel_max_v3 = Vector3(vel_max, vel_max, vel_max)
+		local var_4_23 = NetworkConstants.enemy_velocity
+		local var_4_24 = var_4_23.min
+		local var_4_25 = var_4_23.max
+		local var_4_26 = Vector3(var_4_24, var_4_24, var_4_24)
+		local var_4_27 = Vector3(var_4_25, var_4_25, var_4_25)
+		local var_4_28 = Vector3.min(Vector3.max(var_4_20, var_4_26), var_4_27)
 
-		velocity = Vector3.min(Vector3.max(velocity, vel_min_v3), vel_max_v3)
-
-		GameSession.set_game_object_field(game, id, "velocity", velocity)
+		GameSession.set_game_object_field(var_4_21, var_4_22, "velocity", var_4_28)
 	end
 
-	self.moved = true
+	arg_4_0.moved = true
 end
 
-ProjectileHomingSkullLocomotionExtension.moved_this_frame = function (self)
-	return not self.stopped and self.moved
+function ProjectileHomingSkullLocomotionExtension.moved_this_frame(arg_5_0)
+	return not arg_5_0.stopped and arg_5_0.moved
 end
 
-ProjectileHomingSkullLocomotionExtension.destroy = function (self)
-	self.stopped = true
+function ProjectileHomingSkullLocomotionExtension.destroy(arg_6_0)
+	arg_6_0.stopped = true
 end
 
-ProjectileHomingSkullLocomotionExtension.stop = function (self)
-	self.stopped = true
+function ProjectileHomingSkullLocomotionExtension.stop(arg_7_0)
+	arg_7_0.stopped = true
 end

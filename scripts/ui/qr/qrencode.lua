@@ -1,47 +1,45 @@
-﻿-- chunkname: @scripts/ui/qr/qrencode.lua
+-- chunkname: @scripts/ui/qr/qrencode.lua
 
-local debugging = false
-local testing = false
-local bit_xor = require("bit").bxor
+local var_0_0 = false
+local var_0_1 = false
+local var_0_2 = require("bit").bxor
 
-local function binary(x, digits)
-	local s = string.format("%o", x)
-	local a = {
+local function var_0_3(arg_1_0, arg_1_1)
+	local var_1_0 = string.format("%o", arg_1_0)
+	local var_1_1 = {
 		["0"] = "000",
 		["1"] = "001",
-		["2"] = "010",
-		["3"] = "011",
-		["4"] = "100",
-		["5"] = "101",
 		["6"] = "110",
+		["2"] = "010",
+		["5"] = "101",
+		["3"] = "011",
 		["7"] = "111",
+		["4"] = "100"
 	}
-
-	s = string.gsub(s, "(.)", function (d)
-		return a[d]
+	local var_1_2 = string.gsub(var_1_0, "(.)", function(arg_2_0)
+		return var_1_1[arg_2_0]
 	end)
-	s = string.gsub(s, "^0*(.*)$", "%1")
+	local var_1_3 = string.gsub(var_1_2, "^0*(.*)$", "%1")
+	local var_1_4 = string.format("%%%ds", arg_1_1)
+	local var_1_5 = string.format(var_1_4, var_1_3)
 
-	local fmtstring = string.format("%%%ds", digits)
-	local ret = string.format(fmtstring, s)
-
-	return string.gsub(ret, " ", "0")
+	return string.gsub(var_1_5, " ", "0")
 end
 
-local function fill_matrix_position(matrix, bitstring, x, y)
-	if bitstring == "1" then
-		matrix[x][y] = 2
+local function var_0_4(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	if arg_3_1 == "1" then
+		arg_3_0[arg_3_2][arg_3_3] = 2
 	else
-		matrix[x][y] = -2
+		arg_3_0[arg_3_2][arg_3_3] = -2
 	end
 end
 
-local function get_mode(str)
-	local mode
+local function var_0_5(arg_4_0)
+	local var_4_0
 
-	if string.match(str, "^[0-9]+$") then
+	if string.match(arg_4_0, "^[0-9]+$") then
 		return 1
-	elseif string.match(str, "^[0-9A-Z $%%*./:+-]+$") then
+	elseif string.match(arg_4_0, "^[0-9A-Z $%%*./:+-]+$") then
 		return 2
 	else
 		return 4
@@ -52,319 +50,323 @@ local function get_mode(str)
 	return nil
 end
 
-local capacity = {
+local var_0_6 = {
 	{
 		19,
 		16,
 		13,
-		9,
+		9
 	},
 	{
 		34,
 		28,
 		22,
-		16,
+		16
 	},
 	{
 		55,
 		44,
 		34,
-		26,
+		26
 	},
 	{
 		80,
 		64,
 		48,
-		36,
+		36
 	},
 	{
 		108,
 		86,
 		62,
-		46,
+		46
 	},
 	{
 		136,
 		108,
 		76,
-		60,
+		60
 	},
 	{
 		156,
 		124,
 		88,
-		66,
+		66
 	},
 	{
 		194,
 		154,
 		110,
-		86,
+		86
 	},
 	{
 		232,
 		182,
 		132,
-		100,
+		100
 	},
 	{
 		274,
 		216,
 		154,
-		122,
+		122
 	},
 	{
 		324,
 		254,
 		180,
-		140,
+		140
 	},
 	{
 		370,
 		290,
 		206,
-		158,
+		158
 	},
 	{
 		428,
 		334,
 		244,
-		180,
+		180
 	},
 	{
 		461,
 		365,
 		261,
-		197,
+		197
 	},
 	{
 		523,
 		415,
 		295,
-		223,
+		223
 	},
 	{
 		589,
 		453,
 		325,
-		253,
+		253
 	},
 	{
 		647,
 		507,
 		367,
-		283,
+		283
 	},
 	{
 		721,
 		563,
 		397,
-		313,
+		313
 	},
 	{
 		795,
 		627,
 		445,
-		341,
+		341
 	},
 	{
 		861,
 		669,
 		485,
-		385,
+		385
 	},
 	{
 		932,
 		714,
 		512,
-		406,
+		406
 	},
 	{
 		1006,
 		782,
 		568,
-		442,
+		442
 	},
 	{
 		1094,
 		860,
 		614,
-		464,
+		464
 	},
 	{
 		1174,
 		914,
 		664,
-		514,
+		514
 	},
 	{
 		1276,
 		1000,
 		718,
-		538,
+		538
 	},
 	{
 		1370,
 		1062,
 		754,
-		596,
+		596
 	},
 	{
 		1468,
 		1128,
 		808,
-		628,
+		628
 	},
 	{
 		1531,
 		1193,
 		871,
-		661,
+		661
 	},
 	{
 		1631,
 		1267,
 		911,
-		701,
+		701
 	},
 	{
 		1735,
 		1373,
 		985,
-		745,
+		745
 	},
 	{
 		1843,
 		1455,
 		1033,
-		793,
+		793
 	},
 	{
 		1955,
 		1541,
 		1115,
-		845,
+		845
 	},
 	{
 		2071,
 		1631,
 		1171,
-		901,
+		901
 	},
 	{
 		2191,
 		1725,
 		1231,
-		961,
+		961
 	},
 	{
 		2306,
 		1812,
 		1286,
-		986,
+		986
 	},
 	{
 		2434,
 		1914,
 		1354,
-		1054,
+		1054
 	},
 	{
 		2566,
 		1992,
 		1426,
-		1096,
+		1096
 	},
 	{
 		2702,
 		2102,
 		1502,
-		1142,
+		1142
 	},
 	{
 		2812,
 		2216,
 		1582,
-		1222,
+		1222
 	},
 	{
 		2956,
 		2334,
 		1666,
-		1276,
-	},
+		1276
+	}
 }
 
-local function get_version_eclevel(len, mode, requested_ec_level)
-	local local_mode = mode
+local function var_0_7(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = arg_5_1
 
-	if mode == 4 then
-		local_mode = 3
-	elseif mode == 8 then
-		local_mode = 4
+	if arg_5_1 == 4 then
+		var_5_0 = 3
+	elseif arg_5_1 == 8 then
+		var_5_0 = 4
 	end
 
-	assert(local_mode <= 4)
+	assert(var_5_0 <= 4)
 
-	local bytes, bits, digits, modebits, c
-	local tab = {
+	local var_5_1
+	local var_5_2
+	local var_5_3
+	local var_5_4
+	local var_5_5
+	local var_5_6 = {
 		{
 			10,
 			9,
 			8,
-			8,
+			8
 		},
 		{
 			12,
 			11,
 			16,
-			10,
+			10
 		},
 		{
 			14,
 			13,
 			16,
-			12,
-		},
+			12
+		}
 	}
-	local minversion = 40
-	local maxec_level = requested_ec_level or 1
-	local min, max = 1, 4
+	local var_5_7 = 40
+	local var_5_8 = arg_5_2 or 1
+	local var_5_9 = 1
+	local var_5_10 = 4
 
-	if requested_ec_level and requested_ec_level >= 1 and requested_ec_level <= 4 then
-		min = requested_ec_level
-		max = requested_ec_level
+	if arg_5_2 and arg_5_2 >= 1 and arg_5_2 <= 4 then
+		var_5_9 = arg_5_2
+		var_5_10 = arg_5_2
 	end
 
-	for ec_level = min, max do
-		for version = 1, #capacity do
-			bits = capacity[version][ec_level] * 8
-			bits = bits - 4
+	for iter_5_0 = var_5_9, var_5_10 do
+		for iter_5_1 = 1, #var_0_6 do
+			local var_5_11 = var_0_6[iter_5_1][iter_5_0] * 8 - 4
 
-			if version < 10 then
-				digits = tab[1][local_mode]
-			elseif version < 27 then
-				digits = tab[2][local_mode]
-			elseif version <= 40 then
-				digits = tab[3][local_mode]
+			if iter_5_1 < 10 then
+				var_5_3 = var_5_6[1][var_5_0]
+			elseif iter_5_1 < 27 then
+				var_5_3 = var_5_6[2][var_5_0]
+			elseif iter_5_1 <= 40 then
+				var_5_3 = var_5_6[3][var_5_0]
 			end
 
-			modebits = bits - digits
+			local var_5_12 = var_5_11 - var_5_3
 
-			if local_mode == 1 then
-				c = math.floor(modebits * 3 / 10)
-			elseif local_mode == 2 then
-				c = math.floor(modebits * 2 / 11)
-			elseif local_mode == 3 then
-				c = math.floor(modebits * 1 / 8)
+			if var_5_0 == 1 then
+				var_5_5 = math.floor(var_5_12 * 3 / 10)
+			elseif var_5_0 == 2 then
+				var_5_5 = math.floor(var_5_12 * 2 / 11)
+			elseif var_5_0 == 3 then
+				var_5_5 = math.floor(var_5_12 * 1 / 8)
 			else
-				c = math.floor(modebits * 1 / 13)
+				var_5_5 = math.floor(var_5_12 * 1 / 13)
 			end
 
-			if len <= c then
-				if version <= minversion then
-					minversion = version
-					maxec_level = ec_level
+			if arg_5_0 <= var_5_5 then
+				if iter_5_1 <= var_5_7 then
+					var_5_7 = iter_5_1
+					var_5_8 = iter_5_0
 				end
 
 				break
@@ -372,78 +374,75 @@ local function get_version_eclevel(len, mode, requested_ec_level)
 		end
 	end
 
-	return minversion, maxec_level
+	return var_5_7, var_5_8
 end
 
-local function get_length(str, version, mode)
-	local i = mode
+local function var_0_8(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = arg_6_2
 
-	if mode == 4 then
-		i = 3
-	elseif mode == 8 then
-		i = 4
+	if arg_6_2 == 4 then
+		var_6_0 = 3
+	elseif arg_6_2 == 8 then
+		var_6_0 = 4
 	end
 
-	assert(i <= 4)
+	assert(var_6_0 <= 4)
 
-	local tab = {
+	local var_6_1 = {
 		{
 			10,
 			9,
 			8,
-			8,
+			8
 		},
 		{
 			12,
 			11,
 			16,
-			10,
+			10
 		},
 		{
 			14,
 			13,
 			16,
-			12,
-		},
+			12
+		}
 	}
-	local digits
+	local var_6_2
 
-	if version < 10 then
-		digits = tab[1][i]
-	elseif version < 27 then
-		digits = tab[2][i]
-	elseif version <= 40 then
-		digits = tab[3][i]
+	if arg_6_1 < 10 then
+		var_6_2 = var_6_1[1][var_6_0]
+	elseif arg_6_1 < 27 then
+		var_6_2 = var_6_1[2][var_6_0]
+	elseif arg_6_1 <= 40 then
+		var_6_2 = var_6_1[3][var_6_0]
 	else
 		assert(false, "get_length, version > 40 not supported")
 	end
 
-	local len = binary(#str, digits)
-
-	return len
+	return (var_0_3(#arg_6_0, var_6_2))
 end
 
-local function get_version_eclevel_mode_bistringlength(str, requested_ec_level, mode)
-	local local_mode
+local function var_0_9(arg_7_0, arg_7_1, arg_7_2)
+	local var_7_0
 
-	if mode then
+	if arg_7_2 then
 		assert(false, "not implemented")
 
-		local_mode = mode
+		var_7_0 = arg_7_2
 	else
-		local_mode = get_mode(str)
+		var_7_0 = var_0_5(arg_7_0)
 	end
 
-	local version, ec_level
+	local var_7_1
+	local var_7_2
+	local var_7_3, var_7_4 = var_0_7(#arg_7_0, var_7_0, arg_7_1)
+	local var_7_5 = var_0_8(arg_7_0, var_7_3, var_7_0)
 
-	version, ec_level = get_version_eclevel(#str, local_mode, requested_ec_level)
-
-	local length_string = get_length(str, version, local_mode)
-
-	return version, ec_level, binary(local_mode, 4), local_mode, length_string
+	return var_7_3, var_7_4, var_0_3(var_7_0, 4), var_7_0, var_7_5
 end
 
-local asciitbl = {
+local var_0_10 = {
 	-1,
 	-1,
 	-1,
@@ -538,98 +537,101 @@ local asciitbl = {
 	-1,
 	-1,
 	-1,
-	-1,
+	-1
 }
 
-local function encode_string_numeric(str)
-	local bitstring = ""
-	local int
+local function var_0_11(arg_8_0)
+	local var_8_0 = ""
+	local var_8_1
 
-	string.gsub(str, "..?.?", function (a)
-		int = tonumber(a)
+	string.gsub(arg_8_0, "..?.?", function(arg_9_0)
+		var_8_1 = tonumber(arg_9_0)
 
-		if #a == 3 then
-			bitstring = bitstring .. binary(int, 10)
-		elseif #a == 2 then
-			bitstring = bitstring .. binary(int, 7)
+		if #arg_9_0 == 3 then
+			var_8_0 = var_8_0 .. var_0_3(var_8_1, 10)
+		elseif #arg_9_0 == 2 then
+			var_8_0 = var_8_0 .. var_0_3(var_8_1, 7)
 		else
-			bitstring = bitstring .. binary(int, 4)
+			var_8_0 = var_8_0 .. var_0_3(var_8_1, 4)
 		end
 	end)
 
-	return bitstring
+	return var_8_0
 end
 
-local function encode_string_ascii(str)
-	local bitstring = ""
-	local int, b1, b2
+local function var_0_12(arg_10_0)
+	local var_10_0 = ""
+	local var_10_1
+	local var_10_2
+	local var_10_3
 
-	string.gsub(str, "..?", function (a)
-		if #a == 2 then
-			b1 = asciitbl[string.byte(string.sub(a, 1, 1))]
-			b2 = asciitbl[string.byte(string.sub(a, 2, 2))]
-			int = b1 * 45 + b2
-			bitstring = bitstring .. binary(int, 11)
+	string.gsub(arg_10_0, "..?", function(arg_11_0)
+		if #arg_11_0 == 2 then
+			var_10_2 = var_0_10[string.byte(string.sub(arg_11_0, 1, 1))]
+			var_10_3 = var_0_10[string.byte(string.sub(arg_11_0, 2, 2))]
+			var_10_1 = var_10_2 * 45 + var_10_3
+			var_10_0 = var_10_0 .. var_0_3(var_10_1, 11)
 		else
-			int = asciitbl[string.byte(a)]
-			bitstring = bitstring .. binary(int, 6)
+			var_10_1 = var_0_10[string.byte(arg_11_0)]
+			var_10_0 = var_10_0 .. var_0_3(var_10_1, 6)
 		end
 	end)
 
-	return bitstring
+	return var_10_0
 end
 
-local function encode_string_binary(str)
-	local ret = {}
+local function var_0_13(arg_12_0)
+	local var_12_0 = {}
 
-	string.gsub(str, ".", function (x)
-		ret[#ret + 1] = binary(string.byte(x), 8)
+	string.gsub(arg_12_0, ".", function(arg_13_0)
+		var_12_0[#var_12_0 + 1] = var_0_3(string.byte(arg_13_0), 8)
 	end)
 
-	return table.concat(ret)
+	return table.concat(var_12_0)
 end
 
-local function encode_data(str, mode)
-	if mode == 1 then
-		return encode_string_numeric(str)
-	elseif mode == 2 then
-		return encode_string_ascii(str)
-	elseif mode == 4 then
-		return encode_string_binary(str)
+local function var_0_14(arg_14_0, arg_14_1)
+	if arg_14_1 == 1 then
+		return var_0_11(arg_14_0)
+	elseif arg_14_1 == 2 then
+		return var_0_12(arg_14_0)
+	elseif arg_14_1 == 4 then
+		return var_0_13(arg_14_0)
 	else
 		assert(false, "not implemented yet")
 	end
 end
 
-local function add_pad_data(version, ec_level, data)
-	local count_to_pad, missing_digits
-	local cpty = capacity[version][ec_level] * 8
+local function var_0_15(arg_15_0, arg_15_1, arg_15_2)
+	local var_15_0
+	local var_15_1
+	local var_15_2 = var_0_6[arg_15_0][arg_15_1] * 8
+	local var_15_3 = math.min(4, var_15_2 - #arg_15_2)
 
-	count_to_pad = math.min(4, cpty - #data)
-
-	if count_to_pad > 0 then
-		data = data .. string.rep("0", count_to_pad)
+	if var_15_3 > 0 then
+		arg_15_2 = arg_15_2 .. string.rep("0", var_15_3)
 	end
 
-	if math.fmod(#data, 8) ~= 0 then
-		missing_digits = 8 - math.fmod(#data, 8)
-		data = data .. string.rep("0", missing_digits)
+	if math.fmod(#arg_15_2, 8) ~= 0 then
+		local var_15_4 = 8 - math.fmod(#arg_15_2, 8)
+
+		arg_15_2 = arg_15_2 .. string.rep("0", var_15_4)
 	end
 
-	assert(math.fmod(#data, 8) == 0)
+	assert(math.fmod(#arg_15_2, 8) == 0)
 
-	while cpty > #data do
-		data = data .. "11101100"
+	while var_15_2 > #arg_15_2 do
+		arg_15_2 = arg_15_2 .. "11101100"
 
-		if cpty > #data then
-			data = data .. "00010001"
+		if var_15_2 > #arg_15_2 then
+			arg_15_2 = arg_15_2 .. "00010001"
 		end
 	end
 
-	return data
+	return arg_15_2
 end
 
-local alpha_int = {
+local var_0_16 = {
 	[0] = 0,
 	2,
 	4,
@@ -885,9 +887,9 @@ local alpha_int = {
 	173,
 	71,
 	142,
-	1,
+	1
 }
-local int_alpha = {
+local var_0_17 = {
 	[0] = 0,
 	255,
 	1,
@@ -1143,9 +1145,9 @@ local int_alpha = {
 	168,
 	80,
 	88,
-	175,
+	175
 }
-local generator_polynomial = {
+local var_0_18 = {
 	[7] = {
 		21,
 		102,
@@ -1154,7 +1156,7 @@ local generator_polynomial = {
 		146,
 		229,
 		87,
-		0,
+		0
 	},
 	[10] = {
 		45,
@@ -1167,7 +1169,7 @@ local generator_polynomial = {
 		46,
 		67,
 		251,
-		0,
+		0
 	},
 	[13] = {
 		78,
@@ -1183,7 +1185,7 @@ local generator_polynomial = {
 		176,
 		152,
 		74,
-		0,
+		0
 	},
 	[15] = {
 		105,
@@ -1201,7 +1203,7 @@ local generator_polynomial = {
 		61,
 		183,
 		8,
-		0,
+		0
 	},
 	[16] = {
 		120,
@@ -1220,7 +1222,7 @@ local generator_polynomial = {
 		107,
 		104,
 		120,
-		0,
+		0
 	},
 	[17] = {
 		136,
@@ -1240,7 +1242,7 @@ local generator_polynomial = {
 		206,
 		139,
 		43,
-		0,
+		0
 	},
 	[18] = {
 		153,
@@ -1261,7 +1263,7 @@ local generator_polynomial = {
 		158,
 		234,
 		215,
-		0,
+		0
 	},
 	[20] = {
 		190,
@@ -1284,7 +1286,7 @@ local generator_polynomial = {
 		79,
 		60,
 		17,
-		0,
+		0
 	},
 	[22] = {
 		231,
@@ -1309,7 +1311,7 @@ local generator_polynomial = {
 		247,
 		171,
 		210,
-		0,
+		0
 	},
 	[24] = {
 		21,
@@ -1336,7 +1338,7 @@ local generator_polynomial = {
 		135,
 		121,
 		229,
-		0,
+		0
 	},
 	[26] = {
 		70,
@@ -1365,7 +1367,7 @@ local generator_polynomial = {
 		158,
 		125,
 		173,
-		0,
+		0
 	},
 	[28] = {
 		123,
@@ -1396,7 +1398,7 @@ local generator_polynomial = {
 		200,
 		223,
 		168,
-		0,
+		0
 	},
 	[30] = {
 		180,
@@ -1429,172 +1431,175 @@ local generator_polynomial = {
 		145,
 		173,
 		41,
-		0,
-	},
+		0
+	}
 }
 
-local function convert_bitstring_to_bytes(data)
-	local msg = {}
-	local tab = string.gsub(data, "(........)", function (x)
-		msg[#msg + 1] = tonumber(x, 2)
+local function var_0_19(arg_16_0)
+	local var_16_0 = {}
+	local var_16_1 = string.gsub(arg_16_0, "(........)", function(arg_17_0)
+		var_16_0[#var_16_0 + 1] = tonumber(arg_17_0, 2)
 	end)
 
-	return msg
+	return var_16_0
 end
 
-local function get_generator_polynominal_adjusted(num_ec_codewords, highest_exponent)
-	local gp_alpha = {
-		[0] = 0,
+local function var_0_20(arg_18_0, arg_18_1)
+	local var_18_0 = {
+		[0] = 0
 	}
 
-	for i = 0, highest_exponent - num_ec_codewords - 1 do
-		gp_alpha[i] = 0
+	for iter_18_0 = 0, arg_18_1 - arg_18_0 - 1 do
+		var_18_0[iter_18_0] = 0
 	end
 
-	local gp = generator_polynomial[num_ec_codewords]
+	local var_18_1 = var_0_18[arg_18_0]
 
-	for i = 1, num_ec_codewords + 1 do
-		gp_alpha[highest_exponent - num_ec_codewords + i - 1] = gp[i]
+	for iter_18_1 = 1, arg_18_0 + 1 do
+		var_18_0[arg_18_1 - arg_18_0 + iter_18_1 - 1] = var_18_1[iter_18_1]
 	end
 
-	return gp_alpha
+	return var_18_0
 end
 
-local function convert_to_alpha(tab)
-	local new_tab = {}
+local function var_0_21(arg_19_0)
+	local var_19_0 = {}
 
-	for i = 0, #tab do
-		new_tab[i] = int_alpha[tab[i]]
+	for iter_19_0 = 0, #arg_19_0 do
+		var_19_0[iter_19_0] = var_0_17[arg_19_0[iter_19_0]]
 	end
 
-	return new_tab
+	return var_19_0
 end
 
-local function convert_to_int(tab, len_message)
-	local new_tab = {}
+local function var_0_22(arg_20_0, arg_20_1)
+	local var_20_0 = {}
 
-	for i = 0, #tab do
-		new_tab[i] = alpha_int[tab[i]]
+	for iter_20_0 = 0, #arg_20_0 do
+		var_20_0[iter_20_0] = var_0_16[arg_20_0[iter_20_0]]
 	end
 
-	return new_tab
+	return var_20_0
 end
 
-local function calculate_error_correction(data, num_ec_codewords)
-	local mp
+local function var_0_23(arg_21_0, arg_21_1)
+	local var_21_0
 
-	if type(data) == "string" then
-		mp = convert_bitstring_to_bytes(data)
-	elseif type(data) == "table" then
-		mp = data
+	if type(arg_21_0) == "string" then
+		var_21_0 = var_0_19(arg_21_0)
+	elseif type(arg_21_0) == "table" then
+		var_21_0 = arg_21_0
 	else
-		assert(false, "Unknown type for data: %s", type(data))
+		assert(false, "Unknown type for data: %s", type(arg_21_0))
 	end
 
-	local len_message = #mp
-	local highest_exponent = len_message + num_ec_codewords - 1
-	local gp_alpha, tmp, he
-	local gp_int = {}
-	local mp_int, mp_alpha = {}, {}
+	local var_21_1 = #var_21_0
+	local var_21_2 = var_21_1 + arg_21_1 - 1
+	local var_21_3
+	local var_21_4
+	local var_21_5
+	local var_21_6 = {}
+	local var_21_7 = {}
+	local var_21_8 = {}
 
-	for i = 1, len_message do
-		mp_int[highest_exponent - i + 1] = mp[i]
+	for iter_21_0 = 1, var_21_1 do
+		var_21_7[var_21_2 - iter_21_0 + 1] = var_21_0[iter_21_0]
 	end
 
-	for i = 1, highest_exponent - len_message do
-		mp_int[i] = 0
+	for iter_21_1 = 1, var_21_2 - var_21_1 do
+		var_21_7[iter_21_1] = 0
 	end
 
-	mp_int[0] = 0
-	mp_alpha = convert_to_alpha(mp_int)
+	var_21_7[0] = 0
 
-	while num_ec_codewords <= highest_exponent do
-		gp_alpha = get_generator_polynominal_adjusted(num_ec_codewords, highest_exponent)
+	local var_21_9 = var_0_21(var_21_7)
 
-		local exp = mp_alpha[highest_exponent]
+	while arg_21_1 <= var_21_2 do
+		local var_21_10 = var_0_20(arg_21_1, var_21_2)
+		local var_21_11 = var_21_9[var_21_2]
 
-		for i = highest_exponent, highest_exponent - num_ec_codewords, -1 do
-			if gp_alpha[i] + exp > 255 then
-				gp_alpha[i] = math.fmod(gp_alpha[i] + exp, 255)
+		for iter_21_2 = var_21_2, var_21_2 - arg_21_1, -1 do
+			if var_21_10[iter_21_2] + var_21_11 > 255 then
+				var_21_10[iter_21_2] = math.fmod(var_21_10[iter_21_2] + var_21_11, 255)
 			else
-				gp_alpha[i] = gp_alpha[i] + exp
+				var_21_10[iter_21_2] = var_21_10[iter_21_2] + var_21_11
 			end
 		end
 
-		for i = highest_exponent - num_ec_codewords - 1, 0, -1 do
-			gp_alpha[i] = 0
+		for iter_21_3 = var_21_2 - arg_21_1 - 1, 0, -1 do
+			var_21_10[iter_21_3] = 0
 		end
 
-		gp_int = convert_to_int(gp_alpha)
-		mp_int = convert_to_int(mp_alpha)
-		tmp = {}
+		local var_21_12 = var_0_22(var_21_10)
 
-		for i = highest_exponent, 0, -1 do
-			tmp[i] = bit_xor(gp_int[i], mp_int[i])
+		var_21_7 = var_0_22(var_21_9)
+
+		local var_21_13 = {}
+
+		for iter_21_4 = var_21_2, 0, -1 do
+			var_21_13[iter_21_4] = var_0_2(var_21_12[iter_21_4], var_21_7[iter_21_4])
 		end
 
-		he = highest_exponent
-
-		for i = he, 0, -1 do
-			if i < num_ec_codewords then
+		for iter_21_5 = var_21_2, 0, -1 do
+			if iter_21_5 < arg_21_1 then
 				break
 			end
 
-			if tmp[i] == 0 then
-				tmp[i] = nil
-				highest_exponent = highest_exponent - 1
+			if var_21_13[iter_21_5] == 0 then
+				var_21_13[iter_21_5] = nil
+				var_21_2 = var_21_2 - 1
 			else
 				break
 			end
 		end
 
-		mp_int = tmp
-		mp_alpha = convert_to_alpha(mp_int)
+		var_21_7 = var_21_13
+		var_21_9 = var_0_21(var_21_7)
 	end
 
-	local ret = {}
+	local var_21_14 = {}
 
-	for i = #mp_int, 0, -1 do
-		ret[#ret + 1] = mp_int[i]
+	for iter_21_6 = #var_21_7, 0, -1 do
+		var_21_14[#var_21_14 + 1] = var_21_7[iter_21_6]
 	end
 
-	return ret
+	return var_21_14
 end
 
-local ecblocks = {
+local var_0_24 = {
 	{
 		{
 			1,
 			{
 				26,
 				19,
-				2,
-			},
+				2
+			}
 		},
 		{
 			1,
 			{
 				26,
 				16,
-				4,
-			},
+				4
+			}
 		},
 		{
 			1,
 			{
 				26,
 				13,
-				6,
-			},
+				6
+			}
 		},
 		{
 			1,
 			{
 				26,
 				9,
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -1602,33 +1607,33 @@ local ecblocks = {
 			{
 				44,
 				34,
-				4,
-			},
+				4
+			}
 		},
 		{
 			1,
 			{
 				44,
 				28,
-				8,
-			},
+				8
+			}
 		},
 		{
 			1,
 			{
 				44,
 				22,
-				11,
-			},
+				11
+			}
 		},
 		{
 			1,
 			{
 				44,
 				16,
-				14,
-			},
-		},
+				14
+			}
+		}
 	},
 	{
 		{
@@ -1636,33 +1641,33 @@ local ecblocks = {
 			{
 				70,
 				55,
-				7,
-			},
+				7
+			}
 		},
 		{
 			1,
 			{
 				70,
 				44,
-				13,
-			},
+				13
+			}
 		},
 		{
 			2,
 			{
 				35,
 				17,
-				9,
-			},
+				9
+			}
 		},
 		{
 			2,
 			{
 				35,
 				13,
-				11,
-			},
-		},
+				11
+			}
+		}
 	},
 	{
 		{
@@ -1670,33 +1675,33 @@ local ecblocks = {
 			{
 				100,
 				80,
-				10,
-			},
+				10
+			}
 		},
 		{
 			2,
 			{
 				50,
 				32,
-				9,
-			},
+				9
+			}
 		},
 		{
 			2,
 			{
 				50,
 				24,
-				13,
-			},
+				13
+			}
 		},
 		{
 			4,
 			{
 				25,
 				9,
-				8,
-			},
-		},
+				8
+			}
+		}
 	},
 	{
 		{
@@ -1704,45 +1709,45 @@ local ecblocks = {
 			{
 				134,
 				108,
-				13,
-			},
+				13
+			}
 		},
 		{
 			2,
 			{
 				67,
 				43,
-				12,
-			},
+				12
+			}
 		},
 		{
 			2,
 			{
 				33,
 				15,
-				9,
+				9
 			},
 			2,
 			{
 				34,
 				16,
-				9,
-			},
+				9
+			}
 		},
 		{
 			2,
 			{
 				33,
 				11,
-				11,
+				11
 			},
 			2,
 			{
 				34,
 				12,
-				11,
-			},
-		},
+				11
+			}
+		}
 	},
 	{
 		{
@@ -1750,33 +1755,33 @@ local ecblocks = {
 			{
 				86,
 				68,
-				9,
-			},
+				9
+			}
 		},
 		{
 			4,
 			{
 				43,
 				27,
-				8,
-			},
+				8
+			}
 		},
 		{
 			4,
 			{
 				43,
 				19,
-				12,
-			},
+				12
+			}
 		},
 		{
 			4,
 			{
 				43,
 				15,
-				14,
-			},
-		},
+				14
+			}
+		}
 	},
 	{
 		{
@@ -1784,45 +1789,45 @@ local ecblocks = {
 			{
 				98,
 				78,
-				10,
-			},
+				10
+			}
 		},
 		{
 			4,
 			{
 				49,
 				31,
-				9,
-			},
+				9
+			}
 		},
 		{
 			2,
 			{
 				32,
 				14,
-				9,
+				9
 			},
 			4,
 			{
 				33,
 				15,
-				9,
-			},
+				9
+			}
 		},
 		{
 			4,
 			{
 				39,
 				13,
-				13,
+				13
 			},
 			1,
 			{
 				40,
 				14,
-				13,
-			},
-		},
+				13
+			}
+		}
 	},
 	{
 		{
@@ -1830,51 +1835,51 @@ local ecblocks = {
 			{
 				121,
 				97,
-				12,
-			},
+				12
+			}
 		},
 		{
 			2,
 			{
 				60,
 				38,
-				11,
+				11
 			},
 			2,
 			{
 				61,
 				39,
-				11,
-			},
+				11
+			}
 		},
 		{
 			4,
 			{
 				40,
 				18,
-				11,
+				11
 			},
 			2,
 			{
 				41,
 				19,
-				11,
-			},
+				11
+			}
 		},
 		{
 			4,
 			{
 				40,
 				14,
-				13,
+				13
 			},
 			2,
 			{
 				41,
 				15,
-				13,
-			},
-		},
+				13
+			}
+		}
 	},
 	{
 		{
@@ -1882,51 +1887,51 @@ local ecblocks = {
 			{
 				146,
 				116,
-				15,
-			},
+				15
+			}
 		},
 		{
 			3,
 			{
 				58,
 				36,
-				11,
+				11
 			},
 			2,
 			{
 				59,
 				37,
-				11,
-			},
+				11
+			}
 		},
 		{
 			4,
 			{
 				36,
 				16,
-				10,
+				10
 			},
 			4,
 			{
 				37,
 				17,
-				10,
-			},
+				10
+			}
 		},
 		{
 			4,
 			{
 				36,
 				12,
-				12,
+				12
 			},
 			4,
 			{
 				37,
 				13,
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -1934,57 +1939,57 @@ local ecblocks = {
 			{
 				86,
 				68,
-				9,
+				9
 			},
 			2,
 			{
 				87,
 				69,
-				9,
-			},
+				9
+			}
 		},
 		{
 			4,
 			{
 				69,
 				43,
-				13,
+				13
 			},
 			1,
 			{
 				70,
 				44,
-				13,
-			},
+				13
+			}
 		},
 		{
 			6,
 			{
 				43,
 				19,
-				12,
+				12
 			},
 			2,
 			{
 				44,
 				20,
-				12,
-			},
+				12
+			}
 		},
 		{
 			6,
 			{
 				43,
 				15,
-				14,
+				14
 			},
 			2,
 			{
 				44,
 				16,
-				14,
-			},
-		},
+				14
+			}
+		}
 	},
 	{
 		{
@@ -1992,51 +1997,51 @@ local ecblocks = {
 			{
 				101,
 				81,
-				10,
-			},
+				10
+			}
 		},
 		{
 			1,
 			{
 				80,
 				50,
-				15,
+				15
 			},
 			4,
 			{
 				81,
 				51,
-				15,
-			},
+				15
+			}
 		},
 		{
 			4,
 			{
 				50,
 				22,
-				14,
+				14
 			},
 			4,
 			{
 				51,
 				23,
-				14,
-			},
+				14
+			}
 		},
 		{
 			3,
 			{
 				36,
 				12,
-				12,
+				12
 			},
 			8,
 			{
 				37,
 				13,
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -2044,57 +2049,57 @@ local ecblocks = {
 			{
 				116,
 				92,
-				12,
+				12
 			},
 			2,
 			{
 				117,
 				93,
-				12,
-			},
+				12
+			}
 		},
 		{
 			6,
 			{
 				58,
 				36,
-				11,
+				11
 			},
 			2,
 			{
 				59,
 				37,
-				11,
-			},
+				11
+			}
 		},
 		{
 			4,
 			{
 				46,
 				20,
-				13,
+				13
 			},
 			6,
 			{
 				47,
 				21,
-				13,
-			},
+				13
+			}
 		},
 		{
 			7,
 			{
 				42,
 				14,
-				14,
+				14
 			},
 			4,
 			{
 				43,
 				15,
-				14,
-			},
-		},
+				14
+			}
+		}
 	},
 	{
 		{
@@ -2102,51 +2107,51 @@ local ecblocks = {
 			{
 				133,
 				107,
-				13,
-			},
+				13
+			}
 		},
 		{
 			8,
 			{
 				59,
 				37,
-				11,
+				11
 			},
 			1,
 			{
 				60,
 				38,
-				11,
-			},
+				11
+			}
 		},
 		{
 			8,
 			{
 				44,
 				20,
-				12,
+				12
 			},
 			4,
 			{
 				45,
 				21,
-				12,
-			},
+				12
+			}
 		},
 		{
 			12,
 			{
 				33,
 				11,
-				11,
+				11
 			},
 			4,
 			{
 				34,
 				12,
-				11,
-			},
-		},
+				11
+			}
+		}
 	},
 	{
 		{
@@ -2154,57 +2159,57 @@ local ecblocks = {
 			{
 				145,
 				115,
-				15,
+				15
 			},
 			1,
 			{
 				146,
 				116,
-				15,
-			},
+				15
+			}
 		},
 		{
 			4,
 			{
 				64,
 				40,
-				12,
+				12
 			},
 			5,
 			{
 				65,
 				41,
-				12,
-			},
+				12
+			}
 		},
 		{
 			11,
 			{
 				36,
 				16,
-				10,
+				10
 			},
 			5,
 			{
 				37,
 				17,
-				10,
-			},
+				10
+			}
 		},
 		{
 			11,
 			{
 				36,
 				12,
-				12,
+				12
 			},
 			5,
 			{
 				37,
 				13,
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -2212,57 +2217,57 @@ local ecblocks = {
 			{
 				109,
 				87,
-				11,
+				11
 			},
 			1,
 			{
 				110,
 				88,
-				11,
-			},
+				11
+			}
 		},
 		{
 			5,
 			{
 				65,
 				41,
-				12,
+				12
 			},
 			5,
 			{
 				66,
 				42,
-				12,
-			},
+				12
+			}
 		},
 		{
 			5,
 			{
 				54,
 				24,
-				15,
+				15
 			},
 			7,
 			{
 				55,
 				25,
-				15,
-			},
+				15
+			}
 		},
 		{
 			11,
 			{
 				36,
 				12,
-				12,
+				12
 			},
 			7,
 			{
 				37,
 				13,
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -2270,57 +2275,57 @@ local ecblocks = {
 			{
 				122,
 				98,
-				12,
+				12
 			},
 			1,
 			{
 				123,
 				99,
-				12,
-			},
+				12
+			}
 		},
 		{
 			7,
 			{
 				73,
 				45,
-				14,
+				14
 			},
 			3,
 			{
 				74,
 				46,
-				14,
-			},
+				14
+			}
 		},
 		{
 			15,
 			{
 				43,
 				19,
-				12,
+				12
 			},
 			2,
 			{
 				44,
 				20,
-				12,
-			},
+				12
+			}
 		},
 		{
 			3,
 			{
 				45,
 				15,
-				15,
+				15
 			},
 			13,
 			{
 				46,
 				16,
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -2328,57 +2333,57 @@ local ecblocks = {
 			{
 				135,
 				107,
-				14,
+				14
 			},
 			5,
 			{
 				136,
 				108,
-				14,
-			},
+				14
+			}
 		},
 		{
 			10,
 			{
 				74,
 				46,
-				14,
+				14
 			},
 			1,
 			{
 				75,
 				47,
-				14,
-			},
+				14
+			}
 		},
 		{
 			1,
 			{
 				50,
 				22,
-				14,
+				14
 			},
 			15,
 			{
 				51,
 				23,
-				14,
-			},
+				14
+			}
 		},
 		{
 			2,
 			{
 				42,
 				14,
-				14,
+				14
 			},
 			17,
 			{
 				43,
 				15,
-				14,
-			},
-		},
+				14
+			}
+		}
 	},
 	{
 		{
@@ -2386,57 +2391,57 @@ local ecblocks = {
 			{
 				150,
 				120,
-				15,
+				15
 			},
 			1,
 			{
 				151,
 				121,
-				15,
-			},
+				15
+			}
 		},
 		{
 			9,
 			{
 				69,
 				43,
-				13,
+				13
 			},
 			4,
 			{
 				70,
 				44,
-				13,
-			},
+				13
+			}
 		},
 		{
 			17,
 			{
 				50,
 				22,
-				14,
+				14
 			},
 			1,
 			{
 				51,
 				23,
-				14,
-			},
+				14
+			}
 		},
 		{
 			2,
 			{
 				42,
 				14,
-				14,
+				14
 			},
 			19,
 			{
 				43,
 				15,
-				14,
-			},
-		},
+				14
+			}
+		}
 	},
 	{
 		{
@@ -2444,57 +2449,57 @@ local ecblocks = {
 			{
 				141,
 				113,
-				14,
+				14
 			},
 			4,
 			{
 				142,
 				114,
-				14,
-			},
+				14
+			}
 		},
 		{
 			3,
 			{
 				70,
 				44,
-				13,
+				13
 			},
 			11,
 			{
 				71,
 				45,
-				13,
-			},
+				13
+			}
 		},
 		{
 			17,
 			{
 				47,
 				21,
-				13,
+				13
 			},
 			4,
 			{
 				48,
 				22,
-				13,
-			},
+				13
+			}
 		},
 		{
 			9,
 			{
 				39,
 				13,
-				13,
+				13
 			},
 			16,
 			{
 				40,
 				14,
-				13,
-			},
-		},
+				13
+			}
+		}
 	},
 	{
 		{
@@ -2502,57 +2507,57 @@ local ecblocks = {
 			{
 				135,
 				107,
-				14,
+				14
 			},
 			5,
 			{
 				136,
 				108,
-				14,
-			},
+				14
+			}
 		},
 		{
 			3,
 			{
 				67,
 				41,
-				13,
+				13
 			},
 			13,
 			{
 				68,
 				42,
-				13,
-			},
+				13
+			}
 		},
 		{
 			15,
 			{
 				54,
 				24,
-				15,
+				15
 			},
 			5,
 			{
 				55,
 				25,
-				15,
-			},
+				15
+			}
 		},
 		{
 			15,
 			{
 				43,
 				15,
-				14,
+				14
 			},
 			10,
 			{
 				44,
 				16,
-				14,
-			},
-		},
+				14
+			}
+		}
 	},
 	{
 		{
@@ -2560,51 +2565,51 @@ local ecblocks = {
 			{
 				144,
 				116,
-				14,
+				14
 			},
 			4,
 			{
 				145,
 				117,
-				14,
-			},
+				14
+			}
 		},
 		{
 			17,
 			{
 				68,
 				42,
-				13,
-			},
+				13
+			}
 		},
 		{
 			17,
 			{
 				50,
 				22,
-				14,
+				14
 			},
 			6,
 			{
 				51,
 				23,
-				14,
-			},
+				14
+			}
 		},
 		{
 			19,
 			{
 				46,
 				16,
-				15,
+				15
 			},
 			6,
 			{
 				47,
 				17,
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -2612,45 +2617,45 @@ local ecblocks = {
 			{
 				139,
 				111,
-				14,
+				14
 			},
 			7,
 			{
 				140,
 				112,
-				14,
-			},
+				14
+			}
 		},
 		{
 			17,
 			{
 				74,
 				46,
-				14,
-			},
+				14
+			}
 		},
 		{
 			7,
 			{
 				54,
 				24,
-				15,
+				15
 			},
 			16,
 			{
 				55,
 				25,
-				15,
-			},
+				15
+			}
 		},
 		{
 			34,
 			{
 				37,
 				13,
-				12,
-			},
-		},
+				12
+			}
+		}
 	},
 	{
 		{
@@ -2658,57 +2663,57 @@ local ecblocks = {
 			{
 				151,
 				121,
-				15,
+				15
 			},
 			5,
 			{
 				152,
 				122,
-				15,
-			},
+				15
+			}
 		},
 		{
 			4,
 			{
 				75,
 				47,
-				14,
+				14
 			},
 			14,
 			{
 				76,
 				48,
-				14,
-			},
+				14
+			}
 		},
 		{
 			11,
 			{
 				54,
 				24,
-				15,
+				15
 			},
 			14,
 			{
 				55,
 				25,
-				15,
-			},
+				15
+			}
 		},
 		{
 			16,
 			{
 				45,
 				15,
-				15,
+				15
 			},
 			14,
 			{
 				46,
 				16,
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -2716,57 +2721,57 @@ local ecblocks = {
 			{
 				147,
 				117,
-				15,
+				15
 			},
 			4,
 			{
 				148,
 				118,
-				15,
-			},
+				15
+			}
 		},
 		{
 			6,
 			{
 				73,
 				45,
-				14,
+				14
 			},
 			14,
 			{
 				74,
 				46,
-				14,
-			},
+				14
+			}
 		},
 		{
 			11,
 			{
 				54,
 				24,
-				15,
+				15
 			},
 			16,
 			{
 				55,
 				25,
-				15,
-			},
+				15
+			}
 		},
 		{
 			30,
 			{
 				46,
 				16,
-				15,
+				15
 			},
 			2,
 			{
 				47,
 				17,
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -2774,57 +2779,57 @@ local ecblocks = {
 			{
 				132,
 				106,
-				13,
+				13
 			},
 			4,
 			{
 				133,
 				107,
-				13,
-			},
+				13
+			}
 		},
 		{
 			8,
 			{
 				75,
 				47,
-				14,
+				14
 			},
 			13,
 			{
 				76,
 				48,
-				14,
-			},
+				14
+			}
 		},
 		{
 			7,
 			{
 				54,
 				24,
-				15,
+				15
 			},
 			22,
 			{
 				55,
 				25,
-				15,
-			},
+				15
+			}
 		},
 		{
 			22,
 			{
 				45,
 				15,
-				15,
+				15
 			},
 			13,
 			{
 				46,
 				16,
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -2832,57 +2837,57 @@ local ecblocks = {
 			{
 				142,
 				114,
-				14,
+				14
 			},
 			2,
 			{
 				143,
 				115,
-				14,
-			},
+				14
+			}
 		},
 		{
 			19,
 			{
 				74,
 				46,
-				14,
+				14
 			},
 			4,
 			{
 				75,
 				47,
-				14,
-			},
+				14
+			}
 		},
 		{
 			28,
 			{
 				50,
 				22,
-				14,
+				14
 			},
 			6,
 			{
 				51,
 				23,
-				14,
-			},
+				14
+			}
 		},
 		{
 			33,
 			{
 				46,
 				16,
-				15,
+				15
 			},
 			4,
 			{
 				47,
 				17,
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -2890,57 +2895,57 @@ local ecblocks = {
 			{
 				152,
 				122,
-				15,
+				15
 			},
 			4,
 			{
 				153,
 				123,
-				15,
-			},
+				15
+			}
 		},
 		{
 			22,
 			{
 				73,
 				45,
-				14,
+				14
 			},
 			3,
 			{
 				74,
 				46,
-				14,
-			},
+				14
+			}
 		},
 		{
 			8,
 			{
 				53,
 				23,
-				15,
+				15
 			},
 			26,
 			{
 				54,
 				24,
-				15,
-			},
+				15
+			}
 		},
 		{
 			12,
 			{
 				45,
 				15,
-				15,
+				15
 			},
 			28,
 			{
 				46,
 				16,
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -2948,57 +2953,57 @@ local ecblocks = {
 			{
 				147,
 				117,
-				15,
+				15
 			},
 			10,
 			{
 				148,
 				118,
-				15,
-			},
+				15
+			}
 		},
 		{
 			3,
 			{
 				73,
 				45,
-				14,
+				14
 			},
 			23,
 			{
 				74,
 				46,
-				14,
-			},
+				14
+			}
 		},
 		{
 			4,
 			{
 				54,
 				24,
-				15,
+				15
 			},
 			31,
 			{
 				55,
 				25,
-				15,
-			},
+				15
+			}
 		},
 		{
 			11,
 			{
 				45,
 				15,
-				15,
+				15
 			},
 			31,
 			{
 				46,
 				16,
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -3006,57 +3011,57 @@ local ecblocks = {
 			{
 				146,
 				116,
-				15,
+				15
 			},
 			7,
 			{
 				147,
 				117,
-				15,
-			},
+				15
+			}
 		},
 		{
 			21,
 			{
 				73,
 				45,
-				14,
+				14
 			},
 			7,
 			{
 				74,
 				46,
-				14,
-			},
+				14
+			}
 		},
 		{
 			1,
 			{
 				53,
 				23,
-				15,
+				15
 			},
 			37,
 			{
 				54,
 				24,
-				15,
-			},
+				15
+			}
 		},
 		{
 			19,
 			{
 				45,
 				15,
-				15,
+				15
 			},
 			26,
 			{
 				46,
 				16,
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -3064,57 +3069,57 @@ local ecblocks = {
 			{
 				145,
 				115,
-				15,
+				15
 			},
 			10,
 			{
 				146,
 				116,
-				15,
-			},
+				15
+			}
 		},
 		{
 			19,
 			{
 				75,
 				47,
-				14,
+				14
 			},
 			10,
 			{
 				76,
 				48,
-				14,
-			},
+				14
+			}
 		},
 		{
 			15,
 			{
 				54,
 				24,
-				15,
+				15
 			},
 			25,
 			{
 				55,
 				25,
-				15,
-			},
+				15
+			}
 		},
 		{
 			23,
 			{
 				45,
 				15,
-				15,
+				15
 			},
 			25,
 			{
 				46,
 				16,
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -3122,57 +3127,57 @@ local ecblocks = {
 			{
 				145,
 				115,
-				15,
+				15
 			},
 			3,
 			{
 				146,
 				116,
-				15,
-			},
+				15
+			}
 		},
 		{
 			2,
 			{
 				74,
 				46,
-				14,
+				14
 			},
 			29,
 			{
 				75,
 				47,
-				14,
-			},
+				14
+			}
 		},
 		{
 			42,
 			{
 				54,
 				24,
-				15,
+				15
 			},
 			1,
 			{
 				55,
 				25,
-				15,
-			},
+				15
+			}
 		},
 		{
 			23,
 			{
 				45,
 				15,
-				15,
+				15
 			},
 			28,
 			{
 				46,
 				16,
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -3180,51 +3185,51 @@ local ecblocks = {
 			{
 				145,
 				115,
-				15,
-			},
+				15
+			}
 		},
 		{
 			10,
 			{
 				74,
 				46,
-				14,
+				14
 			},
 			23,
 			{
 				75,
 				47,
-				14,
-			},
+				14
+			}
 		},
 		{
 			10,
 			{
 				54,
 				24,
-				15,
+				15
 			},
 			35,
 			{
 				55,
 				25,
-				15,
-			},
+				15
+			}
 		},
 		{
 			19,
 			{
 				45,
 				15,
-				15,
+				15
 			},
 			35,
 			{
 				46,
 				16,
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -3232,57 +3237,57 @@ local ecblocks = {
 			{
 				145,
 				115,
-				15,
+				15
 			},
 			1,
 			{
 				146,
 				116,
-				15,
-			},
+				15
+			}
 		},
 		{
 			14,
 			{
 				74,
 				46,
-				14,
+				14
 			},
 			21,
 			{
 				75,
 				47,
-				14,
-			},
+				14
+			}
 		},
 		{
 			29,
 			{
 				54,
 				24,
-				15,
+				15
 			},
 			19,
 			{
 				55,
 				25,
-				15,
-			},
+				15
+			}
 		},
 		{
 			11,
 			{
 				45,
 				15,
-				15,
+				15
 			},
 			46,
 			{
 				46,
 				16,
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -3290,57 +3295,57 @@ local ecblocks = {
 			{
 				145,
 				115,
-				15,
+				15
 			},
 			6,
 			{
 				146,
 				116,
-				15,
-			},
+				15
+			}
 		},
 		{
 			14,
 			{
 				74,
 				46,
-				14,
+				14
 			},
 			23,
 			{
 				75,
 				47,
-				14,
-			},
+				14
+			}
 		},
 		{
 			44,
 			{
 				54,
 				24,
-				15,
+				15
 			},
 			7,
 			{
 				55,
 				25,
-				15,
-			},
+				15
+			}
 		},
 		{
 			59,
 			{
 				46,
 				16,
-				15,
+				15
 			},
 			1,
 			{
 				47,
 				17,
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -3348,57 +3353,57 @@ local ecblocks = {
 			{
 				151,
 				121,
-				15,
+				15
 			},
 			7,
 			{
 				152,
 				122,
-				15,
-			},
+				15
+			}
 		},
 		{
 			12,
 			{
 				75,
 				47,
-				14,
+				14
 			},
 			26,
 			{
 				76,
 				48,
-				14,
-			},
+				14
+			}
 		},
 		{
 			39,
 			{
 				54,
 				24,
-				15,
+				15
 			},
 			14,
 			{
 				55,
 				25,
-				15,
-			},
+				15
+			}
 		},
 		{
 			22,
 			{
 				45,
 				15,
-				15,
+				15
 			},
 			41,
 			{
 				46,
 				16,
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -3406,57 +3411,57 @@ local ecblocks = {
 			{
 				151,
 				121,
-				15,
+				15
 			},
 			14,
 			{
 				152,
 				122,
-				15,
-			},
+				15
+			}
 		},
 		{
 			6,
 			{
 				75,
 				47,
-				14,
+				14
 			},
 			34,
 			{
 				76,
 				48,
-				14,
-			},
+				14
+			}
 		},
 		{
 			46,
 			{
 				54,
 				24,
-				15,
+				15
 			},
 			10,
 			{
 				55,
 				25,
-				15,
-			},
+				15
+			}
 		},
 		{
 			2,
 			{
 				45,
 				15,
-				15,
+				15
 			},
 			64,
 			{
 				46,
 				16,
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -3464,57 +3469,57 @@ local ecblocks = {
 			{
 				152,
 				122,
-				15,
+				15
 			},
 			4,
 			{
 				153,
 				123,
-				15,
-			},
+				15
+			}
 		},
 		{
 			29,
 			{
 				74,
 				46,
-				14,
+				14
 			},
 			14,
 			{
 				75,
 				47,
-				14,
-			},
+				14
+			}
 		},
 		{
 			49,
 			{
 				54,
 				24,
-				15,
+				15
 			},
 			10,
 			{
 				55,
 				25,
-				15,
-			},
+				15
+			}
 		},
 		{
 			24,
 			{
 				45,
 				15,
-				15,
+				15
 			},
 			46,
 			{
 				46,
 				16,
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -3522,57 +3527,57 @@ local ecblocks = {
 			{
 				152,
 				122,
-				15,
+				15
 			},
 			18,
 			{
 				153,
 				123,
-				15,
-			},
+				15
+			}
 		},
 		{
 			13,
 			{
 				74,
 				46,
-				14,
+				14
 			},
 			32,
 			{
 				75,
 				47,
-				14,
-			},
+				14
+			}
 		},
 		{
 			48,
 			{
 				54,
 				24,
-				15,
+				15
 			},
 			14,
 			{
 				55,
 				25,
-				15,
-			},
+				15
+			}
 		},
 		{
 			42,
 			{
 				45,
 				15,
-				15,
+				15
 			},
 			32,
 			{
 				46,
 				16,
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -3580,57 +3585,57 @@ local ecblocks = {
 			{
 				147,
 				117,
-				15,
+				15
 			},
 			4,
 			{
 				148,
 				118,
-				15,
-			},
+				15
+			}
 		},
 		{
 			40,
 			{
 				75,
 				47,
-				14,
+				14
 			},
 			7,
 			{
 				76,
 				48,
-				14,
-			},
+				14
+			}
 		},
 		{
 			43,
 			{
 				54,
 				24,
-				15,
+				15
 			},
 			22,
 			{
 				55,
 				25,
-				15,
-			},
+				15
+			}
 		},
 		{
 			10,
 			{
 				45,
 				15,
-				15,
+				15
 			},
 			67,
 			{
 				46,
 				16,
-				15,
-			},
-		},
+				15
+			}
+		}
 	},
 	{
 		{
@@ -3638,60 +3643,60 @@ local ecblocks = {
 			{
 				148,
 				118,
-				15,
+				15
 			},
 			6,
 			{
 				149,
 				119,
-				15,
-			},
+				15
+			}
 		},
 		{
 			18,
 			{
 				75,
 				47,
-				14,
+				14
 			},
 			31,
 			{
 				76,
 				48,
-				14,
-			},
+				14
+			}
 		},
 		{
 			34,
 			{
 				54,
 				24,
-				15,
+				15
 			},
 			34,
 			{
 				55,
 				25,
-				15,
-			},
+				15
+			}
 		},
 		{
 			20,
 			{
 				45,
 				15,
-				15,
+				15
 			},
 			61,
 			{
 				46,
 				16,
-				15,
-			},
-		},
-	},
+				15
+			}
+		}
+	}
 }
-local remainder = {
+local var_0_25 = {
 	0,
 	7,
 	7,
@@ -3731,284 +3736,284 @@ local remainder = {
 	0,
 	0,
 	0,
-	0,
+	0
 }
 
-local function arrange_codewords_and_calculate_ec(version, ec_level, data)
-	if type(data) == "table" then
-		local tmp = ""
+local function var_0_26(arg_22_0, arg_22_1, arg_22_2)
+	if type(arg_22_2) == "table" then
+		local var_22_0 = ""
 
-		for i = 1, #data do
-			tmp = tmp .. binary(data[i], 8)
+		for iter_22_0 = 1, #arg_22_2 do
+			var_22_0 = var_22_0 .. var_0_3(arg_22_2[iter_22_0], 8)
 		end
 
-		data = tmp
+		arg_22_2 = var_22_0
 	end
 
-	local blocks = ecblocks[version][ec_level]
-	local size_datablock_bytes, size_ecblock_bytes
-	local datablocks = {}
-	local ecblocks = {}
-	local count = 1
-	local pos = 0
-	local cpty_ec_bits = 0
+	local var_22_1 = var_0_24[arg_22_0][arg_22_1]
+	local var_22_2
+	local var_22_3
+	local var_22_4 = {}
+	local var_22_5 = {}
+	local var_22_6 = 1
+	local var_22_7 = 0
+	local var_22_8 = 0
 
-	for i = 1, #blocks / 2 do
-		for j = 1, blocks[2 * i - 1] do
-			size_datablock_bytes = blocks[2 * i][2]
-			size_ecblock_bytes = blocks[2 * i][1] - blocks[2 * i][2]
-			cpty_ec_bits = cpty_ec_bits + size_ecblock_bytes * 8
-			datablocks[#datablocks + 1] = string.sub(data, pos * 8 + 1, (pos + size_datablock_bytes) * 8)
+	for iter_22_1 = 1, #var_22_1 / 2 do
+		for iter_22_2 = 1, var_22_1[2 * iter_22_1 - 1] do
+			local var_22_9 = var_22_1[2 * iter_22_1][2]
+			local var_22_10 = var_22_1[2 * iter_22_1][1] - var_22_1[2 * iter_22_1][2]
 
-			local tmp_tab = calculate_error_correction(datablocks[#datablocks], size_ecblock_bytes)
-			local tmp_str = ""
+			var_22_8 = var_22_8 + var_22_10 * 8
+			var_22_4[#var_22_4 + 1] = string.sub(arg_22_2, var_22_7 * 8 + 1, (var_22_7 + var_22_9) * 8)
 
-			for x = 1, #tmp_tab do
-				tmp_str = tmp_str .. binary(tmp_tab[x], 8)
+			local var_22_11 = var_0_23(var_22_4[#var_22_4], var_22_10)
+			local var_22_12 = ""
+
+			for iter_22_3 = 1, #var_22_11 do
+				var_22_12 = var_22_12 .. var_0_3(var_22_11[iter_22_3], 8)
 			end
 
-			ecblocks[#ecblocks + 1] = tmp_str
-			pos = pos + size_datablock_bytes
-			count = count + 1
+			var_22_5[#var_22_5 + 1] = var_22_12
+			var_22_7 = var_22_7 + var_22_9
+			var_22_6 = var_22_6 + 1
 		end
 	end
 
-	local arranged_data = ""
-
-	pos = 1
+	local var_22_13 = ""
+	local var_22_14 = 1
 
 	repeat
-		for i = 1, #datablocks do
-			if pos < #datablocks[i] then
-				arranged_data = arranged_data .. string.sub(datablocks[i], pos, pos + 7)
+		for iter_22_4 = 1, #var_22_4 do
+			if var_22_14 < #var_22_4[iter_22_4] then
+				var_22_13 = var_22_13 .. string.sub(var_22_4[iter_22_4], var_22_14, var_22_14 + 7)
 			end
 		end
 
-		pos = pos + 8
-	until #arranged_data == #data
+		var_22_14 = var_22_14 + 8
+	until #var_22_13 == #arg_22_2
 
-	local arranged_ec = ""
-
-	pos = 1
+	local var_22_15 = ""
+	local var_22_16 = 1
 
 	repeat
-		for i = 1, #ecblocks do
-			if pos < #ecblocks[i] then
-				arranged_ec = arranged_ec .. string.sub(ecblocks[i], pos, pos + 7)
+		for iter_22_5 = 1, #var_22_5 do
+			if var_22_16 < #var_22_5[iter_22_5] then
+				var_22_15 = var_22_15 .. string.sub(var_22_5[iter_22_5], var_22_16, var_22_16 + 7)
 			end
 		end
 
-		pos = pos + 8
-	until #arranged_ec == cpty_ec_bits
+		var_22_16 = var_22_16 + 8
+	until #var_22_15 == var_22_8
 
-	return arranged_data .. arranged_ec
+	return var_22_13 .. var_22_15
 end
 
-local function add_position_detection_patterns(tab_x)
-	local size = #tab_x
+local function var_0_27(arg_23_0)
+	local var_23_0 = #arg_23_0
 
-	for i = 1, 8 do
-		for j = 1, 8 do
-			tab_x[i][j] = -2
-			tab_x[size - 8 + i][j] = -2
-			tab_x[i][size - 8 + j] = -2
+	for iter_23_0 = 1, 8 do
+		for iter_23_1 = 1, 8 do
+			arg_23_0[iter_23_0][iter_23_1] = -2
+			arg_23_0[var_23_0 - 8 + iter_23_0][iter_23_1] = -2
+			arg_23_0[iter_23_0][var_23_0 - 8 + iter_23_1] = -2
 		end
 	end
 
-	for i = 1, 7 do
-		tab_x[1][i] = 2
-		tab_x[7][i] = 2
-		tab_x[i][1] = 2
-		tab_x[i][7] = 2
-		tab_x[size][i] = 2
-		tab_x[size - 6][i] = 2
-		tab_x[size - i + 1][1] = 2
-		tab_x[size - i + 1][7] = 2
-		tab_x[1][size - i + 1] = 2
-		tab_x[7][size - i + 1] = 2
-		tab_x[i][size - 6] = 2
-		tab_x[i][size] = 2
+	for iter_23_2 = 1, 7 do
+		arg_23_0[1][iter_23_2] = 2
+		arg_23_0[7][iter_23_2] = 2
+		arg_23_0[iter_23_2][1] = 2
+		arg_23_0[iter_23_2][7] = 2
+		arg_23_0[var_23_0][iter_23_2] = 2
+		arg_23_0[var_23_0 - 6][iter_23_2] = 2
+		arg_23_0[var_23_0 - iter_23_2 + 1][1] = 2
+		arg_23_0[var_23_0 - iter_23_2 + 1][7] = 2
+		arg_23_0[1][var_23_0 - iter_23_2 + 1] = 2
+		arg_23_0[7][var_23_0 - iter_23_2 + 1] = 2
+		arg_23_0[iter_23_2][var_23_0 - 6] = 2
+		arg_23_0[iter_23_2][var_23_0] = 2
 	end
 
-	for i = 1, 3 do
-		for j = 1, 3 do
-			tab_x[2 + j][i + 2] = 2
-			tab_x[size - j - 1][i + 2] = 2
-			tab_x[2 + j][size - i - 1] = 2
+	for iter_23_3 = 1, 3 do
+		for iter_23_4 = 1, 3 do
+			arg_23_0[2 + iter_23_4][iter_23_3 + 2] = 2
+			arg_23_0[var_23_0 - iter_23_4 - 1][iter_23_3 + 2] = 2
+			arg_23_0[2 + iter_23_4][var_23_0 - iter_23_3 - 1] = 2
 		end
 	end
 end
 
-local function add_timing_pattern(tab_x)
-	local line, col
+local function var_0_28(arg_24_0)
+	local var_24_0
+	local var_24_1
+	local var_24_2 = 7
+	local var_24_3 = 9
 
-	line = 7
-	col = 9
-
-	for i = col, #tab_x - 8 do
-		if math.fmod(i, 2) == 1 then
-			tab_x[i][line] = 2
+	for iter_24_0 = var_24_3, #arg_24_0 - 8 do
+		if math.fmod(iter_24_0, 2) == 1 then
+			arg_24_0[iter_24_0][var_24_2] = 2
 		else
-			tab_x[i][line] = -2
+			arg_24_0[iter_24_0][var_24_2] = -2
 		end
 	end
 
-	for i = col, #tab_x - 8 do
-		if math.fmod(i, 2) == 1 then
-			tab_x[line][i] = 2
+	for iter_24_1 = var_24_3, #arg_24_0 - 8 do
+		if math.fmod(iter_24_1, 2) == 1 then
+			arg_24_0[var_24_2][iter_24_1] = 2
 		else
-			tab_x[line][i] = -2
+			arg_24_0[var_24_2][iter_24_1] = -2
 		end
 	end
 end
 
-local alignment_pattern = {
+local var_0_29 = {
 	{},
 	{
 		6,
-		18,
+		18
+	},
+	{
+		6,
+		22
+	},
+	{
+		6,
+		26
+	},
+	{
+		6,
+		30
+	},
+	{
+		6,
+		34
 	},
 	{
 		6,
 		22,
-	},
-	{
-		6,
-		26,
-	},
-	{
-		6,
-		30,
-	},
-	{
-		6,
-		34,
-	},
-	{
-		6,
-		22,
-		38,
+		38
 	},
 	{
 		6,
 		24,
-		42,
+		42
 	},
 	{
 		6,
 		26,
-		46,
+		46
 	},
 	{
 		6,
 		28,
-		50,
+		50
 	},
 	{
 		6,
 		30,
-		54,
+		54
 	},
 	{
 		6,
 		32,
-		58,
+		58
 	},
 	{
 		6,
 		34,
-		62,
+		62
 	},
 	{
 		6,
 		26,
 		46,
-		66,
+		66
 	},
 	{
 		6,
 		26,
 		48,
-		70,
+		70
 	},
 	{
 		6,
 		26,
 		50,
-		74,
+		74
 	},
 	{
 		6,
 		30,
 		54,
-		78,
+		78
 	},
 	{
 		6,
 		30,
 		56,
-		82,
+		82
 	},
 	{
 		6,
 		30,
 		58,
-		86,
+		86
 	},
 	{
 		6,
 		34,
 		62,
-		90,
+		90
 	},
 	{
 		6,
 		28,
 		50,
 		72,
-		94,
+		94
 	},
 	{
 		6,
 		26,
 		50,
 		74,
-		98,
+		98
 	},
 	{
 		6,
 		30,
 		54,
 		78,
-		102,
+		102
 	},
 	{
 		6,
 		28,
 		54,
 		80,
-		106,
+		106
 	},
 	{
 		6,
 		32,
 		58,
 		84,
-		110,
+		110
 	},
 	{
 		6,
 		30,
 		58,
 		86,
-		114,
+		114
 	},
 	{
 		6,
 		34,
 		62,
 		90,
-		118,
+		118
 	},
 	{
 		6,
@@ -4016,7 +4021,7 @@ local alignment_pattern = {
 		50,
 		74,
 		98,
-		122,
+		122
 	},
 	{
 		6,
@@ -4024,7 +4029,7 @@ local alignment_pattern = {
 		54,
 		78,
 		102,
-		126,
+		126
 	},
 	{
 		6,
@@ -4032,7 +4037,7 @@ local alignment_pattern = {
 		52,
 		78,
 		104,
-		130,
+		130
 	},
 	{
 		6,
@@ -4040,7 +4045,7 @@ local alignment_pattern = {
 		56,
 		82,
 		108,
-		134,
+		134
 	},
 	{
 		6,
@@ -4048,7 +4053,7 @@ local alignment_pattern = {
 		60,
 		86,
 		112,
-		138,
+		138
 	},
 	{
 		6,
@@ -4056,7 +4061,7 @@ local alignment_pattern = {
 		58,
 		86,
 		114,
-		142,
+		142
 	},
 	{
 		6,
@@ -4064,7 +4069,7 @@ local alignment_pattern = {
 		62,
 		90,
 		118,
-		146,
+		146
 	},
 	{
 		6,
@@ -4073,7 +4078,7 @@ local alignment_pattern = {
 		78,
 		102,
 		126,
-		150,
+		150
 	},
 	{
 		6,
@@ -4082,7 +4087,7 @@ local alignment_pattern = {
 		76,
 		102,
 		128,
-		154,
+		154
 	},
 	{
 		6,
@@ -4091,7 +4096,7 @@ local alignment_pattern = {
 		80,
 		106,
 		132,
-		158,
+		158
 	},
 	{
 		6,
@@ -4100,7 +4105,7 @@ local alignment_pattern = {
 		84,
 		110,
 		136,
-		162,
+		162
 	},
 	{
 		6,
@@ -4109,7 +4114,7 @@ local alignment_pattern = {
 		82,
 		110,
 		138,
-		166,
+		166
 	},
 	{
 		6,
@@ -4118,51 +4123,53 @@ local alignment_pattern = {
 		86,
 		114,
 		142,
-		170,
-	},
+		170
+	}
 }
 
-local function add_alignment_pattern(tab_x)
-	local version = (#tab_x - 17) / 4
-	local ap = alignment_pattern[version]
-	local pos_x, pos_y
+local function var_0_30(arg_25_0)
+	local var_25_0 = (#arg_25_0 - 17) / 4
+	local var_25_1 = var_0_29[var_25_0]
+	local var_25_2
+	local var_25_3
 
-	for x = 1, #ap do
-		for y = 1, #ap do
-			if (x ~= 1 or y ~= 1) and (x ~= #ap or y ~= 1) and (x ~= 1 or y ~= #ap) then
-				pos_x = ap[x] + 1
-				pos_y = ap[y] + 1
-				tab_x[pos_x][pos_y] = 2
-				tab_x[pos_x + 1][pos_y] = -2
-				tab_x[pos_x - 1][pos_y] = -2
-				tab_x[pos_x + 2][pos_y] = 2
-				tab_x[pos_x - 2][pos_y] = 2
-				tab_x[pos_x][pos_y - 2] = 2
-				tab_x[pos_x + 1][pos_y - 2] = 2
-				tab_x[pos_x - 1][pos_y - 2] = 2
-				tab_x[pos_x + 2][pos_y - 2] = 2
-				tab_x[pos_x - 2][pos_y - 2] = 2
-				tab_x[pos_x][pos_y + 2] = 2
-				tab_x[pos_x + 1][pos_y + 2] = 2
-				tab_x[pos_x - 1][pos_y + 2] = 2
-				tab_x[pos_x + 2][pos_y + 2] = 2
-				tab_x[pos_x - 2][pos_y + 2] = 2
-				tab_x[pos_x][pos_y - 1] = -2
-				tab_x[pos_x + 1][pos_y - 1] = -2
-				tab_x[pos_x - 1][pos_y - 1] = -2
-				tab_x[pos_x + 2][pos_y - 1] = 2
-				tab_x[pos_x - 2][pos_y - 1] = 2
-				tab_x[pos_x][pos_y + 1] = -2
-				tab_x[pos_x + 1][pos_y + 1] = -2
-				tab_x[pos_x - 1][pos_y + 1] = -2
-				tab_x[pos_x + 2][pos_y + 1] = 2
-				tab_x[pos_x - 2][pos_y + 1] = 2
+	for iter_25_0 = 1, #var_25_1 do
+		for iter_25_1 = 1, #var_25_1 do
+			if (iter_25_0 ~= 1 or iter_25_1 ~= 1) and (iter_25_0 ~= #var_25_1 or iter_25_1 ~= 1) and (iter_25_0 ~= 1 or iter_25_1 ~= #var_25_1) then
+				local var_25_4 = var_25_1[iter_25_0] + 1
+				local var_25_5 = var_25_1[iter_25_1] + 1
+
+				arg_25_0[var_25_4][var_25_5] = 2
+				arg_25_0[var_25_4 + 1][var_25_5] = -2
+				arg_25_0[var_25_4 - 1][var_25_5] = -2
+				arg_25_0[var_25_4 + 2][var_25_5] = 2
+				arg_25_0[var_25_4 - 2][var_25_5] = 2
+				arg_25_0[var_25_4][var_25_5 - 2] = 2
+				arg_25_0[var_25_4 + 1][var_25_5 - 2] = 2
+				arg_25_0[var_25_4 - 1][var_25_5 - 2] = 2
+				arg_25_0[var_25_4 + 2][var_25_5 - 2] = 2
+				arg_25_0[var_25_4 - 2][var_25_5 - 2] = 2
+				arg_25_0[var_25_4][var_25_5 + 2] = 2
+				arg_25_0[var_25_4 + 1][var_25_5 + 2] = 2
+				arg_25_0[var_25_4 - 1][var_25_5 + 2] = 2
+				arg_25_0[var_25_4 + 2][var_25_5 + 2] = 2
+				arg_25_0[var_25_4 - 2][var_25_5 + 2] = 2
+				arg_25_0[var_25_4][var_25_5 - 1] = -2
+				arg_25_0[var_25_4 + 1][var_25_5 - 1] = -2
+				arg_25_0[var_25_4 - 1][var_25_5 - 1] = -2
+				arg_25_0[var_25_4 + 2][var_25_5 - 1] = 2
+				arg_25_0[var_25_4 - 2][var_25_5 - 1] = 2
+				arg_25_0[var_25_4][var_25_5 + 1] = -2
+				arg_25_0[var_25_4 + 1][var_25_5 + 1] = -2
+				arg_25_0[var_25_4 - 1][var_25_5 + 1] = -2
+				arg_25_0[var_25_4 + 2][var_25_5 + 1] = 2
+				arg_25_0[var_25_4 - 2][var_25_5 + 1] = 2
 			end
 		end
 	end
 end
 
-local typeinfo = {
+local var_0_31 = {
 	{
 		[0] = "111011111000100",
 		"111001011110011",
@@ -4172,7 +4179,7 @@ local typeinfo = {
 		"110001100011000",
 		"110110001000001",
 		"110100101110110",
-		[-1] = "111111111111111",
+		[-1] = "111111111111111"
 	},
 	{
 		[0] = "101010000010010",
@@ -4183,7 +4190,7 @@ local typeinfo = {
 		"100000011001110",
 		"100111110010111",
 		"100101010100000",
-		[-1] = "111111111111111",
+		[-1] = "111111111111111"
 	},
 	{
 		[0] = "011010101011111",
@@ -4194,7 +4201,7 @@ local typeinfo = {
 		"010000110000011",
 		"010111011011010",
 		"010101111101101",
-		[-1] = "111111111111111",
+		[-1] = "111111111111111"
 	},
 	{
 		[0] = "001011010001001",
@@ -4205,50 +4212,50 @@ local typeinfo = {
 		"000001001010101",
 		"000110100001100",
 		"000100000111011",
-		[-1] = "111111111111111",
-	},
+		[-1] = "111111111111111"
+	}
 }
 
-local function add_typeinfo_to_matrix(matrix, ec_level, mask)
-	local ec_mask_type = typeinfo[ec_level][mask]
-	local bit
+local function var_0_32(arg_26_0, arg_26_1, arg_26_2)
+	local var_26_0 = var_0_31[arg_26_1][arg_26_2]
+	local var_26_1
 
-	for i = 1, 7 do
-		bit = string.sub(ec_mask_type, i, i)
+	for iter_26_0 = 1, 7 do
+		local var_26_2 = string.sub(var_26_0, iter_26_0, iter_26_0)
 
-		fill_matrix_position(matrix, bit, 9, #matrix - i + 1)
+		var_0_4(arg_26_0, var_26_2, 9, #arg_26_0 - iter_26_0 + 1)
 	end
 
-	for i = 8, 9 do
-		bit = string.sub(ec_mask_type, i, i)
+	for iter_26_1 = 8, 9 do
+		local var_26_3 = string.sub(var_26_0, iter_26_1, iter_26_1)
 
-		fill_matrix_position(matrix, bit, 9, 17 - i)
+		var_0_4(arg_26_0, var_26_3, 9, 17 - iter_26_1)
 	end
 
-	for i = 10, 15 do
-		bit = string.sub(ec_mask_type, i, i)
+	for iter_26_2 = 10, 15 do
+		local var_26_4 = string.sub(var_26_0, iter_26_2, iter_26_2)
 
-		fill_matrix_position(matrix, bit, 9, 16 - i)
+		var_0_4(arg_26_0, var_26_4, 9, 16 - iter_26_2)
 	end
 
-	for i = 1, 6 do
-		bit = string.sub(ec_mask_type, i, i)
+	for iter_26_3 = 1, 6 do
+		local var_26_5 = string.sub(var_26_0, iter_26_3, iter_26_3)
 
-		fill_matrix_position(matrix, bit, i, 9)
+		var_0_4(arg_26_0, var_26_5, iter_26_3, 9)
 	end
 
-	bit = string.sub(ec_mask_type, 7, 7)
+	local var_26_6 = string.sub(var_26_0, 7, 7)
 
-	fill_matrix_position(matrix, bit, 8, 9)
+	var_0_4(arg_26_0, var_26_6, 8, 9)
 
-	for i = 8, 15 do
-		bit = string.sub(ec_mask_type, i, i)
+	for iter_26_4 = 8, 15 do
+		local var_26_7 = string.sub(var_26_0, iter_26_4, iter_26_4)
 
-		fill_matrix_position(matrix, bit, #matrix - 15 + i, 9)
+		var_0_4(arg_26_0, var_26_7, #arg_26_0 - 15 + iter_26_4, 9)
 	end
 end
 
-local version_information = {
+local var_0_33 = {
 	"001010010011111000",
 	"001111011010000100",
 	"100110010101100100",
@@ -4282,361 +4289,378 @@ local version_information = {
 	"011101000010101001",
 	"001001100101011001",
 	"100000101010111001",
-	"100101100011000101",
+	"100101100011000101"
 }
 
-local function add_version_information(matrix, version)
-	if version < 7 then
+local function var_0_34(arg_27_0, arg_27_1)
+	if arg_27_1 < 7 then
 		return
 	end
 
-	local size = #matrix
-	local bitstring = version_information[version - 6]
-	local x, y, bit, start_x, start_y
+	local var_27_0 = #arg_27_0
+	local var_27_1 = var_0_33[arg_27_1 - 6]
+	local var_27_2
+	local var_27_3
+	local var_27_4
+	local var_27_5
+	local var_27_6
+	local var_27_7 = #arg_27_0 - 10
+	local var_27_8 = 1
 
-	start_x = #matrix - 10
-	start_y = 1
+	for iter_27_0 = 1, #var_27_1 do
+		local var_27_9 = string.sub(var_27_1, iter_27_0, iter_27_0)
+		local var_27_10 = var_27_7 + math.fmod(iter_27_0 - 1, 3)
+		local var_27_11 = var_27_8 + math.floor((iter_27_0 - 1) / 3)
 
-	for i = 1, #bitstring do
-		bit = string.sub(bitstring, i, i)
-		x = start_x + math.fmod(i - 1, 3)
-		y = start_y + math.floor((i - 1) / 3)
-
-		fill_matrix_position(matrix, bit, x, y)
+		var_0_4(arg_27_0, var_27_9, var_27_10, var_27_11)
 	end
 
-	start_x = 1
-	start_y = #matrix - 10
+	local var_27_12 = 1
+	local var_27_13 = #arg_27_0 - 10
 
-	for i = 1, #bitstring do
-		bit = string.sub(bitstring, i, i)
-		x = start_x + math.floor((i - 1) / 3)
-		y = start_y + math.fmod(i - 1, 3)
+	for iter_27_1 = 1, #var_27_1 do
+		local var_27_14 = string.sub(var_27_1, iter_27_1, iter_27_1)
+		local var_27_15 = var_27_12 + math.floor((iter_27_1 - 1) / 3)
+		local var_27_16 = var_27_13 + math.fmod(iter_27_1 - 1, 3)
 
-		fill_matrix_position(matrix, bit, x, y)
+		var_0_4(arg_27_0, var_27_14, var_27_15, var_27_16)
 	end
 end
 
-local function prepare_matrix_with_mask(version, ec_level, mask)
-	local size
-	local tab_x = {}
+local function var_0_35(arg_28_0, arg_28_1, arg_28_2)
+	local var_28_0
+	local var_28_1 = {}
+	local var_28_2 = arg_28_0 * 4 + 17
 
-	size = version * 4 + 17
+	for iter_28_0 = 1, var_28_2 do
+		var_28_1[iter_28_0] = {}
 
-	for i = 1, size do
-		tab_x[i] = {}
-
-		for j = 1, size do
-			tab_x[i][j] = 0
+		for iter_28_1 = 1, var_28_2 do
+			var_28_1[iter_28_0][iter_28_1] = 0
 		end
 	end
 
-	add_position_detection_patterns(tab_x)
-	add_timing_pattern(tab_x)
-	add_version_information(tab_x, version)
+	var_0_27(var_28_1)
+	var_0_28(var_28_1)
+	var_0_34(var_28_1, arg_28_0)
 
-	tab_x[9][size - 7] = 2
+	var_28_1[9][var_28_2 - 7] = 2
 
-	add_alignment_pattern(tab_x)
-	add_typeinfo_to_matrix(tab_x, ec_level, mask)
+	var_0_30(var_28_1)
+	var_0_32(var_28_1, arg_28_1, arg_28_2)
 
-	return tab_x
+	return var_28_1
 end
 
-local function get_pixel_with_mask(mask, x, y, value)
-	x = x - 1
-	y = y - 1
+local function var_0_36(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+	arg_29_1 = arg_29_1 - 1
+	arg_29_2 = arg_29_2 - 1
 
-	local invert = false
+	local var_29_0 = false
 
-	if mask == -1 then
-		-- Nothing
-	elseif mask == 0 then
-		if math.fmod(x + y, 2) == 0 then
-			invert = true
+	if arg_29_0 == -1 then
+		-- block empty
+	elseif arg_29_0 == 0 then
+		if math.fmod(arg_29_1 + arg_29_2, 2) == 0 then
+			var_29_0 = true
 		end
-	elseif mask == 1 then
-		if math.fmod(y, 2) == 0 then
-			invert = true
+	elseif arg_29_0 == 1 then
+		if math.fmod(arg_29_2, 2) == 0 then
+			var_29_0 = true
 		end
-	elseif mask == 2 then
-		if math.fmod(x, 3) == 0 then
-			invert = true
+	elseif arg_29_0 == 2 then
+		if math.fmod(arg_29_1, 3) == 0 then
+			var_29_0 = true
 		end
-	elseif mask == 3 then
-		if math.fmod(x + y, 3) == 0 then
-			invert = true
+	elseif arg_29_0 == 3 then
+		if math.fmod(arg_29_1 + arg_29_2, 3) == 0 then
+			var_29_0 = true
 		end
-	elseif mask == 4 then
-		if math.fmod(math.floor(y / 2) + math.floor(x / 3), 2) == 0 then
-			invert = true
+	elseif arg_29_0 == 4 then
+		if math.fmod(math.floor(arg_29_2 / 2) + math.floor(arg_29_1 / 3), 2) == 0 then
+			var_29_0 = true
 		end
-	elseif mask == 5 then
-		if math.fmod(x * y, 2) + math.fmod(x * y, 3) == 0 then
-			invert = true
+	elseif arg_29_0 == 5 then
+		if math.fmod(arg_29_1 * arg_29_2, 2) + math.fmod(arg_29_1 * arg_29_2, 3) == 0 then
+			var_29_0 = true
 		end
-	elseif mask == 6 then
-		if math.fmod(math.fmod(x * y, 2) + math.fmod(x * y, 3), 2) == 0 then
-			invert = true
+	elseif arg_29_0 == 6 then
+		if math.fmod(math.fmod(arg_29_1 * arg_29_2, 2) + math.fmod(arg_29_1 * arg_29_2, 3), 2) == 0 then
+			var_29_0 = true
 		end
-	elseif mask == 7 then
-		if math.fmod(math.fmod(x * y, 3) + math.fmod(x + y, 2), 2) == 0 then
-			invert = true
+	elseif arg_29_0 == 7 then
+		if math.fmod(math.fmod(arg_29_1 * arg_29_2, 3) + math.fmod(arg_29_1 + arg_29_2, 2), 2) == 0 then
+			var_29_0 = true
 		end
 	else
 		assert(false, "This can't happen (mask must be <= 7)")
 	end
 
-	if invert then
-		return 1 - 2 * tonumber(value)
+	if var_29_0 then
+		return 1 - 2 * tonumber(arg_29_3)
 	else
-		return -1 + 2 * tonumber(value)
+		return -1 + 2 * tonumber(arg_29_3)
 	end
 end
 
-local function get_next_free_positions(matrix, x, y, dir, byte)
-	local ret = {}
-	local count = 1
-	local mode = "right"
+local function var_0_37(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+	local var_30_0 = {}
+	local var_30_1 = 1
+	local var_30_2 = "right"
 
-	while count <= #byte do
-		if mode == "right" and matrix[x][y] == 0 then
-			ret[#ret + 1] = {
-				x,
-				y,
+	while var_30_1 <= #arg_30_4 do
+		if var_30_2 == "right" and arg_30_0[arg_30_1][arg_30_2] == 0 then
+			var_30_0[#var_30_0 + 1] = {
+				arg_30_1,
+				arg_30_2
 			}
-			mode = "left"
-			count = count + 1
-		elseif mode == "left" and matrix[x - 1][y] == 0 then
-			ret[#ret + 1] = {
-				x - 1,
-				y,
+			var_30_2 = "left"
+			var_30_1 = var_30_1 + 1
+		elseif var_30_2 == "left" and arg_30_0[arg_30_1 - 1][arg_30_2] == 0 then
+			var_30_0[#var_30_0 + 1] = {
+				arg_30_1 - 1,
+				arg_30_2
 			}
-			mode = "right"
-			count = count + 1
+			var_30_2 = "right"
+			var_30_1 = var_30_1 + 1
 
-			if dir == "up" then
-				y = y - 1
+			if arg_30_3 == "up" then
+				arg_30_2 = arg_30_2 - 1
 			else
-				y = y + 1
+				arg_30_2 = arg_30_2 + 1
 			end
-		elseif mode == "right" and matrix[x - 1][y] == 0 then
-			ret[#ret + 1] = {
-				x - 1,
-				y,
+		elseif var_30_2 == "right" and arg_30_0[arg_30_1 - 1][arg_30_2] == 0 then
+			var_30_0[#var_30_0 + 1] = {
+				arg_30_1 - 1,
+				arg_30_2
 			}
-			count = count + 1
+			var_30_1 = var_30_1 + 1
 
-			if dir == "up" then
-				y = y - 1
+			if arg_30_3 == "up" then
+				arg_30_2 = arg_30_2 - 1
 			else
-				y = y + 1
+				arg_30_2 = arg_30_2 + 1
 			end
-		elseif dir == "up" then
-			y = y - 1
+		elseif arg_30_3 == "up" then
+			arg_30_2 = arg_30_2 - 1
 		else
-			y = y + 1
+			arg_30_2 = arg_30_2 + 1
 		end
 
-		if y < 1 or y > #matrix then
-			x = x - 2
+		if arg_30_2 < 1 or arg_30_2 > #arg_30_0 then
+			arg_30_1 = arg_30_1 - 2
 
-			if x == 7 then
-				x = 6
+			if arg_30_1 == 7 then
+				arg_30_1 = 6
 			end
 
-			if dir == "up" then
-				dir = "down"
-				y = 1
+			if arg_30_3 == "up" then
+				arg_30_3 = "down"
+				arg_30_2 = 1
 			else
-				dir = "up"
-				y = #matrix
+				arg_30_3 = "up"
+				arg_30_2 = #arg_30_0
 			end
 		end
 	end
 
-	return ret, x, y, dir
+	return var_30_0, arg_30_1, arg_30_2, arg_30_3
 end
 
-local function add_data_to_matrix(matrix, data, mask)
-	local size = #matrix
-	local x, y, positions, _x, _y, m
-	local dir = "up"
-	local byte_number = 0
+local function var_0_38(arg_31_0, arg_31_1, arg_31_2)
+	local var_31_0 = #arg_31_0
+	local var_31_1
+	local var_31_2
+	local var_31_3
+	local var_31_4
+	local var_31_5
+	local var_31_6
+	local var_31_7 = "up"
+	local var_31_8 = 0
+	local var_31_9, var_31_10 = var_31_0, var_31_0
 
-	x, y = size, size
+	string.gsub(arg_31_1, ".?.?.?.?.?.?.?.?", function(arg_32_0)
+		var_31_8 = var_31_8 + 1
+		var_31_3, var_31_9, var_31_10, var_31_7 = var_0_37(arg_31_0, var_31_9, var_31_10, var_31_7, arg_32_0, arg_31_2)
 
-	string.gsub(data, ".?.?.?.?.?.?.?.?", function (byte)
-		byte_number = byte_number + 1
-		positions, x, y, dir = get_next_free_positions(matrix, x, y, dir, byte, mask)
+		for iter_32_0 = 1, #arg_32_0 do
+			var_31_4 = var_31_3[iter_32_0][1]
+			var_31_5 = var_31_3[iter_32_0][2]
+			var_31_6 = var_0_36(arg_31_2, var_31_4, var_31_5, string.sub(arg_32_0, iter_32_0, iter_32_0))
 
-		for i = 1, #byte do
-			_x = positions[i][1]
-			_y = positions[i][2]
-			m = get_pixel_with_mask(mask, _x, _y, string.sub(byte, i, i))
-
-			if debugging then
-				matrix[_x][_y] = m * (i + 10)
+			if var_0_0 then
+				arg_31_0[var_31_4][var_31_5] = var_31_6 * (iter_32_0 + 10)
 			else
-				matrix[_x][_y] = m
+				arg_31_0[var_31_4][var_31_5] = var_31_6
 			end
 		end
 	end)
 end
 
-local function calculate_penalty(matrix)
-	local penalty1, penalty2, penalty3, penalty4 = 0, 0, 0, 0
-	local size = #matrix
-	local number_of_dark_cells = 0
-	local last_bit_blank, is_blank, number_of_consecutive_bits
+local function var_0_39(arg_33_0)
+	local var_33_0 = 0
+	local var_33_1 = 0
+	local var_33_2 = 0
+	local var_33_3 = 0
+	local var_33_4 = #arg_33_0
+	local var_33_5 = 0
+	local var_33_6
+	local var_33_7
+	local var_33_8
 
-	for x = 1, size do
-		number_of_consecutive_bits = 0
-		last_bit_blank = nil
+	for iter_33_0 = 1, var_33_4 do
+		local var_33_9 = 0
+		local var_33_10
 
-		for y = 1, size do
-			if matrix[x][y] > 0 then
-				number_of_dark_cells = number_of_dark_cells + 1
-				is_blank = false
+		for iter_33_1 = 1, var_33_4 do
+			if arg_33_0[iter_33_0][iter_33_1] > 0 then
+				var_33_5 = var_33_5 + 1
+
+				local var_33_11 = false
 			else
-				is_blank = true
+				local var_33_12 = true
 			end
 
-			is_blank = matrix[x][y] < 0
+			local var_33_13 = arg_33_0[iter_33_0][iter_33_1] < 0
 
-			if last_bit_blank == is_blank then
-				number_of_consecutive_bits = number_of_consecutive_bits + 1
+			if var_33_10 == var_33_13 then
+				var_33_9 = var_33_9 + 1
 			else
-				if number_of_consecutive_bits >= 5 then
-					penalty1 = penalty1 + number_of_consecutive_bits - 2
+				if var_33_9 >= 5 then
+					var_33_0 = var_33_0 + var_33_9 - 2
 				end
 
-				number_of_consecutive_bits = 1
+				var_33_9 = 1
 			end
 
-			last_bit_blank = is_blank
+			var_33_10 = var_33_13
 		end
 
-		if number_of_consecutive_bits >= 5 then
-			penalty1 = penalty1 + number_of_consecutive_bits - 2
+		if var_33_9 >= 5 then
+			var_33_0 = var_33_0 + var_33_9 - 2
 		end
 	end
 
-	for y = 1, size do
-		number_of_consecutive_bits = 0
-		last_bit_blank = nil
+	for iter_33_2 = 1, var_33_4 do
+		local var_33_14 = 0
+		local var_33_15
 
-		for x = 1, size do
-			is_blank = matrix[x][y] < 0
+		for iter_33_3 = 1, var_33_4 do
+			local var_33_16 = arg_33_0[iter_33_3][iter_33_2] < 0
 
-			if last_bit_blank == is_blank then
-				number_of_consecutive_bits = number_of_consecutive_bits + 1
+			if var_33_15 == var_33_16 then
+				var_33_14 = var_33_14 + 1
 			else
-				if number_of_consecutive_bits >= 5 then
-					penalty1 = penalty1 + number_of_consecutive_bits - 2
+				if var_33_14 >= 5 then
+					var_33_0 = var_33_0 + var_33_14 - 2
 				end
 
-				number_of_consecutive_bits = 1
+				var_33_14 = 1
 			end
 
-			last_bit_blank = is_blank
+			var_33_15 = var_33_16
 		end
 
-		if number_of_consecutive_bits >= 5 then
-			penalty1 = penalty1 + number_of_consecutive_bits - 2
-		end
-	end
-
-	for x = 1, size do
-		for y = 1, size do
-			if y < size - 1 and x < size - 1 and (matrix[x][y] < 0 and matrix[x + 1][y] < 0 and matrix[x][y + 1] < 0 and matrix[x + 1][y + 1] < 0 or matrix[x][y] > 0 and matrix[x + 1][y] > 0 and matrix[x][y + 1] > 0 and matrix[x + 1][y + 1] > 0) then
-				penalty2 = penalty2 + 3
-			end
-
-			if size > y + 6 and matrix[x][y] > 0 and matrix[x][y + 1] < 0 and matrix[x][y + 2] > 0 and matrix[x][y + 3] > 0 and matrix[x][y + 4] > 0 and matrix[x][y + 5] < 0 and matrix[x][y + 6] > 0 and (size > y + 10 and matrix[x][y + 7] < 0 and matrix[x][y + 8] < 0 and matrix[x][y + 9] < 0 and matrix[x][y + 10] < 0 or y - 4 >= 1 and matrix[x][y - 1] < 0 and matrix[x][y - 2] < 0 and matrix[x][y - 3] < 0 and matrix[x][y - 4] < 0) then
-				penalty3 = penalty3 + 40
-			end
-
-			if size >= x + 6 and matrix[x][y] > 0 and matrix[x + 1][y] < 0 and matrix[x + 2][y] > 0 and matrix[x + 3][y] > 0 and matrix[x + 4][y] > 0 and matrix[x + 5][y] < 0 and matrix[x + 6][y] > 0 and (size >= x + 10 and matrix[x + 7][y] < 0 and matrix[x + 8][y] < 0 and matrix[x + 9][y] < 0 and matrix[x + 10][y] < 0 or x - 4 >= 1 and matrix[x - 1][y] < 0 and matrix[x - 2][y] < 0 and matrix[x - 3][y] < 0 and matrix[x - 4][y] < 0) then
-				penalty3 = penalty3 + 40
-			end
+		if var_33_14 >= 5 then
+			var_33_0 = var_33_0 + var_33_14 - 2
 		end
 	end
 
-	local dark_ratio = number_of_dark_cells / (size * size)
+	for iter_33_4 = 1, var_33_4 do
+		for iter_33_5 = 1, var_33_4 do
+			if iter_33_5 < var_33_4 - 1 and iter_33_4 < var_33_4 - 1 and (arg_33_0[iter_33_4][iter_33_5] < 0 and arg_33_0[iter_33_4 + 1][iter_33_5] < 0 and arg_33_0[iter_33_4][iter_33_5 + 1] < 0 and arg_33_0[iter_33_4 + 1][iter_33_5 + 1] < 0 or arg_33_0[iter_33_4][iter_33_5] > 0 and arg_33_0[iter_33_4 + 1][iter_33_5] > 0 and arg_33_0[iter_33_4][iter_33_5 + 1] > 0 and arg_33_0[iter_33_4 + 1][iter_33_5 + 1] > 0) then
+				var_33_1 = var_33_1 + 3
+			end
 
-	penalty4 = math.floor(math.abs(dark_ratio * 100 - 50)) * 2
+			if var_33_4 > iter_33_5 + 6 and arg_33_0[iter_33_4][iter_33_5] > 0 and arg_33_0[iter_33_4][iter_33_5 + 1] < 0 and arg_33_0[iter_33_4][iter_33_5 + 2] > 0 and arg_33_0[iter_33_4][iter_33_5 + 3] > 0 and arg_33_0[iter_33_4][iter_33_5 + 4] > 0 and arg_33_0[iter_33_4][iter_33_5 + 5] < 0 and arg_33_0[iter_33_4][iter_33_5 + 6] > 0 and (var_33_4 > iter_33_5 + 10 and arg_33_0[iter_33_4][iter_33_5 + 7] < 0 and arg_33_0[iter_33_4][iter_33_5 + 8] < 0 and arg_33_0[iter_33_4][iter_33_5 + 9] < 0 and arg_33_0[iter_33_4][iter_33_5 + 10] < 0 or iter_33_5 - 4 >= 1 and arg_33_0[iter_33_4][iter_33_5 - 1] < 0 and arg_33_0[iter_33_4][iter_33_5 - 2] < 0 and arg_33_0[iter_33_4][iter_33_5 - 3] < 0 and arg_33_0[iter_33_4][iter_33_5 - 4] < 0) then
+				var_33_2 = var_33_2 + 40
+			end
 
-	return penalty1 + penalty2 + penalty3 + penalty4
-end
-
-local function get_matrix_and_penalty(version, ec_level, data, mask)
-	local tab = prepare_matrix_with_mask(version, ec_level, mask)
-
-	add_data_to_matrix(tab, data, mask)
-
-	local penalty = calculate_penalty(tab)
-
-	return tab, penalty
-end
-
-local function get_matrix_with_lowest_penalty(version, ec_level, data)
-	local tab, penalty, tab_min_penalty, min_penalty
-
-	tab_min_penalty, min_penalty = get_matrix_and_penalty(version, ec_level, data, 0)
-
-	for i = 1, 7 do
-		tab, penalty = get_matrix_and_penalty(version, ec_level, data, i)
-
-		if penalty < min_penalty then
-			tab_min_penalty = tab
-			min_penalty = penalty
+			if var_33_4 >= iter_33_4 + 6 and arg_33_0[iter_33_4][iter_33_5] > 0 and arg_33_0[iter_33_4 + 1][iter_33_5] < 0 and arg_33_0[iter_33_4 + 2][iter_33_5] > 0 and arg_33_0[iter_33_4 + 3][iter_33_5] > 0 and arg_33_0[iter_33_4 + 4][iter_33_5] > 0 and arg_33_0[iter_33_4 + 5][iter_33_5] < 0 and arg_33_0[iter_33_4 + 6][iter_33_5] > 0 and (var_33_4 >= iter_33_4 + 10 and arg_33_0[iter_33_4 + 7][iter_33_5] < 0 and arg_33_0[iter_33_4 + 8][iter_33_5] < 0 and arg_33_0[iter_33_4 + 9][iter_33_5] < 0 and arg_33_0[iter_33_4 + 10][iter_33_5] < 0 or iter_33_4 - 4 >= 1 and arg_33_0[iter_33_4 - 1][iter_33_5] < 0 and arg_33_0[iter_33_4 - 2][iter_33_5] < 0 and arg_33_0[iter_33_4 - 3][iter_33_5] < 0 and arg_33_0[iter_33_4 - 4][iter_33_5] < 0) then
+				var_33_2 = var_33_2 + 40
+			end
 		end
 	end
 
-	return tab_min_penalty
+	local var_33_17 = var_33_5 / (var_33_4 * var_33_4)
+	local var_33_18 = math.floor(math.abs(var_33_17 * 100 - 50)) * 2
+
+	return var_33_0 + var_33_1 + var_33_2 + var_33_18
 end
 
-local function qrcode(str, ec_level, mode)
-	local arranged_data, version, data_raw, mode, len_bitstring
+local function var_0_40(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+	local var_34_0 = var_0_35(arg_34_0, arg_34_1, arg_34_3)
 
-	version, ec_level, data_raw, mode, len_bitstring = get_version_eclevel_mode_bistringlength(str, ec_level)
-	data_raw = data_raw .. len_bitstring
-	data_raw = data_raw .. encode_data(str, mode)
-	data_raw = add_pad_data(version, ec_level, data_raw)
-	arranged_data = arrange_codewords_and_calculate_ec(version, ec_level, data_raw)
+	var_0_38(var_34_0, arg_34_2, arg_34_3)
 
-	if math.fmod(#arranged_data, 8) ~= 0 then
-		return false, string.format("Arranged data %% 8 != 0: data length = %d, mod 8 = %d", #arranged_data, math.fmod(#arranged_data, 8))
+	local var_34_1 = var_0_39(var_34_0)
+
+	return var_34_0, var_34_1
+end
+
+local function var_0_41(arg_35_0, arg_35_1, arg_35_2)
+	local var_35_0
+	local var_35_1
+	local var_35_2
+	local var_35_3
+	local var_35_4, var_35_5 = var_0_40(arg_35_0, arg_35_1, arg_35_2, 0)
+
+	for iter_35_0 = 1, 7 do
+		local var_35_6, var_35_7 = var_0_40(arg_35_0, arg_35_1, arg_35_2, iter_35_0)
+
+		if var_35_7 < var_35_5 then
+			var_35_4 = var_35_6
+			var_35_5 = var_35_7
+		end
 	end
 
-	arranged_data = arranged_data .. string.rep("0", remainder[version])
-
-	local tab = get_matrix_with_lowest_penalty(version, ec_level, arranged_data)
-
-	return true, tab
+	return var_35_4
 end
 
-if testing then
+local function var_0_42(arg_36_0, arg_36_1, arg_36_2)
+	local var_36_0
+	local var_36_1
+	local var_36_2
+	local var_36_3
+	local var_36_4
+	local var_36_5, var_36_6, var_36_7, var_36_8
+
+	var_36_5, arg_36_1, var_36_6, var_36_7, var_36_8 = var_0_9(arg_36_0, arg_36_1)
+
+	local var_36_9 = (var_36_6 .. var_36_8) .. var_0_14(arg_36_0, var_36_7)
+	local var_36_10 = var_0_15(var_36_5, arg_36_1, var_36_9)
+	local var_36_11 = var_0_26(var_36_5, arg_36_1, var_36_10)
+
+	if math.fmod(#var_36_11, 8) ~= 0 then
+		return false, string.format("Arranged data %% 8 != 0: data length = %d, mod 8 = %d", #var_36_11, math.fmod(#var_36_11, 8))
+	end
+
+	local var_36_12 = var_36_11 .. string.rep("0", var_0_25[var_36_5])
+	local var_36_13 = var_0_41(var_36_5, arg_36_1, var_36_12)
+
+	return true, var_36_13
+end
+
+if var_0_1 then
 	return {
-		encode_string_numeric = encode_string_numeric,
-		encode_string_ascii = encode_string_ascii,
-		qrcode = qrcode,
-		binary = binary,
-		get_mode = get_mode,
-		get_length = get_length,
-		add_pad_data = add_pad_data,
-		get_generator_polynominal_adjusted = get_generator_polynominal_adjusted,
-		get_pixel_with_mask = get_pixel_with_mask,
-		get_version_eclevel_mode_bistringlength = get_version_eclevel_mode_bistringlength,
-		remainder = remainder,
-		arrange_codewords_and_calculate_ec = arrange_codewords_and_calculate_ec,
-		calculate_error_correction = calculate_error_correction,
-		convert_bitstring_to_bytes = convert_bitstring_to_bytes,
-		bit_xor = bit_xor,
+		encode_string_numeric = var_0_11,
+		encode_string_ascii = var_0_12,
+		qrcode = var_0_42,
+		binary = var_0_3,
+		get_mode = var_0_5,
+		get_length = var_0_8,
+		add_pad_data = var_0_15,
+		get_generator_polynominal_adjusted = var_0_20,
+		get_pixel_with_mask = var_0_36,
+		get_version_eclevel_mode_bistringlength = var_0_9,
+		remainder = var_0_25,
+		arrange_codewords_and_calculate_ec = var_0_26,
+		calculate_error_correction = var_0_23,
+		convert_bitstring_to_bytes = var_0_19,
+		bit_xor = var_0_2
 	}
 end
 
 return {
-	qrcode = qrcode,
+	qrcode = var_0_42
 }

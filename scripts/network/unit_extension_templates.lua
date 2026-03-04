@@ -1,8 +1,8 @@
-﻿-- chunkname: @scripts/network/unit_extension_templates.lua
+-- chunkname: @scripts/network/unit_extension_templates.lua
 
-local ai_locomotion_name = _G.GameSettingsDevelopment and GameSettingsDevelopment.use_engine_optimized_ai_locomotion and "AILocomotionExtensionC" or "AILocomotionExtension"
-local eye_tracking_name = IS_WINDOWS and "PlayerEyeTrackingExtension" or nil
-local unit_templates = {
+local var_0_0 = _G.GameSettingsDevelopment and GameSettingsDevelopment.use_engine_optimized_ai_locomotion and "AILocomotionExtensionC" or "AILocomotionExtension"
+local var_0_1 = IS_WINDOWS and "PlayerEyeTrackingExtension" or nil
+local var_0_2 = {
 	player_unit_base = {
 		go_type = "player_unit",
 		self_owned_extensions = {
@@ -33,7 +33,7 @@ local unit_templates = {
 			"PlayerSoundEffectExtension",
 			"PlayerUnitAttackIntensityExtension",
 			"AICommanderExtension",
-			eye_tracking_name,
+			var_0_1
 		},
 		self_owned_extensions_server = {
 			"PlayerInputExtension",
@@ -65,7 +65,7 @@ local unit_templates = {
 			"PlayerSoundEffectExtension",
 			"PlayerUnitAttackIntensityExtension",
 			"AICommanderExtension",
-			eye_tracking_name,
+			var_0_1
 		},
 		husk_extensions = {
 			"SimpleHuskInventoryExtension",
@@ -84,7 +84,7 @@ local unit_templates = {
 			"PingTargetExtension",
 			"PlayerUnitFadeExtension",
 			"PlayerUnitDarknessExtension",
-			"PlayerEquipmentWorldMarkerExtension",
+			"PlayerEquipmentWorldMarkerExtension"
 		},
 		husk_extensions_server = {
 			"SimpleHuskInventoryExtension",
@@ -109,8 +109,8 @@ local unit_templates = {
 			"PlayerUnitDarknessExtension",
 			"PlayerUnitAttackIntensityExtension",
 			"PlayerEquipmentWorldMarkerExtension",
-			"AICommanderExtension",
-		},
+			"AICommanderExtension"
+		}
 	},
 	player_unit_3rd = {
 		base_template = "player_unit_base",
@@ -126,7 +126,7 @@ local unit_templates = {
 			"GenericDialogueContextExtension",
 			"PlayerProximityExtension",
 			"SurroundingObserverExtension",
-			"PlayerOutlineExtension",
+			"PlayerOutlineExtension"
 		},
 		self_owned_extensions_server = {
 			"GenericStatusExtension",
@@ -142,7 +142,7 @@ local unit_templates = {
 			"SurroundingObserverExtension",
 			"GenericAggroableExtension",
 			"PlayerOutlineExtension",
-			"RoundStartedExtension",
+			"RoundStartedExtension"
 		},
 		husk_extensions = {
 			"GenericStatusExtension",
@@ -156,7 +156,7 @@ local unit_templates = {
 			"SurroundingObserverHuskExtension",
 			"PlayerHuskOutlineExtension",
 			"PlayerUnitAttackIntensityExtension",
-			"HuskTalentExtension",
+			"HuskTalentExtension"
 		},
 		husk_extensions_server = {
 			"GenericStatusExtension",
@@ -172,8 +172,8 @@ local unit_templates = {
 			"SurroundingObserverHuskExtension",
 			"GenericAggroableExtension",
 			"PlayerHuskOutlineExtension",
-			"RoundStartedExtension",
-		},
+			"RoundStartedExtension"
+		}
 	},
 	player_unit_3rd_tutorial = {
 		go_type = "player_unit",
@@ -213,7 +213,7 @@ local unit_templates = {
 			"PlayerSoundEffectExtension",
 			"PlayerUnitVisualEffectsExtension",
 			"AICommanderExtension",
-			eye_tracking_name,
+			var_0_1
 		},
 		self_owned_extensions_server = {
 			"PlayerInputTutorialExtension",
@@ -258,7 +258,7 @@ local unit_templates = {
 			"PlayerUnitVisualEffectsExtension",
 			"PlayerUnitAttackIntensityExtension",
 			"AICommanderExtension",
-			eye_tracking_name,
+			var_0_1
 		},
 		husk_extensions = {
 			"SimpleHuskInventoryExtension",
@@ -284,7 +284,7 @@ local unit_templates = {
 			"PlayerUnitDarknessExtension",
 			"PlayerHuskOverchargeExtension",
 			"PlayerHuskEnergyExtension",
-			"PlayerHuskVisualEffectsExtension",
+			"PlayerHuskVisualEffectsExtension"
 		},
 		husk_extensions_server = {
 			"SimpleHuskInventoryExtension",
@@ -318,8 +318,8 @@ local unit_templates = {
 			"PlayerUnitDarknessExtension",
 			"PlayerHuskOverchargeExtension",
 			"PlayerHuskEnergyExtension",
-			"PlayerHuskVisualEffectsExtension",
-		},
+			"PlayerHuskVisualEffectsExtension"
+		}
 	},
 	player_bot_unit = {
 		go_type = "player_bot_unit",
@@ -365,7 +365,7 @@ local unit_templates = {
 			"PlayerUnitVisualEffectsExtension",
 			"PlayerUnitAttackIntensityExtension",
 			"PlayerEquipmentWorldMarkerExtension",
-			"AICommanderExtension",
+			"AICommanderExtension"
 		},
 		husk_extensions = {
 			"SimpleHuskInventoryExtension",
@@ -395,13 +395,13 @@ local unit_templates = {
 			"PlayerHuskEnergyExtension",
 			"PlayerHuskVisualEffectsExtension",
 			"HuskTalentExtension",
-			"PlayerEquipmentWorldMarkerExtension",
-		},
+			"PlayerEquipmentWorldMarkerExtension"
+		}
 	},
 	ai_unit_base = {
 		go_type = "ai_unit",
 		self_owned_extensions = {
-			ai_locomotion_name,
+			var_0_0,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"GenericHealthExtension",
@@ -415,7 +415,7 @@ local unit_templates = {
 			"AIVolumeExtension",
 			"AIUnitFadeExtension",
 			"AISimpleExtension",
-			"UnitFlowOverrideExtension",
+			"UnitFlowOverrideExtension"
 		},
 		husk_extensions = {
 			"AiHuskLocomotionExtension",
@@ -430,7 +430,7 @@ local unit_templates = {
 			"AIUnitFadeExtension",
 			"AiHuskBaseExtension",
 			"UnitFlowOverrideExtension",
-			"AIGroupMember",
+			"AIGroupMember"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
@@ -440,7 +440,7 @@ local unit_templates = {
 				"AIGroupMember",
 				"DialogueActorExtension",
 				"AIVolumeExtension",
-				"AISimpleExtension",
+				"AISimpleExtension"
 			},
 			husk_extensions = {
 				"AiHuskLocomotionExtension",
@@ -448,14 +448,14 @@ local unit_templates = {
 				"BuffExtension",
 				"DialogueActorExtension",
 				"AiHuskBaseExtension",
-				"AIGroupMember",
-			},
-		},
+				"AIGroupMember"
+			}
+		}
 	},
 	ai_unit_critter = {
 		go_type = "ai_unit",
 		self_owned_extensions = {
-			ai_locomotion_name,
+			var_0_0,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"GenericHealthExtension",
@@ -465,7 +465,7 @@ local unit_templates = {
 			"ProjectileLinkerExtension",
 			"DialogueActorExtension",
 			"AIVolumeExtension",
-			"AISimpleExtension",
+			"AISimpleExtension"
 		},
 		husk_extensions = {
 			"AiHuskLocomotionExtension",
@@ -476,7 +476,7 @@ local unit_templates = {
 			"BuffExtension",
 			"ProjectileLinkerExtension",
 			"DialogueActorExtension",
-			"AiHuskBaseExtension",
+			"AiHuskBaseExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
@@ -485,21 +485,21 @@ local unit_templates = {
 				"BuffExtension",
 				"DialogueActorExtension",
 				"AIVolumeExtension",
-				"AISimpleExtension",
+				"AISimpleExtension"
 			},
 			husk_extensions = {
 				"AiHuskLocomotionExtension",
 				"AIProximityExtension",
 				"BuffExtension",
 				"DialogueActorExtension",
-				"AiHuskBaseExtension",
-			},
-		},
+				"AiHuskBaseExtension"
+			}
+		}
 	},
 	ai_unit_critter_nurgling = {
 		go_type = "ai_unit_with_inventory",
 		self_owned_extensions = {
-			ai_locomotion_name,
+			var_0_0,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"GenericHealthExtension",
@@ -511,7 +511,7 @@ local unit_templates = {
 			"DialogueActorExtension",
 			"AIVolumeExtension",
 			"AISimpleExtension",
-			"AIInventoryExtension",
+			"AIInventoryExtension"
 		},
 		husk_extensions = {
 			"AiHuskLocomotionExtension",
@@ -524,7 +524,7 @@ local unit_templates = {
 			"DialogueActorExtension",
 			"AiHuskBaseExtension",
 			"AIInventoryExtension",
-			"AIGroupMember",
+			"AIGroupMember"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
@@ -534,7 +534,7 @@ local unit_templates = {
 				"AIGroupMember",
 				"DialogueActorExtension",
 				"AIVolumeExtension",
-				"AISimpleExtension",
+				"AISimpleExtension"
 			},
 			husk_extensions = {
 				"AiHuskLocomotionExtension",
@@ -542,9 +542,9 @@ local unit_templates = {
 				"BuffExtension",
 				"DialogueActorExtension",
 				"AiHuskBaseExtension",
-				"AIGroupMember",
-			},
-		},
+				"AIGroupMember"
+			}
+		}
 	},
 	ai_unit_beastmen_bestigor = {
 		base_template = "ai_unit_base",
@@ -554,23 +554,23 @@ local unit_templates = {
 			"AIInventoryExtension",
 			"AIEnemySlotExtension",
 			"PingTargetExtension",
-			"GenericUnitAnimationMovementExtension",
+			"GenericUnitAnimationMovementExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
 			"PingTargetExtension",
-			"GenericUnitAnimationMovementExtension",
+			"GenericUnitAnimationMovementExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
 				"AILineOfSightExtension",
 				"AIEnemySlotExtension",
-				"GenericUnitAnimationMovementExtension",
+				"GenericUnitAnimationMovementExtension"
 			},
 			husk_extensions = {
-				"GenericUnitAnimationMovementExtension",
-			},
-		},
+				"GenericUnitAnimationMovementExtension"
+			}
+		}
 	},
 	ai_unit_beastmen_ungor_archer = {
 		base_template = "ai_unit_base",
@@ -580,23 +580,23 @@ local unit_templates = {
 			"AIInventoryExtension",
 			"AIEnemySlotExtension",
 			"PingTargetExtension",
-			"GenericUnitAimExtension",
+			"GenericUnitAimExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
 			"PingTargetExtension",
-			"GenericUnitAimExtension",
+			"GenericUnitAimExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
 				"AILineOfSightExtension",
 				"AIEnemySlotExtension",
-				"GenericUnitAimExtension",
+				"GenericUnitAimExtension"
 			},
 			husk_extensions = {
-				"GenericUnitAimExtension",
-			},
-		},
+				"GenericUnitAimExtension"
+			}
+		}
 	},
 	ai_unit_storm_vermin = {
 		base_template = "ai_unit_base",
@@ -605,19 +605,19 @@ local unit_templates = {
 			"AILineOfSightExtension",
 			"AIInventoryExtension",
 			"AIEnemySlotExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
 				"AILineOfSightExtension",
-				"AIEnemySlotExtension",
+				"AIEnemySlotExtension"
 			},
-			husk_extensions = {},
-		},
+			husk_extensions = {}
+		}
 	},
 	ai_unit_chaos_warrior = {
 		base_template = "ai_unit_base",
@@ -627,23 +627,23 @@ local unit_templates = {
 			"AIInventoryExtension",
 			"AIEnemySlotExtension",
 			"PingTargetExtension",
-			"GenericUnitAimExtension",
+			"GenericUnitAimExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
 			"PingTargetExtension",
-			"GenericUnitAimExtension",
+			"GenericUnitAimExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
 				"AILineOfSightExtension",
 				"AIEnemySlotExtension",
-				"GenericUnitAimExtension",
+				"GenericUnitAimExtension"
 			},
 			husk_extensions = {
-				"GenericUnitAimExtension",
-			},
-		},
+				"GenericUnitAimExtension"
+			}
+		}
 	},
 	ai_unit_chaos_bulwark = {
 		base_template = "ai_unit_base",
@@ -654,24 +654,24 @@ local unit_templates = {
 			"AIEnemySlotExtension",
 			"PingTargetExtension",
 			"BulwarkShieldExtension",
-			"GenericUnitAimExtension",
+			"GenericUnitAimExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
 			"PingTargetExtension",
 			"BulwarkHuskShieldExtension",
-			"GenericUnitAimExtension",
+			"GenericUnitAimExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
 				"AILineOfSightExtension",
 				"AIEnemySlotExtension",
-				"GenericUnitAimExtension",
+				"GenericUnitAimExtension"
 			},
 			husk_extensions = {
-				"GenericUnitAimExtension",
-			},
-		},
+				"GenericUnitAimExtension"
+			}
+		}
 	},
 	ai_unit_training_dummy_bob = {
 		go_type = "ai_unit_training_dummy_bob",
@@ -693,7 +693,7 @@ local unit_templates = {
 			"DialogueActorExtension",
 			"AIUnitFadeExtension",
 			"AISimpleExtension",
-			"UnitFlowOverrideExtension",
+			"UnitFlowOverrideExtension"
 		},
 		husk_extensions = {
 			"GenericHitReactionExtension",
@@ -712,8 +712,8 @@ local unit_templates = {
 			"GenericUnitInteractableExtension",
 			"LookatTargetExtension",
 			"PingTargetExtension",
-			"AIGroupMember",
-		},
+			"AIGroupMember"
+		}
 	},
 	ai_unit_chaos_exalted_champion = {
 		base_template = "ai_unit_base",
@@ -723,23 +723,23 @@ local unit_templates = {
 			"AIInventoryExtension",
 			"AIEnemySlotExtension",
 			"PingTargetExtension",
-			"GenericUnitAimExtension",
+			"GenericUnitAimExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
 			"PingTargetExtension",
-			"GenericUnitAimExtension",
+			"GenericUnitAimExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
 				"AILineOfSightExtension",
 				"AIEnemySlotExtension",
-				"GenericUnitAimExtension",
+				"GenericUnitAimExtension"
 			},
 			husk_extensions = {
-				"GenericUnitAimExtension",
-			},
-		},
+				"GenericUnitAimExtension"
+			}
+		}
 	},
 	ai_unit_clan_rat = {
 		base_template = "ai_unit_base",
@@ -748,22 +748,22 @@ local unit_templates = {
 			"AILineOfSightExtension",
 			"AIInventoryExtension",
 			"AIEnemySlotExtension",
-			"SoundSectorExtension",
+			"SoundSectorExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
-			"SoundSectorExtension",
+			"SoundSectorExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
 				"AILineOfSightExtension",
 				"AIEnemySlotExtension",
-				"SoundSectorExtension",
+				"SoundSectorExtension"
 			},
 			husk_extensions = {
-				"SoundSectorExtension",
-			},
-		},
+				"SoundSectorExtension"
+			}
+		}
 	},
 	ai_unit_shield_rat = {
 		base_template = "ai_unit_base",
@@ -772,19 +772,19 @@ local unit_templates = {
 			"AILineOfSightExtension",
 			"AIInventoryExtension",
 			"AIEnemySlotExtension",
-			"AIShieldUserExtension",
+			"AIShieldUserExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
-			"AIShieldUserHuskExtension",
+			"AIShieldUserHuskExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
 				"AILineOfSightExtension",
-				"AIEnemySlotExtension",
+				"AIEnemySlotExtension"
 			},
-			husk_extensions = {},
-		},
+			husk_extensions = {}
+		}
 	},
 	ai_unit_plague_monk = {
 		base_template = "ai_unit_base",
@@ -793,19 +793,19 @@ local unit_templates = {
 			"AILineOfSightExtension",
 			"AIInventoryExtension",
 			"AIEnemySlotExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
 				"AILineOfSightExtension",
-				"AIEnemySlotExtension",
+				"AIEnemySlotExtension"
 			},
-			husk_extensions = {},
-		},
+			husk_extensions = {}
+		}
 	},
 	ai_unit_shield_marauder = {
 		base_template = "ai_unit_base",
@@ -815,23 +815,23 @@ local unit_templates = {
 			"AIInventoryExtension",
 			"AIEnemySlotExtension",
 			"AIShieldUserExtension",
-			"GenericUnitAimExtension",
+			"GenericUnitAimExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
 			"AIShieldUserHuskExtension",
-			"GenericUnitAimExtension",
+			"GenericUnitAimExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
 				"AILineOfSightExtension",
 				"AIEnemySlotExtension",
-				"GenericUnitAimExtension",
+				"GenericUnitAimExtension"
 			},
 			husk_extensions = {
-				"GenericUnitAimExtension",
-			},
-		},
+				"GenericUnitAimExtension"
+			}
+		}
 	},
 	ai_unit_shield_vermin = {
 		base_template = "ai_unit_base",
@@ -841,20 +841,20 @@ local unit_templates = {
 			"AIInventoryExtension",
 			"AIEnemySlotExtension",
 			"PingTargetExtension",
-			"AIShieldUserExtension",
+			"AIShieldUserExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
 			"PingTargetExtension",
-			"AIShieldUserHuskExtension",
+			"AIShieldUserHuskExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
 				"AILineOfSightExtension",
-				"AIEnemySlotExtension",
+				"AIEnemySlotExtension"
 			},
-			husk_extensions = {},
-		},
+			husk_extensions = {}
+		}
 	},
 	ai_unit_marauder = {
 		base_template = "ai_unit_base",
@@ -864,25 +864,25 @@ local unit_templates = {
 			"AIInventoryExtension",
 			"AIEnemySlotExtension",
 			"GenericUnitAimExtension",
-			"SoundSectorExtension",
+			"SoundSectorExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
 			"GenericUnitAimExtension",
-			"SoundSectorExtension",
+			"SoundSectorExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
 				"AILineOfSightExtension",
 				"AIEnemySlotExtension",
 				"GenericUnitAimExtension",
-				"SoundSectorExtension",
+				"SoundSectorExtension"
 			},
 			husk_extensions = {
 				"GenericUnitAimExtension",
-				"SoundSectorExtension",
-			},
-		},
+				"SoundSectorExtension"
+			}
+		}
 	},
 	ai_unit_skeleton_with_shield = {
 		base_template = "ai_unit_base",
@@ -893,26 +893,26 @@ local unit_templates = {
 			"AIShieldUserExtension",
 			"AIEnemySlotExtension",
 			"GenericUnitAimExtension",
-			"SoundSectorExtension",
+			"SoundSectorExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
 			"AIShieldUserHuskExtension",
 			"GenericUnitAimExtension",
-			"SoundSectorExtension",
+			"SoundSectorExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
 				"AILineOfSightExtension",
 				"AIEnemySlotExtension",
 				"GenericUnitAimExtension",
-				"SoundSectorExtension",
+				"SoundSectorExtension"
 			},
 			husk_extensions = {
 				"GenericUnitAimExtension",
-				"SoundSectorExtension",
-			},
-		},
+				"SoundSectorExtension"
+			}
+		}
 	},
 	ai_unit_skeleton = {
 		base_template = "ai_unit_base",
@@ -922,30 +922,30 @@ local unit_templates = {
 			"AIInventoryExtension",
 			"AIEnemySlotExtension",
 			"GenericUnitAimExtension",
-			"SoundSectorExtension",
+			"SoundSectorExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
 			"GenericUnitAimExtension",
-			"SoundSectorExtension",
+			"SoundSectorExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
 				"AILineOfSightExtension",
 				"AIEnemySlotExtension",
 				"GenericUnitAimExtension",
-				"SoundSectorExtension",
+				"SoundSectorExtension"
 			},
 			husk_extensions = {
 				"GenericUnitAimExtension",
-				"SoundSectorExtension",
-			},
-		},
+				"SoundSectorExtension"
+			}
+		}
 	},
 	ai_unit_pet_skeleton = {
 		go_type = "ai_unit_with_inventory",
 		self_owned_extensions = {
-			ai_locomotion_name,
+			var_0_0,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"GenericHealthExtension",
@@ -964,7 +964,7 @@ local unit_templates = {
 			"AIInventoryExtension",
 			"AIEnemySlotExtension",
 			"GenericUnitAimExtension",
-			"SoundSectorExtension",
+			"SoundSectorExtension"
 		},
 		husk_extensions = {
 			"AiHuskLocomotionExtension",
@@ -982,7 +982,7 @@ local unit_templates = {
 			"AIInventoryExtension",
 			"GenericUnitAimExtension",
 			"SoundSectorExtension",
-			"AIGroupMember",
+			"AIGroupMember"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
@@ -996,7 +996,7 @@ local unit_templates = {
 				"AILineOfSightExtension",
 				"AIEnemySlotExtension",
 				"GenericUnitAimExtension",
-				"SoundSectorExtension",
+				"SoundSectorExtension"
 			},
 			husk_extensions = {
 				"AiHuskLocomotionExtension",
@@ -1006,14 +1006,14 @@ local unit_templates = {
 				"AiHuskBaseExtension",
 				"GenericUnitAimExtension",
 				"SoundSectorExtension",
-				"AIGroupMember",
-			},
-		},
+				"AIGroupMember"
+			}
+		}
 	},
 	ai_unit_pet_skeleton_with_shield = {
 		go_type = "ai_unit_with_inventory_and_shield",
 		self_owned_extensions = {
-			ai_locomotion_name,
+			var_0_0,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"GenericHealthExtension",
@@ -1033,7 +1033,7 @@ local unit_templates = {
 			"AIShieldUserExtension",
 			"AIEnemySlotExtension",
 			"GenericUnitAimExtension",
-			"SoundSectorExtension",
+			"SoundSectorExtension"
 		},
 		husk_extensions = {
 			"AiHuskLocomotionExtension",
@@ -1052,7 +1052,7 @@ local unit_templates = {
 			"AIShieldUserHuskExtension",
 			"GenericUnitAimExtension",
 			"SoundSectorExtension",
-			"AIGroupMember",
+			"AIGroupMember"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
@@ -1066,7 +1066,7 @@ local unit_templates = {
 				"AILineOfSightExtension",
 				"AIEnemySlotExtension",
 				"GenericUnitAimExtension",
-				"SoundSectorExtension",
+				"SoundSectorExtension"
 			},
 			husk_extensions = {
 				"AiHuskLocomotionExtension",
@@ -1076,9 +1076,9 @@ local unit_templates = {
 				"AiHuskBaseExtension",
 				"GenericUnitAimExtension",
 				"SoundSectorExtension",
-				"AIGroupMember",
-			},
-		},
+				"AIGroupMember"
+			}
+		}
 	},
 	ai_unit_berzerker = {
 		base_template = "ai_unit_base",
@@ -1088,23 +1088,23 @@ local unit_templates = {
 			"AIInventoryExtension",
 			"AIEnemySlotExtension",
 			"GenericUnitAimExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
 			"GenericUnitAimExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
 				"AILineOfSightExtension",
 				"AIEnemySlotExtension",
-				"GenericUnitAimExtension",
+				"GenericUnitAimExtension"
 			},
 			husk_extensions = {
-				"GenericUnitAimExtension",
-			},
-		},
+				"GenericUnitAimExtension"
+			}
+		}
 	},
 	ai_unit_zombie = {
 		base_template = "ai_unit_base",
@@ -1112,18 +1112,18 @@ local unit_templates = {
 		self_owned_extensions = {
 			"AILineOfSightExtension",
 			"AIInventoryExtension",
-			"AIEnemySlotExtension",
+			"AIEnemySlotExtension"
 		},
 		husk_extensions = {
-			"AIInventoryExtension",
+			"AIInventoryExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
 				"AILineOfSightExtension",
-				"AIEnemySlotExtension",
+				"AIEnemySlotExtension"
 			},
-			husk_extensions = {},
-		},
+			husk_extensions = {}
+		}
 	},
 	ai_unit_raider = {
 		base_template = "ai_unit_base",
@@ -1132,24 +1132,24 @@ local unit_templates = {
 			"AILineOfSightExtension",
 			"AIInventoryExtension",
 			"AIEnemySlotExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
 				"AILineOfSightExtension",
-				"AIEnemySlotExtension",
+				"AIEnemySlotExtension"
 			},
-			husk_extensions = {},
-		},
+			husk_extensions = {}
+		}
 	},
 	ai_unit_loot_rat = {
 		go_type = "ai_unit_with_inventory",
 		self_owned_extensions = {
-			ai_locomotion_name,
+			var_0_0,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"LootRatHealthExtension",
@@ -1164,7 +1164,7 @@ local unit_templates = {
 			"PingTargetExtension",
 			"EnemyOutlineExtension",
 			"AIUnitFadeExtension",
-			"AISimpleExtension",
+			"AISimpleExtension"
 		},
 		husk_extensions = {
 			"AiHuskLocomotionExtension",
@@ -1180,7 +1180,7 @@ local unit_templates = {
 			"EnemyOutlineExtension",
 			"AIUnitFadeExtension",
 			"AiHuskBaseExtension",
-			"AIGroupMember",
+			"AIGroupMember"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
@@ -1190,7 +1190,7 @@ local unit_templates = {
 				"AIGroupMember",
 				"DialogueActorExtension",
 				"AIVolumeExtension",
-				"AISimpleExtension",
+				"AISimpleExtension"
 			},
 			husk_extensions = {
 				"AiHuskLocomotionExtension",
@@ -1198,14 +1198,14 @@ local unit_templates = {
 				"BuffExtension",
 				"DialogueActorExtension",
 				"AiHuskBaseExtension",
-				"AIGroupMember",
-			},
-		},
+				"AIGroupMember"
+			}
+		}
 	},
 	ai_unit_rat_ogre = {
 		go_type = "ai_unit_with_inventory",
 		self_owned_extensions = {
-			ai_locomotion_name,
+			var_0_0,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"AIInventoryExtension",
@@ -1221,7 +1221,7 @@ local unit_templates = {
 			"EnemyOutlineExtension",
 			"AIUnitFadeExtension",
 			"AISimpleExtension",
-			"AIEnemySlotExtension",
+			"AIEnemySlotExtension"
 		},
 		husk_extensions = {
 			"AiHuskLocomotionExtension",
@@ -1237,7 +1237,7 @@ local unit_templates = {
 			"EnemyOutlineExtension",
 			"AIUnitFadeExtension",
 			"AiHuskBaseExtension",
-			"AIGroupMember",
+			"AIGroupMember"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
@@ -1248,7 +1248,7 @@ local unit_templates = {
 				"AIVolumeExtension",
 				"AISimpleExtension",
 				"AIEnemySlotExtension",
-				"AIGroupMember",
+				"AIGroupMember"
 			},
 			husk_extensions = {
 				"AiHuskLocomotionExtension",
@@ -1256,14 +1256,14 @@ local unit_templates = {
 				"BuffExtension",
 				"DialogueActorExtension",
 				"AiHuskBaseExtension",
-				"AIGroupMember",
-			},
-		},
+				"AIGroupMember"
+			}
+		}
 	},
 	ai_unit_chaos_troll = {
 		go_type = "ai_unit_chaos_troll",
 		self_owned_extensions = {
-			ai_locomotion_name,
+			var_0_0,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"AIInventoryExtension",
@@ -1282,7 +1282,7 @@ local unit_templates = {
 			"AILineOfSightExtension",
 			"AISimpleExtension",
 			"GenericUnitAnimationMovementExtension",
-			"AIEnemySlotExtension",
+			"AIEnemySlotExtension"
 		},
 		husk_extensions = {
 			"AiHuskLocomotionExtension",
@@ -1300,7 +1300,7 @@ local unit_templates = {
 			"AIUnitFadeExtension",
 			"AiHuskBaseExtension",
 			"GenericUnitAnimationMovementExtension",
-			"AIGroupMember",
+			"AIGroupMember"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
@@ -1313,7 +1313,7 @@ local unit_templates = {
 				"AISimpleExtension",
 				"GenericUnitAnimationMovementExtension",
 				"AIEnemySlotExtension",
-				"AIGroupMember",
+				"AIGroupMember"
 			},
 			husk_extensions = {
 				"AiHuskLocomotionExtension",
@@ -1322,14 +1322,14 @@ local unit_templates = {
 				"DialogueActorExtension",
 				"AiHuskBaseExtension",
 				"GenericUnitAnimationMovementExtension",
-				"AIGroupMember",
-			},
-		},
+				"AIGroupMember"
+			}
+		}
 	},
 	ai_unit_stormfiend = {
 		go_type = "ai_unit_stormfiend",
 		self_owned_extensions = {
-			ai_locomotion_name,
+			var_0_0,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"AIInventoryExtension",
@@ -1348,7 +1348,7 @@ local unit_templates = {
 			"AILineOfSightExtension",
 			"StormfiendBeamExtension",
 			"AISimpleExtension",
-			"AIEnemySlotExtension",
+			"AIEnemySlotExtension"
 		},
 		husk_extensions = {
 			"AiHuskLocomotionExtension",
@@ -1366,7 +1366,7 @@ local unit_templates = {
 			"AIUnitFadeExtension",
 			"StormfiendBeamExtension",
 			"AiHuskBaseExtension",
-			"AIGroupMember",
+			"AIGroupMember"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
@@ -1379,7 +1379,7 @@ local unit_templates = {
 				"StormfiendBeamExtension",
 				"AISimpleExtension",
 				"AIEnemySlotExtension",
-				"AIGroupMember",
+				"AIGroupMember"
 			},
 			husk_extensions = {
 				"AiHuskLocomotionExtension",
@@ -1388,30 +1388,30 @@ local unit_templates = {
 				"DialogueActorExtension",
 				"StormfiendBeamExtension",
 				"AiHuskBaseExtension",
-				"AIGroupMember",
-			},
-		},
+				"AIGroupMember"
+			}
+		}
 	},
 	ai_unit_stormfiend_boss = {
-		base_template = "ai_unit_stormfiend",
 		go_type = "ai_unit_stormfiend_boss",
+		base_template = "ai_unit_stormfiend",
 		self_owned_extensions = {},
-		husk_extensions = {},
+		husk_extensions = {}
 	},
 	ai_unit_grey_seer = {
 		base_template = "ai_unit_base",
 		go_type = "ai_unit_grey_seer",
 		self_owned_extensions = {
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		husk_extensions = {
-			"PingTargetExtension",
-		},
+			"PingTargetExtension"
+		}
 	},
 	ai_unit_chaos_spawn = {
 		go_type = "ai_unit",
 		self_owned_extensions = {
-			ai_locomotion_name,
+			var_0_0,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"GenericHealthExtension",
@@ -1426,7 +1426,7 @@ local unit_templates = {
 			"EnemyOutlineExtension",
 			"AIUnitFadeExtension",
 			"AISimpleExtension",
-			"AIEnemySlotExtension",
+			"AIEnemySlotExtension"
 		},
 		husk_extensions = {
 			"AiHuskLocomotionExtension",
@@ -1441,7 +1441,7 @@ local unit_templates = {
 			"EnemyOutlineExtension",
 			"AIUnitFadeExtension",
 			"AiHuskBaseExtension",
-			"AIGroupMember",
+			"AIGroupMember"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
@@ -1452,7 +1452,7 @@ local unit_templates = {
 				"AIVolumeExtension",
 				"AISimpleExtension",
 				"AIEnemySlotExtension",
-				"AIGroupMember",
+				"AIGroupMember"
 			},
 			husk_extensions = {
 				"AiHuskLocomotionExtension",
@@ -1460,31 +1460,31 @@ local unit_templates = {
 				"BuffExtension",
 				"DialogueActorExtension",
 				"AiHuskBaseExtension",
-				"AIGroupMember",
-			},
-		},
+				"AIGroupMember"
+			}
+		}
 	},
 	ai_unit_gutter_runner = {
 		base_template = "ai_unit_base",
 		go_type = "ai_unit_with_inventory",
 		self_owned_extensions = {
 			"AIInventoryExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
-			"PingTargetExtension",
-		},
+			"PingTargetExtension"
+		}
 	},
 	ai_unit_poison_wind_globadier = {
 		base_template = "ai_unit_base",
 		go_type = "ai_unit",
 		self_owned_extensions = {
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		husk_extensions = {
-			"PingTargetExtension",
-		},
+			"PingTargetExtension"
+		}
 	},
 	ai_unit_pack_master = {
 		base_template = "ai_unit_base",
@@ -1492,13 +1492,13 @@ local unit_templates = {
 		self_owned_extensions = {
 			"AIInventoryExtension",
 			"GenericUnitAimExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
 			"GenericUnitAimExtension",
-			"PingTargetExtension",
-		},
+			"PingTargetExtension"
+		}
 	},
 	ai_unit_ratling_gunner = {
 		base_template = "ai_unit_base",
@@ -1506,13 +1506,13 @@ local unit_templates = {
 		self_owned_extensions = {
 			"AIInventoryExtension",
 			"GenericUnitAimExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
 			"GenericUnitAimExtension",
-			"PingTargetExtension",
-		},
+			"PingTargetExtension"
+		}
 	},
 	ai_unit_warpfire_thrower = {
 		base_template = "ai_unit_base",
@@ -1520,33 +1520,33 @@ local unit_templates = {
 		self_owned_extensions = {
 			"AIInventoryExtension",
 			"GenericUnitAimExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
 			"GenericUnitAimExtension",
-			"PingTargetExtension",
-		},
+			"PingTargetExtension"
+		}
 	},
 	ai_unit_chaos_sorcerer = {
 		base_template = "ai_unit_base",
 		go_type = "ai_unit_with_inventory",
 		self_owned_extensions = {
 			"AIInventoryExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
-				"PingTargetExtension",
+				"PingTargetExtension"
 			},
 			husk_extensions = {
-				"PingTargetExtension",
-			},
-		},
+				"PingTargetExtension"
+			}
+		}
 	},
 	ai_unit_chaos_corruptor_sorcerer = {
 		base_template = "ai_unit_base",
@@ -1555,26 +1555,26 @@ local unit_templates = {
 			"AIInventoryExtension",
 			"PingTargetExtension",
 			"CorruptorBeamExtension",
-			"ObjectiveUnitExtension",
+			"ObjectiveUnitExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
 			"PingTargetExtension",
 			"CorruptorBeamExtension",
-			"ObjectiveUnitExtension",
+			"ObjectiveUnitExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
 				"PingTargetExtension",
 				"CorruptorBeamExtension",
-				"ObjectiveUnitExtension",
+				"ObjectiveUnitExtension"
 			},
 			husk_extensions = {
 				"PingTargetExtension",
 				"CorruptorBeamExtension",
-				"ObjectiveUnitExtension",
-			},
-		},
+				"ObjectiveUnitExtension"
+			}
+		}
 	},
 	ai_unit_curse_corruptor_sorcerer = {
 		base_template = "ai_unit_base",
@@ -1582,43 +1582,43 @@ local unit_templates = {
 		self_owned_extensions = {
 			"AIInventoryExtension",
 			"PingTargetExtension",
-			"CurseCorruptorBeamExtension",
+			"CurseCorruptorBeamExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
 			"PingTargetExtension",
-			"CurseCorruptorBeamExtension",
+			"CurseCorruptorBeamExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
 				"PingTargetExtension",
-				"CurseCorruptorBeamExtension",
+				"CurseCorruptorBeamExtension"
 			},
 			husk_extensions = {
 				"PingTargetExtension",
-				"CurseCorruptorBeamExtension",
-			},
-		},
+				"CurseCorruptorBeamExtension"
+			}
+		}
 	},
 	ai_unit_chaos_exalted_sorcerer = {
 		base_template = "ai_unit_base",
 		go_type = "ai_lord_with_inventory",
 		self_owned_extensions = {
 			"AIInventoryExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
-				"PingTargetExtension",
+				"PingTargetExtension"
 			},
 			husk_extensions = {
-				"PingTargetExtension",
-			},
-		},
+				"PingTargetExtension"
+			}
+		}
 	},
 	ai_unit_chaos_dummy_sorcerer = {
 		go_type = "ai_unit_with_inventory",
@@ -1629,7 +1629,7 @@ local unit_templates = {
 			"GenericDeathExtension",
 			"ProjectileLinkerExtension",
 			"BuffExtension",
-			"AISimpleExtension",
+			"AISimpleExtension"
 		},
 		husk_extensions = {
 			"GenericHealthExtension",
@@ -1638,16 +1638,16 @@ local unit_templates = {
 			"GenericDeathExtension",
 			"ProjectileLinkerExtension",
 			"BuffExtension",
-			"AiHuskBaseExtension",
+			"AiHuskBaseExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
-				"AISimpleExtension",
+				"AISimpleExtension"
 			},
 			husk_extensions = {
-				"AiHuskBaseExtension",
-			},
-		},
+				"AiHuskBaseExtension"
+			}
+		}
 	},
 	ai_unit_storm_vermin_champion = {
 		base_template = "ai_unit_base",
@@ -1655,18 +1655,18 @@ local unit_templates = {
 		self_owned_extensions = {
 			"AILineOfSightExtension",
 			"AIInventoryExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
-				"AILineOfSightExtension",
+				"AILineOfSightExtension"
 			},
-			husk_extensions = {},
-		},
+			husk_extensions = {}
+		}
 	},
 	ai_unit_storm_vermin_warlord = {
 		base_template = "ai_unit_base",
@@ -1675,18 +1675,18 @@ local unit_templates = {
 			"AILineOfSightExtension",
 			"AIInventoryExtension",
 			"PingTargetExtension",
-			"AIShieldUserExtension",
+			"AIShieldUserExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
-				"AILineOfSightExtension",
+				"AILineOfSightExtension"
 			},
-			husk_extensions = {},
-		},
+			husk_extensions = {}
+		}
 	},
 	ai_unit_tentacle = {
 		go_type = "ai_unit_tentacle",
@@ -1698,7 +1698,7 @@ local unit_templates = {
 			"ProjectileLinkerExtension",
 			"TentacleSplineExtension",
 			"DialogueActorExtension",
-			"AISimpleExtension",
+			"AISimpleExtension"
 		},
 		husk_extensions = {
 			"GenericHealthExtension",
@@ -1708,51 +1708,51 @@ local unit_templates = {
 			"ProjectileLinkerExtension",
 			"TentacleSplineExtension",
 			"DialogueActorExtension",
-			"AiHuskBaseExtension",
+			"AiHuskBaseExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
 				"AIProximityExtension",
 				"BuffExtension",
 				"DialogueActorExtension",
-				"AISimpleExtension",
+				"AISimpleExtension"
 			},
 			husk_extensions = {
 				"AIProximityExtension",
 				"BuffExtension",
 				"DialogueActorExtension",
-				"AiHuskBaseExtension",
-			},
-		},
+				"AiHuskBaseExtension"
+			}
+		}
 	},
 	ai_unit_tentacle_portal = {
 		go_type = "ai_unit_tentacle_portal",
 		self_owned_extensions = {
 			"GenericHealthExtension",
-			"GenericDeathExtension",
+			"GenericDeathExtension"
 		},
 		husk_extensions = {
 			"GenericHealthExtension",
-			"GenericDeathExtension",
-		},
+			"GenericDeathExtension"
+		}
 	},
 	damage_wave_unit = {
 		go_type = "damage_wave_unit",
 		self_owned_extensions = {
-			"DamageWaveExtension",
+			"DamageWaveExtension"
 		},
 		husk_extensions = {
-			"DamageWaveHuskExtension",
-		},
+			"DamageWaveHuskExtension"
+		}
 	},
 	damage_blob_unit = {
 		go_type = "damage_blob_unit",
 		self_owned_extensions = {
-			"DamageBlobExtension",
+			"DamageBlobExtension"
 		},
 		husk_extensions = {
-			"DamageBlobHuskExtension",
-		},
+			"DamageBlobHuskExtension"
+		}
 	},
 	standard_unit = {
 		go_type = "standard_unit",
@@ -1762,7 +1762,7 @@ local unit_templates = {
 			"BeastmenStandardExtension",
 			"ProjectileLinkerExtension",
 			"PingTargetExtension",
-			"EnemyOutlineExtension",
+			"EnemyOutlineExtension"
 		},
 		husk_extensions = {
 			"BeastmenStandardHealthExtension",
@@ -1770,56 +1770,56 @@ local unit_templates = {
 			"BeastmenStandardExtension",
 			"ProjectileLinkerExtension",
 			"PingTargetExtension",
-			"EnemyOutlineExtension",
-		},
+			"EnemyOutlineExtension"
+		}
 	},
 	ai_unit_vortex = {
 		go_type = "ai_unit_vortex",
 		self_owned_extensions = {
-			ai_locomotion_name,
+			var_0_0,
 			"AINavigationExtension",
 			"VortexExtension",
-			"AISimpleExtension",
+			"AISimpleExtension"
 		},
 		husk_extensions = {
 			"AiHuskLocomotionExtension",
 			"VortexHuskExtension",
-			"AiHuskBaseExtension",
+			"AiHuskBaseExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
 				"AINavigationExtension",
-				"AISimpleExtension",
+				"AISimpleExtension"
 			},
 			husk_extensions = {
-				"AiHuskBaseExtension",
-			},
-		},
+				"AiHuskBaseExtension"
+			}
+		}
 	},
 	ai_unit_plague_wave_spawner = {
 		go_type = "ai_unit_plague_wave_spawner",
 		self_owned_extensions = {
 			"InvincibleHealthExtension",
-			"AISimpleExtension",
+			"AISimpleExtension"
 		},
 		husk_extensions = {
 			"InvincibleHealthExtension",
-			"AiHuskBaseExtension",
+			"AiHuskBaseExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
-				"AISimpleExtension",
+				"AISimpleExtension"
 			},
 			husk_extensions = {
-				"AiHuskBaseExtension",
-			},
-		},
+				"AiHuskBaseExtension"
+			}
+		}
 	},
 	ai_inventory_item = {
 		go_type = "ai_inventory_item",
 		self_owned_extensions = {
-			"AIInventoryItemExtension",
-		},
+			"AIInventoryItemExtension"
+		}
 	},
 	destructible_objective_unit = {
 		go_type = "destructible_objective_unit",
@@ -1827,43 +1827,43 @@ local unit_templates = {
 			"GenericHealthExtension",
 			"GenericHitReactionExtension",
 			"GenericDeathExtension",
-			"ObjectiveLightOutlineExtension",
+			"ObjectiveLightOutlineExtension"
 		},
 		husk_extensions = {
 			"GenericHealthExtension",
 			"GenericHitReactionExtension",
 			"GenericDeathExtension",
-			"ObjectiveLightOutlineExtension",
-		},
+			"ObjectiveLightOutlineExtension"
+		}
 	},
 	aoe_unit = {
 		go_type = "aoe_unit",
 		self_owned_extensions = {
-			"AreaDamageExtension",
+			"AreaDamageExtension"
 		},
 		husk_extensions = {
-			"AreaDamageExtension",
-		},
+			"AreaDamageExtension"
+		}
 	},
 	thorn_bush_unit = {
 		go_type = "thorn_bush_unit",
 		self_owned_extensions = {
 			"AreaDamageExtension",
-			"ThornMutatorExtension",
+			"ThornMutatorExtension"
 		},
 		husk_extensions = {
 			"AreaDamageExtension",
-			"ThornMutatorExtension",
-		},
+			"ThornMutatorExtension"
+		}
 	},
 	shadow_flare_light = {
 		go_type = "shadow_flare_light",
 		self_owned_extensions = {
-			"ShadowFlareExtension",
+			"ShadowFlareExtension"
 		},
 		husk_extensions = {
-			"ShadowFlareExtension",
-		},
+			"ShadowFlareExtension"
+		}
 	},
 	aoe_projectile_unit = {
 		go_type = "aoe_projectile_unit",
@@ -1871,13 +1871,13 @@ local unit_templates = {
 			"ProjectileScriptUnitLocomotionExtension",
 			"ProjectileRaycastImpactUnitExtension",
 			"GenericImpactProjectileUnitExtension",
-			"AreaDamageExtension",
+			"AreaDamageExtension"
 		},
 		husk_extensions = {
 			"ProjectileScriptUnitLocomotionExtension",
 			"GenericImpactProjectileUnitExtension",
-			"AreaDamageExtension",
-		},
+			"AreaDamageExtension"
+		}
 	},
 	aoe_projectile_unit_fixed_impact = {
 		go_type = "aoe_projectile_unit_fixed_impact",
@@ -1885,77 +1885,77 @@ local unit_templates = {
 			"ProjectileScriptUnitLocomotionExtension",
 			"ProjectileFixedImpactUnitExtension",
 			"GenericImpactProjectileUnitExtension",
-			"AreaDamageExtension",
+			"AreaDamageExtension"
 		},
 		husk_extensions = {
 			"ProjectileScriptUnitLocomotionExtension",
 			"GenericImpactProjectileUnitExtension",
-			"AreaDamageExtension",
-		},
+			"AreaDamageExtension"
+		}
 	},
 	timed_explosion_unit = {
 		go_type = "timed_explosion_unit",
 		self_owned_extensions = {
-			"TimedExplosionExtension",
+			"TimedExplosionExtension"
 		},
 		husk_extensions = {
-			"TimedExplosionExtension",
-		},
+			"TimedExplosionExtension"
+		}
 	},
 	liquid_aoe_unit = {
 		go_type = "liquid_aoe_unit",
 		self_owned_extensions = {
-			"LiquidAreaDamageExtension",
+			"LiquidAreaDamageExtension"
 		},
 		husk_extensions = {
-			"LiquidAreaDamageHuskExtension",
-		},
+			"LiquidAreaDamageHuskExtension"
+		}
 	},
 	player_projectile_unit = {
 		go_type = "player_projectile_unit",
 		self_owned_extensions = {
 			"ProjectileScriptUnitLocomotionExtension",
 			"PlayerProjectileImpactUnitExtension",
-			"PlayerProjectileUnitExtension",
+			"PlayerProjectileUnitExtension"
 		},
 		husk_extensions = {
 			"ProjectileScriptUnitLocomotionExtension",
-			"PlayerProjectileHuskExtension",
-		},
+			"PlayerProjectileHuskExtension"
+		}
 	},
 	sticky_projectile_unit = {
 		go_type = "sticky_projectile_unit",
 		self_owned_extensions = {
 			"ProjectileStickyLocomotion",
 			"PlayerProjectileImpactUnitExtension",
-			"PlayerProjectileUnitExtension",
+			"PlayerProjectileUnitExtension"
 		},
 		husk_extensions = {
 			"ProjectileStickyLocomotion",
-			"PlayerProjectileHuskExtension",
-		},
+			"PlayerProjectileHuskExtension"
+		}
 	},
 	prop_projectile_unit = {
 		go_type = "prop_projectile_unit",
 		self_owned_extensions = {
-			"ProjectilePhysicsUnitLocomotionExtension",
+			"ProjectilePhysicsUnitLocomotionExtension"
 		},
 		husk_extensions = {
-			"ProjectilePhysicsHuskLocomotionExtension",
-		},
+			"ProjectilePhysicsHuskLocomotionExtension"
+		}
 	},
 	vfx_scripted_projectile_unit = {
 		go_type = "vfx_scripted_projectile_unit",
 		self_owned_extensions = {
 			"ProjectileScriptUnitLocomotionExtension",
 			"ProjectileLinearSphereSweepImpactUnitExtension",
-			"GenericImpactProjectileUnitExtension",
+			"GenericImpactProjectileUnitExtension"
 		},
 		husk_extensions = {
 			"ProjectileScriptUnitLocomotionExtension",
 			"ProjectileLinearSphereSweepImpactUnitExtension",
-			"GenericImpactProjectileUnitExtension",
-		},
+			"GenericImpactProjectileUnitExtension"
+		}
 	},
 	pickup_projectile_unit = {
 		go_type = "pickup_projectile_unit",
@@ -1966,7 +1966,7 @@ local unit_templates = {
 			"ObjectiveLightOutlineExtension",
 			"LookatTargetExtension",
 			"PickupProjectileVolumeExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		husk_extensions = {
 			"ProjectilePhysicsHuskLocomotionExtension",
@@ -1974,8 +1974,8 @@ local unit_templates = {
 			"GenericUnitInteractableExtension",
 			"ObjectiveLightOutlineExtension",
 			"LookatTargetExtension",
-			"PingTargetExtension",
-		},
+			"PingTargetExtension"
+		}
 	},
 	life_time_pickup_projectile_unit = {
 		go_type = "pickup_projectile_unit",
@@ -1986,7 +1986,7 @@ local unit_templates = {
 			"ObjectiveLightOutlineExtension",
 			"LookatTargetExtension",
 			"PickupProjectileVolumeExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		husk_extensions = {
 			"ProjectilePhysicsHuskLocomotionExtension",
@@ -1994,8 +1994,8 @@ local unit_templates = {
 			"GenericUnitInteractableExtension",
 			"ObjectiveLightOutlineExtension",
 			"LookatTargetExtension",
-			"PingTargetExtension",
-		},
+			"PingTargetExtension"
+		}
 	},
 	limited_owned_pickup_projectile_unit = {
 		go_type = "limited_owned_pickup_projectile_unit",
@@ -2006,7 +2006,7 @@ local unit_templates = {
 			"ObjectiveLightOutlineExtension",
 			"LookatTargetExtension",
 			"PickupProjectileVolumeExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		husk_extensions = {
 			"ProjectilePhysicsHuskLocomotionExtension",
@@ -2014,8 +2014,8 @@ local unit_templates = {
 			"GenericUnitInteractableExtension",
 			"ObjectiveLightOutlineExtension",
 			"LookatTargetExtension",
-			"PingTargetExtension",
-		},
+			"PingTargetExtension"
+		}
 	},
 	pickup_training_dummy_unit = {
 		go_type = "pickup_training_dummy_unit",
@@ -2031,7 +2031,7 @@ local unit_templates = {
 			"LookatTargetExtension",
 			"PickupProjectileVolumeExtension",
 			"PingTargetExtension",
-			"BuffExtension",
+			"BuffExtension"
 		},
 		husk_extensions = {
 			"TrainingDummyHealthExtension",
@@ -2044,94 +2044,94 @@ local unit_templates = {
 			"GenericUnitInteractableExtension",
 			"LookatTargetExtension",
 			"PingTargetExtension",
-			"BuffExtension",
-		},
+			"BuffExtension"
+		}
 	},
 	versus_volume_objective_unit = {
 		go_type = "versus_volume_objective_unit",
 		self_owned_extensions = {
-			"VersusVolumeObjectiveExtension",
+			"VersusVolumeObjectiveExtension"
 		},
 		husk_extensions = {
-			"VersusVolumeObjectiveExtension",
-		},
+			"VersusVolumeObjectiveExtension"
+		}
 	},
 	versus_mission_objective_unit = {
 		go_type = "versus_mission_objective_unit",
 		self_owned_extensions = {
-			"VersusMissionObjectiveExtension",
+			"VersusMissionObjectiveExtension"
 		},
 		husk_extensions = {
-			"VersusMissionObjectiveExtension",
-		},
+			"VersusMissionObjectiveExtension"
+		}
 	},
 	versus_capture_point_objective_unit = {
 		go_type = "versus_capture_point_objective_unit",
 		self_owned_extensions = {
-			"VersusCapturePointObjectiveExtension",
+			"VersusCapturePointObjectiveExtension"
 		},
 		husk_extensions = {
-			"VersusCapturePointObjectiveExtension",
-		},
+			"VersusCapturePointObjectiveExtension"
+		}
 	},
 	weave_capture_point_unit = {
 		go_type = "weave_capture_point_unit",
 		self_owned_extensions = {
 			"WeaveCapturePointExtension",
-			"ObjectiveUnitExtension",
+			"ObjectiveUnitExtension"
 		},
 		husk_extensions = {
 			"WeaveCapturePointExtension",
-			"ObjectiveUnitExtension",
-		},
+			"ObjectiveUnitExtension"
+		}
 	},
 	weave_target_unit = {
 		go_type = "weave_target_unit",
 		self_owned_extensions = {
 			"TargetHealthExtension",
 			"ObjectiveUnitExtension",
-			"WeaveTargetExtension",
+			"WeaveTargetExtension"
 		},
 		husk_extensions = {
 			"TargetHealthExtension",
 			"ObjectiveUnitExtension",
-			"WeaveTargetExtension",
-		},
+			"WeaveTargetExtension"
+		}
 	},
 	weave_doom_wheel = {
 		go_type = "weave_doom_wheel_unit",
 		self_owned_extensions = {
 			"ObjectiveSocketTutorialExtension",
 			"WeaveDoomWheelExtension",
-			"ObjectiveSocketUnitExtension",
+			"ObjectiveSocketUnitExtension"
 		},
 		husk_extensions = {
 			"ObjectiveSocketTutorialExtension",
 			"WeaveDoomWheelExtension",
-			"ObjectiveSocketUnitExtension",
-		},
+			"ObjectiveSocketUnitExtension"
+		}
 	},
 	weave_interaction_unit = {
 		go_type = "weave_interaction_unit",
 		self_owned_extensions = {
 			"ObjectiveUnitExtension",
 			"GenericUnitInteractableExtension",
-			"WeaveInteractionExtension",
+			"WeaveInteractionExtension"
 		},
 		husk_extensions = {
 			"ObjectiveUnitExtension",
 			"GenericUnitInteractableExtension",
-			"WeaveInteractionExtension",
-		},
+			"WeaveInteractionExtension"
+		}
 	},
 	weave_kill_enemies_unit = {
 		go_type = "weave_kill_enemies_unit",
 		self_owned_extensions = {
-			"WeaveKillEnemiesExtension",
+			"WeaveKillEnemiesExtension"
 		},
 		husk_extensions = {
-			"WeaveKillEnemiesExtension",
-		},
+			"WeaveKillEnemiesExtension"
+		}
 	},
 	pickup_torch_unit_init = {
 		go_type = "pickup_torch_unit_init",
@@ -2143,7 +2143,7 @@ local unit_templates = {
 			"LookatTargetExtension",
 			"PickupProjectileVolumeExtension",
 			"PingTargetExtension",
-			"LightSourceExtension",
+			"LightSourceExtension"
 		},
 		husk_extensions = {
 			"ProjectilePhysicsHuskLocomotionExtension",
@@ -2152,8 +2152,8 @@ local unit_templates = {
 			"ObjectiveLightOutlineExtension",
 			"LookatTargetExtension",
 			"PingTargetExtension",
-			"LightSourceExtension",
-		},
+			"LightSourceExtension"
+		}
 	},
 	pickup_torch_unit = {
 		go_type = "pickup_torch_unit",
@@ -2165,7 +2165,7 @@ local unit_templates = {
 			"LookatTargetExtension",
 			"PickupProjectileVolumeExtension",
 			"PingTargetExtension",
-			"LightSourceExtension",
+			"LightSourceExtension"
 		},
 		husk_extensions = {
 			"ProjectilePhysicsHuskLocomotionExtension",
@@ -2174,8 +2174,8 @@ local unit_templates = {
 			"ObjectiveLightOutlineExtension",
 			"LookatTargetExtension",
 			"PingTargetExtension",
-			"LightSourceExtension",
-		},
+			"LightSourceExtension"
+		}
 	},
 	pickup_projectile_unit_limited = {
 		go_type = "pickup_projectile_unit_limited",
@@ -2188,7 +2188,7 @@ local unit_templates = {
 			"LookatTargetExtension",
 			"PickupProjectileVolumeExtension",
 			"LimitedItemExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		husk_extensions = {
 			"ObjectivePickupTutorialExtension",
@@ -2198,8 +2198,8 @@ local unit_templates = {
 			"ObjectiveLightOutlineExtension",
 			"LookatTargetExtension",
 			"LimitedItemExtension",
-			"PingTargetExtension",
-		},
+			"PingTargetExtension"
+		}
 	},
 	explosive_pickup_projectile_unit = {
 		go_type = "explosive_pickup_projectile_unit",
@@ -2214,7 +2214,7 @@ local unit_templates = {
 			"ProjectileLinkerExtension",
 			"PickupProjectileVolumeExtension",
 			"PingTargetExtension",
-			"ObjectiveUnitExtension",
+			"ObjectiveUnitExtension"
 		},
 		husk_extensions = {
 			"ProjectilePhysicsHuskLocomotionExtension",
@@ -2226,33 +2226,33 @@ local unit_templates = {
 			"LookatTargetExtension",
 			"ProjectileLinkerExtension",
 			"PingTargetExtension",
-			"ObjectiveUnitExtension",
-		},
+			"ObjectiveUnitExtension"
+		}
 	},
 	interaction_unit = {
 		go_type = "prop_unit",
 		self_owned_extensions = {
 			"GenericUnitInteractableExtension",
-			"GenericOutlineExtension",
+			"GenericOutlineExtension"
 		},
 		husk_extensions = {
 			"GenericUnitInteractableExtension",
-			"GenericOutlineExtension",
-		},
+			"GenericOutlineExtension"
+		}
 	},
 	objective_unit = {
 		go_type = "objective_unit",
 		self_owned_extensions = {
-			"ObjectiveUnitExtension",
+			"ObjectiveUnitExtension"
 		},
 		husk_extensions = {
-			"ObjectiveUnitExtension",
-		},
+			"ObjectiveUnitExtension"
+		}
 	},
 	objective_group = {
 		self_owned_extensions = {
-			"ObjectiveGroupExtension",
-		},
+			"ObjectiveGroupExtension"
+		}
 	},
 	nurgle_liquid_blob = {
 		go_type = "prop_unit",
@@ -2260,18 +2260,18 @@ local unit_templates = {
 			"GenericHealthExtension",
 			"GenericDeathExtension",
 			"ProjectileLinkerExtension",
-			"GenericHitReactionExtension",
+			"GenericHitReactionExtension"
 		},
 		husk_extensions = {
 			"GenericHealthExtension",
 			"GenericDeathExtension",
 			"ProjectileLinkerExtension",
-			"GenericHitReactionExtension",
+			"GenericHitReactionExtension"
 		},
 		remove_when_killed = {
 			"GenericDeathExtension",
-			"ProjectileLinkerExtension",
-		},
+			"ProjectileLinkerExtension"
+		}
 	},
 	explosive_pickup_projectile_unit_limited = {
 		go_type = "explosive_pickup_projectile_unit_limited",
@@ -2287,7 +2287,7 @@ local unit_templates = {
 			"LookatTargetExtension",
 			"ProjectileLinkerExtension",
 			"PickupProjectileVolumeExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		husk_extensions = {
 			"ObjectivePickupTutorialExtension",
@@ -2300,32 +2300,32 @@ local unit_templates = {
 			"ObjectiveLightOutlineExtension",
 			"LookatTargetExtension",
 			"ProjectileLinkerExtension",
-			"PingTargetExtension",
-		},
+			"PingTargetExtension"
+		}
 	},
 	true_flight_projectile_unit = {
 		go_type = "true_flight_projectile_unit",
 		self_owned_extensions = {
 			"ProjectileTrueFlightLocomotionExtension",
 			"ProjectileRaycastImpactUnitExtension",
-			"PlayerProjectileUnitExtension",
+			"PlayerProjectileUnitExtension"
 		},
 		husk_extensions = {
 			"ProjectileTrueFlightLocomotionExtension",
-			"PlayerProjectileHuskExtension",
-		},
+			"PlayerProjectileHuskExtension"
+		}
 	},
 	ai_true_flight_projectile_unit = {
 		go_type = "ai_true_flight_projectile_unit",
 		self_owned_extensions = {
 			"ProjectileTrueFlightLocomotionExtension",
 			"ProjectileRaycastImpactUnitExtension",
-			"GenericImpactProjectileUnitExtension",
+			"GenericImpactProjectileUnitExtension"
 		},
 		husk_extensions = {
 			"ProjectileTrueFlightLocomotionExtension",
-			"GenericImpactProjectileUnitExtension",
-		},
+			"GenericImpactProjectileUnitExtension"
+		}
 	},
 	ai_true_flight_killable_projectile_unit = {
 		go_type = "ai_true_flight_killable_projectile_unit",
@@ -2334,108 +2334,108 @@ local unit_templates = {
 			"ProjectileRaycastImpactUnitExtension",
 			"GenericImpactProjectileUnitExtension",
 			"GenericHealthExtension",
-			"GenericDeathExtension",
+			"GenericDeathExtension"
 		},
 		husk_extensions = {
 			"ProjectileTrueFlightLocomotionExtension",
 			"GenericImpactProjectileUnitExtension",
 			"GenericHealthExtension",
-			"GenericDeathExtension",
-		},
+			"GenericDeathExtension"
+		}
 	},
 	ai_true_flight_projectile_unit_without_raycast = {
 		go_type = "ai_true_flight_projectile_unit_without_raycast",
 		self_owned_extensions = {
 			"ProjectileTrueFlightLocomotionExtension",
-			"GenericImpactProjectileUnitExtension",
+			"GenericImpactProjectileUnitExtension"
 		},
 		husk_extensions = {
 			"ProjectileTrueFlightLocomotionExtension",
-			"GenericImpactProjectileUnitExtension",
-		},
+			"GenericImpactProjectileUnitExtension"
+		}
 	},
 	overpowering_blob_unit = {
 		go_type = "overpowering_blob_unit",
 		self_owned_extensions = {
 			"OverpoweredBlobHealthExtension",
-			"GenericDeathExtension",
+			"GenericDeathExtension"
 		},
 		husk_extensions = {
 			"GenericHealthExtension",
-			"GenericDeathExtension",
-		},
+			"GenericDeathExtension"
+		}
 	},
 	prop_unit = {
 		go_type = "prop_unit",
 		self_owned_extensions = {},
-		husk_extensions = {},
+		husk_extensions = {}
 	},
 	positioned_prop_unit = {
 		go_type = "positioned_prop_unit",
 		self_owned_extensions = {},
-		husk_extensions = {},
+		husk_extensions = {}
 	},
 	network_synched_dummy_unit = {
 		go_type = "network_synched_dummy_unit",
 		self_owned_extensions = {},
-		husk_extensions = {},
+		husk_extensions = {}
 	},
 	position_synched_dummy_unit = {
 		go_type = "position_synched_dummy_unit",
 		self_owned_extensions = {
-			"UnitSynchronizationExtension",
+			"UnitSynchronizationExtension"
 		},
 		husk_extensions = {
-			"UnitSynchronizationExtension",
-		},
+			"UnitSynchronizationExtension"
+		}
 	},
 	position_synched_light_unit = {
 		go_type = "position_synched_dummy_unit",
 		self_owned_extensions = {
 			"UnitSynchronizationExtension",
-			"LightSourceExtension",
+			"LightSourceExtension"
 		},
 		husk_extensions = {
 			"UnitSynchronizationExtension",
-			"LightSourceExtension",
-		},
+			"LightSourceExtension"
+		}
 	},
 	buff_aoe_unit = {
 		go_type = "buff_aoe_unit",
 		self_owned_extensions = {
-			"BuffAreaExtension",
+			"BuffAreaExtension"
 		},
 		husk_extensions = {
-			"BuffAreaExtension",
-		},
+			"BuffAreaExtension"
+		}
 	},
 	buff_unit = {
 		go_type = "buff_unit",
 		self_owned_extensions = {
-			"BuffExtension",
+			"BuffExtension"
 		},
 		husk_extensions = {
-			"BuffExtension",
-		},
+			"BuffExtension"
+		}
 	},
 	thrown_weapon_unit = {
 		go_type = "thrown_weapon_unit",
 		self_owned_extensions = {},
 		husk_extensions = {
-			"ThrownUnitHuskExtension",
-		},
+			"ThrownUnitHuskExtension"
+		}
 	},
 	camera_unit = {
 		self_owned_extensions = {
 			"GenericCameraExtension",
-			"GenericCameraStateMachineExtension",
-		},
+			"GenericCameraStateMachineExtension"
+		}
 	},
 	navgraphconnector = {
 		self_owned_extensions = {
-			"NavGraphConnectorExtension",
+			"NavGraphConnectorExtension"
 		},
-		husk_extensions = {},
+		husk_extensions = {}
 	},
 	pickup_unit = {
 		go_type = "pickup_unit",
@@ -2444,15 +2444,15 @@ local unit_templates = {
 			"GenericUnitInteractableExtension",
 			"PickupOutlineExtension",
 			"LookatTargetExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		husk_extensions = {
 			"PickupUnitExtension",
 			"GenericUnitInteractableExtension",
 			"PickupOutlineExtension",
 			"LookatTargetExtension",
-			"PingTargetExtension",
-		},
+			"PingTargetExtension"
+		}
 	},
 	conditional_pickup_unit = {
 		go_type = "pickup_unit",
@@ -2461,15 +2461,15 @@ local unit_templates = {
 			"GenericUnitInteractableExtension",
 			"ConditionalPickupOutlineExtension",
 			"LookatTargetExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		husk_extensions = {
 			"PickupUnitExtension",
 			"GenericUnitInteractableExtension",
 			"ConditionalPickupOutlineExtension",
 			"LookatTargetExtension",
-			"PingTargetExtension",
-		},
+			"PingTargetExtension"
+		}
 	},
 	life_time_pickup_unit = {
 		go_type = "pickup_unit",
@@ -2478,15 +2478,15 @@ local unit_templates = {
 			"GenericUnitInteractableExtension",
 			"PickupOutlineExtension",
 			"LookatTargetExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		husk_extensions = {
 			"LifeTimePickupUnitExtension",
 			"GenericUnitInteractableExtension",
 			"PickupOutlineExtension",
 			"LookatTargetExtension",
-			"PingTargetExtension",
-		},
+			"PingTargetExtension"
+		}
 	},
 	limited_owned_pickup_unit = {
 		go_type = "limited_owned_pickup_unit",
@@ -2495,15 +2495,15 @@ local unit_templates = {
 			"GenericUnitInteractableExtension",
 			"PickupOutlineExtension",
 			"LookatTargetExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		husk_extensions = {
 			"LimitedOwnedPickupUnitExtension",
 			"GenericUnitInteractableExtension",
 			"PickupOutlineExtension",
 			"LookatTargetExtension",
-			"PingTargetExtension",
-		},
+			"PingTargetExtension"
+		}
 	},
 	objective_pickup_unit = {
 		go_type = "objective_pickup_unit",
@@ -2513,7 +2513,7 @@ local unit_templates = {
 			"PickupOutlineExtension",
 			"LookatTargetExtension",
 			"PingTargetExtension",
-			"ObjectiveUnitExtension",
+			"ObjectiveUnitExtension"
 		},
 		husk_extensions = {
 			"PickupUnitExtension",
@@ -2521,68 +2521,68 @@ local unit_templates = {
 			"PickupOutlineExtension",
 			"LookatTargetExtension",
 			"PingTargetExtension",
-			"ObjectiveUnitExtension",
-		},
+			"ObjectiveUnitExtension"
+		}
 	},
 	battle_chatter_unit = {
 		self_owned_extensions = {
-			"LookatTargetExtension",
+			"LookatTargetExtension"
 		},
 		husk_extensions = {
-			"LookatTargetExtension",
-		},
+			"LookatTargetExtension"
+		}
 	},
 	weapon_unit_3p = {
 		self_owned_extensions = {
-			"HuskWeaponUnitExtension",
-		},
+			"HuskWeaponUnitExtension"
+		}
 	},
 	torch_unit_3p = {
 		self_owned_extensions = {
-			"LightSourceExtension",
+			"LightSourceExtension"
 		},
 		husk_extensions = {
-			"LightSourceExtension",
-		},
+			"LightSourceExtension"
+		}
 	},
 	weapon_unit = {
 		self_owned_extensions = {
-			"WeaponUnitExtension",
-		},
+			"WeaponUnitExtension"
+		}
 	},
 	single_weapon_unit = {
 		self_owned_extensions = {
-			"SingleWeaponUnitExtension",
+			"SingleWeaponUnitExtension"
 		},
 		husk_extensions = {
-			"SingleWeaponUnitExtension",
-		},
+			"SingleWeaponUnitExtension"
+		}
 	},
 	weapon_unit_spread = {
 		self_owned_extensions = {
 			"WeaponUnitExtension",
-			"WeaponSpreadExtension",
-		},
+			"WeaponSpreadExtension"
+		}
 	},
 	weapon_unit_ammo = {
 		self_owned_extensions = {
 			"WeaponUnitExtension",
-			"GenericAmmoUserExtension",
-		},
+			"GenericAmmoUserExtension"
+		}
 	},
 	weapon_unit_ammo_limited = {
 		self_owned_extensions = {
 			"WeaponUnitExtension",
 			"GenericAmmoUserExtension",
-			"HeldLimitedItemExtension",
-		},
+			"HeldLimitedItemExtension"
+		}
 	},
 	weapon_unit_ammo_spread = {
 		self_owned_extensions = {
 			"WeaponUnitExtension",
 			"GenericAmmoUserExtension",
-			"WeaponSpreadExtension",
-		},
+			"WeaponSpreadExtension"
+		}
 	},
 	explosive_weapon_unit_ammo = {
 		self_owned_extensions = {
@@ -2590,8 +2590,8 @@ local unit_templates = {
 			"GenericAmmoUserExtension",
 			"ExplosiveBarrelHealthExtension",
 			"GenericDeathExtension",
-			"ObjectiveUnitExtension",
-		},
+			"ObjectiveUnitExtension"
+		}
 	},
 	explosive_weapon_unit_ammo_limited = {
 		self_owned_extensions = {
@@ -2600,105 +2600,105 @@ local unit_templates = {
 			"HeldLimitedItemExtension",
 			"ExplosiveBarrelHealthExtension",
 			"GenericDeathExtension",
-			"ObjectiveUnitExtension",
-		},
+			"ObjectiveUnitExtension"
+		}
 	},
 	weapon_unit_aim = {
 		self_owned_extensions = {
 			"WeaponUnitExtension",
-			"GenericUnitAimExtension",
+			"GenericUnitAimExtension"
 		},
 		husk_extensions = {
-			"GenericUnitAimExtension",
-		},
+			"GenericUnitAimExtension"
+		}
 	},
 	ai_weapon_unit = {
 		go_type = "ai_inventory_item",
 		self_owned_extensions = {
 			"AIInventoryItemExtension",
-			"AiWeaponUnitExtension",
-		},
+			"AiWeaponUnitExtension"
+		}
 	},
 	ai_shield_unit = {
 		go_type = "ai_inventory_item",
 		self_owned_extensions = {
 			"AIInventoryItemExtension",
-			"ProjectileLinkerExtension",
-		},
+			"ProjectileLinkerExtension"
+		}
 	},
 	ai_helmet_unit = {
 		go_type = "ai_inventory_item",
 		self_owned_extensions = {
 			"AIInventoryItemExtension",
-			"ProjectileLinkerExtension",
-		},
+			"ProjectileLinkerExtension"
+		}
 	},
 	ai_skin_unit = {
 		go_type = "ai_inventory_item",
 		self_owned_extensions = {
-			"AIInventoryItemExtension",
-		},
+			"AIInventoryItemExtension"
+		}
 	},
 	ai_outfit_unit = {
 		go_type = "ai_inventory_item",
 		self_owned_extensions = {
-			"AIInventoryItemExtension",
-		},
+			"AIInventoryItemExtension"
+		}
 	},
 	ai_inventory_unit = {
 		go_type = "ai_inventory_item",
 		self_owned_extensions = {
 			"AIInventoryItemExtension",
-			"ProjectileLinkerExtension",
-		},
+			"ProjectileLinkerExtension"
+		}
 	},
 	dynamic_gib_unit = {
 		go_type = "dynamic_gib_unit",
 		self_owned_extensions = {
-			"ProjectileLinkerExtension",
-		},
+			"ProjectileLinkerExtension"
+		}
 	},
 	limited_item_track_spawner = {
 		self_owned_extensions = {},
 		self_owned_extensions_server = {
-			"LimitedItemTrackSpawner",
+			"LimitedItemTrackSpawner"
 		},
 		husk_extensions = {},
-		husk_extension_server = {},
+		husk_extension_server = {}
 	},
 	weave_limited_item_track_spawner = {
 		self_owned_extensions = {
-			"WeaveLimitedItemSpawnerExtension",
+			"WeaveLimitedItemSpawnerExtension"
 		},
 		self_owned_extensions_server = {
 			"WeaveLimitedItemTrackSpawner",
-			"WeaveLimitedItemSpawnerExtension",
+			"WeaveLimitedItemSpawnerExtension"
 		},
 		husk_extensions = {},
-		husk_extension_server = {},
+		husk_extension_server = {}
 	},
 	interest_point = {
 		go_type = "interest_point_unit",
 		self_owned_extensions = {
-			"AIInterestPointHuskExtension",
+			"AIInterestPointHuskExtension"
 		},
 		self_owned_extensions_server = {
-			"AIInterestPointExtension",
+			"AIInterestPointExtension"
 		},
 		husk_extensions = {
-			"AIInterestPointHuskExtension",
+			"AIInterestPointHuskExtension"
 		},
-		husk_extension_server = {},
+		husk_extension_server = {}
 	},
 	interest_point_level = {
 		base_template = "interest_point",
 		go_type = "interest_point_level_unit",
 		self_owned_extensions_server = {},
 		self_owned_extensions = {},
-		husk_extensions = {},
+		husk_extensions = {}
 	},
 	base_level_unit = {
-		go_type = "base_level_unit",
+		go_type = "base_level_unit"
 	},
 	lure_unit = {
 		go_type = "lure_unit",
@@ -2707,151 +2707,152 @@ local unit_templates = {
 			"GenericDeathExtension",
 			"LureWhereaboutsExtension",
 			"AIAggroableSlotExtension",
-			"GenericAggroableExtension",
+			"GenericAggroableExtension"
 		},
 		husk_extensions = {
 			"LureHealthExtension",
-			"GenericDeathExtension",
-		},
+			"GenericDeathExtension"
+		}
 	},
 	rotating_hazard = {
 		go_type = "rotating_hazard",
 		self_owned_extensions = {
-			"RotatingHazardExtension",
+			"RotatingHazardExtension"
 		},
 		husk_extensions = {
-			"RotatingHazardExtension",
-		},
+			"RotatingHazardExtension"
+		}
 	},
 	dialogue_node = {
 		go_type = "dialogue_node",
 		self_owned_extensions = {
 			"DialogueActorExtension",
-			"GlobalObserverExtension",
+			"GlobalObserverExtension"
 		},
 		husk_extensions = {
 			"DialogueActorExtension",
-			"GlobalObserverExtension",
-		},
+			"GlobalObserverExtension"
+		}
 	},
 	explosive_barrel_socket = {
-		go_type = "explosive_barrel_socket",
-	},
+		go_type = "explosive_barrel_socket"
+	}
 }
 
-DLCUtils.map_list("unit_extension_templates", function (file)
-	table.merge(unit_templates, dofile(file))
+DLCUtils.map_list("unit_extension_templates", function(arg_1_0)
+	table.merge(var_0_2, dofile(arg_1_0))
 end)
 
-local extension_table_names = {
+local var_0_3 = {
 	"self_owned_extensions",
 	"self_owned_extensions_server",
 	"husk_extensions",
-	"husk_extensions_server",
+	"husk_extensions_server"
 }
-local extension_table_names_n = #extension_table_names
+local var_0_4 = #var_0_3
 
-for unit_template_name, template_data in pairs(unit_templates) do
-	template_data.NAME = unit_template_name
+for iter_0_0, iter_0_1 in pairs(var_0_2) do
+	iter_0_1.NAME = iter_0_0
 
-	for i = 1, extension_table_names_n do
-		local extension_table_name = extension_table_names[i]
-		local extension_list = template_data[extension_table_name] or {}
-		local extension_list_n = #extension_list
+	for iter_0_2 = 1, var_0_4 do
+		local var_0_5 = var_0_3[iter_0_2]
+		local var_0_6 = iter_0_1[var_0_5] or {}
+		local var_0_7 = #var_0_6
 
-		if template_data.base_template ~= nil then
-			local inherited_template_name = template_data.base_template
-			local inherited_template_data = unit_templates[inherited_template_name]
+		if iter_0_1.base_template ~= nil then
+			local var_0_8 = var_0_2[iter_0_1.base_template]
 
-			assert(inherited_template_data.base_template == nil, "%s tried to inherit from template that had a base_template", unit_template_name)
+			assert(var_0_8.base_template == nil, "%s tried to inherit from template that had a base_template", iter_0_0)
 
-			local inherited_extension_list = inherited_template_data[extension_table_name]
+			local var_0_9 = var_0_8[var_0_5]
 
-			if inherited_extension_list then
-				inherited_extension_list_n = #inherited_extension_list
+			if var_0_9 then
+				inherited_extension_list_n = #var_0_9
 
-				for j = 1, inherited_extension_list_n do
-					extension_list_n = extension_list_n + 1
-					extension_list[extension_list_n] = inherited_extension_list[j]
+				for iter_0_3 = 1, inherited_extension_list_n do
+					var_0_7 = var_0_7 + 1
+					var_0_6[var_0_7] = var_0_9[iter_0_3]
 				end
 			end
 
-			local inherited_remove_when_killed = inherited_template_data.remove_when_killed and inherited_template_data.remove_when_killed[extension_table_name]
+			local var_0_10 = var_0_8.remove_when_killed and var_0_8.remove_when_killed[var_0_5]
 
-			if inherited_remove_when_killed then
-				if template_data.remove_when_killed == nil then
-					template_data.remove_when_killed = {}
+			if var_0_10 then
+				if iter_0_1.remove_when_killed == nil then
+					iter_0_1.remove_when_killed = {}
 				end
 
-				if template_data.remove_when_killed[extension_table_name] == nil then
-					template_data.remove_when_killed[extension_table_name] = {}
+				if iter_0_1.remove_when_killed[var_0_5] == nil then
+					iter_0_1.remove_when_killed[var_0_5] = {}
 				end
 
-				for j = 1, #inherited_remove_when_killed do
-					local remove_when_killed = template_data.remove_when_killed[extension_table_name]
+				for iter_0_4 = 1, #var_0_10 do
+					local var_0_11 = iter_0_1.remove_when_killed[var_0_5]
 
-					remove_when_killed[#remove_when_killed + 1] = inherited_remove_when_killed[j]
+					var_0_11[#var_0_11 + 1] = var_0_10[iter_0_4]
 				end
 			end
 		end
 
-		template_data["num_" .. extension_table_name] = extension_list_n
+		iter_0_1["num_" .. var_0_5] = var_0_7
 
-		local remove_when_killed = template_data.remove_when_killed
+		local var_0_12 = iter_0_1.remove_when_killed
 
-		if remove_when_killed then
-			for i = 1, extension_table_names_n do
-				local extension_table_name = extension_table_names[i]
-				local extension_list = remove_when_killed[extension_table_name]
+		if var_0_12 then
+			for iter_0_5 = 1, var_0_4 do
+				local var_0_13 = var_0_3[iter_0_5]
+				local var_0_14 = var_0_12[var_0_13]
 
-				if extension_list then
-					remove_when_killed["num_" .. extension_table_name] = #extension_list
+				if var_0_14 then
+					var_0_12["num_" .. var_0_13] = #var_0_14
 				end
 			end
 		end
 	end
 end
 
-unit_templates.get_extensions = function (unit_template_name, is_husk, is_server)
-	local extensions, num_extensions
-	local template = unit_templates[unit_template_name]
+function var_0_2.get_extensions(arg_2_0, arg_2_1, arg_2_2)
+	local var_2_0
+	local var_2_1
+	local var_2_2 = var_0_2[arg_2_0]
 
-	if is_husk then
-		if is_server and template.husk_extensions_server then
-			extensions, num_extensions = template.husk_extensions_server, template.num_husk_extensions_server
+	if arg_2_1 then
+		if arg_2_2 and var_2_2.husk_extensions_server then
+			var_2_0, var_2_1 = var_2_2.husk_extensions_server, var_2_2.num_husk_extensions_server
 		else
-			extensions, num_extensions = template.husk_extensions, template.num_husk_extensions
+			var_2_0, var_2_1 = var_2_2.husk_extensions, var_2_2.num_husk_extensions
 		end
-	elseif is_server and template.self_owned_extensions_server then
-		extensions, num_extensions = template.self_owned_extensions_server, template.num_self_owned_extensions_server
+	elseif arg_2_2 and var_2_2.self_owned_extensions_server then
+		var_2_0, var_2_1 = var_2_2.self_owned_extensions_server, var_2_2.num_self_owned_extensions_server
 	else
-		extensions, num_extensions = template.self_owned_extensions, template.num_self_owned_extensions
+		var_2_0, var_2_1 = var_2_2.self_owned_extensions, var_2_2.num_self_owned_extensions
 	end
 
-	return extensions, num_extensions
+	return var_2_0, var_2_1
 end
 
-unit_templates.extensions_to_remove_on_death = function (unit_template_name, is_husk, is_server)
-	local extensions, num_extensions
-	local remove_when_killed = unit_templates[unit_template_name].remove_when_killed
+function var_0_2.extensions_to_remove_on_death(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0
+	local var_3_1
+	local var_3_2 = var_0_2[arg_3_0].remove_when_killed
 
-	if remove_when_killed == nil then
+	if var_3_2 == nil then
 		return nil
 	end
 
-	if is_husk then
-		if is_server and remove_when_killed.husk_extensions_server then
-			extensions, num_extensions = remove_when_killed.husk_extensions_server, remove_when_killed.num_husk_extensions_server
+	if arg_3_1 then
+		if arg_3_2 and var_3_2.husk_extensions_server then
+			var_3_0, var_3_1 = var_3_2.husk_extensions_server, var_3_2.num_husk_extensions_server
 		else
-			extensions, num_extensions = remove_when_killed.husk_extensions, remove_when_killed.num_husk_extensions
+			var_3_0, var_3_1 = var_3_2.husk_extensions, var_3_2.num_husk_extensions
 		end
-	elseif is_server and remove_when_killed.self_owned_extensions_server then
-		extensions, num_extensions = remove_when_killed.self_owned_extensions_server, remove_when_killed.num_self_owned_extensions_server
+	elseif arg_3_2 and var_3_2.self_owned_extensions_server then
+		var_3_0, var_3_1 = var_3_2.self_owned_extensions_server, var_3_2.num_self_owned_extensions_server
 	else
-		extensions, num_extensions = remove_when_killed.self_owned_extensions, remove_when_killed.num_self_owned_extensions
+		var_3_0, var_3_1 = var_3_2.self_owned_extensions, var_3_2.num_self_owned_extensions
 	end
 
-	return extensions, num_extensions
+	return var_3_0, var_3_1
 end
 
-return unit_templates
+return var_0_2

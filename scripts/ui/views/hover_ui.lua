@@ -1,247 +1,246 @@
-﻿-- chunkname: @scripts/ui/views/hover_ui.lua
+-- chunkname: @scripts/ui/views/hover_ui.lua
 
-local scenegraph_definition = {
+local var_0_0 = {
 	root = {
 		is_root = true,
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			UILayer.hover,
-		},
+			UILayer.hover
+		}
 	},
 	hover_root = {
-		horizontal_alignment = "left",
-		parent = "root",
 		vertical_alignment = "bottom",
+		parent = "root",
+		horizontal_alignment = "left",
 		size = {
 			1,
-			1,
+			1
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	default_hover_widget = {
-		horizontal_alignment = "center",
-		parent = "hover_root",
 		vertical_alignment = "center",
+		parent = "hover_root",
+		horizontal_alignment = "center",
 		size = {
 			1,
-			1,
+			1
 		},
 		position = {
 			10,
 			10,
-			1,
-		},
-	},
+			1
+		}
+	}
 }
-local widget_definitions = {
+local var_0_1 = {
 	default_hover_widget = {
 		scenegraph_id = "default_hover_widget",
 		element = {
 			passes = {
 				{
-					pass_type = "rounded_background",
-					style_id = "background",
 					texture_id = "background",
+					style_id = "background",
+					pass_type = "rounded_background"
 				},
 				{
-					pass_type = "text",
 					style_id = "text",
-					text_id = "text",
-				},
-			},
+					pass_type = "text",
+					text_id = "text"
+				}
+			}
 		},
 		content = {
-			text = "description",
+			text = "description"
 		},
 		style = {
 			text = {
-				dynamic_font = true,
 				font_size = 28,
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
-				pixel_perfect = true,
-				vertical_alignment = "center",
 				word_wrap = true,
+				pixel_perfect = true,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				dynamic_font = true,
+				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					0,
 					0,
-					1,
-				},
+					1
+				}
 			},
 			background = {
 				corner_radius = 2,
-				color = Colors.get_color_table_with_alpha("black", 200),
-			},
-		},
-	},
+				color = Colors.get_color_table_with_alpha("black", 200)
+			}
+		}
+	}
 }
 
 HoverUI = class(HoverUI)
 
-local TEXT_SIZE_MULTIPLIER = 1.1
+local var_0_2 = 1.1
 
-HoverUI.init = function (self, ingame_ui_context, input_service)
-	self.ui_renderer = ingame_ui_context.ui_top_renderer
-	self.ingame_ui = ingame_ui_context.ingame_ui
-	self.input_service = input_service
-	self.ui_animations = {}
+function HoverUI.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0.ui_renderer = arg_1_1.ui_top_renderer
+	arg_1_0.ingame_ui = arg_1_1.ingame_ui
+	arg_1_0.input_service = arg_1_2
+	arg_1_0.ui_animations = {}
 
-	self:create_ui_elements()
+	arg_1_0:create_ui_elements()
 end
 
-HoverUI.create_ui_elements = function (self)
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-	self.default_widget = UIWidget.init(widget_definitions.default_hover_widget)
+function HoverUI.create_ui_elements(arg_2_0)
+	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0)
+	arg_2_0.default_widget = UIWidget.init(var_0_1.default_hover_widget)
 
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_renderer)
 end
 
-HoverUI.update_animations = function (self, dt)
-	local ui_scenegraph = self.ui_scenegraph
+function HoverUI.update_animations(arg_3_0, arg_3_1)
+	local var_3_0 = arg_3_0.ui_scenegraph
 
-	for name, ui_animation in pairs(self.ui_animations) do
-		UIAnimation.update(ui_animation, dt)
+	for iter_3_0, iter_3_1 in pairs(arg_3_0.ui_animations) do
+		UIAnimation.update(iter_3_1, arg_3_1)
 
-		if UIAnimation.completed(ui_animation) then
-			self.ui_animations[name] = nil
+		if UIAnimation.completed(iter_3_1) then
+			arg_3_0.ui_animations[iter_3_0] = nil
 		end
 	end
 end
 
-HoverUI.update = function (self, dt)
-	if not self.show_ui then
+function HoverUI.update(arg_4_0, arg_4_1)
+	if not arg_4_0.show_ui then
 		return
 	end
 
-	local input_service = self.input_service or FAKE_INPUT_SERVICE
-	local ui_scenegraph = self.ui_scenegraph
+	local var_4_0 = arg_4_0.input_service or FAKE_INPUT_SERVICE
+	local var_4_1 = arg_4_0.ui_scenegraph
 
-	self:update_widget_pivot_position(ui_scenegraph, input_service)
-	self:draw(dt, ui_scenegraph, input_service)
+	arg_4_0:update_widget_pivot_position(var_4_1, var_4_0)
+	arg_4_0:draw(arg_4_1, var_4_1, var_4_0)
 end
 
-HoverUI.draw = function (self, dt, ui_scenegraph, input_service)
-	local ui_renderer = self.ui_renderer
+function HoverUI.draw(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	local var_5_0 = arg_5_0.ui_renderer
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt)
+	UIRenderer.begin_pass(var_5_0, arg_5_2, arg_5_3, arg_5_1)
 
-	local active_widget = self.active_tooltip_widget
+	local var_5_1 = arg_5_0.active_tooltip_widget
 
-	if active_widget then
-		UIRenderer.draw_widget(ui_renderer, active_widget)
+	if var_5_1 then
+		UIRenderer.draw_widget(var_5_0, var_5_1)
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_5_0)
 end
 
-HoverUI.update_objects = function (self)
-	for index, data in ipairs(self._registered_hover_object) do
-		local hover_content = data.hover_content
+function HoverUI.update_objects(arg_6_0)
+	for iter_6_0, iter_6_1 in ipairs(arg_6_0._registered_hover_object) do
+		local var_6_0 = iter_6_1.hover_content
 
-		if hover_content then
-			if hover_content.disabled then
+		if var_6_0 then
+			if var_6_0.disabled then
 				return
 			end
 
-			if hover_content.is_hover then
-				local tooltip_name = data.name
-				local tooltip_type = data.type
-				local content = data.content
-				local style = data.style
+			if var_6_0.is_hover then
+				local var_6_1 = iter_6_1.name
+				local var_6_2 = iter_6_1.type
+				local var_6_3 = iter_6_1.content
+				local var_6_4 = iter_6_1.style
 
-				self:display_object(tooltip_name, tooltip_type, content, style)
+				arg_6_0:display_object(var_6_1, var_6_2, var_6_3, var_6_4)
 			end
 		end
 	end
 end
 
-HoverUI.display_object = function (self, name, type, content, style)
-	if self.display_object_name == name then
+function HoverUI.display_object(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	if arg_7_0.display_object_name == arg_7_1 then
 		return
 	end
 
-	self.display_object_name = name
-	self.active_tooltip_widget = self.default_widget
+	arg_7_0.display_object_name = arg_7_1
+	arg_7_0.active_tooltip_widget = arg_7_0.default_widget
 end
 
-HoverUI.stop_display_object = function (self)
+function HoverUI.stop_display_object(arg_8_0)
 	return
 end
 
-HoverUI.destroy = function (self, dt)
+function HoverUI.destroy(arg_9_0, arg_9_1)
 	return
 end
 
-HoverUI.register_widget = function (self, name, tooltip_type, hover_content, content, style)
-	local hover_object_data = {
-		name = name,
-		type = tooltip_type,
-		style = style,
+function HoverUI.register_widget(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+	local var_10_0 = {
+		name = arg_10_1,
+		type = arg_10_2,
+		style = arg_10_5,
 		content = display_data,
-		hover_content = hover_content,
+		hover_content = arg_10_3
 	}
-	local index = #self._registered_hover_object + 1
+	local var_10_1 = #arg_10_0._registered_hover_object + 1
 
-	self._registered_hover_index_by_name[name] = index
-	self._registered_hover_object[index] = hover_object_data
+	arg_10_0._registered_hover_index_by_name[arg_10_1] = var_10_1
+	arg_10_0._registered_hover_object[var_10_1] = var_10_0
 end
 
-HoverUI.unregister_widget = function (self, name)
-	local index = self._registered_hover_index_by_name[name]
+function HoverUI.unregister_widget(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_0._registered_hover_index_by_name[arg_11_1]
 
-	if index then
-		self._registered_hover_object[index] = nil
-		self._registered_hover_index_by_name[name] = nil
+	if var_11_0 then
+		arg_11_0._registered_hover_object[var_11_0] = nil
+		arg_11_0._registered_hover_index_by_name[arg_11_1] = nil
 	end
 end
 
-HoverUI.get_text_size = function (self, localized_text, text_style)
-	local font_size = text_style.font_size
-	local font, scaled_font_size = UIFontByResolution(text_style)
-	local text_width, text_height, min = UIRenderer.text_size(self.ui_renderer, localized_text, font[1], scaled_font_size)
+function HoverUI.get_text_size(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = arg_12_2.font_size
+	local var_12_1, var_12_2 = UIFontByResolution(arg_12_2)
+	local var_12_3, var_12_4, var_12_5 = UIRenderer.text_size(arg_12_0.ui_renderer, arg_12_1, var_12_1[1], var_12_2)
 
-	return text_width, text_height
+	return var_12_3, var_12_4
 end
 
-HoverUI.animate_default_widget = function (self)
+function HoverUI.animate_default_widget(arg_13_0)
 	return
 end
 
-HoverUI.set_default_widget_text = function (self, text)
-	local ui_scenegraph = self.ui_scenegraph
-	local default_widget = self.default_widget
-	local text_style = default_widget.style.text
+function HoverUI.set_default_widget_text(arg_14_0, arg_14_1)
+	local var_14_0 = arg_14_0.ui_scenegraph
+	local var_14_1 = arg_14_0.default_widget.style.text
 
-	text = Localize(text)
-	self.default_widget.content.text = text
+	arg_14_1 = Localize(arg_14_1)
+	arg_14_0.default_widget.content.text = arg_14_1
 end
 
-HoverUI.update_widget_pivot_position = function (self, ui_scenegraph, input_service)
-	local active_widget = self.active_tooltip_widget
+function HoverUI.update_widget_pivot_position(arg_15_0, arg_15_1, arg_15_2)
+	local var_15_0 = arg_15_0.active_tooltip_widget
 
-	if active_widget then
-		local hover_position = ui_scenegraph.hover_root.position
-		local cursor_position = UIRenderer.scaled_cursor_position_by_scenegraph(input_service, ui_scenegraph, "root")
+	if var_15_0 then
+		local var_15_1 = arg_15_1.hover_root.position
+		local var_15_2 = UIRenderer.scaled_cursor_position_by_scenegraph(arg_15_2, arg_15_1, "root")
 
-		hover_position[1] = cursor_position.x
-		hover_position[2] = cursor_position.y
+		var_15_1[1] = var_15_2.x
+		var_15_1[2] = var_15_2.y
 
-		local text_style = active_widget.style.text
-		local text = active_widget.content.text
-		local text_width, text_height = self:get_text_size(text, text_style)
-		local widget_scenegraph_definition = ui_scenegraph.default_hover_widget
+		local var_15_3 = var_15_0.style.text
+		local var_15_4 = var_15_0.content.text
+		local var_15_5, var_15_6 = arg_15_0:get_text_size(var_15_4, var_15_3)
+		local var_15_7 = arg_15_1.default_hover_widget
 
-		widget_scenegraph_definition.size[1] = text_width * TEXT_SIZE_MULTIPLIER
-		widget_scenegraph_definition.size[2] = text_height * TEXT_SIZE_MULTIPLIER
+		var_15_7.size[1] = var_15_5 * var_0_2
+		var_15_7.size[2] = var_15_6 * var_0_2
 	end
 end

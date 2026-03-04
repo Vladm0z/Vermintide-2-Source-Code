@@ -1,36 +1,36 @@
-﻿-- chunkname: @scripts/settings/dlcs/shovel/shovel_sound_settings.lua
+-- chunkname: @scripts/settings/dlcs/shovel/shovel_sound_settings.lua
 
-local settings = DLCSettings.shovel
+local var_0_0 = DLCSettings.shovel
 
-settings.dialogue_lookup = {
+var_0_0.dialogue_lookup = {
 	"dialogues/generated/lookup_bright_wizard_shovel",
-	"dialogues/generated/lookup_dlc_shovel",
+	"dialogues/generated/lookup_dlc_shovel"
 }
-settings.dialogue_settings = {
+var_0_0.dialogue_settings = {
 	inn_level = {
-		"dialogues/generated/dlc_shovel",
+		"dialogues/generated/dlc_shovel"
 	},
 	inn_level_halloween = {
-		"dialogues/generated/dlc_shovel",
+		"dialogues/generated/dlc_shovel"
 	},
 	inn_level_skulls = {
-		"dialogues/generated/dlc_shovel",
+		"dialogues/generated/dlc_shovel"
 	},
 	inn_level_sonnstill = {
-		"dialogues/generated/dlc_shovel",
+		"dialogues/generated/dlc_shovel"
 	},
 	morris_hub = {
-		"dialogues/generated/dlc_shovel",
-	},
+		"dialogues/generated/dlc_shovel"
+	}
 }
-settings.dialogue_events = {
+var_0_0.dialogue_events = {
 	"minion_command_attack",
-	"minion_command_defend",
+	"minion_command_defend"
 }
-settings.auto_load_files = {
-	"dialogues/generated/bright_wizard_shovel",
+var_0_0.auto_load_files = {
+	"dialogues/generated/bright_wizard_shovel"
 }
-settings.network_sound_events = {
+var_0_0.network_sound_events = {
 	"Play_career_necro_ability_raise_dead_cast",
 	"Play_career_necro_ability_raise_dead_cast_husk",
 	"Play_career_necro_ability_raise_dead_spawn",
@@ -50,5 +50,5 @@ settings.network_sound_events = {
 	"Play_skeleton_minion_charge_vce",
 	"Play_career_necro_ability_soul_rip_orb_pickup",
 	"Play_career_necro_skeleton_defend",
-	"Play_career_necro_ability_cursed_blood",
+	"Play_career_necro_ability_cursed_blood"
 }

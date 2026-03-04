@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/game_state/title_screen_substates/xb1/state_title_screen_init_network.lua
+-- chunkname: @scripts/game_state/title_screen_substates/xb1/state_title_screen_init_network.lua
 
 require("scripts/network/lobby_host")
 require("scripts/network/lobby_client")
@@ -12,65 +12,65 @@ require("scripts/network/network_transmit")
 StateTitleScreenInitNetwork = class(StateTitleScreenInitNetwork)
 StateTitleScreenInitNetwork.NAME = "StateTitleScreenInitNetwork"
 
-StateTitleScreenInitNetwork.on_enter = function (self, params)
+function StateTitleScreenInitNetwork.on_enter(arg_1_0, arg_1_1)
 	print("[Gamestate] Enter Substate StateTitleScreenInitNetwork")
 
-	self._params = params
-	self._world = self._params.world
-	self._viewport = self._params.viewport
+	arg_1_0._params = arg_1_1
+	arg_1_0._world = arg_1_0._params.world
+	arg_1_0._viewport = arg_1_0._params.viewport
 
-	self:_init_network()
+	arg_1_0:_init_network()
 end
 
-StateTitleScreenInitNetwork._init_network = function (self)
-	local auto_join_setting = Development.parameter("auto_join")
+function StateTitleScreenInitNetwork._init_network(arg_2_0)
+	local var_2_0 = Development.parameter("auto_join")
 
 	Development.set_parameter("auto_join", nil)
 
-	local increment_lobby_port = true
+	local var_2_1 = true
 
-	LobbySetup.setup_network_options(increment_lobby_port)
+	LobbySetup.setup_network_options(var_2_1)
 
-	local network_options = LobbySetup.network_options()
+	local var_2_2 = LobbySetup.network_options()
 
 	if not rawget(_G, "LobbyInternal") or not LobbyInternal.network_initialized() then
 		require("scripts/network/lobby_xbox_live")
-		LobbyInternal.init_client(network_options)
+		LobbyInternal.init_client(var_2_2)
 	end
 
-	self._network_state = "_create_session"
+	arg_2_0._network_state = "_create_session"
 end
 
-StateTitleScreenInitNetwork.update = function (self, dt, t)
-	if self[self._network_state] then
-		self[self._network_state](self, dt, t)
+function StateTitleScreenInitNetwork.update(arg_3_0, arg_3_1, arg_3_2)
+	if arg_3_0[arg_3_0._network_state] then
+		arg_3_0[arg_3_0._network_state](arg_3_0, arg_3_1, arg_3_2)
 	end
 
-	Network.update(dt, self._network_event_delegate.event_table)
-	Managers.backend:update(dt, t)
+	Network.update(arg_3_1, arg_3_0._network_event_delegate.event_table)
+	Managers.backend:update(arg_3_1, arg_3_2)
 
-	return self:_next_state()
+	return arg_3_0:_next_state()
 end
 
-StateTitleScreenInitNetwork._create_session = function (self)
-	local auto_join_setting = Development.parameter("auto_join")
-	local unique_server_name = Development.parameter("unique_server_name")
-	local loading_context = self.parent.parent.loading_context
+function StateTitleScreenInitNetwork._create_session(arg_4_0)
+	local var_4_0 = Development.parameter("auto_join")
+	local var_4_1 = Development.parameter("unique_server_name")
+	local var_4_2 = arg_4_0.parent.parent.loading_context
 
-	self._network_event_delegate = NetworkEventDelegate:new()
+	arg_4_0._network_event_delegate = NetworkEventDelegate:new()
 
-	Managers.level_transition_handler:register_rpcs(self._network_event_delegate)
-	Managers.mechanism:register_rpcs(self._network_event_delegate)
-	Managers.party:register_rpcs(self._network_event_delegate)
+	Managers.level_transition_handler:register_rpcs(arg_4_0._network_event_delegate)
+	Managers.mechanism:register_rpcs(arg_4_0._network_event_delegate)
+	Managers.party:register_rpcs(arg_4_0._network_event_delegate)
 
-	local network_options = LobbySetup.network_options()
+	local var_4_3 = LobbySetup.network_options()
 
-	if loading_context.join_lobby_data then
-		Managers.lobby:make_lobby(LobbyClient, "matchmaking_session_lobby", "StateTitleScreenInitNetwork (join_lobby_data)", network_options, loading_context.join_lobby_data)
+	if var_4_2.join_lobby_data then
+		Managers.lobby:make_lobby(LobbyClient, "matchmaking_session_lobby", "StateTitleScreenInitNetwork (join_lobby_data)", var_4_3, var_4_2.join_lobby_data)
 
-		loading_context.join_lobby_data = nil
-		self._network_state = "_update_lobby_client"
-	elseif auto_join_setting then
+		var_4_2.join_lobby_data = nil
+		arg_4_0._network_state = "_update_lobby_client"
+	elseif var_4_0 then
 		if Managers.package:is_loading("resource_packages/inventory", "global") then
 			Managers.package:load("resource_packages/inventory", "global")
 		end
@@ -79,182 +79,180 @@ StateTitleScreenInitNetwork._create_session = function (self)
 			Managers.package:load("resource_packages/careers", "global")
 		end
 
-		assert(unique_server_name, "No unique_server_name in %%appdata%%\\Roaming\\Fatshark\\Bulldozer\\user_settings.config")
+		assert(var_4_1, "No unique_server_name in %%appdata%%\\Roaming\\Fatshark\\Bulldozer\\user_settings.config")
 
-		self._lobby_finder = LobbyFinder:new(network_options, nil, true)
-		self._network_state = "_update_lobby_join"
+		arg_4_0._lobby_finder = LobbyFinder:new(var_4_3, nil, true)
+		arg_4_0._network_state = "_update_lobby_join"
 	else
-		assert(not loading_context.profile_synchronizer)
-		assert(not loading_context.network_server)
-		Managers.lobby:make_lobby(LobbyHost, "matchmaking_session_lobby", "StateTitleScreenInitNetwork (_create_session)", network_options)
+		assert(not var_4_2.profile_synchronizer)
+		assert(not var_4_2.network_server)
+		Managers.lobby:make_lobby(LobbyHost, "matchmaking_session_lobby", "StateTitleScreenInitNetwork (_create_session)", var_4_3)
 
-		self._network_state = "_creating_session_host"
+		arg_4_0._network_state = "_creating_session_host"
 	end
 end
 
-StateTitleScreenInitNetwork._creating_session_host = function (self, dt, t)
-	local lobby = Managers.lobby:get_lobby("matchmaking_session_lobby")
+function StateTitleScreenInitNetwork._creating_session_host(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = Managers.lobby:get_lobby("matchmaking_session_lobby")
 
-	lobby:update(dt)
+	var_5_0:update(arg_5_1)
 
-	local state = lobby.state
+	local var_5_1 = var_5_0.state
 
-	if state == LobbyState.JOINED then
-		self._network_state = "_join_session"
-	elseif state == LobbyState.FAILED then
-		self._network_state = "_error"
+	if var_5_1 == LobbyState.JOINED then
+		arg_5_0._network_state = "_join_session"
+	elseif var_5_1 == LobbyState.FAILED then
+		arg_5_0._network_state = "_error"
 	end
 end
 
-StateTitleScreenInitNetwork._join_session = function (self, dt, t)
-	local lobby = Managers.lobby:get_lobby("matchmaking_session_lobby")
+function StateTitleScreenInitNetwork._join_session(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = Managers.lobby:get_lobby("matchmaking_session_lobby")
 
-	lobby:update(dt)
+	var_6_0:update(arg_6_1)
 
-	local initial_level = Managers.mechanism:default_level_key()
-	local level_transition_handler = Managers.level_transition_handler
+	local var_6_1 = Managers.mechanism:default_level_key()
+	local var_6_2 = Managers.level_transition_handler
 
-	level_transition_handler:set_next_level(initial_level)
-	level_transition_handler:promote_next_level_data()
-	level_transition_handler:load_current_level()
+	var_6_2:set_next_level(var_6_1)
+	var_6_2:promote_next_level_data()
+	var_6_2:load_current_level()
 
-	local loading_context = self.parent.parent.loading_context
+	local var_6_3 = arg_6_0.parent.parent.loading_context
 
-	self._network_server = NetworkServer:new(Managers.player, lobby, nil)
-	self._network_transmit = loading_context.network_transmit or NetworkTransmit:new(true, self._network_server.server_peer_id)
+	arg_6_0._network_server = NetworkServer:new(Managers.player, var_6_0, nil)
+	arg_6_0._network_transmit = var_6_3.network_transmit or NetworkTransmit:new(true, arg_6_0._network_server.server_peer_id)
 
-	self._network_transmit:set_network_event_delegate(self._network_event_delegate)
-	self._network_server:register_rpcs(self._network_event_delegate, self._network_transmit)
-	self._network_server:server_join()
+	arg_6_0._network_transmit:set_network_event_delegate(arg_6_0._network_event_delegate)
+	arg_6_0._network_server:register_rpcs(arg_6_0._network_event_delegate, arg_6_0._network_transmit)
+	arg_6_0._network_server:server_join()
 
-	self._profile_synchronizer = self._network_server.profile_synchronizer
-	loading_context.network_transmit = self._network_transmit
+	arg_6_0._profile_synchronizer = arg_6_0._network_server.profile_synchronizer
+	var_6_3.network_transmit = arg_6_0._network_transmit
 
 	require("scripts/game_state/state_ingame")
 
-	self._wanted_game_state = StateIngame
-	self._network_state = "_update_host_lobby"
+	arg_6_0._wanted_game_state = StateIngame
+	arg_6_0._network_state = "_update_host_lobby"
 end
 
-StateTitleScreenInitNetwork._update_host_lobby = function (self, dt, t)
+function StateTitleScreenInitNetwork._update_host_lobby(arg_7_0, arg_7_1, arg_7_2)
 	Managers.level_transition_handler:update()
-	self._network_transmit:transmit_local_rpcs()
+	arg_7_0._network_transmit:transmit_local_rpcs()
 
-	local lobby = Managers.lobby:query_lobby("matchmaking_session_lobby")
+	local var_7_0 = Managers.lobby:query_lobby("matchmaking_session_lobby")
 
-	if lobby then
-		lobby:update(dt)
+	if var_7_0 then
+		var_7_0:update(arg_7_1)
 
-		local lobby_state = lobby.state
+		if var_7_0.state == LobbyState.FAILED and not arg_7_0._popup_id and arg_7_0._wanted_game_state then
+			local var_7_1 = "failure_start_no_lan"
 
-		if lobby_state == LobbyState.FAILED and not self._popup_id and self._wanted_game_state then
-			local text_id = "failure_start_no_lan"
-
-			self._popup_id = Managers.popup:queue_popup(Localize(text_id), Localize("popup_error_topic"), "quit", Localize("menu_quit"))
+			arg_7_0._popup_id = Managers.popup:queue_popup(Localize(var_7_1), Localize("popup_error_topic"), "quit", Localize("menu_quit"))
 		end
 	end
 
-	self._network_server:update(dt, t)
+	arg_7_0._network_server:update(arg_7_1, arg_7_2)
 end
 
-StateTitleScreenInitNetwork._update_lobby_client = function (self, dt, t)
+function StateTitleScreenInitNetwork._update_lobby_client(arg_8_0, arg_8_1, arg_8_2)
 	Managers.level_transition_handler:update()
 
-	local lobby = Managers.lobby:get_lobby("matchmaking_session_lobby")
+	local var_8_0 = Managers.lobby:get_lobby("matchmaking_session_lobby")
 
-	lobby:update(dt)
+	var_8_0:update(arg_8_1)
 
-	local new_lobby_state = lobby.state
+	local var_8_1 = var_8_0.state
 
-	if new_lobby_state == LobbyState.JOINED and not self._sent_joined then
-		local host = lobby:lobby_host()
+	if var_8_1 == LobbyState.JOINED and not arg_8_0._sent_joined then
+		local var_8_2 = var_8_0:lobby_host()
 
-		if host ~= "0" then
-			self._network_client = NetworkClient:new(host, nil, nil, nil, lobby)
-			self._network_transmit = NetworkTransmit:new(false, self._network_client.server_peer_id)
+		if var_8_2 ~= "0" then
+			arg_8_0._network_client = NetworkClient:new(var_8_2, nil, nil, nil, var_8_0)
+			arg_8_0._network_transmit = NetworkTransmit:new(false, arg_8_0._network_client.server_peer_id)
 
-			self._network_transmit:set_network_event_delegate(self._network_event_delegate)
-			self._network_client:register_rpcs(self._network_event_delegate, self._network_transmit)
+			arg_8_0._network_transmit:set_network_event_delegate(arg_8_0._network_event_delegate)
+			arg_8_0._network_client:register_rpcs(arg_8_0._network_event_delegate, arg_8_0._network_transmit)
 
-			self._profile_synchronizer = self._network_client.profile_synchronizer
-			self._sent_joined = true
+			arg_8_0._profile_synchronizer = arg_8_0._network_client.profile_synchronizer
+			arg_8_0._sent_joined = true
 		end
 	end
 
-	if new_lobby_state == LobbyState.FAILED and not self._popup_id then
-		self._popup_id = Managers.popup:queue_popup(Localize("failure_start_join_server"), Localize("popup_error_topic"), "restart_as_server", Localize("menu_accept"))
+	if var_8_1 == LobbyState.FAILED and not arg_8_0._popup_id then
+		arg_8_0._popup_id = Managers.popup:queue_popup(Localize("failure_start_join_server"), Localize("popup_error_topic"), "restart_as_server", Localize("menu_accept"))
 	end
 
-	if self._network_client then
-		self._network_client:update(dt, t)
+	if arg_8_0._network_client then
+		arg_8_0._network_client:update(arg_8_1, arg_8_2)
 
-		if self._network_client.state == NetworkClientStates.denied_enter_game and not self._popup_id then
-			local error_message = "failure_start_join_server"
-			local fail_reason = self._network_client.fail_reason
+		if arg_8_0._network_client.state == NetworkClientStates.denied_enter_game and not arg_8_0._popup_id then
+			local var_8_3 = "failure_start_join_server"
+			local var_8_4 = arg_8_0._network_client.fail_reason
 
-			if fail_reason then
-				error_message = error_message .. "_" .. fail_reason
+			if var_8_4 then
+				var_8_3 = var_8_3 .. "_" .. var_8_4
 			end
 
-			self._popup_id = Managers.popup:queue_popup(Localize(error_message), Localize("popup_error_topic"), "restart_as_server", Localize("menu_accept"))
+			arg_8_0._popup_id = Managers.popup:queue_popup(Localize(var_8_3), Localize("popup_error_topic"), "restart_as_server", Localize("menu_accept"))
 		end
 	end
 end
 
-StateTitleScreenInitNetwork._update_lobby_join = function (self, dt, t)
-	local lobby_finder = self._lobby_finder
+function StateTitleScreenInitNetwork._update_lobby_join(arg_9_0, arg_9_1, arg_9_2)
+	local var_9_0 = arg_9_0._lobby_finder
 
-	lobby_finder:update(dt)
+	var_9_0:update(arg_9_1)
 
-	local lobbies = lobby_finder:lobbies()
+	local var_9_1 = var_9_0:lobbies()
 
-	for i, lobby in ipairs(lobbies) do
-		local auto_join = lobby.unique_server_name == Development.parameter("unique_server_name")
+	for iter_9_0, iter_9_1 in ipairs(var_9_1) do
+		local var_9_2 = iter_9_1.unique_server_name == Development.parameter("unique_server_name")
 
-		if lobby.valid and auto_join then
-			local network_options = LobbySetup.network_options()
-			local level_transition_handler = Managers.level_transition_handler
+		if iter_9_1.valid and var_9_2 then
+			local var_9_3 = LobbySetup.network_options()
+			local var_9_4 = Managers.level_transition_handler
 
-			level_transition_handler:set_next_level(lobby.level_key)
-			level_transition_handler:promote_next_level_data()
-			level_transition_handler:load_current_level()
-			Managers.lobby:make_lobby(LobbyClient, "matchmaking_session_lobby", "StateTitleScreenInitNetwork (_update_lobby_join)", network_options, lobby)
+			var_9_4:set_next_level(iter_9_1.level_key)
+			var_9_4:promote_next_level_data()
+			var_9_4:load_current_level()
+			Managers.lobby:make_lobby(LobbyClient, "matchmaking_session_lobby", "StateTitleScreenInitNetwork (_update_lobby_join)", var_9_3, iter_9_1)
 
-			self._lobby_finder = nil
-			self._network_state = "_update_lobby_client"
+			arg_9_0._lobby_finder = nil
+			arg_9_0._network_state = "_update_lobby_client"
 
 			break
 		end
 	end
 end
 
-StateTitleScreenInitNetwork._error = function (self, dt, t)
+function StateTitleScreenInitNetwork._error(arg_10_0, arg_10_1, arg_10_2)
 	return
 end
 
-StateTitleScreenInitNetwork._next_state = function (self)
-	if not self:_packages_loaded() or not self._wanted_game_state then
+function StateTitleScreenInitNetwork._next_state(arg_11_0)
+	if not arg_11_0:_packages_loaded() or not arg_11_0._wanted_game_state then
 		return
 	end
 
-	if not self._debug_setup then
-		self._debug_setup = true
+	if not arg_11_0._debug_setup then
+		arg_11_0._debug_setup = true
 
-		Debug.setup(self._world, "init_network_ui")
+		Debug.setup(arg_11_0._world, "init_network_ui")
 	end
 
-	if self._popup_id then
-		local result = Managers.popup:query_result(self._popup_id)
+	if arg_11_0._popup_id then
+		local var_11_0 = Managers.popup:query_result(arg_11_0._popup_id)
 
-		if result == "quit" then
+		if var_11_0 == "quit" then
 			Boot.quit_game = true
-		elseif result == "restart_as_server" then
-			self._popup_id = nil
+		elseif var_11_0 == "restart_as_server" then
+			arg_11_0._popup_id = nil
 
-			if self._lobby_finder then
-				self._lobby_finder:destroy()
+			if arg_11_0._lobby_finder then
+				arg_11_0._lobby_finder:destroy()
 
-				self._lobby_finder = nil
+				arg_11_0._lobby_finder = nil
 			end
 
 			if Managers.lobby:query_lobby("matchmaking_session_lobby") then
@@ -262,43 +260,43 @@ StateTitleScreenInitNetwork._next_state = function (self)
 				Managers.account:set_current_lobby(nil)
 			end
 
-			if self._network_server then
-				self._network_server:destroy()
+			if arg_11_0._network_server then
+				arg_11_0._network_server:destroy()
 
-				self._network_server = nil
-			elseif self._network_client then
-				self._network_client:destroy()
+				arg_11_0._network_server = nil
+			elseif arg_11_0._network_client then
+				arg_11_0._network_client:destroy()
 
-				self._network_client = nil
+				arg_11_0._network_client = nil
 			end
 
-			self._profile_synchronizer = nil
+			arg_11_0._profile_synchronizer = nil
 
-			local network_options = LobbySetup.network_options()
+			local var_11_1 = LobbySetup.network_options()
 
-			Managers.lobby:make_lobby(LobbyHost, "matchmaking_session_lobby", "StateTitleScreenInitNetwork (_next_state)", network_options)
+			Managers.lobby:make_lobby(LobbyHost, "matchmaking_session_lobby", "StateTitleScreenInitNetwork (_next_state)", var_11_1)
 
-			self._network_state = "_creating_session_host"
-		elseif result == "continue" then
-			self._popup_id = nil
+			arg_11_0._network_state = "_creating_session_host"
+		elseif var_11_0 == "continue" then
+			arg_11_0._popup_id = nil
 		end
 
 		return
 	end
 
-	local lobby = Managers.lobby:query_lobby("matchmaking_session_lobby")
+	local var_11_2 = Managers.lobby:query_lobby("matchmaking_session_lobby")
 
-	if self._lobby_finder or lobby and lobby.state ~= LobbyState.JOINED then
+	if arg_11_0._lobby_finder or var_11_2 and var_11_2.state ~= LobbyState.JOINED then
 		return
 	end
 
-	if not self._sent_joined and not lobby or lobby.is_host and lobby.state == lobby.FAILED then
+	if not arg_11_0._sent_joined and not var_11_2 or var_11_2.is_host and var_11_2.state == var_11_2.FAILED then
 		return
 	end
 
-	if self._network_client and not self._network_client:can_enter_game() then
+	if arg_11_0._network_client and not arg_11_0._network_client:can_enter_game() then
 		return
-	elseif self._network_server and not self._network_server:can_enter_game() then
+	elseif arg_11_0._network_server and not arg_11_0._network_server:can_enter_game() then
 		return
 	end
 
@@ -306,11 +304,11 @@ StateTitleScreenInitNetwork._next_state = function (self)
 		return
 	end
 
-	self.parent.state = self._wanted_game_state
-	self._wanted_game_state = nil
+	arg_11_0.parent.state = arg_11_0._wanted_game_state
+	arg_11_0._wanted_game_state = nil
 end
 
-StateTitleScreenInitNetwork.on_exit = function (self, application_shutdown)
+function StateTitleScreenInitNetwork.on_exit(arg_12_0, arg_12_1)
 	Managers.level_transition_handler:unregister_rpcs()
 
 	if Managers.mechanism then
@@ -321,19 +319,19 @@ StateTitleScreenInitNetwork.on_exit = function (self, application_shutdown)
 		Managers.party:unregister_rpcs()
 	end
 
-	if application_shutdown then
+	if arg_12_1 then
 		if Managers.party:has_party_lobby() then
-			local lobby = Managers.party:steal_lobby()
+			local var_12_0 = Managers.party:steal_lobby()
 
-			if type(lobby) ~= "table" then
-				LobbyInternal.leave_lobby(lobby)
+			if type(var_12_0) ~= "table" then
+				LobbyInternal.leave_lobby(var_12_0)
 			end
 		end
 
-		if self._lobby_finder then
-			self._lobby_finder:destroy()
+		if arg_12_0._lobby_finder then
+			arg_12_0._lobby_finder:destroy()
 
-			self._lobby_finder = nil
+			arg_12_0._lobby_finder = nil
 		end
 
 		if Managers.lobby:query_lobby("matchmaking_session_lobby") then
@@ -341,82 +339,79 @@ StateTitleScreenInitNetwork.on_exit = function (self, application_shutdown)
 			Managers.account:set_current_lobby(nil)
 		end
 
-		if self._network_server then
-			self._network_server:destroy()
+		if arg_12_0._network_server then
+			arg_12_0._network_server:destroy()
 
-			self._network_server = nil
-		elseif self._network_client then
-			self._network_client:destroy()
+			arg_12_0._network_server = nil
+		elseif arg_12_0._network_client then
+			arg_12_0._network_client:destroy()
 
-			self._network_client = nil
+			arg_12_0._network_client = nil
 		end
 
 		if rawget(_G, "LobbyInternal") then
 			LobbyInternal.shutdown_client()
 		end
 
-		self.parent.loading_context.network_transmit = nil
+		arg_12_0.parent.loading_context.network_transmit = nil
 
-		if self._network_transmit then
-			self._network_transmit:destroy()
+		if arg_12_0._network_transmit then
+			arg_12_0._network_transmit:destroy()
 
-			self._network_transmit = nil
+			arg_12_0._network_transmit = nil
 		end
 	else
-		local loading_context = {
-			network_transmit = self._network_transmit,
+		local var_12_1 = {
+			network_transmit = arg_12_0._network_transmit
 		}
-		local lobby = Managers.lobby:get_lobby("matchmaking_session_lobby")
+		local var_12_2 = Managers.lobby:get_lobby("matchmaking_session_lobby")
 
-		if lobby.is_host then
-			local level_key = Managers.level_transition_handler:get_current_level_keys()
-			local stored_lobby_host_data = lobby:get_stored_lobby_data() or {}
+		if var_12_2.is_host then
+			local var_12_3
 
-			stored_lobby_host_data.level_key = level_key
-			stored_lobby_host_data.unique_server_name = stored_lobby_host_data.unique_server_name or LobbyAux.get_unique_server_name()
-			stored_lobby_host_data.host = stored_lobby_host_data.host or Network.peer_id()
-			stored_lobby_host_data.num_players = stored_lobby_host_data.num_players or 1
-			stored_lobby_host_data.matchmaking = "false"
+			var_12_3.level_key, var_12_3 = Managers.level_transition_handler:get_current_level_keys(), var_12_2:get_stored_lobby_data() or {}
+			var_12_3.unique_server_name = var_12_3.unique_server_name or LobbyAux.get_unique_server_name()
+			var_12_3.host = var_12_3.host or Network.peer_id()
+			var_12_3.num_players = var_12_3.num_players or 1
+			var_12_3.matchmaking = "false"
 
-			lobby:set_lobby_data(stored_lobby_host_data)
+			var_12_2:set_lobby_data(var_12_3)
 
-			loading_context.network_server = self._network_server
+			var_12_1.network_server = arg_12_0._network_server
 
-			self._network_server:unregister_rpcs()
+			arg_12_0._network_server:unregister_rpcs()
 		else
-			loading_context.network_client = self._network_client
+			var_12_1.network_client = arg_12_0._network_client
 
-			self._network_client:unregister_rpcs()
+			arg_12_0._network_client:unregister_rpcs()
 		end
 
-		self.parent.parent.loading_context = loading_context
+		arg_12_0.parent.parent.loading_context = var_12_1
 	end
 
-	self._profile_synchronizer = nil
+	arg_12_0._profile_synchronizer = nil
 
-	if self._network_event_delegate then
-		self._network_event_delegate:destroy()
+	if arg_12_0._network_event_delegate then
+		arg_12_0._network_event_delegate:destroy()
 
-		self._network_event_delegate = nil
+		arg_12_0._network_event_delegate = nil
 	end
 end
 
-StateTitleScreenInitNetwork._packages_loaded = function (self)
-	local level_transition_handler = Managers.level_transition_handler
+function StateTitleScreenInitNetwork._packages_loaded(arg_13_0)
+	local var_13_0 = Managers.level_transition_handler
 
-	if level_transition_handler:all_packages_loaded() then
-		if self._network_server and not self._has_sent_level_loaded then
-			self._has_sent_level_loaded = true
+	if var_13_0:all_packages_loaded() then
+		if arg_13_0._network_server and not arg_13_0._has_sent_level_loaded then
+			arg_13_0._has_sent_level_loaded = true
 
-			local level_name = level_transition_handler:get_current_level_keys()
-			local level_index = NetworkLookup.level_keys[level_name]
+			local var_13_1 = var_13_0:get_current_level_keys()
+			local var_13_2 = NetworkLookup.level_keys[var_13_1]
 
-			self._network_server.network_transmit:send_rpc("rpc_level_loaded", Network.peer_id(), level_index)
+			arg_13_0._network_server.network_transmit:send_rpc("rpc_level_loaded", Network.peer_id(), var_13_2)
 		end
 
-		local global_resources_loaded = GlobalResources.update_loading()
-
-		return global_resources_loaded
+		return (GlobalResources.update_loading())
 	end
 
 	return true

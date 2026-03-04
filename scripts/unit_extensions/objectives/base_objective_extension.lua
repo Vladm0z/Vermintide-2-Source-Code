@@ -1,300 +1,297 @@
-﻿-- chunkname: @scripts/unit_extensions/objectives/base_objective_extension.lua
+-- chunkname: @scripts/unit_extensions/objectives/base_objective_extension.lua
 
 BaseObjectiveExtension = class(BaseObjectiveExtension)
 BaseObjectiveExtension.NAME = "BaseObjectiveExtension"
 
-BaseObjectiveExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self._is_server = extension_init_context.is_server
-	self._unit = unit
-	self._world = extension_init_context.world
-	self._objective_name = extension_init_data.objective_name or Unit.get_data(unit, "objective_id")
-	self._objecive_system = Managers.state.entity:system("objective_system")
-	self._objective_name = self._objective_name or Unit.get_data(unit, "versus_objective_id") or Unit.get_data(unit, "weave_objective_id")
+function BaseObjectiveExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._is_server = arg_1_1.is_server
+	arg_1_0._unit = arg_1_2
+	arg_1_0._world = arg_1_1.world
+	arg_1_0._objective_name = arg_1_3.objective_name or Unit.get_data(arg_1_2, "objective_id")
+	arg_1_0._objecive_system = Managers.state.entity:system("objective_system")
+	arg_1_0._objective_name = arg_1_0._objective_name or Unit.get_data(arg_1_2, "versus_objective_id") or Unit.get_data(arg_1_2, "weave_objective_id")
 
-	assert(self._objective_name, "[BaseObjectiveExtension] Missing objective name")
+	assert(arg_1_0._objective_name, "[BaseObjectiveExtension] Missing objective name")
 
-	self._audio_system = Managers.state.entity:system("audio_system")
-	self._wwise_world = Managers.world:wwise_world(self._world)
-	self._scale = extension_init_data.scale or Vector3(1, 1, 1)
-	self._num_sections = 1
-	self._current_section = 0
-	self._percentage = 0
-	self._cached_value = 0
+	arg_1_0._audio_system = Managers.state.entity:system("audio_system")
+	arg_1_0._wwise_world = Managers.world:wwise_world(arg_1_0._world)
+	arg_1_0._scale = arg_1_3.scale or Vector3(1, 1, 1)
+	arg_1_0._num_sections = 1
+	arg_1_0._current_section = 0
+	arg_1_0._percentage = 0
+	arg_1_0._cached_value = 0
 
-	Unit.set_local_scale(unit, 0, self._scale)
+	Unit.set_local_scale(arg_1_2, 0, arg_1_0._scale)
 end
 
-BaseObjectiveExtension.set_objective_data = function (self, objective_data)
-	self._objective_type = objective_data.objective_type
-	self._objective_tag = objective_data.objective_tag
-	self._on_complete_func = objective_data.on_complete_func
-	self._description = objective_data.description or "unlocalized_description"
-	self._display_name = objective_data.display_name
-	self._objective_icon = objective_data.objective_type or "icons_placeholder"
-	self._score_for_completion = objective_data.score_for_completion or 0
-	self._time_for_completion = objective_data.time_for_completion or 0
-	self._on_last_leaf_complete_sound_event = objective_data.on_last_leaf_complete_sound_event
-	self._on_leaf_complete_sound_event = objective_data.on_leaf_complete_sound_event
-	self._on_section_progress_sound_event = objective_data.on_section_progress_sound_event
-	self._always_show_objective_marker = objective_data.always_show_objective_marker
+function BaseObjectiveExtension.set_objective_data(arg_2_0, arg_2_1)
+	arg_2_0._objective_type = arg_2_1.objective_type
+	arg_2_0._objective_tag = arg_2_1.objective_tag
+	arg_2_0._on_complete_func = arg_2_1.on_complete_func
+	arg_2_0._description = arg_2_1.description or "unlocalized_description"
+	arg_2_0._display_name = arg_2_1.display_name
+	arg_2_0._objective_icon = arg_2_1.objective_type or "icons_placeholder"
+	arg_2_0._score_for_completion = arg_2_1.score_for_completion or 0
+	arg_2_0._time_for_completion = arg_2_1.time_for_completion or 0
+	arg_2_0._on_last_leaf_complete_sound_event = arg_2_1.on_last_leaf_complete_sound_event
+	arg_2_0._on_leaf_complete_sound_event = arg_2_1.on_leaf_complete_sound_event
+	arg_2_0._on_section_progress_sound_event = arg_2_1.on_section_progress_sound_event
+	arg_2_0._always_show_objective_marker = arg_2_1.always_show_objective_marker
 
-	self:_set_objective_data(objective_data)
+	arg_2_0:_set_objective_data(arg_2_1)
 end
 
-BaseObjectiveExtension.activate = function (self)
-	self:_activate()
-	self:_store_position()
-	self:_store_local_player()
+function BaseObjectiveExtension.activate(arg_3_0)
+	arg_3_0:_activate()
+	arg_3_0:_store_position()
+	arg_3_0:_store_local_player()
 
-	self._activated = true
+	arg_3_0._activated = true
 end
 
-BaseObjectiveExtension.objective_tag = function (self)
-	return self._objective_tag
+function BaseObjectiveExtension.objective_tag(arg_4_0)
+	return arg_4_0._objective_tag
 end
 
-BaseObjectiveExtension._store_local_player = function (self)
+function BaseObjectiveExtension._store_local_player(arg_5_0)
 	if not DEDICATED_SERVER then
-		self:_local_side()
+		arg_5_0:_local_side()
 	end
 end
 
-BaseObjectiveExtension.sync_objective = function (self, game_object_id, game_session)
-	self._game_object_id = game_object_id
+function BaseObjectiveExtension.sync_objective(arg_6_0, arg_6_1, arg_6_2)
+	arg_6_0._game_object_id = arg_6_1
 end
 
-BaseObjectiveExtension.desync_objective = function (self)
-	self._game_object_id = nil
+function BaseObjectiveExtension.desync_objective(arg_7_0)
+	arg_7_0._game_object_id = nil
 end
 
-BaseObjectiveExtension._local_side = function (self)
-	local local_player = Managers.player:local_player()
+function BaseObjectiveExtension._local_side(arg_8_0)
+	local var_8_0 = Managers.player:local_player()
 
-	if local_player then
-		local peer_id = local_player:network_id()
-		local local_player_id = local_player:local_player_id()
-		local party = Managers.party:get_party_from_player_id(peer_id, local_player_id)
+	if var_8_0 then
+		local var_8_1 = var_8_0:network_id()
+		local var_8_2 = var_8_0:local_player_id()
+		local var_8_3 = Managers.party:get_party_from_player_id(var_8_1, var_8_2)
 
-		if party then
-			self._local_side_cached = Managers.state.side.side_by_party[party]
+		if var_8_3 then
+			arg_8_0._local_side_cached = Managers.state.side.side_by_party[var_8_3]
 		end
 	end
 
-	return self._local_side_cached
+	return arg_8_0._local_side_cached
 end
 
-BaseObjectiveExtension.complete = function (self, is_root_objective, is_leaf_objective, is_last_leaf_objective)
-	if self._is_server and self._on_complete_func then
-		self._on_complete_func(self._unit)
+function BaseObjectiveExtension.complete(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	if arg_9_0._is_server and arg_9_0._on_complete_func then
+		arg_9_0._on_complete_func(arg_9_0._unit)
 	end
 
 	if not DEDICATED_SERVER then
-		local leaf_complete_sound_event = self._on_leaf_complete_sound_event
-		local last_leaf_complete_sound_event = self._on_last_leaf_complete_sound_event or leaf_complete_sound_event
+		local var_9_0 = arg_9_0._on_leaf_complete_sound_event
+		local var_9_1 = arg_9_0._on_last_leaf_complete_sound_event or var_9_0
 
-		if is_last_leaf_objective and last_leaf_complete_sound_event then
-			local side_name = self:_local_side():name()
-			local complete_event = last_leaf_complete_sound_event[side_name]
+		if arg_9_3 and var_9_1 then
+			local var_9_2 = var_9_1[arg_9_0:_local_side():name()]
 
-			if complete_event then
-				self:play_local_sound(complete_event)
+			if var_9_2 then
+				arg_9_0:play_local_sound(var_9_2)
 			end
-		elseif leaf_complete_sound_event and is_leaf_objective then
-			local side_name = self:_local_side():name()
-			local complete_event = leaf_complete_sound_event[side_name]
+		elseif var_9_0 and arg_9_2 then
+			local var_9_3 = var_9_0[arg_9_0:_local_side():name()]
 
-			if complete_event then
-				self:play_local_sound(complete_event)
+			if var_9_3 then
+				arg_9_0:play_local_sound(var_9_3)
 			end
 		end
 	end
 
-	self:deactivate()
+	arg_9_0:deactivate()
 end
 
-BaseObjectiveExtension.deactivate = function (self)
-	self:_deactivate()
+function BaseObjectiveExtension.deactivate(arg_10_0)
+	arg_10_0:_deactivate()
 
-	self._percentage = 1
-	self._game_object_id = nil
-	self._activated = false
+	arg_10_0._percentage = 1
+	arg_10_0._game_object_id = nil
+	arg_10_0._activated = false
 end
 
-BaseObjectiveExtension.play_local_sound = function (self, event)
-	WwiseWorld.trigger_event(self._wwise_world, event)
+function BaseObjectiveExtension.play_local_sound(arg_11_0, arg_11_1)
+	WwiseWorld.trigger_event(arg_11_0._wwise_world, arg_11_1)
 end
 
-BaseObjectiveExtension.play_local_unit_sound = function (self, event)
-	WwiseUtils.trigger_unit_event(self._world, event, self._unit, 0)
+function BaseObjectiveExtension.play_local_unit_sound(arg_12_0, arg_12_1)
+	WwiseUtils.trigger_unit_event(arg_12_0._world, arg_12_1, arg_12_0._unit, 0)
 end
 
-BaseObjectiveExtension.play_unit_sound = function (self, event)
-	self._audio_system:play_audio_unit_event(event, self._unit)
+function BaseObjectiveExtension.play_unit_sound(arg_13_0, arg_13_1)
+	arg_13_0._audio_system:play_audio_unit_event(arg_13_1, arg_13_0._unit)
 end
 
-BaseObjectiveExtension.unit = function (self)
-	return self._unit
+function BaseObjectiveExtension.unit(arg_14_0)
+	return arg_14_0._unit
 end
 
-BaseObjectiveExtension.display_name = function (self)
-	return self._display_name
+function BaseObjectiveExtension.display_name(arg_15_0)
+	return arg_15_0._display_name
 end
 
-BaseObjectiveExtension.is_stacking_objective = function (self)
+function BaseObjectiveExtension.is_stacking_objective(arg_16_0)
 	return false
 end
 
-BaseObjectiveExtension.update = function (self, dt, t)
-	if script_data.testify and self.update_testify then
-		self:update_testify(dt, t)
+function BaseObjectiveExtension.update(arg_17_0, arg_17_1, arg_17_2)
+	if script_data.testify and arg_17_0.update_testify then
+		arg_17_0:update_testify(arg_17_1, arg_17_2)
 	end
 
-	if not self._activated then
+	if not arg_17_0._activated then
 		return
 	end
 
-	if self._is_server then
-		self:_server_update(dt, t)
+	if arg_17_0._is_server then
+		arg_17_0:_server_update(arg_17_1, arg_17_2)
 	else
-		self:_client_update(dt, t)
+		arg_17_0:_client_update(arg_17_1, arg_17_2)
 	end
 end
 
-BaseObjectiveExtension.on_section_completed = function (self)
-	self._current_section = self._current_section + 1
+function BaseObjectiveExtension.on_section_completed(arg_18_0)
+	arg_18_0._current_section = arg_18_0._current_section + 1
 
-	Managers.state.event:trigger("obj_objective_section_completed", self)
+	Managers.state.event:trigger("obj_objective_section_completed", arg_18_0)
 
-	if self:is_done() then
+	if arg_18_0:is_done() then
 		return
 	end
 
-	local sound_event = self._on_section_progress_sound_event
+	local var_18_0 = arg_18_0._on_section_progress_sound_event
 
-	if sound_event then
-		local side = self:_local_side()
+	if var_18_0 then
+		local var_18_1 = arg_18_0:_local_side()
 
-		if side then
-			local side_name = side:name()
-			local progress_event = sound_event[side_name]
+		if var_18_1 then
+			local var_18_2 = var_18_0[var_18_1:name()]
 
-			if progress_event then
-				self:play_local_sound(progress_event)
+			if var_18_2 then
+				arg_18_0:play_local_sound(var_18_2)
 			end
 		end
 	end
 end
 
-BaseObjectiveExtension.server_set_value = function (self, value)
-	local game_session = Network.game_session()
+function BaseObjectiveExtension.server_set_value(arg_19_0, arg_19_1)
+	local var_19_0 = Network.game_session()
 
-	if game_session then
-		GameSession.set_game_object_field(game_session, self._game_object_id, "value", math.clamp01(value))
+	if var_19_0 then
+		GameSession.set_game_object_field(var_19_0, arg_19_0._game_object_id, "value", math.clamp01(arg_19_1))
 	end
 end
 
-BaseObjectiveExtension.client_get_value = function (self)
-	local game_session = Network.game_session()
+function BaseObjectiveExtension.client_get_value(arg_20_0)
+	local var_20_0 = Network.game_session()
 
-	if not game_session or not self._game_object_id then
-		return self._cached_value
+	if not var_20_0 or not arg_20_0._game_object_id then
+		return arg_20_0._cached_value
 	end
 
-	self._cached_value = GameSession.game_object_field(game_session, self._game_object_id, "value")
+	arg_20_0._cached_value = GameSession.game_object_field(var_20_0, arg_20_0._game_object_id, "value")
 
-	return self._cached_value
+	return arg_20_0._cached_value
 end
 
-BaseObjectiveExtension._store_position = function (self)
-	local position = Unit.local_position(self._unit, 0)
+function BaseObjectiveExtension._store_position(arg_21_0)
+	local var_21_0 = Unit.local_position(arg_21_0._unit, 0)
 
-	self._position = Vector3Box(position)
+	arg_21_0._position = Vector3Box(var_21_0)
 end
 
-BaseObjectiveExtension._activate = function (self)
+function BaseObjectiveExtension._activate(arg_22_0)
 	error("This function needs to be overwritten")
 end
 
-BaseObjectiveExtension._deactivate = function (self)
+function BaseObjectiveExtension._deactivate(arg_23_0)
 	error("This function needs to be overwritten")
 end
 
-BaseObjectiveExtension._server_update = function (self, dt, t)
+function BaseObjectiveExtension._server_update(arg_24_0, arg_24_1, arg_24_2)
 	error("This function needs to be overwritten")
 end
 
-BaseObjectiveExtension._client_update = function (self, dt, t)
+function BaseObjectiveExtension._client_update(arg_25_0, arg_25_1, arg_25_2)
 	error("This function needs to be overwritten")
 end
 
-BaseObjectiveExtension.get_percentage_done = function (self)
+function BaseObjectiveExtension.get_percentage_done(arg_26_0)
 	error("This function needs to be overwritten")
 end
 
-BaseObjectiveExtension.objective_name = function (self)
-	return self._objective_name
+function BaseObjectiveExtension.objective_name(arg_27_0)
+	return arg_27_0._objective_name
 end
 
-BaseObjectiveExtension.get_current_section = function (self)
-	return self._current_section
+function BaseObjectiveExtension.get_current_section(arg_28_0)
+	return arg_28_0._current_section
 end
 
-BaseObjectiveExtension.get_total_sections = function (self)
-	return self._num_sections
+function BaseObjectiveExtension.get_total_sections(arg_29_0)
+	return arg_29_0._num_sections
 end
 
-BaseObjectiveExtension.get_num_sections_left = function (self)
-	return self._current_section - self._num_sections
+function BaseObjectiveExtension.get_num_sections_left(arg_30_0)
+	return arg_30_0._current_section - arg_30_0._num_sections
 end
 
-BaseObjectiveExtension.get_time_per_section = function (self)
-	return self._time_per_section
+function BaseObjectiveExtension.get_time_per_section(arg_31_0)
+	return arg_31_0._time_per_section
 end
 
-BaseObjectiveExtension.get_score_per_section = function (self)
-	return self._score_per_section
+function BaseObjectiveExtension.get_score_per_section(arg_32_0)
+	return arg_32_0._score_per_section
 end
 
-BaseObjectiveExtension.get_time_for_completion = function (self)
-	return self._time_for_completion
+function BaseObjectiveExtension.get_time_for_completion(arg_33_0)
+	return arg_33_0._time_for_completion
 end
 
-BaseObjectiveExtension.get_score_for_completion = function (self)
-	return self._score_for_completion
+function BaseObjectiveExtension.get_score_for_completion(arg_34_0)
+	return arg_34_0._score_for_completion
 end
 
-BaseObjectiveExtension.get_position = function (self)
-	if self._position then
-		return self._position:unbox()
+function BaseObjectiveExtension.get_position(arg_35_0)
+	if arg_35_0._position then
+		return arg_35_0._position:unbox()
 	else
-		return Unit.world_position(self._unit, 0)
+		return Unit.world_position(arg_35_0._unit, 0)
 	end
 end
 
-BaseObjectiveExtension.is_optional = function (self)
-	return self._optional
+function BaseObjectiveExtension.is_optional(arg_36_0)
+	return arg_36_0._optional
 end
 
-BaseObjectiveExtension.description = function (self)
-	return self._description
+function BaseObjectiveExtension.description(arg_37_0)
+	return arg_37_0._description
 end
 
-BaseObjectiveExtension.objective_icon = function (self)
-	return self._objective_icon
+function BaseObjectiveExtension.objective_icon(arg_38_0)
+	return arg_38_0._objective_icon
 end
 
-BaseObjectiveExtension.objective_type = function (self)
-	return self._objective_type
+function BaseObjectiveExtension.objective_type(arg_39_0)
+	return arg_39_0._objective_type
 end
 
-BaseObjectiveExtension.is_done = function (self)
-	return self:get_percentage_done() >= 1
+function BaseObjectiveExtension.is_done(arg_40_0)
+	return arg_40_0:get_percentage_done() >= 1
 end
 
-BaseObjectiveExtension.is_active = function (self)
-	return self._activated
+function BaseObjectiveExtension.is_active(arg_41_0)
+	return arg_41_0._activated
 end
 
-BaseObjectiveExtension.always_show_objective_marker = function (self)
-	return self._always_show_objective_marker
+function BaseObjectiveExtension.always_show_objective_marker(arg_42_0)
+	return arg_42_0._always_show_objective_marker
 end

@@ -1,332 +1,317 @@
-﻿-- chunkname: @scripts/entity_system/systems/damage/death_system.lua
+-- chunkname: @scripts/entity_system/systems/damage/death_system.lua
 
 DeathSystem = class(DeathSystem, ExtensionSystemBase)
 
-local RPCS = {
-	"rpc_forced_kill",
+local var_0_0 = {
+	"rpc_forced_kill"
 }
-local extensions = {
-	"GenericDeathExtension",
+local var_0_1 = {
+	"GenericDeathExtension"
 }
-local BLACKBOARDS = BLACKBOARDS
+local var_0_2 = BLACKBOARDS
 
-DeathSystem.init = function (self, entity_system_creation_context, system_name)
-	DeathSystem.super.init(self, entity_system_creation_context, system_name, extensions)
+function DeathSystem.init(arg_1_0, arg_1_1, arg_1_2)
+	DeathSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
-	local network_event_delegate = entity_system_creation_context.network_event_delegate
+	local var_1_0 = arg_1_1.network_event_delegate
 
-	self.network_event_delegate = network_event_delegate
+	arg_1_0.network_event_delegate = var_1_0
 
-	network_event_delegate:register(self, unpack(RPCS))
+	var_1_0:register(arg_1_0, unpack(var_0_0))
 
-	self.unit_extensions = {}
-	self.frozen_unit_extensions = {}
-	self.death_reactions_to_start = {}
-	self.active_reactions = {
+	arg_1_0.unit_extensions = {}
+	arg_1_0.frozen_unit_extensions = {}
+	arg_1_0.death_reactions_to_start = {}
+	arg_1_0.active_reactions = {
 		unit = {},
-		husk = {},
+		husk = {}
 	}
-	self._current_death_reaction_killing_blow = nil
+	arg_1_0._current_death_reaction_killing_blow = nil
 end
 
-DeathSystem.destroy = function (self)
-	self.network_event_delegate:unregister(self)
+function DeathSystem.destroy(arg_2_0)
+	arg_2_0.network_event_delegate:unregister(arg_2_0)
 end
 
-DeathSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
-	local extension = ScriptUnit.add_extension(self.extension_init_context, unit, extension_name, self.NAME, extension_init_data)
+function DeathSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local var_3_0 = ScriptUnit.add_extension(arg_3_0.extension_init_context, arg_3_2, arg_3_3, arg_3_0.NAME, arg_3_4)
 
-	self.unit_extensions[unit] = extension
+	arg_3_0.unit_extensions[arg_3_2] = var_3_0
 
-	local template = extension_init_data.death_reaction_template or Unit.get_data(unit, "death_reaction")
+	local var_3_1 = arg_3_4.death_reaction_template or Unit.get_data(arg_3_2, "death_reaction")
 
-	self:set_death_reaction_template(unit, template)
-	fassert(extension.death_reaction_template, "Missing death reaction template in unit data or extension init data.")
+	arg_3_0:set_death_reaction_template(arg_3_2, var_3_1)
+	fassert(var_3_0.death_reaction_template, "Missing death reaction template in unit data or extension init data.")
 
-	return extension
+	return var_3_0
 end
 
-DeathSystem.extensions_ready = function (self, world, unit, extension_name)
-	local extension = self.unit_extensions[unit]
-	local health_extension = ScriptUnit.extension(unit, "health_system")
-
-	extension.health_extension = health_extension
+function DeathSystem.extensions_ready(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	arg_4_0.unit_extensions[arg_4_2].health_extension = ScriptUnit.extension(arg_4_2, "health_system")
 end
 
-DeathSystem.on_remove_extension = function (self, unit, extension_name)
-	self.frozen_unit_extensions[unit] = nil
+function DeathSystem.on_remove_extension(arg_5_0, arg_5_1, arg_5_2)
+	arg_5_0.frozen_unit_extensions[arg_5_1] = nil
 
-	self:_cleanup_extension(unit, extension_name)
-	ScriptUnit.remove_extension(unit, self.NAME)
+	arg_5_0:_cleanup_extension(arg_5_1, arg_5_2)
+	ScriptUnit.remove_extension(arg_5_1, arg_5_0.NAME)
 end
 
-DeathSystem.on_freeze_extension = function (self, unit, extension_name)
+function DeathSystem.on_freeze_extension(arg_6_0, arg_6_1, arg_6_2)
 	ferror("Shouldn't get called, should run during death until unspawned/frozen.")
 end
 
-DeathSystem._cleanup_extension = function (self, unit, extension_name)
-	local extension = self.unit_extensions[unit]
+function DeathSystem._cleanup_extension(arg_7_0, arg_7_1, arg_7_2)
+	local var_7_0 = arg_7_0.unit_extensions[arg_7_1]
 
-	if extension == nil then
+	if var_7_0 == nil then
 		return
 	end
 
-	extension.death_has_started = false
-	self.unit_extensions[unit] = nil
-	self.death_reactions_to_start[unit] = nil
-	self.active_reactions[extension.network_type][extension.death_reaction_template][unit] = nil
+	var_7_0.death_has_started = false
+	arg_7_0.unit_extensions[arg_7_1] = nil
+	arg_7_0.death_reactions_to_start[arg_7_1] = nil
+	arg_7_0.active_reactions[var_7_0.network_type][var_7_0.death_reaction_template][arg_7_1] = nil
 end
 
-DeathSystem.freeze = function (self, unit, extension_name, reason)
-	fassert(self.frozen_unit_extensions[unit] == nil, "Extension shouldn't be frozen on death")
+function DeathSystem.freeze(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	fassert(arg_8_0.frozen_unit_extensions[arg_8_1] == nil, "Extension shouldn't be frozen on death")
 
-	local extension = self.unit_extensions[unit]
+	local var_8_0 = arg_8_0.unit_extensions[arg_8_1]
 
-	fassert(extension, "Unit to freeze didn't have unfrozen extension")
-	extension:freeze()
-	self:_cleanup_extension(unit, extension_name)
+	fassert(var_8_0, "Unit to freeze didn't have unfrozen extension")
+	var_8_0:freeze()
+	arg_8_0:_cleanup_extension(arg_8_1, arg_8_2)
 
-	self.unit_extensions[unit] = nil
-	self.frozen_unit_extensions[unit] = extension
+	arg_8_0.unit_extensions[arg_8_1] = nil
+	arg_8_0.frozen_unit_extensions[arg_8_1] = var_8_0
 end
 
-DeathSystem.unfreeze = function (self, unit, extension_name)
-	local extension = self.frozen_unit_extensions[unit]
+function DeathSystem.unfreeze(arg_9_0, arg_9_1, arg_9_2)
+	local var_9_0 = arg_9_0.frozen_unit_extensions[arg_9_1]
 
-	fassert(extension, "Unit to unfreeze didn't have frozen extension")
+	fassert(var_9_0, "Unit to unfreeze didn't have frozen extension")
 
-	self.frozen_unit_extensions[unit] = nil
-	self.unit_extensions[unit] = extension
+	arg_9_0.frozen_unit_extensions[arg_9_1] = nil
+	arg_9_0.unit_extensions[arg_9_1] = var_9_0
 end
 
-DeathSystem.hot_join_sync = function (self, sender)
+function DeathSystem.hot_join_sync(arg_10_0, arg_10_1)
 	return
 end
 
-DeathSystem.set_death_reaction_template = function (self, unit, template_name)
-	local extension = self.unit_extensions[unit]
+function DeathSystem.set_death_reaction_template(arg_11_0, arg_11_1, arg_11_2)
+	local var_11_0 = arg_11_0.unit_extensions[arg_11_1]
 
-	extension.death_reaction_template = template_name
+	var_11_0.death_reaction_template = arg_11_2
 
-	local network_type = extension.network_type
-	local active_reactions = self.active_reactions[network_type]
+	local var_11_1 = var_11_0.network_type
+	local var_11_2 = arg_11_0.active_reactions[var_11_1]
 
-	active_reactions[template_name] = active_reactions[template_name] or {}
+	var_11_2[arg_11_2] = var_11_2[arg_11_2] or {}
 
-	if not extension.is_alive and not extension.death_is_done then
-		self.active_reactions[network_type][template_name][unit] = extension
+	if not var_11_0.is_alive and not var_11_0.death_is_done then
+		arg_11_0.active_reactions[var_11_1][arg_11_2][arg_11_1] = var_11_0
 	end
 end
 
-local function start_death_reaction(unit, death_extension, killing_blow, active_reactions, t, context, is_server)
-	local network_type = death_extension.network_type
-	local death_reaction_template = death_extension.death_reaction_template
-	local death_reaction = DeathReactions.templates[death_reaction_template][network_type]
-	local breed = Unit.get_data(unit, "breed")
+local function var_0_3(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+	local var_12_0 = arg_12_1.network_type
+	local var_12_1 = arg_12_1.death_reaction_template
+	local var_12_2 = DeathReactions.templates[var_12_1][var_12_0]
+	local var_12_3 = Unit.get_data(arg_12_0, "breed")
 
-	if breed and breed.name == "skaven_poison_wind_globadier" then
-		printf("[HON-43348] Globadier (%s) starting death reaction. temlate_name: '%s', network_type: '%s', killing_blow:\n%s", Unit.get_data(unit, "globadier_43348"), death_reaction_template, network_type, table.tostring(killing_blow))
+	if var_12_3 and var_12_3.name == "skaven_poison_wind_globadier" then
+		printf("[HON-43348] Globadier (%s) starting death reaction. temlate_name: '%s', network_type: '%s', killing_blow:\n%s", Unit.get_data(arg_12_0, "globadier_43348"), var_12_1, var_12_0, table.tostring(arg_12_2))
 	end
 
-	local death_reaction_data, death_is_done = death_reaction.start(unit, context, t, killing_blow, is_server, death_extension)
+	local var_12_4, var_12_5 = var_12_2.start(arg_12_0, arg_12_5, arg_12_4, arg_12_2, arg_12_6, arg_12_1)
 
-	if death_is_done == DeathReactions.IS_DONE then
-		Unit.flow_event(unit, "lua_dead")
+	if var_12_5 == DeathReactions.IS_DONE then
+		Unit.flow_event(arg_12_0, "lua_dead")
 	else
-		active_reactions[network_type][death_reaction_template][unit] = death_extension
+		arg_12_3[var_12_0][var_12_1][arg_12_0] = arg_12_1
 	end
 
-	death_extension.death_reaction = death_reaction
-	death_extension.death_reaction_data = death_reaction_data
-	death_extension.death_is_done = death_is_done == DeathReactions.IS_DONE
+	arg_12_1.death_reaction = var_12_2
+	arg_12_1.death_reaction_data = var_12_4
+	arg_12_1.death_is_done = var_12_5 == DeathReactions.IS_DONE
 
-	local blackboard = BLACKBOARDS[unit]
+	local var_12_6 = var_0_2[arg_12_0]
 
-	if is_server and blackboard then
-		local breed = blackboard.breed
+	if arg_12_6 and var_12_6 then
+		local var_12_7 = var_12_6.breed
 
-		if breed.run_on_death then
-			breed.run_on_death(unit, blackboard)
+		if var_12_7.run_on_death then
+			var_12_7.run_on_death(arg_12_0, var_12_6)
 		end
 	end
 end
 
-DeathSystem.update = function (self, context, t)
-	local dt = context.dt
-	local DeathReactions = DeathReactions
-	local IS_DONE = DeathReactions.IS_DONE
-	local active_reactions = self.active_reactions
-	local death_reactions_to_start = self.death_reactions_to_start
+function DeathSystem.update(arg_13_0, arg_13_1, arg_13_2)
+	local var_13_0 = arg_13_1.dt
+	local var_13_1 = DeathReactions
+	local var_13_2 = var_13_1.IS_DONE
+	local var_13_3 = arg_13_0.active_reactions
+	local var_13_4 = arg_13_0.death_reactions_to_start
 
-	for unit, killing_blow in pairs(death_reactions_to_start) do
-		self._current_death_reaction_killing_blow = killing_blow
+	for iter_13_0, iter_13_1 in pairs(var_13_4) do
+		arg_13_0._current_death_reaction_killing_blow = iter_13_1
 
-		local death_extension = self.unit_extensions[unit]
+		local var_13_5 = arg_13_0.unit_extensions[iter_13_0]
 
-		start_death_reaction(unit, death_extension, killing_blow, active_reactions, t, context, self.is_server)
+		var_0_3(iter_13_0, var_13_5, iter_13_1, var_13_3, arg_13_2, arg_13_1, arg_13_0.is_server)
 
-		death_reactions_to_start[unit] = nil
+		var_13_4[iter_13_0] = nil
 	end
 
-	for network_type, templates in pairs(active_reactions) do
-		for template, units in pairs(templates) do
-			local death_reaction = DeathReactions.templates[template][network_type]
+	for iter_13_2, iter_13_3 in pairs(var_13_3) do
+		for iter_13_4, iter_13_5 in pairs(iter_13_3) do
+			local var_13_6 = var_13_1.templates[iter_13_4][iter_13_2]
 
-			for unit, extension in pairs(units) do
-				local death_is_done = death_reaction.update(unit, dt, context, t, extension.death_reaction_data)
+			for iter_13_6, iter_13_7 in pairs(iter_13_5) do
+				if var_13_6.update(iter_13_6, var_13_0, arg_13_1, arg_13_2, iter_13_7.death_reaction_data) == var_13_2 then
+					Unit.flow_event(iter_13_6, "lua_dead")
 
-				if death_is_done == IS_DONE then
-					Unit.flow_event(unit, "lua_dead")
-
-					extension.death_is_done = true
-					active_reactions[network_type][template][unit] = nil
+					iter_13_7.death_is_done = true
+					var_13_3[iter_13_2][iter_13_4][iter_13_6] = nil
 				end
 			end
 		end
 	end
 end
 
-local function is_hot_join_sync(killing_blow)
-	local damage_type = killing_blow[DamageDataIndex.DAMAGE_TYPE]
-
-	return damage_type == "sync_health"
+local function var_0_4(arg_14_0)
+	return arg_14_0[DamageDataIndex.DAMAGE_TYPE] == "sync_health"
 end
 
-DeathSystem.kill_unit = function (self, unit, killing_blow)
-	self._current_death_reaction_killing_blow = killing_blow
+function DeathSystem.kill_unit(arg_15_0, arg_15_1, arg_15_2)
+	arg_15_0._current_death_reaction_killing_blow = arg_15_2
 
-	local extension = self.unit_extensions[unit]
-	local breed = Unit.get_data(unit, "breed")
+	local var_15_0 = arg_15_0.unit_extensions[arg_15_1]
+	local var_15_1 = Unit.get_data(arg_15_1, "breed")
 
-	if breed and breed.name == "skaven_poison_wind_globadier" then
-		printf("[HON-43348] Globadier (%s) killing unit. extension: '%s', killing_blow:\n%s", Unit.get_data(unit, "globadier_43348"), extension, table.tostring(killing_blow))
+	if var_15_1 and var_15_1.name == "skaven_poison_wind_globadier" then
+		printf("[HON-43348] Globadier (%s) killing unit. extension: '%s', killing_blow:\n%s", Unit.get_data(arg_15_1, "globadier_43348"), var_15_0, table.tostring(arg_15_2))
 	end
 
-	if not extension then
+	if not var_15_0 then
 		return
 	end
 
-	if self.is_server then
-		local ping_system = Managers.state.entity:system("ping_system")
-
-		ping_system:remove_ping_from_unit(unit)
+	if arg_15_0.is_server then
+		Managers.state.entity:system("ping_system"):remove_ping_from_unit(arg_15_1)
 	end
 
-	local health_extension = extension.health_extension
+	var_15_0.health_extension:set_dead()
 
-	health_extension:set_dead()
+	local var_15_2 = ScriptUnit.has_extension(arg_15_1, "buff_system")
 
-	local buff_extenstion = ScriptUnit.has_extension(unit, "buff_system")
-
-	if buff_extenstion then
-		buff_extenstion:trigger_procs("on_death", unit)
+	if var_15_2 then
+		var_15_2:trigger_procs("on_death", arg_15_1)
 	end
 
-	if is_hot_join_sync(killing_blow) then
-		extension.death_has_started = true
+	if var_0_4(arg_15_2) then
+		var_15_0.death_has_started = true
 	end
 
-	if breed and breed.is_player and breed.keep_weapon_on_death == false then
-		local inventory_extension = ScriptUnit.has_extension(unit, "inventory_system")
+	if var_15_1 and var_15_1.is_player and var_15_1.keep_weapon_on_death == false then
+		local var_15_3 = ScriptUnit.has_extension(arg_15_1, "inventory_system")
 
-		if inventory_extension then
-			inventory_extension:drop_equipped_weapons("death")
+		if var_15_3 then
+			var_15_3:drop_equipped_weapons("death")
 		end
 	end
 
-	local t = Managers.time:time("game")
-	local context = self.extension_init_context
-	local network_type = extension.network_type
-	local death_reaction_template = extension.death_reaction_template
-	local death_reaction = DeathReactions.templates[death_reaction_template][network_type]
+	local var_15_4 = Managers.time:time("game")
+	local var_15_5 = arg_15_0.extension_init_context
+	local var_15_6 = var_15_0.network_type
+	local var_15_7 = var_15_0.death_reaction_template
 
-	death_reaction.pre_start(unit, context, t, killing_blow)
+	DeathReactions.templates[var_15_7][var_15_6].pre_start(arg_15_1, var_15_5, var_15_4, arg_15_2)
 
-	if breed and breed.name == "skaven_poison_wind_globadier" then
-		printf("[HON-43348] Globadier (%s) pre-starting death reaction. template: '%s', network_type: '%s'", Unit.get_data(unit, "globadier_43348"), death_reaction_template, network_type)
+	if var_15_1 and var_15_1.name == "skaven_poison_wind_globadier" then
+		printf("[HON-43348] Globadier (%s) pre-starting death reaction. template: '%s', network_type: '%s'", Unit.get_data(arg_15_1, "globadier_43348"), var_15_7, var_15_6)
 	end
 
-	local death_reactions_to_start = self.death_reactions_to_start
-
-	death_reactions_to_start[unit] = killing_blow
+	arg_15_0.death_reactions_to_start[arg_15_1] = arg_15_2
 end
 
-DeathSystem._create_dummy_killing_blow = function (self, unit, damage_type)
-	local killing_blow = FrameTable.alloc_table()
-	local hit_position = Unit.world_position(unit, 0)
-	local hit_position_table = hit_position and Vector3Aux.box(nil, hit_position)
-	local hit_zone_name = "full"
-	local damage_direction = Vector3.up()
-	local damage_direction_table = Vector3Aux.box(nil, damage_direction)
+function DeathSystem._create_dummy_killing_blow(arg_16_0, arg_16_1, arg_16_2)
+	local var_16_0 = FrameTable.alloc_table()
+	local var_16_1 = Unit.world_position(arg_16_1, 0)
+	local var_16_2 = var_16_1 and Vector3Aux.box(nil, var_16_1)
+	local var_16_3 = "full"
+	local var_16_4 = Vector3.up()
+	local var_16_5 = Vector3Aux.box(nil, var_16_4)
 
-	killing_blow[DamageDataIndex.DAMAGE_AMOUNT] = NetworkConstants.damage.max
-	killing_blow[DamageDataIndex.DAMAGE_TYPE] = damage_type
-	killing_blow[DamageDataIndex.ATTACKER] = unit
-	killing_blow[DamageDataIndex.HIT_ZONE] = hit_zone_name
-	killing_blow[DamageDataIndex.POSITION] = hit_position_table
-	killing_blow[DamageDataIndex.DIRECTION] = damage_direction_table
-	killing_blow[DamageDataIndex.DAMAGE_SOURCE_NAME] = "n/a"
-	killing_blow[DamageDataIndex.HIT_RAGDOLL_ACTOR_NAME] = "n/a"
-	killing_blow[DamageDataIndex.SOURCE_ATTACKER_UNIT] = unit
-	killing_blow[DamageDataIndex.HIT_REACT_TYPE] = "n/a"
-	killing_blow[DamageDataIndex.CRITICAL_HIT] = false
-	killing_blow[DamageDataIndex.FIRST_HIT] = true
-	killing_blow[DamageDataIndex.TOTAL_HITS] = 1
-	killing_blow[DamageDataIndex.ATTACK_TYPE] = "n/a"
-	killing_blow[DamageDataIndex.BACKSTAB_MULTIPLIER] = 1
-	killing_blow[DamageDataIndex.TARGET_INDEX] = 1
+	var_16_0[DamageDataIndex.DAMAGE_AMOUNT] = NetworkConstants.damage.max
+	var_16_0[DamageDataIndex.DAMAGE_TYPE] = arg_16_2
+	var_16_0[DamageDataIndex.ATTACKER] = arg_16_1
+	var_16_0[DamageDataIndex.HIT_ZONE] = var_16_3
+	var_16_0[DamageDataIndex.POSITION] = var_16_2
+	var_16_0[DamageDataIndex.DIRECTION] = var_16_5
+	var_16_0[DamageDataIndex.DAMAGE_SOURCE_NAME] = "n/a"
+	var_16_0[DamageDataIndex.HIT_RAGDOLL_ACTOR_NAME] = "n/a"
+	var_16_0[DamageDataIndex.SOURCE_ATTACKER_UNIT] = arg_16_1
+	var_16_0[DamageDataIndex.HIT_REACT_TYPE] = "n/a"
+	var_16_0[DamageDataIndex.CRITICAL_HIT] = false
+	var_16_0[DamageDataIndex.FIRST_HIT] = true
+	var_16_0[DamageDataIndex.TOTAL_HITS] = 1
+	var_16_0[DamageDataIndex.ATTACK_TYPE] = "n/a"
+	var_16_0[DamageDataIndex.BACKSTAB_MULTIPLIER] = 1
+	var_16_0[DamageDataIndex.TARGET_INDEX] = 1
 
-	return killing_blow
+	return var_16_0
 end
 
-DeathSystem.forced_kill = function (self, unit, damage_type)
-	fassert(Managers.player:is_player_unit(unit), "Tried to perform forced_kill on non-player unit, ONLY USE THIS FOR PLAYERS!")
-	fassert(self.is_server, "Do not call forced_kill on clients. Death should always occur on the server first, so call it on the server and it will sync out to clients.")
+function DeathSystem.forced_kill(arg_17_0, arg_17_1, arg_17_2)
+	fassert(Managers.player:is_player_unit(arg_17_1), "Tried to perform forced_kill on non-player unit, ONLY USE THIS FOR PLAYERS!")
+	fassert(arg_17_0.is_server, "Do not call forced_kill on clients. Death should always occur on the server first, so call it on the server and it will sync out to clients.")
 
-	local killing_blow = self:_create_dummy_killing_blow(unit, damage_type)
+	local var_17_0 = arg_17_0:_create_dummy_killing_blow(arg_17_1, arg_17_2)
 
-	self:kill_unit(unit, killing_blow)
+	arg_17_0:kill_unit(arg_17_1, var_17_0)
 
-	local go_id = self.unit_storage:go_id(unit)
-	local damage_type_id = NetworkLookup.damage_types[damage_type]
+	local var_17_1 = arg_17_0.unit_storage:go_id(arg_17_1)
+	local var_17_2 = NetworkLookup.damage_types[arg_17_2]
 
-	self.network_transmit:send_rpc_clients("rpc_forced_kill", go_id, damage_type_id)
+	arg_17_0.network_transmit:send_rpc_clients("rpc_forced_kill", var_17_1, var_17_2)
 end
 
-DeathSystem.rpc_forced_kill = function (self, channel_id, unit_go_id, damage_type_id)
-	local unit_storage = self.unit_storage
-	local unit = unit_storage:unit(unit_go_id)
-	local damage_type = NetworkLookup.damage_types[damage_type_id]
+function DeathSystem.rpc_forced_kill(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+	local var_18_0 = arg_18_0.unit_storage:unit(arg_18_2)
+	local var_18_1 = NetworkLookup.damage_types[arg_18_3]
 
-	if Unit.alive(unit) then
-		if self.is_server then
-			self:forced_kill(unit, damage_type)
+	if Unit.alive(var_18_0) then
+		if arg_18_0.is_server then
+			arg_18_0:forced_kill(var_18_0, var_18_1)
 		else
-			local killing_blow = self:_create_dummy_killing_blow(unit, damage_type)
+			local var_18_2 = arg_18_0:_create_dummy_killing_blow(var_18_0, var_18_1)
 
-			self:kill_unit(unit, killing_blow)
+			arg_18_0:kill_unit(var_18_0, var_18_2)
 		end
 	end
 end
 
-DeathSystem.get_dead = function (self, fill_table)
-	local sum = 0
-	local active_reactions = self.active_reactions
+function DeathSystem.get_dead(arg_19_0, arg_19_1)
+	local var_19_0 = 0
+	local var_19_1 = arg_19_0.active_reactions
 
-	for network_type, templates in pairs(active_reactions) do
-		for template, units in pairs(templates) do
-			for unit, extension in pairs(units) do
-				sum = sum + 1
-				fill_table[unit] = true
+	for iter_19_0, iter_19_1 in pairs(var_19_1) do
+		for iter_19_2, iter_19_3 in pairs(iter_19_1) do
+			for iter_19_4, iter_19_5 in pairs(iter_19_3) do
+				var_19_0 = var_19_0 + 1
+				arg_19_1[iter_19_4] = true
 			end
 		end
 	end
 
-	return sum
+	return var_19_0
 end
 
-DeathSystem.flow_get_killing_blow_attacker_unit = function (self)
-	local killing_blow = self._current_death_reaction_killing_blow
+function DeathSystem.flow_get_killing_blow_attacker_unit(arg_20_0)
+	local var_20_0 = arg_20_0._current_death_reaction_killing_blow
 
-	return killing_blow and killing_blow[DamageDataIndex.ATTACKER]
+	return var_20_0 and var_20_0[DamageDataIndex.ATTACKER]
 end

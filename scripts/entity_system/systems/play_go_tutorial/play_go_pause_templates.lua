@@ -1,157 +1,151 @@
-﻿-- chunkname: @scripts/entity_system/systems/play_go_tutorial/play_go_pause_templates.lua
+-- chunkname: @scripts/entity_system/systems/play_go_tutorial/play_go_pause_templates.lua
 
 DefaultAnimationFunctions = {
-	on_enter = function (this, unit, position)
-		this.activated = true
-		this.unit = unit
+	on_enter = function(arg_1_0, arg_1_1, arg_1_2)
+		arg_1_0.activated = true
+		arg_1_0.unit = arg_1_1
 
-		local player = Managers.player:local_player()
-		local player_unit = player.player_unit
-		local player_input = ScriptUnit.extension(player_unit, "input_system")
+		local var_1_0 = Managers.player:local_player().player_unit
+		local var_1_1 = ScriptUnit.extension(var_1_0, "input_system")
 
-		this.old_player_input_enabled = player_input.enabled
-		this.old_allowed_input = player_input:allowed_input_table()
-		this.old_disallowed_input = player_input:disallowed_input_table()
+		arg_1_0.old_player_input_enabled = var_1_1.enabled
+		arg_1_0.old_allowed_input = var_1_1:allowed_input_table()
+		arg_1_0.old_disallowed_input = var_1_1:disallowed_input_table()
 
-		local allowed_input = {}
+		local var_1_2 = {}
 
-		for _, input in pairs(this.allowed_input) do
-			allowed_input[input] = true
+		for iter_1_0, iter_1_1 in pairs(arg_1_0.allowed_input) do
+			var_1_2[iter_1_1] = true
 		end
 
-		player_input:set_enabled(false)
-		player_input:set_allowed_inputs(allowed_input)
-		player_input:set_disallowed_inputs()
+		var_1_1:set_enabled(false)
+		var_1_1:set_allowed_inputs(var_1_2)
+		var_1_1:set_disallowed_inputs()
 		Managers.state.event:trigger("close_ingame_menu")
 		Managers.input:device_block_service("gamepad", 1, "ingame_menu")
 		Managers.input:device_block_service("keyboard", 1, "ingame_menu")
 		Managers.input:device_block_service("mouse", 1, "ingame_menu")
 
-		local first_person_ext = ScriptUnit.extension(player_unit, "first_person_system")
-		local player_head_pos = Unit.world_position(player_unit, Unit.node(player_unit, "j_neck"))
-		local enemy_head_pos = position or Unit.world_position(unit, Unit.node(unit, "j_neck"))
-		local dir = enemy_head_pos - player_head_pos
-		local rotation = Quaternion.look(dir, Vector3.up())
+		local var_1_3 = ScriptUnit.extension(var_1_0, "first_person_system")
+		local var_1_4 = Unit.world_position(var_1_0, Unit.node(var_1_0, "j_neck"))
+		local var_1_5 = (arg_1_2 or Unit.world_position(arg_1_1, Unit.node(arg_1_1, "j_neck"))) - var_1_4
+		local var_1_6 = Quaternion.look(var_1_5, Vector3.up())
 
-		first_person_ext:force_look_rotation(rotation, 10)
+		var_1_3:force_look_rotation(var_1_6, 10)
 
-		local level = LevelHelper:current_level(this.world)
+		local var_1_7 = LevelHelper:current_level(arg_1_0.world)
 
-		Level.trigger_event(level, "lua_" .. this.name .. "_activated")
+		Level.trigger_event(var_1_7, "lua_" .. arg_1_0.name .. "_activated")
 
-		if this.mission_name then
-			local mission_name = this.mission_name
-			local mission_template = Missions[mission_name]
+		if arg_1_0.mission_name then
+			local var_1_8 = arg_1_0.mission_name
 
-			if mission_template.is_tutorial_input then
-				Managers.state.event:trigger("event_add_tutorial_input", mission_name)
+			if Missions[var_1_8].is_tutorial_input then
+				Managers.state.event:trigger("event_add_tutorial_input", var_1_8)
 			else
-				local mission_system = Managers.state.entity:system("mission_system")
-
-				mission_system:flow_callback_start_mission(mission_name)
+				Managers.state.entity:system("mission_system"):flow_callback_start_mission(var_1_8)
 			end
 		end
 	end,
-	update_input = function (this, t)
-		if not this.activated then
+	update_input = function(arg_2_0, arg_2_1)
+		if not arg_2_0.activated then
 			return false
 		end
 
-		if this.timer then
-			if t > this.timer then
-				this.stop_timer = this.timer
-				this.timer = nil
+		if arg_2_0.timer then
+			if arg_2_1 > arg_2_0.timer then
+				arg_2_0.stop_timer = arg_2_0.timer
+				arg_2_0.timer = nil
 
 				Managers.time:set_global_time_scale(0.01)
 
-				local play_sound_event = this.play_sound_event or "Play_tutorial_indicator"
+				local var_2_0 = arg_2_0.play_sound_event or "Play_tutorial_indicator"
 
-				Managers.music:trigger_event(play_sound_event)
+				Managers.music:trigger_event(var_2_0)
 
-				local level = LevelHelper:current_level(this.world)
+				local var_2_1 = LevelHelper:current_level(arg_2_0.world)
 
-				Level.trigger_event(level, "lua_" .. this.name .. "_triggered")
+				Level.trigger_event(var_2_1, "lua_" .. arg_2_0.name .. "_triggered")
 			end
 		else
-			local stop_delay = this.stop_delay or 0.15
+			local var_2_2 = arg_2_0.stop_delay or 0.15
 
-			if this.stop_timer and t > this.stop_timer + stop_delay then
+			if arg_2_0.stop_timer and arg_2_1 > arg_2_0.stop_timer + var_2_2 then
 				Managers.time:set_global_time_scale(0)
 
-				this.stop_timer = nil
+				arg_2_0.stop_timer = nil
 			end
 
-			local gamepad_active = Managers.input:is_device_active("gamepad")
-			local input_service = Managers.input:get_service("Player")
-			local alternate_input_service = Managers.input:get_service("Tutorial")
-			local in_sequence = this.input_requirement == "sequence"
+			local var_2_3 = Managers.input:is_device_active("gamepad")
+			local var_2_4 = Managers.input:get_service("Player")
+			local var_2_5 = Managers.input:get_service("Tutorial")
 
-			if in_sequence then
-				local inputs = this.input_mappings[1]
-				local success = true
+			if arg_2_0.input_requirement == "sequence" then
+				local var_2_6 = arg_2_0.input_mappings[1]
+				local var_2_7 = true
 
-				for _, input in ipairs(inputs) do
-					local result
-					local keymap_data = not gamepad_active and input_service:get_keymapping(input)
+				for iter_2_0, iter_2_1 in ipairs(var_2_6) do
+					local var_2_8
+					local var_2_9 = not var_2_3 and var_2_4:get_keymapping(iter_2_1)
 
-					if not gamepad_active and (not keymap_data or keymap_data[2] == UNASSIGNED_KEY) then
-						result = alternate_input_service:get(input)
+					if not var_2_3 and (not var_2_9 or var_2_9[2] == UNASSIGNED_KEY) then
+						var_2_8 = var_2_5:get(iter_2_1)
 					else
-						result = input_service:get(input)
+						var_2_8 = var_2_4:get(iter_2_1)
 					end
 
-					if type(result) == "number" and result == 0 then
-						success = false
+					if type(var_2_8) == "number" and var_2_8 == 0 then
+						var_2_7 = false
 
 						break
-					elseif type(result) == "boolean" and not result then
-						success = false
+					elseif type(var_2_8) == "boolean" and not var_2_8 then
+						var_2_7 = false
 
 						break
-					elseif result == nil then
-						success = false
+					elseif var_2_8 == nil then
+						var_2_7 = false
 
 						break
 					end
 				end
 
-				if success then
-					table.remove(this.input_mappings, 1)
+				if var_2_7 then
+					table.remove(arg_2_0.input_mappings, 1)
 
-					if table.is_empty(this.input_mappings) then
+					if table.is_empty(arg_2_0.input_mappings) then
 						return true
 					end
 				end
 			else
-				for idx, inputs in ipairs(this.input_mappings) do
-					local success = true
+				for iter_2_2, iter_2_3 in ipairs(arg_2_0.input_mappings) do
+					local var_2_10 = true
 
-					for _, input in ipairs(inputs) do
-						local result
-						local keymap_data = not gamepad_active and input_service:get_keymapping(input)
+					for iter_2_4, iter_2_5 in ipairs(iter_2_3) do
+						local var_2_11
+						local var_2_12 = not var_2_3 and var_2_4:get_keymapping(iter_2_5)
 
-						if not gamepad_active and (not keymap_data or keymap_data[2] == UNASSIGNED_KEY) then
-							result = alternate_input_service:get(input)
+						if not var_2_3 and (not var_2_12 or var_2_12[2] == UNASSIGNED_KEY) then
+							var_2_11 = var_2_5:get(iter_2_5)
 						else
-							result = input_service:get(input)
+							var_2_11 = var_2_4:get(iter_2_5)
 						end
 
-						if type(result) == "number" and result == 0 then
-							success = false
+						if type(var_2_11) == "number" and var_2_11 == 0 then
+							var_2_10 = false
 
 							break
-						elseif type(result) == "boolean" and not result then
-							success = false
+						elseif type(var_2_11) == "boolean" and not var_2_11 then
+							var_2_10 = false
 
 							break
-						elseif result == nil then
-							success = false
+						elseif var_2_11 == nil then
+							var_2_10 = false
 
 							break
 						end
 					end
 
-					if success then
+					if var_2_10 then
 						return true
 					end
 				end
@@ -160,178 +154,173 @@ DefaultAnimationFunctions = {
 
 		return false
 	end,
-	update_variable = function (this, t)
-		if not this.activated then
+	update_variable = function(arg_3_0, arg_3_1)
+		if not arg_3_0.activated then
 			return false
 		end
 
-		if this.timer then
-			if t > this.timer then
-				this.stop_timer = this.timer
-				this.timer = nil
+		if arg_3_0.timer then
+			if arg_3_1 > arg_3_0.timer then
+				arg_3_0.stop_timer = arg_3_0.timer
+				arg_3_0.timer = nil
 
 				Managers.time:set_global_time_scale(0.01)
 			end
 		else
-			local stop_delay = this.stop_delay or 0.15
+			local var_3_0 = arg_3_0.stop_delay or 0.15
 
-			if this.stop_timer and t > this.stop_timer + stop_delay then
+			if arg_3_0.stop_timer and arg_3_1 > arg_3_0.stop_timer + var_3_0 then
 				Managers.time:set_global_time_scale(0)
 
-				this.stop_timer = nil
+				arg_3_0.stop_timer = nil
 			end
 
-			if this[this.variable] then
+			if arg_3_0[arg_3_0.variable] then
 				return true
 			end
 		end
 
 		return false
 	end,
-	on_exit = function (this)
+	on_exit = function(arg_4_0)
 		Managers.time:set_global_time_scale(1)
 
-		local stop_sound_event = this.stop_sound_event or "Stop_tutorial_indicator"
+		local var_4_0 = arg_4_0.stop_sound_event or "Stop_tutorial_indicator"
 
-		Managers.music:trigger_event(stop_sound_event)
+		Managers.music:trigger_event(var_4_0)
 
-		local player = Managers.player:local_player()
-		local player_unit = player.player_unit
-		local player_input = ScriptUnit.extension(player_unit, "input_system")
+		local var_4_1 = Managers.player:local_player().player_unit
+		local var_4_2 = ScriptUnit.extension(var_4_1, "input_system")
 
-		player_input:set_enabled(this.old_player_input_enabled)
-		player_input:set_allowed_inputs(this.old_allowed_input)
-		player_input:set_disallowed_inputs(this.old_disallowed_input)
+		var_4_2:set_enabled(arg_4_0.old_player_input_enabled)
+		var_4_2:set_allowed_inputs(arg_4_0.old_allowed_input)
+		var_4_2:set_disallowed_inputs(arg_4_0.old_disallowed_input)
 		Managers.input:device_unblock_service("gamepad", 1, "ingame_menu")
 		Managers.input:device_unblock_service("keyboard", 1, "ingame_menu")
 		Managers.input:device_unblock_service("mouse", 1, "ingame_menu")
 
-		local first_person_ext = ScriptUnit.extension(player_unit, "first_person_system")
-		local rotation = Unit.local_rotation(player_unit, 0)
+		local var_4_3 = ScriptUnit.extension(var_4_1, "first_person_system")
+		local var_4_4 = Unit.local_rotation(var_4_1, 0)
 
-		first_person_ext.forced_look_rotation = nil
+		var_4_3.forced_look_rotation = nil
 
-		if this.mission_name then
-			local mission_name = this.mission_name
-			local mission_template = Missions[mission_name]
+		if arg_4_0.mission_name then
+			local var_4_5 = arg_4_0.mission_name
 
-			if mission_template.is_tutorial_input then
-				Managers.state.event:trigger("event_remove_tutorial_input", mission_name)
+			if Missions[var_4_5].is_tutorial_input then
+				Managers.state.event:trigger("event_remove_tutorial_input", var_4_5)
 			else
-				local mission_system = Managers.state.entity:system("mission_system")
-
-				mission_system:end_mission(mission_name)
+				Managers.state.entity:system("mission_system"):end_mission(var_4_5)
 			end
 		end
 
-		local level = LevelHelper:current_level(this.world)
+		local var_4_6 = LevelHelper:current_level(arg_4_0.world)
 
-		Level.trigger_event(level, "lua_" .. this.name .. "_done")
+		Level.trigger_event(var_4_6, "lua_" .. arg_4_0.name .. "_done")
 	end,
-	default_prerequisites = function (this)
-		local player = Managers.player:local_player()
-		local player_unit = player.player_unit
-		local status_ext = ScriptUnit.extension(player_unit, "status_system")
+	default_prerequisites = function(arg_5_0)
+		local var_5_0 = Managers.player:local_player().player_unit
+		local var_5_1 = ScriptUnit.extension(var_5_0, "status_system")
 
-		if status_ext:dodge_locked() or status_ext:get_is_dodging() then
+		if var_5_1:dodge_locked() or var_5_1:get_is_dodging() then
 			return false
 		end
 
-		local character_state_machine_ext = ScriptUnit.extension(player_unit, "character_state_machine_system")
+		local var_5_2 = ScriptUnit.extension(var_5_0, "character_state_machine_system")
 
-		if character_state_machine_ext:current_state() ~= "standing" and character_state_machine_ext:current_state() ~= "walking" then
+		if var_5_2:current_state() ~= "standing" and var_5_2:current_state() ~= "walking" then
 			return false
 		end
 
-		if status_ext:is_blocking() then
+		if var_5_1:is_blocking() then
 			return false
 		end
 
 		return true
-	end,
+	end
 }
 PauseEvents = {
 	pause_events = {
 		{
 			animation_delay = 0.75,
+			stop_delay = 0.1,
 			input_requirement = "sequence",
 			mission_name = "prologue_use_special_ability",
 			name = "special_ability",
-			stop_delay = 0.1,
 			input_mappings = {
 				{
-					"action_career",
+					"action_career"
 				},
 				{
-					"action_career_release",
-				},
+					"action_career_release"
+				}
 			},
 			allowed_input = {
 				"action_career",
-				"action_career_release",
+				"action_career_release"
 			},
 			on_enter = DefaultAnimationFunctions.on_enter,
 			update = DefaultAnimationFunctions.update_input,
 			on_exit = DefaultAnimationFunctions.on_exit,
-			check_prerequisites = function ()
+			check_prerequisites = function()
 				return true
-			end,
-		},
+			end
+		}
 	},
 	animation_hook_templates = {
 		{
+			stop_delay = 0.1,
+			mission_name = "prologue_pushing",
 			animation_delay = 0.75,
 			breed = "skaven_storm_vermin",
-			mission_name = "prologue_pushing",
 			name = "push_storm_vermin",
-			stop_delay = 0.1,
 			animations = {
 				"attack_pounce",
-				"attack_special",
+				"attack_special"
 			},
 			input_mappings = {
 				{
 					"action_two_hold",
-					"action_one",
-				},
+					"action_one"
+				}
 			},
 			allowed_input = {
 				"action_two_hold",
-				"action_one",
+				"action_one"
 			},
 			on_enter = DefaultAnimationFunctions.on_enter,
 			update = DefaultAnimationFunctions.update_input,
 			on_exit = DefaultAnimationFunctions.on_exit,
-			check_prerequisites = function ()
+			check_prerequisites = function()
 				return true
-			end,
+			end
 		},
 		{
+			stop_delay = 0.07,
+			mission_name = "prologue_dodge",
 			animation_delay = 0.4,
 			breed = "chaos_raider_tutorial",
-			mission_name = "prologue_dodge",
 			name = "dodge_chaos_raider",
-			stop_delay = 0.07,
 			animations = {
-				"attack_cleave_02",
+				"attack_cleave_02"
 			},
 			input_mappings = {
 				{
 					"move_left",
-					"dodge_hold",
+					"dodge_hold"
 				},
 				{
 					"move_right",
-					"dodge_hold",
+					"dodge_hold"
 				},
 				{
 					"move_controller_left",
-					"dodge_hold",
+					"dodge_hold"
 				},
 				{
 					"move_controller_right",
-					"dodge_hold",
-				},
+					"dodge_hold"
+				}
 			},
 			allowed_input = {
 				"move",
@@ -340,52 +329,52 @@ PauseEvents = {
 				"move_controller",
 				"dodge",
 				"dodge_hold",
-				"jump",
+				"jump"
 			},
 			on_enter = DefaultAnimationFunctions.on_enter,
 			update = DefaultAnimationFunctions.update_input,
 			on_exit = DefaultAnimationFunctions.on_exit,
-			check_prerequisites = function ()
+			check_prerequisites = function()
 				return true
-			end,
+			end
 		},
 		{
+			stop_delay = 0.05,
+			mission_name = "prologue_blocking",
 			animation_delay = 0.4,
 			breed = "chaos_marauder_tutorial",
-			mission_name = "prologue_blocking",
 			name = "block_chaos_marauder",
-			stop_delay = 0.05,
 			animations = {
-				"attack_pounce",
+				"attack_pounce"
 			},
 			input_mappings = {
 				{
 					"action_two",
-					"action_two_hold",
-				},
+					"action_two_hold"
+				}
 			},
 			allowed_input = {
 				"action_two_hold",
-				"action_two",
+				"action_two"
 			},
 			on_enter = DefaultAnimationFunctions.on_enter,
 			update = DefaultAnimationFunctions.update_input,
 			on_exit = DefaultAnimationFunctions.on_exit,
-			check_prerequisites = function ()
+			check_prerequisites = function()
 				return true
-			end,
-		},
-	},
+			end
+		}
+	}
 }
 
-for idx, animation_hook in ipairs(PauseEvents.animation_hook_templates) do
-	fassert(not PauseEvents.animation_hook_templates[animation_hook.name], "[PauseEvents] There is already an animation hook called %s", animation_hook.name)
+for iter_0_0, iter_0_1 in ipairs(PauseEvents.animation_hook_templates) do
+	fassert(not PauseEvents.animation_hook_templates[iter_0_1.name], "[PauseEvents] There is already an animation hook called %s", iter_0_1.name)
 
-	PauseEvents.animation_hook_templates[animation_hook.name] = animation_hook
+	PauseEvents.animation_hook_templates[iter_0_1.name] = iter_0_1
 end
 
-for idx, pause_event in ipairs(PauseEvents.pause_events) do
-	fassert(not PauseEvents.animation_hook_templates[pause_event.name], "[PauseEvents] There is already a pause event called %s", pause_event.name)
+for iter_0_2, iter_0_3 in ipairs(PauseEvents.pause_events) do
+	fassert(not PauseEvents.animation_hook_templates[iter_0_3.name], "[PauseEvents] There is already a pause event called %s", iter_0_3.name)
 
-	PauseEvents.pause_events[pause_event.name] = pause_event
+	PauseEvents.pause_events[iter_0_3.name] = iter_0_3
 end

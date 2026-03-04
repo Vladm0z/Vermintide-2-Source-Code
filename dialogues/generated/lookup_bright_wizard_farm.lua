@@ -1,4 +1,4 @@
-﻿-- chunkname: @dialogues/generated/lookup_bright_wizard_farm.lua
+-- chunkname: @dialogues/generated/lookup_bright_wizard_farm.lua
 
 assert(DialogueLookup[DialogueLookup_n + 1] == nil)
 assert(DialogueLookup[DialogueLookup_n + 2] == nil)

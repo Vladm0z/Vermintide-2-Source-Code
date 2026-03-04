@@ -1,17 +1,17 @@
-﻿-- chunkname: @scripts/settings/dlcs/penny/penny_sound_settings_part_3.lua
+-- chunkname: @scripts/settings/dlcs/penny/penny_sound_settings_part_3.lua
 
-local settings = DLCSettings.penny_part_3
+local var_0_0 = DLCSettings.penny_part_3
 
-settings.dialogue_lookup = {
+var_0_0.dialogue_lookup = {
 	"dialogues/generated/lookup_wood_elf_dlc_drachenfels_castle",
 	"dialogues/generated/lookup_empire_soldier_dlc_drachenfels_castle",
 	"dialogues/generated/lookup_bright_wizard_dlc_drachenfels_castle",
 	"dialogues/generated/lookup_dwarf_ranger_dlc_drachenfels_castle",
 	"dialogues/generated/lookup_witch_hunter_dlc_drachenfels_castle",
 	"dialogues/generated/lookup_hero_conversations_dlc_drachenfels_castle",
-	"dialogues/generated/lookup_npc_dlc_drachenfels_castle",
+	"dialogues/generated/lookup_npc_dlc_drachenfels_castle"
 }
-settings.dialogue_settings = {
+var_0_0.dialogue_settings = {
 	dlc_castle = {
 		"dialogues/generated/wood_elf_dlc_drachenfels_castle",
 		"dialogues/generated/empire_soldier_dlc_drachenfels_castle",
@@ -20,10 +20,10 @@ settings.dialogue_settings = {
 		"dialogues/generated/witch_hunter_dlc_drachenfels_castle",
 		"dialogues/generated/hero_conversations_dlc_drachenfels_castle",
 		"dialogues/generated/npc_dlc_drachenfels_castle",
-		"dialogues/generated/nwd_conversations_dlc_drachenfels",
-	},
+		"dialogues/generated/nwd_conversations_dlc_drachenfels"
+	}
 }
-settings.network_sound_events = {
+var_0_0.network_sound_events = {
 	"Play_sorcerer_boss_shoot",
 	"Play_sorcerer_boss_special_ability_start",
 	"Play_sorcerer_boss_special_windup_end",
@@ -37,5 +37,5 @@ settings.network_sound_events = {
 	"Play_exalted_sorcerer_drachenfels_sorcery_vce",
 	"Play_exalted_sorcerer_drachenfels_spell_start_vce",
 	"Play_exalted_sorcerer_drachenfels_attack_short_vce",
-	"Play_exalted_sorcerer_drachenfels_magic_throw_vce",
+	"Play_exalted_sorcerer_drachenfels_magic_throw_vce"
 }

@@ -1,103 +1,102 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_give_command_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_give_command_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
-local unit_alive = Unit.alive
-local command_to_query_concept = {
-	clan_rat_attack = "commanding",
+local var_0_0 = Unit.alive
+local var_0_1 = {
+	clan_rat_attack = "commanding"
 }
 
 BTGiveCommandAction = class(BTGiveCommandAction, BTNode)
 
-BTGiveCommandAction.init = function (self, ...)
-	BTGiveCommandAction.super.init(self, ...)
+function BTGiveCommandAction.init(arg_1_0, ...)
+	BTGiveCommandAction.super.init(arg_1_0, ...)
 end
 
 BTGiveCommandAction.name = "BTGiveCommandAction"
 
-BTGiveCommandAction.enter = function (self, unit, blackboard, t)
-	local action = self._tree_node.action_data
+function BTGiveCommandAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_0._tree_node.action_data
 
-	blackboard.action = action
+	arg_2_2.action = var_2_0
 
-	blackboard.navigation_extension:set_enabled(false)
-	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
+	arg_2_2.navigation_extension:set_enabled(false)
+	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-	local network_manager = Managers.state.network
+	local var_2_1 = Managers.state.network
 
-	network_manager:anim_event(unit, "order")
+	var_2_1:anim_event(arg_2_1, "order")
 
-	local unit_id = network_manager:unit_game_object_id(unit)
+	local var_2_2 = var_2_1:unit_game_object_id(arg_2_1)
 
-	network_manager.network_transmit:send_rpc_all("rpc_ai_inventory_wield", unit_id, 1)
+	var_2_1.network_transmit:send_rpc_all("rpc_ai_inventory_wield", var_2_2, 1)
 
-	local tutorial_message_template = action.tutorial_message_template
+	local var_2_3 = var_2_0.tutorial_message_template
 
-	if tutorial_message_template then
-		local template_id = NetworkLookup.tutorials[tutorial_message_template]
-		local message_id = NetworkLookup.tutorials[blackboard.breed.name]
+	if var_2_3 then
+		local var_2_4 = NetworkLookup.tutorials[var_2_3]
+		local var_2_5 = NetworkLookup.tutorials[arg_2_2.breed.name]
 
-		network_manager.network_transmit:send_rpc_all("rpc_tutorial_message", template_id, message_id)
+		var_2_1.network_transmit:send_rpc_all("rpc_tutorial_message", var_2_4, var_2_5)
 	end
 end
 
-BTGiveCommandAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	blackboard.navigation_extension:set_enabled(true)
+function BTGiveCommandAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	arg_3_2.navigation_extension:set_enabled(true)
 
-	blackboard.target_unit = blackboard.command_target
+	arg_3_2.target_unit = arg_3_2.command_target
 
-	AiUtils.activate_unit(blackboard)
+	AiUtils.activate_unit(arg_3_2)
 
-	blackboard.command_target_previous = blackboard.command_target
-	blackboard.anim_cb_order_finished = nil
-	blackboard.give_command = nil
-	blackboard.command_target = nil
-	blackboard.command_num_units = nil
-	blackboard.anim_cb_stormvermin_voice = nil
+	arg_3_2.command_target_previous = arg_3_2.command_target
+	arg_3_2.anim_cb_order_finished = nil
+	arg_3_2.give_command = nil
+	arg_3_2.command_target = nil
+	arg_3_2.command_num_units = nil
+	arg_3_2.anim_cb_stormvermin_voice = nil
 end
 
-BTGiveCommandAction.run = function (self, unit, blackboard, t, dt)
-	local command_target = blackboard.command_target
+function BTGiveCommandAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = arg_4_2.command_target
 
-	if not unit_alive(command_target) then
+	if not var_0_0(var_4_0) then
 		return "failed"
 	end
 
-	local rot = LocomotionUtils.rotation_towards_unit_flat(unit, command_target)
-	local locomotion_extension = blackboard.locomotion_extension
+	local var_4_1 = LocomotionUtils.rotation_towards_unit_flat(arg_4_1, var_4_0)
 
-	locomotion_extension:set_wanted_rotation(rot)
+	arg_4_2.locomotion_extension:set_wanted_rotation(var_4_1)
 
-	if blackboard.anim_cb_stormvermin_voice then
-		blackboard.anim_cb_stormvermin_voice = nil
+	if arg_4_2.anim_cb_stormvermin_voice then
+		arg_4_2.anim_cb_stormvermin_voice = nil
 
-		local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
-		local event_data = FrameTable.alloc_table()
-		local order = blackboard.give_command
+		local var_4_2 = ScriptUnit.extension_input(arg_4_1, "dialogue_system")
+		local var_4_3 = FrameTable.alloc_table()
+		local var_4_4 = arg_4_2.give_command
 
-		if order == "clan_rat_attack" then
-			event_data.target_name = ScriptUnit.extension(command_target, "dialogue_system").context.player_profile
-			event_data.num_units = blackboard.command_num_units
+		if var_4_4 == "clan_rat_attack" then
+			var_4_3.target_name = ScriptUnit.extension(var_4_0, "dialogue_system").context.player_profile
+			var_4_3.num_units = arg_4_2.command_num_units
 
-			if blackboard.command_target_previous == nil or command_target == blackboard.command_target_previous then
-				dialogue_input:trigger_networked_dialogue_event("commanding", event_data)
+			if arg_4_2.command_target_previous == nil or var_4_0 == arg_4_2.command_target_previous then
+				var_4_2:trigger_networked_dialogue_event("commanding", var_4_3)
 			else
-				dialogue_input:trigger_networked_dialogue_event("command_change_target", event_data)
+				var_4_2:trigger_networked_dialogue_event("command_change_target", var_4_3)
 			end
-		elseif order == "cheer" then
-			-- Nothing
-		elseif order == "rally" then
-			-- Nothing
-		elseif order == "command_globadier" then
-			dialogue_input:trigger_networked_dialogue_event("command_globadier", event_data)
-		elseif order == "command_gutter_runner" then
-			dialogue_input:trigger_networked_dialogue_event("command_gutter_runner", event_data)
-		elseif order == "command_rat_ogre" then
-			dialogue_input:trigger_networked_dialogue_event("command_rat_ogre", event_data)
+		elseif var_4_4 == "cheer" then
+			-- block empty
+		elseif var_4_4 == "rally" then
+			-- block empty
+		elseif var_4_4 == "command_globadier" then
+			var_4_2:trigger_networked_dialogue_event("command_globadier", var_4_3)
+		elseif var_4_4 == "command_gutter_runner" then
+			var_4_2:trigger_networked_dialogue_event("command_gutter_runner", var_4_3)
+		elseif var_4_4 == "command_rat_ogre" then
+			var_4_2:trigger_networked_dialogue_event("command_rat_ogre", var_4_3)
 		end
 	end
 
-	if blackboard.anim_cb_order_finished then
+	if arg_4_2.anim_cb_order_finished then
 		return "done"
 	end
 

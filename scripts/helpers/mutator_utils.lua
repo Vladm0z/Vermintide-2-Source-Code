@@ -1,233 +1,230 @@
-﻿-- chunkname: @scripts/helpers/mutator_utils.lua
+-- chunkname: @scripts/helpers/mutator_utils.lua
 
 MutatorUtils = MutatorUtils or {}
 
-local function tweak_horde_size_value(value, multiplier)
-	return math.max(1, math.ceil(value * multiplier))
+local function var_0_0(arg_1_0, arg_1_1)
+	return math.max(1, math.ceil(arg_1_0 * arg_1_1))
 end
 
-local function tweak_horde_composition(compositions, composition_name, tweaked, multiplier)
-	if tweaked[composition_name] then
+local function var_0_1(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	if arg_2_2[arg_2_1] then
 		return
 	end
 
-	tweaked[composition_name] = true
+	arg_2_2[arg_2_1] = true
 
-	local composition = compositions[composition_name]
+	local var_2_0 = arg_2_0[arg_2_1]
 
-	if not composition then
-		print("[MutatorUtils.update_conflict_settings_horde_size_modifier] did not find " .. composition_name)
+	if not var_2_0 then
+		print("[MutatorUtils.update_conflict_settings_horde_size_modifier] did not find " .. arg_2_1)
 
 		return
 	end
 
-	for _, variant in ipairs(composition) do
-		local breeds = variant.breeds
+	for iter_2_0, iter_2_1 in ipairs(var_2_0) do
+		local var_2_1 = iter_2_1.breeds
 
-		for i = 2, #breeds, 2 do
-			local counts = breeds[i]
+		for iter_2_2 = 2, #var_2_1, 2 do
+			local var_2_2 = var_2_1[iter_2_2]
 
-			counts[1] = tweak_horde_size_value(counts[1], multiplier)
-			counts[2] = tweak_horde_size_value(counts[2], multiplier)
+			var_2_2[1] = var_0_0(var_2_2[1], arg_2_3)
+			var_2_2[2] = var_0_0(var_2_2[2], arg_2_3)
 		end
 	end
 end
 
-local function tweak_horde_compositions(compositions, composition_names, tweaked, multiplier)
-	if type(composition_names) == "string" then
-		tweak_horde_composition(compositions, composition_names, tweaked, multiplier)
+local function var_0_2(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	if type(arg_3_1) == "string" then
+		var_0_1(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	else
-		for _, composition_name in ipairs(composition_names) do
-			tweak_horde_composition(compositions, composition_name, tweaked, multiplier)
+		for iter_3_0, iter_3_1 in ipairs(arg_3_1) do
+			var_0_1(arg_3_0, iter_3_1, arg_3_2, arg_3_3)
 		end
 	end
 end
 
-local function modify_time_table(time_table, modifier, dprint_string)
-	local tt_1, tt_2 = time_table[1], time_table[2]
+local function var_0_3(arg_4_0, arg_4_1, arg_4_2)
+	local var_4_0 = arg_4_0[1]
+	local var_4_1 = arg_4_0[2]
 
-	time_table[1] = tt_1 - tt_1 * modifier
-	time_table[2] = tt_2 - tt_2 * modifier
+	arg_4_0[1] = var_4_0 - var_4_0 * arg_4_1
+	arg_4_0[2] = var_4_1 - var_4_1 * arg_4_1
 end
 
-MutatorUtils.apply_buff_to_alive_player_units = function (context, data, buff_name)
-	if not data.buffed_player_units then
-		data.buffed_player_units = {}
+function MutatorUtils.apply_buff_to_alive_player_units(arg_5_0, arg_5_1, arg_5_2)
+	if not arg_5_1.buffed_player_units then
+		arg_5_1.buffed_player_units = {}
 	end
 
-	local buffed_player_units = data.buffed_player_units
+	local var_5_0 = arg_5_1.buffed_player_units
 
-	if not buffed_player_units[buff_name] then
-		buffed_player_units[buff_name] = {}
+	if not var_5_0[arg_5_2] then
+		var_5_0[arg_5_2] = {}
 	end
 
-	local player_units = buffed_player_units[buff_name]
+	local var_5_1 = var_5_0[arg_5_2]
 
-	for unit, _ in pairs(player_units) do
-		player_units[unit] = false
+	for iter_5_0, iter_5_1 in pairs(var_5_1) do
+		var_5_1[iter_5_0] = false
 	end
 
-	local side = Managers.state.side:get_side_from_name("heroes")
-	local current_player_units = data.only_affect_players and side.PLAYER_UNITS or side.PLAYER_AND_BOT_UNITS
-	local num_current_player_units = #current_player_units
-	local get_extension = ScriptUnit.extension
-	local new_buff_ids = {}
+	local var_5_2 = Managers.state.side:get_side_from_name("heroes")
+	local var_5_3 = arg_5_1.only_affect_players and var_5_2.PLAYER_UNITS or var_5_2.PLAYER_AND_BOT_UNITS
+	local var_5_4 = #var_5_3
+	local var_5_5 = ScriptUnit.extension
+	local var_5_6 = {}
 
-	for i = 1, num_current_player_units do
-		local unit = current_player_units[i]
+	for iter_5_2 = 1, var_5_4 do
+		local var_5_7 = var_5_3[iter_5_2]
 
-		if player_units[unit] == nil and HEALTH_ALIVE[unit] then
-			local params = {
-				attacker_unit = unit,
+		if var_5_1[var_5_7] == nil and HEALTH_ALIVE[var_5_7] then
+			local var_5_8 = {
+				attacker_unit = var_5_7
 			}
-			local buff_ext = get_extension(unit, "buff_system")
-			local buff_id = buff_ext:add_buff(buff_name, params)
 
-			new_buff_ids[unit] = buff_id
+			var_5_6[var_5_7] = var_5_5(var_5_7, "buff_system"):add_buff(arg_5_2, var_5_8)
 		end
 
-		player_units[unit] = true
+		var_5_1[var_5_7] = true
 	end
 
-	for unit, updated in pairs(player_units) do
-		if not updated then
-			player_units[unit] = nil
+	for iter_5_3, iter_5_4 in pairs(var_5_1) do
+		if not iter_5_4 then
+			var_5_1[iter_5_3] = nil
 		end
 	end
 
-	return new_buff_ids
+	return var_5_6
 end
 
-MutatorUtils.store_breed_and_action_settings = function (context, data)
-	if not context.original_breed_settings and not context.original_breed_action_settings then
-		context.original_breed_settings = table.clone(Breeds)
-		context.original_breed_action_settings = table.clone(BreedActions)
+function MutatorUtils.store_breed_and_action_settings(arg_6_0, arg_6_1)
+	if not arg_6_0.original_breed_settings and not arg_6_0.original_breed_action_settings then
+		arg_6_0.original_breed_settings = table.clone(Breeds)
+		arg_6_0.original_breed_action_settings = table.clone(BreedActions)
 	end
 end
 
-MutatorUtils.restore_breed_and_action_settings = function (context, data)
-	if context.original_breed_settings and context.original_breed_action_settings then
-		Breeds = context.original_breed_settings
-		BreedActions = context.original_breed_action_settings
-		context.original_breed_settings = nil
-		context.original_breed_action_settings = nil
+function MutatorUtils.restore_breed_and_action_settings(arg_7_0, arg_7_1)
+	if arg_7_0.original_breed_settings and arg_7_0.original_breed_action_settings then
+		Breeds = arg_7_0.original_breed_settings
+		BreedActions = arg_7_0.original_breed_action_settings
+		arg_7_0.original_breed_settings = nil
+		arg_7_0.original_breed_action_settings = nil
 	end
 end
 
-MutatorUtils.update_conflict_settings_horde_size_modifier = function (multipller)
-	local pacing_settings = CurrentPacing
-
-	if pacing_settings.disabled then
+function MutatorUtils.update_conflict_settings_horde_size_modifier(arg_8_0)
+	if CurrentPacing.disabled then
 		return
 	end
 
-	local compositions = CurrentHordeSettings.compositions_pacing
-	local tweaked = {}
+	local var_8_0 = CurrentHordeSettings.compositions_pacing
+	local var_8_1 = {}
 
-	tweak_horde_compositions(compositions, CurrentHordeSettings.ambush_composition, tweaked, multipller)
-	tweak_horde_compositions(compositions, CurrentHordeSettings.vector_composition, tweaked, multipller)
-	tweak_horde_compositions(compositions, CurrentHordeSettings.vector_blob_composition, tweaked, multipller)
-	tweak_horde_compositions(compositions, CurrentHordeSettings.mini_patrol_composition, tweaked, multipller)
+	var_0_2(var_8_0, CurrentHordeSettings.ambush_composition, var_8_1, arg_8_0)
+	var_0_2(var_8_0, CurrentHordeSettings.vector_composition, var_8_1, arg_8_0)
+	var_0_2(var_8_0, CurrentHordeSettings.vector_blob_composition, var_8_1, arg_8_0)
+	var_0_2(var_8_0, CurrentHordeSettings.mini_patrol_composition, var_8_1, arg_8_0)
 end
 
-MutatorUtils.update_conflict_settings_horde_frequency = function (horde_frequency_modifier, horde_startup_time_modifier, relax_duration_modifier, max_delay_modifier)
-	local pacing_settings = CurrentPacing
+function MutatorUtils.update_conflict_settings_horde_frequency(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	local var_9_0 = CurrentPacing
 
-	if not pacing_settings.disabled then
-		modify_time_table(pacing_settings.horde_frequency, horde_frequency_modifier, "Changed horde frequency from ({%s, %s}) to ({%s, %s}), modifier: %s - original")
-		modify_time_table(pacing_settings.horde_startup_time, horde_startup_time_modifier, "Changed horde startup time from ({%s, %s}) to ({%s, %s}), modifier: %s - original")
-		modify_time_table(pacing_settings.relax_duration, relax_duration_modifier, "Changed relax duration from ({%s, %s}) to ({%s, %s}), modifier: %s - original")
+	if not var_9_0.disabled then
+		var_0_3(var_9_0.horde_frequency, arg_9_0, "Changed horde frequency from ({%s, %s}) to ({%s, %s}), modifier: %s - original")
+		var_0_3(var_9_0.horde_startup_time, arg_9_1, "Changed horde startup time from ({%s, %s}) to ({%s, %s}), modifier: %s - original")
+		var_0_3(var_9_0.relax_duration, arg_9_2, "Changed relax duration from ({%s, %s}) to ({%s, %s}), modifier: %s - original")
 
-		if pacing_settings.max_delay_until_next_horde then
-			modify_time_table(pacing_settings.max_delay_until_next_horde, max_delay_modifier, "Changed max_delay_until_next_horde from ({%s, %s}) to ({%s, %s}), modifier: %s - original")
+		if var_9_0.max_delay_until_next_horde then
+			var_0_3(var_9_0.max_delay_until_next_horde, arg_9_3, "Changed max_delay_until_next_horde from ({%s, %s}) to ({%s, %s}), modifier: %s - original")
 		end
 	end
 end
 
-MutatorUtils.tweak_pack_spawning_settings_convert_breeds = function (pack_spawning_settings, conversion_table)
-	local breed_packs = pack_spawning_settings.roaming_set.breed_packs
+function MutatorUtils.tweak_pack_spawning_settings_convert_breeds(arg_10_0, arg_10_1)
+	local var_10_0 = arg_10_0.roaming_set.breed_packs
 
-	pack_spawning_settings.roaming_set.breed_packs = conversion_table[breed_packs] or breed_packs
+	arg_10_0.roaming_set.breed_packs = arg_10_1[var_10_0] or var_10_0
 
-	for _, breed_pack_override in ipairs(pack_spawning_settings.roaming_set.breed_packs_override) do
-		local breed = breed_pack_override[1]
+	for iter_10_0, iter_10_1 in ipairs(arg_10_0.roaming_set.breed_packs_override) do
+		local var_10_1 = iter_10_1[1]
 
-		breed_pack_override[1] = conversion_table[breed] or breed
+		iter_10_1[1] = arg_10_1[var_10_1] or var_10_1
 	end
 
-	if pack_spawning_settings.difficulty_overrides then
-		for _, difficulty_override in pairs(pack_spawning_settings.difficulty_overrides) do
-			for i = 1, #difficulty_override do
-				local breed_pack_override = difficulty_override[i]
-				local breed = breed_pack_override[1]
+	if arg_10_0.difficulty_overrides then
+		for iter_10_2, iter_10_3 in pairs(arg_10_0.difficulty_overrides) do
+			for iter_10_4 = 1, #iter_10_3 do
+				local var_10_2 = iter_10_3[iter_10_4]
+				local var_10_3 = var_10_2[1]
 
-				breed_pack_override[1] = conversion_table[breed] or breed
+				var_10_2[1] = arg_10_1[var_10_3] or var_10_3
 			end
 		end
 	end
 end
 
-MutatorUtils.tweak_pack_spawning_settings_density_multiplier = function (pack_spawning_settings, density_multiplier)
-	pack_spawning_settings.area_density_coefficient = pack_spawning_settings.area_density_coefficient * density_multiplier
+function MutatorUtils.tweak_pack_spawning_settings_density_multiplier(arg_11_0, arg_11_1)
+	arg_11_0.area_density_coefficient = arg_11_0.area_density_coefficient * arg_11_1
 
-	if pack_spawning_settings.difficulty_overrides then
-		for _, difficulty_override in pairs(pack_spawning_settings.difficulty_overrides) do
-			difficulty_override.area_density_coefficient = difficulty_override.area_density_coefficient * density_multiplier
+	if arg_11_0.difficulty_overrides then
+		for iter_11_0, iter_11_1 in pairs(arg_11_0.difficulty_overrides) do
+			iter_11_1.area_density_coefficient = iter_11_1.area_density_coefficient * arg_11_1
 
-			for i = 1, #difficulty_override do
-				local breed_pack_override = difficulty_override[i]
+			for iter_11_2 = 1, #iter_11_1 do
+				local var_11_0 = iter_11_1[iter_11_2]
 
-				breed_pack_override[3] = breed_pack_override[3] * density_multiplier
+				var_11_0[3] = var_11_0[3] * arg_11_1
 			end
 		end
 	end
 end
 
-MutatorUtils.tweak_pack_spawning_settings_override_chance = function (pack_spawning_settings, min, max)
-	pack_spawning_settings.roaming_set.breed_packs_peeks_overide_chance[1] = math.clamp(min, 0, 1)
-	pack_spawning_settings.roaming_set.breed_packs_peeks_overide_chance[2] = math.clamp(max, 0, 1)
+function MutatorUtils.tweak_pack_spawning_settings_override_chance(arg_12_0, arg_12_1, arg_12_2)
+	arg_12_0.roaming_set.breed_packs_peeks_overide_chance[1] = math.clamp(arg_12_1, 0, 1)
+	arg_12_0.roaming_set.breed_packs_peeks_overide_chance[2] = math.clamp(arg_12_2, 0, 1)
 end
 
-MutatorUtils.update_conflict_settings_specials_frequency = function (max_specials_multiplier, spawn_time_reduction_multiplier)
-	local settings = CurrentSpecialsSettings
+function MutatorUtils.update_conflict_settings_specials_frequency(arg_13_0, arg_13_1)
+	local var_13_0 = CurrentSpecialsSettings
 
-	if not settings.disabled then
-		if settings.max_specials then
-			local original = settings.max_specials
+	if not var_13_0.disabled then
+		if var_13_0.max_specials then
+			local var_13_1 = var_13_0.max_specials
 
-			settings.max_specials = math.round(settings.max_specials * max_specials_multiplier)
+			var_13_0.max_specials = math.round(var_13_0.max_specials * arg_13_0)
 		end
 
-		for method_name, method_settings in pairs(settings.methods) do
-			local modified = false
+		for iter_13_0, iter_13_1 in pairs(var_13_0.methods) do
+			local var_13_2 = false
 
-			if method_name == "specials_by_time_window" then
-				local spawn_interval = method_settings.spawn_interval
+			if iter_13_0 == "specials_by_time_window" then
+				local var_13_3 = iter_13_1.spawn_interval
 
-				spawn_interval[1] = spawn_interval[1] * spawn_time_reduction_multiplier
-				spawn_interval[2] = spawn_interval[2] * spawn_time_reduction_multiplier
-				modified = true
+				var_13_3[1] = var_13_3[1] * arg_13_1
+				var_13_3[2] = var_13_3[2] * arg_13_1
+				var_13_2 = true
 
-				local new_1 = spawn_interval[1]
-				local new_2 = spawn_interval[2]
-				local old_1 = new_1 / spawn_time_reduction_multiplier
-				local old_2 = new_2 / spawn_time_reduction_multiplier
+				local var_13_4 = var_13_3[1]
+				local var_13_5 = var_13_3[2]
+				local var_13_6 = var_13_4 / arg_13_1
+				local var_13_7 = var_13_5 / arg_13_1
 			end
 
-			if method_name == "specials_by_slots" then
-				local spawn_cooldown = method_settings.spawn_cooldown
+			if iter_13_0 == "specials_by_slots" then
+				local var_13_8 = iter_13_1.spawn_cooldown
 
-				spawn_cooldown[1] = spawn_cooldown[1] * spawn_time_reduction_multiplier
-				spawn_cooldown[2] = spawn_cooldown[2] * spawn_time_reduction_multiplier
-				modified = true
+				var_13_8[1] = var_13_8[1] * arg_13_1
+				var_13_8[2] = var_13_8[2] * arg_13_1
+				var_13_2 = true
 
-				local new_1 = spawn_cooldown[1]
-				local new_2 = spawn_cooldown[2]
-				local old_1 = new_1 / spawn_time_reduction_multiplier
-				local old_2 = new_2 / spawn_time_reduction_multiplier
+				local var_13_9 = var_13_8[1]
+				local var_13_10 = var_13_8[2]
+				local var_13_11 = var_13_9 / arg_13_1
+				local var_13_12 = var_13_10 / arg_13_1
 			end
 
-			fassert(modified, "MutatorUtils.update_conflict_settings_specials_frequency: Found new method_name (%s)", method_name)
+			fassert(var_13_2, "MutatorUtils.update_conflict_settings_specials_frequency: Found new method_name (%s)", iter_13_0)
 		end
 	end
 end

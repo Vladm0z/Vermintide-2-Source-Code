@@ -1,78 +1,78 @@
-﻿-- chunkname: @scripts/utils/cosmetics_utils.lua
+-- chunkname: @scripts/utils/cosmetics_utils.lua
 
 CosmeticsUtils = {}
 
-CosmeticsUtils.retrieve_skin_packages = function (skin_name, first_person)
-	local skin_data = Cosmetics[skin_name]
+function CosmeticsUtils.retrieve_skin_packages(arg_1_0, arg_1_1)
+	local var_1_0 = Cosmetics[arg_1_0]
 
-	if not skin_data then
+	if not var_1_0 then
 		return {}
 	end
 
-	local packages
+	local var_1_1
 
-	if first_person then
-		packages = {
-			skin_data.first_person,
-			skin_data.first_person_bot,
-			skin_data.third_person,
-			skin_data.third_person_bot,
-			skin_data.first_person_attachment.unit,
-			skin_data.third_person_attachment.unit,
+	if arg_1_1 then
+		var_1_1 = {
+			var_1_0.first_person,
+			var_1_0.first_person_bot,
+			var_1_0.third_person,
+			var_1_0.third_person_bot,
+			var_1_0.first_person_attachment.unit,
+			var_1_0.third_person_attachment.unit
 		}
 	else
-		packages = {
-			skin_data.third_person_husk,
-			skin_data.third_person_attachment.unit,
+		var_1_1 = {
+			var_1_0.third_person_husk,
+			var_1_0.third_person_attachment.unit
 		}
 	end
 
-	local material_changes = skin_data.material_changes
+	local var_1_2 = var_1_0.material_changes
 
-	if material_changes then
-		packages[#packages + 1] = material_changes.package_name
+	if var_1_2 then
+		var_1_1[#var_1_1 + 1] = var_1_2.package_name
 	end
 
-	return packages
+	return var_1_1
 end
 
-CosmeticsUtils.retrieve_skin_packages_for_preview = function (skin_name)
-	local skin_data = Cosmetics[skin_name]
+function CosmeticsUtils.retrieve_skin_packages_for_preview(arg_2_0)
+	local var_2_0 = Cosmetics[arg_2_0]
 
-	if not skin_data then
+	if not var_2_0 then
 		return {}
 	end
 
-	local packages = {
-		skin_data.third_person,
-		skin_data.third_person_bot,
-		skin_data.third_person_attachment.unit,
+	local var_2_1 = {
+		var_2_0.third_person,
+		var_2_0.third_person_bot,
+		var_2_0.third_person_attachment.unit
 	}
-	local material_changes = skin_data.material_changes
+	local var_2_2 = var_2_0.material_changes
 
-	if material_changes then
-		packages[#packages + 1] = material_changes.package_name
+	if var_2_2 then
+		var_2_1[#var_2_1 + 1] = var_2_2.package_name
 	end
 
-	return packages
+	return var_2_1
 end
 
-CosmeticsUtils.get_third_person_mesh_unit = function (unit)
-	if not ALIVE[unit] then
+function CosmeticsUtils.get_third_person_mesh_unit(arg_3_0)
+	if not ALIVE[arg_3_0] then
 		return nil
 	end
 
-	local cosmetic_extension = ScriptUnit.has_extension(unit, "cosmetic_system")
+	local var_3_0 = ScriptUnit.has_extension(arg_3_0, "cosmetic_system")
 
-	return cosmetic_extension and cosmetic_extension:get_third_person_mesh_unit()
+	return var_3_0 and var_3_0:get_third_person_mesh_unit()
 end
 
-local unit_flow_event = Unit.flow_event
+local var_0_0 = Unit.flow_event
 
-CosmeticsUtils.flow_event_mesh_3p = function (unit, event_name)
-	local mesh_unit = CosmeticsUtils.get_third_person_mesh_unit(unit)
+function CosmeticsUtils.flow_event_mesh_3p(arg_4_0, arg_4_1)
+	local var_4_0 = CosmeticsUtils.get_third_person_mesh_unit(arg_4_0)
 
-	if mesh_unit then
-		unit_flow_event(mesh_unit, event_name)
+	if var_4_0 then
+		var_0_0(var_4_0, arg_4_1)
 	end
 end

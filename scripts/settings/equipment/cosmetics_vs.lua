@@ -1,152 +1,152 @@
-﻿-- chunkname: @scripts/settings/equipment/cosmetics_vs.lua
+-- chunkname: @scripts/settings/equipment/cosmetics_vs.lua
 
-local skaven_gutter_runner_skin_0000 = {
-	career = 1,
-	dark_pact = true,
-	first_person = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_base",
-	first_person_bot = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_bot_base",
-	third_person = "units/beings/player/dark_pact_third_person_base/skaven_gutter_runner/chr_third_person_base",
-	third_person_bot = "units/beings/player/dark_pact_third_person_base/skaven_gutter_runner/chr_third_person_base",
+local var_0_0 = {
 	third_person_husk = "units/beings/player/dark_pact_third_person_base/skaven_gutter_runner/chr_third_person_base_husk",
+	first_person = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_base",
+	third_person = "units/beings/player/dark_pact_third_person_base/skaven_gutter_runner/chr_third_person_base",
+	career = 1,
+	first_person_bot = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_bot_base",
+	third_person_bot = "units/beings/player/dark_pact_third_person_base/skaven_gutter_runner/chr_third_person_base",
+	dark_pact = true,
 	first_person_attachment = {
 		unit = "units/beings/player/dark_pact_skins/skaven_gutter_runner/skin_0000/first_person/chr_first_person_mesh",
-		attachment_node_linking = AttachmentNodeLinking.skaven_first_person_attachment,
+		attachment_node_linking = AttachmentNodeLinking.skaven_first_person_attachment
 	},
 	third_person_attachment = {
 		unit = "units/beings/player/dark_pact_skins/skaven_gutter_runner/skin_0000/third_person/chr_third_person_mesh",
-		attachment_node_linking = AttachmentNodeLinking.skaven_third_person_attachment,
+		attachment_node_linking = AttachmentNodeLinking.skaven_third_person_attachment
 	},
 	always_hide_attachment_slots = {
-		"slot_hat",
-	},
+		"slot_hat"
+	}
 }
-local skaven_pack_master_skin_0000 = {
-	career = 1,
-	dark_pact = true,
-	first_person = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_base",
-	first_person_bot = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_bot_base",
-	third_person = "units/beings/player/dark_pact_third_person_base/skaven_pack_master/chr_third_person_base",
-	third_person_bot = "units/beings/player/dark_pact_third_person_base/skaven_pack_master/chr_third_person_base",
+local var_0_1 = {
 	third_person_husk = "units/beings/player/dark_pact_third_person_base/skaven_pack_master/chr_third_person_base_husk",
+	first_person = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_base",
+	third_person = "units/beings/player/dark_pact_third_person_base/skaven_pack_master/chr_third_person_base",
+	career = 1,
+	first_person_bot = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_bot_base",
+	third_person_bot = "units/beings/player/dark_pact_third_person_base/skaven_pack_master/chr_third_person_base",
+	dark_pact = true,
 	first_person_attachment = {
 		unit = "units/beings/player/dark_pact_skins/skaven_pack_master/skin_0000/first_person/chr_first_person_mesh",
-		attachment_node_linking = AttachmentNodeLinking.skaven_first_person_attachment,
+		attachment_node_linking = AttachmentNodeLinking.skaven_first_person_attachment
 	},
 	third_person_attachment = {
 		unit = "units/beings/player/dark_pact_skins/skaven_pack_master/skin_0000/third_person/chr_third_person_mesh",
-		attachment_node_linking = AttachmentNodeLinking.skaven_third_person_attachment,
+		attachment_node_linking = AttachmentNodeLinking.skaven_third_person_attachment
 	},
 	always_hide_attachment_slots = {
-		"slot_hat",
-	},
+		"slot_hat"
+	}
 }
-local skaven_wind_globadier_skin_0000 = {
-	career = 1,
-	dark_pact = true,
-	first_person = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_base",
-	first_person_bot = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_bot_base",
-	third_person = "units/beings/player/dark_pact_third_person_base/skaven_wind_globadier/chr_third_person_base",
-	third_person_bot = "units/beings/player/dark_pact_third_person_base/skaven_wind_globadier/chr_third_person_base",
+local var_0_2 = {
 	third_person_husk = "units/beings/player/dark_pact_third_person_base/skaven_wind_globadier/chr_third_person_base_husk",
+	first_person = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_base",
+	third_person = "units/beings/player/dark_pact_third_person_base/skaven_wind_globadier/chr_third_person_base",
+	career = 1,
+	first_person_bot = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_bot_base",
+	third_person_bot = "units/beings/player/dark_pact_third_person_base/skaven_wind_globadier/chr_third_person_base",
+	dark_pact = true,
 	first_person_attachment = {
 		unit = "units/beings/player/dark_pact_skins/skaven_wind_globadier/skin_0000/first_person/chr_first_person_mesh",
-		attachment_node_linking = AttachmentNodeLinking.skaven_first_person_attachment,
+		attachment_node_linking = AttachmentNodeLinking.skaven_first_person_attachment
 	},
 	third_person_attachment = {
 		unit = "units/beings/player/dark_pact_skins/skaven_wind_globadier/skin_0000/third_person/chr_third_person_mesh",
-		attachment_node_linking = AttachmentNodeLinking.skaven_wind_globadier_third_person_attachment,
+		attachment_node_linking = AttachmentNodeLinking.skaven_wind_globadier_third_person_attachment
 	},
 	always_hide_attachment_slots = {
-		"slot_hat",
-	},
+		"slot_hat"
+	}
 }
-local skaven_warpfire_thrower_skin_0000 = {
-	career = 1,
-	dark_pact = true,
-	first_person = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_base",
-	first_person_bot = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_bot_base",
-	third_person = "units/beings/player/dark_pact_third_person_base/skaven_warpfire_thrower/chr_third_person_base",
-	third_person_bot = "units/beings/player/dark_pact_third_person_base/skaven_warpfire_thrower/chr_third_person_base",
+local var_0_3 = {
 	third_person_husk = "units/beings/player/dark_pact_third_person_base/skaven_warpfire_thrower/chr_third_person_base_husk",
+	first_person = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_base",
+	third_person = "units/beings/player/dark_pact_third_person_base/skaven_warpfire_thrower/chr_third_person_base",
+	career = 1,
+	first_person_bot = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_bot_base",
+	third_person_bot = "units/beings/player/dark_pact_third_person_base/skaven_warpfire_thrower/chr_third_person_base",
+	dark_pact = true,
 	first_person_attachment = {
 		unit = "units/beings/player/dark_pact_skins/skaven_warpfire_thrower/skin_0000/first_person/chr_first_person_mesh",
-		attachment_node_linking = AttachmentNodeLinking.skaven_first_person_attachment,
+		attachment_node_linking = AttachmentNodeLinking.skaven_first_person_attachment
 	},
 	third_person_attachment = {
 		unit = "units/beings/player/dark_pact_skins/skaven_warpfire_thrower/skin_0000/third_person/chr_third_person_mesh",
-		attachment_node_linking = AttachmentNodeLinking.skaven_third_person_attachment_backpack,
+		attachment_node_linking = AttachmentNodeLinking.skaven_third_person_attachment_backpack
 	},
 	always_hide_attachment_slots = {
-		"slot_hat",
-	},
+		"slot_hat"
+	}
 }
-local skaven_ratling_gunner_skin_0000 = {
-	career = 1,
-	dark_pact = true,
-	first_person = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_base",
-	first_person_bot = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_bot_base",
-	third_person = "units/beings/player/dark_pact_third_person_base/skaven_ratlinggunner/chr_third_person_base",
-	third_person_bot = "units/beings/player/dark_pact_third_person_base/skaven_ratlinggunner/chr_third_person_base",
+local var_0_4 = {
 	third_person_husk = "units/beings/player/dark_pact_third_person_base/skaven_ratlinggunner/chr_third_person_base_husk",
+	first_person = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_base",
+	third_person = "units/beings/player/dark_pact_third_person_base/skaven_ratlinggunner/chr_third_person_base",
+	career = 1,
+	first_person_bot = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_bot_base",
+	third_person_bot = "units/beings/player/dark_pact_third_person_base/skaven_ratlinggunner/chr_third_person_base",
+	dark_pact = true,
 	first_person_attachment = {
 		unit = "units/beings/player/dark_pact_skins/skaven_ratlinggunner/skin_0000/first_person/chr_first_person_mesh",
-		attachment_node_linking = AttachmentNodeLinking.skaven_first_person_attachment,
+		attachment_node_linking = AttachmentNodeLinking.skaven_first_person_attachment
 	},
 	third_person_attachment = {
 		unit = "units/beings/player/dark_pact_skins/skaven_ratlinggunner/skin_0000/third_person/chr_third_person_mesh",
-		attachment_node_linking = AttachmentNodeLinking.skaven_third_person_attachment_backpack,
+		attachment_node_linking = AttachmentNodeLinking.skaven_third_person_attachment_backpack
 	},
 	always_hide_attachment_slots = {
-		"slot_hat",
-	},
+		"slot_hat"
+	}
 }
-local chaos_troll_skin_0000 = {
-	career = 1,
-	dark_pact = true,
-	first_person = "units/beings/player/dark_pact_first_person_base/chaos_troll/chr_first_person_base",
-	first_person_bot = "units/beings/player/dark_pact_first_person_base/chaos_troll/chr_first_person_bot_base",
-	third_person = "units/beings/player/dark_pact_third_person_base/chaos_troll/chr_third_person_base",
-	third_person_bot = "units/beings/player/dark_pact_third_person_base/chaos_troll/chr_third_person_base",
+local var_0_5 = {
 	third_person_husk = "units/beings/player/dark_pact_third_person_base/chaos_troll/chr_third_person_base_husk",
+	first_person = "units/beings/player/dark_pact_first_person_base/chaos_troll/chr_first_person_base",
+	third_person = "units/beings/player/dark_pact_third_person_base/chaos_troll/chr_third_person_base",
+	career = 1,
+	first_person_bot = "units/beings/player/dark_pact_first_person_base/chaos_troll/chr_first_person_bot_base",
+	third_person_bot = "units/beings/player/dark_pact_third_person_base/chaos_troll/chr_third_person_base",
+	dark_pact = true,
 	first_person_attachment = {
 		unit = "units/beings/player/dark_pact_skins/chaos_troll/skin_0000/first_person/chr_first_person_mesh",
-		attachment_node_linking = AttachmentNodeLinking.chaos_troll_first_person_attachment,
+		attachment_node_linking = AttachmentNodeLinking.chaos_troll_first_person_attachment
 	},
 	third_person_attachment = {
 		unit = "units/beings/player/dark_pact_skins/chaos_troll/skin_0000/third_person/chr_third_person_mesh",
-		attachment_node_linking = AttachmentNodeLinking.chaos_troll_third_person_attachment,
+		attachment_node_linking = AttachmentNodeLinking.chaos_troll_third_person_attachment
 	},
 	always_hide_attachment_slots = {
-		"slot_hat",
-	},
+		"slot_hat"
+	}
 }
-local skaven_rat_ogre_skin_0000 = {
-	career = 1,
-	dark_pact = true,
-	first_person = "units/beings/player/dark_pact_first_person_base/skaven_rat_ogre/chr_first_person_base",
-	first_person_bot = "units/beings/player/dark_pact_first_person_base/skaven_rat_ogre/chr_first_person_bot_base",
-	third_person = "units/beings/player/dark_pact_third_person_base/skaven_rat_ogre/chr_third_person_base",
-	third_person_bot = "units/beings/player/dark_pact_third_person_base/skaven_rat_ogre/chr_third_person_base",
+local var_0_6 = {
 	third_person_husk = "units/beings/player/dark_pact_third_person_base/skaven_rat_ogre/chr_third_person_base_husk",
+	first_person = "units/beings/player/dark_pact_first_person_base/skaven_rat_ogre/chr_first_person_base",
+	third_person = "units/beings/player/dark_pact_third_person_base/skaven_rat_ogre/chr_third_person_base",
+	career = 1,
+	first_person_bot = "units/beings/player/dark_pact_first_person_base/skaven_rat_ogre/chr_first_person_bot_base",
+	third_person_bot = "units/beings/player/dark_pact_third_person_base/skaven_rat_ogre/chr_third_person_base",
+	dark_pact = true,
 	first_person_attachment = {
 		unit = "units/beings/player/dark_pact_skins/skaven_rat_ogre/skin_0000/first_person/chr_first_person_mesh",
-		attachment_node_linking = AttachmentNodeLinking.rat_ogre_first_person_attachment,
+		attachment_node_linking = AttachmentNodeLinking.rat_ogre_first_person_attachment
 	},
 	third_person_attachment = {
 		unit = "units/beings/player/dark_pact_skins/skaven_rat_ogre/skin_0000/third_person/chr_third_person_mesh",
-		attachment_node_linking = AttachmentNodeLinking.rat_ogre_third_person_attachment,
+		attachment_node_linking = AttachmentNodeLinking.rat_ogre_third_person_attachment
 	},
 	always_hide_attachment_slots = {
-		"slot_hat",
-	},
+		"slot_hat"
+	}
 }
 
 return {
-	skaven_gutter_runner_skin_0000 = table.clone(skaven_gutter_runner_skin_0000),
-	skaven_pack_master_skin_0000 = table.clone(skaven_pack_master_skin_0000),
-	skaven_wind_globadier_skin_0000 = table.clone(skaven_wind_globadier_skin_0000),
-	skaven_warpfire_thrower_skin_0000 = table.clone(skaven_warpfire_thrower_skin_0000),
-	skaven_ratling_gunner_skin_0000 = table.clone(skaven_ratling_gunner_skin_0000),
-	chaos_troll_skin_0000 = table.clone(chaos_troll_skin_0000),
-	skaven_rat_ogre_skin_0000 = table.clone(skaven_rat_ogre_skin_0000),
+	skaven_gutter_runner_skin_0000 = table.clone(var_0_0),
+	skaven_pack_master_skin_0000 = table.clone(var_0_1),
+	skaven_wind_globadier_skin_0000 = table.clone(var_0_2),
+	skaven_warpfire_thrower_skin_0000 = table.clone(var_0_3),
+	skaven_ratling_gunner_skin_0000 = table.clone(var_0_4),
+	chaos_troll_skin_0000 = table.clone(var_0_5),
+	skaven_rat_ogre_skin_0000 = table.clone(var_0_6)
 }

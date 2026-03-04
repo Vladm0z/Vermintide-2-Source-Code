@@ -1,203 +1,203 @@
-﻿-- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_mutator_summary_console_definitions.lua
+-- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_mutator_summary_console_definitions.lua
 
-local window_default_settings = UISettings.game_start_windows
-local window_size = window_default_settings.size
-local game_option_size = {
-	window_size[1] - 20,
-	700,
+local var_0_0 = UISettings.game_start_windows.size
+local var_0_1 = {
+	var_0_0[1] - 20,
+	700
 }
-local animation_definitions = {
+local var_0_2 = {
 	on_enter = {
 		{
-			end_progress = 0.3,
 			name = "fade_in",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 0
+			end_progress = 0.3,
+			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				local var_2_0 = math.easeOutCubic(arg_2_3)
 
-				params.render_settings.alpha_multiplier = anim_progress
+				arg_2_4.render_settings.alpha_multiplier = var_2_0
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				return
-			end,
-		},
+			end
+		}
 	},
 	on_exit = {
 		{
-			end_progress = 0.3,
 			name = "fade_out",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 1
+			end_progress = 0.3,
+			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				arg_4_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				local var_5_0 = math.easeOutCubic(arg_5_3)
 
-				params.render_settings.alpha_multiplier = 1 - anim_progress
+				arg_5_4.render_settings.alpha_multiplier = 1 - var_5_0
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				return
-			end,
-		},
-	},
+			end
+		}
+	}
 }
-local scenegraph_definition = {
+local var_0_3 = {
 	root = {
 		is_root = true,
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			UILayer.default,
-		},
+			UILayer.default
+		}
 	},
 	root_fit = {
 		scale = "fit",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			UILayer.default,
-		},
+			UILayer.default
+		}
 	},
 	menu_root = {
-		horizontal_alignment = "center",
-		parent = "root",
 		vertical_alignment = "center",
+		parent = "root",
+		horizontal_alignment = "center",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	window = {
-		horizontal_alignment = "left",
-		parent = "menu_root",
 		vertical_alignment = "center",
-		size = window_size,
+		parent = "menu_root",
+		horizontal_alignment = "left",
+		size = var_0_0,
 		position = {
 			850,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	game_options_right_chain = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "top",
+		parent = "window",
+		horizontal_alignment = "center",
 		size = {
 			16,
-			window_size[2],
+			var_0_0[2]
 		},
 		position = {
 			195,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	game_options_left_chain = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "top",
+		parent = "window",
+		horizontal_alignment = "center",
 		size = {
 			16,
-			window_size[2],
+			var_0_0[2]
 		},
 		position = {
 			-195,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	game_option_1 = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "top",
-		size = game_option_size,
+		parent = "window",
+		horizontal_alignment = "center",
+		size = var_0_1,
 		position = {
 			0,
 			0,
-			2,
-		},
+			2
+		}
 	},
 	item_presentation = {
-		horizontal_alignment = "center",
-		parent = "game_option_1",
 		vertical_alignment = "top",
+		parent = "game_option_1",
+		horizontal_alignment = "center",
 		size = {
-			game_option_size[1] - 10,
-			0,
+			var_0_1[1] - 10,
+			0
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	confirm_button = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "bottom",
+		parent = "window",
+		horizontal_alignment = "center",
 		size = {
-			game_option_size[1] - 40,
-			72,
+			var_0_1[1] - 40,
+			72
 		},
 		position = {
 			0,
 			18,
-			20,
-		},
-	},
+			20
+		}
+	}
 }
 
-local function create_placeholder_option(scenegraph_id, size)
-	local background_texture = "game_options_bg_04"
-	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local frame_name = "menu_frame_08"
-	local frame_settings = UIFrameSettings[frame_name]
-	local widget = {
+local function var_0_4(arg_7_0, arg_7_1)
+	local var_7_0 = "game_options_bg_04"
+	local var_7_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_7_0)
+	local var_7_2 = "menu_frame_08"
+	local var_7_3 = UIFrameSettings[var_7_2]
+
+	return {
 		element = {
 			passes = {
 				{
-					content_id = "background",
-					pass_type = "texture_uv",
 					style_id = "background",
+					pass_type = "texture_uv",
+					content_id = "background"
 				},
 				{
-					pass_type = "texture_frame",
-					style_id = "frame",
 					texture_id = "frame",
-				},
-			},
+					style_id = "frame",
+					pass_type = "texture_frame"
+				}
+			}
 		},
 		content = {
-			frame = frame_settings.texture,
+			frame = var_7_3.texture,
 			background = {
 				uvs = {
 					{
 						0,
-						1 - math.min(size[2] / background_texture_settings.size[2], 1),
+						1 - math.min(arg_7_1[2] / var_7_1.size[2], 1)
 					},
 					{
-						math.min(size[1] / background_texture_settings.size[1], 1),
-						1,
-					},
+						math.min(arg_7_1[1] / var_7_1.size[1], 1),
+						1
+					}
 				},
-				texture_id = background_texture,
-			},
+				texture_id = var_7_0
+			}
 		},
 		style = {
 			frame = {
@@ -205,49 +205,47 @@ local function create_placeholder_option(scenegraph_id, size)
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					10,
+					10
 				},
-				size = size,
-				texture_size = frame_settings.texture_size,
-				texture_sizes = frame_settings.texture_sizes,
+				size = arg_7_1,
+				texture_size = var_7_3.texture_size,
+				texture_sizes = var_7_3.texture_sizes
 			},
 			background = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					0,
-				},
-			},
+					0
+				}
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_7_0,
 		offset = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	}
-
-	return widget
 end
 
-local widgets = {
-	game_option_placeholder = create_placeholder_option("game_option_1", scenegraph_definition.game_option_1.size),
-	item_presentation = UIWidgets.create_simple_item_presentation("item_presentation", UISettings.console_tooltip_pass_definitions),
+local var_0_5 = {
+	game_option_placeholder = var_0_4("game_option_1", var_0_3.game_option_1.size),
+	item_presentation = UIWidgets.create_simple_item_presentation("item_presentation", UISettings.console_tooltip_pass_definitions)
 }
 
 return {
-	widgets = widgets,
-	scenegraph_definition = scenegraph_definition,
-	animation_definitions = animation_definitions,
+	widgets = var_0_5,
+	scenegraph_definition = var_0_3,
+	animation_definitions = var_0_2
 }

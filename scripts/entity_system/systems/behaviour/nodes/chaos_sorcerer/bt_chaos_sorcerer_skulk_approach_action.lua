@@ -1,610 +1,594 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/chaos_sorcerer/bt_chaos_sorcerer_skulk_approach_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/chaos_sorcerer/bt_chaos_sorcerer_skulk_approach_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTChaosSorcererSkulkApproachAction = class(BTChaosSorcererSkulkApproachAction, BTNode)
 
-local BTChaosSorcererSkulkApproachAction = BTChaosSorcererSkulkApproachAction
-local Unit_alive = Unit.alive
-local POSITION_LOOKUP = POSITION_LOOKUP
+local var_0_0 = BTChaosSorcererSkulkApproachAction
+local var_0_1 = Unit.alive
+local var_0_2 = POSITION_LOOKUP
 
-BTChaosSorcererSkulkApproachAction.init = function (self, ...)
-	BTChaosSorcererSkulkApproachAction.super.init(self, ...)
+function var_0_0.init(arg_1_0, ...)
+	var_0_0.super.init(arg_1_0, ...)
 
-	self.cover_points_broadphase = Managers.state.conflict.level_analysis.cover_points_broadphase
+	arg_1_0.cover_points_broadphase = Managers.state.conflict.level_analysis.cover_points_broadphase
 end
 
-BTChaosSorcererSkulkApproachAction.name = "BTChaosSorcererSkulkApproachAction"
+var_0_0.name = "BTChaosSorcererSkulkApproachAction"
 
-BTChaosSorcererSkulkApproachAction.enter = function (self, unit, blackboard, t)
-	local action = self._tree_node.action_data
-	local breed = blackboard.breed
-	local skulk_data = blackboard.skulk_data or {}
+function var_0_0.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_0._tree_node.action_data
+	local var_2_1 = arg_2_2.breed
+	local var_2_2 = arg_2_2.skulk_data or {}
 
-	blackboard.skulk_data = skulk_data
-	skulk_data.direction = skulk_data.direction or 1 - math.random(0, 1) * 2
-	skulk_data.radius = skulk_data.radius or blackboard.target_dist
-	blackboard.action = action
+	arg_2_2.skulk_data = var_2_2
+	var_2_2.direction = var_2_2.direction or 1 - math.random(0, 1) * 2
+	var_2_2.radius = var_2_2.radius or arg_2_2.target_dist
+	arg_2_2.action = var_2_0
 
-	if blackboard.move_state ~= "idle" then
-		self:idle(unit, blackboard)
+	if arg_2_2.move_state ~= "idle" then
+		arg_2_0:idle(arg_2_1, arg_2_2)
 	end
 
-	local ai_navigation = blackboard.navigation_extension
+	arg_2_2.navigation_extension:set_max_speed(var_2_1.run_speed)
+	LocomotionUtils.set_animation_driven_movement(arg_2_1, false)
 
-	ai_navigation:set_max_speed(breed.run_speed)
-	LocomotionUtils.set_animation_driven_movement(unit, false)
+	if arg_2_2.move_pos then
+		local var_2_3 = arg_2_2.move_pos:unbox()
 
-	if blackboard.move_pos then
-		local move_pos = blackboard.move_pos:unbox()
-
-		self:move_to(move_pos, unit, blackboard)
+		arg_2_0:move_to(var_2_3, arg_2_1, arg_2_2)
 	end
 
-	blackboard.ready_to_summon = false
-	blackboard.num_summons = blackboard.num_summons or 0
+	arg_2_2.ready_to_summon = false
+	arg_2_2.num_summons = arg_2_2.num_summons or 0
 
-	if action.sorcerer_type == "tentacle" then
-		if not blackboard.portal_data then
-			blackboard.portal_data = {
+	if var_2_0.sorcerer_type == "tentacle" then
+		if not arg_2_2.portal_data then
+			arg_2_2.portal_data = {
 				chance_to_look_for_wall_spawn = 0.5,
-				portal_spawn_type = "n/a",
 				search_counter = 0,
-				portal_search_timer = t + 3,
+				portal_spawn_type = "n/a",
+				portal_search_timer = arg_2_3 + 3,
 				cover_units = {},
 				portal_spawn_pos = Vector3Box(),
 				portal_spawn_rot = QuaternionBox(),
-				physics_world = World.get_data(blackboard.world, "physics_world"),
+				physics_world = World.get_data(arg_2_2.world, "physics_world")
 			}
-			blackboard.spell = blackboard.portal_data
+			arg_2_2.spell = arg_2_2.portal_data
 		end
-	elseif action.sorcerer_type == "vortex" and not blackboard.vortex_data then
-		self:initialize_vortex_data(blackboard, action.vortex_template_name)
+	elseif var_2_0.sorcerer_type == "vortex" and not arg_2_2.vortex_data then
+		arg_2_0:initialize_vortex_data(arg_2_2, var_2_0.vortex_template_name)
 
-		blackboard.spell = blackboard.vortex_data
+		arg_2_2.spell = arg_2_2.vortex_data
 	end
 
-	if blackboard.teleport_health_percent == nil or blackboard.set_teleport_hp then
-		local health_extension = ScriptUnit.extension(unit, "health_system")
+	if arg_2_2.teleport_health_percent == nil or arg_2_2.set_teleport_hp then
+		local var_2_4 = ScriptUnit.extension(arg_2_1, "health_system")
 
-		blackboard.health_extension = health_extension
-		blackboard.teleport_health_percent = health_extension:current_health_percent() - action.part_hp_lost_to_teleport
-		blackboard.set_teleport_hp = nil
+		arg_2_2.health_extension = var_2_4
+		arg_2_2.teleport_health_percent = var_2_4:current_health_percent() - var_2_0.part_hp_lost_to_teleport
+		arg_2_2.set_teleport_hp = nil
 	end
 
-	blackboard.travel_teleport_timer = t + ConflictUtils.random_interval(action.teleport_cooldown)
+	arg_2_2.travel_teleport_timer = arg_2_3 + ConflictUtils.random_interval(var_2_0.teleport_cooldown)
 end
 
-local VORTEX_CHECK_ANGLE_INCREMENT = math.pi / 4
+local var_0_3 = math.pi / 4
 
-BTChaosSorcererSkulkApproachAction.initialize_vortex_data = function (self, blackboard, vortex_template_name)
-	local vortex_template = VortexTemplates[vortex_template_name]
-	local max_radius = vortex_template.full_inner_radius
-	local start_check_direction = Vector3.forward() * max_radius
-	local check_directions = {}
+function var_0_0.initialize_vortex_data(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0 = VortexTemplates[arg_3_2]
+	local var_3_1 = var_3_0.full_inner_radius
+	local var_3_2 = Vector3.forward() * var_3_1
+	local var_3_3 = {}
 
-	for i = 1, 8 do
-		local current_rotation = Quaternion(Vector3.up(), VORTEX_CHECK_ANGLE_INCREMENT * (i - 1))
-		local direction = Quaternion.rotate(current_rotation, start_check_direction)
+	for iter_3_0 = 1, 8 do
+		local var_3_4 = Quaternion(Vector3.up(), var_0_3 * (iter_3_0 - 1))
+		local var_3_5 = Quaternion.rotate(var_3_4, var_3_2)
 
-		check_directions[i] = Vector3Box(direction)
+		var_3_3[iter_3_0] = Vector3Box(var_3_5)
 	end
 
-	blackboard.vortex_data = {
+	arg_3_1.vortex_data = {
 		spawn_timer = 3,
-		physics_world = World.get_data(blackboard.world, "physics_world"),
+		physics_world = World.get_data(arg_3_1.world, "physics_world"),
 		vortex_spawn_pos = Vector3Box(),
 		vortex_units = {},
 		queued_vortex = {},
-		radius_check_directions = check_directions,
-		vortex_template = vortex_template,
+		radius_check_directions = var_3_3,
+		vortex_template = var_3_0
 	}
 end
 
-BTChaosSorcererSkulkApproachAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	local skulk_data = blackboard.skulk_data
-	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
-	local navigation_extension = blackboard.navigation_extension
+function var_0_0.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	local var_4_0 = arg_4_2.skulk_data
+	local var_4_1 = AiUtils.get_default_breed_move_speed(arg_4_1, arg_4_2)
+	local var_4_2 = arg_4_2.navigation_extension
 
-	navigation_extension:set_max_speed(default_move_speed)
+	var_4_2:set_max_speed(var_4_1)
 
-	if reason == "aborted" then
-		local path_found = navigation_extension:is_following_path()
+	if arg_4_4 == "aborted" then
+		local var_4_3 = var_4_2:is_following_path()
 
-		if blackboard.move_pos and path_found and blackboard.move_state == "idle" then
-			self:start_move_animation(unit, blackboard)
+		if arg_4_2.move_pos and var_4_3 and arg_4_2.move_state == "idle" then
+			arg_4_0:start_move_animation(arg_4_1, arg_4_2)
 		end
 	end
 
-	skulk_data.animation_state = nil
-	blackboard.action = nil
+	var_4_0.animation_state = nil
+	arg_4_2.action = nil
 end
 
-BTChaosSorcererSkulkApproachAction.run = function (self, unit, blackboard, t, dt)
-	local ai_navigation = blackboard.navigation_extension
-	local path_found = ai_navigation:is_following_path()
-	local failed_attempts = ai_navigation:number_failed_move_attempts()
-	local action = blackboard.action
+function var_0_0.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	local var_5_0 = arg_5_2.navigation_extension
+	local var_5_1 = var_5_0:is_following_path()
+	local var_5_2 = var_5_0:number_failed_move_attempts()
+	local var_5_3 = arg_5_2.action
 
-	if self[action.search_func_name](self, unit, blackboard, t, blackboard.spell) then
+	if arg_5_0[var_5_3.search_func_name](arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_2.spell) then
 		return "done"
 	end
 
-	local skulk_data = blackboard.skulk_data
+	local var_5_4 = arg_5_2.skulk_data
 
-	if blackboard.move_pos and path_found and blackboard.move_state == "idle" then
-		self:start_move_animation(unit, blackboard)
+	if arg_5_2.move_pos and var_5_1 and arg_5_2.move_state == "idle" then
+		arg_5_0:start_move_animation(arg_5_1, arg_5_2)
 	end
 
-	local current_health_percent = blackboard.health_extension:current_health_percent()
+	if arg_5_2.health_extension:current_health_percent() < arg_5_2.teleport_health_percent then
+		local var_5_5 = var_0_2[arg_5_1]
+		local var_5_6 = math.random() * 5 + math.random() * 5 + math.random() * 5
+		local var_5_7 = var_5_6 * 0.5 + var_5_3.preferred_distance
+		local var_5_8 = 5
+		local var_5_9 = ConflictUtils.get_spawn_pos_on_circle(arg_5_2.nav_world, var_5_5, var_5_7, var_5_6, var_5_8)
 
-	if current_health_percent < blackboard.teleport_health_percent then
-		local unit_pos = POSITION_LOOKUP[unit]
-		local spread = math.random() * 5 + math.random() * 5 + math.random() * 5
-		local dist = spread * 0.5 + action.preferred_distance
-		local tries = 5
-		local teleport_pos = ConflictUtils.get_spawn_pos_on_circle(blackboard.nav_world, unit_pos, dist, spread, tries)
-
-		if teleport_pos then
-			blackboard.set_teleport_hp = true
-			blackboard.quick_teleport_exit_pos = Vector3Box(teleport_pos)
-			blackboard.quick_teleport = true
-			skulk_data.direction = nil
-			blackboard.move_pos = nil
+		if var_5_9 then
+			arg_5_2.set_teleport_hp = true
+			arg_5_2.quick_teleport_exit_pos = Vector3Box(var_5_9)
+			arg_5_2.quick_teleport = true
+			var_5_4.direction = nil
+			arg_5_2.move_pos = nil
 
 			return "done"
 		end
-	elseif t > blackboard.travel_teleport_timer then
-		local teleport_pos = self:get_skulk_target(unit, blackboard, true)
+	elseif arg_5_3 > arg_5_2.travel_teleport_timer then
+		local var_5_10 = arg_5_0:get_skulk_target(arg_5_1, arg_5_2, true)
 
-		if teleport_pos then
-			blackboard.quick_teleport_exit_pos = Vector3Box(teleport_pos)
-			blackboard.quick_teleport = true
-			blackboard.move_pos = nil
+		if var_5_10 then
+			arg_5_2.quick_teleport_exit_pos = Vector3Box(var_5_10)
+			arg_5_2.quick_teleport = true
+			arg_5_2.move_pos = nil
 
 			return "done"
 		end
 	end
 
-	local position = blackboard.move_pos
-
-	if position then
-		local at_goal = self:at_goal(unit, blackboard)
-
-		if at_goal or failed_attempts > 0 then
-			blackboard.move_pos = nil
+	if arg_5_2.move_pos then
+		if arg_5_0:at_goal(arg_5_1, arg_5_2) or var_5_2 > 0 then
+			arg_5_2.move_pos = nil
 		end
 
 		return "running"
 	end
 
-	position = self:get_skulk_target(unit, blackboard)
+	local var_5_11 = arg_5_0:get_skulk_target(arg_5_1, arg_5_2)
 
-	if position then
-		self:move_to(position, unit, blackboard)
+	if var_5_11 then
+		arg_5_0:move_to(var_5_11, arg_5_1, arg_5_2)
 
 		return "running"
 	end
 
-	if blackboard.move_state ~= "idle" then
-		self:idle(unit, blackboard)
+	if arg_5_2.move_state ~= "idle" then
+		arg_5_0:idle(arg_5_1, arg_5_2)
 	end
 
 	return "running"
 end
 
-BTChaosSorcererSkulkApproachAction.at_goal = function (self, unit, blackboard)
-	local position_boxed = blackboard.move_pos
+function var_0_0.at_goal(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = arg_6_2.move_pos
 
-	if not position_boxed then
+	if not var_6_0 then
 		return false
 	end
 
-	local position = position_boxed:unbox()
-	local distance = Vector3.distance_squared(position, POSITION_LOOKUP[unit])
+	local var_6_1 = var_6_0:unbox()
 
-	if distance < 0.25 then
+	if Vector3.distance_squared(var_6_1, var_0_2[arg_6_1]) < 0.25 then
 		return true
 	end
 end
 
-BTChaosSorcererSkulkApproachAction.move_to = function (self, position, unit, blackboard)
-	local ai_navigation = blackboard.navigation_extension
+function var_0_0.move_to(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	arg_7_3.navigation_extension:move_to(arg_7_1)
 
-	ai_navigation:move_to(position)
-
-	blackboard.move_pos = Vector3Box(position)
+	arg_7_3.move_pos = Vector3Box(arg_7_1)
 end
 
-BTChaosSorcererSkulkApproachAction.idle = function (self, unit, blackboard)
-	self:anim_event(unit, blackboard, "idle")
+function var_0_0.idle(arg_8_0, arg_8_1, arg_8_2)
+	arg_8_0:anim_event(arg_8_1, arg_8_2, "idle")
 
-	blackboard.move_state = "idle"
+	arg_8_2.move_state = "idle"
 end
 
-BTChaosSorcererSkulkApproachAction.start_move_animation = function (self, unit, blackboard)
-	local move_animation = blackboard.action.move_animation
+function var_0_0.start_move_animation(arg_9_0, arg_9_1, arg_9_2)
+	local var_9_0 = arg_9_2.action.move_animation
 
-	self:anim_event(unit, blackboard, move_animation)
+	arg_9_0:anim_event(arg_9_1, arg_9_2, var_9_0)
 
-	blackboard.move_state = "moving"
+	arg_9_2.move_state = "moving"
 end
 
-BTChaosSorcererSkulkApproachAction.anim_event = function (self, unit, blackboard, anim)
-	local skulk_data = blackboard.skulk_data
+function var_0_0.anim_event(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	local var_10_0 = arg_10_2.skulk_data
 
-	if skulk_data.animation_state ~= anim then
-		Managers.state.network:anim_event(unit, anim)
+	if var_10_0.animation_state ~= arg_10_3 then
+		Managers.state.network:anim_event(arg_10_1, arg_10_3)
 
-		skulk_data.animation_state = anim
+		var_10_0.animation_state = arg_10_3
 	end
 end
 
-local TRIES = 15
+local var_0_4 = 15
 
-BTChaosSorcererSkulkApproachAction.get_skulk_target = function (self, unit, blackboard, teleporting)
-	local action = blackboard.action
-	local nav_world = blackboard.nav_world
-	local skulk_data = blackboard.skulk_data
-	local direction = skulk_data.direction
-	local target_unit = blackboard.target_unit
-	local target_position = POSITION_LOOKUP[target_unit]
-	local unit_position = POSITION_LOOKUP[unit]
-	local dist = blackboard.target_dist
-	local to_target = unit_position - target_position
-	local to_target_dir = Vector3.normalize(to_target)
-	local preferred_distance = action.preferred_distance
+function var_0_0.get_skulk_target(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+	local var_11_0 = arg_11_2.action
+	local var_11_1 = arg_11_2.nav_world
+	local var_11_2 = arg_11_2.skulk_data
+	local var_11_3 = var_11_2.direction
+	local var_11_4 = arg_11_2.target_unit
+	local var_11_5 = var_0_2[var_11_4]
+	local var_11_6 = var_0_2[arg_11_1]
+	local var_11_7 = arg_11_2.target_dist
+	local var_11_8 = var_11_6 - var_11_5
+	local var_11_9 = Vector3.normalize(var_11_8)
+	local var_11_10 = var_11_0.preferred_distance
 
-	if blackboard.is_close then
-		if dist < preferred_distance then
-			to_target = to_target + to_target_dir * (1 + math.random())
+	if arg_11_2.is_close then
+		if var_11_7 < var_11_10 then
+			var_11_8 = var_11_8 + var_11_9 * (1 + math.random())
 		else
-			blackboard.is_close = false
-			to_target = to_target + to_target_dir
+			arg_11_2.is_close = false
+			var_11_8 = var_11_8 + var_11_9
 		end
-	elseif dist < action.close_distance then
-		blackboard.is_close = true
-		to_target = to_target + to_target_dir
+	elseif var_11_7 < var_11_0.close_distance then
+		arg_11_2.is_close = true
+		var_11_8 = var_11_8 + var_11_9
 	end
 
-	local cross_dir = Vector3(0, 0, direction)
-	local mod = 0.1
-	local alpha = math.pi * math.clamp(mod * 20 / dist, 0.01, 0.15)
+	local var_11_11 = Vector3(0, 0, var_11_3)
+	local var_11_12 = 0.1
+	local var_11_13 = math.pi * math.clamp(var_11_12 * 20 / var_11_7, 0.01, 0.15)
 
-	if teleporting then
-		alpha = alpha * 1.5
+	if arg_11_3 then
+		var_11_13 = var_11_13 * 1.5
 	end
 
-	for i = 1, TRIES do
-		local rot_vec = to_target - to_target_dir * 0.5
+	for iter_11_0 = 1, var_0_4 do
+		local var_11_14 = var_11_8 - var_11_9 * 0.5
 
-		if blackboard.num_summons and blackboard.num_summons >= (action.teleport_closer_summon_limit or 3) then
-			rot_vec = Vector3.normalize(target_position - unit_position) * action.teleport_closer_range
+		if arg_11_2.num_summons and arg_11_2.num_summons >= (var_11_0.teleport_closer_summon_limit or 3) then
+			var_11_14 = Vector3.normalize(var_11_5 - var_11_6) * var_11_0.teleport_closer_range
 		end
 
-		local pos = target_position + Quaternion.rotate(Quaternion(cross_dir, alpha * i), rot_vec)
+		local var_11_15 = var_11_5 + Quaternion.rotate(Quaternion(var_11_11, var_11_13 * iter_11_0), var_11_14)
+		local var_11_16 = ConflictUtils.find_center_tri(var_11_1, var_11_15)
 
-		pos = ConflictUtils.find_center_tri(nav_world, pos)
-
-		if pos then
-			return pos
+		if var_11_16 then
+			return var_11_16
 		end
 	end
 
-	skulk_data.direction = skulk_data.direction * -1
+	var_11_2.direction = var_11_2.direction * -1
 end
 
-BTChaosSorcererSkulkApproachAction.debug_show_skulk_circle = function (self, unit, blackboard)
-	local skulk_data = blackboard.skulk_data
-	local target_unit = blackboard.target_unit
-	local target_position = POSITION_LOOKUP[target_unit]
-	local offset = Vector3.up() * 0.2
+function var_0_0.debug_show_skulk_circle(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = arg_12_2.skulk_data
+	local var_12_1 = arg_12_2.target_unit
+	local var_12_2 = var_0_2[var_12_1]
+	local var_12_3 = Vector3.up() * 0.2
 
-	QuickDrawer:circle(target_position + offset, blackboard.target_dist, Vector3.up(), Colors.get("light_green"))
-	QuickDrawer:circle(target_position + offset, skulk_data.radius, Vector3.up(), Colors.get("light_green"))
+	QuickDrawer:circle(var_12_2 + var_12_3, arg_12_2.target_dist, Vector3.up(), Colors.get("light_green"))
+	QuickDrawer:circle(var_12_2 + var_12_3, var_12_0.radius, Vector3.up(), Colors.get("light_green"))
 
-	skulk_data.radius = blackboard.target_dist
+	var_12_0.radius = arg_12_2.target_dist
 end
 
-BTChaosSorcererSkulkApproachAction.update_dummie = function (self, unit, blackboard, t)
+function var_0_0.update_dummie(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	return false
 end
 
-BTChaosSorcererSkulkApproachAction._update_vortex_search = function (self, unit, blackboard, t, vortex_data)
-	if t > vortex_data.spawn_timer then
-		local vortex_units = vortex_data.vortex_units
-		local num_vortex_units = #vortex_units
-		local i = 1
+function var_0_0._update_vortex_search(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+	if arg_14_3 > arg_14_4.spawn_timer then
+		local var_14_0 = arg_14_4.vortex_units
+		local var_14_1 = #var_14_0
+		local var_14_2 = 1
 
-		while i <= num_vortex_units do
-			local vortex_unit = vortex_units[i]
+		while var_14_2 <= var_14_1 do
+			local var_14_3 = var_14_0[var_14_2]
 
-			if not Unit_alive(vortex_unit) then
-				vortex_units[i] = vortex_units[num_vortex_units]
-				vortex_units[num_vortex_units] = nil
-				num_vortex_units = num_vortex_units - 1
+			if not var_0_1(var_14_3) then
+				var_14_0[var_14_2] = var_14_0[var_14_1]
+				var_14_0[var_14_1] = nil
+				var_14_1 = var_14_1 - 1
 			else
-				i = i + 1
+				var_14_2 = var_14_2 + 1
 			end
 		end
 
-		local action = blackboard.action
-		local target_distance = blackboard.target_dist
-		local target_within_reach = target_distance and target_distance > action.min_cast_vortex_distance and target_distance < action.max_cast_vortex_distance
+		local var_14_4 = arg_14_2.action
+		local var_14_5 = arg_14_2.target_dist
+		local var_14_6 = var_14_5 and var_14_5 > var_14_4.min_cast_vortex_distance and var_14_5 < var_14_4.max_cast_vortex_distance
 
-		if not blackboard.freeze_spell_casting and num_vortex_units < blackboard.max_vortex_units and target_within_reach then
-			local target_unit = blackboard.target_unit
-			local head_node = Unit.node(unit, "j_head")
-			local head_position = Unit.world_position(unit, head_node)
-			local target_node = Unit.node(target_unit, "j_head")
-			local target_node_position = Unit.world_position(target_unit, target_node)
-			local physics_world = vortex_data.physics_world
-			local target_line_of_sight = PerceptionUtils.is_position_in_line_of_sight(unit, head_position, target_node_position, physics_world)
+		if not arg_14_2.freeze_spell_casting and var_14_1 < arg_14_2.max_vortex_units and var_14_6 then
+			local var_14_7 = arg_14_2.target_unit
+			local var_14_8 = Unit.node(arg_14_1, "j_head")
+			local var_14_9 = Unit.world_position(arg_14_1, var_14_8)
+			local var_14_10 = Unit.node(var_14_7, "j_head")
+			local var_14_11 = Unit.world_position(var_14_7, var_14_10)
+			local var_14_12 = arg_14_4.physics_world
 
-			if not target_line_of_sight then
-				vortex_data.spawn_timer = t + action.vortex_check_timer
-
-				return false
-			end
-
-			local vortex_cast_position, min_radius = BTChaosSorcererSkulkApproachAction._get_vortex_cast_position(unit, blackboard, vortex_data, physics_world)
-
-			if not vortex_cast_position then
-				vortex_data.spawn_timer = t + action.vortex_check_timer
+			if not PerceptionUtils.is_position_in_line_of_sight(arg_14_1, var_14_9, var_14_11, var_14_12) then
+				arg_14_4.spawn_timer = arg_14_3 + var_14_4.vortex_check_timer
 
 				return false
 			end
 
-			blackboard.ready_to_summon = true
-			blackboard.num_summons = blackboard.num_summons + 1
+			local var_14_13, var_14_14 = var_0_0._get_vortex_cast_position(arg_14_1, arg_14_2, arg_14_4, var_14_12)
 
-			vortex_data.vortex_spawn_pos:store(vortex_cast_position)
+			if not var_14_13 then
+				arg_14_4.spawn_timer = arg_14_3 + var_14_4.vortex_check_timer
 
-			vortex_data.vortex_spawn_radius = min_radius
-			vortex_data.spawn_timer = t + action.vortex_spawn_timer
+				return false
+			end
+
+			arg_14_2.ready_to_summon = true
+			arg_14_2.num_summons = arg_14_2.num_summons + 1
+
+			arg_14_4.vortex_spawn_pos:store(var_14_13)
+
+			arg_14_4.vortex_spawn_radius = var_14_14
+			arg_14_4.spawn_timer = arg_14_3 + var_14_4.vortex_spawn_timer
 
 			return true
 		else
-			vortex_data.spawn_timer = t + action.vortex_check_timer
+			arg_14_4.spawn_timer = arg_14_3 + var_14_4.vortex_check_timer
 		end
 	end
 end
 
-BTChaosSorcererSkulkApproachAction._get_vortex_cast_position = function (unit, blackboard, vortex_data, physics_world)
-	local action = blackboard.action
-	local params = FrameTable.alloc_table()
-	local target_distance = blackboard.target_dist
-	local navigation_extension = blackboard.navigation_extension
-	local traverse_logic = navigation_extension:traverse_logic()
+function var_0_0._get_vortex_cast_position(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+	local var_15_0 = arg_15_1.action
+	local var_15_1 = FrameTable.alloc_table()
+	local var_15_2 = arg_15_1.target_dist
+	local var_15_3 = arg_15_1.navigation_extension:traverse_logic()
 
-	params.nav_world = blackboard.nav_world
-	params.physics_world = physics_world
-	params.from_unit = unit
-	params.from_node_name = "j_head"
-	params.to_unit = blackboard.target_unit
-	params.to_node_name = "j_head"
-	params.min_distance = action.min_player_vortex_distance
-	params.max_distance = math.min(target_distance, action.max_player_vortex_distance)
-	params.max_tries = 3
-	params.outside_goal_tries = 3
-	params.above = 15
-	params.below = 15
-	params.min_angle_step = 4
-	params.max_angle_step = 8
-	params.traverse_logic = traverse_logic
+	var_15_1.nav_world = arg_15_1.nav_world
+	var_15_1.physics_world = arg_15_3
+	var_15_1.from_unit = arg_15_0
+	var_15_1.from_node_name = "j_head"
+	var_15_1.to_unit = arg_15_1.target_unit
+	var_15_1.to_node_name = "j_head"
+	var_15_1.min_distance = var_15_0.min_player_vortex_distance
+	var_15_1.max_distance = math.min(var_15_2, var_15_0.max_player_vortex_distance)
+	var_15_1.max_tries = 3
+	var_15_1.outside_goal_tries = 3
+	var_15_1.above = 15
+	var_15_1.below = 15
+	var_15_1.min_angle_step = 4
+	var_15_1.max_angle_step = 8
+	var_15_1.traverse_logic = var_15_3
+	var_15_1.min_wanted_radius = VortexTemplates[var_15_0.vortex_template_name].min_inner_radius
+	var_15_1.radius_check_directions = arg_15_2.radius_check_directions
 
-	local vortex_template = VortexTemplates[action.vortex_template_name]
-	local min_wanted_radius = vortex_template.min_inner_radius
+	local var_15_4, var_15_5 = LocomotionUtils.pick_visible_outside_goal(var_15_1)
 
-	params.min_wanted_radius = min_wanted_radius
-	params.radius_check_directions = vortex_data.radius_check_directions
-
-	local cast_position, min_radius = LocomotionUtils.pick_visible_outside_goal(params)
-
-	return cast_position, min_radius
+	return var_15_4, var_15_5
 end
 
-local min_dist_to_target = 7
-local mean_spawn_distance = 20
-local portal_radius = 1.5
-local debug_floor = false
-local debug_wall = false
+local var_0_5 = 7
+local var_0_6 = 20
+local var_0_7 = 1.5
+local var_0_8 = false
+local var_0_9 = false
 
-BTChaosSorcererSkulkApproachAction.update_portal_search = function (self, unit, blackboard, t, portal_data)
-	if blackboard.target_unit and not Unit_alive(blackboard.portal_unit) then
-		if portal_data.portal_search_active then
-			local target_pos = POSITION_LOOKUP[blackboard.target_unit]
-			local found_location = BTChaosSorcererSkulkApproachAction.try_next_portal_location(portal_data, blackboard.nav_world, target_pos)
+function var_0_0.update_portal_search(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+	if arg_16_2.target_unit and not var_0_1(arg_16_2.portal_unit) then
+		if arg_16_4.portal_search_active then
+			local var_16_0 = var_0_2[arg_16_2.target_unit]
+			local var_16_1 = var_0_0.try_next_portal_location(arg_16_4, arg_16_2.nav_world, var_16_0)
 
-			if found_location == "success" then
-				blackboard.ready_to_summon = true
-				portal_data.portal_search_active = false
+			if var_16_1 == "success" then
+				arg_16_2.ready_to_summon = true
+				arg_16_4.portal_search_active = false
 
 				return "done"
-			elseif found_location == "failed" then
-				portal_data.portal_search_timer = 0
-				portal_data.portal_search_active = false
-				portal_data.portal_search_timer = t + 1
+			elseif var_16_1 == "failed" then
+				arg_16_4.portal_search_timer = 0
+				arg_16_4.portal_search_active = false
+				arg_16_4.portal_search_timer = arg_16_3 + 1
 			end
-		elseif t > portal_data.portal_search_timer and not blackboard.portal_unit then
-			local target_position = POSITION_LOOKUP[blackboard.target_unit]
-			local success = BTChaosSorcererSkulkApproachAction.get_portal_location_list(portal_data, target_position)
+		elseif arg_16_3 > arg_16_4.portal_search_timer and not arg_16_2.portal_unit then
+			local var_16_2 = var_0_2[arg_16_2.target_unit]
+			local var_16_3 = var_0_0.get_portal_location_list(arg_16_4, var_16_2)
 
-			portal_data.search_counter = success and 0 or portal_data.search_counter + 1
-			portal_data.portal_search_active = success
-			portal_data.portal_search_timer = t + 1
+			arg_16_4.search_counter = var_16_3 and 0 or arg_16_4.search_counter + 1
+			arg_16_4.portal_search_active = var_16_3
+			arg_16_4.portal_search_timer = arg_16_3 + 1
 		end
 	end
 end
 
-BTChaosSorcererSkulkApproachAction.get_portal_location_list = function (portal_data, center_position)
-	if math.random() <= portal_data.chance_to_look_for_wall_spawn then
-		local success = BTChaosSorcererSkulkApproachAction.prepare_wall_search(portal_data, center_position)
-
-		if success then
-			portal_data.placement = "wall"
+function var_0_0.get_portal_location_list(arg_17_0, arg_17_1)
+	if math.random() <= arg_17_0.chance_to_look_for_wall_spawn then
+		if var_0_0.prepare_wall_search(arg_17_0, arg_17_1) then
+			arg_17_0.placement = "wall"
 
 			return true
 		else
-			portal_data.floor_search_count = 0
-			portal_data.placement = "floor"
+			arg_17_0.floor_search_count = 0
+			arg_17_0.placement = "floor"
 
 			return true
 		end
 	end
 
-	portal_data.floor_search_count = 0
-	portal_data.placement = "floor"
+	arg_17_0.floor_search_count = 0
+	arg_17_0.placement = "floor"
 
 	return true
 end
 
-BTChaosSorcererSkulkApproachAction.prepare_wall_search = function (portal_data, center_position)
-	local bp = Managers.state.conflict.level_analysis.cover_points_broadphase
-	local radius = 30
-	local cover_units = portal_data.cover_units
-	local num_cover_points = Broadphase.query(bp, center_position, radius, cover_units)
+function var_0_0.prepare_wall_search(arg_18_0, arg_18_1)
+	local var_18_0 = Managers.state.conflict.level_analysis.cover_points_broadphase
+	local var_18_1 = 30
+	local var_18_2 = arg_18_0.cover_units
+	local var_18_3 = Broadphase.query(var_18_0, arg_18_1, var_18_1, var_18_2)
 
-	if num_cover_points <= 0 then
+	if var_18_3 <= 0 then
 		return false
 	end
 
-	portal_data.num_cover_points = num_cover_points
-	portal_data.cover_point_index = 1
-	portal_data.placement = "wall"
+	arg_18_0.num_cover_points = var_18_3
+	arg_18_0.cover_point_index = 1
+	arg_18_0.placement = "wall"
 
-	if debug_wall then
-		local unit_local_rotation = Unit.local_rotation
-		local unit_local_position = Unit.local_position
-		local col = Color(255, 255, 0)
-		local col_c = Color(70, 255, 0)
-		local up = Vector3(0, 0, 1)
+	if var_0_9 then
+		local var_18_4 = Unit.local_rotation
+		local var_18_5 = Unit.local_position
+		local var_18_6 = Color(255, 255, 0)
+		local var_18_7 = Color(70, 255, 0)
+		local var_18_8 = Vector3(0, 0, 1)
 
-		for i = 1, num_cover_points do
-			local cover_unit = cover_units[i]
-			local pos_c = unit_local_position(cover_unit, 0)
-			local pos = pos_c + up
-			local rot = unit_local_rotation(cover_unit, 0)
-			local to_wall = Quaternion.forward(rot)
-			local to_right = -Quaternion.right(rot) * 0.85
-			local to_up = -Quaternion.up(rot) * 0.85
+		for iter_18_0 = 1, var_18_3 do
+			local var_18_9 = var_18_2[iter_18_0]
+			local var_18_10 = var_18_5(var_18_9, 0)
+			local var_18_11 = var_18_10 + var_18_8
+			local var_18_12 = var_18_4(var_18_9, 0)
+			local var_18_13 = Quaternion.forward(var_18_12)
+			local var_18_14 = -Quaternion.right(var_18_12) * 0.85
+			local var_18_15 = -Quaternion.up(var_18_12) * 0.85
 
-			QuickDrawerStay:sphere(pos_c, 0.15, col_c)
-			QuickDrawerStay:sphere(pos, 0.1, col)
-			QuickDrawerStay:line(pos, pos + to_wall, col)
-			QuickDrawerStay:line(pos + to_right, pos + to_right + to_wall, col)
-			QuickDrawerStay:line(pos - to_right, pos - to_right + to_wall, col)
-			QuickDrawerStay:line(pos + to_up, pos + to_up + to_wall, col)
-			QuickDrawerStay:line(pos - to_up, pos - to_up + to_wall, col)
+			QuickDrawerStay:sphere(var_18_10, 0.15, var_18_7)
+			QuickDrawerStay:sphere(var_18_11, 0.1, var_18_6)
+			QuickDrawerStay:line(var_18_11, var_18_11 + var_18_13, var_18_6)
+			QuickDrawerStay:line(var_18_11 + var_18_14, var_18_11 + var_18_14 + var_18_13, var_18_6)
+			QuickDrawerStay:line(var_18_11 - var_18_14, var_18_11 - var_18_14 + var_18_13, var_18_6)
+			QuickDrawerStay:line(var_18_11 + var_18_15, var_18_11 + var_18_15 + var_18_13, var_18_6)
+			QuickDrawerStay:line(var_18_11 - var_18_15, var_18_11 - var_18_15 + var_18_13, var_18_6)
 		end
 	end
 
 	return true
 end
 
-local function get_random_pos_on_circle(center_pos, dist, spread)
-	local add_vec = Vector3(dist + (math.random() - 0.5) * spread, 0, 1)
-	local pos = center_pos + Quaternion.rotate(Quaternion(Vector3.up(), math.degrees_to_radians(Math.random(1, 360))), add_vec)
+local function var_0_10(arg_19_0, arg_19_1, arg_19_2)
+	local var_19_0 = Vector3(arg_19_1 + (math.random() - 0.5) * arg_19_2, 0, 1)
 
-	return pos
+	return arg_19_0 + Quaternion.rotate(Quaternion(Vector3.up(), math.degrees_to_radians(Math.random(1, 360))), var_19_0)
 end
 
-BTChaosSorcererSkulkApproachAction.evaluate_floor = function (portal_data, nav_world, center_pos, num_tries)
-	local pos = get_random_pos_on_circle(center_pos, mean_spawn_distance, 10)
-	local hit_pos, disk_pos, spawn_pos_found, floor_normal, _
+function var_0_0.evaluate_floor(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+	local var_20_0 = var_0_10(arg_20_2, var_0_6, 10)
+	local var_20_1
+	local var_20_2
+	local var_20_3
+	local var_20_4
+	local var_20_5
 
-	if pos then
-		_, hit_pos = GwNavQueries.raycast(nav_world, center_pos, pos)
-		disk_pos = GwNavQueries.inside_position_from_outside_position(nav_world, hit_pos, 1, 1, 5, portal_radius)
+	if var_20_0 then
+		local var_20_6
 
-		if disk_pos then
-			local to_disk_pos = disk_pos - center_pos
-			local dist = Vector3.length(to_disk_pos)
+		var_20_6, var_20_1 = GwNavQueries.raycast(arg_20_1, arg_20_2, var_20_0)
+		var_20_2 = GwNavQueries.inside_position_from_outside_position(arg_20_1, var_20_1, 1, 1, 5, var_0_7)
 
-			if dist > min_dist_to_target then
-				local triangle = GwNavTraversal.get_seed_triangle(nav_world, disk_pos)
-				local p1, p2, p3 = GwNavTraversal.get_triangle_vertices(nav_world, triangle)
+		if var_20_2 then
+			local var_20_7 = var_20_2 - arg_20_2
 
-				floor_normal = Vector3.normalize(Vector3.cross(p2 - p1, p3 - p1))
+			if Vector3.length(var_20_7) > var_0_5 then
+				local var_20_8 = GwNavTraversal.get_seed_triangle(arg_20_1, var_20_2)
+				local var_20_9, var_20_10, var_20_11 = GwNavTraversal.get_triangle_vertices(arg_20_1, var_20_8)
 
-				local floor_rot = Quaternion.look(floor_normal, Vector3.normalize(to_disk_pos))
+				var_20_4 = Vector3.normalize(Vector3.cross(var_20_10 - var_20_9, var_20_11 - var_20_9))
 
-				if portal_data.portal_spawn_pos then
-					portal_data.portal_spawn_pos:store(disk_pos)
-					portal_data.portal_spawn_rot:store(floor_rot)
+				local var_20_12 = Quaternion.look(var_20_4, Vector3.normalize(var_20_7))
+
+				if arg_20_0.portal_spawn_pos then
+					arg_20_0.portal_spawn_pos:store(var_20_2)
+					arg_20_0.portal_spawn_rot:store(var_20_12)
 				end
 
-				portal_data.portal_spawn_type = "floor"
-				portal_data.portal_search_active = false
-				spawn_pos_found = "success"
+				arg_20_0.portal_spawn_type = "floor"
+				arg_20_0.portal_search_active = false
+				var_20_3 = "success"
 
 				Debug.sticky_text("Found floor pos")
 			end
 		end
 	end
 
-	if debug_floor and pos then
-		QuickDrawer:sphere(pos, 0.25, Color(0, 200, 200))
-		QuickDrawer:line(pos, center_pos, Color(0, 200, 125))
+	if var_0_8 and var_20_0 then
+		QuickDrawer:sphere(var_20_0, 0.25, Color(0, 200, 200))
+		QuickDrawer:line(var_20_0, arg_20_2, Color(0, 200, 125))
 
-		if hit_pos then
-			QuickDrawerStay:sphere(hit_pos, 0.5, Color(20, 200, 70))
+		if var_20_1 then
+			QuickDrawerStay:sphere(var_20_1, 0.5, Color(20, 200, 70))
 		end
 
-		if spawn_pos_found then
-			QuickDrawer:line(hit_pos, disk_pos, Color(20, 200, 70))
-			QuickDrawer:sphere(disk_pos, portal_radius, Color(20, 200, 70))
-			QuickDrawer:line(disk_pos, disk_pos + floor_normal, Color(20, 200, 70))
+		if var_20_3 then
+			QuickDrawer:line(var_20_1, var_20_2, Color(20, 200, 70))
+			QuickDrawer:sphere(var_20_2, var_0_7, Color(20, 200, 70))
+			QuickDrawer:line(var_20_2, var_20_2 + var_20_4, Color(20, 200, 70))
 		else
 			Debug.sticky_text("no random floor pick pos found")
 		end
 	end
 
-	return spawn_pos_found
+	return var_20_3
 end
 
-local min_spawn_dist_sqr = 25
+local var_0_11 = 25
 
-BTChaosSorcererSkulkApproachAction.evaluate_wall = function (portal_data, nav_world, center_pos, num_tries)
-	local index = portal_data.cover_point_index
-	local num_cover_points = portal_data.num_cover_points
-	local exit_index = index + num_tries
-	local cover_units = portal_data.cover_units
-	local unit_local_rotation = Unit.local_rotation
-	local unit_local_position = Unit.local_position
+function var_0_0.evaluate_wall(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+	local var_21_0 = arg_21_0.cover_point_index
+	local var_21_1 = arg_21_0.num_cover_points
+	local var_21_2 = var_21_0 + arg_21_3
+	local var_21_3 = arg_21_0.cover_units
+	local var_21_4 = Unit.local_rotation
+	local var_21_5 = Unit.local_position
 
-	while index < exit_index do
-		if num_cover_points < index then
-			portal_data.portal_search_active = false
+	while var_21_0 < var_21_2 do
+		if var_21_1 < var_21_0 then
+			arg_21_0.portal_search_active = false
 
 			return "failed"
 		end
 
-		local cover_unit = cover_units[index]
-		local pos = unit_local_position(cover_unit, 0)
+		local var_21_6 = var_21_3[var_21_0]
+		local var_21_7 = var_21_5(var_21_6, 0)
 
-		if Vector3.distance_squared(pos, center_pos) > min_spawn_dist_sqr then
-			local rot = unit_local_rotation(cover_unit, 0)
-			local wall_normal = Quaternion.forward(rot)
-			local result = true
+		if Vector3.distance_squared(var_21_7, arg_21_2) > var_0_11 then
+			local var_21_8 = var_21_4(var_21_6, 0)
+			local var_21_9 = Quaternion.forward(var_21_8)
+			local var_21_10 = true
 
-			if result then
-				local hit_wall, hit_position, _, normal = PhysicsWorld.immediate_raycast(portal_data.physics_world, pos + Vector3(0, 0, 1), wall_normal, 1.5, "closest", "collision_filter", "filter_ai_mover")
+			if var_21_10 then
+				local var_21_11, var_21_12, var_21_13, var_21_14 = PhysicsWorld.immediate_raycast(arg_21_0.physics_world, var_21_7 + Vector3(0, 0, 1), var_21_9, 1.5, "closest", "collision_filter", "filter_ai_mover")
 
-				if hit_wall then
-					if portal_data.portal_spawn_pos then
-						local wall_rot = Quaternion.look(normal, Vector3.up())
+				if var_21_11 then
+					if arg_21_0.portal_spawn_pos then
+						local var_21_15 = Quaternion.look(var_21_14, Vector3.up())
 
-						portal_data.portal_spawn_pos:store(hit_position)
-						portal_data.portal_spawn_rot:store(wall_rot)
+						arg_21_0.portal_spawn_pos:store(var_21_12)
+						arg_21_0.portal_spawn_rot:store(var_21_15)
 					end
 
-					portal_data.portal_spawn_type = "wall"
-					portal_data.portal_search_active = false
+					arg_21_0.portal_spawn_type = "wall"
+					arg_21_0.portal_search_active = false
 
-					if debug_wall then
-						QuickDrawerStay:cylinder(hit_position, hit_position + normal, portal_radius, Color(220, 60, 70), 10)
-						QuickDrawerStay:sphere(hit_position, portal_radius * 0.5, Color(220, 30, 30))
+					if var_0_9 then
+						QuickDrawerStay:cylinder(var_21_12, var_21_12 + var_21_14, var_0_7, Color(220, 60, 70), 10)
+						QuickDrawerStay:sphere(var_21_12, var_0_7 * 0.5, Color(220, 30, 30))
 					end
 
 					return "success"
@@ -612,41 +596,41 @@ BTChaosSorcererSkulkApproachAction.evaluate_wall = function (portal_data, nav_wo
 			end
 		end
 
-		index = index + 1
+		var_21_0 = var_21_0 + 1
 	end
 
-	portal_data.cover_point_index = index
+	arg_21_0.cover_point_index = var_21_0
 end
 
-BTChaosSorcererSkulkApproachAction.try_next_portal_location = function (portal_data, nav_world, center_pos)
-	local placement = portal_data.placement
-	local target_on_navmesh, altitude = GwNavQueries.triangle_from_position(nav_world, center_pos, 3, 3)
+function var_0_0.try_next_portal_location(arg_22_0, arg_22_1, arg_22_2)
+	local var_22_0 = arg_22_0.placement
+	local var_22_1, var_22_2 = GwNavQueries.triangle_from_position(arg_22_1, arg_22_2, 3, 3)
 
-	if target_on_navmesh then
-		center_pos = Vector3.copy(center_pos)
+	if var_22_1 then
+		arg_22_2 = Vector3.copy(arg_22_2)
 
-		Vector3.set_z(center_pos, altitude)
+		Vector3.set_z(arg_22_2, var_22_2)
 	end
 
-	if placement == "floor" then
-		local num_tries = 3
+	if var_22_0 == "floor" then
+		local var_22_3 = 3
 
-		for i = 1, num_tries do
-			local result = BTChaosSorcererSkulkApproachAction.evaluate_floor(portal_data, nav_world, center_pos)
+		for iter_22_0 = 1, var_22_3 do
+			local var_22_4 = var_0_0.evaluate_floor(arg_22_0, arg_22_1, arg_22_2)
 
-			if result then
-				return result
+			if var_22_4 then
+				return var_22_4
 			end
 		end
 
-		portal_data.floor_search_count = portal_data.floor_search_count + num_tries
+		arg_22_0.floor_search_count = arg_22_0.floor_search_count + var_22_3
 
-		if portal_data.floor_search_count > 30 then
+		if arg_22_0.floor_search_count > 30 then
 			return "failed"
 		end
-	elseif placement == "wall" then
-		local num_tries = 3
+	elseif var_22_0 == "wall" then
+		local var_22_5 = 3
 
-		return BTChaosSorcererSkulkApproachAction.evaluate_wall(portal_data, nav_world, center_pos, num_tries)
+		return var_0_0.evaluate_wall(arg_22_0, arg_22_1, arg_22_2, var_22_5)
 	end
 end

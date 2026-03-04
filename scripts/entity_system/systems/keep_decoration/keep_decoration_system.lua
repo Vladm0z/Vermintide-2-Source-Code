@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/entity_system/systems/keep_decoration/keep_decoration_system.lua
+-- chunkname: @scripts/entity_system/systems/keep_decoration/keep_decoration_system.lua
 
 require("scripts/settings/keep_decoration_settings")
 require("scripts/unit_extensions/level/keep_decoration_painting_extension")
@@ -7,162 +7,152 @@ require("scripts/settings/trophies")
 
 KeepDecorationSystem = class(KeepDecorationSystem, ExtensionSystemBase)
 
-local extensions = {
+local var_0_0 = {
 	"KeepDecorationPaintingExtension",
-	"KeepDecorationTrophyExtension",
+	"KeepDecorationTrophyExtension"
 }
-local RPCS = {
+local var_0_1 = {
 	"rpc_request_painting",
-	"rpc_send_painting",
+	"rpc_send_painting"
 }
 
-KeepDecorationSystem.init = function (self, entity_system_creation_context, system_name)
-	KeepDecorationSystem.super.init(self, entity_system_creation_context, system_name, extensions)
+function KeepDecorationSystem.init(arg_1_0, arg_1_1, arg_1_2)
+	KeepDecorationSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 
-	self._network_event_delegate = entity_system_creation_context.network_event_delegate
+	arg_1_0._network_event_delegate = arg_1_1.network_event_delegate
 
-	self._network_event_delegate:register(self, unpack(RPCS))
+	arg_1_0._network_event_delegate:register(arg_1_0, unpack(var_0_1))
 
-	self._network_trasmit = Managers.state.network.network_transmit
-	self._extensions = {}
-	self._unit_extensions = {}
-	self._painting_extensions = {}
-	self._used_settings_keys = {}
-	self._used_backend_keys = {}
-	self._update_index = 0
-	self._is_leader = Managers.party:is_leader(Network.peer_id())
-	self._client_paintings = {}
-	self._client_painting_extensions = {}
-	self._num_players = 0
+	arg_1_0._network_trasmit = Managers.state.network.network_transmit
+	arg_1_0._extensions = {}
+	arg_1_0._unit_extensions = {}
+	arg_1_0._painting_extensions = {}
+	arg_1_0._used_settings_keys = {}
+	arg_1_0._used_backend_keys = {}
+	arg_1_0._update_index = 0
+	arg_1_0._is_leader = Managers.party:is_leader(Network.peer_id())
+	arg_1_0._client_paintings = {}
+	arg_1_0._client_painting_extensions = {}
+	arg_1_0._num_players = 0
 end
 
-KeepDecorationSystem.destroy = function (self)
-	self._extensions = nil
-	self._unit_extensions = nil
-	self._painting_extensions = nil
+function KeepDecorationSystem.destroy(arg_2_0)
+	arg_2_0._extensions = nil
+	arg_2_0._unit_extensions = nil
+	arg_2_0._painting_extensions = nil
 
-	self._network_event_delegate:unregister(self)
+	arg_2_0._network_event_delegate:unregister(arg_2_0)
 end
 
-KeepDecorationSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data, ...)
-	local settings_key = Unit.get_data(unit, "decoration_settings_key")
-	local used_settings_keys = self._used_settings_keys
-	local used_backend_keys = self._used_backend_keys
+function KeepDecorationSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, ...)
+	local var_3_0 = Unit.get_data(arg_3_2, "decoration_settings_key")
+	local var_3_1 = arg_3_0._used_settings_keys
+	local var_3_2 = arg_3_0._used_backend_keys
 
-	fassert(not used_settings_keys[settings_key], "Multiple units has the same decoration_settings_key \"" .. tostring(settings_key) .. "\". Fix it in the unit data!")
+	fassert(not var_3_1[var_3_0], "Multiple units has the same decoration_settings_key \"" .. tostring(var_3_0) .. "\". Fix it in the unit data!")
 
-	local settings = KeepDecorationSettings[settings_key]
+	local var_3_3 = KeepDecorationSettings[var_3_0]
 
-	fassert(settings, "No settings found for decoration_settings_key \"" .. tostring(settings_key) .. "\". Fix it in keep_decoration_settings.lua!")
+	fassert(var_3_3, "No settings found for decoration_settings_key \"" .. tostring(var_3_0) .. "\". Fix it in keep_decoration_settings.lua!")
 
-	local backend_key = settings.backend_key
+	local var_3_4 = var_3_3.backend_key
 
-	fassert(not used_backend_keys[backend_key], "Multiple decoration settings has the same backend_key \"" .. tostring(backend_key) .. "\". Fix it in keep_decoration_settings.lua!")
+	fassert(not var_3_2[var_3_4], "Multiple decoration settings has the same backend_key \"" .. tostring(var_3_4) .. "\". Fix it in keep_decoration_settings.lua!")
 
-	local extension = KeepDecorationSystem.super.on_add_extension(self, world, unit, extension_name, extension_init_data, ...)
+	local var_3_5 = KeepDecorationSystem.super.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, ...)
 
-	if extension_name == "KeepDecorationPaintingExtension" then
-		local is_client_painting = Unit.get_data(unit, "painting_data", "is_client_painting")
-
-		if is_client_painting then
-			self._client_painting_extensions[#self._client_painting_extensions + 1] = extension
+	if arg_3_3 == "KeepDecorationPaintingExtension" then
+		if Unit.get_data(arg_3_2, "painting_data", "is_client_painting") then
+			arg_3_0._client_painting_extensions[#arg_3_0._client_painting_extensions + 1] = var_3_5
 		end
 
-		self._painting_extensions[#self._painting_extensions + 1] = extension
+		arg_3_0._painting_extensions[#arg_3_0._painting_extensions + 1] = var_3_5
 	end
 
-	extension.keep_decoration_system = self
-	self._extensions[#self._extensions + 1] = extension
-	self._unit_extensions[unit] = extension
-	self._used_settings_keys[settings_key] = true
-	self._used_backend_keys[backend_key] = true
+	var_3_5.keep_decoration_system = arg_3_0
+	arg_3_0._extensions[#arg_3_0._extensions + 1] = var_3_5
+	arg_3_0._unit_extensions[arg_3_2] = var_3_5
+	arg_3_0._used_settings_keys[var_3_0] = true
+	arg_3_0._used_backend_keys[var_3_4] = true
 
-	return extension
+	return var_3_5
 end
 
-KeepDecorationSystem.update = function (self, context, t)
-	local extensions = self._extensions
-	local num_extensions = #extensions
+function KeepDecorationSystem.update(arg_4_0, arg_4_1, arg_4_2)
+	local var_4_0 = arg_4_0._extensions
+	local var_4_1 = #var_4_0
 
-	if num_extensions == 0 then
+	if var_4_1 == 0 then
 		return
 	end
 
-	local update_index = self._update_index + 1
+	local var_4_2 = arg_4_0._update_index + 1
 
-	if num_extensions < update_index then
-		update_index = 1
+	if var_4_1 < var_4_2 then
+		var_4_2 = 1
 	end
 
-	local extension_to_update = extensions[update_index]
+	var_4_0[var_4_2]:distributed_update()
 
-	extension_to_update:distributed_update()
+	local var_4_3 = Managers.state.game_mode:level_key()
+	local var_4_4 = LevelSettings[var_4_3]
 
-	local level_key = Managers.state.game_mode:level_key()
-	local level_setting = LevelSettings[level_key]
+	if arg_4_0._is_leader and var_4_4.use_keep_decorations then
+		local var_4_5 = Managers.player:human_players()
+		local var_4_6 = 0
 
-	if self._is_leader and level_setting.use_keep_decorations then
-		local players = Managers.player:human_players()
-		local num_players = 0
-
-		for _, _ in pairs(players) do
-			num_players = num_players + 1
+		for iter_4_0, iter_4_1 in pairs(var_4_5) do
+			var_4_6 = var_4_6 + 1
 		end
 
-		if self._is_leader and num_players ~= self._num_players then
-			self._num_players = num_players
+		if arg_4_0._is_leader and var_4_6 ~= arg_4_0._num_players then
+			arg_4_0._num_players = var_4_6
 
-			self:_sync_client_paintings()
-			self:_refresh_client_paintings()
+			arg_4_0:_sync_client_paintings()
+			arg_4_0:_refresh_client_paintings()
 		end
 	end
 
-	self._update_index = update_index
+	arg_4_0._update_index = var_4_2
 end
 
-KeepDecorationSystem.on_painting_set = function (self, painting, asking_extension)
-	local painting_extensions = self._painting_extensions
-	local painting_data = Paintings[painting]
-	local painting_frame = painting_data.frame
+function KeepDecorationSystem.on_painting_set(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = arg_5_0._painting_extensions
+	local var_5_1 = Paintings[arg_5_1].frame
 
-	for i = 1, #painting_extensions do
-		local extension = painting_extensions[i]
-		local extension_painting = extension:get_selected_decoration()
-		local extension_painting_data = Paintings[extension_painting]
-		local extension_painting_frame = extension_painting_data.frame
-		local is_client_painting = extension:is_client_painting()
+	for iter_5_0 = 1, #var_5_0 do
+		local var_5_2 = var_5_0[iter_5_0]
+		local var_5_3 = var_5_2:get_selected_decoration()
+		local var_5_4 = Paintings[var_5_3].frame
+		local var_5_5 = var_5_2:is_client_painting()
 
-		if extension_painting == painting and asking_extension ~= extension and painting_frame == extension_painting_frame and not is_client_painting then
-			extension:decoration_selected("hor_none")
-			extension:sync_decoration()
+		if var_5_3 == arg_5_1 and arg_5_2 ~= var_5_2 and var_5_1 == var_5_4 and not var_5_5 then
+			var_5_2:decoration_selected("hor_none")
+			var_5_2:sync_decoration()
 		end
 	end
 end
 
-KeepDecorationSystem.on_decoration_set = function (self, decoration, asking_extension, type)
-	local extensions = self._extensions
+function KeepDecorationSystem.on_decoration_set(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	local var_6_0 = arg_6_0._extensions
 
-	for i = 1, #extensions do
-		local extension = extensions[i]
-		local current_decoration = extension:get_selected_decoration()
+	for iter_6_0 = 1, #var_6_0 do
+		local var_6_1 = var_6_0[iter_6_0]
 
-		if current_decoration == decoration and asking_extension ~= extension then
-			local empty = type == "painting" and "hor_none" or type == "trophy" and "hub_trophy_empty"
+		if var_6_1:get_selected_decoration() == arg_6_1 and arg_6_2 ~= var_6_1 then
+			local var_6_2 = arg_6_3 == "painting" and "hor_none" or arg_6_3 == "trophy" and "hub_trophy_empty"
 
-			extension:decoration_selected(empty)
-			extension:sync_decoration()
+			var_6_1:decoration_selected(var_6_2)
+			var_6_1:sync_decoration()
 		end
 	end
 end
 
-KeepDecorationSystem.is_decoration_in_use = function (self, decoration)
-	local extensions = self._extensions
+function KeepDecorationSystem.is_decoration_in_use(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_0._extensions
 
-	for i = 1, #extensions do
-		local extension = extensions[i]
-		local extension_decoration = extension:get_selected_decoration()
-
-		if extension_decoration == decoration then
+	for iter_7_0 = 1, #var_7_0 do
+		if var_7_0[iter_7_0]:get_selected_decoration() == arg_7_1 then
 			return true
 		end
 	end
@@ -170,74 +160,70 @@ KeepDecorationSystem.is_decoration_in_use = function (self, decoration)
 	return false
 end
 
-KeepDecorationSystem._add_client_painting = function (self, player_id, painting)
-	local client_paintings = self._client_paintings
-
-	client_paintings[player_id] = painting
+function KeepDecorationSystem._add_client_painting(arg_8_0, arg_8_1, arg_8_2)
+	arg_8_0._client_paintings[arg_8_1] = arg_8_2
 end
 
-KeepDecorationSystem._sync_client_paintings = function (self)
-	local client_paintings = self._client_paintings
-	local players = Managers.player:human_players()
-	local my_id = Network.peer_id()
+function KeepDecorationSystem._sync_client_paintings(arg_9_0)
+	local var_9_0 = arg_9_0._client_paintings
+	local var_9_1 = Managers.player:human_players()
+	local var_9_2 = Network.peer_id()
 
-	for key_id, _ in pairs(client_paintings) do
-		local exists = false
+	for iter_9_0, iter_9_1 in pairs(var_9_0) do
+		local var_9_3 = false
 
-		for _, player in pairs(players) do
-			if key_id == player.peer_id and player.peer_id ~= my_id then
-				exists = true
+		for iter_9_2, iter_9_3 in pairs(var_9_1) do
+			if iter_9_0 == iter_9_3.peer_id and iter_9_3.peer_id ~= var_9_2 then
+				var_9_3 = true
 
 				break
 			end
 		end
 
-		if not exists then
-			client_paintings[key_id] = nil
+		if not var_9_3 then
+			var_9_0[iter_9_0] = nil
 		end
 	end
 
-	self._client_paintings = client_paintings
+	arg_9_0._client_paintings = var_9_0
 end
 
-KeepDecorationSystem._refresh_client_paintings = function (self)
-	local client_paintings = self._client_paintings
-	local paintings = {}
-	local count = 1
+function KeepDecorationSystem._refresh_client_paintings(arg_10_0)
+	local var_10_0 = arg_10_0._client_paintings
+	local var_10_1 = {}
+	local var_10_2 = 1
 
-	for _, val in pairs(client_paintings) do
-		paintings[count] = val
-		count = count + 1
+	for iter_10_0, iter_10_1 in pairs(var_10_0) do
+		var_10_1[var_10_2] = iter_10_1
+		var_10_2 = var_10_2 + 1
 	end
 
-	for i = 1, 3 do
-		local painting = paintings[i] or "hidden"
-		local extension = self._client_painting_extensions[i]
+	for iter_10_2 = 1, 3 do
+		local var_10_3 = var_10_1[iter_10_2] or "hidden"
 
-		extension:set_client_painting(painting)
+		arg_10_0._client_painting_extensions[iter_10_2]:set_client_painting(var_10_3)
 	end
 end
 
-KeepDecorationSystem.rpc_send_painting = function (self, channel_id, painting)
-	local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+function KeepDecorationSystem.rpc_send_painting(arg_11_0, arg_11_1, arg_11_2)
+	local var_11_0 = CHANNEL_TO_PEER_ID[arg_11_1]
 
-	self:_add_client_painting(peer_id, painting)
-	self:_refresh_client_paintings()
+	arg_11_0:_add_client_painting(var_11_0, arg_11_2)
+	arg_11_0:_refresh_client_paintings()
 end
 
-KeepDecorationSystem.rpc_request_painting = function (self, channel_id)
-	local painting = Managers.backend:get_interface("keep_decorations"):get_decoration("keep_hall_painting_wood_base_5") or "hor_none"
+function KeepDecorationSystem.rpc_request_painting(arg_12_0, arg_12_1)
+	local var_12_0 = Managers.backend:get_interface("keep_decorations"):get_decoration("keep_hall_painting_wood_base_5") or "hor_none"
 
-	self.network_transmit:send_rpc_server("rpc_send_painting", painting)
+	arg_12_0.network_transmit:send_rpc_server("rpc_send_painting", var_12_0)
 end
 
-KeepDecorationSystem.hot_join_sync = function (self, peer_id)
-	local level_key = Managers.state.game_mode:level_key()
-	local level_setting = LevelSettings[level_key]
+function KeepDecorationSystem.hot_join_sync(arg_13_0, arg_13_1)
+	local var_13_0 = Managers.state.game_mode:level_key()
 
-	if level_setting.use_keep_decorations then
-		local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+	if LevelSettings[var_13_0].use_keep_decorations then
+		local var_13_1 = PEER_ID_TO_CHANNEL[arg_13_1]
 
-		RPC.rpc_request_painting(channel_id)
+		RPC.rpc_request_painting(var_13_1)
 	end
 end

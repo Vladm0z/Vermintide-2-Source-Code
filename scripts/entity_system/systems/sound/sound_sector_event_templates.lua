@@ -1,234 +1,195 @@
-﻿-- chunkname: @scripts/entity_system/systems/sound/sound_sector_event_templates.lua
+-- chunkname: @scripts/entity_system/systems/sound/sound_sector_event_templates.lua
 
 SoundSectorEventTemplates = SoundSectorEventTemplates or {}
 
-local last_horde_unit
-local horde_units = {}
-local horde_positions = {}
-local num_horde_units = 0
+local var_0_0
+local var_0_1 = {}
+local var_0_2 = {}
+local var_0_3 = 0
 
 SoundSectorEventTemplates.distant_horde = {
-	sound_event_start = "distant_horde",
 	sound_event_stop = "stop_distant_horde",
-	evaluate = function (sectors, sector_index, t, entities, camera_position)
-		local sector = sectors[sector_index]
+	sound_event_start = "distant_horde",
+	evaluate = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+		local var_1_0 = arg_1_0[arg_1_1]
 
-		if not sector then
+		if not var_1_0 then
 			return false
 		end
 
-		local unit, death_extension
-		local iterate_first_unit = not last_horde_unit or not Unit.alive(last_horde_unit) or not sector[last_horde_unit]
+		local var_1_1
+		local var_1_2
 
-		if iterate_first_unit then
-			unit, death_extension = next(sector, nil)
+		if not var_0_0 or not Unit.alive(var_0_0) or not var_1_0[var_0_0] then
+			var_1_1, var_1_2 = next(var_1_0, nil)
 		else
-			unit, death_extension = next(sector, last_horde_unit)
+			var_1_1, var_1_2 = next(var_1_0, var_0_0)
 		end
 
-		if unit then
-			local ai_base_extension = ScriptUnit.extension(unit, "ai_system")
-			local breed = ai_base_extension:breed()
-			local is_skaven = breed.race == "skaven"
+		if var_1_1 and ScriptUnit.extension(var_1_1, "ai_system"):breed().race == "skaven" and arg_1_3[var_1_1].has_target and not var_1_2:has_death_started() then
+			if not var_0_1[var_1_1] then
+				var_0_3 = var_0_3 + 1
+			end
 
-			if is_skaven and entities[unit].has_target and not death_extension:has_death_started() then
-				local contains_this_unit = horde_units[unit]
+			local var_1_3 = POSITION_LOOKUP[var_1_1]
 
-				if not contains_this_unit then
-					num_horde_units = num_horde_units + 1
-				end
+			var_0_1[var_1_1] = var_1_2
+			var_0_2[var_1_1] = Vector3Box(var_1_3)
+		end
 
-				local position = POSITION_LOOKUP[unit]
+		local var_1_4 = Vector3.zero()
 
-				horde_units[unit] = death_extension
-				horde_positions[unit] = Vector3Box(position)
+		for iter_1_0, iter_1_1 in pairs(var_0_1) do
+			local var_1_5 = var_0_2[iter_1_0]:unbox()
+
+			if not Unit.alive(iter_1_0) or iter_1_1:has_death_started() or not var_1_0[iter_1_0] or not arg_1_3[iter_1_0].has_target then
+				var_0_1[iter_1_0] = nil
+				var_0_2[iter_1_0] = nil
+				var_0_3 = var_0_3 - 1
+			elseif var_1_5 then
+				var_1_4 = var_1_4 + var_1_5
 			end
 		end
 
-		local units_center = Vector3.zero()
+		var_0_0 = var_1_1
 
-		for horde_unit, horde_unit_death_extension in pairs(horde_units) do
-			local position = horde_positions[horde_unit]:unbox()
-
-			if not Unit.alive(horde_unit) or horde_unit_death_extension:has_death_started() or not sector[horde_unit] or not entities[horde_unit].has_target then
-				horde_units[horde_unit] = nil
-				horde_positions[horde_unit] = nil
-				num_horde_units = num_horde_units - 1
-			elseif position then
-				units_center = units_center + position
-			end
-		end
-
-		last_horde_unit = unit
-
-		local min_units = 7
-
-		if min_units > num_horde_units then
+		if 7 > var_0_3 then
 			return false
 		end
 
-		local min_distance_sq = 25
-		local max_distance_sq = 1600
+		local var_1_6 = 25
+		local var_1_7 = 1600
+		local var_1_8 = var_1_4 / var_0_3
+		local var_1_9 = Vector3.distance_squared(arg_1_4, var_1_8)
 
-		units_center = units_center / num_horde_units
-
-		local distance_sq = Vector3.distance_squared(camera_position, units_center)
-		local is_within_distance = min_distance_sq <= distance_sq and distance_sq <= max_distance_sq
-
-		return is_within_distance, units_center, num_horde_units
-	end,
+		return var_1_6 <= var_1_9 and var_1_9 <= var_1_7, var_1_8, var_0_3
+	end
 }
 
-local last_horde_unit_chaos
-local horde_units_chaos = {}
-local horde_positions_chaos = {}
-local num_horde_units_chaos = 0
+local var_0_4
+local var_0_5 = {}
+local var_0_6 = {}
+local var_0_7 = 0
 
 SoundSectorEventTemplates.distant_horde_chaos = {
-	sound_event_start = "distant_horde_marauder",
 	sound_event_stop = "stop_distant_horde_marauder",
-	evaluate = function (sectors, sector_index, t, entities, camera_position)
-		local sector = sectors[sector_index]
+	sound_event_start = "distant_horde_marauder",
+	evaluate = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+		local var_2_0 = arg_2_0[arg_2_1]
 
-		if not sector then
+		if not var_2_0 then
 			return false
 		end
 
-		local unit, death_extension
-		local iterate_first_unit = not last_horde_unit_chaos or not Unit.alive(last_horde_unit_chaos) or not sector[last_horde_unit_chaos]
+		local var_2_1
+		local var_2_2
 
-		if iterate_first_unit then
-			unit, death_extension = next(sector, nil)
+		if not var_0_4 or not Unit.alive(var_0_4) or not var_2_0[var_0_4] then
+			var_2_1, var_2_2 = next(var_2_0, nil)
 		else
-			unit, death_extension = next(sector, last_horde_unit_chaos)
+			var_2_1, var_2_2 = next(var_2_0, var_0_4)
 		end
 
-		if unit then
-			local ai_base_extension = ScriptUnit.extension(unit, "ai_system")
-			local breed = ai_base_extension:breed()
-			local is_chaos = breed.race == "chaos"
+		if var_2_1 and ScriptUnit.extension(var_2_1, "ai_system"):breed().race == "chaos" and arg_2_3[var_2_1].has_target and not var_2_2:has_death_started() then
+			if not var_0_5[var_2_1] then
+				var_0_7 = var_0_7 + 1
+			end
 
-			if is_chaos and entities[unit].has_target and not death_extension:has_death_started() then
-				local contains_this_unit = horde_units_chaos[unit]
+			local var_2_3 = POSITION_LOOKUP[var_2_1]
 
-				if not contains_this_unit then
-					num_horde_units_chaos = num_horde_units_chaos + 1
-				end
+			var_0_5[var_2_1] = var_2_2
+			var_0_6[var_2_1] = Vector3Box(var_2_3)
+		end
 
-				local position = POSITION_LOOKUP[unit]
+		local var_2_4 = Vector3.zero()
 
-				horde_units_chaos[unit] = death_extension
-				horde_positions_chaos[unit] = Vector3Box(position)
+		for iter_2_0, iter_2_1 in pairs(var_0_5) do
+			local var_2_5 = var_0_6[iter_2_0]:unbox()
+
+			if not Unit.alive(iter_2_0) or iter_2_1:has_death_started() or not var_2_0[iter_2_0] or not arg_2_3[iter_2_0].has_target then
+				var_0_5[iter_2_0] = nil
+				var_0_6[iter_2_0] = nil
+				var_0_7 = var_0_7 - 1
+			elseif var_2_5 then
+				var_2_4 = var_2_4 + var_2_5
 			end
 		end
 
-		local units_center = Vector3.zero()
+		var_0_4 = var_2_1
 
-		for horde_unit, horde_unit_death_extension in pairs(horde_units_chaos) do
-			local position = horde_positions_chaos[horde_unit]:unbox()
-
-			if not Unit.alive(horde_unit) or horde_unit_death_extension:has_death_started() or not sector[horde_unit] or not entities[horde_unit].has_target then
-				horde_units_chaos[horde_unit] = nil
-				horde_positions_chaos[horde_unit] = nil
-				num_horde_units_chaos = num_horde_units_chaos - 1
-			elseif position then
-				units_center = units_center + position
-			end
-		end
-
-		last_horde_unit_chaos = unit
-
-		local min_units = 4
-
-		if min_units > num_horde_units_chaos then
+		if 4 > var_0_7 then
 			return false
 		end
 
-		local min_distance_sq = 4
-		local max_distance_sq = 3600
+		local var_2_6 = 4
+		local var_2_7 = 3600
+		local var_2_8 = var_2_4 / var_0_7
+		local var_2_9 = Vector3.distance_squared(arg_2_4, var_2_8)
 
-		units_center = units_center / num_horde_units_chaos
-
-		local distance_sq = Vector3.distance_squared(camera_position, units_center)
-		local is_within_distance = min_distance_sq <= distance_sq and distance_sq <= max_distance_sq
-
-		return is_within_distance, units_center, num_horde_units_chaos
-	end,
+		return var_2_6 <= var_2_9 and var_2_9 <= var_2_7, var_2_8, var_0_7
+	end
 }
 
-local last_horde_unit_beastmen
-local horde_units_beastmen = {}
-local horde_positions_beastmen = {}
-local num_horde_units_beastmen = 0
+local var_0_8
+local var_0_9 = {}
+local var_0_10 = {}
+local var_0_11 = 0
 
 SoundSectorEventTemplates.distant_horde_beastmen = {
-	sound_event_start = "distant_horde_beastmen",
 	sound_event_stop = "stop_distant_horde_beastmen",
-	evaluate = function (sectors, sector_index, t, entities, camera_position)
-		local sector = sectors[sector_index]
+	sound_event_start = "distant_horde_beastmen",
+	evaluate = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+		local var_3_0 = arg_3_0[arg_3_1]
 
-		if not sector then
+		if not var_3_0 then
 			return false
 		end
 
-		local unit, death_extension
-		local iterate_first_unit = not last_horde_unit_beastmen or not Unit.alive(last_horde_unit_beastmen) or not sector[last_horde_unit_beastmen]
+		local var_3_1
+		local var_3_2
 
-		if iterate_first_unit then
-			unit, death_extension = next(sector, nil)
+		if not var_0_8 or not Unit.alive(var_0_8) or not var_3_0[var_0_8] then
+			var_3_1, var_3_2 = next(var_3_0, nil)
 		else
-			unit, death_extension = next(sector, last_horde_unit_beastmen)
+			var_3_1, var_3_2 = next(var_3_0, var_0_8)
 		end
 
-		if unit then
-			local ai_base_extension = ScriptUnit.extension(unit, "ai_system")
-			local breed = ai_base_extension:breed()
-			local is_beastmen = breed.race == "beastmen"
+		if var_3_1 and ScriptUnit.extension(var_3_1, "ai_system"):breed().race == "beastmen" and arg_3_3[var_3_1].has_target and not var_3_2:has_death_started() then
+			if not var_0_9[var_3_1] then
+				var_0_11 = var_0_11 + 1
+			end
 
-			if is_beastmen and entities[unit].has_target and not death_extension:has_death_started() then
-				local contains_this_unit = horde_units_beastmen[unit]
+			local var_3_3 = POSITION_LOOKUP[var_3_1]
 
-				if not contains_this_unit then
-					num_horde_units_beastmen = num_horde_units_beastmen + 1
-				end
+			var_0_9[var_3_1] = var_3_2
+			var_0_10[var_3_1] = Vector3Box(var_3_3)
+		end
 
-				local position = POSITION_LOOKUP[unit]
+		local var_3_4 = Vector3.zero()
 
-				horde_units_beastmen[unit] = death_extension
-				horde_positions_beastmen[unit] = Vector3Box(position)
+		for iter_3_0, iter_3_1 in pairs(var_0_9) do
+			local var_3_5 = var_0_10[iter_3_0]:unbox()
+
+			if not Unit.alive(iter_3_0) or iter_3_1:has_death_started() or not var_3_0[iter_3_0] or not arg_3_3[iter_3_0].has_target then
+				var_0_9[iter_3_0] = nil
+				var_0_10[iter_3_0] = nil
+				var_0_11 = var_0_11 - 1
+			elseif var_3_5 then
+				var_3_4 = var_3_4 + var_3_5
 			end
 		end
 
-		local units_center = Vector3.zero()
+		var_0_8 = var_3_1
 
-		for horde_unit, horde_unit_death_extension in pairs(horde_units_beastmen) do
-			local position = horde_positions_beastmen[horde_unit]:unbox()
-
-			if not Unit.alive(horde_unit) or horde_unit_death_extension:has_death_started() or not sector[horde_unit] or not entities[horde_unit].has_target then
-				horde_units_beastmen[horde_unit] = nil
-				horde_positions_beastmen[horde_unit] = nil
-				num_horde_units_beastmen = num_horde_units_beastmen - 1
-			elseif position then
-				units_center = units_center + position
-			end
-		end
-
-		last_horde_unit_beastmen = unit
-
-		local min_units = 4
-
-		if min_units > num_horde_units_beastmen then
+		if 4 > var_0_11 then
 			return false
 		end
 
-		local min_distance_sq = 4
-		local max_distance_sq = 3600
+		local var_3_6 = 4
+		local var_3_7 = 3600
+		local var_3_8 = var_3_4 / var_0_11
+		local var_3_9 = Vector3.distance_squared(arg_3_4, var_3_8)
 
-		units_center = units_center / num_horde_units_beastmen
-
-		local distance_sq = Vector3.distance_squared(camera_position, units_center)
-		local is_within_distance = min_distance_sq <= distance_sq and distance_sq <= max_distance_sq
-
-		return is_within_distance, units_center, num_horde_units_beastmen
-	end,
+		return var_3_6 <= var_3_9 and var_3_9 <= var_3_7, var_3_8, var_0_11
+	end
 }

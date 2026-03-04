@@ -1,545 +1,541 @@
-﻿-- chunkname: @scripts/managers/game_mode/mutator_templates.lua
+-- chunkname: @scripts/managers/game_mode/mutator_templates.lua
 
-local mutator_settings = local_require("scripts/settings/mutator_settings")
+local var_0_0 = local_require("scripts/settings/mutator_settings")
 
-local function modify_breed_health_start(context, data)
-	local template = data.template
-	local modify_health_breeds = template.modify_health_breeds
+local function var_0_1(arg_1_0, arg_1_1)
+	local var_1_0 = arg_1_1.template
+	local var_1_1 = var_1_0.modify_health_breeds
 
-	if modify_health_breeds then
-		local health_modifier = template.health_modifier
-		local vanilla_breed_health = {}
+	if var_1_1 then
+		local var_1_2 = var_1_0.health_modifier
+		local var_1_3 = {}
 
-		for _, breed_name in ipairs(modify_health_breeds) do
-			local breed = Breeds[breed_name]
-			local max_health = breed.max_health
+		for iter_1_0, iter_1_1 in ipairs(var_1_1) do
+			local var_1_4 = Breeds[iter_1_1].max_health
 
-			vanilla_breed_health[breed_name] = table.clone(max_health)
+			var_1_3[iter_1_1] = table.clone(var_1_4)
 
-			for i, health in ipairs(max_health) do
-				max_health[i] = health * health_modifier
+			for iter_1_2, iter_1_3 in ipairs(var_1_4) do
+				var_1_4[iter_1_2] = iter_1_3 * var_1_2
 			end
 		end
 
-		data.vanilla_breed_health = vanilla_breed_health
+		arg_1_1.vanilla_breed_health = var_1_3
 	end
 end
 
-local function modify_breed_health_stop(context, data)
-	if data.vanilla_breed_health then
-		for breed_name, max_health in pairs(data.vanilla_breed_health) do
-			Breeds[breed_name].max_health = max_health
+local function var_0_2(arg_2_0, arg_2_1)
+	if arg_2_1.vanilla_breed_health then
+		for iter_2_0, iter_2_1 in pairs(arg_2_1.vanilla_breed_health) do
+			Breeds[iter_2_0].max_health = iter_2_1
 		end
 	end
 end
 
-local function modify_breed_armor_category_start(context, data)
-	local template = data.template
-	local modify_primary_armor_category_breeds = template.modify_primary_armor_category_breeds
+local function var_0_3(arg_3_0, arg_3_1)
+	local var_3_0 = arg_3_1.template
+	local var_3_1 = var_3_0.modify_primary_armor_category_breeds
 
-	if modify_primary_armor_category_breeds then
-		local primary_armor_category = template.primary_armor_category
-		local vanilla_breed_primary_armor_category = {}
+	if var_3_1 then
+		local var_3_2 = var_3_0.primary_armor_category
+		local var_3_3 = {}
 
-		for _, breed_name in ipairs(modify_primary_armor_category_breeds) do
-			local breed = Breeds[breed_name]
-			local old_primary_armor_category = breed.primary_armor_category
+		for iter_3_0, iter_3_1 in ipairs(var_3_1) do
+			local var_3_4 = Breeds[iter_3_1]
+			local var_3_5 = var_3_4.primary_armor_category
 
-			if old_primary_armor_category then
-				vanilla_breed_primary_armor_category[breed_name] = old_primary_armor_category
+			if var_3_5 then
+				var_3_3[iter_3_1] = var_3_5
 			else
-				vanilla_breed_primary_armor_category[breed_name] = false
+				var_3_3[iter_3_1] = false
 			end
 
-			breed.primary_armor_category = primary_armor_category
+			var_3_4.primary_armor_category = var_3_2
 		end
 
-		if not data.vanilla_breed_primary_armor_category then
-			data.vanilla_breed_primary_armor_category = vanilla_breed_primary_armor_category
+		if not arg_3_1.vanilla_breed_primary_armor_category then
+			arg_3_1.vanilla_breed_primary_armor_category = var_3_3
 		end
 	end
 end
 
-local function modify_breed_armor_category_stop(context, data)
-	if data.vanilla_breed_primary_armor_category then
-		for breed_name, primary_armor_category in pairs(data.vanilla_breed_primary_armor_category) do
-			if primary_armor_category then
-				Breeds[breed_name].primary_armor_category = primary_armor_category
+local function var_0_4(arg_4_0, arg_4_1)
+	if arg_4_1.vanilla_breed_primary_armor_category then
+		for iter_4_0, iter_4_1 in pairs(arg_4_1.vanilla_breed_primary_armor_category) do
+			if iter_4_1 then
+				Breeds[iter_4_0].primary_armor_category = iter_4_1
 			else
-				Breeds[breed_name].primary_armor_category = nil
+				Breeds[iter_4_0].primary_armor_category = nil
 			end
 		end
 	end
 end
 
-local function modify_breed_primary_armor_category_start(context, data)
-	local template = data.template
-	local modify_armor_category_breeds = template.modify_armor_category_breeds
+local function var_0_5(arg_5_0, arg_5_1)
+	local var_5_0 = arg_5_1.template
+	local var_5_1 = var_5_0.modify_armor_category_breeds
 
-	if modify_armor_category_breeds then
-		local armor_category = template.armor_category
-		local vanilla_breed_armor_category = {}
+	if var_5_1 then
+		local var_5_2 = var_5_0.armor_category
+		local var_5_3 = {}
 
-		for _, breed_name in ipairs(modify_armor_category_breeds) do
-			local breed = Breeds[breed_name]
-			local old_armor_category = breed.armor_category
+		for iter_5_0, iter_5_1 in ipairs(var_5_1) do
+			local var_5_4 = Breeds[iter_5_1]
+			local var_5_5 = var_5_4.armor_category
 
-			if old_armor_category then
-				vanilla_breed_armor_category[breed_name] = old_armor_category
-				breed.armor_category = armor_category
+			if var_5_5 then
+				var_5_3[iter_5_1] = var_5_5
+				var_5_4.armor_category = var_5_2
 			end
 		end
 
-		if not data.vanilla_breed_armor_category then
-			data.vanilla_breed_armor_category = vanilla_breed_armor_category
+		if not arg_5_1.vanilla_breed_armor_category then
+			arg_5_1.vanilla_breed_armor_category = var_5_3
 		end
 	end
 end
 
-local function modify_breed_primary_armor_category_stop(context, data)
-	if data.vanilla_breed_armor_category then
-		for breed_name, armor_category in pairs(data.vanilla_breed_armor_category) do
-			Breeds[breed_name].armor_category = armor_category
+local function var_0_6(arg_6_0, arg_6_1)
+	if arg_6_1.vanilla_breed_armor_category then
+		for iter_6_0, iter_6_1 in pairs(arg_6_1.vanilla_breed_armor_category) do
+			Breeds[iter_6_0].armor_category = iter_6_1
 		end
 	end
 end
 
-local function default_start_function_server(context, data)
-	local template = data.template
-	local remove_pickup_settings = template.remove_pickups
+local function var_0_7(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_1.template
+	local var_7_1 = var_7_0.remove_pickups
 
-	if remove_pickup_settings then
-		local pickup_types = {}
+	if var_7_1 then
+		local var_7_2 = {}
 
-		for i = 1, #remove_pickup_settings do
-			local pickup_type = remove_pickup_settings[i]
-
-			pickup_types[pickup_type] = true
+		for iter_7_0 = 1, #var_7_1 do
+			var_7_2[var_7_1[iter_7_0]] = true
 		end
 
-		local excluded_pickup_item_names = template.excluded_pickup_item_names
-		local pickup_units = Managers.state.entity:get_entities("PickupUnitExtension")
+		local var_7_3 = var_7_0.excluded_pickup_item_names
+		local var_7_4 = Managers.state.entity:get_entities("PickupUnitExtension")
 
-		for unit, extension in pairs(pickup_units) do
-			local pickup_settings = extension:get_pickup_settings()
-			local is_excluded = excluded_pickup_item_names and excluded_pickup_item_names[pickup_settings.item_name]
+		for iter_7_1, iter_7_2 in pairs(var_7_4) do
+			local var_7_5 = iter_7_2:get_pickup_settings()
 
-			if not is_excluded and pickup_types.all or pickup_types[pickup_settings.type] then
-				Managers.state.unit_spawner:mark_for_deletion(unit)
+			if not (var_7_3 and var_7_3[var_7_5.item_name]) and var_7_2.all or var_7_2[var_7_5.type] then
+				Managers.state.unit_spawner:mark_for_deletion(iter_7_1)
 			end
 		end
 	end
 end
 
-local function default_stop_function_server(context, data)
-	modify_breed_health_stop(context, data)
-	modify_breed_armor_category_stop(context, data)
-	modify_breed_primary_armor_category_stop(context, data)
+local function var_0_8(arg_8_0, arg_8_1)
+	var_0_2(arg_8_0, arg_8_1)
+	var_0_4(arg_8_0, arg_8_1)
+	var_0_6(arg_8_0, arg_8_1)
 end
 
-local function default_hot_join_sync_function_server(context, data, peer_id)
+local function var_0_9(arg_9_0, arg_9_1, arg_9_2)
 	return
 end
 
-local function default_player_disabled_function_server(context, data, killed_unit, killer_unit, death_data, killing_blow)
+local function var_0_10(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	return
 end
 
-local function default_ai_killed_function_server(context, data, killed_unit, killer_unit, death_data, killing_blow)
+local function var_0_11(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	return
 end
 
-local function default_level_object_killed_function_server(context, data, killed_unit, killing_blow)
+local function var_0_12(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	return
 end
 
-local function default_ai_hit_by_player_function_server(context, data, hit_unit, attacking_unit, attack_data)
+local function var_0_13(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	return
 end
 
-local function default_player_hit_function_server(context, data, hit_unit, attacking_unit, attack_data)
+local function var_0_14(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 	return
 end
 
-local function default_player_respawned_function_server(context, data, spawned_unit)
+local function var_0_15(arg_15_0, arg_15_1, arg_15_2)
 	return
 end
 
-local function default_damage_taken_function_server(context, data, attacked_unit, attacker_unit, damage, damage_source, damage_type)
+local function var_0_16(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6)
 	return
 end
 
-local function default_ai_spawned_function_server(context, data, spawned_unit)
+local function var_0_17(arg_17_0, arg_17_1, arg_17_2)
 	return
 end
 
-local function default_pre_ai_spawned_function(context, data, breed, optional_data)
+local function var_0_18(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	return
 end
 
-local function default_post_ai_spawned_function(context, data, ai_unit, breed, optional_data)
+local function var_0_19(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 	return
 end
 
-local function default_start_function_client(context, data)
-	modify_breed_armor_category_start(context, data)
-	modify_breed_primary_armor_category_start(context, data)
+local function var_0_20(arg_20_0, arg_20_1)
+	var_0_3(arg_20_0, arg_20_1)
+	var_0_5(arg_20_0, arg_20_1)
 end
 
-local function default_stop_function_client(context, data)
-	modify_breed_armor_category_stop(context, data)
-	modify_breed_primary_armor_category_stop(context, data)
+local function var_0_21(arg_21_0, arg_21_1)
+	var_0_4(arg_21_0, arg_21_1)
+	var_0_6(arg_21_0, arg_21_1)
 end
 
-local function default_hot_join_sync_function_client(context, data, peer_id)
+local function var_0_22(arg_22_0, arg_22_1, arg_22_2)
 	return
 end
 
-local function default_ai_killed_function_client(context, data, killed_unit, killer_unit, death_data, killing_blow)
+local function var_0_23(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
 	return
 end
 
-local function default_level_object_killed_function_client(context, data, killed_unit, killing_blow)
+local function var_0_24(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	return
 end
 
-local function default_ai_hit_by_player_function_client(context, data, hit_unit, attacking_unit, attack_data)
+local function var_0_25(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 	return
 end
 
-local function default_player_hit_function_client(context, data, hit_unit, attacking_unit, attack_data)
+local function var_0_26(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 	return
 end
 
-local function default_player_respawned_function_client(context, data, spawned_unit)
+local function var_0_27(arg_27_0, arg_27_1, arg_27_2)
 	return
 end
 
-local function default_damage_taken_function_client(context, data, attacked_unit, attacker_unit, damage, damage_source, damage_type)
+local function var_0_28(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6)
 	return
 end
 
-local function default_ai_spawned_function_client(context, data, spawned_unit)
+local function var_0_29(arg_29_0, arg_29_1, arg_29_2)
 	return
 end
 
-local function default_server_players_left_safe_zone(context, data)
+local function var_0_30(arg_30_0, arg_30_1)
 	return
 end
 
-local function default_initialize_function_server(context, data)
-	modify_breed_health_start(context, data)
-	modify_breed_armor_category_start(context, data)
-	modify_breed_primary_armor_category_start(context, data)
+local function var_0_31(arg_31_0, arg_31_1)
+	var_0_1(arg_31_0, arg_31_1)
+	var_0_3(arg_31_0, arg_31_1)
+	var_0_5(arg_31_0, arg_31_1)
 end
 
 MutatorTemplates = MutatorTemplates or {}
 
-for name, template in pairs(mutator_settings) do
-	template.name = name
-	template.server = {}
-	template.client = {}
+for iter_0_0, iter_0_1 in pairs(var_0_0) do
+	iter_0_1.name = iter_0_0
+	iter_0_1.server = {}
+	iter_0_1.client = {}
 
-	if template.check_dependencies then
-		local all_good = template.check_dependencies()
+	if iter_0_1.check_dependencies then
+		local var_0_32 = iter_0_1.check_dependencies()
 
-		fassert(all_good, "Mutator (%s) failed dependency check! :(", name)
+		fassert(var_0_32, "Mutator (%s) failed dependency check! :(", iter_0_0)
 	end
 
-	if template.server_initialize_function then
-		local function initialize_function(context, data)
-			default_initialize_function_server(context, data)
-			template.server_initialize_function(context, data)
+	if iter_0_1.server_initialize_function then
+		local function var_0_33(arg_32_0, arg_32_1)
+			var_0_31(arg_32_0, arg_32_1)
+			iter_0_1.server_initialize_function(arg_32_0, arg_32_1)
 		end
 
-		template.server.initialize_function = initialize_function
+		iter_0_1.server.initialize_function = var_0_33
 	else
-		template.server.initialize_function = default_initialize_function_server
+		iter_0_1.server.initialize_function = var_0_31
 	end
 
-	if template.server_start_function then
-		local function start_function(context, data)
-			default_start_function_server(context, data)
-			template.server_start_function(context, data)
+	if iter_0_1.server_start_function then
+		local function var_0_34(arg_33_0, arg_33_1)
+			var_0_7(arg_33_0, arg_33_1)
+			iter_0_1.server_start_function(arg_33_0, arg_33_1)
 		end
 
-		template.server.start_function = start_function
+		iter_0_1.server.start_function = var_0_34
 	else
-		template.server.start_function = default_start_function_server
+		iter_0_1.server.start_function = var_0_7
 	end
 
-	if template.server_stop_function then
-		local function stop_function(context, data, is_destroy)
-			default_stop_function_server(context, data)
-			template.server_stop_function(context, data, is_destroy)
+	if iter_0_1.server_stop_function then
+		local function var_0_35(arg_34_0, arg_34_1, arg_34_2)
+			var_0_8(arg_34_0, arg_34_1)
+			iter_0_1.server_stop_function(arg_34_0, arg_34_1, arg_34_2)
 		end
 
-		template.server.stop_function = stop_function
+		iter_0_1.server.stop_function = var_0_35
 	else
-		template.server.stop_function = default_stop_function_server
+		iter_0_1.server.stop_function = var_0_8
 	end
 
-	if template.server_hot_join_sync then
-		local function hot_join_sync_function(context, data, peer_id)
-			default_hot_join_sync_function_server(context, data, peer_id)
-			template.server_hot_join_sync(context, data, peer_id)
+	if iter_0_1.server_hot_join_sync then
+		local function var_0_36(arg_35_0, arg_35_1, arg_35_2)
+			var_0_9(arg_35_0, arg_35_1, arg_35_2)
+			iter_0_1.server_hot_join_sync(arg_35_0, arg_35_1, arg_35_2)
 		end
 
-		template.server.hot_join_sync_function = hot_join_sync_function
+		iter_0_1.server.hot_join_sync_function = var_0_36
 	else
-		template.server.hot_join_sync_function = default_hot_join_sync_function_server
+		iter_0_1.server.hot_join_sync_function = var_0_9
 	end
 
-	if template.server_player_disabled_function then
-		local function player_disabled_function(context, data, disabling_event, target_unit, attacker_unit)
-			default_player_disabled_function_server(context, data, disabling_event, target_unit, attacker_unit)
-			template.server_player_disabled_function(context, data, disabling_event, target_unit, attacker_unit)
+	if iter_0_1.server_player_disabled_function then
+		local function var_0_37(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+			var_0_10(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+			iter_0_1.server_player_disabled_function(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
 		end
 
-		template.server.player_disabled_function = player_disabled_function
+		iter_0_1.server.player_disabled_function = var_0_37
 	else
-		template.server.player_disabled_function = default_player_disabled_function_server
+		iter_0_1.server.player_disabled_function = var_0_10
 	end
 
-	if template.server_ai_killed_function then
-		local function ai_killed_function(context, data, killed_unit, killer_unit, death_data, killing_blow)
-			default_ai_killed_function_server(context, data, killed_unit, killer_unit, death_data, killing_blow)
-			template.server_ai_killed_function(context, data, killed_unit, killer_unit, death_data, killing_blow)
+	if iter_0_1.server_ai_killed_function then
+		local function var_0_38(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
+			var_0_11(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
+			iter_0_1.server_ai_killed_function(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
 		end
 
-		template.server.ai_killed_function = ai_killed_function
+		iter_0_1.server.ai_killed_function = var_0_38
 	else
-		template.server.ai_killed_function = default_ai_killed_function_server
+		iter_0_1.server.ai_killed_function = var_0_11
 	end
 
-	if template.server_level_object_killed_function then
-		local function level_object_killed_function(context, data, killed_unit, killer_unit, death_data, killing_blow)
-			default_level_object_killed_function_server(context, data, killed_unit, killer_unit, death_data, killing_blow)
-			template.server_level_object_killed_function(context, data, killed_unit, killer_unit, death_data, killing_blow)
+	if iter_0_1.server_level_object_killed_function then
+		local function var_0_39(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5)
+			var_0_12(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5)
+			iter_0_1.server_level_object_killed_function(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5)
 		end
 
-		template.server.level_object_killed_function = level_object_killed_function
+		iter_0_1.server.level_object_killed_function = var_0_39
 	else
-		template.server.level_object_killed_function = default_level_object_killed_function_server
+		iter_0_1.server.level_object_killed_function = var_0_12
 	end
 
-	if template.server_ai_hit_by_player_function then
-		local function ai_hit_by_player_function(context, data, hit_unit, attacking_unit, attack_data)
-			default_ai_hit_by_player_function_server(context, data, hit_unit, attacking_unit, attack_data)
-			template.server_ai_hit_by_player_function(context, data, hit_unit, attacking_unit, attack_data)
+	if iter_0_1.server_ai_hit_by_player_function then
+		local function var_0_40(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+			var_0_13(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+			iter_0_1.server_ai_hit_by_player_function(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
 		end
 
-		template.server.ai_hit_by_player_function = ai_hit_by_player_function
+		iter_0_1.server.ai_hit_by_player_function = var_0_40
 	else
-		template.server.ai_hit_by_player_function = default_ai_hit_by_player_function_server
+		iter_0_1.server.ai_hit_by_player_function = var_0_13
 	end
 
-	if template.server_player_hit_function then
-		local function player_hit_function(context, data, hit_unit, attacking_unit, attack_data)
-			default_player_hit_function_server(context, data, hit_unit, attacking_unit, attack_data)
-			template.server_player_hit_function(context, data, hit_unit, attacking_unit, attack_data)
+	if iter_0_1.server_player_hit_function then
+		local function var_0_41(arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
+			var_0_14(arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
+			iter_0_1.server_player_hit_function(arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
 		end
 
-		template.server.player_hit_function = player_hit_function
+		iter_0_1.server.player_hit_function = var_0_41
 	else
-		template.server.player_hit_function = default_player_hit_function_server
+		iter_0_1.server.player_hit_function = var_0_14
 	end
 
-	if template.server_player_respawned_function then
-		local function player_respawned_function(context, data, spawned_unit)
-			default_player_respawned_function_server(context, data, spawned_unit)
-			template.server_player_respawned_function(context, data, spawned_unit)
+	if iter_0_1.server_player_respawned_function then
+		local function var_0_42(arg_41_0, arg_41_1, arg_41_2)
+			var_0_15(arg_41_0, arg_41_1, arg_41_2)
+			iter_0_1.server_player_respawned_function(arg_41_0, arg_41_1, arg_41_2)
 		end
 
-		template.server.player_respawned_function = player_respawned_function
+		iter_0_1.server.player_respawned_function = var_0_42
 	else
-		template.server.player_respawned_function = default_player_respawned_function_server
+		iter_0_1.server.player_respawned_function = var_0_15
 	end
 
-	if template.server_damage_taken_function then
-		local function damage_taken_function(context, data, attacked_unit, attacker_unit, damage, damage_source, damage_type)
-			default_damage_taken_function_server(context, data, attacked_unit, attacker_unit, damage, damage_source, damage_type)
-			template.server_damage_taken_function(context, data, attacked_unit, attacker_unit, damage, damage_source, damage_type)
+	if iter_0_1.server_damage_taken_function then
+		local function var_0_43(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5, arg_42_6)
+			var_0_16(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5, arg_42_6)
+			iter_0_1.server_damage_taken_function(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5, arg_42_6)
 		end
 
-		template.server.damage_taken_function = damage_taken_function
+		iter_0_1.server.damage_taken_function = var_0_43
 	else
-		template.server.damage_taken_function = default_damage_taken_function_server
+		iter_0_1.server.damage_taken_function = var_0_16
 	end
 
-	if template.server_ai_spawned_function then
-		local function ai_spawned_function(context, data, spawned_unit)
-			default_ai_spawned_function_server(context, data, spawned_unit)
-			template.server_ai_spawned_function(context, data, spawned_unit)
+	if iter_0_1.server_ai_spawned_function then
+		local function var_0_44(arg_43_0, arg_43_1, arg_43_2)
+			var_0_17(arg_43_0, arg_43_1, arg_43_2)
+			iter_0_1.server_ai_spawned_function(arg_43_0, arg_43_1, arg_43_2)
 		end
 
-		template.server.ai_spawned_function = ai_spawned_function
+		iter_0_1.server.ai_spawned_function = var_0_44
 	else
-		template.server.ai_spawned_function = default_ai_spawned_function_server
+		iter_0_1.server.ai_spawned_function = var_0_17
 	end
 
-	if template.pre_ai_spawned_function then
-		local function pre_ai_spawned_function(context, data, breed, optional_data)
-			default_pre_ai_spawned_function(context, data, breed, optional_data)
-			template.pre_ai_spawned_function(context, data, breed, optional_data)
+	if iter_0_1.pre_ai_spawned_function then
+		local function var_0_45(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+			var_0_18(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+			iter_0_1.pre_ai_spawned_function(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 		end
 
-		template.server.pre_ai_spawned_function = pre_ai_spawned_function
+		iter_0_1.server.pre_ai_spawned_function = var_0_45
 	else
-		template.server.pre_ai_spawned_function = default_pre_ai_spawned_function
+		iter_0_1.server.pre_ai_spawned_function = var_0_18
 	end
 
-	if template.post_ai_spawned_function then
-		local function post_ai_spawned_function(context, data, ai_unit, breed, optional_data)
-			default_post_ai_spawned_function(context, data, ai_unit, breed, optional_data)
-			template.post_ai_spawned_function(context, data, ai_unit, breed, optional_data)
+	if iter_0_1.post_ai_spawned_function then
+		local function var_0_46(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
+			var_0_19(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
+			iter_0_1.post_ai_spawned_function(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
 		end
 
-		template.server.post_ai_spawned_function = post_ai_spawned_function
+		iter_0_1.server.post_ai_spawned_function = var_0_46
 	else
-		template.server.post_ai_spawned_function = default_post_ai_spawned_function
+		iter_0_1.server.post_ai_spawned_function = var_0_19
 	end
 
-	if template.server_players_left_safe_zone then
-		local function server_players_left_safe_zone(context, data)
-			default_server_players_left_safe_zone(context, data)
-			template.server_players_left_safe_zone(context, data)
+	if iter_0_1.server_players_left_safe_zone then
+		local function var_0_47(arg_46_0, arg_46_1)
+			var_0_30(arg_46_0, arg_46_1)
+			iter_0_1.server_players_left_safe_zone(arg_46_0, arg_46_1)
 		end
 
-		template.server.server_players_left_safe_zone = server_players_left_safe_zone
+		iter_0_1.server.server_players_left_safe_zone = var_0_47
 	else
-		template.server.server_players_left_safe_zone = default_server_players_left_safe_zone
+		iter_0_1.server.server_players_left_safe_zone = var_0_30
 	end
 
-	if template.client_start_function then
-		local function start_function(context, data)
-			default_start_function_client(context, data)
-			template.client_start_function(context, data)
+	if iter_0_1.client_start_function then
+		local function var_0_48(arg_47_0, arg_47_1)
+			var_0_20(arg_47_0, arg_47_1)
+			iter_0_1.client_start_function(arg_47_0, arg_47_1)
 		end
 
-		template.client.start_function = start_function
+		iter_0_1.client.start_function = var_0_48
 	else
-		template.client.start_function = default_start_function_client
+		iter_0_1.client.start_function = var_0_20
 	end
 
-	if template.client_stop_function then
-		local function stop_function(context, data, is_destroy)
-			default_stop_function_client(context, data)
-			template.client_stop_function(context, data, is_destroy)
+	if iter_0_1.client_stop_function then
+		local function var_0_49(arg_48_0, arg_48_1, arg_48_2)
+			var_0_21(arg_48_0, arg_48_1)
+			iter_0_1.client_stop_function(arg_48_0, arg_48_1, arg_48_2)
 		end
 
-		template.client.stop_function = stop_function
+		iter_0_1.client.stop_function = var_0_49
 	else
-		template.client.stop_function = default_stop_function_client
+		iter_0_1.client.stop_function = var_0_21
 	end
 
-	if template.client_hot_join_sync then
-		local function hot_join_sync_function(context, data, peer_id)
-			default_hot_join_sync_function_client(context, data, peer_id)
-			template.client_hot_join_sync(context, data, peer_id)
+	if iter_0_1.client_hot_join_sync then
+		local function var_0_50(arg_49_0, arg_49_1, arg_49_2)
+			var_0_22(arg_49_0, arg_49_1, arg_49_2)
+			iter_0_1.client_hot_join_sync(arg_49_0, arg_49_1, arg_49_2)
 		end
 
-		template.client.hot_join_sync_function = hot_join_sync_function
+		iter_0_1.client.hot_join_sync_function = var_0_50
 	else
-		template.client.hot_join_sync_function = default_hot_join_sync_function_client
+		iter_0_1.client.hot_join_sync_function = var_0_22
 	end
 
-	if template.client_ai_killed_function then
-		local function ai_killed_function(context, data, killed_unit, killer_unit, killing_blow)
-			default_ai_killed_function_client(context, data, killed_unit, killer_unit, killing_blow)
-			template.client_ai_killed_function(context, data, killed_unit, killer_unit, killing_blow)
+	if iter_0_1.client_ai_killed_function then
+		local function var_0_51(arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
+			var_0_23(arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
+			iter_0_1.client_ai_killed_function(arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
 		end
 
-		template.client.ai_killed_function = ai_killed_function
+		iter_0_1.client.ai_killed_function = var_0_51
 	else
-		template.client.ai_killed_function = default_ai_killed_function_client
+		iter_0_1.client.ai_killed_function = var_0_23
 	end
 
-	if template.client_level_object_killed_function then
-		local function level_object_killed_function(context, data, killed_unit, killer_unit, killing_blow)
-			default_level_object_killed_function_client(context, data, killed_unit, killer_unit, killing_blow)
-			template.client_level_object_killed_function(context, data, killed_unit, killer_unit, killing_blow)
+	if iter_0_1.client_level_object_killed_function then
+		local function var_0_52(arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4)
+			var_0_24(arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4)
+			iter_0_1.client_level_object_killed_function(arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4)
 		end
 
-		template.client.level_object_killed_function = level_object_killed_function
+		iter_0_1.client.level_object_killed_function = var_0_52
 	else
-		template.client.level_object_killed_function = default_level_object_killed_function_client
+		iter_0_1.client.level_object_killed_function = var_0_24
 	end
 
-	if template.client_ai_hit_by_player_function then
-		local function ai_hit_by_player_function(context, data, hit_unit, attacking_unit, attack_data)
-			default_ai_hit_by_player_function_client(context, data, hit_unit, attacking_unit, attack_data)
-			template.client_ai_hit_by_player_function(context, data, hit_unit, attacking_unit, attack_data)
+	if iter_0_1.client_ai_hit_by_player_function then
+		local function var_0_53(arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4)
+			var_0_25(arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4)
+			iter_0_1.client_ai_hit_by_player_function(arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4)
 		end
 
-		template.client.ai_hit_by_player_function = ai_hit_by_player_function
+		iter_0_1.client.ai_hit_by_player_function = var_0_53
 	else
-		template.client.ai_hit_by_player_function = default_ai_hit_by_player_function_client
+		iter_0_1.client.ai_hit_by_player_function = var_0_25
 	end
 
-	if template.client_player_hit_function then
-		local function player_hit_function(context, data, hit_unit, attacking_unit, attack_data)
-			default_player_hit_function_client(context, data, hit_unit, attacking_unit, attack_data)
-			template.client_player_hit_function(context, data, hit_unit, attacking_unit, attack_data)
+	if iter_0_1.client_player_hit_function then
+		local function var_0_54(arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4)
+			var_0_26(arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4)
+			iter_0_1.client_player_hit_function(arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4)
 		end
 
-		template.client.player_hit_function = player_hit_function
+		iter_0_1.client.player_hit_function = var_0_54
 	else
-		template.client.player_hit_function = default_player_hit_function_client
+		iter_0_1.client.player_hit_function = var_0_26
 	end
 
-	if template.client_player_respawned_function then
-		local function player_respawned_function(context, data, spawned_unit)
-			default_player_respawned_function_client(context, data, spawned_unit)
-			template.client_player_respawned_function(context, data, spawned_unit)
+	if iter_0_1.client_player_respawned_function then
+		local function var_0_55(arg_54_0, arg_54_1, arg_54_2)
+			var_0_27(arg_54_0, arg_54_1, arg_54_2)
+			iter_0_1.client_player_respawned_function(arg_54_0, arg_54_1, arg_54_2)
 		end
 
-		template.client.player_respawned_function = player_respawned_function
+		iter_0_1.client.player_respawned_function = var_0_55
 	else
-		template.client.player_respawned_function = default_player_respawned_function_client
+		iter_0_1.client.player_respawned_function = var_0_27
 	end
 
-	if template.client_damage_taken_function then
-		local function damage_taken_function(context, data, attacked_unit, attacker_unit, damage, damage_source, damage_type)
-			default_damage_taken_function_client(context, data, attacked_unit, attacker_unit, damage, damage_source, damage_type)
-			template.client_damage_taken_function(context, data, attacked_unit, attacker_unit, damage, damage_source, damage_type)
+	if iter_0_1.client_damage_taken_function then
+		local function var_0_56(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5, arg_55_6)
+			var_0_28(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5, arg_55_6)
+			iter_0_1.client_damage_taken_function(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5, arg_55_6)
 		end
 
-		template.client.damage_taken_function = damage_taken_function
+		iter_0_1.client.damage_taken_function = var_0_56
 	else
-		template.client.damage_taken_function = default_damage_taken_function_client
+		iter_0_1.client.damage_taken_function = var_0_28
 	end
 
-	if template.client_ai_spawned_function then
-		local function ai_spawned_function(context, data, spawned_unit)
-			default_ai_spawned_function_client(context, data, spawned_unit)
-			template.client_ai_spawned_function(context, data, spawned_unit)
+	if iter_0_1.client_ai_spawned_function then
+		local function var_0_57(arg_56_0, arg_56_1, arg_56_2)
+			var_0_29(arg_56_0, arg_56_1, arg_56_2)
+			iter_0_1.client_ai_spawned_function(arg_56_0, arg_56_1, arg_56_2)
 		end
 
-		template.client.ai_spawned_function = ai_spawned_function
+		iter_0_1.client.ai_spawned_function = var_0_57
 	else
-		template.client.ai_spawned_function = default_ai_spawned_function_client
+		iter_0_1.client.ai_spawned_function = var_0_29
 	end
 
-	if template.server_pre_update_function then
-		template.server.pre_update = template.server_pre_update_function
+	if iter_0_1.server_pre_update_function then
+		iter_0_1.server.pre_update = iter_0_1.server_pre_update_function
 	end
 
-	if template.client_pre_update_function then
-		template.client.pre_update = template.client_pre_update_function
+	if iter_0_1.client_pre_update_function then
+		iter_0_1.client.pre_update = iter_0_1.client_pre_update_function
 	end
 
-	if template.server_update_function then
-		template.server.update = template.server_update_function
+	if iter_0_1.server_update_function then
+		iter_0_1.server.update = iter_0_1.server_update_function
 	end
 
-	if template.client_update_function then
-		template.client.update = template.client_update_function
+	if iter_0_1.client_update_function then
+		iter_0_1.client.update = iter_0_1.client_update_function
 	end
 
-	if MutatorTemplates[name] then
-		MutatorTemplates[name] = table.create_copy(MutatorTemplates[name], template)
+	if MutatorTemplates[iter_0_0] then
+		MutatorTemplates[iter_0_0] = table.create_copy(MutatorTemplates[iter_0_0], iter_0_1)
 	else
-		MutatorTemplates[name] = template
+		MutatorTemplates[iter_0_0] = iter_0_1
 	end
 end

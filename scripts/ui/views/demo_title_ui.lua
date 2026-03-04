@@ -1,832 +1,804 @@
-﻿-- chunkname: @scripts/ui/views/demo_title_ui.lua
+-- chunkname: @scripts/ui/views/demo_title_ui.lua
 
 require("scripts/ui/views/demo_character_previewer")
 
-local definitions = local_require("scripts/ui/views/demo_title_ui_definitions")
-local scenegraph_definition = definitions.scenegraph_definition
-local widget_definitions = definitions.widget_definitions
-local career_widget_definitions = definitions.career_widget_definitions
-local attract_mode_video = definitions.attract_mode_video
-local dead_space_filler = definitions.dead_space_filler_widget
-local create_vide_func = definitions.create_video_func
-local start_game_button_widget = definitions.start_game_button_widget
-local back_button_widget = definitions.back_button_widget
-local console_cursor_definition = definitions.console_cursor_definition
-local press_start_widget = definitions.press_start_widget
-local single_widget_definitions = definitions.single_widget_definitions
+local var_0_0 = local_require("scripts/ui/views/demo_title_ui_definitions")
+local var_0_1 = var_0_0.scenegraph_definition
+local var_0_2 = var_0_0.widget_definitions
+local var_0_3 = var_0_0.career_widget_definitions
+local var_0_4 = var_0_0.attract_mode_video
+local var_0_5 = var_0_0.dead_space_filler_widget
+local var_0_6 = var_0_0.create_video_func
+local var_0_7 = var_0_0.start_game_button_widget
+local var_0_8 = var_0_0.back_button_widget
+local var_0_9 = var_0_0.console_cursor_definition
+local var_0_10 = var_0_0.press_start_widget
+local var_0_11 = var_0_0.single_widget_definitions
 
 DemoTitleUI = class(DemoTitleUI)
 
-local WORLD_GUI_RESOLUTION = 1920
-local CAMERA_TRANSITION_TIME = 2
-local VIDEO_REFERENCE_NAME = "DemoTitleUI"
+local var_0_12 = 1920
+local var_0_13 = 2
+local var_0_14 = "DemoTitleUI"
 
-DemoTitleUI.init = function (self, world, viewport, parent)
-	self._world = world
-	self._viewport = viewport
-	self._parent = parent
-	self._attract_mode_active = false
-	self._character_previewers = {}
-	self._fps = 0
-	self._fps_cooldown = 0
-	self._draw_information_text = false
+function DemoTitleUI.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._world = arg_1_1
+	arg_1_0._viewport = arg_1_2
+	arg_1_0._parent = arg_1_3
+	arg_1_0._attract_mode_active = false
+	arg_1_0._character_previewers = {}
+	arg_1_0._fps = 0
+	arg_1_0._fps_cooldown = 0
+	arg_1_0._draw_information_text = false
 
-	self:_setup_gui()
-	self:_setup_level()
-	self:_collect_cameras()
-	self:_position_camera()
-	self:_setup_world_gui(parent)
-	self:_create_ui_elements()
-	self:_setup_input()
+	arg_1_0:_setup_gui()
+	arg_1_0:_setup_level()
+	arg_1_0:_collect_cameras()
+	arg_1_0:_position_camera()
+	arg_1_0:_setup_world_gui(arg_1_3)
+	arg_1_0:_create_ui_elements()
+	arg_1_0:_setup_input()
 end
 
-DemoTitleUI.menu_input_enabled = function (self)
+function DemoTitleUI.menu_input_enabled(arg_2_0)
 	return true
 end
 
-DemoTitleUI._setup_gui = function (self)
-	self._render_settings = {
-		snap_pixel_positions = true,
+function DemoTitleUI._setup_gui(arg_3_0)
+	arg_3_0._render_settings = {
+		snap_pixel_positions = true
 	}
-	self._ui_renderer = UIRenderer.create(self._world, "material", "materials/ui/ui_1080p_hud_single_textures", "material", "materials/ui/ui_1080p_title_screen", "material", "materials/ui/ui_1080p_start_screen", "material", "materials/fonts/gw_fonts", "material", "materials/ui/ui_1080p_common", "material", "materials/ui/ui_1080p_versus_available_common", "material", "materials/ui/ui_1080p_hud_atlas_textures", "material", "materials/ui/ui_1080p_chat", "material", attract_mode_video.video_name)
+	arg_3_0._ui_renderer = UIRenderer.create(arg_3_0._world, "material", "materials/ui/ui_1080p_hud_single_textures", "material", "materials/ui/ui_1080p_title_screen", "material", "materials/ui/ui_1080p_start_screen", "material", "materials/fonts/gw_fonts", "material", "materials/ui/ui_1080p_common", "material", "materials/ui/ui_1080p_versus_available_common", "material", "materials/ui/ui_1080p_hud_atlas_textures", "material", "materials/ui/ui_1080p_chat", "material", var_0_4.video_name)
 
-	local materials = {}
+	local var_3_0 = {}
 
-	for _, settings in pairs(CareerSettings) do
-		local video = settings.video
+	for iter_3_0, iter_3_1 in pairs(CareerSettings) do
+		local var_3_1 = iter_3_1.video
 
-		materials[#materials + 1] = "material"
-		materials[#materials + 1] = video.resource
+		var_3_0[#var_3_0 + 1] = "material"
+		var_3_0[#var_3_0 + 1] = var_3_1.resource
 	end
 
-	self._career_video_ui_renderer = UIRenderer.create(self._world, unpack(materials))
+	arg_3_0._career_video_ui_renderer = UIRenderer.create(arg_3_0._world, unpack(var_3_0))
 
-	UISetupFontHeights(self._ui_renderer.gui)
+	UISetupFontHeights(arg_3_0._ui_renderer.gui)
 end
 
-DemoTitleUI._setup_world_gui = function (self)
-	self._world_gui = World.create_world_gui(self._world, Matrix4x4.identity(), WORLD_GUI_RESOLUTION, WORLD_GUI_RESOLUTION, "material", "materials/ui/ui_1080p_demo_textures", "immediate")
+function DemoTitleUI._setup_world_gui(arg_4_0)
+	arg_4_0._world_gui = World.create_world_gui(arg_4_0._world, Matrix4x4.identity(), var_0_12, var_0_12, "material", "materials/ui/ui_1080p_demo_textures", "immediate")
 
-	local camera_poses = self._camera_poses
-	local pose = camera_poses[DemoSettings.starting_camera_name] or Matrix4x4Box(Matrix4x4.identity())
-	local position = Matrix4x4.translation(pose:unbox())
-	local rotation = Matrix4x4.rotation(pose:unbox())
-	local forward = Quaternion.forward(rotation)
-	local new_pose = Matrix4x4.from_quaternion_position(rotation, position + forward * 1.5)
+	local var_4_0 = arg_4_0._camera_poses[DemoSettings.starting_camera_name] or Matrix4x4Box(Matrix4x4.identity())
+	local var_4_1 = Matrix4x4.translation(var_4_0:unbox())
+	local var_4_2 = Matrix4x4.rotation(var_4_0:unbox())
+	local var_4_3 = Quaternion.forward(var_4_2)
+	local var_4_4 = Matrix4x4.from_quaternion_position(var_4_2, var_4_1 + var_4_3 * 1.5)
 
-	Gui.move(self._world_gui, new_pose)
+	Gui.move(arg_4_0._world_gui, var_4_4)
 end
 
-DemoTitleUI._setup_level = function (self)
-	local level_name = DemoSettings.level_name
-	local spawned_object_sets = {}
-	local available_level_sets = LevelResource.object_set_names(level_name)
+function DemoTitleUI._setup_level(arg_5_0)
+	local var_5_0 = DemoSettings.level_name
+	local var_5_1 = {}
+	local var_5_2 = LevelResource.object_set_names(var_5_0)
 
-	for key, set in ipairs(available_level_sets) do
-		if set == "shadow_lights" then
-			spawned_object_sets[#spawned_object_sets + 1] = set
-		elseif string.sub(set, 1, 5) == "flow_" then
-			spawned_object_sets[#spawned_object_sets + 1] = set
-		elseif string.sub(set, 1, 5) == "team_" then
-			spawned_object_sets[#spawned_object_sets + 1] = set
+	for iter_5_0, iter_5_1 in ipairs(var_5_2) do
+		if iter_5_1 == "shadow_lights" then
+			var_5_1[#var_5_1 + 1] = iter_5_1
+		elseif string.sub(iter_5_1, 1, 5) == "flow_" then
+			var_5_1[#var_5_1 + 1] = iter_5_1
+		elseif string.sub(iter_5_1, 1, 5) == "team_" then
+			var_5_1[#var_5_1 + 1] = iter_5_1
 		end
 	end
 
-	local position, rotation, mood_setting
-	local spawn_time_sliced = false
+	local var_5_3
+	local var_5_4
+	local var_5_5
+	local var_5_6 = false
 
-	self._level = ScriptWorld.spawn_level(self._world, DemoSettings.level_name, spawned_object_sets, position, rotation, callback(self, "shading_callback"), mood_setting, spawn_time_sliced)
+	arg_5_0._level = ScriptWorld.spawn_level(arg_5_0._world, DemoSettings.level_name, var_5_1, var_5_3, var_5_4, callback(arg_5_0, "shading_callback"), var_5_5, var_5_6)
 
-	Level.spawn_background(self._level)
+	Level.spawn_background(arg_5_0._level)
 end
 
-DemoTitleUI.shading_callback = function (self, world, shading_env, viewport)
-	for name, settings in pairs(OutlineSettings.colors) do
-		local c = settings.color
-		local color = Vector3(c[2] / 255, c[3] / 255, c[4] / 255)
-		local multiplier = settings.outline_multiplier
+function DemoTitleUI.shading_callback(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	for iter_6_0, iter_6_1 in pairs(OutlineSettings.colors) do
+		local var_6_0 = iter_6_1.color
+		local var_6_1 = Vector3(var_6_0[2] / 255, var_6_0[3] / 255, var_6_0[4] / 255)
+		local var_6_2 = iter_6_1.outline_multiplier
 
-		if settings.pulsate then
-			multiplier = settings.outline_multiplier * 0.5 + math.sin(Managers.time:time("ui") * settings.pulse_multiplier) * settings.outline_multiplier * 0.5
+		if iter_6_1.pulsate then
+			var_6_2 = iter_6_1.outline_multiplier * 0.5 + math.sin(Managers.time:time("ui") * iter_6_1.pulse_multiplier) * iter_6_1.outline_multiplier * 0.5
 		end
 
-		ShadingEnvironment.set_vector3(shading_env, settings.variable, color)
-		ShadingEnvironment.set_scalar(shading_env, settings.outline_multiplier_variable, multiplier)
+		ShadingEnvironment.set_vector3(arg_6_2, iter_6_1.variable, var_6_1)
+		ShadingEnvironment.set_scalar(arg_6_2, iter_6_1.outline_multiplier_variable, var_6_2)
 	end
 end
 
-DemoTitleUI._collect_cameras = function (self)
-	self._camera_poses = {}
+function DemoTitleUI._collect_cameras(arg_7_0)
+	arg_7_0._camera_poses = {}
 
-	local unit_indices = LevelResource.unit_indices(DemoSettings.level_name, "units/hub_elements/cutscene_camera/cutscene_camera")
+	local var_7_0 = LevelResource.unit_indices(DemoSettings.level_name, "units/hub_elements/cutscene_camera/cutscene_camera")
 
-	for _, index in pairs(unit_indices) do
-		local unit_data = LevelResource.unit_data(DemoSettings.level_name, index)
-		local name = DynamicData.get(unit_data, "name")
+	for iter_7_0, iter_7_1 in pairs(var_7_0) do
+		local var_7_1 = LevelResource.unit_data(DemoSettings.level_name, iter_7_1)
+		local var_7_2 = DynamicData.get(var_7_1, "name")
 
-		if name and name ~= "" then
-			assert(not self._camera_poses[name], string.format("[StateTitleScreen] There are two cameras with the same name: %s", name))
+		if var_7_2 and var_7_2 ~= "" then
+			assert(not arg_7_0._camera_poses[var_7_2], string.format("[StateTitleScreen] There are two cameras with the same name: %s", var_7_2))
 
-			local position = LevelResource.unit_position(DemoSettings.level_name, index)
-			local rotation = LevelResource.unit_rotation(DemoSettings.level_name, index)
-			local pose = Matrix4x4.from_quaternion_position(rotation, position)
+			local var_7_3 = LevelResource.unit_position(DemoSettings.level_name, iter_7_1)
+			local var_7_4 = LevelResource.unit_rotation(DemoSettings.level_name, iter_7_1)
+			local var_7_5 = Matrix4x4.from_quaternion_position(var_7_4, var_7_3)
 
-			self._camera_poses[name] = Matrix4x4Box(pose)
+			arg_7_0._camera_poses[var_7_2] = Matrix4x4Box(var_7_5)
 
-			print("Found camera: " .. name)
+			print("Found camera: " .. var_7_2)
 		end
 	end
 end
 
-DemoTitleUI._position_camera = function (self)
-	local camera = ScriptViewport.camera(self._viewport)
-	local starting_camera_name = DemoSettings.starting_camera_name
-	local camera_pose = starting_camera_name and self._camera_poses[starting_camera_name]
+function DemoTitleUI._position_camera(arg_8_0)
+	local var_8_0 = ScriptViewport.camera(arg_8_0._viewport)
+	local var_8_1 = DemoSettings.starting_camera_name
+	local var_8_2 = var_8_1 and arg_8_0._camera_poses[var_8_1]
 
-	if camera_pose then
-		ScriptCamera.set_local_pose(camera, camera_pose:unbox())
-		ScriptCamera.force_update(self._world, camera)
+	if var_8_2 then
+		ScriptCamera.set_local_pose(var_8_0, var_8_2:unbox())
+		ScriptCamera.force_update(arg_8_0._world, var_8_0)
 	end
 
-	self._scatter_system = World.scatter_system(self._world)
-	self._scatter_system_observer = ScatterSystem.make_observer(self._scatter_system, Matrix4x4.translation(camera_pose:unbox()), Matrix4x4.rotation(camera_pose:unbox()))
+	arg_8_0._scatter_system = World.scatter_system(arg_8_0._world)
+	arg_8_0._scatter_system_observer = ScatterSystem.make_observer(arg_8_0._scatter_system, Matrix4x4.translation(var_8_2:unbox()), Matrix4x4.rotation(var_8_2:unbox()))
 end
 
-DemoTitleUI._create_ui_elements = function (self)
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-	self._attract_video = UIWidget.init(UIWidgets.create_splash_video(attract_mode_video, VIDEO_REFERENCE_NAME))
-	self._widgets = {}
+function DemoTitleUI._create_ui_elements(arg_9_0)
+	arg_9_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
+	arg_9_0._attract_video = UIWidget.init(UIWidgets.create_splash_video(var_0_4, var_0_14))
+	arg_9_0._widgets = {}
 
-	for name, widget in pairs(widget_definitions) do
-		self._widgets[name] = UIWidget.init(widget)
+	for iter_9_0, iter_9_1 in pairs(var_0_2) do
+		arg_9_0._widgets[iter_9_0] = UIWidget.init(iter_9_1)
 	end
 
-	self._career_widgets = {}
+	arg_9_0._career_widgets = {}
 
-	for name, widget in pairs(career_widget_definitions) do
-		self._career_widgets[name] = UIWidget.init(widget)
+	for iter_9_2, iter_9_3 in pairs(var_0_3) do
+		arg_9_0._career_widgets[iter_9_2] = UIWidget.init(iter_9_3)
 	end
 
-	self._dead_space_filler_widget = UIWidget.init(dead_space_filler)
-	self._start_game_button_widget = UIWidget.init(start_game_button_widget)
-	self._back_button_widget = UIWidget.init(back_button_widget)
+	arg_9_0._dead_space_filler_widget = UIWidget.init(var_0_5)
+	arg_9_0._start_game_button_widget = UIWidget.init(var_0_7)
+	arg_9_0._back_button_widget = UIWidget.init(var_0_8)
 
-	local default_career = DemoSettings.characters[1]
+	local var_9_0 = DemoSettings.characters[1]
 
-	self:_populate_career_page(default_career.profile_name, default_career.career_index)
+	arg_9_0:_populate_career_page(var_9_0.profile_name, var_9_0.career_index)
 
-	self._console_cursor = UIWidget.init(definitions.console_cursor_definition)
-	self._press_start_widget = UIWidget.init(press_start_widget)
+	arg_9_0._console_cursor = UIWidget.init(var_0_0.console_cursor_definition)
+	arg_9_0._press_start_widget = UIWidget.init(var_0_10)
 
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_9_0._ui_renderer)
 
-	local text_style = {
-		font_size = 18,
-		font_type = "hell_shark",
-		horizontal_alignment = "center",
+	local var_9_1 = {
 		vertical_alignment = "center",
 		word_wrap = true,
+		horizontal_alignment = "center",
+		font_size = 18,
+		font_type = "hell_shark",
 		text_color = {
 			255,
 			255,
 			255,
-			255,
+			255
 		},
 		offset = {
 			0,
 			0,
-			2,
-		},
+			2
+		}
 	}
 
-	self._information_text = UIWidget.init(UIWidgets.create_simple_text("n/a", "information_text", nil, nil, text_style))
-	self._user_gamertag_widget = UIWidget.init(UIWidgets.create_simple_rect_text("user_gamertag", "Gamertag not assigned"))
-	self._change_profile_input_icon_widget = UIWidget.init(UIWidgets.create_simple_texture("xbone_button_icon_x", "change_profile_input_icon"))
-	self._change_profile_input_text_widget = UIWidget.init(UIWidgets.create_simple_rect_text("change_profile_input_text", Localize("xb1_switch_profile"), 20))
-	self._ui_animations = {}
-	self._ui_animation_cb = {}
-	self._ui_animations.reset = UIAnimation.init(UIAnimation.function_by_time, self._ui_scenegraph.right_side_root.local_position, 1, self._ui_scenegraph.right_side_root.local_position[1], 450, 0, math.easeOutCubic)
+	arg_9_0._information_text = UIWidget.init(UIWidgets.create_simple_text("n/a", "information_text", nil, nil, var_9_1))
+	arg_9_0._user_gamertag_widget = UIWidget.init(UIWidgets.create_simple_rect_text("user_gamertag", "Gamertag not assigned"))
+	arg_9_0._change_profile_input_icon_widget = UIWidget.init(UIWidgets.create_simple_texture("xbone_button_icon_x", "change_profile_input_icon"))
+	arg_9_0._change_profile_input_text_widget = UIWidget.init(UIWidgets.create_simple_rect_text("change_profile_input_text", Localize("xb1_switch_profile"), 20))
+	arg_9_0._ui_animations = {}
+	arg_9_0._ui_animation_cb = {}
+	arg_9_0._ui_animations.reset = UIAnimation.init(UIAnimation.function_by_time, arg_9_0._ui_scenegraph.right_side_root.local_position, 1, arg_9_0._ui_scenegraph.right_side_root.local_position[1], 450, 0, math.easeOutCubic)
 end
 
-DemoTitleUI._populate_career_page = function (self, profile_name, career_index)
-	local profile_index = FindProfileIndex(profile_name)
-	local profile_settings = SPProfiles[profile_index]
-	local careers = profile_settings.careers
-	local career_settings = careers[career_index]
-	local name = career_settings.name
-	local display_name = career_settings.display_name
-	local description = career_settings.description
-	local icon = career_settings.icon
-	local passive_ability_data = CareerUtils.get_passive_ability_by_career(career_settings)
-	local activated_ability_data = CareerUtils.get_ability_data_by_career(career_settings, 1)
-	local passive_display_name = passive_ability_data.display_name
-	local passive_icon = passive_ability_data.icon
-	local activated_display_name = activated_ability_data.display_name
-	local activated_icon = activated_ability_data.icon
+function DemoTitleUI._populate_career_page(arg_10_0, arg_10_1, arg_10_2)
+	local var_10_0 = FindProfileIndex(arg_10_1)
+	local var_10_1 = SPProfiles[var_10_0]
+	local var_10_2 = var_10_1.careers[arg_10_2]
+	local var_10_3 = var_10_2.name
+	local var_10_4 = var_10_2.display_name
+	local var_10_5 = var_10_2.description
+	local var_10_6 = var_10_2.icon
+	local var_10_7 = CareerUtils.get_passive_ability_by_career(var_10_2)
+	local var_10_8 = CareerUtils.get_ability_data_by_career(var_10_2, 1)
+	local var_10_9 = var_10_7.display_name
+	local var_10_10 = var_10_7.icon
+	local var_10_11 = var_10_8.display_name
+	local var_10_12 = var_10_8.icon
 
-	self._widgets.info_passive_icon.content.texture_id = passive_icon
-	self._widgets.info_ability_icon.content.texture_id = activated_icon
-	self._widgets.info_passive_title.content.text = Localize(passive_display_name)
-	self._widgets.info_passive_description.content.text = UIUtils.get_ability_description(passive_ability_data)
-	self._widgets.info_ability_title.content.text = Localize(activated_display_name)
-	self._widgets.info_ability_description.content.text = UIUtils.get_ability_description(activated_ability_data)
+	arg_10_0._widgets.info_passive_icon.content.texture_id = var_10_10
+	arg_10_0._widgets.info_ability_icon.content.texture_id = var_10_12
+	arg_10_0._widgets.info_passive_title.content.text = Localize(var_10_9)
+	arg_10_0._widgets.info_passive_description.content.text = UIUtils.get_ability_description(var_10_7)
+	arg_10_0._widgets.info_ability_title.content.text = Localize(var_10_11)
+	arg_10_0._widgets.info_ability_description.content.text = UIUtils.get_ability_description(var_10_8)
 
-	local video = career_settings.video
-	local material_name = video.material_name
-	local resource = video.resource
+	local var_10_13 = var_10_2.video
+	local var_10_14 = var_10_13.material_name
+	local var_10_15 = var_10_13.resource
 
-	self:_setup_video_player(material_name, resource)
+	arg_10_0:_setup_video_player(var_10_14, var_10_15)
 
-	self._displayed_profile = profile_name
+	arg_10_0._displayed_profile = arg_10_1
 
-	local portrait_image = career_settings.portrait_image
-	local frame_settings_name = "default"
-	local definition = UIWidgets.create_portrait_frame("player_portrait", frame_settings_name, "-", 1, nil, portrait_image)
-	local widget = UIWidget.init(definition, self._ui_renderer)
+	local var_10_16 = var_10_2.portrait_image
+	local var_10_17 = "default"
+	local var_10_18 = UIWidgets.create_portrait_frame("player_portrait", var_10_17, "-", 1, nil, var_10_16)
+	local var_10_19 = UIWidget.init(var_10_18, arg_10_0._ui_renderer)
 
-	self._career_widgets.player_portrait = widget
+	arg_10_0._career_widgets.player_portrait = var_10_19
 
-	local career_display_name = career_settings.display_name
+	local var_10_20 = var_10_2.display_name
 
-	self:_set_career_widget_text("player_career_name", career_display_name)
+	arg_10_0:_set_career_widget_text("player_career_name", var_10_20)
 
-	local ingame_display_name = profile_settings.ingame_display_name
+	local var_10_21 = var_10_1.ingame_display_name
 
-	self:_set_career_widget_text("player_hero_name", ingame_display_name)
+	arg_10_0:_set_career_widget_text("player_hero_name", var_10_21)
 end
 
-DemoTitleUI._set_career_widget_text = function (self, widget_name, text)
-	local widget = self._career_widgets[widget_name]
-
-	widget.content.text = text
+function DemoTitleUI._set_career_widget_text(arg_11_0, arg_11_1, arg_11_2)
+	arg_11_0._career_widgets[arg_11_1].content.text = arg_11_2
 end
 
-DemoTitleUI._destroy_career_video_player = function (self)
-	local ui_renderer = self._career_video_ui_renderer
-	local widget = self._video_widget
+function DemoTitleUI._destroy_career_video_player(arg_12_0)
+	local var_12_0 = arg_12_0._career_video_ui_renderer
+	local var_12_1 = arg_12_0._video_widget
 
-	if ui_renderer and widget then
-		UIRenderer.destroy_video_player(ui_renderer, VIDEO_REFERENCE_NAME, self._world)
+	if var_12_0 and var_12_1 then
+		UIRenderer.destroy_video_player(var_12_0, var_0_14, arg_12_0._world)
 	end
 
-	self._video_created = nil
+	arg_12_0._video_created = nil
 end
 
-DemoTitleUI._setup_video_player = function (self, material_name, resource)
-	self:_destroy_career_video_player()
-	UIRenderer.create_video_player(self._career_video_ui_renderer, VIDEO_REFERENCE_NAME, self._world, resource, true)
+function DemoTitleUI._setup_video_player(arg_13_0, arg_13_1, arg_13_2)
+	arg_13_0:_destroy_career_video_player()
+	UIRenderer.create_video_player(arg_13_0._career_video_ui_renderer, var_0_14, arg_13_0._world, arg_13_2, true)
 
-	local widget_definition = create_vide_func("info_window_video", material_name)
-	local widget = UIWidget.init(widget_definition)
+	local var_13_0 = var_0_6("info_window_video", arg_13_1)
 
-	self._video_widget = widget
-	self._video_created = true
-
-	local video_widget_content = self._video_widget.content
-
-	video_widget_content.video_player_reference = VIDEO_REFERENCE_NAME
+	arg_13_0._video_widget = UIWidget.init(var_13_0)
+	arg_13_0._video_created = true
+	arg_13_0._video_widget.content.video_player_reference = var_0_14
 end
 
-DemoTitleUI._setup_input = function (self)
-	self._input_manager = Managers.input
+function DemoTitleUI._setup_input(arg_14_0)
+	arg_14_0._input_manager = Managers.input
 
-	self._input_manager:create_input_service("main_menu", "TitleScreenKeyMaps", "TitleScreenFilters")
-	self._input_manager:map_device_to_service("main_menu", "gamepad")
-	self._input_manager:map_device_to_service("main_menu", "keyboard")
-	self._input_manager:map_device_to_service("main_menu", "mouse")
+	arg_14_0._input_manager:create_input_service("main_menu", "TitleScreenKeyMaps", "TitleScreenFilters")
+	arg_14_0._input_manager:map_device_to_service("main_menu", "gamepad")
+	arg_14_0._input_manager:map_device_to_service("main_menu", "keyboard")
+	arg_14_0._input_manager:map_device_to_service("main_menu", "mouse")
 end
 
-DemoTitleUI._setup_characters = function (self)
-	self._character_previewers = {}
+function DemoTitleUI._setup_characters(arg_15_0)
+	arg_15_0._character_previewers = {}
 
-	local physics_world = World.physics_world(self._world)
-	local camera_pose = self._camera_poses[DemoSettings.camera_end_position]
-	local unboxed_camera_pose = camera_pose:unbox()
-	local camera_pos = Matrix4x4.translation(unboxed_camera_pose)
-	local camera_rotation = Matrix4x4.rotation(unboxed_camera_pose)
-	local camera_forward = Quaternion.forward(camera_rotation)
-	local camera_forward_flat = Vector3.flat(camera_forward)
-	local camera_flat_inverse_rotation = Quaternion.look(-camera_forward_flat, Vector3.up())
-	local camera_right = Quaternion.right(camera_rotation)
-	local camera_right_flat = Vector3.flat(camera_right)
-	local characters = DemoSettings.characters
+	local var_15_0 = World.physics_world(arg_15_0._world)
+	local var_15_1 = arg_15_0._camera_poses[DemoSettings.camera_end_position]:unbox()
+	local var_15_2 = Matrix4x4.translation(var_15_1)
+	local var_15_3 = Matrix4x4.rotation(var_15_1)
+	local var_15_4 = Quaternion.forward(var_15_3)
+	local var_15_5 = Vector3.flat(var_15_4)
+	local var_15_6 = Quaternion.look(-var_15_5, Vector3.up())
+	local var_15_7 = Quaternion.right(var_15_3)
+	local var_15_8 = Vector3.flat(var_15_7)
+	local var_15_9 = DemoSettings.characters
 
-	for _, character_data in pairs(characters) do
-		local character_offset_position = character_data.position_offset:unbox()
-		local pos = camera_pos + camera_right_flat * character_offset_position[1] + camera_forward_flat * character_offset_position[2] + Vector3.up() * character_offset_position[3]
-		local is_hit, hit_pos, hit_distance, normal = PhysicsWorld.immediate_raycast(physics_world, pos, Vector3(0, 0, -1), 5, "closest", "collision_filter", "filter_ai_mover")
+	for iter_15_0, iter_15_1 in pairs(var_15_9) do
+		local var_15_10 = iter_15_1.position_offset:unbox()
+		local var_15_11 = var_15_2 + var_15_8 * var_15_10[1] + var_15_5 * var_15_10[2] + Vector3.up() * var_15_10[3]
+		local var_15_12, var_15_13, var_15_14, var_15_15 = PhysicsWorld.immediate_raycast(var_15_0, var_15_11, Vector3(0, 0, -1), 5, "closest", "collision_filter", "filter_ai_mover")
 
-		if is_hit then
-			pos[3] = hit_pos[3]
+		if var_15_12 then
+			var_15_11[3] = var_15_13[3]
 
-			local position = Vector3Box(pos)
-			local rotation = QuaternionBox(Quaternion.multiply(camera_flat_inverse_rotation, character_data.rotation:unbox()))
-			local zoom_offset = character_data.zoom_offset
-			local profile_name = character_data.profile_name
-			local career_index = character_data.career_index
+			local var_15_16 = Vector3Box(var_15_11)
+			local var_15_17 = QuaternionBox(Quaternion.multiply(var_15_6, iter_15_1.rotation:unbox()))
+			local var_15_18 = iter_15_1.zoom_offset
+			local var_15_19 = iter_15_1.profile_name
+			local var_15_20 = iter_15_1.career_index
 
-			self._character_previewers[profile_name] = DemoCharacterPreviewer:new(self._world, profile_name, career_index, position, rotation, zoom_offset)
+			arg_15_0._character_previewers[var_15_19] = DemoCharacterPreviewer:new(arg_15_0._world, var_15_19, var_15_20, var_15_16, var_15_17, var_15_18)
 		end
 	end
 end
 
-DemoTitleUI._play_sound = function (self, event)
-	return Managers.music:trigger_event(event)
+function DemoTitleUI._play_sound(arg_16_0, arg_16_1)
+	return Managers.music:trigger_event(arg_16_1)
 end
 
-DemoTitleUI.get_ui_renderer = function (self)
-	return self._ui_renderer
+function DemoTitleUI.get_ui_renderer(arg_17_0)
+	return arg_17_0._ui_renderer
 end
 
-DemoTitleUI.in_transition = function (self)
-	return self._camera_transition
+function DemoTitleUI.in_transition(arg_18_0)
+	return arg_18_0._camera_transition
 end
 
-DemoTitleUI._recreate_characters = function (self)
-	for profile_name, character_previewer in pairs(self._character_previewers) do
-		character_previewer:destroy()
+function DemoTitleUI._recreate_characters(arg_19_0)
+	for iter_19_0, iter_19_1 in pairs(arg_19_0._character_previewers) do
+		iter_19_1:destroy()
 	end
 
-	self._character_previewers = {}
+	arg_19_0._character_previewers = {}
 
-	self:_setup_characters()
+	arg_19_0:_setup_characters()
 end
 
-local DO_RELOAD = false
+local var_0_15 = false
 
-DemoTitleUI.update = function (self, dt, t)
-	if DO_RELOAD then
-		self:_create_ui_elements()
-		self:_recreate_characters()
+function DemoTitleUI.update(arg_20_0, arg_20_1, arg_20_2)
+	if var_0_15 then
+		arg_20_0:_create_ui_elements()
+		arg_20_0:_recreate_characters()
 
-		self._attract_mode_active = false
-		DO_RELOAD = false
+		arg_20_0._attract_mode_active = false
+		var_0_15 = false
 	end
 
-	if table.is_empty(self._character_previewers) then
-		self:_setup_characters()
+	if table.is_empty(arg_20_0._character_previewers) then
+		arg_20_0:_setup_characters()
 	end
 
-	self:_update_scatter(dt, t)
-	self:_update_input(dt, t)
-	self:_update_camera(dt, t)
-	self:_update_career_information(dt, t)
-	self:_update_animation(dt, t)
-	self:_update_start_game(dt, t)
-	self:_update_back(dt, t)
-	self:_draw_3d_logo(dt, t)
-	self:_draw(dt, t)
-	self:_draw_fps(dt, t)
-	self:_update_character_previewers(dt, t)
+	arg_20_0:_update_scatter(arg_20_1, arg_20_2)
+	arg_20_0:_update_input(arg_20_1, arg_20_2)
+	arg_20_0:_update_camera(arg_20_1, arg_20_2)
+	arg_20_0:_update_career_information(arg_20_1, arg_20_2)
+	arg_20_0:_update_animation(arg_20_1, arg_20_2)
+	arg_20_0:_update_start_game(arg_20_1, arg_20_2)
+	arg_20_0:_update_back(arg_20_1, arg_20_2)
+	arg_20_0:_draw_3d_logo(arg_20_1, arg_20_2)
+	arg_20_0:_draw(arg_20_1, arg_20_2)
+	arg_20_0:_draw_fps(arg_20_1, arg_20_2)
+	arg_20_0:_update_character_previewers(arg_20_1, arg_20_2)
 end
 
-DemoTitleUI._update_scatter = function (self, dt, t)
-	if self._scatter_system then
-		local viewport = ScriptWorld.viewport(self._world, "title_screen_viewport")
-		local camera = ScriptViewport.camera(viewport)
-		local camera_pose = ScriptCamera.pose(camera)
+function DemoTitleUI._update_scatter(arg_21_0, arg_21_1, arg_21_2)
+	if arg_21_0._scatter_system then
+		local var_21_0 = ScriptWorld.viewport(arg_21_0._world, "title_screen_viewport")
+		local var_21_1 = ScriptViewport.camera(var_21_0)
+		local var_21_2 = ScriptCamera.pose(var_21_1)
 
-		ScatterSystem.move_observer(self._scatter_system, self._scatter_system_observer, Matrix4x4.translation(camera_pose), Matrix4x4.rotation(camera_pose))
-	end
-end
-
-DemoTitleUI._update_input = function (self, dt, t)
-	if self._selected_profile then
-		local input_service = Managers.input:get_service("main_menu")
-
-		if (input_service:get("back", true) or self._back_pressed) and not self:in_transition() then
-			local character_previewer = self._character_previewers[self._selected_profile]
-
-			character_previewer:reset_state()
-			self:animate_to_camera(DemoSettings.camera_end_position, nil, nil, 0.5)
-
-			self._input_disabled = false
-			self._back_pressed = false
-		end
+		ScatterSystem.move_observer(arg_21_0._scatter_system, arg_21_0._scatter_system_observer, Matrix4x4.translation(var_21_2), Matrix4x4.rotation(var_21_2))
 	end
 end
 
-DemoTitleUI._update_character_previewers = function (self, dt, t)
-	for _, character_previewer in pairs(self._character_previewers) do
-		character_previewer:update(self._ui_activated and not self._selected_profile and not self._camera_transition, dt, t)
+function DemoTitleUI._update_input(arg_22_0, arg_22_1, arg_22_2)
+	if arg_22_0._selected_profile and (Managers.input:get_service("main_menu"):get("back", true) or arg_22_0._back_pressed) and not arg_22_0:in_transition() then
+		arg_22_0._character_previewers[arg_22_0._selected_profile]:reset_state()
+		arg_22_0:animate_to_camera(DemoSettings.camera_end_position, nil, nil, 0.5)
+
+		arg_22_0._input_disabled = false
+		arg_22_0._back_pressed = false
+	end
+end
+
+function DemoTitleUI._update_character_previewers(arg_23_0, arg_23_1, arg_23_2)
+	for iter_23_0, iter_23_1 in pairs(arg_23_0._character_previewers) do
+		iter_23_1:update(arg_23_0._ui_activated and not arg_23_0._selected_profile and not arg_23_0._camera_transition, arg_23_1, arg_23_2)
 	end
 
-	if not self._ui_activated then
+	if not arg_23_0._ui_activated then
 		return
 	end
 
-	local button_content = self._start_game_button_widget.content
-	local hotspot = button_content.button_hotspot
-
-	if hotspot.is_hover or self._input_disabled then
+	if arg_23_0._start_game_button_widget.content.button_hotspot.is_hover or arg_23_0._input_disabled then
 		return
 	end
 
-	local button_content = self._back_button_widget.content
-	local hotspot = button_content.button_hotspot
-
-	if hotspot.is_hover or self._input_disabled then
+	if arg_23_0._back_button_widget.content.button_hotspot.is_hover or arg_23_0._input_disabled then
 		return
 	end
 end
 
-DemoTitleUI._update_start_game = function (self, dt, t)
-	if self._camera_transition and self._selected_profile then
+function DemoTitleUI._update_start_game(arg_24_0, arg_24_1, arg_24_2)
+	if arg_24_0._camera_transition and arg_24_0._selected_profile then
 		return
 	end
 
-	local button_content = self._start_game_button_widget.content
-	local hotspot = button_content.button_hotspot
-
-	if hotspot.on_release then
-		self._start_pressed = true
-		self._input_disabled = true
+	if arg_24_0._start_game_button_widget.content.button_hotspot.on_release then
+		arg_24_0._start_pressed = true
+		arg_24_0._input_disabled = true
 	end
 end
 
-DemoTitleUI._update_back = function (self, dt, t)
-	if self._camera_transition and self._selected_profile then
+function DemoTitleUI._update_back(arg_25_0, arg_25_1, arg_25_2)
+	if arg_25_0._camera_transition and arg_25_0._selected_profile then
 		return
 	end
 
-	local button_content = self._back_button_widget.content
-	local hotspot = button_content.button_hotspot
-
-	if hotspot.on_release then
-		self._back_pressed = true
-		self._input_disabled = true
+	if arg_25_0._back_button_widget.content.button_hotspot.on_release then
+		arg_25_0._back_pressed = true
+		arg_25_0._input_disabled = true
 	end
 end
 
-DemoTitleUI._update_career_information = function (self, dt, t)
-	if self._input_disabled then
+function DemoTitleUI._update_career_information(arg_26_0, arg_26_1, arg_26_2)
+	if arg_26_0._input_disabled then
 		return
 	end
 
-	local is_selected = false
+	local var_26_0 = false
 
-	self._selected_profile = nil
+	arg_26_0._selected_profile = nil
 
-	for profile_name, character_previewer in pairs(self._character_previewers) do
-		if character_previewer:is_pressed() then
-			if not self._ui_animations.animate_in then
-				self._ui_animations = {}
+	for iter_26_0, iter_26_1 in pairs(arg_26_0._character_previewers) do
+		if iter_26_1:is_pressed() then
+			if not arg_26_0._ui_animations.animate_in then
+				arg_26_0._ui_animations = {}
 
-				local animation = UIAnimation.init(UIAnimation.function_by_time, self._ui_scenegraph.right_side_root.local_position, 1, self._ui_scenegraph.right_side_root.local_position[1], 0, 0.4, math.easeInCubic)
+				local var_26_1 = UIAnimation.init(UIAnimation.function_by_time, arg_26_0._ui_scenegraph.right_side_root.local_position, 1, arg_26_0._ui_scenegraph.right_side_root.local_position[1], 0, 0.4, math.easeInCubic)
 
-				self._ui_animations.animate_in = animation
+				arg_26_0._ui_animations.animate_in = var_26_1
 
-				local animation = UIAnimation.init(UIAnimation.function_by_time, self._ui_scenegraph.portrait_base.local_position, 1, self._ui_scenegraph.portrait_base.local_position[1], 0, 0.4, math.easeInCubic)
+				local var_26_2 = UIAnimation.init(UIAnimation.function_by_time, arg_26_0._ui_scenegraph.portrait_base.local_position, 1, arg_26_0._ui_scenegraph.portrait_base.local_position[1], 0, 0.4, math.easeInCubic)
 
-				self._ui_animations.animate_in_portrait = animation
+				arg_26_0._ui_animations.animate_in_portrait = var_26_2
 
-				local animation = UIAnimation.init(UIAnimation.function_by_time, self._ui_scenegraph.button_root.local_position, 2, self._ui_scenegraph.button_root.local_position[2], 0, 0.4, math.easeInCubic)
+				local var_26_3 = UIAnimation.init(UIAnimation.function_by_time, arg_26_0._ui_scenegraph.button_root.local_position, 2, arg_26_0._ui_scenegraph.button_root.local_position[2], 0, 0.4, math.easeInCubic)
 
-				self._ui_animations.animate_in_buttons = animation
+				arg_26_0._ui_animations.animate_in_buttons = var_26_3
 			end
 
-			if self._displayed_profile ~= profile_name then
-				local profile_name, career_index = character_previewer:profile_information()
+			if arg_26_0._displayed_profile ~= iter_26_0 then
+				local var_26_4, var_26_5 = iter_26_1:profile_information()
 
-				self:_populate_career_page(profile_name, career_index)
+				arg_26_0:_populate_career_page(var_26_4, var_26_5)
 			end
 
-			is_selected = true
+			var_26_0 = true
 		end
 
-		if character_previewer:is_pressed() then
-			if character_previewer:was_pressed_this_frame() then
-				local pose = character_previewer:pressed_pose()
+		if iter_26_1:is_pressed() then
+			if iter_26_1:was_pressed_this_frame() then
+				local var_26_6 = iter_26_1:pressed_pose()
 
-				self:animate_to_camera(nil, pose, callback(character_previewer, "cb_on_select_animation_complete"), 0.5)
-				character_previewer:outline_unit(false)
+				arg_26_0:animate_to_camera(nil, var_26_6, callback(iter_26_1, "cb_on_select_animation_complete"), 0.5)
+				iter_26_1:outline_unit(false)
 			end
 
-			self._selected_profile = profile_name
+			arg_26_0._selected_profile = iter_26_0
 		end
 	end
 
-	if not is_selected and self._selected_profile and self._displayed_profile ~= self._selected_profile then
-		local character_previewer = self._character_previewers[self._selected_profile]
-		local profile_name, career_index = character_previewer:profile_information()
+	if not var_26_0 and arg_26_0._selected_profile and arg_26_0._displayed_profile ~= arg_26_0._selected_profile then
+		local var_26_7, var_26_8 = arg_26_0._character_previewers[arg_26_0._selected_profile]:profile_information()
 
-		self:_populate_career_page(profile_name, career_index)
+		arg_26_0:_populate_career_page(var_26_7, var_26_8)
 	end
 
-	self._ui_animation_cb = self._ui_animation_cb or {}
-	self._ui_animations = self._ui_animations or {}
+	arg_26_0._ui_animation_cb = arg_26_0._ui_animation_cb or {}
+	arg_26_0._ui_animations = arg_26_0._ui_animations or {}
 
-	if not self._ui_animations.animate_out and not self._ui_animations.delay and not is_selected and not self._selected_profile then
-		local function animation_cb(self)
-			local animation = UIAnimation.init(UIAnimation.function_by_time, self._ui_scenegraph.right_side_root.local_position, 1, self._ui_scenegraph.right_side_root.local_position[1], 450, 0.3, math.easeOutCubic)
+	if not arg_26_0._ui_animations.animate_out and not arg_26_0._ui_animations.delay and not var_26_0 and not arg_26_0._selected_profile then
+		local function var_26_9(arg_27_0)
+			local var_27_0 = UIAnimation.init(UIAnimation.function_by_time, arg_27_0._ui_scenegraph.right_side_root.local_position, 1, arg_27_0._ui_scenegraph.right_side_root.local_position[1], 450, 0.3, math.easeOutCubic)
 
-			self._ui_animations = {}
-			self._ui_animations.animate_out = animation
+			arg_27_0._ui_animations = {}
+			arg_27_0._ui_animations.animate_out = var_27_0
 
-			local animation = UIAnimation.init(UIAnimation.function_by_time, self._ui_scenegraph.portrait_base.local_position, 1, self._ui_scenegraph.portrait_base.local_position[1], -450, 0.3, math.easeOutCubic)
+			local var_27_1 = UIAnimation.init(UIAnimation.function_by_time, arg_27_0._ui_scenegraph.portrait_base.local_position, 1, arg_27_0._ui_scenegraph.portrait_base.local_position[1], -450, 0.3, math.easeOutCubic)
 
-			self._ui_animations.animate_out_portrait = animation
+			arg_27_0._ui_animations.animate_out_portrait = var_27_1
 
-			local animation = UIAnimation.init(UIAnimation.function_by_time, self._ui_scenegraph.button_root.local_position, 2, self._ui_scenegraph.button_root.local_position[2], -200, 0.3, math.easeInCubic)
+			local var_27_2 = UIAnimation.init(UIAnimation.function_by_time, arg_27_0._ui_scenegraph.button_root.local_position, 2, arg_27_0._ui_scenegraph.button_root.local_position[2], -200, 0.3, math.easeInCubic)
 
-			self._ui_animations.animate_out_buttons = animation
+			arg_27_0._ui_animations.animate_out_buttons = var_27_2
 		end
 
-		self._ui_animations.delay = UIAnimation.init(UIAnimation.function_by_time, {
+		arg_26_0._ui_animations.delay = UIAnimation.init(UIAnimation.function_by_time, {
 			0,
 			0,
-			0,
+			0
 		}, 1, 0, 0, 0, math.easeInCubic)
-		self._ui_animation_cb.delay = animation_cb
+		arg_26_0._ui_animation_cb.delay = var_26_9
 	end
 end
 
-DemoTitleUI._update_animation = function (self, dt, t)
-	for animation_name, animation in pairs(self._ui_animations) do
-		UIAnimation.update(animation, dt)
+function DemoTitleUI._update_animation(arg_28_0, arg_28_1, arg_28_2)
+	for iter_28_0, iter_28_1 in pairs(arg_28_0._ui_animations) do
+		UIAnimation.update(iter_28_1, arg_28_1)
 
-		if UIAnimation.completed(animation) then
-			if self._ui_animation_cb[animation_name] then
-				self._ui_animation_cb[animation_name](self)
+		if UIAnimation.completed(iter_28_1) then
+			if arg_28_0._ui_animation_cb[iter_28_0] then
+				arg_28_0._ui_animation_cb[iter_28_0](arg_28_0)
 
-				self._ui_animation_cb[animation_name] = nil
+				arg_28_0._ui_animation_cb[iter_28_0] = nil
 			end
 
-			self._ui_animations[animation_name] = nil
+			arg_28_0._ui_animations[iter_28_0] = nil
 		end
 	end
 end
 
-DemoTitleUI._update_camera = function (self, dt, t)
-	if self._camera_transition then
-		self._timer = self._timer or 0
+function DemoTitleUI._update_camera(arg_29_0, arg_29_1, arg_29_2)
+	if arg_29_0._camera_transition then
+		arg_29_0._timer = arg_29_0._timer or 0
 
-		local source_camera_pose = self._camera_poses.current_pose
-		local target_camera_pose = self._target_camera_pose
+		local var_29_0 = arg_29_0._camera_poses.current_pose
+		local var_29_1 = arg_29_0._target_camera_pose
 
-		if self._target_camera_name then
-			target_camera_pose = self._camera_poses[self._target_camera_name]
+		if arg_29_0._target_camera_name then
+			var_29_1 = arg_29_0._camera_poses[arg_29_0._target_camera_name]
 		end
 
-		if not source_camera_pose or not target_camera_pose then
-			self._camera_transition = false
-			self._timer = nil
+		if not var_29_0 or not var_29_1 then
+			arg_29_0._camera_transition = false
+			arg_29_0._timer = nil
 
 			return
 		end
 
-		local time = self._ref_time or CAMERA_TRANSITION_TIME
+		local var_29_2 = arg_29_0._ref_time or var_0_13
 
-		self._timer = math.clamp(self._timer + dt, 0, time)
+		arg_29_0._timer = math.clamp(arg_29_0._timer + arg_29_1, 0, var_29_2)
 
-		local progress = math.smoothstep(self._timer / time, 0, 1)
-		local pose = Matrix4x4.lerp(source_camera_pose:unbox(), target_camera_pose:unbox(), progress)
-		local camera = ScriptViewport.camera(self._viewport)
+		local var_29_3 = math.smoothstep(arg_29_0._timer / var_29_2, 0, 1)
+		local var_29_4 = Matrix4x4.lerp(var_29_0:unbox(), var_29_1:unbox(), var_29_3)
+		local var_29_5 = ScriptViewport.camera(arg_29_0._viewport)
 
-		ScriptCamera.set_local_pose(camera, pose)
-		ScriptCamera.force_update(self._world, camera)
+		ScriptCamera.set_local_pose(var_29_5, var_29_4)
+		ScriptCamera.force_update(arg_29_0._world, var_29_5)
 
-		if self._timer == time then
-			self._camera_transition = false
-			self._timer = 0
+		if arg_29_0._timer == var_29_2 then
+			arg_29_0._camera_transition = false
+			arg_29_0._timer = 0
 
-			if self._camera_animation_cb then
-				self._camera_animation_cb()
+			if arg_29_0._camera_animation_cb then
+				arg_29_0._camera_animation_cb()
 
-				self._camera_animation_cb = nil
+				arg_29_0._camera_animation_cb = nil
 			end
 		end
 	end
 
-	local w, h = Gui.resolution()
-	local camera_poses = self._camera_poses
-	local pose = camera_poses[DemoSettings.starting_camera_name] or Matrix4x4Box(Matrix4x4.identity())
-	local position = Matrix4x4.translation(pose:unbox())
-	local rotation = Matrix4x4.rotation(pose:unbox())
-	local forward = Quaternion.forward(rotation)
-	local scale_value = w / 1920 * 0.5
-	local new_pose = Matrix4x4.from_quaternion_position(rotation, position + forward * scale_value)
+	local var_29_6, var_29_7 = Gui.resolution()
+	local var_29_8 = arg_29_0._camera_poses[DemoSettings.starting_camera_name] or Matrix4x4Box(Matrix4x4.identity())
+	local var_29_9 = Matrix4x4.translation(var_29_8:unbox())
+	local var_29_10 = Matrix4x4.rotation(var_29_8:unbox())
+	local var_29_11 = Quaternion.forward(var_29_10)
+	local var_29_12 = var_29_6 / 1920 * 0.5
+	local var_29_13 = Matrix4x4.from_quaternion_position(var_29_10, var_29_9 + var_29_11 * var_29_12)
 
-	Gui.move(self._world_gui, new_pose)
+	Gui.move(arg_29_0._world_gui, var_29_13)
 end
 
-DemoTitleUI._draw_3d_logo = function (self, dt, t)
-	local base_size = Vector2(1920, 1080)
-	local w, h = Gui.resolution()
+function DemoTitleUI._draw_3d_logo(arg_30_0, arg_30_1, arg_30_2)
+	local var_30_0 = Vector2(1920, 1080)
+	local var_30_1, var_30_2 = Gui.resolution()
 
-	Gui.bitmap(self._world_gui, "vermintide_2_logo_demo", Vector3(-base_size[1] * w / WORLD_GUI_RESOLUTION * 0.5, -base_size[2] * w / WORLD_GUI_RESOLUTION * 0.3, 1), Vector2(base_size[1] * w / WORLD_GUI_RESOLUTION, base_size[2] * w / WORLD_GUI_RESOLUTION))
+	Gui.bitmap(arg_30_0._world_gui, "vermintide_2_logo_demo", Vector3(-var_30_0[1] * var_30_1 / var_0_12 * 0.5, -var_30_0[2] * var_30_1 / var_0_12 * 0.3, 1), Vector2(var_30_0[1] * var_30_1 / var_0_12, var_30_0[2] * var_30_1 / var_0_12))
 end
 
-DemoTitleUI._draw = function (self, dt, t)
-	local ui_renderer = self._ui_renderer
-	local career_video_ui_renderer = self._career_video_ui_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local input_service = self._input_manager:get_service("main_menu")
-	local gamepad_active = self._input_manager:is_device_active("gamepad")
+function DemoTitleUI._draw(arg_31_0, arg_31_1, arg_31_2)
+	local var_31_0 = arg_31_0._ui_renderer
+	local var_31_1 = arg_31_0._career_video_ui_renderer
+	local var_31_2 = arg_31_0._ui_scenegraph
+	local var_31_3 = arg_31_0._input_manager:get_service("main_menu")
+	local var_31_4 = arg_31_0._input_manager:is_device_active("gamepad")
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self._render_settings)
+	UIRenderer.begin_pass(var_31_0, var_31_2, var_31_3, arg_31_1, nil, arg_31_0._render_settings)
 
-	if self._destroy_video_player then
-		UIRenderer.destroy_video_player(ui_renderer, VIDEO_REFERENCE_NAME)
+	if arg_31_0._destroy_video_player then
+		UIRenderer.destroy_video_player(var_31_0, var_0_14)
 
-		self._destroy_video_player = nil
-	elseif self._attract_mode_enabled then
-		if not self._attract_video.content.video_completed then
-			if not ui_renderer.video_players[VIDEO_REFERENCE_NAME] then
-				UIRenderer.create_video_player(ui_renderer, VIDEO_REFERENCE_NAME, self._world, attract_mode_video.video_name, attract_mode_video.loop)
+		arg_31_0._destroy_video_player = nil
+	elseif arg_31_0._attract_mode_enabled then
+		if not arg_31_0._attract_video.content.video_completed then
+			if not var_31_0.video_players[var_0_14] then
+				UIRenderer.create_video_player(var_31_0, var_0_14, arg_31_0._world, var_0_4.video_name, var_0_4.loop)
 			else
-				if not self._sound_started then
-					if attract_mode_video.sound_start then
-						Managers.music:trigger_event(attract_mode_video.sound_start)
+				if not arg_31_0._sound_started then
+					if var_0_4.sound_start then
+						Managers.music:trigger_event(var_0_4.sound_start)
 					end
 
-					self._sound_started = true
+					arg_31_0._sound_started = true
 				end
 
-				UIRenderer.draw_widget(ui_renderer, self._attract_video)
-				UIRenderer.draw_widget(ui_renderer, self._dead_space_filler_widget)
+				UIRenderer.draw_widget(var_31_0, arg_31_0._attract_video)
+				UIRenderer.draw_widget(var_31_0, arg_31_0._dead_space_filler_widget)
 			end
-		elseif ui_renderer.video_players[VIDEO_REFERENCE_NAME] then
-			UIRenderer.destroy_video_player(ui_renderer, VIDEO_REFERENCE_NAME)
+		elseif var_31_0.video_players[var_0_14] then
+			UIRenderer.destroy_video_player(var_31_0, var_0_14)
 
-			self._sound_started = false
+			arg_31_0._sound_started = false
 
-			if attract_mode_video.sound_stop then
-				Managers.music:trigger_event(attract_mode_video.sound_stop)
+			if var_0_4.sound_stop then
+				Managers.music:trigger_event(var_0_4.sound_stop)
 			end
 		end
 	else
-		if self._draw_information_text then
-			UIRenderer.draw_widget(ui_renderer, self._information_text)
+		if arg_31_0._draw_information_text then
+			UIRenderer.draw_widget(var_31_0, arg_31_0._information_text)
 		end
 
-		if self._draw_gamertag then
-			UIRenderer.draw_widget(ui_renderer, self._user_gamertag_widget)
+		if arg_31_0._draw_gamertag then
+			UIRenderer.draw_widget(var_31_0, arg_31_0._user_gamertag_widget)
 
-			if not self._switch_profile_blocked then
-				UIRenderer.draw_widget(ui_renderer, self._change_profile_input_icon_widget)
-				UIRenderer.draw_widget(ui_renderer, self._change_profile_input_text_widget)
+			if not arg_31_0._switch_profile_blocked then
+				UIRenderer.draw_widget(var_31_0, arg_31_0._change_profile_input_icon_widget)
+				UIRenderer.draw_widget(var_31_0, arg_31_0._change_profile_input_text_widget)
 			end
 		end
 	end
 
-	if self._ui_activated then
-		if gamepad_active then
-			UIRenderer.draw_widget(ui_renderer, self._console_cursor)
+	if arg_31_0._ui_activated then
+		if var_31_4 then
+			UIRenderer.draw_widget(var_31_0, arg_31_0._console_cursor)
 		end
 
-		for name, widget in pairs(self._widgets) do
-			UIRenderer.draw_widget(ui_renderer, widget)
+		for iter_31_0, iter_31_1 in pairs(arg_31_0._widgets) do
+			UIRenderer.draw_widget(var_31_0, iter_31_1)
 		end
 
-		for name, widget in pairs(self._career_widgets) do
-			UIRenderer.draw_widget(ui_renderer, widget)
+		for iter_31_2, iter_31_3 in pairs(arg_31_0._career_widgets) do
+			UIRenderer.draw_widget(var_31_0, iter_31_3)
 		end
 
-		UIWidgetUtils.animate_default_button(self._start_game_button_widget, dt)
-		UIWidgetUtils.animate_default_button(self._back_button_widget, dt)
-		UIRenderer.draw_widget(ui_renderer, self._start_game_button_widget)
-		UIRenderer.draw_widget(ui_renderer, self._back_button_widget)
-	elseif not self._entering and not self:in_transition() then
-		UIRenderer.draw_widget(ui_renderer, self._press_start_widget)
+		UIWidgetUtils.animate_default_button(arg_31_0._start_game_button_widget, arg_31_1)
+		UIWidgetUtils.animate_default_button(arg_31_0._back_button_widget, arg_31_1)
+		UIRenderer.draw_widget(var_31_0, arg_31_0._start_game_button_widget)
+		UIRenderer.draw_widget(var_31_0, arg_31_0._back_button_widget)
+	elseif not arg_31_0._entering and not arg_31_0:in_transition() then
+		UIRenderer.draw_widget(var_31_0, arg_31_0._press_start_widget)
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_31_0)
 
-	if self._video_widget and self._ui_activated then
-		UIRenderer.begin_pass(career_video_ui_renderer, ui_scenegraph, input_service, dt, nil, self._render_settings)
+	if arg_31_0._video_widget and arg_31_0._ui_activated then
+		UIRenderer.begin_pass(var_31_1, var_31_2, var_31_3, arg_31_1, nil, arg_31_0._render_settings)
 
-		if not self._video_created then
-			UIRenderer.draw_widget(career_video_ui_renderer, self._video_widget)
+		if not arg_31_0._video_created then
+			UIRenderer.draw_widget(var_31_1, arg_31_0._video_widget)
 		end
 
-		self._video_created = nil
+		arg_31_0._video_created = nil
 
-		UIRenderer.end_pass(career_video_ui_renderer)
+		UIRenderer.end_pass(var_31_1)
 	end
 end
 
-local debug_font = "arial"
-local debug_font_mtrl = "materials/fonts/" .. debug_font
-local debug_font_size = 32
-local position = {}
-local white_color = Colors.color_definitions.white
-local black_color = Colors.color_definitions.black
-local red_color = Colors.color_definitions.red
-local test_fps = 0
-local test_fps_n = 0
+local var_0_16 = "arial"
+local var_0_17 = "materials/fonts/" .. var_0_16
+local var_0_18 = 32
+local var_0_19 = {}
+local var_0_20 = Colors.color_definitions.white
+local var_0_21 = Colors.color_definitions.black
+local var_0_22 = Colors.color_definitions.red
+local var_0_23 = 0
+local var_0_24 = 0
 
-DemoTitleUI._draw_fps = function (self, dt, t)
+function DemoTitleUI._draw_fps(arg_32_0, arg_32_1, arg_32_2)
 	if BUILD == "release" then
 		return
 	end
 
-	self._old_fps = self._old_fps or 0
-	self._fps = self._fps or 0
-	self._fps_cooldown = self._fps_cooldown or 0
+	arg_32_0._old_fps = arg_32_0._old_fps or 0
+	arg_32_0._fps = arg_32_0._fps or 0
+	arg_32_0._fps_cooldown = arg_32_0._fps_cooldown or 0
 
-	local ui_top_renderer = self._ui_renderer
-	local fps = self._old_fps
+	local var_32_0 = arg_32_0._ui_renderer
+	local var_32_1 = arg_32_0._old_fps
 
-	self._fps_cooldown = self._fps_cooldown + dt
-	test_fps = test_fps + 1 / dt
-	test_fps_n = test_fps_n + 1
+	arg_32_0._fps_cooldown = arg_32_0._fps_cooldown + arg_32_1
+	var_0_23 = var_0_23 + 1 / arg_32_1
+	var_0_24 = var_0_24 + 1
 
-	if self._fps_cooldown > 1 then
-		self._old_fps = self._fps
-		self._fps = test_fps / test_fps_n
-		test_fps = 0
-		test_fps_n = 0
-		self._fps_cooldown = 0
+	if arg_32_0._fps_cooldown > 1 then
+		arg_32_0._old_fps = arg_32_0._fps
+		arg_32_0._fps = var_0_23 / var_0_24
+		var_0_23 = 0
+		var_0_24 = 0
+		arg_32_0._fps_cooldown = 0
 	end
 
-	self._old_fps = math.lerp(self._old_fps, self._fps, dt * 0.2)
+	arg_32_0._old_fps = math.lerp(arg_32_0._old_fps, arg_32_0._fps, arg_32_1 * 0.2)
 
-	local text = string.format("%.2f FPS", fps)
-	local color
-	local red_cap = 30
-	local platform = PLATFORM
+	local var_32_2 = string.format("%.2f FPS", var_32_1)
+	local var_32_3
+	local var_32_4 = 30
+	local var_32_5 = PLATFORM
 
 	if IS_CONSOLE then
-		red_cap = 28
+		var_32_4 = 28
 	end
 
-	if fps < red_cap then
-		color = red_color
+	if var_32_1 < var_32_4 then
+		var_32_3 = var_0_22
 	else
-		color = white_color
+		var_32_3 = var_0_20
 	end
 
-	local inv_scale = RESOLUTION_LOOKUP.inv_scale
-	local res_width, res_height = RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h
+	local var_32_6 = RESOLUTION_LOOKUP.inv_scale
+	local var_32_7 = RESOLUTION_LOOKUP.res_w
+	local var_32_8 = RESOLUTION_LOOKUP.res_h
+	local var_32_9 = var_32_7 * var_32_6
+	local var_32_10 = var_32_8 * var_32_6
+	local var_32_11 = var_0_18
+	local var_32_12, var_32_13 = UIRenderer.text_size(var_32_0, var_32_2, var_0_17, var_32_11)
+	local var_32_14 = var_32_9 - var_32_12 - (var_0_18 - 16)
+	local var_32_15 = var_32_13 + 16
 
-	res_width = res_width * inv_scale
-	res_height = res_height * inv_scale
+	var_0_19[1] = var_32_14
+	var_0_19[2] = var_32_15
+	var_0_19[3] = 899
 
-	local text_size = debug_font_size
-	local width, height = UIRenderer.text_size(ui_top_renderer, text, debug_font_mtrl, text_size)
-	local x = res_width - width - (debug_font_size - 16)
-	local y = height + 16
+	UIRenderer.draw_text(var_32_0, var_32_2, var_0_17, var_32_11, var_0_16, Vector3(unpack(var_0_19)), var_32_3)
 
-	position[1] = x
-	position[2] = y
-	position[3] = 899
+	var_0_19[1] = var_32_14 + 2
+	var_0_19[2] = var_32_15 - 2
+	var_0_19[3] = 898
 
-	UIRenderer.draw_text(ui_top_renderer, text, debug_font_mtrl, text_size, debug_font, Vector3(unpack(position)), color)
-
-	position[1] = x + 2
-	position[2] = y - 2
-	position[3] = 898
-
-	UIRenderer.draw_text(ui_top_renderer, text, debug_font_mtrl, text_size, debug_font, Vector3(unpack(position)), black_color)
+	UIRenderer.draw_text(var_32_0, var_32_2, var_0_17, var_32_11, var_0_16, Vector3(unpack(var_0_19)), var_0_21)
 end
 
-DemoTitleUI.activate_career_ui = function (self, activate)
-	self._ui_activated = activate
-	self._selected_profile = nil
-	self._ui_animations.reset = UIAnimation.init(UIAnimation.function_by_time, self._ui_scenegraph.right_side_root.position, 1, self._ui_scenegraph.right_side_root.position[1], 450, 0, math.easeOutCubic)
+function DemoTitleUI.activate_career_ui(arg_33_0, arg_33_1)
+	arg_33_0._ui_activated = arg_33_1
+	arg_33_0._selected_profile = nil
+	arg_33_0._ui_animations.reset = UIAnimation.init(UIAnimation.function_by_time, arg_33_0._ui_scenegraph.right_side_root.position, 1, arg_33_0._ui_scenegraph.right_side_root.position[1], 450, 0, math.easeOutCubic)
 
-	if not activate then
-		for _, character_previewer in pairs(self._character_previewers) do
-			character_previewer:reset_state()
+	if not arg_33_1 then
+		for iter_33_0, iter_33_1 in pairs(arg_33_0._character_previewers) do
+			iter_33_1:reset_state()
 		end
 	end
 end
 
-DemoTitleUI.animate_to_camera = function (self, camera_name, pose, cb, time)
-	local camera = ScriptViewport.camera(self._viewport)
-	local camera_pose = ScriptCamera.pose(camera)
+function DemoTitleUI.animate_to_camera(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
+	local var_34_0 = ScriptViewport.camera(arg_34_0._viewport)
+	local var_34_1 = ScriptCamera.pose(var_34_0)
 
-	self._camera_poses.current_pose = Matrix4x4Box(camera_pose)
-	self._target_camera_name = camera_name
-	self._target_camera_pose = pose
-	self._camera_transition = true
-	self._camera_animation_cb = cb
-	self._ref_time = time
+	arg_34_0._camera_poses.current_pose = Matrix4x4Box(var_34_1)
+	arg_34_0._target_camera_name = arg_34_1
+	arg_34_0._target_camera_pose = arg_34_2
+	arg_34_0._camera_transition = true
+	arg_34_0._camera_animation_cb = arg_34_3
+	arg_34_0._ref_time = arg_34_4
 end
 
-DemoTitleUI.enter_attract_mode = function (self)
-	self._attract_mode_enabled = true
-	self._sound_started = false
-	self._attract_video.content.video_content.video_completed = false
+function DemoTitleUI.enter_attract_mode(arg_35_0)
+	arg_35_0._attract_mode_enabled = true
+	arg_35_0._sound_started = false
+	arg_35_0._attract_video.content.video_content.video_completed = false
 end
 
-DemoTitleUI.exit_attract_mode = function (self)
-	self._attract_mode_enabled = false
-	self._destroy_video_player = true
+function DemoTitleUI.exit_attract_mode(arg_36_0)
+	arg_36_0._attract_mode_enabled = false
+	arg_36_0._destroy_video_player = true
 end
 
-DemoTitleUI.video_completed = function (self)
-	return self._attract_video.content.video_content.video_completed
+function DemoTitleUI.video_completed(arg_37_0)
+	return arg_37_0._attract_video.content.video_content.video_completed
 end
 
-DemoTitleUI.attract_mode = function (self)
-	return self._attract_mode_enabled
+function DemoTitleUI.attract_mode(arg_38_0)
+	return arg_38_0._attract_mode_enabled
 end
 
-DemoTitleUI.is_ready = function (self)
-	for _, character_previewer in pairs(self._character_previewers) do
-		if not character_previewer:character_spawned() then
+function DemoTitleUI.is_ready(arg_39_0)
+	for iter_39_0, iter_39_1 in pairs(arg_39_0._character_previewers) do
+		if not iter_39_1:character_spawned() then
 			return false
 		end
 	end
@@ -834,86 +806,86 @@ DemoTitleUI.is_ready = function (self)
 	return true
 end
 
-DemoTitleUI.should_start = function (self)
-	return self._start_pressed
+function DemoTitleUI.should_start(arg_40_0)
+	return arg_40_0._start_pressed
 end
 
-DemoTitleUI.selected_profile = function (self)
-	return self._selected_profile
+function DemoTitleUI.selected_profile(arg_41_0)
+	return arg_41_0._selected_profile
 end
 
-DemoTitleUI.set_start_pressed = function (self, pressed)
-	self._entering = pressed
+function DemoTitleUI.set_start_pressed(arg_42_0, arg_42_1)
+	arg_42_0._entering = arg_42_1
 end
 
-DemoTitleUI.clear_playgo_status = function (self)
+function DemoTitleUI.clear_playgo_status(arg_43_0)
 	return
 end
 
-DemoTitleUI.set_playgo_status = function (self)
+function DemoTitleUI.set_playgo_status(arg_44_0)
 	return
 end
 
-DemoTitleUI.show_menu = function (self)
+function DemoTitleUI.show_menu(arg_45_0)
 	return
 end
 
-DemoTitleUI.clear_user_name = function (self)
+function DemoTitleUI.clear_user_name(arg_46_0)
 	return
 end
 
-DemoTitleUI.current_menu_index = function (self)
+function DemoTitleUI.current_menu_index(arg_47_0)
 	return
 end
 
-DemoTitleUI.active_menu_selection = function (self)
+function DemoTitleUI.active_menu_selection(arg_48_0)
 	return
 end
 
-DemoTitleUI.set_menu_item_enable_state_by_index = function (self)
+function DemoTitleUI.set_menu_item_enable_state_by_index(arg_49_0)
 	return
 end
 
-DemoTitleUI.destroy = function (self)
-	for profile_name, character_previewer in pairs(self._character_previewers) do
-		character_previewer:destroy()
+function DemoTitleUI.destroy(arg_50_0)
+	for iter_50_0, iter_50_1 in pairs(arg_50_0._character_previewers) do
+		iter_50_1:destroy()
 	end
 
-	self._character_previewers = {}
+	arg_50_0._character_previewers = {}
 
 	print("destroying demo_ui")
-	ScriptWorld.destroy_level_from_reference(self._world, self._level)
-	UIRenderer.destroy(self._ui_renderer, self._world)
-	UIRenderer.destroy(self._career_video_ui_renderer, self._world)
-	World.destroy_gui(self._world, self._world_gui)
+	ScriptWorld.destroy_level_from_reference(arg_50_0._world, arg_50_0._level)
+	UIRenderer.destroy(arg_50_0._ui_renderer, arg_50_0._world)
+	UIRenderer.destroy(arg_50_0._career_video_ui_renderer, arg_50_0._world)
+	World.destroy_gui(arg_50_0._world, arg_50_0._world_gui)
 end
 
-DemoTitleUI.set_information_text = function (self, optinal_text)
+function DemoTitleUI.set_information_text(arg_51_0, arg_51_1)
 	return
 end
 
-DemoTitleUI.set_user_name = function (self, username)
-	self._draw_gamertag = true
-	self._user_gamertag_widget.content.text = username
+function DemoTitleUI.set_user_name(arg_52_0, arg_52_1)
+	arg_52_0._draw_gamertag = true
+	arg_52_0._user_gamertag_widget.content.text = arg_52_1
 
 	if IS_PS4 then
-		self._switch_profile_blocked = true
+		arg_52_0._switch_profile_blocked = true
 	end
 end
 
-DemoTitleUI.clear_user_name = function (self)
-	self._draw_gamertag = nil
-	self._switch_profile_blocked = nil
+function DemoTitleUI.clear_user_name(arg_53_0)
+	arg_53_0._draw_gamertag = nil
+	arg_53_0._switch_profile_blocked = nil
 end
 
-DemoTitleUI.set_update_offline_data_enabled = function (self, enable)
+function DemoTitleUI.set_update_offline_data_enabled(arg_54_0, arg_54_1)
 	return
 end
 
-DemoTitleUI.disable_input = function (self, disable)
+function DemoTitleUI.disable_input(arg_55_0, arg_55_1)
 	return
 end
 
-DemoTitleUI.set_game_type = function (self, game_type)
+function DemoTitleUI.set_game_type(arg_56_0, arg_56_1)
 	return
 end

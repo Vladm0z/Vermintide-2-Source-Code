@@ -1,454 +1,454 @@
-﻿-- chunkname: @scripts/ui/views/hero_view/craft_pages/definitions/craft_page_convert_dust_definitions.lua
+-- chunkname: @scripts/ui/views/hero_view/craft_pages/definitions/craft_page_convert_dust_definitions.lua
 
-local window_default_settings = UISettings.game_start_windows
-local window_background = window_default_settings.background
-local window_frame = window_default_settings.frame
-local window_size = window_default_settings.size
-local window_spacing = window_default_settings.spacing
-local window_frame_width = UIFrameSettings[window_frame].texture_sizes.vertical[1]
-local window_frame_height = UIFrameSettings[window_frame].texture_sizes.horizontal[2]
-local window_text_width = window_size[1] - (window_frame_width * 2 + 60)
+local var_0_0 = UISettings.game_start_windows
+local var_0_1 = var_0_0.background
+local var_0_2 = var_0_0.frame
+local var_0_3 = var_0_0.size
+local var_0_4 = var_0_0.spacing
+local var_0_5 = UIFrameSettings[var_0_2].texture_sizes.vertical[1]
+local var_0_6 = UIFrameSettings[var_0_2].texture_sizes.horizontal[2]
+local var_0_7 = var_0_3[1] - (var_0_5 * 2 + 60)
 
 NUM_CRAFT_SLOTS_X = 1
 NUM_CRAFT_SLOTS_Y = 1
 NUM_CRAFT_SLOTS = NUM_CRAFT_SLOTS_X * NUM_CRAFT_SLOTS_Y
 
-local scenegraph_definition = {
+local var_0_8 = {
 	root = {
 		is_root = true,
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			UILayer.default,
-		},
+			UILayer.default
+		}
 	},
 	root_fit = {
 		scale = "fit",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			UILayer.default,
-		},
+			UILayer.default
+		}
 	},
 	menu_root = {
-		horizontal_alignment = "center",
-		parent = "root",
 		vertical_alignment = "center",
+		parent = "root",
+		horizontal_alignment = "center",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	window = {
-		horizontal_alignment = "center",
-		parent = "menu_root",
 		vertical_alignment = "center",
-		size = window_size,
+		parent = "menu_root",
+		horizontal_alignment = "center",
+		size = var_0_3,
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	item_grid = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "center",
+		parent = "window",
+		horizontal_alignment = "center",
 		size = {
 			186,
-			186,
+			186
 		},
 		position = {
 			0,
 			0,
-			6,
-		},
+			6
+		}
 	},
 	item_grid_icon = {
-		horizontal_alignment = "center",
-		parent = "item_grid",
 		vertical_alignment = "center",
+		parent = "item_grid",
+		horizontal_alignment = "center",
 		size = {
 			72,
-			62,
+			62
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	material_bg = {
-		horizontal_alignment = "center",
-		parent = "item_grid",
 		vertical_alignment = "bottom",
+		parent = "item_grid",
+		horizontal_alignment = "center",
 		size = {
 			284,
-			146,
+			146
 		},
 		position = {
 			0,
 			-160,
-			2,
-		},
+			2
+		}
 	},
 	material_text_1 = {
-		horizontal_alignment = "center",
-		parent = "material_bg",
 		vertical_alignment = "center",
+		parent = "material_bg",
+		horizontal_alignment = "center",
 		size = {
 			60,
-			100,
+			100
 		},
 		position = {
 			0,
 			-10,
-			2,
-		},
+			2
+		}
 	},
 	material_text_2 = {
-		horizontal_alignment = "center",
-		parent = "material_bg",
 		vertical_alignment = "center",
+		parent = "material_bg",
+		horizontal_alignment = "center",
 		size = {
 			60,
-			100,
+			100
 		},
 		position = {
 			0,
 			-10,
-			2,
-		},
+			2
+		}
 	},
 	craft_button = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "bottom",
+		parent = "window",
+		horizontal_alignment = "center",
 		size = {
-			window_size[1] - 100,
-			60,
+			var_0_3[1] - 100,
+			60
 		},
 		position = {
 			0,
 			20,
-			35,
-		},
+			35
+		}
 	},
 	craft_bar_bg = {
-		horizontal_alignment = "center",
-		parent = "craft_button",
 		vertical_alignment = "top",
+		parent = "craft_button",
+		horizontal_alignment = "center",
 		size = {
 			400,
-			6,
+			6
 		},
 		position = {
 			0,
 			28,
-			5,
-		},
+			5
+		}
 	},
 	craft_bar_fg = {
-		horizontal_alignment = "center",
-		parent = "craft_bar_bg",
 		vertical_alignment = "center",
+		parent = "craft_bar_bg",
+		horizontal_alignment = "center",
 		size = {
 			424,
-			30,
+			30
 		},
 		position = {
 			4,
 			-4,
-			2,
-		},
+			2
+		}
 	},
 	craft_bar = {
-		horizontal_alignment = "left",
-		parent = "craft_bar_bg",
 		vertical_alignment = "center",
+		parent = "craft_bar_bg",
+		horizontal_alignment = "left",
 		size = {
 			400,
-			6,
+			6
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
-	},
+			1
+		}
+	}
 }
 
-local function create_craft_material_widget(scenegraph_id)
+local function var_0_9(arg_1_0)
 	return {
 		element = {
 			passes = {
 				{
-					content_id = "button_hotspot",
 					pass_type = "hotspot",
+					content_id = "button_hotspot"
 				},
 				{
 					pass_type = "texture",
 					style_id = "icon",
-					texture_id = "icon",
+					texture_id = "icon"
 				},
 				{
 					pass_type = "rotated_texture",
 					style_id = "effect",
-					texture_id = "effect",
+					texture_id = "effect"
 				},
 				{
-					pass_type = "text",
 					style_id = "text",
+					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (content)
-						return not content.warning
-					end,
+					content_check_function = function(arg_2_0)
+						return not arg_2_0.warning
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "text_warning",
-					text_id = "text",
-					content_check_function = function (content)
-						return content.warning
-					end,
-				},
-				{
 					pass_type = "text",
-					style_id = "text_shadow",
 					text_id = "text",
+					content_check_function = function(arg_3_0)
+						return arg_3_0.warning
+					end
 				},
 				{
-					pass_type = "rect",
+					style_id = "text_shadow",
+					pass_type = "text",
+					text_id = "text"
+				},
+				{
 					style_id = "text_bg",
-					content_check_function = function (content)
-						return content.draw_background
-					end,
+					pass_type = "rect",
+					content_check_function = function(arg_4_0)
+						return arg_4_0.draw_background
+					end
 				},
 				{
-					pass_type = "rect",
 					style_id = "text_bg_2",
-					content_check_function = function (content)
-						return content.draw_background
-					end,
+					pass_type = "rect",
+					content_check_function = function(arg_5_0)
+						return arg_5_0.draw_background
+					end
 				},
 				{
 					item_id = "item",
 					pass_type = "item_tooltip",
-					content_check_function = function (content)
-						return content.button_hotspot.is_hover and content.item
-					end,
-				},
-			},
+					content_check_function = function(arg_6_0)
+						return arg_6_0.button_hotspot.is_hover and arg_6_0.item
+					end
+				}
+			}
 		},
 		content = {
-			draw_background = true,
-			effect = "sparkle_effect",
-			icon = "icon_crafting_dust_01_small",
 			text = "0",
+			effect = "sparkle_effect",
+			draw_background = true,
+			icon = "icon_crafting_dust_01_small",
 			warning = false,
-			button_hotspot = {},
+			button_hotspot = {}
 		},
 		style = {
 			text_bg = {
-				horizontal_alignment = "center",
 				vertical_alignment = "bottom",
+				horizontal_alignment = "center",
 				texture_size = {
 					60,
-					80,
+					80
 				},
 				color = {
 					0,
 					10,
 					10,
-					10,
+					10
 				},
 				offset = {
 					2,
 					10,
-					1,
-				},
+					1
+				}
 			},
 			text_bg_2 = {
-				horizontal_alignment = "center",
 				vertical_alignment = "bottom",
+				horizontal_alignment = "center",
 				texture_size = {
 					60,
-					25,
+					25
 				},
 				color = {
 					180,
 					5,
 					5,
-					5,
+					5
 				},
 				offset = {
 					0,
 					12,
-					0,
-				},
+					0
+				}
 			},
 			icon = {
-				horizontal_alignment = "center",
 				vertical_alignment = "top",
+				horizontal_alignment = "center",
 				texture_size = {
 					50,
-					50,
+					50
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					3,
-				},
+					3
+				}
 			},
 			effect = {
+				vertical_alignment = "top",
 				angle = 0,
 				horizontal_alignment = "right",
-				vertical_alignment = "top",
 				offset = {
 					110,
 					120,
-					4,
+					4
 				},
 				pivot = {
 					128,
-					128,
+					128
 				},
 				texture_size = {
 					256,
-					256,
+					256
 				},
-				color = Colors.get_color_table_with_alpha("white", 0),
+				color = Colors.get_color_table_with_alpha("white", 0)
 			},
 			text = {
-				font_size = 20,
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
-				localize = false,
 				vertical_alignment = "bottom",
+				font_size = 20,
+				localize = false,
+				horizontal_alignment = "center",
 				word_wrap = true,
+				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
 					0,
 					10,
-					3,
-				},
+					3
+				}
 			},
 			text_warning = {
-				font_size = 20,
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
-				localize = false,
 				vertical_alignment = "bottom",
+				font_size = 20,
+				localize = false,
+				horizontal_alignment = "center",
 				word_wrap = true,
+				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("red", 255),
 				offset = {
 					0,
 					10,
-					3,
-				},
+					3
+				}
 			},
 			text_shadow = {
-				font_size = 20,
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
-				localize = false,
 				vertical_alignment = "bottom",
+				font_size = 20,
+				localize = false,
+				horizontal_alignment = "center",
 				word_wrap = true,
+				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					2,
 					8,
-					2,
-				},
-			},
+					2
+				}
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_1_0,
 		offset = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	}
 end
 
-local disable_with_gamepad = true
-local widgets = {
+local var_0_10 = true
+local var_0_11 = {
 	item_grid_bg = UIWidgets.create_simple_texture("crafting_bg_02", "item_grid", nil, nil, nil, -1),
-	item_grid = UIWidgets.create_grid("item_grid", scenegraph_definition.item_grid.size, NUM_CRAFT_SLOTS_Y, NUM_CRAFT_SLOTS_X, 20, 20),
+	item_grid = UIWidgets.create_grid("item_grid", var_0_8.item_grid.size, NUM_CRAFT_SLOTS_Y, NUM_CRAFT_SLOTS_X, 20, 20),
 	item_grid_icon = UIWidgets.create_simple_texture("crafting_icon_dust", "item_grid_icon"),
-	craft_button = UIWidgets.create_default_button("craft_button", scenegraph_definition.craft_button.size, nil, nil, Localize("hero_view_crafting_convert"), 24, nil, "button_detail_02", nil, disable_with_gamepad),
+	craft_button = UIWidgets.create_default_button("craft_button", var_0_8.craft_button.size, nil, nil, Localize("hero_view_crafting_convert"), 24, nil, "button_detail_02", nil, var_0_10),
 	craft_bar_fg = UIWidgets.create_simple_texture("crafting_bar_fg", "craft_bar_fg"),
 	craft_bar_bg = UIWidgets.create_simple_rect("craft_bar_bg", {
 		255,
 		0,
 		0,
-		0,
+		0
 	}),
 	craft_bar = UIWidgets.create_simple_texture("crafting_bar", "craft_bar", nil, nil, nil, 2),
-	material_text_1 = create_craft_material_widget("material_text_1"),
-	material_text_2 = create_craft_material_widget("material_text_2"),
-	material_bg = UIWidgets.create_simple_texture("crafting_bg_conversion", "material_bg"),
+	material_text_1 = var_0_9("material_text_1"),
+	material_text_2 = var_0_9("material_text_2"),
+	material_bg = UIWidgets.create_simple_texture("crafting_bg_conversion", "material_bg")
 }
-local animation_definitions = {
+local var_0_12 = {
 	on_enter = {
 		{
-			end_progress = 0.3,
 			name = "fade_in",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 0
+			end_progress = 0.3,
+			init = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+				arg_7_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+				local var_8_0 = math.easeOutCubic(arg_8_3)
 
-				params.render_settings.alpha_multiplier = anim_progress
+				arg_8_4.render_settings.alpha_multiplier = var_8_0
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 				return
-			end,
-		},
+			end
+		}
 	},
 	on_exit = {
 		{
-			end_progress = 0.3,
 			name = "fade_out",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 1
+			end_progress = 0.3,
+			init = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+				arg_10_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+				local var_11_0 = math.easeOutCubic(arg_11_3)
 
-				params.render_settings.alpha_multiplier = 1 - anim_progress
+				arg_11_4.render_settings.alpha_multiplier = 1 - var_11_0
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 				return
-			end,
-		},
-	},
+			end
+		}
+	}
 }
 
 return {
-	widgets = widgets,
-	scenegraph_definition = scenegraph_definition,
-	animation_definitions = animation_definitions,
+	widgets = var_0_11,
+	scenegraph_definition = var_0_8,
+	animation_definitions = var_0_12
 }

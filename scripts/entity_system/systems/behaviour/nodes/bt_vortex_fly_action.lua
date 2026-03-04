@@ -1,134 +1,128 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_vortex_fly_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_vortex_fly_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTVortexFlyAction = class(BTVortexFlyAction, BTNode)
 
-BTVortexFlyAction.init = function (self, ...)
-	BTVortexFlyAction.super.init(self, ...)
+function BTVortexFlyAction.init(arg_1_0, ...)
+	BTVortexFlyAction.super.init(arg_1_0, ...)
 end
 
 BTVortexFlyAction.name = "BTVortexFlyAction"
 
-BTVortexFlyAction.enter = function (self, unit, blackboard, t)
-	local next_smart_object_data = blackboard.next_smart_object_data
-	local entrance_pos = next_smart_object_data.entrance_pos:unbox()
-	local exit_pos = next_smart_object_data.exit_pos:unbox()
+function BTVortexFlyAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_2.next_smart_object_data
+	local var_2_1 = var_2_0.entrance_pos:unbox()
+	local var_2_2 = var_2_0.exit_pos:unbox()
 
-	blackboard.fly_entrance_pos = Vector3Box(entrance_pos)
-	blackboard.fly_exit_pos = Vector3Box(exit_pos)
+	arg_2_2.fly_entrance_pos = Vector3Box(var_2_1)
+	arg_2_2.fly_exit_pos = Vector3Box(var_2_2)
 
-	local smart_object_data = next_smart_object_data.smart_object_data
-	local ledge_position = smart_object_data.ledge_position and Vector3Aux.unbox(smart_object_data.ledge_position)
+	local var_2_3 = var_2_0.smart_object_data
+	local var_2_4 = var_2_3.ledge_position and Vector3Aux.unbox(var_2_3.ledge_position)
 
-	if ledge_position then
-		blackboard.fly_middle_pos = Vector3Box(ledge_position)
+	if var_2_4 then
+		arg_2_2.fly_middle_pos = Vector3Box(var_2_4)
 	end
 
-	blackboard.fly_state = "moving_to_within_smartobject_range"
+	arg_2_2.fly_state = "moving_to_within_smartobject_range"
 end
 
-BTVortexFlyAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	blackboard.fly_entrance_pos = nil
-	blackboard.fly_middle_pos = nil
-	blackboard.fly_exit_pos = nil
-	blackboard.fly_state = nil
-	blackboard.is_smart_objecting = nil
-	blackboard.is_flying = nil
+function BTVortexFlyAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	arg_3_2.fly_entrance_pos = nil
+	arg_3_2.fly_middle_pos = nil
+	arg_3_2.fly_exit_pos = nil
+	arg_3_2.fly_state = nil
+	arg_3_2.is_smart_objecting = nil
+	arg_3_2.is_flying = nil
 
-	if not destroy then
-		local locomotion_extension = blackboard.locomotion_extension
-
-		locomotion_extension:set_movement_type("snap_to_navmesh")
+	if not arg_3_5 then
+		arg_3_2.locomotion_extension:set_movement_type("snap_to_navmesh")
 	end
 
-	local navigation_extension = blackboard.navigation_extension
+	local var_3_0 = arg_3_2.navigation_extension
 
-	navigation_extension:set_enabled(true)
+	var_3_0:set_enabled(true)
 
-	if navigation_extension:is_using_smart_object() then
-		local success = navigation_extension:use_smart_object(false)
+	if var_3_0:is_using_smart_object() then
+		local var_3_1 = var_3_0:use_smart_object(false)
 	end
 end
 
-BTVortexFlyAction._move_to_destination = function (self, current_position, destination, locomotion_extension, dt, max_speed)
-	local destination_vector = destination - current_position
-	local destination_distance = Vector3.length(destination_vector)
+function BTVortexFlyAction._move_to_destination(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	local var_4_0 = arg_4_2 - arg_4_1
+	local var_4_1 = Vector3.length(var_4_0)
 
-	if destination_distance > 0.1 then
-		local speed = max_speed
+	if var_4_1 > 0.1 then
+		local var_4_2 = arg_4_5
 
-		if destination_distance < speed * dt then
-			speed = destination_distance / dt
+		if var_4_1 < var_4_2 * arg_4_4 then
+			var_4_2 = var_4_1 / arg_4_4
 		end
 
-		local destination_direction = Vector3.normalize(destination_vector)
-		local wanted_velocity = destination_direction * speed
+		local var_4_3 = Vector3.normalize(var_4_0) * var_4_2
 
-		locomotion_extension:set_wanted_velocity(wanted_velocity)
+		arg_4_3:set_wanted_velocity(var_4_3)
 
 		return false
 	else
-		locomotion_extension:teleport_to(destination)
+		arg_4_3:teleport_to(arg_4_2)
 
 		return true
 	end
 end
 
-BTVortexFlyAction.run = function (self, unit, blackboard, t, dt)
-	local locomotion_extension = blackboard.locomotion_extension
-	local max_speed = blackboard.breed.run_speed
-	local unit_position = POSITION_LOOKUP[unit]
+function BTVortexFlyAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	local var_5_0 = arg_5_2.locomotion_extension
+	local var_5_1 = arg_5_2.breed.run_speed
+	local var_5_2 = POSITION_LOOKUP[arg_5_1]
 
-	if blackboard.fly_state == "moving_to_within_smartobject_range" then
-		local entrance_position = blackboard.fly_entrance_pos:unbox()
+	if arg_5_2.fly_state == "moving_to_within_smartobject_range" then
+		local var_5_3 = arg_5_2.fly_entrance_pos:unbox()
 
-		if Vector3.distance_squared(entrance_position, unit_position) < 1 then
-			locomotion_extension:set_wanted_velocity(Vector3.zero())
-			locomotion_extension:set_movement_type("script_driven")
+		if Vector3.distance_squared(var_5_3, var_5_2) < 1 then
+			var_5_0:set_wanted_velocity(Vector3.zero())
+			var_5_0:set_movement_type("script_driven")
 
-			local navigation_extension = blackboard.navigation_extension
+			local var_5_4 = arg_5_2.navigation_extension
 
-			navigation_extension:set_enabled(false)
+			var_5_4:set_enabled(false)
 
-			if navigation_extension:use_smart_object(true) then
-				blackboard.is_smart_objecting = true
-				blackboard.is_flying = true
-				blackboard.fly_state = "moving_towards_entrance_pos"
+			if var_5_4:use_smart_object(true) then
+				arg_5_2.is_smart_objecting = true
+				arg_5_2.is_flying = true
+				arg_5_2.fly_state = "moving_towards_entrance_pos"
 			else
 				print("BTVortexFlyAction - Failing to use smart object")
 
 				return "failed"
 			end
 		end
-	elseif blackboard.fly_state == "moving_towards_entrance_pos" then
-		local entrance_position = blackboard.fly_entrance_pos:unbox()
-		local destination_reached = self:_move_to_destination(unit_position, entrance_position, locomotion_extension, dt, max_speed)
+	elseif arg_5_2.fly_state == "moving_towards_entrance_pos" then
+		local var_5_5 = arg_5_2.fly_entrance_pos:unbox()
 
-		if destination_reached then
-			if blackboard.fly_middle_pos then
-				blackboard.fly_state = "moving_towards_middle_pos"
+		if arg_5_0:_move_to_destination(var_5_2, var_5_5, var_5_0, arg_5_4, var_5_1) then
+			if arg_5_2.fly_middle_pos then
+				arg_5_2.fly_state = "moving_towards_middle_pos"
 			else
-				blackboard.fly_state = "moving_towards_exit_pos"
+				arg_5_2.fly_state = "moving_towards_exit_pos"
 			end
 		end
-	elseif blackboard.fly_state == "moving_towards_middle_pos" then
-		local middle_position = blackboard.fly_middle_pos:unbox()
-		local destination_reached = self:_move_to_destination(unit_position, middle_position, locomotion_extension, dt, max_speed)
+	elseif arg_5_2.fly_state == "moving_towards_middle_pos" then
+		local var_5_6 = arg_5_2.fly_middle_pos:unbox()
 
-		if destination_reached then
-			blackboard.fly_state = "moving_towards_exit_pos"
+		if arg_5_0:_move_to_destination(var_5_2, var_5_6, var_5_0, arg_5_4, var_5_1) then
+			arg_5_2.fly_state = "moving_towards_exit_pos"
 		end
-	elseif blackboard.fly_state == "moving_towards_exit_pos" then
-		local exit_position = blackboard.fly_exit_pos:unbox()
-		local destination_reached = self:_move_to_destination(unit_position, exit_position, locomotion_extension, dt, max_speed)
+	elseif arg_5_2.fly_state == "moving_towards_exit_pos" then
+		local var_5_7 = arg_5_2.fly_exit_pos:unbox()
 
-		if destination_reached then
-			blackboard.fly_state = "done"
+		if arg_5_0:_move_to_destination(var_5_2, var_5_7, var_5_0, arg_5_4, var_5_1) then
+			arg_5_2.fly_state = "done"
 		end
 	end
 
-	if blackboard.fly_state == "done" then
+	if arg_5_2.fly_state == "done" then
 		return "done"
 	else
 		return "running"

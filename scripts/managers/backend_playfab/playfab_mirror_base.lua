@@ -1,10 +1,10 @@
-﻿-- chunkname: @scripts/managers/backend_playfab/playfab_mirror_base.lua
+-- chunkname: @scripts/managers/backend_playfab/playfab_mirror_base.lua
 
 require("scripts/managers/backend_playfab/playfab_request_queue")
 require("scripts/helpers/weave_utils")
 
-local PlayFabClientApi = require("PlayFab.PlayFabClientApi")
-local CAREER_ID_LOOKUP = {
+local var_0_0 = require("PlayFab.PlayFabClientApi")
+local var_0_1 = {
 	"dr_ranger",
 	"dr_slayer",
 	"dr_ironbreaker",
@@ -24,2964 +24,2902 @@ local CAREER_ID_LOOKUP = {
 	"wh_zealot",
 	"we_thornsister",
 	"wh_priest",
-	"bw_necromancer",
+	"bw_necromancer"
 }
-local ALLOWED_DATA_TYPES = {
-	boolean = true,
-	number = true,
+local var_0_2 = {
 	string = true,
+	boolean = true,
+	number = true
 }
-local REDUCTION_INTERVAL = 80
-local DELAY_MULTIPLIER = 5
-local guid = IS_PS4 and math.uuid or Application.guid
+local var_0_3 = 80
+local var_0_4 = 5
+local var_0_5 = IS_PS4 and math.uuid or Application.guid
 
 PlayFabMirrorBase = class(PlayFabMirrorBase)
 
-local function debug_printf(format, ...)
-	printf("[PlayFabMirrorBase] " .. format, ...)
+local function var_0_6(arg_1_0, ...)
+	printf("[PlayFabMirrorBase] " .. arg_1_0, ...)
 end
 
-local function assert_or_print_exception(condition, format, ...)
-	if not condition then
-		Crashify.print_exception("PlayFabMirrorBase", format, ...)
+local function var_0_7(arg_2_0, arg_2_1, ...)
+	if not arg_2_0 then
+		Crashify.print_exception("PlayFabMirrorBase", arg_2_1, ...)
 	end
 end
 
-PlayFabMirrorBase.init = function (self, signin_result)
-	self._num_items_to_load = 0
-	self._stats = {}
-	self._unlocked_dlcs = {}
-	self._commits = {}
-	self._commit_current_id = nil
-	self._last_id = 0
-	self._queued_commit = {}
-	self._request_queue = PlayFabRequestQueue:new()
-	self._quest_data = {}
-	self._fake_inventory_items = {}
-	self._unlocked_cosmetics = {}
-	self._unlocked_weapon_poses = {}
-	self._equipped_weapon_pose_skins = {}
-	self._filtered_data = self:_init_filtered_data()
-	self._best_power_levels = nil
-	self.sum_best_power_levels = nil
-	self._belakor_data_loaded = false
-	self._playfab_id = signin_result.PlayFabId
+function PlayFabMirrorBase.init(arg_3_0, arg_3_1)
+	arg_3_0._num_items_to_load = 0
+	arg_3_0._stats = {}
+	arg_3_0._unlocked_dlcs = {}
+	arg_3_0._commits = {}
+	arg_3_0._commit_current_id = nil
+	arg_3_0._last_id = 0
+	arg_3_0._queued_commit = {}
+	arg_3_0._request_queue = PlayFabRequestQueue:new()
+	arg_3_0._quest_data = {}
+	arg_3_0._fake_inventory_items = {}
+	arg_3_0._unlocked_cosmetics = {}
+	arg_3_0._unlocked_weapon_poses = {}
+	arg_3_0._equipped_weapon_pose_skins = {}
+	arg_3_0._filtered_data = arg_3_0:_init_filtered_data()
+	arg_3_0._best_power_levels = nil
+	arg_3_0.sum_best_power_levels = nil
+	arg_3_0._belakor_data_loaded = false
+	arg_3_0._playfab_id = arg_3_1.PlayFabId
 
-	local info_result_payload = signin_result.InfoResultPayload
-	local read_only_data = info_result_payload.UserReadOnlyData or {}
-	local read_only_data_values = {}
+	local var_3_0 = arg_3_1.InfoResultPayload
+	local var_3_1 = var_3_0.UserReadOnlyData or {}
+	local var_3_2 = {}
 
-	for key, data in pairs(read_only_data) do
-		local value = data.Value
-		local value_type = type(value)
+	for iter_3_0, iter_3_1 in pairs(var_3_1) do
+		local var_3_3 = iter_3_1.Value
+		local var_3_4 = type(var_3_3)
 
-		assert_or_print_exception(ALLOWED_DATA_TYPES[value_type], "Tried to set initial read_only_data's '%s'. Got value '%s' ('%s')", key, tostring(value), value_type)
+		var_0_7(var_0_2[var_3_4], "Tried to set initial read_only_data's '%s'. Got value '%s' ('%s')", iter_3_0, tostring(var_3_3), var_3_4)
 
-		if tonumber(value) then
-			value = tonumber(value)
-		elseif value == "true" or value == "false" then
-			value = to_boolean(value)
+		if tonumber(var_3_3) then
+			var_3_3 = tonumber(var_3_3)
+		elseif var_3_3 == "true" or var_3_3 == "false" then
+			var_3_3 = to_boolean(var_3_3)
 		end
 
-		read_only_data_values[key] = value
+		var_3_2[iter_3_0] = var_3_3
 	end
 
-	self._read_only_data = read_only_data_values
-	self._read_only_data_mirror = table.clone(read_only_data_values)
+	arg_3_0._read_only_data = var_3_2
+	arg_3_0._read_only_data_mirror = table.clone(var_3_2)
 
-	local title_data = info_result_payload.TitleData or {}
+	local var_3_5 = var_3_0.TitleData or {}
 
-	self._title_data = {}
+	arg_3_0._title_data = {}
 
-	for key, value in pairs(title_data) do
-		self:set_title_data(key, value)
+	for iter_3_2, iter_3_3 in pairs(var_3_5) do
+		arg_3_0:set_title_data(iter_3_2, iter_3_3)
 	end
 
-	local user_data = info_result_payload.UserData or {}
-	local user_data_values = {}
+	local var_3_6 = var_3_0.UserData or {}
+	local var_3_7 = {}
 
-	for key, value_table in pairs(user_data) do
-		local value = value_table.Value
+	for iter_3_4, iter_3_5 in pairs(var_3_6) do
+		local var_3_8 = iter_3_5.Value
 
-		if value then
-			if tonumber(value) then
-				value = tonumber(value)
-			elseif value == "true" or value == "false" then
-				value = to_boolean(value)
+		if var_3_8 then
+			if tonumber(var_3_8) then
+				var_3_8 = tonumber(var_3_8)
+			elseif var_3_8 == "true" or var_3_8 == "false" then
+				var_3_8 = to_boolean(var_3_8)
 			end
 
-			user_data_values[key] = value
+			var_3_7[iter_3_4] = var_3_8
 		end
 	end
 
-	self._user_data = user_data_values
-	self._user_data_mirror = table.clone(self._user_data)
-	self._commit_limit_timer = REDUCTION_INTERVAL
-	self._commit_limit_total = 1
+	arg_3_0._user_data = var_3_7
+	arg_3_0._user_data_mirror = table.clone(arg_3_0._user_data)
+	arg_3_0._commit_limit_timer = var_0_3
+	arg_3_0._commit_limit_total = 1
 
-	self:_verify_account_data()
+	arg_3_0:_verify_account_data()
 end
 
-PlayFabMirrorBase._init_filtered_data = function (self)
-	local filtered_data = {}
+function PlayFabMirrorBase._init_filtered_data(arg_4_0)
+	local var_4_0 = {}
 
-	for dlc_name in pairs(Managers.unlock:get_dlcs()) do
-		filtered_data[dlc_name] = {}
+	for iter_4_0 in pairs(Managers.unlock:get_dlcs()) do
+		var_4_0[iter_4_0] = {}
 	end
 
-	return filtered_data
+	return var_4_0
 end
 
-PlayFabMirrorBase._register_dlc_filtered_data = function (self, dlc_name, item, backend_id)
-	self._filtered_data[dlc_name][item] = backend_id or true
+function PlayFabMirrorBase._register_dlc_filtered_data(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	arg_5_0._filtered_data[arg_5_1][arg_5_2] = arg_5_3 or true
 end
 
-PlayFabMirrorBase._grant_filtered_data = function (self, dlc_name)
-	local filtered_data = self._filtered_data[dlc_name]
+function PlayFabMirrorBase._grant_filtered_data(arg_6_0, arg_6_1)
+	local var_6_0 = arg_6_0._filtered_data[arg_6_1]
 
-	for item, backend_id in pairs(filtered_data) do
-		if backend_id == true then
-			backend_id = nil
+	for iter_6_0, iter_6_1 in pairs(var_6_0) do
+		if iter_6_1 == true then
+			iter_6_1 = nil
 		end
 
-		filtered_data[item] = nil
+		var_6_0[iter_6_0] = nil
 
-		local skip_autosave = not table.is_empty(filtered_data)
+		local var_6_1 = not table.is_empty(var_6_0)
 
-		self:add_item(backend_id, item, skip_autosave)
+		arg_6_0:add_item(iter_6_1, iter_6_0, var_6_1)
 	end
 
-	table.clear(self._filtered_data[dlc_name])
+	table.clear(arg_6_0._filtered_data[arg_6_1])
 end
 
-PlayFabMirrorBase._parse_claimed_achievements = function (self)
-	local split_achievements_string = {}
-	local claimed_achievements = {}
-	local claimed_achievements_string = self:get_read_only_data("claimed_achievements")
+function PlayFabMirrorBase._parse_claimed_achievements(arg_7_0)
+	local var_7_0 = {}
+	local var_7_1 = {}
+	local var_7_2 = arg_7_0:get_read_only_data("claimed_achievements")
 
-	if claimed_achievements_string then
-		split_achievements_string = string.split_deprecated(claimed_achievements_string, ",")
+	if var_7_2 then
+		var_7_0 = string.split_deprecated(var_7_2, ",")
 	end
 
-	for i = 1, #split_achievements_string do
-		local value = split_achievements_string[i]
-
-		claimed_achievements[value] = true
+	for iter_7_0 = 1, #var_7_0 do
+		var_7_1[var_7_0[iter_7_0]] = true
 	end
 
-	return claimed_achievements
+	return var_7_1
 end
 
-PlayFabMirrorBase._parse_claimed_event_quests = function (self)
-	local claimed_event_quests = {}
-	local claimed_string = self:get_read_only_data("claimed_event_quests")
+function PlayFabMirrorBase._parse_claimed_event_quests(arg_8_0)
+	local var_8_0 = {}
+	local var_8_1 = arg_8_0:get_read_only_data("claimed_event_quests")
 
-	if claimed_string then
-		local split_string = string.split_deprecated(claimed_string, ",")
+	if var_8_1 then
+		local var_8_2 = string.split_deprecated(var_8_1, ",")
 
-		for i = 1, #split_string do
-			claimed_event_quests[split_string[i]] = true
+		for iter_8_0 = 1, #var_8_2 do
+			var_8_0[var_8_2[iter_8_0]] = true
 		end
 	end
 
-	return claimed_event_quests
+	return var_8_0
 end
 
-PlayFabMirrorBase._parse_unlocked_weapon_skins = function (self)
-	local unlocked_weapon_skins = {}
-	local unlocked_weapon_skins_string = self:get_read_only_data("unlocked_weapon_skins")
-	local unlock_manager = Managers.unlock
-	local existing_weapon_skins = self._unlocked_weapon_skins or {}
+function PlayFabMirrorBase._parse_unlocked_weapon_skins(arg_9_0)
+	local var_9_0 = {}
+	local var_9_1 = arg_9_0:get_read_only_data("unlocked_weapon_skins")
+	local var_9_2 = Managers.unlock
+	local var_9_3 = arg_9_0._unlocked_weapon_skins or {}
 
-	if unlocked_weapon_skins_string then
-		local decoded = cjson.decode(unlocked_weapon_skins_string)
+	if var_9_1 then
+		local var_9_4 = cjson.decode(var_9_1)
 
-		if decoded then
-			for i = 1, #decoded do
-				local skin_name = decoded[i]
-				local item_data = rawget(ItemMasterList, skin_name)
-				local required_dlc = item_data and item_data.required_dlc
+		if var_9_4 then
+			for iter_9_0 = 1, #var_9_4 do
+				local var_9_5 = var_9_4[iter_9_0]
+				local var_9_6 = rawget(ItemMasterList, var_9_5)
+				local var_9_7 = var_9_6 and var_9_6.required_dlc
 
-				if not required_dlc then
-					unlocked_weapon_skins[skin_name] = existing_weapon_skins[skin_name] or true
-				elseif not unlock_manager:dlc_exists(required_dlc) then
-					assert_or_print_exception(false, "Tried to check if unexisting DLC was unlocked %s", required_dlc)
+				if not var_9_7 then
+					var_9_0[var_9_5] = var_9_3[var_9_5] or true
+				elseif not var_9_2:dlc_exists(var_9_7) then
+					var_0_7(false, "Tried to check if unexisting DLC was unlocked %s", var_9_7)
 
-					unlocked_weapon_skins[skin_name] = true
-				elseif unlock_manager:is_dlc_unlocked(required_dlc) then
-					unlocked_weapon_skins[skin_name] = true
+					var_9_0[var_9_5] = true
+				elseif var_9_2:is_dlc_unlocked(var_9_7) then
+					var_9_0[var_9_5] = true
 				else
-					self:_register_dlc_filtered_data(required_dlc, {
-						ItemId = skin_name,
-					}, existing_weapon_skins[skin_name])
+					arg_9_0:_register_dlc_filtered_data(var_9_7, {
+						ItemId = var_9_5
+					}, var_9_3[var_9_5])
 				end
 			end
 		else
-			assert_or_print_exception(false, "Failed to decode unlocked_weapon_skins_string %s", unlocked_weapon_skins_string)
+			var_0_7(false, "Failed to decode unlocked_weapon_skins_string %s", var_9_1)
 		end
 	end
 
-	return unlocked_weapon_skins
+	return var_9_0
 end
 
-PlayFabMirrorBase._parse_unlocked_weapon_poses = function (self)
-	local unlocked_weapon_poses = {}
-	local unlocked_weapon_poses_string = self:get_read_only_data("unlocked_weapon_poses")
-	local unlock_manager = Managers.unlock
-	local existing_weapon_poses = self._unlocked_weapon_poses or {}
+function PlayFabMirrorBase._parse_unlocked_weapon_poses(arg_10_0)
+	local var_10_0 = {}
+	local var_10_1 = arg_10_0:get_read_only_data("unlocked_weapon_poses")
+	local var_10_2 = Managers.unlock
+	local var_10_3 = arg_10_0._unlocked_weapon_poses or {}
 
-	if unlocked_weapon_poses_string then
-		local decoded = cjson.decode(unlocked_weapon_poses_string)
+	if var_10_1 then
+		local var_10_4 = cjson.decode(var_10_1)
 
-		if decoded then
-			for _, pose_item_name in ipairs(decoded) do
-				local item_data = rawget(ItemMasterList, pose_item_name)
-				local required_dlc = item_data and item_data.required_dlc
-				local pose_parent = item_data.parent
+		if var_10_4 then
+			for iter_10_0, iter_10_1 in ipairs(var_10_4) do
+				local var_10_5 = rawget(ItemMasterList, iter_10_1)
+				local var_10_6 = var_10_5 and var_10_5.required_dlc
+				local var_10_7 = var_10_5.parent
 
-				if not item_data then
-					assert_or_print_exception(false, "%q doesn't exist in the ItemMasterList", pose_item_name)
-				elseif not pose_parent then
-					assert_or_print_exception(false, "%q doesn't have a prent", pose_item_name)
-				elseif not required_dlc then
-					unlocked_weapon_poses[pose_parent] = unlocked_weapon_poses[pose_parent] or {}
-					unlocked_weapon_poses[pose_parent][pose_item_name] = true
-				elseif not unlock_manager:dlc_exists(required_dlc) then
-					assert_or_print_exception(false, "Tried to check if unexisting DLC was unlocked %s", required_dlc)
+				if not var_10_5 then
+					var_0_7(false, "%q doesn't exist in the ItemMasterList", iter_10_1)
+				elseif not var_10_7 then
+					var_0_7(false, "%q doesn't have a prent", iter_10_1)
+				elseif not var_10_6 then
+					var_10_0[var_10_7] = var_10_0[var_10_7] or {}
+					var_10_0[var_10_7][iter_10_1] = true
+				elseif not var_10_2:dlc_exists(var_10_6) then
+					var_0_7(false, "Tried to check if unexisting DLC was unlocked %s", var_10_6)
 
-					unlocked_weapon_poses[pose_parent] = unlocked_weapon_poses[pose_parent] or {}
-					unlocked_weapon_poses[pose_parent][pose_item_name] = true
-				elseif unlock_manager:is_dlc_unlocked(required_dlc) then
-					unlocked_weapon_poses[pose_parent] = unlocked_weapon_poses[pose_parent] or {}
-					unlocked_weapon_poses[pose_parent][pose_item_name] = true
+					var_10_0[var_10_7] = var_10_0[var_10_7] or {}
+					var_10_0[var_10_7][iter_10_1] = true
+				elseif var_10_2:is_dlc_unlocked(var_10_6) then
+					var_10_0[var_10_7] = var_10_0[var_10_7] or {}
+					var_10_0[var_10_7][iter_10_1] = true
 				else
-					self:_register_dlc_filtered_data(required_dlc, {
-						ItemId = pose_item_name,
-					}, existing_weapon_poses[pose_parent] and existing_weapon_poses[pose_parent][pose_item_name])
+					arg_10_0:_register_dlc_filtered_data(var_10_6, {
+						ItemId = iter_10_1
+					}, var_10_3[var_10_7] and var_10_3[var_10_7][iter_10_1])
 				end
 			end
 		else
-			assert_or_print_exception(false, "Failed to decode unlocked_weapon_poses_string %s", unlocked_weapon_poses_string)
+			var_0_7(false, "Failed to decode unlocked_weapon_poses_string %s", var_10_1)
 		end
 	end
 
-	return unlocked_weapon_poses
+	return var_10_0
 end
 
-PlayFabMirrorBase._parse_equipped_weapon_pose_skins = function (self)
-	local equipped_weapon_pose_skins = {}
-	local equipped_weapon_pose_skins_string = self:get_read_only_data("equipped_weapon_pose_skins")
-	local existing_equipped_weapon_pose_skins = self._equipped_weapon_pose_skins or {}
+function PlayFabMirrorBase._parse_equipped_weapon_pose_skins(arg_11_0)
+	local var_11_0 = {}
+	local var_11_1 = arg_11_0:get_read_only_data("equipped_weapon_pose_skins")
 
-	if equipped_weapon_pose_skins_string then
-		local decoded = cjson.decode(equipped_weapon_pose_skins_string)
+	if not arg_11_0._equipped_weapon_pose_skins then
+		local var_11_2 = {}
+	end
 
-		if decoded then
-			equipped_weapon_pose_skins = decoded
+	if var_11_1 then
+		local var_11_3 = cjson.decode(var_11_1)
+
+		if var_11_3 then
+			var_11_0 = var_11_3
 		else
-			assert_or_print_exception(false, "Failed to decode equipped_weapon_pose_skins_string %s", equipped_weapon_pose_skins_string)
+			var_0_7(false, "Failed to decode equipped_weapon_pose_skins_string %s", var_11_1)
 		end
 	end
 
-	return equipped_weapon_pose_skins
+	return var_11_0
 end
 
-PlayFabMirrorBase._parse_unlocked_cosmetics = function (self, unlocked_cosmetics_string)
-	unlocked_cosmetics_string = unlocked_cosmetics_string or self:get_read_only_data("unlocked_cosmetics")
+function PlayFabMirrorBase._parse_unlocked_cosmetics(arg_12_0, arg_12_1)
+	arg_12_1 = arg_12_1 or arg_12_0:get_read_only_data("unlocked_cosmetics")
 
-	local unlocked_cosmetics = {}
-	local unlock_manager = Managers.unlock
-	local existing_cosmetics = self._unlocked_cosmetics or {}
+	local var_12_0 = {}
+	local var_12_1 = Managers.unlock
+	local var_12_2 = arg_12_0._unlocked_cosmetics or {}
 
-	if unlocked_cosmetics_string then
-		local decoded = cjson.decode(unlocked_cosmetics_string)
+	if arg_12_1 then
+		local var_12_3 = cjson.decode(arg_12_1)
 
-		if decoded then
-			for _, cosmetics in pairs(decoded) do
-				for i = 1, #cosmetics do
-					local cosmetic_name = cosmetics[i]
-					local item_data = rawget(ItemMasterList, cosmetic_name)
-					local required_dlc = item_data and item_data.required_dlc
+		if var_12_3 then
+			for iter_12_0, iter_12_1 in pairs(var_12_3) do
+				for iter_12_2 = 1, #iter_12_1 do
+					local var_12_4 = iter_12_1[iter_12_2]
+					local var_12_5 = rawget(ItemMasterList, var_12_4)
+					local var_12_6 = var_12_5 and var_12_5.required_dlc
 
-					if not required_dlc then
-						unlocked_cosmetics[cosmetic_name] = existing_cosmetics[cosmetic_name] or true
-					elseif not unlock_manager:dlc_exists(required_dlc) then
-						assert_or_print_exception(false, "Tried to check if unexisting DLC was unlocked %s", required_dlc)
+					if not var_12_6 then
+						var_12_0[var_12_4] = var_12_2[var_12_4] or true
+					elseif not var_12_1:dlc_exists(var_12_6) then
+						var_0_7(false, "Tried to check if unexisting DLC was unlocked %s", var_12_6)
 
-						unlocked_cosmetics[cosmetic_name] = true
-					elseif unlock_manager:is_dlc_unlocked(required_dlc) then
-						unlocked_cosmetics[cosmetic_name] = true
+						var_12_0[var_12_4] = true
+					elseif var_12_1:is_dlc_unlocked(var_12_6) then
+						var_12_0[var_12_4] = true
 					else
-						self:_register_dlc_filtered_data(required_dlc, {
-							ItemId = cosmetic_name,
-						}, existing_cosmetics[cosmetic_name])
+						arg_12_0:_register_dlc_filtered_data(var_12_6, {
+							ItemId = var_12_4
+						}, var_12_2[var_12_4])
 					end
 				end
 			end
 		else
-			assert_or_print_exception(false, "Failed to decode unlocked_cosmetics_string %s", unlocked_cosmetics_string)
+			var_0_7(false, "Failed to decode unlocked_cosmetics_string %s", arg_12_1)
 		end
 	end
 
-	return unlocked_cosmetics
+	return var_12_0
 end
 
-PlayFabMirrorBase._parse_claimed_console_dlc_rewards = function (self)
-	local claimed_rewards = {}
-	local claimed_rewards_string = self:get_read_only_data("claimed_console_dlc_rewards")
+function PlayFabMirrorBase._parse_claimed_console_dlc_rewards(arg_13_0)
+	local var_13_0 = {}
+	local var_13_1 = arg_13_0:get_read_only_data("claimed_console_dlc_rewards")
 
-	if claimed_rewards_string then
-		local claimed_rewards_table = cjson.decode(claimed_rewards_string)
+	if var_13_1 then
+		local var_13_2 = cjson.decode(var_13_1)
 
-		for reward_id, _ in pairs(claimed_rewards_table) do
-			claimed_rewards[reward_id] = true
+		for iter_13_0, iter_13_1 in pairs(var_13_2) do
+			var_13_0[iter_13_0] = true
 		end
 	end
 
-	return claimed_rewards
+	return var_13_0
 end
 
-PlayFabMirrorBase._verify_account_data = function (self)
+function PlayFabMirrorBase._verify_account_data(arg_14_0)
 	if DEDICATED_SERVER then
 		return
 	end
 
-	local request = {
-		FunctionName = "verifyAccountData",
+	local var_14_0 = {
+		FunctionName = "verifyAccountData"
 	}
-	local success_callback = callback(self, "verify_account_data_cb")
+	local var_14_1 = callback(arg_14_0, "verify_account_data_cb")
 
-	self._request_queue:enqueue(request, success_callback)
+	arg_14_0._request_queue:enqueue(var_14_0, var_14_1)
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_14_0._num_items_to_load = arg_14_0._num_items_to_load + 1
 end
 
-PlayFabMirrorBase.verify_account_data_cb = function (self, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.verify_account_data_cb(arg_15_0, arg_15_1)
+	arg_15_0._num_items_to_load = arg_15_0._num_items_to_load - 1
 
-	self:_migrate_characters()
+	arg_15_0:_migrate_characters()
 end
 
-PlayFabMirrorBase._migrate_characters = function (self)
-	local characters_data = self:get_read_only_data("characters_data")
+function PlayFabMirrorBase._migrate_characters(arg_16_0)
+	local var_16_0 = arg_16_0:get_read_only_data("characters_data")
 
-	if not characters_data or characters_data == "{}" or characters_data == "" or type(characters_data) == "table" and table.is_empty(characters_data) then
-		local request = {
+	if not var_16_0 or var_16_0 == "{}" or var_16_0 == "" or type(var_16_0) == "table" and table.is_empty(var_16_0) then
+		local var_16_1 = {
 			FunctionName = "migrateCharacters",
-			FunctionParameter = {},
+			FunctionParameter = {}
 		}
-		local success_callback = callback(self, "migrate_characters_cb")
+		local var_16_2 = callback(arg_16_0, "migrate_characters_cb")
 
-		self._request_queue:enqueue(request, success_callback)
+		arg_16_0._request_queue:enqueue(var_16_1, var_16_2)
 
-		self._num_items_to_load = self._num_items_to_load + 1
+		arg_16_0._num_items_to_load = arg_16_0._num_items_to_load + 1
 
 		return
 	end
 
-	self:_migrate_cosmetics()
+	arg_16_0:_migrate_cosmetics()
 end
 
-PlayFabMirrorBase.migrate_characters_cb = function (self, result)
-	local function_result = result.FunctionResult
-	local success = function_result.success
-	local characters_data = function_result.characters_data
+function PlayFabMirrorBase.migrate_characters_cb(arg_17_0, arg_17_1)
+	local var_17_0 = arg_17_1.FunctionResult
+	local var_17_1 = var_17_0.success
+	local var_17_2 = var_17_0.characters_data
 
-	if characters_data then
-		self:set_read_only_data("characters_data", characters_data, true)
+	if var_17_2 then
+		arg_17_0:set_read_only_data("characters_data", var_17_2, true)
 	end
 
-	self._num_items_to_load = self._num_items_to_load - 1
+	arg_17_0._num_items_to_load = arg_17_0._num_items_to_load - 1
 
-	self:_migrate_cosmetics()
+	arg_17_0:_migrate_cosmetics()
 end
 
-PlayFabMirrorBase._migrate_cosmetics = function (self)
+function PlayFabMirrorBase._migrate_cosmetics(arg_18_0)
 	if DEDICATED_SERVER then
 		return
 	end
 
-	local request = {
-		FunctionName = "migrateCosmetics",
+	local var_18_0 = {
+		FunctionName = "migrateCosmetics"
 	}
-	local success_callback = callback(self, "migrate_cosmetics_request_cb")
+	local var_18_1 = callback(arg_18_0, "migrate_cosmetics_request_cb")
 
-	self._request_queue:enqueue(request, success_callback)
+	arg_18_0._request_queue:enqueue(var_18_0, var_18_1)
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_18_0._num_items_to_load = arg_18_0._num_items_to_load + 1
 end
 
-PlayFabMirrorBase.migrate_cosmetics_request_cb = function (self, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.migrate_cosmetics_request_cb(arg_19_0, arg_19_1)
+	arg_19_0._num_items_to_load = arg_19_0._num_items_to_load - 1
 
-	local data = result.FunctionResult
-	local unlocked_cosmetics = data.unlocked_cosmetics
-	local characters_data = data.characters_data
+	local var_19_0 = arg_19_1.FunctionResult
+	local var_19_1 = var_19_0.unlocked_cosmetics
+	local var_19_2 = var_19_0.characters_data
 
-	if unlocked_cosmetics then
-		self:set_read_only_data("unlocked_cosmetics", unlocked_cosmetics, true)
+	if var_19_1 then
+		arg_19_0:set_read_only_data("unlocked_cosmetics", var_19_1, true)
 	end
 
-	if characters_data then
-		self:set_read_only_data("characters_data", characters_data, true)
+	if var_19_2 then
+		arg_19_0:set_read_only_data("characters_data", var_19_2, true)
 	end
 
-	self:_update_dlc_ownership()
+	arg_19_0:_update_dlc_ownership()
 end
 
-PlayFabMirrorBase._update_dlc_ownership = function (self)
+function PlayFabMirrorBase._update_dlc_ownership(arg_20_0)
 	if DEDICATED_SERVER then
 		return
 	end
 
-	local unlock_manager = Managers.unlock
-	local installed_dlcs = unlock_manager:get_installed_dlcs()
-	local json_string = cjson.encode(installed_dlcs)
-	local request = {
+	local var_20_0 = Managers.unlock:get_installed_dlcs()
+	local var_20_1 = cjson.encode(var_20_0)
+	local var_20_2 = {
 		FunctionName = "updateDLCOwnership",
 		FunctionParameter = {
-			installed_dlcs = json_string,
-		},
+			installed_dlcs = var_20_1
+		}
 	}
-	local success_callback = callback(self, "dlc_ownership_request_cb")
+	local var_20_3 = callback(arg_20_0, "dlc_ownership_request_cb")
 
-	self._request_queue:enqueue(request, success_callback)
+	arg_20_0._request_queue:enqueue(var_20_2, var_20_3)
 
-	self._num_items_to_load = self._num_items_to_load + 1
-	self._unlocked_dlcs = installed_dlcs
+	arg_20_0._num_items_to_load = arg_20_0._num_items_to_load + 1
+	arg_20_0._unlocked_dlcs = var_20_0
 end
 
-PlayFabMirrorBase.dlc_unlocked_at_signin = function (self, dlc_name)
-	return table.find(self._unlocked_dlcs, dlc_name) ~= false
+function PlayFabMirrorBase.dlc_unlocked_at_signin(arg_21_0, arg_21_1)
+	return table.find(arg_21_0._unlocked_dlcs, arg_21_1) ~= false
 end
 
-PlayFabMirrorBase.dlc_ownership_request_cb = function (self, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.dlc_ownership_request_cb(arg_22_0, arg_22_1)
+	arg_22_0._num_items_to_load = arg_22_0._num_items_to_load - 1
 
-	local function_result = result.FunctionResult
+	local var_22_0 = arg_22_1.FunctionResult
 
-	self._owner_dlcs_cb_data = table.shallow_copy(function_result)
+	arg_22_0._owner_dlcs_cb_data = table.shallow_copy(var_22_0)
 
 	if script_data["eac-untrusted"] then
-		self:_handle_owned_dlcs_data()
-		self:_request_best_power_levels()
+		arg_22_0:_handle_owned_dlcs_data()
+		arg_22_0:_request_best_power_levels()
 	else
-		self:_execute_dlc_specific_logic()
+		arg_22_0:_execute_dlc_specific_logic()
 	end
 end
 
-PlayFabMirrorBase._handle_owned_dlcs_data = function (self)
-	local function_result = self._owner_dlcs_cb_data
+function PlayFabMirrorBase._handle_owned_dlcs_data(arg_23_0)
+	local var_23_0 = arg_23_0._owner_dlcs_cb_data
 
-	self._owner_dlcs_cb_data = nil
+	arg_23_0._owner_dlcs_cb_data = nil
 
-	local owned_dlcs = function_result.owned_dlcs
-	local platform_dlcs = function_result.platform_dlcs
-	local excluded_dlcs = function_result.excluded_dlcs
-	local new_dlcs = function_result.new_dlcs
-	local revoked_dlcs = function_result.revoked_dlcs
+	local var_23_1 = var_23_0.owned_dlcs
+	local var_23_2 = var_23_0.platform_dlcs
+	local var_23_3 = var_23_0.excluded_dlcs
+	local var_23_4 = var_23_0.new_dlcs
+	local var_23_5 = var_23_0.revoked_dlcs
 
-	self._owned_dlcs = owned_dlcs or {}
-	self._platform_dlcs = platform_dlcs
+	arg_23_0._owned_dlcs = var_23_1 or {}
+	arg_23_0._platform_dlcs = var_23_2
 
-	local unlock_manager = Managers.unlock
-
-	unlock_manager:set_excluded_dlcs(excluded_dlcs)
-	self:update_owned_dlcs(false)
+	Managers.unlock:set_excluded_dlcs(var_23_3)
+	arg_23_0:update_owned_dlcs(false)
 
 	if HAS_STEAM then
-		self:handle_new_dlcs(new_dlcs)
+		arg_23_0:handle_new_dlcs(var_23_4)
 	end
 
-	if revoked_dlcs and #revoked_dlcs > 0 then
-		local unlocked_keep_decorations = function_result.unlocked_keep_decorations
+	if var_23_5 and #var_23_5 > 0 then
+		local var_23_6 = var_23_0.unlocked_keep_decorations
 
-		if unlocked_keep_decorations then
-			self:set_read_only_data("unlocked_keep_decorations", unlocked_keep_decorations, true)
+		if var_23_6 then
+			arg_23_0:set_read_only_data("unlocked_keep_decorations", var_23_6, true)
 		end
 
-		local unlocked_cosmetics = function_result.unlocked_cosmetics
+		local var_23_7 = var_23_0.unlocked_cosmetics
 
-		if unlocked_cosmetics then
-			self:set_read_only_data("unlocked_cosmetics", unlocked_cosmetics, true)
+		if var_23_7 then
+			arg_23_0:set_read_only_data("unlocked_cosmetics", var_23_7, true)
 		end
 
-		local unlocked_weapon_skins = function_result.unlocked_weapon_skins
+		local var_23_8 = var_23_0.unlocked_weapon_skins
 
-		if unlocked_cosmetics then
-			self:set_read_only_data("unlocked_weapon_skins", unlocked_weapon_skins, true)
+		if var_23_7 then
+			arg_23_0:set_read_only_data("unlocked_weapon_skins", var_23_8, true)
 		end
 	end
 
-	self._claimed_achievements = self:_parse_claimed_achievements()
-	self._claimed_event_quests = self:_parse_claimed_event_quests()
-	self._unlocked_weapon_skins = self:_parse_unlocked_weapon_skins()
-	self._unlocked_cosmetics = self:_parse_unlocked_cosmetics()
-	self._unlocked_weapon_poses = self:_parse_unlocked_weapon_poses()
-	self._equipped_weapon_pose_skins = self:_parse_equipped_weapon_pose_skins()
+	arg_23_0._claimed_achievements = arg_23_0:_parse_claimed_achievements()
+	arg_23_0._claimed_event_quests = arg_23_0:_parse_claimed_event_quests()
+	arg_23_0._unlocked_weapon_skins = arg_23_0:_parse_unlocked_weapon_skins()
+	arg_23_0._unlocked_cosmetics = arg_23_0:_parse_unlocked_cosmetics()
+	arg_23_0._unlocked_weapon_poses = arg_23_0:_parse_unlocked_weapon_poses()
+	arg_23_0._equipped_weapon_pose_skins = arg_23_0:_parse_equipped_weapon_pose_skins()
 
-	local unlocked_keep_decorations_json = self:get_read_only_data("unlocked_keep_decorations") or "{}"
+	local var_23_9 = arg_23_0:get_read_only_data("unlocked_keep_decorations") or "{}"
 
-	self._unlocked_keep_decorations = cjson.decode(unlocked_keep_decorations_json)
+	arg_23_0._unlocked_keep_decorations = cjson.decode(var_23_9)
 
 	if IS_CONSOLE then
-		self._claimed_console_dlc_rewards = self:_parse_claimed_console_dlc_rewards()
+		arg_23_0._claimed_console_dlc_rewards = arg_23_0:_parse_claimed_console_dlc_rewards()
 	end
 
-	self:update_filtered_dlc_data()
+	arg_23_0:update_filtered_dlc_data()
 end
 
-PlayFabMirrorBase._execute_dlc_specific_logic = function (self)
-	local request = {
+function PlayFabMirrorBase._execute_dlc_specific_logic(arg_24_0)
+	local var_24_0 = {
 		FunctionName = "executeDLCLogic",
-		FunctionParameter = {},
+		FunctionParameter = {}
 	}
-	local success_callback = callback(self, "execute_dlc_logic_request_cb")
+	local var_24_1 = callback(arg_24_0, "execute_dlc_logic_request_cb")
 
-	self._request_queue:enqueue(request, success_callback, true)
+	arg_24_0._request_queue:enqueue(var_24_0, var_24_1, true)
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_24_0._num_items_to_load = arg_24_0._num_items_to_load + 1
 end
 
-local function get_item_from_item_master_list(item_id)
-	return ItemMasterList[item_id]
+local function var_0_8(arg_25_0)
+	return ItemMasterList[arg_25_0]
 end
 
-PlayFabMirrorBase._sync_unseen_rewards = function (self, new_rewards)
-	if not new_rewards then
+function PlayFabMirrorBase._sync_unseen_rewards(arg_26_0, arg_26_1)
+	if not arg_26_1 then
 		return
 	end
 
-	local unseen_rewards = {}
+	local var_26_0 = {}
 
-	for i = 1, #new_rewards do
-		local item = new_rewards[i]
-		local item_type = item.ItemType
-		local item_id = item.ItemId
+	for iter_26_0 = 1, #arg_26_1 do
+		local var_26_1 = arg_26_1[iter_26_0]
+		local var_26_2 = var_26_1.ItemType
+		local var_26_3 = var_26_1.ItemId
 
-		if item_type == "keep_decoration_painting" then
-			local reward = {
+		if var_26_2 == "keep_decoration_painting" then
+			local var_26_4 = {
 				reward_type = "keep_decoration_painting",
-				rewarded_from = item.Data.rewarded_from,
-				keep_decoration_name = item_id,
+				rewarded_from = var_26_1.Data.rewarded_from,
+				keep_decoration_name = var_26_3
 			}
 
-			unseen_rewards[#unseen_rewards + 1] = reward
+			var_26_0[#var_26_0 + 1] = var_26_4
 
-			self:add_keep_decoration(item_id)
-		elseif CosmeticUtils.is_cosmetic_item(item_type) then
-			local backend_id = self:add_item(nil, {
-				ItemId = item_id,
+			arg_26_0:add_keep_decoration(var_26_3)
+		elseif CosmeticUtils.is_cosmetic_item(var_26_2) then
+			local var_26_5 = arg_26_0:add_item(nil, {
+				ItemId = var_26_3
 			})
 
-			if backend_id then
-				local reward = {
-					reward_type = item_type,
-					backend_id = backend_id,
-					rewarded_from = item.Data.rewarded_from,
-					item_type = item_type,
-					item_id = item_id,
+			if var_26_5 then
+				local var_26_6 = {
+					reward_type = var_26_2,
+					backend_id = var_26_5,
+					rewarded_from = var_26_1.Data.rewarded_from,
+					item_type = var_26_2,
+					item_id = var_26_3
 				}
 
-				unseen_rewards[#unseen_rewards + 1] = reward
+				var_26_0[#var_26_0 + 1] = var_26_6
 			end
 		else
-			local data = get_item_from_item_master_list(item_id)
-			local custom_data = item.CustomData
-			local rewarded_from = custom_data and custom_data.rewarded_from
+			local var_26_7 = var_0_8(var_26_3)
+			local var_26_8 = var_26_1.CustomData
+			local var_26_9 = var_26_8 and var_26_8.rewarded_from
 
-			if data and rewarded_from then
-				if data.bundle then
-					local bundled_currencies = data.bundle.BundledVirtualCurrencies
+			if var_26_7 and var_26_9 then
+				if var_26_7.bundle then
+					local var_26_10 = var_26_7.bundle.BundledVirtualCurrencies
 
-					for currency_type, currency_amount in pairs(bundled_currencies) do
-						local reward = {
+					for iter_26_1, iter_26_2 in pairs(var_26_10) do
+						local var_26_11 = {
 							reward_type = "currency",
-							currency_type = currency_type,
-							currency_amount = currency_amount,
-							rewarded_from = rewarded_from,
+							currency_type = iter_26_1,
+							currency_amount = iter_26_2,
+							rewarded_from = var_26_9
 						}
 
-						unseen_rewards[#unseen_rewards + 1] = reward
+						var_26_0[#var_26_0 + 1] = var_26_11
 					end
 				else
-					local backend_id = item.ItemInstanceId
+					local var_26_12 = var_26_1.ItemInstanceId
 
-					if rewarded_from then
-						local item_type = data.item_type
-						local reward = {
+					if var_26_9 then
+						local var_26_13 = var_26_7.item_type
+						local var_26_14 = {
 							reward_type = "item",
-							backend_id = backend_id,
-							rewarded_from = rewarded_from,
-							item_type = item_type,
-							item_id = item_id,
+							backend_id = var_26_12,
+							rewarded_from = var_26_9,
+							item_type = var_26_13,
+							item_id = var_26_3
 						}
 
-						unseen_rewards[#unseen_rewards + 1] = reward
+						var_26_0[#var_26_0 + 1] = var_26_14
 					end
 
-					ItemHelper.mark_backend_id_as_new(backend_id, {
-						data = data,
+					ItemHelper.mark_backend_id_as_new(var_26_12, {
+						data = var_26_7
 					})
 				end
 			end
 		end
 	end
 
-	self:_apply_unseen_rewards(unseen_rewards)
+	arg_26_0:_apply_unseen_rewards(var_26_0)
 end
 
-PlayFabMirrorBase._apply_unseen_rewards = function (self, rewards)
-	local unseen_rewards = self:get_user_data("unseen_rewards")
+function PlayFabMirrorBase._apply_unseen_rewards(arg_27_0, arg_27_1)
+	local var_27_0 = arg_27_0:get_user_data("unseen_rewards")
+	local var_27_1
 
-	unseen_rewards = unseen_rewards and cjson.decode(unseen_rewards) or {}
+	var_27_1 = var_27_0 and cjson.decode(var_27_0) or {}
 
-	table.append(unseen_rewards, rewards)
-	self:set_user_data("unseen_rewards", cjson.encode(unseen_rewards))
+	table.append(var_27_1, arg_27_1)
+	arg_27_0:set_user_data("unseen_rewards", cjson.encode(var_27_1))
 end
 
-PlayFabMirrorBase.execute_dlc_logic_request_cb = function (self, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.execute_dlc_logic_request_cb(arg_28_0, arg_28_1)
+	arg_28_0._num_items_to_load = arg_28_0._num_items_to_load - 1
 
-	self:_handle_owned_dlcs_data()
+	arg_28_0:_handle_owned_dlcs_data()
 
-	local function_result = result.FunctionResult
+	local var_28_0 = arg_28_1.FunctionResult
 
-	if function_result then
-		local info = function_result.missing_dlc_info
+	if var_28_0 then
+		local var_28_1 = var_28_0.missing_dlc_info
 
-		if info then
-			local popup_text = info.presentation_text_localized and Localize(info.presentation_text_localized) or info.presentation_text
-			local popup_title = info.presentation_title_localized and Localize(info.presentation_title_localized) or info.presentation_title
-			local popup_url_button
+		if var_28_1 then
+			local var_28_2 = var_28_1.presentation_text_localized and Localize(var_28_1.presentation_text_localized) or var_28_1.presentation_text
+			local var_28_3 = var_28_1.presentation_title_localized and Localize(var_28_1.presentation_title_localized) or var_28_1.presentation_title
+			local var_28_4
 
-			if info.presentation_url_button then
-				popup_url_button = {
-					text = info.presentation_url_button.text_localized and Localize(info.presentation_url_button.text_localized) or info.presentation_url_button.text,
-					url = info.presentation_url_button.url,
+			if var_28_1.presentation_url_button then
+				var_28_4 = {
+					text = var_28_1.presentation_url_button.text_localized and Localize(var_28_1.presentation_url_button.text_localized) or var_28_1.presentation_url_button.text,
+					url = var_28_1.presentation_url_button.url
 				}
 			end
 
-			Managers.backend:missing_required_dlc_error(popup_text, popup_title, popup_url_button)
+			Managers.backend:missing_required_dlc_error(var_28_2, var_28_3, var_28_4)
 
 			return
 		end
 
-		self:_sync_unseen_rewards(function_result.item_grant_results)
+		arg_28_0:_sync_unseen_rewards(var_28_0.item_grant_results)
 	end
 
-	self:_request_best_power_levels()
+	arg_28_0:_request_best_power_levels()
 end
 
-PlayFabMirrorBase._request_best_power_levels = function (self)
-	local request = {
+function PlayFabMirrorBase._request_best_power_levels(arg_29_0)
+	local var_29_0 = {
 		FunctionName = "bestPowerLevels",
-		FunctionParameter = {},
+		FunctionParameter = {}
 	}
-	local success_callback = callback(self, "best_power_levels_request_cb")
+	local var_29_1 = callback(arg_29_0, "best_power_levels_request_cb")
 
-	self._request_queue:enqueue(request, success_callback)
+	arg_29_0._request_queue:enqueue(var_29_0, var_29_1)
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_29_0._num_items_to_load = arg_29_0._num_items_to_load + 1
 end
 
-PlayFabMirrorBase.best_power_levels_request_cb = function (self, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.best_power_levels_request_cb(arg_30_0, arg_30_1)
+	arg_30_0._num_items_to_load = arg_30_0._num_items_to_load - 1
 
-	local function_result = result.FunctionResult
-	local best_power_levels = function_result.best_power_levels
+	local var_30_0 = arg_30_1.FunctionResult.best_power_levels
 
-	self._best_power_levels = best_power_levels
+	arg_30_0._best_power_levels = var_30_0
 
-	local sum = 0
+	local var_30_1 = 0
 
-	for _, value in pairs(best_power_levels) do
-		sum = sum + value
+	for iter_30_0, iter_30_1 in pairs(var_30_0) do
+		var_30_1 = var_30_1 + iter_30_1
 	end
 
-	self.sum_best_power_levels = sum
+	arg_30_0.sum_best_power_levels = var_30_1
 
-	self:_request_signin_reward()
+	arg_30_0:_request_signin_reward()
 end
 
-PlayFabMirrorBase._request_signin_reward = function (self)
-	local request = {
+function PlayFabMirrorBase._request_signin_reward(arg_31_0)
+	local var_31_0 = {
 		FunctionName = "signInRewards",
-		FunctionParameter = {},
+		FunctionParameter = {}
 	}
-	local success_callback = callback(self, "sign_in_reward_request_cb")
+	local var_31_1 = callback(arg_31_0, "sign_in_reward_request_cb")
 
-	self._request_queue:enqueue(request, success_callback)
+	arg_31_0._request_queue:enqueue(var_31_0, var_31_1)
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_31_0._num_items_to_load = arg_31_0._num_items_to_load + 1
 end
 
-PlayFabMirrorBase.sign_in_reward_request_cb = function (self, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.sign_in_reward_request_cb(arg_32_0, arg_32_1)
+	arg_32_0._num_items_to_load = arg_32_0._num_items_to_load - 1
 
-	local function_result = result.FunctionResult
-	local rewards = function_result.rewards
+	local var_32_0 = arg_32_1.FunctionResult.rewards
 
-	for reward_id, reward_data in pairs(rewards) do
-		local grants = reward_data.ItemGrantResults
+	for iter_32_0, iter_32_1 in pairs(var_32_0) do
+		local var_32_1 = iter_32_1.ItemGrantResults
 
-		if grants then
-			for _, grant in ipairs(grants) do
-				local grant_result = grant.Result
+		if var_32_1 then
+			for iter_32_2, iter_32_3 in ipairs(var_32_1) do
+				if iter_32_3.Result == true then
+					local var_32_2 = iter_32_3.ItemInstanceId
 
-				if grant_result == true then
-					local item_id = grant.ItemInstanceId
-
-					if reward_id and item_id then
-						ItemHelper.mark_sign_in_reward_as_new(reward_id, item_id)
+					if iter_32_0 and var_32_2 then
+						ItemHelper.mark_sign_in_reward_as_new(iter_32_0, var_32_2)
 					end
 				end
 			end
 		end
 
-		local unlocked_keep_decorations = reward_data.unlocked_keep_decorations
+		local var_32_3 = iter_32_1.unlocked_keep_decorations
 
-		if unlocked_keep_decorations then
-			for _, keep_decoration in ipairs(unlocked_keep_decorations) do
-				self:add_keep_decoration(keep_decoration)
+		if var_32_3 then
+			for iter_32_4, iter_32_5 in ipairs(var_32_3) do
+				arg_32_0:add_keep_decoration(iter_32_5)
 			end
 		end
 
-		local unlocked_cosmetics = reward_data.unlocked_cosmetics
+		local var_32_4 = iter_32_1.unlocked_cosmetics
 
-		if unlocked_cosmetics then
-			for i = 1, #unlocked_cosmetics do
-				self:add_item(nil, {
-					ItemId = unlocked_cosmetics[i],
+		if var_32_4 then
+			for iter_32_6 = 1, #var_32_4 do
+				arg_32_0:add_item(nil, {
+					ItemId = var_32_4[iter_32_6]
 				})
 			end
 		end
 
-		local unlocked_weapon_skins = reward_data.unlocked_weapon_skins
+		local var_32_5 = iter_32_1.unlocked_weapon_skins
 
-		if unlocked_weapon_skins then
-			for i = 1, #unlocked_weapon_skins do
-				self:add_unlocked_weapon_skin(unlocked_weapon_skins[i])
+		if var_32_5 then
+			for iter_32_7 = 1, #var_32_5 do
+				arg_32_0:add_unlocked_weapon_skin(var_32_5[iter_32_7])
 			end
 		end
 
-		local unlocked_weapon_poses = reward_data.unlocked_weapon_poses
+		local var_32_6 = iter_32_1.unlocked_weapon_poses
 
-		if unlocked_weapon_poses then
-			for i = 1, #unlocked_weapon_poses do
-				self:add_unlocked_weapon_pose(unlocked_weapon_poses[i])
+		if var_32_6 then
+			for iter_32_8 = 1, #var_32_6 do
+				arg_32_0:add_unlocked_weapon_pose(var_32_6[iter_32_8])
 			end
 		end
 	end
 
-	self:_request_quests()
+	arg_32_0:_request_quests()
 end
 
-PlayFabMirrorBase._request_quests = function (self)
-	local request = {
+function PlayFabMirrorBase._request_quests(arg_33_0)
+	local var_33_0 = {
 		FunctionName = "getQuests",
-		FunctionParameter = {},
+		FunctionParameter = {}
 	}
-	local success_callback = callback(self, "get_quests_cb")
+	local var_33_1 = callback(arg_33_0, "get_quests_cb")
 
-	self._request_queue:enqueue(request, success_callback)
+	arg_33_0._request_queue:enqueue(var_33_0, var_33_1)
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_33_0._num_items_to_load = arg_33_0._num_items_to_load + 1
 end
 
-PlayFabMirrorBase.get_quests_cb = function (self, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.get_quests_cb(arg_34_0, arg_34_1)
+	arg_34_0._num_items_to_load = arg_34_0._num_items_to_load - 1
 
-	local function_result = result.FunctionResult
-	local current_daily_quests = function_result.current_daily_quests
-	local daily_quest_refresh_available = function_result.daily_quest_refresh_available
-	local daily_quest_update_time = function_result.daily_quest_update_time
-	local current_event_quests = function_result.current_event_quests
-	local current_weekly_quests = function_result.current_weekly_quests
-	local weekly_quest_update_time = function_result.weekly_quest_update_time
+	local var_34_0 = arg_34_1.FunctionResult
+	local var_34_1 = var_34_0.current_daily_quests
+	local var_34_2 = var_34_0.daily_quest_refresh_available
+	local var_34_3 = var_34_0.daily_quest_update_time
+	local var_34_4 = var_34_0.current_event_quests
+	local var_34_5 = var_34_0.current_weekly_quests
+	local var_34_6 = var_34_0.weekly_quest_update_time
 
-	self:set_quest_data("current_daily_quests", current_daily_quests)
-	self:set_quest_data("daily_quest_refresh_available", to_boolean(daily_quest_refresh_available))
-	self:set_quest_data("daily_quest_update_time", tonumber(daily_quest_update_time))
-	self:set_quest_data("current_event_quests", current_event_quests)
-	self:set_quest_data("current_weekly_quests", current_weekly_quests)
-	self:set_quest_data("weekly_quest_update_time", weekly_quest_update_time)
-	self:_get_weekly_event_rewards()
+	arg_34_0:set_quest_data("current_daily_quests", var_34_1)
+	arg_34_0:set_quest_data("daily_quest_refresh_available", to_boolean(var_34_2))
+	arg_34_0:set_quest_data("daily_quest_update_time", tonumber(var_34_3))
+	arg_34_0:set_quest_data("current_event_quests", var_34_4)
+	arg_34_0:set_quest_data("current_weekly_quests", var_34_5)
+	arg_34_0:set_quest_data("weekly_quest_update_time", var_34_6)
+	arg_34_0:_get_weekly_event_rewards()
 end
 
-PlayFabMirrorBase._get_weekly_event_rewards = function (self)
-	local request = {
+function PlayFabMirrorBase._get_weekly_event_rewards(arg_35_0)
+	local var_35_0 = {
 		FunctionName = "getWeeklyEventRewards",
-		FunctionParameter = {},
+		FunctionParameter = {}
 	}
-	local success_callback = callback(self, "get_weekly_event_rewards_cb")
+	local var_35_1 = callback(arg_35_0, "get_weekly_event_rewards_cb")
 
-	self._request_queue:enqueue(request, success_callback)
+	arg_35_0._request_queue:enqueue(var_35_0, var_35_1)
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_35_0._num_items_to_load = arg_35_0._num_items_to_load + 1
 end
 
-PlayFabMirrorBase.get_weekly_event_rewards_cb = function (self, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.get_weekly_event_rewards_cb(arg_36_0, arg_36_1)
+	arg_36_0._num_items_to_load = arg_36_0._num_items_to_load - 1
 
-	local function_result = result.FunctionResult
-	local data = function_result.data
+	local var_36_0 = arg_36_1.FunctionResult.data
 
-	if data then
-		self:set_read_only_data("weekly_event_rewards", cjson.encode(data), true)
+	if var_36_0 then
+		arg_36_0:set_read_only_data("weekly_event_rewards", cjson.encode(var_36_0), true)
 	end
 
-	self:_request_fix_inventory_data_1()
+	arg_36_0:_request_fix_inventory_data_1()
 end
 
-PlayFabMirrorBase._request_fix_inventory_data_1 = function (self)
-	local request = {
+function PlayFabMirrorBase._request_fix_inventory_data_1(arg_37_0)
+	local var_37_0 = {
 		FunctionName = "fixInventoryData1",
-		FunctionParameter = {},
+		FunctionParameter = {}
 	}
-	local success_callback = callback(self, "fix_inventory_data_1_request_cb")
+	local var_37_1 = callback(arg_37_0, "fix_inventory_data_1_request_cb")
 
-	self._request_queue:enqueue(request, success_callback)
+	arg_37_0._request_queue:enqueue(var_37_0, var_37_1)
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_37_0._num_items_to_load = arg_37_0._num_items_to_load + 1
 end
 
-PlayFabMirrorBase.fix_inventory_data_1_request_cb = function (self, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.fix_inventory_data_1_request_cb(arg_38_0, arg_38_1)
+	arg_38_0._num_items_to_load = arg_38_0._num_items_to_load - 1
 
-	local function_result = result.FunctionResult
-	local updated_xp_data = function_result and function_result.updated_xp_data
-	local new_read_only_data = function_result and function_result.new_read_only_data
+	local var_38_0 = arg_38_1.FunctionResult
+	local var_38_1 = var_38_0 and var_38_0.updated_xp_data
+	local var_38_2 = var_38_0 and var_38_0.new_read_only_data
 
-	if updated_xp_data then
-		for key, value in pairs(updated_xp_data) do
-			self:set_read_only_data(key, value, true)
+	if var_38_1 then
+		for iter_38_0, iter_38_1 in pairs(var_38_1) do
+			arg_38_0:set_read_only_data(iter_38_0, iter_38_1, true)
 		end
 	end
 
-	if new_read_only_data then
-		for key, value in pairs(new_read_only_data) do
-			self:set_read_only_data(key, value, true)
+	if var_38_2 then
+		for iter_38_2, iter_38_3 in pairs(var_38_2) do
+			arg_38_0:set_read_only_data(iter_38_2, iter_38_3, true)
 
-			if key == "unlocked_weapon_skins" then
-				self._unlocked_weapon_skins = self:_parse_unlocked_weapon_skins()
-			elseif key == "unlocked_cosmetics" then
-				self._unlocked_cosmetics = self:_parse_unlocked_cosmetics()
-			elseif key == "unlocked_weapon_poses" then
-				self._unlocked_weapon_poses = self:_parse_unlocked_weapon_poses()
+			if iter_38_2 == "unlocked_weapon_skins" then
+				arg_38_0._unlocked_weapon_skins = arg_38_0:_parse_unlocked_weapon_skins()
+			elseif iter_38_2 == "unlocked_cosmetics" then
+				arg_38_0._unlocked_cosmetics = arg_38_0:_parse_unlocked_cosmetics()
+			elseif iter_38_2 == "unlocked_weapon_poses" then
+				arg_38_0._unlocked_weapon_poses = arg_38_0:_parse_unlocked_weapon_poses()
 			end
 		end
 	end
 
-	self:_request_fix_inventory_data_2()
+	arg_38_0:_request_fix_inventory_data_2()
 end
 
-PlayFabMirrorBase._request_fix_inventory_data_2 = function (self)
-	local request = {
+function PlayFabMirrorBase._request_fix_inventory_data_2(arg_39_0)
+	local var_39_0 = {
 		FunctionName = "fixInventoryData2",
-		FunctionParameter = {},
+		FunctionParameter = {}
 	}
-	local success_callback = callback(self, "fix_inventory_data_2_request_cb")
+	local var_39_1 = callback(arg_39_0, "fix_inventory_data_2_request_cb")
 
-	self._request_queue:enqueue(request, success_callback)
+	arg_39_0._request_queue:enqueue(var_39_0, var_39_1)
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_39_0._num_items_to_load = arg_39_0._num_items_to_load + 1
 end
 
-PlayFabMirrorBase.fix_inventory_data_2_request_cb = function (self, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.fix_inventory_data_2_request_cb(arg_40_0, arg_40_1)
+	arg_40_0._num_items_to_load = arg_40_0._num_items_to_load - 1
 
-	local function_result = result.FunctionResult
-	local new_magic_level = function_result and function_result.new_magic_level
+	local var_40_0 = arg_40_1.FunctionResult
+	local var_40_1 = var_40_0 and var_40_0.new_magic_level
 
-	if new_magic_level then
-		local progress_json = self:get_read_only_data("weaves_career_progress")
-		local weaves_career_progress = cjson.decode(progress_json)
+	if var_40_1 then
+		local var_40_2 = arg_40_0:get_read_only_data("weaves_career_progress")
+		local var_40_3 = cjson.decode(var_40_2)
 
-		for i = 1, #CAREER_ID_LOOKUP do
-			local career_name = CAREER_ID_LOOKUP[i]
+		for iter_40_0 = 1, #var_0_1 do
+			local var_40_4 = var_0_1[iter_40_0]
 
-			if weaves_career_progress[career_name] then
-				weaves_career_progress[career_name].magic_level = new_magic_level
+			if var_40_3[var_40_4] then
+				var_40_3[var_40_4].magic_level = var_40_1
 			end
 		end
 
-		self:set_read_only_data("weaves_career_progress", cjson.encode(weaves_career_progress), true)
+		arg_40_0:set_read_only_data("weaves_career_progress", cjson.encode(var_40_3), true)
 	end
 
-	self:_handle_fix_data_ids()
+	arg_40_0:_handle_fix_data_ids()
 end
 
-PlayFabMirrorBase._handle_fix_data_ids = function (self)
-	local request = {
+function PlayFabMirrorBase._handle_fix_data_ids(arg_41_0)
+	local var_41_0 = {
 		FunctionName = "handleFixDataIds",
-		FunctionParameter = {},
+		FunctionParameter = {}
 	}
-	local success_callback = callback(self, "handle_fix_data_ids_request_cb")
+	local var_41_1 = callback(arg_41_0, "handle_fix_data_ids_request_cb")
 
-	self._request_queue:enqueue(request, success_callback)
+	arg_41_0._request_queue:enqueue(var_41_0, var_41_1)
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_41_0._num_items_to_load = arg_41_0._num_items_to_load + 1
 end
 
-PlayFabMirrorBase.handle_fix_data_ids_request_cb = function (self, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.handle_fix_data_ids_request_cb(arg_42_0, arg_42_1)
+	arg_42_0._num_items_to_load = arg_42_0._num_items_to_load - 1
 
-	local function_result = result.FunctionResult
-	local is_done, data
+	local var_42_0 = arg_42_1.FunctionResult
+	local var_42_1
+	local var_42_2
 
-	if function_result.done ~= nil then
-		is_done = function_result.done
-		data = function_result.data
+	if var_42_0.done ~= nil then
+		var_42_1 = var_42_0.done
+		var_42_2 = var_42_0.data
 	else
-		is_done = true
-		data = function_result
+		var_42_1 = true
+		var_42_2 = var_42_0
 	end
 
-	local new_user_read_only_data = data.new_user_read_only_data
+	local var_42_3 = var_42_2.new_user_read_only_data
 
-	if new_user_read_only_data then
-		for key, value in pairs(new_user_read_only_data) do
-			if type(value) == "table" then
-				local value_json = cjson.encode(value)
+	if var_42_3 then
+		for iter_42_0, iter_42_1 in pairs(var_42_3) do
+			if type(iter_42_1) == "table" then
+				local var_42_4 = cjson.encode(iter_42_1)
 
-				self:set_read_only_data(key, value_json, true)
-			elseif value == "true" then
-				self:set_read_only_data(key, true, true)
-			elseif value == "false" then
-				self:set_read_only_data(key, false, true)
+				arg_42_0:set_read_only_data(iter_42_0, var_42_4, true)
+			elseif iter_42_1 == "true" then
+				arg_42_0:set_read_only_data(iter_42_0, true, true)
+			elseif iter_42_1 == "false" then
+				arg_42_0:set_read_only_data(iter_42_0, false, true)
 			else
-				self:set_read_only_data(key, tonumber(value) or value, true)
+				arg_42_0:set_read_only_data(iter_42_0, tonumber(iter_42_1) or iter_42_1, true)
 			end
 		end
 	end
 
-	local new_user_data = data.new_user_data
+	local var_42_5 = var_42_2.new_user_data
 
-	if new_user_data then
-		for key, value in pairs(new_user_data) do
-			if type(value) == "table" then
-				local value_json = cjson.encode(value)
+	if var_42_5 then
+		for iter_42_2, iter_42_3 in pairs(var_42_5) do
+			if type(iter_42_3) == "table" then
+				local var_42_6 = cjson.encode(iter_42_3)
 
-				self:set_user_data(key, value_json, true)
-			elseif value == "true" then
-				self:set_user_data(key, true, true)
-			elseif value == "false" then
-				self:set_user_data(key, false, true)
+				arg_42_0:set_user_data(iter_42_2, var_42_6, true)
+			elseif iter_42_3 == "true" then
+				arg_42_0:set_user_data(iter_42_2, true, true)
+			elseif iter_42_3 == "false" then
+				arg_42_0:set_user_data(iter_42_2, false, true)
 			else
-				self:set_user_data(key, tonumber(value) or value, true)
+				arg_42_0:set_user_data(iter_42_2, tonumber(iter_42_3) or iter_42_3, true)
 			end
 		end
 	end
 
-	local new_cosmetics = data.new_cosmetics
+	local var_42_7 = var_42_2.new_cosmetics
 
-	if new_cosmetics then
-		for i = 1, #new_cosmetics do
-			self:add_item(nil, {
-				ItemId = new_cosmetics[i],
+	if var_42_7 then
+		for iter_42_4 = 1, #var_42_7 do
+			arg_42_0:add_item(nil, {
+				ItemId = var_42_7[iter_42_4]
 			})
 		end
 	end
 
-	local new_weapon_poses = data.new_weapon_poses
+	local var_42_8 = var_42_2.new_weapon_poses
 
-	if new_weapon_poses then
-		for i = 1, #new_weapon_poses do
-			self:add_item(nil, {
-				ItemId = new_weapon_poses[i],
+	if var_42_8 then
+		for iter_42_5 = 1, #var_42_8 do
+			arg_42_0:add_item(nil, {
+				ItemId = var_42_8[iter_42_5]
 			})
 		end
 	end
 
-	local new_weapon_skins = data.new_weapon_skins
+	local var_42_9 = var_42_2.new_weapon_skins
 
-	if new_weapon_skins then
-		for i = 1, #new_weapon_skins do
-			local weapon_skin_name = new_weapon_skins[i]
+	if var_42_9 then
+		for iter_42_6 = 1, #var_42_9 do
+			local var_42_10 = var_42_9[iter_42_6]
 
-			self:add_unlocked_weapon_skin(weapon_skin_name)
+			arg_42_0:add_unlocked_weapon_skin(var_42_10)
 		end
 	end
 
-	local new_items = data.new_items
+	local var_42_11 = var_42_2.new_items
 
-	if new_items then
-		for i = 1, #new_items do
-			local item = new_items[i]
+	if var_42_11 then
+		for iter_42_7 = 1, #var_42_11 do
+			local var_42_12 = var_42_11[iter_42_7]
 
-			self:add_item(item.ItemInstanceId, item)
+			arg_42_0:add_item(var_42_12.ItemInstanceId, var_42_12)
 		end
 	end
 
-	local removed_items = data.removed_items
+	local var_42_13 = var_42_2.removed_items
 
-	if removed_items then
-		for i = 1, #removed_items do
-			local item = removed_items[i]
+	if var_42_13 then
+		for iter_42_8 = 1, #var_42_13 do
+			local var_42_14 = var_42_13[iter_42_8]
 
-			self:remove_item(item.ItemInstanceId)
+			arg_42_0:remove_item(var_42_14.ItemInstanceId)
 		end
 	end
 
-	local modified_items = data.modified_items
+	local var_42_15 = var_42_2.modified_items
 
-	if modified_items then
-		for i = 1, #modified_items do
-			local item = modified_items[i]
+	if var_42_15 then
+		for iter_42_9 = 1, #var_42_15 do
+			local var_42_16 = var_42_15[iter_42_9]
 
-			if self._inventory_items and self._inventory_items[item.ItemInstanceId] then
-				self:update_item(item.ItemInstanceId, item)
+			if arg_42_0._inventory_items and arg_42_0._inventory_items[var_42_16.ItemInstanceId] then
+				arg_42_0:update_item(var_42_16.ItemInstanceId, var_42_16)
 			else
-				self:add_item(item.ItemInstanceId, item, false, true)
+				arg_42_0:add_item(var_42_16.ItemInstanceId, var_42_16, false, true)
 			end
 		end
 	end
 
-	if not is_done then
-		self:_handle_fix_data_ids()
+	if not var_42_1 then
+		arg_42_0:_handle_fix_data_ids()
 	else
-		self:_fix_excess_bogenhafen_chests()
+		arg_42_0:_fix_excess_bogenhafen_chests()
 	end
 end
 
-PlayFabMirrorBase._fix_excess_bogenhafen_chests = function (self)
-	local request = {
+function PlayFabMirrorBase._fix_excess_bogenhafen_chests(arg_43_0)
+	local var_43_0 = {
 		FunctionName = "removeExcessBogenhafenChests",
-		FunctionParameter = {},
+		FunctionParameter = {}
 	}
-	local success_callback = callback(self, "_fix_excess_bogenhafen_chests_cb")
+	local var_43_1 = callback(arg_43_0, "_fix_excess_bogenhafen_chests_cb")
 
-	self._request_queue:enqueue(request, success_callback)
+	arg_43_0._request_queue:enqueue(var_43_0, var_43_1)
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_43_0._num_items_to_load = arg_43_0._num_items_to_load + 1
 end
 
-PlayFabMirrorBase._fix_excess_bogenhafen_chests_cb = function (self)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase._fix_excess_bogenhafen_chests_cb(arg_44_0)
+	arg_44_0._num_items_to_load = arg_44_0._num_items_to_load - 1
 
-	self:_fix_excess_duplicate_bogenhafen_cosmetics()
+	arg_44_0:_fix_excess_duplicate_bogenhafen_cosmetics()
 end
 
-PlayFabMirrorBase._fix_excess_duplicate_bogenhafen_cosmetics = function (self)
-	local request = {
+function PlayFabMirrorBase._fix_excess_duplicate_bogenhafen_cosmetics(arg_45_0)
+	local var_45_0 = {
 		FunctionName = "removeDuplicateBogenhafenCosmetics",
-		FunctionParameter = {},
+		FunctionParameter = {}
 	}
-	local success_callback = callback(self, "_fix_excess_duplicate_bogenhafen_cosmetics_cb")
+	local var_45_1 = callback(arg_45_0, "_fix_excess_duplicate_bogenhafen_cosmetics_cb")
 
-	self._request_queue:enqueue(request, success_callback)
+	arg_45_0._request_queue:enqueue(var_45_0, var_45_1)
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_45_0._num_items_to_load = arg_45_0._num_items_to_load + 1
 end
 
-PlayFabMirrorBase._fix_excess_duplicate_bogenhafen_cosmetics_cb = function (self)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase._fix_excess_duplicate_bogenhafen_cosmetics_cb(arg_46_0)
+	arg_46_0._num_items_to_load = arg_46_0._num_items_to_load - 1
 
-	self:_request_read_only_data()
+	arg_46_0:_request_read_only_data()
 end
 
-PlayFabMirrorBase._request_read_only_data = function (self)
-	local request = {
+function PlayFabMirrorBase._request_read_only_data(arg_47_0)
+	local var_47_0 = {
 		FunctionName = "getReadOnlyData",
-		FunctionParameter = {},
+		FunctionParameter = {}
 	}
-	local success_callback = callback(self, "read_only_data_request_cb")
+	local var_47_1 = callback(arg_47_0, "read_only_data_request_cb")
 
-	self._request_queue:enqueue(request, success_callback)
+	arg_47_0._request_queue:enqueue(var_47_0, var_47_1)
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_47_0._num_items_to_load = arg_47_0._num_items_to_load + 1
 end
 
-PlayFabMirrorBase.read_only_data_request_cb = function (self, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.read_only_data_request_cb(arg_48_0, arg_48_1)
+	arg_48_0._num_items_to_load = arg_48_0._num_items_to_load - 1
 
-	local function_result = result.FunctionResult
-	local achievement_rewards = function_result.achievement_rewards
+	local var_48_0 = arg_48_1.FunctionResult
+	local var_48_1 = var_48_0.achievement_rewards
 
-	self._achievement_rewards = cjson.decode(achievement_rewards)
+	arg_48_0._achievement_rewards = cjson.decode(var_48_1)
 
-	local weaves_progression_settings = function_result.weaves_progression_settings
+	local var_48_2 = var_48_0.weaves_progression_settings
 
-	self._weaves_progression_settings = weaves_progression_settings and cjson.decode(weaves_progression_settings) or {}
+	arg_48_0._weaves_progression_settings = var_48_2 and cjson.decode(var_48_2) or {}
 
-	local power_level_data = function_result.power_level_data
+	local var_48_3 = var_48_0.power_level_data
 
-	self._power_level_data = power_level_data and cjson.decode(power_level_data) or {}
+	arg_48_0._power_level_data = var_48_3 and cjson.decode(var_48_3) or {}
 
-	local rarity_tables = function_result.rarity_tables
+	local var_48_4 = var_48_0.rarity_tables
 
-	self._rarity_tables = rarity_tables and cjson.decode(rarity_tables) or {}
+	arg_48_0._rarity_tables = var_48_4 and cjson.decode(var_48_4) or {}
 
-	self:_generate_formatted_rarity_tables(self._rarity_tables)
-	self:_request_user_data()
+	arg_48_0:_generate_formatted_rarity_tables(arg_48_0._rarity_tables)
+	arg_48_0:_request_user_data()
 end
 
-PlayFabMirrorBase._request_user_data = function (self)
-	local request = {}
-	local success_callback = callback(self, "user_data_request_cb")
+function PlayFabMirrorBase._request_user_data(arg_49_0)
+	local var_49_0 = {}
+	local var_49_1 = callback(arg_49_0, "user_data_request_cb")
 
-	self._request_queue:enqueue_api_request("GetUserData", request, success_callback)
+	arg_49_0._request_queue:enqueue_api_request("GetUserData", var_49_0, var_49_1)
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_49_0._num_items_to_load = arg_49_0._num_items_to_load + 1
 end
 
-PlayFabMirrorBase.user_data_request_cb = function (self, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.user_data_request_cb(arg_50_0, arg_50_1)
+	arg_50_0._num_items_to_load = arg_50_0._num_items_to_load - 1
 
-	for key, data in pairs(result.Data) do
-		if key == "unseen_rewards" then
-			local new_unseen_rewards = cjson.decode(data.Value)
-			local unseen_rewards_string = self:get_user_data("unseen_rewards")
-			local existing_unseen_rewards = unseen_rewards_string and cjson.decode(unseen_rewards_string) or {}
-			local is_fake_item = ItemHelper.is_fake_item
+	for iter_50_0, iter_50_1 in pairs(arg_50_1.Data) do
+		if iter_50_0 == "unseen_rewards" then
+			local var_50_0 = cjson.decode(iter_50_1.Value)
+			local var_50_1 = arg_50_0:get_user_data("unseen_rewards")
+			local var_50_2 = var_50_1 and cjson.decode(var_50_1) or {}
+			local var_50_3 = ItemHelper.is_fake_item
 
-			for i = 1, #new_unseen_rewards do
-				local new_reward = new_unseen_rewards[i]
+			for iter_50_2 = 1, #var_50_0 do
+				local var_50_4 = var_50_0[iter_50_2]
 
-				if is_fake_item(new_reward.reward_type) then
-					if not table.find_by_key(existing_unseen_rewards, "item_id", new_reward.item_id) then
-						existing_unseen_rewards[#existing_unseen_rewards + 1] = new_reward
+				if var_50_3(var_50_4.reward_type) then
+					if not table.find_by_key(var_50_2, "item_id", var_50_4.item_id) then
+						var_50_2[#var_50_2 + 1] = var_50_4
 					end
-				elseif not table.find_by_key(existing_unseen_rewards, "backend_id", new_reward.backend_id) then
-					existing_unseen_rewards[#existing_unseen_rewards + 1] = new_reward
+				elseif not table.find_by_key(var_50_2, "backend_id", var_50_4.backend_id) then
+					var_50_2[#var_50_2 + 1] = var_50_4
 				end
 			end
 
-			self:set_user_data(key, cjson.encode(existing_unseen_rewards))
+			arg_50_0:set_user_data(iter_50_0, cjson.encode(var_50_2))
 		else
-			self:set_user_data(key, data.Value, true)
+			arg_50_0:set_user_data(iter_50_0, iter_50_1.Value, true)
 		end
 	end
 
-	self:_request_twitch_app_access_token()
+	arg_50_0:_request_twitch_app_access_token()
 end
 
-PlayFabMirrorBase._request_twitch_app_access_token = function (self)
-	local request = {
+function PlayFabMirrorBase._request_twitch_app_access_token(arg_51_0)
+	local var_51_0 = {
 		FunctionName = "getTwitchAccessToken",
-		FunctionParameter = {},
+		FunctionParameter = {}
 	}
-	local success_callback = callback(self, "_request_twitch_app_access_token_cb")
+	local var_51_1 = callback(arg_51_0, "_request_twitch_app_access_token_cb")
 
-	self._request_queue:enqueue(request, success_callback)
+	arg_51_0._request_queue:enqueue(var_51_0, var_51_1)
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_51_0._num_items_to_load = arg_51_0._num_items_to_load + 1
 end
 
-PlayFabMirrorBase._request_twitch_app_access_token_cb = function (self, result)
-	self._num_items_to_load = self._num_items_to_load - 1
-	self._twitch_app_access_token = false
+function PlayFabMirrorBase._request_twitch_app_access_token_cb(arg_52_0, arg_52_1)
+	arg_52_0._num_items_to_load = arg_52_0._num_items_to_load - 1
+	arg_52_0._twitch_app_access_token = false
 
-	local function_result = result.FunctionResult
+	local var_52_0 = arg_52_1.FunctionResult
 
-	if function_result.success then
-		self._twitch_app_access_token = function_result.access_token
+	if var_52_0.success then
+		arg_52_0._twitch_app_access_token = var_52_0.access_token
 	end
 
-	self:_weaves_player_setup()
+	arg_52_0:_weaves_player_setup()
 end
 
-PlayFabMirrorBase.get_twitch_app_access_token = function (self)
-	return self._twitch_app_access_token
+function PlayFabMirrorBase.get_twitch_app_access_token(arg_53_0)
+	return arg_53_0._twitch_app_access_token
 end
 
-PlayFabMirrorBase._weaves_player_setup = function (self)
-	local request = {
+function PlayFabMirrorBase._weaves_player_setup(arg_54_0)
+	local var_54_0 = {
 		FunctionName = "weavesPlayerSetup",
-		FunctionParameter = {},
+		FunctionParameter = {}
 	}
-	local success_callback = callback(self, "weaves_player_setup_request_cb")
+	local var_54_1 = callback(arg_54_0, "weaves_player_setup_request_cb")
 
-	self._request_queue:enqueue(request, success_callback)
+	arg_54_0._request_queue:enqueue(var_54_0, var_54_1)
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_54_0._num_items_to_load = arg_54_0._num_items_to_load + 1
 end
 
-PlayFabMirrorBase.weaves_player_setup_request_cb = function (self, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.weaves_player_setup_request_cb(arg_55_0, arg_55_1)
+	arg_55_0._num_items_to_load = arg_55_0._num_items_to_load - 1
 
-	local function_result = result.FunctionResult
-	local created = function_result.created
-	local essence = function_result.essence
-	local total_essence = function_result.total_essence
-	local maximum_essence = function_result.maximum_essence
+	local var_55_0 = arg_55_1.FunctionResult
+	local var_55_1 = var_55_0.created
+	local var_55_2 = var_55_0.essence
+	local var_55_3 = var_55_0.total_essence
+	local var_55_4 = var_55_0.maximum_essence
 
-	if created then
-		local new_user_data = function_result.new_user_data
+	if var_55_1 then
+		local var_55_5 = var_55_0.new_user_data
 
-		for key, value in pairs(new_user_data) do
-			self:set_read_only_data(key, value, true)
+		for iter_55_0, iter_55_1 in pairs(var_55_5) do
+			arg_55_0:set_read_only_data(iter_55_0, iter_55_1, true)
 		end
 	end
 
-	self:set_essence(essence)
-	self:set_total_essence(total_essence)
-	self:set_maximum_essence(maximum_essence)
-	self:_fix_total_collected_essence()
+	arg_55_0:set_essence(var_55_2)
+	arg_55_0:set_total_essence(var_55_3)
+	arg_55_0:set_maximum_essence(var_55_4)
+	arg_55_0:_fix_total_collected_essence()
 end
 
-PlayFabMirrorBase._fix_total_collected_essence = function (self)
-	local request = {
+function PlayFabMirrorBase._fix_total_collected_essence(arg_56_0)
+	local var_56_0 = {
 		FunctionName = "fixTotalCollectedEssence",
-		FunctionParameter = {},
+		FunctionParameter = {}
 	}
-	local success_callback = callback(self, "fix_total_collected_essence_cb")
+	local var_56_1 = callback(arg_56_0, "fix_total_collected_essence_cb")
 
-	self._request_queue:enqueue(request, success_callback)
+	arg_56_0._request_queue:enqueue(var_56_0, var_56_1)
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_56_0._num_items_to_load = arg_56_0._num_items_to_load + 1
 end
 
-PlayFabMirrorBase.fix_total_collected_essence_cb = function (self, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.fix_total_collected_essence_cb(arg_57_0, arg_57_1)
+	arg_57_0._num_items_to_load = arg_57_0._num_items_to_load - 1
 
-	local function_result = result.FunctionResult
-	local total_essence = function_result.total_essence
+	local var_57_0 = arg_57_1.FunctionResult.total_essence
 
-	if total_essence then
-		self:set_total_essence(total_essence)
+	if var_57_0 then
+		arg_57_0:set_total_essence(var_57_0)
 	end
 
 	if DLCSettings.win_tracks then
-		self:_request_win_tracks()
+		arg_57_0:_request_win_tracks()
 	elseif DLCSettings.morris then
-		self:_deus_player_setup()
-		self:_deus_setup_belakor_data()
+		arg_57_0:_deus_player_setup()
+		arg_57_0:_deus_setup_belakor_data()
 	else
-		self:_set_up_additional_account_data()
+		arg_57_0:_set_up_additional_account_data()
 	end
 end
 
-PlayFabMirrorBase._request_win_tracks = function (self)
-	local request = {
+function PlayFabMirrorBase._request_win_tracks(arg_58_0)
+	local var_58_0 = {
 		FunctionName = "winTracksSetup",
-		FunctionParameter = {},
+		FunctionParameter = {}
 	}
-	local success_callback = callback(self, "win_tracks_request_cb")
+	local var_58_1 = callback(arg_58_0, "win_tracks_request_cb")
 
-	self._request_queue:enqueue(request, success_callback)
+	arg_58_0._request_queue:enqueue(var_58_0, var_58_1)
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_58_0._num_items_to_load = arg_58_0._num_items_to_load + 1
 end
 
-PlayFabMirrorBase.win_tracks_request_cb = function (self, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.win_tracks_request_cb(arg_59_0, arg_59_1)
+	arg_59_0._num_items_to_load = arg_59_0._num_items_to_load - 1
 
-	local function_result = result.FunctionResult
-	local new_read_only_data = function_result.new_read_only_data
+	local var_59_0 = arg_59_1.FunctionResult
+	local var_59_1 = var_59_0.new_read_only_data
 
-	for key, value in pairs(new_read_only_data) do
-		local value_json = cjson.encode(value)
+	for iter_59_0, iter_59_1 in pairs(var_59_1) do
+		local var_59_2 = cjson.encode(iter_59_1)
 
-		self:set_read_only_data(key, value_json, true)
+		arg_59_0:set_read_only_data(iter_59_0, var_59_2, true)
 	end
 
-	local win_tracks = function_result.win_tracks
-
-	self._win_tracks = win_tracks
-
-	local win_tracks_progress = function_result.new_read_only_data.win_tracks_progress
-
-	self._current_win_track_id = win_tracks_progress.current_win_track_id
+	arg_59_0._win_tracks = var_59_0.win_tracks
+	arg_59_0._current_win_track_id = var_59_0.new_read_only_data.win_tracks_progress.current_win_track_id
 
 	if DLCSettings.morris then
-		self:_deus_player_setup()
-		self:_deus_setup_belakor_data()
+		arg_59_0:_deus_player_setup()
+		arg_59_0:_deus_setup_belakor_data()
 	else
-		self:_set_up_additional_account_data()
+		arg_59_0:_set_up_additional_account_data()
 	end
 end
 
-PlayFabMirrorBase.get_win_tracks = function (self)
-	return self._win_tracks
+function PlayFabMirrorBase.get_win_tracks(arg_60_0)
+	return arg_60_0._win_tracks
 end
 
-PlayFabMirrorBase._deus_player_setup = function (self)
-	local request = {
+function PlayFabMirrorBase._deus_player_setup(arg_61_0)
+	local var_61_0 = {
 		FunctionName = "deusPlayerSetup",
-		FunctionParameter = {},
+		FunctionParameter = {}
 	}
-	local success_callback = callback(self, "deus_player_setup_request_cb")
+	local var_61_1 = callback(arg_61_0, "deus_player_setup_request_cb")
 
-	self._request_queue:enqueue(request, success_callback)
+	arg_61_0._request_queue:enqueue(var_61_0, var_61_1)
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_61_0._num_items_to_load = arg_61_0._num_items_to_load + 1
 end
 
-PlayFabMirrorBase.deus_player_setup_request_cb = function (self, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.deus_player_setup_request_cb(arg_62_0, arg_62_1)
+	arg_62_0._num_items_to_load = arg_62_0._num_items_to_load - 1
 
-	self:handle_deus_result(result)
-	self:_set_up_additional_account_data()
+	arg_62_0:handle_deus_result(arg_62_1)
+	arg_62_0:_set_up_additional_account_data()
 end
 
-PlayFabMirrorBase.deus_refresh_belakor_data = function (self)
-	self:_deus_setup_belakor_data()
+function PlayFabMirrorBase.deus_refresh_belakor_data(arg_63_0)
+	arg_63_0:_deus_setup_belakor_data()
 end
 
-PlayFabMirrorBase.has_loaded_belakor_data = function (self)
-	return self._belakor_data_loaded
+function PlayFabMirrorBase.has_loaded_belakor_data(arg_64_0)
+	return arg_64_0._belakor_data_loaded
 end
 
-PlayFabMirrorBase.set_has_loaded_belakor_data = function (self, value)
-	self._belakor_data_loaded = value
+function PlayFabMirrorBase.set_has_loaded_belakor_data(arg_65_0, arg_65_1)
+	arg_65_0._belakor_data_loaded = arg_65_1
 end
 
-PlayFabMirrorBase._deus_setup_belakor_data = function (self)
-	local request = {
+function PlayFabMirrorBase._deus_setup_belakor_data(arg_66_0)
+	local var_66_0 = {
 		FunctionName = "deusSetBelakorCurse",
-		FunctionParameter = {},
+		FunctionParameter = {}
 	}
-	local success_callback = callback(self, "deus_setup_belakor_data_request_cb")
+	local var_66_1 = callback(arg_66_0, "deus_setup_belakor_data_request_cb")
 
-	self._request_queue:enqueue(request, success_callback)
+	arg_66_0._request_queue:enqueue(var_66_0, var_66_1)
 
-	self._belakor_data_loaded = false
+	arg_66_0._belakor_data_loaded = false
 end
 
-PlayFabMirrorBase.deus_setup_belakor_data_request_cb = function (self, result)
-	self._belakor_data_loaded = true
+function PlayFabMirrorBase.deus_setup_belakor_data_request_cb(arg_67_0, arg_67_1)
+	arg_67_0._belakor_data_loaded = true
 
-	local function_result = result.FunctionResult
-	local deus_belakor_curse_data = function_result.deus_belakor_curse_data
+	local var_67_0 = arg_67_1.FunctionResult.deus_belakor_curse_data
 
-	if deus_belakor_curse_data then
-		local current_time = Managers.time:time("main")
+	if var_67_0 then
+		local var_67_1 = Managers.time:time("main")
 
-		self._deus_belakor_curse_data = {
-			time_of_update = current_time,
-			span = deus_belakor_curse_data.span_ms / 1000,
-			remaining_time = deus_belakor_curse_data.remaining_time_ms / 1000,
-			cycle_count = deus_belakor_curse_data.cycle_count,
+		arg_67_0._deus_belakor_curse_data = {
+			time_of_update = var_67_1,
+			span = var_67_0.span_ms / 1000,
+			remaining_time = var_67_0.remaining_time_ms / 1000,
+			cycle_count = var_67_0.cycle_count
 		}
 	end
 end
 
-PlayFabMirrorBase._set_up_additional_account_data = function (self, steps_completed)
-	local request = {
+function PlayFabMirrorBase._set_up_additional_account_data(arg_68_0, arg_68_1)
+	local var_68_0 = {
 		FunctionName = "additionalAccountDataSetUp",
 		FunctionParameter = {
-			steps_completed = steps_completed,
-		},
+			steps_completed = arg_68_1
+		}
 	}
-	local success_callback = callback(self, "additional_data_setup_request_cb")
+	local var_68_1 = callback(arg_68_0, "additional_data_setup_request_cb")
 
-	self._request_queue:enqueue(request, success_callback)
+	arg_68_0._request_queue:enqueue(var_68_0, var_68_1)
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_68_0._num_items_to_load = arg_68_0._num_items_to_load + 1
 end
 
-PlayFabMirrorBase.additional_data_setup_request_cb = function (self, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.additional_data_setup_request_cb(arg_69_0, arg_69_1)
+	arg_69_0._num_items_to_load = arg_69_0._num_items_to_load - 1
 
-	local function_result = result.FunctionResult
-	local new_read_only_data = function_result.new_user_read_only_data
-	local new_currencies = function_result.new_currencies
+	local var_69_0 = arg_69_1.FunctionResult
+	local var_69_1 = var_69_0.new_user_read_only_data
+	local var_69_2 = var_69_0.new_currencies
 
-	if new_read_only_data then
-		for key, value in pairs(new_read_only_data) do
-			self:set_read_only_data(key, value, true)
+	if var_69_1 then
+		for iter_69_0, iter_69_1 in pairs(var_69_1) do
+			arg_69_0:set_read_only_data(iter_69_0, iter_69_1, true)
 		end
 	end
 
-	if new_currencies then
-		local currency_ui_settings = DLCSettings.store.currency_ui_settings
-		local peddler_interface = Managers.backend:get_interface("peddler")
+	if var_69_2 then
+		local var_69_3 = DLCSettings.store.currency_ui_settings
+		local var_69_4 = Managers.backend:get_interface("peddler")
 
-		for currency_code, amount in pairs(new_currencies) do
-			if currency_code == "ES" then
-				self:set_essence(self._essence + amount)
-			elseif currency_ui_settings[currency_code] ~= nil and peddler_interface then
-				local current_amount = peddler_interface:get_chips(currency_code)
+		for iter_69_2, iter_69_3 in pairs(var_69_2) do
+			if iter_69_2 == "ES" then
+				arg_69_0:set_essence(arg_69_0._essence + iter_69_3)
+			elseif var_69_3[iter_69_2] ~= nil and var_69_4 then
+				local var_69_5 = var_69_4:get_chips(iter_69_2)
 
-				peddler_interface:set_chips(currency_code, current_amount + amount)
+				var_69_4:set_chips(iter_69_2, var_69_5 + iter_69_3)
 			end
 		end
 	end
 
-	local steps_completed = function_result.steps_completed
+	local var_69_6 = var_69_0.steps_completed
 
-	if steps_completed then
-		self:_set_up_additional_account_data(steps_completed)
+	if var_69_6 then
+		arg_69_0:_set_up_additional_account_data(var_69_6)
 	else
-		self:_request_user_inventory()
+		arg_69_0:_request_user_inventory()
 	end
 end
 
-PlayFabMirrorBase._request_user_inventory = function (self)
-	local request = {}
-	local success_callback = callback(self, "inventory_request_cb")
+function PlayFabMirrorBase._request_user_inventory(arg_70_0)
+	local var_70_0 = {}
+	local var_70_1 = callback(arg_70_0, "inventory_request_cb")
 
-	self._request_queue:enqueue_api_request("GetUserInventory", request, success_callback)
+	arg_70_0._request_queue:enqueue_api_request("GetUserInventory", var_70_0, var_70_1)
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_70_0._num_items_to_load = arg_70_0._num_items_to_load + 1
 end
 
-PlayFabMirrorBase.inventory_request_cb = function (self, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.inventory_request_cb(arg_71_0, arg_71_1)
+	arg_71_0._num_items_to_load = arg_71_0._num_items_to_load - 1
 
-	local inventory_items = result.Inventory
-	local unlock_manager = Managers.unlock
+	local var_71_0 = arg_71_1.Inventory
+	local var_71_1 = Managers.unlock
 
-	if self._inventory_items then
-		table.clear(self._inventory_items)
+	if arg_71_0._inventory_items then
+		table.clear(arg_71_0._inventory_items)
 	else
-		self._inventory_items = {}
+		arg_71_0._inventory_items = {}
 	end
 
-	for i = 1, #inventory_items do
-		local item = inventory_items[i]
+	for iter_71_0 = 1, #var_71_0 do
+		local var_71_2 = var_71_0[iter_71_0]
 
-		if not item.BundleContents then
-			if item.ItemId and not rawget(ItemMasterList, item.ItemId) then
-				Crashify.print_exception("PlayFabMirrorBase", "ItemMasterList has no item %q", item.ItemId)
+		if not var_71_2.BundleContents then
+			if var_71_2.ItemId and not rawget(ItemMasterList, var_71_2.ItemId) then
+				Crashify.print_exception("PlayFabMirrorBase", "ItemMasterList has no item %q", var_71_2.ItemId)
 			else
-				local backend_id = item.ItemInstanceId
+				local var_71_3 = var_71_2.ItemInstanceId
 
-				self:_update_data(item, backend_id)
+				arg_71_0:_update_data(var_71_2, var_71_3)
 
-				local filter = false
-				local item_type = item.data.item_type
+				local var_71_4 = false
+				local var_71_5 = var_71_2.data.item_type
 
-				if item_type == "weapon_skin" or CosmeticUtils.is_cosmetic_item(item_type) then
-					filter = true
+				if var_71_5 == "weapon_skin" or CosmeticUtils.is_cosmetic_item(var_71_5) then
+					var_71_4 = true
 				end
 
-				local required_dlc = ItemMasterList[item.ItemId].required_dlc
+				local var_71_6 = ItemMasterList[var_71_2.ItemId].required_dlc
 
-				if required_dlc and not unlock_manager:is_dlc_unlocked(required_dlc) then
-					filter = true
+				if var_71_6 and not var_71_1:is_dlc_unlocked(var_71_6) then
+					var_71_4 = true
 
-					self:_register_dlc_filtered_data(required_dlc, item, backend_id)
+					arg_71_0:_register_dlc_filtered_data(var_71_6, var_71_2, var_71_3)
 				end
 
-				if not filter then
-					self._inventory_items[backend_id] = item
+				if not var_71_4 then
+					arg_71_0._inventory_items[var_71_3] = var_71_2
 				end
 			end
 		end
 	end
 
-	local unlocked_weapon_skins = self:get_unlocked_weapon_skins()
+	local var_71_7 = arg_71_0:get_unlocked_weapon_skins() or {}
+	local var_71_8 = arg_71_0:get_unlocked_cosmetics() or {}
+	local var_71_9 = arg_71_0:get_unlocked_weapon_poses() or {}
 
-	unlocked_weapon_skins = unlocked_weapon_skins or {}
-
-	local unlocked_cosmetics = self:get_unlocked_cosmetics()
-
-	unlocked_cosmetics = unlocked_cosmetics or {}
-
-	local unlocked_weapon_poses = self:get_unlocked_weapon_poses()
-
-	unlocked_weapon_poses = unlocked_weapon_poses or {}
-
-	self:_create_fake_inventory_items(unlocked_weapon_skins, "weapon_skins")
-	self:_create_fake_inventory_items(unlocked_cosmetics, "cosmetics")
-	self:_create_fake_inventory_items(unlocked_weapon_poses, "weapon_poses")
+	arg_71_0:_create_fake_inventory_items(var_71_7, "weapon_skins")
+	arg_71_0:_create_fake_inventory_items(var_71_8, "cosmetics")
+	arg_71_0:_create_fake_inventory_items(var_71_9, "weapon_poses")
 
 	if HAS_STEAM then
-		self:_request_steam_user_inventory()
+		arg_71_0:_request_steam_user_inventory()
 	else
-		self:request_characters()
+		arg_71_0:request_characters()
 	end
 end
 
-PlayFabMirrorBase.update_filtered_dlc_data = function (self)
-	local unlock_manager = Managers.unlock
+function PlayFabMirrorBase.update_filtered_dlc_data(arg_72_0)
+	local var_72_0 = Managers.unlock
 
-	for dlc_name in pairs(self._filtered_data) do
-		if unlock_manager:is_dlc_unlocked(dlc_name) then
-			self:_grant_filtered_data(dlc_name)
+	for iter_72_0 in pairs(arg_72_0._filtered_data) do
+		if var_72_0:is_dlc_unlocked(iter_72_0) then
+			arg_72_0:_grant_filtered_data(iter_72_0)
 		end
 	end
 end
 
-PlayFabMirrorBase._request_steam_user_inventory = function (self)
-	debug_printf("steam item server: requesting user inventory")
+function PlayFabMirrorBase._request_steam_user_inventory(arg_73_0)
+	var_0_6("steam item server: requesting user inventory")
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_73_0._num_items_to_load = arg_73_0._num_items_to_load + 1
 
-	local function callback(result, item_list)
-		if item_list then
-			debug_printf("_request_steam_user_inventory got results")
+	local function var_73_0(arg_74_0, arg_74_1)
+		if arg_74_1 then
+			var_0_6("_request_steam_user_inventory got results")
 		else
-			debug_printf("_request_steam_user_inventory got no results")
+			var_0_6("_request_steam_user_inventory got no results")
 		end
 
-		local request_characters = true
-		local skip_mark_as_new = true
+		local var_74_0 = true
+		local var_74_1 = true
 
-		self:_cb_steam_user_inventory(result, item_list, request_characters, skip_mark_as_new)
+		arg_73_0:_cb_steam_user_inventory(arg_74_0, arg_74_1, var_74_0, var_74_1)
 	end
 
-	Managers.steam:request_user_inventory(callback)
+	Managers.steam:request_user_inventory(var_73_0)
 end
 
-PlayFabMirrorBase.delete_playfab_characters_cb = function (self, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.delete_playfab_characters_cb(arg_75_0, arg_75_1)
+	arg_75_0._num_items_to_load = arg_75_0._num_items_to_load - 1
 
-	self:request_characters()
+	arg_75_0:request_characters()
 end
 
-PlayFabMirrorBase.add_steam_items = function (self, item_list)
-	local result_success = 1
+function PlayFabMirrorBase.add_steam_items(arg_76_0, arg_76_1)
+	local var_76_0 = 1
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_76_0._num_items_to_load = arg_76_0._num_items_to_load + 1
 
-	local skip_mark_as_new = false
+	local var_76_1 = false
 
-	self:_cb_steam_user_inventory(result_success, item_list, false, skip_mark_as_new)
+	arg_76_0:_cb_steam_user_inventory(var_76_0, arg_76_1, false, var_76_1)
 end
 
-PlayFabMirrorBase._cb_steam_user_inventory = function (self, result, item_list, request_characters, skip_mark_as_new)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase._cb_steam_user_inventory(arg_77_0, arg_77_1, arg_77_2, arg_77_3, arg_77_4)
+	arg_77_0._num_items_to_load = arg_77_0._num_items_to_load - 1
 
-	if result == 1 then
-		debug_printf("-> retrieval of steam user inventory, SUCCESS")
+	if arg_77_1 == 1 then
+		var_0_6("-> retrieval of steam user inventory, SUCCESS")
 
-		for i = 1, #item_list, 4 do
-			local steam_itemdefid = item_list[i]
-			local steam_backend_unique_id = item_list[i + 1]
-			local flags = item_list[i + 2]
-			local amount = item_list[i + 3]
-			local item_key = SteamitemdefidToMasterList[steam_itemdefid]
+		for iter_77_0 = 1, #arg_77_2, 4 do
+			local var_77_0 = arg_77_2[iter_77_0]
+			local var_77_1 = arg_77_2[iter_77_0 + 1]
+			local var_77_2 = arg_77_2[iter_77_0 + 2]
+			local var_77_3 = arg_77_2[iter_77_0 + 3]
+			local var_77_4 = SteamitemdefidToMasterList[var_77_0]
 
-			if item_key then
-				local backend_id = steam_backend_unique_id
-				local steam_item = {
-					ItemId = item_key,
-					ItemInstanceId = backend_id,
+			if var_77_4 then
+				local var_77_5 = var_77_1
+				local var_77_6 = {
+					ItemId = var_77_4,
+					ItemInstanceId = var_77_5
 				}
-				local item_data = ItemMasterList[item_key]
+				local var_77_7 = ItemMasterList[var_77_4]
 
-				if (item_data.slot_type == "melee" or item_data.slot_type == "ranged") and (not steam_item.CustomData or not steam_item.CustomData.power_level) then
-					local custom_data = {
+				if (var_77_7.slot_type == "melee" or var_77_7.slot_type == "ranged") and (not var_77_6.CustomData or not var_77_6.CustomData.power_level) then
+					var_77_6.CustomData = {
 						power_level = 5,
-						rarity = item_data.rarity or "default",
+						rarity = var_77_7.rarity or "default"
 					}
-
-					steam_item.CustomData = custom_data
 				end
 
-				self:add_item(backend_id, steam_item, true, skip_mark_as_new)
-				debug_printf("Steam Item: %q, %q, %q, %q, %q", item_key, steam_itemdefid, steam_backend_unique_id, flags, amount)
+				arg_77_0:add_item(var_77_5, var_77_6, true, arg_77_4)
+				var_0_6("Steam Item: %q, %q, %q, %q, %q", var_77_4, var_77_0, var_77_1, var_77_2, var_77_3)
 			end
 		end
 	else
-		debug_printf("ERROR could not retrieve get steam user inventory. result-code: %q", result)
+		var_0_6("ERROR could not retrieve get steam user inventory. result-code: %q", arg_77_1)
 	end
 
-	if request_characters then
-		self:request_characters()
+	if arg_77_3 then
+		arg_77_0:request_characters()
 	end
 end
 
-PlayFabMirrorBase._set_inital_career_data = function (self, career_name, character_data, slots_to_verify)
-	if not slots_to_verify then
+function PlayFabMirrorBase._set_inital_career_data(arg_78_0, arg_78_1, arg_78_2, arg_78_3)
+	if not arg_78_3 then
 		return
 	end
 
-	local career_data = self._career_data[career_name]
-	local career_data_mirror = self._career_data_mirror[career_name]
-	local broken_loadout_slots = {}
+	local var_78_0 = arg_78_0._career_data[arg_78_1]
+	local var_78_1 = arg_78_0._career_data_mirror[arg_78_1]
+	local var_78_2 = {}
 
-	table.clear(career_data)
-	table.clear(career_data_mirror)
+	table.clear(var_78_0)
+	table.clear(var_78_1)
 
-	for i = 1, #character_data do
-		local loadout = character_data[i]
-		local broken_slots = {}
+	for iter_78_0 = 1, #arg_78_2 do
+		local var_78_3 = arg_78_2[iter_78_0]
+		local var_78_4 = {}
 
-		for j = 1, #slots_to_verify do
-			local slot_name = slots_to_verify[j]
-			local slot_data = loadout[slot_name]
-			local slot_item_value = type(slot_data) == "table" and slot_data.Value or slot_data
+		for iter_78_1 = 1, #arg_78_3 do
+			local var_78_5 = arg_78_3[iter_78_1]
+			local var_78_6 = var_78_3[var_78_5]
+			local var_78_7 = type(var_78_6) == "table" and var_78_6.Value or var_78_6
 
-			if not slot_item_value then
-				broken_slots[slot_name] = true
-			elseif CosmeticUtils.is_cosmetic_slot(slot_name) then
-				local cosmetic = self._unlocked_cosmetics[slot_item_value]
-
-				if not cosmetic then
-					broken_slots[slot_name] = true
+			if not var_78_7 then
+				var_78_4[var_78_5] = true
+			elseif CosmeticUtils.is_cosmetic_slot(var_78_5) then
+				if not arg_78_0._unlocked_cosmetics[var_78_7] then
+					var_78_4[var_78_5] = true
 				end
-			elseif slot_name == "slot_pose" then
-				local item = ItemMasterList[slot_item_value]
-				local parent = item.parent
-				local pose = self._unlocked_weapon_poses[parent] and self._unlocked_weapon_poses[parent][slot_item_value]
+			elseif var_78_5 == "slot_pose" then
+				local var_78_8 = ItemMasterList[var_78_7].parent
 
-				if not pose then
-					broken_slots[slot_name] = true
+				if not (arg_78_0._unlocked_weapon_poses[var_78_8] and arg_78_0._unlocked_weapon_poses[var_78_8][var_78_7]) then
+					var_78_4[var_78_5] = true
 				end
 			else
-				local item = self._inventory_items[slot_item_value]
+				local var_78_9 = arg_78_0._inventory_items[var_78_7]
 
-				if item then
-					local mechanism_name = Managers.mechanism:current_mechanism_name()
+				if var_78_9 then
+					if Managers.mechanism:current_mechanism_name() == "versus" then
+						local var_78_10 = var_78_9.CustomData
 
-					if mechanism_name == "versus" then
-						local custom_data = item.CustomData
-						local rarity = custom_data and custom_data.rarity
-
-						if rarity ~= "default" then
-							broken_slots[slot_name] = true
+						if (var_78_10 and var_78_10.rarity) ~= "default" then
+							var_78_4[var_78_5] = true
 						end
 					end
 				else
-					broken_slots[slot_name] = true
+					var_78_4[var_78_5] = true
 				end
 			end
 		end
 
-		self:_verify_items_are_usable(broken_slots, loadout, career_name, slots_to_verify)
+		arg_78_0:_verify_items_are_usable(var_78_4, var_78_3, arg_78_1, arg_78_3)
 
-		local loadout_career_data = {}
-		local loadout_career_mirror_data = {}
+		local var_78_11 = {}
+		local var_78_12 = {}
 
-		for key, data in pairs(loadout) do
-			local value = type(data) == "table" and data.Value or data
+		for iter_78_2, iter_78_3 in pairs(var_78_3) do
+			local var_78_13 = type(iter_78_3) == "table" and iter_78_3.Value or iter_78_3
 
-			loadout_career_data[key] = value
-			loadout_career_mirror_data[key] = value
+			var_78_11[iter_78_2] = var_78_13
+			var_78_12[iter_78_2] = var_78_13
 		end
 
-		career_data[i] = loadout_career_data
-		career_data_mirror[i] = loadout_career_mirror_data
+		var_78_0[iter_78_0] = var_78_11
+		var_78_1[iter_78_0] = var_78_12
 
-		if table.size(broken_slots) > 0 then
-			broken_loadout_slots[tostring(i)] = broken_slots
+		if table.size(var_78_4) > 0 then
+			var_78_2[tostring(iter_78_0)] = var_78_4
 		end
 	end
 
-	if table.size(broken_loadout_slots) > 0 then
-		return broken_loadout_slots
+	if table.size(var_78_2) > 0 then
+		return var_78_2
 	end
 end
 
-PlayFabMirrorBase._verify_items_are_usable = function (self, broken_slots, character_data, career_name, slots_to_verify)
-	local career_settings = CareerSettings[career_name]
+function PlayFabMirrorBase._verify_items_are_usable(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4)
+	local var_79_0 = CareerSettings[arg_79_3]
 
-	if not career_settings then
-		debug_printf("Tried to verify items of career that doesn't exist: %q", career_name)
+	if not var_79_0 then
+		var_0_6("Tried to verify items of career that doesn't exist: %q", arg_79_3)
 
 		return
 	end
 
-	local item_slot_types_by_slot_name = career_settings.item_slot_types_by_slot_name
+	local var_79_1 = var_79_0.item_slot_types_by_slot_name
 
-	for i = 1, #slots_to_verify do
-		local slot_name = slots_to_verify[i]
+	for iter_79_0 = 1, #arg_79_4 do
+		local var_79_2 = arg_79_4[iter_79_0]
 
-		if not broken_slots[slot_name] then
-			local slot_data = character_data[slot_name]
-			local value = type(slot_data) == "table" and slot_data.Value or slot_data
+		if not arg_79_1[var_79_2] then
+			local var_79_3 = arg_79_2[var_79_2]
+			local var_79_4 = type(var_79_3) == "table" and var_79_3.Value or var_79_3
 
-			if value then
-				local item = self._inventory_items[value]
+			if var_79_4 then
+				local var_79_5 = arg_79_0._inventory_items[var_79_4]
 
-				if CosmeticUtils.is_cosmetic_slot(slot_name) then
-					local backend_id = self._unlocked_cosmetics[value]
+				if CosmeticUtils.is_cosmetic_slot(var_79_2) then
+					local var_79_6 = arg_79_0._unlocked_cosmetics[var_79_4]
 
-					if backend_id then
-						item = self._inventory_items[backend_id]
+					if var_79_6 then
+						var_79_5 = arg_79_0._inventory_items[var_79_6]
 					end
 				end
 
-				if slot_name == "slot_pose" then
-					local masterlist_item = ItemMasterList[value]
-					local parent_name = masterlist_item.parent
-					local backend_id = self._unlocked_weapon_poses[parent_name][value]
+				if var_79_2 == "slot_pose" then
+					local var_79_7 = ItemMasterList[var_79_4].parent
+					local var_79_8 = arg_79_0._unlocked_weapon_poses[var_79_7][var_79_4]
 
-					if backend_id then
-						item = self._inventory_items[backend_id]
+					if var_79_8 then
+						var_79_5 = arg_79_0._inventory_items[var_79_8]
 					end
 				end
 
-				if item then
-					local item_data = item.data
-					local can_wield = item_data.can_wield
+				if var_79_5 then
+					local var_79_9 = var_79_5.data
+					local var_79_10 = var_79_9.can_wield
 
-					if not table.contains(can_wield, career_name) then
-						broken_slots[slot_name] = true
+					if not table.contains(var_79_10, arg_79_3) then
+						arg_79_1[var_79_2] = true
 					end
 
-					local accepted_slot_types = item_slot_types_by_slot_name[slot_name]
-					local item_slot_type = item_data.slot_type
-					local item_rarity = item_data.rarity
+					local var_79_11 = var_79_1[var_79_2]
+					local var_79_12 = var_79_9.slot_type
+					local var_79_13 = var_79_9.rarity
 
-					if not table.contains(accepted_slot_types, item_slot_type) or item_rarity == "magic" then
-						broken_slots[slot_name] = true
+					if not table.contains(var_79_11, var_79_12) or var_79_13 == "magic" then
+						arg_79_1[var_79_2] = true
 					end
 				else
-					broken_slots[slot_name] = true
+					arg_79_1[var_79_2] = true
 				end
 			end
 		end
 	end
 end
 
-PlayFabMirrorBase._update_data = function (self, item, backend_id)
-	local custom_data = item.CustomData
+function PlayFabMirrorBase._update_data(arg_80_0, arg_80_1, arg_80_2)
+	local var_80_0 = arg_80_1.CustomData
 
-	if custom_data then
-		local properites_string = custom_data.properties
+	if var_80_0 then
+		local var_80_1 = var_80_0.properties
 
-		if properites_string then
-			item.properties = cjson.decode(properites_string)
+		if var_80_1 then
+			arg_80_1.properties = cjson.decode(var_80_1)
 		end
 
-		local traits_string = custom_data.traits
+		local var_80_2 = var_80_0.traits
 
-		if traits_string then
-			item.traits = cjson.decode(traits_string)
+		if var_80_2 then
+			arg_80_1.traits = cjson.decode(var_80_2)
 		end
 
-		local power_level = custom_data.power_level
+		local var_80_3 = var_80_0.power_level
 
-		if power_level then
-			item.power_level = tonumber(power_level)
+		if var_80_3 then
+			arg_80_1.power_level = tonumber(var_80_3)
 		end
 
-		local rarity = custom_data.rarity
+		local var_80_4 = var_80_0.rarity
 
-		if rarity then
-			item.rarity = rarity
+		if var_80_4 then
+			arg_80_1.rarity = var_80_4
 		end
 
-		local skin = custom_data.skin
+		local var_80_5 = var_80_0.skin
 
-		if skin then
-			item.skin = skin
+		if var_80_5 then
+			arg_80_1.skin = var_80_5
 		end
 
-		local level_key = custom_data.level_key
+		local var_80_6 = var_80_0.level_key
 
-		if level_key then
-			item.level_key = level_key
+		if var_80_6 then
+			arg_80_1.level_key = var_80_6
 		end
 
-		local difficulty = custom_data.difficulty
+		local var_80_7 = var_80_0.difficulty
 
-		if difficulty then
-			item.difficulty = difficulty
+		if var_80_7 then
+			arg_80_1.difficulty = var_80_7
 		end
 
-		local magic_level = custom_data.magic_level
+		local var_80_8 = var_80_0.magic_level
 
-		if magic_level then
-			item.magic_level = tonumber(magic_level)
-			item.power_level = WeaveUtils.magic_level_to_power_level(item.magic_level)
+		if var_80_8 then
+			arg_80_1.magic_level = tonumber(var_80_8)
+			arg_80_1.power_level = WeaveUtils.magic_level_to_power_level(arg_80_1.magic_level)
 		end
 	end
 
-	local item_key = item.ItemId
-	local data = ItemMasterList[item_key]
+	local var_80_9 = arg_80_1.ItemId
+	local var_80_10 = ItemMasterList[var_80_9]
 
-	if not item.rarity then
-		item.rarity = data.rarity
+	if not arg_80_1.rarity then
+		arg_80_1.rarity = var_80_10.rarity
 	end
 
-	item.backend_id = backend_id
-	item.key = item_key
-	item.data = data
+	arg_80_1.backend_id = arg_80_2
+	arg_80_1.key = var_80_9
+	arg_80_1.data = var_80_10
 end
 
-PlayFabMirrorBase.ready = function (self)
-	return self._inventory_items and self._num_items_to_load == 0
+function PlayFabMirrorBase.ready(arg_81_0)
+	return arg_81_0._inventory_items and arg_81_0._num_items_to_load == 0
 end
 
-PlayFabMirrorBase.current_api_call = function (self)
-	if not self._request_queue then
+function PlayFabMirrorBase.current_api_call(arg_82_0)
+	if not arg_82_0._request_queue then
 		return
 	end
 
-	return self._request_queue:current_api_call()
+	return arg_82_0._request_queue:current_api_call()
 end
 
-PlayFabMirrorBase.update = function (self, dt, t)
-	local error_code, request_id
+function PlayFabMirrorBase.update(arg_83_0, arg_83_1, arg_83_2)
+	local var_83_0
+	local var_83_1
 
-	if self._request_queue_error then
+	if arg_83_0._request_queue_error then
 		return
 	else
-		error_code, request_id = self._request_queue:update(dt, t)
+		local var_83_2
+
+		var_83_0, var_83_2 = arg_83_0._request_queue:update(arg_83_1, arg_83_2)
 	end
 
-	if error_code then
-		self._request_queue_error = error_code
+	if var_83_0 then
+		arg_83_0._request_queue_error = var_83_0
 
-		if error_code == "request_timed_out" then
+		if var_83_0 == "request_timed_out" then
 			Managers.backend:request_timeout()
 		end
 
 		return
 	end
 
-	if self._commit_current_id then
-		self:_check_current_commit()
+	if arg_83_0._commit_current_id then
+		arg_83_0:_check_current_commit()
 	end
 
-	local queued_commit = self._queued_commit
+	local var_83_3 = arg_83_0._queued_commit
 
-	if queued_commit.active then
-		queued_commit.timer = queued_commit.timer - dt
+	if var_83_3.active then
+		var_83_3.timer = var_83_3.timer - arg_83_1
 
-		if queued_commit.timer <= 0 and not self._commit_current_id and not Managers.account:user_detached() and LobbyInternal.network_initialized() then
-			self:_commit_internal(queued_commit.id, queued_commit.commit_complete_callbacks)
+		if var_83_3.timer <= 0 and not arg_83_0._commit_current_id and not Managers.account:user_detached() and LobbyInternal.network_initialized() then
+			arg_83_0:_commit_internal(var_83_3.id, var_83_3.commit_complete_callbacks)
 		end
 	end
 
-	self._commit_limit_timer = self._commit_limit_timer - dt
+	arg_83_0._commit_limit_timer = arg_83_0._commit_limit_timer - arg_83_1
 
-	if self._commit_limit_timer <= 0 then
-		self._commit_limit_timer = REDUCTION_INTERVAL
-		self._commit_limit_total = math.max(self._commit_limit_total - 1, 1)
+	if arg_83_0._commit_limit_timer <= 0 then
+		arg_83_0._commit_limit_timer = var_0_3
+		arg_83_0._commit_limit_total = math.max(arg_83_0._commit_limit_total - 1, 1)
 	end
 end
 
-PlayFabMirrorBase._check_current_commit = function (self)
-	local status = self:_commit_status()
+function PlayFabMirrorBase._check_current_commit(arg_84_0)
+	local var_84_0 = arg_84_0:_commit_status()
 
-	if status ~= "waiting" then
-		local commit_current_id = self._commit_current_id
-		local commit_data = self._commits[commit_current_id]
+	if var_84_0 ~= "waiting" then
+		local var_84_1 = arg_84_0._commit_current_id
+		local var_84_2 = arg_84_0._commits[var_84_1]
 
-		debug_printf("commit result %q, %q", status, commit_current_id)
+		var_0_6("commit result %q, %q", var_84_0, var_84_1)
 
-		self._commit_current_id = nil
+		arg_84_0._commit_current_id = nil
 
-		if status == "commit_error" then
-			self._commit_error = true
+		if var_84_0 == "commit_error" then
+			arg_84_0._commit_error = true
 		else
-			local backend_manager = Managers.backend
-
-			backend_manager:dirtify_interfaces()
+			Managers.backend:dirtify_interfaces()
 		end
 
-		if commit_data.commit_complete_callbacks then
-			for i = 1, #commit_data.commit_complete_callbacks do
-				commit_data.commit_complete_callbacks[i](status)
+		if var_84_2.commit_complete_callbacks then
+			for iter_84_0 = 1, #var_84_2.commit_complete_callbacks do
+				var_84_2.commit_complete_callbacks[iter_84_0](var_84_0)
 			end
 		end
 
-		self._commits[commit_current_id] = nil
+		arg_84_0._commits[var_84_1] = nil
 	end
 end
 
-PlayFabMirrorBase._commit_status = function (self)
-	local commit_current_id = self._commit_current_id
+function PlayFabMirrorBase._commit_status(arg_85_0)
+	local var_85_0 = arg_85_0._commit_current_id
 
-	fassert(commit_current_id, "Querying status for commit_current_id %s", tostring(commit_current_id))
+	fassert(var_85_0, "Querying status for commit_current_id %s", tostring(var_85_0))
 
-	local commit_data = self._commits[commit_current_id]
+	local var_85_1 = arg_85_0._commits[var_85_0]
 
-	fassert(commit_data, "No commit with id %d", commit_current_id)
+	fassert(var_85_1, "No commit with id %d", var_85_0)
 
-	if commit_data.status == "commit_error" then
+	if var_85_1.status == "commit_error" then
 		return "commit_error"
-	elseif commit_data.num_updates == commit_data.updates_to_make and not commit_data.wait_for_stats and not commit_data.wait_for_weave_user_data and not commit_data.wait_for_keep_decorations and not commit_data.wait_for_user_data and not commit_data.wait_for_read_only_data and not commit_data.wait_for_win_tracks_data and not commit_data.wait_for_gotwf_data and not commit_data.wait_for_weapon_pose_skin_data then
+	elseif var_85_1.num_updates == var_85_1.updates_to_make and not var_85_1.wait_for_stats and not var_85_1.wait_for_weave_user_data and not var_85_1.wait_for_keep_decorations and not var_85_1.wait_for_user_data and not var_85_1.wait_for_read_only_data and not var_85_1.wait_for_win_tracks_data and not var_85_1.wait_for_gotwf_data and not var_85_1.wait_for_weapon_pose_skin_data then
 		if IS_CONSOLE and not Managers.account:offline_mode() then
-			PlayfabBackendSaveDataUtils.store_online_data(self)
+			PlayfabBackendSaveDataUtils.store_online_data(arg_85_0)
 		end
 
 		return "success"
 	end
 
-	return commit_data.status
+	return var_85_1.status
 end
 
-PlayFabMirrorBase.get_current_commit_id = function (self)
-	return self._commit_current_id
+function PlayFabMirrorBase.get_current_commit_id(arg_86_0)
+	return arg_86_0._commit_current_id
 end
 
-PlayFabMirrorBase.have_queued_commit = function (self)
-	return not table.is_empty(self._queued_commit)
+function PlayFabMirrorBase.have_queued_commit(arg_87_0)
+	return not table.is_empty(arg_87_0._queued_commit)
 end
 
-PlayFabMirrorBase.request_queue = function (self)
-	return self._request_queue
+function PlayFabMirrorBase.request_queue(arg_88_0)
+	return arg_88_0._request_queue
 end
 
-PlayFabMirrorBase.get_playfab_id = function (self)
-	return self._playfab_id
+function PlayFabMirrorBase.get_playfab_id(arg_89_0)
+	return arg_89_0._playfab_id
 end
 
-PlayFabMirrorBase.get_character_data = function (self, career_name, key, optional_loadout_index)
-	local career_data = self._career_data
-	local career_loadout_index = optional_loadout_index or self._career_loadouts[career_name]
-	local loadout_career_data = career_data[career_name] and career_data[career_name][career_loadout_index]
+function PlayFabMirrorBase.get_character_data(arg_90_0, arg_90_1, arg_90_2, arg_90_3)
+	local var_90_0 = arg_90_0._career_data
+	local var_90_1 = arg_90_3 or arg_90_0._career_loadouts[arg_90_1]
+	local var_90_2 = var_90_0[arg_90_1] and var_90_0[arg_90_1][var_90_1]
 
-	if loadout_career_data ~= nil then
-		return loadout_career_data[key]
+	if var_90_2 ~= nil then
+		return var_90_2[arg_90_2]
 	end
 
 	return nil
 end
 
-PlayFabMirrorBase.has_loadout = function (self, career_name, loadout_index)
-	local career_data = self._career_data
-	local loadout_career_data = career_data[career_name] and career_data[career_name][loadout_index]
+function PlayFabMirrorBase.has_loadout(arg_91_0, arg_91_1, arg_91_2)
+	local var_91_0 = arg_91_0._career_data
 
-	return loadout_career_data ~= nil
+	return (var_91_0[arg_91_1] and var_91_0[arg_91_1][arg_91_2]) ~= nil
 end
 
-PlayFabMirrorBase.set_character_data = function (self, career_name, key, value, set_mirror, optional_loadout_index)
-	local career_data = self._career_data[career_name]
-	local career_loadout_index = optional_loadout_index or self._career_loadouts[career_name]
-	local loadout_career_data = career_data[career_loadout_index]
+function PlayFabMirrorBase.set_character_data(arg_92_0, arg_92_1, arg_92_2, arg_92_3, arg_92_4, arg_92_5)
+	local var_92_0 = arg_92_0._career_data[arg_92_1]
+	local var_92_1 = arg_92_5 or arg_92_0._career_loadouts[arg_92_1]
 
-	loadout_career_data[key] = value
+	var_92_0[var_92_1][arg_92_2] = arg_92_3
 
-	if set_mirror then
-		self._career_data_mirror[career_name][career_loadout_index][key] = value
+	if arg_92_4 then
+		arg_92_0._career_data_mirror[arg_92_1][var_92_1][arg_92_2] = arg_92_3
 	end
 
-	local character_name = PROFILES_BY_CAREER_NAMES[career_name].display_name
+	local var_92_2 = PROFILES_BY_CAREER_NAMES[arg_92_1].display_name
 
-	self:set_career_read_only_data(character_name, key, value, career_name, set_mirror, career_loadout_index)
+	arg_92_0:set_career_read_only_data(var_92_2, arg_92_2, arg_92_3, arg_92_1, arg_92_4, var_92_1)
 end
 
-PlayFabMirrorBase.get_career_loadouts = function (self, career_name)
-	if not career_name then
+function PlayFabMirrorBase.get_career_loadouts(arg_93_0, arg_93_1)
+	if not arg_93_1 then
 		return nil
 	end
 
-	local career_data = self._career_data[career_name]
-	local selected_loadout = self._career_loadouts[career_name]
+	local var_93_0 = arg_93_0._career_data[arg_93_1]
 
-	return selected_loadout, career_data
+	return arg_93_0._career_loadouts[arg_93_1], var_93_0
 end
 
-PlayFabMirrorBase.get_default_loadouts = function (self, career_name)
-	local mechanism_name = Managers.mechanism:current_mechanism_name()
+function PlayFabMirrorBase.get_default_loadouts(arg_94_0, arg_94_1)
+	local var_94_0 = Managers.mechanism:current_mechanism_name()
 
-	if not career_name or not mechanism_name then
+	if not arg_94_1 or not var_94_0 then
 		return nil
 	end
 
-	local default_loadouts = self._character_default_loadouts[mechanism_name] or self._character_default_loadouts.adventure
-	local career_default_loadouts = default_loadouts[career_name]
-
-	return career_default_loadouts
+	return (arg_94_0._character_default_loadouts[var_94_0] or arg_94_0._character_default_loadouts.adventure)[arg_94_1]
 end
 
-PlayFabMirrorBase.set_loadout_index = function (self, career_name, loadout_index)
-	if not career_name or not loadout_index then
+function PlayFabMirrorBase.set_loadout_index(arg_95_0, arg_95_1, arg_95_2)
+	if not arg_95_1 or not arg_95_2 then
 		return
 	end
 
-	local career_data = self._career_data[career_name]
+	if arg_95_0._career_data[arg_95_1][arg_95_2] then
+		arg_95_0._career_loadouts[arg_95_1] = arg_95_2
 
-	if career_data[loadout_index] then
-		self._career_loadouts[career_name] = loadout_index
+		local var_95_0 = PROFILES_BY_CAREER_NAMES[arg_95_1]
+		local var_95_1 = var_95_0.index
+		local var_95_2 = var_95_0.display_name
+		local var_95_3 = career_index_from_name(var_95_1, arg_95_1)
+		local var_95_4 = arg_95_0._characters_data
 
-		local profile = PROFILES_BY_CAREER_NAMES[career_name]
-		local profile_index = profile.index
-		local profile_name = profile.display_name
-		local career_index = career_index_from_name(profile_index, career_name)
-		local characters_data = self._characters_data
-		local character_data = characters_data[profile_name]
+		var_95_4[var_95_2].loadouts[var_95_3] = arg_95_2
 
-		character_data.loadouts[career_index] = loadout_index
+		local var_95_5 = cjson.encode(var_95_4)
 
-		local encoded_data = cjson.encode(characters_data)
-
-		self:set_read_only_data(self._characters_data_key, encoded_data, false)
+		arg_95_0:set_read_only_data(arg_95_0._characters_data_key, var_95_5, false)
 		Managers.backend:dirtify_interfaces()
 	end
 end
 
-PlayFabMirrorBase.delete_loadout = function (self, career_name, loadout_index)
-	if not career_name or not loadout_index then
+function PlayFabMirrorBase.delete_loadout(arg_96_0, arg_96_1, arg_96_2)
+	if not arg_96_1 or not arg_96_2 then
 		return
 	end
 
-	local selected_loadout_index, loadouts = self:get_career_loadouts(career_name)
+	local var_96_0, var_96_1 = arg_96_0:get_career_loadouts(arg_96_1)
 
-	if loadout_index > #loadouts then
+	if arg_96_2 > #var_96_1 then
 		return
 	end
 
-	if #loadouts == 1 then
+	if #var_96_1 == 1 then
 		return
 	end
 
-	local profile = PROFILES_BY_CAREER_NAMES[career_name]
-	local profile_index = profile.index
-	local profile_name = profile.display_name
-	local career_index = career_index_from_name(profile_index, career_name)
-	local characters_data = self._characters_data
-	local character_data = characters_data[profile_name]
-	local career_data = character_data.careers[career_name]
+	local var_96_2 = PROFILES_BY_CAREER_NAMES[arg_96_1]
+	local var_96_3 = var_96_2.index
+	local var_96_4 = var_96_2.display_name
+	local var_96_5 = career_index_from_name(var_96_3, arg_96_1)
+	local var_96_6 = arg_96_0._characters_data
+	local var_96_7 = var_96_6[var_96_4]
+	local var_96_8 = var_96_7.careers[arg_96_1]
 
-	table.remove(career_data, loadout_index)
-	table.remove(loadouts, loadout_index)
+	table.remove(var_96_8, arg_96_2)
+	table.remove(var_96_1, arg_96_2)
 
-	if loadout_index == selected_loadout_index then
-		self._career_loadouts[career_name] = 1
-		character_data.loadouts[career_index] = 1
+	if arg_96_2 == var_96_0 then
+		arg_96_0._career_loadouts[arg_96_1] = 1
+		var_96_7.loadouts[var_96_5] = 1
 	else
-		local new_loadout_index = math.clamp(selected_loadout_index, 1, #loadouts)
+		local var_96_9 = math.clamp(var_96_0, 1, #var_96_1)
 
-		self._career_loadouts[career_name] = new_loadout_index
-		character_data.loadouts[career_index] = new_loadout_index
+		arg_96_0._career_loadouts[arg_96_1] = var_96_9
+		var_96_7.loadouts[var_96_5] = var_96_9
 	end
 
-	local encoded_data = cjson.encode(characters_data)
+	local var_96_10 = cjson.encode(var_96_6)
 
-	self:set_read_only_data(self._characters_data_key, encoded_data, false)
+	arg_96_0:set_read_only_data(arg_96_0._characters_data_key, var_96_10, false)
 	Managers.backend:dirtify_interfaces()
 end
 
-PlayFabMirrorBase.add_loadout = function (self, career_name)
-	if not career_name then
+function PlayFabMirrorBase.add_loadout(arg_97_0, arg_97_1)
+	if not arg_97_1 then
 		return
 	end
 
-	local selected_loadout_index, loadouts = self:get_career_loadouts(career_name)
-	local current_loadout = loadouts[selected_loadout_index]
-	local num_loadouts = #loadouts
+	local var_97_0, var_97_1 = arg_97_0:get_career_loadouts(arg_97_1)
+	local var_97_2 = var_97_1[var_97_0]
 
-	if num_loadouts < InventorySettings.MAX_NUM_CUSTOM_LOADOUTS then
-		local profile = PROFILES_BY_CAREER_NAMES[career_name]
-		local profile_index = profile.index
-		local profile_name = profile.display_name
-		local career_index = career_index_from_name(profile_index, career_name)
-		local new_selected_loadut_index = selected_loadout_index + 1
-		local new_loadout = table.clone(current_loadout)
+	if #var_97_1 < InventorySettings.MAX_NUM_CUSTOM_LOADOUTS then
+		local var_97_3 = PROFILES_BY_CAREER_NAMES[arg_97_1]
+		local var_97_4 = var_97_3.index
+		local var_97_5 = var_97_3.display_name
+		local var_97_6 = career_index_from_name(var_97_4, arg_97_1)
+		local var_97_7 = var_97_0 + 1
+		local var_97_8 = table.clone(var_97_2)
 
-		loadouts[#loadouts + 1] = new_loadout
-		self._career_loadouts[career_name] = new_selected_loadut_index
+		var_97_1[#var_97_1 + 1] = var_97_8
+		arg_97_0._career_loadouts[arg_97_1] = var_97_7
 
-		local characters_data = self._characters_data
-		local character_data = characters_data[profile_name]
-		local career_data = character_data.careers[career_name]
+		local var_97_9 = arg_97_0._characters_data
+		local var_97_10 = var_97_9[var_97_5]
+		local var_97_11 = var_97_10.careers[arg_97_1]
 
-		career_data[#career_data + 1] = table.clone(new_loadout)
-		character_data.loadouts[career_index] = new_selected_loadut_index
+		var_97_11[#var_97_11 + 1] = table.clone(var_97_8)
+		var_97_10.loadouts[var_97_6] = var_97_7
 
-		local encoded_data = cjson.encode(characters_data)
+		local var_97_12 = cjson.encode(var_97_9)
 
-		self:set_read_only_data(self._characters_data_key, encoded_data, false)
+		arg_97_0:set_read_only_data(arg_97_0._characters_data_key, var_97_12, false)
 		Managers.backend:dirtify_interfaces()
 	end
 end
 
-PlayFabMirrorBase.get_title_data = function (self)
-	return self._title_data
+function PlayFabMirrorBase.get_title_data(arg_98_0)
+	return arg_98_0._title_data
 end
 
-PlayFabMirrorBase.set_title_data = function (self, key, value)
-	if tonumber(value) then
-		value = tonumber(value)
+function PlayFabMirrorBase.set_title_data(arg_99_0, arg_99_1, arg_99_2)
+	if tonumber(arg_99_2) then
+		arg_99_2 = tonumber(arg_99_2)
 	end
 
-	self._title_data[key] = value
+	arg_99_0._title_data[arg_99_1] = arg_99_2
 end
 
-PlayFabMirrorBase.get_user_data = function (self, key)
-	return self._user_data[key]
+function PlayFabMirrorBase.get_user_data(arg_100_0, arg_100_1)
+	return arg_100_0._user_data[arg_100_1]
 end
 
-PlayFabMirrorBase.set_user_data = function (self, key, value, set_mirror)
-	self._user_data[key] = value
+function PlayFabMirrorBase.set_user_data(arg_101_0, arg_101_1, arg_101_2, arg_101_3)
+	arg_101_0._user_data[arg_101_1] = arg_101_2
 
-	if set_mirror then
-		if type(value) == "table" then
-			self._user_data_mirror[key] = table.clone(value)
+	if arg_101_3 then
+		if type(arg_101_2) == "table" then
+			arg_101_0._user_data_mirror[arg_101_1] = table.clone(arg_101_2)
 		else
-			self._user_data_mirror[key] = value
+			arg_101_0._user_data_mirror[arg_101_1] = arg_101_2
 		end
 	end
 end
 
-PlayFabMirrorBase.log_player_exit = function (self, external_cb)
-	local request = {
+function PlayFabMirrorBase.log_player_exit(arg_102_0, arg_102_1)
+	local var_102_0 = {
 		FunctionName = "logPlayerExit",
-		FunctionParameter = {},
+		FunctionParameter = {}
 	}
-	local success_callback = callback(self, "log_player_exit_cb", external_cb)
-	local id = self._request_queue:enqueue(request, success_callback, false)
+	local var_102_1 = callback(arg_102_0, "log_player_exit_cb", arg_102_1)
+	local var_102_2 = arg_102_0._request_queue:enqueue(var_102_0, var_102_1, false)
 end
 
-PlayFabMirrorBase.log_player_exit_cb = function (self, external_cb, result)
-	external_cb(result)
+function PlayFabMirrorBase.log_player_exit_cb(arg_103_0, arg_103_1, arg_103_2)
+	arg_103_1(arg_103_2)
 end
 
-PlayFabMirrorBase._commit_user_data = function (self, new_data, commit, commit_id)
-	table.clear(new_data)
+function PlayFabMirrorBase._commit_user_data(arg_104_0, arg_104_1, arg_104_2, arg_104_3)
+	table.clear(arg_104_1)
 
-	for key, value in pairs(self._user_data) do
-		if self._user_data_mirror[key] ~= value then
-			new_data[key] = value
+	for iter_104_0, iter_104_1 in pairs(arg_104_0._user_data) do
+		if arg_104_0._user_data_mirror[iter_104_0] ~= iter_104_1 then
+			arg_104_1[iter_104_0] = iter_104_1
 		end
 	end
 
-	if not table.is_empty(new_data) then
-		local user_data_request = {
-			Data = new_data,
+	if not table.is_empty(arg_104_1) then
+		local var_104_0 = {
+			Data = arg_104_1
 		}
 
-		self._user_data_mirror = table.clone(self._user_data)
+		arg_104_0._user_data_mirror = table.clone(arg_104_0._user_data)
 
-		local cb_user_data = callback(self, "update_user_data_cb", commit_id)
+		local var_104_1 = callback(arg_104_0, "update_user_data_cb", arg_104_3)
 
-		PlayFabClientApi.UpdateUserData(user_data_request, cb_user_data)
+		var_0_0.UpdateUserData(var_104_0, var_104_1)
 
-		self._num_items_to_load = self._num_items_to_load + 1
-		commit.status = "waiting"
-		commit.wait_for_user_data = true
+		arg_104_0._num_items_to_load = arg_104_0._num_items_to_load + 1
+		arg_104_2.status = "waiting"
+		arg_104_2.wait_for_user_data = true
 	end
 end
 
-PlayFabMirrorBase.update_user_data_cb = function (self, commit_id, result)
-	self._num_items_to_load = self._num_items_to_load - 1
-
-	local commit = self._commits[commit_id]
-
-	commit.wait_for_user_data = false
+function PlayFabMirrorBase.update_user_data_cb(arg_105_0, arg_105_1, arg_105_2)
+	arg_105_0._num_items_to_load = arg_105_0._num_items_to_load - 1
+	arg_105_0._commits[arg_105_1].wait_for_user_data = false
 end
 
-PlayFabMirrorBase.get_read_only_data = function (self, key)
-	local value = self._read_only_data[key]
-	local value_type = type(value)
+function PlayFabMirrorBase.get_read_only_data(arg_106_0, arg_106_1)
+	local var_106_0 = arg_106_0._read_only_data[arg_106_1]
+	local var_106_1 = type(var_106_0)
 
-	assert_or_print_exception(value == nil or ALLOWED_DATA_TYPES[value_type], "Tried to get read_only_data's '%s'. Got value '%s' ('%s')", key, tostring(value), value_type)
+	var_0_7(var_106_0 == nil or var_0_2[var_106_1], "Tried to get read_only_data's '%s'. Got value '%s' ('%s')", arg_106_1, tostring(var_106_0), var_106_1)
 
-	return value
+	return var_106_0
 end
 
-PlayFabMirrorBase.set_read_only_data = function (self, key, value, set_mirror)
-	if not set_mirror and rawget(_G, "debug_characters_data_unsafe_write") and (key == "characters_data" or key == "vs_characters_data") then
+function PlayFabMirrorBase.set_read_only_data(arg_107_0, arg_107_1, arg_107_2, arg_107_3)
+	if not arg_107_3 and rawget(_G, "debug_characters_data_unsafe_write") and (arg_107_1 == "characters_data" or arg_107_1 == "vs_characters_data") then
 		print("[PlayfabMirrorBase] Overwriting character data while it is unsafe to do so")
 		Crashify.print_exception("[PlayfabMirrorBase]", "Unsafe write to readonly data")
 	end
 
-	local value_type = type(value)
+	local var_107_0 = type(arg_107_2)
 
-	assert_or_print_exception(ALLOWED_DATA_TYPES[value_type], "Tried to set read_only_data's '%s' to value '%s' ('%s')", key, tostring(value), value_type)
+	var_0_7(var_0_2[var_107_0], "Tried to set read_only_data's '%s' to value '%s' ('%s')", arg_107_1, tostring(arg_107_2), var_107_0)
 
-	self._read_only_data[key] = value
+	arg_107_0._read_only_data[arg_107_1] = arg_107_2
 
-	if set_mirror then
-		if value_type == "table" then
-			self._read_only_data_mirror[key] = table.clone(value)
+	if arg_107_3 then
+		if var_107_0 == "table" then
+			arg_107_0._read_only_data_mirror[arg_107_1] = table.clone(arg_107_2)
 		else
-			self._read_only_data_mirror[key] = value
+			arg_107_0._read_only_data_mirror[arg_107_1] = arg_107_2
 		end
 	end
 end
 
-PlayFabMirrorBase.merge_read_only_data = function (self, data, set_mirror)
-	for key, value in pairs(data) do
-		local value_type = type(value)
+function PlayFabMirrorBase.merge_read_only_data(arg_108_0, arg_108_1, arg_108_2)
+	for iter_108_0, iter_108_1 in pairs(arg_108_1) do
+		local var_108_0 = type(iter_108_1)
 
-		assert_or_print_exception(ALLOWED_DATA_TYPES[value_type], "Tried to merge read_only_data's '%s' with value '%s' ('%s')", key, tostring(value), value_type)
+		var_0_7(var_0_2[var_108_0], "Tried to merge read_only_data's '%s' with value '%s' ('%s')", iter_108_0, tostring(iter_108_1), var_108_0)
 	end
 
-	table.merge_recursive(self._read_only_data, data)
+	table.merge_recursive(arg_108_0._read_only_data, arg_108_1)
 
-	if set_mirror then
-		table.merge_recursive(self._read_only_data_mirror, data)
-	end
-end
-
-PlayFabMirrorBase.get_all_inventory_items = function (self)
-	return self._inventory_items
-end
-
-PlayFabMirrorBase.get_all_fake_inventory_items = function (self)
-	return self._fake_inventory_items
-end
-
-PlayFabMirrorBase.get_stats = function (self)
-	return self._stats
-end
-
-PlayFabMirrorBase.set_stats = function (self, stats)
-	self._stats = stats
-end
-
-PlayFabMirrorBase.get_claimed_achievements = function (self)
-	return self._claimed_achievements
-end
-
-PlayFabMirrorBase.get_claimed_event_quests = function (self)
-	return self._claimed_event_quests
-end
-
-PlayFabMirrorBase.add_claimed_event_quest = function (self, quest_name)
-	self._claimed_event_quests[quest_name] = true
-end
-
-PlayFabMirrorBase.add_claimed_multiple_event_quests = function (self, quest_names)
-	for i = 1, #quest_names do
-		local quest_name = quest_names[i]
-
-		self._claimed_event_quests[quest_name] = true
+	if arg_108_2 then
+		table.merge_recursive(arg_108_0._read_only_data_mirror, arg_108_1)
 	end
 end
 
-PlayFabMirrorBase.get_achievement_rewards = function (self)
-	return self._achievement_rewards
+function PlayFabMirrorBase.get_all_inventory_items(arg_109_0)
+	return arg_109_0._inventory_items
 end
 
-PlayFabMirrorBase.get_weaves_progression_settings = function (self)
-	return self._weaves_progression_settings
+function PlayFabMirrorBase.get_all_fake_inventory_items(arg_110_0)
+	return arg_110_0._fake_inventory_items
 end
 
-PlayFabMirrorBase.get_unlocked_weapon_skins = function (self)
-	return self._unlocked_weapon_skins
+function PlayFabMirrorBase.get_stats(arg_111_0)
+	return arg_111_0._stats
 end
 
-PlayFabMirrorBase.get_unlocked_cosmetics = function (self)
-	return self._unlocked_cosmetics
+function PlayFabMirrorBase.set_stats(arg_112_0, arg_112_1)
+	arg_112_0._stats = arg_112_1
 end
 
-PlayFabMirrorBase.get_unlocked_weapon_poses = function (self)
-	return self._unlocked_weapon_poses
+function PlayFabMirrorBase.get_claimed_achievements(arg_113_0)
+	return arg_113_0._claimed_achievements
 end
 
-PlayFabMirrorBase.get_equipped_weapon_pose_skins = function (self)
-	return self._equipped_weapon_pose_skins
+function PlayFabMirrorBase.get_claimed_event_quests(arg_114_0)
+	return arg_114_0._claimed_event_quests
 end
 
-PlayFabMirrorBase.get_equipped_weapon_pose_skin = function (self, parent_item_name)
-	return self._equipped_weapon_pose_skins[parent_item_name]
+function PlayFabMirrorBase.add_claimed_event_quest(arg_115_0, arg_115_1)
+	arg_115_0._claimed_event_quests[arg_115_1] = true
 end
 
-PlayFabMirrorBase.set_weapon_pose_skin = function (self, parent_item_name, weapon_skin_name)
-	self._equipped_weapon_pose_skins[parent_item_name] = weapon_skin_name
+function PlayFabMirrorBase.add_claimed_multiple_event_quests(arg_116_0, arg_116_1)
+	for iter_116_0 = 1, #arg_116_1 do
+		local var_116_0 = arg_116_1[iter_116_0]
+
+		arg_116_0._claimed_event_quests[var_116_0] = true
+	end
 end
 
-PlayFabMirrorBase.get_unlocked_keep_decorations = function (self)
-	return self._unlocked_keep_decorations
+function PlayFabMirrorBase.get_achievement_rewards(arg_117_0)
+	return arg_117_0._achievement_rewards
 end
 
-PlayFabMirrorBase.get_owned_dlcs = function (self)
-	return self._owned_dlcs
+function PlayFabMirrorBase.get_weaves_progression_settings(arg_118_0)
+	return arg_118_0._weaves_progression_settings
 end
 
-PlayFabMirrorBase.get_platform_dlcs = function (self)
-	return self._platform_dlcs
+function PlayFabMirrorBase.get_unlocked_weapon_skins(arg_119_0)
+	return arg_119_0._unlocked_weapon_skins
 end
 
-PlayFabMirrorBase.set_owned_dlcs = function (self, owned_dlcs)
-	self._owned_dlcs = owned_dlcs
+function PlayFabMirrorBase.get_unlocked_cosmetics(arg_120_0)
+	return arg_120_0._unlocked_cosmetics
 end
 
-PlayFabMirrorBase.set_platform_dlcs = function (self, platform_dlcs)
-	self._platform_dlcs = platform_dlcs
+function PlayFabMirrorBase.get_unlocked_weapon_poses(arg_121_0)
+	return arg_121_0._unlocked_weapon_poses
 end
 
-PlayFabMirrorBase.add_keep_decoration = function (self, decoration_name)
-	self._unlocked_keep_decorations[#self._unlocked_keep_decorations + 1] = decoration_name
-
-	ItemHelper.mark_keep_decoration_as_new(decoration_name)
+function PlayFabMirrorBase.get_equipped_weapon_pose_skins(arg_122_0)
+	return arg_122_0._equipped_weapon_pose_skins
 end
 
-local new_fake_inventory_items = {}
+function PlayFabMirrorBase.get_equipped_weapon_pose_skin(arg_123_0, arg_123_1)
+	return arg_123_0._equipped_weapon_pose_skins[arg_123_1]
+end
 
-PlayFabMirrorBase._create_fake_inventory_items = function (self, fake_inventory_items, items_type)
-	table.clear(new_fake_inventory_items)
+function PlayFabMirrorBase.set_weapon_pose_skin(arg_124_0, arg_124_1, arg_124_2)
+	arg_124_0._equipped_weapon_pose_skins[arg_124_1] = arg_124_2
+end
 
-	local lookup_table
+function PlayFabMirrorBase.get_unlocked_keep_decorations(arg_125_0)
+	return arg_125_0._unlocked_keep_decorations
+end
 
-	if items_type == "weapon_skins" then
-		lookup_table = self._unlocked_weapon_skins
+function PlayFabMirrorBase.get_owned_dlcs(arg_126_0)
+	return arg_126_0._owned_dlcs
+end
 
-		local weapon_skins = WeaponSkins
+function PlayFabMirrorBase.get_platform_dlcs(arg_127_0)
+	return arg_127_0._platform_dlcs
+end
 
-		for skin_name, optional_offline_backend_id in pairs(fake_inventory_items) do
-			local item_key, rarity = weapon_skins.matching_weapon_skin_item_key(skin_name)
+function PlayFabMirrorBase.set_owned_dlcs(arg_128_0, arg_128_1)
+	arg_128_0._owned_dlcs = arg_128_1
+end
 
-			if item_key and rawget(ItemMasterList, item_key) then
-				if rarity and rarity == "bogenhafen" then
-					rarity = "unique"
+function PlayFabMirrorBase.set_platform_dlcs(arg_129_0, arg_129_1)
+	arg_129_0._platform_dlcs = arg_129_1
+end
+
+function PlayFabMirrorBase.add_keep_decoration(arg_130_0, arg_130_1)
+	arg_130_0._unlocked_keep_decorations[#arg_130_0._unlocked_keep_decorations + 1] = arg_130_1
+
+	ItemHelper.mark_keep_decoration_as_new(arg_130_1)
+end
+
+local var_0_9 = {}
+
+function PlayFabMirrorBase._create_fake_inventory_items(arg_131_0, arg_131_1, arg_131_2)
+	table.clear(var_0_9)
+
+	local var_131_0
+
+	if arg_131_2 == "weapon_skins" then
+		var_131_0 = arg_131_0._unlocked_weapon_skins
+
+		local var_131_1 = WeaponSkins
+
+		for iter_131_0, iter_131_1 in pairs(arg_131_1) do
+			local var_131_2, var_131_3 = var_131_1.matching_weapon_skin_item_key(iter_131_0)
+
+			if var_131_2 and rawget(ItemMasterList, var_131_2) then
+				if var_131_3 and var_131_3 == "bogenhafen" then
+					var_131_3 = "unique"
 				end
 
-				new_fake_inventory_items[#new_fake_inventory_items + 1] = {
-					ItemId = item_key,
-					ItemInstanceId = type(optional_offline_backend_id) == "string" and optional_offline_backend_id or guid(),
+				var_0_9[#var_0_9 + 1] = {
+					ItemId = var_131_2,
+					ItemInstanceId = type(iter_131_1) == "string" and iter_131_1 or var_0_5(),
 					CustomData = {
-						skin = skin_name,
-						rarity = rarity,
-					},
+						skin = iter_131_0,
+						rarity = var_131_3
+					}
 				}
 			else
-				lookup_table[skin_name] = nil
+				var_131_0[iter_131_0] = nil
 			end
 		end
-	elseif items_type == "cosmetics" then
-		lookup_table = self._unlocked_cosmetics
+	elseif arg_131_2 == "cosmetics" then
+		var_131_0 = arg_131_0._unlocked_cosmetics
 
-		for cosmetic_name, optional_offline_backend_id in pairs(fake_inventory_items) do
-			local master_list_item = rawget(ItemMasterList, cosmetic_name)
+		for iter_131_2, iter_131_3 in pairs(arg_131_1) do
+			local var_131_4 = rawget(ItemMasterList, iter_131_2)
 
-			if master_list_item then
-				local existing_backend_id = lookup_table[cosmetic_name]
-				local backend_id, override_id
+			if var_131_4 then
+				local var_131_5 = var_131_0[iter_131_2]
+				local var_131_6
+				local var_131_7
 
-				if type(existing_backend_id) == "string" then
-					backend_id = existing_backend_id
-				elseif type(optional_offline_backend_id) == "string" then
-					backend_id = optional_offline_backend_id
+				if type(var_131_5) == "string" then
+					var_131_6 = var_131_5
+				elseif type(iter_131_3) == "string" then
+					var_131_6 = iter_131_3
 
-					if master_list_item.steam_itemdefid ~= nil then
-						override_id = backend_id
+					if var_131_4.steam_itemdefid ~= nil then
+						var_131_7 = var_131_6
 					end
 				else
-					backend_id = guid()
+					var_131_6 = var_0_5()
 				end
 
-				new_fake_inventory_items[#new_fake_inventory_items + 1] = {
-					ItemId = cosmetic_name,
-					ItemInstanceId = backend_id,
-					override_id = override_id,
+				var_0_9[#var_0_9 + 1] = {
+					ItemId = iter_131_2,
+					ItemInstanceId = var_131_6,
+					override_id = var_131_7
 				}
 			else
-				lookup_table[cosmetic_name] = nil
+				var_131_0[iter_131_2] = nil
 			end
 		end
-	elseif items_type == "weapon_poses" then
-		lookup_table = self._unlocked_weapon_poses
+	elseif arg_131_2 == "weapon_poses" then
+		var_131_0 = arg_131_0._unlocked_weapon_poses
 
-		for parent_name, pose_data in pairs(fake_inventory_items) do
-			for pose_name, _ in pairs(pose_data) do
-				local master_list_item = rawget(ItemMasterList, pose_name)
+		for iter_131_4, iter_131_5 in pairs(arg_131_1) do
+			for iter_131_6, iter_131_7 in pairs(iter_131_5) do
+				local var_131_8 = rawget(ItemMasterList, iter_131_6)
 
-				if master_list_item then
-					local parent_pose_name = master_list_item.parent
-					local existing_backend_id = lookup_table[parent_pose_name] and lookup_table[parent_pose_name][pose_name]
-					local backend_id
+				if var_131_8 then
+					local var_131_9 = var_131_8.parent
+					local var_131_10 = var_131_0[var_131_9] and var_131_0[var_131_9][iter_131_6]
+					local var_131_11
 
-					if type(existing_backend_id) == "string" then
-						backend_id = existing_backend_id
+					if type(var_131_10) == "string" then
+						var_131_11 = var_131_10
 					else
-						backend_id = guid()
+						var_131_11 = var_0_5()
 					end
 
-					new_fake_inventory_items[#new_fake_inventory_items + 1] = {
-						ItemId = pose_name,
-						ItemInstanceId = backend_id,
+					var_0_9[#var_0_9 + 1] = {
+						ItemId = iter_131_6,
+						ItemInstanceId = var_131_11
 					}
 				else
-					lookup_table[lookup_table] = nil
+					var_131_0[var_131_0] = nil
 				end
 			end
 		end
 	else
-		fassert(false, "Invalid items_typs: %q", items_type)
+		fassert(false, "Invalid items_typs: %q", arg_131_2)
 	end
 
-	if not self._inventory_items then
-		self._inventory_items = {}
+	if not arg_131_0._inventory_items then
+		arg_131_0._inventory_items = {}
 	end
 
-	local new_fake_ids = {}
+	local var_131_12 = {}
 
-	for i = 1, #new_fake_inventory_items do
-		local fake_item = new_fake_inventory_items[i]
-		local backend_id = fake_item.ItemInstanceId
-		local id = fake_item.override_id or fake_item.CustomData and fake_item.CustomData.skin or fake_item.ItemId
+	for iter_131_8 = 1, #var_0_9 do
+		local var_131_13 = var_0_9[iter_131_8]
+		local var_131_14 = var_131_13.ItemInstanceId
+		local var_131_15 = var_131_13.override_id or var_131_13.CustomData and var_131_13.CustomData.skin or var_131_13.ItemId
 
-		if items_type == "weapon_poses" then
-			local item_name = fake_item.ItemId
-			local item = ItemMasterList[item_name]
-			local parent = item.parent
+		if arg_131_2 == "weapon_poses" then
+			local var_131_16 = var_131_13.ItemId
 
-			lookup_table[parent][item_name] = backend_id
+			var_131_0[ItemMasterList[var_131_16].parent][var_131_16] = var_131_14
 		else
-			lookup_table[id] = backend_id
+			var_131_0[var_131_15] = var_131_14
 		end
 
-		self:_update_data(fake_item, backend_id)
+		arg_131_0:_update_data(var_131_13, var_131_14)
 
-		self._inventory_items[backend_id] = fake_item
-		self._fake_inventory_items[backend_id] = fake_item
-		new_fake_ids[#new_fake_ids + 1] = backend_id
+		arg_131_0._inventory_items[var_131_14] = var_131_13
+		arg_131_0._fake_inventory_items[var_131_14] = var_131_13
+		var_131_12[#var_131_12 + 1] = var_131_14
 	end
 
-	return new_fake_ids
+	return var_131_12
 end
 
-PlayFabMirrorBase.set_achievement_claimed = function (self, achievement_id)
-	local claimed_achievements = self._claimed_achievements
-
-	claimed_achievements[achievement_id] = true
+function PlayFabMirrorBase.set_achievement_claimed(arg_132_0, arg_132_1)
+	arg_132_0._claimed_achievements[arg_132_1] = true
 end
 
-PlayFabMirrorBase.get_claimed_console_dlc_rewards = function (self)
-	return self._claimed_console_dlc_rewards
+function PlayFabMirrorBase.get_claimed_console_dlc_rewards(arg_133_0)
+	return arg_133_0._claimed_console_dlc_rewards
 end
 
-PlayFabMirrorBase.set_console_dlc_reward_claimed = function (self, reward_id, claimed)
-	local claimed_rewards = self._claimed_console_dlc_rewards
-
-	claimed_rewards[reward_id] = claimed and true or nil
+function PlayFabMirrorBase.set_console_dlc_reward_claimed(arg_134_0, arg_134_1, arg_134_2)
+	arg_134_0._claimed_console_dlc_rewards[arg_134_1] = arg_134_2 and true or nil
 end
 
-PlayFabMirrorBase.get_quest_data = function (self)
-	return self._quest_data
+function PlayFabMirrorBase.get_quest_data(arg_135_0)
+	return arg_135_0._quest_data
 end
 
-PlayFabMirrorBase.set_quest_data = function (self, key, value)
-	local quest_data = self._quest_data
-
-	quest_data[key] = value
+function PlayFabMirrorBase.set_quest_data(arg_136_0, arg_136_1, arg_136_2)
+	arg_136_0._quest_data[arg_136_1] = arg_136_2
 end
 
-PlayFabMirrorBase.check_for_errors = function (self)
+function PlayFabMirrorBase.check_for_errors(arg_137_0)
 	return
 end
 
-local slot_type_to_best_power_level_key = {
-	melee = "best_melee_pl",
-	necklace = "best_necklace_pl",
+local var_0_10 = {
 	ranged = "best_ranged_pl",
 	ring = "best_ring_pl",
+	necklace = "best_necklace_pl",
 	trinket = "best_trinket_pl",
+	melee = "best_melee_pl"
 }
 
-PlayFabMirrorBase._re_evaluate_best_power_level = function (self, item)
-	local item_power_level = item.power_level
+function PlayFabMirrorBase._re_evaluate_best_power_level(arg_138_0, arg_138_1)
+	local var_138_0 = arg_138_1.power_level
 
-	if not item_power_level then
+	if not var_138_0 then
 		return
 	end
 
-	local slot_type = item.data.slot_type
-	local power_level_key = slot_type_to_best_power_level_key[slot_type]
+	local var_138_1 = arg_138_1.data.slot_type
+	local var_138_2 = var_0_10[var_138_1]
 
-	if not power_level_key then
+	if not var_138_2 then
 		return
 	end
 
-	local best_power_levels = self._best_power_levels
-	local current_best = best_power_levels[power_level_key]
+	local var_138_3 = arg_138_0._best_power_levels
 
-	if current_best < item_power_level then
-		best_power_levels[power_level_key] = item_power_level
+	if var_138_0 > var_138_3[var_138_2] then
+		var_138_3[var_138_2] = var_138_0
 
-		local sum = 0
+		local var_138_4 = 0
 
-		for _, value in pairs(best_power_levels) do
-			sum = sum + value
+		for iter_138_0, iter_138_1 in pairs(var_138_3) do
+			var_138_4 = var_138_4 + iter_138_1
 		end
 
-		self.sum_best_power_levels = sum
+		arg_138_0.sum_best_power_levels = var_138_4
 	end
 end
 
-PlayFabMirrorBase._add_new_weapon_skin = function (self, item, generate_new_id, optional_skin_name)
-	local fake_item_id
-	local skin_name = optional_skin_name or item.ItemId
-	local create_new_id = not generate_new_id and Managers.account:offline_mode()
+function PlayFabMirrorBase._add_new_weapon_skin(arg_139_0, arg_139_1, arg_139_2, arg_139_3)
+	local var_139_0
+	local var_139_1 = arg_139_3 or arg_139_1.ItemId
 
-	if create_new_id then
-		local ids = self:add_unlocked_weapon_skin(skin_name, item.ItemInstanceId)
+	if not arg_139_2 and Managers.account:offline_mode() then
+		local var_139_2 = arg_139_0:add_unlocked_weapon_skin(var_139_1, arg_139_1.ItemInstanceId)
 
-		fake_item_id = ids and ids[1]
+		var_139_0 = var_139_2 and var_139_2[1]
 	else
-		local ids = self:add_unlocked_weapon_skin(skin_name)
+		local var_139_3 = arg_139_0:add_unlocked_weapon_skin(var_139_1)
 
-		fake_item_id = ids and ids[1]
+		var_139_0 = var_139_3 and var_139_3[1]
 	end
 
-	return fake_item_id
+	return var_139_0
 end
 
-PlayFabMirrorBase.add_item = function (self, backend_id, item, skip_autosave, skip_mark_as_new)
-	if not self._inventory_items then
-		self._inventory_items = {}
+function PlayFabMirrorBase.add_item(arg_140_0, arg_140_1, arg_140_2, arg_140_3, arg_140_4)
+	if not arg_140_0._inventory_items then
+		arg_140_0._inventory_items = {}
 	end
 
-	local skin_data = WeaponSkins.skins[item.ItemId]
-
-	if skin_data then
-		return self:_add_new_weapon_skin(item)
+	if WeaponSkins.skins[arg_140_2.ItemId] then
+		return arg_140_0:_add_new_weapon_skin(arg_140_2)
 	else
-		local master_list_item = ItemMasterList[item.ItemId]
+		local var_140_0 = ItemMasterList[arg_140_2.ItemId]
 
-		if CosmeticUtils.is_cosmetic_item(master_list_item.slot_type) then
-			backend_id = self:add_unlocked_cosmetic(item.ItemId, backend_id)
+		if CosmeticUtils.is_cosmetic_item(var_140_0.slot_type) then
+			arg_140_1 = arg_140_0:add_unlocked_cosmetic(arg_140_2.ItemId, arg_140_1)
 
-			if not skip_mark_as_new then
-				ItemHelper.mark_backend_id_as_new(backend_id, self._inventory_items[backend_id], skip_autosave)
+			if not arg_140_4 then
+				ItemHelper.mark_backend_id_as_new(arg_140_1, arg_140_0._inventory_items[arg_140_1], arg_140_3)
 			end
 
-			return backend_id
+			return arg_140_1
 		end
 
-		if CosmeticUtils.is_weapon_pose(master_list_item) then
-			backend_id = self:add_unlocked_weapon_pose(item.ItemId, backend_id)
+		if CosmeticUtils.is_weapon_pose(var_140_0) then
+			arg_140_1 = arg_140_0:add_unlocked_weapon_pose(arg_140_2.ItemId, arg_140_1)
 
-			if not skip_mark_as_new then
-				ItemHelper.mark_backend_id_as_new(backend_id, self._inventory_items[backend_id], skip_autosave)
+			if not arg_140_4 then
+				ItemHelper.mark_backend_id_as_new(arg_140_1, arg_140_0._inventory_items[arg_140_1], arg_140_3)
 			end
 
-			return backend_id
+			return arg_140_1
 		end
 
-		self._inventory_items[backend_id] = item
+		arg_140_0._inventory_items[arg_140_1] = arg_140_2
 
-		self:_update_data(item, backend_id)
+		arg_140_0:_update_data(arg_140_2, arg_140_1)
 
-		if not skip_mark_as_new then
-			ItemHelper.mark_backend_id_as_new(backend_id, item, skip_autosave)
+		if not arg_140_4 then
+			ItemHelper.mark_backend_id_as_new(arg_140_1, arg_140_2, arg_140_3)
 		end
 
-		self:_re_evaluate_best_power_level(item)
-		ItemHelper.on_inventory_item_added(item)
+		arg_140_0:_re_evaluate_best_power_level(arg_140_2)
+		ItemHelper.on_inventory_item_added(arg_140_2)
 
-		local skin_name = item.CustomData and item.CustomData.skin
+		local var_140_1 = arg_140_2.CustomData and arg_140_2.CustomData.skin
 
-		if skin_name and WeaponSkins.skins[skin_name] then
-			local unlocked_weapon_skins = self:get_unlocked_weapon_skins()
+		if var_140_1 and WeaponSkins.skins[var_140_1] then
+			local var_140_2 = arg_140_0:get_unlocked_weapon_skins()
 
-			self:_add_new_weapon_skin(item, true, skin_name)
+			arg_140_0:_add_new_weapon_skin(arg_140_2, true, var_140_1)
 		end
 	end
 end
 
-PlayFabMirrorBase.remove_item = function (self, backend_id)
-	local inventory_items = self._inventory_items
+function PlayFabMirrorBase.remove_item(arg_141_0, arg_141_1)
+	local var_141_0 = arg_141_0._inventory_items
 
-	if ItemHelper.is_new_backend_id(backend_id) then
-		ItemHelper.unmark_backend_id_as_new(backend_id)
+	if ItemHelper.is_new_backend_id(arg_141_1) then
+		ItemHelper.unmark_backend_id_as_new(arg_141_1)
 	end
 
-	inventory_items[backend_id] = nil
+	var_141_0[arg_141_1] = nil
 end
 
-PlayFabMirrorBase.update_item_field = function (self, backend_id, field, value)
-	local inventory_items = self._inventory_items
-	local item = inventory_items[backend_id]
+function PlayFabMirrorBase.update_item_field(arg_142_0, arg_142_1, arg_142_2, arg_142_3)
+	local var_142_0 = arg_142_0._inventory_items[arg_142_1]
 
-	fassert(item[field], "Trying to update a field on an item in playfab_mirror_base.lua that does not exist on the item")
+	fassert(var_142_0[arg_142_2], "Trying to update a field on an item in playfab_mirror_base.lua that does not exist on the item")
 
-	item[field] = value
+	var_142_0[arg_142_2] = arg_142_3
 end
 
-PlayFabMirrorBase.update_item = function (self, backend_id, new_item)
-	local inventory_items = self._inventory_items
+function PlayFabMirrorBase.update_item(arg_143_0, arg_143_1, arg_143_2)
+	local var_143_0 = arg_143_0._inventory_items
 
-	fassert(inventory_items[backend_id], "Trying to update an item that does not exist with backend ID %s", backend_id)
+	fassert(var_143_0[arg_143_1], "Trying to update an item that does not exist with backend ID %s", arg_143_1)
 
-	inventory_items[backend_id] = new_item
+	var_143_0[arg_143_1] = arg_143_2
 
-	self:_update_data(new_item, backend_id)
+	arg_143_0:_update_data(arg_143_2, arg_143_1)
 end
 
-PlayFabMirrorBase.add_unlocked_weapon_skin = function (self, weapon_skin, offline_backend_id)
-	if self._unlocked_weapon_skins then
-		local existing_weapon_skin = self._unlocked_weapon_skins[weapon_skin]
+function PlayFabMirrorBase.add_unlocked_weapon_skin(arg_144_0, arg_144_1, arg_144_2)
+	if arg_144_0._unlocked_weapon_skins then
+		local var_144_0 = arg_144_0._unlocked_weapon_skins[arg_144_1]
 
-		if existing_weapon_skin then
+		if var_144_0 then
 			return {
-				existing_weapon_skin,
+				var_144_0
 			}
 		end
 
-		self._unlocked_weapon_skins[weapon_skin] = true
+		arg_144_0._unlocked_weapon_skins[arg_144_1] = true
 
-		return self:_create_fake_inventory_items({
-			[weapon_skin] = offline_backend_id or true,
+		return arg_144_0:_create_fake_inventory_items({
+			[arg_144_1] = arg_144_2 or true
 		}, "weapon_skins")
 	else
-		assert_or_print_exception(false, "Tried to add_unlocked_weapon_skin '%s' before unlocked_weapon_skins was created", weapon_skin)
+		var_0_7(false, "Tried to add_unlocked_weapon_skin '%s' before unlocked_weapon_skins was created", arg_144_1)
 	end
 end
 
-PlayFabMirrorBase.add_unlocked_cosmetic = function (self, cosmetic_name, offline_backend_id)
-	if self._unlocked_cosmetics then
-		local backend_id = self:_create_fake_inventory_items({
-			[cosmetic_name] = offline_backend_id or true,
+function PlayFabMirrorBase.add_unlocked_cosmetic(arg_145_0, arg_145_1, arg_145_2)
+	if arg_145_0._unlocked_cosmetics then
+		local var_145_0 = arg_145_0:_create_fake_inventory_items({
+			[arg_145_1] = arg_145_2 or true
 		}, "cosmetics")
 
-		if #backend_id > 0 then
-			self._unlocked_cosmetics[cosmetic_name] = backend_id[1]
+		if #var_145_0 > 0 then
+			arg_145_0._unlocked_cosmetics[arg_145_1] = var_145_0[1]
 
-			return backend_id[1]
+			return var_145_0[1]
 		end
 	else
-		assert_or_print_exception(false, "Tried to add_unlocked_cosmetics '%s' before unlocked_cosmetics was created", cosmetic_name)
+		var_0_7(false, "Tried to add_unlocked_cosmetics '%s' before unlocked_cosmetics was created", arg_145_1)
 	end
 end
 
-PlayFabMirrorBase.add_unlocked_weapon_pose = function (self, weapon_pose_name, offline_backend_id)
-	if self._unlocked_weapon_poses then
-		local backend_id = self:_create_fake_inventory_items({
-			[weapon_pose_name] = offline_backend_id or true,
+function PlayFabMirrorBase.add_unlocked_weapon_pose(arg_146_0, arg_146_1, arg_146_2)
+	if arg_146_0._unlocked_weapon_poses then
+		local var_146_0 = arg_146_0:_create_fake_inventory_items({
+			[arg_146_1] = arg_146_2 or true
 		}, "cosmetics")
 
-		if #backend_id > 0 then
-			local master_list_item = ItemMasterList[weapon_pose_name]
-			local parent = master_list_item.parent
+		if #var_146_0 > 0 then
+			local var_146_1 = ItemMasterList[arg_146_1].parent
 
-			self._unlocked_weapon_poses[parent] = self._unlocked_weapon_poses[parent] or {}
-			self._unlocked_weapon_poses[parent][weapon_pose_name] = backend_id[1]
+			arg_146_0._unlocked_weapon_poses[var_146_1] = arg_146_0._unlocked_weapon_poses[var_146_1] or {}
+			arg_146_0._unlocked_weapon_poses[var_146_1][arg_146_1] = var_146_0[1]
 
-			return backend_id[1]
+			return var_146_0[1]
 		end
 	else
-		assert_or_print_exception(false, "Tried to add_unlocked_weapon_pose '%s' before unlocked_weapon_poses was created", weapon_pose_name)
+		var_0_7(false, "Tried to add_unlocked_weapon_pose '%s' before unlocked_weapon_poses was created", arg_146_1)
 	end
 end
 
-PlayFabMirrorBase.set_essence = function (self, amount)
-	self._essence = amount
+function PlayFabMirrorBase.set_essence(arg_147_0, arg_147_1)
+	arg_147_0._essence = arg_147_1
 end
 
-PlayFabMirrorBase.get_essence = function (self)
-	return self._essence
+function PlayFabMirrorBase.get_essence(arg_148_0)
+	return arg_148_0._essence
 end
 
-PlayFabMirrorBase.set_total_essence = function (self, amount)
-	self._total_essence = amount
+function PlayFabMirrorBase.set_total_essence(arg_149_0, arg_149_1)
+	arg_149_0._total_essence = arg_149_1
 end
 
-PlayFabMirrorBase.get_total_essence = function (self)
-	return self._total_essence
+function PlayFabMirrorBase.get_total_essence(arg_150_0)
+	return arg_150_0._total_essence
 end
 
-PlayFabMirrorBase.set_maximum_essence = function (self, amount)
-	self._maximum_essence = amount
+function PlayFabMirrorBase.set_maximum_essence(arg_151_0, arg_151_1)
+	arg_151_0._maximum_essence = arg_151_1
 end
 
-PlayFabMirrorBase.get_maximum_essence = function (self)
-	return self._maximum_essence
+function PlayFabMirrorBase.get_maximum_essence(arg_152_0)
+	return arg_152_0._maximum_essence
 end
 
-PlayFabMirrorBase.get_deus_rolled_over_soft_currency = function (self)
-	return self._deus_rolled_over_soft_currency or 0
+function PlayFabMirrorBase.get_deus_rolled_over_soft_currency(arg_153_0)
+	return arg_153_0._deus_rolled_over_soft_currency or 0
 end
 
-PlayFabMirrorBase.get_deus_journey_cycle_data = function (self)
-	return self._deus_journey_cycle_data
+function PlayFabMirrorBase.get_deus_journey_cycle_data(arg_154_0)
+	return arg_154_0._deus_journey_cycle_data
 end
 
-PlayFabMirrorBase.get_deus_belakor_curse_data = function (self)
-	return self._deus_belakor_curse_data
+function PlayFabMirrorBase.get_deus_belakor_curse_data(arg_155_0)
+	return arg_155_0._deus_belakor_curse_data
 end
 
-PlayFabMirrorBase.handle_deus_result = function (self, result)
-	local function_result = result.FunctionResult
-	local deus_journey_cycle_data = function_result.deus_journey_cycle_data
-	local deus_rolled_over_soft_currency = function_result.deus_rolled_over_soft_currency
+function PlayFabMirrorBase.handle_deus_result(arg_156_0, arg_156_1)
+	local var_156_0 = arg_156_1.FunctionResult
+	local var_156_1 = var_156_0.deus_journey_cycle_data
+	local var_156_2 = var_156_0.deus_rolled_over_soft_currency
 
-	if deus_rolled_over_soft_currency then
-		self._deus_rolled_over_soft_currency = deus_rolled_over_soft_currency
+	if var_156_2 then
+		arg_156_0._deus_rolled_over_soft_currency = var_156_2
 	end
 
-	if deus_journey_cycle_data then
-		local current_time = Managers.time:time("main")
+	if var_156_1 then
+		local var_156_3 = Managers.time:time("main")
 
-		self._deus_journey_cycle_data = {
-			span = deus_journey_cycle_data.span_ms / 1000,
-			remaining_time = deus_journey_cycle_data.remaining_time_ms / 1000,
-			cycle_count = deus_journey_cycle_data.cycle_count,
-			time_of_update = current_time,
+		arg_156_0._deus_journey_cycle_data = {
+			span = var_156_1.span_ms / 1000,
+			remaining_time = var_156_1.remaining_time_ms / 1000,
+			cycle_count = var_156_1.cycle_count,
+			time_of_update = var_156_3
 		}
 	end
 end
 
-PlayFabMirrorBase.predict_deus_rolled_over_soft_currency = function (self, amount)
-	local roll_over_coins = math.ceil(amount * DeusRollOverSettings.roll_over)
+function PlayFabMirrorBase.predict_deus_rolled_over_soft_currency(arg_157_0, arg_157_1)
+	local var_157_0 = math.ceil(arg_157_1 * DeusRollOverSettings.roll_over)
 
-	self._deus_rolled_over_soft_currency = math.clamp(roll_over_coins, 0, DeusRollOverSettings.max)
+	arg_157_0._deus_rolled_over_soft_currency = math.clamp(var_157_0, 0, DeusRollOverSettings.max)
 end
 
-PlayFabMirrorBase.predict_deus_run_started = function (self)
-	self._deus_rolled_over_soft_currency = 0
+function PlayFabMirrorBase.predict_deus_run_started(arg_158_0)
+	arg_158_0._deus_rolled_over_soft_currency = 0
 end
 
-PlayFabMirrorBase.predict_debug_clear_deus_meta_progression = function (self, amount)
-	self._deus_rolled_over_soft_currency = 0
+function PlayFabMirrorBase.predict_debug_clear_deus_meta_progression(arg_159_0, arg_159_1)
+	arg_159_0._deus_rolled_over_soft_currency = 0
 end
 
-local function add_callback(commit, callback)
-	if not callback then
+local function var_0_11(arg_160_0, arg_160_1)
+	if not arg_160_1 then
 		return
 	end
 
-	commit.commit_complete_callbacks = commit.commit_complete_callbacks or {}
-	commit.commit_complete_callbacks[#commit.commit_complete_callbacks + 1] = callback
+	arg_160_0.commit_complete_callbacks = arg_160_0.commit_complete_callbacks or {}
+	arg_160_0.commit_complete_callbacks[#arg_160_0.commit_complete_callbacks + 1] = arg_160_1
 
-	return commit.commit_complete_callbacks
+	return arg_160_0.commit_complete_callbacks
 end
 
-PlayFabMirrorBase.commit = function (self, skip_queue, commit_complete_callback)
-	local queued_commit = self._queued_commit
-	local id
+function PlayFabMirrorBase.commit(arg_161_0, arg_161_1, arg_161_2)
+	local var_161_0 = arg_161_0._queued_commit
+	local var_161_1
 
-	if skip_queue then
-		if self._commit_current_id then
-			debug_printf("Unable to skip queue: commit already in progress")
+	if arg_161_1 then
+		if arg_161_0._commit_current_id then
+			var_0_6("Unable to skip queue: commit already in progress")
 
-			id = self:_queue_commit(commit_complete_callback)
+			var_161_1 = arg_161_0:_queue_commit(arg_161_2)
 		elseif not rawget(_G, "LobbyInternal") or not LobbyInternal.network_initialized() then
-			debug_printf("Unable to skip queue: Network not initialized")
+			var_0_6("Unable to skip queue: Network not initialized")
 
-			id = self:_queue_commit(commit_complete_callback)
-		elseif queued_commit.active then
-			local id = queued_commit.id
+			var_161_1 = arg_161_0:_queue_commit(arg_161_2)
+		elseif var_161_0.active then
+			local var_161_2 = var_161_0.id
 
-			debug_printf("Force commit: Override existing queue %q", id)
-			add_callback(queued_commit, commit_complete_callback)
-			self:_commit_internal(id, queued_commit.commit_complete_callbacks)
+			var_0_6("Force commit: Override existing queue %q", var_161_2)
+			var_0_11(var_161_0, arg_161_2)
+			arg_161_0:_commit_internal(var_161_2, var_161_0.commit_complete_callbacks)
 		else
-			debug_printf("Force commit")
-			add_callback(queued_commit, commit_complete_callback)
+			var_0_6("Force commit")
+			var_0_11(var_161_0, arg_161_2)
 
-			id = self:_commit_internal(nil, queued_commit.commit_complete_callbacks)
+			var_161_1 = arg_161_0:_commit_internal(nil, var_161_0.commit_complete_callbacks)
 		end
-	elseif not queued_commit.active then
-		if commit_complete_callback then
-			add_callback(queued_commit, commit_complete_callback)
+	elseif not var_161_0.active then
+		if arg_161_2 then
+			var_0_11(var_161_0, arg_161_2)
 		end
 
-		id = self:_queue_commit(commit_complete_callback, queued_commit.commit_complete_callbacks)
-	elseif commit_complete_callback then
-		add_callback(queued_commit, commit_complete_callback)
+		var_161_1 = arg_161_0:_queue_commit(arg_161_2, var_161_0.commit_complete_callbacks)
+	elseif arg_161_2 then
+		var_0_11(var_161_0, arg_161_2)
 	end
 
-	if id then
-		self._commit_limit_total = self._commit_limit_total + 1
+	if var_161_1 then
+		arg_161_0._commit_limit_total = arg_161_0._commit_limit_total + 1
 	end
 
-	return id or queued_commit.id
+	return var_161_1 or var_161_0.id
 end
 
-PlayFabMirrorBase._new_id = function (self)
-	self._last_id = self._last_id + 1
+function PlayFabMirrorBase._new_id(arg_162_0)
+	arg_162_0._last_id = arg_162_0._last_id + 1
 
-	return self._last_id
+	return arg_162_0._last_id
 end
 
-PlayFabMirrorBase._queue_commit = function (self, commit_complete_callback)
-	local queued_commit = self._queued_commit
-	local timer = self._commit_limit_total * DELAY_MULTIPLIER
-	local id = self:_new_id()
+function PlayFabMirrorBase._queue_commit(arg_163_0, arg_163_1)
+	local var_163_0 = arg_163_0._queued_commit
+	local var_163_1
 
-	queued_commit.timer = timer
-	queued_commit.id = id
-	queued_commit.active = true
+	var_163_0.timer, var_163_1 = arg_163_0._commit_limit_total * var_0_4, arg_163_0:_new_id()
+	var_163_0.id = var_163_1
+	var_163_0.active = true
 
-	add_callback(queued_commit, commit_complete_callback)
+	var_0_11(var_163_0, arg_163_1)
 
-	return id
+	return var_163_1
 end
 
-local max_size = 25000
+local var_0_12 = 25000
 
-local function split_request_data(data)
-	local total_size = 0
-	local additional_data
+local function var_0_13(arg_164_0)
+	local var_164_0 = 0
+	local var_164_1
 
-	for k, v in pairs(data) do
-		local size = #cjson.encode(v)
+	for iter_164_0, iter_164_1 in pairs(arg_164_0) do
+		local var_164_2 = #cjson.encode(iter_164_1)
 
-		assert(size <= max_size, "Exceeding max size")
+		assert(var_164_2 <= var_0_12, "Exceeding max size")
 
-		if total_size + size > max_size then
-			additional_data = additional_data or {}
-			additional_data[k] = v
-			data[k] = nil
+		if var_164_0 + var_164_2 > var_0_12 then
+			var_164_1 = var_164_1 or {}
+			var_164_1[iter_164_0] = iter_164_1
+			arg_164_0[iter_164_0] = nil
 		else
-			total_size = total_size + size
+			var_164_0 = var_164_0 + var_164_2
 		end
 	end
 
-	return data, additional_data
+	return arg_164_0, var_164_1
 end
 
-local new_data = {}
+local var_0_14 = {}
 
-PlayFabMirrorBase._commit_internal = function (self, queue_id, commit_complete_callbacks)
-	debug_printf("_commit_internal %q", queue_id)
+function PlayFabMirrorBase._commit_internal(arg_165_0, arg_165_1, arg_165_2)
+	var_0_6("_commit_internal %q", arg_165_1)
 
-	local commit_id = queue_id or self:_new_id()
-	local commit = {
+	local var_165_0 = arg_165_1 or arg_165_0:_new_id()
+	local var_165_1 = {
 		num_updates = 0,
 		status = "success",
 		updates_to_make = 0,
-		commit_complete_callbacks = commit_complete_callbacks,
+		commit_complete_callbacks = arg_165_2,
 		request_queue_ids = {},
-		current_characters_data_key = self._characters_data_key,
+		current_characters_data_key = arg_165_0._characters_data_key
 	}
 
-	table.clear(self._queued_commit)
+	table.clear(arg_165_0._queued_commit)
 
-	self._commit_current_id = commit_id
+	arg_165_0._commit_current_id = var_165_0
 
-	local stats_interface = Managers.backend:get_interface("statistics")
+	local var_165_2 = Managers.backend:get_interface("statistics")
 
 	if Managers.level_transition_handler:in_hub_level() then
-		stats_interface:save()
+		var_165_2:save()
 	end
 
-	local request, stats_to_save = stats_interface:get_stat_save_request()
+	local var_165_3, var_165_4 = var_165_2:get_stat_save_request()
 
-	if request and not script_data["eac-untrusted"] then
-		local success_callback = callback(self, "save_statistics_cb", commit_id, stats_to_save)
-		local id = self._request_queue:enqueue(request, success_callback, true)
+	if var_165_3 and not script_data["eac-untrusted"] then
+		local var_165_5 = callback(arg_165_0, "save_statistics_cb", var_165_0, var_165_4)
+		local var_165_6 = arg_165_0._request_queue:enqueue(var_165_3, var_165_5, true)
 
-		self._num_items_to_load = self._num_items_to_load + 1
+		arg_165_0._num_items_to_load = arg_165_0._num_items_to_load + 1
 
-		stats_interface:clear_saved_stats()
+		var_165_2:clear_saved_stats()
 
-		commit.status = "waiting"
-		commit.wait_for_stats = true
-		commit.request_queue_ids[#commit.request_queue_ids + 1] = id
+		var_165_1.status = "waiting"
+		var_165_1.wait_for_stats = true
+		var_165_1.request_queue_ids[#var_165_1.request_queue_ids + 1] = var_165_6
 	end
 
 	if not script_data["eac-untrusted"] then
-		local weaves_interface = Managers.backend:get_interface("weaves")
-		local weave_user_data = weaves_interface:get_dirty_user_data()
+		local var_165_7 = Managers.backend:get_interface("weaves"):get_dirty_user_data()
 
-		if weave_user_data then
-			local weave_user_data_request = {
+		if var_165_7 then
+			local var_165_8 = {
 				FunctionName = "updateWeaveUserData",
-				FunctionParameter = weave_user_data,
+				FunctionParameter = var_165_7
 			}
-			local id = self._request_queue:enqueue(weave_user_data_request, callback(self, "update_weave_user_data_cb", commit_id), true)
+			local var_165_9 = arg_165_0._request_queue:enqueue(var_165_8, callback(arg_165_0, "update_weave_user_data_cb", var_165_0), true)
 
-			self._num_items_to_load = self._num_items_to_load + 1
-			commit.status = "waiting"
-			commit.wait_for_weave_user_data = true
-			commit.request_queue_ids[#commit.request_queue_ids + 1] = id
+			arg_165_0._num_items_to_load = arg_165_0._num_items_to_load + 1
+			var_165_1.status = "waiting"
+			var_165_1.wait_for_weave_user_data = true
+			var_165_1.request_queue_ids[#var_165_1.request_queue_ids + 1] = var_165_9
 		end
 	end
 
 	if not script_data["eac-untrusted"] then
-		local items_interface = Managers.backend:get_interface("items")
-		local weapon_pose_data = items_interface:get_dirty_weapon_pose_data()
+		local var_165_10 = Managers.backend:get_interface("items"):get_dirty_weapon_pose_data()
 
-		if not table.is_empty(weapon_pose_data.equipped_weapon_pose_skin) then
-			local weapon_pose_data_request = {
+		if not table.is_empty(var_165_10.equipped_weapon_pose_skin) then
+			local var_165_11 = {
 				FunctionName = "updateEquippedWeaponPoseSkins",
-				FunctionParameter = weapon_pose_data,
+				FunctionParameter = var_165_10
 			}
-			local id = self._request_queue:enqueue(weapon_pose_data_request, callback(self, "update_equipped_weapon_pose_skins_cb", commit_id), true)
+			local var_165_12 = arg_165_0._request_queue:enqueue(var_165_11, callback(arg_165_0, "update_equipped_weapon_pose_skins_cb", var_165_0), true)
 
-			self._num_items_to_load = self._num_items_to_load + 1
-			commit.status = "waiting"
-			commit.wait_for_weapon_pose_skin_data = true
-			commit.request_queue_ids[#commit.request_queue_ids + 1] = id
+			arg_165_0._num_items_to_load = arg_165_0._num_items_to_load + 1
+			var_165_1.status = "waiting"
+			var_165_1.wait_for_weapon_pose_skin_data = true
+			var_165_1.request_queue_ids[#var_165_1.request_queue_ids + 1] = var_165_12
 		end
 	end
 
-	table.clear(new_data)
+	table.clear(var_0_14)
 
-	local read_only_data_mirror = self._read_only_data_mirror
-	local keep_decorations_interface = Managers.backend:get_interface("keep_decorations")
-	local keep_decorations_json = keep_decorations_interface:get_keep_decorations_json()
+	local var_165_13 = arg_165_0._read_only_data_mirror
+	local var_165_14 = Managers.backend:get_interface("keep_decorations"):get_keep_decorations_json()
 
-	if keep_decorations_json ~= read_only_data_mirror.keep_decorations then
-		new_data.keep_decorations = keep_decorations_json
+	if var_165_14 ~= var_165_13.keep_decorations then
+		var_0_14.keep_decorations = var_165_14
 	end
 
-	local dirty, new_characters_data, dirty_hero_data = self:_check_career_data(self._career_data, self._career_data_mirror)
-	local additional_data
+	local var_165_15, var_165_16, var_165_17 = arg_165_0:_check_career_data(arg_165_0._career_data, arg_165_0._career_data_mirror)
+	local var_165_18
 
-	if dirty then
-		local data_to_send, extra_data = split_request_data(dirty_hero_data)
+	if var_165_15 then
+		local var_165_19, var_165_20 = var_0_13(var_165_17)
 
-		new_data[self._characters_data_key] = cjson.encode(data_to_send)
-		additional_data = extra_data
+		var_0_14[arg_165_0._characters_data_key] = cjson.encode(var_165_19)
+		var_165_18 = var_165_20
 	end
 
-	if not table.is_empty(new_data) then
-		local update_read_only_data_request = {
+	if not table.is_empty(var_0_14) then
+		local var_165_21 = {
 			FunctionName = "updateHeroAttributes",
 			FunctionParameter = {
-				hero_attributes = new_data,
-			},
+				hero_attributes = var_0_14
+			}
 		}
-		local success_callback = callback(self, "update_read_only_data_request_cb", commit_id, additional_data)
-		local id = self._request_queue:enqueue(update_read_only_data_request, success_callback, false)
+		local var_165_22 = callback(arg_165_0, "update_read_only_data_request_cb", var_165_0, var_165_18)
+		local var_165_23 = arg_165_0._request_queue:enqueue(var_165_21, var_165_22, false)
 
-		self._num_items_to_load = self._num_items_to_load + 1
-		commit.status = "waiting"
-		commit.wait_for_read_only_data = true
-		commit.request_queue_ids[#commit.request_queue_ids + 1] = id
+		arg_165_0._num_items_to_load = arg_165_0._num_items_to_load + 1
+		var_165_1.status = "waiting"
+		var_165_1.wait_for_read_only_data = true
+		var_165_1.request_queue_ids[#var_165_1.request_queue_ids + 1] = var_165_23
 	end
 
-	self:_commit_user_data(new_data, commit, commit_id)
+	arg_165_0:_commit_user_data(var_0_14, var_165_1, var_165_0)
 
-	self._commits[commit_id] = commit
+	arg_165_0._commits[var_165_0] = var_165_1
 
-	return commit_id
+	return var_165_0
 end
 
-PlayFabMirrorBase.update_current_win_track_cb = function (self, commit_id, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.update_current_win_track_cb(arg_166_0, arg_166_1, arg_166_2)
+	arg_166_0._num_items_to_load = arg_166_0._num_items_to_load - 1
 
-	local commit = self._commits[commit_id]
-	local function_result = result.FunctionResult
-	local new_read_only_data = function_result.new_read_only_data
+	local var_166_0 = arg_166_0._commits[arg_166_1]
+	local var_166_1 = arg_166_2.FunctionResult.new_read_only_data
 
-	for key, value in pairs(new_read_only_data) do
-		local encoded_value = cjson.encode(value)
+	for iter_166_0, iter_166_1 in pairs(var_166_1) do
+		local var_166_2 = cjson.encode(iter_166_1)
 
-		self:set_read_only_data(key, encoded_value, true)
+		arg_166_0:set_read_only_data(iter_166_0, var_166_2, true)
 	end
 
-	commit.wait_for_win_tracks_data = false
+	var_166_0.wait_for_win_tracks_data = false
 end
 
-PlayFabMirrorBase.update_current_gotwf_cb = function (self, commit_id, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.update_current_gotwf_cb(arg_167_0, arg_167_1, arg_167_2)
+	arg_167_0._num_items_to_load = arg_167_0._num_items_to_load - 1
 
-	local commit = self._commits[commit_id]
-	local function_result = result.FunctionResult
-	local new_read_only_data = function_result.new_read_only_data
+	local var_167_0 = arg_167_0._commits[arg_167_1]
+	local var_167_1 = arg_167_2.FunctionResult.new_read_only_data
 
-	for key, value in pairs(new_read_only_data) do
-		local encoded_value = cjson.encode(value)
+	for iter_167_0, iter_167_1 in pairs(var_167_1) do
+		local var_167_2 = cjson.encode(iter_167_1)
 
-		self:set_read_only_data(key, encoded_value, true)
+		arg_167_0:set_read_only_data(iter_167_0, var_167_2, true)
 	end
 
-	commit.wait_for_gotwf_data = false
+	var_167_0.wait_for_gotwf_data = false
 end
 
-PlayFabMirrorBase.update_read_only_data_request_cb = function (self, commit_id, additional_data, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.update_read_only_data_request_cb(arg_168_0, arg_168_1, arg_168_2, arg_168_3)
+	arg_168_0._num_items_to_load = arg_168_0._num_items_to_load - 1
 
-	local commit = self._commits[commit_id]
-	local function_result = result.FunctionResult
-	local hero_attributes = function_result.hero_attributes
+	local var_168_0 = arg_168_0._commits[arg_168_1]
+	local var_168_1 = arg_168_3.FunctionResult.hero_attributes
 
-	if commit.current_characters_data_key ~= self._characters_data_key then
-		Crashify.print_exception("PlayFabMirrorBase", "characters_data_key is not the same as when the request was sent. previous: %s, current: %s", commit.current_characters_data_key, self._characters_data_key)
+	if var_168_0.current_characters_data_key ~= arg_168_0._characters_data_key then
+		Crashify.print_exception("PlayFabMirrorBase", "characters_data_key is not the same as when the request was sent. previous: %s, current: %s", var_168_0.current_characters_data_key, arg_168_0._characters_data_key)
 
 		return
 	end
 
-	for key, new_value in pairs(hero_attributes) do
-		local number_value = tonumber(new_value)
+	for iter_168_0, iter_168_1 in pairs(var_168_1) do
+		local var_168_2 = tonumber(iter_168_1)
 
-		self:set_read_only_data(key, number_value or new_value, true)
+		arg_168_0:set_read_only_data(iter_168_0, var_168_2 or iter_168_1, true)
 	end
 
-	local new_characters_data_string = hero_attributes[self._characters_data_key]
+	local var_168_3 = var_168_1[arg_168_0._characters_data_key]
 
-	if new_characters_data_string then
-		self._characters_data_mirror = cjson.decode(new_characters_data_string)
+	if var_168_3 then
+		arg_168_0._characters_data_mirror = cjson.decode(var_168_3)
 
-		for character_name, character_data in pairs(self._characters_data_mirror) do
-			table.merge_recursive(self._career_data_mirror, character_data.careers)
+		for iter_168_2, iter_168_3 in pairs(arg_168_0._characters_data_mirror) do
+			table.merge_recursive(arg_168_0._career_data_mirror, iter_168_3.careers)
 
-			for career_name, career_loadouts in pairs(character_data.careers) do
-				local career_data_mirror = self._career_data_mirror[career_name]
-				local character_data_career_mirror = character_data.careers[career_name]
+			for iter_168_4, iter_168_5 in pairs(iter_168_3.careers) do
+				local var_168_4 = arg_168_0._career_data_mirror[iter_168_4]
+				local var_168_5 = iter_168_3.careers[iter_168_4]
 
-				if #character_data_career_mirror < #career_data_mirror then
-					for i = #career_data_mirror, 1, -1 do
-						if not character_data_career_mirror[i] then
-							self._career_data_mirror[career_name][i] = nil
+				if #var_168_5 < #var_168_4 then
+					for iter_168_6 = #var_168_4, 1, -1 do
+						if not var_168_5[iter_168_6] then
+							arg_168_0._career_data_mirror[iter_168_4][iter_168_6] = nil
 						end
 					end
 				end
@@ -2989,228 +2927,210 @@ PlayFabMirrorBase.update_read_only_data_request_cb = function (self, commit_id, 
 		end
 	end
 
-	if additional_data then
-		local data_to_send, extra_data = split_request_data(additional_data)
-		local data = {
-			[self._characters_data_key] = cjson.encode(data_to_send),
+	if arg_168_2 then
+		local var_168_6, var_168_7 = var_0_13(arg_168_2)
+		local var_168_8 = {
+			[arg_168_0._characters_data_key] = cjson.encode(var_168_6)
 		}
 
-		additional_data = extra_data
+		arg_168_2 = var_168_7
 
-		local update_read_only_data_request = {
+		local var_168_9 = {
 			FunctionName = "updateHeroAttributes",
 			FunctionParameter = {
-				hero_attributes = data,
-			},
+				hero_attributes = var_168_8
+			}
 		}
-		local success_callback = callback(self, "update_read_only_data_request_cb", commit_id, additional_data)
-		local id = self._request_queue:enqueue(update_read_only_data_request, success_callback, false)
+		local var_168_10 = callback(arg_168_0, "update_read_only_data_request_cb", arg_168_1, arg_168_2)
+		local var_168_11 = arg_168_0._request_queue:enqueue(var_168_9, var_168_10, false)
 
-		self._num_items_to_load = self._num_items_to_load + 1
-		commit.status = "waiting"
-		commit.request_queue_ids[#commit.request_queue_ids + 1] = id
+		arg_168_0._num_items_to_load = arg_168_0._num_items_to_load + 1
+		var_168_0.status = "waiting"
+		var_168_0.request_queue_ids[#var_168_0.request_queue_ids + 1] = var_168_11
 	else
-		commit.wait_for_read_only_data = false
+		var_168_0.wait_for_read_only_data = false
 	end
 end
 
-PlayFabMirrorBase.save_statistics_cb = function (self, commit_id, stats, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.save_statistics_cb(arg_169_0, arg_169_1, arg_169_2, arg_169_3)
+	arg_169_0._num_items_to_load = arg_169_0._num_items_to_load - 1
 
-	local commit = self._commits[commit_id]
-	local stats_interface = Managers.backend:get_interface("statistics")
+	local var_169_0 = arg_169_0._commits[arg_169_1]
+	local var_169_1 = Managers.backend:get_interface("statistics")
 
-	if stats then
-		stats_interface:clear_dirty_flags(stats)
+	if arg_169_2 then
+		var_169_1:clear_dirty_flags(arg_169_2)
 	end
 
-	local function_result = result.FunctionResult
-	local achievement_reward_levels = function_result and function_result.achievement_reward_levels
+	local var_169_2 = arg_169_3.FunctionResult
+	local var_169_3 = var_169_2 and var_169_2.achievement_reward_levels
 
-	if achievement_reward_levels then
-		self:set_read_only_data("achievement_reward_levels", achievement_reward_levels, true)
+	if var_169_3 then
+		arg_169_0:set_read_only_data("achievement_reward_levels", var_169_3, true)
 	end
 
-	commit.wait_for_stats = false
+	var_169_0.wait_for_stats = false
 end
 
-PlayFabMirrorBase.update_weave_user_data_cb = function (self, commit_id, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.update_weave_user_data_cb(arg_170_0, arg_170_1, arg_170_2)
+	arg_170_0._num_items_to_load = arg_170_0._num_items_to_load - 1
 
-	local commit = self._commits[commit_id]
+	local var_170_0 = arg_170_0._commits[arg_170_1]
 
-	commit.wait_for_weave_user_data = false
+	var_170_0.wait_for_weave_user_data = false
 
-	if commit.current_characters_data_key ~= self._characters_data_key then
-		Crashify.print_exception("PlayFabMirrorBase", "characters_data_key is not the same as when the request was sent. previous: %s, current: %s", commit.current_characters_data_key, self._characters_data_key)
+	if var_170_0.current_characters_data_key ~= arg_170_0._characters_data_key then
+		Crashify.print_exception("PlayFabMirrorBase", "characters_data_key is not the same as when the request was sent. previous: %s, current: %s", var_170_0.current_characters_data_key, arg_170_0._characters_data_key)
 	end
 
-	local weaves_interface = Managers.backend:get_interface("weaves")
+	Managers.backend:get_interface("weaves"):clear_dirty_user_data()
 
-	weaves_interface:clear_dirty_user_data()
+	local var_170_1 = arg_170_2.FunctionResult.new_read_only_data
 
-	local function_result = result.FunctionResult
-	local new_read_only_data = function_result.new_read_only_data
-
-	if new_read_only_data then
-		for key, value in pairs(new_read_only_data) do
-			self:set_read_only_data(key, value, true)
+	if var_170_1 then
+		for iter_170_0, iter_170_1 in pairs(var_170_1) do
+			arg_170_0:set_read_only_data(iter_170_0, iter_170_1, true)
 		end
 	end
 end
 
-PlayFabMirrorBase.update_equipped_weapon_pose_skins_cb = function (self, commit_id, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.update_equipped_weapon_pose_skins_cb(arg_171_0, arg_171_1, arg_171_2)
+	arg_171_0._num_items_to_load = arg_171_0._num_items_to_load - 1
+	arg_171_0._commits[arg_171_1].wait_for_weapon_pose_skin_data = false
 
-	local commit = self._commits[commit_id]
+	Managers.backend:get_interface("items"):clear_dirty_weapon_pose_data()
 
-	commit.wait_for_weapon_pose_skin_data = false
+	local var_171_0 = arg_171_2.FunctionResult.equipped_weapon_pose_skins
 
-	local items_interface = Managers.backend:get_interface("items")
-
-	items_interface:clear_dirty_weapon_pose_data()
-
-	local function_result = result.FunctionResult
-	local equipped_weapon_pose_skins = function_result.equipped_weapon_pose_skins
-
-	if equipped_weapon_pose_skins then
-		self:set_read_only_data("equipped_weapon_pose_skins", cjson.encode(equipped_weapon_pose_skins), true)
+	if var_171_0 then
+		arg_171_0:set_read_only_data("equipped_weapon_pose_skins", cjson.encode(var_171_0), true)
 	end
 
-	self:_parse_equipped_weapon_pose_skins()
+	arg_171_0:_parse_equipped_weapon_pose_skins()
 end
 
-PlayFabMirrorBase.save_keep_decorations_cb = function (self, commit_id, on_complete, success)
-	local commit = self._commits[commit_id]
-
-	commit.wait_for_keep_decorations = false
+function PlayFabMirrorBase.save_keep_decorations_cb(arg_172_0, arg_172_1, arg_172_2, arg_172_3)
+	arg_172_0._commits[arg_172_1].wait_for_keep_decorations = false
 end
 
-PlayFabMirrorBase.wait_for_shutdown = function (self, duration)
+function PlayFabMirrorBase.wait_for_shutdown(arg_173_0, arg_173_1)
 	return
 end
 
-PlayFabMirrorBase.destroy = function (self)
+function PlayFabMirrorBase.destroy(arg_174_0)
 	return
 end
 
-PlayFabMirrorBase._get_eac_response = function (self, challenge)
-	local i = 0
-	local str = ""
+function PlayFabMirrorBase._get_eac_response(arg_175_0, arg_175_1)
+	local var_175_0 = 0
+	local var_175_1 = ""
 
-	while challenge[tostring(i)] do
-		str = str .. string.char(challenge[tostring(i)])
-		i = i + 1
+	while arg_175_1[tostring(var_175_0)] do
+		var_175_1 = var_175_1 .. string.char(arg_175_1[tostring(var_175_0)])
+		var_175_0 = var_175_0 + 1
 	end
 
-	local eac_response = Managers.eac:challenge_response(str)
-	local response
+	local var_175_2 = Managers.eac:challenge_response(var_175_1)
+	local var_175_3
 
-	if eac_response then
-		local index = 1
+	if var_175_2 then
+		local var_175_4 = 1
 
-		response = {}
+		var_175_3 = {}
 
-		while string.byte(eac_response, index, index) do
-			local byte_value = string.byte(eac_response, index, index)
+		while string.byte(var_175_2, var_175_4, var_175_4) do
+			local var_175_5 = string.byte(var_175_2, var_175_4, var_175_4)
 
-			response[tostring(index - 1)] = byte_value
-			index = index + 1
+			var_175_3[tostring(var_175_4 - 1)] = var_175_5
+			var_175_4 = var_175_4 + 1
 		end
 	end
 
-	return eac_response, response
+	return var_175_2, var_175_3
 end
 
-PlayFabMirrorBase._verify_dlc_careers = function (self)
-	local request = {
+function PlayFabMirrorBase._verify_dlc_careers(arg_176_0)
+	local var_176_0 = {
 		FunctionName = "verifyDlcCareers",
-		FunctionParameter = {},
+		FunctionParameter = {}
 	}
-	local success_callback = callback(self, "verify_dlc_careers_cb")
+	local var_176_1 = callback(arg_176_0, "verify_dlc_careers_cb")
 
-	self._request_queue:enqueue(request, success_callback)
+	arg_176_0._request_queue:enqueue(var_176_0, var_176_1)
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_176_0._num_items_to_load = arg_176_0._num_items_to_load + 1
 end
 
-PlayFabMirrorBase.verify_dlc_careers_cb = function (self, result)
-	local function_result = result.FunctionResult
-	local careers_added = function_result.careers_added
+function PlayFabMirrorBase.verify_dlc_careers_cb(arg_177_0, arg_177_1)
+	local var_177_0 = arg_177_1.FunctionResult
 
-	if careers_added then
-		local data = function_result.data
+	if var_177_0.careers_added then
+		local var_177_1 = var_177_0.data
 
-		self:merge_read_only_data(data, true)
+		arg_177_0:merge_read_only_data(var_177_1, true)
 	end
 
-	self._num_items_to_load = self._num_items_to_load - 1
+	arg_177_0._num_items_to_load = arg_177_0._num_items_to_load - 1
 
-	self:_setup_careers()
+	arg_177_0:_setup_careers()
 end
 
-PlayFabMirrorBase._setup_careers = function (self)
-	local characters_data_string = self:get_read_only_data(self._characters_data_key)
-	local characters_data = cjson.decode(characters_data_string)
+function PlayFabMirrorBase._setup_careers(arg_178_0)
+	local var_178_0 = arg_178_0:get_read_only_data(arg_178_0._characters_data_key)
+	local var_178_1 = cjson.decode(var_178_0)
 
-	self._career_data = {}
-	self._career_data_mirror = {}
-	self._career_loadouts = {}
-	self._career_lookup = {}
+	arg_178_0._career_data = {}
+	arg_178_0._career_data_mirror = {}
+	arg_178_0._career_loadouts = {}
+	arg_178_0._career_lookup = {}
 
-	local broken_slots_data = {}
-	local slots_to_verify
-	local ignore_keys = {
-		talents = true,
+	local var_178_2 = {}
+	local var_178_3
+	local var_178_4 = {
+		talents = true
 	}
-	local slot_keys_lookup = {}
+	local var_178_5 = {}
 
-	for character_name, character_data in pairs(characters_data) do
-		local profile_index = FindProfileIndex(character_name)
+	for iter_178_0, iter_178_1 in pairs(var_178_1) do
+		local var_178_6 = FindProfileIndex(iter_178_0)
 
-		if profile_index then
-			local profile = SPProfiles[profile_index]
+		if var_178_6 then
+			local var_178_7 = SPProfiles[var_178_6]
+			local var_178_8 = var_178_5[var_178_7.affiliation]
 
-			slots_to_verify = slot_keys_lookup[profile.affiliation]
+			if not var_178_8 and arg_178_0._verify_slot_keys_per_affiliation[var_178_7.affiliation] then
+				local var_178_9 = table.clone(arg_178_0._verify_slot_keys_per_affiliation[var_178_7.affiliation])
 
-			if not slots_to_verify then
-				local slot_keys_per_affiliation = self._verify_slot_keys_per_affiliation[profile.affiliation]
-
-				if slot_keys_per_affiliation then
-					local tbl = table.clone(self._verify_slot_keys_per_affiliation[profile.affiliation])
-
-					for i = #tbl, 1, -1 do
-						if ignore_keys[tbl[i]] then
-							table.remove(tbl, i)
-						end
+				for iter_178_2 = #var_178_9, 1, -1 do
+					if var_178_4[var_178_9[iter_178_2]] then
+						table.remove(var_178_9, iter_178_2)
 					end
-
-					slot_keys_lookup[profile.affiliation] = tbl
-					slots_to_verify = tbl
 				end
+
+				var_178_5[var_178_7.affiliation] = var_178_9
+				var_178_8 = var_178_9
 			end
 
-			if slots_to_verify then
-				local careers_loadout = character_data.loadouts
+			if var_178_8 then
+				local var_178_10 = iter_178_1.loadouts
 
-				for career_name, career_data in pairs(character_data.careers) do
-					if CareerSettings[career_name] then
-						self._career_data[career_name] = {}
-						self._career_data_mirror[career_name] = {}
+				for iter_178_3, iter_178_4 in pairs(iter_178_1.careers) do
+					if CareerSettings[iter_178_3] then
+						arg_178_0._career_data[iter_178_3] = {}
+						arg_178_0._career_data_mirror[iter_178_3] = {}
 
-						local profile = PROFILES_BY_CAREER_NAMES[career_name]
-						local profile_index = profile.index
-						local career_index = career_index_from_name(profile_index, career_name)
+						local var_178_11 = PROFILES_BY_CAREER_NAMES[iter_178_3].index
+						local var_178_12 = career_index_from_name(var_178_11, iter_178_3)
 
-						self._career_loadouts[career_name] = careers_loadout and careers_loadout[career_index] or 1
+						arg_178_0._career_loadouts[iter_178_3] = var_178_10 and var_178_10[var_178_12] or 1
 
-						local broken_slots = self:_set_inital_career_data(career_name, career_data, slots_to_verify)
+						local var_178_13 = arg_178_0:_set_inital_career_data(iter_178_3, iter_178_4, var_178_8)
 
-						if broken_slots then
-							broken_slots_data[career_name] = broken_slots
+						if var_178_13 then
+							var_178_2[iter_178_3] = var_178_13
 
-							debug_printf("Broken item slots for career: %q", career_name)
-							table.dump(broken_slots, "BROKEN_SLOTS", 2)
+							var_0_6("Broken item slots for career: %q", iter_178_3)
+							table.dump(var_178_13, "BROKEN_SLOTS", 2)
 						end
 					end
 				end
@@ -3218,163 +3138,163 @@ PlayFabMirrorBase._setup_careers = function (self)
 		end
 	end
 
-	if table.is_empty(broken_slots_data) then
+	if table.is_empty(var_178_2) then
 		rawset(_G, "debug_characters_data_unsafe_write", nil)
 
-		self._characters_data = characters_data
-		self._characters_data_mirror = table.clone(characters_data)
+		arg_178_0._characters_data = var_178_1
+		arg_178_0._characters_data_mirror = table.clone(var_178_1)
 
 		if DEDICATED_SERVER then
-			self:unequip_disabled_items()
+			arg_178_0:unequip_disabled_items()
 		else
-			self:_verify_default_gear()
+			arg_178_0:_verify_default_gear()
 		end
 	else
-		self:_fix_career_data(broken_slots_data)
+		arg_178_0:_fix_career_data(var_178_2)
 	end
 end
 
-PlayFabMirrorBase._verify_default_gear = function (self)
-	local request = {
+function PlayFabMirrorBase._verify_default_gear(arg_179_0)
+	local var_179_0 = {
 		FunctionName = "verifyDefaultLoadouts",
 		FunctionParameter = {
-			slots_to_verify = self._verify_slot_keys_per_affiliation.heroes,
-		},
+			slots_to_verify = arg_179_0._verify_slot_keys_per_affiliation.heroes
+		}
 	}
-	local success_callback = callback(self, "verify_default_loadouts_request_cb")
+	local var_179_1 = callback(arg_179_0, "verify_default_loadouts_request_cb")
 
-	self._request_queue:enqueue(request, success_callback)
+	arg_179_0._request_queue:enqueue(var_179_0, var_179_1)
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_179_0._num_items_to_load = arg_179_0._num_items_to_load + 1
 end
 
-PlayFabMirrorBase.verify_default_loadouts_request_cb = function (self, result)
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.verify_default_loadouts_request_cb(arg_180_0, arg_180_1)
+	arg_180_0._num_items_to_load = arg_180_0._num_items_to_load - 1
 
-	local function_result = result.FunctionResult
-	local character_default_loadouts = function_result.character_default_loadouts
-	local vs_character_default_loadouts = function_result.vs_character_default_loadouts
+	local var_180_0 = arg_180_1.FunctionResult
+	local var_180_1 = var_180_0.character_default_loadouts
+	local var_180_2 = var_180_0.vs_character_default_loadouts
 
-	if character_default_loadouts then
-		self:set_read_only_data("character_default_loadouts", cjson.encode(character_default_loadouts), true)
+	if var_180_1 then
+		arg_180_0:set_read_only_data("character_default_loadouts", cjson.encode(var_180_1), true)
 	end
 
-	if vs_character_default_loadouts then
-		self:set_read_only_data("vs_character_default_loadouts", cjson.encode(vs_character_default_loadouts), true)
+	if var_180_2 then
+		arg_180_0:set_read_only_data("vs_character_default_loadouts", cjson.encode(var_180_2), true)
 	end
 
-	self._character_default_loadouts = {}
-	self._character_default_loadouts.adventure = character_default_loadouts
-	self._character_default_loadouts.versus = vs_character_default_loadouts
+	arg_180_0._character_default_loadouts = {}
+	arg_180_0._character_default_loadouts.adventure = var_180_1
+	arg_180_0._character_default_loadouts.versus = var_180_2
 
 	if Managers.mechanism:current_mechanism_name() == "adventure" then
-		self:_check_weaves_loadout()
+		arg_180_0:_check_weaves_loadout()
 	else
-		self:unequip_disabled_items()
+		arg_180_0:unequip_disabled_items()
 	end
 end
 
-PlayFabMirrorBase._fix_career_data = function (self, broken_slots_data, override_mechanism, override_cb_func)
-	local request = {
+function PlayFabMirrorBase._fix_career_data(arg_181_0, arg_181_1, arg_181_2, arg_181_3)
+	local var_181_0 = {
 		FunctionName = "fixCareerData",
 		FunctionParameter = {
-			broken_slots = broken_slots_data,
-			mechanism = override_mechanism and override_mechanism or Managers.mechanism:current_mechanism_name(),
-		},
+			broken_slots = arg_181_1,
+			mechanism = arg_181_2 and arg_181_2 or Managers.mechanism:current_mechanism_name()
+		}
 	}
-	local success_callback = callback(self, override_cb_func or "fix_career_data_request_cb")
+	local var_181_1 = callback(arg_181_0, arg_181_3 or "fix_career_data_request_cb")
 
-	self._request_queue:enqueue(request, success_callback)
+	arg_181_0._request_queue:enqueue(var_181_0, var_181_1)
 
-	self._num_items_to_load = self._num_items_to_load + 1
+	arg_181_0._num_items_to_load = arg_181_0._num_items_to_load + 1
 end
 
-PlayFabMirrorBase.fix_career_data_request_cb = function (self, result)
-	self.broken_slots_data = nil
-	self._num_items_to_load = self._num_items_to_load - 1
+function PlayFabMirrorBase.fix_career_data_request_cb(arg_182_0, arg_182_1)
+	arg_182_0.broken_slots_data = nil
+	arg_182_0._num_items_to_load = arg_182_0._num_items_to_load - 1
 
-	local function_result = result.FunctionResult
-	local character_starting_gear = function_result.character_starting_gear
-	local current_career_data = self._career_data
-	local mirror_career_data = self._career_data_mirror
+	local var_182_0 = arg_182_1.FunctionResult
+	local var_182_1 = var_182_0.character_starting_gear
+	local var_182_2 = arg_182_0._career_data
+	local var_182_3 = arg_182_0._career_data_mirror
 
-	self._characters_data = character_starting_gear
-	self._characters_data_mirror = table.clone(character_starting_gear)
+	arg_182_0._characters_data = var_182_1
+	arg_182_0._characters_data_mirror = table.clone(var_182_1)
 
-	for character_names, character_data in pairs(character_starting_gear) do
-		local mirror_data = self._characters_data_mirror[character_names]
-		local careers = character_data.careers
-		local mirror_careers = mirror_data and mirror_data.careers
+	for iter_182_0, iter_182_1 in pairs(var_182_1) do
+		local var_182_4 = arg_182_0._characters_data_mirror[iter_182_0]
+		local var_182_5 = iter_182_1.careers
+		local var_182_6 = var_182_4 and var_182_4.careers
 
-		table.merge_recursive(current_career_data, careers)
-		table.merge_recursive(mirror_career_data, mirror_careers)
+		table.merge_recursive(var_182_2, var_182_5)
+		table.merge_recursive(var_182_3, var_182_6)
 	end
 
-	self:set_read_only_data(self._characters_data_key, cjson.encode(character_starting_gear), true)
+	arg_182_0:set_read_only_data(arg_182_0._characters_data_key, cjson.encode(var_182_1), true)
 
-	if function_result.num_items_granted > 0 then
-		local unlocked_weapon_skins = function_result.unlocked_weapon_skins
+	if var_182_0.num_items_granted > 0 then
+		local var_182_7 = var_182_0.unlocked_weapon_skins
 
-		if unlocked_weapon_skins then
-			self:set_read_only_data("unlocked_weapon_skins", unlocked_weapon_skins, true)
+		if var_182_7 then
+			arg_182_0:set_read_only_data("unlocked_weapon_skins", var_182_7, true)
 
-			self._unlocked_weapon_skins = self:_parse_unlocked_weapon_skins()
+			arg_182_0._unlocked_weapon_skins = arg_182_0:_parse_unlocked_weapon_skins()
 		end
 
-		local unlocked_cosmetics = function_result.unlocked_cosmetics
+		local var_182_8 = var_182_0.unlocked_cosmetics
 
-		if unlocked_cosmetics then
-			self:set_read_only_data("unlocked_cosmetics", unlocked_cosmetics, true)
+		if var_182_8 then
+			arg_182_0:set_read_only_data("unlocked_cosmetics", var_182_8, true)
 
-			self._unlocked_cosmetics = self:_parse_unlocked_cosmetics()
+			arg_182_0._unlocked_cosmetics = arg_182_0:_parse_unlocked_cosmetics()
 		end
 
-		local unlocked_weapon_poses = function_result.unlocked_weapon_poses
+		local var_182_9 = var_182_0.unlocked_weapon_poses
 
-		if unlocked_weapon_poses then
-			self:set_read_only_data("unlocked_weapon_poses", unlocked_weapon_poses, true)
+		if var_182_9 then
+			arg_182_0:set_read_only_data("unlocked_weapon_poses", var_182_9, true)
 
-			self._unlocked_weapon_poses = self:_parse_unlocked_weapon_poses()
+			arg_182_0._unlocked_weapon_poses = arg_182_0:_parse_unlocked_weapon_poses()
 		end
 
-		self:_request_user_inventory()
+		arg_182_0:_request_user_inventory()
 	else
-		self:_verify_default_gear()
+		arg_182_0:_verify_default_gear()
 	end
 end
 
-PlayFabMirrorBase.unequip_disabled_items = function (self)
-	local item_availability = Managers.mechanism:mechanism_setting_for_title("override_item_availability")
+function PlayFabMirrorBase.unequip_disabled_items(arg_183_0)
+	local var_183_0 = Managers.mechanism:mechanism_setting_for_title("override_item_availability")
 
-	if not item_availability or table.is_empty(item_availability) then
+	if not var_183_0 or table.is_empty(var_183_0) then
 		return
 	end
 
-	local profiles_by_career_names = PROFILES_BY_CAREER_NAMES
-	local inventory_items = self._inventory_items
-	local table_contains = table.contains
-	local mechanism_name = Managers.mechanism:current_mechanism_name()
+	local var_183_1 = PROFILES_BY_CAREER_NAMES
+	local var_183_2 = arg_183_0._inventory_items
+	local var_183_3 = table.contains
+	local var_183_4 = Managers.mechanism:current_mechanism_name()
 
-	mechanism_name = mechanism_name == "versus" and mechanism_name or nil
+	var_183_4 = var_183_4 == "versus" and var_183_4 or nil
 
-	for career_name, slot_data in pairs(self._career_data) do
-		local character = profiles_by_career_names[career_name]
+	for iter_183_0, iter_183_1 in pairs(arg_183_0._career_data) do
+		local var_183_5 = var_183_1[iter_183_0]
 
-		if character then
-			local slots_to_verify = self._verify_slot_keys_per_affiliation[character.affiliation]
+		if var_183_5 then
+			local var_183_6 = arg_183_0._verify_slot_keys_per_affiliation[var_183_5.affiliation]
 
-			if slots_to_verify then
-				local career_settings = CareerSettings[career_name]
+			if var_183_6 then
+				local var_183_7 = CareerSettings[iter_183_0]
 
-				for slot_name, slot_value in pairs(slot_data) do
-					if table_contains(slots_to_verify, slot_name) then
-						local item = inventory_items[slot_value]
+				for iter_183_2, iter_183_3 in pairs(iter_183_1) do
+					if var_183_3(var_183_6, iter_183_2) then
+						local var_183_8 = var_183_2[iter_183_3]
 
-						if item and item_availability[item.ItemId] == false then
-							local valid_item_id = self:_find_valid_item_for_slot(item_availability, career_settings, slot_name, career_name, mechanism_name)
+						if var_183_8 and var_183_0[var_183_8.ItemId] == false then
+							local var_183_9 = arg_183_0:_find_valid_item_for_slot(var_183_0, var_183_7, iter_183_2, iter_183_0, var_183_4)
 
-							if valid_item_id then
-								self:set_character_data(career_name, slot_name, valid_item_id, true)
+							if var_183_9 then
+								arg_183_0:set_character_data(iter_183_0, iter_183_2, var_183_9, true)
 							end
 						end
 					end
@@ -3384,310 +3304,293 @@ PlayFabMirrorBase.unequip_disabled_items = function (self)
 	end
 end
 
-PlayFabMirrorBase._find_valid_item_for_slot = function (self, override_item_availability, career_settings, slot_name, career_name, mechanism_name)
-	local item_master_list = ItemMasterList
-	local table_contains = table.contains
-	local empty_tbl = {}
+function PlayFabMirrorBase._find_valid_item_for_slot(arg_184_0, arg_184_1, arg_184_2, arg_184_3, arg_184_4, arg_184_5)
+	local var_184_0 = ItemMasterList
+	local var_184_1 = table.contains
+	local var_184_2 = {}
 
-	for inventory_id, inventory_item in pairs(self._inventory_items) do
-		if override_item_availability[inventory_item.ItemId] ~= false then
-			local master_list_item = item_master_list[inventory_item.ItemId]
-			local correct_slot = table_contains(career_settings.item_slot_types_by_slot_name[slot_name], master_list_item.slot_type)
-			local can_wield = master_list_item.can_wield
+	for iter_184_0, iter_184_1 in pairs(arg_184_0._inventory_items) do
+		if arg_184_1[iter_184_1.ItemId] ~= false then
+			local var_184_3 = var_184_0[iter_184_1.ItemId]
+			local var_184_4 = var_184_1(arg_184_2.item_slot_types_by_slot_name[arg_184_3], var_184_3.slot_type)
+			local var_184_5 = var_184_3.can_wield
 
-			if correct_slot and can_wield and table_contains(can_wield, career_name) then
-				local item_for_mechanism = not mechanism_name or table_contains(master_list_item.mechanisms or empty_tbl, mechanism_name)
-
-				if item_for_mechanism then
-					return inventory_id, inventory_item
-				end
+			if var_184_4 and var_184_5 and var_184_1(var_184_5, arg_184_4) and (not arg_184_5 or var_184_1(var_184_3.mechanisms or var_184_2, arg_184_5)) then
+				return iter_184_0, iter_184_1
 			end
 		end
 	end
 end
 
-PlayFabMirrorBase._check_career_data = function (self, careers_data, career_data_mirror)
-	local characters_data = self._characters_data
-	local characters_data_mirror = self._characters_data_mirror
-	local dirty = false
-	local dirty_hero_data = {}
-	local ignore_keys = {
+function PlayFabMirrorBase._check_career_data(arg_185_0, arg_185_1, arg_185_2)
+	local var_185_0 = arg_185_0._characters_data
+	local var_185_1 = arg_185_0._characters_data_mirror
+	local var_185_2 = false
+	local var_185_3 = {}
+	local var_185_4 = {
 		"careers",
 		"loadouts",
 		"experience",
 		"experience_pool",
-		"prestige",
+		"prestige"
 	}
 
-	for name, data in pairs(characters_data) do
-		local data_mirror = characters_data_mirror[name]
+	for iter_185_0, iter_185_1 in pairs(var_185_0) do
+		local var_185_5 = var_185_1[iter_185_0]
 
-		if data_mirror then
-			local character_dirty = not table.compare(data, data_mirror, ignore_keys)
+		if var_185_5 and (not table.compare(iter_185_1, var_185_5, var_185_4) or table.size(iter_185_1) ~= table.size(var_185_5)) then
+			var_0_6("[CheckCareerData] Found profile data changes: %s", iter_185_0)
 
-			character_dirty = character_dirty or table.size(data) ~= table.size(data_mirror)
+			var_185_2 = true
 
-			if character_dirty then
-				debug_printf("[CheckCareerData] Found profile data changes: %s", name)
+			local var_185_6 = var_185_3[iter_185_0] or {
+				careers = {}
+			}
 
-				dirty = true
-
-				local tbl = dirty_hero_data[name] or {
-					careers = {},
-				}
-
-				tbl.selected_career = data.career
-				tbl.selected_bot_career = data.bot_career
-				dirty_hero_data[name] = tbl
-			end
+			var_185_6.selected_career = iter_185_1.career
+			var_185_6.selected_bot_career = iter_185_1.bot_career
+			var_185_3[iter_185_0] = var_185_6
 		end
 	end
 
-	for name, data in pairs(characters_data) do
-		local loadouts = data.loadouts
-		local data_mirror = characters_data_mirror[name]
+	for iter_185_2, iter_185_3 in pairs(var_185_0) do
+		local var_185_7 = iter_185_3.loadouts
+		local var_185_8 = var_185_1[iter_185_2]
 
-		if data_mirror then
-			local loadouts_mirror = data_mirror.loadouts
+		if var_185_8 then
+			local var_185_9 = var_185_8.loadouts
 
-			if loadouts_mirror then
-				local character_dirty = not table.compare(loadouts, loadouts_mirror)
+			if var_185_9 then
+				if not table.compare(var_185_7, var_185_9) then
+					var_0_6("[CheckCareerData] Found selected loadout changes for profile: %s", iter_185_2)
 
-				if character_dirty then
-					debug_printf("[CheckCareerData] Found selected loadout changes for profile: %s", name)
+					var_185_2 = true
 
-					dirty = true
-
-					local tbl = dirty_hero_data[name] or {
-						careers = {},
+					local var_185_10 = var_185_3[iter_185_2] or {
+						careers = {}
 					}
 
-					tbl.selected_loadouts = loadouts
-					dirty_hero_data[name] = tbl
+					var_185_10.selected_loadouts = var_185_7
+					var_185_3[iter_185_2] = var_185_10
 				end
 			else
-				debug_printf("[CheckCareerData] Missing selected loadout data for profile: %s", name)
+				var_0_6("[CheckCareerData] Missing selected loadout data for profile: %s", iter_185_2)
 
-				dirty = true
+				var_185_2 = true
 			end
 		else
-			debug_printf("[CheckCareerData] Missing profile data: %s", name)
+			var_0_6("[CheckCareerData] Missing profile data: %s", iter_185_2)
 
-			dirty = true
+			var_185_2 = true
 		end
 	end
 
-	for career_name, career_data in pairs(careers_data) do
-		local mirror_data = career_data_mirror[career_name]
-		local profile = PROFILES_BY_CAREER_NAMES[career_name]
+	for iter_185_4, iter_185_5 in pairs(arg_185_1) do
+		local var_185_11 = arg_185_2[iter_185_4]
+		local var_185_12 = PROFILES_BY_CAREER_NAMES[iter_185_4]
 
-		if profile then
-			local slots_to_verify = self._verify_slot_keys_per_affiliation[profile.affiliation]
+		if var_185_12 then
+			local var_185_13 = arg_185_0._verify_slot_keys_per_affiliation[var_185_12.affiliation]
 
-			if slots_to_verify then
-				for i = 1, #career_data do
-					local loadout = career_data[i]
-					local mirror_loadout = mirror_data[i]
+			if var_185_13 then
+				for iter_185_6 = 1, #iter_185_5 do
+					local var_185_14 = iter_185_5[iter_185_6]
+					local var_185_15 = var_185_11[iter_185_6]
 
-					if mirror_loadout then
-						for _, loadout_key in pairs(slots_to_verify) do
-							local loadout_value = loadout[loadout_key]
-							local mirror_loadout_value = mirror_loadout[loadout_key]
+					if var_185_15 then
+						for iter_185_7, iter_185_8 in pairs(var_185_13) do
+							local var_185_16 = var_185_14[iter_185_8]
 
-							if loadout_value ~= mirror_loadout_value then
-								for _, data in pairs(characters_data) do
-									if data.careers[career_name] then
-										local career_loadout = data.careers[career_name][i]
+							if var_185_16 ~= var_185_15[iter_185_8] then
+								for iter_185_9, iter_185_10 in pairs(var_185_0) do
+									if iter_185_10.careers[iter_185_4] then
+										local var_185_17 = iter_185_10.careers[iter_185_4][iter_185_6]
 
-										if career_loadout then
-											career_loadout[loadout_key] = loadout_value
+										if var_185_17 then
+											var_185_17[iter_185_8] = var_185_16
 										end
 
 										break
 									end
 								end
 
-								debug_printf("[CheckCareerData] Found changes in loadout %d for career: %s in slot %s", i, career_name, loadout_key)
+								var_0_6("[CheckCareerData] Found changes in loadout %d for career: %s in slot %s", iter_185_6, iter_185_4, iter_185_8)
 
-								dirty = true
+								var_185_2 = true
 
-								local hero_table = dirty_hero_data[profile.display_name] or {
-									careers = {},
+								local var_185_18 = var_185_3[var_185_12.display_name] or {
+									careers = {}
 								}
-								local career_table = hero_table.careers[career_name] or {
+								local var_185_19 = var_185_18.careers[iter_185_4] or {
 									loadouts = {},
-									deleted_loadouts = {},
+									deleted_loadouts = {}
 								}
 
-								hero_table.careers[career_name] = career_table
-								career_table.loadouts[tostring(i)] = loadout
-								dirty_hero_data[profile.display_name] = hero_table
+								var_185_18.careers[iter_185_4] = var_185_19
+								var_185_19.loadouts[tostring(iter_185_6)] = var_185_14
+								var_185_3[var_185_12.display_name] = var_185_18
 							end
 						end
 					else
-						debug_printf("[CheckCareerData] Missing/new loadout for career: %s", career_name)
+						var_0_6("[CheckCareerData] Missing/new loadout for career: %s", iter_185_4)
 
-						dirty = true
+						var_185_2 = true
 
-						local hero_table = dirty_hero_data[profile.display_name] or {
-							careers = {},
+						local var_185_20 = var_185_3[var_185_12.display_name] or {
+							careers = {}
 						}
-						local career_table = hero_table.careers[career_name] or {
+						local var_185_21 = var_185_20.careers[iter_185_4] or {
 							loadouts = {},
-							deleted_loadouts = {},
+							deleted_loadouts = {}
 						}
 
-						hero_table.careers[career_name] = career_table
-						career_table.loadouts[tostring(i)] = loadout
-						dirty_hero_data[profile.display_name] = hero_table
+						var_185_20.careers[iter_185_4] = var_185_21
+						var_185_21.loadouts[tostring(iter_185_6)] = var_185_14
+						var_185_3[var_185_12.display_name] = var_185_20
 					end
 				end
 			else
-				Application.warning(string.format("Missing slots to verify for %q", career_name))
+				Application.warning(string.format("Missing slots to verify for %q", iter_185_4))
 			end
 		end
 	end
 
-	for career_name, mirror_data in pairs(career_data_mirror) do
-		local career_data = careers_data[career_name]
+	for iter_185_11, iter_185_12 in pairs(arg_185_2) do
+		local var_185_22 = arg_185_1[iter_185_11]
 
-		if not career_data then
-			local table_addresses = {}
-			local verify_table_references
+		if not var_185_22 then
+			local var_185_23 = {}
+			local var_185_24
 
-			function verify_table_references(tbl, name)
-				local k = tostring(tbl)
-				local existing_address = table_addresses[k]
+			local function var_185_25(arg_186_0, arg_186_1)
+				local var_186_0 = tostring(arg_186_0)
+				local var_186_1 = var_185_23[var_186_0]
 
-				if existing_address then
-					debug_printf("%s and %s share the same table address. Verify if these should be clones instead!", name, existing_address)
+				if var_186_1 then
+					var_0_6("%s and %s share the same table address. Verify if these should be clones instead!", arg_186_1, var_186_1)
 				else
-					table_addresses[k] = name
+					var_185_23[var_186_0] = arg_186_1
 				end
 
-				for k, v in pairs(tbl) do
-					if type(v) == "table" then
-						verify_table_references(v, string.format("%s-%s", name, k))
+				for iter_186_0, iter_186_1 in pairs(arg_186_0) do
+					if type(iter_186_1) == "table" then
+						var_185_25(iter_186_1, string.format("%s-%s", arg_186_1, iter_186_0))
 					end
 				end
 			end
 
-			debug_printf("[CheckCareerData] You will crash now. That's sad :(")
-			table.dump(self._career_data, "PlayfabMirrorBase_career_data", 5)
-			table.dump(self._career_data_mirror, "PlayfabMirrorBase._career_data_mirror", 5)
-			table.dump(self._career_loadouts, "PlayfabMirrorBase._career_loadouts", 5)
-			table.dump(self._career_lookup, "PlayfabMirrorBase._career_lookup", 5)
-			table.dump(self._character_default_loadouts, "PlayfabMirrorBase._character_default_loadouts", 5)
-			table.dump(self._characters_data, "PlayfabMirrorBase._characters_data", 5)
-			table.dump(self._characters_data_mirror, "PlayfabMirrorBase._characters_data_mirror", 5)
-			debug_printf("PlayfabMirrorBase._read_only_data.characters_data: %s", self._read_only_data.characters_data)
-			debug_printf("PlayfabMirrorBase._read_only_data.vs_characters_data: %s", self._read_only_data.vs_characters_data)
-			debug_printf("PlayfabMirrorBase._read_only_data.character_default_loadouts: %s", self._read_only_data.character_default_loadouts)
-			debug_printf("PlayfabMirrorBase._read_only_data.vs_character_default_loadouts: %s", self._read_only_data.vs_character_default_loadouts)
-			debug_printf("PlayfabMirrorBase._read_only_data_mirror.characters_data: %s", self._read_only_data_mirror.characters_data)
-			debug_printf("PlayfabMirrorBase._read_only_data_mirror.vs_characters_data: %s", self._read_only_data_mirror.vs_characters_data)
-			debug_printf("PlayfabMirrorBase._read_only_data_mirror.character_default_loadouts: %s", self._read_only_data_mirror.character_default_loadouts)
-			debug_printf("PlayfabMirrorBase._read_only_data_mirror.vs_character_default_loadouts: %s", self._read_only_data_mirror.vs_character_default_loadouts)
-			verify_table_references(self._career_data, "_career_data")
-			verify_table_references(self._career_data_mirror, "_career_data_mirror")
-			verify_table_references(self._career_loadouts, "_career_loadouts")
-			verify_table_references(self._career_lookup, "_career_lookup")
-			verify_table_references(self._character_default_loadouts, "_character_default_loadouts")
-			verify_table_references(self._characters_data, "_characters_data")
-			verify_table_references(self._characters_data_mirror, "_characters_data_mirror")
+			var_0_6("[CheckCareerData] You will crash now. That's sad :(")
+			table.dump(arg_185_0._career_data, "PlayfabMirrorBase_career_data", 5)
+			table.dump(arg_185_0._career_data_mirror, "PlayfabMirrorBase._career_data_mirror", 5)
+			table.dump(arg_185_0._career_loadouts, "PlayfabMirrorBase._career_loadouts", 5)
+			table.dump(arg_185_0._career_lookup, "PlayfabMirrorBase._career_lookup", 5)
+			table.dump(arg_185_0._character_default_loadouts, "PlayfabMirrorBase._character_default_loadouts", 5)
+			table.dump(arg_185_0._characters_data, "PlayfabMirrorBase._characters_data", 5)
+			table.dump(arg_185_0._characters_data_mirror, "PlayfabMirrorBase._characters_data_mirror", 5)
+			var_0_6("PlayfabMirrorBase._read_only_data.characters_data: %s", arg_185_0._read_only_data.characters_data)
+			var_0_6("PlayfabMirrorBase._read_only_data.vs_characters_data: %s", arg_185_0._read_only_data.vs_characters_data)
+			var_0_6("PlayfabMirrorBase._read_only_data.character_default_loadouts: %s", arg_185_0._read_only_data.character_default_loadouts)
+			var_0_6("PlayfabMirrorBase._read_only_data.vs_character_default_loadouts: %s", arg_185_0._read_only_data.vs_character_default_loadouts)
+			var_0_6("PlayfabMirrorBase._read_only_data_mirror.characters_data: %s", arg_185_0._read_only_data_mirror.characters_data)
+			var_0_6("PlayfabMirrorBase._read_only_data_mirror.vs_characters_data: %s", arg_185_0._read_only_data_mirror.vs_characters_data)
+			var_0_6("PlayfabMirrorBase._read_only_data_mirror.character_default_loadouts: %s", arg_185_0._read_only_data_mirror.character_default_loadouts)
+			var_0_6("PlayfabMirrorBase._read_only_data_mirror.vs_character_default_loadouts: %s", arg_185_0._read_only_data_mirror.vs_character_default_loadouts)
+			var_185_25(arg_185_0._career_data, "_career_data")
+			var_185_25(arg_185_0._career_data_mirror, "_career_data_mirror")
+			var_185_25(arg_185_0._career_loadouts, "_career_loadouts")
+			var_185_25(arg_185_0._career_lookup, "_career_lookup")
+			var_185_25(arg_185_0._character_default_loadouts, "_character_default_loadouts")
+			var_185_25(arg_185_0._characters_data, "_characters_data")
+			var_185_25(arg_185_0._characters_data_mirror, "_characters_data_mirror")
 		end
 
-		local profile = PROFILES_BY_CAREER_NAMES[career_name]
+		local var_185_26 = PROFILES_BY_CAREER_NAMES[iter_185_11]
 
-		if profile then
-			for i = 1, #mirror_data do
-				if not career_data[i] then
-					debug_printf("[CheckCareerData] Missing/deleted loadout for career: %s", career_name)
+		if var_185_26 then
+			for iter_185_13 = 1, #iter_185_12 do
+				if not var_185_22[iter_185_13] then
+					var_0_6("[CheckCareerData] Missing/deleted loadout for career: %s", iter_185_11)
 
-					dirty = true
+					var_185_2 = true
 
-					local hero_table = dirty_hero_data[profile.display_name] or {
-						careers = {},
+					local var_185_27 = var_185_3[var_185_26.display_name] or {
+						careers = {}
 					}
-					local career_table = hero_table.careers[career_name] or {
+					local var_185_28 = var_185_27.careers[iter_185_11] or {
 						loadouts = {},
-						deleted_loadouts = {},
+						deleted_loadouts = {}
 					}
 
-					hero_table.careers[career_name] = career_table
-					career_table.deleted_loadouts[#career_table.deleted_loadouts + 1] = i
-					dirty_hero_data[profile.display_name] = hero_table
+					var_185_27.careers[iter_185_11] = var_185_28
+					var_185_28.deleted_loadouts[#var_185_28.deleted_loadouts + 1] = iter_185_13
+					var_185_3[var_185_26.display_name] = var_185_27
 				end
 			end
 		end
 	end
 
-	dirty = dirty or Managers.account:offline_mode()
+	var_185_2 = var_185_2 or Managers.account:offline_mode()
 
-	return dirty, characters_data, dirty_hero_data
+	return var_185_2, var_185_0, var_185_3
 end
 
-PlayFabMirrorBase.set_career_read_only_data = function (self, character, key, value, career, set_mirror, loadout_index)
-	local characters_data = self._characters_data
+function PlayFabMirrorBase.set_career_read_only_data(arg_187_0, arg_187_1, arg_187_2, arg_187_3, arg_187_4, arg_187_5, arg_187_6)
+	local var_187_0 = arg_187_0._characters_data
 
-	loadout_index = career and (loadout_index or self._career_loadouts[career])
+	arg_187_6 = arg_187_4 and (arg_187_6 or arg_187_0._career_loadouts[arg_187_4])
+	;(arg_187_4 and var_187_0[arg_187_1].careers[arg_187_4][arg_187_6] or var_187_0[arg_187_1])[arg_187_2] = arg_187_3
 
-	local data = career and characters_data[character].careers[career][loadout_index] or characters_data[character]
+	if arg_187_5 then
+		local var_187_1 = arg_187_0._characters_data_mirror
+		local var_187_2 = arg_187_4 and var_187_1[arg_187_1].careers[arg_187_4][arg_187_6] or var_187_1[arg_187_1]
 
-	data[key] = value
-
-	if set_mirror then
-		local characters_data_mirror = self._characters_data_mirror
-		local data_mirror = career and characters_data_mirror[character].careers[career][loadout_index] or characters_data_mirror[character]
-
-		if type(value) == "table" then
-			data_mirror[key] = table.clone(value)
+		if type(arg_187_3) == "table" then
+			var_187_2[arg_187_2] = table.clone(arg_187_3)
 		else
-			data_mirror[key] = value
+			var_187_2[arg_187_2] = arg_187_3
 		end
 	end
 
-	local encoded_data = cjson.encode(characters_data)
+	local var_187_3 = cjson.encode(var_187_0)
 
-	self:set_read_only_data(self._characters_data_key, encoded_data, set_mirror)
+	arg_187_0:set_read_only_data(arg_187_0._characters_data_key, var_187_3, arg_187_5)
 end
 
-PlayFabMirrorBase.get_characters_data = function (self)
-	return self._characters_data
+function PlayFabMirrorBase.get_characters_data(arg_188_0)
+	return arg_188_0._characters_data
 end
 
-PlayFabMirrorBase.update_owned_dlcs = function (self, set_status_changed)
+function PlayFabMirrorBase.update_owned_dlcs(arg_189_0, arg_189_1)
 	if IS_CONSOLE then
 		return
 	end
 
-	local unlock_manager = Managers.unlock
-	local dlcs = unlock_manager:get_dlcs()
+	local var_189_0 = Managers.unlock:get_dlcs()
 
-	for dlc_name, unlock in pairs(dlcs) do
-		if unlock.set_owned then
-			local is_owned = table.contains(self._owned_dlcs, dlc_name)
+	for iter_189_0, iter_189_1 in pairs(var_189_0) do
+		if iter_189_1.set_owned then
+			local var_189_1 = table.contains(arg_189_0._owned_dlcs, iter_189_0)
 
-			unlock:set_owned(is_owned, set_status_changed)
+			iter_189_1:set_owned(var_189_1, arg_189_1)
 		end
 	end
 
-	for dlc_name, unlock in pairs(dlcs) do
-		if unlock.check_all_children_dlc_owned then
-			unlock:check_all_children_dlc_owned()
+	for iter_189_2, iter_189_3 in pairs(var_189_0) do
+		if iter_189_3.check_all_children_dlc_owned then
+			iter_189_3:check_all_children_dlc_owned()
 		end
 	end
 end
 
-PlayFabMirrorBase.handle_new_dlcs = function (self, new_dlcs)
+function PlayFabMirrorBase.handle_new_dlcs(arg_190_0, arg_190_1)
 	SaveData.new_dlcs_unlocks = SaveData.new_dlcs_unlocks or {}
 
-	if new_dlcs then
-		for i = 1, #new_dlcs do
-			local new_dlc = new_dlcs[i]
+	if arg_190_1 then
+		for iter_190_0 = 1, #arg_190_1 do
+			local var_190_0 = arg_190_1[iter_190_0]
 
-			if not SaveData.new_dlcs_unlocks[new_dlc] then
-				SaveData.new_dlcs_unlocks[new_dlc] = true
+			if not SaveData.new_dlcs_unlocks[var_190_0] then
+				SaveData.new_dlcs_unlocks[var_190_0] = true
 			end
 		end
 
@@ -3695,122 +3598,123 @@ PlayFabMirrorBase.handle_new_dlcs = function (self, new_dlcs)
 	end
 end
 
-PlayFabMirrorBase._snippet_clear_inventory = function (self)
-	local function clear_inventory_cb(result)
-		local broken_slots = {
-			slot_frame = true,
-			slot_hat = true,
-			slot_melee = true,
+function PlayFabMirrorBase._snippet_clear_inventory(arg_191_0)
+	local function var_191_0(arg_192_0)
+		local var_192_0 = {
 			slot_necklace = true,
-			slot_ranged = true,
-			slot_ring = true,
-			slot_skin = true,
+			slot_hat = true,
 			slot_trinket_1 = true,
+			slot_skin = true,
+			slot_frame = true,
+			slot_melee = true,
+			slot_ring = true,
+			slot_ranged = true
 		}
-		local careers = PROFILES_BY_CAREER_NAMES
-		local broken_heroes = {}
+		local var_192_1 = PROFILES_BY_CAREER_NAMES
+		local var_192_2 = {}
 
-		for name, data in pairs(careers) do
-			if data.affiliation == "heroes" then
-				broken_heroes[name] = broken_slots
+		for iter_192_0, iter_192_1 in pairs(var_192_1) do
+			if iter_192_1.affiliation == "heroes" then
+				var_192_2[iter_192_0] = var_192_0
 			end
 		end
 
-		self:_fix_career_data(broken_heroes, "adventure")
+		arg_191_0:_fix_career_data(var_192_2, "adventure")
 	end
 
-	self._request_queue[#self._request_queue + 1] = {
+	arg_191_0._request_queue[#arg_191_0._request_queue + 1] = {
 		eac_check = false,
 		func = "devClearInventory",
 		args = {
-			exclude_types = {},
+			exclude_types = {}
 		},
-		success_cb = clear_inventory_cb,
+		success_cb = var_191_0
 	}
 end
 
-PlayFabMirrorBase.snippet_clear_inventory = function (self)
-	self:_snippet_clear_inventory()
+function PlayFabMirrorBase.snippet_clear_inventory(arg_193_0)
+	arg_193_0:_snippet_clear_inventory()
 end
 
-PlayFabMirrorBase.set_twitch_app_access_token = function (self, access_token)
-	self._twitch_app_access_token = access_token
+function PlayFabMirrorBase.set_twitch_app_access_token(arg_194_0, arg_194_1)
+	arg_194_0._twitch_app_access_token = arg_194_1
 end
 
-PlayFabMirrorBase.get_power_level_settings = function (self)
-	return self._power_level_data
+function PlayFabMirrorBase.get_power_level_settings(arg_195_0)
+	return arg_195_0._power_level_data
 end
 
-PlayFabMirrorBase.debug_override_power_level_settings = function (self, debug_data)
-	self._power_level_data = debug_data
+function PlayFabMirrorBase.debug_override_power_level_settings(arg_196_0, arg_196_1)
+	arg_196_0._power_level_data = arg_196_1
 end
 
-PlayFabMirrorBase.get_rarity_tables = function (self)
-	return self._rarity_tables
+function PlayFabMirrorBase.get_rarity_tables(arg_197_0)
+	return arg_197_0._rarity_tables
 end
 
-PlayFabMirrorBase.get_formatted_rarity_tables = function (self)
-	return self._formatted_rarity_tables
+function PlayFabMirrorBase.get_formatted_rarity_tables(arg_198_0)
+	return arg_198_0._formatted_rarity_tables
 end
 
-PlayFabMirrorBase._generate_formatted_rarity_tables = function (self, rarity_tables)
-	self._formatted_rarity_tables = {}
+function PlayFabMirrorBase._generate_formatted_rarity_tables(arg_199_0, arg_199_1)
+	arg_199_0._formatted_rarity_tables = {}
 
-	for reward_name, rarities in pairs(rarity_tables) do
-		self._formatted_rarity_tables[reward_name] = {}
+	for iter_199_0, iter_199_1 in pairs(arg_199_1) do
+		arg_199_0._formatted_rarity_tables[iter_199_0] = {}
 
-		local as_array = {}
-		local total_as_rounded = 0
-		local total_chance = 0
+		local var_199_0 = {}
+		local var_199_1 = 0
+		local var_199_2 = 0
 
-		for rarity_name, chance in pairs(rarities) do
-			total_chance = total_chance + chance
+		for iter_199_2, iter_199_3 in pairs(iter_199_1) do
+			var_199_2 = var_199_2 + iter_199_3
 
-			local display_rounded, count_rounded
+			local var_199_3
+			local var_199_4
 
-			if chance < 1 then
-				display_rounded = chance
-				count_rounded = math.ceil(chance)
+			if iter_199_3 < 1 then
+				var_199_3 = iter_199_3
+				var_199_4 = math.ceil(iter_199_3)
 			else
-				display_rounded = math.round(chance)
-				count_rounded = display_rounded
+				var_199_3 = math.round(iter_199_3)
+				var_199_4 = var_199_3
 			end
 
-			self._formatted_rarity_tables[reward_name][rarity_name] = display_rounded
-			total_as_rounded = total_as_rounded + count_rounded
-			as_array[#as_array + 1] = {
-				key = rarity_name,
-				chance = chance,
-				idx = #as_array + 1,
+			arg_199_0._formatted_rarity_tables[iter_199_0][iter_199_2] = var_199_3
+			var_199_1 = var_199_1 + var_199_4
+			var_199_0[#var_199_0 + 1] = {
+				key = iter_199_2,
+				chance = iter_199_3,
+				idx = #var_199_0 + 1
 			}
 		end
 
-		table.sort(as_array, function (a, b)
-			return a.chance % 1 < b.chance % 1
+		table.sort(var_199_0, function(arg_200_0, arg_200_1)
+			return arg_200_0.chance % 1 < arg_200_1.chance % 1
 		end)
 
-		if total_as_rounded > 100 then
-			for i = 1, #as_array do
-				local rarity = as_array[i]
+		if var_199_1 > 100 then
+			for iter_199_4 = 1, #var_199_0 do
+				local var_199_5 = var_199_0[iter_199_4]
 
-				if rarity.chance > 1 and rarity.chance % 1 >= 0.5 then
-					self._formatted_rarity_tables[reward_name][rarity.key] = self._formatted_rarity_tables[reward_name][rarity.key] - 1
-					total_as_rounded = total_as_rounded - 1
+				if var_199_5.chance > 1 and var_199_5.chance % 1 >= 0.5 then
+					arg_199_0._formatted_rarity_tables[iter_199_0][var_199_5.key] = arg_199_0._formatted_rarity_tables[iter_199_0][var_199_5.key] - 1
+					var_199_1 = var_199_1 - 1
 
-					if total_as_rounded == 100 then
+					if var_199_1 == 100 then
 						break
 					end
 				end
 			end
-		elseif total_as_rounded < 100 then
-			for i = #as_array, 1, -1 do
-				local rarity = as_array[i]
+		elseif var_199_1 < 100 then
+			for iter_199_5 = #var_199_0, 1, -1 do
+				local var_199_6 = var_199_0[iter_199_5]
 
-				if rarity.chance > 1 and rarity.chance % 1 < 0.5 then
-					self._formatted_rarity_tables[reward_name][rarity.key] = self._formatted_rarity_tables[reward_name][rarity.key] + 1
-					total_as_rounded = total_as_rounded + 1
+				if var_199_6.chance > 1 and var_199_6.chance % 1 < 0.5 then
+					arg_199_0._formatted_rarity_tables[iter_199_0][var_199_6.key] = arg_199_0._formatted_rarity_tables[iter_199_0][var_199_6.key] + 1
+					var_199_1 = var_199_1 + 1
 
-					if total_as_rounded == 100 then
+					if var_199_1 == 100 then
 						break
 					end
 				end

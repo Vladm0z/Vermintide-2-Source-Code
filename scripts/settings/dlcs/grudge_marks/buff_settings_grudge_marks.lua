@@ -1,33 +1,32 @@
-﻿-- chunkname: @scripts/settings/dlcs/grudge_marks/buff_settings_grudge_marks.lua
+-- chunkname: @scripts/settings/dlcs/grudge_marks/buff_settings_grudge_marks.lua
 
-local settings = DLCSettings.grudge_marks
-local buff_perks = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local var_0_0 = DLCSettings.grudge_marks
+local var_0_1 = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
 
-local function is_server()
+local function var_0_2()
 	return Managers.state.network.is_server
 end
 
-local function owner_is_local_player(owner_unit)
+local function var_0_3(arg_2_0)
 	if DEDICATED_SERVER then
 		return false
 	end
 
-	local player_manager = Managers.player
-	local local_player = player_manager:local_player()
-	local owner_player = player_manager:unit_owner(owner_unit)
+	local var_2_0 = Managers.player
+	local var_2_1 = var_2_0:local_player()
 
-	if owner_player == local_player then
+	if var_2_0:unit_owner(arg_2_0) == var_2_1 then
 		return true
 	end
 
 	return false
 end
 
-local function teleport_validation_func(pos, validation_data)
-	local enemy_positions = validation_data.side.ENEMY_PLAYER_AND_BOT_POSITIONS
+local function var_0_4(arg_3_0, arg_3_1)
+	local var_3_0 = arg_3_1.side.ENEMY_PLAYER_AND_BOT_POSITIONS
 
-	for i = 1, #enemy_positions do
-		if Vector3.distance_squared(pos, enemy_positions[i]) < validation_data.min_dist_sqr then
+	for iter_3_0 = 1, #var_3_0 do
+		if Vector3.distance_squared(arg_3_0, var_3_0[iter_3_0]) < arg_3_1.min_dist_sqr then
 			return false
 		end
 	end
@@ -35,170 +34,170 @@ local function teleport_validation_func(pos, validation_data)
 	return true
 end
 
-local TERMITE_BOSS_RAGE_DURATION = 10
+local var_0_5 = 10
 
-settings.buff_templates = {
+var_0_0.buff_templates = {
 	grudge_mark_health = {
 		buffs = {
 			{
 				multiplier = 0.42,
 				name = "grudge_mark_health",
-				stat_buff = "max_health",
+				stat_buff = "max_health"
 			},
 			{
-				apply_buff_func = "ai_update_max_health",
-				name = "grudge_mark_health_update",
 				remove_buff_func = "ai_update_max_health",
-			},
-		},
+				name = "grudge_mark_health_update",
+				apply_buff_func = "ai_update_max_health"
+			}
+		}
 	},
 	grudge_mark_elite_health = {
 		buffs = {
 			{
 				multiplier = 2,
 				name = "grudge_mark_health",
-				stat_buff = "max_health",
+				stat_buff = "max_health"
 			},
 			{
-				apply_buff_func = "ai_update_max_health",
-				name = "grudge_mark_health_update",
 				remove_buff_func = "ai_update_max_health",
-			},
-		},
+				name = "grudge_mark_health_update",
+				apply_buff_func = "ai_update_max_health"
+			}
+		}
 	},
 	grudge_mark_termite_health = {
 		buffs = {
 			{
 				multiplier = 1,
 				name = "grudge_mark_health",
-				stat_buff = "max_health",
+				stat_buff = "max_health"
 			},
 			{
-				apply_buff_func = "ai_update_max_health",
-				name = "grudge_mark_health_update",
 				remove_buff_func = "ai_update_max_health",
-			},
-		},
+				name = "grudge_mark_health_update",
+				apply_buff_func = "ai_update_max_health"
+			}
+		}
 	},
 	grudge_mark_termite_boss_raging = {
 		buffs = {
 			{
 				buff_to_add = "grudge_mark_termite_boss_raging_buff",
-				chunk_amount = 4,
 				name = "grudge_mark_termite_boss_raging",
 				update_func = "add_buff_based_on_health_chunks",
-			},
-		},
+				chunk_amount = 4
+			}
+		}
 	},
 	grudge_mark_termite_boss_raging_buff = {
-		activation_sound = "enemy_grudge_raging",
 		activation_sound_3p = true,
+		activation_sound = "enemy_grudge_raging",
 		buffs = {
 			{
-				max_stacks = 1,
 				name = "grudge_mark_termite_particle_buff",
+				max_stacks = 1,
 				refresh_durations = true,
-				duration = TERMITE_BOSS_RAGE_DURATION,
+				duration = var_0_5,
 				particles = {
 					{
-						continuous = true,
-						destroy_policy = "stop",
-						effect = "fx/cw_khorne_boss",
-						first_person = false,
 						orphaned_policy = "stop",
+						first_person = false,
 						third_person = true,
-					},
-				},
+						effect = "fx/cw_khorne_boss",
+						continuous = true,
+						destroy_policy = "stop"
+					}
+				}
 			},
 			{
-				max_stacks = 1,
 				multiplier = -0.5,
 				name = "grudge_mark_termite_damage_taken_buff",
-				refresh_durations = true,
 				stat_buff = "damage_taken",
-				duration = TERMITE_BOSS_RAGE_DURATION,
+				refresh_durations = true,
+				max_stacks = 1,
+				duration = var_0_5
 			},
 			{
-				apply_buff_func = "make_stagger_immune",
-				max_stacks = 1,
+				remove_buff_func = "remove_stagger_immunity",
 				name = "grudge_mark_termite_stagger_immune_buff",
 				refresh_durations = true,
-				remove_buff_func = "remove_stagger_immunity",
-				duration = TERMITE_BOSS_RAGE_DURATION,
+				max_stacks = 1,
+				apply_buff_func = "make_stagger_immune",
+				duration = var_0_5
 			},
 			{
-				max_stacks = 1,
 				multiplier = 0.25,
 				name = "grudge_mark_termite_damage_dealt_buff",
-				refresh_durations = true,
 				stat_buff = "damage_dealt",
-				duration = TERMITE_BOSS_RAGE_DURATION,
-			},
-		},
+				refresh_durations = true,
+				max_stacks = 1,
+				duration = var_0_5
+			}
+		}
 	},
 	grudge_mark_termite_health_small = {
 		buffs = {
 			{
 				multiplier = -0.5,
 				name = "grudge_mark_health",
-				stat_buff = "max_health",
-			},
-		},
+				stat_buff = "max_health"
+			}
+		}
 	},
 	grudge_mark_dwarf_fest_troll_boss = {
 		buffs = {
 			{
 				multiplier = 1.5,
 				name = "grudge_mark_health",
-				stat_buff = "max_health",
+				stat_buff = "max_health"
 			},
 			{
-				apply_buff_func = "ai_update_max_health",
-				name = "grudge_mark_health_update",
 				remove_buff_func = "ai_update_max_health",
-			},
-		},
+				name = "grudge_mark_health_update",
+				apply_buff_func = "ai_update_max_health"
+			}
+		}
 	},
 	grudge_mark_damage = {
 		buffs = {
 			{
 				multiplier = 0.2,
 				name = "grudge_mark_damage",
-				stat_buff = "damage_dealt",
-			},
-		},
+				stat_buff = "damage_dealt"
+			}
+		}
 	},
 	grudge_mark_stagger_distance_resistance = {
 		buffs = {
 			{
 				multiplier = -0.7,
 				name = "grudge_mark_stagger_distance_resistance",
-				stat_buff = "stagger_distance",
-			},
-		},
+				stat_buff = "stagger_distance"
+			}
+		}
 	},
 	grudge_mark_warping = {
 		buffs = {
 			{
+				proc_cooldown = 10,
+				name = "grudge_mark_warping",
 				buff_func = "random_teleport_ai",
 				event = "on_damage_taken",
-				find_valid_pos_attempts = 5,
-				max_teleport_distance = 8,
-				min_dist_from_players = 3,
-				min_teleport_distance = 3,
-				name = "grudge_mark_warping",
 				proc_chance = 0.1,
-				proc_cooldown = 10,
-			},
-		},
+				max_teleport_distance = 8,
+				min_teleport_distance = 3,
+				find_valid_pos_attempts = 5,
+				min_dist_from_players = 3
+			}
+		}
 	},
 	grudge_mark_unstaggerable = {
 		buffs = {
 			{
 				apply_buff_func = "make_stagger_immune",
-				name = "grudge_mark_unstaggerable",
-			},
-		},
+				name = "grudge_mark_unstaggerable"
+			}
+		}
 	},
 	grudge_mark_raging = {
 		buffs = {
@@ -207,52 +206,52 @@ settings.buff_templates = {
 				name = "grudge_mark_raging",
 				update_frequency = 25,
 				update_func = "add_buff",
-				update_start_delay = 5,
-			},
-		},
+				update_start_delay = 5
+			}
+		}
 	},
 	grudge_mark_raging_buff = {
-		activation_sound = "enemy_grudge_raging",
 		activation_sound_3p = true,
+		activation_sound = "enemy_grudge_raging",
 		buffs = {
 			{
-				duration = 10,
 				multiplier = 1,
 				name = "grudge_mark_raging_buff",
 				stat_buff = "damage_dealt",
+				duration = 10,
 				particles = {
 					{
-						continuous = true,
-						destroy_policy = "stop",
-						effect = "fx/cw_khorne_boss",
-						first_person = false,
 						orphaned_policy = "stop",
+						first_person = false,
 						third_person = true,
-					},
-				},
-			},
-		},
+						effect = "fx/cw_khorne_boss",
+						continuous = true,
+						destroy_policy = "stop"
+					}
+				}
+			}
+		}
 	},
 	grudge_mark_vampiric = {
 		buffs = {
 			{
-				bonus = 0,
+				name = "grudge_mark_vampiric",
+				multiplier = 2,
 				buff_func = "ai_heal_on_damage_dealt",
 				event = "on_damage_dealt",
-				multiplier = 2,
-				name = "grudge_mark_vampiric",
-			},
-		},
+				bonus = 0
+			}
+		}
 	},
 	grudge_mark_ranged_immune = {
 		buffs = {
 			{
 				name = "grudge_mark_ranged_immune",
 				perks = {
-					buff_perks.invulnerable_ranged,
-				},
-			},
-		},
+					var_0_1.invulnerable_ranged
+				}
+			}
+		}
 	},
 	grudge_mark_periodic_shield = {
 		buffs = {
@@ -261,605 +260,599 @@ settings.buff_templates = {
 				name = "grudge_mark_periodic_shield",
 				update_frequency = 20,
 				update_func = "add_buff",
-				update_start_delay = 0,
-			},
-		},
+				update_start_delay = 0
+			}
+		}
 	},
 	grudge_mark_periodic_shield_buff = {
-		activation_sound = "enemy_grudge_shield_start",
-		activation_sound_3p = true,
 		deactivation_sound = "enemy_grudge_shield_end",
+		activation_sound_3p = true,
+		activation_sound = "enemy_grudge_shield_start",
 		buffs = {
 			{
 				duration = 5,
 				name = "grudge_mark_periodic_shield_buff",
 				perks = {
-					buff_perks.invulnerable,
+					var_0_1.invulnerable
 				},
 				particles = {
 					{
-						continuous = true,
-						destroy_policy = "stop",
-						effect = "fx/cw_shield",
-						first_person = false,
 						orphaned_policy = "stop",
+						first_person = false,
 						third_person = true,
-					},
-				},
-			},
-		},
+						effect = "fx/cw_shield",
+						continuous = true,
+						destroy_policy = "stop"
+					}
+				}
+			}
+		}
 	},
 	grudge_mark_intangible = {
 		buffs = {
 			{
-				name = "grudge_mark_intangible",
 				num_mirrors = 3,
+				name = "grudge_mark_intangible",
+				update_func = "ai_spawn_mirror_images",
 				update_dialogue_delay = 1,
 				update_frequency_time = 45,
-				update_func = "ai_spawn_mirror_images",
-				update_start_delay = 5,
-			},
-		},
+				update_start_delay = 5
+			}
+		}
 	},
 	grudge_mark_intangible_mirror = {
 		buffs = {
 			{
 				multiplier = -1,
 				name = "grudge_mark_intangible_mirror_damage",
-				remove_buff_func = "remove_intangible_mirror_damage",
 				stat_buff = "damage_dealt",
+				remove_buff_func = "remove_intangible_mirror_damage"
 			},
 			{
 				multiplier = -10,
 				name = "grudge_mark_intangible_mirror_health_stat",
-				stat_buff = "max_health",
+				stat_buff = "max_health"
 			},
 			{
-				apply_buff_func = "ai_update_max_health",
-				name = "grudge_mark_intangible_mirror_health_update",
 				remove_buff_func = "ai_update_max_health",
-			},
-		},
+				name = "grudge_mark_intangible_mirror_health_update",
+				apply_buff_func = "ai_update_max_health"
+			}
+		}
 	},
 	grudge_mark_crippling_blow = {
 		buffs = {
 			{
-				buff_func = "ai_add_buff_on_damage_dealt",
-				buff_to_add = "grudge_mark_crippling_blow_debuff",
 				event = "on_damage_dealt",
 				name = "grudge_mark_crippling_blow",
-			},
-		},
+				buff_to_add = "grudge_mark_crippling_blow_debuff",
+				buff_func = "ai_add_buff_on_damage_dealt"
+			}
+		}
 	},
 	grudge_mark_crippling_blow_debuff = {
 		buffs = {
 			{
-				apply_buff_func = "first_person_flow_event",
-				duration = 5,
+				name = "grudge_mark_crippling_blow_debuff_flow_event",
 				flow_event = "sfx_vce_struggle",
 				max_stacks = 1,
-				name = "grudge_mark_crippling_blow_debuff_flow_event",
+				duration = 5,
+				apply_buff_func = "first_person_flow_event"
 			},
 			{
-				apply_buff_func = "apply_action_lerp_movement_buff",
-				debuff = true,
-				duration = 5,
-				icon = "grudge_mark_crippling_debuff",
-				lerp_time = 0.1,
-				max_stacks = 1,
+				update_func = "update_action_lerp_movement_buff",
 				multiplier = 0.3,
 				name = "grudge_mark_crippling_blow_slow_run",
+				icon = "grudge_mark_crippling_debuff",
 				priority_buff = true,
 				remove_buff_func = "remove_action_lerp_movement_buff",
+				apply_buff_func = "apply_action_lerp_movement_buff",
 				remove_buff_name = "planted_return_to_normal_movement",
-				update_func = "update_action_lerp_movement_buff",
+				lerp_time = 0.1,
+				debuff = true,
+				max_stacks = 1,
+				duration = 5,
 				path_to_movement_setting_to_modify = {
-					"move_speed",
+					"move_speed"
 				},
 				sfx = {
-					activation_sound = "enemy_grudge_crippling_hit",
-				},
+					activation_sound = "enemy_grudge_crippling_hit"
+				}
 			},
 			{
-				apply_buff_func = "apply_action_lerp_movement_buff",
-				duration = 5,
-				lerp_time = 0.1,
-				max_stacks = 1,
+				update_func = "update_charging_action_lerp_movement_buff",
 				multiplier = 0.3,
 				name = "grudge_mark_crippling_blow_slow_crouch",
 				remove_buff_func = "remove_action_lerp_movement_buff",
-				remove_buff_name = "planted_return_to_normal_crouch_movement",
-				update_func = "update_charging_action_lerp_movement_buff",
-				path_to_movement_setting_to_modify = {
-					"crouch_move_speed",
-				},
-			},
-			{
 				apply_buff_func = "apply_action_lerp_movement_buff",
-				duration = 5,
+				remove_buff_name = "planted_return_to_normal_crouch_movement",
 				lerp_time = 0.1,
 				max_stacks = 1,
+				duration = 5,
+				path_to_movement_setting_to_modify = {
+					"crouch_move_speed"
+				}
+			},
+			{
+				update_func = "update_charging_action_lerp_movement_buff",
 				multiplier = 0.3,
 				name = "grudge_mark_crippling_blow_slow_walk",
 				remove_buff_func = "remove_action_lerp_movement_buff",
+				apply_buff_func = "apply_action_lerp_movement_buff",
 				remove_buff_name = "planted_return_to_normal_walk_movement",
-				update_func = "update_charging_action_lerp_movement_buff",
+				lerp_time = 0.1,
+				max_stacks = 1,
+				duration = 5,
 				path_to_movement_setting_to_modify = {
-					"walk_move_speed",
-				},
+					"walk_move_speed"
+				}
 			},
 			{
-				apply_buff_func = "apply_movement_buff",
-				duration = 5,
-				max_stacks = 1,
 				multiplier = 0.3,
 				name = "grudge_mark_crippling_blow_jump_debuff",
+				duration = 5,
+				max_stacks = 1,
 				remove_buff_func = "remove_movement_buff",
+				apply_buff_func = "apply_movement_buff",
 				path_to_movement_setting_to_modify = {
 					"jump",
-					"initial_vertical_speed",
-				},
+					"initial_vertical_speed"
+				}
 			},
 			{
-				apply_buff_func = "apply_movement_buff",
-				duration = 5,
-				max_stacks = 1,
 				multiplier = 0.5,
 				name = "grudge_mark_crippling_blow_dodge_speed_debuff",
-				remove_buff_func = "remove_movement_buff",
-				path_to_movement_setting_to_modify = {
-					"dodging",
-					"speed_modifier",
-				},
-			},
-			{
-				apply_buff_func = "apply_movement_buff",
 				duration = 5,
 				max_stacks = 1,
-				multiplier = 0.5,
-				name = "grudge_mark_crippling_blow_dodge_distance_debuff",
 				remove_buff_func = "remove_movement_buff",
+				apply_buff_func = "apply_movement_buff",
 				path_to_movement_setting_to_modify = {
 					"dodging",
-					"distance_modifier",
-				},
+					"speed_modifier"
+				}
 			},
-		},
+			{
+				multiplier = 0.5,
+				name = "grudge_mark_crippling_blow_dodge_distance_debuff",
+				duration = 5,
+				max_stacks = 1,
+				remove_buff_func = "remove_movement_buff",
+				apply_buff_func = "apply_movement_buff",
+				path_to_movement_setting_to_modify = {
+					"dodging",
+					"distance_modifier"
+				}
+			}
+		}
 	},
 	grudge_mark_crushing_blow = {
 		buffs = {
 			{
-				buff_func = "ai_crushing_blow",
 				buff_to_add = "grudge_mark_crushing_blow_debuff",
-				event = "on_damage_dealt",
 				name = "grudge_mark_crushing_blow",
+				buff_func = "ai_crushing_blow",
+				event = "on_damage_dealt",
 				perks = {
-					buff_perks.ai_unblockable,
-				},
+					var_0_1.ai_unblockable
+				}
 			},
 			{
-				apply_buff_func = "ai_add_hit_sfx",
-				hit_sfx_name = "enemy_grudge_crushing_hit",
-				name = "grudge_mark_crushing_blow_sfx",
 				remove_buff_func = "ai_remove_hit_sfx",
-			},
-		},
+				name = "grudge_mark_crushing_blow_sfx",
+				apply_buff_func = "ai_add_hit_sfx",
+				hit_sfx_name = "enemy_grudge_crushing_hit"
+			}
+		}
 	},
 	grudge_mark_crushing_blow_debuff = {
 		buffs = {
 			{
-				bonus = -1,
-				debuff = true,
 				duration = 8,
-				icon = "troll_vomit_debuff",
-				max_stacks = 20,
 				name = "grudge_mark_crushing_blow_debuff",
-				refresh_durations = true,
 				stat_buff = "max_fatigue",
-			},
-		},
+				debuff = true,
+				max_stacks = 20,
+				refresh_durations = true,
+				icon = "troll_vomit_debuff",
+				bonus = -1
+			}
+		}
 	},
 	grudge_mark_regeneratig = {
 		buffs = {
 			{
-				buff_func = "ai_delay_regen",
-				event = "on_damage_taken",
 				frequency = 1,
 				name = "grudge_mark_regeneratig",
-				on_hit_delay = 3,
 				part_healed_of_max_heath = 0.02,
+				buff_func = "ai_delay_regen",
+				event = "on_damage_taken",
 				update_func = "ai_health_regen_update",
-			},
-		},
+				on_hit_delay = 3
+			}
+		}
 	},
 	grudge_mark_periodic_curse_aura = {
 		buffs = {
 			{
 				buff_to_add = "grudge_mark_curse",
-				max_distance = 4,
 				name = "grudge_mark_periodic_curse_aura",
-				sound_on_enter = "enemy_grudge_cursed_enter",
-				time_between_curses = 2,
 				update_frequency = 0.5,
-				update_func = "apply_curse_to_nearby_players",
+				time_between_curses = 2,
 				update_start_delay = 0,
+				max_distance = 4,
+				update_func = "apply_curse_to_nearby_players",
+				sound_on_enter = "enemy_grudge_cursed_enter",
 				particles = {
 					{
+						orphaned_policy = "stop",
+						first_person = false,
+						third_person = true,
+						effect = "fx/gm_cursed_aoe",
 						continuous = true,
 						destroy_policy = "stop",
-						effect = "fx/gm_cursed_aoe",
-						first_person = false,
-						orphaned_policy = "stop",
-						third_person = true,
 						custom_variables = {
 							{
 								name = "radius",
 								value = {
 									4,
 									4,
-									1,
-								},
+									1
+								}
 							},
 							{
 								name = "diameter",
 								value = {
 									8,
 									8,
-									1,
-								},
-							},
-						},
-					},
-				},
-			},
-		},
+									1
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	},
 	grudge_mark_curse = {
-		activation_sound = "enemy_grudge_cursed_damage",
 		deactivation_sound = "enemy_grudge_cursed_exit",
+		activation_sound = "enemy_grudge_cursed_damage",
 		buffs = {
 			{
-				bonus = -0.05,
-				debuff = true,
-				duration = 5,
 				icon = "grudge_mark_cursed_debuff",
-				max_stacks = 20,
 				name = "grudge_mark_curse",
-				refresh_durations = true,
 				stat_buff = "health_curse",
-			},
-		},
+				debuff = true,
+				max_stacks = 20,
+				duration = 5,
+				refresh_durations = true,
+				bonus = -0.05
+			}
+		}
 	},
 	grudge_mark_commander = {
 		buffs = {
 			{
-				name = "grudge_mark_commander",
 				update_frequency = 40,
+				name = "grudge_mark_commander",
 				update_func = "trigger_terror_event",
 				update_start_delay = 8,
 				faction_terror_events = {
-					beastmen = "grudge_mark_commander_terror_event_beastmen",
-					chaos = "grudge_mark_commander_terror_event_chaos",
 					default = "grudge_mark_commander_terror_event_skaven",
 					skaven = "grudge_mark_commander_terror_event_skaven",
-				},
-			},
-		},
+					beastmen = "grudge_mark_commander_terror_event_beastmen",
+					chaos = "grudge_mark_commander_terror_event_chaos"
+				}
+			}
+		}
 	},
 	grudge_mark_frenzy = {
 		buffs = {
 			{
-				buff_func = "add_frenzy_handler",
 				buff_to_add = "grudge_mark_frenzy_handler",
-				event = "on_damage_taken",
 				name = "grudge_mark_frenzy",
-				remove_buff_func = "remove_frenzy_handlers",
 				stacking_buff = "grudge_mark_frenzy_stack",
-			},
-		},
+				buff_func = "add_frenzy_handler",
+				event = "on_damage_taken",
+				remove_buff_func = "remove_frenzy_handlers"
+			}
+		}
 	},
 	grudge_mark_frenzy_handler = {
 		buffs = {
 			{
-				apply_buff_func = "add_extra_frenzy_stack",
+				buff_to_add = "grudge_mark_frenzy_stack",
+				name = "grudge_mark_frenzy_handler",
 				blocker_buff = "grudge_mark_frenzy_buff",
 				buff_func = "add_frenzy_stack",
-				buff_to_add = "grudge_mark_frenzy_stack",
 				event = "on_melee_hit",
-				name = "grudge_mark_frenzy_handler",
-			},
-		},
+				apply_buff_func = "add_extra_frenzy_stack"
+			}
+		}
 	},
 	grudge_mark_frenzy_stack = {
 		buffs = {
 			{
-				debuff = true,
-				duration = 3,
+				reset_on_max_stacks = true,
+				name = "grudge_mark_frenzy_stack",
 				icon = "grudge_mark_frenzy_debuff",
 				max_stacks = 10,
-				name = "grudge_mark_frenzy_stack",
-				on_max_stacks_func = "add_remove_buffs",
 				refresh_durations = true,
-				reset_on_max_stacks = true,
+				debuff = true,
+				on_max_stacks_func = "add_remove_buffs",
+				duration = 3,
 				max_stack_data = {
 					buffs_to_add = {
-						"grudge_mark_frenzy_buff",
-					},
-				},
-			},
-		},
+						"grudge_mark_frenzy_buff"
+					}
+				}
+			}
+		}
 	},
 	grudge_mark_frenzy_buff = {
 		deactivation_sound = "enemy_grudge_frenzy_end",
 		buffs = {
 			{
-				apply_buff_func = "apply_frenzy_func",
-				buff_func = "add_buff",
 				buff_to_add = "grudge_mark_frenzy_buff",
-				duration = 5,
-				event = "on_melee_hit",
-				icon = "grudge_mark_frenzy_debuff",
-				max_stacks = 1,
 				name = "grudge_mark_frenzy_buff",
+				icon = "grudge_mark_frenzy_debuff",
+				buff_func = "add_buff",
+				event = "on_melee_hit",
 				refresh_durations = true,
+				apply_buff_func = "apply_frenzy_func",
 				remove_buff_func = "remove_frenzy_func",
+				max_stacks = 1,
+				duration = 5
 			},
 			{
+				name = "grudge_mark_frenzy_buff_attack_speed",
+				multiplier = 0.25,
+				stat_buff = "attack_speed",
 				duration = 5,
 				max_stacks = 1,
-				multiplier = 0.25,
-				name = "grudge_mark_frenzy_buff_attack_speed",
-				refresh_durations = true,
-				stat_buff = "attack_speed",
+				refresh_durations = true
 			},
 			{
+				refresh_durations = true,
+				name = "grudge_mark_frenzy_buff_move_speed",
+				multiplier = 1.25,
+				max_stacks = 1,
+				remove_buff_func = "remove_movement_buff",
 				apply_buff_func = "apply_movement_buff",
 				duration = 5,
-				max_stacks = 1,
-				multiplier = 1.25,
-				name = "grudge_mark_frenzy_buff_move_speed",
-				refresh_durations = true,
-				remove_buff_func = "remove_movement_buff",
 				path_to_movement_setting_to_modify = {
-					"move_speed",
-				},
+					"move_speed"
+				}
 			},
 			{
+				refresh_durations = true,
+				multiplier = 0.2,
+				stat_buff = "power_level_melee",
 				buff_func = "deus_reckless_swings_buff_on_hit",
-				damage_to_deal = 10,
-				duration = 5,
 				event = "on_melee_hit",
+				damage_to_deal = 10,
+				name = "grudge_mark_frenzy_buff_reckless_swings",
 				is_non_lethal = true,
 				max_stacks = 1,
-				multiplier = 0.2,
-				name = "grudge_mark_frenzy_buff_reckless_swings",
-				refresh_durations = true,
-				stat_buff = "power_level_melee",
-			},
-		},
+				duration = 5
+			}
+		}
 	},
 	grudge_mark_shockwave_attacks = {
 		buffs = {
 			{
-				buff_func = "grudge_mark_shockwave",
 				event = "minion_attack_used",
 				name = "grudge_mark_shockwave_attacks",
-			},
-		},
+				buff_func = "grudge_mark_shockwave"
+			}
+		}
 	},
 	grudge_mark_ignore_death_aura = {
 		buffs = {
 			{
 				buff_to_add = "grudge_mark_ignore_death_buff",
 				name = "grudge_mark_ignore_death_aura",
-				radius = 4,
 				remove_buff_func = "grudge_mark_ignore_death_aura_cleanup",
-				update_frequency = 1,
+				radius = 4,
 				update_func = "grudge_mark_ignore_death_aura_update",
-			},
-		},
+				update_frequency = 1
+			}
+		}
 	},
 	grudge_mark_ignore_death_buff = {
 		buffs = {
 			{
 				name = "grudge_mark_ignore_death_buff",
 				perks = {
-					buff_perks.ignore_death,
-				},
-			},
-		},
-	},
+					var_0_1.ignore_death
+				}
+			}
+		}
+	}
 }
-settings.buff_function_templates = {
-	make_stagger_immune = function (unit, buff, params)
-		if ALIVE[unit] then
-			local blackboard = BLACKBOARDS[unit]
+var_0_0.buff_function_templates = {
+	make_stagger_immune = function(arg_4_0, arg_4_1, arg_4_2)
+		if ALIVE[arg_4_0] then
+			local var_4_0 = BLACKBOARDS[arg_4_0]
 
-			if blackboard then
-				local stagger_immunity = {
-					health_threshold = 0,
+			if var_4_0 then
+				var_4_0.stagger_immunity = {
+					health_threshold = 0
+				}
+			end
+		end
+	end,
+	remove_stagger_immunity = function(arg_5_0, arg_5_1, arg_5_2)
+		if ALIVE[arg_5_0] then
+			local var_5_0 = BLACKBOARDS[arg_5_0]
+
+			if var_5_0 then
+				local var_5_1 = {
+					health_threshold = 0
 				}
 
-				blackboard.stagger_immunity = stagger_immunity
+				var_5_0.stagger_immunity = nil
 			end
 		end
 	end,
-	remove_stagger_immunity = function (unit, buff, params)
-		if ALIVE[unit] then
-			local blackboard = BLACKBOARDS[unit]
-
-			if blackboard then
-				local stagger_immunity = {
-					health_threshold = 0,
-				}
-
-				blackboard.stagger_immunity = nil
-			end
-		end
-	end,
-	apply_buff_to_all_players = function (unit, buff, params)
-		if not is_server() then
+	apply_buff_to_all_players = function(arg_6_0, arg_6_1, arg_6_2)
+		if not var_0_2() then
 			return
 		end
 
-		if ALIVE[unit] then
-			local side = Managers.state.side:get_side_from_name("heroes")
-			local buff_name = buff.template.buff_to_add
-			local buff_system = Managers.state.entity:system("buff_system")
-			local player_and_bot_units = side.PLAYER_AND_BOT_UNITS
+		if ALIVE[arg_6_0] then
+			local var_6_0 = Managers.state.side:get_side_from_name("heroes")
+			local var_6_1 = arg_6_1.template.buff_to_add
+			local var_6_2 = Managers.state.entity:system("buff_system")
+			local var_6_3 = var_6_0.PLAYER_AND_BOT_UNITS
 
-			for i = 1, #player_and_bot_units do
-				local player_unit = player_and_bot_units[i]
+			for iter_6_0 = 1, #var_6_3 do
+				local var_6_4 = var_6_3[iter_6_0]
 
-				buff_system:add_buff(player_unit, buff_name, unit, false)
+				var_6_2:add_buff(var_6_4, var_6_1, arg_6_0, false)
 			end
 
-			local effect_name = buff.template.effect_name
+			local var_6_5 = arg_6_1.template.effect_name
 
-			if effect_name then
-				local unit_pos = POSITION_LOOKUP[unit]
+			if var_6_5 then
+				local var_6_6 = POSITION_LOOKUP[arg_6_0]
 
-				Managers.state.network:rpc_play_particle_effect(nil, NetworkLookup.effects[effect_name], NetworkConstants.invalid_game_object_id, 0, unit_pos, Quaternion.identity(), false)
+				Managers.state.network:rpc_play_particle_effect(nil, NetworkLookup.effects[var_6_5], NetworkConstants.invalid_game_object_id, 0, var_6_6, Quaternion.identity(), false)
 			end
 		end
 	end,
-	remove_intangible_mirror_damage = function (unit, buff, params)
-		local audio_system = Managers.state.entity:system("audio_system")
-
-		audio_system:play_audio_unit_event("enemy_grudge_intangible_destroy", unit)
+	remove_intangible_mirror_damage = function(arg_7_0, arg_7_1, arg_7_2)
+		Managers.state.entity:system("audio_system"):play_audio_unit_event("enemy_grudge_intangible_destroy", arg_7_0)
 	end,
-	add_buff_based_on_health_chunks = function (unit, buff, params)
-		if not is_server() then
+	add_buff_based_on_health_chunks = function(arg_8_0, arg_8_1, arg_8_2)
+		if not var_0_2() then
 			return
 		end
 
-		if ALIVE[unit] then
-			local health_extension = ScriptUnit.extension(unit, "health_system")
-			local buff_extension = ScriptUnit.extension(unit, "buff_system")
-			local buff_system = Managers.state.entity:system("buff_system")
-			local template = buff.template
-			local buff_to_add = template.buff_to_add
-			local chunk_size = health_extension:get_max_health() / template.chunk_amount
-			local total_damage_taken = health_extension:get_damage_taken()
+		if ALIVE[arg_8_0] then
+			local var_8_0 = ScriptUnit.extension(arg_8_0, "health_system")
+			local var_8_1 = ScriptUnit.extension(arg_8_0, "buff_system")
+			local var_8_2 = Managers.state.entity:system("buff_system")
+			local var_8_3 = arg_8_1.template
+			local var_8_4 = var_8_3.buff_to_add
+			local var_8_5 = var_8_0:get_max_health() / var_8_3.chunk_amount
+			local var_8_6 = var_8_0:get_damage_taken()
 
-			buff.next_chunk = buff.next_chunk or chunk_size
+			arg_8_1.next_chunk = arg_8_1.next_chunk or var_8_5
 
-			if total_damage_taken >= buff.next_chunk then
-				buff_system:add_buff_synced(unit, buff_to_add, BuffSyncType.All)
+			if var_8_6 >= arg_8_1.next_chunk then
+				var_8_2:add_buff_synced(arg_8_0, var_8_4, BuffSyncType.All)
 
-				buff.next_chunk = buff.next_chunk + chunk_size
+				arg_8_1.next_chunk = arg_8_1.next_chunk + var_8_5
 			end
 
-			if chunk_size > health_extension:current_health() then
-				buff_system:add_buff_synced(unit, buff_to_add, BuffSyncType.All)
+			if var_8_5 > var_8_0:current_health() then
+				var_8_2:add_buff_synced(arg_8_0, var_8_4, BuffSyncType.All)
 			end
 		end
 	end,
-	ai_spawn_mirror_images = function (unit, buff, params)
-		if not is_server() then
+	ai_spawn_mirror_images = function(arg_9_0, arg_9_1, arg_9_2)
+		if not var_0_2() then
 			return
 		end
 
-		local t = params.t
+		local var_9_0 = arg_9_2.t
 
-		if not buff.update_frequency_time then
-			buff.update_frequency_time = t + buff.template.update_frequency_time
+		if not arg_9_1.update_frequency_time then
+			arg_9_1.update_frequency_time = var_9_0 + arg_9_1.template.update_frequency_time
 		end
 
-		if t < buff.update_frequency_time and buff.first_update_done then
-			local update_dialogue_delay = buff.template.update_dialogue_delay
+		if var_9_0 < arg_9_1.update_frequency_time and arg_9_1.first_update_done then
+			local var_9_1 = arg_9_1.template.update_dialogue_delay
 
-			if update_dialogue_delay and not buff.update_dialogue_done then
-				if not buff.update_dialogue_delay_time then
-					buff.update_dialogue_delay_time = t + update_dialogue_delay
+			if var_9_1 and not arg_9_1.update_dialogue_done then
+				if not arg_9_1.update_dialogue_delay_time then
+					arg_9_1.update_dialogue_delay_time = var_9_0 + var_9_1
 				end
 
-				if t > buff.update_dialogue_delay_time then
-					local dialogue_name = "curse_very_negative_effect_happened"
-					local dialogue_system = Managers.state.entity:system("dialogue_system")
-					local random_player = dialogue_system:get_random_player()
+				if var_9_0 > arg_9_1.update_dialogue_delay_time then
+					local var_9_2 = "curse_very_negative_effect_happened"
+					local var_9_3 = Managers.state.entity:system("dialogue_system"):get_random_player()
 
-					if random_player ~= nil then
-						local dialogue_input = ScriptUnit.extension_input(random_player, "dialogue_system")
-						local event_data = FrameTable.alloc_table()
+					if var_9_3 ~= nil then
+						local var_9_4 = ScriptUnit.extension_input(var_9_3, "dialogue_system")
+						local var_9_5 = FrameTable.alloc_table()
 
-						dialogue_input:trigger_dialogue_event(dialogue_name, event_data)
+						var_9_4:trigger_dialogue_event(var_9_2, var_9_5)
 					end
 
-					buff.update_dialogue_done = true
+					arg_9_1.update_dialogue_done = true
 				end
 			end
 
 			return
 		end
 
-		buff.update_frequency_time = t + buff.template.update_frequency_time
-		buff.first_update_done = true
+		arg_9_1.update_frequency_time = var_9_0 + arg_9_1.template.update_frequency_time
+		arg_9_1.first_update_done = true
 
-		local function nav_callback()
-			if ALIVE[unit] then
-				local blackboard = BLACKBOARDS[unit]
-				local breed = blackboard.breed
-				local side = Managers.state.side.side_by_unit[unit]
-				local unit_pos = POSITION_LOOKUP[unit]
-				local spread = 4
-				local dist = 10
-				local tries = 5
-				local play_effect = "fx/grudge_marks_illusionist"
-				local play_sound = "enemy_grudge_intangible"
-				local teleport_position = ConflictUtils.get_spawn_pos_on_circle(blackboard.nav_world, unit_pos, dist, spread, tries, nil, nil, nil, 8, 8)
+		local function var_9_6()
+			if ALIVE[arg_9_0] then
+				local var_10_0 = BLACKBOARDS[arg_9_0]
+				local var_10_1 = var_10_0.breed
+				local var_10_2 = Managers.state.side.side_by_unit[arg_9_0]
+				local var_10_3 = POSITION_LOOKUP[arg_9_0]
+				local var_10_4 = 4
+				local var_10_5 = 10
+				local var_10_6 = 5
+				local var_10_7 = "fx/grudge_marks_illusionist"
+				local var_10_8 = "enemy_grudge_intangible"
+				local var_10_9 = ConflictUtils.get_spawn_pos_on_circle(var_10_0.nav_world, var_10_3, var_10_5, var_10_4, var_10_6, nil, nil, nil, 8, 8)
 
-				if teleport_position then
-					ConflictUtils.teleport_ai_unit(unit, teleport_position, play_sound, play_effect)
+				if var_10_9 then
+					ConflictUtils.teleport_ai_unit(arg_9_0, var_10_9, var_10_8, var_10_7)
 				end
 
-				local enhancements = {
+				local var_10_10 = {
 					{
 						"grudge_mark_intangible_mirror",
-						name = "mirror_base",
 						no_attribute = true,
-					},
+						name = "mirror_base"
+					}
 				}
-				local ai_system = Managers.state.entity:system("ai_system")
-				local parent_attributes = ai_system:get_attributes(unit)
-				local breed_enhancements = parent_attributes.breed_enhancements
+				local var_10_11 = Managers.state.entity:system("ai_system"):get_attributes(arg_9_0)
+				local var_10_12 = var_10_11.breed_enhancements
 
-				for enhancement_name, value in pairs(breed_enhancements) do
-					if value and (enhancement_name == "intangible" or true) then
-						enhancement_name = "intangible_mirror"
-						enhancements[#enhancements + 1] = BreedEnhancements[enhancement_name]
+				for iter_10_0, iter_10_1 in pairs(var_10_12) do
+					if iter_10_1 and (iter_10_0 == "intangible" or true) then
+						iter_10_0 = "intangible_mirror"
+						var_10_10[#var_10_10 + 1] = BreedEnhancements[iter_10_0]
 					end
 				end
 
-				local name_index = parent_attributes.grudge_marked.name_index
-				local old_mirrors = buff._mirror_units or {}
+				local var_10_13 = var_10_11.grudge_marked.name_index
+				local var_10_14 = arg_9_1._mirror_units or {}
 
-				buff._mirror_units = old_mirrors
+				arg_9_1._mirror_units = var_10_14
 
-				for i = 1, #old_mirrors do
-					local mirror_unit = old_mirrors[i]
+				for iter_10_2 = 1, #var_10_14 do
+					local var_10_15 = var_10_14[iter_10_2]
 
-					if ALIVE[mirror_unit] then
-						AiUtils.kill_unit(mirror_unit, unit)
+					if ALIVE[var_10_15] then
+						AiUtils.kill_unit(var_10_15, arg_9_0)
 					end
 				end
 
-				table.clear(old_mirrors)
+				table.clear(var_10_14)
 
-				local pos_list = {}
-				local min_dist_sqr = 6.25
+				local var_10_16 = {}
+				local var_10_17 = 6.25
 
-				local function valid_teleport_pos_func(pos, pos_list)
-					for i = 1, #pos_list do
-						if Vector3.distance_squared(pos, pos_list[i]) < min_dist_sqr then
+				local function var_10_18(arg_11_0, arg_11_1)
+					for iter_11_0 = 1, #arg_11_1 do
+						if Vector3.distance_squared(arg_11_0, arg_11_1[iter_11_0]) < var_10_17 then
 							return false
 						end
 					end
 
-					local enemy_positions = side.ENEMY_PLAYER_AND_BOT_POSITIONS
+					local var_11_0 = var_10_2.ENEMY_PLAYER_AND_BOT_POSITIONS
 
-					for i = 1, #enemy_positions do
-						if Vector3.distance_squared(pos, enemy_positions[i]) < min_dist_sqr then
+					for iter_11_1 = 1, #var_11_0 do
+						if Vector3.distance_squared(arg_11_0, var_11_0[iter_11_1]) < var_10_17 then
 							return false
 						end
 					end
@@ -867,619 +860,588 @@ settings.buff_function_templates = {
 					return true
 				end
 
-				local buff_template = buff.template
-				local num_mirrors = buff_template.num_mirrors
+				local var_10_19 = arg_9_1.template.num_mirrors
 
-				for i = 1, num_mirrors do
-					local mirror_pos = ConflictUtils.get_spawn_pos_on_circle_with_func(blackboard.nav_world, unit_pos, dist, spread, tries, valid_teleport_pos_func, pos_list, 8, 8)
+				for iter_10_3 = 1, var_10_19 do
+					local var_10_20 = ConflictUtils.get_spawn_pos_on_circle_with_func(var_10_0.nav_world, var_10_3, var_10_5, var_10_4, var_10_6, var_10_18, var_10_16, 8, 8)
 
-					if mirror_pos then
-						pos_list[#pos_list + 1] = mirror_pos
+					if var_10_20 then
+						var_10_16[#var_10_16 + 1] = var_10_20
 
-						local optional_data = {
-							side_id = side.side_id,
-							spawned_func = function (ai_unit, breed, optional_data)
-								local blackboard = BLACKBOARDS[ai_unit]
+						local var_10_21 = {
+							side_id = var_10_2.side_id,
+							spawned_func = function(arg_12_0, arg_12_1, arg_12_2)
+								local var_12_0 = BLACKBOARDS[arg_12_0]
 
-								blackboard.deny_kill_loot = true
-								blackboard.is_illusion = true
+								var_12_0.deny_kill_loot = true
+								var_12_0.is_illusion = true
 
-								local mirror_units = buff._mirror_units
+								local var_12_1 = arg_9_1._mirror_units
 
-								if mirror_units then
-									mirror_units[#mirror_units + 1] = ai_unit
+								if var_12_1 then
+									var_12_1[#var_12_1 + 1] = arg_12_0
 								end
 
-								local health_extension = ScriptUnit.has_extension(ai_unit, "health_system")
+								local var_12_2 = ScriptUnit.has_extension(arg_12_0, "health_system")
 
-								if health_extension.force_set_wounded then
-									health_extension:force_set_wounded()
+								if var_12_2.force_set_wounded then
+									var_12_2:force_set_wounded()
 								end
 
-								local death_extension = ScriptUnit.extension(ai_unit, "death_system")
-
-								death_extension:override_death_behavior(0, "fx/mutator_death_03")
-
-								local death_system = Managers.state.entity:system("death_system")
-
-								death_system:set_death_reaction_template(ai_unit, "despawn")
+								ScriptUnit.extension(arg_12_0, "death_system"):override_death_behavior(0, "fx/mutator_death_03")
+								Managers.state.entity:system("death_system"):set_death_reaction_template(arg_12_0, "despawn")
 							end,
-							enhancements = enhancements,
-							name_index = name_index,
+							enhancements = var_10_10,
+							name_index = var_10_13
 						}
-						local target_position = ConflictUtils.get_closest_position(mirror_pos, side.ENEMY_PLAYER_AND_BOT_POSITIONS)
-						local rot = ConflictUtils.look_at_position_flat(mirror_pos, target_position)
+						local var_10_22 = ConflictUtils.get_closest_position(var_10_20, var_10_2.ENEMY_PLAYER_AND_BOT_POSITIONS)
+						local var_10_23 = ConflictUtils.look_at_position_flat(var_10_20, var_10_22)
 
-						Managers.state.conflict:spawn_queued_unit(breed, Vector3Box(mirror_pos), QuaternionBox(rot), "mirror_spawn", nil, nil, optional_data, nil)
+						Managers.state.conflict:spawn_queued_unit(var_10_1, Vector3Box(var_10_20), QuaternionBox(var_10_23), "mirror_spawn", nil, nil, var_10_21, nil)
 
-						local effect_name_id = NetworkLookup.effects[play_effect]
-						local node_id = 0
-						local rotation_offset = Quaternion.identity()
-						local network_manager = Managers.state.network
+						local var_10_24 = NetworkLookup.effects[var_10_7]
+						local var_10_25 = 0
+						local var_10_26 = Quaternion.identity()
 
-						network_manager:rpc_play_particle_effect(nil, effect_name_id, NetworkConstants.invalid_game_object_id, node_id, mirror_pos, rotation_offset, false)
+						Managers.state.network:rpc_play_particle_effect(nil, var_10_24, NetworkConstants.invalid_game_object_id, var_10_25, var_10_20, var_10_26, false)
 					end
 				end
 			end
 		end
 
-		local ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
-
-		ai_navigation_system:add_safe_navigation_callback(nav_callback)
+		Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(var_9_6)
 	end,
-	ai_spawn_liquid_blob = function (unit, buff, params)
-		if not is_server() then
+	ai_spawn_liquid_blob = function(arg_13_0, arg_13_1, arg_13_2)
+		if not var_0_2() then
 			return
 		end
 
-		local function nav_callback()
-			if ALIVE[unit] then
-				local blackboard = BLACKBOARDS[unit]
-				local unit_pos = POSITION_LOOKUP[unit]
-				local spread = 1
-				local dist = 3
-				local tries = 5
-				local mesh_pos = ConflictUtils.get_spawn_pos_on_circle(blackboard.nav_world, unit_pos, dist, spread, tries)
+		local function var_13_0()
+			if ALIVE[arg_13_0] then
+				local var_14_0 = BLACKBOARDS[arg_13_0]
+				local var_14_1 = POSITION_LOOKUP[arg_13_0]
+				local var_14_2 = 1
+				local var_14_3 = 3
+				local var_14_4 = 5
+				local var_14_5 = ConflictUtils.get_spawn_pos_on_circle(var_14_0.nav_world, var_14_1, var_14_3, var_14_2, var_14_4)
 
-				if not mesh_pos then
+				if not var_14_5 then
 					return
 				end
 
-				local audio_system_extension = Managers.state.entity:system("audio_system")
+				Managers.state.entity:system("audio_system"):play_audio_unit_event("enemy_grudge_bubonic_spawn", arg_13_0)
 
-				audio_system_extension:play_audio_unit_event("enemy_grudge_bubonic_spawn", unit)
+				local var_14_6 = AiUtils.spawn_nurgle_liquid_blob_dynamic(Managers.state.network, var_14_5, arg_13_0)
+				local var_14_7 = Managers.state.side
+				local var_14_8 = (var_14_7.side_by_unit[arg_13_0] or var_14_7:get_side_from_name("dark_pact")).side_id
 
-				local blob_unit = AiUtils.spawn_nurgle_liquid_blob_dynamic(Managers.state.network, mesh_pos, unit)
-				local side_manager = Managers.state.side
-				local side = side_manager.side_by_unit[unit] or side_manager:get_side_from_name("dark_pact")
-				local side_id = side.side_id
-
-				side_manager:add_unit_to_side(blob_unit, side_id)
+				var_14_7:add_unit_to_side(var_14_6, var_14_8)
 			end
 		end
 
-		local ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
-
-		ai_navigation_system:add_safe_navigation_callback(nav_callback)
+		Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(var_13_0)
 	end,
-	ai_health_regen_update = function (unit, buff, params)
-		local t = Managers.time:time("game")
-		local frequency = buff.template.frequency
+	ai_health_regen_update = function(arg_15_0, arg_15_1, arg_15_2)
+		local var_15_0 = Managers.time:time("game")
+		local var_15_1 = arg_15_1.template.frequency
 
-		if not buff.timer then
-			buff.timer = t + frequency
+		if not arg_15_1.timer then
+			arg_15_1.timer = var_15_0 + var_15_1
 		end
 
-		if t < buff.timer then
+		if var_15_0 < arg_15_1.timer then
 			return
 		end
 
-		buff.timer = t + frequency
+		arg_15_1.timer = var_15_0 + var_15_1
 
-		if is_server() and HEALTH_ALIVE[unit] then
-			local health_extension = ScriptUnit.has_extension(unit, "health_system")
-			local max_health = health_extension:get_max_health()
-			local amount_to_heal = max_health * buff.template.part_healed_of_max_heath
+		if var_0_2() and HEALTH_ALIVE[arg_15_0] then
+			local var_15_2 = ScriptUnit.has_extension(arg_15_0, "health_system")
+			local var_15_3 = var_15_2:get_max_health() * arg_15_1.template.part_healed_of_max_heath
 
-			health_extension:add_heal(unit, amount_to_heal, nil, "leech")
+			var_15_2:add_heal(arg_15_0, var_15_3, nil, "leech")
 		end
 	end,
-	apply_curse_to_nearby_players = function (unit, buff, params, world)
-		local template = buff.template
-		local max_distance = template.max_distance
-		local position = POSITION_LOOKUP[unit]
+	apply_curse_to_nearby_players = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+		local var_16_0 = arg_16_1.template
+		local var_16_1 = var_16_0.max_distance
+		local var_16_2 = POSITION_LOOKUP[arg_16_0]
 
-		buff.cursed_players = buff.cursed_players or {}
-		buff.inside_last_frame = buff.inside_last_frame or {}
+		arg_16_1.cursed_players = arg_16_1.cursed_players or {}
+		arg_16_1.inside_last_frame = arg_16_1.inside_last_frame or {}
 
-		local inside_last_frame = buff.inside_last_frame
-		local cursed_players = buff.cursed_players
-		local local_player = Managers.player:local_player().player_unit
-		local proximity_system = Managers.state.entity:system("proximity_system")
-		local player_broadphase = proximity_system.player_units_broadphase
-		local nearby_players = FrameTable.alloc_table()
-		local nearby_players_n = Broadphase.query(player_broadphase, position, max_distance, nearby_players)
-		local inside_this_frame = FrameTable.alloc_table()
+		local var_16_3 = arg_16_1.inside_last_frame
+		local var_16_4 = arg_16_1.cursed_players
+		local var_16_5 = Managers.player:local_player().player_unit
+		local var_16_6 = Managers.state.entity:system("proximity_system").player_units_broadphase
+		local var_16_7 = FrameTable.alloc_table()
+		local var_16_8 = Broadphase.query(var_16_6, var_16_2, var_16_1, var_16_7)
+		local var_16_9 = FrameTable.alloc_table()
 
-		for i = 1, nearby_players_n do
-			local player_unit = nearby_players[i]
+		for iter_16_0 = 1, var_16_8 do
+			local var_16_10 = var_16_7[iter_16_0]
 
-			inside_this_frame[player_unit] = true
+			var_16_9[var_16_10] = true
 
-			if not inside_last_frame[player_unit] then
-				if player_unit == local_player and ALIVE[player_unit] then
-					local buff_extension = ScriptUnit.extension(player_unit, "buff_system")
-					local buff_to_add = template.buff_to_add
-					local num_stacks = buff_extension:num_buff_stacks(buff_to_add)
+			if not var_16_3[var_16_10] then
+				if var_16_10 == var_16_5 and ALIVE[var_16_10] then
+					local var_16_11 = ScriptUnit.extension(var_16_10, "buff_system")
+					local var_16_12 = var_16_0.buff_to_add
 
-					if num_stacks == 0 then
-						local wwise_world = Managers.world:wwise_world(world)
+					if var_16_11:num_buff_stacks(var_16_12) == 0 then
+						local var_16_13 = Managers.world:wwise_world(arg_16_3)
 
-						WwiseWorld.trigger_event(wwise_world, template.sound_on_enter)
+						WwiseWorld.trigger_event(var_16_13, var_16_0.sound_on_enter)
 					end
 				end
 
-				cursed_players[player_unit] = true
-				inside_last_frame[player_unit] = true
+				var_16_4[var_16_10] = true
+				var_16_3[var_16_10] = true
 			end
 		end
 
-		if is_server() then
-			local t = Managers.time:time("game")
+		if var_0_2() then
+			local var_16_14 = Managers.time:time("game")
 
-			buff.last_curse_t = buff.last_curse_t or t
+			arg_16_1.last_curse_t = arg_16_1.last_curse_t or var_16_14
 
-			local time_between_curses = template.time_between_curses
-			local next_curse_t = buff.last_curse_t + time_between_curses
-			local should_apply_buff = next_curse_t <= t
+			local var_16_15 = var_16_0.time_between_curses
+			local var_16_16 = arg_16_1.last_curse_t + var_16_15
+			local var_16_17 = var_16_16 <= var_16_14
 
-			for cursed_player, _ in pairs(cursed_players) do
-				if should_apply_buff then
-					if inside_this_frame[cursed_player] then
-						local buff_to_add = template.buff_to_add
-						local buff_system = Managers.state.entity:system("buff_system")
+			for iter_16_1, iter_16_2 in pairs(var_16_4) do
+				if var_16_17 then
+					if var_16_9[iter_16_1] then
+						local var_16_18 = var_16_0.buff_to_add
 
-						buff_system:add_buff(cursed_player, buff_to_add, unit)
+						Managers.state.entity:system("buff_system"):add_buff(iter_16_1, var_16_18, arg_16_0)
 					else
-						cursed_players[cursed_player] = nil
+						var_16_4[iter_16_1] = nil
 					end
 				end
 
-				inside_last_frame[cursed_player] = inside_this_frame[cursed_player] and true or nil
+				var_16_3[iter_16_1] = var_16_9[iter_16_1] and true or nil
 			end
 
-			buff.last_curse_t = should_apply_buff and next_curse_t or buff.last_curse_t
-		elseif ALIVE[local_player] then
-			inside_last_frame[local_player] = inside_this_frame[local_player] and true or nil
+			arg_16_1.last_curse_t = var_16_17 and var_16_16 or arg_16_1.last_curse_t
+		elseif ALIVE[var_16_5] then
+			var_16_3[var_16_5] = var_16_9[var_16_5] and true or nil
 		end
 	end,
-	ai_create_explosion = function (owner_unit, buff, params, world)
-		if not is_server() or not ALIVE[owner_unit] then
+	ai_create_explosion = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+		if not var_0_2() or not ALIVE[arg_17_0] then
 			return
 		end
 
-		local buff_template = buff.template
-		local explosion_template_name = buff_template.explosion_template_name
-		local damage_source_name = buff_template.damage_source_name or "buff"
-		local explosion_position = POSITION_LOOKUP[owner_unit] or Unit.world_position(owner_unit, 0)
-		local explosion_template = ExplosionUtils.get_template(explosion_template_name)
+		local var_17_0 = arg_17_1.template
+		local var_17_1 = var_17_0.explosion_template_name
+		local var_17_2 = var_17_0.damage_source_name or "buff"
+		local var_17_3 = POSITION_LOOKUP[arg_17_0] or Unit.world_position(arg_17_0, 0)
+		local var_17_4 = ExplosionUtils.get_template(var_17_1)
 
-		DamageUtils.create_explosion(world, owner_unit, explosion_position, Quaternion.identity(), explosion_template, 1, damage_source_name, true, false, owner_unit, 0, false)
+		DamageUtils.create_explosion(arg_17_3, arg_17_0, var_17_3, Quaternion.identity(), var_17_4, 1, var_17_2, true, false, arg_17_0, 0, false)
 
-		local attacker_unit_id = Managers.state.unit_storage:go_id(owner_unit)
-		local explosion_template_id = NetworkLookup.explosion_templates[explosion_template_name]
-		local damage_source_id = NetworkLookup.damage_sources[damage_source_name]
+		local var_17_5 = Managers.state.unit_storage:go_id(arg_17_0)
+		local var_17_6 = NetworkLookup.explosion_templates[var_17_1]
+		local var_17_7 = NetworkLookup.damage_sources[var_17_2]
 
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", attacker_unit_id, false, explosion_position, Quaternion.identity(), explosion_template_id, 1, damage_source_id, 0, false, attacker_unit_id)
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", var_17_5, false, var_17_3, Quaternion.identity(), var_17_6, 1, var_17_7, 0, false, var_17_5)
 	end,
-	ai_add_hit_sfx = function (unit, buff, params)
-		local template = buff.template
-		local override_sfx = template and template.hit_sfx_name
+	ai_add_hit_sfx = function(arg_18_0, arg_18_1, arg_18_2)
+		local var_18_0 = arg_18_1.template
+		local var_18_1 = var_18_0 and var_18_0.hit_sfx_name
 
-		if override_sfx then
-			local ai_inventory_extension = ScriptUnit.has_extension(unit, "ai_inventory_system")
+		if var_18_1 then
+			local var_18_2 = ScriptUnit.has_extension(arg_18_0, "ai_inventory_system")
 
-			if ai_inventory_extension then
-				buff._override_id = ai_inventory_extension:add_additional_hit_sfx(override_sfx)
+			if var_18_2 then
+				arg_18_1._override_id = var_18_2:add_additional_hit_sfx(var_18_1)
 			end
 		end
 	end,
-	ai_remove_hit_sfx = function (unit, buff, params)
-		local ai_inventory_extension = ScriptUnit.has_extension(unit, "ai_inventory_system")
+	ai_remove_hit_sfx = function(arg_19_0, arg_19_1, arg_19_2)
+		local var_19_0 = ScriptUnit.has_extension(arg_19_0, "ai_inventory_system")
 
-		if ai_inventory_extension then
-			ai_inventory_extension:remove_additioanl_hit_sfx(buff._override_id)
+		if var_19_0 then
+			var_19_0:remove_additioanl_hit_sfx(arg_19_1._override_id)
 
-			buff._override_id = nil
+			arg_19_1._override_id = nil
 		end
 	end,
-	first_person_flow_event = function (unit, buff, params)
-		local flow_event = buff.template.flow_event
-		local local_player = owner_is_local_player(unit)
+	first_person_flow_event = function(arg_20_0, arg_20_1, arg_20_2)
+		local var_20_0 = arg_20_1.template.flow_event
 
-		if local_player then
-			local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
-			local first_person_unit = first_person_extension and first_person_extension:get_first_person_unit()
+		if var_0_3(arg_20_0) then
+			local var_20_1 = ScriptUnit.has_extension(arg_20_0, "first_person_system")
+			local var_20_2 = var_20_1 and var_20_1:get_first_person_unit()
 
-			if first_person_unit then
-				Unit.flow_event(first_person_unit, flow_event)
+			if var_20_2 then
+				Unit.flow_event(var_20_2, var_20_0)
 			end
 		end
 	end,
-	remove_all_stamina = function (unit, buff, params)
-		local local_player = owner_is_local_player(unit)
+	remove_all_stamina = function(arg_21_0, arg_21_1, arg_21_2)
+		if var_0_3(arg_21_0) then
+			local var_21_0 = ScriptUnit.has_extension(arg_21_0, "status_system")
 
-		if local_player then
-			local status_extension = ScriptUnit.has_extension(unit, "status_system")
-
-			if status_extension then
-				status_extension:add_fatigue_points("complete", params.attacker_unit)
+			if var_21_0 then
+				var_21_0:add_fatigue_points("complete", arg_21_2.attacker_unit)
 			end
 		end
 	end,
-	trigger_terror_event = function (owner_unit, buff, params)
-		if not is_server() or not ALIVE[owner_unit] then
+	trigger_terror_event = function(arg_22_0, arg_22_1, arg_22_2)
+		if not var_0_2() or not ALIVE[arg_22_0] then
 			return
 		end
 
-		local buff_template = buff.template
-		local faction_terror_events = buff_template.faction_terror_events
-		local blackboard = BLACKBOARDS[owner_unit]
-		local breed = blackboard and blackboard.breed
-		local faction = breed and breed.race
-		local terror_event = faction_terror_events[faction] or faction_terror_events.default
-		local seed = buff.seed or Managers.mechanism:get_level_seed()
+		local var_22_0 = arg_22_1.template.faction_terror_events
+		local var_22_1 = BLACKBOARDS[arg_22_0]
+		local var_22_2 = var_22_1 and var_22_1.breed
+		local var_22_3 = var_22_0[var_22_2 and var_22_2.race] or var_22_0.default
+		local var_22_4 = arg_22_1.seed or Managers.mechanism:get_level_seed()
 
-		Managers.state.conflict:start_terror_event(terror_event, seed, owner_unit)
+		Managers.state.conflict:start_terror_event(var_22_3, var_22_4, arg_22_0)
 
-		buff.seed = Math.next_random(seed)
+		arg_22_1.seed = Math.next_random(var_22_4)
 	end,
-	add_extra_frenzy_stack = function (unit, buff, params)
-		if ALIVE[unit] then
-			local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
+	add_extra_frenzy_stack = function(arg_23_0, arg_23_1, arg_23_2)
+		if ALIVE[arg_23_0] then
+			local var_23_0 = ScriptUnit.has_extension(arg_23_0, "buff_system")
 
-			if buff_extension then
-				buff_extension:add_buff(buff.template.buff_to_add)
+			if var_23_0 then
+				var_23_0:add_buff(arg_23_1.template.buff_to_add)
 			end
 		end
 	end,
-	frenzy_damage_over_time = function (unit, buff, params)
-		if not is_server() then
+	frenzy_damage_over_time = function(arg_24_0, arg_24_1, arg_24_2)
+		if not var_0_2() then
 			return
 		end
 
-		if ALIVE[unit] then
-			local health_extension = ScriptUnit.has_extension(unit, "health_system")
+		if ALIVE[arg_24_0] then
+			local var_24_0 = ScriptUnit.has_extension(arg_24_0, "health_system")
 
-			if not health_extension then
+			if not var_24_0 then
 				return
 			end
 
-			local current_health = health_extension:current_health()
-			local damage_per_tick = buff.template.damage_per_tick
+			local var_24_1 = var_24_0:current_health()
+			local var_24_2 = arg_24_1.template.damage_per_tick
 
-			if current_health <= damage_per_tick then
-				damage_per_tick = current_health - 1
+			if var_24_1 <= var_24_2 then
+				var_24_2 = var_24_1 - 1
 			end
 
-			if damage_per_tick > 0 then
-				DamageUtils.add_damage_network(unit, unit, damage_per_tick, "torso", "buff", nil, Vector3(0, 0, 0), "buff", nil, unit, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
-			end
-		end
-	end,
-	apply_frenzy_func = function (unit, buff, params)
-		if ALIVE[unit] then
-			local player = Managers.player:owner(unit)
-
-			if player and not player.remote then
-				Managers.state.camera:set_mood("skill_zealot", buff, true)
-			end
-
-			local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
-
-			if first_person_extension then
-				first_person_extension:play_hud_sound_event("enemy_grudge_frenzy_start")
+			if var_24_2 > 0 then
+				DamageUtils.add_damage_network(arg_24_0, arg_24_0, var_24_2, "torso", "buff", nil, Vector3(0, 0, 0), "buff", nil, arg_24_0, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 			end
 		end
 	end,
-	remove_frenzy_func = function (unit, buff, params)
-		if ALIVE[unit] then
-			local player = Managers.player:owner(unit)
+	apply_frenzy_func = function(arg_25_0, arg_25_1, arg_25_2)
+		if ALIVE[arg_25_0] then
+			local var_25_0 = Managers.player:owner(arg_25_0)
 
-			if player and not player.remote then
-				Managers.state.camera:set_mood("skill_zealot", buff, false)
+			if var_25_0 and not var_25_0.remote then
+				Managers.state.camera:set_mood("skill_zealot", arg_25_1, true)
+			end
+
+			local var_25_1 = ScriptUnit.has_extension(arg_25_0, "first_person_system")
+
+			if var_25_1 then
+				var_25_1:play_hud_sound_event("enemy_grudge_frenzy_start")
 			end
 		end
 	end,
-	remove_frenzy_handlers = function (unit, buff, params)
-		if buff.buff_ids then
-			local buff_system = Managers.state.entity:system("buff_system")
+	remove_frenzy_func = function(arg_26_0, arg_26_1, arg_26_2)
+		if ALIVE[arg_26_0] then
+			local var_26_0 = Managers.player:owner(arg_26_0)
 
-			for unit, buff_id in pairs(buff.buff_ids) do
-				if ALIVE[unit] then
-					buff_system:remove_server_controlled_buff(unit, buff_id)
+			if var_26_0 and not var_26_0.remote then
+				Managers.state.camera:set_mood("skill_zealot", arg_26_1, false)
+			end
+		end
+	end,
+	remove_frenzy_handlers = function(arg_27_0, arg_27_1, arg_27_2)
+		if arg_27_1.buff_ids then
+			local var_27_0 = Managers.state.entity:system("buff_system")
+
+			for iter_27_0, iter_27_1 in pairs(arg_27_1.buff_ids) do
+				if ALIVE[iter_27_0] then
+					var_27_0:remove_server_controlled_buff(iter_27_0, iter_27_1)
 				end
 			end
 		end
 	end,
-	grudge_mark_ignore_death_aura_update = function (unit, buff, params)
-		local side = Managers.state.side.side_by_unit[unit]
-		local broadphase_categories = side.ally_broadphase_categories
-		local nearby_allies = FrameTable.alloc_table()
-		local position = POSITION_LOOKUP[unit]
-		local radius = buff.template.radius
-		local num_allies = AiUtils.broadphase_query(position, radius, nearby_allies, broadphase_categories)
-		local buff_name = buff.template.buff_to_add
-		local inside_this_frame = FrameTable.alloc_table()
-		local inside_allies = buff.inside_allies or {}
+	grudge_mark_ignore_death_aura_update = function(arg_28_0, arg_28_1, arg_28_2)
+		local var_28_0 = Managers.state.side.side_by_unit[arg_28_0].ally_broadphase_categories
+		local var_28_1 = FrameTable.alloc_table()
+		local var_28_2 = POSITION_LOOKUP[arg_28_0]
+		local var_28_3 = arg_28_1.template.radius
+		local var_28_4 = AiUtils.broadphase_query(var_28_2, var_28_3, var_28_1, var_28_0)
+		local var_28_5 = arg_28_1.template.buff_to_add
+		local var_28_6 = FrameTable.alloc_table()
+		local var_28_7 = arg_28_1.inside_allies or {}
 
-		buff.inside_allies = inside_allies
+		arg_28_1.inside_allies = var_28_7
 
-		for i = 1, num_allies do
-			local ally_unit = nearby_allies[i]
+		for iter_28_0 = 1, var_28_4 do
+			local var_28_8 = var_28_1[iter_28_0]
 
-			if ally_unit ~= unit then
-				local buff_extension = ScriptUnit.has_extension(ally_unit, "buff_system")
+			if var_28_8 ~= arg_28_0 then
+				local var_28_9 = ScriptUnit.has_extension(var_28_8, "buff_system")
 
-				if buff_extension then
-					if not inside_allies[ally_unit] then
-						inside_allies[ally_unit] = buff_extension:add_buff(buff_name)
+				if var_28_9 then
+					if not var_28_7[var_28_8] then
+						var_28_7[var_28_8] = var_28_9:add_buff(var_28_5)
 					end
 
-					inside_this_frame[ally_unit] = true
+					var_28_6[var_28_8] = true
 				end
 			end
 		end
 
-		for ally_unit, buff_id in pairs(inside_allies) do
-			if not inside_this_frame[ally_unit] then
-				local buff_extension = ScriptUnit.has_extension(ally_unit, "buff_system")
+		for iter_28_1, iter_28_2 in pairs(var_28_7) do
+			if not var_28_6[iter_28_1] then
+				local var_28_10 = ScriptUnit.has_extension(iter_28_1, "buff_system")
 
-				if buff_extension then
-					buff_extension:remove_buff(buff_id)
+				if var_28_10 then
+					var_28_10:remove_buff(iter_28_2)
 				end
 
-				inside_allies[ally_unit] = nil
+				var_28_7[iter_28_1] = nil
 			end
 		end
 	end,
-	grudge_mark_ignore_death_aura_cleanup = function (unit, buff, params)
-		local inside_allies = buff.inside_allies
+	grudge_mark_ignore_death_aura_cleanup = function(arg_29_0, arg_29_1, arg_29_2)
+		local var_29_0 = arg_29_1.inside_allies
 
-		if not inside_allies then
+		if not var_29_0 then
 			return
 		end
 
-		for ally_unit, buff_id in pairs(inside_allies) do
-			local buff_extension = ScriptUnit.has_extension(ally_unit, "buff_system")
+		for iter_29_0, iter_29_1 in pairs(var_29_0) do
+			local var_29_1 = ScriptUnit.has_extension(iter_29_0, "buff_system")
 
-			if buff_extension then
-				buff_extension:remove_buff(buff_id)
+			if var_29_1 then
+				var_29_1:remove_buff(iter_29_1)
 			end
 		end
 
-		buff.inside_allies = nil
-	end,
+		arg_29_1.inside_allies = nil
+	end
 }
-settings.proc_functions = {
-	add_frenzy_handler = function (owner_unit, buff, params)
-		if not is_server() then
+var_0_0.proc_functions = {
+	add_frenzy_handler = function(arg_30_0, arg_30_1, arg_30_2)
+		if not var_0_2() then
 			return
 		end
 
-		local attacker_unit = params[1]
-		local attack_type = params[4]
+		local var_30_0 = arg_30_2[1]
+		local var_30_1 = arg_30_2[4]
 
-		if ALIVE[owner_unit] and ALIVE[attacker_unit] and MeleeAttackTypes[attack_type] then
-			local buff_to_add = buff.template.buff_to_add
-			local buff_system = Managers.state.entity:system("buff_system")
+		if ALIVE[arg_30_0] and ALIVE[var_30_0] and MeleeAttackTypes[var_30_1] then
+			local var_30_2 = arg_30_1.template.buff_to_add
+			local var_30_3 = Managers.state.entity:system("buff_system")
 
-			if not buff.buff_ids then
-				buff.buff_ids = {}
+			if not arg_30_1.buff_ids then
+				arg_30_1.buff_ids = {}
 			end
 
-			if not buff.buff_ids[attacker_unit] then
-				buff.buff_ids[attacker_unit] = buff_system:add_buff(attacker_unit, buff_to_add, owner_unit, true)
+			if not arg_30_1.buff_ids[var_30_0] then
+				arg_30_1.buff_ids[var_30_0] = var_30_3:add_buff(var_30_0, var_30_2, arg_30_0, true)
 			end
 		end
 	end,
-	add_frenzy_stack = function (owner_unit, buff, params)
-		local hit_unit = params[1]
+	add_frenzy_stack = function(arg_31_0, arg_31_1, arg_31_2)
+		local var_31_0 = arg_31_2[1]
 
-		if ALIVE[owner_unit] and ALIVE[hit_unit] then
-			if not buff.attacker_unit or hit_unit ~= buff.attacker_unit then
+		if ALIVE[arg_31_0] and ALIVE[var_31_0] then
+			if not arg_31_1.attacker_unit or var_31_0 ~= arg_31_1.attacker_unit then
 				return
 			end
 
-			local buff_extension = ScriptUnit.has_extension(owner_unit, "buff_system")
+			local var_31_1 = ScriptUnit.has_extension(arg_31_0, "buff_system")
 
-			if buff_extension and not buff_extension:has_buff_type(buff.template.blocker_buff) then
-				buff_extension:add_buff(buff.template.buff_to_add)
+			if var_31_1 and not var_31_1:has_buff_type(arg_31_1.template.blocker_buff) then
+				var_31_1:add_buff(arg_31_1.template.buff_to_add)
 			end
 		end
 	end,
-	spawn_liquid_forward = function (owner_unit, buff, params)
-		if not is_server() then
+	spawn_liquid_forward = function(arg_32_0, arg_32_1, arg_32_2)
+		if not var_0_2() then
 			return
 		end
 
-		BuffUtils.create_liquid_forward(owner_unit, buff)
+		BuffUtils.create_liquid_forward(arg_32_0, arg_32_1)
 	end,
-	ai_add_buff_on_damage_dealt = function (owner_unit, buff, params, world, param_order)
-		local target_unit = params[param_order.attacked_unit]
-		local damage_amount = params[param_order.damage_amount]
+	ai_add_buff_on_damage_dealt = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
+		local var_33_0 = arg_33_2[arg_33_4.attacked_unit]
+		local var_33_1 = arg_33_2[arg_33_4.damage_amount]
 
-		if ALIVE[target_unit] and damage_amount > 0 then
-			local buff_template = buff.template
-			local buff_name = buff_template.buff_to_add
-			local buff_extension = ScriptUnit.extension(target_unit, "buff_system")
-			local network_manager = Managers.state.network
-			local network_transmit = network_manager.network_transmit
-			local unit_object_id = network_manager:unit_game_object_id(target_unit)
-			local buff_template_name_id = NetworkLookup.buff_templates[buff_name]
+		if ALIVE[var_33_0] and var_33_1 > 0 then
+			local var_33_2 = arg_33_1.template.buff_to_add
+			local var_33_3 = ScriptUnit.extension(var_33_0, "buff_system")
+			local var_33_4 = Managers.state.network
+			local var_33_5 = var_33_4.network_transmit
+			local var_33_6 = var_33_4:unit_game_object_id(var_33_0)
+			local var_33_7 = NetworkLookup.buff_templates[var_33_2]
 
-			if is_server() then
-				buff_extension:add_buff(buff_name, {
-					attacker_unit = target_unit,
+			if var_0_2() then
+				var_33_3:add_buff(var_33_2, {
+					attacker_unit = var_33_0
 				})
-				network_transmit:send_rpc_clients("rpc_add_buff", unit_object_id, buff_template_name_id, unit_object_id, 0, false)
+				var_33_5:send_rpc_clients("rpc_add_buff", var_33_6, var_33_7, var_33_6, 0, false)
 			else
-				network_transmit:send_rpc_server("rpc_add_buff", unit_object_id, buff_template_name_id, unit_object_id, 0, true)
+				var_33_5:send_rpc_server("rpc_add_buff", var_33_6, var_33_7, var_33_6, 0, true)
 			end
 		end
 	end,
-	ai_delay_regen = function (owner_unit, buff, params)
-		local t = Managers.time:time("game")
-		local on_hit_delay = buff.template.on_hit_delay
+	ai_delay_regen = function(arg_34_0, arg_34_1, arg_34_2)
+		local var_34_0 = Managers.time:time("game")
+		local var_34_1 = arg_34_1.template.on_hit_delay
 
-		if not buff.timer then
-			buff.timer = t + on_hit_delay
+		if not arg_34_1.timer then
+			arg_34_1.timer = var_34_0 + var_34_1
 		end
 
-		buff.timer = t + on_hit_delay
+		arg_34_1.timer = var_34_0 + var_34_1
 	end,
-	ai_heal_on_damage_dealt = function (owner_unit, buff, params, world, param_order)
-		if not is_server() then
+	ai_heal_on_damage_dealt = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
+		if not var_0_2() then
 			return
 		end
 
-		local target_unit = params[param_order.attacked_unit]
+		local var_35_0 = arg_35_2[arg_35_4.attacked_unit]
 
-		if ALIVE[owner_unit] and ALIVE[target_unit] and DamageUtils.is_enemy(owner_unit, target_unit) then
-			local health_extension = ScriptUnit.has_extension(owner_unit, "health_system")
+		if ALIVE[arg_35_0] and ALIVE[var_35_0] and DamageUtils.is_enemy(arg_35_0, var_35_0) then
+			local var_35_1 = ScriptUnit.has_extension(arg_35_0, "health_system")
 
-			if health_extension and health_extension:is_alive() then
-				local damage_amount = params[param_order.damage_amount]
-				local buff_template = buff.template
-				local multiplier = buff_template.multiplier or 1
-				local bonus = buff_template.bonus or 0
-				local amount_to_heal = math.clamp(damage_amount * multiplier + bonus, 0, 255)
+			if var_35_1 and var_35_1:is_alive() then
+				local var_35_2 = arg_35_2[arg_35_4.damage_amount]
+				local var_35_3 = arg_35_1.template
+				local var_35_4 = var_35_3.multiplier or 1
+				local var_35_5 = var_35_3.bonus or 0
+				local var_35_6 = math.clamp(var_35_2 * var_35_4 + var_35_5, 0, 255)
 
-				health_extension:add_heal(owner_unit, amount_to_heal, nil, "leech")
+				var_35_1:add_heal(arg_35_0, var_35_6, nil, "leech")
 			end
 		end
 	end,
-	random_teleport_ai = function (owner_unit, buff, params)
-		if not is_server() then
+	random_teleport_ai = function(arg_36_0, arg_36_1, arg_36_2)
+		if not var_0_2() then
 			return
 		end
 
-		local function nav_callback()
-			if ALIVE[owner_unit] then
-				local blackboard = BLACKBOARDS[owner_unit]
-				local unit_pos = POSITION_LOOKUP[owner_unit]
-				local template = buff.template
-				local min_dist = template.min_teleport_distance
-				local max_dist = template.max_teleport_distance
-				local tries = template.find_valid_pos_attempts
-				local min_player_dist = template.min_dist_from_players
-				local side = Managers.state.side.side_by_unit[owner_unit]
-				local validation_data = {
-					side = side,
-					min_dist_sqr = min_player_dist * min_player_dist,
+		local function var_36_0()
+			if ALIVE[arg_36_0] then
+				local var_37_0 = BLACKBOARDS[arg_36_0]
+				local var_37_1 = POSITION_LOOKUP[arg_36_0]
+				local var_37_2 = arg_36_1.template
+				local var_37_3 = var_37_2.min_teleport_distance
+				local var_37_4 = var_37_2.max_teleport_distance
+				local var_37_5 = var_37_2.find_valid_pos_attempts
+				local var_37_6 = var_37_2.min_dist_from_players
+				local var_37_7 = Managers.state.side.side_by_unit[arg_36_0]
+				local var_37_8 = {
+					side = var_37_7,
+					min_dist_sqr = var_37_6 * var_37_6
 				}
-				local teleport_position = ConflictUtils.get_spawn_pos_on_circle_with_func_range(blackboard.nav_world, unit_pos, min_dist, max_dist, tries, teleport_validation_func, validation_data, 8, 8)
+				local var_37_9 = ConflictUtils.get_spawn_pos_on_circle_with_func_range(var_37_0.nav_world, var_37_1, var_37_3, var_37_4, var_37_5, var_0_4, var_37_8, 8, 8)
 
-				if teleport_position then
-					local play_sound = "enemy_grudge_warping"
-					local play_effect = "fx/grudge_marks_shadow_step"
+				if var_37_9 then
+					local var_37_10 = "enemy_grudge_warping"
+					local var_37_11 = "fx/grudge_marks_shadow_step"
 
-					ConflictUtils.teleport_ai_unit(owner_unit, teleport_position, play_sound, play_effect)
+					ConflictUtils.teleport_ai_unit(arg_36_0, var_37_9, var_37_10, var_37_11)
 				end
 			end
 		end
 
-		local ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
-
-		ai_navigation_system:add_safe_navigation_callback(nav_callback)
+		Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(var_36_0)
 	end,
-	ai_crushing_blow = function (owner_unit, buff, params, world, param_order)
-		if not is_server() or not ALIVE[owner_unit] then
+	ai_crushing_blow = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+		if not var_0_2() or not ALIVE[arg_38_0] then
 			return
 		end
 
-		local attacked_unit = params[param_order.attacked_unit]
-		local blackboard = BLACKBOARDS[owner_unit]
-		local status_extension = ScriptUnit.has_extension(attacked_unit, "status_system")
+		local var_38_0 = arg_38_2[arg_38_4.attacked_unit]
+		local var_38_1 = BLACKBOARDS[arg_38_0]
+		local var_38_2 = ScriptUnit.has_extension(var_38_0, "status_system")
 
-		if blackboard and blackboard.hit_through_block and status_extension then
-			local buff_extension = ScriptUnit.extension(attacked_unit, "buff_system")
-			local buff_template = buff.template
-			local buff_name = buff_template.buff_to_add
-			local action = blackboard.action
+		if var_38_1 and var_38_1.hit_through_block and var_38_2 then
+			local var_38_3 = ScriptUnit.extension(var_38_0, "buff_system")
+			local var_38_4 = arg_38_1.template.buff_to_add
+			local var_38_5 = var_38_1.action
 
-			if action and action.fatigue_type then
-				local can_block, fatigue_point_costs_multiplier, improved_block, enemy_weapon_direction = status_extension:can_block(owner_unit)
-				local fatigue_type = action.fatigue_type
+			if var_38_5 and var_38_5.fatigue_type then
+				local var_38_6, var_38_7, var_38_8, var_38_9 = var_38_2:can_block(arg_38_0)
+				local var_38_10 = var_38_5.fatigue_type
 
-				if type(fatigue_type) == "table" then
-					local difficulty_manager = Managers.state.difficulty
-
-					fatigue_type = difficulty_manager:get_difficulty_value_from_table(fatigue_type)
+				if type(var_38_10) == "table" then
+					var_38_10 = Managers.state.difficulty:get_difficulty_value_from_table(var_38_10)
 				end
 
-				status_extension:blocked_attack(fatigue_type, owner_unit, fatigue_point_costs_multiplier, improved_block, enemy_weapon_direction)
+				var_38_2:blocked_attack(var_38_10, arg_38_0, var_38_7, var_38_8, var_38_9)
 
-				if is_server() then
-					local network_manager = Managers.state.network
-					local unit_storage = Managers.state.unit_storage
-					local go_id = unit_storage:go_id(attacked_unit)
-					local fatigue_type_id = NetworkLookup.fatigue_types[fatigue_type]
-					local attacker_unit_id, attacker_is_level_unit = network_manager:game_object_or_level_id(owner_unit)
+				if var_0_2() then
+					local var_38_11 = Managers.state.network
+					local var_38_12 = Managers.state.unit_storage:go_id(var_38_0)
+					local var_38_13 = NetworkLookup.fatigue_types[var_38_10]
+					local var_38_14, var_38_15 = var_38_11:game_object_or_level_id(arg_38_0)
 
-					network_manager.network_transmit:send_rpc_clients("rpc_player_blocked_attack", go_id, fatigue_type_id, attacker_unit_id, fatigue_point_costs_multiplier, improved_block, enemy_weapon_direction, attacker_is_level_unit)
+					var_38_11.network_transmit:send_rpc_clients("rpc_player_blocked_attack", var_38_12, var_38_13, var_38_14, var_38_7, var_38_8, var_38_9, var_38_15)
 				end
 			end
 
-			local proc_mod_table = params[param_order.PROC_MODIFIABLE]
+			local var_38_16 = arg_38_2[arg_38_4.PROC_MODIFIABLE]
 
-			proc_mod_table.damage_amount = 0
+			var_38_16.damage_amount = 0
 
-			if action and action.blocked_damage then
-				proc_mod_table.damage_amount = action.blocked_damage
+			if var_38_5 and var_38_5.blocked_damage then
+				var_38_16.damage_amount = var_38_5.blocked_damage
 			end
 
-			local network_manager = Managers.state.network
-			local network_transmit = network_manager.network_transmit
-			local unit_object_id = network_manager:unit_game_object_id(attacked_unit)
-			local buff_template_name_id = NetworkLookup.buff_templates[buff_name]
+			local var_38_17 = Managers.state.network
+			local var_38_18 = var_38_17.network_transmit
+			local var_38_19 = var_38_17:unit_game_object_id(var_38_0)
+			local var_38_20 = NetworkLookup.buff_templates[var_38_4]
 
-			if is_server() then
-				buff_extension:add_buff(buff_name, {
-					attacker_unit = owner_unit,
+			if var_0_2() then
+				var_38_3:add_buff(var_38_4, {
+					attacker_unit = arg_38_0
 				})
-				network_transmit:send_rpc_clients("rpc_add_buff", unit_object_id, buff_template_name_id, unit_object_id, 0, false)
+				var_38_18:send_rpc_clients("rpc_add_buff", var_38_19, var_38_20, var_38_19, 0, false)
 			else
-				network_transmit:send_rpc_server("rpc_add_buff", unit_object_id, buff_template_name_id, unit_object_id, 0, true)
+				var_38_18:send_rpc_server("rpc_add_buff", var_38_19, var_38_20, var_38_19, 0, true)
 			end
 		end
 	end,
-	ai_create_explosion = settings.buff_function_templates.ai_create_explosion,
-	grudge_mark_shockwave = function (owner_unit, buff, params, world)
-		local damage_source = "grenade_frag_01"
-		local explosion_template = ExplosionUtils.get_template("grudge_mark_shockwave")
-		local explosion_position = POSITION_LOOKUP[owner_unit]
+	ai_create_explosion = var_0_0.buff_function_templates.ai_create_explosion,
+	grudge_mark_shockwave = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+		local var_39_0 = "grenade_frag_01"
+		local var_39_1 = ExplosionUtils.get_template("grudge_mark_shockwave")
+		local var_39_2 = POSITION_LOOKUP[arg_39_0]
 
-		DamageUtils.create_explosion(world, owner_unit, explosion_position, Quaternion.identity(), explosion_template, 1, damage_source, true, false, owner_unit, false)
+		DamageUtils.create_explosion(arg_39_3, arg_39_0, var_39_2, Quaternion.identity(), var_39_1, 1, var_39_0, true, false, arg_39_0, false)
 
-		local attacker_unit_id = Managers.state.unit_storage:go_id(owner_unit)
-		local explosion_template_id = NetworkLookup.explosion_templates[explosion_template.name]
-		local damage_source_id = NetworkLookup.damage_sources[damage_source]
+		local var_39_3 = Managers.state.unit_storage:go_id(arg_39_0)
+		local var_39_4 = NetworkLookup.explosion_templates[var_39_1.name]
+		local var_39_5 = NetworkLookup.damage_sources[var_39_0]
 
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", attacker_unit_id, false, explosion_position, Quaternion.identity(), explosion_template_id, 1, damage_source_id, 0, false, attacker_unit_id)
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", var_39_3, false, var_39_2, Quaternion.identity(), var_39_4, 1, var_39_5, 0, false, var_39_3)
 	end,
-	grudge_mark_termite_shockwave = function (owner_unit, buff, params, world)
-		local damage_source = "grenade_frag_01"
-		local explosion_template = ExplosionUtils.get_template("grudge_mark_termite_shockwave")
-		local explosion_position = POSITION_LOOKUP[owner_unit]
+	grudge_mark_termite_shockwave = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+		local var_40_0 = "grenade_frag_01"
+		local var_40_1 = ExplosionUtils.get_template("grudge_mark_termite_shockwave")
+		local var_40_2 = POSITION_LOOKUP[arg_40_0]
 
-		DamageUtils.create_explosion(world, owner_unit, explosion_position, Quaternion.identity(), explosion_template, 1, damage_source, true, false, owner_unit, false)
+		DamageUtils.create_explosion(arg_40_3, arg_40_0, var_40_2, Quaternion.identity(), var_40_1, 1, var_40_0, true, false, arg_40_0, false)
 
-		local attacker_unit_id = Managers.state.unit_storage:go_id(owner_unit)
-		local explosion_template_id = NetworkLookup.explosion_templates[explosion_template.name]
-		local damage_source_id = NetworkLookup.damage_sources[damage_source]
+		local var_40_3 = Managers.state.unit_storage:go_id(arg_40_0)
+		local var_40_4 = NetworkLookup.explosion_templates[var_40_1.name]
+		local var_40_5 = NetworkLookup.damage_sources[var_40_0]
 
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", attacker_unit_id, false, explosion_position, Quaternion.identity(), explosion_template_id, 1, damage_source_id, 0, false, attacker_unit_id)
-	end,
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", var_40_3, false, var_40_2, Quaternion.identity(), var_40_4, 1, var_40_5, 0, false, var_40_3)
+	end
 }
-settings.stacking_buff_functions = {}
+var_0_0.stacking_buff_functions = {}

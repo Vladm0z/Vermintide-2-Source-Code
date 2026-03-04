@@ -1,48 +1,46 @@
-﻿-- chunkname: @scripts/managers/conflict_director/conflict_director_testify.lua
+-- chunkname: @scripts/managers/conflict_director/conflict_director_testify.lua
 
-local ConflictDirectorTestify = {
-	total_main_path_distance = function ()
+return {
+	total_main_path_distance = function()
 		return EngineOptimized.main_path_total_length()
 	end,
-	get_all_breeds = function ()
-		local breeds = {}
+	get_all_breeds = function()
+		local var_2_0 = {}
 
-		for breed_name, breed_data in pairs(Breeds) do
-			if breed_data.is_always_spawnable and breed_data.allied ~= true then
-				breeds[breed_name] = breed_data
+		for iter_2_0, iter_2_1 in pairs(Breeds) do
+			if iter_2_1.is_always_spawnable and iter_2_1.allied ~= true then
+				var_2_0[iter_2_0] = iter_2_1
 			end
 		end
 
-		return breeds
+		return var_2_0
 	end,
-	spawn_unit = function (conflict_director, unit_data)
-		local boxed_spawn_rotation = QuaternionBox(Quaternion.identity())
+	spawn_unit = function(arg_3_0, arg_3_1)
+		local var_3_0 = QuaternionBox(Quaternion.identity())
 
-		conflict_director:spawn_queued_unit(unit_data.breed_data, unit_data.boxed_spawn_position, boxed_spawn_rotation)
+		arg_3_0:spawn_queued_unit(arg_3_1.breed_data, arg_3_1.boxed_spawn_position, var_3_0)
 	end,
-	get_unit_of_breed = function (conflict_director, breed_name)
-		local _, unit = next(conflict_director:spawned_units_by_breed(breed_name))
+	get_unit_of_breed = function(arg_4_0, arg_4_1)
+		local var_4_0, var_4_1 = next(arg_4_0:spawned_units_by_breed(arg_4_1))
 
-		return unit
+		return var_4_1
 	end,
-	destroy_all_units = function (conflict_director)
-		conflict_director:destroy_all_units()
+	destroy_all_units = function(arg_5_0)
+		arg_5_0:destroy_all_units()
 	end,
-	peaks = function (conflict_director)
-		return conflict_director:get_peaks()
+	peaks = function(arg_6_0)
+		return arg_6_0:get_peaks()
 	end,
-	reset_terror_event_mixer = function ()
+	reset_terror_event_mixer = function()
 		TerrorEventMixer.reset()
 	end,
-	terror_event_finished = function (conflict_director, event_name)
-		return conflict_director:terror_event_finished(event_name)
+	terror_event_finished = function(arg_8_0, arg_8_1)
+		return arg_8_0:terror_event_finished(arg_8_1)
 	end,
-	start_terror_event = function (conflict_director, event_name)
-		conflict_director:start_terror_event(event_name)
+	start_terror_event = function(arg_9_0, arg_9_1)
+		arg_9_0:start_terror_event(arg_9_1)
 	end,
-	kill_nearby_enemies = function (conflict_director)
-		conflict_director:destroy_close_units(nil, nil, 64)
-	end,
+	kill_nearby_enemies = function(arg_10_0)
+		arg_10_0:destroy_close_units(nil, nil, 64)
+	end
 }
-
-return ConflictDirectorTestify

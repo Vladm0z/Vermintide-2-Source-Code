@@ -1,24 +1,24 @@
-﻿-- chunkname: @scripts/settings/store_interactions.lua
+-- chunkname: @scripts/settings/store_interactions.lua
 
 InteractionDefinitions.store_access = InteractionDefinitions.store_access or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.store_access.config.swap_to_3p = false
 
-InteractionDefinitions.store_access.client.can_interact = function (interactor_unit, interactable_unit, data, config)
+function InteractionDefinitions.store_access.client.can_interact(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	return true
 end
 
-InteractionDefinitions.store_access.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
-	data.start_time = nil
+function InteractionDefinitions.store_access.client.stop(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+	arg_2_3.start_time = nil
 
-	if result == InteractionResult.SUCCESS and not data.is_husk then
+	if arg_2_6 == InteractionResult.SUCCESS and not arg_2_3.is_husk then
 		Managers.ui:handle_transition("hero_view_force", {
-			menu_state_name = "store",
 			menu_sub_state_name = "featured",
-			use_fade = true,
+			menu_state_name = "store",
+			use_fade = true
 		})
 	end
 end
 
-InteractionDefinitions.store_access.client.hud_description = function (interactable_unit, data, config, fail_reason, interactor_unit)
-	return Unit.get_data(interactable_unit, "interaction_data", "hud_description"), Unit.get_data(interactable_unit, "interaction_data", "hud_interaction_action")
+function InteractionDefinitions.store_access.client.hud_description(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	return Unit.get_data(arg_3_0, "interaction_data", "hud_description"), Unit.get_data(arg_3_0, "interaction_data", "hud_interaction_action")
 end

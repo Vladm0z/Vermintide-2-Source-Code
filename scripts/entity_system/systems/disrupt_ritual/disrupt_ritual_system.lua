@@ -1,70 +1,69 @@
-﻿-- chunkname: @scripts/entity_system/systems/disrupt_ritual/disrupt_ritual_system.lua
+-- chunkname: @scripts/entity_system/systems/disrupt_ritual/disrupt_ritual_system.lua
 
 DisruptRitualSystem = class(DisruptRitualSystem, ExtensionSystemBase)
 
-local extension_name = "DisruptRitualExtension"
+local var_0_0 = "DisruptRitualExtension"
 
-DisruptRitualSystem.init = function (self, entity_system_creation_context, ...)
-	DisruptRitualSystem.super.init(self, entity_system_creation_context, ...)
+function DisruptRitualSystem.init(arg_1_0, arg_1_1, ...)
+	DisruptRitualSystem.super.init(arg_1_0, arg_1_1, ...)
 
-	self._update_index = 1
-	self._units = {}
-	self._is_server = entity_system_creation_context.is_server
-	self._extension_list = {}
-	self._profiler_name = self.profiler_names.DisruptRitualExtension
+	arg_1_0._update_index = 1
+	arg_1_0._units = {}
+	arg_1_0._is_server = arg_1_1.is_server
+	arg_1_0._extension_list = {}
+	arg_1_0._profiler_name = arg_1_0.profiler_names.DisruptRitualExtension
 end
 
-DisruptRitualSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
-	local extension_alias = self.NAME
-	local extension_pool_table
-	local extension = ScriptUnit.add_extension(self.extension_init_context, unit, extension_name, extension_alias, extension_init_data, extension_pool_table)
+function DisruptRitualSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	local var_2_0 = arg_2_0.NAME
+	local var_2_1
+	local var_2_2 = ScriptUnit.add_extension(arg_2_0.extension_init_context, arg_2_2, arg_2_3, var_2_0, arg_2_4, var_2_1)
 
-	self.extensions[extension_name] = (self.extensions[extension_name] or 0) + 1
+	arg_2_0.extensions[arg_2_3] = (arg_2_0.extensions[arg_2_3] or 0) + 1
 
-	local index = self.extensions[extension_name]
+	local var_2_3 = arg_2_0.extensions[arg_2_3]
 
-	self._units[index] = unit
-	self._extension_list[#self._extension_list + 1] = extension
+	arg_2_0._units[var_2_3] = arg_2_2
+	arg_2_0._extension_list[#arg_2_0._extension_list + 1] = var_2_2
 
-	return extension
+	return var_2_2
 end
 
-DisruptRitualSystem.update = function (self, context, t)
-	if not self._is_server then
+function DisruptRitualSystem.update(arg_3_0, arg_3_1, arg_3_2)
+	if not arg_3_0._is_server then
 		return
 	end
 
-	local num_extensions = self.extensions.DisruptRitualExtension
+	local var_3_0 = arg_3_0.extensions.DisruptRitualExtension
 
-	if num_extensions == 0 then
+	if var_3_0 == 0 then
 		return
 	end
 
-	local index = self._update_index
-	local dt = context.dt
-	local extension = self._extension_list[index]
+	local var_3_1 = arg_3_0._update_index
+	local var_3_2 = arg_3_1.dt
 
-	extension:update(t)
+	arg_3_0._extension_list[var_3_1]:update(arg_3_2)
 
-	if index == num_extensions then
-		self._update_index = 1
+	if var_3_1 == var_3_0 then
+		arg_3_0._update_index = 1
 	else
-		self._update_index = index + 1
+		arg_3_0._update_index = var_3_1 + 1
 	end
 end
 
-DisruptRitualSystem.hot_join_sync = function (self, peer_id)
-	for extension_name, _ in pairs(self.extensions) do
-		self:_hot_join_sync_extension(extension_name, peer_id)
+function DisruptRitualSystem.hot_join_sync(arg_4_0, arg_4_1)
+	for iter_4_0, iter_4_1 in pairs(arg_4_0.extensions) do
+		arg_4_0:_hot_join_sync_extension(iter_4_0, arg_4_1)
 	end
 end
 
-DisruptRitualSystem._hot_join_sync_extension = function (self, extension_name, peer_id)
-	local entities = self.entity_manager:get_entities(extension_name)
+function DisruptRitualSystem._hot_join_sync_extension(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = arg_5_0.entity_manager:get_entities(arg_5_1)
 
-	for unit, internal in pairs(entities) do
-		if internal.hot_join_sync then
-			internal:hot_join_sync(peer_id)
+	for iter_5_0, iter_5_1 in pairs(var_5_0) do
+		if iter_5_1.hot_join_sync then
+			iter_5_1:hot_join_sync(arg_5_2)
 		end
 	end
 end

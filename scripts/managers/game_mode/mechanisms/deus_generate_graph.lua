@@ -1,101 +1,95 @@
-﻿-- chunkname: @scripts/managers/game_mode/mechanisms/deus_generate_graph.lua
+-- chunkname: @scripts/managers/game_mode/mechanisms/deus_generate_graph.lua
 
 require("scripts/managers/game_mode/mechanisms/deus_base_graph_generator")
 require("scripts/managers/game_mode/mechanisms/deus_layout_base_graph")
 require("scripts/managers/game_mode/mechanisms/deus_populate_graph")
 
-local base_graphs = require("scripts/settings/dlcs/morris/deus_map_baked_base_graphs")
+local var_0_0 = require("scripts/settings/dlcs/morris/deus_map_baked_base_graphs")
 
-function deus_generate_graph(seed, journey_name, dominant_god, populate_config, with_belakor)
-	if type(seed) == "string" and string.starts_with(seed, "DEBUG_SPECIFIC_NODE") then
-		local graph = table.clone(DeusDebugSpecificNodeGraph)
-		local start_node = graph.start
-		local seed_pattern = "SEED(.*)SEED_END"
-		local level_seed = 0
+function deus_generate_graph(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	if type(arg_1_0) == "string" and string.starts_with(arg_1_0, "DEBUG_SPECIFIC_NODE") then
+		local var_1_0 = table.clone(DeusDebugSpecificNodeGraph)
+		local var_1_1 = var_1_0.start
+		local var_1_2 = "SEED(.*)SEED_END"
+		local var_1_3 = 0
 
-		for capture in string.gmatch(seed, seed_pattern) do
-			level_seed = tonumber(capture)
+		for iter_1_0 in string.gmatch(arg_1_0, var_1_2) do
+			var_1_3 = tonumber(iter_1_0)
 		end
 
-		local without_prefix = string.gsub(seed, "DEBUG_SPECIFIC_NODE", "")
-		local without_suffix = string.gsub(without_prefix, seed_pattern, "")
-		local seeds = deus_generate_seeds(level_seed)
+		local var_1_4 = string.gsub(arg_1_0, "DEBUG_SPECIFIC_NODE", "")
+		local var_1_5 = string.gsub(var_1_4, var_1_2, "")
+		local var_1_6 = deus_generate_seeds(var_1_3)
 
-		start_node.level_seed = level_seed
-		start_node.weapon_pickup_seed = seeds.weapon_pickup_seed
-		start_node.system_seeds = {
-			pickups = seeds.pickups_seed,
-			mutator = seeds.mutator_seed,
-			blessings = seeds.blessings_seed,
-			power_ups = seeds.power_ups_seed,
+		var_1_1.level_seed = var_1_3
+		var_1_1.weapon_pickup_seed = var_1_6.weapon_pickup_seed
+		var_1_1.system_seeds = {
+			pickups = var_1_6.pickups_seed,
+			mutator = var_1_6.mutator_seed,
+			blessings = var_1_6.blessings_seed,
+			power_ups = var_1_6.power_ups_seed
 		}
 
-		printf("seeds used for this node: \n%s", table.tostring(seeds))
+		printf("seeds used for this node: \n%s", table.tostring(var_1_6))
 
-		local level = string.gsub(without_suffix, "^%w*_", "")
-		local base_level = string.gsub(level, "(%w_+%w+).*", "%1")
-		local progress = string.gsub(without_suffix, "_.*$", "")
+		local var_1_7 = string.gsub(var_1_5, "^%w*_", "")
+		local var_1_8 = string.gsub(var_1_7, "(%w_+%w+).*", "%1")
+		local var_1_9 = string.gsub(var_1_5, "_.*$", "")
 
-		start_node.level = level
-		start_node.base_level = base_level
-		start_node.run_progress = progress ~= "" and tonumber(progress) / 1000 or 0
+		var_1_1.level = var_1_7
+		var_1_1.base_level = var_1_8
+		var_1_1.run_progress = var_1_9 ~= "" and tonumber(var_1_9) / 1000 or 0
 
-		if string.starts_with(level, "pat") then
-			start_node.level_type = "TRAVEL"
-		elseif string.starts_with(level, "sig") then
-			start_node.level_type = "SIGNATURE"
-		elseif string.starts_with(level, "arena") then
-			start_node.level_type = "ARENA"
+		if string.starts_with(var_1_7, "pat") then
+			var_1_1.level_type = "TRAVEL"
+		elseif string.starts_with(var_1_7, "sig") then
+			var_1_1.level_type = "SIGNATURE"
+		elseif string.starts_with(var_1_7, "arena") then
+			var_1_1.level_type = "ARENA"
 		else
-			start_node.level_type = "START"
+			var_1_1.level_type = "START"
 		end
 
-		local theme
+		local var_1_10
 
-		for capture in string.gmatch(level, ".*_(.*)_path.") do
-			theme = capture
+		for iter_1_1 in string.gmatch(var_1_7, ".*_(.*)_path.") do
+			var_1_10 = iter_1_1
 		end
 
-		if DeusThemeSettings[theme] then
-			start_node.theme = theme
+		if DeusThemeSettings[var_1_10] then
+			var_1_1.theme = var_1_10
 		end
 
-		if level == "arena_belakor" then
-			start_node.theme = "belakor"
+		if var_1_7 == "arena_belakor" then
+			var_1_1.theme = "belakor"
 		end
 
 		if script_data.deus_force_load_curse then
-			start_node.curse = script_data.deus_force_load_curse
-			start_node.theme = theme ~= "wastes" and theme or "khorne"
+			var_1_1.curse = script_data.deus_force_load_curse
+			var_1_1.theme = var_1_10 ~= "wastes" and var_1_10 or "khorne"
 		end
 
-		return graph
-	elseif type(seed) == "string" and string.starts_with(seed, "DEBUG_SHRINE_NODE") then
+		return var_1_0
+	elseif type(arg_1_0) == "string" and string.starts_with(arg_1_0, "DEBUG_SHRINE_NODE") then
 		return DeusDebugShrineNodeGraph
-	elseif DeusDefaultGraphs[seed] then
-		return DeusDefaultGraphs[seed]
+	elseif DeusDefaultGraphs[arg_1_0] then
+		return DeusDefaultGraphs[arg_1_0]
 	else
-		local seed_number = type(seed) == "string" and tonumber(seed) or type(seed) == "number" and seed or 0
-		local graphs = base_graphs[journey_name] or base_graphs.default
+		local var_1_11 = type(arg_1_0) == "string" and tonumber(arg_1_0) or type(arg_1_0) == "number" and arg_1_0 or 0
+		local var_1_12 = var_0_0[arg_1_1] or var_0_0.default
+		local var_1_13 = Math.next_random(var_1_11)
+		local var_1_14 = {}
 
-		seed_number = Math.next_random(seed_number)
-
-		local keys = {}
-
-		for key, _ in pairs(graphs) do
-			keys[#keys + 1] = key
+		for iter_1_2, iter_1_3 in pairs(var_1_12) do
+			var_1_14[#var_1_14 + 1] = iter_1_2
 		end
 
-		table.sort(keys)
+		table.sort(var_1_14)
 
-		local keys_index
+		local var_1_15
+		local var_1_16, var_1_17 = Math.next_random(var_1_13, 1, #var_1_14)
+		local var_1_18 = var_1_12[var_1_14[var_1_17]]
 
-		seed_number, keys_index = Math.next_random(seed_number, 1, #keys)
-
-		local chosen_graph = keys[keys_index]
-		local base_graph = graphs[chosen_graph]
-		local complete_graph = deus_populate_graph(base_graph, seed_number, populate_config, dominant_god, with_belakor)
-
-		return complete_graph
+		return (deus_populate_graph(var_1_18, var_1_16, arg_1_3, arg_1_2, arg_1_4))
 	end
 end

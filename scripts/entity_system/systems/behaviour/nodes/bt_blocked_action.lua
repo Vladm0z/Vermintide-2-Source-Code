@@ -1,128 +1,112 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_blocked_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_blocked_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTBlockedAction = class(BTBlockedAction, BTNode)
 
-BTBlockedAction.init = function (self, ...)
-	BTBlockedAction.super.init(self, ...)
+function BTBlockedAction.init(arg_1_0, ...)
+	BTBlockedAction.super.init(arg_1_0, ...)
 end
 
 BTBlockedAction.name = "BTBlockedAction"
 
-BTBlockedAction.enter = function (self, unit, blackboard, t)
-	local navigation_extension = blackboard.navigation_extension
+function BTBlockedAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	arg_2_2.navigation_extension:set_enabled(false)
 
-	navigation_extension:set_enabled(false)
+	local var_2_0 = arg_2_0._tree_node.action_data
+	local var_2_1 = var_2_0.blocked_anims
+	local var_2_2 = arg_2_2.blocked_anim or var_2_1[Math.random(1, #var_2_1)]
 
-	local action = self._tree_node.action_data
-	local anim_table = action.blocked_anims
-	local block_anim = blackboard.blocked_anim or anim_table[Math.random(1, #anim_table)]
-	local network_manager = Managers.state.network
+	Managers.state.network:anim_event(arg_2_1, var_2_2)
+	LocomotionUtils.set_animation_driven_movement(arg_2_1, true, true, false)
 
-	network_manager:anim_event(unit, block_anim)
-	LocomotionUtils.set_animation_driven_movement(unit, true, true, false)
+	local var_2_3 = arg_2_2.locomotion_extension
 
-	local locomotion_extension = blackboard.locomotion_extension
+	var_2_3:set_rotation_speed(100)
+	var_2_3:set_wanted_velocity(Vector3.zero())
 
-	locomotion_extension:set_rotation_speed(100)
-	locomotion_extension:set_wanted_velocity(Vector3.zero())
+	arg_2_2.spawn_to_running = nil
 
-	blackboard.spawn_to_running = nil
-
-	if ScriptUnit.has_extension(unit, "ai_shield_system") then
-		local shield_extension = ScriptUnit.extension(unit, "ai_shield_system")
-
-		shield_extension:set_is_blocking(false)
+	if ScriptUnit.has_extension(arg_2_1, "ai_shield_system") then
+		ScriptUnit.extension(arg_2_1, "ai_shield_system"):set_is_blocking(false)
 	end
 
-	blackboard.move_state = "stagger"
+	arg_2_2.move_state = "stagger"
 
-	local ai_slot_system = Managers.state.entity:system("ai_slot_system")
+	local var_2_4 = Managers.state.entity:system("ai_slot_system")
 
-	ai_slot_system:do_slot_search(unit, false)
-	ai_slot_system:ai_unit_blocked_attack(unit)
+	var_2_4:do_slot_search(arg_2_1, false)
+	var_2_4:ai_unit_blocked_attack(arg_2_1)
 
-	local difficulty_duration = action.difficulty_duration
+	local var_2_5 = var_2_0.difficulty_duration
 
-	if difficulty_duration then
-		local difficulty = Managers.state.difficulty:get_difficulty()
-		local leave_blocked_t = difficulty_duration[difficulty]
+	if var_2_5 then
+		local var_2_6 = var_2_5[Managers.state.difficulty:get_difficulty()]
 
-		if leave_blocked_t then
-			blackboard.leave_blocked_at_t = t + Math.random_range(leave_blocked_t[1], leave_blocked_t[2])
+		if var_2_6 then
+			arg_2_2.leave_blocked_at_t = arg_2_3 + Math.random_range(var_2_6[1], var_2_6[2])
 		end
 	end
 end
 
-BTBlockedAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	blackboard.blocked = nil
-	blackboard.anim_cb_blocked_cooldown = nil
-	blackboard.stagger_hit_wall = nil
-	blackboard.leave_blocked_at_t = nil
+function BTBlockedAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	arg_3_2.blocked = nil
+	arg_3_2.anim_cb_blocked_cooldown = nil
+	arg_3_2.stagger_hit_wall = nil
+	arg_3_2.leave_blocked_at_t = nil
 
-	if blackboard.stagger and blackboard.stagger < 3 then
-		blackboard.stagger = 3
+	if arg_3_2.stagger and arg_3_2.stagger < 3 then
+		arg_3_2.stagger = 3
 	end
 
-	if ScriptUnit.has_extension(unit, "ai_shield_system") then
-		local shield_extension = ScriptUnit.extension(unit, "ai_shield_system")
-
-		shield_extension:set_is_blocking(true)
+	if ScriptUnit.has_extension(arg_3_1, "ai_shield_system") then
+		ScriptUnit.extension(arg_3_1, "ai_shield_system"):set_is_blocking(true)
 	end
 
-	if not destroy then
-		LocomotionUtils.set_animation_driven_movement(unit, false, false)
+	if not arg_3_5 then
+		LocomotionUtils.set_animation_driven_movement(arg_3_1, false, false)
 
-		local locomotion_extension = blackboard.locomotion_extension
+		local var_3_0 = arg_3_2.locomotion_extension
 
-		locomotion_extension:set_rotation_speed(10)
-		locomotion_extension:set_wanted_rotation(nil)
-		locomotion_extension:set_movement_type("snap_to_navmesh")
-		locomotion_extension:set_wanted_velocity(Vector3.zero())
+		var_3_0:set_rotation_speed(10)
+		var_3_0:set_wanted_rotation(nil)
+		var_3_0:set_movement_type("snap_to_navmesh")
+		var_3_0:set_wanted_velocity(Vector3.zero())
 	end
 
-	blackboard.blocked_anim = nil
+	arg_3_2.blocked_anim = nil
 
-	local navigation_extension = blackboard.navigation_extension
-
-	navigation_extension:set_enabled(true)
-
-	local ai_slot_system = Managers.state.entity:system("ai_slot_system")
-
-	ai_slot_system:do_slot_search(unit, true)
+	arg_3_2.navigation_extension:set_enabled(true)
+	Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_3_1, true)
 end
 
-BTBlockedAction.run = function (self, unit, blackboard, t, dt)
-	local locomotion_extension = blackboard.locomotion_extension
+function BTBlockedAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = arg_4_2.locomotion_extension
 
-	if locomotion_extension.movement_type ~= "constrained_by_mover" and not blackboard.stagger_hit_wall then
-		local position = POSITION_LOOKUP[unit]
-		local velocity = locomotion_extension:current_velocity()
-		local nav_world = blackboard.nav_world
-		local world = blackboard.world
-		local physics_world = World.physics_world(world)
-		local navigation_extension = blackboard.navigation_extension
-		local traverse_logic = navigation_extension:traverse_logic()
-		local result = LocomotionUtils.navmesh_movement_check(position, velocity, nav_world, physics_world, traverse_logic)
+	if var_4_0.movement_type ~= "constrained_by_mover" and not arg_4_2.stagger_hit_wall then
+		local var_4_1 = POSITION_LOOKUP[arg_4_1]
+		local var_4_2 = var_4_0:current_velocity()
+		local var_4_3 = arg_4_2.nav_world
+		local var_4_4 = arg_4_2.world
+		local var_4_5 = World.physics_world(var_4_4)
+		local var_4_6 = arg_4_2.navigation_extension:traverse_logic()
+		local var_4_7 = LocomotionUtils.navmesh_movement_check(var_4_1, var_4_2, var_4_3, var_4_5, var_4_6)
 
-		if result == "navmesh_hit_wall" then
-			blackboard.stagger_hit_wall = true
-		elseif result == "navmesh_use_mover" then
-			local breed = blackboard.breed
-			local override_mover_move_distance = breed.override_mover_move_distance
-			local ignore_forced_mover_kill = true
-			local successful = locomotion_extension:set_movement_type("constrained_by_mover", override_mover_move_distance, ignore_forced_mover_kill)
+		if var_4_7 == "navmesh_hit_wall" then
+			arg_4_2.stagger_hit_wall = true
+		elseif var_4_7 == "navmesh_use_mover" then
+			local var_4_8 = arg_4_2.breed.override_mover_move_distance
+			local var_4_9 = true
 
-			if not successful then
-				locomotion_extension:set_movement_type("snap_to_navmesh")
+			if not var_4_0:set_movement_type("constrained_by_mover", var_4_8, var_4_9) then
+				var_4_0:set_movement_type("snap_to_navmesh")
 
-				blackboard.stagger_hit_wall = true
+				arg_4_2.stagger_hit_wall = true
 			end
 		end
 	end
 
-	if blackboard.anim_cb_blocked_cooldown and blackboard.leave_blocked_at_t and t > blackboard.leave_blocked_at_t then
+	if arg_4_2.anim_cb_blocked_cooldown and arg_4_2.leave_blocked_at_t and arg_4_3 > arg_4_2.leave_blocked_at_t then
 		return "done"
 	end
 

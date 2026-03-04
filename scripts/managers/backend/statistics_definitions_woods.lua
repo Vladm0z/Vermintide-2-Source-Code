@@ -1,7 +1,7 @@
-﻿-- chunkname: @scripts/managers/backend/statistics_definitions_woods.lua
+-- chunkname: @scripts/managers/backend/statistics_definitions_woods.lua
 
-local player = StatisticsDefinitions.player
-local database_names = {
+local var_0_0 = StatisticsDefinitions.player
+local var_0_1 = {
 	"complete_all_helmgart_levels_recruit_we_thornsister",
 	"complete_all_helmgart_levels_veteran_we_thornsister",
 	"complete_all_helmgart_levels_champion_we_thornsister",
@@ -27,35 +27,35 @@ local database_names = {
 	"woods_ratling_shots_soaked",
 	"woods_wall_dual_save",
 	"woods_free_ability_grind",
-	"woods_free_abilities_used",
+	"woods_free_abilities_used"
 }
 
-for i = 1, #database_names do
-	local name = database_names[i]
+for iter_0_0 = 1, #var_0_1 do
+	local var_0_2 = var_0_1[iter_0_0]
 
-	player[name] = {
-		source = "player_data",
+	var_0_0[var_0_2] = {
 		value = 0,
-		database_name = name,
+		source = "player_data",
+		database_name = var_0_2
 	}
 end
 
-local relevant_careers = {
-	we_thornsister = true,
+local var_0_3 = {
+	we_thornsister = true
 }
 
-for career, _ in pairs(CareerSettings) do
-	if relevant_careers[career] then
-		player.mission_streak[career] = {}
+for iter_0_1, iter_0_2 in pairs(CareerSettings) do
+	if var_0_3[iter_0_1] then
+		var_0_0.mission_streak[iter_0_1] = {}
 
-		for level_key, _ in pairs(LevelSettings) do
-			if table.contains(UnlockableLevels, level_key) then
-				local database_name = "mission_streak_" .. career .. "_" .. level_key
+		for iter_0_3, iter_0_4 in pairs(LevelSettings) do
+			if table.contains(UnlockableLevels, iter_0_3) then
+				local var_0_4 = "mission_streak_" .. iter_0_1 .. "_" .. iter_0_3
 
-				player.mission_streak[career][level_key] = {
-					source = "player_data",
+				var_0_0.mission_streak[iter_0_1][iter_0_3] = {
 					value = 0,
-					database_name = database_name,
+					source = "player_data",
+					database_name = var_0_4
 				}
 			end
 		end

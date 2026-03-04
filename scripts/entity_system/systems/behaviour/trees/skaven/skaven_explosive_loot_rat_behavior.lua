@@ -1,21 +1,21 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_explosive_loot_rat_behavior.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_explosive_loot_rat_behavior.lua
 
-local ACTIONS = BreedActions.skaven_explosive_loot_rat
-local EXPLOSIVE_LOOT_RAT_BEHAVIOR = {
+local var_0_0 = BreedActions.skaven_explosive_loot_rat
+local var_0_1 = {
 	"BTUtilityNode",
-	action_data = ACTIONS.utility_action,
+	action_data = var_0_0.utility_action,
 	{
 		"BTClanRatFollowAction",
 		name = "follow",
-		action_data = ACTIONS.follow,
+		action_data = var_0_0.follow
 	},
 	{
 		"BTZombieExplodeAction",
 		name = "explosion_attack",
-		action_data = ACTIONS.explosion_attack,
+		action_data = var_0_0.explosion_attack
 	},
-	condition = "can_see_player",
 	name = "in_combat",
+	condition = "can_see_player"
 }
 
 BreedBehaviors.explosive_loot_rat = {
@@ -23,60 +23,60 @@ BreedBehaviors.explosive_loot_rat = {
 	{
 		"BTSpawningAction",
 		condition = "spawn",
-		name = "spawn",
+		name = "spawn"
 	},
 	{
 		"BTInVortexAction",
 		condition = "in_vortex",
-		name = "in_vortex",
+		name = "in_vortex"
 	},
 	{
 		"BTFallAction",
 		condition = "is_falling",
-		name = "falling",
+		name = "falling"
 	},
 	{
 		"BTStaggerAction",
-		condition = "stagger",
 		name = "stagger",
-		action_data = ACTIONS.stagger,
+		condition = "stagger",
+		action_data = var_0_0.stagger
 	},
 	{
 		"BTSelector",
 		{
 			"BTTeleportAction",
 			condition = "at_teleport_smartobject",
-			name = "teleport",
+			name = "teleport"
 		},
 		{
 			"BTClimbAction",
 			condition = "at_climb_smartobject",
-			name = "climb",
+			name = "climb"
 		},
 		{
 			"BTJumpAcrossAction",
 			condition = "at_jump_smartobject",
-			name = "jump_across",
+			name = "jump_across"
 		},
 		{
 			"BTSmashDoorAction",
-			condition = "at_door_smartobject",
 			name = "smash_door",
-			action_data = ACTIONS.smash_door,
+			condition = "at_door_smartobject",
+			action_data = var_0_0.smash_door
 		},
 		condition = "at_smartobject",
-		name = "smartobject",
+		name = "smartobject"
 	},
-	EXPLOSIVE_LOOT_RAT_BEHAVIOR,
+	var_0_1,
 	{
 		"BTIdleAction",
-		condition = "no_target",
 		name = "idle",
-		action_data = ACTIONS.idle,
+		condition = "no_target",
+		action_data = var_0_0.idle
 	},
 	{
 		"BTFallbackIdleAction",
-		name = "fallback_idle",
+		name = "fallback_idle"
 	},
-	name = "horde",
+	name = "horde"
 }

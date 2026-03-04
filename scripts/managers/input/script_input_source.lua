@@ -1,80 +1,80 @@
-﻿-- chunkname: @scripts/managers/input/script_input_source.lua
+-- chunkname: @scripts/managers/input/script_input_source.lua
 
 require("scripts/settings/script_input_settings")
 
 ScriptInputSource = class(ScriptInputSource, InputSource)
 
-ScriptInputSource.init = function (self, slot, mapping_template)
-	ScriptInputSource.super.init(self, slot, mapping_template)
+function ScriptInputSource.init(arg_1_0, arg_1_1, arg_1_2)
+	ScriptInputSource.super.init(arg_1_0, arg_1_1, arg_1_2)
 
-	self._active = false
+	arg_1_0._active = false
 end
 
-ScriptInputSource.start = function (self, input_table, loop)
-	self._input_settings = input_table
-	self._input_settings_copy = table.clone(input_table)
-	self._input = {}
-	self._active = true
-	self._active_time = 0
-	self._loop = loop
+function ScriptInputSource.start(arg_2_0, arg_2_1, arg_2_2)
+	arg_2_0._input_settings = arg_2_1
+	arg_2_0._input_settings_copy = table.clone(arg_2_1)
+	arg_2_0._input = {}
+	arg_2_0._active = true
+	arg_2_0._active_time = 0
+	arg_2_0._loop = arg_2_2
 end
 
-ScriptInputSource.clear = function (self)
-	ScriptInputSource.super.clear(self)
+function ScriptInputSource.clear(arg_3_0)
+	ScriptInputSource.super.clear(arg_3_0)
 
-	self._active = false
+	arg_3_0._active = false
 end
 
-ScriptInputSource.get = function (self, name)
-	fassert(self.mapping_table, "Trying to access unmapped input source.")
+function ScriptInputSource.get(arg_4_0, arg_4_1)
+	fassert(arg_4_0.mapping_table, "Trying to access unmapped input source.")
 
-	local input_desc = self.mapping_table[name]
+	local var_4_0 = arg_4_0.mapping_table[arg_4_1]
 
-	fassert(input_desc, "No input description for %q", name)
+	fassert(var_4_0, "No input description for %q", arg_4_1)
 
-	local controller = self.controllers[input_desc.controller_type]
+	local var_4_1 = arg_4_0.controllers[var_4_0.controller_type]
 
-	fassert(controller, "No controller of type %q", input_desc.controller_type)
-	fassert(input_desc.func, "No input_desc.func")
+	fassert(var_4_1, "No controller of type %q", var_4_0.controller_type)
+	fassert(var_4_0.func, "No input_desc.func")
 
-	return self._active and self._input[name] or ScriptInputSource.super.get(self, name)
+	return arg_4_0._active and arg_4_0._input[arg_4_1] or ScriptInputSource.super.get(arg_4_0, arg_4_1)
 end
 
-ScriptInputSource.update = function (self, dt, t)
-	if self._active then
-		self:_update_input(dt, t)
+function ScriptInputSource.update(arg_5_0, arg_5_1, arg_5_2)
+	if arg_5_0._active then
+		arg_5_0:_update_input(arg_5_1, arg_5_2)
 	end
 end
 
-ScriptInputSource._update_input = function (self, dt, t)
-	local input = {}
+function ScriptInputSource._update_input(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = {}
 
-	for i = #self._input_settings_copy, 1, -1 do
-		local config = self._input_settings_copy[i]
+	for iter_6_0 = #arg_6_0._input_settings_copy, 1, -1 do
+		local var_6_1 = arg_6_0._input_settings_copy[iter_6_0]
 
-		if self._active_time > config.start then
-			local input_desc = self.mapping_table[config.name]
+		if arg_6_0._active_time > var_6_1.start then
+			local var_6_2 = arg_6_0.mapping_table[var_6_1.name]
 
-			if input_desc.func == "button" then
-				input[config.name] = config.value or 1
-			elseif input_desc.func == "pressed" or input_desc.func == "released" then
-				input[config.name] = true
-			elseif input_desc.func == "axis" then
-				input[config.name] = Vector3(config.value[1], config.value[2], config.value[3])
-			elseif input_desc.func == "filter" then
-				input[config.name] = Vector3(config.value[1], config.value[2], config.value[3])
+			if var_6_2.func == "button" then
+				var_6_0[var_6_1.name] = var_6_1.value or 1
+			elseif var_6_2.func == "pressed" or var_6_2.func == "released" then
+				var_6_0[var_6_1.name] = true
+			elseif var_6_2.func == "axis" then
+				var_6_0[var_6_1.name] = Vector3(var_6_1.value[1], var_6_1.value[2], var_6_1.value[3])
+			elseif var_6_2.func == "filter" then
+				var_6_0[var_6_1.name] = Vector3(var_6_1.value[1], var_6_1.value[2], var_6_1.value[3])
 			end
 
-			if not config.duration or self._active_time > config.start + config.duration then
-				table.remove(self._input_settings_copy, i)
+			if not var_6_1.duration or arg_6_0._active_time > var_6_1.start + var_6_1.duration then
+				table.remove(arg_6_0._input_settings_copy, iter_6_0)
 			end
 		end
 	end
 
-	self._input = input
-	self._active_time = self._active_time + dt
+	arg_6_0._input = var_6_0
+	arg_6_0._active_time = arg_6_0._active_time + arg_6_1
 
-	if #self._input_settings_copy == 0 and self._loop then
-		self:start(self._input_settings, true)
+	if #arg_6_0._input_settings_copy == 0 and arg_6_0._loop then
+		arg_6_0:start(arg_6_0._input_settings, true)
 	end
 end

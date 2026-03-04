@@ -1,35 +1,35 @@
-﻿-- chunkname: @scripts/helpers/breed_utils.lua
+-- chunkname: @scripts/helpers/breed_utils.lua
 
 BreedUtils = {}
 
-local armor_category_mapping = {
+local var_0_0 = {
 	BreedCategory.Infantry,
 	BreedCategory.Armored,
 	[5] = BreedCategory.Berserker,
-	[6] = BreedCategory.SuperArmor,
+	[6] = BreedCategory.SuperArmor
 }
 
-BreedUtils.inject_breed_category_mask = function (breed_data)
-	local category_mask = 0
+function BreedUtils.inject_breed_category_mask(arg_1_0)
+	local var_1_0 = 0
 
-	if breed_data.special then
-		breed_data.immediate_threat = true
-		category_mask = bit.bor(category_mask, BreedCategory.Special)
+	if arg_1_0.special then
+		arg_1_0.immediate_threat = true
+		var_1_0 = bit.bor(var_1_0, BreedCategory.Special)
 	end
 
-	if breed_data.boss then
-		category_mask = bit.bor(category_mask, BreedCategory.Boss)
+	if arg_1_0.boss then
+		var_1_0 = bit.bor(var_1_0, BreedCategory.Boss)
 	end
 
-	if breed_data.shield_user then
-		category_mask = bit.bor(category_mask, BreedCategory.Shielded)
+	if arg_1_0.shield_user then
+		var_1_0 = bit.bor(var_1_0, BreedCategory.Shielded)
 	end
 
-	local armor_bit = armor_category_mapping[breed_data.armor_category]
+	local var_1_1 = var_0_0[arg_1_0.armor_category]
 
-	if armor_bit and (not breed_data.special and not breed_data.boss or breed_data.armor_category == 2) then
-		category_mask = bit.bor(category_mask, armor_bit)
+	if var_1_1 and (not arg_1_0.special and not arg_1_0.boss or arg_1_0.armor_category == 2) then
+		var_1_0 = bit.bor(var_1_0, var_1_1)
 	end
 
-	breed_data.category_mask = category_mask
+	arg_1_0.category_mask = var_1_0
 end

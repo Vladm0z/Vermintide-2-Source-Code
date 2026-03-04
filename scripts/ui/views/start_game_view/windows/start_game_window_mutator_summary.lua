@@ -1,172 +1,166 @@
-﻿-- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_mutator_summary.lua
+-- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_mutator_summary.lua
 
-local definitions = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_mutator_summary_definitions")
-local widget_definitions = definitions.widgets
-local scenegraph_definition = definitions.scenegraph_definition
+local var_0_0 = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_mutator_summary_definitions")
+local var_0_1 = var_0_0.widgets
+local var_0_2 = var_0_0.scenegraph_definition
 
 StartGameWindowMutatorSummary = class(StartGameWindowMutatorSummary)
 StartGameWindowMutatorSummary.NAME = "StartGameWindowMutatorSummary"
 
-StartGameWindowMutatorSummary.on_enter = function (self, params, offset)
+function StartGameWindowMutatorSummary.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowMutatorSummary")
 
-	self.parent = params.parent
+	arg_1_0.parent = arg_1_1.parent
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_1_0 = arg_1_1.ingame_ui_context
 
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self.input_manager = ingame_ui_context.input_manager
-	self.statistics_db = ingame_ui_context.statistics_db
-	self.render_settings = {
-		snap_pixel_positions = true,
+	arg_1_0.ui_renderer = var_1_0.ui_renderer
+	arg_1_0.input_manager = var_1_0.input_manager
+	arg_1_0.statistics_db = var_1_0.statistics_db
+	arg_1_0.render_settings = {
+		snap_pixel_positions = true
 	}
 
-	local player_manager = Managers.player
-	local local_player = player_manager:local_player()
+	local var_1_1 = Managers.player
 
-	self._stats_id = local_player:stats_id()
-	self.player_manager = player_manager
-	self.peer_id = ingame_ui_context.peer_id
+	arg_1_0._stats_id = var_1_1:local_player():stats_id()
+	arg_1_0.player_manager = var_1_1
+	arg_1_0.peer_id = var_1_0.peer_id
 
-	self:create_ui_elements(params, offset)
+	arg_1_0:create_ui_elements(arg_1_1, arg_1_2)
 
-	self.previous_selected_backend_id = self.parent:get_selected_heroic_deed_backend_id()
+	arg_1_0.previous_selected_backend_id = arg_1_0.parent:get_selected_heroic_deed_backend_id()
 end
 
-StartGameWindowMutatorSummary.create_ui_elements = function (self, params, offset)
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+function StartGameWindowMutatorSummary.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 
-	local widgets = {}
-	local widgets_by_name = {}
+	local var_2_0 = {}
+	local var_2_1 = {}
 
-	for name, widget_definition in pairs(widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_2_0, iter_2_1 in pairs(var_0_1) do
+		local var_2_2 = UIWidget.init(iter_2_1)
 
-		widgets[#widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_2_0[#var_2_0 + 1] = var_2_2
+		var_2_1[iter_2_0] = var_2_2
 	end
 
-	self._widgets = widgets
-	self._widgets_by_name = widgets_by_name
+	arg_2_0._widgets = var_2_0
+	arg_2_0._widgets_by_name = var_2_1
 
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_renderer)
 
-	if offset then
-		local window_position = self.ui_scenegraph.window.local_position
+	if arg_2_2 then
+		local var_2_3 = arg_2_0.ui_scenegraph.window.local_position
 
-		window_position[1] = window_position[1] + offset[1]
-		window_position[2] = window_position[2] + offset[2]
-		window_position[3] = window_position[3] + offset[3]
+		var_2_3[1] = var_2_3[1] + arg_2_2[1]
+		var_2_3[2] = var_2_3[2] + arg_2_2[2]
+		var_2_3[3] = var_2_3[3] + arg_2_2[3]
 	end
 
-	widgets_by_name.confirm_button.content.button_hotspot.disable_button = true
-	widgets_by_name.item_presentation_frame.content.visible = false
-	widgets_by_name.item_presentation_bg.content.visible = false
-	widgets_by_name.game_option_placeholder.content.visible = true
+	var_2_1.confirm_button.content.button_hotspot.disable_button = true
+	var_2_1.item_presentation_frame.content.visible = false
+	var_2_1.item_presentation_bg.content.visible = false
+	var_2_1.game_option_placeholder.content.visible = true
 end
 
-StartGameWindowMutatorSummary.on_exit = function (self, params)
+function StartGameWindowMutatorSummary.on_exit(arg_3_0, arg_3_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowMutatorSummary")
 
-	if not self.confirm_button_pressed then
-		self.parent:set_selected_heroic_deed_backend_id(self.previous_selected_backend_id)
+	if not arg_3_0.confirm_button_pressed then
+		arg_3_0.parent:set_selected_heroic_deed_backend_id(arg_3_0.previous_selected_backend_id)
 	end
 end
 
-StartGameWindowMutatorSummary.update = function (self, dt, t)
-	self:_handle_input(dt, t)
-	self:_update_selected_item_backend_id()
-	self:draw(dt)
+function StartGameWindowMutatorSummary.update(arg_4_0, arg_4_1, arg_4_2)
+	arg_4_0:_handle_input(arg_4_1, arg_4_2)
+	arg_4_0:_update_selected_item_backend_id()
+	arg_4_0:draw(arg_4_1)
 end
 
-StartGameWindowMutatorSummary.post_update = function (self, dt, t)
+function StartGameWindowMutatorSummary.post_update(arg_5_0, arg_5_1, arg_5_2)
 	return
 end
 
-StartGameWindowMutatorSummary._is_button_pressed = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
+function StartGameWindowMutatorSummary._is_button_pressed(arg_6_0, arg_6_1)
+	local var_6_0 = arg_6_1.content.button_hotspot
 
-	if hotspot.on_release then
-		hotspot.on_release = false
+	if var_6_0.on_release then
+		var_6_0.on_release = false
 
 		return true
 	end
 end
 
-StartGameWindowMutatorSummary._is_button_hover_enter = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	return hotspot.on_hover_enter
+function StartGameWindowMutatorSummary._is_button_hover_enter(arg_7_0, arg_7_1)
+	return arg_7_1.content.button_hotspot.on_hover_enter
 end
 
-StartGameWindowMutatorSummary._handle_input = function (self, dt, t)
-	if not self._selected_backend_id then
+function StartGameWindowMutatorSummary._handle_input(arg_8_0, arg_8_1, arg_8_2)
+	if not arg_8_0._selected_backend_id then
 		return
 	end
 
-	local confirm_button = self._widgets_by_name.confirm_button
+	local var_8_0 = arg_8_0._widgets_by_name.confirm_button
 
-	UIWidgetUtils.animate_default_button(confirm_button, dt)
+	UIWidgetUtils.animate_default_button(var_8_0, arg_8_1)
 
-	if self:_is_button_hover_enter(confirm_button) then
-		self:_play_sound("play_gui_lobby_button_01_difficulty_confirm_hover")
+	if arg_8_0:_is_button_hover_enter(var_8_0) then
+		arg_8_0:_play_sound("play_gui_lobby_button_01_difficulty_confirm_hover")
 	end
 
-	if self:_is_button_pressed(confirm_button) then
-		self.confirm_button_pressed = true
+	if arg_8_0:_is_button_pressed(var_8_0) then
+		arg_8_0.confirm_button_pressed = true
 
-		self.parent:set_layout_by_name("heroic_deeds")
-	end
-end
-
-StartGameWindowMutatorSummary._update_selected_item_backend_id = function (self)
-	local backend_id = self.parent:get_selected_heroic_deed_backend_id()
-
-	if backend_id ~= self._selected_backend_id then
-		self._selected_backend_id = backend_id
-
-		self:_present_item_by_backend_id(backend_id)
+		arg_8_0.parent:set_layout_by_name("heroic_deeds")
 	end
 end
 
-StartGameWindowMutatorSummary._present_item_by_backend_id = function (self, backend_id)
-	if not backend_id then
+function StartGameWindowMutatorSummary._update_selected_item_backend_id(arg_9_0)
+	local var_9_0 = arg_9_0.parent:get_selected_heroic_deed_backend_id()
+
+	if var_9_0 ~= arg_9_0._selected_backend_id then
+		arg_9_0._selected_backend_id = var_9_0
+
+		arg_9_0:_present_item_by_backend_id(var_9_0)
+	end
+end
+
+function StartGameWindowMutatorSummary._present_item_by_backend_id(arg_10_0, arg_10_1)
+	if not arg_10_1 then
 		return
 	end
 
-	local widgets_by_name = self._widgets_by_name
+	local var_10_0 = arg_10_0._widgets_by_name
 
-	widgets_by_name.item_presentation_frame.content.visible = true
-	widgets_by_name.item_presentation_bg.content.visible = true
-	widgets_by_name.game_option_placeholder.content.visible = false
+	var_10_0.item_presentation_frame.content.visible = true
+	var_10_0.item_presentation_bg.content.visible = true
+	var_10_0.game_option_placeholder.content.visible = false
 
-	local item_interface = Managers.backend:get_interface("items")
-	local item = item_interface:get_item_from_id(backend_id)
+	local var_10_1 = Managers.backend:get_interface("items"):get_item_from_id(arg_10_1)
 
-	widgets_by_name.item_presentation.content.item = item
-	widgets_by_name.confirm_button.content.button_hotspot.disable_button = false
+	var_10_0.item_presentation.content.item = var_10_1
+	var_10_0.confirm_button.content.button_hotspot.disable_button = false
 end
 
-StartGameWindowMutatorSummary.draw = function (self, dt)
-	local ui_renderer = self.ui_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self.parent:window_input_service()
+function StartGameWindowMutatorSummary.draw(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_0.ui_renderer
+	local var_11_1 = arg_11_0.ui_scenegraph
+	local var_11_2 = arg_11_0.parent:window_input_service()
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
+	UIRenderer.begin_pass(var_11_0, var_11_1, var_11_2, arg_11_1, nil, arg_11_0.render_settings)
 
-	local widgets = self._widgets
+	local var_11_3 = arg_11_0._widgets
 
-	for i = 1, #widgets do
-		local widget = widgets[i]
+	for iter_11_0 = 1, #var_11_3 do
+		local var_11_4 = var_11_3[iter_11_0]
 
-		UIRenderer.draw_widget(ui_renderer, widget)
+		UIRenderer.draw_widget(var_11_0, var_11_4)
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_11_0)
 end
 
-StartGameWindowMutatorSummary._play_sound = function (self, event)
-	self.parent:play_sound(event)
+function StartGameWindowMutatorSummary._play_sound(arg_12_0, arg_12_1)
+	arg_12_0.parent:play_sound(arg_12_1)
 end

@@ -1,287 +1,283 @@
-﻿-- chunkname: @scripts/ui/views/tutorial_tooltip_ui.lua
+-- chunkname: @scripts/ui/views/tutorial_tooltip_ui.lua
 
-local definitions = local_require("scripts/ui/views/tutorial_tooltip_ui_definitions")
+local var_0_0 = local_require("scripts/ui/views/tutorial_tooltip_ui_definitions")
 
 TutorialTooltipUI = class(TutorialTooltipUI)
 
-TutorialTooltipUI.init = function (self, ingame_ui_context)
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self.input_manager = ingame_ui_context.input_manager
-	self.platform = PLATFORM
-	self.tutorial_tooltip_animations = {}
-	self.tutorial_tooltip_input_widgets = {}
+function TutorialTooltipUI.init(arg_1_0, arg_1_1)
+	arg_1_0.ui_renderer = arg_1_1.ui_renderer
+	arg_1_0.input_manager = arg_1_1.input_manager
+	arg_1_0.platform = PLATFORM
+	arg_1_0.tutorial_tooltip_animations = {}
+	arg_1_0.tutorial_tooltip_input_widgets = {}
 
-	self:create_ui_elements()
+	arg_1_0:create_ui_elements()
 end
 
-TutorialTooltipUI.destroy = function (self)
+function TutorialTooltipUI.destroy(arg_2_0)
 	return
 end
 
-TutorialTooltipUI.create_ui_elements = function (self)
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+function TutorialTooltipUI.create_ui_elements(arg_3_0)
+	UIRenderer.clear_scenegraph_queue(arg_3_0.ui_renderer)
 
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph)
-	self.tutorial_tooltip_widget = UIWidget.init(definitions.widgets.tutorial_tooltip)
+	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph)
+	arg_3_0.tutorial_tooltip_widget = UIWidget.init(var_0_0.widgets.tutorial_tooltip)
 
-	for i = 1, definitions.NUMBER_OF_TOOLTIP_INPUT_WIDGETS do
-		self.tutorial_tooltip_input_widgets[i] = UIWidget.init(definitions.tutorial_tooltip_input_widgets[i])
+	for iter_3_0 = 1, var_0_0.NUMBER_OF_TOOLTIP_INPUT_WIDGETS do
+		arg_3_0.tutorial_tooltip_input_widgets[iter_3_0] = UIWidget.init(var_0_0.tutorial_tooltip_input_widgets[iter_3_0])
 	end
 end
 
-TutorialTooltipUI.button_texture_data_by_input_action = function (self, input_action, alt_button_name)
-	local input_manager = self.input_manager
-	local gamepad_active = input_manager:is_device_active("gamepad")
-	local platform = PLATFORM
+function TutorialTooltipUI.button_texture_data_by_input_action(arg_4_0, arg_4_1, arg_4_2)
+	local var_4_0 = arg_4_0.input_manager
+	local var_4_1 = var_4_0:is_device_active("gamepad")
+	local var_4_2 = PLATFORM
 
-	if IS_WINDOWS and gamepad_active then
-		platform = "xb1"
+	if IS_WINDOWS and var_4_1 then
+		var_4_2 = "xb1"
 	end
 
-	if alt_button_name then
-		local button_texture_data = ButtonTextureByName(alt_button_name, platform)
-
-		return button_texture_data
+	if arg_4_2 then
+		return (ButtonTextureByName(arg_4_2, var_4_2))
 	else
-		local input_service = input_manager:get_service("Player")
+		local var_4_3 = var_4_0:get_service("Player")
 
-		return UISettings.get_gamepad_input_texture_data(input_service, input_action, gamepad_active)
+		return UISettings.get_gamepad_input_texture_data(var_4_3, arg_4_1, var_4_1)
 	end
 end
 
-TutorialTooltipUI.update = function (self, tooltip_tutorial, player_unit, dt)
-	if next(self.tutorial_tooltip_animations) ~= nil then
-		self:set_dirty()
+function TutorialTooltipUI.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	if next(arg_5_0.tutorial_tooltip_animations) ~= nil then
+		arg_5_0:set_dirty()
 	end
 
-	for name, ui_animation in pairs(self.tutorial_tooltip_animations) do
-		UIAnimation.update(ui_animation, dt)
+	for iter_5_0, iter_5_1 in pairs(arg_5_0.tutorial_tooltip_animations) do
+		UIAnimation.update(iter_5_1, arg_5_3)
 
-		if UIAnimation.completed(ui_animation) then
-			self.tutorial_tooltip_animations[name] = nil
+		if UIAnimation.completed(iter_5_1) then
+			arg_5_0.tutorial_tooltip_animations[iter_5_0] = nil
 		end
 	end
 
-	local ui_renderer = self.ui_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local tooltip_name = tooltip_tutorial.name
-	local active_template = TutorialTemplates[tooltip_name]
-	local active_tooltip_name = self.active_tooltip_name
-	local widget_style = self.tutorial_tooltip_widget.style
-	local widget_content = self.tutorial_tooltip_widget.content
-	local text = active_template.text or "-no text assigned-"
-	local tooltip_action = active_template.action
-	local force_update = active_template.force_update
-	local texture_size_y, texture_size_x = 0, 0
-	local gamepad_active = self.input_manager:is_device_active("gamepad")
-	local inputs = gamepad_active and active_template.gamepad_inputs or active_template.inputs
+	local var_5_0 = arg_5_0.ui_renderer
+	local var_5_1 = arg_5_0.ui_scenegraph
+	local var_5_2 = arg_5_1.name
+	local var_5_3 = TutorialTemplates[var_5_2]
+	local var_5_4 = arg_5_0.active_tooltip_name
+	local var_5_5 = arg_5_0.tutorial_tooltip_widget.style
+	local var_5_6 = arg_5_0.tutorial_tooltip_widget.content
+	local var_5_7 = var_5_3.text or "-no text assigned-"
+	local var_5_8 = var_5_3.action
+	local var_5_9 = var_5_3.force_update
+	local var_5_10 = 0
+	local var_5_11 = 0
+	local var_5_12 = arg_5_0.input_manager:is_device_active("gamepad")
+	local var_5_13 = var_5_12 and var_5_3.gamepad_inputs or var_5_3.inputs
 
-	if inputs and #inputs > 0 then
-		if not active_tooltip_name then
-			self:fade_in()
+	if var_5_13 and #var_5_13 > 0 then
+		if not var_5_4 then
+			arg_5_0:fade_in()
 		end
 
-		local input_widgets = self.tutorial_tooltip_input_widgets
+		local var_5_14 = arg_5_0.tutorial_tooltip_input_widgets
 
-		if force_update or tooltip_name ~= active_tooltip_name or gamepad_active ~= widget_content.using_gamepad_input then
-			widget_content.using_gamepad_input = gamepad_active
-			widget_content.input_set = true
-			self.active_tooltip_name = tooltip_name
-			widget_content.description = text
+		if var_5_9 or var_5_2 ~= var_5_4 or var_5_12 ~= var_5_6.using_gamepad_input then
+			var_5_6.using_gamepad_input = var_5_12
+			var_5_6.input_set = true
+			arg_5_0.active_tooltip_name = var_5_2
+			var_5_6.description = var_5_7
 
-			local total_width = 0
-			local num_inputs = #inputs
-			local num_widgets = 0
+			local var_5_15 = 0
+			local var_5_16 = #var_5_13
+			local var_5_17 = 0
 
-			for i = 1, num_inputs do
-				local widget = input_widgets[i]
-				local widget_content = widget.content
-				local widget_style = widget.style
-				local input = inputs[i]
-				local button_texture_data, button_text = self:button_texture_data_by_input_action(input.action)
+			for iter_5_2 = 1, var_5_16 do
+				local var_5_18 = var_5_14[iter_5_2]
+				local var_5_19 = var_5_18.content
+				local var_5_20 = var_5_18.style
+				local var_5_21 = var_5_13[iter_5_2]
+				local var_5_22, var_5_23 = arg_5_0:button_texture_data_by_input_action(var_5_21.action)
 
-				if not button_texture_data and active_template.alt_action_icons then
-					button_texture_data, button_text = self:button_texture_data_by_input_action(input.action, active_template.alt_action_icons[input.action])
+				if not var_5_22 and var_5_3.alt_action_icons then
+					var_5_22, var_5_23 = arg_5_0:button_texture_data_by_input_action(var_5_21.action, var_5_3.alt_action_icons[var_5_21.action])
 				end
 
-				local texture_size_x = 0
-				local texture_size_y = 0
+				local var_5_24 = 0
+				local var_5_25 = 0
 
-				if button_texture_data then
-					num_widgets = num_widgets + 1
+				if var_5_22 then
+					var_5_17 = var_5_17 + 1
 
-					if button_texture_data.texture then
-						widget_content.button_text = ""
-						widget_content.icon = {
-							button_texture_data.texture,
+					if var_5_22.texture then
+						var_5_19.button_text = ""
+						var_5_19.icon = {
+							var_5_22.texture
 						}
-						widget_style.icon.texture_sizes = {
-							button_texture_data.size,
+						var_5_20.icon.texture_sizes = {
+							var_5_22.size
 						}
-						texture_size_x = button_texture_data.size[1]
-						texture_size_y = button_texture_data.size[2]
+						var_5_24 = var_5_22.size[1]
+						var_5_25 = var_5_22.size[2]
 					else
-						local textures = {}
-						local sizes = {}
-						local tile_sizes = {}
-						local font, scaled_font_size = UIFontByResolution(widget_style.button_text)
-						local text_width, text_height, min = UIRenderer.text_size(ui_renderer, button_text, font[1], scaled_font_size)
+						local var_5_26 = {}
+						local var_5_27 = {}
+						local var_5_28 = {}
+						local var_5_29, var_5_30 = UIFontByResolution(var_5_20.button_text)
+						local var_5_31, var_5_32, var_5_33 = UIRenderer.text_size(var_5_0, var_5_23, var_5_29[1], var_5_30)
 
-						for i = 1, #button_texture_data do
-							textures[i] = button_texture_data[i].texture
-							sizes[i] = button_texture_data[i].size
+						for iter_5_3 = 1, #var_5_22 do
+							var_5_26[iter_5_3] = var_5_22[iter_5_3].texture
+							var_5_27[iter_5_3] = var_5_22[iter_5_3].size
 
-							if button_texture_data[i].tileable then
-								tile_sizes[i] = {
-									text_width,
-									sizes[i][2],
+							if var_5_22[iter_5_3].tileable then
+								var_5_28[iter_5_3] = {
+									var_5_31,
+									var_5_27[iter_5_3][2]
 								}
-								texture_size_x = texture_size_x + text_width
+								var_5_24 = var_5_24 + var_5_31
 
-								if texture_size_y < sizes[i][2] then
-									texture_size_y = sizes[i][2] or texture_size_y
+								if var_5_25 < var_5_27[iter_5_3][2] then
+									var_5_25 = var_5_27[iter_5_3][2] or var_5_25
 								end
 							else
-								texture_size_x = texture_size_x + sizes[i][1]
-								texture_size_y = texture_size_y < sizes[i][2] and sizes[i][2] or texture_size_y
+								var_5_24 = var_5_24 + var_5_27[iter_5_3][1]
+								var_5_25 = var_5_25 < var_5_27[iter_5_3][2] and var_5_27[iter_5_3][2] or var_5_25
 							end
 						end
 
-						widget_content.icon = textures
-						widget_content.button_text = button_text
-						widget_style.icon.texture_sizes = sizes
-						widget_style.icon.tile_sizes = tile_sizes
+						var_5_19.icon = var_5_26
+						var_5_19.button_text = var_5_23
+						var_5_20.icon.texture_sizes = var_5_27
+						var_5_20.icon.tile_sizes = var_5_28
 					end
 
-					ui_scenegraph["input_description_icon_" .. i].size[1] = texture_size_x
-					ui_scenegraph["input_description_icon_" .. i].size[2] = texture_size_y
-					widget_content.prefix_text = input.prefix and input.prefix ~= "" and Localize(input.prefix) or ""
-					widget_content.suffix_text = input.suffix
+					var_5_1["input_description_icon_" .. iter_5_2].size[1] = var_5_24
+					var_5_1["input_description_icon_" .. iter_5_2].size[2] = var_5_25
+					var_5_19.prefix_text = var_5_21.prefix and var_5_21.prefix ~= "" and Localize(var_5_21.prefix) or ""
+					var_5_19.suffix_text = var_5_21.suffix
 
-					local prefix_font, prefix_scaled_font_size = UIFontByResolution(widget_style.prefix_text)
-					local suffix_font, suffix_scaled_font_size = UIFontByResolution(widget_style.suffix_text)
-					local prefix_text_width = UIRenderer.text_size(ui_renderer, widget_content.prefix_text, prefix_font[1], prefix_scaled_font_size)
-					local suffix_text_width = UIRenderer.text_size(ui_renderer, widget_content.suffix_text, suffix_font[1], suffix_scaled_font_size)
-					local widget_width = texture_size_x + prefix_text_width + suffix_text_width + 5
+					local var_5_34, var_5_35 = UIFontByResolution(var_5_20.prefix_text)
+					local var_5_36, var_5_37 = UIFontByResolution(var_5_20.suffix_text)
+					local var_5_38 = UIRenderer.text_size(var_5_0, var_5_19.prefix_text, var_5_34[1], var_5_35)
+					local var_5_39 = UIRenderer.text_size(var_5_0, var_5_19.suffix_text, var_5_36[1], var_5_37)
+					local var_5_40 = var_5_24 + var_5_38 + var_5_39 + 5
 
-					ui_scenegraph["input_description_icon_" .. i].local_position[1] = prefix_text_width
-					ui_scenegraph["input_description_" .. i].local_position[1] = total_width
-					total_width = total_width + widget_width
-					widget.content.visible = true
-					widget.element.dirty = true
+					var_5_1["input_description_icon_" .. iter_5_2].local_position[1] = var_5_38
+					var_5_1["input_description_" .. iter_5_2].local_position[1] = var_5_15
+					var_5_15 = var_5_15 + var_5_40
+					var_5_18.content.visible = true
+					var_5_18.element.dirty = true
 				end
 			end
 
-			self.tutorial_tooltip_widget.element.dirty = true
+			arg_5_0.tutorial_tooltip_widget.element.dirty = true
 
-			for i = num_widgets + 1, definitions.NUMBER_OF_TOOLTIP_INPUT_WIDGETS do
-				local widget = input_widgets[i]
+			for iter_5_4 = var_5_17 + 1, var_0_0.NUMBER_OF_TOOLTIP_INPUT_WIDGETS do
+				local var_5_41 = var_5_14[iter_5_4]
 
-				widget.content.visible = false
-				widget.element.dirty = true
+				var_5_41.content.visible = false
+				var_5_41.element.dirty = true
 			end
 
-			ui_scenegraph.tutorial_tooltip_input_field.local_position[1] = (1920 - total_width + 5) * 0.5
+			var_5_1.tutorial_tooltip_input_field.local_position[1] = (1920 - var_5_15 + 5) * 0.5
 
-			return self.tutorial_tooltip_widget, tooltip_name
+			return arg_5_0.tutorial_tooltip_widget, var_5_2
 		end
 	end
 end
 
-TutorialTooltipUI.draw = function (self, dt, t)
-	local ui_renderer = self.ui_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self.input_manager:get_service("Player")
+function TutorialTooltipUI.draw(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = arg_6_0.ui_renderer
+	local var_6_1 = arg_6_0.ui_scenegraph
+	local var_6_2 = arg_6_0.input_manager:get_service("Player")
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt)
-	UIRenderer.draw_widget(ui_renderer, self.tutorial_tooltip_widget)
+	UIRenderer.begin_pass(var_6_0, var_6_1, var_6_2, arg_6_1)
+	UIRenderer.draw_widget(var_6_0, arg_6_0.tutorial_tooltip_widget)
 
-	for i = 1, definitions.NUMBER_OF_TOOLTIP_INPUT_WIDGETS do
-		UIRenderer.draw_widget(ui_renderer, self.tutorial_tooltip_input_widgets[i])
+	for iter_6_0 = 1, var_0_0.NUMBER_OF_TOOLTIP_INPUT_WIDGETS do
+		UIRenderer.draw_widget(var_6_0, arg_6_0.tutorial_tooltip_input_widgets[iter_6_0])
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_6_0)
 end
 
-TutorialTooltipUI.set_dirty = function (self)
-	self.tutorial_tooltip_widget.element.dirty = true
+function TutorialTooltipUI.set_dirty(arg_7_0)
+	arg_7_0.tutorial_tooltip_widget.element.dirty = true
 
-	local input_widgets = self.tutorial_tooltip_input_widgets
+	local var_7_0 = arg_7_0.tutorial_tooltip_input_widgets
 
-	for i = 1, definitions.NUMBER_OF_TOOLTIP_INPUT_WIDGETS do
-		local widget = input_widgets[i]
-
-		widget.element.dirty = true
+	for iter_7_0 = 1, var_0_0.NUMBER_OF_TOOLTIP_INPUT_WIDGETS do
+		var_7_0[iter_7_0].element.dirty = true
 	end
 end
 
-TutorialTooltipUI.hide = function (self)
-	local ui_renderer = self.ui_renderer
+function TutorialTooltipUI.hide(arg_8_0)
+	local var_8_0 = arg_8_0.ui_renderer
 
-	self.active_tooltip_name = nil
+	arg_8_0.active_tooltip_name = nil
 
-	UIRenderer.set_element_visible(ui_renderer, self.tutorial_tooltip_widget.element, false)
+	UIRenderer.set_element_visible(var_8_0, arg_8_0.tutorial_tooltip_widget.element, false)
 
-	local input_widgets = self.tutorial_tooltip_input_widgets
+	local var_8_1 = arg_8_0.tutorial_tooltip_input_widgets
 
-	for i = 1, definitions.NUMBER_OF_TOOLTIP_INPUT_WIDGETS do
-		local widget = input_widgets[i]
+	for iter_8_0 = 1, var_0_0.NUMBER_OF_TOOLTIP_INPUT_WIDGETS do
+		local var_8_2 = var_8_1[iter_8_0]
 
-		UIRenderer.set_element_visible(ui_renderer, widget.element, false)
+		UIRenderer.set_element_visible(var_8_0, var_8_2.element, false)
 	end
 end
 
-local FADE_TIME = 0.1
+local var_0_1 = 0.1
 
-TutorialTooltipUI.fade_in = function (self)
-	self:_fade(0, 255, FADE_TIME)
+function TutorialTooltipUI.fade_in(arg_9_0)
+	arg_9_0:_fade(0, 255, var_0_1)
 end
 
-TutorialTooltipUI.fade_out = function (self)
-	self:_fade(255, 0, FADE_TIME)
+function TutorialTooltipUI.fade_out(arg_10_0)
+	arg_10_0:_fade(255, 0, var_0_1)
 end
 
-TutorialTooltipUI._fade = function (self, from_alpha, to_alpha, duration)
-	local widget_style = self.tutorial_tooltip_widget.style
-	local bg_style = widget_style.background
-	local description_style = widget_style.description
+function TutorialTooltipUI._fade(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+	local var_11_0 = arg_11_0.tutorial_tooltip_widget.style
+	local var_11_1 = var_11_0.background
+	local var_11_2 = var_11_0.description
 
-	self.tutorial_tooltip_animations.tooltip_bg_fade = UIAnimation.init(UIAnimation.function_by_time, bg_style.color, 1, from_alpha, to_alpha, duration, math.easeInCubic)
-	self.tutorial_tooltip_animations.tooltip_description_fade = UIAnimation.init(UIAnimation.function_by_time, description_style.text_color, 1, from_alpha, to_alpha, duration, math.easeInCubic)
+	arg_11_0.tutorial_tooltip_animations.tooltip_bg_fade = UIAnimation.init(UIAnimation.function_by_time, var_11_1.color, 1, arg_11_1, arg_11_2, arg_11_3, math.easeInCubic)
+	arg_11_0.tutorial_tooltip_animations.tooltip_description_fade = UIAnimation.init(UIAnimation.function_by_time, var_11_2.text_color, 1, arg_11_1, arg_11_2, arg_11_3, math.easeInCubic)
 
-	local input_widgets = self.tutorial_tooltip_input_widgets
+	local var_11_3 = arg_11_0.tutorial_tooltip_input_widgets
 
-	for i = 1, definitions.NUMBER_OF_TOOLTIP_INPUT_WIDGETS do
-		local widget = input_widgets[i]
-		local input_widget_style = widget.style
-		local prefix_text_style = input_widget_style.prefix_text
-		local suffix_text_style = input_widget_style.suffix_text
-		local button_text_style = input_widget_style.button_text
-		local icon_style = input_widget_style.icon
+	for iter_11_0 = 1, var_0_0.NUMBER_OF_TOOLTIP_INPUT_WIDGETS do
+		local var_11_4 = var_11_3[iter_11_0].style
+		local var_11_5 = var_11_4.prefix_text
+		local var_11_6 = var_11_4.suffix_text
+		local var_11_7 = var_11_4.button_text
+		local var_11_8 = var_11_4.icon
 
-		self.tutorial_tooltip_animations["tooltip_input_prefix_" .. i] = UIAnimation.init(UIAnimation.function_by_time, prefix_text_style.text_color, 1, from_alpha, to_alpha, duration, math.easeInCubic)
-		self.tutorial_tooltip_animations["tooltip_input_suffix_" .. i] = UIAnimation.init(UIAnimation.function_by_time, suffix_text_style.text_color, 1, from_alpha, to_alpha, duration, math.easeInCubic)
-		self.tutorial_tooltip_animations["tooltip_input_button_" .. i] = UIAnimation.init(UIAnimation.function_by_time, button_text_style.text_color, 1, from_alpha, to_alpha, duration, math.easeInCubic)
-		self.tutorial_tooltip_animations["tooltip_input_icon_" .. i] = UIAnimation.init(UIAnimation.function_by_time, icon_style.color, 1, from_alpha, to_alpha, duration, math.easeInCubic)
+		arg_11_0.tutorial_tooltip_animations["tooltip_input_prefix_" .. iter_11_0] = UIAnimation.init(UIAnimation.function_by_time, var_11_5.text_color, 1, arg_11_1, arg_11_2, arg_11_3, math.easeInCubic)
+		arg_11_0.tutorial_tooltip_animations["tooltip_input_suffix_" .. iter_11_0] = UIAnimation.init(UIAnimation.function_by_time, var_11_6.text_color, 1, arg_11_1, arg_11_2, arg_11_3, math.easeInCubic)
+		arg_11_0.tutorial_tooltip_animations["tooltip_input_button_" .. iter_11_0] = UIAnimation.init(UIAnimation.function_by_time, var_11_7.text_color, 1, arg_11_1, arg_11_2, arg_11_3, math.easeInCubic)
+		arg_11_0.tutorial_tooltip_animations["tooltip_input_icon_" .. iter_11_0] = UIAnimation.init(UIAnimation.function_by_time, var_11_8.color, 1, arg_11_1, arg_11_2, arg_11_3, math.easeInCubic)
 	end
 end
 
-TutorialTooltipUI.has_completed_fade = function (self)
-	if next(self.tutorial_tooltip_animations) ~= nil then
+function TutorialTooltipUI.has_completed_fade(arg_12_0)
+	if next(arg_12_0.tutorial_tooltip_animations) ~= nil then
 		return false
 	end
 
 	return true
 end
 
-TutorialTooltipUI.set_visible = function (self, visible)
-	self._is_visible = visible
+function TutorialTooltipUI.set_visible(arg_13_0, arg_13_1)
+	arg_13_0._is_visible = arg_13_1
 
-	local ui_renderer = self.ui_renderer
+	local var_13_0 = arg_13_0.ui_renderer
 
-	for _, widget in ipairs(self.tutorial_tooltip_input_widgets) do
-		UIRenderer.set_element_visible(ui_renderer, widget.element, visible)
+	for iter_13_0, iter_13_1 in ipairs(arg_13_0.tutorial_tooltip_input_widgets) do
+		UIRenderer.set_element_visible(var_13_0, iter_13_1.element, arg_13_1)
 	end
 
-	UIRenderer.set_element_visible(ui_renderer, self.tutorial_tooltip_widget.element, visible)
+	UIRenderer.set_element_visible(var_13_0, arg_13_0.tutorial_tooltip_widget.element, arg_13_1)
 end

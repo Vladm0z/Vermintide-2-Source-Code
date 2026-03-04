@@ -1,753 +1,717 @@
-﻿-- chunkname: @scripts/unit_extensions/pickups/deus_chest_extension.lua
+-- chunkname: @scripts/unit_extensions/pickups/deus_chest_extension.lua
 
 require("scripts/managers/game_mode/mechanisms/deus_weapon_generation")
 require("scripts/settings/dlcs/morris/rarity_settings")
 require("scripts/utils/hash_utils")
 
-local RPCS = {
-	"rpc_deus_chest_looted",
+local var_0_0 = {
+	"rpc_deus_chest_looted"
 }
-local REAL_PLAYER_LOCAL_ID = 1
-local RELIQUARY_NEAR_DISTANCE = 10
-local RELIQUARY_FAR_DISTANCE = 12
-local WEAPON_CHEST_TO_SLOTS = {
+local var_0_1 = 1
+local var_0_2 = 10
+local var_0_3 = 12
+local var_0_4 = {
 	default = {
 		swap_melee = {
-			"melee",
+			"melee"
 		},
 		swap_ranged = {
-			"ranged",
-		},
+			"ranged"
+		}
 	},
 	dr_slayer = {
 		swap_melee = {
-			"melee",
+			"melee"
 		},
 		swap_ranged = {
 			"melee",
-			"ranged",
-		},
+			"ranged"
+		}
 	},
 	es_questingknight = {
 		swap_melee = {
-			"melee",
+			"melee"
 		},
 		swap_ranged = {
-			"melee",
-		},
+			"melee"
+		}
 	},
 	wh_priest = {
 		swap_melee = {
-			"melee",
+			"melee"
 		},
 		swap_ranged = {
-			"melee",
-		},
-	},
+			"melee"
+		}
+	}
 }
-local LUA_UPDATE_RARITY_EVENTS = {}
-local RaritySettings = RaritySettings
+local var_0_5 = {}
+local var_0_6 = RaritySettings
 
-for rarity, _ in pairs(RaritySettings) do
-	LUA_UPDATE_RARITY_EVENTS[rarity] = "lua_update_" .. rarity
+for iter_0_0, iter_0_1 in pairs(var_0_6) do
+	var_0_5[iter_0_0] = "lua_update_" .. iter_0_0
 end
 
 DeusChestExtension = class(DeusChestExtension, PickupUnitExtension)
 
-DeusChestExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	DeusChestExtension.super.init(self, extension_init_context, unit, extension_init_data)
+function DeusChestExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	DeusChestExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
-	self._is_server = Managers.player.is_server
-	self._profile_index = 0
-	self._career_index = 0
-	self._animation_state = nil
-	self._sound_state = nil
-	self._sound_state_interact = nil
-	self._wwise_world = Managers.world:wwise_world(self.world)
+	arg_1_0._is_server = Managers.player.is_server
+	arg_1_0._profile_index = 0
+	arg_1_0._career_index = 0
+	arg_1_0._animation_state = nil
+	arg_1_0._sound_state = nil
+	arg_1_0._sound_state_interact = nil
+	arg_1_0._wwise_world = Managers.world:wwise_world(arg_1_0.world)
 
-	self:register_rpcs(extension_init_context.network_transmit.network_event_delegate)
+	arg_1_0:register_rpcs(arg_1_1.network_transmit.network_event_delegate)
 end
 
-DeusChestExtension.game_object_initialized = function (self, unit, go_id)
-	if self._is_server then
-		local server_chest_type = self._chest_type_override or self._deus_run_controller:get_deus_weapon_chest_type()
+function DeusChestExtension.game_object_initialized(arg_2_0, arg_2_1, arg_2_2)
+	if arg_2_0._is_server then
+		local var_2_0 = arg_2_0._chest_type_override or arg_2_0._deus_run_controller:get_deus_weapon_chest_type()
 
-		self:_set_server_chest_type(server_chest_type)
+		arg_2_0:_set_server_chest_type(var_2_0)
 	end
 end
 
-DeusChestExtension.extensions_ready = function (self, world, unit)
-	local mechanism = Managers.mechanism:game_mechanism()
+function DeusChestExtension.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_0._deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
 
-	self._deus_run_controller = mechanism:get_deus_run_controller()
+	fassert(arg_3_0._deus_run_controller, "deus pickup unit can only be used in a deus run")
 
-	fassert(self._deus_run_controller, "deus pickup unit can only be used in a deus run")
-
-	self._telemetry_data = {
-		activated = false,
+	arg_3_0._telemetry_data = {
 		altar_type = "n/a",
+		activated = false,
 		currency_when_found = -1,
-		level_count = self._deus_run_controller:get_completed_level_count() + 1,
-		run_id = self._deus_run_controller:get_run_id(),
+		level_count = arg_3_0._deus_run_controller:get_completed_level_count() + 1,
+		run_id = arg_3_0._deus_run_controller:get_run_id()
 	}
 end
 
-DeusChestExtension.destroy = function (self)
-	if self._telemetry_data.currency_when_found ~= -1 then
-		Managers.telemetry_events:deus_altar_passed(self._telemetry_data)
+function DeusChestExtension.destroy(arg_4_0)
+	if arg_4_0._telemetry_data.currency_when_found ~= -1 then
+		Managers.telemetry_events:deus_altar_passed(arg_4_0._telemetry_data)
 	end
 
-	self:unregister_rpcs()
+	arg_4_0:unregister_rpcs()
 end
 
-DeusChestExtension.register_rpcs = function (self, network_event_delegate)
-	network_event_delegate:register(self, unpack(RPCS))
+function DeusChestExtension.register_rpcs(arg_5_0, arg_5_1)
+	arg_5_1:register(arg_5_0, unpack(var_0_0))
 
-	self._network_event_delegate = network_event_delegate
+	arg_5_0._network_event_delegate = arg_5_1
 end
 
-DeusChestExtension.unregister_rpcs = function (self)
-	self._network_event_delegate:unregister(self)
+function DeusChestExtension.unregister_rpcs(arg_6_0)
+	arg_6_0._network_event_delegate:unregister(arg_6_0)
 
-	self._network_event_delegate = nil
+	arg_6_0._network_event_delegate = nil
 end
 
-DeusChestExtension.update = function (self, unit, input, dt, context, t)
-	local player = Managers.player:local_player()
-	local player_unit = player.player_unit
+function DeusChestExtension.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+	local var_7_0 = Managers.player:local_player()
+	local var_7_1 = var_7_0.player_unit
 
-	if not self._inventory_extension or self._player_unit ~= player_unit then
-		self._inventory_extension = ScriptUnit.has_extension(player_unit, "inventory_system")
-		self._player = player
-		self._player_unit = player_unit
+	if not arg_7_0._inventory_extension or arg_7_0._player_unit ~= var_7_1 then
+		arg_7_0._inventory_extension = ScriptUnit.has_extension(var_7_1, "inventory_system")
+		arg_7_0._player = var_7_0
+		arg_7_0._player_unit = var_7_1
 	end
 
-	if not player_unit or not ALIVE[player_unit] then
+	if not var_7_1 or not ALIVE[var_7_1] then
 		return
 	end
 
-	local go_id = self._go_id or Managers.state.unit_storage:go_id(self.unit)
-	local deus_run_controller = self._deus_run_controller
-	local own_peer_id = deus_run_controller:get_own_peer_id()
-	local profile_index, career_index = deus_run_controller:get_player_profile(own_peer_id, REAL_PLAYER_LOCAL_ID)
+	local var_7_2 = arg_7_0._go_id or Managers.state.unit_storage:go_id(arg_7_0.unit)
+	local var_7_3 = arg_7_0._deus_run_controller
+	local var_7_4 = var_7_3:get_own_peer_id()
+	local var_7_5, var_7_6 = var_7_3:get_player_profile(var_7_4, var_0_1)
 
-	if go_id and (profile_index ~= self._profile_index or career_index ~= self._career_index) then
-		local server_chest_type = self:_get_server_chest_type()
+	if var_7_2 and (var_7_5 ~= arg_7_0._profile_index or var_7_6 ~= arg_7_0._career_index) then
+		local var_7_7 = arg_7_0:_get_server_chest_type()
 
-		if server_chest_type then
-			local current_node = self._deus_run_controller:get_current_node()
-			local seed = HashUtils.fnv32_hash(go_id .. "_" .. current_node.weapon_pickup_seed)
-			local rarity = self:_setup_rarity(seed, server_chest_type)
+		if var_7_7 then
+			local var_7_8 = arg_7_0._deus_run_controller:get_current_node()
+			local var_7_9 = HashUtils.fnv32_hash(var_7_2 .. "_" .. var_7_8.weapon_pickup_seed)
+			local var_7_10 = arg_7_0:_setup_rarity(var_7_9, var_7_7)
 
-			Unit.flow_event(self.unit, "lua_update_" .. server_chest_type)
+			Unit.flow_event(arg_7_0.unit, "lua_update_" .. var_7_7)
 
-			if server_chest_type == DEUS_CHEST_TYPES.power_up then
-				self:_generate_stored_power_up(seed)
-				Unit.set_data(self.unit, "interaction_data", "hud_description", "deus_weapon_chest_power_up_hud_desc")
-				Unit.set_data(self.unit, "interaction_data", "hud_action", "deus_weapon_chest_power_up_action")
-			elseif server_chest_type == DEUS_CHEST_TYPES.upgrade then
-				Unit.set_data(self.unit, "interaction_data", "hud_description", "deus_weapon_chest_upgrade_hud_desc")
-				Unit.set_data(self.unit, "interaction_data", "hud_action", "deus_weapon_chest_upgrade_action")
+			if var_7_7 == DEUS_CHEST_TYPES.power_up then
+				arg_7_0:_generate_stored_power_up(var_7_9)
+				Unit.set_data(arg_7_0.unit, "interaction_data", "hud_description", "deus_weapon_chest_power_up_hud_desc")
+				Unit.set_data(arg_7_0.unit, "interaction_data", "hud_action", "deus_weapon_chest_power_up_action")
+			elseif var_7_7 == DEUS_CHEST_TYPES.upgrade then
+				Unit.set_data(arg_7_0.unit, "interaction_data", "hud_description", "deus_weapon_chest_upgrade_hud_desc")
+				Unit.set_data(arg_7_0.unit, "interaction_data", "hud_action", "deus_weapon_chest_upgrade_action")
 			else
-				local profile = SPProfiles[profile_index]
-				local career_name = profile and profile.careers[career_index].name
-				local slots_by_career = WEAPON_CHEST_TO_SLOTS[career_name] or WEAPON_CHEST_TO_SLOTS.default
-				local slots = slots_by_career[server_chest_type]
+				local var_7_11 = SPProfiles[var_7_5]
+				local var_7_12 = var_7_11 and var_7_11.careers[var_7_6].name
+				local var_7_13 = (var_0_4[var_7_12] or var_0_4.default)[var_7_7]
 
-				self:_generate_stored_weapon(slots, rarity, go_id, profile_index, career_index)
+				arg_7_0:_generate_stored_weapon(var_7_13, var_7_10, var_7_2, var_7_5, var_7_6)
 
-				local slot
+				local var_7_14
 
-				if server_chest_type == DEUS_CHEST_TYPES.swap_melee then
-					slot = "melee"
-				elseif server_chest_type == DEUS_CHEST_TYPES.swap_ranged then
-					slot = "ranged"
+				if var_7_7 == DEUS_CHEST_TYPES.swap_melee then
+					var_7_14 = "melee"
+				elseif var_7_7 == DEUS_CHEST_TYPES.swap_ranged then
+					var_7_14 = "ranged"
 				end
 
-				Unit.set_data(self.unit, "interaction_data", "hud_description", "deus_weapon_chest_swap_" .. slot .. "_hud_desc")
-				Unit.set_data(self.unit, "interaction_data", "hud_action", "deus_weapon_chest_swap_" .. slot .. "_action")
+				Unit.set_data(arg_7_0.unit, "interaction_data", "hud_description", "deus_weapon_chest_swap_" .. var_7_14 .. "_hud_desc")
+				Unit.set_data(arg_7_0.unit, "interaction_data", "hud_action", "deus_weapon_chest_swap_" .. var_7_14 .. "_action")
 			end
 
-			local game_session = Managers.state.network:game()
-			local collected_by_peers = GameSession.game_object_field(game_session, go_id, "collected_by_peers")
-			local peer_id = deus_run_controller:get_own_peer_id()
-			local is_purchased = self._is_purchased
-			local new_is_purchased = not self._stored_purchase and server_chest_type ~= DEUS_CHEST_TYPES.upgrade or table.contains(collected_by_peers, peer_id)
+			local var_7_15 = Managers.state.network:game()
+			local var_7_16 = GameSession.game_object_field(var_7_15, var_7_2, "collected_by_peers")
+			local var_7_17 = var_7_3:get_own_peer_id()
+			local var_7_18 = arg_7_0._is_purchased
+			local var_7_19 = not arg_7_0._stored_purchase and var_7_7 ~= DEUS_CHEST_TYPES.upgrade or table.contains(var_7_16, var_7_17)
 
-			if is_purchased ~= new_is_purchased and new_is_purchased == true then
-				self._is_purchased = new_is_purchased
-				self._animation_state = "looted"
+			if var_7_18 ~= var_7_19 and var_7_19 == true then
+				arg_7_0._is_purchased = var_7_19
+				arg_7_0._animation_state = "looted"
 
-				Unit.flow_event(self.unit, "lua_update_collected")
+				Unit.flow_event(arg_7_0.unit, "lua_update_collected")
 			end
 
-			self._profile_index = profile_index
-			self._career_index = career_index
-			self._go_id = go_id
-			self._chest_type = server_chest_type
+			arg_7_0._profile_index = var_7_5
+			arg_7_0._career_index = var_7_6
+			arg_7_0._go_id = var_7_2
+			arg_7_0._chest_type = var_7_7
 		end
 	end
 
-	self:update_upgrade_chest_color()
-	self:_update_chest_interaction_time()
+	arg_7_0:update_upgrade_chest_color()
+	arg_7_0:_update_chest_interaction_time()
 
-	if self._animation_state ~= "looted" then
-		self:_update_chest_animation_and_sound_state(unit)
+	if arg_7_0._animation_state ~= "looted" then
+		arg_7_0:_update_chest_animation_and_sound_state(arg_7_1)
 	end
 
-	self:_update_telemetry(unit)
+	arg_7_0:_update_telemetry(arg_7_1)
 end
 
-DeusChestExtension._update_chest_interaction_time = function (self)
-	local interaction_length = self:can_be_unlocked() and 0.5 or 0
+function DeusChestExtension._update_chest_interaction_time(arg_8_0)
+	local var_8_0 = arg_8_0:can_be_unlocked() and 0.5 or 0
 
-	if interaction_length ~= self._interaction_length then
-		Unit.set_data(self.unit, "interaction_data", "interaction_length", interaction_length)
+	if var_8_0 ~= arg_8_0._interaction_length then
+		Unit.set_data(arg_8_0.unit, "interaction_data", "interaction_length", var_8_0)
 
-		self._interaction_length = interaction_length
-	end
-end
-
-DeusChestExtension.update_upgrade_chest_color = function (self)
-	if self._chest_type ~= DEUS_CHEST_TYPES.upgrade then
-		return
-	end
-
-	local rarity = self._rarity
-
-	if not rarity then
-		return
-	end
-
-	if self._is_purchased then
-		return
-	end
-
-	local wielded_weapon = self:_get_wielded_weapon()
-
-	if not wielded_weapon then
-		return
-	end
-
-	local weapon_rarity_order = RaritySettings[wielded_weapon.rarity].order
-	local chest_rarity_order = RaritySettings[rarity].order
-	local event
-
-	event = chest_rarity_order <= weapon_rarity_order and "lua_interact_disabled" or LUA_UPDATE_RARITY_EVENTS[rarity]
-
-	if not self._prev_update_upgrade_chest_color_event or self._prev_update_upgrade_chest_color_event ~= event then
-		Unit.flow_event(self.unit, event)
-
-		self._prev_update_upgrade_chest_color_event = event
+		arg_8_0._interaction_length = var_8_0
 	end
 end
 
-DeusChestExtension.can_interact = function (self)
-	if self._is_purchased then
+function DeusChestExtension.update_upgrade_chest_color(arg_9_0)
+	if arg_9_0._chest_type ~= DEUS_CHEST_TYPES.upgrade then
+		return
+	end
+
+	local var_9_0 = arg_9_0._rarity
+
+	if not var_9_0 then
+		return
+	end
+
+	if arg_9_0._is_purchased then
+		return
+	end
+
+	local var_9_1 = arg_9_0:_get_wielded_weapon()
+
+	if not var_9_1 then
+		return
+	end
+
+	local var_9_2 = var_0_6[var_9_1.rarity].order
+	local var_9_3 = var_0_6[var_9_0].order
+	local var_9_4
+	local var_9_5 = var_9_3 <= var_9_2 and "lua_interact_disabled" or var_0_5[var_9_0]
+
+	if not arg_9_0._prev_update_upgrade_chest_color_event or arg_9_0._prev_update_upgrade_chest_color_event ~= var_9_5 then
+		Unit.flow_event(arg_9_0.unit, var_9_5)
+
+		arg_9_0._prev_update_upgrade_chest_color_event = var_9_5
+	end
+end
+
+function DeusChestExtension.can_interact(arg_10_0)
+	if arg_10_0._is_purchased then
 		return false
 	end
 
-	local player_unit = self._player_unit
-	local inventory_extension = self._inventory_extension
+	local var_10_0 = arg_10_0._player_unit
+	local var_10_1 = arg_10_0._inventory_extension
 
-	if not player_unit or not ALIVE[player_unit] or not inventory_extension then
+	if not var_10_0 or not ALIVE[var_10_0] or not var_10_1 then
 		return false
 	end
 
-	local resyncing_loadout = inventory_extension:resyncing_loadout()
-
-	if resyncing_loadout then
+	if var_10_1:resyncing_loadout() then
 		return false
 	end
 
 	return true
 end
 
-DeusChestExtension.get_interact_hud_description = function (self)
-	if self._is_purchased then
+function DeusChestExtension.get_interact_hud_description(arg_11_0)
+	if arg_11_0._is_purchased then
 		return "deus_weapon_chest_already_picked_up_hud_desc"
 	else
 		return "deus_weapon_chest_hud_desc"
 	end
 end
 
-DeusChestExtension.get_purchase_cost = function (self)
-	local chest_type = self._chest_type
+function DeusChestExtension.get_purchase_cost(arg_12_0)
+	local var_12_0 = arg_12_0._chest_type
 
-	if chest_type == DEUS_CHEST_TYPES.upgrade then
-		local wielded_weapon = self:_get_wielded_weapon()
-		local equipped_rarity = wielded_weapon.rarity
+	if var_12_0 == DEUS_CHEST_TYPES.upgrade then
+		local var_12_1 = arg_12_0:_get_wielded_weapon().rarity
 
-		return DeusCostSettings.deus_chest[chest_type][equipped_rarity][self._rarity]
-	elseif chest_type == DEUS_CHEST_TYPES.swap_melee then
-		local deus_run_controller = self._deus_run_controller
-		local melee_weapon = deus_run_controller:get_own_loadout()
-		local equipped_rarity = melee_weapon.rarity
+		return DeusCostSettings.deus_chest[var_12_0][var_12_1][arg_12_0._rarity]
+	elseif var_12_0 == DEUS_CHEST_TYPES.swap_melee then
+		local var_12_2 = arg_12_0._deus_run_controller:get_own_loadout().rarity
 
-		return DeusCostSettings.deus_chest[chest_type][equipped_rarity][self._rarity]
-	elseif chest_type == DEUS_CHEST_TYPES.swap_ranged then
-		local deus_run_controller = self._deus_run_controller
-		local _, ranged_weapon = deus_run_controller:get_own_loadout()
-		local equipped_rarity = ranged_weapon.rarity
+		return DeusCostSettings.deus_chest[var_12_0][var_12_2][arg_12_0._rarity]
+	elseif var_12_0 == DEUS_CHEST_TYPES.swap_ranged then
+		local var_12_3, var_12_4 = arg_12_0._deus_run_controller:get_own_loadout()
+		local var_12_5 = var_12_4.rarity
 
-		return DeusCostSettings.deus_chest[chest_type][equipped_rarity][self._rarity]
-	elseif chest_type == DEUS_CHEST_TYPES.power_up then
+		return DeusCostSettings.deus_chest[var_12_0][var_12_5][arg_12_0._rarity]
+	elseif var_12_0 == DEUS_CHEST_TYPES.power_up then
 		return DeusCostSettings.deus_chest.power_up
 	end
 
 	return math.huge
 end
 
-DeusChestExtension.purchase = function (self)
-	local purchase_cost = self:get_purchase_cost()
+function DeusChestExtension.purchase(arg_13_0)
+	local var_13_0 = arg_13_0:get_purchase_cost()
 
-	self._deus_run_controller:purchase_chest(self._rarity, self._chest_type, purchase_cost)
+	arg_13_0._deus_run_controller:purchase_chest(arg_13_0._rarity, arg_13_0._chest_type, var_13_0)
 
-	self._is_purchased = true
+	arg_13_0._is_purchased = true
 
-	Unit.flow_event(self.unit, "lua_update_collected")
+	Unit.flow_event(arg_13_0.unit, "lua_update_collected")
 
-	self._animation_state = "looted"
+	arg_13_0._animation_state = "looted"
 
-	if not self._is_server then
-		local go_id = Managers.state.unit_storage:go_id(self.unit)
+	if not arg_13_0._is_server then
+		local var_13_1 = Managers.state.unit_storage:go_id(arg_13_0.unit)
 
-		Managers.state.network.network_transmit:send_rpc_server("rpc_deus_chest_looted", go_id)
+		Managers.state.network.network_transmit:send_rpc_server("rpc_deus_chest_looted", var_13_1)
 	end
 end
 
-DeusChestExtension._get_wielded_weapon = function (self)
-	local inventory_extension = self._inventory_extension
+function DeusChestExtension._get_wielded_weapon(arg_14_0)
+	local var_14_0 = arg_14_0._inventory_extension
 
-	if not inventory_extension then
+	if not var_14_0 then
 		return
 	end
 
-	local deus_run_controller = self._deus_run_controller
-	local melee_weapon, ranged_weapon = deus_run_controller:get_own_loadout()
-	local wielded_slot_name = inventory_extension:get_wielded_slot_name()
-	local weapon_slot_name = wielded_slot_name == "slot_melee" and "slot_melee" or "slot_ranged"
-	local wielded_weapon = weapon_slot_name == "slot_melee" and melee_weapon or ranged_weapon
+	local var_14_1, var_14_2 = arg_14_0._deus_run_controller:get_own_loadout()
+	local var_14_3 = var_14_0:get_wielded_slot_name() == "slot_melee" and "slot_melee" or "slot_ranged"
 
-	return wielded_weapon, weapon_slot_name
+	return var_14_3 == "slot_melee" and var_14_1 or var_14_2, var_14_3
 end
 
-DeusChestExtension.on_interact = function (self)
-	if self._chest_type == DEUS_CHEST_TYPES.upgrade then
-		local wielded_weapon, wielded_slot_name = self:_get_wielded_weapon()
+function DeusChestExtension.on_interact(arg_15_0)
+	if arg_15_0._chest_type == DEUS_CHEST_TYPES.upgrade then
+		local var_15_0, var_15_1 = arg_15_0:_get_wielded_weapon()
 
-		if wielded_weapon and wielded_weapon ~= self._previous_wielded_weapon then
-			self:_generate_upgraded_weapon(wielded_weapon, wielded_slot_name, self._rarity, self._go_id, self._profile_index, self._career_index)
+		if var_15_0 and var_15_0 ~= arg_15_0._previous_wielded_weapon then
+			arg_15_0:_generate_upgraded_weapon(var_15_0, var_15_1, arg_15_0._rarity, arg_15_0._go_id, arg_15_0._profile_index, arg_15_0._career_index)
 
-			self._previous_wielded_weapon = wielded_weapon
+			arg_15_0._previous_wielded_weapon = var_15_0
 		end
 	end
 end
 
-DeusChestExtension._setup_rarity = function (self, seed, chest_type)
-	if chest_type == DEUS_CHEST_TYPES.power_up then
+function DeusChestExtension._setup_rarity(arg_16_0, arg_16_1, arg_16_2)
+	if arg_16_2 == DEUS_CHEST_TYPES.power_up then
 		return nil
 	else
-		local current_node = self._deus_run_controller:get_current_node()
-		local difficulty = self._deus_run_controller:get_run_difficulty()
-		local progress = current_node.run_progress
+		local var_16_0 = arg_16_0._deus_run_controller:get_current_node()
+		local var_16_1 = arg_16_0._deus_run_controller:get_run_difficulty()
+		local var_16_2 = var_16_0.run_progress
 
-		self._rarity = DeusWeaponGeneration.get_random_rarity(difficulty, progress, seed)
+		arg_16_0._rarity = DeusWeaponGeneration.get_random_rarity(var_16_1, var_16_2, arg_16_1)
 
-		Unit.flow_event(self.unit, "lua_update_" .. self._rarity)
+		Unit.flow_event(arg_16_0.unit, "lua_update_" .. arg_16_0._rarity)
 
-		return self._rarity
+		return arg_16_0._rarity
 	end
 end
 
-DeusChestExtension.get_rarity = function (self)
-	if self._chest_type == DEUS_CHEST_TYPES.power_up then
-		local power_up = self._stored_purchase
-
-		return power_up.rarity
+function DeusChestExtension.get_rarity(arg_17_0)
+	if arg_17_0._chest_type == DEUS_CHEST_TYPES.power_up then
+		return arg_17_0._stored_purchase.rarity
 	else
-		return self._rarity
+		return arg_17_0._rarity
 	end
 end
 
-DeusChestExtension.get_stored_purchase = function (self)
-	if self._chest_type == DEUS_CHEST_TYPES.power_up then
-		local deus_run_controller = self._deus_run_controller
-		local peer_id = deus_run_controller:get_own_peer_id()
+function DeusChestExtension.get_stored_purchase(arg_18_0)
+	if arg_18_0._chest_type == DEUS_CHEST_TYPES.power_up then
+		local var_18_0 = arg_18_0._deus_run_controller
+		local var_18_1 = var_18_0:get_own_peer_id()
 
-		if self._stored_purchase then
-			local power_up_name = self._stored_purchase.name
-			local max_reached = deus_run_controller:reached_max_power_ups(peer_id, power_up_name)
+		if arg_18_0._stored_purchase then
+			local var_18_2 = arg_18_0._stored_purchase.name
 
-			if max_reached then
-				local go_id = self._go_id or Managers.state.unit_storage:go_id(self.unit)
-				local current_node = self._deus_run_controller:get_current_node()
-				local seed = HashUtils.fnv32_hash(go_id .. "_" .. current_node.weapon_pickup_seed)
+			if var_18_0:reached_max_power_ups(var_18_1, var_18_2) then
+				local var_18_3 = arg_18_0._go_id or Managers.state.unit_storage:go_id(arg_18_0.unit)
+				local var_18_4 = arg_18_0._deus_run_controller:get_current_node()
+				local var_18_5 = HashUtils.fnv32_hash(var_18_3 .. "_" .. var_18_4.weapon_pickup_seed)
 
-				self:_generate_stored_power_up(seed)
+				arg_18_0:_generate_stored_power_up(var_18_5)
 			end
 		end
 	end
 
-	return self._stored_purchase
+	return arg_18_0._stored_purchase
 end
 
-DeusChestExtension.get_chest_type = function (self)
-	return self._chest_type
+function DeusChestExtension.get_chest_type(arg_19_0)
+	return arg_19_0._chest_type
 end
 
-DeusChestExtension._generate_stored_power_up = function (self, seed)
-	local power_ups = self._deus_run_controller:generate_random_power_ups(DeusPowerUpSettings.weapon_chest_choice_amount, DeusPowerUpAvailabilityTypes.weapon_chest, seed)
-
-	self._stored_purchase = power_ups[1]
+function DeusChestExtension._generate_stored_power_up(arg_20_0, arg_20_1)
+	arg_20_0._stored_purchase = arg_20_0._deus_run_controller:generate_random_power_ups(DeusPowerUpSettings.weapon_chest_choice_amount, DeusPowerUpAvailabilityTypes.weapon_chest, arg_20_1)[1]
 end
 
-DeusChestExtension._generate_stored_weapon = function (self, slots, rarity, go_id, profile_index, career_index)
-	local deus_run_controller = self._deus_run_controller
-	local current_node = deus_run_controller:get_current_node()
-	local progress = current_node.run_progress
-	local difficulty = deus_run_controller:get_run_difficulty()
-	local weapon_pool = deus_run_controller:get_weapon_pool()
-	local weapon_seed = HashUtils.fnv32_hash(string.format("%s_%s_%s_%s_%s", profile_index, career_index, current_node.weapon_pickup_seed, go_id, 1))
-	local slot_chance_melee = table.contains(slots, "melee") and 1 or 0
-	local slot_chance_ranged = table.contains(slots, "ranged") and 1 or 0
-	local new_weapon = DeusWeaponGeneration.generate_weapon(difficulty, progress, rarity, weapon_seed, weapon_pool, slot_chance_melee, slot_chance_ranged)
+function DeusChestExtension._generate_stored_weapon(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
+	local var_21_0 = arg_21_0._deus_run_controller
+	local var_21_1 = var_21_0:get_current_node()
+	local var_21_2 = var_21_1.run_progress
+	local var_21_3 = var_21_0:get_run_difficulty()
+	local var_21_4 = var_21_0:get_weapon_pool()
+	local var_21_5 = HashUtils.fnv32_hash(string.format("%s_%s_%s_%s_%s", arg_21_4, arg_21_5, var_21_1.weapon_pickup_seed, arg_21_3, 1))
+	local var_21_6 = table.contains(arg_21_1, "melee") and 1 or 0
+	local var_21_7 = table.contains(arg_21_1, "ranged") and 1 or 0
+	local var_21_8 = DeusWeaponGeneration.generate_weapon(var_21_3, var_21_2, arg_21_2, var_21_5, var_21_4, var_21_6, var_21_7)
 
-	deus_run_controller:remove_weapon_from_pool(rarity, new_weapon.deus_item_key)
+	var_21_0:remove_weapon_from_pool(arg_21_2, var_21_8.deus_item_key)
 
-	local deus_backend = Managers.backend:get_interface("deus")
+	local var_21_9 = Managers.backend:get_interface("deus")
 
-	deus_backend:grant_deus_weapon(new_weapon)
-	deus_backend:refresh_deus_weapons_in_items_backend()
+	var_21_9:grant_deus_weapon(var_21_8)
+	var_21_9:refresh_deus_weapons_in_items_backend()
 
-	self._stored_purchase = new_weapon
+	arg_21_0._stored_purchase = var_21_8
 end
 
-DeusChestExtension._generate_upgraded_weapon = function (self, weapon, slot_name, rarity, go_id, profile_index, career_index)
-	local deus_run_controller = self._deus_run_controller
-	local current_node = deus_run_controller:get_current_node()
-	local progress = current_node.run_progress
-	local difficulty = deus_run_controller:get_run_difficulty()
-	local weapon_seed = HashUtils.fnv32_hash(string.format("%s_%s_%s_%s_%s", profile_index, career_index, current_node.weapon_pickup_seed, go_id, 1))
-	local new_weapon = DeusWeaponGeneration.upgrade_item(weapon, difficulty, progress, rarity, weapon_seed)
+function DeusChestExtension._generate_upgraded_weapon(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
+	local var_22_0 = arg_22_0._deus_run_controller
+	local var_22_1 = var_22_0:get_current_node()
+	local var_22_2 = var_22_1.run_progress
+	local var_22_3 = var_22_0:get_run_difficulty()
+	local var_22_4 = HashUtils.fnv32_hash(string.format("%s_%s_%s_%s_%s", arg_22_5, arg_22_6, var_22_1.weapon_pickup_seed, arg_22_4, 1))
+	local var_22_5 = DeusWeaponGeneration.upgrade_item(arg_22_1, var_22_3, var_22_2, arg_22_3, var_22_4)
 
-	new_weapon.preferred_slot_name = slot_name
+	var_22_5.preferred_slot_name = arg_22_2
 
-	local deus_backend = Managers.backend:get_interface("deus")
+	local var_22_6 = Managers.backend:get_interface("deus")
 
-	deus_backend:grant_deus_weapon(new_weapon)
-	deus_backend:refresh_deus_weapons_in_items_backend()
+	var_22_6:grant_deus_weapon(var_22_5)
+	var_22_6:refresh_deus_weapons_in_items_backend()
 
-	self._stored_purchase = new_weapon
+	arg_22_0._stored_purchase = var_22_5
 
-	Unit.set_data(self.unit, "interaction_data", "hud_description", "deus_weapon_chest_upgrade_hud_desc")
-	Unit.set_data(self.unit, "interaction_data", "hud_action", "deus_weapon_chest_upgrade_action")
+	Unit.set_data(arg_22_0.unit, "interaction_data", "hud_description", "deus_weapon_chest_upgrade_hud_desc")
+	Unit.set_data(arg_22_0.unit, "interaction_data", "hud_action", "deus_weapon_chest_upgrade_action")
 end
 
-DeusChestExtension._get_server_chest_type = function (self)
-	local game_session = Managers.state.network:game()
-	local go_id = Managers.state.unit_storage:go_id(self.unit)
+function DeusChestExtension._get_server_chest_type(arg_23_0)
+	local var_23_0 = Managers.state.network:game()
+	local var_23_1 = Managers.state.unit_storage:go_id(arg_23_0.unit)
 
-	if not game_session or not go_id then
+	if not var_23_0 or not var_23_1 then
 		return nil
 	end
 
-	local chest_lookup = GameSession.game_object_field(game_session, go_id, "server_chest_type")
+	local var_23_2 = GameSession.game_object_field(var_23_0, var_23_1, "server_chest_type")
 
-	return chest_lookup ~= 0 and NetworkLookup.deus_chest_types[chest_lookup] or nil
+	return var_23_2 ~= 0 and NetworkLookup.deus_chest_types[var_23_2] or nil
 end
 
-DeusChestExtension._set_server_chest_type = function (self, server_chest_type)
-	local game_session = Managers.state.network:game()
-	local go_id = Managers.state.unit_storage:go_id(self.unit)
+function DeusChestExtension._set_server_chest_type(arg_24_0, arg_24_1)
+	local var_24_0 = Managers.state.network:game()
+	local var_24_1 = Managers.state.unit_storage:go_id(arg_24_0.unit)
 
-	fassert(game_session and go_id, "setting state without network setup done")
+	fassert(var_24_0 and var_24_1, "setting state without network setup done")
 
-	local chest_lookup = NetworkLookup.deus_chest_types[server_chest_type]
+	local var_24_2 = NetworkLookup.deus_chest_types[arg_24_1]
 
-	GameSession.set_game_object_field(game_session, go_id, "server_chest_type", chest_lookup)
+	GameSession.set_game_object_field(var_24_0, var_24_1, "server_chest_type", var_24_2)
 end
 
-local sound_events = {
-	button_hover = "hud_morris_hover",
-	close_chest_ui = "hud_morris_weapon_chest_close",
-	exchange_weapon = "hud_morris_weapon_chest_change_weapon",
-	open_chest_ui = "hud_morris_weapon_chest_open",
+local var_0_7 = {
 	unlock_chest = "hud_morris_weapon_chest_unlock",
 	unlock_power_up = "morris_reliquarys_get_boon",
+	close_chest_ui = "hud_morris_weapon_chest_close",
+	button_hover = "hud_morris_hover",
+	exchange_weapon = "hud_morris_weapon_chest_change_weapon",
+	open_chest_ui = "hud_morris_weapon_chest_open",
 	unlock_chest_rarity_sounds = {
 		common = "play_hud_rewards_tier1",
-		exotic = "play_hud_rewards_tier3",
 		plentiful = "play_hud_rewards_tier1",
+		exotic = "play_hud_rewards_tier3",
 		rare = "play_hud_rewards_tier2",
-		unique = "play_hud_rewards_tier4",
-	},
+		unique = "play_hud_rewards_tier4"
+	}
 }
 
-DeusChestExtension.can_be_unlocked = function (self)
-	local can_interact = self:can_interact()
-
-	if not can_interact then
+function DeusChestExtension.can_be_unlocked(arg_25_0)
+	if not arg_25_0:can_interact() then
 		return false
 	end
 
-	if not self._stored_purchase and self._chest_type ~= DEUS_CHEST_TYPES.upgrade then
+	if not arg_25_0._stored_purchase and arg_25_0._chest_type ~= DEUS_CHEST_TYPES.upgrade then
 		return false
 	end
 
-	local run_controller = self._deus_run_controller
-	local own_peer_id = run_controller:get_own_peer_id()
-	local soft_currency = self._deus_run_controller:get_player_soft_currency(own_peer_id)
-	local unlock_cost = self:get_purchase_cost() or math.huge
-	local can_unlock = script_data.unlock_all_deus_chests or unlock_cost <= soft_currency
-	local chest_type = self._chest_type
+	local var_25_0 = arg_25_0._deus_run_controller:get_own_peer_id()
+	local var_25_1 = arg_25_0._deus_run_controller:get_player_soft_currency(var_25_0)
+	local var_25_2 = arg_25_0:get_purchase_cost() or math.huge
+	local var_25_3 = script_data.unlock_all_deus_chests or var_25_2 <= var_25_1
+	local var_25_4 = arg_25_0._chest_type
 
-	if chest_type == DEUS_CHEST_TYPES.upgrade then
-		local wielded_weapon = self:_get_wielded_weapon()
+	if var_25_4 == DEUS_CHEST_TYPES.upgrade then
+		local var_25_5 = arg_25_0:_get_wielded_weapon()
 
-		if wielded_weapon then
-			local rarity_settings = RaritySettings
-			local weapon_rarity_order = rarity_settings[wielded_weapon.rarity].order
-			local chest_rarity_order = rarity_settings[self._rarity].order
+		if var_25_5 then
+			local var_25_6 = var_0_6
 
-			if chest_rarity_order <= weapon_rarity_order then
-				can_unlock = false
+			if var_25_6[var_25_5.rarity].order >= var_25_6[arg_25_0._rarity].order then
+				var_25_3 = false
 			end
 		end
 	end
 
-	if not can_unlock then
+	if not var_25_3 then
 		return false
 	end
 
-	local others_actually_ingame = true
+	local var_25_7 = true
 
-	if chest_type ~= DEUS_CHEST_TYPES.power_up then
-		local network_manager = Managers.state.network
-		local profile_synchronizer = network_manager.profile_synchronizer
-
-		others_actually_ingame = profile_synchronizer:others_actually_ingame()
+	if var_25_4 ~= DEUS_CHEST_TYPES.power_up then
+		var_25_7 = Managers.state.network.profile_synchronizer:others_actually_ingame()
 	end
 
-	if not others_actually_ingame then
+	if not var_25_7 then
 		return false
 	end
 
 	return true
 end
 
-DeusChestExtension.open_chest = function (self)
-	local run_controller = self._deus_run_controller
+function DeusChestExtension.open_chest(arg_26_0)
+	local var_26_0 = arg_26_0._deus_run_controller
 
-	self._telemetry_data.currency_when_found = run_controller:get_player_soft_currency(run_controller:get_own_peer_id())
-	self._telemetry_data.activated = true
+	arg_26_0._telemetry_data.currency_when_found = var_26_0:get_player_soft_currency(var_26_0:get_own_peer_id())
+	arg_26_0._telemetry_data.activated = true
 
-	if self._chest_type == DEUS_CHEST_TYPES.power_up then
-		local power_up = self._stored_purchase
+	if arg_26_0._chest_type == DEUS_CHEST_TYPES.power_up then
+		local var_26_1 = arg_26_0._stored_purchase
 
-		run_controller:add_power_ups({
-			power_up,
-		}, REAL_PLAYER_LOCAL_ID, true)
-		self:_play_sound(sound_events.unlock_power_up)
-		self:_post_chest_unlock(self._stored_purchase)
+		var_26_0:add_power_ups({
+			var_26_1
+		}, var_0_1, true)
+		arg_26_0:_play_sound(var_0_7.unlock_power_up)
+		arg_26_0:_post_chest_unlock(arg_26_0._stored_purchase)
 	else
-		if not self._stored_purchase then
-			local wielded_weapon, wielded_slot_name = self:_get_wielded_weapon()
+		if not arg_26_0._stored_purchase then
+			local var_26_2, var_26_3 = arg_26_0:_get_wielded_weapon()
 
-			self:_generate_upgraded_weapon(wielded_weapon, wielded_slot_name, self._rarity, self._go_id, self._profile_index, self._career_index)
+			arg_26_0:_generate_upgraded_weapon(var_26_2, var_26_3, arg_26_0._rarity, arg_26_0._go_id, arg_26_0._profile_index, arg_26_0._career_index)
 
-			self._previous_wielded_weapon = wielded_weapon
+			arg_26_0._previous_wielded_weapon = var_26_2
 		end
 
-		local rarity = self:get_rarity()
-		local rarity_sound = sound_events.unlock_chest_rarity_sounds[rarity]
+		local var_26_4 = arg_26_0:get_rarity()
+		local var_26_5 = var_0_7.unlock_chest_rarity_sounds[var_26_4]
 
-		if rarity_sound then
-			self:_play_sound(rarity_sound)
+		if var_26_5 then
+			arg_26_0:_play_sound(var_26_5)
 		end
 
-		if self._chest_type == DEUS_CHEST_TYPES.swap_ranged or self._chest_type == DEUS_CHEST_TYPES.swap_melee then
-			local dialogue_input = ScriptUnit.extension_input(self._player_unit, "dialogue_system")
-
-			dialogue_input:trigger_networked_dialogue_event("deus_using_a_weapon_shrine")
+		if arg_26_0._chest_type == DEUS_CHEST_TYPES.swap_ranged or arg_26_0._chest_type == DEUS_CHEST_TYPES.swap_melee then
+			ScriptUnit.extension_input(arg_26_0._player_unit, "dialogue_system"):trigger_networked_dialogue_event("deus_using_a_weapon_shrine")
 		end
 
-		self:_post_chest_unlock(self._stored_purchase)
-		self:_equip_weapon(run_controller, self._stored_purchase)
-		self:_play_sound(sound_events.exchange_weapon)
+		arg_26_0:_post_chest_unlock(arg_26_0._stored_purchase)
+		arg_26_0:_equip_weapon(var_26_0, arg_26_0._stored_purchase)
+		arg_26_0:_play_sound(var_0_7.exchange_weapon)
 	end
 end
 
-DeusChestExtension._equip_weapon = function (self, deus_run_controller, new_weapon)
+function DeusChestExtension._equip_weapon(arg_27_0, arg_27_1, arg_27_2)
 	print("[DeusChestExtension] equipped:")
-	table.dump(new_weapon, "deus_weapon")
+	table.dump(arg_27_2, "deus_weapon")
 
-	local backend_id = new_weapon.backend_id
-	local inventory_extension = self._inventory_extension
-	local profile_index = self._profile_index
-	local profile = SPProfiles[profile_index]
-	local career_index = self._career_index
-	local career_data = profile.careers[career_index]
-	local career_name = career_data.name
-	local slot_name
-	local chest_type = self._chest_type
+	local var_27_0 = arg_27_2.backend_id
+	local var_27_1 = arg_27_0._inventory_extension
+	local var_27_2 = arg_27_0._profile_index
+	local var_27_3 = SPProfiles[var_27_2]
+	local var_27_4 = arg_27_0._career_index
+	local var_27_5 = var_27_3.careers[var_27_4]
+	local var_27_6 = var_27_5.name
+	local var_27_7
+	local var_27_8 = arg_27_0._chest_type
+	local var_27_9 = var_27_8 == DEUS_CHEST_TYPES.swap_melee and "slot_melee" or var_27_8 == DEUS_CHEST_TYPES.swap_ranged and "slot_ranged" or arg_27_0:_get_best_slot_name(arg_27_2, var_27_8, var_27_5, var_27_1)
 
-	slot_name = chest_type == DEUS_CHEST_TYPES.swap_melee and "slot_melee" or chest_type == DEUS_CHEST_TYPES.swap_ranged and "slot_ranged" or self:_get_best_slot_name(new_weapon, chest_type, career_data, inventory_extension)
-
-	BackendUtils.set_loadout_item(backend_id, career_name, slot_name)
-	inventory_extension:create_equipment_in_slot(slot_name, backend_id, 1)
-	deus_run_controller:save_loadout(new_weapon, slot_name)
+	BackendUtils.set_loadout_item(var_27_0, var_27_6, var_27_9)
+	var_27_1:create_equipment_in_slot(var_27_9, var_27_0, 1)
+	arg_27_1:save_loadout(arg_27_2, var_27_9)
 end
 
-DeusChestExtension._get_best_slot_name = function (self, stored_weapon, chest_type, career_data, inventory_extension)
-	local slot_name
-	local stored_weapon_slot_type = stored_weapon.data.slot_type
-	local slots = InventorySettings.slots_by_slot_index
+function DeusChestExtension._get_best_slot_name(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+	local var_28_0
+	local var_28_1 = arg_28_1.data.slot_type
+	local var_28_2 = InventorySettings.slots_by_slot_index
 
-	for _, slot in pairs(slots) do
-		if stored_weapon_slot_type == slot.type then
-			slot_name = slot.name
+	for iter_28_0, iter_28_1 in pairs(var_28_2) do
+		if var_28_1 == iter_28_1.type then
+			var_28_0 = iter_28_1.name
 		end
 	end
 
-	local wielded_slot_name
-	local equipment = inventory_extension:equipment()
-	local wielded_backend_id = equipment.wielded.backend_id
+	local var_28_3
+	local var_28_4 = arg_28_4:equipment()
+	local var_28_5 = var_28_4.wielded.backend_id
 
-	for _, slot in pairs(equipment.slots) do
-		local item_data = slot.item_data
-
-		if item_data.backend_id == wielded_backend_id then
-			wielded_slot_name = slot.id
+	for iter_28_2, iter_28_3 in pairs(var_28_4.slots) do
+		if iter_28_3.item_data.backend_id == var_28_5 then
+			var_28_3 = iter_28_3.id
 
 			break
 		end
 	end
 
-	if chest_type == DEUS_CHEST_TYPES.upgrade then
-		return stored_weapon.preferred_slot_name
+	if arg_28_2 == DEUS_CHEST_TYPES.upgrade then
+		return arg_28_1.preferred_slot_name
 	else
-		local wielded_slot_types = career_data.item_slot_types_by_slot_name[wielded_slot_name]
-		local slot_available = wielded_slot_types and table.contains(wielded_slot_types, stored_weapon_slot_type)
-		local best_slot_name = slot_available and wielded_slot_name or slot_name
+		local var_28_6 = arg_28_3.item_slot_types_by_slot_name[var_28_3]
 
-		return best_slot_name, stored_weapon_slot_type
+		return var_28_6 and table.contains(var_28_6, var_28_1) and var_28_3 or var_28_0, var_28_1
 	end
 end
 
-DeusChestExtension._post_chest_unlock = function (self, store_purchase)
-	self:_play_sound(sound_events.unlock_chest)
-	self:purchase()
+function DeusChestExtension._post_chest_unlock(arg_29_0, arg_29_1)
+	arg_29_0:_play_sound(var_0_7.unlock_chest)
+	arg_29_0:purchase()
 
-	local player = Managers.player:local_player()
+	local var_29_0 = Managers.player:local_player()
 
-	Managers.state.event:trigger("player_pickup_deus_weapon_chest", player)
+	Managers.state.event:trigger("player_pickup_deus_weapon_chest", var_29_0)
 
-	if store_purchase and self._chest_type ~= DEUS_CHEST_TYPES.power_up then
+	if arg_29_1 and arg_29_0._chest_type ~= DEUS_CHEST_TYPES.power_up then
 		Managers.state.event:trigger("present_rewards", {
 			{
 				type = "deus_item_tooltip",
-				backend_id = store_purchase.backend_id,
-			},
+				backend_id = arg_29_1.backend_id
+			}
 		})
 	end
 
-	StatisticsUtil.register_open_shrine(self._chest_type)
+	StatisticsUtil.register_open_shrine(arg_29_0._chest_type)
 end
 
-DeusChestExtension._play_sound = function (self, event)
-	WwiseWorld.trigger_event(self._wwise_world, event)
+function DeusChestExtension._play_sound(arg_30_0, arg_30_1)
+	WwiseWorld.trigger_event(arg_30_0._wwise_world, arg_30_1)
 end
 
-DeusChestExtension._update_chest_animation_and_sound_state = function (self, chest_unit)
-	local player_unit = self._player_unit
-	local local_player_pos = POSITION_LOOKUP[player_unit]
-	local chest_unit_pos = POSITION_LOOKUP[chest_unit]
-	local distance_squared = Vector3.distance_squared(local_player_pos, chest_unit_pos)
-	local interaction_extension = ScriptUnit.extension(player_unit, "interactor_system")
-	local interacting_unit = interaction_extension:interactable_unit()
-	local interacting_with_unit = interacting_unit == chest_unit
-	local animation_state = self._animation_state
-	local sound_state = self._sound_state
-	local sound_state_interact = self._sound_state_interact
+function DeusChestExtension._update_chest_animation_and_sound_state(arg_31_0, arg_31_1)
+	local var_31_0 = arg_31_0._player_unit
+	local var_31_1 = POSITION_LOOKUP[var_31_0]
+	local var_31_2 = POSITION_LOOKUP[arg_31_1]
+	local var_31_3 = Vector3.distance_squared(var_31_1, var_31_2)
+	local var_31_4 = ScriptUnit.extension(var_31_0, "interactor_system"):interactable_unit() == arg_31_1
+	local var_31_5 = arg_31_0._animation_state
+	local var_31_6 = arg_31_0._sound_state
+	local var_31_7 = arg_31_0._sound_state_interact
 
-	if not self._stored_purchase and self._chest_type ~= DEUS_CHEST_TYPES.upgrade then
-		animation_state = "player_far"
-		sound_state = "sound_player_far"
-		sound_state_interact = "interact_false"
-	elseif interacting_with_unit then
-		animation_state = "player_interacting"
-		sound_state_interact = "interact_true"
-	elseif distance_squared < RELIQUARY_NEAR_DISTANCE * RELIQUARY_NEAR_DISTANCE then
-		animation_state = "player_near"
-		sound_state = "sound_player_near"
-		sound_state_interact = "interact_false"
-	elseif distance_squared > RELIQUARY_FAR_DISTANCE * RELIQUARY_FAR_DISTANCE then
-		animation_state = "player_far"
-		sound_state = "sound_player_far"
-		sound_state_interact = "interact_false"
+	if not arg_31_0._stored_purchase and arg_31_0._chest_type ~= DEUS_CHEST_TYPES.upgrade then
+		var_31_5 = "player_far"
+		var_31_6 = "sound_player_far"
+		var_31_7 = "interact_false"
+	elseif var_31_4 then
+		var_31_5 = "player_interacting"
+		var_31_7 = "interact_true"
+	elseif var_31_3 < var_0_2 * var_0_2 then
+		var_31_5 = "player_near"
+		var_31_6 = "sound_player_near"
+		var_31_7 = "interact_false"
+	elseif var_31_3 > var_0_3 * var_0_3 then
+		var_31_5 = "player_far"
+		var_31_6 = "sound_player_far"
+		var_31_7 = "interact_false"
 	end
 
-	if animation_state ~= self._animation_state then
-		self._animation_state = animation_state
+	if var_31_5 ~= arg_31_0._animation_state then
+		arg_31_0._animation_state = var_31_5
 
-		Unit.flow_event(chest_unit, animation_state)
+		Unit.flow_event(arg_31_1, var_31_5)
 	end
 
-	if sound_state ~= self._sound_state then
-		Unit.flow_event(chest_unit, sound_state)
+	if var_31_6 ~= arg_31_0._sound_state then
+		Unit.flow_event(arg_31_1, var_31_6)
 
-		self._sound_state = sound_state
+		arg_31_0._sound_state = var_31_6
 	end
 
-	if sound_state_interact ~= self._sound_state_interact then
-		Unit.flow_event(chest_unit, sound_state_interact)
+	if var_31_7 ~= arg_31_0._sound_state_interact then
+		Unit.flow_event(arg_31_1, var_31_7)
 
-		self._sound_state_interact = sound_state_interact
+		arg_31_0._sound_state_interact = var_31_7
 	end
 end
 
-DeusChestExtension._update_telemetry = function (self, chest_unit)
-	local player_unit = self._player_unit
-	local local_player_pos = POSITION_LOOKUP[player_unit]
+function DeusChestExtension._update_telemetry(arg_32_0, arg_32_1)
+	local var_32_0 = arg_32_0._player_unit
+	local var_32_1 = POSITION_LOOKUP[var_32_0]
 
-	if not local_player_pos then
+	if not var_32_1 then
 		return
 	end
 
-	local telemetry_data = self._telemetry_data
+	local var_32_2 = arg_32_0._telemetry_data
 
-	if telemetry_data.altar_type == "n/a" then
-		telemetry_data.altar_type = self:_get_server_chest_type() or "n/a"
+	if var_32_2.altar_type == "n/a" then
+		var_32_2.altar_type = arg_32_0:_get_server_chest_type() or "n/a"
 	end
 
-	if telemetry_data.currency_when_found == -1 then
-		local chest_unit_pos = POSITION_LOOKUP[chest_unit]
-		local distance_squared = Vector3.distance_squared(local_player_pos, chest_unit_pos)
+	if var_32_2.currency_when_found == -1 then
+		local var_32_3 = POSITION_LOOKUP[arg_32_1]
 
-		if distance_squared < 625 then
-			local deus_run_controller = self._deus_run_controller
-			local own_peer_id = deus_run_controller:get_own_peer_id()
+		if Vector3.distance_squared(var_32_1, var_32_3) < 625 then
+			local var_32_4 = arg_32_0._deus_run_controller
+			local var_32_5 = var_32_4:get_own_peer_id()
 
-			telemetry_data.currency_when_found = deus_run_controller:get_player_soft_currency(own_peer_id)
+			var_32_2.currency_when_found = var_32_4:get_player_soft_currency(var_32_5)
 		end
 	end
 end
 
-DeusChestExtension.rpc_deus_chest_looted = function (self, channel_id, go_id)
-	local own_go_id = Managers.state.unit_storage:go_id(self.unit)
+function DeusChestExtension.rpc_deus_chest_looted(arg_33_0, arg_33_1, arg_33_2)
+	local var_33_0 = Managers.state.unit_storage:go_id(arg_33_0.unit)
 
-	if go_id ~= own_go_id then
+	if arg_33_2 ~= var_33_0 then
 		return
 	end
 
-	local game = Managers.state.network:game()
+	local var_33_1 = Managers.state.network:game()
 
-	fassert(game and own_go_id, "setting state without network setup done")
+	fassert(var_33_1 and var_33_0, "setting state without network setup done")
 
-	local collected_by_peers = GameSession.game_object_field(game, own_go_id, "collected_by_peers")
-	local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+	local var_33_2 = GameSession.game_object_field(var_33_1, var_33_0, "collected_by_peers")
+	local var_33_3 = CHANNEL_TO_PEER_ID[arg_33_1]
 
-	table.insert(collected_by_peers, peer_id)
-	GameSession.set_game_object_field(game, own_go_id, "collected_by_peers", collected_by_peers)
+	table.insert(var_33_2, var_33_3)
+	GameSession.set_game_object_field(var_33_1, var_33_0, "collected_by_peers", var_33_2)
 end

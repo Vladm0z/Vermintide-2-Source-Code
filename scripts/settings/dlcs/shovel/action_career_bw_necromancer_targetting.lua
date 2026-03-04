@@ -1,154 +1,146 @@
-﻿-- chunkname: @scripts/settings/dlcs/shovel/action_career_bw_necromancer_targetting.lua
+-- chunkname: @scripts/settings/dlcs/shovel/action_career_bw_necromancer_targetting.lua
 
 require("scripts/unit_extensions/weapons/area_damage/liquid/damage_wave_templates")
 
-local wave_template = DamageWaveTemplates.templates.necromancer_curse_wave
+local var_0_0 = DamageWaveTemplates.templates.necromancer_curse_wave
 
 ActionCareerBWNecromancerTargetting = class(ActionCareerBWNecromancerTargetting, ActionBase)
 
-local FORWARD_OFFSET = 1
-local HALF_WIDTH = 2
-local HALF_HEIGHT = 0.5
-local DEBUG_DRAW_TIME = 2.5
-local DEBUG_DRAW_CD = 0.25
+local var_0_1 = 1
+local var_0_2 = 2
+local var_0_3 = 0.5
+local var_0_4 = 2.5
+local var_0_5 = 0.25
 
-ActionCareerBWNecromancerTargetting.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionCareerBWNecromancerTargetting.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionCareerBWNecromancerTargetting.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionCareerBWNecromancerTargetting.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	self._ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
-	self._nav_world = Managers.state.entity:system("ai_system"):nav_world()
-	self._inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
-	self._talent_extension = ScriptUnit.extension(owner_unit, "talent_system")
-	self._first_person_extension = ScriptUnit.has_extension(owner_unit, "first_person_system")
-	self._weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
+	arg_1_0._ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
+	arg_1_0._nav_world = Managers.state.entity:system("ai_system"):nav_world()
+	arg_1_0._inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
+	arg_1_0._talent_extension = ScriptUnit.extension(arg_1_4, "talent_system")
+	arg_1_0._first_person_extension = ScriptUnit.has_extension(arg_1_4, "first_person_system")
+	arg_1_0._weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
+	arg_1_0._local_player = Managers.player:owner(arg_1_4).local_player
+	arg_1_0._owner_unit = arg_1_4
+	arg_1_0._has_valid_position = false
+	arg_1_0._last_valid_cast_direction = Vector3Box()
+	arg_1_0._last_valid_cast_position = Vector3Box()
+	arg_1_0._decal_unit = nil
+	arg_1_0._decal_unit_name = "units/decals/decal_arrow_kerillian"
 
-	local player = Managers.player:owner(owner_unit)
+	function arg_1_0._nav_callback()
+		local var_2_0 = Managers.time:time("game")
 
-	self._local_player = player.local_player
-	self._owner_unit = owner_unit
-	self._has_valid_position = false
-	self._last_valid_cast_direction = Vector3Box()
-	self._last_valid_cast_position = Vector3Box()
-	self._decal_unit = nil
-	self._decal_unit_name = "units/decals/decal_arrow_kerillian"
-
-	self._nav_callback = function ()
-		local t = Managers.time:time("game")
-
-		self:_update_targetting(t)
+		arg_1_0:_update_targetting(var_2_0)
 	end
 end
 
-ActionCareerBWNecromancerTargetting.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
-	action_init_data = action_init_data or {}
+function ActionCareerBWNecromancerTargetting.client_owner_start_action(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	arg_3_5 = arg_3_5 or {}
 
-	ActionCareerBWNecromancerTargetting.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
+	ActionCareerBWNecromancerTargetting.super.client_owner_start_action(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 
-	self._round_career_ability = self._talent_extension:has_talent("sienna_necromancer_6_3")
-	self._has_valid_position = false
+	arg_3_0._round_career_ability = arg_3_0._talent_extension:has_talent("sienna_necromancer_6_3")
+	arg_3_0._has_valid_position = false
 
-	self._weapon_extension:set_mode(false)
+	arg_3_0._weapon_extension:set_mode(false)
 
-	if self._local_player and not self._round_career_ability then
-		local decal_unit_name = self._decal_unit_name
-		local unit_spawner = Managers.state.unit_spawner
+	if arg_3_0._local_player and not arg_3_0._round_career_ability then
+		local var_3_0 = arg_3_0._decal_unit_name
 
-		self._decal_unit = unit_spawner:spawn_local_unit(decal_unit_name)
+		arg_3_0._decal_unit = Managers.state.unit_spawner:spawn_local_unit(var_3_0)
 	end
 
-	self._ai_navigation_system:add_safe_navigation_callback(self._nav_callback)
-	self._first_person_extension:play_hud_sound_event("Play_career_necro_ability_withering_wave_target", nil, false)
+	arg_3_0._ai_navigation_system:add_safe_navigation_callback(arg_3_0._nav_callback)
+	arg_3_0._first_person_extension:play_hud_sound_event("Play_career_necro_ability_withering_wave_target", nil, false)
 end
 
-ActionCareerBWNecromancerTargetting.client_owner_post_update = function (self, dt, t, world, can_damage, current_time_in_action)
-	self._ai_navigation_system:add_safe_navigation_callback(self._nav_callback)
+function ActionCareerBWNecromancerTargetting.client_owner_post_update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	arg_4_0._ai_navigation_system:add_safe_navigation_callback(arg_4_0._nav_callback)
 end
 
-ActionCareerBWNecromancerTargetting._get_first_person_position_direction = function (self)
-	local first_person_extension = self._first_person_extension
-	local player_position = first_person_extension:current_position()
-	local player_rotation = first_person_extension:current_rotation()
-	local min_pitch = math.rad(45)
-	local max_pitch = math.rad(12.5)
-	local yaw = Quaternion.yaw(player_rotation)
-	local pitch = math.clamp(Quaternion.pitch(player_rotation), -min_pitch, max_pitch)
-	local yaw_rotation = Quaternion(Vector3.up(), yaw)
-	local pitch_rotation = Quaternion(Vector3.right(), pitch)
-	local raycast_rotation = Quaternion.multiply(yaw_rotation, pitch_rotation)
-	local raycast_direction = Quaternion.forward(raycast_rotation)
+function ActionCareerBWNecromancerTargetting._get_first_person_position_direction(arg_5_0)
+	local var_5_0 = arg_5_0._first_person_extension
+	local var_5_1 = var_5_0:current_position()
+	local var_5_2 = var_5_0:current_rotation()
+	local var_5_3 = math.rad(45)
+	local var_5_4 = math.rad(12.5)
+	local var_5_5 = Quaternion.yaw(var_5_2)
+	local var_5_6 = math.clamp(Quaternion.pitch(var_5_2), -var_5_3, var_5_4)
+	local var_5_7 = Quaternion(Vector3.up(), var_5_5)
+	local var_5_8 = Quaternion(Vector3.right(), var_5_6)
+	local var_5_9 = Quaternion.multiply(var_5_7, var_5_8)
+	local var_5_10 = Quaternion.forward(var_5_9)
 
-	return player_position, raycast_direction
+	return var_5_1, var_5_10
 end
 
-ActionCareerBWNecromancerTargetting._update_targetting = function (self, t)
-	local above, below = 1, 2
-	local nav_world = self._nav_world
-	local _, fp_direction = self:_get_first_person_position_direction()
-	local cast_direction = Vector3.normalize(Vector3.flat(fp_direction))
+function ActionCareerBWNecromancerTargetting._update_targetting(arg_6_0, arg_6_1)
+	local var_6_0 = 1
+	local var_6_1 = 2
+	local var_6_2 = arg_6_0._nav_world
+	local var_6_3, var_6_4 = arg_6_0:_get_first_person_position_direction()
+	local var_6_5 = Vector3.normalize(Vector3.flat(var_6_4))
 
-	if self._decal_unit then
-		local player_rotation_flat = Quaternion.look(cast_direction, Vector3.up())
+	if arg_6_0._decal_unit then
+		local var_6_6 = Quaternion.look(var_6_5, Vector3.up())
 
-		Unit.set_local_position(self._decal_unit, 0, POSITION_LOOKUP[self._owner_unit])
-		Unit.set_local_rotation(self._decal_unit, 0, player_rotation_flat)
+		Unit.set_local_position(arg_6_0._decal_unit, 0, POSITION_LOOKUP[arg_6_0._owner_unit])
+		Unit.set_local_rotation(arg_6_0._decal_unit, 0, var_6_6)
 	end
 
-	if self._round_career_ability then
-		local position = POSITION_LOOKUP[self.owner_unit]
-		local nav_position = LocomotionUtils.pos_on_mesh(nav_world, position, above, below)
+	if arg_6_0._round_career_ability then
+		local var_6_7 = POSITION_LOOKUP[arg_6_0.owner_unit]
+		local var_6_8 = LocomotionUtils.pos_on_mesh(var_6_2, var_6_7, var_6_0, var_6_1)
 
-		if not nav_position then
-			self._has_valid_position = false
+		if not var_6_8 then
+			arg_6_0._has_valid_position = false
 
 			return
 		end
 
-		self._has_valid_position = true
+		arg_6_0._has_valid_position = true
 
-		self._weapon_extension:set_mode(true)
-		self._last_valid_cast_position:store(nav_position)
-		self._last_valid_cast_direction:store(cast_direction)
+		arg_6_0._weapon_extension:set_mode(true)
+		arg_6_0._last_valid_cast_position:store(var_6_8)
+		arg_6_0._last_valid_cast_direction:store(var_6_5)
 	else
-		local position = POSITION_LOOKUP[self.owner_unit] + cast_direction * FORWARD_OFFSET
-		local nav_position = LocomotionUtils.pos_on_mesh(nav_world, position, above, below)
+		local var_6_9 = POSITION_LOOKUP[arg_6_0.owner_unit] + var_6_5 * var_0_1
+		local var_6_10 = LocomotionUtils.pos_on_mesh(var_6_2, var_6_9, var_6_0, var_6_1)
 
-		if not nav_position then
-			self._has_valid_position = false
+		if not var_6_10 then
+			arg_6_0._has_valid_position = false
 
 			return
 		end
 
-		local length = (wave_template.max_speed + wave_template.start_speed * 0.5) * wave_template.time_of_life
-		local half_length = length * 0.5
+		local var_6_11 = (var_0_0.max_speed + var_0_0.start_speed * 0.5) * var_0_0.time_of_life * 0.5
 
-		self._has_valid_position = true
+		arg_6_0._has_valid_position = true
 
-		self._weapon_extension:set_mode(true)
-		self._last_valid_cast_position:store(nav_position)
-		self._last_valid_cast_direction:store(cast_direction)
+		arg_6_0._weapon_extension:set_mode(true)
+		arg_6_0._last_valid_cast_position:store(var_6_10)
+		arg_6_0._last_valid_cast_direction:store(var_6_5)
 	end
 end
 
-ActionCareerBWNecromancerTargetting.finish = function (self, reason)
-	if self._decal_unit then
-		local unit_spawner = Managers.state.unit_spawner
+function ActionCareerBWNecromancerTargetting.finish(arg_7_0, arg_7_1)
+	if arg_7_0._decal_unit then
+		Managers.state.unit_spawner:mark_for_deletion(arg_7_0._decal_unit)
 
-		unit_spawner:mark_for_deletion(self._decal_unit)
-
-		self._decal_unit = nil
+		arg_7_0._decal_unit = nil
 	end
 
-	if reason == "new_interupting_action" and self._has_valid_position then
-		self._weapon_extension:set_mode(true)
+	if arg_7_1 == "new_interupting_action" and arg_7_0._has_valid_position then
+		arg_7_0._weapon_extension:set_mode(true)
 
-		local targeting_data = {
-			position = self._last_valid_cast_position,
-			direction = self._last_valid_cast_direction,
+		return {
+			position = arg_7_0._last_valid_cast_position,
+			direction = arg_7_0._last_valid_cast_direction
 		}
-
-		return targeting_data
 	else
-		self._inventory_extension:wield_previous_non_level_slot()
+		arg_7_0._inventory_extension:wield_previous_non_level_slot()
 	end
 
 	return nil

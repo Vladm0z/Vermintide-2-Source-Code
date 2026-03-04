@@ -1,105 +1,90 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_waiting_for_assisted_respawn.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_waiting_for_assisted_respawn.lua
 
 PlayerCharacterStateWaitingForAssistedRespawn = class(PlayerCharacterStateWaitingForAssistedRespawn, PlayerCharacterState)
 
-PlayerCharacterStateWaitingForAssistedRespawn.init = function (self, character_state_init_context)
-	PlayerCharacterState.init(self, character_state_init_context, "waiting_for_assisted_respawn")
+function PlayerCharacterStateWaitingForAssistedRespawn.init(arg_1_0, arg_1_1)
+	PlayerCharacterState.init(arg_1_0, arg_1_1, "waiting_for_assisted_respawn")
 
-	self.recovery_timer = nil
-	self.recovered = false
+	arg_1_0.recovery_timer = nil
+	arg_1_0.recovered = false
 end
 
-PlayerCharacterStateWaitingForAssistedRespawn.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
-	local first_person_extension = self.first_person_extension
+function PlayerCharacterStateWaitingForAssistedRespawn.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	arg_2_0.first_person_extension:set_first_person_mode(false)
 
-	first_person_extension:set_first_person_mode(false)
+	local var_2_0 = true
 
-	local include_local_player = true
+	CharacterStateHelper.show_inventory_3p(arg_2_1, false, var_2_0, arg_2_0.is_server, arg_2_0.inventory_extension)
+	arg_2_0.input_extension:set_enabled(false)
 
-	CharacterStateHelper.show_inventory_3p(unit, false, include_local_player, self.is_server, self.inventory_extension)
+	local var_2_1 = arg_2_0.status_extension.assisted_respawn_flavour_unit
 
-	local input_extension = self.input_extension
+	arg_2_0.flavour_unit = var_2_1
 
-	input_extension:set_enabled(false)
+	LocomotionUtils.enable_linked_movement(arg_2_0.world, arg_2_1, var_2_1, 0, Vector3.zero())
 
-	local status_extension = self.status_extension
-	local flavour_unit = status_extension.assisted_respawn_flavour_unit
+	local var_2_2 = Unit.get_data(var_2_1, "on_enter_loop_anim")
 
-	self.flavour_unit = flavour_unit
+	CharacterStateHelper.play_animation_event(arg_2_1, var_2_2)
+	CharacterStateHelper.change_camera_state(arg_2_0.player, "observer")
 
-	LocomotionUtils.enable_linked_movement(self.world, unit, flavour_unit, 0, Vector3.zero())
+	local var_2_3 = ScriptUnit.extension(arg_2_1, "career_system")
 
-	local flavour_animation = Unit.get_data(flavour_unit, "on_enter_loop_anim")
-
-	CharacterStateHelper.play_animation_event(unit, flavour_animation)
-	CharacterStateHelper.change_camera_state(self.player, "observer")
-
-	local career_extension = ScriptUnit.extension(unit, "career_system")
-
-	CharacterStateHelper.stop_weapon_actions(self.inventory_extension, "respawning")
-	CharacterStateHelper.stop_career_abilities(career_extension, "respawning")
+	CharacterStateHelper.stop_weapon_actions(arg_2_0.inventory_extension, "respawning")
+	CharacterStateHelper.stop_career_abilities(var_2_3, "respawning")
 end
 
-PlayerCharacterStateWaitingForAssistedRespawn.on_exit = function (self, unit, input, dt, context, t, next_state)
-	local first_person_extension = self.first_person_extension
+function PlayerCharacterStateWaitingForAssistedRespawn.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	arg_3_0.first_person_extension:toggle_visibility(CameraTransitionSettings.perspective_transition_time)
 
-	first_person_extension:toggle_visibility(CameraTransitionSettings.perspective_transition_time)
+	local var_3_0 = true
 
-	local include_local_player = true
+	CharacterStateHelper.show_inventory_3p(arg_3_1, true, var_3_0, arg_3_0.is_server, arg_3_0.inventory_extension)
+	arg_3_0.input_extension:set_enabled(true)
 
-	CharacterStateHelper.show_inventory_3p(unit, true, include_local_player, self.is_server, self.inventory_extension)
+	local var_3_1 = arg_3_0.player
 
-	local input_extension = self.input_extension
+	CharacterStateHelper.change_camera_state(var_3_1, "follow")
+	LocomotionUtils.disable_linked_movement(arg_3_1)
+	arg_3_0.locomotion_extension:enable_script_driven_movement()
 
-	input_extension:set_enabled(true)
+	arg_3_0.recovery_timer = nil
+	arg_3_0.recovered = false
 
-	local player = self.player
+	local var_3_2 = arg_3_0.status_extension
 
-	CharacterStateHelper.change_camera_state(player, "follow")
-	LocomotionUtils.disable_linked_movement(unit)
-
-	local locomotion_extension = self.locomotion_extension
-
-	locomotion_extension:enable_script_driven_movement()
-
-	self.recovery_timer = nil
-	self.recovered = false
-
-	local status_extension = self.status_extension
-
-	status_extension:set_assisted_respawning(false)
-	status_extension:set_respawned(true)
+	var_3_2:set_assisted_respawning(false)
+	var_3_2:set_respawned(true)
 
 	if Managers.state.network:game() and not LEVEL_EDITOR_TEST then
-		local network_manager = Managers.state.network
-		local helper_unit = self.status_extension:get_assisted_respawn_helper_unit()
-		local go_id = network_manager:unit_game_object_id(unit) or 0
-		local helper_go_id = helper_unit and network_manager:unit_game_object_id(helper_unit) or 0
+		local var_3_3 = Managers.state.network
+		local var_3_4 = arg_3_0.status_extension:get_assisted_respawn_helper_unit()
+		local var_3_5 = var_3_3:unit_game_object_id(arg_3_1) or 0
+		local var_3_6 = var_3_4 and var_3_3:unit_game_object_id(var_3_4) or 0
 
-		network_manager.network_transmit:send_rpc_server("rpc_status_change_bool", NetworkLookup.statuses.respawned, true, go_id, helper_go_id)
+		var_3_3.network_transmit:send_rpc_server("rpc_status_change_bool", NetworkLookup.statuses.respawned, true, var_3_5, var_3_6)
 	end
 end
 
-PlayerCharacterStateWaitingForAssistedRespawn.update = function (self, unit, input, dt, context, t)
-	local csm = self.csm
-	local status_extension = self.status_extension
+function PlayerCharacterStateWaitingForAssistedRespawn.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	local var_4_0 = arg_4_0.csm
+	local var_4_1 = arg_4_0.status_extension
 
-	if CharacterStateHelper.is_dead(status_extension) then
-		csm:change_state("dead")
+	if CharacterStateHelper.is_dead(var_4_1) then
+		var_4_0:change_state("dead")
 
 		return
 	end
 
-	if CharacterStateHelper.is_assisted_respawning(status_extension) then
-		if not self.recovery_timer then
-			local flavour_unit = self.flavour_unit
-			local recovery_time = Unit.get_data(flavour_unit, "recovery_time")
+	if CharacterStateHelper.is_assisted_respawning(var_4_1) then
+		if not arg_4_0.recovery_timer then
+			local var_4_2 = arg_4_0.flavour_unit
 
-			self.recovery_timer = t + recovery_time
+			arg_4_0.recovery_timer = arg_4_5 + Unit.get_data(var_4_2, "recovery_time")
 
-			CharacterStateHelper.play_animation_event(unit, "respawn_revive")
-		elseif t >= self.recovery_timer then
-			csm:change_state("standing")
+			CharacterStateHelper.play_animation_event(arg_4_1, "respawn_revive")
+		elseif arg_4_5 >= arg_4_0.recovery_timer then
+			var_4_0:change_state("standing")
 
 			return
 		end

@@ -1,64 +1,62 @@
-﻿-- chunkname: @scripts/unit_extensions/ai_supplementary/unit_synchronization_extension.lua
+-- chunkname: @scripts/unit_extensions/ai_supplementary/unit_synchronization_extension.lua
 
 UnitSynchronizationExtension = class(UnitSynchronizationExtension)
 
-local position_lookup = POSITION_LOOKUP
+local var_0_0 = POSITION_LOOKUP
 
-UnitSynchronizationExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	local world = extension_init_context.world
-
-	self.world = world
-	self.unit = unit
-	self.is_server = Managers.player.is_server
+function UnitSynchronizationExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.world = arg_1_1.world
+	arg_1_0.unit = arg_1_2
+	arg_1_0.is_server = Managers.player.is_server
 end
 
-UnitSynchronizationExtension.update = function (self, unit, input, dt, context, t)
-	if self.is_server then
-		self:_server_sync_position_rotation(dt, t)
+function UnitSynchronizationExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	if arg_2_0.is_server then
+		arg_2_0:_server_sync_position_rotation(arg_2_3, arg_2_5)
 	else
-		self:_client_validate_position_rotation(dt, t)
+		arg_2_0:_client_validate_position_rotation(arg_2_3, arg_2_5)
 	end
 end
 
-UnitSynchronizationExtension._server_sync_position_rotation = function (self, dt, t)
-	local game = Managers.state.network:game()
+function UnitSynchronizationExtension._server_sync_position_rotation(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0 = Managers.state.network:game()
 
-	if game then
-		local GameSession_set_game_object_field = GameSession.set_game_object_field
-		local unit_storage = Managers.state.unit_storage
-		local Unit_local_rotation = Unit.local_rotation
-		local position_network_info_min = NetworkConstants.position.min
-		local position_network_info_max = NetworkConstants.position.max
-		local unit = self.unit
-		local game_object_id = unit_storage:go_id(unit)
-		local pos = Vector3.clamp(position_lookup[unit], position_network_info_min, position_network_info_max)
-		local rot = Unit_local_rotation(unit, 0)
+	if var_3_0 then
+		local var_3_1 = GameSession.set_game_object_field
+		local var_3_2 = Managers.state.unit_storage
+		local var_3_3 = Unit.local_rotation
+		local var_3_4 = NetworkConstants.position.min
+		local var_3_5 = NetworkConstants.position.max
+		local var_3_6 = arg_3_0.unit
+		local var_3_7 = var_3_2:go_id(var_3_6)
+		local var_3_8 = Vector3.clamp(var_0_0[var_3_6], var_3_4, var_3_5)
+		local var_3_9 = var_3_3(var_3_6, 0)
 
-		GameSession_set_game_object_field(game, game_object_id, "position", pos)
-		GameSession_set_game_object_field(game, game_object_id, "rotation", rot)
+		var_3_1(var_3_0, var_3_7, "position", var_3_8)
+		var_3_1(var_3_0, var_3_7, "rotation", var_3_9)
 	end
 end
 
-local CORRECTION_DISTANCE = 0.0001
+local var_0_1 = 0.0001
 
-UnitSynchronizationExtension._client_validate_position_rotation = function (self, dt, t)
-	local game = Managers.state.network:game()
+function UnitSynchronizationExtension._client_validate_position_rotation(arg_4_0, arg_4_1, arg_4_2)
+	local var_4_0 = Managers.state.network:game()
 
-	if game then
-		local GameSession_game_object_field = GameSession.game_object_field
-		local Vector3_distance_squared = Vector3.distance_squared
-		local Unit_local_position = Unit.local_position
-		local unit_storage = Managers.state.unit_storage
-		local unit = self.unit
-		local game_object_id = unit_storage:go_id(unit)
-		local server_pos = GameSession_game_object_field(game, game_object_id, "position")
-		local client_pos = position_lookup[unit] or Unit_local_position(unit, 0)
+	if var_4_0 then
+		local var_4_1 = GameSession.game_object_field
+		local var_4_2 = Vector3.distance_squared
+		local var_4_3 = Unit.local_position
+		local var_4_4 = Managers.state.unit_storage
+		local var_4_5 = arg_4_0.unit
+		local var_4_6 = var_4_4:go_id(var_4_5)
+		local var_4_7 = var_4_1(var_4_0, var_4_6, "position")
+		local var_4_8 = var_0_0[var_4_5] or var_4_3(var_4_5, 0)
 
-		if Vector3_distance_squared(server_pos, client_pos) > CORRECTION_DISTANCE then
-			local server_rot = GameSession_game_object_field(game, game_object_id, "rotation")
+		if var_4_2(var_4_7, var_4_8) > var_0_1 then
+			local var_4_9 = var_4_1(var_4_0, var_4_6, "rotation")
 
-			Unit.set_local_position(unit, 0, server_pos)
-			Unit.set_local_rotation(unit, 0, server_rot)
+			Unit.set_local_position(var_4_5, 0, var_4_7)
+			Unit.set_local_rotation(var_4_5, 0, var_4_9)
 		end
 	end
 end

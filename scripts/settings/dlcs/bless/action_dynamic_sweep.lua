@@ -1,27 +1,25 @@
-﻿-- chunkname: @scripts/settings/dlcs/bless/action_dynamic_sweep.lua
+-- chunkname: @scripts/settings/dlcs/bless/action_dynamic_sweep.lua
 
 ActionDynamicSweep = class(ActionDynamicSweep, ActionSweep)
 
-ActionDynamicSweep.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionDynamicSweep.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionDynamicSweep.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionDynamicSweep.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	self.weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
+	arg_1_0.weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
 end
 
-ActionDynamicSweep._get_damage_profile_name = function (self, action_hand, action)
-	local current_mode = self.weapon_extension:get_mode()
-	local dynamic_profiles = action.dynamic_profiles
-	local profile_to_use = dynamic_profiles[current_mode]
+function ActionDynamicSweep._get_damage_profile_name(arg_2_0, arg_2_1, arg_2_2)
+	local var_2_0 = arg_2_0.weapon_extension:get_mode()
+	local var_2_1 = arg_2_2.dynamic_profiles[var_2_0]
 
-	return action_hand and action["damage_profile_" .. action_hand] or profile_to_use or "default"
+	return arg_2_1 and arg_2_2["damage_profile_" .. arg_2_1] or var_2_1 or "default"
 end
 
-ActionDynamicSweep._calculate_attack_direction = function (self, action, weapon_rotation)
-	local current_mode = self.weapon_extension:get_mode()
-	local dynamic_attack_directions = action.dynamic_attack_direction
-	local invert_attack_direction = dynamic_attack_directions[current_mode]
-	local quaternion_axis = action.attack_direction or "forward"
-	local attack_direction = Quaternion[quaternion_axis](weapon_rotation)
+function ActionDynamicSweep._calculate_attack_direction(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0 = arg_3_0.weapon_extension:get_mode()
+	local var_3_1 = arg_3_1.dynamic_attack_direction[var_3_0]
+	local var_3_2 = arg_3_1.attack_direction or "forward"
+	local var_3_3 = Quaternion[var_3_2](arg_3_2)
 
-	return invert_attack_direction and -attack_direction or attack_direction
+	return var_3_1 and -var_3_3 or var_3_3
 end

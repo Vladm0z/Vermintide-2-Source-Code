@@ -1,146 +1,140 @@
-﻿-- chunkname: @scripts/unit_extensions/weaves/weave_limited_item_spawner_extension.lua
+-- chunkname: @scripts/unit_extensions/weaves/weave_limited_item_spawner_extension.lua
 
 require("scripts/unit_extensions/limited_item_track/limited_item_track_spawner_templates")
 
 WeaveLimitedItemSpawnerExtension = class(WeaveLimitedItemSpawnerExtension, BaseObjectiveExtension)
 WeaveLimitedItemSpawnerExtension.NAME = "WeaveLimitedItemSpawnerExtension"
 
-WeaveLimitedItemSpawnerExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	WeaveLimitedItemSpawnerExtension.super.init(self, extension_init_context, unit, extension_init_data)
+function WeaveLimitedItemSpawnerExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	WeaveLimitedItemSpawnerExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
-	self._items_spawned = false
-	self._value = 0
-	self._from_spawner = true
+	arg_1_0._items_spawned = false
+	arg_1_0._value = 0
+	arg_1_0._from_spawner = true
 
-	local limited_item_template_name = Unit.get_data(unit, "template_name")
-	local template = LimitedItemTrackSpawnerTemplates[limited_item_template_name]
+	local var_1_0 = Unit.get_data(arg_1_2, "template_name")
+	local var_1_1 = LimitedItemTrackSpawnerTemplates[var_1_0]
 
-	if template then
-		local pickup_system = Managers.state.entity:system("pickup_system")
-
-		pickup_system:disable_spawners(template.types or {})
+	if var_1_1 then
+		Managers.state.entity:system("pickup_system"):disable_spawners(var_1_1.types or {})
 	end
 end
 
-WeaveLimitedItemSpawnerExtension.extensions_ready = function (self)
+function WeaveLimitedItemSpawnerExtension.extensions_ready(arg_2_0)
 	return
 end
 
-WeaveLimitedItemSpawnerExtension.initial_sync_data = function (self, game_object_data_table)
-	game_object_data_table.value = self._value
+function WeaveLimitedItemSpawnerExtension.initial_sync_data(arg_3_0, arg_3_1)
+	arg_3_1.value = arg_3_0._value
 end
 
-WeaveLimitedItemSpawnerExtension._set_objective_data = function (self, objective_data)
-	self._on_first_pickup_func = objective_data.on_first_pickup_func
-	self._on_pickup_func = objective_data.on_pickup_func
-	self._on_throw_func = objective_data.on_throw_func
-	self._on_destroy_func = objective_data.on_destroy_func
-	self._on_spawn_func = objective_data.on_spawn_func
-	self._on_complete_func = objective_data.on_complete_func
-	self._objective_template_name = objective_data.template_name or Unit.get_data(self._unit, "template_name")
+function WeaveLimitedItemSpawnerExtension._set_objective_data(arg_4_0, arg_4_1)
+	arg_4_0._on_first_pickup_func = arg_4_1.on_first_pickup_func
+	arg_4_0._on_pickup_func = arg_4_1.on_pickup_func
+	arg_4_0._on_throw_func = arg_4_1.on_throw_func
+	arg_4_0._on_destroy_func = arg_4_1.on_destroy_func
+	arg_4_0._on_spawn_func = arg_4_1.on_spawn_func
+	arg_4_0._on_complete_func = arg_4_1.on_complete_func
+	arg_4_0._objective_template_name = arg_4_1.template_name or Unit.get_data(arg_4_0._unit, "template_name")
 
-	local pickup_name = self._objective_template_name == "gargoyle_head_spawner" and "magic_crystal" or "magic_barrel"
+	local var_4_0 = arg_4_0._objective_template_name == "gargoyle_head_spawner" and "magic_crystal" or "magic_barrel"
 
-	Unit.set_data(self._unit, "template_name", self._objective_template_name)
-	Unit.set_data(self._unit, "pickup_name", pickup_name)
+	Unit.set_data(arg_4_0._unit, "template_name", arg_4_0._objective_template_name)
+	Unit.set_data(arg_4_0._unit, "pickup_name", var_4_0)
 end
 
-WeaveLimitedItemSpawnerExtension._activate = function (self)
-	local mission_system = Managers.state.entity:system("mission_system")
-	local active_missions = mission_system:get_missions()
+function WeaveLimitedItemSpawnerExtension._activate(arg_5_0)
+	local var_5_0 = Managers.state.entity:system("mission_system")
+	local var_5_1 = var_5_0:get_missions()
 
-	if not active_missions or not active_missions.weave_collect_limited_item_objective then
-		mission_system:start_mission("weave_collect_limited_item_objective")
+	if not var_5_1 or not var_5_1.weave_collect_limited_item_objective then
+		var_5_0:start_mission("weave_collect_limited_item_objective")
 	end
 
-	if self._is_server then
-		self._limited_item_track_extension = ScriptUnit.extension(self._unit, "limited_item_track_system")
-		self._limited_item_track_extension.template_name = self._objective_template_name
+	if arg_5_0._is_server then
+		arg_5_0._limited_item_track_extension = ScriptUnit.extension(arg_5_0._unit, "limited_item_track_system")
+		arg_5_0._limited_item_track_extension.template_name = arg_5_0._objective_template_name
 	end
 
-	Managers.state.entity:system("limited_item_track_system"):weave_activate_spawner(self._unit, self._objective_name)
+	Managers.state.entity:system("limited_item_track_system"):weave_activate_spawner(arg_5_0._unit, arg_5_0._objective_name)
 end
 
-WeaveLimitedItemSpawnerExtension.destroy = function (self)
+function WeaveLimitedItemSpawnerExtension.destroy(arg_6_0)
 	return
 end
 
-WeaveLimitedItemSpawnerExtension._deactivate = function (self)
-	local limited_item_track_system = Managers.state.entity:system("limited_item_track_system")
+function WeaveLimitedItemSpawnerExtension._deactivate(arg_7_0)
+	Managers.state.entity:system("limited_item_track_system"):deactivate_group(arg_7_0._objective_name)
 
-	limited_item_track_system:deactivate_group(self._objective_name)
+	if arg_7_0._is_server then
+		local var_7_0 = arg_7_0._limited_item_track_extension.items
 
-	if self._is_server then
-		local items = self._limited_item_track_extension.items
-
-		for _, unit in ipairs(items) do
-			if type(unit) ~= "boolean" then
-				Managers.state.unit_spawner:mark_for_deletion(unit)
+		for iter_7_0, iter_7_1 in ipairs(var_7_0) do
+			if type(iter_7_1) ~= "boolean" then
+				Managers.state.unit_spawner:mark_for_deletion(iter_7_1)
 			end
 		end
 	end
 end
 
-WeaveLimitedItemSpawnerExtension.get_percentage_done = function (self)
-	return self._value / 1
+function WeaveLimitedItemSpawnerExtension.get_percentage_done(arg_8_0)
+	return arg_8_0._value / 1
 end
 
-WeaveLimitedItemSpawnerExtension._server_update = function (self, dt, t)
-	local limited_item_track_extension = self._limited_item_track_extension
+function WeaveLimitedItemSpawnerExtension._server_update(arg_9_0, arg_9_1, arg_9_2)
+	local var_9_0 = arg_9_0._limited_item_track_extension
 
-	if limited_item_track_extension.num_socketed_items == limited_item_track_extension.pool then
-		self._value = 1
+	if var_9_0.num_socketed_items == var_9_0.pool then
+		arg_9_0._value = 1
 
-		local limited_item_track_system = Managers.state.entity:system("limited_item_track_system")
-
-		limited_item_track_system:decrease_group_pool_size(self._objective_name)
+		Managers.state.entity:system("limited_item_track_system"):decrease_group_pool_size(arg_9_0._objective_name)
 	end
 
-	local is_any_transformed = limited_item_track_extension:is_any_transformed()
-	local is_any_spawned = limited_item_track_extension:is_any_item_spawned()
+	local var_9_1 = var_9_0:is_any_transformed()
+	local var_9_2 = var_9_0:is_any_item_spawned()
 
-	if not self._interacting_with_spawned_item and is_any_transformed then
-		if self._on_first_pickup_func then
-			self._on_first_pickup_func(self._unit)
+	if not arg_9_0._interacting_with_spawned_item and var_9_1 then
+		if arg_9_0._on_first_pickup_func then
+			arg_9_0._on_first_pickup_func(arg_9_0._unit)
 
-			self._on_first_pickup_func = nil
+			arg_9_0._on_first_pickup_func = nil
 		end
 
-		if self._on_pickup_func then
-			self._on_pickup_func(self._unit, self._from_spawner)
+		if arg_9_0._on_pickup_func then
+			arg_9_0._on_pickup_func(arg_9_0._unit, arg_9_0._from_spawner)
 		end
 
-		self._interacting_with_spawned_item = true
-		self._from_spawner = false
-	elseif self._interacting_with_spawned_item and not is_any_transformed then
-		if is_any_spawned and self._on_throw_func then
-			self._on_throw_func(self._unit)
+		arg_9_0._interacting_with_spawned_item = true
+		arg_9_0._from_spawner = false
+	elseif arg_9_0._interacting_with_spawned_item and not var_9_1 then
+		if var_9_2 and arg_9_0._on_throw_func then
+			arg_9_0._on_throw_func(arg_9_0._unit)
 		end
 
-		self._interacting_with_spawned_item = false
+		arg_9_0._interacting_with_spawned_item = false
 	end
 
-	if not self._items_spawned and is_any_spawned then
-		self._from_spawner = true
+	if not arg_9_0._items_spawned and var_9_2 then
+		arg_9_0._from_spawner = true
 
-		if self._on_spawn_func then
-			self._on_spawn_func(self._unit)
+		if arg_9_0._on_spawn_func then
+			arg_9_0._on_spawn_func(arg_9_0._unit)
 		end
 
-		self._items_spawned = true
-	elseif self._items_spawned and not is_any_spawned then
-		self._from_spawner = false
+		arg_9_0._items_spawned = true
+	elseif arg_9_0._items_spawned and not var_9_2 then
+		arg_9_0._from_spawner = false
 
-		if self._on_destroy_func then
-			self._on_destroy_func(self._unit)
+		if arg_9_0._on_destroy_func then
+			arg_9_0._on_destroy_func(arg_9_0._unit)
 		end
 
-		self._items_spawned = false
+		arg_9_0._items_spawned = false
 	end
 
-	self:server_set_value(self._value)
+	arg_9_0:server_set_value(arg_9_0._value)
 end
 
-WeaveLimitedItemSpawnerExtension._client_update = function (self, dt, t)
-	self._value = self:client_get_value()
+function WeaveLimitedItemSpawnerExtension._client_update(arg_10_0, arg_10_1, arg_10_2)
+	arg_10_0._value = arg_10_0:client_get_value()
 end

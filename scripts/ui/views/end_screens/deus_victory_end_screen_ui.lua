@@ -1,84 +1,82 @@
-﻿-- chunkname: @scripts/ui/views/end_screens/deus_victory_end_screen_ui.lua
+-- chunkname: @scripts/ui/views/end_screens/deus_victory_end_screen_ui.lua
 
 require("scripts/helpers/deus_power_up_utils")
 require("scripts/ui/dlc_morris/views/end_screen/deus_journey_presentation_ui")
 require("scripts/ui/views/end_screens/base_end_screen_ui")
 
-local definitions = local_require("scripts/ui/views/end_screens/deus_victory_end_screen_ui_definitions")
-local states = {
+local var_0_0 = local_require("scripts/ui/views/end_screens/deus_victory_end_screen_ui_definitions")
+local var_0_1 = {
 	DONE = "DONE",
-	PRESENTING_JOURNEY = "PRESENTING_JOURNEY",
 	WAITING_TO_START = "WAITING_TO_START",
+	PRESENTING_JOURNEY = "PRESENTING_JOURNEY"
 }
 
 DeusVictoryEndScreenUI = class(DeusVictoryEndScreenUI, BaseEndScreenUI)
 
-DeusVictoryEndScreenUI.init = function (self, ingame_ui_context, input_service, screen_context)
-	DeusVictoryEndScreenUI.super.init(self, ingame_ui_context, input_service, definitions)
-	fassert(screen_context.journey_name, "No journey_name set in screen_context")
+function DeusVictoryEndScreenUI.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	DeusVictoryEndScreenUI.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
+	fassert(arg_1_3.journey_name, "No journey_name set in screen_context")
 
-	self._journey_name = screen_context.journey_name
+	arg_1_0._journey_name = arg_1_3.journey_name
 
-	fassert(screen_context.profile_index, "No profile_index set in screen_context")
+	fassert(arg_1_3.profile_index, "No profile_index set in screen_context")
 
-	self._profile_index = screen_context.profile_index
+	arg_1_0._profile_index = arg_1_3.profile_index
 
-	fassert(screen_context.previous_completed_difficulty_index, "No previous_completed_difficulty_index set in screen_context")
+	fassert(arg_1_3.previous_completed_difficulty_index, "No previous_completed_difficulty_index set in screen_context")
 
-	self._previous_completed_difficulty_index = screen_context.previous_completed_difficulty_index
-	self._journey_presentation_ui = DeusJourneyPresentationUI:new(ingame_ui_context)
+	arg_1_0._previous_completed_difficulty_index = arg_1_3.previous_completed_difficulty_index
+	arg_1_0._journey_presentation_ui = DeusJourneyPresentationUI:new(arg_1_1)
 
-	self:_play_sound("play_gui_splash_victory")
+	arg_1_0:_play_sound("play_gui_splash_victory")
 
-	self._state = states.WAITING_TO_START
+	arg_1_0._state = var_0_1.WAITING_TO_START
 end
 
-DeusVictoryEndScreenUI._destroy = function (self)
-	if self._journey_presentation_ui then
-		self._journey_presentation_ui:destroy()
+function DeusVictoryEndScreenUI._destroy(arg_2_0)
+	if arg_2_0._journey_presentation_ui then
+		arg_2_0._journey_presentation_ui:destroy()
 
-		self._journey_presentation_ui = nil
+		arg_2_0._journey_presentation_ui = nil
 	end
 end
 
-DeusVictoryEndScreenUI._start = function (self)
-	local scenegraph_definition = definitions.scenegraph_definition
-	local params = {
-		draw_flags = self._draw_flags,
-		wwise_world = self._wwise_world,
+function DeusVictoryEndScreenUI._start(arg_3_0)
+	local var_3_0 = var_0_0.scenegraph_definition
+	local var_3_1 = {
+		draw_flags = arg_3_0._draw_flags,
+		wwise_world = arg_3_0._wwise_world
 	}
 
-	self._victory_anim_id = self._ui_animator:start_animation("victory", self._widgets_by_name, scenegraph_definition, params)
+	arg_3_0._victory_anim_id = arg_3_0._ui_animator:start_animation("victory", arg_3_0._widgets_by_name, var_3_0, var_3_1)
 
-	if self._journey_presentation_ui then
-		self._journey_presentation_ui:start(self._journey_name, self._previous_completed_difficulty_index)
+	if arg_3_0._journey_presentation_ui then
+		arg_3_0._journey_presentation_ui:start(arg_3_0._journey_name, arg_3_0._previous_completed_difficulty_index)
 
-		self._state = states.PRESENTING_JOURNEY
+		arg_3_0._state = var_0_1.PRESENTING_JOURNEY
 	end
 end
 
-DeusVictoryEndScreenUI._update = function (self, dt)
-	if self._completed then
+function DeusVictoryEndScreenUI._update(arg_4_0, arg_4_1)
+	if arg_4_0._completed then
 		return
 	end
 
-	if self._victory_anim_id and self._ui_animator:is_animation_completed(self._victory_anim_id) then
-		self._victory_anim_id = nil
+	if arg_4_0._victory_anim_id and arg_4_0._ui_animator:is_animation_completed(arg_4_0._victory_anim_id) then
+		arg_4_0._victory_anim_id = nil
 	end
 
-	if self._state == states.PRESENTING_JOURNEY then
-		local journey_presentation_ui = self._journey_presentation_ui
+	if arg_4_0._state == var_0_1.PRESENTING_JOURNEY then
+		local var_4_0 = arg_4_0._journey_presentation_ui
 
-		if journey_presentation_ui and journey_presentation_ui.active then
-			journey_presentation_ui:update(dt)
+		if var_4_0 and var_4_0.active then
+			var_4_0:update(arg_4_1)
 		end
 
-		local journey_presentation_done = not journey_presentation_ui or journey_presentation_ui:presentation_completed()
-
-		if journey_presentation_done then
-			self._state = states.DONE
+		if not var_4_0 or var_4_0:presentation_completed() then
+			arg_4_0._state = var_0_1.DONE
 		end
-	elseif self._state == states.DONE and self._victory_anim_id == nil then
-		self:_on_completed()
+	elseif arg_4_0._state == var_0_1.DONE and arg_4_0._victory_anim_id == nil then
+		arg_4_0:_on_completed()
 	end
 end

@@ -1,86 +1,86 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_bestigor_behavior.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_bestigor_behavior.lua
 
-local ACTIONS = BreedActions.beastmen_bestigor
-local BESTIGOR_COMBAT = {
+local var_0_0 = BreedActions.beastmen_bestigor
+local var_0_1 = {
 	"BTUtilityNode",
-	action_data = ACTIONS.utility_action,
+	action_data = var_0_0.utility_action,
 	{
 		"BTClanRatFollowAction",
 		name = "follow",
-		action_data = ACTIONS.follow,
+		action_data = var_0_0.follow
 	},
 	{
 		"BTCombatStepAction",
 		name = "combat_step",
-		action_data = ACTIONS.combat_step,
+		action_data = var_0_0.combat_step
 	},
 	{
 		"BTChargeAttackAction",
-		condition = "ask_target_before_attacking",
 		name = "charge_attack",
-		action_data = ACTIONS.charge_attack,
+		condition = "ask_target_before_attacking",
+		action_data = var_0_0.charge_attack
 	},
 	{
 		"BTRandom",
-		action_data = ACTIONS.running_attack,
+		action_data = var_0_0.running_attack,
 		{
 			"BTStormVerminAttackAction",
 			name = "running_special_attack_sweep",
 			weight = 1,
-			action_data = ACTIONS.special_attack_sweep,
+			action_data = var_0_0.special_attack_sweep
 		},
-		name = "running_attack",
+		name = "running_attack"
 	},
 	{
 		"BTStormVerminAttackAction",
-		condition = "ask_target_before_attacking",
 		name = "special_attack_cleave",
-		action_data = ACTIONS.special_attack_cleave,
+		condition = "ask_target_before_attacking",
+		action_data = var_0_0.special_attack_cleave
 	},
 	{
 		"BTStormVerminAttackAction",
-		condition = "ask_target_before_attacking",
 		name = "special_attack_sweep",
-		action_data = ACTIONS.special_attack_sweep,
+		condition = "ask_target_before_attacking",
+		action_data = var_0_0.special_attack_sweep
 	},
 	{
 		"BTStormVerminPushAction",
 		name = "push_attack",
-		action_data = ACTIONS.push_attack,
+		action_data = var_0_0.push_attack
 	},
 	{
 		"BTCombatShoutAction",
 		name = "combat_shout",
-		action_data = ACTIONS.combat_shout,
+		action_data = var_0_0.combat_shout
 	},
-	condition = "confirmed_player_sighting",
 	name = "in_combat",
+	condition = "confirmed_player_sighting"
 }
-local BESTIGOR_SMART_OBJECT = {
+local var_0_2 = {
 	"BTSelector",
 	{
 		"BTTeleportAction",
 		condition = "at_teleport_smartobject",
-		name = "teleport",
+		name = "teleport"
 	},
 	{
 		"BTClimbAction",
 		condition = "at_climb_smartobject",
-		name = "climb",
+		name = "climb"
 	},
 	{
 		"BTJumpAcrossAction",
 		condition = "at_jump_smartobject",
-		name = "jump_across",
+		name = "jump_across"
 	},
 	{
 		"BTSmashDoorAction",
-		condition = "at_door_smartobject",
 		name = "smash_door",
-		action_data = ACTIONS.smash_door,
+		condition = "at_door_smartobject",
+		action_data = var_0_0.smash_door
 	},
 	condition = "bestigor_at_smartobject",
-	name = "smartobject",
+	name = "smartobject"
 }
 
 BreedBehaviors.bestigor = {
@@ -88,57 +88,57 @@ BreedBehaviors.bestigor = {
 	{
 		"BTSpawningAction",
 		condition = "spawn",
-		name = "spawn",
+		name = "spawn"
 	},
 	{
 		"BTInVortexAction",
 		condition = "in_vortex",
-		name = "in_vortex",
+		name = "in_vortex"
 	},
 	{
 		"BTInGravityWellAction",
 		condition = "in_gravity_well",
-		name = "in_gravity_well",
+		name = "in_gravity_well"
 	},
 	{
 		"BTFallAction",
 		condition = "is_falling",
-		name = "falling",
+		name = "falling"
 	},
 	{
 		"BTStaggerAction",
-		condition = "stagger",
 		name = "stagger",
-		action_data = ACTIONS.stagger,
+		condition = "stagger",
+		action_data = var_0_0.stagger
 	},
 	{
 		"BTBlockedAction",
-		condition = "blocked",
 		name = "blocked",
-		action_data = ACTIONS.blocked,
+		condition = "blocked",
+		action_data = var_0_0.blocked
 	},
-	BESTIGOR_SMART_OBJECT,
-	BESTIGOR_COMBAT,
+	var_0_2,
+	var_0_1,
 	{
 		"BTMoveToGoalAction",
-		condition = "has_goal_destination",
 		name = "move_to_goal",
-		action_data = ACTIONS.follow,
+		condition = "has_goal_destination",
+		action_data = var_0_0.follow
 	},
 	{
 		"BTAlertedAction",
-		condition = "player_spotted",
 		name = "alerted",
-		action_data = ACTIONS.alerted,
+		condition = "player_spotted",
+		action_data = var_0_0.alerted
 	},
 	{
 		"BTIdleAction",
 		condition = "no_target",
-		name = "idle",
+		name = "idle"
 	},
 	{
 		"BTFallbackIdleAction",
-		name = "fallback_idle",
+		name = "fallback_idle"
 	},
-	name = "bestigor",
+	name = "bestigor"
 }

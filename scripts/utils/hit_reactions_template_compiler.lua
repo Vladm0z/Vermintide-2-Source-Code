@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/utils/hit_reactions_template_compiler.lua
+-- chunkname: @scripts/utils/hit_reactions_template_compiler.lua
 
 require("scripts/managers/status_effect/status_effect_templates")
 dofile("scripts/settings/hit_effects/hit_effects_skaven_clan_rat")
@@ -40,150 +40,149 @@ Dismemberments = {}
 HitTemplates = {}
 SoundEvents = {}
 DismemberFlowEvents = {
-	explode_head = true,
+	explode_head = true
 }
 AdditionalHitReactions = {
-	"HitEffectsSkavenGreySeerMounted",
+	"HitEffectsSkavenGreySeerMounted"
 }
 
-local function setup_dismemberment_table(breed_name, hit_zones)
-	if not hit_zones then
+local function var_0_0(arg_1_0, arg_1_1)
+	if not arg_1_1 then
 		return
 	end
 
-	local events = {}
+	local var_1_0 = {}
 
-	for hit_zone, _ in pairs(hit_zones) do
-		local event_name = "dismember_" .. hit_zone
+	for iter_1_0, iter_1_1 in pairs(arg_1_1) do
+		local var_1_1 = "dismember_" .. iter_1_0
 
-		events[hit_zone] = event_name
-		DismemberFlowEvents[event_name] = true
+		var_1_0[iter_1_0] = var_1_1
+		DismemberFlowEvents[var_1_1] = true
 	end
 
-	Dismemberments[breed_name] = events
+	Dismemberments[arg_1_0] = var_1_0
 end
 
-local function add_to_sound_events_table(sound_event)
-	if not SoundEvents[sound_event] then
-		local events = {}
+local function var_0_1(arg_2_0)
+	if not SoundEvents[arg_2_0] then
+		local var_2_0 = {
+			["false"] = arg_2_0,
+			["true"] = arg_2_0 .. "_husk"
+		}
 
-		events["false"] = sound_event
-		events["true"] = sound_event .. "_husk"
-		SoundEvents[sound_event] = events
+		SoundEvents[arg_2_0] = var_2_0
 	end
 end
 
-local function get_inheritence_list(template_list, last_template)
-	local s = ""
+local function var_0_2(arg_3_0, arg_3_1)
+	local var_3_0 = ""
 
-	for i = 1, #template_list do
-		s = s .. sprintf("\t%q inherits from %q\n", template_list[i], template_list[i + 1] or last_template)
+	for iter_3_0 = 1, #arg_3_0 do
+		var_3_0 = var_3_0 .. sprintf("\t%q inherits from %q\n", arg_3_0[iter_3_0], arg_3_0[iter_3_0 + 1] or arg_3_1)
 	end
 
-	return s
+	return var_3_0
 end
 
-local function compile_template_rule(template, all_templates, inherited_templates)
-	local new_template = {}
+local function var_0_3(arg_4_0, arg_4_1, arg_4_2)
+	local var_4_0 = {}
 
-	if template.inherits then
-		local parent_template_name = template.inherits
-		local parent_template = all_templates[parent_template_name]
+	if arg_4_0.inherits then
+		local var_4_1 = arg_4_0.inherits
+		local var_4_2 = arg_4_1[var_4_1]
 
-		assert(parent_template, sprintf("Couldn't inherit from template %q; Template does not exist.", template.inherits))
-		assert(table.contains(inherited_templates, parent_template_name) == false, sprintf("Cyclic inheritence in %q:\n%s", inherited_templates[1], get_inheritence_list(inherited_templates, parent_template_name)))
+		assert(var_4_2, sprintf("Couldn't inherit from template %q; Template does not exist.", arg_4_0.inherits))
+		assert(table.contains(arg_4_2, var_4_1) == false, sprintf("Cyclic inheritence in %q:\n%s", arg_4_2[1], var_0_2(arg_4_2, var_4_1)))
 
-		inherited_templates[#inherited_templates + 1] = parent_template_name
-		new_template = compile_template_rule(parent_template, all_templates, inherited_templates)
+		arg_4_2[#arg_4_2 + 1] = var_4_1
+		var_4_0 = var_0_3(var_4_2, arg_4_1, arg_4_2)
 	end
 
-	local conditions = new_template.conditions or {}
-	local num_conditions = new_template.num_conditions or 0
+	local var_4_3 = var_4_0.conditions or {}
+	local var_4_4 = var_4_0.num_conditions or 0
 
-	for key, value in pairs(template) do
-		new_template[key] = value
+	for iter_4_0, iter_4_1 in pairs(arg_4_0) do
+		var_4_0[iter_4_0] = iter_4_1
 	end
 
-	if template.extra_conditions then
-		for key, value in pairs(template.extra_conditions) do
-			if not conditions[key] then
-				num_conditions = num_conditions + 1
+	if arg_4_0.extra_conditions then
+		for iter_4_2, iter_4_3 in pairs(arg_4_0.extra_conditions) do
+			if not var_4_3[iter_4_2] then
+				var_4_4 = var_4_4 + 1
 			end
 
-			conditions[key] = value
+			var_4_3[iter_4_2] = iter_4_3
 		end
 
-		new_template.extra_conditions = nil
+		var_4_0.extra_conditions = nil
 	end
 
-	new_template.conditions = conditions
-	new_template.num_conditions = num_conditions
+	var_4_0.conditions = var_4_3
+	var_4_0.num_conditions = var_4_4
 
-	return new_template
+	return var_4_0
 end
 
-local function insert_sorted(t, template_rule)
-	local num_conditions = template_rule.num_conditions
+local function var_0_4(arg_5_0, arg_5_1)
+	local var_5_0 = arg_5_1.num_conditions
 
-	for i = #t + 1, 1, -1 do
-		if i == 1 or num_conditions <= t[i - 1].num_conditions then
-			t[i] = template_rule
+	for iter_5_0 = #arg_5_0 + 1, 1, -1 do
+		if iter_5_0 == 1 or var_5_0 <= arg_5_0[iter_5_0 - 1].num_conditions then
+			arg_5_0[iter_5_0] = arg_5_1
 
 			break
 		else
-			t[i] = t[i - 1]
+			arg_5_0[iter_5_0] = arg_5_0[iter_5_0 - 1]
 		end
 	end
 end
 
-local function compile_effects_templates(template)
-	if not template or HitTemplates[template] then
+local function var_0_5(arg_6_0)
+	if not arg_6_0 or HitTemplates[arg_6_0] then
 		return
 	end
 
-	local new_templates = {}
-	local templates = rawget(_G, template)
+	local var_6_0 = {}
+	local var_6_1 = rawget(_G, arg_6_0)
 
-	for name, template_rule in pairs(templates) do
-		local new_template_rule = compile_template_rule(template_rule, templates, {
-			name,
+	for iter_6_0, iter_6_1 in pairs(var_6_1) do
+		local var_6_2 = var_0_3(iter_6_1, var_6_1, {
+			iter_6_0
 		})
 
-		new_template_rule.template_name = name
+		var_6_2.template_name = iter_6_0
 
-		insert_sorted(new_templates, new_template_rule)
+		var_0_4(var_6_0, var_6_2)
 
-		if template_rule.sound_event then
-			local sound_event = template_rule.sound_event
+		if iter_6_1.sound_event then
+			local var_6_3 = iter_6_1.sound_event
 
-			if type(sound_event) == "string" then
-				add_to_sound_events_table(sound_event)
+			if type(var_6_3) == "string" then
+				var_0_1(var_6_3)
 			else
-				local num_events = #sound_event
+				local var_6_4 = #var_6_3
 
-				for i = 1, num_events do
-					add_to_sound_events_table(sound_event[i])
+				for iter_6_2 = 1, var_6_4 do
+					var_0_1(var_6_3[iter_6_2])
 				end
 			end
 		end
 	end
 
-	HitTemplates[template] = new_templates
+	HitTemplates[arg_6_0] = var_6_0
 end
 
-local function setup_hit_reactions()
-	for breed_name, breed_settings in pairs(Breeds) do
-		setup_dismemberment_table(breed_name, breed_settings.hit_zones)
-		compile_effects_templates(breed_settings.hit_effect_template)
+;(function()
+	for iter_7_0, iter_7_1 in pairs(Breeds) do
+		var_0_0(iter_7_0, iter_7_1.hit_zones)
+		var_0_5(iter_7_1.hit_effect_template)
 	end
 
-	for breed_name, breed_settings in pairs(PlayerBreeds) do
-		setup_dismemberment_table(breed_name, breed_settings.hit_zones)
+	for iter_7_2, iter_7_3 in pairs(PlayerBreeds) do
+		var_0_0(iter_7_2, iter_7_3.hit_zones)
 	end
 
-	for _, hit_effect_template in pairs(AdditionalHitReactions) do
-		compile_effects_templates(hit_effect_template)
+	for iter_7_4, iter_7_5 in pairs(AdditionalHitReactions) do
+		var_0_5(iter_7_5)
 	end
-end
-
-setup_hit_reactions()
+end)()

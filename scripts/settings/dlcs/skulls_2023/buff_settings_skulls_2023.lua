@@ -1,438 +1,417 @@
-﻿-- chunkname: @scripts/settings/dlcs/skulls_2023/buff_settings_skulls_2023.lua
+-- chunkname: @scripts/settings/dlcs/skulls_2023/buff_settings_skulls_2023.lua
 
-local settings = DLCSettings.skulls_2023
-local BUFF_DURATION = 30
-local MAX_STACKS = 5
-local BUFF_REFRESH_STACKS = 1
-local buff_order = {
+local var_0_0 = DLCSettings.skulls_2023
+local var_0_1 = 30
+local var_0_2 = 5
+local var_0_3 = 1
+local var_0_4 = {
 	"skulls_2023_buff_power_level",
 	"skulls_2023_buff_attack_speed",
 	"skulls_2023_buff_crit_chance",
 	"skulls_2023_buff_movement_speed",
-	"skulls_2023_buff_cooldown_regen",
+	"skulls_2023_buff_cooldown_regen"
 }
-local MIN_BUFF_DURATION = 30
-local BUFF_DURATION_PER_STACK = 15
-local DEBUFF_DURATION = 20
+local var_0_5 = 30
+local var_0_6 = 15
+local var_0_7 = 20
 
-local function buff_duration_func(current_stacks, owner_unit)
-	local duration = MIN_BUFF_DURATION + BUFF_DURATION_PER_STACK * MAX_STACKS - BUFF_DURATION_PER_STACK * current_stacks
-	local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
-	local has_full_set = buff_extension:num_buff_stacks("power_up_boon_skulls_set_bonus_02_event") > 0
+local function var_0_8(arg_1_0, arg_1_1)
+	local var_1_0 = var_0_5 + var_0_6 * var_0_2 - var_0_6 * arg_1_0
 
-	if has_full_set then
-		duration = duration * (1 + MorrisBuffTweakData.boon_skulls_set_bonus_02.duration_amplify_amount)
+	if ScriptUnit.extension(arg_1_1, "buff_system"):num_buff_stacks("power_up_boon_skulls_set_bonus_02_event") > 0 then
+		var_1_0 = var_1_0 * (1 + MorrisBuffTweakData.boon_skulls_set_bonus_02.duration_amplify_amount)
 	end
 
-	return duration
+	return var_1_0
 end
 
-local function buff_duration_modifier_func(owner_unit, sub_buff_template, duration, buff_extension)
-	local buff_stacks = buff_extension:num_buff_stacks("skulls_2023_buff")
+local function var_0_9(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_3:num_buff_stacks("skulls_2023_buff")
 
-	return buff_duration_func(math.min(buff_stacks, MAX_STACKS), owner_unit)
+	return var_0_8(math.min(var_2_0, var_0_2), arg_2_0)
 end
 
-local function apply_buffs_from_stacks(target_unit, stack_count)
-	local params = {
-		external_optional_duration = buff_duration_func(stack_count, target_unit),
+local function var_0_10(arg_3_0, arg_3_1)
+	local var_3_0 = {
+		external_optional_duration = var_0_8(arg_3_1, arg_3_0)
 	}
-	local buff_system = Managers.state.entity:system("buff_system")
+	local var_3_1 = Managers.state.entity:system("buff_system")
 
-	for i = 1, math.min(stack_count, #buff_order) do
-		buff_system:add_buff_synced(target_unit, buff_order[i], BuffSyncType.LocalAndServer, params)
+	for iter_3_0 = 1, math.min(arg_3_1, #var_0_4) do
+		var_3_1:add_buff_synced(arg_3_0, var_0_4[iter_3_0], BuffSyncType.LocalAndServer, var_3_0)
 	end
 end
 
-settings.buff_templates = {
+var_0_0.buff_templates = {
 	skulls_2023_buff = {
 		buffs = {
 			{
 				name = "skulls_2023_buff",
-				max_stacks = MAX_STACKS,
+				max_stacks = var_0_2
 			},
 			{
-				buff_func = "on_kill_skulls_2023_buff",
 				event = "on_kill",
-				max_stacks = 1,
 				name = "skulls_2023_buff_kill_tracker",
+				max_stacks = 1,
+				buff_func = "on_kill_skulls_2023_buff"
 			},
 			{
-				apply_buff_func = "apply_skulls_2023_buff",
-				buff_func = "dummy_function",
+				name = "skulls_2023_buff_main",
+				refresh_durations = true,
 				duration_end_func = "cleanup_skulls_2023_buff",
 				event = "on_knocked_down",
-				max_stacks = 1,
-				name = "skulls_2023_buff_main",
-				reapply_buff_func = "reapply_skulls_2023_buff",
-				refresh_durations = true,
 				remove_buff_func = "remove_skulls_2023_buff",
+				apply_buff_func = "apply_skulls_2023_buff",
+				buff_func = "dummy_function",
 				remove_on_proc = true,
-				duration = BUFF_DURATION,
-				duration_modifier_func = buff_duration_modifier_func,
-			},
-		},
+				max_stacks = 1,
+				reapply_buff_func = "reapply_skulls_2023_buff",
+				duration = var_0_1,
+				duration_modifier_func = var_0_9
+			}
+		}
 	},
 	skulls_2023_buff_power_level = {
 		buffs = {
 			{
+				name = "skulls_2023_buff_power_level",
+				multiplier = 0.15,
+				stat_buff = "power_level",
 				buff_func = "dummy_function",
 				event = "on_knocked_down",
-				icon = "potion_liquid_bravado",
-				max_stacks = 1,
-				multiplier = 0.15,
-				name = "skulls_2023_buff_power_level",
-				priority_buff = true,
 				refresh_durations = true,
+				priority_buff = true,
 				remove_on_proc = true,
-				stat_buff = "power_level",
-				duration = BUFF_DURATION,
-			},
-		},
+				max_stacks = 1,
+				icon = "potion_liquid_bravado",
+				duration = var_0_1
+			}
+		}
 	},
 	skulls_2023_buff_attack_speed = {
 		buffs = {
 			{
+				name = "skulls_2023_buff_attack_speed",
+				multiplier = 0.12,
+				stat_buff = "attack_speed",
 				buff_func = "dummy_function",
 				event = "on_knocked_down",
-				icon = "grudge_mark_frenzy_debuff",
-				max_stacks = 1,
-				multiplier = 0.12,
-				name = "skulls_2023_buff_attack_speed",
-				priority_buff = true,
 				refresh_durations = true,
+				priority_buff = true,
 				remove_on_proc = true,
-				stat_buff = "attack_speed",
-				duration = BUFF_DURATION,
-			},
-		},
+				max_stacks = 1,
+				icon = "grudge_mark_frenzy_debuff",
+				duration = var_0_1
+			}
+		}
 	},
 	skulls_2023_buff_crit_chance = {
 		buffs = {
 			{
-				bonus = 0.2,
+				name = "skulls_2023_buff_crit_chance",
+				stat_buff = "critical_strike_chance",
 				buff_func = "dummy_function",
 				event = "on_knocked_down",
-				icon = "bardin_slayer_crit_chance",
-				max_stacks = 1,
-				name = "skulls_2023_buff_crit_chance",
-				priority_buff = true,
 				refresh_durations = true,
+				priority_buff = true,
 				remove_on_proc = true,
-				stat_buff = "critical_strike_chance",
-				duration = BUFF_DURATION,
-			},
-		},
+				max_stacks = 1,
+				icon = "bardin_slayer_crit_chance",
+				bonus = 0.2,
+				duration = var_0_1
+			}
+		}
 	},
 	skulls_2023_buff_movement_speed = {
 		buffs = {
 			{
-				apply_buff_func = "apply_movement_buff",
+				priority_buff = true,
+				name = "skulls_2023_buff_movement_speed",
+				icon = "mutator_skulls_movement_speed",
 				buff_func = "dummy_function",
 				event = "on_knocked_down",
-				icon = "mutator_skulls_movement_speed",
-				max_stacks = 1,
-				multiplier = 1.2,
-				name = "skulls_2023_buff_movement_speed",
-				priority_buff = true,
-				refresh_durations = true,
 				remove_buff_func = "remove_movement_buff",
+				refresh_durations = true,
+				multiplier = 1.2,
+				apply_buff_func = "apply_movement_buff",
 				remove_on_proc = true,
+				max_stacks = 1,
 				path_to_movement_setting_to_modify = {
-					"move_speed",
+					"move_speed"
 				},
-				duration = BUFF_DURATION,
-			},
-		},
+				duration = var_0_1
+			}
+		}
 	},
 	skulls_2023_buff_cooldown_regen = {
 		buffs = {
 			{
+				name = "skulls_2023_buff_cooldown_regen",
+				multiplier = 0.25,
+				stat_buff = "cooldown_regen",
 				buff_func = "dummy_function",
 				event = "on_knocked_down",
-				icon = "mutator_skulls_cooldown_reduction",
-				max_stacks = 1,
-				multiplier = 0.25,
-				name = "skulls_2023_buff_cooldown_regen",
-				priority_buff = true,
 				refresh_durations = true,
+				priority_buff = true,
 				remove_on_proc = true,
-				stat_buff = "cooldown_regen",
-				duration = BUFF_DURATION,
-			},
-		},
+				max_stacks = 1,
+				icon = "mutator_skulls_cooldown_reduction",
+				duration = var_0_1
+			}
+		}
 	},
 	skulls_2023_buff_refresh = {
 		buffs = {
 			{
-				buff_func = "dummy_function",
-				event = "on_knocked_down",
-				icon = "buff_icon_mutator_icon_slayer_curse",
-				name = "skulls_2023_buff_refresh",
-				on_max_stacks_func = "skulls_2023_stack_refresh",
-				remove_on_proc = true,
 				reset_on_max_stacks = true,
-				max_stacks = BUFF_REFRESH_STACKS,
-			},
-		},
+				name = "skulls_2023_buff_refresh",
+				buff_func = "dummy_function",
+				on_max_stacks_func = "skulls_2023_stack_refresh",
+				icon = "buff_icon_mutator_icon_slayer_curse",
+				event = "on_knocked_down",
+				remove_on_proc = true,
+				max_stacks = var_0_3
+			}
+		}
 	},
 	skulls_2023_debuff = {
 		buffs = {
 			{
-				apply_buff_func = "apply_skulls_2023_debuff",
-				buff_func = "dummy_function",
-				debuff = true,
-				event = "on_knocked_down",
-				icon = "grudge_mark_cursed_debuff",
-				name = "skulls_2023_debuff",
 				priority_buff = true,
-				refresh_durations = true,
+				name = "skulls_2023_debuff",
+				icon = "grudge_mark_cursed_debuff",
+				buff_func = "dummy_function",
+				event = "on_knocked_down",
 				remove_buff_func = "remove_skulls_2023_debuff",
+				apply_buff_func = "apply_skulls_2023_debuff",
+				refresh_durations = true,
 				remove_on_proc = true,
-				duration = DEBUFF_DURATION,
-				max_stacks = MAX_STACKS,
+				debuff = true,
+				duration = var_0_7,
+				max_stacks = var_0_2
 			},
 			{
-				buff_func = "dummy_function",
-				damage_percentage = 0.01,
-				event = "on_knocked_down",
-				max_stacks = 1,
 				name = "skulls_2023_debuff_dot",
+				damage_percentage = 0.01,
+				buff_func = "dummy_function",
+				event = "on_knocked_down",
 				refresh_durations = true,
 				remove_on_proc = true,
-				update_frequency = 1,
-				update_func = "update_skulls_2023_debuff_dot",
 				update_start_delay = 1,
-				duration = DEBUFF_DURATION,
-			},
-		},
-	},
+				max_stacks = 1,
+				update_func = "update_skulls_2023_debuff_dot",
+				update_frequency = 1,
+				duration = var_0_7
+			}
+		}
+	}
 }
 
-local function is_local(unit)
-	local player = Managers.player:owner(unit)
+local function var_0_11(arg_4_0)
+	local var_4_0 = Managers.player:owner(arg_4_0)
 
-	return player and not player.remote
+	return var_4_0 and not var_4_0.remote
 end
 
-local function is_bot(unit)
-	local player = Managers.player:owner(unit)
+local function var_0_12(arg_5_0)
+	local var_5_0 = Managers.player:owner(arg_5_0)
 
-	return player and player.bot_player
+	return var_5_0 and var_5_0.bot_player
 end
 
-settings.buff_function_templates = {
-	apply_skulls_2023_buff = function (unit, buff, params, world)
-		if not is_local(unit) then
+var_0_0.buff_function_templates = {
+	apply_skulls_2023_buff = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+		if not var_0_11(arg_6_0) then
 			return
 		end
 
-		local buff_extension = ScriptUnit.extension(unit, "buff_system")
-		local debuff_stacks = buff_extension:get_stacking_buff("skulls_2023_debuff")
+		local var_6_0 = ScriptUnit.extension(arg_6_0, "buff_system")
+		local var_6_1 = var_6_0:get_stacking_buff("skulls_2023_debuff")
 
-		if debuff_stacks then
-			for i = #debuff_stacks, 1, -1 do
-				local buff_id = debuff_stacks[i].id
+		if var_6_1 then
+			for iter_6_0 = #var_6_1, 1, -1 do
+				local var_6_2 = var_6_1[iter_6_0].id
 
-				buff_extension:remove_buff(buff_id)
+				var_6_0:remove_buff(var_6_2)
 			end
 		end
 
-		local buff_stacks = buff_extension:get_stacking_buff("skulls_2023_buff")
-		local num_buff_stacks = #buff_stacks
+		local var_6_3 = #var_6_0:get_stacking_buff("skulls_2023_buff")
 
-		apply_buffs_from_stacks(unit, math.min(num_buff_stacks, MAX_STACKS))
+		var_0_10(arg_6_0, math.min(var_6_3, var_0_2))
 
-		if not is_bot(unit) then
-			local first_person_extension = ScriptUnit.extension(unit, "first_person_system")
-			local effect_id = first_person_extension:create_screen_particles("fx/skulls_2023/screenspace_skulls_2023_buff")
+		if not var_0_12(arg_6_0) then
+			local var_6_4 = ScriptUnit.extension(arg_6_0, "first_person_system")
+			local var_6_5 = var_6_4:create_screen_particles("fx/skulls_2023/screenspace_skulls_2023_buff")
 
-			if effect_id then
-				local effect_lerp = (num_buff_stacks - 1) / (MAX_STACKS - 1)
-				local effect_strength = math.lerp(-0.55, 0.4, effect_lerp)
+			if var_6_5 then
+				local var_6_6 = (var_6_3 - 1) / (var_0_2 - 1)
+				local var_6_7 = math.lerp(-0.55, 0.4, var_6_6)
 
-				World.set_particles_material_scalar(world, effect_id, "overlay", "shadow_amount", effect_strength)
+				World.set_particles_material_scalar(arg_6_3, var_6_5, "overlay", "shadow_amount", var_6_7)
 
-				buff.effect_id = effect_id
+				arg_6_1.effect_id = var_6_5
 			end
 
-			first_person_extension:play_hud_sound_event("Play_skulls_event_buff_on")
+			var_6_4:play_hud_sound_event("Play_skulls_event_buff_on")
 		end
 	end,
-	reapply_skulls_2023_buff = function (unit, buff, params, world)
-		if not is_local(unit) then
+	reapply_skulls_2023_buff = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+		if not var_0_11(arg_7_0) then
 			return
 		end
 
-		local buff_extension = ScriptUnit.extension(unit, "buff_system")
-		local buff_stacks = buff_extension:get_stacking_buff("skulls_2023_buff")
-		local num_buff_stacks = #buff_stacks
+		local var_7_0 = #ScriptUnit.extension(arg_7_0, "buff_system"):get_stacking_buff("skulls_2023_buff")
 
-		apply_buffs_from_stacks(unit, math.min(num_buff_stacks, MAX_STACKS))
+		var_0_10(arg_7_0, math.min(var_7_0, var_0_2))
 
-		if not is_bot(unit) then
-			local effect_id = buff.effect_id
+		if not var_0_12(arg_7_0) then
+			local var_7_1 = arg_7_1.effect_id
 
-			if effect_id then
-				local effect_lerp = (num_buff_stacks - 1) / (MAX_STACKS - 1)
-				local effect_strength = math.lerp(-0.55, 0.4, effect_lerp)
+			if var_7_1 then
+				local var_7_2 = (var_7_0 - 1) / (var_0_2 - 1)
+				local var_7_3 = math.lerp(-0.55, 0.4, var_7_2)
 
-				World.set_particles_material_scalar(world, effect_id, "overlay", "shadow_amount", effect_strength)
+				World.set_particles_material_scalar(arg_7_3, var_7_1, "overlay", "shadow_amount", var_7_3)
 			end
 
-			if num_buff_stacks >= MAX_STACKS and not buff.sound_played then
-				local first_person_extension = ScriptUnit.extension(unit, "first_person_system")
+			if var_7_0 >= var_0_2 and not arg_7_1.sound_played then
+				ScriptUnit.extension(arg_7_0, "first_person_system"):play_hud_sound_event("Play_skulls_event_buff_max_stacks")
 
-				first_person_extension:play_hud_sound_event("Play_skulls_event_buff_max_stacks")
-
-				buff.sound_played = true
+				arg_7_1.sound_played = true
 			end
 		end
 	end,
-	remove_skulls_2023_buff = function (unit, buff, params, world)
-		if buff.effect_id then
-			local first_person_extension = ScriptUnit.extension(unit, "first_person_system")
+	remove_skulls_2023_buff = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+		if arg_8_1.effect_id then
+			ScriptUnit.extension(arg_8_0, "first_person_system"):stop_spawning_screen_particles(arg_8_1.effect_id)
 
-			first_person_extension:stop_spawning_screen_particles(buff.effect_id)
-
-			buff.effect_id = nil
+			arg_8_1.effect_id = nil
 		end
 
-		if not is_local(unit) then
+		if not var_0_11(arg_8_0) then
 			return
 		end
 
-		local buff_extension = ScriptUnit.extension(unit, "buff_system")
-		local buff_refresh_stacks = buff_extension:get_stacking_buff("skulls_2023_buff_refresh")
+		local var_8_0 = ScriptUnit.extension(arg_8_0, "buff_system")
+		local var_8_1 = var_8_0:get_stacking_buff("skulls_2023_buff_refresh")
 
-		if buff_refresh_stacks then
-			for i = #buff_refresh_stacks, 1, -1 do
-				local buff_id = buff_refresh_stacks[i].id
+		if var_8_1 then
+			for iter_8_0 = #var_8_1, 1, -1 do
+				local var_8_2 = var_8_1[iter_8_0].id
 
-				buff_extension:remove_buff(buff_id)
+				var_8_0:remove_buff(var_8_2)
 			end
 		end
 
-		local end_t = (buff.start_time or 0) + (buff.duration or 0)
+		local var_8_3 = (arg_8_1.start_time or 0) + (arg_8_1.duration or 0)
 
-		if end_t and end_t <= params.t then
-			local buff_system = Managers.state.entity:system("buff_system")
-			local buff_stacks = buff_extension:get_stacking_buff("skulls_2023_buff")
-			local num_buff_stacks = buff_stacks and #buff_stacks or 0
+		if var_8_3 and var_8_3 <= arg_8_2.t then
+			local var_8_4 = Managers.state.entity:system("buff_system")
+			local var_8_5 = var_8_0:get_stacking_buff("skulls_2023_buff")
+			local var_8_6 = var_8_5 and #var_8_5 or 0
 
-			for i = 1, num_buff_stacks do
-				buff_system:add_buff_synced(unit, "skulls_2023_debuff", BuffSyncType.LocalAndServer, {
-					external_optional_value = num_buff_stacks,
+			for iter_8_1 = 1, var_8_6 do
+				var_8_4:add_buff_synced(arg_8_0, "skulls_2023_debuff", BuffSyncType.LocalAndServer, {
+					external_optional_value = var_8_6
 				})
 			end
 		end
 	end,
-	cleanup_skulls_2023_buff = function (unit, buff, params, world)
-		if not ALIVE[unit] or not is_local(unit) then
+	cleanup_skulls_2023_buff = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+		if not ALIVE[arg_9_0] or not var_0_11(arg_9_0) then
 			return
 		end
 
-		local buff_extension = ScriptUnit.extension(unit, "buff_system")
-		local sub_buff_stacks = buff_extension:get_stacking_buff("skulls_2023_buff")
+		local var_9_0 = ScriptUnit.extension(arg_9_0, "buff_system")
+		local var_9_1 = var_9_0:get_stacking_buff("skulls_2023_buff")
 
-		if sub_buff_stacks then
-			for i = #sub_buff_stacks, 1, -1 do
-				local buff_id = sub_buff_stacks[i].id
+		if var_9_1 then
+			for iter_9_0 = #var_9_1, 1, -1 do
+				local var_9_2 = var_9_1[iter_9_0].id
 
-				buff_extension:remove_buff(buff_id)
+				var_9_0:remove_buff(var_9_2)
 			end
 		end
 	end,
-	apply_skulls_2023_debuff = function (unit, buff, params, world)
-		if is_bot(unit) or not is_local(unit) then
+	apply_skulls_2023_debuff = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+		if var_0_12(arg_10_0) or not var_0_11(arg_10_0) then
 			return
 		end
 
-		local buff_extension = ScriptUnit.extension(unit, "buff_system")
-		local buff_stacks = buff_extension:get_stacking_buff("skulls_2023_debuff")
-		local num_buff_stacks = buff_stacks and #buff_stacks or 0
+		local var_10_0 = ScriptUnit.extension(arg_10_0, "buff_system"):get_stacking_buff("skulls_2023_debuff")
 
-		if num_buff_stacks <= 0 then
-			local first_person_extension = ScriptUnit.extension(unit, "first_person_system")
+		if (var_10_0 and #var_10_0 or 0) <= 0 then
+			local var_10_1 = ScriptUnit.extension(arg_10_0, "first_person_system")
 
-			buff.effect_id = first_person_extension:create_screen_particles("fx/skulls_2023/screenspace_skulls_2023_debuff")
-			buff.effect_size_id = World.find_particles_variable(world, "fx/skulls_2023/screenspace_skulls_2023_debuff", "size")
+			arg_10_1.effect_id = var_10_1:create_screen_particles("fx/skulls_2023/screenspace_skulls_2023_debuff")
+			arg_10_1.effect_size_id = World.find_particles_variable(arg_10_3, "fx/skulls_2023/screenspace_skulls_2023_debuff", "size")
 
-			local effect_id = buff.effect_id
-			local effect_size_id = buff.effect_size_id
-			local effect_lerp = ((params.value or 1) - 1) / (MAX_STACKS - 1)
-			local effect_opacity = math.lerp(1, 0.95, effect_lerp)
-			local effect_size = math.lerp(5.5, 4, effect_lerp)
+			local var_10_2 = arg_10_1.effect_id
+			local var_10_3 = arg_10_1.effect_size_id
+			local var_10_4 = ((arg_10_2.value or 1) - 1) / (var_0_2 - 1)
+			local var_10_5 = math.lerp(1, 0.95, var_10_4)
+			local var_10_6 = math.lerp(5.5, 4, var_10_4)
 
-			World.set_particles_material_scalar(world, effect_id, "overlay", "intensity", effect_opacity)
-			World.set_particles_variable(world, effect_id, effect_size_id, Vector3(effect_size * 1.33, effect_size, effect_size))
-			first_person_extension:play_hud_sound_event("Play_skulls_event_buff_off")
+			World.set_particles_material_scalar(arg_10_3, var_10_2, "overlay", "intensity", var_10_5)
+			World.set_particles_variable(arg_10_3, var_10_2, var_10_3, Vector3(var_10_6 * 1.33, var_10_6, var_10_6))
+			var_10_1:play_hud_sound_event("Play_skulls_event_buff_off")
 		end
 	end,
-	remove_skulls_2023_debuff = function (unit, buff, params, world)
-		if buff.effect_id then
-			local first_person_extension = ScriptUnit.extension(unit, "first_person_system")
+	remove_skulls_2023_debuff = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+		if arg_11_1.effect_id then
+			ScriptUnit.extension(arg_11_0, "first_person_system"):stop_spawning_screen_particles(arg_11_1.effect_id)
 
-			first_person_extension:stop_spawning_screen_particles(buff.effect_id)
-
-			buff.effect_id = nil
+			arg_11_1.effect_id = nil
 		end
 	end,
-	update_skulls_2023_debuff_dot = function (unit, buff, params, world)
+	update_skulls_2023_debuff_dot = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 		if not Managers.state.network.is_server then
 			return
 		end
 
-		local player_health_extension = ScriptUnit.extension(unit, "health_system")
-		local current_health = player_health_extension:current_health()
-		local min_health = 1
+		local var_12_0 = ScriptUnit.extension(arg_12_0, "health_system")
+		local var_12_1 = var_12_0:current_health()
+		local var_12_2 = 1
 
-		if min_health < current_health then
-			local buff_extension = ScriptUnit.extension(unit, "buff_system")
-			local debuff_stacks = buff_extension:num_buff_stacks("skulls_2023_debuff")
-			local max_health = player_health_extension:get_max_health()
-			local damage = DamageUtils.networkify_damage(max_health * buff.template.damage_percentage * debuff_stacks)
-			local modified_damage_amount = math.min(damage, current_health - min_health)
+		if var_12_2 < var_12_1 then
+			local var_12_3 = ScriptUnit.extension(arg_12_0, "buff_system"):num_buff_stacks("skulls_2023_debuff")
+			local var_12_4 = var_12_0:get_max_health()
+			local var_12_5 = DamageUtils.networkify_damage(var_12_4 * arg_12_1.template.damage_percentage * var_12_3)
+			local var_12_6 = math.min(var_12_5, var_12_1 - var_12_2)
 
-			if modified_damage_amount > 0 then
-				local damage_direction = -Vector3.up()
+			if var_12_6 > 0 then
+				local var_12_7 = -Vector3.up()
 
-				DamageUtils.add_damage_network(unit, unit, modified_damage_amount, "torso", "wounded_dot", nil, damage_direction, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
+				DamageUtils.add_damage_network(arg_12_0, arg_12_0, var_12_6, "torso", "wounded_dot", nil, var_12_7, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 			end
 		end
-	end,
+	end
 }
-settings.proc_functions = {
-	on_kill_skulls_2023_buff = function (owner_unit, buff, params)
-		if not is_local(owner_unit) then
+var_0_0.proc_functions = {
+	on_kill_skulls_2023_buff = function(arg_13_0, arg_13_1, arg_13_2)
+		if not var_0_11(arg_13_0) then
 			return
 		end
 
-		local breed_killed = params[2]
-
-		if breed_killed then
-			local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
-
-			buff_extension:add_buff("skulls_2023_buff_refresh")
+		if arg_13_2[2] then
+			ScriptUnit.extension(arg_13_0, "buff_system"):add_buff("skulls_2023_buff_refresh")
 		end
-	end,
+	end
 }
-settings.stacking_buff_functions = {
-	skulls_2023_buff_refresh = function (owner_unit, sub_buff_template)
-		if ALIVE[owner_unit] then
-			local buff_extension = ScriptUnit.has_extension(owner_unit, "buff_system")
-			local buff_stacks = buff_extension:num_buff_stacks("skulls_2023_buff")
+var_0_0.stacking_buff_functions = {
+	skulls_2023_buff_refresh = function(arg_14_0, arg_14_1)
+		if ALIVE[arg_14_0] then
+			local var_14_0 = ScriptUnit.has_extension(arg_14_0, "buff_system"):num_buff_stacks("skulls_2023_buff")
 
-			apply_buffs_from_stacks(owner_unit, buff_stacks)
+			var_0_10(arg_14_0, var_14_0)
 		end
 	end,
-	skulls_2023_stack_refresh = function (owner_unit, sub_buff_template)
-		if ALIVE[owner_unit] then
-			local buff_system = Managers.state.entity:system("buff_system")
-
-			buff_system:add_buff_synced(owner_unit, "skulls_2023_buff", BuffSyncType.LocalAndServer, {
-				refresh_duration_only = true,
+	skulls_2023_stack_refresh = function(arg_15_0, arg_15_1)
+		if ALIVE[arg_15_0] then
+			Managers.state.entity:system("buff_system"):add_buff_synced(arg_15_0, "skulls_2023_buff", BuffSyncType.LocalAndServer, {
+				refresh_duration_only = true
 			})
 		end
-	end,
+	end
 }

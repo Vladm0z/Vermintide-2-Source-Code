@@ -1,137 +1,137 @@
-﻿-- chunkname: @scripts/unit_extensions/camera/states/camera_state_follow_third_person.lua
+-- chunkname: @scripts/unit_extensions/camera/states/camera_state_follow_third_person.lua
 
 CameraStateFollowThirdPerson = class(CameraStateFollowThirdPerson, CameraState)
 
-CameraStateFollowThirdPerson.init = function (self, camera_state_init_context)
-	CameraState.init(self, camera_state_init_context, "follow_third_person")
+function CameraStateFollowThirdPerson.init(arg_1_0, arg_1_1)
+	CameraState.init(arg_1_0, arg_1_1, "follow_third_person")
 
-	self._follow_unit = nil
-	self._follow_node = 0
+	arg_1_0._follow_unit = nil
+	arg_1_0._follow_node = 0
 end
 
-CameraStateFollowThirdPerson.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
-	local camera_extension = self.camera_extension
-	local follow_unit, follow_node = camera_extension:get_follow_data()
-	local viewport_name = camera_extension.viewport_name
+function CameraStateFollowThirdPerson.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	local var_2_0 = arg_2_0.camera_extension
+	local var_2_1, var_2_2 = var_2_0:get_follow_data()
+	local var_2_3 = var_2_0.viewport_name
 
-	self._min_leave_t = params.min_leave_t or 0
+	arg_2_0._min_leave_t = arg_2_7.min_leave_t or 0
 
-	local override_follow_unit = params.override_follow_unit
+	local var_2_4 = arg_2_7.override_follow_unit
 
-	if override_follow_unit and Unit.alive(override_follow_unit) then
-		follow_unit = override_follow_unit
+	if var_2_4 and Unit.alive(var_2_4) then
+		var_2_1 = var_2_4
 	end
 
-	if not follow_unit or not Unit.alive(follow_unit) then
-		self._follow_unit = nil
+	if not var_2_1 or not Unit.alive(var_2_1) then
+		arg_2_0._follow_unit = nil
 
 		return
 	end
 
-	local override_node_name = params.override_node_name
+	local var_2_5 = arg_2_7.override_node_name
 
-	if override_node_name then
-		if Unit.has_node(follow_unit, override_node_name) then
-			follow_node = Unit.node(follow_unit, override_node_name)
+	if var_2_5 then
+		if Unit.has_node(var_2_1, var_2_5) then
+			var_2_2 = Unit.node(var_2_1, var_2_5)
 		else
-			printf(string.format("Tried to get non existing node '%s' for unit '%s'", override_node_name, tostring(follow_unit)))
+			printf(string.format("Tried to get non existing node '%s' for unit '%s'", var_2_5, tostring(var_2_1)))
 		end
 	end
 
-	local camera_offset = params.camera_offset
+	local var_2_6 = arg_2_7.camera_offset
 
-	self._camera_offset = camera_offset and Vector3Box(camera_offset)
-	self._allow_camera_movement = params.allow_camera_movement
-	self._follow_unit_rotation = params.follow_unit_rotation == nil and true or params.follow_unit_rotation
-	self._follow_unit = follow_unit
-	self._follow_node = follow_node
-	self._fallback_pose = Matrix4x4Box(Unit.alive(follow_unit) and Unit.world_pose(follow_unit, 0) or Matrix4x4.identity())
+	arg_2_0._camera_offset = var_2_6 and Vector3Box(var_2_6)
+	arg_2_0._allow_camera_movement = arg_2_7.allow_camera_movement
+	arg_2_0._follow_unit_rotation = arg_2_7.follow_unit_rotation == nil and true or arg_2_7.follow_unit_rotation
+	arg_2_0._follow_unit = var_2_1
+	arg_2_0._follow_node = var_2_2
+	arg_2_0._fallback_pose = Matrix4x4Box(Unit.alive(var_2_1) and Unit.world_pose(var_2_1, 0) or Matrix4x4.identity())
 
-	local camera_manager = Managers.state.camera
-	local root_look_dir = Vector3.normalize(Vector3.flat(Quaternion.forward(Unit.local_rotation(follow_unit, 0))))
-	local yaw = math.atan2(root_look_dir.y, root_look_dir.x)
+	local var_2_7 = Managers.state.camera
+	local var_2_8 = Vector3.normalize(Vector3.flat(Quaternion.forward(Unit.local_rotation(var_2_1, 0))))
+	local var_2_9 = math.atan2(var_2_8.y, var_2_8.x)
 
-	camera_manager:set_pitch_yaw(viewport_name, -0.6, yaw)
-	Unit.set_data(unit, "camera", "settings_node", params.camera_node or "heal_self")
+	var_2_7:set_pitch_yaw(var_2_3, -0.6, var_2_9)
+	Unit.set_data(arg_2_1, "camera", "settings_node", arg_2_7.camera_node or "heal_self")
 end
 
-CameraStateFollowThirdPerson.on_exit = function (self, unit, input, dt, context, t, next_state)
-	self._follow_unit = nil
+function CameraStateFollowThirdPerson.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	arg_3_0._follow_unit = nil
 end
 
-CameraStateFollowThirdPerson.refresh_follow_unit = function (self, follow_unit, follow_node)
-	self._follow_unit = follow_unit
-	self._follow_node = follow_node
+function CameraStateFollowThirdPerson.refresh_follow_unit(arg_4_0, arg_4_1, arg_4_2)
+	arg_4_0._follow_unit = arg_4_1
+	arg_4_0._follow_node = arg_4_2
 end
 
-CameraStateFollowThirdPerson.update = function (self, unit, input, dt, context, t)
-	local csm = self.csm
-	local unit = self.unit
-	local camera_extension = self.camera_extension
-	local follow_unit = self._follow_unit
-	local follow_node = self._follow_node or 0
-	local external_state_change = camera_extension.external_state_change
-	local external_state_change_params = camera_extension.external_state_change_params
-	local force_state_change = external_state_change_params and external_state_change_params.force_state_change
+function CameraStateFollowThirdPerson.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	local var_5_0 = arg_5_0.csm
+	local var_5_1 = arg_5_0.unit
+	local var_5_2 = arg_5_0.camera_extension
+	local var_5_3 = arg_5_0._follow_unit
+	local var_5_4 = arg_5_0._follow_node or 0
+	local var_5_5 = var_5_2.external_state_change
+	local var_5_6 = var_5_2.external_state_change_params
+	local var_5_7 = var_5_6 and var_5_6.force_state_change
 
-	if external_state_change and (external_state_change ~= self.name or force_state_change) then
-		csm:change_state(external_state_change, external_state_change_params)
-		camera_extension:set_external_state_change(nil)
+	if var_5_5 and (var_5_5 ~= arg_5_0.name or var_5_7) then
+		var_5_0:change_state(var_5_5, var_5_6)
+		var_5_2:set_external_state_change(nil)
 
 		return
 	end
 
-	if not follow_unit or not Unit.alive(follow_unit) and t > self._min_leave_t then
-		csm:change_state("observer")
+	if not var_5_3 or not Unit.alive(var_5_3) and arg_5_5 > arg_5_0._min_leave_t then
+		var_5_0:change_state("observer")
 
 		return
 	end
 
-	if self.calculate_lerp then
-		local total_lerp_time = self.total_lerp_time
-		local lerp_time = self.lerp_time
-		local progress = self.progress
-		local current_lerp_time = math.min(lerp_time + dt, total_lerp_time)
-		local current_progress = current_lerp_time / total_lerp_time
-		local smoothstep = math.smoothstep(current_progress, 0, 1)
+	if arg_5_0.calculate_lerp then
+		local var_5_8 = arg_5_0.total_lerp_time
+		local var_5_9 = arg_5_0.lerp_time
+		local var_5_10 = arg_5_0.progress
+		local var_5_11 = math.min(var_5_9 + arg_5_3, var_5_8)
+		local var_5_12 = var_5_11 / var_5_8
+		local var_5_13 = math.smoothstep(var_5_12, 0, 1)
 
-		if Unit.alive(follow_unit) then
-			self._fallback_pose:store(Unit.world_pose(follow_unit, 0))
+		if Unit.alive(var_5_3) then
+			arg_5_0._fallback_pose:store(Unit.world_pose(var_5_3, 0))
 		end
 
-		local camera_target_pose = self._fallback_pose:unbox()
-		local camera_pose = self.camera_start_pose:unbox()
-		local lerp_pose = Matrix4x4.lerp(camera_pose, camera_target_pose, smoothstep)
+		local var_5_14 = arg_5_0._fallback_pose:unbox()
+		local var_5_15 = arg_5_0.camera_start_pose:unbox()
+		local var_5_16 = Matrix4x4.lerp(var_5_15, var_5_14, var_5_13)
 
-		assert(Matrix4x4.is_valid(lerp_pose), "Camera unit lerp pose invalid.")
-		Unit.set_local_pose(unit, 0, lerp_pose)
+		assert(Matrix4x4.is_valid(var_5_16), "Camera unit lerp pose invalid.")
+		Unit.set_local_pose(var_5_1, 0, var_5_16)
 
-		if progress == 1 then
-			self.calculate_lerp = nil
-			self.camera_start_pose = nil
-			self.total_lerp_time = nil
-			self.lerp_time = nil
-			self.progress = nil
+		if var_5_10 == 1 then
+			arg_5_0.calculate_lerp = nil
+			arg_5_0.camera_start_pose = nil
+			arg_5_0.total_lerp_time = nil
+			arg_5_0.lerp_time = nil
+			arg_5_0.progress = nil
 		else
-			self.progress = current_progress
-			self.lerp_time = current_lerp_time
+			arg_5_0.progress = var_5_12
+			arg_5_0.lerp_time = var_5_11
 		end
-	elseif self._follow_unit_rotation and not self._allow_camera_movement and Unit.alive(follow_unit) then
-		CameraStateHelper.set_local_pose(unit, follow_unit, follow_node)
+	elseif arg_5_0._follow_unit_rotation and not arg_5_0._allow_camera_movement and Unit.alive(var_5_3) then
+		CameraStateHelper.set_local_pose(var_5_1, var_5_3, var_5_4)
 	else
-		if self._allow_camera_movement then
-			CameraStateHelper.set_camera_rotation(unit, camera_extension)
+		if arg_5_0._allow_camera_movement then
+			CameraStateHelper.set_camera_rotation(var_5_1, var_5_2)
 		end
 
-		local camera_offset = self._camera_offset and Vector3Box.unbox(self._camera_offset)
-		local position
+		local var_5_17 = arg_5_0._camera_offset and Vector3Box.unbox(arg_5_0._camera_offset)
+		local var_5_18
 
-		if Unit.alive(follow_unit) then
-			position = Unit.world_position(follow_unit, follow_node)
+		if Unit.alive(var_5_3) then
+			var_5_18 = Unit.world_position(var_5_3, var_5_4)
 		else
-			position = Matrix4x4.translation(self._fallback_pose:unbox())
+			var_5_18 = Matrix4x4.translation(arg_5_0._fallback_pose:unbox())
 		end
 
-		CameraStateHelper.set_follow_camera_position(unit, position, camera_offset, nil, dt)
+		CameraStateHelper.set_follow_camera_position(var_5_1, var_5_18, var_5_17, nil, arg_5_3)
 	end
 end

@@ -1,401 +1,387 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/careers/career_ability_bw_necromancer_command.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/careers/career_ability_bw_necromancer_command.lua
 
-local RPCS = {
+local var_0_0 = {
 	"rpc_necromancer_command_sacrifice",
-	"rpc_necromancer_command_charge",
+	"rpc_necromancer_command_charge"
 }
-local CommandSyncTypes = table.mirror_array({
+local var_0_1 = table.mirror_array({
 	"pet",
 	"player",
-	"enemy",
+	"enemy"
 })
 
 CareerAbilityBWNecromancerCommand = class(CareerAbilityBWNecromancerCommand)
 
-CareerAbilityBWNecromancerCommand.init = function (self, extension_init_context, unit, extension_init_data)
-	self._owner_unit = unit
-	self._player = extension_init_data.player
-	self._is_local = extension_init_data.player.local_player
-	self._is_server = extension_init_context.is_server
-	self._command_explosion_params = {
-		source_attacker_unit = unit,
+function CareerAbilityBWNecromancerCommand.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._owner_unit = arg_1_2
+	arg_1_0._player = arg_1_3.player
+	arg_1_0._is_local = arg_1_3.player.local_player
+	arg_1_0._is_server = arg_1_1.is_server
+	arg_1_0._command_explosion_params = {
+		source_attacker_unit = arg_1_2
 	}
-	self._network_transmit = extension_init_context.network_transmit
-	self._network_event_delegate = self._network_transmit.network_event_delegate
+	arg_1_0._network_transmit = arg_1_1.network_transmit
+	arg_1_0._network_event_delegate = arg_1_0._network_transmit.network_event_delegate
 
-	self._network_event_delegate:register(self, unpack(RPCS))
+	arg_1_0._network_event_delegate:register(arg_1_0, unpack(var_0_0))
 
-	self._unit_storage = extension_init_context.unit_storage
-	self._outline_data = nil
-	self._target_unit = nil
+	arg_1_0._unit_storage = arg_1_1.unit_storage
+	arg_1_0._outline_data = nil
+	arg_1_0._target_unit = nil
 end
 
-CareerAbilityBWNecromancerCommand.extensions_ready = function (self, world, unit)
-	self._status_extension = ScriptUnit.extension(unit, "status_system")
-	self._buff_extension = ScriptUnit.extension(unit, "buff_system")
-	self._buff_system = Managers.state.entity:system("buff_system")
+function CareerAbilityBWNecromancerCommand.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+	arg_2_0._status_extension = ScriptUnit.extension(arg_2_2, "status_system")
+	arg_2_0._buff_extension = ScriptUnit.extension(arg_2_2, "buff_system")
+	arg_2_0._buff_system = Managers.state.entity:system("buff_system")
 
-	if self._is_local then
-		self._input_extension = ScriptUnit.extension(unit, "input_system")
-		self._fp_extension = ScriptUnit.extension(unit, "first_person_system")
-		self._inventory_extension = ScriptUnit.has_extension(unit, "inventory_system")
+	if arg_2_0._is_local then
+		arg_2_0._input_extension = ScriptUnit.extension(arg_2_2, "input_system")
+		arg_2_0._fp_extension = ScriptUnit.extension(arg_2_2, "first_person_system")
+		arg_2_0._inventory_extension = ScriptUnit.has_extension(arg_2_2, "inventory_system")
 	end
 
-	if self._is_local or self._is_server then
-		self._commander_extension = ScriptUnit.extension(unit, "ai_commander_system")
+	if arg_2_0._is_local or arg_2_0._is_server then
+		arg_2_0._commander_extension = ScriptUnit.extension(arg_2_2, "ai_commander_system")
 	end
 
-	Managers.state.event:register(self, "on_talents_changed", "_on_talents_changed")
-	self:_on_talents_changed(unit, ScriptUnit.extension(unit, "talent_system"))
+	Managers.state.event:register(arg_2_0, "on_talents_changed", "_on_talents_changed")
+	arg_2_0:_on_talents_changed(arg_2_2, ScriptUnit.extension(arg_2_2, "talent_system"))
 end
 
-CareerAbilityBWNecromancerCommand._on_talents_changed = function (self, unit, talent_extension)
-	if unit ~= self._owner_unit then
+function CareerAbilityBWNecromancerCommand._on_talents_changed(arg_3_0, arg_3_1, arg_3_2)
+	if arg_3_1 ~= arg_3_0._owner_unit then
 		return
 	end
 
-	self._has_charge = talent_extension:has_talent("sienna_necromancer_6_3")
+	arg_3_0._has_charge = arg_3_2:has_talent("sienna_necromancer_6_3")
 
-	if self._is_local then
-		self:_cleanup_talent_buffs(unit)
-		self:_add_talent_buffs(unit)
+	if arg_3_0._is_local then
+		arg_3_0:_cleanup_talent_buffs(arg_3_1)
+		arg_3_0:_add_talent_buffs(arg_3_1)
 	end
 end
 
-CareerAbilityBWNecromancerCommand.update = function (self, dt, t)
-	if not self._is_local and not self._is_server then
+function CareerAbilityBWNecromancerCommand.update(arg_4_0, arg_4_1, arg_4_2)
+	if not arg_4_0._is_local and not arg_4_0._is_server then
 		return
 	end
 
-	self:_update_outlines(t)
+	arg_4_0:_update_outlines(arg_4_2)
 
-	if self._is_local then
-		self:_update_vent_command_target(t)
+	if arg_4_0._is_local then
+		arg_4_0:_update_vent_command_target(arg_4_2)
 	end
 end
 
-CareerAbilityBWNecromancerCommand.destroy = function (self)
-	self._network_event_delegate:unregister(self)
+function CareerAbilityBWNecromancerCommand.destroy(arg_5_0)
+	arg_5_0._network_event_delegate:unregister(arg_5_0)
 
-	local event_manager = Managers.state.event
-
-	if event_manager then
-		Managers.state.event:unregister("on_talents_changed", self)
+	if Managers.state.event then
+		Managers.state.event:unregister("on_talents_changed", arg_5_0)
 	end
 end
 
-CareerAbilityBWNecromancerCommand._update_outlines = function (self, t)
-	local data = self._outline_data
+function CareerAbilityBWNecromancerCommand._update_outlines(arg_6_0, arg_6_1)
+	local var_6_0 = arg_6_0._outline_data
 
-	if data then
-		local status_extension = ScriptUnit.has_extension(data.unit, "status_system")
+	if var_6_0 then
+		local var_6_1 = ScriptUnit.has_extension(var_6_0.unit, "status_system")
 
-		if not HEALTH_ALIVE[data.unit] or status_extension and status_extension:is_invisible() or data.command_type == CommandSyncTypes.player and not status_extension:is_knocked_down() then
-			if ALIVE[data.unit] then
-				data.extension:remove_outline(data.id)
+		if not HEALTH_ALIVE[var_6_0.unit] or var_6_1 and var_6_1:is_invisible() or var_6_0.command_type == var_0_1.player and not var_6_1:is_knocked_down() then
+			if ALIVE[var_6_0.unit] then
+				var_6_0.extension:remove_outline(var_6_0.id)
 			end
 
-			self._outline_data = nil
+			arg_6_0._outline_data = nil
 		end
 	end
 end
 
-CareerAbilityBWNecromancerCommand._command_sacrifice_pet = function (self, pet_unit)
-	local target_node_id = Unit.has_node(pet_unit, "j_spine") and Unit.node(pet_unit, "j_spine") or 0
-	local network_manager = Managers.state.network
-	local effect_name_id = NetworkLookup.effects["fx/necromancer_skeleton_sacrifice"]
-	local pet_unit_id = network_manager:unit_game_object_id(pet_unit)
+function CareerAbilityBWNecromancerCommand._command_sacrifice_pet(arg_7_0, arg_7_1)
+	local var_7_0 = Unit.has_node(arg_7_1, "j_spine") and Unit.node(arg_7_1, "j_spine") or 0
+	local var_7_1 = Managers.state.network
+	local var_7_2 = NetworkLookup.effects["fx/necromancer_skeleton_sacrifice"]
+	local var_7_3 = var_7_1:unit_game_object_id(arg_7_1)
 
-	network_manager:rpc_play_particle_effect(nil, effect_name_id, pet_unit_id, target_node_id, Vector3.zero(), Quaternion.identity(), false)
+	var_7_1:rpc_play_particle_effect(nil, var_7_2, var_7_3, var_7_0, Vector3.zero(), Quaternion.identity(), false)
 
-	local bb = BLACKBOARDS[pet_unit]
-	local locomotion_extension = bb.locomotion_extension
+	local var_7_4 = BLACKBOARDS[arg_7_1].locomotion_extension
 
-	locomotion_extension.death_velocity_boxed = Vector3Box(locomotion_extension:current_velocity())
+	var_7_4.death_velocity_boxed = Vector3Box(var_7_4:current_velocity())
 
-	AiUtils.kill_unit(pet_unit)
+	AiUtils.kill_unit(arg_7_1)
 
-	if self._has_explode then
-		local pet_position = POSITION_LOOKUP[pet_unit]
-		local player_unit = self._owner_unit
-		local career_extension = ScriptUnit.has_extension(player_unit, "career_system")
-		local career_power_level = career_extension and career_extension:get_career_power_level() or DefaultPowerLevel
-		local area_damage_system = Managers.state.entity:system("area_damage_system")
+	if arg_7_0._has_explode then
+		local var_7_5 = POSITION_LOOKUP[arg_7_1]
+		local var_7_6 = arg_7_0._owner_unit
+		local var_7_7 = ScriptUnit.has_extension(var_7_6, "career_system")
+		local var_7_8 = var_7_7 and var_7_7:get_career_power_level() or DefaultPowerLevel
 
-		area_damage_system:create_explosion(player_unit, pet_position, Quaternion.identity(), "sienna_necromancer_passive_explosion", 1, "buff", career_power_level, false)
+		Managers.state.entity:system("area_damage_system"):create_explosion(var_7_6, var_7_5, Quaternion.identity(), "sienna_necromancer_passive_explosion", 1, "buff", var_7_8, false)
 	end
 end
 
-CareerAbilityBWNecromancerCommand._trigger_charge_sound = function (self)
-	self._fp_extension:play_hud_sound_event("Play_career_necro_skeleton_charge")
+function CareerAbilityBWNecromancerCommand._trigger_charge_sound(arg_8_0)
+	arg_8_0._fp_extension:play_hud_sound_event("Play_career_necro_skeleton_charge")
 end
 
-CareerAbilityBWNecromancerCommand._start_charge_cooldown = function (self)
-	local buff_extension = self._buff_extension
-	local buff = buff_extension:get_buff_type("sienna_necromancer_6_3_available_charge")
+function CareerAbilityBWNecromancerCommand._start_charge_cooldown(arg_9_0)
+	local var_9_0 = arg_9_0._buff_extension
+	local var_9_1 = var_9_0:get_buff_type("sienna_necromancer_6_3_available_charge")
 
-	self._charge_cooldown_id = buff_extension:add_buff("sienna_necromancer_6_3_cooldown_charge")
+	arg_9_0._charge_cooldown_id = var_9_0:add_buff("sienna_necromancer_6_3_cooldown_charge")
 
-	buff_extension:remove_buff(buff.id)
+	var_9_0:remove_buff(var_9_1.id)
 end
 
-CareerAbilityBWNecromancerCommand._add_talent_buffs = function (self, unit)
-	if self._has_charge then
-		self._buff_extension:add_buff("sienna_necromancer_6_3_available_charge")
+function CareerAbilityBWNecromancerCommand._add_talent_buffs(arg_10_0, arg_10_1)
+	if arg_10_0._has_charge then
+		arg_10_0._buff_extension:add_buff("sienna_necromancer_6_3_available_charge")
 	end
 end
 
-CareerAbilityBWNecromancerCommand._cleanup_talent_buffs = function (self, unit)
-	local buff_extension = self._buff_extension
+function CareerAbilityBWNecromancerCommand._cleanup_talent_buffs(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_0._buff_extension
 
-	if self._charge_cooldown_id then
-		buff_extension:remove_buff(self._charge_cooldown_id)
+	if arg_11_0._charge_cooldown_id then
+		var_11_0:remove_buff(arg_11_0._charge_cooldown_id)
 
-		self._charge_cooldown_id = nil
+		arg_11_0._charge_cooldown_id = nil
 	end
 
-	local charge_buff = buff_extension:get_buff_type("sienna_necromancer_6_3_available_charge")
+	local var_11_1 = var_11_0:get_buff_type("sienna_necromancer_6_3_available_charge")
 
-	if charge_buff then
-		buff_extension:remove_buff(unit, charge_buff.id)
+	if var_11_1 then
+		var_11_0:remove_buff(arg_11_1, var_11_1.id)
 	end
 end
 
-CareerAbilityBWNecromancerCommand._add_outline = function (self, target_unit, command_sync_type)
-	local outline_extension = ScriptUnit.has_extension(target_unit, "outline_system")
+function CareerAbilityBWNecromancerCommand._add_outline(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = ScriptUnit.has_extension(arg_12_1, "outline_system")
 
-	if outline_extension then
-		local data = self._outline_data
+	if var_12_0 then
+		local var_12_1 = arg_12_0._outline_data
 
-		if data and ALIVE[data.unit] then
-			data.extension:remove_outline(data.id)
+		if var_12_1 and ALIVE[var_12_1.unit] then
+			var_12_1.extension:remove_outline(var_12_1.id)
 		end
 
-		local id = outline_extension:add_outline(OutlineSettings.templates.necromancer_command)
+		local var_12_2 = var_12_0:add_outline(OutlineSettings.templates.necromancer_command)
 
-		self._outline_data = {
-			id = id,
-			unit = target_unit,
-			extension = outline_extension,
-			command_type = command_sync_type,
+		arg_12_0._outline_data = {
+			id = var_12_2,
+			unit = arg_12_1,
+			extension = var_12_0,
+			command_type = arg_12_2
 		}
 	end
 end
 
-CareerAbilityBWNecromancerCommand.command_attack_enemy = function (self, target_unit, should_charge, t)
-	if not HEALTH_ALIVE[target_unit] then
+function CareerAbilityBWNecromancerCommand.command_attack_enemy(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	if not HEALTH_ALIVE[arg_13_1] then
 		return
 	end
 
-	if self._is_local then
-		Managers.telemetry_events:necromancer_used_command_item(self._player, "attack")
+	if arg_13_0._is_local then
+		Managers.telemetry_events:necromancer_used_command_item(arg_13_0._player, "attack")
 	end
 
-	local commander_pos = POSITION_LOOKUP[self._owner_unit]
-	local smallest_dist_sq = math.huge
-	local best_unit
-	local commander_extension = self._commander_extension
-	local units = commander_extension:get_controlled_units()
+	local var_13_0 = POSITION_LOOKUP[arg_13_0._owner_unit]
+	local var_13_1 = math.huge
+	local var_13_2
+	local var_13_3 = arg_13_0._commander_extension
+	local var_13_4 = var_13_3:get_controlled_units()
 
-	for controlled_unit in pairs(units) do
-		local breed = Unit.get_data(controlled_unit, "breed")
-		local is_defending = commander_extension:command_state(controlled_unit) == CommandStates.StandingGround
+	for iter_13_0 in pairs(var_13_4) do
+		local var_13_5 = Unit.get_data(iter_13_0, "breed")
+		local var_13_6 = var_13_3:command_state(iter_13_0) == CommandStates.StandingGround
 
-		if breed.name ~= "pet_skeleton_with_shield" or not is_defending then
-			local pos = POSITION_LOOKUP[controlled_unit]
+		if var_13_5.name ~= "pet_skeleton_with_shield" or not var_13_6 then
+			local var_13_7 = POSITION_LOOKUP[iter_13_0]
 
-			if pos then
-				commander_extension:command_attack(controlled_unit, target_unit)
+			if var_13_7 then
+				var_13_3:command_attack(iter_13_0, arg_13_1)
 
-				local dist_sq = Vector3.distance_squared(pos, commander_pos)
+				local var_13_8 = Vector3.distance_squared(var_13_7, var_13_0)
 
-				if dist_sq < smallest_dist_sq then
-					smallest_dist_sq = dist_sq
-					best_unit = controlled_unit
+				if var_13_8 < var_13_1 then
+					var_13_1 = var_13_8
+					var_13_2 = iter_13_0
 				end
 			end
 		end
 	end
 
-	self:_play_command_sound()
+	arg_13_0:_play_command_sound()
 
-	if best_unit then
-		Managers.state.entity:system("audio_system"):play_audio_unit_event("Play_career_necro_skeleton_charge", best_unit)
+	if var_13_2 then
+		Managers.state.entity:system("audio_system"):play_audio_unit_event("Play_career_necro_skeleton_charge", var_13_2)
 	end
 
-	self:_add_outline(target_unit, CommandSyncTypes.enemy)
+	arg_13_0:_add_outline(arg_13_1, var_0_1.enemy)
 
-	if should_charge then
-		self:_trigger_charge_sound()
-		self:_start_charge_cooldown()
+	if arg_13_2 then
+		arg_13_0:_trigger_charge_sound()
+		arg_13_0:_start_charge_cooldown()
 
-		local target_unit_id = self._unit_storage:go_id(target_unit)
+		local var_13_9 = arg_13_0._unit_storage:go_id(arg_13_1)
 
-		self._network_transmit:send_rpc_server("rpc_necromancer_command_charge", target_unit_id)
+		arg_13_0._network_transmit:send_rpc_server("rpc_necromancer_command_charge", var_13_9)
 	end
 end
 
-CareerAbilityBWNecromancerCommand.any_skeleton_targeting_enemy = function (self, target_enemy)
-	local commander_extension = self._commander_extension
-	local units = commander_extension:get_controlled_units()
+function CareerAbilityBWNecromancerCommand.any_skeleton_targeting_enemy(arg_14_0, arg_14_1)
+	local var_14_0 = arg_14_0._commander_extension:get_controlled_units()
 
-	for controlled_unit in pairs(units) do
-		local blackboard = BLACKBOARDS[controlled_unit]
+	for iter_14_0 in pairs(var_14_0) do
+		local var_14_1 = BLACKBOARDS[iter_14_0]
 
-		if blackboard.commander_target == target_enemy or blackboard.target_unit == target_enemy then
+		if var_14_1.commander_target == arg_14_1 or var_14_1.target_unit == arg_14_1 then
 			return true
 		end
 	end
 end
 
-CareerAbilityBWNecromancerCommand.rpc_necromancer_command_charge = function (self, channel_id, target_unit_id)
-	local peer_id = CHANNEL_TO_PEER_ID[channel_id]
-
-	if peer_id ~= self._player.peer_id then
+function CareerAbilityBWNecromancerCommand.rpc_necromancer_command_charge(arg_15_0, arg_15_1, arg_15_2)
+	if CHANNEL_TO_PEER_ID[arg_15_1] ~= arg_15_0._player.peer_id then
 		return
 	end
 
-	local target_unit = self._unit_storage:unit(target_unit_id)
-	local commander_extension = self._commander_extension
-	local units = commander_extension:get_controlled_units()
+	local var_15_0 = arg_15_0._unit_storage:unit(arg_15_2)
+	local var_15_1 = arg_15_0._commander_extension:get_controlled_units()
 
-	for controlled_unit in pairs(units) do
-		local blackboard = BLACKBOARDS[controlled_unit]
+	for iter_15_0 in pairs(var_15_1) do
+		local var_15_2 = BLACKBOARDS[iter_15_0]
 
-		if blackboard.breed.name == "pet_skeleton_armored" then
-			blackboard.charge_target = target_unit
+		if var_15_2.breed.name == "pet_skeleton_armored" then
+			var_15_2.charge_target = var_15_0
 		end
 	end
 end
 
-CareerAbilityBWNecromancerCommand.command_sacrifice = function (self, target_unit)
-	if self._is_local then
-		Managers.telemetry_events:necromancer_used_command_item(self._player, "sacrifice")
+function CareerAbilityBWNecromancerCommand.command_sacrifice(arg_16_0, arg_16_1)
+	if arg_16_0._is_local then
+		Managers.telemetry_events:necromancer_used_command_item(arg_16_0._player, "sacrifice")
 	end
 
-	if not self._is_server then
-		local target_unit_id = self._unit_storage:go_id(target_unit)
+	if not arg_16_0._is_server then
+		local var_16_0 = arg_16_0._unit_storage:go_id(arg_16_1)
 
-		self._network_transmit:send_rpc_server("rpc_necromancer_command_sacrifice", target_unit_id, CommandSyncTypes.pet)
+		arg_16_0._network_transmit:send_rpc_server("rpc_necromancer_command_sacrifice", var_16_0, var_0_1.pet)
 
 		return
 	end
 
-	self:_command_sacrifice_pet(target_unit)
+	arg_16_0:_command_sacrifice_pet(arg_16_1)
 end
 
-CareerAbilityBWNecromancerCommand.rpc_necromancer_command_sacrifice = function (self, channel_id, target_unit_id)
-	local peer_id = CHANNEL_TO_PEER_ID[channel_id]
-
-	if peer_id ~= self._player.peer_id then
+function CareerAbilityBWNecromancerCommand.rpc_necromancer_command_sacrifice(arg_17_0, arg_17_1, arg_17_2)
+	if CHANNEL_TO_PEER_ID[arg_17_1] ~= arg_17_0._player.peer_id then
 		return
 	end
 
-	local target_unit = self._unit_storage:unit(target_unit_id)
+	local var_17_0 = arg_17_0._unit_storage:unit(arg_17_2)
 
-	self:command_sacrifice(target_unit)
+	arg_17_0:command_sacrifice(var_17_0)
 end
 
-CareerAbilityBWNecromancerCommand._update_vent_command_target = function (self, t)
-	local last_target = self._vent_command_target
-	local wielded_item_template = self._inventory_extension:get_wielded_slot_item_template()
-	local in_command_mode = wielded_item_template and wielded_item_template.is_command_utility_weapon
-	local new_target, using_fallback
+function CareerAbilityBWNecromancerCommand._update_vent_command_target(arg_18_0, arg_18_1)
+	local var_18_0 = arg_18_0._vent_command_target
+	local var_18_1 = arg_18_0._inventory_extension:get_wielded_slot_item_template()
+	local var_18_2 = var_18_1 and var_18_1.is_command_utility_weapon
+	local var_18_3
+	local var_18_4
 
-	if in_command_mode then
-		local hovered_unit, fallback_unit = self._commander_extension:hovered_friendly_unit()
+	if var_18_2 then
+		local var_18_5, var_18_6 = arg_18_0._commander_extension:hovered_friendly_unit()
 
-		using_fallback = not hovered_unit and not not fallback_unit
+		var_18_4 = not var_18_5 and not not var_18_6
 
-		if not hovered_unit then
-			local controlled_units = self._commander_extension:get_controlled_units()
-			local least_t_left = math.huge
+		if not var_18_5 then
+			local var_18_7 = arg_18_0._commander_extension:get_controlled_units()
+			local var_18_8 = math.huge
 
-			for unit, controlled_unit_data in pairs(controlled_units) do
-				local duration = controlled_unit_data.template.duration
+			for iter_18_0, iter_18_1 in pairs(var_18_7) do
+				local var_18_9 = iter_18_1.template.duration
 
-				if duration then
-					local time_left = (controlled_unit_data.start_t or math.huge) + duration - t
+				if var_18_9 then
+					local var_18_10 = (iter_18_1.start_t or math.huge) + var_18_9 - arg_18_1
 
-					if time_left < least_t_left then
-						least_t_left = time_left
-						hovered_unit = unit
+					if var_18_10 < var_18_8 then
+						var_18_8 = var_18_10
+						var_18_5 = iter_18_0
 					end
 				end
 			end
 		end
 
-		new_target = hovered_unit or fallback_unit
+		var_18_3 = var_18_5 or var_18_6
 	end
 
-	if self._vent_outline_id and using_fallback or new_target ~= last_target then
-		if ALIVE[last_target] then
-			local outline_extension = ScriptUnit.has_extension(last_target, "outline_system")
+	if arg_18_0._vent_outline_id and var_18_4 or var_18_3 ~= var_18_0 then
+		if ALIVE[var_18_0] then
+			local var_18_11 = ScriptUnit.has_extension(var_18_0, "outline_system")
 
-			if outline_extension then
-				outline_extension:remove_outline(self._vent_outline_id)
+			if var_18_11 then
+				var_18_11:remove_outline(arg_18_0._vent_outline_id)
 
-				self._vent_outline_id = nil
+				arg_18_0._vent_outline_id = nil
 			end
 		end
 
-		if new_target and not using_fallback then
-			local game = Managers.state.network:game()
-			local go_id = Managers.state.unit_storage:go_id(new_target)
+		if var_18_3 and not var_18_4 then
+			local var_18_12 = Managers.state.network:game()
+			local var_18_13 = Managers.state.unit_storage:go_id(var_18_3)
 
-			if go_id then
-				local bt_action_name_id = GameSession.game_object_field(game, go_id, "bt_action_name")
-				local bt_action_name = NetworkLookup.bt_action_names[bt_action_name_id]
+			if var_18_13 then
+				local var_18_14 = GameSession.game_object_field(var_18_12, var_18_13, "bt_action_name")
 
-				if bt_action_name ~= "spawn" then
-					local outline_extension = ScriptUnit.extension(new_target, "outline_system")
-
-					self._vent_outline_id = outline_extension:add_outline(OutlineSettings.templates.necromancer_command)
+				if NetworkLookup.bt_action_names[var_18_14] ~= "spawn" then
+					arg_18_0._vent_outline_id = ScriptUnit.extension(var_18_3, "outline_system"):add_outline(OutlineSettings.templates.necromancer_command)
 				end
 			end
 		end
 	end
 
-	self._vent_command_target = new_target
+	arg_18_0._vent_command_target = var_18_3
 end
 
-CareerAbilityBWNecromancerCommand.vent_command_target = function (self)
-	return self._vent_command_target
+function CareerAbilityBWNecromancerCommand.vent_command_target(arg_19_0)
+	return arg_19_0._vent_command_target
 end
 
-CareerAbilityBWNecromancerCommand.command_stand_ground = function (self, position, fallback_rotation)
-	local pet_array = table.keys(self._commander_extension:get_controlled_units(), FrameTable.alloc_table())
+function CareerAbilityBWNecromancerCommand.command_stand_ground(arg_20_0, arg_20_1, arg_20_2)
+	local var_20_0 = table.keys(arg_20_0._commander_extension:get_controlled_units(), FrameTable.alloc_table())
 
-	table.array_remove_if(pet_array, function (value)
-		if self._commander_extension:command_state(value) == CommandStates.Following then
+	table.array_remove_if(var_20_0, function(arg_21_0)
+		if arg_20_0._commander_extension:command_state(arg_21_0) == CommandStates.Following then
 			return false
 		end
 
-		local breed = Unit.get_data(value, "breed")
-
-		return breed.name == "pet_skeleton_armored"
+		return Unit.get_data(arg_21_0, "breed").name == "pet_skeleton_armored"
 	end)
-	self:_play_command_sound()
+	arg_20_0:_play_command_sound()
 
-	if self._is_local then
-		Managers.telemetry_events:necromancer_used_command_item(self._player, "defend")
+	if arg_20_0._is_local then
+		Managers.telemetry_events:necromancer_used_command_item(arg_20_0._player, "defend")
 	end
 
-	local audio_system = Managers.state.entity:system("audio_system")
+	local var_20_1 = Managers.state.entity:system("audio_system")
 
-	for i = 1, #pet_array do
-		local unit = pet_array[i]
+	for iter_20_0 = 1, #var_20_0 do
+		local var_20_2 = var_20_0[iter_20_0]
 
-		if ALIVE[unit] then
-			audio_system:play_audio_unit_event("Play_career_necro_skeleton_defend", unit)
+		if ALIVE[var_20_2] then
+			var_20_1:play_audio_unit_event("Play_career_necro_skeleton_defend", var_20_2)
 		end
 	end
 
-	self._commander_extension:command_stand_ground_group(pet_array, position, fallback_rotation)
+	arg_20_0._commander_extension:command_stand_ground_group(var_20_0, arg_20_1, arg_20_2)
 end
 
-CareerAbilityBWNecromancerCommand._play_command_sound = function (self)
-	if self._fp_extension then
-		self._fp_extension:play_hud_sound_event("Play_weapon_necro_command_command")
+function CareerAbilityBWNecromancerCommand._play_command_sound(arg_22_0)
+	if arg_22_0._fp_extension then
+		arg_22_0._fp_extension:play_hud_sound_event("Play_weapon_necro_command_command")
 	end
 end

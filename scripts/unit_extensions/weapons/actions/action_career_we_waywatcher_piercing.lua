@@ -1,52 +1,48 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/actions/action_career_we_waywatcher_piercing.lua
+-- chunkname: @scripts/unit_extensions/weapons/actions/action_career_we_waywatcher_piercing.lua
 
 ActionCareerWEWaywatcherPiercing = class(ActionCareerWEWaywatcherPiercing, ActionBow)
 
-ActionCareerWEWaywatcherPiercing.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionCareerWEWaywatcherPiercing.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionCareerWEWaywatcherPiercing.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionCareerWEWaywatcherPiercing.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	self.career_extension = ScriptUnit.extension(owner_unit, "career_system")
-	self.inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
-	self.talent_extension = ScriptUnit.extension(owner_unit, "talent_system")
+	arg_1_0.career_extension = ScriptUnit.extension(arg_1_4, "career_system")
+	arg_1_0.inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
+	arg_1_0.talent_extension = ScriptUnit.extension(arg_1_4, "talent_system")
 end
 
-ActionCareerWEWaywatcherPiercing.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
-	ActionCareerWEWaywatcherPiercing.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
-	self:_play_vo()
-	self.career_extension:start_activated_ability_cooldown()
-
-	local inventory_extension = ScriptUnit.extension(self.owner_unit, "inventory_system")
-
-	inventory_extension:check_and_drop_pickups("career_ability")
+function ActionCareerWEWaywatcherPiercing.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	ActionCareerWEWaywatcherPiercing.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	arg_2_0:_play_vo()
+	arg_2_0.career_extension:start_activated_ability_cooldown()
+	ScriptUnit.extension(arg_2_0.owner_unit, "inventory_system"):check_and_drop_pickups("career_ability")
 end
 
-ActionCareerWEWaywatcherPiercing.finish = function (self, reason)
-	ActionCareerWEWaywatcherPiercing.super.finish(self, reason)
-	self.inventory_extension:wield_previous_non_level_slot()
+function ActionCareerWEWaywatcherPiercing.finish(arg_3_0, arg_3_1)
+	ActionCareerWEWaywatcherPiercing.super.finish(arg_3_0, arg_3_1)
+	arg_3_0.inventory_extension:wield_previous_non_level_slot()
 end
 
-ActionCareerWEWaywatcherPiercing._play_vo = function (self)
-	local owner_unit = self.owner_unit
-	local dialogue_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
-	local event_data = FrameTable.alloc_table()
+function ActionCareerWEWaywatcherPiercing._play_vo(arg_4_0)
+	local var_4_0 = arg_4_0.owner_unit
+	local var_4_1 = ScriptUnit.extension_input(var_4_0, "dialogue_system")
+	local var_4_2 = FrameTable.alloc_table()
 
-	dialogue_input:trigger_networked_dialogue_event("activate_ability", event_data)
+	var_4_1:trigger_networked_dialogue_event("activate_ability", var_4_2)
 end
 
-ActionCareerWEWaywatcherPiercing._restore_ammo = function (self)
-	local owner_unit = self.owner_unit
-	local weapon_slot = "slot_ranged"
-	local inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
-	local slot_data = inventory_extension:get_slot_data(weapon_slot)
-	local right_unit_1p = slot_data.right_unit_1p
-	local left_unit_1p = slot_data.left_unit_1p
-	local right_hand_ammo_extension = ScriptUnit.has_extension(right_unit_1p, "ammo_system")
-	local left_hand_ammo_extension = ScriptUnit.has_extension(left_unit_1p, "ammo_system")
-	local ammo_extension = right_hand_ammo_extension or left_hand_ammo_extension
-	local ammo_bonus_fraction = 0.2
-	local ammo_amount = math.max(math.round(ammo_extension:max_ammo() * ammo_bonus_fraction), 1)
+function ActionCareerWEWaywatcherPiercing._restore_ammo(arg_5_0)
+	local var_5_0 = arg_5_0.owner_unit
+	local var_5_1 = "slot_ranged"
+	local var_5_2 = ScriptUnit.extension(var_5_0, "inventory_system"):get_slot_data(var_5_1)
+	local var_5_3 = var_5_2.right_unit_1p
+	local var_5_4 = var_5_2.left_unit_1p
+	local var_5_5 = ScriptUnit.has_extension(var_5_3, "ammo_system")
+	local var_5_6 = ScriptUnit.has_extension(var_5_4, "ammo_system")
+	local var_5_7 = var_5_5 or var_5_6
+	local var_5_8 = 0.2
+	local var_5_9 = math.max(math.round(var_5_7:max_ammo() * var_5_8), 1)
 
-	if ammo_extension then
-		ammo_extension:add_ammo_to_reserve(ammo_amount)
+	if var_5_7 then
+		var_5_7:add_ammo_to_reserve(var_5_9)
 	end
 end

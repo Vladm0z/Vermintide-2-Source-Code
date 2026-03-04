@@ -1,650 +1,653 @@
-﻿-- chunkname: @scripts/managers/conflict_director/spawn_zone_baker.lua
+-- chunkname: @scripts/managers/conflict_director/spawn_zone_baker.lua
 
 require("scripts/managers/conflict_director/main_path_spawning_generator")
 
 SpawnZoneBaker = class(SpawnZoneBaker)
 
-local InterestPointUnits = InterestPointUnits
-local DOOR_SEARCH_RADIUS = 1.5
+local var_0_0 = InterestPointUnits
+local var_0_1 = 1.5
 
-SpawnZoneBaker.init = function (self, world, nav_world, level_analyzer, level_seed)
-	self.world = world
-	self.nav_world = nav_world
-	self.level_analyzer = level_analyzer
-	self.spawn_zones_available = false
+function SpawnZoneBaker.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	arg_1_0.world = arg_1_1
+	arg_1_0.nav_world = arg_1_2
+	arg_1_0.level_analyzer = arg_1_3
+	arg_1_0.spawn_zones_available = false
 
-	self:set_seed(level_seed)
+	arg_1_0:set_seed(arg_1_4)
 
 	if not InterestPointUnitsLookup then
-		ConflictUtils.generate_spawn_point_lookup(world)
+		ConflictUtils.generate_spawn_point_lookup(arg_1_1)
 	end
 
-	local level_settings = LevelHelper:current_level_settings()
-	local level_path = level_settings.level_name
+	local var_1_0 = LevelHelper:current_level_settings().level_name
 
-	if level_path then
-		local num_nested_levels = LevelResource.nested_level_count(level_path)
-
-		if num_nested_levels > 0 then
-			level_path = LevelResource.nested_level_resource_name(level_path, 0)
+	if var_1_0 then
+		if LevelResource.nested_level_count(var_1_0) > 0 then
+			var_1_0 = LevelResource.nested_level_resource_name(var_1_0, 0)
 		end
 
-		local patrol_waypoints_path = level_path .. "_patrol_waypoints"
+		local var_1_1 = var_1_0 .. "_patrol_waypoints"
 
-		if Application.can_get("lua", patrol_waypoints_path) then
-			local waypoints_data = require(patrol_waypoints_path)
-			local patrol_waypoints = waypoints_data.patrol_waypoints
-			local boss_waypoints = table.clone(waypoints_data.boss_waypoints)
-			local event_waypoints = waypoints_data.event_waypoints
+		if Application.can_get("lua", var_1_1) then
+			local var_1_2 = require(var_1_1)
+			local var_1_3 = var_1_2.patrol_waypoints
+			local var_1_4 = table.clone(var_1_2.boss_waypoints)
+			local var_1_5 = var_1_2.event_waypoints
 
-			self.level_analyzer:store_patrol_waypoints(boss_waypoints, patrol_waypoints, event_waypoints)
+			arg_1_0.level_analyzer:store_patrol_waypoints(var_1_4, var_1_3, var_1_5)
 		end
 
-		local spawn_data = level_analyzer.spawn_zone_data
+		local var_1_6 = arg_1_3.spawn_zone_data
 
-		if spawn_data then
-			self.zone_convert = {}
-			self.zones = spawn_data.zones
-			self.spawn_pos_lookup = spawn_data.position_lookup
-			self.num_main_zones = spawn_data.num_main_zones
-			self.total_main_path_length_unmodified = spawn_data.total_main_path_length
+		if var_1_6 then
+			arg_1_0.zone_convert = {}
+			arg_1_0.zones = var_1_6.zones
+			arg_1_0.spawn_pos_lookup = var_1_6.position_lookup
+			arg_1_0.num_main_zones = var_1_6.num_main_zones
+			arg_1_0.total_main_path_length_unmodified = var_1_6.total_main_path_length
 
-			local main_paths = spawn_data.main_paths
+			local var_1_7 = var_1_6.main_paths
 
-			self.main_paths = main_paths
+			arg_1_0.main_paths = var_1_7
 
-			local path_markers = spawn_data.path_markers
+			local var_1_8 = var_1_6.path_markers
 
-			self.path_markers = path_markers
+			arg_1_0.path_markers = var_1_8
 
-			local crossroads = spawn_data.crossroads
-			local mainpath_was_changed, altered_amount_num_main_zones = level_analyzer:remove_crossroads_extra_path_branches(main_paths, crossroads, self.total_main_path_length_unmodified, self.zones, self.num_main_zones, path_markers)
+			local var_1_9 = var_1_6.crossroads
+			local var_1_10, var_1_11 = arg_1_3:remove_crossroads_extra_path_branches(var_1_7, var_1_9, arg_1_0.total_main_path_length_unmodified, arg_1_0.zones, arg_1_0.num_main_zones, var_1_8)
 
-			if mainpath_was_changed then
-				self.num_main_zones = altered_amount_num_main_zones
+			if var_1_10 then
+				arg_1_0.num_main_zones = var_1_11
 			end
 
-			local door_system = Managers.state.entity:system("door_system")
-			local door_broadphase_query_result = {}
-			local total_main_path_length = 0
+			local var_1_12 = Managers.state.entity:system("door_system")
+			local var_1_13 = {}
+			local var_1_14 = 0
 
-			for i = 1, #main_paths do
-				local path = main_paths[i]
-				local nodes = path.nodes
+			for iter_1_0 = 1, #var_1_7 do
+				local var_1_15 = var_1_7[iter_1_0]
+				local var_1_16 = var_1_15.nodes
 
-				for j = 1, #nodes do
-					local p = nodes[j]
-					local node_position = Vector3(p[1], p[2], p[3])
-					local num_doors = door_system:get_doors(node_position, DOOR_SEARCH_RADIUS, door_broadphase_query_result)
+				for iter_1_1 = 1, #var_1_16 do
+					local var_1_17 = var_1_16[iter_1_1]
+					local var_1_18 = Vector3(var_1_17[1], var_1_17[2], var_1_17[3])
 
-					if num_doors > 0 then
-						local door_unit = door_broadphase_query_result[1]
-						local result_position = MainPathUtils.resolve_node_in_door(nav_world, node_position, door_unit)
+					if var_1_12:get_doors(var_1_18, var_0_1, var_1_13) > 0 then
+						local var_1_19 = var_1_13[1]
+						local var_1_20 = MainPathUtils.resolve_node_in_door(arg_1_2, var_1_18, var_1_19)
 
-						if result_position then
-							node_position = result_position
+						if var_1_20 then
+							var_1_18 = var_1_20
 						else
-							print("MainPathUtils.resolve_node_in_door: Error - was unable to resolve node in door at position", node_position)
+							print("MainPathUtils.resolve_node_in_door: Error - was unable to resolve node in door at position", var_1_18)
 						end
 					end
 
-					nodes[j] = Vector3Box(node_position)
+					var_1_16[iter_1_1] = Vector3Box(var_1_18)
 				end
 
-				total_main_path_length = total_main_path_length + path.path_length
+				var_1_14 = var_1_14 + var_1_15.path_length
 			end
 
-			MainPathSpawningGenerator.inject_travel_dists(main_paths, mainpath_was_changed)
-			level_analyzer:store_path_markers(path_markers)
+			MainPathSpawningGenerator.inject_travel_dists(var_1_7, var_1_10)
+			arg_1_3:store_path_markers(var_1_8)
 
-			self.total_main_path_length = total_main_path_length
+			arg_1_0.total_main_path_length = var_1_14
 
-			level_analyzer:store_main_paths(main_paths)
-			level_analyzer:brute_force_calc_zone_distances(self.zones, self.num_main_zones, self.spawn_pos_lookup)
+			arg_1_3:store_main_paths(var_1_7)
+			arg_1_3:brute_force_calc_zone_distances(arg_1_0.zones, arg_1_0.num_main_zones, arg_1_0.spawn_pos_lookup)
 
-			if mainpath_was_changed then
+			if var_1_10 then
 				Managers.state.game_mode:recalc_respawner_dist_due_to_crossroads()
 			end
 
-			self:create_cover_points(spawn_data.cover_points, level_analyzer.cover_points_broadphase)
+			arg_1_0:create_cover_points(var_1_6.cover_points, arg_1_3.cover_points_broadphase)
 
-			self.spawn_zones_available = true
+			arg_1_0.spawn_zones_available = true
 		end
 	end
 end
 
-SpawnZoneBaker._random = function (self, ...)
-	local seed, value = Math.next_random(self.seed, ...)
+function SpawnZoneBaker._random(arg_2_0, ...)
+	local var_2_0, var_2_1 = Math.next_random(arg_2_0.seed, ...)
 
-	self.seed = seed
+	arg_2_0.seed = var_2_0
 
-	return value
+	return var_2_1
 end
 
-SpawnZoneBaker._random_dice_roll = function (self, prob, alias)
-	local seed, value = LoadedDice.roll_seeded(prob, alias, self.seed)
+function SpawnZoneBaker._random_dice_roll(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0, var_3_1 = LoadedDice.roll_seeded(arg_3_1, arg_3_2, arg_3_0.seed)
 
-	self.seed = seed
+	arg_3_0.seed = var_3_0
 
-	return value
+	return var_3_1
 end
 
-SpawnZoneBaker.set_seed = function (self, seed)
-	fassert(seed and type(seed) == "number", "Bad seed input!")
+function SpawnZoneBaker.set_seed(arg_4_0, arg_4_1)
+	fassert(arg_4_1 and type(arg_4_1) == "number", "Bad seed input!")
 
-	self.seed = seed
-	self._initial_seed = seed
+	arg_4_0.seed = arg_4_1
+	arg_4_0._initial_seed = arg_4_1
 end
 
-SpawnZoneBaker._random_interval = function (self, numbers)
-	if type(numbers) == "table" then
-		return self:_random(numbers[1], numbers[2])
+function SpawnZoneBaker._random_interval(arg_5_0, arg_5_1)
+	if type(arg_5_1) == "table" then
+		return arg_5_0:_random(arg_5_1[1], arg_5_1[2])
 	else
-		return numbers
+		return arg_5_1
 	end
 end
 
-local random_indices = {}
-local all = {}
+local var_0_2 = {}
+local var_0_3 = {}
 
-SpawnZoneBaker._get_random_array_indices = function (self, size, num_picks)
-	fassert(num_picks <= size, "Can't pick more elements than the size of the")
-	fassert(size < 128, "Don't use this for large arrays, since it will be inefficient. It creates large tables then.")
+function SpawnZoneBaker._get_random_array_indices(arg_6_0, arg_6_1, arg_6_2)
+	fassert(arg_6_2 <= arg_6_1, "Can't pick more elements than the size of the")
+	fassert(arg_6_1 < 128, "Don't use this for large arrays, since it will be inefficient. It creates large tables then.")
 
-	for i = 1, size do
-		all[i] = i
+	for iter_6_0 = 1, arg_6_1 do
+		var_0_3[iter_6_0] = iter_6_0
 	end
 
-	for i = 1, num_picks do
-		local random_index = self:_random(1, size)
+	for iter_6_1 = 1, arg_6_2 do
+		local var_6_0 = arg_6_0:_random(1, arg_6_1)
 
-		random_indices[i] = all[random_index]
-		all[random_index] = all[size]
-		size = size - 1
+		var_0_2[iter_6_1] = var_0_3[var_6_0]
+		var_0_3[var_6_0] = var_0_3[arg_6_1]
+		arg_6_1 = arg_6_1 - 1
 	end
 
-	return random_indices
+	return var_0_2
 end
 
-SpawnZoneBaker.loaded_spawn_zones_available = function (self)
-	return self.spawn_zones_available
+function SpawnZoneBaker.loaded_spawn_zones_available(arg_7_0)
+	return arg_7_0.spawn_zones_available
 end
 
-SpawnZoneBaker.create_cover_points = function (self, cover_points, broad_phase)
-	if not cover_points then
+function SpawnZoneBaker.create_cover_points(arg_8_0, arg_8_1, arg_8_2)
+	if not arg_8_1 then
 		print("No cover points found")
 
 		return
 	end
 
-	local numbers = #cover_points
-	local up = Vector3.up()
+	local var_8_0 = #arg_8_1
+	local var_8_1 = Vector3.up()
 
-	for i = 1, numbers, 5 do
-		local a, b, c = Script.temp_count()
-		local x = cover_points[i]
-		local y = cover_points[i + 1]
-		local z = cover_points[i + 2]
-		local pos = Vector3(x, y, z)
-		local nx = cover_points[i + 3]
-		local ny = cover_points[i + 4]
-		local rot = Quaternion.look(Vector3(nx, ny, 0), up)
-		local unit = World.spawn_unit(self.world, "units/hub_elements/empty", pos, rot)
+	for iter_8_0 = 1, var_8_0, 5 do
+		local var_8_2, var_8_3, var_8_4 = Script.temp_count()
+		local var_8_5 = arg_8_1[iter_8_0]
+		local var_8_6 = arg_8_1[iter_8_0 + 1]
+		local var_8_7 = arg_8_1[iter_8_0 + 2]
+		local var_8_8 = Vector3(var_8_5, var_8_6, var_8_7)
+		local var_8_9 = arg_8_1[iter_8_0 + 3]
+		local var_8_10 = arg_8_1[iter_8_0 + 4]
+		local var_8_11 = Quaternion.look(Vector3(var_8_9, var_8_10, 0), var_8_1)
+		local var_8_12 = World.spawn_unit(arg_8_0.world, "units/hub_elements/empty", var_8_8, var_8_11)
 
-		Broadphase.add(broad_phase, unit, pos, 1)
-		Script.set_temp_count(a, b, c)
+		Broadphase.add(arg_8_2, var_8_12, var_8_8, 1)
+		Script.set_temp_count(var_8_2, var_8_3, var_8_4)
 	end
 end
 
-SpawnZoneBaker.periodical = function (self, hi, dist_data)
-	local len, density
+function SpawnZoneBaker.periodical(arg_9_0, arg_9_1, arg_9_2)
+	local var_9_0
+	local var_9_1
 
-	if hi then
-		len = self:_random(dist_data.min_low_dist, dist_data.max_low_dist)
-		density = dist_data.min_low_density + self:_random() * (dist_data.max_low_density - dist_data.min_low_density)
-		hi = false
+	if arg_9_1 then
+		var_9_0 = arg_9_0:_random(arg_9_2.min_low_dist, arg_9_2.max_low_dist)
+		var_9_1 = arg_9_2.min_low_density + arg_9_0:_random() * (arg_9_2.max_low_density - arg_9_2.min_low_density)
+		arg_9_1 = false
 	else
-		len = self:_random(dist_data.min_hi_dist, dist_data.max_hi_dist)
-		density = dist_data.min_hi_density + self:_random() * (dist_data.max_hi_density - dist_data.min_hi_density)
-		hi = true
+		var_9_0 = arg_9_0:_random(arg_9_2.min_hi_dist, arg_9_2.max_hi_dist)
+		var_9_1 = arg_9_2.min_hi_density + arg_9_0:_random() * (arg_9_2.max_hi_density - arg_9_2.min_hi_density)
+		arg_9_1 = true
 	end
 
-	return len, density, hi
+	return var_9_0, var_9_1, arg_9_1
 end
 
-local function array_copy(source, dest, size)
-	for i = 1, size do
-		dest[i] = source[i]
+local function var_0_4(arg_10_0, arg_10_1, arg_10_2)
+	for iter_10_0 = 1, arg_10_2 do
+		arg_10_1[iter_10_0] = arg_10_0[iter_10_0]
 	end
 end
 
-local function array_remove_element(array, index, size)
-	local element = array[index]
+local function var_0_5(arg_11_0, arg_11_1, arg_11_2)
+	local var_11_0 = arg_11_0[arg_11_1]
 
-	array[index] = array[size]
-	array[size] = nil
+	arg_11_0[arg_11_1] = arg_11_0[arg_11_2]
+	arg_11_0[arg_11_2] = nil
 
-	return element
+	return var_11_0
 end
 
-local work_list = {}
-local lookup = {}
+local var_0_6 = {}
+local var_0_7 = {}
 
-SpawnZoneBaker.generate_spawns = function (self, spawn_cycle_length, goal_density, area_density_coefficient, length_density_coefficient, conflict_director_name, mutator_list)
+function SpawnZoneBaker.generate_spawns(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
 	if not InterestPointUnitsLookup then
-		ConflictUtils.generate_spawn_point_lookup(self.world)
+		ConflictUtils.generate_spawn_point_lookup(arg_12_0.world)
 	end
 
-	if not self.spawn_zones_available then
+	if not arg_12_0.spawn_zones_available then
 		print("No spawn zones where found, can't generate spawns")
 	end
 
-	self._all_hi_data = {}
-	self._count_up = 0
+	arg_12_0._all_hi_data = {}
+	arg_12_0._count_up = 0
 
-	local difficulty, difficulty_tweak = Managers.state.difficulty:get_difficulty()
+	local var_12_0, var_12_1 = Managers.state.difficulty:get_difficulty()
 
-	self.composition_difficulty = DifficultyTweak.converters.composition(difficulty, difficulty_tweak)
+	arg_12_0.composition_difficulty = DifficultyTweak.converters.composition(var_12_0, var_12_1)
 
-	local zones = self.zones
-	local num_main_zones = self.num_main_zones
-	local zone_convert = self.zone_convert
+	local var_12_2 = arg_12_0.zones
+	local var_12_3 = arg_12_0.num_main_zones
+	local var_12_4 = arg_12_0.zone_convert
 
-	conflict_director_name = conflict_director_name or "default"
+	arg_12_5 = arg_12_5 or "default"
 
-	local conflict_director = ConflictDirectors[conflict_director_name]
-	local seed = self._initial_seed
-	local great_cycles = MainPathSpawningGenerator.generate_great_cycles(conflict_director, mutator_list, zones, zone_convert, num_main_zones, spawn_cycle_length, seed)
-	local spawns, pack_sizes, pack_rotations, pack_members, zone_data_list = {}, {}, {}, {}, {}
-	local distribution = PackSpawningDistribution.standard.distribution_method
-	local dist_data = PackDistributions[distribution]
-	local num_great_cycles = #great_cycles
+	local var_12_5 = ConflictDirectors[arg_12_5]
+	local var_12_6 = arg_12_0._initial_seed
+	local var_12_7 = MainPathSpawningGenerator.generate_great_cycles(var_12_5, arg_12_6, var_12_2, var_12_4, var_12_3, arg_12_1, var_12_6)
+	local var_12_8 = {}
+	local var_12_9 = {}
+	local var_12_10 = {}
+	local var_12_11 = {}
+	local var_12_12 = {}
+	local var_12_13 = PackSpawningDistribution.standard.distribution_method
+	local var_12_14 = PackDistributions[var_12_13]
+	local var_12_15 = #var_12_7
 
-	for i = 1, num_great_cycles do
-		local cycle = great_cycles[i]
-		local cycle_zones = cycle.zones
-		local num_cycle_zones = #cycle_zones
-		local sum_density, num_hi = 0, 0
-		local zone
+	for iter_12_0 = 1, var_12_15 do
+		local var_12_16 = var_12_7[iter_12_0].zones
+		local var_12_17 = #var_12_16
+		local var_12_18 = 0
+		local var_12_19 = 0
+		local var_12_20
 
-		if distribution == "random" then
-			for j = 1, num_cycle_zones do
-				zone = cycle_zones[j]
+		if var_12_13 == "random" then
+			for iter_12_1 = 1, var_12_17 do
+				local var_12_21 = var_12_16[iter_12_1]
+				local var_12_22 = arg_12_0:_random()
 
-				local density = self:_random()
-
-				zone.density = density
-				sum_density = sum_density + density
+				var_12_21.density = var_12_22
+				var_12_18 = var_12_18 + var_12_22
 			end
-		elseif distribution == "periodical" then
-			local len, density, period_end
-			local hi = self:_random() > 0.5
+		elseif var_12_13 == "periodical" then
+			local var_12_23
+			local var_12_24
+			local var_12_25
+			local var_12_26 = arg_12_0:_random() > 0.5
+			local var_12_27, var_12_28, var_12_29 = arg_12_0:periodical(var_12_26, var_12_14)
+			local var_12_30 = var_12_16[1]
 
-			len, density, hi = self:periodical(hi, dist_data)
-			zone = cycle_zones[1]
-			zone.period_length = len
-			zone.hi = hi
+			var_12_30.period_length = var_12_27
+			var_12_30.hi = var_12_29
 
-			local hi_data = self:create_hi_data(zone, zone.pack_type)
+			local var_12_31 = arg_12_0:create_hi_data(var_12_30, var_12_30.pack_type)
+			local var_12_32 = var_12_27
 
-			period_end = len
-			num_hi = hi and 1 or 0
+			var_12_19 = var_12_29 and 1 or 0
 
-			local period_counter, second_part
+			local var_12_33
+			local var_12_34
 
-			for j = 1, num_cycle_zones do
-				zone = cycle_zones[j]
-				zone.hi_data = hi_data
+			for iter_12_2 = 1, var_12_17 do
+				local var_12_35 = var_12_16[iter_12_2]
 
-				if period_end < j then
-					len, density, hi = self:periodical(hi, dist_data)
-					second_part = false
-					period_end = j + len - 1
+				var_12_35.hi_data = var_12_31
 
-					if num_cycle_zones < period_end then
-						len = num_cycle_zones - j
-						period_end = num_cycle_zones
+				if var_12_32 < iter_12_2 then
+					local var_12_36
+
+					var_12_36, var_12_28, var_12_29 = arg_12_0:periodical(var_12_29, var_12_14)
+					var_12_34 = false
+					var_12_32 = iter_12_2 + var_12_36 - 1
+
+					if var_12_17 < var_12_32 then
+						var_12_36 = var_12_17 - iter_12_2
+						var_12_32 = var_12_17
 					end
 
-					zone.period_length = len
-					zone.hi_data = hi_data
-					zone.hi = hi
-					hi_data = self:create_hi_data(zone, zone.pack_type)
-					num_hi = num_hi + (hi and 1 or 0)
-				elseif dist_data.random_distribution then
-					if hi then
-						density = dist_data.min_hi_density + self:_random() * (dist_data.max_hi_density - dist_data.min_hi_density)
+					var_12_35.period_length = var_12_36
+					var_12_35.hi_data = var_12_31
+					var_12_35.hi = var_12_29
+					var_12_31 = arg_12_0:create_hi_data(var_12_35, var_12_35.pack_type)
+					var_12_19 = var_12_19 + (var_12_29 and 1 or 0)
+				elseif var_12_14.random_distribution then
+					if var_12_29 then
+						var_12_28 = var_12_14.min_hi_density + arg_12_0:_random() * (var_12_14.max_hi_density - var_12_14.min_hi_density)
 					else
-						density = dist_data.min_low_density + self:_random() * (dist_data.max_low_density - dist_data.min_low_density)
+						var_12_28 = var_12_14.min_low_density + arg_12_0:_random() * (var_12_14.max_low_density - var_12_14.min_low_density)
 					end
-				elseif period_counter == dist_data.zero_clamp_max_dist and not hi then
-					second_part = true
-					density = dist_data.min_low_density + self:_random() * (dist_data.max_low_density - dist_data.min_low_density)
+				elseif var_12_33 == var_12_14.zero_clamp_max_dist and not var_12_29 then
+					var_12_34 = true
+					var_12_28 = var_12_14.min_low_density + arg_12_0:_random() * (var_12_14.max_low_density - var_12_14.min_low_density)
 				end
 
-				period_counter = zone.period_length and 1 or period_counter + 1
+				var_12_33 = var_12_35.period_length and 1 or var_12_33 + 1
 
-				if density < dist_data.zero_density_below and not second_part then
-					density = 0
+				if var_12_28 < var_12_14.zero_density_below and not var_12_34 then
+					var_12_28 = 0
 				end
 
-				zone.density = density
-				zone.hi = hi
-				sum_density = sum_density + density
+				var_12_35.density = var_12_28
+				var_12_35.hi = var_12_29
+				var_12_18 = var_12_18 + var_12_28
 			end
 		end
 
-		local average_goal_density, pack_spawning_setting, goal_density = 0
+		local var_12_37 = 0
+		local var_12_38
+		local var_12_39
 
-		for j = 1, num_cycle_zones do
-			local cycle_zone = cycle_zones[j]
+		for iter_12_3 = 1, var_12_17 do
+			local var_12_40 = var_12_16[iter_12_3]
 
-			if pack_spawning_setting ~= cycle_zone.pack_spawning_setting then
-				goal_density = cycle_zone.pack_spawning_setting.basics.goal_density
+			if var_12_38 ~= var_12_40.pack_spawning_setting then
+				var_12_39 = var_12_40.pack_spawning_setting.basics.goal_density
 			end
 
-			average_goal_density = average_goal_density + goal_density
+			var_12_37 = var_12_37 + var_12_39
 		end
 
-		if sum_density > 0 then
-			local normalizer = average_goal_density / sum_density
-			local remainder = 0
+		if var_12_18 > 0 then
+			local var_12_41 = var_12_37 / var_12_18
+			local var_12_42 = 0
 
-			print("-------------> JOW Perfect-density", average_goal_density, "Sum density", sum_density, "Normalized coefficient:", normalizer)
+			print("-------------> JOW Perfect-density", var_12_37, "Sum density", var_12_18, "Normalized coefficient:", var_12_41)
 
-			for j = 1, num_cycle_zones do
-				local cycle_zone = cycle_zones[j]
+			for iter_12_4 = 1, var_12_17 do
+				local var_12_43 = var_12_16[iter_12_4]
 
-				cycle_zone.density = cycle_zone.density * normalizer
+				var_12_43.density = var_12_43.density * var_12_41
 
-				if remainder > 0 then
-					cycle_zone.density = cycle_zone.density + remainder
-					remainder = 0
+				if var_12_42 > 0 then
+					var_12_43.density = var_12_43.density + var_12_42
+					var_12_42 = 0
 				end
 
-				if cycle_zone.density > 1 then
-					remainder = remainder + cycle_zone.density - 1
-					cycle_zone.density = 1
-				end
-			end
-
-			if distribution == "periodical" then
-				self:inject_special_packs(num_hi, cycle_zones)
-			end
-
-			local kept = 1
-
-			for j = 1, num_cycle_zones do
-				local center_zone = cycle_zones[j]
-				local center_density = center_zone.density
-				local outer = center_zone.outer
-				local density = center_density
-
-				for k = 1, #outer do
-					local cycle_zone = outer[k]
-
-					density = math.clamp(density * kept + (1 - kept) * (2 * self:_random() - 1), 0, 1)
-					cycle_zone.density = density
-					cycle_zone.hi_data = center_zone.hi_data
-					cycle_zone.hi = center_zone.hi
+				if var_12_43.density > 1 then
+					var_12_42 = var_12_42 + var_12_43.density - 1
+					var_12_43.density = 1
 				end
 			end
 
-			self:populate_spawns_by_rats(pack_spawning_setting, spawns, pack_sizes, pack_rotations, pack_members, zone_data_list, cycle_zones, pack_spawning_setting, length_density_coefficient, nil, true, nil)
+			if var_12_13 == "periodical" then
+				arg_12_0:inject_special_packs(var_12_19, var_12_16)
+			end
 
-			for j = 1, num_cycle_zones do
-				local center_zone = cycle_zones[j]
-				local outer_zones = center_zone.outer
-				local pack_spawning_setting = center_zone.pack_spawning_setting
-				local num_zones_to_clamp = pack_spawning_setting.basics.clamp_outer_zones_used
+			local var_12_44 = 1
 
-				if num_zones_to_clamp then
-					local num_zones = #outer_zones
-					local num_to_remove = num_zones - num_zones_to_clamp
+			for iter_12_5 = 1, var_12_17 do
+				local var_12_45 = var_12_16[iter_12_5]
+				local var_12_46, var_12_47 = var_12_45.density, var_12_45.outer
 
-					if num_to_remove > 0 then
-						array_copy(outer_zones, work_list, num_zones)
+				for iter_12_6 = 1, #var_12_47 do
+					local var_12_48 = var_12_47[iter_12_6]
 
-						local work_list_size = #outer_zones
+					var_12_46 = math.clamp(var_12_46 * var_12_44 + (1 - var_12_44) * (2 * arg_12_0:_random() - 1), 0, 1)
+					var_12_48.density = var_12_46
+					var_12_48.hi_data = var_12_45.hi_data
+					var_12_48.hi = var_12_45.hi
+				end
+			end
 
-						for k = 1, num_to_remove do
-							array_remove_element(work_list, self:_random(1, work_list_size), work_list_size)
+			arg_12_0:populate_spawns_by_rats(var_12_38, var_12_8, var_12_9, var_12_10, var_12_11, var_12_12, var_12_16, var_12_38, arg_12_4, nil, true, nil)
 
-							work_list_size = work_list_size - 1
+			for iter_12_7 = 1, var_12_17 do
+				local var_12_49 = var_12_16[iter_12_7]
+				local var_12_50 = var_12_49.outer
+				local var_12_51 = var_12_49.pack_spawning_setting
+				local var_12_52 = var_12_51.basics.clamp_outer_zones_used
+
+				if var_12_52 then
+					local var_12_53 = #var_12_50
+					local var_12_54 = var_12_53 - var_12_52
+
+					if var_12_54 > 0 then
+						var_0_4(var_12_50, var_0_6, var_12_53)
+
+						local var_12_55 = #var_12_50
+
+						for iter_12_8 = 1, var_12_54 do
+							var_0_5(var_0_6, arg_12_0:_random(1, var_12_55), var_12_55)
+
+							var_12_55 = var_12_55 - 1
 						end
 
-						outer_zones = work_list
+						var_12_50 = var_0_6
 					end
 				end
 
-				self:populate_spawns_by_rats(pack_spawning_setting, spawns, pack_sizes, pack_rotations, pack_members, zone_data_list, outer_zones, area_density_coefficient, 0, center_zone.pack_type, nil, center_zone)
+				arg_12_0:populate_spawns_by_rats(var_12_51, var_12_8, var_12_9, var_12_10, var_12_11, var_12_12, var_12_50, arg_12_3, 0, var_12_49.pack_type, nil, var_12_49)
 			end
 		else
-			print(sprintf("Spawn density in great_cycle %d is 0, num cycle zones: %d ", i, num_cycle_zones))
+			print(sprintf("Spawn density in great_cycle %d is 0, num cycle zones: %d ", iter_12_0, var_12_17))
 		end
 	end
 
-	local island_zones = {}
+	local var_12_56 = {}
 
-	for i = num_main_zones + 1, #zones do
-		local zone = zones[i]
-		local parent_zone_index = zone.parent_zone_id
+	for iter_12_9 = var_12_3 + 1, #var_12_2 do
+		local var_12_57 = var_12_2[iter_12_9]
+		local var_12_58 = var_12_57.parent_zone_id
 
-		if not parent_zone_index then
-			print("Missing parent zone id for island-zone", i)
-			table.dump(zone, "ISLAND ZONE", 2)
+		if not var_12_58 then
+			print("Missing parent zone id for island-zone", iter_12_9)
+			table.dump(var_12_57, "ISLAND ZONE", 2)
 		end
 
-		local parent_zone = parent_zone_index and self.level_analyzer:get_zone_from_unique_id(zone_convert, parent_zone_index)
+		local var_12_59 = var_12_58 and arg_12_0.level_analyzer:get_zone_from_unique_id(var_12_4, var_12_58)
 
-		if parent_zone then
-			local conflict_setting = parent_zone.conflict_setting
-			local pack_spawning_setting = parent_zone.pack_spawning_setting
-			local pack_type = parent_zone.pack_type
-			local area_density_coefficient = pack_spawning_setting.area_density_coefficient
-			local ok_to_spawn = not zone.on_roof or BreedPacks[pack_type].roof_spawning_allowed
+		if var_12_59 then
+			local var_12_60 = var_12_59.conflict_setting
+			local var_12_61 = var_12_59.pack_spawning_setting
+			local var_12_62 = var_12_59.pack_type
+			local var_12_63 = var_12_61.area_density_coefficient
 
-			if ok_to_spawn then
-				local sub_zones = zone.sub
-				local sub_areas = zone.sub_areas
+			if not var_12_57.on_roof or BreedPacks[var_12_62].roof_spawning_allowed then
+				local var_12_64 = var_12_57.sub
+				local var_12_65 = var_12_57.sub_areas
 
-				for j = 1, #sub_zones do
-					local nodes = sub_zones[j]
-					local area = sub_areas[j]
-					local density = self:_random()
-					local num_wanted_rats = math.floor(area * density * area_density_coefficient)
-					local island_zone = {
+				for iter_12_10 = 1, #var_12_64 do
+					local var_12_66 = var_12_64[iter_12_10]
+					local var_12_67 = var_12_65[iter_12_10]
+					local var_12_68 = arg_12_0:_random()
+					local var_12_69 = math.floor(var_12_67 * var_12_68 * var_12_63)
+					local var_12_70 = {
 						total_area = 0,
-						nodes = nodes,
-						area = area,
+						nodes = var_12_66,
+						area = var_12_67,
 						outer = {},
-						pack_type = pack_type,
-						pack_spawning_setting = pack_spawning_setting,
-						conflict_setting = conflict_setting,
-						unique_zone_id = zone.unique_zone_id,
+						pack_type = var_12_62,
+						pack_spawning_setting = var_12_61,
+						conflict_setting = var_12_60,
+						unique_zone_id = var_12_57.unique_zone_id
 					}
 
-					island_zone.period_length = 1
-					island_zone.hi = false
-					island_zone.island = true
-					island_zone.density = density
-					island_zone.parent_zone = parent_zone
+					var_12_70.period_length = 1
+					var_12_70.hi = false
+					var_12_70.island = true
+					var_12_70.density = var_12_68
+					var_12_70.parent_zone = var_12_59
 
-					self:create_hi_data(island_zone, pack_type)
+					arg_12_0:create_hi_data(var_12_70, var_12_62)
 
-					island_zones[#island_zones + 1] = island_zone
-					island_zone.unique_zone_id = #island_zones
+					var_12_56[#var_12_56 + 1] = var_12_70
+					var_12_70.unique_zone_id = #var_12_56
 
-					local child_islands = parent_zone.islands
+					local var_12_71 = var_12_59.islands
 
-					if not child_islands then
-						child_islands = {}
-						parent_zone.islands = child_islands
+					if not var_12_71 then
+						var_12_71 = {}
+						var_12_59.islands = var_12_71
 					end
 
-					child_islands[#child_islands + 1] = island_zone.unique_zone_id
+					var_12_71[#var_12_71 + 1] = var_12_70.unique_zone_id
 
-					if num_wanted_rats > 0 then
-						self:spawn_amount_rats(spawns, pack_sizes, pack_rotations, pack_members, zone_data_list, nodes, num_wanted_rats, pack_type, area, island_zone)
+					if var_12_69 > 0 then
+						arg_12_0:spawn_amount_rats(var_12_8, var_12_9, var_12_10, var_12_11, var_12_12, var_12_66, var_12_69, var_12_62, var_12_67, var_12_70)
 					end
 				end
 			end
 		end
 	end
 
-	fassert(#spawns == #pack_sizes, "Mismatching sizes!")
+	fassert(#var_12_8 == #var_12_9, "Mismatching sizes!")
 
-	self.great_cycles = great_cycles
-	self.island_zones = island_zones
+	arg_12_0.great_cycles = var_12_7
+	arg_12_0.island_zones = var_12_56
 
-	table.clear(lookup)
+	table.clear(var_0_7)
 
-	return spawns, pack_sizes, pack_rotations, pack_members, zone_data_list
+	return var_12_8, var_12_9, var_12_10, var_12_11, var_12_12
 end
 
-SpawnZoneBaker.inject_special_packs = function (self, total_peaks, cycle_zones)
-	local roaming_set = cycle_zones[1].pack_spawning_setting.roaming_set
-	local c = roaming_set.breed_packs_peeks_overide_chance
+function SpawnZoneBaker.inject_special_packs(arg_13_0, arg_13_1, arg_13_2)
+	local var_13_0 = arg_13_2[1].pack_spawning_setting.roaming_set.breed_packs_peeks_overide_chance
 
-	if not c then
+	if not var_13_0 then
 		return
 	end
 
-	local percent_overridden = self:_random() * (c[2] - c[1]) + c[1]
-	local picked_peaks = math.floor(total_peaks * percent_overridden)
+	local var_13_1 = arg_13_0:_random() * (var_13_0[2] - var_13_0[1]) + var_13_0[1]
+	local var_13_2 = math.floor(arg_13_1 * var_13_1)
 
-	if picked_peaks <= 0 or total_peaks <= 0 then
+	if var_13_2 <= 0 or arg_13_1 <= 0 then
 		return
 	end
 
-	local random_peaks = self:_get_random_array_indices(total_peaks, picked_peaks)
-	local lookup = {}
+	local var_13_3 = arg_13_0:_get_random_array_indices(arg_13_1, var_13_2)
+	local var_13_4 = {}
 
-	for i = 1, picked_peaks do
-		lookup[random_peaks[i]] = true
+	for iter_13_0 = 1, var_13_2 do
+		var_13_4[var_13_3[iter_13_0]] = true
 	end
 
-	local num_cycle_zones = #cycle_zones
-	local zone_index = 1
-	local peak_index = 1
+	local var_13_5 = #arg_13_2
+	local var_13_6 = 1
+	local var_13_7 = 1
 
-	while zone_index < num_cycle_zones do
-		local zone = cycle_zones[zone_index]
-		local period_length = zone.period_length
+	while var_13_6 < var_13_5 do
+		local var_13_8 = arg_13_2[var_13_6]
+		local var_13_9 = var_13_8.period_length
 
-		if period_length and zone.hi then
-			if lookup[peak_index] then
-				local pack_spawning_setting = zone.pack_spawning_setting
-				local roaming_set = pack_spawning_setting.roaming_set
-				local breed_packs_override = roaming_set.breed_packs_override
+		if var_13_9 and var_13_8.hi then
+			if var_13_4[var_13_7] then
+				local var_13_10 = var_13_8.pack_spawning_setting.roaming_set
+				local var_13_11 = var_13_10.breed_packs_override
 
-				if breed_packs_override then
-					local loaded_dice = roaming_set.breed_packs_override_loaded_dice
-					local prob, alias = loaded_dice[1], loaded_dice[2]
-					local pack_type_index = self:_random_dice_roll(prob, alias)
-					local pack_type = breed_packs_override[pack_type_index][1]
-					local pack_density = breed_packs_override[pack_type_index][3]
-					local hi_data = self:create_hi_data(zone, pack_type)
+				if var_13_11 then
+					local var_13_12 = var_13_10.breed_packs_override_loaded_dice
+					local var_13_13 = var_13_12[1]
+					local var_13_14 = var_13_12[2]
+					local var_13_15 = arg_13_0:_random_dice_roll(var_13_13, var_13_14)
+					local var_13_16 = var_13_11[var_13_15][1]
+					local var_13_17 = var_13_11[var_13_15][3]
+					local var_13_18 = arg_13_0:create_hi_data(var_13_8, var_13_16)
 
-					for k = zone_index, zone_index + period_length - 1 do
-						zone = cycle_zones[k]
-						zone.pack_type = pack_type
-						zone.density_coefficient = pack_density
-						zone.hi_data = hi_data
+					for iter_13_1 = var_13_6, var_13_6 + var_13_9 - 1 do
+						local var_13_19 = arg_13_2[iter_13_1]
+
+						var_13_19.pack_type = var_13_16
+						var_13_19.density_coefficient = var_13_17
+						var_13_19.hi_data = var_13_18
 					end
 				end
 
-				zone_index = zone_index + period_length - 1
+				var_13_6 = var_13_6 + var_13_9 - 1
 			end
 
-			peak_index = peak_index + 1
+			var_13_7 = var_13_7 + 1
 		end
 
-		zone_index = zone_index + 1
+		var_13_6 = var_13_6 + 1
 	end
 end
 
-SpawnZoneBaker.create_hi_data = function (self, zone, pack_type_name)
-	local hi_data
-	local breed_packs = BreedPacks[pack_type_name]
-	local zone_checks = breed_packs.zone_checks
+function SpawnZoneBaker.create_hi_data(arg_14_0, arg_14_1, arg_14_2)
+	local var_14_0
+	local var_14_1 = BreedPacks[arg_14_2].zone_checks
 
-	if zone_checks then
-		self._count_up = self._count_up + 1
-		hi_data = {
-			id = self._count_up,
+	if var_14_1 then
+		arg_14_0._count_up = arg_14_0._count_up + 1
+		var_14_0 = {
+			id = arg_14_0._count_up
 		}
-		zone.hi_data = hi_data
+		arg_14_1.hi_data = var_14_0
 
-		local clamp_breeds = zone.hi and zone_checks.clamp_breeds_hi or zone_checks.clamp_breeds_low
+		local var_14_2 = arg_14_1.hi and var_14_1.clamp_breeds_hi or var_14_1.clamp_breeds_low
 
-		if clamp_breeds then
-			local difficulty_overrides = clamp_breeds[self.composition_difficulty]
+		if var_14_2 then
+			local var_14_3 = var_14_2[arg_14_0.composition_difficulty]
 
-			if difficulty_overrides then
-				local breed_count = {}
+			if var_14_3 then
+				local var_14_4 = {}
 
-				for i = 1, #difficulty_overrides do
-					local c = difficulty_overrides[i]
-					local max_amount = self:_random_interval(c[1])
-					local check_breed_name = c[2]
-					local switch_breed = c[3]
+				for iter_14_0 = 1, #var_14_3 do
+					local var_14_5 = var_14_3[iter_14_0]
+					local var_14_6 = arg_14_0:_random_interval(var_14_5[1])
+					local var_14_7 = var_14_5[2]
+					local var_14_8 = var_14_5[3]
 
-					breed_count[check_breed_name] = {
-						count = 0,
+					var_14_4[var_14_7] = {
 						switch_count = 0,
-						max_amount = max_amount,
-						switch_breed = switch_breed,
-						hi = zone.hi,
+						count = 0,
+						max_amount = var_14_6,
+						switch_breed = var_14_8,
+						hi = arg_14_1.hi
 					}
 				end
 
-				hi_data.breed_count = breed_count
+				var_14_0.breed_count = var_14_4
 			end
 		end
 
-		self._all_hi_data[#self._all_hi_data + 1] = hi_data
+		arg_14_0._all_hi_data[#arg_14_0._all_hi_data + 1] = var_14_0
 	end
 
-	return hi_data
+	return var_14_0
 end
 
-SpawnZoneBaker.populate_spawns_by_rats = function (self, global_pack_spawning_setting, spawns, pack_sizes, pack_rotations, pack_members, zone_data_list, zone_list, global_area_density_coefficient, global_length_density_coefficient, pack_type_override, is_main_zone, parent_zone)
-	local num_zones = #zone_list
-	local area_bucket = 0
-	local dist_bucket = 0
-	local zone_length = 10
+function SpawnZoneBaker.populate_spawns_by_rats(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8, arg_15_9, arg_15_10, arg_15_11, arg_15_12)
+	local var_15_0 = #arg_15_7
+	local var_15_1 = 0
+	local var_15_2 = 0
+	local var_15_3 = 10
 
-	for j = 1, num_zones do
-		local zone = zone_list[j]
-		local pack_spawning_setting = zone.pack_spawning_setting or global_pack_spawning_setting
-		local basics = pack_spawning_setting.basics
-		local area_density_coefficient = is_main_zone and zone.density_coefficient or pack_spawning_setting.area_density_coefficient or global_area_density_coefficient
-		local length_density_coefficient = is_main_zone and basics.length_density_coefficient or global_length_density_coefficient
-		local clamp_area = is_main_zone and basics.clamp_main_path_zone_area
-		local nodes = zone.nodes
+	for iter_15_0 = 1, var_15_0 do
+		local var_15_4 = arg_15_7[iter_15_0]
+		local var_15_5 = var_15_4.pack_spawning_setting or arg_15_1
+		local var_15_6 = var_15_5.basics
+		local var_15_7 = arg_15_11 and var_15_4.density_coefficient or var_15_5.area_density_coefficient or arg_15_8
+		local var_15_8 = arg_15_11 and var_15_6.length_density_coefficient or arg_15_9
+		local var_15_9 = arg_15_11 and var_15_6.clamp_main_path_zone_area
+		local var_15_10 = var_15_4.nodes
 
-		if nodes then
-			local area = is_main_zone and clamp_area > zone.area and clamp_area or zone.area
-			local num_area_spawns_f = area * zone.density * area_density_coefficient + area_bucket
-			local num_area_spawns = math.floor(num_area_spawns_f)
+		if var_15_10 then
+			local var_15_11 = arg_15_11 and var_15_9 > var_15_4.area and var_15_9 or var_15_4.area
+			local var_15_12 = var_15_11 * var_15_4.density * var_15_7 + var_15_1
+			local var_15_13 = math.floor(var_15_12)
 
-			area_bucket = num_area_spawns_f - num_area_spawns
+			var_15_1 = var_15_12 - var_15_13
 
-			local num_dist_spawns_f = zone_length * zone.density * length_density_coefficient + dist_bucket
-			local num_dist_spawns = math.floor(num_dist_spawns_f)
+			local var_15_14 = var_15_3 * var_15_4.density * var_15_8 + var_15_2
+			local var_15_15 = math.floor(var_15_14)
 
-			dist_bucket = num_dist_spawns_f - num_dist_spawns
+			var_15_2 = var_15_14 - var_15_15
 
-			local num_wanted_rats = num_area_spawns + num_dist_spawns
+			local var_15_16 = var_15_13 + var_15_15
 
-			if num_wanted_rats > 0 then
-				local a, b, c = Script.temp_count()
-				local num_spawns = self:spawn_amount_rats(spawns, pack_sizes, pack_rotations, pack_members, zone_data_list, nodes, num_wanted_rats, pack_type_override or zone.pack_type, area, parent_zone or zone)
+			if var_15_16 > 0 then
+				local var_15_17, var_15_18, var_15_19 = Script.temp_count()
 
-				zone.wanted_spawns = num_spawns
+				var_15_4.wanted_spawns = arg_15_0:spawn_amount_rats(arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, var_15_10, var_15_16, arg_15_10 or var_15_4.pack_type, var_15_11, arg_15_12 or var_15_4)
 
-				Script.set_temp_count(a, b, c)
+				Script.set_temp_count(var_15_17, var_15_18, var_15_19)
 			end
 		else
 			print("Warning: missing nodes! in zones")
@@ -652,692 +655,679 @@ SpawnZoneBaker.populate_spawns_by_rats = function (self, global_pack_spawning_se
 	end
 end
 
-SpawnZoneBaker._generate_pack_members = function (self, pack_type, pack_size, zone, ip_unit_name, center_position)
-	local pack_type_by_size = BreedPacksBySize[pack_type]
-	local pack_by_size = pack_type_by_size[pack_size]
-	local prob, alias = pack_by_size.prob, pack_by_size.alias
-	local pack_index = self:_random_dice_roll(prob, alias)
-	local pack = pack_by_size.packs[pack_index]
-	local pack_members = table.clone(pack.members)
+function SpawnZoneBaker._generate_pack_members(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+	local var_16_0 = BreedPacksBySize[arg_16_1][arg_16_2]
+	local var_16_1 = var_16_0.prob
+	local var_16_2 = var_16_0.alias
+	local var_16_3 = arg_16_0:_random_dice_roll(var_16_1, var_16_2)
+	local var_16_4 = var_16_0.packs[var_16_3]
+	local var_16_5 = table.clone(var_16_4.members)
 
-	pack_members.type = pack_type
+	var_16_5.type = arg_16_1
 
-	local hi_data = zone and zone.hi_data
+	local var_16_6 = arg_16_3 and arg_16_3.hi_data
 
-	if hi_data and hi_data.breed_count then
-		local breed_count = hi_data.breed_count
+	if var_16_6 and var_16_6.breed_count then
+		local var_16_7 = var_16_6.breed_count
 
-		for i = 1, pack_size do
-			local breed = pack_members[i]
+		for iter_16_0 = 1, arg_16_2 do
+			local var_16_8 = var_16_5[iter_16_0]
 
-			if not breed.name then
-				local index = math.random(1, #breed)
-
-				breed = breed[index]
-				pack_members[i] = breed
+			if not var_16_8.name then
+				var_16_8 = var_16_8[math.random(1, #var_16_8)]
+				var_16_5[iter_16_0] = var_16_8
 			end
 
-			local data = breed_count[breed.name]
+			local var_16_9 = var_16_7[var_16_8.name]
 
-			if data then
-				data.count = data.count + 1
+			if var_16_9 then
+				var_16_9.count = var_16_9.count + 1
 
-				if data.count > data.max_amount then
-					pack_members[i] = data.switch_breed
-					data.switch_count = data.switch_count + 1
+				if var_16_9.count > var_16_9.max_amount then
+					var_16_5[iter_16_0] = var_16_9.switch_breed
+					var_16_9.switch_count = var_16_9.switch_count + 1
 				end
 			end
 		end
 	end
 
-	return pack_members
+	return var_16_5
 end
 
-local max_pack_size = #InterestPointUnits
+local var_0_8 = #var_0_0
 
-SpawnZoneBaker.spawn_amount_rats = function (self, spawns, pack_sizes, pack_rotations, pack_members, zone_data_list, nodes, num_wanted_rats, pack_type, area, zone)
-	local vector3_normalize = Vector3.normalize
-	local InterestPointUnits = InterestPointUnits
-	local InterestPointPickListIndexLookup = InterestPointPickListIndexLookup
-	local nav_world = self.nav_world
-	local spawn_pos_lookup = self.spawn_pos_lookup
-	local amount = #spawns
-	local tries = 0
-	local num_nodes = #nodes
-	local num_packs = 0
+function SpawnZoneBaker.spawn_amount_rats(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10)
+	local var_17_0 = Vector3.normalize
+	local var_17_1 = var_0_0
+	local var_17_2 = InterestPointPickListIndexLookup
+	local var_17_3 = arg_17_0.nav_world
+	local var_17_4 = arg_17_0.spawn_pos_lookup
+	local var_17_5 = #arg_17_1
+	local var_17_6 = 0
+	local var_17_7 = #arg_17_6
+	local var_17_8 = 0
 
-	while num_wanted_rats > 0 do
-		num_packs = num_packs + 1
+	while arg_17_7 > 0 do
+		var_17_8 = var_17_8 + 1
 
-		local max_num_rats = math.min(num_wanted_rats, max_pack_size)
-		local index_max = InterestPointPickListIndexLookup[max_num_rats]
-		local pack_size = InterestPointPickList[self:_random(index_max)]
-		local variants = InterestPointUnits[pack_size]
-		local num_variants = #variants
-		local ip_unit_index = num_variants == 1 and 1 or self:_random(num_variants)
-		local ip_unit_name = variants[ip_unit_index]
+		local var_17_9 = var_17_2[math.min(arg_17_7, var_0_8)]
+		local var_17_10 = InterestPointPickList[arg_17_0:_random(var_17_9)]
+		local var_17_11 = var_17_1[var_17_10]
+		local var_17_12 = #var_17_11
+		local var_17_13 = var_17_11[var_17_12 == 1 and 1 or arg_17_0:_random(var_17_12)]
 
-		for i = 1, 10 do
-			local a, b, c = Script.temp_count()
-			local node_index = self:_random(num_nodes)
-			local tri_index = nodes[node_index]
+		for iter_17_0 = 1, 10 do
+			local var_17_14, var_17_15, var_17_16 = Script.temp_count()
+			local var_17_17 = arg_17_0:_random(var_17_7)
+			local var_17_18 = arg_17_6[var_17_17]
 
-			if not lookup[tri_index] then
-				local p = spawn_pos_lookup[nodes[node_index]]
-				local pos = Vector3(p[1], p[2], p[3])
-				local angle = self:_random() * 2 * math.pi
-				local rot = Quaternion(Vector3.up(), angle)
-				local outside_navmesh_pos = ConflictUtils.interest_point_outside_nav_mesh(nav_world, ip_unit_name, pos, rot)
-				local move_tries = 0
+			if not var_0_7[var_17_18] then
+				local var_17_19 = var_17_4[arg_17_6[var_17_17]]
+				local var_17_20 = Vector3(var_17_19[1], var_17_19[2], var_17_19[3])
+				local var_17_21 = arg_17_0:_random() * 2 * math.pi
+				local var_17_22 = Quaternion(Vector3.up(), var_17_21)
+				local var_17_23 = ConflictUtils.interest_point_outside_nav_mesh(var_17_3, var_17_13, var_17_20, var_17_22)
+				local var_17_24 = 0
 
-				while outside_navmesh_pos and move_tries < 3 do
-					move_tries = move_tries + 1
-
-					local move_vec = vector3_normalize(pos - outside_navmesh_pos)
-
-					pos = pos + move_vec
-					outside_navmesh_pos = ConflictUtils.interest_point_outside_nav_mesh(nav_world, ip_unit_name, pos, rot)
+				while var_17_23 and var_17_24 < 3 do
+					var_17_24 = var_17_24 + 1
+					var_17_20 = var_17_20 + var_17_0(var_17_20 - var_17_23)
+					var_17_23 = ConflictUtils.interest_point_outside_nav_mesh(var_17_3, var_17_13, var_17_20, var_17_22)
 				end
 
-				if not outside_navmesh_pos then
-					fassert(ip_unit_name, "what the - no spawn point unit name?")
+				if not var_17_23 then
+					fassert(var_17_13, "what the - no spawn point unit name?")
 
-					local members = self:_generate_pack_members(pack_type, pack_size, zone, ip_unit_name, pos)
+					local var_17_25 = arg_17_0:_generate_pack_members(arg_17_8, var_17_10, arg_17_10, var_17_13, var_17_20)
 
-					amount = amount + 1
-					spawns[amount] = Vector3Box(pos)
-					pack_sizes[amount] = ip_unit_name
-					pack_rotations[amount] = angle
-					pack_members[amount] = members
-					zone_data_list[amount] = zone
-					num_wanted_rats = num_wanted_rats - pack_size
-					lookup[tri_index] = true
+					var_17_5 = var_17_5 + 1
+					arg_17_1[var_17_5] = Vector3Box(var_17_20)
+					arg_17_2[var_17_5] = var_17_13
+					arg_17_3[var_17_5] = var_17_21
+					arg_17_4[var_17_5] = var_17_25
+					arg_17_5[var_17_5] = arg_17_10
+					arg_17_7 = arg_17_7 - var_17_10
+					var_0_7[var_17_18] = true
 
 					break
 				end
 			end
 
-			Script.set_temp_count(a, b, c)
+			Script.set_temp_count(var_17_14, var_17_15, var_17_16)
 		end
 
-		tries = tries + 1
+		var_17_6 = var_17_6 + 1
 
-		if tries > 100 then
+		if var_17_6 > 100 then
 			print("cannot find place to spawn rats")
 
 			break
 		end
 	end
 
-	table.clear(lookup)
+	table.clear(var_0_7)
 
-	return num_packs
+	return var_17_8
 end
 
-SpawnZoneBaker.get_zone_segment_from_travel_dist = function (self, travel_dist)
-	local zones = self.zones
-	local num_zones = self.num_main_zones
+function SpawnZoneBaker.get_zone_segment_from_travel_dist(arg_18_0, arg_18_1)
+	local var_18_0 = arg_18_0.zones
+	local var_18_1 = arg_18_0.num_main_zones
 
-	for i = 1, num_zones do
-		local zone = zones[i]
-		local zone_travel_dist = zone.travel_dist - 5
+	for iter_18_0 = 1, var_18_1 do
+		if arg_18_1 < var_18_0[iter_18_0].travel_dist - 5 then
+			local var_18_2 = iter_18_0 > 1 and iter_18_0 - 1 or iter_18_0
+			local var_18_3 = var_18_0[var_18_2]
+			local var_18_4 = arg_18_0.zone_convert[var_18_2]
 
-		if travel_dist < zone_travel_dist then
-			local zone_index = i > 1 and i - 1 or i
-			local closest_zone = zones[zone_index]
-			local closest_zone_conv = self.zone_convert[zone_index]
-
-			return zone_index, closest_zone, closest_zone_conv
+			return var_18_2, var_18_3, var_18_4
 		end
 	end
 
-	return num_zones, zones[num_zones], self.zone_convert[num_zones]
+	return var_18_1, var_18_0[var_18_1], arg_18_0.zone_convert[var_18_1]
 end
 
-SpawnZoneBaker.draw_zones = function (self, nav_world, draw_only_one_zone_index)
-	local show_spawn_density, show_zone_text = false, true
+function SpawnZoneBaker.draw_zones(arg_19_0, arg_19_1, arg_19_2)
+	local var_19_0 = false
+	local var_19_1 = true
 
-	if self.gui then
-		World.destroy_gui(self.world, self.gui)
+	if arg_19_0.gui then
+		World.destroy_gui(arg_19_0.world, arg_19_0.gui)
 
-		self.gui = nil
+		arg_19_0.gui = nil
 
 		return
 	else
-		self.gui = World.create_world_gui(self.world, Matrix4x4.identity(), 1, 1)
+		arg_19_0.gui = World.create_world_gui(arg_19_0.world, Matrix4x4.identity(), 1, 1)
 	end
 
-	local zone_convert = self.zone_convert
-	local gui = self.gui
-	local alpha = 64
-	local zones = self.zones
-	local spawn_pos_lookup = self.spawn_pos_lookup
-	local heatmap_colors = {}
+	local var_19_2 = arg_19_0.zone_convert
+	local var_19_3 = arg_19_0.gui
+	local var_19_4 = 64
+	local var_19_5 = arg_19_0.zones
+	local var_19_6 = arg_19_0.spawn_pos_lookup
+	local var_19_7 = {}
 
-	if show_spawn_density then
-		for i = 1, 16 do
-			local c = heatmap_colors_lookup[i]
+	if var_19_0 then
+		for iter_19_0 = 1, 16 do
+			local var_19_8 = heatmap_colors_lookup[iter_19_0]
 
-			heatmap_colors[i] = Color(200, c[1], c[2], c[3])
+			var_19_7[iter_19_0] = Color(200, var_19_8[1], var_19_8[2], var_19_8[3])
 		end
 	end
 
-	local start = math.clamp(draw_only_one_zone_index or 1, 1, #zones)
+	for iter_19_1 = math.clamp(arg_19_2 or 1, 1, #var_19_5), #var_19_5 do
+		local var_19_9 = var_19_5[iter_19_1]
+		local var_19_10 = var_19_9.sub
+		local var_19_11
+		local var_19_12
 
-	for i = start, #zones do
-		local zone = zones[i]
-		local sub_zones = zone.sub
-		local colors, density
-
-		if show_spawn_density then
-			density = math.floor((zone_convert[i] and zone_convert[i].density or 1) * 16)
+		if var_19_0 then
+			var_19_12 = math.floor((var_19_2[iter_19_1] and var_19_2[iter_19_1].density or 1) * 16)
 		else
-			local f = 92 + 63 * (i % 3)
-			local g = f / 2
+			local var_19_13 = 92 + 63 * (iter_19_1 % 3)
+			local var_19_14 = var_19_13 / 2
 
-			colors = {
-				Color(alpha, 0, f, 0),
-				Color(alpha, 0, 0, f),
-				Color(alpha, f, 0, 0),
-				Color(alpha, f, f, 0),
-				Color(alpha, 0, f, f),
-				Color(alpha, f, 0, f),
-				Color(alpha, f, g, 0),
-				Color(alpha, f, 0, g),
-				Color(alpha, 0, g, f),
-				Color(alpha, g, 0, f),
+			var_19_11 = {
+				Color(var_19_4, 0, var_19_13, 0),
+				Color(var_19_4, 0, 0, var_19_13),
+				Color(var_19_4, var_19_13, 0, 0),
+				Color(var_19_4, var_19_13, var_19_13, 0),
+				Color(var_19_4, 0, var_19_13, var_19_13),
+				Color(var_19_4, var_19_13, 0, var_19_13),
+				Color(var_19_4, var_19_13, var_19_14, 0),
+				Color(var_19_4, var_19_13, 0, var_19_14),
+				Color(var_19_4, 0, var_19_14, var_19_13),
+				Color(var_19_4, var_19_14, 0, var_19_13)
 			}
 		end
 
-		if show_zone_text then
-			local triangle_index = sub_zones[1][1]
-			local p = spawn_pos_lookup[triangle_index]
-			local text = string.format("%d %.1f <- %.1f", i, zone.travel_dist or 0, zone.old_travel_dist or 0)
+		if var_19_1 then
+			local var_19_15 = var_19_6[var_19_10[1][1]]
+			local var_19_16 = string.format("%d %.1f <- %.1f", iter_19_1, var_19_9.travel_dist or 0, var_19_9.old_travel_dist or 0)
 
-			Debug.world_sticky_text(p, text, colors[1])
+			Debug.world_sticky_text(var_19_15, var_19_16, var_19_11[1])
 		end
 
-		local h = Vector3(0, 0, 0.1)
+		local var_19_17 = Vector3(0, 0, 0.1)
 
-		for j = 1, #sub_zones do
-			local sub_zone = sub_zones[j]
+		for iter_19_2 = 1, #var_19_10 do
+			local var_19_18 = var_19_10[iter_19_2]
 
-			if sub_zone then
-				for k = 1, #sub_zone do
-					local triangle_index = sub_zone[k]
-					local a, b, c = Script.temp_count()
-					local p = spawn_pos_lookup[triangle_index]
-					local triangle = GwNavTraversal.get_seed_triangle(nav_world, Vector3(p[1], p[2], p[3]), 0.5, 0.5)
+			if var_19_18 then
+				for iter_19_3 = 1, #var_19_18 do
+					local var_19_19 = var_19_18[iter_19_3]
+					local var_19_20, var_19_21, var_19_22 = Script.temp_count()
+					local var_19_23 = var_19_6[var_19_19]
+					local var_19_24 = GwNavTraversal.get_seed_triangle(arg_19_1, Vector3(var_19_23[1], var_19_23[2], var_19_23[3]), 0.5, 0.5)
 
-					if triangle then
-						local p1, p2, p3 = GwNavTraversal.get_triangle_vertices(nav_world, triangle)
+					if var_19_24 then
+						local var_19_25, var_19_26, var_19_27 = GwNavTraversal.get_triangle_vertices(arg_19_1, var_19_24)
 
-						if show_spawn_density then
-							Gui.triangle(gui, p1 + h, p2 + h, p3 + h, 2, heatmap_colors[density])
+						if var_19_0 then
+							Gui.triangle(var_19_3, var_19_25 + var_19_17, var_19_26 + var_19_17, var_19_27 + var_19_17, 2, var_19_7[var_19_12])
 						else
-							local col = colors[j] or Colors.get_indexed((i * 7 + j + 5) % 32 + 1)
+							local var_19_28 = var_19_11[iter_19_2] or Colors.get_indexed((iter_19_1 * 7 + iter_19_2 + 5) % 32 + 1)
 
-							Gui.triangle(gui, p1 + h, p2 + h, p3 + h, 2, col)
+							Gui.triangle(var_19_3, var_19_25 + var_19_17, var_19_26 + var_19_17, var_19_27 + var_19_17, 2, var_19_28)
 						end
 					end
 
-					Script.set_temp_count(a, b, c)
+					Script.set_temp_count(var_19_20, var_19_21, var_19_22)
 				end
 			end
 		end
 
-		if draw_only_one_zone_index then
+		if arg_19_2 then
 			break
 		end
 	end
 end
 
-SpawnZoneBaker.show_debug = function (self, show)
-	if show then
-		if not self.graph then
-			self:draw_pack_density_graph()
+function SpawnZoneBaker.show_debug(arg_20_0, arg_20_1)
+	if arg_20_1 then
+		if not arg_20_0.graph then
+			arg_20_0:draw_pack_density_graph()
 		end
 
-		self.graph:set_active(true)
-	elseif self.graph then
-		self.graph:set_active(false)
+		arg_20_0.graph:set_active(true)
+	elseif arg_20_0.graph then
+		arg_20_0.graph:set_active(false)
 	end
 
 	return true
 end
 
-SpawnZoneBaker.execute_debug = function (self)
+function SpawnZoneBaker.execute_debug(arg_21_0)
 	QuickDrawerStay:reset()
 	Managers.state.conflict:respawn_level(script_data.debug_pacing_seed)
 
-	self.plain_zone_list = nil
-	self._breed_pack_legend = nil
+	arg_21_0.plain_zone_list = nil
+	arg_21_0._breed_pack_legend = nil
 end
 
-function print_zone_list(cycle_zones)
-	for j = 1, #cycle_zones do
-		local zone = cycle_zones[j]
-		local area = math.clamp(zone.area * 0.5, 0, 100)
+function print_zone_list(arg_22_0)
+	for iter_22_0 = 1, #arg_22_0 do
+		local var_22_0 = arg_22_0[iter_22_0]
+		local var_22_1 = math.clamp(var_22_0.area * 0.5, 0, 100)
 
-		if zone.hi_data then
-			local hi_data_id = zone.hi_data.id
+		if var_22_0.hi_data then
+			local var_22_2 = var_22_0.hi_data.id
 
-			print(string.format("Zone: %d, hi: %s, hi-id: %d, Density: %.1f, Area: %.1f", j, tostring(zone.hi), hi_data_id, zone.density, area), "con:", zone.conflict_setting.name, "period_len:", zone.period_length or "--", "data:", zone.hi_data and "Y" or "N", string.format("Director / Packtype: %s / %s ", zone.conflict_setting.name, zone.pack_type))
+			print(string.format("Zone: %d, hi: %s, hi-id: %d, Density: %.1f, Area: %.1f", iter_22_0, tostring(var_22_0.hi), var_22_2, var_22_0.density, var_22_1), "con:", var_22_0.conflict_setting.name, "period_len:", var_22_0.period_length or "--", "data:", var_22_0.hi_data and "Y" or "N", string.format("Director / Packtype: %s / %s ", var_22_0.conflict_setting.name, var_22_0.pack_type))
 
-			local outer_zones = zone.outer
+			local var_22_3 = var_22_0.outer
 
-			for k = 1, #outer_zones do
-				local outer_zone = outer_zones[k]
+			for iter_22_1 = 1, #var_22_3 do
+				local var_22_4 = var_22_3[iter_22_1]
 
-				if outer_zone.hi_data then
-					if hi_data_id ~= outer_zone.hi_data.id then
-						print(string.format("BAD OUTER=%d hi-id: %d != %d", k, hi_data_id, outer_zone.hi_data.id))
+				if var_22_4.hi_data then
+					if var_22_2 ~= var_22_4.hi_data.id then
+						print(string.format("BAD OUTER=%d hi-id: %d != %d", iter_22_1, var_22_2, var_22_4.hi_data.id))
 					else
-						print(string.format("outer=%d hi=%s hi-id: %d ", k, tostring(outer_zone.hi), hi_data_id))
+						print(string.format("outer=%d hi=%s hi-id: %d ", iter_22_1, tostring(var_22_4.hi), var_22_2))
 					end
 				else
-					print(string.format("outer=%d hi=-- hi-id: -- NO CLAMPING IN PACK_TYPE %s", k, tostring(outer_zone.pack_type)))
+					print(string.format("outer=%d hi=-- hi-id: -- NO CLAMPING IN PACK_TYPE %s", iter_22_1, tostring(var_22_4.pack_type)))
 				end
 			end
 		else
-			print(string.format("Zone: %d, hi: %s, hi-id: --, Density: %.1f, Area: %.1f", j, tostring(zone.hi), zone.density, area), "con:", zone.conflict_setting.name, "period_len:", zone.period_length or "--", "data:", zone.hi_data and "Y" or "N", string.format("Director / Packtype: %s / %s ", zone.conflict_setting.name, zone.pack_type))
+			print(string.format("Zone: %d, hi: %s, hi-id: --, Density: %.1f, Area: %.1f", iter_22_0, tostring(var_22_0.hi), var_22_0.density, var_22_1), "con:", var_22_0.conflict_setting.name, "period_len:", var_22_0.period_length or "--", "data:", var_22_0.hi_data and "Y" or "N", string.format("Director / Packtype: %s / %s ", var_22_0.conflict_setting.name, var_22_0.pack_type))
 		end
 	end
 end
 
-SpawnZoneBaker.debug_print_hi_data = function (self)
-	local old_hi_data
-	local great_cycles = self.great_cycles
+function SpawnZoneBaker.debug_print_hi_data(arg_23_0)
+	local var_23_0
+	local var_23_1 = arg_23_0.great_cycles
 
-	for i = 1, #great_cycles do
-		local great_cycle = great_cycles[i]
+	for iter_23_0 = 1, #var_23_1 do
+		local var_23_2 = var_23_1[iter_23_0]
 
-		print("Great Cycle", i, "-------------")
+		print("Great Cycle", iter_23_0, "-------------")
 
-		local cycle_zones = great_cycle.zones
+		local var_23_3 = var_23_2.zones
 
-		for j = 1, #cycle_zones do
-			local zone = cycle_zones[j]
-			local hi_data = zone.hi_data
+		for iter_23_1 = 1, #var_23_3 do
+			local var_23_4 = var_23_3[iter_23_1]
+			local var_23_5 = var_23_4.hi_data
 
-			if hi_data ~= old_hi_data then
-				local period = zone.hi and "Hi" or "Low"
-				local s = period .. "-data for zone:" .. tostring(j) .. " -> " .. j + zone.period_length - 1
+			if var_23_5 ~= var_23_0 then
+				local var_23_6 = (var_23_4.hi and "Hi" or "Low") .. "-data for zone:" .. tostring(iter_23_1) .. " -> " .. iter_23_1 + var_23_4.period_length - 1
 
-				if hi_data then
-					local breed_count = hi_data.breed_count
+				if var_23_5 then
+					local var_23_7 = var_23_5.breed_count
 
-					if breed_count then
-						table.dump(breed_count, s, 1)
+					if var_23_7 then
+						table.dump(var_23_7, var_23_6, 1)
 					end
 				end
 			end
 
-			old_hi_data = hi_data
+			var_23_0 = var_23_5
 		end
 	end
 
-	for i = 1, #self._all_hi_data do
-		local hi_data = self._all_hi_data[i]
-		local breed_count = hi_data.breed_count
+	for iter_23_2 = 1, #arg_23_0._all_hi_data do
+		local var_23_8 = arg_23_0._all_hi_data[iter_23_2]
+		local var_23_9 = var_23_8.breed_count
 
-		if breed_count then
-			for check_breed_name, data in pairs(breed_count) do
-				print("Hidata id:", hi_data.id, data.hi and "HI" or "LOW", "count:", data.count, "switched:", data.switch_count, "max:", data.max_amount, "breed:", check_breed_name, "switched to:", data.switch_breed.name)
+		if var_23_9 then
+			for iter_23_3, iter_23_4 in pairs(var_23_9) do
+				print("Hidata id:", var_23_8.id, iter_23_4.hi and "HI" or "LOW", "count:", iter_23_4.count, "switched:", iter_23_4.switch_count, "max:", iter_23_4.max_amount, "breed:", iter_23_3, "switched to:", iter_23_4.switch_breed.name)
 			end
 		else
-			print("Hidata id:", hi_data.id, " (no breed_count)")
+			print("Hidata id:", var_23_8.id, " (no breed_count)")
 		end
 	end
 end
 
-SpawnZoneBaker.draw_pack_density_graph = function (self)
-	if not self.graph then
-		self.graph = Managers.state.debug.graph_drawer:create_graph("spawn density", {
+function SpawnZoneBaker.draw_pack_density_graph(arg_24_0)
+	if not arg_24_0.graph then
+		arg_24_0.graph = Managers.state.debug.graph_drawer:create_graph("spawn density", {
 			"distance",
-			"density",
+			"density"
 		})
-		self.graph.visual_frame.y_max = 100
-		self.graph.scroll_lock.vertical = false
-		self.graph.scroll_lock.left = false
+		arg_24_0.graph.visual_frame.y_max = 100
+		arg_24_0.graph.scroll_lock.vertical = false
+		arg_24_0.graph.scroll_lock.left = false
 	end
 
-	local g = self.graph
+	local var_24_0 = arg_24_0.graph
 
-	if not g.active then
-		g:set_active(true)
+	if not var_24_0.active then
+		var_24_0:set_active(true)
 	end
 
-	local zones = self.zones
-	local sub_zone_length = zones[1].sub_zone_length
-	local dist = 0
-	local great_cycles = self.great_cycles
-	local num_great_cycles = #great_cycles
+	local var_24_1 = arg_24_0.zones[1].sub_zone_length
+	local var_24_2 = 0
+	local var_24_3 = arg_24_0.great_cycles
+	local var_24_4 = #var_24_3
 
 	if script_data.debug_zone_baker then
-		self:debug_print_zones()
+		arg_24_0:debug_print_zones()
 	end
 
-	g:set_plot_color("density", "maroon", "crimson")
+	var_24_0:set_plot_color("density", "maroon", "crimson")
 
-	if num_great_cycles > 0 then
-		local current_conflict_setting
-		local current_pack_type = great_cycles[1].zones[1].conflict_setting.pack_spawning.roaming_set.breed_packs
+	if var_24_4 > 0 then
+		local var_24_5
+		local var_24_6 = var_24_3[1].zones[1].conflict_setting.pack_spawning.roaming_set.breed_packs
 
-		for i = 1, num_great_cycles do
-			local cycle = great_cycles[i]
-			local cycle_zones = cycle.zones
+		for iter_24_0 = 1, var_24_4 do
+			local var_24_7 = var_24_3[iter_24_0].zones
 
-			if i > 1 then
-				self.graph:add_annotation({
-					color = "green",
-					live = true,
+			if iter_24_0 > 1 then
+				arg_24_0.graph:add_annotation({
 					text = "Cycle",
+					live = true,
 					y = 105,
-					x = dist,
+					color = "green",
+					x = var_24_2
 				})
 			end
 
-			for j = 1, #cycle_zones do
-				local zone = cycle_zones[j]
-				local density = zone.density
+			for iter_24_1 = 1, #var_24_7 do
+				local var_24_8 = var_24_7[iter_24_1]
+				local var_24_9 = var_24_8.density
 
-				if current_pack_type ~= zone.pack_type then
-					self.graph:add_annotation({
-						color = "lawn_green",
-						live = true,
+				if var_24_6 ~= var_24_8.pack_type then
+					arg_24_0.graph:add_annotation({
 						text = "O",
-						x = dist,
-						y = density * 100,
-					})
-				elseif zone.hi then
-					self.graph:add_annotation({
-						color = "lawn_green",
 						live = true,
+						color = "lawn_green",
+						x = var_24_2,
+						y = var_24_9 * 100
+					})
+				elseif var_24_8.hi then
+					arg_24_0.graph:add_annotation({
 						text = "H",
-						x = dist,
-						y = density * 100,
+						live = true,
+						color = "lawn_green",
+						x = var_24_2,
+						y = var_24_9 * 100
 					})
 				end
 
-				if current_conflict_setting ~= zone.conflict_setting then
-					current_conflict_setting = zone.conflict_setting
-					current_pack_type = current_conflict_setting.pack_spawning.roaming_set.breed_packs
+				if var_24_5 ~= var_24_8.conflict_setting then
+					var_24_5 = var_24_8.conflict_setting
+					var_24_6 = var_24_5.pack_spawning.roaming_set.breed_packs
 
-					self.graph:add_annotation({
-						color = "orange",
+					arg_24_0.graph:add_annotation({
 						live = true,
 						y = 110,
-						x = dist,
-						text = current_conflict_setting.name,
+						color = "orange",
+						x = var_24_2,
+						text = var_24_5.name
 					})
 				end
 
-				g:add_point(dist, density * 100, "density")
+				var_24_0:add_point(var_24_2, var_24_9 * 100, "density")
 
-				local p = self.spawn_pos_lookup[zone.nodes[1]]
-				local pos = Vector3(p[1], p[2], p[3])
-				local width = math.sqrt(zone.total_area) / 5
-				local box_extents = Vector3(width, width, width)
-				local pose = Matrix4x4.from_quaternion_position(Quaternion.look(Vector3.up()), pos)
+				local var_24_10 = arg_24_0.spawn_pos_lookup[var_24_8.nodes[1]]
+				local var_24_11 = Vector3(var_24_10[1], var_24_10[2], var_24_10[3])
+				local var_24_12 = math.sqrt(var_24_8.total_area) / 5
+				local var_24_13 = Vector3(var_24_12, var_24_12, var_24_12)
+				local var_24_14 = Matrix4x4.from_quaternion_position(Quaternion.look(Vector3.up()), var_24_11)
 
-				QuickDrawerStay:box(pose, box_extents, Color(255, 0, 200, 0))
-				QuickDrawerStay:sphere(pos, 7 * density)
+				QuickDrawerStay:box(var_24_14, var_24_13, Color(255, 0, 200, 0))
+				QuickDrawerStay:sphere(var_24_11, 7 * var_24_9)
 
-				dist = dist + sub_zone_length
+				var_24_2 = var_24_2 + var_24_1
 			end
 		end
 	end
 
-	local rares = self.level_analyzer.boss_event_list
-	local y = 60
+	local var_24_15 = arg_24_0.level_analyzer.boss_event_list
+	local var_24_16 = 60
 
-	for k = 1, #rares do
-		local rare = rares[k]
-		local path_dist = rare[3]
-		local event_name = rare[2]
-		local color = rare[4]
+	for iter_24_2 = 1, #var_24_15 do
+		local var_24_17 = var_24_15[iter_24_2]
+		local var_24_18 = var_24_17[3]
+		local var_24_19 = var_24_17[2]
+		local var_24_20 = var_24_17[4]
 
-		self.graph:add_annotation({
+		arg_24_0.graph:add_annotation({
 			live = true,
-			x = path_dist,
-			y = y,
-			text = event_name,
-			color = color,
+			x = var_24_18,
+			y = var_24_16,
+			text = var_24_19,
+			color = var_24_20
 		})
 
-		y = y + 7
+		var_24_16 = var_24_16 + 7
 
-		if y > 70 then
-			y = 30
+		if var_24_16 > 70 then
+			var_24_16 = 30
 		end
 	end
 
-	local player_annotation = {
-		color = "green",
-		live = true,
+	local var_24_21 = {
 		text = "PLAYER",
-		x = 0,
+		live = true,
 		y = 50,
+		color = "green",
+		x = 0
 	}
 
-	self.graph:add_annotation(player_annotation)
+	arg_24_0.graph:add_annotation(var_24_21)
 
-	self.player_annotation = player_annotation
+	arg_24_0.player_annotation = var_24_21
 end
 
-SpawnZoneBaker.draw_player_in_density_graph = function (self, travel_dist)
-	if self.graph then
-		if not self.player_annotation then
-			local player_annotation = {
-				color = "green",
-				live = true,
+function SpawnZoneBaker.draw_player_in_density_graph(arg_25_0, arg_25_1)
+	if arg_25_0.graph then
+		if not arg_25_0.player_annotation then
+			local var_25_0 = {
 				text = "PLAYER",
-				x = 0,
+				live = true,
 				y = 50,
+				color = "green",
+				x = 0
 			}
 
-			self.graph:add_annotation(player_annotation)
+			arg_25_0.graph:add_annotation(var_25_0)
 
-			self.player_annotation = player_annotation
+			arg_25_0.player_annotation = var_25_0
 		end
 
-		self.graph:move_annotation(self.player_annotation, travel_dist)
+		arg_25_0.graph:move_annotation(arg_25_0.player_annotation, arg_25_1)
 	end
 end
 
-SpawnZoneBaker.draw_func1 = function (self, zone, zone_list_index, row, left, row_y)
-	local zone_type = zone.island and "ISLAND" or "MAIN"
-	local row_text = string.format("%d %s: %d %s", row, zone_type, zone_list_index, zone.pack_spawning_setting.name or "?")
+function SpawnZoneBaker.draw_func1(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5)
+	local var_26_0 = arg_26_1.island and "ISLAND" or "MAIN"
+	local var_26_1 = string.format("%d %s: %d %s", arg_26_3, var_26_0, arg_26_2, arg_26_1.pack_spawning_setting.name or "?")
 
-	Gui.text(self._gui, row_text, "materials/fonts/arial", 14, "materials/fonts/arial", Vector3(left + 200, row_y, 1000))
+	Gui.text(arg_26_0._gui, var_26_1, "materials/fonts/arial", 14, "materials/fonts/arial", Vector3(arg_26_4 + 200, arg_26_5, 1000))
 end
 
-SpawnZoneBaker._draw_zone = function (self, zone, color)
-	local up = Vector3(0, 0, 1.5)
-	local nodes = zone.nodes
+function SpawnZoneBaker._draw_zone(arg_27_0, arg_27_1, arg_27_2)
+	local var_27_0 = Vector3(0, 0, 1.5)
+	local var_27_1 = arg_27_1.nodes
 
-	for i = 1, #nodes do
-		local node = nodes[i]
-		local p = self.spawn_pos_lookup[node]
-		local pos = Vector3(p[1], p[2], p[3])
+	for iter_27_0 = 1, #var_27_1 do
+		local var_27_2 = var_27_1[iter_27_0]
+		local var_27_3 = arg_27_0.spawn_pos_lookup[var_27_2]
+		local var_27_4 = Vector3(var_27_3[1], var_27_3[2], var_27_3[3])
 
-		QuickDrawer:circle(pos + up, 0.5, up, color)
+		QuickDrawer:circle(var_27_4 + var_27_0, 0.5, var_27_0, arg_27_2)
 	end
 end
 
-local draw_zones = true
+local var_0_9 = true
 
-SpawnZoneBaker.draw_func2 = function (self, zone, zone_list_index, row, left, row_y, is_closest)
-	local legend = self._breed_pack_legend
-	local hi_data = zone.hi_data
-	local s = legend[zone.pack_type] .. "(" .. hi_data.id .. ")"
-	local outer = zone.outer
+function SpawnZoneBaker.draw_func2(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6)
+	local var_28_0 = arg_28_0._breed_pack_legend
+	local var_28_1 = arg_28_1.hi_data
+	local var_28_2 = var_28_0[arg_28_1.pack_type] .. "(" .. var_28_1.id .. ")"
+	local var_28_3 = arg_28_1.outer
 
-	for i = 1, #outer do
-		s = s .. " " .. legend[zone.pack_type] .. "(" .. zone.hi_data.id .. ") "
+	for iter_28_0 = 1, #var_28_3 do
+		var_28_2 = var_28_2 .. " " .. var_28_0[arg_28_1.pack_type] .. "(" .. arg_28_1.hi_data.id .. ") "
 	end
 
-	local islands = zone.islands
+	local var_28_4 = arg_28_1.islands
 
-	if islands then
-		s = s .. " <--- "
+	if var_28_4 then
+		var_28_2 = var_28_2 .. " <--- "
 
-		for i = 1, #islands do
-			local island_id = islands[i]
-			local island = self.island_zones[island_id]
+		for iter_28_1 = 1, #var_28_4 do
+			local var_28_5 = var_28_4[iter_28_1]
+			local var_28_6 = arg_28_0.island_zones[var_28_5]
 
-			s = s .. " " .. legend[island.pack_type] .. "(" .. island.hi_data.id .. ") "
+			var_28_2 = var_28_2 .. " " .. var_28_0[var_28_6.pack_type] .. "(" .. var_28_6.hi_data.id .. ") "
 		end
 	end
 
-	local color = is_closest and Color(200, 200, 0) or zone.hi and Color(255, 255, 255) or Color(175, 175, 175)
+	local var_28_7 = arg_28_6 and Color(200, 200, 0) or arg_28_1.hi and Color(255, 255, 255) or Color(175, 175, 175)
 
-	if draw_zones and is_closest then
-		self:_draw_zone(zone, color)
+	if var_0_9 and arg_28_6 then
+		arg_28_0:_draw_zone(arg_28_1, var_28_7)
 
-		if zone.islands then
-			for i = 1, #zone.islands do
-				local island_zone = self.island_zones[islands[i]]
+		if arg_28_1.islands then
+			for iter_28_2 = 1, #arg_28_1.islands do
+				local var_28_8 = arg_28_0.island_zones[var_28_4[iter_28_2]]
 
-				if island_zone then
-					self:_draw_zone(island_zone, Color(255, 0, 128))
+				if var_28_8 then
+					arg_28_0:_draw_zone(var_28_8, Color(255, 0, 128))
 				end
 			end
 		end
 
-		local outer = zone.outer
+		local var_28_9 = arg_28_1.outer
 
-		for i = 1, #outer do
-			self:_draw_zone(outer[i], Color(55, 200 - (i - 1) * 24, (i - 1) * 24))
+		for iter_28_3 = 1, #var_28_9 do
+			arg_28_0:_draw_zone(var_28_9[iter_28_3], Color(55, 200 - (iter_28_3 - 1) * 24, (iter_28_3 - 1) * 24))
 		end
 
-		local spawned_units_by_breed = Managers.state.conflict:spawned_units_by_breed_table()
+		local var_28_10 = Managers.state.conflict:spawned_units_by_breed_table()
 
-		s = s .. ConflictUtils.display_number_of_breeds_in_segment("BREEDS: ", spawned_units_by_breed, zone)
+		var_28_2 = var_28_2 .. ConflictUtils.display_number_of_breeds_in_segment("BREEDS: ", var_28_10, arg_28_1)
 	end
 
-	local zone_type = zone.island and "ISLAND" or "MAIN"
-	local row_text = string.format("%s: %d %s", zone_type, zone_list_index, s)
+	local var_28_11 = arg_28_1.island and "ISLAND" or "MAIN"
+	local var_28_12 = string.format("%s: %d %s", var_28_11, arg_28_2, var_28_2)
 
-	Gui.text(self._gui, row_text, "materials/fonts/arial", 14, "materials/fonts/arial", Vector3(left + 200, row_y, 1000), color)
+	Gui.text(arg_28_0._gui, var_28_12, "materials/fonts/arial", 14, "materials/fonts/arial", Vector3(arg_28_4 + 200, arg_28_5, 1000), var_28_7)
 end
 
-SpawnZoneBaker._draw_legend = function (self, legend, x, y)
-	Gui.text(self._gui, string.format("LEGEND OF PACK-TYPES"), "materials/fonts/arial", 14, "materials/fonts/arial", Vector3(x, y, 1000))
+function SpawnZoneBaker._draw_legend(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+	Gui.text(arg_29_0._gui, string.format("LEGEND OF PACK-TYPES"), "materials/fonts/arial", 14, "materials/fonts/arial", Vector3(arg_29_2, arg_29_3, 1000))
 
-	y = y - 30
+	arg_29_3 = arg_29_3 - 30
 
-	for key, code in pairs(legend) do
-		Gui.text(self._gui, string.format("%s = %s", key, code), "materials/fonts/arial", 14, "materials/fonts/arial", Vector3(x, y, 1000))
+	for iter_29_0, iter_29_1 in pairs(arg_29_1) do
+		Gui.text(arg_29_0._gui, string.format("%s = %s", iter_29_0, iter_29_1), "materials/fonts/arial", 14, "materials/fonts/arial", Vector3(arg_29_2, arg_29_3, 1000))
 
-		y = y - 20
+		arg_29_3 = arg_29_3 - 20
 	end
 end
 
-SpawnZoneBaker.draw_zone_info_on_screen = function (self)
-	if not self._gui then
-		self._gui = World.create_screen_gui(self.world, "immediate")
+function SpawnZoneBaker.draw_zone_info_on_screen(arg_30_0)
+	if not arg_30_0._gui then
+		arg_30_0._gui = World.create_screen_gui(arg_30_0.world, "immediate")
 	end
 
-	if not self.plain_zone_list then
-		local plain_zone_list = {}
-		local great_cycles = self.great_cycles
+	if not arg_30_0.plain_zone_list then
+		local var_30_0 = {}
+		local var_30_1 = arg_30_0.great_cycles
 
-		for ci = 1, #great_cycles do
-			local cycle = great_cycles[ci]
-			local zones = cycle.zones
+		for iter_30_0 = 1, #var_30_1 do
+			local var_30_2 = var_30_1[iter_30_0].zones
 
-			for z = 1, #zones do
-				local zone = zones[z]
+			for iter_30_1 = 1, #var_30_2 do
+				local var_30_3 = var_30_2[iter_30_1]
 
-				plain_zone_list[#plain_zone_list + 1] = zone
+				var_30_0[#var_30_0 + 1] = var_30_3
 			end
 		end
 
-		local island_zones = self.island_zones
+		local var_30_4 = arg_30_0.island_zones
 
-		for ci = 1, #island_zones do
-			local zone = island_zones[ci]
+		for iter_30_2 = 1, #var_30_4 do
+			local var_30_5 = var_30_4[iter_30_2]
 
-			plain_zone_list[#plain_zone_list + 1] = zone
+			var_30_0[#var_30_0 + 1] = var_30_5
 		end
 
-		self.plain_zone_list = plain_zone_list
+		arg_30_0.plain_zone_list = var_30_0
 	end
 
-	if not self._breed_pack_legend then
-		local breed_pack_legend = {}
-		local i = 1
+	if not arg_30_0._breed_pack_legend then
+		local var_30_6 = {}
+		local var_30_7 = 1
 
-		for key, _ in pairs(BreedPacks) do
-			local c = string.char(65 + i)
+		for iter_30_3, iter_30_4 in pairs(BreedPacks) do
+			local var_30_8 = string.char(65 + var_30_7)
 
-			breed_pack_legend[key] = c .. c .. c
-			i = i + 1
+			var_30_6[iter_30_3] = var_30_8 .. var_30_8 .. var_30_8
+			var_30_7 = var_30_7 + 1
 		end
 
-		self._breed_pack_legend = breed_pack_legend
+		arg_30_0._breed_pack_legend = var_30_6
 	end
 
-	local w, h
+	local var_30_9
+	local var_30_10
 
 	if Application.screen_resolution then
-		w, h = Application.screen_resolution()
+		var_30_9, var_30_10 = Application.screen_resolution()
 	else
-		w, h = Application.resolution()
+		var_30_9, var_30_10 = Application.resolution()
 	end
 
-	local plain_zone_list = self.plain_zone_list
-	local num_zones = #plain_zone_list
-	local alpha = 60
-	local win_x1, win_y1 = 640, 40
-	local win_x2, win_y2 = w - 100, h - 100
-	local left = 40
-	local top = h - 40
+	local var_30_11 = arg_30_0.plain_zone_list
+	local var_30_12 = #var_30_11
+	local var_30_13 = 60
+	local var_30_14 = 640
+	local var_30_15 = 40
+	local var_30_16 = var_30_9 - 100
+	local var_30_17 = var_30_10 - 100
+	local var_30_18 = 40
+	local var_30_19 = var_30_10 - 40
 
-	Gui.rect(self._gui, Vector3(win_x1, win_y1, UILayer.transition), Vector2(win_x2, win_y2), Color(alpha, 40, 40, 40))
-	self:_draw_legend(self._breed_pack_legend, w - 450, top - 40)
-	Gui.text(self._gui, string.format("Spawn Zone Baker. #zones=%d", num_zones), "materials/fonts/arial", 14, "arial", Vector3(left + 15, top - 40, 1000))
+	Gui.rect(arg_30_0._gui, Vector3(var_30_14, var_30_15, UILayer.transition), Vector2(var_30_16, var_30_17), Color(var_30_13, 40, 40, 40))
+	arg_30_0:_draw_legend(arg_30_0._breed_pack_legend, var_30_9 - 450, var_30_19 - 40)
+	Gui.text(arg_30_0._gui, string.format("Spawn Zone Baker. #zones=%d", var_30_12), "materials/fonts/arial", 14, "arial", Vector3(var_30_18 + 15, var_30_19 - 40, 1000))
 
-	local max_rows_shown = 40
-	local mid_row = math.floor(max_rows_shown / 2)
-	local conflict_director = Managers.state.conflict
-	local main_path_info = conflict_director.main_path_info
-	local zone_index, _, near_zone = self:get_zone_segment_from_travel_dist(main_path_info.ahead_travel_dist)
+	local var_30_20 = 40
+	local var_30_21 = math.floor(var_30_20 / 2)
+	local var_30_22 = Managers.state.conflict.main_path_info
+	local var_30_23, var_30_24, var_30_25 = arg_30_0:get_zone_segment_from_travel_dist(var_30_22.ahead_travel_dist)
 
-	Debug.text("zone:%d, unique_id %d %s", zone_index, near_zone.unique_zone_id, near_zone.pack_type)
+	Debug.text("zone:%d, unique_id %d %s", var_30_23, var_30_25.unique_zone_id, var_30_25.pack_type)
 
-	local zone_list_index = zone_index <= mid_row and 1 or zone_index - mid_row
-	local row_y = top - 40
-	local i = 1
+	local var_30_26 = var_30_23 <= var_30_21 and 1 or var_30_23 - var_30_21
+	local var_30_27 = var_30_19 - 40
+	local var_30_28 = 1
 
-	while i < max_rows_shown and zone_list_index <= num_zones do
-		local zone = plain_zone_list[zone_list_index]
+	while var_30_28 < var_30_20 and var_30_26 <= var_30_12 do
+		local var_30_29 = var_30_11[var_30_26]
 
-		if zone then
-			self:draw_func2(zone, zone_list_index, i, left, row_y, near_zone == zone)
+		if var_30_29 then
+			arg_30_0:draw_func2(var_30_29, var_30_26, var_30_28, var_30_18, var_30_27, var_30_25 == var_30_29)
 
-			row_y = row_y - 20
-			i = i + 1
+			var_30_27 = var_30_27 - 20
+			var_30_28 = var_30_28 + 1
 		end
 
-		zone_list_index = zone_list_index + 1
+		var_30_26 = var_30_26 + 1
 	end
 end
 
-SpawnZoneBaker._debug_draw_baker_data = function (self, hi_data, data, breed_name, position)
-	if data.count > data.max_amount then
-		local c = Colors.distinct_colors_lookup[hi_data.id] or Colors.distinct_colors_lookup[1]
-		local color = Color(c[1], c[2], c[3])
+function SpawnZoneBaker._debug_draw_baker_data(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+	if arg_31_2.count > arg_31_2.max_amount then
+		local var_31_0 = Colors.distinct_colors_lookup[arg_31_1.id] or Colors.distinct_colors_lookup[1]
+		local var_31_1 = Color(var_31_0[1], var_31_0[2], var_31_0[3])
 
-		QuickDrawerStay:sphere(Vector3Aux.unbox(position), 0.5, color)
-		print(string.format("SPAWN SWITCH breed %s -> %s, hidata-id: %s count: %d/%d", breed_name, data.switch_breed.name, hi_data.id, data.switch_count, data.max_amount))
+		QuickDrawerStay:sphere(Vector3Aux.unbox(arg_31_4), 0.5, var_31_1)
+		print(string.format("SPAWN SWITCH breed %s -> %s, hidata-id: %s count: %d/%d", arg_31_3, arg_31_2.switch_breed.name, arg_31_1.id, arg_31_2.switch_count, arg_31_2.max_amount))
 	else
-		local c = Colors.distinct_colors_lookup[hi_data.id] or Colors.distinct_colors_lookup[1]
-		local color = Color(c[1], c[2], c[3])
+		local var_31_2 = Colors.distinct_colors_lookup[arg_31_1.id] or Colors.distinct_colors_lookup[1]
+		local var_31_3 = Color(var_31_2[1], var_31_2[2], var_31_2[3])
 
-		QuickDrawerStay:sphere(Vector3Aux.unbox(position), 0.1, color)
-		print(string.format("SPAWN NORMAL breed %s, hidata-id: %s count: %d/%d", breed_name, hi_data.id, data.switch_count, data.max_amount))
+		QuickDrawerStay:sphere(Vector3Aux.unbox(arg_31_4), 0.1, var_31_3)
+		print(string.format("SPAWN NORMAL breed %s, hidata-id: %s count: %d/%d", arg_31_3, arg_31_1.id, arg_31_2.switch_count, arg_31_2.max_amount))
 	end
 end

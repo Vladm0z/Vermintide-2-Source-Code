@@ -1,99 +1,94 @@
-﻿-- chunkname: @scripts/unit_extensions/level/nav_graph_connector_extension.lua
+-- chunkname: @scripts/unit_extensions/level/nav_graph_connector_extension.lua
 
-local ledges = require("scripts/settings/ledges")
+local var_0_0 = require("scripts/settings/ledges")
 
 NavGraphConnectorExtension = class(NavGraphConnectorExtension)
 
-NavGraphConnectorExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self.world = extension_init_context.world
-	self.unit = unit
-	self.nav_world = extension_init_data.nav_world or Managers.state.entity:system("ai_system"):nav_world()
-	self.is_server = Managers.player.is_server
-	self.navgraphs = {}
+function NavGraphConnectorExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.world = arg_1_1.world
+	arg_1_0.unit = arg_1_2
+	arg_1_0.nav_world = arg_1_3.nav_world or Managers.state.entity:system("ai_system"):nav_world()
+	arg_1_0.is_server = Managers.player.is_server
+	arg_1_0.navgraphs = {}
 
-	local ledge_id = Unit.get_data(unit, "ledge_id")
+	local var_1_0 = Unit.get_data(arg_1_2, "ledge_id")
 
-	if ledge_id and ledges[ledge_id] then
-		self:init_nav_graphs(ledge_id)
+	if var_1_0 and var_0_0[var_1_0] then
+		arg_1_0:init_nav_graphs(var_1_0)
 	else
-		local drawer = Managers.state.debug:drawer({
+		local var_1_1 = Managers.state.debug:drawer({
 			mode = "retained",
-			name = "NavGraphConnectorExtension",
+			name = "NavGraphConnectorExtension"
 		})
-		local pose, half_extents = Unit.box(unit)
+		local var_1_2, var_1_3 = Unit.box(arg_1_2)
 
-		drawer:box(pose, half_extents * 1.1, Colors.get("purple"))
+		var_1_1:box(var_1_2, var_1_3 * 1.1, Colors.get("purple"))
 	end
 end
 
-local control_points = {}
-local idx = 0
+local var_0_1 = {}
+local var_0_2 = 0
 
-NavGraphConnectorExtension.init_nav_graphs = function (self, ledge_id)
-	local unit = self.unit
-	local world = self.world
-	local nav_world = self.nav_world
-	local level = LevelHelper:current_level(world)
-	local unit_level_id = Level.unit_index(level, unit)
-	local smartobject_idx = unit_level_id
-	local bidirectional_edges = true
-	local layer_idx = 0
+function NavGraphConnectorExtension.init_nav_graphs(arg_2_0, arg_2_1)
+	local var_2_0 = arg_2_0.unit
+	local var_2_1 = arg_2_0.world
+	local var_2_2 = arg_2_0.nav_world
+	local var_2_3 = LevelHelper:current_level(var_2_1)
+	local var_2_4 = Level.unit_index(var_2_3, var_2_0)
+	local var_2_5 = true
+	local var_2_6 = 0
 
-	idx = idx + 1
+	var_0_2 = var_0_2 + 1
 
-	local ledge_data = ledges[ledge_id]
+	local var_2_7 = var_0_0[arg_2_1]
 
-	for smart_object, smart_object_data in pairs(ledge_data) do
-		control_points[1] = Vector3Aux.unbox(smart_object_data.ground_pos)
-		control_points[2] = Vector3Aux.unbox(smart_object_data.ledge_pos)
+	for iter_2_0, iter_2_1 in pairs(var_2_7) do
+		var_0_1[1] = Vector3Aux.unbox(iter_2_1.ground_pos)
+		var_0_1[2] = Vector3Aux.unbox(iter_2_1.ledge_pos)
 
-		local navgraph = GwNavGraph.create(nav_world, bidirectional_edges, control_points, debug_color, layer_idx, smartobject_idx)
+		local var_2_8 = GwNavGraph.create(var_2_2, var_2_5, var_0_1, debug_color, var_2_6, var_2_4)
 
-		GwNavGraph.add_to_database(navgraph)
+		GwNavGraph.add_to_database(var_2_8)
 
-		self.navgraphs[#self.navgraphs + 1] = navgraph
+		arg_2_0.navgraphs[#arg_2_0.navgraphs + 1] = var_2_8
 
 		if Development.parameter("visualize_ledges") then
-			local drawer = Managers.state.debug:drawer({
+			local var_2_9 = Managers.state.debug:drawer({
 				mode = "retained",
-				name = "NavGraphConnectorExtension",
+				name = "NavGraphConnectorExtension"
 			})
-			local debug_color = Colors.get("dark_orange")
-			local debug_color_fail = Colors.get("red")
+			local var_2_10 = Colors.get("dark_orange")
+			local var_2_11 = Colors.get("red")
 
-			drawer:line(control_points[1], control_points[2], debug_color)
+			var_2_9:line(var_0_1[1], var_0_1[2], var_2_10)
 
-			local is_position_on_navmesh = GwNavQueries.triangle_from_position(nav_world, control_points[1])
-
-			if is_position_on_navmesh then
-				drawer:sphere(control_points[1], 0.05, debug_color)
+			if GwNavQueries.triangle_from_position(var_2_2, var_0_1[1]) then
+				var_2_9:sphere(var_0_1[1], 0.05, var_2_10)
 			else
-				drawer:sphere(control_points[1], 0.05, debug_color_fail)
+				var_2_9:sphere(var_0_1[1], 0.05, var_2_11)
 			end
 
-			is_position_on_navmesh = GwNavQueries.triangle_from_position(nav_world, control_points[2])
-
-			if is_position_on_navmesh then
-				drawer:sphere(control_points[2], 0.05, debug_color)
+			if GwNavQueries.triangle_from_position(var_2_2, var_0_1[2]) then
+				var_2_9:sphere(var_0_1[2], 0.05, var_2_10)
 			else
-				drawer:sphere(control_points[2], 0.05, debug_color_fail)
+				var_2_9:sphere(var_0_1[2], 0.05, var_2_11)
 			end
 		end
 	end
 end
 
-NavGraphConnectorExtension.extensions_ready = function (self)
+function NavGraphConnectorExtension.extensions_ready(arg_3_0)
 	return
 end
 
-NavGraphConnectorExtension.destroy = function (self)
-	for i = 1, #self.navgraphs do
-		local navgraph = self.navgraphs[i]
+function NavGraphConnectorExtension.destroy(arg_4_0)
+	for iter_4_0 = 1, #arg_4_0.navgraphs do
+		local var_4_0 = arg_4_0.navgraphs[iter_4_0]
 
-		GwNavGraph.destroy(navgraph)
+		GwNavGraph.destroy(var_4_0)
 	end
 end
 
-NavGraphConnectorExtension.update = function (self, unit, input, dt, context, t)
+function NavGraphConnectorExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	return
 end

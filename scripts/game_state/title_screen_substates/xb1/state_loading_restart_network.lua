@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/game_state/title_screen_substates/xb1/state_loading_restart_network.lua
+-- chunkname: @scripts/game_state/title_screen_substates/xb1/state_loading_restart_network.lua
 
 require("scripts/network/lobby_host")
 require("scripts/network/lobby_client")
@@ -12,47 +12,47 @@ require("scripts/network/network_transmit")
 StateLoadingRestartNetwork = class(StateLoadingRestartNetwork)
 StateLoadingRestartNetwork.NAME = "StateLoadingRestartNetwork"
 
-StateLoadingRestartNetwork.on_enter = function (self, params)
+function StateLoadingRestartNetwork.on_enter(arg_1_0, arg_1_1)
 	print("[Gamestate] Enter Substate StateLoadingRestartNetwork")
-	self:_init_params(params)
-	self:_init_network()
+	arg_1_0:_init_params(arg_1_1)
+	arg_1_0:_init_network()
 end
 
-StateLoadingRestartNetwork._init_params = function (self, params)
-	self._world = params.world
-	self._viewport = params.viewport
-	self._loading_view = params.loading_view
+function StateLoadingRestartNetwork._init_params(arg_2_0, arg_2_1)
+	arg_2_0._world = arg_2_1.world
+	arg_2_0._viewport = arg_2_1.viewport
+	arg_2_0._loading_view = arg_2_1.loading_view
 end
 
-StateLoadingRestartNetwork._init_network = function (self)
-	local loading_context = self.parent.parent.loading_context
-	local increment_lobby_port = true
+function StateLoadingRestartNetwork._init_network(arg_3_0)
+	local var_3_0 = arg_3_0.parent.parent.loading_context
+	local var_3_1 = true
 
-	LobbySetup.setup_network_options(increment_lobby_port)
+	LobbySetup.setup_network_options(var_3_1)
 
 	if not rawget(_G, "LobbyInternal") or not LobbyInternal.network_initialized() then
 		require("scripts/network/lobby_xbox_live")
 
-		local network_options = LobbySetup.network_options()
+		local var_3_2 = LobbySetup.network_options()
 
-		LobbyInternal.init_client(network_options)
+		LobbyInternal.init_client(var_3_2)
 	end
 
-	self.parent:setup_level_transition()
+	arg_3_0.parent:setup_level_transition()
 
-	if loading_context.join_lobby_data then
-		self.parent:setup_join_lobby()
+	if var_3_0.join_lobby_data then
+		arg_3_0.parent:setup_join_lobby()
 	elseif auto_join_setting then
-		self.parent:setup_lobby_finder(Development.parameter("unique_server_name"))
+		arg_3_0.parent:setup_lobby_finder(Development.parameter("unique_server_name"))
 	else
-		self.parent:setup_lobby_host()
+		arg_3_0.parent:setup_lobby_host()
 	end
 
-	if loading_context.previous_session_error then
-		local previous_session_error = loading_context.previous_session_error
+	if var_3_0.previous_session_error then
+		local var_3_3 = var_3_0.previous_session_error
 
-		loading_context.previous_session_error = nil
+		var_3_0.previous_session_error = nil
 
-		self.parent:create_popup(previous_session_error, nil, "continue")
+		arg_3_0.parent:create_popup(var_3_3, nil, "continue")
 	end
 end

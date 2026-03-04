@@ -1,2654 +1,2654 @@
-﻿-- chunkname: @dialogues/generated/vs_player_vo_heroes.lua
+-- chunkname: @dialogues/generated/vs_player_vo_heroes.lua
 
-return function ()
+return function()
 	define_rule({
-		name = "pbw_gameplay_pinging_monster_a_VS",
 		probability = 1,
+		name = "pbw_gameplay_pinging_monster_a_VS",
 		response = "pbw_gameplay_pinging_monster_a_VS",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"distance",
 				OP.LTEQ,
-				7,
+				7
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"vs_chaos_troll",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"vs_rat_ogre",
+				"vs_rat_ogre"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"faction_memory",
 				"time_since_ping_monster",
 				OP.TIMEDIFF,
 				OP.GT,
-				30,
-			},
+				30
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_ping_monster",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pbw_vw_affirmative",
 		probability = 1,
+		name = "pbw_vw_affirmative",
 		response = "pbw_vw_affirmative",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_affirmative",
+				"vw_affirmative"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"user_memory",
 				"time_since_vw_affirmative",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_affirmative",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pbw_vw_answer_ping",
 		probability = 1,
+		name = "pbw_vw_answer_ping",
 		response = "pbw_vw_answer_ping",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_answer_ping",
+				"vw_answer_ping"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"user_memory",
 				"time_since_vw_answer_ping",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_answer_ping",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pbw_vw_attack_now",
 		probability = 1,
+		name = "pbw_vw_attack_now",
 		response = "pbw_vw_attack_now",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_attack_now",
+				"vw_attack_now"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"user_memory",
 				"time_since_vw_attack_now",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_attack_now",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pbw_vw_cover_me",
 		probability = 1,
+		name = "pbw_vw_cover_me",
 		response = "pbw_vw_cover_me",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_cover_me",
+				"vw_cover_me"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"global_context",
 				"current_objective",
 				OP.NEQ,
-				"start_zone",
+				"start_zone"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"user_memory",
 				"time_since_vw_cover_me",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_cover_me",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pbw_vw_gather",
 		probability = 1,
+		name = "pbw_vw_gather",
 		response = "pbw_vw_gather",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_gather",
+				"vw_gather"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"user_memory",
 				"time_since_vw_gather",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_gather",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pbw_vw_go_there",
 		probability = 1,
+		name = "pbw_vw_go_there",
 		response = "pbw_vw_go_there",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_go_here",
+				"vw_go_here"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"user_memory",
 				"time_since_vw_go_there",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_go_there",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pbw_vw_negation",
 		probability = 1,
+		name = "pbw_vw_negation",
 		response = "pbw_vw_negation",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_negation",
+				"vw_negation"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"user_memory",
 				"time_since_vw_negation",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_negation",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pbw_vw_objective_in_sight",
 		probability = 1,
+		name = "pbw_vw_objective_in_sight",
 		response = "pbw_vw_objective_in_sight",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_objective_in_sight",
+				"vw_objective_in_sight"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"faction_memory",
 				"time_since_vw_objective_in_sight",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_vw_objective_in_sight",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pbw_vw_thank_you",
 		probability = 1,
+		name = "pbw_vw_thank_you",
 		response = "pbw_vw_thank_you",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_thank_you",
+				"vw_thank_you"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"user_memory",
 				"time_since_vw_thank_you",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_thank_you",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pbw_vw_wait",
 		probability = 1,
+		name = "pbw_vw_wait",
 		response = "pbw_vw_wait",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_wait",
+				"vw_wait"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"user_memory",
 				"time_since_vw_wait",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_wait",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pdr_gameplay_pinging_monster_a_VS",
 		probability = 1,
+		name = "pdr_gameplay_pinging_monster_a_VS",
 		response = "pdr_gameplay_pinging_monster_a_VS",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"distance",
 				OP.LTEQ,
-				7,
+				7
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"vs_chaos_troll",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"vs_rat_ogre",
+				"vs_rat_ogre"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"dwarf_ranger",
+				"dwarf_ranger"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"dwarf_ranger",
+				"dwarf_ranger"
 			},
 			{
 				"faction_memory",
 				"time_since_ping_monster",
 				OP.TIMEDIFF,
 				OP.GT,
-				30,
-			},
+				30
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_ping_monster",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pdr_vw_affirmative",
 		probability = 1,
+		name = "pdr_vw_affirmative",
 		response = "pdr_vw_affirmative",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_affirmative",
+				"vw_affirmative"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"dwarf_ranger",
+				"dwarf_ranger"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"dwarf_ranger",
+				"dwarf_ranger"
 			},
 			{
 				"user_memory",
 				"time_since_vw_affirmative",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_affirmative",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pdr_vw_answer_ping",
 		probability = 1,
+		name = "pdr_vw_answer_ping",
 		response = "pdr_vw_answer_ping",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_answer_ping",
+				"vw_answer_ping"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"dwarf_ranger",
+				"dwarf_ranger"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"dwarf_ranger",
+				"dwarf_ranger"
 			},
 			{
 				"user_memory",
 				"time_since_vw_answer_ping",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_answer_ping",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pdr_vw_attack_now",
 		probability = 1,
+		name = "pdr_vw_attack_now",
 		response = "pdr_vw_attack_now",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_attack_now",
+				"vw_attack_now"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"dwarf_ranger",
+				"dwarf_ranger"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"dwarf_ranger",
+				"dwarf_ranger"
 			},
 			{
 				"user_memory",
 				"time_since_vw_attack_now",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_attack_now",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pdr_vw_cover_me",
 		probability = 1,
+		name = "pdr_vw_cover_me",
 		response = "pdr_vw_cover_me",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_cover_me",
+				"vw_cover_me"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"dwarf_ranger",
+				"dwarf_ranger"
 			},
 			{
 				"global_context",
 				"current_objective",
 				OP.NEQ,
-				"start_zone",
+				"start_zone"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"dwarf_ranger",
+				"dwarf_ranger"
 			},
 			{
 				"user_memory",
 				"time_since_vw_cover_me",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_cover_me",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pdr_vw_gather",
 		probability = 1,
+		name = "pdr_vw_gather",
 		response = "pdr_vw_gather",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_gather",
+				"vw_gather"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"dwarf_ranger",
+				"dwarf_ranger"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"dwarf_ranger",
+				"dwarf_ranger"
 			},
 			{
 				"user_memory",
 				"time_since_vw_gather",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_gather",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pdr_vw_go_there",
 		probability = 1,
+		name = "pdr_vw_go_there",
 		response = "pdr_vw_go_there",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_go_here",
+				"vw_go_here"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"dwarf_ranger",
+				"dwarf_ranger"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"dwarf_ranger",
+				"dwarf_ranger"
 			},
 			{
 				"user_memory",
 				"time_since_vw_go_there",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_go_there",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pdr_vw_negation",
 		probability = 1,
+		name = "pdr_vw_negation",
 		response = "pdr_vw_negation",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_negation",
+				"vw_negation"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"dwarf_ranger",
+				"dwarf_ranger"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"dwarf_ranger",
+				"dwarf_ranger"
 			},
 			{
 				"user_memory",
 				"time_since_vw_negation",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_negation",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pdr_vw_objective_in_sight",
 		probability = 1,
+		name = "pdr_vw_objective_in_sight",
 		response = "pdr_vw_objective_in_sight",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_objective_in_sight",
+				"vw_objective_in_sight"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"dwarf_ranger",
+				"dwarf_ranger"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"dwarf_ranger",
+				"dwarf_ranger"
 			},
 			{
 				"faction_memory",
 				"time_since_vw_objective_in_sight",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_vw_objective_in_sight",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pdr_vw_thank_you",
 		probability = 1,
+		name = "pdr_vw_thank_you",
 		response = "pdr_vw_thank_you",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_thank_you",
+				"vw_thank_you"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"dwarf_ranger",
+				"dwarf_ranger"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"dwarf_ranger",
+				"dwarf_ranger"
 			},
 			{
 				"user_memory",
 				"time_since_vw_thank_you",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_thank_you",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pdr_vw_wait",
 		probability = 1,
+		name = "pdr_vw_wait",
 		response = "pdr_vw_wait",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_wait",
+				"vw_wait"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"dwarf_ranger",
+				"dwarf_ranger"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"dwarf_ranger",
+				"dwarf_ranger"
 			},
 			{
 				"user_memory",
 				"time_since_vw_wait",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_wait",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pes_gameplay_pinging_monster_a_VS",
 		probability = 1,
+		name = "pes_gameplay_pinging_monster_a_VS",
 		response = "pes_gameplay_pinging_monster_a_VS",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"distance",
 				OP.LTEQ,
-				7,
+				7
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"vs_chaos_troll",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"vs_rat_ogre",
+				"vs_rat_ogre"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"empire_soldier",
+				"empire_soldier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"empire_soldier",
+				"empire_soldier"
 			},
 			{
 				"faction_memory",
 				"time_since_ping_monster",
 				OP.TIMEDIFF,
 				OP.GT,
-				30,
-			},
+				30
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_ping_monster",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pes_vw_affirmative",
 		probability = 1,
+		name = "pes_vw_affirmative",
 		response = "pes_vw_affirmative",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_affirmative",
+				"vw_affirmative"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"empire_soldier",
+				"empire_soldier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"empire_soldier",
+				"empire_soldier"
 			},
 			{
 				"user_memory",
 				"time_since_vw_affirmative",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_affirmative",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pes_vw_answer_ping",
 		probability = 1,
+		name = "pes_vw_answer_ping",
 		response = "pes_vw_answer_ping",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_answer_ping",
+				"vw_answer_ping"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"empire_soldier",
+				"empire_soldier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"empire_soldier",
+				"empire_soldier"
 			},
 			{
 				"user_memory",
 				"time_since_vw_answer_ping",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_answer_ping",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pes_vw_attack_now",
 		probability = 1,
+		name = "pes_vw_attack_now",
 		response = "pes_vw_attack_now",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_attack_now",
+				"vw_attack_now"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"empire_soldier",
+				"empire_soldier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"empire_soldier",
+				"empire_soldier"
 			},
 			{
 				"user_memory",
 				"time_since_vw_attack_now",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_attack_now",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pes_vw_cover_me",
 		probability = 1,
+		name = "pes_vw_cover_me",
 		response = "pes_vw_cover_me",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_cover_me",
+				"vw_cover_me"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"empire_soldier",
+				"empire_soldier"
 			},
 			{
 				"global_context",
 				"current_objective",
 				OP.NEQ,
-				"start_zone",
+				"start_zone"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"empire_soldier",
+				"empire_soldier"
 			},
 			{
 				"user_memory",
 				"time_since_vw_cover_me",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_cover_me",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pes_vw_gather",
 		probability = 1,
+		name = "pes_vw_gather",
 		response = "pes_vw_gather",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_gather",
+				"vw_gather"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"empire_soldier",
+				"empire_soldier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"empire_soldier",
+				"empire_soldier"
 			},
 			{
 				"user_memory",
 				"time_since_vw_gather",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_gather",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pes_vw_go_there",
 		probability = 1,
+		name = "pes_vw_go_there",
 		response = "pes_vw_go_there",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_go_here",
+				"vw_go_here"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"empire_soldier",
+				"empire_soldier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"empire_soldier",
+				"empire_soldier"
 			},
 			{
 				"user_memory",
 				"time_since_vw_go_there",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_go_there",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pes_vw_negation",
 		probability = 1,
+		name = "pes_vw_negation",
 		response = "pes_vw_negation",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_negation",
+				"vw_negation"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"empire_soldier",
+				"empire_soldier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"empire_soldier",
+				"empire_soldier"
 			},
 			{
 				"user_memory",
 				"time_since_vw_negation",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_negation",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pes_vw_objective_in_sight",
 		probability = 1,
+		name = "pes_vw_objective_in_sight",
 		response = "pes_vw_objective_in_sight",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_objective_in_sight",
+				"vw_objective_in_sight"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"empire_soldier",
+				"empire_soldier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"empire_soldier",
+				"empire_soldier"
 			},
 			{
 				"faction_memory",
 				"time_since_vw_objective_in_sight",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_vw_objective_in_sight",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pes_vw_thank_you",
 		probability = 1,
+		name = "pes_vw_thank_you",
 		response = "pes_vw_thank_you",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_thank_you",
+				"vw_thank_you"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"empire_soldier",
+				"empire_soldier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"empire_soldier",
+				"empire_soldier"
 			},
 			{
 				"user_memory",
 				"time_since_vw_thank_you",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_thank_you",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pes_vw_wait",
 		probability = 1,
+		name = "pes_vw_wait",
 		response = "pes_vw_wait",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_wait",
+				"vw_wait"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"empire_soldier",
+				"empire_soldier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"empire_soldier",
+				"empire_soldier"
 			},
 			{
 				"user_memory",
 				"time_since_vw_wait",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_wait",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pwe_gameplay_pinging_monster_a_VS",
 		probability = 1,
+		name = "pwe_gameplay_pinging_monster_a_VS",
 		response = "pwe_gameplay_pinging_monster_a_VS",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"distance",
 				OP.LTEQ,
-				7,
+				7
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"vs_chaos_troll",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"vs_rat_ogre",
+				"vs_rat_ogre"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"wood_elf",
+				"wood_elf"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"wood_elf",
+				"wood_elf"
 			},
 			{
 				"faction_memory",
 				"time_since_ping_monster",
 				OP.TIMEDIFF,
 				OP.GT,
-				30,
-			},
+				30
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_ping_monster",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pwe_vw_affirmative",
 		probability = 1,
+		name = "pwe_vw_affirmative",
 		response = "pwe_vw_affirmative",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_affirmative",
+				"vw_affirmative"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"wood_elf",
+				"wood_elf"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"wood_elf",
+				"wood_elf"
 			},
 			{
 				"user_memory",
 				"time_since_vw_affirmative",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_affirmative",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pwe_vw_answer_ping",
 		probability = 1,
+		name = "pwe_vw_answer_ping",
 		response = "pwe_vw_answer_ping",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_answer_ping",
+				"vw_answer_ping"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"wood_elf",
+				"wood_elf"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"wood_elf",
+				"wood_elf"
 			},
 			{
 				"user_memory",
 				"time_since_vw_answer_ping",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_answer_ping",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pwe_vw_attack_now",
 		probability = 1,
+		name = "pwe_vw_attack_now",
 		response = "pwe_vw_attack_now",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_attack_now",
+				"vw_attack_now"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"wood_elf",
+				"wood_elf"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"wood_elf",
+				"wood_elf"
 			},
 			{
 				"user_memory",
 				"time_since_vw_attack_now",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_attack_now",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pwe_vw_cover_me",
 		probability = 1,
+		name = "pwe_vw_cover_me",
 		response = "pwe_vw_cover_me",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_cover_me",
+				"vw_cover_me"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"wood_elf",
+				"wood_elf"
 			},
 			{
 				"global_context",
 				"current_objective",
 				OP.NEQ,
-				"start_zone",
+				"start_zone"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"wood_elf",
+				"wood_elf"
 			},
 			{
 				"user_memory",
 				"time_since_vw_cover_me",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_cover_me",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pwe_vw_gather",
 		probability = 1,
+		name = "pwe_vw_gather",
 		response = "pwe_vw_gather",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_gather",
+				"vw_gather"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"wood_elf",
+				"wood_elf"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"wood_elf",
+				"wood_elf"
 			},
 			{
 				"user_memory",
 				"time_since_vw_gather",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_gather",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pwe_vw_go_there",
 		probability = 1,
+		name = "pwe_vw_go_there",
 		response = "pwe_vw_go_there",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_go_here",
+				"vw_go_here"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"wood_elf",
+				"wood_elf"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"wood_elf",
+				"wood_elf"
 			},
 			{
 				"user_memory",
 				"time_since_vw_go_there",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_go_there",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pwe_vw_negation",
 		probability = 1,
+		name = "pwe_vw_negation",
 		response = "pwe_vw_negation",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_negation",
+				"vw_negation"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"wood_elf",
+				"wood_elf"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"wood_elf",
+				"wood_elf"
 			},
 			{
 				"user_memory",
 				"time_since_vw_negation",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_negation",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pwe_vw_objective_in_sight",
 		probability = 1,
+		name = "pwe_vw_objective_in_sight",
 		response = "pwe_vw_objective_in_sight",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_objective_in_sight",
+				"vw_objective_in_sight"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"wood_elf",
+				"wood_elf"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"wood_elf",
+				"wood_elf"
 			},
 			{
 				"faction_memory",
 				"time_since_vw_objective_in_sight",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_vw_objective_in_sight",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pwe_vw_thank_you",
 		probability = 1,
+		name = "pwe_vw_thank_you",
 		response = "pwe_vw_thank_you",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_thank_you",
+				"vw_thank_you"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"wood_elf",
+				"wood_elf"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"wood_elf",
+				"wood_elf"
 			},
 			{
 				"user_memory",
 				"time_since_vw_thank_you",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_thank_you",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pwe_vw_wait",
 		probability = 1,
+		name = "pwe_vw_wait",
 		response = "pwe_vw_wait",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_wait",
+				"vw_wait"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"wood_elf",
+				"wood_elf"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"wood_elf",
+				"wood_elf"
 			},
 			{
 				"user_memory",
 				"time_since_vw_wait",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_wait",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pwh_gameplay_pinging_monster_a_VS",
 		probability = 1,
+		name = "pwh_gameplay_pinging_monster_a_VS",
 		response = "pwh_gameplay_pinging_monster_a_VS",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"distance",
 				OP.LTEQ,
-				7,
+				7
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"vs_chaos_troll",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"vs_rat_ogre",
+				"vs_rat_ogre"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"witch_hunter",
+				"witch_hunter"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"witch_hunter",
+				"witch_hunter"
 			},
 			{
 				"faction_memory",
 				"time_since_ping_monster",
 				OP.TIMEDIFF,
 				OP.GT,
-				30,
-			},
+				30
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_ping_monster",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pwh_vw_affirmative",
 		probability = 1,
+		name = "pwh_vw_affirmative",
 		response = "pwh_vw_affirmative",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_affirmative",
+				"vw_affirmative"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"witch_hunter",
+				"witch_hunter"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"witch_hunter",
+				"witch_hunter"
 			},
 			{
 				"user_memory",
 				"time_since_vw_affirmative",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_affirmative",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pwh_vw_answer_ping",
 		probability = 1,
+		name = "pwh_vw_answer_ping",
 		response = "pwh_vw_answer_ping",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_answer_ping",
+				"vw_answer_ping"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"witch_hunter",
+				"witch_hunter"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"witch_hunter",
+				"witch_hunter"
 			},
 			{
 				"user_memory",
 				"time_since_vw_answer_ping",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_answer_ping",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pwh_vw_attack_now",
 		probability = 1,
+		name = "pwh_vw_attack_now",
 		response = "pwh_vw_attack_now",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_attack_now",
+				"vw_attack_now"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"witch_hunter",
+				"witch_hunter"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"witch_hunter",
+				"witch_hunter"
 			},
 			{
 				"user_memory",
 				"time_since_vw_attack_now",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_attack_now",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pwh_vw_cover_me",
 		probability = 1,
+		name = "pwh_vw_cover_me",
 		response = "pwh_vw_cover_me",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_cover_me",
+				"vw_cover_me"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"witch_hunter",
+				"witch_hunter"
 			},
 			{
 				"global_context",
 				"current_objective",
 				OP.NEQ,
-				"start_zone",
+				"start_zone"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"witch_hunter",
+				"witch_hunter"
 			},
 			{
 				"user_memory",
 				"time_since_vw_cover_me",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_cover_me",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pwh_vw_gather",
 		probability = 1,
+		name = "pwh_vw_gather",
 		response = "pwh_vw_gather",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_gather",
+				"vw_gather"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"witch_hunter",
+				"witch_hunter"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"witch_hunter",
+				"witch_hunter"
 			},
 			{
 				"user_memory",
 				"time_since_vw_gather",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_gather",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pwh_vw_go_there",
 		probability = 1,
+		name = "pwh_vw_go_there",
 		response = "pwh_vw_go_there",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_go_here",
+				"vw_go_here"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"witch_hunter",
+				"witch_hunter"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"witch_hunter",
+				"witch_hunter"
 			},
 			{
 				"user_memory",
 				"time_since_vw_go_there",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_go_there",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pwh_vw_negation",
 		probability = 1,
+		name = "pwh_vw_negation",
 		response = "pwh_vw_negation",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_negation",
+				"vw_negation"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"witch_hunter",
+				"witch_hunter"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"witch_hunter",
+				"witch_hunter"
 			},
 			{
 				"user_memory",
 				"time_since_vw_negation",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_negation",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pwh_vw_objective_in_sight",
 		probability = 1,
+		name = "pwh_vw_objective_in_sight",
 		response = "pwh_vw_objective_in_sight",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_objective_in_sight",
+				"vw_objective_in_sight"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"witch_hunter",
+				"witch_hunter"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"witch_hunter",
+				"witch_hunter"
 			},
 			{
 				"faction_memory",
 				"time_since_vw_objective_in_sight",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_vw_objective_in_sight",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pwh_vw_thank_you",
 		probability = 1,
+		name = "pwh_vw_thank_you",
 		response = "pwh_vw_thank_you",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_thank_you",
+				"vw_thank_you"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"witch_hunter",
+				"witch_hunter"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"witch_hunter",
+				"witch_hunter"
 			},
 			{
 				"user_memory",
 				"time_since_vw_thank_you",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_thank_you",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pwh_vw_wait",
 		probability = 1,
+		name = "pwh_vw_wait",
 		response = "pwh_vw_wait",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_wait",
+				"vw_wait"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"witch_hunter",
+				"witch_hunter"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"witch_hunter",
+				"witch_hunter"
 			},
 			{
 				"user_memory",
 				"time_since_vw_wait",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_wait",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	add_dialogues({
 		pbw_gameplay_pinging_monster_a_VS = {
-			category = "enemy_alerts",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 4,
+			category = "enemy_alerts",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_shout",
 				"dialogue_shout",
 				"dialogue_shout",
-				"dialogue_shout",
+				"dialogue_shout"
 			},
 			face_animations = {
 				"face_angry",
 				"face_angry",
 				"face_angry",
-				"face_angry",
+				"face_angry"
 			},
 			localization_strings = {
 				"pbw_gameplay_pinging_monster_a_01",
 				"pbw_gameplay_pinging_monster_a_02",
 				"pbw_gameplay_pinging_monster_a_03",
-				"pbw_gameplay_pinging_monster_a_04",
+				"pbw_gameplay_pinging_monster_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"pbw_gameplay_pinging_monster_a_01",
 				"pbw_gameplay_pinging_monster_a_02",
 				"pbw_gameplay_pinging_monster_a_03",
-				"pbw_gameplay_pinging_monster_a_04",
+				"pbw_gameplay_pinging_monster_a_04"
 			},
 			sound_events_duration = {
 				0.80860418081284,
 				1.4378333091736,
 				1.5725417137146,
-				1.3520208597183,
-			},
+				1.3520208597183
+			}
 		},
 		pbw_vw_affirmative = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -2659,7 +2659,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -2671,7 +2671,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pbw_vw_affirmative_01",
@@ -2683,7 +2683,7 @@ return function ()
 				"pbw_vw_affirmative_07",
 				"pbw_vw_affirmative_08",
 				"pbw_vw_affirmative_09",
-				"pbw_vw_affirmative_10",
+				"pbw_vw_affirmative_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -2696,7 +2696,7 @@ return function ()
 				"pbw_vw_affirmative_07",
 				"pbw_vw_affirmative_08",
 				"pbw_vw_affirmative_09",
-				"pbw_vw_affirmative_10",
+				"pbw_vw_affirmative_10"
 			},
 			sound_events_duration = {
 				0.966000020504,
@@ -2708,17 +2708,17 @@ return function ()
 				0.77499997615814,
 				1.2529791593552,
 				1.7089999914169,
-				2.6949791908264,
-			},
+				2.6949791908264
+			}
 		},
 		pbw_vw_answer_ping = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -2729,7 +2729,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -2741,7 +2741,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pbw_vw_answer_ping_01",
@@ -2753,7 +2753,7 @@ return function ()
 				"pbw_vw_answer_ping_07",
 				"pbw_vw_answer_ping_08",
 				"pbw_vw_answer_ping_09",
-				"pbw_vw_answer_ping_10",
+				"pbw_vw_answer_ping_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -2766,7 +2766,7 @@ return function ()
 				"pbw_vw_answer_ping_07",
 				"pbw_vw_answer_ping_08",
 				"pbw_vw_answer_ping_09",
-				"pbw_vw_answer_ping_10",
+				"pbw_vw_answer_ping_10"
 			},
 			sound_events_duration = {
 				1.2469999790192,
@@ -2778,17 +2778,17 @@ return function ()
 				2.0869998931885,
 				2.4919791221619,
 				2.8989791870117,
-				2.2479791641235,
-			},
+				2.2479791641235
+			}
 		},
 		pbw_vw_attack_now = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -2799,7 +2799,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -2811,7 +2811,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pbw_vw_attack_now_01",
@@ -2823,7 +2823,7 @@ return function ()
 				"pbw_vw_attack_now_07",
 				"pbw_vw_attack_now_08",
 				"pbw_vw_attack_now_09",
-				"pbw_vw_attack_now_10",
+				"pbw_vw_attack_now_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -2836,7 +2836,7 @@ return function ()
 				"pbw_vw_attack_now_07",
 				"pbw_vw_attack_now_08",
 				"pbw_vw_attack_now_09",
-				"pbw_vw_attack_now_10",
+				"pbw_vw_attack_now_10"
 			},
 			sound_events_duration = {
 				1.1360000371933,
@@ -2848,17 +2848,17 @@ return function ()
 				1.1959791183472,
 				0.96899998188019,
 				1.7159999608993,
-				1.215979218483,
-			},
+				1.215979218483
+			}
 		},
 		pbw_vw_cover_me = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -2869,7 +2869,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -2881,7 +2881,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pbw_vw_cover_me_01",
@@ -2893,7 +2893,7 @@ return function ()
 				"pbw_vw_cover_me_07",
 				"pbw_vw_cover_me_08",
 				"pbw_vw_cover_me_09",
-				"pbw_vw_cover_me_10",
+				"pbw_vw_cover_me_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -2906,7 +2906,7 @@ return function ()
 				"pbw_vw_cover_me_07",
 				"pbw_vw_cover_me_08",
 				"pbw_vw_cover_me_09",
-				"pbw_vw_cover_me_10",
+				"pbw_vw_cover_me_10"
 			},
 			sound_events_duration = {
 				0.95999997854233,
@@ -2918,17 +2918,17 @@ return function ()
 				1.430999994278,
 				1.5099791288376,
 				2.6489791870117,
-				1.2219791412354,
-			},
+				1.2219791412354
+			}
 		},
 		pbw_vw_gather = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -2939,7 +2939,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -2951,7 +2951,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pbw_vw_gather_01",
@@ -2963,7 +2963,7 @@ return function ()
 				"pbw_vw_gather_07",
 				"pbw_vw_gather_08",
 				"pbw_vw_gather_09",
-				"pbw_vw_gather_10",
+				"pbw_vw_gather_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -2976,7 +2976,7 @@ return function ()
 				"pbw_vw_gather_07",
 				"pbw_vw_gather_08",
 				"pbw_vw_gather_09",
-				"pbw_vw_gather_10",
+				"pbw_vw_gather_10"
 			},
 			sound_events_duration = {
 				1.352979183197,
@@ -2988,17 +2988,17 @@ return function ()
 				1.8679791688919,
 				2.0920000076294,
 				1.3090000152588,
-				1.1920000314713,
-			},
+				1.1920000314713
+			}
 		},
 		pbw_vw_go_there = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -3009,7 +3009,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -3021,7 +3021,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pbw_vw_go_there_01",
@@ -3033,7 +3033,7 @@ return function ()
 				"pbw_vw_go_there_07",
 				"pbw_vw_go_there_08",
 				"pbw_vw_go_there_09",
-				"pbw_vw_go_there_10",
+				"pbw_vw_go_there_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -3046,7 +3046,7 @@ return function ()
 				"pbw_vw_go_there_07",
 				"pbw_vw_go_there_08",
 				"pbw_vw_go_there_09",
-				"pbw_vw_go_there_10",
+				"pbw_vw_go_there_10"
 			},
 			sound_events_duration = {
 				1.3509999513626,
@@ -3058,17 +3058,17 @@ return function ()
 				2.0299999713898,
 				1.2349791526794,
 				1.1849999427795,
-				1.7819999456406,
-			},
+				1.7819999456406
+			}
 		},
 		pbw_vw_negation = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -3079,7 +3079,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -3091,7 +3091,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pbw_vw_negation_01",
@@ -3103,7 +3103,7 @@ return function ()
 				"pbw_vw_negation_07",
 				"pbw_vw_negation_08",
 				"pbw_vw_negation_09",
-				"pbw_vw_negation_10",
+				"pbw_vw_negation_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -3116,7 +3116,7 @@ return function ()
 				"pbw_vw_negation_07",
 				"pbw_vw_negation_08",
 				"pbw_vw_negation_09",
-				"pbw_vw_negation_10",
+				"pbw_vw_negation_10"
 			},
 			sound_events_duration = {
 				0.58399999141693,
@@ -3128,17 +3128,17 @@ return function ()
 				0.47897917032242,
 				1.4459791183472,
 				1.0489791631699,
-				1.5529791116715,
-			},
+				1.5529791116715
+			}
 		},
 		pbw_vw_objective_in_sight = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -3149,7 +3149,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -3161,7 +3161,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pbw_vw_objective_in_sight_01",
@@ -3173,7 +3173,7 @@ return function ()
 				"pbw_vw_objective_in_sight_07",
 				"pbw_vw_objective_in_sight_08",
 				"pbw_vw_objective_in_sight_09",
-				"pbw_vw_objective_in_sight_10",
+				"pbw_vw_objective_in_sight_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -3186,7 +3186,7 @@ return function ()
 				"pbw_vw_objective_in_sight_07",
 				"pbw_vw_objective_in_sight_08",
 				"pbw_vw_objective_in_sight_09",
-				"pbw_vw_objective_in_sight_10",
+				"pbw_vw_objective_in_sight_10"
 			},
 			sound_events_duration = {
 				1.9309791326523,
@@ -3198,17 +3198,17 @@ return function ()
 				2.8559792041779,
 				2.6569790840149,
 				2.1549792289734,
-				2.7739791870117,
-			},
+				2.7739791870117
+			}
 		},
 		pbw_vw_thank_you = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -3219,7 +3219,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -3231,7 +3231,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pbw_vw_thank_you_01",
@@ -3243,7 +3243,7 @@ return function ()
 				"pbw_vw_thank_you_07",
 				"pbw_vw_thank_you_08",
 				"pbw_vw_thank_you_09",
-				"pbw_vw_thank_you_10",
+				"pbw_vw_thank_you_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -3256,7 +3256,7 @@ return function ()
 				"pbw_vw_thank_you_07",
 				"pbw_vw_thank_you_08",
 				"pbw_vw_thank_you_09",
-				"pbw_vw_thank_you_10",
+				"pbw_vw_thank_you_10"
 			},
 			sound_events_duration = {
 				1.0269792079925,
@@ -3268,17 +3268,17 @@ return function ()
 				1.8079792261124,
 				1.6319791078568,
 				2.1529791355133,
-				1.2970000505447,
-			},
+				1.2970000505447
+			}
 		},
 		pbw_vw_wait = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -3289,7 +3289,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -3301,7 +3301,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pbw_vw_wait_01",
@@ -3313,7 +3313,7 @@ return function ()
 				"pbw_vw_wait_07",
 				"pbw_vw_wait_08",
 				"pbw_vw_wait_09",
-				"pbw_vw_wait_10",
+				"pbw_vw_wait_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -3326,7 +3326,7 @@ return function ()
 				"pbw_vw_wait_07",
 				"pbw_vw_wait_08",
 				"pbw_vw_wait_09",
-				"pbw_vw_wait_10",
+				"pbw_vw_wait_10"
 			},
 			sound_events_duration = {
 				1.1569999456406,
@@ -3338,56 +3338,56 @@ return function ()
 				1.7309999465942,
 				1.8469791412354,
 				0.58399999141693,
-				1.75,
-			},
+				1.75
+			}
 		},
 		pdr_gameplay_pinging_monster_a_VS = {
-			category = "enemy_alerts",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 4,
+			category = "enemy_alerts",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_shout",
 				"dialogue_shout",
 				"dialogue_shout",
-				"dialogue_shout",
+				"dialogue_shout"
 			},
 			face_animations = {
 				"face_angry",
 				"face_angry",
 				"face_angry",
-				"face_angry",
+				"face_angry"
 			},
 			localization_strings = {
 				"pdr_gameplay_pinging_monster_a_01",
 				"pdr_gameplay_pinging_monster_a_02",
 				"pdr_gameplay_pinging_monster_a_03",
-				"pdr_gameplay_pinging_monster_a_04",
+				"pdr_gameplay_pinging_monster_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"pdr_gameplay_pinging_monster_a_01",
 				"pdr_gameplay_pinging_monster_a_02",
 				"pdr_gameplay_pinging_monster_a_03",
-				"pdr_gameplay_pinging_monster_a_04",
+				"pdr_gameplay_pinging_monster_a_04"
 			},
 			sound_events_duration = {
 				1.2480624914169,
 				0.89589583873749,
 				1.4153125286102,
-				1.4341875314713,
-			},
+				1.4341875314713
+			}
 		},
 		pdr_vw_affirmative = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -3398,7 +3398,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -3410,7 +3410,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pdr_vw_affirmative_01",
@@ -3422,7 +3422,7 @@ return function ()
 				"pdr_vw_affirmative_07",
 				"pdr_vw_affirmative_08",
 				"pdr_vw_affirmative_09",
-				"pdr_vw_affirmative_10",
+				"pdr_vw_affirmative_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -3435,7 +3435,7 @@ return function ()
 				"pdr_vw_affirmative_07",
 				"pdr_vw_affirmative_08",
 				"pdr_vw_affirmative_09",
-				"pdr_vw_affirmative_10",
+				"pdr_vw_affirmative_10"
 			},
 			sound_events_duration = {
 				0.85399997234345,
@@ -3447,17 +3447,17 @@ return function ()
 				1.2264374494553,
 				1.6327291727066,
 				1.7757083177566,
-				1.114458322525,
-			},
+				1.114458322525
+			}
 		},
 		pdr_vw_answer_ping = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -3468,7 +3468,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -3480,7 +3480,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pdr_vw_answer_ping_01",
@@ -3492,7 +3492,7 @@ return function ()
 				"pdr_vw_answer_ping_07",
 				"pdr_vw_answer_ping_08",
 				"pdr_vw_answer_ping_09",
-				"pdr_vw_answer_ping_10",
+				"pdr_vw_answer_ping_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -3505,7 +3505,7 @@ return function ()
 				"pdr_vw_answer_ping_07",
 				"pdr_vw_answer_ping_08",
 				"pdr_vw_answer_ping_09",
-				"pdr_vw_answer_ping_10",
+				"pdr_vw_answer_ping_10"
 			},
 			sound_events_duration = {
 				1.3205624818802,
@@ -3517,17 +3517,17 @@ return function ()
 				2.0552084445953,
 				1.6849792003632,
 				1.3354375362396,
-				1.574041724205,
-			},
+				1.574041724205
+			}
 		},
 		pdr_vw_attack_now = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -3538,7 +3538,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -3550,7 +3550,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pdr_vw_attack_now_01",
@@ -3562,7 +3562,7 @@ return function ()
 				"pdr_vw_attack_now_07",
 				"pdr_vw_attack_now_08",
 				"pdr_vw_attack_now_09",
-				"pdr_vw_attack_now_10",
+				"pdr_vw_attack_now_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -3575,7 +3575,7 @@ return function ()
 				"pdr_vw_attack_now_07",
 				"pdr_vw_attack_now_08",
 				"pdr_vw_attack_now_09",
-				"pdr_vw_attack_now_10",
+				"pdr_vw_attack_now_10"
 			},
 			sound_events_duration = {
 				0.93062502145767,
@@ -3587,17 +3587,17 @@ return function ()
 				1.7254583835602,
 				1.3074791431427,
 				2.2233126163483,
-				1.8131458759308,
-			},
+				1.8131458759308
+			}
 		},
 		pdr_vw_cover_me = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -3608,7 +3608,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -3620,7 +3620,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pdr_vw_cover_me_01",
@@ -3632,7 +3632,7 @@ return function ()
 				"pdr_vw_cover_me_07",
 				"pdr_vw_cover_me_08",
 				"pdr_vw_cover_me_09",
-				"pdr_vw_cover_me_10",
+				"pdr_vw_cover_me_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -3645,7 +3645,7 @@ return function ()
 				"pdr_vw_cover_me_07",
 				"pdr_vw_cover_me_08",
 				"pdr_vw_cover_me_09",
-				"pdr_vw_cover_me_10",
+				"pdr_vw_cover_me_10"
 			},
 			sound_events_duration = {
 				1.1092292070389,
@@ -3657,17 +3657,17 @@ return function ()
 				1.6915208101273,
 				2.3251457214356,
 				1.1031666994095,
-				1.62600004673,
-			},
+				1.62600004673
+			}
 		},
 		pdr_vw_gather = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -3678,7 +3678,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -3690,7 +3690,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pdr_vw_gather_01",
@@ -3702,7 +3702,7 @@ return function ()
 				"pdr_vw_gather_07",
 				"pdr_vw_gather_08",
 				"pdr_vw_gather_09",
-				"pdr_vw_gather_10",
+				"pdr_vw_gather_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -3715,7 +3715,7 @@ return function ()
 				"pdr_vw_gather_07",
 				"pdr_vw_gather_08",
 				"pdr_vw_gather_09",
-				"pdr_vw_gather_10",
+				"pdr_vw_gather_10"
 			},
 			sound_events_duration = {
 				0.69693750143051,
@@ -3727,17 +3727,17 @@ return function ()
 				1.4916042089462,
 				1.3071875572205,
 				1.6279791593552,
-				1.2289791107178,
-			},
+				1.2289791107178
+			}
 		},
 		pdr_vw_go_there = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -3748,7 +3748,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -3760,7 +3760,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pdr_vw_go_there_01",
@@ -3772,7 +3772,7 @@ return function ()
 				"pdr_vw_go_there_07",
 				"pdr_vw_go_there_08",
 				"pdr_vw_go_there_09",
-				"pdr_vw_go_there_10",
+				"pdr_vw_go_there_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -3785,7 +3785,7 @@ return function ()
 				"pdr_vw_go_there_07",
 				"pdr_vw_go_there_08",
 				"pdr_vw_go_there_09",
-				"pdr_vw_go_there_10",
+				"pdr_vw_go_there_10"
 			},
 			sound_events_duration = {
 				1.5223333835602,
@@ -3797,17 +3797,17 @@ return function ()
 				2.3670625686645,
 				1.1871458292007,
 				1.9268958568573,
-				0.74906247854233,
-			},
+				0.74906247854233
+			}
 		},
 		pdr_vw_negation = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -3818,7 +3818,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -3830,7 +3830,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pdr_vw_negation_01",
@@ -3842,7 +3842,7 @@ return function ()
 				"pdr_vw_negation_07",
 				"pdr_vw_negation_08",
 				"pdr_vw_negation_09",
-				"pdr_vw_negation_10",
+				"pdr_vw_negation_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -3855,7 +3855,7 @@ return function ()
 				"pdr_vw_negation_07",
 				"pdr_vw_negation_08",
 				"pdr_vw_negation_09",
-				"pdr_vw_negation_10",
+				"pdr_vw_negation_10"
 			},
 			sound_events_duration = {
 				0.4527083337307,
@@ -3867,17 +3867,17 @@ return function ()
 				1.4605417251587,
 				1.4483958482742,
 				1.7568957805634,
-				1.5687916278839,
-			},
+				1.5687916278839
+			}
 		},
 		pdr_vw_objective_in_sight = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -3888,7 +3888,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -3900,7 +3900,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pdr_vw_objective_in_sight_01",
@@ -3912,7 +3912,7 @@ return function ()
 				"pdr_vw_objective_in_sight_07",
 				"pdr_vw_objective_in_sight_08",
 				"pdr_vw_objective_in_sight_09",
-				"pdr_vw_objective_in_sight_10",
+				"pdr_vw_objective_in_sight_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -3925,7 +3925,7 @@ return function ()
 				"pdr_vw_objective_in_sight_07",
 				"pdr_vw_objective_in_sight_08",
 				"pdr_vw_objective_in_sight_09",
-				"pdr_vw_objective_in_sight_10",
+				"pdr_vw_objective_in_sight_10"
 			},
 			sound_events_duration = {
 				1.557000041008,
@@ -3937,17 +3937,17 @@ return function ()
 				3.1857917308807,
 				1.7673958539963,
 				1.8910207748413,
-				1.8203333616257,
-			},
+				1.8203333616257
+			}
 		},
 		pdr_vw_thank_you = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -3958,7 +3958,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -3970,7 +3970,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pdr_vw_thank_you_01",
@@ -3982,7 +3982,7 @@ return function ()
 				"pdr_vw_thank_you_07",
 				"pdr_vw_thank_you_08",
 				"pdr_vw_thank_you_09",
-				"pdr_vw_thank_you_10",
+				"pdr_vw_thank_you_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -3995,7 +3995,7 @@ return function ()
 				"pdr_vw_thank_you_07",
 				"pdr_vw_thank_you_08",
 				"pdr_vw_thank_you_09",
-				"pdr_vw_thank_you_10",
+				"pdr_vw_thank_you_10"
 			},
 			sound_events_duration = {
 				1.2268542051315,
@@ -4007,17 +4007,17 @@ return function ()
 				0.96558332443237,
 				1.1904166936874,
 				1.5051457881927,
-				1.1336041688919,
-			},
+				1.1336041688919
+			}
 		},
 		pdr_vw_wait = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -4028,7 +4028,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -4040,7 +4040,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pdr_vw_wait_01",
@@ -4052,7 +4052,7 @@ return function ()
 				"pdr_vw_wait_07",
 				"pdr_vw_wait_08",
 				"pdr_vw_wait_09",
-				"pdr_vw_wait_10",
+				"pdr_vw_wait_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -4065,7 +4065,7 @@ return function ()
 				"pdr_vw_wait_07",
 				"pdr_vw_wait_08",
 				"pdr_vw_wait_09",
-				"pdr_vw_wait_10",
+				"pdr_vw_wait_10"
 			},
 			sound_events_duration = {
 				0.8768749833107,
@@ -4077,56 +4077,56 @@ return function ()
 				1.0268125534058,
 				1.5387707948685,
 				1.402999997139,
-				2.113979101181,
-			},
+				2.113979101181
+			}
 		},
 		pes_gameplay_pinging_monster_a_VS = {
-			category = "enemy_alerts",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 4,
+			category = "enemy_alerts",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_shout",
 				"dialogue_shout",
 				"dialogue_shout",
-				"dialogue_shout",
+				"dialogue_shout"
 			},
 			face_animations = {
 				"face_angry",
 				"face_angry",
 				"face_angry",
-				"face_angry",
+				"face_angry"
 			},
 			localization_strings = {
 				"pes_gameplay_pinging_monster_a_01",
 				"pes_gameplay_pinging_monster_a_02",
 				"pes_gameplay_pinging_monster_a_03",
-				"pes_gameplay_pinging_monster_a_04",
+				"pes_gameplay_pinging_monster_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"pes_gameplay_pinging_monster_a_01",
 				"pes_gameplay_pinging_monster_a_02",
 				"pes_gameplay_pinging_monster_a_03",
-				"pes_gameplay_pinging_monster_a_04",
+				"pes_gameplay_pinging_monster_a_04"
 			},
 			sound_events_duration = {
 				1.2569999694824,
 				0.87812501192093,
 				0.90289580821991,
-				1.2952916622162,
-			},
+				1.2952916622162
+			}
 		},
 		pes_vw_affirmative = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -4137,7 +4137,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -4149,7 +4149,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pes_vw_affirmative_01",
@@ -4161,7 +4161,7 @@ return function ()
 				"pes_vw_affirmative_07",
 				"pes_vw_affirmative_08",
 				"pes_vw_affirmative_09",
-				"pes_vw_affirmative_10",
+				"pes_vw_affirmative_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -4174,7 +4174,7 @@ return function ()
 				"pes_vw_affirmative_07",
 				"pes_vw_affirmative_08",
 				"pes_vw_affirmative_09",
-				"pes_vw_affirmative_10",
+				"pes_vw_affirmative_10"
 			},
 			sound_events_duration = {
 				0.70999997854233,
@@ -4186,17 +4186,17 @@ return function ()
 				0.36197915673256,
 				0.97500002384186,
 				0.81597918272018,
-				0.48100000619888,
-			},
+				0.48100000619888
+			}
 		},
 		pes_vw_answer_ping = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -4207,7 +4207,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -4219,7 +4219,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pes_vw_answer_ping_01",
@@ -4231,7 +4231,7 @@ return function ()
 				"pes_vw_answer_ping_07",
 				"pes_vw_answer_ping_08",
 				"pes_vw_answer_ping_09",
-				"pes_vw_answer_ping_10",
+				"pes_vw_answer_ping_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -4244,7 +4244,7 @@ return function ()
 				"pes_vw_answer_ping_07",
 				"pes_vw_answer_ping_08",
 				"pes_vw_answer_ping_09",
-				"pes_vw_answer_ping_10",
+				"pes_vw_answer_ping_10"
 			},
 			sound_events_duration = {
 				1.3189791440964,
@@ -4256,17 +4256,17 @@ return function ()
 				1.0629999637604,
 				0.90597915649414,
 				1.3889791965485,
-				1.743979215622,
-			},
+				1.743979215622
+			}
 		},
 		pes_vw_attack_now = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -4277,7 +4277,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -4289,7 +4289,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pes_vw_attack_now_01",
@@ -4301,7 +4301,7 @@ return function ()
 				"pes_vw_attack_now_07",
 				"pes_vw_attack_now_08",
 				"pes_vw_attack_now_09",
-				"pes_vw_attack_now_10",
+				"pes_vw_attack_now_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -4314,7 +4314,7 @@ return function ()
 				"pes_vw_attack_now_07",
 				"pes_vw_attack_now_08",
 				"pes_vw_attack_now_09",
-				"pes_vw_attack_now_10",
+				"pes_vw_attack_now_10"
 			},
 			sound_events_duration = {
 				1.0119999647141,
@@ -4326,17 +4326,17 @@ return function ()
 				1.9780000448227,
 				1.0249999761581,
 				1.777999997139,
-				1.4290000200272,
-			},
+				1.4290000200272
+			}
 		},
 		pes_vw_cover_me = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -4347,7 +4347,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -4359,7 +4359,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pes_vw_cover_me_01",
@@ -4371,7 +4371,7 @@ return function ()
 				"pes_vw_cover_me_07",
 				"pes_vw_cover_me_08",
 				"pes_vw_cover_me_09",
-				"pes_vw_cover_me_10",
+				"pes_vw_cover_me_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -4384,7 +4384,7 @@ return function ()
 				"pes_vw_cover_me_07",
 				"pes_vw_cover_me_08",
 				"pes_vw_cover_me_09",
-				"pes_vw_cover_me_10",
+				"pes_vw_cover_me_10"
 			},
 			sound_events_duration = {
 				0.60799998044968,
@@ -4396,17 +4396,17 @@ return function ()
 				2.0409791469574,
 				1.720999956131,
 				1.779000043869,
-				1.1089792251587,
-			},
+				1.1089792251587
+			}
 		},
 		pes_vw_gather = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -4417,7 +4417,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -4429,7 +4429,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pes_vw_gather_01",
@@ -4441,7 +4441,7 @@ return function ()
 				"pes_vw_gather_07",
 				"pes_vw_gather_08",
 				"pes_vw_gather_09",
-				"pes_vw_gather_10",
+				"pes_vw_gather_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -4454,7 +4454,7 @@ return function ()
 				"pes_vw_gather_07",
 				"pes_vw_gather_08",
 				"pes_vw_gather_09",
-				"pes_vw_gather_10",
+				"pes_vw_gather_10"
 			},
 			sound_events_duration = {
 				0.81300002336502,
@@ -4466,17 +4466,17 @@ return function ()
 				0.88899999856949,
 				0.64297914505005,
 				0.36797916889191,
-				1.4079999923706,
-			},
+				1.4079999923706
+			}
 		},
 		pes_vw_go_there = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -4487,7 +4487,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -4499,7 +4499,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pes_vw_go_there_01",
@@ -4511,7 +4511,7 @@ return function ()
 				"pes_vw_go_there_07",
 				"pes_vw_go_there_08",
 				"pes_vw_go_there_09",
-				"pes_vw_go_there_10",
+				"pes_vw_go_there_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -4524,7 +4524,7 @@ return function ()
 				"pes_vw_go_there_07",
 				"pes_vw_go_there_08",
 				"pes_vw_go_there_09",
-				"pes_vw_go_there_10",
+				"pes_vw_go_there_10"
 			},
 			sound_events_duration = {
 				0.95200002193451,
@@ -4536,17 +4536,17 @@ return function ()
 				1.3009999990463,
 				1.6410000324249,
 				1.5520000457764,
-				1.277999997139,
-			},
+				1.277999997139
+			}
 		},
 		pes_vw_negation = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -4557,7 +4557,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -4569,7 +4569,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pes_vw_negation_01",
@@ -4581,7 +4581,7 @@ return function ()
 				"pes_vw_negation_07",
 				"pes_vw_negation_08",
 				"pes_vw_negation_09",
-				"pes_vw_negation_10",
+				"pes_vw_negation_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -4594,7 +4594,7 @@ return function ()
 				"pes_vw_negation_07",
 				"pes_vw_negation_08",
 				"pes_vw_negation_09",
-				"pes_vw_negation_10",
+				"pes_vw_negation_10"
 			},
 			sound_events_duration = {
 				0.44200000166893,
@@ -4606,17 +4606,17 @@ return function ()
 				1.0609999895096,
 				1.2189999818802,
 				1.448979139328,
-				1.6559791564941,
-			},
+				1.6559791564941
+			}
 		},
 		pes_vw_objective_in_sight = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -4627,7 +4627,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -4639,7 +4639,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pes_vw_objective_in_sight_01",
@@ -4651,7 +4651,7 @@ return function ()
 				"pes_vw_objective_in_sight_07",
 				"pes_vw_objective_in_sight_08",
 				"pes_vw_objective_in_sight_09",
-				"pes_vw_objective_in_sight_10",
+				"pes_vw_objective_in_sight_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -4664,7 +4664,7 @@ return function ()
 				"pes_vw_objective_in_sight_07",
 				"pes_vw_objective_in_sight_08",
 				"pes_vw_objective_in_sight_09",
-				"pes_vw_objective_in_sight_10",
+				"pes_vw_objective_in_sight_10"
 			},
 			sound_events_duration = {
 				1.2580000162125,
@@ -4676,17 +4676,17 @@ return function ()
 				1.3539791107178,
 				1.5439791679382,
 				1.7009791135788,
-				2.158979177475,
-			},
+				2.158979177475
+			}
 		},
 		pes_vw_thank_you = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -4697,7 +4697,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -4709,7 +4709,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pes_vw_thank_you_01",
@@ -4721,7 +4721,7 @@ return function ()
 				"pes_vw_thank_you_07",
 				"pes_vw_thank_you_08",
 				"pes_vw_thank_you_09",
-				"pes_vw_thank_you_10",
+				"pes_vw_thank_you_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -4734,7 +4734,7 @@ return function ()
 				"pes_vw_thank_you_07",
 				"pes_vw_thank_you_08",
 				"pes_vw_thank_you_09",
-				"pes_vw_thank_you_10",
+				"pes_vw_thank_you_10"
 			},
 			sound_events_duration = {
 				0.47499999403954,
@@ -4746,17 +4746,17 @@ return function ()
 				1.243979215622,
 				0.91197913885117,
 				1.186979174614,
-				0.8349791765213,
-			},
+				0.8349791765213
+			}
 		},
 		pes_vw_wait = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -4767,7 +4767,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -4779,7 +4779,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pes_vw_wait_01",
@@ -4791,7 +4791,7 @@ return function ()
 				"pes_vw_wait_07",
 				"pes_vw_wait_08",
 				"pes_vw_wait_09",
-				"pes_vw_wait_10",
+				"pes_vw_wait_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -4804,7 +4804,7 @@ return function ()
 				"pes_vw_wait_07",
 				"pes_vw_wait_08",
 				"pes_vw_wait_09",
-				"pes_vw_wait_10",
+				"pes_vw_wait_10"
 			},
 			sound_events_duration = {
 				0.58697915077209,
@@ -4816,56 +4816,56 @@ return function ()
 				0.67297917604446,
 				1.2120000123978,
 				1.4669791460037,
-				1.3719999790192,
-			},
+				1.3719999790192
+			}
 		},
 		pwe_gameplay_pinging_monster_a_VS = {
-			category = "enemy_alerts",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 4,
+			category = "enemy_alerts",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_shout",
 				"dialogue_shout",
 				"dialogue_shout",
-				"dialogue_shout",
+				"dialogue_shout"
 			},
 			face_animations = {
 				"face_angry",
 				"face_angry",
 				"face_angry",
-				"face_angry",
+				"face_angry"
 			},
 			localization_strings = {
 				"pwe_gameplay_pinging_monster_a_01",
 				"pwe_gameplay_pinging_monster_a_02",
 				"pwe_gameplay_pinging_monster_a_03",
-				"pwe_gameplay_pinging_monster_a_04",
+				"pwe_gameplay_pinging_monster_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"pwe_gameplay_pinging_monster_a_01",
 				"pwe_gameplay_pinging_monster_a_02",
 				"pwe_gameplay_pinging_monster_a_03",
-				"pwe_gameplay_pinging_monster_a_04",
+				"pwe_gameplay_pinging_monster_a_04"
 			},
 			sound_events_duration = {
 				1.5702500343323,
 				1.6680417060852,
 				0.86077082157135,
-				1.2936874628067,
-			},
+				1.2936874628067
+			}
 		},
 		pwe_vw_affirmative = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -4876,7 +4876,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -4888,7 +4888,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pwe_vw_affirmative_01",
@@ -4900,7 +4900,7 @@ return function ()
 				"pwe_vw_affirmative_07",
 				"pwe_vw_affirmative_08",
 				"pwe_vw_affirmative_09",
-				"pwe_vw_affirmative_10",
+				"pwe_vw_affirmative_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -4913,7 +4913,7 @@ return function ()
 				"pwe_vw_affirmative_07",
 				"pwe_vw_affirmative_08",
 				"pwe_vw_affirmative_09",
-				"pwe_vw_affirmative_10",
+				"pwe_vw_affirmative_10"
 			},
 			sound_events_duration = {
 				0.88597917556763,
@@ -4925,17 +4925,17 @@ return function ()
 				0.82300001382828,
 				1.0060000419617,
 				1.7760000228882,
-				2.3499791622162,
-			},
+				2.3499791622162
+			}
 		},
 		pwe_vw_answer_ping = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -4946,7 +4946,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -4958,7 +4958,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pwe_vw_answer_ping_01",
@@ -4970,7 +4970,7 @@ return function ()
 				"pwe_vw_answer_ping_07",
 				"pwe_vw_answer_ping_08",
 				"pwe_vw_answer_ping_09",
-				"pwe_vw_answer_ping_10",
+				"pwe_vw_answer_ping_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -4983,7 +4983,7 @@ return function ()
 				"pwe_vw_answer_ping_07",
 				"pwe_vw_answer_ping_08",
 				"pwe_vw_answer_ping_09",
-				"pwe_vw_answer_ping_10",
+				"pwe_vw_answer_ping_10"
 			},
 			sound_events_duration = {
 				2.0839791297913,
@@ -4995,17 +4995,17 @@ return function ()
 				1.879979133606,
 				1.0110000371933,
 				2.0780000686645,
-				2.4499790668488,
-			},
+				2.4499790668488
+			}
 		},
 		pwe_vw_attack_now = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -5016,7 +5016,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -5028,7 +5028,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pwe_vw_attack_now_01",
@@ -5040,7 +5040,7 @@ return function ()
 				"pwe_vw_attack_now_07",
 				"pwe_vw_attack_now_08",
 				"pwe_vw_attack_now_09",
-				"pwe_vw_attack_now_10",
+				"pwe_vw_attack_now_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -5053,7 +5053,7 @@ return function ()
 				"pwe_vw_attack_now_07",
 				"pwe_vw_attack_now_08",
 				"pwe_vw_attack_now_09",
-				"pwe_vw_attack_now_10",
+				"pwe_vw_attack_now_10"
 			},
 			sound_events_duration = {
 				1.8109999895096,
@@ -5065,17 +5065,17 @@ return function ()
 				1.8289791345596,
 				1.8020000457764,
 				0.96697914600372,
-				1.1579999923706,
-			},
+				1.1579999923706
+			}
 		},
 		pwe_vw_cover_me = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -5086,7 +5086,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -5098,7 +5098,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pwe_vw_cover_me_01",
@@ -5110,7 +5110,7 @@ return function ()
 				"pwe_vw_cover_me_07",
 				"pwe_vw_cover_me_08",
 				"pwe_vw_cover_me_09",
-				"pwe_vw_cover_me_10",
+				"pwe_vw_cover_me_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -5123,7 +5123,7 @@ return function ()
 				"pwe_vw_cover_me_07",
 				"pwe_vw_cover_me_08",
 				"pwe_vw_cover_me_09",
-				"pwe_vw_cover_me_10",
+				"pwe_vw_cover_me_10"
 			},
 			sound_events_duration = {
 				0.82700002193451,
@@ -5135,17 +5135,17 @@ return function ()
 				0.74599999189377,
 				1.1779791116715,
 				1.9589999914169,
-				1.1939791440964,
-			},
+				1.1939791440964
+			}
 		},
 		pwe_vw_gather = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -5156,7 +5156,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -5168,7 +5168,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pwe_vw_gather_01",
@@ -5180,7 +5180,7 @@ return function ()
 				"pwe_vw_gather_07",
 				"pwe_vw_gather_08",
 				"pwe_vw_gather_09",
-				"pwe_vw_gather_10",
+				"pwe_vw_gather_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -5193,7 +5193,7 @@ return function ()
 				"pwe_vw_gather_07",
 				"pwe_vw_gather_08",
 				"pwe_vw_gather_09",
-				"pwe_vw_gather_10",
+				"pwe_vw_gather_10"
 			},
 			sound_events_duration = {
 				0.93699997663498,
@@ -5205,17 +5205,17 @@ return function ()
 				2.3309791088104,
 				1.936979174614,
 				1.3550000190735,
-				1.3200000524521,
-			},
+				1.3200000524521
+			}
 		},
 		pwe_vw_go_there = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -5226,7 +5226,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -5238,7 +5238,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pwe_vw_go_there_01",
@@ -5250,7 +5250,7 @@ return function ()
 				"pwe_vw_go_there_07",
 				"pwe_vw_go_there_08",
 				"pwe_vw_go_there_09",
-				"pwe_vw_go_there_10",
+				"pwe_vw_go_there_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -5263,7 +5263,7 @@ return function ()
 				"pwe_vw_go_there_07",
 				"pwe_vw_go_there_08",
 				"pwe_vw_go_there_09",
-				"pwe_vw_go_there_10",
+				"pwe_vw_go_there_10"
 			},
 			sound_events_duration = {
 				1.8509999513626,
@@ -5275,17 +5275,17 @@ return function ()
 				1.1790000200272,
 				1.7459791898727,
 				2.5349791049957,
-				2.2880001068115,
-			},
+				2.2880001068115
+			}
 		},
 		pwe_vw_negation = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -5296,7 +5296,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -5308,7 +5308,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pwe_vw_negation_01",
@@ -5320,7 +5320,7 @@ return function ()
 				"pwe_vw_negation_07",
 				"pwe_vw_negation_08",
 				"pwe_vw_negation_09",
-				"pwe_vw_negation_10",
+				"pwe_vw_negation_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -5333,7 +5333,7 @@ return function ()
 				"pwe_vw_negation_07",
 				"pwe_vw_negation_08",
 				"pwe_vw_negation_09",
-				"pwe_vw_negation_10",
+				"pwe_vw_negation_10"
 			},
 			sound_events_duration = {
 				0.63099998235703,
@@ -5345,17 +5345,17 @@ return function ()
 				1.2399791479111,
 				1.1720000505447,
 				1.3029999732971,
-				1.7050000429153,
-			},
+				1.7050000429153
+			}
 		},
 		pwe_vw_objective_in_sight = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -5366,7 +5366,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -5378,7 +5378,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pwe_vw_objective_in_sight_01",
@@ -5390,7 +5390,7 @@ return function ()
 				"pwe_vw_objective_in_sight_07",
 				"pwe_vw_objective_in_sight_08",
 				"pwe_vw_objective_in_sight_09",
-				"pwe_vw_objective_in_sight_10",
+				"pwe_vw_objective_in_sight_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -5403,7 +5403,7 @@ return function ()
 				"pwe_vw_objective_in_sight_07",
 				"pwe_vw_objective_in_sight_08",
 				"pwe_vw_objective_in_sight_09",
-				"pwe_vw_objective_in_sight_10",
+				"pwe_vw_objective_in_sight_10"
 			},
 			sound_events_duration = {
 				2.1389791965485,
@@ -5415,17 +5415,17 @@ return function ()
 				2.1219792366028,
 				1.2979791164398,
 				1.784979224205,
-				2.3019790649414,
-			},
+				2.3019790649414
+			}
 		},
 		pwe_vw_thank_you = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -5436,7 +5436,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -5448,7 +5448,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pwe_vw_thank_you_01",
@@ -5460,7 +5460,7 @@ return function ()
 				"pwe_vw_thank_you_07",
 				"pwe_vw_thank_you_08",
 				"pwe_vw_thank_you_09",
-				"pwe_vw_thank_you_10",
+				"pwe_vw_thank_you_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -5473,7 +5473,7 @@ return function ()
 				"pwe_vw_thank_you_07",
 				"pwe_vw_thank_you_08",
 				"pwe_vw_thank_you_09",
-				"pwe_vw_thank_you_10",
+				"pwe_vw_thank_you_10"
 			},
 			sound_events_duration = {
 				0.96700000762939,
@@ -5485,17 +5485,17 @@ return function ()
 				2.2399792671204,
 				1.6590000391007,
 				1.0799791812897,
-				2.64097905159,
-			},
+				2.64097905159
+			}
 		},
 		pwe_vw_wait = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -5506,7 +5506,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -5518,7 +5518,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pwe_vw_wait_01",
@@ -5530,7 +5530,7 @@ return function ()
 				"pwe_vw_wait_07",
 				"pwe_vw_wait_08",
 				"pwe_vw_wait_09",
-				"pwe_vw_wait_10",
+				"pwe_vw_wait_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -5543,7 +5543,7 @@ return function ()
 				"pwe_vw_wait_07",
 				"pwe_vw_wait_08",
 				"pwe_vw_wait_09",
-				"pwe_vw_wait_10",
+				"pwe_vw_wait_10"
 			},
 			sound_events_duration = {
 				0.71299999952316,
@@ -5555,56 +5555,56 @@ return function ()
 				2.2460000514984,
 				2.3539791107178,
 				1.3669999837875,
-				2.1559998989105,
-			},
+				2.1559998989105
+			}
 		},
 		pwh_gameplay_pinging_monster_a_VS = {
-			category = "enemy_alerts",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 4,
+			category = "enemy_alerts",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_shout",
 				"dialogue_shout",
 				"dialogue_shout",
-				"dialogue_shout",
+				"dialogue_shout"
 			},
 			face_animations = {
 				"face_angry",
 				"face_angry",
 				"face_angry",
-				"face_angry",
+				"face_angry"
 			},
 			localization_strings = {
 				"pwh_gameplay_pinging_monster_a_01",
 				"pwh_gameplay_pinging_monster_a_02",
 				"pwh_gameplay_pinging_monster_a_03",
-				"pwh_gameplay_pinging_monster_a_04",
+				"pwh_gameplay_pinging_monster_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"pwh_gameplay_pinging_monster_a_01",
 				"pwh_gameplay_pinging_monster_a_02",
 				"pwh_gameplay_pinging_monster_a_03",
-				"pwh_gameplay_pinging_monster_a_04",
+				"pwh_gameplay_pinging_monster_a_04"
 			},
 			sound_events_duration = {
 				1.1946250200272,
 				2.0374791622162,
 				1.9464583396912,
-				1.4368958473206,
-			},
+				1.4368958473206
+			}
 		},
 		pwh_vw_affirmative = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -5615,7 +5615,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -5627,7 +5627,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pwh_vw_affirmative_01",
@@ -5639,7 +5639,7 @@ return function ()
 				"pwh_vw_affirmative_07",
 				"pwh_vw_affirmative_08",
 				"pwh_vw_affirmative_09",
-				"pwh_vw_affirmative_10",
+				"pwh_vw_affirmative_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -5652,7 +5652,7 @@ return function ()
 				"pwh_vw_affirmative_07",
 				"pwh_vw_affirmative_08",
 				"pwh_vw_affirmative_09",
-				"pwh_vw_affirmative_10",
+				"pwh_vw_affirmative_10"
 			},
 			sound_events_duration = {
 				0.92799997329712,
@@ -5664,17 +5664,17 @@ return function ()
 				1.1319999694824,
 				1.3569999933243,
 				1.6829792261124,
-				1.7329791784286,
-			},
+				1.7329791784286
+			}
 		},
 		pwh_vw_answer_ping = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -5685,7 +5685,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -5697,7 +5697,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pwh_vw_answer_ping_01",
@@ -5709,7 +5709,7 @@ return function ()
 				"pwh_vw_answer_ping_07",
 				"pwh_vw_answer_ping_08",
 				"pwh_vw_answer_ping_09",
-				"pwh_vw_answer_ping_10",
+				"pwh_vw_answer_ping_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -5722,7 +5722,7 @@ return function ()
 				"pwh_vw_answer_ping_07",
 				"pwh_vw_answer_ping_08",
 				"pwh_vw_answer_ping_09",
-				"pwh_vw_answer_ping_10",
+				"pwh_vw_answer_ping_10"
 			},
 			sound_events_duration = {
 				1.7120000123978,
@@ -5734,17 +5734,17 @@ return function ()
 				1.6519792079925,
 				2.9619791507721,
 				2.5089790821075,
-				3.8019790649414,
-			},
+				3.8019790649414
+			}
 		},
 		pwh_vw_attack_now = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -5755,7 +5755,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -5767,7 +5767,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pwh_vw_attack_now_01",
@@ -5779,7 +5779,7 @@ return function ()
 				"pwh_vw_attack_now_07",
 				"pwh_vw_attack_now_08",
 				"pwh_vw_attack_now_09",
-				"pwh_vw_attack_now_10",
+				"pwh_vw_attack_now_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -5792,7 +5792,7 @@ return function ()
 				"pwh_vw_attack_now_07",
 				"pwh_vw_attack_now_08",
 				"pwh_vw_attack_now_09",
-				"pwh_vw_attack_now_10",
+				"pwh_vw_attack_now_10"
 			},
 			sound_events_duration = {
 				1.5889999866486,
@@ -5804,17 +5804,17 @@ return function ()
 				1.8109791278839,
 				4.0039792060852,
 				2.2429790496826,
-				2.4739792346954,
-			},
+				2.4739792346954
+			}
 		},
 		pwh_vw_cover_me = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -5825,7 +5825,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -5837,7 +5837,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pwh_vw_cover_me_01",
@@ -5849,7 +5849,7 @@ return function ()
 				"pwh_vw_cover_me_07",
 				"pwh_vw_cover_me_08",
 				"pwh_vw_cover_me_09",
-				"pwh_vw_cover_me_10",
+				"pwh_vw_cover_me_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -5862,7 +5862,7 @@ return function ()
 				"pwh_vw_cover_me_07",
 				"pwh_vw_cover_me_08",
 				"pwh_vw_cover_me_09",
-				"pwh_vw_cover_me_10",
+				"pwh_vw_cover_me_10"
 			},
 			sound_events_duration = {
 				1.5779792070389,
@@ -5874,17 +5874,17 @@ return function ()
 				0.56697916984558,
 				1.1179791688919,
 				1.9239791631699,
-				1.0310000181198,
-			},
+				1.0310000181198
+			}
 		},
 		pwh_vw_gather = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -5895,7 +5895,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -5907,7 +5907,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pwh_vw_gather_01",
@@ -5919,7 +5919,7 @@ return function ()
 				"pwh_vw_gather_07",
 				"pwh_vw_gather_08",
 				"pwh_vw_gather_09",
-				"pwh_vw_gather_10",
+				"pwh_vw_gather_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -5932,7 +5932,7 @@ return function ()
 				"pwh_vw_gather_07",
 				"pwh_vw_gather_08",
 				"pwh_vw_gather_09",
-				"pwh_vw_gather_10",
+				"pwh_vw_gather_10"
 			},
 			sound_events_duration = {
 				0.93699997663498,
@@ -5944,17 +5944,17 @@ return function ()
 				1.9059791564941,
 				2.0089790821075,
 				1.6139999628067,
-				1.6169791221619,
-			},
+				1.6169791221619
+			}
 		},
 		pwh_vw_go_there = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -5965,7 +5965,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -5977,7 +5977,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pwh_vw_go_there_01",
@@ -5989,7 +5989,7 @@ return function ()
 				"pwh_vw_go_there_07",
 				"pwh_vw_go_there_08",
 				"pwh_vw_go_there_09",
-				"pwh_vw_go_there_10",
+				"pwh_vw_go_there_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -6002,7 +6002,7 @@ return function ()
 				"pwh_vw_go_there_07",
 				"pwh_vw_go_there_08",
 				"pwh_vw_go_there_09",
-				"pwh_vw_go_there_10",
+				"pwh_vw_go_there_10"
 			},
 			sound_events_duration = {
 				1.074979186058,
@@ -6014,17 +6014,17 @@ return function ()
 				2.9139790534973,
 				0.77899998426437,
 				1.5620000362396,
-				1.6549999713898,
-			},
+				1.6549999713898
+			}
 		},
 		pwh_vw_negation = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -6035,7 +6035,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -6047,7 +6047,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pwh_vw_negation_01",
@@ -6059,7 +6059,7 @@ return function ()
 				"pwh_vw_negation_07",
 				"pwh_vw_negation_08",
 				"pwh_vw_negation_09",
-				"pwh_vw_negation_10",
+				"pwh_vw_negation_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -6072,7 +6072,7 @@ return function ()
 				"pwh_vw_negation_07",
 				"pwh_vw_negation_08",
 				"pwh_vw_negation_09",
-				"pwh_vw_negation_10",
+				"pwh_vw_negation_10"
 			},
 			sound_events_duration = {
 				0.69999998807907,
@@ -6084,17 +6084,17 @@ return function ()
 				2.7919790744781,
 				3.006979227066,
 				1.7189791202545,
-				2.4989790916443,
-			},
+				2.4989790916443
+			}
 		},
 		pwh_vw_objective_in_sight = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -6105,7 +6105,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -6117,7 +6117,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pwh_vw_objective_in_sight_01",
@@ -6129,7 +6129,7 @@ return function ()
 				"pwh_vw_objective_in_sight_07",
 				"pwh_vw_objective_in_sight_08",
 				"pwh_vw_objective_in_sight_09",
-				"pwh_vw_objective_in_sight_10",
+				"pwh_vw_objective_in_sight_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -6142,7 +6142,7 @@ return function ()
 				"pwh_vw_objective_in_sight_07",
 				"pwh_vw_objective_in_sight_08",
 				"pwh_vw_objective_in_sight_09",
-				"pwh_vw_objective_in_sight_10",
+				"pwh_vw_objective_in_sight_10"
 			},
 			sound_events_duration = {
 				1.2179791927338,
@@ -6154,17 +6154,17 @@ return function ()
 				2.4189791679382,
 				1.754979133606,
 				1.8839792013168,
-				2.1519792079926,
-			},
+				2.1519792079926
+			}
 		},
 		pwh_vw_thank_you = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -6175,7 +6175,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -6187,7 +6187,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pwh_vw_thank_you_01",
@@ -6199,7 +6199,7 @@ return function ()
 				"pwh_vw_thank_you_07",
 				"pwh_vw_thank_you_08",
 				"pwh_vw_thank_you_09",
-				"pwh_vw_thank_you_10",
+				"pwh_vw_thank_you_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -6212,7 +6212,7 @@ return function ()
 				"pwh_vw_thank_you_07",
 				"pwh_vw_thank_you_08",
 				"pwh_vw_thank_you_09",
-				"pwh_vw_thank_you_10",
+				"pwh_vw_thank_you_10"
 			},
 			sound_events_duration = {
 				1.311979174614,
@@ -6224,17 +6224,17 @@ return function ()
 				2.183000087738,
 				1.9949791431427,
 				2.3859791755676,
-				1.465979218483,
-			},
+				1.465979218483
+			}
 		},
 		pwh_vw_wait = {
-			category = "special_occasion",
-			database = "vs_player_vo_heroes",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_heroes",
 			sound_events_n = 10,
+			category = "special_occasion",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -6245,7 +6245,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -6257,7 +6257,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pwh_vw_wait_01",
@@ -6269,7 +6269,7 @@ return function ()
 				"pwh_vw_wait_07",
 				"pwh_vw_wait_08",
 				"pwh_vw_wait_09",
-				"pwh_vw_wait_10",
+				"pwh_vw_wait_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -6282,7 +6282,7 @@ return function ()
 				"pwh_vw_wait_07",
 				"pwh_vw_wait_08",
 				"pwh_vw_wait_09",
-				"pwh_vw_wait_10",
+				"pwh_vw_wait_10"
 			},
 			sound_events_duration = {
 				1.4559999704361,
@@ -6294,8 +6294,8 @@ return function ()
 				2.4500000476837,
 				2.044979095459,
 				3.3089792728424,
-				2.379979133606,
-			},
-		},
+				2.379979133606
+			}
+		}
 	})
 end

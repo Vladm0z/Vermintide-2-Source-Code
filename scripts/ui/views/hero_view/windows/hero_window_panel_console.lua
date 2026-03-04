@@ -1,843 +1,800 @@
-﻿-- chunkname: @scripts/ui/views/hero_view/windows/hero_window_panel_console.lua
+-- chunkname: @scripts/ui/views/hero_view/windows/hero_window_panel_console.lua
 
-local definitions = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_panel_console_definitions")
-local widget_definitions = definitions.widgets
-local title_button_definitions = definitions.title_button_definitions
-local scenegraph_definition = definitions.scenegraph_definition
-local animation_definitions = definitions.animation_definitions
-local create_bot_warning = definitions.create_bot_warning
-local create_bot_cusomization_button = definitions.create_bot_cusomization_button
-local layout_name_by_index = {
+local var_0_0 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_panel_console_definitions")
+local var_0_1 = var_0_0.widgets
+local var_0_2 = var_0_0.title_button_definitions
+local var_0_3 = var_0_0.scenegraph_definition
+local var_0_4 = var_0_0.animation_definitions
+local var_0_5 = var_0_0.create_bot_warning
+local var_0_6 = var_0_0.create_bot_cusomization_button
+local var_0_7 = {
 	"equipment",
 	"talents",
 	"forge",
 	"cosmetics",
 	"pactsworn_equipment",
-	"system",
+	"system"
 }
-local layout_index_by_name = {}
+local var_0_8 = {}
 
-for i, name in ipairs(layout_name_by_index) do
-	layout_index_by_name[name] = i
+for iter_0_0, iter_0_1 in ipairs(var_0_7) do
+	var_0_8[iter_0_1] = iter_0_0
 end
 
-local INPUT_ACTION_NEXT = "cycle_next"
-local INPUT_ACTION_PREVIOUS = "cycle_previous"
-local INPUT_ACTION_PURCHASE = "show_gamercard"
-local DO_RELOAD = false
+local var_0_9 = "cycle_next"
+local var_0_10 = "cycle_previous"
+local var_0_11 = "show_gamercard"
+local var_0_12 = false
 
 HeroWindowPanelConsole = class(HeroWindowPanelConsole)
 HeroWindowPanelConsole.NAME = "HeroWindowPanelConsole"
 
-HeroWindowPanelConsole.on_enter = function (self, params, offset)
+function HeroWindowPanelConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowPanelConsole")
 
-	self.parent = params.parent
+	arg_1_0.parent = arg_1_1.parent
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_1_0 = arg_1_1.ingame_ui_context
 
-	self.ui_renderer = ingame_ui_context.ui_top_renderer
-	self.input_manager = ingame_ui_context.input_manager
-	self.statistics_db = ingame_ui_context.statistics_db
-	self.render_settings = {
-		snap_pixel_positions = true,
+	arg_1_0.ui_renderer = var_1_0.ui_top_renderer
+	arg_1_0.input_manager = var_1_0.input_manager
+	arg_1_0.statistics_db = var_1_0.statistics_db
+	arg_1_0.render_settings = {
+		snap_pixel_positions = true
 	}
 
-	local player_manager = Managers.player
-	local local_player = player_manager:local_player()
+	local var_1_1 = Managers.player
 
-	self._stats_id = local_player:stats_id()
-	self.player_manager = player_manager
-	self.peer_id = ingame_ui_context.peer_id
-	self.is_in_inn = ingame_ui_context.is_in_inn or false
-	self.force_ingame_menu = params.force_ingame_menu
-	self.hero_name = params.hero_name
-	self.career_index = params.career_index
-	self.profile_index = params.profile_index
+	arg_1_0._stats_id = var_1_1:local_player():stats_id()
+	arg_1_0.player_manager = var_1_1
+	arg_1_0.peer_id = var_1_0.peer_id
+	arg_1_0.is_in_inn = var_1_0.is_in_inn or false
+	arg_1_0.force_ingame_menu = arg_1_1.force_ingame_menu
+	arg_1_0.hero_name = arg_1_1.hero_name
+	arg_1_0.career_index = arg_1_1.career_index
+	arg_1_0.profile_index = arg_1_1.profile_index
 
-	local hero_name = self.hero_name
-	local career_index = self.career_index
-	local profile_index = FindProfileIndex(hero_name)
-	local profile = SPProfiles[profile_index]
-	local career_data = profile.careers[career_index]
-	local career_name = career_data.name
+	local var_1_2 = arg_1_0.hero_name
+	local var_1_3 = arg_1_0.career_index
+	local var_1_4 = FindProfileIndex(var_1_2)
+	local var_1_5 = SPProfiles[var_1_4].careers[var_1_3].name
 
-	self._animations = {}
-	self._ui_animations = {}
+	arg_1_0._animations = {}
+	arg_1_0._ui_animations = {}
 
-	self:create_ui_elements(params, offset)
+	arg_1_0:create_ui_elements(arg_1_1, arg_1_2)
 
-	self.conditions_params = {
-		hero_name = self.hero_name,
-		career_name = career_name,
-		rarities_to_ignore = table.enum_safe("magic"),
+	arg_1_0.conditions_params = {
+		hero_name = arg_1_0.hero_name,
+		career_name = var_1_5,
+		rarities_to_ignore = table.enum_safe("magic")
 	}
 
-	local title_button_widgets = self._title_button_widgets
+	local var_1_6 = arg_1_0._title_button_widgets
 
-	self.button_widgets_by_news_template = {
-		equipment = title_button_widgets[1],
-		talent = title_button_widgets[2],
-		cosmetics = title_button_widgets[4],
+	arg_1_0.button_widgets_by_news_template = {
+		equipment = var_1_6[1],
+		talent = var_1_6[2],
+		cosmetics = var_1_6[4]
 	}
 
-	if self.is_in_inn and not self.force_ingame_menu then
-		self:_setup_text_buttons_width()
-		self:_setup_input_buttons()
+	if arg_1_0.is_in_inn and not arg_1_0.force_ingame_menu then
+		arg_1_0:_setup_text_buttons_width()
+		arg_1_0:_setup_input_buttons()
 	else
-		local system_button = self._widgets_by_name.system_button
+		local var_1_7 = arg_1_0._widgets_by_name.system_button
 
-		system_button.content.button_hotspot.is_selected = true
+		var_1_7.content.button_hotspot.is_selected = true
 
-		if IS_WINDOWS or not self.is_in_inn then
-			system_button.content.visible = false
+		if IS_WINDOWS or not arg_1_0.is_in_inn then
+			var_1_7.content.visible = false
 		end
 	end
 
-	self:_validate_product_owner()
+	arg_1_0:_validate_product_owner()
 end
 
-HeroWindowPanelConsole._start_transition_animation = function (self, animation_name)
-	local params = {
-		wwise_world = self.wwise_world,
-		render_settings = self.render_settings,
-		ui_scenegraph = self.ui_scenegraph,
+function HeroWindowPanelConsole._start_transition_animation(arg_2_0, arg_2_1)
+	local var_2_0 = {
+		wwise_world = arg_2_0.wwise_world,
+		render_settings = arg_2_0.render_settings,
+		ui_scenegraph = arg_2_0.ui_scenegraph
 	}
-	local widgets = self._widgets_by_name
-	local anim_id = self.ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
+	local var_2_1 = arg_2_0._widgets_by_name
+	local var_2_2 = arg_2_0.ui_animator:start_animation(arg_2_1, var_2_1, var_0_3, var_2_0)
 
-	self._animations[animation_name] = anim_id
+	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-HeroWindowPanelConsole.create_ui_elements = function (self, params, offset)
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+function HeroWindowPanelConsole.create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_3)
 
-	local widgets = {}
-	local widgets_by_name = {}
+	local var_3_0 = {}
+	local var_3_1 = {}
 
-	for name, widget_definition in pairs(widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_3_0, iter_3_1 in pairs(var_0_1) do
+		local var_3_2 = UIWidget.init(iter_3_1)
 
-		widgets[#widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_3_0[#var_3_0 + 1] = var_3_2
+		var_3_1[iter_3_0] = var_3_2
 	end
 
-	local widget = UIWidget.init(create_bot_cusomization_button(self.ui_renderer))
+	local var_3_3 = UIWidget.init(var_0_6(arg_3_0.ui_renderer))
 
-	widgets[#widgets + 1] = widget
-	widgets_by_name.bot_customization_button = widget
-	self._widgets = widgets
-	self._widgets_by_name = widgets_by_name
+	var_3_0[#var_3_0 + 1] = var_3_3
+	var_3_1.bot_customization_button = var_3_3
+	arg_3_0._widgets = var_3_0
+	arg_3_0._widgets_by_name = var_3_1
 
-	local title_button_widgets = {}
+	local var_3_4 = {}
 
-	for name, widget_definition in pairs(title_button_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_3_2, iter_3_3 in pairs(var_0_2) do
+		local var_3_5 = UIWidget.init(iter_3_3)
 
-		title_button_widgets[#title_button_widgets + 1] = widget
+		var_3_4[#var_3_4 + 1] = var_3_5
 	end
 
-	assert(title_button_widgets[3].content.text_field == "hero_window_crafting")
+	assert(var_3_4[3].content.text_field == "hero_window_crafting")
 
-	title_button_widgets[3].content.button_hotspot.disable_button = script_data["eac-untrusted"]
+	var_3_4[3].content.button_hotspot.disable_button = script_data["eac-untrusted"]
 
-	for i = 1, #title_button_widgets do
-		local title_button_widget = title_button_widgets[i]
-
-		title_button_widget.content.button_hotspot.disable_button = not self.parent:can_add(layout_name_by_index[i])
+	for iter_3_4 = 1, #var_3_4 do
+		var_3_4[iter_3_4].content.button_hotspot.disable_button = not arg_3_0.parent:can_add(var_0_7[iter_3_4])
 	end
 
-	self._title_button_widgets = title_button_widgets
+	arg_3_0._title_button_widgets = var_3_4
 
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_3_0.ui_renderer)
 
-	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
+	arg_3_0.ui_animator = UIAnimator:new(arg_3_0.ui_scenegraph, var_0_4)
 
-	if offset then
-		local window_position = self.ui_scenegraph.window.local_position
+	if arg_3_2 then
+		local var_3_6 = arg_3_0.ui_scenegraph.window.local_position
 
-		window_position[1] = window_position[1] + offset[1]
-		window_position[2] = window_position[2] + offset[2]
-		window_position[3] = window_position[3] + offset[3]
+		var_3_6[1] = var_3_6[1] + arg_3_2[1]
+		var_3_6[2] = var_3_6[2] + arg_3_2[2]
+		var_3_6[3] = var_3_6[3] + arg_3_2[3]
 	end
 
-	self._widgets_by_name.bot_customization_button.content.visible = not self.force_ingame_menu and self.is_in_inn
+	arg_3_0._widgets_by_name.bot_customization_button.content.visible = not arg_3_0.force_ingame_menu and arg_3_0.is_in_inn
 end
 
-HeroWindowPanelConsole.on_exit = function (self, params)
+function HeroWindowPanelConsole.on_exit(arg_4_0, arg_4_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowPanelConsole")
 
-	self.ui_animator = nil
+	arg_4_0.ui_animator = nil
 end
 
-HeroWindowPanelConsole.update = function (self, dt, t)
-	if DO_RELOAD then
-		DO_RELOAD = false
+function HeroWindowPanelConsole.update(arg_5_0, arg_5_1, arg_5_2)
+	if var_0_12 then
+		var_0_12 = false
 
-		self:create_ui_elements()
+		arg_5_0:create_ui_elements()
 	end
 
-	self:_handle_gamepad_activity()
-	self:_handle_back_button_visibility()
-	self:_handle_bot_warning()
+	arg_5_0:_handle_gamepad_activity()
+	arg_5_0:_handle_back_button_visibility()
+	arg_5_0:_handle_bot_warning()
 
-	if self.is_in_inn and not self.force_ingame_menu then
-		self:_sync_news(dt, t)
-		self:_update_selected_option()
+	if arg_5_0.is_in_inn and not arg_5_0.force_ingame_menu then
+		arg_5_0:_sync_news(arg_5_1, arg_5_2)
+		arg_5_0:_update_selected_option()
 	end
 
-	self:_update_animations(dt)
-	self:draw(dt)
+	arg_5_0:_update_animations(arg_5_1)
+	arg_5_0:draw(arg_5_1)
 end
 
-HeroWindowPanelConsole.post_update = function (self, dt, t)
-	self:_handle_input(dt, t)
+function HeroWindowPanelConsole.post_update(arg_6_0, arg_6_1, arg_6_2)
+	arg_6_0:_handle_input(arg_6_1, arg_6_2)
 end
 
-HeroWindowPanelConsole._handle_bot_warning = function (self)
-	local is_bot_career = self.parent:is_bot_career()
+function HeroWindowPanelConsole._handle_bot_warning(arg_7_0)
+	if arg_7_0.parent:is_bot_career() then
+		local var_7_0, var_7_1 = arg_7_0.parent:get_career_data()
 
-	if is_bot_career then
-		local current_profile_index, current_career_index = self.parent:get_career_data()
+		if var_7_0 ~= arg_7_0._current_profile_index or var_7_1 ~= arg_7_0._current_career_index then
+			arg_7_0:_set_bot_information(var_7_0, var_7_1)
 
-		if current_profile_index ~= self._current_profile_index or current_career_index ~= self._current_career_index then
-			self:_set_bot_information(current_profile_index, current_career_index)
+			arg_7_0._current_profile_index = var_7_0
+			arg_7_0._current_career_index = var_7_1
 
-			self._current_profile_index = current_profile_index
-			self._current_career_index = current_career_index
-
-			self:_start_transition_animation("bot_info_enter")
+			arg_7_0:_start_transition_animation("bot_info_enter")
 		end
-	elseif self._current_profile_index or self._current_career_index then
-		self:_start_transition_animation("bot_info_exit")
+	elseif arg_7_0._current_profile_index or arg_7_0._current_career_index then
+		arg_7_0:_start_transition_animation("bot_info_exit")
 
-		local widget = self._widgets_by_name.bot_customization_button
+		local var_7_2 = arg_7_0._widgets_by_name.bot_customization_button
 
-		widget.content.managing_career_name = ""
-		widget.content.playing_career_name = ""
-		self._current_profile_index = nil
-		self._current_career_index = nil
+		var_7_2.content.managing_career_name = ""
+		var_7_2.content.playing_career_name = ""
+		arg_7_0._current_profile_index = nil
+		arg_7_0._current_career_index = nil
 	end
 end
 
-HeroWindowPanelConsole._set_bot_information = function (self, current_profile_index, current_career_index)
-	local local_player = Managers.player:local_player()
-	local playing_profile_index = local_player:profile_index()
-	local playing_career_index = local_player:career_index()
-	local playing_profile = SPProfiles[playing_profile_index]
-	local playing_career = playing_profile.careers[playing_career_index]
-	local playing_career_name = playing_career.display_name
-	local managing_profile = SPProfiles[current_profile_index]
-	local managing_career = managing_profile.careers[current_career_index]
-	local managing_career_name = managing_career.display_name
-	local widget = self._widgets_by_name.bot_customization_button
+function HeroWindowPanelConsole._set_bot_information(arg_8_0, arg_8_1, arg_8_2)
+	local var_8_0 = Managers.player:local_player()
+	local var_8_1 = var_8_0:profile_index()
+	local var_8_2 = var_8_0:career_index()
+	local var_8_3 = SPProfiles[var_8_1].careers[var_8_2].display_name
+	local var_8_4 = SPProfiles[arg_8_1].careers[arg_8_2].display_name
+	local var_8_5 = arg_8_0._widgets_by_name.bot_customization_button
 
-	widget.content.managing_career_name = Localize(managing_career_name)
-	widget.content.playing_career_name = Localize(playing_career_name)
+	var_8_5.content.managing_career_name = Localize(var_8_4)
+	var_8_5.content.playing_career_name = Localize(var_8_3)
 end
 
-HeroWindowPanelConsole._update_animations = function (self, dt)
-	local ui_animations = self._ui_animations
-	local animations = self._animations
-	local ui_animator = self.ui_animator
+function HeroWindowPanelConsole._update_animations(arg_9_0, arg_9_1)
+	local var_9_0 = arg_9_0._ui_animations
+	local var_9_1 = arg_9_0._animations
+	local var_9_2 = arg_9_0.ui_animator
 
-	for name, animation in pairs(self._ui_animations) do
-		UIAnimation.update(animation, dt)
+	for iter_9_0, iter_9_1 in pairs(arg_9_0._ui_animations) do
+		UIAnimation.update(iter_9_1, arg_9_1)
 
-		if UIAnimation.completed(animation) then
-			self._ui_animations[name] = nil
+		if UIAnimation.completed(iter_9_1) then
+			arg_9_0._ui_animations[iter_9_0] = nil
 		end
 	end
 
-	ui_animator:update(dt)
+	var_9_2:update(arg_9_1)
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_9_2, iter_9_3 in pairs(var_9_1) do
+		if var_9_2:is_animation_completed(iter_9_3) then
+			var_9_2:stop_animation(iter_9_3)
 
-			animations[animation_name] = nil
+			var_9_1[iter_9_2] = nil
 		end
 	end
 
-	local title_button_widgets = self._title_button_widgets
+	local var_9_3 = arg_9_0._title_button_widgets
 
-	for i, widget in ipairs(title_button_widgets) do
-		self:_animate_title_entry(widget, dt)
+	for iter_9_4, iter_9_5 in ipairs(var_9_3) do
+		arg_9_0:_animate_title_entry(iter_9_5, arg_9_1)
 	end
 
-	self:_animate_title_entry(self._widgets_by_name.system_button, dt)
-	self:_animate_title_entry(self._widgets_by_name.bot_customization_button, dt)
-	self:_animate_back_button(self._widgets_by_name.back_button, dt)
-	self:_animate_back_button(self._widgets_by_name.close_button, dt)
+	arg_9_0:_animate_title_entry(arg_9_0._widgets_by_name.system_button, arg_9_1)
+	arg_9_0:_animate_title_entry(arg_9_0._widgets_by_name.bot_customization_button, arg_9_1)
+	arg_9_0:_animate_back_button(arg_9_0._widgets_by_name.back_button, arg_9_1)
+	arg_9_0:_animate_back_button(arg_9_0._widgets_by_name.close_button, arg_9_1)
 
-	if self._present_purchase_add then
-		self:_animate_purchase_add(dt)
+	if arg_9_0._present_purchase_add then
+		arg_9_0:_animate_purchase_add(arg_9_1)
 	end
 end
 
-HeroWindowPanelConsole._is_button_pressed = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot or content.button_text
+function HeroWindowPanelConsole._is_button_pressed(arg_10_0, arg_10_1)
+	local var_10_0 = arg_10_1.content
+	local var_10_1 = var_10_0.button_hotspot or var_10_0.button_text
 
-	if hotspot.on_release then
-		hotspot.on_release = false
+	if var_10_1.on_release then
+		var_10_1.on_release = false
 
 		return true
 	end
 end
 
-HeroWindowPanelConsole._is_stepper_button_pressed = function (self, widget)
-	local content = widget.content
-	local hotspot_left = content.button_hotspot_left
-	local hotspot_right = content.button_hotspot_right
+function HeroWindowPanelConsole._is_stepper_button_pressed(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_1.content
+	local var_11_1 = var_11_0.button_hotspot_left
+	local var_11_2 = var_11_0.button_hotspot_right
 
-	if hotspot_left.on_release then
-		hotspot_left.on_release = false
+	if var_11_1.on_release then
+		var_11_1.on_release = false
 
 		return true, -1
-	elseif hotspot_right.on_release then
-		hotspot_right.on_release = false
+	elseif var_11_2.on_release then
+		var_11_2.on_release = false
 
 		return true, 1
 	end
 end
 
-HeroWindowPanelConsole._is_button_hover_enter = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	return hotspot.on_hover_enter
+function HeroWindowPanelConsole._is_button_hover_enter(arg_12_0, arg_12_1)
+	return arg_12_1.content.button_hotspot.on_hover_enter
 end
 
-HeroWindowPanelConsole._is_button_hover_exit = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	return hotspot.on_hover_exit
+function HeroWindowPanelConsole._is_button_hover_exit(arg_13_0, arg_13_1)
+	return arg_13_1.content.button_hotspot.on_hover_exit
 end
 
-HeroWindowPanelConsole._is_button_selected = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	return hotspot.is_selected
+function HeroWindowPanelConsole._is_button_selected(arg_14_0, arg_14_1)
+	return arg_14_1.content.button_hotspot.is_selected
 end
 
-HeroWindowPanelConsole._handle_input = function (self, dt, t)
-	local parent = self.parent
-	local widgets_by_name = self._widgets_by_name
-	local title_button_widgets = self._title_button_widgets
-	local input_service = self.parent:window_input_service()
-	local input_made = false
-	local close_button = widgets_by_name.close_button
-	local back_button = widgets_by_name.back_button
+function HeroWindowPanelConsole._handle_input(arg_15_0, arg_15_1, arg_15_2)
+	local var_15_0 = arg_15_0.parent
+	local var_15_1 = arg_15_0._widgets_by_name
+	local var_15_2 = arg_15_0._title_button_widgets
+	local var_15_3 = arg_15_0.parent:window_input_service()
+	local var_15_4 = false
+	local var_15_5 = var_15_1.close_button
+	local var_15_6 = var_15_1.back_button
 
-	if self:_is_button_hover_enter(back_button) or self:_is_button_hover_enter(close_button) then
-		self:_play_sound("Play_hud_hover")
+	if arg_15_0:_is_button_hover_enter(var_15_6) or arg_15_0:_is_button_hover_enter(var_15_5) then
+		arg_15_0:_play_sound("Play_hud_hover")
 	end
 
-	if not input_made and self:_is_button_pressed(close_button) then
-		parent:close_menu()
+	if not var_15_4 and arg_15_0:_is_button_pressed(var_15_5) then
+		var_15_0:close_menu()
 
-		input_made = true
+		var_15_4 = true
 	end
 
-	if not self.force_ingame_menu then
-		local close_on_exit = parent:close_on_exit()
+	if not arg_15_0.force_ingame_menu and not var_15_0:close_on_exit() and not var_15_4 and arg_15_0:_is_button_pressed(var_15_6) then
+		local var_15_7 = var_15_0:get_previous_selected_game_mode_index()
 
-		if not close_on_exit and not input_made and self:_is_button_pressed(back_button) then
-			local previous_selected_game_mode_index = parent:get_previous_selected_game_mode_index()
+		if var_15_7 then
+			arg_15_0:_reset_back_button()
+			arg_15_0.parent:set_layout(var_15_7)
 
-			if previous_selected_game_mode_index then
-				self:_reset_back_button()
-				self.parent:set_layout(previous_selected_game_mode_index)
-
-				input_made = true
-			end
+			var_15_4 = true
 		end
 	end
 
-	if self.is_in_inn and not self.force_ingame_menu then
-		local title_button_widgets = self._title_button_widgets
+	if arg_15_0.is_in_inn and not arg_15_0.force_ingame_menu then
+		local var_15_8 = arg_15_0._title_button_widgets
 
-		for i, widget in ipairs(title_button_widgets) do
-			if self:_is_button_hover_enter(widget) then
-				self:_play_sound("Play_hud_hover")
+		for iter_15_0, iter_15_1 in ipairs(var_15_8) do
+			if arg_15_0:_is_button_hover_enter(iter_15_1) then
+				arg_15_0:_play_sound("Play_hud_hover")
 			end
 
-			if self:_is_button_pressed(widget) then
-				self:_on_panel_button_selected(i)
+			if arg_15_0:_is_button_pressed(iter_15_1) then
+				arg_15_0:_on_panel_button_selected(iter_15_0)
 
-				input_made = true
+				var_15_4 = true
 			end
 		end
 
-		local system_button = widgets_by_name.system_button
+		local var_15_9 = var_15_1.system_button
 
-		if self:_is_button_hover_enter(system_button) then
-			self:_play_sound("Play_hud_hover")
+		if arg_15_0:_is_button_hover_enter(var_15_9) then
+			arg_15_0:_play_sound("Play_hud_hover")
 		end
 
-		if not input_made and self:_is_button_pressed(system_button) then
-			local system_layout_index = layout_index_by_name.system
+		if not var_15_4 and arg_15_0:_is_button_pressed(var_15_9) then
+			local var_15_10 = var_0_8.system
 
-			self:_on_panel_button_selected(system_layout_index)
+			arg_15_0:_on_panel_button_selected(var_15_10)
 
-			input_made = true
+			var_15_4 = true
 		end
 
-		if not input_made and not self.parent.parent:input_blocked() then
-			local current_index = self._selected_index or 1
-			local max_index = #layout_name_by_index
-			local next_index
+		if not var_15_4 and not arg_15_0.parent.parent:input_blocked() then
+			local var_15_11 = arg_15_0._selected_index or 1
+			local var_15_12 = #var_0_7
+			local var_15_13
 
-			if input_service:get(INPUT_ACTION_PREVIOUS) then
-				for i = #layout_name_by_index, 1, -1 do
-					if i == current_index then
-						next_index = current_index > 1 and current_index - 1 or max_index
+			if var_15_3:get(var_0_10) then
+				for iter_15_2 = #var_0_7, 1, -1 do
+					if iter_15_2 == var_15_11 then
+						var_15_13 = var_15_11 > 1 and var_15_11 - 1 or var_15_12
 
-						if self.parent:can_add(layout_name_by_index[next_index]) then
+						if arg_15_0.parent:can_add(var_0_7[var_15_13]) then
 							break
 						else
-							current_index = next_index
+							var_15_11 = var_15_13
 						end
 					end
 				end
 
-				self:_on_panel_button_selected(next_index)
-			elseif input_service:get(INPUT_ACTION_NEXT) then
-				for i = 1, #layout_name_by_index do
-					if i == current_index then
-						next_index = 1 + current_index % max_index
+				arg_15_0:_on_panel_button_selected(var_15_13)
+			elseif var_15_3:get(var_0_9) then
+				for iter_15_3 = 1, #var_0_7 do
+					if iter_15_3 == var_15_11 then
+						var_15_13 = 1 + var_15_11 % var_15_12
 
-						if self.parent:can_add(layout_name_by_index[next_index]) then
+						if arg_15_0.parent:can_add(var_0_7[var_15_13]) then
 							break
 						else
-							current_index = next_index
+							var_15_11 = var_15_13
 						end
 					end
 				end
 
-				self:_on_panel_button_selected(next_index)
+				arg_15_0:_on_panel_button_selected(var_15_13)
 			end
 		end
 
-		if not input_made and self._present_purchase_add and input_service:get(INPUT_ACTION_PURCHASE) and IS_XB1 then
-			input_made = true
+		if not var_15_4 and arg_15_0._present_purchase_add and var_15_3:get(var_0_11) and IS_XB1 then
+			local var_15_14 = true
 
-			self:_open_marketplace_xb1()
+			arg_15_0:_open_marketplace_xb1()
 		end
 
-		local bot_customization_button = widgets_by_name.bot_customization_button
+		local var_15_15 = var_15_1.bot_customization_button
 
-		if UIUtils.is_button_hover_enter(bot_customization_button) then
-			self:_play_sound("Play_hud_hover")
+		if UIUtils.is_button_hover_enter(var_15_15) then
+			arg_15_0:_play_sound("Play_hud_hover")
 		end
 
-		if UIUtils.is_button_pressed(bot_customization_button) or input_service:get("show_gamercard") then
-			self.parent:set_layout_by_name("character_selection")
+		if UIUtils.is_button_pressed(var_15_15) or var_15_3:get("show_gamercard") then
+			arg_15_0.parent:set_layout_by_name("character_selection")
 		end
 	end
 end
 
-HeroWindowPanelConsole._on_panel_button_selected = function (self, index)
-	local parent = self.parent
-	local selected_layout_name = parent:get_layout_name()
-	local layout_name = layout_name_by_index[index]
+function HeroWindowPanelConsole._on_panel_button_selected(arg_16_0, arg_16_1)
+	local var_16_0 = arg_16_0.parent:get_layout_name()
+	local var_16_1 = var_0_7[arg_16_1]
 
-	if layout_name ~= selected_layout_name then
-		local selected_panel_layout_name = layout_name_by_index[self._selected_index]
+	if var_16_1 ~= var_16_0 then
+		local var_16_2 = var_0_7[arg_16_0._selected_index]
 
-		self.parent:window_layout_on_exit(selected_panel_layout_name)
-		self.parent:set_layout_by_name(layout_name)
+		arg_16_0.parent:window_layout_on_exit(var_16_2)
+		arg_16_0.parent:set_layout_by_name(var_16_1)
 	end
 end
 
-HeroWindowPanelConsole._set_selected_option = function (self, index)
-	local system_button = self._widgets_by_name.system_button
+function HeroWindowPanelConsole._set_selected_option(arg_17_0, arg_17_1)
+	arg_17_0._widgets_by_name.system_button.content.button_hotspot.is_selected = var_0_7[arg_17_1] == "system"
 
-	system_button.content.button_hotspot.is_selected = layout_name_by_index[index] == "system"
+	local var_17_0 = arg_17_0._title_button_widgets
 
-	local title_button_widgets = self._title_button_widgets
-
-	for i, widget in ipairs(title_button_widgets) do
-		widget.content.button_hotspot.is_selected = i == index
+	for iter_17_0, iter_17_1 in ipairs(var_17_0) do
+		iter_17_1.content.button_hotspot.is_selected = iter_17_0 == arg_17_1
 	end
 end
 
-HeroWindowPanelConsole._update_selected_option = function (self)
-	local parent = self.parent
-	local selected_layout_name = parent:get_layout_name()
-	local selected_index = table.find(layout_name_by_index, selected_layout_name)
+function HeroWindowPanelConsole._update_selected_option(arg_18_0)
+	local var_18_0 = arg_18_0.parent:get_layout_name()
+	local var_18_1 = table.find(var_0_7, var_18_0)
 
-	if selected_index and selected_index ~= self._selected_index then
-		self:_set_selected_option(selected_index)
+	if var_18_1 and var_18_1 ~= arg_18_0._selected_index then
+		arg_18_0:_set_selected_option(var_18_1)
 
-		self._selected_index = selected_index
+		arg_18_0._selected_index = var_18_1
 	end
 
-	local widget = self._widgets_by_name.bot_customization_button
+	local var_18_2 = arg_18_0._widgets_by_name.bot_customization_button
 
-	widget.content.button_hotspot.is_selected = selected_layout_name == "character_selection"
-	widget.content.button_hotspot.hover_progress = widget.content.button_hotspot.is_selected and 1 or widget.content.button_hotspot.hover_progress
+	var_18_2.content.button_hotspot.is_selected = var_18_0 == "character_selection"
+	var_18_2.content.button_hotspot.hover_progress = var_18_2.content.button_hotspot.is_selected and 1 or var_18_2.content.button_hotspot.hover_progress
 end
 
-HeroWindowPanelConsole.draw = function (self, dt)
-	local ui_renderer = self.ui_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self.parent:window_input_service()
+function HeroWindowPanelConsole.draw(arg_19_0, arg_19_1)
+	local var_19_0 = arg_19_0.ui_renderer
+	local var_19_1 = arg_19_0.ui_scenegraph
+	local var_19_2 = arg_19_0.parent:window_input_service()
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
+	UIRenderer.begin_pass(var_19_0, var_19_1, var_19_2, arg_19_1, nil, arg_19_0.render_settings)
 
-	for _, widget in ipairs(self._widgets) do
-		UIRenderer.draw_widget(ui_renderer, widget)
+	for iter_19_0, iter_19_1 in ipairs(arg_19_0._widgets) do
+		UIRenderer.draw_widget(var_19_0, iter_19_1)
 	end
 
-	if self.is_in_inn and not self.force_ingame_menu then
-		for _, widget in ipairs(self._title_button_widgets) do
-			UIRenderer.draw_widget(ui_renderer, widget)
+	if arg_19_0.is_in_inn and not arg_19_0.force_ingame_menu then
+		for iter_19_2, iter_19_3 in ipairs(arg_19_0._title_button_widgets) do
+			UIRenderer.draw_widget(var_19_0, iter_19_3)
 		end
 	end
 
-	if self._bot_warning_widget then
-		UIRenderer.draw_widget(ui_renderer, self._bot_warning_widget)
+	if arg_19_0._bot_warning_widget then
+		UIRenderer.draw_widget(var_19_0, arg_19_0._bot_warning_widget)
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_19_0)
 end
 
-HeroWindowPanelConsole._play_sound = function (self, event)
-	self.parent:play_sound(event)
+function HeroWindowPanelConsole._play_sound(arg_20_0, arg_20_1)
+	arg_20_0.parent:play_sound(arg_20_1)
 end
 
-HeroWindowPanelConsole._sync_news = function (self, dt, t)
-	local sync_delay = self._sync_delay
+function HeroWindowPanelConsole._sync_news(arg_21_0, arg_21_1, arg_21_2)
+	local var_21_0 = arg_21_0._sync_delay
 
-	if sync_delay then
-		sync_delay = math.max(0, sync_delay - dt)
+	if var_21_0 then
+		local var_21_1 = math.max(0, var_21_0 - arg_21_1)
 
-		if sync_delay == 0 then
-			self._sync_delay = nil
+		if var_21_1 == 0 then
+			arg_21_0._sync_delay = nil
 		else
-			self._sync_delay = sync_delay
+			arg_21_0._sync_delay = var_21_1
 		end
 
 		return
 	end
 
-	local player = Managers.player:local_player(1)
-	local player_unit = player.player_unit
-	local news_templates = NewsFeedTemplates
-	local conditions_params = self.conditions_params
-	local button_widgets_by_news_template = self.button_widgets_by_news_template
+	local var_21_2 = Managers.player:local_player(1).player_unit
+	local var_21_3 = NewsFeedTemplates
+	local var_21_4 = arg_21_0.conditions_params
+	local var_21_5 = arg_21_0.button_widgets_by_news_template
 
-	if player_unit then
-		for template_name, widget in pairs(button_widgets_by_news_template) do
-			local template_index = FindNewsTemplateIndex(template_name)
-			local template = news_templates[template_index]
-			local condition_func = template.condition_func
+	if var_21_2 then
+		for iter_21_0, iter_21_1 in pairs(var_21_5) do
+			local var_21_6 = var_21_3[FindNewsTemplateIndex(iter_21_0)].condition_func
 
-			widget.content.new = condition_func(conditions_params)
+			iter_21_1.content.new = var_21_6(var_21_4)
 		end
 	end
 
-	self._sync_delay = 4
+	arg_21_0._sync_delay = 4
 end
 
-HeroWindowPanelConsole._setup_input_buttons = function (self)
-	if self.parent:input_blocked() then
+function HeroWindowPanelConsole._setup_input_buttons(arg_22_0)
+	if arg_22_0.parent:input_blocked() then
 		return
 	end
 
-	local input_service = self.parent:window_input_service()
-	local input_1_texture_data = UISettings.get_gamepad_input_texture_data(input_service, INPUT_ACTION_PREVIOUS, true)
-	local input_2_texture_data = UISettings.get_gamepad_input_texture_data(input_service, INPUT_ACTION_NEXT, true)
-	local widgets_by_name = self._widgets_by_name
-	local input_1_widget = widgets_by_name.panel_input_area_1
-	local input_2_widget = widgets_by_name.panel_input_area_2
-	local icon_style_input_1 = input_1_widget.style.texture_id
+	local var_22_0 = arg_22_0.parent:window_input_service()
+	local var_22_1 = UISettings.get_gamepad_input_texture_data(var_22_0, var_0_10, true)
+	local var_22_2 = UISettings.get_gamepad_input_texture_data(var_22_0, var_0_9, true)
+	local var_22_3 = arg_22_0._widgets_by_name
+	local var_22_4 = var_22_3.panel_input_area_1
+	local var_22_5 = var_22_3.panel_input_area_2
+	local var_22_6 = var_22_4.style.texture_id
 
-	icon_style_input_1.horizontal_alignment = "center"
-	icon_style_input_1.vertical_alignment = "center"
-	icon_style_input_1.texture_size = {
-		input_1_texture_data.size[1],
-		input_1_texture_data.size[2],
+	var_22_6.horizontal_alignment = "center"
+	var_22_6.vertical_alignment = "center"
+	var_22_6.texture_size = {
+		var_22_1.size[1],
+		var_22_1.size[2]
 	}
-	input_1_widget.content.texture_id = input_1_texture_data.texture
+	var_22_4.content.texture_id = var_22_1.texture
 
-	local icon_style_input_2 = input_2_widget.style.texture_id
+	local var_22_7 = var_22_5.style.texture_id
 
-	icon_style_input_2.horizontal_alignment = "center"
-	icon_style_input_2.vertical_alignment = "center"
-	icon_style_input_2.texture_size = {
-		input_2_texture_data.size[1],
-		input_2_texture_data.size[2],
+	var_22_7.horizontal_alignment = "center"
+	var_22_7.vertical_alignment = "center"
+	var_22_7.texture_size = {
+		var_22_2.size[1],
+		var_22_2.size[2]
 	}
-	input_2_widget.content.texture_id = input_2_texture_data.texture
+	var_22_5.content.texture_id = var_22_2.texture
 end
 
-HeroWindowPanelConsole._handle_back_button_visibility = function (self)
-	if not self.gamepad_active_last_frame then
-		local close_on_exit = self.parent:close_on_exit()
-		local back_button = self._widgets_by_name.back_button
-		local new_visibility = not close_on_exit
+function HeroWindowPanelConsole._handle_back_button_visibility(arg_23_0)
+	if not arg_23_0.gamepad_active_last_frame then
+		local var_23_0 = arg_23_0.parent:close_on_exit()
+		local var_23_1 = arg_23_0._widgets_by_name.back_button
+		local var_23_2 = not var_23_0
 
-		back_button.content.visible = new_visibility
+		var_23_1.content.visible = var_23_2
 	end
 end
 
-HeroWindowPanelConsole._reset_back_button = function (self)
-	local back_button = self._widgets_by_name.back_button
-	local hotspot = back_button.content.button_hotspot
+function HeroWindowPanelConsole._reset_back_button(arg_24_0)
+	local var_24_0 = arg_24_0._widgets_by_name.back_button.content.button_hotspot
 
-	table.clear(hotspot)
+	table.clear(var_24_0)
 end
 
-HeroWindowPanelConsole._handle_gamepad_activity = function (self)
-	local gamepad_active = Managers.input:is_device_active("gamepad")
-	local most_recent_device = Managers.input:get_most_recent_device()
-	local force_update = self.gamepad_active_last_frame == nil or gamepad_active and most_recent_device ~= self._most_recent_device
+function HeroWindowPanelConsole._handle_gamepad_activity(arg_25_0)
+	local var_25_0 = Managers.input:is_device_active("gamepad")
+	local var_25_1 = Managers.input:get_most_recent_device()
+	local var_25_2 = arg_25_0.gamepad_active_last_frame == nil or var_25_0 and var_25_1 ~= arg_25_0._most_recent_device
 
-	if gamepad_active then
-		if not self.gamepad_active_last_frame or force_update then
-			self.gamepad_active_last_frame = true
+	if var_25_0 then
+		if not arg_25_0.gamepad_active_last_frame or var_25_2 then
+			arg_25_0.gamepad_active_last_frame = true
 
-			local widgets_by_name = self._widgets_by_name
-			local show_selection_buttons = self.is_in_inn and not self.force_ingame_menu or false
+			local var_25_3 = arg_25_0._widgets_by_name
+			local var_25_4 = arg_25_0.is_in_inn and not arg_25_0.force_ingame_menu or false
 
-			widgets_by_name.panel_input_area_1.content.visible = show_selection_buttons
-			widgets_by_name.panel_input_area_2.content.visible = show_selection_buttons
-			widgets_by_name.back_button.content.visible = false
-			widgets_by_name.close_button.content.visible = false
+			var_25_3.panel_input_area_1.content.visible = var_25_4
+			var_25_3.panel_input_area_2.content.visible = var_25_4
+			var_25_3.back_button.content.visible = false
+			var_25_3.close_button.content.visible = false
 
-			self:_setup_input_buttons()
+			arg_25_0:_setup_input_buttons()
 		end
-	elseif self.gamepad_active_last_frame or force_update then
-		self.gamepad_active_last_frame = false
+	elseif arg_25_0.gamepad_active_last_frame or var_25_2 then
+		arg_25_0.gamepad_active_last_frame = false
 
-		local widgets_by_name = self._widgets_by_name
+		local var_25_5 = arg_25_0._widgets_by_name
 
-		widgets_by_name.panel_input_area_1.content.visible = false
-		widgets_by_name.panel_input_area_2.content.visible = false
-		widgets_by_name.close_button.content.visible = true
+		var_25_5.panel_input_area_1.content.visible = false
+		var_25_5.panel_input_area_2.content.visible = false
+		var_25_5.close_button.content.visible = true
 	end
 
-	self._most_recent_device = most_recent_device
+	arg_25_0._most_recent_device = var_25_1
 end
 
-HeroWindowPanelConsole._setup_text_buttons_width = function (self)
-	local ui_scenegraph = self.ui_scenegraph
-	local area_size = ui_scenegraph.panel_entry_area.size
-	local total_width = area_size[1]
-	local total_menu_panel_length = 0
-	local title_button_widgets = self._title_button_widgets
-	local num_buttons = #title_button_widgets
-	local entry_width = math.floor(total_width / num_buttons)
+function HeroWindowPanelConsole._setup_text_buttons_width(arg_26_0)
+	local var_26_0 = arg_26_0.ui_scenegraph.panel_entry_area.size[1]
+	local var_26_1 = 0
+	local var_26_2 = arg_26_0._title_button_widgets
+	local var_26_3 = #var_26_2
+	local var_26_4 = math.floor(var_26_0 / var_26_3)
 
-	for index, widget in ipairs(title_button_widgets) do
-		self:_set_text_button_size(widget, entry_width)
+	for iter_26_0, iter_26_1 in ipairs(var_26_2) do
+		arg_26_0:_set_text_button_size(iter_26_1, var_26_4)
 
-		local position_x = entry_width * (index - 1)
+		local var_26_5 = var_26_4 * (iter_26_0 - 1)
 
-		self:_set_text_button_horizontal_position(widget, position_x)
+		arg_26_0:_set_text_button_horizontal_position(iter_26_1, var_26_5)
 	end
 end
 
-HeroWindowPanelConsole._set_text_button_size = function (self, widget, width)
-	local ui_scenegraph = self.ui_scenegraph
-	local scenegraph_id = widget.scenegraph_id
+function HeroWindowPanelConsole._set_text_button_size(arg_27_0, arg_27_1, arg_27_2)
+	arg_27_0.ui_scenegraph[arg_27_1.scenegraph_id].size[1] = arg_27_2
 
-	ui_scenegraph[scenegraph_id].size[1] = width
+	local var_27_0 = arg_27_1.style
 
-	local style = widget.style
+	var_27_0.selected_texture.texture_size[1] = arg_27_2
 
-	style.selected_texture.texture_size[1] = width
+	local var_27_1 = 5
+	local var_27_2 = arg_27_2 - var_27_1 * 2
 
-	local text_width_offset = 5
-	local text_width = width - text_width_offset * 2
-
-	style.text.size[1] = text_width
-	style.text_shadow.size[1] = text_width
-	style.text_hover.size[1] = text_width
-	style.text_disabled.size[1] = text_width
-	style.text.offset[1] = style.text.default_offset[1] + text_width_offset
-	style.text_shadow.offset[1] = style.text_shadow.default_offset[1] + text_width_offset
-	style.text_hover.offset[1] = style.text_hover.default_offset[1] + text_width_offset
-	style.text_disabled.offset[1] = style.text_disabled.default_offset[1] + text_width_offset
+	var_27_0.text.size[1] = var_27_2
+	var_27_0.text_shadow.size[1] = var_27_2
+	var_27_0.text_hover.size[1] = var_27_2
+	var_27_0.text_disabled.size[1] = var_27_2
+	var_27_0.text.offset[1] = var_27_0.text.default_offset[1] + var_27_1
+	var_27_0.text_shadow.offset[1] = var_27_0.text_shadow.default_offset[1] + var_27_1
+	var_27_0.text_hover.offset[1] = var_27_0.text_hover.default_offset[1] + var_27_1
+	var_27_0.text_disabled.offset[1] = var_27_0.text_disabled.default_offset[1] + var_27_1
 end
 
-local default_font_color = Colors.get_color_table_with_alpha("white", 255)
+local var_0_13 = Colors.get_color_table_with_alpha("white", 255)
 
-HeroWindowPanelConsole._animate_purchase_add = function (self, dt)
-	local widgets_by_name = self._widgets_by_name
-	local style = widgets_by_name.preorder_text.style
-	local progress = 0.5 + math.sin(Managers.time:time("ui") * 3) * 0.5
-	local font_increase = math.easeOutCubic(progress) * 10
-	local text_color = style.text.text_color
-	local shadow_text_color = style.text_shadow.text_color
-	local color_progress = math.easeOutCubic(progress) * 0.5
+function HeroWindowPanelConsole._animate_purchase_add(arg_28_0, arg_28_1)
+	local var_28_0 = arg_28_0._widgets_by_name.preorder_text.style
+	local var_28_1 = 0.5 + math.sin(Managers.time:time("ui") * 3) * 0.5
+	local var_28_2 = math.easeOutCubic(var_28_1) * 10
+	local var_28_3 = var_28_0.text.text_color
+	local var_28_4 = var_28_0.text_shadow.text_color
+	local var_28_5 = math.easeOutCubic(var_28_1) * 0.5
 
-	text_color[2] = default_font_color[2] * 0.5 + default_font_color[2] * color_progress
-	text_color[3] = default_font_color[3] * 0.5 + default_font_color[3] * color_progress
-	text_color[4] = default_font_color[4] * 0.5 + default_font_color[4] * color_progress
+	var_28_3[2] = var_0_13[2] * 0.5 + var_0_13[2] * var_28_5
+	var_28_3[3] = var_0_13[3] * 0.5 + var_0_13[3] * var_28_5
+	var_28_3[4] = var_0_13[4] * 0.5 + var_0_13[4] * var_28_5
 end
 
-HeroWindowPanelConsole._set_text_button_horizontal_position = function (self, widget, x_position)
-	local ui_scenegraph = self.ui_scenegraph
-	local scenegraph_id = widget.scenegraph_id
-
-	ui_scenegraph[scenegraph_id].local_position[1] = x_position
+function HeroWindowPanelConsole._set_text_button_horizontal_position(arg_29_0, arg_29_1, arg_29_2)
+	arg_29_0.ui_scenegraph[arg_29_1.scenegraph_id].local_position[1] = arg_29_2
 end
 
-HeroWindowPanelConsole._validate_product_owner = function (self)
-	local present_purchase_add
+function HeroWindowPanelConsole._validate_product_owner(arg_30_0)
+	local var_30_0
 
 	if IS_XB1 and script_data.settings.use_beta_mode then
-		local owns_game = Managers.unlock:is_dlc_unlocked("vt2")
-
-		present_purchase_add = not owns_game
+		var_30_0 = not Managers.unlock:is_dlc_unlocked("vt2")
 	else
-		present_purchase_add = false
+		var_30_0 = false
 	end
 
-	self._present_purchase_add = present_purchase_add
+	arg_30_0._present_purchase_add = var_30_0
 
-	self:_set_purchase_add_visibility(present_purchase_add)
+	arg_30_0:_set_purchase_add_visibility(var_30_0)
 end
 
-HeroWindowPanelConsole._open_marketplace_xb1 = function (self)
-	local user_id = Managers.account:user_id()
-	local preorder_product_id = "dc4149cc-19c1-4a90-885f-6883868b053a"
+function HeroWindowPanelConsole._open_marketplace_xb1(arg_31_0)
+	local var_31_0 = Managers.account:user_id()
+	local var_31_1 = "dc4149cc-19c1-4a90-885f-6883868b053a"
 
-	XboxLive.show_product_details(user_id, preorder_product_id)
+	XboxLive.show_product_details(var_31_0, var_31_1)
 end
 
-HeroWindowPanelConsole._set_purchase_add_visibility = function (self, visible)
-	local widgets_by_name = self._widgets_by_name
+function HeroWindowPanelConsole._set_purchase_add_visibility(arg_32_0, arg_32_1)
+	local var_32_0 = arg_32_0._widgets_by_name
 
-	widgets_by_name.preorder_text.content.visible = visible
-	widgets_by_name.preorder_input.content.visible = visible
-	widgets_by_name.preorder_text_bg.content.visible = visible
-	widgets_by_name.preorder_divider.content.visible = visible
-	widgets_by_name.preorder_divider_top.content.visible = visible
-	widgets_by_name.preorder_divider_effect.content.visible = visible
-	widgets_by_name.preorder_divider_top_effect.content.visible = visible
+	var_32_0.preorder_text.content.visible = arg_32_1
+	var_32_0.preorder_input.content.visible = arg_32_1
+	var_32_0.preorder_text_bg.content.visible = arg_32_1
+	var_32_0.preorder_divider.content.visible = arg_32_1
+	var_32_0.preorder_divider_top.content.visible = arg_32_1
+	var_32_0.preorder_divider_effect.content.visible = arg_32_1
+	var_32_0.preorder_divider_top_effect.content.visible = arg_32_1
 end
 
-HeroWindowPanelConsole._animate_title_entry = function (self, widget, dt)
-	local content = widget.content
-	local style = widget.style
-	local hotspot = content.button_hotspot
-	local is_hover = hotspot.is_hover
-	local is_selected = hotspot.is_selected
-	local input_pressed = not is_selected and hotspot.is_clicked and hotspot.is_clicked == 0
-	local input_progress = hotspot.input_progress or 0
-	local hover_progress = hotspot.hover_progress or 0
-	local selection_progress = hotspot.selection_progress or 0
-	local speed = 8
-	local input_speed = 20
+function HeroWindowPanelConsole._animate_title_entry(arg_33_0, arg_33_1, arg_33_2)
+	local var_33_0 = arg_33_1.content
+	local var_33_1 = arg_33_1.style
+	local var_33_2 = var_33_0.button_hotspot
+	local var_33_3 = var_33_2.is_hover
+	local var_33_4 = var_33_2.is_selected
+	local var_33_5 = not var_33_4 and var_33_2.is_clicked and var_33_2.is_clicked == 0
+	local var_33_6 = var_33_2.input_progress or 0
+	local var_33_7 = var_33_2.hover_progress or 0
+	local var_33_8 = var_33_2.selection_progress or 0
+	local var_33_9 = 8
+	local var_33_10 = 20
 
-	if input_pressed then
-		input_progress = math.min(input_progress + dt * input_speed, 1)
+	if var_33_5 then
+		var_33_6 = math.min(var_33_6 + arg_33_2 * var_33_10, 1)
 	else
-		input_progress = math.max(input_progress - dt * input_speed, 0)
+		var_33_6 = math.max(var_33_6 - arg_33_2 * var_33_10, 0)
 	end
 
-	local input_easing_out_progress = math.easeOutCubic(input_progress)
-	local input_easing_in_progress = math.easeInCubic(input_progress)
+	local var_33_11 = math.easeOutCubic(var_33_6)
+	local var_33_12 = math.easeInCubic(var_33_6)
 
-	if is_hover then
-		hover_progress = math.min(hover_progress + dt * speed, 1)
+	if var_33_3 then
+		var_33_7 = math.min(var_33_7 + arg_33_2 * var_33_9, 1)
 	else
-		hover_progress = math.max(hover_progress - dt * speed, 0)
+		var_33_7 = math.max(var_33_7 - arg_33_2 * var_33_9, 0)
 	end
 
-	local hover_easing_out_progress = math.easeOutCubic(hover_progress)
-	local hover_easing_in_progress = math.easeInCubic(hover_progress)
+	local var_33_13 = math.easeOutCubic(var_33_7)
+	local var_33_14 = math.easeInCubic(var_33_7)
 
-	if is_selected then
-		selection_progress = math.min(selection_progress + dt * speed, 1)
+	if var_33_4 then
+		var_33_8 = math.min(var_33_8 + arg_33_2 * var_33_9, 1)
 	else
-		selection_progress = math.max(selection_progress - dt * speed, 0)
+		var_33_8 = math.max(var_33_8 - arg_33_2 * var_33_9, 0)
 	end
 
-	local select_easing_out_progress = math.easeOutCubic(selection_progress)
-	local select_easing_in_progress = math.easeInCubic(selection_progress)
-	local combined_progress = math.max(hover_progress, selection_progress)
-	local combined_out_progress = math.max(select_easing_out_progress, hover_easing_out_progress)
-	local combined_in_progress = math.max(hover_easing_in_progress, select_easing_in_progress)
-	local hover_alpha = 255 * combined_progress
+	local var_33_15 = math.easeOutCubic(var_33_8)
+	local var_33_16 = math.easeInCubic(var_33_8)
+	local var_33_17 = math.max(var_33_7, var_33_8)
+	local var_33_18 = math.max(var_33_15, var_33_13)
+	local var_33_19 = math.max(var_33_14, var_33_16)
+	local var_33_20 = 255 * var_33_17
 
-	style.selected_texture.color[1] = hover_alpha
+	var_33_1.selected_texture.color[1] = var_33_20
 
-	if style.text then
-		local text_height_offset = 4 * combined_progress
+	if var_33_1.text then
+		local var_33_21 = 4 * var_33_17
 
-		style.text.offset[2] = 5 - text_height_offset
-		style.text_shadow.offset[2] = 3 - text_height_offset
-		style.text_hover.offset[2] = 5 - text_height_offset
-		style.text_disabled.offset[2] = 5 - text_height_offset
+		var_33_1.text.offset[2] = 5 - var_33_21
+		var_33_1.text_shadow.offset[2] = 3 - var_33_21
+		var_33_1.text_hover.offset[2] = 5 - var_33_21
+		var_33_1.text_disabled.offset[2] = 5 - var_33_21
 	end
 
-	if style.new_marker then
-		local new_marker_progress = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
+	if var_33_1.new_marker then
+		local var_33_22 = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
 
-		style.new_marker.color[1] = 100 + 155 * new_marker_progress
+		var_33_1.new_marker.color[1] = 100 + 155 * var_33_22
 	end
 
-	hotspot.hover_progress = hover_progress
-	hotspot.input_progress = input_progress
-	hotspot.selection_progress = selection_progress
+	var_33_2.hover_progress = var_33_7
+	var_33_2.input_progress = var_33_6
+	var_33_2.selection_progress = var_33_8
 end
 
-HeroWindowPanelConsole._animate_back_button = function (self, widget, dt)
-	local content = widget.content
-	local style = widget.style
-	local hotspot = content.button_hotspot
-	local is_hover = hotspot.is_hover
-	local is_selected = hotspot.is_selected
-	local input_pressed = not is_selected and hotspot.is_clicked and hotspot.is_clicked == 0
-	local input_progress = hotspot.input_progress or 0
-	local hover_progress = hotspot.hover_progress or 0
-	local selection_progress = hotspot.selection_progress or 0
-	local speed = 8
-	local input_speed = 20
+function HeroWindowPanelConsole._animate_back_button(arg_34_0, arg_34_1, arg_34_2)
+	local var_34_0 = arg_34_1.content
+	local var_34_1 = arg_34_1.style
+	local var_34_2 = var_34_0.button_hotspot
+	local var_34_3 = var_34_2.is_hover
+	local var_34_4 = var_34_2.is_selected
+	local var_34_5 = not var_34_4 and var_34_2.is_clicked and var_34_2.is_clicked == 0
+	local var_34_6 = var_34_2.input_progress or 0
+	local var_34_7 = var_34_2.hover_progress or 0
+	local var_34_8 = var_34_2.selection_progress or 0
+	local var_34_9 = 8
+	local var_34_10 = 20
 
-	if input_pressed then
-		input_progress = math.min(input_progress + dt * input_speed, 1)
+	if var_34_5 then
+		var_34_6 = math.min(var_34_6 + arg_34_2 * var_34_10, 1)
 	else
-		input_progress = math.max(input_progress - dt * input_speed, 0)
+		var_34_6 = math.max(var_34_6 - arg_34_2 * var_34_10, 0)
 	end
 
-	local input_easing_out_progress = math.easeOutCubic(input_progress)
-	local input_easing_in_progress = math.easeInCubic(input_progress)
+	local var_34_11 = math.easeOutCubic(var_34_6)
+	local var_34_12 = math.easeInCubic(var_34_6)
 
-	if is_hover then
-		hover_progress = math.min(hover_progress + dt * speed, 1)
+	if var_34_3 then
+		var_34_7 = math.min(var_34_7 + arg_34_2 * var_34_9, 1)
 	else
-		hover_progress = math.max(hover_progress - dt * speed, 0)
+		var_34_7 = math.max(var_34_7 - arg_34_2 * var_34_9, 0)
 	end
 
-	local hover_easing_out_progress = math.easeOutCubic(hover_progress)
-	local hover_easing_in_progress = math.easeInCubic(hover_progress)
+	local var_34_13 = math.easeOutCubic(var_34_7)
+	local var_34_14 = math.easeInCubic(var_34_7)
 
-	if is_selected then
-		selection_progress = math.min(selection_progress + dt * speed, 1)
+	if var_34_4 then
+		var_34_8 = math.min(var_34_8 + arg_34_2 * var_34_9, 1)
 	else
-		selection_progress = math.max(selection_progress - dt * speed, 0)
+		var_34_8 = math.max(var_34_8 - arg_34_2 * var_34_9, 0)
 	end
 
-	local select_easing_out_progress = math.easeOutCubic(selection_progress)
-	local select_easing_in_progress = math.easeInCubic(selection_progress)
-	local combined_progress = math.max(hover_progress, selection_progress)
-	local combined_out_progress = math.max(select_easing_out_progress, hover_easing_out_progress)
-	local combined_in_progress = math.max(hover_easing_in_progress, select_easing_in_progress)
-	local hover_alpha = 255 * combined_progress
+	local var_34_15 = math.easeOutCubic(var_34_8)
+	local var_34_16 = math.easeInCubic(var_34_8)
+	local var_34_17 = math.max(var_34_7, var_34_8)
+	local var_34_18 = math.max(var_34_15, var_34_13)
+	local var_34_19 = math.max(var_34_14, var_34_16)
+	local var_34_20 = 255 * var_34_17
 
-	style.texture_id.color[1] = 255 - hover_alpha
-	style.texture_hover_id.color[1] = hover_alpha
-	style.selected_texture.color[1] = hover_alpha
-	hotspot.hover_progress = hover_progress
-	hotspot.input_progress = input_progress
-	hotspot.selection_progress = selection_progress
+	var_34_1.texture_id.color[1] = 255 - var_34_20
+	var_34_1.texture_hover_id.color[1] = var_34_20
+	var_34_1.selected_texture.color[1] = var_34_20
+	var_34_2.hover_progress = var_34_7
+	var_34_2.input_progress = var_34_6
+	var_34_2.selection_progress = var_34_8
 end

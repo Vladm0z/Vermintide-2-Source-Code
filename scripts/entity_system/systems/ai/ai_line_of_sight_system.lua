@@ -1,131 +1,131 @@
-﻿-- chunkname: @scripts/entity_system/systems/ai/ai_line_of_sight_system.lua
+-- chunkname: @scripts/entity_system/systems/ai/ai_line_of_sight_system.lua
 
 AILineOfSightSystem = class(AILineOfSightSystem, ExtensionSystemBase)
 
-local extensions = {
-	"AILineOfSightExtension",
+local var_0_0 = {
+	"AILineOfSightExtension"
 }
 
-AILineOfSightSystem.init = function (self, context, system_name)
-	AILineOfSightSystem.super.init(self, context, system_name, extensions)
+function AILineOfSightSystem.init(arg_1_0, arg_1_1, arg_1_2)
+	AILineOfSightSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 
-	self._is_server = context.is_server
-	self._world = context.world
-	self._physics_world = World.physics_world(self._world)
-	self._extensions = {}
-	self._frozen_extensions = {}
-	self._num_raycasts = 0
+	arg_1_0._is_server = arg_1_1.is_server
+	arg_1_0._world = arg_1_1.world
+	arg_1_0._physics_world = World.physics_world(arg_1_0._world)
+	arg_1_0._extensions = {}
+	arg_1_0._frozen_extensions = {}
+	arg_1_0._num_raycasts = 0
 end
 
-AILineOfSightSystem.destroy = function (self)
+function AILineOfSightSystem.destroy(arg_2_0)
 	return
 end
 
-AILineOfSightSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
-	ScriptUnit.add_extension(nil, unit, extension_name, self.NAME, extension_init_data)
+function AILineOfSightSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	ScriptUnit.add_extension(nil, arg_3_2, arg_3_3, arg_3_0.NAME, arg_3_4)
 
-	local extension = ScriptUnit.extension(unit, self.NAME)
+	local var_3_0 = ScriptUnit.extension(arg_3_2, arg_3_0.NAME)
 
-	self._extensions[unit] = extension
+	arg_3_0._extensions[arg_3_2] = var_3_0
 
-	return extension
+	return var_3_0
 end
 
-AILineOfSightSystem.on_remove_extension = function (self, unit, extension_name)
-	self._frozen_extensions[unit] = nil
+function AILineOfSightSystem.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
+	arg_4_0._frozen_extensions[arg_4_1] = nil
 
-	self:_cleanup_extension(unit, extension_name)
-	ScriptUnit.remove_extension(unit, self.NAME)
+	arg_4_0:_cleanup_extension(arg_4_1, arg_4_2)
+	ScriptUnit.remove_extension(arg_4_1, arg_4_0.NAME)
 end
 
-AILineOfSightSystem.on_freeze_extension = function (self, unit, extension_name)
-	local extension = self._extensions[unit]
+function AILineOfSightSystem.on_freeze_extension(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = arg_5_0._extensions[arg_5_1]
 
-	fassert(extension, "Unit was already frozen.")
+	fassert(var_5_0, "Unit was already frozen.")
 
-	if extension == nil then
+	if var_5_0 == nil then
 		return
 	end
 
-	self._frozen_extensions[unit] = extension
+	arg_5_0._frozen_extensions[arg_5_1] = var_5_0
 
-	self:_cleanup_extension(unit, extension_name)
+	arg_5_0:_cleanup_extension(arg_5_1, arg_5_2)
 end
 
-AILineOfSightSystem._cleanup_extension = function (self, unit, extension_name)
-	local extensions = self._extensions
+function AILineOfSightSystem._cleanup_extension(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = arg_6_0._extensions
 
-	if extensions[unit] == nil then
+	if var_6_0[arg_6_1] == nil then
 		return
 	end
 
-	extensions[unit] = nil
+	var_6_0[arg_6_1] = nil
 end
 
-AILineOfSightSystem.freeze = function (self, unit, extension_name, reason)
-	local frozen_extensions = self._frozen_extensions
+function AILineOfSightSystem.freeze(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	local var_7_0 = arg_7_0._frozen_extensions
 
-	if self._frozen_extensions[unit] then
+	if arg_7_0._frozen_extensions[arg_7_1] then
 		return
 	end
 
-	local extension = self._extensions[unit]
+	local var_7_1 = arg_7_0._extensions[arg_7_1]
 
-	fassert(extension, "Unit to freeze didn't have unfrozen extension")
-	self:_cleanup_extension(unit, extension_name)
+	fassert(var_7_1, "Unit to freeze didn't have unfrozen extension")
+	arg_7_0:_cleanup_extension(arg_7_1, arg_7_2)
 
-	frozen_extensions[unit] = extension
+	var_7_0[arg_7_1] = var_7_1
 end
 
-AILineOfSightSystem.unfreeze = function (self, unit)
-	local extension = self._frozen_extensions[unit]
+function AILineOfSightSystem.unfreeze(arg_8_0, arg_8_1)
+	local var_8_0 = arg_8_0._frozen_extensions[arg_8_1]
 
-	self._frozen_extensions[unit] = nil
-	self._extensions[unit] = extension
+	arg_8_0._frozen_extensions[arg_8_1] = nil
+	arg_8_0._extensions[arg_8_1] = var_8_0
 end
 
-AILineOfSightSystem.hot_join_sync = function (self, peer_id, player)
+function AILineOfSightSystem.hot_join_sync(arg_9_0, arg_9_1, arg_9_2)
 	return
 end
 
-AILineOfSightSystem.extensions_ready = function (self, world, unit, extension_name)
-	local bb = BLACKBOARDS[unit]
+function AILineOfSightSystem.extensions_ready(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	local var_10_0 = BLACKBOARDS[arg_10_2]
 
-	self._extensions[unit].blackboard = bb
+	arg_10_0._extensions[arg_10_2].blackboard = var_10_0
 end
 
-AILineOfSightSystem.target_changed = function (self, unit)
-	self._extensions[unit].blackboard.has_line_of_sight = true
+function AILineOfSightSystem.target_changed(arg_11_0, arg_11_1)
+	arg_11_0._extensions[arg_11_1].blackboard.has_line_of_sight = true
 end
 
-local is_win32 = PLATFORM == Application.WIN32
-local MAX_RAYCASTS = is_win32 and 10 or 2
+local var_0_1 = PLATFORM == Application.WIN32 and 10 or 2
 
-AILineOfSightSystem.update = function (self, context, t)
-	local dt = context.dt
-	local unit_extensions = self._extensions
+function AILineOfSightSystem.update(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = arg_12_1.dt
+	local var_12_1 = arg_12_0._extensions
 
-	while self._num_raycasts <= MAX_RAYCASTS do
-		local current_unit = self._current_unit
-		local unit, extension
+	while arg_12_0._num_raycasts <= var_0_1 do
+		local var_12_2 = arg_12_0._current_unit
+		local var_12_3
+		local var_12_4
 
-		if current_unit == nil or unit_extensions[current_unit] then
-			unit, extension = next(unit_extensions, current_unit)
+		if var_12_2 == nil or var_12_1[var_12_2] then
+			var_12_3, var_12_4 = next(var_12_1, var_12_2)
 		end
 
-		if extension then
-			local blackboard = extension.blackboard
-			local success, num_raycasts = extension:has_line_of_sight(unit, blackboard)
+		if var_12_4 then
+			local var_12_5 = var_12_4.blackboard
+			local var_12_6, var_12_7 = var_12_4:has_line_of_sight(var_12_3, var_12_5)
 
-			self._num_raycasts = self._num_raycasts + num_raycasts
-			self._current_unit = unit
-			blackboard.has_line_of_sight = success
+			arg_12_0._num_raycasts = arg_12_0._num_raycasts + var_12_7
+			arg_12_0._current_unit = var_12_3
+			var_12_5.has_line_of_sight = var_12_6
 		else
-			self._current_unit = nil
+			arg_12_0._current_unit = nil
 
 			break
 		end
 	end
 
-	self._num_raycasts = 0
+	arg_12_0._num_raycasts = 0
 end

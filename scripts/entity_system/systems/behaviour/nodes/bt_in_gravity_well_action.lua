@@ -1,125 +1,112 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_in_gravity_well_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_in_gravity_well_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTInGravityWellAction = class(BTInGravityWellAction, BTNode)
 
-BTInGravityWellAction.init = function (self, ...)
-	BTInGravityWellAction.super.init(self, ...)
+function BTInGravityWellAction.init(arg_1_0, ...)
+	BTInGravityWellAction.super.init(arg_1_0, ...)
 end
 
 BTInGravityWellAction.name = "BTInGravityWellAction"
 
-local DEFAULT_IN_AIR_MOVER_CHECK_RADIUS = 0.35
+local var_0_0 = 0.35
 
-BTInGravityWellAction.enter = function (self, unit, blackboard, t)
-	local locomotion_extension = blackboard.locomotion_extension
-	local navigation_extension = blackboard.navigation_extension
+function BTInGravityWellAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_2.locomotion_extension
 
-	navigation_extension:set_enabled(false)
+	arg_2_2.navigation_extension:set_enabled(false)
 
-	local breed = blackboard.breed
-	local overlap_radius = breed.stagger_in_air_mover_check_radius or DEFAULT_IN_AIR_MOVER_CHECK_RADIUS
-	local overlap_pos = POSITION_LOOKUP[unit]
-	local overlap_half_height = 1
-	local overlap_size = Vector3(overlap_radius, overlap_half_height, overlap_radius)
-	local overlap_rotation = Quaternion.look(Vector3.down(), Vector3.forward())
-	local world = blackboard.world
-	local physics_world = World.get_data(world, "physics_world")
-	local shape = overlap_half_height - overlap_radius > 0 and "capsule" or "sphere"
-	local _, actor_count = PhysicsWorld.immediate_overlap(physics_world, "position", overlap_pos, "rotation", overlap_rotation, "size", overlap_size, "shape", shape, "types", "both", "collision_filter", "filter_environment_overlap")
+	local var_2_1 = arg_2_2.breed
+	local var_2_2 = var_2_1.stagger_in_air_mover_check_radius or var_0_0
+	local var_2_3 = POSITION_LOOKUP[arg_2_1]
+	local var_2_4 = 1
+	local var_2_5 = Vector3(var_2_2, var_2_4, var_2_2)
+	local var_2_6 = Quaternion.look(Vector3.down(), Vector3.forward())
+	local var_2_7 = arg_2_2.world
+	local var_2_8 = World.get_data(var_2_7, "physics_world")
+	local var_2_9 = var_2_4 - var_2_2 > 0 and "capsule" or "sphere"
+	local var_2_10, var_2_11 = PhysicsWorld.immediate_overlap(var_2_8, "position", var_2_3, "rotation", var_2_6, "size", var_2_5, "shape", var_2_9, "types", "both", "collision_filter", "filter_environment_overlap")
 
-	if actor_count == 0 then
-		local override_mover_move_distance = breed.override_mover_move_distance
+	if var_2_11 == 0 then
+		local var_2_12 = var_2_1.override_mover_move_distance
 
-		locomotion_extension:set_movement_type("constrained_by_mover", override_mover_move_distance)
+		var_2_0:set_movement_type("constrained_by_mover", var_2_12)
 	end
 
-	blackboard.attack_aborted = true
-	blackboard.move_state = "stagger"
-
-	local action_data = self._tree_node.action_data
-
-	blackboard.action = action_data
-	blackboard.spawn_to_running = nil
+	arg_2_2.attack_aborted = true
+	arg_2_2.move_state = "stagger"
+	arg_2_2.action = arg_2_0._tree_node.action_data
+	arg_2_2.spawn_to_running = nil
 end
 
-BTInGravityWellAction._set_wanted_velocity = function (self, dt, blackboard, self_pos)
-	local locomotion_extension = blackboard.locomotion_extension
-	local gravity_well_pos = blackboard.gravity_well_position:unbox()
-	local gravity_well_strength = blackboard.gravity_well_strength
-	local offset = gravity_well_pos - self_pos
-	local dir = Vector3.normalize(offset)
-	local dist_sq = Vector3.length_squared(offset)
-	local old_velocity = locomotion_extension:current_velocity()
-	local broke_free = false
-	local new_velocity
+function BTInGravityWellAction._set_wanted_velocity(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	local var_3_0 = arg_3_2.locomotion_extension
+	local var_3_1 = arg_3_2.gravity_well_position:unbox()
+	local var_3_2 = arg_3_2.gravity_well_strength
+	local var_3_3 = var_3_1 - arg_3_3
+	local var_3_4 = Vector3.normalize(var_3_3)
+	local var_3_5 = Vector3.length_squared(var_3_3)
+	local var_3_6 = var_3_0:current_velocity()
+	local var_3_7 = false
+	local var_3_8
 
-	if dist_sq < 1 then
-		new_velocity = (old_velocity - dir * Vector3.dot(old_velocity, dir)) * (1 - 5 * dt)
+	if var_3_5 < 1 then
+		var_3_8 = (var_3_6 - var_3_4 * Vector3.dot(var_3_6, var_3_4)) * (1 - 5 * arg_3_1)
 	else
-		local force_magnitude = gravity_well_strength / dist_sq
+		local var_3_9 = var_3_2 / var_3_5
 
-		broke_free = force_magnitude < 0.1
-
-		local force = dir * force_magnitude
-
-		new_velocity = old_velocity + dt * force
-		new_velocity.z = math.min(new_velocity.z, 2)
+		var_3_7 = var_3_9 < 0.1
+		var_3_8 = var_3_6 + arg_3_1 * (var_3_4 * var_3_9)
+		var_3_8.z = math.min(var_3_8.z, 2)
 	end
 
-	locomotion_extension:set_wanted_velocity(new_velocity)
-	locomotion_extension:set_wanted_rotation(Quaternion.look(Vector3.flat(-dir), Vector3.up()))
+	var_3_0:set_wanted_velocity(var_3_8)
+	var_3_0:set_wanted_rotation(Quaternion.look(Vector3.flat(-var_3_4), Vector3.up()))
 
-	return new_velocity, broke_free
+	return var_3_8, var_3_7
 end
 
-BTInGravityWellAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	blackboard.action = nil
-	blackboard.stagger_hit_wall = nil
+function BTInGravityWellAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	arg_4_2.action = nil
+	arg_4_2.stagger_hit_wall = nil
 
-	local locomotion_extension = blackboard.locomotion_extension
+	local var_4_0 = arg_4_2.locomotion_extension
 
-	locomotion_extension:set_movement_type("snap_to_navmesh")
-	locomotion_extension:set_wanted_velocity(Vector3.zero())
+	var_4_0:set_movement_type("snap_to_navmesh")
+	var_4_0:set_wanted_velocity(Vector3.zero())
+	arg_4_2.navigation_extension:set_enabled(true)
 
-	local navigation_extension = blackboard.navigation_extension
-
-	navigation_extension:set_enabled(true)
-
-	blackboard.gravity_well_position = nil
-	blackboard.gravity_well_strength = nil
-	blackboard.gravity_well_time = nil
+	arg_4_2.gravity_well_position = nil
+	arg_4_2.gravity_well_strength = nil
+	arg_4_2.gravity_well_time = nil
 end
 
-BTInGravityWellAction.run = function (self, unit, blackboard, t, dt)
-	local position = POSITION_LOOKUP[unit]
-	local velocity, broke_free = self:_set_wanted_velocity(dt, blackboard, position)
-	local locomotion_extension = blackboard.locomotion_extension
+function BTInGravityWellAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	local var_5_0 = POSITION_LOOKUP[arg_5_1]
+	local var_5_1, var_5_2 = arg_5_0:_set_wanted_velocity(arg_5_4, arg_5_2, var_5_0)
+	local var_5_3 = arg_5_2.locomotion_extension
 
-	if locomotion_extension.movement_type ~= "constrained_by_mover" and not blackboard.stagger_hit_wall then
-		local nav_world = blackboard.nav_world
-		local world = blackboard.world
-		local physics_world = World.physics_world(world)
-		local navigation_extension = blackboard.navigation_extension
-		local traverse_logic = navigation_extension:traverse_logic()
-		local result = LocomotionUtils.navmesh_movement_check(position, velocity, nav_world, physics_world, traverse_logic)
+	if var_5_3.movement_type ~= "constrained_by_mover" and not arg_5_2.stagger_hit_wall then
+		local var_5_4 = arg_5_2.nav_world
+		local var_5_5 = arg_5_2.world
+		local var_5_6 = World.physics_world(var_5_5)
+		local var_5_7 = arg_5_2.navigation_extension:traverse_logic()
+		local var_5_8 = LocomotionUtils.navmesh_movement_check(var_5_0, var_5_1, var_5_4, var_5_6, var_5_7)
 
-		if result == "navmesh_hit_wall" then
-			blackboard.stagger_hit_wall = true
-		elseif result == "navmesh_use_mover" then
-			local breed = blackboard.breed
-			local override_mover_move_distance = breed.override_mover_move_distance
-			local ignore_forced_mover_kill = true
-			local successful = locomotion_extension:set_movement_type("constrained_by_mover", override_mover_move_distance, ignore_forced_mover_kill)
+		if var_5_8 == "navmesh_hit_wall" then
+			arg_5_2.stagger_hit_wall = true
+		elseif var_5_8 == "navmesh_use_mover" then
+			local var_5_9 = arg_5_2.breed.override_mover_move_distance
+			local var_5_10 = true
 
-			if not successful then
-				locomotion_extension:set_movement_type("snap_to_navmesh")
+			if not var_5_3:set_movement_type("constrained_by_mover", var_5_9, var_5_10) then
+				var_5_3:set_movement_type("snap_to_navmesh")
 
-				blackboard.stagger_hit_wall = true
+				arg_5_2.stagger_hit_wall = true
 			end
 		end
 	end
 
-	return (broke_free or t > blackboard.gravity_well_time) and "done" or "running"
+	return (var_5_2 or arg_5_3 > arg_5_2.gravity_well_time) and "done" or "running"
 end

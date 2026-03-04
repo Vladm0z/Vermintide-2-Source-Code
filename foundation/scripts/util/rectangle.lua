@@ -1,26 +1,26 @@
-﻿-- chunkname: @foundation/scripts/util/rectangle.lua
+-- chunkname: @foundation/scripts/util/rectangle.lua
 
 Rectangle = class(Rectangle)
 
-Rectangle.init = function (self, x, y, width, height)
-	self.x = x
-	self.y = y
-	self.width = width
-	self.height = height
+function Rectangle.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	arg_1_0.x = arg_1_1
+	arg_1_0.y = arg_1_2
+	arg_1_0.width = arg_1_3
+	arg_1_0.height = arg_1_4
 end
 
-Rectangle.split_horizontal = function (self)
-	local half_height = self.height * 0.5
-	local upper_rect = Rectangle:new(self.x, self.y, self.width, half_height)
-	local lower_rect = Rectangle:new(self.x, self.y + half_height, self.width, half_height)
+function Rectangle.split_horizontal(arg_2_0)
+	local var_2_0 = arg_2_0.height * 0.5
+	local var_2_1 = Rectangle:new(arg_2_0.x, arg_2_0.y, arg_2_0.width, var_2_0)
+	local var_2_2 = Rectangle:new(arg_2_0.x, arg_2_0.y + var_2_0, arg_2_0.width, var_2_0)
 
-	return upper_rect, lower_rect
+	return var_2_1, var_2_2
 end
 
-Rectangle.split_vertical = function (self)
-	local half_width = self.width * 0.5
-	local left_rect = Rectangle:new(self.x, self.y, half_width, self.height)
-	local right_rect = Rectangle:new(self.x + half_width, self.y, half_width, self.height)
+function Rectangle.split_vertical(arg_3_0)
+	local var_3_0 = arg_3_0.width * 0.5
+	local var_3_1 = Rectangle:new(arg_3_0.x, arg_3_0.y, var_3_0, arg_3_0.height)
+	local var_3_2 = Rectangle:new(arg_3_0.x + var_3_0, arg_3_0.y, var_3_0, arg_3_0.height)
 
-	return left_rect, right_rect
+	return var_3_1, var_3_2
 end

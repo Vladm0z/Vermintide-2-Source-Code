@@ -1,128 +1,124 @@
-﻿-- chunkname: @scripts/managers/room/room_handler.lua
+-- chunkname: @scripts/managers/room/room_handler.lua
 
 require("scripts/settings/profiles/room_profiles")
 
 RoomHandler = class(RoomHandler)
 
-RoomHandler.init = function (self, world)
-	self._world = world
-	self._rooms = {}
-	self._level_anchor_points = {}
-	self._num_active_rooms = 0
+function RoomHandler.init(arg_1_0, arg_1_1)
+	arg_1_0._world = arg_1_1
+	arg_1_0._rooms = {}
+	arg_1_0._level_anchor_points = {}
+	arg_1_0._num_active_rooms = 0
 end
 
-RoomHandler.setup_level_anchor_points = function (self, level)
-	local units = Level.units(level)
+function RoomHandler.setup_level_anchor_points(arg_2_0, arg_2_1)
+	local var_2_0 = Level.units(arg_2_1)
 
-	for i, unit in ipairs(units) do
-		if Unit.has_data(unit, "room_id") then
-			local room_id = Unit.get_data(unit, "room_id")
+	for iter_2_0, iter_2_1 in ipairs(var_2_0) do
+		if Unit.has_data(iter_2_1, "room_id") then
+			local var_2_1 = Unit.get_data(iter_2_1, "room_id")
 
-			fassert(room_id ~= -1, "There exist a room_anchor_point without a room_id set in this level")
-			fassert(self._rooms[room_id] == nil, "There are two room_anchor_points with the same room_id (room_id: %s)", tostring(room_id))
+			fassert(var_2_1 ~= -1, "There exist a room_anchor_point without a room_id set in this level")
+			fassert(arg_2_0._rooms[var_2_1] == nil, "There are two room_anchor_points with the same room_id (room_id: %s)", tostring(var_2_1))
 
-			local position = Unit.world_position(unit, 0)
-			local rotation = Unit.world_rotation(unit, 0)
-			local forward = Quaternion.forward(rotation)
+			local var_2_2 = Unit.world_position(iter_2_1, 0)
+			local var_2_3 = Unit.world_rotation(iter_2_1, 0)
+			local var_2_4 = Quaternion.forward(var_2_3)
 
-			self._level_anchor_points[room_id] = {
-				position = Vector3Box(position),
-				normal = Vector3Box(forward),
+			arg_2_0._level_anchor_points[var_2_1] = {
+				position = Vector3Box(var_2_2),
+				normal = Vector3Box(var_2_4)
 			}
-			self._rooms[room_id] = {
-				available = true,
+			arg_2_0._rooms[var_2_1] = {
+				available = true
 			}
 		end
 	end
 end
 
-RoomHandler.create_room = function (self, room_info, room_id)
-	room_id = room_id or self:_available_room_id()
+function RoomHandler.create_room(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_2 = arg_3_2 or arg_3_0:_available_room_id()
 
-	fassert(self._rooms[room_id].available, "[RoomHandler]: room_id %q is not available", room_id)
+	fassert(arg_3_0._rooms[arg_3_2].available, "[RoomHandler]: room_id %q is not available", arg_3_2)
 
-	local room_anchor_point_info = self._level_anchor_points[room_id]
-	local position = room_anchor_point_info.position:unbox()
-	local normal = room_anchor_point_info.normal:unbox()
-	local rotation = Quaternion.look(-normal)
-	local world = self._world
-	local level_name = room_info.level_name
-	local level = World.spawn_level(world, level_name, position, rotation)
-	local flow_event_name = "room_" .. tostring(room_id) .. "_spawned"
+	local var_3_0 = arg_3_0._level_anchor_points[arg_3_2]
+	local var_3_1 = var_3_0.position:unbox()
+	local var_3_2 = var_3_0.normal:unbox()
+	local var_3_3 = Quaternion.look(-var_3_2)
+	local var_3_4 = arg_3_0._world
+	local var_3_5 = arg_3_1.level_name
+	local var_3_6 = World.spawn_level(var_3_4, var_3_5, var_3_1, var_3_3)
+	local var_3_7 = "room_" .. tostring(arg_3_2) .. "_spawned"
 
-	LevelHelper:flow_event(world, flow_event_name)
+	LevelHelper:flow_event(var_3_4, var_3_7)
 
-	local room = {
+	local var_3_8 = {
 		available = false,
-		level = level,
+		level = var_3_6
 	}
 
-	self._rooms[room_id] = room
+	arg_3_0._rooms[arg_3_2] = var_3_8
 
-	printf("[RoomHandler]: Created room with room_id: %s at position: %s, %s, %s", tostring(room_id), tostring(position.x), tostring(position.y), tostring(position.z))
+	printf("[RoomHandler]: Created room with room_id: %s at position: %s, %s, %s", tostring(arg_3_2), tostring(var_3_1.x), tostring(var_3_1.y), tostring(var_3_1.z))
 
-	return room_id
+	return arg_3_2
 end
 
-RoomHandler.destroy_room = function (self, room_id)
-	printf("[RoomHandler]: Destroying room with room_id: %s", tostring(room_id))
+function RoomHandler.destroy_room(arg_4_0, arg_4_1)
+	printf("[RoomHandler]: Destroying room with room_id: %s", tostring(arg_4_1))
 
-	local world = self._world
-	local flow_event_name = "room_" .. tostring(room_id) .. "_destroyed"
+	local var_4_0 = arg_4_0._world
+	local var_4_1 = "room_" .. tostring(arg_4_1) .. "_destroyed"
 
-	LevelHelper:flow_event(world, flow_event_name)
+	LevelHelper:flow_event(var_4_0, var_4_1)
 
-	local room = self._rooms[room_id]
+	local var_4_2 = arg_4_0._rooms[arg_4_1]
 
-	ScriptWorld.destroy_level_from_reference(world, room.level)
+	ScriptWorld.destroy_level_from_reference(var_4_0, var_4_2.level)
 
-	self._rooms[room_id] = {
-		available = true,
+	arg_4_0._rooms[arg_4_1] = {
+		available = true
 	}
 end
 
-RoomHandler._available_room_id = function (self)
-	local num_rooms = #self._rooms
+function RoomHandler._available_room_id(arg_5_0)
+	local var_5_0 = #arg_5_0._rooms
 
-	for i = 1, num_rooms do
-		local room = self._rooms[i]
-
-		if room.available then
-			return i
+	for iter_5_0 = 1, var_5_0 do
+		if arg_5_0._rooms[iter_5_0].available then
+			return iter_5_0
 		end
 	end
 
 	error("[RoomHandler]: There's no rooms available. Lobby size to big? Not enough anchor points?")
 end
 
-RoomHandler._debug_print = function (self)
-	local occupied = ""
-	local available = ""
-	local num_rooms = #self._rooms
+function RoomHandler._debug_print(arg_6_0)
+	local var_6_0 = ""
+	local var_6_1 = ""
+	local var_6_2 = #arg_6_0._rooms
 
-	for i = 1, num_rooms do
-		local room = self._rooms[i]
-
-		if not room.available then
-			occupied = occupied .. i .. ", "
+	for iter_6_0 = 1, var_6_2 do
+		if not arg_6_0._rooms[iter_6_0].available then
+			var_6_0 = var_6_0 .. iter_6_0 .. ", "
 		else
-			available = available .. i .. ", "
+			var_6_1 = var_6_1 .. iter_6_0 .. ", "
 		end
 	end
 
-	Managers.state.debug_text:output_screen_text("Occupied: " .. occupied .. "\n" .. "Available: " .. available, 22, 5)
+	Managers.state.debug_text:output_screen_text("Occupied: " .. var_6_0 .. "\n" .. "Available: " .. var_6_1, 22, 5)
 end
 
-RoomHandler.room_from_id = function (self, room_id)
-	return self._rooms[room_id]
+function RoomHandler.room_from_id(arg_7_0, arg_7_1)
+	return arg_7_0._rooms[arg_7_1]
 end
 
-RoomHandler.destroy = function (self)
-	local num_rooms = self._num_active_rooms
+function RoomHandler.destroy(arg_8_0)
+	local var_8_0 = arg_8_0._num_active_rooms
 
-	for i = 1, num_rooms do
-		local room = self._rooms[i]
+	for iter_8_0 = 1, var_8_0 do
+		local var_8_1 = arg_8_0._rooms[iter_8_0]
 
-		ScriptWorld.destroy_level_from_reference(self._world, room.level)
+		ScriptWorld.destroy_level_from_reference(arg_8_0._world, var_8_1.level)
 	end
 end

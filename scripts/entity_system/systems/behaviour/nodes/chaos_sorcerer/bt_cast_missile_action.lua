@@ -1,267 +1,262 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/chaos_sorcerer/bt_cast_missile_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/chaos_sorcerer/bt_cast_missile_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTCastMissileAction = class(BTCastMissileAction, BTNode)
 BTCastMissileAction.name = "BTCastMissileAction"
 
-BTCastMissileAction.init = function (self, ...)
-	BTCastMissileAction.super.init(self, ...)
+function BTCastMissileAction.init(arg_1_0, ...)
+	BTCastMissileAction.super.init(arg_1_0, ...)
 end
 
-BTCastMissileAction.enter = function (self, unit, blackboard, t)
-	local action = self._tree_node.action_data
+function BTCastMissileAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_0._tree_node.action_data
 
-	blackboard.action = action
-	blackboard.active_node = BTCastMissileAction
-	blackboard.spell_count = blackboard.spell_count or 0
-	blackboard.cast_time_done = t + (action.cast_time or 1)
-	blackboard.summoning = true
-	blackboard.volleys = 0
+	arg_2_2.action = var_2_0
+	arg_2_2.active_node = BTCastMissileAction
+	arg_2_2.spell_count = arg_2_2.spell_count or 0
+	arg_2_2.cast_time_done = arg_2_3 + (var_2_0.cast_time or 1)
+	arg_2_2.summoning = true
+	arg_2_2.volleys = 0
 
-	local target_unit = blackboard.target_unit
-	local distance_to_target
+	local var_2_1 = arg_2_2.target_unit
+	local var_2_2
 
-	blackboard.cast_target_unit = target_unit
+	arg_2_2.cast_target_unit = var_2_1
 
-	if Unit.alive(target_unit) then
-		distance_to_target = Vector3.distance_squared(POSITION_LOOKUP[target_unit], POSITION_LOOKUP[unit])
-		blackboard.target_position = Vector3Box(POSITION_LOOKUP[target_unit])
+	if Unit.alive(var_2_1) then
+		var_2_2 = Vector3.distance_squared(POSITION_LOOKUP[var_2_1], POSITION_LOOKUP[arg_2_1])
+		arg_2_2.target_position = Vector3Box(POSITION_LOOKUP[var_2_1])
 	end
 
-	if action.target_close_anim and distance_to_target and distance_to_target < action.target_close_distance then
-		Managers.state.network:anim_event(unit, action.target_close_anim)
-	elseif action.cast_anim then
-		Managers.state.network:anim_event(unit, action.cast_anim)
+	if var_2_0.target_close_anim and var_2_2 and var_2_2 < var_2_0.target_close_distance then
+		Managers.state.network:anim_event(arg_2_1, var_2_0.target_close_anim)
+	elseif var_2_0.cast_anim then
+		Managers.state.network:anim_event(arg_2_1, var_2_0.cast_anim)
 	end
 
-	if blackboard.navigation_extension then
-		blackboard.navigation_extension:stop()
+	if arg_2_2.navigation_extension then
+		arg_2_2.navigation_extension:stop()
 	end
 
-	if action.init_spell_func then
-		action.init_spell_func(blackboard)
+	if var_2_0.init_spell_func then
+		var_2_0.init_spell_func(arg_2_2)
 	end
 end
 
-BTCastMissileAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	blackboard.active_node = nil
-	blackboard.cast_time_done = nil
-	blackboard.summoning = nil
-	blackboard.ready_to_summon = false
+function BTCastMissileAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	arg_3_2.active_node = nil
+	arg_3_2.cast_time_done = nil
+	arg_3_2.summoning = nil
+	arg_3_2.ready_to_summon = false
 end
 
-BTCastMissileAction.run = function (self, unit, blackboard, t, dt)
-	local cast_target_unit = blackboard.cast_target_unit
+function BTCastMissileAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = arg_4_2.cast_target_unit
 
-	if Unit.alive(cast_target_unit) then
-		local status_ext = ScriptUnit.has_extension(cast_target_unit, "status_system")
+	if Unit.alive(var_4_0) then
+		local var_4_1 = ScriptUnit.has_extension(var_4_0, "status_system")
 
-		if not status_ext or not status_ext:is_invisible() and not status_ext:get_is_dodging() then
-			blackboard.target_position:store(POSITION_LOOKUP[cast_target_unit])
+		if not var_4_1 or not var_4_1:is_invisible() and not var_4_1:get_is_dodging() then
+			arg_4_2.target_position:store(POSITION_LOOKUP[var_4_0])
 		end
 	else
 		return "done"
 	end
 
-	local target_position = blackboard.target_position:unbox()
-	local action = blackboard.action
+	local var_4_2 = arg_4_2.target_position:unbox()
+	local var_4_3 = arg_4_2.action
 
-	if not action.only_cb and t > blackboard.cast_time_done or blackboard.anim_cb_throw then
-		blackboard.anim_cb_throw = false
+	if not var_4_3.only_cb and arg_4_3 > arg_4_2.cast_time_done or arg_4_2.anim_cb_throw then
+		arg_4_2.anim_cb_throw = false
 
-		local missile_data = blackboard.current_spell or action.spell_data
-		local throw_pos, target_dir
+		local var_4_4 = arg_4_2.current_spell or var_4_3.spell_data
+		local var_4_5
+		local var_4_6
 
-		if action.get_throw_position_func then
-			throw_pos, target_dir = action.get_throw_position_func(unit, blackboard, target_position)
+		if var_4_3.get_throw_position_func then
+			var_4_5, var_4_6 = var_4_3.get_throw_position_func(arg_4_1, arg_4_2, var_4_2)
+		elseif var_4_4.read_from_missile_data then
+			var_4_5 = var_4_4.throw_pos:unbox()
+			var_4_6 = var_4_4.target_direction:unbox()
 		else
-			local stored = missile_data.read_from_missile_data
+			local var_4_7 = Vector3.copy(POSITION_LOOKUP[arg_4_1])
+			local var_4_8 = LocomotionUtils.rotation_towards_unit_flat(arg_4_1, var_4_0)
+			local var_4_9, var_4_10, var_4_11 = unpack(arg_4_2.action.missile_spawn_offset)
+			local var_4_12 = Vector3(var_4_9, var_4_10, var_4_11)
 
-			if stored then
-				throw_pos = missile_data.throw_pos:unbox()
-				target_dir = missile_data.target_direction:unbox()
-			else
-				local curr_pos = Vector3.copy(POSITION_LOOKUP[unit])
-				local rot = LocomotionUtils.rotation_towards_unit_flat(unit, cast_target_unit)
-				local x, y, z = unpack(blackboard.action.missile_spawn_offset)
-				local pos = Vector3(x, y, z)
-				local throw_offset = Quaternion.rotate(rot, pos)
-
-				throw_pos = curr_pos + throw_offset
-				target_dir = Vector3.normalize(target_position - throw_pos)
-			end
+			var_4_5 = var_4_7 + Quaternion.rotate(var_4_8, var_4_12)
+			var_4_6 = Vector3.normalize(var_4_2 - var_4_5)
 		end
 
-		if missile_data.magic_missile then
-			local angle = action.launch_angle or 0.7
-			local speed = missile_data.magic_missile_speed
+		if var_4_4.magic_missile then
+			local var_4_13 = var_4_3.launch_angle or 0.7
+			local var_4_14 = var_4_4.magic_missile_speed
 
-			target_dir = Quaternion.rotate(Quaternion.axis_angle(Vector3.cross(target_dir, Vector3.up()), angle), target_dir)
+			var_4_6 = Quaternion.rotate(Quaternion.axis_angle(Vector3.cross(var_4_6, Vector3.up()), var_4_13), var_4_6)
 
-			local up = Vector3.cross(target_dir, Vector3.up()) * (1 - 2 * math.random()) * 0.25
-			local right = Vector3.cross(target_dir, Vector3.right()) * (1 - 2 * math.random()) * 0.25
+			local var_4_15 = Vector3.cross(var_4_6, Vector3.up()) * (1 - 2 * math.random()) * 0.25
+			local var_4_16 = Vector3.cross(var_4_6, Vector3.right()) * (1 - 2 * math.random()) * 0.25
 
-			target_dir = Vector3.normalize(target_dir + up + right)
+			var_4_6 = Vector3.normalize(var_4_6 + var_4_15 + var_4_16)
 
-			local position_target = missile_data.target_ground and POSITION_LOOKUP[blackboard.target_unit]
+			local var_4_17 = var_4_4.target_ground and POSITION_LOOKUP[arg_4_2.target_unit]
 
-			self:launch_magic_missile(blackboard, action, throw_pos, target_dir, angle, speed, unit, blackboard.target_unit, position_target, missile_data)
+			arg_4_0:launch_magic_missile(arg_4_2, var_4_3, var_4_5, var_4_6, var_4_13, var_4_14, arg_4_1, arg_4_2.target_unit, var_4_17, var_4_4)
 		else
-			local angle = missile_data.angle
-			local speed = missile_data.speed
+			local var_4_18 = var_4_4.angle
+			local var_4_19 = var_4_4.speed
 
-			self:launch_projectile(blackboard, action, throw_pos, target_dir, angle, speed, unit, blackboard.target_unit, missile_data)
+			arg_4_0:launch_projectile(arg_4_2, var_4_3, var_4_5, var_4_6, var_4_18, var_4_19, arg_4_1, arg_4_2.target_unit, var_4_4)
 		end
 
-		blackboard.spell_count = blackboard.spell_count + 1
-		blackboard.volleys = blackboard.volleys + 1
+		arg_4_2.spell_count = arg_4_2.spell_count + 1
+		arg_4_2.volleys = arg_4_2.volleys + 1
 
-		if not action.only_cb and blackboard.volleys >= action.volleys then
+		if not var_4_3.only_cb and arg_4_2.volleys >= var_4_3.volleys then
 			return "done"
 		else
-			blackboard.cast_time_done = t + action.volley_delay
+			arg_4_2.cast_time_done = arg_4_3 + var_4_3.volley_delay
 		end
 	end
 
-	if blackboard.attack_finished then
-		blackboard.attack_finished = false
+	if arg_4_2.attack_finished then
+		arg_4_2.attack_finished = false
 
 		return "done"
 	end
 
-	if action.face_target_while_casting and blackboard.locomotion_extension then
-		local rot = LocomotionUtils.look_at_position_flat(unit, target_position)
+	if var_4_3.face_target_while_casting and arg_4_2.locomotion_extension then
+		local var_4_20 = LocomotionUtils.look_at_position_flat(arg_4_1, var_4_2)
 
-		blackboard.locomotion_extension:set_wanted_rotation(rot)
+		arg_4_2.locomotion_extension:set_wanted_rotation(var_4_20)
 	end
 
 	return "running"
 end
 
-BTCastMissileAction.launch_projectile = function (self, blackboard, action, initial_position, target_dir, angle, speed, owner_unit, target_unit)
-	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local aoe_dot_damage_table = action.aoe_dot_damage[difficulty_rank] or action.aoe_dot_damage[2]
-	local aoe_dot_damage = DamageUtils.calculate_damage(aoe_dot_damage_table)
-	local aoe_init_damage_table = action.aoe_init_damage[difficulty_rank] or action.aoe_init_damage[2]
-	local aoe_init_damage = DamageUtils.calculate_damage(aoe_init_damage_table)
-	local aoe_dot_damage_interval = action.aoe_dot_damage_interval
-	local radius = action.radius
-	local duration = action.duration
-	local damage_source = blackboard.breed.name
-	local create_nav_tag_volume = action.create_nav_tag_volume
-	local nav_tag_volume_layer = action.nav_tag_volume_layer
-	local extension_init_data = {
+function BTCastMissileAction.launch_projectile(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8)
+	local var_5_0 = Managers.state.difficulty:get_difficulty_rank()
+	local var_5_1 = arg_5_2.aoe_dot_damage[var_5_0] or arg_5_2.aoe_dot_damage[2]
+	local var_5_2 = DamageUtils.calculate_damage(var_5_1)
+	local var_5_3 = arg_5_2.aoe_init_damage[var_5_0] or arg_5_2.aoe_init_damage[2]
+	local var_5_4 = DamageUtils.calculate_damage(var_5_3)
+	local var_5_5 = arg_5_2.aoe_dot_damage_interval
+	local var_5_6 = arg_5_2.radius
+	local var_5_7 = arg_5_2.duration
+	local var_5_8 = arg_5_1.breed.name
+	local var_5_9 = arg_5_2.create_nav_tag_volume
+	local var_5_10 = arg_5_2.nav_tag_volume_layer
+	local var_5_11 = {
 		projectile_locomotion_system = {
 			trajectory_template_name = "throw_trajectory",
-			angle = angle,
-			speed = speed,
-			target_vector = target_dir,
-			initial_position = initial_position,
+			angle = arg_5_5,
+			speed = arg_5_6,
+			target_vector = arg_5_4,
+			initial_position = arg_5_3
 		},
 		projectile_impact_system = {
-			collision_filter = "filter_enemy_ray_projectile",
 			server_side_raycast = true,
-			owner_unit = owner_unit,
+			collision_filter = "filter_enemy_ray_projectile",
+			owner_unit = arg_5_7
 		},
 		projectile_system = {
 			impact_template_name = "explosion_impact",
-			damage_source = damage_source,
-			owner_unit = owner_unit,
+			damage_source = var_5_8,
+			owner_unit = arg_5_7
 		},
 		area_damage_system = {
-			area_ai_random_death_template = "area_poison_ai_random_death",
 			area_damage_template = "sorcerer_area_dot_damage",
-			damage_players = true,
 			invisible_unit = false,
-			aoe_dot_damage = aoe_dot_damage,
-			aoe_init_damage = aoe_init_damage,
-			aoe_dot_damage_interval = aoe_dot_damage_interval,
-			radius = radius,
-			life_time = duration,
-			player_screen_effect_name = action.player_screen_effect_name,
-			dot_effect_name = action.dot_effect_name,
-			damage_source = damage_source,
-			create_nav_tag_volume = create_nav_tag_volume,
-			nav_tag_volume_layer = nav_tag_volume_layer,
-		},
+			area_ai_random_death_template = "area_poison_ai_random_death",
+			damage_players = true,
+			aoe_dot_damage = var_5_2,
+			aoe_init_damage = var_5_4,
+			aoe_dot_damage_interval = var_5_5,
+			radius = var_5_6,
+			life_time = var_5_7,
+			player_screen_effect_name = arg_5_2.player_screen_effect_name,
+			dot_effect_name = arg_5_2.dot_effect_name,
+			damage_source = var_5_8,
+			create_nav_tag_volume = var_5_9,
+			nav_tag_volume_layer = var_5_10
+		}
 	}
-	local projectile_unit_name = "units/hub_elements/empty"
-	local projectile_unit = Managers.state.unit_spawner:spawn_network_unit(projectile_unit_name, "aoe_projectile_unit", extension_init_data, initial_position)
+	local var_5_12 = "units/hub_elements/empty"
+	local var_5_13 = Managers.state.unit_spawner:spawn_network_unit(var_5_12, "aoe_projectile_unit", var_5_11, arg_5_3)
 end
 
-BTCastMissileAction.launch_magic_missile = function (self, blackboard, action, position, target_dir, angle, speed, owner_unit, target_unit, position_target, missile_data)
-	local scale = 1
-	local radius_min = 0.2
-	local radius_max = 0.5
-	local radius = 0.5 or math.lerp(radius_min, radius_max, scale)
-	local damage_source = blackboard.breed.name
-	local true_flight_template_name = missile_data.true_flight_template_name
-	local true_flight_template = TrueFlightTemplates[true_flight_template_name]
-	local unit_template_name = "ai_true_flight_projectile_unit"
-	local health_system, death_system
-	local missile_health = true_flight_template.health
+function BTCastMissileAction.launch_magic_missile(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10)
+	local var_6_0 = 1
+	local var_6_1 = 0.2
+	local var_6_2 = 0.5
+	local var_6_3 = 0.5 or math.lerp(var_6_1, var_6_2, var_6_0)
+	local var_6_4 = arg_6_1.breed.name
+	local var_6_5 = arg_6_10.true_flight_template_name
+	local var_6_6 = TrueFlightTemplates[var_6_5]
+	local var_6_7 = "ai_true_flight_projectile_unit"
+	local var_6_8
+	local var_6_9
+	local var_6_10 = var_6_6.health
 
-	if missile_health then
-		if type(missile_health) == "table" then
-			local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-
-			missile_health = missile_health[difficulty_rank] or missile_health[2]
+	if var_6_10 then
+		if type(var_6_10) == "table" then
+			var_6_10 = var_6_10[Managers.state.difficulty:get_difficulty_rank()] or var_6_10[2]
 		end
 
-		unit_template_name = "ai_true_flight_killable_projectile_unit"
-		health_system = {
-			health = missile_health,
+		var_6_7 = "ai_true_flight_killable_projectile_unit"
+		var_6_8 = {
+			health = var_6_10
 		}
-		death_system = {
+		var_6_9 = {
 			is_husk = false,
-			death_reaction_template = true_flight_template.death_reaction_template,
+			death_reaction_template = var_6_6.death_reaction_template
 		}
 	end
 
-	local extension_init_data = {
+	local var_6_11 = {
 		projectile_locomotion_system = {
-			gravity_settings = "arrows",
 			trajectory_template_name = "throw_trajectory",
-			angle = angle,
-			speed = speed,
-			initial_position = position,
-			target_vector = target_dir,
-			true_flight_template_name = true_flight_template_name,
-			target_unit = target_unit,
-			owner_unit = owner_unit,
-			position_target = position_target,
-			life_time = missile_data.life_time,
+			gravity_settings = "arrows",
+			angle = arg_6_5,
+			speed = arg_6_6,
+			initial_position = arg_6_3,
+			target_vector = arg_6_4,
+			true_flight_template_name = var_6_5,
+			target_unit = arg_6_8,
+			owner_unit = arg_6_7,
+			position_target = arg_6_9,
+			life_time = arg_6_10.life_time
 		},
 		projectile_system = {
 			impact_template_name = "direct_impact",
-			owner_unit = owner_unit,
-			damage_source = damage_source,
-			explosion_template_name = missile_data.explosion_template_name or "chaos_magic_missile",
+			owner_unit = arg_6_7,
+			damage_source = var_6_4,
+			explosion_template_name = arg_6_10.explosion_template_name or "chaos_magic_missile"
 		},
 		projectile_impact_system = {
 			collision_filter = "filter_enemy_ray_projectile",
 			server_side_raycast = true,
-			owner_unit = owner_unit,
-			radius = radius,
+			owner_unit = arg_6_7,
+			radius = var_6_3
 		},
-		health_system = health_system,
-		death_system = death_system,
+		health_system = var_6_8,
+		death_system = var_6_9
 	}
-	local rotation = Quaternion.look(target_dir)
-	local projectile_unit_name = missile_data.projectile_unit_name
-	local projectile_unit
+	local var_6_12 = Quaternion.look(arg_6_4)
+	local var_6_13 = arg_6_10.projectile_unit_name
+	local var_6_14
 
-	if missile_data.projectile_size then
-		local s = missile_data.projectile_size
-		local pose = Matrix4x4.from_quaternion_position(Quaternion.identity(), position)
+	if arg_6_10.projectile_size then
+		local var_6_15 = arg_6_10.projectile_size
+		local var_6_16 = Matrix4x4.from_quaternion_position(Quaternion.identity(), arg_6_3)
 
-		Matrix4x4.set_scale(pose, Vector3(s[1], s[2], s[3]))
+		Matrix4x4.set_scale(var_6_16, Vector3(var_6_15[1], var_6_15[2], var_6_15[3]))
 
-		projectile_unit = Managers.state.unit_spawner:spawn_network_unit(projectile_unit_name, unit_template_name, extension_init_data, pose)
+		var_6_14 = Managers.state.unit_spawner:spawn_network_unit(var_6_13, var_6_7, var_6_11, var_6_16)
 	else
-		projectile_unit = Managers.state.unit_spawner:spawn_network_unit(projectile_unit_name, unit_template_name, extension_init_data, position, rotation)
+		var_6_14 = Managers.state.unit_spawner:spawn_network_unit(var_6_13, var_6_7, var_6_11, arg_6_3, var_6_12)
 	end
 
-	Unit.set_unit_visibility(projectile_unit, true)
+	Unit.set_unit_visibility(var_6_14, true)
 end

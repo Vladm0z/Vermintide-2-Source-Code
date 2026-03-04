@@ -1,251 +1,247 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/area_damage/liquid/damage_wave_husk_extension.lua
+-- chunkname: @scripts/unit_extensions/weapons/area_damage/liquid/damage_wave_husk_extension.lua
 
 DamageWaveHuskExtension = class(DamageWaveHuskExtension)
 
-local position_lookup = POSITION_LOOKUP
+local var_0_0 = POSITION_LOOKUP
 
-DamageWaveHuskExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	local world = extension_init_context.world
-	local entity_manager = Managers.state.entity
+function DamageWaveHuskExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	local var_1_0 = arg_1_1.world
+	local var_1_1 = Managers.state.entity
 
-	self.world = world
-	self.game = Managers.state.network:game()
-	self.unit = unit
-	self.nav_world = entity_manager:system("ai_system"):nav_world()
+	arg_1_0.world = var_1_0
+	arg_1_0.game = Managers.state.network:game()
+	arg_1_0.unit = arg_1_2
+	arg_1_0.nav_world = var_1_1:system("ai_system"):nav_world()
+	arg_1_0.go_id = Managers.state.unit_storage:go_id(arg_1_2)
+	arg_1_0.fx_list = {}
+	arg_1_0.buff_system = var_1_1:system("buff_system")
+	arg_1_0.source_unit = arg_1_3.source_unit
 
-	local unit_storage = Managers.state.unit_storage
+	local var_1_2 = arg_1_3.damage_wave_template_name
+	local var_1_3 = DamageWaveTemplates.templates[var_1_2]
 
-	self.go_id = unit_storage:go_id(unit)
-	self.fx_list = {}
+	arg_1_0.template = var_1_3
+	arg_1_0.fx_name_filled = var_1_3.fx_name_filled
+	arg_1_0.fx_name_running = var_1_3.fx_name_running
+	arg_1_0.fx_name_impact = var_1_3.fx_name_impact
+	arg_1_0.fx_name_arrived = var_1_3.fx_name_arrived
 
-	local buff_system = entity_manager:system("buff_system")
-
-	self.buff_system = buff_system
-	self.source_unit = extension_init_data.source_unit
-
-	local template_name = extension_init_data.damage_wave_template_name
-	local template = DamageWaveTemplates.templates[template_name]
-
-	self.template = template
-	self.fx_name_filled = template.fx_name_filled
-	self.fx_name_running = template.fx_name_running
-	self.fx_name_impact = template.fx_name_impact
-	self.fx_name_arrived = template.fx_name_arrived
-
-	if template.running_spawn_config then
-		self._running_spawn_configs = template.running_spawn_config
-		self._local_units = {}
+	if var_1_3.running_spawn_config then
+		arg_1_0._running_spawn_configs = var_1_3.running_spawn_config
+		arg_1_0._local_units = {}
 	end
 
-	local fx_name_init = template.fx_name_init
+	local var_1_4 = var_1_3.fx_name_init
 
-	if fx_name_init then
-		local unit_rotation = Unit.local_rotation(unit, 0)
-		local init_effect_id = World.create_particles(world, fx_name_init, position_lookup[unit], unit_rotation)
+	if var_1_4 then
+		local var_1_5 = Unit.local_rotation(arg_1_2, 0)
+		local var_1_6 = World.create_particles(var_1_0, var_1_4, var_0_0[arg_1_2], var_1_5)
 
-		World.link_particles(world, init_effect_id, unit, 0, Matrix4x4.identity(), template.particle_arrived_stop_mode)
+		World.link_particles(var_1_0, var_1_6, arg_1_2, 0, Matrix4x4.identity(), var_1_3.particle_arrived_stop_mode)
 
-		self.init_effect_id = init_effect_id
+		arg_1_0.init_effect_id = var_1_6
 	end
 
-	self.particle_arrived_stop_mode = template.particle_arrived_stop_mode
-	self.launch_wave_sound = template.launch_wave_sound
-	self.impact_wave_sound = template.impact_wave_sound
-	self.running_wave_sound = template.running_wave_sound
-	self.stop_running_wave_sound = template.stop_running_wave_sound
-	self.blob_separation_dist = template.blob_separation_dist
-	self.fx_separation_dist = template.fx_separation_dist
-	self.max_height = template.max_height
-	self.overflow_dist = template.overflow_dist
-	self._init_position = Vector3Box(position_lookup[unit])
-	self._init_wave_direction = true
-	self._update_func = template.update_func
+	arg_1_0.particle_arrived_stop_mode = var_1_3.particle_arrived_stop_mode
+	arg_1_0.launch_wave_sound = var_1_3.launch_wave_sound
+	arg_1_0.impact_wave_sound = var_1_3.impact_wave_sound
+	arg_1_0.running_wave_sound = var_1_3.running_wave_sound
+	arg_1_0.stop_running_wave_sound = var_1_3.stop_running_wave_sound
+	arg_1_0.blob_separation_dist = var_1_3.blob_separation_dist
+	arg_1_0.fx_separation_dist = var_1_3.fx_separation_dist
+	arg_1_0.max_height = var_1_3.max_height
+	arg_1_0.overflow_dist = var_1_3.overflow_dist
+	arg_1_0._init_position = Vector3Box(var_0_0[arg_1_2])
+	arg_1_0._init_wave_direction = true
+	arg_1_0._update_func = var_1_3.update_func
 end
 
-DamageWaveHuskExtension.destroy = function (self)
-	local world = self.world
-	local fx_list = self.fx_list
-	local num_fx = #fx_list
+function DamageWaveHuskExtension.destroy(arg_2_0)
+	local var_2_0 = arg_2_0.world
+	local var_2_1 = arg_2_0.fx_list
+	local var_2_2 = #var_2_1
 
-	for i = 1, num_fx do
-		local fx_id = fx_list[i].id
+	for iter_2_0 = 1, var_2_2 do
+		local var_2_3 = var_2_1[iter_2_0].id
 
-		World.stop_spawning_particles(world, fx_id)
+		World.stop_spawning_particles(var_2_0, var_2_3)
 	end
 
-	local local_units = self._local_units
+	local var_2_4 = arg_2_0._local_units
 
-	if local_units then
-		for i = 1, #local_units do
-			World.destroy_unit(world, local_units[i])
+	if var_2_4 then
+		for iter_2_1 = 1, #var_2_4 do
+			World.destroy_unit(var_2_0, var_2_4[iter_2_1])
 
-			local_units[i] = nil
+			var_2_4[iter_2_1] = nil
 		end
 	end
 end
 
-DamageWaveHuskExtension.update = function (self, unit, input, dt, context, t)
-	local lerp_value = math.min(dt * 10, 1)
-	local current_pos = position_lookup[unit]
-	local wanted_pos = GameSession.game_object_field(self.game, self.go_id, "position")
-	local pos = Vector3.lerp(current_pos, wanted_pos, lerp_value)
+function DamageWaveHuskExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	local var_3_0 = math.min(arg_3_3 * 10, 1)
+	local var_3_1 = var_0_0[arg_3_1]
+	local var_3_2 = GameSession.game_object_field(arg_3_0.game, arg_3_0.go_id, "position")
+	local var_3_3 = Vector3.lerp(var_3_1, var_3_2, var_3_0)
 
-	Unit.set_local_position(unit, 0, pos)
+	Unit.set_local_position(arg_3_1, 0, var_3_3)
 
-	local rot = GameSession.game_object_field(self.game, self.go_id, "rotation")
+	local var_3_4 = GameSession.game_object_field(arg_3_0.game, arg_3_0.go_id, "rotation")
 
-	Unit.set_local_rotation(unit, 0, rot)
+	Unit.set_local_rotation(arg_3_1, 0, var_3_4)
 
-	if self.state == "running" then
-		if self._init_wave_direction and Vector3.distance_squared(wanted_pos, self._init_position:unbox()) >= 0.1 then
-			self._init_wave_direction = nil
-			self._init_position = nil
-			self.wave_direction = Vector3Box(Vector3.normalize(wanted_pos - current_pos))
+	if arg_3_0.state == "running" then
+		if arg_3_0._init_wave_direction and Vector3.distance_squared(var_3_2, arg_3_0._init_position:unbox()) >= 0.1 then
+			arg_3_0._init_wave_direction = nil
+			arg_3_0._init_position = nil
+			arg_3_0.wave_direction = Vector3Box(Vector3.normalize(var_3_2 - var_3_1))
 		end
 
-		if self._update_func then
-			self._update_func(self, unit, pos, t, dt)
+		if arg_3_0._update_func then
+			arg_3_0._update_func(arg_3_0, arg_3_1, var_3_3, arg_3_5, arg_3_3)
 		end
 	end
 end
 
-DamageWaveHuskExtension.add_damage_wave_fx = function (self, position, rotation, fx_idx, name_idx)
-	local name, config
+function DamageWaveHuskExtension.add_damage_wave_fx(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0
+	local var_4_1
 
-	if fx_idx == 0 then
-		name = self.fx_name_filled
+	if arg_4_3 == 0 then
+		var_4_0 = arg_4_0.fx_name_filled
 	else
-		config = self._running_spawn_configs[fx_idx]
-		name = config.names[name_idx]
+		var_4_1 = arg_4_0._running_spawn_configs[arg_4_3]
+		var_4_0 = var_4_1.names[arg_4_4]
 	end
 
-	local unit_or_id
+	local var_4_2
 
-	if fx_idx == 0 or config.spawn_type == "effect" then
-		unit_or_id = World.create_particles(self.world, name, position, rotation)
+	if arg_4_3 == 0 or var_4_1.spawn_type == "effect" then
+		var_4_2 = World.create_particles(arg_4_0.world, var_4_0, arg_4_1, arg_4_2)
 
-		local fx_list = self.fx_list
+		local var_4_3 = arg_4_0.fx_list
 
-		fx_list[#fx_list + 1] = {
-			id = unit_or_id,
-			position = Vector3Box(position),
-			rotation = QuaternionBox(rotation),
-			index = fx_idx,
+		var_4_3[#var_4_3 + 1] = {
+			id = var_4_2,
+			position = Vector3Box(arg_4_1),
+			rotation = QuaternionBox(arg_4_2),
+			index = arg_4_3
 		}
-	elseif config.spawn_type == "unit" then
-		unit_or_id = World.spawn_unit(self.world, name, position, rotation)
-		self._local_units[#self._local_units + 1] = unit_or_id
+	elseif var_4_1.spawn_type == "unit" then
+		var_4_2 = World.spawn_unit(arg_4_0.world, var_4_0, arg_4_1, arg_4_2)
+		arg_4_0._local_units[#arg_4_0._local_units + 1] = var_4_2
 	end
 
-	if fx_idx > 0 and config.on_spawn then
-		config.on_spawn(self, config, name, unit_or_id, self.world)
+	if arg_4_3 > 0 and var_4_1.on_spawn then
+		var_4_1.on_spawn(arg_4_0, var_4_1, var_4_0, var_4_2, arg_4_0.world)
 	end
 end
 
-DamageWaveHuskExtension.set_running_wave = function (self, unit)
-	local world = self.world
-	local position = position_lookup[unit]
-	local rotation = Unit.local_rotation(unit, 0)
-	local fx_id = World.create_particles(world, self.fx_name_running, position, rotation)
+function DamageWaveHuskExtension.set_running_wave(arg_5_0, arg_5_1)
+	local var_5_0 = arg_5_0.world
+	local var_5_1 = var_0_0[arg_5_1]
+	local var_5_2 = Unit.local_rotation(arg_5_1, 0)
+	local var_5_3 = World.create_particles(var_5_0, arg_5_0.fx_name_running, var_5_1, var_5_2)
 
-	World.link_particles(world, fx_id, unit, 0, Matrix4x4.identity(), self.particle_arrived_stop_mode)
+	World.link_particles(var_5_0, var_5_3, arg_5_1, 0, Matrix4x4.identity(), arg_5_0.particle_arrived_stop_mode)
 
-	self.running_wave_fx_id = fx_id
+	arg_5_0.running_wave_fx_id = var_5_3
 
-	local launch_wave_sound = self.launch_wave_sound
+	local var_5_4 = arg_5_0.launch_wave_sound
 
-	if launch_wave_sound then
-		WwiseUtils.trigger_position_event(world, launch_wave_sound, position)
+	if var_5_4 then
+		WwiseUtils.trigger_position_event(var_5_0, var_5_4, var_5_1)
 	end
 
-	local id, source
-	local running_wave_sound = self.running_wave_sound
+	local var_5_5
+	local var_5_6
+	local var_5_7 = arg_5_0.running_wave_sound
 
-	if running_wave_sound then
-		local id, source = WwiseUtils.trigger_unit_event(world, running_wave_sound, unit)
+	if var_5_7 then
+		local var_5_8, var_5_9 = WwiseUtils.trigger_unit_event(var_5_0, var_5_7, arg_5_1)
 
-		self.running_source_id = source
+		arg_5_0.running_source_id = var_5_9
 	end
 
-	self.state = "running"
+	arg_5_0.state = "running"
 end
 
-DamageWaveHuskExtension.hide_wave = function (self, unit)
-	local world = self.world
+function DamageWaveHuskExtension.hide_wave(arg_6_0, arg_6_1)
+	local var_6_0 = arg_6_0.world
 
-	Unit.set_unit_visibility(unit, false)
+	Unit.set_unit_visibility(arg_6_1, false)
 
-	if self.init_effect_id then
-		World.stop_spawning_particles(world, self.init_effect_id)
+	if arg_6_0.init_effect_id then
+		World.stop_spawning_particles(var_6_0, arg_6_0.init_effect_id)
 	end
 
-	self.state = "hide"
+	arg_6_0.state = "hide"
 end
 
-DamageWaveHuskExtension.set_wave_arrived = function (self, unit)
-	self:hide_wave(unit)
+function DamageWaveHuskExtension.set_wave_arrived(arg_7_0, arg_7_1)
+	arg_7_0:hide_wave(arg_7_1)
 
-	local world = self.world
-	local wwise_world = Managers.world:wwise_world(world)
-	local running_source_id = self.running_source_id
-	local stop_running_wave_sound = self.stop_running_wave_sound
+	local var_7_0 = arg_7_0.world
+	local var_7_1 = Managers.world:wwise_world(var_7_0)
+	local var_7_2 = arg_7_0.running_source_id
+	local var_7_3 = arg_7_0.stop_running_wave_sound
 
-	if WwiseWorld.has_source(wwise_world, running_source_id) and stop_running_wave_sound then
-		WwiseWorld.trigger_event(wwise_world, stop_running_wave_sound, running_source_id)
+	if WwiseWorld.has_source(var_7_1, var_7_2) and var_7_3 then
+		WwiseWorld.trigger_event(var_7_1, var_7_3, var_7_2)
 	end
 
-	self.running_source_id = nil
+	arg_7_0.running_source_id = nil
 
-	local impact_wave_sound = self.impact_wave_sound
+	local var_7_4 = arg_7_0.impact_wave_sound
 
-	if impact_wave_sound then
-		WwiseUtils.trigger_unit_event(world, impact_wave_sound, unit)
+	if var_7_4 then
+		WwiseUtils.trigger_unit_event(var_7_0, var_7_4, arg_7_1)
 	end
 
-	if self.running_wave_fx_id then
-		World.stop_spawning_particles(world, self.running_wave_fx_id)
+	if arg_7_0.running_wave_fx_id then
+		World.stop_spawning_particles(var_7_0, arg_7_0.running_wave_fx_id)
 	end
 
-	if self.fx_name_arrived then
-		local rotation = Unit.local_rotation(unit, 0)
+	if arg_7_0.fx_name_arrived then
+		local var_7_5 = Unit.local_rotation(arg_7_1, 0)
 
-		World.create_particles(world, self.fx_name_arrived, position_lookup[unit], rotation)
+		World.create_particles(var_7_0, arg_7_0.fx_name_arrived, var_0_0[arg_7_1], var_7_5)
 	end
 
-	self.state = "arrived"
+	arg_7_0.state = "arrived"
 end
 
-DamageWaveHuskExtension.on_wavefront_impact = function (self, unit)
-	local world = self.world
+function DamageWaveHuskExtension.on_wavefront_impact(arg_8_0, arg_8_1)
+	local var_8_0 = arg_8_0.world
 
-	if self.fx_name_impact then
-		local normal_rotation = Quaternion.look(Vector3.forward(), Vector3.up())
+	if arg_8_0.fx_name_impact then
+		local var_8_1 = Quaternion.look(Vector3.forward(), Vector3.up())
 
-		World.create_particles(world, self.fx_name_impact, position_lookup[unit], normal_rotation)
+		World.create_particles(var_8_0, arg_8_0.fx_name_impact, var_0_0[arg_8_1], var_8_1)
 	end
 
-	local impact_wave_sound = self.impact_wave_sound
+	local var_8_2 = arg_8_0.impact_wave_sound
 
-	if impact_wave_sound then
-		WwiseUtils.trigger_unit_event(world, impact_wave_sound, unit)
+	if var_8_2 then
+		WwiseUtils.trigger_unit_event(var_8_0, var_8_2, arg_8_1)
 	end
 
-	self.state = "impact"
+	arg_8_0.state = "impact"
 end
 
-local segments = 20
-local half_segments = segments / 2
-local wave_length = 1
+local var_0_1 = 20
+local var_0_2 = var_0_1 / 2
+local var_0_3 = 1
 
-DamageWaveHuskExtension.debug_render_wave = function (self, t, dt, pos, travel_dir, height)
-	local k = 0
+function DamageWaveHuskExtension.debug_render_wave(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+	local var_9_0 = 0
 
-	for i = -half_segments, half_segments - 1 do
-		local size = math.sin(-math.pi + k / segments * math.pi) * self.max_height
-		local p = pos + travel_dir * (i / segments) * wave_length - size * Vector3(0, 0, 1) - Vector3(0, 0, height * 2)
+	for iter_9_0 = -var_0_2, var_0_2 - 1 do
+		local var_9_1 = math.sin(-math.pi + var_9_0 / var_0_1 * math.pi) * arg_9_0.max_height
+		local var_9_2 = arg_9_3 + arg_9_4 * (iter_9_0 / var_0_1) * var_0_3 - var_9_1 * Vector3(0, 0, 1) - Vector3(0, 0, arg_9_5 * 2)
 
-		QuickDrawer:circle(p, self.max_height, travel_dir, Colors.get("lime_green"))
+		QuickDrawer:circle(var_9_2, arg_9_0.max_height, arg_9_4, Colors.get("lime_green"))
 
-		k = k + 1
+		var_9_0 = var_9_0 + 1
 	end
 end

@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/settings/ping_templates.lua
+-- chunkname: @scripts/settings/ping_templates.lua
 
 PingTypes = table.mirror_array_inplace({
 	"ACKNOWLEDGE",
@@ -24,17 +24,17 @@ PingTypes = table.mirror_array_inplace({
 	"VO_ONLY",
 	"UNIT_DOWNED",
 	"LOCAL_ONLY",
-	"ENEMY_POSITION",
+	"ENEMY_POSITION"
 })
 IgnoreFreeEvents = {
 	[PingTypes.CONTEXT] = true,
 	[PingTypes.CANCEL] = true,
 	[PingTypes.MOVEMENT_GENERIC] = true,
 	[PingTypes.ENEMY_GENERIC] = true,
-	[PingTypes.UNIT_DOWNED] = true,
+	[PingTypes.UNIT_DOWNED] = true
 }
 IgnoreFreeCombatEvents = {
-	[PingTypes.CANCEL] = true,
+	[PingTypes.CANCEL] = true
 }
 IgnoreChatPings = {
 	[PingTypes.CANCEL] = true,
@@ -46,295 +46,294 @@ IgnoreChatPings = {
 		versus = {
 			[PingTypes.ENEMY_GENERIC] = true,
 			[PingTypes.PLAYER_PICK_UP] = true,
-			[PingTypes.ACKNOWLEDGE] = true,
-		},
-	},
+			[PingTypes.ACKNOWLEDGE] = true
+		}
+	}
 }
 PingMessagesByPingType = {
 	versus = {
 		[PingTypes.PLAYER_PICK_UP] = {
-			ammo = "versus_pickup_lookup_ammo",
-			bomb = "versus_pickup_lookup_bomb",
 			default = "versus_pickup_lookup_deafult",
-			health = "versus_pickup_lookup_health",
+			ammo = "versus_pickup_lookup_ammo",
 			health_flask = "versus_pickup_lookup_health_flask",
+			health = "versus_pickup_lookup_health",
 			potion = "versus_pickup_lookup_potion",
+			bomb = "versus_pickup_lookup_bomb"
 		},
 		[PingTypes.ENEMY_GENERIC] = {
 			default = "versus_generic_enemy",
 			vs_gutter_runner = "versus_ping_skaven_gutter_runner",
-			vs_packmaster = "versus_ping_skaven_pack_master",
 			vs_poison_wind_globadier = "versus_ping_skaven_poison_wind_globadier",
-			vs_ratling_gunner = "versus_ping_skaven_ratling_gunner",
 			vs_warpfire_thrower = "versus_ping_skaven_warpfire_thrower",
-		},
-	},
+			vs_ratling_gunner = "versus_ping_skaven_ratling_gunner",
+			vs_packmaster = "versus_ping_skaven_pack_master"
+		}
+	}
 }
 PingTemplates = {
 	generic_item = {
-		check_func = function (self, pinger_unit, pinged_unit)
-			return pinged_unit and (ScriptUnit.has_extension(pinged_unit, "pickup_system") or Managers.state.network:level_object_id(pinged_unit))
+		check_func = function(arg_1_0, arg_1_1, arg_1_2)
+			return arg_1_2 and (ScriptUnit.has_extension(arg_1_2, "pickup_system") or Managers.state.network:level_object_id(arg_1_2))
 		end,
 		responses = {
 			[PingTypes.ENEMY_GENERIC] = {
 				true,
 				{
-					"ENEMY_GENERIC",
-				},
+					"ENEMY_GENERIC"
+				}
 			},
 			[PingTypes.MOVEMENT_GENERIC] = {
 				true,
 				{
-					"MOVEMENT_GENERIC",
+					"MOVEMENT_GENERIC"
 				},
-				"ping_friendly",
+				"ping_friendly"
 			},
 			[PingTypes.PLAYER_PICK_UP] = {
 				true,
 				{
-					"PLAYER_PICK_UP",
-				},
+					"PLAYER_PICK_UP"
+				}
 			},
 			[PingTypes.CANCEL] = {
 				false,
 				{
-					"CANCEL",
-				},
+					"CANCEL"
+				}
 			},
 			[PingTypes.ACKNOWLEDGE] = {
 				false,
 				{
-					"ACKNOWLEDGE",
-				},
+					"ACKNOWLEDGE"
+				}
 			},
 			[PingTypes.DENY] = {
 				false,
 				{
-					"DENY",
-				},
+					"DENY"
+				}
 			},
 			mechanism_overrides = {
 				versus = {
 					[PingTypes.PLAYER_PICK_UP] = {
 						true,
 						{
-							PingMessagesByPingType.versus[PingTypes.PLAYER_PICK_UP].default,
-						},
-					},
-				},
-			},
+							PingMessagesByPingType.versus[PingTypes.PLAYER_PICK_UP].default
+						}
+					}
+				}
+			}
 		},
-		exec_func = function (self, parent, pinger_unit, pinged_unit, ping_type, social_wheel_event_id, mechanism_key)
-			local response = self.responses[ping_type]
+		exec_func = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+			local var_2_0 = arg_2_0.responses[arg_2_4]
 
-			if response then
-				local ping_messages = PingMessagesByPingType[mechanism_key]
-				local messages = ping_messages and ping_messages[ping_type]
+			if var_2_0 then
+				local var_2_1 = PingMessagesByPingType[arg_2_6]
+				local var_2_2 = var_2_1 and var_2_1[arg_2_4]
 
-				if messages then
-					local lookat_tag = pinged_unit and Unit.get_data(pinged_unit, "lookat_tag")
+				if var_2_2 then
+					local var_2_3 = arg_2_3 and Unit.get_data(arg_2_3, "lookat_tag")
 
-					if lookat_tag then
-						local do_ping, chat_messages, ping_icon = unpack(response)
+					if var_2_3 then
+						local var_2_4, var_2_5, var_2_6 = unpack(var_2_0)
 
-						chat_messages[1] = messages[lookat_tag] or messages.default
+						var_2_5[1] = var_2_2[var_2_3] or var_2_2.default
 
-						return do_ping, chat_messages, ping_icon
+						return var_2_4, var_2_5, var_2_6
 					end
 				end
 
-				return unpack(response)
+				return unpack(var_2_0)
 			end
 
 			return true, nil, nil
-		end,
+		end
 	},
 	enemy_unit = {
-		check_func = function (self, pinger_unit, pinged_unit)
-			return pinged_unit and Managers.state.side:is_enemy(pinger_unit, pinged_unit)
+		check_func = function(arg_3_0, arg_3_1, arg_3_2)
+			return arg_3_2 and Managers.state.side:is_enemy(arg_3_1, arg_3_2)
 		end,
 		responses = {
 			[PingTypes.ENEMY_GENERIC] = {
 				true,
 				{
-					"ENEMY_GENERIC",
-				},
+					"ENEMY_GENERIC"
+				}
 			},
 			[PingTypes.MOVEMENT_GENERIC] = {
 				true,
 				{
-					"MOVEMENT_GENERIC",
+					"MOVEMENT_GENERIC"
 				},
-				"ping_friendly",
+				"ping_friendly"
 			},
 			[PingTypes.PLAYER_PICK_UP] = {
 				true,
 				{
-					"PLAYER_PICK_UP",
-				},
+					"PLAYER_PICK_UP"
+				}
 			},
 			[PingTypes.CANCEL] = {
 				false,
 				{
-					"CANCEL",
-				},
+					"CANCEL"
+				}
 			},
 			[PingTypes.ACKNOWLEDGE] = {
 				false,
 				{
-					"ACKNOWLEDGE",
-				},
+					"ACKNOWLEDGE"
+				}
 			},
 			[PingTypes.DENY] = {
 				false,
 				{
-					"DENY",
-				},
-			},
+					"DENY"
+				}
+			}
 		},
-		exec_func = function (self, parent, pinger_unit, pinged_unit, ping_type, social_wheel_event_id, mechanism_key)
-			local response = self.responses[ping_type]
+		exec_func = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+			local var_4_0 = arg_4_0.responses[arg_4_4]
 
-			if response then
-				local ping_messages = PingMessagesByPingType[mechanism_key]
-				local messages = ping_messages and ping_messages[ping_type]
+			if var_4_0 then
+				local var_4_1 = PingMessagesByPingType[arg_4_6]
+				local var_4_2 = var_4_1 and var_4_1[arg_4_4]
 
-				if messages then
-					local breed = pinged_unit and Unit.get_data(pinged_unit, "breed")
+				if var_4_2 then
+					local var_4_3 = arg_4_3 and Unit.get_data(arg_4_3, "breed")
 
-					if breed then
-						local do_ping, chat_messages, ping_icon = unpack(response)
-						local breed_name = breed.name
+					if var_4_3 then
+						local var_4_4, var_4_5, var_4_6 = unpack(var_4_0)
 
-						chat_messages[1] = messages[breed_name] or messages.default
+						var_4_5[1] = var_4_2[var_4_3.name] or var_4_2.default
 
-						return do_ping, chat_messages, ping_icon
+						return var_4_4, var_4_5, var_4_6
 					end
 				end
 
-				return unpack(response)
+				return unpack(var_4_0)
 			end
 
 			return true, nil, nil
-		end,
+		end
 	},
 	friendly_unit = {
-		check_func = function (self, pinger_unit, pinged_unit)
-			return pinged_unit and not Managers.state.side:is_enemy(pinger_unit, pinged_unit)
+		check_func = function(arg_5_0, arg_5_1, arg_5_2)
+			return arg_5_2 and not Managers.state.side:is_enemy(arg_5_1, arg_5_2)
 		end,
 		responses = {
 			[PingTypes.ENEMY_GENERIC] = {
 				true,
 				{
-					"ENEMY_GENERIC",
-				},
+					"ENEMY_GENERIC"
+				}
 			},
 			[PingTypes.MOVEMENT_GENERIC] = {
 				true,
 				{
-					"MOVEMENT_GENERIC",
+					"MOVEMENT_GENERIC"
 				},
-				"ping_friendly",
+				"ping_friendly"
 			},
 			[PingTypes.PLAYER_PICK_UP] = {
 				true,
 				{
-					"PLAYER_PICK_UP",
-				},
+					"PLAYER_PICK_UP"
+				}
 			},
 			[PingTypes.CANCEL] = {
 				false,
 				{
-					"CANCEL",
-				},
+					"CANCEL"
+				}
 			},
 			[PingTypes.ACKNOWLEDGE] = {
 				false,
 				{
-					"ACKNOWLEDGE",
-				},
+					"ACKNOWLEDGE"
+				}
 			},
 			[PingTypes.DENY] = {
 				false,
 				{
-					"DENY",
-				},
+					"DENY"
+				}
 			},
 			[PingTypes.CHAT_ONLY] = {
-				true,
+				true
 			},
 			[PingTypes.UNIT_DOWNED] = {
-				true,
-			},
+				true
+			}
 		},
-		exec_func = function (self, parent, pinger_unit, pinged_unit, ping_type, social_wheel_event_id, mechanism_key)
-			local response = self.responses[ping_type]
+		exec_func = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
+			local var_6_0 = arg_6_0.responses[arg_6_4]
 
-			if response then
-				return unpack(response)
+			if var_6_0 then
+				return unpack(var_6_0)
 			end
 
 			return false, nil, nil
-		end,
+		end
 	},
 	position_only = {
-		check_func = function (self, pinger_unit, pinged_unit)
-			return not pinged_unit
+		check_func = function(arg_7_0, arg_7_1, arg_7_2)
+			return not arg_7_2
 		end,
 		responses = {
 			[PingTypes.ENEMY_GENERIC] = {
 				true,
 				{
-					"ENEMY_GENERIC",
-				},
+					"ENEMY_GENERIC"
+				}
 			},
 			[PingTypes.MOVEMENT_GENERIC] = {
 				true,
 				{
-					"MOVEMENT_GENERIC",
+					"MOVEMENT_GENERIC"
 				},
-				"ping_friendly",
+				"ping_friendly"
 			},
 			[PingTypes.PLAYER_PICK_UP] = {
 				true,
 				{
-					"PLAYER_PICK_UP",
-				},
+					"PLAYER_PICK_UP"
+				}
 			},
 			[PingTypes.CANCEL] = {
 				false,
 				{
-					"CANCEL",
-				},
+					"CANCEL"
+				}
 			},
 			[PingTypes.ACKNOWLEDGE] = {
 				false,
 				{
-					"ACKNOWLEDGE",
-				},
+					"ACKNOWLEDGE"
+				}
 			},
 			[PingTypes.DENY] = {
 				false,
 				{
-					"DENY",
-				},
+					"DENY"
+				}
 			},
 			[PingTypes.ENEMY_POSITION] = {
 				true,
 				{
-					"ENEMY_POSITION",
+					"ENEMY_POSITION"
 				},
-				"ping_hostile",
-			},
+				"ping_hostile"
+			}
 		},
-		exec_func = function (self, parent, pinger_unit, pinged_unit, ping_type, social_wheel_event_id, mechanism_key)
-			local response = self.responses[ping_type]
+		exec_func = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
+			local var_8_0 = arg_8_0.responses[arg_8_4]
 
-			if response then
-				return unpack(response)
+			if var_8_0 then
+				return unpack(var_8_0)
 			end
 
 			return true, nil, nil
-		end,
-	},
+		end
+	}
 }

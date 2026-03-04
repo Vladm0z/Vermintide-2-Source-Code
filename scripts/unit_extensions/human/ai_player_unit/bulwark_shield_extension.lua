@@ -1,59 +1,59 @@
-﻿-- chunkname: @scripts/unit_extensions/human/ai_player_unit/bulwark_shield_extension.lua
+-- chunkname: @scripts/unit_extensions/human/ai_player_unit/bulwark_shield_extension.lua
 
 require("scripts/unit_extensions/human/ai_player_unit/ai_shield_user_extension")
 
 BulwarkShieldExtension = class(BulwarkShieldExtension, AIShieldUserExtension)
 
-BulwarkShieldExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self.super.init(self, extension_init_context, unit, extension_init_data)
+function BulwarkShieldExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 end
 
-BulwarkShieldExtension.destroy = function (self)
+function BulwarkShieldExtension.destroy(arg_2_0)
 	return
 end
 
-BulwarkShieldExtension.extensions_ready = function (self, world, unit)
-	self.super.extensions_ready(self, world, unit)
+function BulwarkShieldExtension.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_0.super.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
 
-	local inventory_extension = ScriptUnit.extension(unit, "ai_inventory_system")
+	local var_3_0 = ScriptUnit.extension(arg_3_2, "ai_inventory_system")
 
-	self._wwise_world = Managers.world:wwise_world(world)
-	self._world = world
-	self._shield_unit = inventory_extension.inventory_item_shield_unit
-	self._audio_system = Managers.state.entity:system("audio_system")
-	self._unit = unit
+	arg_3_0._wwise_world = Managers.world:wwise_world(arg_3_1)
+	arg_3_0._world = arg_3_1
+	arg_3_0._shield_unit = var_3_0.inventory_item_shield_unit
+	arg_3_0._audio_system = Managers.state.entity:system("audio_system")
+	arg_3_0._unit = arg_3_2
 end
 
-BulwarkShieldExtension.set_is_blocking = function (self, is_blocking)
-	if is_blocking and self._blackboard.reset_after_stagger then
+function BulwarkShieldExtension.set_is_blocking(arg_4_0, arg_4_1)
+	if arg_4_1 and arg_4_0._blackboard.reset_after_stagger then
 		return
 	end
 
-	self.super.set_is_blocking(self, is_blocking)
+	arg_4_0.super.set_is_blocking(arg_4_0, arg_4_1)
 end
 
-BulwarkShieldExtension.set_is_dodging = function (self, is_dodging)
-	self.super.set_is_dodging(self, is_dodging)
+function BulwarkShieldExtension.set_is_dodging(arg_5_0, arg_5_1)
+	arg_5_0.super.set_is_dodging(arg_5_0, arg_5_1)
 end
 
-BulwarkShieldExtension.break_shield = function (self)
+function BulwarkShieldExtension.break_shield(arg_6_0)
 	return
 end
 
-BulwarkShieldExtension.can_block_attack = function (self, attacker_unit, trueflight_blocking, hit_direction)
-	return self.super.can_block_attack(self, attacker_unit, trueflight_blocking, hit_direction)
+function BulwarkShieldExtension.can_block_attack(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	return arg_7_0.super.can_block_attack(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 end
 
-BulwarkShieldExtension.play_shield_hit_sfx = function (self, shield_broken, stagger_amount, break_threshold)
-	if not self.is_blocking then
+function BulwarkShieldExtension.play_shield_hit_sfx(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	if not arg_8_0.is_blocking then
 		return
 	end
 
-	stagger_amount = stagger_amount == 0 and 0.1 or stagger_amount
+	arg_8_2 = arg_8_2 == 0 and 0.1 or arg_8_2
 
-	local parameter_value = math.clamp(stagger_amount / break_threshold, 0, 1)
-	local event = shield_broken and "Play_enemy_chaos_bulwark_stagger_break" or "Play_enemy_chaos_bulwark_stagger"
-	local parameter_name = "bulwark_stagger_amount"
+	local var_8_0 = math.clamp(arg_8_2 / arg_8_3, 0, 1)
+	local var_8_1 = arg_8_1 and "Play_enemy_chaos_bulwark_stagger_break" or "Play_enemy_chaos_bulwark_stagger"
+	local var_8_2 = "bulwark_stagger_amount"
 
-	self._audio_system:play_audio_unit_param_float_event(event, parameter_name, parameter_value, self._unit)
+	arg_8_0._audio_system:play_audio_unit_param_float_event(var_8_1, var_8_2, var_8_0, arg_8_0._unit)
 end

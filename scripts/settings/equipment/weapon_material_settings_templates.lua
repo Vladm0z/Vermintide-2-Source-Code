@@ -1,75 +1,75 @@
-﻿-- chunkname: @scripts/settings/equipment/weapon_material_settings_templates.lua
+-- chunkname: @scripts/settings/equipment/weapon_material_settings_templates.lua
 
-WeaponMaterialSettingsTemplates = WeaponMaterialSettingsTemplates or {}
-WeaponMaterialSettingsTemplates.purple_glow = {
+MaterialSettingsTemplates = MaterialSettingsTemplates or {}
+MaterialSettingsTemplates.purple_glow = {
 	rune_emissive_color = {
-		type = "vector3",
-		x = 3,
 		y = 1,
 		z = 9,
-	},
+		x = 3,
+		type = "vector3"
+	}
 }
-WeaponMaterialSettingsTemplates.golden_glow = {
+MaterialSettingsTemplates.golden_glow = {
 	rune_emissive_color = {
-		type = "vector3",
-		x = 8,
 		y = 5,
 		z = 1.5,
-	},
+		x = 8,
+		type = "vector3"
+	}
 }
-WeaponMaterialSettingsTemplates.deep_crimson = {
+MaterialSettingsTemplates.deep_crimson = {
 	rune_emissive_color = {
-		type = "vector3",
-		x = 7,
 		y = 0,
 		z = 0.1,
-	},
-}
-WeaponMaterialSettingsTemplates.life_green = {
-	rune_emissive_color = {
-		type = "vector3",
 		x = 7,
+		type = "vector3"
+	}
+}
+MaterialSettingsTemplates.life_green = {
+	rune_emissive_color = {
 		y = 9,
 		z = 0.1,
-	},
+		x = 7,
+		type = "vector3"
+	}
 }
-WeaponMaterialSettingsTemplates.lileath = {
+MaterialSettingsTemplates.lileath = {
 	rune_emissive_color = {
-		type = "vector3",
-		x = 5.8,
 		y = 6.3,
 		z = 9,
-	},
+		x = 5.8,
+		type = "vector3"
+	}
 }
-WeaponMaterialSettingsTemplates.versus = {
+MaterialSettingsTemplates.versus = {
 	color_glow_high = {
-		type = "vector3",
-		x = 2.5,
 		y = 2,
 		z = 4,
+		x = 2.5,
+		type = "vector3"
 	},
 	color_glow_low = {
-		type = "vector3",
-		x = 0.7,
 		y = 0.3,
 		z = 1,
+		x = 0.7,
+		type = "vector3"
 	},
 	color_smoke_high = {
-		type = "vector3",
-		x = 0.06,
 		y = 0.15,
 		z = 0.22,
+		x = 0.06,
+		type = "vector3"
 	},
 	color_smoke_low = {
-		type = "vector3",
-		x = 0.06,
 		y = 0.03,
 		z = 0.03,
+		x = 0.06,
+		type = "vector3"
 	},
 	color_dots = {
-		type = "vector3",
-		x = 8.35,
 		y = 3.5,
 		z = 7,
-	},
+		x = 8.35,
+		type = "vector3"
+	}
 }

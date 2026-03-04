@@ -1,211 +1,210 @@
-﻿-- chunkname: @scripts/ui/views/controller_settings_view.lua
+-- chunkname: @scripts/ui/views/controller_settings_view.lua
 
 ControllerSettingsView = class(ControllerSettingsView)
 
-ControllerSettingsView.init = function (self, ingame_ui_context)
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self.input_manager = ingame_ui_context.input_manager
-	self.ingame_ui = ingame_ui_context.ingame_ui
+function ControllerSettingsView.init(arg_1_0, arg_1_1)
+	arg_1_0.ui_renderer = arg_1_1.ui_renderer
+	arg_1_0.input_manager = arg_1_1.input_manager
+	arg_1_0.ingame_ui = arg_1_1.ingame_ui
 end
 
-local controller_settings_to_add = {
+local var_0_0 = {
 	{
 		"Player",
-		PlayerControllerKeymaps,
+		PlayerControllerKeymaps
 	},
 	{
 		"ingame_menu",
-		IngameMenuKeymaps,
+		IngameMenuKeymaps
 	},
 	{
 		"chat_input",
-		ChatControllerSettings,
-	},
+		ChatControllerSettings
+	}
 }
-local scenegraph_definition = {
+local var_0_1 = {
 	root = {
 		is_root = true,
 		position = {
 			0,
 			0,
-			UILayer.default,
+			UILayer.default
 		},
 		size = {
 			1920,
-			1080,
-		},
+			1080
+		}
 	},
 	widget_start = {
-		parent = "root",
 		vertical_alignment = "top",
-	},
+		parent = "root"
+	}
 }
 
 UIElements.KeyBindElement = {
 	passes = {
 		{
-			content_id = "button_hotspot",
 			pass_type = "hover",
+			content_id = "button_hotspot"
 		},
 		{
-			content_id = "button_hotspot",
 			pass_type = "click",
+			content_id = "button_hotspot"
 		},
 		{
-			pass_type = "text",
 			style_id = "text",
+			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function (content)
-				return content.button_hotspot.is_hover
-			end,
+			content_check_function = function(arg_2_0)
+				return arg_2_0.button_hotspot.is_hover
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "hover_text",
+			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function (content)
-				return content.button_hotspot.is_hover
-			end,
-		},
-	},
+			content_check_function = function(arg_3_0)
+				return arg_3_0.button_hotspot.is_hover
+			end
+		}
+	}
 }
 
-local widget_definition = {
+local var_0_2 = {
 	scenegraph_id = "",
 	element = UIElements.KeyBindElement,
 	content = {
 		text_field = "TEST",
-		button_hotspot = {},
+		button_hotspot = {}
 	},
 	style = {
 		text = {
 			font_size = 14,
 			font_type = "hell_shark",
 			horizontal_alignment = "center",
-			text_color = Colors.color_definitions.white,
+			text_color = Colors.color_definitions.white
 		},
 		hover_text = {
 			font_size = 14,
 			font_type = "hell_shark",
 			horizontal_alignment = "center",
-			text_color = Colors.color_definitions.green,
-		},
-	},
+			text_color = Colors.color_definitions.green
+		}
+	}
 }
 
-local function get_button_name(input_service, keymap)
-	local device_type = keymap[1]
-	local device_list = input_service.mapped_devices[device_type]
-	local input_device = device_list[1]
-	local button_type = keymap[3]
-	local button_index = keymap[2]
-	local text
+local function var_0_3(arg_4_0, arg_4_1)
+	local var_4_0 = arg_4_1[1]
+	local var_4_1 = arg_4_0.mapped_devices[var_4_0][1]
+	local var_4_2 = arg_4_1[3]
+	local var_4_3 = arg_4_1[2]
+	local var_4_4
 
-	if button_type == "axis" then
-		text = input_device.axis_name(button_index)
+	if var_4_2 == "axis" then
+		var_4_4 = var_4_1.axis_name(var_4_3)
 	else
-		text = input_device.button_name(button_index)
+		var_4_4 = var_4_1.button_name(var_4_3)
 	end
 
-	return text
+	return var_4_4
 end
 
-ControllerSettingsView.create_ui_elements = function (self)
-	local ui_widgets = {}
-	local n_widgets = 0
-	local scenegraph_definition = scenegraph_definition
-	local widget_definition = widget_definition
-	local input_manager = self.input_manager
+function ControllerSettingsView.create_ui_elements(arg_5_0)
+	local var_5_0 = {}
+	local var_5_1 = 0
+	local var_5_2 = var_0_1
+	local var_5_3 = var_0_2
+	local var_5_4 = arg_5_0.input_manager
 
-	for _, settings_data in ipairs(controller_settings_to_add) do
-		local service_name = settings_data[1]
+	for iter_5_0, iter_5_1 in ipairs(var_0_0) do
+		local var_5_5 = iter_5_1[1]
 
-		n_widgets = n_widgets + 1
-		widget_definition.content[service_name] = service_name
-		UIElements.KeyBindElement.passes[3].text_id = service_name
-		UIElements.KeyBindElement.passes[4].text_id = service_name
-		widget_definition.scenegraph_id = service_name
-		scenegraph_definition[service_name] = {
+		var_5_1 = var_5_1 + 1
+		var_5_3.content[var_5_5] = var_5_5
+		UIElements.KeyBindElement.passes[3].text_id = var_5_5
+		UIElements.KeyBindElement.passes[4].text_id = var_5_5
+		var_5_3.scenegraph_id = var_5_5
+		var_5_2[var_5_5] = {
 			parent = "widget_start",
 			offset = {
 				0,
-				-n_widgets * 16,
-				1,
+				-var_5_1 * 16,
+				1
 			},
 			size = {
 				1920,
-				16,
-			},
+				16
+			}
 		}
-		ui_widgets[n_widgets] = UIWidget.init(widget_definition)
+		var_5_0[var_5_1] = UIWidget.init(var_5_3)
 
-		local input_service = input_manager:get_service(service_name)
+		local var_5_6 = var_5_4:get_service(var_5_5)
 
-		for map_name, _ in pairs(settings_data[2]) do
-			n_widgets = n_widgets + 1
+		for iter_5_2, iter_5_3 in pairs(iter_5_1[2]) do
+			var_5_1 = var_5_1 + 1
 
-			local keymapping = input_service:get_keymapping(map_name)
-			local keymap_1 = keymapping.input_mappings[1]
-			local keymap_2 = keymapping.input_mappings[2]
-			local keymap_1_text = "-"
-			local keymap_2_text = "-"
+			local var_5_7 = var_5_6:get_keymapping(iter_5_2)
+			local var_5_8 = var_5_7.input_mappings[1]
+			local var_5_9 = var_5_7.input_mappings[2]
+			local var_5_10 = "-"
+			local var_5_11 = "-"
 
-			if keymap_1 then
-				keymap_1_text = get_button_name(input_service, keymap_1)
+			if var_5_8 then
+				var_5_10 = var_0_3(var_5_6, var_5_8)
 			end
 
-			if keymap_2 then
-				keymap_2_text = get_button_name(input_service, keymap_2)
+			if var_5_9 then
+				var_5_11 = var_0_3(var_5_6, var_5_9)
 			end
 
-			local index_name = "index_" .. tostring(n_widgets)
-			local total_text = string.format("%s: %20s | %-20s", map_name, keymap_1_text, keymap_2_text)
+			local var_5_12 = "index_" .. tostring(var_5_1)
+			local var_5_13 = string.format("%s: %20s | %-20s", iter_5_2, var_5_10, var_5_11)
 
-			widget_definition.content[index_name] = total_text
-			UIElements.KeyBindElement.passes[3].text_id = index_name
-			UIElements.KeyBindElement.passes[4].text_id = index_name
-			widget_definition.scenegraph_id = index_name
-			scenegraph_definition[index_name] = {
+			var_5_3.content[var_5_12] = var_5_13
+			UIElements.KeyBindElement.passes[3].text_id = var_5_12
+			UIElements.KeyBindElement.passes[4].text_id = var_5_12
+			var_5_3.scenegraph_id = var_5_12
+			var_5_2[var_5_12] = {
 				parent = "widget_start",
 				offset = {
 					0,
-					-n_widgets * 16,
-					1,
+					-var_5_1 * 16,
+					1
 				},
 				size = {
 					1920,
-					16,
-				},
+					16
+				}
 			}
-			ui_widgets[n_widgets] = UIWidget.init(widget_definition)
+			var_5_0[var_5_1] = UIWidget.init(var_5_3)
 		end
 	end
 
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-	self.ui_widgets = ui_widgets
+	arg_5_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_5_2)
+	arg_5_0.ui_widgets = var_5_0
 end
 
-ControllerSettingsView.on_enter = function (self)
-	self:create_ui_elements()
+function ControllerSettingsView.on_enter(arg_6_0)
+	arg_6_0:create_ui_elements()
 end
 
-ControllerSettingsView.destroy = function (self)
+function ControllerSettingsView.destroy(arg_7_0)
 	return
 end
 
-ControllerSettingsView.update = function (self, dt)
-	local ui_renderer = self.ui_renderer
-	local input_service = self.input_manager:get_service("ingame_menu")
+function ControllerSettingsView.update(arg_8_0, arg_8_1)
+	local var_8_0 = arg_8_0.ui_renderer
+	local var_8_1 = arg_8_0.input_manager:get_service("ingame_menu")
 
-	UIRenderer.begin_pass(ui_renderer, self.ui_scenegraph, input_service, dt)
+	UIRenderer.begin_pass(var_8_0, arg_8_0.ui_scenegraph, var_8_1, arg_8_1)
 
-	for i, ui_widget in ipairs(self.ui_widgets) do
-		UIRenderer.draw_widget(ui_renderer, ui_widget)
+	for iter_8_0, iter_8_1 in ipairs(arg_8_0.ui_widgets) do
+		UIRenderer.draw_widget(var_8_0, iter_8_1)
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_8_0)
 
-	if input_service:get("toggle_menu") or input_service:get("back") then
-		self.ingame_ui:handle_transition("ingame_menu", "OptionsMenu")
+	if var_8_1:get("toggle_menu") or var_8_1:get("back") then
+		arg_8_0.ingame_ui:handle_transition("ingame_menu", "OptionsMenu")
 	end
 end

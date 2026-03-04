@@ -1,293 +1,290 @@
-﻿-- chunkname: @scripts/entity_system/systems/ai/ai_inventory_system.lua
+-- chunkname: @scripts/entity_system/systems/ai/ai_inventory_system.lua
 
 require("scripts/settings/ai_inventory_templates")
 require("scripts/entity_system/systems/ai/ai_inventory_extension")
 
-local RPCS = {
+local var_0_0 = {
 	"rpc_ai_inventory_wield",
 	"rpc_ai_drop_single_item",
-	"rpc_ai_show_single_item",
+	"rpc_ai_show_single_item"
 }
-local extensions = {
-	"AIInventoryExtension",
+local var_0_1 = {
+	"AIInventoryExtension"
 }
 
 AIInventorySystem = class(AIInventorySystem, ExtensionSystemBase)
 
-AIInventorySystem.init = function (self, context, system_name)
-	local entity_manager = context.entity_manager
+function AIInventorySystem.init(arg_1_0, arg_1_1, arg_1_2)
+	local var_1_0 = arg_1_1.entity_manager
 
-	entity_manager:register_system(self, system_name, extensions)
+	var_1_0:register_system(arg_1_0, arg_1_2, var_0_1)
 
-	self.entity_manager = entity_manager
-	self.is_server = context.is_server
-	self.world = context.world
-	self.unit_storage = context.unit_storage
+	arg_1_0.entity_manager = var_1_0
+	arg_1_0.is_server = arg_1_1.is_server
+	arg_1_0.world = arg_1_1.world
+	arg_1_0.unit_storage = arg_1_1.unit_storage
 
-	local network_event_delegate = context.network_event_delegate
+	local var_1_1 = arg_1_1.network_event_delegate
 
-	self.network_event_delegate = network_event_delegate
+	arg_1_0.network_event_delegate = var_1_1
 
-	network_event_delegate:register(self, unpack(RPCS))
+	var_1_1:register(arg_1_0, unpack(var_0_0))
 
-	self.unit_extension_data = {}
-	self.frozen_unit_extension_data = {}
-	self.units_to_wield = {}
-	self.units_to_wield_n = 0
-	self.units_to_drop = {}
-	self.units_to_drop_n = 0
-	self.item_set_to_wield = {}
+	arg_1_0.unit_extension_data = {}
+	arg_1_0.frozen_unit_extension_data = {}
+	arg_1_0.units_to_wield = {}
+	arg_1_0.units_to_wield_n = 0
+	arg_1_0.units_to_drop = {}
+	arg_1_0.units_to_drop_n = 0
+	arg_1_0.item_set_to_wield = {}
 end
 
-AIInventorySystem.destroy = function (self)
-	self.network_event_delegate:unregister(self)
+function AIInventorySystem.destroy(arg_2_0)
+	arg_2_0.network_event_delegate:unregister(arg_2_0)
 end
 
-AIInventorySystem.drop_item = function (self, unit)
-	self.units_to_drop_n = self.units_to_drop_n + 1
-	self.units_to_drop[self.units_to_drop_n] = unit
+function AIInventorySystem.drop_item(arg_3_0, arg_3_1)
+	arg_3_0.units_to_drop_n = arg_3_0.units_to_drop_n + 1
+	arg_3_0.units_to_drop[arg_3_0.units_to_drop_n] = arg_3_1
 end
 
-local function link_unit(attachment_node_linking, world, target, source)
-	for i, attachment_nodes in ipairs(attachment_node_linking) do
-		local source_node = attachment_nodes.source
-		local target_node = attachment_nodes.target
-		local source_node_index = type(source_node) == "string" and Unit.node(source, source_node) or source_node
-		local target_node_index = type(target_node) == "string" and Unit.node(target, target_node) or target_node
+local function var_0_2(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	for iter_4_0, iter_4_1 in ipairs(arg_4_0) do
+		local var_4_0 = iter_4_1.source
+		local var_4_1 = iter_4_1.target
+		local var_4_2 = type(var_4_0) == "string" and Unit.node(arg_4_3, var_4_0) or var_4_0
+		local var_4_3 = type(var_4_1) == "string" and Unit.node(arg_4_2, var_4_1) or var_4_1
 
-		World.link_unit(world, target, target_node_index, source, source_node_index)
+		World.link_unit(arg_4_1, arg_4_2, var_4_3, arg_4_3, var_4_2)
 	end
 end
 
-local dummy_input = {}
+local var_0_3 = {}
 
-AIInventorySystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
-	local extension
+function AIInventorySystem.on_add_extension(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	local var_5_0
 
-	fassert(next(extension_init_data) ~= nil, "AI's unit template specifies inventory extension but no init data was sent")
+	fassert(next(arg_5_4) ~= nil, "AI's unit template specifies inventory extension but no init data was sent")
 
-	extension_init_data.world = self.world
-	extension_init_data.is_server = self.is_server
-	extension = AIInventoryExtension:new(unit, extension_init_data)
+	arg_5_4.world = arg_5_0.world
+	arg_5_4.is_server = arg_5_0.is_server
 
-	ScriptUnit.set_extension(unit, "ai_inventory_system", extension, dummy_input)
+	local var_5_1 = AIInventoryExtension:new(arg_5_2, arg_5_4)
 
-	self.unit_extension_data[unit] = extension
+	ScriptUnit.set_extension(arg_5_2, "ai_inventory_system", var_5_1, var_0_3)
 
-	return extension
+	arg_5_0.unit_extension_data[arg_5_2] = var_5_1
+
+	return var_5_1
 end
 
-AIInventorySystem.on_remove_extension = function (self, unit, extension_name)
-	self:_cleanup_extension(unit, extension_name)
-	ScriptUnit.remove_extension(unit, self.NAME)
+function AIInventorySystem.on_remove_extension(arg_6_0, arg_6_1, arg_6_2)
+	arg_6_0:_cleanup_extension(arg_6_1, arg_6_2)
+	ScriptUnit.remove_extension(arg_6_1, arg_6_0.NAME)
 end
 
-AIInventorySystem.on_freeze_extension = function (self, unit, extension_name)
-	local extension = self._extensions[unit]
+function AIInventorySystem.on_freeze_extension(arg_7_0, arg_7_1, arg_7_2)
+	local var_7_0 = arg_7_0._extensions[arg_7_1]
 
-	fassert(extension, "Unit was already frozen.")
+	fassert(var_7_0, "Unit was already frozen.")
 
-	if extension == nil then
+	if var_7_0 == nil then
 		return
 	end
 
-	self.frozen_unit_extension_data[unit] = extension
+	arg_7_0.frozen_unit_extension_data[arg_7_1] = var_7_0
 
-	self:_cleanup_extension(unit, extension_name)
+	arg_7_0:_cleanup_extension(arg_7_1, arg_7_2)
 end
 
-AIInventorySystem._cleanup_extension = function (self, unit, extension_name)
-	local units_to_wield = self.units_to_wield
-	local units_to_wield_n = self.units_to_wield_n
-	local i = 1
+function AIInventorySystem._cleanup_extension(arg_8_0, arg_8_1, arg_8_2)
+	local var_8_0 = arg_8_0.units_to_wield
+	local var_8_1 = arg_8_0.units_to_wield_n
+	local var_8_2 = 1
 
-	while i <= units_to_wield_n do
-		if unit == units_to_wield[i] then
-			units_to_wield[i] = units_to_wield[units_to_wield_n]
-			units_to_wield_n = units_to_wield_n - 1
+	while var_8_2 <= var_8_1 do
+		if arg_8_1 == var_8_0[var_8_2] then
+			var_8_0[var_8_2] = var_8_0[var_8_1]
+			var_8_1 = var_8_1 - 1
 		else
-			i = i + 1
+			var_8_2 = var_8_2 + 1
 		end
 	end
 
-	self.units_to_wield_n = units_to_wield_n
+	arg_8_0.units_to_wield_n = var_8_1
 
-	local units_to_drop = self.units_to_drop
-	local units_to_drop_n = self.units_to_drop_n
+	local var_8_3 = arg_8_0.units_to_drop
+	local var_8_4 = arg_8_0.units_to_drop_n
+	local var_8_5 = 1
 
-	i = 1
-
-	while i <= units_to_drop_n do
-		if unit == units_to_drop[i] then
-			units_to_drop[i] = units_to_drop[units_to_drop_n]
-			units_to_drop_n = units_to_drop_n - 1
+	while var_8_5 <= var_8_4 do
+		if arg_8_1 == var_8_3[var_8_5] then
+			var_8_3[var_8_5] = var_8_3[var_8_4]
+			var_8_4 = var_8_4 - 1
 		else
-			i = i + 1
+			var_8_5 = var_8_5 + 1
 		end
 	end
 
-	self.units_to_drop_n = units_to_drop_n
+	arg_8_0.units_to_drop_n = var_8_4
 end
 
-AIInventorySystem.freeze = function (self, unit, extension_name, reason)
-	local frozen_extensions = self.frozen_unit_extension_data
+function AIInventorySystem.freeze(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	local var_9_0 = arg_9_0.frozen_unit_extension_data
 
-	if frozen_extensions[unit] then
+	if var_9_0[arg_9_1] then
 		return
 	end
 
-	local extension = self.unit_extension_data[unit]
+	local var_9_1 = arg_9_0.unit_extension_data[arg_9_1]
 
-	fassert(extension, "Unit to freeze didn't have unfrozen extension")
-	self:_cleanup_extension(unit, extension_name)
+	fassert(var_9_1, "Unit to freeze didn't have unfrozen extension")
+	arg_9_0:_cleanup_extension(arg_9_1, arg_9_2)
 
-	self.unit_extension_data[unit] = nil
-	frozen_extensions[unit] = extension
+	arg_9_0.unit_extension_data[arg_9_1] = nil
+	var_9_0[arg_9_1] = var_9_1
 
-	extension:freeze()
+	var_9_1:freeze()
 end
 
-AIInventorySystem.unfreeze = function (self, unit)
-	local extension = self.frozen_unit_extension_data[unit]
+function AIInventorySystem.unfreeze(arg_10_0, arg_10_1)
+	local var_10_0 = arg_10_0.frozen_unit_extension_data[arg_10_1]
 
-	fassert(extension, "Unit to unfreeze didn't have frozen extension")
+	fassert(var_10_0, "Unit to unfreeze didn't have frozen extension")
 
-	self.frozen_unit_extension_data[unit] = nil
-	self.unit_extension_data[unit] = extension
+	arg_10_0.frozen_unit_extension_data[arg_10_1] = nil
+	arg_10_0.unit_extension_data[arg_10_1] = var_10_0
 
-	extension:unfreeze()
+	var_10_0:unfreeze()
 end
 
-AIInventorySystem.update = function (self, context, t, dt)
-	local world = self.world
-	local units_to_wield = self.units_to_wield
-	local units_to_wield_n = self.units_to_wield_n
+function AIInventorySystem.update(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+	local var_11_0 = arg_11_0.world
+	local var_11_1 = arg_11_0.units_to_wield
+	local var_11_2 = arg_11_0.units_to_wield_n
 
-	for i = 1, units_to_wield_n do
-		local unit = units_to_wield[i]
-		local extension = self.unit_extension_data[unit]
-		local start_index, end_index
-		local item_sets = extension.item_sets
+	for iter_11_0 = 1, var_11_2 do
+		local var_11_3 = var_11_1[iter_11_0]
+		local var_11_4 = arg_11_0.unit_extension_data[var_11_3]
+		local var_11_5
+		local var_11_6
+		local var_11_7 = var_11_4.item_sets
 
-		if item_sets then
-			if extension.wielded then
-				extension:unwield_set(extension.current_item_set_index)
+		if var_11_7 then
+			if var_11_4.wielded then
+				var_11_4:unwield_set(var_11_4.current_item_set_index)
 			end
 
-			local set_index = self.item_set_to_wield[unit]
+			local var_11_8 = arg_11_0.item_set_to_wield[var_11_3]
 
-			extension.current_item_set_index = set_index
+			var_11_4.current_item_set_index = var_11_8
 
-			local item_set = item_sets[set_index]
+			local var_11_9 = var_11_7[var_11_8]
 
-			start_index, end_index = item_set.start_index, extension.dropped and 0 or item_set.end_index
+			var_11_5, var_11_6 = var_11_9.start_index, var_11_4.dropped and 0 or var_11_9.end_index
 		else
-			start_index, end_index = 1, extension.dropped and 0 or extension.inventory_items_n
+			var_11_5, var_11_6 = 1, var_11_4.dropped and 0 or var_11_4.inventory_items_n
 		end
 
-		extension.wielded = true
+		var_11_4.wielded = true
 
-		local inventory_item_definitions = extension.inventory_item_definitions
-		local inventory_item_units = extension.inventory_item_units
-		local inventory_items_n = extension.dropped and 0 or extension.inventory_items_n
+		local var_11_10 = var_11_4.inventory_item_definitions
+		local var_11_11 = var_11_4.inventory_item_units
+		local var_11_12
+
+		var_11_12 = var_11_4.dropped and 0 or var_11_4.inventory_items_n
 
 		if script_data.ai_debug_inventory then
-			-- Nothing
+			-- block empty
 		end
 
-		for j = start_index, end_index do
-			local item = inventory_item_definitions[j]
-			local attachment_node_linking = item.attachment_node_linking
-			local wielded = attachment_node_linking.wielded
+		for iter_11_1 = var_11_5, var_11_6 do
+			local var_11_13 = var_11_10[iter_11_1].attachment_node_linking.wielded
 
-			if wielded then
-				local item_unit = inventory_item_units[j]
+			if var_11_13 then
+				local var_11_14 = var_11_11[iter_11_1]
 
-				link_unit(wielded, world, item_unit, unit)
+				var_0_2(var_11_13, var_11_0, var_11_14, var_11_3)
 			end
 		end
 
-		local breed = Unit.get_data(unit, "breed")
+		local var_11_15 = Unit.get_data(var_11_3, "breed")
 
-		if breed and breed.on_weapon_wield then
-			breed.on_weapon_wield(unit)
+		if var_11_15 and var_11_15.on_weapon_wield then
+			var_11_15.on_weapon_wield(var_11_3)
 		end
 	end
 
-	self.units_to_wield_n = 0
+	arg_11_0.units_to_wield_n = 0
 
-	local units_to_drop = self.units_to_drop
-	local units_to_drop_n = self.units_to_drop_n
+	local var_11_16 = arg_11_0.units_to_drop
+	local var_11_17 = arg_11_0.units_to_drop_n
 
-	for i = 1, units_to_drop_n do
-		local unit = units_to_drop[i]
-		local extension = self.unit_extension_data[unit]
+	for iter_11_2 = 1, var_11_17 do
+		local var_11_18 = var_11_16[iter_11_2]
+		local var_11_19 = arg_11_0.unit_extension_data[var_11_18]
 
-		fassert(not extension.dropped, "Tried to drop weapon twice")
+		fassert(not var_11_19.dropped, "Tried to drop weapon twice")
 
-		extension.dropped = true
+		var_11_19.dropped = true
 
-		local inventory_item_definitions = extension.inventory_item_definitions
-		local inventory_items_n = extension.inventory_items_n
+		local var_11_20 = var_11_19.inventory_item_definitions
+		local var_11_21 = var_11_19.inventory_items_n
 
-		for j = 1, inventory_items_n do
-			extension:drop_single_item(j, "death")
+		for iter_11_3 = 1, var_11_21 do
+			var_11_19:drop_single_item(iter_11_3, "death")
 		end
 	end
 
-	self.units_to_drop_n = 0
+	arg_11_0.units_to_drop_n = 0
 end
 
-AIInventorySystem.rpc_ai_inventory_wield = function (self, channel_id, go_id, item_set_index)
-	local unit = self.unit_storage:unit(go_id)
+function AIInventorySystem.rpc_ai_inventory_wield(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	local var_12_0 = arg_12_0.unit_storage:unit(arg_12_2)
 
-	if unit == nil then
+	if var_12_0 == nil then
 		return
 	end
 
-	if self.frozen_unit_extension_data[unit] then
+	if arg_12_0.frozen_unit_extension_data[var_12_0] then
 		return
 	end
 
-	self.units_to_wield_n = self.units_to_wield_n + 1
-	self.units_to_wield[self.units_to_wield_n] = unit
-	self.item_set_to_wield[unit] = item_set_index
+	arg_12_0.units_to_wield_n = arg_12_0.units_to_wield_n + 1
+	arg_12_0.units_to_wield[arg_12_0.units_to_wield_n] = var_12_0
+	arg_12_0.item_set_to_wield[var_12_0] = arg_12_3
 end
 
-AIInventorySystem.rpc_ai_drop_single_item = function (self, channel_id, unit_id, item_inventory_index, item_drop_reason_id)
-	local unit = self.unit_storage:unit(unit_id)
+function AIInventorySystem.rpc_ai_drop_single_item(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+	local var_13_0 = arg_13_0.unit_storage:unit(arg_13_2)
 
-	if unit == nil then
+	if var_13_0 == nil then
 		return
 	end
 
-	if self.frozen_unit_extension_data[unit] then
+	if arg_13_0.frozen_unit_extension_data[var_13_0] then
 		return
 	end
 
-	local ai_inventory_extension = ScriptUnit.extension(unit, "ai_inventory_system")
-
-	ai_inventory_extension:drop_single_item(item_inventory_index, NetworkLookup.item_drop_reasons[item_drop_reason_id])
+	ScriptUnit.extension(var_13_0, "ai_inventory_system"):drop_single_item(arg_13_3, NetworkLookup.item_drop_reasons[arg_13_4])
 end
 
-AIInventorySystem.rpc_ai_show_single_item = function (self, channel_id, unit_id, item_inventory_index, show)
-	local unit = self.unit_storage:unit(unit_id)
+function AIInventorySystem.rpc_ai_show_single_item(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+	local var_14_0 = arg_14_0.unit_storage:unit(arg_14_2)
 
-	if unit == nil then
+	if var_14_0 == nil then
 		return
 	end
 
-	if self.frozen_unit_extension_data[unit] then
+	if arg_14_0.frozen_unit_extension_data[var_14_0] then
 		return
 	end
 
-	local ai_inventory_extension = ScriptUnit.extension(unit, "ai_inventory_system")
-
-	ai_inventory_extension:show_single_item(item_inventory_index, show)
+	ScriptUnit.extension(var_14_0, "ai_inventory_system"):show_single_item(arg_14_3, arg_14_4)
 end
 
-AIInventorySystem.hot_join_sync = function (self, peer_id)
-	for unit, extension in pairs(self.unit_extension_data) do
-		extension:hot_join_sync(peer_id)
+function AIInventorySystem.hot_join_sync(arg_15_0, arg_15_1)
+	for iter_15_0, iter_15_1 in pairs(arg_15_0.unit_extension_data) do
+		iter_15_1:hot_join_sync(arg_15_1)
 	end
 end

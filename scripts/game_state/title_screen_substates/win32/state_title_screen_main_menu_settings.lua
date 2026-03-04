@@ -1,101 +1,99 @@
-﻿-- chunkname: @scripts/game_state/title_screen_substates/win32/state_title_screen_main_menu_settings.lua
+-- chunkname: @scripts/game_state/title_screen_substates/win32/state_title_screen_main_menu_settings.lua
 
-local function create_menu_layout(self)
+local function var_0_0(arg_1_0)
 	return {
 		{
 			text = "start_game_menu_button_name",
-			callback = callback(self, "_check_prologue_status"),
+			callback = callback(arg_1_0, "_check_prologue_status"),
 			layout = {
 				{
 					description = "start_menu_adventure_description",
+					video = "adventure",
+					text = "tutorial_intro_adventure",
 					info_slate = "start_menu_recommended_tag",
 					tag = "start_menu_adventure_tag",
-					text = "tutorial_intro_adventure",
-					video = "adventure",
-					callback = function ()
+					callback = function()
 						Managers.music:trigger_event("Play_console_menu_start_game")
 
-						local hub_level = AdventureMechanism.get_starting_level()
+						local var_2_0 = AdventureMechanism.get_starting_level()
 
-						self:_start_game(hub_level)
-					end,
+						arg_1_0:_start_game(var_2_0)
+					end
 				},
 				{
 					description = "start_menu_cw_description",
-					logo_texture = "chaos_wastes_logo",
-					tag = "start_menu_cw_tag",
-					text = "area_selection_morris_name",
 					video = "chaos_wastes",
-					callback = function ()
+					tag = "start_menu_cw_tag",
+					logo_texture = "chaos_wastes_logo",
+					text = "area_selection_morris_name",
+					callback = function()
 						Managers.music:trigger_event("Play_console_menu_start_game")
 
-						local hub_level = DeusMechanism.get_starting_level()
+						local var_3_0 = DeusMechanism.get_starting_level()
 
-						self:_start_game(hub_level)
-					end,
+						arg_1_0:_start_game(var_3_0)
+					end
 				},
 				{
 					description = "start_menu_vs_description",
-					logo_texture = "versus_logo",
-					tag = "start_menu_vs_tag",
-					text = "vs_ui_versus_tag",
 					video = "versus",
-					conditional_func = function ()
+					tag = "start_menu_vs_tag",
+					logo_texture = "versus_logo",
+					text = "vs_ui_versus_tag",
+					conditional_func = function()
 						if not GameSettingsDevelopment.use_backend then
 							return true
 						end
 
-						local backend_manager = Managers.backend
-						local title_settings = backend_manager:get_title_settings()
-						local versus_settings = title_settings.versus
+						local var_4_0 = Managers.backend:get_title_settings().versus
 
-						return versus_settings and versus_settings.active
+						return var_4_0 and var_4_0.active
 					end,
-					callback = function ()
+					callback = function()
 						Managers.music:trigger_event("Play_console_menu_start_game")
 
-						local hub_level = VersusMechanism.get_starting_level()
+						local var_5_0 = VersusMechanism.get_starting_level()
 
-						self:_start_game(hub_level)
-					end,
-				},
-			},
+						arg_1_0:_start_game(var_5_0)
+					end
+				}
+			}
 		},
 		{
 			text = "start_menu_options",
-			callback = function ()
-				self:_activate_view("options_view")
-			end,
+			callback = function()
+				arg_1_0:_activate_view("options_view")
+			end
 		},
 		{
 			text = "start_menu_cinematics",
-			callback = function ()
+			callback = function()
 				Managers.music:trigger_event("Play_console_menu_select")
 				Managers.music:trigger_event("play_gui_start_menu_generic_whoosh")
-				self:_activate_view("cinematics_view")
-			end,
+				arg_1_0:_activate_view("cinematics_view")
+			end
 		},
 		{
 			text = "start_menu_tutorial",
-			callback = function ()
+			callback = function()
 				Managers.music:trigger_event("Play_console_menu_start_game")
-				self:_start_game("prologue")
-			end,
+				arg_1_0:_start_game("prologue")
+			end
 		},
 		{
 			text = "start_menu_credits",
-			callback = function ()
+			callback = function()
 				Managers.music:trigger_event("Play_console_menu_select")
-				self:_activate_view("credits_view")
-			end,
+				arg_1_0:_activate_view("credits_view")
+			end
 		},
 		{
 			text = "menu_quit",
-			callback = callback(self, "_quit_game"),
-		},
+			callback = callback(arg_1_0, "_quit_game")
+		}
 	}
 end
 
 return {
-	create_menu_layout = create_menu_layout,
+	create_menu_layout = var_0_0
 }

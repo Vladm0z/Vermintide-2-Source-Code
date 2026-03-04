@@ -1,293 +1,279 @@
-﻿-- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_mission_selection.lua
+-- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_mission_selection.lua
 
-local definitions = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_mission_selection_definitions")
-local widget_definitions = definitions.widgets
-local large_window_size = definitions.large_window_size
-local create_level_widget_definition = definitions.create_level_widget
-local scenegraph_definition = definitions.scenegraph_definition
-local animation_definitions = definitions.animation_definitions
+local var_0_0 = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_mission_selection_definitions")
+local var_0_1 = var_0_0.widgets
+local var_0_2 = var_0_0.large_window_size
+local var_0_3 = var_0_0.create_level_widget
+local var_0_4 = var_0_0.scenegraph_definition
+local var_0_5 = var_0_0.animation_definitions
 
-local function sort_levels_by_order(a, b)
-	local a_presentation_order = a.act_presentation_order
-	local b_presentation_order = b.act_presentation_order
-
-	return a_presentation_order < b_presentation_order
+local function var_0_6(arg_1_0, arg_1_1)
+	return arg_1_0.act_presentation_order < arg_1_1.act_presentation_order
 end
 
 StartGameWindowMissionSelection = class(StartGameWindowMissionSelection)
 StartGameWindowMissionSelection.NAME = "StartGameWindowMissionSelection"
 
-StartGameWindowMissionSelection.on_enter = function (self, params, offset)
+function StartGameWindowMissionSelection.on_enter(arg_2_0, arg_2_1, arg_2_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowMissionSelection")
 
-	self.parent = params.parent
+	arg_2_0.parent = arg_2_1.parent
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_2_0 = arg_2_1.ingame_ui_context
 
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self.input_manager = ingame_ui_context.input_manager
-	self.statistics_db = ingame_ui_context.statistics_db
-	self.render_settings = {
-		snap_pixel_positions = true,
+	arg_2_0.ui_renderer = var_2_0.ui_renderer
+	arg_2_0.input_manager = var_2_0.input_manager
+	arg_2_0.statistics_db = var_2_0.statistics_db
+	arg_2_0.render_settings = {
+		snap_pixel_positions = true
 	}
 
-	local player_manager = Managers.player
-	local local_player = player_manager:local_player()
+	local var_2_1 = Managers.player
 
-	self._stats_id = local_player:stats_id()
-	self.player_manager = player_manager
-	self.peer_id = ingame_ui_context.peer_id
-	self._animations = {}
+	arg_2_0._stats_id = var_2_1:local_player():stats_id()
+	arg_2_0.player_manager = var_2_1
+	arg_2_0.peer_id = var_2_0.peer_id
+	arg_2_0._animations = {}
 
-	self:create_ui_elements(params, offset)
+	arg_2_0:create_ui_elements(arg_2_1, arg_2_2)
 
-	self._widgets_by_name.select_button.content.button_hotspot.disable_button = true
+	arg_2_0._widgets_by_name.select_button.content.button_hotspot.disable_button = true
 
-	local area_name = self.parent:get_selected_area_name()
+	local var_2_2 = arg_2_0.parent:get_selected_area_name()
 
-	self:_set_presentation_info()
-	self:_setup_levels_by_area(area_name)
-	self:_update_level_option()
-	self.parent:set_input_description("select_mission")
+	arg_2_0:_set_presentation_info()
+	arg_2_0:_setup_levels_by_area(var_2_2)
+	arg_2_0:_update_level_option()
+	arg_2_0.parent:set_input_description("select_mission")
 
-	params.return_layout_name = nil
+	arg_2_1.return_layout_name = nil
 end
 
-StartGameWindowMissionSelection.create_ui_elements = function (self, params, offset)
-	local ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+function StartGameWindowMissionSelection.create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0 = UISceneGraph.init_scenegraph(var_0_4)
 
-	self.ui_scenegraph = ui_scenegraph
+	arg_3_0.ui_scenegraph = var_3_0
 
-	local widgets = {}
-	local widgets_by_name = {}
+	local var_3_1 = {}
+	local var_3_2 = {}
 
-	for name, widget_definition in pairs(widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_3_0, iter_3_1 in pairs(var_0_1) do
+		local var_3_3 = UIWidget.init(iter_3_1)
 
-		widgets[#widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_3_1[#var_3_1 + 1] = var_3_3
+		var_3_2[iter_3_0] = var_3_3
 	end
 
-	self._widgets = widgets
-	self._widgets_by_name = widgets_by_name
+	arg_3_0._widgets = var_3_1
+	arg_3_0._widgets_by_name = var_3_2
 
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_3_0.ui_renderer)
 
-	self.ui_animator = UIAnimator:new(ui_scenegraph, animation_definitions)
+	arg_3_0.ui_animator = UIAnimator:new(var_3_0, var_0_5)
 
-	if offset then
-		local window_position = ui_scenegraph.window.local_position
+	if arg_3_2 then
+		local var_3_4 = var_3_0.window.local_position
 
-		window_position[1] = window_position[1] + offset[1]
-		window_position[2] = window_position[2] + offset[2]
-		window_position[3] = window_position[3] + offset[3]
+		var_3_4[1] = var_3_4[1] + arg_3_2[1]
+		var_3_4[2] = var_3_4[2] + arg_3_2[2]
+		var_3_4[3] = var_3_4[3] + arg_3_2[3]
 	end
 end
 
-StartGameWindowMissionSelection._setup_levels_by_area = function (self, area_name)
-	local area_settings = AreaSettings[area_name]
-	local acts = area_settings.acts
-	local dlc_name = area_settings.dlc_name
+function StartGameWindowMissionSelection._setup_levels_by_area(arg_4_0, arg_4_1)
+	local var_4_0 = AreaSettings[arg_4_1]
+	local var_4_1 = var_4_0.acts
 
-	self._is_dlc = dlc_name ~= nil
+	arg_4_0._is_dlc = var_4_0.dlc_name ~= nil
 
-	self:_setup_level_acts()
-	self:_present_acts(acts)
+	arg_4_0:_setup_level_acts()
+	arg_4_0:_present_acts(var_4_1)
 
-	local create_mission_background_widget = area_settings.create_mission_background_widget
+	local var_4_2 = var_4_0.create_mission_background_widget
 
-	if create_mission_background_widget then
-		local background_widget_definition = create_mission_background_widget()
+	if var_4_2 then
+		local var_4_3 = var_4_2()
 
-		self._dlc_background_widget = UIWidget.init(background_widget_definition)
+		arg_4_0._dlc_background_widget = UIWidget.init(var_4_3)
 	else
-		self._dlc_background_widget = nil
+		arg_4_0._dlc_background_widget = nil
 	end
 end
 
-StartGameWindowMissionSelection._setup_level_acts = function (self)
-	local levels_by_act = {}
-	local num_levels_added = 0
+function StartGameWindowMissionSelection._setup_level_acts(arg_5_0)
+	local var_5_0 = {}
+	local var_5_1 = 0
 
-	for _, level_key in pairs(UnlockableLevels) do
-		if not table.find(NoneActLevels, level_key) then
-			local level_settings = LevelSettings[level_key]
-			local act = level_settings.act
+	for iter_5_0, iter_5_1 in pairs(UnlockableLevels) do
+		if not table.find(NoneActLevels, iter_5_1) then
+			local var_5_2 = LevelSettings[iter_5_1]
+			local var_5_3 = var_5_2.act
 
-			if not levels_by_act[act] then
-				levels_by_act[act] = {}
+			if not var_5_0[var_5_3] then
+				var_5_0[var_5_3] = {}
 			end
 
-			local act_levels = levels_by_act[act]
-			local index = #act_levels + 1
+			local var_5_4 = var_5_0[var_5_3]
 
-			act_levels[index] = level_settings
-			num_levels_added = num_levels_added + 1
+			var_5_4[#var_5_4 + 1] = var_5_2
+			var_5_1 = var_5_1 + 1
 		end
 	end
 
-	for _, levels in pairs(levels_by_act) do
-		table.sort(levels, sort_levels_by_order)
+	for iter_5_2, iter_5_3 in pairs(var_5_0) do
+		table.sort(iter_5_3, var_0_6)
 	end
 
-	self._levels_by_act = levels_by_act
+	arg_5_0._levels_by_act = var_5_0
 end
 
-StartGameWindowMissionSelection._present_acts = function (self, acts)
-	local is_dlc = self._is_dlc
+function StartGameWindowMissionSelection._present_acts(arg_6_0, arg_6_1)
+	local var_6_0 = arg_6_0._is_dlc
 
-	if is_dlc then
-		local ui_scenegraph = self.ui_scenegraph
-		local level_root_node = ui_scenegraph.level_root_node
-		local large_window_width = large_window_size[1]
+	if var_6_0 then
+		local var_6_1 = arg_6_0.ui_scenegraph.level_root_node
+		local var_6_2 = var_0_2[1]
 
-		level_root_node.local_position[1] = large_window_width / 2
+		var_6_1.local_position[1] = var_6_2 / 2
 	end
 
-	local statistics_db = self.statistics_db
-	local stats_id = self._stats_id
-	local assigned_widgets = {}
-	local level_width = 180
-	local level_width_spacing = is_dlc and 80 or 34
-	local level_height_spacing = 250
-	local max_act_number = 3
-	local levels_by_act = self._levels_by_act
+	local var_6_3 = arg_6_0.statistics_db
+	local var_6_4 = arg_6_0._stats_id
+	local var_6_5 = {}
+	local var_6_6 = 180
+	local var_6_7 = var_6_0 and 80 or 34
+	local var_6_8 = 250
+	local var_6_9 = 3
+	local var_6_10 = arg_6_0._levels_by_act
 
-	for act_key, levels in pairs(levels_by_act) do
-		if not acts or table.contains(acts, act_key) then
-			local act_settings = ActSettings[act_key]
-			local act_sorting = act_settings.sorting
-			local act_index = (act_sorting - 1) % max_act_number + 1
-			local num_levels_in_act = #levels
-			local level_position_x = 0
-			local level_position_y = 0
-			local act_position_y = 0
-			local is_end_act = max_act_number < act_sorting
+	for iter_6_0, iter_6_1 in pairs(var_6_10) do
+		if not arg_6_1 or table.contains(arg_6_1, iter_6_0) then
+			local var_6_11 = ActSettings[iter_6_0]
+			local var_6_12 = var_6_11.sorting
+			local var_6_13 = (var_6_12 - 1) % var_6_9 + 1
+			local var_6_14 = #iter_6_1
+			local var_6_15 = 0
+			local var_6_16 = 0
+			local var_6_17 = 0
+			local var_6_18 = var_6_9 < var_6_12
 
-			if not is_end_act then
-				if is_dlc then
-					level_position_x = -((level_width + level_width_spacing) * num_levels_in_act) / 2 + (level_width + level_width_spacing) / 2
+			if not var_6_18 then
+				if var_6_0 then
+					var_6_15 = -((var_6_6 + var_6_7) * var_6_14) / 2 + (var_6_6 + var_6_7) / 2
 				else
-					act_position_y = -level_height_spacing + (max_act_number - act_index) * level_height_spacing
+					var_6_17 = -var_6_8 + (var_6_9 - var_6_13) * var_6_8
 				end
 			end
 
-			for i = 1, #levels do
-				local level_data = levels[i]
+			for iter_6_2 = 1, #iter_6_1 do
+				local var_6_19 = iter_6_1[iter_6_2]
 
-				if not is_dlc then
-					if is_end_act then
-						level_position_x = (level_width + level_width_spacing) * 4
-					elseif act_index ~= 2 and i == 1 then
-						level_position_x = level_position_x + (level_width + level_width_spacing) / 2
+				if not var_6_0 then
+					if var_6_18 then
+						var_6_15 = (var_6_6 + var_6_7) * 4
+					elseif var_6_13 ~= 2 and iter_6_2 == 1 then
+						var_6_15 = var_6_15 + (var_6_6 + var_6_7) / 2
 					end
 				end
 
-				local index = #assigned_widgets + 1
-				local scenegraph_id = "level_root_" .. index
-				local mission_selection_offset = level_data.mission_selection_offset
-				local widget_definition = create_level_widget_definition(scenegraph_id, mission_selection_offset)
-				local widget = UIWidget.init(widget_definition)
-				local content = widget.content
-				local style = widget.style
-				local level_key = level_data.level_id
-				local level_display_name = level_data.display_name
+				local var_6_20 = #var_6_5 + 1
+				local var_6_21 = "level_root_" .. var_6_20
+				local var_6_22 = var_6_19.mission_selection_offset
+				local var_6_23 = var_0_3(var_6_21, var_6_22)
+				local var_6_24 = UIWidget.init(var_6_23)
+				local var_6_25 = var_6_24.content
+				local var_6_26 = var_6_24.style
+				local var_6_27 = var_6_19.level_id
+				local var_6_28 = var_6_19.display_name
 
-				content.text = Localize(level_display_name)
+				var_6_25.text = Localize(var_6_28)
 
-				local level_unlocked = LevelUnlockUtils.level_unlocked(statistics_db, stats_id, level_key)
-				local completed_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(statistics_db, stats_id, level_key)
-				local selection_frame_texture = UIWidgetUtils.get_level_frame_by_difficulty_index(completed_difficulty_index)
+				local var_6_29 = LevelUnlockUtils.level_unlocked(var_6_3, var_6_4, var_6_27)
+				local var_6_30 = LevelUnlockUtils.completed_level_difficulty_index(var_6_3, var_6_4, var_6_27)
 
-				content.frame = selection_frame_texture
-				content.locked = not level_unlocked
-				content.act_key = act_key
-				content.level_key = level_key
+				var_6_25.frame = UIWidgetUtils.get_level_frame_by_difficulty_index(var_6_30)
+				var_6_25.locked = not var_6_29
+				var_6_25.act_key = iter_6_0
+				var_6_25.level_key = var_6_27
 
-				local level_image = level_data.level_image
+				local var_6_31 = var_6_19.level_image
 
-				if level_image then
-					content.icon = level_image
+				if var_6_31 then
+					var_6_25.icon = var_6_31
 				else
-					content.icon = "icons_placeholder"
+					var_6_25.icon = "icons_placeholder"
 				end
 
-				local boss_level = level_data.boss_level
+				var_6_25.boss_level, var_6_25.level_data = var_6_19.boss_level, var_6_19
 
-				content.level_data = level_data
-				content.boss_level = boss_level
+				if not var_6_22 then
+					local var_6_32 = var_6_24.offset
 
-				if not mission_selection_offset then
-					local offset = widget.offset
-
-					offset[1] = level_position_x
-					offset[2] = act_position_y + level_position_y
+					var_6_32[1] = var_6_15
+					var_6_32[2] = var_6_17 + var_6_16
 				end
 
-				if i < num_levels_in_act then
-					local next_level_key = levels[i + 1].level_id
-					local next_level_unlocked = LevelUnlockUtils.level_unlocked(statistics_db, stats_id, next_level_key)
+				if iter_6_2 < var_6_14 then
+					local var_6_33 = iter_6_1[iter_6_2 + 1].level_id
 
-					content.draw_path = act_settings.draw_path or not is_dlc
-					content.draw_path_fill = next_level_unlocked
-					style.path.texture_size[1] = level_width + level_width_spacing
-					style.path_glow.texture_size[1] = level_width + level_width_spacing
+					var_6_25.draw_path_fill, var_6_25.draw_path = LevelUnlockUtils.level_unlocked(var_6_3, var_6_4, var_6_33), var_6_11.draw_path or not var_6_0
+					var_6_26.path.texture_size[1] = var_6_6 + var_6_7
+					var_6_26.path_glow.texture_size[1] = var_6_6 + var_6_7
 				end
 
-				assigned_widgets[index] = widget
-				level_position_x = level_position_x + (level_width + level_width_spacing)
+				var_6_5[var_6_20] = var_6_24
+				var_6_15 = var_6_15 + (var_6_6 + var_6_7)
 			end
 		end
 	end
 
-	self._active_node_widgets = assigned_widgets
+	arg_6_0._active_node_widgets = var_6_5
 
-	self:_setup_required_act_connections()
+	arg_6_0:_setup_required_act_connections()
 end
 
-StartGameWindowMissionSelection._setup_required_act_connections = function (self)
-	local statistics_db = self.statistics_db
-	local stats_id = self._stats_id
-	local ui_scenegraph = self.ui_scenegraph
-	local assigned_widgets = self._active_node_widgets
+function StartGameWindowMissionSelection._setup_required_act_connections(arg_7_0)
+	local var_7_0 = arg_7_0.statistics_db
+	local var_7_1 = arg_7_0._stats_id
+	local var_7_2 = arg_7_0.ui_scenegraph
+	local var_7_3 = arg_7_0._active_node_widgets
 
-	for i = 1, #assigned_widgets do
-		local widget = assigned_widgets[i]
-		local level_settings = LevelSettings[widget.content.level_key]
-		local required_acts = level_settings.required_acts
+	for iter_7_0 = 1, #var_7_3 do
+		local var_7_4 = var_7_3[iter_7_0]
+		local var_7_5 = LevelSettings[var_7_4.content.level_key].required_acts
 
-		if required_acts then
-			local scenegraph_id = widget.scenegraph_id
-			local position = ui_scenegraph[scenegraph_id].world_position
-			local offset = widget.offset
-			local pos_x, pos_y = position[1] + offset[1], position[2] + offset[2]
+		if var_7_5 then
+			local var_7_6 = var_7_2[var_7_4.scenegraph_id].world_position
+			local var_7_7 = var_7_4.offset
+			local var_7_8 = var_7_6[1] + var_7_7[1]
+			local var_7_9 = var_7_6[2] + var_7_7[2]
 
-			for j = 1, #required_acts do
-				local required_act = required_acts[j]
-				local required_level_key = self:_get_last_level_in_act(required_act)
+			for iter_7_1 = 1, #var_7_5 do
+				local var_7_10 = var_7_5[iter_7_1]
+				local var_7_11 = arg_7_0:_get_last_level_in_act(var_7_10)
 
-				for k = 1, #assigned_widgets do
-					local level_widget = assigned_widgets[k]
+				for iter_7_2 = 1, #var_7_3 do
+					local var_7_12 = var_7_3[iter_7_2]
 
-					if level_widget.content.level_key == required_level_key then
-						local completed_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(statistics_db, stats_id, required_level_key)
-						local level_completed = completed_difficulty_index and completed_difficulty_index > 0
-						local level_scenegraph_id = level_widget.scenegraph_id
-						local level_position = ui_scenegraph[level_scenegraph_id].world_position
-						local path_style = level_widget.style.path
-						local path_glow_style = level_widget.style.path_glow
-						local level_offset = level_widget.offset
-						local level_pos_x, level_pos_y = level_position[1] + level_offset[1], level_position[2] + level_offset[2]
-						local distance = math.distance_2d(level_pos_x, level_pos_y, pos_x, pos_y)
-						local angle = math.angle(level_pos_x, level_pos_y, pos_x, pos_y)
+					if var_7_12.content.level_key == var_7_11 then
+						local var_7_13 = LevelUnlockUtils.completed_level_difficulty_index(var_7_0, var_7_1, var_7_11)
+						local var_7_14 = var_7_13 and var_7_13 > 0
+						local var_7_15 = var_7_2[var_7_12.scenegraph_id].world_position
+						local var_7_16 = var_7_12.style.path
+						local var_7_17 = var_7_12.style.path_glow
+						local var_7_18 = var_7_12.offset
+						local var_7_19 = var_7_15[1] + var_7_18[1]
+						local var_7_20 = var_7_15[2] + var_7_18[2]
+						local var_7_21 = math.distance_2d(var_7_19, var_7_20, var_7_8, var_7_9)
+						local var_7_22 = math.angle(var_7_19, var_7_20, var_7_8, var_7_9)
 
-						angle = pos_y < level_pos_y and math.abs(angle) or -angle
-						path_style.angle = angle
-						path_style.texture_size[1] = distance
-						path_glow_style.texture_size[1] = distance
-						path_glow_style.angle = angle
-						level_widget.content.draw_path = true
-						level_widget.content.draw_path_fill = level_completed
+						var_7_22 = var_7_9 < var_7_20 and math.abs(var_7_22) or -var_7_22
+						var_7_16.angle = var_7_22
+						var_7_16.texture_size[1] = var_7_21
+						var_7_17.texture_size[1] = var_7_21
+						var_7_17.angle = var_7_22
+						var_7_12.content.draw_path = true
+						var_7_12.content.draw_path_fill = var_7_14
 					end
 				end
 			end
@@ -297,46 +283,38 @@ StartGameWindowMissionSelection._setup_required_act_connections = function (self
 	end
 end
 
-StartGameWindowMissionSelection._get_last_level_in_act = function (self, act_key)
-	local act_levels = GameActs[act_key]
-	local best_level_id, best_sort_order = nil, 0
+function StartGameWindowMissionSelection._get_last_level_in_act(arg_8_0, arg_8_1)
+	local var_8_0 = GameActs[arg_8_1]
+	local var_8_1
+	local var_8_2 = 0
 
-	for i = 1, #act_levels do
-		local level_id = act_levels[i]
-		local level_settings = LevelSettings[level_id]
-		local sort_order = level_settings.act_presentation_order
+	for iter_8_0 = 1, #var_8_0 do
+		local var_8_3 = var_8_0[iter_8_0]
+		local var_8_4 = LevelSettings[var_8_3].act_presentation_order
 
-		if best_sort_order < sort_order then
-			best_sort_order = sort_order
-			best_level_id = level_id
+		if var_8_2 < var_8_4 then
+			var_8_2 = var_8_4
+			var_8_1 = var_8_3
 		end
 	end
 
-	return best_level_id, best_sort_order
+	return var_8_1, var_8_2
 end
 
-StartGameWindowMissionSelection._get_first_level_id = function (self)
-	local active_node_widgets = self._active_node_widgets
+function StartGameWindowMissionSelection._get_first_level_id(arg_9_0)
+	local var_9_0 = arg_9_0._active_node_widgets
 
-	if active_node_widgets then
-		local widget = active_node_widgets[1]
-		local content = widget.content
-		local level_settings = content.level_data
-
-		return level_settings.level_id
+	if var_9_0 then
+		return var_9_0[1].content.level_data.level_id
 	end
 end
 
-StartGameWindowMissionSelection._is_level_presented = function (self, level_id)
-	local active_node_widgets = self._active_node_widgets
+function StartGameWindowMissionSelection._is_level_presented(arg_10_0, arg_10_1)
+	local var_10_0 = arg_10_0._active_node_widgets
 
-	if active_node_widgets then
-		for i = 1, #active_node_widgets do
-			local widget = active_node_widgets[i]
-			local content = widget.content
-			local level_settings = content.level_data
-
-			if level_settings.level_id == level_id then
+	if var_10_0 then
+		for iter_10_0 = 1, #var_10_0 do
+			if var_10_0[iter_10_0].content.level_data.level_id == arg_10_1 then
 				return true
 			end
 		end
@@ -345,153 +323,143 @@ StartGameWindowMissionSelection._is_level_presented = function (self, level_id)
 	return false
 end
 
-StartGameWindowMissionSelection._select_level = function (self, level_id)
-	local active_node_widgets = self._active_node_widgets
+function StartGameWindowMissionSelection._select_level(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_0._active_node_widgets
 
-	if active_node_widgets then
-		for i = 1, #active_node_widgets do
-			local widget = active_node_widgets[i]
-			local content = widget.content
-			local level_settings = content.level_data
-			local is_selected = level_settings.level_id == level_id
-			local button_hotspot = widget.content.button_hotspot
+	if var_11_0 then
+		for iter_11_0 = 1, #var_11_0 do
+			local var_11_1 = var_11_0[iter_11_0]
+			local var_11_2 = var_11_1.content.level_data.level_id == arg_11_1
 
-			button_hotspot.is_selected = is_selected
+			var_11_1.content.button_hotspot.is_selected = var_11_2
 		end
 	end
 
-	self._selected_level_id = level_id
+	arg_11_0._selected_level_id = arg_11_1
 
-	self:_set_presentation_info(level_id)
+	arg_11_0:_set_presentation_info(arg_11_1)
 
-	self._widgets_by_name.select_button.content.button_hotspot.disable_button = level_id == nil
+	arg_11_0._widgets_by_name.select_button.content.button_hotspot.disable_button = arg_11_1 == nil
 end
 
-StartGameWindowMissionSelection._set_presentation_info = function (self, level_id)
-	local level_text = ""
-	local level_description_text = ""
-	local frame_texture = "map_frame_00"
-	local draw_info = false
-	local widgets_by_name = self._widgets_by_name
-	local selected_level_widget = widgets_by_name.selected_level
-	local content = selected_level_widget.content
+function StartGameWindowMissionSelection._set_presentation_info(arg_12_0, arg_12_1)
+	local var_12_0 = ""
+	local var_12_1 = ""
+	local var_12_2 = "map_frame_00"
+	local var_12_3 = false
+	local var_12_4 = arg_12_0._widgets_by_name
+	local var_12_5 = var_12_4.selected_level.content
 
-	if level_id then
-		local statistics_db = self.statistics_db
-		local stats_id = self._stats_id
-		local level_settings = LevelSettings[level_id]
-		local level_image = level_settings.level_image
-		local boss_level = level_settings.boss_level
-		local display_name = level_settings.display_name
+	if arg_12_1 then
+		local var_12_6 = arg_12_0.statistics_db
+		local var_12_7 = arg_12_0._stats_id
+		local var_12_8 = LevelSettings[arg_12_1]
+		local var_12_9 = var_12_8.level_image
+		local var_12_10 = var_12_8.boss_level
+		local var_12_11 = var_12_8.display_name
 
-		level_description_text = level_settings.description_text
+		var_12_1 = var_12_8.description_text
 
-		local completed_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(statistics_db, stats_id, level_id)
+		local var_12_12 = LevelUnlockUtils.completed_level_difficulty_index(var_12_6, var_12_7, arg_12_1)
 
-		frame_texture = UIWidgetUtils.get_level_frame_by_difficulty_index(completed_difficulty_index)
-		content.icon = level_image
-		content.boss_level = boss_level
-		level_text = Localize(display_name)
-		level_description_text = Localize(level_description_text)
-		draw_info = true
+		var_12_2 = UIWidgetUtils.get_level_frame_by_difficulty_index(var_12_12)
+		var_12_5.icon = var_12_9
+		var_12_5.boss_level = var_12_10
+		var_12_0 = Localize(var_12_11)
+		var_12_1 = Localize(var_12_1)
+		var_12_3 = true
 	end
 
-	content.frame = frame_texture
-	content.locked = not draw_info
-	content.visible = draw_info
-	content.button_hotspot.disable_button = true
-	widgets_by_name.helper_text.content.visible = not draw_info
-	widgets_by_name.level_title_divider.content.visible = draw_info
-	widgets_by_name.level_title.content.text = level_text
-	widgets_by_name.description_text.content.text = level_description_text
+	var_12_5.frame = var_12_2
+	var_12_5.locked = not var_12_3
+	var_12_5.visible = var_12_3
+	var_12_5.button_hotspot.disable_button = true
+	var_12_4.helper_text.content.visible = not var_12_3
+	var_12_4.level_title_divider.content.visible = var_12_3
+	var_12_4.level_title.content.text = var_12_0
+	var_12_4.description_text.content.text = var_12_1
 end
 
-StartGameWindowMissionSelection.on_exit = function (self, params)
+function StartGameWindowMissionSelection.on_exit(arg_13_0, arg_13_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowMissionSelection")
 
-	self.ui_animator = nil
+	arg_13_0.ui_animator = nil
 
-	self.parent:set_input_description(nil)
+	arg_13_0.parent:set_input_description(nil)
 end
 
-StartGameWindowMissionSelection.update = function (self, dt, t)
-	self:_update_animations(dt)
-	self:draw(dt)
+function StartGameWindowMissionSelection.update(arg_14_0, arg_14_1, arg_14_2)
+	arg_14_0:_update_animations(arg_14_1)
+	arg_14_0:draw(arg_14_1)
 end
 
-StartGameWindowMissionSelection.post_update = function (self, dt, t)
-	self:_handle_input(dt, t)
+function StartGameWindowMissionSelection.post_update(arg_15_0, arg_15_1, arg_15_2)
+	arg_15_0:_handle_input(arg_15_1, arg_15_2)
 end
 
-StartGameWindowMissionSelection._update_animations = function (self, dt)
-	local ui_animator = self.ui_animator
+function StartGameWindowMissionSelection._update_animations(arg_16_0, arg_16_1)
+	local var_16_0 = arg_16_0.ui_animator
 
-	ui_animator:update(dt)
+	var_16_0:update(arg_16_1)
 
-	local animations = self._animations
+	local var_16_1 = arg_16_0._animations
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_16_0, iter_16_1 in pairs(var_16_1) do
+		if var_16_0:is_animation_completed(iter_16_1) then
+			var_16_0:stop_animation(iter_16_1)
 
-			animations[animation_name] = nil
+			var_16_1[iter_16_0] = nil
 		end
 	end
 end
 
-StartGameWindowMissionSelection._is_button_pressed = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
+function StartGameWindowMissionSelection._is_button_pressed(arg_17_0, arg_17_1)
+	local var_17_0 = arg_17_1.content.button_hotspot
 
-	if hotspot.on_release then
-		hotspot.on_release = false
+	if var_17_0.on_release then
+		var_17_0.on_release = false
 
 		return true
 	end
 end
 
-StartGameWindowMissionSelection._is_button_hovered = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	if hotspot.on_hover_enter then
+function StartGameWindowMissionSelection._is_button_hovered(arg_18_0, arg_18_1)
+	if arg_18_1.content.button_hotspot.on_hover_enter then
 		return true
 	end
 end
 
-StartGameWindowMissionSelection._update_level_option = function (self)
-	local level_id = self.parent:get_selected_level_id()
+function StartGameWindowMissionSelection._update_level_option(arg_19_0)
+	local var_19_0 = arg_19_0.parent:get_selected_level_id()
 
-	if level_id ~= self._selected_level_id then
-		if self:_is_level_presented(level_id) then
-			self:_select_level(level_id)
-		elseif not self._selected_level_id then
-			local first_level_id = self:_get_first_level_id()
+	if var_19_0 ~= arg_19_0._selected_level_id then
+		if arg_19_0:_is_level_presented(var_19_0) then
+			arg_19_0:_select_level(var_19_0)
+		elseif not arg_19_0._selected_level_id then
+			local var_19_1 = arg_19_0:_get_first_level_id()
 
-			self:_select_level(first_level_id)
+			arg_19_0:_select_level(var_19_1)
 		end
 	end
 end
 
-StartGameWindowMissionSelection._handle_input = function (self, dt, t)
-	local active_node_widgets = self._active_node_widgets
+function StartGameWindowMissionSelection._handle_input(arg_20_0, arg_20_1, arg_20_2)
+	local var_20_0 = arg_20_0._active_node_widgets
 
-	if active_node_widgets then
-		for i = 1, #active_node_widgets do
-			local widget = active_node_widgets[i]
+	if var_20_0 then
+		for iter_20_0 = 1, #var_20_0 do
+			local var_20_1 = var_20_0[iter_20_0]
 
-			if self:_is_button_hovered(widget) then
-				self:_play_sound("play_gui_lobby_button_02_mission_act_hover")
+			if arg_20_0:_is_button_hovered(var_20_1) then
+				arg_20_0:_play_sound("play_gui_lobby_button_02_mission_act_hover")
 			end
 
-			if self:_is_button_pressed(widget) then
-				local content = widget.content
-				local level_settings = content.level_data
-				local level_id = level_settings.level_id
+			if arg_20_0:_is_button_pressed(var_20_1) then
+				local var_20_2 = var_20_1.content.level_data.level_id
 
-				if self._selected_level_id ~= level_id then
-					self:_play_sound("play_gui_lobby_button_02_mission_act_click")
-					self:_select_level(level_id)
+				if arg_20_0._selected_level_id ~= var_20_2 then
+					arg_20_0:_play_sound("play_gui_lobby_button_02_mission_act_click")
+					arg_20_0:_select_level(var_20_2)
 				end
 
 				return
@@ -499,60 +467,59 @@ StartGameWindowMissionSelection._handle_input = function (self, dt, t)
 		end
 	end
 
-	local widgets_by_name = self._widgets_by_name
-	local select_button = widgets_by_name.select_button
+	local var_20_3 = arg_20_0._widgets_by_name.select_button
 
-	UIWidgetUtils.animate_default_button(select_button, dt)
+	UIWidgetUtils.animate_default_button(var_20_3, arg_20_1)
 
-	if self:_is_button_hovered(select_button) then
-		self:_play_sound("play_gui_lobby_button_01_difficulty_confirm_hover")
+	if arg_20_0:_is_button_hovered(var_20_3) then
+		arg_20_0:_play_sound("play_gui_lobby_button_01_difficulty_confirm_hover")
 	end
 
-	if self:_is_button_pressed(select_button) then
-		self:_play_sound("play_gui_lobby_button_02_mission_select")
+	if arg_20_0:_is_button_pressed(var_20_3) then
+		arg_20_0:_play_sound("play_gui_lobby_button_02_mission_select")
 
-		local parent = self.parent
-		local game_mode_layout_name = parent:get_selected_game_mode_layout_name()
+		local var_20_4 = arg_20_0.parent
+		local var_20_5 = var_20_4:get_selected_game_mode_layout_name()
 
-		parent:set_layout_by_name(game_mode_layout_name)
-		parent:set_selected_level_id(self._selected_level_id)
+		var_20_4:set_layout_by_name(var_20_5)
+		var_20_4:set_selected_level_id(arg_20_0._selected_level_id)
 	end
 end
 
-StartGameWindowMissionSelection.draw = function (self, dt)
-	local ui_renderer = self.ui_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self.parent:window_input_service()
+function StartGameWindowMissionSelection.draw(arg_21_0, arg_21_1)
+	local var_21_0 = arg_21_0.ui_renderer
+	local var_21_1 = arg_21_0.ui_scenegraph
+	local var_21_2 = arg_21_0.parent:window_input_service()
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
+	UIRenderer.begin_pass(var_21_0, var_21_1, var_21_2, arg_21_1, nil, arg_21_0.render_settings)
 
-	local widgets = self._widgets
+	local var_21_3 = arg_21_0._widgets
 
-	for i = 1, #widgets do
-		local widget = widgets[i]
+	for iter_21_0 = 1, #var_21_3 do
+		local var_21_4 = var_21_3[iter_21_0]
 
-		UIRenderer.draw_widget(ui_renderer, widget)
+		UIRenderer.draw_widget(var_21_0, var_21_4)
 	end
 
-	local active_node_widgets = self._active_node_widgets
+	local var_21_5 = arg_21_0._active_node_widgets
 
-	if active_node_widgets then
-		for i = 1, #active_node_widgets do
-			local widget = active_node_widgets[i]
+	if var_21_5 then
+		for iter_21_1 = 1, #var_21_5 do
+			local var_21_6 = var_21_5[iter_21_1]
 
-			UIRenderer.draw_widget(ui_renderer, widget)
+			UIRenderer.draw_widget(var_21_0, var_21_6)
 		end
 	end
 
-	local dlc_background_widget = self._dlc_background_widget
+	local var_21_7 = arg_21_0._dlc_background_widget
 
-	if dlc_background_widget then
-		UIRenderer.draw_widget(ui_renderer, dlc_background_widget)
+	if var_21_7 then
+		UIRenderer.draw_widget(var_21_0, var_21_7)
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_21_0)
 end
 
-StartGameWindowMissionSelection._play_sound = function (self, event)
-	self.parent:play_sound(event)
+function StartGameWindowMissionSelection._play_sound(arg_22_0, arg_22_1)
+	arg_22_0.parent:play_sound(arg_22_1)
 end

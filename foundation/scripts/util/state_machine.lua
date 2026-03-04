@@ -1,93 +1,93 @@
-﻿-- chunkname: @foundation/scripts/util/state_machine.lua
+-- chunkname: @foundation/scripts/util/state_machine.lua
 
-local profiler_names = {}
+local var_0_0 = {}
 
-local function profiler_scope(state_name, scope_type)
-	assert(state_name, "State without name not allowed.")
+local function var_0_1(arg_1_0, arg_1_1)
+	assert(arg_1_0, "State without name not allowed.")
 
-	local scope = profiler_names[state_name]
+	local var_1_0 = var_0_0[arg_1_0]
 
-	if scope == nil then
-		scope = {
-			create = state_name .. ":new",
-			enter = state_name .. ":on_enter",
-			exit = state_name .. ":on_exit",
+	if var_1_0 == nil then
+		var_1_0 = {
+			create = arg_1_0 .. ":new",
+			enter = arg_1_0 .. ":on_enter",
+			exit = arg_1_0 .. ":on_exit"
 		}
-		profiler_names[state_name] = scope
+		var_0_0[arg_1_0] = var_1_0
 	end
 
-	local scope_name = scope[scope_type]
+	local var_1_1 = var_1_0[arg_1_1]
 
-	assert(scope_name)
+	assert(var_1_1)
 
-	return scope_name
+	return var_1_1
 end
 
 StateMachine = class(StateMachine)
 
-local function debug_print(format, ...)
-	cprintf("[StateMachine] " .. format, ...)
+local function var_0_2(arg_2_0, ...)
+	cprintf("[StateMachine] " .. arg_2_0, ...)
 end
 
-StateMachine.init = function (self, parent, start_state, params, profiling_debugging_enabled)
-	self._parent = parent
-	self._params = params
-	self._profiling_debugging_enabled = profiling_debugging_enabled
+function StateMachine.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	arg_3_0._parent = arg_3_1
+	arg_3_0._params = arg_3_3
+	arg_3_0._profiling_debugging_enabled = arg_3_4
 
-	self:_change_state(start_state, params)
+	arg_3_0:_change_state(arg_3_2, arg_3_3)
 end
 
-StateMachine._change_state = function (self, new_state, params)
-	if self._state then
-		if self._state.on_exit and self._profiling_debugging_enabled then
-			local scope_name = profiler_scope(self._state.NAME, "exit")
+function StateMachine._change_state(arg_4_0, arg_4_1, arg_4_2)
+	if arg_4_0._state then
+		if arg_4_0._state.on_exit and arg_4_0._profiling_debugging_enabled then
+			local var_4_0 = var_0_1(arg_4_0._state.NAME, "exit")
 
-			self._state:on_exit()
-		elseif self._state.on_exit then
-			self._state:on_exit()
+			arg_4_0._state:on_exit()
+		elseif arg_4_0._state.on_exit then
+			arg_4_0._state:on_exit()
 		end
 	end
 
-	if self._profiling_debugging_enabled then
-		local scope_name = profiler_scope(new_state.NAME, "create")
+	if arg_4_0._profiling_debugging_enabled then
+		local var_4_1 = var_0_1(arg_4_1.NAME, "create")
 
-		self._state = new_state:new()
+		arg_4_0._state = arg_4_1:new()
 	else
-		self._state = new_state:new()
+		arg_4_0._state = arg_4_1:new()
 	end
 
-	self._state.parent = self._parent
+	arg_4_0._state.parent = arg_4_0._parent
 
-	if self._state.on_enter and self._profiling_debugging_enabled then
-		local scope_name = profiler_scope(self._state.NAME, "enter")
+	if arg_4_0._state.on_enter and arg_4_0._profiling_debugging_enabled then
+		local var_4_2 = var_0_1(arg_4_0._state.NAME, "enter")
 
-		self._state:on_enter(params)
-	elseif self._state.on_enter then
-		self._state:on_enter(params)
-	end
-end
-
-StateMachine.state = function (self)
-	return self._state
-end
-
-StateMachine.update = function (self, dt, t)
-	local new_state = self._state:update(dt, t)
-
-	if new_state then
-		self:_change_state(new_state, self._params)
+		arg_4_0._state:on_enter(arg_4_2)
+	elseif arg_4_0._state.on_enter then
+		arg_4_0._state:on_enter(arg_4_2)
 	end
 end
 
-StateMachine.destroy = function (self, ...)
-	if self._state and self._state.on_exit then
-		self._state:on_exit(...)
+function StateMachine.state(arg_5_0)
+	return arg_5_0._state
+end
+
+function StateMachine.update(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = arg_6_0._state:update(arg_6_1, arg_6_2)
+
+	if var_6_0 then
+		arg_6_0:_change_state(var_6_0, arg_6_0._params)
 	end
 end
 
-StateMachine.on_close = function (self)
-	if self._state and self._state.on_close then
-		return self._state:on_close()
+function StateMachine.destroy(arg_7_0, ...)
+	if arg_7_0._state and arg_7_0._state.on_exit then
+		arg_7_0._state:on_exit(...)
+	end
+end
+
+function StateMachine.on_close(arg_8_0)
+	if arg_8_0._state and arg_8_0._state.on_close then
+		return arg_8_0._state:on_close()
 	end
 
 	return true

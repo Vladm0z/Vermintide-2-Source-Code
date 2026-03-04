@@ -1,90 +1,90 @@
-﻿-- chunkname: @scripts/settings/terror_events/terror_events_dlc_dwarf_whaling.lua
+-- chunkname: @scripts/settings/terror_events/terror_events_dlc_dwarf_whaling.lua
 
-local TerrorEventUtils = require("scripts/settings/terror_events/terror_event_utils")
-local count_event_breed = TerrorEventUtils.count_event_breed
-local HARDER = TerrorEventUtils.HARDER
-local HARDEST = TerrorEventUtils.HARDEST
-local CATACLYSM = TerrorEventUtils.CATACLYSM
-local terror_event_blueprints = {
+local var_0_0 = require("scripts/settings/terror_events/terror_event_utils")
+local var_0_1 = var_0_0.count_event_breed
+local var_0_2 = var_0_0.HARDER
+local var_0_3 = var_0_0.HARDEST
+local var_0_4 = var_0_0.CATACLYSM
+local var_0_5 = {
 	dwarf_disable_pacing = {
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"control_specials",
-			enable = false,
-		},
+			enable = false
+		}
 	},
 	dwarf_enable_pacing = {
 		{
 			"control_pacing",
-			enable = true,
+			enable = true
 		},
 		{
 			"control_specials",
-			enable = true,
-		},
+			enable = true
+		}
 	},
 	whaling_burn = {
 		{
 			"set_master_event_running",
-			name = "whaling_whaling",
+			name = "whaling_whaling"
 		},
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"event_horde",
-			composition_type = "event_medium_chaos",
 			limit_spawners = 2,
 			spawner_id = "whaling_event_l",
+			composition_type = "event_medium_chaos"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "chaos_shields",
 			limit_spawners = 1,
 			spawner_id = "whaling_event_l",
+			composition_type = "chaos_shields"
 		},
 		{
 			"spawn_special",
 			amount = 1,
 			breed_name = {
 				"chaos_corruptor_sorcerer",
-				"chaos_vortex_sorcerer",
+				"chaos_vortex_sorcerer"
 			},
-			difficulty_requirement = HARDER,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (t)
-				return count_event_breed("chaos_berzerker") < 3 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
-			end,
+			condition = function(arg_1_0)
+				return var_0_1("chaos_berzerker") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "chaos_berzerkers_small",
 			limit_spawners = 1,
 			spawner_id = "whaling_event_r",
+			composition_type = "chaos_berzerkers_small"
 		},
 		{
 			"delay",
 			duration = 10,
-			difficulty_requirement = HARDER,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"spawn_special",
@@ -92,20 +92,20 @@ local terror_event_blueprints = {
 			breed_name = {
 				"chaos_corruptor_sorcerer",
 				"chaos_vortex_sorcerer",
-				"skaven_gutter_runner",
+				"skaven_gutter_runner"
 			},
-			difficulty_requirement = HARDEST,
+			difficulty_requirement = var_0_3
 		},
 		{
 			"event_horde",
-			composition_type = "event_chaos_extra_spice_small",
 			limit_spawners = 2,
 			spawner_id = "whaling_event_l",
-			difficulty_requirement = HARDER,
+			composition_type = "event_chaos_extra_spice_small",
+			difficulty_requirement = var_0_2
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"spawn_special",
@@ -113,9 +113,9 @@ local terror_event_blueprints = {
 			breed_name = {
 				"skaven_pack_master",
 				"skaven_ratling_gunner",
-				"skaven_poison_wind_globadier",
+				"skaven_poison_wind_globadier"
 			},
-			difficulty_requirement = HARDER,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"spawn_special",
@@ -123,61 +123,61 @@ local terror_event_blueprints = {
 			breed_name = {
 				"chaos_corruptor_sorcerer",
 				"chaos_vortex_sorcerer",
-				"skaven_gutter_runner",
+				"skaven_gutter_runner"
 			},
-			difficulty_requirement = HARDEST,
+			difficulty_requirement = var_0_3
 		},
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (t)
-				return count_event_breed("chaos_berzerker") < 2 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
-			end,
+			condition = function(arg_2_0)
+				return var_0_1("chaos_berzerker") < 2 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			end
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			limit_spawners = 2,
 			spawner_id = "whaling_event_l",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"spawn_special",
 			amount = 1,
 			breed_name = {
 				"skaven_pack_master",
-				"skaven_gutter_runner",
+				"skaven_gutter_runner"
 			},
-			difficulty_requirement = HARDEST,
+			difficulty_requirement = var_0_3
 		},
 		{
 			"event_horde",
-			composition_type = "event_chaos_extra_spice_small",
 			limit_spawners = 2,
 			spawner_id = "whaling_event_l",
-			difficulty_requirement = HARDER,
+			composition_type = "event_chaos_extra_spice_small",
+			difficulty_requirement = var_0_2
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			limit_spawners = 2,
 			spawner_id = "whaling_event_r",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"spawn_special",
 			amount = 1,
-			breed_name = "skaven_poison_wind_globadier",
+			breed_name = "skaven_poison_wind_globadier"
 		},
 		{
 			"spawn_special",
@@ -185,939 +185,939 @@ local terror_event_blueprints = {
 			breed_name = {
 				"chaos_corruptor_sorcerer",
 				"chaos_vortex_sorcerer",
-				"skaven_gutter_runner",
+				"skaven_gutter_runner"
 			},
-			difficulty_requirement = HARDEST,
+			difficulty_requirement = var_0_3
 		},
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (t)
-				return count_event_breed("chaos_berzerker") < 3 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
-			end,
+			condition = function(arg_3_0)
+				return var_0_1("chaos_berzerker") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			end
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "event_large_chaos",
 			limit_spawners = 2,
 			spawner_id = "whaling_event_l",
+			composition_type = "event_large_chaos"
 		},
 		{
 			"event_horde",
+			limit_spawners = 2,
+			spawner_id = "whaling_event_r",
 			composition_type = "event_chaos_extra_spice_small",
-			limit_spawners = 2,
-			spawner_id = "whaling_event_r",
-			difficulty_requirement = HARDER,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (t)
-				return count_event_breed("chaos_berzerker") < 3 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
-			end,
+			condition = function(arg_4_0)
+				return var_0_1("chaos_berzerker") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			end
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			limit_spawners = 2,
 			spawner_id = "whaling_event_r",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "chaos_shields",
 			limit_spawners = 1,
 			spawner_id = "whaling_event_r",
+			composition_type = "chaos_shields"
 		},
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (t)
-				return count_event_breed("chaos_berzerker") < 3 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
-			end,
+			condition = function(arg_5_0)
+				return var_0_1("chaos_berzerker") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			limit_spawners = 2,
 			spawner_id = "whaling_event_r",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "chaos_shields",
 			limit_spawners = 1,
 			spawner_id = "whaling_event_l",
+			composition_type = "chaos_shields"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (t)
-				return count_event_breed("chaos_berzerker") < 3 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
-			end,
+			condition = function(arg_6_0)
+				return var_0_1("chaos_berzerker") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_whaling",
-		},
+			flow_event_name = "whaling_whaling"
+		}
 	},
 	whaling_chaos_boss_01 = {
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_bulwark",
 			spawner_id = "spawner_manual_shielded_warrior_001",
-		},
+			breed_name = "chaos_bulwark"
+		}
 	},
 	whaling_chaos_boss_02 = {
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_bulwark",
 			spawner_id = "spawner_manual_shielded_warrior_002",
-		},
+			breed_name = "chaos_bulwark"
+		}
 	},
 	whaling_chaos_boss_03 = {
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_bulwark",
 			spawner_id = "spawner_manual_shielded_warrior_003",
-		},
+			breed_name = "chaos_bulwark"
+		}
 	},
 	whaling_mid_fanatics = {
 		{
-			"enable_bots_in_carry_event",
+			"enable_bots_in_carry_event"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"set_master_event_running",
-			name = "whaling_mid_fanatics",
+			name = "whaling_mid_fanatics"
 		},
 		{
-			"disable_kick",
+			"disable_kick"
 		},
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"event_horde",
-			composition_type = "whaling_mid_event_chaos_01",
 			limit_spawners = 8,
 			spawner_id = "mid_event",
+			composition_type = "whaling_mid_event_chaos_01"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
 			duration = 20,
-			condition = function (t)
-				return count_event_breed("chaos_fanatic") < 10 and count_event_breed("chaos_marauder") < 6
-			end,
+			condition = function(arg_7_0)
+				return var_0_1("chaos_fanatic") < 10 and var_0_1("chaos_marauder") < 6
+			end
 		},
 		{
 			"delay",
-			duration = 7,
+			duration = 7
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_mid_fanatics_done",
-		},
+			flow_event_name = "whaling_mid_fanatics_done"
+		}
 	},
 	whaling_mid_event_fanatics = {
 		{
-			"enable_bots_in_carry_event",
+			"enable_bots_in_carry_event"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"set_master_event_running",
-			name = "whaling_mid_event_fanatics",
+			name = "whaling_mid_event_fanatics"
 		},
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"event_horde",
-			composition_type = "whaling_mid_event_chaos_01",
 			limit_spawners = 8,
 			spawner_id = "mid_event",
+			composition_type = "whaling_mid_event_chaos_01"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
 			duration = 20,
-			condition = function (t)
-				return count_event_breed("chaos_fanatic") < 10 and count_event_breed("chaos_marauder") < 6
-			end,
+			condition = function(arg_8_0)
+				return var_0_1("chaos_fanatic") < 10 and var_0_1("chaos_marauder") < 6
+			end
 		},
 		{
 			"delay",
-			duration = 7,
+			duration = 7
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_mid_event_fanatics_done",
-		},
+			flow_event_name = "whaling_mid_event_fanatics_done"
+		}
 	},
 	whaling_mid_event_specials = {
 		{
 			"set_master_event_running",
-			name = "whaling_mid_event_fanatics",
+			name = "whaling_mid_event_fanatics"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"delay",
-			duration = 15,
+			duration = 15
 		},
 		{
 			"spawn_special",
 			amount = 1,
 			breed_name = {
 				"chaos_corruptor_sorcerer",
-				"chaos_vortex_sorcerer",
-			},
+				"chaos_vortex_sorcerer"
+			}
 		},
 		{
 			"delay",
-			duration = 25,
+			duration = 25
 		},
 		{
 			"spawn_special",
 			amount = 1,
 			breed_name = {
 				"chaos_corruptor_sorcerer",
-				"chaos_vortex_sorcerer",
+				"chaos_vortex_sorcerer"
 			},
-			difficulty_requirement = CATACLYSM,
+			difficulty_requirement = var_0_4
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_mid_event_specials_done",
-		},
+			flow_event_name = "whaling_mid_event_specials_done"
+		}
 	},
 	whaling_mid_event_spice_01 = {
 		{
 			"set_master_event_running",
-			name = "whaling_mid_event_fanatics",
+			name = "whaling_mid_event_fanatics"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"event_horde",
-			composition_type = "whaling_mid_event_spice_chaos_raiders",
 			limit_spawners = 1,
 			spawner_id = "mid_event",
+			composition_type = "whaling_mid_event_spice_chaos_raiders"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
 			duration = 15,
-			condition = function (t)
-				return count_event_breed("chaos_raider") < 1
-			end,
+			condition = function(arg_9_0)
+				return var_0_1("chaos_raider") < 1
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_mid_event_spice_01_done",
-		},
+			flow_event_name = "whaling_mid_event_spice_01_done"
+		}
 	},
 	whaling_mid_event_spice_02 = {
 		{
 			"set_master_event_running",
-			name = "whaling_mid_event_fanatics",
+			name = "whaling_mid_event_fanatics"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"event_horde",
-			composition_type = "whaling_mid_event_spice_chaos_berzerkers",
 			limit_spawners = 1,
 			spawner_id = "mid_event",
+			composition_type = "whaling_mid_event_spice_chaos_berzerkers"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
 			duration = 15,
-			condition = function (t)
-				return count_event_breed("chaos_berzerker") < 1
-			end,
+			condition = function(arg_10_0)
+				return var_0_1("chaos_berzerker") < 1
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_mid_event_spice_02_done",
-		},
+			flow_event_name = "whaling_mid_event_spice_02_done"
+		}
 	},
 	whaling_mid_event_spice_03 = {
 		{
 			"set_master_event_running",
-			name = "whaling_mid_event_fanatics",
+			name = "whaling_mid_event_fanatics"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"event_horde",
-			composition_type = "whaling_mid_event_spice_chaos_shields",
 			limit_spawners = 1,
 			spawner_id = "mid_event",
+			composition_type = "whaling_mid_event_spice_chaos_shields"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
 			duration = 15,
-			condition = function (t)
-				return count_event_breed("chaos_shield") < 1
-			end,
+			condition = function(arg_11_0)
+				return var_0_1("chaos_shield") < 1
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_mid_event_spice_03_done",
-		},
+			flow_event_name = "whaling_mid_event_spice_03_done"
+		}
 	},
 	whaling_end_event_trickle = {
 		{
-			"enable_bots_in_carry_event",
+			"enable_bots_in_carry_event"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"set_master_event_running",
-			name = "whaling_end_event",
+			name = "whaling_end_event"
 		},
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"event_horde",
-			composition_type = "whaling_end_event_chaos_01",
 			limit_spawners = 8,
 			spawner_id = "lighthouse_event",
+			composition_type = "whaling_end_event_chaos_01"
 		},
 		{
 			"delay",
-			duration = 8,
+			duration = 8
 		},
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (t)
-				return count_event_breed("chaos_fanatic") < 3 and count_event_breed("chaos_marauder") < 5 and count_event_breed("chaos_raider") < 1 and count_event_breed("chaos_marauder_with_shield") < 2
-			end,
+			condition = function(arg_12_0)
+				return var_0_1("chaos_fanatic") < 3 and var_0_1("chaos_marauder") < 5 and var_0_1("chaos_raider") < 1 and var_0_1("chaos_marauder_with_shield") < 2
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_end_event_trickle_done",
-		},
+			flow_event_name = "whaling_end_event_trickle_done"
+		}
 	},
 	whaling_end_event_loop_01 = {
 		{
 			"set_master_event_running",
-			name = "whaling_end_event",
+			name = "whaling_end_event"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"event_horde",
-			composition_type = "event_large",
 			spawner_id = "lighthouse_event",
+			composition_type = "event_large"
 		},
 		{
 			"delay",
-			duration = 8,
+			duration = 8
 		},
 		{
 			"continue_when",
 			duration = 180,
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 4 and count_event_breed("skaven_slave") < 4
-			end,
+			condition = function(arg_13_0)
+				return var_0_1("skaven_clan_rat") < 4 and var_0_1("skaven_slave") < 4
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_end_event_loop_done",
-		},
+			flow_event_name = "whaling_end_event_loop_done"
+		}
 	},
 	whaling_end_event_loop_02 = {
 		{
 			"set_master_event_running",
-			name = "whaling_end_event",
+			name = "whaling_end_event"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			limit_spawners = 2,
 			spawner_id = "lighthouse_event",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"event_horde",
-			composition_type = "event_chaos_extra_spice_small",
 			limit_spawners = 2,
 			spawner_id = "lighthouse_event",
+			composition_type = "event_chaos_extra_spice_small"
 		},
 		{
 			"delay",
-			duration = 8,
+			duration = 8
 		},
 		{
 			"continue_when",
 			duration = 180,
-			condition = function (t)
-				return count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2 and count_event_breed("chaos_raider") < 2
-			end,
+			condition = function(arg_14_0)
+				return var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2 and var_0_1("chaos_raider") < 2
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_end_event_loop_done",
-		},
+			flow_event_name = "whaling_end_event_loop_done"
+		}
 	},
 	whaling_end_event_loop_03 = {
 		{
 			"set_master_event_running",
-			name = "whaling_end_event",
+			name = "whaling_end_event"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			spawner_id = "lighthouse_event",
+			composition_type = "event_small"
 		},
 		{
 			"event_horde",
-			composition_type = "event_extra_spice_medium",
 			limit_spawners = 2,
 			spawner_id = "lighthouse_event",
+			composition_type = "event_extra_spice_medium"
 		},
 		{
 			"delay",
-			duration = 8,
+			duration = 8
 		},
 		{
 			"continue_when",
 			duration = 180,
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 4 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 4
-			end,
+			condition = function(arg_15_0)
+				return var_0_1("skaven_clan_rat") < 4 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 4
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_end_event_loop_done",
-		},
+			flow_event_name = "whaling_end_event_loop_done"
+		}
 	},
 	whaling_end_event_loop_04 = {
 		{
 			"set_master_event_running",
-			name = "whaling_end_event",
+			name = "whaling_end_event"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			limit_spawners = 4,
 			spawner_id = "lighthouse_event",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"event_horde",
-			composition_type = "chaos_berzerkers_small",
 			limit_spawners = 2,
 			spawner_id = "lighthouse_event",
+			composition_type = "chaos_berzerkers_small"
 		},
 		{
 			"delay",
-			duration = 8,
+			duration = 8
 		},
 		{
 			"continue_when",
 			duration = 180,
-			condition = function (t)
-				return count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2 and count_event_breed("chaos_berzerker") < 2
-			end,
+			condition = function(arg_16_0)
+				return var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2 and var_0_1("chaos_berzerker") < 2
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_end_event_loop_done",
-		},
+			flow_event_name = "whaling_end_event_loop_done"
+		}
 	},
 	whaling_end_event_loop_05 = {
 		{
 			"set_master_event_running",
-			name = "whaling_end_event",
+			name = "whaling_end_event"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 2,
 			spawner_id = "lighthouse_event",
+			composition_type = "event_small"
 		},
 		{
 			"event_horde",
-			composition_type = "storm_vermin_small",
 			limit_spawners = 4,
 			spawner_id = "lighthouse_event",
+			composition_type = "storm_vermin_small"
 		},
 		{
 			"delay",
-			duration = 8,
+			duration = 8
 		},
 		{
 			"continue_when",
 			duration = 180,
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 4 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 4
-			end,
+			condition = function(arg_17_0)
+				return var_0_1("skaven_clan_rat") < 4 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 4
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_end_event_loop_done",
-		},
+			flow_event_name = "whaling_end_event_loop_done"
+		}
 	},
 	whaling_end_event_loop_06 = {
 		{
 			"set_master_event_running",
-			name = "whaling_end_event",
+			name = "whaling_end_event"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"event_horde",
-			composition_type = "event_large_chaos",
 			limit_spawners = 2,
 			spawner_id = "lighthouse_event",
+			composition_type = "event_large_chaos"
 		},
 		{
 			"delay",
-			duration = 8,
+			duration = 8
 		},
 		{
 			"continue_when",
 			duration = 180,
-			condition = function (t)
-				return count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_fanatic") < 4 and count_event_breed("chaos_berzerker") < 2 and count_event_breed("chaos_raider") < 2
-			end,
+			condition = function(arg_18_0)
+				return var_0_1("chaos_marauder") < 3 and var_0_1("chaos_fanatic") < 4 and var_0_1("chaos_berzerker") < 2 and var_0_1("chaos_raider") < 2
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_end_event_loop_done",
-		},
+			flow_event_name = "whaling_end_event_loop_done"
+		}
 	},
 	whaling_end_event_specials_01 = {
 		{
 			"set_master_event_running",
-			name = "whaling_end_event_specials",
+			name = "whaling_end_event_specials"
 		},
 		{
 			"spawn_special",
 			amount = 2,
 			breed_name = {
 				"skaven_poison_wind_globadier",
-				"skaven_gutter_runner",
-			},
+				"skaven_gutter_runner"
+			}
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"spawn_special",
 			amount = 1,
 			breed_name = {
 				"skaven_poison_wind_globadier",
-				"skaven_ratling_gunner",
+				"skaven_ratling_gunner"
 			},
-			difficulty_requirement = HARDER,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"spawn_special",
 			amount = 1,
 			breed_name = {
 				"skaven_poison_wind_globadier",
-				"skaven_warpfire_thrower",
+				"skaven_warpfire_thrower"
 			},
-			difficulty_requirement = CATACLYSM,
+			difficulty_requirement = var_0_4
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 180,
-			condition = function (t)
-				return count_event_breed("skaven_poison_wind_globadier") < 1 and count_event_breed("skaven_gutter_runner") < 1 and count_event_breed("skaven_ratling_gunner") < 1 and count_event_breed("skaven_warpfire_thrower") < 1
-			end,
+			condition = function(arg_19_0)
+				return var_0_1("skaven_poison_wind_globadier") < 1 and var_0_1("skaven_gutter_runner") < 1 and var_0_1("skaven_ratling_gunner") < 1 and var_0_1("skaven_warpfire_thrower") < 1
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_end_event_specials_done",
-		},
+			flow_event_name = "whaling_end_event_specials_done"
+		}
 	},
 	whaling_end_event_specials_02 = {
 		{
 			"set_master_event_running",
-			name = "whaling_end_event_specials",
+			name = "whaling_end_event_specials"
 		},
 		{
 			"spawn_special",
 			amount = 2,
 			breed_name = {
 				"skaven_warpfire_thrower",
-				"skaven_pack_master",
-			},
+				"skaven_pack_master"
+			}
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"spawn_special",
 			amount = 1,
 			breed_name = {
 				"skaven_gutter_runner",
-				"skaven_pack_master",
+				"skaven_pack_master"
 			},
-			difficulty_requirement = HARDER,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"spawn_special",
 			amount = 1,
 			breed_name = {
 				"chaos_corruptor_sorcerer",
-				"chaos_corruptor_sorcerer",
+				"chaos_corruptor_sorcerer"
 			},
-			difficulty_requirement = CATACLYSM,
+			difficulty_requirement = var_0_4
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 180,
-			condition = function (t)
-				return count_event_breed("skaven_warpfire_thrower") < 1 and count_event_breed("skaven_pack_master") < 1 and count_event_breed("skaven_gutter_runner") < 1 and count_event_breed("chaos_corruptor_sorcerer") < 1
-			end,
+			condition = function(arg_20_0)
+				return var_0_1("skaven_warpfire_thrower") < 1 and var_0_1("skaven_pack_master") < 1 and var_0_1("skaven_gutter_runner") < 1 and var_0_1("chaos_corruptor_sorcerer") < 1
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_end_event_specials_done",
-		},
+			flow_event_name = "whaling_end_event_specials_done"
+		}
 	},
 	whaling_end_event_specials_03 = {
 		{
 			"set_master_event_running",
-			name = "whaling_end_event_specials",
+			name = "whaling_end_event_specials"
 		},
 		{
 			"spawn_special",
 			amount = 2,
 			breed_name = {
 				"skaven_ratling_gunner",
-				"chaos_corruptor_sorcerer",
-			},
+				"chaos_corruptor_sorcerer"
+			}
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"spawn_special",
 			amount = 1,
 			breed_name = {
 				"skaven_warpfire_thrower",
-				"skaven_pack_master",
+				"skaven_pack_master"
 			},
-			difficulty_requirement = HARDER,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"spawn_special",
 			amount = 1,
 			breed_name = {
 				"skaven_ratling_gunner",
-				"skaven_gutter_runner",
+				"skaven_gutter_runner"
 			},
-			difficulty_requirement = CATACLYSM,
+			difficulty_requirement = var_0_4
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 180,
-			condition = function (t)
-				return count_event_breed("skaven_ratling_gunner") < 1 and count_event_breed("chaos_corruptor_sorcerer") < 1 and count_event_breed("skaven_warpfire_thrower") < 1 and count_event_breed("skaven_pack_master") < 1 and count_event_breed("skaven_gutter_runner") < 1
-			end,
+			condition = function(arg_21_0)
+				return var_0_1("skaven_ratling_gunner") < 1 and var_0_1("chaos_corruptor_sorcerer") < 1 and var_0_1("skaven_warpfire_thrower") < 1 and var_0_1("skaven_pack_master") < 1 and var_0_1("skaven_gutter_runner") < 1
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_end_event_specials_done",
-		},
+			flow_event_name = "whaling_end_event_specials_done"
+		}
 	},
 	whaling_lighthouse = {
 		{
 			"set_master_event_running",
-			name = "whaling_end_event",
+			name = "whaling_end_event"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			limit_spawners = 2,
 			spawner_id = "lighthouse_event",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"event_horde",
-			composition_type = "chaos_shields",
 			limit_spawners = 2,
 			spawner_id = "lighthouse_event",
+			composition_type = "chaos_shields"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (t)
-				return count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
-			end,
+			condition = function(arg_22_0)
+				return var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_lighthouse_restart",
-		},
+			flow_event_name = "whaling_lighthouse_restart"
+		}
 	},
 	whaling_bulwark_house = {
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_bulwark",
 			spawner_id = "end_event_house",
-		},
+			breed_name = "chaos_bulwark"
+		}
 	},
 	whaling_burning_window = {
 		{
-			"enable_bots_in_carry_event",
+			"enable_bots_in_carry_event"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"set_master_event_running",
-			name = "whaling_burning_windows",
+			name = "whaling_burning_windows"
 		},
 		{
-			"disable_kick",
+			"disable_kick"
 		},
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 6,
 			spawner_id = "burning_window",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
 			duration = 20,
-			condition = function (t)
-				return count_event_breed("skaven_slave") < 6
-			end,
+			condition = function(arg_23_0)
+				return var_0_1("skaven_slave") < 6
+			end
 		},
 		{
 			"delay",
-			duration = 7,
+			duration = 7
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_burning_windows_done",
-		},
+			flow_event_name = "whaling_burning_windows_done"
+		}
 	},
 	whaling_door_guard = {
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_marauder_with_shield",
 			spawner_id = "whaling_shield_dude_1",
+			breed_name = "chaos_marauder_with_shield"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_marauder_with_shield",
 			spawner_id = "whaling_shield_dude_2",
+			breed_name = "chaos_marauder_with_shield"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_marauder",
 			spawner_id = "whaling_sword_dude_1",
+			breed_name = "chaos_marauder"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_marauder",
 			spawner_id = "whaling_sword_dude_2",
+			breed_name = "chaos_marauder"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_raider",
 			spawner_id = "whaling_2h_dude_1",
-		},
+			breed_name = "chaos_raider"
+		}
 	},
 	whaling_sewer_event_a = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"set_master_event_running",
-			name = "whaling_sewer_event",
+			name = "whaling_sewer_event"
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_chaos_stinger",
+			stinger_name = "enemy_horde_chaos_stinger"
 		},
 		{
 			"event_horde",
-			composition_type = "chaos_shields",
 			limit_spawners = 2,
 			spawner_id = "sewer_spawn",
+			composition_type = "chaos_shields"
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_sewer_event_a_done",
-		},
+			flow_event_name = "whaling_sewer_event_a_done"
+		}
 	},
 	whaling_sewer_event_b = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"set_master_event_running",
-			name = "whaling_sewer_event",
+			name = "whaling_sewer_event"
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_chaos_stinger",
+			stinger_name = "enemy_horde_chaos_stinger"
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			limit_spawners = 2,
 			spawner_id = "sewer_spawn",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_sewer_event_b_done",
-		},
+			flow_event_name = "whaling_sewer_event_b_done"
+		}
 	},
 	whaling_sewer_event_c = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"set_master_event_running",
-			name = "whaling_sewer_event",
+			name = "whaling_sewer_event"
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_chaos_stinger",
+			stinger_name = "enemy_horde_chaos_stinger"
 		},
 		{
 			"event_horde",
-			composition_type = "chaos_berzerkers_small",
 			limit_spawners = 2,
 			spawner_id = "sewer_spawn",
+			composition_type = "chaos_berzerkers_small"
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_sewer_event_c_done",
-		},
+			flow_event_name = "whaling_sewer_event_c_done"
+		}
 	},
 	whaling_rat_ogre = {
 		{
 			"set_master_event_running",
-			name = "whaling_boss_sewer",
+			name = "whaling_boss_sewer"
 		},
 		{
 			"spawn_at_raw",
@@ -1126,182 +1126,182 @@ local terror_event_blueprints = {
 				"skaven_rat_ogre",
 				"skaven_stormfiend",
 				"chaos_troll",
-				"chaos_spawn",
-			},
+				"chaos_spawn"
+			}
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_rat_ogre") == 1 or count_event_breed("skaven_stormfiend") == 1 or count_event_breed("chaos_troll") == 1 or count_event_breed("chaos_spawn") == 1
-			end,
+			condition = function(arg_24_0)
+				return var_0_1("skaven_rat_ogre") == 1 or var_0_1("skaven_stormfiend") == 1 or var_0_1("chaos_troll") == 1 or var_0_1("chaos_spawn") == 1
+			end
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_sewer_boss_spawned",
+			flow_event_name = "whaling_sewer_boss_spawned"
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_rat_ogre") < 1 and count_event_breed("skaven_stormfiend") < 1 and count_event_breed("chaos_troll") < 1 and count_event_breed("chaos_spawn") < 1
-			end,
+			condition = function(arg_25_0)
+				return var_0_1("skaven_rat_ogre") < 1 and var_0_1("skaven_stormfiend") < 1 and var_0_1("chaos_troll") < 1 and var_0_1("chaos_spawn") < 1
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_sewer_boss_dead",
-		},
+			flow_event_name = "whaling_sewer_boss_dead"
+		}
 	},
 	whaling_storm_fiend = {
 		{
 			"set_master_event_running",
-			name = "whaling_boss_sewer",
+			name = "whaling_boss_sewer"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_stormfiend",
 			spawner_id = "whaling_boss_spawn_sewer",
+			breed_name = "skaven_stormfiend"
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_stormfiend") == 1
-			end,
+			condition = function(arg_26_0)
+				return var_0_1("skaven_stormfiend") == 1
+			end
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_sewer_boss_spawned",
+			flow_event_name = "whaling_sewer_boss_spawned"
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_stormfiend") < 1
-			end,
+			condition = function(arg_27_0)
+				return var_0_1("skaven_stormfiend") < 1
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_sewer_boss_dead",
-		},
+			flow_event_name = "whaling_sewer_boss_dead"
+		}
 	},
 	whaling_chaos_troll = {
 		{
 			"set_master_event_running",
-			name = "whaling_boss_sewer",
+			name = "whaling_boss_sewer"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_troll",
 			spawner_id = "whaling_boss_spawn_sewer",
+			breed_name = "chaos_troll"
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("chaos_troll") == 1
-			end,
+			condition = function(arg_28_0)
+				return var_0_1("chaos_troll") == 1
+			end
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_sewer_boss_spawned",
+			flow_event_name = "whaling_sewer_boss_spawned"
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("chaos_troll") < 1
-			end,
+			condition = function(arg_29_0)
+				return var_0_1("chaos_troll") < 1
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_sewer_boss_dead",
-		},
+			flow_event_name = "whaling_sewer_boss_dead"
+		}
 	},
 	whaling_chaos_spawn = {
 		{
 			"set_master_event_running",
-			name = "whaling_boss_sewer",
+			name = "whaling_boss_sewer"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_spawn",
 			spawner_id = "whaling_boss_spawn_sewer",
+			breed_name = "chaos_spawn"
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("chaos_spawn") == 1
-			end,
+			condition = function(arg_30_0)
+				return var_0_1("chaos_spawn") == 1
+			end
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_sewer_boss_spawned",
+			flow_event_name = "whaling_sewer_boss_spawned"
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("chaos_spawn") < 1
-			end,
+			condition = function(arg_31_0)
+				return var_0_1("chaos_spawn") < 1
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "whaling_sewer_boss_dead",
-		},
+			flow_event_name = "whaling_sewer_boss_dead"
+		}
 	},
 	whaling_outro = {
 		{
 			"flow_event",
-			flow_event_name = "whaling_outro_start",
-		},
+			flow_event_name = "whaling_outro_start"
+		}
 	},
 	whaling_bulwark_endslope = {
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_bulwark",
 			spawner_id = "bulwark_end_1",
+			breed_name = "chaos_bulwark"
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "chaos_bulwark",
 			spawner_id = "bulwark_end_2",
-			difficulty_requirement = HARDER,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "chaos_bulwark",
 			spawner_id = "bulwark_end_3",
-			difficulty_requirement = HARDEST,
-		},
-	},
+			difficulty_requirement = var_0_3
+		}
+	}
 }
 
 return {
-	terror_event_blueprints,
+	var_0_5
 }

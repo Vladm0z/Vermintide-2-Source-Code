@@ -1,51 +1,51 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_selector.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_selector.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTSelector = class(BTSelector, BTNode)
 
-BTSelector.init = function (self, ...)
-	BTSelector.super.init(self, ...)
+function BTSelector.init(arg_1_0, ...)
+	BTSelector.super.init(arg_1_0, ...)
 
-	self._children = {}
+	arg_1_0._children = {}
 end
 
 BTSelector.name = "BTSelector"
 
-BTSelector.leave = function (self, unit, blackboard, t, reason)
-	self:set_running_child(unit, blackboard, t, nil, reason)
+function BTSelector.leave(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	arg_2_0:set_running_child(arg_2_1, arg_2_2, arg_2_3, nil, arg_2_4)
 end
 
-BTSelector.run = function (self, unit, blackboard, t, dt)
-	local child_running = self:current_running_child(blackboard)
+function BTSelector.run(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local var_3_0 = arg_3_0:current_running_child(arg_3_2)
 
-	for index, node in ipairs(self._children) do
-		if node:condition(blackboard) then
-			self:set_running_child(unit, blackboard, t, node, "aborted")
+	for iter_3_0, iter_3_1 in ipairs(arg_3_0._children) do
+		if iter_3_1:condition(arg_3_2) then
+			arg_3_0:set_running_child(arg_3_1, arg_3_2, arg_3_3, iter_3_1, "aborted")
 
-			local result, evaluate = node:run(unit, blackboard, t, dt)
+			local var_3_1, var_3_2 = iter_3_1:run(arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 
-			if result ~= "running" then
-				self:set_running_child(unit, blackboard, t, nil, result)
+			if var_3_1 ~= "running" then
+				arg_3_0:set_running_child(arg_3_1, arg_3_2, arg_3_3, nil, var_3_1)
 			end
 
-			if result ~= "failed" then
-				return result, evaluate
+			if var_3_1 ~= "failed" then
+				return var_3_1, var_3_2
 			end
-		elseif node == child_running then
-			self:set_running_child(unit, blackboard, t, nil, "failed")
+		elseif iter_3_1 == var_3_0 then
+			arg_3_0:set_running_child(arg_3_1, arg_3_2, arg_3_3, nil, "failed")
 		end
 	end
 
-	if script_data.debug_behaviour_trees and script_data.debug_unit == unit then
-		print("BTSelector fail: ", self:id())
+	if script_data.debug_behaviour_trees and script_data.debug_unit == arg_3_1 then
+		print("BTSelector fail: ", arg_3_0:id())
 	end
 
-	fassert(self:current_running_child(blackboard) == nil)
+	fassert(arg_3_0:current_running_child(arg_3_2) == nil)
 
 	return "failed"
 end
 
-BTSelector.add_child = function (self, node)
-	self._children[#self._children + 1] = node
+function BTSelector.add_child(arg_4_0, arg_4_1)
+	arg_4_0._children[#arg_4_0._children + 1] = arg_4_1
 end

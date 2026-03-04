@@ -1,216 +1,210 @@
-﻿-- chunkname: @scripts/managers/backend_playfab/backend_interface_live_events_playfab.lua
+-- chunkname: @scripts/managers/backend_playfab/backend_interface_live_events_playfab.lua
 
-local PlayFabClientApi = require("PlayFab.PlayFabClientApi")
+local var_0_0 = require("PlayFab.PlayFabClientApi")
 
 BackendInterfaceLiveEventsPlayfab = class(BackendInterfaceLiveEventsPlayfab)
 
-BackendInterfaceLiveEventsPlayfab.init = function (self, backend_mirror)
-	self.is_local = false
-	self._backend_mirror = backend_mirror
-	self._last_id = 0
-	self._completed_live_event_requests = {}
-	self._live_events = nil
+function BackendInterfaceLiveEventsPlayfab.init(arg_1_0, arg_1_1)
+	arg_1_0.is_local = false
+	arg_1_0._backend_mirror = arg_1_1
+	arg_1_0._last_id = 0
+	arg_1_0._completed_live_event_requests = {}
+	arg_1_0._live_events = nil
 
-	self:_refresh()
+	arg_1_0:_refresh()
 end
 
-BackendInterfaceLiveEventsPlayfab._refresh = function (self)
-	local backend_manager = Managers.backend
-	local live_events_string = backend_manager:get_title_data("live_events_v2") or backend_manager:get_title_data("live_events")
-	local live_events = live_events_string and cjson.decode(live_events_string) or {}
+function BackendInterfaceLiveEventsPlayfab._refresh(arg_2_0)
+	local var_2_0 = Managers.backend
+	local var_2_1 = var_2_0:get_title_data("live_events_v2") or var_2_0:get_title_data("live_events")
+	local var_2_2 = var_2_1 and cjson.decode(var_2_1) or {}
 
-	if is_array(live_events) then
-		self._live_events = {
-			weekly_events = live_events,
+	if is_array(var_2_2) then
+		arg_2_0._live_events = {
+			weekly_events = var_2_2
 		}
 	else
-		self._live_events = live_events
+		arg_2_0._live_events = var_2_2
 	end
 
-	self._weekly_event_rewards = cjson.decode(self._backend_mirror:get_read_only_data("weekly_event_rewards") or "{}")
-	self._dirty = false
+	arg_2_0._weekly_event_rewards = cjson.decode(arg_2_0._backend_mirror:get_read_only_data("weekly_event_rewards") or "{}")
+	arg_2_0._dirty = false
 end
 
-BackendInterfaceLiveEventsPlayfab.ready = function (self)
-	return self._live_events ~= nil
+function BackendInterfaceLiveEventsPlayfab.ready(arg_3_0)
+	return arg_3_0._live_events ~= nil
 end
 
-BackendInterfaceLiveEventsPlayfab.update = function (self, dt)
+function BackendInterfaceLiveEventsPlayfab.update(arg_4_0, arg_4_1)
 	return
 end
 
-BackendInterfaceLiveEventsPlayfab.make_dirty = function (self)
-	self._dirty = true
+function BackendInterfaceLiveEventsPlayfab.make_dirty(arg_5_0)
+	arg_5_0._dirty = true
 end
 
-BackendInterfaceLiveEventsPlayfab._new_id = function (self)
-	self._last_id = self._last_id + 1
+function BackendInterfaceLiveEventsPlayfab._new_id(arg_6_0)
+	arg_6_0._last_id = arg_6_0._last_id + 1
 
-	return self._last_id
+	return arg_6_0._last_id
 end
 
-BackendInterfaceLiveEventsPlayfab.request_live_events = function (self, cb)
-	local id = self:_new_id()
-	local request = {
+function BackendInterfaceLiveEventsPlayfab.request_live_events(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_0:_new_id()
+	local var_7_1 = {
 		FunctionName = "getLiveEvents",
 		FunctionParameter = {
-			id = id,
-		},
+			id = var_7_0
+		}
 	}
-	local success_callback = callback(self, "request_live_events_cb", id, cb)
-	local request_queue = self._backend_mirror:request_queue()
+	local var_7_2 = callback(arg_7_0, "request_live_events_cb", var_7_0, arg_7_1)
 
-	request_queue:enqueue(request, success_callback, false)
+	arg_7_0._backend_mirror:request_queue():enqueue(var_7_1, var_7_2, false)
 
-	return id
+	return var_7_0
 end
 
-BackendInterfaceLiveEventsPlayfab.request_live_events_cb = function (self, id, cb, result)
-	local function_result = result.FunctionResult
-	local live_events_json = function_result.live_events
+function BackendInterfaceLiveEventsPlayfab.request_live_events_cb(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	local var_8_0 = arg_8_3.FunctionResult
+	local var_8_1 = var_8_0.live_events
 
-	self._backend_mirror:set_title_data("live_events_v2", live_events_json)
-	self:_refresh()
+	arg_8_0._backend_mirror:set_title_data("live_events_v2", var_8_1)
+	arg_8_0:_refresh()
 
-	self._completed_live_event_requests[id] = true
+	arg_8_0._completed_live_event_requests[arg_8_1] = true
 
-	if cb then
-		cb(function_result)
+	if arg_8_2 then
+		arg_8_2(var_8_0)
 	end
 end
 
-BackendInterfaceLiveEventsPlayfab.request_weekly_event_rewards = function (self, cb)
-	local id = self:_new_id()
-	local request = {
+function BackendInterfaceLiveEventsPlayfab.request_weekly_event_rewards(arg_9_0, arg_9_1)
+	local var_9_0 = arg_9_0:_new_id()
+	local var_9_1 = {
 		FunctionName = "getWeeklyEventRewards",
 		FunctionParameter = {
-			id = id,
-		},
+			id = var_9_0
+		}
 	}
-	local success_callback = callback(self, "request_weekly_event_rewards_cb", id, cb)
-	local request_queue = self._backend_mirror:request_queue()
+	local var_9_2 = callback(arg_9_0, "request_weekly_event_rewards_cb", var_9_0, arg_9_1)
 
-	request_queue:enqueue(request, success_callback, false)
+	arg_9_0._backend_mirror:request_queue():enqueue(var_9_1, var_9_2, false)
 
-	return id
+	return var_9_0
 end
 
-BackendInterfaceLiveEventsPlayfab.request_weekly_event_rewards_cb = function (self, id, cb, result)
-	local function_result = result.FunctionResult
-	local weekly_event_rewards = function_result.data
+function BackendInterfaceLiveEventsPlayfab.request_weekly_event_rewards_cb(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	local var_10_0 = arg_10_3.FunctionResult
+	local var_10_1 = var_10_0.data
 
-	self._backend_mirror:set_read_only_data("weekly_event_rewards", cjson.encode(weekly_event_rewards), true)
-	self:_refresh()
+	arg_10_0._backend_mirror:set_read_only_data("weekly_event_rewards", cjson.encode(var_10_1), true)
+	arg_10_0:_refresh()
 
-	self._completed_live_event_requests[id] = true
+	arg_10_0._completed_live_event_requests[arg_10_1] = true
 
-	if cb then
-		cb(function_result)
+	if arg_10_2 then
+		arg_10_2(var_10_0)
 	end
 end
 
-BackendInterfaceLiveEventsPlayfab.live_events_request_complete = function (self, id)
-	local complete = self._completed_live_event_requests[id]
-
-	return complete
+function BackendInterfaceLiveEventsPlayfab.live_events_request_complete(arg_11_0, arg_11_1)
+	return arg_11_0._completed_live_event_requests[arg_11_1]
 end
 
-BackendInterfaceLiveEventsPlayfab.get_weekly_events = function (self)
-	if self._dirty then
-		self:_refresh()
+function BackendInterfaceLiveEventsPlayfab.get_weekly_events(arg_12_0)
+	if arg_12_0._dirty then
+		arg_12_0:_refresh()
 	end
 
-	return self._live_events.weekly_events
+	return arg_12_0._live_events.weekly_events
 end
 
-BackendInterfaceLiveEventsPlayfab.get_special_events = function (self)
-	if self._dirty then
-		self:_refresh()
+function BackendInterfaceLiveEventsPlayfab.get_special_events(arg_13_0)
+	if arg_13_0._dirty then
+		arg_13_0:_refresh()
 	end
 
-	return self._live_events.special_events
+	return arg_13_0._live_events.special_events
 end
 
-BackendInterfaceLiveEventsPlayfab.get_active_events = function (self)
-	if self._dirty then
-		self:_refresh()
+function BackendInterfaceLiveEventsPlayfab.get_active_events(arg_14_0)
+	if arg_14_0._dirty then
+		arg_14_0:_refresh()
 	end
 
-	return self._live_events.active_events
+	return arg_14_0._live_events.active_events
 end
 
-BackendInterfaceLiveEventsPlayfab.get_weekly_events_game_mode_data = function (self)
-	if self._dirty then
-		self:_refresh()
+function BackendInterfaceLiveEventsPlayfab.get_weekly_events_game_mode_data(arg_15_0)
+	if arg_15_0._dirty then
+		arg_15_0:_refresh()
 	end
 
-	local weekly_event_data = self._live_events.weekly_events
+	local var_15_0 = arg_15_0._live_events.weekly_events
 
-	for i = 1, #weekly_event_data do
-		local event = weekly_event_data[i]
+	for iter_15_0 = 1, #var_15_0 do
+		local var_15_1 = var_15_0[iter_15_0]
 
-		if event.game_mode_data then
-			return event.game_mode_data
+		if var_15_1.game_mode_data then
+			return var_15_1.game_mode_data
 		end
 	end
 end
 
-local EMPTY_TABLE = {}
+local var_0_1 = {}
 
-BackendInterfaceLiveEventsPlayfab.get_weekly_chaos_wastes_game_mode_data = function (self)
-	if self._dirty then
-		self:_refresh()
+function BackendInterfaceLiveEventsPlayfab.get_weekly_chaos_wastes_game_mode_data(arg_16_0)
+	if arg_16_0._dirty then
+		arg_16_0:_refresh()
 	end
 
-	local weekly_event_data = self._live_events.weekly_chaos_wastes or EMPTY_TABLE
+	local var_16_0 = arg_16_0._live_events.weekly_chaos_wastes or var_0_1
 
-	for i = 1, #weekly_event_data do
-		local event = weekly_event_data[i]
+	for iter_16_0 = 1, #var_16_0 do
+		local var_16_1 = var_16_0[iter_16_0]
 
-		if event.game_mode_data then
-			return event.game_mode_data, event.information
+		if var_16_1.game_mode_data then
+			return var_16_1.game_mode_data, var_16_1.information
 		end
 	end
 
-	return EMPTY_TABLE, EMPTY_TABLE
+	return var_0_1, var_0_1
 end
 
-BackendInterfaceLiveEventsPlayfab.get_weekly_chaos_wastes_rewards_data = function (self)
-	if self._dirty then
-		self:_refresh()
+function BackendInterfaceLiveEventsPlayfab.get_weekly_chaos_wastes_rewards_data(arg_17_0)
+	if arg_17_0._dirty then
+		arg_17_0:_refresh()
 	end
 
-	local deus = self._weekly_event_rewards.deus
+	local var_17_0 = arg_17_0._weekly_event_rewards.deus
 
-	if not deus then
-		return EMPTY_TABLE
+	if not var_17_0 then
+		return var_0_1
 	end
 
-	return deus.data
+	return var_17_0.data
 end
 
-BackendInterfaceLiveEventsPlayfab.request_twitch_app_access_token = function (self, cb)
-	local request = {
+function BackendInterfaceLiveEventsPlayfab.request_twitch_app_access_token(arg_18_0, arg_18_1)
+	local var_18_0 = {
 		FunctionName = "getTwitchAccessToken",
 		FunctionParameter = {
-			force = true,
-		},
+			force = true
+		}
 	}
-	local success_callback = callback(self, "_request_twitch_app_access_token_cb", cb)
-	local request_queue = self._backend_mirror:request_queue()
+	local var_18_1 = callback(arg_18_0, "_request_twitch_app_access_token_cb", arg_18_1)
 
-	request_queue:enqueue(request, success_callback, false)
+	arg_18_0._backend_mirror:request_queue():enqueue(var_18_0, var_18_1, false)
 end
 
-BackendInterfaceLiveEventsPlayfab._request_twitch_app_access_token_cb = function (self, cb, result)
-	local function_result = result.FunctionResult
-	local access_token = function_result.access_token
+function BackendInterfaceLiveEventsPlayfab._request_twitch_app_access_token_cb(arg_19_0, arg_19_1, arg_19_2)
+	local var_19_0 = arg_19_2.FunctionResult.access_token
 
-	if access_token then
-		self._backend_mirror:set_twitch_app_access_token(access_token)
+	if var_19_0 then
+		arg_19_0._backend_mirror:set_twitch_app_access_token(var_19_0)
 	end
 
-	if cb then
-		cb(access_token)
+	if arg_19_1 then
+		arg_19_1(var_19_0)
 	end
 end

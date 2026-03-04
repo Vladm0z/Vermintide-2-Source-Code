@@ -1,10 +1,10 @@
-﻿-- chunkname: @scripts/managers/voting/vote_manager.lua
+-- chunkname: @scripts/managers/voting/vote_manager.lua
 
 require("scripts/managers/voting/vote_templates")
 
 VoteManager = class(VoteManager)
 
-local VOTING_RPCS = {
+local var_0_0 = {
 	"rpc_server_request_start_vote_peer_id",
 	"rpc_server_request_start_vote_lookup",
 	"rpc_server_request_start_vote_deed",
@@ -18,116 +18,113 @@ local VOTING_RPCS = {
 	"rpc_update_voters_list",
 	"rpc_client_check_dlc",
 	"rpc_server_check_dlc_reply",
-	"rpc_requirement_failed",
+	"rpc_requirement_failed"
 }
 
-VoteManager.init = function (self, ingame_context)
-	self.is_server = ingame_context.is_server
-	self.network_event_delegate = ingame_context.network_event_delegate
-	self.input_manager = ingame_context.input_manager
-	self.wwise_world = ingame_context.wwise_world
-	self.ingame_context = ingame_context
+function VoteManager.init(arg_1_0, arg_1_1)
+	arg_1_0.is_server = arg_1_1.is_server
+	arg_1_0.network_event_delegate = arg_1_1.network_event_delegate
+	arg_1_0.input_manager = arg_1_1.input_manager
+	arg_1_0.wwise_world = arg_1_1.wwise_world
+	arg_1_0.ingame_context = arg_1_1
 
-	self.network_event_delegate:register(self, unpack(VOTING_RPCS))
+	arg_1_0.network_event_delegate:register(arg_1_0, unpack(var_0_0))
 
-	self._vote_kick_enabled = true
+	arg_1_0._vote_kick_enabled = true
 end
 
-local DLC_DEPENDENCIES = {}
+local var_0_1 = {}
 
-VoteManager._gather_dlc_dependencies = function (self, vote_data)
-	table.clear(DLC_DEPENDENCIES)
+function VoteManager._gather_dlc_dependencies(arg_2_0, arg_2_1)
+	table.clear(var_0_1)
 
-	local votes_require_type
-	local mechanism = vote_data.mechanism
-	local mechanism_settings = mechanism and MechanismSettings[mechanism]
+	local var_2_0
+	local var_2_1 = arg_2_1.mechanism
+	local var_2_2 = var_2_1 and MechanismSettings[var_2_1]
 
-	if mechanism_settings and mechanism_settings.required_dlc then
-		DLC_DEPENDENCIES[#DLC_DEPENDENCIES + 1] = NetworkLookup.dlcs[mechanism_settings.required_dlc]
-		votes_require_type = "all"
+	if var_2_2 and var_2_2.required_dlc then
+		var_0_1[#var_0_1 + 1] = NetworkLookup.dlcs[var_2_2.required_dlc]
+		var_2_0 = "all"
 	end
 
-	local difficulty = vote_data.difficulty
-	local difficulty_settings = DifficultySettings[difficulty]
+	local var_2_3 = arg_2_1.difficulty
+	local var_2_4 = DifficultySettings[var_2_3]
 
-	if difficulty_settings and difficulty_settings.dlc_requirement then
-		DLC_DEPENDENCIES[#DLC_DEPENDENCIES + 1] = NetworkLookup.dlcs[difficulty_settings.dlc_requirement]
-		votes_require_type = votes_require_type == "all" and "all" or "any"
+	if var_2_4 and var_2_4.dlc_requirement then
+		var_0_1[#var_0_1 + 1] = NetworkLookup.dlcs[var_2_4.dlc_requirement]
+		var_2_0 = var_2_0 == "all" and "all" or "any"
 	end
 
-	if #DLC_DEPENDENCIES > 0 then
-		return DLC_DEPENDENCIES, votes_require_type
+	if #var_0_1 > 0 then
+		return var_0_1, var_2_0
 	end
 end
 
-VoteManager.request_vote = function (self, name, vote_data, voter_peer_id, ignore_dlc_check)
-	local vote_template = VoteTemplates[name]
+function VoteManager.request_vote(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local var_3_0 = VoteTemplates[arg_3_1]
 
-	fassert(vote_template, "Could not find voting template by name: %q", name)
-	fassert(voter_peer_id ~= nil, "No voter peer id sent")
+	fassert(var_3_0, "Could not find voting template by name: %q", arg_3_1)
+	fassert(arg_3_3 ~= nil, "No voter peer id sent")
 
-	local vote_type_id = NetworkLookup.voting_types[name]
+	local var_3_1 = NetworkLookup.voting_types[arg_3_1]
 
-	vote_data = vote_data or {}
-	vote_data.voter_peer_id = voter_peer_id
+	arg_3_2 = arg_3_2 or {}
+	arg_3_2.voter_peer_id = arg_3_3
 
-	if self.is_server then
-		local start_new_voting = self:can_start_vote(name, vote_data)
+	if arg_3_0.is_server then
+		if arg_3_0:can_start_vote(arg_3_1, arg_3_2) then
+			local var_3_2
+			local var_3_3
 
-		if start_new_voting then
-			local dlc_dependencies, votes_require_type
-
-			if not ignore_dlc_check then
-				dlc_dependencies, votes_require_type = self:_gather_dlc_dependencies(vote_data)
+			if not arg_3_4 then
+				var_3_2, var_3_3 = arg_3_0:_gather_dlc_dependencies(arg_3_2)
 			end
 
-			if dlc_dependencies then
-				self._requirement_check_data = {
-					vote_name = name,
+			if var_3_2 then
+				arg_3_0._requirement_check_data = {
+					vote_name = arg_3_1,
 					results = {},
-					voters = self:_active_peers(),
-					vote_data = vote_data,
-					voter_peer_id = voter_peer_id or Network.peer_id(),
-					votes_require_type = votes_require_type,
+					voters = arg_3_0:_active_peers(),
+					vote_data = arg_3_2,
+					voter_peer_id = arg_3_3 or Network.peer_id(),
+					votes_require_type = var_3_3
 				}
 
-				Managers.state.network.network_transmit:send_rpc_all("rpc_client_check_dlc", dlc_dependencies)
+				Managers.state.network.network_transmit:send_rpc_all("rpc_client_check_dlc", var_3_2)
 
 				return false
 			else
-				self:_server_abort_active_vote()
-				self:_server_start_vote(name, nil, vote_data)
+				arg_3_0:_server_abort_active_vote()
+				arg_3_0:_server_start_vote(arg_3_1, nil, arg_3_2)
 
-				local sync_data = vote_template.pack_sync_data(vote_data)
-				local server_start_vote_rpc = vote_template.server_start_vote_rpc
-				local voters = self.active_voting.voters
+				local var_3_4 = var_3_0.pack_sync_data(arg_3_2)
+				local var_3_5 = var_3_0.server_start_vote_rpc
+				local var_3_6 = arg_3_0.active_voting.voters
 
 				if script_data.debug_vote_manager then
-					Managers.state.network.network_transmit:send_rpc_all(server_start_vote_rpc, vote_type_id, sync_data, voters)
+					Managers.state.network.network_transmit:send_rpc_all(var_3_5, var_3_1, var_3_4, var_3_6)
 				elseif DEDICATED_SERVER then
-					local voter_player = Managers.player:player_from_peer_id(voter_peer_id, 1)
-					local party = voter_player and voter_player:get_party() or nil
+					local var_3_7 = Managers.player:player_from_peer_id(arg_3_3, 1)
+					local var_3_8 = var_3_7 and var_3_7:get_party() or nil
 
-					if party then
-						Managers.state.network.network_transmit:send_rpc_party_clients(server_start_vote_rpc, party, true, vote_type_id, sync_data, voters)
+					if var_3_8 then
+						Managers.state.network.network_transmit:send_rpc_party_clients(var_3_5, var_3_8, true, var_3_1, var_3_4, var_3_6)
 					end
 				else
-					Managers.state.network.network_transmit:send_rpc_clients(server_start_vote_rpc, vote_type_id, sync_data, voters)
+					Managers.state.network.network_transmit:send_rpc_clients(var_3_5, var_3_1, var_3_4, var_3_6)
 				end
 
-				if not script_data.debug_vote_manager and vote_template.initial_vote_func then
-					local votes = vote_template.initial_vote_func(vote_data)
+				if not script_data.debug_vote_manager and var_3_0.initial_vote_func then
+					local var_3_9 = var_3_0.initial_vote_func(arg_3_2)
 
-					for peer_id, vote in pairs(votes) do
-						local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+					for iter_3_0, iter_3_1 in pairs(var_3_9) do
+						local var_3_10 = PEER_ID_TO_CHANNEL[iter_3_0]
 
-						self:rpc_vote(channel_id, vote)
+						arg_3_0:rpc_vote(var_3_10, iter_3_1)
 					end
 
-					local my_peer_id = Network.peer_id()
-
-					if votes[my_peer_id] then
-						self:play_sound("play_gui_mission_vote")
+					if var_3_9[Network.peer_id()] then
+						arg_3_0:play_sound("play_gui_mission_vote")
 					end
 				end
 
@@ -135,491 +132,469 @@ VoteManager.request_vote = function (self, name, vote_data, voter_peer_id, ignor
 			end
 		end
 	elseif Managers.state.network:game() then
-		local client_start_vote_rpc = vote_template.client_start_vote_rpc
-		local sync_data = vote_template.pack_sync_data(vote_data)
+		local var_3_11 = var_3_0.client_start_vote_rpc
+		local var_3_12 = var_3_0.pack_sync_data(arg_3_2)
 
-		Managers.state.network.network_transmit:send_rpc_server(client_start_vote_rpc, vote_type_id, sync_data)
+		Managers.state.network.network_transmit:send_rpc_server(var_3_11, var_3_1, var_3_12)
 
-		if vote_template.initial_vote_func then
-			local votes = vote_template.initial_vote_func(vote_data)
-			local my_peer_id = Network.peer_id()
-
-			if votes[my_peer_id] then
-				self:play_sound("play_gui_mission_vote")
-			end
+		if var_3_0.initial_vote_func and var_3_0.initial_vote_func(arg_3_2)[Network.peer_id()] then
+			arg_3_0:play_sound("play_gui_mission_vote")
 		end
 	end
 end
 
-VoteManager._server_abort_active_vote = function (self)
-	local active_voting = self.active_voting
+function VoteManager._server_abort_active_vote(arg_4_0)
+	local var_4_0 = arg_4_0.active_voting
 
-	if active_voting then
-		local ingame_context = self.ingame_context
-		local vote_data = active_voting.data
-		local result_data = active_voting.template.on_complete(0, ingame_context, vote_data)
+	if var_4_0 then
+		local var_4_1 = arg_4_0.ingame_context
+		local var_4_2 = var_4_0.data
+		local var_4_3 = var_4_0.template.on_complete(0, var_4_1, var_4_2)
 
-		self:rpc_client_complete_vote(nil, 0)
+		arg_4_0:rpc_client_complete_vote(nil, 0)
 		Managers.state.network.network_transmit:send_rpc_clients("rpc_client_complete_vote", 0)
 	end
 end
 
-VoteManager._trigger_can_vote_fail_reply = function (self, vote_name, vote_data, message)
-	local vote_id = NetworkLookup.voting_types[vote_name]
-	local voter_peer_id = vote_data.voter_peer_id
+function VoteManager._trigger_can_vote_fail_reply(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	local var_5_0 = NetworkLookup.voting_types[arg_5_1]
+	local var_5_1 = arg_5_2.voter_peer_id
 
-	Managers.state.network.network_transmit:send_rpc("rpc_requirement_failed", voter_peer_id, vote_id, message)
+	Managers.state.network.network_transmit:send_rpc("rpc_requirement_failed", var_5_1, var_5_0, arg_5_3)
 end
 
-VoteManager.can_start_vote = function (self, name, vote_data)
-	local vote_template = VoteTemplates[name]
+function VoteManager.can_start_vote(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = VoteTemplates[arg_6_1]
 
-	if vote_template.can_start_vote then
-		local success, message = vote_template.can_start_vote(vote_data)
+	if var_6_0.can_start_vote then
+		local var_6_1, var_6_2 = var_6_0.can_start_vote(arg_6_2)
 
-		if not success then
-			if message then
-				self:_trigger_can_vote_fail_reply(name, vote_data, message)
+		if not var_6_1 then
+			if var_6_2 then
+				arg_6_0:_trigger_can_vote_fail_reply(arg_6_1, arg_6_2, var_6_2)
 			end
 
 			return false
 		end
 	end
 
-	local num_players = Managers.player:num_human_players()
-	local min_required_voters = vote_template.min_required_voters or 1
-	local enough_players = min_required_voters <= num_players
-
-	if not enough_players then
+	if not (Managers.player:num_human_players() >= (var_6_0.min_required_voters or 1)) then
 		return false
 	end
 
-	local requirement_check_data = self._requirement_check_data
-
-	if requirement_check_data then
+	if arg_6_0._requirement_check_data then
 		return false
 	end
 
-	local active_voting = self.active_voting
+	local var_6_3 = arg_6_0.active_voting
 
-	if active_voting and vote_template.priority <= active_voting.template.priority then
+	if var_6_3 and var_6_0.priority <= var_6_3.template.priority then
 		return false
 	end
 
 	return true
 end
 
-local IS_LOCAL_CALL = "LOCAL_CALL"
+local var_0_2 = "LOCAL_CALL"
 
-VoteManager.vote = function (self, vote)
-	local valid_vote = vote ~= nil
+function VoteManager.vote(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_1 ~= nil
 
-	fassert(valid_vote, "Incorrect vote: %s. Casteted by: %s", vote, Network.peer_id())
+	fassert(var_7_0, "Incorrect vote: %s. Casteted by: %s", arg_7_1, Network.peer_id())
 
-	local is_server = self.is_server
-	local network_manager = Managers.state.network
+	local var_7_1 = arg_7_0.is_server
+	local var_7_2 = Managers.state.network
 
-	if is_server then
-		local channel_id = CHANNEL_TO_PEER_ID[Network.peer_id()]
+	if var_7_1 then
+		local var_7_3 = CHANNEL_TO_PEER_ID[Network.peer_id()]
 
-		self:rpc_vote(IS_LOCAL_CALL, vote)
-	elseif network_manager:in_game_session() then
-		network_manager.network_transmit:send_rpc_server("rpc_vote", vote)
+		arg_7_0:rpc_vote(var_0_2, arg_7_1)
+	elseif var_7_2:in_game_session() then
+		var_7_2.network_transmit:send_rpc_server("rpc_vote", arg_7_1)
 	end
 end
 
-VoteManager._number_of_votes = function (self)
-	local active_voting = self.active_voting
+function VoteManager._number_of_votes(arg_8_0)
+	local var_8_0 = arg_8_0.active_voting
 
-	if active_voting then
-		local current_vote_results = {}
-		local vote_options = active_voting.template.vote_options
+	if var_8_0 then
+		local var_8_1 = {}
+		local var_8_2 = var_8_0.template.vote_options
 
-		for index, _ in ipairs(vote_options) do
-			current_vote_results[index] = 0
+		for iter_8_0, iter_8_1 in ipairs(var_8_2) do
+			var_8_1[iter_8_0] = 0
 		end
 
-		local number_of_votes = 0
+		local var_8_3 = 0
 
-		for _, vote in pairs(active_voting.votes) do
-			number_of_votes = number_of_votes + 1
-			current_vote_results[vote] = current_vote_results[vote] + 1
+		for iter_8_2, iter_8_3 in pairs(var_8_0.votes) do
+			var_8_3 = var_8_3 + 1
+			var_8_1[iter_8_3] = var_8_1[iter_8_3] + 1
 		end
 
-		return number_of_votes, current_vote_results
+		return var_8_3, var_8_1
 	end
 
 	return 0, nil
 end
 
-VoteManager.has_voted = function (self, peer_id)
-	local active_voting = self.active_voting
+function VoteManager.has_voted(arg_9_0, arg_9_1)
+	local var_9_0 = arg_9_0.active_voting
 
-	return active_voting and active_voting.votes[peer_id] ~= nil
+	return var_9_0 and var_9_0.votes[arg_9_1] ~= nil
 end
 
-VoteManager.vote_in_progress = function (self)
-	local active_voting = self.active_voting
+function VoteManager.vote_in_progress(arg_10_0)
+	local var_10_0 = arg_10_0.active_voting
 
-	if active_voting then
-		return active_voting.name
+	if var_10_0 then
+		return var_10_0.name
 	end
 
 	return nil
 end
 
-VoteManager.active_vote_template = function (self)
-	return self.active_voting.template
+function VoteManager.active_vote_template(arg_11_0)
+	return arg_11_0.active_voting.template
 end
 
-VoteManager.active_vote_data = function (self)
-	return self.active_voting.data
+function VoteManager.active_vote_data(arg_12_0)
+	return arg_12_0.active_voting.data
 end
 
-VoteManager.previous_vote_info = function (self)
-	return self.previous_voting_info
+function VoteManager.previous_vote_info(arg_13_0)
+	return arg_13_0.previous_voting_info
 end
 
-VoteManager.is_ingame_vote = function (self)
-	return self.active_voting.template.ingame_vote
+function VoteManager.is_ingame_vote(arg_14_0)
+	return arg_14_0.active_voting.template.ingame_vote
 end
 
-VoteManager.is_mission_vote = function (self)
-	return self.active_voting.template.mission_vote
+function VoteManager.is_mission_vote(arg_15_0)
+	return arg_15_0.active_voting.template.mission_vote
 end
 
-VoteManager.cancel_disabled = function (self)
-	return self.active_voting and self.active_voting.template.cancel_disabled
+function VoteManager.cancel_disabled(arg_16_0)
+	return arg_16_0.active_voting and arg_16_0.active_voting.template.cancel_disabled
 end
 
-VoteManager.allow_vote_input = function (self, enable)
-	self._allow_vote_input = enable
+function VoteManager.allow_vote_input(arg_17_0, arg_17_1)
+	arg_17_0._allow_vote_input = arg_17_1
 end
 
-VoteManager.vote_time_left = function (self)
-	local network_time = Managers.state.network:network_time()
-	local active_voting = self.active_voting
+function VoteManager.vote_time_left(arg_18_0)
+	local var_18_0 = Managers.state.network:network_time()
+	local var_18_1 = arg_18_0.active_voting
 
-	if active_voting and active_voting.end_time then
-		return math.max(active_voting.end_time - network_time, 0)
+	if var_18_1 and var_18_1.end_time then
+		return math.max(var_18_1.end_time - var_18_0, 0)
 	end
 
 	return nil
 end
 
-VoteManager._handle_popup_result = function (self, result)
-	self._popup_id = nil
+function VoteManager._handle_popup_result(arg_19_0, arg_19_1)
+	arg_19_0._popup_id = nil
 end
 
-VoteManager.update = function (self, dt)
-	local t = Managers.state.network:network_time()
+function VoteManager.update(arg_20_0, arg_20_1)
+	local var_20_0 = Managers.state.network:network_time()
 
-	if self.is_server then
-		self:_server_update(dt, t)
+	if arg_20_0.is_server then
+		arg_20_0:_server_update(arg_20_1, var_20_0)
 	else
-		self:_client_update(dt, t)
+		arg_20_0:_client_update(arg_20_1, var_20_0)
 	end
 
-	if self._popup_id then
-		local result = Managers.popup:query_result(self._popup_id)
+	if arg_20_0._popup_id then
+		local var_20_1 = Managers.popup:query_result(arg_20_0._popup_id)
 
-		if result then
-			self:_handle_popup_result(result)
+		if var_20_1 then
+			arg_20_0:_handle_popup_result(var_20_1)
 		end
 	end
 
-	if self._allow_vote_input then
-		local active_voting = self.active_voting
+	if arg_20_0._allow_vote_input then
+		local var_20_2 = arg_20_0.active_voting
 
-		if active_voting and active_voting.template.ingame_vote and not self:has_voted(Network.peer_id()) then
-			local input_manager = self.input_manager
-			local gamepad_active = input_manager:is_device_active("gamepad")
-			local input_source = input_manager:get_service("ingame_menu")
-			local vote_options = active_voting.template.vote_options
-			local vote_options_n = #vote_options
-			local input_hold_timer = active_voting.input_hold_timer or 0
+		if var_20_2 and var_20_2.template.ingame_vote and not arg_20_0:has_voted(Network.peer_id()) then
+			local var_20_3 = arg_20_0.input_manager
+			local var_20_4 = var_20_3:is_device_active("gamepad")
+			local var_20_5 = var_20_3:get_service("ingame_menu")
+			local var_20_6 = var_20_2.template.vote_options
+			local var_20_7 = #var_20_6
+			local var_20_8 = var_20_2.input_hold_timer or 0
 
-			for i = 1, vote_options_n do
-				local vote_option = vote_options[i]
+			for iter_20_0 = 1, var_20_7 do
+				local var_20_9 = var_20_6[iter_20_0]
 
-				if gamepad_active then
-					local input = vote_option.input
+				if var_20_4 then
+					local var_20_10 = var_20_9.input
 
-					if input_source:get(input, true) then
-						if input ~= active_voting.current_hold_input then
-							active_voting.current_hold_input = input
-							input_hold_timer = 0
+					if var_20_5:get(var_20_10, true) then
+						if var_20_10 ~= var_20_2.current_hold_input then
+							var_20_2.current_hold_input = var_20_10
+							var_20_8 = 0
 						end
 
-						local input_hold_time = vote_option.input_hold_time
+						local var_20_11 = var_20_9.input_hold_time
 
-						if input_hold_timer == input_hold_time then
-							active_voting.input_hold_timer = nil
+						if var_20_8 == var_20_11 then
+							var_20_2.input_hold_timer = nil
 
-							self:vote(vote_option.vote)
+							arg_20_0:vote(var_20_9.vote)
 						else
-							active_voting.input_hold_timer = math.min(input_hold_timer + dt, input_hold_time)
-							active_voting.input_hold_progress = active_voting.input_hold_timer / input_hold_time
+							var_20_2.input_hold_timer = math.min(var_20_8 + arg_20_1, var_20_11)
+							var_20_2.input_hold_progress = var_20_2.input_hold_timer / var_20_11
 						end
-					elseif input == active_voting.current_hold_input then
-						active_voting.current_hold_input = nil
-						active_voting.input_hold_timer = nil
-						active_voting.input_hold_progress = nil
+					elseif var_20_10 == var_20_2.current_hold_input then
+						var_20_2.current_hold_input = nil
+						var_20_2.input_hold_timer = nil
+						var_20_2.input_hold_progress = nil
 					end
-				elseif input_source:get(vote_option.input, true) then
-					self:vote(vote_option.vote)
+				elseif var_20_5:get(var_20_9.input, true) then
+					arg_20_0:vote(var_20_9.vote)
 				end
 			end
 		end
 	end
 end
 
-VoteManager._time_ended = function (self, t)
-	local active_voting = self.active_voting
+function VoteManager._time_ended(arg_21_0, arg_21_1)
+	local var_21_0 = arg_21_0.active_voting
 
-	if active_voting.end_time and t >= active_voting.end_time then
+	if var_21_0.end_time and arg_21_1 >= var_21_0.end_time then
 		return true
 	end
 
 	return false
 end
 
-VoteManager._vote_result = function (self, vote_time_ended)
-	local active_voting = self.active_voting
-	local template = active_voting.template
-	local num_of_votes, current_vote_results = self:_number_of_votes()
-	local number_of_voters = #active_voting.voters
-	local minimum_voter_percent = template.minimum_voter_percent
-	local success_percent = template.success_percent or 0.51
-	local min_required_voters = template.min_required_voters or 1
+function VoteManager._vote_result(arg_22_0, arg_22_1)
+	local var_22_0 = arg_22_0.active_voting
+	local var_22_1 = var_22_0.template
+	local var_22_2, var_22_3 = arg_22_0:_number_of_votes()
+	local var_22_4 = #var_22_0.voters
+	local var_22_5 = var_22_1.minimum_voter_percent
+	local var_22_6 = var_22_1.success_percent or 0.51
 
-	if number_of_voters < min_required_voters then
+	if var_22_4 < (var_22_1.min_required_voters or 1) then
 		return 0
 	end
 
-	if vote_time_ended or num_of_votes == number_of_voters then
-		for vote_option, vote_option_count in ipairs(current_vote_results) do
-			local vote_success_ratio = vote_option_count / num_of_votes
-
-			if success_percent <= vote_success_ratio then
-				return vote_option
+	if arg_22_1 or var_22_2 == var_22_4 then
+		for iter_22_0, iter_22_1 in ipairs(var_22_3) do
+			if var_22_6 <= iter_22_1 / var_22_2 then
+				return iter_22_0
 			end
 		end
 	end
 
-	local num_of_votes_needed = minimum_voter_percent and minimum_voter_percent <= num_of_votes / number_of_voters or false
-
-	if num_of_votes_needed or num_of_votes == number_of_voters then
+	if var_22_5 and var_22_5 <= var_22_2 / var_22_4 or false or var_22_2 == var_22_4 then
 		return 0
 	end
 
 	return nil
 end
 
-VoteManager.hot_join_sync = function (self, peer_id)
-	local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+function VoteManager.hot_join_sync(arg_23_0, arg_23_1)
+	local var_23_0 = PEER_ID_TO_CHANNEL[arg_23_1]
 
-	if self.active_voting then
-		local active_voting = self.active_voting
-		local template = active_voting.template
-		local name_id = NetworkLookup.voting_types[template.name]
-		local sync_data = template.pack_sync_data(active_voting.data)
-		local server_start_vote_rpc = template.server_start_vote_rpc
-		local voters = active_voting.voters
+	if arg_23_0.active_voting then
+		local var_23_1 = arg_23_0.active_voting
+		local var_23_2 = var_23_1.template
+		local var_23_3 = NetworkLookup.voting_types[var_23_2.name]
+		local var_23_4 = var_23_2.pack_sync_data(var_23_1.data)
+		local var_23_5 = var_23_2.server_start_vote_rpc
+		local var_23_6 = var_23_1.voters
 
-		RPC[server_start_vote_rpc](channel_id, name_id, sync_data, voters)
+		RPC[var_23_5](var_23_0, var_23_3, var_23_4, var_23_6)
 
-		local votes = active_voting.votes
+		local var_23_7 = var_23_1.votes
 
-		for voter_peer_id, vote_option in pairs(votes) do
-			RPC.rpc_client_add_vote(channel_id, voter_peer_id, vote_option)
+		for iter_23_0, iter_23_1 in pairs(var_23_7) do
+			RPC.rpc_client_add_vote(var_23_0, iter_23_0, iter_23_1)
 		end
 	end
 
-	RPC.rpc_client_vote_kick_enabled(channel_id, self._vote_kick_enabled)
+	RPC.rpc_client_vote_kick_enabled(var_23_0, arg_23_0._vote_kick_enabled)
 end
 
-VoteManager.destroy = function (self)
-	self.network_event_delegate:unregister(self)
+function VoteManager.destroy(arg_24_0)
+	arg_24_0.network_event_delegate:unregister(arg_24_0)
 
-	self.network_event_delegate = nil
+	arg_24_0.network_event_delegate = nil
 
-	if self._popup_id then
-		Managers.popup:cancel_popup(self._popup_id)
+	if arg_24_0._popup_id then
+		Managers.popup:cancel_popup(arg_24_0._popup_id)
 
-		self._popup_id = nil
+		arg_24_0._popup_id = nil
 	end
 end
 
-VoteManager._server_start_vote = function (self, name, ignore_peer_list, data)
-	local vote_template = VoteTemplates[name]
-	local network_time = Managers.state.network:network_time()
+function VoteManager._server_start_vote(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+	local var_25_0 = VoteTemplates[arg_25_1]
+	local var_25_1 = Managers.state.network:network_time()
 
-	self.active_voting = {
-		name = name,
-		template = vote_template,
-		end_time = vote_template.duration and network_time + vote_template.duration or nil,
+	arg_25_0.active_voting = {
+		name = arg_25_1,
+		template = var_25_0,
+		end_time = var_25_0.duration and var_25_1 + var_25_0.duration or nil,
 		votes = {},
-		voters = self:_get_voter_start_list(ignore_peer_list),
-		data = data,
+		voters = arg_25_0:_get_voter_start_list(arg_25_2),
+		data = arg_25_3
 	}
 
-	if vote_template.on_start then
-		vote_template.on_start(self.ingame_context, data)
+	if var_25_0.on_start then
+		var_25_0.on_start(arg_25_0.ingame_context, arg_25_3)
 	end
 
-	local start_sound_event = vote_template.start_sound_event
+	local var_25_2 = var_25_0.start_sound_event
 
-	if start_sound_event then
-		self:play_sound(start_sound_event)
+	if var_25_2 then
+		arg_25_0:play_sound(var_25_2)
 	end
 end
 
-VoteManager._get_voter_start_list = function (self, ignore_list)
-	local ignore_peers = {}
+function VoteManager._get_voter_start_list(arg_26_0, arg_26_1)
+	local var_26_0 = {}
 
-	if ignore_list then
-		for i = 1, #ignore_list do
-			ignore_peers[ignore_list[i]] = true
+	if arg_26_1 then
+		for iter_26_0 = 1, #arg_26_1 do
+			var_26_0[arg_26_1[iter_26_0]] = true
 		end
 	end
 
-	local voters = {}
-	local human_players = Managers.player:human_players()
+	local var_26_1 = {}
+	local var_26_2 = Managers.player:human_players()
 
-	for _, player in pairs(human_players) do
-		local peer_id = player.peer_id
+	for iter_26_1, iter_26_2 in pairs(var_26_2) do
+		local var_26_3 = iter_26_2.peer_id
 
-		if not ignore_peers[peer_id] then
-			voters[#voters + 1] = peer_id
+		if not var_26_0[var_26_3] then
+			var_26_1[#var_26_1 + 1] = var_26_3
 		end
 	end
 
-	return voters
+	return var_26_1
 end
 
-local removed_peers = {}
+local var_0_3 = {}
 
-VoteManager._update_voter_list_by_active_peers = function (self, active_peers, voter_list, votes)
-	table.clear(removed_peers)
+function VoteManager._update_voter_list_by_active_peers(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+	table.clear(var_0_3)
 
-	local human_players = Managers.player:human_players()
+	local var_27_0 = Managers.player:human_players()
 
-	for _, player in pairs(human_players) do
-		local peer_id = player.peer_id
-
-		active_peers[peer_id] = true
+	for iter_27_0, iter_27_1 in pairs(var_27_0) do
+		arg_27_1[iter_27_1.peer_id] = true
 	end
 
-	local changed = false
+	local var_27_1 = false
 
-	for i = #voter_list, 1, -1 do
-		local voter_peer_id = voter_list[i]
+	for iter_27_2 = #arg_27_2, 1, -1 do
+		local var_27_2 = arg_27_2[iter_27_2]
 
-		if not active_peers[voter_peer_id] then
-			table.remove(voter_list, i)
+		if not arg_27_1[var_27_2] then
+			table.remove(arg_27_2, iter_27_2)
 
-			removed_peers[#removed_peers + 1] = voter_peer_id
-			changed = true
+			var_0_3[#var_0_3 + 1] = var_27_2
+			var_27_1 = true
 		end
 	end
 
-	for i = 1, #removed_peers do
-		local peer_id = removed_peers[i]
+	for iter_27_3 = 1, #var_0_3 do
+		local var_27_3 = var_0_3[iter_27_3]
 
-		if votes[peer_id] ~= nil then
-			votes[peer_id] = nil
+		if arg_27_3[var_27_3] ~= nil then
+			arg_27_3[var_27_3] = nil
 		end
 	end
 
-	return changed
+	return var_27_1
 end
 
-VoteManager.rpc_vote = function (self, channel_id, vote_cast)
-	local active_voting = self.active_voting
+function VoteManager.rpc_vote(arg_28_0, arg_28_1, arg_28_2)
+	if arg_28_0.active_voting then
+		local var_28_0
 
-	if active_voting then
-		local peer_id
-
-		if channel_id == IS_LOCAL_CALL then
-			peer_id = Network.peer_id()
+		if arg_28_1 == var_0_2 then
+			var_28_0 = Network.peer_id()
 		else
-			peer_id = CHANNEL_TO_PEER_ID[channel_id]
+			var_28_0 = CHANNEL_TO_PEER_ID[arg_28_1]
 		end
 
-		if self:has_voted(peer_id) then
+		if arg_28_0:has_voted(var_28_0) then
 			return
 		end
 
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_client_add_vote", peer_id, vote_cast)
-		self:_server_add_vote(peer_id, vote_cast)
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_client_add_vote", var_28_0, arg_28_2)
+		arg_28_0:_server_add_vote(var_28_0, arg_28_2)
 	end
 end
 
-VoteManager._server_add_vote = function (self, peer_id, vote_option)
-	self.active_voting.votes[peer_id] = vote_option
+function VoteManager._server_add_vote(arg_29_0, arg_29_1, arg_29_2)
+	arg_29_0.active_voting.votes[arg_29_1] = arg_29_2
 end
 
-VoteManager._handle_requirement_results = function (self, requirement_check_data)
-	local is_done = true
-	local success = true
-	local votes_require_type = requirement_check_data.votes_require_type
+function VoteManager._handle_requirement_results(arg_30_0, arg_30_1)
+	local var_30_0 = true
+	local var_30_1 = true
+	local var_30_2 = arg_30_1.votes_require_type
 
-	for peer_id, _ in pairs(requirement_check_data.voters) do
-		if requirement_check_data.results[peer_id] == nil then
-			is_done = false
-		elseif votes_require_type == "all" and not requirement_check_data.results[peer_id] then
-			success = false
-		elseif votes_require_type == "any" and requirement_check_data.results[peer_id] then
-			success = true
+	for iter_30_0, iter_30_1 in pairs(arg_30_1.voters) do
+		if arg_30_1.results[iter_30_0] == nil then
+			var_30_0 = false
+		elseif var_30_2 == "all" and not arg_30_1.results[iter_30_0] then
+			var_30_1 = false
+		elseif var_30_2 == "any" and arg_30_1.results[iter_30_0] then
+			var_30_1 = true
 		end
 	end
 
-	return is_done, success
+	return var_30_0, var_30_1
 end
 
-VoteManager._server_handle_requirement_check = function (self, dt, t)
-	local requirement_check_data = self._requirement_check_data
-	local active_peers = self:_active_peers()
+function VoteManager._server_handle_requirement_check(arg_31_0, arg_31_1, arg_31_2)
+	local var_31_0 = arg_31_0._requirement_check_data
+	local var_31_1 = arg_31_0:_active_peers()
 
-	self:_update_voter_list_by_active_peers(active_peers, requirement_check_data.voters, requirement_check_data.results)
+	arg_31_0:_update_voter_list_by_active_peers(var_31_1, var_31_0.voters, var_31_0.results)
 
-	local is_done, success = self:_handle_requirement_results(requirement_check_data)
+	local var_31_2, var_31_3 = arg_31_0:_handle_requirement_results(var_31_0)
 
-	if is_done then
-		self._requirement_check_data = nil
+	if var_31_2 then
+		arg_31_0._requirement_check_data = nil
 
-		if success then
-			local ignore_dlc_check = true
-			local vote_name = requirement_check_data.vote_name
-			local vote_data = requirement_check_data.vote_data
-			local voter_peer_id = requirement_check_data.voter_peer_id
+		if var_31_3 then
+			local var_31_4 = true
+			local var_31_5 = var_31_0.vote_name
+			local var_31_6 = var_31_0.vote_data
+			local var_31_7 = var_31_0.voter_peer_id
 
-			self:request_vote(vote_name, vote_data, voter_peer_id, ignore_dlc_check)
+			arg_31_0:request_vote(var_31_5, var_31_6, var_31_7, var_31_4)
 		else
-			local vote_name = requirement_check_data.vote_name
-			local vote_template = VoteTemplates[vote_name]
-			local message = vote_template.requirement_failed_message or vote_template.requirement_failed_message_func(requirement_check_data) or ""
-			local vote_id = NetworkLookup.voting_types[vote_name]
-			local voter_peer_id = requirement_check_data.voter_peer_id
+			local var_31_8 = var_31_0.vote_name
+			local var_31_9 = VoteTemplates[var_31_8]
+			local var_31_10 = var_31_9.requirement_failed_message or var_31_9.requirement_failed_message_func(var_31_0) or ""
+			local var_31_11 = NetworkLookup.voting_types[var_31_8]
+			local var_31_12 = var_31_0.voter_peer_id
 
-			Managers.state.network.network_transmit:send_rpc("rpc_requirement_failed", voter_peer_id, vote_id, message)
+			Managers.state.network.network_transmit:send_rpc("rpc_requirement_failed", var_31_12, var_31_11, var_31_10)
 		end
 	end
 end
 
-VoteManager._server_update = function (self, dt, t)
-	local requirement_check_data = self._requirement_check_data
-
-	if requirement_check_data then
-		self:_server_handle_requirement_check(dt, t)
+function VoteManager._server_update(arg_32_0, arg_32_1, arg_32_2)
+	if arg_32_0._requirement_check_data then
+		arg_32_0:_server_handle_requirement_check(arg_32_1, arg_32_2)
 
 		return
 	end
 
-	local active_voting = self.active_voting
+	local var_32_0 = arg_32_0.active_voting
 
-	if not active_voting then
+	if not var_32_0 then
 		return
 	end
 
@@ -627,253 +602,251 @@ VoteManager._server_update = function (self, dt, t)
 		return
 	end
 
-	local active_peers = self:_active_peers()
-	local changed = self:_update_voter_list_by_active_peers(active_peers, active_voting.voters, active_voting.votes)
+	local var_32_1 = arg_32_0:_active_peers()
 
-	if changed then
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_update_voters_list", active_voting.voters)
+	if arg_32_0:_update_voter_list_by_active_peers(var_32_1, var_32_0.voters, var_32_0.votes) then
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_update_voters_list", var_32_0.voters)
 	end
 
-	local vote_time_ended = self:_time_ended(t)
+	local var_32_2 = arg_32_0:_time_ended(arg_32_2)
 
-	if vote_time_ended then
-		self:_handle_undecided_votes(active_voting)
+	if var_32_2 then
+		arg_32_0:_handle_undecided_votes(var_32_0)
 	end
 
-	local vote_result = self:_vote_result(vote_time_ended)
+	local var_32_3 = arg_32_0:_vote_result(var_32_2)
 
-	if vote_result ~= nil then
-		local result_data = active_voting.template.on_complete(vote_result, self.ingame_context, active_voting.data)
+	if var_32_3 ~= nil then
+		local var_32_4 = var_32_0.template.on_complete(var_32_3, arg_32_0.ingame_context, var_32_0.data)
 
-		Managers.state.network.network_transmit:send_rpc_all("rpc_client_complete_vote", vote_result)
-	elseif vote_time_ended then
-		local result_data = active_voting.template.on_complete(0, self.ingame_context, active_voting.data)
+		Managers.state.network.network_transmit:send_rpc_all("rpc_client_complete_vote", var_32_3)
+	elseif var_32_2 then
+		local var_32_5 = var_32_0.template.on_complete(0, arg_32_0.ingame_context, var_32_0.data)
 
 		Managers.state.network.network_transmit:send_rpc_all("rpc_client_complete_vote", 0)
 	end
 end
 
-VoteManager._handle_undecided_votes = function (self, active_voting)
-	local timeout_vote_option = active_voting.template.timeout_vote_option
+function VoteManager._handle_undecided_votes(arg_33_0, arg_33_1)
+	local var_33_0 = arg_33_1.template.timeout_vote_option
 
-	if not timeout_vote_option then
+	if not var_33_0 then
 		return
 	end
 
-	local voters = active_voting.voters
-	local votes = active_voting.votes
+	local var_33_1 = arg_33_1.voters
+	local var_33_2 = arg_33_1.votes
 
-	for i = 1, #voters do
-		local peer_id = voters[i]
+	for iter_33_0 = 1, #var_33_1 do
+		local var_33_3 = var_33_1[iter_33_0]
 
-		if not votes[peer_id] then
-			local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+		if not var_33_2[var_33_3] then
+			local var_33_4 = PEER_ID_TO_CHANNEL[var_33_3]
 
-			self:rpc_vote(channel_id, timeout_vote_option)
+			arg_33_0:rpc_vote(var_33_4, var_33_0)
 		end
 	end
 end
 
-VoteManager.rpc_server_request_start_vote_base = function (self, channel_id, vote_type_id, sync_data)
-	local vote_type_name = NetworkLookup.voting_types[vote_type_id]
-	local vote_template = VoteTemplates[vote_type_name]
-	local vote_data = vote_template.extract_sync_data(sync_data)
-	local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+function VoteManager.rpc_server_request_start_vote_base(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+	local var_34_0 = NetworkLookup.voting_types[arg_34_2]
+	local var_34_1 = VoteTemplates[var_34_0].extract_sync_data(arg_34_3)
+	local var_34_2 = CHANNEL_TO_PEER_ID[arg_34_1]
 
-	self:request_vote(vote_type_name, vote_data, peer_id)
+	arg_34_0:request_vote(var_34_0, var_34_1, var_34_2)
 end
 
-VoteManager.rpc_server_request_start_vote_peer_id = function (self, channel_id, vote_type_id, sync_data)
-	self:rpc_server_request_start_vote_base(channel_id, vote_type_id, sync_data)
+function VoteManager.rpc_server_request_start_vote_peer_id(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+	arg_35_0:rpc_server_request_start_vote_base(arg_35_1, arg_35_2, arg_35_3)
 end
 
-VoteManager.rpc_server_request_start_vote_lookup = function (self, channel_id, vote_type_id, sync_data)
-	self:rpc_server_request_start_vote_base(channel_id, vote_type_id, sync_data)
+function VoteManager.rpc_server_request_start_vote_lookup(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+	arg_36_0:rpc_server_request_start_vote_base(arg_36_1, arg_36_2, arg_36_3)
 end
 
-VoteManager.rpc_server_request_start_vote_deed = function (self, channel_id, vote_type_id, sync_data)
-	self:rpc_server_request_start_vote_base(channel_id, vote_type_id, sync_data)
+function VoteManager.rpc_server_request_start_vote_deed(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+	arg_37_0:rpc_server_request_start_vote_base(arg_37_1, arg_37_2, arg_37_3)
 end
 
-VoteManager._start_vote_base = function (self, peer_id, vote_type_id, sync_data, voters)
-	local vote_type_name = NetworkLookup.voting_types[vote_type_id]
-	local vote_template = VoteTemplates[vote_type_name]
+function VoteManager._start_vote_base(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+	local var_38_0 = NetworkLookup.voting_types[arg_38_2]
+	local var_38_1 = VoteTemplates[var_38_0]
 
-	fassert(vote_template, "Could not find voting template by name: %q", vote_type_name)
+	fassert(var_38_1, "Could not find voting template by name: %q", var_38_0)
 
-	local network_time = Managers.state.network:network_time()
-	local data = vote_template.extract_sync_data(sync_data)
+	local var_38_2 = Managers.state.network:network_time()
+	local var_38_3 = var_38_1.extract_sync_data(arg_38_3)
 
-	self.active_voting = {
-		name = vote_type_name,
-		template = vote_template,
-		end_time = vote_template.duration and network_time + vote_template.duration or nil,
-		voters = voters,
+	arg_38_0.active_voting = {
+		name = var_38_0,
+		template = var_38_1,
+		end_time = var_38_1.duration and var_38_2 + var_38_1.duration or nil,
+		voters = arg_38_4,
 		votes = {},
-		data = data,
+		data = var_38_3
 	}
 end
 
-VoteManager.rpc_client_start_vote_peer_id = function (self, channel_id, vote_type_id, sync_data, voters)
-	self:_start_vote_base(channel_id, vote_type_id, sync_data, voters)
+function VoteManager.rpc_client_start_vote_peer_id(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+	arg_39_0:_start_vote_base(arg_39_1, arg_39_2, arg_39_3, arg_39_4)
 end
 
-VoteManager.rpc_client_start_vote_lookup = function (self, channel_id, vote_type_id, sync_data, voters)
-	self:_start_vote_base(channel_id, vote_type_id, sync_data, voters)
+function VoteManager.rpc_client_start_vote_lookup(arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
+	arg_40_0:_start_vote_base(arg_40_1, arg_40_2, arg_40_3, arg_40_4)
 end
 
-VoteManager.rpc_client_start_vote_deed = function (self, channel_id, vote_type_id, sync_data, voters)
-	self:_start_vote_base(channel_id, vote_type_id, sync_data, voters)
+function VoteManager.rpc_client_start_vote_deed(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+	arg_41_0:_start_vote_base(arg_41_1, arg_41_2, arg_41_3, arg_41_4)
 end
 
-VoteManager.rpc_client_add_vote = function (self, channel_id, peer_id, vote_option)
-	local active_voting = self.active_voting
+function VoteManager.rpc_client_add_vote(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+	local var_42_0 = arg_42_0.active_voting
 
-	if active_voting then
-		active_voting.votes[peer_id] = vote_option
+	if var_42_0 then
+		var_42_0.votes[arg_42_2] = arg_42_3
 	end
 end
 
-VoteManager.rpc_client_complete_vote = function (self, channel_id, vote_result)
-	if self.active_voting then
-		local number_of_votes, vote_results = self:_number_of_votes()
+function VoteManager.rpc_client_complete_vote(arg_43_0, arg_43_1, arg_43_2)
+	if arg_43_0.active_voting then
+		local var_43_0, var_43_1 = arg_43_0:_number_of_votes()
 
-		self.previous_voting_info = {
-			text = self.active_voting.text,
-			number_of_votes = number_of_votes,
-			vote_results = vote_results,
-			vote_result = vote_result,
-			votes = self.active_voting.votes,
+		arg_43_0.previous_voting_info = {
+			text = arg_43_0.active_voting.text,
+			number_of_votes = var_43_0,
+			vote_results = var_43_1,
+			vote_result = arg_43_2,
+			votes = arg_43_0.active_voting.votes
 		}
 
-		if self:is_mission_vote() then
-			if vote_result == 1 then
-				self:play_sound("play_gui_mission_vote_outcome_yes")
+		if arg_43_0:is_mission_vote() then
+			if arg_43_2 == 1 then
+				arg_43_0:play_sound("play_gui_mission_vote_outcome_yes")
 			else
-				self:play_sound("play_gui_mission_vote_outcome_no")
+				arg_43_0:play_sound("play_gui_mission_vote_outcome_no")
 			end
 		end
 	end
 
-	self.active_voting = nil
+	arg_43_0.active_voting = nil
 end
 
-VoteManager.rpc_client_vote_kick_enabled = function (self, channel_id, is_enabled)
-	self._vote_kick_enabled = is_enabled
+function VoteManager.rpc_client_vote_kick_enabled(arg_44_0, arg_44_1, arg_44_2)
+	arg_44_0._vote_kick_enabled = arg_44_2
 end
 
-VoteManager.rpc_update_voters_list = function (self, channel_id, voters)
-	local active_voting = self.active_voting
+function VoteManager.rpc_update_voters_list(arg_45_0, arg_45_1, arg_45_2)
+	local var_45_0 = arg_45_0.active_voting
 
-	if active_voting then
-		local active_peers = {}
+	if var_45_0 then
+		local var_45_1 = {}
 
-		for i = 1, #voters do
-			active_peers[voters[i]] = true
+		for iter_45_0 = 1, #arg_45_2 do
+			var_45_1[arg_45_2[iter_45_0]] = true
 		end
 
-		local changed = self:_update_voter_list_by_active_peers(active_peers, active_voting.voters, active_voting.votes)
+		local var_45_2 = arg_45_0:_update_voter_list_by_active_peers(var_45_1, var_45_0.voters, var_45_0.votes)
 
-		if not changed then
-			table.dump(voters, "voters")
-			table.dump(active_peers, "active_peers")
+		if not var_45_2 then
+			table.dump(arg_45_2, "voters")
+			table.dump(var_45_1, "active_peers")
 		end
 
-		fassert(changed, "What?")
+		fassert(var_45_2, "What?")
 	end
 end
 
-VoteManager.rpc_client_check_dlc = function (self, channel_id, dlc_name_ids)
-	local owns_dlc = true
+function VoteManager.rpc_client_check_dlc(arg_46_0, arg_46_1, arg_46_2)
+	local var_46_0 = true
 
-	for _, dlc_id in ipairs(dlc_name_ids) do
-		local dlc_name = NetworkLookup.dlcs[dlc_id]
+	for iter_46_0, iter_46_1 in ipairs(arg_46_2) do
+		local var_46_1 = NetworkLookup.dlcs[iter_46_1]
 
-		if not Managers.unlock:is_dlc_unlocked(dlc_name) then
-			owns_dlc = false
+		if not Managers.unlock:is_dlc_unlocked(var_46_1) then
+			var_46_0 = false
 
 			break
 		end
 	end
 
-	Managers.state.network.network_transmit:send_rpc_server("rpc_server_check_dlc_reply", owns_dlc)
+	Managers.state.network.network_transmit:send_rpc_server("rpc_server_check_dlc_reply", var_46_0)
 end
 
-VoteManager.rpc_server_check_dlc_reply = function (self, channel_id, success)
-	local requirement_check_data = self._requirement_check_data
-	local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+function VoteManager.rpc_server_check_dlc_reply(arg_47_0, arg_47_1, arg_47_2)
+	local var_47_0 = arg_47_0._requirement_check_data
+	local var_47_1 = CHANNEL_TO_PEER_ID[arg_47_1]
 
-	requirement_check_data.results[peer_id] = success
+	var_47_0.results[var_47_1] = arg_47_2
 end
 
-VoteManager.rpc_requirement_failed = function (self, channel_id, vote_id, message)
-	local header = Localize("required_power_level_not_met_in_party")
-	local vote_name = NetworkLookup.voting_types[vote_id]
+function VoteManager.rpc_requirement_failed(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+	local var_48_0 = Localize("required_power_level_not_met_in_party")
+	local var_48_1 = NetworkLookup.voting_types[arg_48_2]
 
-	self._popup_id = Managers.popup:queue_popup(message, header, "ok", Localize("button_ok"))
+	arg_48_0._popup_id = Managers.popup:queue_popup(arg_48_3, var_48_0, "ok", Localize("button_ok"))
 end
 
-VoteManager._client_update = function (self, dt, t)
+function VoteManager._client_update(arg_49_0, arg_49_1, arg_49_2)
 	return
 end
 
-VoteManager.set_vote_kick_enabled = function (self, is_enabled)
-	if self.is_server then
-		self._vote_kick_enabled = is_enabled
+function VoteManager.set_vote_kick_enabled(arg_50_0, arg_50_1)
+	if arg_50_0.is_server then
+		arg_50_0._vote_kick_enabled = arg_50_1
 
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_client_vote_kick_enabled", is_enabled)
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_client_vote_kick_enabled", arg_50_1)
 	end
 end
 
-VoteManager.vote_kick_enabled = function (self)
-	if self._vote_kick_enabled then
+function VoteManager.vote_kick_enabled(arg_51_0)
+	if arg_51_0._vote_kick_enabled then
 		return Managers.player:num_human_players() > 2
 	end
 
 	return false
 end
 
-VoteManager.play_sound = function (self, event)
-	WwiseWorld.trigger_event(self.wwise_world, event)
+function VoteManager.play_sound(arg_52_0, arg_52_1)
+	WwiseWorld.trigger_event(arg_52_0.wwise_world, arg_52_1)
 end
 
-local current_voters = {}
+local var_0_4 = {}
 
-VoteManager.get_current_voters = function (self)
-	table.clear(current_voters)
+function VoteManager.get_current_voters(arg_53_0)
+	table.clear(var_0_4)
 
-	if self.active_voting then
-		local votes = self.active_voting.votes
-		local voters = self.active_voting.voters
-		local num_voters = #voters
+	if arg_53_0.active_voting then
+		local var_53_0 = arg_53_0.active_voting.votes
+		local var_53_1 = arg_53_0.active_voting.voters
+		local var_53_2 = #var_53_1
 
-		for i = 1, num_voters do
-			local peer_id = voters[i]
-			local vote = votes[peer_id]
+		for iter_53_0 = 1, var_53_2 do
+			local var_53_3 = var_53_1[iter_53_0]
+			local var_53_4 = var_53_0[var_53_3]
 
-			if vote == nil then
-				vote = "undecided"
+			if var_53_4 == nil then
+				var_53_4 = "undecided"
 			end
 
-			current_voters[peer_id] = vote
+			var_0_4[var_53_3] = var_53_4
 		end
 	end
 
-	return current_voters
+	return var_0_4
 end
 
-local peers_local = {}
+local var_0_5 = {}
 
-VoteManager._active_peers = function (self)
-	table.clear(peers_local)
+function VoteManager._active_peers(arg_54_0)
+	table.clear(var_0_5)
 
-	local human_players = Managers.player:human_players()
+	local var_54_0 = Managers.player:human_players()
 
-	for _, player in pairs(human_players) do
-		local peer_id = player.peer_id
+	for iter_54_0, iter_54_1 in pairs(var_54_0) do
+		local var_54_1 = iter_54_1.peer_id
 
-		peers_local[peer_id] = true
+		var_0_5[var_54_1] = true
 	end
 
-	return peers_local
+	return var_0_5
 end

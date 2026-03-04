@@ -1,2 +1,2 @@
-﻿-- chunkname: @scripts/imgui/imgui_statistics_db.lua
+-- chunkname: @scripts/imgui/imgui_statistics_db.lua
 

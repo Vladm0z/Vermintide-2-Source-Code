@@ -1,73 +1,66 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_random.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_random.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTRandom = class(BTRandom, BTNode)
 BTRandom.name = "BTRandom"
 
-BTRandom.init = function (self, ...)
-	BTRandom.super.init(self, ...)
+function BTRandom.init(arg_1_0, ...)
+	BTRandom.super.init(arg_1_0, ...)
 
-	self._children = {}
+	arg_1_0._children = {}
 end
 
-BTRandom.ready = function (self, lua_node)
-	local probabilities = {}
+function BTRandom.ready(arg_2_0, arg_2_1)
+	local var_2_0 = {}
 
-	for i = 1, #self._children do
-		local child = self._children[i]
-
-		probabilities[i] = child._tree_node.weight
+	for iter_2_0 = 1, #arg_2_0._children do
+		var_2_0[iter_2_0] = arg_2_0._children[iter_2_0]._tree_node.weight
 	end
 
-	self.prob, self.alias = LoadedDice.create(probabilities, false)
+	arg_2_0.prob, arg_2_0.alias = LoadedDice.create(var_2_0, false)
 end
 
-BTRandom.enter = function (self, unit, blackboard, t)
-	local child_index = LoadedDice.roll(self.prob, self.alias)
+function BTRandom.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	local var_3_0 = LoadedDice.roll(arg_3_0.prob, arg_3_0.alias)
 
-	blackboard.node_data[self._identifier] = child_index
+	arg_3_2.node_data[arg_3_0._identifier] = var_3_0
 end
 
-BTRandom.leave = function (self, unit, blackboard, t, reason, destroy)
-	self:set_running_child(unit, blackboard, t, nil)
+function BTRandom.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil)
 
-	blackboard.node_data[self._identifier] = nil
+	arg_4_2.node_data[arg_4_0._identifier] = nil
 end
 
-BTRandom.run = function (self, unit, blackboard, t, dt)
-	local running_child = self:current_running_child(blackboard)
+function BTRandom.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	local var_5_0 = arg_5_0:current_running_child(arg_5_2)
 
-	if running_child then
-		if not running_child:condition(blackboard) then
+	if var_5_0 then
+		if not var_5_0:condition(arg_5_2) then
 			return "failed"
 		end
 
-		local result = running_child:run(unit, blackboard, t, dt)
-
-		return result
+		return (var_5_0:run(arg_5_1, arg_5_2, arg_5_3, arg_5_4))
 	end
 
-	local node_data = blackboard.node_data[self._identifier]
-	local child_to_run_index = node_data
-	local num_children = #self._children
+	local var_5_1 = arg_5_2.node_data[arg_5_0._identifier]
+	local var_5_2 = #arg_5_0._children
 
-	for i = 1, num_children do
-		local actual_index = (i + child_to_run_index - 2) % num_children + 1
-		local child = self._children[actual_index]
+	for iter_5_0 = 1, var_5_2 do
+		local var_5_3 = (iter_5_0 + var_5_1 - 2) % var_5_2 + 1
+		local var_5_4 = arg_5_0._children[var_5_3]
 
-		if child:condition(blackboard) then
-			self:set_running_child(unit, blackboard, t, child)
+		if var_5_4:condition(arg_5_2) then
+			arg_5_0:set_running_child(arg_5_1, arg_5_2, arg_5_3, var_5_4)
 
-			local result = child:run(unit, blackboard, t, dt)
-
-			return result
+			return (var_5_4:run(arg_5_1, arg_5_2, arg_5_3, arg_5_4))
 		end
 	end
 
 	return "failed"
 end
 
-BTRandom.add_child = function (self, node)
-	self._children[#self._children + 1] = node
+function BTRandom.add_child(arg_6_0, arg_6_1)
+	arg_6_0._children[#arg_6_0._children + 1] = arg_6_1
 end

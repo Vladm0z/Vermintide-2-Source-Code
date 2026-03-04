@@ -1,122 +1,122 @@
-﻿-- chunkname: @scripts/managers/steam/steam_manager.lua
+-- chunkname: @scripts/managers/steam/steam_manager.lua
 
 SteamManager = class(SteamManager)
 
-SteamManager.init = function (self)
-	self._overlay_active = false
+function SteamManager.init(arg_1_0)
+	arg_1_0._overlay_active = false
 end
 
-SteamManager.destroy = function (self)
+function SteamManager.destroy(arg_2_0)
 	return
 end
 
-SteamManager.update = function (self, t, dt)
+function SteamManager.update(arg_3_0, arg_3_1, arg_3_2)
 	if HAS_STEAM then
-		Steam.run_callbacks(self)
+		Steam.run_callbacks(arg_3_0)
 	end
 end
 
-SteamManager.on_overlay_activated = function (self, enabled)
-	self._overlay_active = enabled
+function SteamManager.on_overlay_activated(arg_4_0, arg_4_1)
+	arg_4_0._overlay_active = arg_4_1
 end
 
-SteamManager.is_overlay_active = function (self)
-	return self._overlay_active
+function SteamManager.is_overlay_active(arg_5_0)
+	return arg_5_0._overlay_active
 end
 
-SteamManager.on_inventory_result = function (self, handle, result)
-	print("[SteamManager] on_inventory_result, result=", result, "handle=", handle)
+function SteamManager.on_inventory_result(arg_6_0, arg_6_1, arg_6_2)
+	print("[SteamManager] on_inventory_result, result=", arg_6_2, "handle=", arg_6_1)
 
-	if result == 1 then
-		if handle == self._request_user_inventory_handle then
+	if arg_6_2 == 1 then
+		if arg_6_1 == arg_6_0._request_user_inventory_handle then
 			print("ISI-> GET_ALL_ITEMS!")
 
-			local item_list = SteamInventory.get_result_items(handle)
+			local var_6_0 = SteamInventory.get_result_items(arg_6_1)
 
-			self._request_user_inventory_callback(result, item_list)
+			arg_6_0._request_user_inventory_callback(arg_6_2, var_6_0)
 
-			self._request_user_inventory_callback = nil
+			arg_6_0._request_user_inventory_callback = nil
 
-			table.dump(item_list, "ITEM-LIST", 3)
-		elseif self._purchase_item_callback then
-			local item_list = SteamInventory.get_result_items(handle)
+			table.dump(var_6_0, "ITEM-LIST", 3)
+		elseif arg_6_0._purchase_item_callback then
+			local var_6_1 = SteamInventory.get_result_items(arg_6_1)
 
-			self._purchase_item_callback(result, item_list)
+			arg_6_0._purchase_item_callback(arg_6_2, var_6_1)
 
-			self._purchase_item_callback = nil
+			arg_6_0._purchase_item_callback = nil
 
 			print("[SteamManager] -> PURCHASE success!")
-			table.dump(item_list, "ITEM-LIST", 3)
+			table.dump(var_6_1, "ITEM-LIST", 3)
 		end
 	else
-		print("[SteamManager] on_inventory_result FAILED, error-code:", result)
+		print("[SteamManager] on_inventory_result FAILED, error-code:", arg_6_2)
 
-		if self._request_user_inventory_callback then
+		if arg_6_0._request_user_inventory_callback then
 			print("[SteamManager] failed empty on_inventory_result callback")
-			self._request_user_inventory_callback(result)
+			arg_6_0._request_user_inventory_callback(arg_6_2)
 
-			self._request_user_inventory_callback = nil
-		elseif self._purchase_item_callback then
-			self._purchase_item_callback(result)
+			arg_6_0._request_user_inventory_callback = nil
+		elseif arg_6_0._purchase_item_callback then
+			arg_6_0._purchase_item_callback(arg_6_2)
 
-			self._purchase_item_callback = nil
+			arg_6_0._purchase_item_callback = nil
 		end
 	end
 
-	if handle == self._request_user_inventory_handle then
-		self._request_user_inventory_handle = nil
+	if arg_6_1 == arg_6_0._request_user_inventory_handle then
+		arg_6_0._request_user_inventory_handle = nil
 	end
 
-	SteamInventory.destroy_result(handle)
+	SteamInventory.destroy_result(arg_6_1)
 end
 
-SteamManager.on_price_result = function (self, result, currency)
-	print("[SteamManager] on_price_result", result, currency)
+function SteamManager.on_price_result(arg_7_0, arg_7_1, arg_7_2)
+	print("[SteamManager] on_price_result", arg_7_1, arg_7_2)
 
-	if self._refresh_item_prices_callback then
-		local price_list
+	if arg_7_0._refresh_item_prices_callback then
+		local var_7_0
 
-		if result == 1 then
-			price_list = SteamInventory.get_items_with_prices()
+		if arg_7_1 == 1 then
+			var_7_0 = SteamInventory.get_items_with_prices()
 		else
-			print("[SteamManager] -> on_price_result ERROR:", result)
+			print("[SteamManager] -> on_price_result ERROR:", arg_7_1)
 		end
 
-		self._refresh_item_prices_callback(price_list or {}, currency)
+		arg_7_0._refresh_item_prices_callback(var_7_0 or {}, arg_7_2)
 
-		self._refresh_item_prices_callback = nil
+		arg_7_0._refresh_item_prices_callback = nil
 	end
 end
 
-SteamManager.on_start_purchase = function (self, result, order_id, transaction_id)
-	print("[SteamManager] on_start_purchase result=", result, "order_id=", order_id, ", transaction_id=", transaction_id)
+function SteamManager.on_start_purchase(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	print("[SteamManager] on_start_purchase result=", arg_8_1, "order_id=", arg_8_2, ", transaction_id=", arg_8_3)
 
-	if result ~= 1 then
-		local fmt = Localize("start_game_window_twitch_error_connection")
-		local message = string.format(fmt, Localize("backend_err_auth_steam"), ">=k_EResultFail", result or 0)
+	if arg_8_1 ~= 1 then
+		local var_8_0 = Localize("start_game_window_twitch_error_connection")
+		local var_8_1 = string.format(var_8_0, Localize("backend_err_auth_steam"), ">=k_EResultFail", arg_8_1 or 0)
 
-		Managers.simple_popup:queue_popup(message, Localize("popup_error_topic"), "ok", Localize("popup_choice_ok"))
+		Managers.simple_popup:queue_popup(var_8_1, Localize("popup_error_topic"), "ok", Localize("popup_choice_ok"))
 	end
 end
 
-SteamManager.request_user_inventory = function (self, callback)
-	self._request_user_inventory_callback = callback
-	self._request_user_inventory_handle = SteamInventory.get_all_items()
+function SteamManager.request_user_inventory(arg_9_0, arg_9_1)
+	arg_9_0._request_user_inventory_callback = arg_9_1
+	arg_9_0._request_user_inventory_handle = SteamInventory.get_all_items()
 end
 
-SteamManager.request_item_prices = function (self, callback)
+function SteamManager.request_item_prices(arg_10_0, arg_10_1)
 	print("[SteamManager] request_item_prices")
 	SteamInventory.request_prices()
 
-	self._refresh_item_prices_callback = callback
-	self._last_result = nil
+	arg_10_0._refresh_item_prices_callback = arg_10_1
+	arg_10_0._last_result = nil
 end
 
-SteamManager.request_purchase_item = function (self, steam_itemdefid, amount, callback)
-	local item_name = SteamitemdefidToMasterList[steam_itemdefid]
+function SteamManager.request_purchase_item(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+	local var_11_0 = SteamitemdefidToMasterList[arg_11_1]
 
-	printf("[SteamManager] request_purchase_item(steam_itemdefid=%s %q, amount=%s)", steam_itemdefid, item_name or "n/a", amount)
-	SteamInventory.start_purchase(steam_itemdefid, amount)
+	printf("[SteamManager] request_purchase_item(steam_itemdefid=%s %q, amount=%s)", arg_11_1, var_11_0 or "n/a", arg_11_2)
+	SteamInventory.start_purchase(arg_11_1, arg_11_2)
 
-	self._purchase_item_callback = callback
+	arg_11_0._purchase_item_callback = arg_11_3
 end

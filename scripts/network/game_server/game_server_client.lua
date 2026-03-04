@@ -1,204 +1,204 @@
-﻿-- chunkname: @scripts/network/game_server/game_server_client.lua
+-- chunkname: @scripts/network/game_server/game_server_client.lua
 
 require("scripts/network/game_server/game_server_aux")
 
 GameServerLobbyClient = class(GameServerLobbyClient)
 
-local function dprintf(string, ...)
-	local s = string.format(string, ...)
+local function var_0_0(arg_1_0, ...)
+	local var_1_0 = arg_1_0.format(arg_1_0, ...)
 
-	printf("[GameServerLobbyClient]: %s", s)
+	printf("[GameServerLobbyClient]: %s", var_1_0)
 end
 
-GameServerLobbyClient.init = function (self, network_options, game_server_data, password, reserve_peers)
-	dprintf("Joining lobby on address %s", game_server_data.server_info.ip_port)
+function GameServerLobbyClient.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	var_0_0("Joining lobby on address %s", arg_2_2.server_info.ip_port)
 
-	self._game_server_info = game_server_data.server_info
-	self.peer_id = Network.peer_id()
+	arg_2_0._game_server_info = arg_2_2.server_info
+	arg_2_0.peer_id = Network.peer_id()
 
-	if reserve_peers then
-		self._game_server_lobby = GameServerInternal.reserve_server(self._game_server_info, password, reserve_peers)
+	if arg_2_4 then
+		arg_2_0._game_server_lobby = GameServerInternal.reserve_server(arg_2_0._game_server_info, arg_2_3, arg_2_4)
 	else
-		self._game_server_lobby = GameServerInternal.join_server(self._game_server_info, password)
+		arg_2_0._game_server_lobby = GameServerInternal.join_server(arg_2_0._game_server_info, arg_2_3)
 	end
 
-	self._game_server_lobby_data = game_server_data
+	arg_2_0._game_server_lobby_data = arg_2_2
 
-	local config_file_name = network_options.config_file_name
-	local project_hash = network_options.project_hash
+	local var_2_0 = arg_2_1.config_file_name
+	local var_2_1 = arg_2_1.project_hash
 
-	self._network_hash = GameServerAux.create_network_hash(config_file_name, project_hash)
-	self.lobby = self._game_server_lobby
-	self.network_hash = self._network_hash
-	self._is_party_host = not Managers.state.network or Managers.state.network.is_server
-	self._advertising_playing = true
-	self.is_host = false
+	arg_2_0._network_hash = GameServerAux.create_network_hash(var_2_0, var_2_1)
+	arg_2_0.lobby = arg_2_0._game_server_lobby
+	arg_2_0.network_hash = arg_2_0._network_hash
+	arg_2_0._is_party_host = not Managers.state.network or Managers.state.network.is_server
+	arg_2_0._advertising_playing = true
+	arg_2_0.is_host = false
 end
 
-GameServerLobbyClient.lobby_host = function (self)
-	return GameServerInternal.lobby_host(self._game_server_lobby)
+function GameServerLobbyClient.lobby_host(arg_3_0)
+	return GameServerInternal.lobby_host(arg_3_0._game_server_lobby)
 end
 
-GameServerLobbyClient.destroy = function (self)
-	dprintf("Destroying Game Server Client, leaving server...")
+function GameServerLobbyClient.destroy(arg_4_0)
+	var_0_0("Destroying Game Server Client, leaving server...")
 
-	local host = GameServerInternal.lobby_host(self._game_server_lobby)
-	local channel_id = PEER_ID_TO_CHANNEL[host]
+	local var_4_0 = GameServerInternal.lobby_host(arg_4_0._game_server_lobby)
+	local var_4_1 = PEER_ID_TO_CHANNEL[var_4_0]
 
-	printf("closing channel %s", tostring(channel_id))
+	printf("closing channel %s", tostring(var_4_1))
 
-	if channel_id then
-		GameServerInternal.close_channel(self._game_server_lobby, channel_id)
+	if var_4_1 then
+		GameServerInternal.close_channel(arg_4_0._game_server_lobby, var_4_1)
 
-		PEER_ID_TO_CHANNEL[host] = nil
-		CHANNEL_TO_PEER_ID[channel_id] = nil
+		PEER_ID_TO_CHANNEL[var_4_0] = nil
+		CHANNEL_TO_PEER_ID[var_4_1] = nil
 
-		if Managers.mechanism:dedicated_server_peer_id() == host then
+		if Managers.mechanism:dedicated_server_peer_id() == var_4_0 then
 			Managers.mechanism:reset_dedicated_server_peer_id()
 		end
 	end
 
-	self:stop_advertise_playing()
-	GameServerInternal.leave_server(self._game_server_lobby)
+	arg_4_0:stop_advertise_playing()
+	GameServerInternal.leave_server(arg_4_0._game_server_lobby)
 
-	self._members = nil
-	self._game_server_lobby = nil
-	self._game_server_lobby_data = nil
+	arg_4_0._members = nil
+	arg_4_0._game_server_lobby = nil
+	arg_4_0._game_server_lobby_data = nil
 
-	GarbageLeakDetector.register_object(self, "Game Server Client")
+	GarbageLeakDetector.register_object(arg_4_0, "Game Server Client")
 end
 
-GameServerLobbyClient.update = function (self, dt)
-	local engine_lobby = self._game_server_lobby
-	local new_state = engine_lobby:state()
-	local old_state = self._state
+function GameServerLobbyClient.update(arg_5_0, arg_5_1)
+	local var_5_0 = arg_5_0._game_server_lobby
+	local var_5_1 = var_5_0:state()
+	local var_5_2 = arg_5_0._state
 
-	if new_state ~= old_state then
-		dprintf("Changing state from %s to %s", old_state, new_state)
+	if var_5_1 ~= var_5_2 then
+		var_0_0("Changing state from %s to %s", var_5_2, var_5_1)
 
-		self._state = new_state
+		arg_5_0._state = var_5_1
 
-		if new_state == "failed" then
-			local versus_interface = Managers.backend and Managers.backend:get_interface("versus")
+		if var_5_1 == "failed" then
+			local var_5_3 = Managers.backend and Managers.backend:get_interface("versus")
 
-			if versus_interface then
-				local matchmaking_session_id = versus_interface:get_matchmaking_session_id()
+			if var_5_3 then
+				local var_5_4 = var_5_3:get_matchmaking_session_id()
 
-				if matchmaking_session_id then
-					local ip_port = self._game_server_info.ip_port or "MISSING"
+				if var_5_4 then
+					local var_5_5 = arg_5_0._game_server_info.ip_port or "MISSING"
 
-					Crashify.print_exception("GameServerLobbyClient", "State changed from %s to %s for flexmatch server. matchmaking_session_id: %s | ip_port: %s", old_state, new_state, matchmaking_session_id or "MISSING", ip_port)
+					Crashify.print_exception("GameServerLobbyClient", "State changed from %s to %s for flexmatch server. matchmaking_session_id: %s | ip_port: %s", var_5_2, var_5_1, var_5_4 or "MISSING", var_5_5)
 				end
 			end
-		elseif new_state == "reserved" then
-			local game_server_peer_id = GameServerInternal.lobby_host(engine_lobby)
-			local channel_id = GameServerInternal.open_channel(engine_lobby, game_server_peer_id)
+		elseif var_5_1 == "reserved" then
+			local var_5_6 = GameServerInternal.lobby_host(var_5_0)
+			local var_5_7 = GameServerInternal.open_channel(var_5_0, var_5_6)
 
-			print("[GameServerLobbyClient] Party host open channel to server", game_server_peer_id)
+			print("[GameServerLobbyClient] Party host open channel to server", var_5_6)
 
-			PEER_ID_TO_CHANNEL[game_server_peer_id] = channel_id
-			CHANNEL_TO_PEER_ID[channel_id] = game_server_peer_id
-		elseif new_state == "joined" then
-			local game_server_peer_id = GameServerInternal.lobby_host(engine_lobby)
+			PEER_ID_TO_CHANNEL[var_5_6] = var_5_7
+			CHANNEL_TO_PEER_ID[var_5_7] = var_5_6
+		elseif var_5_1 == "joined" then
+			local var_5_8 = GameServerInternal.lobby_host(var_5_0)
 
-			if not PEER_ID_TO_CHANNEL[game_server_peer_id] then
-				if self._is_party_host then
-					print("[GameServerLobbyClient] Party host open channel to server without reserving", game_server_peer_id)
+			if not PEER_ID_TO_CHANNEL[var_5_8] then
+				if arg_5_0._is_party_host then
+					print("[GameServerLobbyClient] Party host open channel to server without reserving", var_5_8)
 				else
-					print("[GameServerLobbyClient] Party client open channel to server", game_server_peer_id)
+					print("[GameServerLobbyClient] Party client open channel to server", var_5_8)
 				end
 
-				local channel_id = GameServerInternal.open_channel(engine_lobby, game_server_peer_id)
+				local var_5_9 = GameServerInternal.open_channel(var_5_0, var_5_8)
 
-				PEER_ID_TO_CHANNEL[game_server_peer_id] = channel_id
-				CHANNEL_TO_PEER_ID[channel_id] = game_server_peer_id
+				PEER_ID_TO_CHANNEL[var_5_8] = var_5_9
+				CHANNEL_TO_PEER_ID[var_5_9] = var_5_8
 			end
 
-			self._members = self._members or LobbyMembers:new(engine_lobby)
+			arg_5_0._members = arg_5_0._members or LobbyMembers:new(var_5_0)
 		end
 
-		if old_state == "joined" and self._members then
-			self._members:clear()
+		if var_5_2 == "joined" and arg_5_0._members then
+			arg_5_0._members:clear()
 		end
 	end
 
-	if self._members then
-		self._members:update()
+	if arg_5_0._members then
+		arg_5_0._members:update()
 	end
 end
 
-GameServerLobbyClient.claim_reserved = function (self)
-	GameServerInternal.claim_reserved(self._game_server_lobby)
+function GameServerLobbyClient.claim_reserved(arg_6_0)
+	GameServerInternal.claim_reserved(arg_6_0._game_server_lobby)
 end
 
-GameServerLobbyClient.advertise_playing = function (self)
-	Presence.advertise_playing(self._game_server_info.ip_port)
+function GameServerLobbyClient.advertise_playing(arg_7_0)
+	Presence.advertise_playing(arg_7_0._game_server_info.ip_port)
 
-	self._advertising_playing = true
+	arg_7_0._advertising_playing = true
 end
 
-GameServerLobbyClient.stop_advertise_playing = function (self, force)
-	if not self._advertising_playing then
+function GameServerLobbyClient.stop_advertise_playing(arg_8_0, arg_8_1)
+	if not arg_8_0._advertising_playing then
 		return
 	end
 
 	Presence.stop_advertise_playing()
 
-	self._advertising_playing = false
+	arg_8_0._advertising_playing = false
 end
 
-GameServerLobbyClient.state = function (self)
-	return self._state
+function GameServerLobbyClient.state(arg_9_0)
+	return arg_9_0._state
 end
 
-GameServerLobbyClient.members = function (self)
-	return self._members
+function GameServerLobbyClient.members(arg_10_0)
+	return arg_10_0._members
 end
 
-GameServerLobbyClient.invite_target = function (self)
-	return self._game_server_info.ip_port
+function GameServerLobbyClient.invite_target(arg_11_0)
+	return arg_11_0._game_server_info.ip_port
 end
 
-GameServerLobbyClient.is_dedicated_server = function (self)
+function GameServerLobbyClient.is_dedicated_server(arg_12_0)
 	return true
 end
 
-GameServerLobbyClient.lobby_host = function (self)
-	return GameServerInternal.lobby_host(self._game_server_lobby)
+function GameServerLobbyClient.lobby_host(arg_13_0)
+	return GameServerInternal.lobby_host(arg_13_0._game_server_lobby)
 end
 
-GameServerLobbyClient.lobby_data = function (self, key)
-	return self._game_server_lobby:data(key)
+function GameServerLobbyClient.lobby_data(arg_14_0, arg_14_1)
+	return arg_14_0._game_server_lobby:data(arg_14_1)
 end
 
-GameServerLobbyClient.get_stored_lobby_data = function (self)
-	return self._game_server_lobby_data
+function GameServerLobbyClient.get_stored_lobby_data(arg_15_0)
+	return arg_15_0._game_server_lobby_data
 end
 
-GameServerLobbyClient.ip_address = function (self)
-	return self._game_server_info.ip_port
+function GameServerLobbyClient.ip_address(arg_16_0)
+	return arg_16_0._game_server_info.ip_port
 end
 
-GameServerLobbyClient.is_joined = function (self)
-	return self._state == "joined"
+function GameServerLobbyClient.is_joined(arg_17_0)
+	return arg_17_0._state == "joined"
 end
 
-GameServerLobbyClient.failed = function (self)
-	return self._state == "failed"
+function GameServerLobbyClient.failed(arg_18_0)
+	return arg_18_0._state == "failed"
 end
 
-GameServerLobbyClient.id = function (self)
-	return GameServerInternal.lobby_id and GameServerInternal.lobby_id(self._game_server_lobby) or "no_id"
+function GameServerLobbyClient.id(arg_19_0)
+	return GameServerInternal.lobby_id and GameServerInternal.lobby_id(arg_19_0._game_server_lobby) or "no_id"
 end
 
-GameServerLobbyClient.request_data = function (self)
-	self._game_server_lobby:request_data()
+function GameServerLobbyClient.request_data(arg_20_0)
+	arg_20_0._game_server_lobby:request_data()
 end
 
-GameServerLobbyClient.attempting_reconnect = function (self)
+function GameServerLobbyClient.attempting_reconnect(arg_21_0)
 	return false
 end
 
-GameServerLobbyClient.lost_connection_to_lobby = function (self)
+function GameServerLobbyClient.lost_connection_to_lobby(arg_22_0)
 	return false
 end

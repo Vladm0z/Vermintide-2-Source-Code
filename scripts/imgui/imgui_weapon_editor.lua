@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/imgui/imgui_weapon_editor.lua
+-- chunkname: @scripts/imgui/imgui_weapon_editor.lua
 
 rawset(_G, "DamageProfileTemplates_orig", nil)
 rawset(_G, "BoostCurves_orig", nil)
@@ -6,129 +6,130 @@ rawset(_G, "PowerLevelTemplates_orig", nil)
 rawset(_G, "AttackTemplates_orig", nil)
 rawset(_G, "Weapons_orig", nil)
 
-local type = type
+local var_0_0 = type
 
-local function clone(t)
+local function var_0_1(arg_1_0)
 	return setmetatable({}, {
 		__mode = "kv",
-		__index = function (m, x)
-			local t = type(x)
+		__index = function(arg_2_0, arg_2_1)
+			local var_2_0 = var_0_0(arg_2_1)
 
-			if t == "function" then
+			if var_2_0 == "function" then
 				return nil
 			end
 
-			if t ~= "table" then
-				return x
+			if var_2_0 ~= "table" then
+				return arg_2_1
 			end
 
-			local c = {}
+			local var_2_1 = {}
 
-			for k, v in pairs(x) do
-				c[k] = m[v]
+			for iter_2_0, iter_2_1 in pairs(arg_2_1) do
+				var_2_1[iter_2_0] = arg_2_0[iter_2_1]
 			end
 
-			m[t] = c
+			arg_2_0[var_2_0] = var_2_1
 
-			return c
-		end,
-	})[t]
+			return var_2_1
+		end
+	})[arg_1_0]
 end
 
-local function diff(x, ref, b)
-	if x == ref then
-		return nil, b
+local function var_0_2(arg_3_0, arg_3_1, arg_3_2)
+	if arg_3_0 == arg_3_1 then
+		return nil, arg_3_2
 	end
 
-	local t = type(x)
+	local var_3_0 = var_0_0(arg_3_0)
 
-	if t == "function" then
-		return nil, b
+	if var_3_0 == "function" then
+		return nil, arg_3_2
 	end
 
-	if t ~= "table" or type(ref) ~= "table" then
-		return x, true
+	if var_3_0 ~= "table" or var_0_0(arg_3_1) ~= "table" then
+		return arg_3_0, true
 	end
 
-	local d, bb = {}, false
+	local var_3_1 = {}
+	local var_3_2 = false
 
-	for k, v in pairs(x) do
-		d[k], bb = diff(v, ref[k], bb)
+	for iter_3_0, iter_3_1 in pairs(arg_3_0) do
+		var_3_1[iter_3_0], var_3_2 = var_0_2(iter_3_1, arg_3_1[iter_3_0], var_3_2)
 	end
 
-	if not bb then
-		d = nil
+	if not var_3_2 then
+		var_3_1 = nil
 	end
 
-	return d, b or bb
+	return var_3_1, arg_3_2 or var_3_2
 end
 
-local function accumulate(f)
-	local t = {}
+local function var_0_3(arg_4_0)
+	local var_4_0 = {}
 
-	f(function (v)
-		t[#t + 1] = v
+	arg_4_0(function(arg_5_0)
+		var_4_0[#var_4_0 + 1] = arg_5_0
 	end)
 
-	return t
+	return var_4_0
 end
 
 ImguiWeaponEditor = class(ImguiWeaponEditor)
 
-ImguiWeaponEditor.init = function (self)
-	self._persistent = false
-	self._tabs = {
+function ImguiWeaponEditor.init(arg_6_0)
+	arg_6_0._persistent = false
+	arg_6_0._tabs = {
 		BoostCurves = BoostCurves,
 		DamageProfileTemplates = DamageProfileTemplates,
 		PowerLevelTemplates = PowerLevelTemplates,
 		AttackTemplates = AttackTemplates,
 		Weapons = Weapons,
-		TerrorEventBlueprints = TerrorEventBlueprints,
+		TerrorEventBlueprints = TerrorEventBlueprints
 	}
-	self._table_metadata = setmetatable({}, {
+	arg_6_0._table_metadata = setmetatable({}, {
 		__mode = "k",
-		__index = function (t, k)
-			local keys = table.keys(k)
+		__index = function(arg_7_0, arg_7_1)
+			local var_7_0 = table.keys(arg_7_1)
 
-			table.sort(keys)
+			table.sort(var_7_0)
 
-			local v = {
-				new_key = "",
+			local var_7_1 = {
 				new_value = "",
-				keys = keys,
+				new_key = "",
+				keys = var_7_0
 			}
 
-			t[k] = v
+			arg_7_0[arg_7_1] = var_7_1
 
-			return v
-		end,
+			return var_7_1
+		end
 	})
 
-	self:checkpoint()
+	arg_6_0:checkpoint()
 end
 
-ImguiWeaponEditor._defered_init = function (self)
-	if self._defered_init_done then
+function ImguiWeaponEditor._defered_init(arg_8_0)
+	if arg_8_0._defered_init_done then
 		return
 	end
 
-	local sorted_anims = {}
+	local var_8_0 = {}
 
-	for i = 1, #NetworkLookup.anims do
-		sorted_anims[i] = NetworkLookup.anims[i]
+	for iter_8_0 = 1, #NetworkLookup.anims do
+		var_8_0[iter_8_0] = NetworkLookup.anims[iter_8_0]
 	end
 
-	table.sort(sorted_anims)
+	table.sort(var_8_0)
 
-	self._lut_lut = {
-		anim_end_event = sorted_anims,
-		anim_event = sorted_anims,
+	arg_8_0._lut_lut = {
+		anim_end_event = var_8_0,
+		anim_event = var_8_0,
 		attack_template = table.keys(AttackTemplates),
 		boost_curve_type = table.keys(BoostCurves),
 		buff_name = {
 			"planted_charging_decrease_movement",
 			"planted_decrease_movement",
-			"planted_fast_decrease_movement",
+			"planted_fast_decrease_movement"
 		},
 		buff_type = NetworkLookup.buff_weapon_types,
 		crosshair_style = {
@@ -137,20 +138,20 @@ ImguiWeaponEditor._defered_init = function (self)
 			"arrows",
 			"circle",
 			"shotgun",
-			"projectile",
+			"projectile"
 		},
 		damage_profile = table.keys(AttackTemplates),
 		damage_type = NetworkLookup.damage_types,
-		display_unit = accumulate(function (yield)
-			for _, d in pairs(WeaponSkins.skins) do
-				if d.data and d.data.display_unit then
-					yield(d.data.display_unit)
+		display_unit = var_0_3(function(arg_9_0)
+			for iter_9_0, iter_9_1 in pairs(WeaponSkins.skins) do
+				if iter_9_1.data and iter_9_1.data.display_unit then
+					arg_9_0(iter_9_1.data.display_unit)
 				end
 			end
 		end),
-		first_person_hit_anim = sorted_anims,
+		first_person_hit_anim = var_8_0,
 		hit_effect = table.keys(MaterialEffectMappings),
-		hit_stop_anim = sorted_anims,
+		hit_stop_anim = var_8_0,
 		kind = {
 			"career_aim",
 			"career_dummy",
@@ -191,103 +192,105 @@ ImguiWeaponEditor._defered_init = function (self)
 			"career_bw_one",
 			"career_we_three",
 			"career_we_three_piercing",
-			"career_wh_two",
+			"career_wh_two"
 		},
 		sound_type = NetworkLookup.melee_impact_sound_types,
 		stagger_angle = {
 			"down",
 			"smiter",
 			"stab",
-			"pull",
+			"pull"
 		},
-		wield_anim = sorted_anims,
+		wield_anim = var_8_0
 	}
-	self._defered_init_done = true
+	arg_8_0._defered_init_done = true
 end
 
-ImguiWeaponEditor.checkpoint = function (self)
-	self._tabs0 = {
-		BoostCurves = clone(BoostCurves),
-		DamageProfileTemplates = clone(DamageProfileTemplates),
-		PowerLevelTemplates = clone(PowerLevelTemplates),
-		AttackTemplates = clone(AttackTemplates),
-		Weapons = clone(Weapons),
+function ImguiWeaponEditor.checkpoint(arg_10_0)
+	arg_10_0._tabs0 = {
+		BoostCurves = var_0_1(BoostCurves),
+		DamageProfileTemplates = var_0_1(DamageProfileTemplates),
+		PowerLevelTemplates = var_0_1(PowerLevelTemplates),
+		AttackTemplates = var_0_1(AttackTemplates),
+		Weapons = var_0_1(Weapons)
 	}
 end
 
-ImguiWeaponEditor.is_persistent = function (self)
-	return self._persistent
+function ImguiWeaponEditor.is_persistent(arg_11_0)
+	return arg_11_0._persistent
 end
 
-ImguiWeaponEditor.update = function (self)
-	self:_defered_init()
+function ImguiWeaponEditor.update(arg_12_0)
+	arg_12_0:_defered_init()
 end
 
-ImguiWeaponEditor.edit_table = function (self, t)
-	local metadata = self._table_metadata[t]
+function ImguiWeaponEditor.edit_table(arg_13_0, arg_13_1)
+	local var_13_0 = arg_13_0._table_metadata[arg_13_1]
 
-	for i = 1, #metadata.keys do
-		local key = metadata.keys[i]
-		local value = t[key]
-		local td = type(value)
+	for iter_13_0 = 1, #var_13_0.keys do
+		local var_13_1 = var_13_0.keys[iter_13_0]
+		local var_13_2 = arg_13_1[var_13_1]
+		local var_13_3 = var_0_0(var_13_2)
 
-		if td == "table" then
-			if Imgui.tree_node(key, false) then
-				metadata.new_key = Imgui.input_text("Key", metadata.new_key)
-				metadata.new_value = Imgui.input_text("Value", metadata.new_value)
+		if var_13_3 == "table" then
+			if Imgui.tree_node(var_13_1, false) then
+				var_13_0.new_key = Imgui.input_text("Key", var_13_0.new_key)
+				var_13_0.new_value = Imgui.input_text("Value", var_13_0.new_value)
 
 				if Imgui.small_button("Add field") then
-					local val
+					local var_13_4
+					local var_13_5
 
-					val, metadata.error = self:exec("local t = ... return " .. metadata.new_value, value)
+					var_13_5, var_13_0.error = arg_13_0:exec("local t = ... return " .. var_13_0.new_value, var_13_2)
 
-					if val ~= nil then
-						rawset(value, metadata.new_key, val)
+					if var_13_5 ~= nil then
+						rawset(var_13_2, var_13_0.new_key, var_13_5)
 
-						metadata.keys[#metadata.keys + 1] = metadata.new_key
-						metadata.new_key, metadata.new_value = "", ""
+						var_13_0.keys[#var_13_0.keys + 1] = var_13_0.new_key
+						var_13_0.new_key, var_13_0.new_value = "", ""
 					end
 				end
 
-				if metadata.error then
-					Imgui.text_colored(metadata.error, 255, 100, 100, 255)
+				if var_13_0.error then
+					Imgui.text_colored(var_13_0.error, 255, 100, 100, 255)
 				end
 
 				Imgui.separator()
-				self:edit_table(value)
+				arg_13_0:edit_table(var_13_2)
 				Imgui.tree_pop()
 			end
-		elseif td == "boolean" then
-			t[key] = Imgui.checkbox(key, value)
-		elseif td == "number" then
-			t[key] = Imgui.input_float(key, value)
-		elseif td == "string" then
-			local lut, index = self._lut_lut[key]
+		elseif var_13_3 == "boolean" then
+			arg_13_1[var_13_1] = Imgui.checkbox(var_13_1, var_13_2)
+		elseif var_13_3 == "number" then
+			arg_13_1[var_13_1] = Imgui.input_float(var_13_1, var_13_2)
+		elseif var_13_3 == "string" then
+			local var_13_6 = arg_13_0._lut_lut[var_13_1]
+			local var_13_7
 
-			if lut then
-				index = table.find(lut, value)
+			if var_13_6 then
+				var_13_7 = table.find(var_13_6, var_13_2)
 			end
 
-			if index then
-				t[key] = lut[Imgui.combo(key, index, lut)]
+			if var_13_7 then
+				arg_13_1[var_13_1] = var_13_6[Imgui.combo(var_13_1, var_13_7, var_13_6)]
 			else
-				t[key] = Imgui.input_text(key, value)
+				arg_13_1[var_13_1] = Imgui.input_text(var_13_1, var_13_2)
 			end
 		end
 	end
 end
 
-ImguiWeaponEditor._apply_to_existing_items = function (self)
-	for backend_id, modified_item_template in pairs(Managers.backend:get_interface("items")._modified_templates) do
-		printf("[ImguiWeaponEditor] Updating %s (%s)", backend_id, modified_item_template.name)
-		table.merge(modified_item_template, WeaponUtils.get_weapon_template(modified_item_template.name))
+function ImguiWeaponEditor._apply_to_existing_items(arg_14_0)
+	for iter_14_0, iter_14_1 in pairs(Managers.backend:get_interface("items")._modified_templates) do
+		printf("[ImguiWeaponEditor] Updating %s (%s)", iter_14_0, iter_14_1.name)
+		table.merge(iter_14_1, WeaponUtils.get_weapon_template(iter_14_1.name))
 	end
 end
 
-ImguiWeaponEditor.draw = function (self, _)
-	local do_close = Imgui.begin_window("Weapon Editor", "menu_bar")
+function ImguiWeaponEditor.draw(arg_15_0, arg_15_1)
+	local var_15_0 = Imgui.begin_window("Weapon Editor", "menu_bar")
 
-	self._persistent = Imgui.checkbox("Persistent window", self._persistent)
+	arg_15_0._persistent = Imgui.checkbox("Persistent window", arg_15_0._persistent)
 
 	if Imgui.begin_menu_bar() then
 		if Imgui.menu_item("Load") then
@@ -299,7 +302,7 @@ ImguiWeaponEditor.draw = function (self, _)
 		end
 
 		if Imgui.menu_item("Refresh items") then
-			self:_apply_to_existing_items()
+			arg_15_0:_apply_to_existing_items()
 		end
 
 		Imgui.end_menu_bar()
@@ -307,9 +310,9 @@ ImguiWeaponEditor.draw = function (self, _)
 
 	Imgui.separator()
 	Imgui.begin_child_window("Editor", 0, 0, true)
-	self:edit_table(self._tabs)
+	arg_15_0:edit_table(arg_15_0._tabs)
 	Imgui.end_child_window()
 	Imgui.end_window()
 
-	return do_close
+	return var_15_0
 end

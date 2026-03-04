@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/careers/career_ability_settings_vs.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/careers/career_ability_settings_vs.lua
 
 require("scripts/unit_extensions/default_player_unit/careers/career_ability_dark_pact_base")
 require("scripts/unit_extensions/default_player_unit/careers/career_ability_dark_pact_horde")
@@ -18,283 +18,283 @@ require("scripts/unit_extensions/default_player_unit/careers/career_ability_sorc
 require("scripts/unit_extensions/default_player_unit/careers/career_ability_vortex_sorcerer")
 require("scripts/unit_extensions/default_player_unit/careers/career_ability_warpfire_thrower")
 
-local buff_perks = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local var_0_0 = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
 
 ActivatedAbilitySettings.vs_gutter_runner = {
 	{
-		cooldown = 0,
 		description = "career_active_desc_dr_2_2",
+		name = "pounce",
 		display_name = "career_active_name_dr_2",
 		draw_ui_in_ghost_mode = true,
+		cooldown = 0,
+		input_action = "dark_pact_action_one",
+		spawn_cooldown_percent = 0,
 		hud_icon = "dark_pact_ability_pounce",
 		icon = "dark_pact_ability_pounce",
-		input_action = "dark_pact_action_one",
-		name = "pounce",
-		spawn_cooldown_percent = 0,
-		ability_class = CareerAbilityGutterRunnerPounce,
+		ability_class = CareerAbilityGutterRunnerPounce
 	},
 	{
-		cooldown = 15,
 		description = "career_active_desc_dr_2_2",
-		display_name = "career_active_name_dr_2",
-		hud_icon = "dark_pact_ability_invisible",
-		icon = "dark_pact_ability_invisible",
-		input_action = "dark_pact_reload",
 		name = "foff",
-		show_in_hud = true,
+		display_name = "career_active_name_dr_2",
+		input_action = "dark_pact_reload",
+		cooldown = 15,
 		spawn_cooldown_percent = 0,
-		ability_class = CareerAbilityGutterRunnerFoff,
+		hud_icon = "dark_pact_ability_invisible",
+		show_in_hud = true,
+		icon = "dark_pact_ability_invisible",
+		ability_class = CareerAbilityGutterRunnerFoff
 	},
 	{
-		cooldown = 0,
 		description = "career_active_desc_dr_2_2",
+		input_action = "versus_horde_ability",
 		display_name = "career_active_name_dr_2",
 		draw_ui_in_ghost_mode = true,
-		icon = "bardin_slayer_activated_ability",
-		input_action = "versus_horde_ability",
+		cooldown = 0,
 		name = "horde_ability",
 		spawn_cooldown_percent = 0,
-		ability_class = CareerAbilityDarkPactHorde,
-	},
+		icon = "bardin_slayer_activated_ability",
+		ability_class = CareerAbilityDarkPactHorde
+	}
 }
 ActivatedAbilitySettings.vs_poison_wind_globadier = {
 	{
+		description = "career_active_desc_dr_2_2",
+		name = "gas",
+		display_name = "career_active_name_dr_2",
+		input_action = "dark_pact_action_one",
 		cooldown = 12,
 		cooldown_anim_time = 1.25,
-		description = "career_active_desc_dr_2_2",
-		display_name = "career_active_name_dr_2",
-		hud_icon = "dark_pact_ability_throw_gas",
-		icon = "dark_pact_ability_throw_gas",
-		input_action = "dark_pact_action_one",
 		max_stacks = 0,
-		name = "gas",
 		spawn_cooldown_percent = 0,
+		hud_icon = "dark_pact_ability_throw_gas",
 		starting_stack_count = 0,
-		ability_class = CareerAbilityPoisonWindGlobadierThrow,
+		icon = "dark_pact_ability_throw_gas",
+		ability_class = CareerAbilityPoisonWindGlobadierThrow
 	},
 	{
-		cooldown = 0,
 		description = "career_active_desc_dr_2_2",
+		input_action = "versus_horde_ability",
 		display_name = "career_active_name_dr_2",
 		draw_ui_in_ghost_mode = true,
-		icon = "bardin_slayer_activated_ability",
-		input_action = "versus_horde_ability",
+		cooldown = 0,
 		name = "horde_ability",
 		spawn_cooldown_percent = 0,
-		ability_class = CareerAbilityDarkPactHorde,
-	},
+		icon = "bardin_slayer_activated_ability",
+		ability_class = CareerAbilityDarkPactHorde
+	}
 }
 ActivatedAbilitySettings.vs_packmaster = {
 	{
-		cooldown = 5,
 		description = "career_active_desc_dr_2_2",
+		name = "grab",
 		display_name = "career_active_name_dr_2",
+		input_action = "dark_pact_action_one",
+		cooldown = 5,
+		spawn_cooldown_percent = 0,
 		hud_icon = "dark_pact_ability_hook",
 		icon = "dark_pact_ability_hook",
-		input_action = "dark_pact_action_one",
-		name = "grab",
-		spawn_cooldown_percent = 0,
-		ability_class = CareerAbilityPackmasterGrab,
+		ability_class = CareerAbilityPackmasterGrab
 	},
 	{
-		cooldown = 0,
 		description = "career_active_desc_dr_2_2",
+		name = "hoist",
 		display_name = "career_active_name_dr_2",
+		input_action = "dark_pact_action_one",
+		cooldown = 0,
+		spawn_cooldown_percent = 0,
 		hud_icon = "dark_pact_ability_hoist",
 		icon = "dark_pact_ability_hoist",
-		input_action = "dark_pact_action_one",
-		name = "hoist",
-		spawn_cooldown_percent = 0,
-		ability_class = CareerAbilityPackmasterHoist,
+		ability_class = CareerAbilityPackmasterHoist
 	},
 	{
-		cooldown = 0,
 		description = "career_active_desc_dr_2_2",
-		display_name = "career_active_name_dr_2",
-		hud_icon = "dark_pact_ability_hook_return",
-		icon = "dark_pact_ability_hook_return",
-		input_action = "action_career",
 		name = "equip",
+		display_name = "career_active_name_dr_2",
+		icon = "dark_pact_ability_hook_return",
+		cooldown = 0,
+		input_action = "action_career",
 		spawn_cooldown_percent = 0,
+		hud_icon = "dark_pact_ability_hook_return",
 		startup_delay_time = 4,
-		ability_class = CareerAbilityPackmasterEquip,
+		ability_class = CareerAbilityPackmasterEquip
 	},
 	{
-		cooldown = 0,
 		description = "career_active_desc_dr_2_2",
+		input_action = "versus_horde_ability",
 		display_name = "career_active_name_dr_2",
 		draw_ui_in_ghost_mode = true,
-		icon = "bardin_slayer_activated_ability",
-		input_action = "versus_horde_ability",
+		cooldown = 0,
 		name = "horde_ability",
 		spawn_cooldown_percent = 0,
-		ability_class = CareerAbilityDarkPactHorde,
-	},
+		icon = "bardin_slayer_activated_ability",
+		ability_class = CareerAbilityDarkPactHorde
+	}
 }
 ActivatedAbilitySettings.vs_ratling_gunner = {
 	{
-		cooldown = 5,
 		description = "career_active_desc_dr_2_2",
+		name = "fire",
 		display_name = "career_active_name_dr_2",
 		hud_icon = "dark_pact_ability_teleport",
+		cooldown = 5,
 		icon = "bardin_slayer_activated_ability",
-		name = "fire",
 		spawn_cooldown_percent = 0,
-		ability_class = CareerAbilityRatlingGunnerFire,
+		ability_class = CareerAbilityRatlingGunnerFire
 	},
 	{
-		cooldown = 0,
 		description = "career_active_desc_dr_2_2",
+		input_action = "versus_horde_ability",
 		display_name = "career_active_name_dr_2",
 		draw_ui_in_ghost_mode = true,
-		icon = "bardin_slayer_activated_ability",
-		input_action = "versus_horde_ability",
+		cooldown = 0,
 		name = "horde_ability",
 		spawn_cooldown_percent = 0,
-		ability_class = CareerAbilityDarkPactHorde,
-	},
+		icon = "bardin_slayer_activated_ability",
+		ability_class = CareerAbilityDarkPactHorde
+	}
 }
 ActivatedAbilitySettings.vs_warpfire_thrower = {
 	{
-		cooldown = 2,
 		description = "career_active_desc_dr_2_2",
-		display_name = "career_active_name_dr_2",
-		icon = "bardin_slayer_activated_ability",
 		name = "fire",
+		display_name = "career_active_name_dr_2",
 		spawn_cooldown_percent = 0,
-		ability_class = CareerAbilityWarpfireThrower,
+		cooldown = 2,
+		icon = "bardin_slayer_activated_ability",
+		ability_class = CareerAbilityWarpfireThrower
 	},
 	{
-		cooldown = 0,
 		description = "career_active_desc_dr_2_2",
+		input_action = "versus_horde_ability",
 		display_name = "career_active_name_dr_2",
 		draw_ui_in_ghost_mode = true,
-		icon = "bardin_slayer_activated_ability",
-		input_action = "versus_horde_ability",
+		cooldown = 0,
 		name = "horde_ability",
 		spawn_cooldown_percent = 0,
-		ability_class = CareerAbilityDarkPactHorde,
-	},
+		icon = "bardin_slayer_activated_ability",
+		ability_class = CareerAbilityDarkPactHorde
+	}
 }
 ActivatedAbilitySettings.vs_chaos_troll = {
 	{
-		cooldown = 24,
 		description = "career_active_desc_dr_2_2",
-		display_name = "career_active_name_dr_2",
-		icon = "bardin_slayer_activated_ability",
 		input_action = "dark_pact_action_two",
-		name = "vomit",
-		spawn_cooldown_percent = 0.1,
+		display_name = "career_active_name_dr_2",
 		start_paused = true,
+		cooldown = 24,
+		name = "vomit",
 		unpause_on_leave_ghost_mode = true,
-		ability_class = CareerAbilityChaosTrollVomit,
+		spawn_cooldown_percent = 0.1,
+		icon = "bardin_slayer_activated_ability",
+		ability_class = CareerAbilityChaosTrollVomit
 	},
 	{
-		cooldown = 0,
 		description = "career_active_desc_dr_2_2",
+		input_action = "versus_horde_ability",
 		display_name = "career_active_name_dr_2",
 		draw_ui_in_ghost_mode = true,
-		icon = "bardin_slayer_activated_ability",
-		input_action = "versus_horde_ability",
+		cooldown = 0,
 		name = "horde_ability",
 		spawn_cooldown_percent = 0,
-		ability_class = CareerAbilityDarkPactHorde,
-	},
+		icon = "bardin_slayer_activated_ability",
+		ability_class = CareerAbilityDarkPactHorde
+	}
 }
 
-local rat_ogre_jump_data = {
-	hit_indicator_raidus = 3,
-	max_pitch = -2,
+local var_0_1 = {
 	min_jump_dist = 5,
 	min_pitch = 60,
+	hit_indicator_raidus = 3,
+	max_pitch = -2,
 	lerp_data = {
-		end_accel_distance = 0.5,
-		full_distance = 1,
-		glide_distance = 0.7,
+		zero_distance = 0,
 		slow_distance = 0.8,
 		start_accel_distance = 0.05,
-		zero_distance = 0,
+		glide_distance = 0.7,
+		full_distance = 1,
+		end_accel_distance = 0.5
 	},
 	movement_settings = {
 		jump_speed = 24,
-		max_move_speed = 100,
+		slam_speed = 48,
 		max_slam_speed = 100,
 		move_speed = 36,
-		player_speed_scale = 1,
-		slam_speed = 48,
 		vertical_height = 2,
+		player_speed_scale = 1,
+		max_move_speed = 100
 	},
 	priming_buffs = {
 		{
 			buff_template = "rat_ogre_planted_decrease_movement",
-			external_optional_multiplier = 0.001,
-		},
-	},
+			external_optional_multiplier = 0.001
+		}
+	}
 }
 
 ActivatedAbilitySettings.vs_rat_ogre = {
 	{
-		cooldown = 24,
 		cost = 1,
-		description = "career_active_desc_dr_2_2",
-		display_name = "career_active_name_dr_2",
-		icon = "bardin_slayer_activated_ability",
-		input_action = "dark_pact_action_two",
 		name = "ogre_jump",
-		prime_time = 2,
-		spawn_cooldown_percent = 0.1,
+		display_name = "career_active_name_dr_2",
 		start_paused = true,
+		cooldown = 24,
+		input_action = "dark_pact_action_two",
+		prime_time = 2,
 		unpause_on_leave_ghost_mode = true,
+		spawn_cooldown_percent = 0.1,
+		description = "career_active_desc_dr_2_2",
+		icon = "bardin_slayer_activated_ability",
 		ability_class = CareerAbilityRatOgreJump,
-		jump_ability_data = rat_ogre_jump_data,
+		jump_ability_data = var_0_1
 	},
 	{
-		cooldown = 0,
 		description = "career_active_desc_dr_2_2",
+		input_action = "versus_horde_ability",
 		display_name = "career_active_name_dr_2",
 		draw_ui_in_ghost_mode = true,
-		icon = "bardin_slayer_activated_ability",
-		input_action = "versus_horde_ability",
+		cooldown = 0,
 		name = "horde_ability",
 		spawn_cooldown_percent = 0,
-		ability_class = CareerAbilityDarkPactHorde,
-	},
+		icon = "bardin_slayer_activated_ability",
+		ability_class = CareerAbilityDarkPactHorde
+	}
 }
 PassiveAbilitySettings.vs_gutter_runner = {
 	description = "career_passive_desc_dr_2a_2",
 	display_name = "career_passive_name_dr_2",
 	icon = "bardin_slayer_passive",
 	buffs = {
-		"vs_pactsworn_melee_damage_taken",
+		"vs_pactsworn_melee_damage_taken"
 	},
-	perks = {},
+	perks = {}
 }
 PassiveAbilitySettings.vs_poison_wind_globadier = {
 	description = "career_passive_desc_dr_2a_2",
 	display_name = "career_passive_name_dr_2",
 	icon = "bardin_slayer_passive",
 	buffs = {
-		"vs_pactsworn_melee_damage_taken",
+		"vs_pactsworn_melee_damage_taken"
 	},
-	perks = {},
+	perks = {}
 }
 PassiveAbilitySettings.vs_packmaster = {
 	description = "career_passive_desc_dr_2a_2",
 	display_name = "career_passive_name_dr_2",
 	icon = "bardin_slayer_passive",
 	buffs = {
-		"vs_pactsworn_melee_damage_taken",
+		"vs_pactsworn_melee_damage_taken"
 	},
-	perks = {},
+	perks = {}
 }
 PassiveAbilitySettings.vs_ratling_gunner = {
 	description = "career_passive_desc_dr_2a_2",
 	display_name = "career_passive_name_dr_2",
 	icon = "bardin_slayer_passive",
 	buffs = {
-		"vs_pactsworn_melee_damage_taken",
+		"vs_pactsworn_melee_damage_taken"
 	},
-	perks = {},
+	perks = {}
 }
 PassiveAbilitySettings.vs_warpfire_thrower = {
 	description = "career_passive_desc_dr_2a_2",
@@ -302,16 +302,16 @@ PassiveAbilitySettings.vs_warpfire_thrower = {
 	icon = "bardin_slayer_passive",
 	buffs = {
 		"vs_pactsworn_melee_damage_taken",
-		"vs_warpfire_thrower_no_charge_explotion",
+		"vs_warpfire_thrower_no_charge_explotion"
 	},
-	perks = {},
+	perks = {}
 }
 PassiveAbilitySettings.vs_chaos_troll = {
 	description = "career_passive_desc_dr_2a_2",
 	display_name = "career_passive_name_dr_2",
 	icon = "bardin_slayer_passive",
 	buffs = {},
-	perks = {},
+	perks = {}
 }
 PassiveAbilitySettings.vs_rat_ogre = {
 	description = "career_passive_desc_dr_2a_2",
@@ -322,15 +322,13 @@ PassiveAbilitySettings.vs_rat_ogre = {
 	passive_ability_classes = {
 		{
 			name = "vs_rat_ogre",
-			ability_class = PassiveAbilityRatOgre,
-		},
-	},
+			ability_class = PassiveAbilityRatOgre
+		}
+	}
 }
 
-for ability_id, ability_list in pairs(ActivatedAbilitySettings) do
-	for i = 1, #ability_list do
-		local data = ability_list[i]
-
-		data.ability_id = i
+for iter_0_0, iter_0_1 in pairs(ActivatedAbilitySettings) do
+	for iter_0_2 = 1, #iter_0_1 do
+		iter_0_1[iter_0_2].ability_id = iter_0_2
 	end
 end

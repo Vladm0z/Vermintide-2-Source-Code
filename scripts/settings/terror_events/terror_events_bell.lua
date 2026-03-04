@@ -1,35 +1,35 @@
-﻿-- chunkname: @scripts/settings/terror_events/terror_events_bell.lua
+-- chunkname: @scripts/settings/terror_events/terror_events_bell.lua
 
-local TerrorEventUtils = require("scripts/settings/terror_events/terror_event_utils")
-local count_event_breed = TerrorEventUtils.count_event_breed
-local HARDER = TerrorEventUtils.HARDER
-local HARDEST = TerrorEventUtils.HARDEST
-local CATACLYSM = TerrorEventUtils.CATACLYSM
-local terror_event_blueprints = {
+local var_0_0 = require("scripts/settings/terror_events/terror_event_utils")
+local var_0_1 = var_0_0.count_event_breed
+local var_0_2 = var_0_0.HARDER
+local var_0_3 = var_0_0.HARDEST
+local var_0_4 = var_0_0.CATACLYSM
+local var_0_5 = {
 	canyon_bell_event = {
 		{
 			"set_master_event_running",
-			name = "canyon_bell_event",
+			name = "canyon_bell_event"
 		},
 		{
 			"control_specials",
-			enable = false,
+			enable = false
 		},
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
-			"disable_kick",
+			"disable_kick"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			spawner_id = "canyon_bell_event_horde",
+			composition_type = "event_small"
 		},
 		{
 			"spawn_special",
@@ -37,25 +37,25 @@ local terror_event_blueprints = {
 			breed_name = {
 				"skaven_poison_wind_globadier",
 				"skaven_pack_master",
-				"skaven_gutter_runner",
+				"skaven_gutter_runner"
 			},
-			difficulty_requirement = HARDER,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"event_horde",
+			limit_spawners = 3,
+			spawner_id = "canyon_bell_event",
 			composition_type = "event_extra_spice_medium",
-			limit_spawners = 3,
-			spawner_id = "canyon_bell_event",
-			difficulty_requirement = HARDEST,
+			difficulty_requirement = var_0_3
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			spawner_id = "canyon_bell_event_horde",
+			composition_type = "event_small"
 		},
 		{
 			"spawn_special",
@@ -64,38 +64,38 @@ local terror_event_blueprints = {
 				"skaven_poison_wind_globadier",
 				"skaven_pack_master",
 				"skaven_gutter_runner",
-				"skaven_ratling_gunner",
+				"skaven_ratling_gunner"
 			},
-			difficulty_requirement = HARDEST,
+			difficulty_requirement = var_0_3
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "plague_monks_small",
 			limit_spawners = 3,
 			spawner_id = "canyon_bell_event",
-			difficulty_requirement = CATACLYSM,
+			composition_type = "plague_monks_small",
+			difficulty_requirement = var_0_4
 		},
 		{
 			"continue_when",
 			duration = 100,
-			condition = function (t)
-				return count_event_breed("skaven_slave") < 5 and count_event_breed("skaven_clan_rat") < 5
-			end,
+			condition = function(arg_1_0)
+				return var_0_1("skaven_slave") < 5 and var_0_1("skaven_clan_rat") < 5
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "canyon_bell_event_done",
-		},
+			flow_event_name = "canyon_bell_event_done"
+		}
 	},
 	canyon_ogre_boss = {
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_rat_ogre",
 			spawner_id = "canyon_ogre_boss",
+			breed_name = "skaven_rat_ogre"
 		},
 		{
 			"spawn_special",
@@ -104,70 +104,70 @@ local terror_event_blueprints = {
 				"skaven_poison_wind_globadier",
 				"skaven_pack_master",
 				"skaven_gutter_runner",
-				"skaven_ratling_gunner",
+				"skaven_ratling_gunner"
 			},
-			difficulty_requirement = CATACLYSM,
+			difficulty_requirement = var_0_4
 		},
 		{
 			"event_horde",
-			composition_type = "event_extra_spice_medium",
 			limit_spawners = 3,
 			spawner_id = "canyon_bell_event",
-			difficulty_requirement = CATACLYSM,
-		},
+			composition_type = "event_extra_spice_medium",
+			difficulty_requirement = var_0_4
+		}
 	},
 	canyon_escape_event = {
 		{
 			"set_master_event_running",
-			name = "canyon_escape_event",
+			name = "canyon_escape_event"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			spawner_id = "canyon_escape_event",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("skaven_slave") < 5 and count_event_breed("skaven_clan_rat") < 5
-			end,
+			condition = function(arg_2_0)
+				return var_0_1("skaven_slave") < 5 and var_0_1("skaven_clan_rat") < 5
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "canyon_escape_event_done",
-		},
+			flow_event_name = "canyon_escape_event_done"
+		}
 	},
 	canyon_escape_event_start = {
 		{
 			"set_time_challenge",
-			time_challenge_name = "bell_speed_event",
+			time_challenge_name = "bell_speed_event"
 		},
 		{
 			"set_time_challenge",
-			time_challenge_name = "bell_speed_event_cata",
-		},
+			time_challenge_name = "bell_speed_event_cata"
+		}
 	},
 	canyon_escape_event_completion_check = {
 		{
 			"has_completed_time_challenge",
-			time_challenge_name = "bell_speed_event",
+			time_challenge_name = "bell_speed_event"
 		},
 		{
 			"has_completed_time_challenge",
-			time_challenge_name = "bell_speed_event_cata",
-		},
-	},
+			time_challenge_name = "bell_speed_event_cata"
+		}
+	}
 }
 
 return {
-	terror_event_blueprints,
+	var_0_5
 }

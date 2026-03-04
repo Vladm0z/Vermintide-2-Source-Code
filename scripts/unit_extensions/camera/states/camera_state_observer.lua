@@ -1,177 +1,168 @@
-﻿-- chunkname: @scripts/unit_extensions/camera/states/camera_state_observer.lua
+-- chunkname: @scripts/unit_extensions/camera/states/camera_state_observer.lua
 
-local camera_state_observer_testify = script_data.testify and require("scripts/unit_extensions/camera/states/camera_state_observer_testify")
+local var_0_0 = script_data.testify and require("scripts/unit_extensions/camera/states/camera_state_observer_testify")
 
 CameraStateObserver = class(CameraStateObserver, CameraState)
 
-CameraStateObserver.init = function (self, camera_state_init_context)
-	CameraState.init(self, camera_state_init_context, "observer")
+function CameraStateObserver.init(arg_1_0, arg_1_1)
+	CameraState.init(arg_1_0, arg_1_1, "observer")
 
-	self._game_settings = Managers.state.game_mode:settings()
+	arg_1_0._game_settings = Managers.state.game_mode:settings()
 end
 
-CameraStateObserver.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
-	self._observed_unit = nil
-	self._network_transmit = context.network_transmit
-	self._is_server = context.network_transmit.is_server
-	self._default_observed_node_name = "camera_attach"
-	self._input_service_name = params.input_service_name or "Player"
-	self._has_read_camera_input = false
+function CameraStateObserver.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	arg_2_0._observed_unit = nil
+	arg_2_0._network_transmit = arg_2_4.network_transmit
+	arg_2_0._is_server = arg_2_4.network_transmit.is_server
+	arg_2_0._default_observed_node_name = "camera_attach"
+	arg_2_0._input_service_name = arg_2_7.input_service_name or "Player"
+	arg_2_0._has_read_camera_input = false
+	arg_2_0._observed_node_name = arg_2_7.override_observed_node or arg_2_0._default_observed_node_name
 
-	local override_observed_node = params.override_observed_node
+	local var_2_0 = arg_2_7.override_follow_unit or arg_2_0._observed_unit
 
-	self._observed_node_name = override_observed_node or self._default_observed_node_name
+	if Unit.alive(var_2_0) then
+		local var_2_1 = Unit.node(var_2_0, arg_2_0._observed_node_name)
 
-	local observed_unit = params.override_follow_unit or self._observed_unit
-
-	if Unit.alive(observed_unit) then
-		local observed_node = Unit.node(observed_unit, self._observed_node_name)
-
-		self:_set_observed_unit(observed_unit, observed_node)
+		arg_2_0:_set_observed_unit(var_2_0, var_2_1)
 	else
-		self:follow_next_unit(false)
+		arg_2_0:follow_next_unit(false)
 	end
 
 	Managers.state.event:trigger("camera_teleported")
 end
 
-CameraStateObserver.on_exit = function (self, unit, input, dt, context, t, next_state)
+function CameraStateObserver.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	Managers.player:local_player():set_observed_unit(nil)
 	Managers.state.event:trigger("camera_teleported")
 end
 
-CameraStateObserver.refresh_follow_unit = function (self, follow_unit, follow_node)
-	self:_set_observed_unit(follow_unit, follow_node)
+function CameraStateObserver.refresh_follow_unit(arg_4_0, arg_4_1, arg_4_2)
+	arg_4_0:_set_observed_unit(arg_4_1, arg_4_2)
 end
 
-local MAX_MIN_PITCH = math.pi / 2 - math.pi / 15
+local var_0_1 = math.pi / 2 - math.pi / 15
 
-CameraStateObserver.update = function (self, unit, input, dt, context, t)
-	local csm = self.csm
-	local camera_extension = self.camera_extension
-	local external_state_change = camera_extension.external_state_change
-	local external_state_change_params = camera_extension.external_state_change_params
+function CameraStateObserver.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	local var_5_0 = arg_5_0.csm
+	local var_5_1 = arg_5_0.camera_extension
+	local var_5_2 = var_5_1.external_state_change
+	local var_5_3 = var_5_1.external_state_change_params
 
-	if external_state_change and external_state_change ~= self.name then
-		csm:change_state(external_state_change, external_state_change_params)
-		camera_extension:set_external_state_change(nil)
+	if var_5_2 and var_5_2 ~= arg_5_0.name then
+		var_5_0:change_state(var_5_2, var_5_3)
+		var_5_1:set_external_state_change(nil)
 
 		return
 	end
 
-	local input_source = Managers.input:get_service(self._input_service_name)
-	local find_next_observer_target = input_source:get("next_observer_target") or not Unit.alive(self._observed_unit)
-	local find_previous_observer_target = input_source:get("previous_observer_target")
+	local var_5_4 = Managers.input:get_service(arg_5_0._input_service_name)
+	local var_5_5 = var_5_4:get("next_observer_target") or not Unit.alive(arg_5_0._observed_unit)
+	local var_5_6 = var_5_4:get("previous_observer_target")
 
-	if find_next_observer_target or find_previous_observer_target then
-		if find_next_observer_target then
-			self:follow_next_unit(false)
+	if var_5_5 or var_5_6 then
+		if var_5_5 then
+			arg_5_0:follow_next_unit(false)
 		else
-			self:follow_next_unit(true)
+			arg_5_0:follow_next_unit(true)
 		end
 	end
 
-	local manually_moved_camera = CameraStateHelper.set_camera_rotation(unit, camera_extension)
-
-	if manually_moved_camera then
-		self._has_read_camera_input = true
+	if CameraStateHelper.set_camera_rotation(arg_5_1, var_5_1) then
+		arg_5_0._has_read_camera_input = true
 	end
 
-	local observed_unit = self._observed_unit
+	local var_5_7 = arg_5_0._observed_unit
 
-	if not Unit.alive(observed_unit) then
-		self._observed_unit = nil
+	if not Unit.alive(var_5_7) then
+		arg_5_0._observed_unit = nil
 
 		return
 	end
 
-	if not self._has_read_camera_input and not Managers.player:owner(observed_unit) then
-		CameraStateHelper.set_camera_rotation_observe_static(unit, observed_unit)
+	if not arg_5_0._has_read_camera_input and not Managers.player:owner(var_5_7) then
+		CameraStateHelper.set_camera_rotation_observe_static(arg_5_1, var_5_7)
 	end
 
-	local observed_node = self._observed_node
-	local snap_camera = self._snap_camera
-	local position = Unit.world_position(observed_unit, observed_node)
-	local is_player = Managers.player:is_player_unit(observed_unit)
-	local observed_unit_status = is_player and ScriptUnit.extension(observed_unit, "status_system")
-	local is_hoisted = observed_unit_status and (observed_unit_status:is_hanging_from_hook() or observed_unit_status:is_grabbed_by_pack_master())
+	local var_5_8 = arg_5_0._observed_node
+	local var_5_9 = arg_5_0._snap_camera
+	local var_5_10 = Unit.world_position(var_5_7, var_5_8)
+	local var_5_11 = Managers.player:is_player_unit(var_5_7) and ScriptUnit.extension(var_5_7, "status_system")
 
-	if is_hoisted then
-		position = Unit.world_position(observed_unit, 0)
-		position = position + Vector3(0, 0, 1.5)
-	elseif observed_node == 0 and not Managers.player:owner(observed_unit) then
-		position = position + Vector3(0, 0, 1.5)
+	if var_5_11 and (var_5_11:is_hanging_from_hook() or var_5_11:is_grabbed_by_pack_master()) then
+		var_5_10 = Unit.world_position(var_5_7, 0)
+		var_5_10 = var_5_10 + Vector3(0, 0, 1.5)
+	elseif var_5_8 == 0 and not Managers.player:owner(var_5_7) then
+		var_5_10 = var_5_10 + Vector3(0, 0, 1.5)
 	end
 
-	CameraStateHelper.set_follow_camera_position(unit, position, nil, snap_camera, dt)
+	CameraStateHelper.set_follow_camera_position(arg_5_1, var_5_10, nil, var_5_9, arg_5_3)
 
-	self._snap_camera = false
+	arg_5_0._snap_camera = false
 
 	if script_data.testify then
-		Testify:poll_requests_through_handler(camera_state_observer_testify, self)
+		Testify:poll_requests_through_handler(var_0_0, arg_5_0)
 	end
 end
 
-CameraStateObserver.follow_next_unit = function (self, reverse)
-	local player = self.camera_extension.player
-	local unique_id = player:unique_id()
-	local player_side = Managers.state.side:get_side_from_player_unique_id(unique_id)
-	local next_unit = CameraStateHelper.get_valid_unit_to_observe(reverse, player_side, self._observed_unit, player)
-	local new_target = next_unit ~= self._observed_unit
+function CameraStateObserver.follow_next_unit(arg_6_0, arg_6_1)
+	local var_6_0 = arg_6_0.camera_extension.player
+	local var_6_1 = var_6_0:unique_id()
+	local var_6_2 = Managers.state.side:get_side_from_player_unique_id(var_6_1)
+	local var_6_3 = CameraStateHelper.get_valid_unit_to_observe(arg_6_1, var_6_2, arg_6_0._observed_unit, var_6_0)
+	local var_6_4 = var_6_3 ~= arg_6_0._observed_unit
 
-	if new_target then
-		local observed_node = Unit.alive(next_unit) and Unit.has_node(next_unit, self._observed_node_name) and Unit.node(next_unit, self._observed_node_name) or 0
+	if var_6_4 then
+		local var_6_5 = Unit.alive(var_6_3) and Unit.has_node(var_6_3, arg_6_0._observed_node_name) and Unit.node(var_6_3, arg_6_0._observed_node_name) or 0
 
-		self:_set_observed_unit(next_unit, observed_node)
+		arg_6_0:_set_observed_unit(var_6_3, var_6_5)
 	end
 
-	return next_unit, new_target
+	return var_6_3, var_6_4
 end
 
-CameraStateObserver._set_observed_unit = function (self, observed_unit, observed_node)
-	self._observed_unit = observed_unit
-	self._observed_node = observed_node or observed_unit and (Unit.has_node(observed_unit, self._default_observed_node_name) and Unit.node(observed_unit, self._default_observed_node_name) or 0)
+function CameraStateObserver._set_observed_unit(arg_7_0, arg_7_1, arg_7_2)
+	arg_7_0._observed_unit = arg_7_1
+	arg_7_0._observed_node = arg_7_2 or arg_7_1 and (Unit.has_node(arg_7_1, arg_7_0._default_observed_node_name) and Unit.node(arg_7_1, arg_7_0._default_observed_node_name) or 0)
 
-	if not Unit.alive(observed_unit) then
+	if not Unit.alive(arg_7_1) then
 		return false
 	end
 
-	local snap_camera
-	local unit = self.unit
-	local camera_extension = self.camera_extension
-	local viewport_name = camera_extension.viewport_name
-	local root_look_dir = Vector3.normalize(Vector3.flat(Quaternion.forward(Unit.local_rotation(observed_unit, 0))))
-	local yaw = math.atan2(root_look_dir.y, root_look_dir.x)
-	local camera_manager = Managers.state.camera
+	local var_7_0
+	local var_7_1 = arg_7_0.unit
+	local var_7_2 = arg_7_0.camera_extension.viewport_name
+	local var_7_3 = Vector3.normalize(Vector3.flat(Quaternion.forward(Unit.local_rotation(arg_7_1, 0))))
+	local var_7_4 = math.atan2(var_7_3.y, var_7_3.x)
 
-	camera_manager:set_pitch_yaw(viewport_name, -0.6, yaw)
-	Unit.set_data(unit, "camera", "settings_node", "observer")
+	Managers.state.camera:set_pitch_yaw(var_7_2, -0.6, var_7_4)
+	Unit.set_data(var_7_1, "camera", "settings_node", "observer")
 
-	local current_position = Unit.world_position(unit, 0)
-	local observed_unit_position = Unit.world_position(observed_unit, 0)
-	local distance = Vector3.distance(current_position, observed_unit_position)
+	local var_7_5 = Unit.world_position(var_7_1, 0)
+	local var_7_6 = Unit.world_position(arg_7_1, 0)
 
-	if distance > 50 then
-		snap_camera = true
+	if Vector3.distance(var_7_5, var_7_6) > 50 then
+		var_7_0 = true
 	end
 
-	self._snap_camera = snap_camera
+	arg_7_0._snap_camera = var_7_0
 
-	local player = self.camera_extension.player
+	local var_7_7 = arg_7_0.camera_extension.player
 
-	player:set_observed_unit(observed_unit)
+	var_7_7:set_observed_unit(arg_7_1)
 
-	if not self._is_server then
-		local local_player_id = player:local_player_id()
-		local observed_unit_id, is_level_unit = Managers.state.network:game_object_or_level_id(observed_unit)
+	if not arg_7_0._is_server then
+		local var_7_8 = var_7_7:local_player_id()
+		local var_7_9, var_7_10 = Managers.state.network:game_object_or_level_id(arg_7_1)
 
-		observed_unit_id = observed_unit_id or NetworkConstants.invalid_game_object_id
-		is_level_unit = not not is_level_unit
+		var_7_9 = var_7_9 or NetworkConstants.invalid_game_object_id
 
-		self._network_transmit:send_rpc_server("rpc_set_observed_unit", local_player_id, observed_unit_id, is_level_unit)
+		local var_7_11 = not not var_7_10
+
+		arg_7_0._network_transmit:send_rpc_server("rpc_set_observed_unit", var_7_8, var_7_9, var_7_11)
 	end
 
-	self._has_read_camera_input = false
+	arg_7_0._has_read_camera_input = false
 
 	return true
 end

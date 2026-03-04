@@ -1,8 +1,8 @@
-﻿-- chunkname: @scripts/managers/music/music_player.lua
+-- chunkname: @scripts/managers/music/music_player.lua
 
 require("scripts/managers/music/music")
 
-local function dprint(...)
+local function var_0_0(...)
 	if script_data.debug_music then
 		print("[MusicPlayer] ", ...)
 	end
@@ -10,44 +10,44 @@ end
 
 MusicPlayer = class(MusicPlayer)
 
-MusicPlayer.init = function (self, wwise_world, start_event, stop_switch, name, set_flags, unset_flags, parameters, group_states, game_state_voice_thresholds)
-	self._wwise_world = wwise_world
-	self._start_event = start_event
-	self._stop_switch = stop_switch
-	self._name = name
-	self._set_flags = set_flags
-	self._unset_flags = unset_flags
-	self._parameters = parameters
-	self._enabled = true
-	self._init_group_states = group_states
-	self._game_state_voice_thresholds = game_state_voice_thresholds
-	self._old_music = {}
+function MusicPlayer.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8, arg_2_9)
+	arg_2_0._wwise_world = arg_2_1
+	arg_2_0._start_event = arg_2_2
+	arg_2_0._stop_switch = arg_2_3
+	arg_2_0._name = arg_2_4
+	arg_2_0._set_flags = arg_2_5
+	arg_2_0._unset_flags = arg_2_6
+	arg_2_0._parameters = arg_2_7
+	arg_2_0._enabled = true
+	arg_2_0._init_group_states = arg_2_8
+	arg_2_0._game_state_voice_thresholds = arg_2_9
+	arg_2_0._old_music = {}
 
-	dprint(self._name, "init")
+	var_0_0(arg_2_0._name, "init")
 end
 
-MusicPlayer.name = function (self)
-	return self._name
+function MusicPlayer.name(arg_3_0)
+	return arg_3_0._name
 end
 
-MusicPlayer.set_events = function (self, start_event, stop_event)
-	self._start_event = start_event
-	self._stop_event = stop_event
+function MusicPlayer.set_events(arg_4_0, arg_4_1, arg_4_2)
+	arg_4_0._start_event = arg_4_1
+	arg_4_0._stop_event = arg_4_2
 end
 
-MusicPlayer._should_play = function (self, flags)
-	if not self._enabled then
+function MusicPlayer._should_play(arg_5_0, arg_5_1)
+	if not arg_5_0._enabled then
 		return false
 	end
 
-	for _, flag in pairs(self._set_flags) do
-		if not flags[flag] then
+	for iter_5_0, iter_5_1 in pairs(arg_5_0._set_flags) do
+		if not arg_5_1[iter_5_1] then
 			return false
 		end
 	end
 
-	for _, flag in pairs(self._unset_flags) do
-		if flags[flag] then
+	for iter_5_2, iter_5_3 in pairs(arg_5_0._unset_flags) do
+		if arg_5_1[iter_5_3] then
 			return false
 		end
 	end
@@ -55,105 +55,102 @@ MusicPlayer._should_play = function (self, flags)
 	return true
 end
 
-MusicPlayer.set_enabled = function (self, enabled)
-	dprint(self._name, "set_enabled", enabled)
+function MusicPlayer.set_enabled(arg_6_0, arg_6_1)
+	var_0_0(arg_6_0._name, "set_enabled", arg_6_1)
 
-	self._enabled = enabled
+	arg_6_0._enabled = arg_6_1
 end
 
-MusicPlayer.is_playing = function (self)
-	return self._playing and not table.is_empty(self._old_music)
+function MusicPlayer.is_playing(arg_7_0)
+	return arg_7_0._playing and not table.is_empty(arg_7_0._old_music)
 end
 
-MusicPlayer.set_group_state = function (self, group, state)
-	if self._playing then
-		self._playing:set_group_state(group, state)
+function MusicPlayer.set_group_state(arg_8_0, arg_8_1, arg_8_2)
+	if arg_8_0._playing then
+		arg_8_0._playing:set_group_state(arg_8_1, arg_8_2)
 	end
 end
 
-MusicPlayer.post_trigger = function (self, event)
-	if self._playing then
-		dprint(self._name, "post_trigger", event)
-		self._playing:post_trigger(event)
+function MusicPlayer.post_trigger(arg_9_0, arg_9_1)
+	if arg_9_0._playing then
+		var_0_0(arg_9_0._name, "post_trigger", arg_9_1)
+		arg_9_0._playing:post_trigger(arg_9_1)
 	end
 end
 
-MusicPlayer.update = function (self, flags, game_object_id, is_ingame)
-	local should_play = self:_should_play(flags)
+function MusicPlayer.update(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	local var_10_0 = arg_10_0:_should_play(arg_10_1)
 
-	if not self._playing and should_play then
-		self._playing = Music:new(self._wwise_world, self._start_event, self._stop_switch, self._name, self._init_group_states, self._game_state_voice_thresholds)
-	elseif self._playing and not should_play then
-		self._old_music[self._playing] = true
+	if not arg_10_0._playing and var_10_0 then
+		arg_10_0._playing = Music:new(arg_10_0._wwise_world, arg_10_0._start_event, arg_10_0._stop_switch, arg_10_0._name, arg_10_0._init_group_states, arg_10_0._game_state_voice_thresholds)
+	elseif arg_10_0._playing and not var_10_0 then
+		arg_10_0._old_music[arg_10_0._playing] = true
 
-		self._playing:stop()
+		arg_10_0._playing:stop()
 
-		self._playing = false
+		arg_10_0._playing = false
 	end
 
-	if self._playing and game_object_id and not DEDICATED_SERVER and is_ingame and self._playing and self._playing:has_game_faction() then
-		local session = Managers.state.network:game()
+	if arg_10_0._playing and arg_10_2 and not DEDICATED_SERVER and arg_10_3 and arg_10_0._playing and arg_10_0._playing:has_game_faction() then
+		local var_10_1 = Managers.state.network:game()
 
-		for i = 1, #SyncedMusicGroupFlags do
-			local group = SyncedMusicGroupFlags[i]
-			local state_id = GameSession.game_object_field(session, game_object_id, group)
+		for iter_10_0 = 1, #SyncedMusicGroupFlags do
+			local var_10_2 = SyncedMusicGroupFlags[iter_10_0]
+			local var_10_3 = GameSession.game_object_field(var_10_1, arg_10_2, var_10_2)
 
-			if type(state_id) == "table" then
-				local local_player = Managers.player:local_player()
-				local local_party = local_player:get_party()
+			if type(var_10_3) == "table" then
+				local var_10_4 = Managers.player:local_player():get_party()
 
-				if local_party then
-					local local_party_id = local_party.party_id
-
-					state_id = state_id[local_party_id]
+				if var_10_4 then
+					var_10_3 = var_10_3[var_10_4.party_id]
 				else
-					state_id = nil
+					var_10_3 = nil
 				end
 			end
 
-			if state_id then
-				local state = NetworkLookup.music_group_states[state_id]
+			if var_10_3 then
+				local var_10_5 = NetworkLookup.music_group_states[var_10_3]
 
-				self._playing:set_group_state(group, state)
+				arg_10_0._playing:set_group_state(var_10_2, var_10_5)
 			end
 		end
 	end
 
-	for music, _ in pairs(self._old_music) do
-		if not music:is_playing() then
-			self._old_music[music] = nil
+	for iter_10_1, iter_10_2 in pairs(arg_10_0._old_music) do
+		if not iter_10_1:is_playing() then
+			arg_10_0._old_music[iter_10_1] = nil
 
-			music:destroy()
+			iter_10_1:destroy()
 		end
 	end
 
-	if script_data.debug_music and self._playing then
-		Debug.text(self._playing:name())
+	if script_data.debug_music and arg_10_0._playing then
+		Debug.text(arg_10_0._playing:name())
 
-		for state, value in pairs(self._playing._group_states) do
-			Debug.text("\t %s: %s", state, value)
+		for iter_10_3, iter_10_4 in pairs(arg_10_0._playing._group_states) do
+			Debug.text("\t %s: %s", iter_10_3, iter_10_4)
 		end
 	end
 end
 
-MusicPlayer.destroy = function (self)
-	dprint(self._name, "destroy")
+function MusicPlayer.destroy(arg_11_0)
+	var_0_0(arg_11_0._name, "destroy")
 
-	if self._playing then
-		self._playing:destroy()
+	if arg_11_0._playing then
+		arg_11_0._playing:destroy()
 
-		self._playing = nil
+		arg_11_0._playing = nil
 	end
 
-	for music, _ in pairs(self._old_music) do
-		self._old_music[music] = nil
+	for iter_11_0, iter_11_1 in pairs(arg_11_0._old_music) do
+		arg_11_0._old_music[iter_11_0] = nil
 
-		music:destroy()
+		iter_11_0:destroy()
 	end
 
-	self._old_music = nil
+	arg_11_0._old_music = nil
 end
 
-MusicPlayer.event_match = function (self, start_event, stop_event)
-	return self._start_event == start_event and self._stop_event == stop_event
+function MusicPlayer.event_match(arg_12_0, arg_12_1, arg_12_2)
+	return arg_12_0._start_event == arg_12_1 and arg_12_0._stop_event == arg_12_2
 end

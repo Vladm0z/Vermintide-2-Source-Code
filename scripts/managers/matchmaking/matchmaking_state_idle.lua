@@ -1,25 +1,25 @@
-﻿-- chunkname: @scripts/managers/matchmaking/matchmaking_state_idle.lua
+-- chunkname: @scripts/managers/matchmaking/matchmaking_state_idle.lua
 
 MatchmakingStateIdle = class(MatchmakingStateIdle)
 MatchmakingStateIdle.NAME = "MatchmakingStateIdle"
 
-MatchmakingStateIdle.init = function (self, params, reason)
-	self.lobby = params.lobby
-	self.reason = reason
+function MatchmakingStateIdle.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0.lobby = arg_1_1.lobby
+	arg_1_0.reason = arg_1_2
 end
 
-MatchmakingStateIdle.destroy = function (self)
+function MatchmakingStateIdle.destroy(arg_2_0)
 	return
 end
 
-MatchmakingStateIdle.on_enter = function (self, state_context)
-	self.state_context = state_context
+function MatchmakingStateIdle.on_enter(arg_3_0, arg_3_1)
+	arg_3_0.state_context = arg_3_1
 end
 
-MatchmakingStateIdle.on_exit = function (self)
-	self.reason = nil
+function MatchmakingStateIdle.on_exit(arg_4_0)
+	arg_4_0.reason = nil
 end
 
-MatchmakingStateIdle.update = function (self, dt, t)
+function MatchmakingStateIdle.update(arg_5_0, arg_5_1, arg_5_2)
 	return nil
 end

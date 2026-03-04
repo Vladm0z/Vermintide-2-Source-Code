@@ -1,262 +1,258 @@
-﻿-- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_weave_panel_console_definitions.lua
+-- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_weave_panel_console_definitions.lua
 
-local window_default_settings = UISettings.game_start_windows
-local large_window_size = window_default_settings.large_window_size
-local window_frame_name = "menu_frame_11"
-local window_frame = UIFrameSettings[window_frame_name]
-local window_frame_width = window_frame.texture_sizes.vertical[1]
-local window_size = {
-	large_window_size[1] - window_frame_width * 2,
-	large_window_size[2] - window_frame_width * 2,
+local var_0_0 = UISettings.game_start_windows.large_window_size
+local var_0_1 = "menu_frame_11"
+local var_0_2 = UIFrameSettings[var_0_1].texture_sizes.vertical[1]
+local var_0_3 = {
+	var_0_0[1] - var_0_2 * 2,
+	var_0_0[2] - var_0_2 * 2
 }
-local panel_height = 70
-
-window_size = {
+local var_0_4 = 70
+local var_0_5 = {
 	1920,
-	1080,
+	1080
 }
-window_frame_width = 0
-
-local scenegraph_definition = {
+local var_0_6 = 0
+local var_0_7 = {
 	root = {
 		is_root = true,
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	menu_root = {
-		horizontal_alignment = "center",
-		parent = "root",
 		vertical_alignment = "center",
+		parent = "root",
+		horizontal_alignment = "center",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	parent_window = {
-		horizontal_alignment = "center",
-		parent = "menu_root",
 		vertical_alignment = "center",
-		size = window_size,
+		parent = "menu_root",
+		horizontal_alignment = "center",
+		size = var_0_5,
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	window = {
-		horizontal_alignment = "right",
-		parent = "parent_window",
 		vertical_alignment = "center",
-		size = window_size,
+		parent = "parent_window",
+		horizontal_alignment = "right",
+		size = var_0_5,
 		position = {
-			-window_frame_width,
+			-var_0_6,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	panel = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "top",
+		parent = "window",
+		horizontal_alignment = "center",
 		size = {
-			window_size[1],
-			panel_height,
+			var_0_5[1],
+			var_0_4
 		},
 		position = {
 			0,
 			3,
-			6,
-		},
+			6
+		}
 	},
 	panel_left = {
-		horizontal_alignment = "left",
-		parent = "window",
 		vertical_alignment = "top",
+		parent = "window",
+		horizontal_alignment = "left",
 		size = {
 			256,
-			45,
+			45
 		},
 		position = {
 			0,
 			3,
-			6,
-		},
+			6
+		}
 	},
 	panel_right = {
-		horizontal_alignment = "right",
-		parent = "window",
 		vertical_alignment = "top",
+		parent = "window",
+		horizontal_alignment = "right",
 		size = {
 			256,
-			45,
+			45
 		},
 		position = {
 			211,
 			3,
-			6,
-		},
+			6
+		}
 	},
 	panel_bottom = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "bottom",
+		parent = "window",
+		horizontal_alignment = "center",
 		size = {
-			window_size[1],
-			90,
+			var_0_5[1],
+			90
 		},
 		position = {
 			0,
 			-3,
-			0,
-		},
+			0
+		}
 	},
 	panel_edge_top = {
-		horizontal_alignment = "center",
-		parent = "panel",
 		vertical_alignment = "bottom",
+		parent = "panel",
+		horizontal_alignment = "center",
 		size = {
-			window_size[1],
-			5,
+			var_0_5[1],
+			5
 		},
 		position = {
 			0,
 			-3,
-			6,
-		},
+			6
+		}
 	},
 	panel_edge_bottom = {
-		horizontal_alignment = "center",
-		parent = "panel_bottom",
 		vertical_alignment = "top",
+		parent = "panel_bottom",
+		horizontal_alignment = "center",
 		size = {
-			window_size[1],
-			5,
+			var_0_5[1],
+			5
 		},
 		position = {
 			0,
 			3,
-			6,
-		},
+			6
+		}
 	},
 	panel_entry_area = {
-		horizontal_alignment = "left",
-		parent = "panel",
 		vertical_alignment = "top",
+		parent = "panel",
+		horizontal_alignment = "left",
 		size = {
-			window_size[1],
-			64,
+			var_0_5[1],
+			64
 		},
 		position = {
 			150,
 			0,
-			2,
-		},
+			2
+		}
 	},
 	panel_input_area_1 = {
-		horizontal_alignment = "left",
-		parent = "panel_entry_area",
 		vertical_alignment = "center",
+		parent = "panel_entry_area",
+		horizontal_alignment = "left",
 		size = {
 			0,
-			0,
+			0
 		},
 		position = {
 			-50,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	panel_input_area_2 = {
-		horizontal_alignment = "right",
-		parent = "panel_entry_area",
 		vertical_alignment = "center",
+		parent = "panel_entry_area",
+		horizontal_alignment = "right",
 		size = {
 			0,
-			0,
+			0
 		},
 		position = {
 			50,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	game_option_pivot = {
-		horizontal_alignment = "left",
-		parent = "panel_entry_area",
 		vertical_alignment = "top",
+		parent = "panel_entry_area",
+		horizontal_alignment = "left",
 		size = {
 			0,
-			panel_height,
+			var_0_4
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	game_option = {
-		horizontal_alignment = "left",
-		parent = "game_option_pivot",
 		vertical_alignment = "top",
+		parent = "game_option_pivot",
+		horizontal_alignment = "left",
 		size = {
 			0,
-			64,
+			64
 		},
 		position = {
 			0,
 			0,
-			3,
-		},
+			3
+		}
 	},
 	entry_panel_selection = {
-		horizontal_alignment = "left",
-		parent = "game_option_pivot",
 		vertical_alignment = "bottom",
+		parent = "game_option_pivot",
+		horizontal_alignment = "left",
 		size = {
 			0,
-			23,
+			23
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
-	},
+			0
+		}
+	}
 }
-local disable_with_gamepad = true
+local var_0_8 = true
 
-local function create_panel_button_selection(scenegraph_id, size)
+local function var_0_9(arg_1_0, arg_1_1)
 	return {
 		element = {
 			passes = {
 				{
-					pass_type = "texture",
-					style_id = "edge",
 					texture_id = "edge",
+					style_id = "edge",
+					pass_type = "texture"
 				},
 				{
-					pass_type = "texture",
-					style_id = "selection",
 					texture_id = "selection",
+					style_id = "selection",
+					pass_type = "texture"
 				},
 				{
-					content_id = "write_mask",
-					pass_type = "texture_uv",
 					style_id = "write_mask",
-				},
-			},
+					pass_type = "texture_uv",
+					content_id = "write_mask"
+				}
+			}
 		},
 		content = {
 			edge = "weave_menu_glow",
@@ -266,15 +262,15 @@ local function create_panel_button_selection(scenegraph_id, size)
 				uvs = {
 					{
 						0,
-						0,
+						0
 					},
 					{
 						1,
-						0.5,
-					},
-				},
+						0.5
+					}
+				}
 			},
-			size = size,
+			size = arg_1_1
 		},
 		style = {
 			edge = {
@@ -282,149 +278,149 @@ local function create_panel_button_selection(scenegraph_id, size)
 					0,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					-8,
-					1,
-				},
+					1
+				}
 			},
 			write_mask = {
-				horizontal_alignment = "center",
 				vertical_alignment = "bottom",
+				horizontal_alignment = "center",
 				texture_size = {
 					200,
-					150,
+					150
 				},
 				color = {
 					255,
 					138,
 					0,
-					187,
+					187
 				},
 				offset = {
 					0,
 					0,
-					2,
-				},
+					2
+				}
 			},
 			selection = {
-				horizontal_alignment = "center",
 				vertical_alignment = "bottom",
+				horizontal_alignment = "center",
 				texture_size = {
 					68,
-					19,
+					19
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					-10,
-					20,
-				},
-			},
+					20
+				}
+			}
 		},
 		offset = {
 			0,
 			0,
-			0,
+			0
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_1_0
 	}
 end
 
-local widgets = {
+local var_0_10 = {
 	panel_input_area_1 = UIWidgets.create_simple_texture("xbone_button_icon_lt", "panel_input_area_1"),
 	panel_input_area_2 = UIWidgets.create_simple_texture("xbone_button_icon_rt", "panel_input_area_2"),
 	panel = UIWidgets.create_tiled_texture("panel", "menu_frame_bg_03", {
 		256,
-		256,
+		256
 	}, nil, nil, {
 		255,
 		150,
 		150,
-		150,
+		150
 	}),
 	panel_bottom = UIWidgets.create_tiled_texture("panel_bottom", "athanor_panel_back", {
 		64,
-		84,
+		84
 	}, nil, nil, {
 		255,
 		150,
 		150,
-		150,
+		150
 	}),
 	panel_fade = UIWidgets.create_simple_texture("options_window_fade_01", "panel", nil, nil, {
 		255,
 		0,
 		0,
-		0,
+		0
 	}, 1),
 	panel_edge_top = UIWidgets.create_simple_texture("menu_frame_09_divider", "panel_edge_top"),
 	panel_edge_bottom = UIWidgets.create_simple_texture("menu_frame_09_divider", "panel_edge_bottom"),
 	panel_fade_bottom = UIWidgets.create_simple_uv_texture("options_window_fade_01", {
 		{
 			0,
-			1,
+			1
 		},
 		{
 			1,
-			0,
-		},
+			0
+		}
 	}, "panel_bottom", nil, nil, {
 		255,
 		0,
 		0,
-		0,
+		0
 	}, 2),
-	entry_panel_selection = create_panel_button_selection("entry_panel_selection", scenegraph_definition.entry_panel_selection.size),
+	entry_panel_selection = var_0_9("entry_panel_selection", var_0_7.entry_panel_selection.size)
 }
-local animation_definitions = {
+local var_0_11 = {
 	on_enter = {
 		{
-			end_progress = 0.3,
 			name = "fade_in",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 0
+			end_progress = 0.3,
+			init = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+				arg_2_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+				local var_3_0 = math.easeOutCubic(arg_3_3)
 
-				params.render_settings.alpha_multiplier = anim_progress
+				arg_3_4.render_settings.alpha_multiplier = var_3_0
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				return
-			end,
-		},
+			end
+		}
 	},
 	on_exit = {
 		{
-			end_progress = 0.3,
 			name = "fade_out",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 1
+			end_progress = 0.3,
+			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+				arg_5_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+				local var_6_0 = math.easeOutCubic(arg_6_3)
 
-				params.render_settings.alpha_multiplier = 1 - anim_progress
+				arg_6_4.render_settings.alpha_multiplier = 1 - var_6_0
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				return
-			end,
-		},
-	},
+			end
+		}
+	}
 }
 
 return {
-	widgets = widgets,
-	scenegraph_definition = scenegraph_definition,
-	animation_definitions = animation_definitions,
+	widgets = var_0_10,
+	scenegraph_definition = var_0_7,
+	animation_definitions = var_0_11
 }

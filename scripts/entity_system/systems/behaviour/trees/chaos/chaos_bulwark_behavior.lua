@@ -1,125 +1,125 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_bulwark_behavior.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_bulwark_behavior.lua
 
-local ACTIONS = BreedActions.chaos_bulwark
+local var_0_0 = BreedActions.chaos_bulwark
 
 BreedBehaviors.chaos_bulwark = {
 	"BTSelector",
 	{
 		"BTSpawningAction",
 		condition = "spawn",
-		name = "spawn",
+		name = "spawn"
 	},
 	{
 		"BTInVortexAction",
-		condition = "in_vortex",
 		leave_hook = "bulwark_vortex_leave",
 		name = "in_vortex",
+		condition = "in_vortex"
 	},
 	{
 		"BTFallAction",
 		condition = "is_falling",
-		name = "falling",
+		name = "falling"
 	},
 	{
 		"BTStaggerAction",
-		condition = "stagger_activated",
 		leave_hook = "bulwark_stagger_leave",
 		name = "stagger",
-		action_data = ACTIONS.stagger,
+		condition = "stagger_activated",
+		action_data = var_0_0.stagger
 	},
 	{
 		"BTBlockedAction",
-		condition = "blocked",
 		name = "blocked",
-		action_data = ACTIONS.blocked,
+		condition = "blocked",
+		action_data = var_0_0.blocked
 	},
 	{
 		"BTSelector",
 		{
 			"BTTeleportAction",
 			condition = "at_teleport_smartobject",
-			name = "teleport",
+			name = "teleport"
 		},
 		{
 			"BTClimbAction",
 			condition = "at_climb_smartobject",
-			name = "climb",
+			name = "climb"
 		},
 		{
 			"BTSmashDoorAction",
-			condition = "at_door_smartobject",
 			name = "smash_door",
-			action_data = ACTIONS.smash_door,
+			condition = "at_door_smartobject",
+			action_data = var_0_0.smash_door
 		},
 		{
 			"BTJumpAcrossAction",
 			condition = "at_jump_smartobject",
-			name = "jump_across",
+			name = "jump_across"
 		},
 		condition = "at_smartobject",
-		name = "smartobject",
+		name = "smartobject"
 	},
 	{
 		"BTUtilityNode",
 		{
 			"BTTargetRageAction",
 			name = "target_changed",
-			action_data = ACTIONS.target_changed,
+			action_data = var_0_0.target_changed
 		},
 		{
 			"BTStormVerminAttackAction",
-			condition = "ask_target_before_attacking",
 			name = "special_attack_quick",
-			action_data = ACTIONS.special_attack_quick,
+			condition = "ask_target_before_attacking",
+			action_data = var_0_0.special_attack_quick
 		},
 		{
 			"BTMeleeOverlapAttackAction",
-			condition = "ask_target_before_attacking",
 			name = "running_attack_charging",
-			action_data = ACTIONS.running_attack_charging,
+			condition = "ask_target_before_attacking",
+			action_data = var_0_0.running_attack_charging
 		},
 		{
 			"BTMeleeOverlapAttackAction",
-			condition = "ask_target_before_attacking",
 			name = "running_attack_right",
-			action_data = ACTIONS.running_attack_right,
+			condition = "ask_target_before_attacking",
+			action_data = var_0_0.running_attack_right
 		},
 		{
 			"BTStormVerminAttackAction",
-			condition = "ask_target_before_attacking",
 			name = "special_attack_sweep",
-			action_data = ACTIONS.special_attack_sweep,
+			condition = "ask_target_before_attacking",
+			action_data = var_0_0.special_attack_sweep
 		},
 		{
 			"BTBulwarkFollowAction",
 			name = "follow",
-			action_data = ACTIONS.follow,
+			action_data = var_0_0.follow
 		},
 		condition = "confirmed_player_sighting",
-		name = "in_combat",
+		name = "in_combat"
 	},
 	{
 		"BTAlertedAction",
-		condition = "player_spotted",
 		name = "alerted",
-		action_data = ACTIONS.alerted,
+		condition = "player_spotted",
+		action_data = var_0_0.alerted
 	},
 	{
 		"BTMoveToGoalAction",
-		condition = "has_goal_destination",
 		leave_hook = "remove_goal_destination",
 		name = "move_to_goal",
-		action_data = ACTIONS.follow,
+		condition = "has_goal_destination",
+		action_data = var_0_0.follow
 	},
 	{
 		"BTIdleAction",
-		condition = "no_target",
 		name = "idle",
-		action_data = ACTIONS.idle,
+		condition = "no_target",
+		action_data = var_0_0.idle
 	},
 	{
 		"BTFallbackIdleAction",
-		name = "fallback_idle",
+		name = "fallback_idle"
 	},
-	name = "horde",
+	name = "horde"
 }

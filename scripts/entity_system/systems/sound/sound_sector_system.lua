@@ -1,354 +1,351 @@
-﻿-- chunkname: @scripts/entity_system/systems/sound/sound_sector_system.lua
+-- chunkname: @scripts/entity_system/systems/sound/sound_sector_system.lua
 
 require("scripts/entity_system/systems/sound/sound_sector_event_templates")
 
-local NUM_OF_SECTORS = 1
-local RPCS = {
-	"rpc_enemy_has_target",
+local var_0_0 = 1
+local var_0_1 = {
+	"rpc_enemy_has_target"
 }
 
 SoundSectorSystem = class(SoundSectorSystem, ExtensionSystemBase)
 SoundSectorSystem.system_extensions = {
-	"SoundSectorExtension",
+	"SoundSectorExtension"
 }
 
-SoundSectorSystem.init = function (self, context, system_name)
-	self.unit_storage = context.unit_storage
+function SoundSectorSystem.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0.unit_storage = arg_1_1.unit_storage
 
-	local extensions = SoundSectorSystem.system_extensions
-	local entity_manager = context.entity_manager
+	local var_1_0 = SoundSectorSystem.system_extensions
 
-	entity_manager:register_system(self, system_name, extensions)
+	arg_1_1.entity_manager:register_system(arg_1_0, arg_1_2, var_1_0)
 
-	self.world = context.world
-	self.wwise_world = Managers.world:wwise_world(self.world)
+	arg_1_0.world = arg_1_1.world
+	arg_1_0.wwise_world = Managers.world:wwise_world(arg_1_0.world)
 
-	local network_event_delegate = context.network_event_delegate
+	local var_1_1 = arg_1_1.network_event_delegate
 
-	self.network_event_delegate = network_event_delegate
+	arg_1_0.network_event_delegate = var_1_1
 
-	network_event_delegate:register(self, unpack(RPCS))
+	var_1_1:register(arg_1_0, unpack(var_0_1))
 
-	self._extensions = {}
-	self._frozen_extensions = {}
-	self._sectors = {}
-	self._sector_sound_source_ids = {}
-	self._sector_sound_source_units = {}
-	self._sector_sound_source_refs = {}
-	self._sector_process_index = 0
+	arg_1_0._extensions = {}
+	arg_1_0._frozen_extensions = {}
+	arg_1_0._sectors = {}
+	arg_1_0._sector_sound_source_ids = {}
+	arg_1_0._sector_sound_source_units = {}
+	arg_1_0._sector_sound_source_refs = {}
+	arg_1_0._sector_process_index = 0
 
-	for i = 1, NUM_OF_SECTORS do
-		self._sectors[i] = {}
+	for iter_1_0 = 1, var_0_0 do
+		arg_1_0._sectors[iter_1_0] = {}
 
-		local sound_source_unit = World.spawn_unit(self.world, "units/testunits/camera")
+		local var_1_2 = World.spawn_unit(arg_1_0.world, "units/testunits/camera")
 
-		self._sector_sound_source_units[i] = sound_source_unit
+		arg_1_0._sector_sound_source_units[iter_1_0] = var_1_2
 	end
 
-	self._events = {
-		ai_unit_activated = "event_ai_unit_activated",
+	arg_1_0._events = {
 		ai_unit_deactivated = "event_ai_unit_deactivated",
+		ai_unit_activated = "event_ai_unit_activated"
 	}
 
-	local event_manager = Managers.state.event
+	local var_1_3 = Managers.state.event
 
-	for event_name, cb_name in pairs(self._events) do
-		event_manager:register(self, event_name, cb_name)
+	for iter_1_1, iter_1_2 in pairs(arg_1_0._events) do
+		var_1_3:register(arg_1_0, iter_1_1, iter_1_2)
 	end
 end
 
-SoundSectorSystem.destroy = function (self)
-	self.network_event_delegate:unregister(self)
+function SoundSectorSystem.destroy(arg_2_0)
+	arg_2_0.network_event_delegate:unregister(arg_2_0)
 
-	local event_manager = Managers.state.event
+	local var_2_0 = Managers.state.event
 
-	for event_name, _ in pairs(self._events) do
-		event_manager:unregister(event_name, self)
+	for iter_2_0, iter_2_1 in pairs(arg_2_0._events) do
+		var_2_0:unregister(iter_2_0, arg_2_0)
 	end
 
-	local wwise_world = self.wwise_world
+	local var_2_1 = arg_2_0.wwise_world
 
-	for source_id, _ in pairs(self._sector_sound_source_refs) do
-		WwiseWorld.destroy_manual_source(wwise_world, source_id)
+	for iter_2_2, iter_2_3 in pairs(arg_2_0._sector_sound_source_refs) do
+		WwiseWorld.destroy_manual_source(var_2_1, iter_2_2)
 	end
 end
 
-SoundSectorSystem.on_add_extension = function (self, world, unit, extension_name)
-	local extension = {}
+function SoundSectorSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	local var_3_0 = {}
 
-	ScriptUnit.set_extension(unit, "sound_sector_system", extension)
+	ScriptUnit.set_extension(arg_3_2, "sound_sector_system", var_3_0)
 
-	if extension_name == "SoundSectorExtension" then
-		self._extensions[unit] = extension
+	if arg_3_3 == "SoundSectorExtension" then
+		arg_3_0._extensions[arg_3_2] = var_3_0
 
-		if self.camera_unit then
-			local camera_position = Unit.local_position(self.camera_unit, 0)
-			local sector_index = self:_calc_unit_sector(camera_position, unit)
+		if arg_3_0.camera_unit then
+			local var_3_1 = Unit.local_position(arg_3_0.camera_unit, 0)
+			local var_3_2 = arg_3_0:_calc_unit_sector(var_3_1, arg_3_2)
 
-			if sector_index then
-				self._sectors[sector_index][unit] = unit
+			if var_3_2 then
+				arg_3_0._sectors[var_3_2][arg_3_2] = arg_3_2
 			end
 
-			extension.sector_index = sector_index
+			var_3_0.sector_index = var_3_2
 		end
 	end
 
-	return extension
+	return var_3_0
 end
 
-SoundSectorSystem.extensions_ready = function (self, world, unit, extension_name)
-	if extension_name == "SoundSectorExtension" then
-		local extension = self._extensions[unit]
-		local sector_index = extension.sector_index
+function SoundSectorSystem.extensions_ready(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	if arg_4_3 == "SoundSectorExtension" then
+		local var_4_0 = arg_4_0._extensions[arg_4_2].sector_index
 
-		if sector_index then
-			local death_extension = ScriptUnit.extension(unit, "death_system")
+		if var_4_0 then
+			local var_4_1 = ScriptUnit.extension(arg_4_2, "death_system")
 
-			self._sectors[sector_index][unit] = death_extension
+			arg_4_0._sectors[var_4_0][arg_4_2] = var_4_1
 		end
 	end
 end
 
-SoundSectorSystem.on_remove_extension = function (self, unit, extension_name)
-	self._frozen_extensions[unit] = nil
+function SoundSectorSystem.on_remove_extension(arg_5_0, arg_5_1, arg_5_2)
+	arg_5_0._frozen_extensions[arg_5_1] = nil
 
-	self:_cleanup_extension(unit, extension_name)
-	ScriptUnit.remove_extension(unit, self.NAME)
+	arg_5_0:_cleanup_extension(arg_5_1, arg_5_2)
+	ScriptUnit.remove_extension(arg_5_1, arg_5_0.NAME)
 end
 
-SoundSectorSystem.on_freeze_extension = function (self, unit, extension_name)
-	local extension = self._extensions[unit]
+function SoundSectorSystem.on_freeze_extension(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = arg_6_0._extensions[arg_6_1]
 
-	fassert(extension, "Unit was already frozen.")
+	fassert(var_6_0, "Unit was already frozen.")
 
-	self._frozen_extensions[unit] = extension
+	arg_6_0._frozen_extensions[arg_6_1] = var_6_0
 
-	self:_cleanup_extension(unit, extension_name)
+	arg_6_0:_cleanup_extension(arg_6_1, arg_6_2)
 end
 
-SoundSectorSystem._cleanup_extension = function (self, unit, extension_name)
-	local extension = self._extensions[unit]
+function SoundSectorSystem._cleanup_extension(arg_7_0, arg_7_1, arg_7_2)
+	local var_7_0 = arg_7_0._extensions[arg_7_1]
 
-	if extension == nil then
+	if var_7_0 == nil then
 		return
 	end
 
-	local unit_sector_index = extension.sector_index
+	local var_7_1 = var_7_0.sector_index
 
-	if unit_sector_index then
-		self._sectors[unit_sector_index][unit] = nil
+	if var_7_1 then
+		arg_7_0._sectors[var_7_1][arg_7_1] = nil
 	end
 
-	extension.has_target = nil
-	self._extensions[unit] = nil
+	var_7_0.has_target = nil
+	arg_7_0._extensions[arg_7_1] = nil
 end
 
-SoundSectorSystem.freeze = function (self, unit, extension_name, reason)
-	local frozen_extensions = self._frozen_extensions
+function SoundSectorSystem.freeze(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	local var_8_0 = arg_8_0._frozen_extensions
 
-	if frozen_extensions[unit] then
+	if var_8_0[arg_8_1] then
 		return
 	end
 
-	local extension = self._extensions[unit]
+	local var_8_1 = arg_8_0._extensions[arg_8_1]
 
-	fassert(extension, "Unit to freeze didn't have unfrozen extension")
-	self:_cleanup_extension(unit, extension_name)
+	fassert(var_8_1, "Unit to freeze didn't have unfrozen extension")
+	arg_8_0:_cleanup_extension(arg_8_1, arg_8_2)
 
-	self._extensions[unit] = nil
-	frozen_extensions[unit] = extension
+	arg_8_0._extensions[arg_8_1] = nil
+	var_8_0[arg_8_1] = var_8_1
 end
 
-SoundSectorSystem.unfreeze = function (self, unit)
-	local extension = self._frozen_extensions[unit]
+function SoundSectorSystem.unfreeze(arg_9_0, arg_9_1)
+	local var_9_0 = arg_9_0._frozen_extensions[arg_9_1]
 
-	self._frozen_extensions[unit] = nil
-	self._extensions[unit] = extension
+	arg_9_0._frozen_extensions[arg_9_1] = nil
+	arg_9_0._extensions[arg_9_1] = var_9_0
 
-	if self.camera_unit then
-		local camera_position = Unit.local_position(self.camera_unit, 0)
-		local sector_index = self:_calc_unit_sector(camera_position, unit)
+	if arg_9_0.camera_unit then
+		local var_9_1 = Unit.local_position(arg_9_0.camera_unit, 0)
+		local var_9_2 = arg_9_0:_calc_unit_sector(var_9_1, arg_9_1)
 
-		if sector_index then
-			local death_extension = ScriptUnit.extension(unit, "death_system")
+		if var_9_2 then
+			local var_9_3 = ScriptUnit.extension(arg_9_1, "death_system")
 
-			self._sectors[sector_index][unit] = death_extension
+			arg_9_0._sectors[var_9_2][arg_9_1] = var_9_3
 		end
 
-		extension.sector_index = sector_index
+		var_9_0.sector_index = var_9_2
 	end
 end
 
-SoundSectorSystem.update = function (self, context, t, dt)
-	if not self.camera_unit then
+function SoundSectorSystem.update(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	if not arg_10_0.camera_unit then
 		return
 	end
 
-	local camera_position = Unit.local_position(self.camera_unit, 0)
+	local var_10_0 = Unit.local_position(arg_10_0.camera_unit, 0)
 
-	camera_position = Vector3.is_valid(camera_position) and camera_position or Vector3(0, 0, 0)
+	var_10_0 = Vector3.is_valid(var_10_0) and var_10_0 or Vector3(0, 0, 0)
 
-	local sector_sound_source_ids = self._sector_sound_source_ids
+	local var_10_1 = arg_10_0._sector_sound_source_ids
 
-	self:_update_sectors(camera_position)
+	arg_10_0:_update_sectors(var_10_0)
 
-	local sector_sound_source_units = self._sector_sound_source_units
-	local wwise_world = self.wwise_world
-	local Unit_set_local_position = Unit.set_local_position
-	local WwiseWorld_set_source_parameter = WwiseWorld.set_source_parameter
+	local var_10_2 = arg_10_0._sector_sound_source_units
+	local var_10_3 = arg_10_0.wwise_world
+	local var_10_4 = Unit.set_local_position
+	local var_10_5 = WwiseWorld.set_source_parameter
 
-	self._sector_process_index = 1
+	arg_10_0._sector_process_index = 1
 
-	local sector_index = self._sector_process_index
+	local var_10_6 = arg_10_0._sector_process_index
 
-	for _, sound_event_template in pairs(SoundSectorEventTemplates) do
-		local should_play, units_center, num_units = sound_event_template.evaluate(self._sectors, sector_index, t, self._extensions, camera_position)
-		local sector_sound_id = sound_event_template.sound_event_start .. sector_index
-		local wwise_source_id = sector_sound_source_ids[sector_sound_id]
-		local is_playing_sound = wwise_source_id ~= nil
+	for iter_10_0, iter_10_1 in pairs(SoundSectorEventTemplates) do
+		local var_10_7, var_10_8, var_10_9 = iter_10_1.evaluate(arg_10_0._sectors, var_10_6, arg_10_2, arg_10_0._extensions, var_10_0)
+		local var_10_10 = iter_10_1.sound_event_start .. var_10_6
+		local var_10_11 = var_10_1[var_10_10]
+		local var_10_12 = var_10_11 ~= nil
 
-		if should_play then
-			local sound_source_unit = sector_sound_source_units[sector_index]
+		if var_10_7 then
+			local var_10_13 = var_10_2[var_10_6]
 
-			Unit_set_local_position(sound_source_unit, 0, units_center)
-			WwiseWorld_set_source_parameter(wwise_world, wwise_source_id, "enemy_count", num_units)
+			var_10_4(var_10_13, 0, var_10_8)
+			var_10_5(var_10_3, var_10_11, "enemy_count", var_10_9)
 
-			if not is_playing_sound then
-				self:_play_sector_sound_event(sector_index, sector_sound_id, num_units, units_center, sound_event_template.sound_event_start)
+			if not var_10_12 then
+				arg_10_0:_play_sector_sound_event(var_10_6, var_10_10, var_10_9, var_10_8, iter_10_1.sound_event_start)
 			end
-		elseif is_playing_sound then
-			self:_stop_sector_sound_event(sector_index, sector_sound_id, sound_event_template.sound_event_stop)
+		elseif var_10_12 then
+			arg_10_0:_stop_sector_sound_event(var_10_6, var_10_10, iter_10_1.sound_event_stop)
 		end
 	end
 end
 
-SoundSectorSystem._update_sectors = function (self, camera_position)
-	for unit, extension in pairs(self._extensions) do
-		local sector_index = self:_calc_unit_sector(camera_position, unit)
-		local unit_sector_index = extension.sector_index
+function SoundSectorSystem._update_sectors(arg_11_0, arg_11_1)
+	for iter_11_0, iter_11_1 in pairs(arg_11_0._extensions) do
+		local var_11_0 = arg_11_0:_calc_unit_sector(arg_11_1, iter_11_0)
+		local var_11_1 = iter_11_1.sector_index
 
-		if unit_sector_index ~= sector_index then
-			if unit_sector_index then
-				self._sectors[unit_sector_index][unit] = nil
+		if var_11_1 ~= var_11_0 then
+			if var_11_1 then
+				arg_11_0._sectors[var_11_1][iter_11_0] = nil
 			end
 
-			if sector_index then
-				local death_extension = ScriptUnit.extension(unit, "death_system")
+			if var_11_0 then
+				local var_11_2 = ScriptUnit.extension(iter_11_0, "death_system")
 
-				self._sectors[sector_index][unit] = death_extension
+				arg_11_0._sectors[var_11_0][iter_11_0] = var_11_2
 			end
 
-			extension.sector_index = sector_index
+			iter_11_1.sector_index = var_11_0
 		end
 	end
 end
 
-SoundSectorSystem._play_sector_sound_event = function (self, sector_index, sound_id, num_of_units_in_sector, units_center, sound_event)
-	local level_settings = LevelHelper:current_level_settings()
-	local terrain = level_settings.terrain or "city"
-	local sound_source_unit = self._sector_sound_source_units[sector_index]
-	local sound_environment_system = Managers.state.entity:system("sound_environment_system")
-	local wwise_world = self.wwise_world
-	local wwise_source_id = WwiseUtils.make_unit_manual_source(wwise_world, sound_source_unit)
+function SoundSectorSystem._play_sector_sound_event(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+	local var_12_0 = LevelHelper:current_level_settings().terrain or "city"
+	local var_12_1 = arg_12_0._sector_sound_source_units[arg_12_1]
+	local var_12_2 = Managers.state.entity:system("sound_environment_system")
+	local var_12_3 = arg_12_0.wwise_world
+	local var_12_4 = WwiseUtils.make_unit_manual_source(var_12_3, var_12_1)
 
-	WwiseWorld.set_switch(wwise_world, "area", terrain, wwise_source_id)
-	WwiseWorld.trigger_event(wwise_world, sound_event, wwise_source_id)
-	sound_environment_system:register_source_environment_update(wwise_source_id, sound_source_unit)
+	WwiseWorld.set_switch(var_12_3, "area", var_12_0, var_12_4)
+	WwiseWorld.trigger_event(var_12_3, arg_12_5, var_12_4)
+	var_12_2:register_source_environment_update(var_12_4, var_12_1)
 
-	self._sector_sound_source_ids[sound_id] = wwise_source_id
-	self._sector_sound_source_refs[wwise_source_id] = (self._sector_sound_source_refs[wwise_source_id] or 0) + 1
-	self.current_audio_event = sound_event
+	arg_12_0._sector_sound_source_ids[arg_12_2] = var_12_4
+	arg_12_0._sector_sound_source_refs[var_12_4] = (arg_12_0._sector_sound_source_refs[var_12_4] or 0) + 1
+	arg_12_0.current_audio_event = arg_12_5
 end
 
-SoundSectorSystem._stop_sector_sound_event = function (self, sector_index, sound_id, sound_event)
-	local wwise_world = self.wwise_world
-	local wwise_source_id = self._sector_sound_source_ids[sound_id]
+function SoundSectorSystem._stop_sector_sound_event(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	local var_13_0 = arg_13_0.wwise_world
+	local var_13_1 = arg_13_0._sector_sound_source_ids[arg_13_2]
 
-	Managers.state.entity:system("sound_environment_system"):unregister_source_environment_update(wwise_source_id)
-	WwiseWorld.trigger_event(wwise_world, sound_event, wwise_source_id)
+	Managers.state.entity:system("sound_environment_system"):unregister_source_environment_update(var_13_1)
+	WwiseWorld.trigger_event(var_13_0, arg_13_3, var_13_1)
 
-	self._sector_sound_source_ids[sound_id] = nil
+	arg_13_0._sector_sound_source_ids[arg_13_2] = nil
 
-	local source_ref_counts = self._sector_sound_source_refs
+	local var_13_2 = arg_13_0._sector_sound_source_refs
 
-	source_ref_counts[wwise_source_id] = source_ref_counts[wwise_source_id] - 1
+	var_13_2[var_13_1] = var_13_2[var_13_1] - 1
 
-	if source_ref_counts[wwise_source_id] <= 0 then
-		fassert(source_ref_counts[wwise_source_id] == 0, "Sector sound source id [%d] ref count gone negative", wwise_source_id)
+	if var_13_2[var_13_1] <= 0 then
+		fassert(var_13_2[var_13_1] == 0, "Sector sound source id [%d] ref count gone negative", var_13_1)
 
-		source_ref_counts[wwise_source_id] = nil
+		var_13_2[var_13_1] = nil
 
-		WwiseWorld.destroy_manual_source(wwise_world, wwise_source_id)
+		WwiseWorld.destroy_manual_source(var_13_0, var_13_1)
 	end
 end
 
-local MIN_DISTANCE_THRESHOLD_SQ = 25
-local MAX_DISTANCE_THRESHOLD_SQ = 1600
+local var_0_2 = 25
+local var_0_3 = 1600
 
-SoundSectorSystem._calc_unit_sector = function (self, camera_position, unit)
-	if not Vector3.is_valid(camera_position) then
+function SoundSectorSystem._calc_unit_sector(arg_14_0, arg_14_1, arg_14_2)
+	if not Vector3.is_valid(arg_14_1) then
 		return false
 	end
 
-	local unit_position = POSITION_LOOKUP[unit]
-	local distance = Vector3.distance_squared(camera_position, unit_position)
+	local var_14_0 = POSITION_LOOKUP[arg_14_2]
+	local var_14_1 = Vector3.distance_squared(arg_14_1, var_14_0)
 
-	if distance < MIN_DISTANCE_THRESHOLD_SQ or distance > MAX_DISTANCE_THRESHOLD_SQ then
+	if var_14_1 < var_0_2 or var_14_1 > var_0_3 then
 		return false
 	else
 		return 1
 	end
 end
 
-SoundSectorSystem.hot_join_sync = function (self, peer_id)
-	local extensions = self._extensions
-	local network_transmit = Managers.state.network.network_transmit
+function SoundSectorSystem.hot_join_sync(arg_15_0, arg_15_1)
+	local var_15_0 = arg_15_0._extensions
+	local var_15_1 = Managers.state.network.network_transmit
 
-	for unit, extension in pairs(extensions) do
-		if extension.has_target then
-			local go_id = self.unit_storage:go_id(unit)
+	for iter_15_0, iter_15_1 in pairs(var_15_0) do
+		if iter_15_1.has_target then
+			local var_15_2 = arg_15_0.unit_storage:go_id(iter_15_0)
 
-			network_transmit:send_rpc("rpc_enemy_has_target", peer_id, go_id, true)
+			var_15_1:send_rpc("rpc_enemy_has_target", arg_15_1, var_15_2, true)
 		end
 	end
 end
 
-SoundSectorSystem.local_player_created = function (self, player)
-	self.camera_unit = player.camera_follow_unit
+function SoundSectorSystem.local_player_created(arg_16_0, arg_16_1)
+	arg_16_0.camera_unit = arg_16_1.camera_follow_unit
 end
 
-SoundSectorSystem.event_ai_unit_activated = function (self, unit, breed_name, event_spawned)
-	local go_id = self.unit_storage:go_id(unit)
-	local sound_sector_extension = self._extensions[unit]
+function SoundSectorSystem.event_ai_unit_activated(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+	local var_17_0 = arg_17_0.unit_storage:go_id(arg_17_1)
+	local var_17_1 = arg_17_0._extensions[arg_17_1]
 
-	if sound_sector_extension then
-		sound_sector_extension.has_target = true
+	if var_17_1 then
+		var_17_1.has_target = true
 
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_enemy_has_target", go_id, true)
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_enemy_has_target", var_17_0, true)
 	end
 end
 
-SoundSectorSystem.event_ai_unit_deactivated = function (self, unit, breed_name, event_spawned)
-	local go_id = self.unit_storage:go_id(unit)
-	local sound_sector_extension = self._extensions[unit]
+function SoundSectorSystem.event_ai_unit_deactivated(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+	local var_18_0 = arg_18_0.unit_storage:go_id(arg_18_1)
+	local var_18_1 = arg_18_0._extensions[arg_18_1]
 
-	if sound_sector_extension then
-		sound_sector_extension.has_target = false
+	if var_18_1 then
+		var_18_1.has_target = false
 
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_enemy_has_target", go_id, false)
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_enemy_has_target", var_18_0, false)
 	end
 end
 
-SoundSectorSystem.rpc_enemy_has_target = function (self, channel_id, unit_id, has_target)
-	local unit = self.unit_storage:unit(unit_id)
+function SoundSectorSystem.rpc_enemy_has_target(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+	local var_19_0 = arg_19_0.unit_storage:unit(arg_19_2)
 
-	if unit == nil then
+	if var_19_0 == nil then
 		return
 	end
 
-	local sound_sector_extension = self._extensions[unit]
+	local var_19_1 = arg_19_0._extensions[var_19_0]
 
-	if sound_sector_extension then
-		sound_sector_extension.has_target = has_target
+	if var_19_1 then
+		var_19_1.has_target = arg_19_3
 	end
 end

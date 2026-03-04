@@ -1,65 +1,62 @@
-﻿-- chunkname: @scripts/settings/dlcs/belakor/belakor_ingame_challenge_settings.lua
+-- chunkname: @scripts/settings/dlcs/belakor/belakor_ingame_challenge_settings.lua
 
-local dlc_settings = DLCSettings.belakor
-local REAL_PLAYER_LOCAL_ID = 1
+local var_0_0 = DLCSettings.belakor
+local var_0_1 = 1
 
-dlc_settings.ingame_challenge_templates = {}
-dlc_settings.challenge_categories = {
-	"deus_mutator",
+var_0_0.ingame_challenge_templates = {}
+var_0_0.challenge_categories = {
+	"deus_mutator"
 }
-dlc_settings.ingame_challenge_rewards = {
+var_0_0.ingame_challenge_rewards = {
 	deus_power_up_quest_test_reward_01 = {
-		consume_type = "round",
-		consume_value = 1,
-		granted_power_up_name = "deus_power_up_quest_granted_test_01",
-		granted_power_up_rarity = "exotic",
-		icon = "icon_objective_cdr",
 		reward_id = "deus_power_up_quest_test_reward_01",
 		sound = "Play_hud_grail_knight_stamina",
-		target = "owner",
+		consume_value = 1,
 		type = "deus_power_up",
-	},
+		consume_type = "round",
+		target = "owner",
+		granted_power_up_name = "deus_power_up_quest_granted_test_01",
+		granted_power_up_rarity = "exotic",
+		icon = "icon_objective_cdr"
+	}
 }
-dlc_settings.ingame_challenge_reward_types = {
-	deus_power_up = function (reward_data, target_units, reward_instigator)
-		local mechanism = Managers.mechanism:game_mechanism()
-		local run_controller = mechanism:get_deus_run_controller()
+var_0_0.ingame_challenge_reward_types = {
+	deus_power_up = function(arg_1_0, arg_1_1, arg_1_2)
+		local var_1_0 = Managers.mechanism:game_mechanism():get_deus_run_controller()
 
-		if not run_controller then
+		if not var_1_0 then
 			return
 		end
 
-		local granted_power_up_name = reward_data.granted_power_up_name
-		local granted_power_up_rarity = reward_data.granted_power_up_rarity
-		local new_power_up = run_controller:grant_party_power_up(granted_power_up_name, granted_power_up_rarity)
-		local human_players = Managers.player:human_players()
-		local buff_system = Managers.state.entity:system("buff_system")
-		local talent_interface = Managers.backend:get_talents_interface()
-		local deus_backend = Managers.backend:get_interface("deus")
+		local var_1_1 = arg_1_0.granted_power_up_name
+		local var_1_2 = arg_1_0.granted_power_up_rarity
+		local var_1_3 = var_1_0:grant_party_power_up(var_1_1, var_1_2)
+		local var_1_4 = Managers.player:human_players()
+		local var_1_5 = Managers.state.entity:system("buff_system")
+		local var_1_6 = Managers.backend:get_talents_interface()
+		local var_1_7 = Managers.backend:get_interface("deus")
 
-		for unique_id, player in pairs(human_players) do
-			local peer_id, local_player_id = PlayerUtils.split_unique_player_id(reward_instigator)
-			local player_unit = player.player_unit
-			local profile_index, career_index = run_controller:get_player_profile(peer_id, local_player_id)
+		for iter_1_0, iter_1_1 in pairs(var_1_4) do
+			local var_1_8, var_1_9 = PlayerUtils.split_unique_player_id(arg_1_2)
+			local var_1_10 = iter_1_1.player_unit
+			local var_1_11, var_1_12 = var_1_0:get_player_profile(var_1_8, var_1_9)
 
-			DeusPowerUpUtils.activate_deus_power_up(new_power_up, buff_system, talent_interface, deus_backend, run_controller, player_unit, profile_index, career_index)
+			DeusPowerUpUtils.activate_deus_power_up(var_1_3, var_1_5, var_1_6, var_1_7, var_1_0, var_1_10, var_1_11, var_1_12)
 		end
 
-		local return_data
-
-		return return_data
-	end,
+		return nil
+	end
 }
-dlc_settings.ingame_challenge_rewards_description = {
-	deus_power_up_quest_test_reward_01 = "deus_power_up_quest_test_reward_01",
+var_0_0.ingame_challenge_rewards_description = {
+	deus_power_up_quest_test_reward_01 = "deus_power_up_quest_test_reward_01"
 }
-dlc_settings.ingame_challenge_validation_functions = {
-	deus_power_up = function (data)
-		fassert(data.granted_power_up_name and data.granted_power_up_rarity, "power_up challenges must set a power_up that is granting the challenge", data.reward_id)
-		fassert(DeusPowerUps[data.granted_power_up_rarity], "reward power_up %s not valid: power_up rarity %s not found in power_ups list", data.reward_id, data.granted_power_up_rarity)
-		fassert(DeusPowerUps[data.granted_power_up_rarity][data.granted_power_up_name], "reward power_up %s not valid: granted_power_up %s with rarity %s not found in power_ups list", data.reward_id, data.granted_power_up_name, data.granted_power_up_rarity)
-		fassert(not DeusPowerUps[data.granted_power_up_rarity][data.granted_power_up_name].talent, "reward power_up %s not valid: can't grant talent power_ups at the moment", data.reward_id, data.quest_power_up_rarity)
+var_0_0.ingame_challenge_validation_functions = {
+	deus_power_up = function(arg_2_0)
+		fassert(arg_2_0.granted_power_up_name and arg_2_0.granted_power_up_rarity, "power_up challenges must set a power_up that is granting the challenge", arg_2_0.reward_id)
+		fassert(DeusPowerUps[arg_2_0.granted_power_up_rarity], "reward power_up %s not valid: power_up rarity %s not found in power_ups list", arg_2_0.reward_id, arg_2_0.granted_power_up_rarity)
+		fassert(DeusPowerUps[arg_2_0.granted_power_up_rarity][arg_2_0.granted_power_up_name], "reward power_up %s not valid: granted_power_up %s with rarity %s not found in power_ups list", arg_2_0.reward_id, arg_2_0.granted_power_up_name, arg_2_0.granted_power_up_rarity)
+		fassert(not DeusPowerUps[arg_2_0.granted_power_up_rarity][arg_2_0.granted_power_up_name].talent, "reward power_up %s not valid: can't grant talent power_ups at the moment", arg_2_0.reward_id, arg_2_0.quest_power_up_rarity)
 
 		return true
-	end,
+	end
 }

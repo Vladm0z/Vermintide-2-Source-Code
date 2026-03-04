@@ -1,62 +1,61 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/actions/action_throw_grimoire.lua
+-- chunkname: @scripts/unit_extensions/weapons/actions/action_throw_grimoire.lua
 
 ActionThrowGrimoire = class(ActionThrowGrimoire, ActionBase)
 
-ActionThrowGrimoire.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionThrowGrimoire.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionThrowGrimoire.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionThrowGrimoire.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 end
 
-ActionThrowGrimoire.client_owner_start_action = function (self, new_action, t)
-	ActionThrowGrimoire.super.client_owner_start_action(self, new_action, t)
+function ActionThrowGrimoire.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
+	ActionThrowGrimoire.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
 
-	self.current_action = new_action
-	self.ammo_extension = ScriptUnit.extension(self.weapon_unit, "ammo_system")
+	arg_2_0.current_action = arg_2_1
+	arg_2_0.ammo_extension = ScriptUnit.extension(arg_2_0.weapon_unit, "ammo_system")
 end
 
-ActionThrowGrimoire.client_owner_post_update = function (self, dt, t, world, can_damage)
+function ActionThrowGrimoire.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	return
 end
 
-ActionThrowGrimoire.finish = function (self, reason)
-	if reason ~= "action_complete" then
+function ActionThrowGrimoire.finish(arg_4_0, arg_4_1)
+	if arg_4_1 ~= "action_complete" then
 		return
 	end
 
-	local current_action = self.current_action
-	local ammo_usage = current_action.ammo_usage
+	local var_4_0 = arg_4_0.current_action.ammo_usage
 
-	self.ammo_extension:use_ammo(ammo_usage)
+	arg_4_0.ammo_extension:use_ammo(var_4_0)
 
-	local dialogue_input = ScriptUnit.extension_input(self.owner_unit, "dialogue_system")
-	local event_data = FrameTable.alloc_table()
+	local var_4_1 = ScriptUnit.extension_input(arg_4_0.owner_unit, "dialogue_system")
+	local var_4_2 = FrameTable.alloc_table()
 
-	event_data.item_type = "grimoire"
+	var_4_2.item_type = "grimoire"
 
-	dialogue_input:trigger_networked_dialogue_event("throwing_item", event_data)
+	var_4_1:trigger_networked_dialogue_event("throwing_item", var_4_2)
 
-	local player = Managers.player:unit_owner(self.owner_unit)
-	local position = POSITION_LOOKUP[self.owner_unit]
+	local var_4_3 = Managers.player:unit_owner(arg_4_0.owner_unit)
+	local var_4_4 = POSITION_LOOKUP[arg_4_0.owner_unit]
 
-	Managers.telemetry_events:player_used_item(player, self.item_name, position)
+	Managers.telemetry_events:player_used_item(var_4_3, arg_4_0.item_name, var_4_4)
 
-	local is_player_controlled = player:is_player_controlled()
-	local peer_id = player.peer_id
-	local predicate = "discarded_grimoire"
-	local owner_name = player:name()
+	local var_4_5 = var_4_3:is_player_controlled()
+	local var_4_6 = var_4_3.peer_id
+	local var_4_7 = "discarded_grimoire"
+	local var_4_8 = var_4_3:name()
 
 	if not IS_CONSOLE then
-		owner_name = is_player_controlled and (rawget(_G, "Steam") and Steam.user_name(peer_id) or tostring(peer_id)) or player:name()
+		var_4_8 = var_4_5 and (rawget(_G, "Steam") and Steam.user_name(var_4_6) or tostring(var_4_6)) or var_4_3:name()
 	end
 
-	local pop_chat = true
-	local message = string.format(Localize("system_chat_player_discarded_grimoire"), owner_name)
+	local var_4_9 = true
+	local var_4_10 = string.format(Localize("system_chat_player_discarded_grimoire"), var_4_8)
 
-	Managers.chat:add_local_system_message(1, message, pop_chat)
-	Managers.state.event:trigger("add_coop_feedback", player:stats_id(), not player.bot_player, predicate, player)
+	Managers.chat:add_local_system_message(1, var_4_10, var_4_9)
+	Managers.state.event:trigger("add_coop_feedback", var_4_3:stats_id(), not var_4_3.bot_player, var_4_7, var_4_3)
 
-	if self.is_server then
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_coop_feedback", player:network_id(), player:local_player_id(), NetworkLookup.coop_feedback[predicate], player:network_id(), player:local_player_id())
+	if arg_4_0.is_server then
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_coop_feedback", var_4_3:network_id(), var_4_3:local_player_id(), NetworkLookup.coop_feedback[var_4_7], var_4_3:network_id(), var_4_3:local_player_id())
 	else
-		Managers.state.network.network_transmit:send_rpc_server("rpc_coop_feedback", player:network_id(), player:local_player_id(), NetworkLookup.coop_feedback[predicate], player:network_id(), player:local_player_id())
+		Managers.state.network.network_transmit:send_rpc_server("rpc_coop_feedback", var_4_3:network_id(), var_4_3:local_player_id(), NetworkLookup.coop_feedback[var_4_7], var_4_3:network_id(), var_4_3:local_player_id())
 	end
 end

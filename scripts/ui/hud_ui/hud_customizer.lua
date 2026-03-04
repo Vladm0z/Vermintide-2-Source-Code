@@ -1,134 +1,134 @@
-﻿-- chunkname: @scripts/ui/hud_ui/hud_customizer.lua
+-- chunkname: @scripts/ui/hud_ui/hud_customizer.lua
 
 HudCustomizer = {}
 
-local COLOR_TEXT = Colors.get_color_table_with_alpha("white", 255)
-local COLOR_BACKGROUND = Colors.get_color_table_with_alpha("black", 100)
-local COLOR_DEFAULT = Colors.get_color_table_with_alpha("light_sky_blue", 200)
-local COLOR_HOVER = Colors.get_color_table_with_alpha("silver", 230)
-local COLOR_ACTIVE = Colors.get_color_table_with_alpha("cheeseburger", 230)
-local drag_active = false
-local drag_hover = false
-local drag_base = {
+local var_0_0 = Colors.get_color_table_with_alpha("white", 255)
+local var_0_1 = Colors.get_color_table_with_alpha("black", 100)
+local var_0_2 = Colors.get_color_table_with_alpha("light_sky_blue", 200)
+local var_0_3 = Colors.get_color_table_with_alpha("silver", 230)
+local var_0_4 = Colors.get_color_table_with_alpha("cheeseburger", 230)
+local var_0_5 = false
+local var_0_6 = false
+local var_0_7 = {
 	0,
-	0,
+	0
 }
-local offset_registry = {}
+local var_0_8 = {}
 
-HudCustomizer.offset_registry = offset_registry
+HudCustomizer.offset_registry = var_0_8
 
-local hud_customizer_enabled = Application.user_setting("hud_customizer_enabled")
+local var_0_9 = Application.user_setting("hud_customizer_enabled")
 
-HudCustomizer.is_active = function ()
-	return hud_customizer_enabled and Managers.chat.chat_gui.chat_focused and Keyboard.button(Keyboard.button_id("left alt")) > 0.5
+function HudCustomizer.is_active()
+	return var_0_9 and Managers.chat.chat_gui.chat_focused and Keyboard.button(Keyboard.button_id("left alt")) > 0.5
 end
 
-HudCustomizer.reset_button = function (ui_renderer)
+function HudCustomizer.reset_button(arg_2_0)
 	if not HudCustomizer.is_active() then
 		return
 	end
 end
 
-HudCustomizer.run = function (ui_renderer, ui_scenegraph, customizer_data)
+function HudCustomizer.run(arg_3_0, arg_3_1, arg_3_2)
 	if not HudCustomizer.is_active() then
 		return
 	end
 
-	drag_hover = false
+	var_0_6 = false
 
-	local is_dirty = false
-	local key = customizer_data.registry_key or customizer_data
-	local offset = offset_registry[key]
+	local var_3_0 = false
+	local var_3_1 = arg_3_2.registry_key or arg_3_2
+	local var_3_2 = var_0_8[var_3_1]
 
-	if not offset then
-		offset = {
+	if not var_3_2 then
+		var_3_2 = {
 			0,
-			0,
+			0
 		}
-		offset_registry[key] = offset
-		is_dirty = true
+		var_0_8[var_3_1] = var_3_2
+		var_3_0 = true
 	end
 
-	if not customizer_data.is_child then
-		local drag_node = ui_scenegraph[customizer_data.drag_scenegraph_id]
+	if not arg_3_2.is_child then
+		local var_3_3 = arg_3_1[arg_3_2.drag_scenegraph_id]
 
-		if not drag_node then
+		if not var_3_3 then
 			return
 		end
 
-		local drag_pos = Vector3(drag_node.world_position[1], drag_node.world_position[2], 999)
-		local drag_size = drag_node.size
-		local cursor = UIInverseScaleVectorToResolution(Mouse.axis(Mouse.axis_id("cursor")))
-		local is_hover = math.point_is_inside_2d_box(cursor, drag_pos, drag_size)
+		local var_3_4 = Vector3(var_3_3.world_position[1], var_3_3.world_position[2], 999)
+		local var_3_5 = var_3_3.size
+		local var_3_6 = UIInverseScaleVectorToResolution(Mouse.axis(Mouse.axis_id("cursor")))
+		local var_3_7 = math.point_is_inside_2d_box(var_3_6, var_3_4, var_3_5)
 
-		if drag_active == customizer_data then
-			Debug.text("Customizing HUD component %q", customizer_data.label)
-			Debug.text("[%s] = Vector2(%6.2f, %6.2f), ", customizer_data.root_scenegraph_id, offset[1], offset[2])
+		if var_0_5 == arg_3_2 then
+			Debug.text("Customizing HUD component %q", arg_3_2.label)
+			Debug.text("[%s] = Vector2(%6.2f, %6.2f), ", arg_3_2.root_scenegraph_id, var_3_2[1], var_3_2[2])
 
-			if not customizer_data.lock_x then
-				offset[1] = cursor[1] - drag_base[1]
+			if not arg_3_2.lock_x then
+				var_3_2[1] = var_3_6[1] - var_0_7[1]
 			end
 
-			if not customizer_data.lock_y then
-				offset[2] = cursor[2] - drag_base[2]
+			if not arg_3_2.lock_y then
+				var_3_2[2] = var_3_6[2] - var_0_7[2]
 			end
 
 			if Mouse.released(Mouse.button_id("left")) then
-				drag_active = false
+				var_0_5 = false
 			end
-		elseif not drag_active and not drag_hover and not customizer_data.is_child and is_hover then
-			drag_hover = customizer_data
+		elseif not var_0_5 and not var_0_6 and not arg_3_2.is_child and var_3_7 then
+			var_0_6 = arg_3_2
 
 			if Mouse.pressed(Mouse.button_id("left")) then
-				drag_active = customizer_data
-				drag_base[1] = cursor[1] - offset[1]
-				drag_base[2] = cursor[2] - offset[2]
+				var_0_5 = arg_3_2
+				var_0_7[1] = var_3_6[1] - var_3_2[1]
+				var_0_7[2] = var_3_6[2] - var_3_2[2]
 			end
 		end
 
-		local color = COLOR_DEFAULT
+		local var_3_8 = var_0_2
 
-		if drag_active == customizer_data then
-			color = COLOR_ACTIVE
-		elseif drag_hover == customizer_data then
-			color = COLOR_HOVER
-			color[1] = 200 + 55 * math.sin(5 * Managers.time:time("ui"))
+		if var_0_5 == arg_3_2 then
+			var_3_8 = var_0_4
+		elseif var_0_6 == arg_3_2 then
+			var_3_8 = var_0_3
+			var_3_8[1] = 200 + 55 * math.sin(5 * Managers.time:time("ui"))
 		end
 
-		local border = customizer_data.border or 3
-		local h_size = Vector2(drag_size[1], border)
-		local v_size = Vector2(border, drag_size[2] - 2 * border)
-		local a_size = Vector2(drag_size[1], drag_size[2])
+		local var_3_9 = arg_3_2.border or 3
+		local var_3_10 = Vector2(var_3_5[1], var_3_9)
+		local var_3_11 = Vector2(var_3_9, var_3_5[2] - 2 * var_3_9)
+		local var_3_12 = Vector2(var_3_5[1], var_3_5[2])
 
-		UIRenderer.draw_rect(ui_renderer, drag_pos, a_size, COLOR_BACKGROUND)
-		UIRenderer.draw_rect(ui_renderer, drag_pos + Vector2(0, drag_size[2] - border), h_size, color)
-		UIRenderer.draw_rect(ui_renderer, drag_pos, h_size, color)
-		UIRenderer.draw_rect(ui_renderer, drag_pos + Vector2(0, border), v_size, color)
-		UIRenderer.draw_rect(ui_renderer, drag_pos + Vector2(drag_size[1] - border, border), v_size, color)
+		UIRenderer.draw_rect(arg_3_0, var_3_4, var_3_12, var_0_1)
+		UIRenderer.draw_rect(arg_3_0, var_3_4 + Vector2(0, var_3_5[2] - var_3_9), var_3_10, var_3_8)
+		UIRenderer.draw_rect(arg_3_0, var_3_4, var_3_10, var_3_8)
+		UIRenderer.draw_rect(arg_3_0, var_3_4 + Vector2(0, var_3_9), var_3_11, var_3_8)
+		UIRenderer.draw_rect(arg_3_0, var_3_4 + Vector2(var_3_5[1] - var_3_9, var_3_9), var_3_11, var_3_8)
 
-		local sx, sy = UIRenderer.text_alignment_size(ui_renderer, customizer_data.label, "materials/fonts/arial", 18)
-		local text_pos = drag_pos + 0.5 * Vector2(drag_size[1] - sx, drag_size[2] - sy)
+		local var_3_13, var_3_14 = UIRenderer.text_alignment_size(arg_3_0, arg_3_2.label, "materials/fonts/arial", 18)
+		local var_3_15 = var_3_4 + 0.5 * Vector2(var_3_5[1] - var_3_13, var_3_5[2] - var_3_14)
 
-		UIRenderer.draw_text(ui_renderer, customizer_data.label, "materials/fonts/arial", 18, nil, text_pos, COLOR_TEXT)
+		UIRenderer.draw_text(arg_3_0, arg_3_2.label, "materials/fonts/arial", 18, nil, var_3_15, var_0_0)
 	end
 
-	local root_node = ui_scenegraph[customizer_data.root_scenegraph_id]
+	local var_3_16 = arg_3_1[arg_3_2.root_scenegraph_id]
 
-	is_dirty = is_dirty or root_node.local_position[1] ~= offset[1] or root_node.local_position[2] ~= offset[2]
+	var_3_0 = var_3_0 or var_3_16.local_position[1] ~= var_3_2[1] or var_3_16.local_position[2] ~= var_3_2[2]
 
-	if is_dirty then
-		root_node.local_position[1] = offset[1]
-		root_node.local_position[2] = offset[2]
+	if var_3_0 then
+		var_3_16.local_position[1] = var_3_2[1]
+		var_3_16.local_position[2] = var_3_2[2]
 	end
 
-	return is_dirty
+	return var_3_0
 end
 
-HudCustomizer.debug_temp = function (scenegraph, scenegraph_id)
-	local l = scenegraph[scenegraph_id].local_position
-	local w = scenegraph[scenegraph_id].world_position
+function HudCustomizer.debug_temp(arg_4_0, arg_4_1)
+	local var_4_0 = arg_4_0[arg_4_1].local_position
+	local var_4_1 = arg_4_0[arg_4_1].world_position
 
-	Debug.text("%s|local=V3(%.1f, %.1f, %.1f), world=V3(%.1f, %.1f, %.1f)", scenegraph_id, l[1], l[2], l[3], w[1], w[2], w[3])
+	Debug.text("%s|local=V3(%.1f, %.1f, %.1f), world=V3(%.1f, %.1f, %.1f)", arg_4_1, var_4_0[1], var_4_0[2], var_4_0[3], var_4_1[1], var_4_1[2], var_4_1[3])
 end
 
 if not IS_WINDOWS then

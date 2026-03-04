@@ -1,82 +1,81 @@
-﻿-- chunkname: @scripts/entity_system/systems/payload/payload_system.lua
+-- chunkname: @scripts/entity_system/systems/payload/payload_system.lua
 
 require("scripts/unit_extensions/level/payload_extension")
 
 PayloadSystem = class(PayloadSystem, ExtensionSystemBase)
 
-local RPCS = {
-	"rpc_payload_flow_event",
+local var_0_0 = {
+	"rpc_payload_flow_event"
 }
-local extensions = {
+local var_0_1 = {
 	"PayloadExtension",
-	"PayloadGizmoExtension",
+	"PayloadGizmoExtension"
 }
 
-PayloadSystem.init = function (self, entity_system_creation_context, system_name)
-	PayloadSystem.super.init(self, entity_system_creation_context, system_name, extensions)
+function PayloadSystem.init(arg_1_0, arg_1_1, arg_1_2)
+	PayloadSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
-	local network_event_delegate = entity_system_creation_context.network_event_delegate
+	local var_1_0 = arg_1_1.network_event_delegate
 
-	self.network_event_delegate = network_event_delegate
+	arg_1_0.network_event_delegate = var_1_0
 
-	network_event_delegate:register(self, unpack(RPCS))
+	var_1_0:register(arg_1_0, unpack(var_0_0))
 
-	self._payloads = {}
-	self._payload_gizmos = {}
+	arg_1_0._payloads = {}
+	arg_1_0._payload_gizmos = {}
 end
 
-PayloadSystem.destroy = function (self)
-	self.network_event_delegate:unregister(self)
+function PayloadSystem.destroy(arg_2_0)
+	arg_2_0.network_event_delegate:unregister(arg_2_0)
 end
 
-PayloadSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data, ...)
-	local payload_gizmos = self._payload_gizmos
-	local extension
+function PayloadSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, ...)
+	local var_3_0 = arg_3_0._payload_gizmos
+	local var_3_1
 
-	if extension_name == "PayloadExtension" then
-		self._payloads[#self._payloads + 1] = unit
-		extension = PickupSystem.super.on_add_extension(self, world, unit, extension_name, extension_init_data, ...)
-	elseif extension_name == "PayloadGizmoExtension" then
-		local spline_name = Unit.get_data(unit, "spline_name")
+	if arg_3_3 == "PayloadExtension" then
+		arg_3_0._payloads[#arg_3_0._payloads + 1] = arg_3_2
+		var_3_1 = PickupSystem.super.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, ...)
+	elseif arg_3_3 == "PayloadGizmoExtension" then
+		local var_3_2 = Unit.get_data(arg_3_2, "spline_name")
 
-		fassert(spline_name ~= "", "Spline Gizmo added to level without spline name at position %s", Unit.world_position(unit, 0))
+		fassert(var_3_2 ~= "", "Spline Gizmo added to level without spline name at position %s", Unit.world_position(arg_3_2, 0))
 
-		if not payload_gizmos[spline_name] then
-			payload_gizmos[spline_name] = {}
+		if not var_3_0[var_3_2] then
+			var_3_0[var_3_2] = {}
 		end
 
-		local spline_specific_gizmos = payload_gizmos[spline_name]
+		local var_3_3 = var_3_0[var_3_2]
 
-		spline_specific_gizmos[#spline_specific_gizmos + 1] = unit
-		extension = {}
+		var_3_3[#var_3_3 + 1] = arg_3_2
+		var_3_1 = {}
 	end
 
-	return extension
+	return var_3_1
 end
 
-PayloadSystem.init_payloads = function (self)
-	local payloads = self._payloads
-	local num_payloads = #payloads
-	local payload_gizmos = self._payload_gizmos
+function PayloadSystem.init_payloads(arg_4_0)
+	local var_4_0 = arg_4_0._payloads
+	local var_4_1 = #var_4_0
+	local var_4_2 = arg_4_0._payload_gizmos
 
-	for i = 1, num_payloads do
-		local payload = payloads[i]
-		local spline_name = Unit.get_data(payload, "spline_name")
-		local extension = ScriptUnit.extension(payload, "payload_system")
-		local gizmos = payload_gizmos[spline_name]
+	for iter_4_0 = 1, var_4_1 do
+		local var_4_3 = var_4_0[iter_4_0]
+		local var_4_4 = Unit.get_data(var_4_3, "spline_name")
+		local var_4_5 = ScriptUnit.extension(var_4_3, "payload_system")
+		local var_4_6 = var_4_2[var_4_4]
 
-		extension:init_payload(gizmos)
+		var_4_5:init_payload(var_4_6)
 	end
 end
 
-PayloadSystem.rpc_payload_flow_event = function (self, channel_id, payload_unit_id, spline_index)
-	local level = LevelHelper:current_level(self.world)
-	local unit = Level.unit_by_index(level, payload_unit_id)
-	local extension = ScriptUnit.extension(unit, "payload_system")
+function PayloadSystem.rpc_payload_flow_event(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	local var_5_0 = LevelHelper:current_level(arg_5_0.world)
+	local var_5_1 = Level.unit_by_index(var_5_0, arg_5_2)
 
-	extension:payload_flow_event(spline_index)
+	ScriptUnit.extension(var_5_1, "payload_system"):payload_flow_event(arg_5_3)
 end
 
-PayloadSystem.hot_join_sync = function (self)
+function PayloadSystem.hot_join_sync(arg_6_0)
 	return
 end

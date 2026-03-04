@@ -1,890 +1,868 @@
-﻿-- chunkname: @scripts/ui/views/versus_menu/versus_party_char_selection_view.lua
+-- chunkname: @scripts/ui/views/versus_menu/versus_party_char_selection_view.lua
 
 require("scripts/ui/views/versus_menu/ui_widgets_vs")
 require("scripts/ui/views/team_previewer")
 
-local definitions = local_require("scripts/ui/views/versus_menu/versus_party_char_selection_view_definitions")
-local settings = DLCSettings.carousel
-local widget_definitions = definitions.widget_definitions
-local create_progress_marker = definitions.create_progress_marker
-local generic_input_actions = definitions.generic_input_actions
-local animation_definitions = definitions.animation_definitions
-local scenegraph_definition = definitions.scenegraph_definition
-local other_definitions = definitions.other_definitions
-local top_detail_widgets_definitions = definitions.top_detail_widgets_definitions
-local create_player_name_box_widgets = definitions.create_player_name_box_widgets
-local EMPTY_TABLE = {}
-local PICKING_STATES_STRINGS_LOOKUP = {
+local var_0_0 = local_require("scripts/ui/views/versus_menu/versus_party_char_selection_view_definitions")
+local var_0_1 = DLCSettings.carousel
+local var_0_2 = var_0_0.widget_definitions
+local var_0_3 = var_0_0.create_progress_marker
+local var_0_4 = var_0_0.generic_input_actions
+local var_0_5 = var_0_0.animation_definitions
+local var_0_6 = var_0_0.scenegraph_definition
+local var_0_7 = var_0_0.other_definitions
+local var_0_8 = var_0_0.top_detail_widgets_definitions
+local var_0_9 = var_0_0.create_player_name_box_widgets
+local var_0_10 = {}
+local var_0_11 = {
 	done = "versus_hero_selection_view_done",
-	picking = "versus_hero_selection_view_picking",
 	waiting = "versus_hero_selection_view_waiting",
+	picking = "versus_hero_selection_view_picking"
 }
-local ClientStateLookup = VersusPartySelectionLogicUtility.ClientStateLookup
+local var_0_12 = VersusPartySelectionLogicUtility.ClientStateLookup
 
 VersusPartyCharSelectionView = class(VersusPartyCharSelectionView, BaseView)
 
-VersusPartyCharSelectionView.init = function (self, ingame_ui_context)
-	local player = ingame_ui_context.player
+function VersusPartyCharSelectionView.init(arg_1_0, arg_1_1)
+	local var_1_0 = arg_1_1.player
 
-	self._player = player
-	self._peer_id = player:network_id()
-	self._local_player_id = player:local_player_id()
-	self._unique_id = self._peer_id .. ":" .. self._local_player_id
-	self._game_mode = Managers.state.game_mode:game_mode()
-	self._ingame_ui = ingame_ui_context.ingame_ui
-	self._profile_synchronizer = ingame_ui_context.profile_synchronizer
+	arg_1_0._player = var_1_0
+	arg_1_0._peer_id = var_1_0:network_id()
+	arg_1_0._local_player_id = var_1_0:local_player_id()
+	arg_1_0._unique_id = arg_1_0._peer_id .. ":" .. arg_1_0._local_player_id
+	arg_1_0._game_mode = Managers.state.game_mode:game_mode()
+	arg_1_0._ingame_ui = arg_1_1.ingame_ui
+	arg_1_0._profile_synchronizer = arg_1_1.profile_synchronizer
+	arg_1_0._profile_requester = (arg_1_1.network_server or arg_1_1.network_client):profile_requester()
+	arg_1_0._ingame_ui_context = arg_1_1
+	arg_1_0._is_server = arg_1_1.is_server
+	arg_1_0._cam_anim_indx = 1
+	arg_1_0._camera_animations = {}
+	arg_1_0._team_heroes = {}
+	arg_1_0._team_previewer = nil
+	arg_1_0._voip = arg_1_1.voip
 
-	local network_handler = ingame_ui_context.network_server or ingame_ui_context.network_client
-
-	self._profile_requester = network_handler:profile_requester()
-	self._ingame_ui_context = ingame_ui_context
-	self._is_server = ingame_ui_context.is_server
-	self._cam_anim_indx = 1
-	self._camera_animations = {}
-	self._team_heroes = {}
-	self._team_previewer = nil
-	self._voip = ingame_ui_context.voip
-
-	self.super.init(self, ingame_ui_context, definitions)
+	arg_1_0.super.init(arg_1_0, arg_1_1, var_0_0)
 end
 
-VersusPartyCharSelectionView.on_enter = function (self, params)
+function VersusPartyCharSelectionView.on_enter(arg_2_0, arg_2_1)
 	print("[VersusPartyCharSelectionView] Enter character selection view")
-	self.super.on_enter(self)
+	arg_2_0.super.on_enter(arg_2_0)
 
-	self._party_selection_logic = Managers.state.game_mode:game_mode():party_selection_logic()
+	arg_2_0._party_selection_logic = Managers.state.game_mode:game_mode():party_selection_logic()
 
-	self._party_selection_logic:set_ingame_ui(self._ingame_ui)
+	arg_2_0._party_selection_logic:set_ingame_ui(arg_2_0._ingame_ui)
 
-	self._party = Managers.party:get_party_from_player_id(self._peer_id, self._local_player_id)
-	self._side = Managers.state.side.side_by_party[self._party]
-	self._status = Managers.party:get_player_status(self._peer_id, self._local_player_id)
+	arg_2_0._party = Managers.party:get_party_from_player_id(arg_2_0._peer_id, arg_2_0._local_player_id)
+	arg_2_0._side = Managers.state.side.side_by_party[arg_2_0._party]
+	arg_2_0._status = Managers.party:get_player_status(arg_2_0._peer_id, arg_2_0._local_player_id)
 
-	self:_setup_roster_widgets_definitions()
-	self:_setup_background_world()
-	self:_activate_viewport()
+	arg_2_0:_setup_roster_widgets_definitions()
+	arg_2_0:_setup_background_world()
+	arg_2_0:_activate_viewport()
 
-	self.render_settings = {
-		snap_pixel_positions = true,
+	arg_2_0.render_settings = {
+		snap_pixel_positions = true
 	}
-	self._animations = {}
+	arg_2_0._animations = {}
 
-	local gui_layer = UILayer.default + 100
+	local var_2_0 = UILayer.default + 100
 
-	self._menu_input_description = MenuInputDescriptionUI:new(self._ingame_ui_context, self._ui_top_renderer, self:input_service(), 4, gui_layer, generic_input_actions.default, true)
+	arg_2_0._menu_input_description = MenuInputDescriptionUI:new(arg_2_0._ingame_ui_context, arg_2_0._ui_top_renderer, arg_2_0:input_service(), 4, var_2_0, var_0_4.default, true)
 
-	self._menu_input_description:set_input_description(nil)
-	self:create_ui_elements(params)
+	arg_2_0._menu_input_description:set_input_description(nil)
+	arg_2_0:create_ui_elements(arg_2_1)
 
-	self._params = params
-	self._prev_timer_value = 0
+	arg_2_0._params = arg_2_1
+	arg_2_0._prev_timer_value = 0
 
-	self:play_sound("vs_mute_all")
-	self:play_sound("menu_versus_character_amb_loop_start")
+	arg_2_0:play_sound("vs_mute_all")
+	arg_2_0:play_sound("menu_versus_character_amb_loop_start")
 
 	if IS_WINDOWS and not Window.has_focus() then
 		Window.flash_window(nil, "start", 3)
 	end
 end
 
-VersusPartyCharSelectionView._setup_roster_widgets_definitions = function (self)
-	local hero_group_widgets_defs, hero_roster_detail_widgets_defs = definitions.create_hero_roster_widget_defitions()
+function VersusPartyCharSelectionView._setup_roster_widgets_definitions(arg_3_0)
+	local var_3_0, var_3_1 = var_0_0.create_hero_roster_widget_defitions()
 
-	self._hero_group_widgets_defs = hero_group_widgets_defs
-	self._hero_roster_detail_widgets_defs = hero_roster_detail_widgets_defs
+	arg_3_0._hero_group_widgets_defs = var_3_0
+	arg_3_0._hero_roster_detail_widgets_defs = var_3_1
 end
 
-VersusPartyCharSelectionView._is_hovering_item = function (self, profile_index, career_index)
-	return self._hovered_profile_index == profile_index and self._hovered_career_index == career_index
+function VersusPartyCharSelectionView._is_hovering_item(arg_4_0, arg_4_1, arg_4_2)
+	return arg_4_0._hovered_profile_index == arg_4_1 and arg_4_0._hovered_career_index == arg_4_2
 end
 
-VersusPartyCharSelectionView._set_item_hovered = function (self, peer_id, local_player_id, profile_index, career_index)
-	profile_index = profile_index or 0
-	career_index = career_index or 0
-	self._hovered_profile_index = profile_index
-	self._hovered_career_index = career_index
+function VersusPartyCharSelectionView._set_item_hovered(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	arg_5_3 = arg_5_3 or 0
+	arg_5_4 = arg_5_4 or 0
+	arg_5_0._hovered_profile_index = arg_5_3
+	arg_5_0._hovered_career_index = arg_5_4
 
-	self._party_selection_logic:sync_hovered_item(peer_id, local_player_id, profile_index, career_index)
+	arg_5_0._party_selection_logic:sync_hovered_item(arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 end
 
-VersusPartyCharSelectionView.on_exit = function (self)
+function VersusPartyCharSelectionView.on_exit(arg_6_0)
 	print("[VersusPartyCharSelectionView] Exit character selection view")
 
-	if self._team_previewer then
-		self:_destroy_team_previewer()
+	if arg_6_0._team_previewer then
+		arg_6_0:_destroy_team_previewer()
 	end
 
-	if self._team_world_viewport then
-		ScriptWorld.destroy_viewport(self._background_world, self._team_world_viewport_name)
+	if arg_6_0._team_world_viewport then
+		ScriptWorld.destroy_viewport(arg_6_0._background_world, arg_6_0._team_world_viewport_name)
 
-		self._team_world_viewport = nil
-		self._team_world_viewport_name = nil
+		arg_6_0._team_world_viewport = nil
+		arg_6_0._team_world_viewport_name = nil
 	end
 
-	if self._background_world then
-		self:_destroy_world()
+	if arg_6_0._background_world then
+		arg_6_0:_destroy_world()
 	end
 
-	self.super.on_exit(self)
+	arg_6_0.super.on_exit(arg_6_0)
 
 	if not Managers.state.game_mode:setting("display_parading_view") then
-		self:play_sound("vs_unmute_reset_all")
+		arg_6_0:play_sound("vs_unmute_reset_all")
 	end
 
-	local event_manager = Managers.state.event
+	local var_6_0 = Managers.state.event
 
-	if event_manager then
-		event_manager:unregister("party_selection_logic_state_set", self)
-	end
-end
-
-VersusPartyCharSelectionView.post_update = function (self, dt, t)
-	self.ui_animator:update(dt)
-	self:_update_animations(dt, t)
-	self:_update_camera(t)
-	self:_update_player_party(dt, t)
-	self:_handle_input(dt, t)
-
-	if self._team_previewer then
-		self:_update_team_previewer(dt, t)
+	if var_6_0 then
+		var_6_0:unregister("party_selection_logic_state_set", arg_6_0)
 	end
 end
 
-VersusPartyCharSelectionView.update = function (self, dt, t)
-	if not self._is_spectator then
-		self:draw(dt)
-	end
+function VersusPartyCharSelectionView.post_update(arg_7_0, arg_7_1, arg_7_2)
+	arg_7_0.ui_animator:update(arg_7_1)
+	arg_7_0:_update_animations(arg_7_1, arg_7_2)
+	arg_7_0:_update_camera(arg_7_2)
+	arg_7_0:_update_player_party(arg_7_1, arg_7_2)
+	arg_7_0:_handle_input(arg_7_1, arg_7_2)
 
-	self.super.update(self, dt, t)
+	if arg_7_0._team_previewer then
+		arg_7_0:_update_team_previewer(arg_7_1, arg_7_2)
+	end
 end
 
-VersusPartyCharSelectionView._update_hero_picking_progress = function (self, party, party_data, num_slots)
-	local picker_list = party_data.picker_list
-	local party_id = party.party_id
+function VersusPartyCharSelectionView.update(arg_8_0, arg_8_1, arg_8_2)
+	if not arg_8_0._is_spectator then
+		arg_8_0:draw(arg_8_1)
+	end
 
-	for _, careers in pairs(self._hero_group_widgets_lookup) do
-		for _, widget in pairs(careers) do
-			widget.content.taken = nil
-			widget.content.taken_id = nil
+	arg_8_0.super.update(arg_8_0, arg_8_1, arg_8_2)
+end
+
+function VersusPartyCharSelectionView._update_hero_picking_progress(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	local var_9_0 = arg_9_2.picker_list
+	local var_9_1 = arg_9_1.party_id
+
+	for iter_9_0, iter_9_1 in pairs(arg_9_0._hero_group_widgets_lookup) do
+		for iter_9_2, iter_9_3 in pairs(iter_9_1) do
+			iter_9_3.content.taken = nil
+			iter_9_3.content.taken_id = nil
 		end
 	end
 
-	for i = 1, num_slots do
-		local picking_progress_data = self._picking_progress_data[i]
-		local player_data = picker_list[i]
-		local slot_id = player_data.slot_id
-		local is_picking = ClientStateLookup[player_data.state] == ClientStateLookup.player_picking_character
-		local has_picked = ClientStateLookup[player_data.state] >= ClientStateLookup.player_has_picked_character
-		local is_bot = VersusPartySelectionLogicUtility.picker_index_is_bot(party_data, slot_id)
-		local profile_index, career_index
+	for iter_9_4 = 1, arg_9_3 do
+		local var_9_2 = arg_9_0._picking_progress_data[iter_9_4]
+		local var_9_3 = var_9_0[iter_9_4]
+		local var_9_4 = var_9_3.slot_id
+		local var_9_5 = var_0_12[var_9_3.state] == var_0_12.player_picking_character
+		local var_9_6 = var_0_12[var_9_3.state] >= var_0_12.player_has_picked_character
+		local var_9_7 = VersusPartySelectionLogicUtility.picker_index_is_bot(arg_9_2, var_9_4)
+		local var_9_8
+		local var_9_9
 
-		if is_bot then
-			if has_picked or is_picking then
-				profile_index, career_index = self._profile_synchronizer:get_bot_profile(party_id, slot_id)
+		if var_9_7 then
+			if var_9_6 or var_9_5 then
+				var_9_8, var_9_9 = arg_9_0._profile_synchronizer:get_bot_profile(var_9_1, var_9_4)
 			end
 		else
-			local peer_id = player_data.status.peer_id
+			local var_9_10 = var_9_3.status.peer_id
 
-			if peer_id then
-				profile_index, career_index = self._profile_synchronizer:get_persistent_profile_index_reservation(peer_id)
+			if var_9_10 then
+				var_9_8, var_9_9 = arg_9_0._profile_synchronizer:get_persistent_profile_index_reservation(var_9_10)
 			end
 		end
 
-		local careers = self._hero_group_widgets_lookup[profile_index]
+		local var_9_11 = arg_9_0._hero_group_widgets_lookup[var_9_8]
 
-		if careers then
-			for career_i, widget in pairs(careers) do
-				if is_picking then
-					widget.content.taken = nil
-				elseif has_picked then
-					widget.content.taken = true
-					widget.content.has_picked = true
+		if var_9_11 then
+			for iter_9_5, iter_9_6 in pairs(var_9_11) do
+				if var_9_5 then
+					iter_9_6.content.taken = nil
+				elseif var_9_6 then
+					iter_9_6.content.taken = true
+					iter_9_6.content.has_picked = true
 				end
 
-				if career_i == career_index then
-					widget.taken_id = slot_id
+				if iter_9_5 == var_9_9 then
+					iter_9_6.taken_id = var_9_4
 				end
 			end
 		end
 
-		profile_index, career_index = profile_index or 0, career_index or 0
+		local var_9_12
 
-		if picking_progress_data.profile_index ~= profile_index or picking_progress_data.career_index ~= career_index then
-			picking_progress_data.profile_index = profile_index
-			picking_progress_data.career_index = career_index
+		var_9_12, var_9_9 = var_9_8 or 0, var_9_9 or 0
+
+		if var_9_2.profile_index ~= var_9_12 or var_9_2.career_index ~= var_9_9 then
+			var_9_2.profile_index = var_9_12
+			var_9_2.career_index = var_9_9
 		end
 	end
 end
 
-VersusPartyCharSelectionView._update_timer_progress_bar = function (self, party_data, local_player_is_picking, num_slots)
-	if party_data.slider_timer then
-		local bar_scenegraph_id = "progress_bar"
-		local ui_scenegraph = self._ui_scenegraph
-		local default_scenegraph_size = scenegraph_definition[bar_scenegraph_id].size
-		local slider_timer = party_data.slider_timer
-		local time_finished = party_data.time_finished
-		local total_slider_time = party_data.total_slider_time
-		local slider_percent = math.clamp((time_finished - slider_timer) / total_slider_time, 0, 1)
-		local slider_x = slider_percent * default_scenegraph_size[1]
+function VersusPartyCharSelectionView._update_timer_progress_bar(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	if arg_10_1.slider_timer then
+		local var_10_0 = "progress_bar"
+		local var_10_1 = arg_10_0._ui_scenegraph
+		local var_10_2 = var_0_6[var_10_0].size
+		local var_10_3 = arg_10_1.slider_timer
+		local var_10_4 = arg_10_1.time_finished
+		local var_10_5 = arg_10_1.total_slider_time
+		local var_10_6 = math.clamp((var_10_4 - var_10_3) / var_10_5, 0, 1) * var_10_2[1]
 
-		for i = 1, num_slots do
-			local picking_progress_data = self._picking_progress_data[i]
-			local bar_distance = picking_progress_data.bar_distance
-			local step_size = picking_progress_data.step_size
-			local highlight = step_size > bar_distance - slider_x
-			local done = bar_distance < slider_x
-			local point_widget = picking_progress_data.point_widget
+		for iter_10_0 = 1, arg_10_3 do
+			local var_10_7 = arg_10_0._picking_progress_data[iter_10_0]
+			local var_10_8 = var_10_7.bar_distance
+			local var_10_9 = var_10_7.step_size > var_10_8 - var_10_6
+			local var_10_10 = var_10_8 < var_10_6
+			local var_10_11 = var_10_7.point_widget
 
-			if point_widget then
-				point_widget.content.highlight = highlight
-				point_widget.content.done = done
+			if var_10_11 then
+				var_10_11.content.highlight = var_10_9
+				var_10_11.content.done = var_10_10
 			end
 
-			local progress_bar_size = ui_scenegraph[bar_scenegraph_id].size
-
-			progress_bar_size[1] = slider_x
+			var_10_1[var_10_0].size[1] = var_10_6
 		end
 	end
 end
 
-VersusPartyCharSelectionView._update_background_music = function (self, party_state)
-	if not self._background_music_triggered and party_state ~= "setup" then
-		self._background_music_triggered = true
+function VersusPartyCharSelectionView._update_background_music(arg_11_0, arg_11_1)
+	if not arg_11_0._background_music_triggered and arg_11_1 ~= "setup" then
+		arg_11_0._background_music_triggered = true
 
-		self:play_sound("menu_versus_character_selection_start")
+		arg_11_0:play_sound("menu_versus_character_selection_start")
 	end
 end
 
-VersusPartyCharSelectionView._update_party_state_startup = function (self, party_state, picker_list, party)
-	if party_state ~= "startup" then
+function VersusPartyCharSelectionView._update_party_state_startup(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	if arg_12_1 ~= "startup" then
 		return
 	end
 
-	local timer = self._party_selection_logic:timer()
+	local var_12_0 = arg_12_0._party_selection_logic:timer()
 
-	if not self._start_timer_value then
-		self._start_timer_value = timer
+	if not arg_12_0._start_timer_value then
+		arg_12_0._start_timer_value = var_12_0
 	end
 
-	if timer <= self._start_timer_value - GameSettings.transition_fade_out_speed then
-		local rounded_time = math.ceil(timer)
-		local countdown_timer = self._widgets_by_name.countdown_timer
+	if var_12_0 <= arg_12_0._start_timer_value - GameSettings.transition_fade_out_speed then
+		local var_12_1 = math.ceil(var_12_0)
 
-		countdown_timer.content.text = tostring(rounded_time)
+		arg_12_0._widgets_by_name.countdown_timer.content.text = tostring(var_12_1)
 
-		if rounded_time ~= self._prev_timer_value then
-			if rounded_time > 0 then
-				local tick_sound = settings.versus_character_selection_clock_tick[rounded_time]
+		if var_12_1 ~= arg_12_0._prev_timer_value then
+			if var_12_1 > 0 then
+				local var_12_2 = var_0_1.versus_character_selection_clock_tick[var_12_1]
 
-				self:play_sound(tick_sound)
+				arg_12_0:play_sound(var_12_2)
 			end
 
-			self._prev_timer_value = rounded_time
+			arg_12_0._prev_timer_value = var_12_1
 		end
 	end
 end
 
-VersusPartyCharSelectionView._update_party_state_player_picking_character = function (self, party_state, picker_list, current_picker_index, party)
-	local party_data = self._party_selection_logic:get_party_data(self._party_id)
+function VersusPartyCharSelectionView._update_party_state_player_picking_character(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+	local var_13_0 = arg_13_0._party_selection_logic:get_party_data(arg_13_0._party_id)
 
-	if not party_data then
+	if not var_13_0 then
 		return
 	end
 
-	local data_by_pick_index = self._data_by_pick_index
+	local var_13_1 = arg_13_0._data_by_pick_index
 
-	for pick_id = 1, #data_by_pick_index do
-		local pick_index_data = data_by_pick_index[pick_id]
-		local is_bot = VersusPartySelectionLogicUtility.picker_index_is_bot(party_data, pick_id)
+	for iter_13_0 = 1, #var_13_1 do
+		local var_13_2 = var_13_1[iter_13_0]
+		local var_13_3 = VersusPartySelectionLogicUtility.picker_index_is_bot(var_13_0, iter_13_0)
 
-		if pick_index_data.is_bot ~= is_bot then
-			pick_index_data.is_bot = is_bot
+		if var_13_2.is_bot ~= var_13_3 then
+			var_13_2.is_bot = var_13_3
 
-			self:_update_player_name_box_widget(party_data, pick_id)
+			arg_13_0:_update_player_name_box_widget(var_13_0, iter_13_0)
 		end
 	end
 
-	if party_state ~= "player_picking_character" then
+	if arg_13_1 ~= "player_picking_character" then
 		return
 	end
 
-	self._next_character_update_idx = math.index_wrapper((self._next_character_update_idx or 0) + 1, current_picker_index)
+	arg_13_0._next_character_update_idx = math.index_wrapper((arg_13_0._next_character_update_idx or 0) + 1, arg_13_3)
 
-	local pick_id = self._next_character_update_idx
-	local player_data = picker_list[pick_id]
-	local local_player_is_picking = self:local_player_is_picking()
-	local local_player_picking_frame = self._widgets_by_name.local_player_picking_frame
+	local var_13_4 = arg_13_0._next_character_update_idx
+	local var_13_5 = arg_13_2[var_13_4]
+	local var_13_6 = arg_13_0:local_player_is_picking()
 
-	local_player_picking_frame.content.visible = local_player_is_picking
+	arg_13_0._widgets_by_name.local_player_picking_frame.content.visible = var_13_6
 
-	local status = player_data.status
-	local profile_index = status.selected_profile_index
-	local career_index = status.selected_career_index
-	local pick_index_data = self._data_by_pick_index[pick_id]
+	local var_13_7 = var_13_5.status
+	local var_13_8 = var_13_7.selected_profile_index
+	local var_13_9 = var_13_7.selected_career_index
+	local var_13_10 = arg_13_0._data_by_pick_index[var_13_4]
 
-	if profile_index and career_index then
-		local slot_id = player_data.slot_id
-		local slot_data = party.slots_data[slot_id]
-		local has_synced_cosmetics = slot_data.slot_skin ~= "n/a"
+	if var_13_8 and var_13_9 then
+		local var_13_11 = var_13_5.slot_id
 
-		if has_synced_cosmetics and (profile_index ~= pick_index_data.profile_index or career_index ~= pick_index_data.career_index) then
-			self:_spawn_selected_hero(pick_id)
+		if arg_13_4.slots_data[var_13_11].slot_skin ~= "n/a" and (var_13_8 ~= var_13_10.profile_index or var_13_9 ~= var_13_10.career_index) then
+			arg_13_0:_spawn_selected_hero(var_13_4)
 
-			pick_index_data.profile_index = profile_index
-			pick_index_data.career_index = career_index
+			var_13_10.profile_index = var_13_8
+			var_13_10.career_index = var_13_9
 
-			if pick_id == current_picker_index then
-				self:_set_selected_hero_and_career_text(profile_index, career_index)
-				self:_update_selcted_career_passive_and_career_skill(profile_index, career_index)
+			if var_13_4 == arg_13_3 then
+				arg_13_0:_set_selected_hero_and_career_text(var_13_8, var_13_9)
+				arg_13_0:_update_selcted_career_passive_and_career_skill(var_13_8, var_13_9)
 			end
 		end
 	end
 
-	local hero_group_widgets_lookup = self._hero_group_widgets_lookup
+	local var_13_12 = arg_13_0._hero_group_widgets_lookup
 
-	if hero_group_widgets_lookup then
-		for i = 1, #hero_group_widgets_lookup do
-			local carrer_widgets = hero_group_widgets_lookup[i]
+	if var_13_12 then
+		for iter_13_1 = 1, #var_13_12 do
+			local var_13_13 = var_13_12[iter_13_1]
 
-			if carrer_widgets then
-				for j = 1, #carrer_widgets do
-					local roster_hero_widget = carrer_widgets[j]
-
-					roster_hero_widget.content.other_picking = not local_player_is_picking
+			if var_13_13 then
+				for iter_13_2 = 1, #var_13_13 do
+					var_13_13[iter_13_2].content.other_picking = not var_13_6
 				end
 			end
 		end
 	end
 end
 
-VersusPartyCharSelectionView._setup_local_picker_data = function (self, peer_id, local_player_id)
-	local party, party_id = Managers.party:get_party_from_player_id(peer_id, local_player_id)
+function VersusPartyCharSelectionView._setup_local_picker_data(arg_14_0, arg_14_1, arg_14_2)
+	local var_14_0, var_14_1 = Managers.party:get_party_from_player_id(arg_14_1, arg_14_2)
 
-	if party_id == 0 then
+	if var_14_1 == 0 then
 		return
 	end
 
-	local player_status = Managers.party:get_player_status(peer_id, local_player_id)
+	arg_14_0._slot_id = Managers.party:get_player_status(arg_14_1, arg_14_2).slot_id
+	arg_14_0._party = var_14_0
+	arg_14_0._party_id = var_14_1
+	arg_14_0._is_spectator = var_14_0.name == "spectators"
 
-	self._slot_id = player_status.slot_id
-	self._party = party
-	self._party_id = party_id
-	self._is_spectator = party.name == "spectators"
+	local var_14_2 = arg_14_0._party_selection_logic:get_party_data(arg_14_0._party_id)
 
-	local party_data = self._party_selection_logic:get_party_data(self._party_id)
-
-	if not party_data then
+	if not var_14_2 then
 		return
 	end
 
-	self._data_by_pick_index = {}
+	arg_14_0._data_by_pick_index = {}
 
-	for i = 1, party.num_slots do
-		self._data_by_pick_index[i] = {}
+	for iter_14_0 = 1, var_14_0.num_slots do
+		arg_14_0._data_by_pick_index[iter_14_0] = {}
 	end
 
-	self._party_data = party_data
+	arg_14_0._party_data = var_14_2
 
-	local picker_list = party_data.picker_list
+	local var_14_3 = var_14_2.picker_list
 
-	for i = 1, #picker_list do
-		local curr_picker_list = picker_list[i]
+	for iter_14_1 = 1, #var_14_3 do
+		local var_14_4 = var_14_3[iter_14_1]
 
-		if curr_picker_list.slot_id == self._slot_id then
-			self._local_player_data = curr_picker_list
-			self._picker_list_id = i
+		if var_14_4.slot_id == arg_14_0._slot_id then
+			arg_14_0._local_player_data = var_14_4
+			arg_14_0._picker_list_id = iter_14_1
 
 			break
 		end
 	end
 
-	if not self._is_spectator then
-		self:_setup_character_selection_widgets()
-		self:_update_all_player_name_box_widgets()
+	if not arg_14_0._is_spectator then
+		arg_14_0:_setup_character_selection_widgets()
+		arg_14_0:_update_all_player_name_box_widgets()
 	end
 end
 
-VersusPartyCharSelectionView._update_player_party = function (self, dt, t)
-	if not self._party_id then
-		local peer_id, local_player_id = self._peer_id, self._local_player_id
+function VersusPartyCharSelectionView._update_player_party(arg_15_0, arg_15_1, arg_15_2)
+	if not arg_15_0._party_id then
+		local var_15_0 = arg_15_0._peer_id
+		local var_15_1 = arg_15_0._local_player_id
 
-		self:_setup_local_picker_data(peer_id, local_player_id)
+		arg_15_0:_setup_local_picker_data(var_15_0, var_15_1)
 	end
 
-	local party_data = self._party_selection_logic:get_party_data(self._party_id)
+	local var_15_2 = arg_15_0._party_selection_logic:get_party_data(arg_15_0._party_id)
 
-	if not party_data then
+	if not var_15_2 then
 		return
 	end
 
-	if #self._team_heroes == 0 and not self._team_previewer then
-		self:_setup_team_heroes()
-		self:_setup_team_previewer()
-		self:_update_all_player_name_box_widgets()
-		self:_set_your_turn_text_position()
-		self:_set_top_detail_widgets_visible(false)
-		Managers.state.event:register(self, "party_selection_logic_state_set", "on_party_selection_logic_state_set")
-		self:on_party_selection_logic_state_set(party_data.state, self._party_id, party_data.current_picker_index)
+	if #arg_15_0._team_heroes == 0 and not arg_15_0._team_previewer then
+		arg_15_0:_setup_team_heroes()
+		arg_15_0:_setup_team_previewer()
+		arg_15_0:_update_all_player_name_box_widgets()
+		arg_15_0:_set_your_turn_text_position()
+		arg_15_0:_set_top_detail_widgets_visible(false)
+		Managers.state.event:register(arg_15_0, "party_selection_logic_state_set", "on_party_selection_logic_state_set")
+		arg_15_0:on_party_selection_logic_state_set(var_15_2.state, arg_15_0._party_id, var_15_2.current_picker_index)
 	end
 
-	local party = self._party
-	local party_state = party_data.state
-	local num_slots = party.num_slots
-	local picker_list = party_data.picker_list
-	local current_picker_index = party_data.current_picker_index
-	local local_player_is_picking = self:local_player_is_picking()
+	local var_15_3 = arg_15_0._party
+	local var_15_4 = var_15_2.state
+	local var_15_5 = var_15_3.num_slots
+	local var_15_6 = var_15_2.picker_list
+	local var_15_7 = var_15_2.current_picker_index
+	local var_15_8 = arg_15_0:local_player_is_picking()
 
-	self:_update_background_music(party_state)
-	self:_update_party_state_startup(party_state, picker_list, party)
-	self:_update_party_state_player_picking_character(party_state, picker_list, current_picker_index, party)
-	self:_update_hero_picking_progress(party, party_data, num_slots)
-	self:_update_timer_progress_bar(party_data, local_player_is_picking, num_slots)
+	arg_15_0:_update_background_music(var_15_4)
+	arg_15_0:_update_party_state_startup(var_15_4, var_15_6, var_15_3)
+	arg_15_0:_update_party_state_player_picking_character(var_15_4, var_15_6, var_15_7, var_15_3)
+	arg_15_0:_update_hero_picking_progress(var_15_3, var_15_2, var_15_5)
+	arg_15_0:_update_timer_progress_bar(var_15_2, var_15_8, var_15_5)
 end
 
-VersusPartyCharSelectionView._update_roster_widgets_animations = function (self, dt, t)
-	local party_data = self._party_selection_logic:get_party_data(self._party_id)
+function VersusPartyCharSelectionView._update_roster_widgets_animations(arg_16_0, arg_16_1, arg_16_2)
+	local var_16_0 = arg_16_0._party_selection_logic:get_party_data(arg_16_0._party_id)
 
-	if not party_data then
+	if not var_16_0 then
 		return
 	end
 
-	local party_state = party_data.state
-	local picker_data = party_data.picker_list[self._picker_list_id]
-	local is_inactive = false
-	local hero_group_widgets_lookup = self._hero_group_widgets_lookup
+	local var_16_1 = var_16_0.state
+	local var_16_2 = var_16_0.picker_list[arg_16_0._picker_list_id]
+	local var_16_3 = false
+	local var_16_4 = arg_16_0._hero_group_widgets_lookup
 
-	if hero_group_widgets_lookup then
-		for i = 1, #hero_group_widgets_lookup do
-			local carrer_widgets = hero_group_widgets_lookup[i]
+	if var_16_4 then
+		for iter_16_0 = 1, #var_16_4 do
+			local var_16_5 = var_16_4[iter_16_0]
 
-			if carrer_widgets then
-				for j = 1, #carrer_widgets do
-					local roster_hero_widget = carrer_widgets[j]
-					local content = roster_hero_widget.content
-					local style = roster_hero_widget.style
-					local offset = roster_hero_widget.offset
-					local hotspot = content.button_hotspot
-					local taken = content.taken
-					local locked = content.locked
-					local other_picking = content.other_picking
-					local gamepad_selected = content.gamepad_selected
-					local is_hover = (hotspot.is_hover or gamepad_selected) and not other_picking and not locked
-					local profile_index = content.profile_index
-					local career_index = content.career_index
-					local is_selected = self:_is_item_selected(profile_index, career_index)
-					local hover_progress = hotspot.hover_progress or 0
-					local selection_progress = hotspot.selection_progress or 0
-					local inactive_progress = hotspot.inactive_progress or 0
-					local taken_progress = hotspot.taken_progress or 0
+			if var_16_5 then
+				for iter_16_1 = 1, #var_16_5 do
+					local var_16_6 = var_16_5[iter_16_1]
+					local var_16_7 = var_16_6.content
+					local var_16_8 = var_16_6.style
+					local var_16_9 = var_16_6.offset
+					local var_16_10 = var_16_7.button_hotspot
+					local var_16_11 = var_16_7.taken
+					local var_16_12 = var_16_7.locked
+					local var_16_13 = var_16_7.other_picking
+					local var_16_14 = var_16_7.gamepad_selected
+					local var_16_15 = (var_16_10.is_hover or var_16_14) and not var_16_13 and not var_16_12
+					local var_16_16 = var_16_7.profile_index
+					local var_16_17 = var_16_7.career_index
+					local var_16_18 = arg_16_0:_is_item_selected(var_16_16, var_16_17)
+					local var_16_19 = var_16_10.hover_progress or 0
+					local var_16_20 = var_16_10.selection_progress or 0
+					local var_16_21 = var_16_10.inactive_progress or 0
+					local var_16_22 = var_16_10.taken_progress or 0
 
-					content.party_state = party_state
+					var_16_7.party_state = var_16_1
 
-					if party_state == "startup" then
-						style.local_player_selected_texture.color[1] = 0
-						style.other_player_selected_texture.color[1] = 0
-						is_inactive = true
-					elseif party_state ~= "startup" and party_state ~= "parading" then
-						is_inactive = (picker_data.state == "player_has_picked_character" or locked) and not is_selected
+					if var_16_1 == "startup" then
+						var_16_8.local_player_selected_texture.color[1] = 0
+						var_16_8.other_player_selected_texture.color[1] = 0
+						var_16_3 = true
+					elseif var_16_1 ~= "startup" and var_16_1 ~= "parading" then
+						var_16_3 = (var_16_2.state == "player_has_picked_character" or var_16_12) and not var_16_18
 
-						local speed = 15
-						local selected_speed = 5
+						local var_16_23 = 15
+						local var_16_24 = 5
 
-						if is_hover then
-							hover_progress = math.min(hover_progress + dt * speed, 1)
+						if var_16_15 then
+							var_16_19 = math.min(var_16_19 + arg_16_1 * var_16_23, 1)
 						else
-							hover_progress = math.max(hover_progress - dt * speed, 0)
+							var_16_19 = math.max(var_16_19 - arg_16_1 * var_16_23, 0)
 						end
 
-						if is_inactive then
-							inactive_progress = math.min(inactive_progress + dt * speed, 1)
+						if var_16_3 then
+							var_16_21 = math.min(var_16_21 + arg_16_1 * var_16_23, 1)
 						else
-							inactive_progress = math.max(inactive_progress - dt * speed, 0)
+							var_16_21 = math.max(var_16_21 - arg_16_1 * var_16_23, 0)
 						end
 
-						if is_selected then
-							selection_progress = math.min(selection_progress + dt * selected_speed, 1)
+						if var_16_18 then
+							var_16_20 = math.min(var_16_20 + arg_16_1 * var_16_24, 1)
 						else
-							selection_progress = 0
+							var_16_20 = 0
 						end
 
-						if taken then
-							taken_progress = math.min(taken_progress + dt * speed, 1)
+						if var_16_11 then
+							var_16_22 = math.min(var_16_22 + arg_16_1 * var_16_23, 1)
 						else
-							taken_progress = math.max(taken_progress - dt * speed, 0)
+							var_16_22 = math.max(var_16_22 - arg_16_1 * var_16_23, 0)
 						end
 
-						local select_easing_progress = math.easeCubic(selection_progress)
+						local var_16_25 = math.easeCubic(var_16_20)
 
-						offset[3] = hover_progress > 0 and 10 or 0
+						var_16_9[3] = var_16_19 > 0 and 10 or 0
 
-						local taken_color = 55 + 200 * (1 - taken_progress)
+						local var_16_26 = 55 + 200 * (1 - var_16_22)
 
-						style.portrait.color = {
+						var_16_8.portrait.color = {
 							255,
-							taken_color,
-							taken_color,
-							taken_color,
+							var_16_26,
+							var_16_26,
+							var_16_26
 						}
-						style.local_player_selected_texture.color[1] = not other_picking and 255 * select_easing_progress or 0
-						style.other_player_selected_texture.color[1] = other_picking and 255 * select_easing_progress or 0
+						var_16_8.local_player_selected_texture.color[1] = not var_16_13 and 255 * var_16_25 or 0
+						var_16_8.other_player_selected_texture.color[1] = var_16_13 and 255 * var_16_25 or 0
 
-						for style_name, pass_style in pairs(style) do
-							local default_size = pass_style.default_size
+						for iter_16_2, iter_16_3 in pairs(var_16_8) do
+							local var_16_27 = iter_16_3.default_size
 
-							if default_size then
-								local size = pass_style.size or pass_style.texture_size or pass_style.area_size
-								local additional_size_multiplier = 0
+							if var_16_27 then
+								local var_16_28 = iter_16_3.size or iter_16_3.texture_size or iter_16_3.area_size
+								local var_16_29 = 0
 
-								if style_name == "local_player_selected_texture" or style_name == "other_player_selected_texture" then
-									additional_size_multiplier = -0.5 + 0.5 * select_easing_progress
+								if iter_16_2 == "local_player_selected_texture" or iter_16_2 == "other_player_selected_texture" then
+									var_16_29 = -0.5 + 0.5 * var_16_25
 								end
 
-								local size_multiplier = 0.2 + additional_size_multiplier
-								local max_increase_width = math.ceil(default_size[1] * size_multiplier)
-								local max_increase_height = math.ceil(default_size[2] * size_multiplier)
-								local increase_width = max_increase_width * hover_progress
-								local increase_height = max_increase_height * hover_progress
+								local var_16_30 = 0.2 + var_16_29
+								local var_16_31 = math.ceil(var_16_27[1] * var_16_30)
+								local var_16_32 = math.ceil(var_16_27[2] * var_16_30)
+								local var_16_33 = var_16_31 * var_16_19
+								local var_16_34 = var_16_32 * var_16_19
 
-								size[1] = default_size[1] + increase_width
-								size[2] = default_size[2] + increase_height
+								var_16_28[1] = var_16_27[1] + var_16_33
+								var_16_28[2] = var_16_27[2] + var_16_34
 
-								local default_offset = pass_style.default_offset
+								local var_16_35 = iter_16_3.default_offset
 
-								if default_offset then
-									local pass_offset = pass_style.offset
+								if var_16_35 then
+									local var_16_36 = iter_16_3.offset
 
-									pass_offset[1] = default_offset[1] - increase_width * 0.5
-									pass_offset[2] = default_offset[2] - increase_height * 0.5
+									var_16_36[1] = var_16_35[1] - var_16_33 * 0.5
+									var_16_36[2] = var_16_35[2] - var_16_34 * 0.5
 								end
 							end
 						end
 					end
 
-					style.portrait.saturated = is_inactive
-					hotspot.taken_progress = taken_progress
-					hotspot.hover_progress = hover_progress
-					hotspot.inactive_progress = inactive_progress
-					hotspot.selection_progress = selection_progress
+					var_16_8.portrait.saturated = var_16_3
+					var_16_10.taken_progress = var_16_22
+					var_16_10.hover_progress = var_16_19
+					var_16_10.inactive_progress = var_16_21
+					var_16_10.selection_progress = var_16_20
 				end
 			end
 		end
 	end
 end
 
-VersusPartyCharSelectionView._get_player_name_by_status = function (self, status, status_slot_id)
-	local player_name
+function VersusPartyCharSelectionView._get_player_name_by_status(arg_17_0, arg_17_1, arg_17_2)
+	local var_17_0
 
-	if status then
-		if status.is_player then
-			local peer_id, local_player_id = status.peer_id, status.local_player_id
-			local player = Managers.player:player(peer_id, local_player_id)
+	if arg_17_1 then
+		if arg_17_1.is_player then
+			local var_17_1 = arg_17_1.peer_id
+			local var_17_2 = arg_17_1.local_player_id
+			local var_17_3 = Managers.player:player(var_17_1, var_17_2)
 
-			if player then
-				player_name = player:name() .. " "
+			if var_17_3 then
+				var_17_0 = var_17_3:name() .. " "
 			end
-		elseif status.is_bot then
-			player_name = "Bot " .. status.slot_id
+		elseif arg_17_1.is_bot then
+			var_17_0 = "Bot " .. arg_17_1.slot_id
 		end
 	end
 
-	player_name = player_name or "Bot " .. status_slot_id
+	var_17_0 = var_17_0 or "Bot " .. arg_17_2
 
-	return player_name
+	return var_17_0
 end
 
-VersusPartyCharSelectionView._handle_input = function (self, dt, t)
-	local party_data = self._party_selection_logic:get_party_data(self._party_id)
-
-	if not party_data then
+function VersusPartyCharSelectionView._handle_input(arg_18_0, arg_18_1, arg_18_2)
+	if not arg_18_0._party_selection_logic:get_party_data(arg_18_0._party_id) then
 		return
 	end
 
-	local gamepad_active = Managers.input:is_device_active("gamepad")
-
-	if gamepad_active then
-		self:_handle_gamepad_selection()
+	if Managers.input:is_device_active("gamepad") then
+		arg_18_0:_handle_gamepad_selection()
 	else
-		self:_handle_mouse_selection()
-		self:_handle_hover_sync()
+		arg_18_0:_handle_mouse_selection()
+		arg_18_0:_handle_hover_sync()
 	end
 end
 
-VersusPartyCharSelectionView._handle_hover_sync = function (self)
-	local hero_group_widgets_lookup = self._hero_group_widgets_lookup
+function VersusPartyCharSelectionView._handle_hover_sync(arg_19_0)
+	local var_19_0 = arg_19_0._hero_group_widgets_lookup
 
-	if hero_group_widgets_lookup then
-		for i = 1, #hero_group_widgets_lookup do
-			local carrer_widgets = hero_group_widgets_lookup[i]
+	if var_19_0 then
+		for iter_19_0 = 1, #var_19_0 do
+			local var_19_1 = var_19_0[iter_19_0]
 
-			if carrer_widgets then
-				for j = 1, #carrer_widgets do
-					local roster_hero_widget = carrer_widgets[j]
-					local is_career_hovered_by_other = self:_is_item_hovered_by_other(i, j)
+			if var_19_1 then
+				for iter_19_1 = 1, #var_19_1 do
+					local var_19_2 = var_19_1[iter_19_1]
+					local var_19_3 = arg_19_0:_is_item_hovered_by_other(iter_19_0, iter_19_1)
 
-					roster_hero_widget.content.hovered_by_other = is_career_hovered_by_other
+					var_19_2.content.hovered_by_other = var_19_3
 				end
 			end
 		end
 	end
 end
 
-VersusPartyCharSelectionView.draw = function (self, dt)
-	if not self._party_id then
+function VersusPartyCharSelectionView.draw(arg_20_0, arg_20_1)
+	if not arg_20_0._party_id then
 		return
 	end
 
-	local ui_renderer = self._ui_renderer
-	local ui_top_renderer = self._ui_top_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local input_service = self:input_service()
-	local render_settings = self.render_settings
-	local party_data = self._party_selection_logic:get_party_data(self._party_id)
-	local party_state = party_data.state
-	local alpha_multiplier = render_settings.alpha_multiplier or 1
+	local var_20_0 = arg_20_0._ui_renderer
+	local var_20_1 = arg_20_0._ui_top_renderer
+	local var_20_2 = arg_20_0._ui_scenegraph
+	local var_20_3 = arg_20_0:input_service()
+	local var_20_4 = arg_20_0.render_settings
+	local var_20_5 = arg_20_0._party_selection_logic:get_party_data(arg_20_0._party_id).state
+	local var_20_6 = var_20_4.alpha_multiplier or 1
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
-	self:_draw_widgets(self._other_widgets, render_settings, ui_top_renderer, alpha_multiplier)
+	UIRenderer.begin_pass(var_20_1, var_20_2, var_20_3, arg_20_1, nil, var_20_4)
+	arg_20_0:_draw_widgets(arg_20_0._other_widgets, var_20_4, var_20_1, var_20_6)
 
-	if party_state ~= "closing" then
-		self:_draw_widgets(self._hero_group_widgets, render_settings, ui_top_renderer, alpha_multiplier)
-		self:_draw_widgets(self._hero_group_detail_widgets, render_settings, ui_top_renderer, alpha_multiplier)
+	if var_20_5 ~= "closing" then
+		arg_20_0:_draw_widgets(arg_20_0._hero_group_widgets, var_20_4, var_20_1, var_20_6)
+		arg_20_0:_draw_widgets(arg_20_0._hero_group_detail_widgets, var_20_4, var_20_1, var_20_6)
 	end
 
-	self:_draw_widgets(self._top_detail_widgets, render_settings, ui_top_renderer, alpha_multiplier)
-	self:_draw_widgets(self._player_name_box_widgets, render_settings, ui_top_renderer, alpha_multiplier)
-	UIRenderer.end_pass(ui_top_renderer)
+	arg_20_0:_draw_widgets(arg_20_0._top_detail_widgets, var_20_4, var_20_1, var_20_6)
+	arg_20_0:_draw_widgets(arg_20_0._player_name_box_widgets, var_20_4, var_20_1, var_20_6)
+	UIRenderer.end_pass(var_20_1)
 
-	render_settings.alpha_multiplier = alpha_multiplier
+	var_20_4.alpha_multiplier = var_20_6
 
-	local gamepad_active = Managers.input:is_device_active("gamepad")
+	local var_20_7 = Managers.input:is_device_active("gamepad")
 
-	if self._menu_input_description and gamepad_active then
-		self._menu_input_description:draw(ui_top_renderer, dt)
+	if arg_20_0._menu_input_description and var_20_7 then
+		arg_20_0._menu_input_description:draw(var_20_1, arg_20_1)
 	end
 end
 
-VersusPartyCharSelectionView._draw_widgets = function (self, widgets, render_settings, ui_renderer, alpha_multiplier)
-	if not widgets then
+function VersusPartyCharSelectionView._draw_widgets(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+	if not arg_21_1 then
 		return
 	end
 
-	for _, widget in ipairs(widgets) do
-		render_settings.alpha_multiplier = widget.alpha_multiplier or alpha_multiplier
+	for iter_21_0, iter_21_1 in ipairs(arg_21_1) do
+		arg_21_2.alpha_multiplier = iter_21_1.alpha_multiplier or arg_21_4
 
-		UIRenderer.draw_widget(ui_renderer, widget)
+		UIRenderer.draw_widget(arg_21_3, iter_21_1)
 	end
 end
 
-VersusPartyCharSelectionView._update_animations = function (self, dt, t)
-	local animations = self._animations
-	local ui_animator = self.ui_animator
+function VersusPartyCharSelectionView._update_animations(arg_22_0, arg_22_1, arg_22_2)
+	local var_22_0 = arg_22_0._animations
+	local var_22_1 = arg_22_0.ui_animator
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_22_0, iter_22_1 in pairs(var_22_0) do
+		if var_22_1:is_animation_completed(iter_22_1) then
+			var_22_1:stop_animation(iter_22_1)
 
-			animations[animation_name] = nil
+			var_22_0[iter_22_0] = nil
 		end
 	end
 
-	self:_update_roster_widgets_animations(dt, t)
+	arg_22_0:_update_roster_widgets_animations(arg_22_1, arg_22_2)
 end
 
-VersusPartyCharSelectionView._start_transition_animation = function (self, key, animation_name)
-	local params = {
-		wwise_world = self._wwise_world,
-		render_settings = self.render_settings,
+function VersusPartyCharSelectionView._start_transition_animation(arg_23_0, arg_23_1, arg_23_2)
+	local var_23_0 = {
+		wwise_world = arg_23_0._wwise_world,
+		render_settings = arg_23_0.render_settings
 	}
-	local widgets = {}
-	local anim_id = self.ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
+	local var_23_1 = {}
+	local var_23_2 = arg_23_0.ui_animator:start_animation(arg_23_2, var_23_1, var_0_6, var_23_0)
 
-	self._animations[key] = anim_id
+	arg_23_0._animations[arg_23_1] = var_23_2
 end
 
-VersusPartyCharSelectionView.create_ui_elements = function (self, params)
-	if self._team_previewer then
-		self:_destroy_team_previewer()
+function VersusPartyCharSelectionView.create_ui_elements(arg_24_0, arg_24_1)
+	if arg_24_0._team_previewer then
+		arg_24_0:_destroy_team_previewer()
 	end
 
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	arg_24_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_6)
 
-	local widgets_by_name = self._widgets_by_name
+	local var_24_0 = arg_24_0._widgets_by_name
 
-	self._other_widgets = {}
-	self._player_name_box_widgets = {}
-	self._top_detail_widgets = {}
+	arg_24_0._other_widgets = {}
+	arg_24_0._player_name_box_widgets = {}
+	arg_24_0._top_detail_widgets = {}
 
-	UIUtils.create_widgets(widget_definitions, self._other_widgets, widgets_by_name)
-	UIUtils.create_widgets(other_definitions, self._other_widgets, widgets_by_name)
-	UIUtils.create_widgets(top_detail_widgets_definitions, self._top_detail_widgets, widgets_by_name)
+	UIUtils.create_widgets(var_0_2, arg_24_0._other_widgets, var_24_0)
+	UIUtils.create_widgets(var_0_7, arg_24_0._other_widgets, var_24_0)
+	UIUtils.create_widgets(var_0_8, arg_24_0._top_detail_widgets, var_24_0)
 
-	local player_name_box_widgets = create_player_name_box_widgets()
+	local var_24_1 = var_0_9()
 
-	UIUtils.create_widgets(player_name_box_widgets, self._player_name_box_widgets, widgets_by_name)
-	UIRenderer.clear_scenegraph_queue(self._ui_top_renderer)
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	UIUtils.create_widgets(var_24_1, arg_24_0._player_name_box_widgets, var_24_0)
+	UIRenderer.clear_scenegraph_queue(arg_24_0._ui_top_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_24_0._ui_renderer)
 
-	self.ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
+	arg_24_0.ui_animator = UIAnimator:new(arg_24_0._ui_scenegraph, var_0_5)
 
-	self:_setup_picking_progress_bar(4)
+	arg_24_0:_setup_picking_progress_bar(4)
 
-	widgets_by_name.local_player_picking_frame.content.visible = false
+	var_24_0.local_player_picking_frame.content.visible = false
 
-	self._menu_input_description:set_input_description(generic_input_actions.default)
+	arg_24_0._menu_input_description:set_input_description(var_0_4.default)
 end
 
-VersusPartyCharSelectionView._setup_character_selection_widgets = function (self, affiliation)
-	local hero_group_widgets = {}
+function VersusPartyCharSelectionView._setup_character_selection_widgets(arg_25_0, arg_25_1)
+	local var_25_0 = {}
 
-	self._hero_group_widgets = hero_group_widgets
+	arg_25_0._hero_group_widgets = var_25_0
 
-	local hero_group_detail_widgets = {}
+	local var_25_1 = {}
 
-	self._hero_group_detail_widgets = hero_group_detail_widgets
+	arg_25_0._hero_group_detail_widgets = var_25_1
 
-	local hero_group_widgets_lookup = {}
+	local var_25_2 = {}
 
-	self._hero_group_widgets_lookup = hero_group_widgets_lookup
+	arg_25_0._hero_group_widgets_lookup = var_25_2
 
-	self:_setup_hero_party_selection_widgets(hero_group_widgets, hero_group_detail_widgets, hero_group_widgets_lookup)
+	arg_25_0:_setup_hero_party_selection_widgets(var_25_0, var_25_1, var_25_2)
 end
 
-VersusPartyCharSelectionView._update_all_player_name_box_widgets = function (self)
-	local party_data = self._party_selection_logic:get_party_data(self._party_id)
+function VersusPartyCharSelectionView._update_all_player_name_box_widgets(arg_26_0)
+	local var_26_0 = arg_26_0._party_selection_logic:get_party_data(arg_26_0._party_id)
 
-	if not party_data then
+	if not var_26_0 then
 		return
 	end
 
-	local picker_list = party_data.picker_list
+	local var_26_1 = var_26_0.picker_list
 
-	for pick_id = 1, #picker_list do
-		self:_update_player_name_box_widget(party_data, pick_id)
+	for iter_26_0 = 1, #var_26_1 do
+		arg_26_0:_update_player_name_box_widget(var_26_0, iter_26_0)
 	end
 end
 
-VersusPartyCharSelectionView._update_player_name_box_widget = function (self, party_data, pick_id)
-	local picker_list = party_data.picker_list
-	local picker = picker_list[pick_id]
-	local status = picker.status
+function VersusPartyCharSelectionView._update_player_name_box_widget(arg_27_0, arg_27_1, arg_27_2)
+	local var_27_0 = arg_27_1.picker_list[arg_27_2]
+	local var_27_1 = var_27_0.status
 
-	if status then
-		local player = status.player
-		local widget = self._player_name_box_widgets[pick_id]
-		local content = widget.content
-		local player_name = player and self:_set_player_name(player) or "BOT"
-		local picking_progress_text
+	if var_27_1 then
+		local var_27_2 = var_27_1.player
+		local var_27_3 = arg_27_0._player_name_box_widgets[arg_27_2].content
+		local var_27_4 = var_27_2 and arg_27_0:_set_player_name(var_27_2) or "BOT"
+		local var_27_5
 
-		if picker.state == "player_picking_character" then
-			if pick_id == party_data.current_picker_index then
-				picking_progress_text = Localize(PICKING_STATES_STRINGS_LOOKUP.picking)
+		if var_27_0.state == "player_picking_character" then
+			if arg_27_2 == arg_27_1.current_picker_index then
+				var_27_5 = Localize(var_0_11.picking)
 			end
-		elseif picker.state == "player_has_picked_character" then
-			picking_progress_text = Localize(PICKING_STATES_STRINGS_LOOKUP.done)
+		elseif var_27_0.state == "player_has_picked_character" then
+			var_27_5 = Localize(var_0_11.done)
 		else
-			picking_progress_text = Localize(PICKING_STATES_STRINGS_LOOKUP.waiting)
+			var_27_5 = Localize(var_0_11.waiting)
 		end
 
-		local template_string = "{#color(%d,%d,%d,%d)}%s {#reset()} %s"
-		local is_local_player = self._picker_list_id == pick_id
-		local name_color = is_local_player and Colors.get_color_table_with_alpha("local_player_picking", 255) or Colors.get_color_table_with_alpha("other_player_picking", 255)
+		local var_27_6 = "{#color(%d,%d,%d,%d)}%s {#reset()} %s"
+		local var_27_7 = arg_27_0._picker_list_id == arg_27_2
+		local var_27_8 = var_27_7 and Colors.get_color_table_with_alpha("local_player_picking", 255) or Colors.get_color_table_with_alpha("other_player_picking", 255)
 
-		content.player_name = string.format(template_string, name_color[2], name_color[3], name_color[4], name_color[1], player_name, picking_progress_text)
-		content.is_player = player ~= nil
-		content.peer_id = status.peer_id
-		content.is_local_player = is_local_player
+		var_27_3.player_name = string.format(var_27_6, var_27_8[2], var_27_8[3], var_27_8[4], var_27_8[1], var_27_4, var_27_5)
+		var_27_3.is_player = var_27_2 ~= nil
+		var_27_3.peer_id = var_27_1.peer_id
+		var_27_3.is_local_player = var_27_7
 	end
 end
 
-VersusPartyCharSelectionView._setup_hero_party_selection_widgets = function (self, hero_group_widgets, hero_group_detail_widgets, hero_group_widgets_lookup)
-	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-	local profiles = {}
-	local profile_indices = {}
+function VersusPartyCharSelectionView._setup_hero_party_selection_widgets(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+	local var_28_0 = Managers.backend:get_interface("hero_attributes")
+	local var_28_1 = {}
+	local var_28_2 = {}
 
-	for _, index in ipairs(ProfilePriority) do
-		profiles[index] = SPProfiles[index]
-		profile_indices[#profile_indices + 1] = index
+	for iter_28_0, iter_28_1 in ipairs(ProfilePriority) do
+		var_28_1[iter_28_1] = SPProfiles[iter_28_1]
+		var_28_2[#var_28_2 + 1] = iter_28_1
 	end
 
-	self._profile_indices = profile_indices
+	arg_28_0._profile_indices = var_28_2
 
-	local num_max_rows = #profile_indices
-	local num_max_columns = 0
+	local var_28_3 = #var_28_2
+	local var_28_4 = 0
 
-	for i, profile_index in pairs(profile_indices) do
-		local profile_settings = profiles[profile_index]
-		local hero_name = profile_settings.display_name
-		local hero_experience = hero_attributes:get(hero_name, "experience") or 0
-		local hero_level = ExperienceSettings.get_level(hero_experience)
-		local careers = profile_settings.careers
-		local columns = 0
+	for iter_28_2, iter_28_3 in pairs(var_28_2) do
+		local var_28_5 = var_28_1[iter_28_3]
+		local var_28_6 = var_28_5.display_name
+		local var_28_7 = var_28_0:get(var_28_6, "experience") or 0
+		local var_28_8 = ExperienceSettings.get_level(var_28_7)
+		local var_28_9 = var_28_5.careers
+		local var_28_10 = 0
 
-		hero_group_widgets_lookup[profile_index] = {}
+		arg_28_3[iter_28_3] = {}
 
-		local detail_widget_def = self._hero_roster_detail_widgets_defs[i]
-		local detail_widget = UIWidget.init(detail_widget_def)
+		local var_28_11 = arg_28_0._hero_roster_detail_widgets_defs[iter_28_2]
+		local var_28_12 = UIWidget.init(var_28_11)
 
-		detail_widget.content.hero_name = Localize(profile_settings.ingame_short_display_name)
-		detail_widget.content.profile_index = profile_index
-		hero_group_detail_widgets[#hero_group_detail_widgets + 1] = detail_widget
+		var_28_12.content.hero_name = Localize(var_28_5.ingame_short_display_name)
+		var_28_12.content.profile_index = iter_28_3
+		arg_28_2[#arg_28_2 + 1] = var_28_12
 
-		for j = 1, #careers do
-			local career = careers[j]
-			local wname = self._hero_group_widgets_defs[i][j]
-			local widget = UIWidget.init(wname)
+		for iter_28_4 = 1, #var_28_9 do
+			local var_28_13 = var_28_9[iter_28_4]
+			local var_28_14 = arg_28_0._hero_group_widgets_defs[iter_28_2][iter_28_4]
+			local var_28_15 = UIWidget.init(var_28_14)
 
-			hero_group_widgets[#hero_group_widgets + 1] = widget
-			hero_group_widgets_lookup[profile_index][j] = widget
+			arg_28_1[#arg_28_1 + 1] = var_28_15
+			arg_28_3[iter_28_3][iter_28_4] = var_28_15
 
-			local content = widget.content
+			local var_28_16 = var_28_15.content
 
-			content.group_index = i
-			content.career_index = j
+			var_28_16.group_index = iter_28_2
+			var_28_16.career_index = iter_28_4
 
-			if career and career:override_available_for_mechanism() then
-				content.career_settings = career
-				content.profile_index = profile_index
-				content.portrait = career.picking_image
-
-				local is_career_unlocked = career:is_unlocked_function(hero_name, hero_level)
-
-				content.locked = not is_career_unlocked
-				content.taken = false
+			if var_28_13 and var_28_13:override_available_for_mechanism() then
+				var_28_16.career_settings = var_28_13
+				var_28_16.profile_index = iter_28_3
+				var_28_16.portrait = var_28_13.picking_image
+				var_28_16.locked = not var_28_13:is_unlocked_function(var_28_6, var_28_8)
+				var_28_16.taken = false
 			else
-				content.career_settings = career
-				content.profile_index = profile_index
-				content.portrait = career.picking_image
-				content.locked = true
+				var_28_16.career_settings = var_28_13
+				var_28_16.profile_index = iter_28_3
+				var_28_16.portrait = var_28_13.picking_image
+				var_28_16.locked = true
 			end
 
-			local style = widget.style
-
-			style.local_player_select_frame.color = Colors.get_color_table_with_alpha("local_player_picking", 255)
-			columns = columns + 1
+			var_28_15.style.local_player_select_frame.color = Colors.get_color_table_with_alpha("local_player_picking", 255)
+			var_28_10 = var_28_10 + 1
 		end
 
-		num_max_columns = math.max(num_max_columns, columns)
+		var_28_4 = math.max(var_28_4, var_28_10)
 	end
 
-	assert(num_max_rows <= 5 and num_max_columns <= 4, "Too many rows or columns in VersusPartyCharSelectionView")
+	assert(var_28_3 <= 5 and var_28_4 <= 4, "Too many rows or columns in VersusPartyCharSelectionView")
 
-	self._num_max_hero_rows = num_max_rows
-	self._num_max_hero_columns = num_max_columns
+	arg_28_0._num_max_hero_rows = var_28_3
+	arg_28_0._num_max_hero_columns = var_28_4
 end
 
-VersusPartyCharSelectionView._is_item_selected = function (self, profile_index, career_index)
-	local party_data = self._party_selection_logic:get_party_data(self._party_id)
+function VersusPartyCharSelectionView._is_item_selected(arg_29_0, arg_29_1, arg_29_2)
+	local var_29_0 = arg_29_0._party_selection_logic:get_party_data(arg_29_0._party_id)
 
-	if not party_data then
+	if not var_29_0 then
 		return false
 	end
 
-	local current_picker_index = party_data.current_picker_index
+	local var_29_1 = var_29_0.current_picker_index
 
-	for i = 1, current_picker_index do
-		local pick_data = self._data_by_pick_index[i]
+	for iter_29_0 = 1, var_29_1 do
+		local var_29_2 = arg_29_0._data_by_pick_index[iter_29_0]
 
-		if pick_data.profile_index == profile_index and pick_data.career_index == career_index then
+		if var_29_2.profile_index == arg_29_1 and var_29_2.career_index == arg_29_2 then
 			return true
 		end
 	end
@@ -892,272 +870,262 @@ VersusPartyCharSelectionView._is_item_selected = function (self, profile_index, 
 	return false
 end
 
-VersusPartyCharSelectionView.local_player_is_picking = function (self)
-	return self:_is_slot_picking(self._picker_list_id)
+function VersusPartyCharSelectionView.local_player_is_picking(arg_30_0)
+	return arg_30_0:_is_slot_picking(arg_30_0._picker_list_id)
 end
 
-VersusPartyCharSelectionView._is_slot_picking = function (self, slot_id)
-	local party_data = self._party_selection_logic:get_party_data(self._party_id)
+function VersusPartyCharSelectionView._is_slot_picking(arg_31_0, arg_31_1)
+	local var_31_0 = arg_31_0._party_selection_logic:get_party_data(arg_31_0._party_id)
 
-	if not party_data then
+	if not var_31_0 then
 		return
 	end
 
-	local current_picker_index = party_data.current_picker_index
+	local var_31_1 = var_31_0.current_picker_index
 
-	if current_picker_index <= 0 then
+	if var_31_1 <= 0 then
 		return false
 	end
 
-	local is_picking = current_picker_index == slot_id
-
-	return is_picking
+	return var_31_1 == arg_31_1
 end
 
-VersusPartyCharSelectionView._local_player_has_picked = function (self)
-	return self:_has_slot_picked(self:_get_local_player_picker_index())
+function VersusPartyCharSelectionView._local_player_has_picked(arg_32_0)
+	return arg_32_0:_has_slot_picked(arg_32_0:_get_local_player_picker_index())
 end
 
-VersusPartyCharSelectionView._has_slot_picked = function (self, slot_id)
-	local party_data = self._party_selection_logic:get_party_data(self._party_id)
+function VersusPartyCharSelectionView._has_slot_picked(arg_33_0, arg_33_1)
+	local var_33_0 = arg_33_0._party_selection_logic:get_party_data(arg_33_0._party_id)
 
-	if not party_data then
+	if not var_33_0 then
 		return false
 	end
 
-	local current_picker_index = party_data.current_picker_index
+	local var_33_1 = var_33_0.current_picker_index
 
-	if current_picker_index <= 0 then
+	if var_33_1 <= 0 then
 		return false
 	end
 
-	local has_picked = slot_id < current_picker_index
-
-	return has_picked
+	return arg_33_1 < var_33_1
 end
 
-VersusPartyCharSelectionView._get_local_player_picker_index = function (self)
-	return self._picker_list_id
+function VersusPartyCharSelectionView._get_local_player_picker_index(arg_34_0)
+	return arg_34_0._picker_list_id
 end
 
-VersusPartyCharSelectionView._handle_gamepad_selection = function (self)
-	local is_picking = self:local_player_is_picking()
-	local gamepad_selected_index = self._gamepad_selected_index or 1
-	local input_service = self:input_service()
+function VersusPartyCharSelectionView._handle_gamepad_selection(arg_35_0)
+	local var_35_0 = arg_35_0:local_player_is_picking()
+	local var_35_1 = arg_35_0._gamepad_selected_index or 1
+	local var_35_2 = arg_35_0:input_service()
 
-	if input_service:get("move_right") then
-		self:play_sound("Play_hud_hover")
+	if var_35_2:get("move_right") then
+		arg_35_0:play_sound("Play_hud_hover")
 
-		if gamepad_selected_index < #self._hero_group_widgets then
-			gamepad_selected_index = gamepad_selected_index + 1
+		if var_35_1 < #arg_35_0._hero_group_widgets then
+			var_35_1 = var_35_1 + 1
 		end
-	elseif input_service:get("move_left") then
-		self:play_sound("Play_hud_hover")
+	elseif var_35_2:get("move_left") then
+		arg_35_0:play_sound("Play_hud_hover")
 
-		if gamepad_selected_index > 1 then
-			gamepad_selected_index = gamepad_selected_index - 1
+		if var_35_1 > 1 then
+			var_35_1 = var_35_1 - 1
 		end
-	elseif input_service:get("cycle_next") then
-		self:play_sound("Play_hud_hover")
+	elseif var_35_2:get("cycle_next") then
+		arg_35_0:play_sound("Play_hud_hover")
 
-		if gamepad_selected_index < #self._hero_group_widgets - 3 then
-			gamepad_selected_index = bit.bor(gamepad_selected_index - 1, 3) + 1 + 1
+		if var_35_1 < #arg_35_0._hero_group_widgets - 3 then
+			var_35_1 = bit.bor(var_35_1 - 1, 3) + 1 + 1
 		end
-	elseif input_service:get("cycle_previous") and gamepad_selected_index > 4 then
-		gamepad_selected_index = math.max(0, bit.bor(gamepad_selected_index - 1, 3) + 1 - 4) + -3
+	elseif var_35_2:get("cycle_previous") and var_35_1 > 4 then
+		var_35_1 = math.max(0, bit.bor(var_35_1 - 1, 3) + 1 - 4) + -3
 	end
 
-	if gamepad_selected_index ~= self._gamepad_selected_index then
-		local current_selcted_widget = self._hero_group_widgets[gamepad_selected_index]
-		local previous_selected_widget = self._hero_group_widgets[self._gamepad_selected_index or 1]
-		local current_content = current_selcted_widget.content
+	if var_35_1 ~= arg_35_0._gamepad_selected_index then
+		local var_35_3 = arg_35_0._hero_group_widgets[var_35_1]
+		local var_35_4 = arg_35_0._hero_group_widgets[arg_35_0._gamepad_selected_index or 1]
 
-		current_content.gamepad_selected = true
+		var_35_3.content.gamepad_selected = true
 
-		if self._gamepad_selected_index then
-			local previous_content = previous_selected_widget.content
-
-			previous_content.gamepad_selected = false
+		if arg_35_0._gamepad_selected_index then
+			var_35_4.content.gamepad_selected = false
 		end
 	end
 
-	if input_service:get("confirm") and is_picking then
-		local current_selcted_widget = self._hero_group_widgets[gamepad_selected_index]
-		local current_content = current_selcted_widget.content
+	if var_35_2:get("confirm") and var_35_0 then
+		local var_35_5 = arg_35_0._hero_group_widgets[var_35_1].content
 
-		if not current_content.taken and not current_content.other_picking and not current_content.locked then
-			local profile_index = current_content.profile_index
-			local career_index = current_content.career_index
+		if not var_35_5.taken and not var_35_5.other_picking and not var_35_5.locked then
+			local var_35_6 = var_35_5.profile_index
+			local var_35_7 = var_35_5.career_index
 
-			self._party_selection_logic:select_character(profile_index, career_index)
-			self:play_sound("play_gui_hero_select_career_click")
+			arg_35_0._party_selection_logic:select_character(var_35_6, var_35_7)
+			arg_35_0:play_sound("play_gui_hero_select_career_click")
 		end
 	end
 
-	self._gamepad_selected_index = gamepad_selected_index
+	arg_35_0._gamepad_selected_index = var_35_1
 end
 
-VersusPartyCharSelectionView._reset_selection = function (self)
-	if not self._gamepad_selected_index then
+function VersusPartyCharSelectionView._reset_selection(arg_36_0)
+	if not arg_36_0._gamepad_selected_index then
 		return
 	end
 
-	local widget = self._hero_group_widgets[self._gamepad_selected_index]
-	local content = widget.content
-
-	content.gamepad_selected = false
+	arg_36_0._hero_group_widgets[arg_36_0._gamepad_selected_index].content.gamepad_selected = false
 end
 
-VersusPartyCharSelectionView._handle_mouse_selection = function (self)
-	self:_reset_selection()
+function VersusPartyCharSelectionView._handle_mouse_selection(arg_37_0)
+	arg_37_0:_reset_selection()
 
-	local is_picking = self:local_player_is_picking()
-	local hero_group_widgets = self._hero_group_widgets
-	local num_max_rows = self._num_max_hero_rows
-	local num_max_columns = self._num_max_hero_columns
-	local picked_profile_index, picked_career_index
-	local local_picker_index = self:_get_local_player_picker_index()
+	local var_37_0 = arg_37_0:local_player_is_picking()
+	local var_37_1 = arg_37_0._hero_group_widgets
+	local var_37_2 = arg_37_0._num_max_hero_rows
+	local var_37_3 = arg_37_0._num_max_hero_columns
+	local var_37_4
+	local var_37_5
+	local var_37_6 = arg_37_0:_get_local_player_picker_index()
 
-	if local_picker_index then
-		picked_profile_index = self._data_by_pick_index[local_picker_index].profile_index
-		picked_career_index = self._data_by_pick_index[local_picker_index].career_index
+	if var_37_6 then
+		var_37_4 = arg_37_0._data_by_pick_index[var_37_6].profile_index
+		var_37_5 = arg_37_0._data_by_pick_index[var_37_6].career_index
 	end
 
-	local hover_dirty = false
-	local hovered_profile, hovered_career
-	local widget_index = 1
+	local var_37_7 = false
+	local var_37_8
+	local var_37_9
+	local var_37_10 = 1
 
-	for i = 1, num_max_rows do
-		for j = 1, num_max_columns do
-			local widget = hero_group_widgets[widget_index]
+	for iter_37_0 = 1, var_37_2 do
+		for iter_37_1 = 1, var_37_3 do
+			local var_37_11 = var_37_1[var_37_10]
 
-			if widget then
-				local content = widget.content
-				local profile_index = content.profile_index
-				local career_index = content.career_index
-				local button_hotspot = content.button_hotspot
+			if var_37_11 then
+				local var_37_12 = var_37_11.content
+				local var_37_13 = var_37_12.profile_index
+				local var_37_14 = var_37_12.career_index
+				local var_37_15 = var_37_12.button_hotspot
 
-				if not self:_local_player_has_picked() then
-					if button_hotspot.on_hover_enter then
-						hovered_profile = self._profile_indices[i]
-						hovered_career = j
-						hover_dirty = true
-					elseif not hover_dirty and self:_is_hovering_item(self._profile_indices[i], j) and not button_hotspot.is_hover then
-						hover_dirty = true
+				if not arg_37_0:_local_player_has_picked() then
+					if var_37_15.on_hover_enter then
+						var_37_8 = arg_37_0._profile_indices[iter_37_0]
+						var_37_9 = iter_37_1
+						var_37_7 = true
+					elseif not var_37_7 and arg_37_0:_is_hovering_item(arg_37_0._profile_indices[iter_37_0], iter_37_1) and not var_37_15.is_hover then
+						var_37_7 = true
 					end
 				end
 
-				if (profile_index ~= picked_profile_index or career_index ~= picked_career_index) and not content.taken and not content.other_picking and not content.locked then
-					if button_hotspot.on_hover_enter then
-						self:play_sound("Play_hud_hover")
+				if (var_37_13 ~= var_37_4 or var_37_14 ~= var_37_5) and not var_37_12.taken and not var_37_12.other_picking and not var_37_12.locked then
+					if var_37_15.on_hover_enter then
+						arg_37_0:play_sound("Play_hud_hover")
 					end
 
-					if button_hotspot.on_pressed and is_picking then
-						local selected_profile_index = self._profile_indices[i]
-						local selected_career_index = j
+					if var_37_15.on_pressed and var_37_0 then
+						local var_37_16 = arg_37_0._profile_indices[iter_37_0]
+						local var_37_17 = iter_37_1
 
-						self._party_selection_logic:select_character(selected_profile_index, selected_career_index)
-						self:play_sound("play_gui_hero_select_career_click")
+						arg_37_0._party_selection_logic:select_character(var_37_16, var_37_17)
+						arg_37_0:play_sound("play_gui_hero_select_career_click")
 
 						return
 					end
 				end
 			end
 
-			widget_index = widget_index + 1
+			var_37_10 = var_37_10 + 1
 		end
 	end
 
-	if hover_dirty then
-		self:_set_item_hovered(self._peer_id, self._local_player_id, hovered_profile, hovered_career)
+	if var_37_7 then
+		arg_37_0:_set_item_hovered(arg_37_0._peer_id, arg_37_0._local_player_id, var_37_8, var_37_9)
 	end
 
-	self:_update_mute_buttons()
+	arg_37_0:_update_mute_buttons()
 end
 
-VersusPartyCharSelectionView._setup_picking_progress_bar = function (self, num_player)
-	local other_widgets = self._other_widgets
-	local picking_end_maker_scenegraph_id = "progress_point"
-	local picking_end_marker_definition = create_progress_marker(picking_end_maker_scenegraph_id)
-	local spacing = 5
-	local bar_bg_scenegraph_id = "progress_bar_rect"
-	local total_bar_length = scenegraph_definition[bar_bg_scenegraph_id].size[1]
-	local amount = num_player
-	local step_size = math.ceil(total_bar_length / amount)
-	local offset_x = -2
-	local picking_progress_data = {}
+function VersusPartyCharSelectionView._setup_picking_progress_bar(arg_38_0, arg_38_1)
+	local var_38_0 = arg_38_0._other_widgets
+	local var_38_1 = "progress_point"
+	local var_38_2 = var_0_3(var_38_1)
+	local var_38_3 = 5
+	local var_38_4 = "progress_bar_rect"
+	local var_38_5 = var_0_6[var_38_4].size[1]
+	local var_38_6 = arg_38_1
+	local var_38_7 = math.ceil(var_38_5 / var_38_6)
+	local var_38_8 = -2
+	local var_38_9 = {}
 
-	for i = 1, amount do
-		offset_x = offset_x + step_size + spacing / 2
+	for iter_38_0 = 1, var_38_6 do
+		var_38_8 = var_38_8 + var_38_7 + var_38_3 / 2
 
-		local point_widget
+		local var_38_10
 
-		if i < amount then
-			point_widget = UIWidget.init(picking_end_marker_definition)
-			other_widgets[#other_widgets + 1] = point_widget
-			point_widget.offset[1] = math.ceil(offset_x)
+		if iter_38_0 < var_38_6 then
+			var_38_10 = UIWidget.init(var_38_2)
+			var_38_0[#var_38_0 + 1] = var_38_10
+			var_38_10.offset[1] = math.ceil(var_38_8)
 		end
 
-		picking_progress_data[i] = {
-			point_widget = point_widget,
-			bar_distance = offset_x,
-			step_size = step_size,
-			bar_distance_fraction = offset_x / total_bar_length,
+		var_38_9[iter_38_0] = {
+			point_widget = var_38_10,
+			bar_distance = var_38_8,
+			step_size = var_38_7,
+			bar_distance_fraction = var_38_8 / var_38_5
 		}
 	end
 
-	self._picking_progress_data = picking_progress_data
+	arg_38_0._picking_progress_data = var_38_9
 
-	local ui_scenegraph = self._ui_scenegraph
-	local progress_bar_size = ui_scenegraph.progress_bar.size
-	local progress_bar_passive_size = ui_scenegraph.progress_bar_passive.size
+	local var_38_11 = arg_38_0._ui_scenegraph
+	local var_38_12 = var_38_11.progress_bar.size
+	local var_38_13 = var_38_11.progress_bar_passive.size
 
-	progress_bar_size[1] = 0
-	progress_bar_passive_size[1] = 0
+	var_38_12[1] = 0
+	var_38_13[1] = 0
 end
 
-VersusPartyCharSelectionView._start_step_transtion_animation = function (self, animation_name)
-	local widgets = EMPTY_TABLE
-	local params = {
-		self = self,
+function VersusPartyCharSelectionView._start_step_transtion_animation(arg_39_0, arg_39_1)
+	local var_39_0 = var_0_10
+	local var_39_1 = {
+		self = arg_39_0
 	}
-	local anim_id = self.ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
+	local var_39_2 = arg_39_0.ui_animator:start_animation(arg_39_1, var_39_0, var_0_6, var_39_1)
 
-	self._animations[animation_name] = anim_id
+	arg_39_0._animations[arg_39_1] = var_39_2
 end
 
-VersusPartyCharSelectionView._start_widget_animation = function (self, animation_name, widget)
-	local params = EMPTY_TABLE
-	local anim_id = self.ui_animator:start_animation(animation_name, widget, scenegraph_definition, params)
+function VersusPartyCharSelectionView._start_widget_animation(arg_40_0, arg_40_1, arg_40_2)
+	local var_40_0 = var_0_10
+	local var_40_1 = arg_40_0.ui_animator:start_animation(arg_40_1, arg_40_2, var_0_6, var_40_0)
 
-	self._animations[animation_name] = anim_id
+	arg_40_0._animations[arg_40_1] = var_40_1
 end
 
-VersusPartyCharSelectionView._set_top_detail_widgets_visible = function (self, visible)
-	local alpha_multiplier = visible and 1 or 0
+function VersusPartyCharSelectionView._set_top_detail_widgets_visible(arg_41_0, arg_41_1)
+	local var_41_0 = arg_41_1 and 1 or 0
 
-	for _, widget in ipairs(self._top_detail_widgets) do
-		widget.alpha_multiplier = alpha_multiplier
+	for iter_41_0, iter_41_1 in ipairs(arg_41_0._top_detail_widgets) do
+		iter_41_1.alpha_multiplier = var_41_0
 	end
 end
 
-VersusPartyCharSelectionView._is_item_hovered_by_other = function (self, profile_index, career_index)
-	local party = self._party
-	local party_data = self._party_selection_logic:get_party_data(self._party_id)
-	local num_slots = party.num_slots
-	local picker_list = party_data.picker_list
+function VersusPartyCharSelectionView._is_item_hovered_by_other(arg_42_0, arg_42_1, arg_42_2)
+	local var_42_0 = arg_42_0._party
+	local var_42_1 = arg_42_0._party_selection_logic:get_party_data(arg_42_0._party_id)
+	local var_42_2 = var_42_0.num_slots
+	local var_42_3 = var_42_1.picker_list
 
-	for i = 1, num_slots do
-		local player_data = picker_list[i]
-		local status = player_data.status
-		local hovered_profile_index = status.hovered_profile_index or 0
-		local hovered_career_index = status.hovered_career_index or 0
+	for iter_42_0 = 1, var_42_2 do
+		local var_42_4 = var_42_3[iter_42_0].status
+		local var_42_5 = var_42_4.hovered_profile_index or 0
+		local var_42_6 = var_42_4.hovered_career_index or 0
 
-		if hovered_profile_index == profile_index and hovered_career_index == career_index then
-			if status.slot_id == self._slot_id or self:_has_slot_picked(i) then
+		if var_42_5 == arg_42_1 and var_42_6 == arg_42_2 then
+			if var_42_4.slot_id == arg_42_0._slot_id or arg_42_0:_has_slot_picked(iter_42_0) then
 				return false, nil
 			else
-				return true, i
+				return true, iter_42_0
 			end
 		end
 	end
@@ -1165,545 +1133,525 @@ VersusPartyCharSelectionView._is_item_hovered_by_other = function (self, profile
 	return false, nil
 end
 
-VersusPartyCharSelectionView._set_player_name = function (self, player)
-	local player_name = player:name()
-	local player_name_length = UTF8Utils.string_length(player_name)
+function VersusPartyCharSelectionView._set_player_name(arg_43_0, arg_43_1)
+	local var_43_0 = arg_43_1:name()
 
-	if player_name_length > 18 then
-		player_name = string.sub(player_name, 1, 18) .. "..."
+	if UTF8Utils.string_length(var_43_0) > 18 then
+		var_43_0 = string.sub(var_43_0, 1, 18) .. "..."
 	end
 
-	return player_name
+	return var_43_0
 end
 
-VersusPartyCharSelectionView._set_your_turn_text_position = function (self)
-	local your_turn_indicator = self._widgets_by_name.your_turn_indicator_text
-	local new_scenegraph_id = "player_name_box_" .. self._picker_list_id
-
-	your_turn_indicator.scenegraph_id = new_scenegraph_id
+function VersusPartyCharSelectionView._set_your_turn_text_position(arg_44_0)
+	arg_44_0._widgets_by_name.your_turn_indicator_text.scenegraph_id = "player_name_box_" .. arg_44_0._picker_list_id
 end
 
-VersusPartyCharSelectionView._set_selected_hero_and_career_text = function (self, profile_index, career_index)
-	local widget = self._widgets_by_name.hero_career_name_text
-	local template_string = "%s - %s"
-	local profile_settings = SPProfiles[profile_index]
-	local hero_name_short = Localize(profile_settings.ingame_short_display_name)
-	local career_settings = profile_settings.careers[career_index]
-	local career_name = Localize(career_settings.display_name)
+function VersusPartyCharSelectionView._set_selected_hero_and_career_text(arg_45_0, arg_45_1, arg_45_2)
+	local var_45_0 = arg_45_0._widgets_by_name.hero_career_name_text
+	local var_45_1 = "%s - %s"
+	local var_45_2 = SPProfiles[arg_45_1]
+	local var_45_3 = Localize(var_45_2.ingame_short_display_name)
+	local var_45_4 = var_45_2.careers[arg_45_2]
+	local var_45_5 = Localize(var_45_4.display_name)
 
-	widget.content.text = Utf8.upper(string.format(template_string, hero_name_short, career_name))
+	var_45_0.content.text = Utf8.upper(string.format(var_45_1, var_45_3, var_45_5))
 end
 
-VersusPartyCharSelectionView._set_current_picker_text = function (self, current_picker_index)
-	local widget = self._widgets_by_name.player_picking_text
-	local is_local_player = current_picker_index == self._picker_list_id
+function VersusPartyCharSelectionView._set_current_picker_text(arg_46_0, arg_46_1)
+	local var_46_0 = arg_46_0._widgets_by_name.player_picking_text
 
-	if is_local_player then
-		local color = Colors.get_color_table_with_alpha("local_player_picking", 255)
+	if arg_46_1 == arg_46_0._picker_list_id then
+		local var_46_1 = Colors.get_color_table_with_alpha("local_player_picking", 255)
 
-		widget.content.text = string.format(Localize("versus_hero_selection_view_local_player_picking"), color[2], color[3], color[4], color[1])
+		var_46_0.content.text = string.format(Localize("versus_hero_selection_view_local_player_picking"), var_46_1[2], var_46_1[3], var_46_1[4], var_46_1[1])
 	else
-		local party_data = self._party_selection_logic:get_party_data(self._party_id)
-		local picker_list = party_data.picker_list
-		local player_data = picker_list[current_picker_index]
-		local status = player_data.status
-		local player = status.player
-		local player_name = player and player:name() or "BOT"
-		local color = Colors.get_color_table_with_alpha("other_player_picking", 255)
+		local var_46_2 = arg_46_0._party_selection_logic:get_party_data(arg_46_0._party_id).picker_list[arg_46_1].status.player
+		local var_46_3 = var_46_2 and var_46_2:name() or "BOT"
+		local var_46_4 = Colors.get_color_table_with_alpha("other_player_picking", 255)
 
-		widget.content.text = string.format(Localize("versus_hero_selection_view_other_player_picking"), color[2], color[3], color[4], color[1], player_name)
+		var_46_0.content.text = string.format(Localize("versus_hero_selection_view_other_player_picking"), var_46_4[2], var_46_4[3], var_46_4[4], var_46_4[1], var_46_3)
 	end
 end
 
-VersusPartyCharSelectionView._update_selcted_career_passive_and_career_skill = function (self, profile_index, career_index)
-	local passive_skill_widget = self._widgets_by_name.passive_skill
-	local career_skill_widget = self._widgets_by_name.career_skill
-	local hero_career_widget = self._widgets_by_name.hero_career_name_text
-	local passive_content = passive_skill_widget.content
-	local career_content = career_skill_widget.content
-	local profile_settings = SPProfiles[profile_index]
-	local career_settings = profile_settings.careers[career_index]
-	local passive_skill_settings = CareerUtils.get_passive_ability_by_career(career_settings)
-	local career_skill_settings = CareerUtils.get_ability_data_by_career(career_settings, 1)
-	local career_skill_icon = career_skill_settings.icon
-	local career_skill_name = Localize(career_skill_settings.display_name)
-	local career_skill_title = Localize("ability")
-	local passive_skill_icon = passive_skill_settings.icon
-	local passive_skill_name = Localize(passive_skill_settings.display_name)
-	local passive_skill_title = Localize("hero_view_passive_ability")
+function VersusPartyCharSelectionView._update_selcted_career_passive_and_career_skill(arg_47_0, arg_47_1, arg_47_2)
+	local var_47_0 = arg_47_0._widgets_by_name.passive_skill
+	local var_47_1 = arg_47_0._widgets_by_name.career_skill
+	local var_47_2 = arg_47_0._widgets_by_name.hero_career_name_text
+	local var_47_3 = var_47_0.content
+	local var_47_4 = var_47_1.content
+	local var_47_5 = SPProfiles[arg_47_1].careers[arg_47_2]
+	local var_47_6 = CareerUtils.get_passive_ability_by_career(var_47_5)
+	local var_47_7 = CareerUtils.get_ability_data_by_career(var_47_5, 1)
+	local var_47_8 = var_47_7.icon
+	local var_47_9 = Localize(var_47_7.display_name)
+	local var_47_10 = Localize("ability")
+	local var_47_11 = var_47_6.icon
+	local var_47_12 = Localize(var_47_6.display_name)
+	local var_47_13 = Localize("hero_view_passive_ability")
 
-	career_content.skill_icon = career_skill_icon
-	career_content.skill_type = career_skill_title
-	career_content.skill_name = career_skill_name
-	passive_content.skill_icon = passive_skill_icon
-	passive_content.skill_type = passive_skill_title
-	passive_content.skill_name = passive_skill_name
+	var_47_4.skill_icon = var_47_8
+	var_47_4.skill_type = var_47_10
+	var_47_4.skill_name = var_47_9
+	var_47_3.skill_icon = var_47_11
+	var_47_3.skill_type = var_47_13
+	var_47_3.skill_name = var_47_12
 
-	local hero_career_text_style = hero_career_widget.style.text
-	local hero_career_text = hero_career_widget.content.text
-	local hero_career_text_width = UIUtils.get_text_width(self._ui_renderer, hero_career_text_style, hero_career_text)
-	local career_skill_title_style = career_skill_widget.style.skill_type
-	local skill_title_text_width = UIUtils.get_text_width(self._ui_renderer, career_skill_title_style, career_skill_title)
-	local career_skill_name_style = career_skill_widget.style.skill_name
-	local skill_text_width = UIUtils.get_text_width(self._ui_renderer, career_skill_name_style, career_skill_name)
-	local careers_skill_title_text_width = 85 + skill_title_text_width > 150 and 85 + skill_title_text_width or 200
-	local careers_skill_name_text_width = 85 + skill_text_width > 150 and 85 + skill_text_width or 200
-	local careers_skill_text_width
+	local var_47_14 = var_47_2.style.text
+	local var_47_15 = var_47_2.content.text
+	local var_47_16 = UIUtils.get_text_width(arg_47_0._ui_renderer, var_47_14, var_47_15)
+	local var_47_17 = var_47_1.style.skill_type
+	local var_47_18 = UIUtils.get_text_width(arg_47_0._ui_renderer, var_47_17, var_47_10)
+	local var_47_19 = var_47_1.style.skill_name
+	local var_47_20 = UIUtils.get_text_width(arg_47_0._ui_renderer, var_47_19, var_47_9)
+	local var_47_21 = 85 + var_47_18 > 150 and 85 + var_47_18 or 200
+	local var_47_22 = 85 + var_47_20 > 150 and 85 + var_47_20 or 200
+	local var_47_23
 
-	if careers_skill_name_text_width < careers_skill_title_text_width then
-		careers_skill_text_width = careers_skill_title_text_width
+	if var_47_22 < var_47_21 then
+		var_47_23 = var_47_21
 	else
-		careers_skill_text_width = careers_skill_name_text_width
+		var_47_23 = var_47_22
 	end
 
-	local career_skill_x_offset = hero_career_text_width + 25
-	local passive_skill_x_offset = hero_career_text_width + 25 + careers_skill_text_width + 25
+	local var_47_24 = var_47_16 + 25
+	local var_47_25 = var_47_16 + 25 + var_47_23 + 25
 
-	passive_skill_widget.offset[1] = passive_skill_x_offset
-	career_skill_widget.offset[1] = career_skill_x_offset
+	var_47_0.offset[1] = var_47_25
+	var_47_1.offset[1] = var_47_24
 end
 
-VersusPartyCharSelectionView._setup_world = function (self)
-	if self._background_world then
-		self:_destroy_world()
+function VersusPartyCharSelectionView._setup_world(arg_48_0)
+	if arg_48_0._background_world then
+		arg_48_0:_destroy_world()
 	end
 
-	local world_name = "versus_char_selection"
-	local shading_environment = "environment/ui_end_screen"
-	local layer = 2
-	local flags = {
+	local var_48_0 = "versus_char_selection"
+	local var_48_1 = "environment/ui_end_screen"
+	local var_48_2 = 2
+	local var_48_3 = {
 		Application.DISABLE_SOUND,
 		Application.DISABLE_ESRAM,
-		Application.ENABLE_VOLUMETRICS,
+		Application.ENABLE_VOLUMETRICS
 	}
-	local world = Managers.world:create_world(world_name, shading_environment, nil, layer, unpack(flags))
+	local var_48_4 = Managers.world:create_world(var_48_0, var_48_1, nil, var_48_2, unpack(var_48_3))
 
-	World.set_data(world, "avoid_blend", true)
+	World.set_data(var_48_4, "avoid_blend", true)
 
-	local top_world = Managers.world:world("top_ingame_view")
+	local var_48_5 = Managers.world:world("top_ingame_view")
 
-	return world, top_world
+	return var_48_4, var_48_5
 end
 
-VersusPartyCharSelectionView._create_viewport = function (self, world)
-	local viewport_name = "versus_char_selection_ui"
-	local viewport_type = "default"
-	local layer = 960
-	local viewport = ScriptWorld.create_viewport(world, viewport_name, viewport_type, layer)
+function VersusPartyCharSelectionView._create_viewport(arg_49_0, arg_49_1)
+	local var_49_0 = "versus_char_selection_ui"
+	local var_49_1 = "default"
+	local var_49_2 = 960
+	local var_49_3 = ScriptWorld.create_viewport(arg_49_1, var_49_0, var_49_1, var_49_2)
 
-	self._team_world_viewport_name = viewport_name
+	arg_49_0._team_world_viewport_name = var_49_0
 
-	return viewport
+	return var_49_3
 end
 
-VersusPartyCharSelectionView._spawn_level = function (self, world)
-	local level_name = "levels/carousel_podium/world"
-	local object_sets = {}
-	local position, rotation, shading_callback, mood_setting
-	local time_sliced_spawn = false
-	local level = ScriptWorld.spawn_level(world, level_name, object_sets, position, rotation, shading_callback, mood_setting, time_sliced_spawn)
+function VersusPartyCharSelectionView._spawn_level(arg_50_0, arg_50_1)
+	local var_50_0 = "levels/carousel_podium/world"
+	local var_50_1 = {}
+	local var_50_2
+	local var_50_3
+	local var_50_4
+	local var_50_5
+	local var_50_6 = false
+	local var_50_7 = ScriptWorld.spawn_level(arg_50_1, var_50_0, var_50_1, var_50_2, var_50_3, var_50_4, var_50_5, var_50_6)
 
-	Level.spawn_background(level)
-	Level.trigger_level_loaded(level)
+	Level.spawn_background(var_50_7)
+	Level.trigger_level_loaded(var_50_7)
 
-	return level
+	return var_50_7
 end
 
-local level_name = "levels/carousel_podium/world"
+local var_0_13 = "levels/carousel_podium/world"
 
-VersusPartyCharSelectionView._setup_background_world = function (self)
-	local world, top_world = self:_setup_world()
-	local level = self:_spawn_level(world)
-	local viewport = self:_create_viewport(world)
+function VersusPartyCharSelectionView._setup_background_world(arg_51_0)
+	local var_51_0, var_51_1 = arg_51_0:_setup_world()
+	local var_51_2 = arg_51_0:_spawn_level(var_51_0)
+	local var_51_3 = arg_51_0:_create_viewport(var_51_0)
 
-	self._background_world = world
-	self._top_world = top_world
-	self._team_world_viewport = viewport
-	self._level = level
+	arg_51_0._background_world = var_51_0
+	arg_51_0._top_world = var_51_1
+	arg_51_0._team_world_viewport = var_51_3
+	arg_51_0._level = var_51_2
 
-	self:_setup_camera_nodes_data(level)
-	self:_setup_initial_camera(world, viewport)
-	Level.trigger_event(level, "disable_character_select_lights")
+	arg_51_0:_setup_camera_nodes_data(var_51_2)
+	arg_51_0:_setup_initial_camera(var_51_0, var_51_3)
+	Level.trigger_event(var_51_2, "disable_character_select_lights")
 end
 
-VersusPartyCharSelectionView._get_heroes_spawn_locations = function (self, party_id)
-	local spawn_point_unit_prefix = party_id == self._party_id and "character_slot_0" or "character_slot_enemy_0"
-	local unit = "units/hub_elements/versus_podium_character_spawn"
-	local unit_indices = LevelResource.unit_indices(level_name, unit)
-	local hero_locations = {}
+function VersusPartyCharSelectionView._get_heroes_spawn_locations(arg_52_0, arg_52_1)
+	local var_52_0 = arg_52_1 == arg_52_0._party_id and "character_slot_0" or "character_slot_enemy_0"
+	local var_52_1 = "units/hub_elements/versus_podium_character_spawn"
+	local var_52_2 = LevelResource.unit_indices(var_0_13, var_52_1)
+	local var_52_3 = {}
 
-	for i = 1, 4 do
-		for _, index in pairs(unit_indices) do
-			local unit_data = LevelResource.unit_data(level_name, index)
-			local name = DynamicData.get(unit_data, "name")
+	for iter_52_0 = 1, 4 do
+		for iter_52_1, iter_52_2 in pairs(var_52_2) do
+			local var_52_4 = LevelResource.unit_data(var_0_13, iter_52_2)
+			local var_52_5 = DynamicData.get(var_52_4, "name")
 
-			if name and name == spawn_point_unit_prefix .. i then
-				local position = LevelResource.unit_position(level_name, index)
-				local x, y, z = Vector3.to_elements(position)
-				local table_vector = {
-					x,
-					y,
-					z,
+			if var_52_5 and var_52_5 == var_52_0 .. iter_52_0 then
+				local var_52_6 = LevelResource.unit_position(var_0_13, iter_52_2)
+				local var_52_7, var_52_8, var_52_9 = Vector3.to_elements(var_52_6)
+				local var_52_10 = {
+					var_52_7,
+					var_52_8,
+					var_52_9
 				}
 
-				hero_locations[#hero_locations + 1] = table_vector
+				var_52_3[#var_52_3 + 1] = var_52_10
 			end
 		end
 	end
 
-	fassert(#hero_locations ~= 0, "[VersusPartyCharSelectionView:_get_heroes_spawn_locations], No hero locations have been found. Check if unit: %s is present in level: %s and has the script data varaible \"name\" set to the correct name.", unit, level_name)
+	fassert(#var_52_3 ~= 0, "[VersusPartyCharSelectionView:_get_heroes_spawn_locations], No hero locations have been found. Check if unit: %s is present in level: %s and has the script data varaible \"name\" set to the correct name.", var_52_1, var_0_13)
 
-	return hero_locations
+	return var_52_3
 end
 
-VersusPartyCharSelectionView._activate_viewport = function (self)
-	ScriptWorld.activate_viewport(self._background_world, self._team_world_viewport)
+function VersusPartyCharSelectionView._activate_viewport(arg_53_0)
+	ScriptWorld.activate_viewport(arg_53_0._background_world, arg_53_0._team_world_viewport)
 end
 
-VersusPartyCharSelectionView.set_camera_position = function (self, position)
-	local camera = ScriptViewport.camera(self._team_world_viewport)
+function VersusPartyCharSelectionView.set_camera_position(arg_54_0, arg_54_1)
+	local var_54_0 = ScriptViewport.camera(arg_54_0._team_world_viewport)
 
-	return ScriptCamera.set_local_position(camera, position)
+	return ScriptCamera.set_local_position(var_54_0, arg_54_1)
 end
 
-VersusPartyCharSelectionView.set_camera_rotation = function (self, rotation)
-	local camera = ScriptViewport.camera(self._team_world_viewport)
+function VersusPartyCharSelectionView.set_camera_rotation(arg_55_0, arg_55_1)
+	local var_55_0 = ScriptViewport.camera(arg_55_0._team_world_viewport)
 
-	ScriptCamera.set_local_rotation(camera, rotation)
+	ScriptCamera.set_local_rotation(var_55_0, arg_55_1)
 
-	local world = self:_get_viewport_world()
+	local var_55_1 = arg_55_0:_get_viewport_world()
 
-	ScriptCamera.force_update(world, camera)
+	ScriptCamera.force_update(var_55_1, var_55_0)
 end
 
-VersusPartyCharSelectionView._setup_initial_camera = function (self, world, viewport)
-	local ref_camera_data = self._cameras.initial_camera
-	local camera = ScriptViewport.camera(viewport)
+function VersusPartyCharSelectionView._setup_initial_camera(arg_56_0, arg_56_1, arg_56_2)
+	local var_56_0 = arg_56_0._cameras.initial_camera
+	local var_56_1 = ScriptViewport.camera(arg_56_2)
 
-	self._camera = camera
+	arg_56_0._camera = var_56_1
 
-	local fov = Camera.vertical_fov(ref_camera_data.camera)
+	local var_56_2 = Camera.vertical_fov(var_56_0.camera)
 
-	Camera.set_vertical_fov(camera, fov)
-	ScriptCamera.set_local_pose(camera, ref_camera_data.camera_pose:unbox())
-	ScriptCamera.force_update(world, camera)
+	Camera.set_vertical_fov(var_56_1, var_56_2)
+	ScriptCamera.set_local_pose(var_56_1, var_56_0.camera_pose:unbox())
+	ScriptCamera.force_update(arg_56_1, var_56_1)
 end
 
-VersusPartyCharSelectionView._setup_camera_nodes_data = function (self, level)
-	local data = {}
-	local init_camera_unit = Level.flow_variable(level, "initial_camera")
-	local parading_camera_01_unit = Level.flow_variable(level, "parading_position_01")
-	local parading_camera_02_unit = Level.flow_variable(level, "parading_position_02")
-	local init_camera_pose = Matrix4x4Box(Unit.local_pose(init_camera_unit, 0))
-	local parading_camera_01_pose = Matrix4x4Box(Unit.local_pose(parading_camera_01_unit, 0))
-	local parading_camera_02_pose = Matrix4x4Box(Unit.local_pose(parading_camera_02_unit, 0))
-	local init_camera = Unit.camera(init_camera_unit, "camera")
-	local parading_camera_01 = Unit.camera(parading_camera_01_unit, "camera")
-	local parading_camera_02 = Unit.camera(parading_camera_02_unit, "camera")
+function VersusPartyCharSelectionView._setup_camera_nodes_data(arg_57_0, arg_57_1)
+	local var_57_0 = {}
+	local var_57_1 = Level.flow_variable(arg_57_1, "initial_camera")
+	local var_57_2 = Level.flow_variable(arg_57_1, "parading_position_01")
+	local var_57_3 = Level.flow_variable(arg_57_1, "parading_position_02")
+	local var_57_4 = Matrix4x4Box(Unit.local_pose(var_57_1, 0))
+	local var_57_5 = Matrix4x4Box(Unit.local_pose(var_57_2, 0))
+	local var_57_6 = Matrix4x4Box(Unit.local_pose(var_57_3, 0))
+	local var_57_7 = Unit.camera(var_57_1, "camera")
+	local var_57_8 = Unit.camera(var_57_2, "camera")
+	local var_57_9 = Unit.camera(var_57_3, "camera")
 
-	self._inital_camera_position = Vector3Box(Unit.local_position(init_camera_unit, 0))
-	data.initial_camera = {
-		camera_unit = init_camera_unit,
-		camera_pose = init_camera_pose,
-		camera = init_camera,
+	arg_57_0._inital_camera_position = Vector3Box(Unit.local_position(var_57_1, 0))
+	var_57_0.initial_camera = {
+		camera_unit = var_57_1,
+		camera_pose = var_57_4,
+		camera = var_57_7
 	}
-	data.parading_camera_01 = {
-		camera_unit = parading_camera_01_unit,
-		camera_pose = parading_camera_01_pose,
-		camera = parading_camera_01,
+	var_57_0.parading_camera_01 = {
+		camera_unit = var_57_2,
+		camera_pose = var_57_5,
+		camera = var_57_8
 	}
-	data.parading_camera_02 = {
-		camera_unit = parading_camera_02_unit,
-		camera_pose = parading_camera_02_pose,
-		camera = parading_camera_02,
+	var_57_0.parading_camera_02 = {
+		camera_unit = var_57_3,
+		camera_pose = var_57_6,
+		camera = var_57_9
 	}
-	self._cameras = data
+	arg_57_0._cameras = var_57_0
 end
 
-VersusPartyCharSelectionView._destroy_world = function (self)
-	Managers.world:destroy_world(self._background_world)
+function VersusPartyCharSelectionView._destroy_world(arg_58_0)
+	Managers.world:destroy_world(arg_58_0._background_world)
 
-	self._background_world = nil
-	self._top_world = nil
+	arg_58_0._background_world = nil
+	arg_58_0._top_world = nil
 end
 
-VersusPartyCharSelectionView._setup_team_previewer = function (self, spawn_on_setup)
-	if self._team_previewer then
+function VersusPartyCharSelectionView._setup_team_previewer(arg_59_0, arg_59_1)
+	if arg_59_0._team_previewer then
 		return
 	end
 
-	spawn_on_setup = spawn_on_setup or false
-	self._team_previewer = TeamPreviewer:new(self._ingame_ui_context, self._background_world, self._team_world_viewport)
+	arg_59_1 = arg_59_1 or false
+	arg_59_0._team_previewer = TeamPreviewer:new(arg_59_0._ingame_ui_context, arg_59_0._background_world, arg_59_0._team_world_viewport)
 
-	local team_data = self._team_heroes
-	local hero_locations = self:_get_heroes_spawn_locations(self._party_id)
+	local var_59_0 = arg_59_0._team_heroes
+	local var_59_1 = arg_59_0:_get_heroes_spawn_locations(arg_59_0._party_id)
 
-	self._team_previewer:setup_team(team_data, hero_locations, spawn_on_setup)
+	arg_59_0._team_previewer:setup_team(var_59_0, var_59_1, arg_59_1)
 
-	self._hero_locations = hero_locations
+	arg_59_0._hero_locations = var_59_1
 end
 
-VersusPartyCharSelectionView._setup_team_heroes = function (self)
-	local party_data = self._party_selection_logic:get_party_data(self._party_id)
-	local picker_list = party_data.picker_list
-	local team_heroes = self._team_heroes
+function VersusPartyCharSelectionView._setup_team_heroes(arg_60_0)
+	local var_60_0 = arg_60_0._party_selection_logic:get_party_data(arg_60_0._party_id).picker_list
+	local var_60_1 = arg_60_0._team_heroes
 
-	table.clear(team_heroes)
+	table.clear(var_60_1)
 
-	for _, picker in ipairs(picker_list) do
-		local hero_data = self:_get_hero_previewer_data(picker, self._party)
+	for iter_60_0, iter_60_1 in ipairs(var_60_0) do
+		local var_60_2 = arg_60_0:_get_hero_previewer_data(iter_60_1, arg_60_0._party)
 
-		team_heroes[#team_heroes + 1] = hero_data or true
+		var_60_1[#var_60_1 + 1] = var_60_2 or true
 	end
 end
 
-VersusPartyCharSelectionView._get_hero_previewer_data = function (self, picker, party_data)
-	local status = picker.status
-	local profile_index = status.selected_profile_index
-	local career_index = status.selected_career_index
-	local profile_data = SPProfiles[profile_index]
+function VersusPartyCharSelectionView._get_hero_previewer_data(arg_61_0, arg_61_1, arg_61_2)
+	local var_61_0 = arg_61_1.status
+	local var_61_1 = var_61_0.selected_profile_index
+	local var_61_2 = var_61_0.selected_career_index
+	local var_61_3 = SPProfiles[var_61_1]
 
-	if not profile_data or profile_data.affiliation == "dark_pact" then
+	if not var_61_3 or var_61_3.affiliation == "dark_pact" then
 		return nil
 	end
 
-	local slot_id = picker.slot_id
-	local slot_data = party_data.slots_data[slot_id]
+	local var_61_4 = arg_61_1.slot_id
+	local var_61_5 = arg_61_2.slots_data[var_61_4]
 
-	if profile_data then
-		local careers = profile_data.careers
-		local career_settings = careers[career_index]
-		local preview_animation = career_settings.versus_preview_animation or career_settings.preview_animation
-		local preview_wield_slot = career_settings.preview_wield_slot
-		local hero_name = career_settings.profile_name
-		local hat = slot_data.slot_hat
-		local preview_items = {
-			career_settings.preview_items[1],
+	if var_61_3 then
+		local var_61_6 = var_61_3.careers[var_61_2]
+		local var_61_7 = var_61_6.versus_preview_animation or var_61_6.preview_animation
+		local var_61_8 = var_61_6.preview_wield_slot
+		local var_61_9 = var_61_6.profile_name
+		local var_61_10 = var_61_5.slot_hat
+		local var_61_11 = {
+			var_61_6.preview_items[1],
 			{
-				item_name = hat ~= "n/a" and hat or career_settings.preview_items[2].item_name,
-			},
+				item_name = var_61_10 ~= "n/a" and var_61_10 or var_61_6.preview_items[2].item_name
+			}
 		}
-		local skin_name = slot_data.slot_skin ~= "n/a" and slot_data.slot_skin or career_settings.base_skin
+		local var_61_12 = var_61_5.slot_skin ~= "n/a" and var_61_5.slot_skin or var_61_6.base_skin
 
 		return {
-			profile_index = profile_index,
-			career_index = career_index,
-			skin_name = skin_name,
-			hero_name = hero_name,
-			weapon_slot = preview_wield_slot,
-			preview_items = preview_items,
-			preview_animation = preview_animation,
+			profile_index = var_61_1,
+			career_index = var_61_2,
+			skin_name = var_61_12,
+			hero_name = var_61_9,
+			weapon_slot = var_61_8,
+			preview_items = var_61_11,
+			preview_animation = var_61_7
 		}
 	end
 
 	return nil
 end
 
-VersusPartyCharSelectionView._update_team_previewer = function (self, dt, t)
-	local team_previewer = self._team_previewer
+function VersusPartyCharSelectionView._update_team_previewer(arg_62_0, arg_62_1, arg_62_2)
+	local var_62_0 = arg_62_0._team_previewer
 
-	if team_previewer then
-		team_previewer:update(dt, t)
-		team_previewer:post_update(dt, t)
+	if var_62_0 then
+		var_62_0:update(arg_62_1, arg_62_2)
+		var_62_0:post_update(arg_62_1, arg_62_2)
 	end
 end
 
-VersusPartyCharSelectionView._destroy_team_previewer = function (self)
-	if self._team_previewer then
-		self._team_previewer:on_exit()
+function VersusPartyCharSelectionView._destroy_team_previewer(arg_63_0)
+	if arg_63_0._team_previewer then
+		arg_63_0._team_previewer:on_exit()
 
-		self._team_previewer = nil
+		arg_63_0._team_previewer = nil
 	end
 end
 
-VersusPartyCharSelectionView._spawn_selected_hero = function (self, picker_index)
-	local party_data = self._party_selection_logic:get_party_data(self._party_id)
-	local picker_list = party_data.picker_list
-	local picker = picker_list[picker_index]
-	local hero_data = self:_get_hero_previewer_data(picker, self._party)
+function VersusPartyCharSelectionView._spawn_selected_hero(arg_64_0, arg_64_1)
+	local var_64_0 = arg_64_0._party_selection_logic:get_party_data(arg_64_0._party_id).picker_list[arg_64_1]
+	local var_64_1 = arg_64_0:_get_hero_previewer_data(var_64_0, arg_64_0._party)
 
-	if hero_data then
-		local hero_previewer = self._team_previewer:get_hero_previewer(picker_index)
+	if var_64_1 then
+		local var_64_2 = arg_64_0._team_previewer:get_hero_previewer(arg_64_1)
 
-		self._team_previewer:_spawn_hero(hero_previewer, hero_data)
+		arg_64_0._team_previewer:_spawn_hero(var_64_2, var_64_1)
 
-		self._team_heroes[picker_index] = hero_data
+		arg_64_0._team_heroes[arg_64_1] = var_64_1
 	end
 end
 
-VersusPartyCharSelectionView._play_selected_hero_sound = function (self, career_index, profile_index)
-	if profile_index and career_index then
-		local profile = SPProfiles[profile_index]
-		local careers = profile.careers
-		local career_settings = careers[career_index]
-		local career_name = career_settings.display_name
-		local sound_event = "menu_versus_character_selection_" .. career_name
+function VersusPartyCharSelectionView._play_selected_hero_sound(arg_65_0, arg_65_1, arg_65_2)
+	if arg_65_2 and arg_65_1 then
+		local var_65_0 = SPProfiles[arg_65_2].careers[arg_65_1].display_name
+		local var_65_1 = "menu_versus_character_selection_" .. var_65_0
 
-		self:play_sound(sound_event)
+		arg_65_0:play_sound(var_65_1)
 	end
 end
 
-VersusPartyCharSelectionView._level_flow_event = function (self, event_name)
-	local level = self._level
+function VersusPartyCharSelectionView._level_flow_event(arg_66_0, arg_66_1)
+	local var_66_0 = arg_66_0._level
 
-	Level.trigger_event(level, event_name)
+	Level.trigger_event(var_66_0, arg_66_1)
 end
 
-local function animate_camera(camera, fov, source_pose, target_pose, start_time, end_time, time)
-	local progress
-	local interpolation_time = end_time - start_time
+local function var_0_14(arg_67_0, arg_67_1, arg_67_2, arg_67_3, arg_67_4, arg_67_5, arg_67_6)
+	local var_67_0
+	local var_67_1 = arg_67_5 - arg_67_4
+	local var_67_2
 
-	if interpolation_time <= 0.001 then
-		progress = 1
+	if var_67_1 <= 0.001 then
+		var_67_2 = 1
 	else
-		progress = math.clamp((time - start_time) / interpolation_time, 0, 1)
-		progress = (3 - 2 * progress) * progress^2
+		local var_67_3 = math.clamp((arg_67_6 - arg_67_4) / var_67_1, 0, 1)
+
+		var_67_2 = (3 - 2 * var_67_3) * var_67_3^2
 	end
 
-	local new_pose = Matrix4x4.lerp(source_pose, target_pose, progress)
+	local var_67_4 = Matrix4x4.lerp(arg_67_2, arg_67_3, var_67_2)
 
-	ScriptCamera.set_local_pose(camera, new_pose)
-	Camera.set_vertical_fov(camera, fov)
+	ScriptCamera.set_local_pose(arg_67_0, var_67_4)
+	Camera.set_vertical_fov(arg_67_0, arg_67_1)
 end
 
-VersusPartyCharSelectionView._update_camera = function (self, t)
-	if not self._camera_anim_id then
+function VersusPartyCharSelectionView._update_camera(arg_68_0, arg_68_1)
+	if not arg_68_0._camera_anim_id then
 		return
 	end
 
-	local camera = self._camera
-	local anim_data = self._camera_animations[self._camera_anim_id]
+	local var_68_0 = arg_68_0._camera
+	local var_68_1 = arg_68_0._camera_animations[arg_68_0._camera_anim_id]
 
-	if anim_data.animation_end_time and t > anim_data.animation_end_time then
-		self._camera_animations[self._camera_anim_id] = nil
-		self._camera_anim_id = nil
+	if var_68_1.animation_end_time and arg_68_1 > var_68_1.animation_end_time then
+		arg_68_0._camera_animations[arg_68_0._camera_anim_id] = nil
+		arg_68_0._camera_anim_id = nil
 
 		return
 	end
 
-	if not anim_data.animation_start_time then
-		anim_data.animation_start_time = t
-		anim_data.animation_end_time = t + 2
+	if not var_68_1.animation_start_time then
+		var_68_1.animation_start_time = arg_68_1
+		var_68_1.animation_end_time = arg_68_1 + 2
 	end
 
-	animate_camera(camera, anim_data.fov, anim_data.source_pose:unbox(), anim_data.target_pose:unbox(), anim_data.animation_start_time, anim_data.animation_end_time, t)
-	ScriptCamera.force_update(self._background_world, camera)
+	var_0_14(var_68_0, var_68_1.fov, var_68_1.source_pose:unbox(), var_68_1.target_pose:unbox(), var_68_1.animation_start_time, var_68_1.animation_end_time, arg_68_1)
+	ScriptCamera.force_update(arg_68_0._background_world, var_68_0)
 end
 
-VersusPartyCharSelectionView._set_on_selection_complete_camera_animation = function (self)
-	local anim_data = {}
-	local fov = Camera.vertical_fov(self._cameras.initial_camera.camera)
+function VersusPartyCharSelectionView._set_on_selection_complete_camera_animation(arg_69_0)
+	local var_69_0 = {
+		fov = Camera.vertical_fov(arg_69_0._cameras.initial_camera.camera),
+		source_pose = arg_69_0._cameras.initial_camera.camera_pose,
+		target_pose = arg_69_0._cameras.parading_camera_01.camera_pose
+	}
+	local var_69_1 = arg_69_0._cam_anim_indx
 
-	anim_data.fov = fov
-	anim_data.source_pose = self._cameras.initial_camera.camera_pose
-	anim_data.target_pose = self._cameras.parading_camera_01.camera_pose
-
-	local id = self._cam_anim_indx
-
-	self._camera_anim_id = id
-	self._camera_animations[id] = anim_data
-	self._cam_anim_indx = self._cam_anim_indx + 1
+	arg_69_0._camera_anim_id = var_69_1
+	arg_69_0._camera_animations[var_69_1] = var_69_0
+	arg_69_0._cam_anim_indx = arg_69_0._cam_anim_indx + 1
 end
 
-VersusPartyCharSelectionView._muted_peer_id = function (self, peer_id)
+function VersusPartyCharSelectionView._muted_peer_id(arg_70_0, arg_70_1)
 	if IS_XB1 then
 		if Managers.voice_chat then
-			return Managers.voice_chat:is_peer_muted(peer_id)
+			return Managers.voice_chat:is_peer_muted(arg_70_1)
 		else
 			return false
 		end
 	else
-		return self._voip:peer_muted(peer_id)
+		return arg_70_0._voip:peer_muted(arg_70_1)
 	end
 end
 
-VersusPartyCharSelectionView._ignore_voice_message_from_peer_id = function (self, peer_id)
+function VersusPartyCharSelectionView._ignore_voice_message_from_peer_id(arg_71_0, arg_71_1)
 	if IS_XB1 then
 		if Managers.voice_chat then
-			Managers.voice_chat:mute_peer(peer_id)
+			Managers.voice_chat:mute_peer(arg_71_1)
 		end
 	else
-		self._voip:mute_member(peer_id)
+		arg_71_0._voip:mute_member(arg_71_1)
 	end
 end
 
-VersusPartyCharSelectionView._remove_ignore_voice_message_from_peer_id = function (self, peer_id)
+function VersusPartyCharSelectionView._remove_ignore_voice_message_from_peer_id(arg_72_0, arg_72_1)
 	if IS_XB1 then
 		if Managers.voice_chat then
-			Managers.voice_chat:unmute_peer(peer_id)
+			Managers.voice_chat:unmute_peer(arg_72_1)
 		end
 	else
-		self._voip:unmute_member(peer_id)
+		arg_72_0._voip:unmute_member(arg_72_1)
 	end
 end
 
-VersusPartyCharSelectionView._update_mute_buttons = function (self)
-	for i = 1, #self._player_name_box_widgets do
-		local widget = self._player_name_box_widgets[i]
-		local content = widget.content
-		local peer_id = content.peer_id
+function VersusPartyCharSelectionView._update_mute_buttons(arg_73_0)
+	for iter_73_0 = 1, #arg_73_0._player_name_box_widgets do
+		local var_73_0 = arg_73_0._player_name_box_widgets[iter_73_0]
+		local var_73_1 = var_73_0.content
+		local var_73_2 = var_73_1.peer_id
 
-		if peer_id and UIUtils.is_button_pressed(widget) then
-			local is_peer_muted = self:_muted_peer_id(peer_id)
+		if var_73_2 and UIUtils.is_button_pressed(var_73_0) then
+			if arg_73_0:_muted_peer_id(var_73_2) then
+				arg_73_0:_remove_ignore_voice_message_from_peer_id(var_73_2)
 
-			if is_peer_muted then
-				self:_remove_ignore_voice_message_from_peer_id(peer_id)
-
-				content.muted = false
+				var_73_1.muted = false
 			else
-				self:_ignore_voice_message_from_peer_id(peer_id)
+				arg_73_0:_ignore_voice_message_from_peer_id(var_73_2)
 
-				content.muted = true
+				var_73_1.muted = true
 			end
 		end
 	end
 end
 
-VersusPartyCharSelectionView.on_party_selection_logic_state_set = function (self, new_state, party_id, picker_id)
-	if self._party_id ~= party_id then
+function VersusPartyCharSelectionView.on_party_selection_logic_state_set(arg_74_0, arg_74_1, arg_74_2, arg_74_3)
+	if arg_74_0._party_id ~= arg_74_2 then
 		return
 	end
 
-	if new_state == "startup" then
-		-- Nothing
-	elseif new_state == "player_picking_character" then
-		if not self._initial_selection_transition_done then
-			self._initial_selection_transition_done = true
+	if arg_74_1 == "startup" then
+		-- block empty
+	elseif arg_74_1 == "player_picking_character" then
+		if not arg_74_0._initial_selection_transition_done then
+			arg_74_0._initial_selection_transition_done = true
 
-			self:_start_step_transtion_animation("transition_to_selection")
+			arg_74_0:_start_step_transtion_animation("transition_to_selection")
 		end
 
-		self:_start_widget_animation("name_box_fade_to_black", self._player_name_box_widgets[picker_id])
-		self:_level_flow_event("chr_" .. picker_id .. "_selected")
-		self:_set_current_picker_text(picker_id)
-		self:_update_all_player_name_box_widgets()
+		arg_74_0:_start_widget_animation("name_box_fade_to_black", arg_74_0._player_name_box_widgets[arg_74_3])
+		arg_74_0:_level_flow_event("chr_" .. arg_74_3 .. "_selected")
+		arg_74_0:_set_current_picker_text(arg_74_3)
+		arg_74_0:_update_all_player_name_box_widgets()
 
-		local local_player_is_picking = self:local_player_is_picking()
-
-		if local_player_is_picking then
-			self:play_sound("menu_versus_character_selection_your_turn_indicator")
-			self:play_sound("menu_versus_character_selection_meter_start")
+		if arg_74_0:local_player_is_picking() then
+			arg_74_0:play_sound("menu_versus_character_selection_your_turn_indicator")
+			arg_74_0:play_sound("menu_versus_character_selection_meter_start")
 		end
-	elseif new_state == "player_has_picked_character" then
-		self:play_sound("menu_versus_character_selection_locked")
+	elseif arg_74_1 == "player_has_picked_character" then
+		arg_74_0:play_sound("menu_versus_character_selection_locked")
 
-		local local_player_is_picking = self:local_player_is_picking()
-
-		if local_player_is_picking then
-			self:play_sound("menu_versus_character_selection_meter_stop")
+		if arg_74_0:local_player_is_picking() then
+			arg_74_0:play_sound("menu_versus_character_selection_meter_stop")
 		end
 
-		self:_play_selected_hero_sound(self._data_by_pick_index[picker_id].career_index, self._data_by_pick_index[picker_id].profile_index)
-		self:_start_widget_animation("name_box_fade_to_gray", self._player_name_box_widgets[picker_id])
-		self:_level_flow_event("chr_" .. picker_id .. "_unselected")
-	elseif new_state == "parading" then
-		self:_level_flow_event("vs_team_heroes_selected")
-		self:play_sound("menu_versus_character_selection_start_game_buildup")
+		arg_74_0:_play_selected_hero_sound(arg_74_0._data_by_pick_index[arg_74_3].career_index, arg_74_0._data_by_pick_index[arg_74_3].profile_index)
+		arg_74_0:_start_widget_animation("name_box_fade_to_gray", arg_74_0._player_name_box_widgets[arg_74_3])
+		arg_74_0:_level_flow_event("chr_" .. arg_74_3 .. "_unselected")
+	elseif arg_74_1 == "parading" then
+		arg_74_0:_level_flow_event("vs_team_heroes_selected")
+		arg_74_0:play_sound("menu_versus_character_selection_start_game_buildup")
 
-		self._prev_timer_value = 0
+		arg_74_0._prev_timer_value = 0
 
-		self:_set_on_selection_complete_camera_animation()
-		self:_start_step_transtion_animation("transition_to_team_parading")
-		self:play_sound("Play_menu_versus_parading_start_transition")
+		arg_74_0:_set_on_selection_complete_camera_animation()
+		arg_74_0:_start_step_transtion_animation("transition_to_team_parading")
+		arg_74_0:play_sound("Play_menu_versus_parading_start_transition")
 	end
 end

@@ -1,76 +1,74 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_critter_rat_flee_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_critter_rat_flee_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTCritterRatFleeAction = class(BTCritterRatFleeAction, BTNode)
 
-BTCritterRatFleeAction.init = function (self, ...)
-	BTCritterRatFleeAction.super.init(self, ...)
+function BTCritterRatFleeAction.init(arg_1_0, ...)
+	BTCritterRatFleeAction.super.init(arg_1_0, ...)
 end
 
 BTCritterRatFleeAction.name = "BTCritterRatFleeAction"
 
-BTCritterRatFleeAction.enter = function (self, unit, blackboard, t)
-	blackboard.action = self._tree_node.action_data
-	blackboard.move_pos = nil
-	blackboard.using_cover_points = true
-	blackboard.using_far_along_path_point = false
-	blackboard.using_random_point_in_front_of_target = false
-	blackboard.using_random_point = false
+function BTCritterRatFleeAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	arg_2_2.action = arg_2_0._tree_node.action_data
+	arg_2_2.move_pos = nil
+	arg_2_2.using_cover_points = true
+	arg_2_2.using_far_along_path_point = false
+	arg_2_2.using_random_point_in_front_of_target = false
+	arg_2_2.using_random_point = false
 
-	if blackboard.move_state ~= "idle" then
-		self:start_idle_animation(unit, blackboard)
+	if arg_2_2.move_state ~= "idle" then
+		arg_2_0:start_idle_animation(arg_2_1, arg_2_2)
 	end
 end
 
-BTCritterRatFleeAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	blackboard.move_pos = nil
-	blackboard.move_check_index = nil
-	blackboard.dig_timer = nil
-	blackboard.current_check_list = nil
+function BTCritterRatFleeAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	arg_3_2.move_pos = nil
+	arg_3_2.move_check_index = nil
+	arg_3_2.dig_timer = nil
+	arg_3_2.current_check_list = nil
 end
 
-BTCritterRatFleeAction.run = function (self, unit, blackboard, t)
-	local ai_navigation = blackboard.navigation_extension
+function BTCritterRatFleeAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	local var_4_0 = arg_4_2.navigation_extension
 
-	if blackboard.dig_timer and t > blackboard.dig_timer then
+	if arg_4_2.dig_timer and arg_4_3 > arg_4_2.dig_timer then
 		return "done"
 	end
 
-	if not blackboard.move_pos then
-		local move_pos = self:select_move_pos(unit, blackboard)
+	if not arg_4_2.move_pos then
+		local var_4_1 = arg_4_0:select_move_pos(arg_4_1, arg_4_2)
 
-		ai_navigation:move_to(move_pos)
+		var_4_0:move_to(var_4_1)
 
-		blackboard.move_pos = Vector3Box(move_pos)
-		blackboard.is_fleeing = true
+		arg_4_2.move_pos = Vector3Box(var_4_1)
+		arg_4_2.is_fleeing = true
 
 		return "running"
 	end
 
-	local failed_to_move = ai_navigation:number_failed_move_attempts() > 0
+	if var_4_0:number_failed_move_attempts() > 0 then
+		arg_4_2.move_pos = nil
 
-	if failed_to_move then
-		blackboard.move_pos = nil
-
-		if blackboard.move_state ~= "idle" then
-			self:start_idle_animation(unit, blackboard)
+		if arg_4_2.move_state ~= "idle" then
+			arg_4_0:start_idle_animation(arg_4_1, arg_4_2)
 		end
 
 		return "running"
 	end
 
-	local path_found = ai_navigation:is_following_path()
-	local has_reached_destination = ai_navigation:has_reached_destination()
+	local var_4_2 = var_4_0:is_following_path()
+	local var_4_3 = var_4_0:has_reached_destination()
 
-	if path_found and not has_reached_destination and blackboard.move_state ~= "moving" then
-		self:start_move_animation(unit, blackboard)
+	if var_4_2 and not var_4_3 and arg_4_2.move_state ~= "moving" then
+		arg_4_0:start_move_animation(arg_4_1, arg_4_2)
 
 		return "running"
 	end
 
-	if has_reached_destination then
-		self:at_destination(unit, blackboard, t)
+	if var_4_3 then
+		arg_4_0:at_destination(arg_4_1, arg_4_2, arg_4_3)
 
 		return "running"
 	end
@@ -78,183 +76,170 @@ BTCritterRatFleeAction.run = function (self, unit, blackboard, t)
 	return "running"
 end
 
-BTCritterRatFleeAction.select_move_pos = function (self, unit, blackboard)
-	local move_pos
+function BTCritterRatFleeAction.select_move_pos(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0
 
-	if blackboard.using_cover_points then
-		move_pos = self:_get_cover_point_flee_pos(unit, blackboard)
+	if arg_5_2.using_cover_points then
+		var_5_0 = arg_5_0:_get_cover_point_flee_pos(arg_5_1, arg_5_2)
 	end
 
-	if blackboard.using_far_along_path_point then
-		move_pos = self:_get_far_along_path_pos(unit, blackboard)
+	if arg_5_2.using_far_along_path_point then
+		var_5_0 = arg_5_0:_get_far_along_path_pos(arg_5_1, arg_5_2)
 	end
 
-	if not move_pos and blackboard.using_random_point_in_front_of_target then
-		move_pos = self:_get_random_flee_pos_in_front_of_target(unit, blackboard)
+	if not var_5_0 and arg_5_2.using_random_point_in_front_of_target then
+		var_5_0 = arg_5_0:_get_random_flee_pos_in_front_of_target(arg_5_1, arg_5_2)
 	end
 
-	if not move_pos and blackboard.using_random_point then
-		move_pos = self:_get_random_flee_pos(unit, blackboard)
+	if not var_5_0 and arg_5_2.using_random_point then
+		var_5_0 = arg_5_0:_get_random_flee_pos(arg_5_1, arg_5_2)
 	end
 
-	return move_pos
+	return var_5_0
 end
 
-BTCritterRatFleeAction._get_cover_point_flee_pos = function (self, unit, blackboard)
-	local target_unit = blackboard.target_unit
-	local move_pos
+function BTCritterRatFleeAction._get_cover_point_flee_pos(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = arg_6_2.target_unit
+	local var_6_1
 
-	if Unit.alive(target_unit) then
-		local current_position = POSITION_LOOKUP[unit]
-		local target_position = POSITION_LOOKUP[target_unit]
-		local action = blackboard.action
-		local data = action.cover_point_check
-		local max_height_diff = data.max_height_diff
+	if Unit.alive(var_6_0) then
+		local var_6_2 = POSITION_LOOKUP[arg_6_1]
+		local var_6_3 = POSITION_LOOKUP[var_6_0]
+		local var_6_4 = arg_6_2.action.cover_point_check
+		local var_6_5 = var_6_4.max_height_diff
 
-		if not blackboard.current_check_list then
-			local min_dist = data.min_cover_point_check_dist
-			local max_dist = data.max_cover_point_check_dist
-			local side = blackboard.side
-			local avoid_pos_list = side.ENEMY_PLAYER_AND_BOT_POSITIONS
-			local num_cover_units, cover_units = ConflictUtils.hidden_cover_points(current_position, avoid_pos_list, min_dist, max_dist)
+		if not arg_6_2.current_check_list then
+			local var_6_6 = var_6_4.min_cover_point_check_dist
+			local var_6_7 = var_6_4.max_cover_point_check_dist
+			local var_6_8 = arg_6_2.side.ENEMY_PLAYER_AND_BOT_POSITIONS
+			local var_6_9, var_6_10 = ConflictUtils.hidden_cover_points(var_6_2, var_6_8, var_6_6, var_6_7)
 
-			blackboard.current_check_list = cover_units
+			arg_6_2.current_check_list = var_6_10
 
-			for i = num_cover_units + 1, #cover_units do
-				cover_units[i] = nil
+			for iter_6_0 = var_6_9 + 1, #var_6_10 do
+				var_6_10[iter_6_0] = nil
 			end
 
-			table.shuffle(blackboard.current_check_list)
+			table.shuffle(arg_6_2.current_check_list)
 		end
 
-		for index = blackboard.move_check_index or 1, #blackboard.current_check_list do
-			local cover_unit = blackboard.current_check_list[index]
-			local cover_pos = Unit.local_position(cover_unit, 0)
-			local distance_to_target = Vector3.distance_squared(cover_pos, target_position)
-			local distance_to_critter = Vector3.distance_squared(cover_pos, current_position)
-			local cover_on_same_side = distance_to_critter < distance_to_target
-			local height_diff = math.abs(current_position.z - cover_pos.z)
+		for iter_6_1 = arg_6_2.move_check_index or 1, #arg_6_2.current_check_list do
+			local var_6_11 = arg_6_2.current_check_list[iter_6_1]
+			local var_6_12 = Unit.local_position(var_6_11, 0)
+			local var_6_13 = Vector3.distance_squared(var_6_12, var_6_3) > Vector3.distance_squared(var_6_12, var_6_2)
+			local var_6_14 = math.abs(var_6_2.z - var_6_12.z)
 
-			if cover_on_same_side and height_diff < max_height_diff then
-				move_pos = cover_pos
-				blackboard.move_check_index = index + 1
+			if var_6_13 and var_6_14 < var_6_5 then
+				var_6_1 = var_6_12
+				arg_6_2.move_check_index = iter_6_1 + 1
 
 				break
 			end
 		end
 	end
 
-	if not move_pos then
-		blackboard.using_cover_points = false
-		blackboard.using_far_along_path_point = true
-		blackboard.move_check_index = nil
-		blackboard.current_check_list = nil
+	if not var_6_1 then
+		arg_6_2.using_cover_points = false
+		arg_6_2.using_far_along_path_point = true
+		arg_6_2.move_check_index = nil
+		arg_6_2.current_check_list = nil
 	end
 
-	return move_pos
+	return var_6_1
 end
 
-BTCritterRatFleeAction._get_far_along_path_pos = function (self, unit, blackboard)
-	local move_pos
-	local target_unit = blackboard.target_unit
+function BTCritterRatFleeAction._get_far_along_path_pos(arg_7_0, arg_7_1, arg_7_2)
+	local var_7_0
+	local var_7_1 = arg_7_2.target_unit
 
-	if Unit.alive(target_unit) then
-		local conflict = Managers.state.conflict
-		local level_analysis = conflict.level_analysis
-		local current_path_index = conflict.main_path_info.current_path_index
-		local segment_index, break_node_index, last_node_position = EngineOptimized.main_path_next_break(current_path_index)
-		local current_position = POSITION_LOOKUP[unit]
-		local distance_sq = Vector3.distance_squared(current_position, last_node_position)
-		local action = blackboard.action
-		local min_dist_sq = action.min_far_along_path_pos_distance_sq
+	if Unit.alive(var_7_1) then
+		local var_7_2 = Managers.state.conflict
+		local var_7_3 = var_7_2.level_analysis
+		local var_7_4 = var_7_2.main_path_info.current_path_index
+		local var_7_5, var_7_6, var_7_7 = EngineOptimized.main_path_next_break(var_7_4)
+		local var_7_8 = POSITION_LOOKUP[arg_7_1]
 
-		if min_dist_sq < distance_sq then
-			move_pos = last_node_position
+		if Vector3.distance_squared(var_7_8, var_7_7) > arg_7_2.action.min_far_along_path_pos_distance_sq then
+			var_7_0 = var_7_7
 		end
 	end
 
-	blackboard.using_far_along_path_point = false
-	blackboard.using_random_point_in_front_of_target = true
+	arg_7_2.using_far_along_path_point = false
+	arg_7_2.using_random_point_in_front_of_target = true
 
-	return move_pos
+	return var_7_0
 end
 
-BTCritterRatFleeAction._get_random_flee_pos_in_front_of_target = function (self, unit, blackboard)
-	local move_pos
-	local nav_world = blackboard.nav_world
-	local start_pos = POSITION_LOOKUP[unit]
-	local action = blackboard.action
-	local data = action.random_point_in_front_check
-	local min_dist = data.min_random_point_in_front_check_dist
-	local max_dist = data.max_random_point_in_front_check_dist
-	local max_tries = data.max_tries
-	local above = data.above
-	local below = data.below
-	local min_width = data.min_width
-	local max_width = data.max_width
-	local target_unit = blackboard.target_unit
+function BTCritterRatFleeAction._get_random_flee_pos_in_front_of_target(arg_8_0, arg_8_1, arg_8_2)
+	local var_8_0
+	local var_8_1 = arg_8_2.nav_world
+	local var_8_2 = POSITION_LOOKUP[arg_8_1]
+	local var_8_3 = arg_8_2.action.random_point_in_front_check
+	local var_8_4 = var_8_3.min_random_point_in_front_check_dist
+	local var_8_5 = var_8_3.max_random_point_in_front_check_dist
+	local var_8_6 = var_8_3.max_tries
+	local var_8_7 = var_8_3.above
+	local var_8_8 = var_8_3.below
+	local var_8_9 = var_8_3.min_width
+	local var_8_10 = var_8_3.max_width
+	local var_8_11 = arg_8_2.target_unit
 
-	if Unit.alive(target_unit) then
-		move_pos = LocomotionUtils.new_random_goal_in_front_of_unit(nav_world, target_unit, min_dist, max_dist, max_tries, nil, min_width, max_width, above, below)
+	if Unit.alive(var_8_11) then
+		var_8_0 = LocomotionUtils.new_random_goal_in_front_of_unit(var_8_1, var_8_11, var_8_4, var_8_5, var_8_6, nil, var_8_9, var_8_10, var_8_7, var_8_8)
 	end
 
-	if not move_pos then
-		-- Nothing
+	if not var_8_0 then
+		-- block empty
 	end
 
-	blackboard.using_random_point_in_front_of_target = false
-	blackboard.using_random_point = true
+	arg_8_2.using_random_point_in_front_of_target = false
+	arg_8_2.using_random_point = true
 
-	return move_pos
+	return var_8_0
 end
 
-BTCritterRatFleeAction._get_random_flee_pos = function (self, unit, blackboard)
-	local action = blackboard.action
-	local nav_world = blackboard.nav_world
-	local start_pos = POSITION_LOOKUP[unit]
-	local data = action.random_point_check
-	local min_dist = data.min_random_point_check_dist
-	local max_dist = data.max_random_point_check_dist
-	local max_tries = data.max_tries
-	local above = data.above
-	local below = data.below
-	local move_pos = LocomotionUtils.new_random_goal(nav_world, blackboard, start_pos, min_dist, max_dist, max_tries, nil, above, below)
+function BTCritterRatFleeAction._get_random_flee_pos(arg_9_0, arg_9_1, arg_9_2)
+	local var_9_0 = arg_9_2.action
+	local var_9_1 = arg_9_2.nav_world
+	local var_9_2 = POSITION_LOOKUP[arg_9_1]
+	local var_9_3 = var_9_0.random_point_check
+	local var_9_4 = var_9_3.min_random_point_check_dist
+	local var_9_5 = var_9_3.max_random_point_check_dist
+	local var_9_6 = var_9_3.max_tries
+	local var_9_7 = var_9_3.above
+	local var_9_8 = var_9_3.below
 
-	move_pos = move_pos or POSITION_LOOKUP[unit]
-
-	return move_pos
+	return LocomotionUtils.new_random_goal(var_9_1, arg_9_2, var_9_2, var_9_4, var_9_5, var_9_6, nil, var_9_7, var_9_8) or POSITION_LOOKUP[arg_9_1]
 end
 
-BTCritterRatFleeAction.start_idle_animation = function (self, unit, blackboard)
-	Managers.state.network:anim_event(unit, "idle")
+function BTCritterRatFleeAction.start_idle_animation(arg_10_0, arg_10_1, arg_10_2)
+	Managers.state.network:anim_event(arg_10_1, "idle")
 
-	blackboard.move_state = "idle"
+	arg_10_2.move_state = "idle"
 end
 
-BTCritterRatFleeAction.start_move_animation = function (self, unit, blackboard)
-	Managers.state.network:anim_event(unit, "move_fwd")
+function BTCritterRatFleeAction.start_move_animation(arg_11_0, arg_11_1, arg_11_2)
+	Managers.state.network:anim_event(arg_11_1, "move_fwd")
 
-	blackboard.move_state = "moving"
+	arg_11_2.move_state = "moving"
 end
 
-BTCritterRatFleeAction.at_destination = function (self, unit, blackboard, t)
-	if blackboard.move_state ~= "idle" then
-		self:start_idle_animation(unit, blackboard)
+function BTCritterRatFleeAction.at_destination(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	if arg_12_2.move_state ~= "idle" then
+		arg_12_0:start_idle_animation(arg_12_1, arg_12_2)
 	end
 
-	if not blackboard.dig_timer then
-		local action = blackboard.action
-		local data = action.dig_timer
-		local min_time_before_dig = data.min_time_before_dig
-		local max_time_before_dig = data.max_time_before_dig
-		local time_before_dig = math.random(min_time_before_dig, max_time_before_dig)
+	if not arg_12_2.dig_timer then
+		local var_12_0 = arg_12_2.action.dig_timer
+		local var_12_1 = var_12_0.min_time_before_dig
+		local var_12_2 = var_12_0.max_time_before_dig
 
-		blackboard.dig_timer = t + time_before_dig
+		arg_12_2.dig_timer = arg_12_3 + math.random(var_12_1, var_12_2)
 	end
 
-	if BTConditions.can_see_player(blackboard) then
-		blackboard.move_pos = nil
-		blackboard.using_random_point = false
-		blackboard.using_cover_points = true
+	if BTConditions.can_see_player(arg_12_2) then
+		arg_12_2.move_pos = nil
+		arg_12_2.using_random_point = false
+		arg_12_2.using_cover_points = true
 	end
 end

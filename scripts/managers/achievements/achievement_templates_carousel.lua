@@ -1,1796 +1,1657 @@
-﻿-- chunkname: @scripts/managers/achievements/achievement_templates_carousel.lua
+-- chunkname: @scripts/managers/achievements/achievement_templates_carousel.lua
 
-local ObjectiveTags = require("scripts/entity_system/systems/objective/objective_tags")
-local EventParams = require("scripts/managers/achievements/achievement_event_parameters")
-local achievements = AchievementTemplates.achievements
-local register_kill_stats_id = 1
-local register_kill_victim_unit = 2
-local register_kill_damage_data = 3
-local register_kill_victim_breed = 4
-local register_knockdown_stats_id = 1
-local register_knockdown_victim_unit = 2
-local register_knockdown_attacker_player = 3
-local register_knockdown_victim_breed = 4
-local register_damage_stats_id = 1
-local register_damage_victim_unit = 2
-local register_damage_damage_data = 3
-local register_damage_attacker_unit = 4
-local register_damage_target_breed = 5
-local register_player_disabled_victim_unit = 1
-local register_revive_reviver_unit = 1
-local register_revive_revivee_unit = 2
-local register_block_broken_blocking_unit = 1
-local register_block_broken_attaker_unit = 2
-local register_objective_completed_objective_data = 1
-local register_objective_completed_hero_party_id = 2
-local register_objective_completed_objective_extension = 3
-local on_troll_vomit_hit_victim_unit = 1
-local on_troll_vomit_hit_attacker_player_unit = 2
+local var_0_0 = require("scripts/entity_system/systems/objective/objective_tags")
+local var_0_1 = require("scripts/managers/achievements/achievement_event_parameters")
+local var_0_2 = AchievementTemplates.achievements
+local var_0_3 = 1
+local var_0_4 = 2
+local var_0_5 = 3
+local var_0_6 = 4
+local var_0_7 = 1
+local var_0_8 = 2
+local var_0_9 = 3
+local var_0_10 = 4
+local var_0_11 = 1
+local var_0_12 = 2
+local var_0_13 = 3
+local var_0_14 = 4
+local var_0_15 = 5
+local var_0_16 = 1
+local var_0_17 = 1
+local var_0_18 = 2
+local var_0_19 = 1
+local var_0_20 = 2
+local var_0_21 = 1
+local var_0_22 = 2
+local var_0_23 = 3
+local var_0_24 = 1
+local var_0_25 = 2
 
-achievements.vs_disable_reviving_hero = {
-	desc = "achv_disable_reviving_hero_vs_desc",
+var_0_2.vs_disable_reviving_hero = {
+	required_dlc = "carousel",
+	name = "achv_disable_reviving_hero_vs_name",
 	display_completion_ui = true,
 	icon = "revive_interrupt",
-	name = "achv_disable_reviving_hero_vs_name",
-	required_dlc = "carousel",
+	desc = "achv_disable_reviving_hero_vs_desc",
 	events = {
-		"register_player_disabled",
+		"register_player_disabled"
 	},
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-
-		if current_mechanism_name ~= "versus" then
+	on_event = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
 
-		local victim_unit = event_data[register_player_disabled_victim_unit]
+		local var_1_0 = arg_1_4[var_0_16]
 
-		if not ALIVE[victim_unit] then
+		if not ALIVE[var_1_0] then
 			return
 		end
 
-		local local_player = Managers.player:local_player()
-		local local_player_unit = local_player.player_unit
-		local status_ext = ScriptUnit.extension(victim_unit, "status_system")
-		local disabler_unit = status_ext:get_disabler_unit()
+		local var_1_1 = Managers.player:local_player().player_unit
+		local var_1_2 = ScriptUnit.extension(var_1_0, "status_system"):get_disabler_unit()
 
-		if not ALIVE[local_player_unit] or local_player_unit ~= disabler_unit then
+		if not ALIVE[var_1_1] or var_1_1 ~= var_1_2 then
 			return
 		end
 
-		local victim_interactor_ext = ScriptUnit.extension(victim_unit, "interactor_system")
-		local is_interacting, interaction_type = victim_interactor_ext:is_interacting()
+		local var_1_3, var_1_4 = ScriptUnit.extension(var_1_0, "interactor_system"):is_interacting()
 
-		if not is_interacting or interaction_type ~= "revive" then
+		if not var_1_3 or var_1_4 ~= "revive" then
 			return
 		end
 
-		statistics_db:increment_stat(stats_id, "vs_disable_reviving_hero")
+		arg_1_0:increment_stat(arg_1_1, "vs_disable_reviving_hero")
 	end,
-	completed = function (statistics_db, stats_id)
-		return statistics_db:get_persistent_stat(stats_id, "vs_disable_reviving_hero") >= 1
-	end,
+	completed = function(arg_2_0, arg_2_1)
+		return arg_2_0:get_persistent_stat(arg_2_1, "vs_disable_reviving_hero") >= 1
+	end
 }
-achievements.vs_kill_invisible_hero = {
-	desc = "achv_kill_invisible_hero_vs_desc",
+var_0_2.vs_kill_invisible_hero = {
+	required_dlc = "carousel",
+	name = "achv_kill_invisible_hero_vs_name",
 	display_completion_ui = true,
 	icon = "kill_invisible",
-	name = "achv_kill_invisible_hero_vs_name",
-	required_dlc = "carousel",
+	desc = "achv_kill_invisible_hero_vs_desc",
 	events = {
-		"register_knockdown",
+		"register_knockdown"
 	},
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-
-		if current_mechanism_name ~= "versus" then
+	on_event = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
 
-		local victim_unit = event_data[register_knockdown_victim_unit]
-		local attacker_player = event_data[register_knockdown_attacker_player]
-		local attacker_unit = attacker_player and attacker_player.player_unit
-		local local_player = Managers.player:local_player()
-		local local_player_unit = local_player.player_unit
-		local health_ext = ScriptUnit.has_extension(victim_unit, "health_system")
+		local var_3_0 = arg_3_4[var_0_8]
+		local var_3_1 = arg_3_4[var_0_9]
+		local var_3_2 = var_3_1 and var_3_1.player_unit
+		local var_3_3 = Managers.player:local_player()
+		local var_3_4 = var_3_3.player_unit
+		local var_3_5 = ScriptUnit.has_extension(var_3_0, "health_system")
 
-		if health_ext then
-			local local_player_unique_id = local_player:unique_id()
-			local is_recent_attacker = health_ext:was_attacked_by(local_player_unique_id)
+		if var_3_5 then
+			local var_3_6 = var_3_3:unique_id()
 
-			if is_recent_attacker then
-				attacker_unit = local_player_unit
+			if var_3_5:was_attacked_by(var_3_6) then
+				var_3_2 = var_3_4
 			end
 		end
 
-		if not attacker_unit or local_player_unit ~= attacker_unit then
+		if not var_3_2 or var_3_4 ~= var_3_2 then
 			return
 		end
 
-		local attacker_breed = Unit.get_data(attacker_unit, "breed")
+		local var_3_7 = Unit.get_data(var_3_2, "breed")
 
-		if not attacker_breed or not attacker_breed.special and not attacker_breed.boss then
+		if not var_3_7 or not var_3_7.special and not var_3_7.boss then
 			return
 		end
 
-		local status_ext = ScriptUnit.has_extension(victim_unit, "status_system")
+		local var_3_8 = ScriptUnit.has_extension(var_3_0, "status_system")
 
-		if status_ext and status_ext:is_invisible() then
-			statistics_db:increment_stat(stats_id, "vs_kill_invisible_hero")
+		if var_3_8 and var_3_8:is_invisible() then
+			arg_3_0:increment_stat(arg_3_1, "vs_kill_invisible_hero")
 		end
 	end,
-	completed = function (statistics_db, stats_id)
-		return statistics_db:get_persistent_stat(stats_id, "vs_kill_invisible_hero") >= 1
-	end,
+	completed = function(arg_4_0, arg_4_1)
+		return arg_4_0:get_persistent_stat(arg_4_1, "vs_kill_invisible_hero") >= 1
+	end
 }
 
-local values = {
+local var_0_26 = {
 	50,
 	500,
 	1250,
 	2500,
-	5000,
+	5000
 }
 
-for i = 1, #values do
-	local always_run = false
-	local events, event_func
+for iter_0_0 = 1, #var_0_26 do
+	local var_0_27 = false
+	local var_0_28
+	local var_0_29
 
-	if i == 1 then
-		always_run = true
-		events = {
-			"register_kill",
+	if iter_0_0 == 1 then
+		var_0_27 = true
+		var_0_28 = {
+			"register_kill"
 		}
 
-		function event_func(statistics_db, stats_id, template_data, event_name, event_data)
-			local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-
-			if current_mechanism_name ~= "versus" then
+		function var_0_29(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			if Managers.mechanism:current_mechanism_name() ~= "versus" then
 				return
 			end
 
-			local victim_unit = event_data[register_kill_victim_unit]
-			local damage_data = event_data[register_kill_damage_data]
-			local attacker_unit = damage_data[DamageDataIndex.ATTACKER]
-			local local_player = Managers.player:local_player()
-			local local_player_unit = local_player.player_unit
-			local health_ext = ScriptUnit.has_extension(victim_unit, "health_system")
+			local var_5_0 = arg_5_4[var_0_4]
+			local var_5_1 = arg_5_4[var_0_5][DamageDataIndex.ATTACKER]
+			local var_5_2 = Managers.player:local_player()
+			local var_5_3 = var_5_2.player_unit
+			local var_5_4 = ScriptUnit.has_extension(var_5_0, "health_system")
 
-			if health_ext then
-				local local_player_unique_id = local_player:unique_id()
-				local is_recent_attacker = health_ext:was_attacked_by(local_player_unique_id)
+			if var_5_4 then
+				local var_5_5 = var_5_2:unique_id()
 
-				if is_recent_attacker then
-					attacker_unit = local_player_unit
+				if var_5_4:was_attacked_by(var_5_5) then
+					var_5_1 = var_5_3
 				end
 			end
 
-			if not attacker_unit or local_player_unit ~= attacker_unit then
+			if not var_5_1 or var_5_3 ~= var_5_1 then
 				return
 			end
 
-			local victim_breed = event_data[register_kill_victim_breed]
-
-			if not victim_breed.special then
+			if not arg_5_4[var_0_6].special then
 				return
 			end
 
-			statistics_db:increment_stat(stats_id, "vs_hero_eliminations")
+			arg_5_0:increment_stat(arg_5_1, "vs_hero_eliminations")
 		end
 	end
 
-	achievements["vs_hero_eliminations_" .. string.format("%02d", i)] = {
-		display_completion_ui = true,
+	var_0_2["vs_hero_eliminations_" .. string.format("%02d", iter_0_0)] = {
 		group = "vs_hero_eliminations",
+		display_completion_ui = true,
 		required_dlc = "carousel",
-		name = "achv_hero_eliminations_" .. string.format("%02d", i) .. "_vs_name",
-		desc = function ()
-			return string.format(Localize("achv_hero_eliminations_" .. string.format("%02d", i) .. "_vs_desc"), values[i])
+		name = "achv_hero_eliminations_" .. string.format("%02d", iter_0_0) .. "_vs_name",
+		desc = function()
+			return string.format(Localize("achv_hero_eliminations_" .. string.format("%02d", iter_0_0) .. "_vs_desc"), var_0_26[iter_0_0])
 		end,
-		icon = "hero_eliminations_" .. i,
-		always_run = always_run,
-		events = events,
-		on_event = event_func,
-		completed = function (statistics_db, stats_id)
-			return statistics_db:get_persistent_stat(stats_id, "vs_hero_eliminations") >= values[i]
+		icon = "hero_eliminations_" .. iter_0_0,
+		always_run = var_0_27,
+		events = var_0_28,
+		on_event = var_0_29,
+		completed = function(arg_7_0, arg_7_1)
+			return arg_7_0:get_persistent_stat(arg_7_1, "vs_hero_eliminations") >= var_0_26[iter_0_0]
 		end,
-		progress = function (statistics_db, stats_id)
-			local total = values[i]
-			local count = math.min(statistics_db:get_persistent_stat(stats_id, "vs_hero_eliminations"), total)
+		progress = function(arg_8_0, arg_8_1)
+			local var_8_0 = var_0_26[iter_0_0]
+			local var_8_1 = math.min(arg_8_0:get_persistent_stat(arg_8_1, "vs_hero_eliminations"), var_8_0)
 
 			return {
-				count,
-				total,
+				var_8_1,
+				var_8_0
 			}
-		end,
+		end
 	}
 end
 
-local value = 50
+local var_0_30 = 50
 
-achievements.vs_hero_monster_kills = {
+var_0_2.vs_hero_monster_kills = {
+	name = "achv_hero_monster_kills_vs_name",
 	display_completion_ui = true,
 	icon = "kill_x_monsters",
-	name = "achv_hero_monster_kills_vs_name",
 	required_dlc = "carousel",
-	desc = function ()
-		return string.format(Localize("achv_hero_monster_kills_vs_desc"), value)
+	desc = function()
+		return string.format(Localize("achv_hero_monster_kills_vs_desc"), var_0_30)
 	end,
 	events = {
-		"register_kill",
+		"register_kill"
 	},
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-
-		if current_mechanism_name ~= "versus" then
+	on_event = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
 
-		local victim_unit = event_data[register_kill_victim_unit]
-		local damage_data = event_data[register_kill_damage_data]
-		local attacker_unit = damage_data[DamageDataIndex.ATTACKER]
-		local local_player = Managers.player:local_player()
-		local local_player_unit = local_player.player_unit
-		local health_ext = ScriptUnit.has_extension(victim_unit, "health_system")
+		local var_10_0 = arg_10_4[var_0_4]
+		local var_10_1 = arg_10_4[var_0_5][DamageDataIndex.ATTACKER]
+		local var_10_2 = Managers.player:local_player()
+		local var_10_3 = var_10_2.player_unit
+		local var_10_4 = ScriptUnit.has_extension(var_10_0, "health_system")
 
-		if health_ext then
-			local local_player_unique_id = local_player:unique_id()
-			local is_recent_attacker = health_ext:was_attacked_by(local_player_unique_id)
+		if var_10_4 then
+			local var_10_5 = var_10_2:unique_id()
 
-			if is_recent_attacker then
-				attacker_unit = local_player_unit
+			if var_10_4:was_attacked_by(var_10_5) then
+				var_10_1 = var_10_3
 			end
 		end
 
-		if not attacker_unit or local_player_unit ~= attacker_unit then
+		if not var_10_1 or var_10_3 ~= var_10_1 then
 			return
 		end
 
-		local victim_breed = event_data[register_kill_victim_breed]
-
-		if not victim_breed.boss then
+		if not arg_10_4[var_0_6].boss then
 			return
 		end
 
-		statistics_db:increment_stat(stats_id, "vs_hero_monster_kill")
+		arg_10_0:increment_stat(arg_10_1, "vs_hero_monster_kill")
 	end,
-	completed = function (statistics_db, stats_id)
-		return statistics_db:get_persistent_stat(stats_id, "vs_hero_monster_kill") >= value
+	completed = function(arg_11_0, arg_11_1)
+		return arg_11_0:get_persistent_stat(arg_11_1, "vs_hero_monster_kill") >= var_0_30
 	end,
-	progress = function (statistics_db, stats_id)
-		local total = value
-		local count = math.min(statistics_db:get_persistent_stat(stats_id, "vs_hero_monster_kill"), total)
+	progress = function(arg_12_0, arg_12_1)
+		local var_12_0 = var_0_30
+		local var_12_1 = math.min(arg_12_0:get_persistent_stat(arg_12_1, "vs_hero_monster_kill"), var_12_0)
 
 		return {
-			count,
-			total,
+			var_12_1,
+			var_12_0
 		}
-	end,
+	end
 }
 
-local value = 50
+local var_0_31 = 50
 
-achievements.vs_hero_obj_barrels = {
+var_0_2.vs_hero_obj_barrels = {
+	name = "achv_hero_obj_barrels_vs_name",
 	display_completion_ui = true,
 	icon = "socket_x_items",
-	name = "achv_hero_obj_barrels_vs_name",
 	required_dlc = "carousel",
-	desc = function ()
-		return string.format(Localize("achv_hero_obj_barrels_vs_desc"), value)
+	desc = function()
+		return string.format(Localize("achv_hero_obj_barrels_vs_desc"), var_0_31)
 	end,
 	events = {
-		"register_objective_completed",
+		"register_objective_completed"
 	},
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-
-		if current_mechanism_name ~= "versus" then
+	on_event = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
 
-		local objective_data = event_data[register_objective_completed_objective_data]
-
-		if objective_data.objective_type ~= "objective_socket" then
+		if arg_14_4[var_0_21].objective_type ~= "objective_socket" then
 			return
 		end
 
-		local hero_party_id = event_data[register_objective_completed_hero_party_id]
-		local player = Managers.player:local_player()
-		local unique_id = player:unique_id()
-		local player_party = Managers.party:get_party_from_unique_id(unique_id)
+		local var_14_0 = arg_14_4[var_0_22]
+		local var_14_1 = Managers.player:local_player():unique_id()
 
-		if hero_party_id == player_party.party_id then
-			statistics_db:increment_stat(stats_id, "vs_hero_obj_barrels")
+		if var_14_0 == Managers.party:get_party_from_unique_id(var_14_1).party_id then
+			arg_14_0:increment_stat(arg_14_1, "vs_hero_obj_barrels")
 		end
 	end,
-	progress = function (statistics_db, stats_id)
-		local total = value
-		local count = math.min(statistics_db:get_persistent_stat(stats_id, "vs_hero_obj_barrels"), total)
+	progress = function(arg_15_0, arg_15_1)
+		local var_15_0 = var_0_31
+		local var_15_1 = math.min(arg_15_0:get_persistent_stat(arg_15_1, "vs_hero_obj_barrels"), var_15_0)
 
 		return {
-			count,
-			total,
+			var_15_1,
+			var_15_0
 		}
 	end,
-	completed = function (statistics_db, stats_id)
-		return statistics_db:get_persistent_stat(stats_id, "vs_hero_obj_barrels") >= value
-	end,
+	completed = function(arg_16_0, arg_16_1)
+		return arg_16_0:get_persistent_stat(arg_16_1, "vs_hero_obj_barrels") >= var_0_31
+	end
 }
 
-local value = 50
+local var_0_32 = 50
 
-achievements.vs_hero_obj_chains = {
+var_0_2.vs_hero_obj_chains = {
+	name = "achv_hero_obj_chains_vs_name",
 	display_completion_ui = true,
 	icon = "destroy_x_chains_as_team",
-	name = "achv_hero_obj_chains_vs_name",
 	required_dlc = "carousel",
-	desc = function ()
-		return string.format(Localize("achv_hero_obj_chains_vs_desc"), value)
+	desc = function()
+		return string.format(Localize("achv_hero_obj_chains_vs_desc"), var_0_32)
 	end,
 	events = {
-		"register_objective_completed",
+		"register_objective_completed"
 	},
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-
-		if current_mechanism_name ~= "versus" then
+	on_event = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
 
-		local objective_ext = event_data[register_objective_completed_objective_extension]
-		local objective_tag = objective_ext:objective_tag()
-
-		if objective_tag ~= ObjectiveTags.objective_tag_chains then
+		if arg_18_4[var_0_23]:objective_tag() ~= var_0_0.objective_tag_chains then
 			return
 		end
 
-		local hero_party_id = event_data[register_objective_completed_hero_party_id]
-		local player = Managers.player:local_player()
-		local unique_id = player:unique_id()
-		local player_party = Managers.party:get_party_from_unique_id(unique_id)
+		local var_18_0 = arg_18_4[var_0_22]
+		local var_18_1 = Managers.player:local_player():unique_id()
 
-		if hero_party_id == player_party.party_id then
-			statistics_db:increment_stat(stats_id, "vs_hero_obj_chains")
+		if var_18_0 == Managers.party:get_party_from_unique_id(var_18_1).party_id then
+			arg_18_0:increment_stat(arg_18_1, "vs_hero_obj_chains")
 		end
 	end,
-	progress = function (statistics_db, stats_id)
-		local total = value
-		local count = math.min(statistics_db:get_persistent_stat(stats_id, "vs_hero_obj_chains"), total)
+	progress = function(arg_19_0, arg_19_1)
+		local var_19_0 = var_0_32
+		local var_19_1 = math.min(arg_19_0:get_persistent_stat(arg_19_1, "vs_hero_obj_chains"), var_19_0)
 
 		return {
-			count,
-			total,
+			var_19_1,
+			var_19_0
 		}
 	end,
-	completed = function (statistics_db, stats_id)
-		return statistics_db:get_persistent_stat(stats_id, "vs_hero_obj_chains") >= value
-	end,
+	completed = function(arg_20_0, arg_20_1)
+		return arg_20_0:get_persistent_stat(arg_20_1, "vs_hero_obj_chains") >= var_0_32
+	end
 }
 
-local value = 25
+local var_0_33 = 25
 
-achievements.vs_hero_obj_capture = {
+var_0_2.vs_hero_obj_capture = {
+	name = "achv_hero_obj_capture_vs_name",
 	display_completion_ui = true,
 	icon = "contribute_x_to_capture_points",
-	name = "achv_hero_obj_capture_vs_name",
 	required_dlc = "carousel",
-	desc = function ()
-		return string.format(Localize("achv_hero_obj_capture_vs_desc"), value)
+	desc = function()
+		return string.format(Localize("achv_hero_obj_capture_vs_desc"), var_0_33)
 	end,
 	events = {
-		"register_objective_completed",
+		"register_objective_completed"
 	},
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-
-		if current_mechanism_name ~= "versus" then
+	on_event = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
 
-		local objective_data = event_data[register_objective_completed_objective_data]
-
-		if objective_data.objective_type ~= "objective_capture_point" then
+		if arg_22_4[var_0_21].objective_type ~= "objective_capture_point" then
 			return
 		end
 
-		local hero_party_id = event_data[register_objective_completed_hero_party_id]
-		local player = Managers.player:local_player()
-		local unique_id = player:unique_id()
-		local player_party = Managers.party:get_party_from_unique_id(unique_id)
+		local var_22_0 = arg_22_4[var_0_22]
+		local var_22_1 = Managers.player:local_player():unique_id()
 
-		if hero_party_id == player_party.party_id then
-			statistics_db:increment_stat(stats_id, "vs_hero_obj_capture")
+		if var_22_0 == Managers.party:get_party_from_unique_id(var_22_1).party_id then
+			arg_22_0:increment_stat(arg_22_1, "vs_hero_obj_capture")
 		end
 	end,
-	progress = function (statistics_db, stats_id)
-		local total = value
-		local count = math.min(statistics_db:get_persistent_stat(stats_id, "vs_hero_obj_capture"), total)
+	progress = function(arg_23_0, arg_23_1)
+		local var_23_0 = var_0_33
+		local var_23_1 = math.min(arg_23_0:get_persistent_stat(arg_23_1, "vs_hero_obj_capture"), var_23_0)
 
 		return {
-			count,
-			total,
+			var_23_1,
+			var_23_0
 		}
 	end,
-	completed = function (statistics_db, stats_id)
-		return statistics_db:get_persistent_stat(stats_id, "vs_hero_obj_capture") >= value
-	end,
+	completed = function(arg_24_0, arg_24_1)
+		return arg_24_0:get_persistent_stat(arg_24_1, "vs_hero_obj_capture") >= var_0_33
+	end
 }
 
-local values = {
+local var_0_34 = {
 	5,
 	25,
 	50,
 	100,
-	250,
+	250
 }
 
-for i = 1, #values do
-	achievements["vs_wins_" .. string.format("%02d", i)] = {
+for iter_0_1 = 1, #var_0_34 do
+	var_0_2["vs_wins_" .. string.format("%02d", iter_0_1)] = {
+		required_dlc = "carousel",
 		display_completion_ui = true,
 		group = "vs_wins",
-		required_dlc = "carousel",
-		name = "achv_wins_" .. string.format("%02d", i) .. "_vs_name",
-		desc = function ()
-			return string.format(Localize("achv_wins_" .. string.format("%02d", i) .. "_vs_desc"), values[i])
+		name = "achv_wins_" .. string.format("%02d", iter_0_1) .. "_vs_name",
+		desc = function()
+			return string.format(Localize("achv_wins_" .. string.format("%02d", iter_0_1) .. "_vs_desc"), var_0_34[iter_0_1])
 		end,
-		icon = "wins_" .. i,
-		completed = function (statistics_db, stats_id)
-			return statistics_db:get_persistent_stat(stats_id, "vs_game_won") >= values[i]
+		icon = "wins_" .. iter_0_1,
+		completed = function(arg_26_0, arg_26_1)
+			return arg_26_0:get_persistent_stat(arg_26_1, "vs_game_won") >= var_0_34[iter_0_1]
 		end,
-		progress = function (statistics_db, stats_id)
-			local total = values[i]
-			local count = math.min(statistics_db:get_persistent_stat(stats_id, "vs_game_won"), total)
+		progress = function(arg_27_0, arg_27_1)
+			local var_27_0 = var_0_34[iter_0_1]
+			local var_27_1 = math.min(arg_27_0:get_persistent_stat(arg_27_1, "vs_game_won"), var_27_0)
 
 			return {
-				count,
-				total,
+				var_27_1,
+				var_27_0
 			}
-		end,
+		end
 	}
 end
 
-local value = 50
+local var_0_35 = 50
 
-achievements.vs_hero_obj_safezone = {
+var_0_2.vs_hero_obj_safezone = {
+	name = "achv_hero_obj_safezone_vs_name",
 	display_completion_ui = true,
 	icon = "safe_zone",
-	name = "achv_hero_obj_safezone_vs_name",
 	required_dlc = "carousel",
-	desc = function ()
-		return string.format(Localize("achv_hero_obj_safezone_vs_desc"), value)
+	desc = function()
+		return string.format(Localize("achv_hero_obj_safezone_vs_desc"), var_0_35)
 	end,
 	events = {
-		"register_objective_completed",
+		"register_objective_completed"
 	},
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-
-		if current_mechanism_name ~= "versus" then
+	on_event = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
 
-		local objective_data = event_data[register_objective_completed_objective_data]
-
-		if objective_data.objective_type ~= "objective_safehouse" then
+		if arg_29_4[var_0_21].objective_type ~= "objective_safehouse" then
 			return
 		end
 
-		local hero_party_id = event_data[register_objective_completed_hero_party_id]
-		local player = Managers.player:local_player()
-		local unique_id = player:unique_id()
-		local player_party = Managers.party:get_party_from_unique_id(unique_id)
+		local var_29_0 = arg_29_4[var_0_22]
+		local var_29_1 = Managers.player:local_player():unique_id()
 
-		if hero_party_id == player_party.party_id then
-			statistics_db:increment_stat(stats_id, "vs_hero_obj_safezone")
+		if var_29_0 == Managers.party:get_party_from_unique_id(var_29_1).party_id then
+			arg_29_0:increment_stat(arg_29_1, "vs_hero_obj_safezone")
 		end
 	end,
-	progress = function (statistics_db, stats_id)
-		local total = value
-		local count = math.min(statistics_db:get_persistent_stat(stats_id, "vs_hero_obj_safezone"), total)
+	progress = function(arg_30_0, arg_30_1)
+		local var_30_0 = var_0_35
+		local var_30_1 = math.min(arg_30_0:get_persistent_stat(arg_30_1, "vs_hero_obj_safezone"), var_30_0)
 
 		return {
-			count,
-			total,
+			var_30_1,
+			var_30_0
 		}
 	end,
-	completed = function (statistics_db, stats_id)
-		return statistics_db:get_persistent_stat(stats_id, "vs_hero_obj_safezone") >= value
-	end,
+	completed = function(arg_31_0, arg_31_1)
+		return arg_31_0:get_persistent_stat(arg_31_1, "vs_hero_obj_safezone") >= var_0_35
+	end
 }
 
-local value = 50
+local var_0_36 = 50
 
-achievements.vs_hero_revive = {
+var_0_2.vs_hero_revive = {
+	name = "achv_hero_revive_vs_name",
 	display_completion_ui = true,
 	icon = "revive",
-	name = "achv_hero_revive_vs_name",
 	required_dlc = "carousel",
-	desc = function ()
-		return string.format(Localize("achv_hero_revive_vs_desc"), value)
+	desc = function()
+		return string.format(Localize("achv_hero_revive_vs_desc"), var_0_36)
 	end,
 	events = {
-		"register_revive",
+		"register_revive"
 	},
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-
-		if current_mechanism_name ~= "versus" then
+	on_event = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
+		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
 
-		local reviver_unit = event_data[register_revive_reviver_unit]
-		local local_player_unit = Managers.player:local_player().player_unit
+		local var_33_0 = arg_33_4[var_0_17]
+		local var_33_1 = Managers.player:local_player().player_unit
 
-		if not reviver_unit or local_player_unit ~= reviver_unit then
+		if not var_33_0 or var_33_1 ~= var_33_0 then
 			return
 		end
 
-		statistics_db:increment_stat(stats_id, "vs_hero_revive")
+		arg_33_0:increment_stat(arg_33_1, "vs_hero_revive")
 	end,
-	completed = function (statistics_db, stats_id)
-		return statistics_db:get_persistent_stat(stats_id, "vs_hero_revive") >= value
+	completed = function(arg_34_0, arg_34_1)
+		return arg_34_0:get_persistent_stat(arg_34_1, "vs_hero_revive") >= var_0_36
 	end,
-	progress = function (statistics_db, stats_id)
-		local total = value
-		local count = math.min(statistics_db:get_persistent_stat(stats_id, "vs_hero_revive"), total)
+	progress = function(arg_35_0, arg_35_1)
+		local var_35_0 = var_0_36
+		local var_35_1 = math.min(arg_35_0:get_persistent_stat(arg_35_1, "vs_hero_revive"), var_35_0)
 
 		return {
-			count,
-			total,
+			var_35_1,
+			var_35_0
 		}
-	end,
+	end
 }
 
-local value = 100
+local var_0_37 = 100
 
-achievements.vs_hero_obj_reach = {
+var_0_2.vs_hero_obj_reach = {
+	name = "achv_hero_obj_reach_vs_name",
 	display_completion_ui = true,
 	icon = "hero_objective_reach",
-	name = "achv_hero_obj_reach_vs_name",
 	required_dlc = "carousel",
-	desc = function ()
-		return string.format(Localize("achv_hero_obj_reach_vs_desc"), value)
+	desc = function()
+		return string.format(Localize("achv_hero_obj_reach_vs_desc"), var_0_37)
 	end,
 	events = {
-		"register_objective_completed",
+		"register_objective_completed"
 	},
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-
-		if current_mechanism_name ~= "versus" then
+	on_event = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
 
-		local objective_data = event_data[register_objective_completed_objective_data]
+		local var_37_0 = arg_37_4[var_0_21]
 
-		if objective_data.objective_type ~= "objective_reach" or objective_data.score_for_completion == 0 then
+		if var_37_0.objective_type ~= "objective_reach" or var_37_0.score_for_completion == 0 then
 			return
 		end
 
-		local hero_party_id = event_data[register_objective_completed_hero_party_id]
-		local player = Managers.player:local_player()
-		local unique_id = player:unique_id()
-		local player_party = Managers.party:get_party_from_unique_id(unique_id)
+		local var_37_1 = arg_37_4[var_0_22]
+		local var_37_2 = Managers.player:local_player():unique_id()
 
-		if hero_party_id == player_party.party_id then
-			statistics_db:increment_stat(stats_id, "vs_hero_obj_reach")
+		if var_37_1 == Managers.party:get_party_from_unique_id(var_37_2).party_id then
+			arg_37_0:increment_stat(arg_37_1, "vs_hero_obj_reach")
 		end
 	end,
-	progress = function (statistics_db, stats_id)
-		local total = value
-		local count = math.min(statistics_db:get_persistent_stat(stats_id, "vs_hero_obj_reach"), total)
+	progress = function(arg_38_0, arg_38_1)
+		local var_38_0 = var_0_37
+		local var_38_1 = math.min(arg_38_0:get_persistent_stat(arg_38_1, "vs_hero_obj_reach"), var_38_0)
 
 		return {
-			count,
-			total,
+			var_38_1,
+			var_38_0
 		}
 	end,
-	completed = function (statistics_db, stats_id)
-		return statistics_db:get_persistent_stat(stats_id, "vs_hero_obj_reach") >= value
-	end,
+	completed = function(arg_39_0, arg_39_1)
+		return arg_39_0:get_persistent_stat(arg_39_1, "vs_hero_obj_reach") >= var_0_37
+	end
 }
 
-local value = 50
+local var_0_38 = 50
 
-achievements.vs_hero_rescue = {
+var_0_2.vs_hero_rescue = {
+	name = "achv_hero_rescue_vs_name",
 	display_completion_ui = true,
 	icon = "rescue_prisoners",
-	name = "achv_hero_rescue_vs_name",
 	required_dlc = "carousel",
-	desc = function ()
-		return string.format(Localize("achv_hero_rescue_vs_desc"), value)
+	desc = function()
+		return string.format(Localize("achv_hero_rescue_vs_desc"), var_0_38)
 	end,
 	events = {
-		"register_objective_completed",
+		"register_objective_completed"
 	},
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-
-		if current_mechanism_name ~= "versus" then
+	on_event = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
 
-		local objective_ext = event_data[register_objective_completed_objective_extension]
-		local objective_tag = objective_ext:objective_tag()
-
-		if objective_tag ~= ObjectiveTags.objective_tag_prisoner then
+		if arg_41_4[var_0_23]:objective_tag() ~= var_0_0.objective_tag_prisoner then
 			return
 		end
 
-		local hero_party_id = event_data[register_objective_completed_hero_party_id]
-		local player = Managers.player:local_player()
-		local unique_id = player:unique_id()
-		local player_party = Managers.party:get_party_from_unique_id(unique_id)
+		local var_41_0 = arg_41_4[var_0_22]
+		local var_41_1 = Managers.player:local_player():unique_id()
 
-		if hero_party_id == player_party.party_id then
-			statistics_db:increment_stat(stats_id, "vs_hero_rescue")
+		if var_41_0 == Managers.party:get_party_from_unique_id(var_41_1).party_id then
+			arg_41_0:increment_stat(arg_41_1, "vs_hero_rescue")
 		end
 	end,
-	completed = function (statistics_db, stats_id)
-		return statistics_db:get_persistent_stat(stats_id, "vs_hero_rescue") >= value
+	completed = function(arg_42_0, arg_42_1)
+		return arg_42_0:get_persistent_stat(arg_42_1, "vs_hero_rescue") >= var_0_38
 	end,
-	progress = function (statistics_db, stats_id)
-		local total = value
-		local count = math.min(statistics_db:get_persistent_stat(stats_id, "vs_hero_rescue"), total)
+	progress = function(arg_43_0, arg_43_1)
+		local var_43_0 = var_0_38
+		local var_43_1 = math.min(arg_43_0:get_persistent_stat(arg_43_1, "vs_hero_rescue"), var_43_0)
 
 		return {
-			count,
-			total,
+			var_43_1,
+			var_43_0
 		}
-	end,
+	end
 }
-achievements.vs_air_gutter_runner = {
-	desc = "achv_air_gutter_runner_vs_desc",
+var_0_2.vs_air_gutter_runner = {
+	required_dlc = "carousel",
+	name = "achv_air_gutter_runner_vs_name",
 	display_completion_ui = true,
 	icon = "air_gutter_runner",
-	name = "achv_air_gutter_runner_vs_name",
-	required_dlc = "carousel",
+	desc = "achv_air_gutter_runner_vs_desc",
 	events = {
-		"register_kill",
+		"register_kill"
 	},
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-
-		if current_mechanism_name ~= "versus" then
+	on_event = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
+		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
 
-		local damage_data = event_data[register_kill_damage_data]
-		local attacker_unit = damage_data[DamageDataIndex.ATTACKER]
-		local local_player_unit = Managers.player:local_player().player_unit
+		local var_44_0 = arg_44_4[var_0_5][DamageDataIndex.ATTACKER]
+		local var_44_1 = Managers.player:local_player().player_unit
 
-		if not attacker_unit or local_player_unit ~= attacker_unit then
+		if not var_44_0 or var_44_1 ~= var_44_0 then
 			return
 		end
 
-		local target_breed = event_data[register_kill_victim_breed]
+		local var_44_2 = arg_44_4[var_0_6]
 
-		if not target_breed or not target_breed.name or target_breed.name ~= "vs_gutter_runner" then
+		if not var_44_2 or not var_44_2.name or var_44_2.name ~= "vs_gutter_runner" then
 			return
 		end
 
-		local victim_unit = event_data[register_kill_victim_unit]
-		local status_ext = ScriptUnit.has_extension(victim_unit, "status_system")
+		local var_44_3 = arg_44_4[var_0_4]
+		local var_44_4 = ScriptUnit.has_extension(var_44_3, "status_system")
 
-		if status_ext and status_ext:is_gutter_runner_leaping() then
-			statistics_db:increment_stat(stats_id, "vs_air_gutter_runner")
+		if var_44_4 and var_44_4:is_gutter_runner_leaping() then
+			arg_44_0:increment_stat(arg_44_1, "vs_air_gutter_runner")
 		end
 	end,
-	completed = function (statistics_db, stats_id)
-		return statistics_db:get_persistent_stat(stats_id, "vs_air_gutter_runner") >= 1
-	end,
+	completed = function(arg_45_0, arg_45_1)
+		return arg_45_0:get_persistent_stat(arg_45_1, "vs_air_gutter_runner") >= 1
+	end
 }
-achievements.vs_clutch_revive = {
-	desc = "achv_clutch_revive_vs_desc",
+var_0_2.vs_clutch_revive = {
+	required_dlc = "carousel",
+	name = "achv_clutch_revive_vs_name",
 	display_completion_ui = true,
 	icon = "clutch_revive",
-	name = "achv_clutch_revive_vs_name",
-	required_dlc = "carousel",
+	desc = "achv_clutch_revive_vs_desc",
 	events = {
-		"register_revive",
+		"register_revive"
 	},
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-
-		if current_mechanism_name ~= "versus" then
+	on_event = function(arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4)
+		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
 
-		local reviver_unit = event_data[register_revive_reviver_unit]
-		local local_player_unit = Managers.player:local_player().player_unit
+		local var_46_0 = arg_46_4[var_0_17]
+		local var_46_1 = Managers.player:local_player().player_unit
 
-		if not reviver_unit or local_player_unit ~= reviver_unit then
+		if not var_46_0 or var_46_1 ~= var_46_0 then
 			return
 		end
 
-		local side = Managers.state.side:get_side_from_name("heroes")
-		local player_and_bot_units = side.PLAYER_AND_BOT_UNITS
+		local var_46_2 = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_UNITS
 
-		for _, player_unit in pairs(player_and_bot_units) do
-			if ALIVE[player_unit] and player_unit ~= local_player_unit then
-				local status_ext = ScriptUnit.has_extension(player_unit, "status_system")
+		for iter_46_0, iter_46_1 in pairs(var_46_2) do
+			if ALIVE[iter_46_1] and iter_46_1 ~= var_46_1 then
+				local var_46_3 = ScriptUnit.has_extension(iter_46_1, "status_system")
 
-				if status_ext and not status_ext:is_knocked_down() and not status_ext:is_ready_for_assisted_respawn() and not status_ext:is_dead() then
+				if var_46_3 and not var_46_3:is_knocked_down() and not var_46_3:is_ready_for_assisted_respawn() and not var_46_3:is_dead() then
 					return
 				end
 			end
 		end
 
-		statistics_db:increment_stat(stats_id, "vs_clutch_revive")
+		arg_46_0:increment_stat(arg_46_1, "vs_clutch_revive")
 	end,
-	completed = function (statistics_db, stats_id)
-		return statistics_db:get_persistent_stat(stats_id, "vs_clutch_revive") >= 1
-	end,
+	completed = function(arg_47_0, arg_47_1)
+		return arg_47_0:get_persistent_stat(arg_47_1, "vs_clutch_revive") >= 1
+	end
 }
 
-local values = {
+local var_0_39 = {
 	10,
 	50,
 	100,
 	250,
-	500,
+	500
 }
 
-for i = 1, #values do
-	achievements["vs_packmaster_eliminations_" .. string.format("%02d", i)] = {
+for iter_0_2 = 1, #var_0_39 do
+	var_0_2["vs_packmaster_eliminations_" .. string.format("%02d", iter_0_2)] = {
+		required_dlc = "carousel",
 		display_completion_ui = true,
 		group = "vs_packmaster_eliminations",
-		required_dlc = "carousel",
-		name = "achv_packmaster_" .. string.format("%02d", i) .. "_vs_name",
-		desc = function ()
-			return string.format(Localize("achv_packmaster_" .. string.format("%02d", i) .. "_vs_desc"), values[i])
+		name = "achv_packmaster_" .. string.format("%02d", iter_0_2) .. "_vs_name",
+		desc = function()
+			return string.format(Localize("achv_packmaster_" .. string.format("%02d", iter_0_2) .. "_vs_desc"), var_0_39[iter_0_2])
 		end,
-		icon = "packmaster_" .. i,
-		completed = function (statistics_db, stats_id)
-			return statistics_db:get_persistent_stat(stats_id, "eliminations_as_breed", "vs_packmaster") >= values[i]
+		icon = "packmaster_" .. iter_0_2,
+		completed = function(arg_49_0, arg_49_1)
+			return arg_49_0:get_persistent_stat(arg_49_1, "eliminations_as_breed", "vs_packmaster") >= var_0_39[iter_0_2]
 		end,
-		progress = function (statistics_db, stats_id)
-			local total = values[i]
-			local count = math.min(statistics_db:get_persistent_stat(stats_id, "eliminations_as_breed", "vs_packmaster"), total)
+		progress = function(arg_50_0, arg_50_1)
+			local var_50_0 = var_0_39[iter_0_2]
+			local var_50_1 = math.min(arg_50_0:get_persistent_stat(arg_50_1, "eliminations_as_breed", "vs_packmaster"), var_50_0)
 
 			return {
-				count,
-				total,
+				var_50_1,
+				var_50_0
 			}
-		end,
+		end
 	}
 end
 
-local value = 50
+local var_0_40 = 50
 
-achievements.vs_hoist_heroes = {
+var_0_2.vs_hoist_heroes = {
+	name = "achv_hoist_heroes_vs_name",
 	display_completion_ui = true,
 	icon = "hoist_heroes",
-	name = "achv_hoist_heroes_vs_name",
 	required_dlc = "carousel",
-	desc = function ()
-		return string.format(Localize("achv_hoist_heroes_vs_desc"), value)
+	desc = function()
+		return string.format(Localize("achv_hoist_heroes_vs_desc"), var_0_40)
 	end,
 	events = {
-		"register_player_disabled",
+		"register_player_disabled"
 	},
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-
-		if current_mechanism_name ~= "versus" then
+	on_event = function(arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4)
+		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
 
-		local victim_unit = event_data[register_player_disabled_victim_unit]
+		local var_52_0 = arg_52_4[var_0_16]
 
-		if not ALIVE[victim_unit] then
+		if not ALIVE[var_52_0] then
 			return
 		end
 
-		local breed = Unit.get_data(victim_unit, "breed")
-
-		if not breed.is_hero then
+		if not Unit.get_data(var_52_0, "breed").is_hero then
 			return
 		end
 
-		local status_ext = ScriptUnit.has_extension(victim_unit, "status_system")
+		local var_52_1 = ScriptUnit.has_extension(var_52_0, "status_system")
 
-		if not status_ext then
+		if not var_52_1 then
 			return
 		end
 
-		local is_hoisted = status_ext:is_hanging_from_hook()
-
-		if not is_hoisted then
+		if not var_52_1:is_hanging_from_hook() then
 			return
 		end
 
-		local packmaster_unit = status_ext:get_pack_master_grabber()
-		local player_unit = Managers.player:local_player().player_unit
+		local var_52_2 = var_52_1:get_pack_master_grabber()
+		local var_52_3 = Managers.player:local_player().player_unit
 
-		if player_unit and player_unit == packmaster_unit then
-			statistics_db:increment_stat(stats_id, "vs_hoist_heroes")
+		if var_52_3 and var_52_3 == var_52_2 then
+			arg_52_0:increment_stat(arg_52_1, "vs_hoist_heroes")
 		end
 	end,
-	completed = function (statistics_db, stats_id)
-		return statistics_db:get_persistent_stat(stats_id, "vs_hoist_heroes") >= value
+	completed = function(arg_53_0, arg_53_1)
+		return arg_53_0:get_persistent_stat(arg_53_1, "vs_hoist_heroes") >= var_0_40
 	end,
-	progress = function (statistics_db, stats_id)
-		local count = math.min(statistics_db:get_persistent_stat(stats_id, "vs_hoist_heroes"), value)
+	progress = function(arg_54_0, arg_54_1)
+		local var_54_0 = math.min(arg_54_0:get_persistent_stat(arg_54_1, "vs_hoist_heroes"), var_0_40)
 
 		return {
-			count,
-			value,
+			var_54_0,
+			var_0_40
 		}
-	end,
+	end
 }
 
-local value = 500
+local var_0_41 = 500
 
-achievements.vs_drag_heroes = {
+var_0_2.vs_drag_heroes = {
+	required_dlc = "carousel",
+	name = "achv_drag_heroes_vs_name",
 	display_completion_ui = true,
 	icon = "drag_heroes",
-	name = "achv_drag_heroes_vs_name",
-	required_dlc = "carousel",
-	desc = function ()
-		return string.format(Localize("achv_drag_heroes_vs_desc"), value)
+	desc = function()
+		return string.format(Localize("achv_drag_heroes_vs_desc"), var_0_41)
 	end,
-	completed = function (statistics_db, stats_id)
-		return statistics_db:get_persistent_stat(stats_id, "vs_drag_heroes") >= value
+	completed = function(arg_56_0, arg_56_1)
+		return arg_56_0:get_persistent_stat(arg_56_1, "vs_drag_heroes") >= var_0_41
 	end,
-	progress = function (statistics_db, stats_id)
-		local count = math.min(statistics_db:get_persistent_stat(stats_id, "vs_drag_heroes"), value)
+	progress = function(arg_57_0, arg_57_1)
+		local var_57_0 = math.min(arg_57_0:get_persistent_stat(arg_57_1, "vs_drag_heroes"), var_0_41)
 
 		return {
-			count,
-			value,
+			var_57_0,
+			var_0_41
 		}
-	end,
+	end
 }
 
-local values = {
+local var_0_42 = {
 	10,
 	50,
 	100,
 	250,
-	500,
+	500
 }
 
-for i = 1, #values do
-	achievements["vs_gutter_runner_eliminations_" .. string.format("%02d", i)] = {
+for iter_0_3 = 1, #var_0_42 do
+	var_0_2["vs_gutter_runner_eliminations_" .. string.format("%02d", iter_0_3)] = {
+		required_dlc = "carousel",
 		display_completion_ui = true,
 		group = "vs_gutter_runner_eliminations",
-		required_dlc = "carousel",
-		name = "achv_gutter_runner_" .. string.format("%02d", i) .. "_vs_name",
-		desc = function ()
-			return string.format(Localize("achv_gutter_runner_" .. string.format("%02d", i) .. "_vs_desc"), values[i])
+		name = "achv_gutter_runner_" .. string.format("%02d", iter_0_3) .. "_vs_name",
+		desc = function()
+			return string.format(Localize("achv_gutter_runner_" .. string.format("%02d", iter_0_3) .. "_vs_desc"), var_0_42[iter_0_3])
 		end,
-		icon = "gutter_runner_" .. i,
-		completed = function (statistics_db, stats_id)
-			return statistics_db:get_persistent_stat(stats_id, "eliminations_as_breed", "vs_gutter_runner") >= values[i]
+		icon = "gutter_runner_" .. iter_0_3,
+		completed = function(arg_59_0, arg_59_1)
+			return arg_59_0:get_persistent_stat(arg_59_1, "eliminations_as_breed", "vs_gutter_runner") >= var_0_42[iter_0_3]
 		end,
-		progress = function (statistics_db, stats_id)
-			local total = values[i]
-			local count = math.min(statistics_db:get_persistent_stat(stats_id, "eliminations_as_breed", "vs_gutter_runner"), total)
+		progress = function(arg_60_0, arg_60_1)
+			local var_60_0 = var_0_42[iter_0_3]
+			local var_60_1 = math.min(arg_60_0:get_persistent_stat(arg_60_1, "eliminations_as_breed", "vs_gutter_runner"), var_60_0)
 
 			return {
-				count,
-				total,
+				var_60_1,
+				var_60_0
 			}
-		end,
+		end
 	}
 end
 
-local value = 100
+local var_0_43 = 100
 
-achievements.vs_pounce_heroes = {
+var_0_2.vs_pounce_heroes = {
+	name = "achv_pounce_heroes_vs_name",
 	display_completion_ui = true,
 	icon = "pounce_heroes",
-	name = "achv_pounce_heroes_vs_name",
 	required_dlc = "carousel",
-	desc = function ()
-		return string.format(Localize("achv_pounce_heroes_vs_desc"), value)
+	desc = function()
+		return string.format(Localize("achv_pounce_heroes_vs_desc"), var_0_43)
 	end,
 	events = {
-		"register_player_disabled",
+		"register_player_disabled"
 	},
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-
-		if current_mechanism_name ~= "versus" then
+	on_event = function(arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4)
+		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
 
-		local victim_unit = event_data[register_player_disabled_victim_unit]
+		local var_62_0 = arg_62_4[var_0_16]
 
-		if not ALIVE[victim_unit] then
+		if not ALIVE[var_62_0] then
 			return
 		end
 
-		local breed = Unit.get_data(victim_unit, "breed")
-
-		if not breed.is_hero then
+		if not Unit.get_data(var_62_0, "breed").is_hero then
 			return
 		end
 
-		local status_ext = ScriptUnit.has_extension(victim_unit, "status_system")
+		local var_62_1 = ScriptUnit.has_extension(var_62_0, "status_system")
 
-		if not status_ext then
+		if not var_62_1 then
 			return
 		end
 
-		local is_pounced_down, pouncer_unit = status_ext:is_pounced_down()
+		local var_62_2, var_62_3 = var_62_1:is_pounced_down()
 
-		if not is_pounced_down then
+		if not var_62_2 then
 			return
 		end
 
-		local player_unit = Managers.player:local_player().player_unit
+		local var_62_4 = Managers.player:local_player().player_unit
 
-		if player_unit and player_unit == pouncer_unit then
-			statistics_db:increment_stat(stats_id, "vs_pounce_heroes")
+		if var_62_4 and var_62_4 == var_62_3 then
+			arg_62_0:increment_stat(arg_62_1, "vs_pounce_heroes")
 		end
 	end,
-	completed = function (statistics_db, stats_id)
-		return statistics_db:get_persistent_stat(stats_id, "vs_pounce_heroes") >= value
+	completed = function(arg_63_0, arg_63_1)
+		return arg_63_0:get_persistent_stat(arg_63_1, "vs_pounce_heroes") >= var_0_43
 	end,
-	progress = function (statistics_db, stats_id)
-		local count = math.min(statistics_db:get_persistent_stat(stats_id, "vs_pounce_heroes"), value)
+	progress = function(arg_64_0, arg_64_1)
+		local var_64_0 = math.min(arg_64_0:get_persistent_stat(arg_64_1, "vs_pounce_heroes"), var_0_43)
 
 		return {
-			count,
-			value,
+			var_64_0,
+			var_0_43
 		}
-	end,
+	end
 }
-achievements.vs_gas_combo_pounce = {
-	desc = "achv_gas_combo_pounce_vs_desc",
+var_0_2.vs_gas_combo_pounce = {
+	required_dlc = "carousel",
+	name = "achv_gas_combo_pounce_vs_name",
 	display_completion_ui = true,
 	icon = "gas_combo_pounce",
-	name = "achv_gas_combo_pounce_vs_name",
-	required_dlc = "carousel",
+	desc = "achv_gas_combo_pounce_vs_desc",
 	events = {
-		"register_player_disabled",
+		"register_player_disabled"
 	},
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-
-		if current_mechanism_name ~= "versus" then
+	on_event = function(arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4)
+		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
 
-		local victim_unit = event_data[register_player_disabled_victim_unit]
+		local var_65_0 = arg_65_4[var_0_16]
 
-		if not ALIVE[victim_unit] then
+		if not ALIVE[var_65_0] then
 			return
 		end
 
-		local breed = Unit.get_data(victim_unit, "breed")
-
-		if not breed.is_hero then
+		if not Unit.get_data(var_65_0, "breed").is_hero then
 			return
 		end
 
-		local status_ext = ScriptUnit.has_extension(victim_unit, "status_system")
+		local var_65_1 = ScriptUnit.has_extension(var_65_0, "status_system")
 
-		if not status_ext then
+		if not var_65_1 then
 			return
 		end
 
-		local is_pounced_down, pouncer_unit = status_ext:is_pounced_down()
+		local var_65_2, var_65_3 = var_65_1:is_pounced_down()
 
-		if not is_pounced_down then
+		if not var_65_2 then
 			return
 		end
 
-		local player_unit = Managers.player:local_player().player_unit
+		local var_65_4 = Managers.player:local_player().player_unit
 
-		if not ALIVE[player_unit] or player_unit ~= pouncer_unit then
+		if not ALIVE[var_65_4] or var_65_4 ~= var_65_3 then
 			return
 		end
 
-		local area_damage_system = Managers.state.entity:system("area_damage_system")
-		local area_damage_extensions = area_damage_system:get_extensions_from_extension_name("AreaDamageExtension")
+		local var_65_5 = Managers.state.entity:system("area_damage_system"):get_extensions_from_extension_name("AreaDamageExtension")
 
-		for area_damage_unit, extension_data in pairs(area_damage_extensions) do
-			local radius = extension_data.radius
-			local unit_position = POSITION_LOOKUP[victim_unit]
-			local area_damage_position = Unit.local_position(area_damage_unit, 0)
-			local distance_sq = Vector3.distance_squared(unit_position, area_damage_position)
-			local is_inside_radius = distance_sq < radius * radius
+		for iter_65_0, iter_65_1 in pairs(var_65_5) do
+			local var_65_6 = iter_65_1.radius
+			local var_65_7 = POSITION_LOOKUP[var_65_0]
+			local var_65_8 = Unit.local_position(iter_65_0, 0)
 
-			if is_inside_radius then
-				statistics_db:increment_stat(stats_id, "vs_gas_combo_pounce")
+			if Vector3.distance_squared(var_65_7, var_65_8) < var_65_6 * var_65_6 then
+				arg_65_0:increment_stat(arg_65_1, "vs_gas_combo_pounce")
 
 				return
 			end
 		end
 	end,
-	completed = function (statistics_db, stats_id)
-		return statistics_db:get_persistent_stat(stats_id, "vs_gas_combo_pounce") >= 1
-	end,
+	completed = function(arg_66_0, arg_66_1)
+		return arg_66_0:get_persistent_stat(arg_66_1, "vs_gas_combo_pounce") >= 1
+	end
 }
 
-local values = {
+local var_0_44 = {
 	500,
 	2500,
 	5000,
 	10000,
-	25000,
+	25000
 }
 
-for i = 1, #values do
-	achievements["vs_warpfire_thrower_damage_" .. string.format("%02d", i)] = {
+for iter_0_4 = 1, #var_0_44 do
+	var_0_2["vs_warpfire_thrower_damage_" .. string.format("%02d", iter_0_4)] = {
+		required_dlc = "carousel",
 		display_completion_ui = true,
 		group = "vs_warpfire_thrower_damage",
-		required_dlc = "carousel",
-		name = "achv_warpfire_thrower_" .. string.format("%02d", i) .. "_vs_name",
-		desc = function ()
-			return string.format(Localize("achv_warpfire_thrower_" .. string.format("%02d", i) .. "_vs_desc"), values[i])
+		name = "achv_warpfire_thrower_" .. string.format("%02d", iter_0_4) .. "_vs_name",
+		desc = function()
+			return string.format(Localize("achv_warpfire_thrower_" .. string.format("%02d", iter_0_4) .. "_vs_desc"), var_0_44[iter_0_4])
 		end,
-		icon = "warpfire_thrower_" .. i,
-		completed = function (statistics_db, stats_id)
-			return statistics_db:get_persistent_stat(stats_id, "damage_dealt_as_breed", "vs_warpfire_thrower") >= values[i]
+		icon = "warpfire_thrower_" .. iter_0_4,
+		completed = function(arg_68_0, arg_68_1)
+			return arg_68_0:get_persistent_stat(arg_68_1, "damage_dealt_as_breed", "vs_warpfire_thrower") >= var_0_44[iter_0_4]
 		end,
-		progress = function (statistics_db, stats_id)
-			local total = values[i]
-			local count = math.min(statistics_db:get_persistent_stat(stats_id, "damage_dealt_as_breed", "vs_warpfire_thrower"), total)
+		progress = function(arg_69_0, arg_69_1)
+			local var_69_0 = var_0_44[iter_0_4]
+			local var_69_1 = math.min(arg_69_0:get_persistent_stat(arg_69_1, "damage_dealt_as_breed", "vs_warpfire_thrower"), var_69_0)
 
 			return {
-				count,
-				total,
+				var_69_1,
+				var_69_0
 			}
-		end,
+		end
 	}
 end
 
-local WARPFIRE_KNOCKBACK_GRACE_PERIOD_ON_DISABLED = 3
-local WARPFIRE_KNOCKBACK_GRACE_PERIOD_ON_KILL = 6
-local WARPFIRE_KNOCKBACK_MIN_Z_DIFFERENCE = 4
+local var_0_45 = 3
+local var_0_46 = 6
+local var_0_47 = 4
 
-local function warpfire_knockback_check_tracked_unit(knockback_data, victim_unit)
-	local knockback_position = knockback_data.knockback_position:unbox()
-	local position = Unit.is_valid(victim_unit) and not Unit.is_frozen(victim_unit) and Unit.local_position(victim_unit, 0)
+local function var_0_48(arg_70_0, arg_70_1)
+	local var_70_0 = arg_70_0.knockback_position:unbox()
+	local var_70_1 = Unit.is_valid(arg_70_1) and not Unit.is_frozen(arg_70_1) and Unit.local_position(arg_70_1, 0)
 
-	if not position or knockback_position[3] - position[3] < WARPFIRE_KNOCKBACK_MIN_Z_DIFFERENCE then
+	if not var_70_1 or var_70_0[3] - var_70_1[3] < var_0_47 then
 		return false
 	end
 
 	return true
 end
 
-achievements.vs_push_hero_off_map = {
-	desc = "achv_push_hero_off_map_vs_desc",
-	display_completion_ui = true,
-	icon = "push_hero_off_map",
+var_0_2.vs_push_hero_off_map = {
 	name = "achv_push_hero_off_map_vs_name",
+	display_completion_ui = true,
 	required_dlc = "carousel",
+	icon = "push_hero_off_map",
+	desc = "achv_push_hero_off_map_vs_desc",
 	events = {
 		"register_kill",
 		"register_damage",
-		"register_player_disabled",
+		"register_player_disabled"
 	},
-	completed = function (statistics_db, stats_id, template_data)
-		return statistics_db:get_persistent_stat(stats_id, "vs_push_hero_off_map") >= 1
+	completed = function(arg_71_0, arg_71_1, arg_71_2)
+		return arg_71_0:get_persistent_stat(arg_71_1, "vs_push_hero_off_map") >= 1
 	end,
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local t = Managers.time:time("game")
+	on_event = function(arg_72_0, arg_72_1, arg_72_2, arg_72_3, arg_72_4)
+		local var_72_0 = Managers.time:time("game")
 
-		if event_name == "register_kill" then
-			local victim_unit = event_data[register_kill_victim_unit]
-			local unit_data = template_data.tracked_units and template_data.tracked_units[victim_unit]
+		if arg_72_3 == "register_kill" then
+			local var_72_1 = arg_72_4[var_0_4]
+			local var_72_2 = arg_72_2.tracked_units and arg_72_2.tracked_units[var_72_1]
 
-			if not unit_data then
+			if not var_72_2 then
 				return
 			end
 
-			local knockback_time = unit_data.knockback_time
-
-			if t - knockback_time > WARPFIRE_KNOCKBACK_GRACE_PERIOD_ON_KILL then
+			if var_72_0 - var_72_2.knockback_time > var_0_46 then
 				return false
 			end
 
-			if warpfire_knockback_check_tracked_unit(unit_data, victim_unit) then
-				statistics_db:increment_stat(stats_id, "vs_push_hero_off_map")
+			if var_0_48(var_72_2, var_72_1) then
+				arg_72_0:increment_stat(arg_72_1, "vs_push_hero_off_map")
 
 				return
 			end
-		elseif event_name == "register_damage" then
-			local victim_unit = event_data[register_damage_victim_unit]
-			local breed = Unit.get_data(victim_unit, "breed")
+		elseif arg_72_3 == "register_damage" then
+			local var_72_3 = arg_72_4[var_0_12]
+			local var_72_4 = Unit.get_data(var_72_3, "breed")
 
-			if not breed or not breed.is_hero then
+			if not var_72_4 or not var_72_4.is_hero then
 				return
 			end
 
-			local player = Managers.player:local_player()
-			local player_unit = player and player.player_unit
-			local attacker_unit = event_data[register_damage_attacker_unit]
+			local var_72_5 = Managers.player:local_player()
+			local var_72_6 = var_72_5 and var_72_5.player_unit
+			local var_72_7 = arg_72_4[var_0_14]
 
-			if not ALIVE[player_unit] or player_unit ~= attacker_unit then
+			if not ALIVE[var_72_6] or var_72_6 ~= var_72_7 then
 				return
 			end
 
-			local attacker_breed = Unit.get_data(attacker_unit, "breed")
+			local var_72_8 = Unit.get_data(var_72_7, "breed")
 
-			if not attacker_breed or attacker_breed.name ~= "vs_warpfire_thrower" then
+			if not var_72_8 or var_72_8.name ~= "vs_warpfire_thrower" then
 				return
 			end
 
-			template_data.tracked_units = template_data.tracked_units or {}
+			arg_72_2.tracked_units = arg_72_2.tracked_units or {}
 
-			local existing_data = template_data.tracked_units[victim_unit]
+			local var_72_9 = arg_72_2.tracked_units[var_72_3]
 
-			if existing_data then
-				existing_data.knockback_time = t
+			if var_72_9 then
+				var_72_9.knockback_time = var_72_0
 
-				existing_data.knockback_position:store(POSITION_LOOKUP[victim_unit])
+				var_72_9.knockback_position:store(POSITION_LOOKUP[var_72_3])
 			else
-				template_data.tracked_units[victim_unit] = {
-					knockback_time = t,
-					knockback_position = Vector3Box(POSITION_LOOKUP[victim_unit]),
+				arg_72_2.tracked_units[var_72_3] = {
+					knockback_time = var_72_0,
+					knockback_position = Vector3Box(POSITION_LOOKUP[var_72_3])
 				}
 			end
-		elseif event_name == "register_player_disabled" then
-			local victim_unit = event_data[register_player_disabled_victim_unit]
+		elseif arg_72_3 == "register_player_disabled" then
+			local var_72_10 = arg_72_4[var_0_16]
 
-			if not ALIVE[victim_unit] then
+			if not ALIVE[var_72_10] then
 				return
 			end
 
-			local unit_data = template_data.tracked_units and template_data.tracked_units[victim_unit]
+			local var_72_11 = arg_72_2.tracked_units and arg_72_2.tracked_units[var_72_10]
 
-			if not unit_data then
+			if not var_72_11 then
 				return
 			end
 
-			local status_ext = ScriptUnit.has_extension(victim_unit, "status_system")
+			local var_72_12 = ScriptUnit.has_extension(var_72_10, "status_system")
 
-			if not status_ext or not status_ext:get_is_ledge_hanging() then
+			if not var_72_12 or not var_72_12:get_is_ledge_hanging() then
 				return
 			end
 
-			local knockback_time = unit_data.knockback_time
-
-			if t - knockback_time > WARPFIRE_KNOCKBACK_GRACE_PERIOD_ON_DISABLED then
+			if var_72_0 - var_72_11.knockback_time > var_0_45 then
 				return false
 			end
 
-			statistics_db:increment_stat(stats_id, "vs_push_hero_off_map")
+			arg_72_0:increment_stat(arg_72_1, "vs_push_hero_off_map")
 		end
-	end,
+	end
 }
-achievements.vs_kill_hoisted_hero = {
-	desc = "achv_kill_hoisted_hero_vs_desc",
+var_0_2.vs_kill_hoisted_hero = {
+	required_dlc = "carousel",
+	name = "achv_kill_hoisted_hero_vs_name",
 	display_completion_ui = true,
 	icon = "kill_hoisted_hero",
-	name = "achv_kill_hoisted_hero_vs_name",
-	required_dlc = "carousel",
+	desc = "achv_kill_hoisted_hero_vs_desc",
 	events = {
-		"register_kill",
+		"register_kill"
 	},
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-
-		if current_mechanism_name ~= "versus" then
+	on_event = function(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
+		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
 
-		local victim_unit = event_data[register_kill_victim_unit]
-		local damage_data = event_data[register_kill_damage_data]
-		local attacker_unit = damage_data[DamageDataIndex.ATTACKER]
-		local local_player = Managers.player:local_player()
-		local local_player_unit = local_player.player_unit
-		local health_ext = ScriptUnit.has_extension(victim_unit, "health_system")
+		local var_73_0 = arg_73_4[var_0_4]
+		local var_73_1 = arg_73_4[var_0_5][DamageDataIndex.ATTACKER]
+		local var_73_2 = Managers.player:local_player()
+		local var_73_3 = var_73_2.player_unit
+		local var_73_4 = ScriptUnit.has_extension(var_73_0, "health_system")
 
-		if health_ext then
-			local local_player_unique_id = local_player:unique_id()
-			local is_recent_attacker = health_ext:was_attacked_by(local_player_unique_id)
+		if var_73_4 then
+			local var_73_5 = var_73_2:unique_id()
 
-			if is_recent_attacker then
-				attacker_unit = local_player_unit
+			if var_73_4:was_attacked_by(var_73_5) then
+				var_73_1 = var_73_3
 			end
 		end
 
-		if not attacker_unit or local_player_unit ~= attacker_unit then
+		if not var_73_1 or var_73_3 ~= var_73_1 then
 			return
 		end
 
-		local target_breed = event_data[register_kill_victim_breed]
-
-		if not target_breed.is_hero then
+		if not arg_73_4[var_0_6].is_hero then
 			return
 		end
 
-		local attacker_breed = Unit.get_data(attacker_unit, "breed")
-
-		if attacker_breed.name ~= "vs_warpfire_thrower" then
+		if Unit.get_data(var_73_1, "breed").name ~= "vs_warpfire_thrower" then
 			return
 		end
 
-		local status_ext = ScriptUnit.has_extension(victim_unit, "status_system")
+		local var_73_6 = ScriptUnit.has_extension(var_73_0, "status_system")
 
-		if status_ext and (status_ext:is_hanging_from_hook() or status_ext:is_dropping_from_hook()) then
-			statistics_db:increment_stat(stats_id, "vs_kill_hoisted_hero")
+		if var_73_6 and (var_73_6:is_hanging_from_hook() or var_73_6:is_dropping_from_hook()) then
+			arg_73_0:increment_stat(arg_73_1, "vs_kill_hoisted_hero")
 		end
 	end,
-	completed = function (statistics_db, stats_id)
-		return statistics_db:get_persistent_stat(stats_id, "vs_kill_hoisted_hero") >= 1
-	end,
+	completed = function(arg_74_0, arg_74_1)
+		return arg_74_0:get_persistent_stat(arg_74_1, "vs_kill_hoisted_hero") >= 1
+	end
 }
 
-local values = {
+local var_0_49 = {
 	500,
 	2500,
 	5000,
 	10000,
-	25000,
+	25000
 }
 
-for i = 1, #values do
-	achievements["vs_ratling_gunner_damage_" .. string.format("%02d", i)] = {
+for iter_0_5 = 1, #var_0_49 do
+	var_0_2["vs_ratling_gunner_damage_" .. string.format("%02d", iter_0_5)] = {
+		required_dlc = "carousel",
 		display_completion_ui = true,
 		group = "vs_ratling_gunner_damage",
-		required_dlc = "carousel",
-		name = "achv_ratling_gunner_" .. string.format("%02d", i) .. "_vs_name",
-		desc = function ()
-			return string.format(Localize("achv_ratling_gunner_" .. string.format("%02d", i) .. "_vs_desc"), values[i])
+		name = "achv_ratling_gunner_" .. string.format("%02d", iter_0_5) .. "_vs_name",
+		desc = function()
+			return string.format(Localize("achv_ratling_gunner_" .. string.format("%02d", iter_0_5) .. "_vs_desc"), var_0_49[iter_0_5])
 		end,
-		icon = "ratling_gunner_" .. i,
-		completed = function (statistics_db, stats_id)
-			return statistics_db:get_persistent_stat(stats_id, "damage_dealt_as_breed", "vs_ratling_gunner") >= values[i]
+		icon = "ratling_gunner_" .. iter_0_5,
+		completed = function(arg_76_0, arg_76_1)
+			return arg_76_0:get_persistent_stat(arg_76_1, "damage_dealt_as_breed", "vs_ratling_gunner") >= var_0_49[iter_0_5]
 		end,
-		progress = function (statistics_db, stats_id)
-			local total = values[i]
-			local count = math.min(statistics_db:get_persistent_stat(stats_id, "damage_dealt_as_breed", "vs_ratling_gunner"), total)
+		progress = function(arg_77_0, arg_77_1)
+			local var_77_0 = var_0_49[iter_0_5]
+			local var_77_1 = math.min(arg_77_0:get_persistent_stat(arg_77_1, "damage_dealt_as_breed", "vs_ratling_gunner"), var_77_0)
 
 			return {
-				count,
-				total,
+				var_77_1,
+				var_77_0
 			}
-		end,
+		end
 	}
 end
 
-achievements.vs_break_hero_shield = {
-	desc = "achv_break_hero_shield_vs_desc",
+var_0_2.vs_break_hero_shield = {
+	required_dlc = "carousel",
+	name = "achv_break_hero_shield_vs_name",
 	display_completion_ui = true,
 	icon = "break_hero_shield",
-	name = "achv_break_hero_shield_vs_name",
-	required_dlc = "carousel",
+	desc = "achv_break_hero_shield_vs_desc",
 	events = {
-		"register_block_broken",
+		"register_block_broken"
 	},
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-
-		if current_mechanism_name ~= "versus" then
+	on_event = function(arg_78_0, arg_78_1, arg_78_2, arg_78_3, arg_78_4)
+		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
 
-		local attacker_player_unit = event_data[register_block_broken_attaker_unit]
-		local local_player_unit = Managers.player:local_player().player_unit
+		local var_78_0 = arg_78_4[var_0_20]
+		local var_78_1 = Managers.player:local_player().player_unit
 
-		if not attacker_player_unit or local_player_unit ~= attacker_player_unit then
+		if not var_78_0 or var_78_1 ~= var_78_0 then
 			return
 		end
 
-		local blocking_player_unit = event_data[register_block_broken_blocking_unit]
+		local var_78_2 = arg_78_4[var_0_19]
 
-		if not ALIVE[blocking_player_unit] then
+		if not ALIVE[var_78_2] then
 			return
 		end
 
-		local blocking_breed = Unit.get_data(blocking_player_unit, "breed")
-
-		if not blocking_breed.is_hero then
+		if not Unit.get_data(var_78_2, "breed").is_hero then
 			return
 		end
 
-		local attacker_breed = Unit.get_data(attacker_player_unit, "breed")
-
-		if attacker_breed.name ~= "vs_ratling_gunner" then
+		if Unit.get_data(var_78_0, "breed").name ~= "vs_ratling_gunner" then
 			return
 		end
 
-		statistics_db:increment_stat(stats_id, "vs_break_hero_shield")
+		arg_78_0:increment_stat(arg_78_1, "vs_break_hero_shield")
 	end,
-	completed = function (statistics_db, stats_id)
-		return statistics_db:get_persistent_stat(stats_id, "vs_break_hero_shield") >= 1
-	end,
+	completed = function(arg_79_0, arg_79_1)
+		return arg_79_0:get_persistent_stat(arg_79_1, "vs_break_hero_shield") >= 1
+	end
 }
-achievements.vs_kill_ko_hero = {
-	desc = "achv_kill_ko_hero_vs_desc",
+var_0_2.vs_kill_ko_hero = {
+	required_dlc = "carousel",
+	name = "achv_kill_ko_hero_vs_name",
 	display_completion_ui = true,
 	icon = "kill_ko_hero",
-	name = "achv_kill_ko_hero_vs_name",
-	required_dlc = "carousel",
+	desc = "achv_kill_ko_hero_vs_desc",
 	events = {
-		"register_kill",
+		"register_kill"
 	},
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-
-		if current_mechanism_name ~= "versus" then
+	on_event = function(arg_80_0, arg_80_1, arg_80_2, arg_80_3, arg_80_4)
+		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
 
-		local victim_unit = event_data[register_kill_victim_unit]
-		local damage_data = event_data[register_kill_damage_data]
-		local attacker_unit = damage_data[DamageDataIndex.ATTACKER]
-		local local_player = Managers.player:local_player()
-		local local_player_unit = local_player.player_unit
-		local health_ext = ScriptUnit.has_extension(victim_unit, "health_system")
+		local var_80_0 = arg_80_4[var_0_4]
+		local var_80_1 = arg_80_4[var_0_5][DamageDataIndex.ATTACKER]
+		local var_80_2 = Managers.player:local_player()
+		local var_80_3 = var_80_2.player_unit
+		local var_80_4 = ScriptUnit.has_extension(var_80_0, "health_system")
 
-		if health_ext then
-			local local_player_unique_id = local_player:unique_id()
-			local is_recent_attacker = health_ext:was_attacked_by(local_player_unique_id)
+		if var_80_4 then
+			local var_80_5 = var_80_2:unique_id()
 
-			if is_recent_attacker then
-				attacker_unit = local_player_unit
+			if var_80_4:was_attacked_by(var_80_5) then
+				var_80_1 = var_80_3
 			end
 		end
 
-		if not attacker_unit or local_player_unit ~= attacker_unit then
+		if not var_80_1 or var_80_3 ~= var_80_1 then
 			return
 		end
 
-		local target_breed = event_data[register_kill_victim_breed]
-
-		if not target_breed.is_hero then
+		if not arg_80_4[var_0_6].is_hero then
 			return
 		end
 
-		local attacker_breed = Unit.get_data(attacker_unit, "breed")
-
-		if attacker_breed.name ~= "vs_ratling_gunner" then
+		if Unit.get_data(var_80_1, "breed").name ~= "vs_ratling_gunner" then
 			return
 		end
 
-		local victim_unit = event_data[register_kill_victim_unit]
+		local var_80_6 = arg_80_4[var_0_4]
 
-		if not ALIVE[victim_unit] then
+		if not ALIVE[var_80_6] then
 			return
 		end
 
-		local status_ext = ScriptUnit.has_extension(victim_unit, "status_system")
+		local var_80_7 = ScriptUnit.has_extension(var_80_6, "status_system")
 
-		if status_ext and status_ext:is_knocked_down() then
-			statistics_db:increment_stat(stats_id, "vs_kill_ko_hero")
+		if var_80_7 and var_80_7:is_knocked_down() then
+			arg_80_0:increment_stat(arg_80_1, "vs_kill_ko_hero")
 		end
 	end,
-	completed = function (statistics_db, stats_id)
-		return statistics_db:get_persistent_stat(stats_id, "vs_kill_ko_hero") >= 1
-	end,
+	completed = function(arg_81_0, arg_81_1)
+		return arg_81_0:get_persistent_stat(arg_81_1, "vs_kill_ko_hero") >= 1
+	end
 }
 
-local values = {
+local var_0_50 = {
 	500,
 	2500,
 	5000,
 	10000,
-	25000,
+	25000
 }
 
-for i = 1, #values do
-	achievements["vs_poison_wind_globadier_damage_" .. string.format("%02d", i)] = {
+for iter_0_6 = 1, #var_0_50 do
+	var_0_2["vs_poison_wind_globadier_damage_" .. string.format("%02d", iter_0_6)] = {
+		required_dlc = "carousel",
 		display_completion_ui = true,
 		group = "vs_poison_wind_globadier_damage",
-		required_dlc = "carousel",
-		name = "achv_globadier_" .. string.format("%02d", i) .. "_vs_name",
-		desc = function ()
-			return string.format(Localize("achv_globadier_" .. string.format("%02d", i) .. "_vs_desc"), values[i])
+		name = "achv_globadier_" .. string.format("%02d", iter_0_6) .. "_vs_name",
+		desc = function()
+			return string.format(Localize("achv_globadier_" .. string.format("%02d", iter_0_6) .. "_vs_desc"), var_0_50[iter_0_6])
 		end,
-		icon = "globadier_" .. i,
-		completed = function (statistics_db, stats_id)
-			return statistics_db:get_persistent_stat(stats_id, "damage_dealt_as_breed", "vs_poison_wind_globadier") >= values[i]
+		icon = "globadier_" .. iter_0_6,
+		completed = function(arg_83_0, arg_83_1)
+			return arg_83_0:get_persistent_stat(arg_83_1, "damage_dealt_as_breed", "vs_poison_wind_globadier") >= var_0_50[iter_0_6]
 		end,
-		progress = function (statistics_db, stats_id)
-			local total = values[i]
-			local count = math.min(statistics_db:get_persistent_stat(stats_id, "damage_dealt_as_breed", "vs_poison_wind_globadier"), total)
+		progress = function(arg_84_0, arg_84_1)
+			local var_84_0 = var_0_50[iter_0_6]
+			local var_84_1 = math.min(arg_84_0:get_persistent_stat(arg_84_1, "damage_dealt_as_breed", "vs_poison_wind_globadier"), var_84_0)
 
 			return {
-				count,
-				total,
+				var_84_1,
+				var_84_0
 			}
-		end,
+		end
 	}
 end
 
-achievements.vs_gas_combo = {
-	desc = "achv_gas_combo_vs_desc",
+var_0_2.vs_gas_combo = {
+	required_dlc = "carousel",
+	name = "achv_gas_combo_vs_name",
 	display_completion_ui = true,
 	icon = "gas_combo",
-	name = "achv_gas_combo_vs_name",
-	required_dlc = "carousel",
+	desc = "achv_gas_combo_vs_desc",
 	events = {
-		"register_damage",
+		"register_damage"
 	},
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-
-		if current_mechanism_name ~= "versus" then
+	on_event = function(arg_85_0, arg_85_1, arg_85_2, arg_85_3, arg_85_4)
+		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
 
-		local damage_data = event_data[register_damage_damage_data]
-		local damage_type = damage_data[DamageDataIndex.DAMAGE_TYPE]
-		local damage_amount = damage_data[DamageDataIndex.DAMAGE_AMOUNT]
+		local var_85_0 = arg_85_4[var_0_13]
+		local var_85_1 = var_85_0[DamageDataIndex.DAMAGE_TYPE]
+		local var_85_2 = var_85_0[DamageDataIndex.DAMAGE_AMOUNT]
 
-		if damage_amount == 0 then
+		if var_85_2 == 0 then
 			return
 		end
 
-		if damage_type ~= "gas" then
+		if var_85_1 ~= "gas" then
 			return
 		end
 
-		local attacker_player_unit = event_data[register_damage_attacker_unit]
-		local local_player_unit = Managers.player:local_player().player_unit
+		local var_85_3 = arg_85_4[var_0_14]
+		local var_85_4 = Managers.player:local_player().player_unit
 
-		if not attacker_player_unit or local_player_unit ~= attacker_player_unit then
+		if not var_85_3 or var_85_4 ~= var_85_3 then
 			return
 		end
 
-		local attacker_breed = Unit.get_data(attacker_player_unit, "breed")
-
-		if attacker_breed.name ~= "vs_poison_wind_globadier" then
+		if Unit.get_data(var_85_3, "breed").name ~= "vs_poison_wind_globadier" then
 			return
 		end
 
-		local victim_breed = event_data[register_damage_target_breed]
-
-		if not victim_breed.is_hero then
+		if not arg_85_4[var_0_15].is_hero then
 			return
 		end
 
-		local victim_unit = event_data[register_damage_victim_unit]
+		local var_85_5 = arg_85_4[var_0_12]
 
-		if not ALIVE[victim_unit] then
+		if not ALIVE[var_85_5] then
 			return
 		end
 
-		local status_ext = ScriptUnit.has_extension(victim_unit, "status_system")
+		local var_85_6 = ScriptUnit.has_extension(var_85_5, "status_system")
 
-		if status_ext and status_ext:is_disabled_by_pact_sworn() then
-			statistics_db:modify_stat_by_amount(stats_id, "vs_gas_combo", damage_amount)
+		if var_85_6 and var_85_6:is_disabled_by_pact_sworn() then
+			arg_85_0:modify_stat_by_amount(arg_85_1, "vs_gas_combo", var_85_2)
 		end
 	end,
-	completed = function (statistics_db, stats_id)
-		return statistics_db:get_persistent_stat(stats_id, "vs_gas_combo") >= 1
-	end,
+	completed = function(arg_86_0, arg_86_1)
+		return arg_86_0:get_persistent_stat(arg_86_1, "vs_gas_combo") >= 1
+	end
 }
 
-local value = 100
+local var_0_51 = 100
 
-achievements.vs_globe_damage = {
+var_0_2.vs_globe_damage = {
+	required_dlc = "carousel",
+	name = "achv_globe_damage_vs_name",
 	display_completion_ui = true,
 	icon = "globadier_damage",
-	name = "achv_globe_damage_vs_name",
-	required_dlc = "carousel",
-	desc = function ()
-		return string.format(Localize("achv_globe_damage_vs_desc"), value)
+	desc = function()
+		return string.format(Localize("achv_globe_damage_vs_desc"), var_0_51)
 	end,
 	events = {
-		"register_damage",
+		"register_damage"
 	},
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-
-		if current_mechanism_name ~= "versus" then
+	on_event = function(arg_88_0, arg_88_1, arg_88_2, arg_88_3, arg_88_4)
+		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
 
-		local damage_data = event_data[register_damage_damage_data]
-		local damage_type = damage_data[DamageDataIndex.DAMAGE_TYPE]
-		local damage_amount = damage_data[DamageDataIndex.DAMAGE_AMOUNT]
-		local attacker_unit = damage_data[DamageDataIndex.ATTACKER]
+		local var_88_0 = arg_88_4[var_0_13]
+		local var_88_1 = var_88_0[DamageDataIndex.DAMAGE_TYPE]
+		local var_88_2 = var_88_0[DamageDataIndex.DAMAGE_AMOUNT]
+		local var_88_3 = var_88_0[DamageDataIndex.ATTACKER]
 
-		if damage_amount == 0 then
+		if var_88_2 == 0 then
 			return
 		end
 
-		if damage_type ~= "gas" then
+		if var_88_1 ~= "gas" then
 			return
 		end
 
-		local attacker_player_unit = event_data[register_damage_attacker_unit]
-		local local_player_unit = Managers.player:local_player().player_unit
+		local var_88_4 = arg_88_4[var_0_14]
+		local var_88_5 = Managers.player:local_player().player_unit
 
-		if not attacker_player_unit or local_player_unit ~= attacker_player_unit then
+		if not var_88_4 or var_88_5 ~= var_88_4 then
 			return
 		end
 
-		local attacker_breed = Unit.get_data(attacker_player_unit, "breed")
-
-		if attacker_breed.name ~= "vs_poison_wind_globadier" then
+		if Unit.get_data(var_88_4, "breed").name ~= "vs_poison_wind_globadier" then
 			return
 		end
 
-		local victim_breed = event_data[register_damage_target_breed]
-
-		if not victim_breed.is_hero then
+		if not arg_88_4[var_0_15].is_hero then
 			return
 		end
 
-		local victim_unit = event_data[register_damage_victim_unit]
+		local var_88_6 = arg_88_4[var_0_12]
 
-		if not ALIVE[victim_unit] then
+		if not ALIVE[var_88_6] then
 			return
 		end
 
-		if statistics_db:get_persistent_stat(stats_id, "vs_globe_damage") >= value then
+		if arg_88_0:get_persistent_stat(arg_88_1, "vs_globe_damage") >= var_0_51 then
 			return
 		end
 
-		if template_data.current_unit ~= attacker_unit then
-			statistics_db:set_stat(stats_id, "vs_globe_damage", 0)
+		if arg_88_2.current_unit ~= var_88_3 then
+			arg_88_0:set_stat(arg_88_1, "vs_globe_damage", 0)
 		end
 
-		template_data.current_unit = attacker_unit
+		arg_88_2.current_unit = var_88_3
 
-		statistics_db:modify_stat_by_amount(stats_id, "vs_globe_damage", damage_amount)
+		arg_88_0:modify_stat_by_amount(arg_88_1, "vs_globe_damage", var_88_2)
 	end,
-	completed = function (statistics_db, stats_id)
-		return statistics_db:get_persistent_stat(stats_id, "vs_globe_damage") >= value
-	end,
+	completed = function(arg_89_0, arg_89_1)
+		return arg_89_0:get_persistent_stat(arg_89_1, "vs_globe_damage") >= var_0_51
+	end
 }
 
-local values = {
+local var_0_52 = {
 	100,
 	1000,
-	2500,
+	2500
 }
 
-for i = 1, #values do
-	achievements["vs_chaos_troll_damage_" .. string.format("%02d", i)] = {
+for iter_0_7 = 1, #var_0_52 do
+	var_0_2["vs_chaos_troll_damage_" .. string.format("%02d", iter_0_7)] = {
+		required_dlc = "carousel",
 		display_completion_ui = true,
 		group = "vs_chaos_troll_damage",
-		required_dlc = "carousel",
-		name = "achv_bile_troll_" .. string.format("%02d", i) .. "_vs_name",
-		desc = function ()
-			return string.format(Localize("achv_bile_troll_" .. string.format("%02d", i) .. "_vs_desc"), values[i])
+		name = "achv_bile_troll_" .. string.format("%02d", iter_0_7) .. "_vs_name",
+		desc = function()
+			return string.format(Localize("achv_bile_troll_" .. string.format("%02d", iter_0_7) .. "_vs_desc"), var_0_52[iter_0_7])
 		end,
-		icon = "bile_troll_" .. i,
-		completed = function (statistics_db, stats_id)
-			return statistics_db:get_persistent_stat(stats_id, "damage_dealt_as_breed", "vs_chaos_troll") >= values[i]
+		icon = "bile_troll_" .. iter_0_7,
+		completed = function(arg_91_0, arg_91_1)
+			return arg_91_0:get_persistent_stat(arg_91_1, "damage_dealt_as_breed", "vs_chaos_troll") >= var_0_52[iter_0_7]
 		end,
-		progress = function (statistics_db, stats_id)
-			local total = values[i]
-			local count = math.min(statistics_db:get_persistent_stat(stats_id, "damage_dealt_as_breed", "vs_chaos_troll"), total)
+		progress = function(arg_92_0, arg_92_1)
+			local var_92_0 = var_0_52[iter_0_7]
+			local var_92_1 = math.min(arg_92_0:get_persistent_stat(arg_92_1, "damage_dealt_as_breed", "vs_chaos_troll"), var_92_0)
 
 			return {
-				count,
-				total,
+				var_92_1,
+				var_92_0
 			}
-		end,
+		end
 	}
 end
 
-local value = 100
+local var_0_53 = 100
 
-achievements.vs_bile_troll_vomit = {
+var_0_2.vs_bile_troll_vomit = {
+	name = "achv_bile_troll_vomit_vs_name",
 	display_completion_ui = true,
 	icon = "bile_troll_vomit",
-	name = "achv_bile_troll_vomit_vs_name",
 	required_dlc = "carousel",
-	desc = function ()
-		return string.format(Localize("achv_bile_troll_vomit_vs_desc"), value)
+	desc = function()
+		return string.format(Localize("achv_bile_troll_vomit_vs_desc"), var_0_53)
 	end,
 	events = {
-		"on_troll_vomit_hit",
+		"on_troll_vomit_hit"
 	},
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-
-		if current_mechanism_name ~= "versus" then
+	on_event = function(arg_94_0, arg_94_1, arg_94_2, arg_94_3, arg_94_4)
+		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
 
-		local victim_unit = event_data[on_troll_vomit_hit_victim_unit]
-		local attacker_player_unit = event_data[on_troll_vomit_hit_attacker_player_unit]
-		local attacker_breed = Unit.get_data(attacker_player_unit, "breed")
+		local var_94_0 = arg_94_4[var_0_24]
+		local var_94_1 = arg_94_4[var_0_25]
 
-		if attacker_breed.name ~= "vs_chaos_troll" then
+		if Unit.get_data(var_94_1, "breed").name ~= "vs_chaos_troll" then
 			return
 		end
 
-		local local_player_unit = Managers.player:local_player().player_unit
+		local var_94_2 = Managers.player:local_player().player_unit
 
-		if not attacker_player_unit or local_player_unit ~= attacker_player_unit then
+		if not var_94_1 or var_94_2 ~= var_94_1 then
 			return
 		end
 
-		if not ALIVE[victim_unit] then
+		if not ALIVE[var_94_0] then
 			return
 		end
 
-		local victim_breed = Unit.get_data(victim_unit, "breed")
-
-		if not victim_breed.is_hero then
+		if not Unit.get_data(var_94_0, "breed").is_hero then
 			return
 		end
 
-		statistics_db:increment_stat(stats_id, "vs_bile_troll_vomit")
+		arg_94_0:increment_stat(arg_94_1, "vs_bile_troll_vomit")
 	end,
-	completed = function (statistics_db, stats_id)
-		return statistics_db:get_persistent_stat(stats_id, "vs_bile_troll_vomit") >= value
+	completed = function(arg_95_0, arg_95_1)
+		return arg_95_0:get_persistent_stat(arg_95_1, "vs_bile_troll_vomit") >= var_0_53
 	end,
-	progress = function (statistics_db, stats_id)
-		local count = math.min(statistics_db:get_persistent_stat(stats_id, "vs_bile_troll_vomit"), value)
+	progress = function(arg_96_0, arg_96_1)
+		local var_96_0 = math.min(arg_96_0:get_persistent_stat(arg_96_1, "vs_bile_troll_vomit"), var_0_53)
 
 		return {
-			count,
-			value,
+			var_96_0,
+			var_0_53
 		}
-	end,
+	end
 }
 
-local values = {
+local var_0_54 = {
 	100,
 	1000,
-	2500,
+	2500
 }
 
-for i = 1, #values do
-	achievements["vs_rat_ogre_damage_" .. string.format("%02d", i)] = {
+for iter_0_8 = 1, #var_0_54 do
+	var_0_2["vs_rat_ogre_damage_" .. string.format("%02d", iter_0_8)] = {
+		required_dlc = "carousel",
 		display_completion_ui = true,
 		group = "vs_rat_ogre_damage",
-		required_dlc = "carousel",
-		name = "achv_rat_ogre_" .. string.format("%02d", i) .. "_vs_name",
-		desc = function ()
-			return string.format(Localize("achv_rat_ogre_" .. string.format("%02d", i) .. "_vs_desc"), values[i])
+		name = "achv_rat_ogre_" .. string.format("%02d", iter_0_8) .. "_vs_name",
+		desc = function()
+			return string.format(Localize("achv_rat_ogre_" .. string.format("%02d", iter_0_8) .. "_vs_desc"), var_0_54[iter_0_8])
 		end,
-		icon = "rat_ogre_" .. i,
-		completed = function (statistics_db, stats_id)
-			return statistics_db:get_persistent_stat(stats_id, "damage_dealt_as_breed", "vs_rat_ogre") >= values[i]
+		icon = "rat_ogre_" .. iter_0_8,
+		completed = function(arg_98_0, arg_98_1)
+			return arg_98_0:get_persistent_stat(arg_98_1, "damage_dealt_as_breed", "vs_rat_ogre") >= var_0_54[iter_0_8]
 		end,
-		progress = function (statistics_db, stats_id)
-			local total = values[i]
-			local count = math.min(statistics_db:get_persistent_stat(stats_id, "damage_dealt_as_breed", "vs_rat_ogre"), total)
+		progress = function(arg_99_0, arg_99_1)
+			local var_99_0 = var_0_54[iter_0_8]
+			local var_99_1 = math.min(arg_99_0:get_persistent_stat(arg_99_1, "damage_dealt_as_breed", "vs_rat_ogre"), var_99_0)
 
 			return {
-				count,
-				total,
+				var_99_1,
+				var_99_0
 			}
-		end,
+		end
 	}
 end
 
-local value = 100
+local var_0_55 = 100
 
-achievements.vs_rat_ogre_hit_heroes_heavy = {
+var_0_2.vs_rat_ogre_hit_heroes_heavy = {
+	name = "achv_rat_ogre_hit_heroes_vs_name",
 	display_completion_ui = true,
 	icon = "rat_ogre_attack",
-	name = "achv_rat_ogre_hit_heroes_vs_name",
 	required_dlc = "carousel",
-	desc = function ()
-		return string.format(Localize("achv_rat_ogre_hit_heroes_vs_desc"), value)
+	desc = function()
+		return string.format(Localize("achv_rat_ogre_hit_heroes_vs_desc"), var_0_55)
 	end,
 	events = {
-		"on_hit",
+		"on_hit"
 	},
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-
-		if current_mechanism_name ~= "versus" then
+	on_event = function(arg_101_0, arg_101_1, arg_101_2, arg_101_3, arg_101_4)
+		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
 
-		local attacker_unit = event_data[EventParams.on_hit.unit]
+		local var_101_0 = arg_101_4[var_0_1.on_hit.unit]
 
-		if not ALIVE[attacker_unit] then
+		if not ALIVE[var_101_0] then
 			return
 		end
 
-		local local_player_unit = Managers.player:local_player().player_unit
-
-		if local_player_unit ~= attacker_unit then
+		if Managers.player:local_player().player_unit ~= var_101_0 then
 			return
 		end
 
-		local damage_source = event_data[EventParams.on_hit.damage_source]
-
-		if damage_source ~= "vs_rat_ogre_hands" then
+		if arg_101_4[var_0_1.on_hit.damage_source] ~= "vs_rat_ogre_hands" then
 			return
 		end
 
-		local attack_type = event_data[EventParams.on_hit.attack_type]
-
-		if attack_type ~= "heavy_attack" then
+		if arg_101_4[var_0_1.on_hit.attack_type] ~= "heavy_attack" then
 			return
 		end
 
-		local hit_unit = event_data[EventParams.on_hit.hit_unit]
-		local breed = ALIVE[hit_unit] and Unit.get_data(hit_unit, "breed")
+		local var_101_1 = arg_101_4[var_0_1.on_hit.hit_unit]
+		local var_101_2 = ALIVE[var_101_1] and Unit.get_data(var_101_1, "breed")
 
-		if not breed or not breed.is_player then
+		if not var_101_2 or not var_101_2.is_player then
 			return
 		end
 
-		template_data.cooldown = template_data.cooldown or {}
+		arg_101_2.cooldown = arg_101_2.cooldown or {}
 
-		local t = Managers.time:time("game")
-		local cd = template_data.cooldown[hit_unit]
+		local var_101_3 = Managers.time:time("game")
+		local var_101_4 = arg_101_2.cooldown[var_101_1]
 
-		if cd and t < cd then
+		if var_101_4 and var_101_3 < var_101_4 then
 			return
 		end
 
-		template_data.cooldown[hit_unit] = t + 0.5
+		arg_101_2.cooldown[var_101_1] = var_101_3 + 0.5
 
-		statistics_db:increment_stat(stats_id, "vs_rat_ogre_hit_heroes_heavy")
+		arg_101_0:increment_stat(arg_101_1, "vs_rat_ogre_hit_heroes_heavy")
 	end,
-	completed = function (statistics_db, stats_id)
-		return statistics_db:get_persistent_stat(stats_id, "vs_rat_ogre_hit_heroes_heavy") >= value
+	completed = function(arg_102_0, arg_102_1)
+		return arg_102_0:get_persistent_stat(arg_102_1, "vs_rat_ogre_hit_heroes_heavy") >= var_0_55
 	end,
-	progress = function (statistics_db, stats_id)
-		local count = math.min(statistics_db:get_persistent_stat(stats_id, "vs_rat_ogre_hit_heroes_heavy"), value)
+	progress = function(arg_103_0, arg_103_1)
+		local var_103_0 = math.min(arg_103_0:get_persistent_stat(arg_103_1, "vs_rat_ogre_hit_heroes_heavy"), var_0_55)
 
 		return {
-			count,
-			value,
+			var_103_0,
+			var_0_55
 		}
-	end,
+	end
 }
 
-local value = 100
+local var_0_56 = 100
 
-achievements.vs_rat_ogre_hit_leap = {
+var_0_2.vs_rat_ogre_hit_leap = {
+	name = "achv_rat_ogre_leap_vs_name",
 	display_completion_ui = true,
 	icon = "rat_ogre_leap",
-	name = "achv_rat_ogre_leap_vs_name",
 	required_dlc = "carousel",
-	desc = function ()
-		return string.format(Localize("achv_rat_ogre_leap_vs_desc"), value)
+	desc = function()
+		return string.format(Localize("achv_rat_ogre_leap_vs_desc"), var_0_56)
 	end,
 	events = {
-		"on_hit",
+		"on_hit"
 	},
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-
-		if current_mechanism_name ~= "versus" then
+	on_event = function(arg_105_0, arg_105_1, arg_105_2, arg_105_3, arg_105_4)
+		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
 
-		local attacker_unit = event_data[EventParams.on_hit.unit]
+		local var_105_0 = arg_105_4[var_0_1.on_hit.unit]
 
-		if not ALIVE[attacker_unit] then
+		if not ALIVE[var_105_0] then
 			return
 		end
 
-		local local_player_unit = Managers.player:local_player().player_unit
-
-		if local_player_unit ~= attacker_unit then
+		if Managers.player:local_player().player_unit ~= var_105_0 then
 			return
 		end
 
-		local damage_source = event_data[EventParams.on_hit.damage_source]
-
-		if damage_source ~= "vs_rat_ogre_hands" then
+		if arg_105_4[var_0_1.on_hit.damage_source] ~= "vs_rat_ogre_hands" then
 			return
 		end
 
-		local attack_type = event_data[EventParams.on_hit.attack_type]
-
-		if attack_type ~= "aoe" then
+		if arg_105_4[var_0_1.on_hit.attack_type] ~= "aoe" then
 			return
 		end
 
-		local hit_unit = event_data[EventParams.on_hit.hit_unit]
-		local breed = ALIVE[hit_unit] and Unit.get_data(hit_unit, "breed")
+		local var_105_1 = arg_105_4[var_0_1.on_hit.hit_unit]
+		local var_105_2 = ALIVE[var_105_1] and Unit.get_data(var_105_1, "breed")
 
-		if not breed or not breed.is_player then
+		if not var_105_2 or not var_105_2.is_player then
 			return
 		end
 
-		statistics_db:increment_stat(stats_id, "vs_rat_ogre_hit_leap")
+		arg_105_0:increment_stat(arg_105_1, "vs_rat_ogre_hit_leap")
 	end,
-	completed = function (statistics_db, stats_id)
-		return statistics_db:get_persistent_stat(stats_id, "vs_rat_ogre_hit_leap") >= value
+	completed = function(arg_106_0, arg_106_1)
+		return arg_106_0:get_persistent_stat(arg_106_1, "vs_rat_ogre_hit_leap") >= var_0_56
 	end,
-	progress = function (statistics_db, stats_id)
-		local count = math.min(statistics_db:get_persistent_stat(stats_id, "vs_rat_ogre_hit_leap"), value)
+	progress = function(arg_107_0, arg_107_1)
+		local var_107_0 = math.min(arg_107_0:get_persistent_stat(arg_107_1, "vs_rat_ogre_hit_leap"), var_0_56)
 
 		return {
-			count,
-			value,
+			var_107_0,
+			var_0_56
 		}
-	end,
+	end
 }

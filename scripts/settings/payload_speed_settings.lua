@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/settings/payload_speed_settings.lua
+-- chunkname: @scripts/settings/payload_speed_settings.lua
 
 PayloadSpeedSettings = PayloadSpeedSettings or {}
 PayloadSpeedSettings.flat = PayloadSpeedSettings.flat or {}

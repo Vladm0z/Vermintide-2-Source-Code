@@ -1,4 +1,4 @@
-﻿-- chunkname: @dialogues/generated/lookup_enemy_beastmen_vo.lua
+-- chunkname: @dialogues/generated/lookup_enemy_beastmen_vo.lua
 
 assert(DialogueLookup[DialogueLookup_n + 1] == nil)
 assert(DialogueLookup[DialogueLookup_n + 2] == nil)

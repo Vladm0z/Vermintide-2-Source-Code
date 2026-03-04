@@ -1,348 +1,340 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_lunging.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_lunging.lua
 
-local POSITION_LOOKUP = POSITION_LOOKUP
+local var_0_0 = POSITION_LOOKUP
 
 PlayerCharacterStateLunging = class(PlayerCharacterStateLunging, PlayerCharacterState)
 
-PlayerCharacterStateLunging.init = function (self, character_state_init_context)
-	PlayerCharacterState.init(self, character_state_init_context, "lunging")
+function PlayerCharacterStateLunging.init(arg_1_0, arg_1_1)
+	PlayerCharacterState.init(arg_1_0, arg_1_1, "lunging")
 
-	self._direction = Vector3Box()
-	self._last_position = Vector3Box()
+	arg_1_0._direction = Vector3Box()
+	arg_1_0._last_position = Vector3Box()
 end
 
-PlayerCharacterStateLunging._on_enter_animation = function (self, unit, anim_event, variable_name, variable_value, first_person_anim_event)
-	if variable_name then
-		CharacterStateHelper.play_animation_event_with_variable_float(unit, anim_event, variable_name, variable_value)
+function PlayerCharacterStateLunging._on_enter_animation(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	if arg_2_3 then
+		CharacterStateHelper.play_animation_event_with_variable_float(arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	else
-		CharacterStateHelper.play_animation_event(unit, anim_event)
+		CharacterStateHelper.play_animation_event(arg_2_1, arg_2_2)
 	end
 
-	local first_person_extension = self.first_person_extension
+	local var_2_0 = arg_2_0.first_person_extension
 
-	CharacterStateHelper.play_animation_event_first_person(first_person_extension, first_person_anim_event or anim_event)
+	CharacterStateHelper.play_animation_event_first_person(var_2_0, arg_2_5 or arg_2_2)
 end
 
-PlayerCharacterStateLunging.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
-	table.clear(self.temp_params)
+function PlayerCharacterStateLunging.on_enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+	table.clear(arg_3_0.temp_params)
 
-	local input_extension = self.input_extension
-	local first_person_extension = self.first_person_extension
-	local status_extension = self.status_extension
-	local lunge_data = self.status_extension.do_lunge
+	local var_3_0 = arg_3_0.input_extension
+	local var_3_1 = arg_3_0.first_person_extension
+	local var_3_2 = arg_3_0.status_extension
+	local var_3_3 = arg_3_0.status_extension.do_lunge
 
-	self._lunge_data = lunge_data
-	self.status_extension.do_lunge = false
-	self.career_extension = ScriptUnit.extension(unit, "career_system")
+	arg_3_0._lunge_data = var_3_3
+	arg_3_0.status_extension.do_lunge = false
+	arg_3_0.career_extension = ScriptUnit.extension(arg_3_1, "career_system")
+	arg_3_0._first_person_unit = var_3_1:get_first_person_unit()
+	arg_3_0.damage_start_time = var_3_3.damage_start_time and arg_3_5 + var_3_3.damage_start_time or arg_3_5
+	arg_3_0.ledge_falloff_immunity_time = var_3_3.ledge_falloff_immunity and arg_3_5 + var_3_3.ledge_falloff_immunity
 
-	local first_person_unit = first_person_extension:get_first_person_unit()
+	local var_3_4 = Quaternion.forward(arg_3_0.first_person_extension:current_rotation())
 
-	self._first_person_unit = first_person_unit
-	self.damage_start_time = lunge_data.damage_start_time and t + lunge_data.damage_start_time or t
-	self.ledge_falloff_immunity_time = lunge_data.ledge_falloff_immunity and t + lunge_data.ledge_falloff_immunity
+	Vector3.set_z(var_3_4, 0)
 
-	local forward_direction = Quaternion.forward(self.first_person_extension:current_rotation())
+	local var_3_5 = Vector3.normalize(var_3_4)
+	local var_3_6 = Quaternion.look(var_3_5, Vector3.up())
 
-	Vector3.set_z(forward_direction, 0)
+	Unit.set_local_rotation(arg_3_1, 0, var_3_6)
+	CharacterStateHelper.look(var_3_0, arg_3_0.player.viewport_name, var_3_1, var_3_2, arg_3_0.inventory_extension)
 
-	forward_direction = Vector3.normalize(forward_direction)
-
-	local flat_rotation = Quaternion.look(forward_direction, Vector3.up())
-
-	Unit.set_local_rotation(unit, 0, flat_rotation)
-	CharacterStateHelper.look(input_extension, self.player.viewport_name, first_person_extension, status_extension, self.inventory_extension)
-
-	if lunge_data.animation_event then
-		self:_on_enter_animation(unit, lunge_data.animation_event, lunge_data.animation_variable_name, lunge_data.animation_variable_value, lunge_data.first_person_animation_event)
+	if var_3_3.animation_event then
+		arg_3_0:_on_enter_animation(arg_3_1, var_3_3.animation_event, var_3_3.animation_variable_name, var_3_3.animation_variable_value, var_3_3.first_person_animation_event)
 	end
 
-	self._num_impacts = 0
-	self._amount_of_mass_hit = 0
-	self._hit_units = {}
-	self._start_time = t
+	arg_3_0._num_impacts = 0
+	arg_3_0._amount_of_mass_hit = 0
+	arg_3_0._hit_units = {}
+	arg_3_0._start_time = arg_3_5
 
-	self._last_position:store(POSITION_LOOKUP[unit])
-	self._direction:store(forward_direction)
+	arg_3_0._last_position:store(var_0_0[arg_3_1])
+	arg_3_0._direction:store(var_3_5)
 
-	self._falling = false
-	self._stop = false
+	arg_3_0._falling = false
+	arg_3_0._stop = false
 
-	local lunge_events = lunge_data.lunge_events
+	local var_3_7 = var_3_3.lunge_events
 
-	if lunge_events then
-		local start_event_function = lunge_events.start
+	if var_3_7 then
+		local var_3_8 = var_3_7.start
 
-		if start_event_function then
-			start_event_function(self)
+		if var_3_8 then
+			var_3_8(arg_3_0)
 		end
 	end
 
-	first_person_extension:disable_rig_movement()
+	var_3_1:disable_rig_movement()
 
-	local damage_settings = lunge_data.damage
+	local var_3_9 = var_3_3.damage
 
-	if damage_settings then
-		local damage_profile_name = damage_settings.damage_profile or "default"
-		local damage_profile_id, power_level, hit_zone_id, ignore_shield = self:_parse_attack_data(damage_settings)
+	if var_3_9 then
+		local var_3_10 = var_3_9.damage_profile or "default"
+		local var_3_11, var_3_12, var_3_13, var_3_14 = arg_3_0:_parse_attack_data(var_3_9)
 
-		self.damage_profile_id = NetworkLookup.damage_profiles[damage_profile_name]
+		arg_3_0.damage_profile_id = NetworkLookup.damage_profiles[var_3_10]
 
-		local damage_profile = DamageProfileTemplates[damage_profile_name]
+		local var_3_15 = DamageProfileTemplates[var_3_10]
 
-		self.damage_profile = damage_profile
+		arg_3_0.damage_profile = var_3_15
 
-		local difficulty_level = Managers.state.difficulty:get_difficulty()
-		local cleave_power_level = ActionUtils.scale_power_levels(power_level, "cleave", unit, difficulty_level)
-		local max_targets_attack, max_targets_impact = ActionUtils.get_max_targets(damage_profile, cleave_power_level)
+		local var_3_16 = Managers.state.difficulty:get_difficulty()
+		local var_3_17 = ActionUtils.scale_power_levels(var_3_12, "cleave", arg_3_1, var_3_16)
+		local var_3_18, var_3_19 = ActionUtils.get_max_targets(var_3_15, var_3_17)
 
-		self.max_targets_attack = max_targets_attack
-		self.max_targets_impact = max_targets_impact
-		self.max_targets = max_targets_impact < max_targets_attack and max_targets_attack or max_targets_impact
+		arg_3_0.max_targets_attack = var_3_18
+		arg_3_0.max_targets_impact = var_3_19
+		arg_3_0.max_targets = var_3_19 < var_3_18 and var_3_18 or var_3_19
 	end
 
-	if lunge_data.dodge and Managers.state.network:game() then
-		status_extension:set_is_dodging(true)
+	if var_3_3.dodge and Managers.state.network:game() then
+		var_3_2:set_is_dodging(true)
 
-		local network_manager = Managers.state.network
-		local unit_id = network_manager:unit_game_object_id(unit)
+		local var_3_20 = Managers.state.network
+		local var_3_21 = var_3_20:unit_game_object_id(arg_3_1)
 
-		network_manager.network_transmit:send_rpc_server("rpc_status_change_bool", NetworkLookup.statuses.dodging, true, unit_id, 0)
+		var_3_20.network_transmit:send_rpc_server("rpc_status_change_bool", NetworkLookup.statuses.dodging, true, var_3_21, 0)
 	end
 
-	if lunge_data.noclip then
-		status_extension:set_noclip(true, "lunging")
+	if var_3_3.noclip then
+		var_3_2:set_noclip(true, "lunging")
 	end
 end
 
-PlayerCharacterStateLunging.on_exit = function (self, unit, input, dt, context, t, next_state)
-	local data = self._lunge_data
-	local fp_anim_end_event = data.first_person_animation_end_event
+function PlayerCharacterStateLunging.on_exit(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+	local var_4_0 = arg_4_0._lunge_data
+	local var_4_1 = var_4_0.first_person_animation_end_event
 
-	if fp_anim_end_event then
-		CharacterStateHelper.play_animation_event_first_person(self.first_person_extension, fp_anim_end_event)
+	if var_4_1 then
+		CharacterStateHelper.play_animation_event_first_person(arg_4_0.first_person_extension, var_4_1)
 	end
 
-	local anim_end_event = data.animation_end_event
+	local var_4_2 = var_4_0.animation_end_event
 
-	if anim_end_event then
-		if data.animation_variable_name and data.animation_variable_value then
-			CharacterStateHelper.play_animation_event_with_variable_float(unit, anim_end_event, data.animation_variable_name, data.animation_variable_value)
+	if var_4_2 then
+		if var_4_0.animation_variable_name and var_4_0.animation_variable_value then
+			CharacterStateHelper.play_animation_event_with_variable_float(arg_4_1, var_4_2, var_4_0.animation_variable_name, var_4_0.animation_variable_value)
 		else
-			CharacterStateHelper.play_animation_event(unit, anim_end_event)
+			CharacterStateHelper.play_animation_event(arg_4_1, var_4_2)
 		end
 	end
 
-	local lunge_events = self._lunge_data.lunge_events
+	local var_4_3 = arg_4_0._lunge_data.lunge_events
 
-	if lunge_events then
-		local finished_event_function = lunge_events.finished
+	if var_4_3 then
+		local var_4_4 = var_4_3.finished
 
-		if finished_event_function then
-			finished_event_function(self)
+		if var_4_4 then
+			var_4_4(arg_4_0)
 		end
 	end
 
-	if data.lunge_finish then
-		data.lunge_finish(unit)
+	if var_4_0.lunge_finish then
+		var_4_0.lunge_finish(arg_4_1)
 	end
 
-	if data.dodge and Managers.state.network:game() then
-		self.status_extension:set_is_dodging(false)
+	if var_4_0.dodge and Managers.state.network:game() then
+		arg_4_0.status_extension:set_is_dodging(false)
 
-		local network_manager = Managers.state.network
-		local unit_id = network_manager:unit_game_object_id(unit)
+		local var_4_5 = Managers.state.network
+		local var_4_6 = var_4_5:unit_game_object_id(arg_4_1)
 
-		network_manager.network_transmit:send_rpc_server("rpc_status_change_bool", NetworkLookup.statuses.dodging, false, unit_id, 0)
+		var_4_5.network_transmit:send_rpc_server("rpc_status_change_bool", NetworkLookup.statuses.dodging, false, var_4_6, 0)
 	end
 
-	if data.noclip then
-		self.status_extension:set_noclip(false, "lunging")
+	if var_4_0.noclip then
+		arg_4_0.status_extension:set_noclip(false, "lunging")
 	end
 
-	if self._falling and next_state ~= "falling" then
-		ScriptUnit.extension(unit, "whereabouts_system"):set_no_landing()
+	if arg_4_0._falling and arg_4_6 ~= "falling" then
+		ScriptUnit.extension(arg_4_1, "whereabouts_system"):set_no_landing()
 	end
 
-	self._lunge_data = nil
-	self._hit = nil
-	self._stop = true
+	arg_4_0._lunge_data = nil
+	arg_4_0._hit = nil
+	arg_4_0._stop = true
 
-	self.first_person_extension:enable_rig_movement()
+	arg_4_0.first_person_extension:enable_rig_movement()
 end
 
-PlayerCharacterStateLunging.update = function (self, unit, input, dt, context, t)
-	local csm = self.csm
-	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local input_extension = self.input_extension
-	local status_extension = self.status_extension
-	local whereabouts_extension = ScriptUnit.extension(unit, "whereabouts_system")
-	local first_person_extension = self.first_person_extension
-	local damage_start_time = self.damage_start_time
+function PlayerCharacterStateLunging.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	local var_5_0 = arg_5_0.csm
+	local var_5_1 = PlayerUnitMovementSettings.get_movement_settings_table(arg_5_1)
+	local var_5_2 = arg_5_0.input_extension
+	local var_5_3 = arg_5_0.status_extension
+	local var_5_4 = ScriptUnit.extension(arg_5_1, "whereabouts_system")
+	local var_5_5 = arg_5_0.first_person_extension
+	local var_5_6 = arg_5_0.damage_start_time
 
-	if CharacterStateHelper.is_colliding_down(unit) then
-		if self._falling then
-			self._falling = false
+	if CharacterStateHelper.is_colliding_down(arg_5_1) then
+		if arg_5_0._falling then
+			arg_5_0._falling = false
 
-			whereabouts_extension:set_landed()
+			var_5_4:set_landed()
 		end
 
-		whereabouts_extension:set_is_onground()
-	elseif not self._falling then
-		self._falling = true
+		var_5_4:set_is_onground()
+	elseif not arg_5_0._falling then
+		arg_5_0._falling = true
 
-		whereabouts_extension:set_fell(self.name)
+		var_5_4:set_fell(arg_5_0.name)
 	end
 
-	local lunge_data = self._lunge_data
-	local lunge_events = lunge_data.lunge_events
+	local var_5_7 = arg_5_0._lunge_data
+	local var_5_8 = var_5_7.lunge_events
 
-	if lunge_events then
-		local first_event_data = lunge_events[1]
-		local start_time = self._start_time
+	if var_5_8 then
+		local var_5_9 = var_5_8[1]
+		local var_5_10 = arg_5_0._start_time
 
-		while first_event_data do
-			if first_event_data.t < t - start_time then
-				local event_function = first_event_data.event_function
+		while var_5_9 do
+			if var_5_9.t < arg_5_5 - var_5_10 then
+				var_5_9.event_function(arg_5_0)
+				table.remove(var_5_8, 1)
 
-				event_function(self)
-				table.remove(lunge_events, 1)
-
-				first_event_data = lunge_events[1]
+				var_5_9 = var_5_8[1]
 			else
 				break
 			end
 		end
 	end
 
-	if CharacterStateHelper.do_common_state_transitions(status_extension, csm) then
+	if CharacterStateHelper.do_common_state_transitions(var_5_3, var_5_0) then
 		return
 	end
 
-	if CharacterStateHelper.is_using_transport(status_extension) then
-		csm:change_state("using_transport")
-
-		return
-	end
-
-	local world = self.world
-
-	if (not self.ledge_falloff_immunity_time or t > self.ledge_falloff_immunity_time) and CharacterStateHelper.is_ledge_hanging(world, unit, self.temp_params) then
-		self._stop = true
-
-		csm:change_state("ledge_hanging", self.temp_params)
+	if CharacterStateHelper.is_using_transport(var_5_3) then
+		var_5_0:change_state("using_transport")
 
 		return
 	end
 
-	if CharacterStateHelper.is_overcharge_exploding(status_extension) then
-		csm:change_state("overcharge_exploding")
+	local var_5_11 = arg_5_0.world
+
+	if (not arg_5_0.ledge_falloff_immunity_time or arg_5_5 > arg_5_0.ledge_falloff_immunity_time) and CharacterStateHelper.is_ledge_hanging(var_5_11, arg_5_1, arg_5_0.temp_params) then
+		arg_5_0._stop = true
+
+		var_5_0:change_state("ledge_hanging", arg_5_0.temp_params)
 
 		return
 	end
 
-	if CharacterStateHelper.is_pushed(status_extension) then
-		status_extension:set_pushed(false)
+	if CharacterStateHelper.is_overcharge_exploding(var_5_3) then
+		var_5_0:change_state("overcharge_exploding")
+
+		return
 	end
 
-	if CharacterStateHelper.is_block_broken(status_extension) then
-		status_extension:set_block_broken(false)
+	if CharacterStateHelper.is_pushed(var_5_3) then
+		var_5_3:set_pushed(false)
 	end
 
-	if not self._stop then
-		local damage_data = lunge_data.damage
+	if CharacterStateHelper.is_block_broken(var_5_3) then
+		var_5_3:set_block_broken(false)
+	end
 
-		if damage_data and damage_start_time <= t then
-			self._stop = self:_update_damage(unit, dt, t, damage_data)
+	if not arg_5_0._stop then
+		local var_5_12 = var_5_7.damage
+
+		if var_5_12 and var_5_6 <= arg_5_5 then
+			arg_5_0._stop = arg_5_0:_update_damage(arg_5_1, arg_5_3, arg_5_5, var_5_12)
 		end
 
-		local input_service = Managers.input:get_service("Player")
+		local var_5_13 = Managers.input:get_service("Player")
 
-		if input_service and input_service:get("action_two", true) then
-			local position = POSITION_LOOKUP[unit]
-			local forward_direction = Quaternion.forward(first_person_extension:current_rotation())
+		if var_5_13 and var_5_13:get("action_two", true) then
+			local var_5_14 = var_0_0[arg_5_1]
+			local var_5_15 = Quaternion.forward(var_5_5:current_rotation())
 
-			self:_do_blast(position, forward_direction)
+			arg_5_0:_do_blast(var_5_14, var_5_15)
 
-			self._stop = true
+			arg_5_0._stop = true
 		end
 
-		local move_state = self:_update_movement(unit, dt, t, lunge_data)
+		local var_5_16 = arg_5_0:_update_movement(arg_5_1, arg_5_3, arg_5_5, var_5_7)
 
-		if move_state == "ledge_hang" then
-			self._stop = true
+		if var_5_16 == "ledge_hang" then
+			arg_5_0._stop = true
 
-			csm:change_state("ledge_hanging", self.temp_params)
+			var_5_0:change_state("ledge_hanging", arg_5_0.temp_params)
 
 			return
 		end
 
-		if move_state == "stop" and not self._stop then
-			local position = POSITION_LOOKUP[unit]
-			local forward_direction = Quaternion.forward(first_person_extension:current_rotation())
+		if var_5_16 == "stop" and not arg_5_0._stop then
+			local var_5_17 = var_0_0[arg_5_1]
+			local var_5_18 = Quaternion.forward(var_5_5:current_rotation())
 
-			self:_do_blast(position, forward_direction)
+			arg_5_0:_do_blast(var_5_17, var_5_18)
 
-			self._stop = true
+			arg_5_0._stop = true
 		end
 	end
 
-	if self._stop then
-		if not self.csm.state_next and self._falling then
-			csm:change_state("falling", self.temp_params)
+	if arg_5_0._stop then
+		if not arg_5_0.csm.state_next and arg_5_0._falling then
+			var_5_0:change_state("falling", arg_5_0.temp_params)
 
-			self.temp_params.hit = false
+			arg_5_0.temp_params.hit = false
 
-			first_person_extension:change_state("falling")
+			var_5_5:change_state("falling")
 
 			return
 		else
-			csm:change_state("walking", self.temp_params)
+			var_5_0:change_state("walking", arg_5_0.temp_params)
 
-			self.temp_params.hit = false
+			arg_5_0.temp_params.hit = false
 
-			first_person_extension:change_state("walking")
+			var_5_5:change_state("walking")
 
 			return
 		end
 	end
 
-	CharacterStateHelper.look(input_extension, self.player.viewport_name, first_person_extension, status_extension, self.inventory_extension, 0.5)
-	CharacterStateHelper.update_weapon_actions(t, unit, input_extension, self.inventory_extension, self.health_extension)
-	self._last_position:store(POSITION_LOOKUP[unit])
+	CharacterStateHelper.look(var_5_2, arg_5_0.player.viewport_name, var_5_5, var_5_3, arg_5_0.inventory_extension, 0.5)
+	CharacterStateHelper.update_weapon_actions(arg_5_5, arg_5_1, var_5_2, arg_5_0.inventory_extension, arg_5_0.health_extension)
+	arg_5_0._last_position:store(var_0_0[arg_5_1])
 end
 
-PlayerCharacterStateLunging._update_movement = function (self, unit, dt, t, lunge_data)
-	local move_state
+function PlayerCharacterStateLunging._update_movement(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	local var_6_0
 
-	if self._falling then
-		move_state = self:_move_in_air(unit, dt, t, lunge_data)
+	if arg_6_0._falling then
+		var_6_0 = arg_6_0:_move_in_air(arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	else
-		move_state = self:_move_on_ground(unit, dt, t, lunge_data)
+		var_6_0 = arg_6_0:_move_on_ground(arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	end
 
-	return move_state
+	return var_6_0
 end
 
-PlayerCharacterStateLunging._check_ledge_hang = function (self, unit, dt, t, move_direction, speed, z_offset)
-	local current_pos = POSITION_LOOKUP[unit]
-	local future_pos = current_pos + move_direction * speed * dt
-	local predicted_distance = Vector3.length(future_pos - current_pos)
-	local step_distance = 0.1
-	local steps = predicted_distance / step_distance
-	local world = self.world
+function PlayerCharacterStateLunging._check_ledge_hang(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+	local var_7_0 = var_0_0[arg_7_1]
+	local var_7_1 = var_7_0 + arg_7_4 * arg_7_5 * arg_7_2
+	local var_7_2 = Vector3.length(var_7_1 - var_7_0)
+	local var_7_3 = 0.1
+	local var_7_4 = var_7_2 / var_7_3
+	local var_7_5 = arg_7_0.world
 
-	self.temp_params.z_offset = z_offset
-	self.temp_params.collision_filter = "filter_lunge_ledge_collision"
-	self.temp_params.radius = step_distance * 1.5
+	arg_7_0.temp_params.z_offset = arg_7_6
+	arg_7_0.temp_params.collision_filter = "filter_lunge_ledge_collision"
+	arg_7_0.temp_params.radius = var_7_3 * 1.5
 
-	for i = 1, steps do
-		local ray_position = current_pos + move_direction * (step_distance * i)
+	for iter_7_0 = 1, var_7_4 do
+		local var_7_6 = var_7_0 + arg_7_4 * (var_7_3 * iter_7_0)
 
-		self.temp_params.ray_position = ray_position
+		arg_7_0.temp_params.ray_position = var_7_6
 
-		local will_ledge_hang = CharacterStateHelper.will_be_ledge_hanging(world, unit, self.temp_params)
-
-		if will_ledge_hang then
+		if CharacterStateHelper.will_be_ledge_hanging(var_7_5, arg_7_1, arg_7_0.temp_params) then
 			return true
 		end
 	end
@@ -350,233 +342,214 @@ PlayerCharacterStateLunging._check_ledge_hang = function (self, unit, dt, t, mov
 	return false
 end
 
-PlayerCharacterStateLunging._move_on_ground = function (self, unit, dt, t, lunge_data)
-	local locomotion_extension = self.locomotion_extension
-	local first_person_extension = self.first_person_extension
-	local duration = lunge_data.duration
-	local lunge_time = t - self._start_time
-	local move_direction
+function PlayerCharacterStateLunging._move_on_ground(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	local var_8_0 = arg_8_0.locomotion_extension
+	local var_8_1 = arg_8_0.first_person_extension
+	local var_8_2 = arg_8_4.duration
+	local var_8_3 = arg_8_3 - arg_8_0._start_time
+	local var_8_4
 
-	if lunge_data.allow_rotation then
-		local forward_direction = Quaternion.forward(first_person_extension:current_rotation())
+	if arg_8_4.allow_rotation then
+		local var_8_5 = Quaternion.forward(var_8_1:current_rotation())
 
-		move_direction = Vector3.normalize(Vector3.flat(forward_direction))
+		var_8_4 = Vector3.normalize(Vector3.flat(var_8_5))
 	else
-		move_direction = self._direction:unbox()
+		var_8_4 = arg_8_0._direction:unbox()
 	end
 
-	local speed_function = lunge_data.speed_function
-	local speed
+	local var_8_6 = arg_8_4.speed_function
+	local var_8_7
 
-	if speed_function then
-		speed = speed_function(lunge_time, duration)
+	if var_8_6 then
+		var_8_7 = var_8_6(var_8_3, var_8_2)
 	else
-		speed = math.lerp(lunge_data.initial_speed, lunge_data.falloff_to_speed, math.min(lunge_time / duration, 1))
+		var_8_7 = math.lerp(arg_8_4.initial_speed, arg_8_4.falloff_to_speed, math.min(var_8_3 / var_8_2, 1))
 	end
 
-	local base_speed = 1
-	local use_base_speed = base_speed < speed
-	local speed_to_use = use_base_speed and base_speed or speed
-	local will_ledge_hang = self:_check_ledge_hang(unit, dt, t, move_direction, speed, -1.6)
+	local var_8_8 = 1
+	local var_8_9 = var_8_8 < var_8_7
+	local var_8_10 = var_8_9 and var_8_8 or var_8_7
 
-	if will_ledge_hang then
+	if arg_8_0:_check_ledge_hang(arg_8_1, arg_8_2, arg_8_3, var_8_4, var_8_7, -1.6) then
 		return "ledge_hang"
 	end
 
-	locomotion_extension:set_wanted_velocity(move_direction * speed_to_use)
+	var_8_0:set_wanted_velocity(var_8_4 * var_8_10)
 
-	if use_base_speed then
-		locomotion_extension:set_script_movement_time_scale(speed / base_speed)
+	if var_8_9 then
+		var_8_0:set_script_movement_time_scale(var_8_7 / var_8_8)
 	end
 
-	local lunge_ended = lunge_time < duration
-
-	return lunge_ended and "continue" or "stop"
+	return var_8_3 < var_8_2 and "continue" or "stop"
 end
 
-PlayerCharacterStateLunging._move_in_air = function (self, unit, dt, t, lunge_data)
-	local locomotion_extension = self.locomotion_extension
-	local first_person_extension = self.first_person_extension
-	local duration = lunge_data.duration
-	local lunge_time = t - self._start_time
-	local move_direction
+function PlayerCharacterStateLunging._move_in_air(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	local var_9_0 = arg_9_0.locomotion_extension
+	local var_9_1 = arg_9_0.first_person_extension
+	local var_9_2 = arg_9_4.duration
+	local var_9_3 = arg_9_3 - arg_9_0._start_time
+	local var_9_4
 
-	if lunge_data.allow_rotation then
-		local forward_direction = Quaternion.forward(first_person_extension:current_rotation())
+	if arg_9_4.allow_rotation then
+		local var_9_5 = Quaternion.forward(var_9_1:current_rotation())
 
-		move_direction = Vector3.normalize(Vector3.flat(forward_direction))
+		var_9_4 = Vector3.normalize(Vector3.flat(var_9_5))
 	else
-		move_direction = self._direction:unbox()
+		var_9_4 = arg_9_0._direction:unbox()
 	end
 
-	local speed_function = lunge_data.speed_function
-	local speed
+	local var_9_6 = arg_9_4.speed_function
+	local var_9_7
 
-	if speed_function then
-		speed = speed_function(lunge_time, duration)
+	if var_9_6 then
+		var_9_7 = var_9_6(var_9_3, var_9_2)
 	else
-		speed = math.lerp(lunge_data.initial_speed, lunge_data.falloff_to_speed, math.min(lunge_time / duration, 1))
+		var_9_7 = math.lerp(arg_9_4.initial_speed, arg_9_4.falloff_to_speed, math.min(var_9_3 / var_9_2, 1))
 	end
 
-	local will_ledge_hang = self:_check_ledge_hang(unit, dt, t, move_direction, speed, -1.6)
-
-	if will_ledge_hang then
+	if arg_9_0:_check_ledge_hang(arg_9_1, arg_9_2, arg_9_3, var_9_4, var_9_7, -1.6) then
 		return "ledge_hang"
 	end
 
-	local prev_move_velocity = Vector3.flat(locomotion_extension:current_velocity())
-	local new_move_velocity = prev_move_velocity + move_direction * speed
-	local new_move_direction = Vector3.normalize(new_move_velocity)
+	local var_9_8 = Vector3.flat(var_9_0:current_velocity()) + var_9_4 * var_9_7
+	local var_9_9 = Vector3.normalize(var_9_8)
 
-	locomotion_extension:set_wanted_velocity(new_move_direction * speed)
+	var_9_0:set_wanted_velocity(var_9_9 * var_9_7)
 
-	local lunge_ended = lunge_time < duration
-
-	return lunge_ended and "continue" or "stop"
+	return var_9_3 < var_9_2 and "continue" or "stop"
 end
 
-PlayerCharacterStateLunging._parse_attack_data = function (self, damage_settings)
-	local career_power_level = self.career_extension:get_career_power_level()
-	local power_level_multiplier = damage_settings.power_level_multiplier
-	local power_level = career_power_level * power_level_multiplier
+function PlayerCharacterStateLunging._parse_attack_data(arg_10_0, arg_10_1)
+	local var_10_0 = arg_10_0.career_extension:get_career_power_level() * arg_10_1.power_level_multiplier
+	local var_10_1 = math.clamp(var_10_0, MIN_POWER_LEVEL, MAX_POWER_LEVEL)
+	local var_10_2 = arg_10_1.damage_profile or "default"
+	local var_10_3 = NetworkLookup.damage_profiles[var_10_2]
+	local var_10_4 = arg_10_1.hit_zone_hit_name
+	local var_10_5 = NetworkLookup.hit_zones[var_10_4]
 
-	power_level = math.clamp(power_level, MIN_POWER_LEVEL, MAX_POWER_LEVEL)
-
-	local damage_profile_name = damage_settings.damage_profile or "default"
-	local damage_profile_id = NetworkLookup.damage_profiles[damage_profile_name]
-	local hit_zone_hit_name = damage_settings.hit_zone_hit_name
-	local hit_zone_id = NetworkLookup.hit_zones[hit_zone_hit_name]
-
-	return damage_profile_id, power_level, hit_zone_id, damage_settings.ignore_shield
+	return var_10_3, var_10_1, var_10_5, arg_10_1.ignore_shield
 end
 
-PlayerCharacterStateLunging._calculate_hit_mass = function (self, shield_blocked, current_action, hit_unit, breed, unit)
-	local side_manager = Managers.state.side
-	local is_enemy = side_manager:is_enemy(unit, hit_unit)
+function PlayerCharacterStateLunging._calculate_hit_mass(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+	local var_11_0 = Managers.state.side:is_enemy(arg_11_5, arg_11_3)
 
-	if breed and is_enemy and HEALTH_ALIVE[hit_unit] then
-		local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-		local hit_mass_total = shield_blocked and (breed.hit_mass_counts_block and (breed.hit_mass_counts_block[difficulty_rank] or breed.hit_mass_counts_block[2]) or breed.hit_mass_count_block) or breed.hit_mass_counts and (breed.hit_mass_counts[difficulty_rank] or breed.hit_mass_counts[2]) or breed.hit_mass_count or 1
-		local action_mass_override = current_action.hit_mass_count
+	if arg_11_4 and var_11_0 and HEALTH_ALIVE[arg_11_3] then
+		local var_11_1 = Managers.state.difficulty:get_difficulty_rank()
+		local var_11_2 = arg_11_1 and (arg_11_4.hit_mass_counts_block and (arg_11_4.hit_mass_counts_block[var_11_1] or arg_11_4.hit_mass_counts_block[2]) or arg_11_4.hit_mass_count_block) or arg_11_4.hit_mass_counts and (arg_11_4.hit_mass_counts[var_11_1] or arg_11_4.hit_mass_counts[2]) or arg_11_4.hit_mass_count or 1
+		local var_11_3 = arg_11_2.hit_mass_count
 
-		if action_mass_override and action_mass_override[breed.name] then
-			local mass_cost_multiplier = current_action.hit_mass_count[breed.name]
-
-			hit_mass_total = hit_mass_total * (mass_cost_multiplier or 1)
+		if var_11_3 and var_11_3[arg_11_4.name] then
+			var_11_2 = var_11_2 * (arg_11_2.hit_mass_count[arg_11_4.name] or 1)
 		end
 
-		self._amount_of_mass_hit = self._amount_of_mass_hit + hit_mass_total
+		arg_11_0._amount_of_mass_hit = arg_11_0._amount_of_mass_hit + var_11_2
 	else
-		shield_blocked = false
+		arg_11_1 = false
 	end
 
-	return shield_blocked
+	return arg_11_1
 end
 
-PlayerCharacterStateLunging._update_damage = function (self, unit, dt, t, damage_data)
-	local padding = damage_data.depth_padding
-	local half_width = 0.5 * damage_data.width
-	local half_height = 0.5 * damage_data.height
-	local new_pos = POSITION_LOOKUP[unit]
-	local old_pos = self._last_position:unbox()
-	local delta_move = new_pos - old_pos
-	local half_length = Vector3.length(delta_move) * 0.5 + padding
-	local rot = Quaternion.look(delta_move, Vector3.up())
-	local first_person_extension = self.first_person_extension
-	local forward_direction = Quaternion.forward(first_person_extension:current_rotation())
-	local forward_direction_flat = Vector3.flat(forward_direction)
-	local mid_pos = (new_pos + old_pos) * 0.5 + Vector3(0, 0, half_height) + (damage_data.offset_forward or 0) * forward_direction_flat
-	local size = Vector3(half_width, half_length, half_height)
-	local collision_filter = damage_data.collision_filter
-	local actors, num_actors = PhysicsWorld.immediate_overlap(self.physics_world, "shape", "oobb", "position", mid_pos, "rotation", rot, "size", size, "collision_filter", collision_filter)
-	local hit_units = self._hit_units
-	local buff_extension = self.buff_extension
-	local network_manager = Managers.state.network
-	local attacker_unit_id = network_manager:unit_game_object_id(unit)
-	local attack_direction = Vector3.normalize(delta_move)
-	local weapon_system = Managers.state.entity:system("weapon_system")
-	local buff_hit_target_index = 0
-	local side_manager = Managers.state.side
+function PlayerCharacterStateLunging._update_damage(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+	local var_12_0 = arg_12_4.depth_padding
+	local var_12_1 = 0.5 * arg_12_4.width
+	local var_12_2 = 0.5 * arg_12_4.height
+	local var_12_3 = var_0_0[arg_12_1]
+	local var_12_4 = arg_12_0._last_position:unbox()
+	local var_12_5 = var_12_3 - var_12_4
+	local var_12_6 = Vector3.length(var_12_5) * 0.5 + var_12_0
+	local var_12_7 = Quaternion.look(var_12_5, Vector3.up())
+	local var_12_8 = arg_12_0.first_person_extension
+	local var_12_9 = Quaternion.forward(var_12_8:current_rotation())
+	local var_12_10 = Vector3.flat(var_12_9)
+	local var_12_11 = (var_12_3 + var_12_4) * 0.5 + Vector3(0, 0, var_12_2) + (arg_12_4.offset_forward or 0) * var_12_10
+	local var_12_12 = Vector3(var_12_1, var_12_6, var_12_2)
+	local var_12_13 = arg_12_4.collision_filter
+	local var_12_14, var_12_15 = PhysicsWorld.immediate_overlap(arg_12_0.physics_world, "shape", "oobb", "position", var_12_11, "rotation", var_12_7, "size", var_12_12, "collision_filter", var_12_13)
+	local var_12_16 = arg_12_0._hit_units
+	local var_12_17 = arg_12_0.buff_extension
+	local var_12_18 = Managers.state.network
+	local var_12_19 = var_12_18:unit_game_object_id(arg_12_1)
+	local var_12_20 = Vector3.normalize(var_12_5)
+	local var_12_21 = Managers.state.entity:system("weapon_system")
+	local var_12_22 = 0
+	local var_12_23 = Managers.state.side
 
-	for i = 1, num_actors do
+	for iter_12_0 = 1, var_12_15 do
 		repeat
-			local hit_actor = actors[i]
-			local hit_unit = Actor.unit(hit_actor)
+			local var_12_24 = var_12_14[iter_12_0]
+			local var_12_25 = Actor.unit(var_12_24)
 
-			if not hit_units[hit_unit] then
-				hit_units[hit_unit] = true
+			if not var_12_16[var_12_25] then
+				var_12_16[var_12_25] = true
 
-				if not HEALTH_ALIVE[hit_unit] then
+				if not HEALTH_ALIVE[var_12_25] then
 					break
 				end
 
-				local is_enemy = side_manager:is_enemy(unit, hit_unit)
-
-				if not is_enemy then
+				if not var_12_23:is_enemy(arg_12_1, var_12_25) then
 					break
 				end
 
-				local breed = Unit.get_data(hit_unit, "breed")
+				local var_12_26 = Unit.get_data(var_12_25, "breed")
 
-				if not breed then
+				if not var_12_26 then
 					break
 				end
 
-				buff_hit_target_index = buff_hit_target_index + 1
+				var_12_22 = var_12_22 + 1
 
-				local hit_unit_id = network_manager:unit_game_object_id(hit_unit)
-				local hit_unit_pos = POSITION_LOOKUP[hit_unit]
-				local damage_profile_id, power_level, hit_zone_id, ignore_shield = self:_parse_attack_data(damage_data)
-				local shield_blocked = not ignore_shield and AiUtils.attack_is_shield_blocked(hit_unit, unit)
+				local var_12_27 = var_12_18:unit_game_object_id(var_12_25)
+				local var_12_28 = var_0_0[var_12_25]
+				local var_12_29, var_12_30, var_12_31, var_12_32 = arg_12_0:_parse_attack_data(arg_12_4)
+				local var_12_33 = not var_12_32 and AiUtils.attack_is_shield_blocked(var_12_25, arg_12_1)
+				local var_12_34 = arg_12_0:_calculate_hit_mass(var_12_33, arg_12_4, var_12_25, var_12_26, arg_12_1)
+				local var_12_35
 
-				shield_blocked = self:_calculate_hit_mass(shield_blocked, damage_data, hit_unit, breed, unit)
+				if arg_12_4.stagger_angles then
+					local var_12_36 = Vector3.normalize(var_12_28 - var_12_3)
+					local var_12_37 = Vector3.cross(Vector3.flat(var_12_36), Vector3.flat(var_12_9))
+					local var_12_38 = Math.random(arg_12_4.stagger_angles.min, arg_12_4.stagger_angles.max) * (var_12_37.z < 0 and -1 or 1)
+					local var_12_39 = var_12_20
 
-				local final_stagger_direction
-
-				if damage_data.stagger_angles then
-					local owner_to_hit_dir = Vector3.normalize(hit_unit_pos - new_pos)
-					local cross = Vector3.cross(Vector3.flat(owner_to_hit_dir), Vector3.flat(forward_direction))
-					local additional_stagger_angle = Math.random(damage_data.stagger_angles.min, damage_data.stagger_angles.max) * (cross.z < 0 and -1 or 1)
-					local new_attack_direction = attack_direction
-
-					new_attack_direction.x = math.cos(additional_stagger_angle) * attack_direction.x - math.sin(additional_stagger_angle) * attack_direction.y
-					new_attack_direction.y = math.sin(additional_stagger_angle) * attack_direction.x + math.cos(additional_stagger_angle) * attack_direction.y
-					final_stagger_direction = Vector3.normalize(new_attack_direction)
+					var_12_39.x = math.cos(var_12_38) * var_12_20.x - math.sin(var_12_38) * var_12_20.y
+					var_12_39.y = math.sin(var_12_38) * var_12_20.x + math.cos(var_12_38) * var_12_20.y
+					var_12_35 = Vector3.normalize(var_12_39)
 				else
-					final_stagger_direction = attack_direction
+					var_12_35 = var_12_20
 				end
 
-				local damage_source = "charge_ability_hit"
-				local damage_source_id = NetworkLookup.damage_sources[damage_source]
-				local actual_hit_target_index
-				local shield_break_procc = false
-				local boost_curve_multiplier = 0
-				local is_critical_strike = false
-				local can_damage = true
-				local can_stagger = true
+				local var_12_40 = "charge_ability_hit"
+				local var_12_41 = NetworkLookup.damage_sources[var_12_40]
+				local var_12_42
+				local var_12_43 = false
+				local var_12_44 = 0
+				local var_12_45 = false
+				local var_12_46 = true
+				local var_12_47 = true
 
-				weapon_system:send_rpc_attack_hit(damage_source_id, attacker_unit_id, hit_unit_id, hit_zone_id, hit_unit_pos, final_stagger_direction, damage_profile_id, "power_level", power_level, "hit_target_index", actual_hit_target_index, "blocking", shield_blocked, "shield_break_procced", shield_break_procc, "boost_curve_multiplier", boost_curve_multiplier, "is_critical_strike", is_critical_strike, "can_damage", can_damage, "can_stagger", can_stagger)
+				var_12_21:send_rpc_attack_hit(var_12_41, var_12_19, var_12_27, var_12_31, var_12_28, var_12_35, var_12_29, "power_level", var_12_30, "hit_target_index", var_12_42, "blocking", var_12_34, "shield_break_procced", var_12_43, "boost_curve_multiplier", var_12_44, "is_critical_strike", var_12_45, "can_damage", var_12_46, "can_stagger", var_12_47)
 
-				self._num_impacts = self._num_impacts + 1
+				arg_12_0._num_impacts = arg_12_0._num_impacts + 1
 
-				local lunge_events = self._lunge_data.lunge_events
+				local var_12_48 = arg_12_0._lunge_data.lunge_events
 
-				if lunge_events then
-					local impact_event_function = lunge_events.impact
+				if var_12_48 then
+					local var_12_49 = var_12_48.impact
 
-					if impact_event_function then
-						impact_event_function(self)
+					if var_12_49 then
+						var_12_49(arg_12_0)
 					end
 				end
 
-				if self._lunge_data.first_person_hit_animation_event then
-					CharacterStateHelper.play_animation_event_first_person(first_person_extension, self._lunge_data.first_person_hit_animation_event)
+				if arg_12_0._lunge_data.first_person_hit_animation_event then
+					CharacterStateHelper.play_animation_event_first_person(var_12_8, arg_12_0._lunge_data.first_person_hit_animation_event)
 				end
 
-				local hit_mass_count_reached = self._amount_of_mass_hit >= self.max_targets or breed.armor_category == 2 or breed.armor_category == 3
+				local var_12_50 = arg_12_0._amount_of_mass_hit >= arg_12_0.max_targets or var_12_26.armor_category == 2 or var_12_26.armor_category == 3
 
-				if damage_data.interrupt_on_first_hit or hit_mass_count_reached and damage_data.interrupt_on_max_hit_mass then
-					self:_do_blast(new_pos, forward_direction)
+				if arg_12_4.interrupt_on_first_hit or var_12_50 and arg_12_4.interrupt_on_max_hit_mass then
+					arg_12_0:_do_blast(var_12_3, var_12_9)
 
 					return true
 				end
@@ -587,71 +560,66 @@ PlayerCharacterStateLunging._update_damage = function (self, unit, dt, t, damage
 	return false
 end
 
-local hit_units = {}
+local var_0_1 = {}
 
-PlayerCharacterStateLunging._do_blast = function (self, new_pos, forward_direction)
-	self._hit = true
+function PlayerCharacterStateLunging._do_blast(arg_13_0, arg_13_1, arg_13_2)
+	arg_13_0._hit = true
 
-	local lunge_data = self._lunge_data
-	local damage_data = lunge_data.damage
-	local blast_damage_data = damage_data and damage_data.on_interrupt_blast
+	local var_13_0 = arg_13_0._lunge_data.damage
+	local var_13_1 = var_13_0 and var_13_0.on_interrupt_blast
 
-	if blast_damage_data then
-		local physics_world = self.physics_world
-		local collision_filter = blast_damage_data.collision_filter
-		local network_manager = Managers.state.network
-		local weapon_system = Managers.state.entity:system("weapon_system")
-		local unit = self.unit
-		local attacker_unit_id = network_manager:unit_game_object_id(unit)
-		local radius = blast_damage_data.radius
-		local blast_pos = new_pos + forward_direction * radius
-		local actors, num_actors = PhysicsWorld.immediate_overlap(physics_world, "shape", "sphere", "position", blast_pos, "size", radius, "collision_filter", collision_filter)
-		local buff_hit_target_index = 0
-		local side_manager = Managers.state.side
+	if var_13_1 then
+		local var_13_2 = arg_13_0.physics_world
+		local var_13_3 = var_13_1.collision_filter
+		local var_13_4 = Managers.state.network
+		local var_13_5 = Managers.state.entity:system("weapon_system")
+		local var_13_6 = arg_13_0.unit
+		local var_13_7 = var_13_4:unit_game_object_id(var_13_6)
+		local var_13_8 = var_13_1.radius
+		local var_13_9 = arg_13_1 + arg_13_2 * var_13_8
+		local var_13_10, var_13_11 = PhysicsWorld.immediate_overlap(var_13_2, "shape", "sphere", "position", var_13_9, "size", var_13_8, "collision_filter", var_13_3)
+		local var_13_12 = 0
+		local var_13_13 = Managers.state.side
 
-		table.clear(hit_units)
+		table.clear(var_0_1)
 
-		for i = 1, num_actors do
+		for iter_13_0 = 1, var_13_11 do
 			repeat
-				local hit_actor = actors[i]
-				local hit_unit = Actor.unit(hit_actor)
+				local var_13_14 = var_13_10[iter_13_0]
+				local var_13_15 = Actor.unit(var_13_14)
 
-				if hit_units[hit_unit] then
+				if var_0_1[var_13_15] then
 					break
 				end
 
-				hit_units[hit_unit] = true
+				var_0_1[var_13_15] = true
 
-				local breed = Unit.get_data(hit_unit, "breed")
-
-				if not breed then
+				if not Unit.get_data(var_13_15, "breed") then
 					break
 				end
 
-				local is_enemy = side_manager:is_enemy(unit, hit_unit)
-
-				if not is_enemy then
+				if not var_13_13:is_enemy(var_13_6, var_13_15) then
 					break
 				end
 
-				local damage_profile_id, power_level, hit_zone_id, ignore_shield = self:_parse_attack_data(blast_damage_data)
-				local hit_unit_id = network_manager:unit_game_object_id(hit_unit)
+				local var_13_16, var_13_17, var_13_18, var_13_19 = arg_13_0:_parse_attack_data(var_13_1)
+				local var_13_20 = var_13_4:unit_game_object_id(var_13_15)
 
-				buff_hit_target_index = buff_hit_target_index + 1
+				var_13_12 = var_13_12 + 1
 
-				local damage_source = "charge_ability_hit_blast"
-				local damage_source_id = NetworkLookup.damage_sources[damage_source]
-				local target_position = POSITION_LOOKUP[hit_unit]
-				local attack_direction = Vector3.normalize(blast_pos - target_position)
-				local boost_curve_multiplier = 0
-				local actual_hit_target_index
-				local shield_blocked = not ignore_shield and AiUtils.attack_is_shield_blocked(hit_unit, unit)
-				local shield_break_procc = false
-				local is_critical_strike = false
-				local can_damage = true
-				local can_stagger = true
+				local var_13_21 = "charge_ability_hit_blast"
+				local var_13_22 = NetworkLookup.damage_sources[var_13_21]
+				local var_13_23 = var_0_0[var_13_15]
+				local var_13_24 = Vector3.normalize(var_13_9 - var_13_23)
+				local var_13_25 = 0
+				local var_13_26
+				local var_13_27 = not var_13_19 and AiUtils.attack_is_shield_blocked(var_13_15, var_13_6)
+				local var_13_28 = false
+				local var_13_29 = false
+				local var_13_30 = true
+				local var_13_31 = true
 
-				weapon_system:send_rpc_attack_hit(damage_source_id, attacker_unit_id, hit_unit_id, hit_zone_id, target_position, attack_direction, damage_profile_id, "power_level", power_level, "hit_target_index", actual_hit_target_index, "blocking", shield_blocked, "shield_break_procced", shield_break_procc, "boost_curve_multiplier", boost_curve_multiplier, "is_critical_strike", is_critical_strike, "can_damage", can_damage, "can_stagger", can_stagger)
+				var_13_5:send_rpc_attack_hit(var_13_22, var_13_7, var_13_20, var_13_18, var_13_23, var_13_24, var_13_16, "power_level", var_13_17, "hit_target_index", var_13_26, "blocking", var_13_27, "shield_break_procced", var_13_28, "boost_curve_multiplier", var_13_25, "is_critical_strike", var_13_29, "can_damage", var_13_30, "can_stagger", var_13_31)
 			until true
 		end
 	end

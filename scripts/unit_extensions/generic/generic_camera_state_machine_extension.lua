@@ -1,61 +1,61 @@
-﻿-- chunkname: @scripts/unit_extensions/generic/generic_camera_state_machine_extension.lua
+-- chunkname: @scripts/unit_extensions/generic/generic_camera_state_machine_extension.lua
 
 require("scripts/unit_extensions/generic/generic_state_machine")
 
 GenericCameraStateMachineExtension = class(GenericCameraStateMachineExtension)
 
-GenericCameraStateMachineExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self.world = extension_init_context.world
-	self.unit = unit
-	self.start_state = extension_init_data.start_state
-	self.camera_state_class_list = extension_init_data.camera_state_class_list
-	self.state_machine = GenericStateMachine:new(self.world, self.unit)
+function GenericCameraStateMachineExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.world = arg_1_1.world
+	arg_1_0.unit = arg_1_2
+	arg_1_0.start_state = arg_1_3.start_state
+	arg_1_0.camera_state_class_list = arg_1_3.camera_state_class_list
+	arg_1_0.state_machine = GenericStateMachine:new(arg_1_0.world, arg_1_0.unit)
 end
 
-GenericCameraStateMachineExtension.extensions_ready = function (self)
-	local character_state_init_context = {
-		world = self.world,
-		unit = self.unit,
-		csm = self.state_machine,
+function GenericCameraStateMachineExtension.extensions_ready(arg_2_0)
+	local var_2_0 = {
+		world = arg_2_0.world,
+		unit = arg_2_0.unit,
+		csm = arg_2_0.state_machine
 	}
-	local states = {}
-	local camera_state_class_list = self.camera_state_class_list
+	local var_2_1 = {}
+	local var_2_2 = arg_2_0.camera_state_class_list
 
-	for i = 1, #camera_state_class_list do
-		local state_instance = camera_state_class_list[i]:new(character_state_init_context)
-		local name = state_instance.name
+	for iter_2_0 = 1, #var_2_2 do
+		local var_2_3 = var_2_2[iter_2_0]:new(var_2_0)
+		local var_2_4 = var_2_3.name
 
-		assert(name and states[name] == nil)
+		assert(var_2_4 and var_2_1[var_2_4] == nil)
 
-		states[name] = state_instance
+		var_2_1[var_2_4] = var_2_3
 	end
 
-	local start_state = self.start_state
+	local var_2_5 = arg_2_0.start_state
 
-	self.state_machine:post_init(states, start_state)
+	arg_2_0.state_machine:post_init(var_2_1, var_2_5)
 end
 
-GenericCameraStateMachineExtension.destroy = function (self)
+function GenericCameraStateMachineExtension.destroy(arg_3_0)
 	return
 end
 
-GenericCameraStateMachineExtension.reset = function (self)
-	self.state_machine:reset()
+function GenericCameraStateMachineExtension.reset(arg_4_0)
+	arg_4_0.state_machine:reset()
 end
 
-GenericCameraStateMachineExtension.update = function (self, unit, input, dt, context, t)
-	self.state_machine:update(unit, input, dt, context, t)
+function GenericCameraStateMachineExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	arg_5_0.state_machine:update(arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 end
 
-GenericCameraStateMachineExtension.reinitialize_camera_states = function (self, camera_state_class_list, start_state)
-	start_state = start_state or self.start_state
-	camera_state_class_list = camera_state_class_list or table.clone(self.camera_state_class_list)
-	self.state_machine = nil
+function GenericCameraStateMachineExtension.reinitialize_camera_states(arg_6_0, arg_6_1, arg_6_2)
+	arg_6_2 = arg_6_2 or arg_6_0.start_state
+	arg_6_1 = arg_6_1 or table.clone(arg_6_0.camera_state_class_list)
+	arg_6_0.state_machine = nil
 
-	table.clear(self.camera_state_class_list)
+	table.clear(arg_6_0.camera_state_class_list)
 
-	self.camera_state_class_list = camera_state_class_list
-	self.state_machine = GenericStateMachine:new(self.world, self.unit)
+	arg_6_0.camera_state_class_list = arg_6_1
+	arg_6_0.state_machine = GenericStateMachine:new(arg_6_0.world, arg_6_0.unit)
 
-	self:extensions_ready()
+	arg_6_0:extensions_ready()
 end

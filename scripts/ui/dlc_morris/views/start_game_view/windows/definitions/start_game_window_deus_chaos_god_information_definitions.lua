@@ -1,439 +1,437 @@
-﻿-- chunkname: @scripts/ui/dlc_morris/views/start_game_view/windows/definitions/start_game_window_deus_chaos_god_information_definitions.lua
+-- chunkname: @scripts/ui/dlc_morris/views/start_game_view/windows/definitions/start_game_window_deus_chaos_god_information_definitions.lua
 
-local WIDGET_SIZE = {
+local var_0_0 = {
 	380,
-	200,
+	200
 }
-local scenegraph_definition = {
+local var_0_1 = {
 	root = {
 		is_root = true,
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			UILayer.default,
-		},
+			UILayer.default
+		}
 	},
 	root_fit = {
 		scale = "fit",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			UILayer.default,
-		},
+			UILayer.default
+		}
 	},
 	menu_root = {
-		horizontal_alignment = "center",
-		parent = "root",
 		vertical_alignment = "center",
+		parent = "root",
+		horizontal_alignment = "center",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	window = {
-		horizontal_alignment = "center",
-		parent = "menu_root",
 		vertical_alignment = "top",
+		parent = "menu_root",
+		horizontal_alignment = "center",
 		size = {
-			WIDGET_SIZE[1],
-			WIDGET_SIZE[2],
+			var_0_0[1],
+			var_0_0[2]
 		},
 		position = {
 			150,
 			-170,
-			1,
-		},
+			1
+		}
 	},
 	extra_curse = {
-		horizontal_alignment = "center",
-		parent = "menu_root",
 		vertical_alignment = "top",
+		parent = "menu_root",
+		horizontal_alignment = "center",
 		size = {
-			WIDGET_SIZE[1],
-			WIDGET_SIZE[2],
+			var_0_0[1],
+			var_0_0[2]
 		},
 		position = {
 			600,
 			-170,
-			1,
-		},
-	},
+			1
+		}
+	}
 }
 
-local function create_widget(scenegraph_id)
-	local widget = {
-		scenegraph_id = scenegraph_id,
+local function var_0_2(arg_1_0)
+	return {
+		scenegraph_id = arg_1_0,
 		offset = {
 			0,
 			0,
-			0,
+			0
 		},
 		element = {
 			passes = {
 				{
 					pass_type = "texture",
 					style_id = "background",
-					texture_id = "background",
+					texture_id = "background"
 				},
 				{
-					content_id = "glow_top",
-					pass_type = "texture_uv",
 					style_id = "glow_top",
+					pass_type = "texture_uv",
+					content_id = "glow_top"
 				},
 				{
 					pass_type = "texture",
 					style_id = "glow_bottom",
-					texture_id = "glow_bottom",
+					texture_id = "glow_bottom"
 				},
 				{
 					pass_type = "texture",
 					style_id = "header",
-					texture_id = "header",
+					texture_id = "header"
 				},
 				{
 					pass_type = "texture",
 					style_id = "glow_icon",
-					texture_id = "glow_icon",
+					texture_id = "glow_icon"
 				},
 				{
 					pass_type = "texture",
 					style_id = "icon",
-					texture_id = "icon",
+					texture_id = "icon"
 				},
 				{
-					pass_type = "text",
 					style_id = "title",
-					text_id = "title",
+					pass_type = "text",
+					text_id = "title"
 				},
 				{
-					pass_type = "text",
 					style_id = "subtitle",
-					text_id = "subtitle",
+					pass_type = "text",
+					text_id = "subtitle"
 				},
 				{
-					pass_type = "text",
 					style_id = "body",
-					text_id = "body",
-				},
-			},
+					pass_type = "text",
+					text_id = "body"
+				}
+			}
 		},
 		content = {
-			background = "morris_gaze_background",
-			body = "n/a",
 			glow_bottom = "morris_gaze_glow",
-			glow_icon = "circular_gradient",
-			header = "morris_gaze_header",
-			icon = "icons_placeholder",
 			subtitle = "n/a",
-			theme = "khorne",
+			body = "n/a",
+			header = "morris_gaze_header",
+			glow_icon = "circular_gradient",
 			title = "n/a",
+			theme = "khorne",
+			background = "morris_gaze_background",
+			icon = "icons_placeholder",
 			glow_top = {
 				texture_id = "morris_gaze_glow",
 				uvs = {
 					{
 						0,
-						1,
+						1
 					},
 					{
 						1,
-						0,
-					},
-				},
-			},
+						0
+					}
+				}
+			}
 		},
 		style = {
 			background = {},
 			glow_top = {
-				horizontal_alignment = "center",
 				vertical_alignment = "top",
+				horizontal_alignment = "center",
 				texture_size = {
 					315,
-					42,
+					42
 				},
 				color = Colors.get_color_table_with_alpha("tzeentch", 0),
 				offset = {
 					-3,
 					-5,
-					1,
-				},
+					1
+				}
 			},
 			glow_bottom = {
-				horizontal_alignment = "center",
 				vertical_alignment = "top",
+				horizontal_alignment = "center",
 				texture_size = {
 					315,
-					42,
+					42
 				},
 				color = Colors.get_color_table_with_alpha("tzeentch", 0),
 				offset = {
 					-3,
 					-25,
-					2,
-				},
+					2
+				}
 			},
 			header = {
-				horizontal_alignment = "center",
 				vertical_alignment = "top",
+				horizontal_alignment = "center",
 				texture_size = {
 					387,
-					157,
+					157
 				},
 				offset = {
 					-3,
 					70,
-					3,
-				},
+					3
+				}
 			},
 			glow_icon = {
-				horizontal_alignment = "center",
 				vertical_alignment = "top",
+				horizontal_alignment = "center",
 				color = Colors.get_color_table_with_alpha("tzeentch", 0),
 				texture_size = {
 					120,
-					120,
+					120
 				},
 				offset = {
 					-3,
 					95,
-					4,
-				},
+					4
+				}
 			},
 			icon = {
-				horizontal_alignment = "center",
 				vertical_alignment = "top",
+				horizontal_alignment = "center",
 				color = Colors.get_color_table_with_alpha("white", 0),
 				texture_size = {
 					102,
-					106,
+					106
 				},
 				offset = {
 					-3,
 					100,
-					5,
-				},
+					5
+				}
 			},
 			title = {
-				dynamic_font_size = true,
-				font_size = 32,
-				font_type = "hell_shark_header",
-				horizontal_alignment = "center",
-				localize = true,
-				upper_case = false,
 				use_shadow = true,
+				upper_case = false,
+				localize = true,
+				font_size = 32,
+				horizontal_alignment = "center",
 				vertical_alignment = "top",
+				dynamic_font_size = true,
+				font_type = "hell_shark_header",
 				text_color = Colors.get_color_table_with_alpha("tzeentch", 255),
 				offset = {
 					15,
 					-6,
-					6,
+					6
 				},
 				size = {
-					WIDGET_SIZE[1] - 30,
-					WIDGET_SIZE[2],
-				},
+					var_0_0[1] - 30,
+					var_0_0[2]
+				}
 			},
 			subtitle = {
-				dynamic_font_size = true,
-				font_size = 20,
-				font_type = "hell_shark_header",
-				horizontal_alignment = "center",
-				localize = false,
-				upper_case = false,
 				use_shadow = true,
+				upper_case = false,
+				localize = false,
+				font_size = 20,
+				horizontal_alignment = "center",
 				vertical_alignment = "top",
+				dynamic_font_size = true,
+				font_type = "hell_shark_header",
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
 					0,
 					-40,
-					7,
+					7
 				},
 				size = {
-					WIDGET_SIZE[1],
-					WIDGET_SIZE[2],
-				},
+					var_0_0[1],
+					var_0_0[2]
+				}
 			},
 			body = {
 				font_size = 20,
-				font_type = "hell_shark",
 				horizontal_alignment = "left",
 				localize = false,
-				vertical_alignment = "top",
 				word_wrap = true,
+				vertical_alignment = "top",
+				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
 					40,
 					20,
-					8,
+					8
 				},
 				size = {
-					WIDGET_SIZE[1] - 80,
-					WIDGET_SIZE[2] - 40 - 64,
-				},
-			},
-		},
+					var_0_0[1] - 80,
+					var_0_0[2] - 40 - 64
+				}
+			}
+		}
 	}
-
-	return widget
 end
 
-local widgets = {
-	god_info_widget = create_widget("window"),
-	belakor_info_widget = create_widget("extra_curse"),
+local var_0_3 = {
+	god_info_widget = var_0_2("window"),
+	belakor_info_widget = var_0_2("extra_curse")
 }
-local animation_definitions = {
+local var_0_4 = {
 	on_enter = {
 		{
-			duration = 0.3,
 			name = "fade_in",
-			init = function (ui_scenegraph, scenegraph_definition, widget, params)
-				params.render_settings.alpha_multiplier = 0
+			duration = 0.3,
+			init = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+				arg_2_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
-				params.render_settings.alpha_multiplier = math.easeOutCubic(progress)
+			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+				arg_3_4.render_settings.alpha_multiplier = math.easeOutCubic(arg_3_3)
 			end,
-			on_complete = NOP,
-		},
+			on_complete = NOP
+		}
 	},
 	on_exit = {
 		{
-			duration = 0.3,
 			name = "fade_out",
-			init = function (ui_scenegraph, scenegraph_definition, widget, params)
-				params.render_settings.alpha_multiplier = 1
+			duration = 0.3,
+			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				arg_4_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
-				params.render_settings.alpha_multiplier = 1
+			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				arg_5_4.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = NOP,
-		},
+			on_complete = NOP
+		}
 	},
 	set_theme = {
 		{
+			name = "fade_in",
 			delay = 0,
 			duration = 0.5,
-			name = "fade_in",
-			init = function (ui_scenegraph, scenegraph_definition, widget, params)
-				local theme_settings = params.theme_settings
-				local theme_color = theme_settings.curse_description_color
-				local style = widget.style
+			init = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				local var_6_0 = arg_6_3.theme_settings
+				local var_6_1 = var_6_0.curse_description_color
+				local var_6_2 = arg_6_2.style
 
-				style.glow_top.color[1] = 0
-				style.glow_bottom.color[1] = 0
-				style.glow_icon.color[1] = 0
+				var_6_2.glow_top.color[1] = 0
+				var_6_2.glow_bottom.color[1] = 0
+				var_6_2.glow_icon.color[1] = 0
 
-				Colors.copy_no_alpha_to(style.glow_top.color, theme_color)
-				Colors.copy_no_alpha_to(style.glow_bottom.color, theme_color)
-				Colors.copy_no_alpha_to(style.glow_icon.color, theme_color)
-				Colors.copy_no_alpha_to(style.title.text_color, theme_color)
+				Colors.copy_no_alpha_to(var_6_2.glow_top.color, var_6_1)
+				Colors.copy_no_alpha_to(var_6_2.glow_bottom.color, var_6_1)
+				Colors.copy_no_alpha_to(var_6_2.glow_icon.color, var_6_1)
+				Colors.copy_no_alpha_to(var_6_2.title.text_color, var_6_1)
 
-				local content = widget.content
+				local var_6_3 = arg_6_2.content
 
-				content.icon = theme_settings.icon
-				content.title = theme_settings.journey_title
+				var_6_3.icon = var_6_0.icon
+				var_6_3.title = var_6_0.journey_title
 
-				local localized_deity_name = Localize(theme_settings.deity_name or "lb_unknown")
+				local var_6_4 = Localize(var_6_0.deity_name or "lb_unknown")
 
-				content.body = string.format(Localize("gaze_information"), localized_deity_name)
+				var_6_3.body = string.format(Localize("gaze_information"), var_6_4)
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
-				local style = widget.style
+			update = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+				local var_7_0 = arg_7_2.style
 
-				progress = math.easeInCubic(progress)
+				arg_7_3 = math.easeInCubic(arg_7_3)
 
-				local alpha = 255 * progress
+				local var_7_1 = 255 * arg_7_3
 
-				style.glow_top.color[1] = alpha
-				style.glow_bottom.color[1] = alpha
-				style.glow_icon.color[1] = alpha
+				var_7_0.glow_top.color[1] = var_7_1
+				var_7_0.glow_bottom.color[1] = var_7_1
+				var_7_0.glow_icon.color[1] = var_7_1
 			end,
-			on_complete = NOP,
+			on_complete = NOP
 		},
 		{
+			name = "fade_in_icon",
 			delay = 0,
 			duration = 0.25,
-			name = "fade_in_icon",
-			init = function (ui_scenegraph, scenegraph_definition, widget, params)
-				widget.style.icon.color[1] = 0
+			init = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+				arg_8_2.style.icon.color[1] = 0
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
-				progress = math.easeInCubic(progress)
-				widget.style.icon.color[1] = 255 * progress
+			update = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+				arg_9_3 = math.easeInCubic(arg_9_3)
+				arg_9_2.style.icon.color[1] = 255 * arg_9_3
 			end,
-			on_complete = NOP,
-		},
+			on_complete = NOP
+		}
 	},
 	set_theme_belakor = {
 		{
+			name = "fade_in",
 			delay = 0,
 			duration = 0.5,
-			name = "fade_in",
-			init = function (ui_scenegraph, scenegraph_definition, widget, params)
-				local theme_settings = params.theme_settings
-				local theme_color = theme_settings.curse_description_color
-				local style = widget.style
+			init = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+				local var_10_0 = arg_10_3.theme_settings
+				local var_10_1 = var_10_0.curse_description_color
+				local var_10_2 = arg_10_2.style
 
-				style.glow_top.color[1] = 0
-				style.glow_bottom.color[1] = 0
-				style.glow_icon.color[1] = 0
+				var_10_2.glow_top.color[1] = 0
+				var_10_2.glow_bottom.color[1] = 0
+				var_10_2.glow_icon.color[1] = 0
 
-				Colors.copy_no_alpha_to(style.glow_top.color, theme_color)
-				Colors.copy_no_alpha_to(style.glow_bottom.color, theme_color)
-				Colors.copy_no_alpha_to(style.glow_icon.color, theme_color)
-				Colors.copy_no_alpha_to(style.title.text_color, theme_color)
+				Colors.copy_no_alpha_to(var_10_2.glow_top.color, var_10_1)
+				Colors.copy_no_alpha_to(var_10_2.glow_bottom.color, var_10_1)
+				Colors.copy_no_alpha_to(var_10_2.glow_icon.color, var_10_1)
+				Colors.copy_no_alpha_to(var_10_2.title.text_color, var_10_1)
 
-				local content = widget.content
+				local var_10_3 = arg_10_2.content
 
-				content.icon = theme_settings.icon
-				content.title = theme_settings.journey_title
+				var_10_3.icon = var_10_0.icon
+				var_10_3.title = var_10_0.journey_title
 
-				local localized_deity_name = Localize(theme_settings.deity_name or "lb_unknown")
+				local var_10_4 = Localize(var_10_0.deity_name or "lb_unknown")
 
-				content.body = string.format(Localize("gaze_information"), localized_deity_name)
+				var_10_3.body = string.format(Localize("gaze_information"), var_10_4)
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
-				local style = widget.style
+			update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+				local var_11_0 = arg_11_2.style
 
-				progress = math.easeInCubic(progress)
+				arg_11_3 = math.easeInCubic(arg_11_3)
 
-				local alpha = 255 * progress
+				local var_11_1 = 255 * arg_11_3
 
-				style.glow_top.color[1] = alpha
-				style.glow_bottom.color[1] = alpha
-				style.glow_icon.color[1] = alpha
+				var_11_0.glow_top.color[1] = var_11_1
+				var_11_0.glow_bottom.color[1] = var_11_1
+				var_11_0.glow_icon.color[1] = var_11_1
 			end,
-			on_complete = NOP,
+			on_complete = NOP
 		},
 		{
+			name = "fade_in_icon",
 			delay = 0,
 			duration = 0.25,
-			name = "fade_in_icon",
-			init = function (ui_scenegraph, scenegraph_definition, widget, params)
-				widget.style.icon.color[1] = 0
+			init = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+				arg_12_2.style.icon.color[1] = 0
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
-				progress = math.easeInCubic(progress)
-				widget.style.icon.color[1] = 255 * progress
+			update = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+				arg_13_3 = math.easeInCubic(arg_13_3)
+				arg_13_2.style.icon.color[1] = 255 * arg_13_3
 			end,
-			on_complete = NOP,
-		},
-	},
+			on_complete = NOP
+		}
+	}
 }
 
 return {
-	scenegraph_definition = scenegraph_definition,
-	widgets = widgets,
-	animation_definitions = animation_definitions,
+	scenegraph_definition = var_0_1,
+	widgets = var_0_3,
+	animation_definitions = var_0_4
 }

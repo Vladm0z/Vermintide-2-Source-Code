@@ -1,149 +1,139 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_ninja_vanish_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_ninja_vanish_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTNinjaVanishAction = class(BTNinjaVanishAction, BTNode)
 BTNinjaVanishAction.name = "BTNinjaVanishAction"
 
-local POSITION_LOOKUP = POSITION_LOOKUP
-local script_data = script_data
+local var_0_0 = POSITION_LOOKUP
+local var_0_1 = script_data
 
-BTNinjaVanishAction.init = function (self, ...)
-	BTNinjaVanishAction.super.init(self, ...)
+function BTNinjaVanishAction.init(arg_1_0, ...)
+	BTNinjaVanishAction.super.init(arg_1_0, ...)
 end
 
-local function debug3d(unit, text, color_name)
-	if script_data.debug_ai_movement then
-		Debug.world_sticky_text(POSITION_LOOKUP[unit], text, color_name)
+local function var_0_2(arg_2_0, arg_2_1, arg_2_2)
+	if var_0_1.debug_ai_movement then
+		Debug.world_sticky_text(var_0_0[arg_2_0], arg_2_1, arg_2_2)
 	end
 end
 
-BTNinjaVanishAction.enter = function (self, unit, blackboard, t)
-	blackboard.action = self._tree_node.action_data
-	blackboard.vanish_timer = 0
-	blackboard.skulk_pos = nil
+function BTNinjaVanishAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	arg_3_2.action = arg_3_0._tree_node.action_data
+	arg_3_2.vanish_timer = 0
+	arg_3_2.skulk_pos = nil
 
-	local vanish_pos = BTNinjaVanishAction.find_escape_position(unit, blackboard)
+	local var_3_0 = BTNinjaVanishAction.find_escape_position(arg_3_1, arg_3_2)
 
-	blackboard.navigation_extension:set_enabled(false)
-	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
+	arg_3_2.navigation_extension:set_enabled(false)
+	arg_3_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-	if vanish_pos then
-		blackboard.vanish_pos = Vector3Box(vanish_pos)
+	if var_3_0 then
+		arg_3_2.vanish_pos = Vector3Box(var_3_0)
 
-		Managers.state.network:anim_event(unit, "foff_self")
+		Managers.state.network:anim_event(arg_3_1, "foff_self")
 
-		blackboard.vanish_timer = t + blackboard.action.foff_anim_length
-	elseif blackboard.move_state ~= "idle" then
-		Managers.state.network:anim_event(unit, "idle")
+		arg_3_2.vanish_timer = arg_3_3 + arg_3_2.action.foff_anim_length
+	elseif arg_3_2.move_state ~= "idle" then
+		Managers.state.network:anim_event(arg_3_1, "idle")
 
-		blackboard.move_state = "idle"
+		arg_3_2.move_state = "idle"
 	end
 end
 
-BTNinjaVanishAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	blackboard.vanish_timer = nil
-	blackboard.vanish_pos = nil
-	blackboard.wait_one_frame = nil
-	blackboard.ninja_vanish = false
+function BTNinjaVanishAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	arg_4_2.vanish_timer = nil
+	arg_4_2.vanish_pos = nil
+	arg_4_2.wait_one_frame = nil
+	arg_4_2.ninja_vanish = false
 
-	blackboard.navigation_extension:set_enabled(true)
+	arg_4_2.navigation_extension:set_enabled(true)
 end
 
-BTNinjaVanishAction.run = function (self, unit, blackboard, t, dt)
-	if t > blackboard.vanish_timer then
-		if blackboard.wait_one_frame then
+function BTNinjaVanishAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	if arg_5_3 > arg_5_2.vanish_timer then
+		if arg_5_2.wait_one_frame then
 			return "done"
 		end
 
-		if blackboard.vanish_pos then
-			BTNinjaVanishAction.vanish(unit, blackboard)
+		if arg_5_2.vanish_pos then
+			BTNinjaVanishAction.vanish(arg_5_1, arg_5_2)
 		end
 
-		blackboard.wait_one_frame = true
+		arg_5_2.wait_one_frame = true
 	end
 
 	return "running"
 end
 
-BTNinjaVanishAction.vanish = function (unit, blackboard)
-	local vanish_pos = blackboard.vanish_pos:unbox()
+function BTNinjaVanishAction.vanish(arg_6_0, arg_6_1)
+	local var_6_0 = arg_6_1.vanish_pos:unbox()
 
-	if script_data.debug_ai_movement then
-		QuickDrawerStay:cylinder(vanish_pos, vanish_pos + Vector3(0, 0, 17), 0.4, Color(200, 0, 131), 20)
-		QuickDrawerStay:line(POSITION_LOOKUP[unit] + Vector3(0, 0, 4), vanish_pos + Vector3(0, 0, 17), Color(200, 0, 131))
+	if var_0_1.debug_ai_movement then
+		QuickDrawerStay:cylinder(var_6_0, var_6_0 + Vector3(0, 0, 17), 0.4, Color(200, 0, 131), 20)
+		QuickDrawerStay:line(var_0_0[arg_6_0] + Vector3(0, 0, 4), var_6_0 + Vector3(0, 0, 17), Color(200, 0, 131))
 	end
 
-	local network_manager = Managers.state.network
+	local var_6_1 = Managers.state.network
 
-	BTNinjaVanishAction.play_foff(unit, blackboard, network_manager, POSITION_LOOKUP[unit], vanish_pos)
-	network_manager:anim_event(unit, "idle")
-	blackboard.locomotion_extension:teleport_to(vanish_pos)
-
-	local ai_navigation = blackboard.navigation_extension
-
-	ai_navigation:move_to(vanish_pos)
-	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
-	Managers.state.entity:system("ai_bot_group_system"):enemy_teleported(unit, vanish_pos)
-
-	local ping_system = Managers.state.entity:system("ping_system")
-
-	ping_system:remove_ping_from_unit(unit)
+	BTNinjaVanishAction.play_foff(arg_6_0, arg_6_1, var_6_1, var_0_0[arg_6_0], var_6_0)
+	var_6_1:anim_event(arg_6_0, "idle")
+	arg_6_1.locomotion_extension:teleport_to(var_6_0)
+	arg_6_1.navigation_extension:move_to(var_6_0)
+	arg_6_1.locomotion_extension:set_wanted_velocity(Vector3.zero())
+	Managers.state.entity:system("ai_bot_group_system"):enemy_teleported(arg_6_0, var_6_0)
+	Managers.state.entity:system("ping_system"):remove_ping_from_unit(arg_6_0)
 end
 
-BTNinjaVanishAction.play_foff = function (unit, blackboard, network_manager, pos, pos2)
-	local effect_name_id = NetworkLookup.effects[blackboard.action.effect_name]
-	local owner_unit_id = network_manager:unit_game_object_id(unit)
-	local node_id = 0
-	local rotation_offset = Quaternion.identity()
+function BTNinjaVanishAction.play_foff(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	local var_7_0 = NetworkLookup.effects[arg_7_1.action.effect_name]
+	local var_7_1 = arg_7_2:unit_game_object_id(arg_7_0)
+	local var_7_2 = 0
+	local var_7_3 = Quaternion.identity()
 
-	network_manager:rpc_play_particle_effect(nil, effect_name_id, NetworkConstants.invalid_game_object_id, node_id, pos, rotation_offset, false)
-	network_manager:rpc_play_particle_effect(nil, effect_name_id, NetworkConstants.invalid_game_object_id, node_id, pos2, rotation_offset, false)
+	arg_7_2:rpc_play_particle_effect(nil, var_7_0, NetworkConstants.invalid_game_object_id, var_7_2, arg_7_3, var_7_3, false)
+	arg_7_2:rpc_play_particle_effect(nil, var_7_0, NetworkConstants.invalid_game_object_id, var_7_2, arg_7_4, var_7_3, false)
 end
 
-BTNinjaVanishAction.find_escape_position = function (unit, blackboard)
-	local center_position
+function BTNinjaVanishAction.find_escape_position(arg_8_0, arg_8_1)
+	local var_8_0
 
-	if blackboard.action.stalk_lonliest_player then
-		local side = blackboard.side
-		local cluster_utility, lonliest_pos, loneliness_value = Managers.state.conflict:get_cluster_and_loneliness(7, side.ENEMY_PLAYER_POSITIONS, side.ENEMY_PLAYER_UNITS)
+	if arg_8_1.action.stalk_lonliest_player then
+		local var_8_1 = arg_8_1.side
+		local var_8_2, var_8_3, var_8_4 = Managers.state.conflict:get_cluster_and_loneliness(7, var_8_1.ENEMY_PLAYER_POSITIONS, var_8_1.ENEMY_PLAYER_UNITS)
 
-		center_position = lonliest_pos
+		var_8_0 = var_8_3
 	else
-		center_position = POSITION_LOOKUP[unit]
+		var_8_0 = var_0_0[arg_8_0]
 	end
 
-	local num_found = 0
-	local hidden_cover_units
+	local var_8_5 = 0
+	local var_8_6
 
-	if center_position then
-		local side = blackboard.side
+	if var_8_0 then
+		local var_8_7 = arg_8_1.side
 
-		num_found, hidden_cover_units = ConflictUtils.hidden_cover_points(center_position, side.ENEMY_PLAYER_POSITIONS, 15, 40)
+		var_8_5, var_8_6 = ConflictUtils.hidden_cover_points(var_8_0, var_8_7.ENEMY_PLAYER_POSITIONS, 15, 40)
 	end
 
-	if num_found > 0 then
-		local pick = math.random(math.ceil(num_found / 2), num_found)
-		local cover_point_unit = hidden_cover_units[pick]
+	if var_8_5 > 0 then
+		local var_8_8 = var_8_6[math.random(math.ceil(var_8_5 / 2), var_8_5)]
 
-		if cover_point_unit then
-			return Unit.local_position(cover_point_unit, 0)
+		if var_8_8 then
+			return Unit.local_position(var_8_8, 0)
 		end
 	else
-		local conflict_director = Managers.state.conflict
-		local main_path_info = conflict_director.main_path_info
-		local ahead_unit = main_path_info.ahead_unit
+		local var_8_9 = Managers.state.conflict
+		local var_8_10 = var_8_9.main_path_info
+		local var_8_11 = var_8_10.ahead_unit
 
-		if POSITION_LOOKUP[ahead_unit] then
-			local main_path_player_info = conflict_director.main_path_player_info
-			local player_info = main_path_player_info[ahead_unit]
-			local pos, path_index = MainPathUtils.point_on_mainpath(main_path_info.main_paths, player_info.travel_dist + 30 + math.random() * 10)
+		if var_0_0[var_8_11] then
+			local var_8_12 = var_8_9.main_path_player_info[var_8_11]
+			local var_8_13, var_8_14 = MainPathUtils.point_on_mainpath(var_8_10.main_paths, var_8_12.travel_dist + 30 + math.random() * 10)
 
-			return pos
+			return var_8_13
 		else
-			local pos = MainPathUtils.closest_pos_at_main_path(main_path_info.main_paths, POSITION_LOOKUP[unit])
-
-			return pos
+			return (MainPathUtils.closest_pos_at_main_path(var_8_10.main_paths, var_0_0[arg_8_0]))
 		end
 	end
 end

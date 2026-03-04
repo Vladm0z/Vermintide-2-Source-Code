@@ -1,358 +1,355 @@
-﻿-- chunkname: @scripts/managers/conflict_director/main_path_utils.lua
+-- chunkname: @scripts/managers/conflict_director/main_path_utils.lua
 
 MainPathUtils = {}
 
-local distance_squared = Vector3.distance_squared
-local Geometry = Geometry
-local Vector3_distance = Vector3.distance
+local var_0_0 = Vector3.distance_squared
+local var_0_1 = Geometry
+local var_0_2 = Vector3.distance
 
-MainPathUtils.total_path_dist = function ()
+function MainPathUtils.total_path_dist()
 	return EngineOptimized.main_path_total_length()
 end
 
-MainPathUtils.closest_pos_at_main_path = function (not_used, p, search_main_path_index)
-	local start_node_index, end_node_index
+function MainPathUtils.closest_pos_at_main_path(arg_2_0, arg_2_1, arg_2_2)
+	local var_2_0
+	local var_2_1
 
-	if search_main_path_index then
-		local level_analysis = Managers.state.conflict.level_analysis
-		local main_path_data = level_analysis.main_path_data
-		local breaks_order = main_path_data.breaks_order
+	if arg_2_2 then
+		local var_2_2 = Managers.state.conflict.level_analysis.main_path_data.breaks_order
 
-		start_node_index = search_main_path_index == 1 and 1 or breaks_order[search_main_path_index - 1] + 1
-		end_node_index = breaks_order[search_main_path_index]
+		var_2_0 = arg_2_2 == 1 and 1 or var_2_2[arg_2_2 - 1] + 1
+		var_2_1 = var_2_2[arg_2_2]
 	end
 
-	return EngineOptimized.closest_pos_at_main_path(p, start_node_index, end_node_index)
+	return EngineOptimized.closest_pos_at_main_path(arg_2_1, var_2_0, var_2_1)
 end
 
-MainPathUtils.closest_pos_at_main_path_lua = function (main_paths, p, search_main_path_index)
-	local best_dist = math.huge
-	local best_main_path, best_sub_index
-	local best_point = Vector3(0, 0, 0)
-	local best_point_found = false
-	local best_travel_dist = 0
-	local total_path_dist = 0
+function MainPathUtils.closest_pos_at_main_path_lua(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0 = math.huge
+	local var_3_1
+	local var_3_2
+	local var_3_3 = Vector3(0, 0, 0)
+	local var_3_4 = false
+	local var_3_5 = 0
+	local var_3_6 = 0
 
-	p = p or main_paths[1].nodes[1]:unbox()
+	arg_3_1 = arg_3_1 or arg_3_0[1].nodes[1]:unbox()
 
-	local Vector3_set_xyz = Vector3.set_xyz
-	local Vector3_to_elements = Vector3.to_elements
-	local Geometry_closest_point_on_line = Geometry.closest_point_on_line
-	local Script_set_temp_count = Script.set_temp_count
-	local Script_temp_count = Script.temp_count
-	local start_index = search_main_path_index or 1
-	local end_index = search_main_path_index or #main_paths
+	local var_3_7 = Vector3.set_xyz
+	local var_3_8 = Vector3.to_elements
+	local var_3_9 = var_0_1.closest_point_on_line
+	local var_3_10 = Script.set_temp_count
+	local var_3_11 = Script.temp_count
+	local var_3_12 = arg_3_2 or 1
+	local var_3_13 = arg_3_2 or #arg_3_0
 
-	for i = start_index, end_index do
-		local sub_path = main_paths[i]
-		local nodes = sub_path.nodes
+	for iter_3_0 = var_3_12, var_3_13 do
+		local var_3_14 = arg_3_0[iter_3_0]
+		local var_3_15 = var_3_14.nodes
 
-		total_path_dist = total_path_dist + sub_path.path_length
+		var_3_6 = var_3_6 + var_3_14.path_length
 
-		for j = 1, #nodes - 1 do
-			local num_v, num_q, num_m = Script_temp_count()
-			local p1 = nodes[j]:unbox()
-			local p2 = nodes[j + 1]:unbox()
-			local closest_point = Geometry_closest_point_on_line(p, p1, p2)
-			local d = distance_squared(p, closest_point)
+		for iter_3_1 = 1, #var_3_15 - 1 do
+			local var_3_16, var_3_17, var_3_18 = var_3_11()
+			local var_3_19 = var_3_15[iter_3_1]:unbox()
+			local var_3_20 = var_3_15[iter_3_1 + 1]:unbox()
+			local var_3_21 = var_3_9(arg_3_1, var_3_19, var_3_20)
+			local var_3_22 = var_0_0(arg_3_1, var_3_21)
 
-			if d < best_dist then
-				best_dist = d
-				best_main_path = i
-				best_sub_index = j
-				best_point_found = true
+			if var_3_22 < var_3_0 then
+				var_3_0 = var_3_22
+				var_3_1 = iter_3_0
+				var_3_2 = iter_3_1
+				var_3_4 = true
 
-				Vector3_set_xyz(best_point, Vector3_to_elements(closest_point))
+				var_3_7(var_3_3, var_3_8(var_3_21))
 			end
 
-			Script_set_temp_count(num_v, num_q, num_m)
+			var_3_10(var_3_16, var_3_17, var_3_18)
 		end
 	end
 
-	local move_percent, closest_node
+	local var_3_23
+	local var_3_24
 
-	if best_point_found then
-		local path = main_paths[best_main_path]
+	if var_3_4 then
+		local var_3_25 = arg_3_0[var_3_1]
+		local var_3_26 = var_3_25.nodes[var_3_2]:unbox()
 
-		closest_node = path.nodes[best_sub_index]:unbox()
-		best_travel_dist = path.travel_dist and path.travel_dist[best_sub_index] + Vector3.distance(best_point, closest_node) or 0
-		move_percent = best_travel_dist / total_path_dist
+		var_3_5 = var_3_25.travel_dist and var_3_25.travel_dist[var_3_2] + Vector3.distance(var_3_3, var_3_26) or 0
+		var_3_23 = var_3_5 / var_3_6
 	else
-		best_point = nil
+		var_3_3 = nil
 	end
 
-	return best_point, best_travel_dist, total_path_dist, move_percent, best_main_path, best_sub_index
+	return var_3_3, var_3_5, var_3_6, var_3_23, var_3_1, var_3_2
 end
 
-MainPathUtils.collapse_main_paths = function (main_paths)
-	local unified_path, unified_travel_dists, breaks, breaks_order, segments = {}, {}, {}, {}, {}
-	local k = 1
+function MainPathUtils.collapse_main_paths(arg_4_0)
+	local var_4_0 = {}
+	local var_4_1 = {}
+	local var_4_2 = {}
+	local var_4_3 = {}
+	local var_4_4 = {}
+	local var_4_5 = 1
 
-	for i = 1, #main_paths do
-		local sub_path = main_paths[i]
-		local nodes = sub_path.nodes
-		local travel_dist = sub_path.travel_dist
-		local break_index = k + #nodes - 1
+	for iter_4_0 = 1, #arg_4_0 do
+		local var_4_6 = arg_4_0[iter_4_0]
+		local var_4_7 = var_4_6.nodes
+		local var_4_8 = var_4_6.travel_dist
+		local var_4_9 = var_4_5 + #var_4_7 - 1
 
-		if i < #main_paths then
-			breaks[break_index] = 0
+		if iter_4_0 < #arg_4_0 then
+			var_4_2[var_4_9] = 0
 		end
 
-		breaks_order[i] = break_index
+		var_4_3[iter_4_0] = var_4_9
 
-		for j = 1, #nodes do
-			unified_path[k] = nodes[j]
-			unified_travel_dists[k] = travel_dist[j]
-			segments[k] = i
-			k = k + 1
-		end
-	end
-
-	for break_index, data in pairs(breaks) do
-		breaks[break_index] = (unified_travel_dists[break_index] + unified_travel_dists[break_index + 1]) / 2
-	end
-
-	EngineOptimized.register_main_path(unified_path, unified_travel_dists, segments, #main_paths)
-
-	return unified_path, unified_travel_dists, segments, breaks, breaks_order
-end
-
-MainPathUtils.point_on_mainpath = function (main_paths, wanted_distance)
-	return EngineOptimized.point_on_mainpath(wanted_distance)
-end
-
-MainPathUtils.point_on_mainpath_lua = function (main_paths, wanted_distance)
-	if wanted_distance < 0 then
-		return main_paths[1].nodes[1]:unbox(), 1
-	end
-
-	local segment_distance = 0
-	local get_path_point = LevelAnalysis.get_path_point
-
-	for i = 1, #main_paths do
-		local sub_path = main_paths[i]
-
-		segment_distance = segment_distance + sub_path.path_length
-
-		if wanted_distance <= segment_distance then
-			local remainder_dist = wanted_distance - (segment_distance - sub_path.path_length)
-			local sub_move_percent = remainder_dist / sub_path.path_length
-			local pos, sub_index = get_path_point(sub_path.nodes, sub_path.path_length, sub_move_percent)
-
-			return pos, i, sub_index
+		for iter_4_1 = 1, #var_4_7 do
+			var_4_0[var_4_5] = var_4_7[iter_4_1]
+			var_4_1[var_4_5] = var_4_8[iter_4_1]
+			var_4_4[var_4_5] = iter_4_0
+			var_4_5 = var_4_5 + 1
 		end
 	end
 
-	local num_main_paths = #main_paths
-	local nodes = main_paths[num_main_paths].nodes
+	for iter_4_2, iter_4_3 in pairs(var_4_2) do
+		var_4_2[iter_4_2] = (var_4_1[iter_4_2] + var_4_1[iter_4_2 + 1]) / 2
+	end
 
-	return nodes[#nodes]:unbox(), num_main_paths
+	EngineOptimized.register_main_path(var_4_0, var_4_1, var_4_4, #arg_4_0)
+
+	return var_4_0, var_4_1, var_4_4, var_4_2, var_4_3
 end
 
-MainPathUtils.zone_segment_on_mainpath = function (main_paths, p)
-	local best_point, best_travel_dist, move_percent = MainPathUtils.closest_pos_at_main_path(main_paths, p)
-	local index = math.floor((best_travel_dist + 5) / 10)
+function MainPathUtils.point_on_mainpath(arg_5_0, arg_5_1)
+	return EngineOptimized.point_on_mainpath(arg_5_1)
+end
 
-	return index
+function MainPathUtils.point_on_mainpath_lua(arg_6_0, arg_6_1)
+	if arg_6_1 < 0 then
+		return arg_6_0[1].nodes[1]:unbox(), 1
+	end
+
+	local var_6_0 = 0
+	local var_6_1 = LevelAnalysis.get_path_point
+
+	for iter_6_0 = 1, #arg_6_0 do
+		local var_6_2 = arg_6_0[iter_6_0]
+
+		var_6_0 = var_6_0 + var_6_2.path_length
+
+		if arg_6_1 <= var_6_0 then
+			local var_6_3 = (arg_6_1 - (var_6_0 - var_6_2.path_length)) / var_6_2.path_length
+			local var_6_4, var_6_5 = var_6_1(var_6_2.nodes, var_6_2.path_length, var_6_3)
+
+			return var_6_4, iter_6_0, var_6_5
+		end
+	end
+
+	local var_6_6 = #arg_6_0
+	local var_6_7 = arg_6_0[var_6_6].nodes
+
+	return var_6_7[#var_6_7]:unbox(), var_6_6
+end
+
+function MainPathUtils.zone_segment_on_mainpath(arg_7_0, arg_7_1)
+	local var_7_0, var_7_1, var_7_2 = MainPathUtils.closest_pos_at_main_path(arg_7_0, arg_7_1)
+
+	return (math.floor((var_7_1 + 5) / 10))
 end
 
 function moll()
-	local start_point = EngineOptimized.point_on_mainpath(0)
-	local path_pos, travel_dist, move_percent, sub_index, path_index = EngineOptimized.closest_pos_at_main_path(start_point)
-	local current_path_index = path_index
-	local segment_index, break_node_index, last_node_position = EngineOptimized.main_path_next_break(current_path_index)
+	local var_8_0 = EngineOptimized.point_on_mainpath(0)
+	local var_8_1, var_8_2, var_8_3, var_8_4, var_8_5 = EngineOptimized.closest_pos_at_main_path(var_8_0)
+	local var_8_6 = var_8_5
+	local var_8_7, var_8_8, var_8_9 = EngineOptimized.main_path_next_break(var_8_6)
 
-	while break_node_index do
-		print("MAINPATH: ", current_path_index, segment_index, break_node_index, last_node_position)
+	while var_8_8 do
+		print("MAINPATH: ", var_8_6, var_8_7, var_8_8, var_8_9)
 
-		local pos = EngineOptimized.point_on_mainpath(travel_dist + 1)
+		local var_8_10 = EngineOptimized.point_on_mainpath(var_8_2 + 1)
+		local var_8_11, var_8_12, var_8_13, var_8_14
 
-		path_pos, travel_dist, move_percent, sub_index, path_index = EngineOptimized.closest_pos_at_main_path(pos)
+		var_8_11, var_8_2, var_8_12, var_8_13, var_8_14 = EngineOptimized.closest_pos_at_main_path(var_8_10)
 
-		QuickDrawerStay:sphere(path_pos, 3, Color(0, 0, 255))
+		QuickDrawerStay:sphere(var_8_11, 3, Color(0, 0, 255))
 
-		if path_index ~= current_path_index then
-			local segment_index, break_node_index, last_node_position = EngineOptimized.main_path_next_break(path_index)
+		if var_8_14 ~= var_8_6 then
+			local var_8_15, var_8_16, var_8_17 = EngineOptimized.main_path_next_break(var_8_14)
 
-			current_path_index = path_index
+			var_8_6 = var_8_14
 		else
 			break
 		end
 	end
 end
 
-local index_list = {
+local var_0_3 = {
 	0,
 	1,
 	-1,
 	5,
 	-5,
 	20,
-	-20,
+	-20
 }
-local index_list_size = #index_list
+local var_0_4 = #var_0_3
 
-MainPathUtils.closest_pos_at_collapsed_main_path = function (collapsed_path, collapsed_dists, breaks_lookup, p, last_index)
-	last_index = last_index or 1
+function MainPathUtils.closest_pos_at_collapsed_main_path(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	arg_9_4 = arg_9_4 or 1
 
-	local num_nodes = #collapsed_path
-	local last_node = num_nodes - 1
-	local math_clamp = math.clamp
-	local best_dist = math.huge
-	local best_point = Vector3(0, 0, 0)
-	local best_index = false
-	local total_path_dist = collapsed_dists[num_nodes]
+	local var_9_0 = #arg_9_0
+	local var_9_1 = var_9_0 - 1
+	local var_9_2 = math.clamp
+	local var_9_3 = math.huge
+	local var_9_4 = Vector3(0, 0, 0)
+	local var_9_5 = false
+	local var_9_6 = arg_9_1[var_9_0]
 
-	p = p or collapsed_path[1]:unbox()
+	arg_9_3 = arg_9_3 or arg_9_0[1]:unbox()
 
-	local Vector3_set_xyz = Vector3.set_xyz
-	local Vector3_to_elements = Vector3.to_elements
-	local Geometry_closest_point_on_line = Geometry.closest_point_on_line
+	local var_9_7 = Vector3.set_xyz
+	local var_9_8 = Vector3.to_elements
+	local var_9_9 = var_0_1.closest_point_on_line
 
-	for j = 1, index_list_size do
-		local i = last_index + index_list[j]
+	for iter_9_0 = 1, var_0_4 do
+		local var_9_10 = arg_9_4 + var_0_3[iter_9_0]
+		local var_9_11 = var_9_2(var_9_10, 1, var_9_1)
+		local var_9_12 = arg_9_0[var_9_11]:unbox()
+		local var_9_13 = arg_9_0[var_9_11 + 1]:unbox()
+		local var_9_14 = var_9_9(arg_9_3, var_9_12, var_9_13)
+		local var_9_15 = var_0_0(arg_9_3, var_9_14)
 
-		i = math_clamp(i, 1, last_node)
+		if var_9_15 < var_9_3 then
+			var_9_3 = var_9_15
+			var_9_5 = var_9_11
 
-		local p1 = collapsed_path[i]:unbox()
-		local p2 = collapsed_path[i + 1]:unbox()
-		local closest_point = Geometry_closest_point_on_line(p, p1, p2)
-		local d = distance_squared(p, closest_point)
-
-		if d < best_dist then
-			best_dist = d
-			best_index = i
-
-			Vector3_set_xyz(best_point, Vector3_to_elements(closest_point))
+			var_9_7(var_9_4, var_9_8(var_9_14))
 		end
 	end
 
-	local move_percent, closest_node
-	local best_travel_dist = 0
+	local var_9_16
+	local var_9_17
+	local var_9_18 = 0
 
-	if best_index then
-		closest_node = collapsed_path[best_index]:unbox()
+	if var_9_5 then
+		local var_9_19 = arg_9_0[var_9_5]:unbox()
+		local var_9_20 = arg_9_1[var_9_5]
 
-		local node_dist = collapsed_dists[best_index]
+		var_9_18 = var_9_20 + var_0_2(var_9_4, var_9_19)
 
-		best_travel_dist = node_dist + Vector3_distance(best_point, closest_node)
+		local var_9_21 = arg_9_2[var_9_5]
 
-		local at_break = breaks_lookup[best_index]
-
-		if at_break and node_dist < best_travel_dist then
-			if at_break < best_travel_dist then
-				best_travel_dist = collapsed_dists[best_index + 1]
-				best_point = collapsed_path[best_index + 1]:unbox()
+		if var_9_21 and var_9_20 < var_9_18 then
+			if var_9_21 < var_9_18 then
+				var_9_18 = arg_9_1[var_9_5 + 1]
+				var_9_4 = arg_9_0[var_9_5 + 1]:unbox()
 			else
-				best_travel_dist = node_dist
-				best_point = closest_node
+				var_9_18 = var_9_20
+				var_9_4 = var_9_19
 			end
 		end
 
-		move_percent = best_travel_dist / total_path_dist
+		var_9_16 = var_9_18 / var_9_6
 	else
-		best_point = nil
+		var_9_4 = nil
 	end
 
-	return best_point, best_travel_dist, move_percent, best_index
+	return var_9_4, var_9_18, var_9_16, var_9_5
 end
 
-MainPathUtils.resolve_node_in_door = function (nav_world, node_position, door_unit)
-	local nav_graph_extension = ScriptUnit.has_extension(door_unit, "nav_graph_system")
-
-	if nav_graph_extension == nil then
-		return node_position
+function MainPathUtils.resolve_node_in_door(arg_10_0, arg_10_1, arg_10_2)
+	if ScriptUnit.has_extension(arg_10_2, "nav_graph_system") == nil then
+		return arg_10_1
 	end
 
-	local nav_graph_system = Managers.state.entity:system("nav_graph_system")
-	local smart_object_id = nav_graph_system:get_smart_object_id(door_unit)
-	local smart_object_unit_data = nav_graph_system:get_smart_objects(smart_object_id)
+	local var_10_0 = Managers.state.entity:system("nav_graph_system")
+	local var_10_1 = var_10_0:get_smart_object_id(arg_10_2)
+	local var_10_2 = var_10_0:get_smart_objects(var_10_1)
 
-	for _, smart_object_data in pairs(smart_object_unit_data) do
-		local entrance_position = Vector3Aux.unbox(smart_object_data.pos1)
-		local exit_position = Vector3Aux.unbox(smart_object_data.pos2)
-		local entrance_distance_sq = Vector3.distance_squared(node_position, entrance_position)
-		local exit_distance_sq = Vector3.distance_squared(node_position, exit_position)
+	for iter_10_0, iter_10_1 in pairs(var_10_2) do
+		local var_10_3 = Vector3Aux.unbox(iter_10_1.pos1)
+		local var_10_4 = Vector3Aux.unbox(iter_10_1.pos2)
 
-		if entrance_distance_sq < exit_distance_sq then
-			node_position = entrance_position
+		if Vector3.distance_squared(arg_10_1, var_10_3) < Vector3.distance_squared(arg_10_1, var_10_4) then
+			arg_10_1 = var_10_3
 		else
-			node_position = exit_position
+			arg_10_1 = var_10_4
 		end
 
-		local success, z = GwNavQueries.triangle_from_position(nav_world, node_position, 1.5, 1.5)
+		local var_10_5, var_10_6 = GwNavQueries.triangle_from_position(arg_10_0, arg_10_1, 1.5, 1.5)
 
-		if success then
-			node_position.z = z
+		if var_10_5 then
+			arg_10_1.z = var_10_6
 
 			break
 		end
 
-		node_position = nil
+		arg_10_1 = nil
 
 		break
 	end
 
-	return node_position
+	return arg_10_1
 end
 
-local DOOR_SEARCH_RADIUS = 1.5
+local var_0_5 = 1.5
 
-MainPathUtils.node_list_from_main_paths = function (nav_world, main_paths, max_node_distance, obstacles)
-	local forward_list = {}
-	local reversed_list = {}
-	local forward_break_list = {}
-	local reversed_break_list = {}
-	local door_system = Managers.state.entity:system("door_system")
-	local door_broadphase_query_result = {}
+function MainPathUtils.node_list_from_main_paths(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+	local var_11_0 = {}
+	local var_11_1 = {}
+	local var_11_2 = {}
+	local var_11_3 = {}
+	local var_11_4 = Managers.state.entity:system("door_system")
+	local var_11_5 = {}
 
-	for i = 1, #main_paths do
-		local path_nodes = main_paths[i].nodes
+	for iter_11_0 = 1, #arg_11_1 do
+		local var_11_6 = arg_11_1[iter_11_0].nodes
 
-		for j = 1, #path_nodes do
-			local node = path_nodes[j]
+		for iter_11_1 = 1, #var_11_6 do
+			local var_11_7 = var_11_6[iter_11_1]
 
-			forward_list[#forward_list + 1] = node
+			var_11_0[#var_11_0 + 1] = var_11_7
 
-			if i ~= 1 and j == 1 then
-				reversed_break_list[node] = true
-			elseif i ~= #main_paths and j == #path_nodes then
-				forward_break_list[node] = true
+			if iter_11_0 ~= 1 and iter_11_1 == 1 then
+				var_11_3[var_11_7] = true
+			elseif iter_11_0 ~= #arg_11_1 and iter_11_1 == #var_11_6 then
+				var_11_2[var_11_7] = true
 			end
 
-			if max_node_distance then
-				local next_node = path_nodes[j + 1]
+			if arg_11_2 then
+				local var_11_8 = var_11_6[iter_11_1 + 1]
 
-				if next_node then
-					local segment = next_node:unbox() - node:unbox()
-					local segment_length = Vector3.length(segment)
+				if var_11_8 then
+					local var_11_9 = var_11_8:unbox() - var_11_7:unbox()
+					local var_11_10 = Vector3.length(var_11_9)
 
-					if max_node_distance < segment_length then
-						local segment_direction = Vector3.normalize(segment)
-						local num_insert_nodes = math.floor(segment_length / max_node_distance)
+					if arg_11_2 < var_11_10 then
+						local var_11_11 = Vector3.normalize(var_11_9)
+						local var_11_12 = math.floor(var_11_10 / arg_11_2)
 
-						for k = 1, num_insert_nodes do
-							local wanted_node_position = node:unbox() + segment_direction * k * max_node_distance
-							local num_doors = door_system:get_doors(wanted_node_position, DOOR_SEARCH_RADIUS, door_broadphase_query_result)
+						for iter_11_2 = 1, var_11_12 do
+							local var_11_13 = var_11_7:unbox() + var_11_11 * iter_11_2 * arg_11_2
 
-							if num_doors > 0 then
-								local door_unit = door_broadphase_query_result[1]
+							if var_11_4:get_doors(var_11_13, var_0_5, var_11_5) > 0 then
+								local var_11_14 = var_11_5[1]
 
-								wanted_node_position = MainPathUtils.resolve_node_in_door(nav_world, wanted_node_position, door_unit)
+								var_11_13 = MainPathUtils.resolve_node_in_door(arg_11_0, var_11_13, var_11_14)
 							else
-								local success, z = GwNavQueries.triangle_from_position(nav_world, wanted_node_position, 1.5, 1.5)
+								local var_11_15, var_11_16 = GwNavQueries.triangle_from_position(arg_11_0, var_11_13, 1.5, 1.5)
 
-								if success then
-									wanted_node_position.z = z
+								if var_11_15 then
+									var_11_13.z = var_11_16
 								else
-									wanted_node_position = nil
+									var_11_13 = nil
 								end
 							end
 
-							if wanted_node_position then
-								local new_node = Vector3Box(wanted_node_position)
+							if var_11_13 then
+								local var_11_17 = Vector3Box(var_11_13)
 
-								forward_list[#forward_list + 1] = new_node
+								var_11_0[#var_11_0 + 1] = var_11_17
 							end
 						end
 					end
@@ -361,163 +358,151 @@ MainPathUtils.node_list_from_main_paths = function (nav_world, main_paths, max_n
 		end
 	end
 
-	if obstacles then
-		for i = 1, #obstacles do
-			local obstacle = obstacles[i]
-			local obstacle_position = obstacle.position:unbox()
-			local path_position, _, _, _, _, best_sub_index = MainPathUtils.closest_pos_at_main_path_lua({
+	if arg_11_3 then
+		for iter_11_3 = 1, #arg_11_3 do
+			local var_11_18 = arg_11_3[iter_11_3]
+			local var_11_19 = var_11_18.position:unbox()
+			local var_11_20, var_11_21, var_11_22, var_11_23, var_11_24, var_11_25 = MainPathUtils.closest_pos_at_main_path_lua({
 				{
 					path_length = 1,
-					nodes = forward_list,
-				},
-			}, obstacle_position)
+					nodes = var_11_0
+				}
+			}, var_11_19)
 
-			if path_position then
-				local distance_sq = distance_squared(path_position, obstacle_position)
+			if var_11_20 and var_0_0(var_11_20, var_11_19) <= var_11_18.radius_sq then
+				local var_11_26 = var_11_0[var_11_25]
 
-				if distance_sq <= obstacle.radius_sq then
-					local add_break_node = forward_list[best_sub_index]
-
-					forward_break_list[forward_list[best_sub_index]] = true
-					reversed_break_list[forward_list[best_sub_index + 1]] = true
-				end
+				var_11_2[var_11_0[var_11_25]] = true
+				var_11_3[var_11_0[var_11_25 + 1]] = true
 			end
 		end
 	end
 
-	for i = #forward_list, 1, -1 do
-		reversed_list[#reversed_list + 1] = forward_list[i]
+	for iter_11_4 = #var_11_0, 1, -1 do
+		var_11_1[#var_11_1 + 1] = var_11_0[iter_11_4]
 	end
 
-	return forward_list, reversed_list, forward_break_list, reversed_break_list
+	return var_11_0, var_11_1, var_11_2, var_11_3
 end
 
-MainPathUtils.closest_node_in_node_list = function (node_list, p)
-	local best_dist = math.huge
-	local best_index
+function MainPathUtils.closest_node_in_node_list(arg_12_0, arg_12_1)
+	local var_12_0 = math.huge
+	local var_12_1
 
-	for i = 1, #node_list do
-		local node_position = node_list[i]:unbox()
-		local d = distance_squared(p, node_position)
+	for iter_12_0 = 1, #arg_12_0 do
+		local var_12_2 = arg_12_0[iter_12_0]:unbox()
+		local var_12_3 = var_0_0(arg_12_1, var_12_2)
 
-		if d < best_dist then
-			best_dist = d
-			best_index = i
+		if var_12_3 < var_12_0 then
+			var_12_0 = var_12_3
+			var_12_1 = iter_12_0
 		end
 	end
 
-	return best_index
+	return var_12_1
 end
 
-MainPathUtils.ray_along_node_list = function (nav_world, node_list, start_node_index, node_list_direction, wanted_distance)
-	local end_node_index = node_list_direction == -1 and 1 or #node_list
-	local distance = 0
+function MainPathUtils.ray_along_node_list(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+	local var_13_0 = arg_13_3 == -1 and 1 or #arg_13_1
+	local var_13_1 = 0
 
-	for i = start_node_index, end_node_index, node_list_direction do
-		local to_node = node_list[i + node_list_direction]
+	for iter_13_0 = arg_13_2, var_13_0, arg_13_3 do
+		local var_13_2 = arg_13_1[iter_13_0 + arg_13_3]
 
-		if not to_node then
-			return distance
+		if not var_13_2 then
+			return var_13_1
 		end
 
-		local from_node = node_list[i]
-		local from_position = from_node:unbox()
-		local to_position = to_node:unbox()
-		local success, hit_position = GwNavQueries.raycast(nav_world, from_position, to_position)
+		local var_13_3 = arg_13_1[iter_13_0]:unbox()
+		local var_13_4 = var_13_2:unbox()
+		local var_13_5, var_13_6 = GwNavQueries.raycast(arg_13_0, var_13_3, var_13_4)
 
-		if success then
-			distance = distance + Vector3.length(to_position - from_position)
+		if var_13_5 then
+			var_13_1 = var_13_1 + Vector3.length(var_13_4 - var_13_3)
 
-			if wanted_distance <= distance then
-				return wanted_distance
+			if arg_13_4 <= var_13_1 then
+				return arg_13_4
 			end
 		else
-			distance = distance + Vector3.length(hit_position - from_position)
+			var_13_1 = var_13_1 + Vector3.length(var_13_6 - var_13_3)
 
-			if wanted_distance <= distance then
-				return wanted_distance
+			if arg_13_4 <= var_13_1 then
+				return arg_13_4
 			else
-				return distance
+				return var_13_1
 			end
 		end
 	end
 end
 
-MainPathUtils.find_equidistant_points_in_node_list = function (node_list, start_node_index, node_list_direction, point_distance, num_wanted_points, points)
-	local node_index = start_node_index
-	local point_index = 1
-	local segment_offset = 0
+function MainPathUtils.find_equidistant_points_in_node_list(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+	local var_14_0 = arg_14_1
+	local var_14_1 = 1
+	local var_14_2 = 0
 
 	while true do
-		local to_node_index = node_index + node_list_direction
-		local to_node = node_list[to_node_index]
+		local var_14_3 = arg_14_0[var_14_0 + arg_14_2]
 
-		if not to_node then
-			return points
+		if not var_14_3 then
+			return arg_14_5
 		end
 
-		local segment_start = node_list[node_index]:unbox()
-		local segment_end = to_node:unbox()
-		local segment = segment_end - segment_start
-		local segment_length = Vector3.length(segment)
-		local segment_direction = Vector3.normalize(segment)
-		local num_points_in_segment = math.ceil((segment_length - segment_offset) / point_distance)
+		local var_14_4 = arg_14_0[var_14_0]:unbox()
+		local var_14_5 = var_14_3:unbox() - var_14_4
+		local var_14_6 = Vector3.length(var_14_5)
+		local var_14_7 = Vector3.normalize(var_14_5)
+		local var_14_8 = math.ceil((var_14_6 - var_14_2) / arg_14_3)
 
-		for i = 0, num_points_in_segment - 1 do
-			points[point_index] = {
-				segment_start + segment_direction * (segment_offset + i * point_distance),
-				segment_direction * node_list_direction,
-				node_index,
+		for iter_14_0 = 0, var_14_8 - 1 do
+			arg_14_5[var_14_1] = {
+				var_14_4 + var_14_7 * (var_14_2 + iter_14_0 * arg_14_3),
+				var_14_7 * arg_14_2,
+				var_14_0
 			}
-			point_index = point_index + 1
+			var_14_1 = var_14_1 + 1
 
-			if num_wanted_points and num_wanted_points < point_index then
-				return points
+			if arg_14_4 and arg_14_4 < var_14_1 then
+				return arg_14_5
 			end
 		end
 
-		local segment_remainder = segment_length - (num_points_in_segment - 1) * point_distance
+		local var_14_9 = var_14_6 - (var_14_8 - 1) * arg_14_3
 
-		segment_offset = segment_offset + point_distance - segment_remainder
-		node_index = node_index + node_list_direction
+		var_14_2 = var_14_2 + arg_14_3 - var_14_9
+		var_14_0 = var_14_0 + arg_14_2
 	end
 end
 
-MainPathUtils.get_main_path_point_between_players = function (main_paths, main_path_info, main_path_player_info)
-	local ahead_player_travel_dist, behind_player_travel_dist
+function MainPathUtils.get_main_path_point_between_players(arg_15_0, arg_15_1, arg_15_2)
+	local var_15_0
+	local var_15_1
+	local var_15_2
 
-	if not main_path_info.ahead_unit then
-		ahead_player_travel_dist = 0
-		behind_player_travel_dist = 0
+	if not arg_15_1.ahead_unit then
+		var_15_0 = 0
+		var_15_2 = 0
 	else
-		local ahead_player_info = main_path_player_info[main_path_info.ahead_unit]
-
-		ahead_player_travel_dist = ahead_player_info.travel_dist
-
-		local behind_player_info = main_path_player_info[main_path_info.behind_unit]
-
-		behind_player_travel_dist = behind_player_info.travel_dist
+		var_15_0 = arg_15_2[arg_15_1.ahead_unit].travel_dist
+		var_15_2 = arg_15_2[arg_15_1.behind_unit].travel_dist
 	end
 
-	local dist = behind_player_travel_dist + (ahead_player_travel_dist - behind_player_travel_dist) * 0.5
+	local var_15_3 = var_15_2 + (var_15_0 - var_15_2) * 0.5
+	local var_15_4 = math.clamp(var_15_3, 0, MainPathUtils.total_path_dist() - 0.1)
+	local var_15_5, var_15_6 = MainPathUtils.point_on_mainpath(arg_15_0, var_15_4)
+	local var_15_7 = arg_15_0[var_15_6]
+	local var_15_8 = MainPathUtils.closest_node_in_node_list(var_15_7.nodes, var_15_5)
+	local var_15_9 = var_15_7.nodes[var_15_8]
+	local var_15_10 = var_15_7.nodes[var_15_8 + 1]
+	local var_15_11 = var_15_7.nodes[var_15_8 - 1]
+	local var_15_12
 
-	dist = math.clamp(dist, 0, MainPathUtils.total_path_dist() - 0.1)
-
-	local position, sub_path_index = MainPathUtils.point_on_mainpath(main_paths, dist)
-	local sub_path = main_paths[sub_path_index]
-	local base_node_index = MainPathUtils.closest_node_in_node_list(sub_path.nodes, position)
-	local base_position = sub_path.nodes[base_node_index]
-	local next_position = sub_path.nodes[base_node_index + 1]
-	local prev_position = sub_path.nodes[base_node_index - 1]
-	local direction
-
-	if next_position then
-		direction = next_position:unbox() - base_position:unbox()
-	elseif prev_position then
-		direction = base_position:unbox() - prev_position:unbox()
+	if var_15_10 then
+		var_15_12 = var_15_10:unbox() - var_15_9:unbox()
+	elseif var_15_11 then
+		var_15_12 = var_15_9:unbox() - var_15_11:unbox()
 	end
 
-	local rotation = direction and Quaternion.look(direction) or Quaternion.identity()
+	local var_15_13 = var_15_12 and Quaternion.look(var_15_12) or Quaternion.identity()
 
-	return Vector3Box(position), QuaternionBox(rotation)
+	return Vector3Box(var_15_5), QuaternionBox(var_15_13)
 end

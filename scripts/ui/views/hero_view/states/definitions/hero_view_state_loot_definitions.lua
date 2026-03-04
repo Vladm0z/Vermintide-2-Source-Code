@@ -1,1241 +1,1241 @@
-﻿-- chunkname: @scripts/ui/views/hero_view/states/definitions/hero_view_state_loot_definitions.lua
+-- chunkname: @scripts/ui/views/hero_view/states/definitions/hero_view_state_loot_definitions.lua
 
-local panel_height = UISettings.hero_panel_height
-local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
-local panel_color = UISettings.console_menu_rect_color
-local grid_size = {
+local var_0_0 = UISettings.hero_panel_height
+local var_0_1 = UISettings.console_menu_scenegraphs
+local var_0_2 = UISettings.console_menu_rect_color
+local var_0_3 = {
 	520,
-	600,
+	600
 }
-local num_loot_options = IS_CONSOLE and 5 or 5
-local USE_DELAYED_SPAWN = true
-local scenegraph_definition = {
-	screen = console_menu_scenegraphs.screen,
-	area = console_menu_scenegraphs.area,
-	area_left = console_menu_scenegraphs.area_left,
-	area_right = console_menu_scenegraphs.area_right,
-	area_divider = console_menu_scenegraphs.area_divider,
+local var_0_4 = IS_CONSOLE and 5 or 5
+local var_0_5 = true
+local var_0_6 = {
+	screen = var_0_1.screen,
+	area = var_0_1.area,
+	area_left = var_0_1.area_left,
+	area_right = var_0_1.area_right,
+	area_divider = var_0_1.area_divider,
 	bottom_panel = {
-		scale = "fit_width",
 		vertical_alignment = "bottom",
+		scale = "fit_width",
 		size = {
 			1920,
-			79,
+			79
 		},
 		position = {
 			0,
 			0,
-			UILayer.default + 1,
-		},
+			UILayer.default + 1
+		}
 	},
 	dead_space_filler = {
 		scale = "fit",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	root = {
 		is_root = true,
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			UILayer.default,
-		},
+			UILayer.default
+		}
 	},
 	chest_title = {
-		horizontal_alignment = "center",
-		parent = "dead_space_filler",
 		vertical_alignment = "top",
+		parent = "dead_space_filler",
+		horizontal_alignment = "center",
 		size = {
 			1200,
-			50,
+			50
 		},
 		position = {
 			0,
 			-80,
-			1,
-		},
+			1
+		}
 	},
 	chest_sub_title = {
-		horizontal_alignment = "center",
-		parent = "chest_title",
 		vertical_alignment = "top",
+		parent = "chest_title",
+		horizontal_alignment = "center",
 		size = {
 			1200,
-			50,
+			50
 		},
 		position = {
 			0,
 			-40,
-			1,
-		},
+			1
+		}
 	},
 	chest_indicator_root = {
-		horizontal_alignment = "center",
-		parent = "dead_space_filler",
 		vertical_alignment = "top",
+		parent = "dead_space_filler",
+		horizontal_alignment = "center",
 		size = {
 			0,
-			0,
+			0
 		},
 		position = {
 			0,
 			200,
-			0,
-		},
+			0
+		}
 	},
 	arrow_root = {
-		horizontal_alignment = "center",
-		parent = "dead_space_filler",
 		vertical_alignment = "top",
+		parent = "dead_space_filler",
+		horizontal_alignment = "center",
 		size = {
 			0,
-			0,
+			0
 		},
 		position = {
 			0,
 			200,
-			0,
-		},
+			0
+		}
 	},
 	info_root = {
-		horizontal_alignment = "right",
-		parent = "dead_space_filler",
 		vertical_alignment = "center",
+		parent = "dead_space_filler",
+		horizontal_alignment = "right",
 		size = {
 			0,
-			0,
+			0
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	info_window = {
-		horizontal_alignment = "right",
-		parent = "info_root",
 		vertical_alignment = "center",
+		parent = "info_root",
+		horizontal_alignment = "right",
 		size = {
 			300,
-			576,
+			576
 		},
 		position = {
 			-70,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	info_text_box = {
-		horizontal_alignment = "center",
-		parent = "info_window",
 		vertical_alignment = "top",
+		parent = "info_window",
+		horizontal_alignment = "center",
 		size = {
 			270,
-			430,
+			430
 		},
 		position = {
 			0,
 			-140,
-			1,
-		},
+			1
+		}
 	},
 	info_title_text = {
-		horizontal_alignment = "center",
-		parent = "info_text_box",
 		vertical_alignment = "top",
+		parent = "info_text_box",
+		horizontal_alignment = "center",
 		size = {
 			320,
-			50,
+			50
 		},
 		position = {
 			0,
 			70,
-			1,
-		},
+			1
+		}
 	},
 	info_portrait_root = {
-		horizontal_alignment = "center",
-		parent = "info_window",
 		vertical_alignment = "top",
+		parent = "info_window",
+		horizontal_alignment = "center",
 		size = {
 			0,
-			0,
+			0
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	item_grid_root = {
-		horizontal_alignment = "left",
-		parent = "dead_space_filler",
 		vertical_alignment = "center",
+		parent = "dead_space_filler",
+		horizontal_alignment = "left",
 		size = {
 			0,
-			0,
+			0
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	item_window = {
-		horizontal_alignment = "left",
-		parent = "item_grid_root",
 		vertical_alignment = "center",
-		size = grid_size,
+		parent = "item_grid_root",
+		horizontal_alignment = "left",
+		size = var_0_3,
 		position = {
 			50,
 			0,
-			10,
-		},
+			10
+		}
 	},
 	item_grid = {
-		horizontal_alignment = "center",
-		parent = "item_window",
 		vertical_alignment = "center",
+		parent = "item_window",
+		horizontal_alignment = "center",
 		size = {
 			520,
-			600,
+			600
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	item_grid_title = {
-		horizontal_alignment = "center",
-		parent = "item_window",
 		vertical_alignment = "top",
+		parent = "item_window",
+		horizontal_alignment = "center",
 		size = {
 			260,
-			32,
+			32
 		},
 		position = {
 			0,
 			-15,
-			1,
-		},
+			1
+		}
 	},
 	page_text_area = {
-		horizontal_alignment = "center",
-		parent = "item_grid",
 		vertical_alignment = "bottom",
+		parent = "item_grid",
+		horizontal_alignment = "center",
 		size = {
 			334,
-			60,
+			60
 		},
 		position = {
 			0,
 			-25,
-			3,
-		},
+			3
+		}
 	},
 	input_icon_previous = {
-		horizontal_alignment = "center",
-		parent = "page_text_area",
 		vertical_alignment = "center",
+		parent = "page_text_area",
+		horizontal_alignment = "center",
 		size = {
 			0,
-			0,
+			0
 		},
 		position = {
 			-60,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	input_icon_next = {
-		horizontal_alignment = "center",
-		parent = "page_text_area",
 		vertical_alignment = "center",
+		parent = "page_text_area",
+		horizontal_alignment = "center",
 		size = {
 			0,
-			0,
+			0
 		},
 		position = {
 			60,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	input_arrow_next = {
-		horizontal_alignment = "center",
-		parent = "input_icon_next",
 		vertical_alignment = "center",
+		parent = "input_icon_next",
+		horizontal_alignment = "center",
 		size = {
 			19,
-			27,
+			27
 		},
 		position = {
 			40,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	input_arrow_previous = {
-		horizontal_alignment = "center",
-		parent = "input_icon_previous",
 		vertical_alignment = "center",
+		parent = "input_icon_previous",
+		horizontal_alignment = "center",
 		size = {
 			19,
-			27,
+			27
 		},
 		position = {
 			-40,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	page_button_next = {
-		horizontal_alignment = "center",
-		parent = "input_icon_next",
 		vertical_alignment = "center",
+		parent = "input_icon_next",
+		horizontal_alignment = "center",
 		size = {
 			0,
-			0,
+			0
 		},
 		position = {
 			20,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	page_button_previous = {
-		horizontal_alignment = "center",
-		parent = "input_icon_previous",
 		vertical_alignment = "center",
+		parent = "input_icon_previous",
+		horizontal_alignment = "center",
 		size = {
 			0,
-			0,
+			0
 		},
 		position = {
 			-20,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	item_window_1 = {
-		horizontal_alignment = "left",
-		parent = "item_grid_root",
 		vertical_alignment = "center",
+		parent = "item_grid_root",
+		horizontal_alignment = "left",
 		size = {
 			270,
-			180,
+			180
 		},
 		position = {
 			50,
 			300,
-			1,
-		},
+			1
+		}
 	},
 	item_grid_1 = {
-		horizontal_alignment = "center",
-		parent = "item_window_1",
 		vertical_alignment = "center",
+		parent = "item_window_1",
+		horizontal_alignment = "center",
 		size = {
 			270,
-			180,
+			180
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	difficulty_icon_left_1 = {
-		horizontal_alignment = "left",
-		parent = "item_window_1",
 		vertical_alignment = "center",
+		parent = "item_window_1",
+		horizontal_alignment = "left",
 		size = {
 			100,
-			200,
+			200
 		},
 		position = {
 			-100,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	difficulty_icon_right_1 = {
-		horizontal_alignment = "right",
-		parent = "item_window_1",
 		vertical_alignment = "center",
+		parent = "item_window_1",
+		horizontal_alignment = "right",
 		size = {
 			100,
-			200,
+			200
 		},
 		position = {
 			100,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	item_window_2 = {
-		horizontal_alignment = "left",
-		parent = "item_grid_root",
 		vertical_alignment = "center",
+		parent = "item_grid_root",
+		horizontal_alignment = "left",
 		size = {
 			270,
-			180,
+			180
 		},
 		position = {
 			50,
 			100,
-			1,
-		},
+			1
+		}
 	},
 	item_grid_2 = {
-		horizontal_alignment = "center",
-		parent = "item_window_2",
 		vertical_alignment = "center",
+		parent = "item_window_2",
+		horizontal_alignment = "center",
 		size = {
 			270,
-			180,
+			180
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	difficulty_icon_left_2 = {
-		horizontal_alignment = "left",
-		parent = "item_window_2",
 		vertical_alignment = "center",
+		parent = "item_window_2",
+		horizontal_alignment = "left",
 		size = {
 			100,
-			200,
+			200
 		},
 		position = {
 			-100,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	difficulty_icon_right_2 = {
-		horizontal_alignment = "right",
-		parent = "item_window_2",
 		vertical_alignment = "center",
+		parent = "item_window_2",
+		horizontal_alignment = "right",
 		size = {
 			100,
-			200,
+			200
 		},
 		position = {
 			100,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	item_window_3 = {
-		horizontal_alignment = "left",
-		parent = "item_grid_root",
 		vertical_alignment = "center",
+		parent = "item_grid_root",
+		horizontal_alignment = "left",
 		size = {
 			270,
-			180,
+			180
 		},
 		position = {
 			50,
 			-100,
-			1,
-		},
+			1
+		}
 	},
 	item_grid_3 = {
-		horizontal_alignment = "center",
-		parent = "item_window_3",
 		vertical_alignment = "center",
+		parent = "item_window_3",
+		horizontal_alignment = "center",
 		size = {
 			270,
-			180,
+			180
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	difficulty_icon_left_3 = {
-		horizontal_alignment = "left",
-		parent = "item_window_3",
 		vertical_alignment = "center",
+		parent = "item_window_3",
+		horizontal_alignment = "left",
 		size = {
 			100,
-			200,
+			200
 		},
 		position = {
 			-100,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	difficulty_icon_right_3 = {
-		horizontal_alignment = "right",
-		parent = "item_window_3",
 		vertical_alignment = "center",
+		parent = "item_window_3",
+		horizontal_alignment = "right",
 		size = {
 			100,
-			200,
+			200
 		},
 		position = {
 			100,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	item_window_4 = {
-		horizontal_alignment = "left",
-		parent = "item_grid_root",
 		vertical_alignment = "center",
+		parent = "item_grid_root",
+		horizontal_alignment = "left",
 		size = {
 			270,
-			180,
+			180
 		},
 		position = {
 			50,
 			-300,
-			1,
-		},
+			1
+		}
 	},
 	item_grid_4 = {
-		horizontal_alignment = "center",
-		parent = "item_window_4",
 		vertical_alignment = "center",
+		parent = "item_window_4",
+		horizontal_alignment = "center",
 		size = {
 			270,
-			180,
+			180
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	difficulty_icon_left_4 = {
-		horizontal_alignment = "left",
-		parent = "item_window_4",
 		vertical_alignment = "center",
+		parent = "item_window_4",
+		horizontal_alignment = "left",
 		size = {
 			100,
-			200,
+			200
 		},
 		position = {
 			-100,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	difficulty_icon_right_4 = {
-		horizontal_alignment = "right",
-		parent = "item_window_4",
 		vertical_alignment = "center",
+		parent = "item_window_4",
+		horizontal_alignment = "right",
 		size = {
 			100,
-			200,
+			200
 		},
 		position = {
 			100,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	item_cap_warning_text = {
-		horizontal_alignment = "center",
-		parent = "bottom_panel",
 		vertical_alignment = "bottom",
+		parent = "bottom_panel",
+		horizontal_alignment = "center",
 		size = {
 			900,
-			72,
+			72
 		},
 		position = {
 			0,
 			235,
-			10,
-		},
+			10
+		}
 	},
 	open_buttons_pivot = {
-		horizontal_alignment = "center",
-		parent = "dead_space_filler",
 		vertical_alignment = "bottom",
+		parent = "dead_space_filler",
+		horizontal_alignment = "center",
 		size = {
 			0,
-			70,
+			70
 		},
 		position = {
 			0,
 			30,
-			10,
-		},
+			10
+		}
 	},
 	open_button = {
-		horizontal_alignment = "right",
-		parent = "open_buttons_pivot",
 		vertical_alignment = "bottom",
+		parent = "open_buttons_pivot",
+		horizontal_alignment = "right",
 		size = {
 			380,
-			70,
+			70
 		},
 		position = {
 			-10,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	open_multiple_button = {
-		horizontal_alignment = "left",
-		parent = "open_buttons_pivot",
 		vertical_alignment = "bottom",
+		parent = "open_buttons_pivot",
+		horizontal_alignment = "left",
 		size = {
 			380,
-			70,
+			70
 		},
 		position = {
 			10,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	continue_button = {
-		horizontal_alignment = "center",
-		parent = "dead_space_filler",
 		vertical_alignment = "bottom",
+		parent = "dead_space_filler",
+		horizontal_alignment = "center",
 		size = {
 			380,
-			70,
+			70
 		},
 		position = {
 			0,
 			-230,
-			10,
-		},
+			10
+		}
 	},
 	close_button = {
-		horizontal_alignment = "right",
-		parent = "dead_space_filler",
 		vertical_alignment = "bottom",
+		parent = "dead_space_filler",
+		horizontal_alignment = "right",
 		size = {
 			300,
-			70,
+			70
 		},
 		position = {
 			-80,
 			30,
-			10,
-		},
+			10
+		}
 	},
 	debug_add_chest_5 = {
-		horizontal_alignment = "right",
-		parent = "dead_space_filler",
 		vertical_alignment = "bottom",
+		parent = "dead_space_filler",
+		horizontal_alignment = "right",
 		size = {
 			450,
-			70,
+			70
 		},
 		position = {
 			-20,
 			480,
-			2,
-		},
+			2
+		}
 	},
 	debug_add_chest_4 = {
-		horizontal_alignment = "right",
-		parent = "dead_space_filler",
 		vertical_alignment = "bottom",
+		parent = "dead_space_filler",
+		horizontal_alignment = "right",
 		size = {
 			450,
-			70,
+			70
 		},
 		position = {
 			-20,
 			400,
-			2,
-		},
+			2
+		}
 	},
 	debug_add_chest_3 = {
-		horizontal_alignment = "right",
-		parent = "dead_space_filler",
 		vertical_alignment = "bottom",
+		parent = "dead_space_filler",
+		horizontal_alignment = "right",
 		size = {
 			450,
-			70,
+			70
 		},
 		position = {
 			-20,
 			320,
-			2,
-		},
+			2
+		}
 	},
 	debug_add_chest_2 = {
-		horizontal_alignment = "right",
-		parent = "dead_space_filler",
 		vertical_alignment = "bottom",
+		parent = "dead_space_filler",
+		horizontal_alignment = "right",
 		size = {
 			450,
-			70,
+			70
 		},
 		position = {
 			-20,
 			240,
-			2,
-		},
+			2
+		}
 	},
 	debug_add_chest_1 = {
-		horizontal_alignment = "right",
-		parent = "dead_space_filler",
 		vertical_alignment = "bottom",
+		parent = "dead_space_filler",
+		horizontal_alignment = "right",
 		size = {
 			450,
-			70,
+			70
 		},
 		position = {
 			-20,
 			160,
-			2,
-		},
+			2
+		}
 	},
 	loot_options_root = {
-		horizontal_alignment = "center",
-		parent = "dead_space_filler",
 		vertical_alignment = "center",
+		parent = "dead_space_filler",
+		horizontal_alignment = "center",
 		size = {
 			0,
-			0,
+			0
 		},
 		position = {
 			0,
 			-30,
-			1,
-		},
+			1
+		}
 	},
 	gamepad_chest_tooltip = {
-		horizontal_alignment = "left",
-		parent = "item_window",
 		vertical_alignment = "top",
+		parent = "item_window",
+		horizontal_alignment = "left",
 		size = {
 			450,
-			0,
+			0
 		},
 		position = {
 			475,
 			-75,
-			0,
-		},
-	},
+			0
+		}
+	}
 }
 
-for i = 1, num_loot_options do
-	local idx = (i - 1) * 3 + 1
-	local id = "loot_option_" .. idx
+for iter_0_0 = 1, var_0_4 do
+	local var_0_7 = (iter_0_0 - 1) * 3 + 1
+	local var_0_8 = "loot_option_" .. var_0_7
 
-	scenegraph_definition[id] = {
-		horizontal_alignment = "center",
-		parent = "loot_options_root",
+	var_0_6[var_0_8] = {
 		vertical_alignment = "center",
+		parent = "loot_options_root",
+		horizontal_alignment = "center",
 		size = {
 			364,
-			0,
+			0
 		},
 		position = {
-			-600 + 1920 * (i - 1),
+			-600 + 1920 * (iter_0_0 - 1),
 			0,
-			1,
-		},
+			1
+		}
 	}
-	scenegraph_definition[id .. "_center"] = {
-		horizontal_alignment = "center",
+	var_0_6[var_0_8 .. "_center"] = {
 		vertical_alignment = "center",
-		parent = id,
+		horizontal_alignment = "center",
+		parent = var_0_8,
 		size = {
 			0,
-			0,
+			0
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	}
-	scenegraph_definition["gamepad_tooltip_option_" .. idx] = {
-		horizontal_alignment = "center",
+	var_0_6["gamepad_tooltip_option_" .. var_0_7] = {
 		vertical_alignment = "center",
-		parent = id,
+		horizontal_alignment = "center",
+		parent = var_0_8,
 		size = {
 			450,
-			0,
+			0
 		},
 		position = {
 			0,
 			380,
-			100,
-		},
+			100
+		}
 	}
 
-	local idx = (i - 1) * 3 + 2
-	local id = "loot_option_" .. idx
+	local var_0_9 = (iter_0_0 - 1) * 3 + 2
+	local var_0_10 = "loot_option_" .. var_0_9
 
-	scenegraph_definition[id] = {
-		horizontal_alignment = "center",
-		parent = "loot_options_root",
+	var_0_6[var_0_10] = {
 		vertical_alignment = "center",
+		parent = "loot_options_root",
+		horizontal_alignment = "center",
 		size = {
 			364,
-			0,
+			0
 		},
 		position = {
-			0 + 1920 * (i - 1),
+			0 + 1920 * (iter_0_0 - 1),
 			0,
-			1,
-		},
+			1
+		}
 	}
-	scenegraph_definition[id .. "_center"] = {
-		horizontal_alignment = "center",
+	var_0_6[var_0_10 .. "_center"] = {
 		vertical_alignment = "center",
-		parent = id,
+		horizontal_alignment = "center",
+		parent = var_0_10,
 		size = {
 			0,
-			0,
+			0
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	}
-	scenegraph_definition["gamepad_tooltip_option_" .. idx] = {
-		horizontal_alignment = "center",
+	var_0_6["gamepad_tooltip_option_" .. var_0_9] = {
 		vertical_alignment = "center",
-		parent = id,
+		horizontal_alignment = "center",
+		parent = var_0_10,
 		size = {
 			450,
-			0,
+			0
 		},
 		position = {
 			0,
 			380,
-			100,
-		},
+			100
+		}
 	}
 
-	local idx = (i - 1) * 3 + 3
-	local id = "loot_option_" .. idx
+	local var_0_11 = (iter_0_0 - 1) * 3 + 3
+	local var_0_12 = "loot_option_" .. var_0_11
 
-	scenegraph_definition[id] = {
-		horizontal_alignment = "center",
-		parent = "loot_options_root",
+	var_0_6[var_0_12] = {
 		vertical_alignment = "center",
+		parent = "loot_options_root",
+		horizontal_alignment = "center",
 		size = {
 			364,
-			0,
+			0
 		},
 		position = {
-			600 + 1920 * (i - 1),
+			600 + 1920 * (iter_0_0 - 1),
 			0,
-			1,
-		},
+			1
+		}
 	}
-	scenegraph_definition[id .. "_center"] = {
-		horizontal_alignment = "center",
+	var_0_6[var_0_12 .. "_center"] = {
 		vertical_alignment = "center",
-		parent = id,
+		horizontal_alignment = "center",
+		parent = var_0_12,
 		size = {
 			0,
-			0,
+			0
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	}
-	scenegraph_definition["gamepad_tooltip_option_" .. idx] = {
-		horizontal_alignment = "center",
+	var_0_6["gamepad_tooltip_option_" .. var_0_11] = {
 		vertical_alignment = "center",
-		parent = id,
+		horizontal_alignment = "center",
+		parent = var_0_12,
 		size = {
 			450,
-			0,
+			0
 		},
 		position = {
 			0,
 			380,
-			100,
-		},
+			100
+		}
 	}
 end
 
-local loot_option_positions_by_amount = {
+local var_0_13 = {
 	{
 		{
 			0,
-			0,
+			0
 		},
 		{
 			0,
-			0,
+			0
 		},
 		{
 			0,
-			0,
-		},
+			0
+		}
 	},
 	{
 		{
 			-300,
-			0,
+			0
 		},
 		{
 			300,
-			0,
+			0
 		},
 		{
 			0,
-			0,
-		},
+			0
+		}
 	},
 	{
 		{
 			-600,
-			0,
+			0
 		},
 		{
 			0,
-			0,
+			0
 		},
 		{
 			600,
-			0,
-		},
-	},
+			0
+		}
+	}
 }
-local title_text_style = {
-	font_size = 42,
-	font_type = "hell_shark_header",
-	horizontal_alignment = "center",
-	localize = false,
-	upper_case = true,
-	use_shadow = true,
-	vertical_alignment = "bottom",
+local var_0_14 = {
 	word_wrap = true,
+	upper_case = true,
+	localize = false,
+	use_shadow = true,
+	font_size = 42,
+	horizontal_alignment = "center",
+	vertical_alignment = "bottom",
+	font_type = "hell_shark_header",
 	text_color = Colors.get_color_table_with_alpha("white", 255),
 	offset = {
 		0,
 		0,
-		2,
-	},
+		2
+	}
 }
-local sub_title_text_style = {
-	font_size = 28,
-	font_type = "hell_shark",
-	horizontal_alignment = "center",
-	localize = false,
-	upper_case = false,
-	use_shadow = true,
-	vertical_alignment = "top",
+local var_0_15 = {
 	word_wrap = true,
+	upper_case = false,
+	localize = false,
+	use_shadow = true,
+	font_size = 28,
+	horizontal_alignment = "center",
+	vertical_alignment = "top",
+	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	offset = {
 		0,
 		0,
-		2,
-	},
+		2
+	}
 }
-local warning_text_style = {
+local var_0_16 = {
 	font_size = 36,
-	font_type = "hell_shark",
-	horizontal_alignment = "center",
-	localize = false,
 	upper_case = false,
-	vertical_alignment = "center",
+	localize = false,
 	word_wrap = true,
+	horizontal_alignment = "center",
+	vertical_alignment = "center",
+	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("red", 255),
 	offset = {
 		0,
 		0,
-		2,
-	},
+		2
+	}
 }
-local info_title_text_style = {
-	font_size = 24,
-	font_type = "hell_shark",
-	horizontal_alignment = "center",
-	localize = false,
-	upper_case = false,
-	use_shadow = true,
-	vertical_alignment = "bottom",
+local var_0_17 = {
 	word_wrap = true,
+	upper_case = false,
+	localize = false,
+	use_shadow = true,
+	font_size = 24,
+	horizontal_alignment = "center",
+	vertical_alignment = "bottom",
+	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_title", 255),
 	offset = {
 		0,
 		0,
-		2,
-	},
+		2
+	}
 }
-local info_text_style = {
-	font_size = 18,
-	font_type = "hell_shark",
-	horizontal_alignment = "left",
-	localize = true,
-	upper_case = false,
-	use_shadow = true,
-	vertical_alignment = "top",
+local var_0_18 = {
 	word_wrap = true,
+	upper_case = false,
+	localize = true,
+	use_shadow = true,
+	font_size = 18,
+	horizontal_alignment = "left",
+	vertical_alignment = "top",
+	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("white", 255),
 	offset = {
 		0,
 		0,
-		2,
-	},
+		2
+	}
 }
-local page_number_left_text_style = {
+local var_0_19 = {
+	word_wrap = true,
 	font_size = 26,
-	font_type = "hell_shark",
-	horizontal_alignment = "right",
 	localize = false,
 	use_shadow = true,
+	horizontal_alignment = "right",
 	vertical_alignment = "center",
-	word_wrap = true,
+	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	offset = {
 		-172,
 		4,
-		2,
-	},
+		2
+	}
 }
-local page_number_right_text_style = {
+local var_0_20 = {
+	word_wrap = true,
 	font_size = 26,
-	font_type = "hell_shark",
-	horizontal_alignment = "left",
 	localize = false,
 	use_shadow = true,
+	horizontal_alignment = "left",
 	vertical_alignment = "center",
-	word_wrap = true,
+	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	offset = {
 		171,
 		4,
-		2,
-	},
+		2
+	}
 }
-local page_number_center_text_style = {
+local var_0_21 = {
+	word_wrap = true,
 	font_size = 26,
-	font_type = "hell_shark",
-	horizontal_alignment = "center",
 	localize = false,
 	use_shadow = true,
+	horizontal_alignment = "center",
 	vertical_alignment = "center",
-	word_wrap = true,
+	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	offset = {
 		0,
 		4,
-		2,
-	},
+		2
+	}
 }
-local item_grid_title_style = {
+local var_0_22 = {
+	word_wrap = false,
 	font_size = 56,
-	font_type = "hell_shark_header",
-	horizontal_alignment = "center",
 	localize = false,
 	use_shadow = true,
+	horizontal_alignment = "center",
 	vertical_alignment = "top",
-	word_wrap = false,
+	font_type = "hell_shark_header",
 	text_color = Colors.get_color_table_with_alpha("font_title", 255),
 	offset = {
 		0,
 		75,
-		2,
-	},
+		2
+	}
 }
-local settings_by_screen = {
+local var_0_23 = {
 	{
 		description = "n/a",
-		hero_specific_filter = true,
 		name = "loot",
+		hero_specific_filter = true,
 		display_name = Localize("hero_view_crafting_tokens"),
 		icons = {
-			normal = "tabs_icon_equipment",
 			selected = "tabs_icon_equipment_glow",
+			normal = "tabs_icon_equipment"
 		},
-		contains_new_content = function ()
+		contains_new_content = function()
 			return false
 		end,
 		slot_type = ItemType.LOOT_CHEST,
-		item_filter = "slot_type == " .. ItemType.LOOT_CHEST,
-	},
+		item_filter = "slot_type == " .. ItemType.LOOT_CHEST
+	}
 }
-local option_icons = {}
+local var_0_24 = {}
 
-for index, settings in ipairs(settings_by_screen) do
-	option_icons[#option_icons + 1] = "tabs_icon_all_selected"
+for iter_0_1, iter_0_2 in ipairs(var_0_23) do
+	var_0_24[#var_0_24 + 1] = "tabs_icon_all_selected"
 end
 
-local viewport_widget = {
+local var_0_25 = {
 	scenegraph_id = "dead_space_filler",
 	element = {
 		passes = {
 			{
 				pass_type = "viewport",
-				style_id = "viewport",
+				style_id = "viewport"
 			},
 			{
-				content_id = "button_hotspot",
 				pass_type = "hotspot",
-			},
-		},
+				content_id = "button_hotspot"
+			}
+		}
 	},
 	style = {
 		viewport = {
-			enable_sub_gui = false,
-			fov = 120,
-			level_name = "levels/end_screen/world",
 			scenegraph_id = "dead_space_filler",
 			viewport_name = "chest_opening_viewport",
+			level_name = "levels/end_screen/world",
+			enable_sub_gui = false,
+			fov = 120,
 			world_name = "chest_opening",
 			world_flags = {
 				Application.DISABLE_SOUND,
 				Application.DISABLE_ESRAM,
-				Application.ENABLE_VOLUMETRICS,
+				Application.ENABLE_VOLUMETRICS
 			},
 			object_sets = {
-				"flow_victory",
+				"flow_victory"
 			},
 			layer = UILayer.default,
 			camera_position = {
 				0,
 				0,
-				0,
+				0
 			},
 			camera_lookat = {
 				0,
 				0,
-				0,
-			},
-		},
+				0
+			}
+		}
 	},
 	content = {
-		button_hotspot = {},
-	},
+		button_hotspot = {}
+	}
 }
-local arrow_right = {
+local var_0_26 = {
 	scenegraph_id = "arrow_root",
 	element = {
 		passes = {
 			{
-				content_id = "button_hotspot",
-				pass_type = "hotspot",
 				style_id = "button_hotspot",
+				pass_type = "hotspot",
+				content_id = "button_hotspot"
 			},
 			{
 				pass_type = "texture",
 				style_id = "arrow_lit",
-				texture_id = "arrow_lit",
+				texture_id = "arrow_lit"
 			},
 			{
 				pass_type = "texture",
 				style_id = "arrow_unlit",
-				texture_id = "arrow_unlit",
-			},
-		},
+				texture_id = "arrow_unlit"
+			}
+		}
 	},
 	content = {
-		arrow_lit = "arrow_on",
 		arrow_unlit = "arrow_off_01",
 		disable_with_gamepad = true,
-		button_hotspot = {},
+		arrow_lit = "arrow_on",
+		button_hotspot = {}
 	},
 	style = {
 		button_hotspot = {
-			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			horizontal_alignment = "center",
 			area_size = {
 				58,
-				62,
+				62
 			},
 			offset = {
 				0,
 				0,
-				0,
-			},
+				0
+			}
 		},
 		arrow_lit = {
-			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			horizontal_alignment = "center",
 			texture_size = {
 				58,
-				62,
+				62
 			},
 			offset = {
 				0,
 				0,
-				1,
+				1
 			},
 			color = {
 				0,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		arrow_unlit = {
-			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			horizontal_alignment = "center",
 			texture_size = {
 				58,
-				62,
+				62
 			},
 			offset = {
 				0,
 				0,
-				0,
+				0
 			},
 			color = {
 				128,
 				255,
 				255,
-				255,
-			},
-		},
+				255
+			}
+		}
 	},
 	offset = {
 		0,
 		5,
-		0,
-	},
+		0
+	}
 }
-local arrow_left = {
+local var_0_27 = {
 	scenegraph_id = "arrow_root",
 	element = {
 		passes = {
 			{
-				content_id = "button_hotspot",
-				pass_type = "hotspot",
 				style_id = "button_hotspot",
+				pass_type = "hotspot",
+				content_id = "button_hotspot"
 			},
 			{
-				content_id = "arrow_lit",
-				pass_type = "texture_uv",
 				style_id = "arrow_lit",
+				pass_type = "texture_uv",
+				content_id = "arrow_lit"
 			},
 			{
-				content_id = "arrow_unlit",
-				pass_type = "texture_uv",
 				style_id = "arrow_unlit",
-			},
-		},
+				pass_type = "texture_uv",
+				content_id = "arrow_unlit"
+			}
+		}
 	},
 	content = {
 		disable_with_gamepad = true,
@@ -1245,989 +1245,982 @@ local arrow_left = {
 			uvs = {
 				{
 					1,
-					0,
+					0
 				},
 				{
 					0,
-					1,
-				},
-			},
+					1
+				}
+			}
 		},
 		arrow_unlit = {
 			texture_id = "arrow_off_01",
 			uvs = {
 				{
 					1,
-					0,
+					0
 				},
 				{
 					0,
-					1,
-				},
-			},
-		},
+					1
+				}
+			}
+		}
 	},
 	style = {
 		button_hotspot = {
-			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			horizontal_alignment = "center",
 			area_size = {
 				58,
-				62,
+				62
 			},
 			offset = {
 				0,
 				0,
-				0,
-			},
+				0
+			}
 		},
 		arrow_lit = {
-			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			horizontal_alignment = "center",
 			texture_size = {
 				58,
-				62,
+				62
 			},
 			offset = {
 				0,
 				0,
-				1,
+				1
 			},
 			color = {
 				0,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		arrow_unlit = {
-			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			horizontal_alignment = "center",
 			texture_size = {
 				58,
-				62,
+				62
 			},
 			offset = {
 				0,
 				0,
-				0,
+				0
 			},
 			color = {
 				128,
 				255,
 				255,
-				255,
-			},
-		},
+				255
+			}
+		}
 	},
 	offset = {
 		0,
 		5,
-		0,
-	},
+		0
+	}
 }
 
-local function create_loot_preview_widget(scenegraph_id, size)
-	local widget = {
-		element = {},
+local function var_0_28(arg_2_0, arg_2_1)
+	local var_2_0 = {
+		element = {}
 	}
-	local passes = {
+	local var_2_1 = {
 		{
 			pass_type = "viewport",
-			style_id = "viewport",
+			style_id = "viewport"
 		},
 		{
-			content_id = "button_hotspot",
 			pass_type = "hotspot",
-		},
+			content_id = "button_hotspot"
+		}
 	}
-	local content = {
+	local var_2_2 = {
 		activated = true,
-		button_hotspot = {},
+		button_hotspot = {}
 	}
-	local style = {
+	local var_2_3 = {
 		viewport = {
-			enable_sub_gui = false,
-			fov = 65,
 			layer = 990,
 			shading_environment = "environment/blank_offscreen_chest_item",
 			viewport_type = "default_forward",
-			world_name = scenegraph_id,
-			viewport_name = scenegraph_id,
+			enable_sub_gui = false,
+			fov = 65,
+			world_name = arg_2_0,
+			viewport_name = arg_2_0,
 			camera_position = {
 				0,
 				0,
-				0,
+				0
 			},
 			camera_lookat = {
 				0,
 				0,
-				0,
-			},
-		},
+				0
+			}
+		}
 	}
 
-	widget.element.passes = passes
-	widget.content = content
-	widget.style = style
-	widget.offset = {
+	var_2_0.element.passes = var_2_1
+	var_2_0.content = var_2_2
+	var_2_0.style = var_2_3
+	var_2_0.offset = {
 		0,
 		0,
-		0,
+		0
 	}
-	widget.scenegraph_id = scenegraph_id
+	var_2_0.scenegraph_id = arg_2_0
 
-	return widget
+	return var_2_0
 end
 
-local function create_loot_widget(index, size)
-	local frame_settings = UIFrameSettings.menu_frame_09
-	local widget = {
-		element = {},
+local function var_0_29(arg_3_0, arg_3_1)
+	local var_3_0 = UIFrameSettings.menu_frame_09
+	local var_3_1 = {
+		element = {}
 	}
-	local passes = {
+	local var_3_2 = {
 		{
-			content_id = "button_hotspot",
-			pass_type = "hotspot",
 			style_id = "button_hotspot",
-			content_check_function = function (content)
-				return not content.parent.presentation_complete
-			end,
+			pass_type = "hotspot",
+			content_id = "button_hotspot",
+			content_check_function = function(arg_4_0)
+				return not arg_4_0.parent.presentation_complete
+			end
 		},
 		{
-			content_id = "item_hotspot",
-			pass_type = "hotspot",
 			style_id = "item_icon",
-			content_check_function = function (content)
-				return content.parent.presentation_complete
-			end,
-		},
-		{
-			content_id = "item_hotspot_2",
 			pass_type = "hotspot",
-			content_check_function = function (content)
-				return content.parent.presentation_complete
-			end,
+			content_id = "item_hotspot",
+			content_check_function = function(arg_5_0)
+				return arg_5_0.parent.presentation_complete
+			end
 		},
 		{
-			pass_type = "text",
+			pass_type = "hotspot",
+			content_id = "item_hotspot_2",
+			content_check_function = function(arg_6_0)
+				return arg_6_0.parent.presentation_complete
+			end
+		},
+		{
 			style_id = "item_name",
-			text_id = "item_name",
+			pass_type = "text",
+			text_id = "item_name"
 		},
 		{
-			pass_type = "text",
 			style_id = "item_type",
-			text_id = "item_type",
+			pass_type = "text",
+			text_id = "item_type"
 		},
 		{
-			pass_type = "text",
 			style_id = "item_name_shadow",
-			text_id = "item_name",
+			pass_type = "text",
+			text_id = "item_name"
 		},
 		{
-			pass_type = "text",
 			style_id = "item_type_shadow",
-			text_id = "item_type",
+			pass_type = "text",
+			text_id = "item_type"
 		},
 		{
 			item_id = "item",
-			pass_type = "item_tooltip",
 			style_id = "item_tooltip",
-			content_check_function = function (content)
-				local is_hover = content.item_hotspot.is_hover or content.item_hotspot_2.is_hover
-
-				return is_hover and content.item
-			end,
+			pass_type = "item_tooltip",
+			content_check_function = function(arg_7_0)
+				return (arg_7_0.item_hotspot.is_hover or arg_7_0.item_hotspot_2.is_hover) and arg_7_0.item
+			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "item_icon",
-			texture_id = "item_icon",
+			texture_id = "item_icon"
 		},
 		{
 			pass_type = "texture",
 			style_id = "item_icon_frame",
-			texture_id = "item_icon_frame",
+			texture_id = "item_icon_frame"
 		},
 		{
 			pass_type = "texture",
 			style_id = "item_icon_rarity",
-			texture_id = "item_icon_rarity",
+			texture_id = "item_icon_rarity"
 		},
 		{
 			pass_type = "texture",
 			style_id = "illusion_overlay",
 			texture_id = "illusion_overlay",
-			content_check_function = function (content)
-				local item = content.item
-				local item_skin = item and item.skin
+			content_check_function = function(arg_8_0)
+				local var_8_0 = arg_8_0.item
 
-				if item_skin then
-					return item.data.item_type == "weapon_skin"
+				if var_8_0 and var_8_0.skin then
+					return var_8_0.data.item_type == "weapon_skin"
 				end
-			end,
+			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "illusion_icon",
 			texture_id = "illusion_icon",
-			content_check_function = function (content)
-				local item = content.item
-				local item_skin = item and item.skin
+			content_check_function = function(arg_9_0)
+				local var_9_0 = arg_9_0.item
+				local var_9_1 = var_9_0 and var_9_0.skin
 
-				if item_skin then
-					return item.data.item_type ~= "weapon_skin" and WeaponSkins.default_skins[item.key] ~= item_skin
+				if var_9_1 then
+					return var_9_0.data.item_type ~= "weapon_skin" and WeaponSkins.default_skins[var_9_0.key] ~= var_9_1
 				end
-			end,
+			end
 		},
 		{
 			pass_type = "texture_frame",
 			style_id = "frame",
 			texture_id = "frame",
-			content_check_function = function (content)
-				return content.draw_frame
-			end,
+			content_check_function = function(arg_10_0)
+				return arg_10_0.draw_frame
+			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "lock_bottom",
-			texture_id = "lock_bottom",
+			texture_id = "lock_bottom"
 		},
 		{
 			pass_type = "texture",
 			style_id = "lock_top",
-			texture_id = "lock_top",
+			texture_id = "lock_top"
 		},
 		{
 			pass_type = "texture",
 			style_id = "lock_top_shadow",
-			texture_id = "lock_top_shadow",
+			texture_id = "lock_top_shadow"
 		},
 		{
 			pass_type = "texture",
 			style_id = "lock_bottom_shadow",
-			texture_id = "lock_bottom_shadow",
+			texture_id = "lock_bottom_shadow"
 		},
 		{
 			pass_type = "texture",
 			style_id = "lock_bottom_glow",
-			texture_id = "lock_bottom_glow",
+			texture_id = "lock_bottom_glow"
 		},
 		{
 			pass_type = "texture",
 			style_id = "lock_bottom_glow_2",
-			texture_id = "lock_bottom_glow_2",
+			texture_id = "lock_bottom_glow_2"
 		},
 		{
 			pass_type = "texture",
 			style_id = "lock_glow",
-			texture_id = "lock_glow",
+			texture_id = "lock_glow"
 		},
 		{
 			pass_type = "texture",
 			style_id = "lock_glow_1",
-			texture_id = "lock_glow_1",
+			texture_id = "lock_glow_1"
 		},
 		{
 			pass_type = "texture",
 			style_id = "lock_glow_2",
-			texture_id = "lock_glow_2",
+			texture_id = "lock_glow_2"
 		},
 		{
 			pass_type = "texture",
 			style_id = "final_glow",
-			texture_id = "final_glow",
+			texture_id = "final_glow"
 		},
 		{
 			pass_type = "texture",
 			style_id = "final_glow_1",
-			texture_id = "final_glow_1",
+			texture_id = "final_glow_1"
 		},
 		{
 			pass_type = "texture",
 			style_id = "final_glow_2",
-			texture_id = "final_glow_2",
+			texture_id = "final_glow_2"
 		},
 		{
 			pass_type = "texture",
 			style_id = "image",
 			texture_id = "image",
-			content_check_function = function (content)
-				return content.image
-			end,
+			content_check_function = function(arg_11_0)
+				return arg_11_0.image
+			end
 		},
 		{
-			pass_type = "rotated_texture",
 			style_id = "loading_icon",
 			texture_id = "loading_icon",
-			content_check_function = function (content)
-				return content.is_loading
+			pass_type = "rotated_texture",
+			content_check_function = function(arg_12_0)
+				return arg_12_0.is_loading
 			end,
-			content_change_function = function (content, style, _, dt)
-				local progress = style.progress or 0
+			content_change_function = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+				local var_13_0 = ((arg_13_1.progress or 0) + arg_13_3) % 1
 
-				progress = (progress + dt) % 1
-
-				local angle = math.pow(2, math.smoothstep(progress, 0, 1)) * (math.pi * 2)
-
-				style.angle = angle
-				style.progress = progress
-			end,
+				arg_13_1.angle = math.pow(2, math.smoothstep(var_13_0, 0, 1)) * (math.pi * 2)
+				arg_13_1.progress = var_13_0
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "amount_text",
+			pass_type = "text",
 			text_id = "amount_text",
-			content_check_function = function (content)
-				return content.amount_text
-			end,
+			content_check_function = function(arg_14_0)
+				return arg_14_0.amount_text
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "amount_text_shadow",
+			pass_type = "text",
 			text_id = "amount_text",
-			content_check_function = function (content)
-				return content.amount_text
-			end,
-		},
+			content_check_function = function(arg_15_0)
+				return arg_15_0.amount_text
+			end
+		}
 	}
-	local content = {
-		amount_text = "",
-		draw_frame = false,
-		final_glow = "loot_presentation_circle_glow_plentiful_large",
-		final_glow_1 = "loot_presentation_glow_06",
-		final_glow_2 = "loot_presentation_glow_05",
-		illusion_icon = "item_applied_illusion_icon",
-		illusion_overlay = "item_frame_illusion",
-		item_icon = "icons_placeholder",
-		item_icon_frame = "item_frame",
-		item_icon_rarity = "icon_bg_plentiful",
-		item_name = "n/a",
-		item_type = "n/a",
+	local var_3_3 = {
 		loading_icon = "loot_loading",
-		lock_bottom = "loot_presentation_fg_02",
-		lock_bottom_glow = "loot_presentation_glow_02",
-		lock_bottom_glow_2 = "loot_presentation_glow_01",
-		lock_bottom_shadow = "loot_presentation_fg_02_fade",
-		lock_glow = "loot_presentation_circle_glow_plentiful",
+		draw_frame = false,
 		lock_glow_1 = "loot_presentation_glow_04",
-		lock_glow_2 = "loot_presentation_glow_03",
+		lock_glow = "loot_presentation_circle_glow_plentiful",
+		final_glow_2 = "loot_presentation_glow_05",
+		item_type = "n/a",
 		lock_top = "loot_presentation_fg_01",
 		lock_top_shadow = "loot_presentation_fg_01_fade",
-		frame = frame_settings.texture,
+		lock_bottom_shadow = "loot_presentation_fg_02_fade",
+		illusion_overlay = "item_frame_illusion",
+		lock_bottom = "loot_presentation_fg_02",
+		item_icon = "icons_placeholder",
+		illusion_icon = "item_applied_illusion_icon",
+		lock_bottom_glow_2 = "loot_presentation_glow_01",
+		item_icon_rarity = "icon_bg_plentiful",
+		amount_text = "",
+		final_glow_1 = "loot_presentation_glow_06",
+		lock_bottom_glow = "loot_presentation_glow_02",
+		item_icon_frame = "item_frame",
+		final_glow = "loot_presentation_circle_glow_plentiful_large",
+		item_name = "n/a",
+		lock_glow_2 = "loot_presentation_glow_03",
+		frame = var_3_0.texture,
 		item_hotspot = {},
 		item_hotspot_2 = {
-			allow_multi_hover = true,
+			allow_multi_hover = true
 		},
 		button_hotspot = {
-			hover_type = "circle",
-		},
+			hover_type = "circle"
+		}
 	}
-	local style = {
+	local var_3_4 = {
 		button_hotspot = {
 			size = {
 				400,
-				400,
+				400
 			},
 			offset = {
-				size[1] / 2 - 200,
-				size[2] / 2 - 200,
-				0,
-			},
+				arg_3_1[1] / 2 - 200,
+				arg_3_1[2] / 2 - 200,
+				0
+			}
 		},
 		frame = {
 			size = {
-				[2] = size[2],
+				[2] = arg_3_1[2]
 			},
-			texture_size = frame_settings.texture_size,
-			texture_sizes = frame_settings.texture_sizes,
+			texture_size = var_3_0.texture_size,
+			texture_sizes = var_3_0.texture_sizes,
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
 				0,
 				0,
-				2,
-			},
+				2
+			}
 		},
 		loading_icon = {
-			angle = 0,
-			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			horizontal_alignment = "center",
+			angle = 0,
 			texture_size = {
 				150,
-				150,
+				150
 			},
 			offset = {
 				0,
 				0,
-				1,
+				1
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
-			scenegraph_id = "loot_option_" .. index .. "_center",
+			scenegraph_id = "loot_option_" .. arg_3_0 .. "_center",
 			pivot = {
 				75,
-				75,
-			},
+				75
+			}
 		},
 		image = {
-			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			horizontal_alignment = "center",
 			texture_size = {
 				364,
-				364,
+				364
 			},
 			offset = {
 				0,
 				0,
-				1,
+				1
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
-			scenegraph_id = "loot_option_" .. index .. "_center",
+			scenegraph_id = "loot_option_" .. arg_3_0 .. "_center"
 		},
 		amount_text = {
 			font_size = 42,
-			font_type = "hell_shark_header",
-			horizontal_alignment = "center",
-			localize = false,
 			upper_case = false,
-			vertical_alignment = "center",
+			localize = false,
 			word_wrap = false,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
+			font_type = "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
 				0,
 				-100,
-				3,
+				3
 			},
-			scenegraph_id = "loot_option_" .. index .. "_center",
+			scenegraph_id = "loot_option_" .. arg_3_0 .. "_center"
 		},
 		amount_text_shadow = {
 			font_size = 42,
-			font_type = "hell_shark_header",
-			horizontal_alignment = "center",
-			localize = false,
 			upper_case = false,
-			vertical_alignment = "center",
+			localize = false,
 			word_wrap = false,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
+			font_type = "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				2,
 				-102,
-				2,
+				2
 			},
-			scenegraph_id = "loot_option_" .. index .. "_center",
+			scenegraph_id = "loot_option_" .. arg_3_0 .. "_center"
 		},
 		lock_top = {
-			horizontal_alignment = "center",
 			vertical_alignment = "top",
+			horizontal_alignment = "center",
 			texture_size = {
 				364,
-				364,
+				364
 			},
 			offset = {
 				0,
 				182,
-				13,
+				13
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		lock_top_shadow = {
-			horizontal_alignment = "center",
 			vertical_alignment = "top",
+			horizontal_alignment = "center",
 			texture_size = {
 				364,
-				95,
+				95
 			},
 			offset = {
 				0,
 				0,
-				1,
+				1
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		lock_bottom = {
-			horizontal_alignment = "center",
 			vertical_alignment = "bottom",
+			horizontal_alignment = "center",
 			texture_size = {
 				364,
-				364,
+				364
 			},
 			offset = {
 				0,
 				-182,
-				18,
+				18
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		lock_bottom_shadow = {
-			horizontal_alignment = "center",
 			vertical_alignment = "bottom",
+			horizontal_alignment = "center",
 			texture_size = {
 				364,
-				95,
+				95
 			},
 			offset = {
 				0,
 				0,
-				1,
+				1
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		lock_bottom_glow = {
-			horizontal_alignment = "center",
 			vertical_alignment = "bottom",
+			horizontal_alignment = "center",
 			texture_size = {
 				93,
-				88,
+				88
 			},
 			offset = {
 				0,
 				-40,
-				19,
+				19
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			default_color = {
 				0,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		lock_bottom_glow_2 = {
-			horizontal_alignment = "center",
 			vertical_alignment = "bottom",
+			horizontal_alignment = "center",
 			texture_size = {
 				93,
-				88,
+				88
 			},
 			offset = {
 				0,
 				-40,
-				20,
+				20
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			default_color = {
 				0,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		lock_glow = {
-			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			horizontal_alignment = "center",
 			texture_size = {
 				600,
-				600,
+				600
 			},
 			offset = {
 				0,
 				0,
-				21,
+				21
 			},
 			color = {
 				0,
 				255,
 				255,
-				255,
+				255
 			},
 			default_color = {
 				0,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		lock_glow_1 = {
-			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			horizontal_alignment = "center",
 			texture_size = {
 				408,
-				408,
+				408
 			},
 			offset = {
 				0,
 				0,
-				22,
+				22
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			default_color = {
 				0,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		lock_glow_2 = {
-			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			horizontal_alignment = "center",
 			texture_size = {
 				408,
-				408,
+				408
 			},
 			offset = {
 				0,
 				0,
-				23,
+				23
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			default_color = {
 				0,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		final_glow = {
-			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			horizontal_alignment = "center",
 			texture_size = {
 				600,
-				1000,
+				1000
 			},
 			offset = {
 				0,
 				0,
-				21,
+				21
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			default_color = {
 				0,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		final_glow_1 = {
-			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			horizontal_alignment = "center",
 			texture_size = {
 				600,
-				1000,
+				1000
 			},
 			offset = {
 				0,
 				0,
-				22,
+				22
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			default_color = {
 				0,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		final_glow_2 = {
-			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			horizontal_alignment = "center",
 			texture_size = {
 				600,
-				1000,
+				1000
 			},
 			offset = {
 				0,
 				0,
-				23,
+				23
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			default_color = {
 				0,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		illusion_overlay = {
-			horizontal_alignment = "center",
 			vertical_alignment = "top",
+			horizontal_alignment = "center",
 			texture_size = {
 				80,
-				80,
+				80
 			},
 			offset = {
 				0,
 				40,
-				16,
+				16
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		illusion_icon = {
-			horizontal_alignment = "center",
 			vertical_alignment = "top",
+			horizontal_alignment = "center",
 			texture_size = {
 				20,
-				20,
+				20
 			},
 			offset = {
 				22,
 				-12,
-				16,
+				16
 			},
-			color = Colors.get_color_table_with_alpha("promo", 255),
+			color = Colors.get_color_table_with_alpha("promo", 255)
 		},
 		item_icon_frame = {
-			horizontal_alignment = "center",
 			vertical_alignment = "top",
+			horizontal_alignment = "center",
 			texture_size = {
 				80,
-				80,
+				80
 			},
 			offset = {
 				0,
 				40,
-				17,
+				17
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		item_icon = {
 			size = {
 				80,
-				80,
+				80
 			},
 			offset = {
-				size[1] / 2 - 40,
+				arg_3_1[1] / 2 - 40,
 				-40,
-				15,
+				15
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		item_icon_rarity = {
-			horizontal_alignment = "center",
 			vertical_alignment = "top",
+			horizontal_alignment = "center",
 			texture_size = {
 				80,
-				80,
+				80
 			},
 			offset = {
 				0,
 				40,
-				14,
+				14
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		item_name = {
 			font_size = 30,
-			font_type = "hell_shark_header",
-			horizontal_alignment = "center",
-			localize = false,
 			upper_case = true,
-			vertical_alignment = "bottom",
+			localize = false,
 			word_wrap = true,
+			horizontal_alignment = "center",
+			vertical_alignment = "bottom",
+			font_type = "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("white", 0),
 			size = {
-				size[1],
-				50,
+				arg_3_1[1],
+				50
 			},
 			offset = {
 				0,
-				size[2] + 182 + 70,
-				30,
-			},
+				arg_3_1[2] + 182 + 70,
+				30
+			}
 		},
 		item_name_shadow = {
 			font_size = 30,
-			font_type = "hell_shark_header",
-			horizontal_alignment = "center",
-			localize = false,
 			upper_case = true,
-			vertical_alignment = "bottom",
+			localize = false,
 			word_wrap = true,
+			horizontal_alignment = "center",
+			vertical_alignment = "bottom",
+			font_type = "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("black", 0),
 			size = {
-				size[1],
-				50,
+				arg_3_1[1],
+				50
 			},
 			offset = {
 				2,
-				size[2] + 182 + 70 - 2,
-				29,
-			},
+				arg_3_1[2] + 182 + 70 - 2,
+				29
+			}
 		},
 		item_type = {
-			font_size = 26,
-			font_type = "hell_shark",
+			vertical_alignment = "top",
 			horizontal_alignment = "center",
 			localize = false,
-			vertical_alignment = "top",
+			font_size = 26,
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("white", 0),
 			size = {
-				size[1],
-				50,
+				arg_3_1[1],
+				50
 			},
 			offset = {
 				0,
-				size[2] + 182,
-				30,
-			},
+				arg_3_1[2] + 182,
+				30
+			}
 		},
 		item_type_shadow = {
-			font_size = 26,
-			font_type = "hell_shark",
+			vertical_alignment = "top",
 			horizontal_alignment = "center",
 			localize = false,
-			vertical_alignment = "top",
+			font_size = 26,
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 0),
 			size = {
-				size[1],
-				50,
+				arg_3_1[1],
+				50
 			},
 			offset = {
 				2,
-				size[2] + 182 - 2,
-				29,
-			},
+				arg_3_1[2] + 182 - 2,
+				29
+			}
 		},
 		item_tooltip = {
 			font_size = 18,
-			font_type = "hell_shark",
-			horizontal_alignment = "left",
-			localize = true,
 			max_width = 500,
+			localize = true,
+			horizontal_alignment = "left",
 			vertical_alignment = "top",
+			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("white", 255),
 			line_colors = {
 				Colors.get_color_table_with_alpha("font_title", 255),
-				Colors.get_color_table_with_alpha("white", 255),
+				Colors.get_color_table_with_alpha("white", 255)
 			},
 			size = {
 				80,
-				80,
+				80
 			},
 			offset = {
-				size[1] / 2 - 40,
+				arg_3_1[1] / 2 - 40,
 				-40,
-				4,
-			},
-		},
+				4
+			}
+		}
 	}
 
-	widget.element.passes = passes
-	widget.content = content
-	widget.style = style
-	widget.offset = {
+	var_3_1.element.passes = var_3_2
+	var_3_1.content = var_3_3
+	var_3_1.style = var_3_4
+	var_3_1.offset = {
 		0,
 		0,
-		0,
+		0
 	}
-	widget.scenegraph_id = "loot_option_" .. index
+	var_3_1.scenegraph_id = "loot_option_" .. arg_3_0
 
-	return widget
+	return var_3_1
 end
 
-local function create_window_divider(scenegraph_id, size)
-	local widget = {
+local function var_0_30(arg_16_0, arg_16_1)
+	return {
 		element = {
 			passes = {
 				{
-					pass_type = "tiled_texture",
-					style_id = "bottom_edge",
 					texture_id = "bottom_edge",
+					style_id = "bottom_edge",
+					pass_type = "tiled_texture"
 				},
 				{
-					pass_type = "texture",
-					style_id = "edge_holder_left",
 					texture_id = "edge_holder_left",
+					style_id = "edge_holder_left",
+					pass_type = "texture"
 				},
 				{
-					pass_type = "texture",
-					style_id = "edge_holder_right",
 					texture_id = "edge_holder_right",
-				},
-			},
+					style_id = "edge_holder_right",
+					pass_type = "texture"
+				}
+			}
 		},
 		content = {
-			bottom_edge = "menu_frame_09_divider",
-			edge_holder_left = "menu_frame_09_divider_left",
 			edge_holder_right = "menu_frame_09_divider_right",
+			edge_holder_left = "menu_frame_09_divider_left",
+			bottom_edge = "menu_frame_09_divider"
 		},
 		style = {
 			bottom_edge = {
@@ -2235,93 +2228,91 @@ local function create_window_divider(scenegraph_id, size)
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					5,
 					0,
-					6,
+					6
 				},
 				size = {
-					size[1] - 10,
-					5,
+					arg_16_1[1] - 10,
+					5
 				},
 				texture_tiling_size = {
-					size[1] - 10,
-					5,
-				},
+					arg_16_1[1] - 10,
+					5
+				}
 			},
 			edge_holder_left = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					3,
 					-6,
-					10,
+					10
 				},
 				size = {
 					9,
-					17,
-				},
+					17
+				}
 			},
 			edge_holder_right = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					size[1] - 12,
+					arg_16_1[1] - 12,
 					-6,
-					10,
+					10
 				},
 				size = {
 					9,
-					17,
-				},
-			},
+					17
+				}
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_16_0,
 		offset = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	}
-
-	return widget
 end
 
-local function create_vertical_window_divider(scenegraph_id, size)
-	local widget = {
+local function var_0_31(arg_17_0, arg_17_1)
+	return {
 		element = {
 			passes = {
 				{
-					pass_type = "tiled_texture",
-					style_id = "edge",
 					texture_id = "edge",
+					style_id = "edge",
+					pass_type = "tiled_texture"
 				},
 				{
-					pass_type = "texture",
-					style_id = "edge_holder_top",
 					texture_id = "edge_holder_top",
+					style_id = "edge_holder_top",
+					pass_type = "texture"
 				},
 				{
-					pass_type = "texture",
-					style_id = "edge_holder_bottom",
 					texture_id = "edge_holder_bottom",
-				},
-			},
+					style_id = "edge_holder_bottom",
+					pass_type = "texture"
+				}
+			}
 		},
 		content = {
 			edge = "menu_frame_09_divider_vertical",
-			edge_holder_bottom = "menu_frame_09_divider_bottom",
 			edge_holder_top = "menu_frame_09_divider_top",
+			edge_holder_bottom = "menu_frame_09_divider_bottom"
 		},
 		style = {
 			edge = {
@@ -2329,277 +2320,273 @@ local function create_vertical_window_divider(scenegraph_id, size)
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					6,
-					6,
+					6
 				},
 				size = {
 					5,
-					size[2] - 9,
+					arg_17_1[2] - 9
 				},
 				texture_tiling_size = {
 					5,
-					size[2] - 9,
-				},
+					arg_17_1[2] - 9
+				}
 			},
 			edge_holder_top = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					-6,
-					size[2] - 7,
-					10,
+					arg_17_1[2] - 7,
+					10
 				},
 				size = {
 					17,
-					9,
-				},
+					9
+				}
 			},
 			edge_holder_bottom = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					-6,
 					3,
-					10,
+					10
 				},
 				size = {
 					17,
-					9,
-				},
-			},
+					9
+				}
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_17_0,
 		offset = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	}
-
-	return widget
 end
 
-local function create_chest_indicator_func(index, current_index, rarity_a, rarity_b, rarity_c)
-	local spacing = 20
-	local size = 40
-	local rarity_size = size / 5
-	local rarity_settings_a = RaritySettings[rarity_a]
-	local rarity_color_a = rarity_settings_a.color
-	local rarity_settings_b = RaritySettings[rarity_b]
-	local rarity_color_b = rarity_settings_b and rarity_settings_b.color
-	local rarity_settings_c = RaritySettings[rarity_c]
-	local rarity_color_c = rarity_settings_c and rarity_settings_c.color
-	local selected = index == current_index
-	local widget = {
+local function var_0_32(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+	local var_18_0 = 20
+	local var_18_1 = 40
+	local var_18_2 = var_18_1 / 5
+	local var_18_3 = RaritySettings[arg_18_2].color
+	local var_18_4 = RaritySettings[arg_18_3]
+	local var_18_5 = var_18_4 and var_18_4.color
+	local var_18_6 = RaritySettings[arg_18_4]
+	local var_18_7 = var_18_6 and var_18_6.color
+	local var_18_8 = arg_18_0 == arg_18_1
+
+	return {
 		scenegraph_id = "chest_indicator_root",
 		element = {
 			passes = {
 				{
-					content_id = "button_hotspot",
-					pass_type = "hotspot",
 					style_id = "button_hotspot",
+					pass_type = "hotspot",
+					content_id = "button_hotspot"
 				},
 				{
 					pass_type = "texture",
 					style_id = "indicator_selected",
 					texture_id = "dot_lit",
-					content_check_function = function (content)
-						return content.selected
-					end,
+					content_check_function = function(arg_19_0)
+						return arg_19_0.selected
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "indicator_unselected",
 					texture_id = "dot_unlit",
-					content_check_function = function (content)
-						return not content.selected
-					end,
+					content_check_function = function(arg_20_0)
+						return not arg_20_0.selected
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_hover_id",
 					texture_id = "dot_lit",
-					content_check_function = function (content)
-						return not content.selected
-					end,
+					content_check_function = function(arg_21_0)
+						return not arg_21_0.selected
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "rarity_a",
-					texture_id = "rarity_icon",
+					texture_id = "rarity_icon"
 				},
 				{
 					pass_type = "texture",
 					style_id = "rarity_b",
 					texture_id = "rarity_icon",
-					content_check_function = function (content)
-						return rarity_settings_b
-					end,
+					content_check_function = function(arg_22_0)
+						return var_18_4
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "rarity_c",
 					texture_id = "rarity_icon",
-					content_check_function = function (content)
-						return rarity_settings_c
-					end,
-				},
-			},
+					content_check_function = function(arg_23_0)
+						return var_18_6
+					end
+				}
+			}
 		},
 		content = {
-			dot_lit = "dot_on",
 			dot_unlit = "dot_off_01",
+			dot_lit = "dot_on",
 			rarity_icon = "loot_indicator_rarity",
 			button_hotspot = {},
-			index = index,
-			selected = selected,
+			index = arg_18_0,
+			selected = var_18_8
 		},
 		style = {
 			button_hotspot = {
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
+				horizontal_alignment = "center",
 				area_size = {
 					60,
-					60,
+					60
 				},
 				offset = {
 					0,
 					-5,
-					0,
-				},
+					0
+				}
 			},
 			indicator_selected = {
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
+				horizontal_alignment = "center",
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					6,
+					6
 				},
 				texture_size = {
 					60,
-					60,
-				},
+					60
+				}
 			},
 			indicator_unselected = {
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
+				horizontal_alignment = "center",
 				color = {
 					128,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					6,
+					6
 				},
 				texture_size = {
 					60,
-					60,
-				},
+					60
+				}
 			},
 			texture_hover_id = {
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
+				horizontal_alignment = "center",
 				color = {
 					0,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					6,
+					6
 				},
 				texture_size = {
 					60,
-					60,
-				},
+					60
+				}
 			},
 			rarity_a = {
-				horizontal_alignment = "center",
 				vertical_alignment = "bottom",
-				color = rarity_color_a,
+				horizontal_alignment = "center",
+				color = var_18_3,
 				offset = {
-					-rarity_size * 2,
-					-size,
-					6,
+					-var_18_2 * 2,
+					-var_18_1,
+					6
 				},
 				texture_size = {
 					18,
-					18,
-				},
+					18
+				}
 			},
 			rarity_b = {
-				horizontal_alignment = "center",
 				vertical_alignment = "bottom",
-				color = rarity_color_b,
+				horizontal_alignment = "center",
+				color = var_18_5,
 				offset = {
 					0,
-					-size,
-					6,
+					-var_18_1,
+					6
 				},
 				texture_size = {
 					18,
-					18,
-				},
+					18
+				}
 			},
 			rarity_c = {
-				horizontal_alignment = "center",
 				vertical_alignment = "bottom",
-				color = rarity_color_c,
+				horizontal_alignment = "center",
+				color = var_18_7,
 				offset = {
-					rarity_size * 2,
-					-size,
-					6,
+					var_18_2 * 2,
+					-var_18_1,
+					6
 				},
 				texture_size = {
 					18,
-					18,
-				},
-			},
+					18
+				}
+			}
 		},
 		offset = {
-			(index - 1) * (spacing + size),
+			(arg_18_0 - 1) * (var_18_0 + var_18_1),
 			0,
-			0,
-		},
+			0
+		}
 	}
-
-	return widget
 end
 
-local disable_with_gamepad = true
-local widgets = {
-	chest_title = UIWidgets.create_simple_text("chest_title", "chest_title", nil, nil, title_text_style),
-	chest_sub_title = UIWidgets.create_simple_text("chest_sub_title", "chest_sub_title", nil, nil, sub_title_text_style),
-	info_text_title = UIWidgets.create_simple_text("n/a", "info_title_text", nil, nil, info_title_text_style),
-	info_text_box = UIWidgets.create_simple_text("loot_opening_screen_desc", "info_text_box", nil, nil, info_text_style),
-	info_window = UIWidgets.create_rect_with_outer_frame("info_window", scenegraph_definition.info_window.size, nil, nil, Colors.get_color_table_with_alpha("console_menu_rect", 210)),
-	item_grid_title = UIWidgets.create_simple_text(string.upper(Localize("hero_window_loot_crates")), "item_grid_title", nil, nil, item_grid_title_style),
+local var_0_33 = true
+local var_0_34 = {
+	chest_title = UIWidgets.create_simple_text("chest_title", "chest_title", nil, nil, var_0_14),
+	chest_sub_title = UIWidgets.create_simple_text("chest_sub_title", "chest_sub_title", nil, nil, var_0_15),
+	info_text_title = UIWidgets.create_simple_text("n/a", "info_title_text", nil, nil, var_0_17),
+	info_text_box = UIWidgets.create_simple_text("loot_opening_screen_desc", "info_text_box", nil, nil, var_0_18),
+	info_window = UIWidgets.create_rect_with_outer_frame("info_window", var_0_6.info_window.size, nil, nil, Colors.get_color_table_with_alpha("console_menu_rect", 210)),
+	item_grid_title = UIWidgets.create_simple_text(string.upper(Localize("hero_window_loot_crates")), "item_grid_title", nil, nil, var_0_22),
 	title_top_divider = UIWidgets.create_simple_texture("divider_01_top", "item_grid_title"),
-	item_grid = UIWidgets.create_grid("item_grid", scenegraph_definition.item_grid.size, 5, 4, 16, 16, false),
+	item_grid = UIWidgets.create_grid("item_grid", var_0_6.item_grid.size, 5, 4, 16, 16, false),
 	page_button_next = UIWidgets.create_arrow_button("page_button_next", math.pi),
 	page_button_previous = UIWidgets.create_arrow_button("page_button_previous"),
 	input_icon_next = UIWidgets.create_simple_texture("xbone_button_icon_a", "input_icon_next"),
@@ -2607,38 +2594,38 @@ local widgets = {
 	input_arrow_next = UIWidgets.create_simple_uv_texture("settings_arrow_normal", {
 		{
 			1,
-			0,
+			0
 		},
 		{
 			0,
-			1,
-		},
+			1
+		}
 	}, "input_arrow_next"),
 	input_arrow_previous = UIWidgets.create_simple_texture("settings_arrow_normal", "input_arrow_previous"),
-	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, page_number_center_text_style),
-	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, page_number_left_text_style),
-	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, page_number_right_text_style),
+	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, var_0_21),
+	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, var_0_19),
+	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, var_0_20),
 	page_text_area = UIWidgets.create_simple_texture("tab_menu_bg_03", "page_text_area"),
-	open_button = UIWidgets.create_default_button("open_button", scenegraph_definition.open_button.size, nil, nil, Localize("interaction_action_open") .. " 1", 32, "green", nil, nil, disable_with_gamepad, false),
-	open_multiple_button = UIWidgets.create_default_button("open_multiple_button", scenegraph_definition.open_multiple_button.size, nil, nil, Localize("interaction_action_open") .. " 5", 32, "green", nil, nil, disable_with_gamepad, true),
-	close_button = UIWidgets.create_default_button("close_button", scenegraph_definition.close_button.size, nil, nil, Localize("interaction_action_close"), 32, nil, nil, nil, disable_with_gamepad, true),
+	open_button = UIWidgets.create_default_button("open_button", var_0_6.open_button.size, nil, nil, Localize("interaction_action_open") .. " 1", 32, "green", nil, nil, var_0_33, false),
+	open_multiple_button = UIWidgets.create_default_button("open_multiple_button", var_0_6.open_multiple_button.size, nil, nil, Localize("interaction_action_open") .. " 5", 32, "green", nil, nil, var_0_33, true),
+	close_button = UIWidgets.create_default_button("close_button", var_0_6.close_button.size, nil, nil, Localize("interaction_action_close"), 32, nil, nil, nil, var_0_33, true),
 	item_cap_warning_text = {
 		scenegraph_id = "item_cap_warning_text",
 		element = {
 			passes = {
 				{
 					pass_type = "rect",
-					style_id = "background",
+					style_id = "background"
 				},
 				{
-					pass_type = "text",
 					style_id = "text",
-					text_id = "text",
-				},
-			},
+					pass_type = "text",
+					text_id = "text"
+				}
+			}
 		},
 		content = {
-			text = Localize("item_cap_warning_text"),
+			text = Localize("item_cap_warning_text")
 		},
 		style = {
 			background = {
@@ -2646,26 +2633,26 @@ local widgets = {
 					200,
 					0,
 					0,
-					0,
-				},
+					0
+				}
 			},
-			text = warning_text_style,
-		},
-	},
+			text = var_0_16
+		}
+	}
 }
-local input_description_widgets = {
+local var_0_35 = {
 	bottom_panel = UIWidgets.create_simple_uv_texture("menu_panel_bg", {
 		{
 			0,
-			1,
+			1
 		},
 		{
 			1,
-			0,
-		},
-	}, "bottom_panel", nil, nil, panel_color),
+			0
+		}
+	}, "bottom_panel", nil, nil, var_0_2)
 }
-local console_tooltip_pass_definition = {
+local var_0_36 = {
 	"skin_applied",
 	"deed_mission",
 	"deed_difficulty",
@@ -2690,17 +2677,17 @@ local console_tooltip_pass_definition = {
 	"detailed_stats_push",
 	"detailed_stats_ranged_light",
 	"detailed_stats_ranged_heavy",
-	"console_item_background",
+	"console_item_background"
 }
-local gamepad_tooltip_widgets = {}
+local var_0_37 = {}
 
-for i = 1, num_loot_options do
-	gamepad_tooltip_widgets["item_tooltip_" .. (i - 1) * 3 + 1] = UIWidgets.create_simple_item_presentation("gamepad_tooltip_option_" .. (i - 1) * 3 + 1, console_tooltip_pass_definition)
-	gamepad_tooltip_widgets["item_tooltip_" .. (i - 1) * 3 + 2] = UIWidgets.create_simple_item_presentation("gamepad_tooltip_option_" .. (i - 1) * 3 + 2, console_tooltip_pass_definition)
-	gamepad_tooltip_widgets["item_tooltip_" .. (i - 1) * 3 + 3] = UIWidgets.create_simple_item_presentation("gamepad_tooltip_option_" .. (i - 1) * 3 + 3, console_tooltip_pass_definition)
+for iter_0_3 = 1, var_0_4 do
+	var_0_37["item_tooltip_" .. (iter_0_3 - 1) * 3 + 1] = UIWidgets.create_simple_item_presentation("gamepad_tooltip_option_" .. (iter_0_3 - 1) * 3 + 1, var_0_36)
+	var_0_37["item_tooltip_" .. (iter_0_3 - 1) * 3 + 2] = UIWidgets.create_simple_item_presentation("gamepad_tooltip_option_" .. (iter_0_3 - 1) * 3 + 2, var_0_36)
+	var_0_37["item_tooltip_" .. (iter_0_3 - 1) * 3 + 3] = UIWidgets.create_simple_item_presentation("gamepad_tooltip_option_" .. (iter_0_3 - 1) * 3 + 3, var_0_36)
 end
 
-local console_chest_tooltip_pass_definition = {
+local var_0_38 = {
 	"console_item_titles",
 	"item_information_text",
 	"loot_chest_difficulty",
@@ -2708,471 +2695,467 @@ local console_chest_tooltip_pass_definition = {
 	"item_rarity_rate",
 	"console_keywords",
 	"console_item_description",
-	"console_item_background",
+	"console_item_background"
 }
 
-gamepad_tooltip_widgets.chest_tooltip = UIWidgets.create_simple_item_presentation("gamepad_chest_tooltip", console_chest_tooltip_pass_definition)
+var_0_37.chest_tooltip = UIWidgets.create_simple_item_presentation("gamepad_chest_tooltip", var_0_38)
 
-local option_background_widgets = {}
+local var_0_39 = {}
 
-for i = 1, num_loot_options do
-	option_background_widgets["loot_background_" .. (i - 1) * 3 + 1] = UIWidgets.create_background("loot_option_" .. (i - 1) * 3 + 1, scenegraph_definition["loot_option_" .. (i - 1) * 3 + 1].size, "item_tooltip_background_old")
-	option_background_widgets["loot_background_" .. (i - 1) * 3 + 2] = UIWidgets.create_background("loot_option_" .. (i - 1) * 3 + 2, scenegraph_definition["loot_option_" .. (i - 1) * 3 + 2].size, "item_tooltip_background_old")
-	option_background_widgets["loot_background_" .. (i - 1) * 3 + 3] = UIWidgets.create_background("loot_option_" .. (i - 1) * 3 + 3, scenegraph_definition["loot_option_" .. (i - 1) * 3 + 3].size, "item_tooltip_background_old")
+for iter_0_4 = 1, var_0_4 do
+	var_0_39["loot_background_" .. (iter_0_4 - 1) * 3 + 1] = UIWidgets.create_background("loot_option_" .. (iter_0_4 - 1) * 3 + 1, var_0_6["loot_option_" .. (iter_0_4 - 1) * 3 + 1].size, "item_tooltip_background_old")
+	var_0_39["loot_background_" .. (iter_0_4 - 1) * 3 + 2] = UIWidgets.create_background("loot_option_" .. (iter_0_4 - 1) * 3 + 2, var_0_6["loot_option_" .. (iter_0_4 - 1) * 3 + 2].size, "item_tooltip_background_old")
+	var_0_39["loot_background_" .. (iter_0_4 - 1) * 3 + 3] = UIWidgets.create_background("loot_option_" .. (iter_0_4 - 1) * 3 + 3, var_0_6["loot_option_" .. (iter_0_4 - 1) * 3 + 3].size, "item_tooltip_background_old")
 end
 
-local option_widgets = {}
+local var_0_40 = {}
 
-for i = 1, num_loot_options do
-	option_widgets["loot_option_" .. (i - 1) * 3 + 1] = create_loot_widget((i - 1) * 3 + 1, scenegraph_definition["loot_option_" .. (i - 1) * 3 + 1].size)
-	option_widgets["loot_option_" .. (i - 1) * 3 + 2] = create_loot_widget((i - 1) * 3 + 2, scenegraph_definition["loot_option_" .. (i - 1) * 3 + 2].size)
-	option_widgets["loot_option_" .. (i - 1) * 3 + 3] = create_loot_widget((i - 1) * 3 + 3, scenegraph_definition["loot_option_" .. (i - 1) * 3 + 3].size)
+for iter_0_5 = 1, var_0_4 do
+	var_0_40["loot_option_" .. (iter_0_5 - 1) * 3 + 1] = var_0_29((iter_0_5 - 1) * 3 + 1, var_0_6["loot_option_" .. (iter_0_5 - 1) * 3 + 1].size)
+	var_0_40["loot_option_" .. (iter_0_5 - 1) * 3 + 2] = var_0_29((iter_0_5 - 1) * 3 + 2, var_0_6["loot_option_" .. (iter_0_5 - 1) * 3 + 2].size)
+	var_0_40["loot_option_" .. (iter_0_5 - 1) * 3 + 3] = var_0_29((iter_0_5 - 1) * 3 + 3, var_0_6["loot_option_" .. (iter_0_5 - 1) * 3 + 3].size)
 end
 
-local preview_widgets = {}
+local var_0_41 = {}
 
-if USE_DELAYED_SPAWN then
-	preview_widgets.loot_option_1 = create_loot_preview_widget("loot_option_1", scenegraph_definition.loot_option_1.size)
-	preview_widgets.loot_option_2 = create_loot_preview_widget("loot_option_2", scenegraph_definition.loot_option_2.size)
-	preview_widgets.loot_option_3 = create_loot_preview_widget("loot_option_3", scenegraph_definition.loot_option_3.size)
+if var_0_5 then
+	var_0_41.loot_option_1 = var_0_28("loot_option_1", var_0_6.loot_option_1.size)
+	var_0_41.loot_option_2 = var_0_28("loot_option_2", var_0_6.loot_option_2.size)
+	var_0_41.loot_option_3 = var_0_28("loot_option_3", var_0_6.loot_option_3.size)
 else
-	for i = 1, num_loot_options do
-		preview_widgets["loot_option_" .. (i - 1) * 3 + 1] = create_loot_preview_widget("loot_option_" .. (i - 1) * 3 + 1, scenegraph_definition["loot_option_" .. (i - 1) * 3 + 1].size)
-		preview_widgets["loot_option_" .. (i - 1) * 3 + 2] = create_loot_preview_widget("loot_option_" .. (i - 1) * 3 + 2, scenegraph_definition["loot_option_" .. (i - 1) * 3 + 2].size)
-		preview_widgets["loot_option_" .. (i - 1) * 3 + 3] = create_loot_preview_widget("loot_option_" .. (i - 1) * 3 + 3, scenegraph_definition["loot_option_" .. (i - 1) * 3 + 3].size)
+	for iter_0_6 = 1, var_0_4 do
+		var_0_41["loot_option_" .. (iter_0_6 - 1) * 3 + 1] = var_0_28("loot_option_" .. (iter_0_6 - 1) * 3 + 1, var_0_6["loot_option_" .. (iter_0_6 - 1) * 3 + 1].size)
+		var_0_41["loot_option_" .. (iter_0_6 - 1) * 3 + 2] = var_0_28("loot_option_" .. (iter_0_6 - 1) * 3 + 2, var_0_6["loot_option_" .. (iter_0_6 - 1) * 3 + 2].size)
+		var_0_41["loot_option_" .. (iter_0_6 - 1) * 3 + 3] = var_0_28("loot_option_" .. (iter_0_6 - 1) * 3 + 3, var_0_6["loot_option_" .. (iter_0_6 - 1) * 3 + 3].size)
 	end
 end
 
-local arrow_widgets = {
-	arrow_right = arrow_right,
-	arrow_left = arrow_left,
+local var_0_42 = {
+	arrow_right = var_0_26,
+	arrow_left = var_0_27
 }
-local continue_button = UIWidgets.create_default_button("continue_button", scenegraph_definition.continue_button.size, nil, nil, Localize("continue"), 32, nil, nil, nil, disable_with_gamepad)
-local debug_button_widgets = {
-	debug_add_chest_1 = UIWidgets.create_default_button("debug_add_chest_1", scenegraph_definition.debug_add_chest_1.size, nil, nil, "DEBUG: Normal Chest", nil, "green"),
-	debug_add_chest_2 = UIWidgets.create_default_button("debug_add_chest_2", scenegraph_definition.debug_add_chest_2.size, nil, nil, "DEBUG: Hard Chest", nil, "green"),
-	debug_add_chest_3 = UIWidgets.create_default_button("debug_add_chest_3", scenegraph_definition.debug_add_chest_3.size, nil, nil, "DEBUG: Nightmare Chest", nil, "green"),
-	debug_add_chest_4 = UIWidgets.create_default_button("debug_add_chest_4", scenegraph_definition.debug_add_chest_4.size, nil, nil, "DEBUG: Cataclysm Chest", nil, "green"),
+local var_0_43 = UIWidgets.create_default_button("continue_button", var_0_6.continue_button.size, nil, nil, Localize("continue"), 32, nil, nil, nil, var_0_33)
+local var_0_44 = {
+	debug_add_chest_1 = UIWidgets.create_default_button("debug_add_chest_1", var_0_6.debug_add_chest_1.size, nil, nil, "DEBUG: Normal Chest", nil, "green"),
+	debug_add_chest_2 = UIWidgets.create_default_button("debug_add_chest_2", var_0_6.debug_add_chest_2.size, nil, nil, "DEBUG: Hard Chest", nil, "green"),
+	debug_add_chest_3 = UIWidgets.create_default_button("debug_add_chest_3", var_0_6.debug_add_chest_3.size, nil, nil, "DEBUG: Nightmare Chest", nil, "green"),
+	debug_add_chest_4 = UIWidgets.create_default_button("debug_add_chest_4", var_0_6.debug_add_chest_4.size, nil, nil, "DEBUG: Cataclysm Chest", nil, "green")
 }
-local generic_input_actions = {
+local var_0_45 = {
 	default = {},
 	chest_selected_single_use = {
 		actions = {
 			{
-				description_text = "input_description_navigate",
-				ignore_keybinding = true,
 				input_action = "d_pad",
 				priority = 1,
+				description_text = "input_description_navigate",
+				ignore_keybinding = true
 			},
 			{
-				ignore_localization = true,
 				input_action = "confirm",
 				priority = 2,
-				description_text = Localize("interaction_action_open"),
+				ignore_localization = true,
+				description_text = Localize("interaction_action_open")
 			},
 			{
-				description_text = "input_description_tooltip",
 				input_action = "special_1",
 				priority = 3,
+				description_text = "input_description_tooltip"
 			},
 			{
-				description_text = "input_description_close",
 				input_action = "back",
 				priority = 4,
-			},
-		},
+				description_text = "input_description_close"
+			}
+		}
 	},
 	chest_selected = {
 		actions = {
 			{
-				description_text = "input_description_navigate",
-				ignore_keybinding = true,
 				input_action = "d_pad",
 				priority = 1,
+				description_text = "input_description_navigate",
+				ignore_keybinding = true
 			},
 			{
-				ignore_localization = true,
 				input_action = "confirm",
 				priority = 2,
-				description_text = Localize("interaction_action_open") .. " 1",
+				ignore_localization = true,
+				description_text = Localize("interaction_action_open") .. " 1"
 			},
 			{
-				ignore_localization = true,
 				input_action = "refresh",
 				priority = 3,
-				description_text = Localize("interaction_action_open") .. " 5",
+				ignore_localization = true,
+				description_text = Localize("interaction_action_open") .. " 5"
 			},
 			{
-				description_text = "input_description_tooltip",
 				input_action = "special_1",
 				priority = 4,
+				description_text = "input_description_tooltip"
 			},
 			{
-				description_text = "input_description_close",
 				input_action = "back",
 				priority = 5,
-			},
-		},
+				description_text = "input_description_close"
+			}
+		}
 	},
 	chest_not_selected = {
 		actions = {
 			{
-				description_text = "input_description_navigate",
-				ignore_keybinding = true,
 				input_action = "d_pad",
 				priority = 1,
+				description_text = "input_description_navigate",
+				ignore_keybinding = true
 			},
 			{
-				description_text = "input_description_close",
 				input_action = "back",
 				priority = 2,
-			},
-		},
+				description_text = "input_description_close"
+			}
+		}
 	},
 	chest_not_selected = {
 		actions = {
 			{
-				description_text = "input_description_navigate",
-				ignore_keybinding = true,
 				input_action = "d_pad",
 				priority = 1,
+				description_text = "input_description_navigate",
+				ignore_keybinding = true
 			},
 			{
-				description_text = "input_description_close",
 				input_action = "back",
 				priority = 2,
-			},
-		},
+				description_text = "input_description_close"
+			}
+		}
 	},
 	chest_opened = {
 		actions = {
 			{
-				description_text = "input_description_select",
-				ignore_keybinding = true,
 				input_action = "d_horizontal",
 				priority = 1,
+				description_text = "input_description_select",
+				ignore_keybinding = true
 			},
 			{
-				description_text = "input_description_open",
 				input_action = "confirm",
 				priority = 1,
+				description_text = "input_description_open"
 			},
 			{
-				description_text = "input_description_tooltip",
 				input_action = "special_1",
 				priority = 2,
+				description_text = "input_description_tooltip"
 			},
 			{
-				description_text = "input_description_back",
 				input_action = "back",
 				priority = 3,
-			},
-		},
+				description_text = "input_description_back"
+			}
+		}
 	},
 	chest_opened_pages = {
 		actions = {
 			{
-				description_text = "input_description_select",
-				ignore_keybinding = true,
 				input_action = "d_horizontal",
 				priority = 1,
+				description_text = "input_description_select",
+				ignore_keybinding = true
 			},
 			{
-				description_text = "input_description_open",
 				input_action = "confirm",
 				priority = 1,
+				description_text = "input_description_open"
 			},
 			{
-				description_text = "input_description_tooltip",
 				input_action = "special_1",
 				priority = 2,
+				description_text = "input_description_tooltip"
 			},
 			{
-				description_text = "input_description_prev_page",
 				input_action = "trigger_cycle_previous",
 				priority = 3,
+				description_text = "input_description_prev_page"
 			},
 			{
-				description_text = "input_description_next_page",
 				input_action = "trigger_cycle_next",
 				priority = 4,
+				description_text = "input_description_next_page"
 			},
 			{
-				description_text = "input_description_back",
 				input_action = "back",
 				priority = 5,
-			},
-		},
+				description_text = "input_description_back"
+			}
+		}
 	},
 	loot_presented = {
 		actions = {
 			{
-				description_text = "input_description_tooltip",
 				input_action = "special_1",
 				priority = 1,
+				description_text = "input_description_tooltip"
 			},
 			{
-				description_text = "input_description_back",
 				input_action = "back",
 				priority = 2,
-			},
-		},
+				description_text = "input_description_back"
+			}
+		}
 	},
 	loot_presented_pages = {
 		actions = {
 			{
-				description_text = "input_description_tooltip",
 				input_action = "special_1",
 				priority = 1,
+				description_text = "input_description_tooltip"
 			},
 			{
-				description_text = "input_description_prev_page",
 				input_action = "trigger_cycle_previous",
 				priority = 2,
+				description_text = "input_description_prev_page"
 			},
 			{
-				description_text = "input_description_next_page",
 				input_action = "trigger_cycle_next",
 				priority = 3,
+				description_text = "input_description_next_page"
 			},
 			{
-				description_text = "input_description_back",
 				input_action = "back",
 				priority = 4,
-			},
-		},
-	},
+				description_text = "input_description_back"
+			}
+		}
+	}
 }
-local animation_definitions = {
+local var_0_46 = {
 	open_loot_widget = {
 		{
-			end_progress = 0.3,
 			name = "rumble",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widget, params)
-				local wwise_world = params.wwise_world
+			end_progress = 0.3,
+			init = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+				local var_24_0 = arg_24_3.wwise_world
 
-				WwiseWorld.trigger_event(wwise_world, "play_gui_chest_reward_rumble")
+				WwiseWorld.trigger_event(var_24_0, "play_gui_chest_reward_rumble")
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
-				local bounce_anim_progress = math.bounce(progress)
-				local content = widget.content
-				local style = widget.style
-				local offset = widget.offset
-				local scenegraph_id = widget.scenegraph_id
-				local definition = scenegraph_definition[scenegraph_id]
-				local definition_size = definition.size
+			update = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+				local var_25_0 = math.easeOutCubic(arg_25_3)
+				local var_25_1 = math.bounce(arg_25_3)
+				local var_25_2 = arg_25_2.content
+				local var_25_3 = arg_25_2.style
+				local var_25_4 = arg_25_2.offset
+				local var_25_5 = arg_25_1[arg_25_2.scenegraph_id].size
 
-				offset[1] = 5 - 5 * math.catmullrom(bounce_anim_progress, 10, 1, 1, -1)
-				offset[2] = 5 - 5 * math.catmullrom(bounce_anim_progress, -1, 1, 1, 10)
+				var_25_4[1] = 5 - 5 * math.catmullrom(var_25_1, 10, 1, 1, -1)
+				var_25_4[2] = 5 - 5 * math.catmullrom(var_25_1, -1, 1, 1, 10)
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
+			on_complete = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 				return
-			end,
+			end
 		},
 		{
-			end_progress = 0.3,
 			name = "glow_exit",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widget, params)
+			end_progress = 0.3,
+			init = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 				return
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
-				local content = widget.content
-				local style = widget.style
+			update = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+				local var_28_0 = math.easeOutCubic(arg_28_3)
+				local var_28_1 = arg_28_2.content
+				local var_28_2 = arg_28_2.style
 
-				style.lock_bottom_glow.color[1] = math.max(style.lock_bottom_glow.color[1], style.lock_bottom_glow.default_color[1] * anim_progress)
-				style.lock_bottom_glow_2.color[1] = math.max(style.lock_bottom_glow_2.color[1], style.lock_bottom_glow_2.default_color[1] * anim_progress)
-				style.lock_glow.color[1] = math.min(style.lock_glow.color[1], style.lock_glow.default_color[1] * (1 - anim_progress))
-				style.lock_glow_1.color[1] = math.min(style.lock_glow_1.color[1], style.lock_glow_1.default_color[1] * (1 - anim_progress))
-				style.lock_glow_2.color[1] = math.min(style.lock_glow_2.color[1], style.lock_glow_2.default_color[1] * (1 - anim_progress))
+				var_28_2.lock_bottom_glow.color[1] = math.max(var_28_2.lock_bottom_glow.color[1], var_28_2.lock_bottom_glow.default_color[1] * var_28_0)
+				var_28_2.lock_bottom_glow_2.color[1] = math.max(var_28_2.lock_bottom_glow_2.color[1], var_28_2.lock_bottom_glow_2.default_color[1] * var_28_0)
+				var_28_2.lock_glow.color[1] = math.min(var_28_2.lock_glow.color[1], var_28_2.lock_glow.default_color[1] * (1 - var_28_0))
+				var_28_2.lock_glow_1.color[1] = math.min(var_28_2.lock_glow_1.color[1], var_28_2.lock_glow_1.default_color[1] * (1 - var_28_0))
+				var_28_2.lock_glow_2.color[1] = math.min(var_28_2.lock_glow_2.color[1], var_28_2.lock_glow_2.default_color[1] * (1 - var_28_0))
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
+			on_complete = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 				return
-			end,
+			end
 		},
 		{
-			end_progress = 0.6,
 			name = "open",
 			start_progress = 0.3,
-			init = function (ui_scenegraph, scenegraph_definition, widget, params)
+			end_progress = 0.6,
+			init = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 				return
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
-				if not params.played_open_sound then
-					local wwise_world = params.wwise_world
+			update = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+				if not arg_31_4.played_open_sound then
+					local var_31_0 = arg_31_4.wwise_world
 
-					WwiseWorld.trigger_event(wwise_world, "play_gui_chest_reward_open")
+					WwiseWorld.trigger_event(var_31_0, "play_gui_chest_reward_open")
 
-					params.played_open_sound = true
+					arg_31_4.played_open_sound = true
 				end
 
-				local anim_progress = math.easeInCubic(progress)
-				local content = widget.content
-				local style = widget.style
-				local scenegraph_id = widget.scenegraph_id
-				local definition = scenegraph_definition[scenegraph_id]
-				local definition_size = definition.size
-				local new_height = anim_progress * 400
+				local var_31_1 = math.easeInCubic(arg_31_3)
+				local var_31_2 = arg_31_2.content
+				local var_31_3 = arg_31_2.style
+				local var_31_4 = arg_31_2.scenegraph_id
+				local var_31_5 = arg_31_1[var_31_4].size
+				local var_31_6 = var_31_1 * 400
 
-				ui_scenegraph[scenegraph_id].size[2] = new_height
+				arg_31_0[var_31_4].size[2] = var_31_6
 
-				local reward_option = params.reward_option
-				local background_widget = reward_option.background_widget
-				local background_content = background_widget.content.background
-				local background_uvs = background_content.uvs
-				local background_texture = background_content.texture_id
-				local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+				local var_31_7 = arg_31_4.reward_option
+				local var_31_8 = var_31_7.background_widget.content.background
+				local var_31_9 = var_31_8.uvs
+				local var_31_10 = var_31_8.texture_id
+				local var_31_11 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_31_10)
 
-				background_uvs[2][2] = math.min(new_height / background_texture_settings.size[2], 1)
-				style.item_name.offset[2] = new_height + 182 + 35
-				style.item_name_shadow.offset[2] = style.item_name.offset[2] - 2
-				style.item_type.offset[2] = new_height + 182 - 5
-				style.item_type_shadow.offset[2] = style.item_type.offset[2] - 2
-				style.item_icon.offset[2] = new_height - 40
-				style.item_tooltip.offset[2] = new_height - 40
-				content.draw_frame = true
+				var_31_9[2][2] = math.min(var_31_6 / var_31_11.size[2], 1)
+				var_31_3.item_name.offset[2] = var_31_6 + 182 + 35
+				var_31_3.item_name_shadow.offset[2] = var_31_3.item_name.offset[2] - 2
+				var_31_3.item_type.offset[2] = var_31_6 + 182 - 5
+				var_31_3.item_type_shadow.offset[2] = var_31_3.item_type.offset[2] - 2
+				var_31_3.item_icon.offset[2] = var_31_6 - 40
+				var_31_3.item_tooltip.offset[2] = var_31_6 - 40
+				var_31_2.draw_frame = true
 
-				local frame_style = style.frame
+				local var_31_12 = var_31_3.frame
 
-				frame_style.size[2] = new_height + 20
-				frame_style.offset[2] = -10
-				reward_option.opened = true
+				var_31_12.size[2] = var_31_6 + 20
+				var_31_12.offset[2] = -10
+				var_31_7.opened = true
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
-				local presentation_complete = true
-				local reward_option = params.reward_option
-				local item_previewer = reward_option.item_previewer
-				local reward_key = reward_option.reward_key
+			on_complete = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+				local var_32_0 = true
+				local var_32_1 = arg_32_3.reward_option
+				local var_32_2 = var_32_1.item_previewer
+				local var_32_3 = var_32_1.reward_key
 
-				if item_previewer and reward_key then
-					item_previewer:present_item(reward_key)
+				if var_32_2 and var_32_3 then
+					var_32_2:present_item(var_32_3)
 				end
 
-				local world_previewer = reward_option.world_previewer
+				local var_32_4 = var_32_1.world_previewer
 
-				if world_previewer then
-					world_previewer:force_unhide_character()
+				if var_32_4 then
+					var_32_4:force_unhide_character()
 				end
 
-				reward_option.presentation_complete = presentation_complete
-				widget.content.presentation_complete = presentation_complete
+				var_32_1.presentation_complete = var_32_0
+				arg_32_2.content.presentation_complete = var_32_0
 
-				if not params.played_opened_sound then
-					local wwise_world = params.wwise_world
+				if not arg_32_3.played_opened_sound then
+					local var_32_5 = arg_32_3.wwise_world
 
-					WwiseWorld.trigger_event(wwise_world, "play_gui_chest_reward_opened")
+					WwiseWorld.trigger_event(var_32_5, "play_gui_chest_reward_opened")
 
-					params.played_opened_sound = true
+					arg_32_3.played_opened_sound = true
 				end
-			end,
+			end
 		},
 		{
-			end_progress = 0.8,
 			name = "glow_enter",
 			start_progress = 0.6,
-			init = function (ui_scenegraph, scenegraph_definition, widget, params)
+			end_progress = 0.8,
+			init = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 				return
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
-				local content = widget.content
-				local style = widget.style
+			update = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
+				local var_34_0 = math.easeOutCubic(arg_34_3)
+				local var_34_1 = arg_34_2.content
+				local var_34_2 = arg_34_2.style
 
-				style.final_glow.color[1] = math.max(style.final_glow.color[1], style.final_glow.default_color[1] * anim_progress)
-				style.final_glow_1.color[1] = math.max(style.final_glow_1.color[1], style.final_glow_1.default_color[1] * anim_progress)
-				style.final_glow_2.color[1] = math.max(style.final_glow_2.color[1], style.final_glow_2.default_color[1] * anim_progress)
+				var_34_2.final_glow.color[1] = math.max(var_34_2.final_glow.color[1], var_34_2.final_glow.default_color[1] * var_34_0)
+				var_34_2.final_glow_1.color[1] = math.max(var_34_2.final_glow_1.color[1], var_34_2.final_glow_1.default_color[1] * var_34_0)
+				var_34_2.final_glow_2.color[1] = math.max(var_34_2.final_glow_2.color[1], var_34_2.final_glow_2.default_color[1] * var_34_0)
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
+			on_complete = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
 				return
-			end,
+			end
 		},
 		{
-			end_progress = 1.2,
 			name = "fade_in_text",
 			start_progress = 0.8,
-			init = function (ui_scenegraph, scenegraph_definition, widget, params)
+			end_progress = 1.2,
+			init = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 				return
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
-				local content = widget.content
-				local style = widget.style
-				local alpha = 255 * anim_progress
+			update = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+				local var_37_0 = math.easeOutCubic(arg_37_3)
+				local var_37_1 = arg_37_2.content
+				local var_37_2 = arg_37_2.style
+				local var_37_3 = 255 * var_37_0
 
-				style.item_name.text_color[1] = alpha
-				style.item_name_shadow.text_color[1] = alpha
-				style.item_type.text_color[1] = alpha
-				style.item_type_shadow.text_color[1] = alpha
+				var_37_2.item_name.text_color[1] = var_37_3
+				var_37_2.item_name_shadow.text_color[1] = var_37_3
+				var_37_2.item_type.text_color[1] = var_37_3
+				var_37_2.item_type_shadow.text_color[1] = var_37_3
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
+			on_complete = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 				return
-			end,
-		},
+			end
+		}
 	},
 	on_enter = {
 		{
-			end_progress = 0.3,
 			name = "fade_in",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 0
+			end_progress = 0.3,
+			init = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+				arg_39_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
+				local var_40_0 = math.easeOutCubic(arg_40_3)
 
-				params.render_settings.alpha_multiplier = anim_progress
+				arg_40_4.render_settings.alpha_multiplier = var_40_0
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 				return
-			end,
-		},
+			end
+		}
 	},
 	on_exit = {
 		{
-			end_progress = 0.3,
 			name = "fade_out",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 1
+			end_progress = 0.3,
+			init = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+				arg_42_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
+				local var_43_0 = math.easeOutCubic(arg_43_3)
 
-				params.render_settings.alpha_multiplier = 1 - anim_progress
+				arg_43_4.render_settings.alpha_multiplier = 1 - var_43_0
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 				return
-			end,
-		},
-	},
+			end
+		}
+	}
 }
 
 return {
-	USE_DELAYED_SPAWN = USE_DELAYED_SPAWN,
-	arrow_widgets = arrow_widgets,
-	create_chest_indicator_func = create_chest_indicator_func,
-	num_loot_options = num_loot_options,
-	loot_option_positions_by_amount = loot_option_positions_by_amount,
-	gamepad_tooltip_widgets = gamepad_tooltip_widgets,
-	input_description_widgets = input_description_widgets,
-	widgets = widgets,
-	option_widgets = option_widgets,
-	debug_button_widgets = debug_button_widgets,
-	option_background_widgets = option_background_widgets,
-	preview_widgets = preview_widgets,
-	viewport_widget = viewport_widget,
-	continue_button = continue_button,
-	settings_by_screen = settings_by_screen,
-	generic_input_actions = generic_input_actions,
-	scenegraph_definition = scenegraph_definition,
-	animation_definitions = animation_definitions,
+	USE_DELAYED_SPAWN = var_0_5,
+	arrow_widgets = var_0_42,
+	create_chest_indicator_func = var_0_32,
+	num_loot_options = var_0_4,
+	loot_option_positions_by_amount = var_0_13,
+	gamepad_tooltip_widgets = var_0_37,
+	input_description_widgets = var_0_35,
+	widgets = var_0_34,
+	option_widgets = var_0_40,
+	debug_button_widgets = var_0_44,
+	option_background_widgets = var_0_39,
+	preview_widgets = var_0_41,
+	viewport_widget = var_0_25,
+	continue_button = var_0_43,
+	settings_by_screen = var_0_23,
+	generic_input_actions = var_0_45,
+	scenegraph_definition = var_0_6,
+	animation_definitions = var_0_46,
 	background_fade_definition = UIWidgets.create_simple_rect("dead_space_filler", {
 		0,
 		5,
 		5,
-		5,
-	}),
+		5
+	})
 }

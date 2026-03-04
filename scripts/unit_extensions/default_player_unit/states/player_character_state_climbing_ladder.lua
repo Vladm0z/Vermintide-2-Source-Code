@@ -1,306 +1,292 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_climbing_ladder.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_climbing_ladder.lua
 
 PlayerCharacterStateClimbingLadder = class(PlayerCharacterStateClimbingLadder, PlayerCharacterState)
 
-PlayerCharacterStateClimbingLadder.init = function (self, character_state_init_context)
-	PlayerCharacterState.init(self, character_state_init_context, "climbing_ladder")
+function PlayerCharacterStateClimbingLadder.init(arg_1_0, arg_1_1)
+	PlayerCharacterState.init(arg_1_0, arg_1_1, "climbing_ladder")
 
-	local context = character_state_init_context
+	local var_1_0 = arg_1_1
 
-	self.lerp_target_position = Vector3Box()
-	self.lerp_start_position = Vector3Box()
+	arg_1_0.lerp_target_position = Vector3Box()
+	arg_1_0.lerp_start_position = Vector3Box()
 end
 
-PlayerCharacterStateClimbingLadder.on_enter_animation_event = function (self)
-	local unit = self.unit
-	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local unit_pos = POSITION_LOOKUP[unit]
-	local unit_position_height = Vector3.z(unit_pos)
-	local height_dif = math.abs(self.jump_off_height - unit_position_height)
+function PlayerCharacterStateClimbingLadder.on_enter_animation_event(arg_2_0)
+	local var_2_0 = arg_2_0.unit
+	local var_2_1 = PlayerUnitMovementSettings.get_movement_settings_table(var_2_0)
+	local var_2_2 = POSITION_LOOKUP[var_2_0]
+	local var_2_3 = Vector3.z(var_2_2)
 
-	if height_dif < movement_settings_table.ladder.animation_distance_threshold_from_top_node then
-		self.entered_top = true
+	if math.abs(arg_2_0.jump_off_height - var_2_3) < var_2_1.ladder.animation_distance_threshold_from_top_node then
+		arg_2_0.entered_top = true
 
-		CharacterStateHelper.play_animation_event(unit, "climb_top_enter_ladder")
+		CharacterStateHelper.play_animation_event(var_2_0, "climb_top_enter_ladder")
 	else
-		self.entered_top = false
+		arg_2_0.entered_top = false
 
-		CharacterStateHelper.play_animation_event(unit, "climb_enter_ladder")
+		CharacterStateHelper.play_animation_event(var_2_0, "climb_enter_ladder")
 	end
 
-	local first_person_extension = self.first_person_extension
-
-	first_person_extension:play_animation_event("climb_enter_ladder")
+	arg_2_0.first_person_extension:play_animation_event("climb_enter_ladder")
 end
 
-PlayerCharacterStateClimbingLadder.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
-	local unit = self.unit
-	local input_extension = self.input_extension
-	local first_person_extension = self.first_person_extension
-	local ladder_unit = params.ladder_unit
+function PlayerCharacterStateClimbingLadder.on_enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+	local var_3_0 = arg_3_0.unit
+	local var_3_1 = arg_3_0.input_extension
+	local var_3_2 = arg_3_0.first_person_extension
+	local var_3_3 = arg_3_7.ladder_unit
 
-	table.clear(self.temp_params)
+	table.clear(arg_3_0.temp_params)
 
-	self.accumilated_distance = 0
-	self.ladder_unit = ladder_unit
-	self.movement_speed = 1
-	self.animation_state = "no_animation"
-	self.climb_sfx_event = Unit.get_data(ladder_unit, "sfx_footstep_event") or "player_footstep_ladder"
+	arg_3_0.accumilated_distance = 0
+	arg_3_0.ladder_unit = var_3_3
+	arg_3_0.movement_speed = 1
+	arg_3_0.animation_state = "no_animation"
+	arg_3_0.climb_sfx_event = Unit.get_data(var_3_3, "sfx_footstep_event") or "player_footstep_ladder"
 
-	local jump_node = Unit.node(ladder_unit, "c_platform")
+	local var_3_4 = Unit.node(var_3_3, "c_platform")
 
-	self.jump_off_height = Vector3.z(Unit.world_position(ladder_unit, jump_node))
+	arg_3_0.jump_off_height = Vector3.z(Unit.world_position(var_3_3, var_3_4))
 
-	local loc_ext = self.locomotion_extension
+	local var_3_5 = arg_3_0.locomotion_extension
 
-	loc_ext:enable_script_driven_ladder_movement()
-	loc_ext:enable_rotation_towards_velocity(false, Unit.local_rotation(ladder_unit, 0), 0.5)
+	var_3_5:enable_script_driven_ladder_movement()
+	var_3_5:enable_rotation_towards_velocity(false, Unit.local_rotation(var_3_3, 0), 0.5)
 
-	local ladder_pos = Unit.world_position(self.ladder_unit, 0)
-	local ladder_position_height = Vector3.z(ladder_pos)
+	local var_3_6 = Unit.world_position(arg_3_0.ladder_unit, 0)
 
-	self.ladder_position_height = ladder_position_height
+	arg_3_0.ladder_position_height = Vector3.z(var_3_6)
 
-	if previous_state ~= "enter_ladder_top" then
-		CharacterStateHelper.stop_weapon_actions(self.inventory_extension, "ladder")
-		CharacterStateHelper.stop_career_abilities(self.career_extension, "ladder")
+	if arg_3_6 ~= "enter_ladder_top" then
+		CharacterStateHelper.stop_weapon_actions(arg_3_0.inventory_extension, "ladder")
+		CharacterStateHelper.stop_career_abilities(arg_3_0.career_extension, "ladder")
 
-		local network_manager = Managers.state.network
-		local unit_id = network_manager:unit_game_object_id(unit)
-		local include_local_player = false
+		local var_3_7 = Managers.state.network:unit_game_object_id(var_3_0)
+		local var_3_8 = false
 
-		CharacterStateHelper.show_inventory_3p(unit, false, include_local_player, self.is_server, self.inventory_extension)
-		self.first_person_extension:hide_weapons("climbing")
-		self:on_enter_animation_event()
-		CharacterStateHelper.set_is_on_ladder(ladder_unit, unit, true, self.is_server, self.status_extension)
+		CharacterStateHelper.show_inventory_3p(var_3_0, false, var_3_8, arg_3_0.is_server, arg_3_0.inventory_extension)
+		arg_3_0.first_person_extension:hide_weapons("climbing")
+		arg_3_0:on_enter_animation_event()
+		CharacterStateHelper.set_is_on_ladder(var_3_3, var_3_0, true, arg_3_0.is_server, arg_3_0.status_extension)
 	end
 
-	loc_ext:set_mover_filter_property("ladder", true)
+	var_3_5:set_mover_filter_property("ladder", true)
 end
 
-PlayerCharacterStateClimbingLadder.on_exit = function (self, unit, input, dt, context, t, next_state)
-	local loc_ext = self.locomotion_extension
+function PlayerCharacterStateClimbingLadder.on_exit(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+	local var_4_0 = arg_4_0.locomotion_extension
 
-	if next_state and next_state ~= "leaving_ladder_top" then
-		local status_extension = self.status_extension
+	if arg_4_6 and arg_4_6 ~= "leaving_ladder_top" then
+		local var_4_1 = arg_4_0.status_extension
 
-		status_extension:set_falling_height(true)
-		status_extension:set_left_ladder(t)
+		var_4_1:set_falling_height(true)
+		var_4_1:set_left_ladder(arg_4_5)
 
-		local network_manager = Managers.state.network
-		local unit_id = network_manager:unit_game_object_id(unit)
-		local include_local_player = false
+		local var_4_2 = Managers.state.network:unit_game_object_id(arg_4_1)
+		local var_4_3 = false
 
-		CharacterStateHelper.show_inventory_3p(unit, true, include_local_player, self.is_server, self.inventory_extension)
-		loc_ext:enable_script_driven_movement()
-		loc_ext:enable_rotation_towards_velocity(true)
-		self.first_person_extension:unhide_weapons("climbing")
+		CharacterStateHelper.show_inventory_3p(arg_4_1, true, var_4_3, arg_4_0.is_server, arg_4_0.inventory_extension)
+		var_4_0:enable_script_driven_movement()
+		var_4_0:enable_rotation_towards_velocity(true)
+		arg_4_0.first_person_extension:unhide_weapons("climbing")
 
 		if Managers.state.network:game() then
-			CharacterStateHelper.play_animation_event(unit, "climb_end_ladder")
+			CharacterStateHelper.play_animation_event(arg_4_1, "climb_end_ladder")
 		end
 
-		local first_person_extension = self.first_person_extension
-
-		first_person_extension:play_animation_event("idle")
+		arg_4_0.first_person_extension:play_animation_event("idle")
 
 		if Managers.state.network:game() then
-			CharacterStateHelper.set_is_on_ladder(self.ladder_unit, unit, false, self.is_server, self.status_extension)
+			CharacterStateHelper.set_is_on_ladder(arg_4_0.ladder_unit, arg_4_1, false, arg_4_0.is_server, arg_4_0.status_extension)
 		end
 	end
 
-	loc_ext:set_mover_filter_property("ladder", false)
+	var_4_0:set_mover_filter_property("ladder", false)
 end
 
-PlayerCharacterStateClimbingLadder.update = function (self, unit, input, dt, context, t)
-	local csm = self.csm
-	local unit = self.unit
-	local input_extension = self.input_extension
-	local status_extension = self.status_extension
-	local locomotion_extension = self.locomotion_extension
-	local player = self.player
+function PlayerCharacterStateClimbingLadder.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	local var_5_0 = arg_5_0.csm
+	local var_5_1 = arg_5_0.unit
+	local var_5_2 = arg_5_0.input_extension
+	local var_5_3 = arg_5_0.status_extension
+	local var_5_4 = arg_5_0.locomotion_extension
+	local var_5_5 = arg_5_0.player
 
-	if CharacterStateHelper.do_common_state_transitions(status_extension, csm) then
+	if CharacterStateHelper.do_common_state_transitions(var_5_3, var_5_0) then
 		return
 	end
 
-	local current_velocity = locomotion_extension:current_velocity()
-	local current_velocity_z = current_velocity.z
+	local var_5_6 = var_5_4:current_velocity().z
 
-	if CharacterStateHelper.is_colliding_down(unit) and current_velocity_z < 0 then
-		csm:change_state("walking")
-
-		return
-	end
-
-	local ladder_shaking = ScriptUnit.extension(self.ladder_unit, "ladder_system"):is_shaking()
-
-	if not csm.state_next and (input_extension:get("jump") or input_extension:get("jump_only") or ladder_shaking) then
-		local params = self.temp_params
-
-		params.ladder_unit = self.ladder_unit
-		params.shaking_ladder_unit = self.ladder_unit
-
-		csm:change_state("jumping", params)
+	if CharacterStateHelper.is_colliding_down(var_5_1) and var_5_6 < 0 then
+		var_5_0:change_state("walking")
 
 		return
 	end
 
-	local colliding_with_ladder, ladder_unit = CharacterStateHelper.is_colliding_with_gameplay_collision_box(self.world, unit, "filter_ladder_collision")
-	local current_velocity = self.locomotion_extension:current_velocity()
-	local current_velocity_z = current_velocity.z
-	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local above_climb_off_height = self.jump_off_height - movement_settings_table.ladder.leaving_ladder_height_below_get_of_node <= Vector3.z(Unit.world_position(unit, 0))
+	local var_5_7 = ScriptUnit.extension(arg_5_0.ladder_unit, "ladder_system"):is_shaking()
 
-	if not self.position_lerp_timer then
-		if above_climb_off_height and current_velocity_z > 0 then
-			local params = self.temp_params
+	if not var_5_0.state_next and (var_5_2:get("jump") or var_5_2:get("jump_only") or var_5_7) then
+		local var_5_8 = arg_5_0.temp_params
 
-			params.ladder_unit = self.ladder_unit
+		var_5_8.ladder_unit = arg_5_0.ladder_unit
+		var_5_8.shaking_ladder_unit = arg_5_0.ladder_unit
 
-			csm:change_state("leaving_ladder_top", params)
+		var_5_0:change_state("jumping", var_5_8)
+
+		return
+	end
+
+	local var_5_9, var_5_10 = CharacterStateHelper.is_colliding_with_gameplay_collision_box(arg_5_0.world, var_5_1, "filter_ladder_collision")
+	local var_5_11 = arg_5_0.locomotion_extension:current_velocity().z
+	local var_5_12 = PlayerUnitMovementSettings.get_movement_settings_table(var_5_1)
+	local var_5_13 = arg_5_0.jump_off_height - var_5_12.ladder.leaving_ladder_height_below_get_of_node <= Vector3.z(Unit.world_position(var_5_1, 0))
+
+	if not arg_5_0.position_lerp_timer then
+		if var_5_13 and var_5_11 > 0 then
+			local var_5_14 = arg_5_0.temp_params
+
+			var_5_14.ladder_unit = arg_5_0.ladder_unit
+
+			var_5_0:change_state("leaving_ladder_top", var_5_14)
 
 			return
-		elseif not colliding_with_ladder then
-			if above_climb_off_height and current_velocity_z > 0 then
-				local params = self.temp_params
+		elseif not var_5_9 then
+			if var_5_13 and var_5_11 > 0 then
+				local var_5_15 = arg_5_0.temp_params
 
-				params.ladder_unit = self.ladder_unit
+				var_5_15.ladder_unit = arg_5_0.ladder_unit
 
-				csm:change_state("leaving_ladder_top", params)
+				var_5_0:change_state("leaving_ladder_top", var_5_15)
 			else
-				csm:change_state("falling")
+				var_5_0:change_state("falling")
 			end
 
 			return
 		end
 	end
 
-	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local is_moving = CharacterStateHelper.has_move_input(input_extension)
+	local var_5_16 = PlayerUnitMovementSettings.get_movement_settings_table(var_5_1)
 
-	if is_moving then
-		self.movement_speed = math.min(1, self.movement_speed + movement_settings_table.ladder.climb_move_acceleration_up * dt)
+	if CharacterStateHelper.has_move_input(var_5_2) then
+		arg_5_0.movement_speed = math.min(1, arg_5_0.movement_speed + var_5_16.ladder.climb_move_acceleration_up * arg_5_3)
 	else
-		self.movement_speed = math.max(0, self.movement_speed - movement_settings_table.ladder.climb_move_acceleration_down * dt)
+		arg_5_0.movement_speed = math.max(0, arg_5_0.movement_speed - var_5_16.ladder.climb_move_acceleration_down * arg_5_3)
 	end
 
-	local move_speed_multiplier = status_extension:current_move_speed_multiplier()
-	local move_speed = movement_settings_table.ladder.climb_speed * move_speed_multiplier * movement_settings_table.ladder.player_ladder_speed_scale * self.movement_speed
-	local ladder_rotation = Unit.local_rotation(self.ladder_unit, 0)
-	local ladder_pos = Unit.world_position(self.ladder_unit, 0)
-	local ladder_offset = Vector3.dot(-Quaternion.forward(ladder_rotation), POSITION_LOOKUP[unit] - ladder_pos) + movement_settings_table.ladder.climb_attach_to_ladder_position_in_ladder_space_y
+	local var_5_17 = var_5_3:current_move_speed_multiplier()
+	local var_5_18 = var_5_16.ladder.climb_speed * var_5_17 * var_5_16.ladder.player_ladder_speed_scale * arg_5_0.movement_speed
+	local var_5_19 = Unit.local_rotation(arg_5_0.ladder_unit, 0)
+	local var_5_20 = Unit.world_position(arg_5_0.ladder_unit, 0)
+	local var_5_21 = Vector3.dot(-Quaternion.forward(var_5_19), POSITION_LOOKUP[var_5_1] - var_5_20) + var_5_16.ladder.climb_attach_to_ladder_position_in_ladder_space_y
 
-	self:_move_on_ladder(self.first_person_extension, ladder_rotation, input_extension, self.locomotion_extension, unit, move_speed, ladder_offset)
+	arg_5_0:_move_on_ladder(arg_5_0.first_person_extension, var_5_19, var_5_2, arg_5_0.locomotion_extension, var_5_1, var_5_18, var_5_21)
 
-	local time_in_move_animation = CharacterStateHelper.time_in_ladder_move_animation(unit, ladder_pos.z)
-	local variable_index = Unit.animation_find_variable(unit, "climb_time")
+	local var_5_22 = CharacterStateHelper.time_in_ladder_move_animation(var_5_1, var_5_20.z)
+	local var_5_23 = Unit.animation_find_variable(var_5_1, "climb_time")
 
-	Unit.animation_set_variable(unit, variable_index, time_in_move_animation)
+	Unit.animation_set_variable(var_5_1, var_5_23, var_5_22)
 
-	local max_radians = math.degrees_to_radians(movement_settings_table.ladder.look_horizontal_max_degrees)
+	local var_5_24 = math.degrees_to_radians(var_5_16.ladder.look_horizontal_max_degrees)
 
-	CharacterStateHelper.look_limited_rotation_freedom(input_extension, player.viewport_name, self.first_person_extension, unit, ladder_rotation, max_radians, max_radians, status_extension, self.inventory_extension)
-	self:on_ladder_animation()
+	CharacterStateHelper.look_limited_rotation_freedom(var_5_2, var_5_5.viewport_name, arg_5_0.first_person_extension, var_5_1, var_5_19, var_5_24, var_5_24, var_5_3, arg_5_0.inventory_extension)
+	arg_5_0:on_ladder_animation()
 
-	self.accumilated_distance = self.accumilated_distance + math.abs(current_velocity_z) * dt
+	arg_5_0.accumilated_distance = arg_5_0.accumilated_distance + math.abs(var_5_11) * arg_5_3
 
-	if not player.bot_player and self.accumilated_distance > 1 then
-		self.accumilated_distance = 0
+	if not var_5_5.bot_player and arg_5_0.accumilated_distance > 1 then
+		arg_5_0.accumilated_distance = 0
 
-		local position = Unit.world_position(unit, 0)
-		local wwise_source_id, wwise_world = WwiseUtils.make_position_auto_source(self.world, position)
+		local var_5_25 = Unit.world_position(var_5_1, 0)
+		local var_5_26, var_5_27 = WwiseUtils.make_position_auto_source(arg_5_0.world, var_5_25)
 
-		WwiseWorld.trigger_event(wwise_world, self.climb_sfx_event, wwise_source_id)
+		WwiseWorld.trigger_event(var_5_27, arg_5_0.climb_sfx_event, var_5_26)
 	end
 end
 
-PlayerCharacterStateClimbingLadder._move_on_ladder = function (self, first_person_extension, rotation, input_extension, locomotion_extension, unit, speed, ladder_offset)
-	local movement = CharacterStateHelper.get_square_movement_input(input_extension)
-	local x_input = Vector3.x(movement)
-	local y_input = Vector3.y(movement)
+function PlayerCharacterStateClimbingLadder._move_on_ladder(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7)
+	local var_6_0 = CharacterStateHelper.get_square_movement_input(arg_6_3)
+	local var_6_1 = Vector3.x(var_6_0)
+	local var_6_2 = Vector3.y(var_6_0)
 
-	Debug.text("x:%f, y:%f", x_input, y_input)
+	Debug.text("x:%f, y:%f", var_6_1, var_6_2)
 
-	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local mover = Unit.mover(unit)
-	local direction
-	local collides_down = Mover.collides_down(mover)
+	local var_6_3 = PlayerUnitMovementSettings.get_movement_settings_table(arg_6_5)
+	local var_6_4 = Unit.mover(arg_6_5)
+	local var_6_5
+	local var_6_6 = Mover.collides_down(var_6_4)
 
-	if collides_down and y_input <= 0 then
-		direction = Vector3(x_input, y_input, 0)
+	if var_6_6 and var_6_2 <= 0 then
+		var_6_5 = Vector3(var_6_1, var_6_2, 0)
 	else
-		local first_person_unit = first_person_extension:get_first_person_unit()
-		local player_rotation = Unit.local_rotation(first_person_unit, 0)
-		local player_pitch = Quaternion.pitch(player_rotation)
-		local pitch_value = player_pitch + movement_settings_table.ladder.climb_pitch_offset
+		local var_6_7 = arg_6_1:get_first_person_unit()
+		local var_6_8 = Unit.local_rotation(var_6_7, 0)
+		local var_6_9 = Quaternion.pitch(var_6_8) + var_6_3.ladder.climb_pitch_offset
 
-		if collides_down and pitch_value < 0 and y_input > 0 then
-			pitch_value = 0
+		if var_6_6 and var_6_9 < 0 and var_6_2 > 0 then
+			var_6_9 = 0
 		end
 
-		local speed_lerp_interval = math.degrees_to_radians(movement_settings_table.ladder.climb_speed_lerp_interval)
-		local pitch_value = math.clamp(math.auto_lerp(-speed_lerp_interval, speed_lerp_interval, -1, 1, pitch_value), -1, 1)
+		local var_6_10 = math.degrees_to_radians(var_6_3.ladder.climb_speed_lerp_interval)
+		local var_6_11 = math.clamp(math.auto_lerp(-var_6_10, var_6_10, -1, 1, var_6_9), -1, 1)
 
-		if y_input > 0 or y_input < 0 and not collides_down then
-			local percentage_to_increase_input
+		if var_6_2 > 0 or var_6_2 < 0 and not var_6_6 then
+			local var_6_12
 
-			if pitch_value > 0 then
-				percentage_to_increase_input = 1 - (1 - pitch_value) * (1 - pitch_value)
+			if var_6_11 > 0 then
+				var_6_12 = 1 - (1 - var_6_11) * (1 - var_6_11)
 			else
-				percentage_to_increase_input = -1 + (-1 - pitch_value) * (-1 - pitch_value)
+				var_6_12 = -1 + (-1 - var_6_11) * (-1 - var_6_11)
 			end
 
-			y_input = y_input * percentage_to_increase_input
+			var_6_2 = var_6_2 * var_6_12
 		end
 
-		if collides_down then
-			if y_input > 0 then
-				direction = Vector3(x_input * movement_settings_table.ladder.climb_horizontals_multiplier, 0, y_input)
+		if var_6_6 then
+			if var_6_2 > 0 then
+				var_6_5 = Vector3(var_6_1 * var_6_3.ladder.climb_horizontals_multiplier, 0, var_6_2)
 			else
-				direction = Vector3(x_input, y_input, 0)
+				var_6_5 = Vector3(var_6_1, var_6_2, 0)
 			end
 		else
-			if Vector3.dot(Quaternion.forward(player_rotation), Quaternion.forward(rotation)) < 0 then
-				x_input = -x_input
+			if Vector3.dot(Quaternion.forward(var_6_8), Quaternion.forward(arg_6_2)) < 0 then
+				var_6_1 = -var_6_1
 			end
 
-			direction = Vector3(x_input * movement_settings_table.ladder.climb_horizontals_multiplier, 0, y_input)
+			var_6_5 = Vector3(var_6_1 * var_6_3.ladder.climb_horizontals_multiplier, 0, var_6_2)
 		end
 	end
 
-	local move_direction = Quaternion.rotate(rotation, direction)
+	local var_6_13 = Quaternion.rotate(arg_6_2, var_6_5)
 
-	locomotion_extension:set_wanted_velocity(move_direction * speed + ladder_offset * Quaternion.forward(rotation) * 4)
+	arg_6_4:set_wanted_velocity(var_6_13 * arg_6_6 + arg_6_7 * Quaternion.forward(arg_6_2) * 4)
 end
 
-PlayerCharacterStateClimbingLadder.on_ladder_animation = function (self)
-	local unit = self.unit
-	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local current_velocity = self.locomotion_extension:current_velocity()
-	local current_velocity_z = current_velocity.z
+function PlayerCharacterStateClimbingLadder.on_ladder_animation(arg_7_0)
+	local var_7_0 = arg_7_0.unit
+	local var_7_1 = PlayerUnitMovementSettings.get_movement_settings_table(var_7_0)
 
-	if current_velocity_z == 0 then
-		if self.animation_state ~= "animation_idle" then
-			self.animation_state = "animation_idle"
+	if arg_7_0.locomotion_extension:current_velocity().z == 0 then
+		if arg_7_0.animation_state ~= "animation_idle" then
+			arg_7_0.animation_state = "animation_idle"
 
-			local time_in_move_animation = CharacterStateHelper.time_in_ladder_move_animation(unit, self.ladder_position_height)
+			local var_7_2 = CharacterStateHelper.time_in_ladder_move_animation(var_7_0, arg_7_0.ladder_position_height)
 
-			if time_in_move_animation <= movement_settings_table.ladder.threshold_for_idle_right then
-				CharacterStateHelper.play_animation_event(unit, "climb_idle_right_ladder")
-			elseif time_in_move_animation <= movement_settings_table.ladder.threshold_for_idle_middle then
-				CharacterStateHelper.play_animation_event(unit, "climb_idle_mid_ladder")
-			elseif time_in_move_animation <= movement_settings_table.ladder.threshold_for_idle_left then
-				CharacterStateHelper.play_animation_event(unit, "climb_idle_left_ladder")
+			if var_7_2 <= var_7_1.ladder.threshold_for_idle_right then
+				CharacterStateHelper.play_animation_event(var_7_0, "climb_idle_right_ladder")
+			elseif var_7_2 <= var_7_1.ladder.threshold_for_idle_middle then
+				CharacterStateHelper.play_animation_event(var_7_0, "climb_idle_mid_ladder")
+			elseif var_7_2 <= var_7_1.ladder.threshold_for_idle_left then
+				CharacterStateHelper.play_animation_event(var_7_0, "climb_idle_left_ladder")
 			else
-				CharacterStateHelper.play_animation_event(unit, "climb_idle_right_ladder")
+				CharacterStateHelper.play_animation_event(var_7_0, "climb_idle_right_ladder")
 			end
 		end
-	elseif self.animation_state ~= "animation_climbing" then
-		self.animation_state = "animation_climbing"
+	elseif arg_7_0.animation_state ~= "animation_climbing" then
+		arg_7_0.animation_state = "animation_climbing"
 
-		CharacterStateHelper.play_animation_event(unit, "climb_move_ladder")
+		CharacterStateHelper.play_animation_event(var_7_0, "climb_move_ladder")
 
-		self.currently_playing_move_animation = true
+		arg_7_0.currently_playing_move_animation = true
 	end
 end

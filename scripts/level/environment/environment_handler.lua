@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/level/environment/environment_handler.lua
+-- chunkname: @scripts/level/environment/environment_handler.lua
 
 require("scripts/level/environment/environment_blend_time")
 require("scripts/level/environment/environment_blend_volume")
@@ -6,50 +6,49 @@ require("scripts/level/environment/environment_blend_volume")
 EnvironmentHandler = class(EnvironmentHandler)
 EnvironmentHandler.ID = EnvironmentHandler.ID or 0
 
-EnvironmentHandler.init = function (self)
-	self._blends = {}
-	self._weights = {}
+function EnvironmentHandler.init(arg_1_0)
+	arg_1_0._blends = {}
+	arg_1_0._weights = {}
 end
 
-EnvironmentHandler.add_blend_group = function (self, group)
-	self._blends[group] = {}
+function EnvironmentHandler.add_blend_group(arg_2_0, arg_2_1)
+	arg_2_0._blends[arg_2_1] = {}
 end
 
-EnvironmentHandler.add_blend = function (self, blend_class_name, group, priority, blend_data, specified_id)
-	local id
+function EnvironmentHandler.add_blend(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	local var_3_0
 
-	if specified_id then
-		id = specified_id
+	if arg_3_5 then
+		var_3_0 = arg_3_5
 	else
 		EnvironmentHandler.ID = EnvironmentHandler.ID + 1
-		id = EnvironmentHandler.ID
+		var_3_0 = EnvironmentHandler.ID
 	end
 
-	local blend_class = rawget(_G, blend_class_name)
-	local blend = blend_class:new(blend_data)
-	local group = self._blends[group]
+	local var_3_1 = rawget(_G, arg_3_1):new(arg_3_4)
+	local var_3_2 = arg_3_0._blends[arg_3_2]
 
-	group[#group + 1] = {
-		priority = priority,
-		blend = blend,
-		id = id,
+	var_3_2[#var_3_2 + 1] = {
+		priority = arg_3_3,
+		blend = var_3_1,
+		id = var_3_0
 	}
 
-	table.sort(group, function (a, b)
-		return a.priority > b.priority
+	table.sort(var_3_2, function(arg_4_0, arg_4_1)
+		return arg_4_0.priority > arg_4_1.priority
 	end)
 
-	return id
+	return var_3_0
 end
 
-EnvironmentHandler.remove_blend = function (self, id)
-	for _, group in pairs(self._blends) do
-		for key, blend_data in pairs(group) do
-			if blend_data.id == id then
-				blend_data.blend:destroy()
-				table.remove(group, key)
-				table.clear(self._weights)
-				self:_update_weights()
+function EnvironmentHandler.remove_blend(arg_5_0, arg_5_1)
+	for iter_5_0, iter_5_1 in pairs(arg_5_0._blends) do
+		for iter_5_2, iter_5_3 in pairs(iter_5_1) do
+			if iter_5_3.id == arg_5_1 then
+				iter_5_3.blend:destroy()
+				table.remove(iter_5_1, iter_5_2)
+				table.clear(arg_5_0._weights)
+				arg_5_0:_update_weights()
 
 				return
 			end
@@ -57,81 +56,85 @@ EnvironmentHandler.remove_blend = function (self, id)
 	end
 end
 
-EnvironmentHandler.update = function (self, dt, t)
-	self:_update_blends(dt)
-	self:_update_weights(dt)
+function EnvironmentHandler.update(arg_6_0, arg_6_1, arg_6_2)
+	arg_6_0:_update_blends(arg_6_1)
+	arg_6_0:_update_weights(arg_6_1)
 end
 
-EnvironmentHandler._update_blends = function (self, dt)
-	for _, blends in pairs(self._blends) do
-		for _, b in ipairs(blends) do
-			b.blend:update(dt)
+function EnvironmentHandler._update_blends(arg_7_0, arg_7_1)
+	for iter_7_0, iter_7_1 in pairs(arg_7_0._blends) do
+		for iter_7_2, iter_7_3 in ipairs(iter_7_1) do
+			iter_7_3.blend:update(arg_7_1)
 		end
 	end
 end
 
-EnvironmentHandler._update_weights = function (self)
-	local particle_light_intensity
+function EnvironmentHandler._update_weights(arg_8_0)
+	local var_8_0
 
-	for group, blends in pairs(self._blends) do
-		local weights = self._weights[group] or {}
-		local weight_pool = 1
-		local i = 1
+	for iter_8_0, iter_8_1 in pairs(arg_8_0._blends) do
+		local var_8_1 = arg_8_0._weights[iter_8_0] or {}
+		local var_8_2 = 1
+		local var_8_3 = 1
 
-		for i = 1, #blends do
-			local b = blends[i]
-			local weight_data = weights[i] or {}
+		for iter_8_2 = 1, #iter_8_1 do
+			local var_8_4 = iter_8_1[iter_8_2]
 
-			weight_data = weights[i] or {}
-			weight_data.environment = b.blend:environment()
-			weight_data.blend = b.blend
-			weight_data.particle_light_intensity = b.blend:particle_light_intensity()
-
-			if weight_pool > 0 then
-				local weight = math.min(b.blend:value(), weight_pool)
-
-				weight_data.weight = weight
-				weight_pool = weight_pool - weight
-			else
-				weight_data.weight = 0
+			if not var_8_1[iter_8_2] then
+				local var_8_5 = {}
 			end
 
-			weights[i] = weight_data
-			i = i + 1
+			local var_8_6 = var_8_1[iter_8_2] or {}
+
+			var_8_6.environment = var_8_4.blend:environment()
+			var_8_6.blend = var_8_4.blend
+			var_8_6.particle_light_intensity = var_8_4.blend:particle_light_intensity()
+
+			if var_8_2 > 0 then
+				local var_8_7 = math.min(var_8_4.blend:value(), var_8_2)
+
+				var_8_6.weight = var_8_7
+				var_8_2 = var_8_2 - var_8_7
+			else
+				var_8_6.weight = 0
+			end
+
+			var_8_1[iter_8_2] = var_8_6
+			iter_8_2 = iter_8_2 + 1
 		end
 
-		self._weights[group] = weights
+		arg_8_0._weights[iter_8_0] = var_8_1
 	end
 end
 
-EnvironmentHandler.weights = function (self, group)
-	return self._weights[group]
+function EnvironmentHandler.weights(arg_9_0, arg_9_1)
+	return arg_9_0._weights[arg_9_1]
 end
 
-EnvironmentHandler.override_settings = function (self)
-	local max_prio = 0
-	local blend_volume
+function EnvironmentHandler.override_settings(arg_10_0)
+	local var_10_0 = 0
+	local var_10_1
 
-	for i, blend in pairs(self._blends.volumes) do
-		if blend.blend:is_inside() and max_prio < blend.priority then
-			blend_volume = blend.blend
-			max_prio = blend.priority
+	for iter_10_0, iter_10_1 in pairs(arg_10_0._blends.volumes) do
+		if iter_10_1.blend:is_inside() and var_10_0 < iter_10_1.priority then
+			var_10_1 = iter_10_1.blend
+			var_10_0 = iter_10_1.priority
 		end
 	end
 
-	if blend_volume then
-		return blend_volume:override_settings()
+	if var_10_1 then
+		return var_10_1:override_settings()
 	end
 
 	return nil
 end
 
-EnvironmentHandler.destroy = function (self)
-	for _, blends in pairs(self._blends) do
-		for _, b in ipairs(blends) do
-			b.blend:destroy()
+function EnvironmentHandler.destroy(arg_11_0)
+	for iter_11_0, iter_11_1 in pairs(arg_11_0._blends) do
+		for iter_11_2, iter_11_3 in ipairs(iter_11_1) do
+			iter_11_3.blend:destroy()
 		end
 	end
 
-	self._blends = nil
+	arg_11_0._blends = nil
 end

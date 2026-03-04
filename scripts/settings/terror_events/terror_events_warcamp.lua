@@ -1,10 +1,10 @@
-﻿-- chunkname: @scripts/settings/terror_events/terror_events_warcamp.lua
+-- chunkname: @scripts/settings/terror_events/terror_events_warcamp.lua
 
-local TerrorEventUtils = require("scripts/settings/terror_events/terror_event_utils")
-local count_event_breed = TerrorEventUtils.count_event_breed
-local HARDER = TerrorEventUtils.HARDER
-local HARDEST = TerrorEventUtils.HARDEST
-local terror_event_blueprints = {
+local var_0_0 = require("scripts/settings/terror_events/terror_event_utils")
+local var_0_1 = var_0_0.count_event_breed
+local var_0_2 = var_0_0.HARDER
+local var_0_3 = var_0_0.HARDEST
+local var_0_4 = {
 	generic_disable_specials = GenericTerrorEvents.generic_disable_specials,
 	generic_enable_specials = GenericTerrorEvents.generic_enable_specials,
 	generic_disable_pacing = GenericTerrorEvents.generic_disable_pacing,
@@ -12,66 +12,66 @@ local terror_event_blueprints = {
 	warcamp_payload = {
 		{
 			"set_master_event_running",
-			name = "warcamp_payload",
+			name = "warcamp_payload"
 		},
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_chaos_stinger",
+			stinger_name = "enemy_horde_chaos_stinger"
 		},
 		{
 			"event_horde",
-			composition_type = "event_medium_chaos",
 			limit_spawners = 2,
 			spawner_id = "payload_event_l",
+			composition_type = "event_medium_chaos"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "chaos_shields",
 			limit_spawners = 1,
 			spawner_id = "payload_event_l",
+			composition_type = "chaos_shields"
 		},
 		{
 			"spawn_special",
 			amount = 1,
 			breed_name = {
 				"chaos_corruptor_sorcerer",
-				"chaos_vortex_sorcerer",
+				"chaos_vortex_sorcerer"
 			},
-			difficulty_requirement = HARDER,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (t)
-				return count_event_breed("chaos_berzerker") < 3 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
-			end,
+			condition = function(arg_1_0)
+				return var_0_1("chaos_berzerker") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "chaos_berzerkers_small",
 			limit_spawners = 1,
 			spawner_id = "payload_event_r",
+			composition_type = "chaos_berzerkers_small"
 		},
 		{
 			"delay",
 			duration = 10,
-			difficulty_requirement = HARDER,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"spawn_special",
@@ -79,20 +79,20 @@ local terror_event_blueprints = {
 			breed_name = {
 				"chaos_corruptor_sorcerer",
 				"chaos_vortex_sorcerer",
-				"skaven_gutter_runner",
+				"skaven_gutter_runner"
 			},
-			difficulty_requirement = HARDEST,
+			difficulty_requirement = var_0_3
 		},
 		{
 			"event_horde",
-			composition_type = "event_chaos_extra_spice_small",
 			limit_spawners = 2,
 			spawner_id = "payload_event_l",
-			difficulty_requirement = HARDER,
+			composition_type = "event_chaos_extra_spice_small",
+			difficulty_requirement = var_0_2
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"spawn_special",
@@ -100,9 +100,9 @@ local terror_event_blueprints = {
 			breed_name = {
 				"skaven_pack_master",
 				"skaven_ratling_gunner",
-				"skaven_poison_wind_globadier",
+				"skaven_poison_wind_globadier"
 			},
-			difficulty_requirement = HARDER,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"spawn_special",
@@ -110,65 +110,65 @@ local terror_event_blueprints = {
 			breed_name = {
 				"chaos_corruptor_sorcerer",
 				"chaos_vortex_sorcerer",
-				"skaven_gutter_runner",
+				"skaven_gutter_runner"
 			},
-			difficulty_requirement = HARDEST,
+			difficulty_requirement = var_0_3
 		},
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (t)
-				return count_event_breed("chaos_berzerker") < 2 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
-			end,
+			condition = function(arg_2_0)
+				return var_0_1("chaos_berzerker") < 2 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			end
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_chaos_stinger",
+			stinger_name = "enemy_horde_chaos_stinger"
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			limit_spawners = 2,
 			spawner_id = "payload_event_l",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"spawn_special",
 			amount = 1,
 			breed_name = {
 				"skaven_pack_master",
-				"skaven_gutter_runner",
+				"skaven_gutter_runner"
 			},
-			difficulty_requirement = HARDEST,
+			difficulty_requirement = var_0_3
 		},
 		{
 			"event_horde",
-			composition_type = "event_chaos_extra_spice_small",
 			limit_spawners = 2,
 			spawner_id = "payload_event_l",
-			difficulty_requirement = HARDER,
+			composition_type = "event_chaos_extra_spice_small",
+			difficulty_requirement = var_0_2
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			limit_spawners = 2,
 			spawner_id = "payload_event_r",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"spawn_special",
 			amount = 1,
-			breed_name = "skaven_poison_wind_globadier",
+			breed_name = "skaven_poison_wind_globadier"
 		},
 		{
 			"spawn_special",
@@ -176,278 +176,278 @@ local terror_event_blueprints = {
 			breed_name = {
 				"chaos_corruptor_sorcerer",
 				"chaos_vortex_sorcerer",
-				"skaven_gutter_runner",
+				"skaven_gutter_runner"
 			},
-			difficulty_requirement = HARDEST,
+			difficulty_requirement = var_0_3
 		},
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (t)
-				return count_event_breed("chaos_berzerker") < 3 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
-			end,
+			condition = function(arg_3_0)
+				return var_0_1("chaos_berzerker") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			end
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_chaos_stinger",
+			stinger_name = "enemy_horde_chaos_stinger"
 		},
 		{
 			"event_horde",
-			composition_type = "event_large_chaos",
 			limit_spawners = 2,
 			spawner_id = "payload_event_l",
+			composition_type = "event_large_chaos"
 		},
 		{
 			"event_horde",
+			limit_spawners = 2,
+			spawner_id = "payload_event_r",
 			composition_type = "event_chaos_extra_spice_small",
-			limit_spawners = 2,
-			spawner_id = "payload_event_r",
-			difficulty_requirement = HARDER,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (t)
-				return count_event_breed("chaos_berzerker") < 3 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
-			end,
+			condition = function(arg_4_0)
+				return var_0_1("chaos_berzerker") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			end
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_chaos_stinger",
+			stinger_name = "enemy_horde_chaos_stinger"
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			limit_spawners = 2,
 			spawner_id = "payload_event_r",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "chaos_shields",
 			limit_spawners = 1,
 			spawner_id = "payload_event_r",
+			composition_type = "chaos_shields"
 		},
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (t)
-				return count_event_breed("chaos_berzerker") < 3 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
-			end,
+			condition = function(arg_5_0)
+				return var_0_1("chaos_berzerker") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			limit_spawners = 2,
 			spawner_id = "payload_event_r",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "chaos_shields",
 			limit_spawners = 1,
 			spawner_id = "payload_event_l",
+			composition_type = "chaos_shields"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (t)
-				return count_event_breed("chaos_berzerker") < 3 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
-			end,
+			condition = function(arg_6_0)
+				return var_0_1("chaos_berzerker") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "warcamp_payload",
-		},
+			flow_event_name = "warcamp_payload"
+		}
 	},
 	warcamp_chaos_boss = {
 		{
 			"set_master_event_running",
-			name = "warcamp_chaos_boss",
+			name = "warcamp_chaos_boss"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_exalted_champion_warcamp",
 			spawner_id = "warcamp_chaos_boss",
+			breed_name = "chaos_exalted_champion_warcamp"
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("chaos_exalted_champion_warcamp") == 1
-			end,
+			condition = function(arg_7_0)
+				return var_0_1("chaos_exalted_champion_warcamp") == 1
+			end
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("chaos_exalted_champion_warcamp") < 1
-			end,
+			condition = function(arg_8_0)
+				return var_0_1("chaos_exalted_champion_warcamp") < 1
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "warcamp_chaos_boss_dead",
+			flow_event_name = "warcamp_chaos_boss_dead"
 		},
 		{
 			"control_pacing",
-			enable = true,
-		},
+			enable = true
+		}
 	},
 	warcamp_door_guard = {
 		{
-			"disable_kick",
+			"disable_kick"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_marauder_with_shield",
 			spawner_id = "wc_shield_dude_1",
+			breed_name = "chaos_marauder_with_shield"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_marauder_with_shield",
 			spawner_id = "wc_shield_dude_2",
+			breed_name = "chaos_marauder_with_shield"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_marauder",
 			spawner_id = "wc_sword_dude_1",
+			breed_name = "chaos_marauder"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_marauder",
 			spawner_id = "wc_sword_dude_2",
+			breed_name = "chaos_marauder"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_raider",
 			spawner_id = "wc_2h_dude_1",
-		},
+			breed_name = "chaos_raider"
+		}
 	},
 	warcamp_camp = {
 		{
 			"set_master_event_running",
-			name = "warcamp_camp",
+			name = "warcamp_camp"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_chaos_stinger",
+			stinger_name = "enemy_horde_chaos_stinger"
 		},
 		{
 			"event_horde",
-			composition_type = "warcamp_inside_camp",
 			limit_spawners = 2,
 			spawner_id = "camp_event",
+			composition_type = "warcamp_inside_camp"
 		},
 		{
 			"delay",
 			duration = 3,
-			difficulty_requirement = HARDER,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"event_horde",
-			composition_type = "event_chaos_extra_spice_small",
 			limit_spawners = 2,
 			spawner_id = "camp_event",
-			difficulty_requirement = HARDER,
+			composition_type = "event_chaos_extra_spice_small",
+			difficulty_requirement = var_0_2
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (t)
-				return count_event_breed("chaos_berzerker") < 3 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2 and count_event_breed("chaos_fanatic") < 4
-			end,
+			condition = function(arg_9_0)
+				return var_0_1("chaos_berzerker") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2 and var_0_1("chaos_fanatic") < 4
+			end
 		},
 		{
 			"delay",
-			duration = 2,
+			duration = 2
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			limit_spawners = 2,
 			spawner_id = "camp_event",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"flow_event",
-			flow_event_name = "warcamp_camp_restart",
-		},
+			flow_event_name = "warcamp_camp_restart"
+		}
 	},
 	warcamp_load_chaos_exalted_champion = {
 		{
 			"force_load_breed_package",
-			breed_name = "chaos_exalted_champion_warcamp",
-		},
+			breed_name = "chaos_exalted_champion_warcamp"
+		}
 	},
 	warcamp_arena_chase = {
 		{
 			"set_master_event_running",
-			name = "warcamp_chase",
+			name = "warcamp_chase"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_chaos_stinger",
+			stinger_name = "enemy_horde_chaos_stinger"
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			limit_spawners = 2,
 			spawner_id = "arena_chase",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"control_specials",
-			enable = false,
+			enable = false
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("chaos_berzerker") < 3 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
-			end,
+			condition = function(arg_10_0)
+				return var_0_1("chaos_berzerker") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "warcamp_chase_restart",
-		},
-	},
+			flow_event_name = "warcamp_chase_restart"
+		}
+	}
 }
 
 return {
-	terror_event_blueprints,
+	var_0_4
 }

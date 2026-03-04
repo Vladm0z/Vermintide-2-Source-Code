@@ -1,127 +1,124 @@
-﻿-- chunkname: @scripts/entity_system/systems/first_person/first_person_system.lua
+-- chunkname: @scripts/entity_system/systems/first_person/first_person_system.lua
 
 require("scripts/unit_extensions/default_player_unit/player_unit_first_person")
 require("scripts/unit_extensions/human/player_bot_unit/player_bot_unit_first_person")
 
 FirstPersonSystem = class(FirstPersonSystem, ExtensionSystemBase)
 
-local RPCS = {
+local var_0_0 = {
 	"rpc_play_hud_sound_event",
 	"rpc_play_first_person_sound",
 	"rpc_play_husk_sound_event",
 	"rpc_play_husk_unit_sound_event",
-	"rpc_first_person_flow_event",
+	"rpc_first_person_flow_event"
 }
-local EXTENSIONS = {
+local var_0_1 = {
 	"PlayerUnitFirstPerson",
-	"PlayerBotUnitFirstPerson",
+	"PlayerBotUnitFirstPerson"
 }
 
-FirstPersonSystem.init = function (self, entity_system_creation_context, system_name)
-	FirstPersonSystem.super.init(self, entity_system_creation_context, system_name, EXTENSIONS)
+function FirstPersonSystem.init(arg_1_0, arg_1_1, arg_1_2)
+	FirstPersonSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
-	local network_event_delegate = entity_system_creation_context.network_event_delegate
+	local var_1_0 = arg_1_1.network_event_delegate
 
-	self.network_event_delegate = network_event_delegate
+	arg_1_0.network_event_delegate = var_1_0
 
-	network_event_delegate:register(self, unpack(RPCS))
+	var_1_0:register(arg_1_0, unpack(var_0_0))
 end
 
-FirstPersonSystem.destroy = function (self)
-	self.network_event_delegate:unregister(self)
+function FirstPersonSystem.destroy(arg_2_0)
+	arg_2_0.network_event_delegate:unregister(arg_2_0)
 
-	self.network_event_delegate = nil
+	arg_2_0.network_event_delegate = nil
 end
 
-FirstPersonSystem.rpc_play_first_person_sound = function (self, channel_id, unit_id, sound_id, position)
-	local sound_event = NetworkLookup.sound_events[sound_id]
-	local unit = self.unit_storage:unit(unit_id)
+function FirstPersonSystem.rpc_play_first_person_sound(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local var_3_0 = NetworkLookup.sound_events[arg_3_3]
+	local var_3_1 = arg_3_0.unit_storage:unit(arg_3_2)
 
-	if not unit then
-		printf("unit from game_object_id %d is nil", unit_id)
+	if not var_3_1 then
+		printf("unit from game_object_id %d is nil", arg_3_2)
 
 		return
 	end
 
-	local fp_ext = ScriptUnit.extension(unit, "first_person_system")
-
-	fp_ext:play_sound_event(sound_event, position)
+	ScriptUnit.extension(var_3_1, "first_person_system"):play_sound_event(var_3_0, arg_3_4)
 end
 
-FirstPersonSystem.rpc_play_hud_sound_event = function (self, channel_id, unit_id, event_id)
-	local unit = self.unit_storage:unit(unit_id)
+function FirstPersonSystem.rpc_play_hud_sound_event(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	local var_4_0 = arg_4_0.unit_storage:unit(arg_4_2)
 
-	if not unit then
-		printf("unit from game_object_id %d is nil", unit_id)
+	if not var_4_0 then
+		printf("unit from game_object_id %d is nil", arg_4_2)
 
 		return
 	end
 
-	local event = NetworkLookup.sound_events[event_id]
-	local fp_ext = ScriptUnit.extension(unit, "first_person_system")
+	local var_4_1 = NetworkLookup.sound_events[arg_4_3]
 
-	fp_ext:play_hud_sound_event(event)
+	ScriptUnit.extension(var_4_0, "first_person_system"):play_hud_sound_event(var_4_1)
 end
 
-FirstPersonSystem.rpc_play_husk_sound_event = function (self, channel_id, unit_id, event_id)
-	if self.is_server then
-		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+function FirstPersonSystem.rpc_play_husk_sound_event(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	if arg_5_0.is_server then
+		local var_5_0 = CHANNEL_TO_PEER_ID[arg_5_1]
 
-		self.network_transmit:send_rpc_clients_except("rpc_play_husk_sound_event", peer_id, unit_id, event_id)
+		arg_5_0.network_transmit:send_rpc_clients_except("rpc_play_husk_sound_event", var_5_0, arg_5_2, arg_5_3)
 	end
 
-	local unit = self.unit_storage:unit(unit_id)
+	local var_5_1 = arg_5_0.unit_storage:unit(arg_5_2)
 
-	if not unit then
-		printf("unit from game_object_id %d is nil", unit_id)
+	if not var_5_1 then
+		printf("unit from game_object_id %d is nil", arg_5_2)
 
 		return
 	end
 
-	local event = NetworkLookup.sound_events[event_id]
-	local wwise_source_id, wwise_world = WwiseUtils.make_unit_auto_source(self.world, unit)
+	local var_5_2 = NetworkLookup.sound_events[arg_5_3]
+	local var_5_3, var_5_4 = WwiseUtils.make_unit_auto_source(arg_5_0.world, var_5_1)
 
-	WwiseWorld.set_switch(wwise_world, "husk", "true", wwise_source_id)
-	WwiseWorld.trigger_event(wwise_world, event, wwise_source_id)
+	WwiseWorld.set_switch(var_5_4, "husk", "true", var_5_3)
+	WwiseWorld.trigger_event(var_5_4, var_5_2, var_5_3)
 end
 
-FirstPersonSystem.rpc_play_husk_unit_sound_event = function (self, channel_id, unit_id, node_id, event_id)
-	if self.is_server then
-		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+function FirstPersonSystem.rpc_play_husk_unit_sound_event(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	if arg_6_0.is_server then
+		local var_6_0 = CHANNEL_TO_PEER_ID[arg_6_1]
 
-		self.network_transmit:send_rpc_clients_except("rpc_play_husk_unit_sound_event", peer_id, unit_id, node_id, event_id)
+		arg_6_0.network_transmit:send_rpc_clients_except("rpc_play_husk_unit_sound_event", var_6_0, arg_6_2, arg_6_3, arg_6_4)
 	end
 
-	local unit = self.unit_storage:unit(unit_id)
+	local var_6_1 = arg_6_0.unit_storage:unit(arg_6_2)
 
-	if not unit then
-		printf("unit from game_object_id %d is nil", unit_id)
+	if not var_6_1 then
+		printf("unit from game_object_id %d is nil", arg_6_2)
 
 		return
 	end
 
-	local event = NetworkLookup.sound_events[event_id]
-	local wwise_source_id, wwise_world = WwiseUtils.make_unit_auto_source(self.world, unit, node_id)
+	local var_6_2 = NetworkLookup.sound_events[arg_6_4]
+	local var_6_3, var_6_4 = WwiseUtils.make_unit_auto_source(arg_6_0.world, var_6_1, arg_6_3)
 
-	WwiseWorld.set_switch(wwise_world, "husk", "true", wwise_source_id)
-	WwiseWorld.trigger_event(wwise_world, event, wwise_source_id)
+	WwiseWorld.set_switch(var_6_4, "husk", "true", var_6_3)
+	WwiseWorld.trigger_event(var_6_4, var_6_2, var_6_3)
 end
 
-FirstPersonSystem.rpc_first_person_flow_event = function (self, channel_id, unit_id, event_id)
-	local unit = self.unit_storage:unit(unit_id)
+function FirstPersonSystem.rpc_first_person_flow_event(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	local var_7_0 = arg_7_0.unit_storage:unit(arg_7_2)
 
-	if not unit then
-		printf("unit from game_object_id %d is nil", unit_id)
+	if not var_7_0 then
+		printf("unit from game_object_id %d is nil", arg_7_2)
 
 		return
 	end
 
-	local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
+	local var_7_1 = ScriptUnit.has_extension(var_7_0, "first_person_system")
 
-	if first_person_extension then
-		local first_person_unit = first_person_extension:get_first_person_unit()
-		local event_name = NetworkLookup.flow_events[event_id]
+	if var_7_1 then
+		local var_7_2 = var_7_1:get_first_person_unit()
+		local var_7_3 = NetworkLookup.flow_events[arg_7_3]
 
-		Unit.flow_event(first_person_unit, event_name)
+		Unit.flow_event(var_7_2, var_7_3)
 	end
 end

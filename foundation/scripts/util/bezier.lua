@@ -1,67 +1,60 @@
-﻿-- chunkname: @foundation/scripts/util/bezier.lua
+-- chunkname: @foundation/scripts/util/bezier.lua
 
 Bezier = Bezier or {}
 
-Bezier.calc_point = function (t, p1, c1, c2, p2)
-	local t_inv = 1 - t
-	local res = t_inv^3 * p1 + 3 * t_inv^2 * t * c1 + 3 * t_inv * t^2 * c2 + t^3 * p2
+function Bezier.calc_point(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	local var_1_0 = 1 - arg_1_0
 
-	return res
+	return var_1_0^3 * arg_1_1 + 3 * var_1_0^2 * arg_1_0 * arg_1_2 + 3 * var_1_0 * arg_1_0^2 * arg_1_3 + arg_1_0^3 * arg_1_4
 end
 
-Bezier.calc_tangent = function (t, p1, c1, c2, p2)
-	local res = Vector3.normalize(-3 * (p1 * (t - 1)^2 + c1 * (-3 * t^2 + 4 * t - 1) + t * (3 * c2 * t - 2 * c2 - p2 * t)))
-
-	return res
+function Bezier.calc_tangent(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	return (Vector3.normalize(-3 * (arg_2_1 * (arg_2_0 - 1)^2 + arg_2_2 * (-3 * arg_2_0^2 + 4 * arg_2_0 - 1) + arg_2_0 * (3 * arg_2_3 * arg_2_0 - 2 * arg_2_3 - arg_2_4 * arg_2_0))))
 end
 
-Bezier.draw = function (segments, script_drawer, tangent_scale, color, p1, c1, c2, p2)
-	segments = segments or 20
+function Bezier.draw(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+	arg_3_0 = arg_3_0 or 20
 
-	local segment_increment = 1 / segments
-	local t = 0
-	local point_a = Bezier.calc_point(t, p1, c1, c2, p2)
+	local var_3_0 = 1 / arg_3_0
+	local var_3_1 = 0
+	local var_3_2 = Bezier.calc_point(var_3_1, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 
-	for segment = 0, segments do
-		t = segment_increment * segment
+	for iter_3_0 = 0, arg_3_0 do
+		local var_3_3 = var_3_0 * iter_3_0
+		local var_3_4 = Bezier.calc_point(var_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 
-		local point_b = Bezier.calc_point(t, p1, c1, c2, p2)
+		arg_3_1:line(var_3_2, var_3_4, arg_3_3)
 
-		script_drawer:line(point_a, point_b, color)
+		if arg_3_2 then
+			local var_3_5 = Bezier.calc_tangent(var_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 
-		if tangent_scale then
-			local tangent = Bezier.calc_tangent(t, p1, c1, c2, p2)
-
-			script_drawer:vector(point_b, tangent * tangent_scale, color)
+			arg_3_1:vector(var_3_4, var_3_5 * arg_3_2, arg_3_3)
 		end
 
-		point_a = point_b
+		var_3_2 = var_3_4
 	end
 end
 
-Bezier.length = function (segments, p1, c1, c2, p2)
-	local length = 0
-	local last_point = p1
+function Bezier.length(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = 0
+	local var_4_1 = arg_4_1
 
-	for fraction = 1, segments - 1 do
-		local point = Bezier.calc_point(fraction / segments, p1, c1, c2, p2)
+	for iter_4_0 = 1, arg_4_0 - 1 do
+		local var_4_2 = Bezier.calc_point(iter_4_0 / arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 
-		length = length + Vector3.length(point - last_point)
-		last_point = point
+		var_4_0 = var_4_0 + Vector3.length(var_4_2 - var_4_1)
+		var_4_1 = var_4_2
 	end
 
-	length = length + Vector3.length(p2 - last_point)
-
-	return length
+	return var_4_0 + Vector3.length(arg_4_4 - var_4_1)
 end
 
-Bezier.next_index = function (points, index)
-	local next_index = index + 3
-	local next_index_end_point = next_index + 3
+function Bezier.next_index(arg_5_0, arg_5_1)
+	local var_5_0 = arg_5_1 + 3
 
-	return points[next_index_end_point] and next_index or nil
+	return arg_5_0[var_5_0 + 3] and var_5_0 or nil
 end
 
-Bezier.spline_points = function (points, index)
-	return points[index], points[index + 1], points[index + 2], points[index + 3]
+function Bezier.spline_points(arg_6_0, arg_6_1)
+	return arg_6_0[arg_6_1], arg_6_0[arg_6_1 + 1], arg_6_0[arg_6_1 + 2], arg_6_0[arg_6_1 + 3]
 end

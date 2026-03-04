@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/settings/spawn_unit_templates.lua
+-- chunkname: @scripts/settings/spawn_unit_templates.lua
 
 SpawnUnitTemplates = {}
 

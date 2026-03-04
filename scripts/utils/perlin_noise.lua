@@ -1,321 +1,320 @@
-﻿-- chunkname: @scripts/utils/perlin_noise.lua
+-- chunkname: @scripts/utils/perlin_noise.lua
 
 PerlinNoise = class(PerlinNoise)
 
-PerlinNoise.init = function (self, world)
-	self._n = 256
-	self._permutations = {}
-	self._gradients = {}
-	self.world = world
-	self.world_gui = World.create_world_gui(world, Matrix4x4.identity(), 1, 1, "material", "materials/fonts/gw_fonts")
-	self._line_object = World.create_line_object(world, false)
+function PerlinNoise.init(arg_1_0, arg_1_1)
+	arg_1_0._n = 256
+	arg_1_0._permutations = {}
+	arg_1_0._gradients = {}
+	arg_1_0.world = arg_1_1
+	arg_1_0.world_gui = World.create_world_gui(arg_1_1, Matrix4x4.identity(), 1, 1, "material", "materials/fonts/gw_fonts")
+	arg_1_0._line_object = World.create_line_object(arg_1_1, false)
 
-	self:setup()
+	arg_1_0:setup()
 end
 
-local colors = {
+local var_0_0 = {
 	{
 		30,
 		30,
-		30,
+		30
 	},
 	{
 		45,
 		45,
-		45,
+		45
 	},
 	{
 		60,
 		60,
-		60,
+		60
 	},
 	{
 		85,
 		85,
-		85,
+		85
 	},
 	{
 		100,
 		100,
-		100,
+		100
 	},
 	{
 		115,
 		115,
-		115,
+		115
 	},
 	{
 		130,
 		130,
-		130,
+		130
 	},
 	{
 		145,
 		145,
-		145,
+		145
 	},
 	{
 		160,
 		160,
-		160,
+		160
 	},
 	{
 		175,
 		175,
-		175,
+		175
 	},
 	{
 		190,
 		190,
-		190,
+		190
 	},
 	{
 		205,
 		205,
-		205,
+		205
 	},
 	{
 		220,
 		220,
-		220,
+		220
 	},
 	{
 		235,
 		235,
-		235,
+		235
 	},
 	{
 		255,
 		255,
-		255,
-	},
+		255
+	}
 }
 
-PerlinNoise.draw_height = function (self, height, x, y, z, rad)
-	local drawer = Managers.state.debug:drawer({
+function PerlinNoise.draw_height(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	local var_2_0 = Managers.state.debug:drawer({
 		mode = "lel",
-		name = "perlin noise",
+		name = "perlin noise"
 	})
-	local index = math.clamp(height * 100, -15, 15)
+	local var_2_1 = (math.clamp(arg_2_1 * 100, -15, 15) + 15) / 2
+	local var_2_2 = math.floor(var_2_1)
 
-	index = (index + 15) / 2
-	index = math.floor(index)
-
-	if index == 0 then
-		index = 1
+	if var_2_2 == 0 then
+		var_2_2 = 1
 	end
 
-	local color = colors[index]
+	local var_2_3 = var_0_0[var_2_2]
 
-	drawer:sphere(Vector3(x, y, z + 0.5), rad or 0.35, Color(color[1], color[2], color[3]))
+	var_2_0:sphere(Vector3(arg_2_2, arg_2_3, arg_2_4 + 0.5), arg_2_5 or 0.35, Color(var_2_3[1], var_2_3[2], var_2_3[3]))
 end
 
-PerlinNoise.filter_list_using_noise = function (self, list, height_threshold)
-	local a, b, c = Script.temp_count()
-	local lowest, highest = 0, 0
+function PerlinNoise.filter_list_using_noise(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0, var_3_1, var_3_2 = Script.temp_count()
+	local var_3_3 = 0
+	local var_3_4 = 0
 
-	for i = #list, 1, -1 do
-		local pos = list[i]:unbox()
-		local x, y = pos.x, pos.y
-		local height = self:get_height(x, y)
-		local radius
+	for iter_3_0 = #arg_3_1, 1, -1 do
+		local var_3_5 = arg_3_1[iter_3_0]:unbox()
+		local var_3_6 = var_3_5.x
+		local var_3_7 = var_3_5.y
+		local var_3_8 = arg_3_0:get_height(var_3_6, var_3_7)
+		local var_3_9
 
-		if height < height_threshold then
-			list[i] = list[#list]
-			list[#list] = nil
+		if var_3_8 < arg_3_2 then
+			arg_3_1[iter_3_0] = arg_3_1[#arg_3_1]
+			arg_3_1[#arg_3_1] = nil
 		else
-			radius = 0.8
+			var_3_9 = 0.8
 		end
 
 		if script_data.debug_perlin_noise_spawning then
-			self:draw_height(height, x, y, pos.z, radius)
+			arg_3_0:draw_height(var_3_8, var_3_6, var_3_7, var_3_5.z, var_3_9)
 		end
 
-		if height < lowest then
-			lowest = height
-		elseif highest <= height then
-			highest = height
+		if var_3_8 < var_3_3 then
+			var_3_3 = var_3_8
+		elseif var_3_4 <= var_3_8 then
+			var_3_4 = var_3_8
 		end
 
-		Script.set_temp_count(a, b, c)
+		Script.set_temp_count(var_3_0, var_3_1, var_3_2)
 	end
 
-	print("Lowest and highest heights are", lowest, highest)
+	print("Lowest and highest heights are", var_3_3, var_3_4)
 
-	return list
+	return arg_3_1
 end
 
-PerlinNoise.normalize = function (self, gradient_x, gradient_y)
-	local s
+function PerlinNoise.normalize(arg_4_0, arg_4_1, arg_4_2)
+	local var_4_0
+	local var_4_1 = math.sqrt(arg_4_1 * arg_4_1 + arg_4_2 * arg_4_2)
 
-	s = math.sqrt(gradient_x * gradient_x + gradient_y * gradient_y)
+	assert(var_4_1 ~= 0, "dividing by zero is not recommended")
 
-	assert(s ~= 0, "dividing by zero is not recommended")
+	arg_4_1 = arg_4_1 / var_4_1
+	arg_4_2 = arg_4_2 / var_4_1
 
-	gradient_x = gradient_x / s
-	gradient_y = gradient_y / s
-
-	return gradient_x, gradient_y
+	return arg_4_1, arg_4_2
 end
 
-PerlinNoise.setup = function (self)
-	for i = 1, self._n do
-		self._permutations[i] = i
-		self._gradients[i] = {
+function PerlinNoise.setup(arg_5_0)
+	for iter_5_0 = 1, arg_5_0._n do
+		arg_5_0._permutations[iter_5_0] = iter_5_0
+		arg_5_0._gradients[iter_5_0] = {
 			false,
-			false,
+			false
 		}
 
-		local check = true
+		local var_5_0 = true
 
 		repeat
-			for j = 1, 2 do
-				self._gradients[i][j] = Math.random(-10, 10) * 0.1
-				check = check and self._gradients[i][j] == 0
+			for iter_5_1 = 1, 2 do
+				arg_5_0._gradients[iter_5_0][iter_5_1] = Math.random(-10, 10) * 0.1
+				var_5_0 = var_5_0 and arg_5_0._gradients[iter_5_0][iter_5_1] == 0
 			end
-		until not check
+		until not var_5_0
 
-		self._gradients[i][1], self._gradients[i][2] = self:normalize(self._gradients[i][1], self._gradients[i][2])
+		arg_5_0._gradients[iter_5_0][1], arg_5_0._gradients[iter_5_0][2] = arg_5_0:normalize(arg_5_0._gradients[iter_5_0][1], arg_5_0._gradients[iter_5_0][2])
 	end
 
-	local k, j
+	local var_5_1
+	local var_5_2
 
-	for i = self._n, 1, -1 do
-		k = self._permutations[i]
-		j = Math.random(self._n)
-		self._permutations[i] = self._permutations[j]
-		self._permutations[j] = k
+	for iter_5_2 = arg_5_0._n, 1, -1 do
+		local var_5_3 = arg_5_0._permutations[iter_5_2]
+		local var_5_4 = Math.random(arg_5_0._n)
+
+		arg_5_0._permutations[iter_5_2] = arg_5_0._permutations[var_5_4]
+		arg_5_0._permutations[var_5_4] = var_5_3
 	end
 
-	for i = 1, self._n + 2 do
-		self._permutations[self._n + i] = self._permutations[i]
-		self._gradients[self._n + i] = {
+	for iter_5_3 = 1, arg_5_0._n + 2 do
+		arg_5_0._permutations[arg_5_0._n + iter_5_3] = arg_5_0._permutations[iter_5_3]
+		arg_5_0._gradients[arg_5_0._n + iter_5_3] = {
 			false,
-			false,
+			false
 		}
 
-		for j = 1, 2 do
-			self._gradients[self._n + i][j] = self._gradients[i][j]
+		for iter_5_4 = 1, 2 do
+			arg_5_0._gradients[arg_5_0._n + iter_5_3][iter_5_4] = arg_5_0._gradients[iter_5_3][iter_5_4]
 		end
 	end
 end
 
-PerlinNoise.get_height = function (self, x, y)
-	local point_x, point_y = x, y
-	local tx = x + 4096
-	local ty = y + 4096
-	local p0_x = math.floor(tx) % self._n
-	local p1_x = (p0_x + 1) % self._n
-	local p0_y = math.floor(ty) % self._n
-	local p1_y = (p0_y + 1) % self._n
+function PerlinNoise.get_height(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = arg_6_1
+	local var_6_1 = arg_6_2
+	local var_6_2 = arg_6_1 + 4096
+	local var_6_3 = arg_6_2 + 4096
+	local var_6_4 = math.floor(var_6_2) % arg_6_0._n
+	local var_6_5 = (var_6_4 + 1) % arg_6_0._n
+	local var_6_6 = math.floor(var_6_3) % arg_6_0._n
+	local var_6_7 = (var_6_6 + 1) % arg_6_0._n
 
-	if p0_x == 0 then
-		p0_x = 1
+	if var_6_4 == 0 then
+		var_6_4 = 1
 	end
 
-	if p0_y == 0 then
-		p0_y = 1
+	if var_6_6 == 0 then
+		var_6_6 = 1
 	end
 
-	if p1_x == 0 then
-		p1_x = 1
+	if var_6_5 == 0 then
+		var_6_5 = 1
 	end
 
-	if p1_y == 0 then
-		p1_y = 1
+	if var_6_7 == 0 then
+		var_6_7 = 1
 	end
 
-	local rx0 = tx - math.floor(tx)
-	local rx1 = rx0 - 1
-	local ry0 = ty - math.floor(ty)
-	local ry1 = ry0 - 1
-	local i = self._permutations[p0_x]
-	local j = self._permutations[p1_x]
-	local p00, p10 = self._permutations[i + p0_y], self._permutations[j + p0_y]
-	local p01, p11 = self._permutations[i + p1_y], self._permutations[j + p1_y]
-	local s_curve_x = self:getSCurve(rx0)
-	local s_curve_y = self:getSCurve(ry0)
-	local gradient, s, t, u, v
+	local var_6_8 = var_6_2 - math.floor(var_6_2)
+	local var_6_9 = var_6_8 - 1
+	local var_6_10 = var_6_3 - math.floor(var_6_3)
+	local var_6_11 = var_6_10 - 1
+	local var_6_12 = arg_6_0._permutations[var_6_4]
+	local var_6_13 = arg_6_0._permutations[var_6_5]
+	local var_6_14 = arg_6_0._permutations[var_6_12 + var_6_6]
+	local var_6_15 = arg_6_0._permutations[var_6_13 + var_6_6]
+	local var_6_16 = arg_6_0._permutations[var_6_12 + var_6_7]
+	local var_6_17 = arg_6_0._permutations[var_6_13 + var_6_7]
+	local var_6_18 = arg_6_0:getSCurve(var_6_8)
+	local var_6_19 = arg_6_0:getSCurve(var_6_10)
+	local var_6_20
+	local var_6_21
+	local var_6_22
+	local var_6_23
+	local var_6_24
+	local var_6_25 = arg_6_0._gradients[var_6_14]
+	local var_6_26 = arg_6_0:at2(var_6_25, var_6_8, var_6_10)
+	local var_6_27 = arg_6_0._gradients[var_6_15]
+	local var_6_28 = arg_6_0:at2(var_6_27, var_6_9, var_6_10)
+	local var_6_29 = arg_6_0._gradients[var_6_16]
+	local var_6_30 = arg_6_0:at2(var_6_29, var_6_8, var_6_11)
+	local var_6_31 = arg_6_0._gradients[var_6_17]
+	local var_6_32 = arg_6_0:at2(var_6_31, var_6_9, var_6_11)
+	local var_6_33 = math.lerp(var_6_26, var_6_28, var_6_18)
+	local var_6_34 = math.lerp(var_6_30, var_6_32, var_6_18)
 
-	gradient = self._gradients[p00]
-	s = self:at2(gradient, rx0, ry0)
-	gradient = self._gradients[p10]
-	t = self:at2(gradient, rx1, ry0)
-	gradient = self._gradients[p01]
-	u = self:at2(gradient, rx0, ry1)
-	gradient = self._gradients[p11]
-	v = self:at2(gradient, rx1, ry1)
-
-	local a = math.lerp(s, t, s_curve_x)
-	local b = math.lerp(u, v, s_curve_x)
-	local z = math.lerp(a, b, s_curve_y)
-
-	return z
+	return (math.lerp(var_6_33, var_6_34, var_6_19))
 end
 
-PerlinNoise.at2 = function (self, gradient, vec_x, vec_y)
-	local arctang = gradient[1] * vec_x + gradient[2] * vec_y
-
-	return arctang
+function PerlinNoise.at2(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	return arg_7_1[1] * arg_7_2 + arg_7_1[2] * arg_7_3
 end
 
-PerlinNoise.getSCurve = function (self, p)
-	local s_curve = 6 * p^5 - 15 * p^4 + 10 * p^3
-
-	return s_curve
+function PerlinNoise.getSCurve(arg_8_0, arg_8_1)
+	return 6 * arg_8_1^5 - 15 * arg_8_1^4 + 10 * arg_8_1^3
 end
 
-PerlinNoise.simulate_points = function (self)
-	local drawer = Managers.state.debug:drawer({
+function PerlinNoise.simulate_points(arg_9_0)
+	local var_9_0 = Managers.state.debug:drawer({
 		mode = "lel",
-		name = "perlin noise",
+		name = "perlin noise"
 	})
-	local world_gui = self.world_gui
-	local m = Matrix4x4.identity()
-	local font_size = 0.1
-	local font = "arial"
-	local font_material = "materials/fonts/" .. font
-	local lowest, highest = 0, 0
+	local var_9_1 = arg_9_0.world_gui
+	local var_9_2 = Matrix4x4.identity()
+	local var_9_3 = 0.1
+	local var_9_4 = "arial"
+	local var_9_5 = "materials/fonts/" .. var_9_4
+	local var_9_6 = 0
+	local var_9_7 = 0
 
-	for i = self._lowest_point.x, self._highest_point.x do
-		local lal = i
+	for iter_9_0 = arg_9_0._lowest_point.x, arg_9_0._highest_point.x do
+		local var_9_8 = iter_9_0
 
-		i = i + Math.random(-1, 1) / 10
+		iter_9_0 = iter_9_0 + Math.random(-1, 1) / 10
 
-		for j = self._lowest_point.y, self._highest_point.y do
-			local lalal = j
+		for iter_9_1 = arg_9_0._lowest_point.y, arg_9_0._highest_point.y do
+			local var_9_9 = iter_9_1
 
-			j = j + Math.random(-1, 1) / 10
+			iter_9_1 = iter_9_1 + Math.random(-1, 1) / 10
 
-			local height = self:get_height(i, j)
+			local var_9_10 = arg_9_0:get_height(iter_9_0, iter_9_1)
 
-			if height < lowest then
-				lowest = height
-			elseif highest < height then
-				highest = height
+			if var_9_10 < var_9_6 then
+				var_9_6 = var_9_10
+			elseif var_9_7 < var_9_10 then
+				var_9_7 = var_9_10
 			end
 
-			local index = math.clamp(height * 100, -15, 15)
-			local asd = (index + 15) / 2
+			local var_9_11 = (math.clamp(var_9_10 * 100, -15, 15) + 15) / 2
+			local var_9_12 = math.floor(var_9_11)
 
-			index = asd
-			index = math.floor(index)
-
-			if index == 0 then
-				index = 1
+			if var_9_12 == 0 then
+				var_9_12 = 1
 			end
 
-			print(index)
+			print(var_9_12)
 
-			local color = colors[index]
+			local var_9_13 = var_0_0[var_9_12]
 
-			j = lalal
+			iter_9_1 = var_9_9
 
-			drawer:sphere(Vector3(lal, lalal, 100), 0.5, Color(color[1], color[2], color[3]))
+			var_9_0:sphere(Vector3(var_9_8, var_9_9, 100), 0.5, Color(var_9_13[1], var_9_13[2], var_9_13[3]))
 		end
 
-		i = lal
+		iter_9_0 = var_9_8
 	end
 
-	print("lowest and highest", lowest, highest)
+	print("lowest and highest", var_9_6, var_9_7)
 end

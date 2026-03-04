@@ -1,8 +1,8 @@
-﻿-- chunkname: @scripts/settings/mutator_settings.lua
+-- chunkname: @scripts/settings/mutator_settings.lua
 
 require("scripts/helpers/mutator_utils")
 
-local mutators_to_add = {
+local var_0_0 = {
 	"no_ammo",
 	"no_pickups",
 	"player_dot",
@@ -34,21 +34,18 @@ local mutators_to_add = {
 	"fire",
 	"death",
 	"beasts",
-	"twitch_darkness",
+	"twitch_darkness"
 }
 
-DLCUtils.append("mutators", mutators_to_add)
+DLCUtils.append("mutators", var_0_0)
 
-local mutator_settings = {}
+local var_0_1 = {}
 
-for i = 1, #mutators_to_add do
-	local name = mutators_to_add[i]
-	local path = string.format("scripts/settings/mutators/mutator_%s", name)
-	local data = local_require(path)
+for iter_0_0 = 1, #var_0_0 do
+	local var_0_2 = var_0_0[iter_0_0]
+	local var_0_3 = string.format("scripts/settings/mutators/mutator_%s", var_0_2)
 
-	fassert(mutator_settings[name] == nil, "Error! Trying to add mutator settings for %s twice!", name)
-
-	mutator_settings[name] = data
+	var_0_1[var_0_2] = local_require(var_0_3), fassert(var_0_1[var_0_2] == nil, "Error! Trying to add mutator settings for %s twice!", var_0_2)
 end
 
-return mutator_settings
+return var_0_1

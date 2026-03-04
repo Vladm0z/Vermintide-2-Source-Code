@@ -1,150 +1,150 @@
-﻿-- chunkname: @foundation/scripts/util/testify.lua
+-- chunkname: @foundation/scripts/util/testify.lua
 
 require("foundation/scripts/util/table")
 require("scripts/tests/testify_expect")
 
-local SIGNALS = {
+local var_0_0 = {
 	current_request = "current_request",
-	end_suite = "end_suite",
-	last_request = "last_request",
-	ready = "ready",
-	reply = "reply",
 	request = "request",
+	reply = "reply",
+	ready = "ready",
+	end_suite = "end_suite",
+	last_request = "last_request"
 }
 
 Testify = {
 	_requests = {},
 	_responses = {},
 	RETRY = newproxy(false),
-	expect = TestifyExpect:new(),
+	expect = TestifyExpect:new()
 }
 
-local __raw_print = print
-local cjson_decode = cjson.decode
-local cjson_encode = cjson.encode
-local coroutine_resume = coroutine.resume
-local coroutine_yield = coroutine.yield
-local string_format = string.format
-local table_dump = table.dump
-local table_keys = table.keys
-local table_merge_varargs = table.merge_varargs
-local table_pack = table.pack
-local table_size = table.size
-local tostring = tostring
-local unpack = unpack
+local var_0_1 = print
+local var_0_2 = cjson.decode
+local var_0_3 = cjson.encode
+local var_0_4 = coroutine.resume
+local var_0_5 = coroutine.yield
+local var_0_6 = string.format
+local var_0_7 = table.dump
+local var_0_8 = table.keys
+local var_0_9 = table.merge_varargs
+local var_0_10 = table.pack
+local var_0_11 = table.size
+local var_0_12 = tostring
+local var_0_13 = unpack
 
-Testify.init = function (self)
-	self._requests = {}
-	self._responses = {}
+function Testify.init(arg_1_0)
+	arg_1_0._requests = {}
+	arg_1_0._responses = {}
 end
 
-Testify.ready = function (self)
+function Testify.ready(arg_2_0)
 	printf("[Testify] Ready!")
-	self:_signal(SIGNALS.ready)
+	arg_2_0:_signal(var_0_0.ready)
 end
 
-Testify.ready_signal_received = function (self)
-	self._ready_signal_received = true
+function Testify.ready_signal_received(arg_3_0)
+	arg_3_0._ready_signal_received = true
 end
 
-Testify.reply = function (self, message)
-	self:_signal(SIGNALS.reply, message)
+function Testify.reply(arg_4_0, arg_4_1)
+	arg_4_0:_signal(var_0_0.reply, arg_4_1)
 end
 
-Testify.run_case = function (self, test_case)
-	self:init()
+function Testify.run_case(arg_5_0, arg_5_1)
+	arg_5_0:init()
 
-	self._test_case = coroutine.create(test_case)
+	arg_5_0._test_case = coroutine.create(arg_5_1)
 end
 
-Testify.update = function (self, dt, t)
-	if script_data.testify and not self._ready_signal_received then
-		self:_signal(SIGNALS.ready, nil, false)
+function Testify.update(arg_6_0, arg_6_1, arg_6_2)
+	if script_data.testify and not arg_6_0._ready_signal_received then
+		arg_6_0:_signal(var_0_0.ready, nil, false)
 	end
 
-	if Development.parameter("testify_time_scale") and not self._time_scaled then
-		self:_set_time_scale()
+	if Development.parameter("testify_time_scale") and not arg_6_0._time_scaled then
+		arg_6_0:_set_time_scale()
 	end
 
-	if self._test_case then
-		self.expect:update()
+	if arg_6_0._test_case then
+		arg_6_0.expect:update()
 
-		local success, result, end_suite = coroutine_resume(self._test_case, dt, t)
+		local var_6_0, var_6_1, var_6_2 = var_0_4(arg_6_0._test_case, arg_6_1, arg_6_2)
 
-		if not success then
-			error(debug.traceback(self._test_case, result))
-		elseif coroutine.status(self._test_case) == "dead" then
-			self._test_case = nil
+		if not var_6_0 then
+			error(debug.traceback(arg_6_0._test_case, var_6_1))
+		elseif coroutine.status(arg_6_0._test_case) == "dead" then
+			arg_6_0._test_case = nil
 
-			if end_suite == true then
-				self:_signal(SIGNALS.end_suite)
+			if var_6_2 == true then
+				arg_6_0:_signal(var_0_0.end_suite)
 			end
 
-			self:_signal(SIGNALS.reply, result)
+			arg_6_0:_signal(var_0_0.reply, var_6_1)
 		end
 	end
 end
 
-Testify.make_request = function (self, request_name, ...)
-	local request_parameters, num_parameters = table_pack(...)
+function Testify.make_request(arg_7_0, arg_7_1, ...)
+	local var_7_0, var_7_1 = var_0_10(...)
 
-	request_parameters.length = num_parameters
+	var_7_0.length = var_7_1
 
-	self:_print("Requesting %s", request_name)
+	arg_7_0:_print("Requesting %s", arg_7_1)
 
-	self._requests[request_name] = request_parameters
-	self._responses[request_name] = nil
+	arg_7_0._requests[arg_7_1] = var_7_0
+	arg_7_0._responses[arg_7_1] = nil
 
-	return self:_wait_for_response(request_name)
+	return arg_7_0:_wait_for_response(arg_7_1)
 end
 
-Testify.make_request_to_runner = function (self, request_name, ...)
-	local request_parameters = table_pack(...)
+function Testify.make_request_to_runner(arg_8_0, arg_8_1, ...)
+	local var_8_0 = var_0_10(...)
 
-	self:_print("Requesting %s to the Testify Runner", request_name)
+	arg_8_0:_print("Requesting %s to the Testify Runner", arg_8_1)
 
-	self._requests[request_name] = request_parameters
-	self._responses[request_name] = nil
+	arg_8_0._requests[arg_8_1] = var_8_0
+	arg_8_0._responses[arg_8_1] = nil
 
-	local request = {
-		name = request_name,
-		parameters = request_parameters,
+	local var_8_1 = {
+		name = arg_8_1,
+		parameters = var_8_0
 	}
 
-	self:_signal(SIGNALS.request, cjson_encode(request))
+	arg_8_0:_signal(var_0_0.request, var_0_3(var_8_1))
 
-	return self:_wait_for_response(request_name)
+	return arg_8_0:_wait_for_response(arg_8_1)
 end
 
-Testify._wait_for_response = function (self, request_name)
-	self:_print("Waiting for response %s", request_name)
+function Testify._wait_for_response(arg_9_0, arg_9_1)
+	arg_9_0:_print("Waiting for response %s", arg_9_1)
 
 	while true do
-		coroutine_yield()
+		var_0_5()
 
-		local response = self._responses[request_name]
+		local var_9_0 = arg_9_0._responses[arg_9_1]
 
-		if response then
-			local response_length = response.length
+		if var_9_0 then
+			local var_9_1 = var_9_0.length
 
-			return unpack(response, 1, response_length)
+			return var_0_13(var_9_0, 1, var_9_1)
 		end
 	end
 end
 
-Testify.poll_requests_through_handler = function (self, callback_table, ...)
-	local RETRY = Testify.RETRY
+function Testify.poll_requests_through_handler(arg_10_0, arg_10_1, ...)
+	local var_10_0 = Testify.RETRY
 
-	for request, callback in pairs(callback_table) do
-		local request_args, num_request_args = self:poll_request(request)
+	for iter_10_0, iter_10_1 in pairs(arg_10_1) do
+		local var_10_1, var_10_2 = arg_10_0:poll_request(iter_10_0)
 
-		if request_args then
-			local poll_args, num_poll_args = table_pack(...)
-			local merged_args, num_merged_args = table_merge_varargs(poll_args, num_poll_args, unpack(request_args))
-			local responses, num_responses = table_pack(callback(unpack(merged_args, 1, num_merged_args)))
+		if var_10_1 then
+			local var_10_3, var_10_4 = var_0_10(...)
+			local var_10_5, var_10_6 = var_0_9(var_10_3, var_10_4, var_0_13(var_10_1))
+			local var_10_7, var_10_8 = var_0_10(iter_10_1(var_0_13(var_10_5, 1, var_10_6)))
 
-			if responses[1] ~= RETRY then
-				self:respond_to_request(request, responses, num_responses)
+			if var_10_7[1] ~= var_10_0 then
+				arg_10_0:respond_to_request(iter_10_0, var_10_7, var_10_8)
 			end
 
 			return
@@ -152,68 +152,68 @@ Testify.poll_requests_through_handler = function (self, callback_table, ...)
 	end
 end
 
-Testify.poll_request = function (self, request_name)
-	local request_arguments = self._requests[request_name]
+function Testify.poll_request(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_0._requests[arg_11_1]
 
-	if request_arguments then
-		local num_request_arguments = request_arguments.length
+	if var_11_0 then
+		local var_11_1 = var_11_0.length
 
-		return request_arguments, num_request_arguments
+		return var_11_0, var_11_1
 	end
 end
 
-Testify.respond_to_request = function (self, request_name, responses, num_responses)
-	if responses then
-		responses.length = num_responses or #responses
+function Testify.respond_to_request(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	if arg_12_2 then
+		arg_12_2.length = arg_12_3 or #arg_12_2
 	end
 
-	self:_print("Responding to %s", request_name)
+	arg_12_0:_print("Responding to %s", arg_12_1)
 
-	self._requests[request_name] = nil
-	self._last_request = request_name
-	self._responses[request_name] = responses
+	arg_12_0._requests[arg_12_1] = nil
+	arg_12_0._last_request = arg_12_1
+	arg_12_0._responses[arg_12_1] = arg_12_2
 end
 
-Testify.respond_to_runner_request = function (self, request_name, responses, num_responses)
-	self:respond_to_request(request_name, {
-		responses,
-	}, num_responses)
+function Testify.respond_to_runner_request(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	arg_13_0:respond_to_request(arg_13_1, {
+		arg_13_2
+	}, arg_13_3)
 end
 
-Testify.print_test_case_marker = function (self)
-	__raw_print("<<testify>>test case<</testify>>")
+function Testify.print_test_case_marker(arg_14_0)
+	var_0_1("<<testify>>test case<</testify>>")
 end
 
-Testify.inspect = function (self)
-	self:_print("Test case running? %s", self._thread ~= nil)
-	table_dump(self._requests, "[Testify] Requests", 2)
-	table_dump(self._responses, "[Testify] Responses", 2)
+function Testify.inspect(arg_15_0)
+	arg_15_0:_print("Test case running? %s", arg_15_0._thread ~= nil)
+	var_0_7(arg_15_0._requests, "[Testify] Requests", 2)
+	var_0_7(arg_15_0._responses, "[Testify] Responses", 2)
 end
 
-Testify._set_time_scale = function (self)
-	local debug_manager = Managers.state.debug
+function Testify._set_time_scale(arg_16_0)
+	local var_16_0 = Managers.state.debug
 
-	if not debug_manager then
+	if not var_16_0 then
 		return
 	end
 
-	local scale = Development.parameter("testify_time_scale")
-	local time_scale_index = table.index_of(debug_manager.time_scale_list, tonumber(scale))
+	local var_16_1 = Development.parameter("testify_time_scale")
+	local var_16_2 = table.index_of(var_16_0.time_scale_list, tonumber(var_16_1))
 
-	self._time_scaled = true
+	arg_16_0._time_scaled = true
 
-	if time_scale_index == -1 then
-		printf("[Testify] Time Scale %s is not supported. Please chose a value from the following list:%s", scale, table.dump_string(debug_manager.time_scale_list, 1))
+	if var_16_2 == -1 then
+		printf("[Testify] Time Scale %s is not supported. Please chose a value from the following list:%s", var_16_1, table.dump_string(var_16_0.time_scale_list, 1))
 
 		return
 	end
 
-	debug_manager:set_time_scale(time_scale_index)
+	var_16_0:set_time_scale(var_16_2)
 end
 
-Testify._signal = function (self, signal, message, print_signal)
-	if print_signal ~= false then
-		self:_print("Replying to signal %s %s", signal, message)
+function Testify._signal(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+	if arg_17_3 ~= false then
+		arg_17_0:_print("Replying to signal %s %s", arg_17_1, arg_17_2)
 	end
 
 	if Application.console_send == nil then
@@ -223,28 +223,28 @@ Testify._signal = function (self, signal, message, print_signal)
 	Application.console_send({
 		system = "Testify",
 		type = "signal",
-		signal = signal,
-		message = tostring(message),
+		signal = arg_17_1,
+		message = var_0_12(arg_17_2)
 	})
 end
 
-Testify._print = function (self, ...)
+function Testify._print(arg_18_0, ...)
 	if script_data.debug_testify then
 		printf("[Testify] %s", string.format(...))
 	end
 end
 
-Testify.current_request_name = function (self)
-	local requests = self._requests
-	local request_name, _ = next(requests)
+function Testify.current_request_name(arg_19_0)
+	local var_19_0 = arg_19_0._requests
+	local var_19_1, var_19_2 = next(var_19_0)
 
-	self:_print("Current request name: %s", request_name)
-	self:_signal(SIGNALS.current_request, request_name)
+	arg_19_0:_print("Current request name: %s", var_19_1)
+	arg_19_0:_signal(var_0_0.current_request, var_19_1)
 end
 
-Testify.last_request_name = function (self)
-	local last_request = self._last_request
+function Testify.last_request_name(arg_20_0)
+	local var_20_0 = arg_20_0._last_request
 
-	self:_print("Last request name: %s", last_request)
-	self:_signal(SIGNALS.last_request, last_request)
+	arg_20_0:_print("Last request name: %s", var_20_0)
+	arg_20_0:_signal(var_0_0.last_request, var_20_0)
 end

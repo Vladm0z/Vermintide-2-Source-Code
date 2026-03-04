@@ -1,426 +1,388 @@
-﻿-- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_additional_settings_console.lua
+-- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_additional_settings_console.lua
 
-local definitions = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_additional_settings_console_definitions")
+local var_0_0 = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_additional_settings_console_definitions")
 
 StartGameWindowAdditionalSettingsConsole = class(StartGameWindowAdditionalSettingsConsole)
 StartGameWindowAdditionalSettingsConsole.NAME = "StartGameWindowAdditionalSettingsConsole"
 
-StartGameWindowAdditionalSettingsConsole.on_enter = function (self, params, offset, parent_window_name)
+function StartGameWindowAdditionalSettingsConsole.on_enter(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	print("[StartGameWindow] Enter Substate StartGameWindowAdditionalSettingsConsole")
 
-	self.parent = params.parent
+	arg_1_0.parent = arg_1_1.parent
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_1_0 = arg_1_1.ingame_ui_context
 
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self.input_manager = ingame_ui_context.input_manager
-	self.statistics_db = ingame_ui_context.statistics_db
-	self.render_settings = {
-		snap_pixel_positions = true,
+	arg_1_0.ui_renderer = var_1_0.ui_renderer
+	arg_1_0._ui_top_renderer = var_1_0.ui_top_renderer
+	arg_1_0.input_manager = var_1_0.input_manager
+	arg_1_0.statistics_db = var_1_0.statistics_db
+	arg_1_0.render_settings = {
+		snap_pixel_positions = true
 	}
-	self._network_lobby = ingame_ui_context.network_lobby
-	self._mechanism_name = params.mechanism_name
-	self._params = params
-	self._parent_window_name = parent_window_name
+	arg_1_0._network_lobby = var_1_0.network_lobby
+	arg_1_0._mechanism_name = arg_1_1.mechanism_name
+	arg_1_0._params = arg_1_1
+	arg_1_0._parent_window_name = arg_1_3
 
-	local player_manager = Managers.player
-	local local_player = player_manager:local_player()
+	local var_1_1 = Managers.player
 
-	self._stats_id = local_player:stats_id()
-	self.player_manager = player_manager
-	self.peer_id = ingame_ui_context.peer_id
-	self._animations = {}
+	arg_1_0._stats_id = var_1_1:local_player():stats_id()
+	arg_1_0.player_manager = var_1_1
+	arg_1_0.peer_id = var_1_0.peer_id
+	arg_1_0._animations = {}
 
-	self:create_ui_elements(definitions, params, offset)
-	self:_update_additional_options()
+	arg_1_0:create_ui_elements(var_0_0, arg_1_1, arg_1_2)
+	arg_1_0:_update_additional_options()
 
-	self._input_index = 0
+	arg_1_0._input_index = 0
 
-	self:_handle_input_index(1)
+	arg_1_0:_handle_input_index(1)
 
-	self._is_focused = false
-	self._versus_custom_lobby_view_active = params.versus_custom_lobby_view_active
+	arg_1_0._is_focused = false
+	arg_1_0._versus_custom_lobby_view_active = arg_1_1.versus_custom_lobby_view_active
 end
 
-StartGameWindowAdditionalSettingsConsole._start_transition_animation = function (self, animation_name)
-	local params = {
-		render_settings = self.render_settings,
+function StartGameWindowAdditionalSettingsConsole._start_transition_animation(arg_2_0, arg_2_1)
+	local var_2_0 = {
+		render_settings = arg_2_0.render_settings
 	}
-	local widgets = {}
-	local anim_id = self.ui_animator:start_animation(animation_name, widgets, self._scenegraph_definition, params)
+	local var_2_1 = {}
+	local var_2_2 = arg_2_0.ui_animator:start_animation(arg_2_1, var_2_1, arg_2_0._scenegraph_definition, var_2_0)
 
-	self._animations[animation_name] = anim_id
+	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-StartGameWindowAdditionalSettingsConsole.create_ui_elements = function (self, definitions, params, offset)
-	self._widget_definitions = definitions.widgets
-	self._scenegraph_definition = definitions.scenegraph_definition
-	self._animation_definitions = definitions.animation_definitions
-	self._gamepad_widget_navigation = definitions.gamepad_widget_navigation
+function StartGameWindowAdditionalSettingsConsole.create_ui_elements(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	arg_3_0._widget_definitions = arg_3_1.widgets
+	arg_3_0._scenegraph_definition = arg_3_1.scenegraph_definition
+	arg_3_0._animation_definitions = arg_3_1.animation_definitions
+	arg_3_0._gamepad_widget_navigation = arg_3_1.gamepad_widget_navigation
 
-	local ui_scenegraph = UISceneGraph.init_scenegraph(self._scenegraph_definition)
+	local var_3_0 = UISceneGraph.init_scenegraph(arg_3_0._scenegraph_definition)
 
-	self.ui_scenegraph = ui_scenegraph
-	self._widgets, self._widgets_by_name = UIUtils.create_widgets(self._widget_definitions)
+	arg_3_0.ui_scenegraph = var_3_0
+	arg_3_0._widgets, arg_3_0._widgets_by_name = UIUtils.create_widgets(arg_3_0._widget_definitions)
 
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_3_0.ui_renderer)
 
-	self.ui_animator = UIAnimator:new(ui_scenegraph, self._animation_definitions)
+	arg_3_0.ui_animator = UIAnimator:new(var_3_0, arg_3_0._animation_definitions)
 
-	if offset then
-		local window_position = ui_scenegraph.window.local_position
+	if arg_3_3 then
+		local var_3_1 = var_3_0.window.local_position
 
-		window_position[1] = window_position[1] + offset[1]
-		window_position[2] = window_position[2] + offset[2]
-		window_position[3] = window_position[3] + offset[3]
+		var_3_1[1] = var_3_1[1] + arg_3_3[1]
+		var_3_1[2] = var_3_1[2] + arg_3_3[2]
+		var_3_1[3] = var_3_1[3] + arg_3_3[3]
 	end
 
-	self:_set_additional_options_enabled_state(true)
+	arg_3_0:_set_additional_options_enabled_state(true)
 end
 
-StartGameWindowAdditionalSettingsConsole._set_additional_options_enabled_state = function (self, enabled)
-	local widgets_by_name = self._widgets_by_name
-	local private_button = widgets_by_name.private_button
+function StartGameWindowAdditionalSettingsConsole._set_additional_options_enabled_state(arg_4_0, arg_4_1)
+	local var_4_0 = arg_4_0._widgets_by_name
 
-	private_button.content.button_hotspot.disable_button = not enabled
-
-	local host_button = widgets_by_name.host_button
-
-	host_button.content.button_hotspot.disable_button = not enabled
-
-	local strict_matchmaking_button = widgets_by_name.strict_matchmaking_button
-
-	strict_matchmaking_button.content.button_hotspot.disable_button = not enabled
-	self._additional_option_enabled = enabled
+	var_4_0.private_button.content.button_hotspot.disable_button = not arg_4_1
+	var_4_0.host_button.content.button_hotspot.disable_button = not arg_4_1
+	var_4_0.strict_matchmaking_button.content.button_hotspot.disable_button = not arg_4_1
+	arg_4_0._additional_option_enabled = arg_4_1
 end
 
-StartGameWindowAdditionalSettingsConsole.on_exit = function (self, params)
+function StartGameWindowAdditionalSettingsConsole.on_exit(arg_5_0, arg_5_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowAdditionalSettingsConsole")
 
-	self.ui_animator = nil
+	arg_5_0.ui_animator = nil
 
-	Managers.state.event:unregister("versus_custom_lobby_state_changed", self)
+	Managers.state.event:unregister("versus_custom_lobby_state_changed", arg_5_0)
 end
 
-StartGameWindowAdditionalSettingsConsole.set_focus = function (self, focused)
-	self._is_focused = focused
+function StartGameWindowAdditionalSettingsConsole.set_focus(arg_6_0, arg_6_1)
+	arg_6_0._is_focused = arg_6_1
 
-	if focused then
-		self:_start_transition_animation("on_enter")
+	if arg_6_1 then
+		arg_6_0:_start_transition_animation("on_enter")
 	else
-		self.render_settings.alpha_multiplier = 0
+		arg_6_0.render_settings.alpha_multiplier = 0
 	end
 end
 
-StartGameWindowAdditionalSettingsConsole.update = function (self, dt, t)
-	if self._mechanism_name == "versus" and Managers.matchmaking:is_matchmaking_versus() then
+function StartGameWindowAdditionalSettingsConsole.update(arg_7_0, arg_7_1, arg_7_2)
+	if arg_7_0._mechanism_name == "versus" and Managers.matchmaking:is_matchmaking_versus() then
 		return
 	end
 
-	if self._additional_option_enabled then
-		self:_update_additional_options()
+	if arg_7_0._additional_option_enabled then
+		arg_7_0:_update_additional_options()
 	end
 
-	self:_update_animations(dt)
+	arg_7_0:_update_animations(arg_7_1)
 
-	if self._is_focused or not self.gamepad_active_last_frame then
-		self:_handle_input(dt, t)
+	if arg_7_0._is_focused or not arg_7_0.gamepad_active_last_frame then
+		arg_7_0:_handle_input(arg_7_1, arg_7_2)
 	end
 
-	self:_handle_gamepad_activity()
-	self:draw(dt)
+	arg_7_0:_handle_gamepad_activity()
+	arg_7_0:draw(arg_7_1)
 end
 
-StartGameWindowAdditionalSettingsConsole.post_update = function (self, dt, t)
+function StartGameWindowAdditionalSettingsConsole.post_update(arg_8_0, arg_8_1, arg_8_2)
 	return
 end
 
-StartGameWindowAdditionalSettingsConsole._update_animations = function (self, dt)
-	local ui_animator = self.ui_animator
+function StartGameWindowAdditionalSettingsConsole._update_animations(arg_9_0, arg_9_1)
+	local var_9_0 = arg_9_0.ui_animator
 
-	ui_animator:update(dt)
+	var_9_0:update(arg_9_1)
 
-	local animations = self._animations
+	local var_9_1 = arg_9_0._animations
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_9_0, iter_9_1 in pairs(var_9_1) do
+		if var_9_0:is_animation_completed(iter_9_1) then
+			var_9_0:stop_animation(iter_9_1)
 
-			animations[animation_name] = nil
+			var_9_1[iter_9_0] = nil
 		end
 	end
 end
 
-StartGameWindowAdditionalSettingsConsole._is_button_released = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
+function StartGameWindowAdditionalSettingsConsole._is_button_released(arg_10_0, arg_10_1)
+	local var_10_0 = arg_10_1.content.button_hotspot
 
-	if hotspot.on_release then
-		hotspot.on_release = false
+	if var_10_0.on_release then
+		var_10_0.on_release = false
 
 		return true
 	end
 end
 
-StartGameWindowAdditionalSettingsConsole._is_button_hover_enter = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	return hotspot.on_hover_enter
+function StartGameWindowAdditionalSettingsConsole._is_button_hover_enter(arg_11_0, arg_11_1)
+	return arg_11_1.content.button_hotspot.on_hover_enter
 end
 
-StartGameWindowAdditionalSettingsConsole._is_button_hover = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	return hotspot.is_hover
+function StartGameWindowAdditionalSettingsConsole._is_button_hover(arg_12_0, arg_12_1)
+	return arg_12_1.content.button_hotspot.is_hover
 end
 
-StartGameWindowAdditionalSettingsConsole._is_button_hover_exit = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	return hotspot.on_hover_exit
+function StartGameWindowAdditionalSettingsConsole._is_button_hover_exit(arg_13_0, arg_13_1)
+	return arg_13_1.content.button_hotspot.on_hover_exit
 end
 
-StartGameWindowAdditionalSettingsConsole._is_other_option_button_selected = function (self, widget, current_option)
-	if self:_is_button_released(widget) then
-		local is_selected = not current_option
+function StartGameWindowAdditionalSettingsConsole._is_other_option_button_selected(arg_14_0, arg_14_1, arg_14_2)
+	if arg_14_0:_is_button_released(arg_14_1) then
+		local var_14_0 = not arg_14_2
 
-		if is_selected then
-			self:_play_sound("play_gui_lobby_button_03_private")
+		if var_14_0 then
+			arg_14_0:_play_sound("play_gui_lobby_button_03_private")
 		else
-			self:_play_sound("play_gui_lobby_button_03_public")
+			arg_14_0:_play_sound("play_gui_lobby_button_03_public")
 		end
 
-		return is_selected
+		return var_14_0
 	end
 
 	return nil
 end
 
-StartGameWindowAdditionalSettingsConsole._handle_input_index = function (self, index_increment)
-	local input_index = self._input_index
-	local widgets_by_name = self._widgets_by_name
+function StartGameWindowAdditionalSettingsConsole._handle_input_index(arg_15_0, arg_15_1)
+	local var_15_0 = arg_15_0._input_index
+	local var_15_1 = arg_15_0._widgets_by_name
 
 	repeat
-		input_index = input_index + index_increment
+		var_15_0 = var_15_0 + arg_15_1
 
-		local widget_name = self._gamepad_widget_navigation[input_index]
+		local var_15_2 = arg_15_0._gamepad_widget_navigation[var_15_0]
 
-		if not widget_name then
-			input_index = self._input_index
-		else
-			local widget = widgets_by_name[widget_name]
-
-			if not widget.content.button_hotspot.disable_button then
-				self._input_index = input_index
-			end
+		if not var_15_2 then
+			var_15_0 = arg_15_0._input_index
+		elseif not var_15_1[var_15_2].content.button_hotspot.disable_button then
+			arg_15_0._input_index = var_15_0
 		end
-	until self._input_index == input_index
+	until arg_15_0._input_index == var_15_0
 end
 
-StartGameWindowAdditionalSettingsConsole._handle_gamepad_input = function (self, dt, t, input_service)
-	local index_increment
+function StartGameWindowAdditionalSettingsConsole._handle_gamepad_input(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+	local var_16_0
 
-	if input_service:get("move_down") then
-		index_increment = 1
-	elseif input_service:get("move_up") then
-		index_increment = -1
+	if arg_16_3:get("move_down") then
+		var_16_0 = 1
+	elseif arg_16_3:get("move_up") then
+		var_16_0 = -1
 	end
 
-	if index_increment then
-		self:_handle_input_index(index_increment)
+	if var_16_0 then
+		arg_16_0:_handle_input_index(var_16_0)
 	end
 
-	local input_index = self._input_index
-	local widgets_by_name = self._widgets_by_name
-	local option_tooltip = widgets_by_name.option_tooltip
-	local toggle_option = false
+	local var_16_1 = arg_16_0._input_index
+	local var_16_2 = arg_16_0._widgets_by_name
+	local var_16_3 = var_16_2.option_tooltip
+	local var_16_4 = false
 
-	if input_service:get("confirm") then
-		toggle_option = true
+	if arg_16_3:get("confirm") then
+		var_16_4 = true
 	end
 
-	local gamepad_widget_navigation = self._gamepad_widget_navigation
-	local num_inputs = #gamepad_widget_navigation
+	local var_16_5 = arg_16_0._gamepad_widget_navigation
+	local var_16_6 = #var_16_5
 
-	for i = 1, num_inputs do
-		local widget_name = gamepad_widget_navigation[i]
-		local widget = widgets_by_name[widget_name]
-		local hotspot = widget.content.button_hotspot
-		local is_selected = i == input_index
+	for iter_16_0 = 1, var_16_6 do
+		local var_16_7 = var_16_2[var_16_5[iter_16_0]]
+		local var_16_8 = var_16_7.content.button_hotspot
+		local var_16_9 = iter_16_0 == var_16_1
 
-		hotspot.is_hover = is_selected
+		var_16_8.is_hover = var_16_9
 
-		if is_selected then
-			option_tooltip.content.text = widget.content.tooltip_info.description
+		if var_16_9 then
+			var_16_3.content.text = var_16_7.content.tooltip_info.description
 
-			if toggle_option then
-				hotspot.on_release = true
+			if var_16_4 then
+				var_16_8.on_release = true
 			end
 		end
 	end
 end
 
-StartGameWindowAdditionalSettingsConsole._handle_mouse_input = function (self, dt, t, input_service)
-	local widgets_by_name = self._widgets_by_name
-	local option_tooltip = widgets_by_name.option_tooltip
-	local is_hovered = false
-	local gamepad_widget_navigation = self._gamepad_widget_navigation
-	local num_inputs = #gamepad_widget_navigation
+function StartGameWindowAdditionalSettingsConsole._handle_mouse_input(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+	local var_17_0 = arg_17_0._widgets_by_name
+	local var_17_1 = var_17_0.option_tooltip
+	local var_17_2 = false
+	local var_17_3 = arg_17_0._gamepad_widget_navigation
+	local var_17_4 = #var_17_3
 
-	for i = 1, num_inputs do
-		local widget_name = gamepad_widget_navigation[i]
-		local widget = widgets_by_name[widget_name]
+	for iter_17_0 = 1, var_17_4 do
+		local var_17_5 = var_17_0[var_17_3[iter_17_0]]
 
-		if self:_is_button_hover_enter(widget) then
-			option_tooltip.content.text = widget.content.tooltip_info.description
+		if arg_17_0:_is_button_hover_enter(var_17_5) then
+			var_17_1.content.text = var_17_5.content.tooltip_info.description
 		end
 
-		if self:_is_button_hover(widget) then
-			is_hovered = true
+		if arg_17_0:_is_button_hover(var_17_5) then
+			var_17_2 = true
 		end
 	end
 
-	if not is_hovered then
-		option_tooltip.content.text = ""
+	if not var_17_2 then
+		var_17_1.content.text = ""
 	end
 end
 
-StartGameWindowAdditionalSettingsConsole._handle_input = function (self, dt, t)
-	local parent = self.parent
-	local input_service = parent:window_input_service()
+function StartGameWindowAdditionalSettingsConsole._handle_input(arg_18_0, arg_18_1, arg_18_2)
+	local var_18_0 = arg_18_0.parent
+	local var_18_1 = var_18_0:window_input_service()
 
-	if self._additional_option_enabled then
-		local gamepad_active = Managers.input:is_device_active("gamepad")
-
-		if gamepad_active then
-			self:_handle_gamepad_input(dt, t, input_service)
+	if arg_18_0._additional_option_enabled then
+		if Managers.input:is_device_active("gamepad") then
+			arg_18_0:_handle_gamepad_input(arg_18_1, arg_18_2, var_18_1)
 		else
-			self:_handle_mouse_input(dt, t, input_service)
+			arg_18_0:_handle_mouse_input(arg_18_1, arg_18_2, var_18_1)
 		end
 
-		local widgets_by_name = self._widgets_by_name
-		local host_button = widgets_by_name.host_button
-		local private_button = widgets_by_name.private_button
-		local strict_matchmaking_button = widgets_by_name.strict_matchmaking_button
+		local var_18_2 = arg_18_0._widgets_by_name
+		local var_18_3 = var_18_2.host_button
+		local var_18_4 = var_18_2.private_button
+		local var_18_5 = var_18_2.strict_matchmaking_button
 
-		UIWidgetUtils.animate_default_checkbox_button_console(private_button, dt)
-		UIWidgetUtils.animate_default_checkbox_button_console(host_button, dt)
-		UIWidgetUtils.animate_default_checkbox_button_console(strict_matchmaking_button, dt)
+		UIWidgetUtils.animate_default_checkbox_button_console(var_18_4, arg_18_1)
+		UIWidgetUtils.animate_default_checkbox_button_console(var_18_3, arg_18_1)
+		UIWidgetUtils.animate_default_checkbox_button_console(var_18_5, arg_18_1)
 
-		if self:_is_button_hover_enter(private_button) or self:_is_button_hover_enter(host_button) or self:_is_button_hover_enter(strict_matchmaking_button) then
-			self:_play_sound("play_gui_lobby_button_01_difficulty_confirm_hover")
+		if arg_18_0:_is_button_hover_enter(var_18_4) or arg_18_0:_is_button_hover_enter(var_18_3) or arg_18_0:_is_button_hover_enter(var_18_5) then
+			arg_18_0:_play_sound("play_gui_lobby_button_01_difficulty_confirm_hover")
 		end
 
-		local changed_selection = self:_is_other_option_button_selected(private_button, self._private_enabled)
+		local var_18_6 = arg_18_0:_is_other_option_button_selected(var_18_4, arg_18_0._private_enabled)
 
-		if changed_selection ~= nil then
-			parent:set_private_option_enabled(changed_selection)
+		if var_18_6 ~= nil then
+			var_18_0:set_private_option_enabled(var_18_6)
 		end
 
-		changed_selection = self:_is_other_option_button_selected(host_button, self._always_host_enabled)
+		local var_18_7 = arg_18_0:_is_other_option_button_selected(var_18_3, arg_18_0._always_host_enabled)
 
-		if changed_selection ~= nil then
-			parent:set_always_host_option_enabled(changed_selection)
+		if var_18_7 ~= nil then
+			var_18_0:set_always_host_option_enabled(var_18_7)
 		end
 
-		changed_selection = self:_is_other_option_button_selected(strict_matchmaking_button, self._strict_matchmaking_enabled)
+		local var_18_8 = arg_18_0:_is_other_option_button_selected(var_18_5, arg_18_0._strict_matchmaking_enabled)
 
-		if changed_selection ~= nil then
-			parent:set_strict_matchmaking_option_enabled(changed_selection)
-		end
-	end
-
-	if self.gamepad_active_last_frame then
-		local consume = true
-
-		if input_service:get("back_menu", consume) or input_service:get("refresh", consume) or input_service:get("right_stick_press", consume) then
-			parent:set_window_input_focus(self._parent_window_name or "custom_game_overview")
+		if var_18_8 ~= nil then
+			var_18_0:set_strict_matchmaking_option_enabled(var_18_8)
 		end
 	end
-end
 
-StartGameWindowAdditionalSettingsConsole._play_sound = function (self, event)
-	self.parent:play_sound(event)
-end
+	if arg_18_0.gamepad_active_last_frame then
+		local var_18_9 = true
 
-StartGameWindowAdditionalSettingsConsole._update_additional_options = function (self)
-	local parent = self.parent
-	local private_enabled = parent:is_private_option_enabled()
-	local always_host_enabled = parent:is_always_host_option_enabled()
-	local strict_matchmaking_enabled = parent:is_strict_matchmaking_option_enabled()
-	local twitch_active = Managers.twitch and Managers.twitch:is_connected()
-	local lobby = self._network_lobby
-	local num_members = lobby:members():get_member_count()
-	local is_alone = num_members == 1
-
-	if is_alone ~= self._is_alone or private_enabled ~= self._private_enabled or always_host_enabled ~= self._always_host_enabled or strict_matchmaking_enabled ~= self._strict_matchmaking_enabled or twitch_active ~= self._twitch_active then
-		local widgets_by_name = self._widgets_by_name
-		local private_is_selected = private_enabled
-		local private_is_disabled = twitch_active
-		local private_hotspot = widgets_by_name.private_button.content.button_hotspot
-
-		private_hotspot.disable_button = private_is_disabled
-		private_hotspot.is_selected = private_is_selected
-
-		local always_host_is_selected = private_enabled or not is_alone or always_host_enabled
-		local always_host_is_disabled = private_enabled or not is_alone or twitch_active
-		local host_hotspot = widgets_by_name.host_button.content.button_hotspot
-
-		host_hotspot.disable_button = always_host_is_disabled
-		host_hotspot.is_selected = always_host_is_selected
-
-		local strict_matchmaking_is_selected = not always_host_enabled and not private_enabled and is_alone and strict_matchmaking_enabled
-		local strict_matchmaking_is_disabled = private_enabled or always_host_enabled or not is_alone or twitch_active
-		local strict_matchmaking_hotspot = widgets_by_name.strict_matchmaking_button.content.button_hotspot
-
-		strict_matchmaking_hotspot.disable_button = strict_matchmaking_is_disabled
-		strict_matchmaking_hotspot.is_selected = strict_matchmaking_is_selected
-		self._private_enabled = private_enabled
-		self._always_host_enabled = always_host_enabled
-		self._strict_matchmaking_enabled = strict_matchmaking_enabled
-		self._twitch_active = twitch_active
-		self._is_alone = is_alone
+		if var_18_1:get("back_menu", var_18_9) or var_18_1:get("refresh", var_18_9) or var_18_1:get("right_stick_press", var_18_9) then
+			var_18_0:set_window_input_focus(arg_18_0._parent_window_name or "custom_game_overview")
+		end
 	end
 end
 
-StartGameWindowAdditionalSettingsConsole.draw = function (self, dt)
-	local ui_top_renderer = self._ui_top_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self.parent:window_input_service()
-
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
-
-	local widgets = self._widgets
-
-	for i = 1, #widgets do
-		local widget = widgets[i]
-
-		UIRenderer.draw_widget(ui_top_renderer, widget)
-	end
-
-	UIRenderer.end_pass(ui_top_renderer)
+function StartGameWindowAdditionalSettingsConsole._play_sound(arg_19_0, arg_19_1)
+	arg_19_0.parent:play_sound(arg_19_1)
 end
 
-StartGameWindowAdditionalSettingsConsole._handle_gamepad_activity = function (self)
-	local force_update = self.gamepad_active_last_frame == nil
-	local gamepad_active = Managers.input:is_device_active("gamepad")
+function StartGameWindowAdditionalSettingsConsole._update_additional_options(arg_20_0)
+	local var_20_0 = arg_20_0.parent
+	local var_20_1 = var_20_0:is_private_option_enabled()
+	local var_20_2 = var_20_0:is_always_host_option_enabled()
+	local var_20_3 = var_20_0:is_strict_matchmaking_option_enabled()
+	local var_20_4 = Managers.twitch and Managers.twitch:is_connected()
+	local var_20_5 = arg_20_0._network_lobby:members():get_member_count() == 1
 
-	if gamepad_active then
-		if not self.gamepad_active_last_frame or force_update then
-			self.gamepad_active_last_frame = true
-			self.render_settings.alpha_multiplier = 0
+	if var_20_5 ~= arg_20_0._is_alone or var_20_1 ~= arg_20_0._private_enabled or var_20_2 ~= arg_20_0._always_host_enabled or var_20_3 ~= arg_20_0._strict_matchmaking_enabled or var_20_4 ~= arg_20_0._twitch_active then
+		local var_20_6 = arg_20_0._widgets_by_name
+		local var_20_7
+
+		var_20_7.is_selected, var_20_7.disable_button, var_20_7 = var_20_1, var_20_4, var_20_6.private_button.content.button_hotspot
+
+		local var_20_8
+
+		var_20_8.is_selected, var_20_8.disable_button, var_20_8 = var_20_1 or not var_20_5 or var_20_2, var_20_1 or not var_20_5 or var_20_4, var_20_6.host_button.content.button_hotspot
+
+		local var_20_9
+
+		var_20_9.is_selected, var_20_9.disable_button, var_20_9 = not var_20_2 and not var_20_1 and var_20_5 and var_20_3, var_20_1 or var_20_2 or not var_20_5 or var_20_4, var_20_6.strict_matchmaking_button.content.button_hotspot
+		arg_20_0._private_enabled = var_20_1
+		arg_20_0._always_host_enabled = var_20_2
+		arg_20_0._strict_matchmaking_enabled = var_20_3
+		arg_20_0._twitch_active = var_20_4
+		arg_20_0._is_alone = var_20_5
+	end
+end
+
+function StartGameWindowAdditionalSettingsConsole.draw(arg_21_0, arg_21_1)
+	local var_21_0 = arg_21_0._ui_top_renderer
+	local var_21_1 = arg_21_0.ui_scenegraph
+	local var_21_2 = arg_21_0.parent:window_input_service()
+
+	UIRenderer.begin_pass(var_21_0, var_21_1, var_21_2, arg_21_1, nil, arg_21_0.render_settings)
+
+	local var_21_3 = arg_21_0._widgets
+
+	for iter_21_0 = 1, #var_21_3 do
+		local var_21_4 = var_21_3[iter_21_0]
+
+		UIRenderer.draw_widget(var_21_0, var_21_4)
+	end
+
+	UIRenderer.end_pass(var_21_0)
+end
+
+function StartGameWindowAdditionalSettingsConsole._handle_gamepad_activity(arg_22_0)
+	local var_22_0 = arg_22_0.gamepad_active_last_frame == nil
+
+	if Managers.input:is_device_active("gamepad") then
+		if not arg_22_0.gamepad_active_last_frame or var_22_0 then
+			arg_22_0.gamepad_active_last_frame = true
+			arg_22_0.render_settings.alpha_multiplier = 0
 		end
-	elseif self.gamepad_active_last_frame or force_update then
-		self.gamepad_active_last_frame = false
+	elseif arg_22_0.gamepad_active_last_frame or var_22_0 then
+		arg_22_0.gamepad_active_last_frame = false
 
-		if self._is_focused then
-			self.parent:set_window_input_focus(self._parent_window_name or "custom_game_overview")
+		if arg_22_0._is_focused then
+			arg_22_0.parent:set_window_input_focus(arg_22_0._parent_window_name or "custom_game_overview")
 		end
 
-		self.render_settings.alpha_multiplier = 1
+		arg_22_0.render_settings.alpha_multiplier = 1
 	end
 end

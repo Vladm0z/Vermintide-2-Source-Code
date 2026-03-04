@@ -1,465 +1,446 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/inventory/simple_husk_inventory_extension.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/inventory/simple_husk_inventory_extension.lua
 
 SimpleHuskInventoryExtension = class(SimpleHuskInventoryExtension)
 
-SimpleHuskInventoryExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self._world = extension_init_context.world
-	self._game_object_id = extension_init_data.id
-	self._game = extension_init_data.game
-	self._unit = unit
-	self._equipment = {
-		slots = {},
+function SimpleHuskInventoryExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._world = arg_1_1.world
+	arg_1_0._game_object_id = arg_1_3.id
+	arg_1_0._game = arg_1_3.game
+	arg_1_0._unit = arg_1_2
+	arg_1_0._equipment = {
+		slots = {}
 	}
-	self._attached_units = {}
-	self._slot_buffs = {
+	arg_1_0._attached_units = {}
+	arg_1_0._slot_buffs = {
 		wield = {
 			slot_ranged = {},
-			slot_melee = {},
+			slot_melee = {}
 		},
 		equip = {
 			slot_melee = {},
-			slot_ranged = {},
-		},
+			slot_ranged = {}
+		}
 	}
-	self._weapon_fx = {}
-	self.current_item_buffs = {
+	arg_1_0._weapon_fx = {}
+	arg_1_0.current_item_buffs = {
 		wield = {},
 		equip = {
 			slot_melee = {},
-			slot_ranged = {},
-		},
+			slot_ranged = {}
+		}
 	}
-	self._additional_items = {}
+	arg_1_0._additional_items = {}
 
-	local player = extension_init_data.player
+	local var_1_0 = arg_1_3.player
 
-	self._player = player
+	arg_1_0._player = var_1_0
 
-	if player then
-		local career_name = player:career_name()
-		local career_data = career_name and CareerSettings[career_name]
-		local additional_item_slots = career_data and career_data.additional_item_slots
+	if var_1_0 then
+		local var_1_1 = var_1_0:career_name()
+		local var_1_2 = var_1_1 and CareerSettings[var_1_1]
+		local var_1_3 = var_1_2 and var_1_2.additional_item_slots
 
-		if additional_item_slots then
-			for slot_name, slot_count in pairs(additional_item_slots) do
-				self._additional_items[slot_name] = {
-					max_slots = slot_count,
-					items = {},
+		if var_1_3 then
+			for iter_1_0, iter_1_1 in pairs(var_1_3) do
+				arg_1_0._additional_items[iter_1_0] = {
+					max_slots = iter_1_1,
+					items = {}
 				}
 			end
 		end
 
-		self._career_name = career_name
+		arg_1_0._career_name = var_1_1
 	end
 
-	self._show_third_person = true
+	arg_1_0._show_third_person = true
 end
 
-SimpleHuskInventoryExtension.ammo_percentage = function (self)
-	if GameSession.game_object_exists(self._game, self._game_object_id) then
-		local ammo_percentage = GameSession.game_object_field(self._game, self._game_object_id, "ammo_percentage")
-
-		return ammo_percentage
+function SimpleHuskInventoryExtension.ammo_percentage(arg_2_0)
+	if GameSession.game_object_exists(arg_2_0._game, arg_2_0._game_object_id) then
+		return (GameSession.game_object_field(arg_2_0._game, arg_2_0._game_object_id, "ammo_percentage"))
 	end
 end
 
-SimpleHuskInventoryExtension.ammo_status = function (self)
-	if GameSession.game_object_exists(self._game, self._game_object_id) then
-		local current_ammo = GameSession.game_object_field(self._game, self._game_object_id, "current_ammo")
-		local max_ammo = GameSession.game_object_field(self._game, self._game_object_id, "max_ammo")
+function SimpleHuskInventoryExtension.ammo_status(arg_3_0)
+	if GameSession.game_object_exists(arg_3_0._game, arg_3_0._game_object_id) then
+		local var_3_0 = GameSession.game_object_field(arg_3_0._game, arg_3_0._game_object_id, "current_ammo")
+		local var_3_1 = GameSession.game_object_field(arg_3_0._game, arg_3_0._game_object_id, "max_ammo")
 
-		return current_ammo, max_ammo
+		return var_3_0, var_3_1
 	end
 end
 
-SimpleHuskInventoryExtension.destroy = function (self)
+function SimpleHuskInventoryExtension.destroy(arg_4_0)
 	if Managers.player.is_server then
-		for slot_name, slot_data in pairs(self._equipment.slots) do
-			if slot_data.limited_item_data then
-				self:evaluate_limited_item_state(slot_data)
-			elseif slot_name == "slot_level_event" then
-				self:drop_level_event_item(slot_data)
+		for iter_4_0, iter_4_1 in pairs(arg_4_0._equipment.slots) do
+			if iter_4_1.limited_item_data then
+				arg_4_0:evaluate_limited_item_state(iter_4_1)
+			elseif iter_4_0 == "slot_level_event" then
+				arg_4_0:drop_level_event_item(iter_4_1)
 			end
 		end
 	end
 
-	GearUtils.destroy_equipment(self._world, self._equipment)
-	self:_despawn_attached_units()
-	self:_stop_all_weapon_fx()
+	GearUtils.destroy_equipment(arg_4_0._world, arg_4_0._equipment)
+	arg_4_0:_despawn_attached_units()
+	arg_4_0:_stop_all_weapon_fx()
 end
 
-SimpleHuskInventoryExtension.get_weapon_unit = function (self)
-	local equipment = self._equipment
-	local weapon_unit = equipment.left_hand_wielded_unit_3p or equipment.right_hand_wielded_unit_3p
+function SimpleHuskInventoryExtension.get_weapon_unit(arg_5_0)
+	local var_5_0 = arg_5_0._equipment
 
-	return weapon_unit
+	return var_5_0.left_hand_wielded_unit_3p or var_5_0.right_hand_wielded_unit_3p
 end
 
-SimpleHuskInventoryExtension.get_all_weapon_unit = function (self)
-	local equipment = self._equipment
+function SimpleHuskInventoryExtension.get_all_weapon_unit(arg_6_0)
+	local var_6_0 = arg_6_0._equipment
 
-	return equipment.left_hand_wielded_unit_3p, equipment.right_hand_wielded_unit_3p
+	return var_6_0.left_hand_wielded_unit_3p, var_6_0.right_hand_wielded_unit_3p
 end
 
-SimpleHuskInventoryExtension.drop_level_event_item = function (self, slot_data)
-	local item_template = self:get_item_template(slot_data)
+function SimpleHuskInventoryExtension.drop_level_event_item(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_0:get_item_template(arg_7_1)
 
-	if item_template.no_drop then
+	if var_7_0.no_drop then
 		return
 	end
 
-	local action = item_template.actions.action_dropped.default
-	local projectile_info = action.projectile_info
+	local var_7_1 = var_7_0.actions.action_dropped.default
+	local var_7_2 = var_7_1.projectile_info
 
-	if projectile_info.drop_on_player_destroyed then
-		local unit = self._unit
-		local weapon_unit = self._equipment.right_hand_wielded_unit_3p or self._equipment.left_hand_wielded_unit_3p
-		local position = Unit.world_position(unit, 0) + Vector3(0, 0, 2)
-		local proj_rotation = Quaternion.identity()
-		local velocity = Vector3(math.random(), math.random(), math.random())
-		local angular_velocity_transformed = Vector3(math.random(), math.random(), math.random())
-		local item_data = slot_data.item_data
-		local item_name = item_data.name
-		local spawn_type = "dropped"
+	if var_7_2.drop_on_player_destroyed then
+		local var_7_3 = arg_7_0._unit
+		local var_7_4 = arg_7_0._equipment.right_hand_wielded_unit_3p or arg_7_0._equipment.left_hand_wielded_unit_3p
+		local var_7_5 = Unit.world_position(var_7_3, 0) + Vector3(0, 0, 2)
+		local var_7_6 = Quaternion.identity()
+		local var_7_7 = Vector3(math.random(), math.random(), math.random())
+		local var_7_8 = Vector3(math.random(), math.random(), math.random())
+		local var_7_9 = arg_7_1.item_data.name
+		local var_7_10 = "dropped"
 
-		ActionUtils.spawn_pickup_projectile(self._world, weapon_unit, projectile_info.projectile_unit_name, projectile_info.projectile_unit_template_name, action, unit, position, proj_rotation, velocity, angular_velocity_transformed, item_name, spawn_type)
+		ActionUtils.spawn_pickup_projectile(arg_7_0._world, var_7_4, var_7_2.projectile_unit_name, var_7_2.projectile_unit_template_name, var_7_1, var_7_3, var_7_5, var_7_6, var_7_7, var_7_8, var_7_9, var_7_10)
 	end
 
-	self:destroy_slot("slot_level_event")
+	arg_7_0:destroy_slot("slot_level_event")
 end
 
-SimpleHuskInventoryExtension._unlink_unit = function (self, unit, reason, attachment_node_linking)
-	World.unlink_unit(self._world, unit)
+function SimpleHuskInventoryExtension._unlink_unit(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	World.unlink_unit(arg_8_0._world, arg_8_1)
 
-	local node_linking_data = attachment_node_linking.wielded or attachment_node_linking
+	local var_8_0 = arg_8_3.wielded or arg_8_3
 
-	for i, attachment_nodes in ipairs(node_linking_data) do
-		local target_node = attachment_nodes.target
+	for iter_8_0, iter_8_1 in ipairs(var_8_0) do
+		local var_8_1 = iter_8_1.target
 
-		if target_node ~= 0 then
-			local target_node_index = type(target_node) == "string" and Unit.node(unit, target_node) or target_node
-			local parent = Unit.scene_graph_parent(unit, target_node_index)
+		if var_8_1 ~= 0 then
+			local var_8_2 = type(var_8_1) == "string" and Unit.node(arg_8_1, var_8_1) or var_8_1
+			local var_8_3 = Unit.scene_graph_parent(arg_8_1, var_8_2)
 
-			Unit.scene_graph_link(unit, target_node_index, 0)
-			Unit.set_local_pose(unit, target_node_index, Matrix4x4.identity())
+			Unit.scene_graph_link(arg_8_1, var_8_2, 0)
+			Unit.set_local_pose(arg_8_1, var_8_2, Matrix4x4.identity())
 		end
 	end
 
-	Unit.set_flow_variable(unit, "lua_drop_reason", reason)
-	Unit.set_shader_pass_flag_for_meshes_in_unit_and_childs(unit, "outline_unit", false)
-	Unit.flow_event(unit, "lua_dropped")
+	Unit.set_flow_variable(arg_8_1, "lua_drop_reason", arg_8_2)
+	Unit.set_shader_pass_flag_for_meshes_in_unit_and_childs(arg_8_1, "outline_unit", false)
+	Unit.flow_event(arg_8_1, "lua_dropped")
 
-	local actor = Unit.create_actor(unit, "rp_dropped")
+	local var_8_4 = Unit.create_actor(arg_8_1, "rp_dropped")
 
-	Actor.add_angular_velocity(actor, Vector3(math.random(), math.random(), math.random()) * 5)
-	Actor.add_velocity(actor, Vector3(2 * math.random() - 0.5, 2 * math.random() - 0.5, 4.5))
+	Actor.add_angular_velocity(var_8_4, Vector3(math.random(), math.random(), math.random()) * 5)
+	Actor.add_velocity(var_8_4, Vector3(2 * math.random() - 0.5, 2 * math.random() - 0.5, 4.5))
 end
 
-SimpleHuskInventoryExtension.drop_equipped_weapons = function (self, reason)
-	local equipment = self._equipment
-	local wielded = equipment.wielded
-	local template_name = wielded.template
-	local linking_template = AttachmentNodeLinking[template_name]
-	local left_hand_unit_name = wielded.left_hand_unit
-	local right_hand_unit_name = wielded.right_hand_unit
+function SimpleHuskInventoryExtension.drop_equipped_weapons(arg_9_0, arg_9_1)
+	local var_9_0 = arg_9_0._equipment
+	local var_9_1 = var_9_0.wielded
+	local var_9_2 = var_9_1.template
+	local var_9_3 = AttachmentNodeLinking[var_9_2]
+	local var_9_4 = var_9_1.left_hand_unit
+	local var_9_5 = var_9_1.right_hand_unit
 
-	if left_hand_unit_name then
-		local attachment_node_linking = linking_template.left and linking_template.left.third_person or linking_template.third_person
-		local left_hand_unit = equipment.left_hand_wielded_unit_3p
+	if var_9_4 then
+		local var_9_6 = var_9_3.left and var_9_3.left.third_person or var_9_3.third_person
+		local var_9_7 = var_9_0.left_hand_wielded_unit_3p
 
-		self:_unlink_unit(left_hand_unit, reason, attachment_node_linking)
+		arg_9_0:_unlink_unit(var_9_7, arg_9_1, var_9_6)
 	end
 
-	if right_hand_unit_name then
-		local attachment_node_linking = linking_template.right and linking_template.right.third_person or linking_template.third_person
-		local right_hand_unit = equipment.right_hand_wielded_unit_3p
+	if var_9_5 then
+		local var_9_8 = var_9_3.right and var_9_3.right.third_person or var_9_3.third_person
+		local var_9_9 = var_9_0.right_hand_wielded_unit_3p
 
-		self:_unlink_unit(right_hand_unit, reason, attachment_node_linking)
+		arg_9_0:_unlink_unit(var_9_9, arg_9_1, var_9_8)
 	end
 end
 
-SimpleHuskInventoryExtension.equipment = function (self)
-	return self._equipment
+function SimpleHuskInventoryExtension.equipment(arg_10_0)
+	return arg_10_0._equipment
 end
 
-SimpleHuskInventoryExtension.add_equipment = function (self, slot_name, item_name, skin_name)
-	local item_data = ItemMasterList[item_name]
+function SimpleHuskInventoryExtension.add_equipment(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+	local var_11_0 = ItemMasterList[arg_11_2]
 
-	self:clear_buffs_on_slot("equip", slot_name)
-	self:clear_buffs_on_slot("wield", slot_name)
+	arg_11_0:clear_buffs_on_slot("equip", arg_11_1)
+	arg_11_0:clear_buffs_on_slot("wield", arg_11_1)
 
-	if item_data.slot_to_use then
-		local other_slot_slot_data = self._equipment.slots[item_data.slot_to_use]
-		local override_item_data, override_skin
+	if var_11_0.slot_to_use then
+		local var_11_1 = arg_11_0._equipment.slots[var_11_0.slot_to_use]
+		local var_11_2
+		local var_11_3
 
-		if WeaponUtils.is_valid_weapon_override(other_slot_slot_data, item_data) then
-			override_item_data = other_slot_slot_data.item_data
-			override_skin = other_slot_slot_data.skin
+		if WeaponUtils.is_valid_weapon_override(var_11_1, var_11_0) then
+			var_11_2 = var_11_1.item_data
+			var_11_3 = var_11_1.skin
 		else
-			local default_item_name = item_data.default_item_to_replace
+			local var_11_4 = var_11_0.default_item_to_replace
 
-			override_item_data = ItemMasterList[default_item_name]
+			var_11_2 = ItemMasterList[var_11_4]
 		end
 
-		local other_slot_item_units = BackendUtils.get_item_units(override_item_data, nil, override_skin, self._career_name)
+		local var_11_5 = BackendUtils.get_item_units(var_11_2, nil, var_11_3, arg_11_0._career_name)
 
-		skin_name = nil
+		arg_11_3 = nil
 
-		for key, _ in pairs(item_data.item_units_to_replace) do
-			item_data[key] = other_slot_item_units[key]
+		for iter_11_0, iter_11_1 in pairs(var_11_0.item_units_to_replace) do
+			var_11_0[iter_11_0] = var_11_5[iter_11_0]
 		end
 	end
 
-	local item_template = BackendUtils.get_item_template(item_data)
+	local var_11_6 = BackendUtils.get_item_template(var_11_0)
 
-	self._equipment.slots[slot_name] = {
-		item_data = item_data,
-		id = slot_name,
-		skin = skin_name,
-		item_template = item_template,
-		item_template_name = item_template.name,
+	arg_11_0._equipment.slots[arg_11_1] = {
+		item_data = var_11_0,
+		id = arg_11_1,
+		skin = arg_11_3,
+		item_template = var_11_6,
+		item_template_name = var_11_6.name
 	}
 end
 
-SimpleHuskInventoryExtension.add_equipment_limited_item = function (self, slot_name, item_name, spawner_unit, limited_item_id)
-	local item_data = ItemMasterList[item_name]
-	local item_template = BackendUtils.get_item_template(item_data)
+function SimpleHuskInventoryExtension.add_equipment_limited_item(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+	local var_12_0 = ItemMasterList[arg_12_2]
+	local var_12_1 = BackendUtils.get_item_template(var_12_0)
 
-	self._equipment.slots[slot_name] = {
-		item_data = item_data,
-		id = slot_name,
+	arg_12_0._equipment.slots[arg_12_1] = {
+		item_data = var_12_0,
+		id = arg_12_1,
 		limited_item_data = {
-			spawner_unit = spawner_unit,
-			id = limited_item_id,
+			spawner_unit = arg_12_3,
+			id = arg_12_4
 		},
-		item_template_name = item_template.name,
+		item_template_name = var_12_1.name
 	}
 end
 
-SimpleHuskInventoryExtension.destroy_item_by_name = function (self, slot_name, item_name)
-	local slot_data = self:get_slot_data(slot_name)
+function SimpleHuskInventoryExtension.destroy_item_by_name(arg_13_0, arg_13_1, arg_13_2)
+	local var_13_0 = arg_13_0:get_slot_data(arg_13_1)
 
-	if slot_data and slot_data.item_data.name == item_name then
-		self:destroy_slot(slot_name)
+	if var_13_0 and var_13_0.item_data.name == arg_13_2 then
+		arg_13_0:destroy_slot(arg_13_1)
 	end
 end
 
-SimpleHuskInventoryExtension.destroy_slot = function (self, slot_name)
-	local equipment = self._equipment
-	local slot_data = equipment.slots[slot_name]
+function SimpleHuskInventoryExtension.destroy_slot(arg_14_0, arg_14_1)
+	local var_14_0 = arg_14_0._equipment
+	local var_14_1 = var_14_0.slots[arg_14_1]
 
-	if slot_data == nil then
+	if var_14_1 == nil then
 		return
 	end
 
-	if Managers.player.is_server and slot_data.limited_item_data then
-		self:evaluate_limited_item_state(slot_data)
+	if Managers.player.is_server and var_14_1.limited_item_data then
+		arg_14_0:evaluate_limited_item_state(var_14_1)
 	end
 
-	GearUtils.destroy_slot(self._world, self._unit, slot_data, equipment, true)
+	GearUtils.destroy_slot(arg_14_0._world, arg_14_0._unit, var_14_1, var_14_0, true)
 end
 
-SimpleHuskInventoryExtension.evaluate_limited_item_state = function (self, slot_data)
-	local limited_item_data = slot_data.limited_item_data
-	local spawner_unit = limited_item_data.spawner_unit
+function SimpleHuskInventoryExtension.evaluate_limited_item_state(arg_15_0, arg_15_1)
+	local var_15_0 = arg_15_1.limited_item_data
+	local var_15_1 = var_15_0.spawner_unit
 
-	if spawner_unit then
-		local limited_item_spawner_extension = ScriptUnit.extension(spawner_unit, "limited_item_track_system")
-		local limited_item_id = limited_item_data.id
+	if var_15_1 then
+		local var_15_2 = ScriptUnit.extension(var_15_1, "limited_item_track_system")
+		local var_15_3 = var_15_0.id
 
-		if limited_item_spawner_extension:is_transformed(limited_item_id) then
-			local limited_item_track_system = Managers.state.entity:system("limited_item_track_system")
-
-			limited_item_track_system:held_limited_item_destroyed(spawner_unit, limited_item_id)
+		if var_15_2:is_transformed(var_15_3) then
+			Managers.state.entity:system("limited_item_track_system"):held_limited_item_destroyed(var_15_1, var_15_3)
 		end
 	end
 end
 
-SimpleHuskInventoryExtension._setup_equipment = function (self, world, unit_3p, profile)
-	local equipment = {
-		slots = {},
+function SimpleHuskInventoryExtension._setup_equipment(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+	return {
+		slots = {}
 	}
-
-	return equipment
 end
 
-SimpleHuskInventoryExtension.update = function (self)
+function SimpleHuskInventoryExtension.update(arg_17_0)
 	return
 end
 
-local new_linked_units = {}
+local var_0_0 = {}
 
-SimpleHuskInventoryExtension._reapply_fade = function (self, equipment)
-	table.clear(new_linked_units)
+function SimpleHuskInventoryExtension._reapply_fade(arg_18_0, arg_18_1)
+	table.clear(var_0_0)
 
-	if equipment.right_hand_wielded_unit_3p then
-		new_linked_units[#new_linked_units + 1] = equipment.right_hand_wielded_unit_3p
+	if arg_18_1.right_hand_wielded_unit_3p then
+		var_0_0[#var_0_0 + 1] = arg_18_1.right_hand_wielded_unit_3p
 	end
 
-	if equipment.right_hand_ammo_unit_3p then
-		new_linked_units[#new_linked_units + 1] = equipment.right_hand_ammo_unit_3p
+	if arg_18_1.right_hand_ammo_unit_3p then
+		var_0_0[#var_0_0 + 1] = arg_18_1.right_hand_ammo_unit_3p
 	end
 
-	if equipment.left_hand_wielded_unit_3p then
-		new_linked_units[#new_linked_units + 1] = equipment.left_hand_wielded_unit_3p
+	if arg_18_1.left_hand_wielded_unit_3p then
+		var_0_0[#var_0_0 + 1] = arg_18_1.left_hand_wielded_unit_3p
 	end
 
-	if equipment.left_hand_ammo_unit_3p then
-		new_linked_units[#new_linked_units + 1] = equipment.left_hand_ammo_unit_3p
+	if arg_18_1.left_hand_ammo_unit_3p then
+		var_0_0[#var_0_0 + 1] = arg_18_1.left_hand_ammo_unit_3p
 	end
 
-	Managers.state.entity:system("fade_system"):new_linked_units(self._unit, new_linked_units)
+	Managers.state.entity:system("fade_system"):new_linked_units(arg_18_0._unit, var_0_0)
 end
 
-SimpleHuskInventoryExtension.wield = function (self, slot_name)
-	local equipment = self._equipment
+function SimpleHuskInventoryExtension.wield(arg_19_0, arg_19_1)
+	local var_19_0 = arg_19_0._equipment
 
-	self:_stop_all_weapon_fx()
-	self:_despawn_attached_units()
-	self:_wield_slot(self._world, equipment, slot_name, nil, self._unit)
+	arg_19_0:_stop_all_weapon_fx()
+	arg_19_0:_despawn_attached_units()
+	arg_19_0:_wield_slot(arg_19_0._world, var_19_0, arg_19_1, nil, arg_19_0._unit)
 
-	self.wielded_slot = slot_name
+	arg_19_0.wielded_slot = arg_19_1
 
-	if slot_name then
-		local slot_data = equipment.slots[slot_name]
+	if arg_19_1 then
+		local var_19_1 = var_19_0.slots[arg_19_1]
 
-		if slot_data then
-			local item_template = self:get_item_template(slot_data)
+		if var_19_1 then
+			local var_19_2 = arg_19_0:get_item_template(var_19_1)
 
-			self:_spawn_attached_units(item_template.third_person_attached_units)
+			arg_19_0:_spawn_attached_units(var_19_2.third_person_attached_units)
 
-			if ScriptUnit.has_extension(self._unit, "outline_system") then
-				local outline_extension = ScriptUnit.extension(self._unit, "outline_system")
-
-				outline_extension:reapply_outline()
+			if ScriptUnit.has_extension(arg_19_0._unit, "outline_system") then
+				ScriptUnit.extension(arg_19_0._unit, "outline_system"):reapply_outline()
 			end
 
-			if slot_name == "slot_packmaster_claw" then
-				local claw_unit = self:get_weapon_unit()
-				local status_extension = ScriptUnit.extension(self._unit, "status_system")
-				local grabber_unit = status_extension:get_pack_master_grabber()
-				local grabber_player = Managers.player:unit_owner(grabber_unit)
-				local cosmetic_slot = CosmeticUtils.get_cosmetic_slot(grabber_player, "slot_skin")
+			if arg_19_1 == "slot_packmaster_claw" then
+				local var_19_3 = arg_19_0:get_weapon_unit()
+				local var_19_4 = ScriptUnit.extension(arg_19_0._unit, "status_system"):get_pack_master_grabber()
+				local var_19_5 = Managers.player:unit_owner(var_19_4)
+				local var_19_6 = CosmeticUtils.get_cosmetic_slot(var_19_5, "slot_skin")
 
-				if cosmetic_slot then
-					if cosmetic_slot.item_name ~= "skaven_pack_master_skin_1001" then
-						Unit.flow_event(claw_unit, "lua_wield_0000")
+				if var_19_6 then
+					if var_19_6.item_name ~= "skaven_pack_master_skin_1001" then
+						Unit.flow_event(var_19_3, "lua_wield_0000")
 					else
-						Unit.flow_event(claw_unit, "lua_wield_1001")
+						Unit.flow_event(var_19_3, "lua_wield_1001")
 					end
 				end
 			end
 
-			self:_reapply_fade(equipment)
+			arg_19_0:_reapply_fade(var_19_0)
 
-			local reason = "wield"
-			local slot_buffs = self._slot_buffs[reason][slot_name]
+			local var_19_7 = "wield"
+			local var_19_8 = arg_19_0._slot_buffs[var_19_7][arg_19_1]
 
-			if Managers.player.is_server and slot_buffs then
-				self:_refresh_buffs(slot_buffs, reason, slot_name)
+			if Managers.player.is_server and var_19_8 then
+				arg_19_0:_refresh_buffs(var_19_8, var_19_7, arg_19_1)
 			end
 
-			Unit.flow_event(self._unit, "lua_wield")
-			self:start_weapon_fx("wield")
-			Managers.state.event:trigger("on_weapon_wield", equipment)
+			Unit.flow_event(arg_19_0._unit, "lua_wield")
+			arg_19_0:start_weapon_fx("wield")
+			Managers.state.event:trigger("on_weapon_wield", var_19_0)
 		end
 	end
 end
 
-SimpleHuskInventoryExtension._despawn_attached_units = function (self)
-	local attached_units = self._attached_units
-	local world = self._world
+function SimpleHuskInventoryExtension._despawn_attached_units(arg_20_0)
+	local var_20_0 = arg_20_0._attached_units
+	local var_20_1 = arg_20_0._world
 
-	for index, attached_unit in pairs(attached_units) do
-		Managers.state.unit_spawner:mark_for_deletion(attached_unit)
+	for iter_20_0, iter_20_1 in pairs(var_20_0) do
+		Managers.state.unit_spawner:mark_for_deletion(iter_20_1)
 
-		attached_units[index] = nil
+		var_20_0[iter_20_0] = nil
 	end
 end
 
-SimpleHuskInventoryExtension._spawn_attached_units = function (self, attached_units)
-	if attached_units == nil then
+function SimpleHuskInventoryExtension._spawn_attached_units(arg_21_0, arg_21_1)
+	if arg_21_1 == nil then
 		return
 	end
 
-	local unit = self._unit
-	local world = self._world
-	local own_attached_units = self._attached_units
+	local var_21_0 = arg_21_0._unit
+	local var_21_1 = arg_21_0._world
+	local var_21_2 = arg_21_0._attached_units
 
-	for index, attached_unit in pairs(attached_units) do
-		local spawned_unit = AttachmentUtils.create_weapon_visual_attachment(world, unit, attached_unit.unit, attached_unit.attachment_node_linking)
-
-		own_attached_units[index] = spawned_unit
+	for iter_21_0, iter_21_1 in pairs(arg_21_1) do
+		var_21_2[iter_21_0] = AttachmentUtils.create_weapon_visual_attachment(var_21_1, var_21_0, iter_21_1.unit, iter_21_1.attachment_node_linking)
 	end
 end
 
-SimpleHuskInventoryExtension.clear_buffs_on_slot = function (self, reason, slot_name)
-	if slot_name == "slot_ranged" or slot_name == "slot_melee" then
-		local slot_buffs = self._slot_buffs[reason][slot_name]
+function SimpleHuskInventoryExtension.clear_buffs_on_slot(arg_22_0, arg_22_1, arg_22_2)
+	if arg_22_2 == "slot_ranged" or arg_22_2 == "slot_melee" then
+		local var_22_0 = arg_22_0._slot_buffs[arg_22_1][arg_22_2]
 
-		table.clear(slot_buffs)
+		table.clear(var_22_0)
 	end
 end
 
-SimpleHuskInventoryExtension.set_buffs_to_slot = function (self, reason, slot_name, buffs)
-	if slot_name == "slot_ranged" or slot_name == "slot_melee" then
-		self._slot_buffs[reason][slot_name] = buffs
+function SimpleHuskInventoryExtension.set_buffs_to_slot(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+	if arg_23_2 == "slot_ranged" or arg_23_2 == "slot_melee" then
+		arg_23_0._slot_buffs[arg_23_1][arg_23_2] = arg_23_3
 
-		self:_refresh_buffs(buffs, reason, slot_name)
+		arg_23_0:_refresh_buffs(arg_23_3, arg_23_1, arg_23_2)
 	end
 end
 
-local params = {}
+local var_0_1 = {}
 
-SimpleHuskInventoryExtension._refresh_buffs = function (self, buffs, reason, slot_name)
-	local buff_extension = ScriptUnit.extension(self._unit, "buff_system")
-	local current_item_buffs = self.current_item_buffs[reason]
+function SimpleHuskInventoryExtension._refresh_buffs(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+	local var_24_0 = ScriptUnit.extension(arg_24_0._unit, "buff_system")
+	local var_24_1 = arg_24_0.current_item_buffs[arg_24_2]
 
-	if reason == "equip" then
-		current_item_buffs = current_item_buffs[slot_name]
+	if arg_24_2 == "equip" then
+		var_24_1 = var_24_1[arg_24_3]
 	end
 
-	for i = 1, #current_item_buffs do
-		local buff_id = current_item_buffs[i]
+	for iter_24_0 = 1, #var_24_1 do
+		local var_24_2 = var_24_1[iter_24_0]
 
-		buff_extension:remove_buff(buff_id)
+		var_24_0:remove_buff(var_24_2)
 	end
 
-	table.clear(current_item_buffs)
+	table.clear(var_24_1)
 
-	local index = 1
+	local var_24_3 = 1
 
-	for buff_name, variable_data in pairs(buffs) do
-		table.clear(params)
+	for iter_24_1, iter_24_2 in pairs(arg_24_1) do
+		table.clear(var_0_1)
 
-		for data_type, data_value in pairs(variable_data) do
-			params[data_type] = data_value
+		for iter_24_3, iter_24_4 in pairs(iter_24_2) do
+			var_0_1[iter_24_3] = iter_24_4
 		end
 
-		current_item_buffs[index] = buff_extension:add_buff(buff_name, params)
-		index = index + 1
+		var_24_1[var_24_3] = var_24_0:add_buff(iter_24_1, var_0_1)
+		var_24_3 = var_24_3 + 1
 	end
 end
 
-SimpleHuskInventoryExtension.has_inventory_item = function (self, slot_name, item_name)
-	local slot_data = self:get_slot_data(slot_name)
+function SimpleHuskInventoryExtension.has_inventory_item(arg_25_0, arg_25_1, arg_25_2)
+	local var_25_0 = arg_25_0:get_slot_data(arg_25_1)
 
-	if slot_data then
-		local item_data = slot_data.item_data
-		local name = item_data.name
-
-		if item_name == name then
-			return true
-		end
+	if var_25_0 and arg_25_2 == var_25_0.item_data.name then
+		return true
 	end
 
-	local additional_items = self:get_additional_items(slot_name)
+	local var_25_1 = arg_25_0:get_additional_items(arg_25_1)
 
-	if additional_items then
-		for additional_item_idx = 1, #additional_items do
-			local additional_item_data = additional_items[additional_item_idx]
-
-			if item_name == additional_item_data.name then
+	if var_25_1 then
+		for iter_25_0 = 1, #var_25_1 do
+			if arg_25_2 == var_25_1[iter_25_0].name then
 				return true
 			end
 		end
@@ -468,407 +449,390 @@ SimpleHuskInventoryExtension.has_inventory_item = function (self, slot_name, ite
 	return false
 end
 
-SimpleHuskInventoryExtension.show_third_person_inventory = function (self, show)
-	self._show_third_person = show
+function SimpleHuskInventoryExtension.show_third_person_inventory(arg_26_0, arg_26_1)
+	arg_26_0._show_third_person = arg_26_1
 
-	local right_hand_wielded_unit = self._equipment.right_hand_wielded_unit_3p
+	local var_26_0 = arg_26_0._equipment.right_hand_wielded_unit_3p
 
-	if right_hand_wielded_unit then
-		if Unit.has_visibility_group(right_hand_wielded_unit, "normal") then
-			Unit.set_visibility(right_hand_wielded_unit, "normal", show)
+	if var_26_0 then
+		if Unit.has_visibility_group(var_26_0, "normal") then
+			Unit.set_visibility(var_26_0, "normal", arg_26_1)
 		else
-			Unit.set_unit_visibility(right_hand_wielded_unit, show)
+			Unit.set_unit_visibility(var_26_0, arg_26_1)
 		end
 
-		local right_hand_ammo_unit_3p = self._equipment.right_hand_ammo_unit_3p
+		local var_26_1 = arg_26_0._equipment.right_hand_ammo_unit_3p
 
-		if right_hand_ammo_unit_3p then
-			Unit.set_unit_visibility(right_hand_ammo_unit_3p, show)
+		if var_26_1 then
+			Unit.set_unit_visibility(var_26_1, arg_26_1)
 		end
 
-		if show then
-			Unit.flow_event(right_hand_wielded_unit, "lua_wield")
+		if arg_26_1 then
+			Unit.flow_event(var_26_0, "lua_wield")
 
-			if right_hand_ammo_unit_3p then
-				Unit.flow_event(right_hand_ammo_unit_3p, "lua_wield")
+			if var_26_1 then
+				Unit.flow_event(var_26_1, "lua_wield")
 			end
 		else
-			Unit.flow_event(right_hand_wielded_unit, "lua_unwield")
+			Unit.flow_event(var_26_0, "lua_unwield")
 
-			if right_hand_ammo_unit_3p then
-				Unit.flow_event(right_hand_ammo_unit_3p, "lua_unwield")
-			end
-		end
-	end
-
-	local left_hand_wielded_unit = self._equipment.left_hand_wielded_unit_3p
-
-	if left_hand_wielded_unit then
-		if Unit.has_visibility_group(left_hand_wielded_unit, "normal") then
-			Unit.set_visibility(left_hand_wielded_unit, "normal", show)
-		else
-			Unit.set_unit_visibility(left_hand_wielded_unit, show)
-		end
-
-		local left_hand_ammo_unit_3p = self._equipment.left_hand_ammo_unit_3p
-
-		if left_hand_ammo_unit_3p then
-			Unit.set_unit_visibility(left_hand_ammo_unit_3p, show)
-		end
-
-		if show then
-			Unit.flow_event(left_hand_wielded_unit, "lua_wield")
-
-			if left_hand_ammo_unit_3p then
-				Unit.flow_event(left_hand_ammo_unit_3p, "lua_wield")
-			end
-		else
-			Unit.flow_event(left_hand_wielded_unit, "lua_unwield")
-
-			if left_hand_ammo_unit_3p then
-				Unit.flow_event(left_hand_ammo_unit_3p, "lua_unwield")
+			if var_26_1 then
+				Unit.flow_event(var_26_1, "lua_unwield")
 			end
 		end
 	end
 
-	self:_despawn_attached_units()
+	local var_26_2 = arg_26_0._equipment.left_hand_wielded_unit_3p
 
-	local equipment = self._equipment
-	local wielded_slot = self.wielded_slot
+	if var_26_2 then
+		if Unit.has_visibility_group(var_26_2, "normal") then
+			Unit.set_visibility(var_26_2, "normal", arg_26_1)
+		else
+			Unit.set_unit_visibility(var_26_2, arg_26_1)
+		end
 
-	if wielded_slot then
-		local slot_data = equipment.slots[wielded_slot]
+		local var_26_3 = arg_26_0._equipment.left_hand_ammo_unit_3p
 
-		if slot_data and show then
-			local item_template = self:get_item_template(slot_data)
+		if var_26_3 then
+			Unit.set_unit_visibility(var_26_3, arg_26_1)
+		end
 
-			self:_spawn_attached_units(item_template.third_person_attached_units)
+		if arg_26_1 then
+			Unit.flow_event(var_26_2, "lua_wield")
+
+			if var_26_3 then
+				Unit.flow_event(var_26_3, "lua_wield")
+			end
+		else
+			Unit.flow_event(var_26_2, "lua_unwield")
+
+			if var_26_3 then
+				Unit.flow_event(var_26_3, "lua_unwield")
+			end
+		end
+	end
+
+	arg_26_0:_despawn_attached_units()
+
+	local var_26_4 = arg_26_0._equipment
+	local var_26_5 = arg_26_0.wielded_slot
+
+	if var_26_5 then
+		local var_26_6 = var_26_4.slots[var_26_5]
+
+		if var_26_6 and arg_26_1 then
+			local var_26_7 = arg_26_0:get_item_template(var_26_6)
+
+			arg_26_0:_spawn_attached_units(var_26_7.third_person_attached_units)
 		end
 	end
 end
 
-SimpleHuskInventoryExtension.get_item_template = function (self, slot_data)
-	local item_data = slot_data.item_data
-	local item_template = BackendUtils.get_item_template(item_data)
+function SimpleHuskInventoryExtension.get_item_template(arg_27_0, arg_27_1)
+	local var_27_0 = arg_27_1.item_data
 
-	return item_template
+	return (BackendUtils.get_item_template(var_27_0))
 end
 
-SimpleHuskInventoryExtension.get_wielded_slot_data = function (self)
-	local slot_name = self:get_wielded_slot_name()
-	local slot_data = self:get_slot_data(slot_name)
+function SimpleHuskInventoryExtension.get_wielded_slot_data(arg_28_0)
+	local var_28_0 = arg_28_0:get_wielded_slot_name()
 
-	return slot_data
+	return (arg_28_0:get_slot_data(var_28_0))
 end
 
-SimpleHuskInventoryExtension.get_wielded_slot_item_template = function (self)
-	local wielded_slot_name = self.wielded_slot
-	local equipment = self._equipment
-	local slot_data = equipment.slots[wielded_slot_name]
+function SimpleHuskInventoryExtension.get_wielded_slot_item_template(arg_29_0)
+	local var_29_0 = arg_29_0.wielded_slot
+	local var_29_1 = arg_29_0._equipment.slots[var_29_0]
 
-	if not slot_data then
+	if not var_29_1 then
 		return nil
 	end
 
-	local item_template = self:get_item_template(slot_data)
-
-	return item_template
+	return (arg_29_0:get_item_template(var_29_1))
 end
 
-SimpleHuskInventoryExtension.hot_join_sync = function (self, sender)
-	GearUtils.hot_join_sync(sender, self._unit, self._equipment, self._additional_items)
+function SimpleHuskInventoryExtension.hot_join_sync(arg_30_0, arg_30_1)
+	GearUtils.hot_join_sync(arg_30_1, arg_30_0._unit, arg_30_0._equipment, arg_30_0._additional_items)
 end
 
-SimpleHuskInventoryExtension.get_wielded_slot_name = function (self)
-	local equipment = self._equipment
-	local wielded_slot = equipment.wielded_slot
-
-	return wielded_slot
+function SimpleHuskInventoryExtension.get_wielded_slot_name(arg_31_0)
+	return arg_31_0._equipment.wielded_slot
 end
 
-SimpleHuskInventoryExtension.get_slot_data = function (self, slot_id)
-	local equipment = self._equipment
-	local slots = equipment.slots
-
-	return slots[slot_id]
+function SimpleHuskInventoryExtension.get_slot_data(arg_32_0, arg_32_1)
+	return arg_32_0._equipment.slots[arg_32_1]
 end
 
-SimpleHuskInventoryExtension.get_wielded_slot_data = function (self)
-	local slot_name = self:get_wielded_slot_name()
-	local slot_data = self:get_slot_data(slot_name)
+function SimpleHuskInventoryExtension.get_wielded_slot_data(arg_33_0)
+	local var_33_0 = arg_33_0:get_wielded_slot_name()
 
-	return slot_data
+	return (arg_33_0:get_slot_data(var_33_0))
 end
 
-SimpleHuskInventoryExtension.set_loaded_projectile_override = function (self)
+function SimpleHuskInventoryExtension.set_loaded_projectile_override(arg_34_0)
 	return
 end
 
-SimpleHuskInventoryExtension._override_career_skill_item_template = function (self, item_data)
-	local override_item_template
-	local slot_to_use = item_data.slot_to_use
+function SimpleHuskInventoryExtension._override_career_skill_item_template(arg_35_0, arg_35_1)
+	local var_35_0
+	local var_35_1 = arg_35_1.slot_to_use
 
-	if slot_to_use then
-		local equipment = self._equipment
-		local slots = equipment.slots
-		local override_slot_data = slots[slot_to_use]
+	if var_35_1 then
+		local var_35_2 = arg_35_0._equipment.slots[var_35_1]
 
-		if WeaponUtils.is_valid_weapon_override(override_slot_data, item_data) then
-			override_item_template = self:get_item_template(override_slot_data)
+		if WeaponUtils.is_valid_weapon_override(var_35_2, arg_35_1) then
+			var_35_0 = arg_35_0:get_item_template(var_35_2)
 		else
-			local default_item_name = item_data.default_item_to_replace
-			local override_item_data = ItemMasterList[default_item_name]
+			local var_35_3 = arg_35_1.default_item_to_replace
+			local var_35_4 = ItemMasterList[var_35_3]
 
-			override_item_template = WeaponUtils.get_weapon_template(override_item_data.template)
+			var_35_0 = WeaponUtils.get_weapon_template(var_35_4.template)
 		end
 
-		local item_template = BackendUtils.get_item_template(item_data)
+		local var_35_5 = BackendUtils.get_item_template(arg_35_1)
 
-		item_template.left_hand_attachment_node_linking = override_item_template.left_hand_attachment_node_linking
-		item_template.right_hand_attachment_node_linking = override_item_template.right_hand_attachment_node_linking
-		item_template.wield_anim = override_item_template.wield_anim
-		item_template.wield_anim_no_ammo = override_item_template.wield_anim_no_ammo
-		override_item_template = item_template
+		var_35_5.left_hand_attachment_node_linking = var_35_0.left_hand_attachment_node_linking
+		var_35_5.right_hand_attachment_node_linking = var_35_0.right_hand_attachment_node_linking
+		var_35_5.wield_anim = var_35_0.wield_anim
+		var_35_5.wield_anim_no_ammo = var_35_0.wield_anim_no_ammo
+		var_35_0 = var_35_5
 	end
 
-	return override_item_template
+	return var_35_0
 end
 
-local function get_wield_anim(default, optional_switch, career_name)
-	return optional_switch and optional_switch[career_name] or default
+local function var_0_2(arg_36_0, arg_36_1, arg_36_2)
+	return arg_36_1 and arg_36_1[arg_36_2] or arg_36_0
 end
 
-SimpleHuskInventoryExtension._wield_slot = function (self, world, equipment, slot_name, unit_1p, unit_3p)
-	local slot = equipment.slots[slot_name]
+function SimpleHuskInventoryExtension._wield_slot(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
+	local var_37_0 = arg_37_2.slots[arg_37_3]
 
-	if not slot then
-		print("Cannot wield item from " .. tostring(slot_name) .. " since this slot does not exist.")
+	if not var_37_0 then
+		print("Cannot wield item from " .. tostring(arg_37_3) .. " since this slot does not exist.")
 
 		return
 	end
 
-	local item_data = slot.item_data
+	local var_37_1 = var_37_0.item_data
 
-	if not item_data then
-		print("Cannot wield item from " .. tostring(slot_name) .. " since it is empty.")
+	if not var_37_1 then
+		print("Cannot wield item from " .. tostring(arg_37_3) .. " since it is empty.")
 
 		return
 	end
 
-	GearUtils.destroy_equipment(world, equipment)
+	GearUtils.destroy_equipment(arg_37_1, arg_37_2)
 
-	local override_item_template = self:_override_career_skill_item_template(item_data)
-	local item_template = override_item_template or BackendUtils.get_item_template(item_data)
-	local item_units = BackendUtils.get_item_units(item_data, nil, slot.skin, self._career_name)
-	local right_hand_weapon_unit_3p, right_hand_weapon_unit_1p, left_hand_weapon_unit_3p, left_hand_weapon_unit_1p, right_hand_ammo_unit_3p, right_hand_ammo_unit_1p, left_hand_ammo_unit_3p, left_hand_ammo_unit_1p
+	local var_37_2 = arg_37_0:_override_career_skill_item_template(var_37_1) or BackendUtils.get_item_template(var_37_1)
+	local var_37_3 = BackendUtils.get_item_units(var_37_1, nil, var_37_0.skin, arg_37_0._career_name)
+	local var_37_4
+	local var_37_5
+	local var_37_6
+	local var_37_7
+	local var_37_8
+	local var_37_9
+	local var_37_10
+	local var_37_11
 
-	if item_units.right_hand_unit then
-		right_hand_weapon_unit_3p, right_hand_ammo_unit_3p, right_hand_weapon_unit_1p, right_hand_ammo_unit_1p = GearUtils.spawn_inventory_unit(world, "right", item_template, item_units, slot_name, item_data, unit_1p, unit_3p, nil, nil, nil, item_units.material_settings)
+	if var_37_3.right_hand_unit then
+		var_37_4, var_37_8, var_37_5, var_37_9 = GearUtils.spawn_inventory_unit(arg_37_1, "right", var_37_2, var_37_3, arg_37_3, var_37_1, arg_37_4, arg_37_5, nil, nil, nil, var_37_3.material_settings_name)
 	end
 
-	if item_units.left_hand_unit then
-		left_hand_weapon_unit_3p, left_hand_ammo_unit_3p, left_hand_weapon_unit_1p, left_hand_ammo_unit_1p = GearUtils.spawn_inventory_unit(world, "left", item_template, item_units, slot_name, item_data, unit_1p, unit_3p, nil, nil, nil, item_units.material_settings)
+	if var_37_3.left_hand_unit then
+		var_37_6, var_37_10, var_37_7, var_37_11 = GearUtils.spawn_inventory_unit(arg_37_1, "left", var_37_2, var_37_3, arg_37_3, var_37_1, arg_37_4, arg_37_5, nil, nil, nil, var_37_3.material_settings_name)
 	end
 
-	local is_ammo_weapon = item_units.is_ammo_weapon
+	if var_37_3.is_ammo_weapon then
+		local var_37_12 = var_37_3.material_settings_name or var_37_2.material_settings_name
 
-	if is_ammo_weapon then
-		local material_settings = item_units.material_settings or item_template.material_settings
-
-		if material_settings then
-			if right_hand_ammo_unit_3p then
-				GearUtils.apply_material_settings(right_hand_ammo_unit_3p, material_settings)
+		if var_37_12 then
+			if var_37_8 then
+				GearUtils.apply_material_settings(var_37_8, var_37_12)
 			end
 
-			if left_hand_ammo_unit_3p then
-				GearUtils.apply_material_settings(left_hand_ammo_unit_3p, material_settings)
+			if var_37_10 then
+				GearUtils.apply_material_settings(var_37_10, var_37_12)
 			end
 
-			if unit_1p then
-				if right_hand_ammo_unit_1p then
-					GearUtils.apply_material_settings(right_hand_ammo_unit_1p, material_settings)
+			if arg_37_4 then
+				if var_37_9 then
+					GearUtils.apply_material_settings(var_37_9, var_37_12)
 				end
 
-				if left_hand_ammo_unit_1p then
-					GearUtils.apply_material_settings(left_hand_ammo_unit_1p, material_settings)
+				if var_37_11 then
+					GearUtils.apply_material_settings(var_37_11, var_37_12)
 				end
 			end
 		end
 	end
 
-	local career_extension = ScriptUnit.extension(unit_3p, "career_system")
-	local career_index = career_extension:career_index()
+	local var_37_13 = ScriptUnit.extension(arg_37_5, "career_system"):career_index()
 
-	if Unit.animation_has_variable(unit_3p, "career_index") then
-		local variable_index = Unit.animation_find_variable(unit_3p, "career_index")
+	if Unit.animation_has_variable(arg_37_5, "career_index") then
+		local var_37_14 = Unit.animation_find_variable(arg_37_5, "career_index")
 
-		Unit.animation_set_variable(unit_3p, variable_index, career_index)
+		Unit.animation_set_variable(arg_37_5, var_37_14, var_37_13)
 	end
 
-	local item_template = BackendUtils.get_item_template(item_data)
-	local wield_anim = get_wield_anim(item_template.wield_anim, item_template.wield_anim_career, self._career_name)
-	local wield_anim_3p = get_wield_anim(item_template.wield_anim_3p, item_template.wield_anim_career_3p, self._career_name) or wield_anim
+	local var_37_15 = BackendUtils.get_item_template(var_37_1)
+	local var_37_16 = var_0_2(var_37_15.wield_anim, var_37_15.wield_anim_career, arg_37_0._career_name)
+	local var_37_17 = var_0_2(var_37_15.wield_anim_3p, var_37_15.wield_anim_career_3p, arg_37_0._career_name) or var_37_16
 
-	if right_hand_weapon_unit_3p or left_hand_weapon_unit_3p then
-		if self:ammo_percentage() == 0 and item_template.wield_anim_no_ammo_on_husk then
-			local wield_anim_no_ammo = get_wield_anim(item_template.wield_anim_no_ammo, item_template.wield_anim_no_ammo_career, self._career_name)
+	if var_37_4 or var_37_6 then
+		if arg_37_0:ammo_percentage() == 0 and var_37_15.wield_anim_no_ammo_on_husk then
+			local var_37_18 = var_0_2(var_37_15.wield_anim_no_ammo, var_37_15.wield_anim_no_ammo_career, arg_37_0._career_name)
 
-			wield_anim = wield_anim_no_ammo or wield_anim
-
-			local wield_anim_no_ammo_3p = get_wield_anim(item_template.wield_anim_no_ammo_3p, item_template.wield_anim_no_ammo_career_3p, self._career_name) or wield_anim_no_ammo
-
-			wield_anim_3p = wield_anim_no_ammo_3p or wield_anim_3p
+			var_37_16 = var_37_18 or var_37_16
+			var_37_17 = var_0_2(var_37_15.wield_anim_no_ammo_3p, var_37_15.wield_anim_no_ammo_career_3p, arg_37_0._career_name) or var_37_18 or var_37_17
 		end
 
-		Unit.flow_event(unit_3p, "lua_wield")
-		Unit.animation_event(unit_3p, wield_anim_3p)
+		Unit.flow_event(arg_37_5, "lua_wield")
+		Unit.animation_event(arg_37_5, var_37_17)
 
-		if right_hand_weapon_unit_3p then
-			Unit.set_flow_variable(right_hand_weapon_unit_3p, "owner", unit_3p)
-			Unit.flow_event(right_hand_weapon_unit_3p, "lua_wield")
+		if var_37_4 then
+			Unit.set_flow_variable(var_37_4, "owner", arg_37_5)
+			Unit.flow_event(var_37_4, "lua_wield")
 		end
 
-		if left_hand_weapon_unit_3p then
-			Unit.set_flow_variable(left_hand_weapon_unit_3p, "owner", unit_3p)
-			Unit.flow_event(left_hand_weapon_unit_3p, "lua_wield")
+		if var_37_6 then
+			Unit.set_flow_variable(var_37_6, "owner", arg_37_5)
+			Unit.flow_event(var_37_6, "lua_wield")
 		end
 	end
 
-	if right_hand_weapon_unit_1p or left_hand_weapon_unit_1p then
-		if Unit.animation_has_variable(unit_1p, "animation_variation_id") then
-			local weapon_skin_data = WeaponSkins.skins[slot.skin]
-			local weapon_skin_anim_overrides = weapon_skin_data and weapon_skin_data.action_anim_overrides
-			local animation_variation_id = weapon_skin_anim_overrides and weapon_skin_anim_overrides.animation_variation_id or 0
-			local animation_variation_param = Unit.animation_find_variable(unit_1p, "animation_variation_id")
+	if var_37_5 or var_37_7 then
+		if Unit.animation_has_variable(arg_37_4, "animation_variation_id") then
+			local var_37_19 = WeaponSkins.skins[var_37_0.skin]
+			local var_37_20 = var_37_19 and var_37_19.action_anim_overrides
+			local var_37_21 = var_37_20 and var_37_20.animation_variation_id or 0
+			local var_37_22 = Unit.animation_find_variable(arg_37_4, "animation_variation_id")
 
-			Unit.animation_set_variable(unit_1p, animation_variation_param, animation_variation_id)
+			Unit.animation_set_variable(arg_37_4, var_37_22, var_37_21)
 		end
 
-		Unit.animation_event(unit_1p, wield_anim)
+		Unit.animation_event(arg_37_4, var_37_16)
 	end
 
-	if right_hand_weapon_unit_1p then
-		Unit.set_unit_visibility(right_hand_weapon_unit_3p, false)
+	if var_37_5 then
+		Unit.set_unit_visibility(var_37_4, false)
 
-		if right_hand_ammo_unit_1p then
-			Unit.set_unit_visibility(right_hand_ammo_unit_3p, false)
-		end
-	end
-
-	if left_hand_weapon_unit_1p then
-		Unit.set_unit_visibility(left_hand_weapon_unit_3p, false)
-
-		if left_hand_ammo_unit_1p then
-			Unit.set_unit_visibility(left_hand_ammo_unit_3p, false)
+		if var_37_9 then
+			Unit.set_unit_visibility(var_37_8, false)
 		end
 	end
 
-	equipment.right_hand_wielded_unit_3p = right_hand_weapon_unit_3p
-	equipment.right_hand_ammo_unit_3p = right_hand_ammo_unit_3p
-	equipment.right_hand_wielded_unit = right_hand_weapon_unit_1p
-	equipment.right_hand_ammo_unit_1p = right_hand_ammo_unit_1p
-	equipment.left_hand_wielded_unit_3p = left_hand_weapon_unit_3p
-	equipment.left_hand_ammo_unit_3p = left_hand_ammo_unit_3p
-	equipment.left_hand_wielded_unit = left_hand_weapon_unit_1p
-	equipment.left_hand_ammo_unit_1p = left_hand_ammo_unit_1p
-	equipment.wielded = item_data
-	equipment.wielded_slot = slot_name
+	if var_37_7 then
+		Unit.set_unit_visibility(var_37_6, false)
 
-	local blackboard = BLACKBOARDS[self._unit]
-
-	if not blackboard.weapon_unit then
-		blackboard.weapon_unit = self:get_weapon_unit()
+		if var_37_11 then
+			Unit.set_unit_visibility(var_37_10, false)
+		end
 	end
 
-	return item_data
-end
+	arg_37_2.right_hand_wielded_unit_3p = var_37_4
+	arg_37_2.right_hand_ammo_unit_3p = var_37_8
+	arg_37_2.right_hand_wielded_unit = var_37_5
+	arg_37_2.right_hand_ammo_unit_1p = var_37_9
+	arg_37_2.left_hand_wielded_unit_3p = var_37_6
+	arg_37_2.left_hand_ammo_unit_3p = var_37_10
+	arg_37_2.left_hand_wielded_unit = var_37_7
+	arg_37_2.left_hand_ammo_unit_1p = var_37_11
+	arg_37_2.wielded = var_37_1
+	arg_37_2.wielded_slot = arg_37_3
 
-SimpleHuskInventoryExtension.is_showing_third_person_inventory = function (self)
-	return self._show_third_person
-end
+	local var_37_23 = BLACKBOARDS[arg_37_0._unit]
 
-SimpleHuskInventoryExtension.start_weapon_fx = function (self, fx_name)
-	local equipment = self._equipment
-	local slot_name = equipment.wielded_slot
-	local slot_data = equipment.slots[slot_name]
-	local item_template = self:get_item_template(slot_data)
-	local item_particle_fx = item_template.particle_fx
-	local particle_fx = item_particle_fx and item_particle_fx[fx_name]
-
-	if particle_fx then
-		self._weapon_fx[fx_name] = GearUtils.create_attached_particles(self._world, particle_fx, equipment, self._unit, nil, false)
+	if not var_37_23.weapon_unit then
+		var_37_23.weapon_unit = arg_37_0:get_weapon_unit()
 	end
+
+	return var_37_1
 end
 
-SimpleHuskInventoryExtension.stop_weapon_fx = function (self, fx_name)
-	self._weapon_fx[fx_name] = GearUtils.destroy_attached_particles(self._world, self._weapon_fx[fx_name])
+function SimpleHuskInventoryExtension.is_showing_third_person_inventory(arg_38_0)
+	return arg_38_0._show_third_person
 end
 
-SimpleHuskInventoryExtension._stop_all_weapon_fx = function (self)
-	local world = self._world
-	local weapon_fx = self._weapon_fx
+function SimpleHuskInventoryExtension.start_weapon_fx(arg_39_0, arg_39_1)
+	local var_39_0 = arg_39_0._equipment
+	local var_39_1 = var_39_0.wielded_slot
+	local var_39_2 = var_39_0.slots[var_39_1]
+	local var_39_3 = arg_39_0:get_item_template(var_39_2).particle_fx
+	local var_39_4 = var_39_3 and var_39_3[arg_39_1]
 
-	for name, fx_ids in pairs(weapon_fx) do
-		GearUtils.destroy_attached_particles(world, fx_ids)
-
-		weapon_fx[name] = nil
+	if var_39_4 then
+		arg_39_0._weapon_fx[arg_39_1] = GearUtils.create_attached_particles(arg_39_0._world, var_39_4, var_39_0, arg_39_0._unit, nil, false)
 	end
 end
 
-SimpleHuskInventoryExtension.has_additional_item_slots = function (self, slot_name)
-	local additional_items_slot = self._additional_items[slot_name]
-
-	return additional_items_slot ~= nil
+function SimpleHuskInventoryExtension.stop_weapon_fx(arg_40_0, arg_40_1)
+	arg_40_0._weapon_fx[arg_40_1] = GearUtils.destroy_attached_particles(arg_40_0._world, arg_40_0._weapon_fx[arg_40_1])
 end
 
-SimpleHuskInventoryExtension.can_store_additional_item = function (self, slot_name)
-	local additional_items_slot = self._additional_items[slot_name]
+function SimpleHuskInventoryExtension._stop_all_weapon_fx(arg_41_0)
+	local var_41_0 = arg_41_0._world
+	local var_41_1 = arg_41_0._weapon_fx
 
-	return additional_items_slot and #additional_items_slot.items < additional_items_slot.max_slots
+	for iter_41_0, iter_41_1 in pairs(var_41_1) do
+		GearUtils.destroy_attached_particles(var_41_0, iter_41_1)
+
+		var_41_1[iter_41_0] = nil
+	end
 end
 
-SimpleHuskInventoryExtension.has_additional_items = function (self, slot_name)
-	local additional_items_slot = self._additional_items[slot_name]
-
-	return additional_items_slot and #additional_items_slot.items > 0
+function SimpleHuskInventoryExtension.has_additional_item_slots(arg_42_0, arg_42_1)
+	return arg_42_0._additional_items[arg_42_1] ~= nil
 end
 
-SimpleHuskInventoryExtension.get_additional_items = function (self, slot_name)
-	local additional_items_slot = self._additional_items[slot_name]
+function SimpleHuskInventoryExtension.can_store_additional_item(arg_43_0, arg_43_1)
+	local var_43_0 = arg_43_0._additional_items[arg_43_1]
 
-	return additional_items_slot and additional_items_slot.items
+	return var_43_0 and #var_43_0.items < var_43_0.max_slots
 end
 
-SimpleHuskInventoryExtension.get_additional_items_table = function (self)
-	return self._additional_items
+function SimpleHuskInventoryExtension.has_additional_items(arg_44_0, arg_44_1)
+	local var_44_0 = arg_44_0._additional_items[arg_44_1]
+
+	return var_44_0 and #var_44_0.items > 0
 end
 
-SimpleHuskInventoryExtension.get_total_item_count = function (self, slot_name)
-	local count = 0
+function SimpleHuskInventoryExtension.get_additional_items(arg_45_0, arg_45_1)
+	local var_45_0 = arg_45_0._additional_items[arg_45_1]
 
-	if self._equipment.slots[slot_name] then
-		count = 1
+	return var_45_0 and var_45_0.items
+end
+
+function SimpleHuskInventoryExtension.get_additional_items_table(arg_46_0)
+	return arg_46_0._additional_items
+end
+
+function SimpleHuskInventoryExtension.get_total_item_count(arg_47_0, arg_47_1)
+	local var_47_0 = 0
+
+	if arg_47_0._equipment.slots[arg_47_1] then
+		var_47_0 = 1
 	end
 
-	local stored_items = self:get_additional_items(slot_name)
+	local var_47_1 = arg_47_0:get_additional_items(arg_47_1)
 
-	if stored_items then
-		count = count + #stored_items
+	if var_47_1 then
+		var_47_0 = var_47_0 + #var_47_1
 	end
 
-	return count
+	return var_47_0
 end
 
-SimpleHuskInventoryExtension.update_additional_items = function (self, slot_name, items)
-	local additional_items_slot = self._additional_items[slot_name]
+function SimpleHuskInventoryExtension.update_additional_items(arg_48_0, arg_48_1, arg_48_2)
+	local var_48_0 = arg_48_0._additional_items[arg_48_1]
 
-	if additional_items_slot then
-		table.clear(additional_items_slot.items)
+	if var_48_0 then
+		table.clear(var_48_0.items)
 
-		for i = 1, #items do
-			local item_name = items[i]
+		for iter_48_0 = 1, #arg_48_2 do
+			local var_48_1 = arg_48_2[iter_48_0]
 
-			additional_items_slot.items[#additional_items_slot.items + 1] = ItemMasterList[item_name]
+			var_48_0.items[#var_48_0.items + 1] = ItemMasterList[var_48_1]
 		end
 	end
 end

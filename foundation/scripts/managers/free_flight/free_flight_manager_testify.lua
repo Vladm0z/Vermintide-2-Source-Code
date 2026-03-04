@@ -1,15 +1,13 @@
-﻿-- chunkname: @foundation/scripts/managers/free_flight/free_flight_manager_testify.lua
+-- chunkname: @foundation/scripts/managers/free_flight/free_flight_manager_testify.lua
 
-local FreeFlightManagerTestify = {
-	move_free_flight_camera = function (free_flight_manager, data)
-		local position = MainPathUtils.point_on_mainpath(nil, data.position)
-		local rotation = stingray.Quaternion.from_euler_angles_xyz(data.rotation.x, data.rotation.y, data.rotation.z)
+return {
+	move_free_flight_camera = function(arg_1_0, arg_1_1)
+		local var_1_0 = MainPathUtils.point_on_mainpath(nil, arg_1_1.position)
+		local var_1_1 = stingray.Quaternion.from_euler_angles_xyz(arg_1_1.rotation.x, arg_1_1.rotation.y, arg_1_1.rotation.z)
 
-		position.z = position.z + 1
+		var_1_0.z = var_1_0.z + 1
 
-		printf("Moving camera to position x:%f, y:%f, z:%f and rotation x:%f, y:%f, z:%f", position.x, position.y, position.z, data.rotation.x, data.rotation.y, data.rotation.z)
-		free_flight_manager:teleport_camera(1, position, rotation)
-	end,
+		printf("Moving camera to position x:%f, y:%f, z:%f and rotation x:%f, y:%f, z:%f", var_1_0.x, var_1_0.y, var_1_0.z, arg_1_1.rotation.x, arg_1_1.rotation.y, arg_1_1.rotation.z)
+		arg_1_0:teleport_camera(1, var_1_0, var_1_1)
+	end
 }
-
-return FreeFlightManagerTestify

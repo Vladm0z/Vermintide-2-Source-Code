@@ -1,154 +1,153 @@
-﻿-- chunkname: @scripts/utils/profile_requester.lua
+-- chunkname: @scripts/utils/profile_requester.lua
 
-local RPCS = {
+local var_0_0 = {
 	"rpc_request_profile",
-	"rpc_request_profile_reply",
+	"rpc_request_profile_reply"
 }
 
 ProfileRequester = class(ProfileRequester)
 ProfileRequester.REQUEST_RESULTS = {
 	"success",
 	"failure",
-	failure = 2,
 	success = 1,
+	failure = 2
 }
 
-ProfileRequester.init = function (self, is_server, network_server, profile_synchronizer)
-	self._is_server = is_server
-	self._network_server = network_server
-	self._profile_synchronizer = profile_synchronizer
-	self._peer_id = Network.peer_id()
-	self._request_id = 0
+function ProfileRequester.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._is_server = arg_1_1
+	arg_1_0._network_server = arg_1_2
+	arg_1_0._profile_synchronizer = arg_1_3
+	arg_1_0._peer_id = Network.peer_id()
+	arg_1_0._request_id = 0
 end
 
-ProfileRequester.destroy = function (self)
+function ProfileRequester.destroy(arg_2_0)
 	return
 end
 
-ProfileRequester.register_rpcs = function (self, network_event_delegate, network_transmit)
-	network_event_delegate:register(self, unpack(RPCS))
+function ProfileRequester.register_rpcs(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_1:register(arg_3_0, unpack(var_0_0))
 
-	self._network_event_delegate = network_event_delegate
-	self._network_transmit = network_transmit
+	arg_3_0._network_event_delegate = arg_3_1
+	arg_3_0._network_transmit = arg_3_2
 end
 
-ProfileRequester.unregister_rpcs = function (self)
-	self._network_event_delegate:unregister(self)
+function ProfileRequester.unregister_rpcs(arg_4_0)
+	arg_4_0._network_event_delegate:unregister(arg_4_0)
 
-	self._network_event_delegate = nil
-	self._network_transmit = nil
+	arg_4_0._network_event_delegate = nil
+	arg_4_0._network_transmit = nil
 end
 
-ProfileRequester.profile_is_specator = function (self, profile_index)
-	return profile_index == FindProfileIndex("spectator")
+function ProfileRequester.profile_is_specator(arg_5_0, arg_5_1)
+	return arg_5_1 == FindProfileIndex("spectator")
 end
 
-ProfileRequester.request_profile = function (self, peer_id, local_player_id, profile_name, career_name, force_respawn)
-	self._request_id = self._request_id + 1
-	self._request_result = nil
+function ProfileRequester.request_profile(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+	arg_6_0._request_id = arg_6_0._request_id + 1
+	arg_6_0._request_result = nil
 
-	local profile_index = FindProfileIndex(profile_name)
-	local career_index = career_index_from_name(profile_index, career_name)
+	local var_6_0 = FindProfileIndex(arg_6_3)
+	local var_6_1 = career_index_from_name(var_6_0, arg_6_4)
 
-	if self._is_server then
-		self:_request_profile(peer_id, local_player_id, self._request_id, profile_index, career_index, force_respawn)
+	if arg_6_0._is_server then
+		arg_6_0:_request_profile(arg_6_1, arg_6_2, arg_6_0._request_id, var_6_0, var_6_1, arg_6_5)
 	else
-		self._network_transmit:send_rpc_server("rpc_request_profile", peer_id, local_player_id, self._request_id, profile_index, career_index, force_respawn)
+		arg_6_0._network_transmit:send_rpc_server("rpc_request_profile", arg_6_1, arg_6_2, arg_6_0._request_id, var_6_0, var_6_1, arg_6_5)
 	end
 end
 
-ProfileRequester._request_profile = function (self, peer_id, local_player_id, request_id, profile_index, career_index, force_respawn)
-	local allowed_to_switch_to_profile
+function ProfileRequester._request_profile(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+	local var_7_0
 
-	force_respawn = not not force_respawn
+	arg_7_6 = not not arg_7_6
 
-	local party_id = Managers.mechanism:reserved_party_id_by_peer(peer_id)
+	local var_7_1 = Managers.mechanism:reserved_party_id_by_peer(arg_7_1)
+	local var_7_2 = arg_7_0:profile_is_specator() or Managers.mechanism:profile_available_for_peer(var_7_1, arg_7_1, arg_7_4)
 
-	allowed_to_switch_to_profile = self:profile_is_specator() or Managers.mechanism:profile_available_for_peer(party_id, peer_id, profile_index)
+	if var_7_2 then
+		local var_7_3
+		local var_7_4
+		local var_7_5, var_7_6
 
-	if allowed_to_switch_to_profile then
-		local override_profile_index, override_career_index
+		var_7_2, var_7_5, var_7_6 = Managers.mechanism:try_reserve_profile_for_peer_by_mechanism(arg_7_1, arg_7_4, arg_7_5, arg_7_6)
 
-		allowed_to_switch_to_profile, override_profile_index, override_career_index = Managers.mechanism:try_reserve_profile_for_peer_by_mechanism(peer_id, profile_index, career_index, force_respawn)
-
-		if override_profile_index then
-			profile_index = override_profile_index
-			career_index = override_career_index
+		if var_7_5 then
+			arg_7_4 = var_7_5
+			arg_7_5 = var_7_6
 		end
 	end
 
-	local result_id
+	local var_7_7
 
-	if allowed_to_switch_to_profile then
-		result_id = ProfileRequester.REQUEST_RESULTS.success
+	if var_7_2 then
+		var_7_7 = ProfileRequester.REQUEST_RESULTS.success
 
-		Managers.party:set_selected_profile(peer_id, local_player_id, profile_index, career_index)
+		Managers.party:set_selected_profile(arg_7_1, arg_7_2, arg_7_4, arg_7_5)
 
-		local is_bot = false
+		local var_7_8 = false
 
-		self._profile_synchronizer:assign_full_profile(peer_id, local_player_id, profile_index, career_index, is_bot)
+		arg_7_0._profile_synchronizer:assign_full_profile(arg_7_1, arg_7_2, arg_7_4, arg_7_5, var_7_8)
 
-		if force_respawn then
-			Managers.state.game_mode:force_respawn(peer_id, local_player_id)
+		if arg_7_6 then
+			Managers.state.game_mode:force_respawn(arg_7_1, arg_7_2)
 		end
 	else
-		result_id = ProfileRequester.REQUEST_RESULTS.failure
+		var_7_7 = ProfileRequester.REQUEST_RESULTS.failure
 	end
 
-	if self._peer_id == peer_id then
-		local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+	if arg_7_0._peer_id == arg_7_1 then
+		local var_7_9 = PEER_ID_TO_CHANNEL[arg_7_1]
 
-		self:rpc_request_profile_reply(channel_id, local_player_id, request_id, profile_index, career_index, force_respawn, result_id)
+		arg_7_0:rpc_request_profile_reply(var_7_9, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, var_7_7)
 	else
-		self._network_transmit:send_rpc("rpc_request_profile_reply", peer_id, local_player_id, request_id, profile_index, career_index, force_respawn, result_id)
+		arg_7_0._network_transmit:send_rpc("rpc_request_profile_reply", arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, var_7_7)
 	end
 end
 
-ProfileRequester._despawn_player_unit = function (self, player)
-	local player_unit = player.player_unit
+function ProfileRequester._despawn_player_unit(arg_8_0, arg_8_1)
+	arg_8_0._despawning_player_unit = arg_8_1.player_unit
 
-	self._despawning_player_unit = player_unit
-
-	Managers.state.spawn:delayed_despawn(player)
+	Managers.state.spawn:delayed_despawn(arg_8_1)
 end
 
-ProfileRequester.update = function (self, dt)
-	if self._despawning_player_unit and not Unit.alive(self._despawning_player_unit) then
-		self._despawning_player_unit = nil
+function ProfileRequester.update(arg_9_0, arg_9_1)
+	if arg_9_0._despawning_player_unit and not Unit.alive(arg_9_0._despawning_player_unit) then
+		arg_9_0._despawning_player_unit = nil
 	end
 end
 
-ProfileRequester.result = function (self)
-	return self._request_result
+function ProfileRequester.result(arg_10_0)
+	return arg_10_0._request_result
 end
 
-ProfileRequester.rpc_request_profile = function (self, channel_id, peer_id, local_player_id, request_id, profile_index, career_index, force_respawn)
-	local peer = CHANNEL_TO_PEER_ID[channel_id]
+function ProfileRequester.rpc_request_profile(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7)
+	local var_11_0 = CHANNEL_TO_PEER_ID[arg_11_1]
 
-	self:_request_profile(peer, local_player_id, request_id, profile_index, career_index, force_respawn)
+	arg_11_0:_request_profile(var_11_0, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7)
 end
 
-ProfileRequester.rpc_request_profile_reply = function (self, channel_id, local_player_id, request_id, profile_index, career_index, force_respawn, result_id)
-	if request_id < self._request_id then
+function ProfileRequester.rpc_request_profile_reply(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7)
+	if arg_12_3 < arg_12_0._request_id then
 		return
 	end
 
-	local result = ProfileRequester.REQUEST_RESULTS[result_id]
+	local var_12_0 = ProfileRequester.REQUEST_RESULTS[arg_12_7]
 
-	self._request_result = result
+	arg_12_0._request_result = var_12_0
 
-	if result == "success" and force_respawn then
-		local self_peer_id = self._peer_id
-		local player = Managers.player:player(self_peer_id, local_player_id)
+	if var_12_0 == "success" and arg_12_6 then
+		local var_12_1 = arg_12_0._peer_id
+		local var_12_2 = Managers.player:player(var_12_1, arg_12_2)
 
-		if player then
-			if player:needs_despawn() then
-				self:_despawn_player_unit(player)
+		if var_12_2 then
+			if var_12_2:needs_despawn() then
+				arg_12_0:_despawn_player_unit(var_12_2)
 			end
 
-			player:set_profile_index(profile_index)
-			player:set_career_index(career_index)
-			Managers.party:set_selected_profile(self_peer_id, local_player_id, profile_index, career_index)
+			var_12_2:set_profile_index(arg_12_4)
+			var_12_2:set_career_index(arg_12_5)
+			Managers.party:set_selected_profile(var_12_1, arg_12_2, arg_12_4, arg_12_5)
 		end
 	end
 

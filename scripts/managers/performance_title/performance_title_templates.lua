@@ -1,77 +1,77 @@
-﻿-- chunkname: @scripts/managers/performance_title/performance_title_templates.lua
+-- chunkname: @scripts/managers/performance_title/performance_title_templates.lua
 
 PerformanceTitles = {}
 PerformanceTitles.titles = {
 	headhunter = {
-		amount = 1,
-		display_name = "performance_title_headhunter",
 		evaluation_template = "equal_higher",
+		display_name = "performance_title_headhunter",
+		amount = 1,
 		stat_types = {
 			{
-				"headshots",
-			},
-		},
+				"headshots"
+			}
+		}
 	},
 	doctor = {
-		amount = 1,
-		display_name = "performance_title_doctor",
 		evaluation_template = "equal_higher",
+		display_name = "performance_title_doctor",
+		amount = 1,
 		stat_types = {
 			{
-				"times_friend_healed",
-			},
-		},
+				"times_friend_healed"
+			}
+		}
 	},
 	savior = {
-		amount = 1,
-		display_name = "performance_title_savior",
 		evaluation_template = "equal_higher",
+		display_name = "performance_title_savior",
+		amount = 1,
 		stat_types = {
 			{
-				"saves",
-			},
-		},
+				"saves"
+			}
+		}
 	},
 	reviver = {
-		amount = 1,
-		display_name = "performance_title_reviver",
 		evaluation_template = "equal_higher",
+		display_name = "performance_title_reviver",
+		amount = 1,
 		stat_types = {
 			{
-				"revives",
-			},
-		},
-	},
+				"revives"
+			}
+		}
+	}
 }
 
-local function get_stats(statistics_db, stats_id, stat_types)
-	local stat = 0
+local function var_0_0(arg_1_0, arg_1_1, arg_1_2)
+	local var_1_0 = 0
 
-	for i, stats in ipairs(stat_types) do
-		stat = stat + statistics_db:get_stat(stats_id, unpack(stats))
+	for iter_1_0, iter_1_1 in ipairs(arg_1_2) do
+		var_1_0 = var_1_0 + arg_1_0:get_stat(arg_1_1, unpack(iter_1_1))
 	end
 
-	return stat
+	return var_1_0
 end
 
 PerformanceTitles.templates = {
 	equal_higher = {
-		evaluate = function (statistics_db, stats_id, data)
-			local stat = get_stats(statistics_db, stats_id, data.stat_types)
+		evaluate = function(arg_2_0, arg_2_1, arg_2_2)
+			local var_2_0 = var_0_0(arg_2_0, arg_2_1, arg_2_2.stat_types)
 
-			return stat >= data.amount, stat
+			return var_2_0 >= arg_2_2.amount, var_2_0
 		end,
-		compare = function (amount_1, amount_2)
-			return amount_2 <= amount_1
-		end,
-	},
+		compare = function(arg_3_0, arg_3_1)
+			return arg_3_1 <= arg_3_0
+		end
+	}
 }
 
-for title_name, settings in pairs(PerformanceTitles.titles) do
-	fassert(settings.display_name, "No display name in performance title %s", title_name)
+for iter_0_0, iter_0_1 in pairs(PerformanceTitles.titles) do
+	fassert(iter_0_1.display_name, "No display name in performance title %s", iter_0_0)
 
-	local evaluation_template = settings.evaluation_template
-	local template = PerformanceTitles.templates[evaluation_template]
+	local var_0_1 = iter_0_1.evaluation_template
+	local var_0_2 = PerformanceTitles.templates[var_0_1]
 
-	fassert(template, "Performance Titles %s failed, no evaluation_template called %s", title_name, tostring(evaluation_template))
+	fassert(var_0_2, "Performance Titles %s failed, no evaluation_template called %s", iter_0_0, tostring(var_0_1))
 end

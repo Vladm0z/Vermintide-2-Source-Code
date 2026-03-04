@@ -1,196 +1,184 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_warpfire_thrower_shoot_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_warpfire_thrower_shoot_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
-local stagger_types = require("scripts/utils/stagger_types")
+local var_0_0 = require("scripts/utils/stagger_types")
 
 BTWarpfireThrowerShootAction = class(BTWarpfireThrowerShootAction, BTNode)
 
-BTWarpfireThrowerShootAction.init = function (self, ...)
-	BTWarpfireThrowerShootAction.super.init(self, ...)
+function BTWarpfireThrowerShootAction.init(arg_1_0, ...)
+	BTWarpfireThrowerShootAction.super.init(arg_1_0, ...)
 end
 
 BTWarpfireThrowerShootAction.name = "BTWarpfireThrowerShootAction"
 
-local hit_ai_units = {}
+local var_0_1 = {}
 
-BTWarpfireThrowerShootAction.enter = function (self, unit, blackboard, t)
-	local action = self._tree_node.action_data
+function BTWarpfireThrowerShootAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	arg_2_2.action = arg_2_0._tree_node.action_data
+	arg_2_2.attack_finished = false
 
-	blackboard.action = action
-	blackboard.attack_finished = false
+	local var_2_0 = arg_2_2.world
 
-	local world = blackboard.world
+	arg_2_2.physics_world = arg_2_2.physics_world or World.get_data(var_2_0, "physics_world")
 
-	blackboard.physics_world = blackboard.physics_world or World.get_data(world, "physics_world")
+	local var_2_1 = arg_2_2.attack_pattern_data or {}
 
-	local attack_data = blackboard.attack_pattern_data or {}
+	arg_2_2.attack_pattern_data = var_2_1
 
-	blackboard.attack_pattern_data = attack_data
+	local var_2_2 = arg_2_2.breed.default_inventory_template
 
-	local inventory_template = blackboard.breed.default_inventory_template
-	local inventory_extension = ScriptUnit.extension(unit, "ai_inventory_system")
-	local warpfire_gun_unit = inventory_extension:get_unit(inventory_template)
+	var_2_1.warpfire_gun_unit = ScriptUnit.extension(arg_2_1, "ai_inventory_system"):get_unit(var_2_2)
+	var_2_1.state = "align"
 
-	attack_data.warpfire_gun_unit = warpfire_gun_unit
-	attack_data.state = "align"
+	local var_2_3 = Unit.local_rotation(arg_2_1, 0)
+	local var_2_4 = Quaternion.forward(var_2_3)
 
-	local rotation = Unit.local_rotation(unit, 0)
-	local forward_direction = Quaternion.forward(rotation)
+	var_2_1.shoot_direction_box = Vector3Box(var_2_4)
 
-	attack_data.shoot_direction_box = Vector3Box(forward_direction)
+	arg_2_2.navigation_extension:stop()
+	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-	local navigation_extension = blackboard.navigation_extension
+	var_2_1.constraint_target = var_2_1.constraint_target or Unit.animation_find_constraint_target(arg_2_1, "aim_target")
 
-	navigation_extension:stop()
-	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
+	local var_2_5 = arg_2_2.target_unit
 
-	attack_data.constraint_target = attack_data.constraint_target or Unit.animation_find_constraint_target(unit, "aim_target")
+	arg_2_0:_start_align_towards_target(arg_2_1, arg_2_2, var_2_1, var_2_5)
 
-	local target_unit = blackboard.target_unit
+	arg_2_2.move_state = "attacking"
+	arg_2_2.attack_aborted = false
+	arg_2_2.line_of_sight_raycast_timer = arg_2_3 + 0.5
+	arg_2_2.close_attack_cooldown = 0
 
-	self:_start_align_towards_target(unit, blackboard, attack_data, target_unit)
+	local var_2_6 = arg_2_2.warpfire_data or {}
 
-	blackboard.move_state = "attacking"
-	blackboard.attack_aborted = false
-	blackboard.line_of_sight_raycast_timer = t + 0.5
-	blackboard.close_attack_cooldown = 0
+	arg_2_2.warpfire_data = var_2_6
+	var_2_6.is_firing = false
 
-	local data = blackboard.warpfire_data or {}
-
-	blackboard.warpfire_data = data
-	data.is_firing = false
-
-	Managers.state.entity:system("ai_bot_group_system"):ranged_attack_started(unit, target_unit, "warpfire_thrower_fire")
+	Managers.state.entity:system("ai_bot_group_system"):ranged_attack_started(arg_2_1, var_2_5, "warpfire_thrower_fire")
 end
 
-BTWarpfireThrowerShootAction._init_attack = function (self, unit, target_unit, blackboard, action)
-	local target_position = POSITION_LOOKUP[target_unit]
-	local attack_is_ok
+function BTWarpfireThrowerShootAction._init_attack(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local var_3_0 = POSITION_LOOKUP[arg_3_2]
+	local var_3_1
 
-	if target_position then
-		local unit_position = POSITION_LOOKUP[unit]
-		local attack_minimum_length = action.minimum_length
-		local end_pos_distance_sq = Vector3.distance_squared(unit_position, target_position)
+	if var_3_0 then
+		local var_3_2 = POSITION_LOOKUP[arg_3_1]
+		local var_3_3 = arg_3_4.minimum_length
 
-		attack_is_ok = end_pos_distance_sq > attack_minimum_length^2
+		var_3_1 = Vector3.distance_squared(var_3_2, var_3_0) > var_3_3^2
 	else
-		attack_is_ok = false
+		var_3_1 = false
 	end
 
-	return attack_is_ok
+	return var_3_1
 end
 
-BTWarpfireThrowerShootAction._abort_shooting = function (self, t, warpfire_data)
-	warpfire_data.blob_extension:stop_placing_blobs(t)
+function BTWarpfireThrowerShootAction._abort_shooting(arg_4_0, arg_4_1, arg_4_2)
+	arg_4_2.blob_extension:stop_placing_blobs(arg_4_1)
 
-	warpfire_data.is_firing = false
+	arg_4_2.is_firing = false
 end
 
-BTWarpfireThrowerShootAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	local warpfire_data = blackboard.warpfire_data
+function BTWarpfireThrowerShootAction.leave(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	local var_5_0 = arg_5_2.warpfire_data
 
-	if warpfire_data.is_firing then
-		self:_abort_shooting(t, warpfire_data)
+	if var_5_0.is_firing then
+		arg_5_0:_abort_shooting(arg_5_3, var_5_0)
 	end
 
-	Managers.state.network:anim_event(unit, "attack_shoot_end")
+	Managers.state.network:anim_event(arg_5_1, "attack_shoot_end")
 
-	local target_unit = blackboard.target_unit
+	local var_5_1 = arg_5_2.target_unit
 
-	Managers.state.entity:system("ai_bot_group_system"):ranged_attack_ended(unit, target_unit, "warpfire_thrower_fire")
+	Managers.state.entity:system("ai_bot_group_system"):ranged_attack_ended(arg_5_1, var_5_1, "warpfire_thrower_fire")
 
-	blackboard.action = nil
-	blackboard.attack_aborted = nil
-	blackboard.anim_cb_attack_shoot_random_shot = nil
-	blackboard.create_bot_threat_at_t = nil
+	arg_5_2.action = nil
+	arg_5_2.attack_aborted = nil
+	arg_5_2.anim_cb_attack_shoot_random_shot = nil
+	arg_5_2.create_bot_threat_at_t = nil
 
-	for unit, _ in pairs(hit_ai_units) do
-		hit_ai_units[unit] = nil
+	for iter_5_0, iter_5_1 in pairs(var_0_1) do
+		var_0_1[iter_5_0] = nil
 	end
 end
 
-BTWarpfireThrowerShootAction.run = function (self, unit, blackboard, t, dt)
-	if blackboard.attack_aborted then
+function BTWarpfireThrowerShootAction.run(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	if arg_6_2.attack_aborted then
 		return "failed"
 	end
 
-	local action = blackboard.action
-	local target_unit = blackboard.target_unit
-	local warpfire_data = blackboard.warpfire_data
-	local attack_pattern_data = blackboard.attack_pattern_data
+	local var_6_0 = arg_6_2.action
+	local var_6_1 = arg_6_2.target_unit
+	local var_6_2 = arg_6_2.warpfire_data
+	local var_6_3 = arg_6_2.attack_pattern_data
 
-	if attack_pattern_data.state == "align" then
-		local old_target_unit = blackboard.old_target_unit
-		local switched_target = not old_target_unit or target_unit ~= old_target_unit
+	if var_6_3.state == "align" then
+		local var_6_4 = arg_6_2.old_target_unit
 
-		if switched_target then
-			self:_start_align_towards_target(unit, blackboard, attack_pattern_data, target_unit)
+		if not var_6_4 or var_6_1 ~= var_6_4 then
+			arg_6_0:_start_align_towards_target(arg_6_1, arg_6_2, var_6_3, var_6_1)
 
-			blackboard.old_target_unit = target_unit
+			arg_6_2.old_target_unit = var_6_1
 		end
 
-		local done = self:_update_align_towards_target(unit, blackboard, attack_pattern_data, target_unit, dt)
+		if arg_6_0:_update_align_towards_target(arg_6_1, arg_6_2, var_6_3, var_6_1, arg_6_4) then
+			arg_6_0:_end_align_towards_target(arg_6_1, var_6_2, var_6_3, arg_6_2, arg_6_3)
 
-		if done then
-			self:_end_align_towards_target(unit, warpfire_data, attack_pattern_data, blackboard, t)
+			local var_6_5 = var_6_0.bot_threat_start_time
 
-			local bot_threat_start_time = action.bot_threat_start_time
-
-			if bot_threat_start_time then
-				blackboard.create_bot_threat_at_t = t + bot_threat_start_time
+			if var_6_5 then
+				arg_6_2.create_bot_threat_at_t = arg_6_3 + var_6_5
 			end
 		end
 
 		return "running"
-	elseif attack_pattern_data.state == "ready" then
-		local create_bot_threat_at_t = blackboard.create_bot_threat_at_t
+	elseif var_6_3.state == "ready" then
+		local var_6_6 = arg_6_2.create_bot_threat_at_t
 
-		if create_bot_threat_at_t and create_bot_threat_at_t < t then
-			self:_create_bot_aoe_threat(unit, action)
+		if var_6_6 and var_6_6 < arg_6_3 then
+			arg_6_0:_create_bot_aoe_threat(arg_6_1, var_6_0)
 
-			blackboard.create_bot_threat_at_t = nil
+			arg_6_2.create_bot_threat_at_t = nil
 		end
 
-		if blackboard.anim_cb_attack_shoot_random_shot then
-			if t < warpfire_data.stop_firing_t then
-				if not warpfire_data.is_firing then
-					if self:_init_attack(unit, target_unit, blackboard, action) then
-						self:_attack_fire(unit, warpfire_data, action, blackboard, t)
+		if arg_6_2.anim_cb_attack_shoot_random_shot then
+			if arg_6_3 < var_6_2.stop_firing_t then
+				if not var_6_2.is_firing then
+					if arg_6_0:_init_attack(arg_6_1, var_6_1, arg_6_2, var_6_0) then
+						arg_6_0:_attack_fire(arg_6_1, var_6_2, var_6_0, arg_6_2, arg_6_3)
 
-						blackboard.warpfire_face_timer = t + blackboard.target_dist * 0.08
+						arg_6_2.warpfire_face_timer = arg_6_3 + arg_6_2.target_dist * 0.08
 
-						local unit_position = POSITION_LOOKUP[unit]
-						local to_target = Vector3.flat(POSITION_LOOKUP[target_unit] - unit_position)
-						local to_target_normalized = Vector3.normalize(to_target)
-						local forward = Vector3.flat(Quaternion.forward(Unit.local_rotation(unit, 0)))
-						local forward_normalized = Vector3.normalize(forward)
-						local dot = Vector3.dot(to_target_normalized, forward_normalized)
+						local var_6_7 = POSITION_LOOKUP[arg_6_1]
+						local var_6_8 = Vector3.flat(POSITION_LOOKUP[var_6_1] - var_6_7)
+						local var_6_9 = Vector3.normalize(var_6_8)
+						local var_6_10 = Vector3.flat(Quaternion.forward(Unit.local_rotation(arg_6_1, 0)))
+						local var_6_11 = Vector3.normalize(var_6_10)
+						local var_6_12 = Vector3.dot(var_6_9, var_6_11)
 
-						if dot < 0 then
-							blackboard.warpfire_face_timer = blackboard.warpfire_face_timer + math.abs(dot)
+						if var_6_12 < 0 then
+							arg_6_2.warpfire_face_timer = arg_6_2.warpfire_face_timer + math.abs(var_6_12)
 						end
 					else
 						return "done"
 					end
 				else
-					local should_use_close_range_attack = self:_close_range_attack_check(blackboard, action, t)
-
-					if should_use_close_range_attack and blackboard.warpfire_face_timer and t > blackboard.warpfire_face_timer then
-						self:_close_range_attack(unit, attack_pattern_data, blackboard, action, t)
+					if arg_6_0:_close_range_attack_check(arg_6_2, var_6_0, arg_6_3) and arg_6_2.warpfire_face_timer and arg_6_3 > arg_6_2.warpfire_face_timer then
+						arg_6_0:_close_range_attack(arg_6_1, var_6_3, arg_6_2, var_6_0, arg_6_3)
 					end
 
-					local realign, new_target = self:_aim_at_target(unit, target_unit, attack_pattern_data, blackboard, action, t, dt)
+					local var_6_13, var_6_14 = arg_6_0:_aim_at_target(arg_6_1, var_6_1, var_6_3, arg_6_2, var_6_0, arg_6_3, arg_6_4)
 
-					if new_target then
-						blackboard.warpfire_face_timer = t + blackboard.target_dist * 0.08
+					if var_6_14 then
+						arg_6_2.warpfire_face_timer = arg_6_3 + arg_6_2.target_dist * 0.08
 					end
 
-					if realign then
+					if var_6_13 then
 						return "done"
 					end
 
-					self:_move_warpfire_blob(unit, warpfire_data, blackboard, action, dt)
+					arg_6_0:_move_warpfire_blob(arg_6_1, var_6_2, arg_6_2, var_6_0, arg_6_4)
 
 					return "running"
 				end
@@ -203,383 +191,362 @@ BTWarpfireThrowerShootAction.run = function (self, unit, blackboard, t, dt)
 	return "running"
 end
 
-BTWarpfireThrowerShootAction._move_warpfire_blob = function (self, unit, warpfire_data, blackboard, action, dt)
-	local blob_unit = warpfire_data.blob_unit
-	local blob_position = POSITION_LOOKUP[blob_unit]
+function BTWarpfireThrowerShootAction._move_warpfire_blob(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+	local var_7_0 = arg_7_2.blob_unit
+	local var_7_1 = POSITION_LOOKUP[var_7_0]
 
-	if blob_unit and blob_position then
-		local target_unit = blackboard.target_unit
-		local target_dist = blackboard.target_dist
-		local target_position = POSITION_LOOKUP[target_unit]
-		local lerp_value, wanted_position
-		local close_attack_range = action.close_attack_range
-		local warpfire_follow_target_speed = action.warpfire_follow_target_speed
+	if var_7_0 and var_7_1 then
+		local var_7_2 = arg_7_3.target_unit
+		local var_7_3 = arg_7_3.target_dist
+		local var_7_4 = POSITION_LOOKUP[var_7_2]
+		local var_7_5
+		local var_7_6
+		local var_7_7 = arg_7_4.close_attack_range
+		local var_7_8 = arg_7_4.warpfire_follow_target_speed
 
-		if close_attack_range < target_dist then
-			lerp_value = math.min(dt * warpfire_follow_target_speed, 1)
-			wanted_position = target_position
+		if var_7_7 < var_7_3 then
+			var_7_5 = math.min(arg_7_5 * var_7_8, 1)
+			var_7_6 = var_7_4
 		else
-			lerp_value = math.min(dt * warpfire_follow_target_speed * 6, 1)
+			var_7_5 = math.min(arg_7_5 * var_7_8 * 6, 1)
 
-			local unit_position = POSITION_LOOKUP[unit]
-			local unit_to_target = Vector3.normalize(target_position - unit_position)
+			local var_7_9 = POSITION_LOOKUP[arg_7_1]
 
-			wanted_position = unit_position + unit_to_target * close_attack_range
+			var_7_6 = var_7_9 + Vector3.normalize(var_7_4 - var_7_9) * var_7_7
 		end
 
-		local new_blob_position = Vector3.lerp(blob_position, wanted_position, lerp_value)
+		local var_7_10 = Vector3.lerp(var_7_1, var_7_6, var_7_5)
 
-		Unit.set_local_position(blob_unit, 0, new_blob_position)
+		Unit.set_local_position(var_7_0, 0, var_7_10)
 	end
 end
 
-BTWarpfireThrowerShootAction._end_align_towards_target = function (self, unit, warpfire_data, attack_pattern_data, blackboard, t)
-	attack_pattern_data.state = "ready"
-	attack_pattern_data.shoot_direction_start = nil
-	attack_pattern_data.current_aim_rotation = QuaternionBox(Quaternion.look(attack_pattern_data.shoot_direction_box:unbox(), Vector3.up()))
+function BTWarpfireThrowerShootAction._end_align_towards_target(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+	arg_8_3.state = "ready"
+	arg_8_3.shoot_direction_start = nil
+	arg_8_3.current_aim_rotation = QuaternionBox(Quaternion.look(arg_8_3.shoot_direction_box:unbox(), Vector3.up()))
+	arg_8_2.stop_firing_t = arg_8_5 + arg_8_4.action.firing_time
 
-	local action = blackboard.action
+	Managers.state.network:anim_event(arg_8_1, "attack_shoot_start")
 
-	warpfire_data.stop_firing_t = t + action.firing_time
-
-	Managers.state.network:anim_event(unit, "attack_shoot_start")
-
-	blackboard.close_attack_cooldown = 0
+	arg_8_4.close_attack_cooldown = 0
 end
 
-BTWarpfireThrowerShootAction._start_align_towards_target = function (self, unit, blackboard, data, target_unit)
-	data.state = "align"
-	data.align_speed = 0
-	data.current_aim_rotation = nil
-	blackboard.anim_cb_attack_shoot_random_shot = nil
+function BTWarpfireThrowerShootAction._start_align_towards_target(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	arg_9_3.state = "align"
+	arg_9_3.align_speed = 0
+	arg_9_3.current_aim_rotation = nil
+	arg_9_2.anim_cb_attack_shoot_random_shot = nil
 
-	local action = blackboard.action
-	local target_position, _, unit_position = self:_calculate_wanted_target_position(unit, target_unit)
-	local flat_wanted_direction = Vector3.normalize(Vector3.flat(target_position - unit_position))
-	local rotation = Unit.world_rotation(unit, 0)
-	local forward_vector = Quaternion.forward(rotation)
-	local right_vector = Quaternion.right(rotation)
-	local turn_animation = self:_calculate_align_animation(right_vector, forward_vector, flat_wanted_direction, action.attack_anims, unit_position)
+	local var_9_0 = arg_9_2.action
+	local var_9_1, var_9_2, var_9_3 = arg_9_0:_calculate_wanted_target_position(arg_9_1, arg_9_4)
+	local var_9_4 = Vector3.normalize(Vector3.flat(var_9_1 - var_9_3))
+	local var_9_5 = Unit.world_rotation(arg_9_1, 0)
+	local var_9_6 = Quaternion.forward(var_9_5)
+	local var_9_7 = Quaternion.right(var_9_5)
+	local var_9_8 = arg_9_0:_calculate_align_animation(var_9_7, var_9_6, var_9_4, var_9_0.attack_anims, var_9_3)
 
-	Managers.state.network:anim_event(unit, turn_animation)
+	Managers.state.network:anim_event(arg_9_1, var_9_8)
 end
 
-local PI = math.pi
-local TWO_PI = PI * 2
-local ACCELERATION = PI * 24
-local DECELERATION = PI * 6
-local STOP_ANGLE = PI / 32
-local AIM_PIVOT_HEIGHT = 0.7
+local var_0_2 = math.pi
+local var_0_3 = var_0_2 * 2
+local var_0_4 = var_0_2 * 24
+local var_0_5 = var_0_2 * 6
+local var_0_6 = var_0_2 / 32
+local var_0_7 = 0.7
 
-BTWarpfireThrowerShootAction._remaining_angle = function (self, from, to)
-	local from_forward = Quaternion.forward(from)
-	local to_forward = Quaternion.forward(to)
-	local from_angle = math.atan2(from_forward.y, from_forward.x)
-	local to_angle = math.atan2(to_forward.y, to_forward.x)
-	local pi = PI
-	local pi2 = pi * 2
-	local angle_diff = to_angle - from_angle
-	local normalized_angle_diff = (angle_diff % pi2 + pi) % pi2 - pi
+function BTWarpfireThrowerShootAction._remaining_angle(arg_10_0, arg_10_1, arg_10_2)
+	local var_10_0 = Quaternion.forward(arg_10_1)
+	local var_10_1 = Quaternion.forward(arg_10_2)
+	local var_10_2 = math.atan2(var_10_0.y, var_10_0.x)
+	local var_10_3 = math.atan2(var_10_1.y, var_10_1.x)
+	local var_10_4 = var_0_2
+	local var_10_5 = var_10_4 * 2
 
-	return normalized_angle_diff
+	return ((var_10_3 - var_10_2) % var_10_5 + var_10_4) % var_10_5 - var_10_4
 end
 
-BTWarpfireThrowerShootAction._angle_to_speed = function (self, speed, angle_left)
-	if angle_left > 0 then
-		return speed
+function BTWarpfireThrowerShootAction._angle_to_speed(arg_11_0, arg_11_1, arg_11_2)
+	if arg_11_2 > 0 then
+		return arg_11_1
 	else
-		return -speed
+		return -arg_11_1
 	end
 end
 
-BTWarpfireThrowerShootAction._update_align_towards_target = function (self, unit, blackboard, attack_pattern_data, target_unit, dt)
-	local _, wanted_rotation, _ = self:_calculate_wanted_target_position(unit, target_unit)
-	local action = blackboard.action
-	local current_rotation = Unit.local_rotation(unit, 0)
-	local angle_left = self:_remaining_angle(current_rotation, wanted_rotation)
-	local wanted_speed = self:_angle_to_speed(action.rotation_speed, angle_left)
-	local speed = attack_pattern_data.align_speed
+function BTWarpfireThrowerShootAction._update_align_towards_target(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+	local var_12_0, var_12_1, var_12_2 = arg_12_0:_calculate_wanted_target_position(arg_12_1, arg_12_4)
+	local var_12_3 = arg_12_2.action
+	local var_12_4 = Unit.local_rotation(arg_12_1, 0)
+	local var_12_5 = arg_12_0:_remaining_angle(var_12_4, var_12_1)
+	local var_12_6 = arg_12_0:_angle_to_speed(var_12_3.rotation_speed, var_12_5)
+	local var_12_7 = arg_12_3.align_speed
 
-	if wanted_speed == 0 and speed > 0 then
-		speed = math.max(speed - DECELERATION * dt, 0)
-	elseif wanted_speed == 0 and speed < 0 then
-		speed = math.min(speed + DECELERATION * dt, 0)
-	elseif speed < wanted_speed and wanted_speed > 0 then
-		speed = math.min(speed + ACCELERATION * dt, wanted_speed)
-	elseif wanted_speed < speed and wanted_speed < 0 then
-		speed = math.max(speed - ACCELERATION * dt, wanted_speed)
-	elseif speed < wanted_speed and wanted_speed < 0 then
-		speed = math.min(speed + DECELERATION * dt, wanted_speed)
+	if var_12_6 == 0 and var_12_7 > 0 then
+		var_12_7 = math.max(var_12_7 - var_0_5 * arg_12_5, 0)
+	elseif var_12_6 == 0 and var_12_7 < 0 then
+		var_12_7 = math.min(var_12_7 + var_0_5 * arg_12_5, 0)
+	elseif var_12_7 < var_12_6 and var_12_6 > 0 then
+		var_12_7 = math.min(var_12_7 + var_0_4 * arg_12_5, var_12_6)
+	elseif var_12_6 < var_12_7 and var_12_6 < 0 then
+		var_12_7 = math.max(var_12_7 - var_0_4 * arg_12_5, var_12_6)
+	elseif var_12_7 < var_12_6 and var_12_6 < 0 then
+		var_12_7 = math.min(var_12_7 + var_0_5 * arg_12_5, var_12_6)
 	else
-		speed = math.max(speed - ACCELERATION * dt, wanted_speed)
+		var_12_7 = math.max(var_12_7 - var_0_4 * arg_12_5, var_12_6)
 	end
 
-	attack_pattern_data.align_speed = speed
+	arg_12_3.align_speed = var_12_7
 
-	local angle = speed * dt
-	local new_rot = Quaternion.multiply(current_rotation, Quaternion(Vector3.up(), angle))
-	local locomotion_extension = blackboard.locomotion_extension
+	local var_12_8 = var_12_7 * arg_12_5
+	local var_12_9 = Quaternion.multiply(var_12_4, Quaternion(Vector3.up(), var_12_8))
 
-	locomotion_extension:set_wanted_rotation(new_rot)
+	arg_12_2.locomotion_extension:set_wanted_rotation(var_12_9)
 
-	local lerp_value = math.min(dt * 3, 1)
-	local new_shoot_direction = Vector3.lerp(attack_pattern_data.shoot_direction_box:unbox(), Quaternion.forward(new_rot), lerp_value)
+	local var_12_10 = math.min(arg_12_5 * 3, 1)
+	local var_12_11 = Vector3.lerp(arg_12_3.shoot_direction_box:unbox(), Quaternion.forward(var_12_9), var_12_10)
 
-	attack_pattern_data.shoot_direction_box:store(new_shoot_direction)
+	arg_12_3.shoot_direction_box:store(var_12_11)
 
-	return math.abs(angle_left) < STOP_ANGLE
+	return math.abs(var_12_5) < var_0_6
 end
 
-BTWarpfireThrowerShootAction._close_range_attack_check = function (self, blackboard, action, t)
-	local target_distance = blackboard.target_dist
-
-	return target_distance < action.close_attack_range and t > blackboard.close_attack_cooldown
+function BTWarpfireThrowerShootAction._close_range_attack_check(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	return arg_13_1.target_dist < arg_13_2.close_attack_range and arg_13_3 > arg_13_1.close_attack_cooldown
 end
 
-BTWarpfireThrowerShootAction._close_range_attack = function (self, unit, attack_pattern_data, blackboard, action, t)
-	local node_name = action.muzzle_node
-	local warpfire_unit = attack_pattern_data.warpfire_gun_unit
-	local muzzle_node = Unit.node(warpfire_unit, node_name)
-	local muzzle_pos = Unit.world_position(warpfire_unit, muzzle_node)
-	local target_pos = POSITION_LOOKUP[blackboard.target_unit]
-	local to_target = Vector3.flat(target_pos - muzzle_pos)
-	local distance = Vector3.length(to_target)
-	local warpfire_unit = attack_pattern_data.warpfire_gun_unit
-	local forward = Vector3.flat(Quaternion.forward(Unit.world_rotation(warpfire_unit, muzzle_node)))
-	local forward_normalized = Vector3.normalize(forward)
-	local aim_pos = muzzle_pos + forward_normalized * action.close_attack_range
+function BTWarpfireThrowerShootAction._close_range_attack(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+	local var_14_0 = arg_14_4.muzzle_node
+	local var_14_1 = arg_14_2.warpfire_gun_unit
+	local var_14_2 = Unit.node(var_14_1, var_14_0)
+	local var_14_3 = Unit.world_position(var_14_1, var_14_2)
+	local var_14_4 = POSITION_LOOKUP[arg_14_3.target_unit]
+	local var_14_5 = Vector3.flat(var_14_4 - var_14_3)
+	local var_14_6 = Vector3.length(var_14_5)
+	local var_14_7 = arg_14_2.warpfire_gun_unit
+	local var_14_8 = Vector3.flat(Quaternion.forward(Unit.world_rotation(var_14_7, var_14_2)))
+	local var_14_9 = Vector3.normalize(var_14_8)
+	local var_14_10 = var_14_3 + var_14_9 * arg_14_4.close_attack_range
+	local var_14_11 = var_14_3 - var_14_9 * 0.5
+	local var_14_12 = arg_14_3.physics_world
+	local var_14_13 = arg_14_4.hit_radius
+	local var_14_14 = 10
+	local var_14_15 = PhysicsWorld.linear_sphere_sweep(var_14_12, var_14_11, var_14_10, var_14_13, var_14_14, "collision_filter", "filter_character_trigger", "report_initial_overlap")
+	local var_14_16 = Managers.state.entity:system("buff_system")
 
-	muzzle_pos = muzzle_pos - forward_normalized * 0.5
+	if var_14_15 then
+		local var_14_17 = #var_14_15
 
-	local physics_world = blackboard.physics_world
-	local radius = action.hit_radius
-	local max_hits = 10
-	local result = PhysicsWorld.linear_sphere_sweep(physics_world, muzzle_pos, aim_pos, radius, max_hits, "collision_filter", "filter_character_trigger", "report_initial_overlap")
-	local buff_system = Managers.state.entity:system("buff_system")
+		for iter_14_0 = 1, var_14_17 do
+			local var_14_18 = var_14_15[iter_14_0].actor
+			local var_14_19 = Actor.unit(var_14_18)
 
-	if result then
-		local num_hits = #result
+			if var_14_19 ~= arg_14_1 then
+				local var_14_20 = DamageUtils.is_enemy(arg_14_3.target_unit, var_14_19)
+				local var_14_21 = DamageUtils.is_player_unit(var_14_19)
 
-		for i = 1, num_hits do
-			local hit = result[i]
-			local actor = hit.actor
-			local hit_unit = Actor.unit(actor)
+				if (var_14_20 or var_14_21) and ScriptUnit.has_extension(var_14_19, "buff_system") then
+					local var_14_22 = arg_14_4.buff_name
 
-			if hit_unit ~= unit then
-				local is_ai_unit = DamageUtils.is_enemy(blackboard.target_unit, hit_unit)
-				local is_player_unit = DamageUtils.is_player_unit(hit_unit)
-				local unit_is_character = is_ai_unit or is_player_unit
+					if var_14_20 and not var_0_1[var_14_19] and HEALTH_ALIVE[var_14_19] then
+						local var_14_23 = arg_14_4.ai_push_data
+						local var_14_24 = var_14_23.stagger_impact
+						local var_14_25 = var_14_23.stagger_duration
+						local var_14_26 = var_14_23.stagger_distance
+						local var_14_27, var_14_28 = DamageUtils.calculate_stagger(var_14_24, var_14_25, var_14_19, arg_14_1)
+						local var_14_29 = POSITION_LOOKUP[var_14_19]
+						local var_14_30 = Vector3.normalize(var_14_29 - var_14_11)
+						local var_14_31 = BLACKBOARDS[var_14_19]
 
-				if unit_is_character then
-					local buff_extension = ScriptUnit.has_extension(hit_unit, "buff_system")
-
-					if buff_extension then
-						local buff_name = action.buff_name
-
-						if is_ai_unit and not hit_ai_units[hit_unit] and HEALTH_ALIVE[hit_unit] then
-							local ai_push_data = action.ai_push_data
-							local stagger_impact = ai_push_data.stagger_impact
-							local duration_table = ai_push_data.stagger_duration
-							local stagger_distance = ai_push_data.stagger_distance
-							local stagger_type, stagger_duration = DamageUtils.calculate_stagger(stagger_impact, duration_table, hit_unit, unit)
-							local hit_unit_pos = POSITION_LOOKUP[hit_unit]
-							local direction = Vector3.normalize(hit_unit_pos - muzzle_pos)
-							local hit_unit_blackboard = BLACKBOARDS[hit_unit]
-
-							if stagger_type > stagger_types.none then
-								AiUtils.stagger(hit_unit, hit_unit_blackboard, unit, direction, stagger_distance, stagger_type, stagger_duration, nil, t)
-							end
-
-							hit_ai_units[hit_unit] = true
+						if var_14_27 > var_0_0.none then
+							AiUtils.stagger(var_14_19, var_14_31, arg_14_1, var_14_30, var_14_26, var_14_27, var_14_28, nil, arg_14_5)
 						end
 
-						if is_player_unit then
-							local target_status_extension = ScriptUnit.has_extension(blackboard.target_unit, "status_system")
-							local target_buff_extension = ScriptUnit.has_extension(blackboard.target_unit, "buff_system")
-							local target_power_block_perk = target_buff_extension:has_buff_perk("power_block")
-							local target_blocking, shield_block = target_status_extension:is_blocking()
-							local to_target_normalized = Vector3.normalize(to_target)
-							local dot = Vector3.dot(to_target_normalized, forward_normalized)
-							local is_valid_target = dot > 0.99 or distance < action.aim_rotation_override_distance and dot > 0.55
+						var_0_1[var_14_19] = true
+					end
 
-							if is_valid_target and target_power_block_perk and target_blocking and shield_block then
-								is_valid_target = not DamageUtils.check_ranged_block(unit, hit_unit, "blocked_berzerker")
-							end
+					if var_14_21 then
+						local var_14_32 = ScriptUnit.has_extension(arg_14_3.target_unit, "status_system")
+						local var_14_33 = ScriptUnit.has_extension(arg_14_3.target_unit, "buff_system"):has_buff_perk("power_block")
+						local var_14_34, var_14_35 = var_14_32:is_blocking()
+						local var_14_36 = Vector3.normalize(var_14_5)
+						local var_14_37 = Vector3.dot(var_14_36, var_14_9)
+						local var_14_38 = var_14_37 > 0.99 or var_14_6 < arg_14_4.aim_rotation_override_distance and var_14_37 > 0.55
 
-							if is_valid_target then
-								buff_system:add_buff(hit_unit, buff_name, unit)
-							end
-						elseif HEALTH_ALIVE[hit_unit] then
-							buff_system:add_buff(hit_unit, buff_name, unit)
+						if var_14_38 and var_14_33 and var_14_34 and var_14_35 then
+							var_14_38 = not DamageUtils.check_ranged_block(arg_14_1, var_14_19, "blocked_berzerker")
 						end
+
+						if var_14_38 then
+							var_14_16:add_buff(var_14_19, var_14_22, arg_14_1)
+						end
+					elseif HEALTH_ALIVE[var_14_19] then
+						var_14_16:add_buff(var_14_19, var_14_22, arg_14_1)
 					end
 				end
 			end
 		end
 	end
 
-	blackboard.close_attack_cooldown = t + action.close_attack_cooldown
+	arg_14_3.close_attack_cooldown = arg_14_5 + arg_14_4.close_attack_cooldown
 end
 
-BTWarpfireThrowerShootAction._aim_at_target = function (self, unit, target_unit, attack_pattern_data, blackboard, action, t, dt)
-	local aim_pos, wanted_rotation, _, target_position = self:_calculate_wanted_target_position(unit, target_unit)
-	local target_status_extension = ScriptUnit.has_extension(blackboard.target_unit, "status_system")
-	local target_is_dodging = target_status_extension and target_status_extension:get_is_dodging()
-	local aim_rotation_override_distance = action.aim_rotation_override_distance
-	local aim_rotation_override_speed_multiplier = action.aim_rotation_override_speed_multiplier
-	local aim_rotation_dodge_multipler = action.aim_rotation_dodge_multipler
-	local self_pos = POSITION_LOOKUP[unit]
-	local pivot = self_pos + Vector3(0, 0, AIM_PIVOT_HEIGHT)
-	local wanted_aim_position_offset = aim_pos - pivot
-	local wanted_aim_rotation = Quaternion.look(wanted_aim_position_offset, Vector3.up())
-	local current_aim_rotation = attack_pattern_data.current_aim_rotation:unbox()
-	local distance_to_target = Vector3.distance(self_pos, target_position)
-	local aim_rotation_modifier = distance_to_target < aim_rotation_override_distance and aim_rotation_override_speed_multiplier or target_is_dodging and aim_rotation_dodge_multipler or math.max(1 - distance_to_target / action.close_attack_range, 0.1)
-	local upper_body_rotation_speed = action.radial_speed_upper_body_shooting * math.min(aim_rotation_modifier, aim_rotation_override_speed_multiplier)
-	local lerped_rotation = self:_rotate_from_to(current_aim_rotation, wanted_aim_rotation, upper_body_rotation_speed, dt)
-	local aim_position = pivot + Quaternion.forward(lerped_rotation) * Vector3.length(wanted_aim_position_offset)
+function BTWarpfireThrowerShootAction._aim_at_target(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7)
+	local var_15_0, var_15_1, var_15_2, var_15_3 = arg_15_0:_calculate_wanted_target_position(arg_15_1, arg_15_2)
+	local var_15_4 = ScriptUnit.has_extension(arg_15_4.target_unit, "status_system")
+	local var_15_5 = var_15_4 and var_15_4:get_is_dodging()
+	local var_15_6 = arg_15_5.aim_rotation_override_distance
+	local var_15_7 = arg_15_5.aim_rotation_override_speed_multiplier
+	local var_15_8 = arg_15_5.aim_rotation_dodge_multipler
+	local var_15_9 = POSITION_LOOKUP[arg_15_1]
+	local var_15_10 = var_15_9 + Vector3(0, 0, var_0_7)
+	local var_15_11 = var_15_0 - var_15_10
+	local var_15_12 = Quaternion.look(var_15_11, Vector3.up())
+	local var_15_13 = arg_15_3.current_aim_rotation:unbox()
+	local var_15_14 = Vector3.distance(var_15_9, var_15_3)
+	local var_15_15 = var_15_14 < var_15_6 and var_15_7 or var_15_5 and var_15_8 or math.max(1 - var_15_14 / arg_15_5.close_attack_range, 0.1)
+	local var_15_16 = arg_15_5.radial_speed_upper_body_shooting * math.min(var_15_15, var_15_7)
+	local var_15_17 = arg_15_0:_rotate_from_to(var_15_13, var_15_12, var_15_16, arg_15_7)
+	local var_15_18 = var_15_10 + Quaternion.forward(var_15_17) * Vector3.length(var_15_11)
 
-	attack_pattern_data.current_aim_rotation:store(lerped_rotation)
+	arg_15_3.current_aim_rotation:store(var_15_17)
 
-	local current_rotation = Unit.local_rotation(unit, 0)
-	local lerped_rot = self:_rotate_from_to(current_rotation, wanted_rotation, action.radial_speed_feet_shooting, dt)
-	local locomotion_extension = blackboard.locomotion_extension
+	local var_15_19 = Unit.local_rotation(arg_15_1, 0)
+	local var_15_20 = arg_15_0:_rotate_from_to(var_15_19, var_15_1, arg_15_5.radial_speed_feet_shooting, arg_15_7)
 
-	locomotion_extension:set_wanted_rotation(lerped_rot)
-	attack_pattern_data.shoot_direction_box:store(aim_position - pivot)
+	arg_15_4.locomotion_extension:set_wanted_rotation(var_15_20)
+	arg_15_3.shoot_direction_box:store(var_15_18 - var_15_10)
 
-	local physics_world = blackboard.physics_world
+	local var_15_21 = arg_15_4.physics_world
 
-	PhysicsWorld.prepare_actors_for_raycast(physics_world, pivot, Vector3.normalize(aim_position - pivot), action.spread)
+	PhysicsWorld.prepare_actors_for_raycast(var_15_21, var_15_10, Vector3.normalize(var_15_18 - var_15_10), arg_15_5.spread)
 
-	local realign = false
+	local var_15_22 = false
 
-	if blackboard.target_dist > action.target_switch_distance then
-		realign = true
-	elseif t > blackboard.line_of_sight_raycast_timer then
-		local filter = "filter_ai_line_of_sight_check"
-		local self_to_target = target_position - self_pos
-		local is_hit, _ = PhysicsWorld.immediate_raycast(physics_world, self_pos + Vector3.up(), Vector3.normalize(self_to_target), Vector3.length(self_to_target), "closest", "collision_filter", filter)
+	if arg_15_4.target_dist > arg_15_5.target_switch_distance then
+		var_15_22 = true
+	elseif arg_15_6 > arg_15_4.line_of_sight_raycast_timer then
+		local var_15_23 = "filter_ai_line_of_sight_check"
+		local var_15_24 = var_15_3 - var_15_9
+		local var_15_25, var_15_26 = PhysicsWorld.immediate_raycast(var_15_21, var_15_9 + Vector3.up(), Vector3.normalize(var_15_24), Vector3.length(var_15_24), "closest", "collision_filter", var_15_23)
 
-		if is_hit then
-			realign = true
+		if var_15_25 then
+			var_15_22 = true
 		end
 
-		blackboard.line_of_sight_raycast_timer = t + 0.5
+		arg_15_4.line_of_sight_raycast_timer = arg_15_6 + 0.5
 	end
 
-	local new_target_unit = false
+	local var_15_27 = false
 
-	if blackboard.old_target_unit ~= target_unit then
-		new_target_unit = true
-		blackboard.old_target_unit = target_unit
+	if arg_15_4.old_target_unit ~= arg_15_2 then
+		var_15_27 = true
+		arg_15_4.old_target_unit = arg_15_2
 	end
 
-	return realign, new_target_unit
+	return var_15_22, var_15_27
 end
 
-BTWarpfireThrowerShootAction._rotate_from_to = function (self, from, to, max_angle_speed, dt)
-	local inner_product = Quaternion.dot(to, from)
-	local angle_difference = 2 * math.acos(math.clamp(inner_product, -1, 1))
-	local max_delta = max_angle_speed * dt
-	local lerp_t = angle_difference == 0 and 1 or math.min(max_delta / angle_difference, 1)
-	local normalized_angle_diff = math.abs((angle_difference % TWO_PI + PI) % TWO_PI - PI)
+function BTWarpfireThrowerShootAction._rotate_from_to(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+	local var_16_0 = Quaternion.dot(arg_16_2, arg_16_1)
+	local var_16_1 = 2 * math.acos(math.clamp(var_16_0, -1, 1))
+	local var_16_2 = arg_16_3 * arg_16_4
+	local var_16_3 = var_16_1 == 0 and 1 or math.min(var_16_2 / var_16_1, 1)
+	local var_16_4 = math.abs((var_16_1 % var_0_3 + var_0_2) % var_0_3 - var_0_2)
 
-	return Quaternion.lerp(from, to, lerp_t), math.max(normalized_angle_diff - max_delta, 0)
+	return Quaternion.lerp(arg_16_1, arg_16_2, var_16_3), math.max(var_16_4 - var_16_2, 0)
 end
 
-BTWarpfireThrowerShootAction._calculate_wanted_target_position = function (self, unit, target_unit)
-	local unit_position = Unit.world_position(unit, Unit.node(unit, "c_spine"))
-	local target_position = POSITION_LOOKUP[target_unit] + Vector3.up()
-	local unit_to_target = target_position - unit_position
-	local mid_pos = unit_position + unit_to_target * 0.5
-	local length = Vector3.length(target_position - unit_position)
+function BTWarpfireThrowerShootAction._calculate_wanted_target_position(arg_17_0, arg_17_1, arg_17_2)
+	local var_17_0 = Unit.world_position(arg_17_1, Unit.node(arg_17_1, "c_spine"))
+	local var_17_1 = POSITION_LOOKUP[arg_17_2] + Vector3.up()
+	local var_17_2 = var_17_0 + (var_17_1 - var_17_0) * 0.5
+	local var_17_3 = Vector3.length(var_17_1 - var_17_0)
 
-	mid_pos.z = mid_pos.z + length * 0.01
+	var_17_2.z = var_17_2.z + var_17_3 * 0.01
 
-	if length < 2 then
-		mid_pos = target_position
+	if var_17_3 < 2 then
+		var_17_2 = var_17_1
 	end
 
-	local look_at_rotation = LocomotionUtils.look_at_position_flat(unit, mid_pos)
+	local var_17_4 = LocomotionUtils.look_at_position_flat(arg_17_1, var_17_2)
 
-	return mid_pos, look_at_rotation, unit_position, target_position
+	return var_17_2, var_17_4, var_17_0, var_17_1
 end
 
-BTWarpfireThrowerShootAction._calculate_align_animation = function (self, right_vector, forward_vector, dir, attack_anims)
-	local right_dot = Vector3.dot(right_vector, dir)
-	local fwd_dot = Vector3.dot(forward_vector, dir)
-	local abs_right = math.abs(right_dot)
-	local abs_fwd = math.abs(fwd_dot)
-	local anim
-	local is_left_or_right = abs_fwd < abs_right
+function BTWarpfireThrowerShootAction._calculate_align_animation(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+	local var_18_0 = Vector3.dot(arg_18_1, arg_18_3)
+	local var_18_1 = Vector3.dot(arg_18_2, arg_18_3)
+	local var_18_2 = math.abs(var_18_0)
+	local var_18_3 = math.abs(var_18_1)
+	local var_18_4
+	local var_18_5 = var_18_3 < var_18_2
 
-	if is_left_or_right and right_dot > 0.5 then
-		anim = attack_anims.right
-	elseif is_left_or_right and right_dot < -0.5 then
-		anim = attack_anims.left
-	elseif fwd_dot > 0 then
-		anim = attack_anims.fwd
+	if var_18_5 and var_18_0 > 0.5 then
+		var_18_4 = arg_18_4.right
+	elseif var_18_5 and var_18_0 < -0.5 then
+		var_18_4 = arg_18_4.left
+	elseif var_18_1 > 0 then
+		var_18_4 = arg_18_4.fwd
 	else
-		anim = attack_anims.bwd
+		var_18_4 = arg_18_4.bwd
 	end
 
-	return anim
+	return var_18_4
 end
 
-BTWarpfireThrowerShootAction._attack_fire = function (self, unit, warpfire_data, action, blackboard, t)
-	self:_create_warpfire_blob(unit, warpfire_data, action, blackboard, t)
+function BTWarpfireThrowerShootAction._attack_fire(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
+	arg_19_0:_create_warpfire_blob(arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 
-	warpfire_data.is_firing = true
-	blackboard.has_fired = true
+	arg_19_2.is_firing = true
+	arg_19_4.has_fired = true
 end
 
-BTWarpfireThrowerShootAction._create_warpfire_blob = function (self, unit, data, action, blackboard, t)
-	local attack_pattern_data = blackboard.attack_pattern_data
-	local warpfire_data = blackboard.warpfire_data
-	local warpfire_unit = attack_pattern_data.warpfire_gun_unit
-	local target_unit = blackboard.target_unit
-	local target_position = POSITION_LOOKUP[target_unit]
-	local unit_position = POSITION_LOOKUP[unit]
-	local extension_init_data = {
+function BTWarpfireThrowerShootAction._create_warpfire_blob(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+	local var_20_0 = arg_20_4.attack_pattern_data
+	local var_20_1 = arg_20_4.warpfire_data
+	local var_20_2 = var_20_0.warpfire_gun_unit
+	local var_20_3 = arg_20_4.target_unit
+	local var_20_4 = POSITION_LOOKUP[var_20_3]
+	local var_20_5 = POSITION_LOOKUP[arg_20_1]
+	local var_20_6 = {
 		area_damage_system = {
 			damage_blob_template_name = "warpfire",
-			source_unit = unit,
-		},
+			source_unit = arg_20_1
+		}
 	}
-	local aoe_unit_name = "units/hub_elements/empty"
-	local damage_blob_unit = Managers.state.unit_spawner:spawn_network_unit(aoe_unit_name, "damage_blob_unit", extension_init_data, target_position)
-	local damage_blob_extension = ScriptUnit.extension(damage_blob_unit, "area_damage_system")
+	local var_20_7 = "units/hub_elements/empty"
+	local var_20_8 = Managers.state.unit_spawner:spawn_network_unit(var_20_7, "damage_blob_unit", var_20_6, var_20_4)
+	local var_20_9 = ScriptUnit.extension(var_20_8, "area_damage_system")
 
-	warpfire_data.blob_unit = damage_blob_unit
-	warpfire_data.blob_extension = damage_blob_extension
+	var_20_1.blob_unit = var_20_8
+	var_20_1.blob_extension = var_20_9
 
-	local length = Vector3.length(target_position - unit_position)
-	local wait_time = length / 10
+	local var_20_10 = Vector3.length(var_20_4 - var_20_5) / 10
 
-	damage_blob_extension:start_placing_blobs(wait_time, t)
+	var_20_9:start_placing_blobs(var_20_10, arg_20_5)
 end
 
-BTWarpfireThrowerShootAction._calculate_cylinder_collision = function (self, action, self_pos, self_rot)
-	local radius = action.bot_threat_radius
-	local height = action.bot_threat_height
-	local offset_up = action.bot_threat_offset_up
-	local offset_forward = action.bot_threat_offset_forward
-	local half_height = height * 0.5
-	local size = Vector3(0, radius, half_height)
-	local forward = Quaternion.forward(self_rot)
-	local up = Quaternion.up(self_rot)
-	local cylinder_center = self_pos + forward * offset_forward + up * (half_height + offset_up)
+function BTWarpfireThrowerShootAction._calculate_cylinder_collision(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+	local var_21_0 = arg_21_1.bot_threat_radius
+	local var_21_1 = arg_21_1.bot_threat_height
+	local var_21_2 = arg_21_1.bot_threat_offset_up
+	local var_21_3 = arg_21_1.bot_threat_offset_forward
+	local var_21_4 = var_21_1 * 0.5
+	local var_21_5 = Vector3(0, var_21_0, var_21_4)
+	local var_21_6 = Quaternion.forward(arg_21_3)
+	local var_21_7 = Quaternion.up(arg_21_3)
 
-	return cylinder_center, size
+	return arg_21_2 + var_21_6 * var_21_3 + var_21_7 * (var_21_4 + var_21_2), var_21_5
 end
 
-BTWarpfireThrowerShootAction._create_bot_aoe_threat = function (self, unit, action)
-	local unit_position = POSITION_LOOKUP[unit]
-	local unit_rotation = Unit.local_rotation(unit, 0)
-	local bot_threat_duration = action.bot_threat_duration
-	local ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
-	local obstacle_position, obstacle_size = self:_calculate_cylinder_collision(action, unit_position, unit_rotation)
+function BTWarpfireThrowerShootAction._create_bot_aoe_threat(arg_22_0, arg_22_1, arg_22_2)
+	local var_22_0 = POSITION_LOOKUP[arg_22_1]
+	local var_22_1 = Unit.local_rotation(arg_22_1, 0)
+	local var_22_2 = arg_22_2.bot_threat_duration
+	local var_22_3 = Managers.state.entity:system("ai_bot_group_system")
+	local var_22_4, var_22_5 = arg_22_0:_calculate_cylinder_collision(arg_22_2, var_22_0, var_22_1)
 
-	ai_bot_group_system:aoe_threat_created(obstacle_position, "cylinder", obstacle_size, nil, bot_threat_duration, "Warpfire Shoot")
+	var_22_3:aoe_threat_created(var_22_4, "cylinder", var_22_5, nil, var_22_2, "Warpfire Shoot")
 end

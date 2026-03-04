@@ -1,292 +1,282 @@
-﻿-- chunkname: @scripts/ui/views/hero_view/windows/store/definitions/store_window_category_list_definitions.lua
+-- chunkname: @scripts/ui/views/hero_view/windows/store/definitions/store_window_category_list_definitions.lua
 
-local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
-local list_size = {
+local var_0_0 = UISettings.console_menu_scenegraphs
+local var_0_1 = {
 	550,
-	700,
+	700
 }
-local list_entry_size = {
+local var_0_2 = {
 	550,
-	80,
+	80
 }
-local list_scrollbar_size = {
+local var_0_3 = {
 	16,
-	list_size[2],
+	var_0_1[2]
 }
-local scenegraph_definition = {
-	screen = console_menu_scenegraphs.screen,
+local var_0_4 = {
+	screen = var_0_0.screen,
 	list_window = {
-		horizontal_alignment = "left",
-		parent = "screen",
 		vertical_alignment = "top",
-		size = list_size,
+		parent = "screen",
+		horizontal_alignment = "left",
+		size = var_0_1,
 		position = {
 			130,
 			-215,
-			10,
-		},
+			10
+		}
 	},
 	list = {
-		horizontal_alignment = "left",
-		parent = "list_window",
 		vertical_alignment = "top",
-		size = list_size,
+		parent = "list_window",
+		horizontal_alignment = "left",
+		size = var_0_1,
 		position = {
 			0,
-			-list_size[2],
-			0,
-		},
+			-var_0_1[2],
+			0
+		}
 	},
 	list_scrollbar = {
-		horizontal_alignment = "left",
-		parent = "list_window",
 		vertical_alignment = "top",
-		size = list_scrollbar_size,
+		parent = "list_window",
+		horizontal_alignment = "left",
+		size = var_0_3,
 		position = {
 			-58,
 			0,
-			10,
-		},
+			10
+		}
 	},
 	item_root = {
-		horizontal_alignment = "left",
-		parent = "list",
 		vertical_alignment = "top",
+		parent = "list",
+		horizontal_alignment = "left",
 		size = {
 			0,
-			0,
+			0
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
-	},
+			1
+		}
+	}
 }
 
-local function create_list_mask(scenegraph_id, list_scenegraph_id, size, entry_size)
-	local entry_hover_frame_settings = UIFrameSettings.frame_outer_glow_04_big
-	local entry_hover_frame_spacing = entry_hover_frame_settings.texture_sizes.horizontal[2]
-	local element = {
+local function var_0_5(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	local var_1_0 = UIFrameSettings.frame_outer_glow_04_big.texture_sizes.horizontal[2]
+	local var_1_1 = {
 		passes = {
 			{
-				content_id = "button_hotspot",
-				pass_type = "hotspot",
 				style_id = "hotspot",
+				pass_type = "hotspot",
+				content_id = "button_hotspot"
 			},
 			{
-				content_id = "list_hotspot",
-				pass_type = "hotspot",
 				style_id = "list_hotspot",
+				pass_type = "hotspot",
+				content_id = "list_hotspot"
 			},
 			{
 				pass_type = "texture",
 				style_id = "mask",
-				texture_id = "mask_texture",
+				texture_id = "mask_texture"
 			},
 			{
 				pass_type = "texture",
 				style_id = "mask_top",
-				texture_id = "mask_edge",
+				texture_id = "mask_edge"
 			},
 			{
 				pass_type = "rotated_texture",
 				style_id = "mask_bottom",
-				texture_id = "mask_edge",
-			},
-		},
+				texture_id = "mask_edge"
+			}
+		}
 	}
-	local content = {
+	local var_1_2 = {
 		mask_edge = "mask_rect_edge_fade",
 		mask_texture = "mask_rect",
 		list_hotspot = {},
 		button_hotspot = {},
 		scrollbar = {
-			percentage = 0.1,
 			scroll_amount = 0.1,
-			scroll_value = 1,
-		},
+			percentage = 0.1,
+			scroll_value = 1
+		}
 	}
-	local style = {
+	local var_1_3 = {
 		hotspot = {
 			size = {
-				size[1],
-				size[2],
+				arg_1_2[1],
+				arg_1_2[2]
 			},
 			offset = {
 				0,
 				0,
-				0,
-			},
+				0
+			}
 		},
 		list_hotspot = {
 			size = {
-				size[1] + entry_hover_frame_spacing * 2,
-				size[2] + entry_hover_frame_spacing * 2,
+				arg_1_2[1] + var_1_0 * 2,
+				arg_1_2[2] + var_1_0 * 2
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
-				-entry_hover_frame_spacing,
-				-entry_hover_frame_spacing,
-				0,
-			},
+				-var_1_0,
+				-var_1_0,
+				0
+			}
 		},
 		mask = {
 			size = {
-				size[1] + entry_hover_frame_spacing * 2,
-				size[2],
+				arg_1_2[1] + var_1_0 * 2,
+				arg_1_2[2]
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
-				-entry_hover_frame_spacing,
+				-var_1_0,
 				0,
-				0,
-			},
+				0
+			}
 		},
 		mask_top = {
 			size = {
-				size[1] + entry_hover_frame_spacing * 2,
-				entry_hover_frame_spacing,
+				arg_1_2[1] + var_1_0 * 2,
+				var_1_0
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
-				-entry_hover_frame_spacing,
-				size[2],
-				0,
-			},
+				-var_1_0,
+				arg_1_2[2],
+				0
+			}
 		},
 		mask_bottom = {
 			size = {
-				size[1] + entry_hover_frame_spacing * 2,
-				entry_hover_frame_spacing,
+				arg_1_2[1] + var_1_0 * 2,
+				var_1_0
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
-				-entry_hover_frame_spacing,
-				-entry_hover_frame_spacing,
-				0,
+				-var_1_0,
+				-var_1_0,
+				0
 			},
 			angle = math.pi,
 			pivot = {
-				(size[1] + entry_hover_frame_spacing * 2) / 2,
-				entry_hover_frame_spacing / 2,
-			},
+				(arg_1_2[1] + var_1_0 * 2) / 2,
+				var_1_0 / 2
+			}
+		}
+	}
+
+	return {
+		element = var_1_1,
+		content = var_1_2,
+		style = var_1_3,
+		offset = {
+			0,
+			0,
+			0
 		},
+		scenegraph_id = arg_1_0
 	}
-	local widget = {}
-
-	widget.element = element
-	widget.content = content
-	widget.style = style
-	widget.offset = {
-		0,
-		0,
-		0,
-	}
-	widget.scenegraph_id = scenegraph_id
-
-	return widget
 end
 
-local widgets = {
-	list = create_list_mask("list_window", "list", list_size, list_entry_size),
-	list_scrollbar = UIWidgets.create_chain_scrollbar("list_scrollbar", "list_window", scenegraph_definition.list_scrollbar.size, "gold", true),
+local var_0_6 = {
+	list = var_0_5("list_window", "list", var_0_1, var_0_2),
+	list_scrollbar = UIWidgets.create_chain_scrollbar("list_scrollbar", "list_window", var_0_4.list_scrollbar.size, "gold", true)
 }
-local animation_definitions = {
+local var_0_7 = {
 	on_enter = {
 		{
-			end_progress = 0.3,
 			name = "fade_in",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 0
-
-				local widgets_by_name = widgets.widgets_by_name
-				local list_widget = widgets_by_name.list
-				local style = list_widget.style
-				local mask_style = style.mask
-				local mask_default_width = mask_style.size[1]
-
-				params.mask_default_width = mask_default_width
+			end_progress = 0.3,
+			init = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+				arg_2_3.render_settings.alpha_multiplier = 0
+				arg_2_3.mask_default_width = arg_2_2.widgets_by_name.list.style.mask.size[1]
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+				local var_3_0 = math.easeOutCubic(arg_3_3)
 
-				params.render_settings.alpha_multiplier = anim_progress
+				arg_3_4.render_settings.alpha_multiplier = var_3_0
 
-				local widgets_by_name = widgets.widgets_by_name
-				local list_widgets = widgets.list_widgets
-				local longest_anim_distance = 0
+				local var_3_1 = arg_3_2.widgets_by_name
+				local var_3_2 = arg_3_2.list_widgets
+				local var_3_3 = 0
 
-				for index, widget in ipairs(list_widgets) do
-					local content = widget.content
-					local offset = widget.offset
-					local default_offset = widget.default_offset
-					local row = content.row
-					local column = content.column
-					local anim_offset = math.min(row * 50 + column * 20, 300)
+				for iter_3_0, iter_3_1 in ipairs(var_3_2) do
+					local var_3_4 = iter_3_1.content
+					local var_3_5 = iter_3_1.offset
+					local var_3_6 = iter_3_1.default_offset
+					local var_3_7 = var_3_4.row
+					local var_3_8 = var_3_4.column
+					local var_3_9 = math.min(var_3_7 * 50 + var_3_8 * 20, 300)
 
-					offset[1] = math.floor(default_offset[1] + anim_offset - anim_offset * anim_progress)
-					longest_anim_distance = math.max(longest_anim_distance, anim_offset)
+					var_3_5[1] = math.floor(var_3_6[1] + var_3_9 - var_3_9 * var_3_0)
+					var_3_3 = math.max(var_3_3, var_3_9)
 				end
 
-				local mask_default_width = params.mask_default_width
-				local mask_size = math.floor(mask_default_width + longest_anim_distance - longest_anim_distance * anim_progress)
-				local list_widget = widgets_by_name.list
-				local style = list_widget.style
+				local var_3_10 = arg_3_4.mask_default_width
+				local var_3_11 = math.floor(var_3_10 + var_3_3 - var_3_3 * var_3_0)
+				local var_3_12 = var_3_1.list.style
 
-				style.mask.size[1] = mask_size
-				style.mask_top.size[1] = mask_size
-				style.mask_bottom.size[1] = mask_size
+				var_3_12.mask.size[1] = var_3_11
+				var_3_12.mask_top.size[1] = var_3_11
+				var_3_12.mask_bottom.size[1] = var_3_11
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				return
-			end,
-		},
+			end
+		}
 	},
 	on_exit = {
 		{
-			end_progress = 0.3,
 			name = "fade_out",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 1
+			end_progress = 0.3,
+			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+				arg_5_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+				local var_6_0 = math.easeOutCubic(arg_6_3)
 
-				params.render_settings.alpha_multiplier = 1 - anim_progress
+				arg_6_4.render_settings.alpha_multiplier = 1 - var_6_0
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				return
-			end,
-		},
-	},
+			end
+		}
+	}
 }
 
 return {
-	widgets = widgets,
+	widgets = var_0_6,
 	title_button_definitions = title_button_definitions,
-	scenegraph_definition = scenegraph_definition,
-	animation_definitions = animation_definitions,
+	scenegraph_definition = var_0_4,
+	animation_definitions = var_0_7
 }

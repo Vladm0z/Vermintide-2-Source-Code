@@ -1,35 +1,35 @@
-﻿-- chunkname: @scripts/ui/views/show_cursor_stack.lua
+-- chunkname: @scripts/ui/views/show_cursor_stack.lua
 
 ShowCursorStack = ShowCursorStack or {
 	stack_depth = 0,
-	reasons = {},
+	reasons = {}
 }
 
-local set_clip_cursor = Window.set_clip_cursor
+local var_0_0 = Window.set_clip_cursor
 
-ShowCursorStack.render_cursor = function (allow_cursor_rendering)
-	ShowCursorStack.allow_cursor_rendering = allow_cursor_rendering
+function ShowCursorStack.render_cursor(arg_1_0)
+	ShowCursorStack.allow_cursor_rendering = arg_1_0
 
 	if ShowCursorStack.stack_depth > 0 then
-		local is_fullscreen = Application.is_fullscreen and Application.is_fullscreen()
+		local var_1_0 = Application.is_fullscreen and Application.is_fullscreen()
 
-		Window.set_show_cursor(allow_cursor_rendering)
-		set_clip_cursor(not allow_cursor_rendering or is_fullscreen)
+		Window.set_show_cursor(arg_1_0)
+		var_0_0(not arg_1_0 or var_1_0)
 	end
 end
 
-ShowCursorStack.push = function (skip_error)
+function ShowCursorStack.push(arg_2_0)
 	if ShowCursorStack.stack_depth == 0 and ShowCursorStack.allow_cursor_rendering then
-		local is_fullscreen = Application.is_fullscreen and Application.is_fullscreen()
+		local var_2_0 = Application.is_fullscreen and Application.is_fullscreen()
 
 		Window.set_show_cursor(true)
-		set_clip_cursor(is_fullscreen or false)
+		var_0_0(var_2_0 or false)
 	end
 
 	ShowCursorStack.stack_depth = ShowCursorStack.stack_depth + 1
 end
 
-ShowCursorStack.pop = function (skip_error)
+function ShowCursorStack.pop(arg_3_0)
 	ShowCursorStack.stack_depth = ShowCursorStack.stack_depth - 1
 
 	if ShowCursorStack.stack_depth < 0 and IS_WINDOWS then
@@ -39,56 +39,56 @@ ShowCursorStack.pop = function (skip_error)
 
 	if ShowCursorStack.stack_depth == 0 then
 		Window.set_show_cursor(false)
-		set_clip_cursor(true)
+		var_0_0(true)
 	end
 
 	ShowCursorStack.stack_depth = math.max(ShowCursorStack.stack_depth, 0)
 end
 
-ShowCursorStack.show = function (reason)
-	local was_visible = not table.is_empty(ShowCursorStack.reasons)
+function ShowCursorStack.show(arg_4_0)
+	local var_4_0 = not table.is_empty(ShowCursorStack.reasons)
 
-	ShowCursorStack.reasons[reason] = true
+	ShowCursorStack.reasons[arg_4_0] = true
 
-	if not was_visible then
+	if not var_4_0 then
 		ShowCursorStack.push(true)
 	end
 end
 
-ShowCursorStack.hide = function (reason)
-	local was_visible = not table.is_empty(ShowCursorStack.reasons)
+function ShowCursorStack.hide(arg_5_0)
+	local var_5_0 = not table.is_empty(ShowCursorStack.reasons)
 
-	ShowCursorStack.reasons[reason] = nil
+	ShowCursorStack.reasons[arg_5_0] = nil
 
-	if was_visible and table.is_empty(ShowCursorStack.reasons) then
+	if var_5_0 and table.is_empty(ShowCursorStack.reasons) then
 		ShowCursorStack.pop(true)
 	end
 end
 
-ShowCursorStack.update_clip_cursor = function ()
-	local is_fullscreen = Application.is_fullscreen and Application.is_fullscreen()
-	local allow_cursor_rendering = ShowCursorStack.allow_cursor_rendering
+function ShowCursorStack.update_clip_cursor()
+	local var_6_0 = Application.is_fullscreen and Application.is_fullscreen()
+	local var_6_1 = ShowCursorStack.allow_cursor_rendering
 
-	if ShowCursorStack.stack_depth == 0 and allow_cursor_rendering then
-		set_clip_cursor(is_fullscreen or false)
+	if ShowCursorStack.stack_depth == 0 and var_6_1 then
+		var_0_0(var_6_0 or false)
 	elseif ShowCursorStack.stack_depth > 0 then
-		set_clip_cursor(is_fullscreen)
+		var_0_0(var_6_0)
 	end
 end
 
-ShowCursorStack.cursor_active = function ()
+function ShowCursorStack.cursor_active()
 	return ShowCursorStack.stack_depth > 0
 end
 
-ShowCursorStack.dump = function ()
-	local out = {}
+function ShowCursorStack.dump()
+	local var_8_0 = {}
 
-	table.insert(out, "Stack size: " .. ShowCursorStack.stack_depth)
-	table.insert(out, "Reasons:" .. (table.is_empty(ShowCursorStack.reasons) and " (none)" or ""))
+	table.insert(var_8_0, "Stack size: " .. ShowCursorStack.stack_depth)
+	table.insert(var_8_0, "Reasons:" .. (table.is_empty(ShowCursorStack.reasons) and " (none)" or ""))
 
-	for reason in pairs(ShowCursorStack.reasons) do
-		table.insert(out, "\t" .. reason)
+	for iter_8_0 in pairs(ShowCursorStack.reasons) do
+		table.insert(var_8_0, "\t" .. iter_8_0)
 	end
 
-	print(table.concat(out, "\n"))
+	print(table.concat(var_8_0, "\n"))
 end

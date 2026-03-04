@@ -1,659 +1,643 @@
-﻿-- chunkname: @scripts/flow/flow_callbacks_progression.lua
+-- chunkname: @scripts/flow/flow_callbacks_progression.lua
 
-local flow_return_table = Boot.flow_return_table
+local var_0_0 = Boot.flow_return_table
 
-function flow_callback_check_progression_unlocked(params)
-	flow_return_table.is_unlocked = false
-	flow_return_table.is_locked = true
+function flow_callback_check_progression_unlocked(arg_1_0)
+	var_0_0.is_unlocked = false
+	var_0_0.is_locked = true
 
-	return flow_return_table
+	return var_0_0
 end
 
-function flow_callback_get_last_level_played(params)
-	local last_played_level = SaveData.last_played_level or "N/A"
-	local last_played_level_won = SaveData.last_played_level_result == "won"
+function flow_callback_get_last_level_played(arg_2_0)
+	local var_2_0 = SaveData.last_played_level or "N/A"
+	local var_2_1 = SaveData.last_played_level_result == "won"
 
-	flow_return_table.level_key = last_played_level
-	flow_return_table.won = last_played_level_won
+	var_0_0.level_key = var_2_0
+	var_0_0.won = var_2_1
 
-	return flow_return_table
+	return var_0_0
 end
 
-function flow_callback_last_level_played_was_weave(params)
-	local last_played_level = SaveData.last_played_level or "N/A"
-	local last_played_level_won = SaveData.last_played_level_result == "won"
-	local weave_templates = WeaveSettings.templates
-	local was_weave_level = false
-	local was_boss_level = false
+function flow_callback_last_level_played_was_weave(arg_3_0)
+	local var_3_0 = SaveData.last_played_level or "N/A"
+	local var_3_1 = SaveData.last_played_level_result == "won"
+	local var_3_2 = WeaveSettings.templates
+	local var_3_3 = false
+	local var_3_4 = false
 
-	for weave, template in pairs(weave_templates) do
-		local objectives = template.objectives
-		local weave_level = objectives[1]
-		local boss_level = objectives[2]
+	for iter_3_0, iter_3_1 in pairs(var_3_2) do
+		local var_3_5 = iter_3_1.objectives
+		local var_3_6 = var_3_5[1]
+		local var_3_7 = var_3_5[2]
 
-		if weave_level.level_id == last_played_level then
-			was_weave_level = true
-		elseif boss_level.level_id == last_played_level then
-			was_boss_level = true
+		if var_3_6.level_id == var_3_0 then
+			var_3_3 = true
+		elseif var_3_7.level_id == var_3_0 then
+			var_3_4 = true
 		end
 	end
 
-	flow_return_table.was_weave_level = was_weave_level
-	flow_return_table.was_boss_level = was_boss_level
-	flow_return_table.won = last_played_level_won
+	var_0_0.was_weave_level = var_3_3
+	var_0_0.was_boss_level = var_3_4
+	var_0_0.won = var_3_1
 
-	return flow_return_table
+	return var_0_0
 end
 
-function flow_callback_ui_onboarding_tutorial_completed(params)
-	local completed = false
-	local player_manager = Managers.player
+function flow_callback_ui_onboarding_tutorial_completed(arg_4_0)
+	local var_4_0 = false
+	local var_4_1 = Managers.player
 
-	if player_manager then
-		local statistics_db = player_manager:statistics_db()
-		local local_player = player_manager:local_player()
+	if var_4_1 then
+		local var_4_2 = var_4_1:statistics_db()
+		local var_4_3 = var_4_1:local_player()
 
-		if statistics_db and local_player then
-			local tutorial = params.tutorial_name and WeaveUITutorials[params.tutorial_name]
+		if var_4_2 and var_4_3 then
+			local var_4_4 = arg_4_0.tutorial_name and WeaveUITutorials[arg_4_0.tutorial_name]
 
-			if tutorial then
-				local ui_onboarding_state = WeaveOnboardingUtils.get_ui_onboarding_state(statistics_db, local_player:stats_id())
+			if var_4_4 then
+				local var_4_5 = WeaveOnboardingUtils.get_ui_onboarding_state(var_4_2, var_4_3:stats_id())
 
-				completed = WeaveOnboardingUtils.tutorial_completed(ui_onboarding_state, tutorial)
+				var_4_0 = WeaveOnboardingUtils.tutorial_completed(var_4_5, var_4_4)
 			end
 		end
 	end
 
-	flow_return_table.completed = completed
+	var_0_0.completed = var_4_0
 
-	return flow_return_table
+	return var_0_0
 end
 
-function flow_callback_get_completed_game_difficulty(params)
-	local player_manager = Managers.player
-	local statistics_db = player_manager:statistics_db()
-	local server_player = Managers.player:server_player()
+function flow_callback_get_completed_game_difficulty(arg_5_0)
+	local var_5_0 = Managers.player:statistics_db()
+	local var_5_1 = Managers.player:server_player()
 
-	if server_player then
-		local stats_id = server_player:stats_id()
-		local result = LevelUnlockUtils.completed_adventure_difficulty(statistics_db, stats_id)
+	if var_5_1 then
+		local var_5_2 = var_5_1:stats_id()
+		local var_5_3 = LevelUnlockUtils.completed_adventure_difficulty(var_5_0, var_5_2)
 
 		return {
-			completed_difficulty = result,
+			completed_difficulty = var_5_3
 		}
 	end
 
 	return {
-		completed_difficulty = 0,
+		completed_difficulty = 0
 	}
 end
 
-function flow_callback_get_completed_drachenfels_difficulty(params)
-	local player_manager = Managers.player
-	local statistics_db = player_manager:statistics_db()
-	local server_player = Managers.player:server_player()
+function flow_callback_get_completed_drachenfels_difficulty(arg_6_0)
+	local var_6_0 = Managers.player:statistics_db()
+	local var_6_1 = Managers.player:server_player()
 
-	if server_player then
-		local levels = {
+	if var_6_1 then
+		local var_6_2 = {
 			"dlc_portals",
 			"dlc_castle",
-			"dlc_castle_dungeon",
+			"dlc_castle_dungeon"
 		}
-		local result
-		local stats_id = server_player:stats_id()
+		local var_6_3
+		local var_6_4 = var_6_1:stats_id()
 
-		for _, level_key in ipairs(levels) do
-			local difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(statistics_db, stats_id, level_key)
+		for iter_6_0, iter_6_1 in ipairs(var_6_2) do
+			local var_6_5 = LevelUnlockUtils.completed_level_difficulty_index(var_6_0, var_6_4, iter_6_1)
 
-			if not result or difficulty_index < result then
-				result = difficulty_index
+			if not var_6_3 or var_6_5 < var_6_3 then
+				var_6_3 = var_6_5
 			end
 		end
 
 		return {
-			completed_difficulty = result,
+			completed_difficulty = var_6_3
 		}
 	end
 
 	return {
-		completed_difficulty = 0,
+		completed_difficulty = 0
 	}
 end
 
-function flow_callback_get_completed_dwarf_levels_difficulty(params)
-	local player_manager = Managers.player
-	local statistics_db = player_manager:statistics_db()
-	local server_player = Managers.player:server_player()
+function flow_callback_get_completed_dwarf_levels_difficulty(arg_7_0)
+	local var_7_0 = Managers.player:statistics_db()
+	local var_7_1 = Managers.player:server_player()
 
-	if server_player then
-		local levels = {
+	if var_7_1 then
+		local var_7_2 = {
 			"dlc_dwarf_exterior",
 			"dlc_dwarf_interior",
-			"dlc_dwarf_beacons",
+			"dlc_dwarf_beacons"
 		}
-		local result
-		local stats_id = server_player:stats_id()
+		local var_7_3
+		local var_7_4 = var_7_1:stats_id()
 
-		for _, level_key in ipairs(levels) do
-			local difficulty_index = LevelUnlockUtils.completed_level_difficulty(statistics_db, stats_id, level_key)
+		for iter_7_0, iter_7_1 in ipairs(var_7_2) do
+			local var_7_5 = LevelUnlockUtils.completed_level_difficulty(var_7_0, var_7_4, iter_7_1)
 
-			if not result or difficulty_index < result then
-				result = difficulty_index
+			if not var_7_3 or var_7_5 < var_7_3 then
+				var_7_3 = var_7_5
 			end
 		end
 
 		return {
-			completed_difficulty = result,
+			completed_difficulty = var_7_3
 		}
 	end
 
 	return {
-		completed_difficulty = 0,
+		completed_difficulty = 0
 	}
 end
 
-function flow_callback_get_completed_survival_waves(params)
-	local player_manager = Managers.player
-	local server_player = player_manager:server_player()
-	local returns = {
-		dlc_survival_magnus = 0,
+function flow_callback_get_completed_survival_waves(arg_8_0)
+	local var_8_0 = Managers.player
+	local var_8_1 = var_8_0:server_player()
+	local var_8_2 = {
 		dlc_survival_ruins = 0,
+		dlc_survival_magnus = 0
 	}
 
-	if server_player then
-		local statistics_db = player_manager:statistics_db()
-		local start_waves = SurvivalStartWaveByDifficulty
-		local stats_id = server_player:stats_id()
+	if var_8_1 then
+		local var_8_3 = var_8_0:statistics_db()
+		local var_8_4 = SurvivalStartWaveByDifficulty
+		local var_8_5 = var_8_1:stats_id()
 
-		for level_key, _ in pairs(returns) do
-			local hard = StatisticsUtil.get_survival_stat(statistics_db, level_key, "cataclysm", "waves", stats_id)
+		for iter_8_0, iter_8_1 in pairs(var_8_2) do
+			local var_8_6 = StatisticsUtil.get_survival_stat(var_8_3, iter_8_0, "cataclysm", "waves", var_8_5)
 
-			if hard > 0 then
-				hard = hard + start_waves.cataclysm
+			if var_8_6 > 0 then
+				var_8_6 = var_8_6 + var_8_4.cataclysm
 			end
 
-			local harder = StatisticsUtil.get_survival_stat(statistics_db, level_key, "cataclysm_2", "waves", stats_id)
+			local var_8_7 = StatisticsUtil.get_survival_stat(var_8_3, iter_8_0, "cataclysm_2", "waves", var_8_5)
 
-			if harder > 0 then
-				harder = harder + start_waves.cataclysm_2
+			if var_8_7 > 0 then
+				var_8_7 = var_8_7 + var_8_4.cataclysm_2
 			end
 
-			local hardest = StatisticsUtil.get_survival_stat(statistics_db, level_key, "cataclysm_3", "waves", stats_id)
+			local var_8_8 = StatisticsUtil.get_survival_stat(var_8_3, iter_8_0, "cataclysm_3", "waves", var_8_5)
 
-			if hardest > 0 then
-				hardest = hardest + start_waves.cataclysm_3
+			if var_8_8 > 0 then
+				var_8_8 = var_8_8 + var_8_4.cataclysm_3
 			end
 
-			returns[level_key] = math.max(hard, harder, hardest)
+			var_8_2[iter_8_0] = math.max(var_8_6, var_8_7, var_8_8)
 		end
 	end
 
-	return returns
+	return var_8_2
 end
 
-function flow_callback_override_level_progression_for_experience(params)
-	local progression = params.progression
+function flow_callback_override_level_progression_for_experience(arg_9_0)
+	local var_9_0 = arg_9_0.progression
 
-	fassert(progression >= 0 and progression <= 1, "Level progression needs to be a number between 0 and 1, not %d", progression)
-
-	local mission_system = Managers.state.entity:system("mission_system")
-
-	mission_system:override_percentage_completed(progression)
+	fassert(var_9_0 >= 0 and var_9_0 <= 1, "Level progression needs to be a number between 0 and 1, not %d", var_9_0)
+	Managers.state.entity:system("mission_system"):override_percentage_completed(var_9_0)
 end
 
-function flow_query_leader_hero_level(params)
-	local leader_peer_id = Managers.party:leader()
-	local local_peer_id = Network.peer_id()
+function flow_query_leader_hero_level(arg_10_0)
+	local var_10_0 = Managers.party:leader()
+	local var_10_1 = Network.peer_id()
 
-	fassert(leader_peer_id == local_peer_id, "Flow node \"Leader Hero Level\" should only be called by the leader player")
+	fassert(var_10_0 == var_10_1, "Flow node \"Leader Hero Level\" should only be called by the leader player")
 
-	local hero_name = params.hero_name
-	local experience = ExperienceSettings.get_experience(hero_name)
-	local level = ExperienceSettings.get_level(experience)
+	local var_10_2 = arg_10_0.hero_name
+	local var_10_3 = ExperienceSettings.get_experience(var_10_2)
+	local var_10_4 = ExperienceSettings.get_level(var_10_3)
 
-	flow_return_table.value = level
+	var_0_0.value = var_10_4
 
-	return flow_return_table
+	return var_0_0
 end
 
-function flow_query_leader_hero_prestige(params)
-	local leader_peer_id = Managers.party:leader()
-	local local_peer_id = Network.peer_id()
+function flow_query_leader_hero_prestige(arg_11_0)
+	local var_11_0 = Managers.party:leader()
+	local var_11_1 = Network.peer_id()
 
-	fassert(leader_peer_id == local_peer_id, "Flow node \"Leader Hero Prestige\" should only be called by the leader player")
+	fassert(var_11_0 == var_11_1, "Flow node \"Leader Hero Prestige\" should only be called by the leader player")
 
-	local hero_name = params.hero_name
-	local prestige_level = ProgressionUnlocks.get_prestige_level(hero_name)
+	local var_11_2 = arg_11_0.hero_name
+	local var_11_3 = ProgressionUnlocks.get_prestige_level(var_11_2)
 
-	flow_return_table.value = prestige_level
+	var_0_0.value = var_11_3
 
-	return flow_return_table
+	return var_0_0
 end
 
-function flow_query_leader_completed_difficulty(params)
-	local leader_peer_id = Managers.party:leader()
-	local local_peer_id = Network.peer_id()
+function flow_query_leader_completed_difficulty(arg_12_0)
+	local var_12_0 = Managers.party:leader()
+	local var_12_1 = Network.peer_id()
 
-	fassert(leader_peer_id == local_peer_id, "Flow node \"Leader Completed Difficulty\" should only be called by the leader player")
+	fassert(var_12_0 == var_12_1, "Flow node \"Leader Completed Difficulty\" should only be called by the leader player")
 
-	local player_manager = Managers.player
-	local statistics_db = player_manager:statistics_db()
-	local leader_player = player_manager:player(leader_peer_id, 1)
-	local stats_id = leader_player:stats_id()
-	local completed_difficulty = LevelUnlockUtils.completed_main_game_difficulty(statistics_db, stats_id)
+	local var_12_2 = Managers.player
+	local var_12_3 = var_12_2:statistics_db()
+	local var_12_4 = var_12_2:player(var_12_0, 1):stats_id()
+	local var_12_5 = LevelUnlockUtils.completed_main_game_difficulty(var_12_3, var_12_4)
 
-	flow_return_table.value = completed_difficulty
+	var_0_0.value = var_12_5
 
-	return flow_return_table
+	return var_0_0
 end
 
-function flow_query_leader_completed_dlc_difficulty(params)
-	local leader_peer_id = Managers.party:leader()
-	local local_peer_id = Network.peer_id()
+function flow_query_leader_completed_dlc_difficulty(arg_13_0)
+	local var_13_0 = Managers.party:leader()
+	local var_13_1 = Network.peer_id()
 
-	fassert(leader_peer_id == local_peer_id, "Flow node \"Leader Completed DLC Difficulty\" should only be called by the leader player")
+	fassert(var_13_0 == var_13_1, "Flow node \"Leader Completed DLC Difficulty\" should only be called by the leader player")
 
-	local dlc_name = params.dlc_name
-	local player_manager = Managers.player
-	local statistics_db = player_manager:statistics_db()
-	local leader_player = player_manager:player(leader_peer_id, 1)
-	local stats_id = leader_player:stats_id()
-	local completed_difficulty = LevelUnlockUtils.completed_dlc_difficulty(statistics_db, stats_id, dlc_name)
+	local var_13_2 = arg_13_0.dlc_name
+	local var_13_3 = Managers.player
+	local var_13_4 = var_13_3:statistics_db()
+	local var_13_5 = var_13_3:player(var_13_0, 1):stats_id()
+	local var_13_6 = LevelUnlockUtils.completed_dlc_difficulty(var_13_4, var_13_5, var_13_2)
 
-	flow_return_table.value = completed_difficulty
+	var_0_0.value = var_13_6
 
-	return flow_return_table
+	return var_0_0
 end
 
-local function get_presistent_stat_from_peer_id(peer_id, ...)
-	local player_manager = Managers.player
-	local statistics_db = player_manager:statistics_db()
-	local player = player_manager:player(peer_id, 1)
-	local stat_value
+local function var_0_1(arg_14_0, ...)
+	local var_14_0 = Managers.player
+	local var_14_1 = var_14_0:statistics_db()
+	local var_14_2 = var_14_0:player(arg_14_0, 1)
+	local var_14_3
 
-	if player then
-		local stats_id = player:stats_id()
+	if var_14_2 then
+		local var_14_4 = var_14_2:stats_id()
 
-		stat_value = statistics_db:get_persistent_stat(stats_id, ...)
+		var_14_3 = var_14_1:get_persistent_stat(var_14_4, ...)
 	end
 
-	return stat_value
+	return var_14_3
 end
 
-function flow_query_leader_completed_exalted_champion_difficulty(params)
-	local leader_peer_id = Managers.party:leader()
-	local local_peer_id = Network.peer_id()
+function flow_query_leader_completed_exalted_champion_difficulty(arg_15_0)
+	local var_15_0 = Managers.party:leader()
+	local var_15_1 = Network.peer_id()
 
-	fassert(leader_peer_id == local_peer_id, "Flow node \"Leader Completed Bodvarr Difficulty\" should only be called by the leader player")
+	fassert(var_15_0 == var_15_1, "Flow node \"Leader Completed Bodvarr Difficulty\" should only be called by the leader player")
 
-	local completed_difficulty = get_presistent_stat_from_peer_id(leader_peer_id, "kill_chaos_exalted_champion_difficulty_rank")
+	local var_15_2 = var_0_1(var_15_0, "kill_chaos_exalted_champion_difficulty_rank")
 
-	flow_return_table.value = completed_difficulty
+	var_0_0.value = var_15_2
 
-	return flow_return_table
+	return var_0_0
 end
 
-function flow_query_leader_completed_exalted_sorcerer_difficulty(params)
-	local leader_peer_id = Managers.party:leader()
-	local local_peer_id = Network.peer_id()
+function flow_query_leader_completed_exalted_sorcerer_difficulty(arg_16_0)
+	local var_16_0 = Managers.party:leader()
+	local var_16_1 = Network.peer_id()
 
-	fassert(leader_peer_id == local_peer_id, "Flow node \"Leader Completed Haleschmorg Burglederp Difficulty\" should only be called by the leader player")
+	fassert(var_16_0 == var_16_1, "Flow node \"Leader Completed Haleschmorg Burglederp Difficulty\" should only be called by the leader player")
 
-	local completed_difficulty = get_presistent_stat_from_peer_id(leader_peer_id, "kill_chaos_exalted_sorcerer_difficulty_rank")
+	local var_16_2 = var_0_1(var_16_0, "kill_chaos_exalted_sorcerer_difficulty_rank")
 
-	flow_return_table.value = completed_difficulty
+	var_0_0.value = var_16_2
 
-	return flow_return_table
+	return var_0_0
 end
 
-function flow_query_leader_completed_grey_seer_difficulty(params)
-	local leader_peer_id = Managers.party:leader()
-	local local_peer_id = Network.peer_id()
+function flow_query_leader_completed_grey_seer_difficulty(arg_17_0)
+	local var_17_0 = Managers.party:leader()
+	local var_17_1 = Network.peer_id()
 
-	fassert(leader_peer_id == local_peer_id, "Flow node \"Leader Completed Rasknitt Difficulty\" should only be called by the leader player")
+	fassert(var_17_0 == var_17_1, "Flow node \"Leader Completed Rasknitt Difficulty\" should only be called by the leader player")
 
-	local completed_difficulty = get_presistent_stat_from_peer_id(leader_peer_id, "kill_skaven_grey_seer_difficulty_rank")
+	local var_17_2 = var_0_1(var_17_0, "kill_skaven_grey_seer_difficulty_rank")
 
-	flow_return_table.value = completed_difficulty
+	var_0_0.value = var_17_2
 
-	return flow_return_table
+	return var_0_0
 end
 
-function flow_query_leader_completed_storm_vermin_warlord_difficulty(params)
-	local leader_peer_id = Managers.party:leader()
-	local local_peer_id = Network.peer_id()
+function flow_query_leader_completed_storm_vermin_warlord_difficulty(arg_18_0)
+	local var_18_0 = Managers.party:leader()
+	local var_18_1 = Network.peer_id()
 
-	fassert(leader_peer_id == local_peer_id, "Flow node \"Leader Completed Skarrik Spinemanglr Difficulty\" should only be called by the leader player")
+	fassert(var_18_0 == var_18_1, "Flow node \"Leader Completed Skarrik Spinemanglr Difficulty\" should only be called by the leader player")
 
-	local completed_difficulty = get_presistent_stat_from_peer_id(leader_peer_id, "kill_skaven_storm_vermin_warlord_difficulty_rank")
+	local var_18_2 = var_0_1(var_18_0, "kill_skaven_storm_vermin_warlord_difficulty_rank")
 
-	flow_return_table.value = completed_difficulty
+	var_0_0.value = var_18_2
 
-	return flow_return_table
+	return var_0_0
 end
 
-function flow_query_leader_completed_celebrate_event_2019(params)
-	local leader_peer_id = Managers.party:leader()
-	local local_peer_id = Network.peer_id()
+function flow_query_leader_completed_celebrate_event_2019(arg_19_0)
+	local var_19_0 = Managers.party:leader()
+	local var_19_1 = Network.peer_id()
 
-	fassert(leader_peer_id == local_peer_id, "Flow node \"Leader Completed Celebrate Event 2019\" should only be called by the leader player")
+	fassert(var_19_0 == var_19_1, "Flow node \"Leader Completed Celebrate Event 2019\" should only be called by the leader player")
 
-	local completed = get_presistent_stat_from_peer_id(leader_peer_id, "completed_levels", "dlc_celebrate_crawl") > 0
+	local var_19_2 = var_0_1(var_19_0, "completed_levels", "dlc_celebrate_crawl") > 0
 
-	flow_return_table.value = completed
+	var_0_0.value = var_19_2
 
-	return flow_return_table
+	return var_0_0
 end
 
-function flow_query_leader_achievement_completed(params)
+function flow_query_leader_achievement_completed(arg_20_0)
 	if script_data.settings.use_beta_mode or not Managers.state.achievement:is_enabled() then
-		flow_return_table.value = false
+		var_0_0.value = false
 
-		return flow_return_table
+		return var_0_0
 	end
 
-	local leader_peer_id = Managers.party:leader()
-	local local_peer_id = Network.peer_id()
+	local var_20_0 = Managers.party:leader()
+	local var_20_1 = Network.peer_id()
 
-	fassert(leader_peer_id == local_peer_id, "Flow node \"Leader Achievement Completed\" should only be called by the leader player")
+	fassert(var_20_0 == var_20_1, "Flow node \"Leader Achievement Completed\" should only be called by the leader player")
 
 	if script_data.achievement_completed_flow_override ~= nil then
-		flow_return_table.value = script_data.achievement_completed_flow_override
+		var_0_0.value = script_data.achievement_completed_flow_override
 
-		return flow_return_table
+		return var_0_0
 	end
 
-	local achievement_name = params.achievement_name
-	local achievement_data = AchievementTemplates.achievements[achievement_name]
+	local var_20_2 = arg_20_0.achievement_name
+	local var_20_3 = AchievementTemplates.achievements[var_20_2]
 
-	fassert(achievement_data, "Achievement [\"%s\"] not found in AchievementTemplates!", achievement_name)
+	fassert(var_20_3, "Achievement [\"%s\"] not found in AchievementTemplates!", var_20_2)
 
-	local backend_interface_loot = Managers.backend:get_interface("loot")
+	local var_20_4 = Managers.backend:get_interface("loot")
 
-	if backend_interface_loot then
-		local claimed = backend_interface_loot:achievement_rewards_claimed(achievement_data.id)
+	if var_20_4 then
+		local var_20_5 = var_20_4:achievement_rewards_claimed(var_20_3.id)
 
-		if claimed then
-			flow_return_table.value = claimed
+		if var_20_5 then
+			var_0_0.value = var_20_5
 
-			return flow_return_table
+			return var_0_0
 		end
 	end
 
-	local player_manager = Managers.player
-	local statistics_db = player_manager:statistics_db()
-	local player = player_manager:player(leader_peer_id, 1)
-	local stats_id = player:stats_id()
-	local completed = achievement_data.completed(statistics_db, stats_id)
+	local var_20_6 = Managers.player
+	local var_20_7 = var_20_6:statistics_db()
+	local var_20_8 = var_20_6:player(var_20_0, 1):stats_id()
+	local var_20_9 = var_20_3.completed(var_20_7, var_20_8)
 
-	flow_return_table.value = completed
+	var_0_0.value = var_20_9
 
-	return flow_return_table
+	return var_0_0
 end
 
-function flow_query_local_player_achievement_completed(params)
+function flow_query_local_player_achievement_completed(arg_21_0)
 	if script_data.settings.use_beta_mode or not Managers.state.achievement:is_enabled() then
-		flow_return_table.value = false
+		var_0_0.value = false
 
-		return flow_return_table
+		return var_0_0
 	end
 
 	if script_data.achievement_completed_flow_override ~= nil then
-		flow_return_table.value = script_data.achievement_completed_flow_override
+		var_0_0.value = script_data.achievement_completed_flow_override
 
-		return flow_return_table
+		return var_0_0
 	end
 
-	local achievement_name = params.achievement_name
-	local achievement_data = AchievementTemplates.achievements[achievement_name]
+	local var_21_0 = arg_21_0.achievement_name
+	local var_21_1 = AchievementTemplates.achievements[var_21_0]
 
-	fassert(achievement_data, "Achievement [\"%s\"] not found in AchievementTemplates!", achievement_name)
+	fassert(var_21_1, "Achievement [\"%s\"] not found in AchievementTemplates!", var_21_0)
 
-	local backend_interface_loot = Managers.backend:get_interface("loot")
+	local var_21_2 = Managers.backend:get_interface("loot")
 
-	if backend_interface_loot then
-		local claimed = backend_interface_loot:achievement_rewards_claimed(achievement_data.id)
+	if var_21_2 then
+		local var_21_3 = var_21_2:achievement_rewards_claimed(var_21_1.id)
 
-		if claimed then
-			flow_return_table.value = claimed
+		if var_21_3 then
+			var_0_0.value = var_21_3
 
-			return flow_return_table
+			return var_0_0
 		end
 	end
 
-	local player_manager = Managers.player
-	local statistics_db = player_manager:statistics_db()
-	local player = player_manager:local_player()
-	local completed = false
+	local var_21_4 = Managers.player
+	local var_21_5 = var_21_4:statistics_db()
+	local var_21_6 = var_21_4:local_player()
+	local var_21_7 = false
 
-	if player then
-		local stats_id = player:stats_id()
+	if var_21_6 then
+		local var_21_8 = var_21_6:stats_id()
 
-		completed = achievement_data.completed(statistics_db, stats_id)
+		var_21_7 = var_21_1.completed(var_21_5, var_21_8)
 	end
 
-	flow_return_table.value = completed
+	var_0_0.value = var_21_7
 
-	return flow_return_table
+	return var_0_0
 end
 
-function flow_query_local_player_quest_progress(params)
-	flow_return_table.progress = 0
-	flow_return_table.target = 0
+function flow_query_local_player_quest_progress(arg_22_0)
+	var_0_0.progress = 0
+	var_0_0.target = 0
 
 	if script_data.settings.use_beta_mode then
-		flow_return_table.success = false
+		var_0_0.success = false
 
-		return flow_return_table
+		return var_0_0
 	end
 
-	local quest_id = params.quest_id
-	local backend_interface_quests = Managers.backend:get_interface("quests")
-	local quest_key = backend_interface_quests:get_quest_key(quest_id)
+	local var_22_0 = arg_22_0.quest_id
 
-	if not quest_key then
-		flow_return_table.success = false
+	if not Managers.backend:get_interface("quests"):get_quest_key(var_22_0) then
+		var_0_0.success = false
 
-		return flow_return_table
+		return var_0_0
 	end
 
-	local quest_data = Managers.state.quest:get_data_by_id(quest_id)
+	local var_22_1 = Managers.state.quest:get_data_by_id(var_22_0)
 
-	if quest_data then
-		flow_return_table.progress = quest_data.progress[1]
-		flow_return_table.target = quest_data.progress[2]
-		flow_return_table.success = true
+	if var_22_1 then
+		var_0_0.progress = var_22_1.progress[1]
+		var_0_0.target = var_22_1.progress[2]
+		var_0_0.success = true
 	else
-		flow_return_table.success = false
+		var_0_0.success = false
 	end
 
-	return flow_return_table
+	return var_0_0
 end
 
-function flow_query_leader_hero_xp(params)
-	local leader_peer_id = Managers.party:leader()
-	local local_peer_id = Network.peer_id()
+function flow_query_leader_hero_xp(arg_23_0)
+	local var_23_0 = Managers.party:leader()
+	local var_23_1 = Network.peer_id()
 
-	fassert(leader_peer_id == local_peer_id, "Flow node \"Leader Hero XP\" should only be called by the leader player")
+	fassert(var_23_0 == var_23_1, "Flow node \"Leader Hero XP\" should only be called by the leader player")
 
-	local hero_name = params.hero_name
-	local experience = ExperienceSettings.get_experience(hero_name)
+	local var_23_2 = arg_23_0.hero_name
+	local var_23_3 = ExperienceSettings.get_experience(var_23_2)
 
-	flow_return_table.value = experience
+	var_0_0.value = var_23_3
 
-	return flow_return_table
+	return var_0_0
 end
 
-function flow_query_leader_num_acts_completed(params)
-	local leader_peer_id = Managers.party:leader()
-	local local_peer_id = Network.peer_id()
+function flow_query_leader_num_acts_completed(arg_24_0)
+	local var_24_0 = Managers.party:leader()
+	local var_24_1 = Network.peer_id()
 
-	fassert(leader_peer_id == local_peer_id, "Flow node \"Leader Number of Acts Completed\" should only be called by the leader player")
+	fassert(var_24_0 == var_24_1, "Flow node \"Leader Number of Acts Completed\" should only be called by the leader player")
 
-	local player_manager = Managers.player
-	local statistics_db = player_manager:statistics_db()
-	local leader_player = player_manager:player(leader_peer_id, 1)
-	local stats_id = leader_player:stats_id()
-	local num_completed = LevelUnlockUtils.num_acts_completed(statistics_db, stats_id)
+	local var_24_2 = Managers.player
+	local var_24_3 = var_24_2:statistics_db()
+	local var_24_4 = var_24_2:player(var_24_0, 1):stats_id()
+	local var_24_5 = LevelUnlockUtils.num_acts_completed(var_24_3, var_24_4)
 
-	flow_return_table.value = num_completed
+	var_0_0.value = var_24_5
 
-	return flow_return_table
+	return var_0_0
 end
 
-function flow_query_leader_num_crafted_items(params)
-	local leader_peer_id = Managers.party:leader()
-	local local_peer_id = Network.peer_id()
+function flow_query_leader_num_crafted_items(arg_25_0)
+	local var_25_0 = Managers.party:leader()
+	local var_25_1 = Network.peer_id()
 
-	fassert(leader_peer_id == local_peer_id, "Flow node \"Leader Number of Crafted Items\" should only be called by the leader player")
+	fassert(var_25_0 == var_25_1, "Flow node \"Leader Number of Crafted Items\" should only be called by the leader player")
 
-	local player_manager = Managers.player
-	local statistics_db = player_manager:statistics_db()
-	local leader_player = player_manager:player(leader_peer_id, 1)
-	local stats_id = leader_player:stats_id()
-	local num_crafted = statistics_db:get_persistent_stat(stats_id, "crafted_items")
+	local var_25_2 = Managers.player
+	local var_25_3 = var_25_2:statistics_db()
+	local var_25_4 = var_25_2:player(var_25_0, 1):stats_id()
+	local var_25_5 = var_25_3:get_persistent_stat(var_25_4, "crafted_items")
 
-	flow_return_table.value = num_crafted
+	var_0_0.value = var_25_5
 
-	return flow_return_table
+	return var_0_0
 end
 
-function flow_query_local_player_has_loot_chest(params)
-	local has_chest = BackendUtils.has_loot_chest()
+function flow_query_local_player_has_loot_chest(arg_26_0)
+	local var_26_0 = BackendUtils.has_loot_chest()
 
-	flow_return_table.value = has_chest
+	var_0_0.value = var_26_0
 
-	return flow_return_table
+	return var_0_0
 end
 
-function flow_callback_leader_sum_best_power_levels(params)
-	local leader_peer_id = Managers.party:leader()
-	local local_peer_id = Network.peer_id()
+function flow_callback_leader_sum_best_power_levels(arg_27_0)
+	local var_27_0 = Managers.party:leader()
+	local var_27_1 = Network.peer_id()
 
-	fassert(leader_peer_id == local_peer_id, "Flow node \"Leader Sum of Best Power Levels\" should only be called by the leader player")
+	fassert(var_27_0 == var_27_1, "Flow node \"Leader Sum of Best Power Levels\" should only be called by the leader player")
 
-	local world_manager = Managers.world
-	local world_name = "level_world"
+	local var_27_2 = Managers.world
+	local var_27_3 = "level_world"
 
-	if world_manager:has_world(world_name) then
-		local world = world_manager:world(world_name)
-		local result_event = params.result_event
-		local result_parameter = params.result_parameter
-		local item_interface = Managers.backend:get_interface("items")
-		local value = item_interface:sum_best_power_levels()
+	if var_27_2:has_world(var_27_3) then
+		local var_27_4 = var_27_2:world(var_27_3)
+		local var_27_5 = arg_27_0.result_event
+		local var_27_6 = arg_27_0.result_parameter
+		local var_27_7 = Managers.backend:get_interface("items"):sum_best_power_levels()
 
-		LevelHelper:set_flow_parameter(world, result_parameter, value)
-		LevelHelper:flow_event(world, result_event)
+		LevelHelper:set_flow_parameter(var_27_4, var_27_6, var_27_7)
+		LevelHelper:flow_event(var_27_4, var_27_5)
 	end
 end
 
-function flow_query_leader_has_dlc(params)
-	local leader_peer_id = Managers.party:leader()
-	local local_peer_id = Network.peer_id()
+function flow_query_leader_has_dlc(arg_28_0)
+	local var_28_0 = Managers.party:leader()
+	local var_28_1 = Network.peer_id()
 
-	fassert(leader_peer_id == local_peer_id, "Flow node \"Leader Has DLC\" should only be called by the leader player")
+	fassert(var_28_0 == var_28_1, "Flow node \"Leader Has DLC\" should only be called by the leader player")
 
-	local dlc_name = params.dlc_name
+	local var_28_2 = arg_28_0.dlc_name
 
-	if dlc_name == "pre_order" and script_data.has_dlc_pre_order_flow_override ~= nil then
-		flow_return_table.value = script_data.has_dlc_pre_order_flow_override
+	if var_28_2 == "pre_order" and script_data.has_dlc_pre_order_flow_override ~= nil then
+		var_0_0.value = script_data.has_dlc_pre_order_flow_override
 
-		return flow_return_table
+		return var_0_0
 	end
 
-	local has_dlc = Managers.unlock:is_dlc_unlocked(dlc_name)
+	local var_28_3 = Managers.unlock:is_dlc_unlocked(var_28_2)
 
-	flow_return_table.value = has_dlc
+	var_0_0.value = var_28_3
 
-	return flow_return_table
+	return var_0_0
 end
 
-function flow_query_local_player_has_dlc(params)
-	local dlc_name = params.dlc_name
+function flow_query_local_player_has_dlc(arg_29_0)
+	local var_29_0 = arg_29_0.dlc_name
 
-	if dlc_name == "pre_order" and script_data.has_dlc_pre_order_flow_override ~= nil then
-		flow_return_table.value = script_data.has_dlc_pre_order_flow_override
+	if var_29_0 == "pre_order" and script_data.has_dlc_pre_order_flow_override ~= nil then
+		var_0_0.value = script_data.has_dlc_pre_order_flow_override
 
-		return flow_return_table
+		return var_0_0
 	end
 
-	local has_dlc = Managers.unlock:is_dlc_unlocked(dlc_name)
+	local var_29_1 = Managers.unlock:is_dlc_unlocked(var_29_0)
 
-	flow_return_table.value = has_dlc
+	var_0_0.value = var_29_1
 
-	return flow_return_table
+	return var_0_0
 end
 
-function flow_query_leader_owns_vt1(params)
-	local leader_peer_id = Managers.party:leader()
-	local local_peer_id = Network.peer_id()
+function flow_query_leader_owns_vt1(arg_30_0)
+	local var_30_0 = Managers.party:leader()
+	local var_30_1 = Network.peer_id()
 
-	fassert(leader_peer_id == local_peer_id, "Flow node \"Leader Owns VT1\" should only be called by the leader player")
+	fassert(var_30_0 == var_30_1, "Flow node \"Leader Owns VT1\" should only be called by the leader player")
 
-	local owns_vt1 = false
+	local var_30_2 = false
 
 	if IS_WINDOWS and rawget(_G, "Steam") then
-		owns_vt1 = Steam.owns_app(235540)
+		var_30_2 = Steam.owns_app(235540)
 	end
 
-	flow_return_table.value = owns_vt1
+	var_0_0.value = var_30_2
 
-	return flow_return_table
+	return var_0_0
 end
 
-function flow_query_leader_completed_all_dlc_levels(params)
-	local leader_peer_id = Managers.party:leader()
-	local local_peer_id = Network.peer_id()
+function flow_query_leader_completed_all_dlc_levels(arg_31_0)
+	local var_31_0 = Managers.party:leader()
+	local var_31_1 = Network.peer_id()
 
-	fassert(leader_peer_id == local_peer_id, "Flow node \"Leader Completed All DLC Levels\" should only be called by the leader player")
+	fassert(var_31_0 == var_31_1, "Flow node \"Leader Completed All DLC Levels\" should only be called by the leader player")
 
-	local dlc_name = params.dlc_name
-	local player_manager = Managers.player
-	local statistics_db = player_manager:statistics_db()
-	local leader_player = player_manager:player(leader_peer_id, 1)
-	local stats_id = leader_player:stats_id()
-	local all_completed = LevelUnlockUtils.all_dlc_levels_completed(statistics_db, stats_id, dlc_name)
+	local var_31_2 = arg_31_0.dlc_name
+	local var_31_3 = Managers.player
+	local var_31_4 = var_31_3:statistics_db()
+	local var_31_5 = var_31_3:player(var_31_0, 1):stats_id()
+	local var_31_6 = LevelUnlockUtils.all_dlc_levels_completed(var_31_4, var_31_5, var_31_2)
 
-	flow_return_table.value = all_completed
+	var_0_0.value = var_31_6
 
-	return flow_return_table
+	return var_0_0
 end
 
-function flow_query_leader_early_owner(params)
-	local leader_peer_id = Managers.party:leader()
-	local local_peer_id = Network.peer_id()
+function flow_query_leader_early_owner(arg_32_0)
+	local var_32_0 = Managers.party:leader()
+	local var_32_1 = Network.peer_id()
 
-	fassert(leader_peer_id == local_peer_id, "Flow node \"Leader Early Owner\" should only be called by the leader player")
+	fassert(var_32_0 == var_32_1, "Flow node \"Leader Early Owner\" should only be called by the leader player")
 
-	local backend_manager = Managers.backend
-	local eary_owner = backend_manager:get_read_only_data("early_owner")
+	local var_32_2 = Managers.backend:get_read_only_data("early_owner")
 
-	flow_return_table.value = not not eary_owner
+	var_0_0.value = not not var_32_2
 
-	return flow_return_table
+	return var_0_0
 end
 
-function flow_query_leader_get_persistant_stat(params)
-	local leader_peer_id = Managers.party:leader()
-	local local_peer_id = Network.peer_id()
+function flow_query_leader_get_persistant_stat(arg_33_0)
+	local var_33_0 = Managers.party:leader()
+	local var_33_1 = Network.peer_id()
 
-	fassert(leader_peer_id == local_peer_id, "Flow node \"Leader Get Persistant Stat\" should only be called by the leader player")
+	fassert(var_33_0 == var_33_1, "Flow node \"Leader Get Persistant Stat\" should only be called by the leader player")
 
-	local stat_name = params.stat_name
-	local parts = string.split(stat_name, "|")
-	local stat_value = get_presistent_stat_from_peer_id(local_peer_id, unpack(parts))
+	local var_33_2 = arg_33_0.stat_name
+	local var_33_3 = string.split(var_33_2, "|")
+	local var_33_4 = var_0_1(var_33_1, unpack(var_33_3))
 
-	flow_return_table.value = stat_value
+	var_0_0.value = var_33_4
 
-	return flow_return_table
+	return var_0_0
 end
 
-function flow_query_local_player_get_persistant_stat(params)
-	local stat_name = params.stat_name
-	local parts = string.split(stat_name, "|")
-	local stat_value = get_presistent_stat_from_peer_id(Network.peer_id(), unpack(parts))
+function flow_query_local_player_get_persistant_stat(arg_34_0)
+	local var_34_0 = arg_34_0.stat_name
+	local var_34_1 = string.split(var_34_0, "|")
+	local var_34_2 = var_0_1(Network.peer_id(), unpack(var_34_1))
 
-	flow_return_table.value = stat_value
+	var_0_0.value = var_34_2
 
-	return flow_return_table
+	return var_0_0
 end

@@ -1,558 +1,535 @@
-﻿-- chunkname: @scripts/ui/views/level_end/states/end_view_state_weave.lua
+-- chunkname: @scripts/ui/views/level_end/states/end_view_state_weave.lua
 
 require("scripts/helpers/weave_utils")
 require("scripts/ui/ui_widgets_weaves")
 
-local definitions = local_require("scripts/ui/views/level_end/states/definitions/end_view_state_weave_definitions")
-local widget_definitions = definitions.widgets
-local hero_widget_definitions = definitions.hero_widgets
-local scenegraph_definition = definitions.scenegraph_definition
-local animation_definitions = definitions.animation_definitions
-local update_bar_progress = definitions.update_bar_progress
-local generic_input_actions = definitions.generic_input_actions
-local player_frame_spacing = 430
-local player_name_width = player_frame_spacing - 20
+local var_0_0 = local_require("scripts/ui/views/level_end/states/definitions/end_view_state_weave_definitions")
+local var_0_1 = var_0_0.widgets
+local var_0_2 = var_0_0.hero_widgets
+local var_0_3 = var_0_0.scenegraph_definition
+local var_0_4 = var_0_0.animation_definitions
+local var_0_5 = var_0_0.update_bar_progress
+local var_0_6 = var_0_0.generic_input_actions
+local var_0_7 = 430
+local var_0_8 = var_0_7 - 20
 
-local function draw_widgets(ui_renderer, widgets)
-	for i = 1, #widgets do
-		UIRenderer.draw_widget(ui_renderer, widgets[i])
+local function var_0_9(arg_1_0, arg_1_1)
+	for iter_1_0 = 1, #arg_1_1 do
+		UIRenderer.draw_widget(arg_1_0, arg_1_1[iter_1_0])
 	end
 end
 
 EndViewStateWeave = class(EndViewStateWeave)
 EndViewStateWeave.NAME = "EndViewStateWeave"
 
-EndViewStateWeave.on_enter = function (self, params)
+function EndViewStateWeave.on_enter(arg_2_0, arg_2_1)
 	print("[PlayState] Enter Substate EndViewStateWeave")
 
-	self.parent = params.parent
-	self.game_won = params.game_won
-	self.game_mode_key = params.game_mode_key
+	arg_2_0.parent = arg_2_1.parent
+	arg_2_0.game_won = arg_2_1.game_won
+	arg_2_0.game_mode_key = arg_2_1.game_mode_key
 
-	local context = params.context
+	local var_2_0 = arg_2_1.context
 
-	self._context = context
-	self.ui_renderer = context.ui_renderer
-	self.ui_top_renderer = context.ui_top_renderer
-	self.wwise_world = context.wwise_world
-	self.input_manager = context.input_manager
-	self.statistics_db = context.statistics_db
-	self.render_settings = {
+	arg_2_0._context = var_2_0
+	arg_2_0.ui_renderer = var_2_0.ui_renderer
+	arg_2_0.ui_top_renderer = var_2_0.ui_top_renderer
+	arg_2_0.wwise_world = var_2_0.wwise_world
+	arg_2_0.input_manager = var_2_0.input_manager
+	arg_2_0.statistics_db = var_2_0.statistics_db
+	arg_2_0.render_settings = {
 		alpha_multiplier = 0,
-		snap_pixel_positions = true,
+		snap_pixel_positions = true
 	}
-	self.world_previewer = params.world_previewer
-	self.platform = PLATFORM
-	self.peer_id = context.peer_id
-	self.weave_personal_best_achieved = context.weave_personal_best_achieved
-	self.weave_personal_best_ranking = context.weave_personal_best_ranking
-	self._completed_weave = context.completed_weave
-	self._animations = {}
-	self._ui_animations = {}
-	self._player_count = Managers.weave:get_num_players()
-	self._exit_timer = nil
-	self._screen_done = false
-	self._selected_profile = 1
+	arg_2_0.world_previewer = arg_2_1.world_previewer
+	arg_2_0.platform = PLATFORM
+	arg_2_0.peer_id = var_2_0.peer_id
+	arg_2_0.weave_personal_best_achieved = var_2_0.weave_personal_best_achieved
+	arg_2_0.weave_personal_best_ranking = var_2_0.weave_personal_best_ranking
+	arg_2_0._completed_weave = var_2_0.completed_weave
+	arg_2_0._animations = {}
+	arg_2_0._ui_animations = {}
+	arg_2_0._player_count = Managers.weave:get_num_players()
+	arg_2_0._exit_timer = nil
+	arg_2_0._screen_done = false
+	arg_2_0._selected_profile = 1
 
-	if params.initial_state then
-		self._initial_preview = true
-		params.initial_state = nil
+	if arg_2_1.initial_state then
+		arg_2_0._initial_preview = true
+		arg_2_1.initial_state = nil
 	end
 
-	self:create_ui_elements(params)
-	self:_start_transition_animation("on_enter", "transition_enter")
-	self:_setup_team_results(self._context.players_session_score)
-	self:_play_sound("play_gui_mission_summary_wom_appear")
-	self.parent:_push_mouse_cursor()
+	arg_2_0:create_ui_elements(arg_2_1)
+	arg_2_0:_start_transition_animation("on_enter", "transition_enter")
+	arg_2_0:_setup_team_results(arg_2_0._context.players_session_score)
+	arg_2_0:_play_sound("play_gui_mission_summary_wom_appear")
+	arg_2_0.parent:_push_mouse_cursor()
 end
 
-EndViewStateWeave.exit = function (self, direction)
-	self._exit_started = true
+function EndViewStateWeave.exit(arg_3_0, arg_3_1)
+	arg_3_0._exit_started = true
 
-	self:_start_transition_animation("on_enter", "transition_exit")
+	arg_3_0:_start_transition_animation("on_enter", "transition_exit")
 
-	local transition_delay = 0.5
-	local transition_duration = 2.5
-	local degrees = 55
+	local var_3_0 = 0.5
+	local var_3_1 = 2.5
+	local var_3_2 = 55
 
-	self.parent:start_camera_look_up(transition_delay, transition_duration, degrees)
-	self:_play_sound("stop_gui_mission_summary_wom")
+	arg_3_0.parent:start_camera_look_up(var_3_0, var_3_1, var_3_2)
+	arg_3_0:_play_sound("stop_gui_mission_summary_wom")
 end
 
-EndViewStateWeave.exit_done = function (self)
-	return self._exit_started and self._animations.on_enter == nil
+function EndViewStateWeave.exit_done(arg_4_0)
+	return arg_4_0._exit_started and arg_4_0._animations.on_enter == nil
 end
 
-EndViewStateWeave.done = function (self)
-	return self._screen_done or self.parent:get_all_signaled_done()
+function EndViewStateWeave.done(arg_5_0)
+	return arg_5_0._screen_done or arg_5_0.parent:get_all_signaled_done()
 end
 
-EndViewStateWeave.create_ui_elements = function (self, params)
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+function EndViewStateWeave.create_ui_elements(arg_6_0, arg_6_1)
+	arg_6_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_3)
 
-	local widgets = {}
-	local widgets_by_name = {}
+	local var_6_0 = {}
+	local var_6_1 = {}
 
-	for name, widget_definition in pairs(widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_6_0, iter_6_1 in pairs(var_0_1) do
+		local var_6_2 = UIWidget.init(iter_6_1)
 
-		widgets[#widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_6_0[#var_6_0 + 1] = var_6_2
+		var_6_1[iter_6_0] = var_6_2
 	end
 
-	self._widgets = widgets
-	self._widgets_by_name = widgets_by_name
-	self._hero_widgets = {}
-	self._hero_insignias = {}
-	self._ready_button_widget = widgets_by_name.ready_button
-	self._ready_timer_widget = widgets_by_name.ready_timer
-	self._player_name_widgets = {}
-	widgets_by_name.highscore_sigil.content.visible = false
-	widgets_by_name.highscore_ribbon.content.visible = false
-	widgets_by_name.highscore_text.content.visible = false
+	arg_6_0._widgets = var_6_0
+	arg_6_0._widgets_by_name = var_6_1
+	arg_6_0._hero_widgets = {}
+	arg_6_0._hero_insignias = {}
+	arg_6_0._ready_button_widget = var_6_1.ready_button
+	arg_6_0._ready_timer_widget = var_6_1.ready_timer
+	arg_6_0._player_name_widgets = {}
+	var_6_1.highscore_sigil.content.visible = false
+	var_6_1.highscore_ribbon.content.visible = false
+	var_6_1.highscore_text.content.visible = false
 
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_6_0.ui_renderer)
 
-	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
-	self._menu_input_description = MenuInputDescriptionUI:new(nil, self.ui_top_renderer, Managers.input:get_service("end_of_level"), 4, 900, generic_input_actions.default)
+	arg_6_0.ui_animator = UIAnimator:new(arg_6_0.ui_scenegraph, var_0_4)
+	arg_6_0._menu_input_description = MenuInputDescriptionUI:new(nil, arg_6_0.ui_top_renderer, Managers.input:get_service("end_of_level"), 4, 900, var_0_6.default)
 
-	self._menu_input_description:set_input_description(generic_input_actions.show_profile)
+	arg_6_0._menu_input_description:set_input_description(var_0_6.show_profile)
 end
 
-EndViewStateWeave._wanted_state = function (self)
-	local new_state = self.parent:wanted_menu_state()
-
-	return new_state
+function EndViewStateWeave._wanted_state(arg_7_0)
+	return (arg_7_0.parent:wanted_menu_state())
 end
 
-EndViewStateWeave.set_input_manager = function (self, input_manager)
-	self.input_manager = input_manager
+function EndViewStateWeave.set_input_manager(arg_8_0, arg_8_1)
+	arg_8_0.input_manager = arg_8_1
 end
 
-EndViewStateWeave.on_exit = function (self, params)
+function EndViewStateWeave.on_exit(arg_9_0, arg_9_1)
 	print("[PlayState] Exit Substate EndViewStateWeave")
 
-	self.ui_animator = nil
+	arg_9_0.ui_animator = nil
 end
 
-EndViewStateWeave._update_transition_timer = function (self, dt)
-	if not self._transition_timer then
+function EndViewStateWeave._update_transition_timer(arg_10_0, arg_10_1)
+	if not arg_10_0._transition_timer then
 		return
 	end
 
-	if self._transition_timer == 0 then
-		self._transition_timer = nil
+	if arg_10_0._transition_timer == 0 then
+		arg_10_0._transition_timer = nil
 	else
-		self._transition_timer = math.max(self._transition_timer - dt, 0)
+		arg_10_0._transition_timer = math.max(arg_10_0._transition_timer - arg_10_1, 0)
 	end
 end
 
-EndViewStateWeave.update = function (self, dt, t)
-	local input_manager = self.input_manager
-	local input_service = input_manager:get_service("end_of_level")
+function EndViewStateWeave.update(arg_11_0, arg_11_1, arg_11_2)
+	local var_11_0 = arg_11_0.input_manager:get_service("end_of_level")
 
-	self:draw(input_service, dt)
-	self:_update_transition_timer(dt)
-	self:_update_ready(dt, t)
+	arg_11_0:draw(var_11_0, arg_11_1)
+	arg_11_0:_update_transition_timer(arg_11_1)
+	arg_11_0:_update_ready(arg_11_1, arg_11_2)
 
-	local wanted_state = self:_wanted_state()
+	local var_11_1 = arg_11_0:_wanted_state()
 
-	if not self._transition_timer and (wanted_state or self._new_state) then
-		self.parent:clear_wanted_menu_state()
+	if not arg_11_0._transition_timer and (var_11_1 or arg_11_0._new_state) then
+		arg_11_0.parent:clear_wanted_menu_state()
 
-		return wanted_state or self._new_state
+		return var_11_1 or arg_11_0._new_state
 	end
 
-	self.ui_animator:update(dt)
-	self:_update_animations(dt)
+	arg_11_0.ui_animator:update(arg_11_1)
+	arg_11_0:_update_animations(arg_11_1)
 
-	local transitioning = self.parent:transitioning()
-
-	if not transitioning and not self._transition_timer then
+	if not arg_11_0.parent:transitioning() and not arg_11_0._transition_timer then
 		if Managers.input:is_device_active("gamepad") then
-			self:_handle_gamepad_input(dt, t)
+			arg_11_0:_handle_gamepad_input(arg_11_1, arg_11_2)
 		else
-			self:_handle_input(dt, t)
+			arg_11_0:_handle_input(arg_11_1, arg_11_2)
 		end
 	end
 end
 
-EndViewStateWeave._update_ready = function (self, dt, t)
-	local is_force_shutdown_active = self.parent:is_force_shutdown_active()
-	local timer_bar = self._ready_timer_widget
+function EndViewStateWeave._update_ready(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = arg_12_0.parent:is_force_shutdown_active()
+	local var_12_1 = arg_12_0._ready_timer_widget
 
-	timer_bar.content.active = is_force_shutdown_active == true
+	var_12_1.content.active = var_12_0 == true
 
-	if is_force_shutdown_active then
-		local time_left, time_total = self.parent:get_force_shutdown_time()
-		local progress = 0
+	if var_12_0 then
+		local var_12_2, var_12_3 = arg_12_0.parent:get_force_shutdown_time()
+		local var_12_4 = 0
 
-		if time_left and time_total then
-			progress = 1 - time_left / time_total
+		if var_12_2 and var_12_3 then
+			var_12_4 = 1 - var_12_2 / var_12_3
 		end
 
-		update_bar_progress(timer_bar, progress, t)
+		var_0_5(var_12_1, var_12_4, arg_12_2)
 	end
 end
 
-EndViewStateWeave._handle_input = function (self, dt, t)
-	if UIUtils.is_button_hover_enter(self._ready_button_widget) then
-		self:_play_sound("play_gui_start_menu_button_hover")
+function EndViewStateWeave._handle_input(arg_13_0, arg_13_1, arg_13_2)
+	if UIUtils.is_button_hover_enter(arg_13_0._ready_button_widget) then
+		arg_13_0:_play_sound("play_gui_start_menu_button_hover")
 	end
 
-	if UIUtils.is_button_pressed(self._ready_button_widget) then
-		self:_play_sound("play_gui_mission_summary_button_return_to_keep_click")
+	if UIUtils.is_button_pressed(arg_13_0._ready_button_widget) then
+		arg_13_0:_play_sound("play_gui_mission_summary_button_return_to_keep_click")
 
-		self._ready_button_widget.content.button_hotspot.disable_button = true
+		arg_13_0._ready_button_widget.content.button_hotspot.disable_button = true
 
-		if self.parent._left_lobby then
-			self._screen_done = true
+		if arg_13_0.parent._left_lobby then
+			arg_13_0._screen_done = true
 		else
-			self.parent:signal_done(false)
+			arg_13_0.parent:signal_done(false)
 		end
 	end
 end
 
-EndViewStateWeave._handle_gamepad_input = function (self, dt, t)
-	local input_service = Managers.input:get_service("end_of_level")
+function EndViewStateWeave._handle_gamepad_input(arg_14_0, arg_14_1, arg_14_2)
+	local var_14_0 = Managers.input:get_service("end_of_level")
 
-	if input_service:get("confirm_press") then
-		self:_play_sound("play_gui_mission_summary_button_return_to_keep_click")
+	if var_14_0:get("confirm_press") then
+		arg_14_0:_play_sound("play_gui_mission_summary_button_return_to_keep_click")
 
-		self._ready_button_widget.content.button_hotspot.disable_button = true
+		arg_14_0._ready_button_widget.content.button_hotspot.disable_button = true
 
-		if self.parent._left_lobby then
-			self._screen_done = true
+		if arg_14_0.parent._left_lobby then
+			arg_14_0._screen_done = true
 		else
-			self.parent:signal_done(false)
+			arg_14_0.parent:signal_done(false)
 		end
-	elseif input_service:get("move_left") then
-		local index = self._selected_profile
-		local new_index = math.clamp(index - 1, 1, self._player_count)
+	elseif var_14_0:get("move_left") then
+		local var_14_1 = arg_14_0._selected_profile
+		local var_14_2 = math.clamp(var_14_1 - 1, 1, arg_14_0._player_count)
 
-		if new_index ~= index then
-			self:_play_sound("play_gui_start_menu_button_hover")
-			self:_move_profile_selector(new_index)
+		if var_14_2 ~= var_14_1 then
+			arg_14_0:_play_sound("play_gui_start_menu_button_hover")
+			arg_14_0:_move_profile_selector(var_14_2)
 		end
-	elseif input_service:get("move_right") then
-		local index = self._selected_profile
-		local new_index = math.clamp(index + 1, 1, self._player_count)
+	elseif var_14_0:get("move_right") then
+		local var_14_3 = arg_14_0._selected_profile
+		local var_14_4 = math.clamp(var_14_3 + 1, 1, arg_14_0._player_count)
 
-		if new_index ~= index then
-			self:_play_sound("play_gui_start_menu_button_hover")
-			self:_move_profile_selector(new_index)
+		if var_14_4 ~= var_14_3 then
+			arg_14_0:_play_sound("play_gui_start_menu_button_hover")
+			arg_14_0:_move_profile_selector(var_14_4)
 		end
-	elseif input_service:get("special_1_press") then
-		local players_session_scores = self._context.players_session_score
-		local sorted_stat_ids = {}
+	elseif var_14_0:get("special_1_press") then
+		local var_14_5 = arg_14_0._context.players_session_score
+		local var_14_6 = {}
 
-		for stats_id in pairs(players_session_scores) do
-			table.insert(sorted_stat_ids, stats_id)
+		for iter_14_0 in pairs(var_14_5) do
+			table.insert(var_14_6, iter_14_0)
 		end
 
-		table.sort(sorted_stat_ids)
+		table.sort(var_14_6)
 
-		local player_stat_id = sorted_stat_ids[self._selected_profile]
-		local player_data = players_session_scores[player_stat_id]
+		local var_14_7 = var_14_5[var_14_6[arg_14_0._selected_profile]]
 
-		if player_data then
-			self:_show_profile_by_peer_id(player_data.peer_id)
+		if var_14_7 then
+			arg_14_0:_show_profile_by_peer_id(var_14_7.peer_id)
 		end
 	end
 end
 
-EndViewStateWeave._show_profile_by_peer_id = function (self, peer_id)
-	local platform = self.platform
+function EndViewStateWeave._show_profile_by_peer_id(arg_15_0, arg_15_1)
+	local var_15_0 = arg_15_0.platform
 
 	if IS_WINDOWS and rawget(_G, "Steam") then
-		local id = Steam.id_hex_to_dec(peer_id)
-		local url = "http://steamcommunity.com/profiles/" .. id
+		local var_15_1 = Steam.id_hex_to_dec(arg_15_1)
+		local var_15_2 = "http://steamcommunity.com/profiles/" .. var_15_1
 
-		Steam.open_url(url)
+		Steam.open_url(var_15_2)
 	elseif IS_XB1 then
-		local xuid = self._context.lobby:xuid(peer_id)
+		local var_15_3 = arg_15_0._context.lobby:xuid(arg_15_1)
 
-		if xuid then
-			XboxLive.show_gamercard(Managers.account:user_id(), xuid)
+		if var_15_3 then
+			XboxLive.show_gamercard(Managers.account:user_id(), var_15_3)
 		end
 	elseif IS_PS4 then
-		Managers.account:show_player_profile_with_account_id(peer_id)
+		Managers.account:show_player_profile_with_account_id(arg_15_1)
 	end
 end
 
-EndViewStateWeave._update_animations = function (self, dt)
-	for name, animation in pairs(self._ui_animations) do
-		UIAnimation.update(animation, dt)
+function EndViewStateWeave._update_animations(arg_16_0, arg_16_1)
+	for iter_16_0, iter_16_1 in pairs(arg_16_0._ui_animations) do
+		UIAnimation.update(iter_16_1, arg_16_1)
 
-		if UIAnimation.completed(animation) then
-			self._ui_animations[name] = nil
+		if UIAnimation.completed(iter_16_1) then
+			arg_16_0._ui_animations[iter_16_0] = nil
 		end
 	end
 
-	local animations = self._animations
-	local ui_animator = self.ui_animator
+	local var_16_0 = arg_16_0._animations
+	local var_16_1 = arg_16_0.ui_animator
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_16_2, iter_16_3 in pairs(var_16_0) do
+		if var_16_1:is_animation_completed(iter_16_3) then
+			var_16_1:stop_animation(iter_16_3)
 
-			animations[animation_name] = nil
+			var_16_0[iter_16_2] = nil
 		end
 	end
 
-	UIWidgetUtils.animate_default_button(self._ready_button_widget, dt)
+	UIWidgetUtils.animate_default_button(arg_16_0._ready_button_widget, arg_16_1)
 
-	local score_count_index = self.score_count_index
-	local score_count_queue = self.score_count_queue
+	local var_16_2 = arg_16_0.score_count_index
+	local var_16_3 = arg_16_0.score_count_queue
 
-	if score_count_index then
-		local animation_completed = animations.score_count == nil and animations.total_score_count == nil
+	if var_16_2 and var_16_0.score_count == nil and var_16_0.total_score_count == nil then
+		local var_16_4 = var_16_3 and var_16_3[var_16_2]
 
-		if animation_completed then
-			local next_counters = score_count_queue and score_count_queue[score_count_index]
+		if var_16_4 then
+			arg_16_0:_start_score_count_animation("score_count", "score_entry", var_16_4[1])
+			arg_16_0:_start_score_count_animation("total_score_count", "score_entry", var_16_4[2])
 
-			if next_counters then
-				self:_start_score_count_animation("score_count", "score_entry", next_counters[1])
-				self:_start_score_count_animation("total_score_count", "score_entry", next_counters[2])
+			arg_16_0.score_count_index = var_16_2 + 1
+		else
+			arg_16_0.score_count_index = nil
 
-				self.score_count_index = score_count_index + 1
-			else
-				self.score_count_index = nil
-
-				local new_highscore = self.weave_personal_best_achieved
-
-				if new_highscore then
-					self:_start_transition_animation("highscore_presentation", "highscore_presentation")
-				end
+			if arg_16_0.weave_personal_best_achieved then
+				arg_16_0:_start_transition_animation("highscore_presentation", "highscore_presentation")
 			end
 		end
 	end
 end
 
-EndViewStateWeave.draw = function (self, input_service, dt)
-	local ui_renderer = self.ui_renderer
-	local ui_top_renderer = self.ui_top_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local render_settings = self.render_settings
-	local gamepad_active = Managers.input:is_device_active("gamepad")
+function EndViewStateWeave.draw(arg_17_0, arg_17_1, arg_17_2)
+	local var_17_0 = arg_17_0.ui_renderer
+	local var_17_1 = arg_17_0.ui_top_renderer
+	local var_17_2 = arg_17_0.ui_scenegraph
+	local var_17_3 = arg_17_0.render_settings
+	local var_17_4 = Managers.input:is_device_active("gamepad")
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
-	draw_widgets(ui_top_renderer, self._widgets)
-	draw_widgets(ui_top_renderer, self._hero_widgets)
-	draw_widgets(ui_top_renderer, self._player_name_widgets)
-	draw_widgets(ui_top_renderer, self._hero_insignias)
-	UIRenderer.end_pass(ui_top_renderer)
+	UIRenderer.begin_pass(var_17_1, var_17_2, arg_17_1, arg_17_2, nil, var_17_3)
+	var_0_9(var_17_1, arg_17_0._widgets)
+	var_0_9(var_17_1, arg_17_0._hero_widgets)
+	var_0_9(var_17_1, arg_17_0._player_name_widgets)
+	var_0_9(var_17_1, arg_17_0._hero_insignias)
+	UIRenderer.end_pass(var_17_1)
 
-	if gamepad_active then
-		self._menu_input_description:draw(ui_top_renderer, dt)
+	if var_17_4 then
+		arg_17_0._menu_input_description:draw(var_17_1, arg_17_2)
 	end
 end
 
-EndViewStateWeave._start_transition_animation = function (self, key, animation_name)
-	local params = {
-		wwise_world = self.wwise_world,
-		render_settings = self.render_settings,
+function EndViewStateWeave._start_transition_animation(arg_18_0, arg_18_1, arg_18_2)
+	local var_18_0 = {
+		wwise_world = arg_18_0.wwise_world,
+		render_settings = arg_18_0.render_settings
 	}
-	local widgets = self._widgets_by_name
-	local anim_id = self.ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
+	local var_18_1 = arg_18_0._widgets_by_name
+	local var_18_2 = arg_18_0.ui_animator:start_animation(arg_18_2, var_18_1, var_0_3, var_18_0)
 
-	self._animations[key] = anim_id
+	arg_18_0._animations[arg_18_1] = var_18_2
 end
 
-EndViewStateWeave._start_score_count_animation = function (self, key, animation_name, params)
-	local widgets = {}
+function EndViewStateWeave._start_score_count_animation(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+	local var_19_0 = {}
 
-	params.start_font_size = params.widget.style.text.font_size
-	params.peak_font_size = params.widget.style.text.font_size * 1.5
-	params.wwise_world = self.wwise_world
+	arg_19_3.start_font_size = arg_19_3.widget.style.text.font_size
+	arg_19_3.peak_font_size = arg_19_3.widget.style.text.font_size * 1.5
+	arg_19_3.wwise_world = arg_19_0.wwise_world
 
-	local anim_id = self.ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
+	local var_19_1 = arg_19_0.ui_animator:start_animation(arg_19_2, var_19_0, var_0_3, arg_19_3)
 
-	self._animations[key] = anim_id
+	arg_19_0._animations[arg_19_1] = var_19_1
 end
 
-EndViewStateWeave._animate_element_by_time = function (self, target, target_index, from, to, time)
-	local new_animation = UIAnimation.init(UIAnimation.function_by_time, target, target_index, from, to, time, math.ease_out_quad)
-
-	return new_animation
+function EndViewStateWeave._animate_element_by_time(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+	return (UIAnimation.init(UIAnimation.function_by_time, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, math.ease_out_quad))
 end
 
-EndViewStateWeave._animate_element_by_catmullrom = function (self, target, target_index, target_value, p0, p1, p2, p3, time)
-	local new_animation = UIAnimation.init(UIAnimation.catmullrom, target, target_index, target_value, p0, p1, p2, p3, time)
-
-	return new_animation
+function EndViewStateWeave._animate_element_by_catmullrom(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8)
+	return (UIAnimation.init(UIAnimation.catmullrom, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8))
 end
 
-EndViewStateWeave._setup_team_results = function (self, players_session_scores)
-	local sorted_stat_ids = {}
+function EndViewStateWeave._setup_team_results(arg_22_0, arg_22_1)
+	local var_22_0 = {}
 
-	for stats_id in pairs(players_session_scores) do
-		table.insert(sorted_stat_ids, stats_id)
+	for iter_22_0 in pairs(arg_22_1) do
+		table.insert(var_22_0, iter_22_0)
 	end
 
-	table.sort(sorted_stat_ids)
+	table.sort(var_22_0)
 
-	for i = 1, #sorted_stat_ids do
-		local player_stat_id = sorted_stat_ids[i]
-		local player_data = players_session_scores[player_stat_id]
-		local peer_id = player_data.peer_id
-		local profile_index = player_data.profile_index
-		local career_index = player_data.career_index
-		local profile_data = SPProfiles[profile_index]
-		local careers = profile_data.careers
-		local career_settings = careers[career_index]
-		local portrait_image = career_settings.portrait_image
-		local portrait_frame = player_data.portrait_frame
-		local player_level = player_data.player_level
-		local is_player_controlled = player_data.is_player_controlled
-		local level_text = is_player_controlled and (player_level and tostring(player_level) or "-") or "BOT"
-		local versus_level = is_player_controlled and Application.user_setting("toggle_versus_level_in_all_game_modes") and player_data.versus_player_level or 0
+	for iter_22_1 = 1, #var_22_0 do
+		local var_22_1 = arg_22_1[var_22_0[iter_22_1]]
+		local var_22_2 = var_22_1.peer_id
+		local var_22_3 = var_22_1.profile_index
+		local var_22_4 = var_22_1.career_index
+		local var_22_5 = SPProfiles[var_22_3].careers[var_22_4].portrait_image
+		local var_22_6 = var_22_1.portrait_frame
+		local var_22_7 = var_22_1.player_level
+		local var_22_8 = var_22_1.is_player_controlled
+		local var_22_9 = var_22_8 and (var_22_7 and tostring(var_22_7) or "-") or "BOT"
+		local var_22_10 = var_22_8 and Application.user_setting("toggle_versus_level_in_all_game_modes") and var_22_1.versus_player_level or 0
 
-		self:_fill_portrait(i, portrait_frame, level_text, portrait_image, player_data.name, versus_level)
+		arg_22_0:_fill_portrait(iter_22_1, var_22_6, var_22_9, var_22_5, var_22_1.name, var_22_10)
 	end
 
-	for i = #sorted_stat_ids + 1, self._player_count do
-		self:_fill_portrait(i)
+	for iter_22_2 = #var_22_0 + 1, arg_22_0._player_count do
+		arg_22_0:_fill_portrait(iter_22_2)
 	end
 
-	self:_setup_score_panel()
-	self:_move_profile_selector(1)
+	arg_22_0:_setup_score_panel()
+	arg_22_0:_move_profile_selector(1)
 end
 
-EndViewStateWeave._move_profile_selector = function (self, selection_index)
-	local hero_frame_count = self._player_count
-	local profile_selector_widget = self._widgets_by_name.profile_selector
-	local x_offset = player_frame_spacing * (selection_index - hero_frame_count / 2 - 0.5)
+function EndViewStateWeave._move_profile_selector(arg_23_0, arg_23_1)
+	local var_23_0 = arg_23_0._player_count
+	local var_23_1 = arg_23_0._widgets_by_name.profile_selector
+	local var_23_2 = var_0_7 * (arg_23_1 - var_23_0 / 2 - 0.5)
 
-	profile_selector_widget.offset = {
-		x_offset,
+	var_23_1.offset = {
+		var_23_2,
 		0,
-		0,
+		0
 	}
-	self._selected_profile = selection_index
+	arg_23_0._selected_profile = arg_23_1
 
-	local players_session_scores = self._context.players_session_score
-	local sorted_stat_ids = {}
+	local var_23_3 = arg_23_0._context.players_session_score
+	local var_23_4 = {}
 
-	for stats_id in pairs(players_session_scores) do
-		table.insert(sorted_stat_ids, stats_id)
+	for iter_23_0 in pairs(var_23_3) do
+		table.insert(var_23_4, iter_23_0)
 	end
 
-	table.sort(sorted_stat_ids)
+	table.sort(var_23_4)
 
-	local current_stat_id = sorted_stat_ids[self._selected_profile]
-	local player_data = players_session_scores[current_stat_id]
-
-	if player_data then
-		self._menu_input_description:set_input_description(generic_input_actions.show_profile)
+	if var_23_3[var_23_4[arg_23_0._selected_profile]] then
+		arg_23_0._menu_input_description:set_input_description(var_0_6.show_profile)
 	else
-		self._menu_input_description:set_input_description(nil)
+		arg_23_0._menu_input_description:set_input_description(nil)
 	end
 end
 
-EndViewStateWeave._fill_portrait = function (self, slot, portrait_frame, level_text, portrait_image, player_name, versus_level)
-	local hero_frame_count = self._player_count
-	local x_offset = player_frame_spacing * (slot - hero_frame_count / 2 - 0.5)
-	local portrait_frame = portrait_frame or "default"
-	local level_text = level_text or ""
-	local portrait_image = portrait_image or "eor_empty_player"
-	local widget_definition = UIWidgets.create_portrait_frame("player_frame", portrait_frame, level_text, 1, nil, portrait_image)
-	local hero_widget = self._hero_widgets[slot]
+function EndViewStateWeave._fill_portrait(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
+	local var_24_0 = arg_24_0._player_count
+	local var_24_1 = var_0_7 * (arg_24_1 - var_24_0 / 2 - 0.5)
+	local var_24_2 = arg_24_2 or "default"
+	local var_24_3 = arg_24_3 or ""
+	local var_24_4 = arg_24_4 or "eor_empty_player"
+	local var_24_5 = UIWidgets.create_portrait_frame("player_frame", var_24_2, var_24_3, 1, nil, var_24_4)
+	local var_24_6 = arg_24_0._hero_widgets[arg_24_1]
+	local var_24_7 = UIWidget.init(var_24_5, arg_24_0.ui_top_renderer)
 
-	hero_widget = UIWidget.init(widget_definition, self.ui_top_renderer)
-	hero_widget.offset = {
-		x_offset,
+	var_24_7.offset = {
+		var_24_1,
 		0,
-		0,
+		0
 	}
-	self._hero_widgets[slot] = hero_widget
+	arg_24_0._hero_widgets[arg_24_1] = var_24_7
 
-	local widget_definition = UIWidgets.create_small_insignia("player_insignia", versus_level or 0)
-	local insignia_widget = UIWidget.init(widget_definition, self.ui_top_renderer)
+	local var_24_8 = UIWidgets.create_small_insignia("player_insignia", arg_24_6 or 0)
+	local var_24_9 = UIWidget.init(var_24_8, arg_24_0.ui_top_renderer)
 
-	insignia_widget.offset = {
-		x_offset,
+	var_24_9.offset = {
+		var_24_1,
 		0,
-		0,
+		0
 	}
-	self._hero_insignias[slot] = insignia_widget
+	arg_24_0._hero_insignias[arg_24_1] = var_24_9
 
-	if player_name then
-		local name = UIRenderer.crop_text_width(self.ui_renderer, player_name, player_name_width, hero_widget_definitions.player_name.style.text)
-		local widget = UIWidget.init(hero_widget_definitions.player_name)
+	if arg_24_5 then
+		local var_24_10 = UIRenderer.crop_text_width(arg_24_0.ui_renderer, arg_24_5, var_0_8, var_0_2.player_name.style.text)
+		local var_24_11 = UIWidget.init(var_0_2.player_name)
 
-		widget.offset = {
-			x_offset,
+		var_24_11.offset = {
+			var_24_1,
 			0,
-			0,
+			0
 		}
-		widget.content.text = name
-		self._player_name_widgets[#self._player_name_widgets + 1] = widget
+		var_24_11.content.text = var_24_10
+		arg_24_0._player_name_widgets[#arg_24_0._player_name_widgets + 1] = var_24_11
 	end
 end
 
-EndViewStateWeave._setup_score_panel = function (self)
-	local weave_manager = Managers.weave
-	local game_won = self.game_won
-	local weave_template = self._completed_weave and WeaveSettings.templates[self._completed_weave]
-	local weave_display_name = ""
-	local weave_number_display_name = ""
+function EndViewStateWeave._setup_score_panel(arg_25_0)
+	local var_25_0 = Managers.weave
+	local var_25_1 = arg_25_0.game_won
+	local var_25_2 = arg_25_0._completed_weave and WeaveSettings.templates[arg_25_0._completed_weave]
+	local var_25_3 = ""
+	local var_25_4 = ""
 
-	if weave_template then
-		weave_number_display_name = tostring(weave_template.tier)
-		weave_display_name = Localize(weave_template.display_name)
+	if var_25_2 then
+		var_25_4 = tostring(var_25_2.tier)
+		var_25_3 = Localize(var_25_2.display_name)
 	end
 
-	local time_left = weave_manager:get_time_left()
-	local time = math.max(WeaveSettings.max_time - math.floor(time_left), 0)
-	local seconds = time % 60
-	local minutes = math.floor(time / 60)
-	local total_score = game_won and weave_manager:get_score() or 0
-	local time_score = weave_manager:get_time_score()
-	local damage_score = weave_manager:get_damage_score()
-	local widgets_by_name = self._widgets_by_name
+	local var_25_5 = var_25_0:get_time_left()
+	local var_25_6 = math.max(WeaveSettings.max_time - math.floor(var_25_5), 0)
+	local var_25_7 = var_25_6 % 60
+	local var_25_8 = math.floor(var_25_6 / 60)
+	local var_25_9 = var_25_1 and var_25_0:get_score() or 0
+	local var_25_10 = var_25_0:get_time_score()
+	local var_25_11 = var_25_0:get_damage_score()
+	local var_25_12 = arg_25_0._widgets_by_name
 
-	widgets_by_name.score_weave_num.content.text = Localize("lb_game_type_weave") .. " " .. weave_number_display_name .. ": " .. weave_display_name
-	widgets_by_name.total_time_value.content.text = string.format("%d %s %02d %s", minutes, Localize("weave_endscreen_min"), seconds, Localize("weave_endscreen_sec"))
+	var_25_12.score_weave_num.content.text = Localize("lb_game_type_weave") .. " " .. var_25_4 .. ": " .. var_25_3
+	var_25_12.total_time_value.content.text = string.format("%d %s %02d %s", var_25_8, Localize("weave_endscreen_min"), var_25_7, Localize("weave_endscreen_sec"))
 
-	if game_won then
-		widgets_by_name.time_score_value.content.text = UIUtils.comma_value(0)
-		widgets_by_name.damage_bonus_value.content.text = UIUtils.comma_value(0)
-		widgets_by_name.total_score_value.content.text = UIUtils.comma_value(0)
-		self.score_count_queue = {
+	if var_25_1 then
+		var_25_12.time_score_value.content.text = UIUtils.comma_value(0)
+		var_25_12.damage_bonus_value.content.text = UIUtils.comma_value(0)
+		var_25_12.total_score_value.content.text = UIUtils.comma_value(0)
+		arg_25_0.score_count_queue = {
 			{
 				{
 					start_value = 0,
-					widget = widgets_by_name.time_score_value,
-					end_value = time_score,
+					widget = var_25_12.time_score_value,
+					end_value = var_25_10
 				},
 				{
 					start_value = 0,
-					widget = widgets_by_name.total_score_value,
-					end_value = time_score,
-				},
+					widget = var_25_12.total_score_value,
+					end_value = var_25_10
+				}
 			},
 			{
 				{
 					start_value = 0,
-					widget = widgets_by_name.damage_bonus_value,
-					end_value = damage_score,
+					widget = var_25_12.damage_bonus_value,
+					end_value = var_25_11
 				},
 				{
-					widget = widgets_by_name.total_score_value,
-					start_value = time_score,
-					end_value = total_score,
-				},
-			},
+					widget = var_25_12.total_score_value,
+					start_value = var_25_10,
+					end_value = var_25_9
+				}
+			}
 		}
-		self.score_count_index = 1
+		arg_25_0.score_count_index = 1
 	else
-		widgets_by_name.time_score_value.content.text = "-"
-		widgets_by_name.damage_bonus_value.content.text = "-"
-		widgets_by_name.total_score_value.content.text = UIUtils.comma_value(total_score)
+		var_25_12.time_score_value.content.text = "-"
+		var_25_12.damage_bonus_value.content.text = "-"
+		var_25_12.total_score_value.content.text = UIUtils.comma_value(var_25_9)
 	end
 end
 
-EndViewStateWeave._play_sound = function (self, event)
-	self.parent:play_sound(event)
+function EndViewStateWeave._play_sound(arg_26_0, arg_26_1)
+	arg_26_0.parent:play_sound(arg_26_1)
 end

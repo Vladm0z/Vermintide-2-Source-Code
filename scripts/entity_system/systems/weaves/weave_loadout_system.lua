@@ -1,43 +1,42 @@
-﻿-- chunkname: @scripts/entity_system/systems/weaves/weave_loadout_system.lua
+-- chunkname: @scripts/entity_system/systems/weaves/weave_loadout_system.lua
 
 require("scripts/unit_extensions/default_player_unit/weaves/player_unit_weave_loadout_extension")
 require("scripts/unit_extensions/default_player_unit/weaves/player_husk_weave_loadout_extension")
 
 WeaveLoadoutSystem = class(WeaveLoadoutSystem, ExtensionSystemBase)
 
-local RPCS = {
-	"rpc_add_weave_buffs",
+local var_0_0 = {
+	"rpc_add_weave_buffs"
 }
-local extension_list = {
+local var_0_1 = {
 	"PlayerUnitWeaveLoadoutExtension",
-	"PlayerHuskWeaveLoadoutExtension",
+	"PlayerHuskWeaveLoadoutExtension"
 }
 
-WeaveLoadoutSystem.init = function (self, entity_system_creation_context, system_name)
-	WeaveLoadoutSystem.super.init(self, entity_system_creation_context, system_name, extension_list)
+function WeaveLoadoutSystem.init(arg_1_0, arg_1_1, arg_1_2)
+	WeaveLoadoutSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
-	local network_event_delegate = entity_system_creation_context.network_event_delegate
+	local var_1_0 = arg_1_1.network_event_delegate
 
-	self.network_event_delegate = network_event_delegate
+	arg_1_0.network_event_delegate = var_1_0
 
-	network_event_delegate:register(self, unpack(RPCS))
+	var_1_0:register(arg_1_0, unpack(var_0_0))
 end
 
-WeaveLoadoutSystem.destroy = function (self)
-	self.network_event_delegate:unregister(self)
+function WeaveLoadoutSystem.destroy(arg_2_0)
+	arg_2_0.network_event_delegate:unregister(arg_2_0)
 
-	self.network_event_delegate = nil
+	arg_2_0.network_event_delegate = nil
 end
 
-WeaveLoadoutSystem.rpc_add_weave_buffs = function (self, channel_id, go_id, num_buffs, buff_ids, buff_data_type_ids, buff_values)
-	if self.is_server then
-		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+function WeaveLoadoutSystem.rpc_add_weave_buffs(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	if arg_3_0.is_server then
+		local var_3_0 = CHANNEL_TO_PEER_ID[arg_3_1]
 
-		self.network_transmit:send_rpc_clients_except("rpc_add_weave_buffs", peer_id, go_id, num_buffs, buff_ids, buff_data_type_ids, buff_values)
+		arg_3_0.network_transmit:send_rpc_clients_except("rpc_add_weave_buffs", var_3_0, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	end
 
-	local unit = self.unit_storage:unit(go_id)
-	local weave_loadout_extension = ScriptUnit.extension(unit, "weave_loadout_system")
+	local var_3_1 = arg_3_0.unit_storage:unit(arg_3_2)
 
-	weave_loadout_extension:add_buffs(num_buffs, buff_ids, buff_data_type_ids, buff_values)
+	ScriptUnit.extension(var_3_1, "weave_loadout_system"):add_buffs(arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 end

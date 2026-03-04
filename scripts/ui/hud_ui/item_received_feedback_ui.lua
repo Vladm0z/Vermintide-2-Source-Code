@@ -1,300 +1,295 @@
-﻿-- chunkname: @scripts/ui/hud_ui/item_received_feedback_ui.lua
+-- chunkname: @scripts/ui/hud_ui/item_received_feedback_ui.lua
 
 require("scripts/settings/ui_player_portrait_frame_settings")
 
-local definitions = local_require("scripts/ui/hud_ui/item_received_feedback_ui_definitions")
-local MAX_NUMBER_OF_MESSAGES = definitions.MAX_NUMBER_OF_MESSAGES
-local event_settings = {
+local var_0_0 = local_require("scripts/ui/hud_ui/item_received_feedback_ui_definitions")
+local var_0_1 = var_0_0.MAX_NUMBER_OF_MESSAGES
+local var_0_2 = {
 	give_item = {
-		text_function = function (amount, player_1_name, player_2_name)
-			if amount > 1 then
-				return string.format(Localize("positive_reinforcement_player_gave_item_player_multiple"), player_1_name, player_2_name, amount)
+		text_function = function(arg_1_0, arg_1_1, arg_1_2)
+			if arg_1_0 > 1 then
+				return string.format(Localize("positive_reinforcement_player_gave_item_player_multiple"), arg_1_1, arg_1_2, arg_1_0)
 			else
-				return string.format(Localize("positive_reinforcement_player_gave_item_player"), player_1_name, player_2_name)
+				return string.format(Localize("positive_reinforcement_player_gave_item_player"), arg_1_1, arg_1_2)
 			end
 		end,
-		sound_function = function ()
+		sound_function = function()
 			return script_data.reinforcement_ui_local_sound or "hud_achievement_unlock_02" or script_data.enable_reinforcement_ui_remote_sound and "hud_info"
 		end,
-		icon_function = function (hero_portrait_texture, item_icon)
-			return hero_portrait_texture, item_icon
-		end,
-	},
+		icon_function = function(arg_3_0, arg_3_1)
+			return arg_3_0, arg_3_1
+		end
+	}
 }
-local event_colors = {
+local var_0_3 = {
 	fade_to = Colors.get_table("white"),
 	default = Colors.get_table("cheeseburger"),
 	kill = Colors.get_table("red"),
-	personal = Colors.get_table("dodger_blue"),
+	personal = Colors.get_table("dodger_blue")
 }
-local item_icons = {
-	grenade_engineer = "killfeed_icon_05",
-	grenade_fire_01 = "killfeed_icon_09",
-	grenade_fire_02 = "killfeed_icon_09",
-	grenade_frag_01 = "killfeed_icon_05",
-	grenade_frag_02 = "killfeed_icon_05",
+local var_0_4 = {
 	healthkit_first_aid_kit_01 = "reinforcement_heal",
+	grenade_fire_02 = "killfeed_icon_09",
+	potion_healing_draught_01 = "killfeed_icon_06",
+	grenade_frag_02 = "killfeed_icon_05",
+	grenade_fire_01 = "killfeed_icon_09",
+	grenade_frag_01 = "killfeed_icon_05",
+	grenade_engineer = "killfeed_icon_05",
 	potion_cooldown_reduction_01 = "killfeed_icon_13",
 	potion_damage_boost_01 = "killfeed_icon_10",
-	potion_healing_draught_01 = "killfeed_icon_06",
-	potion_speed_boost_01 = "killfeed_icon_04",
+	potion_speed_boost_01 = "killfeed_icon_04"
 }
 
 ItemReceivedFeedbackUI = class(ItemReceivedFeedbackUI)
 
-ItemReceivedFeedbackUI.init = function (self, parent, ingame_ui_context)
-	self._parent = parent
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self.input_manager = ingame_ui_context.input_manager
-	self.player_manager = ingame_ui_context.player_manager
-	self.peer_id = ingame_ui_context.peer_id
-	self.world = ingame_ui_context.world_manager:world("level_world")
-	self.render_settings = {
-		snap_pixel_positions = true,
+function ItemReceivedFeedbackUI.init(arg_4_0, arg_4_1, arg_4_2)
+	arg_4_0._parent = arg_4_1
+	arg_4_0.ui_renderer = arg_4_2.ui_renderer
+	arg_4_0.input_manager = arg_4_2.input_manager
+	arg_4_0.player_manager = arg_4_2.player_manager
+	arg_4_0.peer_id = arg_4_2.peer_id
+	arg_4_0.world = arg_4_2.world_manager:world("level_world")
+	arg_4_0.render_settings = {
+		snap_pixel_positions = true
 	}
 
-	self:create_ui_elements()
+	arg_4_0:create_ui_elements()
 
-	self._received_events = {}
-	self._hash_order = {}
-	self._hash_widget_lookup = {}
-	self._animations = {}
+	arg_4_0._received_events = {}
+	arg_4_0._hash_order = {}
+	arg_4_0._hash_widget_lookup = {}
+	arg_4_0._animations = {}
 
-	local event_manager = Managers.state.event
-
-	event_manager:register(self, "give_item_feedback", "event_give_item_feedback")
+	Managers.state.event:register(arg_4_0, "give_item_feedback", "event_give_item_feedback")
 end
 
-ItemReceivedFeedbackUI.destroy = function (self)
-	GarbageLeakDetector.register_object(self, "item_received_feedback_ui")
-
-	local event_manager = Managers.state.event
-
-	event_manager:unregister("give_item_feedback", self)
+function ItemReceivedFeedbackUI.destroy(arg_5_0)
+	GarbageLeakDetector.register_object(arg_5_0, "item_received_feedback_ui")
+	Managers.state.event:unregister("give_item_feedback", arg_5_0)
 end
 
-ItemReceivedFeedbackUI.create_ui_elements = function (self)
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+function ItemReceivedFeedbackUI.create_ui_elements(arg_6_0)
+	UIRenderer.clear_scenegraph_queue(arg_6_0.ui_renderer)
 
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
-	self.message_widgets = {}
-	self._unused_widgets = {}
+	arg_6_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	arg_6_0.message_widgets = {}
+	arg_6_0._unused_widgets = {}
 
-	local i = 0
+	local var_6_0 = 0
 
-	for _, widget in pairs(definitions.message_widgets) do
-		i = i + 1
-		self.message_widgets[i] = UIWidget.init(widget)
-		self._unused_widgets[i] = UIWidget.init(widget)
+	for iter_6_0, iter_6_1 in pairs(var_0_0.message_widgets) do
+		var_6_0 = var_6_0 + 1
+		arg_6_0.message_widgets[var_6_0] = UIWidget.init(iter_6_1)
+		arg_6_0._unused_widgets[var_6_0] = UIWidget.init(iter_6_1)
 	end
 end
 
-ItemReceivedFeedbackUI.remove_event = function (self, index)
-	local events = self._received_events
-	local event = table.remove(events, index)
-	local widget = event.widget
-	local unused_widgets = self._unused_widgets
+function ItemReceivedFeedbackUI.remove_event(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_0._received_events
+	local var_7_1 = table.remove(var_7_0, arg_7_1).widget
+	local var_7_2 = arg_7_0._unused_widgets
 
-	unused_widgets[#unused_widgets + 1] = widget
+	var_7_2[#var_7_2 + 1] = var_7_1
 end
 
-ItemReceivedFeedbackUI.add_event = function (self, hash, color_from, event_type, ...)
+function ItemReceivedFeedbackUI.add_event(arg_8_0, arg_8_1, arg_8_2, arg_8_3, ...)
 	if not script_data.disable_reinforcement_ui then
-		local events = self._received_events
-		local full_hash = hash .. event_type
-		local hash_order = self._hash_order
-		local t = Managers.time:time("game")
-		local increment_duration = UISettings.positive_reinforcement.increment_duration
-		local message_widgets = self.message_widgets
-		local unused_widgets = self._unused_widgets
+		local var_8_0 = arg_8_0._received_events
+		local var_8_1 = arg_8_1 .. arg_8_3
+		local var_8_2 = arg_8_0._hash_order
+		local var_8_3 = Managers.time:time("game")
+		local var_8_4 = UISettings.positive_reinforcement.increment_duration
+		local var_8_5 = arg_8_0.message_widgets
+		local var_8_6 = arg_8_0._unused_widgets
 
-		if #unused_widgets == 0 then
-			self:remove_event(#events)
+		if #var_8_6 == 0 then
+			arg_8_0:remove_event(#var_8_0)
 		end
 
-		local settings = event_settings[event_type]
-		local widget = table.remove(unused_widgets, 1)
-		local offset = widget.offset
-		local event = {
-			amount = 0,
-			shown_amount = 0,
+		local var_8_7 = var_0_2[arg_8_3]
+		local var_8_8 = table.remove(var_8_6, 1)
+		local var_8_9 = var_8_8.offset
+		local var_8_10 = {
 			text = "",
-			widget = widget,
-			event_type = event_type,
-			next_increment = t - increment_duration,
+			shown_amount = 0,
+			amount = 0,
+			widget = var_8_8,
+			event_type = arg_8_3,
+			next_increment = var_8_3 - var_8_4,
 			data = {
-				...,
-			},
+				...
+			}
 		}
-		local event_index = #events + 1
+		local var_8_11 = #var_8_0 + 1
 
-		table.insert(events, 1, event)
+		table.insert(var_8_0, 1, var_8_10)
 
-		local content = widget.content
-		local style = widget.style
-		local hero_portrait_texture, item_icon = settings.icon_function(...)
+		local var_8_12 = var_8_8.content
+		local var_8_13 = var_8_8.style
+		local var_8_14, var_8_15 = var_8_7.icon_function(...)
 
-		self:_assign_portrait_texture(widget, "portrait_1", hero_portrait_texture)
+		arg_8_0:_assign_portrait_texture(var_8_8, "portrait_1", var_8_14)
 
-		content.icon = item_icon
-		offset[2] = 0
-		offset[1] = 0
+		var_8_12.icon = var_8_15
+		var_8_9[2] = 0
+		var_8_9[1] = 0
 
-		local text_style_ids = content.text_style_ids
+		local var_8_16 = var_8_12.text_style_ids
 
-		for _, style_id in ipairs(text_style_ids) do
-			style[style_id].color[1] = 255
+		for iter_8_0, iter_8_1 in ipairs(var_8_16) do
+			var_8_13[iter_8_1].color[1] = 255
 		end
 
-		local sound_event = settings.sound_function()
+		local var_8_17 = var_8_7.sound_function()
 
-		if sound_event then
-			local world = self.world
-			local wwise_world = Managers.world:wwise_world(world)
+		if var_8_17 then
+			local var_8_18 = arg_8_0.world
+			local var_8_19 = Managers.world:wwise_world(var_8_18)
 
-			WwiseWorld.trigger_event(wwise_world, sound_event)
+			WwiseWorld.trigger_event(var_8_19, var_8_17)
 		end
 	end
 end
 
-local temp_portrait_size = {
+local var_0_5 = {
 	96,
-	112,
+	112
 }
 
-ItemReceivedFeedbackUI._assign_portrait_texture = function (self, widget, pass_name, texture)
-	widget.content[pass_name].texture_id = texture
+function ItemReceivedFeedbackUI._assign_portrait_texture(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	arg_9_1.content[arg_9_2].texture_id = arg_9_3
 
-	local portrait_size = table.clone(temp_portrait_size)
+	local var_9_0 = table.clone(var_0_5)
 
-	if UIAtlasHelper.has_atlas_settings_by_texture_name(texture) then
-		local texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(texture)
+	if UIAtlasHelper.has_atlas_settings_by_texture_name(arg_9_3) then
+		local var_9_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_9_3)
 
-		portrait_size[1] = texture_settings.size[1]
-		portrait_size[2] = texture_settings.size[2]
+		var_9_0[1] = var_9_1.size[1]
+		var_9_0[2] = var_9_1.size[2]
 	end
 
-	local style = widget.style[pass_name]
-	local portrait_offset = style.portrait_offset
-	local offset = style.offset
+	local var_9_2 = arg_9_1.style[arg_9_2]
+	local var_9_3 = var_9_2.portrait_offset
+	local var_9_4 = var_9_2.offset
 
-	offset[1] = portrait_offset[1] - portrait_size[1] / 2
-	offset[2] = portrait_offset[2] - portrait_size[2] / 2
-	style.size = portrait_size
+	var_9_4[1] = var_9_3[1] - var_9_0[1] / 2
+	var_9_4[2] = var_9_3[2] - var_9_0[2] / 2
+	var_9_2.size = var_9_0
 end
 
-ItemReceivedFeedbackUI.event_give_item_feedback = function (self, hash, giver_player, item_name)
-	local player_1_name = giver_player and giver_player:name() or nil
-	local player_unit = giver_player and giver_player.player_unit
-	local career_extension = Unit.alive(player_unit) and ScriptUnit.extension(player_unit, "career_system")
-	local player_1_career_index = career_extension and career_extension:career_index() or giver_player and giver_player:profile_index()
-	local player_1_profile_index = giver_player and giver_player:profile_index() or nil
-	local player_1_profile_image = player_1_profile_index and player_1_career_index and self:_get_hero_portrait(player_1_profile_index, player_1_career_index)
-	local item_data = ItemMasterList[item_name]
-	local hud_icon = item_data and item_data.item_received_icon
-	local item_icon = item_icons[item_name] or hud_icon or "icons_placeholder"
+function ItemReceivedFeedbackUI.event_give_item_feedback(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	if not arg_10_2 or not arg_10_2:name() then
+		local var_10_0
+	end
 
-	self:add_event(hash, event_colors.default, "give_item", player_1_profile_image, item_icon)
+	local var_10_1 = arg_10_2 and arg_10_2.player_unit
+	local var_10_2 = Unit.alive(var_10_1) and ScriptUnit.extension(var_10_1, "career_system")
+	local var_10_3 = var_10_2 and var_10_2:career_index() or arg_10_2 and arg_10_2:profile_index()
+	local var_10_4 = arg_10_2 and arg_10_2:profile_index() or nil
+	local var_10_5 = var_10_4 and var_10_3 and arg_10_0:_get_hero_portrait(var_10_4, var_10_3)
+	local var_10_6 = ItemMasterList[arg_10_3]
+	local var_10_7 = var_10_6 and var_10_6.item_received_icon
+	local var_10_8 = var_0_4[arg_10_3] or var_10_7 or "icons_placeholder"
+
+	arg_10_0:add_event(arg_10_1, var_0_3.default, "give_item", var_10_5, var_10_8)
 end
 
-ItemReceivedFeedbackUI._get_hero_portrait = function (self, profile_index, career_index)
-	local scale = RESOLUTION_LOOKUP.scale
-	local profile_data = SPProfiles[profile_index]
-	local careers = profile_data.careers
-	local career_data = careers[career_index]
-	local display_name = profile_data.display_name
-	local character_portrait = career_data.portrait_image
+function ItemReceivedFeedbackUI._get_hero_portrait(arg_11_0, arg_11_1, arg_11_2)
+	local var_11_0 = RESOLUTION_LOOKUP.scale
+	local var_11_1 = SPProfiles[arg_11_1]
+	local var_11_2 = var_11_1.careers[arg_11_2]
+	local var_11_3 = var_11_1.display_name
+	local var_11_4 = var_11_2.portrait_image
 
-	return "small_" .. character_portrait
+	return "small_" .. var_11_4
 end
 
-local customizer_data = {
-	drag_scenegraph_id = "message_animated_dragger",
+local var_0_6 = {
+	root_scenegraph_id = "message_animated",
 	label = "Item received",
 	registry_key = "item_received",
-	root_scenegraph_id = "message_animated",
+	drag_scenegraph_id = "message_animated_dragger"
 }
 
-ItemReceivedFeedbackUI.update = function (self, dt, t)
-	local ui_renderer = self.ui_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self.input_manager:get_service("Player")
-	local render_settings = self.render_settings
+function ItemReceivedFeedbackUI.update(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = arg_12_0.ui_renderer
+	local var_12_1 = arg_12_0.ui_scenegraph
+	local var_12_2 = arg_12_0.input_manager:get_service("Player")
+	local var_12_3 = arg_12_0.render_settings
 
-	if HudCustomizer.run(ui_renderer, ui_scenegraph, customizer_data) then
-		UISceneGraph.update_scenegraph(ui_scenegraph)
+	if HudCustomizer.run(var_12_0, var_12_1, var_0_6) then
+		UISceneGraph.update_scenegraph(var_12_1)
 	end
 
-	for name, animation in pairs(self._animations) do
-		if self._animations[name] then
-			if not UIAnimation.completed(animation) then
-				UIAnimation.update(animation, dt)
+	for iter_12_0, iter_12_1 in pairs(arg_12_0._animations) do
+		if arg_12_0._animations[iter_12_0] then
+			if not UIAnimation.completed(iter_12_1) then
+				UIAnimation.update(iter_12_1, arg_12_1)
 			else
-				self._animations[name] = nil
+				arg_12_0._animations[iter_12_0] = nil
 			end
 		end
 	end
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+	UIRenderer.begin_pass(var_12_0, var_12_1, var_12_2, arg_12_1, nil, var_12_3)
 
-	local events = self._received_events
-	local move_duration = 2
-	local show_duration = 2.5
+	local var_12_4 = arg_12_0._received_events
+	local var_12_5 = 2
+	local var_12_6 = 2.5
 
-	for index, event in ipairs(events) do
-		local snap_pixel_positions = render_settings.snap_pixel_positions
-		local widget = event.widget
-		local content = widget.content
-		local style = widget.style
-		local offset = widget.offset
-		local event_type = event.event_type
-		local settings = event_settings[event_type]
-		local removed = false
+	for iter_12_2, iter_12_3 in ipairs(var_12_4) do
+		local var_12_7 = var_12_3.snap_pixel_positions
+		local var_12_8 = iter_12_3.widget
+		local var_12_9 = var_12_8.content
+		local var_12_10 = var_12_8.style
+		local var_12_11 = var_12_8.offset
+		local var_12_12 = iter_12_3.event_type
+		local var_12_13 = var_0_2[var_12_12]
+		local var_12_14 = false
 
-		if not event.remove_time then
-			event.remove_time = t + show_duration
-		elseif t > event.remove_time then
-			self:remove_event(index)
+		if not iter_12_3.remove_time then
+			iter_12_3.remove_time = arg_12_2 + var_12_6
+		elseif arg_12_2 > iter_12_3.remove_time then
+			arg_12_0:remove_event(iter_12_2)
 
-			removed = true
+			var_12_14 = true
 		end
 
-		if not removed then
-			local step_size = 70
-			local new_height_offset = (index - 1) * step_size
-			local diff = math.abs(math.abs(offset[2]) - math.abs(new_height_offset))
-			local time_left = event.remove_time - t
-			local fade_duration = 0.3
-			local fade_out_progress = 0
+		if not var_12_14 then
+			local var_12_15 = 70
+			local var_12_16 = (iter_12_2 - 1) * var_12_15
+			local var_12_17 = math.abs(math.abs(var_12_11[2]) - math.abs(var_12_16))
+			local var_12_18 = iter_12_3.remove_time - arg_12_2
+			local var_12_19 = 0.3
+			local var_12_20 = 0
 
-			if fade_duration < time_left then
-				fade_out_progress = math.clamp((show_duration - time_left) / fade_duration, 0, 1)
+			if var_12_19 < var_12_18 then
+				var_12_20 = math.clamp((var_12_6 - var_12_18) / var_12_19, 0, 1)
 			else
-				fade_out_progress = math.clamp(time_left / fade_duration, 0, 1)
+				var_12_20 = math.clamp(var_12_18 / var_12_19, 0, 1)
 			end
 
-			local move_time_left = math.max(time_left - (show_duration - move_duration), 0)
-			local offset_progress = 1 - math.clamp(move_time_left / move_duration, 0, 1)
+			local var_12_21 = math.max(var_12_18 - (var_12_6 - var_12_5), 0)
+			local var_12_22 = 1 - math.clamp(var_12_21 / var_12_5, 0, 1)
 
-			offset[1] = 50 * math.easeOutCubic(offset_progress)
-			style.arrow.offset[1] = 35 * math.easeOutCubic(offset_progress)
-			style.icon.offset[1] = 80 * math.easeOutCubic(offset_progress)
+			var_12_11[1] = 50 * math.easeOutCubic(var_12_22)
+			var_12_10.arrow.offset[1] = 35 * math.easeOutCubic(var_12_22)
+			var_12_10.icon.offset[1] = 80 * math.easeOutCubic(var_12_22)
 
-			local anim_progress = math.easeOutCubic(fade_out_progress)
-			local alpha = 255 * anim_progress
-			local text_style_ids = content.text_style_ids
+			local var_12_23 = 255 * math.easeOutCubic(var_12_20)
+			local var_12_24 = var_12_9.text_style_ids
 
-			for _, style_id in ipairs(text_style_ids) do
-				style[style_id].color[1] = alpha
+			for iter_12_4, iter_12_5 in ipairs(var_12_24) do
+				var_12_10[iter_12_5].color[1] = var_12_23
 			end
 
-			render_settings.snap_pixel_positions = move_time_left == 0
+			var_12_3.snap_pixel_positions = var_12_21 == 0
 
-			UIRenderer.draw_widget(ui_renderer, widget)
+			UIRenderer.draw_widget(var_12_0, var_12_8)
 		end
 
-		render_settings.snap_pixel_positions = snap_pixel_positions
+		var_12_3.snap_pixel_positions = var_12_7
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_12_0)
 end

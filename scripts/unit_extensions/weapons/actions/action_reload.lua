@@ -1,41 +1,41 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/actions/action_reload.lua
+-- chunkname: @scripts/unit_extensions/weapons/actions/action_reload.lua
 
 ActionReload = class(ActionReload, ActionBase)
 
-ActionReload.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	self.weapon_system = weapon_system
-	self.owner_unit = owner_unit
-	self.first_person_unit = first_person_unit
-	self.weapon_unit = weapon_unit
-	self.world = world
-	self.item_name = item_name
-	self.wwise_world = Managers.world:wwise_world(world)
-	self.is_server = is_server
+function ActionReload.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	arg_1_0.weapon_system = arg_1_8
+	arg_1_0.owner_unit = arg_1_4
+	arg_1_0.first_person_unit = arg_1_6
+	arg_1_0.weapon_unit = arg_1_7
+	arg_1_0.world = arg_1_1
+	arg_1_0.item_name = arg_1_2
+	arg_1_0.wwise_world = Managers.world:wwise_world(arg_1_1)
+	arg_1_0.is_server = arg_1_3
 end
 
-ActionReload.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level)
-	ActionReload.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level)
+function ActionReload.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	ActionReload.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
-	local owner_unit = self.owner_unit
-	local inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
-	local ammo_extension
-	local equipment = inventory_extension:equipment()
+	local var_2_0 = arg_2_0.owner_unit
+	local var_2_1 = ScriptUnit.extension(var_2_0, "inventory_system")
+	local var_2_2
+	local var_2_3 = var_2_1:equipment()
 
-	if equipment.right_hand_wielded_unit ~= nil and ScriptUnit.has_extension(equipment.right_hand_wielded_unit, "ammo_system") then
-		ammo_extension = ScriptUnit.extension(equipment.right_hand_wielded_unit, "ammo_system")
-	elseif equipment.left_hand_wielded_unit ~= nil and ScriptUnit.has_extension(equipment.left_hand_wielded_unit, "ammo_system") then
-		ammo_extension = ScriptUnit.extension(equipment.left_hand_wielded_unit, "ammo_system")
+	if var_2_3.right_hand_wielded_unit ~= nil and ScriptUnit.has_extension(var_2_3.right_hand_wielded_unit, "ammo_system") then
+		var_2_2 = ScriptUnit.extension(var_2_3.right_hand_wielded_unit, "ammo_system")
+	elseif var_2_3.left_hand_wielded_unit ~= nil and ScriptUnit.has_extension(var_2_3.left_hand_wielded_unit, "ammo_system") then
+		var_2_2 = ScriptUnit.extension(var_2_3.left_hand_wielded_unit, "ammo_system")
 	end
 
-	local play_reload_animation = true
+	local var_2_4 = true
 
-	ammo_extension:start_reload(play_reload_animation)
+	var_2_2:start_reload(var_2_4)
 end
 
-ActionReload.client_owner_post_update = function (self, dt, t, world, can_damage)
+function ActionReload.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	return
 end
 
-ActionReload.finish = function (self, reason)
+function ActionReload.finish(arg_4_0, arg_4_1)
 	return
 end

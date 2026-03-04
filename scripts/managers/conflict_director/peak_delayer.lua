@@ -1,23 +1,22 @@
-﻿-- chunkname: @scripts/managers/conflict_director/peak_delayer.lua
+-- chunkname: @scripts/managers/conflict_director/peak_delayer.lua
 
 PeakDelayer = class(PeakDelayer)
 
-local DISTANCE_TO_START_DELAY = 100
-local TIME_TO_DELAY_PACING = 100
-local PEAK_LENGTH = 30
-local DELAY_STATES = {
-	DELAYING = "DELAYING",
-	DELAY_FINISHED = "DELAY_FINISHED",
+local var_0_0 = 100
+local var_0_1 = 100
+local var_0_2 = 30
+local var_0_3 = {
 	IN_PEAK = "IN_PEAK",
+	DELAYING = "DELAYING",
 	WAITING_TO_REACH_DELAY = "WAITING_TO_REACH_DELAY",
+	DELAY_FINISHED = "DELAY_FINISHED"
 }
 
-local function is_in_peak(peaks, current_travel_dist)
-	for current_index = #peaks, 1, -1 do
-		local peak = peaks[current_index]
-		local inside_peak = math.value_inside_range(current_travel_dist, peak, peak + PEAK_LENGTH)
+local function var_0_4(arg_1_0, arg_1_1)
+	for iter_1_0 = #arg_1_0, 1, -1 do
+		local var_1_0 = arg_1_0[iter_1_0]
 
-		if inside_peak then
+		if math.value_inside_range(arg_1_1, var_1_0, var_1_0 + var_0_2) then
 			return true
 		end
 	end
@@ -25,77 +24,73 @@ local function is_in_peak(peaks, current_travel_dist)
 	return false
 end
 
-local function get_next_peak(peaks, current_travel_dist)
-	for i = #peaks, 1, -1 do
-		if current_travel_dist > peaks[i] then
-			return peaks[i + 1]
+local function var_0_5(arg_2_0, arg_2_1)
+	for iter_2_0 = #arg_2_0, 1, -1 do
+		if arg_2_1 > arg_2_0[iter_2_0] then
+			return arg_2_0[iter_2_0 + 1]
 		end
 	end
 
-	return peaks[1]
+	return arg_2_0[1]
 end
 
-PeakDelayer.init = function (self, peaks)
-	self._peaks = peaks
-	self._state = DELAY_STATES.WAITING_TO_REACH_DELAY
+function PeakDelayer.init(arg_3_0, arg_3_1)
+	arg_3_0._peaks = arg_3_1
+	arg_3_0._state = var_0_3.WAITING_TO_REACH_DELAY
 end
 
-PeakDelayer.update = function (self, current_travel_dist, current_time)
-	local next_peak = get_next_peak(self._peaks, current_travel_dist) or math.huge
+function PeakDelayer.update(arg_4_0, arg_4_1, arg_4_2)
+	local var_4_0 = var_0_5(arg_4_0._peaks, arg_4_1) or math.huge
 
-	if self._state == DELAY_STATES.WAITING_TO_REACH_DELAY then
-		if is_in_peak(self._peaks, current_travel_dist) then
-			self._state = DELAY_STATES.IN_PEAK
-		else
-			local dist_to_peak = next_peak - current_travel_dist
+	if arg_4_0._state == var_0_3.WAITING_TO_REACH_DELAY then
+		if var_0_4(arg_4_0._peaks, arg_4_1) then
+			arg_4_0._state = var_0_3.IN_PEAK
+		elseif var_4_0 - arg_4_1 < var_0_0 then
+			Managers.state.event:trigger("event_delay_pacing", true)
 
-			if dist_to_peak < DISTANCE_TO_START_DELAY then
-				Managers.state.event:trigger("event_delay_pacing", true)
-
-				self._delaying_since = current_time
-				self._delay_for_peak = next_peak
-				self._state = DELAY_STATES.DELAYING
-			end
+			arg_4_0._delaying_since = arg_4_2
+			arg_4_0._delay_for_peak = var_4_0
+			arg_4_0._state = var_0_3.DELAYING
 		end
-	elseif self._state == DELAY_STATES.DELAYING then
-		if is_in_peak(self._peaks, current_travel_dist) then
+	elseif arg_4_0._state == var_0_3.DELAYING then
+		if var_0_4(arg_4_0._peaks, arg_4_1) then
 			Managers.state.event:trigger("event_delay_pacing", false)
 
-			self._state = DELAY_STATES.IN_PEAK
-		elseif self._delay_for_peak ~= next_peak then
+			arg_4_0._state = var_0_3.IN_PEAK
+		elseif arg_4_0._delay_for_peak ~= var_4_0 then
 			Managers.state.event:trigger("event_delay_pacing", false)
 
-			self._delay_for_peak = nil
-			self._state = DELAY_STATES.WAITING_TO_REACH_DELAY
-		elseif current_time - self._delaying_since > TIME_TO_DELAY_PACING then
+			arg_4_0._delay_for_peak = nil
+			arg_4_0._state = var_0_3.WAITING_TO_REACH_DELAY
+		elseif arg_4_2 - arg_4_0._delaying_since > var_0_1 then
 			Managers.state.event:trigger("event_delay_pacing", false)
 
-			self._state = DELAY_STATES.DELAY_FINISHED
+			arg_4_0._state = var_0_3.DELAY_FINISHED
 		end
-	elseif self._state == DELAY_STATES.DELAY_FINISHED then
-		if is_in_peak(self._peaks, current_travel_dist) then
-			self._state = DELAY_STATES.IN_PEAK
-		elseif self._delay_for_peak ~= next_peak then
-			self._delay_for_peak = nil
-			self._state = DELAY_STATES.WAITING_TO_REACH_DELAY
+	elseif arg_4_0._state == var_0_3.DELAY_FINISHED then
+		if var_0_4(arg_4_0._peaks, arg_4_1) then
+			arg_4_0._state = var_0_3.IN_PEAK
+		elseif arg_4_0._delay_for_peak ~= var_4_0 then
+			arg_4_0._delay_for_peak = nil
+			arg_4_0._state = var_0_3.WAITING_TO_REACH_DELAY
 		end
-	elseif self._state == DELAY_STATES.IN_PEAK and not is_in_peak(self._peaks, current_travel_dist) then
-		self._state = DELAY_STATES.WAITING_TO_REACH_DELAY
+	elseif arg_4_0._state == var_0_3.IN_PEAK and not var_0_4(arg_4_0._peaks, arg_4_1) then
+		arg_4_0._state = var_0_3.WAITING_TO_REACH_DELAY
 	end
 
 	if script_data.debug_peak_delayer then
-		Debug.text("PeakDelayer state: %s", self._state)
+		Debug.text("PeakDelayer state: %s", arg_4_0._state)
 	end
 end
 
-PeakDelayer.is_near_or_in_a_peak = function (self)
-	return self._state ~= DELAY_STATES.WAITING_TO_REACH_DELAY
+function PeakDelayer.is_near_or_in_a_peak(arg_5_0)
+	return arg_5_0._state ~= var_0_3.WAITING_TO_REACH_DELAY
 end
 
-PeakDelayer.set_peaks = function (self, peaks)
-	self._peaks = table.clone(peaks)
+function PeakDelayer.set_peaks(arg_6_0, arg_6_1)
+	arg_6_0._peaks = table.clone(arg_6_1)
 end
 
-PeakDelayer.get_peaks = function (self)
-	return self._peaks and table.clone(self._peaks) or {}
+function PeakDelayer.get_peaks(arg_7_0)
+	return arg_7_0._peaks and table.clone(arg_7_0._peaks) or {}
 end

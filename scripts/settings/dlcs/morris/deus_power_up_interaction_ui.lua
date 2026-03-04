@@ -1,57 +1,56 @@
-﻿-- chunkname: @scripts/settings/dlcs/morris/deus_power_up_interaction_ui.lua
+-- chunkname: @scripts/settings/dlcs/morris/deus_power_up_interaction_ui.lua
 
 require("scripts/settings/dlcs/morris/deus_swap_weapon_interaction_ui")
 
 DeusPowerUpInteractionUI = class(DeusPowerUpInteractionUI, DeusSwapWeaponInteractionUI)
 DeusPowerUpInteractionUI.TYPE = "power_up"
 
-DeusPowerUpInteractionUI.init = function (self, parent, ingame_ui_context)
-	DeusPowerUpInteractionUI.super.init(self, parent, ingame_ui_context)
+function DeusPowerUpInteractionUI.init(arg_1_0, arg_1_1, arg_1_2)
+	DeusPowerUpInteractionUI.super.init(arg_1_0, arg_1_1, arg_1_2)
 end
 
-DeusPowerUpInteractionUI.chest_unlock_failed = function (self, chest_type)
-	if chest_type == DeusPowerUpInteractionUI.TYPE then
-		self:_start_animation("chest_unlock_failed")
+function DeusPowerUpInteractionUI.chest_unlock_failed(arg_2_0, arg_2_1)
+	if arg_2_1 == DeusPowerUpInteractionUI.TYPE then
+		arg_2_0:_start_animation("chest_unlock_failed")
 	end
 end
 
-DeusPowerUpInteractionUI._populate_widget = function (self, interactable_unit)
-	local mechanism = Managers.mechanism:game_mechanism()
-	local deus_run_controller = mechanism:get_deus_run_controller()
+function DeusPowerUpInteractionUI._populate_widget(arg_3_0, arg_3_1)
+	local var_3_0 = Managers.mechanism:game_mechanism():get_deus_run_controller()
 
-	if not deus_run_controller then
+	if not var_3_0 then
 		return
 	end
 
-	local peer_id = deus_run_controller:get_own_peer_id()
-	local soft_currency_amount = deus_run_controller:get_player_soft_currency(peer_id)
-	local pickup_ext = ScriptUnit.extension(interactable_unit, "pickup_system")
-	local cost = pickup_ext:get_purchase_cost()
-	local stored_purchase = pickup_ext:get_stored_purchase()
+	local var_3_1 = var_3_0:get_own_peer_id()
+	local var_3_2 = var_3_0:get_player_soft_currency(var_3_1)
+	local var_3_3 = ScriptUnit.extension(arg_3_1, "pickup_system")
+	local var_3_4 = var_3_3:get_purchase_cost()
+	local var_3_5 = var_3_3:get_stored_purchase()
 
-	if not stored_purchase then
+	if not var_3_5 then
 		return
 	end
 
-	local chest_info_widget = self._widgets_by_name.chest_content
+	local var_3_6 = arg_3_0._widgets_by_name.chest_content
 
-	chest_info_widget.content.rarity_text = nil
-	chest_info_widget.content.cost_text = soft_currency_amount .. "/" .. cost
-	chest_info_widget.style.cost_text.text_color = cost <= soft_currency_amount and {
+	var_3_6.content.rarity_text = nil
+	var_3_6.content.cost_text = var_3_2 .. "/" .. var_3_4
+	var_3_6.style.cost_text.text_color = var_3_4 <= var_3_2 and {
 		255,
 		255,
 		255,
-		255,
+		255
 	} or {
 		255,
 		255,
 		0,
-		0,
+		0
 	}
 
-	local power_level = stored_purchase.power_level
+	local var_3_7 = var_3_5.power_level
 
-	chest_info_widget.content.reward_info_text = Localize("deus_weapon_chest_upgrade_description")
-	self._current_interactable_unit = interactable_unit
-	self._soft_currency_amount = soft_currency_amount
+	var_3_6.content.reward_info_text = Localize("deus_weapon_chest_upgrade_description")
+	arg_3_0._current_interactable_unit = arg_3_1
+	arg_3_0._soft_currency_amount = var_3_2
 end

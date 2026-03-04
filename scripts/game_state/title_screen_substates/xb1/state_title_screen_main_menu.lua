@@ -1,483 +1,470 @@
-﻿-- chunkname: @scripts/game_state/title_screen_substates/xb1/state_title_screen_main_menu.lua
+-- chunkname: @scripts/game_state/title_screen_substates/xb1/state_title_screen_main_menu.lua
 
 require("scripts/ui/views/additional_content/additional_content_view")
 
 StateTitleScreenMainMenu = class(StateTitleScreenMainMenu)
 StateTitleScreenMainMenu.NAME = "StateTitleScreenMainMenu"
 
-local game_types = {
+local var_0_0 = {
 	INVITATION = "invitation",
 	OFFLINE = "offline",
-	ONLINE = "online",
+	ONLINE = "online"
 }
-local menu_functions
+local var_0_1
 
 if script_data.honduras_demo then
-	menu_functions = {
-		function (this)
-			this:_start_game(game_types.ONLINE, DemoSettings.demo_level)
+	var_0_1 = {
+		function(arg_1_0)
+			arg_1_0:_start_game(var_0_0.ONLINE, DemoSettings.demo_level)
 			Managers.music:trigger_event("Play_console_menu_start_game")
-		end,
+		end
 	}
 elseif script_data.settings.use_beta_mode then
 	if script_data.settings.disable_tutorial_at_start then
-		menu_functions = {
-			function (this)
-				local game_type = this._title_start_ui:game_type() or game_types.ONLINE
+		var_0_1 = {
+			function(arg_2_0)
+				local var_2_0 = arg_2_0._title_start_ui:game_type() or var_0_0.ONLINE
 
-				this:_start_game(game_type)
-				this._title_start_ui:menu_option_activated(true)
+				arg_2_0:_start_game(var_2_0)
+				arg_2_0._title_start_ui:menu_option_activated(true)
 				Managers.music:trigger_event("Play_console_menu_start_game")
 			end,
-			function (this)
-				local input_manager = Managers.input
-
-				input_manager:block_device_except_service("options_menu", "gamepad")
-				this:activate_view("options_view")
-				this._title_start_ui:menu_option_activated(true)
+			function(arg_3_0)
+				Managers.input:block_device_except_service("options_menu", "gamepad")
+				arg_3_0:activate_view("options_view")
+				arg_3_0._title_start_ui:menu_option_activated(true)
 				Managers.music:trigger_event("Play_console_menu_select")
 			end,
-			function (this)
-				this:activate_view("credits_view")
-				this._title_start_ui:menu_option_activated(true)
+			function(arg_4_0)
+				arg_4_0:activate_view("credits_view")
+				arg_4_0._title_start_ui:menu_option_activated(true)
 				Managers.music:trigger_event("Play_console_menu_select")
-			end,
+			end
 		}
 	else
-		menu_functions = {
-			function (this)
-				local game_type = this._title_start_ui:game_type() or game_types.ONLINE
+		var_0_1 = {
+			function(arg_5_0)
+				local var_5_0 = arg_5_0._title_start_ui:game_type() or var_0_0.ONLINE
 
-				this:_start_game(game_type)
-				this._title_start_ui:menu_option_activated(true)
+				arg_5_0:_start_game(var_5_0)
+				arg_5_0._title_start_ui:menu_option_activated(true)
 				Managers.music:trigger_event("Play_console_menu_start_game")
 			end,
-			function (this)
-				local game_type = this._title_start_ui:game_type() or game_types.ONLINE
+			function(arg_6_0)
+				local var_6_0 = arg_6_0._title_start_ui:game_type() or var_0_0.ONLINE
 
-				this:_start_game(game_type, "prologue")
-				this._title_start_ui:menu_option_activated(true)
+				arg_6_0:_start_game(var_6_0, "prologue")
+				arg_6_0._title_start_ui:menu_option_activated(true)
 				Managers.music:trigger_event("Play_console_menu_start_game")
 			end,
-			function (this)
-				local input_manager = Managers.input
-
-				input_manager:block_device_except_service("options_menu", "gamepad")
-				this:activate_view("options_view")
-				this._title_start_ui:menu_option_activated(true)
+			function(arg_7_0)
+				Managers.input:block_device_except_service("options_menu", "gamepad")
+				arg_7_0:activate_view("options_view")
+				arg_7_0._title_start_ui:menu_option_activated(true)
 				Managers.music:trigger_event("Play_console_menu_select")
 			end,
-			function (this)
-				this:activate_view("credits_view")
-				this._title_start_ui:menu_option_activated(true)
+			function(arg_8_0)
+				arg_8_0:activate_view("credits_view")
+				arg_8_0._title_start_ui:menu_option_activated(true)
 				Managers.music:trigger_event("Play_console_menu_select")
-			end,
+			end
 		}
 	end
 elseif GameSettingsDevelopment.additional_content_view_enabled then
-	menu_functions = {
-		function (this)
-			local game_type = this._title_start_ui:game_type() or game_types.ONLINE
+	var_0_1 = {
+		function(arg_9_0)
+			local var_9_0 = arg_9_0._title_start_ui:game_type() or var_0_0.ONLINE
 
-			this:_start_game(game_type)
-			this._title_start_ui:menu_option_activated(true)
+			arg_9_0:_start_game(var_9_0)
+			arg_9_0._title_start_ui:menu_option_activated(true)
 			Managers.music:trigger_event("Play_console_menu_start_game")
 		end,
-		function (this)
-			local game_type = this._title_start_ui:game_type() or game_types.ONLINE
+		function(arg_10_0)
+			local var_10_0 = arg_10_0._title_start_ui:game_type() or var_0_0.ONLINE
 
-			this:_start_game(game_type, "prologue")
-			this._title_start_ui:menu_option_activated(true)
+			arg_10_0:_start_game(var_10_0, "prologue")
+			arg_10_0._title_start_ui:menu_option_activated(true)
 			Managers.music:trigger_event("Play_console_menu_start_game")
 		end,
-		function (this)
-			local input_manager = Managers.input
+		function(arg_11_0)
+			Managers.input:block_device_except_service("options_menu", "gamepad")
+			arg_11_0:activate_view("options_view")
+			arg_11_0._title_start_ui:menu_option_activated(true)
+			Managers.music:trigger_event("Play_console_menu_select")
+		end,
+		function(arg_12_0)
+			local var_12_0 = Managers.input
 
-			input_manager:block_device_except_service("options_menu", "gamepad")
-			this:activate_view("options_view")
-			this._title_start_ui:menu_option_activated(true)
+			arg_12_0:activate_view("cinematics_view")
+			arg_12_0._title_start_ui:menu_option_activated(true)
 			Managers.music:trigger_event("Play_console_menu_select")
 		end,
-		function (this)
-			local input_manager = Managers.input
-
-			this:activate_view("cinematics_view")
-			this._title_start_ui:menu_option_activated(true)
+		function(arg_13_0)
+			Managers.input:block_device_except_service("additional_content_menu", "gamepad")
+			arg_13_0:activate_view("additional_content_view")
+			arg_13_0._title_start_ui:menu_option_activated(true)
 			Managers.music:trigger_event("Play_console_menu_select")
 		end,
-		function (this)
-			local input_manager = Managers.input
-
-			input_manager:block_device_except_service("additional_content_menu", "gamepad")
-			this:activate_view("additional_content_view")
-			this._title_start_ui:menu_option_activated(true)
+		function(arg_14_0)
+			arg_14_0:activate_view("credits_view")
+			arg_14_0._title_start_ui:menu_option_activated(true)
 			Managers.music:trigger_event("Play_console_menu_select")
-		end,
-		function (this)
-			this:activate_view("credits_view")
-			this._title_start_ui:menu_option_activated(true)
-			Managers.music:trigger_event("Play_console_menu_select")
-		end,
+		end
 	}
 else
-	menu_functions = {
-		function (this)
-			local game_type = this._title_start_ui:game_type() or game_types.ONLINE
+	var_0_1 = {
+		function(arg_15_0)
+			local var_15_0 = arg_15_0._title_start_ui:game_type() or var_0_0.ONLINE
 
-			this:_start_game(game_type)
-			this._title_start_ui:menu_option_activated(true)
+			arg_15_0:_start_game(var_15_0)
+			arg_15_0._title_start_ui:menu_option_activated(true)
 			Managers.music:trigger_event("Play_console_menu_start_game")
 		end,
-		function (this)
-			local game_type = this._title_start_ui:game_type() or game_types.ONLINE
+		function(arg_16_0)
+			local var_16_0 = arg_16_0._title_start_ui:game_type() or var_0_0.ONLINE
 
-			this:_start_game(game_type, "prologue")
-			this._title_start_ui:menu_option_activated(true)
+			arg_16_0:_start_game(var_16_0, "prologue")
+			arg_16_0._title_start_ui:menu_option_activated(true)
 			Managers.music:trigger_event("Play_console_menu_start_game")
 		end,
-		function (this)
-			local input_manager = Managers.input
-
-			input_manager:block_device_except_service("options_menu", "gamepad")
-			this:activate_view("options_view")
-			this._title_start_ui:menu_option_activated(true)
+		function(arg_17_0)
+			Managers.input:block_device_except_service("options_menu", "gamepad")
+			arg_17_0:activate_view("options_view")
+			arg_17_0._title_start_ui:menu_option_activated(true)
 			Managers.music:trigger_event("Play_console_menu_select")
 		end,
-		function (this)
-			this:activate_view("credits_view")
-			this._title_start_ui:menu_option_activated(true)
+		function(arg_18_0)
+			arg_18_0:activate_view("credits_view")
+			arg_18_0._title_start_ui:menu_option_activated(true)
 			Managers.music:trigger_event("Play_console_menu_select")
-		end,
+		end
 	}
 end
 
-StateTitleScreenMainMenu.on_enter = function (self, params)
+function StateTitleScreenMainMenu.on_enter(arg_19_0, arg_19_1)
 	print("[Gamestate] Enter Substate StateTitleScreenMainMenu")
 
-	self._params = params
-	self._world = params.world
-	self._viewport = params.viewport
-	self._title_start_ui = params.ui
-	self._auto_start = params.auto_start
-	params.auto_start = nil
-	self._state = "none"
-	self._new_state = nil
-	self._input_disabled = false
-	self._game_type = nil
-	self._level_key = nil
-	self._disable_trailer = nil
-	self._profile_name = nil
+	arg_19_0._params = arg_19_1
+	arg_19_0._world = arg_19_1.world
+	arg_19_0._viewport = arg_19_1.viewport
+	arg_19_0._title_start_ui = arg_19_1.ui
+	arg_19_0._auto_start = arg_19_1.auto_start
+	arg_19_1.auto_start = nil
+	arg_19_0._state = "none"
+	arg_19_0._new_state = nil
+	arg_19_0._input_disabled = false
+	arg_19_0._game_type = nil
+	arg_19_0._level_key = nil
+	arg_19_0._disable_trailer = nil
+	arg_19_0._profile_name = nil
 
 	if script_data.honduras_demo then
 		Wwise.set_state("menu_mute_ingame_sounds", "false")
 	end
 
 	UISettings.set_console_settings()
-	self._setup_sound()
-	self:_setup_input()
-	self:_init_menu_views()
-	self:_init_managers()
-	self:_update_chat_ignore_list()
+	arg_19_0._setup_sound()
+	arg_19_0:_setup_input()
+	arg_19_0:_init_menu_views()
+	arg_19_0:_init_managers()
+	arg_19_0:_update_chat_ignore_list()
 
-	if params.skip_signin then
-		self._title_start_ui:set_start_pressed(true)
+	if arg_19_1.skip_signin then
+		arg_19_0._title_start_ui:set_start_pressed(true)
 	end
 
 	Managers.transition:hide_loading_icon()
 
-	self._network_event_meta_table = {}
+	arg_19_0._network_event_meta_table = {}
 
-	self._network_event_meta_table.__index = function (event_table, event_key)
-		return function ()
-			Application.warning("Got RPC %s during forced network update when exiting StateTitleScreenMain", event_key)
+	function arg_19_0._network_event_meta_table.__index(arg_20_0, arg_20_1)
+		return function()
+			Application.warning("Got RPC %s during forced network update when exiting StateTitleScreenMain", arg_20_1)
 		end
 	end
 
-	self._is_installed = Managers.play_go:installed()
+	arg_19_0._is_installed = Managers.play_go:installed()
 
-	if not self._is_installed then
-		self._title_start_ui:set_menu_item_enable_state_by_index("start_game", false, true, "start_game_disabled_playgo")
-		self._title_start_ui:set_menu_item_enable_state_by_index("cinematics", false, true, "start_game_disabled_playgo")
+	if not arg_19_0._is_installed then
+		arg_19_0._title_start_ui:set_menu_item_enable_state_by_index("start_game", false, true, "start_game_disabled_playgo")
+		arg_19_0._title_start_ui:set_menu_item_enable_state_by_index("cinematics", false, true, "start_game_disabled_playgo")
 	else
-		self._title_start_ui:set_menu_item_enable_state_by_index("start_game", true, true)
-		self._title_start_ui:set_menu_item_enable_state_by_index("cinematics", true, true)
+		arg_19_0._title_start_ui:set_menu_item_enable_state_by_index("start_game", true, true)
+		arg_19_0._title_start_ui:set_menu_item_enable_state_by_index("cinematics", true, true)
 	end
 
 	if PlayfabBackendSaveDataUtils.online_data_is_dirty() then
-		self._title_start_ui:set_update_offline_data_enabled(true)
+		arg_19_0._title_start_ui:set_update_offline_data_enabled(true)
 	else
-		self._title_start_ui:set_update_offline_data_enabled(false)
+		arg_19_0._title_start_ui:set_update_offline_data_enabled(false)
 	end
 
-	self:_try_activate_splash()
+	arg_19_0:_try_activate_splash()
 
 	if GameSettingsDevelopment.additional_content_view_enabled then
-		local additional_content_view = self._views.additional_content_view
-		local has_splashes = additional_content_view and additional_content_view:has_active_splashes()
+		local var_19_0 = arg_19_0._views.additional_content_view
 
-		if not has_splashes then
-			self._title_start_ui:set_menu_item_enable_state_by_index("store", false, true, "start_game_disabled_playgo")
+		if not (var_19_0 and var_19_0:has_active_splashes()) then
+			arg_19_0._title_start_ui:set_menu_item_enable_state_by_index("store", false, true, "start_game_disabled_playgo")
 		else
-			self._title_start_ui:set_menu_item_enable_state_by_index("store", true, true)
+			arg_19_0._title_start_ui:set_menu_item_enable_state_by_index("store", true, true)
 		end
 	end
 end
 
-StateTitleScreenMainMenu._setup_sound = function (self)
-	local master_bus_volume = Application.user_setting("master_bus_volume") or 90
-	local music_bus_volume = Application.user_setting("music_bus_volume") or 90
-	local wwise_world
+function StateTitleScreenMainMenu._setup_sound(arg_22_0)
+	local var_22_0 = Application.user_setting("master_bus_volume") or 90
+	local var_22_1 = Application.user_setting("music_bus_volume") or 90
+	local var_22_2
 
 	if GLOBAL_MUSIC_WORLD then
-		wwise_world = MUSIC_WWISE_WORLD
+		var_22_2 = MUSIC_WWISE_WORLD
 	else
-		local music_world = Managers.world:world("music_world")
+		local var_22_3 = Managers.world:world("music_world")
 
-		wwise_world = Managers.world:wwise_world(music_world)
+		var_22_2 = Managers.world:wwise_world(var_22_3)
 	end
 
-	WwiseWorld.set_global_parameter(wwise_world, "master_bus_volume", master_bus_volume)
-	Managers.music:set_master_volume(master_bus_volume)
-	Managers.music:set_music_volume(music_bus_volume)
+	WwiseWorld.set_global_parameter(var_22_2, "master_bus_volume", var_22_0)
+	Managers.music:set_master_volume(var_22_0)
+	Managers.music:set_music_volume(var_22_1)
 end
 
-StateTitleScreenMainMenu.cb_camera_animation_complete = function (self)
+function StateTitleScreenMainMenu.cb_camera_animation_complete(arg_23_0)
 	ShowCursorStack.show("StateTitleScreenMainMenu")
-	self._title_start_ui:activate_career_ui(true)
+	arg_23_0._title_start_ui:activate_career_ui(true)
 end
 
-StateTitleScreenMainMenu.cb_camera_animation_complete_back = function (self)
-	self._new_state = StateTitleScreenMain
+function StateTitleScreenMainMenu.cb_camera_animation_complete_back(arg_24_0)
+	arg_24_0._new_state = StateTitleScreenMain
 end
 
-StateTitleScreenMainMenu._setup_input = function (self)
-	local input_manager = Managers.input
-
-	self.input_manager = input_manager
+function StateTitleScreenMainMenu._setup_input(arg_25_0)
+	arg_25_0.input_manager = Managers.input
 end
 
-StateTitleScreenMainMenu._init_menu_views = function (self)
-	local ui_renderer = self._title_start_ui:get_ui_renderer()
-	local view_context = {
+function StateTitleScreenMainMenu._init_menu_views(arg_26_0)
+	local var_26_0 = arg_26_0._title_start_ui:get_ui_renderer()
+	local var_26_1 = {
 		in_title_screen = true,
-		ui_renderer = ui_renderer,
-		ui_top_renderer = ui_renderer,
+		ui_renderer = var_26_0,
+		ui_top_renderer = var_26_0,
 		input_manager = Managers.input,
-		world_manager = Managers.world,
+		world_manager = Managers.world
 	}
 
 	if script_data.honduras_demo then
-		self._title_start_ui:animate_to_camera(DemoSettings.camera_end_position, nil, callback(self, "cb_camera_animation_complete"))
+		arg_26_0._title_start_ui:animate_to_camera(DemoSettings.camera_end_position, nil, callback(arg_26_0, "cb_camera_animation_complete"))
 
-		self._views = {}
+		arg_26_0._views = {}
 	else
-		self._views = {
-			credits_view = CreditsView:new(view_context),
-			options_view = OptionsView:new(view_context),
-			cinematics_view = CinematicsView:new(view_context),
-			additional_content_view = GameSettingsDevelopment.additional_content_view_enabled and AdditionalContentView:new(view_context) or nil,
+		arg_26_0._views = {
+			credits_view = CreditsView:new(var_26_1),
+			options_view = OptionsView:new(var_26_1),
+			cinematics_view = CinematicsView:new(var_26_1),
+			additional_content_view = GameSettingsDevelopment.additional_content_view_enabled and AdditionalContentView:new(var_26_1) or nil
 		}
 	end
 
-	for name, view in pairs(self._views) do
-		view.exit = function ()
-			self:exit_current_view()
+	for iter_26_0, iter_26_1 in pairs(arg_26_0._views) do
+		function iter_26_1.exit()
+			arg_26_0:exit_current_view()
 		end
 	end
 end
 
-StateTitleScreenMainMenu._init_managers = function (self)
-	local user_id = Managers.account:user_id()
+function StateTitleScreenMainMenu._init_managers(arg_28_0)
+	local var_28_0 = Managers.account:user_id()
 
-	Managers.xbox_stats = StatsManager2017:new(user_id)
+	Managers.xbox_stats = StatsManager2017:new(var_28_0)
 end
 
-StateTitleScreenMainMenu._update_chat_ignore_list = function (self)
+function StateTitleScreenMainMenu._update_chat_ignore_list(arg_29_0)
 	Managers.chat:update_ignore_list()
 end
 
-StateTitleScreenMainMenu._try_activate_splash = function (self)
-	local additional_content_view = self._views.additional_content_view
+function StateTitleScreenMainMenu._try_activate_splash(arg_30_0)
+	local var_30_0 = arg_30_0._views.additional_content_view
 
-	if additional_content_view and additional_content_view:has_active_splashes() and not SaveData.store_shown then
-		local input_manager = Managers.input
-
-		input_manager:block_device_except_service("additional_content_menu", "gamepad")
-		self:activate_view("additional_content_view")
-		self._title_start_ui:menu_option_activated(true)
-		self.parent:show_menu(true, true)
+	if var_30_0 and var_30_0:has_active_splashes() and not SaveData.store_shown then
+		Managers.input:block_device_except_service("additional_content_menu", "gamepad")
+		arg_30_0:activate_view("additional_content_view")
+		arg_30_0._title_start_ui:menu_option_activated(true)
+		arg_30_0.parent:show_menu(true, true)
 	else
-		self.parent:show_menu(true)
+		arg_30_0.parent:show_menu(true)
 	end
 end
 
-local BACKGROUND_ONLY = BACKGROUND_ONLY or true
+if not BACKGROUND_ONLY then
+	local var_0_2 = true
+end
 
-StateTitleScreenMainMenu._update_network = function (self, dt, t)
+function StateTitleScreenMainMenu._update_network(arg_31_0, arg_31_1, arg_31_2)
 	if rawget(_G, "LobbyInternal") and LobbyInternal.network_initialized() then
-		Network.update(dt, setmetatable({}, self._network_event_meta_table))
+		Network.update(arg_31_1, setmetatable({}, arg_31_0._network_event_meta_table))
 	end
 end
 
-StateTitleScreenMainMenu._start_game = function (self, game_type, level_key, disable_trailer, profile_name)
-	self._game_type = game_type
-	self._level_key = level_key
-	self._disable_trailer = disable_trailer or not Application.user_setting("play_intro_cinematic")
-	self._profile_name = profile_name
-	self._input_disabled = true
+function StateTitleScreenMainMenu._start_game(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+	arg_32_0._game_type = arg_32_1
+	arg_32_0._level_key = arg_32_2
+	arg_32_0._disable_trailer = arg_32_3 or not Application.user_setting("play_intro_cinematic")
+	arg_32_0._profile_name = arg_32_4
+	arg_32_0._input_disabled = true
 
 	Managers.transition:show_loading_icon(false)
-	self._title_start_ui:disable_input(true)
+	arg_32_0._title_start_ui:disable_input(true)
 
-	if game_type == game_types.OFFLINE then
-		self._state = "signin_to_backend"
+	if arg_32_1 == var_0_0.OFFLINE then
+		arg_32_0._state = "signin_to_backend"
 	else
-		self._state = "check_connection_state"
+		arg_32_0._state = "check_connection_state"
 	end
 end
 
-StateTitleScreenMainMenu.update = function (self, dt, t)
-	local title_start_ui = self._title_start_ui
+function StateTitleScreenMainMenu.update(arg_33_0, arg_33_1, arg_33_2)
+	local var_33_0 = arg_33_0._title_start_ui
 
-	self:_update_play_go(dt, t)
-	self:_update_network(dt, t)
+	arg_33_0:_update_play_go(arg_33_1, arg_33_2)
+	arg_33_0:_update_network(arg_33_1, arg_33_2)
 
-	local has_offline_invitation = false
+	local var_33_1 = false
 
-	if self._auto_start then
-		local loading_context = self.parent.parent.loading_context
+	if arg_33_0._auto_start then
+		local var_33_2 = arg_33_0.parent.parent.loading_context
 
-		if loading_context.offline_invite then
-			has_offline_invitation = true
-			loading_context.offline_invite = nil
+		if var_33_2.offline_invite then
+			var_33_1 = true
+			var_33_2.offline_invite = nil
 		else
-			self:_start_game(game_types.ONLINE)
+			arg_33_0:_start_game(var_0_0.ONLINE)
 		end
 
-		self._auto_start = nil
+		arg_33_0._auto_start = nil
 	end
 
-	local has_popup = Managers.popup:has_popup()
-	local user_detached = Managers.account:user_detached()
+	local var_33_3 = Managers.popup:has_popup()
+	local var_33_4 = Managers.account:user_detached()
 
-	if (Managers.invite:has_invitation() or has_offline_invitation) and not self._input_disabled and not has_popup and not user_detached and not self._popup_id then
-		if self._is_installed then
-			self:_start_game(game_types.INVITATION, nil, true)
+	if (Managers.invite:has_invitation() or var_33_1) and not arg_33_0._input_disabled and not var_33_3 and not var_33_4 and not arg_33_0._popup_id then
+		if arg_33_0._is_installed then
+			arg_33_0:_start_game(var_0_0.INVITATION, nil, true)
 		else
-			self._popup_id = Managers.popup:queue_popup(Localize("popup_invite_not_installed"), Localize("popup_invite_not_installed_header"), "not_installed", Localize("menu_ok"))
-			self._state = "check_popup"
+			arg_33_0._popup_id = Managers.popup:queue_popup(Localize("popup_invite_not_installed"), Localize("popup_invite_not_installed_header"), "not_installed", Localize("menu_ok"))
+			arg_33_0._state = "check_popup"
 		end
 	end
 
-	local active_view = self._active_view
+	local var_33_5 = arg_33_0._active_view
 
-	if active_view then
-		self._views[active_view]:update(dt, t)
+	if var_33_5 then
+		arg_33_0._views[var_33_5]:update(arg_33_1, arg_33_2)
 	else
-		title_start_ui:update(dt, t)
+		var_33_0:update(arg_33_1, arg_33_2)
 
 		if script_data.honduras_demo then
-			self:_update_demo_input(dt, t)
+			arg_33_0:_update_demo_input(arg_33_1, arg_33_2)
 		else
-			self:_update_input(dt, t)
+			arg_33_0:_update_input(arg_33_1, arg_33_2)
 		end
 	end
 
 	if not Managers.account:user_detached() then
-		if self._state == "check_connection_state" then
-			self:_check_connection_state()
-			title_start_ui:set_information_text(Localize("loading_checking_online_state"))
-		elseif self._state == "check_multiplayer_privileges" then
-			self:_check_privileges()
-			title_start_ui:set_information_text(Localize("loading_checking_privileges"))
-		elseif self._state == "signin_to_xsts" then
-			title_start_ui:set_information_text(Localize("loading_acquiring_xsts_token"))
-			self:_signin_to_xsts()
-		elseif self._state == "signin_to_backend" then
-			self:_signin_to_backend()
-			title_start_ui:set_information_text(Localize("loading_signing_in"))
-		elseif self._state == "waiting_for_backend_signin" then
-			self:_waiting_for_backend_signin()
-		elseif self._state == "check_popup" then
-			self:_check_popup()
+		if arg_33_0._state == "check_connection_state" then
+			arg_33_0:_check_connection_state()
+			var_33_0:set_information_text(Localize("loading_checking_online_state"))
+		elseif arg_33_0._state == "check_multiplayer_privileges" then
+			arg_33_0:_check_privileges()
+			var_33_0:set_information_text(Localize("loading_checking_privileges"))
+		elseif arg_33_0._state == "signin_to_xsts" then
+			var_33_0:set_information_text(Localize("loading_acquiring_xsts_token"))
+			arg_33_0:_signin_to_xsts()
+		elseif arg_33_0._state == "signin_to_backend" then
+			arg_33_0:_signin_to_backend()
+			var_33_0:set_information_text(Localize("loading_signing_in"))
+		elseif arg_33_0._state == "waiting_for_backend_signin" then
+			arg_33_0:_waiting_for_backend_signin()
+		elseif arg_33_0._state == "check_popup" then
+			arg_33_0:_check_popup()
 		end
-	elseif self._popup_id then
-		self:_check_popup()
+	elseif arg_33_0._popup_id then
+		arg_33_0:_check_popup()
 	end
 
 	if Managers.account:leaving_game() then
-		if active_view then
-			self:exit_current_view()
+		if var_33_5 then
+			arg_33_0:exit_current_view()
 		end
 
-		self.parent:show_menu(false)
-		self._title_start_ui:set_start_pressed(false)
+		arg_33_0.parent:show_menu(false)
+		arg_33_0._title_start_ui:set_start_pressed(false)
 	end
 
-	return self:_next_state()
+	return arg_33_0:_next_state()
 end
 
-StateTitleScreenMainMenu._check_popup = function (self)
-	local result = Managers.popup:query_result(self._popup_id)
+function StateTitleScreenMainMenu._check_popup(arg_34_0)
+	local var_34_0 = Managers.popup:query_result(arg_34_0._popup_id)
 
-	if result == "xbox_live_connection_error" then
+	if var_34_0 == "xbox_live_connection_error" then
 		Managers.invite:clear_invites()
-		self:_close_menu()
-	elseif result == "privilege_error" then
+		arg_34_0:_close_menu()
+	elseif var_34_0 == "privilege_error" then
 		Managers.invite:clear_invites()
-		self:_close_menu()
-	elseif result == "xsts_error" then
+		arg_34_0:_close_menu()
+	elseif var_34_0 == "xsts_error" then
 		Managers.invite:clear_invites()
-		self:_close_menu()
-	elseif result == "not_installed" then
+		arg_34_0:_close_menu()
+	elseif var_34_0 == "not_installed" then
 		Managers.invite:clear_invites()
 
-		self._state = "none"
-	elseif result == "update_offline_data" then
+		arg_34_0._state = "none"
+	elseif var_34_0 == "update_offline_data" then
 		print("[StateTitleScreenMainMenu] Updating offline data...")
-		PlayfabBackendSaveDataUtils.update_offline_data(callback(self, "cb_offline_data_updated"))
-		self._title_start_ui:set_update_offline_data_enabled(false)
-		self._title_start_ui:disable_input(true)
+		PlayfabBackendSaveDataUtils.update_offline_data(callback(arg_34_0, "cb_offline_data_updated"))
+		arg_34_0._title_start_ui:set_update_offline_data_enabled(false)
+		arg_34_0._title_start_ui:disable_input(true)
 
-		self._input_disabled = true
+		arg_34_0._input_disabled = true
 
 		Managers.transition:show_loading_icon(false)
 
-		self._state = "waiting_for_offline_data_update"
-	elseif result == "do_nothing" then
-		self._state = "none"
-	elseif result then
-		fassert(false, "[StateTitleScreenMainMenu] The popup result doesn't exist (%s)", result)
+		arg_34_0._state = "waiting_for_offline_data_update"
+	elseif var_34_0 == "do_nothing" then
+		arg_34_0._state = "none"
+	elseif var_34_0 then
+		fassert(false, "[StateTitleScreenMainMenu] The popup result doesn't exist (%s)", var_34_0)
 	end
 
-	if result then
-		self._popup_id = nil
+	if var_34_0 then
+		arg_34_0._popup_id = nil
 	end
 end
 
-StateTitleScreenMainMenu.cb_offline_data_updated = function (self, success)
-	if success then
+function StateTitleScreenMainMenu.cb_offline_data_updated(arg_35_0, arg_35_1)
+	if arg_35_1 then
 		print("[StateTitleScreenMainMenu] Offline data update SUCCESS")
 	else
 		print("[StateTitleScreenMainMenu] Offline data update ERROR")
 	end
 
-	self._title_start_ui:disable_input(false)
+	arg_35_0._title_start_ui:disable_input(false)
 
-	self._input_disabled = false
+	arg_35_0._input_disabled = false
 
 	Managers.transition:hide_loading_icon()
 
-	self._state = "none"
+	arg_35_0._state = "none"
 end
 
-StateTitleScreenMainMenu._close_menu = function (self)
-	self.parent:show_menu(false)
-	self._title_start_ui:set_start_pressed(false)
-	self._title_start_ui:disable_input(false)
-	self._title_start_ui:set_game_type(nil)
+function StateTitleScreenMainMenu._close_menu(arg_36_0)
+	arg_36_0.parent:show_menu(false)
+	arg_36_0._title_start_ui:set_start_pressed(false)
+	arg_36_0._title_start_ui:disable_input(false)
+	arg_36_0._title_start_ui:set_game_type(nil)
 
-	self._closing_menu = true
+	arg_36_0._closing_menu = true
 
 	Managers.transition:hide_loading_icon()
 	Managers.account:close_storage()
@@ -487,310 +474,309 @@ StateTitleScreenMainMenu._close_menu = function (self)
 		Managers.transition:fade_out(1)
 	end
 
-	self._new_state = StateTitleScreenMain
-	self._state = "none"
+	arg_36_0._new_state = StateTitleScreenMain
+	arg_36_0._state = "none"
 end
 
-StateTitleScreenMainMenu._next_state = function (self)
-	if not Managers.popup:has_popup() and not self._popup_id then
-		if script_data.honduras_demo and not self._title_start_ui:is_ready() then
+function StateTitleScreenMainMenu._next_state(arg_37_0)
+	if not Managers.popup:has_popup() and not arg_37_0._popup_id then
+		if script_data.honduras_demo and not arg_37_0._title_start_ui:is_ready() then
 			return
 		end
 
 		if Managers.backend and Managers.backend:is_disconnected() then
-			self:_close_menu()
+			arg_37_0:_close_menu()
 
-			return self._new_state
-		elseif self._closing_menu then
-			return self._new_state
+			return arg_37_0._new_state
+		elseif arg_37_0._closing_menu then
+			return arg_37_0._new_state
 		else
 			return nil
 		end
 	end
 end
 
-StateTitleScreenMainMenu._update_input = function (self, dt, t)
-	local input_service = self.input_manager:get_service("main_menu")
-	local current_menu_index = self._title_start_ui:current_menu_index()
-	local active_menu_selection = self._title_start_ui:active_menu_selection()
-	local has_popup = Managers.popup:has_popup()
-	local user_detached = Managers.account:user_detached()
-	local active_controller = Managers.account:active_controller()
+function StateTitleScreenMainMenu._update_input(arg_38_0, arg_38_1, arg_38_2)
+	local var_38_0 = arg_38_0.input_manager:get_service("main_menu")
+	local var_38_1 = arg_38_0._title_start_ui:current_menu_index()
+	local var_38_2 = arg_38_0._title_start_ui:active_menu_selection()
+	local var_38_3 = Managers.popup:has_popup()
+	local var_38_4 = Managers.account:user_detached()
+	local var_38_5 = Managers.account:active_controller()
 
-	if active_menu_selection and not self._input_disabled and not has_popup and not user_detached and not self._popup_id then
-		if current_menu_index and input_service:get("start", true) then
-			input_service:get("confirm_press", true)
-			menu_functions[current_menu_index](self)
-		elseif input_service:get("back") then
-			self:_close_menu()
-		elseif active_controller.pressed(active_controller.button_index("x")) then
-			local controller_id = tonumber(string.gsub(active_controller._name, "Pad", ""), 10)
+	if var_38_2 and not arg_38_0._input_disabled and not var_38_3 and not var_38_4 and not arg_38_0._popup_id then
+		if var_38_1 and var_38_0:get("start", true) then
+			var_38_0:get("confirm_press", true)
+			var_0_1[var_38_1](arg_38_0)
+		elseif var_38_0:get("back") then
+			arg_38_0:_close_menu()
+		elseif var_38_5.pressed(var_38_5.button_index("x")) then
+			local var_38_6 = tonumber(string.gsub(var_38_5._name, "Pad", ""), 10)
 
-			XboxLive.show_account_picker(controller_id)
+			XboxLive.show_account_picker(var_38_6)
 
-			local error, device_id, user_id_from, user_id_to = XboxLive.show_account_picker_result()
+			local var_38_7, var_38_8, var_38_9, var_38_10 = XboxLive.show_account_picker_result()
 
-			while error do
-				XboxLive.show_account_picker(controller_id)
+			while var_38_7 do
+				XboxLive.show_account_picker(var_38_6)
 
-				error, device_id, user_id_from, user_id_to = XboxLive.show_account_picker_result()
+				local var_38_11
+
+				var_38_7, var_38_11, var_38_9, var_38_10 = XboxLive.show_account_picker_result()
 			end
 
-			if user_id_to == user_id_from and user_id_to == AccountManager.SIGNED_OUT then
+			if var_38_10 == var_38_9 and var_38_10 == AccountManager.SIGNED_OUT then
 				return
-			elseif user_id_to ~= AccountManager.SIGNED_OUT then
-				self._params.switch_user_auto_sign_in = true
+			elseif var_38_10 ~= AccountManager.SIGNED_OUT then
+				arg_38_0._params.switch_user_auto_sign_in = true
 			end
 
-			self:_close_menu()
-		elseif self._title_start_ui:offline_data_available() and active_controller.pressed(active_controller.button_index("y")) then
-			self._popup_id = Managers.popup:queue_popup(Localize("popup_update_offline_data"), Localize("popup_update_offline_data_header"), "update_offline_data", Localize("popup_choice_yes"), "do_nothing", Localize("popup_choice_no"))
-			self._state = "check_popup"
+			arg_38_0:_close_menu()
+		elseif arg_38_0._title_start_ui:offline_data_available() and var_38_5.pressed(var_38_5.button_index("y")) then
+			arg_38_0._popup_id = Managers.popup:queue_popup(Localize("popup_update_offline_data"), Localize("popup_update_offline_data_header"), "update_offline_data", Localize("popup_choice_yes"), "do_nothing", Localize("popup_choice_no"))
+			arg_38_0._state = "check_popup"
 		end
-	elseif not active_menu_selection and not self._input_disabled and input_service:get("back") then
-		self:_close_menu()
+	elseif not var_38_2 and not arg_38_0._input_disabled and var_38_0:get("back") then
+		arg_38_0:_close_menu()
 	end
 end
 
-StateTitleScreenMainMenu._update_demo_input = function (self, dt, t)
-	local demo_ui = self._title_start_ui
-	local input_service = self.input_manager:get_service("main_menu")
-	local has_popup = Managers.popup:has_popup()
-	local user_detached = Managers.account:user_detached()
-	local active_controller = Managers.account:active_controller()
+function StateTitleScreenMainMenu._update_demo_input(arg_39_0, arg_39_1, arg_39_2)
+	local var_39_0 = arg_39_0._title_start_ui
+	local var_39_1 = arg_39_0.input_manager:get_service("main_menu")
+	local var_39_2 = Managers.popup:has_popup()
+	local var_39_3 = Managers.account:user_detached()
+	local var_39_4 = Managers.account:active_controller()
 
-	if demo_ui:should_start() and not self._input_disabled then
-		local profile_name, career_index = demo_ui:selected_profile()
+	if var_39_0:should_start() and not arg_39_0._input_disabled then
+		local var_39_5, var_39_6 = var_39_0:selected_profile()
 
-		self:_start_game(game_types.ONLINE, DemoSettings.demo_level, nil, profile_name)
+		arg_39_0:_start_game(var_0_0.ONLINE, DemoSettings.demo_level, nil, var_39_5)
 		Managers.music:trigger_event("Play_console_menu_start_game")
 
 		return
 	end
 
-	if Managers.time:get_demo_transition() and not demo_ui:in_transition() then
-		demo_ui:animate_to_camera(DemoSettings.starting_camera_name, nil, callback(self, "cb_camera_animation_complete_back"))
-		demo_ui:activate_career_ui(false)
-		self.parent:show_menu(false)
+	if Managers.time:get_demo_transition() and not var_39_0:in_transition() then
+		var_39_0:animate_to_camera(DemoSettings.starting_camera_name, nil, callback(arg_39_0, "cb_camera_animation_complete_back"))
+		var_39_0:activate_career_ui(false)
+		arg_39_0.parent:show_menu(false)
 	end
 
-	if not self._input_disabled and not has_popup and not user_detached and not self._popup_id then
-		if input_service:get("back") then
-			if not demo_ui:in_transition() then
-				demo_ui:animate_to_camera(DemoSettings.starting_camera_name, nil, callback(self, "cb_camera_animation_complete_back"))
-				demo_ui:activate_career_ui(false)
-				self:_close_menu()
+	if not arg_39_0._input_disabled and not var_39_2 and not var_39_3 and not arg_39_0._popup_id then
+		if var_39_1:get("back") then
+			if not var_39_0:in_transition() then
+				var_39_0:animate_to_camera(DemoSettings.starting_camera_name, nil, callback(arg_39_0, "cb_camera_animation_complete_back"))
+				var_39_0:activate_career_ui(false)
+				arg_39_0:_close_menu()
 			end
-		elseif active_controller.pressed(active_controller.button_index("x")) and not demo_ui:in_transition() then
-			local controller_id = tonumber(string.gsub(active_controller._name, "Pad", ""), 10)
+		elseif var_39_4.pressed(var_39_4.button_index("x")) and not var_39_0:in_transition() then
+			local var_39_7 = tonumber(string.gsub(var_39_4._name, "Pad", ""), 10)
 
-			XboxLive.show_account_picker(controller_id)
+			XboxLive.show_account_picker(var_39_7)
 
-			local error, device_id, user_id_from, user_id_to = XboxLive.show_account_picker_result()
+			local var_39_8, var_39_9, var_39_10, var_39_11 = XboxLive.show_account_picker_result()
 
-			while error do
-				XboxLive.show_account_picker(controller_id)
+			while var_39_8 do
+				XboxLive.show_account_picker(var_39_7)
 
-				error, device_id, user_id_from, user_id_to = XboxLive.show_account_picker_result()
+				local var_39_12
+
+				var_39_8, var_39_12, var_39_10, var_39_11 = XboxLive.show_account_picker_result()
 			end
 
-			if user_id_to == user_id_from and user_id_to == AccountManager.SIGNED_OUT then
+			if var_39_11 == var_39_10 and var_39_11 == AccountManager.SIGNED_OUT then
 				return
-			elseif user_id_to ~= AccountManager.SIGNED_OUT then
-				self._params.switch_user_auto_sign_in = true
+			elseif var_39_11 ~= AccountManager.SIGNED_OUT then
+				arg_39_0._params.switch_user_auto_sign_in = true
 			end
 
-			self:_close_menu()
-			demo_ui:animate_to_camera(DemoSettings.starting_camera_name, nil, callback(self, "cb_camera_animation_complete_back"))
-			demo_ui:activate_career_ui(false)
+			arg_39_0:_close_menu()
+			var_39_0:animate_to_camera(DemoSettings.starting_camera_name, nil, callback(arg_39_0, "cb_camera_animation_complete_back"))
+			var_39_0:activate_career_ui(false)
 		end
 	end
 end
 
-StateTitleScreenMainMenu._update_play_go = function (self, dt, t)
-	if self._is_installed then
+function StateTitleScreenMainMenu._update_play_go(arg_40_0, arg_40_1, arg_40_2)
+	if arg_40_0._is_installed then
 		return
 	end
 
-	local installed = Managers.play_go:installed()
+	if Managers.play_go:installed() then
+		arg_40_0._title_start_ui:set_menu_item_enable_state_by_index("start_game", true, true)
+		arg_40_0._title_start_ui:set_menu_item_enable_state_by_index("cinematics", true, true)
 
-	if installed then
-		self._title_start_ui:set_menu_item_enable_state_by_index("start_game", true, true)
-		self._title_start_ui:set_menu_item_enable_state_by_index("cinematics", true, true)
-
-		self._is_installed = true
+		arg_40_0._is_installed = true
 	end
 end
 
-StateTitleScreenMainMenu.on_exit = function (self)
-	for k, view in pairs(self._views) do
-		if view.destroy then
-			view:destroy()
+function StateTitleScreenMainMenu.on_exit(arg_41_0)
+	for iter_41_0, iter_41_1 in pairs(arg_41_0._views) do
+		if iter_41_1.destroy then
+			iter_41_1:destroy()
 		end
 	end
 
-	self._views = nil
+	arg_41_0._views = nil
 end
 
-StateTitleScreenMainMenu.cb_fade_in_done = function (self)
-	local game_type = self._game_type
-	local level_key = self._level_key
-	local disable_trailer = self._disable_trailer or not Application.user_setting("play_intro_cinematic")
-	local profile_name = self._profile_name
-	local switch_to_tutorial_backend, tutorial_state = Managers.mechanism:should_run_tutorial()
+function StateTitleScreenMainMenu.cb_fade_in_done(arg_42_0)
+	local var_42_0 = arg_42_0._game_type
+	local var_42_1 = arg_42_0._level_key
+	local var_42_2 = arg_42_0._disable_trailer or not Application.user_setting("play_intro_cinematic")
+	local var_42_3 = arg_42_0._profile_name
+	local var_42_4, var_42_5 = Managers.mechanism:should_run_tutorial()
 
-	if switch_to_tutorial_backend and not Managers.backend:get_user_data("prologue_started") and not script_data.settings.disable_tutorial_at_start and not script_data.disable_prologue and not script_data.honduras_demo then
-		disable_trailer = false
-		level_key = "prologue"
+	if var_42_4 and not Managers.backend:get_user_data("prologue_started") and not script_data.settings.disable_tutorial_at_start and not script_data.disable_prologue and not script_data.honduras_demo then
+		var_42_2 = false
+		var_42_1 = "prologue"
 	end
 
-	self.parent.state = StateLoading
+	arg_42_0.parent.state = StateLoading
 
-	local loading_context = self.parent.parent.loading_context
+	local var_42_6 = arg_42_0.parent.parent.loading_context
 
-	loading_context.restart_network = true
-	loading_context.level_key = level_key
+	var_42_6.restart_network = true
+	var_42_6.level_key = var_42_1
 
-	if game_type == game_types.INVITATION then
-		loading_context.first_time = false
+	if var_42_0 == var_0_0.INVITATION then
+		var_42_6.first_time = false
 	end
 
-	if level_key then
-		local environment_variation_id = LevelHelper.get_environment_variation_id and LevelHelper:get_environment_variation_id(level_key) or nil
+	if var_42_1 then
+		local var_42_7 = LevelHelper.get_environment_variation_id and LevelHelper:get_environment_variation_id(var_42_1) or nil
 
-		Managers.level_transition_handler:set_next_level(level_key, environment_variation_id)
+		Managers.level_transition_handler:set_next_level(var_42_1, var_42_7)
 	end
 
-	if level_key == "prologue" then
-		loading_context.gamma_correct = not SaveData.gamma_corrected
-		loading_context.play_trailer = true
-		loading_context.switch_to_tutorial_backend = switch_to_tutorial_backend
-		loading_context.wanted_tutorial_state = tutorial_state
+	if var_42_1 == "prologue" then
+		var_42_6.gamma_correct = not SaveData.gamma_corrected
+		var_42_6.play_trailer = true
+		var_42_6.switch_to_tutorial_backend = var_42_4
+		var_42_6.wanted_tutorial_state = var_42_5
 	elseif script_data.honduras_demo then
-		self.parent.parent.loading_context.wanted_profile_index = profile_name and FindProfileIndex(profile_name) or DemoSettings.wanted_profile_index
+		arg_42_0.parent.parent.loading_context.wanted_profile_index = var_42_3 and FindProfileIndex(var_42_3) or DemoSettings.wanted_profile_index
 		GameSettingsDevelopment.disable_free_flight = DemoSettings.disable_free_flight
 		GameSettingsDevelopment.disable_intro_trailer = DemoSettings.disable_intro_trailer
-	elseif not level_key then
-		loading_context.gamma_correct = not SaveData.gamma_corrected
-		loading_context.show_profile_on_startup = true
+	elseif not var_42_1 then
+		var_42_6.gamma_correct = not SaveData.gamma_corrected
+		var_42_6.show_profile_on_startup = true
 
-		if not disable_trailer then
-			loading_context.play_trailer = true
+		if not var_42_2 then
+			var_42_6.play_trailer = true
 		end
 	end
 end
 
-StateTitleScreenMainMenu.activate_view = function (self, new_view)
-	self._active_view = new_view
+function StateTitleScreenMainMenu.activate_view(arg_43_0, arg_43_1)
+	arg_43_0._active_view = arg_43_1
 
-	local views = self._views
+	local var_43_0 = arg_43_0._views
 
-	assert(views[new_view])
+	assert(var_43_0[arg_43_1])
 
-	if new_view and views[new_view] and views[new_view].on_enter then
-		views[new_view]:on_enter()
+	if arg_43_1 and var_43_0[arg_43_1] and var_43_0[arg_43_1].on_enter then
+		var_43_0[arg_43_1]:on_enter()
 	end
 end
 
-StateTitleScreenMainMenu.exit_current_view = function (self)
-	local active_view = self._active_view
-	local views = self._views
+function StateTitleScreenMainMenu.exit_current_view(arg_44_0)
+	local var_44_0 = arg_44_0._active_view
+	local var_44_1 = arg_44_0._views
 
-	assert(active_view)
+	assert(var_44_0)
 
-	if views[active_view] and views[active_view].on_exit then
-		views[active_view]:on_exit()
+	if var_44_1[var_44_0] and var_44_1[var_44_0].on_exit then
+		var_44_1[var_44_0]:on_exit()
 	end
 
-	self._active_view = nil
+	arg_44_0._active_view = nil
 
-	local input_manager = Managers.input
-
-	input_manager:block_device_except_service("main_menu", "gamepad")
-	self._title_start_ui:menu_option_activated(false)
+	Managers.input:block_device_except_service("main_menu", "gamepad")
+	arg_44_0._title_start_ui:menu_option_activated(false)
 end
 
-StateTitleScreenMainMenu._check_connection_state = function (self)
+function StateTitleScreenMainMenu._check_connection_state(arg_45_0)
 	if XboxLive.online_state() == XboxOne.OFFLINE then
-		self._popup_id = Managers.popup:queue_popup(Localize("popup_xbox_live_connection_error"), Localize("popup_xbox_live_connection_error_header"), "xbox_live_connection_error", Localize("menu_ok"))
-		self._state = "check_popup"
+		arg_45_0._popup_id = Managers.popup:queue_popup(Localize("popup_xbox_live_connection_error"), Localize("popup_xbox_live_connection_error_header"), "xbox_live_connection_error", Localize("menu_ok"))
+		arg_45_0._state = "check_popup"
 	else
-		self._state = "check_multiplayer_privileges"
+		arg_45_0._state = "check_multiplayer_privileges"
 	end
 end
 
-StateTitleScreenMainMenu._check_privileges = function (self)
+function StateTitleScreenMainMenu._check_privileges(arg_46_0)
 	if Managers.account:is_privileges_initialized() then
-		Managers.account:get_privilege_async(UserPrivilege.MULTIPLAYER_SESSIONS, true, callback(self, "cb_privilege_updated"))
+		Managers.account:get_privilege_async(UserPrivilege.MULTIPLAYER_SESSIONS, true, callback(arg_46_0, "cb_privilege_updated"))
 
-		self._state = "none"
+		arg_46_0._state = "none"
 	end
 end
 
-StateTitleScreenMainMenu.cb_privilege_updated = function (self, privilege)
+function StateTitleScreenMainMenu.cb_privilege_updated(arg_47_0, arg_47_1)
 	if Managers.account:has_privilege_error() then
-		self._popup_id = Managers.popup:queue_popup(Localize("popup_privilege_error"), Localize("popup_privilege_error_header"), "privilege_error", Localize("menu_ok"))
-		self._state = "check_popup"
+		arg_47_0._popup_id = Managers.popup:queue_popup(Localize("popup_privilege_error"), Localize("popup_privilege_error_header"), "privilege_error", Localize("menu_ok"))
+		arg_47_0._state = "check_popup"
 	elseif Managers.account:has_privilege(UserPrivilege.MULTIPLAYER_SESSIONS) then
-		self._state = "signin_to_xsts"
+		arg_47_0._state = "signin_to_xsts"
 	else
-		self._popup_id = Managers.popup:queue_popup(Localize("popup_xbox_live_gold_error"), Localize("popup_xbox_live_gold_error_header"), "privilege_error", Localize("menu_ok"))
-		self._state = "check_popup"
+		arg_47_0._popup_id = Managers.popup:queue_popup(Localize("popup_xbox_live_gold_error"), Localize("popup_xbox_live_gold_error_header"), "privilege_error", Localize("menu_ok"))
+		arg_47_0._state = "check_popup"
 	end
 end
 
-StateTitleScreenMainMenu._signin_to_xsts = function (self)
-	local token = UserXSTS.has(Managers.account:user_id())
-	local script_xsts_token = ScriptXSTSToken:new(token)
+function StateTitleScreenMainMenu._signin_to_xsts(arg_48_0)
+	local var_48_0 = UserXSTS.has(Managers.account:user_id())
+	local var_48_1 = ScriptXSTSToken:new(var_48_0)
 
-	Managers.token:register_token(script_xsts_token, callback(self, "cb_xsts_token_received"))
+	Managers.token:register_token(var_48_1, callback(arg_48_0, "cb_xsts_token_received"))
 
-	self._state = "waiting_for_xsts"
+	arg_48_0._state = "waiting_for_xsts"
 end
 
-StateTitleScreenMainMenu.cb_xsts_token_received = function (self, data)
+function StateTitleScreenMainMenu.cb_xsts_token_received(arg_49_0, arg_49_1)
 	print("[StateTitleScreenMainMenu] cb_xsts_token_received")
 
-	local title_start_ui = self._title_start_ui
+	local var_49_0 = arg_49_0._title_start_ui
 
-	if data.error then
-		self._popup_id = Managers.popup:queue_popup(Localize("popup_xsts_signin_failed"), Localize("popup_xsts_signin_failed_header"), "xsts_error", Localize("menu_ok"))
-		self._state = "check_popup"
+	if arg_49_1.error then
+		arg_49_0._popup_id = Managers.popup:queue_popup(Localize("popup_xsts_signin_failed"), Localize("popup_xsts_signin_failed_header"), "xsts_error", Localize("menu_ok"))
+		arg_49_0._state = "check_popup"
 	else
 		print("[StateTitleScreenMainMenu] Successfully acquired an XSTS token")
 		print("################  XSTS  ##################")
 
-		self._xsts_result = data.result
+		arg_49_0._xsts_result = arg_49_1.result
 
-		print(self._xsts_result)
+		print(arg_49_0._xsts_result)
 		print("################ XSTS END ################")
 
-		self._state = "signin_to_backend"
+		arg_49_0._state = "signin_to_backend"
 	end
 end
 
-StateTitleScreenMainMenu._signin_to_backend = function (self)
-	local mechanism_name = Development.parameter("mechanism") or "adventure"
-	local mechanism_settings = MechanismSettings[mechanism_name]
-	local playfab_mirror = mechanism_settings and mechanism_settings.playfab_mirror
-	local mirror = playfab_mirror or "PlayFabMirrorAdventure"
+function StateTitleScreenMainMenu._signin_to_backend(arg_50_0)
+	local var_50_0 = Development.parameter("mechanism") or "adventure"
+	local var_50_1 = MechanismSettings[var_50_0]
+	local var_50_2 = var_50_1 and var_50_1.playfab_mirror or "PlayFabMirrorAdventure"
 
 	Managers.unlock = UnlockManager:new()
 
-	if self._game_type == game_types.OFFLINE then
+	if arg_50_0._game_type == var_0_0.OFFLINE then
 		print("Using Offline Backend")
 		Managers.account:set_offline_mode(true)
 
 		if not Managers.rest_transport_offline then
 			require("scripts/managers/rest_transport_offline/rest_transport_manager_offline")
 
-			local offline_backend = require("scripts/managers/rest_transport_offline/offline_backend_playfab")
+			local var_50_3 = require("scripts/managers/rest_transport_offline/offline_backend_playfab")
 
-			Managers.rest_transport_offline = RestTransportManagerOffline:new(offline_backend.endpoints)
+			Managers.rest_transport_offline = RestTransportManagerOffline:new(var_50_3.endpoints)
 		end
 
 		Managers.rest_transport = Managers.rest_transport_offline
-		Managers.backend = BackendManagerPlayFab:new("ScriptBackendPlayFabXbox", mirror, "DataServerQueue")
+		Managers.backend = BackendManagerPlayFab:new("ScriptBackendPlayFabXbox", var_50_2, "DataServerQueue")
 
 		Managers.backend:signin("")
 	else
@@ -798,25 +784,25 @@ StateTitleScreenMainMenu._signin_to_backend = function (self)
 		Managers.account:set_offline_mode(false)
 
 		Managers.rest_transport = Managers.rest_transport_online
-		Managers.backend = BackendManagerPlayFab:new("ScriptBackendPlayFabXbox", mirror, "DataServerQueue")
+		Managers.backend = BackendManagerPlayFab:new("ScriptBackendPlayFabXbox", var_50_2, "DataServerQueue")
 
-		Managers.backend:signin(self._xsts_result)
-		Managers.account:set_xsts_token(self._xsts_result)
+		Managers.backend:signin(arg_50_0._xsts_result)
+		Managers.account:set_xsts_token(arg_50_0._xsts_result)
 
-		self._xsts_result = nil
+		arg_50_0._xsts_result = nil
 	end
 
-	self._state = "waiting_for_backend_signin"
+	arg_50_0._state = "waiting_for_backend_signin"
 end
 
-StateTitleScreenMainMenu._waiting_for_backend_signin = function (self)
-	local backend_manager = Managers.backend
+function StateTitleScreenMainMenu._waiting_for_backend_signin(arg_51_0)
+	local var_51_0 = Managers.backend
 
-	if backend_manager and backend_manager:authenticated() then
-		self._params.menu_screen_music_playing = false
+	if var_51_0 and var_51_0:authenticated() then
+		arg_51_0._params.menu_screen_music_playing = false
 
-		Managers.transition:fade_in(GameSettings.transition_fade_out_speed, callback(self, "cb_fade_in_done"))
+		Managers.transition:fade_in(GameSettings.transition_fade_out_speed, callback(arg_51_0, "cb_fade_in_done"))
 
-		self._state = "none"
+		arg_51_0._state = "none"
 	end
 end

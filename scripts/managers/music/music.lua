@@ -1,6 +1,6 @@
-﻿-- chunkname: @scripts/managers/music/music.lua
+-- chunkname: @scripts/managers/music/music.lua
 
-local function dprint(...)
+local function var_0_0(...)
 	if script_data.debug_music then
 		print("[Music]", ...)
 	end
@@ -8,81 +8,81 @@ end
 
 Music = class(Music)
 
-Music.init = function (self, wwise_world, start_event, stop, name, group_states, game_state_voice_thresholds)
-	self._wwise_world = wwise_world
-	self._stop = stop
-	self._name = name
-	self._game_state_voice_thresholds = game_state_voice_thresholds
+function Music.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+	arg_2_0._wwise_world = arg_2_1
+	arg_2_0._stop = arg_2_3
+	arg_2_0._name = arg_2_4
+	arg_2_0._game_state_voice_thresholds = arg_2_6
 
-	self:_init_group_states(group_states)
+	arg_2_0:_init_group_states(arg_2_5)
 
-	self._id = self:_trigger_event(start_event)
+	arg_2_0._id = arg_2_0:_trigger_event(arg_2_2)
 end
 
-Music._init_group_states = function (self, states)
-	self._group_states = {}
+function Music._init_group_states(arg_3_0, arg_3_1)
+	arg_3_0._group_states = {}
 
-	for group, state in pairs(states) do
-		self:set_group_state(group, state)
+	for iter_3_0, iter_3_1 in pairs(arg_3_1) do
+		arg_3_0:set_group_state(iter_3_0, iter_3_1)
 	end
 end
 
-Music.name = function (self)
-	return self._name
+function Music.name(arg_4_0)
+	return arg_4_0._name
 end
 
-Music.stop = function (self)
-	if self._stop then
-		dprint("Stopping Music player", self._name, "with switch:", self._stop.switch, "and value", self._stop.value)
-		self:set_group_state(self._stop.group, self._stop.state)
-		self:_trigger_event(self._stop.event)
+function Music.stop(arg_5_0)
+	if arg_5_0._stop then
+		var_0_0("Stopping Music player", arg_5_0._name, "with switch:", arg_5_0._stop.switch, "and value", arg_5_0._stop.value)
+		arg_5_0:set_group_state(arg_5_0._stop.group, arg_5_0._stop.state)
+		arg_5_0:_trigger_event(arg_5_0._stop.event)
 	else
-		self:destroy()
+		arg_5_0:destroy()
 	end
 
-	self._stopped = true
+	arg_5_0._stopped = true
 end
 
-Music.is_stopped = function (self)
-	return self._stopped
+function Music.is_stopped(arg_6_0)
+	return arg_6_0._stopped
 end
 
-Music.is_playing = function (self)
-	return WwiseWorld.is_playing(self._wwise_world, self._id)
+function Music.is_playing(arg_7_0)
+	return WwiseWorld.is_playing(arg_7_0._wwise_world, arg_7_0._id)
 end
 
-Music.destroy = function (self)
-	if self:is_playing() then
-		WwiseWorld.stop_event(self._wwise_world, self._id)
+function Music.destroy(arg_8_0)
+	if arg_8_0:is_playing() then
+		WwiseWorld.stop_event(arg_8_0._wwise_world, arg_8_0._id)
 	end
 end
 
-Music.set_group_state = function (self, state, value)
-	if self._group_states[state] ~= value then
-		dprint("Player", self._name, "setting group state:", state, "to", value)
-		Wwise.set_state(state, value)
+function Music.set_group_state(arg_9_0, arg_9_1, arg_9_2)
+	if arg_9_0._group_states[arg_9_1] ~= arg_9_2 then
+		var_0_0("Player", arg_9_0._name, "setting group state:", arg_9_1, "to", arg_9_2)
+		Wwise.set_state(arg_9_1, arg_9_2)
 
-		self._group_states[state] = value
+		arg_9_0._group_states[arg_9_1] = arg_9_2
 
-		if state == "game_state" then
-			local voice_threshold = self._game_state_voice_thresholds[value] or self._game_state_voice_thresholds.default
+		if arg_9_1 == "game_state" then
+			local var_9_0 = arg_9_0._game_state_voice_thresholds[arg_9_2] or arg_9_0._game_state_voice_thresholds.default
 
-			Wwise.set_volume_threshold(voice_threshold)
+			Wwise.set_volume_threshold(var_9_0)
 		end
 	end
 end
 
-Music.has_game_faction = function (self)
-	return self._group_states.game_faction and self._group_states.game_faction ~= "undecided"
+function Music.has_game_faction(arg_10_0)
+	return arg_10_0._group_states.game_faction and arg_10_0._group_states.game_faction ~= "undecided"
 end
 
-Music._trigger_event = function (self, event)
-	dprint("trigger event", event)
+function Music._trigger_event(arg_11_0, arg_11_1)
+	var_0_0("trigger event", arg_11_1)
 
-	return WwiseWorld.trigger_event(self._wwise_world, event)
+	return WwiseWorld.trigger_event(arg_11_0._wwise_world, arg_11_1)
 end
 
-Music.post_trigger = function (self, trigger)
-	dprint("post trigger", trigger)
-	WwiseWorld.trigger_event(self._wwise_world, trigger)
+function Music.post_trigger(arg_12_0, arg_12_1)
+	var_0_0("post trigger", arg_12_1)
+	WwiseWorld.trigger_event(arg_12_0._wwise_world, arg_12_1)
 end

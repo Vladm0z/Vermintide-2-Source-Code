@@ -1,59 +1,59 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/actions/action_inspect.lua
+-- chunkname: @scripts/unit_extensions/weapons/actions/action_inspect.lua
 
 ActionInspect = class(ActionInspect, ActionBase)
 
-ActionInspect.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionInspect.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionInspect.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionInspect.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	self._owner_unit = owner_unit
+	arg_1_0._owner_unit = arg_1_4
 
-	if ScriptUnit.has_extension(owner_unit, "status_system") then
-		self.status_extension = ScriptUnit.extension(owner_unit, "status_system")
+	if ScriptUnit.has_extension(arg_1_4, "status_system") then
+		arg_1_0.status_extension = ScriptUnit.extension(arg_1_4, "status_system")
 	end
 
-	if ScriptUnit.has_extension(weapon_unit, "spread_system") then
-		self.spread_extension = ScriptUnit.extension(weapon_unit, "spread_system")
+	if ScriptUnit.has_extension(arg_1_7, "spread_system") then
+		arg_1_0.spread_extension = ScriptUnit.extension(arg_1_7, "spread_system")
 	end
 
-	self._first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
+	arg_1_0._first_person_extension = ScriptUnit.extension(arg_1_4, "first_person_system")
 end
 
-ActionInspect.client_owner_start_action = function (self, new_action, t)
-	ActionInspect.super.client_owner_start_action(self, new_action, t)
+function ActionInspect.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
+	ActionInspect.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
 
-	self.current_action = new_action
-	self.action_time_started = t
+	arg_2_0.current_action = arg_2_1
+	arg_2_0.action_time_started = arg_2_2
 
-	local spread_template_override = new_action.spread_template_override
+	local var_2_0 = arg_2_1.spread_template_override
 
-	if spread_template_override then
-		self.spread_extension:override_spread_template(spread_template_override)
+	if var_2_0 then
+		arg_2_0.spread_extension:override_spread_template(var_2_0)
 	end
 
-	local first_person_extension = self._first_person_extension
+	local var_2_1 = arg_2_0._first_person_extension
 
-	if first_person_extension then
-		local rot = first_person_extension:current_rotation()
+	if var_2_1 then
+		local var_2_2 = var_2_1:current_rotation()
 
-		first_person_extension:force_look_rotation(rot, math.huge)
+		var_2_1:force_look_rotation(var_2_2, math.huge)
 	end
 end
 
-ActionInspect.client_owner_post_update = function (self, dt, t, world, can_damage)
+function ActionInspect.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	return
 end
 
-ActionInspect.finish = function (self, reason)
-	if self.spread_extension then
-		self.spread_extension:reset_spread_template()
+function ActionInspect.finish(arg_4_0, arg_4_1)
+	if arg_4_0.spread_extension then
+		arg_4_0.spread_extension:reset_spread_template()
 	end
 
-	local first_person_extension = self._first_person_extension
+	local var_4_0 = arg_4_0._first_person_extension
 
-	if first_person_extension then
-		first_person_extension:stop_force_look_rotation()
+	if var_4_0 then
+		var_4_0:stop_force_look_rotation()
 	end
 
-	Unit.flow_event(self.owner_unit, "lua_force_stop")
-	Unit.flow_event(self.first_person_unit, "lua_force_stop")
+	Unit.flow_event(arg_4_0.owner_unit, "lua_force_stop")
+	Unit.flow_event(arg_4_0.first_person_unit, "lua_force_stop")
 end

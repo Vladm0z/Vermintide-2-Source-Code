@@ -1,11 +1,11 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_stunned.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_stunned.lua
 
 PlayerCharacterStateStunned = class(PlayerCharacterStateStunned, PlayerCharacterState)
 
-PlayerCharacterStateStunned.init = function (self, character_state_init_context)
-	PlayerCharacterState.init(self, character_state_init_context, "stunned")
+function PlayerCharacterStateStunned.init(arg_1_0, arg_1_1)
+	PlayerCharacterState.init(arg_1_0, arg_1_1, "stunned")
 
-	self.inputs_to_buffer = {
+	arg_1_0.inputs_to_buffer = {
 		"action_career_release",
 		"action_career",
 		"wield_switch",
@@ -15,221 +15,217 @@ PlayerCharacterStateStunned.init = function (self, character_state_init_context)
 		"wield_4",
 		"wield_4_alt",
 		"wield_5",
-		"action_one",
+		"action_one"
 	}
-	self.movement_speed = 0
-	self.movement_speed_limit = 1
-	self.last_input_direction = Vector3Box(0, 0, 0)
-	self.look_override = Vector3Box(0, 0, 0)
+	arg_1_0.movement_speed = 0
+	arg_1_0.movement_speed_limit = 1
+	arg_1_0.last_input_direction = Vector3Box(0, 0, 0)
+	arg_1_0.look_override = Vector3Box(0, 0, 0)
 end
 
-PlayerCharacterStateStunned.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
-	CharacterStateHelper.stop_weapon_actions(self.inventory_extension, "stunned")
-	CharacterStateHelper.stop_career_abilities(self.career_extension, "stunned")
-	CharacterStateHelper.play_animation_event_first_person(self.first_person_extension, params.first_person_anim_name)
-	CharacterStateHelper.play_animation_event(unit, params.third_person_anim_name)
+function PlayerCharacterStateStunned.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	CharacterStateHelper.stop_weapon_actions(arg_2_0.inventory_extension, "stunned")
+	CharacterStateHelper.stop_career_abilities(arg_2_0.career_extension, "stunned")
+	CharacterStateHelper.play_animation_event_first_person(arg_2_0.first_person_extension, arg_2_7.first_person_anim_name)
+	CharacterStateHelper.play_animation_event(arg_2_1, arg_2_7.third_person_anim_name)
 
-	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local hit_react_type = params.hit_react_type or "light"
-	local hit_react_settings = movement_settings_table.hit_react_settings[hit_react_type]
+	local var_2_0 = PlayerUnitMovementSettings.get_movement_settings_table(arg_2_1)
+	local var_2_1 = arg_2_7.hit_react_type or "light"
+	local var_2_2 = var_2_0.hit_react_settings[var_2_1]
 
-	fassert(hit_react_settings ~= nil, "Missing hit_react settings for hit_react_type %s", hit_react_type)
+	fassert(var_2_2 ~= nil, "Missing hit_react settings for hit_react_type %s", var_2_1)
 
-	self.movement_speed = hit_react_settings.movement_speed_modifier
-	self.movement_speed_modifier = hit_react_settings.movement_speed_modifier
-	self.end_look_sense_override = hit_react_settings.end_look_sense_override
-	self.start_look_sense_override = hit_react_settings.start_look_sense_override
+	arg_2_0.movement_speed = var_2_2.movement_speed_modifier
+	arg_2_0.movement_speed_modifier = var_2_2.movement_speed_modifier
+	arg_2_0.end_look_sense_override = var_2_2.end_look_sense_override
+	arg_2_0.start_look_sense_override = var_2_2.start_look_sense_override
 
-	local original_duration = hit_react_settings.duration_function()
-	local buff_extension = ScriptUnit.extension(unit, "buff_system")
-	local duration = buff_extension:apply_buffs_to_value(original_duration, "stun_duration")
-	local onscreen_particle = hit_react_settings.onscreen_particle_function(duration)
-	local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
+	local var_2_3 = var_2_2.duration_function()
+	local var_2_4 = ScriptUnit.extension(arg_2_1, "buff_system"):apply_buffs_to_value(var_2_3, "stun_duration")
+	local var_2_5 = var_2_2.onscreen_particle_function(var_2_4)
+	local var_2_6 = ScriptUnit.has_extension(arg_2_1, "first_person_system")
 
-	if first_person_extension and onscreen_particle then
-		self.onscreen_particle_id = first_person_extension:create_screen_particles(onscreen_particle)
+	if var_2_6 and var_2_5 then
+		arg_2_0.onscreen_particle_id = var_2_6:create_screen_particles(var_2_5)
 	end
 
-	local input_extension = self.input_extension
-	local status_extension = self.status_extension
-	local move_anim_3p, _ = CharacterStateHelper.get_move_animation(self.locomotion_extension, input_extension, status_extension)
+	local var_2_7 = arg_2_0.input_extension
+	local var_2_8 = arg_2_0.status_extension
+	local var_2_9, var_2_10 = CharacterStateHelper.get_move_animation(arg_2_0.locomotion_extension, var_2_7, var_2_8)
 
-	self.move_anim_3p = move_anim_3p
+	arg_2_0.move_anim_3p = var_2_9
 
-	self.last_input_direction:store(Vector3(0, 0, 0))
+	arg_2_0.last_input_direction:store(Vector3(0, 0, 0))
 
-	local look_override_x, look_override_y = hit_react_settings.look_override_function()
+	local var_2_11, var_2_12 = var_2_2.look_override_function()
 
-	if look_override_y and look_override_x then
-		self.look_override:store(Vector3(look_override_x, look_override_y, 0))
+	if var_2_12 and var_2_11 then
+		arg_2_0.look_override:store(Vector3(var_2_11, var_2_12, 0))
 	end
 
-	self.duration = duration
-	self.time_in_state = 0
-	self.end_time = t + duration
-	self.next_pulse = 0
-	self.current_stagger_speed = 1
-	self.last_stagger = Vector3Box(0, 0, 0)
+	arg_2_0.duration = var_2_4
+	arg_2_0.time_in_state = 0
+	arg_2_0.end_time = arg_2_5 + var_2_4
+	arg_2_0.next_pulse = 0
+	arg_2_0.current_stagger_speed = 1
+	arg_2_0.last_stagger = Vector3Box(0, 0, 0)
 end
 
-PlayerCharacterStateStunned.on_exit = function (self, unit, input, dt, context, t, next_state)
-	local input_extension = self.input_extension
+function PlayerCharacterStateStunned.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	local var_3_0 = arg_3_0.input_extension
 
-	if input_extension:get("action_one_hold") then
-		input_extension:add_stun_buffer("action_one_hold")
+	if var_3_0:get("action_one_hold") then
+		var_3_0:add_stun_buffer("action_one_hold")
 	end
 
-	local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
+	local var_3_1 = ScriptUnit.has_extension(arg_3_1, "first_person_system")
 
-	if first_person_extension and self.onscreen_particle_id then
-		first_person_extension:stop_spawning_screen_particles(self.onscreen_particle_id)
+	if var_3_1 and arg_3_0.onscreen_particle_id then
+		var_3_1:stop_spawning_screen_particles(arg_3_0.onscreen_particle_id)
 	end
 end
 
-PlayerCharacterStateStunned.update = function (self, unit, input, dt, context, t)
-	local csm = self.csm
-	local input_extension = self.input_extension
-	local inventory_extension = self.inventory_extension
-	local status_extension = self.status_extension
-	local locomotion_extension = self.locomotion_extension
-	local world = self.world
-	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local first_person_extension = self.first_person_extension
+function PlayerCharacterStateStunned.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	local var_4_0 = arg_4_0.csm
+	local var_4_1 = arg_4_0.input_extension
+	local var_4_2 = arg_4_0.inventory_extension
+	local var_4_3 = arg_4_0.status_extension
+	local var_4_4 = arg_4_0.locomotion_extension
+	local var_4_5 = arg_4_0.world
+	local var_4_6 = PlayerUnitMovementSettings.get_movement_settings_table(arg_4_1)
+	local var_4_7 = arg_4_0.first_person_extension
 
-	self.time_in_state = self.time_in_state + dt
+	arg_4_0.time_in_state = arg_4_0.time_in_state + arg_4_3
 
-	if CharacterStateHelper.do_common_state_transitions(status_extension, csm, "stunned") then
+	if CharacterStateHelper.do_common_state_transitions(var_4_3, var_4_0, "stunned") then
 		return
 	end
 
-	if CharacterStateHelper.is_ledge_hanging(world, unit, self.temp_params) then
-		csm:change_state("ledge_hanging", self.temp_params)
-
-		return
-	end
-
-	if t > self.end_time then
-		csm:change_state("standing")
+	if CharacterStateHelper.is_ledge_hanging(var_4_5, arg_4_1, arg_4_0.temp_params) then
+		var_4_0:change_state("ledge_hanging", arg_4_0.temp_params)
 
 		return
 	end
 
-	if not csm.state_next and status_extension.do_leap then
-		csm:change_state("leaping")
+	if arg_4_5 > arg_4_0.end_time then
+		var_4_0:change_state("standing")
 
 		return
 	end
 
-	self:queue_input(input, input_extension, inventory_extension)
+	if not var_4_0.state_next and var_4_3.do_leap then
+		var_4_0:change_state("leaping")
 
-	local player = Managers.player:owner(unit)
-	local is_moving = CharacterStateHelper.has_move_input(input_extension)
+		return
+	end
 
-	if is_moving then
-		self.movement_speed = math.min(0.75, self.movement_speed + movement_settings_table.move_acceleration_up * dt)
-	elseif player and player.bot_player then
-		self.movement_speed = 0
+	arg_4_0:queue_input(arg_4_2, var_4_1, var_4_2)
+
+	local var_4_8 = Managers.player:owner(arg_4_1)
+
+	if CharacterStateHelper.has_move_input(var_4_1) then
+		arg_4_0.movement_speed = math.min(0.75, arg_4_0.movement_speed + var_4_6.move_acceleration_up * arg_4_3)
+	elseif var_4_8 and var_4_8.bot_player then
+		arg_4_0.movement_speed = 0
 	else
-		self.movement_speed = math.max(self.movement_speed_limit, self.movement_speed - movement_settings_table.move_acceleration_down * dt)
+		arg_4_0.movement_speed = math.max(arg_4_0.movement_speed_limit, arg_4_0.movement_speed - var_4_6.move_acceleration_down * arg_4_3)
 	end
 
-	local walking = input_extension:get("walk")
-	local move_speed = status_extension:is_crouching() and movement_settings_table.crouch_move_speed or walking and movement_settings_table.walk_move_speed or movement_settings_table.move_speed
-	local move_speed_multiplier = status_extension:current_move_speed_multiplier()
+	local var_4_9 = var_4_1:get("walk")
+	local var_4_10 = var_4_3:is_crouching() and var_4_6.crouch_move_speed or var_4_9 and var_4_6.walk_move_speed or var_4_6.move_speed
+	local var_4_11 = var_4_3:current_move_speed_multiplier()
 
-	if walking ~= self.walking then
-		status_extension:set_slowed(walking)
+	if var_4_9 ~= arg_4_0.walking then
+		var_4_3:set_slowed(var_4_9)
 	end
 
-	move_speed = move_speed * move_speed_multiplier
-	move_speed = move_speed * movement_settings_table.player_speed_scale
-	move_speed = move_speed * self.movement_speed
+	local var_4_12 = var_4_10 * var_4_11 * var_4_6.player_speed_scale * arg_4_0.movement_speed
+	local var_4_13 = Vector3(0, 0, 0)
+	local var_4_14 = var_4_1:get("move")
 
-	local movement = Vector3(0, 0, 0)
-	local move_input = input_extension:get("move")
-
-	if move_input then
-		movement = movement + move_input
+	if var_4_14 then
+		var_4_13 = var_4_13 + var_4_14
 	end
 
-	local move_input_controller = input_extension:get("move_controller")
+	local var_4_15 = var_4_1:get("move_controller")
 
-	if move_input_controller then
-		local controller_length = Vector3.length(move_input_controller)
+	if var_4_15 then
+		local var_4_16 = Vector3.length(var_4_15)
 
-		if controller_length > 0 then
-			move_speed = move_speed * controller_length
+		if var_4_16 > 0 then
+			var_4_12 = var_4_12 * var_4_16
 		end
 
-		movement = movement + move_input_controller
+		var_4_13 = var_4_13 + var_4_15
 	end
 
-	local stagger
+	local var_4_17
 
-	if t > self.next_pulse then
-		stagger = Vector3(2 * (math.random() - 0.5), 2 * (math.random() - 0.5), 0)
-		self.next_pulse = t + 0.2
+	if arg_4_5 > arg_4_0.next_pulse then
+		local var_4_18 = Vector3(2 * (math.random() - 0.5), 2 * (math.random() - 0.5), 0)
 
-		self.last_stagger:store(stagger)
+		arg_4_0.next_pulse = arg_4_5 + 0.2
 
-		self.current_stagger_speed = 1
+		arg_4_0.last_stagger:store(var_4_18)
+
+		arg_4_0.current_stagger_speed = 1
 	end
 
-	movement = movement + self.last_stagger:unbox()
-	self.current_stagger_speed = math.max(0, self.current_stagger_speed - movement_settings_table.move_acceleration_down * dt)
-	move_speed = move_speed * self.current_stagger_speed * self.movement_speed_modifier
+	local var_4_19 = var_4_13 + arg_4_0.last_stagger:unbox()
 
-	local move_input_direction
+	arg_4_0.current_stagger_speed = math.max(0, arg_4_0.current_stagger_speed - var_4_6.move_acceleration_down * arg_4_3)
 
-	move_input_direction = Vector3.normalize(movement)
+	local var_4_20 = var_4_12 * arg_4_0.current_stagger_speed * arg_4_0.movement_speed_modifier
+	local var_4_21
+	local var_4_22 = Vector3.normalize(var_4_19)
 
-	if Vector3.length(move_input_direction) == 0 then
-		move_input_direction = self.last_input_direction:unbox()
+	if Vector3.length(var_4_22) == 0 then
+		var_4_22 = arg_4_0.last_input_direction:unbox()
 	else
-		self.last_input_direction:store(move_input_direction)
+		arg_4_0.last_input_direction:store(var_4_22)
 	end
 
-	CharacterStateHelper.move_on_ground(first_person_extension, input_extension, locomotion_extension, move_input_direction, move_speed, unit)
+	CharacterStateHelper.move_on_ground(var_4_7, var_4_1, var_4_4, var_4_22, var_4_20, arg_4_1)
 
-	local move_anim_3p, _ = CharacterStateHelper.get_move_animation(locomotion_extension, input_extension, status_extension, self.move_anim_3p)
+	local var_4_23, var_4_24 = CharacterStateHelper.get_move_animation(var_4_4, var_4_1, var_4_3, arg_4_0.move_anim_3p)
 
-	if move_anim_3p ~= self.move_anim_3p then
-		CharacterStateHelper.play_animation_event(unit, move_anim_3p)
+	if var_4_23 ~= arg_4_0.move_anim_3p then
+		CharacterStateHelper.play_animation_event(arg_4_1, var_4_23)
 
-		self.move_anim_3p = move_anim_3p
+		arg_4_0.move_anim_3p = var_4_23
 	end
 
-	self.walking = walking
+	arg_4_0.walking = var_4_9
 
-	if not csm.state_next and not locomotion_extension:is_on_ground() then
-		csm:change_state("falling")
+	if not var_4_0.state_next and not var_4_4:is_on_ground() then
+		var_4_0:change_state("falling")
 
 		return
 	end
 
-	local look_override
+	local var_4_25
 
-	if self.look_override then
-		look_override = self.look_override:unbox()
+	if arg_4_0.look_override then
+		var_4_25 = arg_4_0.look_override:unbox()
 	end
 
-	local percentage_done = self.time_in_state / self.duration
-	local look_sense_override = math.min(self.end_look_sense_override, math.lerp(self.start_look_sense_override, 1, percentage_done))
+	local var_4_26 = arg_4_0.time_in_state / arg_4_0.duration
+	local var_4_27 = math.min(arg_4_0.end_look_sense_override, math.lerp(arg_4_0.start_look_sense_override, 1, var_4_26))
 
-	CharacterStateHelper.look(input_extension, self.player.viewport_name, self.first_person_extension, status_extension, self.inventory_extension, look_sense_override, look_override)
-	self.look_override:store(0, 0, 0)
+	CharacterStateHelper.look(var_4_1, arg_4_0.player.viewport_name, arg_4_0.first_person_extension, var_4_3, arg_4_0.inventory_extension, var_4_27, var_4_25)
+	arg_4_0.look_override:store(0, 0, 0)
 end
 
-PlayerCharacterStateStunned.queue_input = function (self, input, input_extension, inventory_extension)
-	local wield_input = CharacterStateHelper.wield_input(input_extension, inventory_extension, "action_wield")
+function PlayerCharacterStateStunned.queue_input(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	local var_5_0 = CharacterStateHelper.wield_input(arg_5_2, arg_5_3, "action_wield")
 
-	if wield_input then
-		input_extension:add_buffer(wield_input)
+	if var_5_0 then
+		arg_5_2:add_buffer(var_5_0)
 	end
 
-	for _, input_to_buffer in pairs(self.inputs_to_buffer) do
-		if input_extension:get(input_to_buffer) then
-			input_extension:add_stun_buffer(input_to_buffer)
+	for iter_5_0, iter_5_1 in pairs(arg_5_0.inputs_to_buffer) do
+		if arg_5_2:get(iter_5_1) then
+			arg_5_2:add_stun_buffer(iter_5_1)
 
 			break
 		end

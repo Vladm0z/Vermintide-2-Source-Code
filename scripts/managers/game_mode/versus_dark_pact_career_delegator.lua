@@ -1,360 +1,351 @@
-﻿-- chunkname: @scripts/managers/game_mode/versus_dark_pact_career_delegator.lua
+-- chunkname: @scripts/managers/game_mode/versus_dark_pact_career_delegator.lua
 
 VersusDarkPactCareerDelegator = class(VersusDarkPactCareerDelegator)
 
-local weights_by_career = {
+local var_0_0 = {
 	default = {
 		[0] = 1,
 		0.5,
 		0.25,
-		0.125,
+		0.125
 	},
 	vs_poison_wind_globadier = {
 		[0] = 0.8,
 		0.4,
 		0.2,
-		0.1,
-	},
+		0.1
+	}
 }
-local weights_by_repetition = {
-	[1] = 0.25,
+local var_0_1 = {
+	[1] = 0.25
 }
 
-VersusDarkPactCareerDelegator.init = function (self)
-	self._playable_boss_can_be_picked = false
-	self._picks_per_career = {}
-	self._picks_per_player = {}
-	self._peer_picking_boss = nil
-	self._rolled_careers_time_stamp = {}
-	self._last_picked_by_player = {}
+function VersusDarkPactCareerDelegator.init(arg_1_0)
+	arg_1_0._playable_boss_can_be_picked = false
+	arg_1_0._picks_per_career = {}
+	arg_1_0._picks_per_player = {}
+	arg_1_0._peer_picking_boss = nil
+	arg_1_0._rolled_careers_time_stamp = {}
+	arg_1_0._last_picked_by_player = {}
 
-	Managers.state.event:register(self, "on_player_left_party", "on_player_left_party")
-	Managers.state.event:register(self, "player_profile_assigned", "on_player_profile_assigned")
+	Managers.state.event:register(arg_1_0, "on_player_left_party", "on_player_left_party")
+	Managers.state.event:register(arg_1_0, "player_profile_assigned", "on_player_profile_assigned")
 
-	self._mechanism = Managers.mechanism:game_mechanism()
+	arg_1_0._mechanism = Managers.mechanism:game_mechanism()
 
-	self:_override_available_profiles(GameModeSettings.versus)
-	self:_initialize_custom_settings()
+	arg_1_0:_override_available_profiles(GameModeSettings.versus)
+	arg_1_0:_initialize_custom_settings()
 end
 
-VersusDarkPactCareerDelegator._override_available_profiles = function (self, settings)
-	local career_overrides = Managers.mechanism:mechanism_setting_for_title("override_career_availability")
+function VersusDarkPactCareerDelegator._override_available_profiles(arg_2_0, arg_2_1)
+	local var_2_0 = Managers.mechanism:mechanism_setting_for_title("override_career_availability")
 
-	if not self._bosses then
-		self._bosses = table.shallow_copy(settings.dark_pact_boss_profiles)
+	if not arg_2_0._bosses then
+		arg_2_0._bosses = table.shallow_copy(arg_2_1.dark_pact_boss_profiles)
 
-		for i = #self._bosses, 1, -1 do
-			local career = self._bosses[i]
-			local override = career_overrides[career]
-
-			if override == false then
-				table.swap_delete(self._bosses, i)
+		for iter_2_0 = #arg_2_0._bosses, 1, -1 do
+			if var_2_0[arg_2_0._bosses[iter_2_0]] == false then
+				table.swap_delete(arg_2_0._bosses, iter_2_0)
 			end
 		end
 	end
 
-	if not self._all_careers then
-		self._all_careers = table.shallow_copy(settings.dark_pact_profile_order)
+	if not arg_2_0._all_careers then
+		arg_2_0._all_careers = table.shallow_copy(arg_2_1.dark_pact_profile_order)
 
-		for i = #self._all_careers, 1, -1 do
-			local career = self._all_careers[i]
-			local override = career_overrides[career]
-
-			if override == false then
-				table.swap_delete(self._all_careers, i)
+		for iter_2_1 = #arg_2_0._all_careers, 1, -1 do
+			if var_2_0[arg_2_0._all_careers[iter_2_1]] == false then
+				table.swap_delete(arg_2_0._all_careers, iter_2_1)
 			end
 		end
 	end
 end
 
-VersusDarkPactCareerDelegator.destroy = function (self)
-	Managers.state.event:unregister("on_player_left_party", self)
-	Managers.state.event:unregister("player_profile_assigned", self)
-	Managers.state.event:unregister("player_unit_relinquished", self)
+function VersusDarkPactCareerDelegator.destroy(arg_3_0)
+	Managers.state.event:unregister("on_player_left_party", arg_3_0)
+	Managers.state.event:unregister("player_profile_assigned", arg_3_0)
+	Managers.state.event:unregister("player_unit_relinquished", arg_3_0)
 end
 
-VersusDarkPactCareerDelegator._roll_career_options = function (self, num_career_options, available_careers, peer_id)
-	local selected_careers = {}
-	local rolls = FrameTable.alloc_table()
+function VersusDarkPactCareerDelegator._roll_career_options(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	local var_4_0 = {}
+	local var_4_1 = FrameTable.alloc_table()
 
-	for i = 1, num_career_options do
-		rolls[i] = 0
+	for iter_4_0 = 1, arg_4_1 do
+		var_4_1[iter_4_0] = 0
 	end
 
-	local delegated_careers = self._picks_per_player[peer_id] or {}
+	local var_4_2 = arg_4_0._picks_per_player[arg_4_3] or {}
 
-	self._picks_per_player[peer_id] = delegated_careers
+	arg_4_0._picks_per_player[arg_4_3] = var_4_2
 
-	for i = 1, #available_careers do
-		local career = available_careers[i]
+	for iter_4_1 = 1, #arg_4_2 do
+		local var_4_3 = arg_4_2[iter_4_1]
 
-		self._picks_per_career[career] = self._picks_per_career[career] or 0
+		arg_4_0._picks_per_career[var_4_3] = arg_4_0._picks_per_career[var_4_3] or 0
 
-		local num_times_picked = self._picks_per_career[career]
-		local career_weights = weights_by_career[career] or weights_by_career.default
-		local repetition_weight = self:_weight_by_repetition(peer_id, career)
-		local custom_spawn_chance_multiplier = 1
+		local var_4_4 = arg_4_0._picks_per_career[var_4_3]
+		local var_4_5 = var_0_0[var_4_3] or var_0_0.default
+		local var_4_6 = arg_4_0:_weight_by_repetition(arg_4_3, var_4_3)
+		local var_4_7 = 1
 
-		if self._custom_settings_spawn_chance_multipliers and not table.is_empty(self._custom_settings_spawn_chance_multipliers) then
-			custom_spawn_chance_multiplier = self._custom_settings_spawn_chance_multipliers[career]
+		if arg_4_0._custom_settings_spawn_chance_multipliers and not table.is_empty(arg_4_0._custom_settings_spawn_chance_multipliers) then
+			var_4_7 = arg_4_0._custom_settings_spawn_chance_multipliers[var_4_3]
 		end
 
-		local weighted_roll = math.random() * (career_weights[num_times_picked] or 0) * repetition_weight * custom_spawn_chance_multiplier
-		local smallest_roll = table.min(rolls)
+		local var_4_8 = math.random() * (var_4_5[var_4_4] or 0) * var_4_6 * var_4_7
+		local var_4_9 = table.min(var_4_1)
 
-		if weighted_roll >= rolls[smallest_roll] then
-			selected_careers[smallest_roll] = career
-			rolls[smallest_roll] = weighted_roll
+		if var_4_8 >= var_4_1[var_4_9] then
+			var_4_0[var_4_9] = var_4_3
+			var_4_1[var_4_9] = var_4_8
 		end
 	end
 
-	for i = 1, #selected_careers do
-		local career = selected_careers[i]
+	for iter_4_2 = 1, #var_4_0 do
+		local var_4_10 = var_4_0[iter_4_2]
 
-		delegated_careers[i] = career
-		self._picks_per_career[career] = self._picks_per_career[career] + 1
+		var_4_2[iter_4_2] = var_4_10
+		arg_4_0._picks_per_career[var_4_10] = arg_4_0._picks_per_career[var_4_10] + 1
 	end
 
-	return selected_careers
+	return var_4_0
 end
 
-VersusDarkPactCareerDelegator.request_careers = function (self, peer_id)
-	printf("[DELEGATOR] requested careers, peer_id: %s", peer_id)
-	self:_release_career_for_player(peer_id)
+function VersusDarkPactCareerDelegator.request_careers(arg_5_0, arg_5_1)
+	printf("[DELEGATOR] requested careers, peer_id: %s", arg_5_1)
+	arg_5_0:_release_career_for_player(arg_5_1)
 
-	local settings = Managers.state.game_mode:game_mode():settings()
-	local num_career_options = self._custom_num_special_pick_options or settings.dark_pact_picking_rules.special_pick_options
-	local career_options = self:_roll_career_options(num_career_options, self._all_careers, peer_id)
+	local var_5_0 = Managers.state.game_mode:game_mode():settings()
+	local var_5_1 = arg_5_0._custom_num_special_pick_options or var_5_0.dark_pact_picking_rules.special_pick_options
+	local var_5_2 = arg_5_0:_roll_career_options(var_5_1, arg_5_0._all_careers, arg_5_1)
 
-	if self._playable_boss_can_be_picked then
+	if arg_5_0._playable_boss_can_be_picked then
 		if DEDICATED_SERVER then
 			cprint("[VS BOSS] added boss to picking list")
 		elseif Managers.state.network.is_server then
 			print("[VS BOSS] added boss to picking list")
 		end
 
-		assert(self._peer_picking_boss == nil, "Peer_picking_boss needs to be nill, another player is picking the boss")
+		assert(arg_5_0._peer_picking_boss == nil, "Peer_picking_boss needs to be nill, another player is picking the boss")
 
-		self._peer_picking_boss = peer_id
+		arg_5_0._peer_picking_boss = arg_5_1
 
-		for i = 1, #self._bosses do
-			local boss_profile = self._bosses[i]
+		for iter_5_0 = 1, #arg_5_0._bosses do
+			local var_5_3 = arg_5_0._bosses[iter_5_0]
 
-			career_options[#career_options + 1] = boss_profile
+			var_5_2[#var_5_2 + 1] = var_5_3
 
-			table.insert(self._picks_per_player[peer_id], boss_profile)
+			table.insert(arg_5_0._picks_per_player[arg_5_1], var_5_3)
 
-			self._picks_per_career[boss_profile] = (self._picks_per_career[boss_profile] or 0) + 1
+			arg_5_0._picks_per_career[var_5_3] = (arg_5_0._picks_per_career[var_5_3] or 0) + 1
 
-			self:set_playable_boss_can_be_picked(false)
+			arg_5_0:set_playable_boss_can_be_picked(false)
 		end
 	end
 
-	self._rolled_careers_time_stamp[peer_id] = Managers.time:time("game")
+	arg_5_0._rolled_careers_time_stamp[arg_5_1] = Managers.time:time("game")
 
-	return career_options, "all"
+	return var_5_2, "all"
 end
 
-VersusDarkPactCareerDelegator.set_playable_boss_can_be_picked = function (self, is_next)
-	if self._custom_setting_no_bosses or #self._bosses == 0 then
+function VersusDarkPactCareerDelegator.set_playable_boss_can_be_picked(arg_6_0, arg_6_1)
+	if arg_6_0._custom_setting_no_bosses or #arg_6_0._bosses == 0 then
 		return
 	end
 
 	if DEDICATED_SERVER then
 		cprint("[VS BOSS] setting is_playble_boss_next")
 	elseif Managers.state.network.is_server then
-		printf("[Playable_bosses] setting is_playble_boss_next %s", is_next)
+		printf("[Playable_bosses] setting is_playble_boss_next %s", arg_6_1)
 	end
 
-	if self._peer_picking_boss == nil and is_next then
-		self._playable_boss_can_be_picked = true
-	elseif not is_next then
-		self._playable_boss_can_be_picked = false
+	if arg_6_0._peer_picking_boss == nil and arg_6_1 then
+		arg_6_0._playable_boss_can_be_picked = true
+	elseif not arg_6_1 then
+		arg_6_0._playable_boss_can_be_picked = false
 	else
 		print("[VS BOSS] self._playable_boss_can_be_picked was not sett")
 	end
 end
 
-VersusDarkPactCareerDelegator.get_playable_boss_can_be_picked = function (self)
-	return self._playable_boss_can_be_picked
+function VersusDarkPactCareerDelegator.get_playable_boss_can_be_picked(arg_7_0)
+	return arg_7_0._playable_boss_can_be_picked
 end
 
-VersusDarkPactCareerDelegator.on_player_profile_assigned = function (self, peer_id, local_player_id, profile_index, career_index)
-	local profile = SPProfiles[profile_index]
-	local career_name = profile.careers[career_index].name
-	local settings = Managers.state.game_mode:game_mode():settings()
+function VersusDarkPactCareerDelegator.on_player_profile_assigned(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	local var_8_0 = SPProfiles[arg_8_3].careers[arg_8_4].name
+	local var_8_1 = Managers.state.game_mode:game_mode():settings()
 
-	if not self._picks_per_player[peer_id] then
+	if not arg_8_0._picks_per_player[arg_8_1] then
 		return
 	end
 
-	if not table.contains(settings.dark_pact_profile_order, career_name) and not table.contains(GameModeSettings.versus.dark_pact_boss_profiles, career_name) then
+	if not table.contains(var_8_1.dark_pact_profile_order, var_8_0) and not table.contains(GameModeSettings.versus.dark_pact_boss_profiles, var_8_0) then
 		return
 	end
 
-	self:_career_picked(peer_id, career_name)
+	arg_8_0:_career_picked(arg_8_1, var_8_0)
 end
 
-VersusDarkPactCareerDelegator.on_player_left_party = function (self, peer_id)
-	self:_release_career_for_player(peer_id)
+function VersusDarkPactCareerDelegator.on_player_left_party(arg_9_0, arg_9_1)
+	arg_9_0:_release_career_for_player(arg_9_1)
 
-	self._picks_per_player[peer_id] = nil
+	arg_9_0._picks_per_player[arg_9_1] = nil
 end
 
-VersusDarkPactCareerDelegator._career_picked = function (self, peer_id, career)
-	self:_picking_telemetry(peer_id, career)
-	self:_release_career_for_player(peer_id)
+function VersusDarkPactCareerDelegator._career_picked(arg_10_0, arg_10_1, arg_10_2)
+	arg_10_0:_picking_telemetry(arg_10_1, arg_10_2)
+	arg_10_0:_release_career_for_player(arg_10_1)
 
-	self._picks_per_career[career] = (self._picks_per_career[career] or 0) + 1
+	arg_10_0._picks_per_career[arg_10_2] = (arg_10_0._picks_per_career[arg_10_2] or 0) + 1
 
-	local delegated_careers = self._picks_per_player[peer_id] or {}
+	local var_10_0 = arg_10_0._picks_per_player[arg_10_1] or {}
 
-	self._picks_per_player[peer_id] = delegated_careers
+	arg_10_0._picks_per_player[arg_10_1] = var_10_0
 
-	if self._peer_picking_boss and peer_id == self._peer_picking_boss then
-		if table.contains(self._bosses, career) then
-			self._peer_picking_boss = nil
+	if arg_10_0._peer_picking_boss and arg_10_1 == arg_10_0._peer_picking_boss then
+		if table.contains(arg_10_0._bosses, arg_10_2) then
+			arg_10_0._peer_picking_boss = nil
 		else
-			self._peer_picking_boss = nil
+			arg_10_0._peer_picking_boss = nil
 
-			self:set_playable_boss_can_be_picked(true)
+			arg_10_0:set_playable_boss_can_be_picked(true)
 		end
 	end
 
-	delegated_careers[1] = career
+	var_10_0[1] = arg_10_2
 
-	self:_register_player_career(peer_id, career)
+	arg_10_0:_register_player_career(arg_10_1, arg_10_2)
 end
 
-VersusDarkPactCareerDelegator._release_career_for_player = function (self, peer_id)
-	local delegated_careers = self._picks_per_player[peer_id]
+function VersusDarkPactCareerDelegator._release_career_for_player(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_0._picks_per_player[arg_11_1]
 
-	if delegated_careers then
-		for i = 1, #delegated_careers do
-			local delegated_career = delegated_careers[i]
+	if var_11_0 then
+		for iter_11_0 = 1, #var_11_0 do
+			local var_11_1 = var_11_0[iter_11_0]
 
-			self._picks_per_career[delegated_career] = self._picks_per_career[delegated_career] - 1
+			arg_11_0._picks_per_career[var_11_1] = arg_11_0._picks_per_career[var_11_1] - 1
 
-			printf("[DELEGATOR] releasing career: %s", delegated_careers[i])
+			printf("[DELEGATOR] releasing career: %s", var_11_0[iter_11_0])
 
-			delegated_careers[i] = nil
+			var_11_0[iter_11_0] = nil
 		end
 	end
 end
 
-VersusDarkPactCareerDelegator.update = function (self)
+function VersusDarkPactCareerDelegator.update(arg_12_0)
 	return
 end
 
-VersusDarkPactCareerDelegator._picking_telemetry = function (self, peer_id, selected_career)
-	local settings = Managers.state.game_mode:game_mode():settings()
+function VersusDarkPactCareerDelegator._picking_telemetry(arg_13_0, arg_13_1, arg_13_2)
+	local var_13_0 = Managers.state.game_mode:game_mode():settings()
 
-	if not table.contains(settings.dark_pact_profile_order, selected_career) and not table.contains(GameModeSettings.versus.dark_pact_boss_profiles, selected_career) then
+	if not table.contains(var_13_0.dark_pact_profile_order, arg_13_2) and not table.contains(GameModeSettings.versus.dark_pact_boss_profiles, arg_13_2) then
 		return
 	end
 
-	local player = Managers.player:player_from_peer_id(peer_id)
-
-	if not player then
+	if not Managers.player:player_from_peer_id(arg_13_1) then
 		return
 	end
 
-	if not self._picks_per_player[peer_id] then
+	if not arg_13_0._picks_per_player[arg_13_1] then
 		return
 	end
 
-	local player_backend_id = self._mechanism:get_peer_backend_id(peer_id) or "offline backend"
-	local career_options = table.shallow_copy(self._picks_per_player[peer_id])
-	local match_id = Managers.mechanism:game_mechanism():match_id()
-	local career_selection_time_elapsed = Managers.time:time("game") - self._rolled_careers_time_stamp[peer_id]
-	local platform = PLATFORM
-	local build = BUILD
+	local var_13_1 = arg_13_0._mechanism:get_peer_backend_id(arg_13_1) or "offline backend"
+	local var_13_2 = table.shallow_copy(arg_13_0._picks_per_player[arg_13_1])
+	local var_13_3 = Managers.mechanism:game_mechanism():match_id()
+	local var_13_4 = Managers.time:time("game") - arg_13_0._rolled_careers_time_stamp[arg_13_1]
+	local var_13_5 = PLATFORM
+	local var_13_6 = BUILD
 
-	Managers.telemetry_events:versus_pactsworn_picking(match_id, player_backend_id, career_options, selected_career, career_selection_time_elapsed, platform, build)
+	Managers.telemetry_events:versus_pactsworn_picking(var_13_3, var_13_1, var_13_2, arg_13_2, var_13_4, var_13_5, var_13_6)
 end
 
-VersusDarkPactCareerDelegator._weight_by_repetition = function (self, peer_id, career)
-	local last_picks = self._last_picked_by_player[peer_id]
+function VersusDarkPactCareerDelegator._weight_by_repetition(arg_14_0, arg_14_1, arg_14_2)
+	local var_14_0 = arg_14_0._last_picked_by_player[arg_14_1]
 
-	if not last_picks then
+	if not var_14_0 then
 		return 1
 	end
 
-	for i = 1, #last_picks do
-		if last_picks[i] == career then
-			return weights_by_repetition[i]
+	for iter_14_0 = 1, #var_14_0 do
+		if var_14_0[iter_14_0] == arg_14_2 then
+			return var_0_1[iter_14_0]
 		end
 	end
 
 	return 1
 end
 
-VersusDarkPactCareerDelegator._register_player_career = function (self, peer_id, career)
-	local last_picks = self._last_picked_by_player[peer_id] or {}
+function VersusDarkPactCareerDelegator._register_player_career(arg_15_0, arg_15_1, arg_15_2)
+	local var_15_0 = arg_15_0._last_picked_by_player[arg_15_1] or {}
 
-	self._last_picked_by_player[peer_id] = last_picks
+	arg_15_0._last_picked_by_player[arg_15_1] = var_15_0
 
-	table.insert(last_picks, 1, career)
+	table.insert(var_15_0, 1, arg_15_2)
 
-	for i = #weights_by_repetition + 1, #last_picks do
-		last_picks[i] = nil
+	for iter_15_0 = #var_0_1 + 1, #var_15_0 do
+		var_15_0[iter_15_0] = nil
 	end
 end
 
-VersusDarkPactCareerDelegator._initialize_custom_settings = function (self)
-	local mechanism_ok, num_pactsworn_picking_options, custom_settings_enabled = Managers.mechanism:mechanism_try_call("get_custom_game_setting", "num_pactsworn_picking_options")
+function VersusDarkPactCareerDelegator._initialize_custom_settings(arg_16_0)
+	local var_16_0, var_16_1, var_16_2 = Managers.mechanism:mechanism_try_call("get_custom_game_setting", "num_pactsworn_picking_options")
 
-	if not custom_settings_enabled then
+	if not var_16_2 then
 		return
 	end
 
-	if num_pactsworn_picking_options then
-		self._custom_num_special_pick_options = num_pactsworn_picking_options
+	if var_16_1 then
+		arg_16_0._custom_num_special_pick_options = var_16_1
 	end
 
-	local all_careers = self._all_careers
+	local var_16_3 = arg_16_0._all_careers
 
-	self._custom_settings_spawn_chance_multipliers = {}
+	arg_16_0._custom_settings_spawn_chance_multipliers = {}
 
-	local num_rollable_careers = 0
+	local var_16_4 = 0
 
-	for i = 1, #all_careers do
-		local career_name = all_careers[i]
-		local setting_name = career_name .. "_spawn_chance_multiplier"
-		local _, multiplier, _ = Managers.mechanism:mechanism_try_call("get_custom_game_setting", setting_name)
+	for iter_16_0 = 1, #var_16_3 do
+		local var_16_5 = var_16_3[iter_16_0]
+		local var_16_6 = var_16_5 .. "_spawn_chance_multiplier"
+		local var_16_7, var_16_8, var_16_9 = Managers.mechanism:mechanism_try_call("get_custom_game_setting", var_16_6)
 
-		if mechanism_ok and custom_settings_enabled and multiplier then
-			self._custom_settings_spawn_chance_multipliers[career_name] = multiplier
+		if var_16_0 and var_16_2 and var_16_8 then
+			arg_16_0._custom_settings_spawn_chance_multipliers[var_16_5] = var_16_8
 
-			if multiplier ~= 0 then
-				num_rollable_careers = num_rollable_careers + 1
+			if var_16_8 ~= 0 then
+				var_16_4 = var_16_4 + 1
 			end
 		end
 	end
 
-	local all_bosses = self._bosses
-	local new_boss_table = {}
+	local var_16_10 = arg_16_0._bosses
+	local var_16_11 = {}
 
-	for i = 1, #self._bosses do
-		local boss_name = all_bosses[i]
-		local setting_name = boss_name .. "_spawn_chance_multiplier"
-		local _, setting, _ = Managers.mechanism:mechanism_try_call("get_custom_game_setting", setting_name)
+	for iter_16_1 = 1, #arg_16_0._bosses do
+		local var_16_12 = var_16_10[iter_16_1]
+		local var_16_13 = var_16_12 .. "_spawn_chance_multiplier"
+		local var_16_14, var_16_15, var_16_16 = Managers.mechanism:mechanism_try_call("get_custom_game_setting", var_16_13)
 
-		if setting ~= "default" and setting ~= false then
-			self._custom_settings_spawn_chance_multipliers[boss_name] = setting
-			self._all_careers[#self._all_careers + 1] = boss_name
-			num_rollable_careers = num_rollable_careers + 1
-		elseif setting == "default" then
-			new_boss_table[#new_boss_table + 1] = boss_name
+		if var_16_15 ~= "default" and var_16_15 ~= false then
+			arg_16_0._custom_settings_spawn_chance_multipliers[var_16_12] = var_16_15
+			arg_16_0._all_careers[#arg_16_0._all_careers + 1] = var_16_12
+			var_16_4 = var_16_4 + 1
+		elseif var_16_15 == "default" then
+			var_16_11[#var_16_11 + 1] = var_16_12
 		end
 	end
 
-	self._bosses = new_boss_table
-	self._custom_setting_no_bosses = #self._bosses == 0
+	arg_16_0._bosses = var_16_11
+	arg_16_0._custom_setting_no_bosses = #arg_16_0._bosses == 0
 
-	if num_rollable_careers == 0 then
-		table.clear(self._custom_settings_spawn_chance_multipliers)
-	elseif num_rollable_careers < self._custom_num_special_pick_options then
-		self._custom_num_special_pick_options = num_rollable_careers
+	if var_16_4 == 0 then
+		table.clear(arg_16_0._custom_settings_spawn_chance_multipliers)
+	elseif var_16_4 < arg_16_0._custom_num_special_pick_options then
+		arg_16_0._custom_num_special_pick_options = var_16_4
 	end
 end

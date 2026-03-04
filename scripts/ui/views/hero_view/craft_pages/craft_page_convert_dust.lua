@@ -1,81 +1,80 @@
-﻿-- chunkname: @scripts/ui/views/hero_view/craft_pages/craft_page_convert_dust.lua
+-- chunkname: @scripts/ui/views/hero_view/craft_pages/craft_page_convert_dust.lua
 
 require("scripts/ui/views/menu_world_previewer")
 
-local crafting_recipes, crafting_recipes_by_name, crafting_recipes_lookup = dofile("scripts/settings/crafting/crafting_recipes")
-local definitions = local_require("scripts/ui/views/hero_view/craft_pages/definitions/craft_page_convert_dust_definitions")
-local widget_definitions = definitions.widgets
-local category_settings = definitions.category_settings
-local scenegraph_definition = definitions.scenegraph_definition
-local animation_definitions = definitions.animation_definitions
-local DO_RELOAD = false
-local NUM_CRAFT_SLOTS = 1
+local var_0_0, var_0_1, var_0_2 = dofile("scripts/settings/crafting/crafting_recipes")
+local var_0_3 = local_require("scripts/ui/views/hero_view/craft_pages/definitions/craft_page_convert_dust_definitions")
+local var_0_4 = var_0_3.widgets
+local var_0_5 = var_0_3.category_settings
+local var_0_6 = var_0_3.scenegraph_definition
+local var_0_7 = var_0_3.animation_definitions
+local var_0_8 = false
+local var_0_9 = 1
 
 CraftPageConvertDust = class(CraftPageConvertDust)
 CraftPageConvertDust.NAME = "CraftPageConvertDust"
 
-CraftPageConvertDust.on_enter = function (self, params, settings)
+function CraftPageConvertDust.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroWindowCraft] Enter Substate CraftPageConvertDust")
 
-	self.parent = params.parent
-	self.super_parent = self.parent.parent
+	arg_1_0.parent = arg_1_1.parent
+	arg_1_0.super_parent = arg_1_0.parent.parent
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_1_0 = arg_1_1.ingame_ui_context
 
-	self.ingame_ui_context = ingame_ui_context
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self.input_manager = ingame_ui_context.input_manager
-	self.statistics_db = ingame_ui_context.statistics_db
-	self.render_settings = {
-		snap_pixel_positions = true,
+	arg_1_0.ingame_ui_context = var_1_0
+	arg_1_0.ui_renderer = var_1_0.ui_renderer
+	arg_1_0.ui_top_renderer = var_1_0.ui_top_renderer
+	arg_1_0.input_manager = var_1_0.input_manager
+	arg_1_0.statistics_db = var_1_0.statistics_db
+	arg_1_0.render_settings = {
+		snap_pixel_positions = true
 	}
-	self.crafting_manager = Managers.state.crafting
+	arg_1_0.crafting_manager = Managers.state.crafting
 
-	local player_manager = Managers.player
-	local local_player = player_manager:local_player()
+	local var_1_1 = Managers.player
 
-	self._stats_id = local_player:stats_id()
-	self.player_manager = player_manager
-	self.peer_id = ingame_ui_context.peer_id
-	self.hero_name = params.hero_name
-	self.career_index = params.career_index
-	self.profile_index = params.profile_index
-	self.wwise_world = params.wwise_world
-	self.settings = settings
-	self._recipe_name = settings.name
-	self._animations = {}
+	arg_1_0._stats_id = var_1_1:local_player():stats_id()
+	arg_1_0.player_manager = var_1_1
+	arg_1_0.peer_id = var_1_0.peer_id
+	arg_1_0.hero_name = arg_1_1.hero_name
+	arg_1_0.career_index = arg_1_1.career_index
+	arg_1_0.profile_index = arg_1_1.profile_index
+	arg_1_0.wwise_world = arg_1_1.wwise_world
+	arg_1_0.settings = arg_1_2
+	arg_1_0._recipe_name = arg_1_2.name
+	arg_1_0._animations = {}
 
-	self:create_ui_elements(params)
+	arg_1_0:create_ui_elements(arg_1_1)
 
-	self._craft_items = {}
-	self._item_grid = ItemGridUI:new(category_settings, self._widgets_by_name.item_grid, self.hero_name, self.career_index)
+	arg_1_0._craft_items = {}
+	arg_1_0._item_grid = ItemGridUI:new(var_0_5, arg_1_0._widgets_by_name.item_grid, arg_1_0.hero_name, arg_1_0.career_index)
 
-	self._item_grid:disable_locked_items(true)
-	self._item_grid:mark_locked_items(true)
-	self._item_grid:hide_slots(true)
-	self._item_grid:disable_item_drag()
-	self.super_parent:clear_disabled_backend_ids()
-	self:setup_recipe_requirements()
+	arg_1_0._item_grid:disable_locked_items(true)
+	arg_1_0._item_grid:mark_locked_items(true)
+	arg_1_0._item_grid:hide_slots(true)
+	arg_1_0._item_grid:disable_item_drag()
+	arg_1_0.super_parent:clear_disabled_backend_ids()
+	arg_1_0:setup_recipe_requirements()
 end
 
-CraftPageConvertDust._has_required_item_amount = function (self, backend_id)
-	local recipe_name = self:_get_recipe_by_backend_id(backend_id)
-	local recipe = crafting_recipes_by_name[recipe_name]
-	local recipe_item_filter = recipe.item_filter
-	local ingredients = recipe.ingredients
-	local item_interface = Managers.backend:get_interface("items")
-	local crafting_material_items = item_interface:get_filtered_items(recipe_item_filter)
-	local amount_owned = item_interface:get_item_amount(backend_id)
-	local item = item_interface:get_item_from_id(backend_id)
+function CraftPageConvertDust._has_required_item_amount(arg_2_0, arg_2_1)
+	local var_2_0 = arg_2_0:_get_recipe_by_backend_id(arg_2_1)
+	local var_2_1 = var_0_1[var_2_0]
+	local var_2_2 = var_2_1.item_filter
+	local var_2_3 = var_2_1.ingredients
+	local var_2_4 = Managers.backend:get_interface("items")
+	local var_2_5 = var_2_4:get_filtered_items(var_2_2)
+	local var_2_6 = var_2_4:get_item_amount(arg_2_1)
+	local var_2_7 = var_2_4:get_item_from_id(arg_2_1)
 
-	for index, data in ipairs(ingredients) do
-		if not data.catergory then
-			local item_key = data.name
-			local required_amount = data.amount
+	for iter_2_0, iter_2_1 in ipairs(var_2_3) do
+		if not iter_2_1.catergory then
+			local var_2_8 = iter_2_1.name
+			local var_2_9 = iter_2_1.amount
 
-			if item.key == item_key then
-				return required_amount <= amount_owned
+			if var_2_7.key == var_2_8 then
+				return var_2_9 <= var_2_6
 			end
 		end
 	end
@@ -83,505 +82,484 @@ CraftPageConvertDust._has_required_item_amount = function (self, backend_id)
 	return false
 end
 
-CraftPageConvertDust._get_recipe_by_backend_id = function (self, backend_id)
-	local item_interface = Managers.backend:get_interface("items")
-	local item_key = item_interface:get_key(backend_id)
-	local recipe_name
+function CraftPageConvertDust._get_recipe_by_backend_id(arg_3_0, arg_3_1)
+	local var_3_0 = Managers.backend:get_interface("items"):get_key(arg_3_1)
+	local var_3_1
 
-	if item_key == "crafting_material_dust_2" then
-		recipe_name = "convert_blue_dust"
-	elseif item_key == "crafting_material_dust_3" then
-		recipe_name = "convert_orange_dust"
+	if var_3_0 == "crafting_material_dust_2" then
+		var_3_1 = "convert_blue_dust"
+	elseif var_3_0 == "crafting_material_dust_3" then
+		var_3_1 = "convert_orange_dust"
 	end
 
-	return recipe_name
+	return var_3_1
 end
 
-CraftPageConvertDust.setup_recipe_requirements = function (self)
-	local settings = self.settings
-	local recipe_name
-	local item_filter = settings.item_filter
-	local added_backend_id = self._craft_items[1]
+function CraftPageConvertDust.setup_recipe_requirements(arg_4_0)
+	local var_4_0 = arg_4_0.settings
+	local var_4_1
+	local var_4_2 = var_4_0.item_filter
+	local var_4_3 = arg_4_0._craft_items[1]
 
-	if added_backend_id then
-		recipe_name = self:_get_recipe_by_backend_id(added_backend_id)
+	if var_4_3 then
+		var_4_1 = arg_4_0:_get_recipe_by_backend_id(var_4_3)
 	end
 
-	self._recipe_name = recipe_name or settings.name
+	arg_4_0._recipe_name = var_4_1 or var_4_0.name
 
-	local has_all_requirements = true
+	local var_4_4 = true
 
-	if not recipe_name then
-		has_all_requirements = false
+	if not var_4_1 then
+		var_4_4 = false
 
-		self:reset_requirements(0)
+		arg_4_0:reset_requirements(0)
 	else
-		local recipe = crafting_recipes_by_name[recipe_name]
-		local recipe_item_filter = recipe.item_filter
-		local ingredients = recipe.ingredients
-		local presentation_ingredients = recipe.presentation_ingredients
-		local num_required_ingredients = 0
+		local var_4_5 = var_0_1[var_4_1]
+		local var_4_6 = var_4_5.item_filter
+		local var_4_7 = var_4_5.ingredients
+		local var_4_8 = var_4_5.presentation_ingredients
+		local var_4_9 = 0
 
-		for index, data in ipairs(presentation_ingredients) do
-			if not data.catergory then
-				num_required_ingredients = num_required_ingredients + 1
+		for iter_4_0, iter_4_1 in ipairs(var_4_8) do
+			if not iter_4_1.catergory then
+				var_4_9 = var_4_9 + 1
 			end
 		end
 
-		self:reset_requirements(num_required_ingredients)
+		arg_4_0:reset_requirements(var_4_9)
 
-		for index, data in ipairs(presentation_ingredients) do
-			local item_key = data.name
-			local required_amount = data.amount
-			local presentation_amount = tostring(required_amount)
+		for iter_4_2, iter_4_3 in ipairs(var_4_8) do
+			local var_4_10 = iter_4_3.name
+			local var_4_11 = iter_4_3.amount
+			local var_4_12 = tostring(var_4_11)
 
-			self:_add_crafting_material_requirement(index, item_key, presentation_amount, true)
+			arg_4_0:_add_crafting_material_requirement(iter_4_2, var_4_10, var_4_12, true)
 		end
 
-		local item_interface = Managers.backend:get_interface("items")
-		local crafting_material_items = item_interface:get_filtered_items(recipe_item_filter)
+		local var_4_13 = Managers.backend:get_interface("items")
+		local var_4_14 = var_4_13:get_filtered_items(var_4_6)
 
-		for index, data in ipairs(ingredients) do
-			if not data.catergory then
-				local item_key = data.name
-				local required_amount = data.amount
-				local amount_owned = 0
-				local required_backend_id
+		for iter_4_4, iter_4_5 in ipairs(var_4_7) do
+			if not iter_4_5.catergory then
+				local var_4_15 = iter_4_5.name
+				local var_4_16 = iter_4_5.amount
+				local var_4_17 = 0
+				local var_4_18
 
-				for _, item in ipairs(crafting_material_items) do
-					local backend_id = item.backend_id
-					local item_data = item.data
+				for iter_4_6, iter_4_7 in ipairs(var_4_14) do
+					local var_4_19 = iter_4_7.backend_id
 
-					if item_data.key == item_key then
-						required_backend_id = backend_id
-						amount_owned = item_interface:get_item_amount(backend_id)
+					if iter_4_7.data.key == var_4_15 then
+						local var_4_20 = var_4_19
+
+						var_4_17 = var_4_13:get_item_amount(var_4_19)
 
 						break
 					end
 				end
 
-				local has_required_amount = required_amount <= amount_owned
-
-				if not has_required_amount then
-					has_all_requirements = false
+				if not (var_4_16 <= var_4_17) then
+					var_4_4 = false
 				end
 			end
 		end
 	end
 
-	self._has_all_requirements = added_backend_id and has_all_requirements
+	arg_4_0._has_all_requirements = var_4_3 and var_4_4
 
-	if self._has_all_requirements then
-		self:_set_craft_button_disabled(false)
+	if arg_4_0._has_all_requirements then
+		arg_4_0:_set_craft_button_disabled(false)
 	else
-		self:_set_craft_button_disabled(true)
+		arg_4_0:_set_craft_button_disabled(true)
 	end
 end
 
-CraftPageConvertDust.reset_requirements = function (self, num_required_ingredients)
-	local widgets_by_name = self._widgets_by_name
-	local widget_width = 60
-	local spacing = 94
-	local start_position_x = -((widget_width + spacing) * (num_required_ingredients - 1)) / 2
+function CraftPageConvertDust.reset_requirements(arg_5_0, arg_5_1)
+	local var_5_0 = arg_5_0._widgets_by_name
+	local var_5_1 = 60
+	local var_5_2 = 94
+	local var_5_3 = -((var_5_1 + var_5_2) * (arg_5_1 - 1)) / 2
 
-	for i = 1, 2 do
-		local widget = widgets_by_name["material_text_" .. i]
-		local visible = i <= num_required_ingredients
+	for iter_5_0 = 1, 2 do
+		local var_5_4 = var_5_0["material_text_" .. iter_5_0]
+		local var_5_5 = iter_5_0 <= arg_5_1
 
-		widget.content.visible = visible
-		widget.content.draw_background = false
+		var_5_4.content.visible = var_5_5
+		var_5_4.content.draw_background = false
 
-		if visible then
-			local offset = widget.offset
-
-			offset[1] = start_position_x
-			start_position_x = start_position_x + widget_width + spacing
+		if var_5_5 then
+			var_5_4.offset[1] = var_5_3
+			var_5_3 = var_5_3 + var_5_1 + var_5_2
 		end
 	end
 end
 
-CraftPageConvertDust._add_crafting_material_requirement = function (self, index, item_key, amount_text, has_required_amount)
-	local material_textures = UISettings.crafting_material_icons_small
-	local widgets_by_name = self._widgets_by_name
-	local widget = widgets_by_name["material_text_" .. index]
-	local content = widget.content
-	local texture = material_textures[item_key]
+function CraftPageConvertDust._add_crafting_material_requirement(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	local var_6_0 = UISettings.crafting_material_icons_small
+	local var_6_1 = arg_6_0._widgets_by_name["material_text_" .. arg_6_1].content
 
-	content.text = amount_text
-	content.icon = texture
-	content.warning = not has_required_amount
-	content.item = {
-		data = table.clone(ItemMasterList[item_key]),
+	var_6_1.icon, var_6_1.text = var_6_0[arg_6_2], arg_6_3
+	var_6_1.warning = not arg_6_4
+	var_6_1.item = {
+		data = table.clone(ItemMasterList[arg_6_2])
 	}
 end
 
-CraftPageConvertDust.create_ui_elements = function (self, params)
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+function CraftPageConvertDust.create_ui_elements(arg_7_0, arg_7_1)
+	arg_7_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_6)
 
-	local widgets = {}
-	local widgets_by_name = {}
+	local var_7_0 = {}
+	local var_7_1 = {}
 
-	for name, widget_definition in pairs(widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_7_0, iter_7_1 in pairs(var_0_4) do
+		local var_7_2 = UIWidget.init(iter_7_1)
 
-		widgets[#widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_7_0[#var_7_0 + 1] = var_7_2
+		var_7_1[iter_7_0] = var_7_2
 	end
 
-	self._widgets = widgets
-	self._widgets_by_name = widgets_by_name
+	arg_7_0._widgets = var_7_0
+	arg_7_0._widgets_by_name = var_7_1
 
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_7_0.ui_renderer)
 
-	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
+	arg_7_0.ui_animator = UIAnimator:new(arg_7_0.ui_scenegraph, var_0_7)
 
-	self:_set_craft_button_disabled(true)
-	self:_handle_craft_input_progress(0)
+	arg_7_0:_set_craft_button_disabled(true)
+	arg_7_0:_handle_craft_input_progress(0)
 end
 
-CraftPageConvertDust.on_exit = function (self, params)
+function CraftPageConvertDust.on_exit(arg_8_0, arg_8_1)
 	print("[HeroWindowCraft] Exit Substate CraftPageConvertDust")
 
-	self.ui_animator = nil
+	arg_8_0.ui_animator = nil
 
-	if self._craft_input_time then
-		self:_play_sound("play_gui_craft_forge_button_aborted")
+	if arg_8_0._craft_input_time then
+		arg_8_0:_play_sound("play_gui_craft_forge_button_aborted")
 	end
 end
 
-CraftPageConvertDust.update = function (self, dt, t)
-	if DO_RELOAD then
-		DO_RELOAD = false
+function CraftPageConvertDust.update(arg_9_0, arg_9_1, arg_9_2)
+	if var_0_8 then
+		var_0_8 = false
 
-		self:create_ui_elements()
+		arg_9_0:create_ui_elements()
 	end
 
-	self:_handle_input(dt, t)
-	self:_update_animations(dt)
-	self:_update_craft_items()
-	self:draw(dt)
+	arg_9_0:_handle_input(arg_9_1, arg_9_2)
+	arg_9_0:_update_animations(arg_9_1)
+	arg_9_0:_update_craft_items()
+	arg_9_0:draw(arg_9_1)
 end
 
-CraftPageConvertDust.post_update = function (self, dt, t)
+function CraftPageConvertDust.post_update(arg_10_0, arg_10_1, arg_10_2)
 	return
 end
 
-CraftPageConvertDust._update_animations = function (self, dt)
-	self.ui_animator:update(dt)
+function CraftPageConvertDust._update_animations(arg_11_0, arg_11_1)
+	arg_11_0.ui_animator:update(arg_11_1)
 
-	local animations = self._animations
-	local ui_animator = self.ui_animator
+	local var_11_0 = arg_11_0._animations
+	local var_11_1 = arg_11_0.ui_animator
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_11_0, iter_11_1 in pairs(var_11_0) do
+		if var_11_1:is_animation_completed(iter_11_1) then
+			var_11_1:stop_animation(iter_11_1)
 
-			animations[animation_name] = nil
+			var_11_0[iter_11_0] = nil
 		end
 	end
 
-	local widgets_by_name = self._widgets_by_name
+	local var_11_2 = arg_11_0._widgets_by_name
 
-	UIWidgetUtils.animate_default_button(widgets_by_name.craft_button, dt)
+	UIWidgetUtils.animate_default_button(var_11_2.craft_button, arg_11_1)
 end
 
-CraftPageConvertDust._is_button_pressed = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
+function CraftPageConvertDust._is_button_pressed(arg_12_0, arg_12_1)
+	local var_12_0 = arg_12_1.content.button_hotspot
 
-	if hotspot.on_release then
-		hotspot.on_release = false
+	if var_12_0.on_release then
+		var_12_0.on_release = false
 
 		return true
 	end
 end
 
-CraftPageConvertDust._is_button_hovered = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	if hotspot.on_hover_enter then
+function CraftPageConvertDust._is_button_hovered(arg_13_0, arg_13_1)
+	if arg_13_1.content.button_hotspot.on_hover_enter then
 		return true
 	end
 end
 
-CraftPageConvertDust._is_button_held = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
+function CraftPageConvertDust._is_button_held(arg_14_0, arg_14_1)
+	local var_14_0 = arg_14_1.content.button_hotspot
 
-	if hotspot.is_clicked then
-		return hotspot.is_clicked
+	if var_14_0.is_clicked then
+		return var_14_0.is_clicked
 	end
 end
 
-CraftPageConvertDust._handle_input = function (self, dt, t)
-	local parent = self.parent
+function CraftPageConvertDust._handle_input(arg_15_0, arg_15_1, arg_15_2)
+	local var_15_0 = arg_15_0.parent
 
-	if parent:waiting_for_craft() or self._craft_result then
+	if var_15_0:waiting_for_craft() or arg_15_0._craft_result then
 		return
 	end
 
-	local widgets_by_name = self._widgets_by_name
-	local super_parent = self.super_parent
-	local gamepad_active = Managers.input:is_device_active("gamepad")
-	local input_service = self.super_parent:window_input_service()
-	local widget = widgets_by_name.craft_button
-	local is_button_enabled = not widget.content.button_hotspot.disable_button
-	local craft_input = self:_is_button_held(widgets_by_name.craft_button)
-	local craft_input_gamepad = is_button_enabled and gamepad_active and input_service:get("refresh_hold")
-	local craft_input_accepted = false
+	local var_15_1 = arg_15_0._widgets_by_name
+	local var_15_2 = arg_15_0.super_parent
+	local var_15_3 = Managers.input:is_device_active("gamepad")
+	local var_15_4 = arg_15_0.super_parent:window_input_service()
+	local var_15_5 = not var_15_1.craft_button.content.button_hotspot.disable_button
+	local var_15_6 = arg_15_0:_is_button_held(var_15_1.craft_button)
+	local var_15_7 = var_15_5 and var_15_3 and var_15_4:get("refresh_hold")
+	local var_15_8 = false
 
-	if (craft_input == 0 or craft_input_gamepad) and self._has_all_requirements then
-		if not self._craft_input_time then
-			self._craft_input_time = 0
+	if (var_15_6 == 0 or var_15_7) and arg_15_0._has_all_requirements then
+		if not arg_15_0._craft_input_time then
+			arg_15_0._craft_input_time = 0
 
-			self:_play_sound("play_gui_craft_forge_button_begin")
+			arg_15_0:_play_sound("play_gui_craft_forge_button_begin")
 		else
-			self._craft_input_time = self._craft_input_time + dt
+			arg_15_0._craft_input_time = arg_15_0._craft_input_time + arg_15_1
 		end
 
-		local max_time = UISettings.crafting_progress_time
-		local progress = math.min(self._craft_input_time / max_time, 1)
+		local var_15_9 = UISettings.crafting_progress_time
+		local var_15_10 = math.min(arg_15_0._craft_input_time / var_15_9, 1)
 
-		craft_input_accepted = self:_handle_craft_input_progress(progress)
+		var_15_8 = arg_15_0:_handle_craft_input_progress(var_15_10)
 
-		WwiseWorld.set_global_parameter(self.wwise_world, "craft_forge_button_progress", progress)
-	elseif self._craft_input_time then
-		self._craft_input_time = nil
+		WwiseWorld.set_global_parameter(arg_15_0.wwise_world, "craft_forge_button_progress", var_15_10)
+	elseif arg_15_0._craft_input_time then
+		arg_15_0._craft_input_time = nil
 
-		self:_handle_craft_input_progress(0)
-		self:_play_sound("play_gui_craft_forge_button_aborted")
+		arg_15_0:_handle_craft_input_progress(0)
+		arg_15_0:_play_sound("play_gui_craft_forge_button_aborted")
 	end
 
-	if craft_input_accepted then
-		local craft_items = self._craft_items
-		local items = {}
+	if var_15_8 then
+		local var_15_11 = arg_15_0._craft_items
+		local var_15_12 = {}
 
-		for _, backend_id in ipairs(craft_items) do
-			items[#items + 1] = backend_id
+		for iter_15_0, iter_15_1 in ipairs(var_15_11) do
+			var_15_12[#var_15_12 + 1] = iter_15_1
 		end
 
-		local recipe_available = parent:craft(items, self._recipe_name)
+		if var_15_0:craft(var_15_12, arg_15_0._recipe_name) then
+			arg_15_0:_set_craft_button_disabled(true)
 
-		if recipe_available then
-			self:_set_craft_button_disabled(true)
+			local var_15_13 = arg_15_0._item_grid
 
-			local item_grid = self._item_grid
-
-			for _, backend_id in pairs(items) do
-				item_grid:lock_item_by_id(backend_id, true)
+			for iter_15_2, iter_15_3 in pairs(var_15_12) do
+				var_15_13:lock_item_by_id(iter_15_3, true)
 			end
 
-			item_grid:update_items_status()
-			self:_play_sound("play_gui_craft_forge_button_completed")
-			self:_play_sound("play_gui_craft_forge_begin")
+			var_15_13:update_items_status()
+			arg_15_0:_play_sound("play_gui_craft_forge_button_completed")
+			arg_15_0:_play_sound("play_gui_craft_forge_begin")
 		end
 	end
 end
 
-CraftPageConvertDust._handle_craft_input_progress = function (self, progress)
-	local has_progress = progress ~= 0
-	local bard_default_width = scenegraph_definition.craft_bar.size[1]
+function CraftPageConvertDust._handle_craft_input_progress(arg_16_0, arg_16_1)
+	local var_16_0
 
-	self.ui_scenegraph.craft_bar.size[1] = bard_default_width * progress
+	var_16_0 = arg_16_1 ~= 0
 
-	if progress == 1 then
+	local var_16_1 = var_0_6.craft_bar.size[1]
+
+	arg_16_0.ui_scenegraph.craft_bar.size[1] = var_16_1 * arg_16_1
+
+	if arg_16_1 == 1 then
 		return true
 	end
 end
 
-CraftPageConvertDust.craft_result = function (self, result, error, reset_slots)
-	if not error then
-		self._craft_result = result
+function CraftPageConvertDust.craft_result(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+	if not arg_17_2 then
+		arg_17_0._craft_result = arg_17_1
 	end
 end
 
-CraftPageConvertDust.reset = function (self)
-	local item_grid = self._item_grid
+function CraftPageConvertDust.reset(arg_18_0)
+	local var_18_0 = arg_18_0._item_grid
 
-	item_grid:clear_locked_items()
-	item_grid:update_items_status()
+	var_18_0:clear_locked_items()
+	var_18_0:update_items_status()
 end
 
-CraftPageConvertDust.on_craft_completed = function (self)
-	local result = self._craft_result
-	local item_grid = self._item_grid
+function CraftPageConvertDust.on_craft_completed(arg_19_0)
+	local var_19_0 = arg_19_0._craft_result
+	local var_19_1 = arg_19_0._item_grid
 
-	self.super_parent:clear_disabled_backend_ids()
-	self.super_parent:update_inventory_items()
+	arg_19_0.super_parent:clear_disabled_backend_ids()
+	arg_19_0.super_parent:update_inventory_items()
 
-	local add_item = false
+	local var_19_2 = false
 
-	self._num_craft_items = 0
+	arg_19_0._num_craft_items = 0
 
-	local craft_item_backend_id = self._craft_items[1]
-	local item_interface = Managers.backend:get_interface("items")
+	local var_19_3 = arg_19_0._craft_items[1]
 
-	if item_interface:get_item_from_id(craft_item_backend_id) then
-		add_item = true
+	if Managers.backend:get_interface("items"):get_item_from_id(var_19_3) then
+		var_19_2 = true
 	end
 
-	if add_item then
-		local ignore_sound = true
+	if var_19_2 then
+		local var_19_4 = true
 
-		self:_add_craft_item(craft_item_backend_id, 1, ignore_sound)
+		arg_19_0:_add_craft_item(var_19_3, 1, var_19_4)
 	else
-		item_grid:clear_item_grid()
-		table.clear(self._craft_items)
+		var_19_1:clear_item_grid()
+		table.clear(arg_19_0._craft_items)
 	end
 
-	item_grid:clear_locked_items()
+	var_19_1:clear_locked_items()
 
-	for _, backend_id in pairs(self._craft_items) do
-		item_grid:lock_item_by_id(backend_id, true)
+	for iter_19_0, iter_19_1 in pairs(arg_19_0._craft_items) do
+		var_19_1:lock_item_by_id(iter_19_1, true)
 	end
 
-	item_grid:update_items_status()
-	self:_set_craft_button_disabled(true)
+	var_19_1:update_items_status()
+	arg_19_0:_set_craft_button_disabled(true)
 
-	self._craft_result = nil
+	arg_19_0._craft_result = nil
 
-	self:setup_recipe_requirements()
+	arg_19_0:setup_recipe_requirements()
 end
 
-CraftPageConvertDust._update_craft_items = function (self)
-	local super_parent = self.super_parent
-	local item_grid = self._item_grid
-	local is_dragging_craft_item = item_grid:is_dragging_item() or item_grid:is_item_dragged() ~= nil
-	local pressed_backend_id, is_drag_item = super_parent:get_pressed_item_backend_id()
+function CraftPageConvertDust._update_craft_items(arg_20_0)
+	local var_20_0 = arg_20_0.super_parent
+	local var_20_1 = arg_20_0._item_grid
+	local var_20_2 = var_20_1:is_dragging_item() or var_20_1:is_item_dragged() ~= nil
+	local var_20_3, var_20_4 = var_20_0:get_pressed_item_backend_id()
 
-	if pressed_backend_id then
-		if is_drag_item then
-			if not is_dragging_craft_item then
-				local slot_index = item_grid:is_slot_hovered()
+	if var_20_3 then
+		if var_20_4 then
+			if not var_20_2 then
+				local var_20_5 = var_20_1:is_slot_hovered()
 
-				if slot_index then
-					self:_add_craft_item(pressed_backend_id, slot_index)
-					self:setup_recipe_requirements()
+				if var_20_5 then
+					arg_20_0:_add_craft_item(var_20_3, var_20_5)
+					arg_20_0:setup_recipe_requirements()
 				end
 			end
 		else
-			self:_add_craft_item(pressed_backend_id)
-			self:setup_recipe_requirements()
+			arg_20_0:_add_craft_item(var_20_3)
+			arg_20_0:setup_recipe_requirements()
 		end
 	end
 
-	local grid_item_pressed = item_grid:is_item_pressed()
+	local var_20_6 = var_20_1:is_item_pressed()
 
-	if grid_item_pressed then
-		local backend_id = grid_item_pressed.backend_id
+	if var_20_6 then
+		local var_20_7 = var_20_6.backend_id
 
-		self:_remove_craft_item(backend_id)
+		arg_20_0:_remove_craft_item(var_20_7)
 	end
 end
 
-CraftPageConvertDust._remove_craft_item = function (self, backend_id, slot_index)
-	local craft_items = self._craft_items
+function CraftPageConvertDust._remove_craft_item(arg_21_0, arg_21_1, arg_21_2)
+	local var_21_0 = arg_21_0._craft_items
 
-	if slot_index then
-		if craft_items[slot_index] then
-			backend_id = craft_items[slot_index]
+	if arg_21_2 then
+		if var_21_0[arg_21_2] then
+			arg_21_1 = var_21_0[arg_21_2]
 		end
 	else
-		for item_slot_index, slot_item_backend_id in pairs(craft_items) do
-			if slot_item_backend_id == backend_id then
-				slot_index = item_slot_index
+		for iter_21_0, iter_21_1 in pairs(var_21_0) do
+			if iter_21_1 == arg_21_1 then
+				arg_21_2 = iter_21_0
 
 				break
 			end
 		end
 	end
 
-	if backend_id and slot_index then
-		self.super_parent:set_disabled_backend_id(backend_id, false)
-		self._item_grid:add_item_to_slot_index(slot_index, nil)
+	if arg_21_1 and arg_21_2 then
+		arg_21_0.super_parent:set_disabled_backend_id(arg_21_1, false)
+		arg_21_0._item_grid:add_item_to_slot_index(arg_21_2, nil)
 
-		craft_items[slot_index] = nil
-		self._num_craft_items = math.max((self._num_craft_items or 0) - 1, 0)
+		var_21_0[arg_21_2] = nil
+		arg_21_0._num_craft_items = math.max((arg_21_0._num_craft_items or 0) - 1, 0)
 
-		if self._num_craft_items == 0 then
-			self:_set_craft_button_disabled(true)
+		if arg_21_0._num_craft_items == 0 then
+			arg_21_0:_set_craft_button_disabled(true)
 		end
 
-		self:_play_sound("play_gui_craft_item_drag")
-		self:setup_recipe_requirements()
+		arg_21_0:_play_sound("play_gui_craft_item_drag")
+		arg_21_0:setup_recipe_requirements()
 	end
 end
 
-CraftPageConvertDust._add_craft_item = function (self, backend_id, slot_index, ignore_sound)
-	if self._num_craft_items == 0 then
-		self._item_grid:clear_item_grid()
-		table.clear(self._craft_items)
+function CraftPageConvertDust._add_craft_item(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+	if arg_22_0._num_craft_items == 0 then
+		arg_22_0._item_grid:clear_item_grid()
+		table.clear(arg_22_0._craft_items)
 	end
 
-	local craft_items = self._craft_items
+	local var_22_0 = arg_22_0._craft_items
 
-	if not slot_index then
-		for i = 1, 1 do
-			if not craft_items[i] then
-				slot_index = i
+	if not arg_22_2 then
+		for iter_22_0 = 1, 1 do
+			if not var_22_0[iter_22_0] then
+				arg_22_2 = iter_22_0
 
 				break
 			end
 		end
 	end
 
-	if slot_index then
-		craft_items[slot_index] = backend_id
+	if arg_22_2 then
+		var_22_0[arg_22_2] = arg_22_1
 
-		local item_interface = Managers.backend:get_interface("items")
-		local item = backend_id and item_interface:get_item_from_id(backend_id)
+		local var_22_1 = Managers.backend:get_interface("items")
+		local var_22_2 = arg_22_1 and var_22_1:get_item_from_id(arg_22_1)
 
-		if item then
-			item = table.clone(item)
-
-			local has_required_amount = self:_has_required_item_amount(backend_id)
-
-			item.insufficient_amount = not has_required_amount
+		if var_22_2 then
+			var_22_2 = table.clone(var_22_2)
+			var_22_2.insufficient_amount = not arg_22_0:_has_required_item_amount(arg_22_1)
 		end
 
-		self._item_grid:add_item_to_slot_index(slot_index, item)
-		self.super_parent:set_disabled_backend_id(backend_id, true)
+		arg_22_0._item_grid:add_item_to_slot_index(arg_22_2, var_22_2)
+		arg_22_0.super_parent:set_disabled_backend_id(arg_22_1, true)
 
-		self._num_craft_items = math.min((self._num_craft_items or 0) + 1, NUM_CRAFT_SLOTS)
+		arg_22_0._num_craft_items = math.min((arg_22_0._num_craft_items or 0) + 1, var_0_9)
 
-		if backend_id and not ignore_sound then
-			self:_play_sound("play_gui_craft_item_drop")
+		if arg_22_1 and not arg_22_3 then
+			arg_22_0:_play_sound("play_gui_craft_item_drop")
 		end
 	end
 end
 
-CraftPageConvertDust._set_craft_button_disabled = function (self, disabled)
-	self._widgets_by_name.craft_button.content.button_hotspot.disable_button = disabled
+function CraftPageConvertDust._set_craft_button_disabled(arg_23_0, arg_23_1)
+	arg_23_0._widgets_by_name.craft_button.content.button_hotspot.disable_button = arg_23_1
 end
 
-CraftPageConvertDust._exit = function (self, selected_level)
-	self.exit = true
-	self.exit_level_id = selected_level
+function CraftPageConvertDust._exit(arg_24_0, arg_24_1)
+	arg_24_0.exit = true
+	arg_24_0.exit_level_id = arg_24_1
 end
 
-CraftPageConvertDust.draw = function (self, dt)
-	local ui_renderer = self.ui_renderer
-	local ui_top_renderer = self.ui_top_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self.super_parent:window_input_service()
+function CraftPageConvertDust.draw(arg_25_0, arg_25_1)
+	local var_25_0 = arg_25_0.ui_renderer
+	local var_25_1 = arg_25_0.ui_top_renderer
+	local var_25_2 = arg_25_0.ui_scenegraph
+	local var_25_3 = arg_25_0.super_parent:window_input_service()
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
+	UIRenderer.begin_pass(var_25_1, var_25_2, var_25_3, arg_25_1, nil, arg_25_0.render_settings)
 
-	for _, widget in ipairs(self._widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, widget)
+	for iter_25_0, iter_25_1 in ipairs(arg_25_0._widgets) do
+		UIRenderer.draw_widget(var_25_1, iter_25_1)
 	end
 
-	UIRenderer.end_pass(ui_top_renderer)
+	UIRenderer.end_pass(var_25_1)
 end
 
-CraftPageConvertDust._play_sound = function (self, event)
-	self.super_parent:play_sound(event)
+function CraftPageConvertDust._play_sound(arg_26_0, arg_26_1)
+	arg_26_0.super_parent:play_sound(arg_26_1)
 end
 
-CraftPageConvertDust._set_craft_button_text = function (self, text, localize)
-	local widgets_by_name = self._widgets_by_name
-	local widget = widgets_by_name.craft_button
-
-	widget.content.button_text = localize and Localize(text) or text
+function CraftPageConvertDust._set_craft_button_text(arg_27_0, arg_27_1, arg_27_2)
+	arg_27_0._widgets_by_name.craft_button.content.button_text = arg_27_2 and Localize(arg_27_1) or arg_27_1
 end

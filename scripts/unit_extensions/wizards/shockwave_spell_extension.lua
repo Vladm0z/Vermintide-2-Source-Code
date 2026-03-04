@@ -1,143 +1,135 @@
-﻿-- chunkname: @scripts/unit_extensions/wizards/shockwave_spell_extension.lua
+-- chunkname: @scripts/unit_extensions/wizards/shockwave_spell_extension.lua
 
 ShockwaveSpellExtension = class(ShockwaveSpellExtension)
 
-ShockwaveSpellExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self._unit = unit
-	self._position = Vector3Box(Unit.local_position(unit, 0))
-	self._shockwave_radius_min = Unit.get_data(unit, "wave_distance") or 2
-	self._shockwave_radius_max = Unit.get_data(unit, "wave_distance") or 30
-	self._vfx = Unit.get_data(unit, "spell_vfx") or "fx/wizard_tower_end_sofia_explosion"
-	self._spell_triggerd = false
-	self._world = extension_init_context.world
-	self._start_time = 0
-	self._time_to_broadphase = 0.15
-	self._enemy_damage = 0
-	self._players = Managers.player:players()
+function ShockwaveSpellExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._unit = arg_1_2
+	arg_1_0._position = Vector3Box(Unit.local_position(arg_1_2, 0))
+	arg_1_0._shockwave_radius_min = Unit.get_data(arg_1_2, "wave_distance") or 2
+	arg_1_0._shockwave_radius_max = Unit.get_data(arg_1_2, "wave_distance") or 30
+	arg_1_0._vfx = Unit.get_data(arg_1_2, "spell_vfx") or "fx/wizard_tower_end_sofia_explosion"
+	arg_1_0._spell_triggerd = false
+	arg_1_0._world = arg_1_1.world
+	arg_1_0._start_time = 0
+	arg_1_0._time_to_broadphase = 0.15
+	arg_1_0._enemy_damage = 0
+	arg_1_0._players = Managers.player:players()
 
-	Managers.state.event:register(self, "on_failed_guardians_event", "setup_shockwave")
+	Managers.state.event:register(arg_1_0, "on_failed_guardians_event", "setup_shockwave")
 end
 
-local lerp_time = 1.5
-local RESULT_TABLE = {}
-local HIT_ENEMIES = {}
-local frame = 0
-local braodphase_frame = 0
-local num_hits = 0
-local broadphase_timer = 0.25
+local var_0_0 = 1.5
+local var_0_1 = {}
+local var_0_2 = {}
+local var_0_3 = 0
+local var_0_4 = 0
+local var_0_5 = 0
+local var_0_6 = 0.25
 
-ShockwaveSpellExtension.update = function (self, unit, input, dt, context, t)
-	if not self._spell_triggerd then
+function ShockwaveSpellExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	if not arg_2_0._spell_triggerd then
 		return
 	end
 
-	broadphase_timer = broadphase_timer + dt
+	var_0_6 = var_0_6 + arg_2_3
 
-	local do_broadphase = broadphase_timer >= self._time_to_broadphase
-	local elapsed_time = t - self._start_time
-	local lerp_t = elapsed_time / lerp_time
+	local var_2_0 = var_0_6 >= arg_2_0._time_to_broadphase
+	local var_2_1 = (arg_2_5 - arg_2_0._start_time) / var_0_0
+	local var_2_2 = math.clamp(var_2_1, 0, 1)
+	local var_2_3 = math.lerp(arg_2_0._shockwave_radius_min, arg_2_0._shockwave_radius_max, var_2_2)
+	local var_2_4 = arg_2_0._position:unbox()
 
-	lerp_t = math.clamp(lerp_t, 0, 1)
-
-	local radius = math.lerp(self._shockwave_radius_min, self._shockwave_radius_max, lerp_t)
-	local position = self._position:unbox()
-
-	if not (lerp_t >= 1) and do_broadphase then
-		num_hits = AiUtils.broadphase_query(position, radius, RESULT_TABLE)
-		broadphase_timer = 0
+	if not (var_2_2 >= 1) and var_2_0 then
+		var_0_5 = AiUtils.broadphase_query(var_2_4, var_2_3, var_0_1)
+		var_0_6 = 0
 	end
 
-	self:damage_player(position, radius)
-	self:damage_enemies(position, t)
+	arg_2_0:damage_player(var_2_4, var_2_3)
+	arg_2_0:damage_enemies(var_2_4, arg_2_5)
 
-	if lerp_t >= 1 and num_hits <= 0 then
-		self:reset_shockwave()
+	if var_2_2 >= 1 and var_0_5 <= 0 then
+		arg_2_0:reset_shockwave()
 	end
 end
 
-ShockwaveSpellExtension.damage_enemies = function (self, position, t)
-	if num_hits > 0 then
-		local damage_num_units = math.min(num_hits, 3)
+function ShockwaveSpellExtension.damage_enemies(arg_3_0, arg_3_1, arg_3_2)
+	if var_0_5 > 0 then
+		local var_3_0 = math.min(var_0_5, 3)
 
-		for i = 1, damage_num_units do
-			local unit = RESULT_TABLE[i]
+		for iter_3_0 = 1, var_3_0 do
+			local var_3_1 = var_0_1[iter_3_0]
 
-			if ALIVE[unit] or not HIT_ENEMIES[unit] then
-				local hit_unit_position = POSITION_LOOKUP[unit]
-				local damage_direction = Vector3.normalize(hit_unit_position - position)
-				local health_extension = ScriptUnit.extension(unit, "health_system")
+			if ALIVE[var_3_1] or not var_0_2[var_3_1] then
+				local var_3_2 = POSITION_LOOKUP[var_3_1]
+				local var_3_3 = Vector3.normalize(var_3_2 - arg_3_1)
+				local var_3_4 = ScriptUnit.extension(var_3_1, "health_system")
 
-				HIT_ENEMIES[unit] = true
+				var_0_2[var_3_1] = true
 
-				local hit_zone_name = "torso"
-				local damage_source
-				local attacker_unit = self._unit
-				local damage_type = "grenade"
+				local var_3_5 = "torso"
+				local var_3_6
+				local var_3_7 = arg_3_0._unit
+				local var_3_8 = "grenade"
 
-				DamageUtils.add_damage_network(unit, attacker_unit, 240, hit_zone_name, damage_type, hit_unit_position, damage_direction, damage_source, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
+				DamageUtils.add_damage_network(var_3_1, var_3_7, 240, var_3_5, var_3_8, var_3_2, var_3_3, var_3_6, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 			end
 		end
 
-		for i = damage_num_units, 1, -1 do
-			table.swap_delete(RESULT_TABLE, i)
+		for iter_3_1 = var_3_0, 1, -1 do
+			table.swap_delete(var_0_1, iter_3_1)
 		end
 
-		num_hits = #RESULT_TABLE
+		var_0_5 = #var_0_1
 	end
 end
 
-ShockwaveSpellExtension.damage_player = function (self, position, radius)
-	local players = self._players
-	local radius_squared = radius * radius
-	local target_index = 1
+function ShockwaveSpellExtension.damage_player(arg_4_0, arg_4_1, arg_4_2)
+	local var_4_0 = arg_4_0._players
+	local var_4_1 = arg_4_2 * arg_4_2
+	local var_4_2 = 1
 
-	for _, player in pairs(players) do
-		local player_unit = player.player_unit
+	for iter_4_0, iter_4_1 in pairs(var_4_0) do
+		local var_4_3 = iter_4_1.player_unit
 
-		if ALIVE[player_unit] and not HIT_ENEMIES[player_unit] then
-			local player_position = POSITION_LOOKUP[player_unit]
+		if ALIVE[var_4_3] and not var_0_2[var_4_3] then
+			local var_4_4 = POSITION_LOOKUP[var_4_3]
 
-			if radius_squared > Vector3.distance_squared(position, player_position) then
-				local hit_zone_name = "torso"
-				local damage_type = "forced"
-				local damage_direction = Vector3.normalize(player_position - position)
-				local health_extension = ScriptUnit.extension(player_unit, "health_system")
-				local current_health = health_extension:current_health()
-				local damage = current_health / 2
+			if var_4_1 > Vector3.distance_squared(arg_4_1, var_4_4) then
+				local var_4_5 = "torso"
+				local var_4_6 = "forced"
+				local var_4_7 = Vector3.normalize(var_4_4 - arg_4_1)
+				local var_4_8 = ScriptUnit.extension(var_4_3, "health_system")
+				local var_4_9 = var_4_8:current_health() / 2
 
-				health_extension:add_damage(player_unit, damage, hit_zone_name, damage_type, player_position, damage_direction, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, target_index)
+				var_4_8:add_damage(var_4_3, var_4_9, var_4_5, var_4_6, var_4_4, var_4_7, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, var_4_2)
 
-				HIT_ENEMIES[player_unit] = true
+				var_0_2[var_4_3] = true
 
-				local push_multiplier = 10
-				local pushed_velocity = (damage_direction + Vector3.up() * 3) * push_multiplier
-				local locomotion_extension = ScriptUnit.extension(player_unit, "locomotion_system")
+				local var_4_10 = 10
+				local var_4_11 = (var_4_7 + Vector3.up() * 3) * var_4_10
 
-				locomotion_extension:add_external_velocity(pushed_velocity)
+				ScriptUnit.extension(var_4_3, "locomotion_system"):add_external_velocity(var_4_11)
 
-				target_index = target_index + 1
+				var_4_2 = var_4_2 + 1
 			end
 		end
 	end
 end
 
-ShockwaveSpellExtension.setup_shockwave = function (self, damage_data)
-	self._enemy_damage = damage_data.enemy_damage
+function ShockwaveSpellExtension.setup_shockwave(arg_5_0, arg_5_1)
+	arg_5_0._enemy_damage = arg_5_1.enemy_damage
+	arg_5_0._start_time = Managers.time:time("game")
+	arg_5_0._spell_triggerd = true
 
-	local t = Managers.time:time("game")
-
-	self._start_time = t
-	self._spell_triggerd = true
-
-	World.create_particles(self._world, self._vfx, self._position:unbox())
+	World.create_particles(arg_5_0._world, arg_5_0._vfx, arg_5_0._position:unbox())
 end
 
-ShockwaveSpellExtension.reset_shockwave = function (self)
-	self._spell_triggerd = false
+function ShockwaveSpellExtension.reset_shockwave(arg_6_0)
+	arg_6_0._spell_triggerd = false
 
-	table.clear(HIT_ENEMIES)
+	table.clear(var_0_2)
 end
 
-ShockwaveSpellExtension.destroy = function (self)
-	Managers.state.event:unregister("on_failed_guardians_event", self)
+function ShockwaveSpellExtension.destroy(arg_7_0)
+	Managers.state.event:unregister("on_failed_guardians_event", arg_7_0)
 end

@@ -1,210 +1,206 @@
-﻿-- chunkname: @scripts/managers/achievements/achievement_templates_grudge_marks.lua
+-- chunkname: @scripts/managers/achievements/achievement_templates_grudge_marks.lua
 
-local achievements = AchievementTemplates.achievements
-local achievement_settings = DLCSettings.grudge_marks
-local add_weapon_kill_challenge = AchievementTemplateHelper.add_weapon_kill_challenge
-local add_meta_challenge = AchievementTemplateHelper.add_meta_challenge
-local add_multi_stat_count_challenge = AchievementTemplateHelper.add_multi_stat_count_challenge
-local add_event_challenge = AchievementTemplateHelper.add_event_challenge
-local add_stat_count_challenge = AchievementTemplateHelper.add_stat_count_challenge
+local var_0_0 = AchievementTemplates.achievements
+local var_0_1 = DLCSettings.grudge_marks
+local var_0_2 = AchievementTemplateHelper.add_weapon_kill_challenge
+local var_0_3 = AchievementTemplateHelper.add_meta_challenge
+local var_0_4 = AchievementTemplateHelper.add_multi_stat_count_challenge
+local var_0_5 = AchievementTemplateHelper.add_event_challenge
+local var_0_6 = AchievementTemplateHelper.add_stat_count_challenge
 
-local function rpc_increment_stat(unit, stat_name)
-	local player = Managers.player:unit_owner(unit)
+local function var_0_7(arg_1_0, arg_1_1)
+	local var_1_0 = Managers.player:unit_owner(arg_1_0)
 
-	if player and not player.bot_player then
-		local peer_id = player:network_id()
-		local network_manager = Managers.state.network
-		local stat_id = NetworkLookup.statistics[stat_name]
+	if var_1_0 and not var_1_0.bot_player then
+		local var_1_1 = var_1_0:network_id()
+		local var_1_2 = Managers.state.network
+		local var_1_3 = NetworkLookup.statistics[arg_1_1]
 
-		network_manager.network_transmit:send_rpc("rpc_increment_stat", peer_id, stat_id)
+		var_1_2.network_transmit:send_rpc("rpc_increment_stat", var_1_1, var_1_3)
 	end
 end
 
-local XB1_ACHIEVEMENT_ID = {}
-local PS4_ACHIEVEMENT_ID = {}
-local register_kill_stats_id = 1
-local register_kill_victim_unit = 2
-local register_kill_damage_data = 3
-local register_kill_victim_breed = 4
-local register_damage_stats_id = 1
-local register_damage_victim_unit = 2
-local register_damage_damage_data = 3
-local register_damage_attacker_unit = 4
-local register_damage_target_breed = 5
-local relevant_bosses = table.mirror_array_inplace({
+local var_0_8 = {}
+local var_0_9 = {}
+local var_0_10 = 1
+local var_0_11 = 2
+local var_0_12 = 3
+local var_0_13 = 4
+local var_0_14 = 1
+local var_0_15 = 2
+local var_0_16 = 3
+local var_0_17 = 4
+local var_0_18 = 5
+local var_0_19 = table.mirror_array_inplace({
 	"skaven_rat_ogre",
 	"skaven_stormfiend",
 	"chaos_spawn",
 	"beastmen_minotaur",
-	"chaos_troll",
+	"chaos_troll"
 })
-local expeditions = {
+local var_0_20 = {
 	"journey_ruin",
 	"journey_ice",
 	"journey_cave",
-	"journey_citadel",
+	"journey_citadel"
 }
-local achievement_to_check = {}
+local var_0_21 = {}
 
-achievements.grudge_marks_on_kill_util = {
+var_0_0.grudge_marks_on_kill_util = {
 	display_completion_ui = false,
 	events = {
-		"register_kill",
+		"register_kill"
 	},
-	completed = function (statistics_db, stats_id, template_data)
-		local backend_interface_loot = Managers.backend:get_interface("loot")
+	completed = function(arg_2_0, arg_2_1, arg_2_2)
+		local var_2_0 = Managers.backend:get_interface("loot")
 
-		for i = 1, #achievement_to_check do
-			local achievement_id = achievement_to_check[i]
-			local completed = achievements[achievement_id].completed(statistics_db, stats_id)
+		for iter_2_0 = 1, #var_0_21 do
+			local var_2_1 = var_0_21[iter_2_0]
 
-			completed = completed or backend_interface_loot:achievement_rewards_claimed(achievement_id)
-
-			if not completed then
+			if not (var_0_0[var_2_1].completed(arg_2_0, arg_2_1) or var_2_0:achievement_rewards_claimed(var_2_1)) then
 				return false
 			end
 		end
 
 		return true
 	end,
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local target_breed = event_data[register_kill_victim_breed]
+	on_event = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+		local var_3_0 = arg_3_4[var_0_13]
 
-		if not target_breed or not target_breed.boss then
+		if not var_3_0 or not var_3_0.boss then
 			return
 		end
 
-		local killed_breed_name = target_breed.name
+		local var_3_1 = var_3_0.name
 
-		if not killed_breed_name or not relevant_bosses[killed_breed_name] then
+		if not var_3_1 or not var_0_19[var_3_1] then
 			return
 		end
 
-		local killed_unit = event_data[register_kill_victim_unit]
+		local var_3_2 = arg_3_4[var_0_11]
 
-		if not killed_unit then
+		if not var_3_2 then
 			return
 		end
 
-		local ai_system = Managers.state.entity:system("ai_system")
-		local attributes = ai_system:get_attributes(killed_unit)
-
-		if not attributes.grudge_marked then
+		if not Managers.state.entity:system("ai_system"):get_attributes(var_3_2).grudge_marked then
 			return
 		end
 
-		local local_player_unit = Managers.player:local_player().player_unit
-		local career_extension = ScriptUnit.has_extension(local_player_unit, "career_system")
-		local career_name = career_extension and career_extension:career_name()
+		local var_3_3 = Managers.player:local_player().player_unit
+		local var_3_4 = ScriptUnit.has_extension(var_3_3, "career_system")
+		local var_3_5 = var_3_4 and var_3_4:career_name()
 
-		if not career_name then
+		if not var_3_5 then
 			return
 		end
 
-		statistics_db:increment_stat(stats_id, "grudge_mark_kills", career_name)
+		arg_3_0:increment_stat(arg_3_1, "grudge_mark_kills", var_3_5)
 
-		local mechanism = Managers.mechanism:game_mechanism()
-		local deus_run_controller = mechanism and mechanism.get_deus_run_controller and mechanism:get_deus_run_controller()
-		local journey_name = deus_run_controller and deus_run_controller:get_journey_name()
+		local var_3_6 = Managers.mechanism:game_mechanism()
+		local var_3_7 = var_3_6 and var_3_6.get_deus_run_controller and var_3_6:get_deus_run_controller()
+		local var_3_8 = var_3_7 and var_3_7:get_journey_name()
 
-		if journey_name then
-			statistics_db:increment_stat(stats_id, "grudge_marks_kills_per_career_per_expedition", career_name, journey_name)
+		if var_3_8 then
+			arg_3_0:increment_stat(arg_3_1, "grudge_marks_kills_per_career_per_expedition", var_3_5, var_3_8)
 		end
 
-		statistics_db:increment_stat(stats_id, "grudge_marks_kills_per_career_per_monster", career_name, killed_breed_name)
-	end,
+		arg_3_0:increment_stat(arg_3_1, "grudge_marks_kills_per_career_per_monster", var_3_5, var_3_1)
+	end
 }
 
-for career, career_settings in pairs(CareerSettings) do
-	if career ~= "empire_soldier_tutorial" then
-		local career_breed = career_settings.breed
+for iter_0_0, iter_0_1 in pairs(CareerSettings) do
+	if iter_0_0 ~= "empire_soldier_tutorial" then
+		local var_0_22 = iter_0_1.breed
 
-		if career_breed and career_breed.is_hero then
-			local required_dlc = career_settings.required_dlc
+		if var_0_22 and var_0_22.is_hero then
+			local var_0_23 = iter_0_1.required_dlc
 
-			for i = 1, #expeditions do
-				local expedition_name = expeditions[i]
-				local achievement_id = "grudge_mark_kills_" .. career .. "_per_" .. expedition_name
+			for iter_0_2 = 1, #var_0_20 do
+				local var_0_24 = var_0_20[iter_0_2]
+				local var_0_25 = "grudge_mark_kills_" .. iter_0_0 .. "_per_" .. var_0_24
 
-				achievements[achievement_id] = {
+				var_0_0[var_0_25] = {
 					display_completion_ui = false,
-					name = expedition_name .. "_name",
-					icon = "achievement_trophy_" .. achievement_id,
-					required_dlc = required_dlc,
-					completed = function (statistics_db, stats_id, template_data)
-						return statistics_db:get_persistent_stat(stats_id, "grudge_marks_kills_per_career_per_expedition", career, expedition_name) >= 1
-					end,
+					name = var_0_24 .. "_name",
+					icon = "achievement_trophy_" .. var_0_25,
+					required_dlc = var_0_23,
+					completed = function(arg_4_0, arg_4_1, arg_4_2)
+						return arg_4_0:get_persistent_stat(arg_4_1, "grudge_marks_kills_per_career_per_expedition", iter_0_0, var_0_24) >= 1
+					end
 				}
 			end
 
-			for i = 1, #relevant_bosses do
-				local breed_name = relevant_bosses[i]
-				local achievement_id = "grudge_mark_kills_" .. career .. "_per_" .. breed_name
+			for iter_0_3 = 1, #var_0_19 do
+				local var_0_26 = var_0_19[iter_0_3]
+				local var_0_27 = "grudge_mark_kills_" .. iter_0_0 .. "_per_" .. var_0_26
 
-				achievements[achievement_id] = {
+				var_0_0[var_0_27] = {
 					display_completion_ui = false,
-					name = breed_name,
-					icon = "achievement_trophy_" .. achievement_id,
-					required_dlc = required_dlc,
-					completed = function (statistics_db, stats_id, template_data)
-						return statistics_db:get_persistent_stat(stats_id, "grudge_marks_kills_per_career_per_monster", career, breed_name) >= 1
-					end,
+					name = var_0_26,
+					icon = "achievement_trophy_" .. var_0_27,
+					required_dlc = var_0_23,
+					completed = function(arg_5_0, arg_5_1, arg_5_2)
+						return arg_5_0:get_persistent_stat(arg_5_1, "grudge_marks_kills_per_career_per_monster", iter_0_0, var_0_26) >= 1
+					end
 				}
 			end
 
-			local achievement_id = "grudge_mark_kills_grind_" .. career
+			local var_0_28 = "grudge_mark_kills_grind_" .. iter_0_0
 
-			achievements[achievement_id] = {
+			var_0_0[var_0_28] = {
 				display_completion_ui = true,
-				name = "achv_" .. achievement_id .. "_name",
-				desc = "achv_" .. achievement_id .. "_desc",
-				icon = "achievement_trophy_" .. achievement_id,
-				required_dlc = required_dlc,
-				progress = function (statistics_db, stats_id, template_data)
-					local completed = statistics_db:get_persistent_stat(stats_id, "grudge_mark_kills", career)
+				name = "achv_" .. var_0_28 .. "_name",
+				desc = "achv_" .. var_0_28 .. "_desc",
+				icon = "achievement_trophy_" .. var_0_28,
+				required_dlc = var_0_23,
+				progress = function(arg_6_0, arg_6_1, arg_6_2)
+					local var_6_0 = arg_6_0:get_persistent_stat(arg_6_1, "grudge_mark_kills", iter_0_0)
 
 					return {
-						completed,
-						5,
+						var_6_0,
+						5
 					}
 				end,
-				completed = function (statistics_db, stats_id, template_data)
-					return statistics_db:get_persistent_stat(stats_id, "grudge_mark_kills", career) >= 5
-				end,
+				completed = function(arg_7_0, arg_7_1, arg_7_2)
+					return arg_7_0:get_persistent_stat(arg_7_1, "grudge_mark_kills", iter_0_0) >= 5
+				end
 			}
 
-			local achievement_group = {}
+			local var_0_29 = {}
 
-			for i = 1, #relevant_bosses do
-				local breed_name = relevant_bosses[i]
-				local stat_count_achv = "grudge_mark_kills_" .. career .. "_per_" .. breed_name
+			for iter_0_4 = 1, #var_0_19 do
+				local var_0_30 = var_0_19[iter_0_4]
+				local var_0_31 = "grudge_mark_kills_" .. iter_0_0 .. "_per_" .. var_0_30
 
-				table.insert(achievement_group, stat_count_achv)
+				table.insert(var_0_29, var_0_31)
 			end
 
-			local achievement_id = "kill_each_monster_grudge_" .. career
-			local icon = "achievement_trophy_" .. achievement_id, add_meta_challenge(achievements, achievement_id, achievement_group, icon, required_dlc, nil, nil)
+			local var_0_32 = "kill_each_monster_grudge_" .. iter_0_0
+			local var_0_33 = "achievement_trophy_" .. var_0_32
 
-			achievement_group = {}
+			var_0_3(var_0_0, var_0_32, var_0_29, icon, var_0_23, nil, nil)
 
-			for i = 1, #expeditions do
-				local expedition_name = expeditions[i]
-				local stat_count_achv = "grudge_mark_kills_" .. career .. "_per_" .. expedition_name
+			local var_0_34 = {}
 
-				table.insert(achievement_group, stat_count_achv)
+			for iter_0_5 = 1, #var_0_20 do
+				local var_0_35 = var_0_20[iter_0_5]
+				local var_0_36 = "grudge_mark_kills_" .. iter_0_0 .. "_per_" .. var_0_35
+
+				table.insert(var_0_34, var_0_36)
 			end
 
-			achievement_id = "kill_grudge_each_expedition_" .. career
-			icon = "achievement_trophy_" .. achievement_id, add_meta_challenge(achievements, achievement_id, achievement_group, icon, required_dlc, nil, nil)
-			achievement_group = {
-				"kill_grudge_each_expedition_" .. career,
-				"kill_each_monster_grudge_" .. career,
-				"grudge_mark_kills_grind_" .. career,
+			local var_0_37 = "kill_grudge_each_expedition_" .. iter_0_0
+			local var_0_38 = "achievement_trophy_" .. var_0_37, var_0_3(var_0_0, var_0_37, var_0_34, var_0_33, var_0_23, nil, nil)
+			local var_0_39 = {
+				"kill_grudge_each_expedition_" .. iter_0_0,
+				"kill_each_monster_grudge_" .. iter_0_0,
+				"grudge_mark_kills_grind_" .. iter_0_0
 			}
-			achievement_id = "complete_all_career_grudge_challenges_" .. career
-			icon = "achievement_trophy_" .. achievement_id, add_meta_challenge(achievements, achievement_id, achievement_group, icon, required_dlc, nil, nil)
+			local var_0_40 = "complete_all_career_grudge_challenges_" .. iter_0_0
+			local var_0_41 = "achievement_trophy_" .. var_0_40, var_0_3(var_0_0, var_0_40, var_0_39, var_0_38, var_0_23, nil, nil)
 
-			table.insert(achievement_to_check, achievement_id)
+			table.insert(var_0_21, var_0_40)
 		end
 	end
 end

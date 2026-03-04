@@ -1,3 +1,3 @@
-﻿-- chunkname: @scripts/settings/economy.lua
+-- chunkname: @scripts/settings/economy.lua
 
 EconomySettings = {}

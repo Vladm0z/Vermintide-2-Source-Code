@@ -1,24 +1,24 @@
-﻿-- chunkname: @scripts/imgui/imgui_deus_chest_preload_debug.lua
+-- chunkname: @scripts/imgui/imgui_deus_chest_preload_debug.lua
 
 ImguiDeusChestPreloadDebug = class(ImguiDeusChestPreload)
 
-ImguiDeusChestPreloadDebug.init = function (self)
+function ImguiDeusChestPreloadDebug.init(arg_1_0)
 	return
 end
 
-ImguiDeusChestPreloadDebug.update = function (self)
+function ImguiDeusChestPreloadDebug.update(arg_2_0)
 	return
 end
 
-ImguiDeusChestPreloadDebug.is_persistent = function (self)
+function ImguiDeusChestPreloadDebug.is_persistent(arg_3_0)
 	return true
 end
 
-ImguiDeusChestPreloadDebug.draw = function (self, is_open)
-	local mechanism_name = Managers.mechanism:current_mechanism_name()
-	local do_close = Imgui.begin_window("ImguiDeusChestPreloadDebug", "always_auto_resize")
+function ImguiDeusChestPreloadDebug.draw(arg_4_0, arg_4_1)
+	local var_4_0 = Managers.mechanism:current_mechanism_name()
+	local var_4_1 = Imgui.begin_window("ImguiDeusChestPreloadDebug", "always_auto_resize")
 
 	Imgui.end_window()
 
-	return do_close
+	return var_4_1
 end

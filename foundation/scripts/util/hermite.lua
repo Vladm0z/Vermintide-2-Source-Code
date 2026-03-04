@@ -1,91 +1,85 @@
-﻿-- chunkname: @foundation/scripts/util/hermite.lua
+-- chunkname: @foundation/scripts/util/hermite.lua
 
 Hermite = Hermite or {}
 
-Hermite.calc_point = function (t, p0, p1, p2, p3)
-	local t2 = t * t
-	local t3 = t2 * t
-	local two_t3 = t3 + t3
-	local two_t2 = t2 + t2
-	local three_t2 = two_t2 + t2
-	local h1 = two_t3 - three_t2 + 1
-	local h2 = three_t2 - two_t3
-	local h3 = t3 - two_t2 + t
-	local h4 = t3 - t2
-	local length = Vector3.length(p2 - p1)
-	local t1 = Vector3.normalize(p2 - p0) * length
-	local t2 = Vector3.normalize(p3 - p1) * length
-	local res = p1 * h1 + p2 * h2 + t1 * h3 + t2 * h4
+function Hermite.calc_point(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	local var_1_0 = arg_1_0 * arg_1_0
+	local var_1_1 = var_1_0 * arg_1_0
+	local var_1_2 = var_1_1 + var_1_1
+	local var_1_3 = var_1_0 + var_1_0
+	local var_1_4 = var_1_3 + var_1_0
+	local var_1_5 = var_1_2 - var_1_4 + 1
+	local var_1_6 = var_1_4 - var_1_2
+	local var_1_7 = var_1_1 - var_1_3 + arg_1_0
+	local var_1_8 = var_1_1 - var_1_0
+	local var_1_9 = Vector3.length(arg_1_3 - arg_1_2)
+	local var_1_10 = Vector3.normalize(arg_1_3 - arg_1_1) * var_1_9
+	local var_1_11 = Vector3.normalize(arg_1_4 - arg_1_2) * var_1_9
 
-	return res
+	return arg_1_2 * var_1_5 + arg_1_3 * var_1_6 + var_1_10 * var_1_7 + var_1_11 * var_1_8
 end
 
-Hermite.calc_tangent = function (t, p0, p1, p2, p3)
-	local t2 = t * t
-	local dh1 = 6 * t2 - 6 * t
-	local dh2 = 6 * t - 6 * t2
-	local dh3 = 3 * t2 - 4 * t + 1
-	local dh4 = 3 * t2 - 2 * t
-	local length = Vector3.length(p2 - p1)
-	local t1 = Vector3.normalize(p2 - p0) * length
-	local t2 = Vector3.normalize(p3 - p1) * length
-	local res = p1 * dh1 + p2 * dh2 + t1 * dh3 + t2 * dh4
+function Hermite.calc_tangent(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	local var_2_0 = arg_2_0 * arg_2_0
+	local var_2_1 = 6 * var_2_0 - 6 * arg_2_0
+	local var_2_2 = 6 * arg_2_0 - 6 * var_2_0
+	local var_2_3 = 3 * var_2_0 - 4 * arg_2_0 + 1
+	local var_2_4 = 3 * var_2_0 - 2 * arg_2_0
+	local var_2_5 = Vector3.length(arg_2_3 - arg_2_2)
+	local var_2_6 = Vector3.normalize(arg_2_3 - arg_2_1) * var_2_5
+	local var_2_7 = Vector3.normalize(arg_2_4 - arg_2_2) * var_2_5
 
-	return res
+	return arg_2_2 * var_2_1 + arg_2_3 * var_2_2 + var_2_6 * var_2_3 + var_2_7 * var_2_4
 end
 
-Hermite.draw = function (segments, script_drawer, tangent_scale, color, p0, p1, p2, p3)
-	segments = segments or 20
+function Hermite.draw(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+	arg_3_0 = arg_3_0 or 20
 
-	local segment_increment = 1 / segments
-	local t = 0
-	local point_a = Hermite.calc_point(t, p0, p1, p2, p3)
+	local var_3_0 = 1 / arg_3_0
+	local var_3_1 = 0
+	local var_3_2 = Hermite.calc_point(var_3_1, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 
-	for segment = 0, segments do
-		t = segment_increment * segment
+	for iter_3_0 = 0, arg_3_0 do
+		local var_3_3 = var_3_0 * iter_3_0
+		local var_3_4 = Hermite.calc_point(var_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 
-		local point_b = Hermite.calc_point(t, p0, p1, p2, p3)
+		arg_3_1:line(var_3_2, var_3_4, arg_3_3)
 
-		script_drawer:line(point_a, point_b, color)
+		if arg_3_2 then
+			local var_3_5 = Hermite.calc_tangent(var_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 
-		if tangent_scale then
-			local tangent = Hermite.calc_tangent(t, p0, p1, p2, p3)
-
-			script_drawer:vector(point_b, tangent * tangent_scale, color)
+			arg_3_1:vector(var_3_4, var_3_5 * arg_3_2, arg_3_3)
 		end
 
-		point_a = point_b
+		var_3_2 = var_3_4
 	end
 end
 
-Hermite.length = function (segments, p0, p1, p2, p3)
-	local length = 0
-	local last_point = p1
+function Hermite.length(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = 0
+	local var_4_1 = arg_4_2
 
-	for fraction = 1, segments - 1 do
-		local point = Hermite.calc_point(fraction / segments, p0, p1, p2, p3)
+	for iter_4_0 = 1, arg_4_0 - 1 do
+		local var_4_2 = Hermite.calc_point(iter_4_0 / arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 
-		length = length + Vector3.length(point - last_point)
-		last_point = point
+		var_4_0 = var_4_0 + Vector3.length(var_4_2 - var_4_1)
+		var_4_1 = var_4_2
 	end
 
-	length = length + Vector3.length(p2 - last_point)
-
-	return length
+	return var_4_0 + Vector3.length(arg_4_3 - var_4_1)
 end
 
-Hermite.next_index = function (points, index)
-	local next_index = index + 1
-	local next_index_end_point = next_index + 1
+function Hermite.next_index(arg_5_0, arg_5_1)
+	local var_5_0 = arg_5_1 + 1
 
-	return points[next_index_end_point] and next_index or nil
+	return arg_5_0[var_5_0 + 1] and var_5_0 or nil
 end
 
-Hermite.spline_points = function (points, index)
-	local p1 = points[index]
-	local p2 = points[index + 1]
-	local p0 = points[index - 1] or 2 * p1 - p2
-	local p3 = points[index + 2] or 2 * p2 - p1
+function Hermite.spline_points(arg_6_0, arg_6_1)
+	local var_6_0 = arg_6_0[arg_6_1]
+	local var_6_1 = arg_6_0[arg_6_1 + 1]
+	local var_6_2 = arg_6_0[arg_6_1 - 1] or 2 * var_6_0 - var_6_1
+	local var_6_3 = arg_6_0[arg_6_1 + 2] or 2 * var_6_1 - var_6_0
 
-	return p0, p1, p2, p3
+	return var_6_2, var_6_0, var_6_1, var_6_3
 end

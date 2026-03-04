@@ -1,35 +1,33 @@
-﻿-- chunkname: @scripts/misc/script_retrieve_app_ticket_token.lua
+-- chunkname: @scripts/misc/script_retrieve_app_ticket_token.lua
 
 ScriptReceiveAppTicketToken = class(ScriptReceiveAppTicketToken)
 
-ScriptReceiveAppTicketToken.init = function (self)
-	self._done = false
-	self._error = true
+function ScriptReceiveAppTicketToken.init(arg_1_0)
+	arg_1_0._done = false
+	arg_1_0._error = true
 end
 
-ScriptReceiveAppTicketToken.update = function (self)
-	local encrypted_app_ticket_raw = Steam.poll_encrypted_app_ticket()
+function ScriptReceiveAppTicketToken.update(arg_2_0)
+	local var_2_0 = Steam.poll_encrypted_app_ticket()
 
-	if encrypted_app_ticket_raw then
-		self._encrypted_app_ticket = string.tohex(encrypted_app_ticket_raw)
-		self._done = true
-		self._error = false
+	if var_2_0 then
+		arg_2_0._encrypted_app_ticket = string.tohex(var_2_0)
+		arg_2_0._done = true
+		arg_2_0._error = false
 	end
 end
 
-ScriptReceiveAppTicketToken.info = function (self)
-	local info = {
-		encrypted_app_ticket = self._encrypted_app_ticket,
-		error = self._error,
+function ScriptReceiveAppTicketToken.info(arg_3_0)
+	return {
+		encrypted_app_ticket = arg_3_0._encrypted_app_ticket,
+		error = arg_3_0._error
 	}
-
-	return info
 end
 
-ScriptReceiveAppTicketToken.done = function (self)
-	return self._done
+function ScriptReceiveAppTicketToken.done(arg_4_0)
+	return arg_4_0._done
 end
 
-ScriptReceiveAppTicketToken.close = function (self)
+function ScriptReceiveAppTicketToken.close(arg_5_0)
 	return
 end

@@ -1,155 +1,146 @@
-﻿-- chunkname: @scripts/unit_extensions/generic/explosive_barrel_health_extension.lua
+-- chunkname: @scripts/unit_extensions/generic/explosive_barrel_health_extension.lua
 
 ExplosiveBarrelHealthExtension = class(ExplosiveBarrelHealthExtension, GenericHealthExtension)
 
-ExplosiveBarrelHealthExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	ExplosiveBarrelHealthExtension.super.init(self, extension_init_context, unit, extension_init_data)
+function ExplosiveBarrelHealthExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	ExplosiveBarrelHealthExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
-	self.in_hand = extension_init_data.in_hand
-	self.item_name = extension_init_data.item_name
+	arg_1_0.in_hand = arg_1_3.in_hand
+	arg_1_0.item_name = arg_1_3.item_name
 
-	local data = extension_init_data.health_data
+	local var_1_0 = arg_1_3.health_data
 
-	if data then
-		self.ignited = true
-		self.explode_time = data.explode_time
-		self.fuse_time = data.fuse_time
+	if var_1_0 then
+		arg_1_0.ignited = true
+		arg_1_0.explode_time = var_1_0.explode_time
+		arg_1_0.fuse_time = var_1_0.fuse_time
+		arg_1_0.last_damage_data.attacker_unit_id = var_1_0.attacker_unit_id
+		arg_1_0.insta_explode = not arg_1_0.in_hand
 
-		local last_damage_data = self.last_damage_data
-
-		last_damage_data.attacker_unit_id = data.attacker_unit_id
-		self.insta_explode = not self.in_hand
-
-		Unit.flow_event(unit, "exploding_barrel_fuse_init")
+		Unit.flow_event(arg_1_2, "exploding_barrel_fuse_init")
 	end
 
-	local owner_unit = extension_init_data.owner_unit
+	local var_1_1 = arg_1_3.owner_unit
 
-	if owner_unit then
-		self.owner_unit = owner_unit
-		self.owner_unit_health_extension = ScriptUnit.extension(owner_unit, "health_system")
-		self.ignored_damage_types = extension_init_data.ignored_damage_types
+	if var_1_1 then
+		arg_1_0.owner_unit = var_1_1
+		arg_1_0.owner_unit_health_extension = ScriptUnit.extension(var_1_1, "health_system")
+		arg_1_0.ignored_damage_types = arg_1_3.ignored_damage_types
 	end
 end
 
-ExplosiveBarrelHealthExtension.update = function (self, dt, context, t)
-	local owner_unit_health_extension = self.owner_unit_health_extension
+function ExplosiveBarrelHealthExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_0.owner_unit_health_extension
 
-	if owner_unit_health_extension then
-		local recent_damages, num_damages = owner_unit_health_extension:recent_damages()
+	if var_2_0 then
+		local var_2_1, var_2_2 = var_2_0:recent_damages()
 
-		for i = 1, num_damages / DamageDataIndex.STRIDE do
-			local j = (i - 1) * DamageDataIndex.STRIDE
-			local attacker_unit = recent_damages[j + DamageDataIndex.ATTACKER]
-			local damage_amount = recent_damages[j + DamageDataIndex.DAMAGE_AMOUNT]
-			local damage_type = recent_damages[j + DamageDataIndex.DAMAGE_TYPE]
-			local source_attacker_unit = recent_damages[j + DamageDataIndex.SOURCE_ATTACKER_UNIT]
-			local ignore_damage_type = self.ignored_damage_types[damage_type]
+		for iter_2_0 = 1, var_2_2 / DamageDataIndex.STRIDE do
+			local var_2_3 = (iter_2_0 - 1) * DamageDataIndex.STRIDE
+			local var_2_4 = var_2_1[var_2_3 + DamageDataIndex.ATTACKER]
+			local var_2_5 = var_2_1[var_2_3 + DamageDataIndex.DAMAGE_AMOUNT]
+			local var_2_6 = var_2_1[var_2_3 + DamageDataIndex.DAMAGE_TYPE]
+			local var_2_7 = var_2_1[var_2_3 + DamageDataIndex.SOURCE_ATTACKER_UNIT]
 
-			if not ignore_damage_type then
-				if damage_type == "heal" then
-					self:add_heal(attacker_unit, -damage_amount, nil, "n/a")
+			if not arg_2_0.ignored_damage_types[var_2_6] then
+				if var_2_6 == "heal" then
+					arg_2_0:add_heal(var_2_4, -var_2_5, nil, "n/a")
 				else
-					local hit_zone_name = recent_damages[j + DamageDataIndex.HIT_ZONE]
-					local hit_position = Vector3Aux.unbox(recent_damages[j + DamageDataIndex.POSITION])
-					local damage_direction = Vector3Aux.unbox(recent_damages[j + DamageDataIndex.DIRECTION])
-					local damage_source_name = recent_damages[j + DamageDataIndex.DAMAGE_SOURCE_NAME]
+					local var_2_8 = var_2_1[var_2_3 + DamageDataIndex.HIT_ZONE]
+					local var_2_9 = Vector3Aux.unbox(var_2_1[var_2_3 + DamageDataIndex.POSITION])
+					local var_2_10 = Vector3Aux.unbox(var_2_1[var_2_3 + DamageDataIndex.DIRECTION])
+					local var_2_11 = var_2_1[var_2_3 + DamageDataIndex.DAMAGE_SOURCE_NAME]
 
-					self:add_damage(attacker_unit, damage_amount, hit_zone_name, damage_type, hit_position, damage_direction, damage_source_name, nil, source_attacker_unit, nil, nil, nil, nil, nil, nil, nil, i)
+					arg_2_0:add_damage(var_2_4, var_2_5, var_2_8, var_2_6, var_2_9, var_2_10, var_2_11, nil, var_2_7, nil, nil, nil, nil, nil, nil, nil, iter_2_0)
 				end
 			end
 		end
 	end
 
-	if self.ignited and not self._dead and not self.exploded then
-		local network_time = Managers.state.network:network_time()
-		local fuse_time_left = self.explode_time - network_time
-		local fuse_time_percent = fuse_time_left / self.fuse_time
+	if arg_2_0.ignited and not arg_2_0._dead and not arg_2_0.exploded then
+		local var_2_12 = Managers.state.network:network_time()
+		local var_2_13 = (arg_2_0.explode_time - var_2_12) / arg_2_0.fuse_time
 
-		Unit.set_data(self.unit, "fuse_time_percent", fuse_time_percent)
+		Unit.set_data(arg_2_0.unit, "fuse_time_percent", var_2_13)
 
-		if network_time >= self.explode_time then
-			self.insta_explode = true
+		if var_2_12 >= arg_2_0.explode_time then
+			arg_2_0.insta_explode = true
 
-			self:add_damage(self.unit, self.health, "full", "undefined", Unit.world_position(self.unit, 0), Vector3(0, 0, -1), nil, nil, self.last_attacker_unit, nil, nil, nil, nil, nil, nil, nil, 1)
-		elseif not self.in_hand and not self.insta_explode and network_time >= self.insta_explode_time then
-			self.insta_explode = true
-		elseif not self.played_fuse_out and network_time >= self.explode_time - 1.2 then
-			Unit.flow_event(self.unit, "exploding_barrel_fuse_out")
+			arg_2_0:add_damage(arg_2_0.unit, arg_2_0.health, "full", "undefined", Unit.world_position(arg_2_0.unit, 0), Vector3(0, 0, -1), nil, nil, arg_2_0.last_attacker_unit, nil, nil, nil, nil, nil, nil, nil, 1)
+		elseif not arg_2_0.in_hand and not arg_2_0.insta_explode and var_2_12 >= arg_2_0.insta_explode_time then
+			arg_2_0.insta_explode = true
+		elseif not arg_2_0.played_fuse_out and var_2_12 >= arg_2_0.explode_time - 1.2 then
+			Unit.flow_event(arg_2_0.unit, "exploding_barrel_fuse_out")
 
-			self.played_fuse_out = true
+			arg_2_0.played_fuse_out = true
 		end
 	end
 end
 
-ExplosiveBarrelHealthExtension.apply_client_predicted_damage = function (self, predicted_damage)
+function ExplosiveBarrelHealthExtension.apply_client_predicted_damage(arg_3_0, arg_3_1)
 	return
 end
 
-ExplosiveBarrelHealthExtension.add_damage = function (self, attacker_unit, damage_amount, hit_zone_name, damage_type, hit_position, damage_direction, damage_source_name, hit_ragdoll_actor, source_attacker_unit, hit_react_type, is_critical_strike, added_dot, first_hit, total_hits, attack_type, backstab_multiplier, target_index)
-	if damage_type and (damage_type == "blade_storm" or damage_type == "life_tap") then
+function ExplosiveBarrelHealthExtension.add_damage(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, arg_4_8, arg_4_9, arg_4_10, arg_4_11, arg_4_12, arg_4_13, arg_4_14, arg_4_15, arg_4_16, arg_4_17)
+	if arg_4_4 and (arg_4_4 == "blade_storm" or arg_4_4 == "life_tap") then
 		return
 	end
 
-	self.last_attacker_unit = attacker_unit
+	arg_4_0.last_attacker_unit = arg_4_1
 
-	local did_damage = damage_amount > 0
-	local unit = self.unit
-	local network_manager = Managers.state.network
-	local unit_id, is_level_unit = network_manager:game_object_or_level_id(unit)
-	local damage_table = self:_add_to_damage_history_buffer(unit, attacker_unit, damage_amount, hit_zone_name, damage_type, hit_position, damage_direction, damage_source_name, hit_ragdoll_actor, source_attacker_unit, hit_react_type, is_critical_strike, nil, nil, nil, nil, target_index)
+	local var_4_0 = arg_4_2 > 0
+	local var_4_1 = arg_4_0.unit
+	local var_4_2, var_4_3 = Managers.state.network:game_object_or_level_id(var_4_1)
+	local var_4_4 = arg_4_0:_add_to_damage_history_buffer(var_4_1, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, arg_4_8, arg_4_9, arg_4_10, arg_4_11, nil, nil, nil, nil, arg_4_17)
 
-	StatisticsUtil.register_damage(unit, damage_table, self.statistics_db)
-	fassert(damage_type, "No damage_type!")
+	StatisticsUtil.register_damage(var_4_1, var_4_4, arg_4_0.statistics_db)
+	fassert(arg_4_4, "No damage_type!")
 
-	self._recent_damage_type = damage_type
-	self._recent_hit_react_type = hit_react_type
+	arg_4_0._recent_damage_type = arg_4_4
+	arg_4_0._recent_hit_react_type = arg_4_10
 
-	self:save_kill_feed_data(attacker_unit, damage_table, hit_zone_name, damage_type, damage_source_name, source_attacker_unit)
-	DamageUtils.handle_hit_indication(attacker_unit, unit, damage_amount, hit_zone_name, added_dot)
+	arg_4_0:save_kill_feed_data(arg_4_1, var_4_4, arg_4_3, arg_4_4, arg_4_7, arg_4_9)
+	DamageUtils.handle_hit_indication(arg_4_1, var_4_1, arg_4_2, arg_4_3, arg_4_12)
 
-	if not self:get_is_invincible() and not self.dead then
-		local internal_damage_amount = did_damage and self.insta_explode and self.health or 0
+	if not arg_4_0:get_is_invincible() and not arg_4_0.dead then
+		local var_4_5 = var_4_0 and arg_4_0.insta_explode and arg_4_0.health or 0
 
-		self.damage = self.damage + internal_damage_amount
+		arg_4_0.damage = arg_4_0.damage + var_4_5
 
-		if self:_should_die() and (self.is_server or not unit_id) then
-			local death_system = Managers.state.entity:system("death_system")
-
-			death_system:kill_unit(unit, damage_table)
+		if arg_4_0:_should_die() and (arg_4_0.is_server or not var_4_2) then
+			Managers.state.entity:system("death_system"):kill_unit(var_4_1, var_4_4)
 		end
 	end
 
-	self:_sync_out_damage(attacker_unit, unit_id, is_level_unit, source_attacker_unit, damage_amount, hit_zone_name, damage_type, hit_position, damage_direction, damage_source_name, hit_ragdoll_actor, hit_react_type, is_critical_strike, added_dot, first_hit, total_hits, attack_type, backstab_multiplier, target_index)
+	arg_4_0:_sync_out_damage(arg_4_1, var_4_2, var_4_3, arg_4_9, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, arg_4_8, arg_4_10, arg_4_11, arg_4_12, arg_4_13, arg_4_14, arg_4_15, arg_4_16, arg_4_17)
 
-	if did_damage and not self.ignited then
-		local network_time = Managers.state.network:network_time()
-		local fuse_time = Unit.has_data(unit, "fuse_time") and Unit.get_data(unit, "fuse_time") or 4
-		local insta_explode_time = network_time + 0.2
-		local explode_time = network_time + fuse_time
+	if var_4_0 and not arg_4_0.ignited then
+		local var_4_6 = Managers.state.network:network_time()
+		local var_4_7 = Unit.has_data(var_4_1, "fuse_time") and Unit.get_data(var_4_1, "fuse_time") or 4
+		local var_4_8 = var_4_6 + 0.2
+		local var_4_9 = var_4_6 + var_4_7
 
-		Unit.flow_event(unit, "exploding_barrel_fuse_init")
+		Unit.flow_event(var_4_1, "exploding_barrel_fuse_init")
 
-		self.fuse_time = fuse_time
-		self.explode_time = explode_time
-		self.ignited = true
-		self.insta_explode_time = insta_explode_time
-	elseif did_damage and self.ignited and self.insta_explode and not self.exploded then
-		self.exploded = true
+		arg_4_0.fuse_time = var_4_7
+		arg_4_0.explode_time = var_4_9
+		arg_4_0.ignited = true
+		arg_4_0.insta_explode_time = var_4_8
+	elseif var_4_0 and arg_4_0.ignited and arg_4_0.insta_explode and not arg_4_0.exploded then
+		arg_4_0.exploded = true
 
-		if self.ignited and not self.played_fuse_out then
-			Unit.flow_event(self.unit, "exploding_barrel_remove_fuse")
+		if arg_4_0.ignited and not arg_4_0.played_fuse_out then
+			Unit.flow_event(arg_4_0.unit, "exploding_barrel_remove_fuse")
 		end
 	end
 end
 
-ExplosiveBarrelHealthExtension.health_data = function (self)
-	local last_damage_data = self.last_damage_data
-	local data = {
-		fuse_time = self.fuse_time,
-		explode_time = self.explode_time,
-		attacker_unit_id = last_damage_data.attacker_unit_id,
-	}
+function ExplosiveBarrelHealthExtension.health_data(arg_5_0)
+	local var_5_0 = arg_5_0.last_damage_data
 
-	return data
+	return {
+		fuse_time = arg_5_0.fuse_time,
+		explode_time = arg_5_0.explode_time,
+		attacker_unit_id = var_5_0.attacker_unit_id
+	}
 end

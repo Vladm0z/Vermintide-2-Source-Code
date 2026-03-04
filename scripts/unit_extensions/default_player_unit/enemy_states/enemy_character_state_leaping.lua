@@ -1,495 +1,450 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/enemy_character_state_leaping.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/enemy_character_state_leaping.lua
 
 EnemyCharacterStateLeaping = class(EnemyCharacterStateLeaping, EnemyCharacterState)
 
-EnemyCharacterStateLeaping.init = function (self, character_state_init_context)
-	EnemyCharacterState.init(self, character_state_init_context, "leaping")
+function EnemyCharacterStateLeaping.init(arg_1_0, arg_1_1)
+	EnemyCharacterState.init(arg_1_0, arg_1_1, "leaping")
 
-	self._direction = Vector3Box()
+	arg_1_0._direction = Vector3Box()
 end
 
-local POSITION_LOOKUP = POSITION_LOOKUP
+local var_0_0 = POSITION_LOOKUP
 
-EnemyCharacterStateLeaping.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
-	table.clear(self._temp_params)
+function EnemyCharacterStateLeaping.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	table.clear(arg_2_0._temp_params)
 
-	self._time_entered_leap = t
+	arg_2_0._time_entered_leap = arg_2_5
 
-	local player = self._player
-	local input_extension = self._input_extension
-	local status_extension = self._status_extension
-	local locomotion_extension = self._locomotion_extension
+	local var_2_0 = arg_2_0._player
+	local var_2_1 = arg_2_0._input_extension
+	local var_2_2 = arg_2_0._status_extension
 
-	locomotion_extension:set_mover_filter_property("enemy_leap_state", true)
+	arg_2_0._locomotion_extension:set_mover_filter_property("enemy_leap_state", true)
 
-	local inventory_extension = self._inventory_extension
-	local first_person_extension = self._first_person_extension
-	local leap_data = status_extension.do_leap
+	local var_2_3 = arg_2_0._inventory_extension
+	local var_2_4 = arg_2_0._first_person_extension
+	local var_2_5 = var_2_2.do_leap
 
-	leap_data.starting_pos = Vector3Box(POSITION_LOOKUP[unit])
-	leap_data.total_distance = Vector3.length(leap_data.projected_hit_pos:unbox() - POSITION_LOOKUP[unit])
-	self._leap_data = leap_data
-	status_extension.do_leap = false
+	var_2_5.starting_pos = Vector3Box(var_0_0[arg_2_1])
+	var_2_5.total_distance = Vector3.length(var_2_5.projected_hit_pos:unbox() - var_0_0[arg_2_1])
+	arg_2_0._leap_data = var_2_5
+	var_2_2.do_leap = false
 
-	local rotation = first_person_extension:current_rotation()
-	local look_direction_flat = Vector3.normalize(Vector3.flat(Quaternion.forward(rotation)))
-	local start_position = POSITION_LOOKUP[unit]
-	local projected_hit_pos = leap_data.projected_hit_pos:unbox()
+	local var_2_6 = var_2_4:current_rotation()
+	local var_2_7 = Vector3.normalize(Vector3.flat(Quaternion.forward(var_2_6)))
+	local var_2_8 = var_0_0[arg_2_1]
+	local var_2_9 = var_2_5.projected_hit_pos:unbox()
 
-	self._percentage_done = 0
-	self.initial_jump_direction = Vector3Box(projected_hit_pos - start_position)
-	self.jump_direction = Vector3Box(look_direction_flat)
+	arg_2_0._percentage_done = 0
+	arg_2_0.initial_jump_direction = Vector3Box(var_2_9 - var_2_8)
+	arg_2_0.jump_direction = Vector3Box(var_2_7)
 
-	self:_start_leap(unit, t)
-	CharacterStateHelper.look(input_extension, player.viewport_name, first_person_extension, status_extension, self._inventory_extension)
-	CharacterStateHelper.update_weapon_actions(t, unit, input_extension, inventory_extension, self._health_extension)
-	ScriptUnit.extension(unit, "whereabouts_system"):set_jumped()
+	arg_2_0:_start_leap(arg_2_1, arg_2_5)
+	CharacterStateHelper.look(var_2_1, var_2_0.viewport_name, var_2_4, var_2_2, arg_2_0._inventory_extension)
+	CharacterStateHelper.update_weapon_actions(arg_2_5, arg_2_1, var_2_1, var_2_3, arg_2_0._health_extension)
+	ScriptUnit.extension(arg_2_1, "whereabouts_system"):set_jumped()
 
-	self._time_slided = 0
-	self._played_landing_event = nil
+	arg_2_0._time_slided = 0
+	arg_2_0._played_landing_event = nil
 end
 
-EnemyCharacterStateLeaping.on_exit = function (self, unit, input, dt, context, t, next_state, is_destroy)
-	local locomotion_extension = self._locomotion_extension
+function EnemyCharacterStateLeaping.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+	local var_3_0 = arg_3_0._locomotion_extension
 
-	locomotion_extension:set_mover_filter_property("enemy_leap_state", false)
+	var_3_0:set_mover_filter_property("enemy_leap_state", false)
 
-	if not is_destroy then
-		local player_position = Vector3.copy(POSITION_LOOKUP[unit])
-		local end_position = self._leap_data.projected_hit_pos:unbox()
+	if not arg_3_7 then
+		local var_3_1 = Vector3.copy(var_0_0[arg_3_1])
+		local var_3_2 = arg_3_0._leap_data.projected_hit_pos:unbox()
 
-		if player_position and end_position and player_position.z < end_position.z then
-			player_position.z = end_position.z + 0.1
+		if var_3_1 and var_3_2 and var_3_1.z < var_3_2.z then
+			var_3_1.z = var_3_2.z + 0.1
 
-			locomotion_extension:teleport_to(player_position)
+			var_3_0:teleport_to(var_3_1)
 		end
 
-		locomotion_extension:set_forced_velocity(Vector3.zero())
-		locomotion_extension:set_wanted_velocity(Vector3.zero())
+		var_3_0:set_forced_velocity(Vector3.zero())
+		var_3_0:set_wanted_velocity(Vector3.zero())
 
-		if not self._leap_done and self._leap_data.leap_events.finished then
-			local final_position = POSITION_LOOKUP[unit]
+		if not arg_3_0._leap_done and arg_3_0._leap_data.leap_events.finished then
+			local var_3_3 = var_0_0[arg_3_1]
 
-			self._leap_data.leap_events.finished(self, unit, false, final_position)
+			arg_3_0._leap_data.leap_events.finished(arg_3_0, arg_3_1, false, var_3_3)
 		end
 
-		if next_state == "walking" or next_state == "standing" then
-			ScriptUnit.extension(unit, "whereabouts_system"):set_landed()
-		elseif next_state and next_state ~= "falling" then
-			ScriptUnit.extension(unit, "whereabouts_system"):set_no_landing()
+		if arg_3_6 == "walking" or arg_3_6 == "standing" then
+			ScriptUnit.extension(arg_3_1, "whereabouts_system"):set_landed()
+		elseif arg_3_6 and arg_3_6 ~= "falling" then
+			ScriptUnit.extension(arg_3_1, "whereabouts_system"):set_no_landing()
 		end
 
-		if next_state and next_state ~= "falling" and next_state ~= "staggered" and Managers.state.network:game() then
-			CharacterStateHelper.play_animation_event(unit, "land_still")
-			CharacterStateHelper.play_animation_event(unit, "to_onground")
-			locomotion_extension:force_on_ground(true)
+		if arg_3_6 and arg_3_6 ~= "falling" and arg_3_6 ~= "staggered" and Managers.state.network:game() then
+			CharacterStateHelper.play_animation_event(arg_3_1, "land_still")
+			CharacterStateHelper.play_animation_event(arg_3_1, "to_onground")
+			var_3_0:force_on_ground(true)
 		end
 
-		if self._screenspace_effect_id then
-			self._first_person_extension:destroy_screen_particles(self._screenspace_effect_id)
+		if arg_3_0._screenspace_effect_id then
+			arg_3_0._first_person_extension:destroy_screen_particles(arg_3_0._screenspace_effect_id)
 
-			self._screenspace_effect_id = nil
+			arg_3_0._screenspace_effect_id = nil
 		end
 	end
 end
 
-EnemyCharacterStateLeaping.update = function (self, unit, input, dt, context, t)
-	local csm = self._csm
-	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local input_extension = self._input_extension
-	local status_extension = self._status_extension
-	local first_person_extension = self._first_person_extension
-	local locomotion_extension = self._locomotion_extension
-	local inventory_extension = self._inventory_extension
+function EnemyCharacterStateLeaping.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	local var_4_0 = arg_4_0._csm
+	local var_4_1 = PlayerUnitMovementSettings.get_movement_settings_table(arg_4_1)
+	local var_4_2 = arg_4_0._input_extension
+	local var_4_3 = arg_4_0._status_extension
+	local var_4_4 = arg_4_0._first_person_extension
+	local var_4_5 = arg_4_0._locomotion_extension
+	local var_4_6 = arg_4_0._inventory_extension
 
-	if CharacterStateHelper.do_common_state_transitions(status_extension, csm) then
+	if CharacterStateHelper.do_common_state_transitions(var_4_3, var_4_0) then
 		return
 	end
 
-	if CharacterStateHelper.is_using_transport(status_extension) then
-		csm:change_state("using_transport")
-
-		return
-	end
-
-	if CharacterStateHelper.is_overcharge_exploding(status_extension) then
-		csm:change_state("overcharge_exploding")
+	if CharacterStateHelper.is_using_transport(var_4_3) then
+		var_4_0:change_state("using_transport")
 
 		return
 	end
 
-	if CharacterStateHelper.is_pushed(status_extension) then
-		status_extension:set_pushed(false)
-
-		local params = movement_settings_table.stun_settings.pushed
-		local hit_react_type = status_extension:hit_react_type()
-
-		params.hit_react_type = hit_react_type .. "_push"
-
-		csm:change_state("stunned", params)
+	if CharacterStateHelper.is_overcharge_exploding(var_4_3) then
+		var_4_0:change_state("overcharge_exploding")
 
 		return
 	end
 
-	if CharacterStateHelper.is_block_broken(status_extension) then
-		status_extension:set_block_broken(false)
+	if CharacterStateHelper.is_pushed(var_4_3) then
+		var_4_3:set_pushed(false)
 
-		local params = movement_settings_table.stun_settings.parry_broken
+		local var_4_7 = var_4_1.stun_settings.pushed
 
-		params.hit_react_type = "medium_push"
+		var_4_7.hit_react_type = var_4_3:hit_react_type() .. "_push"
 
-		csm:change_state("stunned", params)
+		var_4_0:change_state("stunned", var_4_7)
 
 		return
 	end
 
-	self._time_spent_in_leap = t - self._time_entered_leap
+	if CharacterStateHelper.is_block_broken(var_4_3) then
+		var_4_3:set_block_broken(false)
 
-	local is_done_moving, colliding_down, going_backwards = self:_update_movement(unit, dt, t)
+		local var_4_8 = var_4_1.stun_settings.parry_broken
 
-	if is_done_moving then
-		self:_finish(unit, t)
+		var_4_8.hit_react_type = "medium_push"
 
-		if colliding_down then
-			csm:change_state("walking", self._temp_params)
-			first_person_extension:change_state("walking")
+		var_4_0:change_state("stunned", var_4_8)
 
-			self._leap_done = true
+		return
+	end
+
+	arg_4_0._time_spent_in_leap = arg_4_5 - arg_4_0._time_entered_leap
+
+	local var_4_9, var_4_10, var_4_11 = arg_4_0:_update_movement(arg_4_1, arg_4_3, arg_4_5)
+
+	if var_4_9 then
+		arg_4_0:_finish(arg_4_1, arg_4_5)
+
+		if var_4_10 then
+			var_4_0:change_state("walking", arg_4_0._temp_params)
+			var_4_4:change_state("walking")
+
+			arg_4_0._leap_done = true
 
 			return
 		end
 
-		local current_velocity = locomotion_extension:current_velocity()
+		local var_4_12 = var_4_5:current_velocity()
 
-		if not self._csm.state_next and (current_velocity.z <= 0 or going_backwards) then
-			if going_backwards then
-				current_velocity.y = 0
+		if not arg_4_0._csm.state_next and (var_4_12.z <= 0 or var_4_11) then
+			if var_4_11 then
+				var_4_12.y = 0
 			end
 
-			self._locomotion_extension:set_wanted_velocity(Vector3.zero())
-			self._locomotion_extension:set_forced_velocity(Vector3.zero())
-			csm:change_state("falling", self._temp_params)
-			first_person_extension:change_state("falling")
+			arg_4_0._locomotion_extension:set_wanted_velocity(Vector3.zero())
+			arg_4_0._locomotion_extension:set_forced_velocity(Vector3.zero())
+			var_4_0:change_state("falling", arg_4_0._temp_params)
+			var_4_4:change_state("falling")
 
-			self._leap_done = true
+			arg_4_0._leap_done = true
 
 			return
 		end
 	end
 
-	local current_position = POSITION_LOOKUP[unit]
-	local starting_pos = self._leap_data.starting_pos:unbox()
-	local projected_hit_pos = self._leap_data.projected_hit_pos:unbox()
-	local distance_travelled = Vector3.length(current_position - starting_pos)
+	local var_4_13 = var_0_0[arg_4_1]
+	local var_4_14 = arg_4_0._leap_data.starting_pos:unbox()
+	local var_4_15 = arg_4_0._leap_data.projected_hit_pos:unbox()
 
-	self._percentage_done = distance_travelled / Vector3.length(projected_hit_pos - starting_pos)
+	arg_4_0._percentage_done = Vector3.length(var_4_13 - var_4_14) / Vector3.length(var_4_15 - var_4_14)
 
-	if self._leap_data.update_leap_anim_variable then
-		self._leap_data.update_leap_anim_variable(self, unit)
+	if arg_4_0._leap_data.update_leap_anim_variable then
+		arg_4_0._leap_data.update_leap_anim_variable(arg_4_0, arg_4_1)
 	end
 
-	local distance_to_goal_sqr = Vector3.distance_squared(current_position, projected_hit_pos)
-
-	if distance_to_goal_sqr < 0.25 then
-		self._leap_done = true
+	if Vector3.distance_squared(var_4_13, var_4_15) < 0.25 then
+		arg_4_0._leap_done = true
 	end
 
-	local look_sense_override, look_override
+	local var_4_16
+	local var_4_17
 
-	CharacterStateHelper.look(input_extension, self._player.viewport_name, first_person_extension, status_extension, inventory_extension, look_sense_override, look_override)
+	CharacterStateHelper.look(var_4_2, arg_4_0._player.viewport_name, var_4_4, var_4_3, var_4_6, var_4_16, var_4_17)
 end
 
-local function scale_percentage(a, b, p)
-	return (math.clamp(p, a, b) - a) / (b - a)
+local function var_0_1(arg_5_0, arg_5_1, arg_5_2)
+	return (math.clamp(arg_5_2, arg_5_0, arg_5_1) - arg_5_0) / (arg_5_1 - arg_5_0)
 end
 
-PlayerCharacterStateLeaping._reset_speed_and_gravity = function (self, unit)
-	local locomotion_extension = self.locomotion_extension
-	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
+function PlayerCharacterStateLeaping._reset_speed_and_gravity(arg_6_0, arg_6_1)
+	local var_6_0 = arg_6_0.locomotion_extension
 
-	movement_settings_table.gravity_acceleration = PlayerUnitMovementSettings.gravity_acceleration
+	PlayerUnitMovementSettings.get_movement_settings_table(arg_6_1).gravity_acceleration = PlayerUnitMovementSettings.gravity_acceleration
 
-	locomotion_extension:set_forced_velocity(Vector3.zero())
-	locomotion_extension:set_wanted_velocity(Vector3.zero())
-	locomotion_extension:reset_maximum_upwards_velocity()
-	locomotion_extension:set_external_velocity_enabled(true)
+	var_6_0:set_forced_velocity(Vector3.zero())
+	var_6_0:set_wanted_velocity(Vector3.zero())
+	var_6_0:reset_maximum_upwards_velocity()
+	var_6_0:set_external_velocity_enabled(true)
 end
 
-EnemyCharacterStateLeaping._move_in_air = function (self, unit, dt, t)
-	local locomotion_extension = self._locomotion_extension
-	local current_position = POSITION_LOOKUP[unit]
-	local starting_pos = self._leap_data.starting_pos:unbox()
-	local end_position = self._leap_data.projected_hit_pos:unbox()
-	local travelled_vector = Vector3.flat(current_position - starting_pos)
-	local total_vector = Vector3.flat(end_position - starting_pos)
-	local dot = Vector3.dot(travelled_vector, total_vector)
-	local total_distance = Vector3.length(total_vector)
-	local distance_travelled = dot / total_distance
-	local move_direction = Vector3.normalize(self._leap_data.direction:unbox())
-	local player_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local movement_settings_table = self._leap_data.movement_settings or PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local starting_speed = self._leap_data.speed
-	local speed = starting_speed
-	local move_speed_multiplier = self._status_extension:current_move_speed_multiplier()
+function EnemyCharacterStateLeaping._move_in_air(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	local var_7_0 = arg_7_0._locomotion_extension
+	local var_7_1 = var_0_0[arg_7_1]
+	local var_7_2 = arg_7_0._leap_data.starting_pos:unbox()
+	local var_7_3 = arg_7_0._leap_data.projected_hit_pos:unbox()
+	local var_7_4 = Vector3.flat(var_7_1 - var_7_2)
+	local var_7_5 = Vector3.flat(var_7_3 - var_7_2)
+	local var_7_6 = Vector3.dot(var_7_4, var_7_5)
+	local var_7_7 = Vector3.length(var_7_5)
+	local var_7_8 = var_7_6 / var_7_7
+	local var_7_9 = Vector3.normalize(arg_7_0._leap_data.direction:unbox())
+	local var_7_10 = PlayerUnitMovementSettings.get_movement_settings_table(arg_7_1)
+	local var_7_11 = arg_7_0._leap_data.movement_settings or PlayerUnitMovementSettings.get_movement_settings_table(arg_7_1)
+	local var_7_12 = arg_7_0._leap_data.speed * arg_7_0._status_extension:current_move_speed_multiplier()^2 * var_7_11.player_speed_scale
+	local var_7_13 = arg_7_0._leap_data.lerp_data
+	local var_7_14 = var_7_7 * var_7_13.zero_distance or 0
+	local var_7_15 = var_7_7 * var_7_13.start_accel_distance or 0.1
+	local var_7_16 = var_7_7 * var_7_13.end_accel_distance or 0.2
+	local var_7_17 = var_7_7 * var_7_13.glide_distance or 0.7
+	local var_7_18 = var_7_7 * var_7_13.slow_distance or 0.95
+	local var_7_19 = var_7_7 * var_7_13.full_distance or 1
 
-	speed = speed * move_speed_multiplier^2
-	speed = speed * movement_settings_table.player_speed_scale
+	arg_7_0._old_position = var_7_1
 
-	local lerp_data = self._leap_data.lerp_data
-	local zero_distance = total_distance * lerp_data.zero_distance or 0
-	local start_accel_distance = total_distance * lerp_data.start_accel_distance or 0.1
-	local end_accel_distance = total_distance * lerp_data.end_accel_distance or 0.2
-	local glide_distance = total_distance * lerp_data.glide_distance or 0.7
-	local slow_distance = total_distance * lerp_data.slow_distance or 0.95
-	local full_distance = total_distance * lerp_data.full_distance or 1
+	local var_7_20
 
-	self._old_position = current_position
+	if var_7_8 <= var_7_15 then
+		var_7_20 = "start_acceleration"
 
-	local state
+		local var_7_21 = var_0_1(var_7_14, var_7_15, var_7_8)
+		local var_7_22 = math.ease_out_exp(var_7_21)
 
-	if distance_travelled <= start_accel_distance then
-		state = "start_acceleration"
+		var_7_12 = var_7_12 * math.lerp(0, 1.25, var_7_22)
 
-		local interval_distance_percentage = scale_percentage(zero_distance, start_accel_distance, distance_travelled)
+		local var_7_23 = 0.05
 
-		interval_distance_percentage = math.ease_out_exp(interval_distance_percentage)
+		var_7_10.gravity_acceleration = PlayerUnitMovementSettings.gravity_acceleration * var_7_23
 
-		local speed_multiplier = math.lerp(0, 1.25, interval_distance_percentage)
+		local var_7_24 = math.clamp(var_7_11.move_speed, 0, var_7_11.max_move_speed)
+		local var_7_25 = var_7_0:current_velocity()
+		local var_7_26 = (Vector3.normalize(var_7_25) + var_7_9) * var_7_12
+		local var_7_27 = Vector3.length(var_7_26)
+		local var_7_28 = math.clamp(var_7_27, 0, var_7_24 * var_7_11.player_speed_scale)
+		local var_7_29 = Vector3.normalize(var_7_26)
 
-		speed = speed * speed_multiplier
+		var_7_0:set_wanted_velocity(var_7_29 * var_7_28)
+	elseif var_7_8 <= var_7_16 then
+		var_7_20 = "end_acceleration"
 
-		local gravity_multiplier = 0.05
+		local var_7_30 = var_0_1(var_7_15, var_7_16, var_7_8)
+		local var_7_31 = math.easeOutCubic(var_7_30)
 
-		player_movement_settings_table.gravity_acceleration = PlayerUnitMovementSettings.gravity_acceleration * gravity_multiplier
+		var_7_12 = var_7_12 * math.lerp(1.25, 0.8, var_7_31)
 
-		local move_cap = math.clamp(movement_settings_table.move_speed, 0, movement_settings_table.max_move_speed)
-		local prev_move_velocity = locomotion_extension:current_velocity()
-		local new_move_velocity = (Vector3.normalize(prev_move_velocity) + move_direction) * speed
-		local new_move_speed = Vector3.length(new_move_velocity)
+		local var_7_32 = 0.1
 
-		new_move_speed = math.clamp(new_move_speed, 0, move_cap * movement_settings_table.player_speed_scale)
+		var_7_10.gravity_acceleration = PlayerUnitMovementSettings.gravity_acceleration * var_7_32
 
-		local new_move_direction = Vector3.normalize(new_move_velocity)
+		local var_7_33 = math.clamp(var_7_11.move_speed, 0, var_7_11.max_move_speed)
+		local var_7_34 = var_7_0:current_velocity()
+		local var_7_35 = (Vector3.normalize(var_7_34) + var_7_9) * var_7_12
+		local var_7_36 = Vector3.length(var_7_35)
+		local var_7_37 = math.clamp(var_7_36, 0, var_7_33 * (var_7_11.player_speed_scale or 1))
+		local var_7_38 = Vector3.normalize(var_7_35)
 
-		locomotion_extension:set_wanted_velocity(new_move_direction * new_move_speed)
-	elseif distance_travelled <= end_accel_distance then
-		state = "end_acceleration"
+		var_7_0:set_wanted_velocity(var_7_38 * var_7_37)
+	elseif var_7_8 <= var_7_17 then
+		var_7_20 = "glide"
 
-		local interval_distance_percentage = scale_percentage(start_accel_distance, end_accel_distance, distance_travelled)
+		local var_7_39 = var_0_1(var_7_16, var_7_17, var_7_8)
+		local var_7_40 = math.ease_in_exp(var_7_39)
 
-		interval_distance_percentage = math.easeOutCubic(interval_distance_percentage)
+		var_7_12 = var_7_12 * math.lerp(0.8, 0.7, var_7_40)
 
-		local speed_multiplier = math.lerp(1.25, 0.8, interval_distance_percentage)
+		var_7_0:set_mover_filter_property("enemy_leap_state", false)
 
-		speed = speed * speed_multiplier
+		local var_7_41 = 1
 
-		local gravity_multiplier = 0.1
+		var_7_10.gravity_acceleration = PlayerUnitMovementSettings.gravity_acceleration * var_7_41
 
-		player_movement_settings_table.gravity_acceleration = PlayerUnitMovementSettings.gravity_acceleration * gravity_multiplier
+		local var_7_42 = math.clamp(var_7_11.move_speed, 0, var_7_11.max_move_speed)
+		local var_7_43 = var_7_0:current_velocity()
+		local var_7_44 = (Vector3.normalize(var_7_43) + var_7_9) * var_7_12
+		local var_7_45 = Vector3.length(var_7_44)
+		local var_7_46 = math.clamp(var_7_45, 0, var_7_42 * (var_7_11.player_speed_scale or 1))
+		local var_7_47 = Vector3.normalize(var_7_44)
 
-		local move_cap = math.clamp(movement_settings_table.move_speed, 0, movement_settings_table.max_move_speed)
-		local prev_move_velocity = locomotion_extension:current_velocity()
-		local new_move_velocity = (Vector3.normalize(prev_move_velocity) + move_direction) * speed
-		local new_move_speed = Vector3.length(new_move_velocity)
+		var_7_0:set_wanted_velocity(var_7_47 * var_7_46)
+	elseif var_7_8 <= var_7_18 then
+		var_7_20 = "slow"
 
-		new_move_speed = math.clamp(new_move_speed, 0, move_cap * (movement_settings_table.player_speed_scale or 1))
+		local var_7_48 = var_0_1(var_7_17, var_7_18, var_7_8)
+		local var_7_49 = math.ease_out_quad(var_7_48)
 
-		local new_move_direction = Vector3.normalize(new_move_velocity)
+		var_7_12 = var_7_12 * math.lerp(0.7, 0.6, var_7_49)
+		var_7_10.gravity_acceleration = PlayerUnitMovementSettings.gravity_acceleration * var_7_49
 
-		locomotion_extension:set_wanted_velocity(new_move_direction * new_move_speed)
-	elseif distance_travelled <= glide_distance then
-		state = "glide"
+		local var_7_50 = math.clamp(var_7_11.move_speed, 0, var_7_11.max_move_speed)
+		local var_7_51 = var_7_0:current_velocity()
+		local var_7_52 = (Vector3.normalize(var_7_51) + var_7_9) * var_7_12
+		local var_7_53 = Vector3.length(var_7_52)
+		local var_7_54 = math.clamp(var_7_53, 0, var_7_50 * var_7_11.player_speed_scale or 1)
+		local var_7_55 = Vector3.normalize(var_7_52)
 
-		local interval_distance_percentage = scale_percentage(end_accel_distance, glide_distance, distance_travelled)
-
-		interval_distance_percentage = math.ease_in_exp(interval_distance_percentage)
-
-		local speed_multiplier = math.lerp(0.8, 0.7, interval_distance_percentage)
-
-		speed = speed * speed_multiplier
-
-		locomotion_extension:set_mover_filter_property("enemy_leap_state", false)
-
-		local gravity_multiplier = 1
-
-		player_movement_settings_table.gravity_acceleration = PlayerUnitMovementSettings.gravity_acceleration * gravity_multiplier
-
-		local move_cap = math.clamp(movement_settings_table.move_speed, 0, movement_settings_table.max_move_speed)
-		local prev_move_velocity = locomotion_extension:current_velocity()
-		local new_move_velocity = (Vector3.normalize(prev_move_velocity) + move_direction) * speed
-		local new_move_speed = Vector3.length(new_move_velocity)
-
-		new_move_speed = math.clamp(new_move_speed, 0, move_cap * (movement_settings_table.player_speed_scale or 1))
-
-		local new_move_direction = Vector3.normalize(new_move_velocity)
-
-		locomotion_extension:set_wanted_velocity(new_move_direction * new_move_speed)
-	elseif distance_travelled <= slow_distance then
-		state = "slow"
-
-		local interval_distance_percentage = scale_percentage(glide_distance, slow_distance, distance_travelled)
-
-		interval_distance_percentage = math.ease_out_quad(interval_distance_percentage)
-
-		local speed_multiplier = math.lerp(0.7, 0.6, interval_distance_percentage)
-
-		speed = speed * speed_multiplier
-		player_movement_settings_table.gravity_acceleration = PlayerUnitMovementSettings.gravity_acceleration * interval_distance_percentage
-
-		local move_cap = math.clamp(movement_settings_table.move_speed, 0, movement_settings_table.max_move_speed)
-		local prev_move_velocity = locomotion_extension:current_velocity()
-		local new_move_velocity = (Vector3.normalize(prev_move_velocity) + move_direction) * speed
-		local new_move_speed = Vector3.length(new_move_velocity)
-
-		new_move_speed = math.clamp(new_move_speed, 0, move_cap * movement_settings_table.player_speed_scale or 1)
-
-		local new_move_direction = Vector3.normalize(new_move_velocity)
-
-		locomotion_extension:set_wanted_velocity(new_move_direction * new_move_speed)
+		var_7_0:set_wanted_velocity(var_7_55 * var_7_54)
 	else
-		state = "slam"
+		var_7_20 = "slam"
 
-		locomotion_extension:set_mover_filter_property("enemy_leap_state", false)
+		var_7_0:set_mover_filter_property("enemy_leap_state", false)
 
-		local interval_distance_percentage = scale_percentage(slow_distance, full_distance, distance_travelled)
+		local var_7_56 = var_0_1(var_7_18, var_7_19, var_7_8)
+		local var_7_57 = math.ease_out_quad(var_7_56)
+		local var_7_58 = var_7_12 * math.lerp(0.6, 1.2, var_7_57)
+		local var_7_59 = math.lerp(0.25, 0, var_7_57)
+		local var_7_60 = math.lerp(0, 0.75, var_7_57)
+		local var_7_61 = 2
 
-		interval_distance_percentage = math.ease_out_quad(interval_distance_percentage)
+		var_7_10.gravity_acceleration = PlayerUnitMovementSettings.gravity_acceleration * var_7_61
 
-		local speed_multiplier = math.lerp(0.6, 1.2, interval_distance_percentage)
+		local var_7_62 = math.clamp(var_7_11.slam_speed, 0, var_7_11.max_slam_speed)
+		local var_7_63 = var_7_0:current_velocity()
+		local var_7_64 = Vector3.normalize(Vector3.flat(var_7_9)) * var_7_59 + Vector3.normalize(var_7_3 - var_7_1) * var_7_60
+		local var_7_65 = (Vector3.normalize(var_7_63) + var_7_64) * var_7_58
+		local var_7_66 = Vector3.length(var_7_65)
+		local var_7_67 = math.clamp(var_7_66, 0, var_7_62 * var_7_11.player_speed_scale)
+		local var_7_68 = Vector3.normalize(var_7_65)
 
-		speed = speed * speed_multiplier
-
-		local forward_vector_multiplier = math.lerp(0.25, 0, interval_distance_percentage)
-		local towards_end_vector_multiplier = math.lerp(0, 0.75, interval_distance_percentage)
-		local gravity_multiplier = 2
-
-		player_movement_settings_table.gravity_acceleration = PlayerUnitMovementSettings.gravity_acceleration * gravity_multiplier
-
-		local move_cap = math.clamp(movement_settings_table.slam_speed, 0, movement_settings_table.max_slam_speed)
-		local prev_move_velocity = locomotion_extension:current_velocity()
-		local forward = Vector3.normalize(Vector3.flat(move_direction)) * forward_vector_multiplier
-		local towards_end = Vector3.normalize(end_position - current_position) * towards_end_vector_multiplier
-		local new_move_direction = forward + towards_end
-		local new_move_velocity = (Vector3.normalize(prev_move_velocity) + new_move_direction) * speed
-		local new_move_speed = Vector3.length(new_move_velocity)
-
-		new_move_speed = math.clamp(new_move_speed, 0, move_cap * movement_settings_table.player_speed_scale)
-		new_move_direction = Vector3.normalize(new_move_velocity)
-
-		locomotion_extension:set_forced_velocity(new_move_direction * new_move_speed)
+		var_7_0:set_forced_velocity(var_7_68 * var_7_67)
 	end
 
-	return state
+	return var_7_20
 end
 
-EnemyCharacterStateLeaping._update_movement = function (self, unit, dt, t)
-	if self._leap_done then
+function EnemyCharacterStateLeaping._update_movement(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	if arg_8_0._leap_done then
 		return true
 	end
 
-	local leap_state = self:_move_in_air(unit, dt, t)
-	local colliding_down = CharacterStateHelper.is_colliding_down(unit)
-	local current_vel = self._locomotion_extension:current_velocity()
-	local flat_current_vel = Vector3.flat(current_vel)
-	local dot = Vector3.dot(Vector3.normalize(Vector3Box.unbox(self.initial_jump_direction)), Vector3.normalize(flat_current_vel))
-	local going_backwards
+	local var_8_0 = arg_8_0:_move_in_air(arg_8_1, arg_8_2, arg_8_3)
+	local var_8_1 = CharacterStateHelper.is_colliding_down(arg_8_1)
+	local var_8_2 = arg_8_0._locomotion_extension:current_velocity()
+	local var_8_3 = Vector3.flat(var_8_2)
+	local var_8_4 = Vector3.dot(Vector3.normalize(Vector3Box.unbox(arg_8_0.initial_jump_direction)), Vector3.normalize(var_8_3))
+	local var_8_5
 
-	if leap_state ~= "start_acceleration" and dot < 0 then
-		going_backwards = true
+	if var_8_0 ~= "start_acceleration" and var_8_4 < 0 then
+		var_8_5 = true
 	end
 
-	self._leap_done = colliding_down or going_backwards
+	arg_8_0._leap_done = var_8_1 or var_8_5
 
-	return self._leap_done, colliding_down, going_backwards
+	return arg_8_0._leap_done, var_8_1, var_8_5
 end
 
-EnemyCharacterStateLeaping._finish = function (self, unit, t)
-	local locomotion_extension = self._locomotion_extension
-	local first_person_extension = self._first_person_extension
+function EnemyCharacterStateLeaping._finish(arg_9_0, arg_9_1, arg_9_2)
+	local var_9_0 = arg_9_0._locomotion_extension
+	local var_9_1 = arg_9_0._first_person_extension
 
-	first_person_extension:play_camera_effect_sequence("landed_leap", t)
+	var_9_1:play_camera_effect_sequence("landed_leap", arg_9_2)
 
-	local land_sound_event = self._leap_data.sfx_event_land
+	local var_9_2 = arg_9_0._leap_data.sfx_event_land
 
-	if land_sound_event and not self._played_landing_event then
-		first_person_extension:play_unit_sound_event(land_sound_event, unit, 0, true)
+	if var_9_2 and not arg_9_0._played_landing_event then
+		var_9_1:play_unit_sound_event(var_9_2, arg_9_1, 0, true)
 
-		self._played_landing_event = true
+		arg_9_0._played_landing_event = true
 	end
 
-	local player_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
+	PlayerUnitMovementSettings.get_movement_settings_table(arg_9_1).gravity_acceleration = PlayerUnitMovementSettings.gravity_acceleration
 
-	player_movement_settings_table.gravity_acceleration = PlayerUnitMovementSettings.gravity_acceleration
+	var_9_0:set_forced_velocity(Vector3.zero())
+	var_9_0:set_wanted_velocity(Vector3.zero())
 
-	locomotion_extension:set_forced_velocity(Vector3.zero())
-	locomotion_extension:set_wanted_velocity(Vector3.zero())
+	if arg_9_0._leap_data.leap_events.finished then
+		local var_9_3 = var_0_0[arg_9_1]
 
-	if self._leap_data.leap_events.finished then
-		local final_position = POSITION_LOOKUP[unit]
-
-		self._leap_data.leap_events.finished(self, unit, false, final_position)
+		arg_9_0._leap_data.leap_events.finished(arg_9_0, arg_9_1, false, var_9_3)
 	end
 
-	self:_camera_effects(unit, 0)
+	arg_9_0:_camera_effects(arg_9_1, 0)
 
-	self._leap_done = true
+	arg_9_0._leap_done = true
 end
 
-EnemyCharacterStateLeaping._start_leap = function (self, unit, t)
-	local locomotion_extension = self._locomotion_extension
-	local first_person_extension = self._first_person_extension
+function EnemyCharacterStateLeaping._start_leap(arg_10_0, arg_10_1, arg_10_2)
+	local var_10_0 = arg_10_0._locomotion_extension
+	local var_10_1 = arg_10_0._first_person_extension
 
-	first_person_extension:play_camera_effect_sequence("jump", t)
+	var_10_1:play_camera_effect_sequence("jump", arg_10_2)
 
-	if self._leap_data.anim_start_event_1p then
-		CharacterStateHelper.play_animation_event_first_person(first_person_extension, self._leap_data.anim_start_event_1p)
+	if arg_10_0._leap_data.anim_start_event_1p then
+		CharacterStateHelper.play_animation_event_first_person(var_10_1, arg_10_0._leap_data.anim_start_event_1p)
 	end
 
-	if self._leap_data.anim_start_event_3p then
-		CharacterStateHelper.play_animation_event(unit, self._leap_data.anim_start_event_3p)
+	if arg_10_0._leap_data.anim_start_event_3p then
+		CharacterStateHelper.play_animation_event(arg_10_1, arg_10_0._leap_data.anim_start_event_3p)
 	end
 
-	local jump_sound_event = self._leap_data.sfx_event_jump
+	local var_10_2 = arg_10_0._leap_data.sfx_event_jump
 
-	if jump_sound_event then
-		first_person_extension:play_unit_sound_event(jump_sound_event, unit, 0, true)
+	if var_10_2 then
+		var_10_1:play_unit_sound_event(var_10_2, arg_10_1, 0, true)
 	end
 
-	local leap_events = self._leap_data.leap_events
+	local var_10_3 = arg_10_0._leap_data.leap_events
 
-	if leap_events and leap_events.start then
-		leap_events.start(self, unit)
+	if var_10_3 and var_10_3.start then
+		var_10_3.start(arg_10_0, arg_10_1)
 	end
 
-	local direction = self._leap_data.direction:unbox()
-	local speed = PlayerUnitMovementSettings.leap.jump_speed
-	local velocity = direction * speed + Vector3.up()
+	local var_10_4 = arg_10_0._leap_data.direction:unbox() * PlayerUnitMovementSettings.leap.jump_speed + Vector3.up()
 
-	locomotion_extension:set_maximum_upwards_velocity(velocity.z)
-	locomotion_extension:set_forced_velocity(velocity)
-	locomotion_extension:set_wanted_velocity(velocity)
+	var_10_0:set_maximum_upwards_velocity(var_10_4.z)
+	var_10_0:set_forced_velocity(var_10_4)
+	var_10_0:set_wanted_velocity(var_10_4)
 
-	local movement_settings_table = self._leap_data.movement_settings or PlayerUnitMovementSettings.get_movement_settings_table(unit)
-
-	movement_settings_table.gravity_acceleration = PlayerUnitMovementSettings.gravity_acceleration * 0
-	self._leap_done = false
+	;(arg_10_0._leap_data.movement_settings or PlayerUnitMovementSettings.get_movement_settings_table(arg_10_1)).gravity_acceleration = PlayerUnitMovementSettings.gravity_acceleration * 0
+	arg_10_0._leap_done = false
 end
 
-EnemyCharacterStateLeaping._camera_effects = function (self, unit, alpha)
-	local fov_max = 1.5
-	local fov_multiplier = math.lerp(1, fov_max, alpha)
+function EnemyCharacterStateLeaping._camera_effects(arg_11_0, arg_11_1, arg_11_2)
+	local var_11_0 = 1.5
+	local var_11_1 = math.lerp(1, var_11_0, arg_11_2)
 
-	Managers.state.camera:set_additional_fov_multiplier(fov_multiplier)
+	Managers.state.camera:set_additional_fov_multiplier(var_11_1)
 
-	local local_screen_space_effect = "fx/speedlines_01_1p"
+	local var_11_2 = "fx/speedlines_01_1p"
 
-	if alpha >= 0.25 then
-		if not self._screenspace_effect_id then
-			self._screenspace_effect_id = self._first_person_extension:create_screen_particles(local_screen_space_effect)
+	if arg_11_2 >= 0.25 then
+		if not arg_11_0._screenspace_effect_id then
+			arg_11_0._screenspace_effect_id = arg_11_0._first_person_extension:create_screen_particles(var_11_2)
 		end
-	elseif alpha <= 0 and self._screenspace_effect_id then
-		self._first_person_extension:destroy_screen_particles(self._screenspace_effect_id)
+	elseif arg_11_2 <= 0 and arg_11_0._screenspace_effect_id then
+		arg_11_0._first_person_extension:destroy_screen_particles(arg_11_0._screenspace_effect_id)
 
-		self._screenspace_effect_id = nil
+		arg_11_0._screenspace_effect_id = nil
 	end
 end

@@ -1,746 +1,722 @@
-﻿-- chunkname: @scripts/ui/hud_ui/versus_tab_ui.lua
+-- chunkname: @scripts/ui/hud_ui/versus_tab_ui.lua
 
-local definitions = local_require("scripts/ui/hud_ui/versus_tab_ui_definitions")
-local animation_definitions = definitions.animation_definitions
-local scenegraph_definition = definitions.scenegraph_definition
-local create_empty_frame_widget = definitions.create_empty_frame_widget
-local console_cursor_definition = definitions.console_cursor_definition
-local custom_game_settings_widgets = definitions.custom_game_settings_widgets
-local NUM_MAX_TEAMS = 2
-local NUM_TEAMS_SIZE = 4
-local DO_RELOAD = false
-local temp_vote_data = {}
-local allowed_loadout_slots = {
+local var_0_0 = local_require("scripts/ui/hud_ui/versus_tab_ui_definitions")
+local var_0_1 = var_0_0.animation_definitions
+local var_0_2 = var_0_0.scenegraph_definition
+local var_0_3 = var_0_0.create_empty_frame_widget
+local var_0_4 = var_0_0.console_cursor_definition
+local var_0_5 = var_0_0.custom_game_settings_widgets
+local var_0_6 = 2
+local var_0_7 = 4
+local var_0_8 = false
+local var_0_9 = {}
+local var_0_10 = {
 	"slot_melee",
-	"slot_ranged",
+	"slot_ranged"
 }
 
 VersusTabUI = class(VersusTabUI)
 
-VersusTabUI.init = function (self, parent, ingame_ui_context)
-	self._parent = parent
-	self._ui_renderer = ingame_ui_context.ui_renderer
-	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self._input_manager = ingame_ui_context.input_manager
-	self._voip = ingame_ui_context.voip
+function VersusTabUI.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0._parent = arg_1_1
+	arg_1_0._ui_renderer = arg_1_2.ui_renderer
+	arg_1_0._ui_top_renderer = arg_1_2.ui_top_renderer
+	arg_1_0._input_manager = arg_1_2.input_manager
+	arg_1_0._voip = arg_1_2.voip
 
-	local player = ingame_ui_context.player
+	local var_1_0 = arg_1_2.player
 
-	self._player = player
-	self._peer_id = player:network_id()
-	self._local_player_id = player:local_player_id()
-	self._context = ingame_ui_context
+	arg_1_0._player = var_1_0
+	arg_1_0._peer_id = var_1_0:network_id()
+	arg_1_0._local_player_id = var_1_0:local_player_id()
+	arg_1_0._context = arg_1_2
 
-	local world = ingame_ui_context.world_manager:world("level_world")
+	local var_1_1 = arg_1_2.world_manager:world("level_world")
 
-	self._wwise_world = Managers.world:wwise_world(world)
+	arg_1_0._wwise_world = Managers.world:wwise_world(var_1_1)
 
-	local input_manager = self._input_manager
+	local var_1_2 = arg_1_0._input_manager
 
-	input_manager:create_input_service("player_list_input", "IngamePlayerListKeymaps", "IngamePlayerListFilters")
-	input_manager:map_device_to_service("player_list_input", "keyboard")
-	input_manager:map_device_to_service("player_list_input", "mouse")
-	input_manager:map_device_to_service("player_list_input", "gamepad")
+	var_1_2:create_input_service("player_list_input", "IngamePlayerListKeymaps", "IngamePlayerListFilters")
+	var_1_2:map_device_to_service("player_list_input", "keyboard")
+	var_1_2:map_device_to_service("player_list_input", "mouse")
+	var_1_2:map_device_to_service("player_list_input", "gamepad")
 
-	self._animations = {}
-	self._render_settings = {
+	arg_1_0._animations = {}
+	arg_1_0._render_settings = {
 		alpha_multiplier = 0,
-		snap_pixel_positions = true,
+		snap_pixel_positions = true
 	}
-	self._selected_objective_index = 0
-	self._selected_sub_objective_index = 0
+	arg_1_0._selected_objective_index = 0
+	arg_1_0._selected_sub_objective_index = 0
 
-	self:_create_ui_elements()
+	arg_1_0:_create_ui_elements()
 
-	self._objective_system = Managers.state.entity:system("objective_system")
-	self._objectives_initialized = false
-	self._win_conditions = Managers.mechanism:game_mechanism():win_conditions()
+	arg_1_0._objective_system = Managers.state.entity:system("objective_system")
+	arg_1_0._objectives_initialized = false
+	arg_1_0._win_conditions = Managers.mechanism:game_mechanism():win_conditions()
 
-	local level_key = Managers.level_transition_handler:get_current_level_keys()
-	local level_settings = LevelSettings[level_key]
-	local level_name_localized = Localize(level_settings.display_name)
+	local var_1_3 = Managers.level_transition_handler:get_current_level_keys()
+	local var_1_4 = LevelSettings[var_1_3]
+	local var_1_5 = Localize(var_1_4.display_name)
 
-	self:_set_level_name(level_name_localized)
-	self:_register_events()
+	arg_1_0:_set_level_name(var_1_5)
+	arg_1_0:_register_events()
 
-	local game_mode_state = Managers.state.game_mode:game_mode():game_mode_state()
-	local round_has_started = game_mode_state == "match_running_state" and true or nil
+	local var_1_6 = Managers.state.game_mode:game_mode():game_mode_state() == "match_running_state" and true or nil
 
-	if round_has_started then
-		self:_on_round_started()
+	if var_1_6 then
+		arg_1_0:_on_round_started()
 	end
 
-	self._round_has_started = round_has_started
+	arg_1_0._round_has_started = var_1_6
 
-	local _, custom_round_time_limit, custom_settings_enabled = Managers.mechanism:mechanism_try_call("get_custom_game_setting", "round_time_limit")
+	local var_1_7, var_1_8, var_1_9 = Managers.mechanism:mechanism_try_call("get_custom_game_setting", "round_time_limit")
 
-	if custom_settings_enabled and custom_round_time_limit then
-		self._custom_round_timer_active = true
+	if var_1_9 and var_1_8 then
+		arg_1_0._custom_round_timer_active = true
 	end
 end
 
-VersusTabUI._create_ui_elements = function (self)
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
-	UIRenderer.clear_scenegraph_queue(self._ui_top_renderer)
+function VersusTabUI._create_ui_elements(arg_2_0)
+	UIRenderer.clear_scenegraph_queue(arg_2_0._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_2_0._ui_top_renderer)
 
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
+	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
-	local widgets = {}
-	local widgets_by_name = {}
-	local widget_definitions = definitions.widget_definitions
+	local var_2_0 = {}
+	local var_2_1 = {}
+	local var_2_2 = var_0_0.widget_definitions
 
-	for name, definition in pairs(widget_definitions) do
-		local widget = UIWidget.init(definition)
+	for iter_2_0, iter_2_1 in pairs(var_2_2) do
+		local var_2_3 = UIWidget.init(iter_2_1)
 
-		widgets_by_name[name] = widget
-		widgets[#widgets + 1] = widget
+		var_2_1[iter_2_0] = var_2_3
+		var_2_0[#var_2_0 + 1] = var_2_3
 	end
 
-	self._item_tooltip = UIWidget.init(definitions.item_tooltip)
-	self._console_cursor = UIWidget.init(console_cursor_definition)
-	self._widgets_by_name = widgets_by_name
-	self._widgets = widgets
-	DO_RELOAD = false
+	arg_2_0._item_tooltip = UIWidget.init(var_0_0.item_tooltip)
+	arg_2_0._console_cursor = UIWidget.init(var_0_4)
+	arg_2_0._widgets_by_name = var_2_1
+	arg_2_0._widgets = var_2_0
+	var_0_8 = false
 
-	self:_create_player_slots()
+	arg_2_0:_create_player_slots()
 
-	self._custom_game_settings_widgets, self._custom_game_settings_widgets_by_name = {}, {}
+	arg_2_0._custom_game_settings_widgets, arg_2_0._custom_game_settings_widgets_by_name = {}, {}
 
-	UIUtils.create_widgets(custom_game_settings_widgets, self._custom_game_settings_widgets, self._custom_game_settings_widgets_by_name)
+	UIUtils.create_widgets(var_0_5, arg_2_0._custom_game_settings_widgets, arg_2_0._custom_game_settings_widgets_by_name)
 
-	local custom_settings_enabled = Managers.mechanism:game_mechanism():custom_settings_enabled()
+	local var_2_4 = Managers.mechanism:game_mechanism():custom_settings_enabled()
 
-	if custom_settings_enabled then
-		self:_setup_custom_settings()
+	if var_2_4 then
+		arg_2_0:_setup_custom_settings()
 	end
 
-	self._custom_settings_enabled = custom_settings_enabled
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
+	arg_2_0._custom_settings_enabled = var_2_4
+	arg_2_0._ui_animator = UIAnimator:new(arg_2_0._ui_scenegraph, var_0_1)
 end
 
-VersusTabUI.destroy = function (self)
-	self._ui_animator = nil
+function VersusTabUI.destroy(arg_3_0)
+	arg_3_0._ui_animator = nil
 
-	self:_unregister_events()
+	arg_3_0:_unregister_events()
 end
 
-VersusTabUI.update = function (self, dt, t)
-	if DO_RELOAD then
-		self:_create_ui_elements()
+function VersusTabUI.update(arg_4_0, arg_4_1, arg_4_2)
+	if var_0_8 then
+		arg_4_0:_create_ui_elements()
 	end
 
-	self:_handle_input(dt, t)
+	arg_4_0:_handle_input(arg_4_1, arg_4_2)
 
-	if self._active then
-		local mechanism_manager = Managers.mechanism
-		local current_set = self:_get_current_set()
-		local level_key = Managers.level_transition_handler:get_current_level_key()
-		local max_rounds = VersusObjectiveSettings[level_key].num_sets
+	if arg_4_0._active then
+		local var_4_0 = Managers.mechanism
+		local var_4_1 = arg_4_0:_get_current_set()
+		local var_4_2 = Managers.level_transition_handler:get_current_level_key()
+		local var_4_3 = VersusObjectiveSettings[var_4_2].num_sets
 
-		if current_set ~= self._round_id then
-			self._round_id = current_set
+		if var_4_1 ~= arg_4_0._round_id then
+			arg_4_0._round_id = var_4_1
 
-			local temp_string = Localize("versus_round_count")
+			local var_4_4 = Localize("versus_round_count")
 
-			self:_set_sub_title(string.format(temp_string, current_set, max_rounds))
+			arg_4_0:_set_sub_title(string.format(var_4_4, var_4_1, var_4_3))
 		end
 
-		local party_manager = Managers.party
-		local _, party_id = party_manager:get_party_from_player_id(self._peer_id, self._local_player_id)
-		local opponent_party_id = self:_get_opponent_party_id()
+		local var_4_5 = Managers.party
+		local var_4_6, var_4_7 = var_4_5:get_party_from_player_id(arg_4_0._peer_id, arg_4_0._local_player_id)
+		local var_4_8 = arg_4_0:_get_opponent_party_id()
 
-		self:_set_team_name(party_id, opponent_party_id)
-		self:_set_team_textures(party_id, opponent_party_id)
-		self:_set_side_text(party_manager, party_id, opponent_party_id)
+		arg_4_0:_set_team_name(var_4_7, var_4_8)
+		arg_4_0:_set_team_textures(var_4_7, var_4_8)
+		arg_4_0:_set_side_text(var_4_5, var_4_7, var_4_8)
 
-		if not self._party_id then
-			self._party_id = party_id
-			self._opponent_party_id = opponent_party_id
+		if not arg_4_0._party_id then
+			arg_4_0._party_id = var_4_7
+			arg_4_0._opponent_party_id = var_4_8
 		end
 
-		self:_update_round_start_timer(dt, t)
-		self:_update_objectives(dt, t)
-		self:_update_score(party_id, opponent_party_id)
-		self:_update_animations(dt, t)
-		self:_update_custom_lobby_slots()
-		self:_draw(dt, t)
+		arg_4_0:_update_round_start_timer(arg_4_1, arg_4_2)
+		arg_4_0:_update_objectives(arg_4_1, arg_4_2)
+		arg_4_0:_update_score(var_4_7, var_4_8)
+		arg_4_0:_update_animations(arg_4_1, arg_4_2)
+		arg_4_0:_update_custom_lobby_slots()
+		arg_4_0:_draw(arg_4_1, arg_4_2)
 	end
 end
 
-VersusTabUI._update_animations = function (self, dt, t)
-	local animations = self._animations
-	local ui_animator = self._ui_animator
+function VersusTabUI._update_animations(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = arg_5_0._animations
+	local var_5_1 = arg_5_0._ui_animator
 
-	ui_animator:update(dt)
+	var_5_1:update(arg_5_1)
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_5_0, iter_5_1 in pairs(var_5_0) do
+		if var_5_1:is_animation_completed(iter_5_1) then
+			var_5_1:stop_animation(iter_5_1)
 
-			animations[animation_name] = nil
+			var_5_0[iter_5_0] = nil
 		end
 	end
 end
 
-VersusTabUI._draw = function (self, dt, t)
-	local ui_renderer = self._ui_top_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local input_manager = self._input_manager
-	local input_service = input_manager:get_service("player_list_input")
-	local render_settings = self._render_settings
-	local gamepad_active = input_manager:is_device_active("gamepad")
-	local alpha_multiplier = render_settings.alpha_multiplier or 1
+function VersusTabUI._draw(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = arg_6_0._ui_top_renderer
+	local var_6_1 = arg_6_0._ui_scenegraph
+	local var_6_2 = arg_6_0._input_manager
+	local var_6_3 = var_6_2:get_service("player_list_input")
+	local var_6_4 = arg_6_0._render_settings
+	local var_6_5 = var_6_2:is_device_active("gamepad")
+	local var_6_6 = var_6_4.alpha_multiplier or 1
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+	UIRenderer.begin_pass(var_6_0, var_6_1, var_6_3, arg_6_1, nil, var_6_4)
 
-	local widgets = self._widgets
+	local var_6_7 = arg_6_0._widgets
 
-	if widgets then
-		for i = 1, #widgets do
-			local widget = widgets[i]
+	if var_6_7 then
+		for iter_6_0 = 1, #var_6_7 do
+			local var_6_8 = var_6_7[iter_6_0]
 
-			render_settings.alpha_multiplier = widget.alpha_multiplier or alpha_multiplier
+			var_6_4.alpha_multiplier = var_6_8.alpha_multiplier or var_6_6
 
-			UIRenderer.draw_widget(ui_renderer, widget)
+			UIRenderer.draw_widget(var_6_0, var_6_8)
 		end
 	end
 
-	render_settings.alpha_multiplier = alpha_multiplier
+	var_6_4.alpha_multiplier = var_6_6
 
-	local custom_game_slots = self._custom_game_slots
+	local var_6_9 = arg_6_0._custom_game_slots
 
-	if custom_game_slots then
-		for i = 1, #custom_game_slots do
-			local team_slots = custom_game_slots[i]
+	if var_6_9 then
+		for iter_6_1 = 1, #var_6_9 do
+			local var_6_10 = var_6_9[iter_6_1]
 
-			for j = 1, #team_slots do
-				local player_slot = team_slots[j]
-				local empty = player_slot.empty
-				local is_player = player_slot.is_player
-				local peer_id = player_slot.peer_id
-				local empty_widget = player_slot.empty_widget
+			for iter_6_2 = 1, #var_6_10 do
+				local var_6_11 = var_6_10[iter_6_2]
+				local var_6_12 = var_6_11.empty
+				local var_6_13 = var_6_11.is_player
+				local var_6_14 = var_6_11.peer_id
+				local var_6_15 = var_6_11.empty_widget
 
-				if empty_widget then
-					UIRenderer.draw_widget(ui_renderer, empty_widget)
+				if var_6_15 then
+					UIRenderer.draw_widget(var_6_0, var_6_15)
 				end
 
-				if not empty then
-					local panel_widget = player_slot.panel_widget
+				if not var_6_12 then
+					local var_6_16 = var_6_11.panel_widget
 
-					if panel_widget then
-						UIRenderer.draw_widget(ui_renderer, panel_widget)
+					if var_6_16 then
+						UIRenderer.draw_widget(var_6_0, var_6_16)
 					end
 
-					local portrait_widget = player_slot.portrait_widget
+					local var_6_17 = var_6_11.portrait_widget
 
-					if portrait_widget then
-						UIRenderer.draw_widget(ui_renderer, portrait_widget)
+					if var_6_17 then
+						UIRenderer.draw_widget(var_6_0, var_6_17)
 					end
 
-					local insignia_widget = player_slot.insignia_widget
+					local var_6_18 = var_6_11.insignia_widget
 
-					if insignia_widget then
-						UIRenderer.draw_widget(ui_renderer, insignia_widget)
+					if var_6_18 then
+						UIRenderer.draw_widget(var_6_0, var_6_18)
 					end
 				end
 			end
 		end
 	end
 
-	self._widgets_by_name.objective_text.content.visible = self._round_has_started and true or false
+	arg_6_0._widgets_by_name.objective_text.content.visible = arg_6_0._round_has_started and true or false
 
-	UIRenderer.draw_widget(ui_renderer, self._item_tooltip)
+	UIRenderer.draw_widget(var_6_0, arg_6_0._item_tooltip)
 
-	if gamepad_active then
-		UIRenderer.draw_widget(ui_renderer, self._console_cursor)
+	if var_6_5 then
+		UIRenderer.draw_widget(var_6_0, arg_6_0._console_cursor)
 	end
 
-	if self._custom_settings_enabled and self._custom_game_settings_widgets then
-		UIRenderer.draw_all_widgets(ui_renderer, self._custom_game_settings_widgets)
+	if arg_6_0._custom_settings_enabled and arg_6_0._custom_game_settings_widgets then
+		UIRenderer.draw_all_widgets(var_6_0, arg_6_0._custom_game_settings_widgets)
 	end
 
-	if self._custom_settings_enabled and self._settings_widgets then
-		UIRenderer.draw_all_widgets(ui_renderer, self._settings_widgets)
+	if arg_6_0._custom_settings_enabled and arg_6_0._settings_widgets then
+		UIRenderer.draw_all_widgets(var_6_0, arg_6_0._settings_widgets)
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_6_0)
 
-	if self._scrollbar_ui then
-		self._scrollbar_ui:update(dt, t, ui_renderer, input_service, render_settings)
-	end
-end
-
-VersusTabUI._set_team_name = function (self, local_player_party_id, opponent_party_id)
-	local local_team_ui_settings, opponent_team_ui_settings = self:_get_teams_ui_settings(local_player_party_id, opponent_party_id)
-	local team_1_name = self._widgets_by_name.team_1_name
-
-	team_1_name.content.text = Localize(local_team_ui_settings.display_name)
-
-	local team_2_name = self._widgets_by_name.team_2_name
-
-	team_2_name.content.text = Localize(opponent_team_ui_settings.display_name)
-end
-
-VersusTabUI._set_team_textures = function (self, local_player_party_id, opponent_party_id)
-	local local_team_ui_settings, opponent_team_ui_settings = self:_get_teams_ui_settings(local_player_party_id, opponent_party_id)
-	local team_1_icon = self._widgets_by_name.team_1_icon
-
-	team_1_icon.content.texture_id = local_team_ui_settings.local_flag_texture
-
-	local team_2_icon = self._widgets_by_name.team_2_icon
-
-	team_2_icon.content.texture_id = opponent_team_ui_settings.opponent_flag_texture
-end
-
-VersusTabUI._set_side_text = function (self, party_manager, local_player_party_id, opponent_party_id)
-	local settings = DLCSettings.carousel
-	local local_player_party = party_manager:get_party(local_player_party_id)
-
-	if local_player_party then
-		local side = Managers.state.side.side_by_party[local_player_party]
-		local side_name = side:name()
-		local side_name_text = self._widgets_by_name.team_1_side_text
-		local side_localization_key = settings.sides_localization_lookup[side_name]
-
-		side_name_text.content.text = Localize(side_localization_key)
-	end
-
-	local opponent_party = party_manager:get_party(opponent_party_id)
-
-	if opponent_party then
-		local side = Managers.state.side.side_by_party[opponent_party]
-		local side_name = side:name()
-		local side_name_text = self._widgets_by_name.team_2_side_text
-		local side_localization_key = settings.sides_localization_lookup[side_name]
-
-		side_name_text.content.text = Localize(side_localization_key)
+	if arg_6_0._scrollbar_ui then
+		arg_6_0._scrollbar_ui:update(arg_6_1, arg_6_2, var_6_0, var_6_3, var_6_4)
 	end
 end
 
-VersusTabUI._update_score = function (self, local_player_party_id, opponent_party_id)
-	local local_player_team_score = self._win_conditions:get_total_score(local_player_party_id)
-	local opponent_team_score = self._win_conditions:get_total_score(opponent_party_id)
-	local local_player_party = Managers.party:get_party(local_player_party_id)
-	local local_player_team_side = Managers.state.side.side_by_party[local_player_party]
-	local local_player_team_side_name = local_player_team_side:name()
-	local widget = self._widgets_by_name.score
-	local content = widget.content
+function VersusTabUI._set_team_name(arg_7_0, arg_7_1, arg_7_2)
+	local var_7_0, var_7_1 = arg_7_0:_get_teams_ui_settings(arg_7_1, arg_7_2)
 
-	content.is_hero = local_player_team_side_name == "heroes"
-	content.team_1_score = local_player_team_score
-	content.team_2_score = opponent_team_score
+	arg_7_0._widgets_by_name.team_1_name.content.text = Localize(var_7_0.display_name)
+	arg_7_0._widgets_by_name.team_2_name.content.text = Localize(var_7_1.display_name)
 end
 
-VersusTabUI._get_teams_ui_settings = function (self, local_player_party_id, opponent_party_id)
-	local local_player_team_name_key = Managers.state.game_mode:setting("party_names_lookup_by_id")[local_player_party_id]
-	local opponent_team_name_key = Managers.state.game_mode:setting("party_names_lookup_by_id")[opponent_party_id]
-	local dlc_settings = DLCSettings.carousel
-	local local_team_ui_settings = dlc_settings.teams_ui_assets[local_player_team_name_key]
-	local opponent_ui_settings = dlc_settings.teams_ui_assets[opponent_team_name_key]
+function VersusTabUI._set_team_textures(arg_8_0, arg_8_1, arg_8_2)
+	local var_8_0, var_8_1 = arg_8_0:_get_teams_ui_settings(arg_8_1, arg_8_2)
 
-	return local_team_ui_settings, opponent_ui_settings
+	arg_8_0._widgets_by_name.team_1_icon.content.texture_id = var_8_0.local_flag_texture
+	arg_8_0._widgets_by_name.team_2_icon.content.texture_id = var_8_1.opponent_flag_texture
 end
 
-VersusTabUI._set_level_name = function (self, text)
-	local widget = self._widgets_by_name.level_name
+function VersusTabUI._set_side_text(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	local var_9_0 = DLCSettings.carousel
+	local var_9_1 = arg_9_1:get_party(arg_9_2)
 
-	widget.content.text = text
+	if var_9_1 then
+		local var_9_2 = Managers.state.side.side_by_party[var_9_1]:name()
+		local var_9_3 = arg_9_0._widgets_by_name.team_1_side_text
+		local var_9_4 = var_9_0.sides_localization_lookup[var_9_2]
+
+		var_9_3.content.text = Localize(var_9_4)
+	end
+
+	local var_9_5 = arg_9_1:get_party(arg_9_3)
+
+	if var_9_5 then
+		local var_9_6 = Managers.state.side.side_by_party[var_9_5]:name()
+		local var_9_7 = arg_9_0._widgets_by_name.team_2_side_text
+		local var_9_8 = var_9_0.sides_localization_lookup[var_9_6]
+
+		var_9_7.content.text = Localize(var_9_8)
+	end
 end
 
-VersusTabUI._set_sub_title = function (self, text)
-	local widget = self._widgets_by_name.sub_title
+function VersusTabUI._update_score(arg_10_0, arg_10_1, arg_10_2)
+	local var_10_0 = arg_10_0._win_conditions:get_total_score(arg_10_1)
+	local var_10_1 = arg_10_0._win_conditions:get_total_score(arg_10_2)
+	local var_10_2 = Managers.party:get_party(arg_10_1)
+	local var_10_3 = Managers.state.side.side_by_party[var_10_2]:name()
+	local var_10_4 = arg_10_0._widgets_by_name.score.content
 
-	widget.content.text = text
+	var_10_4.is_hero = var_10_3 == "heroes"
+	var_10_4.team_1_score = var_10_0
+	var_10_4.team_2_score = var_10_1
 end
 
-VersusTabUI.input_service = function (self)
-	local input_manager = self._input_manager
+function VersusTabUI._get_teams_ui_settings(arg_11_0, arg_11_1, arg_11_2)
+	local var_11_0 = Managers.state.game_mode:setting("party_names_lookup_by_id")[arg_11_1]
+	local var_11_1 = Managers.state.game_mode:setting("party_names_lookup_by_id")[arg_11_2]
+	local var_11_2 = DLCSettings.carousel
+	local var_11_3 = var_11_2.teams_ui_assets[var_11_0]
+	local var_11_4 = var_11_2.teams_ui_assets[var_11_1]
 
-	return input_manager:get_service("player_list_input")
+	return var_11_3, var_11_4
 end
 
-VersusTabUI.is_focused = function (self)
-	return self._active and self.cursor_active
+function VersusTabUI._set_level_name(arg_12_0, arg_12_1)
+	arg_12_0._widgets_by_name.level_name.content.text = arg_12_1
 end
 
-VersusTabUI.is_active = function (self)
-	return self._active
+function VersusTabUI._set_sub_title(arg_13_0, arg_13_1)
+	arg_13_0._widgets_by_name.sub_title.content.text = arg_13_1
 end
 
-VersusTabUI.set_active = function (self, active)
-	local chat_gui = Managers.chat.chat_gui
+function VersusTabUI.input_service(arg_14_0)
+	return arg_14_0._input_manager:get_service("player_list_input")
+end
 
-	if active then
-		local anim_params = {
-			render_settings = self._render_settings,
+function VersusTabUI.is_focused(arg_15_0)
+	return arg_15_0._active and arg_15_0.cursor_active
+end
+
+function VersusTabUI.is_active(arg_16_0)
+	return arg_16_0._active
+end
+
+function VersusTabUI.set_active(arg_17_0, arg_17_1)
+	local var_17_0 = Managers.chat.chat_gui
+
+	if arg_17_1 then
+		local var_17_1 = {
+			render_settings = arg_17_0._render_settings
 		}
 
-		self._ui_animator:start_animation("on_enter", self._widgets_by_name, scenegraph_definition, anim_params)
+		arg_17_0._ui_animator:start_animation("on_enter", arg_17_0._widgets_by_name, var_0_2, var_17_1)
 		Managers.input:enable_gamepad_cursor()
-		self:_create_player_slots()
+		arg_17_0:_create_player_slots()
 	else
-		chat_gui:hide_chat()
+		var_17_0:hide_chat()
 		Managers.input:disable_gamepad_cursor()
 	end
 
-	self._active = active
+	arg_17_0._active = arg_17_1
 
-	if active then
-		self._fade_in_duration = 0
+	if arg_17_1 then
+		arg_17_0._fade_in_duration = 0
 	end
 
-	self:_deactivate_cursor()
+	arg_17_0:_deactivate_cursor()
 end
 
-VersusTabUI._deactivate_cursor = function (self)
-	if self.cursor_active then
+function VersusTabUI._deactivate_cursor(arg_18_0)
+	if arg_18_0.cursor_active then
 		ShowCursorStack.hide("VersusSlotStatusUI")
 
-		local input_manager = self._input_manager
+		local var_18_0 = arg_18_0._input_manager
 
-		input_manager:device_unblock_all_services("keyboard")
-		input_manager:device_unblock_all_services("mouse")
-		input_manager:device_unblock_all_services("gamepad")
+		var_18_0:device_unblock_all_services("keyboard")
+		var_18_0:device_unblock_all_services("mouse")
+		var_18_0:device_unblock_all_services("gamepad")
 
-		self.cursor_active = false
-		self._widgets_by_name.input_description_text.content.visible = true
+		arg_18_0.cursor_active = false
+		arg_18_0._widgets_by_name.input_description_text.content.visible = true
 	end
 end
 
-VersusTabUI._activate_cursor = function (self)
-	if not self.cursor_active then
+function VersusTabUI._activate_cursor(arg_19_0)
+	if not arg_19_0.cursor_active then
 		ShowCursorStack.show("VersusSlotStatusUI")
 
-		local input_manager = self._input_manager
+		local var_19_0 = arg_19_0._input_manager
 
-		input_manager:block_device_except_service("player_list_input", "keyboard")
-		input_manager:block_device_except_service("player_list_input", "mouse")
-		input_manager:block_device_except_service("player_list_input", "gamepad")
+		var_19_0:block_device_except_service("player_list_input", "keyboard")
+		var_19_0:block_device_except_service("player_list_input", "mouse")
+		var_19_0:block_device_except_service("player_list_input", "gamepad")
 
-		self.cursor_active = true
-		self._widgets_by_name.input_description_text.content.visible = false
+		arg_19_0.cursor_active = true
+		arg_19_0._widgets_by_name.input_description_text.content.visible = false
 	end
 end
 
-VersusTabUI._handle_input = function (self, dt)
-	local input_manager = self._input_manager
-	local in_fade_active = Managers.transition:in_fade_active()
-	local input_service = input_manager:get_service("player_list_input")
+function VersusTabUI._handle_input(arg_20_0, arg_20_1)
+	local var_20_0 = arg_20_0._input_manager
+	local var_20_1 = Managers.transition:in_fade_active()
+	local var_20_2 = var_20_0:get_service("player_list_input")
 
-	if not in_fade_active and (input_service:get("ingame_player_list_exit") or input_service:get("ingame_player_list_toggle") or input_service:get("back")) and self._active and self.cursor_active then
-		self:set_active(false)
-	elseif not self.cursor_active then
-		if not in_fade_active and input_service:get("ingame_player_list_toggle") then
-			if not self._active then
-				self:set_active(true)
+	if not var_20_1 and (var_20_2:get("ingame_player_list_exit") or var_20_2:get("ingame_player_list_toggle") or var_20_2:get("back")) and arg_20_0._active and arg_20_0.cursor_active then
+		arg_20_0:set_active(false)
+	elseif not arg_20_0.cursor_active then
+		if not var_20_1 and var_20_2:get("ingame_player_list_toggle") then
+			if not arg_20_0._active then
+				arg_20_0:set_active(true)
 
-				if not self.cursor_active then
-					self:_activate_cursor()
+				if not arg_20_0.cursor_active then
+					arg_20_0:_activate_cursor()
 				end
 			end
-		elseif input_service:get("ingame_player_list_pressed") then
-			if not self._active then
-				self:set_active(true)
+		elseif var_20_2:get("ingame_player_list_pressed") then
+			if not arg_20_0._active then
+				arg_20_0:set_active(true)
 			end
-		elseif self._active and not input_service:get("ingame_player_list_held") then
-			self:set_active(false)
+		elseif arg_20_0._active and not var_20_2:get("ingame_player_list_held") then
+			arg_20_0:set_active(false)
 		end
 	end
 
-	if self._active and input_service:get("activate_ingame_player_list") then
-		self:_activate_cursor()
+	if arg_20_0._active and var_20_2:get("activate_ingame_player_list") then
+		arg_20_0:_activate_cursor()
 	end
 end
 
-VersusTabUI._create_player_slots = function (self)
-	local ui_scenegraph = self._ui_scenegraph
-	local index = 1
-	local custom_game_slots = {}
+function VersusTabUI._create_player_slots(arg_21_0)
+	local var_21_0 = arg_21_0._ui_scenegraph
+	local var_21_1 = 1
+	local var_21_2 = {}
 
-	for i = 1, NUM_MAX_TEAMS do
-		local team_slots = {}
+	for iter_21_0 = 1, var_0_6 do
+		local var_21_3 = {}
 
-		custom_game_slots[i] = team_slots
+		var_21_2[iter_21_0] = var_21_3
 
-		for j = 1, NUM_TEAMS_SIZE do
-			local slot_data = {}
+		for iter_21_1 = 1, var_0_7 do
+			local var_21_4 = {}
 
-			team_slots[j] = slot_data
+			var_21_3[iter_21_1] = var_21_4
 
-			local player_panel_scenegraph_id = "team_" .. i .. "_player_panel_" .. j
-			local talent_tooltip_scenegraph_id = "talent_tooltip"
-			local player_panel_scenegraph = ui_scenegraph[player_panel_scenegraph_id]
+			local var_21_5 = "team_" .. iter_21_0 .. "_player_panel_" .. iter_21_1
+			local var_21_6 = "talent_tooltip"
 
-			if player_panel_scenegraph then
-				local size = ui_scenegraph[player_panel_scenegraph_id].size
-				local widget_definition = UIWidgets.create_player_panel(player_panel_scenegraph_id, talent_tooltip_scenegraph_id, index, size)
-				local widget = UIWidget.init(widget_definition)
-				local team_color = i == 1 and Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
+			if var_21_0[var_21_5] then
+				local var_21_7 = var_21_0[var_21_5].size
+				local var_21_8 = UIWidgets.create_player_panel(var_21_5, var_21_6, var_21_1, var_21_7)
+				local var_21_9 = UIWidget.init(var_21_8)
+				local var_21_10 = iter_21_0 == 1 and Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
 
-				self:_apply_color_values(widget.style.background.color, team_color)
+				arg_21_0:_apply_color_values(var_21_9.style.background.color, var_21_10)
 
-				local empty_widget_def = create_empty_frame_widget(player_panel_scenegraph_id)
-				local empty_widget = UIWidget.init(empty_widget_def)
+				local var_21_11 = var_0_3(var_21_5)
 
-				slot_data.panel_widget = widget
-				slot_data.empty_widget = empty_widget
-				index = index + 1
+				var_21_4.empty_widget, var_21_4.panel_widget = UIWidget.init(var_21_11), var_21_9
+				var_21_1 = var_21_1 + 1
 			end
 		end
 	end
 
-	self._custom_game_slots = custom_game_slots
+	arg_21_0._custom_game_slots = var_21_2
 end
 
-VersusTabUI._setup_custom_settings = function (self)
-	local custom_game_settings_handler = Managers.mechanism:game_mechanism():get_custom_game_settings_handler()
-	local settings_templates = custom_game_settings_handler and custom_game_settings_handler:get_settings_template()
-	local settings = custom_game_settings_handler:get_settings()
-	local settings_template = settings_templates
-	local settings_ui_data = DLCSettings.carousel.custom_game_ui_settings
-	local settings_widgets, settings_widgets_by_name = {}, {}
-	local settings_spacing = 34
+function VersusTabUI._setup_custom_settings(arg_22_0)
+	local var_22_0 = Managers.mechanism:game_mechanism():get_custom_game_settings_handler()
+	local var_22_1, var_22_2 = var_22_0 and var_22_0:get_settings_template(), var_22_0:get_settings()
+	local var_22_3 = DLCSettings.carousel.custom_game_ui_settings
+	local var_22_4 = {}
+	local var_22_5 = {}
+	local var_22_6 = 34
 
-	for id, value in ipairs(settings) do
-		local data = settings_template[id]
-		local setting_name = data.setting_name
-		local values = data.values
-		local ui_data = settings_ui_data[setting_name]
-		local start_idx = data.values_reverse_lookup[value]
-		local default_value = data.default
-		local default_idx = data.values_reverse_lookup[default_value]
-		local widget_def = definitions.create_settings_widget("settings_anchor", data, ui_data, value, start_idx, id)
-		local widget = UIWidget.init(widget_def)
+	for iter_22_0, iter_22_1 in ipairs(var_22_2) do
+		local var_22_7 = var_22_1[iter_22_0]
+		local var_22_8 = var_22_7.setting_name
+		local var_22_9 = var_22_7.values
+		local var_22_10 = var_22_3[var_22_8]
+		local var_22_11 = var_22_7.values_reverse_lookup[iter_22_1]
+		local var_22_12 = var_22_7.default
+		local var_22_13 = var_22_7.values_reverse_lookup[var_22_12]
+		local var_22_14 = var_0_0.create_settings_widget("settings_anchor", var_22_7, var_22_10, iter_22_1, var_22_11, iter_22_0)
+		local var_22_15 = UIWidget.init(var_22_14)
 
-		widget.offset = {
+		var_22_15.offset = {
 			20,
-			-settings_spacing * id,
-			1,
+			-var_22_6 * iter_22_0,
+			1
 		}
-		widget.content.default_value = default_value
-		widget.content.default_idx = default_idx
-		settings_widgets[#settings_widgets + 1] = widget
-		settings_widgets_by_name[setting_name] = widget
+		var_22_15.content.default_value = var_22_12
+		var_22_15.content.default_idx = var_22_13
+		var_22_4[#var_22_4 + 1] = var_22_15
+		var_22_5[var_22_8] = var_22_15
 	end
 
-	self._settings_widgets = settings_widgets
-	self._settings_widgets_by_name = settings_widgets_by_name
+	arg_22_0._settings_widgets = var_22_4
+	arg_22_0._settings_widgets_by_name = var_22_5
 
-	local num_settings = #settings
+	local var_22_16 = #var_22_2
 
-	self:_setup_custom_settings_scrollbar(num_settings, settings_spacing)
+	arg_22_0:_setup_custom_settings_scrollbar(var_22_16, var_22_6)
 
-	self._num_settings = num_settings
-	self._settings = settings
+	arg_22_0._num_settings = var_22_16
+	arg_22_0._settings = var_22_2
 end
 
-VersusTabUI._update_custom_lobby_slots = function (self)
-	local party_manager = Managers.party
-	local player_manager = Managers.player
-	local pre_game_logic = self._pre_game_logic
-	local players = player_manager:human_and_bot_players()
-	local custom_game_slots = self._custom_game_slots
+function VersusTabUI._update_custom_lobby_slots(arg_23_0)
+	local var_23_0 = Managers.party
+	local var_23_1 = Managers.player
+	local var_23_2 = arg_23_0._pre_game_logic
+	local var_23_3 = var_23_1:human_and_bot_players()
+	local var_23_4 = arg_23_0._custom_game_slots
 
-	if not custom_game_slots then
+	if not var_23_4 then
 		return
 	end
 
-	self._item_tooltip.content.item = nil
+	arg_23_0._item_tooltip.content.item = nil
 
-	local local_player_team_slots = custom_game_slots[1]
+	local var_23_5 = var_23_4[1]
 
-	self:_update_party_slots_data(self._party_id, local_player_team_slots, 1, party_manager, player_manager, pre_game_logic, players)
+	arg_23_0:_update_party_slots_data(arg_23_0._party_id, var_23_5, 1, var_23_0, var_23_1, var_23_2, var_23_3)
 
-	local opponent_team_slots = custom_game_slots[2]
-	local opponent_party_id = self:_get_opponent_party_id()
+	local var_23_6 = var_23_4[2]
+	local var_23_7 = arg_23_0:_get_opponent_party_id()
 
-	self:_update_party_slots_data(opponent_party_id, opponent_team_slots, 2, party_manager, player_manager, pre_game_logic, players)
-	self:_update_players_panel_button_widgets()
-	self:_handle_players_panel_button_input()
+	arg_23_0:_update_party_slots_data(var_23_7, var_23_6, 2, var_23_0, var_23_1, var_23_2, var_23_3)
+	arg_23_0:_update_players_panel_button_widgets()
+	arg_23_0:_handle_players_panel_button_input()
 end
 
-VersusTabUI._update_party_slots_data = function (self, party_id, team_slots, team, party_manager, player_manager, pre_game_logic, players)
-	local party = party_manager:get_party(party_id)
-	local game_session = Managers.state.network:game()
-	local network_handler = Managers.mechanism:network_handler()
-	local match_handler = network_handler:get_match_handler()
+function VersusTabUI._update_party_slots_data(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6, arg_24_7)
+	local var_24_0 = arg_24_4:get_party(arg_24_1)
+	local var_24_1 = Managers.state.network:game()
+	local var_24_2 = Managers.mechanism:network_handler():get_match_handler()
 
-	if party then
-		local side = Managers.state.side.side_by_party[party]
-		local is_dark_pact = side and side:name() == "dark_pact"
-		local slots = party.slots
+	if var_24_0 then
+		local var_24_3 = Managers.state.side.side_by_party[var_24_0]
+		local var_24_4 = var_24_3 and var_24_3:name() == "dark_pact"
+		local var_24_5 = var_24_0.slots
 
-		for j = 1, #team_slots do
-			local player_slot = team_slots[j]
-			local status = slots[j]
-			local slot_changed = false
-			local slot_filled = false
-			local panel_widget = player_slot.panel_widget
-			local panel_content = panel_widget.content
-			local panel_style = panel_widget.style
-			local empty_widget = player_slot.empty_widget
-			local empty_content = empty_widget.content
+		for iter_24_0 = 1, #arg_24_2 do
+			local var_24_6 = arg_24_2[iter_24_0]
+			local var_24_7 = var_24_5[iter_24_0]
+			local var_24_8 = false
+			local var_24_9 = false
+			local var_24_10 = var_24_6.panel_widget
+			local var_24_11 = var_24_10.content
+			local var_24_12 = var_24_10.style
+			local var_24_13 = var_24_6.empty_widget.content
 
-			if player_slot.unique_id ~= status.unique_id then
-				player_slot.unique_id = status.unique_id
-				slot_changed = true
+			if var_24_6.unique_id ~= var_24_7.unique_id then
+				var_24_6.unique_id = var_24_7.unique_id
+				var_24_8 = true
 			end
 
-			local peer_id, local_player_id = status.peer_id, status.local_player_id
-			local player
-			local is_player = false
-			local ready = false
-			local is_in_local_player_party = self._party_id == status.party_id
-			local profile_index, career_index
+			local var_24_14 = var_24_7.peer_id
+			local var_24_15 = var_24_7.local_player_id
+			local var_24_16
+			local var_24_17 = false
+			local var_24_18 = false
+			local var_24_19 = arg_24_0._party_id == var_24_7.party_id
+			local var_24_20
+			local var_24_21
 
-			if peer_id and local_player_id then
-				profile_index = status.profile_index
-				career_index = status.career_index
-				player = status.player
-				is_player = status.is_player
-				slot_filled = true
+			if var_24_14 and var_24_15 then
+				var_24_20 = var_24_7.profile_index
+				var_24_21 = var_24_7.career_index
+				var_24_16 = var_24_7.player
+				var_24_17 = var_24_7.is_player
+				var_24_9 = true
 			end
 
-			if player_slot.ready ~= ready then
-				player_slot.ready = ready
-				panel_content.ready = ready
+			if var_24_6.ready ~= var_24_18 then
+				var_24_6.ready = var_24_18
+				var_24_11.ready = var_24_18
 			end
 
-			local profile_updated = false
+			local var_24_22 = false
 
-			if player_slot.profile_index ~= profile_index or player_slot.career_index ~= career_index or slot_changed then
-				player_slot.profile_index = profile_index
-				player_slot.career_index = career_index
-				profile_updated = true
+			if var_24_6.profile_index ~= var_24_20 or var_24_6.career_index ~= var_24_21 or var_24_8 then
+				var_24_6.profile_index = var_24_20
+				var_24_6.career_index = var_24_21
+				var_24_22 = true
 			end
 
-			local is_wounded, is_knocked_down, needs_help, is_dead
-			local is_local_player = false
-			local is_bot = true
-			local unique_id = player and player:unique_id()
-			local player_exists = player and players[unique_id]
+			local var_24_23
+			local var_24_24
+			local var_24_25
+			local var_24_26
+			local var_24_27 = false
+			local var_24_28 = true
+			local var_24_29 = var_24_16 and var_24_16:unique_id()
+			local var_24_30 = var_24_16 and arg_24_7[var_24_29]
 
-			if player_exists then
-				if profile_updated then
-					local is_player_controlled = player:is_player_controlled()
-					local player_portrait_frame = CosmeticUtils.get_cosmetic_slot(player, "slot_frame")
-					local player_portrait_frame_name = player_portrait_frame and player_portrait_frame.item_name or "default"
-					local level_text = player and (is_player_controlled and match_handler:query_peer_data(peer_id, "versus_level", true) or UISettings.bots_level_display_text)
-					local portrait_texture = self:_get_hero_portrait(profile_index, career_index)
-					local player_frame_scenegraph_id = "team_" .. team .. "_player_frame_" .. j
-					local portrait_widget = self:_create_portrait_frame(player_frame_scenegraph_id, player_portrait_frame_name, level_text, portrait_texture)
+			if var_24_30 then
+				if var_24_22 then
+					local var_24_31 = var_24_16:is_player_controlled()
+					local var_24_32 = CosmeticUtils.get_cosmetic_slot(var_24_16, "slot_frame")
+					local var_24_33 = var_24_32 and var_24_32.item_name or "default"
+					local var_24_34 = var_24_16 and (var_24_31 and var_24_2:query_peer_data(var_24_14, "versus_level", true) or UISettings.bots_level_display_text)
+					local var_24_35 = arg_24_0:_get_hero_portrait(var_24_20, var_24_21)
+					local var_24_36 = "team_" .. arg_24_3 .. "_player_frame_" .. iter_24_0
 
-					player_slot.portrait_widget = portrait_widget
+					var_24_6.portrait_widget = arg_24_0:_create_portrait_frame(var_24_36, var_24_33, var_24_34, var_24_35)
 
-					if is_player_controlled then
-						local player_insignia_scenegraph_id = "team_" .. team .. "_player_insignia_" .. j
-						local versus_level = ExperienceSettings.get_versus_player_level(player) or 0
-						local insignia_widget_def = UIWidgets.create_small_insignia(player_insignia_scenegraph_id, versus_level)
-						local insignia_widget = UIWidget.init(insignia_widget_def)
+					if var_24_31 then
+						local var_24_37 = "team_" .. arg_24_3 .. "_player_insignia_" .. iter_24_0
+						local var_24_38 = ExperienceSettings.get_versus_player_level(var_24_16) or 0
+						local var_24_39 = UIWidgets.create_small_insignia(var_24_37, var_24_38)
 
-						player_slot.insignia_widget = insignia_widget
+						var_24_6.insignia_widget = UIWidget.init(var_24_39)
 					end
 				end
 
-				is_local_player = player.local_player
-				is_bot = not player:is_player_controlled()
+				var_24_27 = var_24_16.local_player
+				var_24_28 = not var_24_16:is_player_controlled()
 
-				local player_name = player:name()
-				local career_name = (not is_dark_pact or is_in_local_player_party) and player:career_name() or "vs_lobby_dark_pact_team_name"
-				local network_handler = Managers.mechanism:network_handler()
+				local var_24_40 = var_24_16:name()
+				local var_24_41 = (not var_24_4 or var_24_19) and var_24_16:career_name() or "vs_lobby_dark_pact_team_name"
 
-				panel_content.show_host = peer_id == network_handler.server_peer_id and not is_bot
+				var_24_11.show_host = var_24_14 == Managers.mechanism:network_handler().server_peer_id and not var_24_28
 
-				if player_slot.player_name ~= player_name then
-					player_slot.player_name = player_name
-					panel_content.name = player_name
+				if var_24_6.player_name ~= var_24_40 then
+					var_24_6.player_name = var_24_40
+					var_24_11.name = var_24_40
 				end
 
-				if career_name and player_slot.career_name ~= career_name then
-					player_slot.career_name = career_name
-					panel_content.hero = career_name
+				if var_24_41 and var_24_6.career_name ~= var_24_41 then
+					var_24_6.career_name = var_24_41
+					var_24_11.hero = var_24_41
 				end
 
-				local player_unit = player.player_unit
+				local var_24_42 = var_24_16.player_unit
 
-				if ALIVE[player_unit] then
-					if not is_dark_pact then
-						local player_loadouts = Managers.player:player_loadouts()
-						local loadout = player_loadouts[unique_id]
+				if ALIVE[var_24_42] then
+					if not var_24_4 then
+						local var_24_43 = Managers.player:player_loadouts()[var_24_29]
 
-						if loadout then
-							self:_update_player_item_slots(loadout, panel_widget)
+						if var_24_43 then
+							arg_24_0:_update_player_item_slots(var_24_43, var_24_10)
 						end
 
-						self:_update_player_talents(player_unit, player, panel_widget)
+						arg_24_0:_update_player_talents(var_24_42, var_24_16, var_24_10)
 					end
 
-					is_wounded, is_knocked_down, needs_help, is_dead = self:_update_player_health(player_unit, panel_widget)
+					var_24_23, var_24_24, var_24_25, var_24_26 = arg_24_0:_update_player_health(var_24_42, var_24_10)
 				else
-					is_dead = true
+					var_24_26 = true
 				end
 
-				self:_update_player_status_portrait(player_slot, profile_index, career_index, is_dark_pact, is_in_local_player_party, is_wounded, is_knocked_down, needs_help, is_dead)
+				arg_24_0:_update_player_status_portrait(var_24_6, var_24_20, var_24_21, var_24_4, var_24_19, var_24_23, var_24_24, var_24_25, var_24_26)
 
-				if is_dark_pact and panel_content.respawning and is_in_local_player_party then
-					self:_update_player_respawn_counter(player_slot)
+				if var_24_4 and var_24_11.respawning and var_24_19 then
+					arg_24_0:_update_player_respawn_counter(var_24_6)
 				end
 
-				self:_update_player_talents_tooltip(panel_widget)
+				arg_24_0:_update_player_talents_tooltip(var_24_10)
 
-				local game_object_id = player.game_object_id
-				local ping = game_object_id and GameSession.game_object_field(game_session, game_object_id, "ping") or math.huge
-				local ping_texture, ping_color = self:_get_ping_texture_by_ping_value(ping)
+				local var_24_44 = var_24_16.game_object_id
+				local var_24_45 = var_24_44 and GameSession.game_object_field(var_24_1, var_24_44, "ping") or math.huge
+				local var_24_46, var_24_47 = arg_24_0:_get_ping_texture_by_ping_value(var_24_45)
 
-				panel_content.ping_texture = ping_texture
-				panel_content.ping_text = ping
+				var_24_11.ping_texture = var_24_46
+				var_24_11.ping_text = var_24_45
 
-				local ping_style = panel_widget.style.ping_text
+				local var_24_48 = var_24_10.style.ping_text
 
-				ping_style.text_color = ping_style[ping_color]
+				var_24_48.text_color = var_24_48[var_24_47]
 			end
 
-			panel_content.empty = not slot_filled
-			empty_content.empty = not slot_filled
-			panel_content.visible = player_exists
-			panel_content.is_local_player = not is_dark_pact and player ~= nil
-			panel_content.is_dark_pact = is_dark_pact
-			panel_content.is_build_visible = true
-			panel_content.is_in_local_player_party = is_in_local_player_party
-			panel_content.is_wounded = is_wounded
-			panel_content.is_knocked_down = is_knocked_down
-			panel_content.needs_help = needs_help
-			panel_content.is_dead = is_dead
-			player_slot.empty = not slot_filled
-			player_slot.is_player = is_player
-			player_slot.peer_id = peer_id
-			player_slot.is_dark_pact = is_dark_pact
-			player_slot.is_local_player = is_local_player
-			player_slot.is_bot = is_bot
+			var_24_11.empty = not var_24_9
+			var_24_13.empty = not var_24_9
+			var_24_11.visible = var_24_30
+			var_24_11.is_local_player = not var_24_4 and var_24_16 ~= nil
+			var_24_11.is_dark_pact = var_24_4
+			var_24_11.is_build_visible = true
+			var_24_11.is_in_local_player_party = var_24_19
+			var_24_11.is_wounded = var_24_23
+			var_24_11.is_knocked_down = var_24_24
+			var_24_11.needs_help = var_24_25
+			var_24_11.is_dead = var_24_26
+			var_24_6.empty = not var_24_9
+			var_24_6.is_player = var_24_17
+			var_24_6.peer_id = var_24_14
+			var_24_6.is_dark_pact = var_24_4
+			var_24_6.is_local_player = var_24_27
+			var_24_6.is_bot = var_24_28
 		end
 	end
 end
 
-VersusTabUI._set_player_custom_panel_loadout_icon = function (self, widget, item_name, slot_name)
-	local content = widget.content
-	local style = widget.style
+function VersusTabUI._set_player_custom_panel_loadout_icon(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+	local var_25_0 = arg_25_1.content
+	local var_25_1 = arg_25_1.style
 
-	if item_name then
-		local item = {
-			data = ItemMasterList[item_name],
+	if arg_25_2 then
+		local var_25_2 = {
+			data = ItemMasterList[arg_25_2]
 		}
-		local inventory_icon, _, _ = UIUtils.get_ui_information_from_item(item)
+		local var_25_3, var_25_4, var_25_5 = UIUtils.get_ui_information_from_item(var_25_2)
 
-		content[slot_name] = inventory_icon
-		content[slot_name .. "_item_name"] = item_name
+		var_25_0[arg_25_3] = var_25_3
+		var_25_0[arg_25_3 .. "_item_name"] = arg_25_2
 	else
-		content[slot_name .. "_item_name"] = nil
+		var_25_0[arg_25_3 .. "_item_name"] = nil
 	end
 end
 
-VersusTabUI._button_pressed = function (self, button_hotspot)
-	if button_hotspot.on_release then
-		button_hotspot.on_release = false
+function VersusTabUI._button_pressed(arg_26_0, arg_26_1)
+	if arg_26_1.on_release then
+		arg_26_1.on_release = false
 
 		return true
 	end
@@ -748,126 +724,117 @@ VersusTabUI._button_pressed = function (self, button_hotspot)
 	return false
 end
 
-VersusTabUI._get_hero_portrait = function (self, profile_index, career_index)
-	local default_portrait = "eor_empty_player"
+function VersusTabUI._get_hero_portrait(arg_27_0, arg_27_1, arg_27_2)
+	local var_27_0 = "eor_empty_player"
 
-	if profile_index == nil or career_index == nil then
-		return default_portrait
+	if arg_27_1 == nil or arg_27_2 == nil then
+		return var_27_0
 	end
 
-	local profile = SPProfiles[profile_index]
-	local career = profile.careers[career_index]
-	local portrait_texture = career.portrait_image
-
-	return portrait_texture or default_portrait
+	return SPProfiles[arg_27_1].careers[arg_27_2].portrait_image or var_27_0
 end
 
-VersusTabUI._create_portrait_frame = function (self, scenegraph_id, frame_settings_name, level_text, portrait_texture, optional_scale)
-	local scale = optional_scale or 1
-	local retained_mode = false
-	local widget_definition = UIWidgets.create_portrait_frame(scenegraph_id, frame_settings_name, level_text, scale, retained_mode, portrait_texture)
-	local widget = UIWidget.init(widget_definition, self._ui_top_renderer)
-	local widget_content = widget.content
+function VersusTabUI._create_portrait_frame(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
+	local var_28_0 = arg_28_5 or 1
+	local var_28_1 = false
+	local var_28_2 = UIWidgets.create_portrait_frame(arg_28_1, arg_28_2, arg_28_3, var_28_0, var_28_1, arg_28_4)
+	local var_28_3 = UIWidget.init(var_28_2, arg_28_0._ui_top_renderer)
+	local var_28_4 = var_28_3.content
 
-	widget_content.frame_settings_name = frame_settings_name
-	widget_content.level_text = level_text
+	var_28_4.frame_settings_name = arg_28_2
+	var_28_4.level_text = arg_28_3
 
-	return widget
+	return var_28_3
 end
 
-VersusTabUI._apply_color_values = function (self, target, source, include_alpha)
-	if include_alpha then
-		target[1] = source[1]
+function VersusTabUI._apply_color_values(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+	if arg_29_3 then
+		arg_29_1[1] = arg_29_2[1]
 	end
 
-	target[2] = source[2]
-	target[3] = source[3]
-	target[4] = source[4]
+	arg_29_1[2] = arg_29_2[2]
+	arg_29_1[3] = arg_29_2[3]
+	arg_29_1[4] = arg_29_2[4]
 end
 
-VersusTabUI._show_profile_by_peer_id = function (self, peer_id)
+function VersusTabUI._show_profile_by_peer_id(arg_30_0, arg_30_1)
 	if IS_WINDOWS and rawget(_G, "Steam") then
-		local id = Steam.id_hex_to_dec(peer_id)
-		local url = "http://steamcommunity.com/profiles/" .. id
+		local var_30_0 = Steam.id_hex_to_dec(arg_30_1)
+		local var_30_1 = "http://steamcommunity.com/profiles/" .. var_30_0
 
-		Steam.open_url(url)
+		Steam.open_url(var_30_1)
 	elseif IS_XB1 then
-		local xuid = self.network_lobby:xuid(peer_id)
+		local var_30_2 = arg_30_0.network_lobby:xuid(arg_30_1)
 
-		if xuid then
-			XboxLive.show_gamercard(Managers.account:user_id(), xuid)
+		if var_30_2 then
+			XboxLive.show_gamercard(Managers.account:user_id(), var_30_2)
 		end
 	elseif IS_PS4 then
-		Managers.account:show_player_profile_with_account_id(peer_id)
+		Managers.account:show_player_profile_with_account_id(arg_30_1)
 	end
 end
 
-VersusTabUI._muted_peer_id = function (self, peer_id)
+function VersusTabUI._muted_peer_id(arg_31_0, arg_31_1)
 	if IS_XB1 then
 		if Managers.voice_chat then
-			return Managers.voice_chat:is_peer_muted(peer_id)
+			return Managers.voice_chat:is_peer_muted(arg_31_1)
 		else
 			return false
 		end
 	else
-		return self._voip:peer_muted(peer_id)
+		return arg_31_0._voip:peer_muted(arg_31_1)
 	end
 end
 
-VersusTabUI._ignore_voice_message_from_peer_id = function (self, peer_id)
+function VersusTabUI._ignore_voice_message_from_peer_id(arg_32_0, arg_32_1)
 	if IS_XB1 then
 		if Managers.voice_chat then
-			Managers.voice_chat:mute_peer(peer_id)
+			Managers.voice_chat:mute_peer(arg_32_1)
 		end
 	else
-		self._voip:mute_member(peer_id)
+		arg_32_0._voip:mute_member(arg_32_1)
 	end
 end
 
-VersusTabUI._remove_ignore_voice_message_from_peer_id = function (self, peer_id)
+function VersusTabUI._remove_ignore_voice_message_from_peer_id(arg_33_0, arg_33_1)
 	if IS_XB1 then
 		if Managers.voice_chat then
-			Managers.voice_chat:unmute_peer(peer_id)
+			Managers.voice_chat:unmute_peer(arg_33_1)
 		end
 	else
-		self._voip:unmute_member(peer_id)
+		arg_33_0._voip:unmute_member(arg_33_1)
 	end
 end
 
-VersusTabUI._ignoring_chat_peer_id = function (self, peer_id)
+function VersusTabUI._ignoring_chat_peer_id(arg_34_0, arg_34_1)
 	if IS_WINDOWS then
-		local chat_gui = Managers.chat.chat_gui
-
-		return chat_gui:ignoring_peer_id(peer_id)
+		return Managers.chat.chat_gui:ignoring_peer_id(arg_34_1)
 	elseif IS_XB1 then
-		return Managers.chat:ignoring_peer_id(peer_id)
+		return Managers.chat:ignoring_peer_id(arg_34_1)
 	end
 end
 
-VersusTabUI._ignore_chat_message_from_peer_id = function (self, peer_id)
+function VersusTabUI._ignore_chat_message_from_peer_id(arg_35_0, arg_35_1)
 	if IS_WINDOWS then
-		local chat_gui = Managers.chat.chat_gui
-
-		chat_gui:ignore_peer_id(peer_id)
+		Managers.chat.chat_gui:ignore_peer_id(arg_35_1)
 	elseif IS_XB1 then
-		Managers.chat:ignore_peer_id(peer_id)
+		Managers.chat:ignore_peer_id(arg_35_1)
 	end
 end
 
-VersusTabUI._can_host_solo_kick = function (self)
-	return self._is_server and Managers.player:num_human_players() == 2
+function VersusTabUI._can_host_solo_kick(arg_36_0)
+	return arg_36_0._is_server and Managers.player:num_human_players() == 2
 end
 
-VersusTabUI._can_kick_player = function (self, peer_id)
-	local is_in_local_player_party = self:_is_in_local_player_party(peer_id)
+function VersusTabUI._can_kick_player(arg_37_0, arg_37_1)
+	local var_37_0 = arg_37_0:_is_in_local_player_party(arg_37_1)
 
-	if peer_id and is_in_local_player_party then
-		temp_vote_data.kick_peer_id = peer_id
+	if arg_37_1 and var_37_0 then
+		var_0_9.kick_peer_id = arg_37_1
 
-		local is_leader = Managers.party:is_leader(peer_id)
-		local player_available = Managers.state.voting:can_start_vote("kick_player", temp_vote_data)
+		local var_37_1 = Managers.party:is_leader(arg_37_1)
 
-		if player_available and peer_id ~= Network.peer_id() and not is_leader and Managers.player:num_human_players() > 2 then
+		if Managers.state.voting:can_start_vote("kick_player", var_0_9) and arg_37_1 ~= Network.peer_id() and not var_37_1 and Managers.player:num_human_players() > 2 then
 			return true
 		end
 	end
@@ -875,67 +842,66 @@ VersusTabUI._can_kick_player = function (self, peer_id)
 	return false
 end
 
-VersusTabUI._kick_player_attempt = function (self, peer_id)
-	if self:_can_kick_player(peer_id) then
-		local vote_data = {
-			kick_peer_id = peer_id,
+function VersusTabUI._kick_player_attempt(arg_38_0, arg_38_1)
+	if arg_38_0:_can_kick_player(arg_38_1) then
+		local var_38_0 = {
+			kick_peer_id = arg_38_1
 		}
 
-		Managers.state.voting:request_vote("kick_player", vote_data, Network.peer_id())
-		self:set_active(false)
+		Managers.state.voting:request_vote("kick_player", var_38_0, Network.peer_id())
+		arg_38_0:set_active(false)
 	end
 end
 
-VersusTabUI._update_players_panel_button_widgets = function (self)
-	local vote_manager = Managers.state.voting
-	local vote_kick_enabled = vote_manager:vote_kick_enabled()
-	local custom_game_slots = self._custom_game_slots
+function VersusTabUI._update_players_panel_button_widgets(arg_39_0)
+	local var_39_0 = Managers.state.voting:vote_kick_enabled()
+	local var_39_1 = arg_39_0._custom_game_slots
 
-	if custom_game_slots then
-		for i = 1, #custom_game_slots do
-			local team_slots = custom_game_slots[i]
+	if var_39_1 then
+		for iter_39_0 = 1, #var_39_1 do
+			local var_39_2 = var_39_1[iter_39_0]
 
-			for j = 1, #team_slots do
-				local player_slot = team_slots[j]
-				local widget = player_slot.panel_widget
-				local widget_content = widget.content
-				local style = widget.style
-				local empty = player_slot.empty
-				local is_player = player_slot.is_player
-				local peer_id = player_slot.peer_id
-				local is_local_player = player_slot.is_local_player
-				local is_bot = player_slot.is_bot
-				local can_kick_player = vote_kick_enabled and self:_can_kick_player(peer_id)
+			for iter_39_1 = 1, #var_39_2 do
+				local var_39_3 = var_39_2[iter_39_1]
+				local var_39_4 = var_39_3.panel_widget
+				local var_39_5 = var_39_4.content
+				local var_39_6 = var_39_4.style
+				local var_39_7 = var_39_3.empty
+				local var_39_8 = var_39_3.is_player
+				local var_39_9 = var_39_3.peer_id
+				local var_39_10 = var_39_3.is_local_player
+				local var_39_11 = var_39_3.is_bot
+				local var_39_12 = var_39_0 and arg_39_0:_can_kick_player(var_39_9)
 
-				if not empty and is_player then
-					if is_local_player or is_bot then
-						widget_content.show_chat_button = false
-						widget_content.show_kick_button = false
-						widget_content.show_voice_button = false
-						widget_content.show_profile_button = is_local_player and not is_bot
-						widget_content.show_ping = not is_local_player and not is_bot
-						widget_content.chat_button_hotspot.disable_button = true
-						widget_content.kick_button_hotspot.disable_button = true
-						widget_content.voice_button_hotspot.disable_button = true
-						widget_content.profile_button_hotspot.disable_button = is_bot
+				if not var_39_7 and var_39_8 then
+					if var_39_10 or var_39_11 then
+						var_39_5.show_chat_button = false
+						var_39_5.show_kick_button = false
+						var_39_5.show_voice_button = false
+						var_39_5.show_profile_button = var_39_10 and not var_39_11
+						var_39_5.show_ping = not var_39_10 and not var_39_11
+						var_39_5.chat_button_hotspot.disable_button = true
+						var_39_5.kick_button_hotspot.disable_button = true
+						var_39_5.voice_button_hotspot.disable_button = true
+						var_39_5.profile_button_hotspot.disable_button = var_39_11
 					else
-						if can_kick_player then
-							widget_content.show_kick_button = true
-							widget_content.kick_button_hotspot.disable_button = false
+						if var_39_12 then
+							var_39_5.show_kick_button = true
+							var_39_5.kick_button_hotspot.disable_button = false
 						else
-							widget_content.show_kick_button = false
-							widget_content.kick_button_hotspot.disable_button = true
+							var_39_5.show_kick_button = false
+							var_39_5.kick_button_hotspot.disable_button = true
 						end
 
-						widget_content.show_profile_button = true
-						widget_content.show_chat_button = not IS_PS4
-						widget_content.show_voice_button = true
-						widget_content.show_ping = true
-						widget_content.profile_button_hotspot.disable_button = false
-						widget_content.chat_button_hotspot.disable_button = IS_PS4
-						widget_content.voice_button_hotspot.disable_button = false
-						widget_content.chat_button_hotspot.is_selected = self:_ignoring_chat_peer_id(peer_id)
-						widget_content.voice_button_hotspot.is_selected = self:_muted_peer_id(peer_id)
+						var_39_5.show_profile_button = true
+						var_39_5.show_chat_button = not IS_PS4
+						var_39_5.show_voice_button = true
+						var_39_5.show_ping = true
+						var_39_5.profile_button_hotspot.disable_button = false
+						var_39_5.chat_button_hotspot.disable_button = IS_PS4
+						var_39_5.voice_button_hotspot.disable_button = false
+						var_39_5.chat_button_hotspot.is_selected = arg_39_0:_ignoring_chat_peer_id(var_39_9)
+						var_39_5.voice_button_hotspot.is_selected = arg_39_0:_muted_peer_id(var_39_9)
 					end
 				end
 			end
@@ -943,86 +909,86 @@ VersusTabUI._update_players_panel_button_widgets = function (self)
 	end
 end
 
-VersusTabUI._handle_players_panel_button_input = function (self)
-	local custom_game_slots = self._custom_game_slots
+function VersusTabUI._handle_players_panel_button_input(arg_40_0)
+	local var_40_0 = arg_40_0._custom_game_slots
 
-	if custom_game_slots then
-		for i = 1, #custom_game_slots do
-			local team_slots = custom_game_slots[i]
+	if var_40_0 then
+		for iter_40_0 = 1, #var_40_0 do
+			local var_40_1 = var_40_0[iter_40_0]
 
-			for j = 1, #team_slots do
-				local player_slot = team_slots[j]
-				local widget = player_slot.panel_widget
-				local widget_content = widget.content
-				local style = widget.style
-				local empty = player_slot.empty
-				local is_player = player_slot.is_player
-				local peer_id = player_slot.peer_id
-				local is_local_player = player_slot.is_local_player
-				local is_bot = player_slot.is_bot
+			for iter_40_1 = 1, #var_40_1 do
+				local var_40_2 = var_40_1[iter_40_1]
+				local var_40_3 = var_40_2.panel_widget
+				local var_40_4 = var_40_3.content
+				local var_40_5 = var_40_3.style
+				local var_40_6 = var_40_2.empty
+				local var_40_7 = var_40_2.is_player
+				local var_40_8 = var_40_2.peer_id
+				local var_40_9 = var_40_2.is_local_player
+				local var_40_10 = var_40_2.is_bot
 
-				if not empty then
-					if is_player then
-						if not is_bot then
-							local profile_button_hotspot = widget_content.profile_button_hotspot
+				if not var_40_6 then
+					if var_40_7 then
+						if not var_40_10 then
+							local var_40_11 = var_40_4.profile_button_hotspot
 
-							if profile_button_hotspot.on_pressed then
-								profile_button_hotspot.on_pressed = nil
+							if var_40_11.on_pressed then
+								var_40_11.on_pressed = nil
 
-								self:_show_profile_by_peer_id(peer_id)
+								arg_40_0:_show_profile_by_peer_id(var_40_8)
 							end
 						end
 
-						if not is_local_player then
-							local chat_button_hotspot = widget_content.chat_button_hotspot
+						if not var_40_9 then
+							local var_40_12 = var_40_4.chat_button_hotspot
 
-							if chat_button_hotspot.on_pressed then
-								chat_button_hotspot.on_pressed = nil
+							if var_40_12.on_pressed then
+								var_40_12.on_pressed = nil
 
-								if chat_button_hotspot.is_selected then
-									self:_remove_ignore_chat_message_from_peer_id(peer_id)
+								if var_40_12.is_selected then
+									arg_40_0:_remove_ignore_chat_message_from_peer_id(var_40_8)
 
-									chat_button_hotspot.is_selected = nil
+									var_40_12.is_selected = nil
 								else
-									self:_ignore_chat_message_from_peer_id(peer_id)
+									arg_40_0:_ignore_chat_message_from_peer_id(var_40_8)
 
-									chat_button_hotspot.is_selected = true
+									var_40_12.is_selected = true
 								end
 							end
 
-							local voice_button_hotspot = widget_content.voice_button_hotspot
+							local var_40_13 = var_40_4.voice_button_hotspot
 
-							if voice_button_hotspot.on_pressed then
-								voice_button_hotspot.on_pressed = nil
+							if var_40_13.on_pressed then
+								var_40_13.on_pressed = nil
 
-								if voice_button_hotspot.is_selected then
-									self:_remove_ignore_voice_message_from_peer_id(peer_id)
+								if var_40_13.is_selected then
+									arg_40_0:_remove_ignore_voice_message_from_peer_id(var_40_8)
 
-									voice_button_hotspot.is_selected = nil
+									var_40_13.is_selected = nil
 								else
-									self:_ignore_voice_message_from_peer_id(peer_id)
+									arg_40_0:_ignore_voice_message_from_peer_id(var_40_8)
 
-									voice_button_hotspot.is_selected = true
+									var_40_13.is_selected = true
 								end
 							end
 
-							local kick_button_hotspot = widget_content.kick_button_hotspot
+							local var_40_14 = var_40_4.kick_button_hotspot
 
-							if kick_button_hotspot.on_pressed then
-								kick_button_hotspot.on_pressed = nil
+							if var_40_14.on_pressed then
+								var_40_14.on_pressed = nil
 
-								self:_kick_player_attempt(peer_id)
+								arg_40_0:_kick_player_attempt(var_40_8)
 							end
 						end
 					end
 
-					for k = 1, #allowed_loadout_slots do
-						local slot_name = allowed_loadout_slots[k]
+					for iter_40_2 = 1, #var_0_10 do
+						local var_40_15 = var_0_10[iter_40_2]
 
-						if UIUtils.is_button_hover(widget, slot_name .. "_hotspot") then
-							local item_name = widget.content[slot_name .. "_item_name"]
+						if UIUtils.is_button_hover(var_40_3, var_40_15 .. "_hotspot") then
+							local var_40_16 = var_40_3.content[var_40_15 .. "_item_name"]
 
-							self:_update_item_slots_tooltip(item_name, widget)
+							arg_40_0:_update_item_slots_tooltip(var_40_16, var_40_3)
 						end
 					end
 				end
@@ -1031,168 +997,158 @@ VersusTabUI._handle_players_panel_button_input = function (self)
 	end
 end
 
-VersusTabUI._update_player_item_slots = function (self, loadout, widget)
-	for i = 1, #allowed_loadout_slots do
-		local slot_name = allowed_loadout_slots[i]
-		local item = loadout[slot_name]
-		local item_data = item.data
-		local item_name = item_data.name
+function VersusTabUI._update_player_item_slots(arg_41_0, arg_41_1, arg_41_2)
+	for iter_41_0 = 1, #var_0_10 do
+		local var_41_0 = var_0_10[iter_41_0]
+		local var_41_1 = arg_41_1[var_41_0].data.name
 
-		if widget.content[slot_name .. "_item_name"] ~= item_name then
-			self:_set_player_custom_panel_loadout_icon(widget, item_name, slot_name)
+		if arg_41_2.content[var_41_0 .. "_item_name"] ~= var_41_1 then
+			arg_41_0:_set_player_custom_panel_loadout_icon(arg_41_2, var_41_1, var_41_0)
 		end
 	end
 end
 
-local ITEM_TOOLTIP_RENDER_SETTINGS = {
-	alpha_multiplier = 0,
+local var_0_11 = {
+	alpha_multiplier = 0
 }
 
-VersusTabUI._update_item_slots_tooltip = function (self, item_name, panle_widget)
-	local ui_scenegraph = self._ui_scenegraph
-	local ui_renderer = self._ui_top_renderer
-	local widget = self._item_tooltip
-	local widget_style = widget.style
-	local widget_content = widget.content
-	local item = {
-		data = ItemMasterList[item_name],
+function VersusTabUI._update_item_slots_tooltip(arg_42_0, arg_42_1, arg_42_2)
+	local var_42_0 = arg_42_0._ui_scenegraph
+	local var_42_1 = arg_42_0._ui_top_renderer
+	local var_42_2 = arg_42_0._item_tooltip
+	local var_42_3 = var_42_2.style
+
+	var_42_2.content.item = {
+		data = ItemMasterList[arg_42_1]
 	}
 
-	widget_content.item = item
+	UIRenderer.begin_pass(var_42_1, var_42_0, FAKE_INPUT_SERVICE, 0, nil, var_0_11)
+	UIRenderer.draw_widget(var_42_1, var_42_2)
+	UIRenderer.end_pass(var_42_1)
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, FAKE_INPUT_SERVICE, 0, nil, ITEM_TOOLTIP_RENDER_SETTINGS)
-	UIRenderer.draw_widget(ui_renderer, widget)
-	UIRenderer.end_pass(ui_renderer)
+	local var_42_4 = var_42_0.item_tooltip
+	local var_42_5 = var_42_3.item.item_presentation_height - 100
+	local var_42_6 = 1080 - var_42_5
+	local var_42_7 = var_42_0[arg_42_2.scenegraph_id]
+	local var_42_8 = var_42_7.position
 
-	local item_tooltip_node = ui_scenegraph.item_tooltip
-	local item_presentation_height = widget_style.item.item_presentation_height - 100
-	local max_height = 1080 - item_presentation_height
-	local parent_scenegraph_node = ui_scenegraph[panle_widget.scenegraph_id]
-	local parent_offset = parent_scenegraph_node.position
-	local left_aligned = parent_scenegraph_node.horizontal_alignment == "left"
-
-	if left_aligned then
-		item_tooltip_node.horizontal_alignment = "left"
-		item_tooltip_node.local_position[1] = 20 + parent_scenegraph_node.size[1] + 50
-		item_tooltip_node.local_position[2] = math.min(parent_offset[2] + item_presentation_height, max_height) + 50
+	if var_42_7.horizontal_alignment == "left" then
+		var_42_4.horizontal_alignment = "left"
+		var_42_4.local_position[1] = 20 + var_42_7.size[1] + 50
+		var_42_4.local_position[2] = math.min(var_42_8[2] + var_42_5, var_42_6) + 50
 	else
-		item_tooltip_node.horizontal_alignment = "right"
-		item_tooltip_node.local_position[1] = -20 - parent_scenegraph_node.size[1] - 50
-		item_tooltip_node.local_position[2] = math.min(parent_offset[2] + item_presentation_height, max_height) + 50
+		var_42_4.horizontal_alignment = "right"
+		var_42_4.local_position[1] = -20 - var_42_7.size[1] - 50
+		var_42_4.local_position[2] = math.min(var_42_8[2] + var_42_5, var_42_6) + 50
 	end
 end
 
-VersusTabUI._update_player_talents = function (self, player_unit, player, widget)
-	local panel_content = widget.content
-	local talent_extension = ScriptUnit.has_extension(player_unit, "talent_system")
+function VersusTabUI._update_player_talents(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+	local var_43_0 = arg_43_3.content
+	local var_43_1 = ScriptUnit.has_extension(arg_43_1, "talent_system")
 
-	if talent_extension then
-		local talent_ids = talent_extension:get_talent_ids()
-		local profile_name = player:profile_display_name()
+	if var_43_1 then
+		local var_43_2 = var_43_1:get_talent_ids()
+		local var_43_3 = arg_43_2:profile_display_name()
 
-		for i = 1, 6 do
-			local id = talent_ids[i]
-			local talent = TalentUtils.get_talent_by_id(profile_name, id)
-			local talent_icon = talent and talent.icon
-			local talent_content = panel_content["talent_" .. i]
+		for iter_43_0 = 1, 6 do
+			local var_43_4 = var_43_2[iter_43_0]
+			local var_43_5 = TalentUtils.get_talent_by_id(var_43_3, var_43_4)
+			local var_43_6 = var_43_5 and var_43_5.icon
+			local var_43_7 = var_43_0["talent_" .. iter_43_0]
 
-			if not talent_icon then
-				talent = nil
+			if not var_43_6 then
+				var_43_5 = nil
 			end
 
-			talent_content.talent = talent
-			talent_content.icon = talent_icon or "icons_placeholder"
+			var_43_7.talent = var_43_5
+			var_43_7.icon = var_43_6 or "icons_placeholder"
 		end
 	end
 end
 
-VersusTabUI._update_player_talents_tooltip = function (self, widget)
-	local panel_content = widget.content
+function VersusTabUI._update_player_talents_tooltip(arg_44_0, arg_44_1)
+	local var_44_0 = arg_44_1.content
 
-	for i = 1, 6 do
-		local talent_content = panel_content["talent_" .. i]
+	for iter_44_0 = 1, 6 do
+		local var_44_1 = var_44_0["talent_" .. iter_44_0]
 
-		if talent_content.talent and talent_content.is_hover then
-			local parent_scenegraph_id = widget.scenegraph_id
-			local parent_scenegraph_node = self._ui_scenegraph[parent_scenegraph_id]
-			local parent_offset = parent_scenegraph_node.position
-			local left_aligned = parent_scenegraph_node.horizontal_alignment == "left"
-			local talent_tooltip_node = self._ui_scenegraph.talent_tooltip
+		if var_44_1.talent and var_44_1.is_hover then
+			local var_44_2 = arg_44_1.scenegraph_id
+			local var_44_3 = arg_44_0._ui_scenegraph[var_44_2]
+			local var_44_4 = var_44_3.position
+			local var_44_5 = var_44_3.horizontal_alignment == "left"
+			local var_44_6 = arg_44_0._ui_scenegraph.talent_tooltip
 
-			if left_aligned then
-				talent_tooltip_node.horizontal_alignment = "left"
-				talent_tooltip_node.local_position[1] = 20 + parent_scenegraph_node.size[1] + 50
-				talent_tooltip_node.local_position[2] = parent_scenegraph_node.position[2] + 50
+			if var_44_5 then
+				var_44_6.horizontal_alignment = "left"
+				var_44_6.local_position[1] = 20 + var_44_3.size[1] + 50
+				var_44_6.local_position[2] = var_44_3.position[2] + 50
 			else
-				talent_tooltip_node.horizontal_alignment = "right"
-				talent_tooltip_node.local_position[1] = -20 - parent_scenegraph_node.size[1] - 50
-				talent_tooltip_node.local_position[2] = parent_scenegraph_node.position[2] + 50
+				var_44_6.horizontal_alignment = "right"
+				var_44_6.local_position[1] = -20 - var_44_3.size[1] - 50
+				var_44_6.local_position[2] = var_44_3.position[2] + 50
 			end
 		end
 	end
 end
 
-VersusTabUI._update_player_health = function (self, player_unit, widget)
-	local network_manager = Managers.state.network
-	local game = network_manager:game()
-	local go_id = Managers.state.unit_storage:go_id(player_unit)
-	local health_extension = ScriptUnit.extension(player_unit, "health_system")
-	local status_extension = ScriptUnit.extension(player_unit, "status_system")
-	local buff_extension = ScriptUnit.extension(player_unit, "buff_system")
-	local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
-	local max_health = health_extension:get_max_health()
-	local is_dead = status_extension:is_dead()
-	local total_health = is_dead and 0 or health_extension:current_health()
-	local total_health_percent = is_dead and 0 or health_extension:current_health_percent()
-	local health_percent = is_dead and 0 or health_extension:current_permanent_health_percent()
-	local is_wounded = status_extension:is_wounded()
-	local is_knocked_down = (status_extension:is_knocked_down() or status_extension:get_is_ledge_hanging()) and total_health_percent > 0
-	local is_ready_for_assisted_respawn = status_extension:is_ready_for_assisted_respawn()
-	local needs_help = status_extension:is_grabbed_by_pack_master() or status_extension:is_hanging_from_hook() or status_extension:is_pounced_down() or status_extension:is_grabbed_by_corruptor() or status_extension:is_in_vortex() or status_extension:is_grabbed_by_chaos_spawn()
-	local num_grimoires = buff_extension:num_buff_perk("skaven_grimoire")
-	local multiplier = buff_extension:apply_buffs_to_value(PlayerUnitDamageSettings.GRIMOIRE_HEALTH_DEBUFF, "curse_protection")
-	local num_twitch_grimoires = buff_extension:num_buff_perk("twitch_grimoire")
-	local twitch_multiplier = buff_extension:apply_buffs_to_value(PlayerUnitDamageSettings.GRIMOIRE_HEALTH_DEBUFF, "curse_protection")
-	local num_slayer_curses = buff_extension:num_buff_perk("slayer_curse")
-	local slayer_curse_multiplier = buff_extension:apply_buffs_to_value(PlayerUnitDamageSettings.SLAYER_CURSE_HEALTH_DEBUFF, "curse_protection")
-	local num_mutator_curses = buff_extension:num_buff_perk("mutator_curse")
-	local curse_settings_value = WindSettings.light.curse_settings.value
-	local value = Managers.state.difficulty:get_difficulty_value_from_table(curse_settings_value)
-	local mutator_curse_multiplier = buff_extension:apply_buffs_to_value(value, "curse_protection")
-	local cursed_health = buff_extension:apply_buffs_to_value(0, "health_curse")
+function VersusTabUI._update_player_health(arg_45_0, arg_45_1, arg_45_2)
+	local var_45_0 = Managers.state.network:game()
+	local var_45_1 = Managers.state.unit_storage:go_id(arg_45_1)
+	local var_45_2 = ScriptUnit.extension(arg_45_1, "health_system")
+	local var_45_3 = ScriptUnit.extension(arg_45_1, "status_system")
+	local var_45_4 = ScriptUnit.extension(arg_45_1, "buff_system")
+	local var_45_5 = ScriptUnit.extension(arg_45_1, "inventory_system")
+	local var_45_6 = var_45_2:get_max_health()
+	local var_45_7 = var_45_3:is_dead()
+	local var_45_8
 
-	cursed_health = buff_extension:apply_buffs_to_value(cursed_health, "curse_protection")
+	var_45_8 = var_45_7 and 0 or var_45_2:current_health()
 
-	local active_percentage = 1 + num_grimoires * multiplier + num_twitch_grimoires * twitch_multiplier + num_slayer_curses * slayer_curse_multiplier + num_mutator_curses * mutator_curse_multiplier + cursed_health
-	local style = widget.style
-	local content = widget.content
-	local health_bar_style = style.health_bar
-	local total_health_bar_style = style.total_health_bar
-	local ability_bar_content = content.ability_bar
+	local var_45_9 = var_45_7 and 0 or var_45_2:current_health_percent()
+	local var_45_10 = var_45_7 and 0 or var_45_2:current_permanent_health_percent()
+	local var_45_11 = var_45_3:is_wounded()
+	local var_45_12 = (var_45_3:is_knocked_down() or var_45_3:get_is_ledge_hanging()) and var_45_9 > 0
+	local var_45_13 = var_45_3:is_ready_for_assisted_respawn()
+	local var_45_14 = var_45_3:is_grabbed_by_pack_master() or var_45_3:is_hanging_from_hook() or var_45_3:is_pounced_down() or var_45_3:is_grabbed_by_corruptor() or var_45_3:is_in_vortex() or var_45_3:is_grabbed_by_chaos_spawn()
+	local var_45_15 = var_45_4:num_buff_perk("skaven_grimoire")
+	local var_45_16 = var_45_4:apply_buffs_to_value(PlayerUnitDamageSettings.GRIMOIRE_HEALTH_DEBUFF, "curse_protection")
+	local var_45_17 = var_45_4:num_buff_perk("twitch_grimoire")
+	local var_45_18 = var_45_4:apply_buffs_to_value(PlayerUnitDamageSettings.GRIMOIRE_HEALTH_DEBUFF, "curse_protection")
+	local var_45_19 = var_45_4:num_buff_perk("slayer_curse")
+	local var_45_20 = var_45_4:apply_buffs_to_value(PlayerUnitDamageSettings.SLAYER_CURSE_HEALTH_DEBUFF, "curse_protection")
+	local var_45_21 = var_45_4:num_buff_perk("mutator_curse")
+	local var_45_22 = WindSettings.light.curse_settings.value
+	local var_45_23 = Managers.state.difficulty:get_difficulty_value_from_table(var_45_22)
+	local var_45_24 = var_45_4:apply_buffs_to_value(var_45_23, "curse_protection")
+	local var_45_25 = var_45_4:apply_buffs_to_value(0, "health_curse")
+	local var_45_26 = var_45_4:apply_buffs_to_value(var_45_25, "curse_protection")
+	local var_45_27 = 1 + var_45_15 * var_45_16 + var_45_17 * var_45_18 + var_45_19 * var_45_20 + var_45_21 * var_45_24 + var_45_26
+	local var_45_28 = arg_45_2.style
+	local var_45_29 = arg_45_2.content
+	local var_45_30 = var_45_28.health_bar
+	local var_45_31 = var_45_28.total_health_bar
+	local var_45_32 = var_45_29.ability_bar
 
-	if game and go_id then
-		local ability_cooldown_percentage = GameSession.game_object_field(game, go_id, "ability_percentage") or 0
-
-		ability_bar_content.bar_value = 1 - ability_cooldown_percentage
+	if var_45_0 and var_45_1 then
+		var_45_32.bar_value = 1 - (GameSession.game_object_field(var_45_0, var_45_1, "ability_percentage") or 0)
 	end
 
-	health_bar_style.gradient_threshold = health_percent * active_percentage
-	total_health_bar_style.gradient_threshold = total_health_percent * active_percentage
+	var_45_30.gradient_threshold = var_45_10 * var_45_27
+	var_45_31.gradient_threshold = var_45_9 * var_45_27
 
-	return is_wounded, is_knocked_down, needs_help, is_dead
+	return var_45_11, var_45_12, var_45_14, var_45_7
 end
 
-VersusTabUI._is_in_local_player_party = function (self, peer_id)
-	local local_player_party = Managers.party:get_local_player_party()
+function VersusTabUI._is_in_local_player_party(arg_46_0, arg_46_1)
+	local var_46_0 = Managers.party:get_local_player_party()
 
-	if local_player_party then
-		local occupied_slots = local_player_party.occupied_slots
+	if var_46_0 then
+		local var_46_1 = var_46_0.occupied_slots
 
-		for i = 1, #occupied_slots do
-			local slot = occupied_slots[i]
-			local slot_peer_id = slot.peer_id
-
-			if peer_id == slot_peer_id then
+		for iter_46_0 = 1, #var_46_1 do
+			if arg_46_1 == var_46_1[iter_46_0].peer_id then
 				return true
 			end
 		end
@@ -1201,285 +1157,270 @@ VersusTabUI._is_in_local_player_party = function (self, peer_id)
 	return false
 end
 
-VersusTabUI._get_opponent_party_id = function (self)
-	return self._party_id == 1 and 2 or 1
+function VersusTabUI._get_opponent_party_id(arg_47_0)
+	return arg_47_0._party_id == 1 and 2 or 1
 end
 
-VersusTabUI._remove_ignore_chat_message_from_peer_id = function (self, peer_id)
+function VersusTabUI._remove_ignore_chat_message_from_peer_id(arg_48_0, arg_48_1)
 	if IS_WINDOWS then
-		local chat_gui = Managers.chat.chat_gui
-
-		chat_gui:remove_ignore_peer_id(peer_id)
+		Managers.chat.chat_gui:remove_ignore_peer_id(arg_48_1)
 	elseif IS_XB1 then
-		Managers.chat:remove_ignore_peer_id(peer_id)
+		Managers.chat:remove_ignore_peer_id(arg_48_1)
 	end
 end
 
-VersusTabUI.add_respawn_counter_event = function (self, player, is_local_player, spawn_timer, show_selection_ui)
-	local peer_id = player.peer_id
-	local player_slot = self:_get_player_slot_by_peer_id(peer_id)
+function VersusTabUI.add_respawn_counter_event(arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4)
+	local var_49_0 = arg_49_1.peer_id
+	local var_49_1 = arg_49_0:_get_player_slot_by_peer_id(var_49_0)
 
-	if player_slot and spawn_timer > 0 then
-		local widget = player_slot.panel_widget
-		local content = widget.content
+	if var_49_1 and arg_49_3 > 0 then
+		local var_49_2 = var_49_1.panel_widget.content
 
-		content.respawning = true
-		content.spawn_timer = spawn_timer
+		var_49_2.respawning = true
+		var_49_2.spawn_timer = arg_49_3
 	end
 end
 
-VersusTabUI._update_player_respawn_counter = function (self, player_slot)
-	local portrait_frame_widget = player_slot.portrait_widget
+function VersusTabUI._update_player_respawn_counter(arg_50_0, arg_50_1)
+	local var_50_0 = arg_50_1.portrait_widget
 
-	if not portrait_frame_widget then
+	if not var_50_0 then
 		return
 	end
 
-	local panel_widget = player_slot.panel_widget
+	local var_50_1 = arg_50_1.panel_widget
 
-	if panel_widget.content.respawning then
-		local t, dt = Managers.time:time_and_delta("game")
-		local respawn_time = panel_widget.content.spawn_timer - t
+	if var_50_1.content.respawning then
+		local var_50_2, var_50_3 = Managers.time:time_and_delta("game")
+		local var_50_4 = var_50_1.content.spawn_timer - var_50_2
 
-		if respawn_time <= 0 then
-			panel_widget.content.respawning = false
+		if var_50_4 <= 0 then
+			var_50_1.content.respawning = false
 		end
 
-		panel_widget.content.respawn_text = string.format("%d", math.abs(respawn_time))
+		var_50_1.content.respawn_text = string.format("%d", math.abs(var_50_4))
 	end
 
-	portrait_frame_widget.style.portrait.saturated = panel_widget.content.respawning
+	var_50_0.style.portrait.saturated = var_50_1.content.respawning
 end
 
-VersusTabUI._update_player_status_portrait = function (self, player_slot, profile_index, career_index, is_dark_pact, is_in_local_player_party, is_wounded, is_knocked_down, needs_help, is_dead)
-	local portrait_frame_widget = player_slot.portrait_widget
+function VersusTabUI._update_player_status_portrait(arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4, arg_51_5, arg_51_6, arg_51_7, arg_51_8, arg_51_9)
+	local var_51_0 = arg_51_1.portrait_widget
 
-	if not portrait_frame_widget then
+	if not var_51_0 then
 		return
 	end
 
-	local panel_widget = player_slot.panel_widget
-	local player_card_content = panel_widget.content
+	local var_51_1 = arg_51_1.panel_widget
+	local var_51_2 = var_51_1.content
 
-	if is_dark_pact and not is_in_local_player_party then
-		portrait_frame_widget.content.portrait = "eor_empty_player"
-		portrait_frame_widget.style.portrait.color[1] = 255
-	elseif player_card_content.is_wounded ~= is_wounded or player_card_content.is_knocked_down ~= is_knocked_down or player_card_content.needs_help ~= needs_help or player_card_content.is_dead ~= is_dead then
-		local style = panel_widget.style
+	if arg_51_4 and not arg_51_5 then
+		var_51_0.content.portrait = "eor_empty_player"
+		var_51_0.style.portrait.color[1] = 255
+	elseif var_51_2.is_wounded ~= arg_51_6 or var_51_2.is_knocked_down ~= arg_51_7 or var_51_2.needs_help ~= arg_51_8 or var_51_2.is_dead ~= arg_51_9 then
+		local var_51_3 = var_51_1.style
 
-		if is_knocked_down or needs_help then
-			portrait_frame_widget.content.portrait = "status_icon_needs_assist"
-			portrait_frame_widget.style.portrait.color[1] = 150
-		elseif is_dead and not player_card_content.respawning then
-			portrait_frame_widget.content.portrait = "status_icon_dead"
-			portrait_frame_widget.style.portrait.color[1] = 255
+		if arg_51_7 or arg_51_8 then
+			var_51_0.content.portrait = "status_icon_needs_assist"
+			var_51_0.style.portrait.color[1] = 150
+		elseif arg_51_9 and not var_51_2.respawning then
+			var_51_0.content.portrait = "status_icon_dead"
+			var_51_0.style.portrait.color[1] = 255
 		else
-			local portrait_texture = self:_get_hero_portrait(profile_index, career_index)
+			local var_51_4 = arg_51_0:_get_hero_portrait(arg_51_2, arg_51_3)
 
-			portrait_frame_widget.content.portrait = portrait_texture
-			portrait_frame_widget.style.portrait.color[1] = 255
+			var_51_0.content.portrait = var_51_4
+			var_51_0.style.portrait.color[1] = 255
 		end
 	end
 end
 
-VersusTabUI._get_player_slot_by_peer_id = function (self, peer_id)
-	local custom_game_slots = self._custom_game_slots
+function VersusTabUI._get_player_slot_by_peer_id(arg_52_0, arg_52_1)
+	local var_52_0 = arg_52_0._custom_game_slots
 
-	if custom_game_slots then
-		for i = 1, #custom_game_slots do
-			local team_slots = custom_game_slots[i]
+	if var_52_0 then
+		for iter_52_0 = 1, #var_52_0 do
+			local var_52_1 = var_52_0[iter_52_0]
 
-			for j = 1, #team_slots do
-				local player_slot = team_slots[j]
+			for iter_52_1 = 1, #var_52_1 do
+				local var_52_2 = var_52_1[iter_52_1]
 
-				if player_slot.peer_id == peer_id then
-					return player_slot
+				if var_52_2.peer_id == arg_52_1 then
+					return var_52_2
 				end
 			end
 		end
 	end
 end
 
-VersusTabUI._get_ping_texture_by_ping_value = function (self, ping_value)
-	if ping_value <= 125 then
+function VersusTabUI._get_ping_texture_by_ping_value(arg_53_0, arg_53_1)
+	if arg_53_1 <= 125 then
 		return "ping_icon_01", "low_ping_color"
-	elseif ping_value > 125 and ping_value <= 175 then
+	elseif arg_53_1 > 125 and arg_53_1 <= 175 then
 		return "ping_icon_02", "medium_ping_color"
-	elseif ping_value > 175 then
+	elseif arg_53_1 > 175 then
 		return "ping_icon_03", "high_ping_color"
 	end
 end
 
-VersusTabUI._update_objectives = function (self, dt, t)
-	if not self._objective_system:is_active() then
+function VersusTabUI._update_objectives(arg_54_0, arg_54_1, arg_54_2)
+	if not arg_54_0._objective_system:is_active() then
 		return
 	end
 
-	if not self._objectives_initialized then
-		local is_hero = not self:_is_dark_pact()
+	if not arg_54_0._objectives_initialized then
+		local var_54_0 = not arg_54_0:_is_dark_pact()
 
-		self:_set_active_scoring_side_color(is_hero)
+		arg_54_0:_set_active_scoring_side_color(var_54_0)
 
-		local num_main_objectives = self._objective_system:num_main_objectives()
-
-		self._num_main_objective = num_main_objectives
-		self._objectives_initialized = true
+		arg_54_0._num_main_objective = arg_54_0._objective_system:num_main_objectives()
+		arg_54_0._objectives_initialized = true
 	end
 
-	local current_objective_index = self._objective_system:current_objective_index()
-	local num_completed_main_objectives = self._objective_system:num_completed_main_objectives()
+	local var_54_1 = arg_54_0._objective_system:current_objective_index()
+	local var_54_2 = arg_54_0._objective_system:num_completed_main_objectives()
 
-	if current_objective_index > self._selected_objective_index then
-		self._selected_objective_index = current_objective_index
+	if var_54_1 > arg_54_0._selected_objective_index then
+		arg_54_0._selected_objective_index = var_54_1
 
-		self:_update_current_objective(current_objective_index)
+		arg_54_0:_update_current_objective(var_54_1)
 
-		local description = "n/a"
+		local var_54_3 = "n/a"
 
-		if self:_is_dark_pact() then
-			description = Localize("level_objective_pactsworn")
+		if arg_54_0:_is_dark_pact() then
+			var_54_3 = Localize("level_objective_pactsworn")
 		else
-			description = self._objective_system:first_active_objective_description()
+			var_54_3 = arg_54_0._objective_system:first_active_objective_description()
 		end
 
-		self:_set_objective_text(description)
+		arg_54_0:_set_objective_text(var_54_3)
 	end
 
-	self:_update_objective_progress()
+	arg_54_0:_update_objective_progress()
 end
 
-VersusTabUI._update_current_objective = function (self)
-	local objective_widget = self._widgets_by_name.score
-	local objective_icon = self._objective_system:current_objective_icon()
+function VersusTabUI._update_current_objective(arg_55_0)
+	local var_55_0 = arg_55_0._widgets_by_name.score
+	local var_55_1 = arg_55_0._objective_system:current_objective_icon()
 
-	objective_widget.content.objective_icon = objective_icon
+	var_55_0.content.objective_icon = var_55_1
 end
 
-VersusTabUI._update_objective_progress = function (self)
-	local progress = self._objective_system:current_objective_progress() or 0
-	local starting_degrees = 0
-	local degrees = 360 - starting_degrees * 2
-	local alpha = 255 * math.min(progress * 2, 1)
-	local current_degrees = starting_degrees + degrees * progress
-	local degrees_progress = current_degrees / 360
-	local widgets_by_name = self._widgets_by_name
-	local objective_widget = widgets_by_name.score
+function VersusTabUI._update_objective_progress(arg_56_0)
+	local var_56_0 = arg_56_0._objective_system:current_objective_progress() or 0
+	local var_56_1 = 0
+	local var_56_2 = 360 - var_56_1 * 2
+	local var_56_3 = 255 * math.min(var_56_0 * 2, 1)
+	local var_56_4 = (var_56_1 + var_56_2 * var_56_0) / 360
 
-	objective_widget.style.progress_bar.gradient_threshold = degrees_progress
+	arg_56_0._widgets_by_name.score.style.progress_bar.gradient_threshold = var_56_4
 
-	if progress == 1 then
+	if var_56_0 == 1 then
 		return true
 	end
 end
 
-VersusTabUI._update_round_start_timer = function (self, dt, t)
-	if self._round_has_started then
+function VersusTabUI._update_round_start_timer(arg_57_0, arg_57_1, arg_57_2)
+	if arg_57_0._round_has_started then
 		return
 	end
 
-	if self._countdown_timer and self._countdown_timer <= 0 then
-		self:_on_round_started()
+	if arg_57_0._countdown_timer and arg_57_0._countdown_timer <= 0 then
+		arg_57_0:_on_round_started()
 	end
 end
 
-VersusTabUI._set_pre_round_timer = function (self, time_left)
-	local widget = self._widgets_by_name.score
-
-	widget.content.pre_round_timer = time_left
-	self._countdown_timer = time_left
+function VersusTabUI._set_pre_round_timer(arg_58_0, arg_58_1)
+	arg_58_0._widgets_by_name.score.content.pre_round_timer = arg_58_1
+	arg_58_0._countdown_timer = arg_58_1
 end
 
-VersusTabUI._set_round_starting_text = function (self)
-	local widget = self._widgets_by_name.round_starting_text
-
-	widget.content.text = "Round Starting..."
+function VersusTabUI._set_round_starting_text(arg_59_0)
+	arg_59_0._widgets_by_name.round_starting_text.content.text = "Round Starting..."
 end
 
-VersusTabUI._set_objective_text = function (self, text)
-	local widget = self._widgets_by_name.objective_text
-	local content = widget.content
-	local style = widget.style
+function VersusTabUI._set_objective_text(arg_60_0, arg_60_1)
+	local var_60_0 = arg_60_0._widgets_by_name.objective_text
+	local var_60_1 = var_60_0.content
+	local var_60_2 = var_60_0.style
 
-	content.area_text_content = text
+	var_60_1.area_text_content = arg_60_1
 end
 
-VersusTabUI._register_events = function (self)
-	local event_manager = Managers.state.event
+function VersusTabUI._register_events(arg_61_0)
+	local var_61_0 = Managers.state.event
 
-	if event_manager then
-		event_manager:register(self, "add_respawn_counter_event", "add_respawn_counter_event")
-		event_manager:register(self, "ui_tab_update_start_round_counter", "update_start_round_counter")
-		event_manager:register(self, "ui_tab_round_started", "round_started")
+	if var_61_0 then
+		var_61_0:register(arg_61_0, "add_respawn_counter_event", "add_respawn_counter_event")
+		var_61_0:register(arg_61_0, "ui_tab_update_start_round_counter", "update_start_round_counter")
+		var_61_0:register(arg_61_0, "ui_tab_round_started", "round_started")
 	end
 end
 
-VersusTabUI._unregister_events = function (self)
-	local event_manager = Managers.state.event
+function VersusTabUI._unregister_events(arg_62_0)
+	local var_62_0 = Managers.state.event
 
-	if event_manager then
-		event_manager:unregister("add_respawn_counter_event", self)
-		event_manager:unregister("ui_tab_update_start_round_counter", self)
-		event_manager:unregister("ui_tab_round_started", self)
+	if var_62_0 then
+		var_62_0:unregister("add_respawn_counter_event", arg_62_0)
+		var_62_0:unregister("ui_tab_update_start_round_counter", arg_62_0)
+		var_62_0:unregister("ui_tab_round_started", arg_62_0)
 	end
 end
 
-VersusTabUI.update_start_round_counter = function (self, time_left)
-	self:_set_pre_round_timer(time_left)
+function VersusTabUI.update_start_round_counter(arg_63_0, arg_63_1)
+	arg_63_0:_set_pre_round_timer(arg_63_1)
 end
 
-VersusTabUI._on_round_started = function (self)
-	self._round_has_started = true
+function VersusTabUI._on_round_started(arg_64_0)
+	arg_64_0._round_has_started = true
 
-	local objective_widget = self._widgets_by_name.score
-	local var_1_0 = objective_widget.content
+	local var_64_0 = arg_64_0._widgets_by_name.score.content
 
-	if self._custom_round_timer_active then
-		-- Nothing
+	if arg_64_0._custom_round_timer_active then
+		-- block empty
 	end
 
-	var_1_0.pre_round_timer_done = true
+	var_64_0.pre_round_timer_done = true
 end
 
-VersusTabUI.round_started = function (self)
-	self:_on_round_started()
+function VersusTabUI.round_started(arg_65_0)
+	arg_65_0:_on_round_started()
 end
 
-VersusTabUI._set_active_scoring_side_color = function (self, is_hero)
-	local active_side_color = is_hero and Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
-	local objective_widget = self._widgets_by_name.score
+function VersusTabUI._set_active_scoring_side_color(arg_66_0, arg_66_1)
+	local var_66_0 = arg_66_1 and Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
+	local var_66_1 = arg_66_0._widgets_by_name.score
 
-	objective_widget.content.is_hero = is_hero
-	objective_widget.style.progress_bar.color = active_side_color
-	objective_widget.style.objective_icon.color = active_side_color
+	var_66_1.content.is_hero = arg_66_1
+	var_66_1.style.progress_bar.color = var_66_0
+	var_66_1.style.objective_icon.color = var_66_0
 end
 
-VersusTabUI._is_dark_pact = function (self)
-	local party_id = self._party_id
-	local party_manager = Managers.party
-	local party = party_manager:get_party(party_id)
-	local side = Managers.state.side.side_by_party[party]
-	local is_dark_pact = side and side:name() == "dark_pact"
+function VersusTabUI._is_dark_pact(arg_67_0)
+	local var_67_0 = arg_67_0._party_id
+	local var_67_1 = Managers.party:get_party(var_67_0)
+	local var_67_2 = Managers.state.side.side_by_party[var_67_1]
 
-	return is_dark_pact
+	return var_67_2 and var_67_2:name() == "dark_pact"
 end
 
-VersusTabUI._get_current_set = function (self)
-	local rounds_played = self._win_conditions:get_current_round()
+function VersusTabUI._get_current_set(arg_68_0)
+	local var_68_0 = arg_68_0._win_conditions:get_current_round()
 
-	return math.round(rounds_played / 2)
+	return math.round(var_68_0 / 2)
 end
 
-VersusTabUI._setup_custom_settings_scrollbar = function (self, num_settings, spacing)
-	local settings_total_size = num_settings * spacing
-	local excess_area = settings_total_size - definitions.scenegraph_definition.settings_container.size[2]
+function VersusTabUI._setup_custom_settings_scrollbar(arg_69_0, arg_69_1, arg_69_2)
+	local var_69_0 = arg_69_1 * arg_69_2 - var_0_0.scenegraph_definition.settings_container.size[2]
 
-	if excess_area > 0 then
-		local ui_scenegraph = self._ui_scenegraph
-		local scroll_area_scenegraph_id = "settings_anchor"
-		local scroll_area_anchor_scenegraph_id = "settings_container"
-		local enable_auto_scroll = false
-		local optional_scroll_area_hotspot_widget, horizontal_scrollbar
+	if var_69_0 > 0 then
+		local var_69_1 = arg_69_0._ui_scenegraph
+		local var_69_2 = "settings_anchor"
+		local var_69_3 = "settings_container"
+		local var_69_4 = false
+		local var_69_5
+		local var_69_6
 
-		self._scrollbar_ui = ScrollbarUI:new(ui_scenegraph, scroll_area_scenegraph_id, scroll_area_anchor_scenegraph_id, excess_area, enable_auto_scroll, optional_scroll_area_hotspot_widget, horizontal_scrollbar)
+		arg_69_0._scrollbar_ui = ScrollbarUI:new(var_69_1, var_69_2, var_69_3, var_69_0, var_69_4, var_69_5, var_69_6)
 	end
 end

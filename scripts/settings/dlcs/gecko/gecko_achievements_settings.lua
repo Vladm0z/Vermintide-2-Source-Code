@@ -1,14 +1,14 @@
-﻿-- chunkname: @scripts/settings/dlcs/gecko/gecko_achievements_settings.lua
+-- chunkname: @scripts/settings/dlcs/gecko/gecko_achievements_settings.lua
 
-local settings = DLCSettings.gecko
+local var_0_0 = DLCSettings.gecko
 
-settings.achievement_outline = {
+var_0_0.achievement_outline = {
 	levels = {
 		entries = {},
 		categories = {
 			{
-				name = "achv_menu_levels_gecko_category_title",
 				sorting = 4,
+				name = "achv_menu_levels_gecko_category_title",
 				entries = {
 					"gecko_scraps_farmlands_1",
 					"gecko_scraps_farmlands_2",
@@ -49,12 +49,12 @@ settings.achievement_outline = {
 					"gecko_scraps_generic_1",
 					"gecko_scraps_generic_2",
 					"gecko_scraps_generic_3",
-					"gecko_scraps_generic_4",
-				},
-			},
-		},
-	},
+					"gecko_scraps_generic_4"
+				}
+			}
+		}
+	}
 }
-settings.achievement_template_file_names = {
-	"scripts/managers/achievements/achievement_templates_gecko",
+var_0_0.achievement_template_file_names = {
+	"scripts/managers/achievements/achievement_templates_gecko"
 }

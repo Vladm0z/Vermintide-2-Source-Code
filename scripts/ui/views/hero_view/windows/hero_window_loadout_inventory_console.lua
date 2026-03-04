@@ -1,55 +1,52 @@
-﻿-- chunkname: @scripts/ui/views/hero_view/windows/hero_window_loadout_inventory_console.lua
+-- chunkname: @scripts/ui/views/hero_view/windows/hero_window_loadout_inventory_console.lua
 
-local definitions = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_loadout_inventory_console_definitions")
-local widget_definitions = definitions.widgets
-local scenegraph_definition = definitions.scenegraph_definition
-local animation_definitions = definitions.animation_definitions
-local generic_input_actions = definitions.generic_input_actions
-local DO_RELOAD = false
-local INPUT_ACTION_NEXT = "trigger_cycle_next"
-local INPUT_ACTION_PREVIOUS = "trigger_cycle_previous"
+local var_0_0 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_loadout_inventory_console_definitions")
+local var_0_1 = var_0_0.widgets
+local var_0_2 = var_0_0.scenegraph_definition
+local var_0_3 = var_0_0.animation_definitions
+local var_0_4 = var_0_0.generic_input_actions
+local var_0_5 = false
+local var_0_6 = "trigger_cycle_next"
+local var_0_7 = "trigger_cycle_previous"
 
-local function item_sort_func(item_1, item_2)
-	local item_data_1 = item_1.data
-	local item_data_2 = item_2.data
-	local item_key_1 = item_data_1.key
-	local item_key_2 = item_data_2.key
-	local item_1_power_level = item_1.power_level or 0
-	local item_2_power_level = item_2.power_level or 0
-	local item_1_backend_id = item_1.backend_id
-	local item_2_backend_id = item_2.backend_id
-	local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
-	local item_2_favorited = ItemHelper.is_favorite_backend_id(item_2_backend_id, item_2)
+local function var_0_8(arg_1_0, arg_1_1)
+	local var_1_0 = arg_1_0.data
+	local var_1_1 = arg_1_1.data
+	local var_1_2 = var_1_0.key
+	local var_1_3 = var_1_1.key
+	local var_1_4 = arg_1_0.power_level or 0
+	local var_1_5 = arg_1_1.power_level or 0
+	local var_1_6 = arg_1_0.backend_id
+	local var_1_7 = arg_1_1.backend_id
+	local var_1_8 = ItemHelper.is_favorite_backend_id(var_1_6, arg_1_0)
 
-	if item_1_favorited == item_2_favorited then
-		if item_1_power_level == item_2_power_level then
-			local item_1_rarity = item_1.rarity or item_data_1.rarity
-			local item_2_rarity = item_2.rarity or item_data_2.rarity
-			local item_rarity_order = UISettings.item_rarity_order
-			local item_1_rarity_order = item_rarity_order[item_1_rarity]
-			local item_2_rarity_order = item_rarity_order[item_2_rarity]
+	if var_1_8 == ItemHelper.is_favorite_backend_id(var_1_7, arg_1_1) then
+		if var_1_4 == var_1_5 then
+			local var_1_9 = arg_1_0.rarity or var_1_0.rarity
+			local var_1_10 = arg_1_1.rarity or var_1_1.rarity
+			local var_1_11 = UISettings.item_rarity_order
+			local var_1_12 = var_1_11[var_1_9]
+			local var_1_13 = var_1_11[var_1_10]
 
-			if item_1_rarity_order == item_2_rarity_order then
-				local item_type_1 = Localize(item_data_1.item_type)
-				local item_type_2 = Localize(item_data_2.item_type)
+			if var_1_12 == var_1_13 then
+				local var_1_14 = Localize(var_1_0.item_type)
+				local var_1_15 = Localize(var_1_1.item_type)
 
-				if item_type_1 == item_type_2 then
-					local _, item_1_display_name = UIUtils.get_ui_information_from_item(item_1)
-					local _, item_2_display_name = UIUtils.get_ui_information_from_item(item_2)
-					local item_name_1 = Localize(item_1_display_name)
-					local item_name_2 = Localize(item_2_display_name)
+				if var_1_14 == var_1_15 then
+					local var_1_16, var_1_17 = UIUtils.get_ui_information_from_item(arg_1_0)
+					local var_1_18, var_1_19 = UIUtils.get_ui_information_from_item(arg_1_1)
 
-					return item_name_1 < item_name_2
+					return Localize(var_1_17) < Localize(var_1_19)
 				else
-					return item_type_1 < item_type_2
+					return var_1_14 < var_1_15
 				end
 			else
-				return item_1_rarity_order < item_2_rarity_order
+				return var_1_12 < var_1_13
 			end
 		else
-			return item_2_power_level < item_1_power_level
+			return var_1_5 < var_1_4
 		end
-	elseif item_1_favorited then
+	elseif var_1_8 then
 		return true
 	else
 		return false
@@ -59,580 +56,557 @@ end
 HeroWindowLoadoutInventoryConsole = class(HeroWindowLoadoutInventoryConsole)
 HeroWindowLoadoutInventoryConsole.NAME = "HeroWindowLoadoutInventoryConsole"
 
-HeroWindowLoadoutInventoryConsole.on_enter = function (self, params, offset)
+function HeroWindowLoadoutInventoryConsole.on_enter(arg_2_0, arg_2_1, arg_2_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowLoadoutInventoryConsole")
 
-	self.params = params
-	self.parent = params.parent
+	arg_2_0.params = arg_2_1
+	arg_2_0.parent = arg_2_1.parent
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_2_0 = arg_2_1.ingame_ui_context
 
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self.input_manager = ingame_ui_context.input_manager
-	self.statistics_db = ingame_ui_context.statistics_db
-	self.render_settings = {
-		snap_pixel_positions = true,
+	arg_2_0.ui_renderer = var_2_0.ui_renderer
+	arg_2_0.ui_top_renderer = var_2_0.ui_top_renderer
+	arg_2_0.input_manager = var_2_0.input_manager
+	arg_2_0.statistics_db = var_2_0.statistics_db
+	arg_2_0.render_settings = {
+		snap_pixel_positions = true
 	}
 
-	local player_manager = Managers.player
-	local local_player = player_manager:local_player()
+	local var_2_1 = Managers.player
+	local var_2_2 = var_2_1:local_player()
 
-	self._stats_id = local_player:stats_id()
-	self.player_manager = player_manager
-	self.peer_id = ingame_ui_context.peer_id
-	self.hero_name = params.hero_name
-	self.career_index = params.career_index
-	self.profile_index = params.profile_index
+	arg_2_0._stats_id = var_2_2:stats_id()
+	arg_2_0.player_manager = var_2_1
+	arg_2_0.peer_id = var_2_0.peer_id
+	arg_2_0.hero_name = arg_2_1.hero_name
+	arg_2_0.career_index = arg_2_1.career_index
+	arg_2_0.profile_index = arg_2_1.profile_index
+	arg_2_0.career_name = SPProfiles[arg_2_0.profile_index].careers[arg_2_0.career_index].name
+	arg_2_0._equipped_item = nil
+	arg_2_0._compare_item = nil
+	arg_2_0._animations = {}
+	arg_2_0._categories = arg_2_0:_create_item_categories(arg_2_0.profile_index, arg_2_0.career_index)
 
-	local profile = SPProfiles[self.profile_index]
-	local career_data = profile.careers[self.career_index]
+	arg_2_0:create_ui_elements(arg_2_1, arg_2_2)
+	arg_2_0:_setup_input_buttons()
 
-	self.career_name = career_data.name
-	self._equipped_item = nil
-	self._compare_item = nil
-	self._animations = {}
-	self._categories = self:_create_item_categories(self.profile_index, self.career_index)
-
-	self:create_ui_elements(params, offset)
-	self:_setup_input_buttons()
-
-	local params = {
-		profile_index = params.profile_index,
-		career_index = params.career_index,
+	local var_2_3 = {
+		profile_index = arg_2_1.profile_index,
+		career_index = arg_2_1.career_index
 	}
-	local item_grid = ItemGridUI:new(self._categories, self._widgets_by_name.item_grid, self.hero_name, self.career_index, params)
+	local var_2_4 = ItemGridUI:new(arg_2_0._categories, arg_2_0._widgets_by_name.item_grid, arg_2_0.hero_name, arg_2_0.career_index, var_2_3)
 
-	self._item_grid = item_grid
+	arg_2_0._item_grid = var_2_4
 
-	item_grid:mark_equipped_items(true)
-	item_grid:mark_locked_items(true)
-	item_grid:disable_locked_items(true)
-	item_grid:disable_unwieldable_items(true)
-	item_grid:disable_item_drag()
-	item_grid:apply_item_sorting_function(item_sort_func)
-	self:_set_item_compare_enable_state(false)
+	var_2_4:mark_equipped_items(true)
+	var_2_4:mark_locked_items(true)
+	var_2_4:disable_locked_items(true)
+	var_2_4:disable_unwieldable_items(true)
+	var_2_4:disable_item_drag()
+	var_2_4:apply_item_sorting_function(var_0_8)
+	arg_2_0:_set_item_compare_enable_state(false)
 
-	local player_unit = local_player and local_player.player_unit
+	local var_2_5 = var_2_2 and var_2_2.player_unit
 
-	if player_unit then
-		local inventory_extension = ScriptUnit.has_extension(player_unit, "inventory_system")
+	if var_2_5 then
+		local var_2_6 = ScriptUnit.has_extension(var_2_5, "inventory_system")
 
-		if inventory_extension then
-			inventory_extension:check_and_drop_pickups("enter_inventory")
+		if var_2_6 then
+			var_2_6:check_and_drop_pickups("enter_inventory")
 		end
 	end
 
-	self:_start_transition_animation("on_enter")
+	arg_2_0:_start_transition_animation("on_enter")
 end
 
-HeroWindowLoadoutInventoryConsole._create_item_categories = function (self, profile_index, career_index)
-	local career_index = self.career_index
-	local profile_index = self.profile_index
-	local profile = SPProfiles[profile_index]
-	local careers = profile.careers
-	local career = careers[career_index]
-	local item_slot_types_by_slot_name = career.item_slot_types_by_slot_name
-	local categories = {}
+function HeroWindowLoadoutInventoryConsole._create_item_categories(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0 = arg_3_0.career_index
+	local var_3_1 = arg_3_0.profile_index
+	local var_3_2 = SPProfiles[var_3_1].careers[var_3_0].item_slot_types_by_slot_name
+	local var_3_3 = {}
 
-	for slot_name, slot_types in pairs(item_slot_types_by_slot_name) do
-		local slot = InventorySettings.slots_by_name[slot_name]
-		local ui_slot_index = slot.ui_slot_index
+	for iter_3_0, iter_3_1 in pairs(var_3_2) do
+		local var_3_4 = InventorySettings.slots_by_name[iter_3_0].ui_slot_index
 
-		if ui_slot_index then
-			local item_filter = "( "
+		if var_3_4 then
+			local var_3_5 = "( "
 
-			for index, slot_type in ipairs(slot_types) do
-				item_filter = item_filter .. "slot_type == " .. slot_type
+			for iter_3_2, iter_3_3 in ipairs(iter_3_1) do
+				var_3_5 = var_3_5 .. "slot_type == " .. iter_3_3
 
-				if index < #slot_types then
-					item_filter = item_filter .. " or "
+				if iter_3_2 < #iter_3_1 then
+					var_3_5 = var_3_5 .. " or "
 				else
-					item_filter = item_filter .. " ) and item_rarity ~= magic"
+					var_3_5 = var_3_5 .. " ) and item_rarity ~= magic"
 				end
 			end
 
-			local category = {
+			var_3_3[var_3_4] = {
 				hero_specific_filter = true,
-				name = slot_name,
-				item_types = slot_types,
-				slot_index = ui_slot_index,
-				slot_name = slot_name,
-				item_filter = item_filter,
+				name = iter_3_0,
+				item_types = iter_3_1,
+				slot_index = var_3_4,
+				slot_name = iter_3_0,
+				item_filter = var_3_5
 			}
-
-			categories[ui_slot_index] = category
 		end
 	end
 
-	return categories
+	return var_3_3
 end
 
-HeroWindowLoadoutInventoryConsole._start_transition_animation = function (self, animation_name)
-	local params = {
-		wwise_world = self.wwise_world,
-		render_settings = self.render_settings,
+function HeroWindowLoadoutInventoryConsole._start_transition_animation(arg_4_0, arg_4_1)
+	local var_4_0 = {
+		wwise_world = arg_4_0.wwise_world,
+		render_settings = arg_4_0.render_settings
 	}
-	local widgets = {}
-	local anim_id = self.ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
+	local var_4_1 = {}
+	local var_4_2 = arg_4_0.ui_animator:start_animation(arg_4_1, var_4_1, var_0_2, var_4_0)
 
-	self._animations[animation_name] = anim_id
+	arg_4_0._animations[arg_4_1] = var_4_2
 end
 
-HeroWindowLoadoutInventoryConsole.create_ui_elements = function (self, params, offset)
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+function HeroWindowLoadoutInventoryConsole.create_ui_elements(arg_5_0, arg_5_1, arg_5_2)
+	arg_5_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 
-	local widgets = {}
-	local widgets_by_name = {}
+	local var_5_0 = {}
+	local var_5_1 = {}
 
-	for name, widget_definition in pairs(widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_5_0, iter_5_1 in pairs(var_0_1) do
+		local var_5_2 = UIWidget.init(iter_5_1)
 
-		widgets[#widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_5_0[#var_5_0 + 1] = var_5_2
+		var_5_1[iter_5_0] = var_5_2
 	end
 
-	self._widgets = widgets
-	self._widgets_by_name = widgets_by_name
+	arg_5_0._widgets = var_5_0
+	arg_5_0._widgets_by_name = var_5_1
 
-	local input_service = Managers.input:get_service("hero_view")
-	local gui_layer = UILayer.default + 300
+	local var_5_3 = Managers.input:get_service("hero_view")
+	local var_5_4 = UILayer.default + 300
 
-	self._menu_input_description = MenuInputDescriptionUI:new(nil, self.ui_top_renderer, input_service, 7, gui_layer, generic_input_actions.default, true)
+	arg_5_0._menu_input_description = MenuInputDescriptionUI:new(nil, arg_5_0.ui_top_renderer, var_5_3, 7, var_5_4, var_0_4.default, true)
 
-	self._menu_input_description:set_input_description(nil)
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+	arg_5_0._menu_input_description:set_input_description(nil)
+	UIRenderer.clear_scenegraph_queue(arg_5_0.ui_renderer)
 
-	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
+	arg_5_0.ui_animator = UIAnimator:new(arg_5_0.ui_scenegraph, var_0_3)
 
-	if offset then
-		local window_position = self.ui_scenegraph.window.local_position
+	if arg_5_2 then
+		local var_5_5 = arg_5_0.ui_scenegraph.window.local_position
 
-		window_position[1] = window_position[1] + offset[1]
-		window_position[2] = window_position[2] + offset[2]
-		window_position[3] = window_position[3] + offset[3]
+		var_5_5[1] = var_5_5[1] + arg_5_2[1]
+		var_5_5[2] = var_5_5[2] + arg_5_2[2]
+		var_5_5[3] = var_5_5[3] + arg_5_2[3]
 	end
 
-	widgets_by_name.item_tooltip.content.profile_index = self.params.profile_index
-	widgets_by_name.item_tooltip.content.career_index = self.params.career_index
-	widgets_by_name.item_tooltip_compare.content.profile_index = self.params.profile_index
-	widgets_by_name.item_tooltip_compare.content.career_index = self.params.career_index
+	var_5_1.item_tooltip.content.profile_index = arg_5_0.params.profile_index
+	var_5_1.item_tooltip.content.career_index = arg_5_0.params.career_index
+	var_5_1.item_tooltip_compare.content.profile_index = arg_5_0.params.profile_index
+	var_5_1.item_tooltip_compare.content.career_index = arg_5_0.params.career_index
 end
 
-HeroWindowLoadoutInventoryConsole.set_focus = function (self, focused)
-	self._focused = focused
-	self.render_settings.alpha_multiplier = focused and 1 or 0.5
-	self._widgets_by_name.item_tooltip.content.visible = focused
+function HeroWindowLoadoutInventoryConsole.set_focus(arg_6_0, arg_6_1)
+	arg_6_0._focused = arg_6_1
+	arg_6_0.render_settings.alpha_multiplier = arg_6_1 and 1 or 0.5
+	arg_6_0._widgets_by_name.item_tooltip.content.visible = arg_6_1
 end
 
-HeroWindowLoadoutInventoryConsole.on_exit = function (self, params)
+function HeroWindowLoadoutInventoryConsole.on_exit(arg_7_0, arg_7_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowLoadoutInventoryConsole")
 
-	self.ui_animator = nil
+	arg_7_0.ui_animator = nil
 
-	self._item_grid:destroy()
+	arg_7_0._item_grid:destroy()
 
-	self._item_grid = nil
+	arg_7_0._item_grid = nil
 
-	self._menu_input_description:destroy()
+	arg_7_0._menu_input_description:destroy()
 
-	self._menu_input_description = nil
+	arg_7_0._menu_input_description = nil
 end
 
-HeroWindowLoadoutInventoryConsole.update = function (self, dt, t)
-	if DO_RELOAD then
-		DO_RELOAD = false
+function HeroWindowLoadoutInventoryConsole.update(arg_8_0, arg_8_1, arg_8_2)
+	if var_0_5 then
+		var_0_5 = false
 
-		self:create_ui_elements()
+		arg_8_0:create_ui_elements()
 	end
 
-	self._item_grid:update(dt, t)
-	self:_update_animations(dt)
-	self:_update_selected_loadout_slot_index()
-	self:_update_loadout_sync()
-	self:_update_page_info()
-	self:_update_input_description()
+	arg_8_0._item_grid:update(arg_8_1, arg_8_2)
+	arg_8_0:_update_animations(arg_8_1)
+	arg_8_0:_update_selected_loadout_slot_index()
+	arg_8_0:_update_loadout_sync()
+	arg_8_0:_update_page_info()
+	arg_8_0:_update_input_description()
 
-	if self._focused then
-		self:_handle_gamepad_activity()
-		self:_update_selected_item_tooltip()
-		self:_handle_input(dt, t)
-		self:_handle_gamepad_input(dt, t)
+	if arg_8_0._focused then
+		arg_8_0:_handle_gamepad_activity()
+		arg_8_0:_update_selected_item_tooltip()
+		arg_8_0:_handle_input(arg_8_1, arg_8_2)
+		arg_8_0:_handle_gamepad_input(arg_8_1, arg_8_2)
 	end
 
-	self:draw(dt)
+	arg_8_0:draw(arg_8_1)
 end
 
-HeroWindowLoadoutInventoryConsole.post_update = function (self, dt, t)
+function HeroWindowLoadoutInventoryConsole.post_update(arg_9_0, arg_9_1, arg_9_2)
 	return
 end
 
-HeroWindowLoadoutInventoryConsole._update_input_description = function (self)
-	local params = self.params
-	local hero_statistics_active = self.params.hero_statistics_active
+function HeroWindowLoadoutInventoryConsole._update_input_description(arg_10_0)
+	local var_10_0 = arg_10_0.params
+	local var_10_1 = arg_10_0.params.hero_statistics_active
 
-	if hero_statistics_active ~= self._hero_statistics_active then
-		self._hero_statistics_active = hero_statistics_active
+	if var_10_1 ~= arg_10_0._hero_statistics_active then
+		arg_10_0._hero_statistics_active = var_10_1
 
-		if hero_statistics_active then
-			self._menu_input_description:change_generic_actions(generic_input_actions.details)
+		if var_10_1 then
+			arg_10_0._menu_input_description:change_generic_actions(var_0_4.details)
 		else
-			self._menu_input_description:change_generic_actions(generic_input_actions.default)
+			arg_10_0._menu_input_description:change_generic_actions(var_0_4.default)
 		end
 	end
 end
 
-HeroWindowLoadoutInventoryConsole._set_item_compare_enable_state = function (self, enabled)
-	self._widgets_by_name.item_tooltip_compare.content.visible = enabled
-	self._draw_item_compare = enabled
+function HeroWindowLoadoutInventoryConsole._set_item_compare_enable_state(arg_11_0, arg_11_1)
+	arg_11_0._widgets_by_name.item_tooltip_compare.content.visible = arg_11_1
+	arg_11_0._draw_item_compare = arg_11_1
 end
 
-HeroWindowLoadoutInventoryConsole._update_equipped_item_tooltip = function (self)
-	local slot_index = self._selected_loadout_slot_index
-	local slot = InventorySettings.slots_by_slot_index[slot_index]
-	local slot_name = slot.name
-	local item_interface = Managers.backend:get_interface("items")
-	local backend_id = BackendUtils.get_loadout_item_id(self.career_name, slot_name)
-	local item = backend_id and item_interface:get_item_from_id(backend_id)
-	local widget = self._widgets_by_name.item_tooltip_compare
+function HeroWindowLoadoutInventoryConsole._update_equipped_item_tooltip(arg_12_0)
+	local var_12_0 = arg_12_0._selected_loadout_slot_index
+	local var_12_1 = InventorySettings.slots_by_slot_index[var_12_0].name
+	local var_12_2 = Managers.backend:get_interface("items")
+	local var_12_3 = BackendUtils.get_loadout_item_id(arg_12_0.career_name, var_12_1)
+	local var_12_4 = var_12_3 and var_12_2:get_item_from_id(var_12_3)
 
-	widget.content.item = item
-	self._equipped_item = item
+	arg_12_0._widgets_by_name.item_tooltip_compare.content.item = var_12_4
+	arg_12_0._equipped_item = var_12_4
 end
 
-HeroWindowLoadoutInventoryConsole._update_selected_item_tooltip = function (self)
-	local selected_item = self._item_grid:selected_item()
-	local backend_id = selected_item and selected_item.backend_id
+function HeroWindowLoadoutInventoryConsole._update_selected_item_tooltip(arg_13_0)
+	local var_13_0 = arg_13_0._item_grid:selected_item()
+	local var_13_1 = var_13_0 and var_13_0.backend_id
 
-	if backend_id ~= self._selected_backend_id then
-		local widget = self._widgets_by_name.item_tooltip
+	if var_13_1 ~= arg_13_0._selected_backend_id then
+		local var_13_2 = arg_13_0._widgets_by_name.item_tooltip
 
-		widget.content.item = selected_item
-		self._compare_item = selected_item
-		widget.content.compare_item = self._equipped_item
+		var_13_2.content.item = var_13_0
+		arg_13_0._compare_item = var_13_0
+		var_13_2.content.compare_item = arg_13_0._equipped_item
 	end
 
-	self._selected_backend_id = backend_id
+	arg_13_0._selected_backend_id = var_13_1
 end
 
-HeroWindowLoadoutInventoryConsole._update_animations = function (self, dt)
-	self.ui_animator:update(dt)
+function HeroWindowLoadoutInventoryConsole._update_animations(arg_14_0, arg_14_1)
+	arg_14_0.ui_animator:update(arg_14_1)
 
-	local animations = self._animations
-	local ui_animator = self.ui_animator
+	local var_14_0 = arg_14_0._animations
+	local var_14_1 = arg_14_0.ui_animator
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_14_0, iter_14_1 in pairs(var_14_0) do
+		if var_14_1:is_animation_completed(iter_14_1) then
+			var_14_1:stop_animation(iter_14_1)
 
-			animations[animation_name] = nil
+			var_14_0[iter_14_0] = nil
 		end
 	end
 
-	local widgets_by_name = self._widgets_by_name
-	local page_button_next = widgets_by_name.page_button_next
-	local page_button_previous = widgets_by_name.page_button_previous
+	local var_14_2 = arg_14_0._widgets_by_name
+	local var_14_3 = var_14_2.page_button_next
+	local var_14_4 = var_14_2.page_button_previous
 
-	UIWidgetUtils.animate_arrow_button(page_button_next, dt)
-	UIWidgetUtils.animate_arrow_button(page_button_previous, dt)
+	UIWidgetUtils.animate_arrow_button(var_14_3, arg_14_1)
+	UIWidgetUtils.animate_arrow_button(var_14_4, arg_14_1)
 end
 
-HeroWindowLoadoutInventoryConsole._is_button_pressed = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot or content.hotspot
+function HeroWindowLoadoutInventoryConsole._is_button_pressed(arg_15_0, arg_15_1)
+	local var_15_0 = arg_15_1.content
+	local var_15_1 = var_15_0.button_hotspot or var_15_0.hotspot
 
-	if hotspot.on_release then
-		hotspot.on_release = false
+	if var_15_1.on_release then
+		var_15_1.on_release = false
 
 		return true
 	end
 end
 
-HeroWindowLoadoutInventoryConsole._is_button_hovered = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot or content.hotspot
+function HeroWindowLoadoutInventoryConsole._is_button_hovered(arg_16_0, arg_16_1)
+	local var_16_0 = arg_16_1.content
 
-	if hotspot.on_hover_enter then
+	if (var_16_0.button_hotspot or var_16_0.hotspot).on_hover_enter then
 		return true
 	end
 end
 
-HeroWindowLoadoutInventoryConsole._handle_gamepad_input = function (self, dt, t)
-	local mouse_active = Managers.input:is_device_active("mouse")
-
-	if mouse_active then
+function HeroWindowLoadoutInventoryConsole._handle_gamepad_input(arg_17_0, arg_17_1, arg_17_2)
+	if Managers.input:is_device_active("mouse") then
 		return
 	end
 
-	local parent = self.parent
-	local input_service = self:_input_service()
-	local item_grid = self._item_grid
+	local var_17_0 = arg_17_0.parent
+	local var_17_1 = arg_17_0:_input_service()
+	local var_17_2 = arg_17_0._item_grid
 
-	if item_grid:handle_gamepad_selection(input_service) then
-		self:_play_sound("play_gui_equipment_button_hover")
+	if var_17_2:handle_gamepad_selection(var_17_1) then
+		arg_17_0:_play_sound("play_gui_equipment_button_hover")
 	end
 
-	if input_service:get("confirm", true) then
-		local selected_item, is_equipped = item_grid:selected_item()
+	if var_17_1:get("confirm", true) then
+		local var_17_3, var_17_4 = var_17_2:selected_item()
 
-		if selected_item and item_grid:is_item_wieldable(selected_item) then
-			parent:_set_loadout_item(selected_item, self._strict_slot_name)
-			self:_play_sound("play_gui_equipment_equip_hero")
+		if var_17_3 and var_17_2:is_item_wieldable(var_17_3) then
+			var_17_0:_set_loadout_item(var_17_3, arg_17_0._strict_slot_name)
+			arg_17_0:_play_sound("play_gui_equipment_equip_hero")
 		end
-	elseif input_service:get("special_1", true) then
-		self:_set_item_compare_enable_state(not self._draw_item_compare)
+	elseif var_17_1:get("special_1", true) then
+		arg_17_0:_set_item_compare_enable_state(not arg_17_0._draw_item_compare)
 	end
 
-	local page_index = self._current_page
-	local total_pages = self._total_pages
+	local var_17_5 = arg_17_0._current_page
+	local var_17_6 = arg_17_0._total_pages
 
-	if page_index and total_pages then
-		if page_index < total_pages and input_service:get(INPUT_ACTION_NEXT) then
-			item_grid:set_item_page(page_index + 1)
-			self:_play_sound("play_gui_equipment_inventory_next_click")
+	if var_17_5 and var_17_6 then
+		if var_17_5 < var_17_6 and var_17_1:get(var_0_6) then
+			var_17_2:set_item_page(var_17_5 + 1)
+			arg_17_0:_play_sound("play_gui_equipment_inventory_next_click")
 
-			local first_item = item_grid:get_item_in_slot(1, 1)
+			local var_17_7 = var_17_2:get_item_in_slot(1, 1)
 
-			item_grid:set_item_selected(first_item)
-		elseif page_index > 1 and input_service:get(INPUT_ACTION_PREVIOUS) then
-			item_grid:set_item_page(page_index - 1)
-			self:_play_sound("play_gui_equipment_inventory_next_click")
+			var_17_2:set_item_selected(var_17_7)
+		elseif var_17_5 > 1 and var_17_1:get(var_0_7) then
+			var_17_2:set_item_page(var_17_5 - 1)
+			arg_17_0:_play_sound("play_gui_equipment_inventory_next_click")
 
-			local first_item = item_grid:get_item_in_slot(1, 1)
+			local var_17_8 = var_17_2:get_item_in_slot(1, 1)
 
-			item_grid:set_item_selected(first_item)
-		end
-	end
-end
-
-HeroWindowLoadoutInventoryConsole._handle_input = function (self, dt, t)
-	local widgets_by_name = self._widgets_by_name
-	local parent = self.parent
-	local item_grid = self._item_grid
-	local allow_single_press = false
-	local item, is_equipped = item_grid:is_item_pressed(allow_single_press)
-	local input_service = parent:window_input_service()
-
-	if item_grid:handle_favorite_marking(input_service) then
-		self:_play_sound("play_gui_inventory_item_hover")
-	end
-
-	if item_grid:is_item_hovered() then
-		self:_play_sound("play_gui_inventory_item_hover")
-	end
-
-	if item and not is_equipped then
-		parent:_set_loadout_item(item, self._strict_slot_name)
-		self:_play_sound("play_gui_equipment_equip_hero")
-	end
-
-	local page_button_next = widgets_by_name.page_button_next
-	local page_button_previous = widgets_by_name.page_button_previous
-
-	if self:_is_button_hovered(page_button_next) or self:_is_button_hovered(page_button_previous) then
-		self:_play_sound("play_gui_inventory_next_hover")
-	end
-
-	if self:_is_button_pressed(page_button_next) then
-		local next_page_index = self._current_page + 1
-
-		item_grid:set_item_page(next_page_index)
-		self:_play_sound("play_gui_equipment_inventory_next_click")
-	elseif self:_is_button_pressed(page_button_previous) then
-		local next_page_index = self._current_page - 1
-
-		item_grid:set_item_page(next_page_index)
-		self:_play_sound("play_gui_equipment_inventory_next_click")
-	end
-end
-
-HeroWindowLoadoutInventoryConsole._update_page_info = function (self)
-	local current_page, total_pages = self._item_grid:get_page_info()
-
-	if current_page ~= self._current_page or total_pages ~= self._total_pages then
-		self._total_pages = total_pages
-		self._current_page = current_page
-		current_page = current_page or 1
-		total_pages = total_pages or 1
-
-		local widgets_by_name = self._widgets_by_name
-
-		widgets_by_name.page_text_left.content.text = tostring(current_page)
-		widgets_by_name.page_text_right.content.text = tostring(total_pages)
-		widgets_by_name.page_button_next.content.hotspot.disable_button = current_page == total_pages
-		widgets_by_name.page_button_previous.content.hotspot.disable_button = current_page == 1
-	end
-end
-
-HeroWindowLoadoutInventoryConsole._update_selected_loadout_slot_index = function (self)
-	local slot_index = self.parent:get_selected_loadout_slot_index()
-	local category_index = self:_get_category_index_by_slot_index(slot_index)
-
-	if slot_index ~= self._selected_loadout_slot_index then
-		self:_change_category_by_index(category_index)
-
-		self._selected_loadout_slot_index = slot_index
-		self._category_index = category_index
-	end
-end
-
-HeroWindowLoadoutInventoryConsole._get_category_slot_index = function (self, index)
-	local categories = self._categories
-	local category = categories[index]
-
-	return category.slot_index
-end
-
-HeroWindowLoadoutInventoryConsole._get_category_index_by_slot_index = function (self, slot_index)
-	local categories = self._categories
-
-	for i, category in ipairs(categories) do
-		if category.slot_index == slot_index then
-			return i
+			var_17_2:set_item_selected(var_17_8)
 		end
 	end
 end
 
-HeroWindowLoadoutInventoryConsole._update_loadout_sync = function (self)
-	local item_grid = self._item_grid
-	local parent = self.parent
-	local loadout_sync_id = parent.loadout_sync_id
+function HeroWindowLoadoutInventoryConsole._handle_input(arg_18_0, arg_18_1, arg_18_2)
+	local var_18_0 = arg_18_0._widgets_by_name
+	local var_18_1 = arg_18_0.parent
+	local var_18_2 = arg_18_0._item_grid
+	local var_18_3 = false
+	local var_18_4, var_18_5 = var_18_2:is_item_pressed(var_18_3)
+	local var_18_6 = var_18_1:window_input_service()
 
-	if loadout_sync_id ~= self._loadout_sync_id then
-		self._loadout_sync_id = loadout_sync_id
+	if var_18_2:handle_favorite_marking(var_18_6) then
+		arg_18_0:_play_sound("play_gui_inventory_item_hover")
+	end
 
-		item_grid:update_items_status()
-		self:_update_equipped_item_tooltip()
+	if var_18_2:is_item_hovered() then
+		arg_18_0:_play_sound("play_gui_inventory_item_hover")
+	end
+
+	if var_18_4 and not var_18_5 then
+		var_18_1:_set_loadout_item(var_18_4, arg_18_0._strict_slot_name)
+		arg_18_0:_play_sound("play_gui_equipment_equip_hero")
+	end
+
+	local var_18_7 = var_18_0.page_button_next
+	local var_18_8 = var_18_0.page_button_previous
+
+	if arg_18_0:_is_button_hovered(var_18_7) or arg_18_0:_is_button_hovered(var_18_8) then
+		arg_18_0:_play_sound("play_gui_inventory_next_hover")
+	end
+
+	if arg_18_0:_is_button_pressed(var_18_7) then
+		local var_18_9 = arg_18_0._current_page + 1
+
+		var_18_2:set_item_page(var_18_9)
+		arg_18_0:_play_sound("play_gui_equipment_inventory_next_click")
+	elseif arg_18_0:_is_button_pressed(var_18_8) then
+		local var_18_10 = arg_18_0._current_page - 1
+
+		var_18_2:set_item_page(var_18_10)
+		arg_18_0:_play_sound("play_gui_equipment_inventory_next_click")
 	end
 end
 
-HeroWindowLoadoutInventoryConsole._exit = function (self, selected_level)
-	self.exit = true
-	self.exit_level_id = selected_level
+function HeroWindowLoadoutInventoryConsole._update_page_info(arg_19_0)
+	local var_19_0, var_19_1 = arg_19_0._item_grid:get_page_info()
+
+	if var_19_0 ~= arg_19_0._current_page or var_19_1 ~= arg_19_0._total_pages then
+		arg_19_0._total_pages = var_19_1
+		arg_19_0._current_page = var_19_0
+		var_19_0 = var_19_0 or 1
+		var_19_1 = var_19_1 or 1
+
+		local var_19_2 = arg_19_0._widgets_by_name
+
+		var_19_2.page_text_left.content.text = tostring(var_19_0)
+		var_19_2.page_text_right.content.text = tostring(var_19_1)
+		var_19_2.page_button_next.content.hotspot.disable_button = var_19_0 == var_19_1
+		var_19_2.page_button_previous.content.hotspot.disable_button = var_19_0 == 1
+	end
 end
 
-HeroWindowLoadoutInventoryConsole.draw = function (self, dt)
-	local ui_renderer = self.ui_renderer
-	local ui_top_renderer = self.ui_top_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self:_input_service()
-	local gamepad_active = Managers.input:is_device_active("gamepad")
+function HeroWindowLoadoutInventoryConsole._update_selected_loadout_slot_index(arg_20_0)
+	local var_20_0 = arg_20_0.parent:get_selected_loadout_slot_index()
+	local var_20_1 = arg_20_0:_get_category_index_by_slot_index(var_20_0)
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
+	if var_20_0 ~= arg_20_0._selected_loadout_slot_index then
+		arg_20_0:_change_category_by_index(var_20_1)
 
-	for _, widget in ipairs(self._widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, widget)
+		arg_20_0._selected_loadout_slot_index = var_20_0
+		arg_20_0._category_index = var_20_1
+	end
+end
+
+function HeroWindowLoadoutInventoryConsole._get_category_slot_index(arg_21_0, arg_21_1)
+	return arg_21_0._categories[arg_21_1].slot_index
+end
+
+function HeroWindowLoadoutInventoryConsole._get_category_index_by_slot_index(arg_22_0, arg_22_1)
+	local var_22_0 = arg_22_0._categories
+
+	for iter_22_0, iter_22_1 in ipairs(var_22_0) do
+		if iter_22_1.slot_index == arg_22_1 then
+			return iter_22_0
+		end
+	end
+end
+
+function HeroWindowLoadoutInventoryConsole._update_loadout_sync(arg_23_0)
+	local var_23_0 = arg_23_0._item_grid
+	local var_23_1 = arg_23_0.parent.loadout_sync_id
+
+	if var_23_1 ~= arg_23_0._loadout_sync_id then
+		arg_23_0._loadout_sync_id = var_23_1
+
+		var_23_0:update_items_status()
+		arg_23_0:_update_equipped_item_tooltip()
+	end
+end
+
+function HeroWindowLoadoutInventoryConsole._exit(arg_24_0, arg_24_1)
+	arg_24_0.exit = true
+	arg_24_0.exit_level_id = arg_24_1
+end
+
+function HeroWindowLoadoutInventoryConsole.draw(arg_25_0, arg_25_1)
+	local var_25_0 = arg_25_0.ui_renderer
+	local var_25_1 = arg_25_0.ui_top_renderer
+	local var_25_2 = arg_25_0.ui_scenegraph
+	local var_25_3 = arg_25_0:_input_service()
+	local var_25_4 = Managers.input:is_device_active("gamepad")
+
+	UIRenderer.begin_pass(var_25_1, var_25_2, var_25_3, arg_25_1, nil, arg_25_0.render_settings)
+
+	for iter_25_0, iter_25_1 in ipairs(arg_25_0._widgets) do
+		UIRenderer.draw_widget(var_25_1, iter_25_1)
 	end
 
-	local active_node_widgets = self._active_node_widgets
+	local var_25_5 = arg_25_0._active_node_widgets
 
-	if active_node_widgets then
-		for _, widget in ipairs(active_node_widgets) do
-			UIRenderer.draw_widget(ui_top_renderer, widget)
+	if var_25_5 then
+		for iter_25_2, iter_25_3 in ipairs(var_25_5) do
+			UIRenderer.draw_widget(var_25_1, iter_25_3)
 		end
 	end
 
-	UIRenderer.end_pass(ui_top_renderer)
+	UIRenderer.end_pass(var_25_1)
 
-	if gamepad_active and self._menu_input_description then
-		self._menu_input_description:draw(ui_top_renderer, dt)
+	if var_25_4 and arg_25_0._menu_input_description then
+		arg_25_0._menu_input_description:draw(var_25_1, arg_25_1)
 	end
 end
 
-HeroWindowLoadoutInventoryConsole._input_service = function (self)
-	local parent = self.parent
+function HeroWindowLoadoutInventoryConsole._input_service(arg_26_0)
+	local var_26_0 = arg_26_0.parent
 
-	if parent:is_friends_list_active() then
+	if var_26_0:is_friends_list_active() then
 		return FAKE_INPUT_SERVICE
 	end
 
-	return parent:window_input_service()
+	return var_26_0:window_input_service()
 end
 
-HeroWindowLoadoutInventoryConsole._play_sound = function (self, event)
-	self.parent:play_sound(event)
+function HeroWindowLoadoutInventoryConsole._play_sound(arg_27_0, arg_27_1)
+	arg_27_0.parent:play_sound(arg_27_1)
 end
 
-HeroWindowLoadoutInventoryConsole._change_category_by_index = function (self, index)
-	local categories = self._categories
-	local category = categories[index]
-	local category_slot_name = category.slot_name
+function HeroWindowLoadoutInventoryConsole._change_category_by_index(arg_28_0, arg_28_1)
+	local var_28_0 = arg_28_0._categories[arg_28_1]
 
-	self._strict_slot_name = category_slot_name
+	arg_28_0._strict_slot_name = var_28_0.slot_name
 
-	local category_name = category.name
+	local var_28_1 = var_28_0.name
 
-	self._item_grid:change_category(category_name)
+	arg_28_0._item_grid:change_category(var_28_1)
 
 	return true
 end
 
-HeroWindowLoadoutInventoryConsole._setup_input_buttons = function (self)
-	local input_service = self.parent:window_input_service()
-	local input_1_texture_data = UISettings.get_gamepad_input_texture_data(input_service, INPUT_ACTION_NEXT, true)
-	local input_2_texture_data = UISettings.get_gamepad_input_texture_data(input_service, INPUT_ACTION_PREVIOUS, true)
-	local widgets_by_name = self._widgets_by_name
-	local input_1_widget = widgets_by_name.input_icon_next
-	local input_2_widget = widgets_by_name.input_icon_previous
-	local icon_style_input_1 = input_1_widget.style.texture_id
+function HeroWindowLoadoutInventoryConsole._setup_input_buttons(arg_29_0)
+	local var_29_0 = arg_29_0.parent:window_input_service()
+	local var_29_1 = UISettings.get_gamepad_input_texture_data(var_29_0, var_0_6, true)
+	local var_29_2 = UISettings.get_gamepad_input_texture_data(var_29_0, var_0_7, true)
+	local var_29_3 = arg_29_0._widgets_by_name
+	local var_29_4 = var_29_3.input_icon_next
+	local var_29_5 = var_29_3.input_icon_previous
+	local var_29_6 = var_29_4.style.texture_id
 
-	icon_style_input_1.horizontal_alignment = "center"
-	icon_style_input_1.vertical_alignment = "center"
-	icon_style_input_1.texture_size = {
-		input_1_texture_data.size[1],
-		input_1_texture_data.size[2],
+	var_29_6.horizontal_alignment = "center"
+	var_29_6.vertical_alignment = "center"
+	var_29_6.texture_size = {
+		var_29_1.size[1],
+		var_29_1.size[2]
 	}
-	input_1_widget.content.texture_id = input_1_texture_data.texture
+	var_29_4.content.texture_id = var_29_1.texture
 
-	local icon_style_input_2 = input_2_widget.style.texture_id
+	local var_29_7 = var_29_5.style.texture_id
 
-	icon_style_input_2.horizontal_alignment = "center"
-	icon_style_input_2.vertical_alignment = "center"
-	icon_style_input_2.texture_size = {
-		input_2_texture_data.size[1],
-		input_2_texture_data.size[2],
+	var_29_7.horizontal_alignment = "center"
+	var_29_7.vertical_alignment = "center"
+	var_29_7.texture_size = {
+		var_29_2.size[1],
+		var_29_2.size[2]
 	}
-	input_2_widget.content.texture_id = input_2_texture_data.texture
+	var_29_5.content.texture_id = var_29_2.texture
 end
 
-HeroWindowLoadoutInventoryConsole._set_gamepad_input_buttons_visibility = function (self, visible)
-	local widgets_by_name = self._widgets_by_name
-	local input_1_widget = widgets_by_name.input_icon_next
-	local input_2_widget = widgets_by_name.input_icon_previous
-	local input_arrow_1_widget = widgets_by_name.input_arrow_next
-	local input_arrow_2_widget = widgets_by_name.input_arrow_previous
+function HeroWindowLoadoutInventoryConsole._set_gamepad_input_buttons_visibility(arg_30_0, arg_30_1)
+	local var_30_0 = arg_30_0._widgets_by_name
+	local var_30_1 = var_30_0.input_icon_next
+	local var_30_2 = var_30_0.input_icon_previous
+	local var_30_3 = var_30_0.input_arrow_next
+	local var_30_4 = var_30_0.input_arrow_previous
 
-	input_1_widget.content.visible = visible
-	input_2_widget.content.visible = visible
-	input_arrow_1_widget.content.visible = visible
-	input_arrow_2_widget.content.visible = visible
+	var_30_1.content.visible = arg_30_1
+	var_30_2.content.visible = arg_30_1
+	var_30_3.content.visible = arg_30_1
+	var_30_4.content.visible = arg_30_1
 end
 
-HeroWindowLoadoutInventoryConsole._handle_gamepad_activity = function (self)
-	local mouse_active = Managers.input:is_device_active("mouse")
-	local force_update = self.gamepad_active_last_frame == nil
+function HeroWindowLoadoutInventoryConsole._handle_gamepad_activity(arg_31_0)
+	local var_31_0 = Managers.input:is_device_active("mouse")
+	local var_31_1 = arg_31_0.gamepad_active_last_frame == nil
 
-	if not mouse_active then
-		if not self.gamepad_active_last_frame or force_update then
-			self.gamepad_active_last_frame = true
+	if not var_31_0 then
+		if not arg_31_0.gamepad_active_last_frame or var_31_1 then
+			arg_31_0.gamepad_active_last_frame = true
 
-			local item_grid = self._item_grid
-			local first_item = item_grid:get_item_in_slot(1, 1)
+			local var_31_2 = arg_31_0._item_grid
+			local var_31_3 = var_31_2:get_item_in_slot(1, 1)
 
-			item_grid:set_item_selected(first_item)
-			self:_set_gamepad_input_buttons_visibility(true)
+			var_31_2:set_item_selected(var_31_3)
+			arg_31_0:_set_gamepad_input_buttons_visibility(true)
 		end
-	elseif self.gamepad_active_last_frame or force_update then
-		self.gamepad_active_last_frame = false
+	elseif arg_31_0.gamepad_active_last_frame or var_31_1 then
+		arg_31_0.gamepad_active_last_frame = false
 
-		local item_grid = self._item_grid
+		arg_31_0._item_grid:set_item_selected(nil)
 
-		item_grid:set_item_selected(nil)
-
-		if self._draw_item_compare then
-			self:_set_item_compare_enable_state(false)
+		if arg_31_0._draw_item_compare then
+			arg_31_0:_set_item_compare_enable_state(false)
 		end
 
-		self:_set_gamepad_input_buttons_visibility(false)
+		arg_31_0:_set_gamepad_input_buttons_visibility(false)
 	end
 end

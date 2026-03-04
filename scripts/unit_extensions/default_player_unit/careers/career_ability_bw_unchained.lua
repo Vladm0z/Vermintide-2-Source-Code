@@ -1,293 +1,287 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/careers/career_ability_bw_unchained.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/careers/career_ability_bw_unchained.lua
 
 CareerAbilityBWUnchained = class(CareerAbilityBWUnchained)
 
-CareerAbilityBWUnchained.init = function (self, extension_init_context, unit, extension_init_data)
-	self._owner_unit = unit
-	self._world = extension_init_context.world
-	self._wwise_world = Managers.world:wwise_world(self._world)
+function CareerAbilityBWUnchained.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._owner_unit = arg_1_2
+	arg_1_0._world = arg_1_1.world
+	arg_1_0._wwise_world = Managers.world:wwise_world(arg_1_0._world)
 
-	local player = extension_init_data.player
+	local var_1_0 = arg_1_3.player
 
-	self._player = player
-	self._is_server = player.is_server
-	self._local_player = player.local_player
-	self._bot_player = player.bot_player
-	self._network_manager = Managers.state.network
-	self._input_manager = Managers.input
-	self._priming_fx_id = nil
-	self._priming_fx_name = "fx/chr_unchained_aoe_decal"
+	arg_1_0._player = var_1_0
+	arg_1_0._is_server = var_1_0.is_server
+	arg_1_0._local_player = var_1_0.local_player
+	arg_1_0._bot_player = var_1_0.bot_player
+	arg_1_0._network_manager = Managers.state.network
+	arg_1_0._input_manager = Managers.input
+	arg_1_0._priming_fx_id = nil
+	arg_1_0._priming_fx_name = "fx/chr_unchained_aoe_decal"
 end
 
-CareerAbilityBWUnchained.extensions_ready = function (self, world, unit)
-	self._first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
-	self._status_extension = ScriptUnit.extension(unit, "status_system")
-	self._career_extension = ScriptUnit.extension(unit, "career_system")
-	self._buff_extension = ScriptUnit.extension(unit, "buff_system")
-	self._input_extension = ScriptUnit.has_extension(unit, "input_system")
+function CareerAbilityBWUnchained.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+	arg_2_0._first_person_extension = ScriptUnit.has_extension(arg_2_2, "first_person_system")
+	arg_2_0._status_extension = ScriptUnit.extension(arg_2_2, "status_system")
+	arg_2_0._career_extension = ScriptUnit.extension(arg_2_2, "career_system")
+	arg_2_0._buff_extension = ScriptUnit.extension(arg_2_2, "buff_system")
+	arg_2_0._input_extension = ScriptUnit.has_extension(arg_2_2, "input_system")
 
-	if self._first_person_extension then
-		self._first_person_unit = self._first_person_extension:get_first_person_unit()
+	if arg_2_0._first_person_extension then
+		arg_2_0._first_person_unit = arg_2_0._first_person_extension:get_first_person_unit()
 	end
 end
 
-CareerAbilityBWUnchained.destroy = function (self)
+function CareerAbilityBWUnchained.destroy(arg_3_0)
 	return
 end
 
-CareerAbilityBWUnchained.update = function (self, unit, input, dt, context, t)
-	if not self:_ability_available() then
+function CareerAbilityBWUnchained.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	if not arg_4_0:_ability_available() then
 		return
 	end
 
-	local input_extension = self._input_extension
+	local var_4_0 = arg_4_0._input_extension
 
-	if not input_extension then
+	if not var_4_0 then
 		return
 	end
 
-	if not self._is_priming then
-		if input_extension:get("action_career") then
-			self:_start_priming()
+	if not arg_4_0._is_priming then
+		if var_4_0:get("action_career") then
+			arg_4_0:_start_priming()
 		end
-	elseif self._is_priming then
-		self:_update_priming(dt)
+	elseif arg_4_0._is_priming then
+		arg_4_0:_update_priming(arg_4_3)
 
-		if input_extension:get("action_two") then
-			self:_stop_priming()
+		if var_4_0:get("action_two") then
+			arg_4_0:_stop_priming()
 
 			return
 		end
 
-		if input_extension:get("weapon_reload") then
-			self:_stop_priming()
+		if var_4_0:get("weapon_reload") then
+			arg_4_0:_stop_priming()
 
 			return
 		end
 
-		if not input_extension:get("action_career_hold") then
-			self:_run_ability()
+		if not var_4_0:get("action_career_hold") then
+			arg_4_0:_run_ability()
 		end
 	end
 end
 
-CareerAbilityBWUnchained.stop = function (self, reason)
-	if reason ~= "pushed" and reason ~= "stunned" and self._is_priming then
-		self:_stop_priming()
+function CareerAbilityBWUnchained.stop(arg_5_0, arg_5_1)
+	if arg_5_1 ~= "pushed" and arg_5_1 ~= "stunned" and arg_5_0._is_priming then
+		arg_5_0:_stop_priming()
 	end
 end
 
-CareerAbilityBWUnchained._ability_available = function (self)
-	local career_extension = self._career_extension
-	local status_extension = self._status_extension
+function CareerAbilityBWUnchained._ability_available(arg_6_0)
+	local var_6_0 = arg_6_0._career_extension
+	local var_6_1 = arg_6_0._status_extension
 
-	return career_extension:can_use_activated_ability() and not status_extension:is_disabled()
+	return var_6_0:can_use_activated_ability() and not var_6_1:is_disabled()
 end
 
-CareerAbilityBWUnchained._start_priming = function (self)
-	if self._local_player then
-		local world = self._world
-		local effect_name = self._priming_fx_name
-		local talent_extension = ScriptUnit.extension(self._owner_unit, "talent_system")
+function CareerAbilityBWUnchained._start_priming(arg_7_0)
+	if arg_7_0._local_player then
+		local var_7_0 = arg_7_0._world
+		local var_7_1 = arg_7_0._priming_fx_name
 
-		if talent_extension:has_talent("sienna_unchained_activated_ability_power_on_enemies_hit", "bright_wizard", true) then
-			effect_name = "fx/chr_unchained_aoe_decal_large"
+		if ScriptUnit.extension(arg_7_0._owner_unit, "talent_system"):has_talent("sienna_unchained_activated_ability_power_on_enemies_hit", "bright_wizard", true) then
+			var_7_1 = "fx/chr_unchained_aoe_decal_large"
 		end
 
-		self._priming_fx_id = World.create_particles(world, effect_name, Vector3.zero())
+		arg_7_0._priming_fx_id = World.create_particles(var_7_0, var_7_1, Vector3.zero())
 	end
 
-	self._is_priming = true
+	arg_7_0._is_priming = true
 end
 
-CareerAbilityBWUnchained._update_priming = function (self, dt)
-	local effect_id = self._priming_fx_id
+function CareerAbilityBWUnchained._update_priming(arg_8_0, arg_8_1)
+	local var_8_0 = arg_8_0._priming_fx_id
 
-	if effect_id then
-		local world = self._world
-		local owner_unit = self._owner_unit
-		local owner_unit_position = POSITION_LOOKUP[owner_unit]
+	if var_8_0 then
+		local var_8_1 = arg_8_0._world
+		local var_8_2 = arg_8_0._owner_unit
+		local var_8_3 = POSITION_LOOKUP[var_8_2]
 
-		World.move_particles(world, effect_id, owner_unit_position)
+		World.move_particles(var_8_1, var_8_0, var_8_3)
 	end
 end
 
-CareerAbilityBWUnchained._stop_priming = function (self)
-	local world = self._world
-	local effect_id = self._priming_fx_id
+function CareerAbilityBWUnchained._stop_priming(arg_9_0)
+	local var_9_0 = arg_9_0._world
+	local var_9_1 = arg_9_0._priming_fx_id
 
-	if effect_id then
-		World.destroy_particles(world, effect_id)
+	if var_9_1 then
+		World.destroy_particles(var_9_0, var_9_1)
 
-		self._priming_fx_id = nil
+		arg_9_0._priming_fx_id = nil
 	end
 
-	self._is_priming = false
+	arg_9_0._is_priming = false
 end
 
-CareerAbilityBWUnchained._run_ability = function (self, new_initial_speed)
-	self:_stop_priming()
+function CareerAbilityBWUnchained._run_ability(arg_10_0, arg_10_1)
+	arg_10_0:_stop_priming()
 
-	local owner_unit = self._owner_unit
-	local is_server = self._is_server
-	local local_player = self._local_player
-	local bot_player = self._bot_player
-	local position = POSITION_LOOKUP[owner_unit]
-	local network_manager = self._network_manager
-	local network_transmit = network_manager.network_transmit
-	local career_extension = self._career_extension
-	local buff_extension = self._buff_extension
-	local talent_extension = ScriptUnit.extension(owner_unit, "talent_system")
-	local buff_name = "sienna_unchained_activated_ability"
+	local var_10_0 = arg_10_0._owner_unit
+	local var_10_1 = arg_10_0._is_server
+	local var_10_2 = arg_10_0._local_player
+	local var_10_3 = arg_10_0._bot_player
+	local var_10_4 = POSITION_LOOKUP[var_10_0]
+	local var_10_5 = arg_10_0._network_manager
+	local var_10_6 = var_10_5.network_transmit
+	local var_10_7 = arg_10_0._career_extension
+	local var_10_8 = arg_10_0._buff_extension
+	local var_10_9 = ScriptUnit.extension(var_10_0, "talent_system")
+	local var_10_10 = "sienna_unchained_activated_ability"
 
-	buff_extension:add_buff(buff_name, {
-		attacker_unit = owner_unit,
+	var_10_8:add_buff(var_10_10, {
+		attacker_unit = var_10_0
 	})
 
-	if is_server and bot_player or local_player then
-		local overcharge_extension = ScriptUnit.extension(owner_unit, "overcharge_system")
-
-		overcharge_extension:reset()
-		career_extension:set_state("sienna_activate_unchained")
+	if var_10_1 and var_10_3 or var_10_2 then
+		ScriptUnit.extension(var_10_0, "overcharge_system"):reset()
+		var_10_7:set_state("sienna_activate_unchained")
 	end
 
-	local rotation = Unit.local_rotation(owner_unit, 0)
-	local explosion_template_name = "explosion_bw_unchained_ability"
-	local scale = 1
+	local var_10_11 = Unit.local_rotation(var_10_0, 0)
+	local var_10_12 = "explosion_bw_unchained_ability"
+	local var_10_13 = 1
 
-	if talent_extension:has_talent("sienna_unchained_activated_ability_fire_aura") then
-		explosion_template_name = "explosion_bw_unchained_ability_increased_radius"
+	if var_10_9:has_talent("sienna_unchained_activated_ability_fire_aura") then
+		var_10_12 = "explosion_bw_unchained_ability_increased_radius"
 	end
 
-	local career_power_level = career_extension:get_career_power_level()
+	local var_10_14 = var_10_7:get_career_power_level()
 
-	if talent_extension:has_talent("sienna_unchained_activated_ability_temp_health") then
-		local radius = 10
-		local nearby_player_units = FrameTable.alloc_table()
-		local proximity_extension = Managers.state.entity:system("proximity_system")
-		local broadphase = proximity_extension.player_units_broadphase
+	if var_10_9:has_talent("sienna_unchained_activated_ability_temp_health") then
+		local var_10_15 = 10
+		local var_10_16 = FrameTable.alloc_table()
+		local var_10_17 = Managers.state.entity:system("proximity_system").player_units_broadphase
 
-		Broadphase.query(broadphase, POSITION_LOOKUP[owner_unit], radius, nearby_player_units)
+		Broadphase.query(var_10_17, POSITION_LOOKUP[var_10_0], var_10_15, var_10_16)
 
-		local side_manager = Managers.state.side
-		local heal_amount = TalentUtils.get_talent_attribute("sienna_unchained_activated_ability_temp_health", "heal_amount")
-		local heal_type_id = NetworkLookup.heal_types.career_skill
+		local var_10_18 = Managers.state.side
+		local var_10_19 = TalentUtils.get_talent_attribute("sienna_unchained_activated_ability_temp_health", "heal_amount")
+		local var_10_20 = NetworkLookup.heal_types.career_skill
 
-		for _, player_unit in pairs(nearby_player_units) do
-			if not side_manager:is_enemy(self._owner_unit, player_unit) then
-				local unit_go_id = network_manager:unit_game_object_id(player_unit)
+		for iter_10_0, iter_10_1 in pairs(var_10_16) do
+			if not var_10_18:is_enemy(arg_10_0._owner_unit, iter_10_1) then
+				local var_10_21 = var_10_5:unit_game_object_id(iter_10_1)
 
-				if unit_go_id then
-					network_transmit:send_rpc_server("rpc_request_heal", unit_go_id, heal_amount, heal_type_id)
+				if var_10_21 then
+					var_10_6:send_rpc_server("rpc_request_heal", var_10_21, var_10_19, var_10_20)
 				end
 			end
 		end
 	end
 
-	local explosion_template = ExplosionUtils.get_template(explosion_template_name)
-	local owner_unit_go_id = network_manager:unit_game_object_id(owner_unit)
-	local damage_source = "career_ability"
-	local explosion_template_id = NetworkLookup.explosion_templates[explosion_template_name]
-	local damage_source_id = NetworkLookup.damage_sources[damage_source]
-	local is_husk = false
+	local var_10_22 = ExplosionUtils.get_template(var_10_12)
+	local var_10_23 = var_10_5:unit_game_object_id(var_10_0)
+	local var_10_24 = "career_ability"
+	local var_10_25 = NetworkLookup.explosion_templates[var_10_12]
+	local var_10_26 = NetworkLookup.damage_sources[var_10_24]
+	local var_10_27 = false
 
-	if is_server then
-		network_transmit:send_rpc_clients("rpc_create_explosion", owner_unit_go_id, false, position, rotation, explosion_template_id, scale, damage_source_id, career_power_level, false, owner_unit_go_id)
+	if var_10_1 then
+		var_10_6:send_rpc_clients("rpc_create_explosion", var_10_23, false, var_10_4, var_10_11, var_10_25, var_10_13, var_10_26, var_10_14, false, var_10_23)
 	else
-		network_transmit:send_rpc_server("rpc_create_explosion", owner_unit_go_id, false, position, rotation, explosion_template_id, scale, damage_source_id, career_power_level, false, owner_unit_go_id)
+		var_10_6:send_rpc_server("rpc_create_explosion", var_10_23, false, var_10_4, var_10_11, var_10_25, var_10_13, var_10_26, var_10_14, false, var_10_23)
 	end
 
-	DamageUtils.create_explosion(self._world, owner_unit, position, rotation, explosion_template, scale, damage_source, is_server, is_husk, owner_unit, career_power_level, false, owner_unit)
-	career_extension:start_activated_ability_cooldown()
+	DamageUtils.create_explosion(arg_10_0._world, var_10_0, var_10_4, var_10_11, var_10_22, var_10_13, var_10_24, var_10_1, var_10_27, var_10_0, var_10_14, false, var_10_0)
+	var_10_7:start_activated_ability_cooldown()
 
-	if talent_extension:has_talent("sienna_unchained_activated_ability_fire_aura") then
-		local buffs = {
-			"sienna_unchained_activated_ability_pulse",
+	if var_10_9:has_talent("sienna_unchained_activated_ability_fire_aura") then
+		local var_10_28 = {
+			"sienna_unchained_activated_ability_pulse"
 		}
-		local unit_object_id = network_manager:unit_game_object_id(owner_unit)
+		local var_10_29 = var_10_5:unit_game_object_id(var_10_0)
 
-		if is_server then
-			local buff_extension = self._buff_extension
+		if var_10_1 then
+			local var_10_30 = arg_10_0._buff_extension
 
-			for i = 1, #buffs do
-				local buff_name = buffs[i]
-				local buff_template_name_id = NetworkLookup.buff_templates[buff_name]
+			for iter_10_2 = 1, #var_10_28 do
+				local var_10_31 = var_10_28[iter_10_2]
+				local var_10_32 = NetworkLookup.buff_templates[var_10_31]
 
-				buff_extension:add_buff(buff_name, {
-					attacker_unit = owner_unit,
+				var_10_30:add_buff(var_10_31, {
+					attacker_unit = var_10_0
 				})
-				network_transmit:send_rpc_clients("rpc_add_buff", unit_object_id, buff_template_name_id, unit_object_id, 0, false)
+				var_10_6:send_rpc_clients("rpc_add_buff", var_10_29, var_10_32, var_10_29, 0, false)
 			end
 		else
-			for i = 1, #buffs do
-				local buff_name = buffs[i]
-				local buff_template_name_id = NetworkLookup.buff_templates[buff_name]
+			for iter_10_3 = 1, #var_10_28 do
+				local var_10_33 = var_10_28[iter_10_3]
+				local var_10_34 = NetworkLookup.buff_templates[var_10_33]
 
-				network_transmit:send_rpc_server("rpc_add_buff", unit_object_id, buff_template_name_id, unit_object_id, 0, true)
+				var_10_6:send_rpc_server("rpc_add_buff", var_10_29, var_10_34, var_10_29, 0, true)
 			end
 		end
 	end
 
-	if talent_extension:has_talent("sienna_unchained_activated_ability_power_on_enemies_hit") then
-		local attack_type_id = NetworkLookup.buff_attack_types.ability
-		local attacker_unit_id = network_manager:unit_game_object_id(owner_unit)
-		local buff_weapon_type_id = NetworkLookup.buff_weapon_types["n/a"]
-		local hit_zone_id = NetworkLookup.hit_zones.torso
-		local radius = 10
-		local nearby_enemy_units = FrameTable.alloc_table()
-		local proximity_extension = Managers.state.entity:system("proximity_system")
-		local broadphase = proximity_extension.enemy_broadphase
+	if var_10_9:has_talent("sienna_unchained_activated_ability_power_on_enemies_hit") then
+		local var_10_35 = NetworkLookup.buff_attack_types.ability
+		local var_10_36 = var_10_5:unit_game_object_id(var_10_0)
+		local var_10_37 = NetworkLookup.buff_weapon_types["n/a"]
+		local var_10_38 = NetworkLookup.hit_zones.torso
+		local var_10_39 = 10
+		local var_10_40 = FrameTable.alloc_table()
+		local var_10_41 = Managers.state.entity:system("proximity_system").enemy_broadphase
 
-		Broadphase.query(broadphase, position, radius, nearby_enemy_units)
+		Broadphase.query(var_10_41, var_10_4, var_10_39, var_10_40)
 
-		local target_number = 1
-		local side_manager = Managers.state.side
+		local var_10_42 = 1
+		local var_10_43 = Managers.state.side
 
-		for _, enemy_unit in pairs(nearby_enemy_units) do
-			if Unit.alive(enemy_unit) then
-				local hit_unit_id = network_manager:unit_game_object_id(enemy_unit)
+		for iter_10_4, iter_10_5 in pairs(var_10_40) do
+			if Unit.alive(iter_10_5) then
+				local var_10_44 = var_10_5:unit_game_object_id(iter_10_5)
 
-				if side_manager:is_enemy(owner_unit, enemy_unit) then
-					if is_server then
-						network_transmit:send_rpc_server("rpc_buff_on_attack", attacker_unit_id, hit_unit_id, attack_type_id, false, hit_zone_id, target_number, buff_weapon_type_id, damage_source_id)
+				if var_10_43:is_enemy(var_10_0, iter_10_5) then
+					if var_10_1 then
+						var_10_6:send_rpc_server("rpc_buff_on_attack", var_10_36, var_10_44, var_10_35, false, var_10_38, var_10_42, var_10_37, var_10_26)
 					else
-						network_transmit:send_rpc_server("rpc_buff_on_attack", attacker_unit_id, hit_unit_id, attack_type_id, false, hit_zone_id, target_number, buff_weapon_type_id, damage_source_id)
+						var_10_6:send_rpc_server("rpc_buff_on_attack", var_10_36, var_10_44, var_10_35, false, var_10_38, var_10_42, var_10_37, var_10_26)
 					end
 				end
 			end
 		end
 	end
 
-	local inventory_extension = ScriptUnit.has_extension(owner_unit, "inventory_system")
-	local lh_weapon_unit, rh_weapon_unit = inventory_extension:get_all_weapon_unit()
-	local lh_weapon_extension = lh_weapon_unit and ScriptUnit.has_extension(lh_weapon_unit, "weapon_system")
-	local rh_weapon_extension = rh_weapon_unit and ScriptUnit.has_extension(rh_weapon_unit, "weapon_system")
-	local has_action = lh_weapon_extension and lh_weapon_extension:has_current_action()
+	local var_10_45, var_10_46 = ScriptUnit.has_extension(var_10_0, "inventory_system"):get_all_weapon_unit()
+	local var_10_47 = var_10_45 and ScriptUnit.has_extension(var_10_45, "weapon_system")
+	local var_10_48 = var_10_46 and ScriptUnit.has_extension(var_10_46, "weapon_system")
+	local var_10_49 = var_10_47 and var_10_47:has_current_action()
 
-	has_action = has_action or rh_weapon_extension and rh_weapon_extension:has_current_action()
+	var_10_49 = var_10_49 or var_10_48 and var_10_48:has_current_action()
 
-	if not has_action then
-		CharacterStateHelper.play_animation_event(owner_unit, "unchained_ability_explosion")
+	if not var_10_49 then
+		CharacterStateHelper.play_animation_event(var_10_0, "unchained_ability_explosion")
 	end
 
-	if is_server and bot_player or local_player then
-		local first_person_extension = self._first_person_extension
+	if var_10_1 and var_10_3 or var_10_2 then
+		local var_10_50 = arg_10_0._first_person_extension
 
-		if not has_action then
-			first_person_extension:animation_event("unchained_ability_explosion")
+		if not var_10_49 then
+			var_10_50:animation_event("unchained_ability_explosion")
 		end
 
-		first_person_extension:play_hud_sound_event("Play_career_ability_unchained_fire")
-		first_person_extension:play_remote_unit_sound_event("Play_career_ability_unchained_fire", owner_unit, 0)
+		var_10_50:play_hud_sound_event("Play_career_ability_unchained_fire")
+		var_10_50:play_remote_unit_sound_event("Play_career_ability_unchained_fire", var_10_0, 0)
 	end
 
-	self:_play_vo()
+	arg_10_0:_play_vo()
 end
 
-CareerAbilityBWUnchained._play_vo = function (self)
-	local owner_unit = self._owner_unit
-	local dialogue_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
-	local event_data = FrameTable.alloc_table()
+function CareerAbilityBWUnchained._play_vo(arg_11_0)
+	local var_11_0 = arg_11_0._owner_unit
+	local var_11_1 = ScriptUnit.extension_input(var_11_0, "dialogue_system")
+	local var_11_2 = FrameTable.alloc_table()
 
-	dialogue_input:trigger_networked_dialogue_event("activate_ability", event_data)
+	var_11_1:trigger_networked_dialogue_event("activate_ability", var_11_2)
 end

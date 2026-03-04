@@ -1,5 +1,3 @@
-﻿-- chunkname: @scripts/managers/game_mode/mechanisms/reservation_handler_types.lua
+-- chunkname: @scripts/managers/game_mode/mechanisms/reservation_handler_types.lua
 
-local ReservationHandlerTypes = table.enum("session", "pending_custom_game")
-
-return ReservationHandlerTypes
+return (table.enum("session", "pending_custom_game"))

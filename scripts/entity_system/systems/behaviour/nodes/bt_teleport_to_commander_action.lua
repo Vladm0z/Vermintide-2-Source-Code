@@ -1,38 +1,35 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_teleport_to_commander_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_teleport_to_commander_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTTeleportToCommanderAction = class(BTTeleportToCommanderAction, BTNode)
 
-BTTeleportToCommanderAction.init = function (self, ...)
-	BTTeleportToCommanderAction.super.init(self, ...)
+function BTTeleportToCommanderAction.init(arg_1_0, ...)
+	BTTeleportToCommanderAction.super.init(arg_1_0, ...)
 end
 
 BTTeleportToCommanderAction.name = "BTTeleportToCommanderAction"
 
-BTTeleportToCommanderAction.enter = function (self, unit, blackboard, t)
-	self.commander_system = Managers.state.entity:system("ai_commander_system")
+function BTTeleportToCommanderAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	arg_2_0.commander_system = Managers.state.entity:system("ai_commander_system")
 end
 
-BTTeleportToCommanderAction.leave = function (self, unit, blackboard, t, reason, destroy)
+function BTTeleportToCommanderAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	return
 end
 
-local CHECKS_PER_DIRECTION = 5
-local ANGLE_INCREMENT = math.pi / (2 * CHECKS_PER_DIRECTION)
-local CHECK_DISTANCE = 5
+local var_0_0 = 5
+local var_0_1 = math.pi / (2 * var_0_0)
+local var_0_2 = 5
 
-BTTeleportToCommanderAction.run = function (self, unit, blackboard, t, dt)
-	local commander_unit = self.commander_system:get_commander_unit(unit)
+function BTTeleportToCommanderAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = arg_4_0.commander_system:get_commander_unit(arg_4_1)
 
-	if not ALIVE[commander_unit] then
+	if not ALIVE[var_4_0] then
 		return "done"
 	end
 
-	local career_extension = ScriptUnit.extension(commander_unit, "career_system")
-	local passive = career_extension:get_passive_ability_by_name("bw_necromancer")
-
-	passive:resummon_pet(unit)
+	ScriptUnit.extension(var_4_0, "career_system"):get_passive_ability_by_name("bw_necromancer"):resummon_pet(arg_4_1)
 
 	return "done"
 end

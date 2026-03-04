@@ -1,242 +1,230 @@
-﻿-- chunkname: @scripts/managers/ui/ui_manager.lua
+-- chunkname: @scripts/managers/ui/ui_manager.lua
 
 require("scripts/managers/ui/popup_settings")
 
 UIManager = class(UIManager)
 
-UIManager.init = function (self)
-	self._ui_enabled = true
+function UIManager.init(arg_1_0)
+	arg_1_0._ui_enabled = true
 end
 
-UIManager.destroy = function (self)
-	if self._ingame_ui then
+function UIManager.destroy(arg_2_0)
+	if arg_2_0._ingame_ui then
 		print("[UIManager] Warning: destroy_ingame_ui was not called before destroy")
 	end
 end
 
-UIManager.create_ingame_ui = function (self, ingame_ui_context, loading_subtitle_gui)
-	self._ingame_ui_context = ingame_ui_context
-	self._loading_subtitle_gui = loading_subtitle_gui
+function UIManager.create_ingame_ui(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_0._ingame_ui_context = arg_3_1
+	arg_3_0._loading_subtitle_gui = arg_3_2
 
-	if self._ingame_ui then
+	if arg_3_0._ingame_ui then
 		print("[UIManager] Warning: destroy_ingame_ui was not called before create_ingame_ui")
-		self._ingame_ui:destroy()
+		arg_3_0._ingame_ui:destroy()
 	end
 
-	self._ingame_ui = IngameUI:new(ingame_ui_context)
-	self._ui_enabled = true
+	arg_3_0._ingame_ui = IngameUI:new(arg_3_1)
+	arg_3_0._ui_enabled = true
 end
 
-UIManager.create_ui_renderer = function (self, world, is_tutorial, is_in_inn, mechanism_key)
-	return self._ingame_ui:create_ui_renderer(world, is_tutorial, is_in_inn, mechanism_key)
+function UIManager.create_ui_renderer(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	return arg_4_0._ingame_ui:create_ui_renderer(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 end
 
-UIManager.destroy_ingame_ui = function (self)
-	local ingame_ui = self._ingame_ui
+function UIManager.destroy_ingame_ui(arg_5_0)
+	local var_5_0 = arg_5_0._ingame_ui
 
-	if ingame_ui then
-		ingame_ui:destroy()
+	if var_5_0 then
+		var_5_0:destroy()
 
-		self._ingame_ui = nil
+		arg_5_0._ingame_ui = nil
 	end
 end
 
-UIManager.reload_ingame_ui = function (self, reload_sources)
-	local ingame_ui = self._ingame_ui
+function UIManager.reload_ingame_ui(arg_6_0, arg_6_1)
+	local var_6_0 = arg_6_0._ingame_ui
 
-	if not ingame_ui then
+	if not var_6_0 then
 		print("[UIManager] Warning: reloading the UI when it wasn't loaded.")
 
 		return
 	end
 
-	local current_transition = ingame_ui.last_transition_name
-	local current_params = ingame_ui.last_transition_params
+	local var_6_1 = var_6_0.last_transition_name
+	local var_6_2 = var_6_0.last_transition_params
 
-	if reload_sources then
-		for script_path in pairs(package.loaded) do
-			if string.find(script_path, "^scripts/ui") then
-				package.loaded[script_path] = nil
+	if arg_6_1 then
+		for iter_6_0 in pairs(package.loaded) do
+			if string.find(iter_6_0, "^scripts/ui") then
+				package.loaded[iter_6_0] = nil
 
-				require(script_path)
+				require(iter_6_0)
 			end
 		end
 	end
 
-	self:destroy_ingame_ui()
-	self:create_ingame_ui(self._ingame_ui_context)
+	arg_6_0:destroy_ingame_ui()
+	arg_6_0:create_ingame_ui(arg_6_0._ingame_ui_context)
 
-	if current_transition then
-		self._ingame_ui:handle_transition(current_transition, current_params)
+	if var_6_1 then
+		arg_6_0._ingame_ui:handle_transition(var_6_1, var_6_2)
 	end
 end
 
-UIManager.temporary_get_ingame_ui_called_from_state_ingame_running = function (self)
-	return self._ingame_ui
+function UIManager.temporary_get_ingame_ui_called_from_state_ingame_running(arg_7_0)
+	return arg_7_0._ingame_ui
 end
 
-UIManager.set_ingame_ui_enabled = function (self, bool)
-	if self._ui_enabled ~= bool then
-		self._ui_enabled = bool
+function UIManager.set_ingame_ui_enabled(arg_8_0, arg_8_1)
+	if arg_8_0._ui_enabled ~= arg_8_1 then
+		arg_8_0._ui_enabled = arg_8_1
 
-		if not bool then
-			local ingame_ui = self._ingame_ui
+		if not arg_8_1 then
+			local var_8_0 = arg_8_0._ingame_ui
 
-			if ingame_ui then
-				ingame_ui:suspend_active_view()
+			if var_8_0 then
+				var_8_0:suspend_active_view()
 			end
 		end
 	end
 end
 
-UIManager.update = function (self)
-	if not self._ui_enabled then
+function UIManager.update(arg_9_0)
+	if not arg_9_0._ui_enabled then
 		return
 	end
 
-	if not self._ui_update_initialized then
-		self._ui_update_initialized = true
+	if not arg_9_0._ui_update_initialized then
+		arg_9_0._ui_update_initialized = true
 
 		return
 	end
 
-	local ingame_ui = self._ingame_ui
+	local var_9_0 = arg_9_0._ingame_ui
 
-	if not ingame_ui then
+	if not var_9_0 then
 		return
 	end
 
-	local t, dt = Managers.time:time_and_delta("ui")
-	local disable_ingame_ui = (script_data.disable_ui or DebugScreen.active) and Managers.state.network:game_session_host() ~= nil
-	local level_end_view_wrapper = self._level_end_view_wrapper
-	local level_end_view = level_end_view_wrapper and level_end_view_wrapper:level_end_view()
+	local var_9_1, var_9_2 = Managers.time:time_and_delta("ui")
+	local var_9_3 = (script_data.disable_ui or DebugScreen.active) and Managers.state.network:game_session_host() ~= nil
+	local var_9_4 = arg_9_0._level_end_view_wrapper
+	local var_9_5 = var_9_4 and var_9_4:level_end_view()
 
-	ingame_ui:update(dt, t, disable_ingame_ui, level_end_view)
+	var_9_0:update(var_9_2, var_9_1, var_9_3, var_9_5)
 
-	local loading_subtitle_gui = self._loading_subtitle_gui
+	local var_9_6 = arg_9_0._loading_subtitle_gui
 
-	if loading_subtitle_gui then
-		ingame_ui:update_loading_subtitle_gui(loading_subtitle_gui, dt)
+	if var_9_6 then
+		var_9_0:update_loading_subtitle_gui(var_9_6, var_9_2)
 
-		if loading_subtitle_gui:is_complete() then
-			self._loading_subtitle_gui = nil
+		if var_9_6:is_complete() then
+			arg_9_0._loading_subtitle_gui = nil
 		end
 	end
 
-	if ingame_ui:end_screen_active() and ingame_ui:end_screen_completed() then
+	if var_9_0:end_screen_active() and var_9_0:end_screen_completed() then
 		Managers.state.event:trigger("end_screen_ui_complete")
 	end
 end
 
-UIManager.end_screen_active = function (self)
-	return self._ingame_ui:end_screen_active()
+function UIManager.end_screen_active(arg_10_0)
+	return arg_10_0._ingame_ui:end_screen_active()
 end
 
-UIManager.end_screen_completed = function (self)
-	return self._ingame_ui:end_screen_completed()
+function UIManager.end_screen_completed(arg_11_0)
+	return arg_11_0._ingame_ui:end_screen_completed()
 end
 
-UIManager.activate_end_screen_ui = function (self, screen_name, screen_config, screen_params)
-	self._ingame_ui:activate_end_screen_ui(screen_name, screen_config, screen_params)
+function UIManager.activate_end_screen_ui(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	arg_12_0._ingame_ui:activate_end_screen_ui(arg_12_1, arg_12_2, arg_12_3)
 end
 
-UIManager.post_update = function (self, dt, t, disable_ingame_ui)
-	local ingame_ui = self._ingame_ui
+function UIManager.post_update(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	local var_13_0 = arg_13_0._ingame_ui
 
-	if ingame_ui then
-		ingame_ui:post_update(dt, t, disable_ingame_ui)
+	if var_13_0 then
+		var_13_0:post_update(arg_13_1, arg_13_2, arg_13_3)
 	end
 end
 
-UIManager.post_render = function (self)
-	local ingame_ui = self._ingame_ui
+function UIManager.post_render(arg_14_0)
+	local var_14_0 = arg_14_0._ingame_ui
 
-	if ingame_ui then
-		ingame_ui:post_render()
+	if var_14_0 then
+		var_14_0:post_render()
 	end
 end
 
-UIManager.get_transition = function (self)
-	local ingame_ui = self._ingame_ui
+function UIManager.get_transition(arg_15_0)
+	local var_15_0 = arg_15_0._ingame_ui
 
-	if ingame_ui then
-		return ingame_ui:get_transition()
+	if var_15_0 then
+		return var_15_0:get_transition()
 	end
 end
 
-UIManager.restart_game = function (self)
-	local ingame_ui = self._ingame_ui
-
-	ingame_ui.restart_game = true
+function UIManager.restart_game(arg_16_0)
+	arg_16_0._ingame_ui.restart_game = true
 end
 
-UIManager.is_in_view_state = function (self, state_name)
-	local ingame_ui = self._ingame_ui
+function UIManager.is_in_view_state(arg_17_0, arg_17_1)
+	local var_17_0 = arg_17_0._ingame_ui
 
-	if ingame_ui then
-		return ingame_ui:is_in_view_state(state_name)
+	if var_17_0 then
+		return var_17_0:is_in_view_state(arg_17_1)
 	end
 end
 
-UIManager.get_hud_component = function (self, component_name)
-	local ingame_ui = self._ingame_ui
-
-	return ingame_ui:get_hud_component(component_name)
+function UIManager.get_hud_component(arg_18_0, arg_18_1)
+	return arg_18_0._ingame_ui:get_hud_component(arg_18_1)
 end
 
-UIManager.open_popup = function (self, popup_name, ...)
-	local ingame_ui = self._ingame_ui
-
-	return ingame_ui:open_popup(popup_name, ...)
+function UIManager.open_popup(arg_19_0, arg_19_1, ...)
+	return arg_19_0._ingame_ui:open_popup(arg_19_1, ...)
 end
 
-UIManager.close_popup = function (self, popup_name)
-	local ingame_ui = self._ingame_ui
-
-	return ingame_ui:close_popup(popup_name)
+function UIManager.close_popup(arg_20_0, arg_20_1)
+	return arg_20_0._ingame_ui:close_popup(arg_20_1)
 end
 
-UIManager.get_active_popup = function (self, popup_name)
-	local ingame_ui = self._ingame_ui
+function UIManager.get_active_popup(arg_21_0, arg_21_1)
+	local var_21_0 = arg_21_0._ingame_ui
 
-	if ingame_ui then
-		return ingame_ui:get_active_popup(popup_name)
+	if var_21_0 then
+		return var_21_0:get_active_popup(arg_21_1)
 	end
 end
 
-UIManager.handle_new_ui_disclaimer = function (self, disclaimer_states, state)
-	local gamepad_active = Managers.input:is_device_active("gamepad")
-
-	if gamepad_active or IS_CONSOLE then
+function UIManager.handle_new_ui_disclaimer(arg_22_0, arg_22_1, arg_22_2)
+	if Managers.input:is_device_active("gamepad") or IS_CONSOLE then
 		return
 	end
 
-	local use_gamepad_layout = Application.user_setting("use_gamepad_menu_layout")
-	local use_pc_menu_layout = Application.user_setting("use_pc_menu_layout")
+	local var_22_0 = Application.user_setting("use_gamepad_menu_layout")
+	local var_22_1 = Application.user_setting("use_pc_menu_layout")
 
-	if use_gamepad_layout == false and use_pc_menu_layout == false and (disclaimer_states[state] or disclaimer_states[state] == nil) then
-		local ingame_ui = self._ingame_ui
-
-		ingame_ui.weave_onboarding:try_show_tutorial(WeaveUITutorials.new_ui_disclaimer)
+	if var_22_0 == false and var_22_1 == false and (arg_22_1[arg_22_2] or arg_22_1[arg_22_2] == nil) then
+		arg_22_0._ingame_ui.weave_onboarding:try_show_tutorial(WeaveUITutorials.new_ui_disclaimer)
 		Application.set_user_setting("use_gamepad_menu_layout", nil)
 		Application.save_user_settings()
 	end
 end
 
-UIManager.handle_transition = function (self, new_transition, params)
-	fassert(params, "params are a required argument")
+function UIManager.handle_transition(arg_23_0, arg_23_1, arg_23_2)
+	fassert(arg_23_2, "params are a required argument")
 
-	local ingame_ui = self._ingame_ui
+	local var_23_0 = arg_23_0._ingame_ui
 
-	if ingame_ui then
-		if params.use_fade then
-			return ingame_ui:transition_with_fade(new_transition, params, params.fade_in_speed, params.fade_out_speed)
+	if var_23_0 then
+		if arg_23_2.use_fade then
+			return var_23_0:transition_with_fade(arg_23_1, arg_23_2, arg_23_2.fade_in_speed, arg_23_2.fade_out_speed)
 		else
-			return ingame_ui:handle_transition(new_transition, params)
+			return var_23_0:handle_transition(arg_23_1, arg_23_2)
 		end
 	end
 end
 
-UIManager.ingame_ui = function (self)
-	return self._ingame_ui
+function UIManager.ingame_ui(arg_24_0)
+	return arg_24_0._ingame_ui
 end

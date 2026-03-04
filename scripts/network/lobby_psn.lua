@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/network/lobby_psn.lua
+-- chunkname: @scripts/network/lobby_psn.lua
 
 require("scripts/network/lobby_aux")
 require("scripts/network/lobby_host")
@@ -11,62 +11,62 @@ LobbyInternal = LobbyInternal or {}
 LobbyInternal.lobby_data_version = 2
 LobbyInternal.TYPE = "psn"
 
-local USE_C_SERIALIZATION = false
+local var_0_0 = false
 
 LobbyInternal.comparison_lookup = {
-	equal = 1,
-	greater_or_equal = 6,
-	greater_than = 5,
-	less_or_equal = 4,
 	less_than = 3,
-	not_equal = 2,
+	greater_or_equal = 6,
+	less_or_equal = 4,
+	greater_than = 5,
+	equal = 1,
+	not_equal = 2
 }
 LobbyInternal.matchmaking_lobby_data = {
 	matchmaking = {
 		data_type = "integer",
-		id = PsnRoom.SEARCHABLE_INTEGER_ID_1,
+		id = PsnRoom.SEARCHABLE_INTEGER_ID_1
 	},
 	difficulty = {
 		data_type = "integer",
-		id = PsnRoom.SEARCHABLE_INTEGER_ID_2,
+		id = PsnRoom.SEARCHABLE_INTEGER_ID_2
 	},
 	selected_mission_id = {
 		data_type = "integer",
-		id = PsnRoom.SEARCHABLE_INTEGER_ID_3,
+		id = PsnRoom.SEARCHABLE_INTEGER_ID_3
 	},
 	matchmaking_type = {
 		data_type = "integer",
-		id = PsnRoom.SEARCHABLE_INTEGER_ID_4,
+		id = PsnRoom.SEARCHABLE_INTEGER_ID_4
 	},
 	primary_region = {
 		data_type = "integer",
-		id = PsnRoom.SEARCHABLE_INTEGER_ID_5,
+		id = PsnRoom.SEARCHABLE_INTEGER_ID_5
 	},
 	secondary_region = {
 		data_type = "integer",
-		id = PsnRoom.SEARCHABLE_INTEGER_ID_6,
+		id = PsnRoom.SEARCHABLE_INTEGER_ID_6
 	},
 	network_hash_as_int = {
 		data_type = "integer",
-		id = PsnRoom.SEARCHABLE_INTEGER_ID_7,
+		id = PsnRoom.SEARCHABLE_INTEGER_ID_7
 	},
 	mechanism = {
 		data_type = "integer",
-		id = PsnRoom.SEARCHABLE_INTEGER_ID_8,
-	},
+		id = PsnRoom.SEARCHABLE_INTEGER_ID_8
+	}
 }
 LobbyInternal.lobby_data_network_lookups = {
-	difficulty = "difficulties",
-	is_private = "lobby_data_values",
 	matchmaking = "lobby_data_values",
-	matchmaking_type = "matchmaking_types",
+	secondary_region = "matchmaking_regions",
+	twitch_enabled = "lobby_data_values",
 	mechanism = "mechanism_keys",
+	is_private = "lobby_data_values",
+	matchmaking_type = "matchmaking_types",
 	mission_id = "mission_ids",
 	primary_region = "matchmaking_regions",
-	secondary_region = "matchmaking_regions",
 	selected_mission_id = "mission_ids",
-	twitch_enabled = "lobby_data_values",
-	weave_quick_game = "lobby_data_values",
+	difficulty = "difficulties",
+	weave_quick_game = "lobby_data_values"
 }
 LobbyInternal.key_order = {
 	"network_hash",
@@ -85,30 +85,30 @@ LobbyInternal.key_order = {
 	"country_code",
 	"twitch_enabled",
 	"power_level",
-	"mechanism",
+	"mechanism"
 }
 LobbyInternal.key_index = {}
 
-for i, key in ipairs(LobbyInternal.key_order) do
-	LobbyInternal.key_index[key] = i
+for iter_0_0, iter_0_1 in ipairs(LobbyInternal.key_order) do
+	LobbyInternal.key_index[iter_0_1] = iter_0_0
 end
 
 LobbyInternal.default_lobby_data = {
-	difficulty = "normal",
+	twitch_enabled = "false",
+	reserved_profiles = "0=0",
 	is_private = "false",
-	matchmaking = "false",
 	matchmaking_type = "n/a",
 	mission_id = "n/a",
+	matchmaking = "false",
 	num_players = 1,
-	reserved_profiles = "0=0",
 	selected_mission_id = "n/a",
-	twitch_enabled = "false",
-	weave_quick_game = "false",
+	difficulty = "normal",
+	weave_quick_game = "false"
 }
 
-LobbyInternal.init_client = function (network_options)
+function LobbyInternal.init_client(arg_1_0)
 	if not LobbyInternal.client then
-		LobbyInternal.client = Network.init_psn_client(network_options.config_file_name)
+		LobbyInternal.client = Network.init_psn_client(arg_1_0.config_file_name)
 		LobbyInternal.psn_room_browser = PSNRoomBrowser:new(LobbyInternal.client)
 		LobbyInternal.psn_room_data_external = PsnClient.room_data_external(LobbyInternal.client)
 	end
@@ -116,19 +116,19 @@ LobbyInternal.init_client = function (network_options)
 	GameSettingsDevelopment.set_ignored_rpc_logs()
 end
 
-LobbyInternal.network_initialized = function ()
+function LobbyInternal.network_initialized()
 	return not not LobbyInternal.client
 end
 
-LobbyInternal.client_ready = function ()
+function LobbyInternal.client_ready()
 	return PsnClient.ready(LobbyInternal.client)
 end
 
-LobbyInternal.ping = function (peer_id)
-	return Network.ping(peer_id)
+function LobbyInternal.ping(arg_4_0)
+	return Network.ping(arg_4_0)
 end
 
-LobbyInternal.shutdown_client = function ()
+function LobbyInternal.shutdown_client()
 	Network.shutdown_psn_client(LobbyInternal.client)
 
 	LobbyInternal.client = nil
@@ -141,524 +141,515 @@ LobbyInternal.shutdown_client = function ()
 	end
 end
 
-LobbyInternal.open_channel = function (lobby, peer)
-	local channel_id = PsnRoom.open_channel(lobby.room_id, peer)
+function LobbyInternal.open_channel(arg_6_0, arg_6_1)
+	local var_6_0 = PsnRoom.open_channel(arg_6_0.room_id, arg_6_1)
 
-	printf("LobbyInternal.open_channel lobby: %s, to peer: %s channel: %s", lobby, peer, channel_id)
+	printf("LobbyInternal.open_channel lobby: %s, to peer: %s channel: %s", arg_6_0, arg_6_1, var_6_0)
 
-	return channel_id
+	return var_6_0
 end
 
-LobbyInternal.close_channel = function (lobby, channel)
-	printf("LobbyInternal.close_channel lobby: %s, channel: %s", lobby, channel)
-	PsnRoom.close_channel(lobby.room_id, channel)
+function LobbyInternal.close_channel(arg_7_0, arg_7_1)
+	printf("LobbyInternal.close_channel lobby: %s, channel: %s", arg_7_0, arg_7_1)
+	PsnRoom.close_channel(arg_7_0.room_id, arg_7_1)
 end
 
-LobbyInternal.is_orphaned = function (engine_lobby)
+function LobbyInternal.is_orphaned(arg_8_0)
 	return false
 end
 
-LobbyInternal.game_session_host = function (engine_lobby)
-	return PsnRoom.game_session_host(engine_lobby.room_id)
+function LobbyInternal.game_session_host(arg_9_0)
+	return PsnRoom.game_session_host(arg_9_0.room_id)
 end
 
-LobbyInternal.create_lobby = function (network_options)
-	local name = Managers.account:online_id() or "UNKNOWN"
-	local room_id = Network.create_psn_room(name, network_options.max_members)
+function LobbyInternal.create_lobby(arg_10_0)
+	local var_10_0 = Managers.account:online_id() or "UNKNOWN"
+	local var_10_1 = Network.create_psn_room(var_10_0, arg_10_0.max_members)
 
 	if script_data.debug_psn then
-		print("[LobbyInternal] creating room:", room_id)
+		print("[LobbyInternal] creating room:", var_10_1)
 		print(Script.callstack())
 	end
 
-	return PSNRoom:new(room_id)
+	return PSNRoom:new(var_10_1)
 end
 
-LobbyInternal.join_lobby = function (lobby_data)
-	local id = lobby_data.id
-	local room_id = Network.join_psn_room(id)
+function LobbyInternal.join_lobby(arg_11_0)
+	local var_11_0 = arg_11_0.id
+	local var_11_1 = Network.join_psn_room(var_11_0)
 
 	if script_data.debug_psn then
-		print("[LobbyInternal] joining room [room_id, id]", room_id, id)
+		print("[LobbyInternal] joining room [room_id, id]", var_11_1, var_11_0)
 		print(Script.callstack())
 	end
 
-	return PSNRoom:new(room_id)
+	return PSNRoom:new(var_11_1)
 end
 
-LobbyInternal.leave_lobby = function (psn_room)
+function LobbyInternal.leave_lobby(arg_12_0)
 	if script_data.debug_psn then
-		print("[LobbyInternal] Leaving room:", psn_room.room_id)
+		print("[LobbyInternal] Leaving room:", arg_12_0.room_id)
 		print(Script.callstack())
 	end
 
-	Network.leave_psn_room(psn_room.room_id)
+	Network.leave_psn_room(arg_12_0.room_id)
 end
 
-LobbyInternal.get_lobby = function (room_browser, index, verify_lobby_data)
-	local network_psn_room_info = room_browser:lobby(index)
-	local data_string = network_psn_room_info.data
-	local data_table, verified = LobbyInternal.unserialize_psn_data(data_string, verify_lobby_data)
+function LobbyInternal.get_lobby(arg_13_0, arg_13_1, arg_13_2)
+	local var_13_0 = arg_13_0:lobby(arg_13_1)
+	local var_13_1 = var_13_0.data
+	local var_13_2, var_13_3 = LobbyInternal.unserialize_psn_data(var_13_1, arg_13_2)
 
-	data_table.id = network_psn_room_info.id
-	data_table.name = network_psn_room_info.name
+	var_13_2.id = var_13_0.id
+	var_13_2.name = var_13_0.name
 
-	return data_table, verified
+	return var_13_2, var_13_3
 end
 
-LobbyInternal.lobby_browser = function ()
+function LobbyInternal.lobby_browser()
 	return LobbyInternal.psn_room_browser
 end
 
-LobbyInternal.client_lost_context = function ()
+function LobbyInternal.client_lost_context()
 	return PsnClient.lost_context(LobbyInternal.client)
 end
 
-LobbyInternal.client_failed = function ()
+function LobbyInternal.client_failed()
 	return PsnClient.failed(LobbyInternal.client)
 end
 
-LobbyInternal.get_lobby_data_from_id = function (id)
-	local entry = LobbyInternal.room_data_entry(id)
+function LobbyInternal.get_lobby_data_from_id(arg_17_0)
+	local var_17_0 = LobbyInternal.room_data_entry(arg_17_0)
 
-	if entry then
-		return entry.data
+	if var_17_0 then
+		return var_17_0.data
 	end
 end
 
-LobbyInternal.get_lobby_data_from_id_by_key = function (id, key)
-	local entry = LobbyInternal.room_data_entry(id)
+function LobbyInternal.get_lobby_data_from_id_by_key(arg_18_0, arg_18_1)
+	local var_18_0 = LobbyInternal.room_data_entry(arg_18_0)
 
-	if entry then
-		return entry.data[key]
+	if var_18_0 then
+		return var_18_0.data[arg_18_1]
 	end
 end
 
-LobbyInternal.room_data_refresh = function (ids)
+function LobbyInternal.room_data_refresh(arg_19_0)
 	if script_data.debug_psn then
-		printf("[LobbyInternal] Refreshing PsnRoomDataExternal for %s number of rooms:", #ids)
+		printf("[LobbyInternal] Refreshing PsnRoomDataExternal for %s number of rooms:", #arg_19_0)
 
-		for i, id in ipairs(ids) do
-			printf("\tRoomId #%d: %s", i, id)
+		for iter_19_0, iter_19_1 in ipairs(arg_19_0) do
+			printf("\tRoomId #%d: %s", iter_19_0, iter_19_1)
 		end
 	end
 
-	PsnRoomDataExternal.refresh(LobbyInternal.psn_room_data_external, ids)
+	PsnRoomDataExternal.refresh(LobbyInternal.psn_room_data_external, arg_19_0)
 end
 
-LobbyInternal.room_data_is_refreshing = function ()
+function LobbyInternal.room_data_is_refreshing()
 	return PsnRoomDataExternal.is_refreshing(LobbyInternal.psn_room_data_external)
 end
 
-LobbyInternal.room_data_all_entries = function ()
-	local entries = PsnRoomDataExternal.all_entries(LobbyInternal.psn_room_data_external)
+function LobbyInternal.room_data_all_entries()
+	local var_21_0 = PsnRoomDataExternal.all_entries(LobbyInternal.psn_room_data_external)
 
-	for _, entry in ipairs(entries) do
-		entry.data = LobbyInternal.unserialize_psn_data(entry.data)
+	for iter_21_0, iter_21_1 in ipairs(var_21_0) do
+		iter_21_1.data = LobbyInternal.unserialize_psn_data(iter_21_1.data)
 	end
 
-	return entries
+	return var_21_0
 end
 
-LobbyInternal.room_data_entry = function (id)
-	local entry = PsnRoomDataExternal.entry(LobbyInternal.psn_room_data_external, id)
+function LobbyInternal.room_data_entry(arg_22_0)
+	local var_22_0 = PsnRoomDataExternal.entry(LobbyInternal.psn_room_data_external, arg_22_0)
 
-	if entry then
-		entry.data = LobbyInternal.unserialize_psn_data(entry.data)
+	if var_22_0 then
+		var_22_0.data = LobbyInternal.unserialize_psn_data(var_22_0.data)
 	end
 
-	return entry
+	return var_22_0
 end
 
-LobbyInternal.room_data_num_entries = function ()
+function LobbyInternal.room_data_num_entries()
 	return PsnRoomDataExternal.num_entries(LobbyInternal.psn_room_data_external)
 end
 
-local conv_table = {}
+local var_0_1 = {}
 
-LobbyInternal.serialize_psn_data = function (data_table)
-	table.clear(conv_table)
+function LobbyInternal.serialize_psn_data(arg_24_0)
+	table.clear(var_0_1)
 
-	local lobby_data_network_lookups = LobbyInternal.lobby_data_network_lookups
+	local var_24_0 = LobbyInternal.lobby_data_network_lookups
 
-	for key, value in pairs(LobbyInternal.default_lobby_data) do
-		if not data_table[key] then
-			data_table[key] = value
+	for iter_24_0, iter_24_1 in pairs(LobbyInternal.default_lobby_data) do
+		if not arg_24_0[iter_24_0] then
+			arg_24_0[iter_24_0] = iter_24_1
 		end
 	end
 
-	for key, value in pairs(data_table) do
-		if lobby_data_network_lookups[key] then
-			conv_table[key] = NetworkLookup[lobby_data_network_lookups[key]][value]
+	for iter_24_2, iter_24_3 in pairs(arg_24_0) do
+		if var_24_0[iter_24_2] then
+			var_0_1[iter_24_2] = NetworkLookup[var_24_0[iter_24_2]][iter_24_3]
 		else
-			conv_table[key] = value
+			var_0_1[iter_24_2] = iter_24_3
 		end
 	end
 
-	local packed_data, packed_data_size
+	local var_24_1
+	local var_24_2
 
-	if USE_C_SERIALIZATION then
-		packed_data = PsnRoom.pack_room_data(conv_table)
-		packed_data_size = string.len(packed_data)
+	if var_0_0 then
+		var_24_1 = PsnRoom.pack_room_data(var_0_1)
+		var_24_2 = string.len(var_24_1)
 	else
-		packed_data = ""
+		var_24_1 = ""
 
-		for idx, key in ipairs(LobbyInternal.key_order) do
-			if idx > 1 then
-				packed_data = packed_data .. "/"
+		for iter_24_4, iter_24_5 in ipairs(LobbyInternal.key_order) do
+			if iter_24_4 > 1 then
+				var_24_1 = var_24_1 .. "/"
 			end
 
-			packed_data = packed_data .. (conv_table[key] or "1")
+			var_24_1 = var_24_1 .. (var_0_1[iter_24_5] or "1")
 		end
 
-		packed_data_size = string.len(packed_data)
+		var_24_2 = string.len(var_24_1)
 	end
 
-	fassert(packed_data_size <= PSNRoom.room_data_max_size, "[PSNRoom] Tried to store %d characters in the PSN Room Data, maximum is 255 bytes", packed_data_size)
+	fassert(var_24_2 <= PSNRoom.room_data_max_size, "[PSNRoom] Tried to store %d characters in the PSN Room Data, maximum is 255 bytes", var_24_2)
 
-	return packed_data
+	return var_24_1
 end
 
-LobbyInternal.verify_lobby_data = function (lobby_data_table)
-	local my_network_hash = LobbySetup.network_hash()
-	local lobby_network_hash = lobby_data_table.network_hash
+function LobbyInternal.verify_lobby_data(arg_25_0)
+	local var_25_0 = LobbySetup.network_hash()
 
-	return lobby_network_hash == my_network_hash
+	return arg_25_0.network_hash == var_25_0
 end
 
-LobbyInternal.unserialize_psn_data = function (data_string, verify_lobby_data)
-	local t
+function LobbyInternal.unserialize_psn_data(arg_26_0, arg_26_1)
+	local var_26_0
 
-	if USE_C_SERIALIZATION then
-		t = PsnRoom.unpack_room_data(data_string)
+	if var_0_0 then
+		var_26_0 = PsnRoom.unpack_room_data(arg_26_0)
 	else
-		t = {}
+		var_26_0 = {}
 
-		local data_string_table = string.split_deprecated(data_string, "/")
+		local var_26_1 = string.split_deprecated(arg_26_0, "/")
 
-		if #data_string_table > #LobbyInternal.key_order then
-			t.broken_lobby_data = data_string
+		if #var_26_1 > #LobbyInternal.key_order then
+			var_26_0.broken_lobby_data = arg_26_0
 
-			return t, false
+			return var_26_0, false
 		end
 
-		local my_network_hash = LobbySetup.network_hash()
-		local index = LobbyInternal.key_index.network_hash
-		local lobby_network_hash = data_string_table[index]
+		local var_26_2 = LobbySetup.network_hash()
 
-		if lobby_network_hash ~= my_network_hash then
-			t.old_lobby_data = data_string
+		if var_26_1[LobbyInternal.key_index.network_hash] ~= var_26_2 then
+			var_26_0.old_lobby_data = arg_26_0
 
-			return t, false
+			return var_26_0, false
 		end
 
-		for i = 1, #data_string_table do
-			local key = LobbyInternal.key_order[i]
-			local value = data_string_table[i]
-
-			t[key] = value
+		for iter_26_0 = 1, #var_26_1 do
+			var_26_0[LobbyInternal.key_order[iter_26_0]] = var_26_1[iter_26_0]
 		end
 	end
 
-	local lobby_data_network_lookups = LobbyInternal.lobby_data_network_lookups
+	local var_26_3 = LobbyInternal.lobby_data_network_lookups
 
-	if verify_lobby_data and not LobbyInternal.verify_lobby_data(t) then
-		return t, false
+	if arg_26_1 and not LobbyInternal.verify_lobby_data(var_26_0) then
+		return var_26_0, false
 	end
 
-	for key, value in pairs(t) do
-		if lobby_data_network_lookups[key] then
-			t[key] = NetworkLookup[lobby_data_network_lookups[key]][tonumber(value)]
+	for iter_26_1, iter_26_2 in pairs(var_26_0) do
+		if var_26_3[iter_26_1] then
+			var_26_0[iter_26_1] = NetworkLookup[var_26_3[iter_26_1]][tonumber(iter_26_2)]
 		end
 	end
 
-	return t, true
+	return var_26_0, true
 end
 
-LobbyInternal.clear_filter_requirements = function ()
-	local room_browser = LobbyInternal.psn_room_browser
-
-	room_browser:clear_filters()
+function LobbyInternal.clear_filter_requirements()
+	LobbyInternal.psn_room_browser:clear_filters()
 end
 
-LobbyInternal.add_filter_requirements = function (requirements)
-	local room_browser = LobbyInternal.psn_room_browser
+function LobbyInternal.add_filter_requirements(arg_28_0)
+	local var_28_0 = LobbyInternal.psn_room_browser
 
-	room_browser:clear_filters(room_browser)
+	var_28_0:clear_filters(var_28_0)
 
-	local lobby_data_network_lookups = LobbyInternal.lobby_data_network_lookups
+	local var_28_1 = LobbyInternal.lobby_data_network_lookups
 
-	for key, filter in pairs(requirements.filters) do
-		local mm_lobby_data = LobbyInternal.matchmaking_lobby_data[key]
+	for iter_28_0, iter_28_1 in pairs(arg_28_0.filters) do
+		local var_28_2 = LobbyInternal.matchmaking_lobby_data[iter_28_0]
 
-		if mm_lobby_data then
-			local id = mm_lobby_data.id
-			local value, comparison = filter.value, filter.comparison
+		if var_28_2 then
+			local var_28_3 = var_28_2.id
+			local var_28_4 = iter_28_1.value
+			local var_28_5 = iter_28_1.comparison
 
-			if lobby_data_network_lookups[key] then
-				value = NetworkLookup[lobby_data_network_lookups[key]][value]
+			if var_28_1[iter_28_0] then
+				var_28_4 = NetworkLookup[var_28_1[iter_28_0]][var_28_4]
 			end
 
-			local comparison = LobbyInternal.comparison_lookup[comparison]
+			local var_28_6 = LobbyInternal.comparison_lookup[var_28_5]
 
-			room_browser:add_filter(id, value, comparison)
-			mm_printf("Filter: %s, comparison(%s), id=%s, value(untouched)=%s, value=%s", tostring(key), tostring(comparison), tostring(id), tostring(filter.value), tostring(value))
+			var_28_0:add_filter(var_28_3, var_28_4, var_28_6)
+			mm_printf("Filter: %s, comparison(%s), id=%s, value(untouched)=%s, value=%s", tostring(iter_28_0), tostring(var_28_6), tostring(var_28_3), tostring(iter_28_1.value), tostring(var_28_4))
 		else
-			mm_printf("Skipping filter %q matchmaking_lobby_data not setup. Probably redundant on ps4", key)
+			mm_printf("Skipping filter %q matchmaking_lobby_data not setup. Probably redundant on ps4", iter_28_0)
 		end
 	end
 end
 
-LobbyInternal._set_matchmaking_data = function (room_id, key, value)
-	local mm_lobby_data = LobbyInternal.matchmaking_lobby_data[key]
+function LobbyInternal._set_matchmaking_data(arg_29_0, arg_29_1, arg_29_2)
+	local var_29_0 = LobbyInternal.matchmaking_lobby_data[arg_29_1]
 
-	fassert(mm_lobby_data, "Lobby data key %q is not set up for matchmaking", key)
+	fassert(var_29_0, "Lobby data key %q is not set up for matchmaking", arg_29_1)
 
-	local lobby_data_network_lookups = LobbyInternal.lobby_data_network_lookups
-	local data_type = mm_lobby_data.data_type
+	local var_29_1 = LobbyInternal.lobby_data_network_lookups
+	local var_29_2 = var_29_0.data_type
 
-	if data_type == "integer" then
-		if lobby_data_network_lookups[key] then
-			value = NetworkLookup[lobby_data_network_lookups[key]][value]
+	if var_29_2 == "integer" then
+		if var_29_1[arg_29_1] then
+			arg_29_2 = NetworkLookup[var_29_1[arg_29_1]][arg_29_2]
 		end
 
-		fassert(type(value) == "number", "Value needs to be an integer.")
-		PsnRoom.set_searchable_attribute(room_id, mm_lobby_data.id, value)
+		fassert(type(arg_29_2) == "number", "Value needs to be an integer.")
+		PsnRoom.set_searchable_attribute(arg_29_0, var_29_0.id, arg_29_2)
 	else
-		ferror("unsupported data type %q", data_type)
+		ferror("unsupported data type %q", var_29_2)
 	end
 end
 
-LobbyInternal.user_name = function (user)
+function LobbyInternal.user_name(arg_30_0)
 	return nil
 end
 
-LobbyInternal.lobby_id = function (psn_room)
-	return PsnRoom.sce_np_room_id(psn_room.room_id)
+function LobbyInternal.lobby_id(arg_31_0)
+	return PsnRoom.sce_np_room_id(arg_31_0.room_id)
 end
 
-LobbyInternal.is_friend = function (peer_id)
+function LobbyInternal.is_friend(arg_32_0)
 	print("LobbyInternal.is_friend() is not implemented on the ps4")
 
 	return false
 end
 
-LobbyInternal.set_max_members = function (lobby, max_members)
+function LobbyInternal.set_max_members(arg_33_0, arg_33_1)
 	ferror("set_max_members not supported on platform.")
 end
 
 PSNRoom = class(PSNRoom)
 PSNRoom.room_data_max_size = 256
 
-PSNRoom.init = function (self, room_id)
-	self.room_id = room_id
-	self._room_data = {}
-	self._serialized_room_data = ""
-	self._user_names = {}
-	self._refresh_room_data = false
-	self._refresh_cooldown = 0
+function PSNRoom.init(arg_34_0, arg_34_1)
+	arg_34_0.room_id = arg_34_1
+	arg_34_0._room_data = {}
+	arg_34_0._serialized_room_data = ""
+	arg_34_0._user_names = {}
+	arg_34_0._refresh_room_data = false
+	arg_34_0._refresh_cooldown = 0
 end
 
-PSNRoom.state = function (self)
-	return PsnRoom.state(self.room_id)
+function PSNRoom.state(arg_35_0)
+	return PsnRoom.state(arg_35_0.room_id)
 end
 
-PSNRoom.update = function (self, dt)
-	self._refresh_cooldown = math.max(self._refresh_cooldown - dt, 0)
+function PSNRoom.update(arg_36_0, arg_36_1)
+	arg_36_0._refresh_cooldown = math.max(arg_36_0._refresh_cooldown - arg_36_1, 0)
 
-	if self._refresh_room_data and self._refresh_cooldown == 0 then
-		local packed_data_size = string.len(self._serialized_room_data)
+	if arg_36_0._refresh_room_data and arg_36_0._refresh_cooldown == 0 then
+		local var_36_0 = string.len(arg_36_0._serialized_room_data)
 
-		fassert(packed_data_size <= PSNRoom.room_data_max_size, "[PSNRoom] Tried to store %d characters in the PSN Room Data, maximum is 255 bytes", packed_data_size)
-		print("ROOM DATA", self._serialized_room_data)
-		PsnRoom.set_data(self.room_id, self._serialized_room_data)
-		PsnRoom.set_data_internal(self.room_id, self._serialized_room_data)
+		fassert(var_36_0 <= PSNRoom.room_data_max_size, "[PSNRoom] Tried to store %d characters in the PSN Room Data, maximum is 255 bytes", var_36_0)
+		print("ROOM DATA", arg_36_0._serialized_room_data)
+		PsnRoom.set_data(arg_36_0.room_id, arg_36_0._serialized_room_data)
+		PsnRoom.set_data_internal(arg_36_0.room_id, arg_36_0._serialized_room_data)
 
 		if script_data.debug_psn then
-			printf("[PSNRoom] Setting Packed Room Data: %q, Packed Size: %d/%d", self._serialized_room_data, packed_data_size, PSNRoom.room_data_max_size)
+			printf("[PSNRoom] Setting Packed Room Data: %q, Packed Size: %d/%d", arg_36_0._serialized_room_data, var_36_0, PSNRoom.room_data_max_size)
 		end
 
-		self._refresh_room_data = false
-		self._refresh_cooldown = 1
+		arg_36_0._refresh_room_data = false
+		arg_36_0._refresh_cooldown = 1
 	end
 end
 
-PSNRoom.set_data = function (self, key, value)
-	local room_data = self._room_data
+function PSNRoom.set_data(arg_37_0, arg_37_1, arg_37_2)
+	local var_37_0 = arg_37_0._room_data
 
-	room_data[key] = tostring(value)
+	var_37_0[arg_37_1] = tostring(arg_37_2)
 
-	if LobbyInternal.matchmaking_lobby_data[key] then
-		LobbyInternal._set_matchmaking_data(self.room_id, key, value)
+	if LobbyInternal.matchmaking_lobby_data[arg_37_1] then
+		LobbyInternal._set_matchmaking_data(arg_37_0.room_id, arg_37_1, arg_37_2)
 	end
 
-	local data_string = LobbyInternal.serialize_psn_data(room_data)
+	local var_37_1 = LobbyInternal.serialize_psn_data(var_37_0)
 
-	if data_string ~= self._serialized_room_data then
-		self._serialized_room_data = data_string
-		self._refresh_room_data = true
-	end
-end
-
-PSNRoom.set_data_table = function (self, data_table)
-	local room_data = self._room_data
-
-	for key, value in pairs(data_table) do
-		room_data[key] = tostring(value)
-
-		if LobbyInternal.matchmaking_lobby_data[key] then
-			LobbyInternal._set_matchmaking_data(self.room_id, key, value)
-		end
-	end
-
-	local data_string = LobbyInternal.serialize_psn_data(room_data)
-
-	if data_string ~= self._serialized_room_data then
-		self._serialized_room_data = data_string
-		self._refresh_room_data = true
+	if var_37_1 ~= arg_37_0._serialized_room_data then
+		arg_37_0._serialized_room_data = var_37_1
+		arg_37_0._refresh_room_data = true
 	end
 end
 
-PSNRoom.data = function (self, key)
-	local data_string = PsnRoom.data_internal(self.room_id)
-	local room_data = LobbyInternal.unserialize_psn_data(data_string)
+function PSNRoom.set_data_table(arg_38_0, arg_38_1)
+	local var_38_0 = arg_38_0._room_data
 
-	return room_data[key]
-end
+	for iter_38_0, iter_38_1 in pairs(arg_38_1) do
+		var_38_0[iter_38_0] = tostring(iter_38_1)
 
-PSNRoom.members = function (self)
-	local room_id = self.room_id
-	local num_members = PsnRoom.num_members(room_id)
-	local t = {}
-
-	for i = 0, num_members - 1 do
-		local member = PsnRoom.member(room_id, i)
-
-		t[i + 1] = member.peer_id
-	end
-
-	return t
-end
-
-PSNRoom.members_np_id = function (self, t)
-	local room_id = self.room_id
-	local num_members = PsnRoom.num_members(room_id)
-
-	for i = 0, num_members - 1 do
-		local member = PsnRoom.member(room_id, i)
-
-		t[i + 1] = member.np_id
-	end
-end
-
-PSNRoom.online_id_from_peer_id = function (self, peer_id)
-	local room_id = self.room_id
-	local num_members = PsnRoom.num_members(room_id)
-
-	for i = 0, num_members - 1 do
-		local member = PsnRoom.member(room_id, i)
-
-		if member.peer_id == peer_id then
-			return member.online_id
+		if LobbyInternal.matchmaking_lobby_data[iter_38_0] then
+			LobbyInternal._set_matchmaking_data(arg_38_0.room_id, iter_38_0, iter_38_1)
 		end
 	end
 
-	local user_name = self._user_names[peer_id]
+	local var_38_1 = LobbyInternal.serialize_psn_data(var_38_0)
 
-	if user_name then
-		return user_name
-	end
-
-	fassert(false, "[PSNRoom]:np_id_froom_peer_id() No member with peer id(%s) in room(%d)", peer_id, room_id)
-end
-
-PSNRoom.lobby_host = function (self)
-	return PsnRoom.owner(self.room_id)
-end
-
-PSNRoom.sce_np_room_id = function (self)
-	return PsnRoom.sce_np_room_id(self.room_id)
-end
-
-PSNRoom.update_user_names = function (self)
-	local room_id = self.room_id
-	local num_members = PsnRoom.num_members(room_id)
-
-	for i = 0, num_members - 1 do
-		local member = PsnRoom.member(room_id, i)
-
-		self._user_names[member.peer_id] = member.online_id
+	if var_38_1 ~= arg_38_0._serialized_room_data then
+		arg_38_0._serialized_room_data = var_38_1
+		arg_38_0._refresh_room_data = true
 	end
 end
 
-PSNRoom.user_name = function (self, peer_id)
-	local user_name
-	local room_id = self.room_id
-	local num_members = PsnRoom.num_members(room_id)
+function PSNRoom.data(arg_39_0, arg_39_1)
+	local var_39_0 = PsnRoom.data_internal(arg_39_0.room_id)
 
-	for i = 0, num_members - 1 do
-		local member = PsnRoom.member(room_id, i)
+	return LobbyInternal.unserialize_psn_data(var_39_0)[arg_39_1]
+end
 
-		if member.peer_id == peer_id then
-			user_name = member.online_id
+function PSNRoom.members(arg_40_0)
+	local var_40_0 = arg_40_0.room_id
+	local var_40_1 = PsnRoom.num_members(var_40_0)
+	local var_40_2 = {}
+
+	for iter_40_0 = 0, var_40_1 - 1 do
+		local var_40_3 = PsnRoom.member(var_40_0, iter_40_0)
+
+		var_40_2[iter_40_0 + 1] = var_40_3.peer_id
+	end
+
+	return var_40_2
+end
+
+function PSNRoom.members_np_id(arg_41_0, arg_41_1)
+	local var_41_0 = arg_41_0.room_id
+	local var_41_1 = PsnRoom.num_members(var_41_0)
+
+	for iter_41_0 = 0, var_41_1 - 1 do
+		local var_41_2 = PsnRoom.member(var_41_0, iter_41_0)
+
+		arg_41_1[iter_41_0 + 1] = var_41_2.np_id
+	end
+end
+
+function PSNRoom.online_id_from_peer_id(arg_42_0, arg_42_1)
+	local var_42_0 = arg_42_0.room_id
+	local var_42_1 = PsnRoom.num_members(var_42_0)
+
+	for iter_42_0 = 0, var_42_1 - 1 do
+		local var_42_2 = PsnRoom.member(var_42_0, iter_42_0)
+
+		if var_42_2.peer_id == arg_42_1 then
+			return var_42_2.online_id
+		end
+	end
+
+	local var_42_3 = arg_42_0._user_names[arg_42_1]
+
+	if var_42_3 then
+		return var_42_3
+	end
+
+	fassert(false, "[PSNRoom]:np_id_froom_peer_id() No member with peer id(%s) in room(%d)", arg_42_1, var_42_0)
+end
+
+function PSNRoom.lobby_host(arg_43_0)
+	return PsnRoom.owner(arg_43_0.room_id)
+end
+
+function PSNRoom.sce_np_room_id(arg_44_0)
+	return PsnRoom.sce_np_room_id(arg_44_0.room_id)
+end
+
+function PSNRoom.update_user_names(arg_45_0)
+	local var_45_0 = arg_45_0.room_id
+	local var_45_1 = PsnRoom.num_members(var_45_0)
+
+	for iter_45_0 = 0, var_45_1 - 1 do
+		local var_45_2 = PsnRoom.member(var_45_0, iter_45_0)
+
+		arg_45_0._user_names[var_45_2.peer_id] = var_45_2.online_id
+	end
+end
+
+function PSNRoom.user_name(arg_46_0, arg_46_1)
+	local var_46_0
+	local var_46_1 = arg_46_0.room_id
+	local var_46_2 = PsnRoom.num_members(var_46_1)
+
+	for iter_46_0 = 0, var_46_2 - 1 do
+		local var_46_3 = PsnRoom.member(var_46_1, iter_46_0)
+
+		if var_46_3.peer_id == arg_46_1 then
+			var_46_0 = var_46_3.online_id
 
 			break
 		end
 	end
 
-	user_name = user_name or self._user_names[peer_id]
+	var_46_0 = var_46_0 or arg_46_0._user_names[arg_46_1]
 
-	return user_name
+	return var_46_0
 end
 
-PSNRoom.user_id = function (self, peer_id)
-	local user_id
-	local room_id = self.room_id
-	local num_members = PsnRoom.num_members(room_id)
+function PSNRoom.user_id(arg_47_0, arg_47_1)
+	local var_47_0
+	local var_47_1 = arg_47_0.room_id
+	local var_47_2 = PsnRoom.num_members(var_47_1)
 
-	for i = 0, num_members - 1 do
-		local member = PsnRoom.member(room_id, i)
-
-		if member.peer_id == peer_id then
-			user_id = PsnRoom.user_id(room_id, i)
+	for iter_47_0 = 0, var_47_2 - 1 do
+		if PsnRoom.member(var_47_1, iter_47_0).peer_id == arg_47_1 then
+			var_47_0 = PsnRoom.user_id(var_47_1, iter_47_0)
 		end
 	end
 
-	fassert(user_id ~= nil, "[PSNRoom]:user_id() No member with peer id(%s) in room(%d)", peer_id, room_id)
+	fassert(var_47_0 ~= nil, "[PSNRoom]:user_id() No member with peer id(%s) in room(%d)", arg_47_1, var_47_1)
 
-	return user_id
+	return var_47_0
 end
 
-PSNRoom.set_game_session_host = function (self, peer_id)
-	PsnRoom.set_game_session_host(self.room_id, peer_id)
+function PSNRoom.set_game_session_host(arg_48_0, arg_48_1)
+	PsnRoom.set_game_session_host(arg_48_0.room_id, arg_48_1)
 end
 
 PSNRoomBrowser = class(PSNRoomBrowser)
 
-PSNRoomBrowser.init = function (self, psn_client)
-	self.browser = PsnClient.room_browser(psn_client)
+function PSNRoomBrowser.init(arg_49_0, arg_49_1)
+	arg_49_0.browser = PsnClient.room_browser(arg_49_1)
 end
 
-PSNRoomBrowser.is_refreshing = function (self)
-	return PsnRoomBrowser.is_refreshing(self.browser)
+function PSNRoomBrowser.is_refreshing(arg_50_0)
+	return PsnRoomBrowser.is_refreshing(arg_50_0.browser)
 end
 
-PSNRoomBrowser.num_lobbies = function (self)
-	return PsnRoomBrowser.num_rooms(self.browser)
+function PSNRoomBrowser.num_lobbies(arg_51_0)
+	return PsnRoomBrowser.num_rooms(arg_51_0.browser)
 end
 
-PSNRoomBrowser.refresh = function (self)
-	PsnRoomBrowser.refresh(self.browser)
+function PSNRoomBrowser.refresh(arg_52_0)
+	PsnRoomBrowser.refresh(arg_52_0.browser)
 end
 
-PSNRoomBrowser.lobby = function (self, index)
-	return PsnRoomBrowser.room(self.browser, index)
+function PSNRoomBrowser.lobby(arg_53_0, arg_53_1)
+	return PsnRoomBrowser.room(arg_53_0.browser, arg_53_1)
 end
 
-PSNRoomBrowser.add_filter = function (self, id, value, comparison)
-	PsnRoomBrowser.add_filter(self.browser, id, value, comparison)
+function PSNRoomBrowser.add_filter(arg_54_0, arg_54_1, arg_54_2, arg_54_3)
+	PsnRoomBrowser.add_filter(arg_54_0.browser, arg_54_1, arg_54_2, arg_54_3)
 end
 
-PSNRoomBrowser.clear_filters = function (self)
-	PsnRoomBrowser.clear_filters(self.browser)
+function PSNRoomBrowser.clear_filters(arg_55_0)
+	PsnRoomBrowser.clear_filters(arg_55_0.browser)
 end

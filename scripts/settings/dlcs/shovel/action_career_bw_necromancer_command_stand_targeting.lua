@@ -1,275 +1,265 @@
-﻿-- chunkname: @scripts/settings/dlcs/shovel/action_career_bw_necromancer_command_stand_targeting.lua
+-- chunkname: @scripts/settings/dlcs/shovel/action_career_bw_necromancer_command_stand_targeting.lua
 
 require("scripts/settings/profiles/career_constants")
 
-local target_decal_unit_name = "fx/bw_necromancer_ability_indicator"
-local indicator_radius = 0.35
-local raycast_speed = 11
-local raycast_gravity = -10
-local right_spacing = 0.55
-local forward_spacing = 0.9
+local var_0_0 = "fx/bw_necromancer_ability_indicator"
+local var_0_1 = 0.35
+local var_0_2 = 11
+local var_0_3 = -10
+local var_0_4 = 0.55
+local var_0_5 = 0.9
 
 ActionCareerBwNecromancerCommandStandTargetingUtility = {}
 
-ActionCareerBwNecromancerCommandStandTargetingUtility.generate_positions = function (target_center, fp_rotation, num_positions, optional_cached_positions)
-	local navified_spawn_positions = optional_cached_positions or {}
-	local num_per_rank = math.min(num_positions, CareerConstants.bw_necromancer.pets_per_rank)
+function ActionCareerBwNecromancerCommandStandTargetingUtility.generate_positions(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	local var_1_0 = arg_1_3 or {}
+	local var_1_1 = math.min(arg_1_2, CareerConstants.bw_necromancer.pets_per_rank)
 
-	if num_per_rank == 0 then
-		table.clear(navified_spawn_positions)
+	if var_1_1 == 0 then
+		table.clear(var_1_0)
 
-		return navified_spawn_positions
+		return var_1_0
 	end
 
-	local above = 2
-	local below = 2
-	local fp_rotation_flat = Quaternion.axis_angle(Vector3.up(), Quaternion.yaw(fp_rotation))
-	local forward = Quaternion.forward(fp_rotation_flat)
-	local right = Quaternion.right(fp_rotation_flat)
-	local valid_position
-	local ranks = math.ceil(num_positions / num_per_rank)
+	local var_1_2 = 2
+	local var_1_3 = 2
+	local var_1_4 = Quaternion.axis_angle(Vector3.up(), Quaternion.yaw(arg_1_1))
+	local var_1_5 = Quaternion.forward(var_1_4)
+	local var_1_6 = Quaternion.right(var_1_4)
+	local var_1_7
+	local var_1_8 = math.ceil(arg_1_2 / var_1_1)
 
-	for rank_i = 1, ranks do
-		local num_this_rank = math.min(num_positions - (rank_i - 1) * num_per_rank, num_per_rank)
-		local wanted_width = (indicator_radius + right_spacing) * num_this_rank
-		local left_wanted = -right * wanted_width
-		local right_wanted = right * wanted_width
-		local nav_world = Managers.state.entity:system("ai_system"):nav_world()
-		local _, left_bound = GwNavQueries.raycast(nav_world, target_center, target_center + left_wanted)
-		local _, right_bound = GwNavQueries.raycast(nav_world, target_center, target_center + right_wanted)
-		local left_delta = left_bound - target_center
-		local right_delta = right_bound - target_center
-		local left_actual_wanted = left_wanted * 0.5
-		local right_actual_wanted = right_wanted * 0.5
-		local offset_left = Vector3.length_squared(right_delta) < Vector3.length_squared(right_actual_wanted) and right_delta - right_actual_wanted or Vector3.zero()
-		local offset_right = Vector3.length_squared(left_delta) < Vector3.length_squared(left_actual_wanted) and left_delta - left_actual_wanted or Vector3.zero()
+	for iter_1_0 = 1, var_1_8 do
+		local var_1_9 = math.min(arg_1_2 - (iter_1_0 - 1) * var_1_1, var_1_1)
+		local var_1_10 = (var_0_1 + var_0_4) * var_1_9
+		local var_1_11 = -var_1_6 * var_1_10
+		local var_1_12 = var_1_6 * var_1_10
+		local var_1_13 = Managers.state.entity:system("ai_system"):nav_world()
+		local var_1_14, var_1_15 = GwNavQueries.raycast(var_1_13, arg_1_0, arg_1_0 + var_1_11)
+		local var_1_16, var_1_17 = GwNavQueries.raycast(var_1_13, arg_1_0, arg_1_0 + var_1_12)
+		local var_1_18 = var_1_15 - arg_1_0
+		local var_1_19 = var_1_17 - arg_1_0
+		local var_1_20 = var_1_11 * 0.5
+		local var_1_21 = var_1_12 * 0.5
+		local var_1_22 = Vector3.length_squared(var_1_19) < Vector3.length_squared(var_1_21) and var_1_19 - var_1_21 or Vector3.zero()
+		local var_1_23 = Vector3.length_squared(var_1_18) < Vector3.length_squared(var_1_20) and var_1_18 - var_1_20 or Vector3.zero()
+		local var_1_24 = Geometry.closest_point_on_line(arg_1_0 + var_1_21 + var_1_23, var_1_15, var_1_17)
+		local var_1_25 = Geometry.closest_point_on_line(arg_1_0 + var_1_20 + var_1_22, var_1_15, var_1_24)
+		local var_1_26 = Vector3.length(var_1_24 - var_1_25) / var_1_9
 
-		right_bound = Geometry.closest_point_on_line(target_center + right_actual_wanted + offset_right, left_bound, right_bound)
-		left_bound = Geometry.closest_point_on_line(target_center + left_actual_wanted + offset_left, left_bound, right_bound)
+		for iter_1_1 = 1, var_1_9 do
+			local var_1_27 = var_1_25 + var_1_6 * var_1_26 * (iter_1_1 - 0.5) - var_1_5 * var_0_5 * (iter_1_0 - 1)
+			local var_1_28 = LocomotionUtils.pos_on_mesh(var_1_13, var_1_27, var_1_2, var_1_3)
+			local var_1_29 = (iter_1_0 - 1) * var_1_1 + iter_1_1
 
-		local offset = Vector3.length(right_bound - left_bound) / num_this_rank
+			if not var_1_28 then
+				local var_1_30 = 3
+				local var_1_31 = 0.5
 
-		for i = 1, num_this_rank do
-			local position = left_bound + right * offset * (i - 0.5) - forward * forward_spacing * (rank_i - 1)
-			local nav_position = LocomotionUtils.pos_on_mesh(nav_world, position, above, below)
-			local idx = (rank_i - 1) * num_per_rank + i
-
-			if not nav_position then
-				local horizontal_tolerance = 3
-				local distance_from_obstacle = 0.5
-
-				nav_position = GwNavQueries.inside_position_from_outside_position(nav_world, position, above, below, horizontal_tolerance, distance_from_obstacle)
+				var_1_28 = GwNavQueries.inside_position_from_outside_position(var_1_13, var_1_27, var_1_2, var_1_3, var_1_30, var_1_31)
 			end
 
-			if nav_position then
-				navified_spawn_positions[idx] = Vector3Box(nav_position)
-				valid_position = valid_position or nav_position
+			if var_1_28 then
+				var_1_0[var_1_29] = Vector3Box(var_1_28)
+				var_1_7 = var_1_7 or var_1_28
 			else
-				navified_spawn_positions[idx] = false
+				var_1_0[var_1_29] = false
 			end
 		end
 	end
 
-	if not valid_position then
-		table.clear(navified_spawn_positions)
+	if not var_1_7 then
+		table.clear(var_1_0)
 
-		return navified_spawn_positions
+		return var_1_0
 	end
 
-	for i = 1, num_positions do
-		if not navified_spawn_positions[i] then
-			navified_spawn_positions[i] = Vector3Box(valid_position)
+	for iter_1_2 = 1, arg_1_2 do
+		if not var_1_0[iter_1_2] then
+			var_1_0[iter_1_2] = Vector3Box(var_1_7)
 		else
-			valid_position = navified_spawn_positions[i]:unbox()
+			var_1_7 = var_1_0[iter_1_2]:unbox()
 		end
 	end
 
-	for i = num_positions + 1, #navified_spawn_positions do
-		navified_spawn_positions[i] = nil
+	for iter_1_3 = arg_1_2 + 1, #var_1_0 do
+		var_1_0[iter_1_3] = nil
 	end
 
-	return navified_spawn_positions
+	return var_1_0
 end
 
 ActionCareerBwNecromancerCommandStandTargeting = class(ActionCareerBwNecromancerCommandStandTargeting, ActionBase)
 
-ActionCareerBwNecromancerCommandStandTargeting.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionCareerBwNecromancerCommandStandTargeting.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionCareerBwNecromancerCommandStandTargeting.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
+	ActionCareerBwNecromancerCommandStandTargeting.super.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
 
-	self._ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
-	self._first_person_extension = ScriptUnit.has_extension(owner_unit, "first_person_system")
-	self._inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
-	self._weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
-	self._commander_extension = ScriptUnit.extension(owner_unit, "ai_commander_system")
-	self._world = world
-	self._owner_unit = owner_unit
-	self._last_valid_spawn_position = Vector3Box()
-	self._fp_rotation = QuaternionBox()
-	self._decal_diameter_id = World.find_particles_variable(self._world, target_decal_unit_name, "diameter")
+	arg_2_0._ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
+	arg_2_0._first_person_extension = ScriptUnit.has_extension(arg_2_4, "first_person_system")
+	arg_2_0._inventory_extension = ScriptUnit.extension(arg_2_4, "inventory_system")
+	arg_2_0._weapon_extension = ScriptUnit.extension(arg_2_7, "weapon_system")
+	arg_2_0._commander_extension = ScriptUnit.extension(arg_2_4, "ai_commander_system")
+	arg_2_0._world = arg_2_1
+	arg_2_0._owner_unit = arg_2_4
+	arg_2_0._last_valid_spawn_position = Vector3Box()
+	arg_2_0._fp_rotation = QuaternionBox()
+	arg_2_0._decal_diameter_id = World.find_particles_variable(arg_2_0._world, var_0_0, "diameter")
 
-	self._nav_callback = function ()
-		local t = Managers.time:time("game")
+	function arg_2_0._nav_callback()
+		local var_3_0 = Managers.time:time("game")
 
-		self:_update_targeting(t)
+		arg_2_0:_update_targeting(var_3_0)
 	end
 end
 
-ActionCareerBwNecromancerCommandStandTargeting.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
-	action_init_data = action_init_data or {}
+function ActionCareerBwNecromancerCommandStandTargeting.client_owner_start_action(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	arg_4_5 = arg_4_5 or {}
 
-	ActionCareerBwNecromancerCommandStandTargeting.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
-	self._weapon_extension:set_mode(true)
+	ActionCareerBwNecromancerCommandStandTargeting.super.client_owner_start_action(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	arg_4_0._weapon_extension:set_mode(true)
 
-	self._controlled_unit_template = new_action.controlled_unit_template
-	self._breed_to_spawn = new_action.breed_to_spawn
-	self._spawn_decal_ids = {}
+	arg_4_0._controlled_unit_template = arg_4_1.controlled_unit_template
+	arg_4_0._breed_to_spawn = arg_4_1.breed_to_spawn
+	arg_4_0._spawn_decal_ids = {}
 
-	local owner_pos = POSITION_LOOKUP[self._owner_unit]
+	local var_4_0 = POSITION_LOOKUP[arg_4_0._owner_unit]
 
-	self._last_valid_spawn_position:store(owner_pos)
-	self._ai_navigation_system:add_safe_navigation_callback(self._nav_callback)
+	arg_4_0._last_valid_spawn_position:store(var_4_0)
+	arg_4_0._ai_navigation_system:add_safe_navigation_callback(arg_4_0._nav_callback)
 end
 
-ActionCareerBwNecromancerCommandStandTargeting.client_owner_post_update = function (self, dt, t, world, can_damage, current_time_in_action)
-	self._ai_navigation_system:add_safe_navigation_callback(self._nav_callback)
+function ActionCareerBwNecromancerCommandStandTargeting.client_owner_post_update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	arg_5_0._ai_navigation_system:add_safe_navigation_callback(arg_5_0._nav_callback)
 end
 
-ActionCareerBwNecromancerCommandStandTargeting._update_targeting = function (self, t)
-	local spawn_positions = self:_update_spawn_positions()
-	local num_positions = #spawn_positions
-	local world = self._world
-	local decal_ids = self._spawn_decal_ids
+function ActionCareerBwNecromancerCommandStandTargeting._update_targeting(arg_6_0, arg_6_1)
+	local var_6_0 = arg_6_0:_update_spawn_positions()
+	local var_6_1 = #var_6_0
+	local var_6_2 = arg_6_0._world
+	local var_6_3 = arg_6_0._spawn_decal_ids
 
-	for i = 1, num_positions do
-		local position = spawn_positions[i]
-		local decal_id = decal_ids[i]
+	for iter_6_0 = 1, var_6_1 do
+		local var_6_4 = var_6_0[iter_6_0]
+		local var_6_5 = var_6_3[iter_6_0]
+		local var_6_6 = var_6_4:unbox()
 
-		position = position:unbox()
+		if not var_6_5 then
+			var_6_5 = World.create_particles(var_6_2, var_0_0, var_6_6)
+			var_6_3[iter_6_0] = var_6_5
 
-		if not decal_id then
-			decal_id = World.create_particles(world, target_decal_unit_name, position)
-			decal_ids[i] = decal_id
-
-			World.set_particles_variable(world, decal_id, self._decal_diameter_id, Vector3(indicator_radius * 2, indicator_radius * 2, 1))
+			World.set_particles_variable(var_6_2, var_6_5, arg_6_0._decal_diameter_id, Vector3(var_0_1 * 2, var_0_1 * 2, 1))
 		end
 
-		World.move_particles(world, decal_id, position)
+		World.move_particles(var_6_2, var_6_5, var_6_6)
 	end
 
-	for i = num_positions + 1, #decal_ids do
-		local decal_id = decal_ids[i]
+	for iter_6_1 = var_6_1 + 1, #var_6_3 do
+		local var_6_7 = var_6_3[iter_6_1]
 
-		if decal_id then
-			World.destroy_particles(world, decal_id)
+		if var_6_7 then
+			World.destroy_particles(var_6_2, var_6_7)
 		end
 
-		decal_ids[i] = nil
+		var_6_3[iter_6_1] = nil
 	end
 end
 
-ActionCareerBwNecromancerCommandStandTargeting._update_spawn_positions = function (self)
-	local commander_extension = self._commander_extension
-	local pet_array = table.keys(commander_extension:get_controlled_units())
+function ActionCareerBwNecromancerCommandStandTargeting._update_spawn_positions(arg_7_0)
+	local var_7_0 = arg_7_0._commander_extension
+	local var_7_1 = table.keys(var_7_0:get_controlled_units())
 
-	table.array_remove_if(pet_array, function (value)
-		local breed = Unit.get_data(value, "breed")
-
-		return breed.name == "pet_skeleton_armored" and commander_extension:command_state(value) ~= CommandStates.Following
+	table.array_remove_if(var_7_1, function(arg_8_0)
+		return Unit.get_data(arg_8_0, "breed").name == "pet_skeleton_armored" and var_7_0:command_state(arg_8_0) ~= CommandStates.Following
 	end)
 
-	local num_pets = #pet_array
-	local center
-	local good_target, target_pos = self:_get_projectile_position(raycast_speed)
+	local var_7_2 = #var_7_1
+	local var_7_3
+	local var_7_4, var_7_5 = arg_7_0:_get_projectile_position(var_0_2)
 
-	if good_target then
-		center = target_pos
+	if var_7_4 then
+		var_7_3 = var_7_5
 
-		self._last_valid_spawn_position:store(target_pos)
+		arg_7_0._last_valid_spawn_position:store(var_7_5)
 	else
-		center = self._last_valid_spawn_position:unbox()
+		var_7_3 = arg_7_0._last_valid_spawn_position:unbox()
 	end
 
-	local fp_rotation = self._first_person_extension:current_rotation()
+	local var_7_6 = arg_7_0._first_person_extension:current_rotation()
+	local var_7_7 = Quaternion.axis_angle(Vector3.up(), Quaternion.yaw(var_7_6))
 
-	fp_rotation = Quaternion.axis_angle(Vector3.up(), Quaternion.yaw(fp_rotation))
+	arg_7_0._fp_rotation:store(var_7_7)
 
-	self._fp_rotation:store(fp_rotation)
+	arg_7_0._spawn_positions = ActionCareerBwNecromancerCommandStandTargetingUtility.generate_positions(var_7_3, var_7_7, var_7_2, arg_7_0._spawn_positions)
 
-	self._spawn_positions = ActionCareerBwNecromancerCommandStandTargetingUtility.generate_positions(center, fp_rotation, num_pets, self._spawn_positions)
-
-	return self._spawn_positions
+	return arg_7_0._spawn_positions
 end
 
-ActionCareerBwNecromancerCommandStandTargeting._get_projectile_position = function (self)
-	local world = self._world
-	local physics_world = World.get_data(world, "physics_world")
-	local collision_filter = "filter_adept_teleport"
-	local player_position, raycast_direction = self:_get_first_person_position_direction()
-	local velocity = raycast_direction * raycast_speed
-	local gravity = Vector3(0, 0, raycast_gravity)
-	local good_target_position, target_position = WeaponHelper:ground_target(physics_world, self._owner_unit, player_position, velocity, gravity, collision_filter)
+function ActionCareerBwNecromancerCommandStandTargeting._get_projectile_position(arg_9_0)
+	local var_9_0 = arg_9_0._world
+	local var_9_1 = World.get_data(var_9_0, "physics_world")
+	local var_9_2 = "filter_adept_teleport"
+	local var_9_3, var_9_4 = arg_9_0:_get_first_person_position_direction()
+	local var_9_5 = var_9_4 * var_0_2
+	local var_9_6 = Vector3(0, 0, var_0_3)
+	local var_9_7, var_9_8 = WeaponHelper:ground_target(var_9_1, arg_9_0._owner_unit, var_9_3, var_9_5, var_9_6, var_9_2)
 
-	if good_target_position then
-		local nav_world = Managers.state.entity:system("ai_system"):nav_world()
-		local above, below = 1, 1
-		local nav_position = LocomotionUtils.pos_on_mesh(nav_world, target_position, above, below)
+	if var_9_7 then
+		local var_9_9 = Managers.state.entity:system("ai_system"):nav_world()
+		local var_9_10 = 1
+		local var_9_11 = 1
+		local var_9_12 = LocomotionUtils.pos_on_mesh(var_9_9, var_9_8, var_9_10, var_9_11)
 
-		if not nav_position then
-			local horizontal_tolerance = 3
-			local distance_from_obstacle = 0.5
+		if not var_9_12 then
+			local var_9_13 = 3
+			local var_9_14 = 0.5
 
-			nav_position = GwNavQueries.inside_position_from_outside_position(nav_world, target_position, above, below, horizontal_tolerance, distance_from_obstacle)
+			var_9_12 = GwNavQueries.inside_position_from_outside_position(var_9_9, var_9_8, var_9_10, var_9_11, var_9_13, var_9_14)
 		end
 
-		good_target_position = not not nav_position
-		target_position = nav_position
+		var_9_7 = not not var_9_12
+		var_9_8 = var_9_12
 	end
 
-	return good_target_position, target_position
+	return var_9_7, var_9_8
 end
 
-ActionCareerBwNecromancerCommandStandTargeting._get_first_person_position_direction = function (self)
-	local first_person_extension = self._first_person_extension
-	local player_position = first_person_extension:current_position()
-	local player_rotation = first_person_extension:current_rotation()
-	local min_pitch = math.rad(45)
-	local max_pitch = math.rad(12.5)
-	local yaw = Quaternion.yaw(player_rotation)
-	local pitch = math.clamp(Quaternion.pitch(player_rotation), -min_pitch, max_pitch)
-	local yaw_rotation = Quaternion(Vector3.up(), yaw)
-	local pitch_rotation = Quaternion(Vector3.right(), pitch)
-	local raycast_rotation = Quaternion.multiply(yaw_rotation, pitch_rotation)
-	local raycast_direction = Quaternion.forward(raycast_rotation)
+function ActionCareerBwNecromancerCommandStandTargeting._get_first_person_position_direction(arg_10_0)
+	local var_10_0 = arg_10_0._first_person_extension
+	local var_10_1 = var_10_0:current_position()
+	local var_10_2 = var_10_0:current_rotation()
+	local var_10_3 = math.rad(45)
+	local var_10_4 = math.rad(12.5)
+	local var_10_5 = Quaternion.yaw(var_10_2)
+	local var_10_6 = math.clamp(Quaternion.pitch(var_10_2), -var_10_3, var_10_4)
+	local var_10_7 = Quaternion(Vector3.up(), var_10_5)
+	local var_10_8 = Quaternion(Vector3.right(), var_10_6)
+	local var_10_9 = Quaternion.multiply(var_10_7, var_10_8)
+	local var_10_10 = Quaternion.forward(var_10_9)
 
-	return player_position, raycast_direction
+	return var_10_1, var_10_10
 end
 
-ActionCareerBwNecromancerCommandStandTargeting.finish = function (self, reason)
-	local world = self._world
-	local decal_ids = self._spawn_decal_ids
-	local spawn_positions = self._spawn_positions
+function ActionCareerBwNecromancerCommandStandTargeting.finish(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_0._world
+	local var_11_1 = arg_11_0._spawn_decal_ids
 
-	if not spawn_positions then
+	if not arg_11_0._spawn_positions then
 		return nil
 	end
 
-	for i = 1, #decal_ids do
-		local decal_id = decal_ids[i]
+	for iter_11_0 = 1, #var_11_1 do
+		if var_11_1[iter_11_0] then
+			World.destroy_particles(var_11_0, var_11_1[iter_11_0])
 
-		if decal_id then
-			World.destroy_particles(world, decal_ids[i])
-
-			decal_ids[i] = nil
+			var_11_1[iter_11_0] = nil
 		end
 	end
 
-	if reason == "new_interupting_action" then
-		local targeting_data = {
-			target_center = self._last_valid_spawn_position,
-			fp_rotation = self._fp_rotation,
+	if arg_11_1 == "new_interupting_action" then
+		return {
+			target_center = arg_11_0._last_valid_spawn_position,
+			fp_rotation = arg_11_0._fp_rotation
 		}
-
-		return targeting_data
 	end
 
 	return nil

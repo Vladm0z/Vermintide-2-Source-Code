@@ -1,228 +1,221 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_jumping.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_jumping.lua
 
 PlayerCharacterStateJumping = class(PlayerCharacterStateJumping, PlayerCharacterState)
 
-PlayerCharacterStateJumping.init = function (self, character_state_init_context)
-	PlayerCharacterState.init(self, character_state_init_context, "jumping")
+function PlayerCharacterStateJumping.init(arg_1_0, arg_1_1)
+	PlayerCharacterState.init(arg_1_0, arg_1_1, "jumping")
 
-	local context = character_state_init_context
+	local var_1_0 = arg_1_1
 end
 
-local position_lookup = POSITION_LOOKUP
+local var_0_0 = POSITION_LOOKUP
 
-PlayerCharacterStateJumping.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
-	table.clear(self.temp_params)
+function PlayerCharacterStateJumping.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	table.clear(arg_2_0.temp_params)
 
-	local player = self.player
-	local input_extension = self.input_extension
-	local status_extension = self.status_extension
-	local locomotion_extension = self.locomotion_extension
-	local inventory_extension = self.inventory_extension
-	local first_person_extension = self.first_person_extension
-	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local jump_speed = movement_settings_table.jump.initial_vertical_speed
+	local var_2_0 = arg_2_0.player
+	local var_2_1 = arg_2_0.input_extension
+	local var_2_2 = arg_2_0.status_extension
+	local var_2_3 = arg_2_0.locomotion_extension
+	local var_2_4 = arg_2_0.inventory_extension
+	local var_2_5 = arg_2_0.first_person_extension
+	local var_2_6 = PlayerUnitMovementSettings.get_movement_settings_table(arg_2_1)
+	local var_2_7 = var_2_6.jump.initial_vertical_speed
 
 	if script_data.use_super_jumps then
-		jump_speed = jump_speed * 2
+		var_2_7 = var_2_7 * 2
 	end
 
-	locomotion_extension:set_maximum_upwards_velocity(jump_speed)
-	locomotion_extension:force_on_ground(false)
+	var_2_3:set_maximum_upwards_velocity(var_2_7)
+	var_2_3:force_on_ground(false)
 
-	local velocity_current = locomotion_extension:current_velocity()
-	local velocity_jump
+	local var_2_8 = var_2_3:current_velocity()
+	local var_2_9
 
-	if params.post_dodge_jump then
-		velocity_current = velocity_current * PlayerUnitMovementSettings.post_dodge_jump_velocity_scale
-		jump_speed = jump_speed * PlayerUnitMovementSettings.post_dodge_jump_speed_scale
+	if arg_2_7.post_dodge_jump then
+		var_2_8 = var_2_8 * PlayerUnitMovementSettings.post_dodge_jump_velocity_scale
+		var_2_7 = var_2_7 * PlayerUnitMovementSettings.post_dodge_jump_speed_scale
 	end
 
-	if params.backward_jump then
-		velocity_current = velocity_current * PlayerUnitMovementSettings.backwards_jump_velocity_scale
+	if arg_2_7.backward_jump then
+		var_2_8 = var_2_8 * PlayerUnitMovementSettings.backwards_jump_velocity_scale
 	end
 
-	local speed_current = Vector3.length(velocity_current)
+	local var_2_10 = Vector3.length(var_2_8)
 
-	if speed_current > PlayerUnitMovementSettings.move_speed then
-		velocity_current = velocity_current * (PlayerUnitMovementSettings.move_speed / speed_current)
+	if var_2_10 > PlayerUnitMovementSettings.move_speed then
+		var_2_8 = var_2_8 * (PlayerUnitMovementSettings.move_speed / var_2_10)
 	end
 
-	if previous_state == "climbing_ladder" then
-		local ladder_unit = params.ladder_unit
-		local ladder_rotation = Unit.world_rotation(ladder_unit, 0)
-		local direction = Quaternion.forward(ladder_rotation)
+	if arg_2_6 == "climbing_ladder" then
+		local var_2_11 = arg_2_7.ladder_unit
+		local var_2_12 = Unit.world_rotation(var_2_11, 0)
 
-		velocity_jump = direction * movement_settings_table.ladder.jump_backwards_force
-		self.temp_params.shaking_ladder_unit = params.shaking_ladder_unit
+		var_2_9 = Quaternion.forward(var_2_12) * var_2_6.ladder.jump_backwards_force
+		arg_2_0.temp_params.shaking_ladder_unit = arg_2_7.shaking_ladder_unit
 	else
-		velocity_jump = Vector3(velocity_current.x, velocity_current.y, jump_speed)
+		var_2_9 = Vector3(var_2_8.x, var_2_8.y, var_2_7)
 	end
 
-	locomotion_extension:set_forced_velocity(velocity_jump)
-	locomotion_extension:set_wanted_velocity(velocity_jump)
+	var_2_3:set_forced_velocity(var_2_9)
+	var_2_3:set_wanted_velocity(var_2_9)
 
-	local move_anim
-	local item_template = inventory_extension:get_wielded_slot_item_template()
+	local var_2_13
+	local var_2_14 = var_2_4:get_wielded_slot_item_template()
 
-	self._play_fp_anim = item_template and item_template.jump_anim_enabled_1p
-	move_anim = CharacterStateHelper.has_move_input(input_extension) and "jump_fwd" or "jump_idle"
+	arg_2_0._play_fp_anim = var_2_14 and var_2_14.jump_anim_enabled_1p
 
-	CharacterStateHelper.play_animation_event(unit, move_anim)
+	local var_2_15 = CharacterStateHelper.has_move_input(var_2_1) and "jump_fwd" or "jump_idle"
 
-	if self._play_fp_anim then
-		CharacterStateHelper.play_animation_event_first_person(first_person_extension, move_anim)
+	CharacterStateHelper.play_animation_event(arg_2_1, var_2_15)
+
+	if arg_2_0._play_fp_anim then
+		CharacterStateHelper.play_animation_event_first_person(var_2_5, var_2_15)
 	end
 
-	first_person_extension:play_camera_effect_sequence("jump", t)
-	CharacterStateHelper.look(input_extension, player.viewport_name, first_person_extension, status_extension, self.inventory_extension)
-	CharacterStateHelper.update_weapon_actions(t, unit, input_extension, inventory_extension, self.health_extension)
-	ScriptUnit.extension(unit, "whereabouts_system"):set_jumped()
+	var_2_5:play_camera_effect_sequence("jump", arg_2_5)
+	CharacterStateHelper.look(var_2_1, var_2_0.viewport_name, var_2_5, var_2_2, arg_2_0.inventory_extension)
+	CharacterStateHelper.update_weapon_actions(arg_2_5, arg_2_1, var_2_1, var_2_4, arg_2_0.health_extension)
+	ScriptUnit.extension(arg_2_1, "whereabouts_system"):set_jumped()
 
-	local start_jump_height = position_lookup[unit].z
-	local status_extension = self.status_extension
+	local var_2_16 = var_0_0[arg_2_1].z
 
-	status_extension:set_falling_height(start_jump_height)
-	Unit.flow_event(unit, "sfx_player_jump")
+	arg_2_0.status_extension:set_falling_height(var_2_16)
+	Unit.flow_event(arg_2_1, "sfx_player_jump")
 end
 
-PlayerCharacterStateJumping.on_exit = function (self, unit, input, dt, context, t, next_state)
-	local input_extension = self.input_extension
+function PlayerCharacterStateJumping.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	local var_3_0 = arg_3_0.input_extension
 
-	self.locomotion_extension:reset_maximum_upwards_velocity()
+	arg_3_0.locomotion_extension:reset_maximum_upwards_velocity()
 
-	if next_state == "walking" or next_state == "standing" then
-		ScriptUnit.extension(unit, "whereabouts_system"):set_landed()
-	elseif next_state and next_state ~= "falling" then
-		ScriptUnit.extension(unit, "whereabouts_system"):set_no_landing()
+	if arg_3_6 == "walking" or arg_3_6 == "standing" then
+		ScriptUnit.extension(arg_3_1, "whereabouts_system"):set_landed()
+	elseif arg_3_6 and arg_3_6 ~= "falling" then
+		ScriptUnit.extension(arg_3_1, "whereabouts_system"):set_no_landing()
 	end
 
-	if next_state and next_state ~= "falling" and Managers.state.network:game() then
-		CharacterStateHelper.play_animation_event(unit, "land_still")
-		CharacterStateHelper.play_animation_event(unit, "to_onground")
+	if arg_3_6 and arg_3_6 ~= "falling" and Managers.state.network:game() then
+		CharacterStateHelper.play_animation_event(arg_3_1, "land_still")
+		CharacterStateHelper.play_animation_event(arg_3_1, "to_onground")
 
-		if self._play_fp_anim then
-			CharacterStateHelper.play_animation_event_first_person(self.first_person_extension, "to_onground")
+		if arg_3_0._play_fp_anim then
+			CharacterStateHelper.play_animation_event_first_person(arg_3_0.first_person_extension, "to_onground")
 		end
 	end
 end
 
-PlayerCharacterStateJumping.update = function (self, unit, input, dt, context, t)
-	local csm = self.csm
-	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local input_extension = self.input_extension
-	local status_extension = self.status_extension
-	local first_person_extension = self.first_person_extension
-	local locomotion_extension = self.locomotion_extension
+function PlayerCharacterStateJumping.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	local var_4_0 = arg_4_0.csm
+	local var_4_1 = PlayerUnitMovementSettings.get_movement_settings_table(arg_4_1)
+	local var_4_2 = arg_4_0.input_extension
+	local var_4_3 = arg_4_0.status_extension
+	local var_4_4 = arg_4_0.first_person_extension
+	local var_4_5 = arg_4_0.locomotion_extension
 
-	if CharacterStateHelper.do_common_state_transitions(status_extension, csm) then
+	if CharacterStateHelper.do_common_state_transitions(var_4_3, var_4_0) then
 		return
 	end
 
-	if CharacterStateHelper.is_overcharge_exploding(status_extension) then
-		csm:change_state("overcharge_exploding")
-
-		return
-	end
-
-	if CharacterStateHelper.is_pushed(status_extension) then
-		status_extension:set_pushed(false)
-
-		local params = movement_settings_table.stun_settings.pushed
-		local hit_react_type = status_extension:hit_react_type()
-
-		params.hit_react_type = hit_react_type .. "_push"
-
-		csm:change_state("stunned", params)
+	if CharacterStateHelper.is_overcharge_exploding(var_4_3) then
+		var_4_0:change_state("overcharge_exploding")
 
 		return
 	end
 
-	if CharacterStateHelper.is_charged(status_extension) then
-		local params = movement_settings_table.charged_settings.charged
+	if CharacterStateHelper.is_pushed(var_4_3) then
+		var_4_3:set_pushed(false)
 
-		params.hit_react_type = "charged"
+		local var_4_6 = var_4_1.stun_settings.pushed
 
-		csm:change_state("charged", params)
+		var_4_6.hit_react_type = var_4_3:hit_react_type() .. "_push"
 
-		return
-	end
-
-	if CharacterStateHelper.is_block_broken(status_extension) then
-		status_extension:set_block_broken(false)
-
-		local params = movement_settings_table.stun_settings.parry_broken
-
-		params.hit_react_type = "medium_push"
-
-		csm:change_state("stunned", params)
+		var_4_0:change_state("stunned", var_4_6)
 
 		return
 	end
 
-	if locomotion_extension:is_on_ground() then
-		csm:change_state("walking")
-		first_person_extension:change_state("walking")
+	if CharacterStateHelper.is_charged(var_4_3) then
+		local var_4_7 = var_4_1.charged_settings.charged
+
+		var_4_7.hit_react_type = "charged"
+
+		var_4_0:change_state("charged", var_4_7)
 
 		return
 	end
 
-	if not csm.state_next and locomotion_extension:current_velocity().z <= 0 then
-		csm:change_state("falling", self.temp_params)
-		first_person_extension:change_state("falling")
+	if CharacterStateHelper.is_block_broken(var_4_3) then
+		var_4_3:set_block_broken(false)
+
+		local var_4_8 = var_4_1.stun_settings.parry_broken
+
+		var_4_8.hit_react_type = "medium_push"
+
+		var_4_0:change_state("stunned", var_4_8)
 
 		return
 	end
 
-	local inventory_extension = self.inventory_extension
-	local move_speed = math.clamp(movement_settings_table.move_speed, 0, PlayerUnitMovementSettings.move_speed)
-	local move_speed_multiplier = status_extension:current_move_speed_multiplier()
+	if var_4_5:is_on_ground() then
+		var_4_0:change_state("walking")
+		var_4_4:change_state("walking")
 
-	move_speed = move_speed * move_speed_multiplier
-	move_speed = move_speed * movement_settings_table.player_speed_scale
-	move_speed = move_speed * movement_settings_table.player_air_speed_scale
+		return
+	end
 
-	CharacterStateHelper.move_in_air(self.first_person_extension, input_extension, self.locomotion_extension, move_speed, unit)
-	CharacterStateHelper.look(input_extension, self.player.viewport_name, self.first_person_extension, status_extension, self.inventory_extension)
-	CharacterStateHelper.update_weapon_actions(t, unit, input_extension, inventory_extension, self.health_extension)
+	if not var_4_0.state_next and var_4_5:current_velocity().z <= 0 then
+		var_4_0:change_state("falling", arg_4_0.temp_params)
+		var_4_4:change_state("falling")
 
-	local interactor_extension = self.interactor_extension
+		return
+	end
 
-	if CharacterStateHelper.is_starting_interaction(input_extension, interactor_extension) then
-		local _, hold_input = InteractionHelper.interaction_action_names(unit)
+	local var_4_9 = arg_4_0.inventory_extension
+	local var_4_10 = math.clamp(var_4_1.move_speed, 0, PlayerUnitMovementSettings.move_speed) * var_4_3:current_move_speed_multiplier() * var_4_1.player_speed_scale * var_4_1.player_air_speed_scale
 
-		interactor_extension:start_interaction(hold_input)
+	CharacterStateHelper.move_in_air(arg_4_0.first_person_extension, var_4_2, arg_4_0.locomotion_extension, var_4_10, arg_4_1)
+	CharacterStateHelper.look(var_4_2, arg_4_0.player.viewport_name, arg_4_0.first_person_extension, var_4_3, arg_4_0.inventory_extension)
+	CharacterStateHelper.update_weapon_actions(arg_4_5, arg_4_1, var_4_2, var_4_9, arg_4_0.health_extension)
 
-		if interactor_extension:allow_movement_during_interaction() then
+	local var_4_11 = arg_4_0.interactor_extension
+
+	if CharacterStateHelper.is_starting_interaction(var_4_2, var_4_11) then
+		local var_4_12, var_4_13 = InteractionHelper.interaction_action_names(arg_4_1)
+
+		var_4_11:start_interaction(var_4_13)
+
+		if var_4_11:allow_movement_during_interaction() then
 			return
 		end
 
-		local config = interactor_extension:interaction_config()
-		local params = self.temp_params
+		local var_4_14 = var_4_11:interaction_config()
+		local var_4_15 = arg_4_0.temp_params
 
-		params.swap_to_3p = config.swap_to_3p
-		params.show_weapons = config.show_weapons
-		params.activate_block = config.activate_block
-		params.allow_rotation_update = config.allow_rotation_update
+		var_4_15.swap_to_3p = var_4_14.swap_to_3p
+		var_4_15.show_weapons = var_4_14.show_weapons
+		var_4_15.activate_block = var_4_14.activate_block
+		var_4_15.allow_rotation_update = var_4_14.allow_rotation_update
 
-		csm:change_state("interacting", params)
+		var_4_0:change_state("interacting", var_4_15)
 
 		return
 	end
 
-	if CharacterStateHelper.is_interacting(interactor_extension) then
-		if interactor_extension:allow_movement_during_interaction() then
+	if CharacterStateHelper.is_interacting(var_4_11) then
+		if var_4_11:allow_movement_during_interaction() then
 			return
 		end
 
-		local config = interactor_extension:interaction_config()
-		local params = self.temp_params
+		local var_4_16 = var_4_11:interaction_config()
+		local var_4_17 = arg_4_0.temp_params
 
-		params.swap_to_3p = config.swap_to_3p
-		params.show_weapons = config.show_weapons
-		params.activate_block = config.activate_block
-		params.allow_rotation_update = config.allow_rotation_update
+		var_4_17.swap_to_3p = var_4_16.swap_to_3p
+		var_4_17.show_weapons = var_4_16.show_weapons
+		var_4_17.activate_block = var_4_16.activate_block
+		var_4_17.allow_rotation_update = var_4_16.allow_rotation_update
 
-		csm:change_state("interacting", params)
+		var_4_0:change_state("interacting", var_4_17)
 
 		return
 	end

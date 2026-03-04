@@ -1,393 +1,388 @@
-﻿-- chunkname: @scripts/ui/views/hero_view/loot_item_unit_previewer.lua
+-- chunkname: @scripts/ui/views/hero_view/loot_item_unit_previewer.lua
 
-local DEFAULT_ANGLE = 0
+local var_0_0 = 0
 
 LootItemUnitPreviewer = class(LootItemUnitPreviewer)
 
-LootItemUnitPreviewer.init = function (self, item, spawn_position, background_world, background_viewport, unique_id, invert_start_rotation, display_unit_key, use_highest_mip_levels, delayed_spawn, career_name_override)
-	self._unique_id = unique_id
-	self._loaded_packages = {}
-	self._packages_to_load = {}
-	self._requested_all_mips_units = {}
-	self._camera_xy_angle_target = DEFAULT_ANGLE
-	self._camera_xy_angle_current = DEFAULT_ANGLE
-	self._invert_start_rotation = invert_start_rotation
-	self._display_unit_key = display_unit_key
-	self._spawn_position = spawn_position
-	self._item = item
-	self._use_highest_mip_levels = use_highest_mip_levels
-	self._career_name_override = career_name_override
-	self._delayed_spawn = delayed_spawn
+function LootItemUnitPreviewer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9, arg_1_10)
+	arg_1_0._unique_id = arg_1_5
+	arg_1_0._loaded_packages = {}
+	arg_1_0._packages_to_load = {}
+	arg_1_0._requested_all_mips_units = {}
+	arg_1_0._camera_xy_angle_target = var_0_0
+	arg_1_0._camera_xy_angle_current = var_0_0
+	arg_1_0._invert_start_rotation = arg_1_6
+	arg_1_0._display_unit_key = arg_1_7
+	arg_1_0._spawn_position = arg_1_2
+	arg_1_0._item = arg_1_1
+	arg_1_0._use_highest_mip_levels = arg_1_8
+	arg_1_0._career_name_override = arg_1_10
+	arg_1_0._delayed_spawn = arg_1_9
 
-	if not self._delayed_spawn then
-		self._background_world = background_world
-		self._background_viewport = background_viewport
-		self._link_unit = self:_spawn_link_unit(item)
+	if not arg_1_0._delayed_spawn then
+		arg_1_0._background_world = arg_1_3
+		arg_1_0._background_viewport = arg_1_4
+		arg_1_0._link_unit = arg_1_0:_spawn_link_unit(arg_1_1)
 	end
 
-	self._activated = not self._delayed_spawn
-	self._units_to_spawn = self:_load_item_units(item)
+	arg_1_0._activated = not arg_1_0._delayed_spawn
+	arg_1_0._units_to_spawn = arg_1_0:_load_item_units(arg_1_1)
 end
 
-LootItemUnitPreviewer.activate = function (self, activate, background_world, background_viewport, force_present)
-	if not self._delayed_spawn then
+function LootItemUnitPreviewer.activate(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	if not arg_2_0._delayed_spawn then
 		return
 	end
 
-	if activate == self._activated then
+	if arg_2_1 == arg_2_0._activated then
 		return
 	end
 
-	if activate then
-		self._background_world = background_world
-		self._background_viewport = background_viewport
-		self._link_unit = self:_spawn_link_unit(self._item)
+	if arg_2_1 then
+		arg_2_0._background_world = arg_2_2
+		arg_2_0._background_viewport = arg_2_3
+		arg_2_0._link_unit = arg_2_0:_spawn_link_unit(arg_2_0._item)
 	else
-		self:_destroy_units()
+		arg_2_0:_destroy_units()
 
-		self._background_world = nil
-		self._background_viewport = nil
+		arg_2_0._background_world = nil
+		arg_2_0._background_viewport = nil
 	end
 
-	self._activated = activate
-	self._force_present = force_present
+	arg_2_0._activated = arg_2_1
+	arg_2_0._force_present = arg_2_4
 end
 
-LootItemUnitPreviewer.activate_auto_spin = function (self)
-	self._auto_spin_random_seed = math.random(5, 30000)
+function LootItemUnitPreviewer.activate_auto_spin(arg_3_0)
+	arg_3_0._auto_spin_random_seed = math.random(5, 30000)
 end
 
-LootItemUnitPreviewer.register_spawn_callback = function (self, callback)
-	self._spawn_callback = callback
+function LootItemUnitPreviewer.register_spawn_callback(arg_4_0, arg_4_1)
+	arg_4_0._spawn_callback = arg_4_1
 end
 
-LootItemUnitPreviewer.destroy = function (self)
-	self:_destroy_units()
-	self:_unload_packages()
-	table.clear(self._loaded_packages)
-	table.clear(self._packages_to_load)
+function LootItemUnitPreviewer.destroy(arg_5_0)
+	arg_5_0:_destroy_units()
+	arg_5_0:_unload_packages()
+	table.clear(arg_5_0._loaded_packages)
+	table.clear(arg_5_0._packages_to_load)
 	Renderer.set_automatic_streaming(true)
 end
 
-LootItemUnitPreviewer._destroy_units = function (self)
-	local world = self._background_world
-	local spawned_units = self._spawned_units
+function LootItemUnitPreviewer._destroy_units(arg_6_0)
+	local var_6_0 = arg_6_0._background_world
+	local var_6_1 = arg_6_0._spawned_units
 
-	if spawned_units then
-		for _, unit in ipairs(spawned_units) do
-			World.destroy_unit(world, unit)
+	if var_6_1 then
+		for iter_6_0, iter_6_1 in ipairs(var_6_1) do
+			World.destroy_unit(var_6_0, iter_6_1)
 		end
 
-		self._spawned_units = nil
+		arg_6_0._spawned_units = nil
 	end
 
-	local link_unit = self._link_unit
+	local var_6_2 = arg_6_0._link_unit
 
-	if link_unit then
-		World.destroy_unit(world, link_unit)
+	if var_6_2 then
+		World.destroy_unit(var_6_0, var_6_2)
 	end
 
-	self._link_unit = nil
-	self.units_spawned = nil
-	self._items_spawned = nil
+	arg_6_0._link_unit = nil
+	arg_6_0.units_spawned = nil
+	arg_6_0._items_spawned = nil
 end
 
-LootItemUnitPreviewer.update = function (self, dt, t, input_service)
-	if not self._activated then
+function LootItemUnitPreviewer.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	if not arg_7_0._activated then
 		return
 	end
 
-	if self._items_spawned then
-		if self._request_show_settings and self:_update_manual_mip_streaming() then
-			local request_show_settings = self._request_show_settings
-			local item_key = request_show_settings.item_key
-			local ignore_spin = request_show_settings.ignore_spin
-			local visible = true
+	if arg_7_0._items_spawned then
+		if arg_7_0._request_show_settings and arg_7_0:_update_manual_mip_streaming() then
+			local var_7_0 = arg_7_0._request_show_settings
+			local var_7_1 = var_7_0.item_key
+			local var_7_2 = var_7_0.ignore_spin
+			local var_7_3 = true
 
-			self:_enable_item_units_visibility(item_key, ignore_spin, visible)
+			arg_7_0:_enable_item_units_visibility(var_7_1, var_7_2, var_7_3)
 
-			self._request_show_settings = nil
-		elseif self._force_present then
-			local item = self._item
-			local item_key = item.key
+			arg_7_0._request_show_settings = nil
+		elseif arg_7_0._force_present then
+			local var_7_4 = arg_7_0._item.key
 
-			self:present_item(item_key, true)
+			arg_7_0:present_item(var_7_4, true)
 
-			self._force_present = false
+			arg_7_0._force_present = false
 		end
 
-		if input_service then
-			local input_manager = Managers.input
+		if arg_7_3 then
+			local var_7_5 = Managers.input
 
-			if input_manager:is_device_active("mouse") then
-				self:_handle_mouse_input(input_service, dt)
-			elseif input_manager:is_device_active("gamepad") then
-				self:_handle_controller_input(input_service, dt)
+			if var_7_5:is_device_active("mouse") then
+				arg_7_0:_handle_mouse_input(arg_7_3, arg_7_1)
+			elseif var_7_5:is_device_active("gamepad") then
+				arg_7_0:_handle_controller_input(arg_7_3, arg_7_1)
 			end
 		end
 
-		if self._camera_xy_angle_target > math.pi * 2 then
-			self._camera_xy_angle_current = self._camera_xy_angle_current - math.pi * 2
-			self._camera_xy_angle_target = self._camera_xy_angle_target - math.pi * 2
+		if arg_7_0._camera_xy_angle_target > math.pi * 2 then
+			arg_7_0._camera_xy_angle_current = arg_7_0._camera_xy_angle_current - math.pi * 2
+			arg_7_0._camera_xy_angle_target = arg_7_0._camera_xy_angle_target - math.pi * 2
 		end
 
-		local character_xy_angle_new = math.lerp(self._camera_xy_angle_current, self._camera_xy_angle_target, 0.1)
+		local var_7_6 = math.lerp(arg_7_0._camera_xy_angle_current, arg_7_0._camera_xy_angle_target, 0.1)
 
-		self._camera_xy_angle_current = character_xy_angle_new
+		arg_7_0._camera_xy_angle_current = var_7_6
 
-		local auto_tilt_angle, auto_turn_angle = self:_auto_spin_values(dt, t)
-		local start_angle = self._invert_start_rotation and 0 or math.pi
-		local rotation = Quaternion.axis_angle(Vector3(0, auto_tilt_angle, 1), -(character_xy_angle_new + auto_turn_angle + start_angle))
-		local link_unit = self._link_unit
+		local var_7_7, var_7_8 = arg_7_0:_auto_spin_values(arg_7_1, arg_7_2)
+		local var_7_9 = arg_7_0._invert_start_rotation and 0 or math.pi
+		local var_7_10 = Quaternion.axis_angle(Vector3(0, var_7_7, 1), -(var_7_6 + var_7_8 + var_7_9))
+		local var_7_11 = arg_7_0._link_unit
 
-		if link_unit then
-			Unit.set_local_rotation(link_unit, 0, rotation)
+		if var_7_11 then
+			Unit.set_local_rotation(var_7_11, 0, var_7_10)
 		end
 
-		if self._zoom_dirty then
-			local zoom_fraction = self._zoom_fraction or 0
-			local unit_start_position = self._unit_start_position_boxed:unbox()
+		if arg_7_0._zoom_dirty then
+			local var_7_12 = arg_7_0._zoom_fraction or 0
+			local var_7_13 = arg_7_0._unit_start_position_boxed:unbox()
 
-			unit_start_position[1] = unit_start_position[1] * (1 - zoom_fraction)
-			unit_start_position[2] = unit_start_position[2] * (1 - zoom_fraction)
+			var_7_13[1] = var_7_13[1] * (1 - var_7_12)
+			var_7_13[2] = var_7_13[2] * (1 - var_7_12)
 
-			Unit.set_local_position(link_unit, 0, unit_start_position)
+			Unit.set_local_position(var_7_11, 0, var_7_13)
 
-			self._zoom_dirty = nil
+			arg_7_0._zoom_dirty = nil
 		end
 	end
 end
 
-LootItemUnitPreviewer.set_zoom_fraction = function (self, fraction)
-	self._zoom_fraction = math.clamp(fraction, 0, 1)
-	self._zoom_dirty = true
+function LootItemUnitPreviewer.set_zoom_fraction(arg_8_0, arg_8_1)
+	arg_8_0._zoom_fraction = math.clamp(arg_8_1, 0, 1)
+	arg_8_0._zoom_dirty = true
 end
 
-LootItemUnitPreviewer.zoom_fraction = function (self)
-	return self._zoom_fraction or 0
+function LootItemUnitPreviewer.zoom_fraction(arg_9_0)
+	return arg_9_0._zoom_fraction or 0
 end
 
-LootItemUnitPreviewer._auto_spin_values = function (self, dt, t)
-	local start_seed = self._auto_spin_random_seed
+function LootItemUnitPreviewer._auto_spin_values(arg_10_0, arg_10_1, arg_10_2)
+	local var_10_0 = arg_10_0._auto_spin_random_seed
 
-	if not start_seed then
+	if not var_10_0 then
 		return 0, 0
 	end
 
-	local progress_speed = 0.2
-	local progress_range = 0.3
-	local progress = math.sin((start_seed + t) * progress_speed) * progress_range
-	local auto_tilt_angle = -(progress * 0.5)
-	local auto_turn_angle = -(progress * math.pi / 2)
+	local var_10_1 = 0.2
+	local var_10_2 = 0.3
+	local var_10_3 = math.sin((var_10_0 + arg_10_2) * var_10_1) * var_10_2
+	local var_10_4 = -(var_10_3 * 0.5)
+	local var_10_5 = -(var_10_3 * math.pi / 2)
 
-	return auto_tilt_angle, auto_turn_angle
+	return var_10_4, var_10_5
 end
 
-local mouse_pos_temp = {}
+local var_0_1 = {}
 
-LootItemUnitPreviewer._handle_mouse_input = function (self, input_service, dt)
-	local mouse = input_service:get("cursor")
+function LootItemUnitPreviewer._handle_mouse_input(arg_11_0, arg_11_1, arg_11_2)
+	local var_11_0 = arg_11_1:get("cursor")
 
-	if not mouse then
+	if not var_11_0 then
 		return
 	end
 
-	local is_hover = true
+	local var_11_1 = true
 
-	if is_hover then
-		if input_service:get("left_press") then
-			self._is_moving_camera = true
-			self._last_mouse_position = nil
-		elseif input_service:get("right_press") then
-			self._camera_xy_angle_target = DEFAULT_ANGLE
+	if var_11_1 then
+		if arg_11_1:get("left_press") then
+			arg_11_0._is_moving_camera = true
+			arg_11_0._last_mouse_position = nil
+		elseif arg_11_1:get("right_press") then
+			arg_11_0._camera_xy_angle_target = var_0_0
 		end
 	end
 
-	local is_moving_camera = self._is_moving_camera
-	local mouse_hold = input_service:get("left_hold")
+	local var_11_2 = arg_11_0._is_moving_camera
+	local var_11_3 = arg_11_1:get("left_hold")
 
-	if is_moving_camera and mouse_hold then
-		if self._last_mouse_position then
-			self._camera_xy_angle_target = self._camera_xy_angle_target - (mouse.x - self._last_mouse_position[1]) * 0.01
+	if var_11_2 and var_11_3 then
+		if arg_11_0._last_mouse_position then
+			arg_11_0._camera_xy_angle_target = arg_11_0._camera_xy_angle_target - (var_11_0.x - arg_11_0._last_mouse_position[1]) * 0.01
 		end
 
-		mouse_pos_temp[1] = mouse.x
-		mouse_pos_temp[2] = mouse.y
-		self._last_mouse_position = mouse_pos_temp
-	elseif is_moving_camera then
-		self._is_moving_camera = false
+		var_0_1[1] = var_11_0.x
+		var_0_1[2] = var_11_0.y
+		arg_11_0._last_mouse_position = var_0_1
+	elseif var_11_2 then
+		arg_11_0._is_moving_camera = false
 	end
 end
 
-LootItemUnitPreviewer._handle_controller_input = function (self, input_service, dt)
-	local camera_move = input_service:get("gamepad_right_axis")
+function LootItemUnitPreviewer._handle_controller_input(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = arg_12_1:get("gamepad_right_axis")
 
-	if camera_move and Vector3.length(camera_move) > 0.01 then
-		self._camera_xy_angle_target = self._camera_xy_angle_target + -camera_move.x * dt * 5
+	if var_12_0 and Vector3.length(var_12_0) > 0.01 then
+		arg_12_0._camera_xy_angle_target = arg_12_0._camera_xy_angle_target + -var_12_0.x * arg_12_2 * 5
 	end
 end
 
-LootItemUnitPreviewer.post_update = function (self, dt, t)
-	if not self._activated then
+function LootItemUnitPreviewer.post_update(arg_13_0, arg_13_1, arg_13_2)
+	if not arg_13_0._activated then
 		return
 	end
 
-	if self._spawn_callback and self._items_spawned then
-		self._spawn_callback()
+	if arg_13_0._spawn_callback and arg_13_0._items_spawned then
+		arg_13_0._spawn_callback()
 
-		self._spawn_callback = nil
+		arg_13_0._spawn_callback = nil
 	end
 
-	if not self._items_spawned and self:_packages_loaded() then
-		self._items_spawned = self:_spawn_items()
+	if not arg_13_0._items_spawned and arg_13_0:_packages_loaded() then
+		arg_13_0._items_spawned = arg_13_0:_spawn_items()
 	end
 end
 
-LootItemUnitPreviewer._load_item_units = function (self, item)
-	if not item then
+function LootItemUnitPreviewer._load_item_units(arg_14_0, arg_14_1)
+	if not arg_14_1 then
 		return
 	end
 
-	local item_data = item.data
-	local backend_id = item.backend_id
-	local item_skin = item.skin
-	local item_key = item_data.key or item.key
-	local item_data = ItemMasterList[item_key]
-	local item_template
-	local item_type = item_data.item_type
+	local var_14_0 = arg_14_1.data
+	local var_14_1 = arg_14_1.backend_id
+	local var_14_2 = arg_14_1.skin
+	local var_14_3 = var_14_0.key or arg_14_1.key
+	local var_14_4 = ItemMasterList[var_14_3]
+	local var_14_5
+	local var_14_6 = var_14_4.item_type
 
-	if item_type == "rune" or item_type == "material" or item_type == "ring" or item_type == "necklace" then
-		item_data = ItemMasterList[item_key]
-	elseif item_type == "weapon_skin" then
-		local matching_item_key = item_data.matching_item_key
+	if var_14_6 == "rune" or var_14_6 == "material" or var_14_6 == "ring" or var_14_6 == "necklace" then
+		var_14_4 = ItemMasterList[var_14_3]
+	elseif var_14_6 == "weapon_skin" then
+		local var_14_7 = var_14_4.matching_item_key
 
-		item_template = ItemHelper.get_template_by_item_name(matching_item_key)
-		item_skin = item_skin or item_key
+		var_14_5 = ItemHelper.get_template_by_item_name(var_14_7)
+		var_14_2 = var_14_2 or var_14_3
 	end
 
-	item_template = item_template or ItemHelper.get_template_by_item_name(item_key)
+	var_14_5 = var_14_5 or ItemHelper.get_template_by_item_name(var_14_3)
 
-	local item_units = BackendUtils.get_item_units(item_data, backend_id, item_skin, self._career_name_override)
-	local units_to_spawn_data = {}
-	local slot_type = item_data.slot_type
+	local var_14_8 = BackendUtils.get_item_units(var_14_4, var_14_1, var_14_2, arg_14_0._career_name_override)
+	local var_14_9 = {}
+	local var_14_10 = var_14_4.slot_type
 
-	if slot_type == "melee" or slot_type == "ranged" or slot_type == "weapon_skin" then
-		local left_hand_unit = item_units.left_hand_unit
-		local right_hand_unit = item_units.right_hand_unit
-		local ammo_unit = item_units.ammo_unit
-		local is_ammo_weapon = item_units.is_ammo_weapon
-		local material_settings = item_units.material_settings
+	if var_14_10 == "melee" or var_14_10 == "ranged" or var_14_10 == "weapon_skin" then
+		local var_14_11 = var_14_8.left_hand_unit
+		local var_14_12 = var_14_8.right_hand_unit
+		local var_14_13 = var_14_8.ammo_unit
+		local var_14_14 = var_14_8.is_ammo_weapon
+		local var_14_15 = var_14_8.material_settings_name
 
-		if left_hand_unit then
-			if is_ammo_weapon then
-				left_hand_unit = ammo_unit
+		if var_14_11 then
+			if var_14_14 then
+				var_14_11 = var_14_13
 			end
 
-			local left_unit = left_hand_unit .. "_3p"
+			local var_14_16 = var_14_11 .. "_3p"
 
-			self:load_package(left_unit)
+			arg_14_0:load_package(var_14_16)
 
-			units_to_spawn_data[#units_to_spawn_data + 1] = {
-				unit_name = left_unit,
-				unit_attachment_node_linking = item_template.left_hand_attachment_node_linking.third_person.display,
-				material_settings = material_settings,
+			var_14_9[#var_14_9 + 1] = {
+				unit_name = var_14_16,
+				unit_attachment_node_linking = var_14_5.left_hand_attachment_node_linking.third_person.display,
+				material_settings_name = var_14_15
 			}
 		end
 
-		if right_hand_unit then
-			if is_ammo_weapon then
-				right_hand_unit = ammo_unit
+		if var_14_12 then
+			if var_14_14 then
+				var_14_12 = var_14_13
 			end
 
-			local right_unit = right_hand_unit .. "_3p"
+			local var_14_17 = var_14_12 .. "_3p"
 
-			if right_hand_unit ~= left_hand_unit then
-				self:load_package(right_unit)
+			if var_14_12 ~= var_14_11 then
+				arg_14_0:load_package(var_14_17)
 			end
 
-			units_to_spawn_data[#units_to_spawn_data + 1] = {
-				unit_name = right_unit,
-				unit_attachment_node_linking = item_template.right_hand_attachment_node_linking.third_person.display,
-				material_settings = material_settings,
+			var_14_9[#var_14_9 + 1] = {
+				unit_name = var_14_17,
+				unit_attachment_node_linking = var_14_5.right_hand_attachment_node_linking.third_person.display,
+				material_settings_name = var_14_15
 			}
 		end
-	elseif slot_type == "frame" or slot_type == "chips" then
-		local unit = item_template.attachment_node.unit
+	elseif var_14_10 == "frame" or var_14_10 == "chips" then
+		local var_14_18 = var_14_5.attachment_node.unit
 
-		if unit then
-			self:load_package(unit)
+		if var_14_18 then
+			arg_14_0:load_package(var_14_18)
 		end
 
-		if item_template.texture_package_name then
-			local package_available = Application.can_get("package", item_template.texture_package_name)
-
-			if package_available then
-				self:load_package(item_template.texture_package_name)
-			end
+		if var_14_5.texture_package_name and Application.can_get("package", var_14_5.texture_package_name) then
+			arg_14_0:load_package(var_14_5.texture_package_name)
 		end
 
-		local material_settings = item_template.material_settings
+		local var_14_19 = var_14_5.material_settings_name
 
-		units_to_spawn_data[#units_to_spawn_data + 1] = {
-			unit_name = unit,
-			unit_attachment_node_linking = item_template.attachment_node.attachment_node,
-			material_settings = material_settings,
+		var_14_9[#var_14_9 + 1] = {
+			unit_name = var_14_18,
+			unit_attachment_node_linking = var_14_5.attachment_node.attachment_node,
+			material_settings_name = var_14_19,
 			additional_packages = {
-				item_template.texture_package_name,
-			},
+				var_14_5.texture_package_name
+			}
 		}
 	else
-		local unit = item_units.unit
+		local var_14_20 = var_14_8.unit
 
-		if unit then
-			self:load_package(unit)
+		if var_14_20 then
+			arg_14_0:load_package(var_14_20)
 
-			units_to_spawn_data[#units_to_spawn_data + 1] = {
-				unit_name = unit,
-				unit_attachment_node_linking = slot_type == "trinket" and item_template.attachment_node_linking.slot_trinket_1 or item_template.attachment_node_linking.slot_hat,
+			var_14_9[#var_14_9 + 1] = {
+				unit_name = var_14_20,
+				unit_attachment_node_linking = var_14_10 == "trinket" and var_14_5.attachment_node_linking.slot_trinket_1 or var_14_5.attachment_node_linking.slot_hat
 			}
 		end
 	end
 
-	return units_to_spawn_data
+	return var_14_9
 end
 
-LootItemUnitPreviewer._trigger_unit_flow_event = function (self, unit, event_name)
-	if unit and Unit.alive(unit) then
-		Unit.flow_event(unit, event_name)
+function LootItemUnitPreviewer._trigger_unit_flow_event(arg_15_0, arg_15_1, arg_15_2)
+	if arg_15_1 and Unit.alive(arg_15_1) then
+		Unit.flow_event(arg_15_1, arg_15_2)
 	end
 end
 
-LootItemUnitPreviewer._get_world = function (self)
-	return self._background_world, self._background_viewport
+function LootItemUnitPreviewer._get_world(arg_16_0)
+	return arg_16_0._background_world, arg_16_0._background_viewport
 end
 
-LootItemUnitPreviewer._get_camera_position = function (self)
-	local background_viewport = self._background_viewport
-	local camera = ScriptViewport.camera(background_viewport)
+function LootItemUnitPreviewer._get_camera_position(arg_17_0)
+	local var_17_0 = arg_17_0._background_viewport
+	local var_17_1 = ScriptViewport.camera(var_17_0)
 
-	return ScriptCamera.position(camera)
+	return ScriptCamera.position(var_17_1)
 end
 
-LootItemUnitPreviewer._get_camera_rotation = function (self)
-	local background_viewport = self._background_viewport
-	local camera = ScriptViewport.camera(background_viewport)
+function LootItemUnitPreviewer._get_camera_rotation(arg_18_0)
+	local var_18_0 = arg_18_0._background_viewport
+	local var_18_1 = ScriptViewport.camera(var_18_0)
 
-	return ScriptCamera.rotation(camera)
+	return ScriptCamera.rotation(var_18_1)
 end
 
-LootItemUnitPreviewer._packages_loaded = function (self)
-	local units_to_spawn = self._units_to_spawn
-	local loaded_packages = self._loaded_packages
+function LootItemUnitPreviewer._packages_loaded(arg_19_0)
+	local var_19_0 = arg_19_0._units_to_spawn
+	local var_19_1 = arg_19_0._loaded_packages
 
-	for index, package_data in ipairs(units_to_spawn) do
-		if not loaded_packages[package_data.unit_name] then
+	for iter_19_0, iter_19_1 in ipairs(var_19_0) do
+		if not var_19_1[iter_19_1.unit_name] then
 			return false
 		end
 
-		if package_data.additional_packages then
-			for _, package in ipairs(package_data.additional_packages) do
-				if not loaded_packages[package] then
+		if iter_19_1.additional_packages then
+			for iter_19_2, iter_19_3 in ipairs(iter_19_1.additional_packages) do
+				if not var_19_1[iter_19_3] then
 					return false
 				end
 			end
@@ -397,238 +392,230 @@ LootItemUnitPreviewer._packages_loaded = function (self)
 	return true
 end
 
-LootItemUnitPreviewer.load_package = function (self, package_name)
-	if self._packages_to_load[package_name] ~= nil then
+function LootItemUnitPreviewer.load_package(arg_20_0, arg_20_1)
+	if arg_20_0._packages_to_load[arg_20_1] ~= nil then
 		return
 	end
 
-	self._packages_to_load[package_name] = true
+	arg_20_0._packages_to_load[arg_20_1] = true
 
-	local package_manager = Managers.package
-	local cb = callback(self, "_on_load_complete", package_name)
-	local reference_name = "LootItemUnitPreviewer"
+	local var_20_0 = Managers.package
+	local var_20_1 = callback(arg_20_0, "_on_load_complete", arg_20_1)
+	local var_20_2 = "LootItemUnitPreviewer"
 
-	if self._unique_id then
-		reference_name = reference_name .. tostring(self._unique_id)
+	if arg_20_0._unique_id then
+		var_20_2 = var_20_2 .. tostring(arg_20_0._unique_id)
 	end
 
-	package_manager:load(package_name, reference_name, cb, true)
+	var_20_0:load(arg_20_1, var_20_2, var_20_1, true)
 end
 
-LootItemUnitPreviewer._on_load_complete = function (self, package_name)
-	self._loaded_packages[package_name] = true
-	self._packages_to_load[package_name] = false
+function LootItemUnitPreviewer._on_load_complete(arg_21_0, arg_21_1)
+	arg_21_0._loaded_packages[arg_21_1] = true
+	arg_21_0._packages_to_load[arg_21_1] = false
 end
 
-LootItemUnitPreviewer._unload_packages = function (self)
-	local reference_name = "LootItemUnitPreviewer"
+function LootItemUnitPreviewer._unload_packages(arg_22_0)
+	local var_22_0 = "LootItemUnitPreviewer"
 
-	if self._unique_id then
-		reference_name = reference_name .. tostring(self._unique_id)
+	if arg_22_0._unique_id then
+		var_22_0 = var_22_0 .. tostring(arg_22_0._unique_id)
 	end
 
-	local loaded_packages = self._loaded_packages
+	local var_22_1 = arg_22_0._loaded_packages
 
-	if loaded_packages then
-		local package_manager = Managers.package
+	if var_22_1 then
+		local var_22_2 = Managers.package
 
-		for package_name, _ in pairs(loaded_packages) do
-			package_manager:unload(package_name, reference_name)
+		for iter_22_0, iter_22_1 in pairs(var_22_1) do
+			var_22_2:unload(iter_22_0, var_22_0)
 		end
 	end
 
-	local packages_to_load = self._packages_to_load
+	local var_22_3 = arg_22_0._packages_to_load
 
-	if packages_to_load then
-		local package_manager = Managers.package
+	if var_22_3 then
+		local var_22_4 = Managers.package
 
-		for package_name, unload in pairs(packages_to_load) do
-			if unload then
-				package_manager:unload(package_name, reference_name)
+		for iter_22_2, iter_22_3 in pairs(var_22_3) do
+			if iter_22_3 then
+				var_22_4:unload(iter_22_2, var_22_0)
 			end
 		end
 	end
 end
 
-LootItemUnitPreviewer._spawn_link_unit = function (self, item)
-	local item_data = item.data
-	local item_key = item.key or item_data.key
-	local item_skin = item.skin or item_key
-	local spawn_position = self._spawn_position
-	local item_data = ItemMasterList[item_key]
-	local item_type = item_data.item_type
+function LootItemUnitPreviewer._spawn_link_unit(arg_23_0, arg_23_1)
+	local var_23_0 = arg_23_1.data
+	local var_23_1 = arg_23_1.key or var_23_0.key
+	local var_23_2 = arg_23_1.skin or var_23_1
+	local var_23_3 = arg_23_0._spawn_position
+	local var_23_4 = ItemMasterList[var_23_1]
+	local var_23_5 = var_23_4.item_type
 
-	if item_type ~= "rune" and item_type ~= "material" and item_type ~= "ring" and item_type == "necklace" then
-		-- Nothing
+	if var_23_5 ~= "rune" and var_23_5 ~= "material" and var_23_5 ~= "ring" and var_23_5 == "necklace" then
+		-- block empty
 	end
 
-	local display_unit_key = self._display_unit_key
-	local default_display_unit_key = "display_unit"
-	local unit_name = item_data[display_unit_key] or item_data[default_display_unit_key]
+	local var_23_6 = arg_23_0._display_unit_key
+	local var_23_7 = "display_unit"
+	local var_23_8 = var_23_4[var_23_6] or var_23_4[var_23_7]
 
-	if item_type == "weapon_skin" then
-		local skin_template = WeaponSkins.skins[item_skin]
+	if var_23_5 == "weapon_skin" then
+		local var_23_9 = WeaponSkins.skins[var_23_2]
 
-		unit_name = skin_template[display_unit_key] or skin_template[default_display_unit_key] or unit_name
-	elseif not unit_name then
-		local item_template = ItemHelper.get_template_by_item_name(item_key)
+		var_23_8 = var_23_9[var_23_6] or var_23_9[var_23_7] or var_23_8
+	elseif not var_23_8 then
+		local var_23_10 = ItemHelper.get_template_by_item_name(var_23_1)
 
-		unit_name = item_template[display_unit_key] or item_template[default_display_unit_key]
+		var_23_8 = var_23_10[var_23_6] or var_23_10[var_23_7]
 	end
 
-	if not unit_name or unit_name == "" then
-		Application.warning(string.format("[LootItemUnitPreviewer] Couldn't find any display unit for item %q", item_key))
+	if not var_23_8 or var_23_8 == "" then
+		Application.warning(string.format("[LootItemUnitPreviewer] Couldn't find any display unit for item %q", var_23_1))
 
 		return nil
 	end
 
-	local camera_rotation = self:_get_camera_rotation()
-	local camera_forward_vector = Quaternion.forward(camera_rotation)
-	local camera_look_rotation = Quaternion.look(camera_forward_vector, Vector3.up())
-	local horizontal_rotation = Quaternion.axis_angle(Vector3.up(), 0)
-	local unit_spawn_rotation = Quaternion.multiply(camera_look_rotation, horizontal_rotation)
-	local camera_position = self:_get_camera_position()
-	local unit_spawn_position = camera_position + camera_forward_vector
+	local var_23_11 = arg_23_0:_get_camera_rotation()
+	local var_23_12 = Quaternion.forward(var_23_11)
+	local var_23_13 = Quaternion.look(var_23_12, Vector3.up())
+	local var_23_14 = Quaternion.axis_angle(Vector3.up(), 0)
+	local var_23_15 = Quaternion.multiply(var_23_13, var_23_14)
+	local var_23_16 = arg_23_0:_get_camera_position() + var_23_12 + Vector3(var_23_3[1], var_23_3[2], var_23_3[3])
+	local var_23_17 = arg_23_0._background_world
+	local var_23_18 = World.spawn_unit(var_23_17, var_23_8, var_23_16, var_23_15)
+	local var_23_19 = Unit.world_position(var_23_18, 0)
 
-	unit_spawn_position = unit_spawn_position + Vector3(spawn_position[1], spawn_position[2], spawn_position[3])
+	arg_23_0._unit_start_position_boxed = Vector3Box(var_23_19)
 
-	local world = self._background_world
-	local link_unit = World.spawn_unit(world, unit_name, unit_spawn_position, unit_spawn_rotation)
-	local unit_start_position = Unit.world_position(link_unit, 0)
-
-	self._unit_start_position_boxed = Vector3Box(unit_start_position)
-
-	return link_unit
+	return var_23_18
 end
 
-LootItemUnitPreviewer._spawn_items = function (self)
-	local units_loaded = true
-	local units_to_spawn = self._units_to_spawn
+function LootItemUnitPreviewer._spawn_items(arg_24_0)
+	local var_24_0 = true
+	local var_24_1 = arg_24_0._units_to_spawn
 
-	for _, data in ipairs(units_to_spawn) do
-		local unit_name = data.unit_name
+	for iter_24_0, iter_24_1 in ipairs(var_24_1) do
+		local var_24_2 = iter_24_1.unit_name
 
-		if not self._loaded_packages[unit_name] then
-			units_loaded = false
+		if not arg_24_0._loaded_packages[var_24_2] then
+			var_24_0 = false
 
 			break
 		end
 	end
 
-	if units_loaded then
-		local item = self._item
-		local item_data = item.data
-		local item_key = item_data.key
-		local units = self:spawn_units(units_to_spawn)
+	if var_24_0 then
+		local var_24_3 = arg_24_0._item.data.key
+		local var_24_4 = arg_24_0:spawn_units(var_24_1)
 
-		if self._use_highest_mip_levels then
-			for i = 1, #units do
-				local spawned_unit = units[i]
+		if arg_24_0._use_highest_mip_levels then
+			for iter_24_2 = 1, #var_24_4 do
+				local var_24_5 = var_24_4[iter_24_2]
 
-				self:_request_all_mips_for_unit(spawned_unit)
+				arg_24_0:_request_all_mips_for_unit(var_24_5)
 			end
 		end
 
-		self._spawned_units = units
+		arg_24_0._spawned_units = var_24_4
 	end
 
-	return units_loaded
+	return var_24_0
 end
 
-LootItemUnitPreviewer.spawn_units = function (self, spawn_data)
-	local units = {}
-	local link_unit = self._link_unit
+function LootItemUnitPreviewer.spawn_units(arg_25_0, arg_25_1)
+	local var_25_0 = {}
+	local var_25_1 = arg_25_0._link_unit
 
-	if spawn_data and link_unit then
-		local scene_graph_links = {}
-		local world = self._background_world
+	if arg_25_1 and var_25_1 then
+		local var_25_2 = {}
+		local var_25_3 = arg_25_0._background_world
 
-		for i = 1, #spawn_data do
-			local spawn_unit_data = spawn_data[i]
-			local unit_name = spawn_unit_data.unit_name
-			local unit_attachment_node_linking = spawn_unit_data.unit_attachment_node_linking
-			local material_settings = spawn_unit_data.material_settings
-			local unit = World.spawn_unit(world, unit_name)
+		for iter_25_0 = 1, #arg_25_1 do
+			local var_25_4 = arg_25_1[iter_25_0]
+			local var_25_5 = var_25_4.unit_name
+			local var_25_6 = var_25_4.unit_attachment_node_linking
+			local var_25_7 = var_25_4.material_settings_name
+			local var_25_8 = World.spawn_unit(var_25_3, var_25_5)
 
-			Unit.set_unit_visibility(unit, false)
+			Unit.set_unit_visibility(var_25_8, false)
 
-			units[#units + 1] = unit
+			var_25_0[#var_25_0 + 1] = var_25_8
 
-			GearUtils.link(world, unit_attachment_node_linking, scene_graph_links, link_unit, unit)
+			GearUtils.link(var_25_3, var_25_6, var_25_2, var_25_1, var_25_8)
 
-			if material_settings then
-				GearUtils.apply_material_settings(unit, material_settings)
+			if var_25_7 then
+				GearUtils.apply_material_settings(var_25_8, var_25_7)
 			end
 		end
 
-		self.units_spawned = true
+		arg_25_0.units_spawned = true
 	end
 
-	return units
+	return var_25_0
 end
 
-LootItemUnitPreviewer.present_item = function (self, item_key, ignore_spin)
-	if self._use_highest_mip_levels and not self:_update_manual_mip_streaming() then
-		self._request_show_settings = {
-			item_key = item_key,
-			ignore_spin = ignore_spin,
+function LootItemUnitPreviewer.present_item(arg_26_0, arg_26_1, arg_26_2)
+	if arg_26_0._use_highest_mip_levels and not arg_26_0:_update_manual_mip_streaming() then
+		arg_26_0._request_show_settings = {
+			item_key = arg_26_1,
+			ignore_spin = arg_26_2
 		}
 	else
-		self:_enable_item_units_visibility(item_key, ignore_spin, true)
+		arg_26_0:_enable_item_units_visibility(arg_26_1, arg_26_2, true)
 	end
 end
 
-LootItemUnitPreviewer._enable_item_units_visibility = function (self, item_key, ignore_spin, visible)
-	local spawned_units = self._spawned_units
+function LootItemUnitPreviewer._enable_item_units_visibility(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+	local var_27_0 = arg_27_0._spawned_units
 
-	if spawned_units then
-		local link_unit = self._link_unit
+	if var_27_0 then
+		local var_27_1 = arg_27_0._link_unit
 
-		for _, unit in ipairs(spawned_units) do
-			if unit and Unit.alive(unit) then
-				Unit.set_unit_visibility(unit, visible)
+		for iter_27_0, iter_27_1 in ipairs(var_27_0) do
+			if iter_27_1 and Unit.alive(iter_27_1) then
+				Unit.set_unit_visibility(iter_27_1, arg_27_3)
 
-				if visible then
-					self:_trigger_unit_flow_event(unit, "lua_presentation")
-					self:_trigger_unit_flow_event(unit, "lua_wield")
+				if arg_27_3 then
+					arg_27_0:_trigger_unit_flow_event(iter_27_1, "lua_presentation")
+					arg_27_0:_trigger_unit_flow_event(iter_27_1, "lua_wield")
 				end
 			end
 		end
 
-		if not ignore_spin and visible and link_unit then
-			Unit.flow_event(link_unit, "lua_spin_no_fx")
+		if not arg_27_2 and arg_27_3 and var_27_1 then
+			Unit.flow_event(var_27_1, "lua_spin_no_fx")
 		end
 	end
 end
 
-LootItemUnitPreviewer._request_all_mips_for_unit = function (self, unit)
-	local requested_units = self._requested_all_mips_units
+function LootItemUnitPreviewer._request_all_mips_for_unit(arg_28_0, arg_28_1)
+	local var_28_0 = arg_28_0._requested_all_mips_units
 
-	requested_units[#requested_units + 1] = unit
+	var_28_0[#var_28_0 + 1] = arg_28_1
 
-	Renderer.request_to_stream_all_mips_for_unit(unit)
+	Renderer.request_to_stream_all_mips_for_unit(arg_28_1)
 	Renderer.set_automatic_streaming(false)
 end
 
-LootItemUnitPreviewer._update_manual_mip_streaming = function (self)
-	local mip_streaming_completed = true
-	local requested_units = self._requested_all_mips_units
-	local num_units_left = #requested_units
+function LootItemUnitPreviewer._update_manual_mip_streaming(arg_29_0)
+	local var_29_0 = true
+	local var_29_1 = arg_29_0._requested_all_mips_units
 
-	for i = num_units_left, 1, -1 do
-		local unit = requested_units[i]
-		local unit_mip_streaming_completed = Renderer.is_all_mips_loaded_for_unit(unit)
+	for iter_29_0 = #var_29_1, 1, -1 do
+		local var_29_2 = var_29_1[iter_29_0]
 
-		if unit_mip_streaming_completed then
-			table.swap_delete(requested_units, i)
+		if Renderer.is_all_mips_loaded_for_unit(var_29_2) then
+			table.swap_delete(var_29_1, iter_29_0)
 		else
-			mip_streaming_completed = false
+			var_29_0 = false
 		end
 	end
 
-	if mip_streaming_completed then
+	if var_29_0 then
 		Renderer.set_automatic_streaming(true)
 	end
 
-	return mip_streaming_completed
+	return var_29_0
 end

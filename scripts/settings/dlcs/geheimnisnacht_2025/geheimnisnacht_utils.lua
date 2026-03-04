@@ -1,105 +1,106 @@
-﻿-- chunkname: @scripts/settings/dlcs/geheimnisnacht_2025/geheimnisnacht_utils.lua
+-- chunkname: @scripts/settings/dlcs/geheimnisnacht_2025/geheimnisnacht_utils.lua
 
-local map_settings = require("scripts/settings/dlcs/geheimnisnacht_2025/geheimnisnacht_map_settings")
-local GeheimnisnachtUtils = {}
-local maps_by_year = {
+local var_0_0 = require("scripts/settings/dlcs/geheimnisnacht_2025/geheimnisnacht_map_settings")
+local var_0_1 = {}
+local var_0_2 = {
 	[2021] = {
 		"dlc_portals",
 		"bell",
 		"military",
 		"dlc_castle",
-		"ussingen",
+		"ussingen"
 	},
 	[2022] = {
 		"catacombs",
 		"mines",
 		"ground_zero",
 		"elven_ruins",
-		"farmlands",
+		"farmlands"
 	},
 	[2023] = {
 		"warcamp",
 		"nurgle",
 		"dlc_wizards_tower",
 		"dlc_bastion",
-		"dlc_dwarf_beacons",
+		"dlc_dwarf_beacons"
 	},
 	[2024] = {
 		"dlc_dwarf_whaling",
 		"catacombs",
 		"ground_zero",
 		"elven_ruins",
-		"farmlands",
+		"farmlands"
 	},
 	[2025] = {
 		"dlc_termite_1",
 		"military",
 		"mines",
 		"warcamp",
-		"dlc_portals",
-	},
+		"dlc_portals"
+	}
 }
 
-GeheimnisnachtUtils._cached_maps_by_event = {}
+var_0_1._cached_maps_by_event = {}
 
-for year, maps in pairs(maps_by_year) do
-	GeheimnisnachtUtils._cached_maps_by_event["geheimnisnacht_" .. year] = maps
+for iter_0_0, iter_0_1 in pairs(var_0_2) do
+	var_0_1._cached_maps_by_event["geheimnisnacht_" .. iter_0_0] = iter_0_1
 end
 
-GeheimnisnachtUtils.event_by_year = function (year)
-	return "geheimnisnacht_" .. year
+function var_0_1.event_by_year(arg_1_0)
+	return "geheimnisnacht_" .. arg_1_0
 end
 
-GeheimnisnachtUtils.maps_by_year = function (year, allow_fallback)
-	local event = GeheimnisnachtUtils.event_by_year(year)
+function var_0_1.maps_by_year(arg_2_0, arg_2_1)
+	local var_2_0 = var_0_1.event_by_year(arg_2_0)
 
-	return GeheimnisnachtUtils.maps_by_event(event, allow_fallback)
+	return var_0_1.maps_by_event(var_2_0, arg_2_1)
 end
 
-GeheimnisnachtUtils.maps_by_event = function (event_name, allow_fallback)
-	if GeheimnisnachtUtils._cached_maps_by_event[event_name] then
-		return GeheimnisnachtUtils._cached_maps_by_event[event_name]
+function var_0_1.maps_by_event(arg_3_0, arg_3_1)
+	if var_0_1._cached_maps_by_event[arg_3_0] then
+		return var_0_1._cached_maps_by_event[arg_3_0]
 	end
 
-	if not allow_fallback then
+	if not arg_3_1 then
 		return
 	end
 
-	local seed = HashUtils.fnv32_hash(event_name)
-	local level_names = table.keys(map_settings)
-	local random_maps = {}
+	local var_3_0 = HashUtils.fnv32_hash(arg_3_0)
+	local var_3_1 = table.keys(var_0_0)
+	local var_3_2 = {}
 
-	for i = 1, 5 do
-		local map_idx
+	for iter_3_0 = 1, 5 do
+		local var_3_3
+		local var_3_4
 
-		seed, map_idx = Math.next_random(seed, 1, #level_names)
-		random_maps[i] = level_names[map_idx]
+		var_3_0, var_3_4 = Math.next_random(var_3_0, 1, #var_3_1)
+		var_3_2[iter_3_0] = var_3_1[var_3_4]
 
-		table.remove(level_names, map_idx)
+		table.remove(var_3_1, var_3_4)
 	end
 
-	GeheimnisnachtUtils._cached_maps_by_event[event_name] = random_maps
+	var_0_1._cached_maps_by_event[arg_3_0] = var_3_2
 
-	return random_maps
+	return var_3_2
 end
 
-GeheimnisnachtUtils.maps_by_live_event = function (allow_fallback)
-	local live_events_interface = Managers.backend:get_interface("live_events")
-	local live_events = live_events_interface and live_events_interface:get_active_events()
+function var_0_1.maps_by_live_event(arg_4_0)
+	local var_4_0 = Managers.backend:get_interface("live_events")
+	local var_4_1 = var_4_0 and var_4_0:get_active_events()
 
-	if live_events then
-		for i = 1, #live_events do
-			local live_event = live_events[i]
+	if var_4_1 then
+		for iter_4_0 = 1, #var_4_1 do
+			local var_4_2 = var_4_1[iter_4_0]
 
-			if string.find(live_event, "geheimnisnacht_%d+") then
-				return GeheimnisnachtUtils.maps_by_event(live_event, allow_fallback)
+			if string.find(var_4_2, "geheimnisnacht_%d+") then
+				return var_0_1.maps_by_event(var_4_2, arg_4_0)
 			end
 		end
 	end
 
-	if allow_fallback then
+	if arg_4_0 then
 		return {}
 	end
 end
 
-return GeheimnisnachtUtils
+return var_0_1

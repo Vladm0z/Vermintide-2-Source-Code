@@ -1,70 +1,70 @@
-﻿-- chunkname: @scripts/settings/dlcs/skulls_2023/skulls_2023_quest_settings.lua
+-- chunkname: @scripts/settings/dlcs/skulls_2023/skulls_2023_quest_settings.lua
 
-local settings = DLCSettings.skulls_2023
-local SKULLS_2023_PICKUP_COUNT = 100
-local SKULLS_2024_PICKUP_COUNT = 100
+local var_0_0 = DLCSettings.skulls_2023
+local var_0_1 = 100
+local var_0_2 = 100
 
-settings.quest_templates = {
+var_0_0.quest_templates = {
 	event_skulls_2023_collect_skulls = {
-		icon = "quest_book_event_skull",
 		name = "quest_event_skulls_2023_pickups",
-		summary_icon = "achievement_symbol_book_event_skull",
-		desc = function ()
-			return string.format(Localize("quest_event_skulls_2023_pickups_desc"), SKULLS_2023_PICKUP_COUNT)
-		end,
-		completed = function (statistics_db, stats_id, quest_key, quest_templates)
-			local stat_name = QuestSettings.stat_mappings[quest_key][1]
-
-			return statistics_db:get_persistent_stat(stats_id, "quest_statistics", stat_name) >= SKULLS_2023_PICKUP_COUNT
-		end,
-		progress = function (statistics_db, stats_id, quest_key, quest_templates)
-			local stat_name = QuestSettings.stat_mappings[quest_key][1]
-			local count = statistics_db:get_persistent_stat(stats_id, "quest_statistics", stat_name)
-
-			return {
-				count,
-				SKULLS_2023_PICKUP_COUNT,
-			}
-		end,
-		events = {
-			"register_skulls_2023_pickup",
-		},
-		on_event = function (statistics_db, stats_id, template_data, event_name, event_data, quest_key)
-			local stat_name = QuestSettings.stat_mappings[quest_key][1]
-
-			statistics_db:increment_stat(stats_id, "quest_statistics", stat_name)
-		end,
-	},
-}
-settings.quest_templates = {
-	event_skulls_2024_collect_skulls = {
 		icon = "quest_book_event_skull",
-		name = "quest_event_skulls_2024_pickups",
 		summary_icon = "achievement_symbol_book_event_skull",
-		desc = function ()
-			return string.format(Localize("quest_event_skulls_2024_pickups_desc"), SKULLS_2024_PICKUP_COUNT)
+		desc = function()
+			return string.format(Localize("quest_event_skulls_2023_pickups_desc"), var_0_1)
 		end,
-		completed = function (statistics_db, stats_id, quest_key, quest_templates)
-			local stat_name = QuestSettings.stat_mappings[quest_key][1]
+		completed = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			local var_2_0 = QuestSettings.stat_mappings[arg_2_2][1]
 
-			return statistics_db:get_persistent_stat(stats_id, "quest_statistics", stat_name) >= SKULLS_2024_PICKUP_COUNT
+			return arg_2_0:get_persistent_stat(arg_2_1, "quest_statistics", var_2_0) >= var_0_1
 		end,
-		progress = function (statistics_db, stats_id, quest_key, quest_templates)
-			local stat_name = QuestSettings.stat_mappings[quest_key][1]
-			local count = statistics_db:get_persistent_stat(stats_id, "quest_statistics", stat_name)
+		progress = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			local var_3_0 = QuestSettings.stat_mappings[arg_3_2][1]
+			local var_3_1 = arg_3_0:get_persistent_stat(arg_3_1, "quest_statistics", var_3_0)
 
 			return {
-				count,
-				SKULLS_2024_PICKUP_COUNT,
+				var_3_1,
+				var_0_1
 			}
 		end,
 		events = {
-			"register_skulls_2023_pickup",
+			"register_skulls_2023_pickup"
 		},
-		on_event = function (statistics_db, stats_id, template_data, event_name, event_data, quest_key)
-			local stat_name = QuestSettings.stat_mappings[quest_key][1]
+		on_event = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+			local var_4_0 = QuestSettings.stat_mappings[arg_4_5][1]
 
-			statistics_db:increment_stat(stats_id, "quest_statistics", stat_name)
+			arg_4_0:increment_stat(arg_4_1, "quest_statistics", var_4_0)
+		end
+	}
+}
+var_0_0.quest_templates = {
+	event_skulls_2024_collect_skulls = {
+		name = "quest_event_skulls_2024_pickups",
+		icon = "quest_book_event_skull",
+		summary_icon = "achievement_symbol_book_event_skull",
+		desc = function()
+			return string.format(Localize("quest_event_skulls_2024_pickups_desc"), var_0_2)
 		end,
-	},
+		completed = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			local var_6_0 = QuestSettings.stat_mappings[arg_6_2][1]
+
+			return arg_6_0:get_persistent_stat(arg_6_1, "quest_statistics", var_6_0) >= var_0_2
+		end,
+		progress = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			local var_7_0 = QuestSettings.stat_mappings[arg_7_2][1]
+			local var_7_1 = arg_7_0:get_persistent_stat(arg_7_1, "quest_statistics", var_7_0)
+
+			return {
+				var_7_1,
+				var_0_2
+			}
+		end,
+		events = {
+			"register_skulls_2023_pickup"
+		},
+		on_event = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+			local var_8_0 = QuestSettings.stat_mappings[arg_8_5][1]
+
+			arg_8_0:increment_stat(arg_8_1, "quest_statistics", var_8_0)
+		end
+	}
 }

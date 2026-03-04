@@ -1,123 +1,114 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_skulk_around_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_skulk_around_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTSkulkAroundAction = class(BTSkulkAroundAction, BTNode)
 BTSkulkAroundAction.name = "BTSkulkAroundAction"
 
-local position_lookup = POSITION_LOOKUP
-local script_data = script_data
+local var_0_0 = POSITION_LOOKUP
+local var_0_1 = script_data
 
-BTSkulkAroundAction.init = function (self, ...)
-	BTSkulkAroundAction.super.init(self, ...)
+function BTSkulkAroundAction.init(arg_1_0, ...)
+	BTSkulkAroundAction.super.init(arg_1_0, ...)
 end
 
-local function debug3d(unit, text, color_name)
-	if script_data.debug_ai_movement then
-		Debug.world_sticky_text(position_lookup[unit], text, color_name)
+local function var_0_2(arg_2_0, arg_2_1, arg_2_2)
+	if var_0_1.debug_ai_movement then
+		Debug.world_sticky_text(var_0_0[arg_2_0], arg_2_1, arg_2_2)
 	end
 end
 
-BTSkulkAroundAction.enter = function (self, unit, blackboard, t)
-	if not blackboard.skulk_data then
-		blackboard.skulk_data = {}
+function BTSkulkAroundAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	if not arg_3_2.skulk_data then
+		arg_3_2.skulk_data = {}
 	end
 
-	local skulk_data = blackboard.skulk_data
+	local var_3_0 = arg_3_2.skulk_data
 
-	LocomotionUtils.set_animation_driven_movement(unit, false)
+	LocomotionUtils.set_animation_driven_movement(arg_3_1, false)
 
-	local network_manager = Managers.state.network
+	local var_3_1 = Managers.state.network
 
-	Managers.state.network:anim_event(unit, "idle")
+	Managers.state.network:anim_event(arg_3_1, "idle")
 
-	blackboard.move_state = "idle"
+	arg_3_2.move_state = "idle"
 
-	blackboard.navigation_extension:set_max_speed(blackboard.breed.run_speed)
+	arg_3_2.navigation_extension:set_max_speed(arg_3_2.breed.run_speed)
+	arg_3_2.locomotion_extension:set_rotation_speed(5)
 
-	local locomotion = blackboard.locomotion_extension
+	if var_3_0.skulk_pos then
+		local var_3_2 = var_3_0.skulk_pos:unbox()
 
-	locomotion:set_rotation_speed(5)
-
-	if skulk_data.skulk_pos then
-		local pos = skulk_data.skulk_pos:unbox()
-
-		blackboard.navigation_extension:move_to(pos)
+		arg_3_2.navigation_extension:move_to(var_3_2)
 	else
-		local pos = self:get_new_skulk_goal(unit, blackboard)
+		local var_3_3 = arg_3_0:get_new_skulk_goal(arg_3_1, arg_3_2)
 
-		skulk_data.skulk_pos = Vector3Box(pos)
+		var_3_0.skulk_pos = Vector3Box(var_3_3)
 
-		blackboard.navigation_extension:move_to(pos)
+		arg_3_2.navigation_extension:move_to(var_3_3)
 	end
 
-	if not skulk_data.attack_timer or t > skulk_data.attack_timer then
-		skulk_data.attack_timer = t + math.random(25, 30)
-	end
-end
-
-BTSkulkAroundAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
-	local navigation_extension = blackboard.navigation_extension
-
-	navigation_extension:set_max_speed(default_move_speed)
-
-	if blackboard.approach_target then
-		local skulk_data = blackboard.skulk_data
-
-		skulk_data.attack_timer = nil
+	if not var_3_0.attack_timer or arg_3_3 > var_3_0.attack_timer then
+		var_3_0.attack_timer = arg_3_3 + math.random(25, 30)
 	end
 end
 
-BTSkulkAroundAction.run = function (self, unit, blackboard, t, dt)
-	local skulk_data = blackboard.skulk_data
+function BTSkulkAroundAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	local var_4_0 = AiUtils.get_default_breed_move_speed(arg_4_1, arg_4_2)
 
-	if blackboard.navigation_extension:is_following_path() then
-		if blackboard.move_state ~= "moving" then
-			Managers.state.network:anim_event(unit, "move_fwd")
+	arg_4_2.navigation_extension:set_max_speed(var_4_0)
 
-			blackboard.move_state = "moving"
+	if arg_4_2.approach_target then
+		arg_4_2.skulk_data.attack_timer = nil
+	end
+end
+
+function BTSkulkAroundAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	local var_5_0 = arg_5_2.skulk_data
+
+	if arg_5_2.navigation_extension:is_following_path() then
+		if arg_5_2.move_state ~= "moving" then
+			Managers.state.network:anim_event(arg_5_1, "move_fwd")
+
+			arg_5_2.move_state = "moving"
 		end
 	else
-		if blackboard.l ~= "idle" then
-			Managers.state.network:anim_event(unit, "idle")
+		if arg_5_2.l ~= "idle" then
+			Managers.state.network:anim_event(arg_5_1, "idle")
 
-			blackboard.move_state = "idle"
+			arg_5_2.move_state = "idle"
 		end
 
-		if blackboard.no_path_found then
-			local pos = self:get_new_skulk_goal(unit, blackboard)
+		if arg_5_2.no_path_found then
+			local var_5_1 = arg_5_0:get_new_skulk_goal(arg_5_1, arg_5_2)
 
-			skulk_data.skulk_pos = Vector3Box(pos)
+			var_5_0.skulk_pos = Vector3Box(var_5_1)
 
-			blackboard.navigation_extension:move_to(pos)
+			arg_5_2.navigation_extension:move_to(var_5_1)
 		end
 	end
 
-	if not skulk_data.skulk_pos then
+	if not var_5_0.skulk_pos then
 		return "done"
 	end
 
-	if t > skulk_data.attack_timer then
-		blackboard.approach_target = true
+	if arg_5_3 > var_5_0.attack_timer then
+		arg_5_2.approach_target = true
 
 		return "failed"
 	end
 
-	local urgency_to_engage = PerceptionUtils.special_opportunity(unit, blackboard)
-
-	if urgency_to_engage > 0 then
-		blackboard.approach_target = true
+	if PerceptionUtils.special_opportunity(arg_5_1, arg_5_2) > 0 then
+		arg_5_2.approach_target = true
 
 		return "failed"
 	end
 
-	local pos = POSITION_LOOKUP[unit]
-	local skulk_pos = skulk_data.skulk_pos:unbox()
-	local skulk_target_dist = Vector3.distance_squared(pos, skulk_pos)
+	local var_5_2 = POSITION_LOOKUP[arg_5_1]
+	local var_5_3 = var_5_0.skulk_pos:unbox()
 
-	if skulk_target_dist < 1 then
-		skulk_data.skulk_pos = nil
+	if Vector3.distance_squared(var_5_2, var_5_3) < 1 then
+		var_5_0.skulk_pos = nil
 
 		return "done"
 	end
@@ -125,63 +116,64 @@ BTSkulkAroundAction.run = function (self, unit, blackboard, t, dt)
 	return "running"
 end
 
-BTSkulkAroundAction.get_new_skulk_goal = function (self, unit, blackboard)
-	local conflict_director = Managers.state.conflict
-	local main_paths = conflict_director.level_analysis:get_main_paths()
-	local path_pos, travel_dist, move_percent = MainPathUtils.closest_pos_at_main_path(main_paths, POSITION_LOOKUP[unit])
-	local info = Managers.state.conflict.main_path_info
-	local player_info = Managers.state.conflict.main_path_player_info
-	local enemy_pos, player_travel_dist, add_dist
+function BTSkulkAroundAction.get_new_skulk_goal(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = Managers.state.conflict
+	local var_6_1 = var_6_0.level_analysis:get_main_paths()
+	local var_6_2, var_6_3, var_6_4 = MainPathUtils.closest_pos_at_main_path(var_6_1, POSITION_LOOKUP[arg_6_1])
+	local var_6_5 = Managers.state.conflict.main_path_info
+	local var_6_6 = Managers.state.conflict.main_path_player_info
+	local var_6_7
+	local var_6_8
+	local var_6_9
 
-	if move_percent >= info.ahead_percent then
-		enemy_pos = POSITION_LOOKUP[info.ahead_unit]
-		add_dist = 30
-		player_travel_dist = player_info[info.ahead_unit].travel_dist
-	elseif move_percent <= info.behind_percent then
-		enemy_pos = POSITION_LOOKUP[info.behind_unit]
-		add_dist = -20
-		player_travel_dist = player_info[info.behind_unit].travel_dist
+	if var_6_4 >= var_6_5.ahead_percent then
+		local var_6_10 = POSITION_LOOKUP[var_6_5.ahead_unit]
+
+		var_6_9 = 30
+		var_6_8 = var_6_6[var_6_5.ahead_unit].travel_dist
+	elseif var_6_4 <= var_6_5.behind_percent then
+		local var_6_11 = POSITION_LOOKUP[var_6_5.behind_unit]
+
+		var_6_9 = -20
+		var_6_8 = var_6_6[var_6_5.behind_unit].travel_dist
 	else
-		enemy_pos = POSITION_LOOKUP[info.ahead_unit]
-		add_dist = 30
-		player_travel_dist = player_info[info.ahead_unit].travel_dist
+		local var_6_12 = POSITION_LOOKUP[var_6_5.ahead_unit]
+
+		var_6_9 = 30
+		var_6_8 = var_6_6[var_6_5.ahead_unit].travel_dist
 	end
 
-	local wanted_travel_dist = player_travel_dist + add_dist
-	local pos = MainPathUtils.point_on_mainpath(main_paths, wanted_travel_dist)
+	local var_6_13 = var_6_8 + var_6_9
 
-	if not pos then
-		wanted_travel_dist = player_travel_dist - add_dist
-		pos = MainPathUtils.point_on_mainpath(main_paths, wanted_travel_dist)
+	if not MainPathUtils.point_on_mainpath(var_6_1, var_6_13) then
+		var_6_13 = var_6_8 - var_6_9
+
+		local var_6_14 = MainPathUtils.point_on_mainpath(var_6_1, var_6_13)
 	end
 
-	local spawn_zone_baker = conflict_director.spawn_zone_baker
-	local zone_index = math.clamp(math.floor((wanted_travel_dist + 5) / 10), 1, #spawn_zone_baker.zones)
-	local zone = spawn_zone_baker.zones[zone_index]
-	local nodes
-	local nearby_islands = zone.nearby_islands
+	local var_6_15 = var_6_0.spawn_zone_baker
+	local var_6_16 = math.clamp(math.floor((var_6_13 + 5) / 10), 1, #var_6_15.zones)
+	local var_6_17 = var_6_15.zones[var_6_16]
+	local var_6_18
+	local var_6_19 = var_6_17.nearby_islands
 
-	if nearby_islands then
-		local island_zone = nearby_islands[math.random(1, #nearby_islands)]
-
-		nodes = island_zone.sub[1]
+	if var_6_19 then
+		var_6_18 = var_6_19[math.random(1, #var_6_19)].sub[1]
 	else
-		local num_zones = #zone.sub
-		local zone_layer = math.clamp(num_zones, 1, 2)
-		local outer_nodes = zone.sub[zone_layer]
+		local var_6_20 = #var_6_17.sub
+		local var_6_21 = math.clamp(var_6_20, 1, 2)
 
-		nodes = outer_nodes
+		var_6_18 = var_6_17.sub[var_6_21]
 	end
 
-	local triangle_index = nodes[math.random(1, #nodes)]
-	local p = spawn_zone_baker.spawn_pos_lookup[triangle_index]
+	local var_6_22 = var_6_18[math.random(1, #var_6_18)]
+	local var_6_23 = var_6_15.spawn_pos_lookup[var_6_22]
 
-	while not p do
-		triangle_index = nodes[math.random(1, #nodes)]
-		p = spawn_zone_baker.spawn_pos_lookup[triangle_index]
+	while not var_6_23 do
+		local var_6_24 = var_6_18[math.random(1, #var_6_18)]
+
+		var_6_23 = var_6_15.spawn_pos_lookup[var_6_24]
 	end
 
-	local pos = Vector3(p[1], p[2], p[3])
-
-	return pos
+	return (Vector3(var_6_23[1], var_6_23[2], var_6_23[3]))
 end

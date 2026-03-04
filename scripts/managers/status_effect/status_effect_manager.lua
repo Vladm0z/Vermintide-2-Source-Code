@@ -1,109 +1,109 @@
-﻿-- chunkname: @scripts/managers/status_effect/status_effect_manager.lua
+-- chunkname: @scripts/managers/status_effect/status_effect_manager.lua
 
 require("scripts/managers/status_effect/status_effect_templates")
 
 StatusEffectManager = class(StatusEffectManager)
 
-StatusEffectManager.init = function (self, world)
-	self._world = world
-	self._statuses_by_unit = {}
-	self._timed_status_datas = {}
-	self._blacklisted_units = {}
+function StatusEffectManager.init(arg_1_0, arg_1_1)
+	arg_1_0._world = arg_1_1
+	arg_1_0._statuses_by_unit = {}
+	arg_1_0._timed_status_datas = {}
+	arg_1_0._blacklisted_units = {}
 
-	self._on_unit_destroyed_cb = function (unit)
-		self:_cleanup_unit(unit)
+	function arg_1_0._on_unit_destroyed_cb(arg_2_0)
+		arg_1_0:_cleanup_unit(arg_2_0)
 	end
 end
 
-StatusEffectManager.destroy = function (self)
-	for unit in pairs(self._statuses_by_unit) do
-		self:remove_all_statuses(unit)
+function StatusEffectManager.destroy(arg_3_0)
+	for iter_3_0 in pairs(arg_3_0._statuses_by_unit) do
+		arg_3_0:remove_all_statuses(iter_3_0)
 	end
 end
 
-StatusEffectManager.update = function (self, dt, t)
-	self:_update_timed_statuses(dt, t)
+function StatusEffectManager.update(arg_4_0, arg_4_1, arg_4_2)
+	arg_4_0:_update_timed_statuses(arg_4_1, arg_4_2)
 end
 
-local EMPTY_TABLE = {}
+local var_0_0 = {}
 
-StatusEffectManager.set_status = function (self, unit, status_name, reason, value)
-	if value then
-		if self._blacklisted_units[unit] then
+function StatusEffectManager.set_status(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	if arg_5_4 then
+		if arg_5_0._blacklisted_units[arg_5_1] then
 			return false
 		end
 
-		local breed = Unit.get_data(unit, "breed")
+		local var_5_0 = Unit.get_data(arg_5_1, "breed")
 
-		if breed then
-			local status_settings = breed.status_effect_settings
-			local ignored_statuses = status_settings and status_settings.ignored_statuses or EMPTY_TABLE
-			local is_critter = CRITTER[breed.name]
+		if var_5_0 then
+			local var_5_1 = var_5_0.status_effect_settings
+			local var_5_2 = var_5_1 and var_5_1.ignored_statuses or var_0_0
+			local var_5_3 = CRITTER[var_5_0.name]
 
-			if ignored_statuses[status_name] or is_critter then
+			if var_5_2[arg_5_2] or var_5_3 then
 				return false
 			end
 		end
 	end
 
-	local status_template = StatusEffectTemplates[status_name]
-	local had_status = self:has_status(unit, status_name)
-	local status_by_unit = self._statuses_by_unit
-	local statuses = status_by_unit[unit]
+	local var_5_4 = StatusEffectTemplates[arg_5_2]
+	local var_5_5 = arg_5_0:has_status(arg_5_1, arg_5_2)
+	local var_5_6 = arg_5_0._statuses_by_unit
+	local var_5_7 = var_5_6[arg_5_1]
 
-	if value then
-		if not statuses then
-			Managers.state.unit_spawner:add_destroy_listener(unit, "StatusEffectManager", self._on_unit_destroyed_cb)
-			Managers.state.event:register_referenced(unit, self, "on_unit_freeze", "_cleanup_unit")
+	if arg_5_4 then
+		if not var_5_7 then
+			Managers.state.unit_spawner:add_destroy_listener(arg_5_1, "StatusEffectManager", arg_5_0._on_unit_destroyed_cb)
+			Managers.state.event:register_referenced(arg_5_1, arg_5_0, "on_unit_freeze", "_cleanup_unit")
 
-			statuses = {}
-			status_by_unit[unit] = statuses
+			var_5_7 = {}
+			var_5_6[arg_5_1] = var_5_7
 		end
 
-		statuses[status_name] = statuses[status_name] or {
+		var_5_7[arg_5_2] = var_5_7[arg_5_2] or {
 			reasons = {},
-			frame_index = GLOBAL_FRAME_INDEX,
+			frame_index = GLOBAL_FRAME_INDEX
 		}
 
-		local status_data = statuses[status_name]
+		local var_5_8 = var_5_7[arg_5_2]
 
-		status_data.reasons[reason] = true
+		var_5_8.reasons[arg_5_3] = true
 
-		if not had_status and status_template.on_applied then
-			status_data.apply_data = status_template.on_applied(unit, reason, status_template, self._world)
+		if not var_5_5 and var_5_4.on_applied then
+			var_5_8.apply_data = var_5_4.on_applied(arg_5_1, arg_5_3, var_5_4, arg_5_0._world)
 		end
 
-		if status_template.on_increment then
-			status_template.on_increment(unit, reason, status_template, self._world, status_data.apply_data)
+		if var_5_4.on_increment then
+			var_5_4.on_increment(arg_5_1, arg_5_3, var_5_4, arg_5_0._world, var_5_8.apply_data)
 		end
-	elseif statuses then
-		local status_data = statuses[status_name] or EMPTY_TABLE
-		local reasons = status_data.reasons or EMPTY_TABLE
+	elseif var_5_7 then
+		local var_5_9 = var_5_7[arg_5_2] or var_0_0
+		local var_5_10 = var_5_9.reasons or var_0_0
 
-		if reasons[reason] then
-			reasons[reason] = nil
+		if var_5_10[arg_5_3] then
+			var_5_10[arg_5_3] = nil
 
-			local apply_data = status_data.apply_data
+			local var_5_11 = var_5_9.apply_data
 
-			if status_template.on_decrement then
-				status_template.on_decrement(unit, reason, status_template, self._world, apply_data)
+			if var_5_4.on_decrement then
+				var_5_4.on_decrement(arg_5_1, arg_5_3, var_5_4, arg_5_0._world, var_5_11)
 			end
 
-			if table.is_empty(reasons) then
-				statuses[status_name] = nil
+			if table.is_empty(var_5_10) then
+				var_5_7[arg_5_2] = nil
 
-				if status_template.on_removed then
-					status_template.on_removed(unit, reason, status_template, self._world, apply_data)
+				if var_5_4.on_removed then
+					var_5_4.on_removed(arg_5_1, arg_5_3, var_5_4, arg_5_0._world, var_5_11)
 				end
 			end
 		end
 
-		if table.is_empty(statuses) then
-			status_by_unit[unit] = nil
+		if table.is_empty(var_5_7) then
+			var_5_6[arg_5_1] = nil
 
-			if not self._blacklisted_units[unit] then
-				Managers.state.unit_spawner:remove_destroy_listener(unit, "StatusEffectManager")
-				Managers.state.event:unregister_referenced("on_unit_freeze", unit, self)
+			if not arg_5_0._blacklisted_units[arg_5_1] then
+				Managers.state.unit_spawner:remove_destroy_listener(arg_5_1, "StatusEffectManager")
+				Managers.state.event:unregister_referenced("on_unit_freeze", arg_5_1, arg_5_0)
 			end
 		end
 	end
@@ -111,86 +111,86 @@ StatusEffectManager.set_status = function (self, unit, status_name, reason, valu
 	return true
 end
 
-StatusEffectManager.add_timed_status = function (self, unit, status_name, optional_duration)
-	local duration = optional_duration or StatusEffectTemplates[status_name].default_timed_duration
-	local t = Managers.time:time("game")
-	local timed_data = {
+function StatusEffectManager.add_timed_status(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	local var_6_0 = arg_6_3 or StatusEffectTemplates[arg_6_2].default_timed_duration
+	local var_6_1 = Managers.time:time("game")
+	local var_6_2 = {
 		_is_timed = true,
-		status_name = status_name,
-		remove_t = t + duration,
+		status_name = arg_6_2,
+		remove_t = var_6_1 + var_6_0
 	}
 
-	if self:set_status(unit, status_name, timed_data, true) then
-		self._timed_status_datas[timed_data] = unit
+	if arg_6_0:set_status(arg_6_1, arg_6_2, var_6_2, true) then
+		arg_6_0._timed_status_datas[var_6_2] = arg_6_1
 	end
 
-	return timed_data
+	return var_6_2
 end
 
-StatusEffectManager._remove_timed_status = function (self, unit, handle)
-	if Unit.alive(unit) then
-		local status_name = handle.status_name
+function StatusEffectManager._remove_timed_status(arg_7_0, arg_7_1, arg_7_2)
+	if Unit.alive(arg_7_1) then
+		local var_7_0 = arg_7_2.status_name
 
-		self:set_status(unit, status_name, handle, false)
+		arg_7_0:set_status(arg_7_1, var_7_0, arg_7_2, false)
 	end
 
-	self._timed_status_datas[handle] = nil
+	arg_7_0._timed_status_datas[arg_7_2] = nil
 end
 
-StatusEffectManager.has_status = function (self, unit, status_name)
-	local unit_statuses = self._statuses_by_unit[unit]
+function StatusEffectManager.has_status(arg_8_0, arg_8_1, arg_8_2)
+	local var_8_0 = arg_8_0._statuses_by_unit[arg_8_1]
 
-	if unit_statuses then
-		local status = unit_statuses[status_name]
-		local applied_this_frame = status and status.frame_index == GLOBAL_FRAME_INDEX
+	if var_8_0 then
+		local var_8_1 = var_8_0[arg_8_2]
+		local var_8_2 = var_8_1 and var_8_1.frame_index == GLOBAL_FRAME_INDEX
 
-		return status, applied_this_frame
+		return var_8_1, var_8_2
 	end
 
 	return false, false
 end
 
-StatusEffectManager.remove_all_statuses = function (self, unit, disable_further_statuses)
-	if disable_further_statuses then
-		self._blacklisted_units[unit] = true
+function StatusEffectManager.remove_all_statuses(arg_9_0, arg_9_1, arg_9_2)
+	if arg_9_2 then
+		arg_9_0._blacklisted_units[arg_9_1] = true
 	end
 
-	local statuses = self._statuses_by_unit[unit] or EMPTY_TABLE
+	local var_9_0 = arg_9_0._statuses_by_unit[arg_9_1] or var_0_0
 
-	for status_name, apply_data in pairs(statuses) do
-		for handle in pairs(apply_data.reasons) do
-			if type(handle) == "table" and handle._is_timed then
-				self:_remove_timed_status(unit, handle)
+	for iter_9_0, iter_9_1 in pairs(var_9_0) do
+		for iter_9_2 in pairs(iter_9_1.reasons) do
+			if type(iter_9_2) == "table" and iter_9_2._is_timed then
+				arg_9_0:_remove_timed_status(arg_9_1, iter_9_2)
 			else
-				self:set_status(unit, status_name, handle, false)
+				arg_9_0:set_status(arg_9_1, iter_9_0, iter_9_2, false)
 			end
 		end
 	end
 end
 
-StatusEffectManager._update_timed_statuses = function (self, dt, t)
-	for timed_data, unit in pairs(self._timed_status_datas) do
-		if t > timed_data.remove_t then
-			self:_remove_timed_status(unit, timed_data)
+function StatusEffectManager._update_timed_statuses(arg_10_0, arg_10_1, arg_10_2)
+	for iter_10_0, iter_10_1 in pairs(arg_10_0._timed_status_datas) do
+		if arg_10_2 > iter_10_0.remove_t then
+			arg_10_0:_remove_timed_status(iter_10_1, iter_10_0)
 		end
 	end
 end
 
-StatusEffectManager._cleanup_unit = function (self, unit)
-	Managers.state.unit_spawner:remove_destroy_listener(unit, "StatusEffectManager")
-	Managers.state.event:unregister_referenced("on_unit_freeze", unit, self)
-	self:remove_all_statuses(unit)
+function StatusEffectManager._cleanup_unit(arg_11_0, arg_11_1)
+	Managers.state.unit_spawner:remove_destroy_listener(arg_11_1, "StatusEffectManager")
+	Managers.state.event:unregister_referenced("on_unit_freeze", arg_11_1, arg_11_0)
+	arg_11_0:remove_all_statuses(arg_11_1)
 
-	self._blacklisted_units[unit] = nil
+	arg_11_0._blacklisted_units[arg_11_1] = nil
 end
 
-StatusEffectManager.unit_is_burning = function (self, unit)
-	local burning_normal, applied_this_frame_normal = self:has_status(unit, StatusEffectNames.burning)
-	local burning_balefire, applied_this_frame_balefire = self:has_status(unit, StatusEffectNames.burning_balefire)
-	local burning_elven, applied_this_frame_elven = self:has_status(unit, StatusEffectNames.burning_elven_magic)
-	local burning_warpfire, applied_this_frame_warpfire = self:has_status(unit, StatusEffectNames.burning_warpfire)
-	local burning = burning_normal or burning_balefire or burning_elven or burning_warpfire
-	local applied_this_frame = burning and (not burning_normal or applied_this_frame_normal) and (not burning_balefire or applied_this_frame_balefire) and (not burning_elven or applied_this_frame_elven) and (not burning_warpfire or applied_this_frame_warpfire)
+function StatusEffectManager.unit_is_burning(arg_12_0, arg_12_1)
+	local var_12_0, var_12_1 = arg_12_0:has_status(arg_12_1, StatusEffectNames.burning)
+	local var_12_2, var_12_3 = arg_12_0:has_status(arg_12_1, StatusEffectNames.burning_balefire)
+	local var_12_4, var_12_5 = arg_12_0:has_status(arg_12_1, StatusEffectNames.burning_elven_magic)
+	local var_12_6, var_12_7 = arg_12_0:has_status(arg_12_1, StatusEffectNames.burning_warpfire)
+	local var_12_8 = var_12_0 or var_12_2 or var_12_4 or var_12_6
+	local var_12_9 = var_12_8 and (not var_12_0 or var_12_1) and (not var_12_2 or var_12_3) and (not var_12_4 or var_12_5) and (not var_12_6 or var_12_7)
 
-	return burning, applied_this_frame
+	return var_12_8, var_12_9
 end

@@ -1,13 +1,13 @@
-﻿-- chunkname: @scripts/settings/mutators/mutator_deus_more_elites.lua
+-- chunkname: @scripts/settings/mutators/mutator_deus_more_elites.lua
 
 require("scripts/settings/dlcs/morris/deus_terror_event_tags")
 
-local conversion_table = {
-	beastmen = "beastmen_elites",
-	beastmen_light = "beastmen",
-	marauders_and_warriors = "marauders_elites",
+local var_0_0 = {
 	shield_rats_no_elites = "shield_rats",
-	standard_no_elites = "standard",
+	beastmen = "beastmen_elites",
+	marauders_and_warriors = "marauders_elites",
+	beastmen_light = "beastmen",
+	standard_no_elites = "standard"
 }
 
 return {
@@ -15,10 +15,10 @@ return {
 	display_name = "mutator_deus_more_elites_name",
 	hide_from_player_ui = true,
 	icon = "mutator_icon_deus_more_elites",
-	tweak_pack_spawning_settings = function (conflict_director_name, pack_spawning_settings)
-		MutatorUtils.tweak_pack_spawning_settings_convert_breeds(pack_spawning_settings, conversion_table)
+	tweak_pack_spawning_settings = function(arg_1_0, arg_1_1)
+		MutatorUtils.tweak_pack_spawning_settings_convert_breeds(arg_1_1, var_0_0)
 	end,
-	get_terror_event_tags = function (context, data, terror_event_tags)
-		terror_event_tags[#terror_event_tags + 1] = DeusTerrorEventTags.MORE_ELITES
-	end,
+	get_terror_event_tags = function(arg_2_0, arg_2_1, arg_2_2)
+		arg_2_2[#arg_2_2 + 1] = DeusTerrorEventTags.MORE_ELITES
+	end
 }

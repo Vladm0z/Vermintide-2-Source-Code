@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/settings/nav_tag_volume_settings.lua
+-- chunkname: @scripts/settings/nav_tag_volume_settings.lua
 
 require("scripts/settings/volume_settings")
 
@@ -38,27 +38,27 @@ NavTagVolumeLayers = {
 	"nav_tag_volume_dummy_layer5",
 	"nav_tag_volume_dummy_layer6",
 	"nav_tag_volume_dummy_layer7",
-	"nav_tag_volume_dummy_layer8",
+	"nav_tag_volume_dummy_layer8"
 }
 LevelVolumesOnly = {
 	HIGH_SPAWN = true,
+	ROOF = true,
+	NO_BOTS = true,
+	NO_SPAWN = true,
 	LOW_SPAWN = true,
 	NO_BOSS = true,
-	NO_BOTS = true,
-	NO_BOTS_NO_SPAWN = true,
-	NO_SPAWN = true,
-	ROOF = true,
+	NO_BOTS_NO_SPAWN = true
 }
 
-local added_layers = {}
+local var_0_0 = {}
 
-for volume_type, volume_sub_types in pairs(VolumeSystemSettings.nav_tag_layer_costs) do
-	for volume_sub_type, extensions in pairs(volume_sub_types) do
-		local layer_name = volume_type .. "_" .. volume_sub_type
+for iter_0_0, iter_0_1 in pairs(VolumeSystemSettings.nav_tag_layer_costs) do
+	for iter_0_2, iter_0_3 in pairs(iter_0_1) do
+		local var_0_1 = iter_0_0 .. "_" .. iter_0_2
 
-		if not added_layers[layer_name] then
-			NavTagVolumeLayers[#NavTagVolumeLayers + 1] = layer_name
-			added_layers[layer_name] = true
+		if not var_0_0[var_0_1] then
+			NavTagVolumeLayers[#NavTagVolumeLayers + 1] = var_0_1
+			var_0_0[var_0_1] = true
 		end
 	end
 end

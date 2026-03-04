@@ -1,2068 +1,2047 @@
-﻿-- chunkname: @scripts/ui/views/versus_menu/versus_party_char_selection_view_definitions.lua
+-- chunkname: @scripts/ui/views/versus_menu/versus_party_char_selection_view_definitions.lua
 
-local RETAINED_MODE = false
-local slider_length = 1600
-local hero_group_width = 318
-local hero_group_spacing = 60
-local player_name_box_size = {
+local var_0_0 = false
+local var_0_1 = 1600
+local var_0_2 = 318
+local var_0_3 = 60
+local var_0_4 = {
 	474,
-	46,
+	46
 }
-local hero_portrait_size = {
+local var_0_5 = {
 	70,
-	80,
+	80
 }
-local scenegraph_position = {
+local var_0_6 = {
 	screen = {
 		0,
 		0,
-		UILayer.default,
+		UILayer.default
 	},
 	player_name_box_1 = {
 		-720,
 		250,
-		20,
+		20
 	},
 	player_name_box_2 = {
 		-240,
 		250,
-		20,
+		20
 	},
 	player_name_box_3 = {
 		240,
 		250,
-		20,
+		20
 	},
 	player_name_box_4 = {
 		720,
 		250,
-		20,
+		20
 	},
 	bottom_bar = {
 		0,
 		0,
-		10,
+		10
 	},
 	menu_root = {
 		0,
 		0,
-		0,
+		0
 	},
 	hero_roster = {
 		0,
 		150,
-		2,
+		2
 	},
 	hero_group_1 = {
-		-(hero_group_width + hero_group_spacing) * 2,
+		-(var_0_2 + var_0_3) * 2,
 		0,
-		1,
+		1
 	},
 	hero_group_2 = {
-		-(hero_group_width + hero_group_spacing),
+		-(var_0_2 + var_0_3),
 		0,
-		1,
+		1
 	},
 	hero_group_3 = {
 		0,
 		0,
-		1,
+		1
 	},
 	hero_group_4 = {
-		hero_group_width + hero_group_spacing,
+		var_0_2 + var_0_3,
 		0,
-		1,
+		1
 	},
 	hero_group_5 = {
-		(hero_group_width + hero_group_spacing) * 2,
+		(var_0_2 + var_0_3) * 2,
 		0,
-		1,
+		1
 	},
 	background = {
 		0,
 		0,
-		1,
+		1
 	},
 	progress_bar_edge_bottom = {
 		0,
 		-2,
-		15,
+		15
 	},
 	progress_bar_edge_top = {
 		0,
 		10,
-		15,
+		15
 	},
 	progress_bar = {
 		0,
 		0,
-		1,
+		1
 	},
 	progress_bar_anchor = {
 		0,
 		234,
-		18,
+		18
 	},
 	progress_bar_end_glow = {
 		28,
 		0,
-		0,
+		0
 	},
 	progress_bar_passive = {
 		0,
 		0,
-		4,
+		4
 	},
 	progress_bar_rect = {
 		0,
 		0,
-		-1,
+		-1
 	},
 	progress_point = {
 		0,
 		0,
-		100,
+		100
 	},
 	countdown_timer = {
 		0,
 		130,
-		3,
+		3
 	},
 	selected_career_title = {
 		50,
 		-50,
-		3,
+		3
 	},
 	selected_hero_title = {
 		70,
 		-190,
-		3,
+		3
 	},
 	player_info_text = {
 		0,
 		-15,
-		10,
+		10
 	},
 	player_info_text_background = {
 		0,
 		200,
-		10,
+		10
 	},
 	local_player_picking_frame = {
 		0,
 		0,
-		200,
+		200
 	},
 	hero_name_text_anchor = {
 		50,
 		-75,
-		10,
+		10
 	},
 	parading_info = {
 		0,
 		-200,
-		10,
-	},
+		10
+	}
 }
-local scenegraph_size = {
+local var_0_7 = {
 	screen = {
 		1920,
-		1080,
+		1080
 	},
-	player_name_box_1 = player_name_box_size,
-	player_name_box_2 = player_name_box_size,
-	player_name_box_3 = player_name_box_size,
-	player_name_box_4 = player_name_box_size,
+	player_name_box_1 = var_0_4,
+	player_name_box_2 = var_0_4,
+	player_name_box_3 = var_0_4,
+	player_name_box_4 = var_0_4,
 	bottom_bar = {
 		1920,
-		250,
+		250
 	},
 	menu_root = {
 		1920,
-		1080,
+		1080
 	},
 	hero_roster = {
 		1920,
-		0,
+		0
 	},
 	hero_group_1 = {
-		hero_group_width,
-		91,
+		var_0_2,
+		91
 	},
 	hero_group_2 = {
-		hero_group_width,
-		91,
+		var_0_2,
+		91
 	},
 	hero_group_3 = {
-		hero_group_width,
-		91,
+		var_0_2,
+		91
 	},
 	hero_group_4 = {
-		hero_group_width,
-		91,
+		var_0_2,
+		91
 	},
 	hero_group_5 = {
-		hero_group_width,
-		91,
+		var_0_2,
+		91
 	},
 	background = {
 		1920,
-		1080,
+		1080
 	},
 	progress_bar_edge_bottom = {
 		1920,
-		2,
+		2
 	},
 	progress_bar_edge_top = {
 		1920,
-		2,
+		2
 	},
 	progress_bar = {
 		1920,
-		10,
+		10
 	},
 	progress_bar_end_glow = {
 		100,
-		10,
+		10
 	},
 	progress_bar_passive = {
 		1920,
-		10,
+		10
 	},
 	progress_bar_rect = {
 		1920,
-		10,
+		10
 	},
 	progress_point = {
 		0,
-		0,
+		0
 	},
 	countdown_timer = {
 		1900,
-		300,
+		300
 	},
 	selected_career_title = {
 		1900,
-		180,
+		180
 	},
 	selected_hero_title = {
 		1900,
-		180,
+		180
 	},
 	player_info_text = {
 		800,
-		88,
+		88
 	},
 	player_info_text_background = {
 		1920,
-		88,
+		88
 	},
 	local_player_picking_frame = {
 		1920,
-		1080,
+		1080
 	},
 	local_player_flame_highlight = {
 		1820,
-		440,
+		440
 	},
 	hero_name_text_anchor = {
 		0,
-		0,
+		0
 	},
 	background_image_heroes = {
 		892.8000000000001,
-		1231.2,
+		1231.2
 	},
 	background_image_dark_pact = {
 		873,
-		927,
+		927
 	},
 	parading_info = {
 		640,
-		120,
-	},
+		120
+	}
 }
-local scenegraph_definition = {
+local var_0_8 = {
 	screen = {
 		scale = "fit",
-		size = scenegraph_size.screen,
-		position = scenegraph_position.screen,
+		size = var_0_7.screen,
+		position = var_0_6.screen
 	},
 	menu_root = {
-		horizontal_alignment = "center",
-		parent = "screen",
 		vertical_alignment = "center",
-		size = scenegraph_size.menu_root,
-		position = scenegraph_position.menu_root,
+		parent = "screen",
+		horizontal_alignment = "center",
+		size = var_0_7.menu_root,
+		position = var_0_6.menu_root
 	},
 	bottom_bar = {
-		horizontal_alignment = "center",
-		scale = "fit_width",
 		vertical_alignment = "bottom",
-		size = scenegraph_size.bottom_bar,
-		position = scenegraph_position.bottom_bar,
+		scale = "fit_width",
+		horizontal_alignment = "center",
+		size = var_0_7.bottom_bar,
+		position = var_0_6.bottom_bar
 	},
 	player_name_box_1 = {
-		horizontal_alignment = "center",
-		parent = "bottom_bar",
 		vertical_alignment = "bottom",
-		size = scenegraph_size.player_name_box_1,
-		position = scenegraph_position.player_name_box_1,
+		parent = "bottom_bar",
+		horizontal_alignment = "center",
+		size = var_0_7.player_name_box_1,
+		position = var_0_6.player_name_box_1
 	},
 	player_name_box_2 = {
-		horizontal_alignment = "center",
-		parent = "bottom_bar",
 		vertical_alignment = "bottom",
-		size = scenegraph_size.player_name_box_2,
-		position = scenegraph_position.player_name_box_2,
+		parent = "bottom_bar",
+		horizontal_alignment = "center",
+		size = var_0_7.player_name_box_2,
+		position = var_0_6.player_name_box_2
 	},
 	player_name_box_3 = {
-		horizontal_alignment = "center",
-		parent = "bottom_bar",
 		vertical_alignment = "bottom",
-		size = scenegraph_size.player_name_box_3,
-		position = scenegraph_position.player_name_box_3,
+		parent = "bottom_bar",
+		horizontal_alignment = "center",
+		size = var_0_7.player_name_box_3,
+		position = var_0_6.player_name_box_3
 	},
 	player_name_box_4 = {
-		horizontal_alignment = "center",
-		parent = "bottom_bar",
 		vertical_alignment = "bottom",
-		size = scenegraph_size.player_name_box_4,
-		position = scenegraph_position.player_name_box_4,
+		parent = "bottom_bar",
+		horizontal_alignment = "center",
+		size = var_0_7.player_name_box_4,
+		position = var_0_6.player_name_box_4
 	},
 	hero_roster = {
-		horizontal_alignment = "center",
-		parent = "bottom_bar",
 		vertical_alignment = "bottom",
-		size = scenegraph_size.hero_roster,
-		position = scenegraph_position.hero_roster,
+		parent = "bottom_bar",
+		horizontal_alignment = "center",
+		size = var_0_7.hero_roster,
+		position = var_0_6.hero_roster
 	},
 	hero_group_1 = {
-		horizontal_alignment = "center",
-		parent = "hero_roster",
 		vertical_alignment = "center",
-		size = scenegraph_size.hero_group_1,
-		position = scenegraph_position.hero_group_1,
+		parent = "hero_roster",
+		horizontal_alignment = "center",
+		size = var_0_7.hero_group_1,
+		position = var_0_6.hero_group_1
 	},
 	hero_group_2 = {
-		horizontal_alignment = "center",
-		parent = "hero_roster",
 		vertical_alignment = "center",
-		size = scenegraph_size.hero_group_2,
-		position = scenegraph_position.hero_group_2,
+		parent = "hero_roster",
+		horizontal_alignment = "center",
+		size = var_0_7.hero_group_2,
+		position = var_0_6.hero_group_2
 	},
 	hero_group_3 = {
-		horizontal_alignment = "center",
-		parent = "hero_roster",
 		vertical_alignment = "center",
-		size = scenegraph_size.hero_group_3,
-		position = scenegraph_position.hero_group_3,
+		parent = "hero_roster",
+		horizontal_alignment = "center",
+		size = var_0_7.hero_group_3,
+		position = var_0_6.hero_group_3
 	},
 	hero_group_4 = {
-		horizontal_alignment = "center",
-		parent = "hero_roster",
 		vertical_alignment = "center",
-		size = scenegraph_size.hero_group_4,
-		position = scenegraph_position.hero_group_4,
+		parent = "hero_roster",
+		horizontal_alignment = "center",
+		size = var_0_7.hero_group_4,
+		position = var_0_6.hero_group_4
 	},
 	hero_group_5 = {
-		horizontal_alignment = "center",
-		parent = "hero_roster",
 		vertical_alignment = "center",
-		size = scenegraph_size.hero_group_5,
-		position = scenegraph_position.hero_group_5,
+		parent = "hero_roster",
+		horizontal_alignment = "center",
+		size = var_0_7.hero_group_5,
+		position = var_0_6.hero_group_5
 	},
 	background = {
-		horizontal_alignment = "center",
-		parent = "menu_root",
 		vertical_alignment = "bottom",
-		size = scenegraph_size.background,
-		position = scenegraph_position.background,
+		parent = "menu_root",
+		horizontal_alignment = "center",
+		size = var_0_7.background,
+		position = var_0_6.background
 	},
 	progress_bar_anchor = {
-		horizontal_alignment = "center",
-		parent = "screen",
 		vertical_alignment = "bottom",
-		size = scenegraph_size.progress_bar,
-		position = scenegraph_position.progress_bar_anchor,
+		parent = "screen",
+		horizontal_alignment = "center",
+		size = var_0_7.progress_bar,
+		position = var_0_6.progress_bar_anchor
 	},
 	progress_bar = {
-		parent = "progress_bar_anchor",
 		vertical_alignment = "bottom",
-		size = scenegraph_size.progress_bar,
-		position = scenegraph_position.progress_bar,
+		parent = "progress_bar_anchor",
+		size = var_0_7.progress_bar,
+		position = var_0_6.progress_bar
 	},
 	progress_bar_edge_bottom = {
-		parent = "progress_bar_anchor",
 		vertical_alignment = "bottom",
-		size = scenegraph_size.progress_bar_edge_bottom,
-		position = scenegraph_position.progress_bar_edge_bottom,
+		parent = "progress_bar_anchor",
+		size = var_0_7.progress_bar_edge_bottom,
+		position = var_0_6.progress_bar_edge_bottom
 	},
 	progress_bar_edge_top = {
-		parent = "progress_bar_anchor",
 		vertical_alignment = "bottom",
-		size = scenegraph_size.progress_bar_edge_top,
-		position = scenegraph_position.progress_bar_edge_top,
+		parent = "progress_bar_anchor",
+		size = var_0_7.progress_bar_edge_top,
+		position = var_0_6.progress_bar_edge_top
 	},
 	progress_bar_end_glow = {
-		horizontal_alignment = "right",
-		parent = "progress_bar",
 		vertical_alignment = "center",
-		size = scenegraph_size.progress_bar_end_glow,
-		position = scenegraph_position.progress_bar_end_glow,
+		parent = "progress_bar",
+		horizontal_alignment = "right",
+		size = var_0_7.progress_bar_end_glow,
+		position = var_0_6.progress_bar_end_glow
 	},
 	progress_bar_passive = {
-		parent = "progress_bar",
 		vertical_alignment = "bottom",
-		size = scenegraph_size.progress_bar_passive,
-		position = scenegraph_position.progress_bar_passive,
+		parent = "progress_bar",
+		size = var_0_7.progress_bar_passive,
+		position = var_0_6.progress_bar_passive
 	},
 	progress_bar_rect = {
-		parent = "progress_bar",
 		vertical_alignment = "bottom",
-		size = scenegraph_size.progress_bar_rect,
-		position = scenegraph_position.progress_bar_rect,
+		parent = "progress_bar",
+		size = var_0_7.progress_bar_rect,
+		position = var_0_6.progress_bar_rect
 	},
 	progress_point = {
-		horizontal_alignment = "left",
-		parent = "progress_bar_rect",
 		vertical_alignment = "center",
-		size = scenegraph_size.progress_point,
-		position = scenegraph_position.progress_point,
+		parent = "progress_bar_rect",
+		horizontal_alignment = "left",
+		size = var_0_7.progress_point,
+		position = var_0_6.progress_point
 	},
 	countdown_timer = {
-		horizontal_alignment = "center",
-		parent = "screen",
 		vertical_alignment = "center",
-		size = scenegraph_size.countdown_timer,
-		position = scenegraph_position.countdown_timer,
+		parent = "screen",
+		horizontal_alignment = "center",
+		size = var_0_7.countdown_timer,
+		position = var_0_6.countdown_timer
 	},
 	selected_career_title = {
-		horizontal_alignment = "left",
-		parent = "screen",
 		vertical_alignment = "top",
-		size = scenegraph_size.selected_career_title,
-		position = scenegraph_position.selected_career_title,
+		parent = "screen",
+		horizontal_alignment = "left",
+		size = var_0_7.selected_career_title,
+		position = var_0_6.selected_career_title
 	},
 	selected_hero_title = {
-		horizontal_alignment = "left",
-		parent = "screen",
 		vertical_alignment = "top",
-		size = scenegraph_size.selected_hero_title,
-		position = scenegraph_position.selected_hero_title,
+		parent = "screen",
+		horizontal_alignment = "left",
+		size = var_0_7.selected_hero_title,
+		position = var_0_6.selected_hero_title
 	},
 	player_info_text_background = {
-		horizontal_alignment = "center",
-		scale = "fit_width",
 		vertical_alignment = "bottom",
-		size = scenegraph_size.player_info_text_background,
-		position = scenegraph_position.player_info_text_background,
+		scale = "fit_width",
+		horizontal_alignment = "center",
+		size = var_0_7.player_info_text_background,
+		position = var_0_6.player_info_text_background
 	},
 	player_info_text = {
-		horizontal_alignment = "center",
-		parent = "player_info_text_background",
 		vertical_alignment = "bottom",
-		size = scenegraph_size.player_info_text,
-		position = scenegraph_position.player_info_text,
+		parent = "player_info_text_background",
+		horizontal_alignment = "center",
+		size = var_0_7.player_info_text,
+		position = var_0_6.player_info_text
 	},
 	local_player_picking_frame = {
-		horizontal_alignment = "center",
-		scale = "fit",
 		vertical_alignment = "bottom",
-		size = scenegraph_size.local_player_picking_frame,
-		position = scenegraph_position.local_player_picking_frame,
+		scale = "fit",
+		horizontal_alignment = "center",
+		size = var_0_7.local_player_picking_frame,
+		position = var_0_6.local_player_picking_frame
 	},
 	local_player_flame_highlight = {
-		horizontal_alignment = "center",
-		parent = "bottom_bar",
 		vertical_alignment = "bottom",
-		size = scenegraph_size.local_player_flame_highlight,
-		position = scenegraph_position.local_player_flame_highlight,
+		parent = "bottom_bar",
+		horizontal_alignment = "center",
+		size = var_0_7.local_player_flame_highlight,
+		position = var_0_6.local_player_flame_highlight
 	},
 	hero_name_text_anchor = {
-		horizontal_alignment = "left",
-		parent = "screen",
 		vertical_alignment = "top",
-		size = scenegraph_size.hero_name_text_anchor,
-		position = scenegraph_position.hero_name_text_anchor,
+		parent = "screen",
+		horizontal_alignment = "left",
+		size = var_0_7.hero_name_text_anchor,
+		position = var_0_6.hero_name_text_anchor
 	},
 	parading_info = {
-		horizontal_alignment = "center",
-		parent = "menu_root",
 		vertical_alignment = "center",
-		size = scenegraph_size.parading_info,
-		position = scenegraph_position.parading_info,
-	},
+		parent = "menu_root",
+		horizontal_alignment = "center",
+		size = var_0_7.parading_info,
+		position = var_0_6.parading_info
+	}
 }
 
-local function create_progress_marker(scenegraph_id)
+local function var_0_9(arg_1_0)
 	return {
 		element = {
 			passes = {
 				{
-					pass_type = "texture",
-					style_id = "background",
 					texture_id = "background",
+					style_id = "background",
+					pass_type = "texture"
 				},
 				{
-					pass_type = "texture",
-					style_id = "glow",
 					texture_id = "glow",
-					content_check_function = function (content)
-						return content.highlight and content.is_local_player and not content.done
-					end,
+					style_id = "glow",
+					pass_type = "texture",
+					content_check_function = function(arg_2_0)
+						return arg_2_0.highlight and arg_2_0.is_local_player and not arg_2_0.done
+					end
 				},
 				{
-					pass_type = "texture",
+					texture_id = "glow_done",
 					style_id = "glow_done",
-					texture_id = "glow_done",
-					content_check_function = function (content)
-						return content.done
-					end,
+					pass_type = "texture",
+					content_check_function = function(arg_3_0)
+						return arg_3_0.done
+					end
 				},
 				{
-					pass_type = "texture",
 					style_id = "glow_done_animation",
+					pass_type = "texture",
 					texture_id = "glow_done",
-					content_check_function = function (content)
-						return content.done
+					content_check_function = function(arg_4_0)
+						return arg_4_0.done
 					end,
-					content_change_function = function (content, style, ui_animations, dt)
-						local done = content.done
-						local anim_progress = style.anim_progress
+					content_change_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+						local var_5_0 = arg_5_0.done
+						local var_5_1 = arg_5_1.anim_progress
 
-						if done then
-							anim_progress = style.anim_progress or 0
+						if var_5_0 then
+							var_5_1 = arg_5_1.anim_progress or 0
 
-							local texture_size = style.texture_size
-							local default_size = style.default_size
-							local size_multiplier = 2
-							local ease_progress = math.easeOutCubic(anim_progress)
+							local var_5_2 = arg_5_1.texture_size
+							local var_5_3 = arg_5_1.default_size
+							local var_5_4 = 2
+							local var_5_5 = math.easeOutCubic(var_5_1)
 
-							texture_size[1] = default_size[1] + default_size[1] * size_multiplier * ease_progress
-							texture_size[2] = default_size[2] + default_size[2] * size_multiplier * ease_progress
-
-							local color = style.color
-
-							color[1] = 255 * (1 - ease_progress)
-							style.anim_progress = math.min(anim_progress + dt, 1)
-						elseif anim_progress then
-							style.anim_progress = nil
+							var_5_2[1] = var_5_3[1] + var_5_3[1] * var_5_4 * var_5_5
+							var_5_2[2] = var_5_3[2] + var_5_3[2] * var_5_4 * var_5_5
+							arg_5_1.color[1] = 255 * (1 - var_5_5)
+							arg_5_1.anim_progress = math.min(var_5_1 + arg_5_3, 1)
+						elseif var_5_1 then
+							arg_5_1.anim_progress = nil
 						end
-					end,
-				},
-			},
+					end
+				}
+			}
 		},
 		content = {
+			is_local_player = false,
 			background = "versus_hero_selection_skull",
 			glow = "versus_hero_selection_skull_eyes_glow",
-			glow_done = "versus_hero_selection_skull_eyes_glow",
 			highlight = false,
-			is_local_player = false,
+			glow_done = "versus_hero_selection_skull_eyes_glow"
 		},
 		style = {
 			background = {
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
+				horizontal_alignment = "center",
 				texture_size = {
 					36,
-					50,
+					50
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					-1,
 					0,
-					1,
-				},
+					1
+				}
 			},
 			glow = {
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
+				horizontal_alignment = "center",
 				texture_size = {
 					48,
-					55,
+					55
 				},
 				color = {
 					255,
 					0,
 					136,
-					255,
+					255
 				},
 				offset = {
 					-1,
 					5,
-					2,
-				},
+					2
+				}
 			},
 			glow_done = {
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
+				horizontal_alignment = "center",
 				texture_size = {
 					48,
-					55,
+					55
 				},
 				color = {
 					255,
 					255,
 					123,
-					0,
+					0
 				},
 				offset = {
 					-1,
 					5,
-					3,
-				},
+					3
+				}
 			},
 			glow_done_animation = {
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
+				horizontal_alignment = "center",
 				texture_size = {
 					48,
-					55,
+					55
 				},
 				default_size = {
 					48,
-					55,
+					55
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					-1,
 					0,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		offset = {
 			0,
 			0,
-			0,
+			0
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_1_0
 	}
 end
 
-local function create_roster_hero_widget(scenegraph_id, size)
-	local frame_style = "versus_hero_selection_hero_portrait_frame"
-	local frame_settings = UIFrameSettings[frame_style]
-	local frame_width = frame_settings.texture_sizes.horizontal[2]
-	local shadow_frame_style = "shadow_frame_02"
-	local shadow_frame_settings = UIFrameSettings[shadow_frame_style]
-	local shadow_frame_width = shadow_frame_settings.texture_sizes.horizontal[2]
+local function var_0_10(arg_6_0, arg_6_1)
+	local var_6_0 = "versus_hero_selection_hero_portrait_frame"
+	local var_6_1 = UIFrameSettings[var_6_0]
+	local var_6_2 = var_6_1.texture_sizes.horizontal[2]
+	local var_6_3 = "shadow_frame_02"
+	local var_6_4 = UIFrameSettings[var_6_3]
+	local var_6_5 = var_6_4.texture_sizes.horizontal[2]
 
 	return {
 		alpha_multiplier = 1,
 		element = {
 			passes = {
 				{
-					content_id = "button_hotspot",
 					pass_type = "hotspot",
+					content_id = "button_hotspot"
 				},
 				{
-					pass_type = "texture",
-					style_id = "portrait",
 					texture_id = "portrait",
+					style_id = "portrait",
+					pass_type = "texture"
 				},
 				{
-					pass_type = "texture",
+					texture_id = "lock_texture",
 					style_id = "lock_texture",
-					texture_id = "lock_texture",
-					content_check_function = function (content)
-						return content.locked
-					end,
+					pass_type = "texture",
+					content_check_function = function(arg_7_0)
+						return arg_7_0.locked
+					end
 				},
 				{
-					pass_type = "texture",
+					texture_id = "lock_texture",
 					style_id = "lock_texture_shadow",
-					texture_id = "lock_texture",
-					content_check_function = function (content)
-						return content.locked
-					end,
+					pass_type = "texture",
+					content_check_function = function(arg_8_0)
+						return arg_8_0.locked
+					end
 				},
 				{
-					pass_type = "texture",
+					texture_id = "selected_texture",
 					style_id = "local_player_selected_texture",
-					texture_id = "selected_texture",
+					pass_type = "texture"
 				},
 				{
-					pass_type = "texture",
+					texture_id = "selected_texture",
 					style_id = "other_player_selected_texture",
-					texture_id = "selected_texture",
+					pass_type = "texture"
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "frame_passive",
 					texture_id = "frame_passive",
-					content_check_function = function (content)
-						return content.locked or content.taken or content.other_picking
-					end,
+					content_check_function = function(arg_9_0)
+						return arg_9_0.locked or arg_9_0.taken or arg_9_0.other_picking
+					end
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "frame_passive",
 					texture_id = "frame_passive",
-					content_check_function = function (content)
-						return content.locked or content.taken or content.other_picking
-					end,
+					content_check_function = function(arg_10_0)
+						return arg_10_0.locked or arg_10_0.taken or arg_10_0.other_picking
+					end
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "local_player_frame",
 					texture_id = "local_player_frame",
-					content_check_function = function (content)
-						return not content.locked and not content.taken and not content.other_picking
-					end,
+					content_check_function = function(arg_11_0)
+						return not arg_11_0.locked and not arg_11_0.taken and not arg_11_0.other_picking
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "other_hover",
 					texture_id = "other_hover",
-					content_check_function = function (content)
-						return content.hovered_by_other and not content.button_hotspot.is_hover
-					end,
+					content_check_function = function(arg_12_0)
+						return arg_12_0.hovered_by_other and not arg_12_0.button_hotspot.is_hover
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "local_player_select_frame",
 					texture_id = "local_player_select_frame",
-					content_check_function = function (content)
-						return content.button_hotspot.is_hover or content.gamepad_selected
-					end,
-				},
-			},
+					content_check_function = function(arg_13_0)
+						return arg_13_0.button_hotspot.is_hover or arg_13_0.gamepad_selected
+					end
+				}
+			}
 		},
 		content = {
-			gamepad_selected = false,
+			portrait = "icons_placeholder",
 			hovered_by_other = false,
-			local_player_select_frame = "versus_hero_selection_frame",
+			selected_texture = "versus_hero_selection_hero_selected_effect",
 			lock_texture = "hero_icon_locked_gold",
 			other_hover = "versus_hero_selection_frame",
-			other_picking = true,
-			portrait = "icons_placeholder",
-			selected_texture = "versus_hero_selection_hero_selected_effect",
-			taken = false,
 			taken_id = 1,
+			other_picking = true,
+			gamepad_selected = false,
+			taken = false,
+			local_player_select_frame = "versus_hero_selection_frame",
 			button_hotspot = {},
-			local_player_frame = frame_settings.texture,
-			frame_passive = shadow_frame_settings.texture,
-			size = size,
+			local_player_frame = var_6_1.texture,
+			frame_passive = var_6_4.texture,
+			size = arg_6_1
 		},
 		style = {
 			portrait = {
-				size = size,
-				default_size = size,
+				size = arg_6_1,
+				default_size = arg_6_1,
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					1,
+					1
 				},
 				default_offset = {
 					0,
 					0,
-					1,
-				},
+					1
+				}
 			},
 			lock_texture = {
-				horizontal_alignment = "left",
 				vertical_alignment = "bottom",
+				horizontal_alignment = "left",
 				texture_size = {
 					50,
-					57,
+					57
 				},
 				default_size = {
 					50,
-					57,
+					57
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					(size[1] - 50) / 2,
-					(size[2] - 57) / 2,
-					5,
+					(arg_6_1[1] - 50) / 2,
+					(arg_6_1[2] - 57) / 2,
+					5
 				},
 				default_offset = {
-					(size[1] - 50) / 2,
-					(size[2] - 57) / 2,
-					5,
-				},
+					(arg_6_1[1] - 50) / 2,
+					(arg_6_1[2] - 57) / 2,
+					5
+				}
 			},
 			lock_texture_shadow = {
-				horizontal_alignment = "left",
 				vertical_alignment = "bottom",
+				horizontal_alignment = "left",
 				texture_size = {
 					50,
-					57,
+					57
 				},
 				default_size = {
 					50,
-					57,
+					57
 				},
 				color = {
 					255,
 					0,
 					0,
-					0,
+					0
 				},
 				offset = {
-					(size[1] - 50) / 2 + 2,
-					(size[2] - 57) / 2 - 2,
-					4,
+					(arg_6_1[1] - 50) / 2 + 2,
+					(arg_6_1[2] - 57) / 2 - 2,
+					4
 				},
 				default_offset = {
-					(size[1] - 50) / 2 + 2,
-					(size[2] - 57) / 2 - 2,
-					4,
-				},
+					(arg_6_1[1] - 50) / 2 + 2,
+					(arg_6_1[2] - 57) / 2 - 2,
+					4
+				}
 			},
 			local_player_selected_texture = {
-				horizontal_alignment = "left",
 				vertical_alignment = "bottom",
+				horizontal_alignment = "left",
 				texture_size = {
-					size[1],
-					size[2] - 2,
+					arg_6_1[1],
+					arg_6_1[2] - 2
 				},
 				default_size = {
-					size[1],
-					size[2] - 2,
+					arg_6_1[1],
+					arg_6_1[2] - 2
 				},
 				color = Colors.get_color_table_with_alpha("local_player_picking", 255),
 				offset = {
 					0,
 					0,
-					2,
+					2
 				},
 				default_offset = {
 					0,
 					0,
-					2,
-				},
+					2
+				}
 			},
 			other_player_selected_texture = {
-				horizontal_alignment = "left",
 				vertical_alignment = "bottom",
+				horizontal_alignment = "left",
 				texture_size = {
-					size[1],
-					size[2] - 2,
+					arg_6_1[1],
+					arg_6_1[2] - 2
 				},
 				default_size = {
-					size[1],
-					size[2] - 2,
+					arg_6_1[1],
+					arg_6_1[2] - 2
 				},
 				color = Colors.get_color_table_with_alpha("other_player_picking", 255),
 				offset = {
 					0,
 					0,
-					2,
+					2
 				},
 				default_offset = {
 					0,
 					0,
-					2,
-				},
+					2
+				}
 			},
 			local_player_frame = {
 				size = {
-					size[1] - 2,
-					size[2] - 2,
+					arg_6_1[1] - 2,
+					arg_6_1[2] - 2
 				},
 				default_size = {
-					size[1] - 2,
-					size[2] - 2,
+					arg_6_1[1] - 2,
+					arg_6_1[2] - 2
 				},
-				texture_size = frame_settings.texture_size,
-				texture_sizes = frame_settings.texture_sizes,
+				texture_size = var_6_1.texture_size,
+				texture_sizes = var_6_1.texture_sizes,
 				frame_margins = {
-					-frame_width,
-					-frame_width,
+					-var_6_2,
+					-var_6_2
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					4,
+					4
 				},
 				default_offset = {
 					0,
 					0,
-					4,
-				},
+					4
+				}
 			},
 			frame_passive = {
-				size = size,
-				default_size = size,
-				texture_size = shadow_frame_settings.texture_size,
-				texture_sizes = shadow_frame_settings.texture_sizes,
+				size = arg_6_1,
+				default_size = arg_6_1,
+				texture_size = var_6_4.texture_size,
+				texture_sizes = var_6_4.texture_sizes,
 				frame_margins = {
-					-shadow_frame_width,
-					-shadow_frame_width,
+					-var_6_5,
+					-var_6_5
 				},
 				color = {
 					255,
 					0,
 					0,
-					0,
+					0
 				},
 				offset = {
 					0,
 					0,
-					4,
+					4
 				},
 				default_offset = {
 					0,
 					0,
-					4,
-				},
+					4
+				}
 			},
 			local_player_select_frame = {
-				horizontal_alignment = "left",
 				vertical_alignment = "bottom",
+				horizontal_alignment = "left",
 				texture_size = {
-					size[1] + 16,
-					size[2] + 20,
+					arg_6_1[1] + 16,
+					arg_6_1[2] + 20
 				},
 				default_size = {
-					size[1] + 16,
-					size[2] + 20,
+					arg_6_1[1] + 16,
+					arg_6_1[2] + 20
 				},
 				color = Colors.get_color_table_with_alpha("local_player_picking", 255),
 				offset = {
 					-9,
 					-10,
-					21,
+					21
 				},
 				default_offset = {
 					-10,
 					-10,
-					21,
-				},
+					21
+				}
 			},
 			other_hover = {
-				horizontal_alignment = "left",
 				vertical_alignment = "bottom",
+				horizontal_alignment = "left",
 				texture_size = {
-					size[1] + 16,
-					size[2] + 20,
+					arg_6_1[1] + 16,
+					arg_6_1[2] + 20
 				},
 				default_size = {
-					size[1] + 16,
-					size[2] + 20,
+					arg_6_1[1] + 16,
+					arg_6_1[2] + 20
 				},
 				color = Colors.get_color_table_with_alpha("other_player_picking", 255),
 				offset = {
 					-9,
 					-10,
-					21,
+					21
 				},
 				default_offset = {
 					-10,
 					-10,
-					21,
-				},
-			},
+					21
+				}
+			}
 		},
 		offset = {
 			0,
 			0,
-			0,
+			0
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_6_0
 	}
 end
 
-local function create_hero_roster_detail_widget(scenegraph_id)
-	local widget = {
+local function var_0_11(arg_14_0)
+	return {
 		element = {
 			passes = {
 				{
 					pass_type = "texture",
 					style_id = "detail_texture",
-					texture_id = "detail_texture",
+					texture_id = "detail_texture"
 				},
 				{
-					pass_type = "text",
 					style_id = "hero_name",
+					pass_type = "text",
 					text_id = "hero_name",
-					content_change_function = function (content, style)
-						if content.taken then
-							style.text_color = {
+					content_change_function = function(arg_15_0, arg_15_1)
+						if arg_15_0.taken then
+							arg_15_1.text_color = {
 								255,
 								76,
 								35,
-								14,
+								14
 							}
 						end
-					end,
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "available_text",
+					pass_type = "text",
 					text_id = "available_text",
-					content_check_function = function (content)
-						return content.side == "dark_pact"
-					end,
-				},
-			},
+					content_check_function = function(arg_16_0)
+						return arg_16_0.side == "dark_pact"
+					end
+				}
+			}
 		},
 		content = {
 			available_text = "-/-",
-			detail_texture = "versus_hero_selection_divider",
-			enemy_role = "-",
-			hero_name = "HERO",
 			side = "heroes",
+			detail_texture = "versus_hero_selection_divider",
+			hero_name = "HERO",
 			taken = false,
+			enemy_role = "-"
 		},
 		style = {
 			detail_texture = {
-				horizontal_alignment = "center",
 				vertical_alignment = "bottom",
+				horizontal_alignment = "center",
 				texture_size = {
 					256,
-					28.8,
+					28.8
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					1,
-				},
+					1
+				}
 			},
 			hero_name = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
 				dynamic_font_size_word_wrap = true,
 				font_size = 25,
-				font_type = "hell_shark_header",
 				horizontal_alignment = "center",
-				localize = false,
-				upper_case = true,
-				use_shadow = true,
 				vertical_alignment = "bottom",
-				word_wrap = true,
+				use_shadow = true,
+				font_type = "hell_shark_header",
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					0,
 					-30,
-					2,
+					2
 				},
 				shadow_offset = {
 					1,
 					1,
-					0,
-				},
+					0
+				}
 			},
 			available_text = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
 				dynamic_font_size_word_wrap = true,
 				font_size = 25,
-				font_type = "hell_shark_header",
 				horizontal_alignment = "center",
-				localize = false,
-				upper_case = true,
-				use_shadow = true,
 				vertical_alignment = "bottom",
-				word_wrap = true,
+				use_shadow = true,
+				font_type = "hell_shark_header",
 				text_color = Colors.get_color_table_with_alpha("green", 255),
 				offset = {
 					100,
 					-30,
-					3,
+					3
 				},
 				shadow_offset = {
 					1,
 					1,
-					0,
-				},
-			},
+					0
+				}
+			}
 		},
 		offset = {
 			0,
 			-25,
-			100,
+			100
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_14_0
 	}
-
-	return widget
 end
 
-local function create_hero_roster_widget_defitions()
-	local roster_hero_widgets = {}
-	local hero_groups = {
+local function var_0_12()
+	local var_17_0 = {}
+	local var_17_1 = {
 		4,
 		4,
 		4,
 		4,
-		4,
+		4
 	}
-	local hero_roster_detail_widgets = {}
+	local var_17_2 = {}
 
-	for i = 1, #hero_groups do
-		local num_careers = hero_groups[i]
-		local parent_group = "hero_group_" .. i
-		local parent = scenegraph_definition[parent_group]
-		local border_wid = 10
-		local group_wid = parent.size[1] - border_wid / 2
+	for iter_17_0 = 1, #var_17_1 do
+		local var_17_3 = var_17_1[iter_17_0]
+		local var_17_4 = "hero_group_" .. iter_17_0
+		local var_17_5 = var_0_8[var_17_4]
+		local var_17_6 = 10
+		local var_17_7 = var_17_5.size[1] - var_17_6 / 2
 
-		roster_hero_widgets[i] = {}
+		var_17_0[iter_17_0] = {}
+		var_17_2[iter_17_0] = var_0_11("hero_group_" .. iter_17_0)
 
-		local detail_widget = create_hero_roster_detail_widget("hero_group_" .. i)
+		for iter_17_1 = 1, var_17_3 do
+			local var_17_8 = "hero_root_" .. iter_17_0 .. "_" .. iter_17_1
 
-		hero_roster_detail_widgets[i] = detail_widget
-
-		for j = 1, num_careers do
-			local name = "hero_root_" .. i .. "_" .. j
-
-			scenegraph_definition[name] = {
-				horizontal_alignment = "left",
+			var_0_8[var_17_8] = {
 				vertical_alignment = "center",
-				parent = parent_group,
+				horizontal_alignment = "left",
+				parent = var_17_4,
 				size = {
 					70,
-					80,
+					80
 				},
 				position = {
-					0 + (j - 1) * 77,
+					0 + (iter_17_1 - 1) * 77,
 					0,
-					1,
-				},
+					1
+				}
 			}
-			roster_hero_widgets[i][j] = create_roster_hero_widget(name, hero_portrait_size)
+			var_17_0[iter_17_0][iter_17_1] = var_0_10(var_17_8, var_0_5)
 		end
 	end
 
-	return roster_hero_widgets, hero_roster_detail_widgets
+	return var_17_0, var_17_2
 end
 
-local function create_player_box_widget(scenegraph_id, offset, size)
-	local size = size or scenegraph_definition[scenegraph_id].size
-	local offset = offset or {
+local function var_0_13(arg_18_0, arg_18_1, arg_18_2)
+	local var_18_0 = arg_18_2 or var_0_8[arg_18_0].size
+	local var_18_1 = arg_18_1 or {
 		0,
 		0,
-		11,
+		11
 	}
-	local frame_style = "menu_frame_12"
-	local frame_settings = UIFrameSettings[frame_style]
-	local frame_width = frame_settings.texture_sizes.horizontal[2]
-	local mute_button_frame_settings = UIFrameSettings.button_frame_02
-	local widget = {
+	local var_18_2 = "menu_frame_12"
+	local var_18_3 = UIFrameSettings[var_18_2]
+	local var_18_4 = var_18_3.texture_sizes.horizontal[2]
+	local var_18_5 = UIFrameSettings.button_frame_02
+
+	return {
 		element = {
 			passes = {
 				{
 					pass_type = "tiled_texture",
 					style_id = "background",
-					texture_id = "background",
+					texture_id = "background"
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "frame",
-					texture_id = "frame",
+					texture_id = "frame"
 				},
 				{
-					pass_type = "text",
 					style_id = "player_name",
-					text_id = "player_name",
+					pass_type = "text",
+					text_id = "player_name"
 				},
 				{
 					pass_type = "texture",
 					style_id = "mute_background_fade",
 					texture_id = "mute_background_fade",
-					content_check_function = function (content)
-						local is_player = content.is_player
+					content_check_function = function(arg_19_0)
+						local var_19_0 = arg_19_0.is_player
 
-						return content.is_player and not content.is_local_player
-					end,
+						return arg_19_0.is_player and not arg_19_0.is_local_player
+					end
 				},
 				{
-					pass_type = "texture_frame",
-					style_id = "mute_button_frame",
 					texture_id = "mute_button_frame",
-					content_check_function = function (content)
-						local is_player = content.is_player
+					style_id = "mute_button_frame",
+					pass_type = "texture_frame",
+					content_check_function = function(arg_20_0)
+						local var_20_0 = arg_20_0.is_player
 
-						return content.is_player and not content.is_local_player
-					end,
+						return arg_20_0.is_player and not arg_20_0.is_local_player
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "mute_icon",
 					texture_id = "mute_icon",
-					content_check_function = function (content)
-						local is_player = content.is_player
+					content_check_function = function(arg_21_0)
+						local var_21_0 = arg_21_0.is_player
 
-						return content.is_player and not content.is_local_player
-					end,
+						return arg_21_0.is_player and not arg_21_0.is_local_player
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "mute_icon_hovered",
 					texture_id = "mute_icon",
-					content_check_function = function (content)
-						return content.is_player and not content.is_local_player and content.hotspot.is_hover
-					end,
+					content_check_function = function(arg_22_0)
+						return arg_22_0.is_player and not arg_22_0.is_local_player and arg_22_0.hotspot.is_hover
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "mute_icon_muted",
 					texture_id = "mute_icon_muted",
-					content_check_function = function (content)
-						return content.is_player and not content.is_local_player and content.muted
-					end,
+					content_check_function = function(arg_23_0)
+						return arg_23_0.is_player and not arg_23_0.is_local_player and arg_23_0.muted
+					end
 				},
 				{
-					content_id = "hotspot",
-					pass_type = "hotspot",
 					style_id = "mute_icon",
-					content_check_function = function (content)
-						return content.parent.is_player and not content.parent.is_local_player
-					end,
-				},
-			},
+					pass_type = "hotspot",
+					content_id = "hotspot",
+					content_check_function = function(arg_24_0)
+						return arg_24_0.parent.is_player and not arg_24_0.parent.is_local_player
+					end
+				}
+			}
 		},
 		content = {
-			background = "item_tooltip_background",
-			is_local_player = false,
-			is_player = false,
-			mute_background_fade = "button_bg_fade",
-			mute_icon = "tab_menu_icon_01",
 			mute_icon_muted = "tab_menu_icon_03",
-			muted = false,
 			player_name = "BOT",
-			mute_button_frame = mute_button_frame_settings.texture,
-			frame = frame_settings.texture,
-			hotspot = {},
+			mute_background_fade = "button_bg_fade",
+			is_player = false,
+			muted = false,
+			is_local_player = false,
+			background = "item_tooltip_background",
+			mute_icon = "tab_menu_icon_01",
+			mute_button_frame = var_18_5.texture,
+			frame = var_18_3.texture,
+			hotspot = {}
 		},
 		style = {
 			background = {
-				horizontal_alignment = "center",
-				masked = true,
 				vertical_alignment = "center",
-				texture_size = player_name_box_size,
+				masked = true,
+				horizontal_alignment = "center",
+				texture_size = var_0_4,
 				texture_tiling_size = {
 					256,
-					256,
+					256
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					1,
-				},
+					1
+				}
 			},
 			frame = {
 				size = {
-					size[1] - 6,
-					size[2] - 6,
+					var_18_0[1] - 6,
+					var_18_0[2] - 6
 				},
-				default_size = size,
-				texture_size = frame_settings.texture_size,
-				texture_sizes = frame_settings.texture_sizes,
+				default_size = var_18_0,
+				texture_size = var_18_3.texture_size,
+				texture_sizes = var_18_3.texture_sizes,
 				frame_margins = {
-					-frame_width - 2,
-					-frame_width - 2,
+					-var_18_4 - 2,
+					-var_18_4 - 2
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					3,
 					3,
-					4,
+					4
 				},
 				default_offset = {
 					3,
 					3,
-					4,
-				},
+					4
+				}
 			},
 			player_name = {
+				word_wrap = true,
+				upper_case = false,
+				localize = false,
 				dynamic_font_size_word_wrap = true,
 				font_size = 25,
-				font_type = "hell_shark",
 				horizontal_alignment = "center",
-				localize = false,
-				upper_case = false,
-				use_shadow = true,
 				vertical_alignment = "center",
-				word_wrap = true,
+				use_shadow = true,
+				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					0,
 					0,
-					8,
+					8
 				},
 				shadow_offset = {
 					1,
 					1,
-					0,
-				},
+					0
+				}
 			},
 			mute_background_fade = {
 				size = {
 					42,
-					42,
+					42
 				},
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
-					scenegraph_definition[scenegraph_id].size[1] - 57,
+					var_0_8[arg_18_0].size[1] - 57,
 					3,
-					8,
-				},
+					8
+				}
 			},
 			mute_button_frame = {
 				size = {
 					42,
-					42,
+					42
 				},
-				texture_size = mute_button_frame_settings.texture_size,
-				texture_sizes = mute_button_frame_settings.texture_sizes,
+				texture_size = var_18_5.texture_size,
+				texture_sizes = var_18_5.texture_sizes,
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
-					scenegraph_definition[scenegraph_id].size[1] - 57,
+					var_0_8[arg_18_0].size[1] - 57,
 					3,
-					8,
-				},
+					8
+				}
 			},
 			mute_icon = {
 				size = {
 					38,
-					38,
+					38
 				},
 				color = Colors.get_color_table_with_alpha("white", 200),
 				offset = {
-					scenegraph_definition[scenegraph_id].size[1] - 55,
+					var_0_8[arg_18_0].size[1] - 55,
 					5,
-					8,
-				},
+					8
+				}
 			},
 			mute_icon_hovered = {
 				size = {
 					38,
-					38,
+					38
 				},
 				color = Colors.get_color_table_with_alpha("white", 250),
 				offset = {
-					scenegraph_definition[scenegraph_id].size[1] - 55,
+					var_0_8[arg_18_0].size[1] - 55,
 					5,
-					9,
-				},
+					9
+				}
 			},
 			mute_icon_muted = {
 				size = {
 					38,
-					38,
+					38
 				},
 				color = Colors.get_color_table_with_alpha("red", 250),
 				offset = {
-					scenegraph_definition[scenegraph_id].size[1] - 55,
+					var_0_8[arg_18_0].size[1] - 55,
 					5,
-					10,
-				},
-			},
+					10
+				}
+			}
 		},
-		scenegraph_id = scenegraph_id,
-		offset = offset,
+		scenegraph_id = arg_18_0,
+		offset = var_18_1
 	}
-
-	return widget
 end
 
-local box_size = {
+local var_0_14 = {
 	480,
-	80,
+	80
 }
 
-local function create_player_name_box_widgets()
-	local name_box_widgets = {}
-	local num_players = 4
+local function var_0_15()
+	local var_25_0 = {}
+	local var_25_1 = 4
 
-	for i = 1, num_players do
-		local name = "player_name_box_" .. i
-		local widget_def = create_player_box_widget(name)
+	for iter_25_0 = 1, var_25_1 do
+		local var_25_2 = "player_name_box_" .. iter_25_0
+		local var_25_3 = var_0_13(var_25_2)
 
-		name_box_widgets[#name_box_widgets + 1] = widget_def
+		var_25_0[#var_25_0 + 1] = var_25_3
 	end
 
-	return name_box_widgets
+	return var_25_0
 end
 
-local function create_your_turn_text_widget(scenegraph_id)
-	local widget = {
+local function var_0_16(arg_26_0)
+	return {
 		element = {
 			passes = {
 				{
-					pass_type = "text",
 					style_id = "text",
-					text_id = "text",
+					pass_type = "text",
+					text_id = "text"
 				},
 				{
-					pass_type = "texture",
 					style_id = "arrow_texture",
 					texture_id = "arrow_texture",
-					content_change_function = function (content, style)
-						style.color[1] = 165 + 95 * math.sin(Managers.time:time("ui") * 5) * 0.75
-					end,
-				},
-			},
+					pass_type = "texture",
+					content_change_function = function(arg_27_0, arg_27_1)
+						arg_27_1.color[1] = 165 + 95 * math.sin(Managers.time:time("ui") * 5) * 0.75
+					end
+				}
+			}
 		},
 		content = {
-			arrow_texture = "turn_arrow",
 			text = "versus_hero_selection_view_you",
+			arrow_texture = "turn_arrow"
 		},
 		style = {
 			text = {
 				font_size = 120,
-				font_type = "hell_shark_header",
-				horizontal_alignment = "center",
-				localize = true,
 				upper_case = true,
+				localize = true,
+				word_wrap = false,
+				horizontal_alignment = "center",
 				use_shadow = true,
 				vertical_alignment = "center",
-				word_wrap = false,
+				font_type = "hell_shark_header",
 				size = {
 					100,
-					100,
+					100
 				},
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					0,
 					40,
-					2,
+					2
 				},
 				shadow_offset = {
 					1,
 					1,
-					0,
-				},
+					0
+				}
 			},
 			arrow_texture = {
 				size = {
 					83.2,
-					26.650000000000002,
+					26.650000000000002
 				},
 				color = Colors.get_color_table_with_alpha("local_player_picking", 255),
 				offset = {
 					0,
 					25,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
 		offset = {
-			player_name_box_size[1] * 0.5 - 50,
+			var_0_4[1] * 0.5 - 50,
 			30,
-			50,
+			50
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_26_0
 	}
-
-	return widget
 end
 
-local function create_skill_info_widget(scenegraph_id, skill_type, skill_icon, skill_name)
-	local skill_icon = skill_icon or "icons_placeholder"
-	local skill_type = skill_type or "n/a"
-	local skill_name = skill_name or "n/a"
-	local widget = {
+local function var_0_17(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+	local var_28_0 = arg_28_2 or "icons_placeholder"
+	local var_28_1 = arg_28_1 or "n/a"
+	local var_28_2 = arg_28_3 or "n/a"
+
+	return {
 		element = {
 			passes = {
 				{
 					pass_type = "texture",
 					style_id = "skill_icon",
-					texture_id = "skill_icon",
+					texture_id = "skill_icon"
 				},
 				{
 					pass_type = "texture",
 					style_id = "icon_frame",
-					texture_id = "icon_frame",
+					texture_id = "icon_frame"
 				},
 				{
-					pass_type = "text",
 					style_id = "skill_type",
-					text_id = "skill_type",
+					pass_type = "text",
+					text_id = "skill_type"
 				},
 				{
-					pass_type = "text",
 					style_id = "skill_name",
-					text_id = "skill_name",
-				},
-			},
+					pass_type = "text",
+					text_id = "skill_name"
+				}
+			}
 		},
 		content = {
 			icon_frame = "icon_talent_frame",
-			skill_icon = skill_icon,
-			skill_type = skill_type,
-			skill_name = skill_name,
+			skill_icon = var_28_0,
+			skill_type = var_28_1,
+			skill_name = var_28_2
 		},
 		style = {
 			skill_icon = {
 				size = {
 					64,
-					64,
+					64
 				},
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					0,
 					-32,
-					5,
-				},
+					5
+				}
 			},
 			icon_frame = {
 				size = {
 					64,
-					64,
+					64
 				},
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					0,
 					-32,
-					6,
-				},
+					6
+				}
 			},
 			skill_type = {
+				word_wrap = false,
 				font_size = 20,
-				font_type = "hell_shark",
-				horizontal_alignment = "left",
 				localize = false,
 				use_shadow = true,
+				horizontal_alignment = "left",
 				vertical_alignment = "center",
-				word_wrap = false,
+				font_type = "hell_shark",
 				size = {
 					100,
-					25,
+					25
 				},
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
 					75,
 					0,
-					2,
+					2
 				},
 				shadow_offset = {
 					1,
 					1,
-					0,
-				},
+					0
+				}
 			},
 			skill_name = {
+				word_wrap = false,
 				font_size = 24,
-				font_type = "hell_shark",
-				horizontal_alignment = "left",
 				localize = false,
 				use_shadow = true,
+				horizontal_alignment = "left",
 				vertical_alignment = "center",
-				word_wrap = false,
+				font_type = "hell_shark",
 				size = {
 					100,
-					25,
+					25
 				},
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
 					75,
 					-24,
-					2,
+					2
 				},
 				shadow_offset = {
 					1,
 					1,
-					0,
-				},
-			},
+					0
+				}
+			}
 		},
 		offset = {
 			0,
 			0,
-			10,
+			10
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_28_0
 	}
-
-	return widget
 end
 
 generic_input_actions = {
 	default = {
 		actions = {
 			{
-				description_text = "input_description_navigate",
-				ignore_keybinding = true,
 				input_action = "d_horizontal",
 				priority = 1,
+				description_text = "input_description_navigate",
+				ignore_keybinding = true
 			},
 			{
-				description_text = "input_description_select_character",
 				input_action = "confirm",
 				priority = 2,
+				description_text = "input_description_select_character"
 			},
 			{
-				description_text = "input_description_next_hero",
 				input_action = "cycle_next",
 				priority = 3,
+				description_text = "input_description_next_hero"
 			},
 			{
-				description_text = "input_description_previous_hero",
 				input_action = "cycle_previous",
 				priority = 4,
-			},
-		},
-	},
+				description_text = "input_description_previous_hero"
+			}
+		}
+	}
 }
 
-local animation_definitions = {
+local var_0_18 = {
 	on_enter = {
 		{
-			end_progress = 0.3,
 			name = "fade_in",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 0
+			end_progress = 0.3,
+			init = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+				arg_29_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+				local var_30_0 = math.easeOutCubic(arg_30_3)
 
-				params.render_settings.alpha_multiplier = anim_progress
+				arg_30_4.render_settings.alpha_multiplier = var_30_0
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 				return
-			end,
-		},
+			end
+		}
 	},
 	on_exit = {
 		{
-			end_progress = 1,
 			name = "fade_out",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 1
+			end_progress = 1,
+			init = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+				arg_32_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
+				local var_33_0 = math.easeOutCubic(arg_33_3)
 
-				params.render_settings.alpha_multiplier = 1 - anim_progress
+				arg_33_4.render_settings.alpha_multiplier = 1 - var_33_0
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 				return
-			end,
-		},
+			end
+		}
 	},
 	transition_to_selection = {
 		{
-			end_progress = 0.4,
 			name = "fade_out_startup",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			end_progress = 0.4,
+			init = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
 				return
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local self = params.self
-				local widgets_by_name = self._widgets_by_name
-				local countdown_timer = widgets_by_name.countdown_timer
-				local your_turn_indicator = widgets_by_name.your_turn_indicator_text
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+				local var_36_0 = arg_36_4.self._widgets_by_name
+				local var_36_1 = var_36_0.countdown_timer
+				local var_36_2 = var_36_0.your_turn_indicator_text
+				local var_36_3 = math.easeOutCubic(arg_36_3)
 
-				countdown_timer.alpha_multiplier = 1 - anim_progress
-
-				local your_turn_indicator_style = your_turn_indicator.style
-
-				your_turn_indicator_style.text.text_color[1] = 255 * (1 - anim_progress)
+				var_36_1.alpha_multiplier = 1 - var_36_3
+				var_36_2.style.text.text_color[1] = 255 * (1 - var_36_3)
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
 				return
-			end,
+			end
 		},
 		{
-			end_progress = 0.4,
 			name = "fade_in_top_details",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			end_progress = 0.4,
+			init = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 				return
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local self = params.self
-				local top_detail_widgets = self._top_detail_widgets
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+				local var_39_0 = arg_39_4.self._top_detail_widgets
+				local var_39_1 = math.easeOutCubic(arg_39_3)
 
-				for _, widget in ipairs(top_detail_widgets) do
-					widget.alpha_multiplier = anim_progress
+				for iter_39_0, iter_39_1 in ipairs(var_39_0) do
+					iter_39_1.alpha_multiplier = var_39_1
 				end
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
 				return
-			end,
-		},
+			end
+		}
 	},
 	transition_to_team_parading = {
 		{
-			end_progress = 0.4,
 			name = "fade_out_hero_selection",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			end_progress = 0.4,
+			init = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 				return
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local self = params.self
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
+				local var_42_0 = arg_42_4.self
+				local var_42_1 = math.easeOutCubic(arg_42_3)
 
-				for _, widget in ipairs(self._other_widgets) do
-					if widget.alpha_multiplier ~= 0 then
-						widget.alpha_multiplier = 1 - anim_progress
+				for iter_42_0, iter_42_1 in ipairs(var_42_0._other_widgets) do
+					if iter_42_1.alpha_multiplier ~= 0 then
+						iter_42_1.alpha_multiplier = 1 - var_42_1
 					end
 				end
 
-				for _, widget in ipairs(self._hero_group_widgets) do
-					widget.alpha_multiplier = 1 - anim_progress
+				for iter_42_2, iter_42_3 in ipairs(var_42_0._hero_group_widgets) do
+					iter_42_3.alpha_multiplier = 1 - var_42_1
 				end
 
-				for _, widget in ipairs(self._hero_group_detail_widgets) do
-					widget.alpha_multiplier = 1 - anim_progress
+				for iter_42_4, iter_42_5 in ipairs(var_42_0._hero_group_detail_widgets) do
+					iter_42_5.alpha_multiplier = 1 - var_42_1
 				end
 
-				for _, widget in ipairs(self._player_name_box_widgets) do
-					widget.alpha_multiplier = 1 - anim_progress
+				for iter_42_6, iter_42_7 in ipairs(var_42_0._player_name_box_widgets) do
+					iter_42_7.alpha_multiplier = 1 - var_42_1
 				end
 
-				for _, widget in ipairs(self._top_detail_widgets) do
-					widget.alpha_multiplier = 1 - anim_progress
+				for iter_42_8, iter_42_9 in ipairs(var_42_0._top_detail_widgets) do
+					iter_42_9.alpha_multiplier = 1 - var_42_1
 				end
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 				return
-			end,
-		},
+			end
+		}
 	},
 	name_box_fade_to_black = {
 		{
-			end_progress = 0.3,
 			name = "fade_to_black",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widget, params)
+			end_progress = 0.3,
+			init = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 				return
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
-				local new_value = 155 + 100 * (1 - anim_progress)
-				local style = widget.style.background
+			update = function(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
+				local var_45_0 = 155 + 100 * (1 - math.easeOutCubic(arg_45_3))
 
-				style.color = {
+				arg_45_2.style.background.color = {
 					255,
-					new_value,
-					new_value,
-					new_value,
+					var_45_0,
+					var_45_0,
+					var_45_0
 				}
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
+			on_complete = function(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
 				return
-			end,
-		},
+			end
+		}
 	},
 	name_box_fade_to_gray = {
 		{
-			end_progress = 0.3,
 			name = "fade_to_gray",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widget, params)
+			end_progress = 0.3,
+			init = function(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
 				return
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
-				local new_value = 255 * anim_progress
-				local style = widget.style.background
+			update = function(arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4)
+				local var_48_0 = 255 * math.easeOutCubic(arg_48_3)
 
-				style.color = {
+				arg_48_2.style.background.color = {
 					255,
-					new_value,
-					new_value,
-					new_value,
+					var_48_0,
+					var_48_0,
+					var_48_0
 				}
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
+			on_complete = function(arg_49_0, arg_49_1, arg_49_2, arg_49_3)
 				return
-			end,
-		},
-	},
+			end
+		}
+	}
 }
-local selected_career_title_style = {
+local var_0_19 = {
+	word_wrap = true,
+	upper_case = true,
+	localize = false,
 	dynamic_font_size_word_wrap = true,
 	font_size = 160,
-	font_type = "hell_shark_header",
 	horizontal_alignment = "left",
-	localize = false,
-	upper_case = true,
-	use_shadow = true,
 	vertical_alignment = "top",
-	word_wrap = true,
+	use_shadow = true,
+	font_type = "hell_shark_header",
 	text_color = {
 		50,
 		255,
 		255,
-		255,
+		255
 	},
 	offset = {
 		0,
 		0,
-		2,
+		2
 	},
 	shadow_offset = {
 		1,
 		1,
-		0,
-	},
+		0
+	}
 }
-local countdown_timer_style = {
-	font_size = 400,
-	font_type = "hell_shark_header",
-	horizontal_alignment = "center",
-	localize = false,
-	upper_case = true,
-	use_shadow = true,
-	vertical_alignment = "center",
+local var_0_20 = {
 	word_wrap = true,
+	upper_case = true,
+	localize = false,
+	font_size = 400,
+	use_shadow = true,
+	horizontal_alignment = "center",
+	vertical_alignment = "center",
+	font_type = "hell_shark_header",
 	text_color = Colors.get_color_table_with_alpha("white", 255),
 	offset = {
 		0,
 		0,
-		2,
+		2
 	},
 	shadow_offset = {
 		1,
 		1,
-		0,
-	},
+		0
+	}
 }
-local selected_hero_title_style = {
-	dynamic_font_size_word_wrap = true,
-	font_size = 70,
-	font_type = "hell_shark_header",
-	horizontal_alignment = "left",
-	localize = false,
-	use_shadow = true,
-	vertical_alignment = "top",
+local var_0_21 = {
 	word_wrap = true,
+	font_size = 70,
+	localize = false,
+	dynamic_font_size_word_wrap = true,
+	use_shadow = true,
+	horizontal_alignment = "left",
+	vertical_alignment = "top",
+	font_type = "hell_shark_header",
 	text_color = {
 		50,
 		180,
 		180,
-		180,
+		180
 	},
 	offset = {
 		0,
 		0,
-		2,
+		2
 	},
 	shadow_offset = {
 		1,
 		1,
-		0,
-	},
+		0
+	}
 }
-local team_text_style = {
-	font_size = 45,
-	font_type = "hell_shark_header",
+local var_0_22 = {
+	word_wrap = true,
 	horizontal_alignment = "center",
 	localize = false,
+	font_size = 45,
 	use_shadow = true,
 	vertical_alignment = "top",
-	word_wrap = true,
+	font_type = "hell_shark_header",
 	text_color = Colors.get_color_table_with_alpha("local_player_team_lighter", 255),
 	offset = {
 		0,
 		0,
-		1,
+		1
 	},
 	shadow_offset = {
 		1,
 		1,
-		0,
-	},
+		0
+	}
 }
-local objective_text_style = {
-	font_size = 30,
-	font_type = "hell_shark",
+local var_0_23 = {
+	word_wrap = true,
 	horizontal_alignment = "center",
 	localize = false,
+	font_size = 30,
 	use_shadow = true,
 	vertical_alignment = "bottom",
-	word_wrap = true,
+	font_type = "hell_shark",
 	text_color = {
 		255,
 		255,
 		255,
-		255,
+		255
 	},
 	offset = {
 		0,
 		0,
-		1,
+		1
 	},
 	shadow_offset = {
 		1,
 		1,
-		0,
-	},
+		0
+	}
 }
-local player_picking_text_style = {
+local var_0_24 = {
+	word_wrap = false,
 	font_size = 20,
-	font_type = "hell_shark",
-	horizontal_alignment = "left",
 	localize = false,
 	use_shadow = true,
+	horizontal_alignment = "left",
 	vertical_alignment = "top",
-	word_wrap = false,
+	font_type = "hell_shark",
 	size = {
 		200,
-		25,
+		25
 	},
 	text_color = {
 		255,
 		255,
 		255,
-		255,
+		255
 	},
 	offset = {
 		0,
 		15,
-		1,
+		1
 	},
 	shadow_offset = {
 		1,
 		1,
-		0,
-	},
+		0
+	}
 }
-local hero_career_name_text_style = {
+local var_0_25 = {
+	word_wrap = false,
 	font_size = 48,
-	font_type = "hell_shark_header",
-	horizontal_alignment = "left",
 	localize = false,
 	use_shadow = true,
+	horizontal_alignment = "left",
 	vertical_alignment = "center",
-	word_wrap = false,
+	font_type = "hell_shark_header",
 	size = {
 		600,
-		60,
+		60
 	},
 	text_color = {
 		255,
 		255,
 		255,
-		255,
+		255
 	},
 	offset = {
 		0,
 		-45,
-		1,
+		1
 	},
 	shadow_offset = {
 		1,
 		1,
-		0,
-	},
+		0
+	}
 }
-local other_definitions = {
-	local_player_picking_frame = UIWidgets.create_frame("local_player_picking_frame", scenegraph_definition.local_player_picking_frame.size, "frame_inner_glow_02", nil, nil, nil, true),
+local var_0_26 = {
+	local_player_picking_frame = UIWidgets.create_frame("local_player_picking_frame", var_0_8.local_player_picking_frame.size, "frame_inner_glow_02", nil, nil, nil, true),
 	local_player_picking_frame_write_mask = UIWidgets.create_simple_texture("mask_rect_edge_fade", "local_player_picking_frame"),
 	progress_bar_edge_top = UIWidgets.create_simple_texture("menu_frame_09_divider", "progress_bar_edge_top"),
 	progress_bar_edge_bottom = UIWidgets.create_simple_texture("menu_frame_09_divider", "progress_bar_edge_bottom"),
 	progress_bar = UIWidgets.create_simple_uv_texture("picking_bar_fill_orange", {
 		{
 			0,
-			0,
+			0
 		},
 		{
 			1,
-			1,
-		},
+			1
+		}
 	}, "progress_bar"),
 	progress_bar_end_glow = UIWidgets.create_simple_texture("picking_bar_fill_highlight", "progress_bar_end_glow"),
 	progress_bar_rect = UIWidgets.create_simple_rect("progress_bar_rect", {
 		255,
 		0,
 		0,
-		0,
+		0
 	}),
-	your_turn_indicator_text = create_your_turn_text_widget("player_name_box_1"),
-	countdown_timer = UIWidgets.create_simple_text("", "countdown_timer", nil, nil, countdown_timer_style),
+	your_turn_indicator_text = var_0_16("player_name_box_1"),
+	countdown_timer = UIWidgets.create_simple_text("", "countdown_timer", nil, nil, var_0_20)
 }
-local widget_definitions = {
-	selected_career_title = UIWidgets.create_simple_text("", "selected_career_title", nil, nil, selected_career_title_style),
-	selected_hero_title = UIWidgets.create_simple_text("", "selected_hero_title", nil, nil, selected_hero_title_style),
+local var_0_27 = {
+	selected_career_title = UIWidgets.create_simple_text("", "selected_career_title", nil, nil, var_0_19),
+	selected_hero_title = UIWidgets.create_simple_text("", "selected_hero_title", nil, nil, var_0_21),
 	character_selection_bg = UIWidgets.create_simple_texture("versus_hero_selection_bottom_frame_background", "bottom_bar", nil, nil, {
 		255,
 		136,
 		136,
-		136,
+		136
 	}, {
 		0,
 		0,
-		1,
+		1
 	}),
 	character_selection_bg_fade = UIWidgets.create_simple_texture("loot_presentation_fg_02_fade", "bottom_bar", nil, nil, {
 		255,
 		255,
 		255,
-		255,
+		255
 	}, {
 		0,
 		0,
-		1,
-	}),
+		1
+	})
 }
-local parading_info_size = scenegraph_size.parading_info
-local detail_offset = {
-	parading_info_size[1] / 2 - 227,
-	parading_info_size[2] / 2 - 25,
-	1,
+local var_0_28 = var_0_7.parading_info
+local var_0_29 = {
+	var_0_28[1] / 2 - 227,
+	var_0_28[2] / 2 - 25,
+	1
 }
-local top_detail_widgets_definitions = {
-	player_picking_text = UIWidgets.create_simple_text(Localize("versus_hero_selection_view_local_player_picking"), "hero_name_text_anchor", nil, nil, player_picking_text_style),
-	hero_career_name_text = UIWidgets.create_simple_text("", "hero_name_text_anchor", nil, nil, hero_career_name_text_style),
-	passive_skill = create_skill_info_widget("hero_name_text_anchor"),
-	career_skill = create_skill_info_widget("hero_name_text_anchor"),
+local var_0_30 = {
+	player_picking_text = UIWidgets.create_simple_text(Localize("versus_hero_selection_view_local_player_picking"), "hero_name_text_anchor", nil, nil, var_0_24),
+	hero_career_name_text = UIWidgets.create_simple_text("", "hero_name_text_anchor", nil, nil, var_0_25),
+	passive_skill = var_0_17("hero_name_text_anchor"),
+	career_skill = var_0_17("hero_name_text_anchor")
 }
 
 return {
-	scenegraph_definition = scenegraph_definition,
-	widget_definitions = widget_definitions,
-	retained_mode = RETAINED_MODE,
-	create_player_name_box_widgets = create_player_name_box_widgets,
-	create_hero_roster_widget_defitions = create_hero_roster_widget_defitions,
-	create_skill_info_widget = create_skill_info_widget,
-	other_definitions = other_definitions,
-	animation_definitions = animation_definitions,
-	create_progress_marker = create_progress_marker,
+	scenegraph_definition = var_0_8,
+	widget_definitions = var_0_27,
+	retained_mode = var_0_0,
+	create_player_name_box_widgets = var_0_15,
+	create_hero_roster_widget_defitions = var_0_12,
+	create_skill_info_widget = var_0_17,
+	other_definitions = var_0_26,
+	animation_definitions = var_0_18,
+	create_progress_marker = var_0_9,
 	intro_view_settings = intro_view_settings,
-	top_detail_widgets_definitions = top_detail_widgets_definitions,
-	generic_input_actions = generic_input_actions,
+	top_detail_widgets_definitions = var_0_30,
+	generic_input_actions = generic_input_actions
 }

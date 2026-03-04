@@ -1,109 +1,107 @@
-﻿-- chunkname: @scripts/entity_system/systems/weapon/ammo_system.lua
+-- chunkname: @scripts/entity_system/systems/weapon/ammo_system.lua
 
 AmmoSystem = class(AmmoSystem, ExtensionSystemBase)
 
-local extensions = {
+local var_0_0 = {
 	"ActiveReloadAmmoUserExtension",
-	"GenericAmmoUserExtension",
+	"GenericAmmoUserExtension"
 }
-local RPCS = {
-	"rpc_give_ammo_fraction_to_owner",
+local var_0_1 = {
+	"rpc_give_ammo_fraction_to_owner"
 }
 
-AmmoSystem.init = function (self, entity_system_creation_context, system_name)
-	AmmoSystem.super.init(self, entity_system_creation_context, system_name, extensions)
+function AmmoSystem.init(arg_1_0, arg_1_1, arg_1_2)
+	AmmoSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 
-	self._world = entity_system_creation_context.world
-	self._network_event_delegate = entity_system_creation_context.network_event_delegate
+	arg_1_0._world = arg_1_1.world
+	arg_1_0._network_event_delegate = arg_1_1.network_event_delegate
 
-	self._network_event_delegate:register(self, unpack(RPCS))
+	arg_1_0._network_event_delegate:register(arg_1_0, unpack(var_0_1))
 
-	self._unit_extensions = {}
-	self._unit_extensions_by_owener = {}
+	arg_1_0._unit_extensions = {}
+	arg_1_0._unit_extensions_by_owener = {}
 end
 
-AmmoSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
-	local extension = AmmoSystem.super.on_add_extension(self, world, unit, extension_name, extension_init_data)
+function AmmoSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	local var_2_0 = AmmoSystem.super.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
-	self._unit_extensions[unit] = extension
+	arg_2_0._unit_extensions[arg_2_2] = var_2_0
 
-	local extension_owners = self._unit_extensions_by_owener[extension.owner_unit]
+	local var_2_1 = arg_2_0._unit_extensions_by_owener[var_2_0.owner_unit]
 
-	if not extension_owners then
-		self._unit_extensions_by_owener[extension.owner_unit] = {
-			extension,
+	if not var_2_1 then
+		arg_2_0._unit_extensions_by_owener[var_2_0.owner_unit] = {
+			var_2_0
 		}
 	else
-		extension_owners[#extension_owners + 1] = extension
+		var_2_1[#var_2_1 + 1] = var_2_0
 	end
 
-	return extension
+	return var_2_0
 end
 
-AmmoSystem.on_remove_extension = function (self, unit, extension_name)
-	local extension = self._unit_extensions[unit]
+function AmmoSystem.on_remove_extension(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0 = arg_3_0._unit_extensions[arg_3_1]
 
-	self._unit_extensions[unit] = nil
+	arg_3_0._unit_extensions[arg_3_1] = nil
 
-	local extension_owners = self._unit_extensions_by_owener[extension.owner_unit]
+	local var_3_1 = arg_3_0._unit_extensions_by_owener[var_3_0.owner_unit]
 
-	if extension_owners then
-		local index = table.index_of(extension_owners, extension)
+	if var_3_1 then
+		local var_3_2 = table.index_of(var_3_1, var_3_0)
 
-		if index then
-			table.swap_delete(extension_owners, index)
+		if var_3_2 then
+			table.swap_delete(var_3_1, var_3_2)
 		end
 	end
 
-	AmmoSystem.super.on_remove_extension(self, unit, extension_name)
+	AmmoSystem.super.on_remove_extension(arg_3_0, arg_3_1, arg_3_2)
 end
 
-AmmoSystem.destroy = function (self)
-	self._network_event_delegate:unregister(self)
+function AmmoSystem.destroy(arg_4_0)
+	arg_4_0._network_event_delegate:unregister(arg_4_0)
 end
 
-AmmoSystem.give_ammo_fraction_to_owner = function (self, owner_unit, fraction, to_reserve)
-	local player = Managers.player:owner(owner_unit)
+function AmmoSystem.give_ammo_fraction_to_owner(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	local var_5_0 = Managers.player:owner(arg_5_1)
 
-	if player then
-		local is_local = player and not player.remote
+	if var_5_0 then
+		if var_5_0 and not var_5_0.remote then
+			local var_5_1 = arg_5_0._unit_extensions_by_owener[arg_5_1]
 
-		if is_local then
-			local extensions = self._unit_extensions_by_owener[owner_unit]
-
-			if not extensions then
+			if not var_5_1 then
 				return
 			end
 
-			for extension_id = 1, #extensions do
-				local extension = extensions[extension_id]
+			for iter_5_0 = 1, #var_5_1 do
+				local var_5_2 = var_5_1[iter_5_0]
 
-				if extension.slot_name == "slot_ranged" then
-					local ammo_amount = math.max(math.round(extension:max_ammo() * fraction), 1)
+				if var_5_2.slot_name == "slot_ranged" then
+					local var_5_3 = math.max(math.round(var_5_2:max_ammo() * arg_5_2), 1)
 
-					if to_reserve then
-						extension:add_ammo_to_reserve(ammo_amount)
+					if arg_5_3 then
+						var_5_2:add_ammo_to_reserve(var_5_3)
 					else
-						extension:add_ammo(ammo_amount)
+						var_5_2:add_ammo(var_5_3)
 					end
 				end
 			end
 		else
-			local network_transmit = Managers.state.network.network_transmit
-			local target_peer_id = player.peer_id
-			local unit_id = Managers.state.unit_storage:go_id(owner_unit)
+			local var_5_4 = Managers.state.network.network_transmit
+			local var_5_5 = var_5_0.peer_id
+			local var_5_6 = Managers.state.unit_storage:go_id(arg_5_1)
 
-			if self.is_server then
-				network_transmit:send_rpc("rpc_give_ammo_fraction_to_owner", target_peer_id, unit_id, fraction, to_reserve)
+			if arg_5_0.is_server then
+				var_5_4:send_rpc("rpc_give_ammo_fraction_to_owner", var_5_5, var_5_6, arg_5_2, arg_5_3)
 			else
-				network_transmit:send_rpc_server("rpc_give_ammo_fraction_to_owner", unit_id, fraction, to_reserve)
+				var_5_4:send_rpc_server("rpc_give_ammo_fraction_to_owner", var_5_6, arg_5_2, arg_5_3)
 			end
 		end
 	end
 end
 
-AmmoSystem.rpc_give_ammo_fraction_to_owner = function (self, channel_id, unit_id, fraction, to_reserve)
-	local unit = Managers.state.unit_storage:unit(unit_id)
+function AmmoSystem.rpc_give_ammo_fraction_to_owner(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	local var_6_0 = Managers.state.unit_storage:unit(arg_6_2)
 
-	self:give_ammo_fraction_to_owner(unit, fraction, to_reserve)
+	arg_6_0:give_ammo_fraction_to_owner(var_6_0, arg_6_3, arg_6_4)
 end

@@ -1,199 +1,190 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/attachment/player_husk_attachment_extension.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/attachment/player_husk_attachment_extension.lua
 
 PlayerHuskAttachmentExtension = class(PlayerHuskAttachmentExtension)
 
-PlayerHuskAttachmentExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self._world = extension_init_context.world
-	self._unit = unit
+function PlayerHuskAttachmentExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._world = arg_1_1.world
+	arg_1_0._unit = arg_1_2
 
-	local profile = extension_init_data.profile
-	local slots = extension_init_data.slots
+	local var_1_0 = arg_1_3.profile
 
-	self._profile = profile
-	self._slots = slots
-	self._attachments = {
-		slots = {},
+	arg_1_0._slots, arg_1_0._profile = arg_1_3.slots, var_1_0
+	arg_1_0._attachments = {
+		slots = {}
 	}
-	self._synced_slot_buffs = {}
-	self.current_item_buffs = {}
+	arg_1_0._synced_slot_buffs = {}
+	arg_1_0.current_item_buffs = {}
 end
 
-PlayerHuskAttachmentExtension.extensions_ready = function (self, world, unit)
-	self.buff_extension = ScriptUnit.extension(unit, "buff_system")
-	self._cosmetic_extension = ScriptUnit.extension(unit, "cosmetic_system")
-	self._tp_unit_mesh = self._cosmetic_extension:get_third_person_mesh_unit()
+function PlayerHuskAttachmentExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+	arg_2_0.buff_extension = ScriptUnit.extension(arg_2_2, "buff_system")
+	arg_2_0._cosmetic_extension = ScriptUnit.extension(arg_2_2, "cosmetic_system")
+	arg_2_0._tp_unit_mesh = arg_2_0._cosmetic_extension:get_third_person_mesh_unit()
 
-	Unit.flow_event(self._tp_unit_mesh, "lua_attachment_unhidden")
+	Unit.flow_event(arg_2_0._tp_unit_mesh, "lua_attachment_unhidden")
 end
 
-PlayerHuskAttachmentExtension.destroy = function (self)
-	local slots = self._attachments.slots
+function PlayerHuskAttachmentExtension.destroy(arg_3_0)
+	local var_3_0 = arg_3_0._attachments.slots
 
-	for slot_name, slot_data in pairs(slots) do
-		AttachmentUtils.destroy_attachment(self._world, self._unit, slot_data)
+	for iter_3_0, iter_3_1 in pairs(var_3_0) do
+		AttachmentUtils.destroy_attachment(arg_3_0._world, arg_3_0._unit, iter_3_1)
 	end
 end
 
-PlayerHuskAttachmentExtension.update = function (self, unit, input, dt, context, t)
+function PlayerHuskAttachmentExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	return
 end
 
-PlayerHuskAttachmentExtension.hot_join_sync = function (self, sender)
-	AttachmentUtils.hot_join_sync(sender, self._unit, self._attachments.slots, self._synced_slot_buffs)
+function PlayerHuskAttachmentExtension.hot_join_sync(arg_5_0, arg_5_1)
+	AttachmentUtils.hot_join_sync(arg_5_1, arg_5_0._unit, arg_5_0._attachments.slots, arg_5_0._synced_slot_buffs)
 end
 
-PlayerHuskAttachmentExtension.create_attachment = function (self, slot_name, item_data)
-	if not self._profile then
+function PlayerHuskAttachmentExtension.create_attachment(arg_6_0, arg_6_1, arg_6_2)
+	if not arg_6_0._profile then
 		return
 	end
 
-	local unit = self._unit
-	local attachments = self._attachments
-	local old_slot_data = attachments.slots[slot_name]
+	local var_6_0 = arg_6_0._unit
+	local var_6_1 = arg_6_0._attachments
 
-	if old_slot_data then
-		self:remove_attachment(slot_name)
+	if var_6_1.slots[arg_6_1] then
+		arg_6_0:remove_attachment(arg_6_1)
 	end
 
-	local item_template = BackendUtils.get_item_template(item_data)
-	local parent_unit = unit
+	local var_6_2 = BackendUtils.get_item_template(arg_6_2)
+	local var_6_3 = var_6_0
 
-	if item_template.link_to_skin then
-		parent_unit = self._tp_unit_mesh
+	if var_6_2.link_to_skin then
+		var_6_3 = arg_6_0._tp_unit_mesh
 	end
 
-	local slot_data = AttachmentUtils.create_attachment(self._world, parent_unit, attachments, slot_name, item_data, true)
-	local show_attachments_event = item_template.show_attachments_event
+	local var_6_4 = AttachmentUtils.create_attachment(arg_6_0._world, var_6_3, var_6_1, arg_6_1, arg_6_2, true)
+	local var_6_5 = var_6_2.show_attachments_event
 
-	if show_attachments_event then
-		Unit.flow_event(self._tp_unit_mesh, show_attachments_event)
-		Unit.flow_event(unit, show_attachments_event)
+	if var_6_5 then
+		Unit.flow_event(arg_6_0._tp_unit_mesh, var_6_5)
+		Unit.flow_event(var_6_0, var_6_5)
 	end
 
-	self:_show_attachment(slot_name, slot_data, true)
+	arg_6_0:_show_attachment(arg_6_1, var_6_4, true)
 
-	attachments.slots[slot_name] = slot_data
+	var_6_1.slots[arg_6_1] = var_6_4
 
 	if not DEDICATED_SERVER then
-		local outline_extension = ScriptUnit.extension(unit, "outline_system")
-
-		outline_extension:reapply_outline()
+		ScriptUnit.extension(var_6_0, "outline_system"):reapply_outline()
 	end
 
-	local cosmetic_extension = ScriptUnit.has_extension(unit, "cosmetic_system")
+	local var_6_6 = ScriptUnit.has_extension(var_6_0, "cosmetic_system")
 
-	if cosmetic_extension and slot_name == "slot_hat" then
-		local character_material_changes = item_template.character_material_changes
+	if var_6_6 and arg_6_1 == "slot_hat" then
+		local var_6_7 = var_6_2.character_material_changes
 
-		if character_material_changes then
-			cosmetic_extension:change_skin_materials(character_material_changes)
+		if var_6_7 then
+			var_6_6:change_skin_materials(var_6_7)
 		end
 	end
 end
 
-PlayerHuskAttachmentExtension.remove_attachment = function (self, slot_name)
-	local slot_data = self._attachments.slots[slot_name]
+function PlayerHuskAttachmentExtension.remove_attachment(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_0._attachments.slots[arg_7_1]
 
-	AttachmentUtils.destroy_attachment(self._world, self._unit, slot_data)
+	AttachmentUtils.destroy_attachment(arg_7_0._world, arg_7_0._unit, var_7_0)
 
-	if self.current_item_buffs[slot_name] then
-		self:_remove_buffs(slot_name)
+	if arg_7_0.current_item_buffs[arg_7_1] then
+		arg_7_0:_remove_buffs(arg_7_1)
 	end
 
-	self._attachments.slots[slot_name] = nil
+	arg_7_0._attachments.slots[arg_7_1] = nil
 end
 
-PlayerHuskAttachmentExtension.attachments = function (self)
-	return self._attachments
+function PlayerHuskAttachmentExtension.attachments(arg_8_0)
+	return arg_8_0._attachments
 end
 
-PlayerHuskAttachmentExtension.get_slot_data = function (self, slot_id)
-	local attachments = self._attachments
-	local slots = attachments.slots
-
-	return slots[slot_id]
+function PlayerHuskAttachmentExtension.get_slot_data(arg_9_0, arg_9_1)
+	return arg_9_0._attachments.slots[arg_9_1]
 end
 
-PlayerHuskAttachmentExtension.show_attachments = function (self, show)
-	if self._show_attachments ~= show then
-		local slots = self._attachments.slots
+function PlayerHuskAttachmentExtension.show_attachments(arg_10_0, arg_10_1)
+	if arg_10_0._show_attachments ~= arg_10_1 then
+		local var_10_0 = arg_10_0._attachments.slots
 
-		for slot_name, slot_data in pairs(slots) do
-			if slot_data.unit then
-				self:_show_attachment(slot_name, slot_data, show)
+		for iter_10_0, iter_10_1 in pairs(var_10_0) do
+			if iter_10_1.unit then
+				arg_10_0:_show_attachment(iter_10_0, iter_10_1, arg_10_1)
 			end
 		end
 
-		local attachment_event = show and "lua_attachment_unhidden" or "lua_attachment_hidden"
+		local var_10_1 = arg_10_1 and "lua_attachment_unhidden" or "lua_attachment_hidden"
 
-		Unit.flow_event(self._tp_unit_mesh, attachment_event)
+		Unit.flow_event(arg_10_0._tp_unit_mesh, var_10_1)
 
-		self._show_attachments = show
+		arg_10_0._show_attachments = arg_10_1
 	end
 end
 
-PlayerHuskAttachmentExtension._show_attachment = function (self, slot_name, slot_data, show)
-	local should_show = show
-	local always_hide = self._cosmetic_extension:always_hide_attachment_slot(slot_name)
+function PlayerHuskAttachmentExtension._show_attachment(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+	local var_11_0 = arg_11_3
 
-	if always_hide then
-		should_show = false
+	if arg_11_0._cosmetic_extension:always_hide_attachment_slot(arg_11_1) then
+		var_11_0 = false
 	end
 
-	local unit = slot_data.unit
+	local var_11_1 = arg_11_2.unit
 
-	if unit then
-		Unit.set_unit_visibility(unit, should_show)
+	if var_11_1 then
+		Unit.set_unit_visibility(var_11_1, var_11_0)
 
-		if should_show then
-			Unit.flow_event(unit, "lua_attachment_unhidden")
-			self._cosmetic_extension:trigger_equip_events(slot_name, unit)
+		if var_11_0 then
+			Unit.flow_event(var_11_1, "lua_attachment_unhidden")
+			arg_11_0._cosmetic_extension:trigger_equip_events(arg_11_1, var_11_1)
 		else
-			Unit.flow_event(unit, "lua_attachment_hidden")
+			Unit.flow_event(var_11_1, "lua_attachment_hidden")
 		end
 	end
 end
 
-local params = {}
+local var_0_0 = {}
 
-PlayerHuskAttachmentExtension._apply_buffs = function (self, buffs, slot_name)
-	local buff_extension = ScriptUnit.extension(self._unit, "buff_system")
-	local current_item_buffs = self.current_item_buffs[slot_name] or {}
-	local index = 1
+function PlayerHuskAttachmentExtension._apply_buffs(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = ScriptUnit.extension(arg_12_0._unit, "buff_system")
+	local var_12_1 = arg_12_0.current_item_buffs[arg_12_2] or {}
+	local var_12_2 = 1
 
-	for buff_name, variable_data in pairs(buffs) do
-		table.clear(params)
+	for iter_12_0, iter_12_1 in pairs(arg_12_1) do
+		table.clear(var_0_0)
 
-		for data_type, data_value in pairs(variable_data) do
-			params[data_type] = data_value
+		for iter_12_2, iter_12_3 in pairs(iter_12_1) do
+			var_0_0[iter_12_2] = iter_12_3
 		end
 
-		current_item_buffs[index] = buff_extension:add_buff(buff_name, params)
-		index = index + 1
+		var_12_1[var_12_2] = var_12_0:add_buff(iter_12_0, var_0_0)
+		var_12_2 = var_12_2 + 1
 	end
 
-	self.current_item_buffs[slot_name] = current_item_buffs
+	arg_12_0.current_item_buffs[arg_12_2] = var_12_1
 end
 
-PlayerHuskAttachmentExtension._remove_buffs = function (self, slot_name)
-	local buff_extension = ScriptUnit.extension(self._unit, "buff_system")
-	local current_item_buffs = self.current_item_buffs[slot_name]
+function PlayerHuskAttachmentExtension._remove_buffs(arg_13_0, arg_13_1)
+	local var_13_0 = ScriptUnit.extension(arg_13_0._unit, "buff_system")
+	local var_13_1 = arg_13_0.current_item_buffs[arg_13_1]
 
-	for i = 1, #current_item_buffs do
-		local buff_id = current_item_buffs[i]
+	for iter_13_0 = 1, #var_13_1 do
+		local var_13_2 = var_13_1[iter_13_0]
 
-		buff_extension:remove_buff(buff_id)
+		var_13_0:remove_buff(var_13_2)
 	end
 
-	table.clear(current_item_buffs)
+	table.clear(var_13_1)
 end
 
-PlayerHuskAttachmentExtension.set_buffs_to_slot = function (self, slot_name, buffs)
-	local slot_buffs = self._synced_slot_buffs[slot_name] or {}
+function PlayerHuskAttachmentExtension.set_buffs_to_slot(arg_14_0, arg_14_1, arg_14_2)
+	local var_14_0 = arg_14_0._synced_slot_buffs[arg_14_1] or {}
 
-	table.clear(slot_buffs)
+	table.clear(var_14_0)
 
-	self._synced_slot_buffs[slot_name] = buffs
+	arg_14_0._synced_slot_buffs[arg_14_1] = arg_14_2
 
-	self:_apply_buffs(buffs, slot_name)
+	arg_14_0:_apply_buffs(arg_14_2, arg_14_1)
 end

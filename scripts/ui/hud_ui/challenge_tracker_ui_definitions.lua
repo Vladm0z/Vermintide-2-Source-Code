@@ -1,151 +1,152 @@
-﻿-- chunkname: @scripts/ui/hud_ui/challenge_tracker_ui_definitions.lua
+-- chunkname: @scripts/ui/hud_ui/challenge_tracker_ui_definitions.lua
 
-local SIZE_X, SIZE_Y = 1920, 1080
-local QUEST_SIZE = {
+local var_0_0 = 1920
+local var_0_1 = 1080
+local var_0_2 = {
 	260,
-	75,
+	75
 }
-local QUEST_PADDING = 20
-local RETAINED_MODE_ENABLED = true
-local scenegraph_definition = {
+local var_0_3 = 20
+local var_0_4 = true
+local var_0_5 = {
 	screen = {
 		scale = "hud_scale_fit",
 		position = {
 			0,
 			0,
-			UILayer.hud,
+			UILayer.hud
 		},
 		size = {
-			SIZE_X,
-			SIZE_Y,
-		},
+			var_0_0,
+			var_0_1
+		}
 	},
 	pivot = {
-		horizontal_alignment = "right",
-		parent = "screen",
 		vertical_alignment = "center",
+		parent = "screen",
+		horizontal_alignment = "right",
 		position = {
 			1,
 			155,
-			0,
+			0
 		},
 		size = {
 			0,
-			0,
-		},
+			0
+		}
 	},
 	quest = {
-		horizontal_alignment = "right",
-		parent = "pivot",
 		vertical_alignment = "top",
+		parent = "pivot",
+		horizontal_alignment = "right",
 		position = {
 			0,
 			0,
-			0,
+			0
 		},
-		size = QUEST_SIZE,
-	},
+		size = var_0_2
+	}
 }
-local corner = UIAtlasHelper.get_atlas_settings_by_texture_name("objective_detail")
-local lily = UIAtlasHelper.get_atlas_settings_by_texture_name("lily")
-local CHALLENGE_WIDGET_TEMPLATE = {
+local var_0_6 = UIAtlasHelper.get_atlas_settings_by_texture_name("objective_detail")
+local var_0_7 = UIAtlasHelper.get_atlas_settings_by_texture_name("lily")
+local var_0_8 = {
 	scenegraph_id = "quest",
 	element = {
 		passes = {
 			{
-				pass_type = "rect",
 				style_id = "background_rect",
-				retained_mode = RETAINED_MODE_ENABLED,
+				pass_type = "rect",
+				retained_mode = var_0_4
 			},
 			{
 				pass_type = "texture",
 				style_id = "background_lilies",
 				texture_id = "background_id",
-				retained_mode = RETAINED_MODE_ENABLED,
+				retained_mode = var_0_4
 			},
 			{
 				pass_type = "texture",
 				style_id = "corner_top_right",
 				texture_id = "corner_id",
-				retained_mode = RETAINED_MODE_ENABLED,
+				retained_mode = var_0_4
 			},
 			{
 				pass_type = "texture",
 				style_id = "corner_bot_right",
 				texture_id = "corner_id",
-				retained_mode = RETAINED_MODE_ENABLED,
+				retained_mode = var_0_4
 			},
 			{
 				pass_type = "texture",
 				style_id = "lily",
 				texture_id = "lily_id",
-				retained_mode = RETAINED_MODE_ENABLED,
+				retained_mode = var_0_4
 			},
 			{
 				pass_type = "texture",
 				style_id = "progress",
 				texture_id = "progress_id",
-				retained_mode = RETAINED_MODE_ENABLED,
+				retained_mode = var_0_4
 			},
 			{
 				pass_type = "texture",
 				style_id = "progress_bg",
 				texture_id = "progress_bg_id",
-				retained_mode = RETAINED_MODE_ENABLED,
+				retained_mode = var_0_4
 			},
 			{
 				pass_type = "texture",
 				style_id = "reward_icon",
 				texture_id = "reward_icon",
-				retained_mode = RETAINED_MODE_ENABLED,
+				retained_mode = var_0_4
 			},
 			{
-				pass_type = "text",
 				style_id = "progress_text",
+				pass_type = "text",
 				text_id = "progress_text",
-				retained_mode = RETAINED_MODE_ENABLED,
+				retained_mode = var_0_4
 			},
 			{
-				pass_type = "text",
 				style_id = "challenge_name",
+				pass_type = "text",
 				text_id = "challenge_name",
-				retained_mode = RETAINED_MODE_ENABLED,
+				retained_mode = var_0_4
 			},
 			{
-				pass_type = "text",
 				style_id = "challenge_name_shadow",
+				pass_type = "text",
 				text_id = "challenge_name",
-				retained_mode = RETAINED_MODE_ENABLED,
+				retained_mode = var_0_4
 			},
 			{
-				pass_type = "text",
 				style_id = "reward_name",
+				pass_type = "text",
 				text_id = "reward_name",
-				retained_mode = RETAINED_MODE_ENABLED,
+				retained_mode = var_0_4
 			},
 			{
-				pass_type = "text",
 				style_id = "reward_name_shadow",
+				pass_type = "text",
 				text_id = "reward_name",
-				retained_mode = RETAINED_MODE_ENABLED,
-			},
-		},
+				retained_mode = var_0_4
+			}
+		}
 	},
 	content = {
-		alpha_multiplier = 1,
-		background_id = "challenge_ui_questingknight_bg",
+		last_milestone = 0,
+		progress_bg_id = "challenge_ui_progress_arc_bg",
+		progress = 0,
 		challenge_name = "NO CHALLENGE NAME",
 		is_done = false,
-		last_milestone = 0,
-		last_progress = 0,
-		max_progress = 0,
-		progress = 0,
-		progress_bg_id = "challenge_ui_progress_arc_bg",
-		progress_id = "challenge_ui_progress_arc",
 		progress_text = "0/0",
+		background_id = "challenge_ui_questingknight_bg",
 		reward_name = "NO REWARD NAME",
-		lily_id = lily.texture_name,
-		corner_id = corner.texture_name,
+		alpha_multiplier = 1,
+		max_progress = 0,
+		progress_id = "challenge_ui_progress_arc",
+		last_progress = 0,
+		lily_id = var_0_7.texture_name,
+		corner_id = var_0_6.texture_name
 	},
 	style = {
 		background_rect = {
@@ -153,414 +154,414 @@ local CHALLENGE_WIDGET_TEMPLATE = {
 				200,
 				0,
 				0,
-				0,
-			},
+				0
+			}
 		},
 		background_lilies = {
 			color = {
 				175,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		corner_top_right = {
-			horizontal_alignment = "right",
 			vertical_alignment = "top",
+			horizontal_alignment = "right",
 			offset = {
 				0,
-				0.5 * corner.size[2],
-				1,
+				0.5 * var_0_6.size[2],
+				1
 			},
-			texture_size = corner.size,
+			texture_size = var_0_6.size,
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		corner_bot_right = {
-			horizontal_alignment = "right",
 			vertical_alignment = "bottom",
+			horizontal_alignment = "right",
 			offset = {
 				0,
-				-0.5 * corner.size[2],
-				1,
+				-0.5 * var_0_6.size[2],
+				1
 			},
-			texture_size = corner.size,
+			texture_size = var_0_6.size,
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		lily = {
-			horizontal_alignment = "left",
 			vertical_alignment = "center",
+			horizontal_alignment = "left",
 			offset = {
-				-0.5 * lily.size[1] + 3,
+				-0.5 * var_0_7.size[1] + 3,
 				0,
-				5,
+				5
 			},
-			texture_size = lily.size,
+			texture_size = var_0_7.size,
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		progress = {
-			horizontal_alignment = "right",
 			vertical_alignment = "center",
+			horizontal_alignment = "right",
 			color = Colors.get_color_table_with_alpha("es_questingknight", 255),
 			offset = {
 				-5,
 				0,
-				1,
+				1
 			},
 			texture_size = {
 				70,
-				70,
-			},
+				70
+			}
 		},
 		progress_bg = {
-			horizontal_alignment = "right",
 			vertical_alignment = "center",
+			horizontal_alignment = "right",
 			color = {
 				200,
 				200,
 				200,
-				200,
+				200
 			},
 			offset = {
 				-5,
 				0,
-				0,
+				0
 			},
 			texture_size = {
 				70,
-				70,
-			},
+				70
+			}
 		},
 		challenge_name = {
-			dynamic_font_size = true,
 			font_size = 22,
-			font_type = "hell_shark_header",
-			horizontal_alignment = "left",
-			localize = false,
 			upper_case = false,
-			vertical_alignment = "bottom",
+			localize = false,
 			word_wrap = false,
+			horizontal_alignment = "left",
+			vertical_alignment = "bottom",
+			dynamic_font_size = true,
+			font_type = "hell_shark_header",
 			size = {
-				QUEST_SIZE[1] - 95,
-				QUEST_SIZE[2] * 0.5,
+				var_0_2[1] - 95,
+				var_0_2[2] * 0.5
 			},
 			text_color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
 				20,
-				QUEST_SIZE[2] * 0.5,
-				1,
-			},
+				var_0_2[2] * 0.5,
+				1
+			}
 		},
 		challenge_name_shadow = {
-			dynamic_font_size = true,
 			font_size = 22,
-			font_type = "hell_shark_header",
-			horizontal_alignment = "left",
-			localize = false,
 			upper_case = false,
-			vertical_alignment = "bottom",
+			localize = false,
 			word_wrap = false,
+			horizontal_alignment = "left",
+			vertical_alignment = "bottom",
+			dynamic_font_size = true,
+			font_type = "hell_shark_header",
 			size = {
-				QUEST_SIZE[1] - 95,
-				QUEST_SIZE[2] * 0.5,
+				var_0_2[1] - 95,
+				var_0_2[2] * 0.5
 			},
 			text_color = {
 				255,
 				0,
 				0,
-				0,
+				0
 			},
 			offset = {
 				22,
-				QUEST_SIZE[2] * 0.5 - 2,
-				0,
-			},
+				var_0_2[2] * 0.5 - 2,
+				0
+			}
 		},
 		reward_name = {
+			word_wrap = true,
+			upper_case = false,
+			localize = false,
 			dynamic_font_size_word_wrap = true,
 			font_size = 20,
-			font_type = "hell_shark_header",
 			horizontal_alignment = "left",
-			localize = false,
-			upper_case = false,
 			vertical_alignment = "top",
-			word_wrap = true,
+			font_type = "hell_shark_header",
 			size = {
-				QUEST_SIZE[1] - 95,
-				QUEST_SIZE[2] * 0.5,
+				var_0_2[1] - 95,
+				var_0_2[2] * 0.5
 			},
 			text_color = Colors.get_color_table_with_alpha("es_questingknight", 255),
 			offset = {
 				20,
 				5,
-				1,
-			},
+				1
+			}
 		},
 		reward_name_shadow = {
+			word_wrap = true,
+			upper_case = false,
+			localize = false,
 			dynamic_font_size_word_wrap = true,
 			font_size = 20,
-			font_type = "hell_shark_header",
 			horizontal_alignment = "left",
-			localize = false,
-			upper_case = false,
 			vertical_alignment = "top",
-			word_wrap = true,
+			font_type = "hell_shark_header",
 			size = {
-				QUEST_SIZE[1] - 95,
-				QUEST_SIZE[2] * 0.5,
+				var_0_2[1] - 95,
+				var_0_2[2] * 0.5
 			},
 			text_color = {
 				255,
 				0,
 				0,
-				0,
+				0
 			},
 			offset = {
 				22,
 				3,
-				0,
-			},
+				0
+			}
 		},
 		reward_icon = {
-			horizontal_alignment = "right",
 			vertical_alignment = "center",
+			horizontal_alignment = "right",
 			texture_size = {
 				60,
-				60,
+				60
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
 				-10,
 				7,
-				50,
-			},
+				50
+			}
 		},
 		progress_text = {
-			dynamic_font_size = true,
 			font_size = 12,
-			font_type = "hell_shark_header",
-			horizontal_alignment = "center",
-			localize = false,
 			upper_case = false,
-			vertical_alignment = "bottom",
+			localize = false,
 			word_wrap = false,
+			horizontal_alignment = "center",
+			vertical_alignment = "bottom",
+			dynamic_font_size = true,
+			font_type = "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
-				QUEST_SIZE[1] * 0.5 - 40,
+				var_0_2[1] * 0.5 - 40,
 				10,
-				1,
-			},
-		},
-	},
+				1
+			}
+		}
+	}
 }
 
-local function get_widget_position(offset, index)
+local function var_0_9(arg_1_0, arg_1_1)
 	return {
-		offset[1],
-		offset[2] - (QUEST_SIZE[2] + QUEST_PADDING) * (index - 1),
-		offset[3],
+		arg_1_0[1],
+		arg_1_0[2] - (var_0_2[2] + var_0_3) * (arg_1_1 - 1),
+		arg_1_0[3]
 	}
 end
 
-local function create_objective(challenge, gui, offset, index)
-	local widget = UIWidget.init(CHALLENGE_WIDGET_TEMPLATE)
+local function var_0_10(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = UIWidget.init(var_0_8)
 
-	widget.offset = get_widget_position(offset, index)
+	var_2_0.offset = var_0_9(arg_2_2, arg_2_3)
 
-	local content = widget.content
+	local var_2_1 = var_2_0.content
 
-	content.challenge = challenge
-	content.challenge_name = Localize(challenge:get_challenge_name())
+	var_2_1.challenge = arg_2_0
+	var_2_1.challenge_name = Localize(arg_2_0:get_challenge_name())
 
-	if challenge:is_repeatable() then
-		widget.style.background_rect.color = {
+	if arg_2_0:is_repeatable() then
+		var_2_0.style.background_rect.color = {
 			200,
 			15,
 			10,
-			5,
+			5
 		}
-		widget.style.background_lilies.color = {
+		var_2_0.style.background_lilies.color = {
 			200,
 			255,
 			255,
-			255,
+			255
 		}
 	end
 
-	local reward, reward_name = challenge:get_reward(), challenge:get_reward_name()
+	local var_2_2 = arg_2_0:get_reward()
+	local var_2_3 = arg_2_0:get_reward_name()
 
-	content.reward_name = UIUtils.format_localized_description(reward_name, reward.description_values)
-	content.reward_icon = reward.icon
+	var_2_1.reward_name = UIUtils.format_localized_description(var_2_3, var_2_2.description_values)
+	var_2_1.reward_icon = var_2_2.icon
 
-	local p, mp = challenge:get_progress()
+	local var_2_4, var_2_5 = arg_2_0:get_progress()
 
-	content.progress = p
-	content.last_progress = p
-	content.max_progress = mp
-	content.start_anim_progress = p / mp
-	content.last_milestone = math.floor(content.start_anim_progress * 4)
+	var_2_1.progress = var_2_4
+	var_2_1.last_progress = var_2_4
+	var_2_1.max_progress = var_2_5
+	var_2_1.start_anim_progress = var_2_4 / var_2_5
+	var_2_1.last_milestone = math.floor(var_2_1.start_anim_progress * 4)
 
-	local template_id = content.progress_id
-	local clone_id = content.progress_id .. math.uuid()
+	local var_2_6 = var_2_1.progress_id
+	local var_2_7 = var_2_1.progress_id .. math.uuid()
 
-	Gui.clone_material_from_template(gui, clone_id, template_id)
+	Gui.clone_material_from_template(arg_2_1, var_2_7, var_2_6)
 
-	content.progress_id = clone_id
-	content.progress_text = tostring(mp - p)
+	var_2_1.progress_id = var_2_7
+	var_2_1.progress_text = tostring(var_2_5 - var_2_4)
 
-	return widget
+	return var_2_0
 end
 
-local animation_definitions = {
+local var_0_11 = {
 	on_enter = {
 		{
+			name = "ease_in",
 			delay = 0.5,
 			duration = 1,
-			name = "ease_in",
-			init = function (ui_scenegraph, scenegraph_def, widget, params)
-				local x = widget.offset
+			init = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				local var_3_0 = arg_3_2.offset
 
-				params.src = {
-					x[1] + 1.5 * QUEST_SIZE[2],
-					x[2],
+				arg_3_3.src = {
+					var_3_0[1] + 1.5 * var_0_2[2],
+					var_3_0[2]
 				}
-				params.dst = {
-					x[1],
-					x[2],
+				arg_3_3.dst = {
+					var_3_0[1],
+					var_3_0[2]
 				}
-				widget.content.alpha_multiplier = 0
-				widget.offset[1] = params.src[1]
-				widget.offset[2] = params.src[2]
+				arg_3_2.content.alpha_multiplier = 0
+				arg_3_2.offset[1] = arg_3_3.src[1]
+				arg_3_2.offset[2] = arg_3_3.src[2]
 
-				local gui = RETAINED_MODE_ENABLED and params.ui_renderer.gui_retained or params.ui_renderer.gui
-				local content = widget.content
-				local material = Gui.material(gui, widget.content.progress_id)
+				local var_3_1 = var_0_4 and arg_3_3.ui_renderer.gui_retained or arg_3_3.ui_renderer.gui
+				local var_3_2 = arg_3_2.content
+				local var_3_3 = Gui.material(var_3_1, arg_3_2.content.progress_id)
 
-				Material.set_scalar(material, "angle", (content.start_anim_progress - 0.5) * math.pi * 2)
+				Material.set_scalar(var_3_3, "angle", (var_3_2.start_anim_progress - 0.5) * math.pi * 2)
 			end,
-			update = function (ui_scenegraph, scenegraph_def, widget, progress, params)
-				local t = math.easeOutCubic(progress)
+			update = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+				local var_4_0 = math.easeOutCubic(arg_4_3)
 
-				widget.content.alpha_multiplier = t
-				widget.offset[1] = math.floor(math.lerp(params.src[1], params.dst[1], t))
-				widget.offset[2] = math.floor(math.lerp(params.src[2], params.dst[2], t))
+				arg_4_2.content.alpha_multiplier = var_4_0
+				arg_4_2.offset[1] = math.floor(math.lerp(arg_4_4.src[1], arg_4_4.dst[1], var_4_0))
+				arg_4_2.offset[2] = math.floor(math.lerp(arg_4_4.src[2], arg_4_4.dst[2], var_4_0))
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_def, widget, params)
-				params.view:_play_sound("Play_hud_grail_knight_quest_start")
-			end,
-		},
+			on_complete = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+				arg_5_3.view:_play_sound("Play_hud_grail_knight_quest_start")
+			end
+		}
 	},
 	on_progress = {
 		{
-			duration = 0.2,
 			name = "update circle",
-			init = function (ui_scenegraph, scenegraph_def, widget, params)
-				local content = widget.content
-				local p, mp = content.progress, content.max_progress
+			duration = 0.2,
+			init = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				local var_6_0 = arg_6_2.content
+				local var_6_1 = var_6_0.progress
+				local var_6_2 = var_6_0.max_progress
 
-				content.start_anim_progress = content.start_anim_progress or 0
-				content.end_anim_progress = p / mp
-				content.progress_text = tostring(mp - p)
+				var_6_0.start_anim_progress = var_6_0.start_anim_progress or 0
+				var_6_0.end_anim_progress = var_6_1 / var_6_2
+				var_6_0.progress_text = tostring(var_6_2 - var_6_1)
 			end,
-			update = function (ui_scenegraph, scenegraph_def, widget, progress, params)
-				local content = widget.content
-				local gui = RETAINED_MODE_ENABLED and params.ui_renderer.gui_retained or params.ui_renderer.gui
-				local material = Gui.material(gui, widget.content.progress_id)
-				local start_anim_progress = content.start_anim_progress
-				local end_anim_progress = content.end_anim_progress
-				local anim_progress = math.lerp(start_anim_progress, end_anim_progress, progress)
+			update = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+				local var_7_0 = arg_7_2.content
+				local var_7_1 = var_0_4 and arg_7_4.ui_renderer.gui_retained or arg_7_4.ui_renderer.gui
+				local var_7_2 = Gui.material(var_7_1, arg_7_2.content.progress_id)
+				local var_7_3 = var_7_0.start_anim_progress
+				local var_7_4 = var_7_0.end_anim_progress
+				local var_7_5 = math.lerp(var_7_3, var_7_4, arg_7_3)
 
-				Material.set_scalar(material, "angle", (anim_progress - 0.5) * math.pi * 2)
+				Material.set_scalar(var_7_2, "angle", (var_7_5 - 0.5) * math.pi * 2)
 
-				local next_milestone_p = (content.last_milestone + 1) / 4
+				if var_7_4 > (var_7_0.last_milestone + 1) / 4 and var_7_4 < 1 then
+					arg_7_4.view:_play_sound("Play_hud_grail_knight_quest_milestone_finish")
 
-				if next_milestone_p < end_anim_progress and end_anim_progress < 1 then
-					params.view:_play_sound("Play_hud_grail_knight_quest_milestone_finish")
-
-					content.last_milestone = math.floor(end_anim_progress * 4)
+					var_7_0.last_milestone = math.floor(var_7_4 * 4)
 				end
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_def, widget, params)
-				local content = widget.content
+			on_complete = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+				local var_8_0 = arg_8_2.content
 
-				content.start_anim_progress = content.end_anim_progress
-			end,
-		},
+				var_8_0.start_anim_progress = var_8_0.end_anim_progress
+			end
+		}
 	},
 	on_done = {
 		{
+			name = "fade and play sound",
 			delay = 0.5,
 			duration = 1,
-			name = "fade and play sound",
-			init = function (ui_scenegraph, scenegraph_def, widget, params)
-				params.view:_play_sound("Play_hud_grail_knight_quest_finish")
+			init = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+				arg_9_3.view:_play_sound("Play_hud_grail_knight_quest_finish")
 			end,
-			update = function (ui_scenegraph, scenegraph_def, widget, progress, params)
-				widget.content.alpha_multiplier = 1 - progress
+			update = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+				arg_10_2.content.alpha_multiplier = 1 - arg_10_3
 			end,
-			on_complete = NOP,
+			on_complete = NOP
 		},
 		{
+			name = "play sound",
 			delay = 2.2,
 			duration = 0.1,
-			name = "play sound",
 			init = NOP,
 			update = NOP,
-			on_complete = function (ui_scenegraph, scenegraph_def, widget, params)
-				local challenge = widget.content.challenge
-				local sound_event = challenge:get_reward().sound
+			on_complete = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+				local var_11_0 = arg_11_2.content.challenge
+				local var_11_1 = var_11_0:get_reward().sound
 
-				if sound_event then
-					params.view:_play_sound(sound_event)
+				if var_11_1 then
+					arg_11_3.view:_play_sound(var_11_1)
 				end
 
-				params.view:_cb_on_done(widget, challenge)
-			end,
-		},
+				arg_11_3.view:_cb_on_done(arg_11_2, var_11_0)
+			end
+		}
 	},
 	on_cancel = {
 		{
+			name = "fade",
 			delay = 0.5,
 			duration = 1,
-			name = "fade",
-			init = function (ui_scenegraph, scenegraph_def, widget, params)
+			init = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 				return
 			end,
-			update = function (ui_scenegraph, scenegraph_def, widget, progress, params)
-				widget.content.alpha_multiplier = 1 - progress
+			update = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+				arg_13_2.content.alpha_multiplier = 1 - arg_13_3
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_def, widget, params)
-				local challenge = widget.content.challenge
+			on_complete = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+				local var_14_0 = arg_14_2.content.challenge
 
-				params.view:_cb_on_done(widget, challenge)
-			end,
-		},
-	},
+				arg_14_3.view:_cb_on_done(arg_14_2, var_14_0)
+			end
+		}
+	}
 }
 
 return {
-	animation_definitions = animation_definitions,
-	scenegraph_definition = scenegraph_definition,
-	create_objective = create_objective,
-	get_widget_position = get_widget_position,
-	RETAINED_MODE_ENABLED = RETAINED_MODE_ENABLED,
+	animation_definitions = var_0_11,
+	scenegraph_definition = var_0_5,
+	create_objective = var_0_10,
+	get_widget_position = var_0_9,
+	RETAINED_MODE_ENABLED = var_0_4
 }

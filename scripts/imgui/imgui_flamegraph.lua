@@ -1,197 +1,203 @@
-﻿-- chunkname: @scripts/imgui/imgui_flamegraph.lua
+-- chunkname: @scripts/imgui/imgui_flamegraph.lua
 
 ImguiFlamegraph = class(ImguiFlamegraph)
 
-local Gui_rect, Gui_text, V2, V3, Color = Gui.rect, Gui.text, Vector2, Vector3, Color
-local Mouse = Mouse
-local profile = require("jit.profile")
-local dumpstack = profile.dumpstack
-local gmatch = string.gmatch
-local find = string.find
-local byte = string.byte
-local sub = string.sub
-local floor = math.floor
-local point_is_inside_2d_box = math.point_is_inside_2d_box
-local hsl2rgb = Colors.hsl2rgb
-local tonumber = tonumber
-local pairs = pairs
-local make_hash = Application.make_hash
-local DONT_PROFILE = false
+local var_0_0 = Gui.rect
+local var_0_1 = Gui.text
+local var_0_2 = Vector2
+local var_0_3 = Vector3
+local var_0_4 = Color
+local var_0_5 = Mouse
+local var_0_6 = require("jit.profile")
+local var_0_7 = var_0_6.dumpstack
+local var_0_8 = string.gmatch
+local var_0_9 = string.find
+local var_0_10 = string.byte
+local var_0_11 = string.sub
+local var_0_12 = math.floor
+local var_0_13 = math.point_is_inside_2d_box
+local var_0_14 = Colors.hsl2rgb
+local var_0_15 = tonumber
+local var_0_16 = pairs
+local var_0_17 = Application.make_hash
+local var_0_18 = false
 
-ImguiFlamegraph.init = function (self)
-	self._recording = false
-	self._rendering = false
-	self._invert = false
-	self._search = ""
+function ImguiFlamegraph.init(arg_1_0)
+	arg_1_0._recording = false
+	arg_1_0._rendering = false
+	arg_1_0._invert = false
+	arg_1_0._search = ""
 
-	self:clear_data()
-	self:reset_zoom()
+	arg_1_0:clear_data()
+	arg_1_0:reset_zoom()
 end
 
-ImguiFlamegraph.do_cell = function (self, gui, cursor, name, record, s, w, h, x, y)
-	local color = Color(hsl2rgb(tonumber(sub(make_hash(name), 1, 2), 16) / 256, 0.4, 0.5))
-	local search = self._search
-	local border_color = search ~= "" and find(name, search) and Color(255, 255, 255) or Color(64, 64, 64)
-	local box_pos, box_size = V3(x, y, 999), V2(w, math.max(2, h))
+function ImguiFlamegraph.do_cell(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8, arg_2_9)
+	local var_2_0 = var_0_4(var_0_14(var_0_15(var_0_11(var_0_17(arg_2_3), 1, 2), 16) / 256, 0.4, 0.5))
+	local var_2_1 = arg_2_0._search
+	local var_2_2 = var_2_1 ~= "" and var_0_9(arg_2_3, var_2_1) and var_0_4(255, 255, 255) or var_0_4(64, 64, 64)
+	local var_2_3 = var_0_3(arg_2_8, arg_2_9, 999)
+	local var_2_4 = var_0_2(arg_2_6, math.max(2, arg_2_7))
 
-	Gui_rect(gui, box_pos, box_size, border_color)
-	Gui_rect(gui, box_pos + V3(1, 1, 1), box_size - V2(2, 2), color)
+	var_0_0(arg_2_1, var_2_3, var_2_4, var_2_2)
+	var_0_0(arg_2_1, var_2_3 + var_0_3(1, 1, 1), var_2_4 - var_0_2(2, 2), var_2_0)
 
-	local wf = w / s
-	local cx, cy = x, y - h
-	local selected = point_is_inside_2d_box(cursor, box_pos, box_size)
+	local var_2_5 = arg_2_6 / arg_2_5
+	local var_2_6 = arg_2_8
+	local var_2_7 = arg_2_9 - arg_2_7
+	local var_2_8 = var_0_13(arg_2_2, var_2_3, var_2_4)
 
-	if selected and Mouse.pressed(Mouse.button_id("left")) then
-		self._draw_name = name
-		self._draw_node = record
+	if var_2_8 and var_0_5.pressed(var_0_5.button_id("left")) then
+		arg_2_0._draw_name = arg_2_3
+		arg_2_0._draw_node = arg_2_4
 	end
 
-	for name, child in pairs(record) do
-		if name then
-			local cs = child[false]
-			local cw = wf * cs
+	for iter_2_0, iter_2_1 in var_0_16(arg_2_4) do
+		if iter_2_0 then
+			local var_2_9 = iter_2_1[false]
+			local var_2_10 = var_2_5 * var_2_9
 
-			selected = self:do_cell(gui, cursor, name, child, cs, cw, h, cx, cy) or selected
-			cx = cx + cw
+			var_2_8 = arg_2_0:do_cell(arg_2_1, arg_2_2, iter_2_0, iter_2_1, var_2_9, var_2_10, arg_2_7, var_2_6, var_2_7) or var_2_8
+			var_2_6 = var_2_6 + var_2_10
 		end
 	end
 
-	if selected then
-		Gui_text(gui, name .. " (" .. s .. ")", "materials/fonts/arial", h, nil, V3(x, y + 3, 1000))
+	if var_2_8 then
+		var_0_1(arg_2_1, arg_2_3 .. " (" .. arg_2_5 .. ")", "materials/fonts/arial", arg_2_7, nil, var_0_3(arg_2_8, arg_2_9 + 3, 1000))
 
 		return true
 	end
 end
 
-ImguiFlamegraph.update = function (self)
-	if self._rendering then
-		DONT_PROFILE = true
+function ImguiFlamegraph.update(arg_3_0)
+	if arg_3_0._rendering then
+		var_0_18 = true
 
-		if Mouse.pressed(Mouse.button_id("right")) then
-			self:reset_zoom()
+		if var_0_5.pressed(var_0_5.button_id("right")) then
+			arg_3_0:reset_zoom()
 		end
 
-		local draw = self._draw_node
-		local samples = draw[false]
+		local var_3_0 = arg_3_0._draw_node
+		local var_3_1 = var_3_0[false]
 
-		if samples > 0 then
-			local w, h = Gui.resolution()
-			local gui = Debug.gui
-			local cursor = Mouse.axis(Mouse.axis_id("cursor"))
+		if var_3_1 > 0 then
+			local var_3_2, var_3_3 = Gui.resolution()
+			local var_3_4 = Debug.gui
+			local var_3_5 = var_0_5.axis(var_0_5.axis_id("cursor"))
 
-			self:do_cell(gui, cursor, self._draw_name, draw, samples, w - 50, 12, 25, h - 50)
+			arg_3_0:do_cell(var_3_4, var_3_5, arg_3_0._draw_name, var_3_0, var_3_1, var_3_2 - 50, 12, 25, var_3_3 - 50)
 		end
 
-		DONT_PROFILE = false
+		var_0_18 = false
 	end
 end
 
-ImguiFlamegraph.is_persistent = function (self)
+function ImguiFlamegraph.is_persistent(arg_4_0)
 	return false
 end
 
-ImguiFlamegraph.clear_data = function (self)
+function ImguiFlamegraph.clear_data(arg_5_0)
 	ImguiFlamegraph._root = {
-		[false] = 0,
+		[false] = 0
 	}
 
-	self:reset_zoom()
+	arg_5_0:reset_zoom()
 end
 
-ImguiFlamegraph.reset_zoom = function (self)
-	self._draw_name = "@root"
-	self._draw_node = ImguiFlamegraph._root
+function ImguiFlamegraph.reset_zoom(arg_6_0)
+	arg_6_0._draw_name = "@root"
+	arg_6_0._draw_node = ImguiFlamegraph._root
 end
 
-ImguiFlamegraph.profile_cb = function (self, thread, samples, vmmode)
-	if DONT_PROFILE then
+function ImguiFlamegraph.profile_cb(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	if var_0_18 then
 		return
 	end
 
-	local depth = self._invert and 100 or -100
-	local stk = dumpstack(thread, "pFZ;", depth)
+	local var_7_0 = arg_7_0._invert and 100 or -100
+	local var_7_1 = var_0_7(arg_7_1, "pFZ;", var_7_0)
 
-	if find(stk, "^scripts/boot.lua:%d+$") then
+	if var_0_9(var_7_1, "^scripts/boot.lua:%d+$") then
 		return
 	end
 
-	local record = ImguiFlamegraph._root
+	local var_7_2 = ImguiFlamegraph._root
 
-	record[false] = record[false] + samples
+	var_7_2[false] = var_7_2[false] + arg_7_2
 
-	for row in gmatch(stk, "[^;]+") do
-		local child = record[row]
+	for iter_7_0 in var_0_8(var_7_1, "[^;]+") do
+		local var_7_3 = var_7_2[iter_7_0]
 
-		if child then
-			child[false] = child[false] + samples
+		if var_7_3 then
+			var_7_3[false] = var_7_3[false] + arg_7_2
 		else
-			child = {
-				[false] = samples,
+			var_7_3 = {
+				[false] = arg_7_2
 			}
-			record[row] = child
+			var_7_2[iter_7_0] = var_7_3
 		end
 
-		record = child
+		var_7_2 = var_7_3
 	end
 end
 
-ImguiFlamegraph.toggle_recording = function (self, bool)
-	if bool == nil then
-		bool = not self._recording
+function ImguiFlamegraph.toggle_recording(arg_8_0, arg_8_1)
+	if arg_8_1 == nil then
+		arg_8_1 = not arg_8_0._recording
 	end
 
-	if self._recording ~= bool then
-		if bool then
-			profile.start("fi33", callback(self, "profile_cb"))
+	if arg_8_0._recording ~= arg_8_1 then
+		if arg_8_1 then
+			var_0_6.start("fi33", callback(arg_8_0, "profile_cb"))
 		else
-			profile.stop()
+			var_0_6.stop()
 		end
 
-		self._recording = bool
+		arg_8_0._recording = arg_8_1
 	end
 end
 
-ImguiFlamegraph.toggle_rendering = function (self, bool)
-	if bool == nil then
-		bool = not self._rendering
+function ImguiFlamegraph.toggle_rendering(arg_9_0, arg_9_1)
+	if arg_9_1 == nil then
+		arg_9_1 = not arg_9_0._rendering
 	end
 
-	self._rendering = bool
+	arg_9_0._rendering = arg_9_1
 end
 
-local HELP_TEXT = "Flamegraph help\n---------------\nUses LuaJIT's in-built statistical profiler.\nIt needs to run for a while to capture nested calls.\nFlamegraph rendering is excluded from samples.\nIt's still recommendable to disable it while recording.\n\nLeft-click on a segment to focus on it.\nRight-click anywhere to reset the view.\n"
+local var_0_19 = "Flamegraph help\n---------------\nUses LuaJIT's in-built statistical profiler.\nIt needs to run for a while to capture nested calls.\nFlamegraph rendering is excluded from samples.\nIt's still recommendable to disable it while recording.\n\nLeft-click on a segment to focus on it.\nRight-click anywhere to reset the view.\n"
 
-ImguiFlamegraph.draw = function (self)
-	local do_close = Imgui.begin_window("Flamegraph")
-	local recording = Imgui.checkbox("Recording", self._recording)
+function ImguiFlamegraph.draw(arg_10_0)
+	local var_10_0 = Imgui.begin_window("Flamegraph")
+	local var_10_1 = Imgui.checkbox("Recording", arg_10_0._recording)
 
-	if recording ~= self._recording then
-		self:toggle_recording(recording)
+	if var_10_1 ~= arg_10_0._recording then
+		arg_10_0:toggle_recording(var_10_1)
 	end
 
-	local rendering = Imgui.checkbox("Draw flamegraph", self._rendering)
+	local var_10_2 = Imgui.checkbox("Draw flamegraph", arg_10_0._rendering)
 
-	if rendering ~= self._rendering then
-		self:toggle_rendering(rendering)
+	if var_10_2 ~= arg_10_0._rendering then
+		arg_10_0:toggle_rendering(var_10_2)
 	end
 
-	local invert = Imgui.checkbox("Invert", self._invert)
+	local var_10_3 = Imgui.checkbox("Invert", arg_10_0._invert)
 
-	if not recording and not next(ImguiFlamegraph._root, false) then
-		self._invert = invert
+	if not var_10_1 and not next(ImguiFlamegraph._root, false) then
+		arg_10_0._invert = var_10_3
 	end
 
-	Imgui.text("Total samples: " .. tostring(self._root[false]))
+	Imgui.text("Total samples: " .. tostring(arg_10_0._root[false]))
 
 	if Imgui.button("Reset") then
-		self:clear_data()
+		arg_10_0:clear_data()
 	end
 
-	self._search = Imgui.input_text("Search", self._search)
+	arg_10_0._search = Imgui.input_text("Search", arg_10_0._search)
 
 	Imgui.dummy(1, 20)
-	Imgui.text(HELP_TEXT)
+	Imgui.text(var_0_19)
 	Imgui.end_window()
 
-	return do_close
+	return var_10_0
 end

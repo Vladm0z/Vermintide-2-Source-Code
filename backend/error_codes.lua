@@ -1,4 +1,4 @@
-﻿-- chunkname: @backend/error_codes.lua
+-- chunkname: @backend/error_codes.lua
 
 ERROR_CODES = {}
 BACKEND_LUA_ERRORS = {}

@@ -1,140 +1,126 @@
-﻿-- chunkname: @scripts/settings/mutators/mutator_flames.lua
+-- chunkname: @scripts/settings/mutators/mutator_flames.lua
 
-local blacklisted_units = {
+local var_0_0 = {
 	"chaos_corruptor_sorcerer",
 	"chaos_vortex_sorcerer",
 	"skaven_warpfire_thrower",
 	"skaven_poison_wind_globadier",
-	"skaven_ratling_gunner",
+	"skaven_ratling_gunner"
 }
 
 return {
-	buff_duration_enemy = 3,
-	buff_duration_player = 3,
-	description = "flames_mutator_desc",
 	display_name = "flames_mutator_name",
+	buff_duration_enemy = 3,
+	description = "flames_mutator_desc",
+	buff_duration_player = 3,
 	icon = "mutator_icon_fire_burn",
-	server_start_function = function (context, data)
-		data.network_manager = Managers.state.network
-		data.buff_time_player = data.template.buff_duration_player
-		data.buff_time_enemy = data.template.buff_duration_enemy
-		data.buff_system = Managers.state.entity:system("buff_system")
-		data.applied_buffs = {}
-		data.buff_name_player = "mutator_fire_player_dot"
-		data.buff_name_enemy = "mutator_fire_enemy_dot"
-		data.buff_system = Managers.state.entity:system("buff_system")
-		data.boss_spawned = {}
-		data.boss_spawned_counter = 0
+	server_start_function = function(arg_1_0, arg_1_1)
+		arg_1_1.network_manager = Managers.state.network
+		arg_1_1.buff_time_player = arg_1_1.template.buff_duration_player
+		arg_1_1.buff_time_enemy = arg_1_1.template.buff_duration_enemy
+		arg_1_1.buff_system = Managers.state.entity:system("buff_system")
+		arg_1_1.applied_buffs = {}
+		arg_1_1.buff_name_player = "mutator_fire_player_dot"
+		arg_1_1.buff_name_enemy = "mutator_fire_enemy_dot"
+		arg_1_1.buff_system = Managers.state.entity:system("buff_system")
+		arg_1_1.boss_spawned = {}
+		arg_1_1.boss_spawned_counter = 0
 	end,
-	client_start_function = function (context, data)
-		data.buff_time_player = data.template.buff_duration_player
-		data.buff_name_player = "mutator_fire_player_dot"
-		data.buff_name_enemy = "mutator_fire_enemy_dot"
+	client_start_function = function(arg_2_0, arg_2_1)
+		arg_2_1.buff_time_player = arg_2_1.template.buff_duration_player
+		arg_2_1.buff_name_player = "mutator_fire_player_dot"
+		arg_2_1.buff_name_enemy = "mutator_fire_enemy_dot"
 	end,
-	update_buffs = function (context, data, dt)
-		for id, buff in pairs(data.applied_buffs) do
-			buff.duration = buff.duration + dt
+	update_buffs = function(arg_3_0, arg_3_1, arg_3_2)
+		for iter_3_0, iter_3_1 in pairs(arg_3_1.applied_buffs) do
+			iter_3_1.duration = iter_3_1.duration + arg_3_2
 
-			local unit = buff.unit
-			local is_dead = not HEALTH_ALIVE[unit]
+			local var_3_0 = iter_3_1.unit
+			local var_3_1 = not HEALTH_ALIVE[var_3_0]
 
-			if buff.duration > data.buff_time_enemy or is_dead then
-				data.template.remove_buff(data, unit, id, is_dead)
+			if iter_3_1.duration > arg_3_1.buff_time_enemy or var_3_1 then
+				arg_3_1.template.remove_buff(arg_3_1, var_3_0, iter_3_0, var_3_1)
 			end
 		end
 	end,
-	apply_buff = function (data, hit_unit, attacker_unit, is_enemy)
-		local is_alive = HEALTH_ALIVE[hit_unit]
-		local buff_template_name = is_enemy and data.buff_name_enemy or data.buff_name_player
-		local buff_extension = ScriptUnit.extension(hit_unit, "buff_system")
-		local unit_has_buff = buff_extension:has_buff_type(buff_template_name)
+	apply_buff = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+		local var_4_0 = HEALTH_ALIVE[arg_4_1]
+		local var_4_1 = arg_4_3 and arg_4_0.buff_name_enemy or arg_4_0.buff_name_player
+		local var_4_2 = ScriptUnit.extension(arg_4_1, "buff_system")
+		local var_4_3 = var_4_2:has_buff_type(var_4_1)
 
-		if is_alive and not unit_has_buff then
-			if is_enemy then
-				local is_server_controlled = true
-				local buff_id = data.buff_system:add_buff(hit_unit, buff_template_name, hit_unit, is_server_controlled)
-				local unit_id = data.network_manager:unit_game_object_id(hit_unit)
+		if var_4_0 and not var_4_3 then
+			if arg_4_3 then
+				local var_4_4 = true
+				local var_4_5 = arg_4_0.buff_system:add_buff(arg_4_1, var_4_1, arg_4_1, var_4_4)
+				local var_4_6 = arg_4_0.network_manager:unit_game_object_id(arg_4_1)
 
-				data.applied_buffs[unit_id] = {}
-				data.applied_buffs[unit_id].buff_id = buff_id
-				data.applied_buffs[unit_id].unit = hit_unit
-				data.applied_buffs[unit_id].duration = 0
+				arg_4_0.applied_buffs[var_4_6] = {}
+				arg_4_0.applied_buffs[var_4_6].buff_id = var_4_5
+				arg_4_0.applied_buffs[var_4_6].unit = arg_4_1
+				arg_4_0.applied_buffs[var_4_6].duration = 0
 			else
-				local duration = data.buff_time_player
-				local buff_params = {
-					attacker_unit = attacker_unit,
-					external_optional_duration = duration,
+				local var_4_7 = arg_4_0.buff_time_player
+				local var_4_8 = {
+					attacker_unit = arg_4_2,
+					external_optional_duration = var_4_7
 				}
 
-				buff_extension:add_buff(buff_template_name, buff_params)
+				var_4_2:add_buff(var_4_1, var_4_8)
 			end
 		end
 	end,
-	remove_buff = function (data, unit, id, is_dead)
-		if not is_dead then
-			data.buff_system:remove_server_controlled_buff(unit, data.applied_buffs[id].buff_id)
+	remove_buff = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+		if not arg_5_3 then
+			arg_5_0.buff_system:remove_server_controlled_buff(arg_5_1, arg_5_0.applied_buffs[arg_5_2].buff_id)
 		end
 
-		data.applied_buffs[id] = nil
+		arg_5_0.applied_buffs[arg_5_2] = nil
 	end,
-	unit_has_buff = function (data, unit, buff_name)
-		local unit_buff_extension = ScriptUnit.has_extension(unit, "buff_system")
-		local unit_has_buff = unit_buff_extension and unit_buff_extension:has_buff_type(buff_name)
+	unit_has_buff = function(arg_6_0, arg_6_1, arg_6_2)
+		local var_6_0 = ScriptUnit.has_extension(arg_6_1, "buff_system")
 
-		return unit_has_buff
+		return var_6_0 and var_6_0:has_buff_type(arg_6_2)
 	end,
-	check_melee = function (data, hit_data)
-		local damage_source = hit_data[DamageDataIndex.DAMAGE_SOURCE_NAME]
-		local master_list_item = rawget(ItemMasterList, damage_source)
+	check_melee = function(arg_7_0, arg_7_1)
+		local var_7_0 = arg_7_1[DamageDataIndex.DAMAGE_SOURCE_NAME]
+		local var_7_1 = rawget(ItemMasterList, var_7_0)
 
-		if master_list_item then
-			local is_melee = master_list_item.slot_type == "melee"
-
-			return is_melee
+		if var_7_1 then
+			return var_7_1.slot_type == "melee"
 		else
-			local unit_is_banned = table.contains(blacklisted_units, damage_source)
-
-			return not unit_is_banned
+			return not table.contains(var_0_0, var_7_0)
 		end
 	end,
-	server_ai_hit_by_player_function = function (context, data, hit_unit, attacker_unit, hit_data)
-		if hit_unit ~= attacker_unit then
-			local is_melee = data.template.check_melee(data, hit_data)
-			local wounded_dot = hit_data[DamageDataIndex.DAMAGE_TYPE] == "wounded_dot"
-			local pushed = hit_data[DamageDataIndex.DAMAGE_TYPE] == "push"
+	server_ai_hit_by_player_function = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+		if arg_8_2 ~= arg_8_3 then
+			local var_8_0 = arg_8_1.template.check_melee(arg_8_1, arg_8_4)
+			local var_8_1 = arg_8_4[DamageDataIndex.DAMAGE_TYPE] == "wounded_dot"
+			local var_8_2 = arg_8_4[DamageDataIndex.DAMAGE_TYPE] == "push"
 
-			if is_melee and not wounded_dot and not pushed then
-				local data_template = data.template
-
-				data_template.apply_buff(data, hit_unit, attacker_unit, true)
+			if var_8_0 and not var_8_1 and not var_8_2 then
+				arg_8_1.template.apply_buff(arg_8_1, arg_8_2, arg_8_3, true)
 			end
 		end
 	end,
-	client_player_hit_function = function (context, data, hit_unit, attacker_unit, hit_data)
-		if hit_unit ~= attacker_unit then
-			local wounded_dot = hit_data[DamageDataIndex.DAMAGE_TYPE] == "wounded_dot"
-			local is_melee = data.template.check_melee(data, hit_data)
+	client_player_hit_function = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+		if arg_9_2 ~= arg_9_3 then
+			local var_9_0 = arg_9_4[DamageDataIndex.DAMAGE_TYPE] == "wounded_dot"
 
-			if is_melee and not wounded_dot then
-				data.template.apply_buff(data, hit_unit, attacker_unit, false)
+			if arg_9_1.template.check_melee(arg_9_1, arg_9_4) and not var_9_0 then
+				arg_9_1.template.apply_buff(arg_9_1, arg_9_2, arg_9_3, false)
 			end
 		end
 	end,
-	server_update_function = function (context, data, dt, t)
-		data.template.update_buffs(context, data, dt)
+	server_update_function = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+		arg_10_1.template.update_buffs(arg_10_0, arg_10_1, arg_10_2)
 	end,
-	server_ai_spawned_function = function (context, data, spawned_unit)
-		local alive_bosses = Managers.state.conflict:alive_bosses()
+	server_ai_spawned_function = function(arg_11_0, arg_11_1, arg_11_2)
+		local var_11_0 = Managers.state.conflict:alive_bosses()
 
-		if alive_bosses and #alive_bosses > data.boss_spawned_counter then
-			local blackboard = BLACKBOARDS[spawned_unit]
-			local breed = blackboard.breed
-			local is_boss = breed.boss
-
-			if is_boss then
-				data.boss_spawned[spawned_unit] = true
-				data.boss_spawned_counter = data.boss_spawned_counter + 1
-			end
+		if var_11_0 and #var_11_0 > arg_11_1.boss_spawned_counter and BLACKBOARDS[arg_11_2].breed.boss then
+			arg_11_1.boss_spawned[arg_11_2] = true
+			arg_11_1.boss_spawned_counter = arg_11_1.boss_spawned_counter + 1
 		end
-	end,
+	end
 }

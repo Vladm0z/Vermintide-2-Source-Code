@@ -1,66 +1,66 @@
-﻿-- chunkname: @scripts/network/network_clock_server.lua
+-- chunkname: @scripts/network/network_clock_server.lua
 
 NetworkClockServer = class(NetworkClockServer)
 
-local RPCS = {
+local var_0_0 = {
 	"rpc_network_clock_sync_request",
-	"rpc_network_current_server_time_request",
+	"rpc_network_current_server_time_request"
 }
 
-NetworkClockServer.init = function (self)
-	self._clock = 0
+function NetworkClockServer.init(arg_1_0)
+	arg_1_0._clock = 0
 end
 
-NetworkClockServer.register_rpcs = function (self, network_event_delegate)
-	network_event_delegate:register(self, unpack(RPCS))
+function NetworkClockServer.register_rpcs(arg_2_0, arg_2_1)
+	arg_2_1:register(arg_2_0, unpack(var_0_0))
 
-	self._network_event_delegate = network_event_delegate
+	arg_2_0._network_event_delegate = arg_2_1
 end
 
-NetworkClockServer.unregister_rpcs = function (self)
-	self._network_event_delegate:unregister(self)
+function NetworkClockServer.unregister_rpcs(arg_3_0)
+	arg_3_0._network_event_delegate:unregister(arg_3_0)
 
-	self._network_event_delegate = nil
+	arg_3_0._network_event_delegate = nil
 end
 
-NetworkClockServer.synchronized = function (self)
+function NetworkClockServer.synchronized(arg_4_0)
 	return true
 end
 
-NetworkClockServer.time = function (self)
-	return self._clock
+function NetworkClockServer.time(arg_5_0)
+	return arg_5_0._clock
 end
 
-NetworkClockServer.update = function (self, dt)
-	self:_update_clock(dt)
+function NetworkClockServer.update(arg_6_0, arg_6_1)
+	arg_6_0:_update_clock(arg_6_1)
 
 	if Development.parameter("network_clock_debug") then
-		self:_debug_stuff(dt)
+		arg_6_0:_debug_stuff(arg_6_1)
 	end
 end
 
-NetworkClockServer._update_clock = function (self, delta)
-	self._clock = self._clock + delta
+function NetworkClockServer._update_clock(arg_7_0, arg_7_1)
+	arg_7_0._clock = arg_7_0._clock + arg_7_1
 end
 
-NetworkClockServer.destroy = function (self)
+function NetworkClockServer.destroy(arg_8_0)
 	return
 end
 
-NetworkClockServer._debug_stuff = function (self, dt)
-	local debug_text_manager = Managers.state.debug_text
+function NetworkClockServer._debug_stuff(arg_9_0, arg_9_1)
+	local var_9_0 = Managers.state.debug_text
 
-	if debug_text_manager then
-		local text = string.format("%.3f", self._clock)
+	if var_9_0 then
+		local var_9_1 = string.format("%.3f", arg_9_0._clock)
 
-		debug_text_manager:output_screen_text(text, 22, 0.1)
+		var_9_0:output_screen_text(var_9_1, 22, 0.1)
 	end
 end
 
-NetworkClockServer.rpc_network_clock_sync_request = function (self, channel_id, client_time)
-	RPC.rpc_network_time_sync_response(channel_id, client_time, self._clock)
+function NetworkClockServer.rpc_network_clock_sync_request(arg_10_0, arg_10_1, arg_10_2)
+	RPC.rpc_network_time_sync_response(arg_10_1, arg_10_2, arg_10_0._clock)
 end
 
-NetworkClockServer.rpc_network_current_server_time_request = function (self, channel_id, client_time)
-	RPC.rpc_network_current_server_time_response(channel_id, client_time, self._clock)
+function NetworkClockServer.rpc_network_current_server_time_request(arg_11_0, arg_11_1, arg_11_2)
+	RPC.rpc_network_current_server_time_response(arg_11_1, arg_11_2, arg_11_0._clock)
 end

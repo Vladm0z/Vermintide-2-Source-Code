@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/managers/talents/talent_settings.lua
+-- chunkname: @scripts/managers/talents/talent_settings.lua
 
 Talents = Talents or {}
 
@@ -13,48 +13,49 @@ MaxTalentPoints = 6
 NumTalentRows = 6
 NumTalentColumns = 3
 TalentUnlockLevels = {
-	talent_point_1 = 5,
-	talent_point_2 = 10,
-	talent_point_3 = 15,
-	talent_point_4 = 20,
 	talent_point_5 = 25,
+	talent_point_1 = 5,
 	talent_point_6 = 30,
+	talent_point_4 = 20,
+	talent_point_3 = 15,
+	talent_point_2 = 10
 }
 TalentIDLookup = {}
 
-for hero_name, hero_talents in pairs(Talents) do
-	for talent_id, data in ipairs(hero_talents) do
-		local talent_name = data.name
+for iter_0_0, iter_0_1 in pairs(Talents) do
+	for iter_0_2, iter_0_3 in ipairs(iter_0_1) do
+		local var_0_0 = iter_0_3.name
 
-		if not talent_name then
-			table.dump(data, "talent_contents", 2)
+		if not var_0_0 then
+			table.dump(iter_0_3, "talent_contents", 2)
 		end
 
-		fassert(not TalentIDLookup[talent_name], "talent with unique name %s already exists", talent_name)
+		fassert(not TalentIDLookup[var_0_0], "talent with unique name %s already exists", var_0_0)
 
-		local lookup_entry = {}
+		local var_0_1 = {
+			talent_id = iter_0_2,
+			hero_name = iter_0_0
+		}
 
-		lookup_entry.talent_id = talent_id
-		lookup_entry.hero_name = hero_name
-		TalentIDLookup[talent_name] = lookup_entry
+		TalentIDLookup[var_0_0] = var_0_1
 	end
 end
 
-for hero_name, hero_talent_trees in pairs(TalentTrees) do
-	for tree, tree_layout in ipairs(hero_talent_trees) do
-		for row, coulumns in ipairs(tree_layout) do
-			for coulumn, talent_name in ipairs(coulumns) do
-				if talent_name ~= "empty" then
-					local lookup = TalentIDLookup[talent_name]
+for iter_0_4, iter_0_5 in pairs(TalentTrees) do
+	for iter_0_6, iter_0_7 in ipairs(iter_0_5) do
+		for iter_0_8, iter_0_9 in ipairs(iter_0_7) do
+			for iter_0_10, iter_0_11 in ipairs(iter_0_9) do
+				if iter_0_11 ~= "empty" then
+					local var_0_2 = TalentIDLookup[iter_0_11]
 
-					fassert(lookup, "Talent %s is missing from the TalentIDLookup table", talent_name)
+					fassert(var_0_2, "Talent %s is missing from the TalentIDLookup table", iter_0_11)
 
-					local talent_settings = Talents[hero_name][lookup.talent_id]
+					local var_0_3 = Talents[iter_0_4][var_0_2.talent_id]
 
-					talent_settings.tree = tree
-					talent_settings.row = row
-					talent_settings.coulumn = coulumn
-					talent_settings.talent_id = lookup.talent_id
+					var_0_3.tree = iter_0_6
+					var_0_3.row = iter_0_8
+					var_0_3.coulumn = iter_0_10
+					var_0_3.talent_id = var_0_2.talent_id
 				end
 			end
 		end

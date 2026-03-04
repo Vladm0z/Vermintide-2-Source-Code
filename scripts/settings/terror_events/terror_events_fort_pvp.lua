@@ -1,586 +1,585 @@
-﻿-- chunkname: @scripts/settings/terror_events/terror_events_fort_pvp.lua
+-- chunkname: @scripts/settings/terror_events/terror_events_fort_pvp.lua
 
-local TerrorEventUtils = require("scripts/settings/terror_events/terror_event_utils")
-local count_event_breed = TerrorEventUtils.count_event_breed
-local terror_event_blueprints = {
+local var_0_0 = require("scripts/settings/terror_events/terror_event_utils").count_event_breed
+local var_0_1 = {
 	fort_pacing_off = {
 		{
 			"control_hordes",
-			enable = false,
+			enable = false
 		},
 		{
 			"control_pacing",
-			enable = false,
-		},
+			enable = false
+		}
 	},
 	fort_pacing_on = {
 		{
 			"control_hordes",
-			enable = true,
+			enable = true
 		},
 		{
 			"control_pacing",
-			enable = true,
-		},
+			enable = true
+		}
 	},
 	fort_pvp_terror_event_payload_01 = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"set_master_event_running",
-			name = "fort_pvp_terror_event_payload_01",
+			name = "fort_pvp_terror_event_payload_01"
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_stinger",
+			stinger_name = "enemy_horde_stinger"
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			spawner_id = "payload_01_spawn_1",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "storm_vermin_shields_small",
 			spawner_id = "payload_01_spawn_2",
+			composition_type = "storm_vermin_shields_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"event_horde",
-			composition_type = "plague_monks_small",
 			spawner_id = "payload_01_spawn_3",
+			composition_type = "plague_monks_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 180,
-			condition = function (t)
-				return count_event_breed("skaven_slave") < 2 and count_event_breed("skaven_clan_rat") < 2 and count_event_breed("skaven_storm_vermin_with_shield") < 2 and count_event_breed("skaven_plague_monk") < 1
-			end,
+			condition = function(arg_1_0)
+				return var_0_0("skaven_slave") < 2 and var_0_0("skaven_clan_rat") < 2 and var_0_0("skaven_storm_vermin_with_shield") < 2 and var_0_0("skaven_plague_monk") < 1
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "fort_pvp_terror_event_payload_01_done",
-		},
+			flow_event_name = "fort_pvp_terror_event_payload_01_done"
+		}
 	},
 	fort_pvp_terror_event_bell_tower_guards = {
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_storm_vermin_commander",
 			spawner_id = "bell_tower_guard_1",
+			breed_name = "skaven_storm_vermin_commander"
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_storm_vermin_commander",
 			spawner_id = "bell_tower_guard_2",
+			breed_name = "skaven_storm_vermin_commander"
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_storm_vermin_with_shield",
 			spawner_id = "bell_tower_guard_3",
+			breed_name = "skaven_storm_vermin_with_shield"
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_storm_vermin_with_shield",
 			spawner_id = "bell_tower_guard_4",
+			breed_name = "skaven_storm_vermin_with_shield"
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_plague_monk",
 			spawner_id = "bell_tower_guard_5",
+			breed_name = "skaven_plague_monk"
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_plague_monk",
 			spawner_id = "bell_tower_guard_6",
+			breed_name = "skaven_plague_monk"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"flow_event",
-			flow_event_name = "fort_pvp_terror_event_bell_tower_guards_done",
-		},
+			flow_event_name = "fort_pvp_terror_event_bell_tower_guards_done"
+		}
 	},
 	fort_pvp_terror_event_bonfire_guards = {
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_storm_vermin_commander",
 			spawner_id = "bon_fire_guard_1",
+			breed_name = "skaven_storm_vermin_commander"
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_storm_vermin_commander",
 			spawner_id = "bon_fire_guard_2",
+			breed_name = "skaven_storm_vermin_commander"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"flow_event",
-			flow_event_name = "fort_pvp_terror_event_bonfire_guards_done",
-		},
+			flow_event_name = "fort_pvp_terror_event_bonfire_guards_done"
+		}
 	},
 	fort_pvp_terror_event_bonfire_guards_back = {
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_plague_monk",
 			spawner_id = "bon_fire_guard_3",
+			breed_name = "skaven_plague_monk"
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_storm_vermin_with_shield",
 			spawner_id = "bon_fire_guard_4",
+			breed_name = "skaven_storm_vermin_with_shield"
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_storm_vermin_with_shield",
 			spawner_id = "bon_fire_guard_5",
+			breed_name = "skaven_storm_vermin_with_shield"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"flow_event",
-			flow_event_name = "fort_pvp_terror_event_bonfire_guards_back_done",
-		},
+			flow_event_name = "fort_pvp_terror_event_bonfire_guards_back_done"
+		}
 	},
 	fort_pvp_terror_event_payload_02 = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"set_master_event_running",
-			name = "fort_pvp_terror_event_payload_02",
+			name = "fort_pvp_terror_event_payload_02"
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_chaos_stinger",
+			stinger_name = "enemy_horde_chaos_stinger"
 		},
 		{
 			"event_horde",
-			composition_type = "event_chaos_extra_spice_medium",
 			spawner_id = "payload_02_spawn_3",
+			composition_type = "event_chaos_extra_spice_medium"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "chaos_shields",
 			spawner_id = "payload_02_spawn_2",
+			composition_type = "chaos_shields"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "chaos_warriors",
 			spawner_id = "payload_02_spawn_1",
+			composition_type = "chaos_warriors"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
 			duration = 60,
-			condition = function (t)
-				return count_event_breed("chaos_marauder_with_shield") < 3 and count_event_breed("chaos_warrior") < 1 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_raider") < 3
-			end,
+			condition = function(arg_2_0)
+				return var_0_0("chaos_marauder_with_shield") < 3 and var_0_0("chaos_warrior") < 1 and var_0_0("chaos_marauder") < 3 and var_0_0("chaos_raider") < 3
+			end
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"flow_event",
-			flow_event_name = "fort_pvp_terror_event_payload_02_done",
-		},
+			flow_event_name = "fort_pvp_terror_event_payload_02_done"
+		}
 	},
 	fort_pvp_terror_event_ram_guards = {
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_marauder_with_shield",
 			spawner_id = "ram_guard_1",
+			breed_name = "chaos_marauder_with_shield"
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_raider",
 			spawner_id = "ram_guard_2",
+			breed_name = "chaos_raider"
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_warrior",
 			spawner_id = "ram_guard_3",
+			breed_name = "chaos_warrior"
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_warrior",
 			spawner_id = "ram_guard_4",
+			breed_name = "chaos_warrior"
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_warrior",
 			spawner_id = "ram_guard_5",
+			breed_name = "chaos_warrior"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (t)
-				return count_event_breed("chaos_raider") < 1 and count_event_breed("chaos_warrior") < 1 and count_event_breed("chaos_marauder_with_shield") < 1
-			end,
+			condition = function(arg_3_0)
+				return var_0_0("chaos_raider") < 1 and var_0_0("chaos_warrior") < 1 and var_0_0("chaos_marauder_with_shield") < 1
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "fort_pvp_terror_event_ram_guards_done",
-		},
+			flow_event_name = "fort_pvp_terror_event_ram_guards_done"
+		}
 	},
 	fort_terror_event_climb = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"set_master_event_running",
-			name = "fort_terror_event_climb",
+			name = "fort_terror_event_climb"
 		},
 		{
 			"event_horde",
-			composition_type = "event_smaller",
 			spawner_id = "terror_event_climb",
+			composition_type = "event_smaller"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_clan_rat") < 2
-			end,
+			condition = function(arg_4_0)
+				return var_0_0("skaven_slave") < 3 and var_0_0("skaven_clan_rat") < 2
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "fort_terror_event_climb_done",
-		},
+			flow_event_name = "fort_terror_event_climb_done"
+		}
 	},
 	fort_terror_event_inner_yard = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"set_master_event_running",
-			name = "fort_terror_event_inner_yard",
+			name = "fort_terror_event_inner_yard"
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_stinger",
+			stinger_name = "enemy_horde_stinger"
 		},
 		{
 			"event_horde",
-			composition_type = "event_smaller",
 			spawner_id = "terror_event_inner_yard",
+			composition_type = "event_smaller"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_clan_rat") < 2
-			end,
+			condition = function(arg_5_0)
+				return var_0_0("skaven_slave") < 3 and var_0_0("skaven_clan_rat") < 2
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "fort_terror_event_inner_yard_done",
-		},
+			flow_event_name = "fort_terror_event_inner_yard_done"
+		}
 	},
 	fort_horde_gate = {
 		{
 			"set_master_event_running",
-			name = "fort_horde_gate",
+			name = "fort_horde_gate"
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_stinger",
+			stinger_name = "enemy_horde_stinger"
 		},
 		{
-			"disable_kick",
+			"disable_kick"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			spawner_id = "fort_horde_gate",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (t)
-				return count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
-			end,
+			condition = function(arg_6_0)
+				return var_0_0("chaos_marauder") < 3 and var_0_0("chaos_marauder_with_shield") < 2
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "fort_horde_gate_done",
-		},
+			flow_event_name = "fort_horde_gate_done"
+		}
 	},
 	fort_horde_cannon = {
 		{
 			"set_master_event_running",
-			name = "fort_horde_cannon",
+			name = "fort_horde_cannon"
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_stinger",
+			stinger_name = "enemy_horde_stinger"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			spawner_id = "fort_horde_cannon",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "event_extra_spice_small",
 			limit_spawners = 3,
 			spawner_id = "fort_horde_cannon",
+			composition_type = "event_extra_spice_small"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
 			duration = 120,
-			condition = function (t)
-				return count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_storm_vermin_commander") < 1
-			end,
+			condition = function(arg_7_0)
+				return var_0_0("skaven_slave") < 3 and var_0_0("skaven_clan_rat") < 3 and var_0_0("skaven_storm_vermin_commander") < 1
+			end
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"event_horde",
-			composition_type = "event_extra_spice_small",
 			limit_spawners = 3,
 			spawner_id = "fort_horde_cannon",
+			composition_type = "event_extra_spice_small"
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"continue_when",
 			duration = 120,
-			condition = function (t)
-				return count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_storm_vermin_commander") < 1
-			end,
+			condition = function(arg_8_0)
+				return var_0_0("skaven_slave") < 3 and var_0_0("skaven_clan_rat") < 3 and var_0_0("skaven_storm_vermin_commander") < 1
+			end
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"event_horde",
-			composition_type = "plague_monks_small",
 			limit_spawners = 3,
 			spawner_id = "fort_horde_cannon",
+			composition_type = "plague_monks_small"
 		},
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (t)
-				return count_event_breed("skaven_plague_monk") < 1
-			end,
+			condition = function(arg_9_0)
+				return var_0_0("skaven_plague_monk") < 1
+			end
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"flow_event",
-			flow_event_name = "fort_horde_cannon_done",
-		},
+			flow_event_name = "fort_horde_cannon_done"
+		}
 	},
 	fort_horde_fleeing = {
 		{
 			"set_master_event_running",
-			name = "fort_horde_fleeing",
+			name = "fort_horde_fleeing"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			spawner_id = "fort_horde_fleeing",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (t)
-				return count_event_breed("skaven_slave") < 2
-			end,
+			condition = function(arg_10_0)
+				return var_0_0("skaven_slave") < 2
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "fort_horde_small_done",
-		},
+			flow_event_name = "fort_horde_small_done"
+		}
 	},
 	fort_closet_chaos = {
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_warrior",
 			spawner_id = "fort_closet_chaos_spawner",
+			breed_name = "chaos_warrior"
 		},
 		{
 			"flow_event",
-			flow_event_name = "fort_closet_chaos_done",
-		},
+			flow_event_name = "fort_closet_chaos_done"
+		}
 	},
 	fort_siegers = {
 		{
 			"set_master_event_running",
-			name = "fort_siegers",
+			name = "fort_siegers"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_marauder",
 			spawner_id = "siege_1",
+			breed_name = "chaos_marauder"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_berzerker",
 			spawner_id = "siege_2",
+			breed_name = "chaos_berzerker"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_marauder",
 			spawner_id = "siege_3",
+			breed_name = "chaos_marauder"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_marauder",
 			spawner_id = "siege_4",
+			breed_name = "chaos_marauder"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_berzerker",
 			spawner_id = "siege_5",
+			breed_name = "chaos_berzerker"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_marauder",
 			spawner_id = "siege_6",
+			breed_name = "chaos_marauder"
 		},
 		{
 			"continue_when",
 			duration = 180,
-			condition = function (t)
-				return count_event_breed("chaos_berzerker") < 2 and count_event_breed("chaos_raider") < 2 and count_event_breed("chaos_marauder") < 2 and count_event_breed("chaos_marauder_with_shield") < 2
-			end,
+			condition = function(arg_11_0)
+				return var_0_0("chaos_berzerker") < 2 and var_0_0("chaos_raider") < 2 and var_0_0("chaos_marauder") < 2 and var_0_0("chaos_marauder_with_shield") < 2
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "siege_broken",
-		},
-	},
+			flow_event_name = "siege_broken"
+		}
+	}
 }
 
 return {
-	terror_event_blueprints,
+	var_0_1
 }

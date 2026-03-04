@@ -1,133 +1,130 @@
-﻿-- chunkname: @scripts/ui/views/transition_video.lua
+-- chunkname: @scripts/ui/views/transition_video.lua
 
-local definitions = local_require("scripts/ui/views/transition_video_definitions")
-local scenegraph_definition = definitions.scenegraph_definition
-local background_widget_definitions = definitions.background_widget_definitions
-local widget_definitions = definitions.widget_definitions
-local demo_video = definitions.demo_video
-local VIDEO_REFERENCE_NAME = "TransitionVideo"
+local var_0_0 = local_require("scripts/ui/views/transition_video_definitions")
+local var_0_1 = var_0_0.scenegraph_definition
+local var_0_2 = var_0_0.background_widget_definitions
+local var_0_3 = var_0_0.widget_definitions
+local var_0_4 = var_0_0.demo_video
+local var_0_5 = "TransitionVideo"
 
 TransitionVideo = class(TransitionVideo)
 
-TransitionVideo.init = function (self, world, video_data_table)
-	self._world = world
-
-	local platform = PLATFORM
-
-	self._platform = platform
-	self._render_settings = {
-		snap_pixel_positions = true,
+function TransitionVideo.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0._world = arg_1_1
+	arg_1_0._platform = PLATFORM
+	arg_1_0._render_settings = {
+		snap_pixel_positions = true
 	}
-	self._video_data_table = video_data_table or demo_video
-	self._ui_renderer = UIRenderer.create(world, "material", self._video_data_table.video_name)
+	arg_1_0._video_data_table = arg_1_2 or var_0_4
+	arg_1_0._ui_renderer = UIRenderer.create(arg_1_1, "material", arg_1_0._video_data_table.video_name)
 
-	self:_create_ui_elements()
+	arg_1_0:_create_ui_elements()
 end
 
-TransitionVideo._create_ui_elements = function (self)
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-	self._demo_video = UIWidget.init(UIWidgets.create_splash_video(self._video_data_table, VIDEO_REFERENCE_NAME))
-	self._widgets = {}
+function TransitionVideo._create_ui_elements(arg_2_0)
+	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
+	arg_2_0._demo_video = UIWidget.init(UIWidgets.create_splash_video(arg_2_0._video_data_table, var_0_5))
+	arg_2_0._widgets = {}
 
-	for widget_name, widget_definition in pairs(widget_definitions) do
-		self._widgets[widget_name] = UIWidget.init(widget_definition)
+	for iter_2_0, iter_2_1 in pairs(var_0_3) do
+		arg_2_0._widgets[iter_2_0] = UIWidget.init(iter_2_1)
 	end
 
-	self._background_widgets = {}
+	arg_2_0._background_widgets = {}
 
-	for widget_name, widget_definition in pairs(background_widget_definitions) do
-		self._background_widgets[widget_name] = UIWidget.init(widget_definition)
-	end
-end
-
-local DO_RELOAD = true
-
-TransitionVideo.activate = function (self, activate)
-	if DO_RELOAD then
-		self:_create_ui_elements()
-
-		DO_RELOAD = false
-	end
-
-	self._active = activate
-
-	if not activate then
-		self:_destroy_video()
+	for iter_2_2, iter_2_3 in pairs(var_0_2) do
+		arg_2_0._background_widgets[iter_2_2] = UIWidget.init(iter_2_3)
 	end
 end
 
-TransitionVideo._destroy_video = function (self)
-	local ui_renderer = self._ui_renderer
+local var_0_6 = true
 
-	if ui_renderer.video_players[VIDEO_REFERENCE_NAME] then
-		UIRenderer.destroy_video_player(ui_renderer, VIDEO_REFERENCE_NAME)
+function TransitionVideo.activate(arg_3_0, arg_3_1)
+	if var_0_6 then
+		arg_3_0:_create_ui_elements()
 
-		self._sound_started = false
+		var_0_6 = false
+	end
 
-		if self._video_data_table.sound_stop then
-			Managers.music:trigger_event(self._video_data_table.sound_stop)
+	arg_3_0._active = arg_3_1
+
+	if not arg_3_1 then
+		arg_3_0:_destroy_video()
+	end
+end
+
+function TransitionVideo._destroy_video(arg_4_0)
+	local var_4_0 = arg_4_0._ui_renderer
+
+	if var_4_0.video_players[var_0_5] then
+		UIRenderer.destroy_video_player(var_4_0, var_0_5)
+
+		arg_4_0._sound_started = false
+
+		if arg_4_0._video_data_table.sound_stop then
+			Managers.music:trigger_event(arg_4_0._video_data_table.sound_stop)
 		end
 	end
 end
 
-TransitionVideo.update = function (self, dt, t)
-	if self._active then
-		self:_draw(dt, t)
+function TransitionVideo.update(arg_5_0, arg_5_1, arg_5_2)
+	if arg_5_0._active then
+		arg_5_0:_draw(arg_5_1, arg_5_2)
 	end
 end
 
-TransitionVideo._draw = function (self, dt, t)
-	local ui_renderer = self._ui_renderer
-	local ui_scenegraph = self._ui_scenegraph
+function TransitionVideo._draw(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = arg_6_0._ui_renderer
+	local var_6_1 = arg_6_0._ui_scenegraph
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, FAKE_INPUT_SERVICE, dt, nil, self.render_settings)
+	UIRenderer.begin_pass(var_6_0, var_6_1, FAKE_INPUT_SERVICE, arg_6_1, nil, arg_6_0.render_settings)
 
-	if not self._demo_video.content.video_content.video_completed then
-		if not ui_renderer.video_players[VIDEO_REFERENCE_NAME] then
-			UIRenderer.create_video_player(ui_renderer, VIDEO_REFERENCE_NAME, self._world, self._video_data_table.video_name, self._video_data_table.loop)
+	if not arg_6_0._demo_video.content.video_content.video_completed then
+		if not var_6_0.video_players[var_0_5] then
+			UIRenderer.create_video_player(var_6_0, var_0_5, arg_6_0._world, arg_6_0._video_data_table.video_name, arg_6_0._video_data_table.loop)
 		else
-			if not self._sound_started then
-				if self._video_data_table.sound_start then
-					Managers.music:trigger_event(self._video_data_table.sound_start)
+			if not arg_6_0._sound_started then
+				if arg_6_0._video_data_table.sound_start then
+					Managers.music:trigger_event(arg_6_0._video_data_table.sound_start)
 				end
 
-				self._sound_started = true
+				arg_6_0._sound_started = true
 			end
 
-			UIRenderer.draw_widget(ui_renderer, self._demo_video)
+			UIRenderer.draw_widget(var_6_0, arg_6_0._demo_video)
 		end
-	elseif ui_renderer.video_players[VIDEO_REFERENCE_NAME] then
-		UIRenderer.destroy_video_player(ui_renderer, VIDEO_REFERENCE_NAME)
+	elseif var_6_0.video_players[var_0_5] then
+		UIRenderer.destroy_video_player(var_6_0, var_0_5)
 
-		self._sound_started = false
+		arg_6_0._sound_started = false
 
-		if self._video_data_table.sound_stop then
-			Managers.music:trigger_event(self._video_data_table.sound_stop)
+		if arg_6_0._video_data_table.sound_stop then
+			Managers.music:trigger_event(arg_6_0._video_data_table.sound_stop)
 		end
 
-		self._active = false
-		self._demo_video.content.video_content.video_completed = false
+		arg_6_0._active = false
+		arg_6_0._demo_video.content.video_content.video_completed = false
 	end
 
-	for _, widget in pairs(self._widgets) do
-		UIRenderer.draw_widget(ui_renderer, widget)
+	for iter_6_0, iter_6_1 in pairs(arg_6_0._widgets) do
+		UIRenderer.draw_widget(var_6_0, iter_6_1)
 	end
 
-	for _, widget in pairs(self._background_widgets) do
-		UIRenderer.draw_widget(ui_renderer, widget)
+	for iter_6_2, iter_6_3 in pairs(arg_6_0._background_widgets) do
+		UIRenderer.draw_widget(var_6_0, iter_6_3)
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_6_0)
 end
 
-TransitionVideo.completed = function (self)
-	return self._demo_video.content.video_content.video_completed
+function TransitionVideo.completed(arg_7_0)
+	return arg_7_0._demo_video.content.video_content.video_completed
 end
 
-TransitionVideo.is_active = function (self)
-	return self._active
+function TransitionVideo.is_active(arg_8_0)
+	return arg_8_0._active
 end
 
-TransitionVideo.destroy = function (self)
-	UIRenderer.destroy(self._ui_renderer, self._world)
+function TransitionVideo.destroy(arg_9_0)
+	UIRenderer.destroy(arg_9_0._ui_renderer, arg_9_0._world)
 end

@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/settings/camera_settings.lua
+-- chunkname: @scripts/settings/camera_settings.lua
 
 CameraSettings = CameraSettings or {}
 PITCH_SPEED = 480
@@ -6,12 +6,12 @@ YAW_SPEED = 480
 CameraTweaks = CameraTweaks or {}
 CameraTweaks.zoom = {
 	scale = 0.1,
-	interpolation_function = function (current, target, dt)
-		return math.lerp(current, target, dt * 7)
-	end,
+	interpolation_function = function(arg_1_0, arg_1_1, arg_1_2)
+		return math.lerp(arg_1_0, arg_1_1, arg_1_2 * 7)
+	end
 }
 
-local THIRD_PERSON_TRANSITIONS = {
+local var_0_0 = {
 	revive = CameraTransitionTemplates.reviving,
 	heal_self = CameraTransitionTemplates.reviving,
 	emotes = CameraTransitionTemplates.reviving,
@@ -31,208 +31,208 @@ local THIRD_PERSON_TRANSITIONS = {
 	over_shoulder = CameraTransitionTemplates.over_shoulder,
 	chaos_spawn_grabbed = CameraTransitionTemplates.grabbed_by_chaos_spawn,
 	smart_climbing = CameraTransitionTemplates.smart_climbing,
-	tunneling = CameraTransitionTemplates.tunneling,
+	tunneling = CameraTransitionTemplates.tunneling
 }
 
 CameraSettings.first_person = {
 	_node = {
-		class = "RootCamera",
 		far_range = 5000,
 		name = "root_node",
+		pitch_min = -40,
 		near_range = 0.1,
 		pitch_max = 0,
-		pitch_min = -40,
-		pitch_speed = 0,
 		should_apply_fov_multiplier = true,
-		vertical_fov = 65,
+		class = "RootCamera",
 		yaw_speed = 0,
+		vertical_fov = 65,
+		pitch_speed = 0,
 		tree_transitions = {},
-		safe_position_offset = Vector3Box(0, 0, 0),
+		safe_position_offset = Vector3Box(0, 0, 0)
 	},
 	{
 		_node = {
-			class = "TransformCamera",
 			name = "first_person_node",
+			class = "TransformCamera",
 			offset_position = {
-				x = 0,
-				y = 0,
 				z = 0,
+				x = 0,
+				y = 0
 			},
-			node_transitions = THIRD_PERSON_TRANSITIONS,
+			node_transitions = var_0_0
 		},
 		{
 			_node = {
-				class = "TransformCamera",
-				name = "zoom_in",
 				near_range = 0.1,
+				name = "zoom_in",
+				class = "TransformCamera",
 				vertical_fov = 30,
 				offset_position = {
-					x = 0,
-					y = 0,
 					z = 0,
+					x = 0,
+					y = 0
 				},
 				node_transitions = table.merge({
 					first_person_node = CameraTransitionTemplates.zoom,
-					increased_zoom_in = CameraTransitionTemplates.zoom,
-				}, THIRD_PERSON_TRANSITIONS),
-			},
+					increased_zoom_in = CameraTransitionTemplates.zoom
+				}, var_0_0)
+			}
 		},
 		{
 			_node = {
-				class = "TransformCamera",
-				name = "zoom_in_third_person",
 				near_range = 0.1,
+				name = "zoom_in_third_person",
+				class = "TransformCamera",
 				vertical_fov = 65,
 				offset_position = {
-					x = 0.75,
-					y = 0.65,
 					z = 0,
+					x = 0.75,
+					y = 0.65
 				},
 				node_transitions = table.merge({
 					first_person_node = CameraTransitionTemplates.zoom,
-					increased_zoom_in = CameraTransitionTemplates.zoom,
-				}, THIRD_PERSON_TRANSITIONS),
-			},
+					increased_zoom_in = CameraTransitionTemplates.zoom
+				}, var_0_0)
+			}
 		},
 		{
 			_node = {
-				class = "TransformCamera",
 				name = "zoom_in_trueflight",
+				class = "TransformCamera",
 				offset_position = {
-					x = 0,
-					y = 0,
 					z = 0,
+					x = 0,
+					y = 0
 				},
 				node_transitions = table.merge({
 					zoom_in = CameraTransitionTemplates.zoom,
-					increased_zoom_in = CameraTransitionTemplates.zoom,
-				}, THIRD_PERSON_TRANSITIONS),
-			},
+					increased_zoom_in = CameraTransitionTemplates.zoom
+				}, var_0_0)
+			}
 		},
 		{
 			_node = {
-				class = "TransformCamera",
 				name = "zoom_in_trueflight_third_person",
+				class = "TransformCamera",
 				offset_position = {
-					x = 0.75,
-					y = 0.65,
 					z = 0,
+					x = 0.75,
+					y = 0.65
 				},
 				node_transitions = table.merge({
 					zoom_in = CameraTransitionTemplates.zoom,
-					increased_zoom_in = CameraTransitionTemplates.zoom,
-				}, THIRD_PERSON_TRANSITIONS),
-			},
+					increased_zoom_in = CameraTransitionTemplates.zoom
+				}, var_0_0)
+			}
 		},
 		{
 			_node = {
-				class = "TransformCamera",
+				near_range = 0.1,
 				name = "increased_zoom_in",
-				near_range = 0.1,
-				vertical_fov = 16,
-				offset_position = {
-					x = 0,
-					y = 0,
-					z = 0,
-				},
-				node_transitions = table.merge({
-					first_person_node = CameraTransitionTemplates.zoom,
-					zoom_in = CameraTransitionTemplates.zoom,
-					zoom_in_trueflight = CameraTransitionTemplates.zoom,
-				}, THIRD_PERSON_TRANSITIONS),
-			},
-		},
-		{
-			_node = {
 				class = "TransformCamera",
-				name = "increased_zoom_in_third_person",
-				near_range = 0.1,
 				vertical_fov = 16,
 				offset_position = {
-					x = 0.75,
-					y = 0.65,
 					z = 0,
+					x = 0,
+					y = 0
 				},
 				node_transitions = table.merge({
 					first_person_node = CameraTransitionTemplates.zoom,
 					zoom_in = CameraTransitionTemplates.zoom,
-					zoom_in_trueflight = CameraTransitionTemplates.zoom,
-				}, THIRD_PERSON_TRANSITIONS),
-			},
+					zoom_in_trueflight = CameraTransitionTemplates.zoom
+				}, var_0_0)
+			}
 		},
 		{
 			_node = {
-				class = "RotationCamera",
+				near_range = 0.1,
+				name = "increased_zoom_in_third_person",
+				class = "TransformCamera",
+				vertical_fov = 16,
+				offset_position = {
+					z = 0,
+					x = 0.75,
+					y = 0.65
+				},
+				node_transitions = table.merge({
+					first_person_node = CameraTransitionTemplates.zoom,
+					zoom_in = CameraTransitionTemplates.zoom,
+					zoom_in_trueflight = CameraTransitionTemplates.zoom
+				}, var_0_0)
+			}
+		},
+		{
+			_node = {
 				name = "map_deus",
+				class = "RotationCamera",
 				offset_pitch = -85,
 				offset_position = {
-					x = 0,
-					y = 0,
 					z = 0,
+					x = 0,
+					y = 0
 				},
-				node_transitions = THIRD_PERSON_TRANSITIONS,
-			},
+				node_transitions = var_0_0
+			}
 		},
 		{
 			_node = {
-				class = "TransformCamera",
 				name = "up_translation",
+				class = "TransformCamera",
 				offset_position = {
-					x = 0,
-					y = 0,
 					z = 0,
-				},
+					x = 0,
+					y = 0
+				}
 			},
 			{
 				_node = {
-					class = "TransformCamera",
 					name = "onground_no_scale",
+					class = "TransformCamera",
 					offset_position = {
-						x = 0,
-						y = -2,
 						z = 0,
-					},
+						x = 0,
+						y = -2
+					}
 				},
 				{
 					_node = {
-						class = "TransformCamera",
 						name = "knocked_down",
+						class = "TransformCamera",
 						offset_position = {
-							x = 0,
-							y = 0,
 							z = 0,
+							x = 0,
+							y = 0
 						},
 						node_transitions = {
-							first_person_node = CameraTransitionTemplates.first_person,
-						},
-					},
+							first_person_node = CameraTransitionTemplates.first_person
+						}
+					}
 				},
 				{
 					_node = {
-						class = "TransformCamera",
 						name = "heal_self",
+						class = "TransformCamera",
 						offset_position = {
-							x = 0,
-							y = 0,
 							z = 0,
+							x = 0,
+							y = 0
 						},
 						node_transitions = {
-							first_person_node = CameraTransitionTemplates.first_person,
-						},
-					},
+							first_person_node = CameraTransitionTemplates.first_person
+						}
+					}
 				},
 				{
 					_node = {
-						class = "TransformCamera",
 						name = "emotes_offset",
+						class = "TransformCamera",
 						offset_position = {
-							x = 0,
-							y = 1,
 							z = 0,
+							x = 0,
+							y = 1
 						},
 						node_transitions = {
-							first_person_node = CameraTransitionTemplates.first_person,
-						},
+							first_person_node = CameraTransitionTemplates.first_person
+						}
 					},
 					{
 						_node = {
@@ -240,190 +240,190 @@ CameraSettings.first_person = {
 							name = "emotes",
 							scale_variable = "emote_zoom",
 							offset_position = {
-								x = 0,
-								y = -5,
 								z = 0,
+								x = 0,
+								y = -5
 							},
-							scale_function = function (scale)
-								return scale
+							scale_function = function(arg_2_0)
+								return arg_2_0
 							end,
 							node_transitions = {
-								first_person_node = CameraTransitionTemplates.first_person,
-							},
-						},
-					},
+								first_person_node = CameraTransitionTemplates.first_person
+							}
+						}
+					}
 				},
 				{
 					_node = {
-						class = "TransformCamera",
 						name = "attract_mode",
+						class = "TransformCamera",
 						offset_position = {
-							x = 0,
-							y = -5,
 							z = 1,
+							x = 0,
+							y = -5
 						},
 						node_transitions = {
-							first_person_node = CameraTransitionTemplates.first_person,
-						},
-					},
+							first_person_node = CameraTransitionTemplates.first_person
+						}
+					}
 				},
 				{
 					_node = {
-						class = "TransformCamera",
 						name = "over_shoulder",
+						class = "TransformCamera",
 						offset_position = {
+							z = 0,
 							x = 0.75,
-							y = 0.65,
-							z = 0,
+							y = 0.65
 						},
 						node_transitions = table.merge({
-							first_person_node = CameraTransitionTemplates.first_person,
-						}, THIRD_PERSON_TRANSITIONS),
-					},
+							first_person_node = CameraTransitionTemplates.first_person
+						}, var_0_0)
+					}
 				},
 				{
 					_node = {
-						class = "TransformCamera",
 						name = "observer",
+						class = "TransformCamera",
 						offset_position = {
-							x = 0,
-							y = -2,
 							z = 0,
+							x = 0,
+							y = -2
 						},
 						node_transitions = {
-							first_person_node = CameraTransitionTemplates.first_person,
-						},
-					},
+							first_person_node = CameraTransitionTemplates.first_person
+						}
+					}
 				},
 				{
 					_node = {
-						class = "TransformCamera",
 						name = "ledge_hanging",
+						class = "TransformCamera",
 						offset_position = {
-							x = 0,
-							y = 0,
 							z = -1.5,
+							x = 0,
+							y = 0
 						},
 						node_transitions = {
-							first_person_node = CameraTransitionTemplates.first_person,
-						},
-					},
+							first_person_node = CameraTransitionTemplates.first_person
+						}
+					}
 				},
 				{
 					_node = {
-						class = "TransformCamera",
 						name = "chaos_spawn_grabbed",
+						class = "TransformCamera",
 						offset_position = {
-							x = 0.5,
-							y = -1.6,
 							z = 0.5,
+							x = 0.5,
+							y = -1.6
 						},
 						node_transitions = table.merge({
-							first_person_node = CameraTransitionTemplates.first_person,
-						}, THIRD_PERSON_TRANSITIONS),
-					},
+							first_person_node = CameraTransitionTemplates.first_person
+						}, var_0_0)
+					}
 				},
 				{
 					_node = {
-						class = "TransformCamera",
 						name = "pounced_down",
+						class = "TransformCamera",
 						offset_position = {
-							x = 0,
-							y = 0,
 							z = 0,
+							x = 0,
+							y = 0
 						},
 						node_transitions = {
-							first_person_node = CameraTransitionTemplates.first_person,
-						},
-					},
+							first_person_node = CameraTransitionTemplates.first_person
+						}
+					}
 				},
 				{
 					_node = {
-						class = "TransformCamera",
 						name = "smartobject",
+						class = "TransformCamera",
 						offset_position = {
-							x = 0,
-							y = 0,
 							z = 0,
+							x = 0,
+							y = 0
 						},
 						node_transitions = {
-							first_person_node = CameraTransitionTemplates.first_person,
-						},
-					},
+							first_person_node = CameraTransitionTemplates.first_person
+						}
+					}
 				},
 				{
 					_node = {
-						class = "TransformCamera",
 						name = "revive",
+						class = "TransformCamera",
 						offset_position = {
-							x = 0,
-							y = 0,
 							z = 0,
+							x = 0,
+							y = 0
 						},
 						node_transitions = {
-							first_person_node = CameraTransitionTemplates.first_person,
-						},
-					},
+							first_person_node = CameraTransitionTemplates.first_person
+						}
+					}
 				},
 				{
 					_node = {
-						class = "TransformCamera",
 						name = "heal_other",
+						class = "TransformCamera",
 						offset_position = {
-							x = 0,
-							y = 0,
 							z = 0,
+							x = 0,
+							y = 0
 						},
 						node_transitions = {
-							first_person_node = CameraTransitionTemplates.first_person,
-						},
-					},
+							first_person_node = CameraTransitionTemplates.first_person
+						}
+					}
 				},
 				{
 					_node = {
-						class = "TransformCamera",
 						name = "dead",
+						class = "TransformCamera",
 						offset_position = {
-							x = 0,
-							y = 0,
 							z = 0,
+							x = 0,
+							y = 0
 						},
 						node_transitions = {
-							first_person_node = CameraTransitionTemplates.first_person,
-						},
-					},
+							first_person_node = CameraTransitionTemplates.first_person
+						}
+					}
 				},
 				{
 					_node = {
-						class = "TransformCamera",
 						name = "smart_climbing",
+						class = "TransformCamera",
 						offset_position = {
-							x = 0,
-							y = -1,
 							z = 0.3,
+							x = 0,
+							y = -1
 						},
 						node_transitions = table.merge({
-							first_person_node = CameraTransitionTemplates.first_person_fast,
-						}, THIRD_PERSON_TRANSITIONS),
-					},
+							first_person_node = CameraTransitionTemplates.first_person_fast
+						}, var_0_0)
+					}
 				},
 				{
 					_node = {
-						class = "TransformCamera",
 						name = "tunneling",
+						class = "TransformCamera",
 						offset_position = {
-							x = 0,
-							y = -1,
 							z = 0.3,
+							x = 0,
+							y = -1
 						},
 						node_transitions = table.merge({
-							first_person_node = CameraTransitionTemplates.first_person_fast,
-						}, THIRD_PERSON_TRANSITIONS),
-					},
-				},
-			},
-		},
-	},
+							first_person_node = CameraTransitionTemplates.first_person_fast
+						}, var_0_0)
+					}
+				}
+			}
+		}
+	}
 }
 
 if script_data.debug_third_person then
@@ -432,156 +432,156 @@ end
 
 CameraSettings.world = {
 	_node = {
-		class = "RootCamera",
-		far_range = 5000,
-		name = "default",
-		pitch_max = -90,
 		pitch_min = -90,
-		pitch_speed = 0,
+		name = "default",
+		far_range = 5000,
+		pitch_max = -90,
 		should_apply_fov_multiplier = true,
-		vertical_fov = 45,
+		class = "RootCamera",
 		yaw_speed = 0,
+		vertical_fov = 45,
+		pitch_speed = 0,
 		tree_transitions = {},
-		node_transitions = {},
-	},
+		node_transitions = {}
+	}
 }
 CameraSettings.main_menu = {
 	_node = {
-		class = "RootCamera",
-		far_range = 1000,
+		pitch_min = 0,
 		name = "default",
 		near_range = 0.05,
+		far_range = 1000,
 		pitch_max = 0,
-		pitch_min = 0,
-		pitch_speed = 0,
 		should_apply_fov_multiplier = true,
-		vertical_fov = 45,
+		class = "RootCamera",
 		yaw_speed = 0,
+		vertical_fov = 45,
+		pitch_speed = 0,
 		tree_transitions = {},
-		node_transitions = {},
+		node_transitions = {}
 	},
 	{
 		_node = {
 			class = "OffsetCamera",
-			name = "sway",
-		},
-	},
+			name = "sway"
+		}
+	}
 }
 CameraSettings.ingame_menu = {
 	_node = {
-		class = "RootCamera",
-		far_range = 1000,
+		pitch_min = 0,
 		name = "default",
 		near_range = 1,
+		far_range = 1000,
 		pitch_max = 0,
-		pitch_min = 0,
-		pitch_speed = 0,
 		should_apply_fov_multiplier = true,
-		vertical_fov = 45,
+		class = "RootCamera",
 		yaw_speed = 0,
+		vertical_fov = 45,
+		pitch_speed = 0,
 		tree_transitions = {},
-		node_transitions = {},
-	},
+		node_transitions = {}
+	}
 }
 CameraSettings.player_dead = {
 	_node = {
-		class = "RootCamera",
-		name = "root_node",
-		pitch_max = 90,
 		pitch_min = -90,
+		name = "root_node",
 		pitch_offset = 0,
-		root_object_name = "j_hips",
+		pitch_max = 90,
 		should_apply_fov_multiplier = true,
+		class = "RootCamera",
 		vertical_fov = 45,
+		root_object_name = "j_hips",
 		pitch_speed = PITCH_SPEED,
 		yaw_speed = YAW_SPEED,
 		safe_position_offset = Vector3Box(0, 0, 1.55),
 		tree_transitions = {},
 		node_transitions = {
-			default = CameraTransitionTemplates.dead,
-		},
+			default = CameraTransitionTemplates.dead
+		}
 	},
 	{
 		_node = {
-			class = "AimCamera",
-			name = "yaw_aim",
-			pitch = false,
-			pitch_offset = 22.5,
 			yaw = true,
+			name = "yaw_aim",
+			class = "AimCamera",
+			pitch_offset = 22.5,
+			pitch = false
 		},
 		{
 			_node = {
-				class = "TransformCamera",
 				name = "up_translation",
+				class = "TransformCamera",
 				offset_position = {
-					x = 0,
-					y = 0,
 					z = 0.25,
-				},
+					x = 0,
+					y = 0
+				}
 			},
 			{
 				_node = {
-					class = "AimCamera",
-					name = "pitch_aim",
 					pitch = true,
-					yaw = true,
+					name = "pitch_aim",
+					class = "AimCamera",
+					yaw = true
 				},
 				{
 					_node = {
-						class = "TransformCamera",
 						name = "onground_no_scale",
+						class = "TransformCamera",
 						offset_position = {
-							x = 0,
-							y = -2,
 							z = 0.18,
-						},
+							x = 0,
+							y = -2
+						}
 					},
 					{
 						_node = {
-							class = "ScalableTransformCamera",
 							name = "onground",
-							scale_variable = "zoom",
+							class = "ScalableTransformCamera",
 							vertical_fov = 48,
+							scale_variable = "zoom",
 							offset_position = {
-								x = 0,
-								y = -2,
 								z = 0,
+								x = 0,
+								y = -2
 							},
-							scale_function = function (scale)
-								return scale
-							end,
+							scale_function = function(arg_3_0)
+								return arg_3_0
+							end
 						},
 						{
 							_node = {
-								class = "TransformCamera",
 								name = "default",
+								class = "TransformCamera",
 								offset_position = {
-									x = 0,
-									y = 0,
 									z = 0,
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-	},
+									x = 0,
+									y = 0
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
 CameraSettings.cutscene = {
 	_node = {
-		class = "RootCamera",
+		pitch_min = -90,
 		name = "root_node",
+		pitch_offset = 0,
 		offset_pitch = -10,
 		pitch_max = -90,
-		pitch_min = -90,
-		pitch_offset = 0,
-		pitch_speed = 0,
-		safe_position_impact_offset = 0,
-		vertical_fov = 80,
+		class = "RootCamera",
 		yaw_speed = 0,
+		vertical_fov = 80,
+		safe_position_impact_offset = 0,
+		pitch_speed = 0,
 		safe_position_offset = Vector3Box(0, 0, 1.55),
 		tree_transitions = {},
-		node_transitions = {},
-	},
+		node_transitions = {}
+	}
 }

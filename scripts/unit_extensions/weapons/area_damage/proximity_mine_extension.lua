@@ -1,102 +1,102 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/area_damage/proximity_mine_extension.lua
+-- chunkname: @scripts/unit_extensions/weapons/area_damage/proximity_mine_extension.lua
 
 ProximityMineExtension = class(ProximityMineExtension)
 
-ProximityMineExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self.arm_time = extension_init_data.arm_time or 0
-	self.detonation_time = extension_init_data.detonation_time or 0
-	self.range = extension_init_data.range or 1
-	self.catapult_strength = extension_init_data.catapult_strength or 1
-	self.explosion_template = extension_init_data.explosion_template
-	self.owner_unit = extension_init_data.owner_unit
-	self.detonating_sound_event = extension_init_data.detonating_sound_event
-	self.armed_sound_event = extension_init_data.armed_sound_event
-	self.hero_side = Managers.state.side:get_side_from_name("heroes")
-	self.audio_system = Managers.state.entity:system("audio_system")
-	self._is_server = extension_init_context.is_server
-	self._armed = false
-	self._detonating = false
-	self._unit = unit
+function ProximityMineExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.arm_time = arg_1_3.arm_time or 0
+	arg_1_0.detonation_time = arg_1_3.detonation_time or 0
+	arg_1_0.range = arg_1_3.range or 1
+	arg_1_0.catapult_strength = arg_1_3.catapult_strength or 1
+	arg_1_0.explosion_template = arg_1_3.explosion_template
+	arg_1_0.owner_unit = arg_1_3.owner_unit
+	arg_1_0.detonating_sound_event = arg_1_3.detonating_sound_event
+	arg_1_0.armed_sound_event = arg_1_3.armed_sound_event
+	arg_1_0.hero_side = Managers.state.side:get_side_from_name("heroes")
+	arg_1_0.audio_system = Managers.state.entity:system("audio_system")
+	arg_1_0._is_server = arg_1_1.is_server
+	arg_1_0._armed = false
+	arg_1_0._detonating = false
+	arg_1_0._unit = arg_1_2
 
-	self:enable(true)
+	arg_1_0:enable(true)
 end
 
-ProximityMineExtension.destroy = function (self)
+function ProximityMineExtension.destroy(arg_2_0)
 	return
 end
 
-ProximityMineExtension.enable = function (self, enable)
-	self._arm_timer = self.arm_time
+function ProximityMineExtension.enable(arg_3_0, arg_3_1)
+	arg_3_0._arm_timer = arg_3_0.arm_time
 end
 
-ProximityMineExtension.update = function (self, unit, input, dt, context, t)
-	if not self._is_server or not HEALTH_ALIVE[unit] then
+function ProximityMineExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	if not arg_4_0._is_server or not HEALTH_ALIVE[arg_4_1] then
 		return
 	end
 
-	local arm_timer = self._arm_timer
+	local var_4_0 = arg_4_0._arm_timer
 
-	if arm_timer then
-		arm_timer = arm_timer - dt
+	if var_4_0 then
+		local var_4_1 = var_4_0 - arg_4_3
 
-		if arm_timer <= 0 then
-			if self.armed_sound_event then
-				self.audio_system:play_audio_unit_event(self.armed_sound_event, unit)
+		if var_4_1 <= 0 then
+			if arg_4_0.armed_sound_event then
+				arg_4_0.audio_system:play_audio_unit_event(arg_4_0.armed_sound_event, arg_4_1)
 			end
 
-			self._arm_timer = nil
-			self._armed = true
+			arg_4_0._arm_timer = nil
+			arg_4_0._armed = true
 		else
-			self._arm_timer = arm_timer
+			arg_4_0._arm_timer = var_4_1
 		end
 	end
 
-	if self._armed then
-		local player_and_bot_units = self.hero_side.PLAYER_AND_BOT_UNITS
-		local position = Unit.local_position(unit, 0)
+	if arg_4_0._armed then
+		local var_4_2 = arg_4_0.hero_side.PLAYER_AND_BOT_UNITS
+		local var_4_3 = Unit.local_position(arg_4_1, 0)
 
-		for i = 1, #player_and_bot_units do
-			local player_unit = player_and_bot_units[i]
+		for iter_4_0 = 1, #var_4_2 do
+			local var_4_4 = var_4_2[iter_4_0]
 
-			if ALIVE[player_unit] then
-				local unit_pos = POSITION_LOOKUP[player_unit]
-				local distance_sq = Vector3.distance_squared(position, unit_pos)
-				local range = self.range
+			if ALIVE[var_4_4] then
+				local var_4_5 = POSITION_LOOKUP[var_4_4]
+				local var_4_6 = Vector3.distance_squared(var_4_3, var_4_5)
+				local var_4_7 = arg_4_0.range
 
-				if distance_sq <= range * range then
-					if self.detonating_sound_event then
-						self.audio_system:play_audio_unit_event(self.detonating_sound_event, unit)
+				if var_4_6 <= var_4_7 * var_4_7 then
+					if arg_4_0.detonating_sound_event then
+						arg_4_0.audio_system:play_audio_unit_event(arg_4_0.detonating_sound_event, arg_4_1)
 					end
 
-					self._armed = false
-					self._detonating = true
-					self._detonation_timer = self.detonation_time
+					arg_4_0._armed = false
+					arg_4_0._detonating = true
+					arg_4_0._detonation_timer = arg_4_0.detonation_time
 				end
 			end
 		end
 	end
 
-	local detonation_timer = self._detonation_timer
+	local var_4_8 = arg_4_0._detonation_timer
 
-	if detonation_timer then
-		detonation_timer = detonation_timer - dt
+	if var_4_8 then
+		local var_4_9 = var_4_8 - arg_4_3
 
-		if detonation_timer <= 0 then
-			local area_damage_system = Managers.state.entity:system("area_damage_system")
-			local position = Unit.local_position(unit, 0)
-			local power_level = 100
+		if var_4_9 <= 0 then
+			local var_4_10 = Managers.state.entity:system("area_damage_system")
+			local var_4_11 = Unit.local_position(arg_4_1, 0)
+			local var_4_12 = 100
 
-			area_damage_system:create_explosion(unit, position, Quaternion.identity(), self.explosion_template, 1, "undefined", power_level, false, self.owner_unit)
-			AiUtils.kill_unit(unit)
+			var_4_10:create_explosion(arg_4_1, var_4_11, Quaternion.identity(), arg_4_0.explosion_template, 1, "undefined", var_4_12, false, arg_4_0.owner_unit)
+			AiUtils.kill_unit(arg_4_1)
 
-			self._detonating = false
-			self._detonation_timer = nil
+			arg_4_0._detonating = false
+			arg_4_0._detonation_timer = nil
 		else
-			self._detonation_timer = detonation_timer
+			arg_4_0._detonation_timer = var_4_9
 		end
 	end
 end
 
-ProximityMineExtension.hot_join_sync = function (self, peer_id)
+function ProximityMineExtension.hot_join_sync(arg_5_0, arg_5_1)
 	return
 end

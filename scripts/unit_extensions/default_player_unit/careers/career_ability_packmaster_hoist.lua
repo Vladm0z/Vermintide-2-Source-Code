@@ -1,11 +1,11 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/careers/career_ability_packmaster_hoist.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/careers/career_ability_packmaster_hoist.lua
 
 CareerAbilityPackmasterHoist = class(CareerAbilityPackmasterHoist, CareerAbilityDarkPactBase)
 
-CareerAbilityPackmasterHoist._ability_available = function (self)
-	local ability_available = self.super._ability_available(self)
-	local status_extension = self._status_extension
-	local locomotion_extension = self._locomotion_extension
+function CareerAbilityPackmasterHoist._ability_available(arg_1_0)
+	local var_1_0 = arg_1_0.super._ability_available(arg_1_0)
+	local var_1_1 = arg_1_0._status_extension
+	local var_1_2 = arg_1_0._locomotion_extension
 
-	return ability_available and status_extension:get_is_packmaster_dragging() and locomotion_extension:is_on_ground()
+	return var_1_0 and var_1_1:get_is_packmaster_dragging() and var_1_2:is_on_ground()
 end

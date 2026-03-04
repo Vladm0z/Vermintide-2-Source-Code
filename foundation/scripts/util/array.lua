@@ -1,660 +1,697 @@
-﻿-- chunkname: @foundation/scripts/util/array.lua
+-- chunkname: @foundation/scripts/util/array.lua
 
-local function array_new()
+local function var_0_0()
 	return {
 		{},
-		0,
+		0
 	}
 end
 
-local function array_data(a)
-	return a[1], a[2]
+local function var_0_1(arg_2_0)
+	return arg_2_0[1], arg_2_0[2]
 end
 
-local function array(a)
-	return a[1]
+local function var_0_2(arg_3_0)
+	return arg_3_0[1]
 end
 
-local function array_n(a)
-	return a[2]
+local function var_0_3(arg_4_0)
+	return arg_4_0[2]
 end
 
-local function array_copy(a)
-	local at, an = array_data(a)
-	local t = {}
-	local b = {
-		t,
-		an,
+local function var_0_4(arg_5_0)
+	local var_5_0, var_5_1 = var_0_1(arg_5_0)
+	local var_5_2 = {}
+	local var_5_3 = {
+		var_5_2,
+		var_5_1
 	}
 
-	for i = 1, an do
-		t[i] = at[i]
+	for iter_5_0 = 1, var_5_1 do
+		var_5_2[iter_5_0] = var_5_0[iter_5_0]
 	end
 
-	return b
+	return var_5_3
 end
 
-local function array_resize(a, new_n)
-	local t, n = a[1], a[2]
+local function var_0_5(arg_6_0, arg_6_1)
+	local var_6_0 = arg_6_0[1]
+	local var_6_1 = arg_6_0[2]
 
-	while n < new_n do
-		n = n + 1
-		t[n] = nil
+	while var_6_1 < arg_6_1 do
+		var_6_1 = var_6_1 + 1
+		var_6_0[var_6_1] = nil
 	end
 
-	while new_n < n do
-		t[n] = nil
-		n = n - 1
+	while arg_6_1 < var_6_1 do
+		var_6_0[var_6_1] = nil
+		var_6_1 = var_6_1 - 1
 	end
 
-	a[2] = new_n
+	arg_6_0[2] = arg_6_1
 end
 
-local function array_resize_grow_only(a, new_n)
-	local t, n = a[1], a[2]
+local function var_0_6(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_0[1]
+	local var_7_1 = arg_7_0[2]
 
-	a[2] = new_n
+	arg_7_0[2] = arg_7_1
 
-	while n < new_n do
-		n = n + 1
-		t[n] = nil
+	while var_7_1 < arg_7_1 do
+		var_7_1 = var_7_1 + 1
+		var_7_0[var_7_1] = nil
 	end
 end
 
-local function array_set_size(a, new_n)
-	a[2] = new_n
+local function var_0_7(arg_8_0, arg_8_1)
+	arg_8_0[2] = arg_8_1
 end
 
-local function array_set_empty(a)
-	array_set_size(a, 0)
+local function var_0_8(arg_9_0)
+	var_0_7(arg_9_0, 0)
 end
 
-local function array_empty(a)
-	return a[2] == 0
+local function var_0_9(arg_10_0)
+	return arg_10_0[2] == 0
 end
 
-local function array_pop_index(a, index)
-	local t, n = a[1], a[2]
+local function var_0_10(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_0[1]
+	local var_11_1 = arg_11_0[2]
 
-	t[index] = t[n]
-	t[n] = nil
-	a[2] = n - 1
+	var_11_0[arg_11_1] = var_11_0[var_11_1]
+	var_11_0[var_11_1] = nil
+	arg_11_0[2] = var_11_1 - 1
 end
 
-local function array_pop_index_ordered(a, index)
-	local t, n = a[1], a[2]
+local function var_0_11(arg_12_0, arg_12_1)
+	local var_12_0 = arg_12_0[1]
+	local var_12_1 = arg_12_0[2]
 
-	for i = index, n - 1 do
-		t[i] = t[i + 1]
+	for iter_12_0 = arg_12_1, var_12_1 - 1 do
+		var_12_0[iter_12_0] = var_12_0[iter_12_0 + 1]
 	end
 
-	t[n] = nil
-	a[2] = n - 1
+	var_12_0[var_12_1] = nil
+	arg_12_0[2] = var_12_1 - 1
 end
 
-local function array_item_index(a, item)
-	local t, n = a[1], a[2]
-	local found_i
+local function var_0_12(arg_13_0, arg_13_1)
+	local var_13_0 = arg_13_0[1]
+	local var_13_1 = arg_13_0[2]
+	local var_13_2
 
-	for i = 1, n do
-		if t[i] == item then
-			found_i = i
+	for iter_13_0 = 1, var_13_1 do
+		if var_13_0[iter_13_0] == arg_13_1 then
+			var_13_2 = iter_13_0
 
 			break
 		end
 	end
 
-	return found_i
+	return var_13_2
 end
 
-local function array_pop_item(a, item)
-	local found_i = array_item_index(a, item)
+local function var_0_13(arg_14_0, arg_14_1)
+	local var_14_0 = var_0_12(arg_14_0, arg_14_1)
 
-	if not found_i then
+	if not var_14_0 then
 		return nil
 	end
 
-	array_pop_index(a, found_i)
+	var_0_10(arg_14_0, var_14_0)
 
-	return found_i
+	return var_14_0
 end
 
-local function array_pop_index_value(a, index)
-	local t, n = a[1], a[2]
-	local return_value = t[index]
+local function var_0_14(arg_15_0, arg_15_1)
+	local var_15_0 = arg_15_0[1]
+	local var_15_1 = arg_15_0[2]
+	local var_15_2 = var_15_0[arg_15_1]
 
-	t[index] = t[n]
-	t[n] = nil
-	a[2] = n - 1
+	var_15_0[arg_15_1] = var_15_0[var_15_1]
+	var_15_0[var_15_1] = nil
+	arg_15_0[2] = var_15_1 - 1
 
-	return return_value, index
+	return var_15_2, arg_15_1
 end
 
-local function array_pop_item_value(a, item)
-	local found_i = array_item_index(a, item)
+local function var_0_15(arg_16_0, arg_16_1)
+	local var_16_0 = var_0_12(arg_16_0, arg_16_1)
 
-	if not found_i then
+	if not var_16_0 then
 		return
 	end
 
-	return array_pop_index_value(a, found_i)
+	return var_0_14(arg_16_0, var_16_0)
 end
 
-local function array_pop_index_ordered_value(a, index)
-	local t, n = a[1], a[2]
-	local return_value = t[index]
+local function var_0_16(arg_17_0, arg_17_1)
+	local var_17_0 = arg_17_0[1]
+	local var_17_1 = arg_17_0[2]
+	local var_17_2 = var_17_0[arg_17_1]
 
-	for i = index, n - 1 do
-		t[i] = t[i + 1]
+	for iter_17_0 = arg_17_1, var_17_1 - 1 do
+		var_17_0[iter_17_0] = var_17_0[iter_17_0 + 1]
 	end
 
-	t[n] = nil
-	a[2] = n - 1
+	var_17_0[var_17_1] = nil
+	arg_17_0[2] = var_17_1 - 1
 
-	return return_value, index
+	return var_17_2, arg_17_1
 end
 
-local function array_pop_item_ordered(a, item)
-	local found_i = array_item_index(a, item)
+local function var_0_17(arg_18_0, arg_18_1)
+	local var_18_0 = var_0_12(arg_18_0, arg_18_1)
 
-	if not found_i then
+	if not var_18_0 then
 		return nil
 	end
 
-	array_pop_index_ordered(a, found_i)
+	var_0_11(arg_18_0, var_18_0)
 
-	return found_i
+	return var_18_0
 end
 
-local function array_pop_item_value_ordered(a, item)
-	local found_i = array_item_index(a, item)
+local function var_0_18(arg_19_0, arg_19_1)
+	local var_19_0 = var_0_12(arg_19_0, arg_19_1)
 
-	if not found_i then
+	if not var_19_0 then
 		return
 	end
 
-	return array_pop_index_ordered_value(a, found_i)
+	return var_0_16(arg_19_0, var_19_0)
 end
 
-local function array_pop_back(a)
-	local t, n = a[1], a[2]
+local function var_0_19(arg_20_0)
+	local var_20_0 = arg_20_0[1]
+	local var_20_1 = arg_20_0[2]
 
-	assert(n > 0)
+	assert(var_20_1 > 0)
 
-	local v = t[n]
+	local var_20_2 = var_20_0[var_20_1]
 
-	t[n] = nil
-	a[2] = n - 1
+	var_20_0[var_20_1] = nil
+	arg_20_0[2] = var_20_1 - 1
 
-	return v, n
+	return var_20_2, var_20_1
 end
 
-local function array_erase_back(a)
-	local t, n = a[1], a[2]
+local function var_0_20(arg_21_0)
+	local var_21_0 = arg_21_0[1]
+	local var_21_1 = arg_21_0[2]
 
-	assert(n > 0)
+	assert(var_21_1 > 0)
 
-	t[n] = nil
-	a[2] = n - 1
+	var_21_0[var_21_1] = nil
+	arg_21_0[2] = var_21_1 - 1
 end
 
-local function array_push_back(a, item, ...)
-	local t, n = a[1], a[2] + 1
+local function var_0_21(arg_22_0, arg_22_1, ...)
+	local var_22_0 = arg_22_0[1]
+	local var_22_1 = arg_22_0[2] + 1
 
-	t[n] = item
-	a[2] = n
+	var_22_0[var_22_1] = arg_22_1
+	arg_22_0[2] = var_22_1
 end
 
-local function array_push_back2(a, item1, item2, ...)
-	local t, n = a[1], a[2]
+local function var_0_22(arg_23_0, arg_23_1, arg_23_2, ...)
+	local var_23_0 = arg_23_0[1]
+	local var_23_1 = arg_23_0[2]
 
-	t[n + 1] = item1
-	t[n + 2] = item2
-	a[2] = n + 2
+	var_23_0[var_23_1 + 1] = arg_23_1
+	var_23_0[var_23_1 + 2] = arg_23_2
+	arg_23_0[2] = var_23_1 + 2
 end
 
-local function array_push_back3(a, item1, item2, item3, ...)
-	local t, n = a[1], a[2]
+local function var_0_23(arg_24_0, arg_24_1, arg_24_2, arg_24_3, ...)
+	local var_24_0 = arg_24_0[1]
+	local var_24_1 = arg_24_0[2]
 
-	t[n + 1] = item1
-	t[n + 2] = item2
-	t[n + 3] = item3
-	a[2] = n + 3
+	var_24_0[var_24_1 + 1] = arg_24_1
+	var_24_0[var_24_1 + 2] = arg_24_2
+	var_24_0[var_24_1 + 3] = arg_24_3
+	arg_24_0[2] = var_24_1 + 3
 end
 
-local function array_push_back4(a, item1, item2, item3, item4, ...)
-	local t, n = a[1], a[2]
+local function var_0_24(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, ...)
+	local var_25_0 = arg_25_0[1]
+	local var_25_1 = arg_25_0[2]
 
-	t[n + 1] = item1
-	t[n + 2] = item2
-	t[n + 3] = item3
-	t[n + 4] = item4
-	a[2] = n + 4
+	var_25_0[var_25_1 + 1] = arg_25_1
+	var_25_0[var_25_1 + 2] = arg_25_2
+	var_25_0[var_25_1 + 3] = arg_25_3
+	var_25_0[var_25_1 + 4] = arg_25_4
+	arg_25_0[2] = var_25_1 + 4
 end
 
-local function array_push_back5(a, item1, item2, item3, item4, item5, ...)
-	local t, n = a[1], a[2]
+local function var_0_25(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, ...)
+	local var_26_0 = arg_26_0[1]
+	local var_26_1 = arg_26_0[2]
 
-	t[n + 1] = item1
-	t[n + 2] = item2
-	t[n + 3] = item3
-	t[n + 4] = item4
-	t[n + 5] = item5
-	a[2] = n + 5
+	var_26_0[var_26_1 + 1] = arg_26_1
+	var_26_0[var_26_1 + 2] = arg_26_2
+	var_26_0[var_26_1 + 3] = arg_26_3
+	var_26_0[var_26_1 + 4] = arg_26_4
+	var_26_0[var_26_1 + 5] = arg_26_5
+	arg_26_0[2] = var_26_1 + 5
 end
 
-local function array_push_back6(a, item1, item2, item3, item4, item5, item6, ...)
-	local t, n = a[1], a[2]
+local function var_0_26(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6, ...)
+	local var_27_0 = arg_27_0[1]
+	local var_27_1 = arg_27_0[2]
 
-	t[n + 1] = item1
-	t[n + 2] = item2
-	t[n + 3] = item3
-	t[n + 4] = item4
-	t[n + 5] = item5
-	t[n + 6] = item6
-	a[2] = n + 6
+	var_27_0[var_27_1 + 1] = arg_27_1
+	var_27_0[var_27_1 + 2] = arg_27_2
+	var_27_0[var_27_1 + 3] = arg_27_3
+	var_27_0[var_27_1 + 4] = arg_27_4
+	var_27_0[var_27_1 + 5] = arg_27_5
+	var_27_0[var_27_1 + 6] = arg_27_6
+	arg_27_0[2] = var_27_1 + 6
 end
 
-local function array_push_back7(a, item1, item2, item3, item4, item5, item6, item7, ...)
-	local t, n = a[1], a[2]
+local function var_0_27(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6, arg_28_7, ...)
+	local var_28_0 = arg_28_0[1]
+	local var_28_1 = arg_28_0[2]
 
-	t[n + 1] = item1
-	t[n + 2] = item2
-	t[n + 3] = item3
-	t[n + 4] = item4
-	t[n + 5] = item5
-	t[n + 6] = item6
-	t[n + 7] = item7
-	a[2] = n + 7
+	var_28_0[var_28_1 + 1] = arg_28_1
+	var_28_0[var_28_1 + 2] = arg_28_2
+	var_28_0[var_28_1 + 3] = arg_28_3
+	var_28_0[var_28_1 + 4] = arg_28_4
+	var_28_0[var_28_1 + 5] = arg_28_5
+	var_28_0[var_28_1 + 6] = arg_28_6
+	var_28_0[var_28_1 + 7] = arg_28_7
+	arg_28_0[2] = var_28_1 + 7
 end
 
-local function array_push_back8(a, item1, item2, item3, item4, item5, item6, item7, item8, ...)
-	local t, n = a[1], a[2]
+local function var_0_28(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8, ...)
+	local var_29_0 = arg_29_0[1]
+	local var_29_1 = arg_29_0[2]
 
-	t[n + 1] = item1
-	t[n + 2] = item2
-	t[n + 3] = item3
-	t[n + 4] = item4
-	t[n + 5] = item5
-	t[n + 6] = item6
-	t[n + 7] = item7
-	t[n + 8] = item8
-	a[2] = n + 8
+	var_29_0[var_29_1 + 1] = arg_29_1
+	var_29_0[var_29_1 + 2] = arg_29_2
+	var_29_0[var_29_1 + 3] = arg_29_3
+	var_29_0[var_29_1 + 4] = arg_29_4
+	var_29_0[var_29_1 + 5] = arg_29_5
+	var_29_0[var_29_1 + 6] = arg_29_6
+	var_29_0[var_29_1 + 7] = arg_29_7
+	var_29_0[var_29_1 + 8] = arg_29_8
+	arg_29_0[2] = var_29_1 + 8
 end
 
-local function array_push_back9(a, item1, item2, item3, item4, item5, item6, item7, item8, item9, ...)
-	local t, n = a[1], a[2]
+local function var_0_29(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5, arg_30_6, arg_30_7, arg_30_8, arg_30_9, ...)
+	local var_30_0 = arg_30_0[1]
+	local var_30_1 = arg_30_0[2]
 
-	t[n + 1] = item1
-	t[n + 2] = item2
-	t[n + 3] = item3
-	t[n + 4] = item4
-	t[n + 5] = item5
-	t[n + 6] = item6
-	t[n + 7] = item7
-	t[n + 8] = item8
-	t[n + 9] = item9
-	a[2] = n + 9
+	var_30_0[var_30_1 + 1] = arg_30_1
+	var_30_0[var_30_1 + 2] = arg_30_2
+	var_30_0[var_30_1 + 3] = arg_30_3
+	var_30_0[var_30_1 + 4] = arg_30_4
+	var_30_0[var_30_1 + 5] = arg_30_5
+	var_30_0[var_30_1 + 6] = arg_30_6
+	var_30_0[var_30_1 + 7] = arg_30_7
+	var_30_0[var_30_1 + 8] = arg_30_8
+	var_30_0[var_30_1 + 9] = arg_30_9
+	arg_30_0[2] = var_30_1 + 9
 end
 
-local function array_push_back10(a, item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, ...)
-	local t, n = a[1], a[2]
+local function var_0_30(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5, arg_31_6, arg_31_7, arg_31_8, arg_31_9, arg_31_10, ...)
+	local var_31_0 = arg_31_0[1]
+	local var_31_1 = arg_31_0[2]
 
-	t[n + 1] = item1
-	t[n + 2] = item2
-	t[n + 3] = item3
-	t[n + 4] = item4
-	t[n + 5] = item5
-	t[n + 6] = item6
-	t[n + 7] = item7
-	t[n + 8] = item8
-	t[n + 9] = item9
-	t[n + 10] = item10
-	a[2] = n + 10
+	var_31_0[var_31_1 + 1] = arg_31_1
+	var_31_0[var_31_1 + 2] = arg_31_2
+	var_31_0[var_31_1 + 3] = arg_31_3
+	var_31_0[var_31_1 + 4] = arg_31_4
+	var_31_0[var_31_1 + 5] = arg_31_5
+	var_31_0[var_31_1 + 6] = arg_31_6
+	var_31_0[var_31_1 + 7] = arg_31_7
+	var_31_0[var_31_1 + 8] = arg_31_8
+	var_31_0[var_31_1 + 9] = arg_31_9
+	var_31_0[var_31_1 + 10] = arg_31_10
+	arg_31_0[2] = var_31_1 + 10
 end
 
-local function array_push_back11(a, item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, item11, ...)
-	local t, n = a[1], a[2]
+local function var_0_31(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6, arg_32_7, arg_32_8, arg_32_9, arg_32_10, arg_32_11, ...)
+	local var_32_0 = arg_32_0[1]
+	local var_32_1 = arg_32_0[2]
 
-	t[n + 1] = item1
-	t[n + 2] = item2
-	t[n + 3] = item3
-	t[n + 4] = item4
-	t[n + 5] = item5
-	t[n + 6] = item6
-	t[n + 7] = item7
-	t[n + 8] = item8
-	t[n + 9] = item9
-	t[n + 10] = item10
-	t[n + 11] = item11
-	a[2] = n + 11
+	var_32_0[var_32_1 + 1] = arg_32_1
+	var_32_0[var_32_1 + 2] = arg_32_2
+	var_32_0[var_32_1 + 3] = arg_32_3
+	var_32_0[var_32_1 + 4] = arg_32_4
+	var_32_0[var_32_1 + 5] = arg_32_5
+	var_32_0[var_32_1 + 6] = arg_32_6
+	var_32_0[var_32_1 + 7] = arg_32_7
+	var_32_0[var_32_1 + 8] = arg_32_8
+	var_32_0[var_32_1 + 9] = arg_32_9
+	var_32_0[var_32_1 + 10] = arg_32_10
+	var_32_0[var_32_1 + 11] = arg_32_11
+	arg_32_0[2] = var_32_1 + 11
 end
 
-local function array_push_back12(a, item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, item11, item12, ...)
-	local t, n = a[1], a[2]
+local function var_0_32(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5, arg_33_6, arg_33_7, arg_33_8, arg_33_9, arg_33_10, arg_33_11, arg_33_12, ...)
+	local var_33_0 = arg_33_0[1]
+	local var_33_1 = arg_33_0[2]
 
-	t[n + 1] = item1
-	t[n + 2] = item2
-	t[n + 3] = item3
-	t[n + 4] = item4
-	t[n + 5] = item5
-	t[n + 6] = item6
-	t[n + 7] = item7
-	t[n + 8] = item8
-	t[n + 9] = item9
-	t[n + 10] = item10
-	t[n + 11] = item11
-	t[n + 12] = item12
-	a[2] = n + 12
+	var_33_0[var_33_1 + 1] = arg_33_1
+	var_33_0[var_33_1 + 2] = arg_33_2
+	var_33_0[var_33_1 + 3] = arg_33_3
+	var_33_0[var_33_1 + 4] = arg_33_4
+	var_33_0[var_33_1 + 5] = arg_33_5
+	var_33_0[var_33_1 + 6] = arg_33_6
+	var_33_0[var_33_1 + 7] = arg_33_7
+	var_33_0[var_33_1 + 8] = arg_33_8
+	var_33_0[var_33_1 + 9] = arg_33_9
+	var_33_0[var_33_1 + 10] = arg_33_10
+	var_33_0[var_33_1 + 11] = arg_33_11
+	var_33_0[var_33_1 + 12] = arg_33_12
+	arg_33_0[2] = var_33_1 + 12
 end
 
-local function array_push_back13(a, item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, item11, item12, item13, ...)
-	local t, n = a[1], a[2]
+local function var_0_33(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5, arg_34_6, arg_34_7, arg_34_8, arg_34_9, arg_34_10, arg_34_11, arg_34_12, arg_34_13, ...)
+	local var_34_0 = arg_34_0[1]
+	local var_34_1 = arg_34_0[2]
 
-	t[n + 1] = item1
-	t[n + 2] = item2
-	t[n + 3] = item3
-	t[n + 4] = item4
-	t[n + 5] = item5
-	t[n + 6] = item6
-	t[n + 7] = item7
-	t[n + 8] = item8
-	t[n + 9] = item9
-	t[n + 10] = item10
-	t[n + 11] = item11
-	t[n + 12] = item12
-	t[n + 13] = item13
-	a[2] = n + 13
+	var_34_0[var_34_1 + 1] = arg_34_1
+	var_34_0[var_34_1 + 2] = arg_34_2
+	var_34_0[var_34_1 + 3] = arg_34_3
+	var_34_0[var_34_1 + 4] = arg_34_4
+	var_34_0[var_34_1 + 5] = arg_34_5
+	var_34_0[var_34_1 + 6] = arg_34_6
+	var_34_0[var_34_1 + 7] = arg_34_7
+	var_34_0[var_34_1 + 8] = arg_34_8
+	var_34_0[var_34_1 + 9] = arg_34_9
+	var_34_0[var_34_1 + 10] = arg_34_10
+	var_34_0[var_34_1 + 11] = arg_34_11
+	var_34_0[var_34_1 + 12] = arg_34_12
+	var_34_0[var_34_1 + 13] = arg_34_13
+	arg_34_0[2] = var_34_1 + 13
 end
 
-local function array_push_back14(a, item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, item11, item12, item13, item14, ...)
-	local t, n = a[1], a[2]
+local function var_0_34(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6, arg_35_7, arg_35_8, arg_35_9, arg_35_10, arg_35_11, arg_35_12, arg_35_13, arg_35_14, ...)
+	local var_35_0 = arg_35_0[1]
+	local var_35_1 = arg_35_0[2]
 
-	t[n + 1] = item1
-	t[n + 2] = item2
-	t[n + 3] = item3
-	t[n + 4] = item4
-	t[n + 5] = item5
-	t[n + 6] = item6
-	t[n + 7] = item7
-	t[n + 8] = item8
-	t[n + 9] = item9
-	t[n + 10] = item10
-	t[n + 11] = item11
-	t[n + 12] = item12
-	t[n + 13] = item13
-	t[n + 14] = item14
-	a[2] = n + 14
+	var_35_0[var_35_1 + 1] = arg_35_1
+	var_35_0[var_35_1 + 2] = arg_35_2
+	var_35_0[var_35_1 + 3] = arg_35_3
+	var_35_0[var_35_1 + 4] = arg_35_4
+	var_35_0[var_35_1 + 5] = arg_35_5
+	var_35_0[var_35_1 + 6] = arg_35_6
+	var_35_0[var_35_1 + 7] = arg_35_7
+	var_35_0[var_35_1 + 8] = arg_35_8
+	var_35_0[var_35_1 + 9] = arg_35_9
+	var_35_0[var_35_1 + 10] = arg_35_10
+	var_35_0[var_35_1 + 11] = arg_35_11
+	var_35_0[var_35_1 + 12] = arg_35_12
+	var_35_0[var_35_1 + 13] = arg_35_13
+	var_35_0[var_35_1 + 14] = arg_35_14
+	arg_35_0[2] = var_35_1 + 14
 end
 
-local function array_push_back15(a, item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, item11, item12, item13, item14, item15, ...)
-	local t, n = a[1], a[2]
+local function var_0_35(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6, arg_36_7, arg_36_8, arg_36_9, arg_36_10, arg_36_11, arg_36_12, arg_36_13, arg_36_14, arg_36_15, ...)
+	local var_36_0 = arg_36_0[1]
+	local var_36_1 = arg_36_0[2]
 
-	t[n + 1] = item1
-	t[n + 2] = item2
-	t[n + 3] = item3
-	t[n + 4] = item4
-	t[n + 5] = item5
-	t[n + 6] = item6
-	t[n + 7] = item7
-	t[n + 8] = item8
-	t[n + 9] = item9
-	t[n + 10] = item10
-	t[n + 11] = item11
-	t[n + 12] = item12
-	t[n + 13] = item13
-	t[n + 14] = item14
-	t[n + 15] = item15
-	a[2] = n + 15
+	var_36_0[var_36_1 + 1] = arg_36_1
+	var_36_0[var_36_1 + 2] = arg_36_2
+	var_36_0[var_36_1 + 3] = arg_36_3
+	var_36_0[var_36_1 + 4] = arg_36_4
+	var_36_0[var_36_1 + 5] = arg_36_5
+	var_36_0[var_36_1 + 6] = arg_36_6
+	var_36_0[var_36_1 + 7] = arg_36_7
+	var_36_0[var_36_1 + 8] = arg_36_8
+	var_36_0[var_36_1 + 9] = arg_36_9
+	var_36_0[var_36_1 + 10] = arg_36_10
+	var_36_0[var_36_1 + 11] = arg_36_11
+	var_36_0[var_36_1 + 12] = arg_36_12
+	var_36_0[var_36_1 + 13] = arg_36_13
+	var_36_0[var_36_1 + 14] = arg_36_14
+	var_36_0[var_36_1 + 15] = arg_36_15
+	arg_36_0[2] = var_36_1 + 15
 end
 
-local function array_push_back16(a, item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, item11, item12, item13, item14, item15, item16, ...)
-	local t, n = a[1], a[2]
+local function var_0_36(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5, arg_37_6, arg_37_7, arg_37_8, arg_37_9, arg_37_10, arg_37_11, arg_37_12, arg_37_13, arg_37_14, arg_37_15, arg_37_16, ...)
+	local var_37_0 = arg_37_0[1]
+	local var_37_1 = arg_37_0[2]
 
-	t[n + 1] = item1
-	t[n + 2] = item2
-	t[n + 3] = item3
-	t[n + 4] = item4
-	t[n + 5] = item5
-	t[n + 6] = item6
-	t[n + 7] = item7
-	t[n + 8] = item8
-	t[n + 9] = item9
-	t[n + 10] = item10
-	t[n + 11] = item11
-	t[n + 12] = item12
-	t[n + 13] = item13
-	t[n + 14] = item14
-	t[n + 15] = item15
-	t[n + 16] = item16
-	a[2] = n + 16
+	var_37_0[var_37_1 + 1] = arg_37_1
+	var_37_0[var_37_1 + 2] = arg_37_2
+	var_37_0[var_37_1 + 3] = arg_37_3
+	var_37_0[var_37_1 + 4] = arg_37_4
+	var_37_0[var_37_1 + 5] = arg_37_5
+	var_37_0[var_37_1 + 6] = arg_37_6
+	var_37_0[var_37_1 + 7] = arg_37_7
+	var_37_0[var_37_1 + 8] = arg_37_8
+	var_37_0[var_37_1 + 9] = arg_37_9
+	var_37_0[var_37_1 + 10] = arg_37_10
+	var_37_0[var_37_1 + 11] = arg_37_11
+	var_37_0[var_37_1 + 12] = arg_37_12
+	var_37_0[var_37_1 + 13] = arg_37_13
+	var_37_0[var_37_1 + 14] = arg_37_14
+	var_37_0[var_37_1 + 15] = arg_37_15
+	var_37_0[var_37_1 + 16] = arg_37_16
+	arg_37_0[2] = var_37_1 + 16
 end
 
-local array_push_back_table_lut = {
-	function (a, t)
-		local at, n = a[1], a[2]
+local var_0_37 = {
+	function(arg_38_0, arg_38_1)
+		local var_38_0 = arg_38_0[1]
+		local var_38_1 = arg_38_0[2]
 
-		at[n + 1] = t[1]
-		a[2] = n + 1
+		var_38_0[var_38_1 + 1] = arg_38_1[1]
+		arg_38_0[2] = var_38_1 + 1
 	end,
-	function (a, t)
-		local at, n = a[1], a[2]
+	function(arg_39_0, arg_39_1)
+		local var_39_0 = arg_39_0[1]
+		local var_39_1 = arg_39_0[2]
 
-		at[n + 1] = t[1]
-		at[n + 2] = t[2]
-		a[2] = n + 2
+		var_39_0[var_39_1 + 1] = arg_39_1[1]
+		var_39_0[var_39_1 + 2] = arg_39_1[2]
+		arg_39_0[2] = var_39_1 + 2
 	end,
-	function (a, t)
-		local at, n = a[1], a[2]
+	function(arg_40_0, arg_40_1)
+		local var_40_0 = arg_40_0[1]
+		local var_40_1 = arg_40_0[2]
 
-		at[n + 1] = t[1]
-		at[n + 2] = t[2]
-		at[n + 3] = t[3]
-		a[2] = n + 3
+		var_40_0[var_40_1 + 1] = arg_40_1[1]
+		var_40_0[var_40_1 + 2] = arg_40_1[2]
+		var_40_0[var_40_1 + 3] = arg_40_1[3]
+		arg_40_0[2] = var_40_1 + 3
 	end,
-	function (a, t)
-		local at, n = a[1], a[2]
+	function(arg_41_0, arg_41_1)
+		local var_41_0 = arg_41_0[1]
+		local var_41_1 = arg_41_0[2]
 
-		at[n + 1] = t[1]
-		at[n + 2] = t[2]
-		at[n + 3] = t[3]
-		at[n + 4] = t[4]
-		a[2] = n + 4
+		var_41_0[var_41_1 + 1] = arg_41_1[1]
+		var_41_0[var_41_1 + 2] = arg_41_1[2]
+		var_41_0[var_41_1 + 3] = arg_41_1[3]
+		var_41_0[var_41_1 + 4] = arg_41_1[4]
+		arg_41_0[2] = var_41_1 + 4
 	end,
-	function (a, t)
-		local at, n = a[1], a[2]
+	function(arg_42_0, arg_42_1)
+		local var_42_0 = arg_42_0[1]
+		local var_42_1 = arg_42_0[2]
 
-		at[n + 1] = t[1]
-		at[n + 2] = t[2]
-		at[n + 3] = t[3]
-		at[n + 4] = t[4]
-		at[n + 5] = t[5]
-		a[2] = n + 5
+		var_42_0[var_42_1 + 1] = arg_42_1[1]
+		var_42_0[var_42_1 + 2] = arg_42_1[2]
+		var_42_0[var_42_1 + 3] = arg_42_1[3]
+		var_42_0[var_42_1 + 4] = arg_42_1[4]
+		var_42_0[var_42_1 + 5] = arg_42_1[5]
+		arg_42_0[2] = var_42_1 + 5
 	end,
-	function (a, t)
-		local at, n = a[1], a[2]
+	function(arg_43_0, arg_43_1)
+		local var_43_0 = arg_43_0[1]
+		local var_43_1 = arg_43_0[2]
 
-		at[n + 1] = t[1]
-		at[n + 2] = t[2]
-		at[n + 3] = t[3]
-		at[n + 4] = t[4]
-		at[n + 5] = t[5]
-		at[n + 6] = t[6]
-		a[2] = n + 6
+		var_43_0[var_43_1 + 1] = arg_43_1[1]
+		var_43_0[var_43_1 + 2] = arg_43_1[2]
+		var_43_0[var_43_1 + 3] = arg_43_1[3]
+		var_43_0[var_43_1 + 4] = arg_43_1[4]
+		var_43_0[var_43_1 + 5] = arg_43_1[5]
+		var_43_0[var_43_1 + 6] = arg_43_1[6]
+		arg_43_0[2] = var_43_1 + 6
 	end,
-	function (a, t)
-		local at, n = a[1], a[2]
+	function(arg_44_0, arg_44_1)
+		local var_44_0 = arg_44_0[1]
+		local var_44_1 = arg_44_0[2]
 
-		at[n + 1] = t[1]
-		at[n + 2] = t[2]
-		at[n + 3] = t[3]
-		at[n + 4] = t[4]
-		at[n + 5] = t[5]
-		at[n + 6] = t[6]
-		at[n + 7] = t[7]
-		a[2] = n + 7
+		var_44_0[var_44_1 + 1] = arg_44_1[1]
+		var_44_0[var_44_1 + 2] = arg_44_1[2]
+		var_44_0[var_44_1 + 3] = arg_44_1[3]
+		var_44_0[var_44_1 + 4] = arg_44_1[4]
+		var_44_0[var_44_1 + 5] = arg_44_1[5]
+		var_44_0[var_44_1 + 6] = arg_44_1[6]
+		var_44_0[var_44_1 + 7] = arg_44_1[7]
+		arg_44_0[2] = var_44_1 + 7
 	end,
-	function (a, t)
-		local at, n = a[1], a[2]
+	function(arg_45_0, arg_45_1)
+		local var_45_0 = arg_45_0[1]
+		local var_45_1 = arg_45_0[2]
 
-		at[n + 1] = t[1]
-		at[n + 2] = t[2]
-		at[n + 3] = t[3]
-		at[n + 4] = t[4]
-		at[n + 5] = t[5]
-		at[n + 6] = t[6]
-		at[n + 7] = t[7]
-		at[n + 8] = t[8]
-		a[2] = n + 8
-	end,
+		var_45_0[var_45_1 + 1] = arg_45_1[1]
+		var_45_0[var_45_1 + 2] = arg_45_1[2]
+		var_45_0[var_45_1 + 3] = arg_45_1[3]
+		var_45_0[var_45_1 + 4] = arg_45_1[4]
+		var_45_0[var_45_1 + 5] = arg_45_1[5]
+		var_45_0[var_45_1 + 6] = arg_45_1[6]
+		var_45_0[var_45_1 + 7] = arg_45_1[7]
+		var_45_0[var_45_1 + 8] = arg_45_1[8]
+		arg_45_0[2] = var_45_1 + 8
+	end
 }
 
-local function array_push_back_table(array, in_table, table_count)
-	local push_back_function = array_push_back_table_lut[table_count]
-
-	if push_back_function then
-		f(array, in_table)
+local function var_0_38(arg_46_0, arg_46_1, arg_46_2)
+	if var_0_37[arg_46_2] then
+		f(arg_46_0, arg_46_1)
 	else
-		for i = 1, table_count do
-			array_push_back(array, in_table[i])
+		for iter_46_0 = 1, arg_46_2 do
+			var_0_21(arg_46_0, arg_46_1[iter_46_0])
 		end
 	end
 end
 
-local function array_back(a)
-	return a[1][a[2]]
+local function var_0_39(arg_47_0)
+	return arg_47_0[1][arg_47_0[2]]
 end
 
-local function array_front(a)
-	return a[1][1]
+local function var_0_40(arg_48_0)
+	return arg_48_0[1][1]
 end
 
-local function array_filter(a, filter_func)
-	local t, n = a[1], a[2]
-	local i = 1
+local function var_0_41(arg_49_0, arg_49_1)
+	local var_49_0 = arg_49_0[1]
+	local var_49_1 = arg_49_0[2]
+	local var_49_2 = 1
 
-	while i <= n do
-		if not filter_func(t[i]) then
-			t[i] = t[n]
-			t[n] = nil
-			n = n - 1
+	while var_49_2 <= var_49_1 do
+		if not arg_49_1(var_49_0[var_49_2]) then
+			var_49_0[var_49_2] = var_49_0[var_49_1]
+			var_49_0[var_49_1] = nil
+			var_49_1 = var_49_1 - 1
 		else
-			i = i + 1
+			var_49_2 = var_49_2 + 1
 		end
 	end
 
-	local num_filtered_items = a[2] - n
+	local var_49_3 = arg_49_0[2] - var_49_1
 
-	a[2] = n
+	arg_49_0[2] = var_49_1
 
-	return num_filtered_items
+	return var_49_3
 end
 
-local function array_insert_at(a, v, insert_index)
-	local at, n = a[1], a[2]
+local function var_0_42(arg_50_0, arg_50_1, arg_50_2)
+	local var_50_0 = arg_50_0[1]
+	local var_50_1 = arg_50_0[2]
 
-	for i = n, insert_index, -1 do
-		at[i + 1] = at[i]
+	for iter_50_0 = var_50_1, arg_50_2, -1 do
+		var_50_0[iter_50_0 + 1] = var_50_0[iter_50_0]
 	end
 
-	at[insert_index] = v
-	a[2] = n + 1
+	var_50_0[arg_50_2] = arg_50_1
+	arg_50_0[2] = var_50_1 + 1
 end
 
-local function comp_default(a, b)
-	return a < b
+local function var_0_43(arg_51_0, arg_51_1)
+	return arg_51_0 < arg_51_1
 end
 
-local function array_insert_sorted(a, value, comp_function)
-	comp_function = comp_function or comp_default
+local function var_0_44(arg_52_0, arg_52_1, arg_52_2)
+	arg_52_2 = arg_52_2 or var_0_43
 
-	local at, n = a[1], a[2]
+	local var_52_0 = arg_52_0[1]
+	local var_52_1 = arg_52_0[2]
 
-	for i = 1, n do
-		if comp_function(value, at[i]) then
-			array_insert_at(a, value, i)
+	for iter_52_0 = 1, var_52_1 do
+		if arg_52_2(arg_52_1, var_52_0[iter_52_0]) then
+			var_0_42(arg_52_0, arg_52_1, iter_52_0)
 
-			return i
+			return iter_52_0
 		end
 	end
 
-	n = n + 1
-	at[n] = value
-	a[2] = n
+	local var_52_2 = var_52_1 + 1
 
-	return n
+	var_52_0[var_52_2] = arg_52_1
+	arg_52_0[2] = var_52_2
+
+	return var_52_2
 end
 
-local floor = math.floor
+local var_0_45 = math.floor
 
-local function array_binary_insert(a, value, comp_function)
-	comp_function = comp_function or comp_default
+local function var_0_46(arg_53_0, arg_53_1, arg_53_2)
+	arg_53_2 = arg_53_2 or var_0_43
 
-	local at, n = a[1], a[2]
-	local iStart, iEnd, iMid, iState = 1, n, 1, 0
+	local var_53_0 = arg_53_0[1]
+	local var_53_1, var_53_2 = arg_53_0[2], 1
+	local var_53_3 = 1
+	local var_53_4 = 0
 
-	while iStart <= iEnd do
-		iMid = floor((iStart + iEnd) / 2)
+	while var_53_2 <= var_53_1 do
+		var_53_3 = var_0_45((var_53_2 + var_53_1) / 2)
 
-		if comp_function(value, at[iMid]) then
-			iEnd, iState = iMid - 1, 0
+		if arg_53_2(arg_53_1, var_53_0[var_53_3]) then
+			var_53_1, var_53_4 = var_53_3 - 1, 0
 		else
-			iStart, iState = iMid + 1, 1
+			var_53_2, var_53_4 = var_53_3 + 1, 1
 		end
 	end
 
-	local insert_index = iMid + iState
+	local var_53_5 = var_53_3 + var_53_4
 
-	array_insert_at(a, value, insert_index)
+	var_0_42(arg_53_0, arg_53_1, var_53_5)
 
-	return insert_index
+	return var_53_5
 end
 
-local a = {
-	new = array_new,
-	items = array,
-	num_items = array_n,
-	data = array_data,
-	item_index = array_item_index,
-	empty = array_empty,
-	resize = array_resize,
-	resize_grow_only = array_resize_grow_only,
-	set_size = array_set_size,
-	set_empty = array_set_empty,
-	pop_index = array_pop_index,
-	pop_index_value = array_pop_index_value,
-	pop_item = array_pop_item,
-	pop_item_value = array_pop_item_value,
-	pop_index_ordered = array_pop_index_ordered,
-	pop_item_ordered = array_pop_item_ordered,
-	pop_item_value_ordered = array_pop_item_value_ordered,
-	pop_back = array_pop_back,
-	erase_back = array_erase_back,
-	push_back = array_push_back,
-	push_back2 = array_push_back2,
-	push_back3 = array_push_back3,
-	push_back4 = array_push_back4,
-	push_back5 = array_push_back5,
-	push_back6 = array_push_back6,
-	push_back7 = array_push_back7,
-	push_back8 = array_push_back8,
-	push_back9 = array_push_back9,
-	push_back10 = array_push_back10,
-	push_back11 = array_push_back11,
-	push_back12 = array_push_back12,
-	push_back13 = array_push_back13,
-	push_back14 = array_push_back14,
-	push_back15 = array_push_back15,
-	push_back16 = array_push_back16,
-	push_back_table = array_push_back_table,
-	insert_at = array_insert_at,
-	insert_sorted = array_insert_sorted,
-	binary_insert = array_binary_insert,
-	front = array_front,
-	back = array_back,
-	filter = array_filter,
+local var_0_47 = {
+	new = var_0_0,
+	items = var_0_2,
+	num_items = var_0_3,
+	data = var_0_1,
+	item_index = var_0_12,
+	empty = var_0_9,
+	resize = var_0_5,
+	resize_grow_only = var_0_6,
+	set_size = var_0_7,
+	set_empty = var_0_8,
+	pop_index = var_0_10,
+	pop_index_value = var_0_14,
+	pop_item = var_0_13,
+	pop_item_value = var_0_15,
+	pop_index_ordered = var_0_11,
+	pop_item_ordered = var_0_17,
+	pop_item_value_ordered = var_0_18,
+	pop_back = var_0_19,
+	erase_back = var_0_20,
+	push_back = var_0_21,
+	push_back2 = var_0_22,
+	push_back3 = var_0_23,
+	push_back4 = var_0_24,
+	push_back5 = var_0_25,
+	push_back6 = var_0_26,
+	push_back7 = var_0_27,
+	push_back8 = var_0_28,
+	push_back9 = var_0_29,
+	push_back10 = var_0_30,
+	push_back11 = var_0_31,
+	push_back12 = var_0_32,
+	push_back13 = var_0_33,
+	push_back14 = var_0_34,
+	push_back15 = var_0_35,
+	push_back16 = var_0_36,
+	push_back_table = var_0_38,
+	insert_at = var_0_42,
+	insert_sorted = var_0_44,
+	binary_insert = var_0_46,
+	front = var_0_40,
+	back = var_0_39,
+	filter = var_0_41
 }
 
-pdArray = a
+pdArray = var_0_47
 
-return a
+return var_0_47

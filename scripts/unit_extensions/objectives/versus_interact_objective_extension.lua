@@ -1,52 +1,52 @@
-﻿-- chunkname: @scripts/unit_extensions/objectives/versus_interact_objective_extension.lua
+-- chunkname: @scripts/unit_extensions/objectives/versus_interact_objective_extension.lua
 
-local versus_interact_objective_extension_testify = script_data.testify and require("scripts/unit_extensions/objectives/testify/versus_interact_objective_extension_testify")
+local var_0_0 = script_data.testify and require("scripts/unit_extensions/objectives/testify/versus_interact_objective_extension_testify")
 
 VersusInteractObjectiveExtension = class(VersusInteractObjectiveExtension, BaseObjectiveExtension)
 VersusInteractObjectiveExtension.NAME = "VersusInteractObjectiveExtension"
 
-VersusInteractObjectiveExtension.init = function (self, ...)
-	VersusInteractObjectiveExtension.super.init(self, ...)
+function VersusInteractObjectiveExtension.init(arg_1_0, ...)
+	VersusInteractObjectiveExtension.super.init(arg_1_0, ...)
 
-	self._wanted_interaction_result = InteractionResult.SUCCESS
-	self._percentage = 0
+	arg_1_0._wanted_interaction_result = InteractionResult.SUCCESS
+	arg_1_0._percentage = 0
 end
 
-VersusInteractObjectiveExtension.extensions_ready = function (self)
-	self._interactable_extension = ScriptUnit.has_extension(self._unit, "interactable_system")
+function VersusInteractObjectiveExtension.extensions_ready(arg_2_0)
+	arg_2_0._interactable_extension = ScriptUnit.has_extension(arg_2_0._unit, "interactable_system")
 end
 
-VersusInteractObjectiveExtension._set_objective_data = function (self, objective_data)
-	local interact_default_settings = GameModeSettings.versus.objectives.interact
+function VersusInteractObjectiveExtension._set_objective_data(arg_3_0, arg_3_1)
+	local var_3_0 = GameModeSettings.versus.objectives.interact
 
-	self._score_for_completion = objective_data.score_for_completion or interact_default_settings.score_for_completion
-	self._time_for_completion = objective_data.time_for_completion or interact_default_settings.time_for_completion
+	arg_3_0._score_for_completion = arg_3_1.score_for_completion or var_3_0.score_for_completion
+	arg_3_0._time_for_completion = arg_3_1.time_for_completion or var_3_0.time_for_completion
 end
 
-VersusInteractObjectiveExtension._activate = function (self)
+function VersusInteractObjectiveExtension._activate(arg_4_0)
 	return
 end
 
-VersusInteractObjectiveExtension._server_update = function (self, dt, t)
-	if self._percentage < 1 and self._interactable_extension.interaction_result == self._wanted_interaction_result then
-		self._percentage = 1
+function VersusInteractObjectiveExtension._server_update(arg_5_0, arg_5_1, arg_5_2)
+	if arg_5_0._percentage < 1 and arg_5_0._interactable_extension.interaction_result == arg_5_0._wanted_interaction_result then
+		arg_5_0._percentage = 1
 
-		self:server_set_value(self._percentage)
+		arg_5_0:server_set_value(arg_5_0._percentage)
 	end
 end
 
-VersusInteractObjectiveExtension._client_update = function (self, dt, t)
-	self._percentage = self:client_get_value()
+function VersusInteractObjectiveExtension._client_update(arg_6_0, arg_6_1, arg_6_2)
+	arg_6_0._percentage = arg_6_0:client_get_value()
 end
 
-VersusInteractObjectiveExtension.update_testify = function (self, dt, t)
-	Testify:poll_requests_through_handler(versus_interact_objective_extension_testify, self)
+function VersusInteractObjectiveExtension.update_testify(arg_7_0, arg_7_1, arg_7_2)
+	Testify:poll_requests_through_handler(var_0_0, arg_7_0)
 end
 
-VersusInteractObjectiveExtension.get_percentage_done = function (self)
-	return self._percentage
+function VersusInteractObjectiveExtension.get_percentage_done(arg_8_0)
+	return arg_8_0._percentage
 end
 
-VersusInteractObjectiveExtension._deactivate = function (self)
+function VersusInteractObjectiveExtension._deactivate(arg_9_0)
 	return
 end

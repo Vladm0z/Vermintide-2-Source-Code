@@ -1,8 +1,8 @@
-﻿-- chunkname: @scripts/imgui/imgui_deus_auto_debug.lua
+-- chunkname: @scripts/imgui/imgui_deus_auto_debug.lua
 
 ImguiDeusAutoDebug = class(ImguiDeusAutoDebug)
 
-local helpful_responses = {
+local var_0_0 = {
 	"That ain't working.",
 	"Have you tried restarting?",
 	"Maybe furiously spamming this button will work.",
@@ -11,38 +11,36 @@ local helpful_responses = {
 	"I'm a notorious liar",
 	"What is truth",
 	"This is a helpful response",
-	"It is wednesday my dudes",
+	"It is wednesday my dudes"
 }
 
-ImguiDeusAutoDebug.init = function (self)
-	self._current_response = ""
+function ImguiDeusAutoDebug.init(arg_1_0)
+	arg_1_0._current_response = ""
 end
 
-ImguiDeusAutoDebug.update = function (self)
+function ImguiDeusAutoDebug.update(arg_2_0)
 	return
 end
 
-ImguiDeusAutoDebug.is_persistent = function (self)
+function ImguiDeusAutoDebug.is_persistent(arg_3_0)
 	return false
 end
 
-ImguiDeusAutoDebug.draw = function (self)
-	local do_close = Imgui.begin_window("DeusAutoDebug", "always_auto_resize")
+function ImguiDeusAutoDebug.draw(arg_4_0)
+	local var_4_0 = Imgui.begin_window("DeusAutoDebug", "always_auto_resize")
 
 	if Imgui.button("Automatically debug my problems") then
-		local possible_responses = table.clone(helpful_responses)
+		local var_4_1 = table.clone(var_0_0)
 
-		table.array_remove_if(possible_responses, function (response)
-			return response == self._current_response
+		table.array_remove_if(var_4_1, function(arg_5_0)
+			return arg_5_0 == arg_4_0._current_response
 		end)
 
-		local index = math.random(1, #possible_responses)
-
-		self._current_response = possible_responses[index]
+		arg_4_0._current_response = var_4_1[math.random(1, #var_4_1)]
 	end
 
-	Imgui.text(self._current_response)
+	Imgui.text(arg_4_0._current_response)
 	Imgui.end_window()
 
-	return do_close
+	return var_4_0
 end

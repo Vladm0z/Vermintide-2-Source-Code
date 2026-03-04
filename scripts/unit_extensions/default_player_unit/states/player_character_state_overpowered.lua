@@ -1,113 +1,110 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_overpowered.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_overpowered.lua
 
 PlayerCharacterStateOverpowered = class(PlayerCharacterStateOverpowered, PlayerCharacterState)
 
-PlayerCharacterStateOverpowered.init = function (self, character_state_init_context)
-	PlayerCharacterState.init(self, character_state_init_context, "overpowered")
+function PlayerCharacterStateOverpowered.init(arg_1_0, arg_1_1)
+	PlayerCharacterState.init(arg_1_0, arg_1_1, "overpowered")
 end
 
-PlayerCharacterStateOverpowered.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
-	CharacterStateHelper.stop_weapon_actions(self.inventory_extension, "overpowered")
-	CharacterStateHelper.stop_career_abilities(self.career_extension, "overpowered")
+function PlayerCharacterStateOverpowered.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	CharacterStateHelper.stop_weapon_actions(arg_2_0.inventory_extension, "overpowered")
+	CharacterStateHelper.stop_career_abilities(arg_2_0.career_extension, "overpowered")
 
-	local player = Managers.player:owner(unit)
-	local is_bot = player and not player:is_player_controlled()
+	local var_2_0 = Managers.player:owner(arg_2_1)
+	local var_2_1 = var_2_0 and not var_2_0:is_player_controlled()
 
-	if params.start_sound_event and not is_bot then
-		local wwise_world = Managers.world:wwise_world(self.world)
+	if arg_2_7.start_sound_event and not var_2_1 then
+		local var_2_2 = Managers.world:wwise_world(arg_2_0.world)
 
-		WwiseWorld.trigger_event(wwise_world, params.start_sound_event)
+		WwiseWorld.trigger_event(var_2_2, arg_2_7.start_sound_event)
 	end
 
-	local anim = "to_cloud_of_flies"
+	local var_2_3 = "to_cloud_of_flies"
 
-	self.inventory_extension:check_and_drop_pickups("overpowererd")
-	CharacterStateHelper.play_animation_event(unit, anim)
+	arg_2_0.inventory_extension:check_and_drop_pickups("overpowererd")
+	CharacterStateHelper.play_animation_event(arg_2_1, var_2_3)
 
-	local input_extension = self.input_extension
-	local status_extension = self.status_extension
+	local var_2_4 = arg_2_0.input_extension
+	local var_2_5 = arg_2_0.status_extension
 
-	self.locomotion_extension:set_wanted_velocity(Vector3.zero())
+	arg_2_0.locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-	self.params = params
+	arg_2_0.params = arg_2_7
 
-	CharacterStateHelper.change_camera_state(self.player, "follow_third_person")
-	self.first_person_extension:set_first_person_mode(false)
-	CharacterStateHelper.show_inventory_3p(unit, false, true, Managers.player.is_server, self.inventory_extension)
+	CharacterStateHelper.change_camera_state(arg_2_0.player, "follow_third_person")
+	arg_2_0.first_person_extension:set_first_person_mode(false)
+	CharacterStateHelper.show_inventory_3p(arg_2_1, false, true, Managers.player.is_server, arg_2_0.inventory_extension)
 end
 
-PlayerCharacterStateOverpowered.on_exit = function (self, unit, input, dt, context, t, next_state)
-	local player = Managers.player:owner(unit)
-	local is_bot = player and not player:is_player_controlled()
+function PlayerCharacterStateOverpowered.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	local var_3_0 = Managers.player:owner(arg_3_1)
+	local var_3_1 = var_3_0 and not var_3_0:is_player_controlled()
 
-	if self.params.end_sound_event and not is_bot then
-		local wwise_world = Managers.world:wwise_world(self.world)
+	if arg_3_0.params.end_sound_event and not var_3_1 then
+		local var_3_2 = Managers.world:wwise_world(arg_3_0.world)
 
-		WwiseWorld.trigger_event(wwise_world, self.params.end_sound_event)
+		WwiseWorld.trigger_event(var_3_2, arg_3_0.params.end_sound_event)
 	end
 
-	local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
+	local var_3_3 = ScriptUnit.has_extension(arg_3_1, "first_person_system")
 
-	if first_person_extension and self.onscreen_particle_id then
-		first_person_extension:stop_spawning_screen_particles(self.onscreen_particle_id)
+	if var_3_3 and arg_3_0.onscreen_particle_id then
+		var_3_3:stop_spawning_screen_particles(arg_3_0.onscreen_particle_id)
 	end
 
-	if next_state ~= "knocked_down" then
-		CharacterStateHelper.change_camera_state(self.player, "follow")
-		self.first_person_extension:toggle_visibility(CameraTransitionSettings.perspective_transition_time)
+	if arg_3_6 ~= "knocked_down" then
+		CharacterStateHelper.change_camera_state(arg_3_0.player, "follow")
+		arg_3_0.first_person_extension:toggle_visibility(CameraTransitionSettings.perspective_transition_time)
 
-		local include_local_player = false
+		local var_3_4 = false
 
-		CharacterStateHelper.show_inventory_3p(unit, true, include_local_player, self.is_server, self.inventory_extension)
+		CharacterStateHelper.show_inventory_3p(arg_3_1, true, var_3_4, arg_3_0.is_server, arg_3_0.inventory_extension)
 	end
 
-	local inventory_extension = self.inventory_extension
-
-	inventory_extension:rewield_wielded_slot()
-	self.status_extension:set_overpowered(false)
+	arg_3_0.inventory_extension:rewield_wielded_slot()
+	arg_3_0.status_extension:set_overpowered(false)
 end
 
-PlayerCharacterStateOverpowered.update = function (self, unit, input, dt, context, t)
-	local csm = self.csm
-	local unit = self.unit
-	local input_extension = self.input_extension
-	local inventory_extension = self.inventory_extension
-	local status_extension = self.status_extension
-	local locomotion_extension = self.locomotion_extension
-	local world = self.world
-	local attacking_unit = status_extension.overpowered_attacking_unit
-	local is_free = not HEALTH_ALIVE[attacking_unit]
+function PlayerCharacterStateOverpowered.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	local var_4_0 = arg_4_0.csm
+	local var_4_1 = arg_4_0.unit
+	local var_4_2 = arg_4_0.input_extension
+	local var_4_3 = arg_4_0.inventory_extension
+	local var_4_4 = arg_4_0.status_extension
+	local var_4_5 = arg_4_0.locomotion_extension
+	local var_4_6 = arg_4_0.world
+	local var_4_7 = var_4_4.overpowered_attacking_unit
 
-	if is_free then
-		if CharacterStateHelper.is_waiting_for_assisted_respawn(status_extension) then
-			csm:change_state("waiting_for_assisted_respawn")
-		elseif CharacterStateHelper.is_knocked_down(status_extension) then
-			csm:change_state("knocked_down")
-		elseif CharacterStateHelper.is_dead(status_extension) then
-			csm:change_state("dead")
+	if not HEALTH_ALIVE[var_4_7] then
+		if CharacterStateHelper.is_waiting_for_assisted_respawn(var_4_4) then
+			var_4_0:change_state("waiting_for_assisted_respawn")
+		elseif CharacterStateHelper.is_knocked_down(var_4_4) then
+			var_4_0:change_state("knocked_down")
+		elseif CharacterStateHelper.is_dead(var_4_4) then
+			var_4_0:change_state("dead")
 		else
-			csm:change_state("standing")
+			var_4_0:change_state("standing")
 		end
 
 		return
 	end
 
-	if CharacterStateHelper.do_common_state_transitions(status_extension, csm, "overpowered") then
+	if CharacterStateHelper.do_common_state_transitions(var_4_4, var_4_0, "overpowered") then
 		return
 	end
 
-	if CharacterStateHelper.is_ledge_hanging(world, unit, self.temp_params) then
-		csm:change_state("ledge_hanging", self.temp_params)
-
-		return
-	end
-
-	if not csm.state_next and not locomotion_extension:is_on_ground() then
-		csm:change_state("falling")
+	if CharacterStateHelper.is_ledge_hanging(var_4_6, var_4_1, arg_4_0.temp_params) then
+		var_4_0:change_state("ledge_hanging", arg_4_0.temp_params)
 
 		return
 	end
 
-	locomotion_extension:set_disable_rotation_update()
-	CharacterStateHelper.look(input_extension, self.player.viewport_name, self.first_person_extension, status_extension, inventory_extension)
+	if not var_4_0.state_next and not var_4_5:is_on_ground() then
+		var_4_0:change_state("falling")
+
+		return
+	end
+
+	var_4_5:set_disable_rotation_update()
+	CharacterStateHelper.look(var_4_2, arg_4_0.player.viewport_name, arg_4_0.first_person_extension, var_4_4, var_4_3)
 end

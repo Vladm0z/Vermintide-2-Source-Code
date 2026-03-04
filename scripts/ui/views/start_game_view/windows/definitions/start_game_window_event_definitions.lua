@@ -1,145 +1,145 @@
-﻿-- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_event_definitions.lua
+-- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_event_definitions.lua
 
-local window_default_settings = UISettings.game_start_windows
-local window_frame = window_default_settings.frame
-local window_size = window_default_settings.size
-local window_frame_width = UIFrameSettings[window_frame].texture_sizes.vertical[1]
-local window_text_width = window_size[1] - (window_frame_width * 2 + 60)
-local scenegraph_definition = {
+local var_0_0 = UISettings.game_start_windows
+local var_0_1 = var_0_0.frame
+local var_0_2 = var_0_0.size
+local var_0_3 = UIFrameSettings[var_0_1].texture_sizes.vertical[1]
+local var_0_4 = var_0_2[1] - (var_0_3 * 2 + 60)
+local var_0_5 = {
 	root = {
 		is_root = true,
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			UILayer.default,
-		},
+			UILayer.default
+		}
 	},
 	root_fit = {
 		scale = "fit",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			UILayer.default,
-		},
+			UILayer.default
+		}
 	},
 	menu_root = {
-		horizontal_alignment = "center",
-		parent = "root",
 		vertical_alignment = "center",
+		parent = "root",
+		horizontal_alignment = "center",
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	window = {
-		horizontal_alignment = "center",
-		parent = "menu_root",
 		vertical_alignment = "center",
-		size = window_size,
+		parent = "menu_root",
+		horizontal_alignment = "center",
+		size = var_0_2,
 		position = {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	},
 	event_texture = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "top",
+		parent = "window",
+		horizontal_alignment = "center",
 		size = {
 			480,
-			564,
+			564
 		},
 		position = {
 			0,
 			-60,
-			1,
-		},
+			1
+		}
 	},
 	event_title = {
-		horizontal_alignment = "center",
-		parent = "event_texture",
 		vertical_alignment = "top",
+		parent = "event_texture",
+		horizontal_alignment = "center",
 		size = {
 			300,
-			80,
+			80
 		},
 		position = {
 			0,
 			-40,
-			1,
-		},
+			1
+		}
 	},
 	description_text = {
-		horizontal_alignment = "center",
-		parent = "event_texture",
 		vertical_alignment = "bottom",
+		parent = "event_texture",
+		horizontal_alignment = "center",
 		size = {
 			300,
-			120,
+			120
 		},
 		position = {
 			0,
 			10,
-			1,
-		},
-	},
+			1
+		}
+	}
 }
-local event_title_text_style = {
-	dynamic_font_size = true,
-	font_size = 52,
-	font_type = "hell_shark_header",
-	horizontal_alignment = "center",
-	localize = false,
-	upper_case = true,
-	use_shadow = true,
-	vertical_alignment = "center",
+local var_0_6 = {
 	word_wrap = true,
+	upper_case = true,
+	localize = false,
+	use_shadow = true,
+	font_size = 52,
+	horizontal_alignment = "center",
+	vertical_alignment = "center",
+	dynamic_font_size = true,
+	font_type = "hell_shark_header",
 	text_color = Colors.get_color_table_with_alpha("font_title", 255),
 	offset = {
 		0,
 		0,
-		2,
-	},
+		2
+	}
 }
-local description_text_style = {
+local var_0_7 = {
+	word_wrap = true,
 	font_size = 22,
-	font_type = "hell_shark",
-	horizontal_alignment = "center",
 	localize = false,
 	use_shadow = true,
+	horizontal_alignment = "center",
 	vertical_alignment = "center",
-	word_wrap = true,
+	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	offset = {
 		0,
 		0,
-		2,
-	},
+		2
+	}
 }
-local widgets = {
+local var_0_8 = {
 	background_fade = UIWidgets.create_simple_texture("options_window_fade_01", "window"),
 	background_mask = UIWidgets.create_simple_texture("mask_rect", "window"),
-	window = UIWidgets.create_frame("window", window_size, window_frame, 20),
-	description_text = UIWidgets.create_simple_text("", "description_text", nil, nil, description_text_style),
-	event_title = UIWidgets.create_simple_text("", "event_title", nil, nil, event_title_text_style),
-	event_texture = UIWidgets.create_simple_texture("adventure_icon", "event_texture"),
+	window = UIWidgets.create_frame("window", var_0_2, var_0_1, 20),
+	description_text = UIWidgets.create_simple_text("", "description_text", nil, nil, var_0_7),
+	event_title = UIWidgets.create_simple_text("", "event_title", nil, nil, var_0_6),
+	event_texture = UIWidgets.create_simple_texture("adventure_icon", "event_texture")
 }
 
 return {
-	widgets = widgets,
-	scenegraph_definition = scenegraph_definition,
+	widgets = var_0_8,
+	scenegraph_definition = var_0_5
 }

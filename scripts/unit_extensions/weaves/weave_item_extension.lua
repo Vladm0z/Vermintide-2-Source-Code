@@ -1,36 +1,36 @@
-﻿-- chunkname: @scripts/unit_extensions/weaves/weave_item_extension.lua
+-- chunkname: @scripts/unit_extensions/weaves/weave_item_extension.lua
 
 WeaveItemExtension = class(WeaveItemExtension, BaseObjectiveExtension)
 WeaveItemExtension.NAME = "WeaveItemExtension"
 
-WeaveItemExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	WeaveItemExtension.super.init(self, extension_init_context, unit, extension_init_data)
+function WeaveItemExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	WeaveItemExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 end
 
-WeaveItemExtension.initial_sync_data = function (self, game_object_data_table)
-	game_object_data_table.value = 1
+function WeaveItemExtension.initial_sync_data(arg_2_0, arg_2_1)
+	arg_2_1.value = 1
 end
 
-WeaveItemExtension._set_objective_data = function (self, objective_data)
+function WeaveItemExtension._set_objective_data(arg_3_0, arg_3_1)
 	return
 end
 
-WeaveItemExtension._server_update = function (self)
+function WeaveItemExtension._server_update(arg_4_0)
 	return
 end
 
-WeaveItemExtension._client_update = function (self)
+function WeaveItemExtension._client_update(arg_5_0)
 	return
 end
 
-WeaveItemExtension._activate = function (self)
+function WeaveItemExtension._activate(arg_6_0)
 	return
 end
 
-WeaveItemExtension._deactivate = function (self)
+function WeaveItemExtension._deactivate(arg_7_0)
 	return
 end
 
-WeaveItemExtension.get_percentage_done = function (self)
+function WeaveItemExtension.get_percentage_done(arg_8_0)
 	return 1
 end

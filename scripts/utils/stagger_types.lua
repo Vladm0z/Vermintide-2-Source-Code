@@ -1,15 +1,13 @@
-﻿-- chunkname: @scripts/utils/stagger_types.lua
+-- chunkname: @scripts/utils/stagger_types.lua
 
-local STAGGER_TYPES = {
-	explosion = 6,
+return {
+	ranged_medium = 5,
 	heavy = 3,
+	weak = 1,
+	explosion = 6,
 	medium = 2,
 	none = 0,
 	pulling = 9,
-	ranged_medium = 5,
 	ranged_weak = 4,
-	weak = 1,
-	weakspot = 8,
+	weakspot = 8
 }
-
-return STAGGER_TYPES

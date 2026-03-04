@@ -1,51 +1,51 @@
-﻿-- chunkname: @scripts/helpers/rarity_utils.lua
+-- chunkname: @scripts/helpers/rarity_utils.lua
 
 require("scripts/settings/dlcs/morris/rarity_settings")
 
 RarityUtils = RarityUtils or {}
 
-RarityUtils.get_previous_rarity = function (rarity)
-	local rarity_settings = RaritySettings
-	local order = rarity_settings[rarity].order
-	local best_rarity = rarity
-	local best_rarity_order = 0
+function RarityUtils.get_previous_rarity(arg_1_0)
+	local var_1_0 = RaritySettings
+	local var_1_1 = var_1_0[arg_1_0].order
+	local var_1_2 = arg_1_0
+	local var_1_3 = 0
 
-	for other_rarity, settings in pairs(rarity_settings) do
-		if order > settings.order and best_rarity_order < settings.order then
-			best_rarity = other_rarity
-			best_rarity_order = rarity_settings[best_rarity].order
+	for iter_1_0, iter_1_1 in pairs(var_1_0) do
+		if var_1_1 > iter_1_1.order and var_1_3 < iter_1_1.order then
+			var_1_2 = iter_1_0
+			var_1_3 = var_1_0[var_1_2].order
 		end
 	end
 
-	local has_previous_rarity = best_rarity ~= rarity
+	local var_1_4 = var_1_2 ~= arg_1_0
 
-	return best_rarity, has_previous_rarity
+	return var_1_2, var_1_4
 end
 
-RarityUtils.get_lower_rarities = function (rarity)
-	local rarity_settings = RaritySettings
-	local order = rarity_settings[rarity].order
-	local rarities = {}
+function RarityUtils.get_lower_rarities(arg_2_0)
+	local var_2_0 = RaritySettings
+	local var_2_1 = var_2_0[arg_2_0].order
+	local var_2_2 = {}
 
-	for other_rarity, settings in pairs(rarity_settings) do
-		if order > settings.order then
-			table.insert(rarities, other_rarity)
+	for iter_2_0, iter_2_1 in pairs(var_2_0) do
+		if var_2_1 > iter_2_1.order then
+			table.insert(var_2_2, iter_2_0)
 		end
 	end
 
-	return rarities
+	return var_2_2
 end
 
-RarityUtils.get_higher_rarities = function (rarity)
-	local rarity_settings = RaritySettings
-	local order = rarity_settings[rarity].order
-	local rarities = {}
+function RarityUtils.get_higher_rarities(arg_3_0)
+	local var_3_0 = RaritySettings
+	local var_3_1 = var_3_0[arg_3_0].order
+	local var_3_2 = {}
 
-	for other_rarity, settings in pairs(rarity_settings) do
-		if order < settings.order then
-			table.insert(rarities, other_rarity)
+	for iter_3_0, iter_3_1 in pairs(var_3_0) do
+		if var_3_1 < iter_3_1.order then
+			table.insert(var_3_2, iter_3_0)
 		end
 	end
 
-	return rarities
+	return var_3_2
 end

@@ -1,14 +1,14 @@
-﻿-- chunkname: @scripts/settings/dlcs/cosmetics_2022_q1/cosmetics_2022_q1_equipment_settings.lua
+-- chunkname: @scripts/settings/dlcs/cosmetics_2022_q1/cosmetics_2022_q1_equipment_settings.lua
 
-local settings = DLCSettings.cosmetics_2022_q1
+local var_0_0 = DLCSettings.cosmetics_2022_q1
 
-settings.cosmetics_files = {
-	"scripts/settings/dlcs/cosmetics_2022_q1/cosmetics_cosmetics_2022_q1",
+var_0_0.cosmetics_files = {
+	"scripts/settings/dlcs/cosmetics_2022_q1/cosmetics_cosmetics_2022_q1"
 }
-settings.item_master_list_file_names = {
-	"scripts/settings/equipment/item_master_list_cosmetics_2022_q1",
+var_0_0.item_master_list_file_names = {
+	"scripts/settings/equipment/item_master_list_cosmetics_2022_q1"
 }
-settings.inventory_package_list = {
+var_0_0.inventory_package_list = {
 	"units/beings/player/bright_wizard_unchained/headpiece/bw_u_hat_13",
 	"units/beings/player/dwarf_ranger_upgraded/headpiece/dr_u_hat_13",
 	"units/beings/player/empire_soldier_knight/headpiece/es_k_hat_14",
@@ -23,5 +23,5 @@ settings.inventory_package_list = {
 	"units/beings/player/witch_hunter_captain_skin_01/first_person_base/chr_first_person_mesh",
 	"units/beings/player/witch_hunter_captain_skin_01/third_person_base/chr_third_person_mesh",
 	"units/beings/player/way_watcher_upgraded_skin_01/first_person_base/chr_first_person_mesh",
-	"units/beings/player/way_watcher_upgraded_skin_01/third_person_base/chr_third_person_mesh",
+	"units/beings/player/way_watcher_upgraded_skin_01/third_person_base/chr_third_person_mesh"
 }

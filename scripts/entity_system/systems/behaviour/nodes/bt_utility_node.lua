@@ -1,182 +1,177 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_utility_node.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_utility_node.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTUtilityNode = class(BTUtilityNode, BTNode)
 
-BTUtilityNode.init = function (self, ...)
-	BTUtilityNode.super.init(self, ...)
+function BTUtilityNode.init(arg_1_0, ...)
+	BTUtilityNode.super.init(arg_1_0, ...)
 
-	self._children = {}
-	self.fail_cooldown_name = self._identifier .. "_fail_cooldown"
+	arg_1_0._children = {}
+	arg_1_0.fail_cooldown_name = arg_1_0._identifier .. "_fail_cooldown"
 end
 
 BTUtilityNode.name = "BTUtilityNode"
 
-BTUtilityNode.ready = function (self, lua_node)
-	for name, child in pairs(self._children) do
-		self._action_list = self._action_list or {}
-		self._action_list[#self._action_list + 1] = child._tree_node.action_data
+function BTUtilityNode.ready(arg_2_0, arg_2_1)
+	for iter_2_0, iter_2_1 in pairs(arg_2_0._children) do
+		arg_2_0._action_list = arg_2_0._action_list or {}
+		arg_2_0._action_list[#arg_2_0._action_list + 1] = iter_2_1._tree_node.action_data
 	end
 end
 
-BTUtilityNode.enter = function (self, unit, blackboard, t)
+function BTUtilityNode.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	return
 end
 
-BTUtilityNode.leave = function (self, unit, blackboard, t, reason, destroy)
-	blackboard.running_attack_action = nil
+function BTUtilityNode.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	arg_4_2.running_attack_action = nil
 
-	self:set_running_child(unit, blackboard, t, nil, reason)
+	arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, arg_4_4)
 end
 
-local function swap(t, i, j)
-	local temp = t[i]
-
-	t[i] = t[j]
-	t[j] = temp
+local function var_0_0(arg_5_0, arg_5_1, arg_5_2)
+	arg_5_0[arg_5_2], arg_5_0[arg_5_1] = arg_5_0[arg_5_1], arg_5_0[arg_5_2]
 end
 
-local function randomize_actions(unit, actions, blackboard, t, node_children)
-	local num_actions = #actions
-	local total_utility_score = 0
+local function var_0_1(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	local var_6_0 = #arg_6_1
+	local var_6_1 = 0
 
-	for i = 1, num_actions do
-		local action = actions[i]
-		local action_name = action.name
-		local node = node_children[action_name]
-		local score = 0
+	for iter_6_0 = 1, var_6_0 do
+		local var_6_2 = arg_6_1[iter_6_0]
+		local var_6_3 = var_6_2.name
+		local var_6_4 = arg_6_4[var_6_3]
+		local var_6_5 = 0
 
-		if node:condition(blackboard) then
-			score = Utility.get_action_utility(action, action_name, blackboard, t)
+		if var_6_4:condition(arg_6_2) then
+			var_6_5 = Utility.get_action_utility(var_6_2, var_6_3, arg_6_2, arg_6_3)
 		end
 
-		actions[i].utility_score = score
-		total_utility_score = total_utility_score + score
+		arg_6_1[iter_6_0].utility_score = var_6_5
+		var_6_1 = var_6_1 + var_6_5
 	end
 
-	for i = 1, num_actions do
-		local picked_index
-		local random_utility_score = math.random() * total_utility_score
+	for iter_6_1 = 1, var_6_0 do
+		local var_6_6
+		local var_6_7 = math.random() * var_6_1
 
-		for j = i, num_actions do
-			local action_utility_score = actions[j].utility_score
+		for iter_6_2 = iter_6_1, var_6_0 do
+			local var_6_8 = arg_6_1[iter_6_2].utility_score
 
-			if random_utility_score < action_utility_score then
-				picked_index = j
+			if var_6_7 < var_6_8 then
+				var_6_6 = iter_6_2
 
 				break
 			end
 
-			random_utility_score = random_utility_score - action_utility_score
+			var_6_7 = var_6_7 - var_6_8
 		end
 
-		if not picked_index then
-			num_actions = i - 1
+		if not var_6_6 then
+			var_6_0 = iter_6_1 - 1
 
-			return num_actions
+			return var_6_0
 		end
 
-		total_utility_score = total_utility_score - actions[picked_index].utility_score
+		var_6_1 = var_6_1 - arg_6_1[var_6_6].utility_score
 
-		if picked_index ~= i then
-			swap(actions, picked_index, i)
+		if var_6_6 ~= iter_6_1 then
+			var_0_0(arg_6_1, var_6_6, iter_6_1)
 		end
 	end
 
-	return num_actions
+	return var_6_0
 end
 
-BTUtilityNode.run = function (self, unit, blackboard, t, dt)
-	local action_data = self._tree_node.action_data
-	local fail_cooldown_t = blackboard[self.fail_cooldown_name]
+function BTUtilityNode.run(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	local var_7_0 = arg_7_0._tree_node.action_data
+	local var_7_1 = arg_7_2[arg_7_0.fail_cooldown_name]
 
-	if fail_cooldown_t then
-		if t < fail_cooldown_t then
+	if var_7_1 then
+		if arg_7_3 < var_7_1 then
 			return "failed"
 		end
 
-		blackboard[self.fail_cooldown_name] = nil
+		arg_7_2[arg_7_0.fail_cooldown_name] = nil
 	end
 
-	local running_node = self:current_running_child(blackboard)
-	local result = "failed"
-	local evaluate_next_frame
+	local var_7_2 = arg_7_0:current_running_child(arg_7_2)
+	local var_7_3 = "failed"
+	local var_7_4
 
-	if running_node and not blackboard.evaluate then
-		local running_node_id = running_node._identifier
+	if var_7_2 and not arg_7_2.evaluate then
+		local var_7_5 = var_7_2._identifier
+		local var_7_6
 
-		result, evaluate_next_frame = running_node:evaluate(unit, blackboard, t, dt)
+		var_7_3, var_7_6 = var_7_2:evaluate(arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 
-		if result == "done" then
-			local utility_data = blackboard.utility_actions[running_node_id]
-
-			utility_data.last_done_time = t
+		if var_7_3 == "done" then
+			arg_7_2.utility_actions[var_7_5].last_done_time = arg_7_3
 		end
 
-		if result ~= "failed" then
-			blackboard.evaluate = evaluate_next_frame
+		if var_7_3 ~= "failed" then
+			arg_7_2.evaluate = var_7_6
 
-			return result
+			return var_7_3
 		end
 	end
 
-	local actions = self._action_list
-	local num_actions = randomize_actions(unit, actions, blackboard, t, self._children)
+	local var_7_7 = arg_7_0._action_list
+	local var_7_8 = var_0_1(arg_7_1, var_7_7, arg_7_2, arg_7_3, arg_7_0._children)
 
-	for i = 1, num_actions do
-		local action = actions[i]
-		local action_name = action.name
-		local node = self._children[action_name]
+	for iter_7_0 = 1, var_7_8 do
+		local var_7_9 = var_7_7[iter_7_0].name
+		local var_7_10 = arg_7_0._children[var_7_9]
 
-		if node ~= running_node then
-			self:set_running_child(unit, blackboard, t, node, "aborted")
+		if var_7_10 ~= var_7_2 then
+			arg_7_0:set_running_child(arg_7_1, arg_7_2, arg_7_3, var_7_10, "aborted")
 
-			running_node = node
+			var_7_2 = var_7_10
 		end
 
-		local utility_data = blackboard.utility_actions[action_name]
+		local var_7_11 = arg_7_2.utility_actions[var_7_9]
 
-		utility_data.last_time = t
+		var_7_11.last_time = arg_7_3
 
-		local node_id = node._identifier
+		local var_7_12 = var_7_10._identifier
+		local var_7_13
 
-		result, evaluate_next_frame = node:evaluate(unit, blackboard, t, dt)
+		var_7_3, var_7_13 = var_7_10:evaluate(arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 
-		if result ~= "running" then
-			if result == "done" then
-				utility_data.last_done_time = t
+		if var_7_3 ~= "running" then
+			if var_7_3 == "done" then
+				var_7_11.last_done_time = arg_7_3
 			end
 
-			self:set_running_child(unit, blackboard, t, nil, result)
+			arg_7_0:set_running_child(arg_7_1, arg_7_2, arg_7_3, nil, var_7_3)
 
-			running_node = nil
+			var_7_2 = nil
 		end
 
-		if result ~= "failed" then
-			blackboard.evaluate = evaluate_next_frame
+		if var_7_3 ~= "failed" then
+			arg_7_2.evaluate = var_7_13
 
 			break
 		end
 	end
 
-	if result == "running" or result == "done" then
-		return result
+	if var_7_3 == "running" or var_7_3 == "done" then
+		return var_7_3
 	end
 
-	local fail_cooldown_blackboard_identifier = action_data and action_data.fail_cooldown_blackboard_identifier
+	local var_7_14 = var_7_0 and var_7_0.fail_cooldown_blackboard_identifier
+	local var_7_15 = var_7_14 and arg_7_2[var_7_14]
 
-	fail_cooldown_t = fail_cooldown_blackboard_identifier and blackboard[fail_cooldown_blackboard_identifier]
-
-	if fail_cooldown_t == nil then
-		fail_cooldown_t = t + (action_data and action_data.fail_cooldown or 0.5)
+	if var_7_15 == nil then
+		var_7_15 = arg_7_3 + (var_7_0 and var_7_0.fail_cooldown or 0.5)
 	end
 
-	blackboard[self.fail_cooldown_name] = fail_cooldown_t
+	arg_7_2[arg_7_0.fail_cooldown_name] = var_7_15
 
-	return result
+	return var_7_3
 end
 
-BTUtilityNode.add_child = function (self, node)
-	self._children[node._identifier] = node
+function BTUtilityNode.add_child(arg_8_0, arg_8_1)
+	arg_8_0._children[arg_8_1._identifier] = arg_8_1
 end

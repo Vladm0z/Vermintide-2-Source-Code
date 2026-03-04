@@ -1,109 +1,107 @@
-﻿-- chunkname: @foundation/scripts/managers/event/event_manager.lua
+-- chunkname: @foundation/scripts/managers/event/event_manager.lua
 
 EventManager = class(EventManager)
 
-EventManager.init = function (self, passthrough)
-	self._events = {}
-	self._referenced_events = {}
-	self._passthrough = passthrough
+function EventManager.init(arg_1_0, arg_1_1)
+	arg_1_0._events = {}
+	arg_1_0._referenced_events = {}
+	arg_1_0._passthrough = arg_1_1
 end
 
-EventManager.register = function (self, object, ...)
-	for i = 1, select("#", ...), 2 do
-		local event_name = select(i, ...)
-		local callback_name = select(i + 1, ...)
+function EventManager.register(arg_2_0, arg_2_1, ...)
+	for iter_2_0 = 1, select("#", ...), 2 do
+		local var_2_0 = select(iter_2_0, ...)
+		local var_2_1 = select(iter_2_0 + 1, ...)
 
-		fassert(type(object) == "table" and type(object[callback_name]) == "function", "No function found with name %q on supplied object", callback_name)
+		fassert(type(arg_2_1) == "table" and type(arg_2_1[var_2_1]) == "function", "No function found with name %q on supplied object", var_2_1)
 
-		self._events[event_name] = self._events[event_name] or setmetatable({}, {
-			__mode = "v",
+		arg_2_0._events[var_2_0] = arg_2_0._events[var_2_0] or setmetatable({}, {
+			__mode = "v"
 		})
-		self._events[event_name][object] = callback_name
+		arg_2_0._events[var_2_0][arg_2_1] = var_2_1
 	end
 end
 
-EventManager.unregister = function (self, event_name, object)
-	local events = self._events[event_name]
+function EventManager.unregister(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0 = arg_3_0._events[arg_3_1]
 
-	if events then
-		events[object] = nil
+	if var_3_0 then
+		var_3_0[arg_3_2] = nil
 
-		if table.is_empty(events) then
-			self._events[event_name] = nil
+		if table.is_empty(var_3_0) then
+			arg_3_0._events[arg_3_1] = nil
 		end
 	end
 end
 
-EventManager.trigger = function (self, event_name, ...)
-	local events = self._events[event_name]
-
-	if events then
-		for object, callback_name in pairs(self._events[event_name]) do
-			object[callback_name](object, ...)
+function EventManager.trigger(arg_4_0, arg_4_1, ...)
+	if arg_4_0._events[arg_4_1] then
+		for iter_4_0, iter_4_1 in pairs(arg_4_0._events[arg_4_1]) do
+			iter_4_0[iter_4_1](iter_4_0, ...)
 		end
 	end
 
-	if self._passthrough then
-		self._passthrough:trigger(event_name, ...)
+	if arg_4_0._passthrough then
+		arg_4_0._passthrough:trigger(arg_4_1, ...)
 	end
 end
 
-EventManager.register_referenced = function (self, reference, object, ...)
-	local referenced_events = self._referenced_events
-	local registered_events = referenced_events[reference] or {}
+function EventManager.register_referenced(arg_5_0, arg_5_1, arg_5_2, ...)
+	local var_5_0 = arg_5_0._referenced_events
+	local var_5_1 = var_5_0[arg_5_1] or {}
 
-	referenced_events[reference] = registered_events
+	var_5_0[arg_5_1] = var_5_1
 
-	for i = 1, select("#", ...), 2 do
-		local event_name = select(i, ...)
-		local callback_name = select(i + 1, ...)
+	for iter_5_0 = 1, select("#", ...), 2 do
+		local var_5_2 = select(iter_5_0, ...)
+		local var_5_3 = select(iter_5_0 + 1, ...)
 
-		registered_events[event_name] = registered_events[event_name] or setmetatable({}, {
-			__mode = "v",
+		var_5_1[var_5_2] = var_5_1[var_5_2] or setmetatable({}, {
+			__mode = "v"
 		})
-		registered_events[event_name][object] = callback_name
+		var_5_1[var_5_2][arg_5_2] = var_5_3
 	end
 end
 
-EventManager.unregister_referenced = function (self, event_name, reference, object)
-	local referenced_events = self._referenced_events[reference]
+function EventManager.unregister_referenced(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	local var_6_0 = arg_6_0._referenced_events[arg_6_2]
 
-	if not referenced_events then
+	if not var_6_0 then
 		return
 	end
 
-	local registered_objects = referenced_events[event_name]
+	local var_6_1 = var_6_0[arg_6_1]
 
-	if not registered_objects then
+	if not var_6_1 then
 		return
 	end
 
-	registered_objects[object] = nil
+	var_6_1[arg_6_3] = nil
 
-	if table.is_empty(registered_objects) then
-		referenced_events[event_name] = nil
+	if table.is_empty(var_6_1) then
+		var_6_0[arg_6_1] = nil
 	end
 
-	if table.is_empty(referenced_events) then
-		self._referenced_events[reference] = nil
+	if table.is_empty(var_6_0) then
+		arg_6_0._referenced_events[arg_6_2] = nil
 	end
 end
 
-EventManager.unregister_referenced_all = function (self, reference)
-	self._referenced_events[reference] = nil
+function EventManager.unregister_referenced_all(arg_7_0, arg_7_1)
+	arg_7_0._referenced_events[arg_7_1] = nil
 end
 
-EventManager.trigger_referenced = function (self, reference, event_name, ...)
-	local registered_events = self._referenced_events[reference]
-	local registered_objects = registered_events and registered_events[event_name]
+function EventManager.trigger_referenced(arg_8_0, arg_8_1, arg_8_2, ...)
+	local var_8_0 = arg_8_0._referenced_events[arg_8_1]
+	local var_8_1 = var_8_0 and var_8_0[arg_8_2]
 
-	if registered_objects then
-		for object, callback_name in pairs(registered_objects) do
-			object[callback_name](object, reference, ...)
+	if var_8_1 then
+		for iter_8_0, iter_8_1 in pairs(var_8_1) do
+			iter_8_0[iter_8_1](iter_8_0, arg_8_1, ...)
 		end
 	end
 
-	if self._passthrough then
-		self._passthrough:trigger_referenced(reference, event_name, ...)
+	if arg_8_0._passthrough then
+		arg_8_0._passthrough:trigger_referenced(arg_8_1, arg_8_2, ...)
 	end
 end

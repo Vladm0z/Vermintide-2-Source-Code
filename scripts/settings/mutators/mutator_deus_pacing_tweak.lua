@@ -1,526 +1,516 @@
-﻿-- chunkname: @scripts/settings/mutators/mutator_deus_pacing_tweak.lua
+-- chunkname: @scripts/settings/mutators/mutator_deus_pacing_tweak.lua
 
-local conflict_settings = {
+local var_0_0 = {
 	deus_skaven_chaos = {
-		breed1 = "deus_skaven",
 		breed2 = "deus_chaos",
+		breed1 = "deus_skaven"
 	},
 	deus_skaven_beastmen = {
-		breed1 = "deus_skaven",
 		breed2 = "deus_beastmen",
-	},
+		breed1 = "deus_skaven"
+	}
 }
-local EVENT_ACTIVATION_DISTANCE = 45
-local EVENT_WEIGHTS = {
+local var_0_1 = 45
+local var_0_2 = {
 	{
 		run_progress = 0,
 		weights = {
 			event_boss = 0,
-			event_patrol = 70,
 			nothing = 30,
-		},
+			event_patrol = 70
+		}
 	},
 	{
 		run_progress = 0.4,
 		weights = {
 			event_boss = 20,
-			event_patrol = 70,
 			nothing = 10,
-		},
-	},
+			event_patrol = 70
+		}
+	}
 }
-local sequences = {
+local var_0_3 = {
 	SIGNATURE = {
 		{
 			{
 				breeds = "a",
 				mutators = {
-					"no_roamers",
-				},
+					"no_roamers"
+				}
 			},
 			{
 				breeds = "a",
 				mutators = {
-					"easier_packs",
-				},
+					"easier_packs"
+				}
 			},
 			{
 				breeds = "a",
 				mutators = {
-					"easier_packs",
-				},
+					"easier_packs"
+				}
 			},
 			{
-				breeds = "a",
 				peak = true,
-				mutators = {},
+				breeds = "a",
+				mutators = {}
 			},
 			{
 				breeds = "a",
 				mutators = {
-					"no_roamers",
-				},
+					"no_roamers"
+				}
 			},
 			{
 				breeds = "b",
 				mutators = {
-					"easier_packs",
-				},
+					"easier_packs"
+				}
 			},
 			{
 				breeds = "b",
 				mutators = {
-					"easier_packs",
-				},
+					"easier_packs"
+				}
 			},
 			{
-				breeds = "b",
 				peak = true,
-				mutators = {},
+				breeds = "b",
+				mutators = {}
 			},
 			{
 				breeds = "both",
-				mutators = {},
+				mutators = {}
 			},
 			{
 				breeds = "both",
-				mutators = {},
-			},
-		},
+				mutators = {}
+			}
+		}
 	},
 	TRAVEL = {
 		{
 			{
 				breeds = "a",
 				mutators = {
-					"easier_packs",
-				},
+					"easier_packs"
+				}
 			},
 			{
 				breeds = "a",
 				mutators = {
-					"easier_packs",
-				},
+					"easier_packs"
+				}
 			},
 			{
 				breeds = "a",
-				mutators = {},
+				mutators = {}
 			},
 			{
-				breeds = "a",
 				peak = true,
-				mutators = {},
+				breeds = "a",
+				mutators = {}
 			},
 			{
 				breeds = "a",
 				mutators = {
-					"easier_packs",
-				},
+					"easier_packs"
+				}
 			},
 			{
 				breeds = "b",
 				mutators = {
-					"easier_packs",
-				},
+					"easier_packs"
+				}
 			},
 			{
 				breeds = "b",
 				mutators = {
-					"easier_packs",
-				},
+					"easier_packs"
+				}
 			},
 			{
 				breeds = "b",
-				mutators = {},
+				mutators = {}
+			},
+			{
+				peak = true,
+				breeds = "both",
+				mutators = {}
 			},
 			{
 				breeds = "both",
-				peak = true,
-				mutators = {},
-			},
-			{
-				breeds = "both",
 				mutators = {
-					"easier_packs",
-				},
-			},
+					"easier_packs"
+				}
+			}
 		},
 		{
 			{
 				breeds = "a",
 				mutators = {
-					"easier_packs",
-				},
+					"easier_packs"
+				}
 			},
 			{
 				breeds = "a",
 				mutators = {
-					"easier_packs",
-				},
+					"easier_packs"
+				}
 			},
 			{
 				breeds = "a",
-				mutators = {},
+				mutators = {}
 			},
 			{
-				breeds = "a",
 				peak = true,
-				mutators = {},
+				breeds = "a",
+				mutators = {}
 			},
 			{
 				breeds = "a",
 				mutators = {
-					"easier_packs",
-				},
+					"easier_packs"
+				}
 			},
 			{
 				breeds = "a",
 				mutators = {
-					"easier_packs",
-				},
+					"easier_packs"
+				}
 			},
 			{
 				breeds = "a",
 				mutators = {
-					"easier_packs",
-				},
+					"easier_packs"
+				}
 			},
 			{
 				breeds = "a",
-				mutators = {},
+				mutators = {}
 			},
 			{
-				breeds = "a",
 				peak = true,
-				mutators = {},
+				breeds = "a",
+				mutators = {}
 			},
 			{
 				breeds = "a",
 				mutators = {
-					"easier_packs",
-				},
-			},
-		},
-	},
+					"easier_packs"
+				}
+			}
+		}
+	}
 }
-local EVENT_DISTANCE_THRESHOLD = 40
+local var_0_4 = 40
 
-local function get_random_from_weighted_table(seed, weighted_table)
-	local total_weight_sum = 0
+local function var_0_5(arg_1_0, arg_1_1)
+	local var_1_0 = 0
 
-	for key, weight in pairs(weighted_table) do
-		total_weight_sum = total_weight_sum + weight
+	for iter_1_0, iter_1_1 in pairs(arg_1_1) do
+		var_1_0 = var_1_0 + iter_1_1
 	end
 
-	local _, random = Math.next_random(seed, 0, total_weight_sum * 100)
-	local current_weight_sum = 0
+	local var_1_1, var_1_2 = Math.next_random(arg_1_0, 0, var_1_0 * 100)
+	local var_1_3 = 0
 
-	for key, weight in pairs(weighted_table) do
-		current_weight_sum = current_weight_sum + weight * 100
+	for iter_1_2, iter_1_3 in pairs(arg_1_1) do
+		var_1_3 = var_1_3 + iter_1_3 * 100
 
-		if random <= current_weight_sum then
-			return key
+		if var_1_2 <= var_1_3 then
+			return iter_1_2
 		end
 	end
 
 	return nil
 end
 
-local Sequencer = {
-	apply_travel_dist_to_sequence_with_peaks_and_events = function (sequence, total_travel_dist, peaks, possible_events, event_weight_table, seed)
-		local sequence_with_travel_dist = table.clone(sequence)
-		local zone_dist_delta = total_travel_dist / (#sequence + 1)
-		local dist = 0
+local var_0_6 = {
+	apply_travel_dist_to_sequence_with_peaks_and_events = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+		local var_2_0 = table.clone(arg_2_0)
+		local var_2_1 = arg_2_1 / (#arg_2_0 + 1)
+		local var_2_2 = 0
 
-		for _, sequence_node in ipairs(sequence_with_travel_dist) do
-			sequence_node.travel_dist = dist
-			dist = dist + zone_dist_delta
+		for iter_2_0, iter_2_1 in ipairs(var_2_0) do
+			iter_2_1.travel_dist = var_2_2
+			var_2_2 = var_2_2 + var_2_1
 		end
 
-		for _, peak in ipairs(peaks) do
-			local closest_peak
+		for iter_2_2, iter_2_3 in ipairs(arg_2_2) do
+			local var_2_3
 
-			for i, sequence_node in ipairs(sequence_with_travel_dist) do
-				if sequence_node.peak then
-					if not closest_peak then
-						closest_peak = sequence_node
-					else
-						local new_travel_dist_delta = math.abs(sequence_node.travel_dist - peak)
-						local old_travel_dist_delta = math.abs(closest_peak.travel_dist - peak)
-
-						if new_travel_dist_delta < old_travel_dist_delta then
-							closest_peak = sequence_node
-						end
+			for iter_2_4, iter_2_5 in ipairs(var_2_0) do
+				if iter_2_5.peak then
+					if not var_2_3 then
+						var_2_3 = iter_2_5
+					elseif math.abs(iter_2_5.travel_dist - iter_2_3) < math.abs(var_2_3.travel_dist - iter_2_3) then
+						var_2_3 = iter_2_5
 					end
 				end
 			end
 
-			closest_peak.travel_dist = peak
-			closest_peak.fixed_peak = true
+			var_2_3.travel_dist = iter_2_3
+			var_2_3.fixed_peak = true
 		end
 
-		local best_events, node_for_best_event, best_distance
+		local var_2_4
+		local var_2_5
+		local var_2_6
 
-		for i, sequence_node in ipairs(sequence_with_travel_dist) do
-			if sequence_node.peak and not sequence_node.fixed_peak then
-				for _, possible_event in ipairs(possible_events) do
-					local distance = math.abs(possible_event.travel_dist - EVENT_ACTIVATION_DISTANCE - sequence_node.travel_dist)
+		for iter_2_6, iter_2_7 in ipairs(var_2_0) do
+			if iter_2_7.peak and not iter_2_7.fixed_peak then
+				for iter_2_8, iter_2_9 in ipairs(arg_2_3) do
+					local var_2_7 = math.abs(iter_2_9.travel_dist - var_0_1 - iter_2_7.travel_dist)
 
-					if not best_distance then
-						best_events = {
-							possible_event,
+					if not var_2_6 then
+						var_2_4 = {
+							iter_2_9
 						}
-						node_for_best_event = sequence_node
-						best_distance = distance
-					else
-						local diff = math.abs(distance - best_distance)
-
-						if diff < EVENT_DISTANCE_THRESHOLD then
-							best_events[#best_events + 1] = possible_event
-						elseif distance < best_distance then
-							best_events = {
-								possible_event,
-							}
-							node_for_best_event = sequence_node
-							best_distance = distance
-						end
+						var_2_5 = iter_2_7
+						var_2_6 = var_2_7
+					elseif math.abs(var_2_7 - var_2_6) < var_0_4 then
+						var_2_4[#var_2_4 + 1] = iter_2_9
+					elseif var_2_7 < var_2_6 then
+						var_2_4 = {
+							iter_2_9
+						}
+						var_2_5 = iter_2_7
+						var_2_6 = var_2_7
 					end
 				end
 			end
 		end
 
-		local best_event
+		local var_2_8
 
-		if best_events then
-			local weighted_table = {}
+		if var_2_4 then
+			local var_2_9 = {}
 
-			for _, event in ipairs(best_events) do
-				weighted_table[event.kind] = event_weight_table[event.kind]
+			for iter_2_10, iter_2_11 in ipairs(var_2_4) do
+				var_2_9[iter_2_11.kind] = arg_2_4[iter_2_11.kind]
 			end
 
-			weighted_table.nothing = event_weight_table.nothing
+			var_2_9.nothing = arg_2_4.nothing
 
-			local event_kind = get_random_from_weighted_table(seed, weighted_table)
+			local var_2_10 = var_0_5(arg_2_5, var_2_9)
 
-			if event_kind ~= "nothing" then
-				for _, event in ipairs(best_events) do
-					if event.kind == event_kind then
-						best_event = event
+			if var_2_10 ~= "nothing" then
+				for iter_2_12, iter_2_13 in ipairs(var_2_4) do
+					if iter_2_13.kind == var_2_10 then
+						var_2_8 = iter_2_13
 
 						break
 					end
 				end
 
-				node_for_best_event.travel_dist = best_event.travel_dist - EVENT_ACTIVATION_DISTANCE
+				var_2_5.travel_dist = var_2_8.travel_dist - var_0_1
 			end
 		end
 
-		local function normalize(start_index, end_index)
-			local offset = end_index - start_index
-			local early_travel_dist = sequence_with_travel_dist[start_index].travel_dist
-			local current_travel_dist = sequence_with_travel_dist[end_index].travel_dist
+		local function var_2_11(arg_3_0, arg_3_1)
+			local var_3_0 = arg_3_1 - arg_3_0
+			local var_3_1 = var_2_0[arg_3_0].travel_dist
+			local var_3_2 = var_2_0[arg_3_1].travel_dist
 
-			for normalize_index = start_index + 1, end_index - 1 do
-				local lerp_val = (normalize_index - start_index) / offset
+			for iter_3_0 = arg_3_0 + 1, arg_3_1 - 1 do
+				local var_3_3 = (iter_3_0 - arg_3_0) / var_3_0
 
-				sequence_with_travel_dist[normalize_index].travel_dist = math.lerp(early_travel_dist, current_travel_dist, lerp_val)
+				var_2_0[iter_3_0].travel_dist = math.lerp(var_3_1, var_3_2, var_3_3)
 			end
 		end
 
-		local early_index = 1
+		local var_2_12 = 1
 
-		for current_index = 1, #sequence_with_travel_dist do
-			if sequence_with_travel_dist[current_index].peak then
-				normalize(early_index, current_index)
+		for iter_2_14 = 1, #var_2_0 do
+			if var_2_0[iter_2_14].peak then
+				var_2_11(var_2_12, iter_2_14)
 
-				early_index = current_index
+				var_2_12 = iter_2_14
 			end
 		end
 
-		normalize(early_index, #sequence_with_travel_dist)
+		var_2_11(var_2_12, #var_2_0)
 
-		return sequence_with_travel_dist, best_event
+		return var_2_0, var_2_8
 	end,
-	tweak_zones_with_sequence = function (breed_a, breed_b, both_breeds, zones, num_zones, sequence_with_travel_dist)
-		local seek_start_index = 1
+	tweak_zones_with_sequence = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+		local var_4_0 = 1
 
-		for index, sequence_node in ipairs(sequence_with_travel_dist) do
-			local new_mutators = sequence_node.mutators
+		for iter_4_0, iter_4_1 in ipairs(arg_4_5) do
+			local var_4_1 = iter_4_1.mutators
 
-			for i = seek_start_index, num_zones do
-				local zone = zones[i]
-				local mutator_list = {}
+			for iter_4_2 = var_4_0, arg_4_4 do
+				local var_4_2 = arg_4_3[iter_4_2]
+				local var_4_3 = {}
 
-				if zone.mutators then
-					for name in string.gmatch(zone.mutators, "([^[%s,]+)%s*,?%s*") do
-						mutator_list[#mutator_list + 1] = name
+				if var_4_2.mutators then
+					for iter_4_3 in string.gmatch(var_4_2.mutators, "([^[%s,]+)%s*,?%s*") do
+						var_4_3[#var_4_3 + 1] = iter_4_3
 					end
 				end
 
-				for _, new_mutator in ipairs(new_mutators) do
-					if table.index_of(mutator_list, new_mutator) == -1 then
-						mutator_list[#mutator_list + 1] = new_mutator
+				for iter_4_4, iter_4_5 in ipairs(var_4_1) do
+					if table.index_of(var_4_3, iter_4_5) == -1 then
+						var_4_3[#var_4_3 + 1] = iter_4_5
 					end
 				end
 
-				zone.peak = sequence_node.peak
+				var_4_2.peak = iter_4_1.peak
 
-				if #mutator_list > 0 then
-					zone.mutators = table.concat(mutator_list, ",")
+				if #var_4_3 > 0 then
+					var_4_2.mutators = table.concat(var_4_3, ",")
 				end
 
-				if zone.travel_dist > sequence_node.travel_dist then
-					if not zone.roaming_set then
-						zone.roaming_set = sequence_node.breeds == "a" and breed_a or sequence_node.breeds == "b" and breed_b or both_breeds
+				if var_4_2.travel_dist > iter_4_1.travel_dist then
+					if not var_4_2.roaming_set then
+						var_4_2.roaming_set = iter_4_1.breeds == "a" and arg_4_0 or iter_4_1.breeds == "b" and arg_4_1 or arg_4_2
 					end
 
-					seek_start_index = i
+					var_4_0 = iter_4_2
 
 					break
 				end
 			end
 		end
-	end,
+	end
 }
 
 return {
 	hide_from_player_ui = true,
-	tweak_zones = function (mutator_context, data, conflict_director_name, zones, num_zones)
-		local mechanism = Managers.mechanism:game_mechanism()
-		local deus_run_controller = mechanism.get_deus_run_controller and mechanism:get_deus_run_controller()
+	tweak_zones = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+		local var_5_0 = Managers.mechanism:game_mechanism()
+		local var_5_1 = var_5_0.get_deus_run_controller and var_5_0:get_deus_run_controller()
 
-		if not conflict_settings[conflict_director_name] or not deus_run_controller then
+		if not var_0_0[arg_5_2] or not var_5_1 then
 			return
 		end
 
-		local current_node = deus_run_controller:get_current_node()
-		local sequences_for_type = sequences[current_node.level_type]
+		local var_5_2 = var_5_1:get_current_node()
+		local var_5_3 = var_0_3[var_5_2.level_type]
 
-		if not sequences_for_type then
+		if not var_5_3 then
 			return
 		end
 
-		local seed = Managers.mechanism:get_level_seed("mutator")
-		local sequence_index
+		local var_5_4 = Managers.mechanism:get_level_seed("mutator")
+		local var_5_5
+		local var_5_6, var_5_7 = Math.next_random(var_5_4, 1, #var_5_3)
+		local var_5_8 = var_5_3[var_5_7]
+		local var_5_9 = arg_5_3[arg_5_4].travel_dist
+		local var_5_10 = Managers.state.conflict
+		local var_5_11 = var_5_10:get_peaks()
+		local var_5_12 = var_5_10.level_analysis:get_possible_events()
+		local var_5_13 = var_5_2.run_progress
+		local var_5_14 = table.clone(var_0_2)
+		local var_5_15 = var_5_14[1].weights
 
-		seed, sequence_index = Math.next_random(seed, 1, #sequences_for_type)
-
-		local sequence = sequences_for_type[sequence_index]
-		local last_zone_travel_dist = zones[num_zones].travel_dist
-		local conflict_director = Managers.state.conflict
-		local peaks = conflict_director:get_peaks()
-		local possible_events = conflict_director.level_analysis:get_possible_events()
-		local run_progress = current_node.run_progress
-		local event_weights = table.clone(EVENT_WEIGHTS)
-		local event_weight_table = event_weights[1].weights
-
-		for _, possible_event_weight_config in ipairs(event_weights) do
-			if run_progress >= possible_event_weight_config.run_progress then
-				event_weight_table = possible_event_weight_config.weights
+		for iter_5_0, iter_5_1 in ipairs(var_5_14) do
+			if var_5_13 >= iter_5_1.run_progress then
+				var_5_15 = iter_5_1.weights
 			else
 				break
 			end
 		end
 
-		local game_mode_manager = Managers.state.game_mode
+		local var_5_16 = Managers.state.game_mode
 
-		if game_mode_manager:has_mutator("deus_more_monsters") then
-			event_weight_table.event_boss = 100
-			event_weight_table.event_patrol = 0
-			event_weight_table.nothing = 0
+		if var_5_16:has_mutator("deus_more_monsters") then
+			var_5_15.event_boss = 100
+			var_5_15.event_patrol = 0
+			var_5_15.nothing = 0
 		end
 
-		if game_mode_manager:has_mutator("deus_less_monsters") then
-			event_weight_table.event_boss = 0
+		if var_5_16:has_mutator("deus_less_monsters") then
+			var_5_15.event_boss = 0
 		end
 
-		if game_mode_manager:has_mutator("deus_more_elites") then
-			event_weight_table.event_boss = 0
-			event_weight_table.nothing = 0
-			event_weight_table.event_patrol = 100
+		if var_5_16:has_mutator("deus_more_elites") then
+			var_5_15.event_boss = 0
+			var_5_15.nothing = 0
+			var_5_15.event_patrol = 100
 		end
 
-		if game_mode_manager:has_mutator("deus_less_elites") then
-			event_weight_table.event_patrol = 0
+		if var_5_16:has_mutator("deus_less_elites") then
+			var_5_15.event_patrol = 0
 		end
 
-		local sequence_with_travel_dist, best_event = Sequencer.apply_travel_dist_to_sequence_with_peaks_and_events(sequence, last_zone_travel_dist, peaks, possible_events, event_weight_table, seed)
+		local var_5_17, var_5_18 = var_0_6.apply_travel_dist_to_sequence_with_peaks_and_events(var_5_8, var_5_9, var_5_11, var_5_12, var_5_15, var_5_6)
 
-		data.event = best_event
+		arg_5_1.event = var_5_18
 
-		local _, breed_selection = Math.next_random(seed, 1, 2)
-		local sub_breeds = conflict_settings[conflict_director_name]
-		local breed_a = breed_selection == 1 and sub_breeds.breed1 or sub_breeds.breed2
-		local breed_b = breed_selection == 1 and sub_breeds.breed2 or sub_breeds.breed1
+		local var_5_19, var_5_20 = Math.next_random(var_5_6, 1, 2)
+		local var_5_21 = var_0_0[arg_5_2]
+		local var_5_22 = var_5_20 == 1 and var_5_21.breed1 or var_5_21.breed2
+		local var_5_23 = var_5_20 == 1 and var_5_21.breed2 or var_5_21.breed1
 
-		Sequencer.tweak_zones_with_sequence(breed_a, breed_b, conflict_director_name, zones, num_zones, sequence_with_travel_dist)
+		var_0_6.tweak_zones_with_sequence(var_5_22, var_5_23, arg_5_2, arg_5_3, arg_5_4, var_5_17)
 
-		local final_peaks = {}
+		local var_5_24 = {}
 
-		for index, sequence_node in ipairs(sequence_with_travel_dist) do
-			if sequence_node.peak then
-				final_peaks[#final_peaks + 1] = sequence_node.travel_dist
+		for iter_5_2, iter_5_3 in ipairs(var_5_17) do
+			if iter_5_3.peak then
+				var_5_24[#var_5_24 + 1] = iter_5_3.travel_dist
 			end
 		end
 
-		conflict_director:set_peaks(final_peaks)
+		var_5_10:set_peaks(var_5_24)
 	end,
-	server_start_function = function (mutator_context, data, dt, t)
-		if not data.event then
+	server_start_function = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+		if not arg_6_1.event then
 			return
 		end
 
-		local conflict_director = Managers.state.conflict
+		local var_6_0 = Managers.state.conflict
 
-		if data.event.kind == "event_boss" then
-			local spawner = data.event.spawner
-			local spawner_pos = Unit.local_position(spawner[1], 0)
-			local boxed_pos = Vector3Box(spawner_pos)
-			local event_data = {
-				event_kind = "event_boss",
+		if arg_6_1.event.kind == "event_boss" then
+			local var_6_1 = arg_6_1.event.spawner
+			local var_6_2 = Unit.local_position(var_6_1[1], 0)
+			local var_6_3 = Vector3Box(var_6_2)
+			local var_6_4 = {
+				event_kind = "event_boss"
 			}
-			local terror_events = CurrentBossSettings.boss_events.event_lookup.event_boss
-			local seed = Managers.mechanism:get_level_seed("mutator")
-			local _, index = Math.next_random(seed, 1, #terror_events)
-			local terror_event_name = terror_events[index]
+			local var_6_5 = CurrentBossSettings.boss_events.event_lookup.event_boss
+			local var_6_6 = Managers.mechanism:get_level_seed("mutator")
+			local var_6_7, var_6_8 = Math.next_random(var_6_6, 1, #var_6_5)
+			local var_6_9 = var_6_5[var_6_8]
 
-			conflict_director.enemy_recycler:add_main_path_terror_event(boxed_pos, terror_event_name, EVENT_ACTIVATION_DISTANCE, event_data)
-		elseif data.event.kind == "event_patrol" then
-			local waypoints_table = data.event.waypoints_table
-			local spline_waypoints = conflict_director.level_analysis:boxify_waypoint_table(waypoints_table.waypoints)
-			local event_data = {
-				event_kind = "event_spline_patrol",
+			var_6_0.enemy_recycler:add_main_path_terror_event(var_6_3, var_6_9, var_0_1, var_6_4)
+		elseif arg_6_1.event.kind == "event_patrol" then
+			local var_6_10 = arg_6_1.event.waypoints_table
+			local var_6_11 = var_6_0.level_analysis:boxify_waypoint_table(var_6_10.waypoints)
+			local var_6_12 = {
 				spline_type = "patrol",
-				spline_id = waypoints_table.id,
-				spline_way_points = spline_waypoints,
-				one_directional = waypoints_table.one_directional,
+				event_kind = "event_spline_patrol",
+				spline_id = var_6_10.id,
+				spline_way_points = var_6_11,
+				one_directional = var_6_10.one_directional
 			}
-			local terror_events = CurrentBossSettings.boss_events.event_lookup.event_patrol
-			local seed = Managers.mechanism:get_level_seed("mutator")
-			local _, index = Math.next_random(seed, 1, #terror_events)
-			local terror_event_name = terror_events[index]
-			local travel_dist = conflict_director.level_analysis:get_boss_spline_travel_distance(waypoints_table) - EVENT_ACTIVATION_DISTANCE
+			local var_6_13 = CurrentBossSettings.boss_events.event_lookup.event_patrol
+			local var_6_14 = Managers.mechanism:get_level_seed("mutator")
+			local var_6_15, var_6_16 = Math.next_random(var_6_14, 1, #var_6_13)
+			local var_6_17 = var_6_13[var_6_16]
+			local var_6_18 = var_6_0.level_analysis:get_boss_spline_travel_distance(var_6_10) - var_0_1
 
-			conflict_director.enemy_recycler:add_main_path_terror_event(spline_waypoints[1], terror_event_name, EVENT_ACTIVATION_DISTANCE, event_data, travel_dist)
+			var_6_0.enemy_recycler:add_main_path_terror_event(var_6_11[1], var_6_17, var_0_1, var_6_12, var_6_18)
 		end
 	end,
-	server_update_function = function (mutator_context, data, dt, t)
-		if not data.peak_delayer_data then
+	server_update_function = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+		if not arg_7_1.peak_delayer_data then
 			return
 		end
 
-		local current_time = Managers.time:time("game")
-		local conflict_director = Managers.state.conflict
-		local main_path_info = conflict_director.main_path_info
-		local ahead_player_travel_dist
+		local var_7_0 = Managers.time:time("game")
+		local var_7_1 = Managers.state.conflict
+		local var_7_2 = var_7_1.main_path_info
+		local var_7_3
 
-		if not main_path_info.ahead_unit then
+		if not var_7_2.ahead_unit then
 			return
 		end
 
-		local ahead_player_info = conflict_director.main_path_player_info[main_path_info.ahead_unit]
+		local var_7_4 = var_7_1.main_path_player_info[var_7_2.ahead_unit].travel_dist
 
-		ahead_player_travel_dist = ahead_player_info.travel_dist
-		data.highest_travel_dist = math.max(data.highest_travel_dist or 0, ahead_player_travel_dist)
-	end,
+		arg_7_1.highest_travel_dist = math.max(arg_7_1.highest_travel_dist or 0, var_7_4)
+	end
 }

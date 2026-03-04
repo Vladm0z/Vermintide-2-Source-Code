@@ -1,411 +1,393 @@
-﻿-- chunkname: @scripts/entity_system/systems/limited_item_track/limited_item_track_system.lua
+-- chunkname: @scripts/entity_system/systems/limited_item_track/limited_item_track_system.lua
 
 require("scripts/unit_extensions/limited_item_track/limited_item_track_spawner")
 
 LimitedItemTrackSystem = class(LimitedItemTrackSystem, ExtensionSystemBase)
 
-local RPCS = {}
-local extensions = {
+local var_0_0 = {}
+local var_0_1 = {
 	"LimitedItemTrackSpawner",
 	"HeldLimitedItemExtension",
 	"LimitedItemExtension",
-	"WeaveLimitedItemTrackSpawner",
+	"WeaveLimitedItemTrackSpawner"
 }
 
-LimitedItemTrackSystem.init = function (self, entity_system_creation_context, system_name)
-	LimitedItemTrackSystem.super.init(self, entity_system_creation_context, system_name, extensions)
+function LimitedItemTrackSystem.init(arg_1_0, arg_1_1, arg_1_2)
+	LimitedItemTrackSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
-	local network_event_delegate = entity_system_creation_context.network_event_delegate
+	local var_1_0 = arg_1_1.network_event_delegate
 
-	network_event_delegate:register(self, unpack(RPCS))
+	var_1_0:register(arg_1_0, unpack(var_0_0))
 
-	self.network_event_delegate = network_event_delegate
-	self.network_manager = Managers.state.network
-	self.spawners = {}
-	self.active_spawners = {}
-	self.active_spawners_n = 0
-	self.items = {}
-	self.groups = {}
-	self.active_groups = {}
-	self.active_groups_n = 0
-	self.queued_group_spawners = {}
-	self.queued_weave_group_spawners = {}
-	self.no_group_spawners = {}
-	self.marked_items = {}
+	arg_1_0.network_event_delegate = var_1_0
+	arg_1_0.network_manager = Managers.state.network
+	arg_1_0.spawners = {}
+	arg_1_0.active_spawners = {}
+	arg_1_0.active_spawners_n = 0
+	arg_1_0.items = {}
+	arg_1_0.groups = {}
+	arg_1_0.active_groups = {}
+	arg_1_0.active_groups_n = 0
+	arg_1_0.queued_group_spawners = {}
+	arg_1_0.queued_weave_group_spawners = {}
+	arg_1_0.no_group_spawners = {}
+	arg_1_0.marked_items = {}
 
-	self.mark_item_for_transformation = function (extension)
-		local unit = extension.unit
+	function arg_1_0.mark_item_for_transformation(arg_2_0)
+		local var_2_0 = arg_2_0.unit
 
-		self.marked_items[unit] = extension.id > 0 and extension.id or nil
+		arg_1_0.marked_items[var_2_0] = arg_2_0.id > 0 and arg_2_0.id or nil
 	end
 
-	self.enable_spawner = function (extension)
-		local unit = extension.unit
-		local active_spawners_n = self.active_spawners_n + 1
-		local spawners = self.spawners
+	function arg_1_0.enable_spawner(arg_3_0)
+		local var_3_0 = arg_3_0.unit
+		local var_3_1 = arg_1_0.active_spawners_n + 1
+		local var_3_2 = arg_1_0.spawners
 
-		fassert(spawners[unit], "Tried enabling spawner that does not exist %q", tostring(unit))
+		fassert(var_3_2[var_3_0], "Tried enabling spawner that does not exist %q", tostring(var_3_0))
 
-		self.active_spawners[active_spawners_n] = unit
-		self.active_spawners_n = active_spawners_n
+		arg_1_0.active_spawners[var_3_1] = var_3_0
+		arg_1_0.active_spawners_n = var_3_1
 	end
 
-	self.disable_spawner = function (extension)
-		local unit = extension.unit
-		local spawner_id = self:find_active_spawner_id(unit)
+	function arg_1_0.disable_spawner(arg_4_0)
+		local var_4_0 = arg_4_0.unit
+		local var_4_1 = arg_1_0:find_active_spawner_id(var_4_0)
 
-		if spawner_id == nil then
+		if var_4_1 == nil then
 			return
 		end
 
-		table.remove(self.active_spawners, spawner_id)
+		table.remove(arg_1_0.active_spawners, var_4_1)
 
-		self.active_spawners_n = self.active_spawners_n - 1
+		arg_1_0.active_spawners_n = arg_1_0.active_spawners_n - 1
 	end
 end
 
-LimitedItemTrackSystem.register_group = function (self, group_name, pool_size)
-	fassert(self.groups[group_name] == nil, "Limited Item Group with name %q, is already registered", group_name)
+function LimitedItemTrackSystem.register_group(arg_5_0, arg_5_1, arg_5_2)
+	fassert(arg_5_0.groups[arg_5_1] == nil, "Limited Item Group with name %q, is already registered", arg_5_1)
 
-	local spawners = self.queued_group_spawners[group_name] or {}
-	local spawners_n = #spawners
+	local var_5_0 = arg_5_0.queued_group_spawners[arg_5_1] or {}
+	local var_5_1 = #var_5_0
 
-	self.queued_group_spawners[group_name] = nil
-	self.groups[group_name] = {
-		spawners = spawners,
-		spawners_n = spawners_n,
-		pool_size = pool_size,
+	arg_5_0.queued_group_spawners[arg_5_1] = nil
+	arg_5_0.groups[arg_5_1] = {
+		spawners = var_5_0,
+		spawners_n = var_5_1,
+		pool_size = arg_5_2
 	}
 end
 
-LimitedItemTrackSystem.register_weave_group = function (self, group_name, pool_size)
-	fassert(self.groups[group_name] == nil, "Limited Item Group with name %q, is already registered", group_name)
+function LimitedItemTrackSystem.register_weave_group(arg_6_0, arg_6_1, arg_6_2)
+	fassert(arg_6_0.groups[arg_6_1] == nil, "Limited Item Group with name %q, is already registered", arg_6_1)
 
-	local spawners = self.queued_weave_group_spawners[group_name] or {}
-	local spawners_n = #spawners
+	local var_6_0 = arg_6_0.queued_weave_group_spawners[arg_6_1] or {}
+	local var_6_1 = #var_6_0
 
-	self.queued_weave_group_spawners[group_name] = nil
-	self.groups[group_name] = {
-		spawners = spawners,
-		spawners_n = spawners_n,
-		pool_size = pool_size,
+	arg_6_0.queued_weave_group_spawners[arg_6_1] = nil
+	arg_6_0.groups[arg_6_1] = {
+		spawners = var_6_0,
+		spawners_n = var_6_1,
+		pool_size = arg_6_2
 	}
 end
 
-LimitedItemTrackSystem.decrease_group_pool_size = function (self, group_name)
-	local group = self.groups[group_name]
-	local pool_size = math.max(group.pool_size - 1, 0)
+function LimitedItemTrackSystem.decrease_group_pool_size(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_0.groups[arg_7_1]
+	local var_7_1 = math.max(var_7_0.pool_size - 1, 0)
 
-	group.pool_size = pool_size
+	var_7_0.pool_size = var_7_1
 
-	if pool_size == 0 then
-		self:deactivate_group(group_name)
+	if var_7_1 == 0 then
+		arg_7_0:deactivate_group(arg_7_1)
 	end
 end
 
-LimitedItemTrackSystem.activate_group = function (self, group_name, pool_size)
-	local active_groups = self.active_groups
-	local active_groups_n = self.active_groups_n
+function LimitedItemTrackSystem.activate_group(arg_8_0, arg_8_1, arg_8_2)
+	local var_8_0 = arg_8_0.active_groups
+	local var_8_1 = arg_8_0.active_groups_n
 
-	for i = 1, active_groups_n do
-		local active_group_name = active_groups[i]
-
-		if active_group_name == group_name then
-			Application.warning(string.format("Limited Item Group %q is already active", group_name))
+	for iter_8_0 = 1, var_8_1 do
+		if var_8_0[iter_8_0] == arg_8_1 then
+			Application.warning(string.format("Limited Item Group %q is already active", arg_8_1))
 
 			return
 		end
 	end
 
-	self.active_groups_n = active_groups_n + 1
-	active_groups[self.active_groups_n] = group_name
-	self.groups[group_name].pool_size = pool_size
+	arg_8_0.active_groups_n = var_8_1 + 1
+	var_8_0[arg_8_0.active_groups_n] = arg_8_1
+	arg_8_0.groups[arg_8_1].pool_size = arg_8_2
 end
 
-LimitedItemTrackSystem.weave_activate_spawner = function (self, unit, group_name)
-	if not self.groups[group_name] then
-		self:register_weave_group(group_name, 0)
+function LimitedItemTrackSystem.weave_activate_spawner(arg_9_0, arg_9_1, arg_9_2)
+	if not arg_9_0.groups[arg_9_2] then
+		arg_9_0:register_weave_group(arg_9_2, 0)
 	end
 
-	local active_groups = self.active_groups
-	local active_groups_n = self.active_groups_n
-	local active_group_index = active_groups_n + 1
+	local var_9_0 = arg_9_0.active_groups
+	local var_9_1 = arg_9_0.active_groups_n
+	local var_9_2 = var_9_1 + 1
 
-	for i = 1, active_groups_n do
-		local active_group_name = active_groups[i]
-
-		if active_group_name == group_name then
-			active_group_index = i
+	for iter_9_0 = 1, var_9_1 do
+		if var_9_0[iter_9_0] == arg_9_2 then
+			var_9_2 = iter_9_0
 
 			break
 		end
 	end
 
-	active_groups[active_group_index] = group_name
-	self.groups[group_name].pool_size = self.groups[group_name].pool_size + 1
-	self.active_groups_n = #active_groups
+	var_9_0[var_9_2] = arg_9_2
+	arg_9_0.groups[arg_9_2].pool_size = arg_9_0.groups[arg_9_2].pool_size + 1
+	arg_9_0.active_groups_n = #var_9_0
 end
 
-LimitedItemTrackSystem.deactivate_group = function (self, group_name)
-	local active_groups = self.active_groups
-	local active_groups_n = self.active_groups_n
+function LimitedItemTrackSystem.deactivate_group(arg_10_0, arg_10_1)
+	local var_10_0 = arg_10_0.active_groups
+	local var_10_1 = arg_10_0.active_groups_n
 
-	for i = 1, active_groups_n do
-		local active_group_name = active_groups[i]
+	for iter_10_0 = 1, var_10_1 do
+		if var_10_0[iter_10_0] == arg_10_1 then
+			table.remove(var_10_0, iter_10_0)
 
-		if active_group_name == group_name then
-			table.remove(active_groups, i)
-
-			self.active_groups_n = active_groups_n - 1
+			arg_10_0.active_groups_n = var_10_1 - 1
 
 			break
 		end
 	end
 end
 
-LimitedItemTrackSystem.find_active_spawner_id = function (self, unit)
-	local active_spawners = self.active_spawners
-	local active_spawners_n = self.active_spawners_n
+function LimitedItemTrackSystem.find_active_spawner_id(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_0.active_spawners
+	local var_11_1 = arg_11_0.active_spawners_n
 
-	for i = 1, active_spawners_n do
-		local spawner_unit = active_spawners[i]
-
-		if unit == spawner_unit then
-			return i
+	for iter_11_0 = 1, var_11_1 do
+		if arg_11_1 == var_11_0[iter_11_0] then
+			return iter_11_0
 		end
 	end
 
 	return nil
 end
 
-LimitedItemTrackSystem.destroy = function (self)
-	self.network_event_delegate:unregister(self)
+function LimitedItemTrackSystem.destroy(arg_12_0)
+	arg_12_0.network_event_delegate:unregister(arg_12_0)
 
-	self.network_event_delegate = nil
-	self.network_manager = nil
+	arg_12_0.network_event_delegate = nil
+	arg_12_0.network_manager = nil
 end
 
-local dummy_input = {}
-local temp_extension_init_data = {}
+local var_0_2 = {}
+local var_0_3 = {}
 
-LimitedItemTrackSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
-	extension_init_data = next(extension_init_data) == nil and temp_extension_init_data or extension_init_data
-	extension_init_data.network_manager = self.network_manager
+function LimitedItemTrackSystem.on_add_extension(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+	arg_13_4 = next(arg_13_4) == nil and var_0_3 or arg_13_4
+	arg_13_4.network_manager = arg_13_0.network_manager
 
-	if extension_name == "LimitedItemTrackSpawner" then
-		local pool = Unit.get_data(unit, "pool")
-		local template_name = Unit.get_data(unit, "template_name")
+	if arg_13_3 == "LimitedItemTrackSpawner" then
+		local var_13_0 = Unit.get_data(arg_13_2, "pool")
 
-		extension_init_data.pool = 1
-		extension_init_data.template_name = template_name
+		arg_13_4.template_name, arg_13_4.pool = Unit.get_data(arg_13_2, "template_name"), 1
 
-		local extension = LimitedItemTrackSystem.super.on_add_extension(self, world, unit, extension_name, extension_init_data)
+		local var_13_1 = LimitedItemTrackSystem.super.on_add_extension(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 
-		extension.enable = self.enable_spawner
-		extension.disable = self.disable_spawner
-		self.spawners[unit] = extension
+		var_13_1.enable = arg_13_0.enable_spawner
+		var_13_1.disable = arg_13_0.disable_spawner
+		arg_13_0.spawners[arg_13_2] = var_13_1
 
-		local group_name = Unit.get_data(unit, "group_name")
+		local var_13_2 = Unit.get_data(arg_13_2, "group_name")
 
-		if group_name ~= "" then
-			local group = self.groups[group_name]
+		if var_13_2 ~= "" then
+			local var_13_3 = arg_13_0.groups[var_13_2]
 
-			if group == nil then
-				local queued_group_spawners = self.queued_group_spawners[group_name] or {}
+			if var_13_3 == nil then
+				local var_13_4 = arg_13_0.queued_group_spawners[var_13_2] or {}
 
-				queued_group_spawners[#queued_group_spawners + 1] = extension
-				self.queued_group_spawners[group_name] = queued_group_spawners
+				var_13_4[#var_13_4 + 1] = var_13_1
+				arg_13_0.queued_group_spawners[var_13_2] = var_13_4
 			else
-				local spawners = group.spawners
-				local spawners_n = group.spawners_n + 1
+				local var_13_5 = var_13_3.spawners
+				local var_13_6 = var_13_3.spawners_n + 1
 
-				spawners[spawners_n] = extension
-				group.spawners_n = spawners_n
+				var_13_5[var_13_6] = var_13_1
+				var_13_3.spawners_n = var_13_6
 			end
 		else
-			self.no_group_spawners[#self.no_group_spawners + 1] = extension
+			arg_13_0.no_group_spawners[#arg_13_0.no_group_spawners + 1] = var_13_1
 		end
 
-		extension_init_data.pool = nil
-		extension_init_data.template_name = nil
-		extension_init_data.network_manager = nil
+		arg_13_4.pool = nil
+		arg_13_4.template_name = nil
+		arg_13_4.network_manager = nil
 
-		return extension
-	elseif extension_name == "WeaveLimitedItemTrackSpawner" then
-		local template_name = Unit.get_data(unit, "template_name")
+		return var_13_1
+	elseif arg_13_3 == "WeaveLimitedItemTrackSpawner" then
+		arg_13_4.template_name, arg_13_4.pool = Unit.get_data(arg_13_2, "template_name"), 1
 
-		extension_init_data.pool = 1
-		extension_init_data.template_name = template_name
+		local var_13_7 = LimitedItemTrackSystem.super.on_add_extension(arg_13_0, arg_13_1, arg_13_2, "LimitedItemTrackSpawner", arg_13_4)
 
-		local extension = LimitedItemTrackSystem.super.on_add_extension(self, world, unit, "LimitedItemTrackSpawner", extension_init_data)
+		var_13_7.enable = arg_13_0.enable_spawner
+		var_13_7.disable = arg_13_0.disable_spawner
+		arg_13_0.spawners[arg_13_2] = var_13_7
 
-		extension.enable = self.enable_spawner
-		extension.disable = self.disable_spawner
-		self.spawners[unit] = extension
+		local var_13_8 = Unit.get_data(arg_13_2, "weave_objective_id")
+		local var_13_9 = arg_13_0.queued_weave_group_spawners[var_13_8] or {}
 
-		local group_name = Unit.get_data(unit, "weave_objective_id")
-		local queued_weave_group_spawners = self.queued_weave_group_spawners[group_name] or {}
+		var_13_9[#var_13_9 + 1] = var_13_7
+		arg_13_0.queued_weave_group_spawners[var_13_8] = var_13_9
+		arg_13_4.pool = nil
+		arg_13_4.template_name = nil
+		arg_13_4.network_manager = nil
 
-		queued_weave_group_spawners[#queued_weave_group_spawners + 1] = extension
-		self.queued_weave_group_spawners[group_name] = queued_weave_group_spawners
-		extension_init_data.pool = nil
-		extension_init_data.template_name = nil
-		extension_init_data.network_manager = nil
-
-		return extension
+		return var_13_7
 	else
-		local extension = {}
-		local extension_alias = self.NAME
+		local var_13_10 = {}
+		local var_13_11 = arg_13_0.NAME
 
-		ScriptUnit.set_extension(unit, extension_alias, extension, dummy_input)
+		ScriptUnit.set_extension(arg_13_2, var_13_11, var_13_10, var_0_2)
 
-		if extension_name == "LimitedItemExtension" then
-			extension.unit = unit
-			extension.id = extension_init_data.id or 0
-			extension.spawner_unit = extension_init_data.spawner_unit
-			extension.mark_for_transformation = self.mark_item_for_transformation
+		if arg_13_3 == "LimitedItemExtension" then
+			var_13_10.unit = arg_13_2
+			var_13_10.id = arg_13_4.id or 0
+			var_13_10.spawner_unit = arg_13_4.spawner_unit
+			var_13_10.mark_for_transformation = arg_13_0.mark_item_for_transformation
 
-			if self.is_server then
-				local spawner_extension = self.spawners[extension.spawner_unit]
+			if arg_13_0.is_server then
+				local var_13_12 = arg_13_0.spawners[var_13_10.spawner_unit]
 
-				if spawner_extension then
-					local item = spawner_extension.items[extension.id]
+				if var_13_12 then
+					local var_13_13 = var_13_12.items[var_13_10.id]
 
-					if item and type(item) ~= "boolean" then
+					if var_13_13 and type(var_13_13) ~= "boolean" then
 						Crashify.print_exception("LimitedItemTrackSystem", "Added limited unit with occupied id")
 					end
 
-					if spawner_extension:is_transformed(extension.id) then
-						spawner_extension.items[extension.id] = unit
+					if var_13_12:is_transformed(var_13_10.id) then
+						var_13_12.items[var_13_10.id] = arg_13_2
 					end
 				end
 			end
-		elseif extension_name == "HeldLimitedItemExtension" then
-			extension.unit = unit
-			extension.id = extension_init_data.id or 0
-			extension.spawner_unit = extension_init_data.spawner_unit
+		elseif arg_13_3 == "HeldLimitedItemExtension" then
+			var_13_10.unit = arg_13_2
+			var_13_10.id = arg_13_4.id or 0
+			var_13_10.spawner_unit = arg_13_4.spawner_unit
 		else
-			fassert(false, "Unknown extension name %q", extension_name)
+			fassert(false, "Unknown extension name %q", arg_13_3)
 		end
 
-		self.items[unit] = extension
-		extension_init_data.network_manager = nil
+		arg_13_0.items[arg_13_2] = var_13_10
+		arg_13_4.network_manager = nil
 
-		return extension
+		return var_13_10
 	end
 end
 
-LimitedItemTrackSystem.on_remove_extension = function (self, unit, extension_name)
-	if extension_name == "LimitedItemTrackSpawner" or extension_name == "WeaveLimitedItemTrackSpawner" then
-		LimitedItemTrackSystem.super.on_remove_extension(self, unit, extension_name)
-	elseif extension_name == "LimitedItemExtension" then
-		if self.is_server then
-			local item_extension = self.items[unit]
-			local spawner_unit = item_extension.spawner_unit
-			local spawner_extension = self.spawners[spawner_unit]
+function LimitedItemTrackSystem.on_remove_extension(arg_14_0, arg_14_1, arg_14_2)
+	if arg_14_2 == "LimitedItemTrackSpawner" or arg_14_2 == "WeaveLimitedItemTrackSpawner" then
+		LimitedItemTrackSystem.super.on_remove_extension(arg_14_0, arg_14_1, arg_14_2)
+	elseif arg_14_2 == "LimitedItemExtension" then
+		if arg_14_0.is_server then
+			local var_14_0 = arg_14_0.items[arg_14_1]
+			local var_14_1 = var_14_0.spawner_unit
+			local var_14_2 = arg_14_0.spawners[var_14_1]
 
-			if spawner_extension then
-				local marked_id = self.marked_items[unit]
+			if var_14_2 then
+				local var_14_3 = arg_14_0.marked_items[arg_14_1]
 
-				if marked_id then
-					spawner_extension:transform(marked_id)
+				if var_14_3 then
+					var_14_2:transform(var_14_3)
 				else
-					spawner_extension:remove(item_extension.id)
+					var_14_2:remove(var_14_0.id)
 				end
 			end
 		end
 
-		self.items[unit] = nil
+		arg_14_0.items[arg_14_1] = nil
 
-		ScriptUnit.remove_extension(unit, self.NAME)
-	elseif extension_name == "HeldLimitedItemExtension" then
-		local extension = self.items[unit]
+		ScriptUnit.remove_extension(arg_14_1, arg_14_0.NAME)
+	elseif arg_14_2 == "HeldLimitedItemExtension" then
+		local var_14_4 = arg_14_0.items[arg_14_1]
 
-		self.items[unit] = nil
+		arg_14_0.items[arg_14_1] = nil
 
-		ScriptUnit.remove_extension(unit, self.NAME)
+		ScriptUnit.remove_extension(arg_14_1, arg_14_0.NAME)
 	end
 end
 
-LimitedItemTrackSystem.spawn_batch = function (self, group)
-	local spawners = group.spawners
-	local spawners_n = group.spawners_n
-	local spawner_ids = {}
-	local spawner_ids_n = spawners_n
+function LimitedItemTrackSystem.spawn_batch(arg_15_0, arg_15_1)
+	local var_15_0 = arg_15_1.spawners
+	local var_15_1 = arg_15_1.spawners_n
+	local var_15_2 = {}
+	local var_15_3 = var_15_1
 
-	for i = 1, spawners_n do
-		spawner_ids[i] = i
+	for iter_15_0 = 1, var_15_1 do
+		var_15_2[iter_15_0] = iter_15_0
 	end
 
-	local spawned_items = 0
-	local pool_size = group.pool_size
+	local var_15_4 = 0
+	local var_15_5 = arg_15_1.pool_size
 
-	for i = 1, pool_size do
-		if spawner_ids_n == 0 then
+	for iter_15_1 = 1, var_15_5 do
+		if var_15_3 == 0 then
 			break
 		end
 
-		local rnd = math.random(1, spawner_ids_n)
-		local spawner_id = spawner_ids[rnd]
+		local var_15_6 = math.random(1, var_15_3)
+		local var_15_7 = var_15_2[var_15_6]
 
-		table.remove(spawner_ids, rnd)
+		table.remove(var_15_2, var_15_6)
 
-		spawner_ids_n = spawner_ids_n - 1
+		var_15_3 = var_15_3 - 1
 
-		local spawner = spawners[spawner_id]
-		local num_items = spawner.num_items
+		local var_15_8 = var_15_0[var_15_7]
+		local var_15_9 = var_15_8.num_items
 
-		fassert(num_items == 0, "Sanity Check")
-		spawner:spawn_item()
+		fassert(var_15_9 == 0, "Sanity Check")
+		var_15_8:spawn_item()
 	end
 end
 
-LimitedItemTrackSystem.update = function (self, context, t)
-	local active_groups_n = self.active_groups_n
+function LimitedItemTrackSystem.update(arg_16_0, arg_16_1, arg_16_2)
+	local var_16_0 = arg_16_0.active_groups_n
 
-	if active_groups_n > 0 then
-		local groups = self.groups
-		local active_groups = self.active_groups
+	if var_16_0 > 0 then
+		local var_16_1 = arg_16_0.groups
+		local var_16_2 = arg_16_0.active_groups
 
-		for i = 1, active_groups_n do
-			local group = groups[active_groups[i]]
-			local no_items = true
-			local spawners = group.spawners
-			local spawners_n = group.spawners_n
+		for iter_16_0 = 1, var_16_0 do
+			local var_16_3 = var_16_1[var_16_2[iter_16_0]]
+			local var_16_4 = true
+			local var_16_5 = var_16_3.spawners
+			local var_16_6 = var_16_3.spawners_n
 
-			for i = 1, spawners_n do
-				local spawner = spawners[i]
-
-				if spawner.num_items > 0 then
-					no_items = false
+			for iter_16_1 = 1, var_16_6 do
+				if var_16_5[iter_16_1].num_items > 0 then
+					var_16_4 = false
 				end
 			end
 
-			if no_items then
-				self:spawn_batch(group)
+			if var_16_4 then
+				arg_16_0:spawn_batch(var_16_3)
 			end
 		end
 	end
 
 	if Debug.active then
-		if #self.no_group_spawners > 0 then
+		if #arg_16_0.no_group_spawners > 0 then
 			Debug.text("There are limited item spawners on this level without a group assigned to!!!!!")
 		end
 
-		if table.size(self.queued_group_spawners) > 0 then
+		if table.size(arg_16_0.queued_group_spawners) > 0 then
 			Debug.text("There are limited item spawners assigned to a group that hasn't been registered!!!!!")
 
-			for group_name, spawners in pairs(self.queued_group_spawners) do
-				Debug.text(group_name)
+			for iter_16_2, iter_16_3 in pairs(arg_16_0.queued_group_spawners) do
+				Debug.text(iter_16_2)
 			end
 		end
 	end
 end
 
-LimitedItemTrackSystem.held_limited_item_destroyed = function (self, spawner_unit, id)
-	assert(self.is_server)
-
-	local spawner_extension = self.spawners[spawner_unit]
-
-	spawner_extension:remove(id)
+function LimitedItemTrackSystem.held_limited_item_destroyed(arg_17_0, arg_17_1, arg_17_2)
+	assert(arg_17_0.is_server)
+	arg_17_0.spawners[arg_17_1]:remove(arg_17_2)
 end

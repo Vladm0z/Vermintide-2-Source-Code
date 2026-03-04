@@ -1,175 +1,174 @@
-﻿-- chunkname: @scripts/ui/hint_ui/hint_ui.lua
+-- chunkname: @scripts/ui/hint_ui/hint_ui.lua
 
 HintUI = class(HintUI)
 
-HintUI.init = function (self, ui_context, hint_name, hint_settings)
-	self._ui_context = ui_context
-	self._ui_renderer = ui_context.ui_renderer
-	self._ui_top_renderer = ui_context.ui_top_renderer
-	self._input_manager = ui_context.input_manager
-	self._wwise_world = ui_context.wwise_world
-	self._render_settings = {
+function HintUI.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._ui_context = arg_1_1
+	arg_1_0._ui_renderer = arg_1_1.ui_renderer
+	arg_1_0._ui_top_renderer = arg_1_1.ui_top_renderer
+	arg_1_0._input_manager = arg_1_1.input_manager
+	arg_1_0._wwise_world = arg_1_1.wwise_world
+	arg_1_0._render_settings = {
 		alpha_multiplier = 1,
-		snap_pixel_positions = true,
+		snap_pixel_positions = true
 	}
-	self._hint_name = hint_name
-	self._hint_settings = hint_settings
-	self._hint_data = hint_settings.data
-	self._animations = {}
+	arg_1_0._hint_name = arg_1_2
+	arg_1_0._hint_settings = arg_1_3
+	arg_1_0._hint_data = arg_1_3.data
+	arg_1_0._animations = {}
 
-	self:create_ui_elements()
+	arg_1_0:create_ui_elements()
 
-	self._input_service_name = "hint_ui"
+	arg_1_0._input_service_name = "hint_ui"
 
-	self:setup_input()
+	arg_1_0:setup_input()
 
-	self.hint_id = 0
-	self._has_widget_been_closed = false
+	arg_1_0.hint_id = 0
+	arg_1_0._has_widget_been_closed = false
 end
 
-HintUI.destroy = function (self)
-	if self._is_visible then
-		self:hide()
+function HintUI.destroy(arg_2_0)
+	if arg_2_0._is_visible then
+		arg_2_0:hide()
 	end
 end
 
-HintUI.create_ui_elements = function (self)
-	local settings = self._hint_settings
-	local data = settings.data
+function HintUI.create_ui_elements(arg_3_0)
+	local var_3_0 = arg_3_0._hint_settings.data
 
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(data.definitions.scenegraph_definition)
+	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_3_0.definitions.scenegraph_definition)
 
-	local widgets_by_name
+	local var_3_1
+	local var_3_2, var_3_3 = UIUtils.create_widgets(var_3_0.definitions.widget_definitions)
 
-	self._widgets, widgets_by_name = UIUtils.create_widgets(data.definitions.widget_definitions)
-	self._widgets_by_name = widgets_by_name
+	arg_3_0._widgets_by_name, arg_3_0._widgets = var_3_3, var_3_2
 
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_3_0._ui_renderer)
 
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, data.definitions.animation_definitions)
+	arg_3_0._ui_animator = UIAnimator:new(arg_3_0._ui_scenegraph, var_3_0.definitions.animation_definitions)
 end
 
-HintUI.update = function (self, dt)
-	if not self._is_visible then
+function HintUI.update(arg_4_0, arg_4_1)
+	if not arg_4_0._is_visible then
 		return
 	end
 
-	self:_handle_input(dt)
-	self:_update_animations(dt)
-	self:draw(dt)
+	arg_4_0:_handle_input(arg_4_1)
+	arg_4_0:_update_animations(arg_4_1)
+	arg_4_0:draw(arg_4_1)
 end
 
-HintUI._handle_input = function (self, dt)
+function HintUI._handle_input(arg_5_0, arg_5_1)
 	return
 end
 
-HintUI.draw = function (self, dt)
-	local ui_top_renderer = self._ui_top_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local input_service = self:_get_input_service()
-	local render_settings = self._render_settings
-	local gamepad_active = Managers.input:is_device_active("gamepad")
+function HintUI.draw(arg_6_0, arg_6_1)
+	local var_6_0 = arg_6_0._ui_top_renderer
+	local var_6_1 = arg_6_0._ui_scenegraph
+	local var_6_2 = arg_6_0:_get_input_service()
+	local var_6_3 = arg_6_0._render_settings
+	local var_6_4 = Managers.input:is_device_active("gamepad")
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
-	UIRenderer.draw_all_widgets(ui_top_renderer, self._widgets)
-	UIRenderer.end_pass(ui_top_renderer)
+	UIRenderer.begin_pass(var_6_0, var_6_1, var_6_2, arg_6_1, nil, var_6_3)
+	UIRenderer.draw_all_widgets(var_6_0, arg_6_0._widgets)
+	UIRenderer.end_pass(var_6_0)
 
-	if gamepad_active and self._menu_input_description then
-		self._menu_input_description:draw(ui_top_renderer, dt)
+	if var_6_4 and arg_6_0._menu_input_description then
+		arg_6_0._menu_input_description:draw(var_6_0, arg_6_1)
 	end
 end
 
-HintUI.show = function (self)
-	assert(not self._is_visible)
+function HintUI.show(arg_7_0)
+	assert(not arg_7_0._is_visible)
 
-	self._is_visible = true
+	arg_7_0._is_visible = true
 end
 
-HintUI.hide = function (self)
-	assert(self._is_visible)
+function HintUI.hide(arg_8_0)
+	assert(arg_8_0._is_visible)
 
-	self._is_visible = false
+	arg_8_0._is_visible = false
 end
 
-HintUI.exit_done = function (self)
-	return not self._is_visible and self._has_widget_been_closed
+function HintUI.exit_done(arg_9_0)
+	return not arg_9_0._is_visible and arg_9_0._has_widget_been_closed
 end
 
-HintUI._start_transition_animation = function (self, animation_name)
+function HintUI._start_transition_animation(arg_10_0, arg_10_1)
 	return
 end
 
-HintUI._update_animations = function (self, dt)
-	local ui_animator = self._ui_animator
+function HintUI._update_animations(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_0._ui_animator
 
-	ui_animator:update(dt)
+	var_11_0:update(arg_11_1)
 
-	local animations = self._animations
+	local var_11_1 = arg_11_0._animations
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_11_0, iter_11_1 in pairs(var_11_1) do
+		if var_11_0:is_animation_completed(iter_11_1) then
+			var_11_0:stop_animation(iter_11_1)
 
-			animations[animation_name] = nil
+			var_11_1[iter_11_0] = nil
 		end
 	end
 end
 
-HintUI.acquire_input = function (self)
-	local input_manager = self._input_manager
+function HintUI.acquire_input(arg_12_0)
+	local var_12_0 = arg_12_0._input_manager
 
-	if input_manager then
+	if var_12_0 then
 		ShowCursorStack.show("HintUI")
-		input_manager:capture_input(ALL_INPUT_METHODS, 1, self._input_service_name, "HintUI")
+		var_12_0:capture_input(ALL_INPUT_METHODS, 1, arg_12_0._input_service_name, "HintUI")
 	end
 end
 
-HintUI.release_input = function (self)
-	local input_manager = self._input_manager
+function HintUI.release_input(arg_13_0)
+	local var_13_0 = arg_13_0._input_manager
 
-	if input_manager then
+	if var_13_0 then
 		ShowCursorStack.hide("HintUI")
-		input_manager:release_input(ALL_INPUT_METHODS, 1, self._input_service_name, "HintUI")
+		var_13_0:release_input(ALL_INPUT_METHODS, 1, arg_13_0._input_service_name, "HintUI")
 	end
 end
 
-HintUI.setup_input = function (self)
-	local input_manager = self._input_manager
-	local service_name = self._input_service_name
+function HintUI.setup_input(arg_14_0)
+	local var_14_0 = arg_14_0._input_manager
+	local var_14_1 = arg_14_0._input_service_name
 
-	if input_manager then
-		input_manager:create_input_service(service_name, "IngameMenuKeymaps", "IngameMenuFilters")
-		input_manager:map_device_to_service(service_name, "keyboard")
-		input_manager:map_device_to_service(service_name, "gamepad")
-		input_manager:map_device_to_service(service_name, "mouse")
+	if var_14_0 then
+		var_14_0:create_input_service(var_14_1, "IngameMenuKeymaps", "IngameMenuFilters")
+		var_14_0:map_device_to_service(var_14_1, "keyboard")
+		var_14_0:map_device_to_service(var_14_1, "gamepad")
+		var_14_0:map_device_to_service(var_14_1, "mouse")
 	end
 end
 
-HintUI._get_input_service = function (self)
-	return Managers.input:get_service(self._input_service_name)
+function HintUI._get_input_service(arg_15_0)
+	return Managers.input:get_service(arg_15_0._input_service_name)
 end
 
-HintUI.should_show = function (self)
-	return not self._is_visible
+function HintUI.should_show(arg_16_0)
+	return not arg_16_0._is_visible
 end
 
-HintUI.is_hint_showing = function (self)
-	return self._is_visible
+function HintUI.is_hint_showing(arg_17_0)
+	return arg_17_0._is_visible
 end
 
-HintUI.start_animation = function (self, animation_name, widget, optional_params)
-	local params = optional_params or {
-		wwise_world = self._wwise_world,
-		render_settings = self._render_settings,
+function HintUI.start_animation(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+	local var_18_0 = arg_18_3 or {
+		wwise_world = arg_18_0._wwise_world,
+		render_settings = arg_18_0._render_settings
 	}
-	local animation_id = self._ui_animator:start_animation(animation_name, widget, self._hint_data.definitions.scenegraph_definition, params)
-	local animation_key = animation_name
+	local var_18_1 = arg_18_0._ui_animator:start_animation(arg_18_1, arg_18_2, arg_18_0._hint_data.definitions.scenegraph_definition, var_18_0)
+	local var_18_2 = arg_18_1
 
-	self._animations[animation_key] = animation_id
+	arg_18_0._animations[var_18_2] = var_18_1
 
-	return animation_id
+	return var_18_1
 end
 
-HintUI.get_hint_name = function (self)
-	return self._hint_name
+function HintUI.get_hint_name(arg_19_0)
+	return arg_19_0._hint_name
 end

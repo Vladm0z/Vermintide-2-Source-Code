@@ -1,103 +1,103 @@
-﻿-- chunkname: @scripts/imgui/imgui_package_debug.lua
+-- chunkname: @scripts/imgui/imgui_package_debug.lua
 
 ImguiPackageDebug = class(ImguiPackageDebug)
 
-local SHOULD_RELOAD = true
+local var_0_0 = true
 
-ImguiPackageDebug.init = function (self)
+function ImguiPackageDebug.init(arg_1_0)
 	return
 end
 
-ImguiPackageDebug._hijack_package_manager = function (self)
-	local package_manager = Managers.package
+function ImguiPackageDebug._hijack_package_manager(arg_2_0)
+	local var_2_0 = Managers.package
 
-	self._old_load_func = package_manager.load
-	self._old_unload_func = package_manager.unload
+	arg_2_0._old_load_func = var_2_0.load
+	arg_2_0._old_unload_func = var_2_0.unload
 
-	PackageManager.load = function (this, ...)
-		self._refresh_references = true
+	function PackageManager.load(arg_3_0, ...)
+		arg_2_0._refresh_references = true
 
-		self._old_load_func(this, ...)
+		arg_2_0._old_load_func(arg_3_0, ...)
 	end
 
-	PackageManager.unload = function (this, ...)
-		self._refresh_references = true
+	function PackageManager.unload(arg_4_0, ...)
+		arg_2_0._refresh_references = true
 
-		self._old_unload_func(this, ...)
+		arg_2_0._old_unload_func(arg_4_0, ...)
 	end
 
-	self._refresh_references = true
+	arg_2_0._refresh_references = true
 end
 
-ImguiPackageDebug.on_show = function (self)
-	self:_hijack_package_manager()
+function ImguiPackageDebug.on_show(arg_5_0)
+	arg_5_0:_hijack_package_manager()
 end
 
-ImguiPackageDebug.on_hide = function (self)
-	PackageManager.load = self._old_load_func
-	PackageManager.unload = self._old_unload_func
+function ImguiPackageDebug.on_hide(arg_6_0)
+	PackageManager.load = arg_6_0._old_load_func
+	PackageManager.unload = arg_6_0._old_unload_func
 end
 
-ImguiPackageDebug.update = function (self)
-	if SHOULD_RELOAD then
-		self:init()
+function ImguiPackageDebug.update(arg_7_0)
+	if var_0_0 then
+		arg_7_0:init()
 
-		SHOULD_RELOAD = false
+		var_0_0 = false
 	end
 
-	if self._refresh_references then
-		self._refresh_references = false
+	if arg_7_0._refresh_references then
+		arg_7_0._refresh_references = false
 
-		local package_manager = Managers.package
+		local var_7_0 = Managers.package
 
-		self._packages = self:_steal_and_sort(package_manager._packages)
-		self._asynch_packages = self:_steal_and_sort(package_manager._asynch_packages)
-		self._references = self:_steal_and_sort(package_manager._references)
-		self._queued_async_packages = self:_steal_and_sort(package_manager._queued_async_packages)
-		self._queue_order = self:_steal_and_sort(package_manager._queue_order)
+		arg_7_0._packages = arg_7_0:_steal_and_sort(var_7_0._packages)
+		arg_7_0._asynch_packages = arg_7_0:_steal_and_sort(var_7_0._asynch_packages)
+		arg_7_0._references = arg_7_0:_steal_and_sort(var_7_0._references)
+		arg_7_0._queued_async_packages = arg_7_0:_steal_and_sort(var_7_0._queued_async_packages)
+		arg_7_0._queue_order = arg_7_0:_steal_and_sort(var_7_0._queue_order)
 	end
 end
 
-ImguiPackageDebug._steal_and_sort = function (self, table_to_steal)
-	local copy = table.shallow_copy(table_to_steal)
-	local keys = table.keys(copy)
+function ImguiPackageDebug._steal_and_sort(arg_8_0, arg_8_1)
+	local var_8_0 = table.shallow_copy(arg_8_1)
+	local var_8_1 = table.keys(var_8_0)
 
-	table.sort(keys)
+	table.sort(var_8_1)
 
-	copy._sorted_keys = keys
+	var_8_0._sorted_keys = var_8_1
 
-	return copy
+	return var_8_0
 end
 
-ImguiPackageDebug.is_persistent = function (self)
+function ImguiPackageDebug.is_persistent(arg_9_0)
 	return true
 end
 
-ImguiPackageDebug.draw = function (self, is_open)
-	local do_close = Imgui.begin_window("Package Debug")
+function ImguiPackageDebug.draw(arg_10_0, arg_10_1)
+	local var_10_0 = Imgui.begin_window("Package Debug")
 
-	self:_display_packages("packages", self._packages)
-	self:_display_packages("async packages", self._asynch_packages)
-	self:_display_references("references", self._references)
-	self:_display_packages("queued async packages", self._queued_async_packages)
-	self:_display_queue_order("queue order", self._queue_order)
+	arg_10_0:_display_packages("packages", arg_10_0._packages)
+	arg_10_0:_display_packages("async packages", arg_10_0._asynch_packages)
+	arg_10_0:_display_references("references", arg_10_0._references)
+	arg_10_0:_display_packages("queued async packages", arg_10_0._queued_async_packages)
+	arg_10_0:_display_queue_order("queue order", arg_10_0._queue_order)
 	Imgui.end_window()
 
-	return do_close
+	return var_10_0
 end
 
-ImguiPackageDebug._display_references = function (self, name, table_to_display)
-	if Imgui.tree_node(name) then
-		if table_to_display then
-			local keys = table_to_display._sorted_keys
+function ImguiPackageDebug._display_references(arg_11_0, arg_11_1, arg_11_2)
+	if Imgui.tree_node(arg_11_1) then
+		if arg_11_2 then
+			local var_11_0 = arg_11_2._sorted_keys
 
-			for i = 1, #keys do
-				local package_name = keys[i]
-				local references = table_to_display[package_name]
+			for iter_11_0 = 1, #var_11_0 do
+				local var_11_1 = var_11_0[iter_11_0]
+				local var_11_2 = arg_11_2[var_11_1]
 
-				if Imgui.tree_node(package_name) then
-					for reference_name, count in pairs(references) do
-						Imgui.text(reference_name .. "(" .. count .. ")")
+				if Imgui.tree_node(var_11_1) then
+					for iter_11_1, iter_11_2 in pairs(var_11_2) do
+						Imgui.text(iter_11_1 .. "(" .. iter_11_2 .. ")")
 						Imgui.separator()
 					end
 				end
@@ -109,15 +109,15 @@ ImguiPackageDebug._display_references = function (self, name, table_to_display)
 	end
 end
 
-ImguiPackageDebug._display_packages = function (self, name, packages)
-	if Imgui.tree_node(name) then
-		if packages then
-			local keys = packages._sorted_keys
+function ImguiPackageDebug._display_packages(arg_12_0, arg_12_1, arg_12_2)
+	if Imgui.tree_node(arg_12_1) then
+		if arg_12_2 then
+			local var_12_0 = arg_12_2._sorted_keys
 
-			for i = 1, #keys do
-				local package_name = keys[i]
+			for iter_12_0 = 1, #var_12_0 do
+				local var_12_1 = var_12_0[iter_12_0]
 
-				Imgui.text(package_name)
+				Imgui.text(var_12_1)
 			end
 		end
 
@@ -126,13 +126,13 @@ ImguiPackageDebug._display_packages = function (self, name, packages)
 	end
 end
 
-ImguiPackageDebug._display_queue_order = function (self, name, queue)
-	if Imgui.tree_node(name) then
-		if queue then
-			for i = 1, #queue do
-				local package_name = queue[i]
+function ImguiPackageDebug._display_queue_order(arg_13_0, arg_13_1, arg_13_2)
+	if Imgui.tree_node(arg_13_1) then
+		if arg_13_2 then
+			for iter_13_0 = 1, #arg_13_2 do
+				local var_13_0 = arg_13_2[iter_13_0]
 
-				Imgui.text(i .. ": " .. package_name)
+				Imgui.text(iter_13_0 .. ": " .. var_13_0)
 			end
 		end
 
@@ -141,18 +141,18 @@ ImguiPackageDebug._display_queue_order = function (self, name, queue)
 	end
 end
 
-ImguiPackageDebug._display_userdata = function (self, name, table_to_display)
-	if Imgui.tree_node(name) then
-		if table_to_display then
-			local keys = table_to_display._sorted_keys
+function ImguiPackageDebug._display_userdata(arg_14_0, arg_14_1, arg_14_2)
+	if Imgui.tree_node(arg_14_1) then
+		if arg_14_2 then
+			local var_14_0 = arg_14_2._sorted_keys
 
-			for i = 1, #keys do
-				local package_name = keys[i]
-				local references = table_to_display[package_name]
+			for iter_14_0 = 1, #var_14_0 do
+				local var_14_1 = var_14_0[iter_14_0]
+				local var_14_2 = arg_14_2[var_14_1]
 
-				if Imgui.tree_node(package_name) then
-					for reference_name, count in pairs(references) do
-						Imgui.text(reference_name .. "(userdata)")
+				if Imgui.tree_node(var_14_1) then
+					for iter_14_1, iter_14_2 in pairs(var_14_2) do
+						Imgui.text(iter_14_1 .. "(userdata)")
 						Imgui.separator()
 					end
 

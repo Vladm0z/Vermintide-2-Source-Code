@@ -1,566 +1,539 @@
-﻿-- chunkname: @scripts/settings/mutators/mutator_curse_bolt_of_change.lua
+-- chunkname: @scripts/settings/mutators/mutator_curse_bolt_of_change.lua
 
-local base_lighting_strike = require("scripts/settings/mutators/mutator_lightning_strike")
-local bolt_of_change = table.clone(base_lighting_strike)
-local STOP_SPAWN_DISTANCE = 5
+local var_0_0 = require("scripts/settings/mutators/mutator_lightning_strike")
+local var_0_1 = table.clone(var_0_0)
+local var_0_2 = 5
 
-bolt_of_change.packages = {
-	"resource_packages/mutators/mutator_curse_bolt_of_change",
+var_0_1.packages = {
+	"resource_packages/mutators/mutator_curse_bolt_of_change"
 }
-bolt_of_change.display_name = "curse_bolt_of_change_name"
-bolt_of_change.description = "curse_bolt_of_change_desc"
-bolt_of_change.icon = "deus_curse_tzeentch_01"
-bolt_of_change.spawn_rate = 40
-bolt_of_change.max_spawns = math.huge
+var_0_1.display_name = "curse_bolt_of_change_name"
+var_0_1.description = "curse_bolt_of_change_desc"
+var_0_1.icon = "deus_curse_tzeentch_01"
+var_0_1.spawn_rate = 40
+var_0_1.max_spawns = math.huge
 
-local BOT_DAMAGE_MODIFIER = 0.3
-local NORMAL = 2
-local HARD = 3
-local HARDER = 4
-local HARDEST = 5
-local CATACLYSM = 6
-local difficulty_settings = {
+local var_0_3 = 0.3
+local var_0_4 = 2
+local var_0_5 = 3
+local var_0_6 = 4
+local var_0_7 = 5
+local var_0_8 = 6
+local var_0_9 = {
 	bolt_amount = {
-		[NORMAL] = 1,
-		[HARD] = 2,
-		[HARDER] = 2,
-		[HARDEST] = 2,
-		[CATACLYSM] = 2,
+		[var_0_4] = 1,
+		[var_0_5] = 2,
+		[var_0_6] = 2,
+		[var_0_7] = 2,
+		[var_0_8] = 2
 	},
 	change_limit = {
-		[NORMAL] = 1,
-		[HARD] = 2,
-		[HARDER] = 3,
-		[HARDEST] = 3,
-		[CATACLYSM] = 3,
-	},
+		[var_0_4] = 1,
+		[var_0_5] = 2,
+		[var_0_6] = 3,
+		[var_0_7] = 3,
+		[var_0_8] = 3
+	}
 }
-local BOLT_EXPLOSION_SOUND_EVENT = "morris_bolt_of_change_laughter"
-local breed_override = {
+local var_0_10 = "morris_bolt_of_change_laughter"
+local var_0_11 = {
 	chaos_warrior = {
-		breed = "chaos_spawn",
 		chance = 0.3,
+		breed = "chaos_spawn"
 	},
 	beastmen_bestigor = {
-		breed = "chaos_spawn",
 		chance = 0.3,
+		breed = "chaos_spawn"
 	},
 	skaven_slave = {
-		breed = "critter_rat",
 		chance = 0.005,
-	},
+		breed = "critter_rat"
+	}
 }
-local max_spawn_amounts = {
-	chaos_spawn = 1,
+local var_0_12 = {
+	chaos_spawn = 1
 }
-local max_specials = 2
-local unchangeable_breeds = {
-	beastmen_minotaur = true,
-	chaos_exalted_champion_norsca = true,
+local var_0_13 = 2
+local var_0_14 = {
+	chaos_troll = true,
+	chaos_spawn_exalted_champion_warcamp = true,
 	chaos_exalted_champion_warcamp = true,
 	chaos_exalted_sorcerer = true,
-	chaos_exalted_sorcerer_drachenfels = true,
-	chaos_spawn = true,
-	chaos_spawn_exalted_champion_warcamp = true,
-	chaos_troll = true,
-	pet_pig = true,
+	skaven_storm_vermin_warlord = true,
 	pet_rat = true,
-	pet_wolf = true,
+	chaos_exalted_champion_norsca = true,
+	beastmen_minotaur = true,
+	skaven_stormfiend = true,
 	skaven_grey_seer = true,
 	skaven_rat_ogre = true,
-	skaven_storm_vermin_champion = true,
-	skaven_storm_vermin_warlord = true,
-	skaven_stormfiend = true,
+	pet_pig = true,
+	chaos_spawn = true,
+	chaos_exalted_sorcerer_drachenfels = true,
 	skaven_stormfiend_boss = true,
+	pet_wolf = true,
+	skaven_storm_vermin_champion = true
 }
-local excluded_random_breeds = {
-	beastmen_minotaur = true,
+local var_0_15 = {
+	chaos_spawn_exalted_champion_warcamp = true,
+	chaos_exalted_champion_warcamp = true,
+	chaos_exalted_sorcerer = true,
 	beastmen_ungor = true,
-	chaos_exalted_champion_norsca = true,
-	chaos_exalted_champion_warcamp = true,
-	chaos_exalted_sorcerer = true,
-	chaos_exalted_sorcerer_drachenfels = true,
-	chaos_fanatic = true,
-	chaos_spawn = true,
-	chaos_spawn_exalted_champion_warcamp = true,
-	chaos_troll = true,
+	skaven_storm_vermin_warlord = true,
 	pet_pig = true,
 	pet_rat = true,
-	pet_wolf = true,
+	chaos_exalted_champion_norsca = true,
+	beastmen_minotaur = true,
+	chaos_fanatic = true,
+	skaven_slave = true,
+	skaven_stormfiend = true,
 	skaven_grey_seer = true,
 	skaven_rat_ogre = true,
-	skaven_slave = true,
-	skaven_storm_vermin_champion = true,
-	skaven_storm_vermin_warlord = true,
-	skaven_stormfiend = true,
+	chaos_troll = true,
+	chaos_spawn = true,
+	chaos_exalted_sorcerer_drachenfels = true,
 	skaven_stormfiend_boss = true,
+	pet_wolf = true,
+	skaven_storm_vermin_champion = true
 }
 
-local function in_range_to_end(range, total_path_dist, conflict_director)
-	local main_path_info = conflict_director.main_path_info
-	local ahead_player_travel_dist
+local function var_0_16(arg_1_0, arg_1_1, arg_1_2)
+	local var_1_0 = arg_1_2.main_path_info
+	local var_1_1
 
-	if not main_path_info.ahead_unit then
-		ahead_player_travel_dist = 0
-	else
-		local ahead_player_info = conflict_director.main_path_player_info[main_path_info.ahead_unit]
-
-		ahead_player_travel_dist = ahead_player_info.travel_dist
-	end
-
-	return ahead_player_travel_dist >= total_path_dist - range
+	return (not var_1_0.ahead_unit and 0 or arg_1_2.main_path_player_info[var_1_0.ahead_unit].travel_dist) >= arg_1_1 - arg_1_0
 end
 
-bolt_of_change.server_start_function = function (context, data)
-	data.seed = Managers.mechanism:get_level_seed("mutator")
-	data.change_cooldown = 1
-	data.spawn_delay = 0.25
-	data.spawn_queue = {}
-	data.spawned_units_data = {}
-	data.explosion_template_name = "generic_mutator_explosion"
+function var_0_1.server_start_function(arg_2_0, arg_2_1)
+	arg_2_1.seed = Managers.mechanism:get_level_seed("mutator")
+	arg_2_1.change_cooldown = 1
+	arg_2_1.spawn_delay = 0.25
+	arg_2_1.spawn_queue = {}
+	arg_2_1.spawned_units_data = {}
+	arg_2_1.explosion_template_name = "generic_mutator_explosion"
 
-	data.cb_enemy_spawned_function = function (unit, breed, optional_data)
-		local blackboard = BLACKBOARDS[unit]
+	function arg_2_1.cb_enemy_spawned_function(arg_3_0, arg_3_1, arg_3_2)
+		local var_3_0 = BLACKBOARDS[arg_3_0]
 
-		if not breed.special then
-			blackboard.spawn_type = "horde"
-			blackboard.spawning_finished = true
+		if not arg_3_1.special then
+			var_3_0.spawn_type = "horde"
+			var_3_0.spawning_finished = true
 		end
 
-		local unit_data = {
-			unit = unit,
-			breed_name = breed.name,
+		local var_3_1 = {
+			unit = arg_3_0,
+			breed_name = arg_3_1.name
 		}
 
-		table.insert(data.spawned_units_data, unit_data)
+		table.insert(arg_2_1.spawned_units_data, var_3_1)
 	end
 
-	base_lighting_strike.server_start_function(context, data)
+	var_0_0.server_start_function(arg_2_0, arg_2_1)
 
-	data.lighting_strike_callback = callback(data.template, "cb_on_explode", data)
-	data.explosion_template = ExplosionUtils.get_template("bolt_of_change")
-	data.decal_unit_name = "units/decals/deus_decal_aoe_bluefire_02"
-	data.follow_time = data.explosion_template.follow_time
-	data.time_to_explode = data.explosion_template.time_to_explode
-	data.extension_init_data = {
+	arg_2_1.lighting_strike_callback = callback(arg_2_1.template, "cb_on_explode", arg_2_1)
+	arg_2_1.explosion_template = ExplosionUtils.get_template("bolt_of_change")
+	arg_2_1.decal_unit_name = "units/decals/deus_decal_aoe_bluefire_02"
+	arg_2_1.follow_time = arg_2_1.explosion_template.follow_time
+	arg_2_1.time_to_explode = arg_2_1.explosion_template.time_to_explode
+	arg_2_1.extension_init_data = {
 		area_damage_system = {
-			explosion_template_name = "bolt_of_change",
-		},
+			explosion_template_name = "bolt_of_change"
+		}
 	}
-	data.all_available_breeds = {}
-	data.available_breeds = {
+	arg_2_1.all_available_breeds = {}
+	arg_2_1.available_breeds = {
 		skaven = {},
 		chaos = {},
 		beastmen = {},
 		undead = {},
-		critter = {},
+		critter = {}
 	}
-	data.difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
+	arg_2_1.difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
 
-	data.template.populate_available_breeds(context, data)
+	arg_2_1.template.populate_available_breeds(arg_2_0, arg_2_1)
 end
 
-bolt_of_change.server_stop_function = function (context, data)
-	local unit_spawner = Managers.state.unit_spawner
+function var_0_1.server_stop_function(arg_4_0, arg_4_1)
+	local var_4_0 = Managers.state.unit_spawner
 
-	if #data.units > 0 and unit_spawner then
-		for k, unit in ipairs(data.units) do
-			if ALIVE[unit] then
-				unit_spawner:mark_for_deletion(unit)
+	if #arg_4_1.units > 0 and var_4_0 then
+		for iter_4_0, iter_4_1 in ipairs(arg_4_1.units) do
+			if ALIVE[iter_4_1] then
+				var_4_0:mark_for_deletion(iter_4_1)
 
-				data.units[k] = nil
+				arg_4_1.units[iter_4_0] = nil
 			end
 		end
 	end
 end
 
-local function filter_respawning_players(players_array, player_manager, deus_run_controller)
-	local filtered_array = {}
+local function var_0_17(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = {}
 
-	for _, player_unit in ipairs(players_array) do
-		local player = player_manager:unit_owner(player_unit)
-		local peer_id = player.peer_id
-		local local_player_id = player:local_player_id()
-		local health_state = deus_run_controller:get_player_health_state(peer_id, local_player_id)
+	for iter_5_0, iter_5_1 in ipairs(arg_5_0) do
+		local var_5_1 = arg_5_1:unit_owner(iter_5_1)
+		local var_5_2 = var_5_1.peer_id
+		local var_5_3 = var_5_1:local_player_id()
 
-		if health_state ~= "respawning" then
-			table.insert(filtered_array, player_unit)
+		if arg_5_2:get_player_health_state(var_5_2, var_5_3) ~= "respawning" then
+			table.insert(var_5_0, iter_5_1)
 		end
 	end
 
-	return filtered_array
+	return var_5_0
 end
 
-bolt_of_change.spawn_lightning_strike_unit = function (data)
-	local bolt_amount = difficulty_settings.bolt_amount[data.difficulty_rank] or 1
-	local bolts_spawned = 0
-	local side_manager = Managers.state.side
-	local hero_side = side_manager:get_side_from_name("heroes")
-	local players_array = table.clone(hero_side.PLAYER_UNITS)
-	local deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
-	local player_manager = Managers.player
+function var_0_1.spawn_lightning_strike_unit(arg_6_0)
+	local var_6_0 = var_0_9.bolt_amount[arg_6_0.difficulty_rank] or 1
+	local var_6_1 = 0
+	local var_6_2 = Managers.state.side
+	local var_6_3 = var_6_2:get_side_from_name("heroes")
+	local var_6_4 = table.clone(var_6_3.PLAYER_UNITS)
+	local var_6_5 = Managers.mechanism:game_mechanism():get_deus_run_controller()
+	local var_6_6 = Managers.player
+	local var_6_7 = var_0_17(var_6_4, var_6_6, var_6_5)
 
-	players_array = filter_respawning_players(players_array, player_manager, deus_run_controller)
-	data.seed = table.shuffle(players_array, data.seed)
+	arg_6_0.seed = table.shuffle(var_6_7, arg_6_0.seed)
 
-	table.clear(data.units)
+	table.clear(arg_6_0.units)
 
-	for _, player_unit in ipairs(players_array) do
-		if bolt_amount <= bolts_spawned then
+	for iter_6_0, iter_6_1 in ipairs(var_6_7) do
+		if var_6_0 <= var_6_1 then
 			break
 		end
 
-		data.extension_init_data.area_damage_system.follow_unit = player_unit
+		arg_6_0.extension_init_data.area_damage_system.follow_unit = iter_6_1
 
-		local unit = Managers.state.unit_spawner:spawn_network_unit(data.decal_unit_name, "timed_explosion_unit", data.extension_init_data, Unit.local_position(player_unit, 0))
-		local callback = data.lighting_strike_callback
-		local timed_explosion_extension = ScriptUnit.has_extension(unit, "area_damage_system")
+		local var_6_8 = Managers.state.unit_spawner:spawn_network_unit(arg_6_0.decal_unit_name, "timed_explosion_unit", arg_6_0.extension_init_data, Unit.local_position(iter_6_1, 0))
+		local var_6_9 = arg_6_0.lighting_strike_callback
+		local var_6_10 = ScriptUnit.has_extension(var_6_8, "area_damage_system")
 
-		if callback and timed_explosion_extension then
-			timed_explosion_extension:add_on_explode_callback(callback)
+		if var_6_9 and var_6_10 then
+			var_6_10:add_on_explode_callback(var_6_9)
 		end
 
-		local neutral_side = side_manager:get_side_from_name("neutral")
-		local side_id = neutral_side.side_id
+		local var_6_11 = var_6_2:get_side_from_name("neutral").side_id
 
-		side_manager:add_unit_to_side(unit, side_id)
-		data.audio_system:play_audio_unit_event("Play_winds_heavens_gameplay_spawn", unit)
+		var_6_2:add_unit_to_side(var_6_8, var_6_11)
+		arg_6_0.audio_system:play_audio_unit_event("Play_winds_heavens_gameplay_spawn", var_6_8)
 
-		data.units[#data.units + 1] = unit
-		bolts_spawned = bolts_spawned + 1
-		data.lock_played = false
-		data.charge_played = false
-		data.hit_played = false
+		arg_6_0.units[#arg_6_0.units + 1] = var_6_8
+		var_6_1 = var_6_1 + 1
+		arg_6_0.lock_played = false
+		arg_6_0.charge_played = false
+		arg_6_0.hit_played = false
 	end
 
-	if #players_array > 0 then
-		local player_unit = players_array[1]
-		local dialogue_input = ScriptUnit.extension_input(player_unit, "dialogue_system")
-		local event_data = FrameTable.alloc_table()
+	if #var_6_7 > 0 then
+		local var_6_12 = var_6_7[1]
+		local var_6_13 = ScriptUnit.extension_input(var_6_12, "dialogue_system")
+		local var_6_14 = FrameTable.alloc_table()
 
-		dialogue_input:trigger_networked_dialogue_event("curse_danger_spotted", event_data)
+		var_6_13:trigger_networked_dialogue_event("curse_danger_spotted", var_6_14)
 	end
 end
 
-bolt_of_change.server_players_left_safe_zone = function (context, data)
-	data.has_left_safe_zone = true
+function var_0_1.server_players_left_safe_zone(arg_7_0, arg_7_1)
+	arg_7_1.has_left_safe_zone = true
 end
 
-bolt_of_change.server_update_function = function (context, data, dt, t)
-	if not data.has_left_safe_zone or global_is_inside_inn then
+function var_0_1.server_update_function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	if not arg_8_1.has_left_safe_zone or global_is_inside_inn then
 		return
 	end
 
-	local conflict_director = Managers.state.conflict
-	local total_path_dist = MainPathUtils.total_path_dist()
-	local in_end_area = in_range_to_end(STOP_SPAWN_DISTANCE, total_path_dist, conflict_director)
+	local var_8_0 = Managers.state.conflict
+	local var_8_1 = MainPathUtils.total_path_dist()
 
-	if in_end_area then
+	if var_0_16(var_0_2, var_8_1, var_8_0) then
 		return
 	end
 
-	base_lighting_strike.server_update_function(context, data, dt, t)
+	var_0_0.server_update_function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 
-	local delete_index
-	local spawn_queue = data.spawn_queue
+	local var_8_2
+	local var_8_3 = arg_8_1.spawn_queue
 
-	for i = 1, #spawn_queue do
-		local spawn_queue_entry = spawn_queue[i]
+	for iter_8_0 = 1, #var_8_3 do
+		local var_8_4 = var_8_3[iter_8_0]
 
-		if t > spawn_queue_entry.spawn_at_t then
-			local breed = spawn_queue_entry.breed
-			local position_box = spawn_queue_entry.position_box
-			local rotation_box = spawn_queue_entry.rotation_box
-			local spawn_category = "mutator"
-			local optional_data = {
-				spawned_func = data.cb_enemy_spawned_function,
+		if arg_8_3 > var_8_4.spawn_at_t then
+			local var_8_5 = var_8_4.breed
+			local var_8_6 = var_8_4.position_box
+			local var_8_7 = var_8_4.rotation_box
+			local var_8_8 = "mutator"
+			local var_8_9 = {
+				spawned_func = arg_8_1.cb_enemy_spawned_function
 			}
 
-			Managers.state.conflict:spawn_queued_unit(breed, position_box, rotation_box, spawn_category, nil, "terror_event", optional_data)
+			Managers.state.conflict:spawn_queued_unit(var_8_5, var_8_6, var_8_7, var_8_8, nil, "terror_event", var_8_9)
 
-			delete_index = i
+			var_8_2 = iter_8_0
 
 			break
 		end
 	end
 
-	if delete_index then
-		table.swap_delete(spawn_queue, delete_index)
+	if var_8_2 then
+		table.swap_delete(var_8_3, var_8_2)
 	end
 
-	local spawned_units_data = data.spawned_units_data
+	local var_8_10 = arg_8_1.spawned_units_data
 
-	for i = #spawned_units_data, 1, -1 do
-		local unit = spawned_units_data[i].unit
+	for iter_8_1 = #var_8_10, 1, -1 do
+		local var_8_11 = var_8_10[iter_8_1].unit
 
-		if not HEALTH_ALIVE[unit] then
-			table.swap_delete(spawned_units_data, i)
+		if not HEALTH_ALIVE[var_8_11] then
+			table.swap_delete(var_8_10, iter_8_1)
 		end
 	end
 end
 
-bolt_of_change.modify_player_base_damage = function (context, data, damaged_unit, attacker_unit, damage, damage_type)
-	local player = Managers.player:owner(damaged_unit)
-	local is_bot = player and player.bot_player
+function var_0_1.modify_player_base_damage(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+	local var_9_0 = Managers.player:owner(arg_9_2)
 
-	if is_bot then
-		return damage * BOT_DAMAGE_MODIFIER
+	if var_9_0 and var_9_0.bot_player then
+		return arg_9_4 * var_0_3
 	else
-		return damage
+		return arg_9_4
 	end
 end
 
-bolt_of_change.populate_available_breeds = function (context, data)
-	local difficulty = Managers.state.difficulty:get_difficulty()
-	local contained_breeds = CurrentConflictSettings.contained_breeds[difficulty] or CurrentConflictSettings.contained_breeds[2]
-	local available_breeds = data.available_breeds
+function var_0_1.populate_available_breeds(arg_10_0, arg_10_1)
+	local var_10_0 = Managers.state.difficulty:get_difficulty()
+	local var_10_1 = CurrentConflictSettings.contained_breeds[var_10_0] or CurrentConflictSettings.contained_breeds[2]
+	local var_10_2 = arg_10_1.available_breeds
 
-	for breed_name, _ in pairs(contained_breeds) do
-		local race
+	for iter_10_0, iter_10_1 in pairs(var_10_1) do
+		local var_10_3
 
-		if CHAOS[breed_name] then
-			race = "chaos"
-		elseif SKAVEN[breed_name] then
-			race = "skaven"
-		elseif BEASTMEN[breed_name] then
-			race = "beastmen"
-		elseif CRITTER[breed_name] then
-			race = "critter"
+		if CHAOS[iter_10_0] then
+			var_10_3 = "chaos"
+		elseif SKAVEN[iter_10_0] then
+			var_10_3 = "skaven"
+		elseif BEASTMEN[iter_10_0] then
+			var_10_3 = "beastmen"
+		elseif CRITTER[iter_10_0] then
+			var_10_3 = "critter"
 		end
 
-		if race then
-			data.all_available_breeds[breed_name] = true
-			available_breeds[race][breed_name] = true
+		if var_10_3 then
+			arg_10_1.all_available_breeds[iter_10_0] = true
+			var_10_2[var_10_3][iter_10_0] = true
 		end
 	end
 
-	table.merge_recursive(data.all_available_breeds, CRITTER)
-	table.merge_recursive(available_breeds.critter, CRITTER)
+	table.merge_recursive(arg_10_1.all_available_breeds, CRITTER)
+	table.merge_recursive(var_10_2.critter, CRITTER)
 end
 
-bolt_of_change.cb_on_explode = function (template, data, explosion_template_name, position)
-	local explosion_template = ExplosionUtils.get_template(explosion_template_name)
-	local radius = explosion_template.explosion.radius
-	local ai_in_range = {}
+function var_0_1.cb_on_explode(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+	local var_11_0 = ExplosionUtils.get_template(arg_11_2).explosion.radius
+	local var_11_1 = {}
 
-	AiUtils.broadphase_query(position, radius, ai_in_range)
+	AiUtils.broadphase_query(arg_11_3, var_11_0, var_11_1)
 
-	local change_limit = difficulty_settings.change_limit[data.difficulty_rank] or 1
-	local units_queued_successfully = 0
+	local var_11_2 = var_0_9.change_limit[arg_11_1.difficulty_rank] or 1
+	local var_11_3 = 0
 
-	for _, ai_unit in ipairs(ai_in_range) do
-		if change_limit <= units_queued_successfully then
+	for iter_11_0, iter_11_1 in ipairs(var_11_1) do
+		if var_11_2 <= var_11_3 then
 			break
 		end
 
-		local success = template.change_ai(data, ai_unit)
-
-		if success then
-			units_queued_successfully = units_queued_successfully + 1
+		if arg_11_0.change_ai(arg_11_1, iter_11_1) then
+			var_11_3 = var_11_3 + 1
 		end
 	end
 
-	local audio_system = Managers.state.entity:system("audio_system")
-
-	audio_system:play_2d_audio_event(BOLT_EXPLOSION_SOUND_EVENT)
+	Managers.state.entity:system("audio_system"):play_2d_audio_event(var_0_10)
 end
 
-bolt_of_change.get_overridden_breed = function (data, maxed_out_breeds, breed_name)
-	local override = breed_override[breed_name]
+function var_0_1.get_overridden_breed(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = var_0_11[arg_12_2]
 
-	if override then
-		local override_breed
+	if var_12_0 then
+		local var_12_1
 
-		if override.chance then
-			local random
+		if var_12_0.chance then
+			local var_12_2
+			local var_12_3
 
-			data.seed, random = Math.next_random(data.seed)
+			arg_12_0.seed, var_12_3 = Math.next_random(arg_12_0.seed)
 
-			if random <= override.chance then
-				override_breed = override.breed
+			if var_12_3 <= var_12_0.chance then
+				var_12_1 = var_12_0.breed
 			end
 		else
-			override_breed = override.breed
+			var_12_1 = var_12_0.breed
 		end
 
-		if maxed_out_breeds[override_breed] then
+		if arg_12_1[var_12_1] then
 			return nil
-		elseif data.all_available_breeds[override_breed] then
-			return override_breed
+		elseif arg_12_0.all_available_breeds[var_12_1] then
+			return var_12_1
 		end
 	end
 
 	return nil
 end
 
-local function get_maxed_out_breeds(t)
-	local maxed_breeds = {}
-	local breeds_by_amount = {}
+local function var_0_18(arg_13_0)
+	local var_13_0 = {}
+	local var_13_1 = {}
 
-	for _, entry in ipairs(t) do
-		local breed_name = entry.breed_name
-		local max_amount = max_spawn_amounts[breed_name]
+	for iter_13_0, iter_13_1 in ipairs(arg_13_0) do
+		local var_13_2 = iter_13_1.breed_name
+		local var_13_3 = var_0_12[var_13_2]
 
-		if max_amount then
-			local amount = breeds_by_amount[breed_name] or max_amount
+		if var_13_3 then
+			local var_13_4 = (var_13_1[var_13_2] or var_13_3) - 1
 
-			amount = amount - 1
-			breeds_by_amount[breed_name] = amount
+			var_13_1[var_13_2] = var_13_4
 
-			if amount <= 0 then
-				maxed_breeds[breed_name] = true
+			if var_13_4 <= 0 then
+				var_13_0[var_13_2] = true
 			end
 		end
 	end
 
-	return maxed_breeds
+	return var_13_0
 end
 
-local function filter_available_breeds(available_breeds, race, excluded_breeds)
-	local filtered_breeds = {}
+local function var_0_19(arg_14_0, arg_14_1, arg_14_2)
+	local var_14_0 = {}
 
-	for breed_name, _ in pairs(available_breeds[race]) do
-		local included = not excluded_breeds[breed_name]
-
-		if included then
-			filtered_breeds[breed_name] = true
+	for iter_14_0, iter_14_1 in pairs(arg_14_0[arg_14_1]) do
+		if not arg_14_2[iter_14_0] then
+			var_14_0[iter_14_0] = true
 		end
 	end
 
-	return filtered_breeds
+	return var_14_0
 end
 
-local function despawn_breed(ai_unit)
-	local blackboard = BLACKBOARDS[ai_unit]
-	local conflict_director = Managers.state.conflict
+local function var_0_20(arg_15_0)
+	local var_15_0 = BLACKBOARDS[arg_15_0]
 
-	conflict_director:destroy_unit(ai_unit, blackboard, "mutator")
+	Managers.state.conflict:destroy_unit(arg_15_0, var_15_0, "mutator")
 end
 
-local function table_next_random_value(seed, t)
-	local num_entries = table.size(t)
+local function var_0_21(arg_16_0, arg_16_1)
+	local var_16_0 = table.size(arg_16_1)
 
-	if num_entries > 0 then
-		local new_seed, random_index = Math.next_random(seed, 1, num_entries)
-		local table_keys = table.keys(t)
-		local random_entry = table_keys[random_index]
+	if var_16_0 > 0 then
+		local var_16_1, var_16_2 = Math.next_random(arg_16_0, 1, var_16_0)
+		local var_16_3 = table.keys(arg_16_1)[var_16_2]
 
-		return new_seed, random_entry
+		return var_16_1, var_16_3
 	end
 
-	return seed, nil
+	return arg_16_0, nil
 end
 
-local function get_num_specials(conflict_director, spawn_queue)
-	local specials_spawned_by_bolt = conflict_director:alive_specials_count()
+local function var_0_22(arg_17_0, arg_17_1)
+	local var_17_0 = arg_17_0:alive_specials_count()
 
-	for _, spawn_queue_entry in ipairs(spawn_queue) do
-		local breed = spawn_queue_entry.breed
-
-		if breed.special then
-			specials_spawned_by_bolt = specials_spawned_by_bolt + 1
+	for iter_17_0, iter_17_1 in ipairs(arg_17_1) do
+		if iter_17_1.breed.special then
+			var_17_0 = var_17_0 + 1
 		end
 	end
 
-	return specials_spawned_by_bolt
+	return var_17_0
 end
 
-local function array_to_table(array)
-	local new_table = {}
+local function var_0_23(arg_18_0)
+	local var_18_0 = {}
 
-	for _, value in ipairs(array) do
-		new_table[value] = true
+	for iter_18_0, iter_18_1 in ipairs(arg_18_0) do
+		var_18_0[iter_18_1] = true
 	end
 
-	return new_table
+	return var_18_0
 end
 
-bolt_of_change.spawn_new_breed = function (data, ai_unit, new_breed)
-	local nav_world = Managers.state.entity:system("ai_system"):nav_world()
-	local spawn_queue = data.spawn_queue
-	local blackboard = BLACKBOARDS[ai_unit]
-	local position = POSITION_LOOKUP[ai_unit]
+function var_0_1.spawn_new_breed(arg_19_0, arg_19_1, arg_19_2)
+	local var_19_0 = Managers.state.entity:system("ai_system"):nav_world()
+	local var_19_1 = arg_19_0.spawn_queue
+	local var_19_2 = BLACKBOARDS[arg_19_1]
+	local var_19_3 = POSITION_LOOKUP[arg_19_1]
 
-	if position then
-		local explosion_template_name = data.explosion_template_name
+	if var_19_3 then
+		local var_19_4 = arg_19_0.explosion_template_name
 
-		AiUtils.generic_mutator_explosion(ai_unit, blackboard, explosion_template_name)
+		AiUtils.generic_mutator_explosion(arg_19_1, var_19_2, var_19_4)
 
-		local projected_start_pos = LocomotionUtils.pos_on_mesh(nav_world, position, 1, 1)
+		local var_19_5 = LocomotionUtils.pos_on_mesh(var_19_0, var_19_3, 1, 1)
 
-		if not projected_start_pos then
-			local new_projected_start_pos = GwNavQueries.inside_position_from_outside_position(nav_world, position, 6, 6, 8, 0.5)
+		if not var_19_5 then
+			local var_19_6 = GwNavQueries.inside_position_from_outside_position(var_19_0, var_19_3, 6, 6, 8, 0.5)
 
-			if new_projected_start_pos then
-				projected_start_pos = new_projected_start_pos
+			if var_19_6 then
+				var_19_5 = var_19_6
 			end
 		end
 
-		local time = Managers.time:time("game")
-		local spawn_at_t = time + data.spawn_delay
-		local rotation = Unit.local_rotation(ai_unit, 0)
+		local var_19_7 = Managers.time:time("game")
+		local var_19_8 = var_19_7 + arg_19_0.spawn_delay
+		local var_19_9 = Unit.local_rotation(arg_19_1, 0)
 
-		if projected_start_pos then
-			local spawn_queue_entry = {
-				breed = Breeds[new_breed],
-				breed_name = new_breed,
-				rotation_box = QuaternionBox(rotation),
-				spawn_at_t = spawn_at_t,
-				position_box = Vector3Box(projected_start_pos),
+		if var_19_5 then
+			local var_19_10 = {
+				breed = Breeds[arg_19_2],
+				breed_name = arg_19_2,
+				rotation_box = QuaternionBox(var_19_9),
+				spawn_at_t = var_19_8,
+				position_box = Vector3Box(var_19_5)
 			}
 
-			table.insert(spawn_queue, spawn_queue_entry)
+			table.insert(var_19_1, var_19_10)
 
-			local can_change_at = time + data.change_cooldown
+			local var_19_11 = var_19_7 + arg_19_0.change_cooldown
 
-			Unit.set_data(ai_unit, "can_change_at", can_change_at)
+			Unit.set_data(arg_19_1, "can_change_at", var_19_11)
 		end
 	end
 end
 
-bolt_of_change.change_ai = function (data, ai_unit)
-	local time = Managers.time:time("game")
-	local can_change_at = Unit.get_data(ai_unit, "can_change_at") or 0
-	local change_cooldown_active = time <= can_change_at
-	local breed = Unit.get_data(ai_unit, "breed")
-	local unchangeable = unchangeable_breeds[breed.name]
+function var_0_1.change_ai(arg_20_0, arg_20_1)
+	local var_20_0 = Managers.time:time("game") <= (Unit.get_data(arg_20_1, "can_change_at") or 0)
+	local var_20_1 = Unit.get_data(arg_20_1, "breed")
+	local var_20_2 = var_0_14[var_20_1.name]
 
-	if change_cooldown_active or unchangeable then
+	if var_20_0 or var_20_2 then
 		return
 	end
 
-	local excluded_breeds = table.clone(excluded_random_breeds)
+	local var_20_3 = table.clone(var_0_15)
 
-	excluded_breeds[breed.name] = true
+	var_20_3[var_20_1.name] = true
 
-	local maxed_out_breeds = get_maxed_out_breeds(data.spawned_units_data)
-	local maxed_out_breeds_queued = get_maxed_out_breeds(data.spawn_queue)
+	local var_20_4 = var_0_18(arg_20_0.spawned_units_data)
+	local var_20_5 = var_0_18(arg_20_0.spawn_queue)
 
-	table.merge(excluded_breeds, maxed_out_breeds_queued)
-	table.merge(excluded_breeds, maxed_out_breeds)
+	table.merge(var_20_3, var_20_5)
+	table.merge(var_20_3, var_20_4)
 
-	local num_specials = get_num_specials(Managers.state.conflict, data.spawn_queue)
+	if var_0_22(Managers.state.conflict, arg_20_0.spawn_queue) >= var_0_13 then
+		local var_20_6 = var_0_23(CurrentSpecialsSettings.breeds)
 
-	if num_specials >= max_specials then
-		local special_breeds = array_to_table(CurrentSpecialsSettings.breeds)
-
-		table.merge(excluded_breeds, special_breeds)
+		table.merge(var_20_3, var_20_6)
 	end
 
-	local race = breed.race
-	local breeds = filter_available_breeds(data.available_breeds, race, excluded_breeds)
-	local new_breed
+	local var_20_7 = var_20_1.race
+	local var_20_8 = var_0_19(arg_20_0.available_breeds, var_20_7, var_20_3)
+	local var_20_9
+	local var_20_10
 
-	data.seed, new_breed = table_next_random_value(data.seed, breeds)
+	arg_20_0.seed, var_20_10 = var_0_21(arg_20_0.seed, var_20_8)
 
-	if new_breed then
-		local template = data.template
-		local override_breed = template.get_overridden_breed(data, maxed_out_breeds, breed.name)
+	if var_20_10 then
+		local var_20_11 = arg_20_0.template
 
-		new_breed = override_breed or new_breed
+		var_20_10 = var_20_11.get_overridden_breed(arg_20_0, var_20_4, var_20_1.name) or var_20_10
 
-		template.spawn_new_breed(data, ai_unit, new_breed)
-		despawn_breed(ai_unit)
+		var_20_11.spawn_new_breed(arg_20_0, arg_20_1, var_20_10)
+		var_0_20(arg_20_1)
 
 		return true
 	else
@@ -570,15 +543,13 @@ bolt_of_change.change_ai = function (data, ai_unit)
 	end
 end
 
-bolt_of_change.server_player_hit_function = function (context, data, hit_unit, attacker_unit, hit_data)
-	local damage_type = hit_data[2]
+function var_0_1.server_player_hit_function(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+	if arg_21_4[2] == "bolt_of_change" then
+		local var_21_0 = ScriptUnit.extension_input(arg_21_2, "dialogue_system")
+		local var_21_1 = FrameTable.alloc_table()
 
-	if damage_type == "bolt_of_change" then
-		local dialogue_input = ScriptUnit.extension_input(hit_unit, "dialogue_system")
-		local event_data = FrameTable.alloc_table()
-
-		dialogue_input:trigger_dialogue_event("curse_damage_taken", event_data)
+		var_21_0:trigger_dialogue_event("curse_damage_taken", var_21_1)
 	end
 end
 
-return bolt_of_change
+return var_0_1

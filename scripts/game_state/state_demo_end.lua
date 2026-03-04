@@ -1,91 +1,91 @@
-﻿-- chunkname: @scripts/game_state/state_demo_end.lua
+-- chunkname: @scripts/game_state/state_demo_end.lua
 
 require("scripts/ui/views/demo_end_ui")
 
 StateDemoEnd = class(StateDemoEnd)
 StateDemoEnd.NAME = "StateDemoEnd"
 
-StateDemoEnd.on_enter = function (self)
-	self:_setup_world()
-	self:_setup_input()
-	self:_setup_ui()
-	self:_handle_fade()
-	self:_handle_video_playback()
+function StateDemoEnd.on_enter(arg_1_0)
+	arg_1_0:_setup_world()
+	arg_1_0:_setup_input()
+	arg_1_0:_setup_ui()
+	arg_1_0:_handle_fade()
+	arg_1_0:_handle_video_playback()
 end
 
-StateDemoEnd._handle_video_playback = function (self)
+function StateDemoEnd._handle_video_playback(arg_2_0)
 	Framerate.set_low_power()
 	Managers.music:stop_all_sounds()
 end
 
-StateDemoEnd.on_exit = function (self)
-	if self._demo_end_ui then
-		self._demo_end_ui:destroy()
+function StateDemoEnd.on_exit(arg_3_0)
+	if arg_3_0._demo_end_ui then
+		arg_3_0._demo_end_ui:destroy()
 
-		self._demo_end_ui = nil
+		arg_3_0._demo_end_ui = nil
 	end
 
-	self._input_manager:destroy()
+	arg_3_0._input_manager:destroy()
 
-	self._input_manager = nil
+	arg_3_0._input_manager = nil
 	Managers.input = nil
 
 	Managers.state:destroy()
 	Framerate.set_playing()
-	ScriptWorld.destroy_viewport(self._world, self._viewport_name)
-	Managers.world:destroy_world(self._world)
+	ScriptWorld.destroy_viewport(arg_3_0._world, arg_3_0._viewport_name)
+	Managers.world:destroy_world(arg_3_0._world)
 end
 
-StateDemoEnd._setup_world = function (self)
-	self._world_name = "demo_end_world"
-	self._viewport_name = "demo_end_world_viewport"
-	self._world = Managers.world:create_world(self._world_name, GameSettingsDevelopment.default_environment, nil, nil, Application.DISABLE_PHYSICS, Application.DISABLE_APEX_CLOTH)
-	self._viewport = ScriptWorld.create_viewport(self._world, self._viewport_name, "overlay", 1)
+function StateDemoEnd._setup_world(arg_4_0)
+	arg_4_0._world_name = "demo_end_world"
+	arg_4_0._viewport_name = "demo_end_world_viewport"
+	arg_4_0._world = Managers.world:create_world(arg_4_0._world_name, GameSettingsDevelopment.default_environment, nil, nil, Application.DISABLE_PHYSICS, Application.DISABLE_APEX_CLOTH)
+	arg_4_0._viewport = ScriptWorld.create_viewport(arg_4_0._world, arg_4_0._viewport_name, "overlay", 1)
 end
 
-StateDemoEnd._setup_input = function (self)
-	self._input_manager = InputManager:new()
+function StateDemoEnd._setup_input(arg_5_0)
+	arg_5_0._input_manager = InputManager:new()
 
-	local input_manager = self._input_manager
+	local var_5_0 = arg_5_0._input_manager
 
-	Managers.input = input_manager
+	Managers.input = var_5_0
 
-	input_manager:initialize_device("keyboard", 1)
-	input_manager:initialize_device("mouse", 1)
-	input_manager:initialize_device("gamepad")
+	var_5_0:initialize_device("keyboard", 1)
+	var_5_0:initialize_device("mouse", 1)
+	var_5_0:initialize_device("gamepad")
 end
 
-StateDemoEnd._setup_ui = function (self)
-	self._demo_end_ui = DemoEndUI:new(self._world)
+function StateDemoEnd._setup_ui(arg_6_0)
+	arg_6_0._demo_end_ui = DemoEndUI:new(arg_6_0._world)
 end
 
-StateDemoEnd._handle_fade = function (self)
+function StateDemoEnd._handle_fade(arg_7_0)
 	Managers.transition:hide_loading_icon()
 	Managers.transition:fade_out(GameSettings.transition_fade_in_speed)
 end
 
-StateDemoEnd.update = function (self, dt, t)
-	self._demo_end_ui:update(dt, t)
+function StateDemoEnd.update(arg_8_0, arg_8_1, arg_8_2)
+	arg_8_0._demo_end_ui:update(arg_8_1, arg_8_2)
 
-	return self:_try_exit()
+	return arg_8_0:_try_exit()
 end
 
-StateDemoEnd.cb_fade_in_done = function (self, state)
-	self._new_state = state
+function StateDemoEnd.cb_fade_in_done(arg_9_0, arg_9_1)
+	arg_9_0._new_state = arg_9_1
 end
 
-StateDemoEnd._try_exit = function (self)
-	local skip_outro = false
+function StateDemoEnd._try_exit(arg_10_0)
+	local var_10_0 = false
 
 	if BUILD == "dev" and Keyboard.pressed(Keyboard.ENTER) then
-		skip_outro = true
+		var_10_0 = true
 	end
 
-	if not self._fade_started and (self._demo_end_ui:completed() or skip_outro) then
-		Managers.transition:fade_in(GameSettings.transition_fade_out_speed, callback(self, "cb_fade_in_done", StateTitleScreen))
+	if not arg_10_0._fade_started and (arg_10_0._demo_end_ui:completed() or var_10_0) then
+		Managers.transition:fade_in(GameSettings.transition_fade_out_speed, callback(arg_10_0, "cb_fade_in_done", StateTitleScreen))
 
-		self._fade_started = true
+		arg_10_0._fade_started = true
 	end
 
-	return self._new_state
+	return arg_10_0._new_state
 end

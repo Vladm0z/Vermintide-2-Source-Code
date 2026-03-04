@@ -1,218 +1,211 @@
-﻿-- chunkname: @scripts/settings/mutators/mutator_splitting_enemies.lua
+-- chunkname: @scripts/settings/mutators/mutator_splitting_enemies.lua
 
 return {
 	description = "description_mutator_splitting_enemies",
 	display_name = "display_name_mutator_splitting_enemies",
 	icon = "mutator_icon_splitting_enemies",
-	server_start_function = function (context, data)
-		data.breed_tier_list = {
-			beastmen_bestigor = "beastmen_gor",
-			beastmen_gor = "beastmen_ungor",
-			beastmen_minotaur = "beastmen_standard_bearer",
+	server_start_function = function(arg_1_0, arg_1_1)
+		arg_1_1.breed_tier_list = {
 			beastmen_standard_bearer = "beastmen_bestigor",
-			chaos_berzerker = "chaos_marauder",
-			chaos_bulwark = "chaos_raider",
-			chaos_corruptor_sorcerer = "chaos_raider",
-			chaos_exalted_champion_norsca = "chaos_warrior",
-			chaos_exalted_champion_warcamp = "chaos_warrior",
-			chaos_exalted_sorcerer = "chaos_vortex_sorcerer",
-			chaos_marauder = "chaos_fanatic",
-			chaos_marauder_with_shield = "chaos_fanatic",
 			chaos_raider = "chaos_marauder",
-			chaos_spawn = "chaos_warrior",
-			chaos_spawn_exalted_champion_norsca = "chaos_warrior",
-			chaos_troll = "chaos_warrior",
-			chaos_vortex_sorcerer = "chaos_berzerker",
-			chaos_warrior = "chaos_raider",
-			skaven_clan_rat = "skaven_slave",
-			skaven_clan_rat_with_shield = "skaven_slave",
-			skaven_explosive_loot_rat = "skaven_clan_rat",
-			skaven_grey_seer = "skaven_loot_rat",
-			skaven_gutter_runner = "skaven_storm_vermin_commander",
-			skaven_pack_master = "skaven_storm_vermin_commander",
-			skaven_plague_monk = "skaven_clan_rat",
+			chaos_marauder_with_shield = "chaos_fanatic",
+			beastmen_bestigor = "beastmen_gor",
 			skaven_poison_wind_globadier = "skaven_plague_monk",
-			skaven_rat_ogre = "skaven_pack_master",
-			skaven_ratling_gunner = "skaven_storm_vermin_commander",
-			skaven_storm_vermin = "skaven_clan_rat",
-			skaven_storm_vermin_commander = "skaven_clan_rat",
+			skaven_clan_rat_with_shield = "skaven_slave",
+			chaos_berzerker = "chaos_marauder",
+			skaven_gutter_runner = "skaven_storm_vermin_commander",
+			skaven_plague_monk = "skaven_clan_rat",
+			beastmen_minotaur = "beastmen_standard_bearer",
+			chaos_marauder = "chaos_fanatic",
 			skaven_storm_vermin_warlord = "skaven_storm_vermin_with_shield",
-			skaven_storm_vermin_with_shield = "skaven_clan_rat",
-			skaven_stormfiend = "skaven_warpfire_thrower",
 			skaven_stormfiend_boss = "skaven_ratling_gunner",
+			skaven_clan_rat = "skaven_slave",
+			skaven_stormfiend = "skaven_warpfire_thrower",
+			chaos_exalted_sorcerer = "chaos_vortex_sorcerer",
+			skaven_rat_ogre = "skaven_pack_master",
+			chaos_troll = "chaos_warrior",
+			chaos_spawn = "chaos_warrior",
+			chaos_corruptor_sorcerer = "chaos_raider",
+			chaos_vortex_sorcerer = "chaos_berzerker",
+			skaven_storm_vermin = "skaven_clan_rat",
+			beastmen_gor = "beastmen_ungor",
+			skaven_storm_vermin_with_shield = "skaven_clan_rat",
+			chaos_exalted_champion_warcamp = "chaos_warrior",
 			skaven_warpfire_thrower = "skaven_plague_monk",
+			chaos_exalted_champion_norsca = "chaos_warrior",
+			skaven_pack_master = "skaven_storm_vermin_commander",
+			chaos_spawn_exalted_champion_norsca = "chaos_warrior",
+			chaos_bulwark = "chaos_raider",
+			skaven_grey_seer = "skaven_loot_rat",
+			chaos_warrior = "chaos_raider",
+			skaven_explosive_loot_rat = "skaven_clan_rat",
+			skaven_storm_vermin_commander = "skaven_clan_rat",
+			skaven_ratling_gunner = "skaven_storm_vermin_commander",
 			skaven_loot_rat = {
 				"skaven_clan_rat",
 				"skaven_storm_vermin_commander",
 				"skaven_warpfire_thrower",
 				"skaven_rat_ogre",
-				"skaven_rat_ogre",
-			},
+				"skaven_rat_ogre"
+			}
 		}
-		data.breed_explosion_templates = {
-			beastmen_bestigor = "generic_mutator_explosion_medium",
-			beastmen_minotaur = "generic_mutator_explosion_large",
-			chaos_bulwark = "generic_mutator_explosion_medium",
-			chaos_exalted_champion_norsca = "generic_mutator_explosion_medium",
-			chaos_exalted_champion_warcamp = "generic_mutator_explosion_medium",
-			chaos_exalted_sorcerer = "generic_mutator_explosion_medium",
-			chaos_raider = "generic_mutator_explosion_medium",
-			chaos_spawn = "generic_mutator_explosion_large",
-			chaos_spawn_exalted_champion_norsca = "generic_mutator_explosion_large",
-			chaos_troll = "generic_mutator_explosion_large",
-			chaos_warrior = "generic_mutator_explosion_medium",
-			skaven_grey_seer = "generic_mutator_explosion_medium",
-			skaven_plague_monk = "generic_mutator_explosion_medium",
-			skaven_rat_ogre = "generic_mutator_explosion_large",
-			skaven_storm_vermin = "generic_mutator_explosion_medium",
-			skaven_storm_vermin_commander = "generic_mutator_explosion_medium",
-			skaven_storm_vermin_warlord = "generic_mutator_explosion_medium",
-			skaven_storm_vermin_with_shield = "generic_mutator_explosion_medium",
+		arg_1_1.breed_explosion_templates = {
 			skaven_stormfiend = "generic_mutator_explosion_large",
+			chaos_raider = "generic_mutator_explosion_medium",
+			chaos_exalted_champion_warcamp = "generic_mutator_explosion_medium",
+			beastmen_bestigor = "generic_mutator_explosion_medium",
+			skaven_storm_vermin_warlord = "generic_mutator_explosion_medium",
+			skaven_plague_monk = "generic_mutator_explosion_medium",
 			skaven_stormfiend_boss = "generic_mutator_explosion_large",
+			skaven_grey_seer = "generic_mutator_explosion_medium",
+			chaos_exalted_champion_norsca = "generic_mutator_explosion_medium",
+			beastmen_minotaur = "generic_mutator_explosion_large",
+			chaos_spawn_exalted_champion_norsca = "generic_mutator_explosion_large",
+			chaos_bulwark = "generic_mutator_explosion_medium",
+			chaos_exalted_sorcerer = "generic_mutator_explosion_medium",
+			chaos_warrior = "generic_mutator_explosion_medium",
+			skaven_rat_ogre = "generic_mutator_explosion_large",
+			chaos_troll = "generic_mutator_explosion_large",
+			chaos_spawn = "generic_mutator_explosion_large",
+			skaven_storm_vermin_commander = "generic_mutator_explosion_medium",
+			skaven_storm_vermin = "generic_mutator_explosion_medium",
+			skaven_storm_vermin_with_shield = "generic_mutator_explosion_medium"
 		}
 
-		data.cb_enemy_spawned_function = function (unit, breed, optional_data)
-			local blackboard = BLACKBOARDS[unit]
+		function arg_1_1.cb_enemy_spawned_function(arg_2_0, arg_2_1, arg_2_2)
+			local var_2_0 = BLACKBOARDS[arg_2_0]
 
-			if not breed.special then
-				blackboard.spawn_type = "horde"
-				blackboard.spawning_finished = true
+			if not arg_2_1.special then
+				var_2_0.spawn_type = "horde"
+				var_2_0.spawning_finished = true
 			end
 		end
 
-		data.spawn_queue = {}
-		data.spawn_delay = 0.25
+		arg_1_1.spawn_queue = {}
+		arg_1_1.spawn_delay = 0.25
 	end,
-	server_update_function = function (context, data, dt, t)
-		local spawn_queue = data.spawn_queue
-		local delete_index
+	server_update_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		local var_3_0 = arg_3_1.spawn_queue
+		local var_3_1
 
-		for i = 1, #spawn_queue do
-			local spawn_queue_entry = spawn_queue[i]
+		for iter_3_0 = 1, #var_3_0 do
+			local var_3_2 = var_3_0[iter_3_0]
 
-			if t > spawn_queue_entry.spawn_at_t then
-				local breed = spawn_queue_entry.breed
-				local position_box = spawn_queue_entry.position_box
-				local rotation_box = spawn_queue_entry.rotation_box
-				local spawn_category = "mutator"
-				local optional_data = {
-					spawned_func = data.cb_enemy_spawned_function,
+			if arg_3_3 > var_3_2.spawn_at_t then
+				local var_3_3 = var_3_2.breed
+				local var_3_4 = var_3_2.position_box
+				local var_3_5 = var_3_2.rotation_box
+				local var_3_6 = "mutator"
+				local var_3_7 = {
+					spawned_func = arg_3_1.cb_enemy_spawned_function
 				}
 
-				Managers.state.conflict:spawn_queued_unit(breed, position_box, rotation_box, spawn_category, nil, "terror_event", optional_data)
+				Managers.state.conflict:spawn_queued_unit(var_3_3, var_3_4, var_3_5, var_3_6, nil, "terror_event", var_3_7)
 
-				delete_index = i
+				var_3_1 = iter_3_0
 
 				break
 			end
 		end
 
-		if delete_index then
-			table.remove(spawn_queue, delete_index)
+		if var_3_1 then
+			table.remove(var_3_0, var_3_1)
 		end
 	end,
-	on_split_enemy = function (killer_unit)
+	on_split_enemy = function(arg_4_0)
 		return
 	end,
-	server_ai_killed_function = function (context, data, killed_unit, killer_unit, death_data, killing_blow)
-		local damage_type = killing_blow[DamageDataIndex.DAMAGE_TYPE]
+	server_ai_killed_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+		local var_5_0 = arg_5_5[DamageDataIndex.DAMAGE_TYPE]
 
-		if killing_blow[DamageDataIndex.DAMAGE_SOURCE_NAME] == "suicide" and (damage_type == "volume_insta_kill" or damage_type == "forced") then
+		if arg_5_5[DamageDataIndex.DAMAGE_SOURCE_NAME] == "suicide" and (var_5_0 == "volume_insta_kill" or var_5_0 == "forced") then
 			return
 		end
 
-		local breed_tier_list = data.breed_tier_list
-		local breed_explosion_templates = data.breed_explosion_templates
-		local blackboard = BLACKBOARDS[killed_unit]
-		local breed = blackboard.breed
-		local breed_name = breed.name
-		local lower_tier_breed_name = breed_tier_list[breed_name]
+		local var_5_1 = arg_5_1.breed_tier_list
+		local var_5_2 = arg_5_1.breed_explosion_templates
+		local var_5_3 = BLACKBOARDS[arg_5_2]
+		local var_5_4 = var_5_3.breed
+		local var_5_5 = var_5_4.name
+		local var_5_6 = var_5_1[var_5_5]
 
-		if type(lower_tier_breed_name) == "table" then
-			local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-
-			lower_tier_breed_name = lower_tier_breed_name[difficulty_rank - 1]
+		if type(var_5_6) == "table" then
+			var_5_6 = var_5_6[Managers.state.difficulty:get_difficulty_rank() - 1]
 		end
 
-		local position = POSITION_LOOKUP[killed_unit]
-		local nav_world = Managers.state.entity:system("ai_system"):nav_world()
-		local spawn_queue = data.spawn_queue
-		local conflict_director = Managers.state.conflict
+		local var_5_7 = POSITION_LOOKUP[arg_5_2]
+		local var_5_8 = Managers.state.entity:system("ai_system"):nav_world()
+		local var_5_9 = arg_5_1.spawn_queue
+		local var_5_10 = Managers.state.conflict
 
-		if position and lower_tier_breed_name then
-			local rotation = Unit.local_rotation(killed_unit, 0)
-			local right = Quaternion.right(rotation) * 0.5
-			local left = -right
-			local lower_tier_breed = Breeds[lower_tier_breed_name]
-			local explosion_template_name = breed_explosion_templates[breed_name] or "generic_mutator_explosion"
+		if var_5_7 and var_5_6 then
+			local var_5_11 = Unit.local_rotation(arg_5_2, 0)
+			local var_5_12 = Quaternion.right(var_5_11) * 0.5
+			local var_5_13 = -var_5_12
+			local var_5_14 = Breeds[var_5_6]
+			local var_5_15 = var_5_2[var_5_5] or "generic_mutator_explosion"
 
-			AiUtils.generic_mutator_explosion(killed_unit, blackboard, explosion_template_name)
+			AiUtils.generic_mutator_explosion(arg_5_2, var_5_3, var_5_15)
 
-			local position_1 = position + right
-			local position_2 = position + left
-			local projected_start_pos_1 = LocomotionUtils.pos_on_mesh(nav_world, position_1, 1, 1)
+			local var_5_16 = var_5_7 + var_5_12
+			local var_5_17 = var_5_7 + var_5_13
+			local var_5_18 = LocomotionUtils.pos_on_mesh(var_5_8, var_5_16, 1, 1)
 
-			if not projected_start_pos_1 then
-				local p = GwNavQueries.inside_position_from_outside_position(nav_world, position_1, 6, 6, 8, 0.5)
+			if not var_5_18 then
+				local var_5_19 = GwNavQueries.inside_position_from_outside_position(var_5_8, var_5_16, 6, 6, 8, 0.5)
 
-				if p then
-					projected_start_pos_1 = p
+				if var_5_19 then
+					var_5_18 = var_5_19
 				end
 			end
 
-			local projected_start_pos_2 = LocomotionUtils.pos_on_mesh(nav_world, position_2, 1, 1)
+			local var_5_20 = LocomotionUtils.pos_on_mesh(var_5_8, var_5_17, 1, 1)
 
-			if not projected_start_pos_2 then
-				local p = GwNavQueries.inside_position_from_outside_position(nav_world, position_2, 6, 6, 8, 0.5)
+			if not var_5_20 then
+				local var_5_21 = GwNavQueries.inside_position_from_outside_position(var_5_8, var_5_17, 6, 6, 8, 0.5)
 
-				if p then
-					projected_start_pos_2 = p
+				if var_5_21 then
+					var_5_20 = var_5_21
 				end
 			end
 
-			local t = Managers.time:time("game")
-			local spawn_at_t = t + data.spawn_delay
+			local var_5_22 = Managers.time:time("game") + arg_5_1.spawn_delay
 
-			if projected_start_pos_1 then
-				local spawn_queue_entry = {
-					breed = lower_tier_breed,
-					rotation_box = QuaternionBox(rotation),
-					spawn_at_t = spawn_at_t,
-					position_box = Vector3Box(projected_start_pos_1),
+			if var_5_18 then
+				local var_5_23 = {
+					breed = var_5_14,
+					rotation_box = QuaternionBox(var_5_11),
+					spawn_at_t = var_5_22,
+					position_box = Vector3Box(var_5_18)
 				}
 
-				spawn_queue[#spawn_queue + 1] = spawn_queue_entry
+				var_5_9[#var_5_9 + 1] = var_5_23
 			end
 
-			if projected_start_pos_2 then
-				local spawn_queue_entry = {
-					breed = lower_tier_breed,
-					rotation_box = QuaternionBox(rotation),
-					spawn_at_t = spawn_at_t,
-					position_box = Vector3Box(projected_start_pos_2),
+			if var_5_20 then
+				local var_5_24 = {
+					breed = var_5_14,
+					rotation_box = QuaternionBox(var_5_11),
+					spawn_at_t = var_5_22,
+					position_box = Vector3Box(var_5_20)
 				}
 
-				spawn_queue[#spawn_queue + 1] = spawn_queue_entry
+				var_5_9[#var_5_9 + 1] = var_5_24
 			end
 
-			local unit_spawner = Managers.state.unit_spawner
+			local var_5_25 = Managers.state.unit_spawner
 
-			if not unit_spawner:is_marked_for_deletion(killed_unit) then
-				local froze_unit_successfully = conflict_director.breed_freezer and conflict_director.breed_freezer:try_mark_unit_for_freeze(breed, killed_unit)
+			if not var_5_25:is_marked_for_deletion(arg_5_2) and not (var_5_10.breed_freezer and var_5_10.breed_freezer:try_mark_unit_for_freeze(var_5_4, arg_5_2)) then
+				var_5_25:mark_for_deletion(arg_5_2)
 
-				if not froze_unit_successfully then
-					unit_spawner:mark_for_deletion(killed_unit)
-
-					if death_data then
-						death_data.remove = true
-					end
+				if arg_5_4 then
+					arg_5_4.remove = true
 				end
 			end
 
-			blackboard.about_to_be_destroyed = true
+			var_5_3.about_to_be_destroyed = true
 
-			data.template.on_split_enemy(killer_unit)
+			arg_5_1.template.on_split_enemy(arg_5_3)
 		end
-	end,
+	end
 }

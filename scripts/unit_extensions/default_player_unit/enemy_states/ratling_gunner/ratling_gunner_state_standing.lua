@@ -1,53 +1,50 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/ratling_gunner/ratling_gunner_state_standing.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/ratling_gunner/ratling_gunner_state_standing.lua
 
 RatlingGunnerStateStanding = class(RatlingGunnerStateStanding, EnemyCharacterStateStanding)
 
-RatlingGunnerStateStanding.init = function (self, character_state_init_context)
-	RatlingGunnerStateStanding.super.init(self, character_state_init_context)
+function RatlingGunnerStateStanding.init(arg_1_0, arg_1_1)
+	RatlingGunnerStateStanding.super.init(arg_1_0, arg_1_1)
 
-	self._fire_ability_id = self._career_extension:ability_id("fire")
-	self._reload_ability_id = self._career_extension:ability_id("reload")
+	arg_1_0._fire_ability_id = arg_1_0._career_extension:ability_id("fire")
+	arg_1_0._reload_ability_id = arg_1_0._career_extension:ability_id("reload")
 end
 
-RatlingGunnerStateStanding.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
-	RatlingGunnerStateStanding.super.on_enter(self, unit, input, dt, context, t, previous_state, params)
+function RatlingGunnerStateStanding.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	RatlingGunnerStateStanding.super.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 
-	self._left_wpn_particle_node_name = "g_ratlinggun"
-	self._left_wpn_particle_name = "fx/wpnfx_gunner_enemy_in_range_1p"
+	arg_2_0._left_wpn_particle_node_name = "g_ratlinggun"
+	arg_2_0._left_wpn_particle_name = "fx/wpnfx_gunner_enemy_in_range_1p"
 end
 
-RatlingGunnerStateStanding.update = function (self, unit, input, dt, context, t)
-	local handled = self:common_state_changes()
+function RatlingGunnerStateStanding.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	local var_3_0 = arg_3_0:common_state_changes()
 
-	if handled then
+	if var_3_0 then
 		return
 	end
 
-	local csm = self._csm
-	local career_extension = self._career_extension
+	local var_3_1 = arg_3_0._csm
+	local var_3_2 = arg_3_0._career_extension
 
-	if not handled then
-		CharacterStateHelper.update_weapon_actions(t, unit, self._input_extension, self._inventory_extension, self._health_extension)
+	if not var_3_0 then
+		CharacterStateHelper.update_weapon_actions(arg_3_5, arg_3_1, arg_3_0._input_extension, arg_3_0._inventory_extension, arg_3_0._health_extension)
 	end
 
-	self:_update_taunt_dialogue(t)
+	arg_3_0:_update_taunt_dialogue(arg_3_5)
 
-	handled = self:common_movement(t)
+	local var_3_3 = arg_3_0:common_movement(arg_3_5)
 end
 
-RatlingGunnerStateStanding.debug_display_ammo = function (self)
-	local unit = self._unit
-	local blackboard = BLACKBOARDS[unit]
-	local data = blackboard.attack_pattern_data or {}
-	local current_ammo = data.current_ammo or self._breed.max_ammo
-	local screen_width = RESOLUTION_LOOKUP.res_w
-	local screen_height = RESOLUTION_LOOKUP.res_h
-	local pos_y = screen_height * 0.85
-	local pos_x = screen_width * 0.87
-	local color = Color(100, 255, 0)
-	local text_pos = Vector3(pos_x, pos_y, 10)
-	local font_size = 40
-	local string_ammo = string.format("Ammo: %2d", current_ammo)
+function RatlingGunnerStateStanding.debug_display_ammo(arg_4_0)
+	local var_4_0 = arg_4_0._unit
+	local var_4_1 = (BLACKBOARDS[var_4_0].attack_pattern_data or {}).current_ammo or arg_4_0._breed.max_ammo
+	local var_4_2 = RESOLUTION_LOOKUP.res_w
+	local var_4_3 = RESOLUTION_LOOKUP.res_h * 0.85
+	local var_4_4 = var_4_2 * 0.87
+	local var_4_5 = Color(100, 255, 0)
+	local var_4_6 = Vector3(var_4_4, var_4_3, 10)
+	local var_4_7 = 40
+	local var_4_8 = string.format("Ammo: %2d", var_4_1)
 
-	Debug.draw_text(string_ammo, text_pos, font_size, color)
+	Debug.draw_text(var_4_8, var_4_6, var_4_7, var_4_5)
 end

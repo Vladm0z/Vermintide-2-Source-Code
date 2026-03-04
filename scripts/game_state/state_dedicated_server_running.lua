@@ -1,24 +1,22 @@
-﻿-- chunkname: @scripts/game_state/state_dedicated_server_running.lua
+-- chunkname: @scripts/game_state/state_dedicated_server_running.lua
 
 StateDedicatedServerRunning = class(StateDedicatedServerRunning)
 StateDedicatedServerRunning.NAME = "StateDedicatedServerRunning"
 
-StateDedicatedServerRunning.on_enter = function (self, params)
-	local loading_context = self.parent.parent.loading_context
-
-	self._game_server = loading_context.game_server
+function StateDedicatedServerRunning.on_enter(arg_1_0, arg_1_1)
+	arg_1_0._game_server = arg_1_0.parent.parent.loading_context.game_server
 end
 
-StateDedicatedServerRunning.update = function (self, dt, t)
-	local game_server = self._game_server
-	local old_state = game_server:state()
-	local new_state = game_server:update(dt, t)
+function StateDedicatedServerRunning.update(arg_2_0, arg_2_1, arg_2_2)
+	local var_2_0 = arg_2_0._game_server
+	local var_2_1 = var_2_0:state()
+	local var_2_2 = var_2_0:update(arg_2_1, arg_2_2)
 
-	if old_state ~= new_state and new_state == GameServerState.DISCONNECTED then
+	if var_2_1 ~= var_2_2 and var_2_2 == GameServerState.DISCONNECTED then
 		error("DISCONNECTED, RESTART!")
 	end
 end
 
-StateDedicatedServerRunning.on_exit = function (self)
+function StateDedicatedServerRunning.on_exit(arg_3_0)
 	return
 end

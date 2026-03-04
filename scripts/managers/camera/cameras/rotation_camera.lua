@@ -1,34 +1,34 @@
-﻿-- chunkname: @scripts/managers/camera/cameras/rotation_camera.lua
+-- chunkname: @scripts/managers/camera/cameras/rotation_camera.lua
 
 require("scripts/managers/camera/cameras/base_camera")
 
 RotationCamera = class(RotationCamera, BaseCamera)
 
-RotationCamera.init = function (self, ...)
-	RotationCamera.super.init(self, ...)
+function RotationCamera.init(arg_1_0, ...)
+	RotationCamera.super.init(arg_1_0, ...)
 
-	self._offset_pitch = 0
-	self._offset_yaw = 0
+	arg_1_0._offset_pitch = 0
+	arg_1_0._offset_yaw = 0
 end
 
-local INV_180 = 0.005555555555555556
+local var_0_0 = 0.005555555555555556
 
-RotationCamera.parse_parameters = function (self, camera_settings, parent_node)
-	BaseCamera.parse_parameters(self, camera_settings, parent_node)
+function RotationCamera.parse_parameters(arg_2_0, arg_2_1, arg_2_2)
+	BaseCamera.parse_parameters(arg_2_0, arg_2_1, arg_2_2)
 
-	if camera_settings.offset_pitch then
-		self._offset_pitch = math.pi * camera_settings.offset_pitch * INV_180
+	if arg_2_1.offset_pitch then
+		arg_2_0._offset_pitch = math.pi * arg_2_1.offset_pitch * var_0_0
 	end
 
-	if camera_settings.offset_yaw then
-		self._offset_yaw = math.pi * camera_settings.offset_yaw * INV_180
+	if arg_2_1.offset_yaw then
+		arg_2_0._offset_yaw = math.pi * arg_2_1.offset_yaw * var_0_0
 	end
 end
 
-RotationCamera.update = function (self, dt, position, rotation, data)
-	local offset_yaw_rot = Quaternion(Vector3.up(), self._offset_yaw)
-	local offset_pitch_rot = Quaternion(Vector3.right(), self._offset_pitch)
-	local new_rot = Quaternion.multiply(Quaternion.multiply(rotation, offset_pitch_rot), offset_yaw_rot)
+function RotationCamera.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local var_3_0 = Quaternion(Vector3.up(), arg_3_0._offset_yaw)
+	local var_3_1 = Quaternion(Vector3.right(), arg_3_0._offset_pitch)
+	local var_3_2 = Quaternion.multiply(Quaternion.multiply(arg_3_3, var_3_1), var_3_0)
 
-	BaseCamera.update(self, dt, position, new_rot, data)
+	BaseCamera.update(arg_3_0, arg_3_1, arg_3_2, var_3_2, arg_3_4)
 end

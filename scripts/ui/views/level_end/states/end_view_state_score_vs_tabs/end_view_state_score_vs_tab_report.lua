@@ -1,1029 +1,1008 @@
-﻿-- chunkname: @scripts/ui/views/level_end/states/end_view_state_score_vs_tabs/end_view_state_score_vs_tab_report.lua
+-- chunkname: @scripts/ui/views/level_end/states/end_view_state_score_vs_tabs/end_view_state_score_vs_tab_report.lua
 
-local definitions = local_require("scripts/ui/views/level_end/states/end_view_state_score_vs_tabs/end_view_state_score_vs_tab_report_definitions")
+local var_0_0 = local_require("scripts/ui/views/level_end/states/end_view_state_score_vs_tabs/end_view_state_score_vs_tab_report_definitions")
 
 EndViewStateScoreVSTabReport = class(EndViewStateScoreVSTabReport)
 EndViewStateScoreVSTabReport.NAME = "EndViewStateScoreVSTabReport"
 
-local ITEM_COLUMNS = 5
-local ITEM_SIZE = definitions.scenegraph_definition.hero_progress_item_anchor.size
-local ITEM_SPACING = 10
+local var_0_1 = 5
+local var_0_2 = var_0_0.scenegraph_definition.hero_progress_item_anchor.size
+local var_0_3 = 10
 
-EndViewStateScoreVSTabReport.on_enter = function (self, params)
+function EndViewStateScoreVSTabReport.on_enter(arg_1_0, arg_1_1)
 	print("[EndViewStateVS] Enter Substate EndViewStateScoreVSTabReport")
 
-	self._params = params
-	self._parent = params.parent
+	arg_1_0._params = arg_1_1
+	arg_1_0._parent = arg_1_1.parent
 
-	local context = params.context
+	local var_1_0 = arg_1_1.context
 
-	self._context = context
-	self._wwise_world = context.wwise_world
-	self._ui_renderer = context.ui_renderer
-	self._ui_top_renderer = context.ui_top_renderer
-	self._input_manager = context.input_manager
-	self._render_settings = {
+	arg_1_0._context = var_1_0
+	arg_1_0._wwise_world = var_1_0.wwise_world
+	arg_1_0._ui_renderer = var_1_0.ui_renderer
+	arg_1_0._ui_top_renderer = var_1_0.ui_top_renderer
+	arg_1_0._input_manager = var_1_0.input_manager
+	arg_1_0._render_settings = {
 		alpha_multiplier = 0,
-		snap_pixel_positions = true,
+		snap_pixel_positions = true
 	}
-	self._progression_presentation_done = self._context.progression_presentation_done
-	self._is_untrusted = script_data["eac-untrusted"]
-	self._animations = {}
-	self._ui_animations = {}
-	self._animation_callbacks = {}
-	self._challenge_entry_widgets = {}
-	self._level_up_item_index = 1
+	arg_1_0._progression_presentation_done = arg_1_0._context.progression_presentation_done
+	arg_1_0._is_untrusted = script_data["eac-untrusted"]
+	arg_1_0._animations = {}
+	arg_1_0._ui_animations = {}
+	arg_1_0._animation_callbacks = {}
+	arg_1_0._challenge_entry_widgets = {}
+	arg_1_0._level_up_item_index = 1
 
-	self:_extract_rewards()
-	self:_extract_hero_data()
-	self:_create_ui_elements(self._params)
+	arg_1_0:_extract_rewards()
+	arg_1_0:_extract_hero_data()
+	arg_1_0:_create_ui_elements(arg_1_0._params)
 
-	self._reward_popup = RewardPopupUI:new(context)
+	arg_1_0._reward_popup = RewardPopupUI:new(var_1_0)
 
-	if self._progression_presentation_done then
-		self:_show_final_progression()
+	if arg_1_0._progression_presentation_done then
+		arg_1_0:_show_final_progression()
 	else
-		self:_initialize_entries()
-		self:_start_transition_animation("on_enter", "on_enter")
+		arg_1_0:_initialize_entries()
+		arg_1_0:_start_transition_animation("on_enter", "on_enter")
 	end
 
-	self._parent:hide_team()
-	self:_trigger_telemetry_events()
+	arg_1_0._parent:hide_team()
+	arg_1_0:_trigger_telemetry_events()
 end
 
-EndViewStateScoreVSTabReport._show_final_progression = function (self)
-	self:_initialize_entries()
-	self:_gather_challenge_progression()
-	self:_set_hero_progression()
-	self:_start_transition_animation("on_enter_forced", "on_enter_forced")
-	self:_start_transition_animation("animate_hero_progress", "animate_hero_progress_forced")
-	self._parent:activate_back_to_keep_button()
+function EndViewStateScoreVSTabReport._show_final_progression(arg_2_0)
+	arg_2_0:_initialize_entries()
+	arg_2_0:_gather_challenge_progression()
+	arg_2_0:_set_hero_progression()
+	arg_2_0:_start_transition_animation("on_enter_forced", "on_enter_forced")
+	arg_2_0:_start_transition_animation("animate_hero_progress", "animate_hero_progress_forced")
+	arg_2_0._parent:activate_back_to_keep_button()
 end
 
-EndViewStateScoreVSTabReport._set_hero_progression = function (self)
-	local context = self._context
-	local hero_name = context.local_player_hero_name
-	local experience = ExperienceSettings.get_experience(hero_name)
-	local experience_pool = ExperienceSettings.get_experience_pool(hero_name)
+function EndViewStateScoreVSTabReport._set_hero_progression(arg_3_0)
+	local var_3_0 = arg_3_0._context.local_player_hero_name
+	local var_3_1 = ExperienceSettings.get_experience(var_3_0)
+	local var_3_2 = ExperienceSettings.get_experience_pool(var_3_0)
 
-	self._current_level = self:_set_current_experience(experience + experience_pool)
+	arg_3_0._current_level = arg_3_0:_set_current_experience(var_3_1 + var_3_2)
+	arg_3_0._widgets_by_name.portrait.content.level = arg_3_0._current_level
 
-	local hero_widget = self._widgets_by_name.portrait
+	local var_3_3 = arg_3_0._level_start[1]
+	local var_3_4 = arg_3_0._current_level + arg_3_0._extra_levels
+	local var_3_5 = var_3_4 + table.size(arg_3_0._level_up_rewards)
 
-	hero_widget.content.level = self._current_level
+	for iter_3_0 = var_3_4, var_3_5 do
+		local var_3_6 = arg_3_0._level_up_rewards[iter_3_0]
 
-	local start_level = self._level_start[1]
-	local current_level = self._current_level + self._extra_levels
-	local end_level = current_level + table.size(self._level_up_rewards)
-
-	for i = current_level, end_level do
-		local rewards = self._level_up_rewards[i]
-
-		if rewards then
-			self:_handle_rewards(rewards)
+		if var_3_6 then
+			arg_3_0:_handle_rewards(var_3_6)
 		end
 	end
 end
 
-EndViewStateScoreVSTabReport._extract_hero_data = function (self)
-	local peer_id = Network.peer_id()
-	local local_player_id = 1
-	local unique_id = peer_id .. ":" .. local_player_id
-	local player_data = self._player_session_scores[unique_id]
+function EndViewStateScoreVSTabReport._extract_hero_data(arg_4_0)
+	local var_4_0 = Network.peer_id()
+	local var_4_1 = 1
+	local var_4_2 = var_4_0 .. ":" .. var_4_1
+	local var_4_3 = arg_4_0._player_session_scores[var_4_2]
 
-	self._profile_index = player_data.profile_index
-	self._career_index = player_data.career_index
+	arg_4_0._profile_index = var_4_3.profile_index
+	arg_4_0._career_index = var_4_3.career_index
 
-	local profile = SPProfiles[self._profile_index]
+	local var_4_4 = SPProfiles[arg_4_0._profile_index]
 
-	self._hero_name = Localize(profile.character_name)
+	arg_4_0._hero_name = Localize(var_4_4.character_name)
 
-	local career = profile.careers[self._career_index]
+	local var_4_5 = var_4_4.careers[arg_4_0._career_index]
 
-	self._career_name = Localize(career.name)
+	arg_4_0._career_name = Localize(var_4_5.name)
 end
 
-EndViewStateScoreVSTabReport._extract_rewards = function (self)
-	self._game_won = self._context.game_won
-	self._rewards = self._context.rewards
-	self._level_up_rewards = self._params.parent.level_up_rewards
-	self._versus_level_up_rewards = self._params.parent.versus_level_up_rewards
-	self._level_start = self._rewards.level_start
-	self._versus_level_start = self._rewards.versus_level_start
-	self._mission_results = self._rewards.mission_results
-	self._player_session_scores = self._context.players_session_score
-	self._challenge_progression_status = self._context.challenge_progression_status
+function EndViewStateScoreVSTabReport._extract_rewards(arg_5_0)
+	arg_5_0._game_won = arg_5_0._context.game_won
+	arg_5_0._rewards = arg_5_0._context.rewards
+	arg_5_0._level_up_rewards = arg_5_0._params.parent.level_up_rewards
+	arg_5_0._versus_level_up_rewards = arg_5_0._params.parent.versus_level_up_rewards
+	arg_5_0._level_start = arg_5_0._rewards.level_start
+	arg_5_0._versus_level_start = arg_5_0._rewards.versus_level_start
+	arg_5_0._mission_results = arg_5_0._rewards.mission_results
+	arg_5_0._player_session_scores = arg_5_0._context.players_session_score
+	arg_5_0._challenge_progression_status = arg_5_0._context.challenge_progression_status
 end
 
-EndViewStateScoreVSTabReport._trigger_telemetry_events = function (self)
-	if self._is_untrusted then
+function EndViewStateScoreVSTabReport._trigger_telemetry_events(arg_6_0)
+	if arg_6_0._is_untrusted then
 		return
 	end
 
-	local start_level, start_experience = self._versus_level_start[1], self._versus_level_start[2]
+	local var_6_0 = arg_6_0._versus_level_start[1]
+	local var_6_1 = arg_6_0._versus_level_start[2]
 
-	Managers.telemetry_events:start_versus_experience(start_level, start_experience)
+	Managers.telemetry_events:start_versus_experience(var_6_0, var_6_1)
 
-	local end_experience = ExperienceSettings.get_versus_experience()
+	local var_6_2 = ExperienceSettings.get_versus_experience()
 
-	Managers.telemetry_events:versus_experience_gained(end_experience - start_experience)
+	Managers.telemetry_events:versus_experience_gained(var_6_2 - var_6_1)
 
-	local end_level, _, _ = ExperienceSettings.get_versus_level_from_experience(start_experience + self._total_experience_gained)
+	local var_6_3, var_6_4, var_6_5 = ExperienceSettings.get_versus_level_from_experience(var_6_1 + arg_6_0._total_experience_gained)
 
-	Managers.telemetry_events:versus_level_gained(start_level, end_level)
+	Managers.telemetry_events:versus_level_gained(var_6_0, var_6_3)
 
-	local currency_gained = 0
+	local var_6_6 = 0
 
-	for _, level_up_rewards in pairs(self._versus_level_up_rewards) do
-		for _, reward in pairs(level_up_rewards) do
-			if reward.currency == "VS" then
-				currency_gained = currency_gained + reward.awarded
+	for iter_6_0, iter_6_1 in pairs(arg_6_0._versus_level_up_rewards) do
+		for iter_6_2, iter_6_3 in pairs(iter_6_1) do
+			if iter_6_3.currency == "VS" then
+				var_6_6 = var_6_6 + iter_6_3.awarded
 			end
 		end
 	end
 
-	Managers.telemetry_events:versus_currency_gained(currency_gained)
+	Managers.telemetry_events:versus_currency_gained(var_6_6)
 end
 
-EndViewStateScoreVSTabReport._setup_hero_progression = function (self)
-	local level_start = self._level_start
-	local start_level, start_experience, start_experience_pool = level_start[1], level_start[2], level_start[3]
+function EndViewStateScoreVSTabReport._setup_hero_progression(arg_7_0)
+	local var_7_0 = arg_7_0._level_start
+	local var_7_1 = var_7_0[1]
+	local var_7_2 = var_7_0[2]
+	local var_7_3 = var_7_0[3]
 
-	self._progress_data = self:_get_total_experience_progress_data(start_experience, start_experience_pool)
+	arg_7_0._progress_data = arg_7_0:_get_total_experience_progress_data(var_7_2, var_7_3)
 
-	if self._progress_data.bonus_experience > 0 then
-		self._extra_levels = self._extra_levels + self._progress_data.start_extra_level
+	if arg_7_0._progress_data.bonus_experience > 0 then
+		arg_7_0._extra_levels = arg_7_0._extra_levels + arg_7_0._progress_data.start_extra_level
 	end
 
-	self._experience_presentation_completed = self._progression_presentation_done
+	arg_7_0._experience_presentation_completed = arg_7_0._progression_presentation_done
 end
 
-EndViewStateScoreVSTabReport._get_total_experience_progress_data = function (self, start_experience, start_experience_pool)
-	local start_level, start_progress = ExperienceSettings.get_level(start_experience)
-	local start_extra_level, start_extra_level_progress = ExperienceSettings.get_extra_level(start_experience_pool)
-	local context = self._context
-	local hero_name = context.local_player_hero_name
-	local end_experience = ExperienceSettings.get_experience(hero_name)
-	local end_level, end_progress = ExperienceSettings.get_level(end_experience)
-	local end_experience_pool = ExperienceSettings.get_experience_pool(hero_name)
-	local end_extra_level, end_extra_levels_progress = ExperienceSettings.get_extra_level(end_experience_pool)
-	local total_start_level = start_level + start_extra_level
-	local total_end_level = end_level + end_extra_level
-	local bonus_experience = 0
+function EndViewStateScoreVSTabReport._get_total_experience_progress_data(arg_8_0, arg_8_1, arg_8_2)
+	local var_8_0, var_8_1 = ExperienceSettings.get_level(arg_8_1)
+	local var_8_2, var_8_3 = ExperienceSettings.get_extra_level(arg_8_2)
+	local var_8_4 = arg_8_0._context.local_player_hero_name
+	local var_8_5 = ExperienceSettings.get_experience(var_8_4)
+	local var_8_6, var_8_7 = ExperienceSettings.get_level(var_8_5)
+	local var_8_8 = ExperienceSettings.get_experience_pool(var_8_4)
+	local var_8_9, var_8_10 = ExperienceSettings.get_extra_level(var_8_8)
+	local var_8_11 = var_8_0 + var_8_2
+	local var_8_12 = var_8_6 + var_8_9
+	local var_8_13 = 0
 
-	if start_level ~= ExperienceSettings.max_level and end_level == ExperienceSettings.max_level then
-		end_progress = start_extra_level_progress
-		bonus_experience = ExperienceSettings.get_experience_required_for_level(ExperienceSettings.max_level) * start_extra_level_progress
+	if var_8_0 ~= ExperienceSettings.max_level and var_8_6 == ExperienceSettings.max_level then
+		var_8_7 = var_8_3
+		var_8_13 = ExperienceSettings.get_experience_required_for_level(ExperienceSettings.max_level) * var_8_3
 	end
 
-	local progress_length = total_end_level - total_start_level + (end_progress - start_progress) + (end_extra_levels_progress - start_extra_level_progress)
-	local experience_gained = end_experience - start_experience + (end_experience_pool - start_experience_pool) + bonus_experience
+	local var_8_14 = var_8_12 - var_8_11 + (var_8_7 - var_8_1) + (var_8_10 - var_8_3)
+	local var_8_15 = var_8_5 - arg_8_1 + (var_8_8 - arg_8_2) + var_8_13
 
-	if start_level == ExperienceSettings.max_level then
-		start_experience = start_experience + start_experience_pool
-		start_progress = start_extra_level_progress
+	if var_8_0 == ExperienceSettings.max_level then
+		arg_8_1 = arg_8_1 + arg_8_2
+		var_8_1 = var_8_3
 	end
 
-	local min_time = UISettings.summary_screen.bar_progress_min_time
-	local max_time = UISettings.summary_screen.bar_progress_max_time
-	local time_multiplier = UISettings.summary_screen.bar_progress_experience_time_multiplier
-	local time = math.min(math.max(time_multiplier * experience_gained, min_time), max_time)
+	local var_8_16 = UISettings.summary_screen.bar_progress_min_time
+	local var_8_17 = UISettings.summary_screen.bar_progress_max_time
+	local var_8_18 = UISettings.summary_screen.bar_progress_experience_time_multiplier
+	local var_8_19 = math.min(math.max(var_8_18 * var_8_15, var_8_16), var_8_17)
 
 	return {
-		complete = false,
 		time = 0,
-		current_experience = start_experience,
-		experience_to_add = experience_gained,
-		total_progress = progress_length,
-		start_progress = start_progress,
-		start_extra_level = start_extra_level,
-		bonus_experience = bonus_experience,
-		total_time = time,
+		complete = false,
+		current_experience = arg_8_1,
+		experience_to_add = var_8_15,
+		total_progress = var_8_14,
+		start_progress = var_8_1,
+		start_extra_level = var_8_2,
+		bonus_experience = var_8_13,
+		total_time = var_8_19
 	}
 end
 
-EndViewStateScoreVSTabReport._play_sound = function (self, event_name)
-	self._parent:play_sound(event_name)
+function EndViewStateScoreVSTabReport._play_sound(arg_9_0, arg_9_1)
+	arg_9_0._parent:play_sound(arg_9_1)
 end
 
-EndViewStateScoreVSTabReport._set_global_wwise_parameter = function (self, parameter_name, value)
-	WwiseWorld.set_global_parameter(self._wwise_world, parameter_name, value)
+function EndViewStateScoreVSTabReport._set_global_wwise_parameter(arg_10_0, arg_10_1, arg_10_2)
+	WwiseWorld.set_global_parameter(arg_10_0._wwise_world, arg_10_1, arg_10_2)
 end
 
-EndViewStateScoreVSTabReport._initialize_entries = function (self)
-	self:_create_summary_entries(self._game_won)
-	self:_populate_hero_progression()
+function EndViewStateScoreVSTabReport._initialize_entries(arg_11_0)
+	arg_11_0:_create_summary_entries(arg_11_0._game_won)
+	arg_11_0:_populate_hero_progression()
 end
 
-EndViewStateScoreVSTabReport._populate_hero_progression = function (self)
-	local peer_id = Network.peer_id()
-	local local_player_id = 1
-	local unique_id = peer_id .. ":" .. local_player_id
-	local player_data = self._player_session_scores[unique_id]
-	local profile_index = player_data.profile_index
-	local career_index = player_data.career_index
-	local scenegraph_id = "portrait"
-	local frame_settings_name = player_data.portrait_frame
-	local level_start = self._level_start
-	local start_level, start_experience, start_experience_pool = level_start[1], level_start[2], level_start[3]
-	local start_level = ExperienceSettings.get_level(start_experience)
-	local current_experience = start_experience + start_experience_pool
+function EndViewStateScoreVSTabReport._populate_hero_progression(arg_12_0)
+	local var_12_0 = Network.peer_id()
+	local var_12_1 = 1
+	local var_12_2 = var_12_0 .. ":" .. var_12_1
+	local var_12_3 = arg_12_0._player_session_scores[var_12_2]
+	local var_12_4 = var_12_3.profile_index
+	local var_12_5 = var_12_3.career_index
+	local var_12_6 = "portrait"
+	local var_12_7 = var_12_3.portrait_frame
+	local var_12_8 = arg_12_0._level_start
+	local var_12_9 = var_12_8[1]
+	local var_12_10 = var_12_8[2]
+	local var_12_11 = var_12_8[3]
+	local var_12_12 = ExperienceSettings.get_level(var_12_10)
+	local var_12_13 = var_12_10 + var_12_11
 
-	if start_level < ExperienceSettings.max_level then
-		current_experience = start_experience
+	if var_12_12 < ExperienceSettings.max_level then
+		var_12_13 = var_12_10
 	end
 
-	local widget = self._widgets_by_name.experience_gained_text
-	local content = widget.content
+	arg_12_0._widgets_by_name.experience_gained_text.content.text = string.format(var_0_0.summary_value_string, arg_12_0._total_experience_gained)
+	arg_12_0._current_level, arg_12_0._extra_levels = arg_12_0:_set_current_experience(var_12_13)
 
-	content.text = string.format(definitions.summary_value_string, self._total_experience_gained)
-	self._current_level, self._extra_levels = self:_set_current_experience(current_experience)
+	local var_12_14 = tostring(arg_12_0._current_level)
+	local var_12_15 = 1
+	local var_12_16 = false
+	local var_12_17 = var_12_5 and UIUtils.get_portrait_image_by_profile_index(var_12_4, var_12_5) or "unit_frame_portrait_default"
+	local var_12_18 = UIWidgets.create_portrait_frame(var_12_6, var_12_7, var_12_14, var_12_15, var_12_16, var_12_17)
+	local var_12_19 = UIWidget.init(var_12_18)
 
-	local level_text = tostring(self._current_level)
-	local scale = 1
-	local retained_mode = false
-	local portrait_texture = career_index and UIUtils.get_portrait_image_by_profile_index(profile_index, career_index) or "unit_frame_portrait_default"
-	local widget_definition = UIWidgets.create_portrait_frame(scenegraph_id, frame_settings_name, level_text, scale, retained_mode, portrait_texture)
-	local widget = UIWidget.init(widget_definition)
+	arg_12_0._widgets_by_name.portrait = var_12_19
+	arg_12_0._hero_progress_widgets[#arg_12_0._hero_progress_widgets + 1] = var_12_19
 
-	self._widgets_by_name.portrait = widget
-	self._hero_progress_widgets[#self._hero_progress_widgets + 1] = widget
+	local var_12_20 = SPProfiles[var_12_4]
+	local var_12_21 = Localize(var_12_20.character_name)
+	local var_12_22 = var_12_20.careers[var_12_5]
+	local var_12_23 = Localize(var_12_22.name)
 
-	local profile = SPProfiles[profile_index]
-	local hero_name = Localize(profile.character_name)
-	local career = profile.careers[career_index]
-	local career_name = Localize(career.name)
-	local hero_name_widget = self._widgets_by_name.hero_name
-
-	hero_name_widget.content.text = hero_name
-
-	local career_name_widget = self._widgets_by_name.career_name
-
-	career_name_widget.content.text = career_name
+	arg_12_0._widgets_by_name.hero_name.content.text = var_12_21
+	arg_12_0._widgets_by_name.career_name.content.text = var_12_23
 end
 
-EndViewStateScoreVSTabReport._animate_experience_bar = function (self, dt, displaying_reward_presentation)
-	local progress_data = self._progress_data
+function EndViewStateScoreVSTabReport._animate_experience_bar(arg_13_0, arg_13_1, arg_13_2)
+	local var_13_0 = arg_13_0._progress_data
 
-	if not progress_data or progress_data.complete or displaying_reward_presentation or self.level_up_anim_id or self._experience_presentation_completed then
+	if not var_13_0 or var_13_0.complete or arg_13_2 or arg_13_0.level_up_anim_id or arg_13_0._experience_presentation_completed then
 		return
 	end
 
-	if not self._playing_experience_bar_sound then
-		self:_play_sound("Play_vs_hud_progression_hero_counter_loop")
+	if not arg_13_0._playing_experience_bar_sound then
+		arg_13_0:_play_sound("Play_vs_hud_progression_hero_counter_loop")
 
-		self._playing_experience_bar_sound = true
+		arg_13_0._playing_experience_bar_sound = true
 	end
 
-	local current_time = progress_data.time
-	local total_time = progress_data.total_time
-	local time_progress = current_time / total_time
-	local smoothstep_progress = math.smoothstep(time_progress, 0, 1)
+	local var_13_1 = var_13_0.time
+	local var_13_2 = var_13_0.total_time
+	local var_13_3 = var_13_1 / var_13_2
+	local var_13_4 = math.smoothstep(var_13_3, 0, 1)
+	local var_13_5 = math.min(var_13_1 + arg_13_1, var_13_2)
 
-	current_time = math.min(current_time + dt, total_time)
-	progress_data.time = current_time
+	var_13_0.time = var_13_5
 
-	self:_set_global_wwise_parameter("summary_meter_progress", current_time / total_time)
+	arg_13_0:_set_global_wwise_parameter("summary_meter_progress", var_13_5 / var_13_2)
 
-	local current_experience = progress_data.current_experience
-	local experience_to_add = progress_data.experience_to_add
-	local current_experience_to_add = math.floor(experience_to_add * smoothstep_progress)
-	local presentation_experience = math.floor(current_experience + current_experience_to_add)
-	local level_reached, extra_levels = self:_set_current_experience(presentation_experience)
-	local has_reached_level = level_reached ~= self._current_level
+	local var_13_6 = var_13_0.current_experience
+	local var_13_7 = var_13_0.experience_to_add
+	local var_13_8 = math.floor(var_13_7 * var_13_4)
+	local var_13_9 = math.floor(var_13_6 + var_13_8)
+	local var_13_10, var_13_11 = arg_13_0:_set_current_experience(var_13_9)
+	local var_13_12 = var_13_10 ~= arg_13_0._current_level
 
-	if self._extra_levels ~= nil then
-		if self._progress_data.bonus_experience > 0 then
-			extra_levels = extra_levels + self._progress_data.start_extra_level
+	if arg_13_0._extra_levels ~= nil then
+		if arg_13_0._progress_data.bonus_experience > 0 then
+			var_13_11 = var_13_11 + arg_13_0._progress_data.start_extra_level
 		end
 
-		has_reached_level = has_reached_level or extra_levels ~= self._extra_levels
+		var_13_12 = var_13_12 or var_13_11 ~= arg_13_0._extra_levels
 	end
 
-	if has_reached_level then
-		self._current_level = level_reached
-		self._extra_levels = extra_levels
-		self._level_up_anim_id = self._ui_animator:start_animation("level_up", self._widgets_by_name, definitions.scenegraph_definition, {
-			wwise_world = self.wwise_world,
+	if var_13_12 then
+		arg_13_0._current_level = var_13_10
+		arg_13_0._extra_levels = var_13_11
+		arg_13_0._level_up_anim_id = arg_13_0._ui_animator:start_animation("level_up", arg_13_0._widgets_by_name, var_0_0.scenegraph_definition, {
+			wwise_world = arg_13_0.wwise_world
 		})
+		arg_13_0._widgets_by_name.portrait.content.level = arg_13_0._current_level
 
-		local hero_widget = self._widgets_by_name.portrait
+		local var_13_13 = arg_13_0._current_level + arg_13_0._extra_levels
+		local var_13_14 = arg_13_0._level_up_rewards[var_13_13]
 
-		hero_widget.content.level = self._current_level
-
-		local current_level = self._current_level + self._extra_levels
-		local rewards = self._level_up_rewards[current_level]
-
-		if rewards then
-			self:_handle_rewards(rewards)
+		if var_13_14 then
+			arg_13_0:_handle_rewards(var_13_14)
 		end
 
-		self._playing_experience_bar_sound = false
+		arg_13_0._playing_experience_bar_sound = false
 
-		self:_play_sound("Stop_vs_hud_progression_hero_counter_loop")
+		arg_13_0:_play_sound("Stop_vs_hud_progression_hero_counter_loop")
 	end
 
-	if current_time == total_time then
-		progress_data.complete = true
-		self._experience_presentation_completed = true
+	if var_13_5 == var_13_2 then
+		var_13_0.complete = true
+		arg_13_0._experience_presentation_completed = true
 
-		self:_play_sound("Stop_vs_hud_progression_hero_counter_loop")
-		self:_gather_challenge_progression()
+		arg_13_0:_play_sound("Stop_vs_hud_progression_hero_counter_loop")
+		arg_13_0:_gather_challenge_progression()
 	end
 end
 
-EndViewStateScoreVSTabReport._gather_challenge_progression = function (self)
-	local challenge_progression_entries = {}
-	local start_progression = self._challenge_progression_status.start_progress
-	local end_progression = self._challenge_progression_status.end_progress
-	local num_completed = 0
-	local added_groups = {}
+function EndViewStateScoreVSTabReport._gather_challenge_progression(arg_14_0)
+	local var_14_0 = {}
+	local var_14_1 = arg_14_0._challenge_progression_status.start_progress
+	local var_14_2 = arg_14_0._challenge_progression_status.end_progress
+	local var_14_3 = 0
+	local var_14_4 = {}
 
-	for id, start_progress in pairs(start_progression) do
-		local end_progress = end_progression[id]
+	for iter_14_0, iter_14_1 in pairs(var_14_1) do
+		local var_14_5 = var_14_2[iter_14_0]
 
-		if start_progress ~= end_progress then
-			challenge_progression_entries[#challenge_progression_entries + 1] = {
-				id = id,
-				start_progress = start_progress,
-				end_progress = end_progress,
+		if iter_14_1 ~= var_14_5 then
+			var_14_0[#var_14_0 + 1] = {
+				id = iter_14_0,
+				start_progress = iter_14_1,
+				end_progress = var_14_5
 			}
-			num_completed = num_completed + (end_progress >= 1 and 1 or 0)
+			var_14_3 = var_14_3 + (var_14_5 >= 1 and 1 or 0)
 		end
 	end
 
-	local function sort_func(a, b)
-		local a_progress = a.end_progress
-		local b_progress = b.end_progress
-
-		return b_progress < a_progress
+	local function var_14_6(arg_15_0, arg_15_1)
+		return arg_15_0.end_progress > arg_15_1.end_progress
 	end
 
-	table.sort(challenge_progression_entries, sort_func)
-	self:_trim_trailing_group_entries(challenge_progression_entries)
+	table.sort(var_14_0, var_14_6)
+	arg_14_0:_trim_trailing_group_entries(var_14_0)
 
-	local widget = self._widgets_by_name.challenge_progress_text
+	local var_14_7 = arg_14_0._widgets_by_name.challenge_progress_text
 
-	if num_completed > 0 then
-		widget.content.text = string.format(definitions.challenge_progress_text_string, num_completed)
+	if var_14_3 > 0 then
+		var_14_7.content.text = string.format(var_0_0.challenge_progress_text_string, var_14_3)
 	else
-		widget.content.text = Localize("achv_menu_achievements_category_title")
+		var_14_7.content.text = Localize("achv_menu_achievements_category_title")
 	end
 
-	self:_start_transition_animation("animate_challenge_progress", "animate_challenge_progress")
+	arg_14_0:_start_transition_animation("animate_challenge_progress", "animate_challenge_progress")
 
-	if self._progression_presentation_done then
-		self:_setup_challenge_progression_widgets(challenge_progression_entries)
+	if arg_14_0._progression_presentation_done then
+		arg_14_0:_setup_challenge_progression_widgets(var_14_0)
 	else
-		self._animation_callbacks.animate_challenge_progress = callback(self, "_setup_challenge_progression_widgets", challenge_progression_entries)
+		arg_14_0._animation_callbacks.animate_challenge_progress = callback(arg_14_0, "_setup_challenge_progression_widgets", var_14_0)
 	end
 end
 
-local TO_REMOVE = {}
+local var_0_4 = {}
 
-EndViewStateScoreVSTabReport._trim_trailing_group_entries = function (self, entries)
-	table.clear(TO_REMOVE)
+function EndViewStateScoreVSTabReport._trim_trailing_group_entries(arg_16_0, arg_16_1)
+	table.clear(var_0_4)
 
-	local groups = {}
+	local var_16_0 = {}
 
-	for i = 1, #entries do
-		local entry = entries[i]
-		local id = entry.id
-		local achievement_template = AchievementTemplates.achievements[id]
-		local group = achievement_template.group
+	for iter_16_0 = 1, #arg_16_1 do
+		local var_16_1 = arg_16_1[iter_16_0]
+		local var_16_2 = var_16_1.id
+		local var_16_3 = AchievementTemplates.achievements[var_16_2].group
 
-		if group then
-			if not groups[group] then
-				groups[group] = entry.end_progress < 1
+		if var_16_3 then
+			if not var_16_0[var_16_3] then
+				var_16_0[var_16_3] = var_16_1.end_progress < 1
 			else
-				TO_REMOVE[#TO_REMOVE + 1] = i
+				var_0_4[#var_0_4 + 1] = iter_16_0
 			end
 		end
 	end
 
-	for i = #TO_REMOVE, 1, -1 do
-		table.remove(entries, TO_REMOVE[i])
+	for iter_16_1 = #var_0_4, 1, -1 do
+		table.remove(arg_16_1, var_0_4[iter_16_1])
 	end
 end
 
-EndViewStateScoreVSTabReport._setup_challenge_progression_widgets = function (self, challenge_progression_entries)
-	local spacing = 25
-	local callback_key
+function EndViewStateScoreVSTabReport._setup_challenge_progression_widgets(arg_17_0, arg_17_1)
+	local var_17_0 = 25
+	local var_17_1
 
-	for i = 1, #challenge_progression_entries do
-		local entry = challenge_progression_entries[i]
-		local idx = i - 1
-		local offset = {
-			idx % 2 * 400,
-			-math.floor(idx / 2) * (definitions.scenegraph_definition.challenge_entry_anchor.size[2] + spacing),
-			0,
+	for iter_17_0 = 1, #arg_17_1 do
+		local var_17_2 = arg_17_1[iter_17_0]
+		local var_17_3 = iter_17_0 - 1
+		local var_17_4 = {
+			var_17_3 % 2 * 400,
+			-math.floor(var_17_3 / 2) * (var_0_0.scenegraph_definition.challenge_entry_anchor.size[2] + var_17_0),
+			0
 		}
-		local widget_def = definitions.create_challenge_entry_func(entry.id, entry.start_progress, entry.end_progress, offset, self._progression_presentation_done)
-		local widget = UIWidget.init(widget_def)
+		local var_17_5 = var_0_0.create_challenge_entry_func(var_17_2.id, var_17_2.start_progress, var_17_2.end_progress, var_17_4, arg_17_0._progression_presentation_done)
+		local var_17_6 = UIWidget.init(var_17_5)
 
-		self._challenge_entry_widgets[#self._challenge_entry_widgets + 1] = widget
+		arg_17_0._challenge_entry_widgets[#arg_17_0._challenge_entry_widgets + 1] = var_17_6
 
-		local entry_name = "achievement_entry_" .. #self._challenge_entry_widgets
+		local var_17_7 = "achievement_entry_" .. #arg_17_0._challenge_entry_widgets
 
-		self._widgets_by_name[entry_name] = widget
+		arg_17_0._widgets_by_name[var_17_7] = var_17_6
 
-		self:_start_challenge_entry_animation(i, entry_name)
+		arg_17_0:_start_challenge_entry_animation(iter_17_0, var_17_7)
 	end
 
-	local offset_y = math.ceil(#challenge_progression_entries / 2) * (definitions.scenegraph_definition.challenge_entry_anchor.size[2] + spacing)
-	local excess_area = offset_y - definitions.scenegraph_definition.challenge_progress_anchor.size[2]
+	local var_17_8 = math.ceil(#arg_17_1 / 2) * (var_0_0.scenegraph_definition.challenge_entry_anchor.size[2] + var_17_0) - var_0_0.scenegraph_definition.challenge_progress_anchor.size[2]
 
-	if excess_area > 0 then
-		local ui_scenegraph = self._ui_scenegraph
-		local scroll_area_scenegraph_id = "challenge_entry_anchor"
-		local scroll_area_anchor_scenegraph_id = "challenge_progress_area"
-		local enable_auto_scroll = false
-		local optional_scroll_area_hotspot_widget, horizontal_scrollbar
+	if var_17_8 > 0 then
+		local var_17_9 = arg_17_0._ui_scenegraph
+		local var_17_10 = "challenge_entry_anchor"
+		local var_17_11 = "challenge_progress_area"
+		local var_17_12 = false
+		local var_17_13
+		local var_17_14
 
-		self._scrollbar_ui = ScrollbarUI:new(ui_scenegraph, scroll_area_scenegraph_id, scroll_area_anchor_scenegraph_id, excess_area, enable_auto_scroll, optional_scroll_area_hotspot_widget, horizontal_scrollbar)
+		arg_17_0._scrollbar_ui = ScrollbarUI:new(var_17_9, var_17_10, var_17_11, var_17_8, var_17_12, var_17_13, var_17_14)
 	end
 
-	self._parent:activate_back_to_keep_button()
+	arg_17_0._parent:activate_back_to_keep_button()
 end
 
-EndViewStateScoreVSTabReport._start_challenge_entry_animation = function (self, index, entry_name, is_callback)
-	if self._progression_presentation_done then
+function EndViewStateScoreVSTabReport._start_challenge_entry_animation(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+	if arg_18_0._progression_presentation_done then
 		return
 	end
 
-	self:_play_sound("Play_vs_hud_progression_challenge_appear")
+	arg_18_0:_play_sound("Play_vs_hud_progression_challenge_appear")
 
-	local callback_key = "wait_" .. index - 1
+	local var_18_0 = "wait_" .. arg_18_1 - 1
 
-	if not table.is_empty(self._animations) and not is_callback then
-		self._animation_callbacks[callback_key] = callback(self, "_start_challenge_entry_animation", index, entry_name, true)
+	if not table.is_empty(arg_18_0._animations) and not arg_18_3 then
+		arg_18_0._animation_callbacks[var_18_0] = callback(arg_18_0, "_start_challenge_entry_animation", arg_18_1, arg_18_2, true)
 	else
-		local data = {
-			entry_name = entry_name,
+		local var_18_1 = {
+			entry_name = arg_18_2
 		}
-		local animation_key = "animate_challenge_entry_" .. index
-		local wait_key = "wait_" .. index
+		local var_18_2 = "animate_challenge_entry_" .. arg_18_1
+		local var_18_3 = "wait_" .. arg_18_1
 
-		self:_start_transition_animation(animation_key, "animate_challenge_entry", data)
-		self:_start_transition_animation(wait_key, "wait")
+		arg_18_0:_start_transition_animation(var_18_2, "animate_challenge_entry", var_18_1)
+		arg_18_0:_start_transition_animation(var_18_3, "wait")
 	end
 end
 
-EndViewStateScoreVSTabReport._handle_rewards = function (self, rewards)
-	local level_up_item_index = self._level_up_item_index
-	local item_interface = Managers.backend:get_interface("items")
+function EndViewStateScoreVSTabReport._handle_rewards(arg_19_0, arg_19_1)
+	local var_19_0 = arg_19_0._level_up_item_index
+	local var_19_1 = Managers.backend:get_interface("items")
 
-	for idx, reward in ipairs(rewards) do
-		local backend_id = reward.backend_id
-		local item = item_interface:get_item_from_id(backend_id)
-		local offset_index = level_up_item_index - 1
-		local level_up_column_index = offset_index % ITEM_COLUMNS
-		local level_up_column_row = math.floor(offset_index / ITEM_COLUMNS)
-		local offset_x = level_up_column_index * ITEM_SIZE[1] + (level_up_column_index - 1) * ITEM_SPACING
-		local offset_y = -level_up_column_row * ITEM_SIZE[2] - (level_up_column_row - 1) * ITEM_SPACING
-		local offset = {
-			offset_x,
-			offset_y,
-			0,
+	for iter_19_0, iter_19_1 in ipairs(arg_19_1) do
+		local var_19_2 = iter_19_1.backend_id
+		local var_19_3 = var_19_1:get_item_from_id(var_19_2)
+		local var_19_4 = var_19_0 - 1
+		local var_19_5 = var_19_4 % var_0_1
+		local var_19_6 = math.floor(var_19_4 / var_0_1)
+		local var_19_7 = var_19_5 * var_0_2[1] + (var_19_5 - 1) * var_0_3
+		local var_19_8 = -var_19_6 * var_0_2[2] - (var_19_6 - 1) * var_0_3
+		local var_19_9 = {
+			var_19_7,
+			var_19_8,
+			0
 		}
-		local widget_def = definitions.create_item_widget_func(item, offset, self._progression_presentation_done)
-		local widget = UIWidget.init(widget_def)
+		local var_19_10 = var_0_0.create_item_widget_func(var_19_3, var_19_9, arg_19_0._progression_presentation_done)
+		local var_19_11 = UIWidget.init(var_19_10)
 
-		self._widgets[#self._widgets + 1] = widget
-		self._widgets_by_name["rewards_" .. level_up_item_index] = widget
+		arg_19_0._widgets[#arg_19_0._widgets + 1] = var_19_11
+		arg_19_0._widgets_by_name["rewards_" .. var_19_0] = var_19_11
 
-		if not self._progression_presentation_done then
-			local data = {
-				widget = widget,
-				offset = table.clone(offset),
-				sound = (item.key == "level_chest" or item.key == "level_chest_lesser") and "Play_vs_hud_progression_hero_chest_appear" or "Play_vs_hud_progression_hero_item_appear",
+		if not arg_19_0._progression_presentation_done then
+			local var_19_12 = {
+				widget = var_19_11,
+				offset = table.clone(var_19_9),
+				sound = (var_19_3.key == "level_chest" or var_19_3.key == "level_chest_lesser") and "Play_vs_hud_progression_hero_chest_appear" or "Play_vs_hud_progression_hero_item_appear"
 			}
 
-			if idx > 1 then
-				self._animation_callbacks["animate_item_" .. level_up_item_index - 1] = callback(self, "_start_transition_animation", "animate_item_" .. level_up_item_index, "animate_item", data)
+			if iter_19_0 > 1 then
+				arg_19_0._animation_callbacks["animate_item_" .. var_19_0 - 1] = callback(arg_19_0, "_start_transition_animation", "animate_item_" .. var_19_0, "animate_item", var_19_12)
 			else
-				self:_start_transition_animation("animate_item_" .. level_up_item_index, "animate_item", data)
+				arg_19_0:_start_transition_animation("animate_item_" .. var_19_0, "animate_item", var_19_12)
 			end
 		end
 
-		level_up_item_index = level_up_item_index + 1
+		var_19_0 = var_19_0 + 1
 	end
 
-	if not self._progression_presentation_done then
-		self:_play_sound("Play_vs_hud_progression_hero_level_up")
+	if not arg_19_0._progression_presentation_done then
+		arg_19_0:_play_sound("Play_vs_hud_progression_hero_level_up")
 	end
 
-	self._level_up_item_index = level_up_item_index
+	arg_19_0._level_up_item_index = var_19_0
 end
 
-EndViewStateScoreVSTabReport._set_current_experience = function (self, current_experience)
-	local level, progress = ExperienceSettings.get_level(current_experience)
-	local extra_levels = 0
+function EndViewStateScoreVSTabReport._set_current_experience(arg_20_0, arg_20_1)
+	local var_20_0, var_20_1 = ExperienceSettings.get_level(arg_20_1)
+	local var_20_2 = 0
 
-	if level == ExperienceSettings.max_level then
-		local overflow_pool = current_experience - ExperienceSettings.max_experience
+	if var_20_0 == ExperienceSettings.max_level then
+		local var_20_3 = arg_20_1 - ExperienceSettings.max_experience
 
-		extra_levels, progress = ExperienceSettings.get_extra_level(overflow_pool)
+		var_20_2, var_20_1 = ExperienceSettings.get_extra_level(var_20_3)
 	end
 
-	local next_level = math.clamp(level + 1, 0, ExperienceSettings.max_level)
+	local var_20_4 = math.clamp(var_20_0 + 1, 0, ExperienceSettings.max_level)
 
-	if not self._progression_presentation_done and (self._current_level and level > self._current_level or self._extra_levels and extra_levels > self._extra_levels) then
-		progress = 1
+	if not arg_20_0._progression_presentation_done and (arg_20_0._current_level and var_20_0 > arg_20_0._current_level or arg_20_0._extra_levels and var_20_2 > arg_20_0._extra_levels) then
+		var_20_1 = 1
 	end
 
-	local widgets_by_name = self._widgets_by_name
-	local experience_bar = widgets_by_name.experience_bar
-	local content = experience_bar.content
-	local style = experience_bar.style
-	local default_size = style.experience_bar.default_size
+	local var_20_5 = arg_20_0._widgets_by_name.experience_bar
+	local var_20_6 = var_20_5.content
+	local var_20_7 = var_20_5.style
+	local var_20_8 = var_20_7.experience_bar.default_size
 
-	style.experience_bar.size[1] = default_size[1] * progress
-	style.experience_bar_end.offset[1] = default_size[1] * progress
+	var_20_7.experience_bar.size[1] = var_20_8[1] * var_20_1
+	var_20_7.experience_bar_end.offset[1] = var_20_8[1] * var_20_1
 
-	return level, extra_levels
+	return var_20_0, var_20_2
 end
 
-EndViewStateScoreVSTabReport._create_summary_entries = function (self)
-	local mission_rewards = self._mission_results
-	local entries = {}
-	local widget_index = 0
-	local total_experience_gained = 0
-	local summary_index = 1
+function EndViewStateScoreVSTabReport._create_summary_entries(arg_21_0)
+	local var_21_0 = arg_21_0._mission_results
+	local var_21_1 = {}
+	local var_21_2 = 0
+	local var_21_3 = 0
+	local var_21_4 = 1
 
-	for index, mission_reward in ipairs(mission_rewards) do
-		local experience = mission_reward.experience and math.round(mission_reward.experience)
+	for iter_21_0, iter_21_1 in ipairs(var_21_0) do
+		local var_21_5 = iter_21_1.experience and math.round(iter_21_1.experience)
 
-		if experience and experience > 0 then
-			local name = "summary_entry_" .. summary_index
-			local text = mission_reward.text
-			local format_values = mission_reward.format_values
-			local title_text
+		if var_21_5 and var_21_5 > 0 then
+			local var_21_6 = "summary_entry_" .. var_21_4
+			local var_21_7 = iter_21_1.text
+			local var_21_8 = iter_21_1.format_values
+			local var_21_9
 
-			if text then
-				if format_values then
-					title_text = UIUtils.format_localized_description(text, format_values)
+			if var_21_7 then
+				if var_21_8 then
+					var_21_9 = UIUtils.format_localized_description(var_21_7, var_21_8)
 				else
-					title_text = Localize(text)
+					var_21_9 = Localize(var_21_7)
 				end
 			end
 
-			local value = mission_reward.value
-			local bonus = mission_reward.bonus
-			local icon = mission_reward.icon
-			local value_text = experience and tostring(experience) or value and tostring(value) or ""
-			local localized_text = title_text .. (value and " (" .. tostring(value) .. ")" or "")
-			local entry = {
-				name = name,
-				title_text = localized_text,
-				experience = experience,
-				value = value,
-				value_text = value_text,
-				bonus = bonus,
-				icon = icon,
+			local var_21_10 = iter_21_1.value
+			local var_21_11 = iter_21_1.bonus
+			local var_21_12 = iter_21_1.icon
+			local var_21_13 = var_21_5 and tostring(var_21_5) or var_21_10 and tostring(var_21_10) or ""
+			local var_21_14 = var_21_9 .. (var_21_10 and " (" .. tostring(var_21_10) .. ")" or "")
+			local var_21_15 = {
+				name = var_21_6,
+				title_text = var_21_14,
+				experience = var_21_5,
+				value = var_21_10,
+				value_text = var_21_13,
+				bonus = var_21_11,
+				icon = var_21_12
 			}
 
-			entries[#entries + 1] = entry
+			var_21_1[#var_21_1 + 1] = var_21_15
 
-			local widget_def = definitions.create_summery_entry_func(summary_index, localized_text, experience, self._progression_presentation_done)
-			local widget = UIWidget.init(widget_def)
+			local var_21_16 = var_0_0.create_summery_entry_func(var_21_4, var_21_14, var_21_5, arg_21_0._progression_presentation_done)
+			local var_21_17 = UIWidget.init(var_21_16)
 
-			self._widgets[#self._widgets + 1] = widget
-			self._widgets_by_name[name] = widget
-			total_experience_gained = total_experience_gained + experience
-			summary_index = summary_index + 1
+			arg_21_0._widgets[#arg_21_0._widgets + 1] = var_21_17
+			arg_21_0._widgets_by_name[var_21_6] = var_21_17
+			var_21_3 = var_21_3 + var_21_5
+			var_21_4 = var_21_4 + 1
 		end
 	end
 
-	self._total_experience_gained = total_experience_gained
+	arg_21_0._total_experience_gained = var_21_3
 
-	if self._progression_presentation_done then
-		self:_set_final_level_up_progress(total_experience_gained)
+	if arg_21_0._progression_presentation_done then
+		arg_21_0:_set_final_level_up_progress(var_21_3)
 	else
-		self:_setup_entry_animations(entries, total_experience_gained)
+		arg_21_0:_setup_entry_animations(var_21_1, var_21_3)
 	end
 end
 
-EndViewStateScoreVSTabReport._set_final_level_up_progress = function (self, total_experience_gained)
-	local bar_thresholds = definitions.bar_thresholds
-	local versus_level_start = self._versus_level_start
+function EndViewStateScoreVSTabReport._set_final_level_up_progress(arg_22_0, arg_22_1)
+	local var_22_0 = var_0_0.bar_thresholds
+	local var_22_1 = arg_22_0._versus_level_start
 
-	if table.is_empty(versus_level_start) then
-		versus_level_start[1] = ExperienceSettings.get_versus_level()
-		versus_level_start[2] = ExperienceSettings.get_versus_experience()
+	if table.is_empty(var_22_1) then
+		var_22_1[1] = ExperienceSettings.get_versus_level()
+		var_22_1[2] = ExperienceSettings.get_versus_experience()
 	end
 
-	local start_level, start_experience = versus_level_start[1], versus_level_start[2]
-	local _, start_experience_level_progress = ExperienceSettings.get_versus_level_from_experience(start_experience)
-	local end_level, end_experience_level_progress, end_experience_pool = ExperienceSettings.get_versus_level_from_experience(start_experience + total_experience_gained)
-	local num_levels_gained = end_level - start_level
-	local widget = self._widgets_by_name.level_up
-	local content = widget.content
+	local var_22_2 = var_22_1[1]
+	local var_22_3 = var_22_1[2]
+	local var_22_4, var_22_5 = ExperienceSettings.get_versus_level_from_experience(var_22_3)
+	local var_22_6, var_22_7, var_22_8 = ExperienceSettings.get_versus_level_from_experience(var_22_3 + arg_22_1)
+	local var_22_9 = var_22_6 - var_22_2
+	local var_22_10 = arg_22_0._widgets_by_name.level_up.content
 
-	if num_levels_gained > 0 then
-		content.starting_progress = 0
-		content.final_progress = math.lerp(bar_thresholds[1], bar_thresholds[2], end_experience_level_progress)
-	elseif start_level == ExperienceSettings.max_versus_level then
-		content.starting_progress = 1
-		content.final_progress = 1
+	if var_22_9 > 0 then
+		var_22_10.starting_progress = 0
+		var_22_10.final_progress = math.lerp(var_22_0[1], var_22_0[2], var_22_7)
+	elseif var_22_2 == ExperienceSettings.max_versus_level then
+		var_22_10.starting_progress = 1
+		var_22_10.final_progress = 1
 	else
-		content.starting_progress = math.lerp(bar_thresholds[1], bar_thresholds[2], start_experience_level_progress)
-		content.final_progress = math.lerp(bar_thresholds[1], bar_thresholds[2], end_experience_level_progress)
+		var_22_10.starting_progress = math.lerp(var_22_0[1], var_22_0[2], var_22_5)
+		var_22_10.final_progress = math.lerp(var_22_0[1], var_22_0[2], var_22_7)
 	end
 
-	content.level_text = end_level
+	var_22_10.level_text = var_22_6
 
-	local insignia_widget = self._widgets_by_name.insignia
-	local insignia_main_uvs, insignia_addon_uvs = UIAtlasHelper.get_insignia_texture_settings_from_level(end_level)
+	local var_22_11 = arg_22_0._widgets_by_name.insignia
+	local var_22_12, var_22_13 = UIAtlasHelper.get_insignia_texture_settings_from_level(var_22_6)
 
-	insignia_widget.content.insignia_main.uvs = insignia_main_uvs
-	insignia_widget.content.insignia_addon.uvs = insignia_addon_uvs
-	insignia_widget.content.level = end_level
-
-	local summary_value_widget = self._widgets_by_name.summary_value_text
-
-	summary_value_widget.content.text = string.format(definitions.summary_value_string, total_experience_gained)
+	var_22_11.content.insignia_main.uvs = var_22_12
+	var_22_11.content.insignia_addon.uvs = var_22_13
+	var_22_11.content.level = var_22_6
+	arg_22_0._widgets_by_name.summary_value_text.content.text = string.format(var_0_0.summary_value_string, arg_22_1)
 end
 
-EndViewStateScoreVSTabReport._setup_entry_animations = function (self, entries, total_experience_gained)
-	local num_entries = #entries
-
-	if num_entries > 0 then
-		local entry_data = {
-			entry_name = "summary_entry_1",
+function EndViewStateScoreVSTabReport._setup_entry_animations(arg_23_0, arg_23_1, arg_23_2)
+	if #arg_23_1 > 0 then
+		local var_23_0 = {
+			entry_name = "summary_entry_1"
 		}
 
-		self:_start_transition_animation("animate_progression_entry_1", "animate_progression_entry", entry_data)
+		arg_23_0:_start_transition_animation("animate_progression_entry_1", "animate_progression_entry", var_23_0)
 
-		for i = 2, #entries do
-			local data = {
-				entry_name = "summary_entry_" .. i,
+		for iter_23_0 = 2, #arg_23_1 do
+			local var_23_1 = {
+				entry_name = "summary_entry_" .. iter_23_0
 			}
 
-			self._animation_callbacks["animate_progression_entry_" .. i - 1] = callback(self, "_start_transition_animation", "animate_progression_entry_" .. i, "animate_progression_entry", data)
+			arg_23_0._animation_callbacks["animate_progression_entry_" .. iter_23_0 - 1] = callback(arg_23_0, "_start_transition_animation", "animate_progression_entry_" .. iter_23_0, "animate_progression_entry", var_23_1)
 		end
 
-		local progression_callback_key = "animate_progression_entry_" .. #entries
-		local versus_level_start = self._versus_level_start
+		local var_23_2 = "animate_progression_entry_" .. #arg_23_1
+		local var_23_3 = arg_23_0._versus_level_start
 
-		if table.is_empty(versus_level_start) then
-			versus_level_start[1] = ExperienceSettings.get_versus_level()
-			versus_level_start[2] = ExperienceSettings.get_versus_experience()
+		if table.is_empty(var_23_3) then
+			var_23_3[1] = ExperienceSettings.get_versus_level()
+			var_23_3[2] = ExperienceSettings.get_versus_experience()
 		end
 
-		local start_level, start_experience = versus_level_start[1], versus_level_start[2]
+		local var_23_4 = var_23_3[1]
+		local var_23_5 = var_23_3[2]
 
-		if start_level ~= ExperienceSettings.max_versus_level then
-			local _, start_experience_level_progress = ExperienceSettings.get_versus_level_from_experience(start_experience)
-			local end_level, end_experience_level_progress = ExperienceSettings.get_versus_level_from_experience(start_experience + total_experience_gained)
-			local breakdown, breakdown_index = ExperienceSettings.get_versus_progress_breakdown(start_experience, total_experience_gained)
-			local num_levels_gained = end_level - start_level
-			local sound_parameter_value = 0
-			local level_up_reward_level
+		if var_23_4 ~= ExperienceSettings.max_versus_level then
+			local var_23_6, var_23_7 = ExperienceSettings.get_versus_level_from_experience(var_23_5)
+			local var_23_8, var_23_9 = ExperienceSettings.get_versus_level_from_experience(var_23_5 + arg_23_2)
+			local var_23_10, var_23_11 = ExperienceSettings.get_versus_progress_breakdown(var_23_5, arg_23_2)
+			local var_23_12 = var_23_8 - var_23_4
+			local var_23_13 = 0
+			local var_23_14
 
-			for i = 0, num_levels_gained do
-				local new_level = math.min(start_level + (i + 1), ExperienceSettings.max_versus_level)
-				local animation_key = "animate_level_up_" .. i + 1
+			for iter_23_1 = 0, var_23_12 do
+				local var_23_15 = math.min(var_23_4 + (iter_23_1 + 1), ExperienceSettings.max_versus_level)
+				local var_23_16 = "animate_level_up_" .. iter_23_1 + 1
 
-				if i == 0 then
-					if num_levels_gained > 0 then
-						local data = {
+				if iter_23_1 == 0 then
+					if var_23_12 > 0 then
+						local var_23_17 = {
 							final_progress = 1,
-							starting_progress = start_experience_level_progress,
-							level = new_level,
+							starting_progress = var_23_7,
+							level = var_23_15,
 							sound_parameter_values = {
-								sound_parameter_value,
-								sound_parameter_value + breakdown[breakdown_index],
-							},
+								var_23_13,
+								var_23_13 + var_23_10[var_23_11]
+							}
 						}
 
-						if new_level == ExperienceSettings.max_versus_level then
-							data.on_complete_optional_starting_progress = 1
-							data.on_complete_optional_final_progress = 1
+						if var_23_15 == ExperienceSettings.max_versus_level then
+							var_23_17.on_complete_optional_starting_progress = 1
+							var_23_17.on_complete_optional_final_progress = 1
 						end
 
-						self._animation_callbacks[progression_callback_key] = callback(self, "_start_transition_animation", animation_key, "animate_level_up_start", data)
-						level_up_reward_level = new_level
+						arg_23_0._animation_callbacks[var_23_2] = callback(arg_23_0, "_start_transition_animation", var_23_16, "animate_level_up_start", var_23_17)
+						var_23_14 = var_23_15
 					else
-						local data = {
-							starting_progress = start_experience_level_progress,
-							final_progress = end_experience_level_progress,
+						local var_23_18 = {
+							starting_progress = var_23_7,
+							final_progress = var_23_9,
 							sound_parameter_values = {
-								sound_parameter_value,
-								sound_parameter_value + breakdown[breakdown_index],
-							},
+								var_23_13,
+								var_23_13 + var_23_10[var_23_11]
+							}
 						}
 
-						self._animation_callbacks[progression_callback_key] = callback(self, "_start_transition_animation", animation_key, "animate_level_up_start_end", data)
+						arg_23_0._animation_callbacks[var_23_2] = callback(arg_23_0, "_start_transition_animation", var_23_16, "animate_level_up_start_end", var_23_18)
 					end
-				elseif i < num_levels_gained then
-					local data = {
+				elseif iter_23_1 < var_23_12 then
+					local var_23_19 = {
 						final_progress = 1,
 						starting_progress = 0,
-						level = new_level,
+						level = var_23_15,
 						sound_parameter_values = {
-							sound_parameter_value,
-							sound_parameter_value + breakdown[breakdown_index],
-						},
+							var_23_13,
+							var_23_13 + var_23_10[var_23_11]
+						}
 					}
-					local reward_done_cb = callback(self, "_start_transition_animation", animation_key, "animate_level_up_linear", data)
+					local var_23_20 = callback(arg_23_0, "_start_transition_animation", var_23_16, "animate_level_up_linear", var_23_19)
 
-					self._animation_callbacks[progression_callback_key] = callback(self, "_start_level_up_reward_presentation", level_up_reward_level, reward_done_cb)
-					level_up_reward_level = new_level
-				elseif new_level == ExperienceSettings.max_versus_level then
-					local data = {
+					arg_23_0._animation_callbacks[var_23_2] = callback(arg_23_0, "_start_level_up_reward_presentation", var_23_14, var_23_20)
+					var_23_14 = var_23_15
+				elseif var_23_15 == ExperienceSettings.max_versus_level then
+					local var_23_21 = {
 						final_progress = 1,
 						starting_progress = 1,
-						level = ExperienceSettings.max_versus_level,
+						level = ExperienceSettings.max_versus_level
 					}
-					local reward_done_cb = callback(self, "_start_transition_animation", animation_key, "animate_level_up_instant", data)
+					local var_23_22 = callback(arg_23_0, "_start_transition_animation", var_23_16, "animate_level_up_instant", var_23_21)
 
-					self._animation_callbacks[progression_callback_key] = callback(self, "_start_level_up_reward_presentation", level_up_reward_level, reward_done_cb)
+					arg_23_0._animation_callbacks[var_23_2] = callback(arg_23_0, "_start_level_up_reward_presentation", var_23_14, var_23_22)
 				else
-					local data = {
+					local var_23_23 = {
 						starting_progress = 0,
-						final_progress = end_experience_level_progress,
-						level = new_level,
+						final_progress = var_23_9,
+						level = var_23_15,
 						sound_parameter_values = {
-							sound_parameter_value,
-							sound_parameter_value + breakdown[breakdown_index],
-						},
+							var_23_13,
+							var_23_13 + var_23_10[var_23_11]
+						}
 					}
-					local reward_done_cb = callback(self, "_start_transition_animation", animation_key, "animate_level_up_end", data)
+					local var_23_24 = callback(arg_23_0, "_start_transition_animation", var_23_16, "animate_level_up_end", var_23_23)
 
-					self._animation_callbacks[progression_callback_key] = callback(self, "_start_level_up_reward_presentation", level_up_reward_level, reward_done_cb)
+					arg_23_0._animation_callbacks[var_23_2] = callback(arg_23_0, "_start_level_up_reward_presentation", var_23_14, var_23_24)
 				end
 
-				progression_callback_key = animation_key
-				sound_parameter_value = sound_parameter_value + breakdown[breakdown_index]
-				breakdown_index = breakdown_index + 1
+				var_23_2 = var_23_16
+				var_23_13 = var_23_13 + var_23_10[var_23_11]
+				var_23_11 = var_23_11 + 1
 			end
 
-			self._animation_callbacks[progression_callback_key] = callback(self, "_start_transition_animation", "versus_level_up_pause", "versus_level_up_pause")
-			progression_callback_key = "versus_level_up_pause"
+			arg_23_0._animation_callbacks[var_23_2] = callback(arg_23_0, "_start_transition_animation", "versus_level_up_pause", "versus_level_up_pause")
+			var_23_2 = "versus_level_up_pause"
 		end
 
-		self._animation_callbacks[progression_callback_key] = callback(self, "_start_transition_animation", "animate_hero_progress", "animate_hero_progress")
-		self._animation_callbacks.animate_hero_progress = callback(self, "_setup_hero_progression")
+		arg_23_0._animation_callbacks[var_23_2] = callback(arg_23_0, "_start_transition_animation", "animate_hero_progress", "animate_hero_progress")
+		arg_23_0._animation_callbacks.animate_hero_progress = callback(arg_23_0, "_setup_hero_progression")
 	else
-		self:_start_transition_animation("animate_hero_progress", "animate_hero_progress")
+		arg_23_0:_start_transition_animation("animate_hero_progress", "animate_hero_progress")
 
-		self._animation_callbacks.animate_hero_progress = callback(self, "_setup_hero_progression")
+		arg_23_0._animation_callbacks.animate_hero_progress = callback(arg_23_0, "_setup_hero_progression")
 	end
 end
 
-local PRESENTATION_DATA = {}
+local var_0_5 = {}
 
-EndViewStateScoreVSTabReport._start_level_up_reward_presentation = function (self, level, reward_done_cb)
-	table.clear(PRESENTATION_DATA)
+function EndViewStateScoreVSTabReport._start_level_up_reward_presentation(arg_24_0, arg_24_1, arg_24_2)
+	table.clear(var_0_5)
 
-	local level_up_rewards = self._versus_level_up_rewards[level]
+	local var_24_0 = arg_24_0._versus_level_up_rewards[arg_24_1]
 
-	if not level_up_rewards then
-		reward_done_cb()
+	if not var_24_0 then
+		arg_24_2()
 
 		return
 	end
 
-	local entry = {}
-	local description = {}
-
-	description[1] = Localize("summary_screen_rank_up")
-	description[2] = Localize("versus_level_tag") .. " " .. level
-	entry[#entry + 1] = {
-		widget_type = "description",
-		value = description,
+	local var_24_1 = {}
+	local var_24_2 = {
+		Localize("summary_screen_rank_up"),
+		Localize("versus_level_tag") .. " " .. arg_24_1
 	}
 
-	local items = {}
-	local backend_items = Managers.backend:get_interface("items")
+	var_24_1[#var_24_1 + 1] = {
+		widget_type = "description",
+		value = var_24_2
+	}
 
-	for i = 1, #level_up_rewards do
-		local level_up_reward = level_up_rewards[i]
-		local item
-		local backend_id = level_up_reward.backend_id
+	local var_24_3 = {}
+	local var_24_4 = Managers.backend:get_interface("items")
 
-		if backend_id then
-			item = backend_items:get_item_from_id(backend_id)
+	for iter_24_0 = 1, #var_24_0 do
+		local var_24_5 = var_24_0[iter_24_0]
+		local var_24_6
+		local var_24_7 = var_24_5.backend_id
+
+		if var_24_7 then
+			var_24_6 = var_24_4:get_item_from_id(var_24_7)
 		else
-			item = {
-				data = BackendUtils.get_fake_currency_item(level_up_reward.currency or "SM", level_up_reward.awarded),
+			var_24_6 = {
+				data = BackendUtils.get_fake_currency_item(var_24_5.currency or "SM", var_24_5.awarded)
 			}
 		end
 
-		items[#items + 1] = item
+		var_24_3[#var_24_3 + 1] = var_24_6
 	end
 
-	entry[#entry + 1] = {
+	var_24_1[#var_24_1 + 1] = {
 		widget_type = "item_list",
-		value = items,
+		value = var_24_3
 	}
-	PRESENTATION_DATA[#PRESENTATION_DATA + 1] = entry
-	PRESENTATION_DATA.bg_alpha = 200
-	PRESENTATION_DATA.offset = {
+	var_0_5[#var_0_5 + 1] = var_24_1
+	var_0_5.bg_alpha = 200
+	var_0_5.offset = {
 		0,
 		0,
-		1,
+		1
 	}
 
-	self._reward_popup:display_presentation(PRESENTATION_DATA, reward_done_cb)
+	arg_24_0._reward_popup:display_presentation(var_0_5, arg_24_2)
 end
 
-EndViewStateScoreVSTabReport.on_exit = function (self, params)
+function EndViewStateScoreVSTabReport.on_exit(arg_25_0, arg_25_1)
 	print("[EndViewStateVS] Exit Substate EndViewStateScoreVSTabReport")
 
-	self._ui_scenegraph = nil
-	self._widgets = nil
-	self._widgets_by_name = nil
-	self._ui_animator = nil
-	self._context.progression_presentation_done = true
+	arg_25_0._ui_scenegraph = nil
+	arg_25_0._widgets = nil
+	arg_25_0._widgets_by_name = nil
+	arg_25_0._ui_animator = nil
+	arg_25_0._context.progression_presentation_done = true
 
-	if self._reward_popup then
-		self._reward_popup:destroy()
+	if arg_25_0._reward_popup then
+		arg_25_0._reward_popup:destroy()
 
-		self._reward_popup = nil
+		arg_25_0._reward_popup = nil
 	end
 end
 
-EndViewStateScoreVSTabReport._create_ui_elements = function (self, params)
-	local widget_definitions = definitions.widget_definitions
-	local challenge_widget_definitions = definitions.challenge_widget_definitions
-	local hero_progress_widget_definitions = definitions.hero_progress_widget_definitions
-	local summary_entry_widget_definitions = definitions.summary_entry_widgets
-	local scenegraph_definition = definitions.scenegraph_definition
-	local animation_definitions = definitions.animation_definitions
-	local bar_thresholds = definitions.bar_thresholds
+function EndViewStateScoreVSTabReport._create_ui_elements(arg_26_0, arg_26_1)
+	local var_26_0 = var_0_0.widget_definitions
+	local var_26_1 = var_0_0.challenge_widget_definitions
+	local var_26_2 = var_0_0.hero_progress_widget_definitions
+	local var_26_3 = var_0_0.summary_entry_widgets
+	local var_26_4 = var_0_0.scenegraph_definition
+	local var_26_5 = var_0_0.animation_definitions
+	local var_26_6 = var_0_0.bar_thresholds
 
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_26_0._ui_renderer)
 
-	self._scenegraph_definition = scenegraph_definition
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-	self._widgets, self._widgets_by_name = UIUtils.create_widgets(widget_definitions, {}, {})
-	self._hero_progress_widgets, self._widgets_by_name = UIUtils.create_widgets(hero_progress_widget_definitions, {}, self._widgets_by_name)
-	self._challenge_widgets, self._widgets_by_name = UIUtils.create_widgets(challenge_widget_definitions, {}, self._widgets_by_name)
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
+	arg_26_0._scenegraph_definition = var_26_4
+	arg_26_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_26_4)
+	arg_26_0._widgets, arg_26_0._widgets_by_name = UIUtils.create_widgets(var_26_0, {}, {})
+	arg_26_0._hero_progress_widgets, arg_26_0._widgets_by_name = UIUtils.create_widgets(var_26_2, {}, arg_26_0._widgets_by_name)
+	arg_26_0._challenge_widgets, arg_26_0._widgets_by_name = UIUtils.create_widgets(var_26_1, {}, arg_26_0._widgets_by_name)
+	arg_26_0._ui_animator = UIAnimator:new(arg_26_0._ui_scenegraph, var_26_5)
 
-	local level_start = self._versus_level_start
+	local var_26_7 = arg_26_0._versus_level_start
 
-	if table.is_empty(level_start) then
-		level_start[1] = ExperienceSettings.get_versus_level()
-		level_start[2] = ExperienceSettings.get_versus_experience()
+	if table.is_empty(var_26_7) then
+		var_26_7[1] = ExperienceSettings.get_versus_level()
+		var_26_7[2] = ExperienceSettings.get_versus_experience()
 	end
 
-	local versus_start_level, versus_start_experience = level_start[1], level_start[2]
-	local _, versus_start_experience_level_progress = ExperienceSettings.get_versus_level_from_experience(versus_start_experience)
-	local level_up_widget = self._widgets_by_name.level_up
+	local var_26_8 = var_26_7[1]
+	local var_26_9 = var_26_7[2]
+	local var_26_10, var_26_11 = ExperienceSettings.get_versus_level_from_experience(var_26_9)
+	local var_26_12 = arg_26_0._widgets_by_name.level_up
 
-	if versus_start_level == ExperienceSettings.max_versus_level then
-		level_up_widget.content.starting_progress = 1
-		level_up_widget.content.final_progress = 1
+	if var_26_8 == ExperienceSettings.max_versus_level then
+		var_26_12.content.starting_progress = 1
+		var_26_12.content.final_progress = 1
 	else
-		level_up_widget.content.starting_progress = math.lerp(bar_thresholds[1], bar_thresholds[2], versus_start_experience_level_progress)
-		level_up_widget.content.final_progress = math.lerp(bar_thresholds[1], bar_thresholds[2], versus_start_experience_level_progress)
+		var_26_12.content.starting_progress = math.lerp(var_26_6[1], var_26_6[2], var_26_11)
+		var_26_12.content.final_progress = math.lerp(var_26_6[1], var_26_6[2], var_26_11)
 	end
 
-	level_up_widget.content.level_text = versus_start_level
+	var_26_12.content.level_text = var_26_8
 
-	local insignia_widget = self._widgets_by_name.insignia
-	local insignia_main_uvs, insignia_addon_uvs = UIAtlasHelper.get_insignia_texture_settings_from_level(versus_start_level)
+	local var_26_13 = arg_26_0._widgets_by_name.insignia
+	local var_26_14, var_26_15 = UIAtlasHelper.get_insignia_texture_settings_from_level(var_26_8)
 
-	insignia_widget.content.insignia_main.uvs = insignia_main_uvs
-	insignia_widget.content.insignia_addon.uvs = insignia_addon_uvs
-	insignia_widget.content.level = versus_start_level
+	var_26_13.content.insignia_main.uvs = var_26_14
+	var_26_13.content.insignia_addon.uvs = var_26_15
+	var_26_13.content.level = var_26_8
 end
 
-EndViewStateScoreVSTabReport._get_definitions = function (self)
+function EndViewStateScoreVSTabReport._get_definitions(arg_27_0)
 	return local_require("scripts/ui/views/level_end/states/end_view_state_score_vs_tabs/end_view_state_score_vs_tab_report_definitions")
 end
 
-EndViewStateScoreVSTabReport.update = function (self, dt, t)
-	self:_draw(dt, t)
-	self:_update_animations(dt, t)
-	self:_handle_reward_popup(dt, t)
+function EndViewStateScoreVSTabReport.update(arg_28_0, arg_28_1, arg_28_2)
+	arg_28_0:_draw(arg_28_1, arg_28_2)
+	arg_28_0:_update_animations(arg_28_1, arg_28_2)
+	arg_28_0:_handle_reward_popup(arg_28_1, arg_28_2)
 end
 
-EndViewStateScoreVSTabReport._handle_reward_popup = function (self, dt, t)
-	self._reward_popup:update(dt, t)
+function EndViewStateScoreVSTabReport._handle_reward_popup(arg_29_0, arg_29_1, arg_29_2)
+	arg_29_0._reward_popup:update(arg_29_1, arg_29_2)
 end
 
-EndViewStateScoreVSTabReport.post_update = function (self, dt, t)
+function EndViewStateScoreVSTabReport.post_update(arg_30_0, arg_30_1, arg_30_2)
 	return
 end
 
-EndViewStateScoreVSTabReport._handle_input = function (self, dt, t)
-	local input_manager = self._input_manager
-	local input_service = input_manager:get_service("end_of_level")
-
-	if input_service:get("confirm_hold") then
-		return dt * 5
+function EndViewStateScoreVSTabReport._handle_input(arg_31_0, arg_31_1, arg_31_2)
+	if arg_31_0._input_manager:get_service("end_of_level"):get("confirm_hold") then
+		return arg_31_1 * 5
 	end
 
-	return dt
+	return arg_31_1
 end
 
-EndViewStateScoreVSTabReport._update_animations = function (self, dt)
-	self._ui_animator:update(dt)
+function EndViewStateScoreVSTabReport._update_animations(arg_32_0, arg_32_1)
+	arg_32_0._ui_animator:update(arg_32_1)
 
-	for name, animation in pairs(self._ui_animations) do
-		UIAnimation.update(animation, dt)
+	for iter_32_0, iter_32_1 in pairs(arg_32_0._ui_animations) do
+		UIAnimation.update(iter_32_1, arg_32_1)
 
-		if UIAnimation.completed(animation) then
-			self._ui_animations[name] = nil
+		if UIAnimation.completed(iter_32_1) then
+			arg_32_0._ui_animations[iter_32_0] = nil
 		end
 	end
 
-	local animations = self._animations
-	local ui_animator = self._ui_animator
+	local var_32_0 = arg_32_0._animations
+	local var_32_1 = arg_32_0._ui_animator
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_32_2, iter_32_3 in pairs(var_32_0) do
+		if var_32_1:is_animation_completed(iter_32_3) then
+			var_32_1:stop_animation(iter_32_3)
 
-			animations[animation_name] = nil
+			var_32_0[iter_32_2] = nil
 
-			local anim_callback = self._animation_callbacks[animation_name]
+			local var_32_2 = arg_32_0._animation_callbacks[iter_32_2]
 
-			self._animation_callbacks[animation_name] = nil
+			arg_32_0._animation_callbacks[iter_32_2] = nil
 
-			if anim_callback then
-				anim_callback()
+			if var_32_2 then
+				var_32_2()
 			end
 		end
 	end
 
-	if table.is_empty(self._animations) then
-		self:_animate_experience_bar(dt)
+	if table.is_empty(arg_32_0._animations) then
+		arg_32_0:_animate_experience_bar(arg_32_1)
 	end
 end
 
-EndViewStateScoreVSTabReport._draw = function (self, input_service, dt, t)
-	local input_manager = self._input_manager
-	local input_service = input_manager:get_service("end_of_level")
-	local ui_renderer = self._ui_top_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local render_settings = self._render_settings
+function EndViewStateScoreVSTabReport._draw(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+	local var_33_0 = arg_33_0._input_manager:get_service("end_of_level")
+	local var_33_1 = arg_33_0._ui_top_renderer
+	local var_33_2 = arg_33_0._ui_scenegraph
+	local var_33_3 = arg_33_0._render_settings
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+	UIRenderer.begin_pass(var_33_1, var_33_2, var_33_0, arg_33_2, nil, var_33_3)
 
-	for _, widget in ipairs(self._widgets) do
-		UIRenderer.draw_widget(ui_renderer, widget)
+	for iter_33_0, iter_33_1 in ipairs(arg_33_0._widgets) do
+		UIRenderer.draw_widget(var_33_1, iter_33_1)
 	end
 
-	local alpha_multiplier = render_settings.alpha_multiplier
+	local var_33_4 = var_33_3.alpha_multiplier
 
-	render_settings.alpha_multiplier = render_settings.hero_progress_alpha_multiplier or 0
+	var_33_3.alpha_multiplier = var_33_3.hero_progress_alpha_multiplier or 0
 
-	for _, widget in ipairs(self._hero_progress_widgets) do
-		UIRenderer.draw_widget(ui_renderer, widget)
+	for iter_33_2, iter_33_3 in ipairs(arg_33_0._hero_progress_widgets) do
+		UIRenderer.draw_widget(var_33_1, iter_33_3)
 	end
 
-	render_settings.alpha_multiplier = alpha_multiplier
+	var_33_3.alpha_multiplier = var_33_4
 
-	local alpha_multiplier = render_settings.alpha_multiplier
+	local var_33_5 = var_33_3.alpha_multiplier
 
-	render_settings.alpha_multiplier = render_settings.challenge_alpha_multiplier or 0
+	var_33_3.alpha_multiplier = var_33_3.challenge_alpha_multiplier or 0
 
-	for _, widget in ipairs(self._challenge_widgets) do
-		UIRenderer.draw_widget(ui_renderer, widget)
+	for iter_33_4, iter_33_5 in ipairs(arg_33_0._challenge_widgets) do
+		UIRenderer.draw_widget(var_33_1, iter_33_5)
 	end
 
-	render_settings.alpha_multiplier = alpha_multiplier
+	var_33_3.alpha_multiplier = var_33_5
 
-	local anchor_pos_y = self._ui_scenegraph.challenge_entry_anchor.local_position[2]
-	local entry_size_y = self._ui_scenegraph.challenge_entry_anchor.size[2]
-	local area_size_y = self._ui_scenegraph.challenge_progress_area.size[2]
-	local alpha_multiplier = render_settings.alpha_multiplier
+	local var_33_6 = arg_33_0._ui_scenegraph.challenge_entry_anchor.local_position[2]
+	local var_33_7 = arg_33_0._ui_scenegraph.challenge_entry_anchor.size[2]
+	local var_33_8 = arg_33_0._ui_scenegraph.challenge_progress_area.size[2]
+	local var_33_9 = var_33_3.alpha_multiplier
 
-	for _, widget in ipairs(self._challenge_entry_widgets) do
-		render_settings.alpha_multiplier = widget.content.alpha_multiplier
+	for iter_33_6, iter_33_7 in ipairs(arg_33_0._challenge_entry_widgets) do
+		var_33_3.alpha_multiplier = iter_33_7.content.alpha_multiplier
 
-		local offset_y = widget.offset[2] + anchor_pos_y
+		local var_33_10 = iter_33_7.offset[2] + var_33_6
 
-		if offset_y < -area_size_y then
+		if var_33_10 < -var_33_8 then
 			break
-		elseif offset_y - entry_size_y < 0 then
-			UIRenderer.draw_widget(ui_renderer, widget)
+		elseif var_33_10 - var_33_7 < 0 then
+			UIRenderer.draw_widget(var_33_1, iter_33_7)
 		end
 	end
 
-	render_settings.alpha_multiplier = alpha_multiplier
+	var_33_3.alpha_multiplier = var_33_9
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_33_1)
 
-	if self._scrollbar_ui then
-		self._scrollbar_ui:update(dt, t, ui_renderer, input_service, render_settings)
+	if arg_33_0._scrollbar_ui then
+		arg_33_0._scrollbar_ui:update(arg_33_2, arg_33_3, var_33_1, var_33_0, var_33_3)
 	end
 end
 
-EndViewStateScoreVSTabReport._start_transition_animation = function (self, key, animation_name, data)
-	local params = {
-		set_global_wwise_parameter = callback(self, "_set_global_wwise_parameter"),
-		play_sound = callback(self, "_play_sound"),
-		render_settings = self._render_settings,
-		data = data,
+function EndViewStateScoreVSTabReport._start_transition_animation(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+	local var_34_0 = {
+		set_global_wwise_parameter = callback(arg_34_0, "_set_global_wwise_parameter"),
+		play_sound = callback(arg_34_0, "_play_sound"),
+		render_settings = arg_34_0._render_settings,
+		data = arg_34_3
 	}
-	local widgets = self._widgets_by_name
-	local anim_id = self._ui_animator:start_animation(animation_name, widgets, self._scenegraph_definition, params)
+	local var_34_1 = arg_34_0._widgets_by_name
+	local var_34_2 = arg_34_0._ui_animator:start_animation(arg_34_2, var_34_1, arg_34_0._scenegraph_definition, var_34_0)
 
-	self._animations[key] = anim_id
+	arg_34_0._animations[arg_34_1] = var_34_2
 end

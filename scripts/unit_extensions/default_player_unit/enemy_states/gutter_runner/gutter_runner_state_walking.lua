@@ -1,42 +1,38 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/gutter_runner/gutter_runner_state_walking.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/gutter_runner/gutter_runner_state_walking.lua
 
 GutterRunnerStateWalking = class(GutterRunnerStateWalking, EnemyCharacterStateWalking)
 
-GutterRunnerStateWalking.init = function (self, character_state_init_context, name)
-	GutterRunnerStateWalking.super.init(self, character_state_init_context, name)
+function GutterRunnerStateWalking.init(arg_1_0, arg_1_1, arg_1_2)
+	GutterRunnerStateWalking.super.init(arg_1_0, arg_1_1, arg_1_2)
 
-	self._pounce_ability_id = self._career_extension:ability_id("pounce")
-	self._foff_ability_id = self._career_extension:ability_id("foff")
+	arg_1_0._pounce_ability_id = arg_1_0._career_extension:ability_id("pounce")
+	arg_1_0._foff_ability_id = arg_1_0._career_extension:ability_id("foff")
 end
 
-GutterRunnerStateWalking.update = function (self, unit, input, dt, context, t)
-	local handled = self:common_state_changes()
-
-	if handled then
+function GutterRunnerStateWalking.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	if arg_2_0:common_state_changes() then
 		return
 	end
 
-	local csm = self._csm
-	local career_extension = self._career_extension
+	local var_2_0 = arg_2_0._csm
+	local var_2_1 = arg_2_0._career_extension
 
-	if career_extension:ability_was_triggered(self._pounce_ability_id) then
-		csm:change_state("gutter_runner_prowling")
-
-		return
-	end
-
-	if career_extension:ability_was_triggered(self._foff_ability_id) then
-		csm:change_state("gutter_runner_foff")
+	if var_2_1:ability_was_triggered(arg_2_0._pounce_ability_id) then
+		var_2_0:change_state("gutter_runner_prowling")
 
 		return
 	end
 
-	if not self._status_extension:is_invisible() then
-		self:_update_taunt_dialogue(t)
+	if var_2_1:ability_was_triggered(arg_2_0._foff_ability_id) then
+		var_2_0:change_state("gutter_runner_foff")
+
+		return
 	end
 
-	local ghost_mode_extension = self._ghost_mode_extension
-	local in_ghost_mode = ghost_mode_extension:is_in_ghost_mode()
+	if not arg_2_0._status_extension:is_invisible() then
+		arg_2_0:_update_taunt_dialogue(arg_2_5)
+	end
 
-	handled = self:common_movement(in_ghost_mode, dt)
+	local var_2_2 = arg_2_0._ghost_mode_extension:is_in_ghost_mode()
+	local var_2_3 = arg_2_0:common_movement(var_2_2, arg_2_3)
 end

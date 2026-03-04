@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/entity_system/systems/projectile/drone_templates.lua
+-- chunkname: @scripts/entity_system/systems/projectile/drone_templates.lua
 
 DroneTemplates = DroneTemplates or {}
 

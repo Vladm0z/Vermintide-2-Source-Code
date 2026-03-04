@@ -1,6 +1,6 @@
-﻿-- chunkname: @scripts/settings/experience_settings.lua
+-- chunkname: @scripts/settings/experience_settings.lua
 
-local experience_levels = {
+local var_0_0 = {
 	0,
 	200,
 	400,
@@ -35,209 +35,195 @@ local experience_levels = {
 	3100,
 	3200,
 	3300,
-	3400,
+	3400
 }
-local level_used_for_extra_levels_experience = 30
-local num_defined_levels = #experience_levels
-local experience_for_extra_levels = experience_levels[level_used_for_extra_levels_experience]
-local total_defined_experience = 0
+local var_0_1 = 30
+local var_0_2 = #var_0_0
+local var_0_3 = var_0_0[var_0_1]
+local var_0_4 = 0
 
-for i = 1, num_defined_levels do
-	total_defined_experience = total_defined_experience + experience_levels[i]
+for iter_0_0 = 1, var_0_2 do
+	var_0_4 = var_0_4 + var_0_0[iter_0_0]
 end
 
-local max_reward_experience = 0
+local var_0_5 = 0
 
-for i = 1, math.min(#experience_levels, level_used_for_extra_levels_experience) do
-	max_reward_experience = max_reward_experience + experience_levels[i]
+for iter_0_1 = 1, math.min(#var_0_0, var_0_1) do
+	var_0_5 = var_0_5 + var_0_0[iter_0_1]
 end
 
 ExperienceSettings = ExperienceSettings or {}
 
-ExperienceSettings.get_player_level = function (player)
-	local network_manager = Managers.state.network
-	local network_game = network_manager:game()
+function ExperienceSettings.get_player_level(arg_1_0)
+	local var_1_0 = Managers.state.network:game()
 
-	if not network_game then
+	if not var_1_0 then
 		return nil
 	end
 
-	local unit_storage = Managers.state.unit_storage
-	local unit = player.player_unit
-	local go_id = unit_storage:go_id(unit)
+	local var_1_1 = Managers.state.unit_storage
+	local var_1_2 = arg_1_0.player_unit
+	local var_1_3 = var_1_1:go_id(var_1_2)
 
-	if not go_id then
+	if not var_1_3 then
 		return nil
 	end
 
-	local level = GameSession.game_object_field(network_game, go_id, "level")
-
-	return level
+	return (GameSession.game_object_field(var_1_0, var_1_3, "level"))
 end
 
-ExperienceSettings.get_highest_hero_level = function ()
-	local best_class, best_xp = nil, 0
+function ExperienceSettings.get_highest_hero_level()
+	local var_2_0
+	local var_2_1 = 0
 
-	for i = 1, 5 do
-		local profile = SPProfiles[i]
-		local experience = ExperienceSettings.get_experience(profile.display_name)
+	for iter_2_0 = 1, 5 do
+		local var_2_2 = SPProfiles[iter_2_0]
+		local var_2_3 = ExperienceSettings.get_experience(var_2_2.display_name)
 
-		if best_xp < experience then
-			best_class = profile
-			best_xp = experience
+		if var_2_1 < var_2_3 then
+			var_2_0 = var_2_2
+			var_2_1 = var_2_3
 		end
 	end
 
-	local level = ExperienceSettings.get_level(best_xp)
-
-	return level, best_xp, best_class
+	return ExperienceSettings.get_level(var_2_1), var_2_1, var_2_0
 end
 
-ExperienceSettings.get_reward_level = function ()
-	local experience = 0
-	local spillover_experience = 0
+function ExperienceSettings.get_reward_level()
+	local var_3_0 = 0
+	local var_3_1 = 0
 
-	for i = 1, 5 do
-		local profile = SPProfiles[i]
-		local hero_experience = ExperienceSettings.get_experience(profile.display_name)
+	for iter_3_0 = 1, 5 do
+		local var_3_2 = SPProfiles[iter_3_0]
+		local var_3_3 = ExperienceSettings.get_experience(var_3_2.display_name)
 
-		if experience <= hero_experience then
-			experience = math.min(hero_experience, max_reward_experience)
-			spillover_experience = spillover_experience + math.max(0, hero_experience - max_reward_experience)
+		if var_3_0 <= var_3_3 then
+			var_3_0 = math.min(var_3_3, var_0_5)
+			var_3_1 = var_3_1 + math.max(0, var_3_3 - var_0_5)
 		end
 
-		local hero_experience_pool = ExperienceSettings.get_experience_pool(profile.display_name)
-
-		spillover_experience = spillover_experience + hero_experience_pool
+		var_3_1 = var_3_1 + ExperienceSettings.get_experience_pool(var_3_2.display_name)
 	end
 
-	local level, _, _, extra_levels = ExperienceSettings.get_level(experience + spillover_experience)
+	local var_3_4, var_3_5, var_3_6, var_3_7 = ExperienceSettings.get_level(var_3_0 + var_3_1)
 
-	return level + extra_levels
+	return var_3_4 + var_3_7
 end
 
-ExperienceSettings.get_experience = function (hero_name)
-	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-
-	return hero_attributes:get(hero_name, "experience") or 0
+function ExperienceSettings.get_experience(arg_4_0)
+	return Managers.backend:get_interface("hero_attributes"):get(arg_4_0, "experience") or 0
 end
 
-ExperienceSettings.get_experience_pool = function (hero_name)
-	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-
-	return hero_attributes:get(hero_name, "experience_pool") or 0
+function ExperienceSettings.get_experience_pool(arg_5_0)
+	return Managers.backend:get_interface("hero_attributes"):get(arg_5_0, "experience_pool") or 0
 end
 
-ExperienceSettings.get_level = function (experience)
-	experience = experience or 0
+function ExperienceSettings.get_level(arg_6_0)
+	arg_6_0 = arg_6_0 or 0
 
-	assert(experience >= 0, "Negative XP!??")
+	assert(arg_6_0 >= 0, "Negative XP!??")
 
-	local exp_total = 0
-	local level = 0
-	local extra_levels = 0
-	local progress = 0
-	local experience_into_level = 0
+	local var_6_0 = 0
+	local var_6_1 = 0
+	local var_6_2 = 0
+	local var_6_3 = 0
+	local var_6_4 = 0
 
-	if experience >= total_defined_experience then
-		level = num_defined_levels
-		progress = 0
-		experience_into_level = 0
-		extra_levels = ExperienceSettings.get_extra_level(experience - total_defined_experience)
+	if arg_6_0 >= var_0_4 then
+		var_6_1 = var_0_2
+		var_6_3 = 0
+		var_6_4 = 0
+		var_6_2 = ExperienceSettings.get_extra_level(arg_6_0 - var_0_4)
 	else
-		local previous_exp_total
+		local var_6_5
 
-		for i = 1, num_defined_levels do
-			previous_exp_total = exp_total
-			exp_total = exp_total + experience_levels[i]
+		for iter_6_0 = 1, var_0_2 do
+			local var_6_6 = var_6_0
 
-			if experience < exp_total then
-				level = i - 1
-				experience_into_level = experience - previous_exp_total
-				progress = experience_into_level / experience_levels[i]
+			var_6_0 = var_6_0 + var_0_0[iter_6_0]
+
+			if arg_6_0 < var_6_0 then
+				var_6_1 = iter_6_0 - 1
+				var_6_4 = arg_6_0 - var_6_6
+				var_6_3 = var_6_4 / var_0_0[iter_6_0]
 
 				break
 			end
 		end
 	end
 
-	return level, progress, experience_into_level, extra_levels
+	return var_6_1, var_6_3, var_6_4, var_6_2
 end
 
-ExperienceSettings.get_extra_level = function (experience_pool)
-	local extra_level = math.floor(experience_pool / experience_for_extra_levels)
-	local progress = experience_pool % experience_for_extra_levels
-	local progress_ratio = progress / experience_for_extra_levels
+function ExperienceSettings.get_extra_level(arg_7_0)
+	local var_7_0 = math.floor(arg_7_0 / var_0_3)
+	local var_7_1 = arg_7_0 % var_0_3 / var_0_3
 
-	return extra_level, progress_ratio
+	return var_7_0, var_7_1
 end
 
-ExperienceSettings.get_total_experience_required_for_level = function (level)
-	local experience = 0
+function ExperienceSettings.get_total_experience_required_for_level(arg_8_0)
+	local var_8_0 = 0
 
-	for i = 1, level do
-		local level_experience = experience_levels[i] or experience_for_extra_levels
-
-		experience = experience + level_experience
+	for iter_8_0 = 1, arg_8_0 do
+		var_8_0 = var_8_0 + (var_0_0[iter_8_0] or var_0_3)
 	end
 
-	return experience
+	return var_8_0
 end
 
-ExperienceSettings.get_experience_required_for_level = function (level)
-	return experience_levels[level] or experience_for_extra_levels
+function ExperienceSettings.get_experience_required_for_level(arg_9_0)
+	return var_0_0[arg_9_0] or var_0_3
 end
 
-ExperienceSettings.get_highest_character_level = function ()
-	local highest_level = 0
+function ExperienceSettings.get_highest_character_level()
+	local var_10_0 = 0
 
-	for _, profile_index in ipairs(ProfilePriority) do
-		local profile = SPProfiles[profile_index]
-		local display_name = profile.display_name
-		local experience = ExperienceSettings.get_experience(display_name)
-		local level = ExperienceSettings.get_level(experience)
+	for iter_10_0, iter_10_1 in ipairs(ProfilePriority) do
+		local var_10_1 = SPProfiles[iter_10_1].display_name
+		local var_10_2 = ExperienceSettings.get_experience(var_10_1)
+		local var_10_3 = ExperienceSettings.get_level(var_10_2)
 
-		if highest_level < level then
-			highest_level = level
+		if var_10_0 < var_10_3 then
+			var_10_0 = var_10_3
 		end
 	end
 
-	return highest_level
+	return var_10_0
 end
 
-ExperienceSettings.get_character_level = function (display_name)
-	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-	local hero_experience = hero_attributes:get(display_name, "experience") or 0
+function ExperienceSettings.get_character_level(arg_11_0)
+	local var_11_0 = Managers.backend:get_interface("hero_attributes"):get(arg_11_0, "experience") or 0
 
-	return ExperienceSettings.get_level(hero_experience)
+	return ExperienceSettings.get_level(var_11_0)
 end
 
-local hero_commendation_bonus_levels = {
-	[10] = 0.05,
+local var_0_6 = {
 	[20] = 0.1,
+	[10] = 0.05
 }
 
-ExperienceSettings.hero_commendation_experience_multiplier = function ()
-	local total_multiplier = 1
+function ExperienceSettings.hero_commendation_experience_multiplier()
+	local var_12_0 = 1
 
-	for i = 1, 5 do
-		local profile = SPProfiles[i]
-		local hero_level = ExperienceSettings.get_character_level(profile.display_name)
+	for iter_12_0 = 1, 5 do
+		local var_12_1 = SPProfiles[iter_12_0]
+		local var_12_2 = ExperienceSettings.get_character_level(var_12_1.display_name)
 
-		for commendation_level, multiplier in pairs(hero_commendation_bonus_levels) do
-			if commendation_level < hero_level then
-				total_multiplier = total_multiplier + multiplier
+		for iter_12_1, iter_12_2 in pairs(var_0_6) do
+			if iter_12_1 < var_12_2 then
+				var_12_0 = var_12_0 + iter_12_2
 			end
 		end
 	end
 
-	return total_multiplier
+	return var_12_0
 end
 
-ExperienceSettings.max_experience = total_defined_experience
-ExperienceSettings.max_level = num_defined_levels
+ExperienceSettings.max_experience = var_0_4
+ExperienceSettings.max_level = var_0_2
 ExperienceSettings.multiplier = 1
 ExperienceSettings.level_length_experience_multiplier = {
-	long = 1,
 	short = 1,
+	long = 1
 }

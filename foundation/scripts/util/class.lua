@@ -1,74 +1,73 @@
-﻿-- chunkname: @foundation/scripts/util/class.lua
+-- chunkname: @foundation/scripts/util/class.lua
 
-local destroyed_mt = {}
-
-destroyed_mt.__index = function ()
-	error("This object has been destroyed")
-end
-
-local special_functions = {
-	__index = true,
-	delete = true,
+local var_0_0 = {
+	__index = function()
+		error("This object has been destroyed")
+	end
+}
+local var_0_1 = {
 	new = true,
+	__index = true,
 	super = true,
+	delete = true
 }
 
-function class(class_table, ...)
-	local super = ...
+function class(arg_2_0, ...)
+	local var_2_0 = ...
 
-	if select("#", ...) >= 1 and super == nil then
+	if select("#", ...) >= 1 and var_2_0 == nil then
 		ferror("Trying to inherit from nil")
 	end
 
-	if not class_table then
-		class_table = {
+	if not arg_2_0 then
+		arg_2_0 = {
 			___is_class_metatable___ = true,
-			super = super,
+			super = var_2_0
 		}
-		class_table.__index = class_table
+		arg_2_0.__index = arg_2_0
 
-		class_table.new = function (self, ...)
-			local object = {}
+		function arg_2_0.new(arg_3_0, ...)
+			local var_3_0 = {}
 
-			setmetatable(object, class_table)
+			setmetatable(var_3_0, arg_2_0)
 
-			if object.init then
-				object:init(...)
+			if var_3_0.init then
+				var_3_0:init(...)
 			end
 
-			return object
+			return var_3_0
 		end
 
-		class_table.delete = function (self, ...)
-			if self.destroy then
-				self:destroy(...)
+		function arg_2_0.delete(arg_4_0, ...)
+			if arg_4_0.destroy then
+				arg_4_0:destroy(...)
 			end
 
-			setmetatable(self, destroyed_mt)
-		end
-	end
-
-	if super then
-		for k, v in pairs(super) do
-			if not special_functions[k] then
-				class_table[k] = v
-			end
+			setmetatable(arg_4_0, var_0_0)
 		end
 	end
 
-	return class_table
+	if var_2_0 then
+		for iter_2_0, iter_2_1 in pairs(var_2_0) do
+			if not var_0_1[iter_2_0] then
+				arg_2_0[iter_2_0] = iter_2_1
+			end
+		end
+	end
+
+	return arg_2_0
 end
 
-function is_class_instance(object)
-	if type(object) ~= "table" then
+function is_class_instance(arg_5_0)
+	if type(arg_5_0) ~= "table" then
 		return false
 	end
 
-	local metatable = getmetatable(object)
+	local var_5_0 = getmetatable(arg_5_0)
 
-	if metatable == nil then
+	if var_5_0 == nil then
 		return false
 	end
 
-	return rawget(metatable, "___is_class_metatable___") == true
+	return rawget(var_5_0, "___is_class_metatable___") == true
 end

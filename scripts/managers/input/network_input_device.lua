@@ -1,15 +1,15 @@
-﻿-- chunkname: @scripts/managers/input/network_input_device.lua
+-- chunkname: @scripts/managers/input/network_input_device.lua
 
 NetworkInputDevice = {}
 
-NetworkInputDevice.name = function ()
+function NetworkInputDevice.name()
 	return "NetworkInputDevice"
 end
 
-NetworkInputDevice.category = function ()
+function NetworkInputDevice.category()
 	return "network"
 end
 
-NetworkInputDevice.active = function ()
+function NetworkInputDevice.active()
 	return true
 end

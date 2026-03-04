@@ -1,95 +1,93 @@
-﻿-- chunkname: @scripts/unit_extensions/weaves/weave_socket_extension.lua
+-- chunkname: @scripts/unit_extensions/weaves/weave_socket_extension.lua
 
 WeaveSocketExtension = class(WeaveSocketExtension, BaseObjectiveExtension)
 WeaveSocketExtension.NAME = "WeaveSocketExtension"
 
-WeaveSocketExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	WeaveSocketExtension.super.init(self, extension_init_context, unit, extension_init_data)
+function WeaveSocketExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	WeaveSocketExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
-	self._value = 0
-	self._is_done = false
-	self.keep_alive = true
-	self._num_sockets = 0
-	self._num_closed_sockets = 0
+	arg_1_0._value = 0
+	arg_1_0._is_done = false
+	arg_1_0.keep_alive = true
+	arg_1_0._num_sockets = 0
+	arg_1_0._num_closed_sockets = 0
 end
 
-WeaveSocketExtension.extensions_ready = function (self)
-	self._objective_socket_extension = ScriptUnit.has_extension(self._unit, "objective_socket_system")
+function WeaveSocketExtension.extensions_ready(arg_2_0)
+	arg_2_0._objective_socket_extension = ScriptUnit.has_extension(arg_2_0._unit, "objective_socket_system")
 
-	if self._objective_socket_extension then
-		self._objective_socket_extension.distance = math.huge
-		self._num_sockets = self._objective_socket_extension.num_sockets
+	if arg_2_0._objective_socket_extension then
+		arg_2_0._objective_socket_extension.distance = math.huge
+		arg_2_0._num_sockets = arg_2_0._objective_socket_extension.num_sockets
 	end
 end
 
-WeaveSocketExtension.display_name = function (self)
+function WeaveSocketExtension.display_name(arg_3_0)
 	return "objective_sockets_name_single"
 end
 
-WeaveSocketExtension.initial_sync_data = function (self, game_object_data_table)
-	game_object_data_table.value = self:get_percentage_done()
+function WeaveSocketExtension.initial_sync_data(arg_4_0, arg_4_1)
+	arg_4_1.value = arg_4_0:get_percentage_done()
 end
 
-WeaveSocketExtension._set_objective_data = function (self, objective_data)
-	self._on_start_func = objective_data.on_start_func
-	self._on_progress_func = objective_data.on_progress_func
-	self._on_complete_func = objective_data.on_complete_func
+function WeaveSocketExtension._set_objective_data(arg_5_0, arg_5_1)
+	arg_5_0._on_start_func = arg_5_1.on_start_func
+	arg_5_0._on_progress_func = arg_5_1.on_progress_func
+	arg_5_0._on_complete_func = arg_5_1.on_complete_func
 end
 
-WeaveSocketExtension._activate = function (self)
-	Unit.flow_event(self._unit, "enable_socket")
+function WeaveSocketExtension._activate(arg_6_0)
+	Unit.flow_event(arg_6_0._unit, "enable_socket")
 end
 
-WeaveSocketExtension._deactivate = function (self)
-	local position = Unit.local_position(self._unit, 0)
+function WeaveSocketExtension._deactivate(arg_7_0)
+	local var_7_0 = Unit.local_position(arg_7_0._unit, 0)
 
-	for i = 1, 15 do
-		local x_offset = math.random(-10, 10) / 10
-		local y_offset = math.random(-10, 10) / 10
-		local z_offset = math.random(-10, 10) / 10
-		local objective_system = Managers.state.entity:system("objective_system")
-		local weave_essence_handler = objective_system:weave_essence_handler()
+	for iter_7_0 = 1, 15 do
+		local var_7_1 = math.random(-10, 10) / 10
+		local var_7_2 = math.random(-10, 10) / 10
+		local var_7_3 = math.random(-10, 10) / 10
 
-		weave_essence_handler:spawn_essence_unit(position + Vector3(0, 0, 0.5) + Vector3(x_offset, y_offset, z_offset))
+		Managers.state.entity:system("objective_system"):weave_essence_handler():spawn_essence_unit(var_7_0 + Vector3(0, 0, 0.5) + Vector3(var_7_1, var_7_2, var_7_3))
 	end
 end
 
-WeaveSocketExtension.is_done = function (self)
-	return self._is_done
+function WeaveSocketExtension.is_done(arg_8_0)
+	return arg_8_0._is_done
 end
 
-WeaveSocketExtension._server_update = function (self, dt, t)
-	local num_closed_sockets = self._objective_socket_extension.num_closed_sockets
+function WeaveSocketExtension._server_update(arg_9_0, arg_9_1, arg_9_2)
+	local var_9_0 = arg_9_0._objective_socket_extension.num_closed_sockets
 
-	if num_closed_sockets > self._num_closed_sockets then
-		self._num_closed_sockets = num_closed_sockets
+	if var_9_0 > arg_9_0._num_closed_sockets then
+		arg_9_0._num_closed_sockets = var_9_0
 
-		if self._on_start_func then
-			self._on_start_func(self._unit)
+		if arg_9_0._on_start_func then
+			arg_9_0._on_start_func(arg_9_0._unit)
 
-			self._on_start_func = nil
+			arg_9_0._on_start_func = nil
 		end
 
-		if self._on_progress_func then
-			self._on_progress_func(self._unit, num_closed_sockets, self._num_sockets)
+		if arg_9_0._on_progress_func then
+			arg_9_0._on_progress_func(arg_9_0._unit, var_9_0, arg_9_0._num_sockets)
 		end
 
-		self:server_set_value(self:get_percentage_done())
+		arg_9_0:server_set_value(arg_9_0:get_percentage_done())
 
-		if num_closed_sockets >= self._num_sockets then
-			self._is_done = true
+		if var_9_0 >= arg_9_0._num_sockets then
+			arg_9_0._is_done = true
 		end
 	end
 end
 
-WeaveSocketExtension._client_update = function (self, dt, t)
+function WeaveSocketExtension._client_update(arg_10_0, arg_10_1, arg_10_2)
 	return
 end
 
-WeaveSocketExtension.get_percentage_done = function (self)
-	if self._num_sockets == 0 then
+function WeaveSocketExtension.get_percentage_done(arg_11_0)
+	if arg_11_0._num_sockets == 0 then
 		return 0
 	end
 
-	return math.clamp01(self._num_closed_sockets / self._num_sockets)
+	return math.clamp01(arg_11_0._num_closed_sockets / arg_11_0._num_sockets)
 end

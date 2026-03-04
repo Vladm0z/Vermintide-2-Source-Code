@@ -1,51 +1,51 @@
-﻿-- chunkname: @scripts/settings/dlcs/woods/thorn_wall_health_extension.lua
+-- chunkname: @scripts/settings/dlcs/woods/thorn_wall_health_extension.lua
 
 ThornWallHealthExtension = class(ThornWallHealthExtension, GenericHealthExtension)
 
-local unit_alive = Unit.alive
-local unit_flow_event = Unit.flow_event
-local unit_set_flow_variable = Unit.set_flow_variable
+local var_0_0 = Unit.alive
+local var_0_1 = Unit.flow_event
+local var_0_2 = Unit.set_flow_variable
 
-ThornWallHealthExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	ThornWallHealthExtension.super.init(self, extension_init_context, unit, extension_init_data)
+function ThornWallHealthExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	ThornWallHealthExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 end
 
-ThornWallHealthExtension.extensions_ready = function (self, world, unit, extension_name)
+function ThornWallHealthExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	return
 end
 
-ThornWallHealthExtension.destroy = function (self)
-	ThornWallHealthExtension.super.destroy(self)
+function ThornWallHealthExtension.destroy(arg_3_0)
+	ThornWallHealthExtension.super.destroy(arg_3_0)
 end
 
-ThornWallHealthExtension.apply_client_predicted_damage = function (self, predicted_damage)
+function ThornWallHealthExtension.apply_client_predicted_damage(arg_4_0, arg_4_1)
 	return
 end
 
-local allowed_damage_sources = {
+local var_0_3 = {
 	chaos_exalted_champion_norsca = true,
 	chaos_exalted_champion_warcamp = true,
-	skaven_storm_vermin_warlord = true,
+	skaven_storm_vermin_warlord = true
 }
 
-ThornWallHealthExtension.add_damage = function (self, attacker_unit, damage_amount, hit_zone_name, damage_type, hit_position, damage_direction, damage_source_name, hit_ragdoll_actor, damaging_unit, hit_react_type, is_critical_strike, added_dot, first_hit, total_hits, attack_type, backstab_multiplier, target_index)
-	local unit = self.unit
-	local is_attacker_enemy = DamageUtils.is_enemy(attacker_unit, unit)
-	local damage_override = 0
+function ThornWallHealthExtension.add_damage(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10, arg_5_11, arg_5_12, arg_5_13, arg_5_14, arg_5_15, arg_5_16, arg_5_17)
+	local var_5_0 = arg_5_0.unit
+	local var_5_1 = DamageUtils.is_enemy(arg_5_1, var_5_0)
+	local var_5_2 = 0
 
-	if allowed_damage_sources[damage_source_name] then
-		damage_override = 100
+	if var_0_3[arg_5_7] then
+		var_5_2 = 100
 	end
 
-	Managers.state.achievement:trigger_event("register_thorn_wall_damage", self.unit, attacker_unit, damage_override, attack_type)
+	Managers.state.achievement:trigger_event("register_thorn_wall_damage", arg_5_0.unit, arg_5_1, var_5_2, arg_5_15)
 
-	if is_attacker_enemy or attack_type == "heavy_attack" or attack_type == "light_attack" then
-		ThornWallHealthExtension.super.add_damage(self, attacker_unit, damage_override, hit_zone_name, damage_type, hit_position, damage_direction, damage_source_name, hit_ragdoll_actor, damaging_unit, hit_react_type, is_critical_strike, added_dot, first_hit, total_hits, attack_type, backstab_multiplier, target_index)
+	if var_5_1 or arg_5_15 == "heavy_attack" or arg_5_15 == "light_attack" then
+		ThornWallHealthExtension.super.add_damage(arg_5_0, arg_5_1, var_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10, arg_5_11, arg_5_12, arg_5_13, arg_5_14, arg_5_15, arg_5_16, arg_5_17)
 
-		if unit and unit_alive(unit) then
-			unit_set_flow_variable(unit, "hit_direction", damage_direction)
-			unit_set_flow_variable(unit, "hit_position", hit_position)
-			unit_flow_event(unit, "lua_simple_damage")
+		if var_5_0 and var_0_0(var_5_0) then
+			var_0_2(var_5_0, "hit_direction", arg_5_6)
+			var_0_2(var_5_0, "hit_position", arg_5_5)
+			var_0_1(var_5_0, "lua_simple_damage")
 		end
 	end
 end

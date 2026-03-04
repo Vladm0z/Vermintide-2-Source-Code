@@ -1,269 +1,254 @@
-﻿-- chunkname: @scripts/settings/dlcs/woods/thornsister_wall_extension.lua
+-- chunkname: @scripts/settings/dlcs/woods/thornsister_wall_extension.lua
 
 ThornSisterWallExtension = class(ThornSisterWallExtension)
 
-local DESPAWN_ANIM_TIME = 1
+local var_0_0 = 1
 
-ThornSisterWallExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self._is_server = Managers.state.network.is_server
-	self._unit = unit
-	self._life_time = extension_init_data.life_time
-	self._owner_peer = extension_init_data.owner
-	self._owner_unit = extension_init_data.owner_unit
-	self._despawn_sound_event = extension_init_data.despawn_sound_event
-	self.wall_index = extension_init_data.wall_index
-	self.group_spawn_index = extension_init_data.group_spawn_index
-	self._despawning = false
-	self._initialized = false
-	self.world = extension_init_context.world
-	self._area_damage_extension = ScriptUnit.extension(self._unit, "area_damage_system")
+function ThornSisterWallExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._is_server = Managers.state.network.is_server
+	arg_1_0._unit = arg_1_2
+	arg_1_0._life_time = arg_1_3.life_time
+	arg_1_0._owner_peer = arg_1_3.owner
+	arg_1_0._owner_unit = arg_1_3.owner_unit
+	arg_1_0._despawn_sound_event = arg_1_3.despawn_sound_event
+	arg_1_0.wall_index = arg_1_3.wall_index
+	arg_1_0.group_spawn_index = arg_1_3.group_spawn_index
+	arg_1_0._despawning = false
+	arg_1_0._initialized = false
+	arg_1_0.world = arg_1_1.world
+	arg_1_0._area_damage_extension = ScriptUnit.extension(arg_1_0._unit, "area_damage_system")
 
-	local source_talent_extension = ScriptUnit.has_extension(self._owner_unit, "talent_system")
+	local var_1_0 = ScriptUnit.has_extension(arg_1_0._owner_unit, "talent_system")
 
-	if source_talent_extension and source_talent_extension:has_talent("kerillian_thorn_sister_debuff_wall") then
-		self._is_explosive_wall = true
+	if var_1_0 and var_1_0:has_talent("kerillian_thorn_sister_debuff_wall") then
+		arg_1_0._is_explosive_wall = true
 
-		local career_extension = ScriptUnit.has_extension(self._owner_unit, "career_system")
+		local var_1_1 = ScriptUnit.has_extension(arg_1_0._owner_unit, "career_system")
 
-		self._owner_career_power_level = career_extension and career_extension:get_career_power_level() or 100
+		arg_1_0._owner_career_power_level = var_1_1 and var_1_1:get_career_power_level() or 100
 	end
 
-	local side_manager = Managers.state.side
-	local side = side_manager.side_by_unit[self._owner_unit] or Managers.state.side:get_side_from_name("heroes")
-	local side_id = side.side_id
+	local var_1_2 = Managers.state.side
+	local var_1_3 = (var_1_2.side_by_unit[arg_1_0._owner_unit] or Managers.state.side:get_side_from_name("heroes")).side_id
 
-	side_manager:add_unit_to_side(unit, side_id)
+	var_1_2:add_unit_to_side(arg_1_2, var_1_3)
 
-	local is_versus = Managers.mechanism:current_mechanism_name() == "versus"
+	if Managers.mechanism:current_mechanism_name() == "versus" then
+		local var_1_4 = 1.25
+		local var_1_5, var_1_6 = Unit.box(arg_1_2, false)
 
-	if is_versus then
-		local extents_padding = 1.25
-		local _, extents = Unit.box(unit, false)
-
-		self._player_boss_trample_radius = (extents[1] > extents[2] and extents[1] or extents[2]) * extents_padding
+		arg_1_0._player_boss_trample_radius = (var_1_6[1] > var_1_6[2] and var_1_6[1] or var_1_6[2]) * var_1_4
 	end
 end
 
-ThornSisterWallExtension.game_object_initialized = function (self)
-	Managers.state.event:trigger("sister_wall_spawned", self._unit)
+function ThornSisterWallExtension.game_object_initialized(arg_2_0)
+	Managers.state.event:trigger("sister_wall_spawned", arg_2_0._unit)
 end
 
-ThornSisterWallExtension.update = function (self, unit, input, dt, context, t)
-	if not self._initialized then
-		local life_time = self._life_time
+function ThornSisterWallExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	if not arg_3_0._initialized then
+		local var_3_0 = arg_3_0._life_time
 
-		self._despawn_t = t + life_time
-		self._despawn_anim_start_t = t + math.max(life_time - DESPAWN_ANIM_TIME, 0)
-		self._initialized = true
+		arg_3_0._despawn_t = arg_3_5 + var_3_0
+		arg_3_0._despawn_anim_start_t = arg_3_5 + math.max(var_3_0 - var_0_0, 0)
+		arg_3_0._initialized = true
 
-		self:trigger_area_damage()
+		arg_3_0:trigger_area_damage()
 	end
 
-	self:_update_local_player_pactsworn_collision()
-	self:_check_player_boss_trample()
+	arg_3_0:_update_local_player_pactsworn_collision()
+	arg_3_0:_check_player_boss_trample()
 
-	if not self._despawning and t >= self._despawn_anim_start_t then
-		self:despawn()
+	if not arg_3_0._despawning and arg_3_5 >= arg_3_0._despawn_anim_start_t then
+		arg_3_0:despawn()
 	end
 
-	if self._is_server and t >= self._despawn_t then
-		Managers.state.side:remove_unit_from_side(self._unit)
-		Managers.state.unit_spawner:mark_for_deletion(self._unit)
-	end
-end
-
-ThornSisterWallExtension.trigger_area_damage = function (self)
-	self._area_damage_extension:enable_area_damage(true)
-
-	if self._is_server then
-		local network_manager = Managers.state.network
-		local unit_id = network_manager:unit_game_object_id(self._unit)
-
-		network_manager.network_transmit:send_rpc_clients("rpc_thorn_bush_trigger_area_damage", unit_id)
+	if arg_3_0._is_server and arg_3_5 >= arg_3_0._despawn_t then
+		Managers.state.side:remove_unit_from_side(arg_3_0._unit)
+		Managers.state.unit_spawner:mark_for_deletion(arg_3_0._unit)
 	end
 end
 
-local empty_damage_table = {}
+function ThornSisterWallExtension.trigger_area_damage(arg_4_0)
+	arg_4_0._area_damage_extension:enable_area_damage(true)
 
-ThornSisterWallExtension._despawn_single = function (self, skip_sound, grab_average_position)
-	if self._despawning then
+	if arg_4_0._is_server then
+		local var_4_0 = Managers.state.network
+		local var_4_1 = var_4_0:unit_game_object_id(arg_4_0._unit)
+
+		var_4_0.network_transmit:send_rpc_clients("rpc_thorn_bush_trigger_area_damage", var_4_1)
+	end
+end
+
+local var_0_1 = {}
+
+function ThornSisterWallExtension._despawn_single(arg_5_0, arg_5_1, arg_5_2)
+	if arg_5_0._despawning then
 		return
 	end
 
-	local death_system = Managers.state.entity:system("death_system")
+	Managers.state.entity:system("death_system"):kill_unit(arg_5_0._unit, var_0_1)
 
-	death_system:kill_unit(self._unit, empty_damage_table)
+	if arg_5_0._versus_blocker_unit then
+		World.destroy_unit(arg_5_0.world, arg_5_0._versus_blocker_unit)
 
-	if self._versus_blocker_unit then
-		World.destroy_unit(self.world, self._versus_blocker_unit)
-
-		self._versus_blocker_unit = nil
+		arg_5_0._versus_blocker_unit = nil
 	end
 
-	if self._is_server then
-		self._area_damage_extension:enable_area_damage(false)
+	if arg_5_0._is_server then
+		arg_5_0._area_damage_extension:enable_area_damage(false)
 	end
 
-	Unit.flow_event(self._unit, "despawn")
+	Unit.flow_event(arg_5_0._unit, "despawn")
 
-	self._despawning = true
+	arg_5_0._despawning = true
 
-	if self._is_server and self._despawn_sound_event and not skip_sound then
-		self:_trigger_despawn_sound(grab_average_position)
+	if arg_5_0._is_server and arg_5_0._despawn_sound_event and not arg_5_1 then
+		arg_5_0:_trigger_despawn_sound(arg_5_2)
 	end
 
-	self._despawn_t = math.min(self._despawn_t or math.huge, Managers.time:time("game") + DESPAWN_ANIM_TIME)
+	arg_5_0._despawn_t = math.min(arg_5_0._despawn_t or math.huge, Managers.time:time("game") + var_0_0)
 end
 
-ThornSisterWallExtension._trigger_despawn_sound = function (self, grab_average_position)
-	local owner_unit = self._owner_unit
-	local average_position = POSITION_LOOKUP[self._unit]
+function ThornSisterWallExtension._trigger_despawn_sound(arg_6_0, arg_6_1)
+	local var_6_0 = arg_6_0._owner_unit
+	local var_6_1 = POSITION_LOOKUP[arg_6_0._unit]
 
-	if grab_average_position then
-		local segment_count = 1
-		local all_thorn_walls = Managers.state.entity:get_entities("ThornSisterWallExtension")
+	if arg_6_1 then
+		local var_6_2 = 1
+		local var_6_3 = Managers.state.entity:get_entities("ThornSisterWallExtension")
 
-		if all_thorn_walls then
-			local wall_index = self.wall_index
+		if var_6_3 then
+			local var_6_4 = arg_6_0.wall_index
 
-			for unit, extension in pairs(all_thorn_walls) do
-				if unit ~= self._unit and extension.wall_index == wall_index and extension._owner_unit == owner_unit then
-					average_position = average_position + POSITION_LOOKUP[self._unit]
-					segment_count = segment_count + 1
+			for iter_6_0, iter_6_1 in pairs(var_6_3) do
+				if iter_6_0 ~= arg_6_0._unit and iter_6_1.wall_index == var_6_4 and iter_6_1._owner_unit == var_6_0 then
+					var_6_1 = var_6_1 + POSITION_LOOKUP[arg_6_0._unit]
+					var_6_2 = var_6_2 + 1
 				end
 			end
 		end
 
-		average_position = average_position / segment_count
+		var_6_1 = var_6_1 / var_6_2
 	end
 
-	Managers.state.entity:system("audio_system"):play_audio_position_event(self._despawn_sound_event, average_position)
+	Managers.state.entity:system("audio_system"):play_audio_position_event(arg_6_0._despawn_sound_event, var_6_1)
 end
 
-ThornSisterWallExtension.despawn = function (self, only_this)
-	local owner_unit = self._owner_unit
-	local skip_sound = false
-	local average_position_for_sound = not only_this
+function ThornSisterWallExtension.despawn(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_0._owner_unit
+	local var_7_1 = false
+	local var_7_2 = not arg_7_1
 
-	self:_despawn_single(skip_sound, average_position_for_sound)
+	arg_7_0:_despawn_single(var_7_1, var_7_2)
 
-	if only_this then
+	if arg_7_1 then
 		return
 	end
 
-	local all_thorn_walls = Managers.state.entity:get_entities("ThornSisterWallExtension")
+	local var_7_3 = Managers.state.entity:get_entities("ThornSisterWallExtension")
 
-	if all_thorn_walls then
-		skip_sound = true
-		average_position_for_sound = nil
+	if var_7_3 then
+		local var_7_4 = true
+		local var_7_5
+		local var_7_6 = arg_7_0.wall_index
 
-		local wall_index = self.wall_index
-
-		for unit, extension in pairs(all_thorn_walls) do
-			if unit ~= self._unit and extension.wall_index == wall_index and extension._owner_unit == owner_unit then
-				extension:_despawn_single(skip_sound, average_position_for_sound)
+		for iter_7_0, iter_7_1 in pairs(var_7_3) do
+			if iter_7_0 ~= arg_7_0._unit and iter_7_1.wall_index == var_7_6 and iter_7_1._owner_unit == var_7_0 then
+				iter_7_1:_despawn_single(var_7_4, var_7_5)
 			end
 		end
 	end
 end
 
-ThornSisterWallExtension.die = function (self)
-	if not self._despawning then
-		self:despawn()
+function ThornSisterWallExtension.die(arg_8_0)
+	if not arg_8_0._despawning then
+		arg_8_0:despawn()
 
-		local t = Managers.time:time("game")
-
-		self._despawn_t = t + DESPAWN_ANIM_TIME
+		arg_8_0._despawn_t = Managers.time:time("game") + var_0_0
 	end
 end
 
-ThornSisterWallExtension.owner = function (self)
-	return self._owner_unit
+function ThornSisterWallExtension.owner(arg_9_0)
+	return arg_9_0._owner_unit
 end
 
-ThornSisterWallExtension._update_local_player_pactsworn_collision = function (self)
-	local is_versus = Managers.mechanism:current_mechanism_name() == "versus"
-
-	if not is_versus then
+function ThornSisterWallExtension._update_local_player_pactsworn_collision(arg_10_0)
+	if not (Managers.mechanism:current_mechanism_name() == "versus") then
 		return
 	end
 
-	local local_player = Managers.player:local_player()
-	local local_player_unit = local_player and local_player.player_unit
+	local var_10_0 = Managers.player:local_player()
+	local var_10_1 = var_10_0 and var_10_0.player_unit
 
-	if not local_player_unit then
+	if not var_10_1 then
 		return
 	end
 
-	local ghost_mode_extension = ScriptUnit.has_extension(local_player_unit, "ghost_mode_system")
+	local var_10_2 = ScriptUnit.has_extension(var_10_1, "ghost_mode_system")
 
-	if not ghost_mode_extension then
+	if not var_10_2 then
 		return
 	end
 
-	if self._despawning then
+	if arg_10_0._despawning then
 		return
 	end
 
-	local is_in_ghost_mode = ghost_mode_extension:is_in_ghost_mode()
-	local is_dirty = self._local_player_in_ghost_mode ~= is_in_ghost_mode
+	local var_10_3 = var_10_2:is_in_ghost_mode()
+	local var_10_4 = arg_10_0._local_player_in_ghost_mode ~= var_10_3
 
-	self._local_player_in_ghost_mode = is_in_ghost_mode
+	arg_10_0._local_player_in_ghost_mode = var_10_3
 
-	if is_dirty then
-		if is_in_ghost_mode then
-			if self._versus_blocker_unit then
-				World.destroy_unit(self.world, self._versus_blocker_unit)
+	if var_10_4 then
+		if var_10_3 then
+			if arg_10_0._versus_blocker_unit then
+				World.destroy_unit(arg_10_0.world, arg_10_0._versus_blocker_unit)
 
-				self._versus_blocker_unit = nil
+				arg_10_0._versus_blocker_unit = nil
 			end
 		else
-			local unit = self._unit
-			local blocker_pos = Unit.local_position(unit, 0)
-			local blocker_rot = Unit.local_rotation(unit, 0)
+			local var_10_5 = arg_10_0._unit
+			local var_10_6 = Unit.local_position(var_10_5, 0)
+			local var_10_7 = Unit.local_rotation(var_10_5, 0)
 
-			self._versus_blocker_unit = World.spawn_unit(self.world, "units/beings/player/way_watcher_thornsister/abilities/ww_thornsister_thorn_wall_01", blocker_pos, blocker_rot)
+			arg_10_0._versus_blocker_unit = World.spawn_unit(arg_10_0.world, "units/beings/player/way_watcher_thornsister/abilities/ww_thornsister_thorn_wall_01", var_10_6, var_10_7)
 
-			Unit.set_unit_visibility(self._versus_blocker_unit, false)
+			Unit.set_unit_visibility(arg_10_0._versus_blocker_unit, false)
 
-			local actor = Unit.actor(self._versus_blocker_unit, "c_simple")
+			local var_10_8 = Unit.actor(arg_10_0._versus_blocker_unit, "c_simple")
 
-			Actor.set_collision_filter(actor, "filter_mover_blocker_pactsworn")
+			Actor.set_collision_filter(var_10_8, "filter_mover_blocker_pactsworn")
 		end
 	end
 end
 
-ThornSisterWallExtension._check_player_boss_trample = function (self)
-	local trample_radius = self._player_boss_trample_radius
+function ThornSisterWallExtension._check_player_boss_trample(arg_11_0)
+	local var_11_0 = arg_11_0._player_boss_trample_radius
 
-	if not trample_radius or self._despawning then
+	if not var_11_0 or arg_11_0._despawning then
 		return
 	end
 
-	local pos = Unit.local_position(self._unit, 0)
-	local side = Managers.state.side.side_by_unit[self._unit]
-	local enemy_player_units = side.ENEMY_PLAYER_AND_BOT_UNITS
+	local var_11_1 = Unit.local_position(arg_11_0._unit, 0)
+	local var_11_2 = Managers.state.side.side_by_unit[arg_11_0._unit].ENEMY_PLAYER_AND_BOT_UNITS
 
-	for _, player_unit in pairs(enemy_player_units) do
-		local breed = Unit.get_data(player_unit, "breed")
+	for iter_11_0, iter_11_1 in pairs(var_11_2) do
+		if Unit.get_data(iter_11_1, "breed").boss then
+			local var_11_3 = ScriptUnit.extension(iter_11_1, "ghost_mode_system")
 
-		if breed.boss then
-			local ghost_mode_extension = ScriptUnit.extension(player_unit, "ghost_mode_system")
+			if var_11_3 and not var_11_3:is_in_ghost_mode() then
+				local var_11_4 = Unit.mover(iter_11_1)
 
-			if ghost_mode_extension and not ghost_mode_extension:is_in_ghost_mode() then
-				local mover = Unit.mover(player_unit)
+				if var_11_4 then
+					local var_11_5 = Mover.radius(var_11_4)
+					local var_11_6 = POSITION_LOOKUP[iter_11_1]
+					local var_11_7 = var_11_5 + var_11_0
 
-				if mover then
-					local radius = Mover.radius(mover)
-					local player_pos = POSITION_LOOKUP[player_unit]
-					local trample_distance = radius + trample_radius
-					local distance_sq = Vector3.distance_squared(pos, player_pos)
-					local trample_sq = trample_distance * trample_distance
+					if Vector3.distance_squared(var_11_1, var_11_6) < var_11_7 * var_11_7 then
+						local var_11_8 = true
 
-					if distance_sq < trample_sq then
-						local only_this = true
-
-						self:despawn(only_this)
+						arg_11_0:despawn(var_11_8)
 
 						break
 					end
@@ -273,15 +258,15 @@ ThornSisterWallExtension._check_player_boss_trample = function (self)
 	end
 end
 
-ThornSisterWallExtension.move_prop = function (self, wanted_pose)
-	local wanted_position = Matrix4x4.translation(wanted_pose)
-	local wanted_rotation = Matrix4x4.rotation(wanted_pose)
+function ThornSisterWallExtension.move_prop(arg_12_0, arg_12_1)
+	local var_12_0 = Matrix4x4.translation(arg_12_1)
+	local var_12_1 = Matrix4x4.rotation(arg_12_1)
 
-	Unit.set_local_position(self._unit, 0, wanted_position)
-	Unit.set_local_rotation(self._unit, 0, wanted_rotation)
+	Unit.set_local_position(arg_12_0._unit, 0, var_12_0)
+	Unit.set_local_rotation(arg_12_0._unit, 0, var_12_1)
 
-	if self._versus_blocker_unit then
-		Unit.set_local_position(self._versus_blocker_unit, 0, wanted_position)
-		Unit.set_local_rotation(self._versus_blocker_unit, 0, wanted_rotation)
+	if arg_12_0._versus_blocker_unit then
+		Unit.set_local_position(arg_12_0._versus_blocker_unit, 0, var_12_0)
+		Unit.set_local_rotation(arg_12_0._versus_blocker_unit, 0, var_12_1)
 	end
 end

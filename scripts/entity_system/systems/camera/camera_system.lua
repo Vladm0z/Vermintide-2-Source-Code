@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/entity_system/systems/camera/camera_system.lua
+-- chunkname: @scripts/entity_system/systems/camera/camera_system.lua
 
 require("scripts/unit_extensions/camera/generic_camera_extension")
 require("scripts/unit_extensions/camera/states/camera_state_helper")
@@ -18,266 +18,256 @@ require("scripts/unit_extensions/camera/states/camera_state_observer_spectator")
 
 CameraSystem = class(CameraSystem, ExtensionSystemBase)
 
-local extensions = {
-	"GenericCameraExtension",
+local var_0_0 = {
+	"GenericCameraExtension"
 }
-local RPCS = {
-	"rpc_set_observer_camera",
+local var_0_1 = {
+	"rpc_set_observer_camera"
 }
 
-CameraSystem.init = function (self, context, system_name)
-	CameraSystem.super.init(self, context, system_name, extensions)
+function CameraSystem.init(arg_1_0, arg_1_1, arg_1_2)
+	CameraSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 
-	self.camera_units = {}
-	self.unit_extension_data = {}
-	self.input_manager = context.input_manager
+	arg_1_0.camera_units = {}
+	arg_1_0.unit_extension_data = {}
+	arg_1_0.input_manager = arg_1_1.input_manager
 
-	local network_event_delegate = context.network_event_delegate
+	local var_1_0 = arg_1_1.network_event_delegate
 
-	network_event_delegate:register(self, unpack(RPCS))
+	var_1_0:register(arg_1_0, unpack(var_0_1))
 
-	self.network_event_delegate = network_event_delegate
+	arg_1_0.network_event_delegate = var_1_0
 end
 
-CameraSystem.destroy = function (self)
-	self.network_event_delegate:unregister(self)
+function CameraSystem.destroy(arg_2_0)
+	arg_2_0.network_event_delegate:unregister(arg_2_0)
 end
 
-CameraSystem.idle_camera_dummy_spawned = function (self, camera_dummy_unit)
-	local position = Unit.local_position(camera_dummy_unit, 0)
-	local rotation = Unit.local_rotation(camera_dummy_unit, 0)
+function CameraSystem.idle_camera_dummy_spawned(arg_3_0, arg_3_1)
+	local var_3_0 = Unit.local_position(arg_3_1, 0)
+	local var_3_1 = Unit.local_rotation(arg_3_1, 0)
 
-	for player, camera_unit in pairs(self.camera_units) do
-		local camera_ext = self.unit_extension_data[camera_unit]
+	for iter_3_0, iter_3_1 in pairs(arg_3_0.camera_units) do
+		local var_3_2 = arg_3_0.unit_extension_data[iter_3_1]
 
-		camera_ext:set_idle_position(position)
-		camera_ext:set_idle_rotation(rotation)
+		var_3_2:set_idle_position(var_3_0)
+		var_3_2:set_idle_rotation(var_3_1)
 	end
 end
 
-CameraSystem.external_state_change = function (self, player, state, params)
-	local camera_unit = self.camera_units[player]
-	local camera_ext = self.unit_extension_data[camera_unit]
+function CameraSystem.external_state_change(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	local var_4_0 = arg_4_0.camera_units[arg_4_1]
+	local var_4_1 = arg_4_0.unit_extension_data[var_4_0]
 
-	if camera_ext then
-		camera_ext:set_external_state_change(state, params)
+	if var_4_1 then
+		var_4_1:set_external_state_change(arg_4_2, arg_4_3)
 	end
 end
 
-CameraSystem.external_state_change_delayed = function (self, player, state, params, t)
-	local camera_unit = self.camera_units[player]
-	local camera_ext = self.unit_extension_data[camera_unit]
+function CameraSystem.external_state_change_delayed(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	local var_5_0 = arg_5_0.camera_units[arg_5_1]
+	local var_5_1 = arg_5_0.unit_extension_data[var_5_0]
 
-	if camera_ext then
-		camera_ext:set_delayed_external_state_change(state, params, t)
+	if var_5_1 then
+		var_5_1:set_delayed_external_state_change(arg_5_2, arg_5_3, arg_5_4)
 	end
 end
 
-CameraSystem.set_follow_unit = function (self, player, follow_unit, follow_node_name)
-	local camera_unit = self.camera_units[player]
-	local camera_ext = self.unit_extension_data[camera_unit]
+function CameraSystem.set_follow_unit(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	local var_6_0 = arg_6_0.camera_units[arg_6_1]
+	local var_6_1 = arg_6_0.unit_extension_data[var_6_0]
 
-	if camera_ext then
-		local camera_state_ext = ScriptUnit.extension(camera_unit, "camera_state_machine_system")
+	if var_6_1 then
+		local var_6_2 = ScriptUnit.extension(var_6_0, "camera_state_machine_system")
 
-		camera_ext:set_follow_unit(follow_unit, follow_node_name)
+		var_6_1:set_follow_unit(arg_6_2, arg_6_3)
 
-		local camera_state = camera_state_ext.state_machine.state_current
+		local var_6_3 = var_6_2.state_machine.state_current
 
-		if camera_state.refresh_follow_unit then
-			local follow_node = follow_unit and Unit.node(follow_unit, follow_node_name) or nil
+		if var_6_3.refresh_follow_unit then
+			local var_6_4 = arg_6_2 and Unit.node(arg_6_2, arg_6_3) or nil
 
-			camera_state:refresh_follow_unit(follow_unit, follow_node)
+			var_6_3:refresh_follow_unit(arg_6_2, var_6_4)
 		end
 	end
 end
 
-CameraSystem.get_follow_data = function (self, player)
-	local camera_unit = self.camera_units[player]
-	local camera_ext = self.unit_extension_data[camera_unit]
+function CameraSystem.get_follow_data(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_0.camera_units[arg_7_1]
+	local var_7_1 = arg_7_0.unit_extension_data[var_7_0]
 
-	if camera_ext then
-		local follow_unit, follow_unit_node = camera_ext:get_follow_data()
+	if var_7_1 then
+		local var_7_2, var_7_3 = var_7_1:get_follow_data()
 
-		return follow_unit, follow_unit_node
+		return var_7_2, var_7_3
 	end
 end
 
-CameraSystem.update_tunnel_camera_position = function (self, player, position)
-	local camera_unit = self.camera_units[player]
-	local camera_state_ext = ScriptUnit.has_extension(camera_unit, "camera_state_machine_system")
+function CameraSystem.update_tunnel_camera_position(arg_8_0, arg_8_1, arg_8_2)
+	local var_8_0 = arg_8_0.camera_units[arg_8_1]
+	local var_8_1 = ScriptUnit.has_extension(var_8_0, "camera_state_machine_system")
 
-	if camera_state_ext then
-		local camera_state = camera_state_ext.state_machine.state_current
+	if var_8_1 then
+		local var_8_2 = var_8_1.state_machine.state_current
 
-		if camera_state.update_tunnel_camera_position then
-			camera_state:update_tunnel_camera_position(position)
+		if var_8_2.update_tunnel_camera_position then
+			var_8_2:update_tunnel_camera_position(arg_8_2)
 		end
 	end
 end
 
-CameraSystem.local_player_created = function (self, player)
-	local camera_manager = Managers.state.camera
-	local viewport_name = player.viewport_name
+function CameraSystem.local_player_created(arg_9_0, arg_9_1)
+	local var_9_0 = Managers.state.camera
+	local var_9_1 = arg_9_1.viewport_name
 
-	self:_setup_viewport(viewport_name)
-	self:_setup_camera(viewport_name)
-	self:_setup_camera_unit(player, viewport_name)
-	camera_manager:set_camera_node(viewport_name, "first_person", "first_person_node")
+	arg_9_0:_setup_viewport(var_9_1)
+	arg_9_0:_setup_camera(var_9_1)
+	arg_9_0:_setup_camera_unit(arg_9_1, var_9_1)
+	var_9_0:set_camera_node(var_9_1, "first_person", "first_person_node")
 
-	local camera_unit = self.camera_units[player]
+	local var_9_2 = arg_9_0.camera_units[arg_9_1]
 
-	player:set_camera_follow_unit(camera_unit)
+	arg_9_1:set_camera_follow_unit(var_9_2)
 end
 
-CameraSystem._setup_viewport = function (self, viewport_name)
-	local camera_manager = Managers.state.camera
-
-	camera_manager:create_viewport(viewport_name, Vector3.zero(), Quaternion.identity())
+function CameraSystem._setup_viewport(arg_10_0, arg_10_1)
+	Managers.state.camera:create_viewport(arg_10_1, Vector3.zero(), Quaternion.identity())
 end
 
-CameraSystem._setup_camera = function (self, viewport_name)
-	local viewport = ScriptWorld.viewport(self.world, viewport_name)
-	local camera = ScriptViewport.camera(viewport)
-	local camera_manager = Managers.state.camera
+function CameraSystem._setup_camera(arg_11_0, arg_11_1)
+	local var_11_0 = ScriptWorld.viewport(arg_11_0.world, arg_11_1)
+	local var_11_1 = ScriptViewport.camera(var_11_0)
+	local var_11_2 = Managers.state.camera
 
-	camera_manager:load_node_tree(viewport_name, "default", "world")
-	camera_manager:load_node_tree(viewport_name, "first_person", "first_person")
-	camera_manager:load_node_tree(viewport_name, "player_dead", "player_dead")
-	camera_manager:load_node_tree(viewport_name, "cutscene", "cutscene")
+	var_11_2:load_node_tree(arg_11_1, "default", "world")
+	var_11_2:load_node_tree(arg_11_1, "first_person", "first_person")
+	var_11_2:load_node_tree(arg_11_1, "player_dead", "player_dead")
+	var_11_2:load_node_tree(arg_11_1, "cutscene", "cutscene")
 end
 
-CameraSystem._setup_camera_unit = function (self, player, viewport_name)
-	local unit_name = DefaultUnits.standard.backlit_camera
-	local unit_template_name = "camera_unit"
-	local position = Vector3.zero()
-	local rotation = Quaternion.identity()
-	local camera_state_class_list = {}
-	local profile_index = player:profile_index() or 1
-	local profile = SPProfiles[profile_index]
-	local careers = profile.careers
-	local career_index = player:career_index() or 1
-	local career = profile.careers[career_index]
-	local camera_state_class_list = {}
+function CameraSystem._setup_camera_unit(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = DefaultUnits.standard.backlit_camera
+	local var_12_1 = "camera_unit"
+	local var_12_2 = Vector3.zero()
+	local var_12_3 = Quaternion.identity()
+	local var_12_4 = {}
+	local var_12_5 = arg_12_1:profile_index() or 1
+	local var_12_6 = SPProfiles[var_12_5]
+	local var_12_7 = var_12_6.careers
+	local var_12_8 = arg_12_1:career_index() or 1
+	local var_12_9 = var_12_6.careers[var_12_8]
+	local var_12_10 = {}
 
-	for _, camera_state_name in ipairs(career.camera_state_list) do
-		camera_state_class_list[#camera_state_class_list + 1] = rawget(_G, camera_state_name)
+	for iter_12_0, iter_12_1 in ipairs(var_12_9.camera_state_list) do
+		var_12_10[#var_12_10 + 1] = rawget(_G, iter_12_1)
 	end
 
-	local extension_init_data = {
+	local var_12_11 = {
 		camera_state_machine_system = {
 			start_state = "idle",
-			camera_state_class_list = camera_state_class_list,
+			camera_state_class_list = var_12_10
 		},
 		camera_system = {
-			player = player,
-		},
+			player = arg_12_1
+		}
 	}
-	local camera_unit = Managers.state.unit_spawner:spawn_local_unit_with_extensions(unit_name, unit_template_name, extension_init_data, position, rotation)
+	local var_12_12 = Managers.state.unit_spawner:spawn_local_unit_with_extensions(var_12_0, var_12_1, var_12_11, var_12_2, var_12_3)
 
-	self.camera_units[player] = camera_unit
+	arg_12_0.camera_units[arg_12_1] = var_12_12
 
-	local camera_ext = ScriptUnit.extension(camera_unit, "camera_system")
+	local var_12_13 = ScriptUnit.extension(var_12_12, "camera_system")
 
-	self.unit_extension_data[camera_unit] = camera_ext
+	arg_12_0.unit_extension_data[var_12_12] = var_12_13
 
-	camera_ext:set_idle_position(position)
-	camera_ext:set_idle_rotation(rotation)
-	Unit.set_data(camera_unit, "camera", "settings_tree", "first_person")
-	Unit.set_data(camera_unit, "camera", "settings_node", "first_person_node")
-	Managers.state.camera:set_node_tree_root_unit(viewport_name, "first_person", camera_unit, "rp_root", true)
-	Managers.state.camera:set_node_tree_root_unit(viewport_name, "player_dead", camera_unit, "rp_root", true)
-	Managers.state.camera:set_node_tree_root_unit(viewport_name, "default", camera_unit, "rp_root", true)
+	var_12_13:set_idle_position(var_12_2)
+	var_12_13:set_idle_rotation(var_12_3)
+	Unit.set_data(var_12_12, "camera", "settings_tree", "first_person")
+	Unit.set_data(var_12_12, "camera", "settings_node", "first_person_node")
+	Managers.state.camera:set_node_tree_root_unit(arg_12_2, "first_person", var_12_12, "rp_root", true)
+	Managers.state.camera:set_node_tree_root_unit(arg_12_2, "player_dead", var_12_12, "rp_root", true)
+	Managers.state.camera:set_node_tree_root_unit(arg_12_2, "default", var_12_12, "rp_root", true)
 
 	if not script_data.disable_camera_backlight then
-		local level_settings = LevelHelper:current_level_settings()
-		local backlight = level_settings.camera_backlight
+		local var_12_14 = LevelHelper:current_level_settings().camera_backlight
 
-		if backlight then
-			local light = Unit.light(camera_unit, "light")
+		if var_12_14 then
+			local var_12_15 = Unit.light(var_12_12, "light")
 
-			if light then
-				Light.set_color(light, backlight.color:unbox())
-				Light.set_intensity(light, backlight.intensity)
-				Light.set_falloff_start(light, backlight.start_falloff)
-				Light.set_falloff_end(light, backlight.end_falloff)
+			if var_12_15 then
+				Light.set_color(var_12_15, var_12_14.color:unbox())
+				Light.set_intensity(var_12_15, var_12_14.intensity)
+				Light.set_falloff_start(var_12_15, var_12_14.start_falloff)
+				Light.set_falloff_end(var_12_15, var_12_14.end_falloff)
 			end
 		end
 	end
 end
 
-CameraSystem.set_backlight_color = function (self, color, intensity)
-	for _, unit in pairs(self.camera_units) do
-		local light = Unit.light(unit, "light")
+function CameraSystem.set_backlight_color(arg_13_0, arg_13_1, arg_13_2)
+	for iter_13_0, iter_13_1 in pairs(arg_13_0.camera_units) do
+		local var_13_0 = Unit.light(iter_13_1, "light")
 
-		Light.set_color(light, color)
-		Light.set_intensity(light, intensity)
+		Light.set_color(var_13_0, arg_13_1)
+		Light.set_intensity(var_13_0, arg_13_2)
 	end
 end
 
-CameraSystem.set_backlight_falloff = function (self, start_falloff, end_falloff, exponent)
-	for _, unit in pairs(self.camera_units) do
-		local light = Unit.light(unit, "light")
+function CameraSystem.set_backlight_falloff(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+	for iter_14_0, iter_14_1 in pairs(arg_14_0.camera_units) do
+		local var_14_0 = Unit.light(iter_14_1, "light")
 
-		Light.set_falloff_start(light, start_falloff)
-		Light.set_falloff_end(light, end_falloff)
+		Light.set_falloff_start(var_14_0, arg_14_1)
+		Light.set_falloff_end(var_14_0, arg_14_2)
 	end
 end
 
-local dummy_input = {}
+local var_0_2 = {}
 
-CameraSystem.update = function (self, context)
-	local dt = context.dt
-	local t = context.t
-	local camera_manager = Managers.state.camera
+function CameraSystem.update(arg_15_0, arg_15_1)
+	local var_15_0 = arg_15_1.dt
+	local var_15_1 = arg_15_1.t
+	local var_15_2 = Managers.state.camera
 
-	for player, camera_unit in pairs(self.camera_units) do
-		local viewport_name = player.viewport_name
-		local node_name = Unit.get_data(camera_unit, "camera", "settings_node")
+	for iter_15_0, iter_15_1 in pairs(arg_15_0.camera_units) do
+		local var_15_3 = iter_15_0.viewport_name
+		local var_15_4 = Unit.get_data(iter_15_1, "camera", "settings_node")
 
-		if node_name ~= camera_manager:current_camera_node(viewport_name) then
-			local tree_name = Unit.get_data(camera_unit, "camera", "settings_tree")
+		if var_15_4 ~= var_15_2:current_camera_node(var_15_3) then
+			local var_15_5 = Unit.get_data(iter_15_1, "camera", "settings_tree")
 
-			camera_manager:set_camera_node(viewport_name, tree_name, node_name)
+			var_15_2:set_camera_node(var_15_3, var_15_5, var_15_4)
 		end
 
-		camera_manager:update(dt, t, viewport_name)
-
-		local camera_ext = self.unit_extension_data[camera_unit]
-
-		camera_ext:update(camera_unit, dummy_input, dt, context, t)
+		var_15_2:update(var_15_0, var_15_1, var_15_3)
+		arg_15_0.unit_extension_data[iter_15_1]:update(iter_15_1, var_0_2, var_15_0, arg_15_1, var_15_1)
 	end
 end
 
-CameraSystem.post_update = function (self, context)
-	local dt = context.dt
-	local t = context.t
-	local camera_manager = Managers.state.camera
+function CameraSystem.post_update(arg_16_0, arg_16_1)
+	local var_16_0 = arg_16_1.dt
+	local var_16_1 = arg_16_1.t
+	local var_16_2 = Managers.state.camera
 
-	for player, camera_unit in pairs(self.camera_units) do
-		local viewport_name = player.viewport_name
+	for iter_16_0, iter_16_1 in pairs(arg_16_0.camera_units) do
+		local var_16_3 = iter_16_0.viewport_name
 
-		camera_manager:post_update(dt, t, viewport_name)
+		var_16_2:post_update(var_16_0, var_16_1, var_16_3)
 	end
 end
 
-CameraSystem.rpc_set_observer_camera = function (self, channel_id, local_player_id)
-	local player = Managers.player:local_player(local_player_id)
+function CameraSystem.rpc_set_observer_camera(arg_17_0, arg_17_1, arg_17_2)
+	local var_17_0 = Managers.player:local_player(arg_17_2)
 
-	CharacterStateHelper.change_camera_state(player, "observer")
+	CharacterStateHelper.change_camera_state(var_17_0, "observer")
 end
 
-CameraSystem.initialize_camera_states = function (self, player, profile_index, career_index)
-	local profile = SPProfiles[profile_index]
-	local career = profile.careers[career_index]
-	local camera_state_list = career.camera_state_list
-	local camera_state_class_list = {}
+function CameraSystem.initialize_camera_states(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+	local var_18_0 = SPProfiles[arg_18_2].careers[arg_18_3].camera_state_list
+	local var_18_1 = {}
 
-	for _, camera_state_name in ipairs(camera_state_list) do
-		camera_state_class_list[#camera_state_class_list + 1] = rawget(_G, camera_state_name)
+	for iter_18_0, iter_18_1 in ipairs(var_18_0) do
+		var_18_1[#var_18_1 + 1] = rawget(_G, iter_18_1)
 	end
 
-	local camera_state_extension = ScriptUnit.has_extension(player.camera_follow_unit, "camera_state_machine_system")
-
-	camera_state_extension:reinitialize_camera_states(camera_state_class_list, "idle")
+	ScriptUnit.has_extension(arg_18_1.camera_follow_unit, "camera_state_machine_system"):reinitialize_camera_states(var_18_1, "idle")
 end

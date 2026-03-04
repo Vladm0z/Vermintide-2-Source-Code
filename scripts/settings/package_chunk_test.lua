@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/settings/package_chunk_test.lua
+-- chunkname: @scripts/settings/package_chunk_test.lua
 
 PackageChunkPackages = {
 	"backend/local_backend/local_backend",
@@ -256,13 +256,13 @@ PackageChunkPackages = {
 	"units/beings/player/first_person_base/state_machines/career/skill_waywatcher",
 	"units/beings/player/first_person_base/state_machines/ranged/longbow",
 	"units/beings/player/first_person_base/state_machines/ranged/longbow_es",
-	"units/beings/player/first_person_base/state_machines/career/skill_ranger",
+	"units/beings/player/first_person_base/state_machines/career/skill_ranger"
 }
 
-function find_playgo_package(element)
-	for key, value in pairs(PackageChunkPackages) do
-		if value == element then
-			return key
+function find_playgo_package(arg_1_0)
+	for iter_1_0, iter_1_1 in pairs(PackageChunkPackages) do
+		if iter_1_1 == arg_1_0 then
+			return iter_1_0
 		end
 	end
 

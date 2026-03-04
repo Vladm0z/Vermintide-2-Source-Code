@@ -1,1594 +1,1540 @@
-﻿-- chunkname: @scripts/ui/hud_ui/equipment_ui.lua
+-- chunkname: @scripts/ui/hud_ui/equipment_ui.lua
 
-local definitions = local_require("scripts/ui/hud_ui/equipment_ui_definitions")
-local scenegraph_definition = definitions.scenegraph_definition
-local animation_definitions = definitions.animations_definitions
+local var_0_0 = local_require("scripts/ui/hud_ui/equipment_ui_definitions")
+local var_0_1 = var_0_0.scenegraph_definition
+local var_0_2 = var_0_0.animations_definitions
 
 EquipmentUI = class(EquipmentUI)
 
-local AMMO_PRESENTATION_DURATION = 2
-local PERSISTENT_AMMO_COUNTER = Application.user_setting("persistent_ammo_counter")
-local slot_size = definitions.slot_size
-local NUM_SLOTS = definitions.NUM_SLOTS
-local input_actions_by_slot = {
-	slot_career_skill_weapon = "weapon_reload",
+local var_0_3 = 2
+local var_0_4 = Application.user_setting("persistent_ammo_counter")
+local var_0_5 = var_0_0.slot_size
+local var_0_6 = var_0_0.NUM_SLOTS
+local var_0_7 = {
+	slot_potion = "wield_4",
 	slot_grenade = "wield_5",
 	slot_healthkit = "wield_3",
+	slot_career_skill_weapon = "weapon_reload",
 	slot_melee = "wield_1",
-	slot_potion = "wield_4",
-	slot_ranged = "wield_2",
+	slot_ranged = "wield_2"
 }
-local allowed_equipment_slots = {
-	slot_career_skill_weapon = true,
+local var_0_8 = {
 	slot_grenade = true,
 	slot_healthkit = true,
-	slot_melee = true,
 	slot_potion = true,
-	slot_ranged = true,
+	slot_career_skill_weapon = true,
+	slot_melee = true,
+	slot_ranged = true
 }
-local ammo_colors = {
+local var_0_9 = {
 	normal = Colors.get_color_table_with_alpha("white", 255),
 	empty = Colors.get_color_table_with_alpha("red", 255),
 	focus = Colors.get_color_table_with_alpha("font_default", 150),
-	unfocused = Colors.get_color_table_with_alpha("font_default", 150),
+	unfocused = Colors.get_color_table_with_alpha("font_default", 150)
 }
 
-local function sort_by_hud_index(a, b)
-	local a_hud_index = a.hud_index or 0
-	local b_hud_index = b.hud_index or 0
-
-	return a_hud_index < b_hud_index
+local function var_0_10(arg_1_0, arg_1_1)
+	return (arg_1_0.hud_index or 0) < (arg_1_1.hud_index or 0)
 end
 
-local function is_dark_pact()
-	local local_player_party = Managers.party:get_local_player_party()
-	local side = Managers.state.side.side_by_party[local_player_party]
+local function var_0_11()
+	local var_2_0 = Managers.party:get_local_player_party()
+	local var_2_1 = Managers.state.side.side_by_party[var_2_0]
 
-	return side and side:name() == "dark_pact"
+	return var_2_1 and var_2_1:name() == "dark_pact"
 end
 
-EquipmentUI.init = function (self, parent, ingame_ui_context)
-	self._parent = parent
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self.ingame_ui = ingame_ui_context.ingame_ui
-	self.input_manager = ingame_ui_context.input_manager
-	self.peer_id = ingame_ui_context.peer_id
-	self.player = ingame_ui_context.player
-	self.ui_animations = {}
-	self._animations = {}
-	self.render_settings = {
+function EquipmentUI.init(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_0._parent = arg_3_1
+	arg_3_0.ui_renderer = arg_3_2.ui_renderer
+	arg_3_0.ingame_ui = arg_3_2.ingame_ui
+	arg_3_0.input_manager = arg_3_2.input_manager
+	arg_3_0.peer_id = arg_3_2.peer_id
+	arg_3_0.player = arg_3_2.player
+	arg_3_0.ui_animations = {}
+	arg_3_0._animations = {}
+	arg_3_0.render_settings = {
 		alpha_multiplier = 1,
-		snap_pixel_positions = false,
+		snap_pixel_positions = false
 	}
-	self.is_in_inn = ingame_ui_context.is_in_inn
-	self.cleanui = ingame_ui_context.cleanui
-	self._is_spectator = false
-	self._spectated_player = nil
-	self._spectated_player_unit = nil
-	self._reload_attempts = 0
+	arg_3_0.is_in_inn = arg_3_2.is_in_inn
+	arg_3_0.cleanui = arg_3_2.cleanui
+	arg_3_0._is_spectator = false
+	arg_3_0._spectated_player = nil
+	arg_3_0._spectated_player_unit = nil
+	arg_3_0._reload_attempts = 0
 
-	local event_manager = Managers.state.event
+	local var_3_0 = Managers.state.event
 
-	event_manager:register(self, "input_changed", "event_input_changed")
-	event_manager:register(self, "on_spectator_target_changed", "on_spectator_target_changed")
-	event_manager:register(self, "swap_equipment_from_storage", "event_swap_equipment_from_storage")
-	self:_create_ui_elements()
+	var_3_0:register(arg_3_0, "input_changed", "event_input_changed")
+	var_3_0:register(arg_3_0, "on_spectator_target_changed", "on_spectator_target_changed")
+	var_3_0:register(arg_3_0, "swap_equipment_from_storage", "event_swap_equipment_from_storage")
+	arg_3_0:_create_ui_elements()
 end
 
-EquipmentUI._create_ui_elements = function (self)
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+function EquipmentUI._create_ui_elements(arg_4_0)
+	arg_4_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 
-	local widgets = {}
-	local widgets_by_name = {}
-	local ammo_widgets = {}
-	local ammo_widgets_by_name = {}
-	local unused_widgets = {}
-	local slot_widgets = {}
-	local static_widgets = {}
-	local count = 1
+	local var_4_0 = {}
+	local var_4_1 = {}
+	local var_4_2 = {}
+	local var_4_3 = {}
+	local var_4_4 = {}
+	local var_4_5 = {}
+	local var_4_6 = {}
+	local var_4_7 = 1
 
-	for name, definition in pairs(definitions.widget_definitions) do
-		local widget = UIWidget.init(definition)
+	for iter_4_0, iter_4_1 in pairs(var_0_0.widget_definitions) do
+		local var_4_8 = UIWidget.init(iter_4_1)
 
-		widgets_by_name[name] = widget
-		static_widgets[count] = widget
-		count = count + 1
+		var_4_1[iter_4_0] = var_4_8
+		var_4_6[var_4_7] = var_4_8
+		var_4_7 = var_4_7 + 1
 	end
 
-	for i, definition in ipairs(definitions.slot_widget_definitions) do
-		local widget = UIWidget.init(definition)
+	for iter_4_2, iter_4_3 in ipairs(var_0_0.slot_widget_definitions) do
+		local var_4_9 = UIWidget.init(iter_4_3)
 
-		widgets[i] = widget
-		unused_widgets[i] = widget
-		slot_widgets[i] = widget
+		var_4_0[iter_4_2] = var_4_9
+		var_4_4[iter_4_2] = var_4_9
+		var_4_5[iter_4_2] = var_4_9
 	end
 
-	for name, definition in pairs(definitions.ammo_widget_definitions) do
-		local widget = UIWidget.init(definition)
+	for iter_4_4, iter_4_5 in pairs(var_0_0.ammo_widget_definitions) do
+		local var_4_10 = UIWidget.init(iter_4_5)
 
-		ammo_widgets[#ammo_widgets + 1] = widget
-		ammo_widgets_by_name[name] = widget
-		widgets_by_name[name] = widget
+		var_4_2[#var_4_2 + 1] = var_4_10
+		var_4_3[iter_4_4] = var_4_10
+		var_4_1[iter_4_4] = var_4_10
 	end
 
-	local extra_storage_icon_widgets = {}
+	local var_4_11 = {}
 
-	for i, widget_def in ipairs(definitions.extra_storage_icon_definitions) do
-		extra_storage_icon_widgets[i] = UIWidget.init(widget_def)
+	for iter_4_6, iter_4_7 in ipairs(var_0_0.extra_storage_icon_definitions) do
+		var_4_11[iter_4_6] = UIWidget.init(iter_4_7)
 	end
 
-	self._extra_storage_icon_widgets = extra_storage_icon_widgets
-	self._widgets = widgets
-	self._widgets_by_name = widgets_by_name
-	self._ammo_widgets = ammo_widgets
-	self._ammo_widgets_by_name = ammo_widgets_by_name
-	self._static_widgets = static_widgets
-	self._unused_widgets = unused_widgets
-	self._slot_widgets = slot_widgets
-	self._ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
-	widgets_by_name.overcharge_background.style.texture_id.color = {
+	arg_4_0._extra_storage_icon_widgets = var_4_11
+	arg_4_0._widgets = var_4_0
+	arg_4_0._widgets_by_name = var_4_1
+	arg_4_0._ammo_widgets = var_4_2
+	arg_4_0._ammo_widgets_by_name = var_4_3
+	arg_4_0._static_widgets = var_4_6
+	arg_4_0._unused_widgets = var_4_4
+	arg_4_0._slot_widgets = var_4_5
+	arg_4_0._ui_animator = UIAnimator:new(arg_4_0.ui_scenegraph, var_0_2)
+	var_4_1.overcharge_background.style.texture_id.color = {
 		100,
 		150,
 		150,
-		150,
+		150
 	}
-	widgets_by_name.overcharge.style.texture_id.color = Colors.get_color_table_with_alpha("font_title", 255)
-	self._added_items = {}
+	var_4_1.overcharge.style.texture_id.color = Colors.get_color_table_with_alpha("font_title", 255)
+	arg_4_0._added_items = {}
 
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
-	self:event_input_changed()
-	self:_set_widget_visibility(self._ammo_widgets_by_name.reload_tip_text, false)
-	self:set_visible(true)
-	self:set_dirty()
+	UIRenderer.clear_scenegraph_queue(arg_4_0.ui_renderer)
+	arg_4_0:event_input_changed()
+	arg_4_0:_set_widget_visibility(arg_4_0._ammo_widgets_by_name.reload_tip_text, false)
+	arg_4_0:set_visible(true)
+	arg_4_0:set_dirty()
 
-	self._num_added_items = 0
+	arg_4_0._num_added_items = 0
 end
 
-EquipmentUI.event_input_changed = function (self)
-	local inventory_slots = InventorySettings.slots
-	local num_inventory_slots = #inventory_slots
+function EquipmentUI.event_input_changed(arg_5_0)
+	local var_5_0 = InventorySettings.slots
+	local var_5_1 = #var_5_0
 
-	for i = 1, num_inventory_slots do
-		local slot = inventory_slots[i]
-		local slot_name = slot.name
-		local hud_index = slot.hud_index
+	for iter_5_0 = 1, var_5_1 do
+		local var_5_2 = var_5_0[iter_5_0]
+		local var_5_3 = var_5_2.name
+		local var_5_4 = var_5_2.hud_index
 
-		for k, slot_widget in ipairs(self._slot_widgets) do
-			if slot_widget.content.hud_index == hud_index then
-				self:_set_slot_input(slot_widget, slot_name)
-				self:_set_widget_dirty(slot_widget)
+		for iter_5_1, iter_5_2 in ipairs(arg_5_0._slot_widgets) do
+			if iter_5_2.content.hud_index == var_5_4 then
+				arg_5_0:_set_slot_input(iter_5_2, var_5_3)
+				arg_5_0:_set_widget_dirty(iter_5_2)
 			end
 		end
 	end
 
-	self:set_dirty()
+	arg_5_0:set_dirty()
 end
 
-EquipmentUI.on_spectator_target_changed = function (self, spectated_player_unit)
-	self._spectated_player_unit = spectated_player_unit
-	self._spectated_player = Managers.player:owner(spectated_player_unit)
-	self._is_spectator = true
+function EquipmentUI.on_spectator_target_changed(arg_6_0, arg_6_1)
+	arg_6_0._spectated_player_unit = arg_6_1
+	arg_6_0._spectated_player = Managers.player:owner(arg_6_1)
+	arg_6_0._is_spectator = true
 
-	local observed_side = Managers.state.side:get_side_from_player_unique_id(self._spectated_player:unique_id())
-
-	if observed_side:name() == "dark_pact" then
-		self:set_visible(false)
+	if Managers.state.side:get_side_from_player_unique_id(arg_6_0._spectated_player:unique_id()):name() == "dark_pact" then
+		arg_6_0:set_visible(false)
 	else
-		self:set_visible(true)
+		arg_6_0:set_visible(true)
 	end
 end
 
-EquipmentUI.event_swap_equipment_from_storage = function (self, slot_name, additional_items)
-	if slot_name ~= "slot_grenade" then
+function EquipmentUI.event_swap_equipment_from_storage(arg_7_0, arg_7_1, arg_7_2)
+	if arg_7_1 ~= "slot_grenade" then
 		return
 	end
 
-	self._widgets_by_name.extra_storage_bg.style.texture.color[1] = 163
-	self._time_fade_storage_slots = Managers.time:time("ui") + 2
+	arg_7_0._widgets_by_name.extra_storage_bg.style.texture.color[1] = 163
+	arg_7_0._time_fade_storage_slots = Managers.time:time("ui") + 2
 
-	local widgets = self._extra_storage_icon_widgets
+	local var_7_0 = arg_7_0._extra_storage_icon_widgets
 
-	for i = 1, #widgets do
-		local widget = widgets[i]
-		local item = additional_items[i]
+	for iter_7_0 = 1, #var_7_0 do
+		local var_7_1 = var_7_0[iter_7_0]
+		local var_7_2 = arg_7_2[iter_7_0]
 
-		if item then
-			local hud_icon = item.gamepad_hud_icon
-			local style = widget.style
-			local content = widget.content
+		if var_7_2 then
+			local var_7_3 = var_7_2.gamepad_hud_icon
+			local var_7_4 = var_7_1.style
+			local var_7_5 = var_7_1.content
 
-			content.visible = true
-			content.texture_icon = hud_icon
-			content.texture_glow = hud_icon .. "_glow"
-			style.texture_icon.color[1] = 255
+			var_7_5.visible = true
+			var_7_5.texture_icon = var_7_3
+			var_7_5.texture_glow = var_7_3 .. "_glow"
+			var_7_4.texture_icon.color[1] = 255
 
-			local color_src = Colors.color_definitions[item.key] or Colors.color_definitions.black
-			local color_dst = style.texture_glow.color
+			local var_7_6 = Colors.color_definitions[var_7_2.key] or Colors.color_definitions.black
+			local var_7_7 = var_7_4.texture_glow.color
 
-			color_dst[1] = 255
-			color_dst[2] = color_src[2]
-			color_dst[3] = color_src[3]
-			color_dst[4] = color_src[4]
+			var_7_7[1] = 255
+			var_7_7[2] = var_7_6[2]
+			var_7_7[3] = var_7_6[3]
+			var_7_7[4] = var_7_6[4]
 		else
-			widget.content.visible = false
+			var_7_1.content.visible = false
 		end
 	end
 end
 
-EquipmentUI._set_slot_input = function (self, widget, slot_name)
-	local input_action = input_actions_by_slot[slot_name]
-	local texture_data, input_text, prefix_text = self:_get_input_texture_data(input_action)
-	local text_length = input_text and UTF8Utils.string_length(input_text) or 0
-	local max_length = 40
-	local input_style = widget.style.input_text
-	local ui_renderer = self.ui_renderer
+function EquipmentUI._set_slot_input(arg_8_0, arg_8_1, arg_8_2)
+	local var_8_0 = var_0_7[arg_8_2]
+	local var_8_1, var_8_2, var_8_3 = arg_8_0:_get_input_texture_data(var_8_0)
 
-	input_text = input_text and UIRenderer.crop_text_width(ui_renderer, input_text, max_length, input_style)
-	widget.content.input_text = input_text or ""
-	widget.content.input_action = input_action
+	if not var_8_2 or not UTF8Utils.string_length(var_8_2) then
+		local var_8_4 = 0
+	end
+
+	local var_8_5 = 40
+	local var_8_6 = arg_8_1.style.input_text
+	local var_8_7 = arg_8_0.ui_renderer
+
+	var_8_2 = var_8_2 and UIRenderer.crop_text_width(var_8_7, var_8_2, var_8_5, var_8_6)
+	arg_8_1.content.input_text = var_8_2 or ""
+	arg_8_1.content.input_action = var_8_0
 end
 
-EquipmentUI._get_input_texture_data = function (self, input_action)
-	local input_manager = self.input_manager
-	local input_service = input_manager:get_service("Player")
-	local gamepad_active = input_manager:is_device_active("gamepad")
-	local platform = PLATFORM
+function EquipmentUI._get_input_texture_data(arg_9_0, arg_9_1)
+	local var_9_0 = arg_9_0.input_manager
+	local var_9_1 = var_9_0:get_service("Player")
+	local var_9_2 = var_9_0:is_device_active("gamepad")
+	local var_9_3 = PLATFORM
 
-	if IS_WINDOWS and gamepad_active then
-		platform = "xb1"
+	if IS_WINDOWS and var_9_2 then
+		var_9_3 = "xb1"
 	end
 
-	local keymap_binding = input_service:get_keymapping(input_action, platform)
-	local device_type = keymap_binding and keymap_binding[1]
-	local key_index = keymap_binding and keymap_binding[2] or UNASSIGNED_KEY
-	local key_action_type = keymap_binding and keymap_binding[3]
-	local prefix_text
+	local var_9_4 = var_9_1:get_keymapping(arg_9_1, var_9_3)
+	local var_9_5 = var_9_4 and var_9_4[1]
+	local var_9_6 = var_9_4 and var_9_4[2] or UNASSIGNED_KEY
+	local var_9_7 = var_9_4 and var_9_4[3]
+	local var_9_8
 
-	if key_action_type == "held" then
-		prefix_text = "matchmaking_prefix_hold"
+	if var_9_7 == "held" then
+		var_9_8 = "matchmaking_prefix_hold"
 	end
 
-	local is_button_unassigned = key_index == UNASSIGNED_KEY
-	local button_name = ""
+	local var_9_9 = var_9_6 == UNASSIGNED_KEY
+	local var_9_10 = ""
 
-	if device_type == "keyboard" then
-		button_name = is_button_unassigned and "" or Keyboard.button_locale_name(key_index)
+	if var_9_5 == "keyboard" then
+		local var_9_11 = var_9_9 and "" or Keyboard.button_locale_name(var_9_6)
 
-		return nil, button_name, prefix_text
-	elseif device_type == "mouse" then
-		button_name = is_button_unassigned and "" or Mouse.button_name(key_index)
+		return nil, var_9_11, var_9_8
+	elseif var_9_5 == "mouse" then
+		local var_9_12 = var_9_9 and "" or Mouse.button_name(var_9_6)
 
-		return nil, button_name, prefix_text
-	elseif device_type == "gamepad" then
-		button_name = is_button_unassigned and "" or Pad1.button_name(key_index)
+		return nil, var_9_12, var_9_8
+	elseif var_9_5 == "gamepad" then
+		local var_9_13 = var_9_9 and "" or Pad1.button_name(var_9_6)
 
-		local button_texture_data = ButtonTextureByName(button_name, platform)
-
-		return button_texture_data, button_name, prefix_text
+		return ButtonTextureByName(var_9_13, var_9_3), var_9_13, var_9_8
 	end
 
 	return nil, ""
 end
 
-EquipmentUI._update_widgets = function (self)
-	local slot_widgets = self._slot_widgets
+function EquipmentUI._update_widgets(arg_10_0)
+	local var_10_0 = arg_10_0._slot_widgets
 
-	for index, widget in ipairs(slot_widgets) do
-		self:_set_widget_dirty(widget)
+	for iter_10_0, iter_10_1 in ipairs(var_10_0) do
+		arg_10_0:_set_widget_dirty(iter_10_1)
 	end
 
-	self:set_dirty()
+	arg_10_0:set_dirty()
 end
 
-EquipmentUI._get_wield_scroll_input = function (self)
-	local player_manager = self.player_manager
-	local player = self._is_spectator and self._spectated_player or self.player
-	local player_unit = player.player_unit
+function EquipmentUI._get_wield_scroll_input(arg_11_0)
+	local var_11_0 = arg_11_0.player_manager
+	local var_11_1 = arg_11_0._is_spectator and arg_11_0._spectated_player or arg_11_0.player
+	local var_11_2 = var_11_1.player_unit
 
-	if not player_unit then
+	if not var_11_2 then
 		return
 	end
 
-	local peer_id = player:network_id()
-	local input_extension = ScriptUnit.has_extension(player_unit, "input_system")
+	local var_11_3 = var_11_1:network_id()
 
-	return input_extension:get_last_scroll_value()
+	return ScriptUnit.has_extension(var_11_2, "input_system"):get_last_scroll_value()
 end
 
-EquipmentUI._set_wielded_item = function (self, wielded_slot_name)
-	local added_items = self._added_items
+function EquipmentUI._set_wielded_item(arg_12_0, arg_12_1)
+	local var_12_0 = arg_12_0._added_items
 
-	for _, data in ipairs(added_items) do
-		local was_wielded = data.slot_name == self._wielded_slot_name
-		local is_wielded = data.slot_name == wielded_slot_name
-		local widget = data.widget
+	for iter_12_0, iter_12_1 in ipairs(var_12_0) do
+		local var_12_1 = iter_12_1.slot_name == arg_12_0._wielded_slot_name
+		local var_12_2 = iter_12_1.slot_name == arg_12_1
+		local var_12_3 = iter_12_1.widget
 
-		widget.content.selected = is_wielded
+		var_12_3.content.selected = var_12_2
 
-		local slot_name = data.slot_name
+		local var_12_4 = iter_12_1.slot_name
 
-		if is_wielded then
-			local ammo_focus = slot_name == "slot_ranged"
+		if var_12_2 then
+			local var_12_5 = var_12_4 == "slot_ranged"
 
-			self:_set_ammo_text_focus(ammo_focus)
-			self:_add_animation(slot_name .. "_wield_anim", widget, widget, "_animate_slot_wield")
-		elseif was_wielded then
-			self:_add_animation(slot_name .. "_wield_anim", widget, widget, "_animate_slot_unwield")
+			arg_12_0:_set_ammo_text_focus(var_12_5)
+			arg_12_0:_add_animation(var_12_4 .. "_wield_anim", var_12_3, var_12_3, "_animate_slot_wield")
+		elseif var_12_1 then
+			arg_12_0:_add_animation(var_12_4 .. "_wield_anim", var_12_3, var_12_3, "_animate_slot_unwield")
 		end
 
-		data.is_wielded = is_wielded
+		iter_12_1.is_wielded = var_12_2
 	end
 
-	self._wielded_slot_name = wielded_slot_name
+	arg_12_0._wielded_slot_name = arg_12_1
 end
 
-local widgets_to_remove = {}
-local verified_widgets = {}
+local var_0_12 = {}
+local var_0_13 = {}
 
-EquipmentUI._sync_player_equipment = function (self)
-	local player = self._is_spectator and self._spectated_player or self.player
-	local player_unit = player.player_unit
+function EquipmentUI._sync_player_equipment(arg_13_0)
+	local var_13_0 = arg_13_0._is_spectator and arg_13_0._spectated_player or arg_13_0.player
+	local var_13_1 = var_13_0.player_unit
 
-	if not player_unit then
+	if not var_13_1 then
 		return
 	end
 
-	local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
-	local equipment = inventory_extension:equipment()
+	local var_13_2 = ScriptUnit.extension(var_13_1, "inventory_system")
+	local var_13_3 = var_13_2:equipment()
 
-	if not equipment then
+	if not var_13_3 then
 		return
 	end
 
-	table.clear(verified_widgets)
+	table.clear(var_0_13)
 
-	local inventory_modified = false
-	local wielded_slot_name
-	local equipment_slots = equipment.slots
-	local wielded = equipment.wielded_slot
-	local inventory_slots = InventorySettings.slots
-	local num_inventory_slots = #inventory_slots
-	local career_name = player:career_name()
-	local hud_inventory_widget_content = self._widgets_by_name.background_panel.content
-	local career_data = UISettings.hud_inventory_panel_data[career_name] or UISettings.hud_inventory_panel_data.default
+	local var_13_4 = false
+	local var_13_5
+	local var_13_6 = var_13_3.slots
+	local var_13_7 = var_13_3.wielded_slot
+	local var_13_8 = InventorySettings.slots
+	local var_13_9 = #var_13_8
+	local var_13_10 = var_13_0:career_name()
+	local var_13_11 = arg_13_0._widgets_by_name.background_panel.content
+	local var_13_12 = UISettings.hud_inventory_panel_data[var_13_10] or UISettings.hud_inventory_panel_data.default
 
-	hud_inventory_widget_content.texture_id = career_data.texture_id
+	var_13_11.texture_id = var_13_12.texture_id
+	arg_13_0._widgets_by_name.background_panel.style.texture_id.texture_size = var_13_12.texture_size
 
-	local hud_inventory_widget_style = self._widgets_by_name.background_panel.style.texture_id
+	local var_13_13 = var_13_10 == "dr_engineer"
+	local var_13_14 = arg_13_0._added_items
 
-	hud_inventory_widget_style.texture_size = career_data.texture_size
+	for iter_13_0 = 1, var_13_9 do
+		local var_13_15 = var_13_8[iter_13_0].name
 
-	local is_cog = career_name == "dr_engineer"
-	local added_items = self._added_items
-
-	for i = 1, num_inventory_slots do
-		local slot = inventory_slots[i]
-		local slot_name = slot.name
-
-		if not allowed_equipment_slots[slot_name] or slot_name == "slot_career_skill_weapon" and not is_cog then
-			-- Nothing
+		if not var_0_8[var_13_15] or var_13_15 == "slot_career_skill_weapon" and not var_13_13 then
+			-- block empty
 		else
-			local slot_data = equipment_slots[slot_name]
-			local item_data = slot_data and slot_data.item_data
-			local item_name = item_data and item_data.name
-			local item_id = item_data and item_data.backend_id
-			local is_wielded = slot_name and wielded == slot_name or false
-			local verified = false
-			local widget_id = 0
+			local var_13_16 = var_13_6[var_13_15]
+			local var_13_17 = var_13_16 and var_13_16.item_data
+			local var_13_18 = var_13_17 and var_13_17.name
+			local var_13_19 = var_13_17 and var_13_17.backend_id
+			local var_13_20 = var_13_15 and var_13_7 == var_13_15 or false
+			local var_13_21 = false
+			local var_13_22 = 0
 
-			for j = 1, #added_items do
-				local data = added_items[j]
-				local same_item
+			for iter_13_1 = 1, #var_13_14 do
+				local var_13_23 = var_13_14[iter_13_1]
+				local var_13_24
 
-				if item_id then
-					same_item = data.item_id == item_id
+				if var_13_19 then
+					var_13_24 = var_13_23.item_id == var_13_19
 				else
-					same_item = data.item_name == item_name
+					var_13_24 = var_13_23.item_name == var_13_18
 				end
 
-				local same_slot = data.slot_name == slot_name
+				local var_13_25 = var_13_23.slot_name == var_13_15
 
-				if same_slot then
-					widget_id = j
+				if var_13_25 then
+					var_13_22 = iter_13_1
 				end
 
-				if same_item then
-					if not verified_widgets[j] then
-						verified = true
-						verified_widgets[j] = true
+				if var_13_24 then
+					if not var_0_13[iter_13_1] then
+						var_13_21 = true
+						var_0_13[iter_13_1] = true
 
 						break
 					end
-				elseif item_name and same_slot then
-					verified = true
-					verified_widgets[j] = true
+				elseif var_13_18 and var_13_25 then
+					var_13_21 = true
+					var_0_13[iter_13_1] = true
 
-					self:_add_item(slot_data, data)
+					arg_13_0:_add_item(var_13_16, var_13_23)
 
-					inventory_modified = true
+					var_13_4 = true
 
 					break
 				end
 			end
 
-			if not verified and slot_data ~= nil then
-				self:_add_item(slot_data)
+			if not var_13_21 and var_13_16 ~= nil then
+				arg_13_0:_add_item(var_13_16)
 
-				verified_widgets[#added_items] = true
-				inventory_modified = true
+				var_0_13[#var_13_14] = true
+				var_13_4 = true
 			end
 
-			if is_wielded then
-				wielded_slot_name = slot_name
+			if var_13_20 then
+				var_13_5 = var_13_15
 			end
 
-			if slot_name == "slot_ranged" and item_data and (slot_data.left_unit_1p or slot_data.right_unit_1p) then
-				self:_update_ammo_count(item_data, slot_data, player_unit)
+			if var_13_15 == "slot_ranged" and var_13_17 and (var_13_16.left_unit_1p or var_13_16.right_unit_1p) then
+				arg_13_0:_update_ammo_count(var_13_17, var_13_16, var_13_1)
 			end
 
-			if slot_name == "slot_grenade" and item_data and widget_id > 0 then
-				local has_additional_slots = inventory_extension:has_additional_item_slots(slot_name)
-				local item_count = inventory_extension:get_total_item_count(slot_name)
-				local hud_slot = added_items[widget_id]
-				local widget = hud_slot and hud_slot.widget
+			if var_13_15 == "slot_grenade" and var_13_17 and var_13_22 > 0 then
+				local var_13_26 = var_13_2:has_additional_item_slots(var_13_15)
+				local var_13_27 = var_13_2:get_total_item_count(var_13_15)
+				local var_13_28 = var_13_14[var_13_22]
+				local var_13_29 = var_13_28 and var_13_28.widget
 
-				if widget then
-					local content = widget.content
+				if var_13_29 then
+					local var_13_30 = var_13_29.content
 
-					if content.use_count ~= item_count then
-						content.use_count = item_count
-						content.use_count_text = "x" .. item_count
-						content.has_additional_slots = has_additional_slots
+					if var_13_30.use_count ~= var_13_27 then
+						var_13_30.use_count = var_13_27
+						var_13_30.use_count_text = "x" .. var_13_27
+						var_13_30.has_additional_slots = var_13_26
 
-						self:_set_widget_dirty(widget)
+						arg_13_0:_set_widget_dirty(var_13_29)
 					end
 
-					local can_swap = inventory_extension:can_swap_from_storage(slot_name, SwapFromStorageType.Unique)
+					local var_13_31 = var_13_2:can_swap_from_storage(var_13_15, SwapFromStorageType.Unique)
 
-					if content.can_swap ~= can_swap then
-						content.can_swap = can_swap
+					if var_13_30.can_swap ~= var_13_31 then
+						var_13_30.can_swap = var_13_31
 
-						self:_set_widget_dirty(widget)
+						arg_13_0:_set_widget_dirty(var_13_29)
 					end
 				end
 			end
 
-			if slot_name == "slot_potion" and item_data and widget_id > 0 then
-				local hud_slot = added_items[widget_id]
-				local widget = hud_slot and hud_slot.widget
+			if var_13_15 == "slot_potion" and var_13_17 and var_13_22 > 0 then
+				local var_13_32 = var_13_14[var_13_22]
+				local var_13_33 = var_13_32 and var_13_32.widget
 
-				if widget then
-					local content = widget.content
-					local style = widget.style
-					local has_additional_slots = inventory_extension:has_additional_item_slots(slot_name)
-					local additional_items = inventory_extension:get_additional_items(slot_name)
+				if var_13_33 then
+					local var_13_34 = var_13_33.content
+					local var_13_35 = var_13_33.style
+					local var_13_36 = var_13_2:has_additional_item_slots(var_13_15)
+					local var_13_37 = var_13_2:get_additional_items(var_13_15)
 
-					if additional_items then
-						local next_additional_item = additional_items[1]
+					if var_13_37 then
+						local var_13_38 = var_13_37[1]
 
-						if next_additional_item then
-							local hud_icon = next_additional_item.gamepad_hud_icon
+						if var_13_38 then
+							local var_13_39 = var_13_38.gamepad_hud_icon
 
-							content.secondary_texture_icon = hud_icon
-							content.secondary_texture_icon_glow = hud_icon .. "_glow"
-							content.has_additional_slots = has_additional_slots
+							var_13_34.secondary_texture_icon = var_13_39
+							var_13_34.secondary_texture_icon_glow = var_13_39 .. "_glow"
+							var_13_34.has_additional_slots = var_13_36
 
-							local key = next_additional_item.key
+							local var_13_40 = var_13_38.key
 
-							if content.additional_item_key ~= key then
-								content.additional_item_key = key
+							if var_13_34.additional_item_key ~= var_13_40 then
+								var_13_34.additional_item_key = var_13_40
 
-								local inventory_consumable_slot_colors = UISettings.inventory_consumable_slot_colors
-								local default_background_color = {
+								local var_13_41 = UISettings.inventory_consumable_slot_colors
+								local var_13_42 = {
 									255,
 									0,
 									0,
-									0,
+									0
 								}
-								local default_glow_color = {
+								local var_13_43 = {
 									255,
 									255,
 									255,
-									255,
+									255
 								}
-								local slot_background_color = inventory_consumable_slot_colors[next_additional_item.key]
+								local var_13_44 = var_13_41[var_13_38.key]
 
-								if slot_background_color then
-									style.secondary_texture_icon.color = slot_background_color
-									style.secondary_texture_icon_glow.color = {
+								if var_13_44 then
+									var_13_35.secondary_texture_icon.color = var_13_44
+									var_13_35.secondary_texture_icon_glow.color = {
 										255,
 										0,
 										0,
-										0,
+										0
 									}
 								else
-									style.secondary_texture_icon.color = default_background_color
-									style.secondary_texture_icon_glow.color = default_glow_color
+									var_13_35.secondary_texture_icon.color = var_13_42
+									var_13_35.secondary_texture_icon_glow.color = var_13_43
 								end
 
-								local default_angle = UISettings.additional_inventory_slot_angles.default
-								local slot_rotation = UISettings.additional_inventory_slot_angles[next_additional_item.key] or default_angle
+								local var_13_45 = UISettings.additional_inventory_slot_angles.default
+								local var_13_46 = UISettings.additional_inventory_slot_angles[var_13_38.key] or var_13_45
 
-								style.secondary_texture_icon.angle = slot_rotation
-								style.secondary_texture_icon_glow.angle = slot_rotation
+								var_13_35.secondary_texture_icon.angle = var_13_46
+								var_13_35.secondary_texture_icon_glow.angle = var_13_46
 
-								self:_set_widget_dirty(widget)
+								arg_13_0:_set_widget_dirty(var_13_33)
 							end
-						elseif not next_additional_item and content.additional_item_key then
-							content.secondary_texture_icon = nil
-							content.secondary_texture_icon_glow = nil
-							content.has_additional_slots = has_additional_slots
-							content.additional_item_key = nil
+						elseif not var_13_38 and var_13_34.additional_item_key then
+							var_13_34.secondary_texture_icon = nil
+							var_13_34.secondary_texture_icon_glow = nil
+							var_13_34.has_additional_slots = var_13_36
+							var_13_34.additional_item_key = nil
 
-							self:_set_widget_dirty(widget)
+							arg_13_0:_set_widget_dirty(var_13_33)
 						end
-					elseif content.has_additional_slots and not has_additional_slots then
-						content.secondary_texture_icon = nil
-						content.secondary_texture_icon_glow = nil
-						content.has_additional_slots = has_additional_slots
-						content.additional_item_key = nil
+					elseif var_13_34.has_additional_slots and not var_13_36 then
+						var_13_34.secondary_texture_icon = nil
+						var_13_34.secondary_texture_icon_glow = nil
+						var_13_34.has_additional_slots = var_13_36
+						var_13_34.additional_item_key = nil
 
-						self:_set_widget_dirty(widget)
+						arg_13_0:_set_widget_dirty(var_13_33)
 					end
 				end
 			end
 
-			if slot_name == "slot_career_skill_weapon" and item_data and widget_id > 0 then
-				local hud_slot = added_items[widget_id]
-				local widget = hud_slot and hud_slot.widget
+			if var_13_15 == "slot_career_skill_weapon" and var_13_17 and var_13_22 > 0 then
+				local var_13_47 = var_13_14[var_13_22]
+				local var_13_48 = var_13_47 and var_13_47.widget
 
-				if widget then
-					local career_extension = ScriptUnit.has_extension(player_unit, "career_system")
-					local heat, max_heat = career_extension:current_ability_cooldown(1)
-					local buff_extension = ScriptUnit.has_extension(player_unit, "buff_system")
-					local is_exhausted = buff_extension:has_buff_type("bardin_engineer_pump_max_exhaustion_buff")
-					local can_reload = equipment.wielded_slot == "slot_career_skill_weapon" and heat > 0 and not is_exhausted
-					local reload_status_changed = widget.content.can_reload ~= can_reload or widget.content.is_exhausted ~= is_exhausted
+				if var_13_48 then
+					local var_13_49, var_13_50 = ScriptUnit.has_extension(var_13_1, "career_system"):current_ability_cooldown(1)
+					local var_13_51 = ScriptUnit.has_extension(var_13_1, "buff_system"):has_buff_type("bardin_engineer_pump_max_exhaustion_buff")
+					local var_13_52 = var_13_3.wielded_slot == "slot_career_skill_weapon" and var_13_49 > 0 and not var_13_51
 
-					if reload_status_changed then
-						widget.content.can_reload = can_reload
-						widget.content.is_exhausted = is_exhausted
+					if var_13_48.content.can_reload ~= var_13_52 or var_13_48.content.is_exhausted ~= var_13_51 then
+						var_13_48.content.can_reload = var_13_52
+						var_13_48.content.is_exhausted = var_13_51
 
-						self:_set_widget_dirty(widget)
+						arg_13_0:_set_widget_dirty(var_13_48)
 					end
 
-					local weapon_template = WeaponUtils.get_weapon_template(item_data.template)
-					local can_shoot_func = weapon_template.actions.action_one.default.condition_func
+					local var_13_53 = WeaponUtils.get_weapon_template(var_13_17.template).actions.action_one.default.condition_func
 
-					if can_reload and not can_shoot_func(player_unit, nil) then
-						local t = Managers.time:time("ui")
+					if var_13_52 and not var_13_53(var_13_1, nil) then
+						local var_13_54 = Managers.time:time("ui")
 
-						widget.style.reload_icon.color[1] = 255 - 155 * (0.5 + 0.5 * math.sin(5 * t))
+						var_13_48.style.reload_icon.color[1] = 255 - 155 * (0.5 + 0.5 * math.sin(5 * var_13_54))
 
-						self:_set_widget_dirty(widget)
+						arg_13_0:_set_widget_dirty(var_13_48)
 					else
-						widget.style.reload_icon.color[1] = 235
+						var_13_48.style.reload_icon.color[1] = 235
 					end
 
-					widget.style.reload_icon.color[3] = is_exhausted and 100 or 255
-					widget.style.reload_icon.color[4] = is_exhausted and 69 or 255
+					var_13_48.style.reload_icon.color[3] = var_13_51 and 100 or 255
+					var_13_48.style.reload_icon.color[4] = var_13_51 and 69 or 255
 				end
 			end
 		end
 	end
 
-	table.clear(widgets_to_remove)
+	table.clear(var_0_12)
 
-	for i = 1, #added_items do
-		if not verified_widgets[i] then
-			widgets_to_remove[#widgets_to_remove + 1] = i
+	for iter_13_2 = 1, #var_13_14 do
+		if not var_0_13[iter_13_2] then
+			var_0_12[#var_0_12 + 1] = iter_13_2
 		end
 	end
 
-	local index_mod = 0
+	local var_13_55 = 0
 
-	for i = 1, #widgets_to_remove do
-		local index = widgets_to_remove[i] - index_mod
+	for iter_13_3 = 1, #var_0_12 do
+		local var_13_56 = var_0_12[iter_13_3] - var_13_55
 
-		self:_remove_item(index)
+		arg_13_0:_remove_item(var_13_56)
 
-		index_mod = index_mod + 1
-		inventory_modified = true
+		var_13_55 = var_13_55 + 1
+		var_13_4 = true
 	end
 
-	if inventory_modified then
-		self:_update_widgets()
-		table.sort(added_items, sort_by_hud_index)
+	if var_13_4 then
+		arg_13_0:_update_widgets()
+		table.sort(var_13_14, var_0_10)
 	end
 
-	if wielded and not wielded_slot_name then
-		wielded_slot_name = wielded
+	if var_13_7 and not var_13_5 then
+		var_13_5 = var_13_7
 
-		self:_set_ammo_text_focus(false)
+		arg_13_0:_set_ammo_text_focus(false)
 	end
 
-	if wielded_slot_name and self._wielded_slot_name ~= wielded_slot_name or inventory_modified then
-		wielded_slot_name = wielded_slot_name or self._wielded_slot_name
+	if var_13_5 and arg_13_0._wielded_slot_name ~= var_13_5 or var_13_4 then
+		var_13_5 = var_13_5 or arg_13_0._wielded_slot_name
 
-		self:_set_wielded_item(wielded_slot_name)
+		arg_13_0:_set_wielded_item(var_13_5)
 	end
 end
 
-EquipmentUI._update_ammo_count = function (self, item_data, slot_data, player_unit)
-	local item_template = BackendUtils.get_item_template(item_data)
-	local ammo_widgets_by_name = self._ammo_widgets_by_name
-	local draw_overheat = false
+function EquipmentUI._update_ammo_count(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+	local var_14_0 = BackendUtils.get_item_template(arg_14_1)
+	local var_14_1 = arg_14_0._ammo_widgets_by_name
+	local var_14_2 = false
 
-	if item_template.ammo_data then
-		if item_template.ammo_data.hide_ammo_ui then
-			self._draw_ammo = false
+	if var_14_0.ammo_data then
+		if var_14_0.ammo_data.hide_ammo_ui then
+			arg_14_0._draw_ammo = false
 		else
-			self._draw_ammo = true
+			arg_14_0._draw_ammo = true
 
-			local ammo_count, remaining_ammo, using_single_clip = self:_get_ammunition_count(slot_data.left_unit_1p, slot_data.right_unit_1p, item_template)
-			local ammo_text_clip_widget = ammo_widgets_by_name.ammo_text_clip
-			local content = ammo_text_clip_widget.content
-			local ammo_empty = ammo_count + remaining_ammo == 0
-			local ammo_changed = false
+			local var_14_3, var_14_4, var_14_5 = arg_14_0:_get_ammunition_count(arg_14_2.left_unit_1p, arg_14_2.right_unit_1p, var_14_0)
+			local var_14_6 = var_14_1.ammo_text_clip.content
+			local var_14_7 = var_14_3 + var_14_4 == 0
+			local var_14_8 = false
 
-			if self._ammo_count ~= ammo_count then
-				self._ammo_count = ammo_count
+			if arg_14_0._ammo_count ~= var_14_3 then
+				arg_14_0._ammo_count = var_14_3
 
-				local widget = ammo_widgets_by_name.ammo_text_clip
-				local content = widget.content
+				local var_14_9 = var_14_1.ammo_text_clip
 
-				content.text = tostring(ammo_count)
+				var_14_9.content.text = tostring(var_14_3)
 
-				self:_set_widget_dirty(widget)
+				arg_14_0:_set_widget_dirty(var_14_9)
 
-				ammo_changed = true
+				var_14_8 = true
 			end
 
-			if self._remaining_ammo ~= remaining_ammo then
-				self._remaining_ammo = remaining_ammo
+			if arg_14_0._remaining_ammo ~= var_14_4 then
+				arg_14_0._remaining_ammo = var_14_4
 
-				local widget = ammo_widgets_by_name.ammo_text_remaining
-				local content = widget.content
+				local var_14_10 = var_14_1.ammo_text_remaining
 
-				content.text = tostring(remaining_ammo)
+				var_14_10.content.text = tostring(var_14_4)
 
-				self:_set_widget_dirty(widget)
+				arg_14_0:_set_widget_dirty(var_14_10)
 
-				ammo_changed = true
+				var_14_8 = true
 			end
 
-			if ammo_changed then
-				self._ammo_counter_fade_delay = AMMO_PRESENTATION_DURATION
-				self._ammo_counter_fade_progress = 1
+			if var_14_8 then
+				arg_14_0._ammo_counter_fade_delay = var_0_3
+				arg_14_0._ammo_counter_fade_progress = 1
 
-				self:_set_ammo_counter_alpha(255)
+				arg_14_0:_set_ammo_counter_alpha(255)
 
-				local ammo_text_color = ammo_empty and ammo_colors.empty or ammo_colors.normal
+				local var_14_11 = var_14_7 and var_0_9.empty or var_0_9.normal
 
-				self:_set_ammo_counter_color(ammo_text_color)
-				self:set_dirty()
+				arg_14_0:_set_ammo_counter_color(var_14_11)
+				arg_14_0:set_dirty()
 			end
 		end
 	else
-		local has_overcharge, overcharge_fraction, threshold_fraction = self:_get_overcharge_amount(player_unit)
+		local var_14_12, var_14_13, var_14_14 = arg_14_0:_get_overcharge_amount(arg_14_3)
 
-		if self._overcharge_fraction ~= overcharge_fraction then
-			self._overcharge_fraction = overcharge_fraction
+		if arg_14_0._overcharge_fraction ~= var_14_13 then
+			arg_14_0._overcharge_fraction = var_14_13
 
-			self:_set_overheat_fraction(overcharge_fraction)
+			arg_14_0:_set_overheat_fraction(var_14_13)
 		end
 
-		draw_overheat = true
+		var_14_2 = true
 	end
 
-	if self._draw_overheat ~= draw_overheat then
-		self._draw_overheat = draw_overheat
+	if arg_14_0._draw_overheat ~= var_14_2 then
+		arg_14_0._draw_overheat = var_14_2
 
-		self:_show_overheat_meter(draw_overheat)
+		arg_14_0:_show_overheat_meter(var_14_2)
 	end
 end
 
-EquipmentUI._animate_ammo_counter = function (self, dt)
-	local ammo_counter_fade_delay = self._ammo_counter_fade_delay
+function EquipmentUI._animate_ammo_counter(arg_15_0, arg_15_1)
+	local var_15_0 = arg_15_0._ammo_counter_fade_delay
 
-	if ammo_counter_fade_delay then
-		ammo_counter_fade_delay = math.max(ammo_counter_fade_delay - dt, 0)
+	if var_15_0 then
+		local var_15_1 = math.max(var_15_0 - arg_15_1, 0)
 
-		if ammo_counter_fade_delay == 0 then
-			self._ammo_counter_fade_delay = nil
+		if var_15_1 == 0 then
+			arg_15_0._ammo_counter_fade_delay = nil
 		else
-			self._ammo_counter_fade_delay = ammo_counter_fade_delay
+			arg_15_0._ammo_counter_fade_delay = var_15_1
 		end
 
 		return
 	end
 
-	local ammo_counter_fade_progress = self._ammo_counter_fade_progress
+	local var_15_2 = arg_15_0._ammo_counter_fade_progress
 
-	if not ammo_counter_fade_progress then
+	if not var_15_2 then
 		return
 	end
 
-	ammo_counter_fade_progress = math.max(ammo_counter_fade_progress - dt, 0)
+	local var_15_3 = math.max(var_15_2 - arg_15_1, 0)
+	local var_15_4 = 100 + 155 * var_15_3
 
-	local alpha = 100 + 155 * ammo_counter_fade_progress
+	arg_15_0:_set_ammo_counter_alpha(var_15_4)
 
-	self:_set_ammo_counter_alpha(alpha)
-
-	if ammo_counter_fade_progress == 0 then
-		self._ammo_counter_fade_progress = nil
+	if var_15_3 == 0 then
+		arg_15_0._ammo_counter_fade_progress = nil
 	else
-		self._ammo_counter_fade_progress = ammo_counter_fade_progress
+		arg_15_0._ammo_counter_fade_progress = var_15_3
 	end
 
 	return true
 end
 
-EquipmentUI._set_ammo_counter_alpha = function (self, alpha)
-	local ammo_widgets_by_name = self._ammo_widgets_by_name
-	local ammo_clip_widget = ammo_widgets_by_name.ammo_text_clip
-	local ammo_clip_widget_style = ammo_clip_widget.style.text
-	local clip_text_color = ammo_clip_widget_style.text_color
+function EquipmentUI._set_ammo_counter_alpha(arg_16_0, arg_16_1)
+	local var_16_0 = arg_16_0._ammo_widgets_by_name
+	local var_16_1 = var_16_0.ammo_text_clip
 
-	clip_text_color[1] = alpha
+	var_16_1.style.text.text_color[1] = arg_16_1
 
-	self:_set_widget_dirty(ammo_clip_widget)
+	arg_16_0:_set_widget_dirty(var_16_1)
 
-	local ammo_remaining_widget = ammo_widgets_by_name.ammo_text_remaining
-	local ammo_remaining_widget_style = ammo_remaining_widget.style.text
-	local remaining_text_color = ammo_remaining_widget_style.text_color
+	local var_16_2 = var_16_0.ammo_text_remaining
 
-	remaining_text_color[1] = alpha
+	var_16_2.style.text.text_color[1] = arg_16_1
 
-	self:_set_widget_dirty(ammo_remaining_widget)
+	arg_16_0:_set_widget_dirty(var_16_2)
 
-	local ammo_center_widget = ammo_widgets_by_name.ammo_text_center
-	local ammo_center_widget_style = ammo_center_widget.style.text
-	local center_text_color = ammo_center_widget_style.text_color
+	local var_16_3 = var_16_0.ammo_text_center
 
-	center_text_color[1] = alpha
+	var_16_3.style.text.text_color[1] = arg_16_1
 
-	self:_set_widget_dirty(ammo_center_widget)
-	self:set_dirty()
+	arg_16_0:_set_widget_dirty(var_16_3)
+	arg_16_0:set_dirty()
 end
 
-EquipmentUI._set_ammo_counter_color = function (self, color)
-	local ammo_clip_widget = self._ammo_widgets_by_name.ammo_text_clip
-	local ammo_clip_widget_style = ammo_clip_widget.style.text
-	local clip_text_color = ammo_clip_widget_style.text_color
+function EquipmentUI._set_ammo_counter_color(arg_17_0, arg_17_1)
+	local var_17_0 = arg_17_0._ammo_widgets_by_name.ammo_text_clip
+	local var_17_1 = var_17_0.style.text.text_color
 
-	clip_text_color[2] = color[2]
-	clip_text_color[3] = color[3]
-	clip_text_color[4] = color[4]
+	var_17_1[2] = arg_17_1[2]
+	var_17_1[3] = arg_17_1[3]
+	var_17_1[4] = arg_17_1[4]
 
-	self:_set_widget_dirty(ammo_clip_widget)
+	arg_17_0:_set_widget_dirty(var_17_0)
 
-	local ammo_remaining_widget = self._ammo_widgets_by_name.ammo_text_remaining
-	local ammo_remaining_widget_style = ammo_remaining_widget.style.text
-	local remaining_text_color = ammo_remaining_widget_style.text_color
+	local var_17_2 = arg_17_0._ammo_widgets_by_name.ammo_text_remaining
+	local var_17_3 = var_17_2.style.text.text_color
 
-	remaining_text_color[2] = color[2]
-	remaining_text_color[3] = color[3]
-	remaining_text_color[4] = color[4]
+	var_17_3[2] = arg_17_1[2]
+	var_17_3[3] = arg_17_1[3]
+	var_17_3[4] = arg_17_1[4]
 
-	self:_set_widget_dirty(ammo_remaining_widget)
+	arg_17_0:_set_widget_dirty(var_17_2)
 
-	local ammo_center_widget = self._ammo_widgets_by_name.ammo_text_center
-	local ammo_center_widget_style = ammo_center_widget.style.text
-	local center_text_color = ammo_center_widget_style.text_color
+	local var_17_4 = arg_17_0._ammo_widgets_by_name.ammo_text_center
+	local var_17_5 = var_17_4.style.text.text_color
 
-	center_text_color[2] = color[2]
-	center_text_color[3] = color[3]
-	center_text_color[4] = color[4]
+	var_17_5[2] = arg_17_1[2]
+	var_17_5[3] = arg_17_1[3]
+	var_17_5[4] = arg_17_1[4]
 
-	self:_set_widget_dirty(ammo_center_widget)
-	self:set_dirty()
+	arg_17_0:_set_widget_dirty(var_17_4)
+	arg_17_0:set_dirty()
 end
 
-EquipmentUI._set_ammo_text_focus = function (self, focus)
-	if self._draw_overheat then
-		if self._overcharge_fraction ~= nil then
-			local multiplier = 1
-			local color = focus and ammo_colors.focus or ammo_colors.unfocused
-			local widgets_by_name = self._widgets_by_name
-			local fg_widget = widgets_by_name.overcharge
-			local bg_widget = widgets_by_name.overcharge_background
-			local fg_color = fg_widget.style.texture_id.color
-			local bg_color = bg_widget.style.texture_id.color
+function EquipmentUI._set_ammo_text_focus(arg_18_0, arg_18_1)
+	if arg_18_0._draw_overheat then
+		if arg_18_0._overcharge_fraction ~= nil then
+			local var_18_0 = 1
+			local var_18_1 = arg_18_1 and var_0_9.focus or var_0_9.unfocused
+			local var_18_2 = arg_18_0._widgets_by_name
+			local var_18_3 = var_18_2.overcharge
+			local var_18_4 = var_18_2.overcharge_background
+			local var_18_5 = var_18_3.style.texture_id.color
+			local var_18_6 = var_18_4.style.texture_id.color
 
-			fg_color[2] = color[2] * multiplier
-			fg_color[3] = color[3] * multiplier
-			fg_color[4] = color[4] * multiplier
+			var_18_5[2] = var_18_1[2] * var_18_0
+			var_18_5[3] = var_18_1[3] * var_18_0
+			var_18_5[4] = var_18_1[4] * var_18_0
 
-			self:_set_widget_dirty(fg_widget)
-			self:_set_widget_dirty(bg_widget)
-			self:set_dirty()
+			arg_18_0:_set_widget_dirty(var_18_3)
+			arg_18_0:_set_widget_dirty(var_18_4)
+			arg_18_0:set_dirty()
 		end
-	elseif self._draw_ammo then
-		local ammo_widgets_by_name = self._ammo_widgets_by_name
+	elseif arg_18_0._draw_ammo then
+		local var_18_7 = arg_18_0._ammo_widgets_by_name
 
-		if not PERSISTENT_AMMO_COUNTER or focus then
-			self._ammo_counter_fade_progress = 1
-			self._ammo_counter_fade_delay = AMMO_PRESENTATION_DURATION
+		if not var_0_4 or arg_18_1 then
+			arg_18_0._ammo_counter_fade_progress = 1
+			arg_18_0._ammo_counter_fade_delay = var_0_3
 
-			self:_set_ammo_counter_alpha(255)
+			arg_18_0:_set_ammo_counter_alpha(255)
 		end
 
-		if not PERSISTENT_AMMO_COUNTER and (self._ammo_count ~= nil or self._remaining_ammo ~= nil) then
-			local multiplier = 1
-			local color = focus and ammo_colors.focus or ammo_colors.unfocused
-			local ammo_background_widget = self._widgets_by_name.ammo_background
+		if not var_0_4 and (arg_18_0._ammo_count ~= nil or arg_18_0._remaining_ammo ~= nil) then
+			local var_18_8 = 1
 
-			ammo_background_widget.content.visible = focus
+			if not arg_18_1 or not var_0_9.focus then
+				local var_18_9 = var_0_9.unfocused
+			end
 
-			self:_set_widget_dirty(ammo_background_widget)
+			local var_18_10 = arg_18_0._widgets_by_name.ammo_background
 
-			local ammo_clip_widget = ammo_widgets_by_name.ammo_text_clip
+			var_18_10.content.visible = arg_18_1
 
-			ammo_clip_widget.content.visible = focus
+			arg_18_0:_set_widget_dirty(var_18_10)
 
-			self:_set_widget_dirty(ammo_clip_widget)
+			local var_18_11 = var_18_7.ammo_text_clip
 
-			local ammo_remaining_widget = ammo_widgets_by_name.ammo_text_remaining
+			var_18_11.content.visible = arg_18_1
 
-			ammo_remaining_widget.content.visible = focus
+			arg_18_0:_set_widget_dirty(var_18_11)
 
-			self:_set_widget_dirty(ammo_remaining_widget)
+			local var_18_12 = var_18_7.ammo_text_remaining
 
-			local ammo_center_widget = ammo_widgets_by_name.ammo_text_center
+			var_18_12.content.visible = arg_18_1
 
-			ammo_center_widget.content.visible = focus
+			arg_18_0:_set_widget_dirty(var_18_12)
 
-			self:_set_widget_dirty(ammo_center_widget)
-			self:set_dirty()
+			local var_18_13 = var_18_7.ammo_text_center
+
+			var_18_13.content.visible = arg_18_1
+
+			arg_18_0:_set_widget_dirty(var_18_13)
+			arg_18_0:set_dirty()
 		end
 	end
 
-	if not PERSISTENT_AMMO_COUNTER then
-		self._show_ammo_meter = focus
+	if not var_0_4 then
+		arg_18_0._show_ammo_meter = arg_18_1
 
-		if not focus then
-			local widgets_by_name = self._widgets_by_name
-			local ammo_widgets_by_name = self._ammo_widgets_by_name
-			local fg_widget = widgets_by_name.overcharge
-			local bg_widget = widgets_by_name.overcharge_background
-			local ammo_background_widget = widgets_by_name.ammo_background
-			local ammo_clip_widget = ammo_widgets_by_name.ammo_text_clip
-			local ammo_remaining_widget = ammo_widgets_by_name.ammo_text_remaining
-			local ammo_center_widget = ammo_widgets_by_name.ammo_text_center
-			local reload_tip_widget = ammo_widgets_by_name.reload_tip_text
+		if not arg_18_1 then
+			local var_18_14 = arg_18_0._widgets_by_name
+			local var_18_15 = arg_18_0._ammo_widgets_by_name
+			local var_18_16 = var_18_14.overcharge
+			local var_18_17 = var_18_14.overcharge_background
+			local var_18_18 = var_18_14.ammo_background
+			local var_18_19 = var_18_15.ammo_text_clip
+			local var_18_20 = var_18_15.ammo_text_remaining
+			local var_18_21 = var_18_15.ammo_text_center
+			local var_18_22 = var_18_15.reload_tip_text
 
-			self:_set_widget_visibility(fg_widget, false)
-			self:_set_widget_visibility(bg_widget, false)
-			self:_set_widget_visibility(ammo_background_widget, false)
-			self:_set_widget_visibility(ammo_clip_widget, false)
-			self:_set_widget_visibility(ammo_remaining_widget, false)
-			self:_set_widget_visibility(ammo_center_widget, false)
-			self:_set_widget_visibility(reload_tip_widget, false)
+			arg_18_0:_set_widget_visibility(var_18_16, false)
+			arg_18_0:_set_widget_visibility(var_18_17, false)
+			arg_18_0:_set_widget_visibility(var_18_18, false)
+			arg_18_0:_set_widget_visibility(var_18_19, false)
+			arg_18_0:_set_widget_visibility(var_18_20, false)
+			arg_18_0:_set_widget_visibility(var_18_21, false)
+			arg_18_0:_set_widget_visibility(var_18_22, false)
 
-			self._ammo_dirty = true
+			arg_18_0._ammo_dirty = true
 		end
 	end
 end
 
-EquipmentUI._get_ammunition_count = function (self, left_hand_wielded_unit, right_hand_wielded_unit, item_template)
-	local ammo_extension
+function EquipmentUI._get_ammunition_count(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+	local var_19_0
 
-	if not item_template.ammo_data then
+	if not arg_19_3.ammo_data then
 		return
 	end
 
-	local ammo_unit_hand = item_template.ammo_data.ammo_hand
+	local var_19_1 = arg_19_3.ammo_data.ammo_hand
 
-	if ammo_unit_hand == "right" then
-		ammo_extension = ScriptUnit.extension(right_hand_wielded_unit, "ammo_system")
-	elseif ammo_unit_hand == "left" then
-		ammo_extension = ScriptUnit.extension(left_hand_wielded_unit, "ammo_system")
+	if var_19_1 == "right" then
+		var_19_0 = ScriptUnit.extension(arg_19_2, "ammo_system")
+	elseif var_19_1 == "left" then
+		var_19_0 = ScriptUnit.extension(arg_19_1, "ammo_system")
 	else
 		return
 	end
 
-	local ammo_count = ammo_extension:ammo_count()
-	local remaining_ammo = ammo_extension:remaining_ammo()
-	local single_clip = ammo_extension:using_single_clip()
+	local var_19_2 = var_19_0:ammo_count()
+	local var_19_3 = var_19_0:remaining_ammo()
+	local var_19_4 = var_19_0:using_single_clip()
 
-	return ammo_count, remaining_ammo, single_clip
+	return var_19_2, var_19_3, var_19_4
 end
 
-EquipmentUI._get_overcharge_amount = function (self, player_unit)
-	local overcharge_extension = ScriptUnit.extension(player_unit, "overcharge_system")
-	local overcharge_fraction = overcharge_extension:overcharge_fraction()
-	local threshold_fraction = overcharge_extension:threshold_fraction()
-	local anim_blend_overcharge = overcharge_extension:get_anim_blend_overcharge()
+function EquipmentUI._get_overcharge_amount(arg_20_0, arg_20_1)
+	local var_20_0 = ScriptUnit.extension(arg_20_1, "overcharge_system")
+	local var_20_1 = var_20_0:overcharge_fraction()
+	local var_20_2 = var_20_0:threshold_fraction()
+	local var_20_3 = var_20_0:get_anim_blend_overcharge()
 
-	return true, overcharge_fraction, threshold_fraction, anim_blend_overcharge
+	return true, var_20_1, var_20_2, var_20_3
 end
 
-EquipmentUI._add_animation = function (self, name, widget, style, func_name)
-	local animations = self._animations
-	local inventory_hud_settings = UISettings.inventory_hud
-	local total_time = inventory_hud_settings.equip_animation_duration
-	local animation = animations[name]
+function EquipmentUI._add_animation(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+	local var_21_0 = arg_21_0._animations
+	local var_21_1 = UISettings.inventory_hud.equip_animation_duration
+	local var_21_2 = var_21_0[arg_21_1]
 
-	if animation then
-		animation.total_time = total_time
-		animation.time = 0
-		animation.func = func_name
+	if var_21_2 then
+		var_21_2.total_time = var_21_1
+		var_21_2.time = 0
+		var_21_2.func = arg_21_4
 	else
-		animations[name] = {
+		var_21_0[arg_21_1] = {
 			time = 0,
-			total_time = total_time,
-			style = style,
-			widget = widget,
-			func = func_name,
+			total_time = var_21_1,
+			style = arg_21_3,
+			widget = arg_21_2,
+			func = arg_21_4
 		}
 	end
 end
 
-EquipmentUI._update_animations = function (self, dt, t)
-	local t_until_fade = self._time_fade_storage_slots
+function EquipmentUI._update_animations(arg_22_0, arg_22_1, arg_22_2)
+	local var_22_0 = arg_22_0._time_fade_storage_slots
 
-	if t_until_fade then
-		local progress = math.clamp(t_until_fade - t, 0, 1)
-		local widgets = self._extra_storage_icon_widgets
+	if var_22_0 then
+		local var_22_1 = math.clamp(var_22_0 - arg_22_2, 0, 1)
+		local var_22_2 = arg_22_0._extra_storage_icon_widgets
 
-		for i = 1, #widgets do
-			local widget = widgets[i]
-			local style = widget.style
+		for iter_22_0 = 1, #var_22_2 do
+			local var_22_3 = var_22_2[iter_22_0].style
 
-			style.texture_icon.color[1] = 255 * progress
-			style.texture_glow.color[1] = 128 * progress
+			var_22_3.texture_icon.color[1] = 255 * var_22_1
+			var_22_3.texture_glow.color[1] = 128 * var_22_1
 		end
 
-		local bg_widget = self._widgets_by_name.extra_storage_bg
+		local var_22_4 = arg_22_0._widgets_by_name.extra_storage_bg
 
-		bg_widget.style.texture.color[1] = 189 * progress
+		var_22_4.style.texture.color[1] = 189 * var_22_1
 
-		self:_set_widget_dirty(bg_widget)
+		arg_22_0:_set_widget_dirty(var_22_4)
 
-		if progress == 0 then
-			self._time_fade_storage_slots = nil
+		if var_22_1 == 0 then
+			arg_22_0._time_fade_storage_slots = nil
 		end
 	end
 
-	local animations = self._animations
-	local dirty = false
+	local var_22_5 = arg_22_0._animations
+	local var_22_6 = false
 
-	for name, animation_data in pairs(animations) do
-		local anim_func_name = animation_data.func
+	for iter_22_1, iter_22_2 in pairs(var_22_5) do
+		var_22_5[iter_22_1] = arg_22_0[iter_22_2.func](arg_22_0, iter_22_2, arg_22_1)
 
-		animations[name] = self[anim_func_name](self, animation_data, dt)
+		local var_22_7 = iter_22_2.widget
 
-		local widget = animation_data.widget
+		arg_22_0:_set_widget_dirty(var_22_7)
 
-		self:_set_widget_dirty(widget)
-
-		dirty = true
+		var_22_6 = true
 	end
 
-	return dirty
+	return var_22_6
 end
 
-EquipmentUI._animate_slot_wield = function (self, animation_data, dt)
-	local widget = animation_data.widget
-	local total_time = animation_data.total_time
-	local time = animation_data.time
+function EquipmentUI._animate_slot_wield(arg_23_0, arg_23_1, arg_23_2)
+	local var_23_0 = arg_23_1.widget
+	local var_23_1 = arg_23_1.total_time
+	local var_23_2 = arg_23_1.time + arg_23_2
+	local var_23_3 = math.min(var_23_2 / var_23_1, 1)
+	local var_23_4 = math.easeOutCubic(var_23_3)
+	local var_23_5 = math.easeInCubic(1 - var_23_3)
 
-	time = time + dt
+	var_23_0.style.texture_selected.color[1] = 255 * var_23_4
+	arg_23_1.time = var_23_2
 
-	local progress = math.min(time / total_time, 1)
-	local anim_progress = math.easeOutCubic(progress)
-	local anim_progress_input = math.easeInCubic(1 - progress)
-
-	widget.style.texture_selected.color[1] = 255 * anim_progress
-	animation_data.time = time
-
-	return progress < 1 and animation_data or nil
+	return var_23_3 < 1 and arg_23_1 or nil
 end
 
-EquipmentUI._animate_slot_unwield = function (self, animation_data, dt)
-	local widget = animation_data.widget
-	local total_time = animation_data.total_time
-	local time = animation_data.time
+function EquipmentUI._animate_slot_unwield(arg_24_0, arg_24_1, arg_24_2)
+	local var_24_0 = arg_24_1.widget
+	local var_24_1 = arg_24_1.total_time
+	local var_24_2 = arg_24_1.time + arg_24_2
+	local var_24_3 = math.min(var_24_2 / var_24_1, 1)
+	local var_24_4 = math.easeInCubic(1 - var_24_3)
+	local var_24_5 = math.easeOutCubic(var_24_3)
 
-	time = time + dt
+	var_24_0.style.texture_selected.color[1] = 255 * var_24_4
+	arg_24_1.time = var_24_2
 
-	local progress = math.min(time / total_time, 1)
-	local anim_progress = math.easeInCubic(1 - progress)
-	local anim_progress_input = math.easeOutCubic(progress)
-
-	widget.style.texture_selected.color[1] = 255 * anim_progress
-	animation_data.time = time
-
-	return progress < 1 and animation_data or nil
+	return var_24_3 < 1 and arg_24_1 or nil
 end
 
-EquipmentUI._animate_slot_equip = function (self, animation_data, dt)
-	local style = animation_data.style
-	local total_time = animation_data.total_time
-	local time = animation_data.time
+function EquipmentUI._animate_slot_equip(arg_25_0, arg_25_1, arg_25_2)
+	local var_25_0 = arg_25_1.style
+	local var_25_1 = arg_25_1.total_time
+	local var_25_2 = arg_25_1.time + arg_25_2
+	local var_25_3 = math.min(var_25_2 / var_25_1, 1)
+	local var_25_4 = math.catmullrom(var_25_3, -10, 0, 0, -4)
+	local var_25_5 = math.easeOutCubic(var_25_3)
 
-	time = time + dt
+	var_25_0.color[1] = 255 * var_25_5
+	arg_25_1.time = var_25_2
 
-	local progress = math.min(time / total_time, 1)
-	local catmullrom_value = math.catmullrom(progress, -10, 0, 0, -4)
-	local anim_progress = math.easeOutCubic(progress)
-
-	style.color[1] = 255 * anim_progress
-	animation_data.time = time
-
-	return progress < 1 and animation_data or nil
+	return var_25_3 < 1 and arg_25_1 or nil
 end
 
-EquipmentUI._add_item = function (self, slot_data, data)
-	local num_added_items = self._num_added_items or 0
-	local use_existing_data = data ~= nil
+function EquipmentUI._add_item(arg_26_0, arg_26_1, arg_26_2)
+	local var_26_0 = arg_26_0._num_added_items or 0
+	local var_26_1 = arg_26_2 ~= nil
 
-	if not use_existing_data and num_added_items >= NUM_SLOTS then
+	if not var_26_1 and var_26_0 >= var_0_6 then
 		return
 	end
 
-	local slot_name = slot_data.id
-	local master_item = slot_data.item_data
-	local slot_type = master_item.slot_type
-	local slots_by_name = InventorySettings.slots_by_name
-	local slot_settings = slots_by_name[slot_name]
-	local hud_index = slot_settings.hud_index
-	local widget
+	local var_26_2 = arg_26_1.id
+	local var_26_3 = arg_26_1.item_data.slot_type
+	local var_26_4 = InventorySettings.slots_by_name[var_26_2].hud_index
+	local var_26_5
 
-	if use_existing_data then
-		widget = data.widget
+	if var_26_1 then
+		var_26_5 = arg_26_2.widget
 	else
-		for i, slot_widget in ipairs(self._slot_widgets) do
-			if slot_widget.content.hud_index == hud_index then
-				widget = slot_widget
+		for iter_26_0, iter_26_1 in ipairs(arg_26_0._slot_widgets) do
+			if iter_26_1.content.hud_index == var_26_4 then
+				var_26_5 = iter_26_1
 
 				break
 			end
 		end
 
-		UIRenderer.set_element_visible(self.ui_renderer, widget.element, true)
+		UIRenderer.set_element_visible(arg_26_0.ui_renderer, var_26_5.element, true)
 	end
 
-	local widget_content = widget.content
-	local widget_style = widget.style
-	local color = widget_content.normal_color
-	local item_data = slot_data.item_data
-	local item_name = item_data.name
-	local hud_icon = item_data.hud_icon
+	local var_26_6 = var_26_5.content
+	local var_26_7 = var_26_5.style
+	local var_26_8 = var_26_6.normal_color
+	local var_26_9 = arg_26_1.item_data
+	local var_26_10 = var_26_9.name
+	local var_26_11 = var_26_9.hud_icon
 
-	if slot_type == "melee" then
-		hud_icon = "hud_inventory_icon_melee"
-	elseif slot_type == "ranged" then
-		hud_icon = "hud_inventory_icon_ranged"
-	elseif slot_name == "slot_career_skill_weapon" then
-		hud_icon = "hud_ability_cog_icon"
+	if var_26_3 == "melee" then
+		var_26_11 = "hud_inventory_icon_melee"
+	elseif var_26_3 == "ranged" then
+		var_26_11 = "hud_inventory_icon_ranged"
+	elseif var_26_2 == "slot_career_skill_weapon" then
+		var_26_11 = "hud_ability_cog_icon"
 	end
 
-	local texture_background_style = widget_style.texture_background
+	local var_26_12 = var_26_7.texture_background
 
-	if texture_background_style then
-		local inventory_consumable_slot_colors = UISettings.inventory_consumable_slot_colors
-		local default_background_color = inventory_consumable_slot_colors.default
-		local slot_background_color = inventory_consumable_slot_colors[item_name] or default_background_color
+	if var_26_12 then
+		local var_26_13 = UISettings.inventory_consumable_slot_colors
+		local var_26_14 = var_26_13.default
+		local var_26_15 = var_26_13[var_26_10] or var_26_14
 
-		Colors.copy_to(texture_background_style.color, slot_background_color)
+		Colors.copy_to(var_26_12.color, var_26_15)
 	end
 
-	widget_content.texture_icon = hud_icon or "icons_placeholder"
-	widget_style.texture_icon.color[1] = 255
-	widget_content.visible = true
-	data = data or {}
-	data.hud_index = hud_index
-	data.slot_name = slot_name
-	data.item_name = item_name
-	data.widget = widget
-	data.wielded = false
-	data.icon = hud_icon
-	data.item_id = item_data.backend_id
+	var_26_6.texture_icon = var_26_11 or "icons_placeholder"
+	var_26_7.texture_icon.color[1] = 255
+	var_26_6.visible = true
+	arg_26_2 = arg_26_2 or {}
+	arg_26_2.hud_index = var_26_4
+	arg_26_2.slot_name = var_26_2
+	arg_26_2.item_name = var_26_10
+	arg_26_2.widget = var_26_5
+	arg_26_2.wielded = false
+	arg_26_2.icon = var_26_11
+	arg_26_2.item_id = var_26_9.backend_id
 
-	if not use_existing_data then
-		local added_items = self._added_items
+	if not var_26_1 then
+		local var_26_16 = arg_26_0._added_items
 
-		table.insert(added_items, #added_items + 1, data)
+		table.insert(var_26_16, #var_26_16 + 1, arg_26_2)
 
-		self._num_added_items = num_added_items + 1
+		arg_26_0._num_added_items = var_26_0 + 1
 	end
 end
 
-EquipmentUI._remove_item = function (self, index)
-	local num_added_items = self._num_added_items or 0
+function EquipmentUI._remove_item(arg_27_0, arg_27_1)
+	local var_27_0 = arg_27_0._num_added_items or 0
 
-	if num_added_items <= 0 then
+	if var_27_0 <= 0 then
 		return
 	end
 
-	local added_items = self._added_items
-	local data = table.remove(added_items, index)
-	local slot_name = data.slot_name
-	local widget = data.widget
-	local widget_content = widget.content
-	local widget_style = widget.style
+	local var_27_1 = arg_27_0._added_items
+	local var_27_2 = table.remove(var_27_1, arg_27_1)
+	local var_27_3 = var_27_2.slot_name
+	local var_27_4 = var_27_2.widget
+	local var_27_5 = var_27_4.content
+	local var_27_6 = var_27_4.style
 
-	widget_style.texture_icon.color[1] = 0
+	var_27_6.texture_icon.color[1] = 0
 
-	local was_selected = widget_content.selected
+	local var_27_7 = var_27_5.selected
 
-	widget_content.selected = false
+	var_27_5.selected = false
 
-	local inventory_consumable_slot_colors = UISettings.inventory_consumable_slot_colors
-	local default_background_color = inventory_consumable_slot_colors.default
+	local var_27_8 = UISettings.inventory_consumable_slot_colors.default
 
-	if widget_style.texture_background then
-		local background_color = widget_style.texture_background.color
+	if var_27_6.texture_background then
+		local var_27_9 = var_27_6.texture_background.color
 
-		background_color[2] = default_background_color[2]
-		background_color[3] = default_background_color[3]
-		background_color[4] = default_background_color[4]
+		var_27_9[2] = var_27_8[2]
+		var_27_9[3] = var_27_8[3]
+		var_27_9[4] = var_27_8[4]
 	end
 
-	widget_content.visible = false
-	self._num_added_items = num_added_items - 1
+	var_27_5.visible = false
+	arg_27_0._num_added_items = var_27_0 - 1
 
-	if was_selected then
-		self:_add_animation(slot_name .. "_wield_anim", widget, widget, "_animate_slot_unwield")
+	if var_27_7 then
+		arg_27_0:_add_animation(var_27_3 .. "_wield_anim", var_27_4, var_27_4, "_animate_slot_unwield")
 	else
-		widget.style.texture_selected.color[1] = 0
+		var_27_4.style.texture_selected.color[1] = 0
 	end
 end
 
-EquipmentUI.set_position = function (self, x, y)
-	local position = self.ui_scenegraph.pivot.local_position
+function EquipmentUI.set_position(arg_28_0, arg_28_1, arg_28_2)
+	local var_28_0 = arg_28_0.ui_scenegraph.pivot.local_position
 
-	position[1] = x
-	position[2] = y
+	var_28_0[1] = arg_28_1
+	var_28_0[2] = arg_28_2
 
-	for _, widget in ipairs(self._widgets) do
-		self:_set_widget_dirty(widget)
+	for iter_28_0, iter_28_1 in ipairs(arg_28_0._widgets) do
+		arg_28_0:_set_widget_dirty(iter_28_1)
 	end
 
-	for _, widget in ipairs(self._static_widgets) do
-		self:_set_widget_dirty(widget)
+	for iter_28_2, iter_28_3 in ipairs(arg_28_0._static_widgets) do
+		arg_28_0:_set_widget_dirty(iter_28_3)
 	end
 
-	self:set_dirty()
+	arg_28_0:set_dirty()
 end
 
-EquipmentUI.destroy = function (self)
-	local event_manager = Managers.state.event
+function EquipmentUI.destroy(arg_29_0)
+	local var_29_0 = Managers.state.event
 
-	event_manager:unregister("input_changed", self)
-	event_manager:unregister("on_spectator_target_changed", self)
-	event_manager:unregister("swap_equipment_from_storage", self)
-	self:set_visible(false)
+	var_29_0:unregister("input_changed", arg_29_0)
+	var_29_0:unregister("on_spectator_target_changed", arg_29_0)
+	var_29_0:unregister("swap_equipment_from_storage", arg_29_0)
+	arg_29_0:set_visible(false)
 
-	self._ui_animator = nil
+	arg_29_0._ui_animator = nil
 
 	print("[EquipmentUI] - Destroy")
 end
 
-EquipmentUI.set_visible = function (self, visible)
-	self._is_visible = visible
+function EquipmentUI.set_visible(arg_30_0, arg_30_1)
+	arg_30_0._is_visible = arg_30_1
 
-	self:_set_elements_visible(visible)
+	arg_30_0:_set_elements_visible(arg_30_1)
 end
 
-EquipmentUI._set_elements_visible = function (self, visible)
-	local ui_renderer = self.ui_renderer
+function EquipmentUI._set_elements_visible(arg_31_0, arg_31_1)
+	local var_31_0 = arg_31_0.ui_renderer
 
-	for _, widget in ipairs(self._widgets) do
-		UIRenderer.set_element_visible(ui_renderer, widget.element, visible)
+	for iter_31_0, iter_31_1 in ipairs(arg_31_0._widgets) do
+		UIRenderer.set_element_visible(var_31_0, iter_31_1.element, arg_31_1)
 	end
 
-	for _, widget in ipairs(self._static_widgets) do
-		UIRenderer.set_element_visible(ui_renderer, widget.element, visible)
+	for iter_31_2, iter_31_3 in ipairs(arg_31_0._static_widgets) do
+		UIRenderer.set_element_visible(var_31_0, iter_31_3.element, arg_31_1)
 	end
 
-	for _, widget in ipairs(self._ammo_widgets) do
-		UIRenderer.set_element_visible(ui_renderer, widget.element, visible)
+	for iter_31_4, iter_31_5 in ipairs(arg_31_0._ammo_widgets) do
+		UIRenderer.set_element_visible(var_31_0, iter_31_5.element, arg_31_1)
 	end
 
-	self._retained_elements_visible = visible
+	arg_31_0._retained_elements_visible = arg_31_1
 
-	self:set_dirty()
+	arg_31_0:set_dirty()
 end
 
-local customizer_data_player_status = {
-	drag_scenegraph_id = "background_panel",
-	label = "Player status",
-	lock_x = false,
+local var_0_14 = {
 	lock_y = true,
 	registry_key = "player_status",
+	drag_scenegraph_id = "background_panel",
 	root_scenegraph_id = "root",
+	label = "Player status",
+	lock_x = false
 }
-local customizer_data_ammo = {
-	drag_scenegraph_id = "ammo_background",
+local var_0_15 = {
+	root_scenegraph_id = "ammo_background",
 	label = "Ammo",
 	registry_key = "ammo",
-	root_scenegraph_id = "ammo_background",
+	drag_scenegraph_id = "ammo_background"
 }
 
-EquipmentUI.update = function (self, dt, t)
-	if not self._is_visible then
+function EquipmentUI.update(arg_32_0, arg_32_1, arg_32_2)
+	if not arg_32_0._is_visible then
 		return
 	end
 
-	if HudCustomizer.run(self.ui_renderer, self.ui_scenegraph, customizer_data_player_status) then
-		UIUtils.mark_dirty(self._widgets_by_name)
-		UIUtils.mark_dirty(self._widgets)
-		UIUtils.mark_dirty(self._extra_storage_icon_widgets)
+	if HudCustomizer.run(arg_32_0.ui_renderer, arg_32_0.ui_scenegraph, var_0_14) then
+		UIUtils.mark_dirty(arg_32_0._widgets_by_name)
+		UIUtils.mark_dirty(arg_32_0._widgets)
+		UIUtils.mark_dirty(arg_32_0._extra_storage_icon_widgets)
 	end
 
-	if HudCustomizer.run(self.ui_renderer, self.ui_scenegraph, customizer_data_ammo) then
-		UIUtils.mark_dirty(self._ammo_widgets)
+	if HudCustomizer.run(arg_32_0.ui_renderer, arg_32_0.ui_scenegraph, var_0_15) then
+		UIUtils.mark_dirty(arg_32_0._ammo_widgets)
 	end
 
-	local dirty = false
-	local parent = self._parent
-	local crosshair_position_x, crosshair_position_y = parent:get_crosshair_position()
+	local var_32_0 = false
+	local var_32_1, var_32_2 = arg_32_0._parent:get_crosshair_position()
 
-	if self:_apply_crosshair_position(crosshair_position_x, crosshair_position_y) then
-		dirty = true
+	if arg_32_0:_apply_crosshair_position(var_32_1, var_32_2) then
+		var_32_0 = true
 	end
 
-	if self:_update_animations(dt, t) then
-		dirty = true
+	if arg_32_0:_update_animations(arg_32_1, arg_32_2) then
+		var_32_0 = true
 	end
 
-	if self:_animate_ammo_counter(dt) then
-		dirty = true
+	if arg_32_0:_animate_ammo_counter(arg_32_1) then
+		var_32_0 = true
 	end
 
-	if dirty then
-		self:set_dirty()
+	if var_32_0 then
+		arg_32_0:set_dirty()
 	end
 
-	self:_handle_resolution_modified()
-	self:_show_hold_to_reload(t)
-	self:_sync_player_equipment()
-	self:draw(dt)
-	self._ui_animator:update(dt)
+	arg_32_0:_handle_resolution_modified()
+	arg_32_0:_show_hold_to_reload(arg_32_2)
+	arg_32_0:_sync_player_equipment()
+	arg_32_0:draw(arg_32_1)
+	arg_32_0._ui_animator:update(arg_32_1)
 end
 
-EquipmentUI._handle_resolution_modified = function (self)
+function EquipmentUI._handle_resolution_modified(arg_33_0)
 	if RESOLUTION_LOOKUP.modified then
-		self:_on_resolution_modified()
+		arg_33_0:_on_resolution_modified()
 	end
 end
 
-EquipmentUI._on_resolution_modified = function (self)
-	for _, widget in ipairs(self._widgets) do
-		self:_set_widget_dirty(widget)
+function EquipmentUI._on_resolution_modified(arg_34_0)
+	for iter_34_0, iter_34_1 in ipairs(arg_34_0._widgets) do
+		arg_34_0:_set_widget_dirty(iter_34_1)
 	end
 
-	for _, widget in ipairs(self._static_widgets) do
-		self:_set_widget_dirty(widget)
+	for iter_34_2, iter_34_3 in ipairs(arg_34_0._static_widgets) do
+		arg_34_0:_set_widget_dirty(iter_34_3)
 	end
 
-	for _, widget in ipairs(self._ammo_widgets) do
-		self:_set_widget_dirty(widget)
+	for iter_34_4, iter_34_5 in ipairs(arg_34_0._ammo_widgets) do
+		arg_34_0:_set_widget_dirty(iter_34_5)
 	end
 
-	self:set_dirty()
+	arg_34_0:set_dirty()
 end
 
-EquipmentUI._handle_gamepad = function (self)
-	local gamepad_active = Managers.input:is_device_active("gamepad") or not IS_WINDOWS
-
-	if (gamepad_active or UISettings.use_gamepad_hud_layout == "always") and UISettings.use_gamepad_hud_layout ~= "never" then
-		if self._retained_elements_visible then
-			self:_set_elements_visible(false)
+function EquipmentUI._handle_gamepad(arg_35_0)
+	if (Managers.input:is_device_active("gamepad") or not IS_WINDOWS or UISettings.use_gamepad_hud_layout == "always") and UISettings.use_gamepad_hud_layout ~= "never" then
+		if arg_35_0._retained_elements_visible then
+			arg_35_0:_set_elements_visible(false)
 		end
 
 		return false
 	else
-		if not self._retained_elements_visible then
-			self:_set_elements_visible(true)
-			self:event_input_changed()
+		if not arg_35_0._retained_elements_visible then
+			arg_35_0:_set_elements_visible(true)
+			arg_35_0:event_input_changed()
 		end
 
-		return self._dirty
+		return arg_35_0._dirty
 	end
 end
 
-EquipmentUI.draw = function (self, dt)
-	if not self._is_visible then
+function EquipmentUI.draw(arg_36_0, arg_36_1)
+	if not arg_36_0._is_visible then
 		return
 	end
 
-	local should_render = self:_handle_gamepad()
-
-	if not should_render then
+	if not arg_36_0:_handle_gamepad() then
 		return
 	end
 
-	local ui_renderer = self.ui_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self.input_manager:get_service("ingame_menu")
-	local render_settings = self.render_settings
-	local alpha_multiplier = render_settings.alpha_multiplier
+	local var_36_0 = arg_36_0.ui_renderer
+	local var_36_1 = arg_36_0.ui_scenegraph
+	local var_36_2 = arg_36_0.input_manager:get_service("ingame_menu")
+	local var_36_3 = arg_36_0.render_settings
+	local var_36_4 = var_36_3.alpha_multiplier
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+	UIRenderer.begin_pass(var_36_0, var_36_1, var_36_2, arg_36_1, nil, var_36_3)
 
-	render_settings.snap_pixel_positions = true
-	render_settings.alpha_multiplier = self.panel_alpha_multiplier or alpha_multiplier
+	var_36_3.snap_pixel_positions = true
+	var_36_3.alpha_multiplier = arg_36_0.panel_alpha_multiplier or var_36_4
 
-	for _, widget in ipairs(self._slot_widgets) do
-		UIRenderer.draw_widget(ui_renderer, widget)
+	for iter_36_0, iter_36_1 in ipairs(arg_36_0._slot_widgets) do
+		UIRenderer.draw_widget(var_36_0, iter_36_1)
 	end
 
-	for _, widget in ipairs(self._extra_storage_icon_widgets) do
-		UIRenderer.draw_widget(ui_renderer, widget)
+	for iter_36_2, iter_36_3 in ipairs(arg_36_0._extra_storage_icon_widgets) do
+		UIRenderer.draw_widget(var_36_0, iter_36_3)
 	end
 
-	render_settings.snap_pixel_positions = true
+	var_36_3.snap_pixel_positions = true
 
-	for _, widget in ipairs(self._static_widgets) do
-		UIRenderer.draw_widget(ui_renderer, widget)
+	for iter_36_4, iter_36_5 in ipairs(arg_36_0._static_widgets) do
+		UIRenderer.draw_widget(var_36_0, iter_36_5)
 	end
 
-	if PERSISTENT_AMMO_COUNTER or self._show_ammo_meter or self._ammo_dirty then
-		render_settings.alpha_multiplier = self.ammo_alpha_multiplier or alpha_multiplier
-		render_settings.snap_pixel_positions = true
+	if var_0_4 or arg_36_0._show_ammo_meter or arg_36_0._ammo_dirty then
+		var_36_3.alpha_multiplier = arg_36_0.ammo_alpha_multiplier or var_36_4
+		var_36_3.snap_pixel_positions = true
 
-		for _, widget in ipairs(self._ammo_widgets) do
-			UIRenderer.draw_widget(ui_renderer, widget)
+		for iter_36_6, iter_36_7 in ipairs(arg_36_0._ammo_widgets) do
+			UIRenderer.draw_widget(var_36_0, iter_36_7)
 		end
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_36_0)
 
-	self._dirty = false
-	self._ammo_dirty = false
+	arg_36_0._dirty = false
+	arg_36_0._ammo_dirty = false
 end
 
-EquipmentUI._set_color = function (self, color, new_color, ignore_alpha)
-	if not ignore_alpha then
-		color[1] = new_color[1]
+function EquipmentUI._set_color(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+	if not arg_37_3 then
+		arg_37_1[1] = arg_37_2[1]
 	end
 
-	color[2] = new_color[2]
-	color[3] = new_color[3]
-	color[4] = new_color[4]
+	arg_37_1[2] = arg_37_2[2]
+	arg_37_1[3] = arg_37_2[3]
+	arg_37_1[4] = arg_37_2[4]
 end
 
-EquipmentUI.set_dirty = function (self)
-	self._dirty = true
+function EquipmentUI.set_dirty(arg_38_0)
+	arg_38_0._dirty = true
 
-	if self.cleanui then
-		self.cleanui.dirty = true
-	end
-end
-
-EquipmentUI._set_widget_dirty = function (self, widget)
-	widget.element.dirty = true
-	self._dirty = true
-
-	if self.cleanui then
-		self.cleanui.dirty = true
+	if arg_38_0.cleanui then
+		arg_38_0.cleanui.dirty = true
 	end
 end
 
-EquipmentUI.on_gamepad_activated = function (self)
-	self:_update_widgets()
+function EquipmentUI._set_widget_dirty(arg_39_0, arg_39_1)
+	arg_39_1.element.dirty = true
+	arg_39_0._dirty = true
+
+	if arg_39_0.cleanui then
+		arg_39_0.cleanui.dirty = true
+	end
 end
 
-EquipmentUI.on_gamepad_deactivated = function (self)
-	self:_update_widgets()
+function EquipmentUI.on_gamepad_activated(arg_40_0)
+	arg_40_0:_update_widgets()
 end
 
-EquipmentUI._set_overheat_fraction = function (self, fraction)
-	local widget = self._widgets_by_name.overcharge
-	local content = widget.content
-	local uvs = content.texture_id.uvs
-
-	uvs[2][1] = fraction
-
-	local scenegraph_id = widget.scenegraph_id
-	local scenegraph = self.ui_scenegraph[scenegraph_id]
-	local default_scenegraph = scenegraph_definition[scenegraph_id]
-	local default_size = default_scenegraph.size
-	local size = scenegraph.size
-
-	size[1] = default_size[1] * fraction
-
-	self:_set_widget_dirty(widget)
-	self:set_dirty()
+function EquipmentUI.on_gamepad_deactivated(arg_41_0)
+	arg_41_0:_update_widgets()
 end
 
-EquipmentUI._show_overheat_meter = function (self, visible)
-	local widgets_by_name = self._widgets_by_name
-	local ammo_widgets_by_name = self._ammo_widgets_by_name
+function EquipmentUI._set_overheat_fraction(arg_42_0, arg_42_1)
+	local var_42_0 = arg_42_0._widgets_by_name.overcharge
 
-	self:_set_widget_visibility(widgets_by_name.overcharge, false)
-	self:_set_widget_visibility(widgets_by_name.overcharge_background, false)
-	self:_set_widget_visibility(ammo_widgets_by_name.ammo_text_clip, not visible)
-	self:_set_widget_visibility(ammo_widgets_by_name.ammo_text_remaining, not visible)
-	self:_set_widget_visibility(ammo_widgets_by_name.ammo_text_center, not visible)
-	self:_set_widget_visibility(widgets_by_name.ammo_background, not visible)
-	self:set_dirty()
+	var_42_0.content.texture_id.uvs[2][1] = arg_42_1
+
+	local var_42_1 = var_42_0.scenegraph_id
+	local var_42_2 = arg_42_0.ui_scenegraph[var_42_1]
+	local var_42_3 = var_0_1[var_42_1].size
+
+	var_42_2.size[1] = var_42_3[1] * arg_42_1
+
+	arg_42_0:_set_widget_dirty(var_42_0)
+	arg_42_0:set_dirty()
 end
 
-EquipmentUI._set_widget_visibility = function (self, widget, visible)
-	widget.content.visible = visible
+function EquipmentUI._show_overheat_meter(arg_43_0, arg_43_1)
+	local var_43_0 = arg_43_0._widgets_by_name
+	local var_43_1 = arg_43_0._ammo_widgets_by_name
 
-	self:_set_widget_dirty(widget)
+	arg_43_0:_set_widget_visibility(var_43_0.overcharge, false)
+	arg_43_0:_set_widget_visibility(var_43_0.overcharge_background, false)
+	arg_43_0:_set_widget_visibility(var_43_1.ammo_text_clip, not arg_43_1)
+	arg_43_0:_set_widget_visibility(var_43_1.ammo_text_remaining, not arg_43_1)
+	arg_43_0:_set_widget_visibility(var_43_1.ammo_text_center, not arg_43_1)
+	arg_43_0:_set_widget_visibility(var_43_0.ammo_background, not arg_43_1)
+	arg_43_0:set_dirty()
 end
 
-EquipmentUI.set_alpha = function (self, alpha)
-	self.render_settings.alpha_multiplier = alpha
+function EquipmentUI._set_widget_visibility(arg_44_0, arg_44_1, arg_44_2)
+	arg_44_1.content.visible = arg_44_2
 
-	for widget_index, widget in pairs(self._widgets) do
-		self:_set_widget_dirty(widget)
-	end
-
-	for widget_index, widget in pairs(self._slot_widgets) do
-		self:_set_widget_dirty(widget)
-	end
-
-	for widget_index, widget in pairs(self._static_widgets) do
-		self:_set_widget_dirty(widget)
-	end
-
-	for widget_index, widget in pairs(self._ammo_widgets) do
-		self:_set_widget_dirty(widget)
-	end
-
-	self:set_dirty()
+	arg_44_0:_set_widget_dirty(arg_44_1)
 end
 
-EquipmentUI.set_ammo_alpha = function (self, alpha)
-	self.ammo_alpha_multiplier = alpha
+function EquipmentUI.set_alpha(arg_45_0, arg_45_1)
+	arg_45_0.render_settings.alpha_multiplier = arg_45_1
 
-	for widget_index, widget in pairs(self._ammo_widgets) do
-		self:_set_widget_dirty(widget)
+	for iter_45_0, iter_45_1 in pairs(arg_45_0._widgets) do
+		arg_45_0:_set_widget_dirty(iter_45_1)
 	end
 
-	self:set_dirty()
+	for iter_45_2, iter_45_3 in pairs(arg_45_0._slot_widgets) do
+		arg_45_0:_set_widget_dirty(iter_45_3)
+	end
+
+	for iter_45_4, iter_45_5 in pairs(arg_45_0._static_widgets) do
+		arg_45_0:_set_widget_dirty(iter_45_5)
+	end
+
+	for iter_45_6, iter_45_7 in pairs(arg_45_0._ammo_widgets) do
+		arg_45_0:_set_widget_dirty(iter_45_7)
+	end
+
+	arg_45_0:set_dirty()
 end
 
-EquipmentUI.set_panel_alpha = function (self, alpha)
-	self.panel_alpha_multiplier = alpha
+function EquipmentUI.set_ammo_alpha(arg_46_0, arg_46_1)
+	arg_46_0.ammo_alpha_multiplier = arg_46_1
 
-	for widget_index, widget in pairs(self._widgets) do
-		self:_set_widget_dirty(widget)
+	for iter_46_0, iter_46_1 in pairs(arg_46_0._ammo_widgets) do
+		arg_46_0:_set_widget_dirty(iter_46_1)
 	end
 
-	for widget_index, widget in pairs(self._slot_widgets) do
-		self:_set_widget_dirty(widget)
-	end
-
-	for widget_index, widget in pairs(self._static_widgets) do
-		self:_set_widget_dirty(widget)
-	end
-
-	self:set_dirty()
+	arg_46_0:set_dirty()
 end
 
-EquipmentUI._apply_crosshair_position = function (self, x, y)
-	local scenegraph_id = "screen_bottom_pivot"
-	local position = self.ui_scenegraph[scenegraph_id].local_position
-	local dirty = false
+function EquipmentUI.set_panel_alpha(arg_47_0, arg_47_1)
+	arg_47_0.panel_alpha_multiplier = arg_47_1
 
-	if position[1] ~= x or position[2] ~= y then
-		dirty = true
+	for iter_47_0, iter_47_1 in pairs(arg_47_0._widgets) do
+		arg_47_0:_set_widget_dirty(iter_47_1)
 	end
 
-	position[1] = x
-	position[2] = y
-
-	if dirty then
-		local widgets_by_name = self._widgets_by_name
-		local ammo_widgets_by_name = self._ammo_widgets_by_name
-
-		self:_set_widget_dirty(ammo_widgets_by_name.ammo_text_clip)
-		self:_set_widget_dirty(ammo_widgets_by_name.ammo_text_remaining)
-		self:_set_widget_dirty(ammo_widgets_by_name.ammo_text_center)
-		self:_set_widget_dirty(widgets_by_name.overcharge)
-		self:_set_widget_dirty(widgets_by_name.overcharge_background)
+	for iter_47_2, iter_47_3 in pairs(arg_47_0._slot_widgets) do
+		arg_47_0:_set_widget_dirty(iter_47_3)
 	end
 
-	return dirty
+	for iter_47_4, iter_47_5 in pairs(arg_47_0._static_widgets) do
+		arg_47_0:_set_widget_dirty(iter_47_5)
+	end
+
+	arg_47_0:set_dirty()
 end
 
-EquipmentUI._show_hold_to_reload = function (self, t)
-	local player = self._is_spectator and self._spectated_player or self.player
-	local player_unit = player.player_unit
+function EquipmentUI._apply_crosshair_position(arg_48_0, arg_48_1, arg_48_2)
+	local var_48_0 = "screen_bottom_pivot"
+	local var_48_1 = arg_48_0.ui_scenegraph[var_48_0].local_position
+	local var_48_2 = false
 
-	if not player_unit then
+	if var_48_1[1] ~= arg_48_1 or var_48_1[2] ~= arg_48_2 then
+		var_48_2 = true
+	end
+
+	var_48_1[1] = arg_48_1
+	var_48_1[2] = arg_48_2
+
+	if var_48_2 then
+		local var_48_3 = arg_48_0._widgets_by_name
+		local var_48_4 = arg_48_0._ammo_widgets_by_name
+
+		arg_48_0:_set_widget_dirty(var_48_4.ammo_text_clip)
+		arg_48_0:_set_widget_dirty(var_48_4.ammo_text_remaining)
+		arg_48_0:_set_widget_dirty(var_48_4.ammo_text_center)
+		arg_48_0:_set_widget_dirty(var_48_3.overcharge)
+		arg_48_0:_set_widget_dirty(var_48_3.overcharge_background)
+	end
+
+	return var_48_2
+end
+
+function EquipmentUI._show_hold_to_reload(arg_49_0, arg_49_1)
+	local var_49_0 = (arg_49_0._is_spectator and arg_49_0._spectated_player or arg_49_0.player).player_unit
+
+	if not var_49_0 then
 		return
 	end
 
-	local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
-	local equipment = inventory_extension:equipment()
-	local wielded_slot = equipment.wielded_slot
-	local is_wielding_special_weapon = false
-	local slot_data, item_data, item_template
+	local var_49_1 = ScriptUnit.extension(var_49_0, "inventory_system"):equipment()
+	local var_49_2 = var_49_1.wielded_slot
+	local var_49_3 = false
+	local var_49_4
+	local var_49_5
+	local var_49_6
 
-	for _, temp_slot_data in pairs(equipment.slots) do
-		local temp_item_data = temp_slot_data.item_data
-		local temp_item_template = BackendUtils.get_item_template(temp_item_data)
+	for iter_49_0, iter_49_1 in pairs(var_49_1.slots) do
+		local var_49_7 = iter_49_1.item_data
+		local var_49_8 = BackendUtils.get_item_template(var_49_7)
 
-		if temp_slot_data.id == wielded_slot then
-			local unique_ammo_type = temp_item_template.ammo_data and temp_item_template.ammo_data.unique_ammo_type
-
-			if unique_ammo_type then
-				slot_data = temp_slot_data
-				item_data = temp_item_data
-				item_template = temp_item_template
-				is_wielding_special_weapon = true
-			end
+		if iter_49_1.id == var_49_2 and var_49_8.ammo_data and var_49_8.ammo_data.unique_ammo_type then
+			var_49_4 = iter_49_1
+			var_49_5 = var_49_7
+			var_49_6 = var_49_8
+			var_49_3 = true
 		end
 	end
 
-	if not item_data or not slot_data or not item_template then
+	if not var_49_5 or not var_49_4 or not var_49_6 then
 		return
 	end
 
-	local ammo_count, remaining_ammo, using_single_clip = self:_get_ammunition_count(slot_data.left_unit_1p, slot_data.right_unit_1p, item_template)
-	local reload_tip_widget = self._ammo_widgets_by_name.reload_tip_text
-	local texture_data, input_text, prefix_text = self:_get_input_texture_data("weapon_reload_hold")
-	local alpha = reload_tip_widget.style.text.text_color[1]
-	local format_color = string.format("{#color(193,91,36, %d)}", alpha)
+	local var_49_9, var_49_10, var_49_11 = arg_49_0:_get_ammunition_count(var_49_4.left_unit_1p, var_49_4.right_unit_1p, var_49_6)
+	local var_49_12 = arg_49_0._ammo_widgets_by_name.reload_tip_text
+	local var_49_13, var_49_14, var_49_15 = arg_49_0:_get_input_texture_data("weapon_reload_hold")
+	local var_49_16 = var_49_12.style.text.text_color[1]
+	local var_49_17 = string.format("{#color(193,91,36, %d)}", var_49_16)
 
-	reload_tip_widget.content.text = string.format(Localize("reload_tip"), format_color, input_text, "{#reset()}")
+	var_49_12.content.text = string.format(Localize("reload_tip"), var_49_17, var_49_14, "{#reset()}")
 
-	local full_clip = ammo_count + remaining_ammo == item_template.ammo_data.max_ammo
+	local var_49_18 = var_49_9 + var_49_10 == var_49_6.ammo_data.max_ammo
 
-	if is_wielding_special_weapon and not full_clip then
-		if self._reload_attempts >= 3 then
-			self._reload_tip_text_shown = true
+	if var_49_3 and not var_49_18 then
+		if arg_49_0._reload_attempts >= 3 then
+			arg_49_0._reload_tip_text_shown = true
 
-			if not self._reload_tip_anim or self._ui_animator:is_animation_completed(self._reload_tip_anim) then
-				self._reload_tip_anim = self._ui_animator:start_animation("show_reload_tip", reload_tip_widget, scenegraph_definition)
+			if not arg_49_0._reload_tip_anim or arg_49_0._ui_animator:is_animation_completed(arg_49_0._reload_tip_anim) then
+				arg_49_0._reload_tip_anim = arg_49_0._ui_animator:start_animation("show_reload_tip", var_49_12, var_0_1)
 			end
 		end
 
-		self:_update_reload_ui_state(t, item_template)
+		arg_49_0:_update_reload_ui_state(arg_49_1, var_49_6)
 	end
 
-	self:_set_widget_dirty(reload_tip_widget)
+	arg_49_0:_set_widget_dirty(var_49_12)
 end
 
-EquipmentUI._update_reload_ui_state = function (self, t, item_template)
-	local reload_tip_widget = self._ammo_widgets_by_name.reload_tip_text
-
-	if not reload_tip_widget then
+function EquipmentUI._update_reload_ui_state(arg_50_0, arg_50_1, arg_50_2)
+	if not arg_50_0._ammo_widgets_by_name.reload_tip_text then
 		return
 	end
 
-	local input_service = Managers.input:get_service("Player")
-	local listening_duration = 5
+	local var_50_0 = Managers.input:get_service("Player")
+	local var_50_1 = 5
 
-	if input_service:get("weapon_reload_hold") then
-		if not self._ui_animator:is_animation_completed(self._reload_tip_anim) then
+	if var_50_0:get("weapon_reload_hold") then
+		if not arg_50_0._ui_animator:is_animation_completed(arg_50_0._reload_tip_anim) then
 			return
 		end
 
-		if not self._listening_timer_start then
-			self._listening_timer_start = t
+		if not arg_50_0._listening_timer_start then
+			arg_50_0._listening_timer_start = arg_50_1
 		end
 
-		if not self._reload_start_time then
-			self._reload_start_time = t
+		if not arg_50_0._reload_start_time then
+			arg_50_0._reload_start_time = arg_50_1
 		end
 	else
-		local reload_time = item_template.actions.weapon_reload.default.anim_time_scale
-		local failed_reload = self._reload_start_time and reload_time > t - self._reload_start_time
+		local var_50_2 = arg_50_2.actions.weapon_reload.default.anim_time_scale
 
-		if failed_reload then
-			self._reload_attempts = self._reload_attempts + 1
+		if arg_50_0._reload_start_time and var_50_2 > arg_50_1 - arg_50_0._reload_start_time then
+			arg_50_0._reload_attempts = arg_50_0._reload_attempts + 1
 		end
 
-		if self._reload_start_time then
-			self._reload_start_time = nil
+		if arg_50_0._reload_start_time then
+			arg_50_0._reload_start_time = nil
 		end
 	end
 
-	local end_time = 0
+	local var_50_3 = 0
 
-	if self._listening_timer_start then
-		end_time = self._listening_timer_start + listening_duration
+	if arg_50_0._listening_timer_start then
+		var_50_3 = arg_50_0._listening_timer_start + var_50_1
 	end
 
-	if end_time ~= 0 and end_time < t or self._reload_tip_text_shown then
-		self._listening_timer_start = nil
-		self._reload_attempts = 0
-		self._reload_tip_text_shown = false
+	if var_50_3 ~= 0 and var_50_3 < arg_50_1 or arg_50_0._reload_tip_text_shown then
+		arg_50_0._listening_timer_start = nil
+		arg_50_0._reload_attempts = 0
+		arg_50_0._reload_tip_text_shown = false
 	end
 end

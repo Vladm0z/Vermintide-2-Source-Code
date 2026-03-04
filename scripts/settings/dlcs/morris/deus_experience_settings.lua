@@ -1,7 +1,7 @@
-﻿-- chunkname: @scripts/settings/dlcs/morris/deus_experience_settings.lua
+-- chunkname: @scripts/settings/dlcs/morris/deus_experience_settings.lua
 
 DeusExperienceSettings = {
-	COINS = 10,
-	CURSED_CHESTS = 100,
 	CURSES = 200,
+	COINS = 10,
+	CURSED_CHESTS = 100
 }

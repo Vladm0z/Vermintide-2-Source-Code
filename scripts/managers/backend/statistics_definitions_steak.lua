@@ -1,30 +1,30 @@
-﻿-- chunkname: @scripts/managers/backend/statistics_definitions_steak.lua
+-- chunkname: @scripts/managers/backend/statistics_definitions_steak.lua
 
-local player = StatisticsDefinitions.player
+local var_0_0 = StatisticsDefinitions.player
 
-player.scorpion_crater_pendant = {
-	database_name = "scorpion_crater_pendant",
-	source = "player_data",
+var_0_0.scorpion_crater_pendant = {
 	value = 0,
+	database_name = "scorpion_crater_pendant",
+	source = "player_data"
 }
 
-for i = 1, 3 do
-	local dark_tongue_definition = "scorpion_crater_dark_tongue_" .. i
+for iter_0_0 = 1, 3 do
+	local var_0_1 = "scorpion_crater_dark_tongue_" .. iter_0_0
 
-	player[dark_tongue_definition] = {
-		source = "player_data",
+	var_0_0[var_0_1] = {
 		value = 0,
-		database_name = dark_tongue_definition,
+		source = "player_data",
+		database_name = var_0_1
 	}
 end
 
-player.scorpion_crater_detour = {
+var_0_0.scorpion_crater_detour = {
+	value = 0,
 	database_name = "scorpion_crater_detour",
-	source = "player_data",
-	value = 0,
+	source = "player_data"
 }
-player.scorpion_crater_ambush = {
-	database_name = "scorpion_crater_ambush",
-	source = "player_data",
+var_0_0.scorpion_crater_ambush = {
 	value = 0,
+	database_name = "scorpion_crater_ambush",
+	source = "player_data"
 }

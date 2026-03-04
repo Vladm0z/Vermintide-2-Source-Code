@@ -1,4 +1,4 @@
-﻿-- chunkname: @dialogues/generated/lookup_marker_events.lua
+-- chunkname: @dialogues/generated/lookup_marker_events.lua
 
 assert(DialogueLookup[DialogueLookup_n + 1] == nil)
 

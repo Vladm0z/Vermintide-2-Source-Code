@@ -1,35 +1,35 @@
-﻿-- chunkname: @scripts/managers/decal/decal_manager.lua
+-- chunkname: @scripts/managers/decal/decal_manager.lua
 
 require("scripts/settings/decal_settings")
 
 DecalManager = class(DecalManager)
 
-DecalManager.init = function (self, world)
-	self._decal_system = EngineOptimizedManagers.decal_manager_init(self._decal_system, world)
+function DecalManager.init(arg_1_0, arg_1_1)
+	arg_1_0._decal_system = EngineOptimizedManagers.decal_manager_init(arg_1_0._decal_system, arg_1_1)
 
-	for pool_name, setting in pairs(DecalSettings) do
-		EngineOptimizedManagers.decal_manager_add_setting(self._decal_system, pool_name, setting.life_time, setting.pool_size, unpack(setting.units))
+	for iter_1_0, iter_1_1 in pairs(DecalSettings) do
+		EngineOptimizedManagers.decal_manager_add_setting(arg_1_0._decal_system, iter_1_0, iter_1_1.life_time, iter_1_1.pool_size, unpack(iter_1_1.units))
 	end
 end
 
-DecalManager.destroy = function (self)
-	EngineOptimizedManagers.decal_manager_destroy(self._decal_system)
+function DecalManager.destroy(arg_2_0)
+	EngineOptimizedManagers.decal_manager_destroy(arg_2_0._decal_system)
 end
 
-DecalManager.add_projection_decal = function (self, unit_name, hit_unit, hit_actor, position, rotation, extents, normal)
-	local t = Managers.time:time("game")
+function DecalManager.add_projection_decal(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+	local var_3_0 = Managers.time:time("game")
 
-	EngineOptimizedManagers.decal_manager_add_decal(self._decal_system, unit_name, position, rotation, normal, extents, hit_actor, hit_unit, t)
+	EngineOptimizedManagers.decal_manager_add_decal(arg_3_0._decal_system, arg_3_1, arg_3_4, arg_3_5, arg_3_7, arg_3_6, arg_3_3, arg_3_2, var_3_0)
 end
 
-DecalManager.update = function (self, dt, t)
-	EngineOptimizedManagers.decal_manager_update(self._decal_system, t)
+function DecalManager.update(arg_4_0, arg_4_1, arg_4_2)
+	EngineOptimizedManagers.decal_manager_update(arg_4_0._decal_system, arg_4_2)
 end
 
-DecalManager.clear_all_of_type = function (self, pool_name)
-	EngineOptimizedManagers.decal_manager_clear_all_of_type(self._decal_system, pool_name)
+function DecalManager.clear_all_of_type(arg_5_0, arg_5_1)
+	EngineOptimizedManagers.decal_manager_clear_all_of_type(arg_5_0._decal_system, arg_5_1)
 end
 
-DecalManager.move_decals = function (self, from_unit, to_unit)
-	EngineOptimizedManagers.decal_manager_move_decals(self._decal_system, from_unit, to_unit)
+function DecalManager.move_decals(arg_6_0, arg_6_1, arg_6_2)
+	EngineOptimizedManagers.decal_manager_move_decals(arg_6_0._decal_system, arg_6_1, arg_6_2)
 end

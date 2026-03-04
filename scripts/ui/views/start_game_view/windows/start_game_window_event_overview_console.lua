@@ -1,330 +1,308 @@
-﻿-- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_event_overview_console.lua
+-- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_event_overview_console.lua
 
-local definitions = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_event_overview_console_definitions")
-local scenegraph_definition = definitions.scenegraph_definition
-local widget_definitions = definitions.widgets
-local animation_definitions = definitions.animation_definitions
-local selector_input_definition = definitions.selector_input_definition
-local START_GAME_INPUT = "refresh_press"
-local SELECTION_INPUT = "confirm_press"
+local var_0_0 = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_event_overview_console_definitions")
+local var_0_1 = var_0_0.scenegraph_definition
+local var_0_2 = var_0_0.widgets
+local var_0_3 = var_0_0.animation_definitions
+local var_0_4 = var_0_0.selector_input_definition
+local var_0_5 = "refresh_press"
+local var_0_6 = "confirm_press"
 
 StartGameWindowEventOverviewConsole = class(StartGameWindowEventOverviewConsole)
 StartGameWindowEventOverviewConsole.NAME = "StartGameWindowEventOverviewConsole"
 
-StartGameWindowEventOverviewConsole.on_enter = function (self, params, offset)
+function StartGameWindowEventOverviewConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameViewWindow] Enter Substate StartGameWindowEventOverviewConsole")
 
-	self._parent = params.parent
+	arg_1_0._parent = arg_1_1.parent
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_1_0 = arg_1_1.ingame_ui_context
 
-	self._ingame_ui_context = ingame_ui_context
-	self._ui_renderer = ingame_ui_context.ui_renderer
-	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self._input_manager = ingame_ui_context.input_manager
-	self._statistics_db = ingame_ui_context.statistics_db
-
-	local player_manager = Managers.player
-	local local_player = player_manager:local_player()
-
-	self._stats_id = local_player:stats_id()
-	self._render_settings = {
-		snap_pixel_positions = true,
+	arg_1_0._ingame_ui_context = var_1_0
+	arg_1_0._ui_renderer = var_1_0.ui_renderer
+	arg_1_0._ui_top_renderer = var_1_0.ui_top_renderer
+	arg_1_0._input_manager = var_1_0.input_manager
+	arg_1_0._statistics_db = var_1_0.statistics_db
+	arg_1_0._stats_id = Managers.player:local_player():stats_id()
+	arg_1_0._render_settings = {
+		snap_pixel_positions = true
 	}
-	self._animations = {}
+	arg_1_0._animations = {}
 
-	self:_create_ui_elements(params, offset)
+	arg_1_0:_create_ui_elements(arg_1_1, arg_1_2)
 
-	self._input_index = params.input_index or 1
+	arg_1_0._input_index = arg_1_1.input_index or 1
 
-	self:_handle_new_selection(self._input_index)
-	self:_update_difficulty_option()
+	arg_1_0:_handle_new_selection(arg_1_0._input_index)
+	arg_1_0:_update_difficulty_option()
 
-	self._is_focused = false
-	self._play_button_pressed = false
-	self._show_additional_settings = false
-	self._previous_can_play = nil
+	arg_1_0._is_focused = false
+	arg_1_0._play_button_pressed = false
+	arg_1_0._show_additional_settings = false
+	arg_1_0._previous_can_play = nil
 
-	self._parent:change_generic_actions("default")
-	self:_start_transition_animation("on_enter")
+	arg_1_0._parent:change_generic_actions("default")
+	arg_1_0:_start_transition_animation("on_enter")
 end
 
-StartGameWindowEventOverviewConsole._start_transition_animation = function (self, animation_name)
-	local params = {
-		render_settings = self._render_settings,
+function StartGameWindowEventOverviewConsole._start_transition_animation(arg_2_0, arg_2_1)
+	local var_2_0 = {
+		render_settings = arg_2_0._render_settings
 	}
-	local widgets = {}
-	local anim_id = self._ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
+	local var_2_1 = {}
+	local var_2_2 = arg_2_0._ui_animator:start_animation(arg_2_1, var_2_1, var_0_1, var_2_0)
 
-	self._animations[animation_name] = anim_id
+	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-StartGameWindowEventOverviewConsole._create_ui_elements = function (self, params, offset)
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+function StartGameWindowEventOverviewConsole._create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 
-	local widgets = {}
-	local widgets_by_name = {}
+	local var_3_0 = {}
+	local var_3_1 = {}
 
-	for name, widget_definition in pairs(widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_3_0, iter_3_1 in pairs(var_0_2) do
+		local var_3_2 = UIWidget.init(iter_3_1)
 
-		widgets[#widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_3_0[#var_3_0 + 1] = var_3_2
+		var_3_1[iter_3_0] = var_3_2
 	end
 
-	self._widgets = widgets
-	self._widgets_by_name = widgets_by_name
+	arg_3_0._widgets = var_3_0
+	arg_3_0._widgets_by_name = var_3_1
 
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_3_0._ui_renderer)
 
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
+	arg_3_0._ui_animator = UIAnimator:new(arg_3_0._ui_scenegraph, var_0_3)
 
-	if offset then
-		local window_position = self._ui_scenegraph.window.local_position
+	if arg_3_2 then
+		local var_3_3 = arg_3_0._ui_scenegraph.window.local_position
 
-		window_position[1] = window_position[1] + offset[1]
-		window_position[2] = window_position[2] + offset[2]
-		window_position[3] = window_position[3] + offset[3]
+		var_3_3[1] = var_3_3[1] + arg_3_2[1]
+		var_3_3[2] = var_3_3[2] + arg_3_2[2]
+		var_3_3[3] = var_3_3[3] + arg_3_2[3]
 	end
 
-	self:_setup_content_from_backend()
+	arg_3_0:_setup_content_from_backend()
 end
 
-StartGameWindowEventOverviewConsole._setup_content_from_backend = function (self)
-	local widgets_by_name = self._widgets_by_name
-	local live_event_interface = Managers.backend:get_interface("live_events")
-	local game_mode_data = live_event_interface:get_weekly_events_game_mode_data()
-	local title_text_id = game_mode_data.title_text_id
-	local event_title_widget = widgets_by_name.event_title
+function StartGameWindowEventOverviewConsole._setup_content_from_backend(arg_4_0)
+	local var_4_0 = arg_4_0._widgets_by_name
+	local var_4_1 = Managers.backend:get_interface("live_events"):get_weekly_events_game_mode_data()
+	local var_4_2 = var_4_1.title_text_id
 
-	event_title_widget.content.text = Localize(title_text_id)
+	var_4_0.event_title.content.text = Localize(var_4_2)
 
-	local description_text_id = game_mode_data.description_text_id
-	local event_description_widget = widgets_by_name.event_description
+	local var_4_3 = var_4_1.description_text_id
 
-	event_description_widget.content.text = Localize(description_text_id)
+	var_4_0.event_description.content.text = Localize(var_4_3)
 end
 
-StartGameWindowEventOverviewConsole.on_exit = function (self, params)
+function StartGameWindowEventOverviewConsole.on_exit(arg_5_0, arg_5_1)
 	print("[StartGameViewWindow] Exit Substate StartGameWindowEventOverviewConsole")
 
-	self._ui_animator = nil
+	arg_5_0._ui_animator = nil
 
-	if self._play_button_pressed then
-		params.input_index = nil
+	if arg_5_0._play_button_pressed then
+		arg_5_1.input_index = nil
 	else
-		params.input_index = self._input_index
+		arg_5_1.input_index = arg_5_0._input_index
 	end
 end
 
-StartGameWindowEventOverviewConsole.set_focus = function (self, focused)
-	self._is_focused = focused
+function StartGameWindowEventOverviewConsole.set_focus(arg_6_0, arg_6_1)
+	arg_6_0._is_focused = arg_6_1
 end
 
-StartGameWindowEventOverviewConsole.update = function (self, dt, t)
-	self:_update_can_play()
-	self:_update_animations(dt)
-	self:_handle_input(dt, t)
-	self:_draw(dt)
+function StartGameWindowEventOverviewConsole.update(arg_7_0, arg_7_1, arg_7_2)
+	arg_7_0:_update_can_play()
+	arg_7_0:_update_animations(arg_7_1)
+	arg_7_0:_handle_input(arg_7_1, arg_7_2)
+	arg_7_0:_draw(arg_7_1)
 end
 
-StartGameWindowEventOverviewConsole.post_update = function (self, dt, t)
+function StartGameWindowEventOverviewConsole.post_update(arg_8_0, arg_8_1, arg_8_2)
 	return
 end
 
-StartGameWindowEventOverviewConsole._update_can_play = function (self)
-	local can_play = self:_can_play()
+function StartGameWindowEventOverviewConsole._update_can_play(arg_9_0)
+	local var_9_0 = arg_9_0:_can_play()
 
-	if self._previous_can_play ~= can_play then
-		self._previous_can_play = can_play
+	if arg_9_0._previous_can_play ~= var_9_0 then
+		arg_9_0._previous_can_play = var_9_0
 
-		local play_button = self._widgets_by_name.play_button
+		local var_9_1 = arg_9_0._widgets_by_name.play_button
 
-		play_button.content.button_hotspot.disable_button = not can_play
-		play_button.content.disabled = not can_play
+		var_9_1.content.button_hotspot.disable_button = not var_9_0
+		var_9_1.content.disabled = not var_9_0
 
-		if can_play then
-			self._parent:set_input_description("play_available")
+		if var_9_0 then
+			arg_9_0._parent:set_input_description("play_available")
 		else
-			self._parent:set_input_description(nil)
+			arg_9_0._parent:set_input_description(nil)
 		end
 	end
 end
 
-StartGameWindowEventOverviewConsole._is_button_hover_enter = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	return hotspot.on_hover_enter
+function StartGameWindowEventOverviewConsole._is_button_hover_enter(arg_10_0, arg_10_1)
+	return arg_10_1.content.button_hotspot.on_hover_enter
 end
 
-StartGameWindowEventOverviewConsole._is_button_pressed = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
+function StartGameWindowEventOverviewConsole._is_button_pressed(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_1.content.button_hotspot
 
-	if hotspot.on_release then
-		hotspot.on_release = false
+	if var_11_0.on_release then
+		var_11_0.on_release = false
 
 		return true
 	end
 end
 
-StartGameWindowEventOverviewConsole._handle_input = function (self, dt, t)
-	local parent = self._parent
-	local input_service = parent:window_input_service()
+function StartGameWindowEventOverviewConsole._handle_input(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = arg_12_0._parent
+	local var_12_1 = var_12_0:window_input_service()
 
-	if input_service:get(SELECTION_INPUT) then
-		self:_option_selected(self._input_index, t)
+	if var_12_1:get(var_0_6) then
+		arg_12_0:_option_selected(arg_12_0._input_index, arg_12_2)
 	end
 
-	local input_index = self._input_index
+	local var_12_2 = arg_12_0._input_index
 
-	if input_service:get("move_down") then
-		input_index = input_index + 1
-	elseif input_service:get("move_up") then
-		input_index = input_index - 1
+	if var_12_1:get("move_down") then
+		var_12_2 = var_12_2 + 1
+	elseif var_12_1:get("move_up") then
+		var_12_2 = var_12_2 - 1
 	end
 
-	if input_index ~= self._input_index then
-		self:_handle_new_selection(input_index)
+	if var_12_2 ~= arg_12_0._input_index then
+		arg_12_0:_handle_new_selection(var_12_2)
 	end
 
-	local widgets_by_name = self._widgets_by_name
+	local var_12_3 = arg_12_0._widgets_by_name
 
-	for i = 1, #selector_input_definition do
-		local widget_name = selector_input_definition[i]
-		local widget = widgets_by_name[widget_name]
-		local is_selected = widget.content.is_selected
+	for iter_12_0 = 1, #var_0_4 do
+		local var_12_4 = var_12_3[var_0_4[iter_12_0]]
 
-		if not is_selected and self:_is_button_hover_enter(widget) then
-			self:_handle_new_selection(i)
+		if not var_12_4.content.is_selected and arg_12_0:_is_button_hover_enter(var_12_4) then
+			arg_12_0:_handle_new_selection(iter_12_0)
 		end
 
-		if self:_is_button_pressed(widget) then
-			self:_option_selected(self._input_index, t)
+		if arg_12_0:_is_button_pressed(var_12_4) then
+			arg_12_0:_option_selected(arg_12_0._input_index, arg_12_2)
 		end
 	end
 
-	if self:_can_play() then
-		if self:_is_button_hover_enter(widgets_by_name.play_button) then
-			self:_play_sound("Play_hud_hover")
+	if arg_12_0:_can_play() then
+		if arg_12_0:_is_button_hover_enter(var_12_3.play_button) then
+			arg_12_0:_play_sound("Play_hud_hover")
 		end
 
-		if input_service:get(START_GAME_INPUT) or self:_is_button_pressed(widgets_by_name.play_button) then
-			self._play_button_pressed = true
+		if var_12_1:get(var_0_5) or arg_12_0:_is_button_pressed(var_12_3.play_button) then
+			arg_12_0._play_button_pressed = true
 
-			parent:play(t, "event")
+			var_12_0:play(arg_12_2, "event")
 		end
 	end
 end
 
-StartGameWindowEventOverviewConsole._play_sound = function (self, event)
-	self._parent:play_sound(event)
+function StartGameWindowEventOverviewConsole._play_sound(arg_13_0, arg_13_1)
+	arg_13_0._parent:play_sound(arg_13_1)
 end
 
-StartGameWindowEventOverviewConsole._can_play = function (self)
-	local parent = self._parent
-	local selected_difficulty_key = parent:get_difficulty_option()
-	local can_play = selected_difficulty_key ~= nil
-
-	return can_play
+function StartGameWindowEventOverviewConsole._can_play(arg_14_0)
+	return arg_14_0._parent:get_difficulty_option() ~= nil
 end
 
-StartGameWindowEventOverviewConsole._update_difficulty_option = function (self)
-	local selected_difficulty_key = self._parent:get_difficulty_option()
+function StartGameWindowEventOverviewConsole._update_difficulty_option(arg_15_0)
+	local var_15_0 = arg_15_0._parent:get_difficulty_option()
 
-	if selected_difficulty_key then
-		local difficulty_settings = DifficultySettings[selected_difficulty_key]
-		local difficulty_widget = self._widgets_by_name.difficulty_setting
+	if var_15_0 then
+		local var_15_1 = DifficultySettings[var_15_0]
+		local var_15_2 = arg_15_0._widgets_by_name.difficulty_setting
 
-		difficulty_widget.content.input_text = Localize(difficulty_settings.display_name)
+		var_15_2.content.input_text = Localize(var_15_1.display_name)
 
-		local display_image = difficulty_settings.display_image
+		local var_15_3 = var_15_1.display_image
 
-		difficulty_widget.content.icon_texture = display_image
+		var_15_2.content.icon_texture = var_15_3
 
-		local completed_frame_texture = difficulty_settings.completed_frame_texture
+		local var_15_4 = var_15_1.completed_frame_texture
 
-		difficulty_widget.content.icon_frame_texture = completed_frame_texture
+		var_15_2.content.icon_frame_texture = var_15_4
 	end
 end
 
-StartGameWindowEventOverviewConsole._option_selected = function (self, input_index, t)
-	local selected_widget_name = selector_input_definition[input_index]
+function StartGameWindowEventOverviewConsole._option_selected(arg_16_0, arg_16_1, arg_16_2)
+	local var_16_0 = var_0_4[arg_16_1]
 
-	if selected_widget_name == "difficulty_setting" then
-		self._parent:set_layout_by_name("difficulty_selection_event")
-	elseif selected_widget_name == "play_button" then
-		self._play_button_pressed = true
+	if var_16_0 == "difficulty_setting" then
+		arg_16_0._parent:set_layout_by_name("difficulty_selection_event")
+	elseif var_16_0 == "play_button" then
+		arg_16_0._play_button_pressed = true
 
-		self._parent:play(t, "event")
+		arg_16_0._parent:play(arg_16_2, "event")
 	else
-		ferror("Unknown selector_input_definition: %s", selected_widget_name)
+		ferror("Unknown selector_input_definition: %s", var_16_0)
 	end
 end
 
-StartGameWindowEventOverviewConsole._handle_new_selection = function (self, input_index)
-	local widgets_by_name = self._widgets_by_name
-	local num_inputs = #selector_input_definition
+function StartGameWindowEventOverviewConsole._handle_new_selection(arg_17_0, arg_17_1)
+	local var_17_0 = arg_17_0._widgets_by_name
+	local var_17_1 = #var_0_4
 
-	input_index = math.clamp(input_index, 1, num_inputs)
+	arg_17_1 = math.clamp(arg_17_1, 1, var_17_1)
 
-	local widget_name = selector_input_definition[input_index]
-	local widget = widgets_by_name[widget_name]
-	local widget_content = widget.content
-
-	if widget_content.disabled then
+	if var_17_0[var_0_4[arg_17_1]].content.disabled then
 		return
 	end
 
-	for i = 1, #selector_input_definition do
-		local widget_name = selector_input_definition[i]
-		local widget = widgets_by_name[widget_name]
-		local is_selected = i == input_index
+	for iter_17_0 = 1, #var_0_4 do
+		local var_17_2 = var_17_0[var_0_4[iter_17_0]]
+		local var_17_3 = iter_17_0 == arg_17_1
 
-		widget.content.is_selected = is_selected
+		var_17_2.content.is_selected = var_17_3
 	end
 
-	self._input_index = input_index
+	arg_17_0._input_index = arg_17_1
 end
 
-StartGameWindowEventOverviewConsole._update_animations = function (self, dt)
-	local ui_animator = self._ui_animator
+function StartGameWindowEventOverviewConsole._update_animations(arg_18_0, arg_18_1)
+	local var_18_0 = arg_18_0._ui_animator
 
-	ui_animator:update(dt)
+	var_18_0:update(arg_18_1)
 
-	local animations = self._animations
+	local var_18_1 = arg_18_0._animations
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_18_0, iter_18_1 in pairs(var_18_1) do
+		if var_18_0:is_animation_completed(iter_18_1) then
+			var_18_0:stop_animation(iter_18_1)
 
-			animations[animation_name] = nil
+			var_18_1[iter_18_0] = nil
 		end
 	end
 
-	local widgets_by_name = self._widgets_by_name
+	local var_18_2 = arg_18_0._widgets_by_name
 
-	UIWidgetUtils.animate_start_game_console_setting_button(widgets_by_name.difficulty_setting, dt)
-	UIWidgetUtils.animate_play_button(widgets_by_name.play_button, dt)
+	UIWidgetUtils.animate_start_game_console_setting_button(var_18_2.difficulty_setting, arg_18_1)
+	UIWidgetUtils.animate_play_button(var_18_2.play_button, arg_18_1)
 end
 
-StartGameWindowEventOverviewConsole._draw = function (self, dt)
-	local ui_top_renderer = self._ui_top_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local input_service = self._parent:window_input_service()
-	local render_settings = self._render_settings
-	local parent_scenegraph_id
+function StartGameWindowEventOverviewConsole._draw(arg_19_0, arg_19_1)
+	local var_19_0 = arg_19_0._ui_top_renderer
+	local var_19_1 = arg_19_0._ui_scenegraph
+	local var_19_2 = arg_19_0._parent:window_input_service()
+	local var_19_3 = arg_19_0._render_settings
+	local var_19_4
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, parent_scenegraph_id, render_settings)
+	UIRenderer.begin_pass(var_19_0, var_19_1, var_19_2, arg_19_1, var_19_4, var_19_3)
 
-	local widgets = self._widgets
+	local var_19_5 = arg_19_0._widgets
 
-	for i = 1, #widgets do
-		local widget = widgets[i]
+	for iter_19_0 = 1, #var_19_5 do
+		local var_19_6 = var_19_5[iter_19_0]
 
-		UIRenderer.draw_widget(ui_top_renderer, widget)
+		UIRenderer.draw_widget(var_19_0, var_19_6)
 	end
 
-	UIRenderer.end_pass(ui_top_renderer)
+	UIRenderer.end_pass(var_19_0)
 end

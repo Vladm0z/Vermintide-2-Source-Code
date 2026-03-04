@@ -1,417 +1,406 @@
-﻿-- chunkname: @scripts/ui/dlc_versus/views/start_game_view/windows/start_game_window_versus_mission_selection.lua
+-- chunkname: @scripts/ui/dlc_versus/views/start_game_view/windows/start_game_window_versus_mission_selection.lua
 
-local definitions = local_require("scripts/ui/dlc_versus/views/start_game_view/windows/definitions/start_game_window_versus_mission_selection_definitions")
-local widget_definitions = definitions.widgets
-local scenegraph_definition = definitions.scenegraph_definition
-local animation_definitions = definitions.animation_definitions
-local widget_functions = definitions.widget_functions
-local grid_settings = definitions.grid_settings
-local SELECTION_INPUT = "confirm_press"
+local var_0_0 = local_require("scripts/ui/dlc_versus/views/start_game_view/windows/definitions/start_game_window_versus_mission_selection_definitions")
+local var_0_1 = var_0_0.widgets
+local var_0_2 = var_0_0.scenegraph_definition
+local var_0_3 = var_0_0.animation_definitions
+local var_0_4 = var_0_0.widget_functions
+local var_0_5 = var_0_0.grid_settings
+local var_0_6 = "confirm_press"
 
 StartGameWindowVersusMissionSelection = class(StartGameWindowVersusMissionSelection)
 StartGameWindowVersusMissionSelection.NAME = "StartGameWindowVersusMissionSelection"
 
-StartGameWindowVersusMissionSelection.on_enter = function (self, params, offset)
+function StartGameWindowVersusMissionSelection.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowVersusMissionSelection")
 
-	self._parent = params.parent
+	arg_1_0._parent = arg_1_1.parent
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_1_0 = arg_1_1.ingame_ui_context
 
-	self._ui_renderer = ingame_ui_context.ui_renderer
-	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self._input_manager = ingame_ui_context.input_manager
-	self._statistics_db = ingame_ui_context.statistics_db
-	self._render_settings = {
-		snap_pixel_positions = true,
+	arg_1_0._ui_renderer = var_1_0.ui_renderer
+	arg_1_0._ui_top_renderer = var_1_0.ui_top_renderer
+	arg_1_0._input_manager = var_1_0.input_manager
+	arg_1_0._statistics_db = var_1_0.statistics_db
+	arg_1_0._render_settings = {
+		snap_pixel_positions = true
 	}
 
-	local player_manager = Managers.player
-	local local_player = player_manager:local_player()
+	local var_1_1 = Managers.player
 
-	self._stats_id = local_player:stats_id()
-	self._player_manager = player_manager
-	self._peer_id = ingame_ui_context.peer_id
-	self._selected_grid_index = {
+	arg_1_0._stats_id = var_1_1:local_player():stats_id()
+	arg_1_0._player_manager = var_1_1
+	arg_1_0._peer_id = var_1_0.peer_id
+	arg_1_0._selected_grid_index = {
 		1,
-		1,
+		1
 	}
-	self._animations = {}
-	self._ui_animations = {}
+	arg_1_0._animations = {}
+	arg_1_0._ui_animations = {}
 
-	self:_gather_level_information()
-	self:_create_ui_elements(params, offset)
-	self:_handle_input_desc()
+	arg_1_0:_gather_level_information()
+	arg_1_0:_create_ui_elements(arg_1_1, arg_1_2)
+	arg_1_0:_handle_input_desc()
 
-	self._return_layout_name = self._parent:get_selected_layout_name() or "versus_custom_game"
+	arg_1_0._return_layout_name = arg_1_0._parent:get_selected_layout_name() or "versus_custom_game"
 
-	self:_start_transition_animation("on_enter")
+	arg_1_0:_start_transition_animation("on_enter")
 end
 
-local function sort_levels_by_order(a, b)
-	local a_presentation_order = a.act_presentation_order
-	local b_presentation_order = b.act_presentation_order
-
-	return a_presentation_order < b_presentation_order
+local function var_0_7(arg_2_0, arg_2_1)
+	return arg_2_0.act_presentation_order < arg_2_1.act_presentation_order
 end
 
-StartGameWindowVersusMissionSelection._gather_level_information = function (self)
-	local levels = UnlockableLevelsByGameMode.versus
-	local sorted_levels = {}
+function StartGameWindowVersusMissionSelection._gather_level_information(arg_3_0)
+	local var_3_0 = UnlockableLevelsByGameMode.versus
+	local var_3_1 = {}
 
-	for i = 1, #levels do
-		local level_key = levels[i]
+	for iter_3_0 = 1, #var_3_0 do
+		local var_3_2 = var_3_0[iter_3_0]
 
-		sorted_levels[i] = LevelSettings[level_key]
+		var_3_1[iter_3_0] = LevelSettings[var_3_2]
 	end
 
-	table.sort(sorted_levels, sort_levels_by_order)
+	table.sort(var_3_1, var_0_7)
 
-	sorted_levels.act_name = "act_versus"
-	self._sorted_level_data = {
+	var_3_1.act_name = "act_versus"
+	arg_3_0._sorted_level_data = {
 		{
 			area_display_name = "area_selection_carousel_name",
 			levels_by_act = {
-				sorted_levels,
-			},
+				var_3_1
+			}
 		},
 		{
 			area_display_name = "random_level",
 			levels_by_act = {
 				{
 					DummyAnyLevel,
-					act_name = "act_versus",
-				},
-			},
-		},
-	}
-end
-
-StartGameWindowVersusMissionSelection._start_transition_animation = function (self, animation_name)
-	local params = {
-		render_settings = self._render_settings,
-	}
-	local widgets = {}
-	local anim_id = self._ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
-
-	self._animations[animation_name] = anim_id
-end
-
-StartGameWindowVersusMissionSelection._create_ui_elements = function (self, params, offset)
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-	self._widgets, self._widgets_by_name = UIUtils.create_widgets(widget_definitions)
-
-	local global_entries = {}
-	local area_entries = {}
-	local global_grid_entries = {}
-	local area_grid_entries = {}
-	local global_offset = {
-		0,
-		0,
-		0,
-	}
-	local global_row = 1
-
-	for i = 1, #self._sorted_level_data do
-		global_offset[1] = 0
-
-		local area_data = self._sorted_level_data[i]
-		local area_name = area_data.area_name
-		local global_area_entry = UIWidget.init(widget_functions.create_area_entry(area_data, global_offset))
-
-		global_entries[#global_entries + 1] = global_area_entry
-
-		local starting_offset_y = global_offset[2]
-		local area_background = global_area_entry.style.background
-		local area_background_frame = global_area_entry.style.frame
-
-		global_offset[1] = global_offset[1] + grid_settings.area_spacing[1]
-		global_offset[2] = global_offset[2] + grid_settings.area_spacing[2]
-		global_offset[3] = global_offset[3] + grid_settings.area_spacing[3]
-
-		local offset = {
-			0,
-			global_offset[2],
-			global_offset[3],
+					act_name = "act_versus"
+				}
+			}
 		}
-		local levels_by_act = area_data.levels_by_act
-		local add_acts = #levels_by_act > 1
+	}
+end
 
-		for j = 1, #levels_by_act do
-			offset[1] = grid_settings.margin
-			global_offset[1] = grid_settings.margin
+function StartGameWindowVersusMissionSelection._start_transition_animation(arg_4_0, arg_4_1)
+	local var_4_0 = {
+		render_settings = arg_4_0._render_settings
+	}
+	local var_4_1 = {}
+	local var_4_2 = arg_4_0._ui_animator:start_animation(arg_4_1, var_4_1, var_0_2, var_4_0)
 
-			local levels = levels_by_act[j]
-			local act_name = levels.act_name
+	arg_4_0._animations[arg_4_1] = var_4_2
+end
 
-			if add_acts then
-				local act_entry = UIWidget.init(widget_functions.create_act_entry(act_name .. "_display_name", offset))
+function StartGameWindowVersusMissionSelection._create_ui_elements(arg_5_0, arg_5_1, arg_5_2)
+	arg_5_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
+	arg_5_0._widgets, arg_5_0._widgets_by_name = UIUtils.create_widgets(var_0_1)
 
-				offset[1] = offset[1] + grid_settings.act_spacing[1]
-				offset[2] = offset[2] + grid_settings.act_spacing[2]
-				offset[3] = offset[3] + grid_settings.act_spacing[3]
-				area_entries[#area_entries + 1] = act_entry
+	local var_5_0 = {}
+	local var_5_1 = {}
+	local var_5_2 = {}
+	local var_5_3 = {}
+	local var_5_4 = {
+		0,
+		0,
+		0
+	}
+	local var_5_5 = 1
 
-				local global_act_entry = UIWidget.init(widget_functions.create_act_entry(act_name .. "_display_name", global_offset))
+	for iter_5_0 = 1, #arg_5_0._sorted_level_data do
+		var_5_4[1] = 0
 
-				global_offset[1] = global_offset[1] + grid_settings.act_spacing[1]
-				global_offset[2] = global_offset[2] + grid_settings.act_spacing[2]
-				global_offset[3] = global_offset[3] + grid_settings.act_spacing[3]
-				global_entries[#global_entries + 1] = global_act_entry
+		local var_5_6 = arg_5_0._sorted_level_data[iter_5_0]
+		local var_5_7 = var_5_6.area_name
+		local var_5_8 = UIWidget.init(var_0_4.create_area_entry(var_5_6, var_5_4))
+
+		var_5_0[#var_5_0 + 1] = var_5_8
+
+		local var_5_9 = var_5_4[2]
+		local var_5_10 = var_5_8.style.background
+		local var_5_11 = var_5_8.style.frame
+
+		var_5_4[1] = var_5_4[1] + var_0_5.area_spacing[1]
+		var_5_4[2] = var_5_4[2] + var_0_5.area_spacing[2]
+		var_5_4[3] = var_5_4[3] + var_0_5.area_spacing[3]
+
+		local var_5_12 = {
+			0,
+			var_5_4[2],
+			var_5_4[3]
+		}
+		local var_5_13 = var_5_6.levels_by_act
+		local var_5_14 = #var_5_13 > 1
+
+		for iter_5_1 = 1, #var_5_13 do
+			var_5_12[1] = var_0_5.margin
+			var_5_4[1] = var_0_5.margin
+
+			local var_5_15 = var_5_13[iter_5_1]
+			local var_5_16 = var_5_15.act_name
+
+			if var_5_14 then
+				local var_5_17 = UIWidget.init(var_0_4.create_act_entry(var_5_16 .. "_display_name", var_5_12))
+
+				var_5_12[1] = var_5_12[1] + var_0_5.act_spacing[1]
+				var_5_12[2] = var_5_12[2] + var_0_5.act_spacing[2]
+				var_5_12[3] = var_5_12[3] + var_0_5.act_spacing[3]
+				var_5_1[#var_5_1 + 1] = var_5_17
+
+				local var_5_18 = UIWidget.init(var_0_4.create_act_entry(var_5_16 .. "_display_name", var_5_4))
+
+				var_5_4[1] = var_5_4[1] + var_0_5.act_spacing[1]
+				var_5_4[2] = var_5_4[2] + var_0_5.act_spacing[2]
+				var_5_4[3] = var_5_4[3] + var_0_5.act_spacing[3]
+				var_5_0[#var_5_0 + 1] = var_5_18
 			end
 
-			local level_count = #levels
+			local var_5_19 = #var_5_15
 
-			for k = 1, level_count do
-				local temp_offset = table.clone(offset)
-				local index = k - 1
-				local level_settings = levels[math.min(k, #levels)]
-				local is_disabled, disabled_reason = false
+			for iter_5_2 = 1, var_5_19 do
+				local var_5_20 = table.clone(var_5_12)
+				local var_5_21 = iter_5_2 - 1
+				local var_5_22 = var_5_15[math.min(iter_5_2, #var_5_15)]
+				local var_5_23 = false
+				local var_5_24
 
-				if level_settings.level_id ~= "any" then
-					local dlc_name = level_settings.dlc_name
+				if var_5_22.level_id ~= "any" then
+					local var_5_25 = var_5_22.dlc_name
 
-					if dlc_name and not Managers.unlock:is_dlc_unlocked(dlc_name) then
-						is_disabled = true
-						disabled_reason = "dlc"
+					if var_5_25 and not Managers.unlock:is_dlc_unlocked(var_5_25) then
+						var_5_23 = true
+						var_5_24 = "dlc"
 					end
 
-					local map_pool = script_data.versus_map_pool or Managers.mechanism:mechanism_setting_for_title("map_pool")
+					local var_5_26 = script_data.versus_map_pool or Managers.mechanism:mechanism_setting_for_title("map_pool")
 
-					if map_pool and not table.find(map_pool, level_settings.level_id) then
-						is_disabled = true
-						disabled_reason = "map_pool"
+					if var_5_26 and not table.find(var_5_26, var_5_22.level_id) then
+						var_5_23 = true
+						var_5_24 = "map_pool"
 					end
 				end
 
-				temp_offset[1] = temp_offset[1] + grid_settings.level_spacing[1] * (index % grid_settings.columns)
-				temp_offset[2] = temp_offset[2] + grid_settings.level_spacing[2] * math.floor(index / grid_settings.columns)
-				temp_offset[3] = temp_offset[3] + grid_settings.level_spacing[3]
+				var_5_20[1] = var_5_20[1] + var_0_5.level_spacing[1] * (var_5_21 % var_0_5.columns)
+				var_5_20[2] = var_5_20[2] + var_0_5.level_spacing[2] * math.floor(var_5_21 / var_0_5.columns)
+				var_5_20[3] = var_5_20[3] + var_0_5.level_spacing[3]
 
-				local row = math.floor(index / grid_settings.columns) + 1
-				local column = index % grid_settings.columns + 1
-				local level_entry = UIWidget.init(widget_functions.create_level_entry(level_settings, temp_offset, self._selected_grid_index, {
-					row,
-					column,
-				}, is_disabled, disabled_reason, self._level_preferences))
-				local row = math.floor(index / grid_settings.columns) + 1
-				local column = index % grid_settings.columns + 1
+				local var_5_27 = math.floor(var_5_21 / var_0_5.columns) + 1
+				local var_5_28 = var_5_21 % var_0_5.columns + 1
+				local var_5_29 = UIWidget.init(var_0_4.create_level_entry(var_5_22, var_5_20, arg_5_0._selected_grid_index, {
+					var_5_27,
+					var_5_28
+				}, var_5_23, var_5_24, arg_5_0._level_preferences))
+				local var_5_30 = math.floor(var_5_21 / var_0_5.columns) + 1
+				local var_5_31 = var_5_21 % var_0_5.columns + 1
 
-				area_grid_entries[row] = area_grid_entries[row] or {}
-				area_grid_entries[row][column] = area_grid_entries[row][column] or {}
-				area_grid_entries[row][column] = level_entry
-				area_entries[#area_entries + 1] = level_entry
+				var_5_3[var_5_30] = var_5_3[var_5_30] or {}
+				var_5_3[var_5_30][var_5_31] = var_5_3[var_5_30][var_5_31] or {}
+				var_5_3[var_5_30][var_5_31] = var_5_29
+				var_5_1[#var_5_1 + 1] = var_5_29
 
-				local temp_global_offset = table.clone(global_offset)
+				local var_5_32 = table.clone(var_5_4)
 
-				temp_global_offset[1] = temp_global_offset[1] + grid_settings.level_spacing[1] * (index % grid_settings.columns)
-				temp_global_offset[2] = temp_global_offset[2] + grid_settings.level_spacing[2] * math.floor(index / grid_settings.columns)
-				temp_global_offset[3] = temp_global_offset[3] + grid_settings.level_spacing[3]
+				var_5_32[1] = var_5_32[1] + var_0_5.level_spacing[1] * (var_5_21 % var_0_5.columns)
+				var_5_32[2] = var_5_32[2] + var_0_5.level_spacing[2] * math.floor(var_5_21 / var_0_5.columns)
+				var_5_32[3] = var_5_32[3] + var_0_5.level_spacing[3]
 
-				local new_global_row = global_row - 1 + row
-				local global_level_entry = UIWidget.init(widget_functions.create_level_entry(level_settings, temp_global_offset, self._selected_grid_index, {
-					new_global_row,
-					column,
-				}, is_disabled, disabled_reason, self._level_preferences))
+				local var_5_33 = var_5_5 - 1 + var_5_30
+				local var_5_34 = UIWidget.init(var_0_4.create_level_entry(var_5_22, var_5_32, arg_5_0._selected_grid_index, {
+					var_5_33,
+					var_5_31
+				}, var_5_23, var_5_24, arg_5_0._level_preferences))
 
-				global_grid_entries[new_global_row] = global_grid_entries[new_global_row] or {}
-				global_grid_entries[new_global_row][column] = global_grid_entries[new_global_row][column] or {}
-				global_grid_entries[new_global_row][column] = global_level_entry
-				global_entries[#global_entries + 1] = global_level_entry
-				global_level_entry.content.selected_index = self._selected_grid_index
-				global_level_entry.content.preferred_levels = self._level_preferences
+				var_5_2[var_5_33] = var_5_2[var_5_33] or {}
+				var_5_2[var_5_33][var_5_31] = var_5_2[var_5_33][var_5_31] or {}
+				var_5_2[var_5_33][var_5_31] = var_5_34
+				var_5_0[#var_5_0 + 1] = var_5_34
+				var_5_34.content.selected_index = arg_5_0._selected_grid_index
+				var_5_34.content.preferred_levels = arg_5_0._level_preferences
 			end
 
-			local vertical_offset = 1 + math.floor((level_count - 1) / grid_settings.columns)
+			local var_5_35 = 1 + math.floor((var_5_19 - 1) / var_0_5.columns)
 
-			offset[2] = offset[2] + grid_settings.level_spacing[2] * vertical_offset
-			global_offset[2] = global_offset[2] + grid_settings.level_spacing[2] * vertical_offset
-			global_row = global_row + vertical_offset
+			var_5_12[2] = var_5_12[2] + var_0_5.level_spacing[2] * var_5_35
+			var_5_4[2] = var_5_4[2] + var_0_5.level_spacing[2] * var_5_35
+			var_5_5 = var_5_5 + var_5_35
 		end
 
-		area_background.texture_size[2] = global_offset[2] - starting_offset_y + grid_settings.section_spacing[2] * 0.5
-		area_background_frame.area_size[2] = -area_background.texture_size[2] + area_background_frame.edge_height * 2
-		area_background.offset[2] = global_offset[2] - starting_offset_y + grid_settings.section_spacing[2] * 0.5
-		offset[2] = offset[2] + grid_settings.section_spacing[2]
-		global_offset[2] = global_offset[2] + grid_settings.section_spacing[2]
+		var_5_10.texture_size[2] = var_5_4[2] - var_5_9 + var_0_5.section_spacing[2] * 0.5
+		var_5_11.area_size[2] = -var_5_10.texture_size[2] + var_5_11.edge_height * 2
+		var_5_10.offset[2] = var_5_4[2] - var_5_9 + var_0_5.section_spacing[2] * 0.5
+		var_5_12[2] = var_5_12[2] + var_0_5.section_spacing[2]
+		var_5_4[2] = var_5_4[2] + var_0_5.section_spacing[2]
 	end
 
-	self._total_length = global_offset[2]
-	self._scroll_multiplier = (UISettings.game_start_windows.size[2] + 20) / math.abs(self._total_length)
+	arg_5_0._total_length = var_5_4[2]
+	arg_5_0._scroll_multiplier = (UISettings.game_start_windows.size[2] + 20) / math.abs(arg_5_0._total_length)
 
-	local scroller_widget = self._widgets_by_name.scroller
-	local scroller_style = scroller_widget.style.scroller
+	local var_5_36 = arg_5_0._widgets_by_name.scroller
 
-	scroller_style.texture_size[2] = (UISettings.game_start_windows.size[2] + 20) * self._scroll_multiplier - 6
-	scroller_widget.content.visible = false
-	self._current_entries = global_entries
-	self._current_grid_entries = global_grid_entries
-	self._global_entries = global_entries
-	self._area_entries = area_entries
-	self._global_grid_entries = global_grid_entries
-	self._area_grid_entries = area_grid_entries
+	var_5_36.style.scroller.texture_size[2] = (UISettings.game_start_windows.size[2] + 20) * arg_5_0._scroll_multiplier - 6
+	var_5_36.content.visible = false
+	arg_5_0._current_entries = var_5_0
+	arg_5_0._current_grid_entries = var_5_2
+	arg_5_0._global_entries = var_5_0
+	arg_5_0._area_entries = var_5_1
+	arg_5_0._global_grid_entries = var_5_2
+	arg_5_0._area_grid_entries = var_5_3
 
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_5_0._ui_renderer)
 
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
+	arg_5_0._ui_animator = UIAnimator:new(arg_5_0._ui_scenegraph, var_0_3)
 
-	if offset then
-		local window_position = self._ui_scenegraph.window.local_position
+	if arg_5_2 then
+		local var_5_37 = arg_5_0._ui_scenegraph.window.local_position
 
-		window_position[1] = window_position[1] + offset[1]
-		window_position[2] = window_position[2] + offset[2]
-		window_position[3] = window_position[3] + offset[3]
+		var_5_37[1] = var_5_37[1] + arg_5_2[1]
+		var_5_37[2] = var_5_37[2] + arg_5_2[2]
+		var_5_37[3] = var_5_37[3] + arg_5_2[3]
 	end
 
-	self:_populate_description()
+	arg_5_0:_populate_description()
 end
 
-StartGameWindowVersusMissionSelection.on_exit = function (self, params)
+function StartGameWindowVersusMissionSelection.on_exit(arg_6_0, arg_6_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowVersusMissionSelection")
 
-	self._ui_animator = nil
+	arg_6_0._ui_animator = nil
 
-	self._parent:set_input_description(nil)
+	arg_6_0._parent:set_input_description(nil)
 end
 
-StartGameWindowVersusMissionSelection.update = function (self, dt, t)
-	self:_update_animations(dt)
-	self:_handle_input(dt, t)
-	self:_update_gamepad_scroller(dt, t)
-	self:_update_scroller(dt, t)
-	self:_draw(dt)
+function StartGameWindowVersusMissionSelection.update(arg_7_0, arg_7_1, arg_7_2)
+	arg_7_0:_update_animations(arg_7_1)
+	arg_7_0:_handle_input(arg_7_1, arg_7_2)
+	arg_7_0:_update_gamepad_scroller(arg_7_1, arg_7_2)
+	arg_7_0:_update_scroller(arg_7_1, arg_7_2)
+	arg_7_0:_draw(arg_7_1)
 end
 
-StartGameWindowVersusMissionSelection._update_gamepad_scroller = function (self, dt, t)
-	local gamepad_active = Managers.input:is_device_active("gamepad")
-
-	if not gamepad_active then
+function StartGameWindowVersusMissionSelection._update_gamepad_scroller(arg_8_0, arg_8_1, arg_8_2)
+	if not Managers.input:is_device_active("gamepad") then
 		return
 	end
 
-	local area_size = UISettings.game_start_windows.size[2] + 20
-	local window_size = self._total_length + UISettings.game_start_windows.size[2] + 20
-	local current_grid_offset = self._ui_scenegraph.grid_anchor.local_position[2]
-	local current_grid = self._current_grid_entries
-	local current_selection = self._selected_grid_index
-	local old_grid_y_selection = self._old_grid_y_selection or 0
-	local row = current_selection[1]
-	local column = current_selection[2]
+	local var_8_0 = UISettings.game_start_windows.size[2] + 20
+	local var_8_1 = arg_8_0._total_length + UISettings.game_start_windows.size[2] + 20
+	local var_8_2 = arg_8_0._ui_scenegraph.grid_anchor.local_position[2]
+	local var_8_3 = arg_8_0._current_grid_entries
+	local var_8_4 = arg_8_0._selected_grid_index
+	local var_8_5 = arg_8_0._old_grid_y_selection or 0
+	local var_8_6 = var_8_4[1]
+	local var_8_7 = var_8_4[2]
 
-	if row == old_grid_y_selection then
+	if var_8_6 == var_8_5 then
 		return
 	end
 
-	local current_widget = current_grid[row][column]
-	local current_widget_offset = current_widget.offset[2]
-	local current_screen_position = -current_grid_offset - current_widget_offset
-	local wanted_pos = math.clamp(current_grid_offset + (current_screen_position - area_size / 2), 0, math.abs(window_size))
+	local var_8_8 = var_8_3[var_8_6][var_8_7].offset[2]
+	local var_8_9 = -var_8_2 - var_8_8
+	local var_8_10 = math.clamp(var_8_2 + (var_8_9 - var_8_0 / 2), 0, math.abs(var_8_1))
 
-	self._ui_animations.scroll = UIAnimation.init(UIAnimation.function_by_time, self._ui_scenegraph.grid_anchor.position, 2, self._ui_scenegraph.grid_anchor.position[2], wanted_pos, 0.3, math.easeOutCubic)
+	arg_8_0._ui_animations.scroll = UIAnimation.init(UIAnimation.function_by_time, arg_8_0._ui_scenegraph.grid_anchor.position, 2, arg_8_0._ui_scenegraph.grid_anchor.position[2], var_8_10, 0.3, math.easeOutCubic)
 
-	local scroller_widget = self._widgets_by_name.scroller
-	local scroller_style = scroller_widget.style.scroller
-	local scroller_offset = 3 + (UISettings.game_start_windows.size[2] - 6) * (1 - self._scroll_multiplier) * (wanted_pos / math.abs(window_size))
+	local var_8_11 = arg_8_0._widgets_by_name.scroller.style.scroller
+	local var_8_12 = 3 + (UISettings.game_start_windows.size[2] - 6) * (1 - arg_8_0._scroll_multiplier) * (var_8_10 / math.abs(var_8_1))
 
-	self._ui_animations.scroller = UIAnimation.init(UIAnimation.function_by_time, scroller_style.offset, 2, scroller_style.offset[2], -scroller_offset, 0.3, math.easeOutCubic)
-	self._old_grid_y_selection = row
+	arg_8_0._ui_animations.scroller = UIAnimation.init(UIAnimation.function_by_time, var_8_11.offset, 2, var_8_11.offset[2], -var_8_12, 0.3, math.easeOutCubic)
+	arg_8_0._old_grid_y_selection = var_8_6
 end
 
-StartGameWindowVersusMissionSelection._update_scroller = function (self, dt, t)
-	local gamepad_active = Managers.input:is_device_active("gamepad")
-
-	if gamepad_active then
+function StartGameWindowVersusMissionSelection._update_scroller(arg_9_0, arg_9_1, arg_9_2)
+	if Managers.input:is_device_active("gamepad") then
 		return
 	end
 end
 
-StartGameWindowVersusMissionSelection.post_update = function (self, dt, t)
+function StartGameWindowVersusMissionSelection.post_update(arg_10_0, arg_10_1, arg_10_2)
 	return
 end
 
-StartGameWindowVersusMissionSelection._update_animations = function (self, dt)
-	local ui_animator = self._ui_animator
+function StartGameWindowVersusMissionSelection._update_animations(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_0._ui_animator
 
-	ui_animator:update(dt)
+	var_11_0:update(arg_11_1)
 
-	local animations = self._animations
+	local var_11_1 = arg_11_0._animations
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_11_0, iter_11_1 in pairs(var_11_1) do
+		if var_11_0:is_animation_completed(iter_11_1) then
+			var_11_0:stop_animation(iter_11_1)
 
-			animations[animation_name] = nil
+			var_11_1[iter_11_0] = nil
 		end
 	end
 
-	local animations = self._ui_animations
+	local var_11_2 = arg_11_0._ui_animations
 
-	for animation_name, animation in pairs(animations) do
-		UIAnimation.update(animation, dt)
+	for iter_11_2, iter_11_3 in pairs(var_11_2) do
+		UIAnimation.update(iter_11_3, arg_11_1)
 
-		if UIAnimation.completed(animation) then
-			animations[animation_name] = nil
+		if UIAnimation.completed(iter_11_3) then
+			var_11_2[iter_11_2] = nil
 		end
 	end
 end
 
-StartGameWindowVersusMissionSelection._handle_input = function (self, dt, t)
-	local input_service = self._parent:window_input_service()
+function StartGameWindowVersusMissionSelection._handle_input(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = arg_12_0._parent:window_input_service()
 
-	if input_service:get("move_right_hold_continuous") then
-		self:_update_selection(0, 1)
-	elseif input_service:get("move_left_hold_continuous") then
-		self:_update_selection(0, -1)
+	if var_12_0:get("move_right_hold_continuous") then
+		arg_12_0:_update_selection(0, 1)
+	elseif var_12_0:get("move_left_hold_continuous") then
+		arg_12_0:_update_selection(0, -1)
 	end
 
-	if input_service:get("move_up_hold_continuous") then
-		self:_update_selection(-1, 0)
-	elseif input_service:get("move_down_hold_continuous") then
-		self:_update_selection(1, 0)
+	if var_12_0:get("move_up_hold_continuous") then
+		arg_12_0:_update_selection(-1, 0)
+	elseif var_12_0:get("move_down_hold_continuous") then
+		arg_12_0:_update_selection(1, 0)
 	end
 
-	if input_service:get("confirm_press", true) then
-		local current_grid_entries = self._current_grid_entries
-		local current_selection = self._selected_grid_index
-		local row = current_selection[1]
-		local column = current_selection[2]
-		local current_widget = current_grid_entries[row][column]
-		local content = current_widget.content
+	if var_12_0:get("confirm_press", true) then
+		local var_12_1 = arg_12_0._current_grid_entries
+		local var_12_2 = arg_12_0._selected_grid_index
+		local var_12_3 = var_12_2[1]
+		local var_12_4 = var_12_2[2]
+		local var_12_5 = var_12_1[var_12_3][var_12_4]
 
-		if not content.is_disabled then
-			local level_id = current_widget.content.level_settings.level_id
+		if not var_12_5.content.is_disabled then
+			local var_12_6 = var_12_5.content.level_settings.level_id
 
-			self._parent:set_selected_level_id(level_id)
-			self._parent:set_layout_by_name(self._return_layout_name)
+			arg_12_0._parent:set_selected_level_id(var_12_6)
+			arg_12_0._parent:set_layout_by_name(arg_12_0._return_layout_name)
 
-			local matchmaking_manager = Managers.matchmaking
+			local var_12_7 = Managers.matchmaking
 
-			if matchmaking_manager:is_in_versus_custom_game_lobby() then
-				matchmaking_manager:set_selected_level(level_id)
+			if var_12_7:is_in_versus_custom_game_lobby() then
+				var_12_7:set_selected_level(var_12_6)
 			end
 
 			return
 		end
 	end
 
-	for _, entry in pairs(self._current_entries) do
-		local level_settings = entry.content.level_settings
+	for iter_12_0, iter_12_1 in pairs(arg_12_0._current_entries) do
+		local var_12_8 = iter_12_1.content.level_settings
 
-		if level_settings then
-			if UIUtils.is_button_hover_enter(entry) then
-				local selected_index = entry.content.index
+		if var_12_8 then
+			if UIUtils.is_button_hover_enter(iter_12_1) then
+				local var_12_9 = iter_12_1.content.index
 
-				self:_set_selection(selected_index[1], selected_index[2])
-			elseif UIUtils.is_button_pressed(entry) then
-				local level_id = level_settings.level_id
+				arg_12_0:_set_selection(var_12_9[1], var_12_9[2])
+			elseif UIUtils.is_button_pressed(iter_12_1) then
+				local var_12_10 = var_12_8.level_id
 
-				self._parent:set_selected_level_id(level_id)
-				self._parent:set_layout_by_name(self._return_layout_name)
+				arg_12_0._parent:set_selected_level_id(var_12_10)
+				arg_12_0._parent:set_layout_by_name(arg_12_0._return_layout_name)
 
-				local matchmaking_manager = Managers.matchmaking
+				local var_12_11 = Managers.matchmaking
 
-				if matchmaking_manager:is_in_versus_custom_game_lobby() then
-					matchmaking_manager:set_selected_level(level_id)
+				if var_12_11:is_in_versus_custom_game_lobby() then
+					var_12_11:set_selected_level(var_12_10)
 				end
 
 				break
@@ -420,129 +409,120 @@ StartGameWindowVersusMissionSelection._handle_input = function (self, dt, t)
 	end
 end
 
-StartGameWindowVersusMissionSelection._set_selection = function (self, row, column)
-	local current_selection = self._selected_grid_index
+function StartGameWindowVersusMissionSelection._set_selection(arg_13_0, arg_13_1, arg_13_2)
+	local var_13_0 = arg_13_0._selected_grid_index
 
-	current_selection[1] = row
-	current_selection[2] = column
+	var_13_0[1] = arg_13_1
+	var_13_0[2] = arg_13_2
 
-	self:_populate_description()
+	arg_13_0:_populate_description()
 end
 
-StartGameWindowVersusMissionSelection._update_selection = function (self, row_change, column_change)
-	local current_grid = self._current_grid_entries
-	local current_selection = self._selected_grid_index
+function StartGameWindowVersusMissionSelection._update_selection(arg_14_0, arg_14_1, arg_14_2)
+	local var_14_0 = arg_14_0._current_grid_entries
+	local var_14_1 = arg_14_0._selected_grid_index
 
-	if math.abs(row_change) > 0 then
-		local new_row = math.clamp(current_selection[1] + row_change, 1, table.size(current_grid))
-		local num_columns = table.size(current_grid[new_row])
-		local new_column = math.min(current_selection[2], num_columns)
+	if math.abs(arg_14_1) > 0 then
+		local var_14_2 = math.clamp(var_14_1[1] + arg_14_1, 1, table.size(var_14_0))
+		local var_14_3 = table.size(var_14_0[var_14_2])
 
-		current_selection[1] = new_row
-		current_selection[2] = new_column
-	elseif math.abs(column_change) > 0 then
-		local current_row = current_selection[1]
-		local new_column = math.clamp(current_selection[2] + column_change, 1, table.size(current_grid[current_row]))
+		var_14_1[2], var_14_1[1] = math.min(var_14_1[2], var_14_3), var_14_2
+	elseif math.abs(arg_14_2) > 0 then
+		local var_14_4 = var_14_1[1]
 
-		current_selection[2] = new_column
+		var_14_1[2] = math.clamp(var_14_1[2] + arg_14_2, 1, table.size(var_14_0[var_14_4]))
 	end
 
-	self:_handle_input_desc()
-	self:_populate_description()
+	arg_14_0:_handle_input_desc()
+	arg_14_0:_populate_description()
 end
 
-StartGameWindowVersusMissionSelection._handle_input_desc = function (self)
-	local current_grid = self._current_grid_entries
-	local current_selection = self._selected_grid_index
-	local row = current_selection[1]
-	local column = current_selection[2]
-	local current_widget = current_grid[row][column]
-	local dlc_is_locked = current_widget.content.dlc_is_locked
+function StartGameWindowVersusMissionSelection._handle_input_desc(arg_15_0)
+	local var_15_0 = arg_15_0._current_grid_entries
+	local var_15_1 = arg_15_0._selected_grid_index
+	local var_15_2 = var_15_1[1]
+	local var_15_3 = var_15_1[2]
+	local var_15_4 = var_15_0[var_15_2][var_15_3]
 
-	if dlc_is_locked then
-		self._parent:set_input_description(nil)
+	if var_15_4.content.dlc_is_locked then
+		arg_15_0._parent:set_input_description(nil)
 
 		return
 	end
 
-	local level_settings = current_widget.content.level_settings
-	local level_id = level_settings.level_id
+	local var_15_5 = var_15_4.content.level_settings.level_id
 
 	do return end
 
-	if not self._level_preferences[1][level_id] and self._level_preferences[2][level_id] then
-		-- Nothing
+	if not arg_15_0._level_preferences[1][var_15_5] and arg_15_0._level_preferences[2][var_15_5] then
+		-- block empty
 	end
 end
 
-StartGameWindowVersusMissionSelection._populate_description = function (self)
-	local current_selection = self._selected_grid_index
-	local x = current_selection[1]
-	local y = current_selection[2]
-	local current_level_entry = self._current_grid_entries[x][y]
-	local level_settings = current_level_entry.content.level_settings
-	local level_text = ""
-	local level_description_text = ""
-	local frame_texture = "map_frame_00"
-	local draw_info = false
-	local is_locked = true
-	local lock_text = ""
-	local widgets_by_name = self._widgets_by_name
-	local selected_level_widget = widgets_by_name.selected_level
-	local content = selected_level_widget.content
+function StartGameWindowVersusMissionSelection._populate_description(arg_16_0)
+	local var_16_0 = arg_16_0._selected_grid_index
+	local var_16_1 = var_16_0[1]
+	local var_16_2 = var_16_0[2]
+	local var_16_3 = arg_16_0._current_grid_entries[var_16_1][var_16_2]
+	local var_16_4 = var_16_3.content.level_settings
+	local var_16_5 = ""
+	local var_16_6 = ""
+	local var_16_7 = "map_frame_00"
+	local var_16_8 = false
+	local var_16_9 = true
+	local var_16_10 = ""
+	local var_16_11 = arg_16_0._widgets_by_name
+	local var_16_12 = var_16_11.selected_level.content
 
-	if level_settings then
-		local statistics_db = self._statistics_db
-		local stats_id = self._stats_id
-		local level_id = level_settings.level_id
-		local level_image = level_settings.level_image
-		local boss_level = level_settings.boss_level
-		local display_name = level_settings.display_name
+	if var_16_4 then
+		local var_16_13 = arg_16_0._statistics_db
+		local var_16_14 = arg_16_0._stats_id
+		local var_16_15 = var_16_4.level_id
+		local var_16_16 = var_16_4.level_image
+		local var_16_17 = var_16_4.boss_level
+		local var_16_18 = var_16_4.display_name
 
-		level_description_text = level_settings.description_text
+		var_16_6 = var_16_4.description_text
 
-		local completed_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(statistics_db, stats_id, level_id)
+		local var_16_19 = LevelUnlockUtils.completed_level_difficulty_index(var_16_13, var_16_14, var_16_15)
 
-		frame_texture = UIWidgetUtils.get_level_frame_by_difficulty_index(completed_difficulty_index)
+		var_16_7 = UIWidgetUtils.get_level_frame_by_difficulty_index(var_16_19)
+		var_16_9 = var_16_3.content.is_disabled or var_16_15 ~= "any" and not LevelUnlockUtils.level_unlocked(var_16_13, var_16_14, var_16_15)
 
-		local is_disabled = current_level_entry.content.is_disabled
+		if var_16_9 then
+			local var_16_20 = var_16_4.dlc_name
 
-		is_locked = is_disabled or level_id ~= "any" and not LevelUnlockUtils.level_unlocked(statistics_db, stats_id, level_id)
-
-		if is_locked then
-			local dlc_name = level_settings.dlc_name
-
-			if dlc_name and not Managers.unlock:is_dlc_unlocked(dlc_name) then
-				lock_text = Localize("dlc1_2_dlc_level_locked_tooltip")
+			if var_16_20 and not Managers.unlock:is_dlc_unlocked(var_16_20) then
+				var_16_10 = Localize("dlc1_2_dlc_level_locked_tooltip")
 			end
 		end
 
-		content.icon = level_image
-		content.boss_level = boss_level
-		level_text = Localize(display_name)
-		level_description_text = level_description_text and Localize(level_description_text)
-		draw_info = true
+		var_16_12.icon = var_16_16
+		var_16_12.boss_level = var_16_17
+		var_16_5 = Localize(var_16_18)
+		var_16_6 = var_16_6 and Localize(var_16_6)
+		var_16_8 = true
 	end
 
-	content.frame = frame_texture
-	content.locked = is_locked
-	content.visible = draw_info
-	content.button_hotspot.disable_button = true
-	widgets_by_name.helper_text.content.visible = not draw_info
-	widgets_by_name.level_title_divider.content.visible = draw_info
-	widgets_by_name.level_title.content.text = level_text
-	widgets_by_name.description_text.content.text = level_description_text
-	widgets_by_name.description_text.content.visible = not not level_description_text
-	widgets_by_name.locked_text.content.text = lock_text
+	var_16_12.frame = var_16_7
+	var_16_12.locked = var_16_9
+	var_16_12.visible = var_16_8
+	var_16_12.button_hotspot.disable_button = true
+	var_16_11.helper_text.content.visible = not var_16_8
+	var_16_11.level_title_divider.content.visible = var_16_8
+	var_16_11.level_title.content.text = var_16_5
+	var_16_11.description_text.content.text = var_16_6
+	var_16_11.description_text.content.visible = not not var_16_6
+	var_16_11.locked_text.content.text = var_16_10
 end
 
-StartGameWindowVersusMissionSelection._draw = function (self, dt)
-	local ui_top_renderer = self._ui_top_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local input_service = self._parent:window_input_service()
+function StartGameWindowVersusMissionSelection._draw(arg_17_0, arg_17_1)
+	local var_17_0 = arg_17_0._ui_top_renderer
+	local var_17_1 = arg_17_0._ui_scenegraph
+	local var_17_2 = arg_17_0._parent:window_input_service()
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self._render_settings)
-	UIRenderer.draw_all_widgets(ui_top_renderer, self._widgets)
-	UIRenderer.draw_all_widgets(ui_top_renderer, self._global_entries)
-	UIRenderer.end_pass(ui_top_renderer)
+	UIRenderer.begin_pass(var_17_0, var_17_1, var_17_2, arg_17_1, nil, arg_17_0._render_settings)
+	UIRenderer.draw_all_widgets(var_17_0, arg_17_0._widgets)
+	UIRenderer.draw_all_widgets(var_17_0, arg_17_0._global_entries)
+	UIRenderer.end_pass(var_17_0)
 end

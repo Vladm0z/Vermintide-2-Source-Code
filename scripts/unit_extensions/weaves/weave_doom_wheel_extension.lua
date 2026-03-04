@@ -1,139 +1,137 @@
-﻿-- chunkname: @scripts/unit_extensions/weaves/weave_doom_wheel_extension.lua
+-- chunkname: @scripts/unit_extensions/weaves/weave_doom_wheel_extension.lua
 
 WeaveDoomWheelExtension = class(WeaveDoomWheelExtension, BaseObjectiveExtension)
 WeaveDoomWheelExtension.NAME = "WeaveDoomWheelExtension"
 
-WeaveDoomWheelExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	WeaveDoomWheelExtension.super.init(self, extension_init_context, unit, extension_init_data)
+function WeaveDoomWheelExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	WeaveDoomWheelExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
-	self._is_done = false
-	self._num_sockets = 0
-	self._num_closed_sockets = 0
-	self._on_socket_start_func = extension_init_data.on_socket_start_func
-	self._on_socket_progress_func = extension_init_data.on_socket_progress_func
-	self._on_socket_complete_func = extension_init_data.on_socket_complete_func
-	self._on_fuze_start_func = extension_init_data.on_fuze_start_func
-	self._on_fuze_progress_func = extension_init_data.on_fuze_progress_func
-	self._on_fuze_complete_func = extension_init_data.on_fuze_complete_func
-	self._max_timer = extension_init_data.timer or 10
-	self._timer = self._max_timer
-	self.keep_alive = true
+	arg_1_0._is_done = false
+	arg_1_0._num_sockets = 0
+	arg_1_0._num_closed_sockets = 0
+	arg_1_0._on_socket_start_func = arg_1_3.on_socket_start_func
+	arg_1_0._on_socket_progress_func = arg_1_3.on_socket_progress_func
+	arg_1_0._on_socket_complete_func = arg_1_3.on_socket_complete_func
+	arg_1_0._on_fuze_start_func = arg_1_3.on_fuze_start_func
+	arg_1_0._on_fuze_progress_func = arg_1_3.on_fuze_progress_func
+	arg_1_0._on_fuze_complete_func = arg_1_3.on_fuze_complete_func
+	arg_1_0._max_timer = arg_1_3.timer or 10
+	arg_1_0._timer = arg_1_0._max_timer
+	arg_1_0.keep_alive = true
 
-	local terror_event_spawner_id = extension_init_data.terror_event_spawner_id
+	local var_1_0 = arg_1_3.terror_event_spawner_id
 
-	Unit.set_data(unit, "terror_event_spawner_id", terror_event_spawner_id)
+	Unit.set_data(arg_1_2, "terror_event_spawner_id", var_1_0)
 end
 
-WeaveDoomWheelExtension.extensions_ready = function (self)
-	self._objective_socket_extension = ScriptUnit.has_extension(self._unit, "objective_socket_system")
+function WeaveDoomWheelExtension.extensions_ready(arg_2_0)
+	arg_2_0._objective_socket_extension = ScriptUnit.has_extension(arg_2_0._unit, "objective_socket_system")
 
-	if self._objective_socket_extension then
-		self._objective_socket_extension.distance = math.huge
-		self._num_sockets = self._objective_socket_extension.num_sockets
+	if arg_2_0._objective_socket_extension then
+		arg_2_0._objective_socket_extension.distance = math.huge
+		arg_2_0._num_sockets = arg_2_0._objective_socket_extension.num_sockets
 	end
 end
 
-WeaveDoomWheelExtension.display_name = function (self)
+function WeaveDoomWheelExtension.display_name(arg_3_0)
 	return "objective_destroy_doom_wheels_name_single"
 end
 
-WeaveDoomWheelExtension.initial_sync_data = function (self, game_object_data_table)
-	game_object_data_table.value = self:get_percentage_done()
+function WeaveDoomWheelExtension.initial_sync_data(arg_4_0, arg_4_1)
+	arg_4_1.value = arg_4_0:get_percentage_done()
 end
 
-WeaveDoomWheelExtension._set_objective_data = function (self, objective_data)
+function WeaveDoomWheelExtension._set_objective_data(arg_5_0, arg_5_1)
 	return
 end
 
-WeaveDoomWheelExtension._activate = function (self)
+function WeaveDoomWheelExtension._activate(arg_6_0)
 	return
 end
 
-WeaveDoomWheelExtension.complete = function (self, ...)
-	if self._on_fuze_complete_func then
-		self._on_fuze_complete_func(self._unit)
+function WeaveDoomWheelExtension.complete(arg_7_0, ...)
+	if arg_7_0._on_fuze_complete_func then
+		arg_7_0._on_fuze_complete_func(arg_7_0._unit)
 	end
 
-	WeaveDoomWheelExtension.super.complete(self, ...)
+	WeaveDoomWheelExtension.super.complete(arg_7_0, ...)
 end
 
-WeaveDoomWheelExtension._deactivate = function (self)
-	Unit.flow_event(self._unit, "force_destroy")
+function WeaveDoomWheelExtension._deactivate(arg_8_0)
+	Unit.flow_event(arg_8_0._unit, "force_destroy")
 
-	local position = Unit.local_position(self._unit, 0)
+	local var_8_0 = Unit.local_position(arg_8_0._unit, 0)
 
-	for i = 1, 15 do
-		local x_offset = math.random(-10, 10) / 10
-		local y_offset = math.random(-10, 10) / 10
-		local z_offset = math.random(-10, 10) / 10
-		local objective_system = Managers.state.entity:system("objective_system")
-		local weave_essence_handler = objective_system:weave_essence_handler()
+	for iter_8_0 = 1, 15 do
+		local var_8_1 = math.random(-10, 10) / 10
+		local var_8_2 = math.random(-10, 10) / 10
+		local var_8_3 = math.random(-10, 10) / 10
 
-		weave_essence_handler:spawn_essence_unit(position + Vector3(0, 0, 0.5) + Vector3(x_offset, y_offset, z_offset))
+		Managers.state.entity:system("objective_system"):weave_essence_handler():spawn_essence_unit(var_8_0 + Vector3(0, 0, 0.5) + Vector3(var_8_1, var_8_2, var_8_3))
 	end
 end
 
-WeaveDoomWheelExtension._server_update = function (self, dt, t)
-	local num_closed_sockets = self._objective_socket_extension.num_closed_sockets
+function WeaveDoomWheelExtension._server_update(arg_9_0, arg_9_1, arg_9_2)
+	local var_9_0 = arg_9_0._objective_socket_extension.num_closed_sockets
 
-	if num_closed_sockets > self._num_closed_sockets then
-		self._num_closed_sockets = num_closed_sockets
+	if var_9_0 > arg_9_0._num_closed_sockets then
+		arg_9_0._num_closed_sockets = var_9_0
 
-		if self._on_socket_start_func then
-			self._on_socket_start_func(self._unit)
+		if arg_9_0._on_socket_start_func then
+			arg_9_0._on_socket_start_func(arg_9_0._unit)
 
-			self._on_socket_start_func = nil
+			arg_9_0._on_socket_start_func = nil
 		end
 
-		if self._on_socket_progress_func then
-			self._on_socket_progress_func(self._unit, num_closed_sockets, self._num_sockets)
+		if arg_9_0._on_socket_progress_func then
+			arg_9_0._on_socket_progress_func(arg_9_0._unit, var_9_0, arg_9_0._num_sockets)
 		end
 
-		self:server_set_value(self:get_percentage_done())
+		arg_9_0:server_set_value(arg_9_0:get_percentage_done())
 	end
 
-	if num_closed_sockets >= self._num_sockets then
-		if self._on_socket_complete_func then
-			self._on_socket_complete_func(self._unit)
+	if var_9_0 >= arg_9_0._num_sockets then
+		if arg_9_0._on_socket_complete_func then
+			arg_9_0._on_socket_complete_func(arg_9_0._unit)
 
-			self._on_socket_complete_func = nil
+			arg_9_0._on_socket_complete_func = nil
 		end
 
-		if self._timer <= 0 then
-			self._is_done = true
+		if arg_9_0._timer <= 0 then
+			arg_9_0._is_done = true
 		else
-			self._timer = self._timer - dt
+			arg_9_0._timer = arg_9_0._timer - arg_9_1
 
-			if self._on_fuze_start_func then
-				self._on_fuze_start_func(self._unit)
+			if arg_9_0._on_fuze_start_func then
+				arg_9_0._on_fuze_start_func(arg_9_0._unit)
 
-				self._on_fuze_start_func = nil
+				arg_9_0._on_fuze_start_func = nil
 			end
 
-			if self._on_fuze_progress_func then
-				self._on_fuze_progress_func(self._unit, self._timer, self._max_timer)
+			if arg_9_0._on_fuze_progress_func then
+				arg_9_0._on_fuze_progress_func(arg_9_0._unit, arg_9_0._timer, arg_9_0._max_timer)
 			end
 
-			self:server_set_value(self:get_percentage_done())
+			arg_9_0:server_set_value(arg_9_0:get_percentage_done())
 		end
 	end
 end
 
-WeaveDoomWheelExtension._client_update = function (self, dt, t)
+function WeaveDoomWheelExtension._client_update(arg_10_0, arg_10_1, arg_10_2)
 	return
 end
 
-WeaveDoomWheelExtension.is_done = function (self)
-	return self._is_done
+function WeaveDoomWheelExtension.is_done(arg_11_0)
+	return arg_11_0._is_done
 end
 
-WeaveDoomWheelExtension.get_percentage_done = function (self)
-	if self._num_sockets == 0 then
+function WeaveDoomWheelExtension.get_percentage_done(arg_12_0)
+	if arg_12_0._num_sockets == 0 then
 		return 0
 	end
 
-	local socket_percentage = self._num_closed_sockets / self._num_sockets
-	local timer_percentage = 1 - self._timer / self._max_timer
+	local var_12_0 = arg_12_0._num_closed_sockets / arg_12_0._num_sockets
+	local var_12_1 = 1 - arg_12_0._timer / arg_12_0._max_timer
 
-	return math.clamp((socket_percentage + timer_percentage) / 2, 0, 1)
+	return math.clamp((var_12_0 + var_12_1) / 2, 0, 1)
 end

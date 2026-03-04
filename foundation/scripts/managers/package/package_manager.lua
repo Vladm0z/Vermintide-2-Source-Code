@@ -1,406 +1,406 @@
-﻿-- chunkname: @foundation/scripts/managers/package/package_manager.lua
+-- chunkname: @foundation/scripts/managers/package/package_manager.lua
 
-local function debug_print(format, ...)
+local function var_0_0(arg_1_0, ...)
 	if script_data.package_debug then
-		print(string.format("[PackageManager] " .. format, ...))
+		print(string.format("[PackageManager] " .. arg_1_0, ...))
 	end
 end
 
 PackageManager = PackageManager or {}
 
-PackageManager.init = function (self)
-	self._packages = {}
-	self._asynch_packages = {}
-	self._references = {}
-	self._queued_async_packages = {}
-	self._queue_order = {}
-	self._delayed_packages_to_remove = {}
+function PackageManager.init(arg_2_0)
+	arg_2_0._packages = {}
+	arg_2_0._asynch_packages = {}
+	arg_2_0._references = {}
+	arg_2_0._queued_async_packages = {}
+	arg_2_0._queue_order = {}
+	arg_2_0._delayed_packages_to_remove = {}
 end
 
-PackageManager.load = function (self, package_name, reference_name, callback, asynchronous, prioritize)
-	debug_print("Load:  %s, %s, %s, %s", package_name, reference_name, asynchronous and "async-read" or "sync-read", prioritize and "prioritized" or "")
-	assert(reference_name ~= nil, "No reference name passed when loading package")
+function PackageManager.load(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	var_0_0("Load:  %s, %s, %s, %s", arg_3_1, arg_3_2, arg_3_4 and "async-read" or "sync-read", arg_3_5 and "prioritized" or "")
+	assert(arg_3_2 ~= nil, "No reference name passed when loading package")
 
-	self._delayed_packages_to_remove[package_name] = nil
+	arg_3_0._delayed_packages_to_remove[arg_3_1] = nil
 
-	if self._references[package_name] then
-		self._references[package_name][reference_name] = (self._references[package_name][reference_name] or 0) + 1
+	if arg_3_0._references[arg_3_1] then
+		arg_3_0._references[arg_3_1][arg_3_2] = (arg_3_0._references[arg_3_1][arg_3_2] or 0) + 1
 
-		if not asynchronous and self._asynch_packages[package_name] then
-			self:force_load(package_name)
+		if not arg_3_4 and arg_3_0._asynch_packages[arg_3_1] then
+			arg_3_0:force_load(arg_3_1)
 
-			if callback then
-				callback()
+			if arg_3_3 then
+				arg_3_3()
 			end
-		elseif not asynchronous and self._queued_async_packages[package_name] then
-			self:force_load_queued_package(package_name)
+		elseif not arg_3_4 and arg_3_0._queued_async_packages[arg_3_1] then
+			arg_3_0:force_load_queued_package(arg_3_1)
 
-			if callback then
-				callback()
+			if arg_3_3 then
+				arg_3_3()
 			end
-		elseif self._asynch_packages[package_name] then
-			local callbacks = self._asynch_packages[package_name].callbacks
+		elseif arg_3_0._asynch_packages[arg_3_1] then
+			local var_3_0 = arg_3_0._asynch_packages[arg_3_1].callbacks
 
-			callbacks[#callbacks + 1] = callback
-		elseif self._queued_async_packages[package_name] then
-			local callbacks = self._queued_async_packages[package_name].callbacks
+			var_3_0[#var_3_0 + 1] = arg_3_3
+		elseif arg_3_0._queued_async_packages[arg_3_1] then
+			local var_3_1 = arg_3_0._queued_async_packages[arg_3_1].callbacks
 
-			callbacks[#callbacks + 1] = callback
+			var_3_1[#var_3_1 + 1] = arg_3_3
 
-			if prioritize then
-				local index = table.find(self._queue_order, package_name)
+			if arg_3_5 then
+				local var_3_2 = table.find(arg_3_0._queue_order, arg_3_1)
 
-				table.remove(self._queue_order, index)
-				table.insert(self._queue_order, 1, package_name)
+				table.remove(arg_3_0._queue_order, var_3_2)
+				table.insert(arg_3_0._queue_order, 1, arg_3_1)
 			end
-		elseif callback then
-			callback()
+		elseif arg_3_3 then
+			arg_3_3()
 		end
 	else
-		assert(self._packages[package_name] == nil, "Package '" .. tostring(package_name) .. "' is already loaded")
-		assert(self._asynch_packages[package_name] == nil, "Package '" .. tostring(package_name) .. "' is already being loaded")
-		assert(self._queued_async_packages[package_name] == nil, "Package '" .. tostring(package_name) .. "' is already queued")
+		assert(arg_3_0._packages[arg_3_1] == nil, "Package '" .. tostring(arg_3_1) .. "' is already loaded")
+		assert(arg_3_0._asynch_packages[arg_3_1] == nil, "Package '" .. tostring(arg_3_1) .. "' is already being loaded")
+		assert(arg_3_0._queued_async_packages[arg_3_1] == nil, "Package '" .. tostring(arg_3_1) .. "' is already queued")
 
-		self._references[package_name] = {
-			[reference_name] = 1,
+		arg_3_0._references[arg_3_1] = {
+			[arg_3_2] = 1
 		}
 
-		if next(self._asynch_packages) and asynchronous then
-			self._queued_async_packages[package_name] = {
+		if next(arg_3_0._asynch_packages) and arg_3_4 then
+			arg_3_0._queued_async_packages[arg_3_1] = {
 				callbacks = {
-					callback,
-				},
+					arg_3_3
+				}
 			}
 
-			if prioritize then
-				table.insert(self._queue_order, 1, package_name)
+			if arg_3_5 then
+				table.insert(arg_3_0._queue_order, 1, arg_3_1)
 			else
-				self._queue_order[#self._queue_order + 1] = package_name
+				arg_3_0._queue_order[#arg_3_0._queue_order + 1] = arg_3_1
 			end
-		elseif not asynchronous then
-			local resource_handle = Application.resource_package(package_name)
+		elseif not arg_3_4 then
+			local var_3_3 = Application.resource_package(arg_3_1)
 
-			ResourcePackage.load(resource_handle)
-			ResourcePackage.flush(resource_handle)
+			ResourcePackage.load(var_3_3)
+			ResourcePackage.flush(var_3_3)
 
-			self._packages[package_name] = resource_handle
+			arg_3_0._packages[arg_3_1] = var_3_3
 		else
-			self._asynch_packages[package_name] = {
+			arg_3_0._asynch_packages[arg_3_1] = {
 				callbacks = {
-					callback,
-				},
+					arg_3_3
+				}
 			}
 
-			local resource_handle = Application.resource_package(package_name)
+			local var_3_4 = Application.resource_package(arg_3_1)
 
-			ResourcePackage.load(resource_handle)
+			ResourcePackage.load(var_3_4)
 
-			self._asynch_packages[package_name].handle = resource_handle
+			arg_3_0._asynch_packages[arg_3_1].handle = var_3_4
 		end
 	end
 end
 
-PackageManager.force_load = function (self, package_name)
-	debug_print("Force_load:  %s", package_name)
+function PackageManager.force_load(arg_4_0, arg_4_1)
+	var_0_0("Force_load:  %s", arg_4_1)
 
-	local resource_handle = self:_get_async_handle(package_name, true)
+	local var_4_0 = arg_4_0:_get_async_handle(arg_4_1, true)
 
-	if not resource_handle then
-		resource_handle = Application.resource_package(package_name)
+	if not var_4_0 then
+		var_4_0 = Application.resource_package(arg_4_1)
 
-		ResourcePackage.load(resource_handle)
+		ResourcePackage.load(var_4_0)
 	end
 
-	assert(not self._packages[package_name], "Package %q is already loaded", package_name)
-	ResourcePackage.flush(resource_handle)
+	assert(not arg_4_0._packages[arg_4_1], "Package %q is already loaded", arg_4_1)
+	ResourcePackage.flush(var_4_0)
 
-	self._packages[package_name] = resource_handle
+	arg_4_0._packages[arg_4_1] = var_4_0
 
-	local package_data = self._asynch_packages[package_name]
+	local var_4_1 = arg_4_0._asynch_packages[arg_4_1]
 
-	self._asynch_packages[package_name] = nil
+	arg_4_0._asynch_packages[arg_4_1] = nil
 
-	if package_data.callbacks then
-		for _, callback in ipairs(package_data.callbacks) do
-			callback()
+	if var_4_1.callbacks then
+		for iter_4_0, iter_4_1 in ipairs(var_4_1.callbacks) do
+			iter_4_1()
 		end
 	end
 
-	self:_pop_queue()
+	arg_4_0:_pop_queue()
 end
 
-PackageManager.force_load_queued_package = function (self, package_name)
-	debug_print("Force_load_queued_package:  %s", package_name)
+function PackageManager.force_load_queued_package(arg_5_0, arg_5_1)
+	var_0_0("Force_load_queued_package:  %s", arg_5_1)
 
-	local package_data = self._queued_async_packages[package_name]
+	local var_5_0 = arg_5_0._queued_async_packages[arg_5_1]
 
-	assert(package_data, "Package %q is not being loaded", package_name)
+	assert(var_5_0, "Package %q is not being loaded", arg_5_1)
 
-	local resource_handle = Application.resource_package(package_name)
+	local var_5_1 = Application.resource_package(arg_5_1)
 
-	ResourcePackage.load(resource_handle)
-	assert(not self._packages[package_name], "Package %q is already loaded", package_name)
-	ResourcePackage.flush(resource_handle)
+	ResourcePackage.load(var_5_1)
+	assert(not arg_5_0._packages[arg_5_1], "Package %q is already loaded", arg_5_1)
+	ResourcePackage.flush(var_5_1)
 
-	self._packages[package_name] = resource_handle
-	self._queued_async_packages[package_name] = nil
+	arg_5_0._packages[arg_5_1] = var_5_1
+	arg_5_0._queued_async_packages[arg_5_1] = nil
 
-	if package_data.callbacks then
-		for _, callback in ipairs(package_data.callbacks) do
-			callback()
+	if var_5_0.callbacks then
+		for iter_5_0, iter_5_1 in ipairs(var_5_0.callbacks) do
+			iter_5_1()
 		end
 	end
 
-	local index = table.find(self._queue_order, package_name)
+	local var_5_2 = table.find(arg_5_0._queue_order, arg_5_1)
 
-	table.remove(self._queue_order, index)
-	self:_pop_queue()
+	table.remove(arg_5_0._queue_order, var_5_2)
+	arg_5_0:_pop_queue()
 end
 
-PackageManager._pop_queue = function (self)
-	local queued_package_name
-	local index = 1
+function PackageManager._pop_queue(arg_6_0)
+	local var_6_0
+	local var_6_1 = 1
 
-	while #self._queue_order > 0 and index <= #self._queue_order do
-		queued_package_name = self._queue_order[index]
+	while #arg_6_0._queue_order > 0 and var_6_1 <= #arg_6_0._queue_order do
+		var_6_0 = arg_6_0._queue_order[var_6_1]
 
-		if self._queued_async_packages[queued_package_name] then
+		if arg_6_0._queued_async_packages[var_6_0] then
 			break
 		end
 
-		index = index + 1
-		queued_package_name = nil
+		var_6_1 = var_6_1 + 1
+		var_6_0 = nil
 	end
 
-	if self._queued_async_packages[queued_package_name] then
-		local data = self._queued_async_packages[queued_package_name]
+	if arg_6_0._queued_async_packages[var_6_0] then
+		local var_6_2 = arg_6_0._queued_async_packages[var_6_0]
 
-		debug_print("Queueing new asynch package:  %s", queued_package_name)
+		var_0_0("Queueing new asynch package:  %s", var_6_0)
 
-		self._queued_async_packages[queued_package_name] = nil
-		self._queue_order = table.crop(self._queue_order, index + 1)
-		self._asynch_packages[queued_package_name] = {
-			callbacks = data.callbacks,
+		arg_6_0._queued_async_packages[var_6_0] = nil
+		arg_6_0._queue_order = table.crop(arg_6_0._queue_order, var_6_1 + 1)
+		arg_6_0._asynch_packages[var_6_0] = {
+			callbacks = var_6_2.callbacks
 		}
 
-		local resource_handle = Application.resource_package(queued_package_name)
+		local var_6_3 = Application.resource_package(var_6_0)
 
-		ResourcePackage.load(resource_handle)
+		ResourcePackage.load(var_6_3)
 
-		self._asynch_packages[queued_package_name].handle = resource_handle
+		arg_6_0._asynch_packages[var_6_0].handle = var_6_3
 	else
-		table.clear(self._queue_order)
+		table.clear(arg_6_0._queue_order)
 	end
 end
 
-PackageManager.unload = function (self, package_name, reference_name)
-	local references = self._references[package_name]
+function PackageManager.unload(arg_7_0, arg_7_1, arg_7_2)
+	local var_7_0 = arg_7_0._references[arg_7_1]
 
-	assert(references[reference_name] ~= nil, "[PackageManager] Trying to unload package with unknown reference name")
+	assert(var_7_0[arg_7_2] ~= nil, "[PackageManager] Trying to unload package with unknown reference name")
 
-	local reference_count = references[reference_name] - 1
+	local var_7_1 = var_7_0[arg_7_2] - 1
 
-	if reference_count == 0 then
-		references[reference_name] = nil
+	if var_7_1 == 0 then
+		var_7_0[arg_7_2] = nil
 	else
-		references[reference_name] = reference_count
+		var_7_0[arg_7_2] = var_7_1
 	end
 
-	if table.is_empty(references) then
-		local resource_handle = self:_get_async_handle(package_name, true) or self._packages[package_name]
+	if table.is_empty(var_7_0) then
+		local var_7_2 = arg_7_0:_get_async_handle(arg_7_1, true) or arg_7_0._packages[arg_7_1]
 
-		if resource_handle then
-			if self:can_unload(package_name) then
-				ResourcePackage.unload(resource_handle)
-				Application.release_resource_package(resource_handle)
+		if var_7_2 then
+			if arg_7_0:can_unload(arg_7_1) then
+				ResourcePackage.unload(var_7_2)
+				Application.release_resource_package(var_7_2)
 
-				self._delayed_packages_to_remove[package_name] = nil
+				arg_7_0._delayed_packages_to_remove[arg_7_1] = nil
 
-				debug_print("Unload:  %s, %s", package_name, reference_name)
+				var_0_0("Unload:  %s, %s", arg_7_1, arg_7_2)
 			else
-				self._delayed_packages_to_remove[package_name] = resource_handle
+				arg_7_0._delayed_packages_to_remove[arg_7_1] = var_7_2
 
-				debug_print("Delayed Unload of:  %s, %s", package_name, reference_name)
+				var_0_0("Delayed Unload of:  %s, %s", arg_7_1, arg_7_2)
 			end
 		end
 
-		self._packages[package_name] = nil
-		self._asynch_packages[package_name] = nil
-		self._references[package_name] = nil
-		self._queued_async_packages[package_name] = nil
+		arg_7_0._packages[arg_7_1] = nil
+		arg_7_0._asynch_packages[arg_7_1] = nil
+		arg_7_0._references[arg_7_1] = nil
+		arg_7_0._queued_async_packages[arg_7_1] = nil
 
-		if table.is_empty(self._asynch_packages) then
-			self:_pop_queue()
+		if table.is_empty(arg_7_0._asynch_packages) then
+			arg_7_0:_pop_queue()
 		end
 	else
-		debug_print("Unload:  %s, %s -> Package still referenced, NOT unloaded:", package_name, reference_name)
+		var_0_0("Unload:  %s, %s -> Package still referenced, NOT unloaded:", arg_7_1, arg_7_2)
 	end
 end
 
-PackageManager.can_unload = function (self, package_name)
-	local resource_handle = self._packages[package_name]
+function PackageManager.can_unload(arg_8_0, arg_8_1)
+	local var_8_0 = arg_8_0._packages[arg_8_1]
 
-	if self._asynch_packages[package_name] then
-		resource_handle = self._asynch_packages[package_name].handle
+	if arg_8_0._asynch_packages[arg_8_1] then
+		var_8_0 = arg_8_0._asynch_packages[arg_8_1].handle
 	end
 
-	if resource_handle and self._packages[package_name] then
-		return ResourcePackage.can_unload(resource_handle)
+	if var_8_0 and arg_8_0._packages[arg_8_1] then
+		return ResourcePackage.can_unload(var_8_0)
 	end
 
 	return true
 end
 
-PackageManager.destroy = function (self)
-	debug_print("Destroy()")
-	table.clear(self._queue_order)
-	table.clear(self._queued_async_packages)
+function PackageManager.destroy(arg_9_0)
+	var_0_0("Destroy()")
+	table.clear(arg_9_0._queue_order)
+	table.clear(arg_9_0._queued_async_packages)
 
-	for package_name, _ in pairs(self._packages) do
-		for reference_name, reference_count in pairs(self._references[package_name]) do
-			for i = 1, reference_count do
-				self:unload(package_name, reference_name)
+	for iter_9_0, iter_9_1 in pairs(arg_9_0._packages) do
+		for iter_9_2, iter_9_3 in pairs(arg_9_0._references[iter_9_0]) do
+			for iter_9_4 = 1, iter_9_3 do
+				arg_9_0:unload(iter_9_0, iter_9_2)
 			end
 		end
 	end
 
-	for package_name, _ in pairs(self._asynch_packages) do
-		for reference_name, reference_count in pairs(self._references[package_name]) do
-			for i = 1, reference_count do
-				self:unload(package_name, reference_name)
+	for iter_9_5, iter_9_6 in pairs(arg_9_0._asynch_packages) do
+		for iter_9_7, iter_9_8 in pairs(arg_9_0._references[iter_9_5]) do
+			for iter_9_9 = 1, iter_9_8 do
+				arg_9_0:unload(iter_9_5, iter_9_7)
 			end
 		end
 	end
 
-	for package_name, resource_handle in pairs(self._delayed_packages_to_remove) do
-		debug_print("We have delayed packages during destroy. This will likely crash during unload. Unloading delayed package:  %s", package_name)
-		ResourcePackage.unload(resource_handle)
-		Application.release_resource_package(resource_handle)
+	for iter_9_10, iter_9_11 in pairs(arg_9_0._delayed_packages_to_remove) do
+		var_0_0("We have delayed packages during destroy. This will likely crash during unload. Unloading delayed package:  %s", iter_9_10)
+		ResourcePackage.unload(iter_9_11)
+		Application.release_resource_package(iter_9_11)
 	end
 end
 
-PackageManager.is_loading = function (self, package, optional_reference_name)
-	return self._packages[package] == nil and (self._asynch_packages[package] ~= nil or self._queued_async_packages[package] ~= nil) and (not optional_reference_name or self._references[package][optional_reference_name])
+function PackageManager.is_loading(arg_10_0, arg_10_1, arg_10_2)
+	return arg_10_0._packages[arg_10_1] == nil and (arg_10_0._asynch_packages[arg_10_1] ~= nil or arg_10_0._queued_async_packages[arg_10_1] ~= nil) and (not arg_10_2 or arg_10_0._references[arg_10_1][arg_10_2])
 end
 
-PackageManager.has_loaded = function (self, package, reference_name)
-	local loaded = self._packages[package] ~= nil and self._asynch_packages[package] == nil and self._queued_async_packages[package] == nil
+function PackageManager.has_loaded(arg_11_0, arg_11_1, arg_11_2)
+	local var_11_0 = arg_11_0._packages[arg_11_1] ~= nil and arg_11_0._asynch_packages[arg_11_1] == nil and arg_11_0._queued_async_packages[arg_11_1] == nil
 
-	if reference_name then
-		return loaded and self._references[package][reference_name] ~= nil
+	if arg_11_2 then
+		return var_11_0 and arg_11_0._references[arg_11_1][arg_11_2] ~= nil
 	else
-		return loaded
+		return var_11_0
 	end
 end
 
-PackageManager.reference_count = function (self, package, reference_name)
-	local reference_count = 0
+function PackageManager.reference_count(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = 0
 
-	if self._references[package] then
-		reference_count = self._references[package][reference_name]
+	if arg_12_0._references[arg_12_1] then
+		var_12_0 = arg_12_0._references[arg_12_1][arg_12_2]
 	end
 
-	return reference_count
+	return var_12_0
 end
 
-PackageManager.update = function (self, dt)
-	for package_name, package in pairs(self._asynch_packages) do
-		local resource_handle = self:_get_async_handle(package_name, false)
+function PackageManager.update(arg_13_0, arg_13_1)
+	for iter_13_0, iter_13_1 in pairs(arg_13_0._asynch_packages) do
+		local var_13_0 = arg_13_0:_get_async_handle(iter_13_0, false)
 
-		if resource_handle and ResourcePackage.has_loaded(resource_handle) then
-			debug_print("Finished loading asynchronous package:  %s", package_name)
-			self:force_load(package_name)
+		if var_13_0 and ResourcePackage.has_loaded(var_13_0) then
+			var_0_0("Finished loading asynchronous package:  %s", iter_13_0)
+			arg_13_0:force_load(iter_13_0)
 
 			break
 		end
 	end
 
-	for package_name, resource_handle in pairs(self._delayed_packages_to_remove) do
-		if ResourcePackage.can_unload(resource_handle) then
-			debug_print("Unloading delayed package:  %s", package_name)
-			ResourcePackage.unload(resource_handle)
-			Application.release_resource_package(resource_handle)
+	for iter_13_2, iter_13_3 in pairs(arg_13_0._delayed_packages_to_remove) do
+		if ResourcePackage.can_unload(iter_13_3) then
+			var_0_0("Unloading delayed package:  %s", iter_13_2)
+			ResourcePackage.unload(iter_13_3)
+			Application.release_resource_package(iter_13_3)
 
-			self._delayed_packages_to_remove[package_name] = nil
+			arg_13_0._delayed_packages_to_remove[iter_13_2] = nil
 		end
 	end
 
-	return next(self._asynch_packages) == nil
+	return next(arg_13_0._asynch_packages) == nil
 end
 
-PackageManager.num_references = function (self, package_name)
-	local num_references = 0
-	local references = self._references[package_name]
+function PackageManager.num_references(arg_14_0, arg_14_1)
+	local var_14_0 = 0
+	local var_14_1 = arg_14_0._references[arg_14_1]
 
-	if references then
-		for reference_name, reference_count in pairs(references) do
-			num_references = num_references + reference_count
+	if var_14_1 then
+		for iter_14_0, iter_14_1 in pairs(var_14_1) do
+			var_14_0 = var_14_0 + iter_14_1
 		end
 	end
 
-	return num_references
+	return var_14_0
 end
 
-PackageManager.unload_dangling_painting_materials = function (self)
-	local is_occuring = false
+function PackageManager.unload_dangling_painting_materials(arg_15_0)
+	local var_15_0 = false
 
 	print("############### UNLOADING PACKAGES ###############")
 
-	for package_name, resource_handle in pairs(self._packages) do
-		if PaintingPackageNames[package_name] then
-			is_occuring = true
+	for iter_15_0, iter_15_1 in pairs(arg_15_0._packages) do
+		if PaintingPackageNames[iter_15_0] then
+			var_15_0 = true
 
-			self:_force_unload(package_name)
+			arg_15_0:_force_unload(iter_15_0)
 		end
 	end
 
-	if is_occuring then
+	if var_15_0 then
 		Crashify.print_exception("Keep Decorations", "unloading dangling painting packages")
 	end
 end
 
-PackageManager._get_async_handle = function (self, package_name, clear_debug_delay)
-	local load_data = self._asynch_packages[package_name]
+function PackageManager._get_async_handle(arg_16_0, arg_16_1, arg_16_2)
+	local var_16_0 = arg_16_0._asynch_packages[arg_16_1]
 
-	if load_data then
-		local resource_handle = load_data.handle
+	if var_16_0 then
+		local var_16_1 = var_16_0.handle
 
-		fassert(resource_handle, "Package '%s' is not loaded", package_name)
+		fassert(var_16_1, "Package '%s' is not loaded", arg_16_1)
 
-		return resource_handle
+		return var_16_1
 	end
 end
 
-PackageManager._force_unload = function (self, package_name)
-	table.clear(self._references[package_name])
+function PackageManager._force_unload(arg_17_0, arg_17_1)
+	table.clear(arg_17_0._references[arg_17_1])
 
-	local resource_handle = self:_get_async_handle(package_name, true) or self._packages[package_name]
+	local var_17_0 = arg_17_0:_get_async_handle(arg_17_1, true) or arg_17_0._packages[arg_17_1]
 
-	if resource_handle then
-		ResourcePackage.unload(resource_handle)
-		Application.release_resource_package(resource_handle)
+	if var_17_0 then
+		ResourcePackage.unload(var_17_0)
+		Application.release_resource_package(var_17_0)
 	end
 
-	self._packages[package_name] = nil
-	self._asynch_packages[package_name] = nil
-	self._references[package_name] = nil
-	self._queued_async_packages[package_name] = nil
+	arg_17_0._packages[arg_17_1] = nil
+	arg_17_0._asynch_packages[arg_17_1] = nil
+	arg_17_0._references[arg_17_1] = nil
+	arg_17_0._queued_async_packages[arg_17_1] = nil
 
-	if table.is_empty(self._asynch_packages) then
-		self:_pop_queue()
+	if table.is_empty(arg_17_0._asynch_packages) then
+		arg_17_0:_pop_queue()
 	end
 
-	debug_print("Unload:  %s, %s", package_name, "Keep Painting Error")
+	var_0_0("Unload:  %s, %s", arg_17_1, "Keep Painting Error")
 end
 
-PackageManager.dump_reference_counter = function (self, reference_name)
-	printf("[PackageManager] Dumping reference counters for %s", reference_name)
+function PackageManager.dump_reference_counter(arg_18_0, arg_18_1)
+	printf("[PackageManager] Dumping reference counters for %s", arg_18_1)
 
-	for package_name, references in pairs(self._references) do
-		local referenced = references[reference_name]
+	for iter_18_0, iter_18_1 in pairs(arg_18_0._references) do
+		local var_18_0 = iter_18_1[arg_18_1]
 
-		if referenced then
-			printf("%s - referenced %i", package_name, referenced)
+		if var_18_0 then
+			printf("%s - referenced %i", iter_18_0, var_18_0)
 		end
 	end
 

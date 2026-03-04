@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/entity_system/systems/ai/ai_slot_system_2.lua
+-- chunkname: @scripts/entity_system/systems/ai/ai_slot_system_2.lua
 
 require("scripts/unit_extensions/human/ai_player_unit/ai_utils")
 require("scripts/settings/slot_templates")
@@ -8,585 +8,546 @@ require("scripts/entity_system/systems/ai/ai_enemy_slot_extension")
 require("scripts/entity_system/systems/ai/ai_player_slot_extension")
 require("scripts/entity_system/systems/ai/ai_aggroable_slot_extension")
 
-local DEFAULT_SLOT_TYPE = "normal"
-local extensions = {
+local var_0_0 = "normal"
+local var_0_1 = {
 	"AIEnemySlotExtension",
 	"AIPlayerSlotExtension",
-	"AIAggroableSlotExtension",
+	"AIAggroableSlotExtension"
 }
 
 AISlotSystem2 = class(AISlotSystem2, ExtensionSystemBase)
 
-local SlotTypeSettings = SlotTypeSettings
-local debug_draw_slots, debug_print_slots_count
+local var_0_2 = SlotTypeSettings
+local var_0_3
+local var_0_4
 
-AISlotSystem2.init = function (self, context, system_name)
-	AISlotSystem2.super.init(self, context, system_name, extensions)
+function AISlotSystem2.init(arg_1_0, arg_1_1, arg_1_2)
+	AISlotSystem2.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
-	self.nav_world = Managers.state.entity:system("ai_system"):nav_world()
-	self.unit_extension_data = {}
-	self.frozen_unit_extension_data = {}
-	self.update_slots_ai_units = {}
-	self.update_slots_ai_units_prioritized = {}
-	self.target_units = {}
-	self.current_ai_index = 1
-	self.next_total_slot_count_update = 0
-	self.next_disabled_slot_count_update = 0
-	self.next_slot_sound_update = 0
-	self.network_transmit = context.network_transmit
-	self.num_total_enemies = 0
-	self.num_occupied_slots = 0
+	arg_1_0.nav_world = Managers.state.entity:system("ai_system"):nav_world()
+	arg_1_0.unit_extension_data = {}
+	arg_1_0.frozen_unit_extension_data = {}
+	arg_1_0.update_slots_ai_units = {}
+	arg_1_0.update_slots_ai_units_prioritized = {}
+	arg_1_0.target_units = {}
+	arg_1_0.current_ai_index = 1
+	arg_1_0.next_total_slot_count_update = 0
+	arg_1_0.next_disabled_slot_count_update = 0
+	arg_1_0.next_slot_sound_update = 0
+	arg_1_0.network_transmit = arg_1_1.network_transmit
+	arg_1_0.num_total_enemies = 0
+	arg_1_0.num_occupied_slots = 0
 
-	local nav_tag_layer_costs = {
+	local var_1_0 = {
 		bot_poison_wind = 1,
 		bot_ratling_gun_fire = 1,
-		fire_grenade = 1,
+		fire_grenade = 1
 	}
 
-	table.merge(nav_tag_layer_costs, NAV_TAG_VOLUME_LAYER_COST_AI)
+	table.merge(var_1_0, NAV_TAG_VOLUME_LAYER_COST_AI)
 
-	local navtag_layer_cost_table = GwNavTagLayerCostTable.create()
+	local var_1_1 = GwNavTagLayerCostTable.create()
 
-	self._navtag_layer_cost_table = navtag_layer_cost_table
+	arg_1_0._navtag_layer_cost_table = var_1_1
 
-	AiUtils.initialize_cost_table(navtag_layer_cost_table, nav_tag_layer_costs)
+	AiUtils.initialize_cost_table(var_1_1, var_1_0)
 
-	local nav_cost_map_cost_table = GwNavCostMap.create_tag_cost_table()
+	local var_1_2 = GwNavCostMap.create_tag_cost_table()
 
-	self._nav_cost_map_cost_table = nav_cost_map_cost_table
+	arg_1_0._nav_cost_map_cost_table = var_1_2
 
-	AiUtils.initialize_nav_cost_map_cost_table(nav_cost_map_cost_table, nil, 1)
+	AiUtils.initialize_nav_cost_map_cost_table(var_1_2, nil, 1)
 
-	self._traverse_logic = GwNavTraverseLogic.create(self.nav_world, nav_cost_map_cost_table)
+	arg_1_0._traverse_logic = GwNavTraverseLogic.create(arg_1_0.nav_world, var_1_2)
 
-	GwNavTraverseLogic.set_navtag_layer_cost_table(self._traverse_logic, navtag_layer_cost_table)
+	GwNavTraverseLogic.set_navtag_layer_cost_table(arg_1_0._traverse_logic, var_1_1)
 end
 
-AISlotSystem2.destroy = function (self)
-	if self._traverse_logic ~= nil then
-		GwNavTagLayerCostTable.destroy(self._navtag_layer_cost_table)
-		GwNavCostMap.destroy_tag_cost_table(self._nav_cost_map_cost_table)
-		GwNavTraverseLogic.destroy(self._traverse_logic)
+function AISlotSystem2.destroy(arg_2_0)
+	if arg_2_0._traverse_logic ~= nil then
+		GwNavTagLayerCostTable.destroy(arg_2_0._navtag_layer_cost_table)
+		GwNavCostMap.destroy_tag_cost_table(arg_2_0._nav_cost_map_cost_table)
+		GwNavTraverseLogic.destroy(arg_2_0._traverse_logic)
 	end
 end
 
-AISlotSystem2.hot_join_sync = function (self, peer_id, player)
+function AISlotSystem2.hot_join_sync(arg_3_0, arg_3_1, arg_3_2)
 	return
 end
 
-local AI_UPDATES_PER_FRAME = 1
+local var_0_5 = 1
 
-AISlotSystem2.do_slot_search = function (self, ai_unit, set)
-	local ai_unit_extension = self.unit_extension_data[ai_unit]
+function AISlotSystem2.do_slot_search(arg_4_0, arg_4_1, arg_4_2)
+	local var_4_0 = arg_4_0.unit_extension_data[arg_4_1]
 
-	if ai_unit_extension then
-		ai_unit_extension.do_search = set
+	if var_4_0 then
+		var_4_0.do_search = arg_4_2
 	end
 end
 
-AISlotSystem2.ai_unit_have_slot = function (self, ai_unit)
-	local ai_unit_extension = self.unit_extension_data[ai_unit]
+function AISlotSystem2.ai_unit_have_slot(arg_5_0, arg_5_1)
+	local var_5_0 = arg_5_0.unit_extension_data[arg_5_1]
 
-	if not ai_unit_extension then
+	if not var_5_0 then
 		return false
 	end
 
-	local ai_have_slot = ai_unit_extension.gathering_ball or ai_unit_extension.sloid_id
-
-	if ai_have_slot then
+	if var_5_0.gathering_ball or var_5_0.sloid_id then
 		return true
 	end
 
-	local slot = ai_unit_extension.slot
-
-	if not slot then
+	if not var_5_0.slot then
 		return false
 	end
 
 	return true
 end
 
-AISlotSystem2.ai_unit_have_wait_slot = function (self, ai_unit)
-	local ai_unit_extension = self.unit_extension_data[ai_unit]
+function AISlotSystem2.ai_unit_have_wait_slot(arg_6_0, arg_6_1)
+	local var_6_0 = arg_6_0.unit_extension_data[arg_6_1]
 
-	if not ai_unit_extension then
+	if not var_6_0 then
 		return false
 	end
 
-	local slot = ai_unit_extension.waiting_on_slot
-
-	if not slot then
+	if not var_6_0.waiting_on_slot then
 		return false
 	end
 
 	return true
 end
 
-AISlotSystem2.ai_unit_wait_slot_distance = function (self, ai_unit)
-	local ai_unit_extension = self.unit_extension_data[ai_unit]
+function AISlotSystem2.ai_unit_wait_slot_distance(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_0.unit_extension_data[arg_7_1]
 
-	if not ai_unit_extension then
+	if not var_7_0 then
 		return math.huge
 	end
 
-	local slot = ai_unit_extension.slot
-
-	if slot then
+	if var_7_0.slot then
 		return math.huge
 	end
 
-	local waiting_on_slot = ai_unit_extension.waiting_on_slot
-
-	if not waiting_on_slot then
+	if not var_7_0.waiting_on_slot then
 		return math.huge
 	end
 
-	local distance = ai_unit_extension.wait_slot_distance or math.huge
-
-	return distance
+	return var_7_0.wait_slot_distance or math.huge
 end
 
-AISlotSystem2.ai_unit_slot_position = function (self, ai_unit)
-	local ai_unit_extension = self.unit_extension_data[ai_unit]
+function AISlotSystem2.ai_unit_slot_position(arg_8_0, arg_8_1)
+	local var_8_0 = arg_8_0.unit_extension_data[arg_8_1]
 
-	if not ai_unit_extension then
+	if not var_8_0 then
 		return nil
 	end
 
-	local slot = ai_unit_extension.slot or ai_unit_extension.waiting_on_slot
+	local var_8_1 = var_8_0.slot or var_8_0.waiting_on_slot
 
-	if slot then
-		return slot.absolute_position:unbox()
+	if var_8_1 then
+		return var_8_1.absolute_position:unbox()
 	end
 
 	return nil
 end
 
-AISlotSystem2.ai_unit_blocked_attack = function (self, ai_unit)
-	local ai_unit_extension = self.unit_extension_data[ai_unit]
+function AISlotSystem2.ai_unit_blocked_attack(arg_9_0, arg_9_1)
+	local var_9_0 = arg_9_0.unit_extension_data[arg_9_1]
 
-	if ai_unit_extension and ai_unit_extension.on_unit_blocked_attack then
-		ai_unit_extension:on_unit_blocked_attack(ai_unit, self)
+	if var_9_0 and var_9_0.on_unit_blocked_attack then
+		var_9_0:on_unit_blocked_attack(arg_9_1, arg_9_0)
 	end
 end
 
-AISlotSystem2.ai_unit_staggered = function (self, ai_unit)
-	local ai_unit_extension = self.unit_extension_data[ai_unit]
+function AISlotSystem2.ai_unit_staggered(arg_10_0, arg_10_1)
+	local var_10_0 = arg_10_0.unit_extension_data[arg_10_1]
 
-	if ai_unit_extension and ai_unit_extension.ai_unit_staggered then
-		ai_unit_extension:ai_unit_staggered(ai_unit, self)
+	if var_10_0 and var_10_0.ai_unit_staggered then
+		var_10_0:ai_unit_staggered(arg_10_1, arg_10_0)
 	end
 end
 
-AISlotSystem2.get_target_unit_slot_data = function (self, target_unit, slot_type)
-	local target_unit_extension = self.unit_extension_data[target_unit]
-	local slot_data = target_unit_extension.all_slots[slot_type]
+function AISlotSystem2.get_target_unit_slot_data(arg_11_0, arg_11_1, arg_11_2)
+	local var_11_0 = arg_11_0.unit_extension_data[arg_11_1].all_slots[arg_11_2]
 
-	if not slot_data then
+	if not var_11_0 then
 		return
 	end
 
-	local slots = slot_data.slots
-
-	return slots
+	return var_11_0.slots
 end
 
-AISlotSystem2.slots_count = function (self, unit, slot_type)
-	local unit_extension = self.unit_extension_data[unit]
+function AISlotSystem2.slots_count(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = arg_12_0.unit_extension_data[arg_12_1]
 
-	slot_type = slot_type or DEFAULT_SLOT_TYPE
+	arg_12_2 = arg_12_2 or var_0_0
 
-	local slot_data = unit_extension.all_slots[slot_type]
-
-	return slot_data.slots_count
+	return var_12_0.all_slots[arg_12_2].slots_count
 end
 
-AISlotSystem2.total_slots_count = function (self, unit, slot_type)
-	local unit_extension = self.unit_extension_data[unit]
+function AISlotSystem2.total_slots_count(arg_13_0, arg_13_1, arg_13_2)
+	local var_13_0 = arg_13_0.unit_extension_data[arg_13_1]
 
-	slot_type = slot_type or DEFAULT_SLOT_TYPE
+	arg_13_2 = arg_13_2 or var_0_0
 
-	local slot_data = unit_extension.all_slots[slot_type]
-
-	return slot_data.total_slots_count
+	return var_13_0.all_slots[arg_13_2].total_slots_count
 end
 
-AISlotSystem2.disabled_slots_count = function (self, unit, slot_type)
-	local unit_extension = self.unit_extension_data[unit]
+function AISlotSystem2.disabled_slots_count(arg_14_0, arg_14_1, arg_14_2)
+	local var_14_0 = arg_14_0.unit_extension_data[arg_14_1]
 
-	slot_type = slot_type or DEFAULT_SLOT_TYPE
+	arg_14_2 = arg_14_2 or var_0_0
 
-	local slot_data = unit_extension.all_slots[slot_type]
-
-	return slot_data.disabled_slots_count
+	return var_14_0.all_slots[arg_14_2].disabled_slots_count
 end
 
-AISlotSystem2.set_release_slot_lock = function (self, unit, release_slot_lock)
-	local unit_extension = self.unit_extension_data[unit]
+function AISlotSystem2.set_release_slot_lock(arg_15_0, arg_15_1, arg_15_2)
+	local var_15_0 = arg_15_0.unit_extension_data[arg_15_1]
 
-	if unit_extension then
-		unit_extension.release_slot_lock = release_slot_lock
+	if var_15_0 then
+		var_15_0.release_slot_lock = arg_15_2
 	end
 end
 
-AISlotSystem2.update_target_slots = function (self, t)
-	local target_units = self.target_units
+function AISlotSystem2.update_target_slots(arg_16_0, arg_16_1)
+	local var_16_0 = arg_16_0.target_units
 
-	for i = 1, #target_units do
-		local target_unit_extension = target_units[i]
-		local successful = target_unit_extension:update_target_slots(t, target_units, self.nav_world, self._traverse_logic)
-
-		if successful then
+	for iter_16_0 = 1, #var_16_0 do
+		if var_16_0[iter_16_0]:update_target_slots(arg_16_1, var_16_0, arg_16_0.nav_world, arg_16_0._traverse_logic) then
 			break
 		end
 	end
 end
 
-AISlotSystem2.update_disabled_slots_count = function (self, t)
-	local target_units = self.target_units
+function AISlotSystem2.update_disabled_slots_count(arg_17_0, arg_17_1)
+	local var_17_0 = arg_17_0.target_units
 
-	for i = 1, #target_units do
-		local target_unit_extension = target_units[i]
-
-		target_unit_extension:update_disabled_slots_count(t)
+	for iter_17_0 = 1, #var_17_0 do
+		var_17_0[iter_17_0]:update_disabled_slots_count(arg_17_1)
 	end
 end
 
-AISlotSystem2.update_slot_sound = function (self, t)
-	local target_units = self.target_units
+function AISlotSystem2.update_slot_sound(arg_18_0, arg_18_1)
+	local var_18_0 = arg_18_0.target_units
 
-	for unit_i = 1, #target_units do
-		local target_unit_extension = target_units[unit_i]
-
-		target_unit_extension:update_slot_sound(t)
+	for iter_18_0 = 1, #var_18_0 do
+		var_18_0[iter_18_0]:update_slot_sound(arg_18_1)
 	end
 end
 
-AISlotSystem2.update = function (self, context, t, dt)
+function AISlotSystem2.update(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	if not script_data.navigation_thread_disabled then
-		local nav_world = self.nav_world
+		local var_19_0 = arg_19_0.nav_world
 
-		GwNavWorld.join_async_update(nav_world)
+		GwNavWorld.join_async_update(var_19_0)
 
 		NAVIGATION_RUNNING_IN_THREAD = false
 	end
 end
 
-local TOTAL_SLOTS_COUNT_UPDATE_INTERVAL = 1
-local DISABLED_SLOTS_COUNT_UPDATE_INTERVAL = 1
-local SLOT_SOUND_UPDATE_INTERVAL = 1
+local var_0_6 = 1
+local var_0_7 = 1
+local var_0_8 = 1
 
-AISlotSystem2.update_slot_providers = function (self, t)
-	local target_units = self.target_units
-	local target_units_n = #target_units
-
-	if target_units_n == 0 then
+function AISlotSystem2.update_slot_providers(arg_20_0, arg_20_1)
+	if #arg_20_0.target_units == 0 then
 		return
 	end
 
-	self:update_target_slots(t)
+	arg_20_0:update_target_slots(arg_20_1)
 
-	if t > self.next_total_slot_count_update then
-		self:update_total_slots_count(t)
+	if arg_20_1 > arg_20_0.next_total_slot_count_update then
+		arg_20_0:update_total_slots_count(arg_20_1)
 
-		self.next_total_slot_count_update = t + TOTAL_SLOTS_COUNT_UPDATE_INTERVAL
+		arg_20_0.next_total_slot_count_update = arg_20_1 + var_0_6
 	end
 
-	if t > self.next_disabled_slot_count_update then
-		self:update_disabled_slots_count(t)
+	if arg_20_1 > arg_20_0.next_disabled_slot_count_update then
+		arg_20_0:update_disabled_slots_count(arg_20_1)
 
-		self.next_disabled_slot_count_update = t + DISABLED_SLOTS_COUNT_UPDATE_INTERVAL
+		arg_20_0.next_disabled_slot_count_update = arg_20_1 + var_0_7
 	end
 
-	if t > self.next_slot_sound_update then
-		self:update_slot_sound(t)
+	if arg_20_1 > arg_20_0.next_slot_sound_update then
+		arg_20_0:update_slot_sound(arg_20_1)
 
-		self.next_slot_sound_update = t + SLOT_SOUND_UPDATE_INTERVAL
+		arg_20_0.next_slot_sound_update = arg_20_1 + var_0_8
 	end
 end
 
-AISlotSystem2.traverse_logic = function (self)
-	return self._traverse_logic
+function AISlotSystem2.traverse_logic(arg_21_0)
+	return arg_21_0._traverse_logic
 end
 
-AISlotSystem2.update_slot_consumers = function (self, t)
-	local nav_world = self.nav_world
-	local unit_extension_data = self.unit_extension_data
-	local update_slots_ai_units = self.update_slots_ai_units
-	local update_slots_ai_units_n = #update_slots_ai_units
+function AISlotSystem2.update_slot_consumers(arg_22_0, arg_22_1)
+	local var_22_0 = arg_22_0.nav_world
+	local var_22_1 = arg_22_0.unit_extension_data
+	local var_22_2 = arg_22_0.update_slots_ai_units
+	local var_22_3 = #var_22_2
 
-	if update_slots_ai_units_n < self.current_ai_index then
-		self.current_ai_index = 1
+	if var_22_3 < arg_22_0.current_ai_index then
+		arg_22_0.current_ai_index = 1
 	end
 
-	local start_index = self.current_ai_index
-	local end_index = math.min(start_index + AI_UPDATES_PER_FRAME - 1, update_slots_ai_units_n)
+	local var_22_4 = arg_22_0.current_ai_index
+	local var_22_5 = math.min(var_22_4 + var_0_5 - 1, var_22_3)
 
-	self.current_ai_index = end_index + 1
+	arg_22_0.current_ai_index = var_22_5 + 1
 
-	local update_slots_ai_units_prioritized = self.update_slots_ai_units_prioritized
+	local var_22_6 = arg_22_0.update_slots_ai_units_prioritized
 
-	for i = start_index, end_index do
-		local ai_unit = update_slots_ai_units[i]
-		local extension = unit_extension_data[ai_unit]
+	for iter_22_0 = var_22_4, var_22_5 do
+		local var_22_7 = var_22_2[iter_22_0]
 
-		extension:update(ai_unit, unit_extension_data, nav_world, t, self._traverse_logic, self)
+		var_22_1[var_22_7]:update(var_22_7, var_22_1, var_22_0, arg_22_1, arg_22_0._traverse_logic, arg_22_0)
 
-		update_slots_ai_units_prioritized[ai_unit] = nil
+		var_22_6[var_22_7] = nil
 	end
 
-	for ai_unit, _ in pairs(update_slots_ai_units_prioritized) do
-		local extension = unit_extension_data[ai_unit]
+	for iter_22_1, iter_22_2 in pairs(var_22_6) do
+		local var_22_8 = var_22_1[iter_22_1]
 
-		if extension then
-			extension:update(ai_unit, unit_extension_data, nav_world, t, self._traverse_logic, self)
+		if var_22_8 then
+			var_22_8:update(iter_22_1, var_22_1, var_22_0, arg_22_1, arg_22_0._traverse_logic, arg_22_0)
 		end
 
-		update_slots_ai_units_prioritized[ai_unit] = nil
+		var_22_6[iter_22_1] = nil
 	end
 end
 
-AISlotSystem2.physics_async_update = function (self, context, t)
-	self.t = t
+function AISlotSystem2.physics_async_update(arg_23_0, arg_23_1, arg_23_2)
+	arg_23_0.t = arg_23_2
 
-	local target_units = self.target_units
-	local target_units_n = #target_units
-
-	if target_units_n == 0 then
+	if #arg_23_0.target_units == 0 then
 		return
 	end
 
-	local nav_world = self.nav_world
-	local unit_extension_data = self.unit_extension_data
+	local var_23_0 = arg_23_0.nav_world
+	local var_23_1 = arg_23_0.unit_extension_data
 
-	self:update_slot_providers(t)
-	self:update_slot_consumers(t)
+	arg_23_0:update_slot_providers(arg_23_2)
+	arg_23_0:update_slot_consumers(arg_23_2)
 end
 
-AISlotSystem2.update_total_slots_count = function (self, t)
-	local target_units = self.target_units
-	local num_slots = 0
-	local num_slots_occupied_total = 0
+function AISlotSystem2.update_total_slots_count(arg_24_0, arg_24_1)
+	local var_24_0 = arg_24_0.target_units
+	local var_24_1 = 0
+	local var_24_2 = 0
 
-	for j = 1, #target_units do
-		local target_unit_extension = target_units[j]
-		local available, occupied = target_unit_extension:update_total_slots_count(t)
+	for iter_24_0 = 1, #var_24_0 do
+		local var_24_3, var_24_4 = var_24_0[iter_24_0]:update_total_slots_count(arg_24_1)
 
-		num_slots = num_slots + available
-		num_slots_occupied_total = num_slots_occupied_total + occupied
+		var_24_1 = var_24_1 + var_24_3
+		var_24_2 = var_24_2 + var_24_4
 	end
 
-	self.num_total_enemies = num_slots
-	self.num_occupied_slots = num_slots_occupied_total
+	arg_24_0.num_total_enemies = var_24_1
+	arg_24_0.num_occupied_slots = var_24_2
 end
 
-AISlotSystem2.register_prioritized_ai_unit_update = function (self, unit)
-	self.update_slots_ai_units_prioritized[unit] = true
+function AISlotSystem2.register_prioritized_ai_unit_update(arg_25_0, arg_25_1)
+	arg_25_0.update_slots_ai_units_prioritized[arg_25_1] = true
 end
 
-AISlotSystem2.prioritize_queued_units_on_slot = function (self, slot)
-	if slot and slot.queue then
-		local queue = slot.queue
-		local queue_n = #queue
+function AISlotSystem2.prioritize_queued_units_on_slot(arg_26_0, arg_26_1)
+	if arg_26_1 and arg_26_1.queue then
+		local var_26_0 = arg_26_1.queue
+		local var_26_1 = #var_26_0
 
-		for i = 1, queue_n do
-			local queued_unit = queue[i].unit
+		for iter_26_0 = 1, var_26_1 do
+			local var_26_2 = var_26_0[iter_26_0].unit
 
-			self:register_prioritized_ai_unit_update(queued_unit)
+			arg_26_0:register_prioritized_ai_unit_update(var_26_2)
 		end
 	end
 end
 
-AISlotSystem2.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
-	local extension
+function AISlotSystem2.on_add_extension(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+	local var_27_0
 
-	if extension_name == "AIPlayerSlotExtension" or extension_name == "AIAggroableSlotExtension" then
-		extension = AISlotSystem2.super.on_add_extension(self, world, unit, extension_name, extension_init_data)
-		self.unit_extension_data[unit] = extension
+	if arg_27_3 == "AIPlayerSlotExtension" or arg_27_3 == "AIAggroableSlotExtension" then
+		var_27_0 = AISlotSystem2.super.on_add_extension(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+		arg_27_0.unit_extension_data[arg_27_2] = var_27_0
 
-		local target_units = self.target_units
-		local target_index = #target_units + 1
+		local var_27_1 = arg_27_0.target_units
+		local var_27_2 = #var_27_1 + 1
 
-		extension.index = target_index
-		target_units[target_index] = extension
+		var_27_0.index = var_27_2
+		var_27_1[var_27_2] = var_27_0
 
-		local nav_world = self.nav_world
-		local traverse_logic = self._traverse_logic
+		local var_27_3 = arg_27_0.nav_world
+		local var_27_4 = arg_27_0._traverse_logic
 
-		extension:update_target_slots(0, target_units, nav_world, traverse_logic)
+		var_27_0:update_target_slots(0, var_27_1, var_27_3, var_27_4)
 	end
 
-	if extension_name == "AIEnemySlotExtension" then
-		extension = AISlotSystem2.super.on_add_extension(self, world, unit, extension_name, extension_init_data)
-		self.update_slots_ai_units[#self.update_slots_ai_units + 1] = unit
-		self.unit_extension_data[unit] = extension
+	if arg_27_3 == "AIEnemySlotExtension" then
+		var_27_0 = AISlotSystem2.super.on_add_extension(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+		arg_27_0.update_slots_ai_units[#arg_27_0.update_slots_ai_units + 1] = arg_27_2
+		arg_27_0.unit_extension_data[arg_27_2] = var_27_0
 	end
 
-	return extension
+	return var_27_0
 end
 
-AISlotSystem2.on_remove_extension = function (self, unit, extension_name)
-	self.frozen_unit_extension_data[unit] = nil
+function AISlotSystem2.on_remove_extension(arg_28_0, arg_28_1, arg_28_2)
+	arg_28_0.frozen_unit_extension_data[arg_28_1] = nil
 
-	self:_cleanup_extension(unit, extension_name)
-	ScriptUnit.remove_extension(unit, self.NAME)
+	arg_28_0:_cleanup_extension(arg_28_1, arg_28_2)
+	ScriptUnit.remove_extension(arg_28_1, arg_28_0.NAME)
 end
 
-AISlotSystem2.on_freeze_extension = function (self, unit, extension_name)
-	local extension = self.unit_extension_data[unit]
+function AISlotSystem2.on_freeze_extension(arg_29_0, arg_29_1, arg_29_2)
+	local var_29_0 = arg_29_0.unit_extension_data[arg_29_1]
 
-	fassert(extension, "Unit was already frozen.")
+	fassert(var_29_0, "Unit was already frozen.")
 
-	if extension == nil then
+	if var_29_0 == nil then
 		return
 	end
 
-	local slot_template = extension.slot_template
+	local var_29_1 = var_29_0.slot_template
 
-	if slot_template and slot_template.prioritize_queued_units_on_death then
-		local slot = extension.slot
+	if var_29_1 and var_29_1.prioritize_queued_units_on_death then
+		local var_29_2 = var_29_0.slot
 
-		if slot_template.prioritize_queued_units_on_death_time then
-			local t = Managers.time:time("game")
-
-			extension.delayed_prioritized_ai_unit_update_time = t + slot_template.prioritize_queued_units_on_death_time
+		if var_29_1.prioritize_queued_units_on_death_time then
+			var_29_0.delayed_prioritized_ai_unit_update_time = Managers.time:time("game") + var_29_1.prioritize_queued_units_on_death_time
 		else
-			self:prioritize_queued_units_on_slot(slot)
+			arg_29_0:prioritize_queued_units_on_slot(var_29_2)
 		end
 	end
 
-	self.frozen_unit_extension_data[unit] = extension
+	arg_29_0.frozen_unit_extension_data[arg_29_1] = var_29_0
 
-	self:_cleanup_extension(unit, extension_name)
+	arg_29_0:_cleanup_extension(arg_29_1, arg_29_2)
 end
 
-AISlotSystem2._cleanup_extension = function (self, unit, extension_name)
-	local extension = self.unit_extension_data[unit]
+function AISlotSystem2._cleanup_extension(arg_30_0, arg_30_1, arg_30_2)
+	local var_30_0 = arg_30_0.unit_extension_data[arg_30_1]
 
-	if extension == nil then
+	if var_30_0 == nil then
 		return
 	end
 
-	local update_slots_ai_units = self.update_slots_ai_units
-	local update_slots_ai_units_n = #update_slots_ai_units
+	local var_30_1 = arg_30_0.update_slots_ai_units
+	local var_30_2 = #var_30_1
 
-	if extension_name == "AIEnemySlotExtension" then
-		self.update_slots_ai_units_prioritized[unit] = nil
+	if arg_30_2 == "AIEnemySlotExtension" then
+		arg_30_0.update_slots_ai_units_prioritized[arg_30_1] = nil
 
-		extension:cleanup_extension(unit, update_slots_ai_units, update_slots_ai_units_n)
+		var_30_0:cleanup_extension(arg_30_1, var_30_1, var_30_2)
 	end
 
-	if extension_name == "AIPlayerSlotExtension" or extension_name == "AIAggroableSlotExtension" then
-		extension:cleanup_extension(unit, update_slots_ai_units, update_slots_ai_units_n, self.unit_extension_data)
+	if arg_30_2 == "AIPlayerSlotExtension" or arg_30_2 == "AIAggroableSlotExtension" then
+		var_30_0:cleanup_extension(arg_30_1, var_30_1, var_30_2, arg_30_0.unit_extension_data)
 
-		local all_slot_proviers = self.target_units
-		local target_units_n = #all_slot_proviers
+		local var_30_3 = arg_30_0.target_units
+		local var_30_4 = #var_30_3
 
-		for i = 1, target_units_n do
-			if all_slot_proviers[i] == extension then
-				all_slot_proviers[i] = all_slot_proviers[target_units_n]
-				all_slot_proviers[target_units_n] = nil
+		for iter_30_0 = 1, var_30_4 do
+			if var_30_3[iter_30_0] == var_30_0 then
+				var_30_3[iter_30_0] = var_30_3[var_30_4]
+				var_30_3[var_30_4] = nil
 
 				break
 			end
 		end
 	end
 
-	self.unit_extension_data[unit] = nil
+	arg_30_0.unit_extension_data[arg_30_1] = nil
 end
 
-AISlotSystem2.freeze = function (self, unit, extension_name, reason)
-	local frozen_extensions = self.frozen_unit_extension_data
+function AISlotSystem2.freeze(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+	local var_31_0 = arg_31_0.frozen_unit_extension_data
 
-	if frozen_extensions[unit] then
+	if var_31_0[arg_31_1] then
 		return
 	end
 
-	local extension = self.unit_extension_data[unit]
+	local var_31_1 = arg_31_0.unit_extension_data[arg_31_1]
 
-	fassert(extension, "Unit to freeze didn't have unfrozen extension")
-	self:_cleanup_extension(unit, extension_name)
+	fassert(var_31_1, "Unit to freeze didn't have unfrozen extension")
+	arg_31_0:_cleanup_extension(arg_31_1, arg_31_2)
 
-	frozen_extensions[unit] = extension
+	var_31_0[arg_31_1] = var_31_1
 end
 
-AISlotSystem2.unfreeze = function (self, unit)
-	local extension = self.frozen_unit_extension_data[unit]
+function AISlotSystem2.unfreeze(arg_32_0, arg_32_1)
+	local var_32_0 = arg_32_0.frozen_unit_extension_data[arg_32_1]
 
-	self.frozen_unit_extension_data[unit] = nil
-	self.unit_extension_data[unit] = extension
+	arg_32_0.frozen_unit_extension_data[arg_32_1] = nil
+	arg_32_0.unit_extension_data[arg_32_1] = var_32_0
 
-	fassert(extension, "Unit to freeze didn't have unfrozen extension")
+	fassert(var_32_0, "Unit to freeze didn't have unfrozen extension")
 
-	if extension.unfreeze then
-		extension:unfreeze(unit)
+	if var_32_0.unfreeze then
+		var_32_0:unfreeze(arg_32_1)
 	end
 
-	self.update_slots_ai_units[#self.update_slots_ai_units + 1] = unit
+	arg_32_0.update_slots_ai_units[#arg_32_0.update_slots_ai_units + 1] = arg_32_1
 end
 
-function debug_draw_slots(unit_extension_data, nav_world, t)
-	local drawer = Managers.state.debug:drawer({
+local function var_0_9(arg_33_0, arg_33_1, arg_33_2)
+	local var_33_0 = Managers.state.debug:drawer({
 		mode = "immediate",
-		name = "AISlotSystem2_immediate",
+		name = "AISlotSystem2_immediate"
 	})
 
-	for unit, extension in pairs(unit_extension_data) do
-		if extension.debug_draw then
-			extension:debug_draw(drawer, t, nav_world)
+	for iter_33_0, iter_33_1 in pairs(arg_33_0) do
+		if iter_33_1.debug_draw then
+			iter_33_1:debug_draw(var_33_0, arg_33_2, arg_33_1)
 		end
 	end
 end
 
-function debug_print_slots_count(target_units)
-	local target_slots_n = #target_units
+local function var_0_10(arg_34_0)
+	local var_34_0 = #arg_34_0
 
 	Debug.text("OCCUPIED SLOTS")
 
-	for unit_i = 1, target_slots_n do
-		local target_unit_extension = target_units[unit_i]
-		local target_unit = target_unit_extension.unit
-		local player_manager = Managers.player
-		local owner_player = player_manager:owner(target_unit)
-		local display_name
+	for iter_34_0 = 1, var_34_0 do
+		local var_34_1 = arg_34_0[iter_34_0]
+		local var_34_2 = var_34_1.unit
+		local var_34_3 = Managers.player:owner(var_34_2)
+		local var_34_4
 
-		if owner_player then
-			display_name = owner_player:profile_display_name()
+		if var_34_3 then
+			var_34_4 = var_34_3:profile_display_name()
 		else
-			display_name = tostring(target_unit)
+			var_34_4 = tostring(var_34_2)
 		end
 
-		local debug_text = display_name .. "-> "
-		local all_slots = target_unit_extension.all_slots
-		local total_slots = 0
-		local total_enabled = 0
+		local var_34_5 = var_34_4 .. "-> "
+		local var_34_6 = var_34_1.all_slots
+		local var_34_7 = 0
+		local var_34_8 = 0
 
-		for slot_type, slot_data in pairs(all_slots) do
-			local disabled_slots_count = slot_data.disabled_slots_count
-			local occupied_slots = slot_data.slots_count
-			local total_slots_count = slot_data.total_slots_count
-			local enabled_slots_count = total_slots_count - disabled_slots_count
+		for iter_34_1, iter_34_2 in pairs(var_34_6) do
+			local var_34_9 = iter_34_2.disabled_slots_count
+			local var_34_10 = iter_34_2.slots_count
+			local var_34_11 = iter_34_2.total_slots_count
+			local var_34_12 = var_34_11 - var_34_9
 
-			total_slots = total_slots + total_slots_count
-			total_enabled = total_enabled + enabled_slots_count
-			debug_text = debug_text .. string.format("%s: [%d|%d(%d)]. ", slot_type, occupied_slots, enabled_slots_count, total_slots_count)
+			var_34_7 = var_34_7 + var_34_11
+			var_34_8 = var_34_8 + var_34_12
+			var_34_5 = var_34_5 .. string.format("%s: [%d|%d(%d)]. ", iter_34_1, var_34_10, var_34_12, var_34_11)
 		end
 
-		local num_occupied_slots = target_unit_extension.num_occupied_slots
-		local delayed_occupied_slots = target_unit_extension.delayed_num_occupied_slots
+		local var_34_13 = var_34_1.num_occupied_slots
+		local var_34_14 = var_34_1.delayed_num_occupied_slots
+		local var_34_15 = var_34_5 .. string.format("total: [%d(%d)|%d(%d)]. ", var_34_13, var_34_14, var_34_8, var_34_7)
 
-		debug_text = debug_text .. string.format("total: [%d(%d)|%d(%d)]. ", num_occupied_slots, delayed_occupied_slots, total_enabled, total_slots)
-
-		Debug.text(debug_text)
+		Debug.text(var_34_15)
 	end
 end
 
-AISlotSystem2.set_allowed_layer = function (self, layer_name, allowed)
-	local layer_id = LAYER_ID_MAPPING[layer_name]
+function AISlotSystem2.set_allowed_layer(arg_35_0, arg_35_1, arg_35_2)
+	local var_35_0 = LAYER_ID_MAPPING[arg_35_1]
 
-	if allowed then
-		GwNavTagLayerCostTable.allow_layer(self._navtag_layer_cost_table, layer_id)
+	if arg_35_2 then
+		GwNavTagLayerCostTable.allow_layer(arg_35_0._navtag_layer_cost_table, var_35_0)
 	else
-		GwNavTagLayerCostTable.forbid_layer(self._navtag_layer_cost_table, layer_id)
+		GwNavTagLayerCostTable.forbid_layer(arg_35_0._navtag_layer_cost_table, var_35_0)
 	end
 end

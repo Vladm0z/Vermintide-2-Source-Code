@@ -1,136 +1,131 @@
-﻿-- chunkname: @scripts/unit_extensions/pickups/pickup_unit_extension.lua
+-- chunkname: @scripts/unit_extensions/pickups/pickup_unit_extension.lua
 
 PickupUnitExtension = class(PickupUnitExtension)
 
-PickupUnitExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self.world = extension_init_context.world
-	self.unit = unit
+function PickupUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.world = arg_1_1.world
+	arg_1_0.unit = arg_1_2
 
-	local pickup_name = extension_init_data.pickup_name
-	local has_physics = extension_init_data.has_physics
-	local spawn_type = extension_init_data.spawn_type
-	local dropped_by_breed = extension_init_data.dropped_by_breed or "n/a"
-	local network_transmit = extension_init_context.network_transmit
+	local var_1_0 = arg_1_3.pickup_name
+	local var_1_1 = arg_1_3.has_physics
+	local var_1_2 = arg_1_3.spawn_type
+	local var_1_3 = arg_1_3.dropped_by_breed or "n/a"
+	local var_1_4 = arg_1_1.network_transmit
 
-	self.pickup_name = pickup_name
-	self.has_physics = has_physics
-	self.spawn_type = spawn_type
-	self.dropped_by_breed = dropped_by_breed
-	self.is_server = network_transmit.is_server
-	self.spawn_index = extension_init_data.spawn_index
-	self.owner_peer_id = extension_init_data.owner_peer_id
-	self.spawn_limit = extension_init_data.spawn_limit
+	arg_1_0.pickup_name = var_1_0
+	arg_1_0.has_physics = var_1_1
+	arg_1_0.spawn_type = var_1_2
+	arg_1_0.dropped_by_breed = var_1_3
+	arg_1_0.is_server = var_1_4.is_server
+	arg_1_0.spawn_index = arg_1_3.spawn_index
+	arg_1_0.owner_peer_id = arg_1_3.owner_peer_id
+	arg_1_0.spawn_limit = arg_1_3.spawn_limit
 
-	local pickup_settings = AllPickups[pickup_name]
+	local var_1_5 = AllPickups[var_1_0]
 
-	self.hide_func = pickup_settings.hide_func
-	self.hidden = false
+	arg_1_0.material_settings_name = arg_1_3.material_settings_name ~= "n/a" and arg_1_3.material_settings_name or var_1_5.material_settings_name or nil
+	arg_1_0.hide_func = var_1_5.hide_func
+	arg_1_0.hidden = false
 
-	Unit.set_data(unit, "interaction_data", "item_name", pickup_settings.item_name)
-	Unit.set_data(unit, "interaction_data", "hud_description", pickup_settings.hud_description)
-	Unit.set_data(unit, "interaction_data", "interaction_length", Unit.get_data(unit, "interaction_data", "interaction_length") or 0)
-	Unit.set_data(unit, "interaction_data", "interaction_type", "pickup_object")
-	Unit.set_data(unit, "interaction_data", "only_once", pickup_settings.only_once)
-	Unit.set_data(unit, "interaction_data", "individual_pickup", pickup_settings.individual_pickup)
-	Unit.set_data(unit, "pickup_name", pickup_name)
+	Unit.set_data(arg_1_2, "interaction_data", "item_name", var_1_5.item_name)
+	Unit.set_data(arg_1_2, "interaction_data", "hud_description", var_1_5.hud_description)
+	Unit.set_data(arg_1_2, "interaction_data", "interaction_length", Unit.get_data(arg_1_2, "interaction_data", "interaction_length") or 0)
+	Unit.set_data(arg_1_2, "interaction_data", "interaction_type", "pickup_object")
+	Unit.set_data(arg_1_2, "interaction_data", "only_once", var_1_5.only_once)
+	Unit.set_data(arg_1_2, "interaction_data", "individual_pickup", var_1_5.individual_pickup)
+	Unit.set_data(arg_1_2, "pickup_name", var_1_0)
 
-	self._can_interact_time = Managers.time:time("game") + 1
-	self.life_time = pickup_settings.life_time
+	arg_1_0._can_interact_time = Managers.time:time("game") + 1
+	arg_1_0.life_time = var_1_5.life_time
 
-	self:set_physics_enabled(has_physics)
+	arg_1_0:set_physics_enabled(var_1_1)
 
-	if self.is_server then
-		local position = POSITION_LOOKUP[unit]
+	if arg_1_0.is_server then
+		local var_1_6 = POSITION_LOOKUP[arg_1_2]
 
-		Managers.telemetry_events:pickup_spawned(pickup_name, spawn_type, position)
+		Managers.telemetry_events:pickup_spawned(var_1_0, var_1_2, var_1_6)
+	end
+
+	if arg_1_0.material_settings_name then
+		GearUtils.apply_material_settings(arg_1_2, arg_1_0.material_settings_name)
 	end
 end
 
-PickupUnitExtension.extensions_ready = function (self)
-	local pickup_settings = AllPickups[self.pickup_name]
-	local unit = self.unit
-	local outline_extension = ScriptUnit.has_extension(unit, "outline_system")
+function PickupUnitExtension.extensions_ready(arg_2_0)
+	local var_2_0 = AllPickups[arg_2_0.pickup_name]
+	local var_2_1 = arg_2_0.unit
+	local var_2_2 = ScriptUnit.has_extension(var_2_1, "outline_system")
 
-	if outline_extension then
-		local outline_distance_type = pickup_settings.outline_distance
-		local outline_distance = OutlineSettings.ranges[outline_distance_type]
+	if var_2_2 then
+		local var_2_3 = var_2_0.outline_distance
+		local var_2_4 = OutlineSettings.ranges[var_2_3]
 
-		if outline_distance then
-			outline_extension:update_outline({
-				distance = outline_distance,
+		if var_2_4 then
+			var_2_2:update_outline({
+				distance = var_2_4
 			}, 0)
 		end
 
-		if pickup_settings.outline_available_func then
-			local local_player_unit = Managers.player:local_player().player_unit
-			local available = pickup_settings.outline_available_func(local_player_unit)
+		if var_2_0.outline_available_func then
+			local var_2_5 = Managers.player:local_player().player_unit
 
-			if not available then
-				outline_extension:update_outline({
-					method = "never",
+			if not var_2_0.outline_available_func(var_2_5) then
+				var_2_2:update_outline({
+					method = "never"
 				}, 0)
 			end
 		end
 	end
-
-	local material_settings = pickup_settings.material_settings
-
-	if material_settings then
-		GearUtils.apply_material_settings(unit, material_settings)
-	end
 end
 
-PickupUnitExtension.update = function (self, unit, input, dt, context, t)
+function PickupUnitExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	return
 end
 
-PickupUnitExtension.hide = function (self)
-	local unit = self.unit
+function PickupUnitExtension.hide(arg_4_0)
+	local var_4_0 = arg_4_0.unit
 
-	self.hidden = true
+	arg_4_0.hidden = true
 
-	Unit.set_unit_visibility(unit, false)
-	Unit.disable_physics(unit)
-	Unit.flow_event(unit, "lua_hidden")
+	Unit.set_unit_visibility(var_4_0, false)
+	Unit.disable_physics(var_4_0)
+	Unit.flow_event(var_4_0, "lua_hidden")
 end
 
-PickupUnitExtension.get_pickup_settings = function (self)
-	return AllPickups[self.pickup_name]
+function PickupUnitExtension.get_pickup_settings(arg_5_0)
+	return AllPickups[arg_5_0.pickup_name]
 end
 
-PickupUnitExtension.destroy = function (self)
-	local pickup_system = Managers.state.entity:system("pickup_system")
+function PickupUnitExtension.destroy(arg_6_0)
+	local var_6_0 = Managers.state.entity:system("pickup_system")
 
-	if pickup_system and self.spawn_index then
-		pickup_system:set_taken(self.spawn_index)
+	if var_6_0 and arg_6_0.spawn_index then
+		var_6_0:set_taken(arg_6_0.spawn_index)
 	end
 
-	if self.is_server then
-		local position = POSITION_LOOKUP[self.unit]
+	if arg_6_0.is_server then
+		local var_6_1 = POSITION_LOOKUP[arg_6_0.unit]
 
-		Managers.telemetry_events:pickup_destroyed(self.pickup_name, self.spawn_type, position)
+		Managers.telemetry_events:pickup_destroyed(arg_6_0.pickup_name, arg_6_0.spawn_type, var_6_1)
 	end
 end
 
-PickupUnitExtension.get_dropped_by_breed = function (self)
-	return self.dropped_by_breed
+function PickupUnitExtension.get_dropped_by_breed(arg_7_0)
+	return arg_7_0.dropped_by_breed
 end
 
-PickupUnitExtension.can_interact = function (self)
-	local t = Managers.time:time("game")
-	local return_value = t <= self._can_interact_time
-
-	return not return_value
+function PickupUnitExtension.can_interact(arg_8_0)
+	return not (Managers.time:time("game") <= arg_8_0._can_interact_time)
 end
 
-PickupUnitExtension.set_physics_enabled = function (self, has_physics)
-	local unit = self.unit
+function PickupUnitExtension.set_physics_enabled(arg_9_0, arg_9_1)
+	local var_9_0 = arg_9_0.unit
 
-	if Unit.find_actor(unit, "pickup") then
-		if has_physics then
-			Unit.create_actor(unit, "pickup")
+	if Unit.find_actor(var_9_0, "pickup") then
+		if arg_9_1 then
+			Unit.create_actor(var_9_0, "pickup")
 		else
-			Unit.destroy_actor(unit, "pickup")
+			Unit.destroy_actor(var_9_0, "pickup")
 		end
 	end
 end

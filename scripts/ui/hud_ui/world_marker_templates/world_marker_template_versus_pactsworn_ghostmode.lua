@@ -1,33 +1,33 @@
-﻿-- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_pactsworn_ghostmode.lua
+-- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_pactsworn_ghostmode.lua
 
 WorldMarkerTemplates = WorldMarkerTemplates or {}
 
-local template = WorldMarkerTemplates.versus_pactsworn_ghostmode
+local var_0_0 = WorldMarkerTemplates.versus_pactsworn_ghostmode
 
-if not template then
-	template = {}
-	WorldMarkerTemplates.versus_pactsworn_ghostmode = template
+if not var_0_0 then
+	var_0_0 = {}
+	WorldMarkerTemplates.versus_pactsworn_ghostmode = var_0_0
 end
 
-template.position_offset = {
+var_0_0.position_offset = {
 	0,
 	0,
-	2,
+	2
 }
-template.max_distance = 50
-template.screen_clamp = true
-template.only_when_clamped = false
-template.draw_behind = true
-template.screen_margins = {
+var_0_0.max_distance = 50
+var_0_0.screen_clamp = true
+var_0_0.only_when_clamped = false
+var_0_0.draw_behind = true
+var_0_0.screen_margins = {
 	down = 150,
-	left = 150,
-	right = 150,
 	up = 200,
+	left = 150,
+	right = 150
 }
 
-template.create_widget_definition = function (scenegraph_id)
-	local icon_scale = 1
-	local arrow_offset = 60 * icon_scale
+function var_0_0.create_widget_definition(arg_1_0)
+	local var_1_0 = 1
+	local var_1_1 = 60 * var_1_0
 
 	return {
 		element = {
@@ -36,233 +36,231 @@ template.create_widget_definition = function (scenegraph_id)
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function (content)
-						return content.is_clamped
-					end,
+					content_check_function = function(arg_2_0)
+						return arg_2_0.is_clamped
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "ally_name",
-					text_id = "ally_name",
+					pass_type = "text",
+					text_id = "ally_name"
 				},
 				{
-					pass_type = "text",
 					style_id = "ally_name_shadow",
-					text_id = "ally_name",
+					pass_type = "text",
+					text_id = "ally_name"
 				},
 				{
 					pass_type = "rotated_texture",
 					style_id = "arrow",
 					texture_id = "arrow",
-					content_check_function = function (content)
-						return content.is_clamped
-					end,
+					content_check_function = function(arg_3_0)
+						return arg_3_0.is_clamped
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "checkmark",
 					texture_id = "checkmark",
-					content_check_function = function (content)
-						return content.countdown_over
-					end,
-				},
-			},
+					content_check_function = function(arg_4_0)
+						return arg_4_0.countdown_over
+					end
+				}
+			}
 		},
 		content = {
-			ally_name = "ally_name",
-			arrow = "versus_world_marker_objective_arrow",
 			checkmark = "matchmaking_checkbox",
-			icon = "versus_hud_marker_objective",
 			player_name = "player_name",
+			ally_name = "ally_name",
+			icon = "versus_hud_marker_objective",
+			arrow = "versus_world_marker_objective_arrow"
 		},
 		style = {
 			icon = {
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
+				horizontal_alignment = "center",
 				texture_size = {
-					70 * icon_scale,
-					90 * icon_scale,
+					70 * var_1_0,
+					90 * var_1_0
 				},
 				default_size = {
-					70 * icon_scale,
-					90 * icon_scale,
+					70 * var_1_0,
+					90 * var_1_0
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					3,
-				},
+					3
+				}
 			},
 			arrow = {
-				angle = 0,
-				horizontal_alignment = "center",
 				vertical_alignment = "center",
+				horizontal_alignment = "center",
+				angle = 0,
 				pivot = {
 					22,
-					11.5 - arrow_offset,
+					11.5 - var_1_1
 				},
 				texture_size = {
 					44,
-					23,
+					23
 				},
 				default_size = {
 					44,
-					23,
+					23
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
-					arrow_offset,
-					0,
-				},
+					var_1_1,
+					0
+				}
 			},
 			ally_name = {
-				font_size = 18,
 				font_type = "hell_shark",
-				horizontal_alignment = "center",
-				localize = false,
 				upper_case = false,
+				localize = false,
+				font_size = 18,
+				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				size = {
 					200,
-					30,
+					30
 				},
 				area_size = {
 					200,
-					30,
+					30
 				},
 				text_color = Colors.get_color_table_with_alpha("local_player_team", 255),
 				offset = {
 					-100,
 					60,
-					3,
-				},
+					3
+				}
 			},
 			ally_name_shadow = {
-				font_size = 18,
 				font_type = "hell_shark",
-				horizontal_alignment = "center",
-				localize = false,
 				upper_case = false,
+				localize = false,
+				font_size = 18,
+				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				size = {
 					200,
-					30,
+					30
 				},
 				area_size = {
 					200,
-					30,
+					30
 				},
 				text_color = {
 					255,
 					30,
 					30,
-					30,
+					30
 				},
 				offset = {
 					-99,
 					59,
-					2,
-				},
+					2
+				}
 			},
 			checkmark = {
-				horizontal_alignment = "left",
 				vertical_alignment = "center",
+				horizontal_alignment = "left",
 				size = {
 					30,
-					25,
+					25
 				},
 				offset = {
 					0,
 					5,
-					3,
+					3
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
-				},
-			},
+					255
+				}
+			}
 		},
 		offset = {
 			0,
 			0,
-			0,
+			0
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_1_0
 	}
 end
 
-template.on_enter = function (widget)
-	local content = widget.content
+function var_0_0.on_enter(arg_5_0)
+	local var_5_0 = arg_5_0.content
 
-	content.just_entered = true
-	content.t = 0
+	var_5_0.just_entered = true
+	var_5_0.t = 0
 end
 
-template.update_function = function (ui_renderer, widget, marker, settings, dt, t)
-	local content = widget.content
-	local style = widget.style
-	local allow_name = Application.user_setting("toggle_pactsworn_overhead_name_ui")
+function var_0_0.update_function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+	local var_6_0 = arg_6_1.content
+	local var_6_1 = arg_6_1.style
+	local var_6_2 = Application.user_setting("toggle_pactsworn_overhead_name_ui")
 
-	if content.just_entered then
-		content.just_entered = false
-		content.enter_timer = t
+	if var_6_0.just_entered then
+		var_6_0.just_entered = false
+		var_6_0.enter_timer = arg_6_5
 
-		local player_name_text_width = UIUtils.get_text_width(ui_renderer, style.ally_name, content.ally_name)
+		local var_6_3 = UIUtils.get_text_width(arg_6_0, var_6_1.ally_name, var_6_0.ally_name)
 
-		style.checkmark.offset[1] = allow_name and -(player_name_text_width / 2) - 30 - 10 or 0
+		var_6_1.checkmark.offset[1] = var_6_2 and -(var_6_3 / 2) - 30 - 10 or 0
 	end
 
-	local am = math.clamp(0.5 + (1 - content.forward_dot_dir) * 499.99999999999955, 0, 1)
-	local timer_delta = t - content.enter_timer
-	local alpha = 255 * math.easeOutCubic(math.min(timer_delta, 1)) * am
-	local fade_in_alpha = alpha * 0.7
+	local var_6_4 = math.clamp(0.5 + (1 - var_6_0.forward_dot_dir) * 499.99999999999955, 0, 1)
+	local var_6_5 = arg_6_5 - var_6_0.enter_timer
+	local var_6_6 = 255 * math.easeOutCubic(math.min(var_6_5, 1)) * var_6_4 * 0.7
 
-	style.icon.color[1] = fade_in_alpha
-	style.arrow.color[1] = fade_in_alpha
-	style.arrow.angle = content.angle
+	var_6_1.icon.color[1] = var_6_6
+	var_6_1.arrow.color[1] = var_6_6
+	var_6_1.arrow.angle = var_6_0.angle
 
-	local ally_name_offset_y = content.is_clamped and 60 or 0
+	local var_6_7 = var_6_0.is_clamped and 60 or 0
 
-	style.ally_name.offset[2] = ally_name_offset_y
-	style.ally_name_shadow.offset[2] = ally_name_offset_y
+	var_6_1.ally_name.offset[2] = var_6_7
+	var_6_1.ally_name_shadow.offset[2] = var_6_7
 
-	local ally_name = allow_name and content.player_name or ""
-	local ally_name_length = UTF8Utils.string_length(ally_name)
+	local var_6_8 = var_6_2 and var_6_0.player_name or ""
 
-	if ally_name_length > 18 then
-		ally_name = string.sub(ally_name, 1, 18) .. "..."
+	if UTF8Utils.string_length(var_6_8) > 18 then
+		var_6_8 = string.sub(var_6_8, 1, 18) .. "..."
 	end
 
-	if content.respawn_timer and not content.countdown_over then
-		local respawn_delta = content.respawn_timer - Managers.time:time("game")
-		local countdown_over = respawn_delta <= 0
+	if var_6_0.respawn_timer and not var_6_0.countdown_over then
+		local var_6_9 = var_6_0.respawn_timer - Managers.time:time("game")
+		local var_6_10 = var_6_9 <= 0
 
-		ally_name = countdown_over and ally_name or string.format("{#size(20);color(255,255,255)}%d{#reset()}  %s", math.abs(respawn_delta), ally_name)
-		content.countdown_over = countdown_over
+		var_6_8 = var_6_10 and var_6_8 or string.format("{#size(20);color(255,255,255)}%d{#reset()}  %s", math.abs(var_6_9), var_6_8)
+		var_6_0.countdown_over = var_6_10
 	end
 
-	if content.allow_name ~= allow_name then
-		local player_name_text_width = UIUtils.get_text_width(ui_renderer, style.ally_name, ally_name)
+	if var_6_0.allow_name ~= var_6_2 then
+		local var_6_11 = UIUtils.get_text_width(arg_6_0, var_6_1.ally_name, var_6_8)
 
-		style.checkmark.offset[1] = allow_name and -(player_name_text_width / 2) - 30 - 10 or 0
-		content.allow_name = allow_name
+		var_6_1.checkmark.offset[1] = var_6_2 and -(var_6_11 / 2) - 30 - 10 or 0
+		var_6_0.allow_name = var_6_2
 	end
 
-	content.ally_name = ally_name
+	var_6_0.ally_name = var_6_8
 
 	return true
 end

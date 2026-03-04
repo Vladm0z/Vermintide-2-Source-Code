@@ -1,251 +1,247 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/careers/career_ability_we_shade_dash.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/careers/career_ability_we_shade_dash.lua
 
 CareerAbilityWEShadeDash = class(CareerAbilityWEShadeDash)
 
-CareerAbilityWEShadeDash.init = function (self, extension_init_context, unit, extension_init_data)
-	self._owner_unit = unit
-	self._world = extension_init_context.world
-	self._wwise_world = Managers.world:wwise_world(self._world)
+function CareerAbilityWEShadeDash.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._owner_unit = arg_1_2
+	arg_1_0._world = arg_1_1.world
+	arg_1_0._wwise_world = Managers.world:wwise_world(arg_1_0._world)
 
-	local player = extension_init_data.player
+	local var_1_0 = arg_1_3.player
 
-	self._player = player
-	self._is_server = player.is_server
-	self._local_player = player.local_player
-	self._bot_player = player.bot_player
-	self._network_manager = Managers.state.network
-	self._input_manager = Managers.input
-	self._lunge_events = {
-		start = function (this)
-			local owner_unit = self._owner_unit
-			local local_player = self._local_player
-			local bot_player = self._bot_player
-			local is_server = self._is_server
-			local network_manager = self._network_manager
-			local network_transmit = network_manager.network_transmit
-			local career_extension = self._career_extension
-			local status_extension = self._status_extension
-			local buff_extension = self._buff_extension
-			local buff_name = "kerillian_shade_activated_ability"
-			local talent_extension = ScriptUnit.extension(self._owner_unit, "talent_system")
+	arg_1_0._player = var_1_0
+	arg_1_0._is_server = var_1_0.is_server
+	arg_1_0._local_player = var_1_0.local_player
+	arg_1_0._bot_player = var_1_0.bot_player
+	arg_1_0._network_manager = Managers.state.network
+	arg_1_0._input_manager = Managers.input
+	arg_1_0._lunge_events = {
+		start = function(arg_2_0)
+			local var_2_0 = arg_1_0._owner_unit
+			local var_2_1 = arg_1_0._local_player
+			local var_2_2 = arg_1_0._bot_player
+			local var_2_3 = arg_1_0._is_server
+			local var_2_4 = arg_1_0._network_manager
+			local var_2_5 = var_2_4.network_transmit
+			local var_2_6 = arg_1_0._career_extension
+			local var_2_7 = arg_1_0._status_extension
+			local var_2_8 = arg_1_0._buff_extension
+			local var_2_9 = "kerillian_shade_activated_ability"
 
-			if talent_extension:has_talent("kerillian_shade_activated_ability_quick_cooldown", "wood_elf", true) then
-				buff_name = "kerillian_shade_activated_ability_quick_cooldown"
+			if ScriptUnit.extension(arg_1_0._owner_unit, "talent_system"):has_talent("kerillian_shade_activated_ability_quick_cooldown", "wood_elf", true) then
+				var_2_9 = "kerillian_shade_activated_ability_quick_cooldown"
 			end
 
-			local buff_template_name_id = NetworkLookup.buff_templates[buff_name]
-			local unit_object_id = network_manager:unit_game_object_id(owner_unit)
+			local var_2_10 = NetworkLookup.buff_templates[var_2_9]
+			local var_2_11 = var_2_4:unit_game_object_id(var_2_0)
 
-			if is_server then
-				buff_extension:add_buff(buff_name, {
-					attacker_unit = owner_unit,
+			if var_2_3 then
+				var_2_8:add_buff(var_2_9, {
+					attacker_unit = var_2_0
 				})
-				network_transmit:send_rpc_clients("rpc_add_buff", unit_object_id, buff_template_name_id, unit_object_id, 0, false)
+				var_2_5:send_rpc_clients("rpc_add_buff", var_2_11, var_2_10, var_2_11, 0, false)
 			else
-				network_transmit:send_rpc_server("rpc_add_buff", unit_object_id, buff_template_name_id, unit_object_id, 0, true)
+				var_2_5:send_rpc_server("rpc_add_buff", var_2_11, var_2_10, var_2_11, 0, true)
 			end
 
-			if local_player or is_server and bot_player then
-				local applying_stealth = status_extension:set_invisible(true, nil, "skill_shade")
+			if var_2_1 or var_2_3 and var_2_2 then
+				local var_2_12 = var_2_7:set_invisible(true, nil, "skill_shade")
 
-				status_extension:set_noclip(true, "skill_shade")
+				var_2_7:set_noclip(true, "skill_shade")
 
-				local events = {
+				local var_2_13 = {
 					"Play_career_ability_kerillian_shade_enter",
-					"Play_career_ability_kerillian_shade_loop_husk",
+					"Play_career_ability_kerillian_shade_loop_husk"
 				}
-				local unit_id = network_manager:unit_game_object_id(owner_unit)
-				local node_id = 0
+				local var_2_14 = var_2_4:unit_game_object_id(var_2_0)
+				local var_2_15 = 0
 
-				for _, event in ipairs(events) do
-					local event_id = NetworkLookup.sound_events[event]
+				for iter_2_0, iter_2_1 in ipairs(var_2_13) do
+					local var_2_16 = NetworkLookup.sound_events[iter_2_1]
 
-					if is_server then
-						network_transmit:send_rpc_clients("rpc_play_husk_unit_sound_event", unit_id, node_id, event_id)
+					if var_2_3 then
+						var_2_5:send_rpc_clients("rpc_play_husk_unit_sound_event", var_2_14, var_2_15, var_2_16)
 					else
-						network_transmit:send_rpc_server("rpc_play_husk_unit_sound_event", unit_id, node_id, event_id)
+						var_2_5:send_rpc_server("rpc_play_husk_unit_sound_event", var_2_14, var_2_15, var_2_16)
 					end
 				end
 
-				if not bot_player then
-					local first_person_extension = self._first_person_extension
+				if not var_2_2 then
+					local var_2_17 = arg_1_0._first_person_extension
 
-					if applying_stealth then
-						first_person_extension:play_hud_sound_event("Play_career_ability_kerillian_shade_loop")
+					if var_2_12 then
+						var_2_17:play_hud_sound_event("Play_career_ability_kerillian_shade_loop")
 					end
 
-					first_person_extension:play_hud_sound_event("Play_career_ability_kerillian_shade_enter")
-					first_person_extension:animation_event("shade_stealth_ability")
-					career_extension:set_state("kerillian_activate_shade")
+					var_2_17:play_hud_sound_event("Play_career_ability_kerillian_shade_enter")
+					var_2_17:animation_event("shade_stealth_ability")
+					var_2_6:set_state("kerillian_activate_shade")
 				end
 			end
 		end,
-		impact = function (this)
+		impact = function(arg_3_0)
 			return
 		end,
-		finished = function (this)
+		finished = function(arg_4_0)
 			return
-		end,
+		end
 	}
-	self._decal_unit = nil
-	self._decal_unit_name = "units/decals/decal_arrow_kerillian"
+	arg_1_0._decal_unit = nil
+	arg_1_0._decal_unit_name = "units/decals/decal_arrow_kerillian"
 end
 
-CareerAbilityWEShadeDash.extensions_ready = function (self, world, unit)
-	self._first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
-	self._status_extension = ScriptUnit.extension(unit, "status_system")
-	self._career_extension = ScriptUnit.extension(unit, "career_system")
-	self._buff_extension = ScriptUnit.extension(unit, "buff_system")
-	self._input_extension = ScriptUnit.has_extension(unit, "input_system")
+function CareerAbilityWEShadeDash.extensions_ready(arg_5_0, arg_5_1, arg_5_2)
+	arg_5_0._first_person_extension = ScriptUnit.has_extension(arg_5_2, "first_person_system")
+	arg_5_0._status_extension = ScriptUnit.extension(arg_5_2, "status_system")
+	arg_5_0._career_extension = ScriptUnit.extension(arg_5_2, "career_system")
+	arg_5_0._buff_extension = ScriptUnit.extension(arg_5_2, "buff_system")
+	arg_5_0._input_extension = ScriptUnit.has_extension(arg_5_2, "input_system")
 
-	if self._first_person_extension then
-		self._first_person_unit = self._first_person_extension:get_first_person_unit()
+	if arg_5_0._first_person_extension then
+		arg_5_0._first_person_unit = arg_5_0._first_person_extension:get_first_person_unit()
 	end
 end
 
-CareerAbilityWEShadeDash.destroy = function (self)
+function CareerAbilityWEShadeDash.destroy(arg_6_0)
 	return
 end
 
-CareerAbilityWEShadeDash.update = function (self, unit, input, dt, context, t)
-	if not self:_ability_available() then
+function CareerAbilityWEShadeDash.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+	if not arg_7_0:_ability_available() then
 		return
 	end
 
-	local input_extension = self._input_extension
+	local var_7_0 = arg_7_0._input_extension
 
-	if not input_extension then
+	if not var_7_0 then
 		return
 	end
 
-	if not self._is_priming then
-		if input_extension:get("action_career") then
-			self:_start_priming()
+	if not arg_7_0._is_priming then
+		if var_7_0:get("action_career") then
+			arg_7_0:_start_priming()
 		end
-	elseif self._is_priming then
-		self:_update_priming()
+	elseif arg_7_0._is_priming then
+		arg_7_0:_update_priming()
 
-		if input_extension:get("action_two") then
-			self:_stop_priming()
+		if var_7_0:get("action_two") then
+			arg_7_0:_stop_priming()
 
 			return
 		end
 
-		if input_extension:get("weapon_reload") then
-			self:_stop_priming()
+		if var_7_0:get("weapon_reload") then
+			arg_7_0:_stop_priming()
 
 			return
 		end
 
-		if not input_extension:get("action_career_hold") then
-			self:_run_ability()
+		if not var_7_0:get("action_career_hold") then
+			arg_7_0:_run_ability()
 		end
 	end
 end
 
-CareerAbilityWEShadeDash.stop = function (self, reason)
-	if reason ~= "pushed" and reason ~= "stunned" and self._is_priming then
-		self:_stop_priming()
+function CareerAbilityWEShadeDash.stop(arg_8_0, arg_8_1)
+	if arg_8_1 ~= "pushed" and arg_8_1 ~= "stunned" and arg_8_0._is_priming then
+		arg_8_0:_stop_priming()
 	end
 end
 
-CareerAbilityWEShadeDash._ability_available = function (self)
-	local career_extension = self._career_extension
-	local status_extension = self._status_extension
-	local talent_extension = ScriptUnit.extension(self._owner_unit, "talent_system")
-	local available = false
+function CareerAbilityWEShadeDash._ability_available(arg_9_0)
+	local var_9_0 = arg_9_0._career_extension
+	local var_9_1 = arg_9_0._status_extension
+	local var_9_2 = ScriptUnit.extension(arg_9_0._owner_unit, "talent_system")
+	local var_9_3 = false
 
-	return available and career_extension:can_use_activated_ability() and not status_extension:is_disabled()
+	return var_9_3 and var_9_0:can_use_activated_ability() and not var_9_1:is_disabled()
 end
 
-CareerAbilityWEShadeDash._start_priming = function (self)
-	if self._local_player then
-		local decal_unit_name = self._decal_unit_name
-		local unit_spawner = Managers.state.unit_spawner
+function CareerAbilityWEShadeDash._start_priming(arg_10_0)
+	if arg_10_0._local_player then
+		local var_10_0 = arg_10_0._decal_unit_name
 
-		self._decal_unit = unit_spawner:spawn_local_unit(decal_unit_name)
+		arg_10_0._decal_unit = Managers.state.unit_spawner:spawn_local_unit(var_10_0)
 	end
 
-	self._is_priming = true
+	arg_10_0._is_priming = true
 end
 
-CareerAbilityWEShadeDash._update_priming = function (self)
-	if self._decal_unit then
-		local first_person_extension = self._first_person_extension
-		local player_position = Unit.local_position(self._owner_unit, 0)
-		local player_rotation = first_person_extension:current_rotation()
-		local player_direction_flat = Vector3.flat(Vector3.normalize(Quaternion.forward(player_rotation)))
-		local player_rotation_flat = Quaternion.look(player_direction_flat, Vector3.up())
+function CareerAbilityWEShadeDash._update_priming(arg_11_0)
+	if arg_11_0._decal_unit then
+		local var_11_0 = arg_11_0._first_person_extension
+		local var_11_1 = Unit.local_position(arg_11_0._owner_unit, 0)
+		local var_11_2 = var_11_0:current_rotation()
+		local var_11_3 = Vector3.flat(Vector3.normalize(Quaternion.forward(var_11_2)))
+		local var_11_4 = Quaternion.look(var_11_3, Vector3.up())
 
-		Unit.set_local_position(self._decal_unit, 0, player_position)
-		Unit.set_local_rotation(self._decal_unit, 0, player_rotation_flat)
+		Unit.set_local_position(arg_11_0._decal_unit, 0, var_11_1)
+		Unit.set_local_rotation(arg_11_0._decal_unit, 0, var_11_4)
 	end
 end
 
-CareerAbilityWEShadeDash._stop_priming = function (self)
-	if self._decal_unit then
-		local unit_spawner = Managers.state.unit_spawner
-
-		unit_spawner:mark_for_deletion(self._decal_unit)
+function CareerAbilityWEShadeDash._stop_priming(arg_12_0)
+	if arg_12_0._decal_unit then
+		Managers.state.unit_spawner:mark_for_deletion(arg_12_0._decal_unit)
 	end
 
-	self._is_priming = false
+	arg_12_0._is_priming = false
 end
 
-CareerAbilityWEShadeDash._run_ability = function (self)
-	self:_stop_priming()
+function CareerAbilityWEShadeDash._run_ability(arg_13_0)
+	arg_13_0:_stop_priming()
 
-	local owner_unit = self._owner_unit
-	local is_server = self._is_server
-	local local_player = self._local_player
-	local bot_player = self._bot_player
-	local network_manager = self._network_manager
-	local network_transmit = network_manager.network_transmit
-	local status_extension = self._status_extension
-	local career_extension = self._career_extension
+	local var_13_0 = arg_13_0._owner_unit
+	local var_13_1 = arg_13_0._is_server
+	local var_13_2 = arg_13_0._local_player
+	local var_13_3 = arg_13_0._bot_player
+	local var_13_4 = arg_13_0._network_manager
+	local var_13_5 = var_13_4.network_transmit
+	local var_13_6 = arg_13_0._status_extension
+	local var_13_7 = arg_13_0._career_extension
 
-	if is_server and bot_player or local_player then
-		local first_person_extension = self._first_person_extension
+	if var_13_1 and var_13_3 or var_13_2 then
+		local var_13_8 = arg_13_0._first_person_extension
 
-		first_person_extension:animation_event("shade_stealth_ability")
-		first_person_extension:play_hud_sound_event("Play_career_ability_shade_shadowstep_charge")
-		first_person_extension:play_remote_unit_sound_event("Play_career_ability_shade_shadowstep_charge", owner_unit, 0)
-		career_extension:set_state("kerillian_activate_maiden_guard")
+		var_13_8:animation_event("shade_stealth_ability")
+		var_13_8:play_hud_sound_event("Play_career_ability_shade_shadowstep_charge")
+		var_13_8:play_remote_unit_sound_event("Play_career_ability_shade_shadowstep_charge", var_13_0, 0)
+		var_13_7:set_state("kerillian_activate_maiden_guard")
 	end
 
-	status_extension:set_noclip(true, "skill_shade")
+	var_13_6:set_noclip(true, "skill_shade")
 
-	if network_manager:game() then
-		status_extension:set_is_dodging(true)
+	if var_13_4:game() then
+		var_13_6:set_is_dodging(true)
 
-		local unit_id = network_manager:unit_game_object_id(owner_unit)
+		local var_13_9 = var_13_4:unit_game_object_id(var_13_0)
 
-		network_transmit:send_rpc_server("rpc_status_change_bool", NetworkLookup.statuses.dodging, true, unit_id, 0)
+		var_13_5:send_rpc_server("rpc_status_change_bool", NetworkLookup.statuses.dodging, true, var_13_9, 0)
 	end
 
-	status_extension.do_lunge = {
-		allow_rotation = false,
+	var_13_6.do_lunge = {
 		animation_end_event = "maiden_guard_active_ability_charge_hit",
-		animation_event = "maiden_guard_active_ability_charge_start",
-		dodge = true,
-		duration = 0.65,
+		allow_rotation = false,
 		falloff_to_speed = 5,
 		first_person_animation_end_event = "dodge_bwd",
-		first_person_animation_end_event_hit = "dodge_bwd",
-		first_person_animation_event = "shade_stealth_ability",
 		first_person_hit_animation_event = "charge_react",
+		dodge = true,
+		first_person_animation_event = "shade_stealth_ability",
+		first_person_animation_end_event_hit = "dodge_bwd",
+		duration = 0.65,
 		initial_speed = 25,
-		lunge_events = self._lunge_events,
+		animation_event = "maiden_guard_active_ability_charge_start",
+		lunge_events = arg_13_0._lunge_events
 	}
 
-	career_extension:start_activated_ability_cooldown()
-	self:_play_vo()
+	var_13_7:start_activated_ability_cooldown()
+	arg_13_0:_play_vo()
 end
 
-CareerAbilityWEShadeDash._play_vo = function (self)
-	local owner_unit = self._owner_unit
-	local dialogue_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
-	local event_data = FrameTable.alloc_table()
+function CareerAbilityWEShadeDash._play_vo(arg_14_0)
+	local var_14_0 = arg_14_0._owner_unit
+	local var_14_1 = ScriptUnit.extension_input(var_14_0, "dialogue_system")
+	local var_14_2 = FrameTable.alloc_table()
 
-	dialogue_input:trigger_networked_dialogue_event("activate_ability", event_data)
+	var_14_1:trigger_networked_dialogue_event("activate_ability", var_14_2)
 end

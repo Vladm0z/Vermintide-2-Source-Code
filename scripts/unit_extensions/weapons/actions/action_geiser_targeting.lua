@@ -1,271 +1,263 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/actions/action_geiser_targeting.lua
+-- chunkname: @scripts/unit_extensions/weapons/actions/action_geiser_targeting.lua
 
 ActionGeiserTargeting = class(ActionGeiserTargeting, ActionBase)
 
-ActionGeiserTargeting.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionGeiserTargeting.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionGeiserTargeting.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionGeiserTargeting.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	self.position = Vector3Box()
-	self.first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
-	self.overcharge_extension = ScriptUnit.extension(owner_unit, "overcharge_system")
-	self.unit_id = Managers.state.network.unit_storage:go_id(owner_unit)
-	self._is_server = is_server
+	arg_1_0.position = Vector3Box()
+	arg_1_0.first_person_extension = ScriptUnit.extension(arg_1_4, "first_person_system")
+	arg_1_0.overcharge_extension = ScriptUnit.extension(arg_1_4, "overcharge_system")
+	arg_1_0.unit_id = Managers.state.network.unit_storage:go_id(arg_1_4)
+	arg_1_0._is_server = arg_1_3
 end
 
-ActionGeiserTargeting.client_owner_start_action = function (self, new_action, t)
-	ActionGeiserTargeting.super.client_owner_start_action(self, new_action, t)
+function ActionGeiserTargeting.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
+	ActionGeiserTargeting.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
 
-	local world = self.world
-	local network_transmit = self.network_transmit
-	local owner_unit = self.owner_unit
+	local var_2_0 = arg_2_0.world
+	local var_2_1 = arg_2_0.network_transmit
+	local var_2_2 = arg_2_0.owner_unit
 
-	self.overcharge_timer = 0
-	self.current_action = new_action
-	self.fully_charged_triggered = false
+	arg_2_0.overcharge_timer = 0
+	arg_2_0.current_action = arg_2_1
+	arg_2_0.fully_charged_triggered = false
 
-	local effect_name = new_action.particle_effect
-	local effect_id = NetworkLookup.effects[effect_name]
-	local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
+	local var_2_3 = arg_2_1.particle_effect
+	local var_2_4 = NetworkLookup.effects[var_2_3]
+	local var_2_5 = ScriptUnit.extension(var_2_2, "buff_system")
 
-	self.buff_extension = buff_extension
+	arg_2_0.buff_extension = var_2_5
 
-	if not self._is_server then
-		self.targeting_effect_id = World.create_particles(world, effect_name, Vector3.zero())
-		self.targeting_variable_id = World.find_particles_variable(world, effect_name, "charge_radius")
+	if not arg_2_0._is_server then
+		arg_2_0.targeting_effect_id = World.create_particles(var_2_0, var_2_3, Vector3.zero())
+		arg_2_0.targeting_variable_id = World.find_particles_variable(var_2_0, var_2_3, "charge_radius")
 	end
 
-	self.charge_time = buff_extension:apply_buffs_to_value(new_action.charge_time, "reduced_ranged_charge_time")
-	self.angle = math.degrees_to_radians(new_action.angle)
-	self.time_to_shoot = t
+	arg_2_0.charge_time = var_2_5:apply_buffs_to_value(arg_2_1.charge_time, "reduced_ranged_charge_time")
+	arg_2_0.angle = math.degrees_to_radians(arg_2_1.angle)
+	arg_2_0.time_to_shoot = arg_2_2
 
-	local go_id = self.unit_id
+	local var_2_6 = arg_2_0.unit_id
 
-	network_transmit:send_rpc_server("rpc_start_geiser", go_id, effect_id, new_action.min_radius, new_action.max_radius, self.charge_time, self.angle)
+	var_2_1:send_rpc_server("rpc_start_geiser", var_2_6, var_2_4, arg_2_1.min_radius, arg_2_1.max_radius, arg_2_0.charge_time, arg_2_0.angle)
 
-	self.min_radius = new_action.min_radius
-	self.max_radius = new_action.max_radius
-	self.radius = self.min_radius
-	self.charge_ready_sound_event = self.current_action.charge_ready_sound_event
-	self.speed = new_action.speed
-	self.gravity = new_action.gravity
-	self.height = new_action.height or 1
-	self.debug_draw = new_action.debug_draw
+	arg_2_0.min_radius = arg_2_1.min_radius
+	arg_2_0.max_radius = arg_2_1.max_radius
+	arg_2_0.radius = arg_2_0.min_radius
+	arg_2_0.charge_ready_sound_event = arg_2_0.current_action.charge_ready_sound_event
+	arg_2_0.speed = arg_2_1.speed
+	arg_2_0.gravity = arg_2_1.gravity
+	arg_2_0.height = arg_2_1.height or 1
+	arg_2_0.debug_draw = arg_2_1.debug_draw
 
-	local owner_player = Managers.player:owner(owner_unit)
-	local is_bot = owner_player and owner_player.bot_player
+	local var_2_7 = Managers.player:owner(var_2_2)
 
-	if not is_bot then
-		local current_action = self.current_action
+	if not (var_2_7 and var_2_7.bot_player) and arg_2_0.current_action.fire_at_gaze_setting and ScriptUnit.has_extension(var_2_2, "eyetracking_system") then
+		local var_2_8 = ScriptUnit.extension(var_2_2, "eyetracking_system")
 
-		if current_action.fire_at_gaze_setting and ScriptUnit.has_extension(owner_unit, "eyetracking_system") then
-			local eyetracking_extension = ScriptUnit.extension(owner_unit, "eyetracking_system")
+		if var_2_8:get_is_feature_enabled("tobii_fire_at_gaze") then
+			local var_2_9 = Unit.world_rotation(arg_2_0.first_person_unit, 0)
+			local var_2_10 = var_2_8:gaze_rotation()
+			local var_2_11 = Quaternion.inverse(var_2_9)
+			local var_2_12 = Quaternion.multiply(var_2_11, var_2_10)
 
-			if eyetracking_extension:get_is_feature_enabled("tobii_fire_at_gaze") then
-				local first_person_rotation = Unit.world_rotation(self.first_person_unit, 0)
-				local new_direction = eyetracking_extension:gaze_rotation()
-				local player_rotation_inverse = Quaternion.inverse(first_person_rotation)
-				local new_offset = Quaternion.multiply(player_rotation_inverse, new_direction)
+			arg_2_0.fire_at_gaze_offset = QuaternionBox()
 
-				self.fire_at_gaze_offset = QuaternionBox()
+			QuaternionBox.store(arg_2_0.fire_at_gaze_offset, var_2_12)
+		end
+	end
 
-				QuaternionBox.store(self.fire_at_gaze_offset, new_offset)
+	arg_2_0:_start_charge_sound()
+
+	arg_2_0.charge_value = 0
+end
+
+local function var_0_0(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+	local var_3_0 = arg_3_2 / arg_3_1
+
+	for iter_3_0 = 1, arg_3_1 do
+		local var_3_1 = arg_3_3 + arg_3_4 * var_3_0
+		local var_3_2 = var_3_1 - arg_3_3
+		local var_3_3 = Vector3.normalize(var_3_2)
+		local var_3_4 = Vector3.length(var_3_2)
+		local var_3_5, var_3_6, var_3_7, var_3_8, var_3_9 = PhysicsWorld.immediate_raycast(arg_3_0, arg_3_3, var_3_3, var_3_4, "closest", "collision_filter", arg_3_6)
+
+		if var_3_6 then
+			return var_3_5, var_3_6, var_3_7, var_3_8, var_3_9
+		end
+
+		arg_3_4 = arg_3_4 + arg_3_5 * var_3_0
+		arg_3_3 = var_3_1
+	end
+
+	return false, arg_3_3
+end
+
+function ActionGeiserTargeting._start_charge_sound(arg_4_0)
+	local var_4_0 = arg_4_0.current_action
+	local var_4_1 = arg_4_0.owner_unit
+	local var_4_2 = arg_4_0.owner_player
+	local var_4_3 = var_4_2 and var_4_2.bot_player
+	local var_4_4 = var_4_2 and not var_4_2.remote
+	local var_4_5 = arg_4_0.wwise_world
+
+	if var_4_4 and not var_4_3 then
+		local var_4_6, var_4_7 = ActionUtils.start_charge_sound(var_4_5, arg_4_0.weapon_unit, var_4_1, var_4_0)
+
+		arg_4_0.charging_sound_id = var_4_6
+		arg_4_0.wwise_source_id = var_4_7
+	end
+
+	ActionUtils.play_husk_sound_event(var_4_5, var_4_0.charge_sound_husk_name, var_4_1, var_4_3)
+end
+
+function ActionGeiserTargeting._stop_charge_sound(arg_5_0)
+	local var_5_0 = arg_5_0.current_action
+	local var_5_1 = arg_5_0.owner_unit
+	local var_5_2 = arg_5_0.owner_player
+	local var_5_3 = var_5_2 and var_5_2.bot_player
+	local var_5_4 = var_5_2 and not var_5_2.remote
+	local var_5_5 = arg_5_0.wwise_world
+
+	if var_5_4 and not var_5_3 then
+		ActionUtils.stop_charge_sound(var_5_5, arg_5_0.charging_sound_id, arg_5_0.wwise_source_id, var_5_0)
+
+		arg_5_0.charging_sound_id = nil
+		arg_5_0.wwise_source_id = nil
+	end
+
+	ActionUtils.play_husk_sound_event(var_5_5, var_5_0.charge_sound_husk_stop_event, var_5_1, var_5_3)
+end
+
+function ActionGeiserTargeting.client_owner_post_update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	local var_6_0 = arg_6_0.time_to_shoot
+	local var_6_1 = arg_6_0.current_action
+
+	if var_6_1.overcharge_interval then
+		arg_6_0.overcharge_timer = arg_6_0.overcharge_timer + arg_6_1
+
+		if arg_6_0.overcharge_timer >= var_6_1.overcharge_interval then
+			if arg_6_0.overcharge_extension then
+				local var_6_2 = PlayerUnitStatusSettings.overcharge_values[var_6_1.overcharge_type]
+
+				arg_6_0.overcharge_extension:add_charge(var_6_2, nil, var_6_1.overcharge_type)
+			end
+
+			arg_6_0.overcharge_timer = 0
+		end
+	end
+
+	local var_6_3 = POSITION_LOOKUP[arg_6_0.owner_unit]
+	local var_6_4 = POSITION_LOOKUP[arg_6_0.first_person_unit]
+	local var_6_5 = Unit.world_rotation(arg_6_0.first_person_unit, 0)
+
+	if arg_6_0.fire_at_gaze_offset then
+		var_6_5 = Quaternion.multiply(var_6_5, QuaternionBox.unbox(arg_6_0.fire_at_gaze_offset))
+	end
+
+	local var_6_6
+	local var_6_7 = World.get_data(arg_6_3, "physics_world")
+	local var_6_8 = 10
+	local var_6_9 = 1.5
+	local var_6_10 = arg_6_0.speed
+	local var_6_11 = arg_6_0.angle
+	local var_6_12 = Quaternion.forward(Quaternion.multiply(var_6_5, Quaternion(Vector3.right(), var_6_11))) * var_6_10
+	local var_6_13 = Vector3(0, 0, arg_6_0.gravity)
+	local var_6_14 = "filter_geiser_check"
+	local var_6_15, var_6_16, var_6_17, var_6_18 = var_0_0(var_6_7, var_6_8, var_6_9, var_6_4, var_6_12, var_6_13, var_6_14, arg_6_0.debug_draw)
+	local var_6_19 = var_6_16
+
+	if var_6_15 then
+		local var_6_20 = Vector3(0, 0, 1)
+
+		if Vector3.dot(var_6_18, var_6_20) < 0.75 then
+			local var_6_21 = var_6_19 - 1 * Vector3.normalize(var_6_19 - var_6_3)
+			local var_6_22, var_6_23, var_6_24, var_6_25 = PhysicsWorld.immediate_raycast(var_6_7, var_6_21, Vector3(0, 0, -1), 5, "closest", "collision_filter", var_6_14)
+
+			if var_6_23 then
+				var_6_19 = var_6_23
 			end
 		end
 	end
 
-	self:_start_charge_sound()
+	arg_6_0.position:store(var_6_19)
 
-	self.charge_value = 0
-end
+	arg_6_0.charge_value = math.min(math.max(arg_6_2 - var_6_0, 0) / arg_6_0.charge_time, 1)
 
-local function ballistic_raycast(physics_world, max_steps, max_time, position, velocity, gravity, collision_filter, visualize)
-	local time_step = max_time / max_steps
+	if arg_6_0.charge_value >= 1 and not arg_6_0.fully_charged_triggered then
+		arg_6_0.fully_charged_triggered = true
 
-	for i = 1, max_steps do
-		local new_position = position + velocity * time_step
-		local delta = new_position - position
-		local direction = Vector3.normalize(delta)
-		local distance = Vector3.length(delta)
-		local result, hit_position, hit_distance, normal, actor = PhysicsWorld.immediate_raycast(physics_world, position, direction, distance, "closest", "collision_filter", collision_filter)
+		arg_6_0.buff_extension:trigger_procs("on_full_charge")
+	end
 
-		if hit_position then
-			return result, hit_position, hit_distance, normal, actor
+	local var_6_26 = arg_6_0.min_radius
+	local var_6_27 = arg_6_0.max_radius
+	local var_6_28 = math.min(var_6_27, (var_6_27 - var_6_26) * arg_6_0.charge_value + var_6_26)
+
+	arg_6_0.radius = var_6_28
+
+	if arg_6_0.targeting_effect_id then
+		local var_6_29 = var_6_28 * 2
+
+		World.move_particles(arg_6_3, arg_6_0.targeting_effect_id, var_6_19)
+		World.set_particles_variable(arg_6_3, arg_6_0.targeting_effect_id, arg_6_0.targeting_variable_id, Vector3(var_6_29, var_6_29, 1))
+	end
+
+	local var_6_30 = arg_6_0.owner_unit
+	local var_6_31 = Managers.player:owner(var_6_30)
+
+	if not (var_6_31 and var_6_31.bot_player) then
+		local var_6_32 = var_6_1.charge_sound_parameter_name
+
+		if var_6_32 then
+			local var_6_33 = arg_6_0.wwise_world
+			local var_6_34 = arg_6_0.wwise_source_id
+
+			WwiseWorld.set_source_parameter(var_6_33, var_6_34, var_6_32, arg_6_0.charge_value)
 		end
 
-		velocity = velocity + gravity * time_step
-		position = new_position
-	end
+		if arg_6_0.charge_ready_sound_event and arg_6_0.charge_value >= 1 then
+			arg_6_0.first_person_extension:play_hud_sound_event(arg_6_0.charge_ready_sound_event)
 
-	return false, position
-end
-
-ActionGeiserTargeting._start_charge_sound = function (self)
-	local current_action = self.current_action
-	local owner_unit = self.owner_unit
-	local owner_player = self.owner_player
-	local is_bot = owner_player and owner_player.bot_player
-	local is_local = owner_player and not owner_player.remote
-	local wwise_world = self.wwise_world
-
-	if is_local and not is_bot then
-		local wwise_playing_id, wwise_source_id = ActionUtils.start_charge_sound(wwise_world, self.weapon_unit, owner_unit, current_action)
-
-		self.charging_sound_id = wwise_playing_id
-		self.wwise_source_id = wwise_source_id
-	end
-
-	ActionUtils.play_husk_sound_event(wwise_world, current_action.charge_sound_husk_name, owner_unit, is_bot)
-end
-
-ActionGeiserTargeting._stop_charge_sound = function (self)
-	local current_action = self.current_action
-	local owner_unit = self.owner_unit
-	local owner_player = self.owner_player
-	local is_bot = owner_player and owner_player.bot_player
-	local is_local = owner_player and not owner_player.remote
-	local wwise_world = self.wwise_world
-
-	if is_local and not is_bot then
-		ActionUtils.stop_charge_sound(wwise_world, self.charging_sound_id, self.wwise_source_id, current_action)
-
-		self.charging_sound_id = nil
-		self.wwise_source_id = nil
-	end
-
-	ActionUtils.play_husk_sound_event(wwise_world, current_action.charge_sound_husk_stop_event, owner_unit, is_bot)
-end
-
-ActionGeiserTargeting.client_owner_post_update = function (self, dt, t, world, can_damage)
-	local time_to_shoot = self.time_to_shoot
-	local current_action = self.current_action
-
-	if current_action.overcharge_interval then
-		self.overcharge_timer = self.overcharge_timer + dt
-
-		if self.overcharge_timer >= current_action.overcharge_interval then
-			if self.overcharge_extension then
-				local overcharge_amount = PlayerUnitStatusSettings.overcharge_values[current_action.overcharge_type]
-
-				self.overcharge_extension:add_charge(overcharge_amount, nil, current_action.overcharge_type)
-			end
-
-			self.overcharge_timer = 0
-		end
-	end
-
-	local player_position = POSITION_LOOKUP[self.owner_unit]
-	local first_person_position = POSITION_LOOKUP[self.first_person_unit]
-	local first_person_rotation = Unit.world_rotation(self.first_person_unit, 0)
-
-	if self.fire_at_gaze_offset then
-		first_person_rotation = Quaternion.multiply(first_person_rotation, QuaternionBox.unbox(self.fire_at_gaze_offset))
-	end
-
-	local position
-	local physics_world = World.get_data(world, "physics_world")
-	local max_steps = 10
-	local max_time = 1.5
-	local speed = self.speed
-	local angle = self.angle
-	local velocity = Quaternion.forward(Quaternion.multiply(first_person_rotation, Quaternion(Vector3.right(), angle))) * speed
-	local gravity = Vector3(0, 0, self.gravity)
-	local collision_filter = "filter_geiser_check"
-	local result, hit_position, _, normal = ballistic_raycast(physics_world, max_steps, max_time, first_person_position, velocity, gravity, collision_filter, self.debug_draw)
-
-	position = hit_position
-
-	if result then
-		local up = Vector3(0, 0, 1)
-
-		if Vector3.dot(normal, up) < 0.75 then
-			local half_step_back = 1 * Vector3.normalize(position - player_position)
-			local new_position = position - half_step_back
-			local _, new_hit_position, _, _ = PhysicsWorld.immediate_raycast(physics_world, new_position, Vector3(0, 0, -1), 5, "closest", "collision_filter", collision_filter)
-
-			if new_hit_position then
-				position = new_hit_position
-			end
-		end
-	end
-
-	self.position:store(position)
-
-	self.charge_value = math.min(math.max(t - time_to_shoot, 0) / self.charge_time, 1)
-
-	if self.charge_value >= 1 and not self.fully_charged_triggered then
-		self.fully_charged_triggered = true
-
-		self.buff_extension:trigger_procs("on_full_charge")
-	end
-
-	local min_radius = self.min_radius
-	local max_radius = self.max_radius
-	local radius = math.min(max_radius, (max_radius - min_radius) * self.charge_value + min_radius)
-
-	self.radius = radius
-
-	if self.targeting_effect_id then
-		local scale = radius * 2
-
-		World.move_particles(world, self.targeting_effect_id, position)
-		World.set_particles_variable(world, self.targeting_effect_id, self.targeting_variable_id, Vector3(scale, scale, 1))
-	end
-
-	local owner_unit = self.owner_unit
-	local owner_player = Managers.player:owner(owner_unit)
-	local is_bot = owner_player and owner_player.bot_player
-
-	if not is_bot then
-		local charge_sound_parameter_name = current_action.charge_sound_parameter_name
-
-		if charge_sound_parameter_name then
-			local wwise_world = self.wwise_world
-			local wwise_source_id = self.wwise_source_id
-
-			WwiseWorld.set_source_parameter(wwise_world, wwise_source_id, charge_sound_parameter_name, self.charge_value)
-		end
-
-		if self.charge_ready_sound_event and self.charge_value >= 1 then
-			self.first_person_extension:play_hud_sound_event(self.charge_ready_sound_event)
-
-			self.charge_ready_sound_event = nil
+			arg_6_0.charge_ready_sound_event = nil
 		end
 	end
 end
 
-ActionGeiserTargeting.finish = function (self, reason, data)
-	local world = self.world
-	local network_transmit = self.network_transmit
-	local go_id = self.unit_id
+function ActionGeiserTargeting.finish(arg_7_0, arg_7_1, arg_7_2)
+	local var_7_0 = arg_7_0.world
+	local var_7_1 = arg_7_0.network_transmit
+	local var_7_2 = arg_7_0.unit_id
 
-	network_transmit:send_rpc_server("rpc_end_geiser", go_id)
+	var_7_1:send_rpc_server("rpc_end_geiser", var_7_2)
 
-	local chain_action_data = {}
+	local var_7_3 = {
+		radius = arg_7_0.radius,
+		range = arg_7_0.range,
+		height = arg_7_0.height,
+		charge_value = arg_7_0.charge_value,
+		position = arg_7_0.position
+	}
 
-	chain_action_data.radius = self.radius
-	chain_action_data.range = self.range
-	chain_action_data.height = self.height
-	chain_action_data.charge_value = self.charge_value
-	chain_action_data.position = self.position
+	if arg_7_0.targeting_effect_id then
+		World.destroy_particles(var_7_0, arg_7_0.targeting_effect_id)
 
-	if self.targeting_effect_id then
-		World.destroy_particles(world, self.targeting_effect_id)
-
-		self.targeting_effect_id = nil
+		arg_7_0.targeting_effect_id = nil
 	end
 
-	self:_stop_charge_sound()
-	self.buff_extension:trigger_procs("on_charge_finished")
+	arg_7_0:_stop_charge_sound()
+	arg_7_0.buff_extension:trigger_procs("on_charge_finished")
 
-	return chain_action_data
+	return var_7_3
 end
 
-ActionGeiserTargeting.destroy = function (self)
-	if self.targeting_effect_id then
-		World.destroy_particles(self.world, self.targeting_effect_id)
+function ActionGeiserTargeting.destroy(arg_8_0)
+	if arg_8_0.targeting_effect_id then
+		World.destroy_particles(arg_8_0.world, arg_8_0.targeting_effect_id)
 
-		self.targeting_effect_id = nil
+		arg_8_0.targeting_effect_id = nil
 	end
 
-	self:_stop_charge_sound()
+	arg_8_0:_stop_charge_sound()
 end

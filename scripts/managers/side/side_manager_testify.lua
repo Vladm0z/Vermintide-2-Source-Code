@@ -1,15 +1,13 @@
-﻿-- chunkname: @scripts/managers/side/side_manager_testify.lua
+-- chunkname: @scripts/managers/side/side_manager_testify.lua
 
-local SideManagerTestify = {
-	num_human_players_on_side = function (side_manager, sideName)
-		local side = side_manager:get_side_from_name("heroes")
+return {
+	num_human_players_on_side = function(arg_1_0, arg_1_1)
+		local var_1_0 = arg_1_0:get_side_from_name("heroes")
 
-		if not side then
+		if not var_1_0 then
 			return Testify.RETRY
 		end
 
-		return table.size(side.PLAYER_UNITS)
-	end,
+		return table.size(var_1_0.PLAYER_UNITS)
+	end
 }
-
-return SideManagerTestify

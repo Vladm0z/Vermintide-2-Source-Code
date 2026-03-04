@@ -1,11366 +1,11366 @@
-﻿-- chunkname: @dialogues/generated/vs_player_vo_pactsworn.lua
+-- chunkname: @dialogues/generated/vs_player_vo_pactsworn.lua
 
-return function ()
+return function()
 	define_rule({
-		name = "ebt_vs_low_on_health",
 		probability = 1,
+		name = "ebt_vs_low_on_health",
 		response = "ebt_vs_low_on_health",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"health_trigger",
+				"health_trigger"
 			},
 			{
 				"query_context",
 				"current_amount",
 				OP.LTEQ,
-				0.6,
+				0.6
 			},
 			{
 				"query_context",
 				"current_amount",
 				OP.GTEQ,
-				0.1,
+				0.1
 			},
 			{
 				"query_context",
 				"trigger_type",
 				OP.EQ,
-				"decreasing",
+				"decreasing"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_chaos_troll",
+				"vs_chaos_troll"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_chaos_troll",
+				"vs_chaos_troll"
 			},
 			{
 				"user_memory",
 				"low_health",
 				OP.TIMEDIFF,
 				OP.GT,
-				30,
-			},
+				30
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"low_health",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ebt_vs_spawning_troll",
 		probability = 1,
+		name = "ebt_vs_spawning_troll",
 		response = "ebt_vs_spawning_troll",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"spawning",
+				"spawning"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_chaos_troll",
+				"vs_chaos_troll"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_chaos_troll",
+				"vs_chaos_troll"
 			},
 			{
 				"user_memory",
 				"time_since_spawning",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_spawning",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_spawning_gutter_runner",
 		probability = 1,
+		name = "egt_spawning_gutter_runner",
 		response = "egt_spawning_gutter_runner",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"spawning",
+				"spawning"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_memory",
 				"time_since_spawning",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_spawning",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_taunting_bardin",
 		probability = 1,
+		name = "egt_taunting_bardin",
 		response = "egt_taunting_bardin",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_dr_ranger",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_dr_ironbreaker",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_dr_slayer",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"hero_dr_engineer",
+				"hero_dr_engineer"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_memory",
 				"time_since_taunting",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_taunting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_taunting_kerillian",
 		probability = 1,
+		name = "egt_taunting_kerillian",
 		response = "egt_taunting_kerillian",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_we_waywatcher",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_we_maidenguard",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_we_shade",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"hero_we_thornsister",
+				"hero_we_thornsister"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_memory",
 				"time_since_taunting",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_taunting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_taunting_kruber",
 		probability = 1,
+		name = "egt_taunting_kruber",
 		response = "egt_taunting_kruber",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_es_mercenary",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_es_huntsman",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_es_knight",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"hero_es_questingknight",
+				"hero_es_questingknight"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_memory",
 				"time_since_taunting",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_taunting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_taunting_saltzpyre",
 		probability = 1,
+		name = "egt_taunting_saltzpyre",
 		response = "egt_taunting_saltzpyre",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_wh_captain",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_wh_bountyhunter",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_wh_zealot",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"hero_wh_priest",
+				"hero_wh_priest"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_memory",
 				"time_since_taunting",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_taunting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_taunting_sienna",
 		probability = 1,
+		name = "egt_taunting_sienna",
 		response = "egt_taunting_sienna",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_bw_scholar",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_bw_adept",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_bw_unchained",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"hero_bw_necromancer",
+				"hero_bw_necromancer"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_memory",
 				"time_since_taunting",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_taunting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
+		response = "egt_vs_ability_horde_a",
 		name = "egt_vs_ability_horde_a",
 		probability = 1,
-		response = "egt_vs_ability_horde_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_ability_horde",
+				"vs_ability_horde"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
-			},
-		},
+				"vs_gutter_runner"
+			}
+		}
 	})
 	define_rule({
+		response = "egt_vs_downed_hero_a",
 		name = "egt_vs_downed_hero_a",
 		probability = 1,
-		response = "egt_vs_downed_hero_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_downed_hero",
+				"vs_downed_hero"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
-			},
-		},
+				"vs_gutter_runner"
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vs_globadier_hitting_many_a",
 		probability = 1,
+		name = "egt_vs_globadier_hitting_many_a",
 		response = "egt_vs_globadier_hitting_many_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_globadier_hitting_many",
+				"vs_globadier_hitting_many"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_memory",
 				"vs_globadier_globe_thrown",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_globe_thrown",
 				OP.TIMEDIFF,
 				OP.GT,
-				60,
-			},
+				60
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"vs_globadier_globe_thrown",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_globe_thrown",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vs_globadier_missing_globe_a",
 		probability = 1,
+		name = "egt_vs_globadier_missing_globe_a",
 		response = "egt_vs_globadier_missing_globe_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_globadier_missing_globe",
+				"vs_globadier_missing_globe"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_memory",
 				"vs_globadier_globe_thrown",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_globe_thrown",
 				OP.TIMEDIFF,
 				OP.GT,
-				60,
-			},
+				60
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"vs_globadier_globe_thrown",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_globe_thrown",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
+		response = "egt_vs_heroes_objective_almost_completed_b",
 		name = "egt_vs_heroes_objective_almost_completed_b",
 		probability = 1,
-		response = "egt_vs_heroes_objective_almost_completed_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_heroes_objective_almost_completed_a",
+				"vs_heroes_objective_almost_completed_a"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
-			},
-		},
+				"vs_gutter_runner"
+			}
+		}
 	})
 	define_rule({
+		response = "egt_vs_many_heroes_incapacitated_a",
 		name = "egt_vs_many_heroes_incapacitated_a",
 		probability = 1,
-		response = "egt_vs_many_heroes_incapacitated_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_many_heroes_incapacitated",
+				"vs_many_heroes_incapacitated"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
-			},
-		},
+				"vs_gutter_runner"
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vs_pact_proximity_banter_eight_b",
 		probability = 1,
+		name = "egt_vs_pact_proximity_banter_eight_b",
 		response = "egt_vs_pact_proximity_banter_eight_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_eight_a",
+				"vs_pact_proximity_banter_eight_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vs_pact_proximity_banter_eighteen_b",
 		probability = 1,
+		name = "egt_vs_pact_proximity_banter_eighteen_b",
 		response = "egt_vs_pact_proximity_banter_eighteen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_eighteen_a",
+				"vs_pact_proximity_banter_eighteen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vs_pact_proximity_banter_eleven_b",
 		probability = 1,
+		name = "egt_vs_pact_proximity_banter_eleven_b",
 		response = "egt_vs_pact_proximity_banter_eleven_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_eleven_a",
+				"vs_pact_proximity_banter_eleven_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vs_pact_proximity_banter_fifteen_a",
 		probability = 0.5,
+		name = "egt_vs_pact_proximity_banter_fifteen_a",
 		response = "egt_vs_pact_proximity_banter_fifteen_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"friends_close",
+				"friends_close"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				2,
+				2
 			},
 			{
 				"user_context",
 				"enemies_close",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.LT,
-				5,
+				5
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_fifteen",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
 				OP.TIMEDIFF,
 				OP.GT,
-				140,
-			},
+				140
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_fifteen",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vs_pact_proximity_banter_five_a",
 		probability = 0.5,
+		name = "egt_vs_pact_proximity_banter_five_a",
 		response = "egt_vs_pact_proximity_banter_five_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"friends_close",
+				"friends_close"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				2,
+				2
 			},
 			{
 				"user_context",
 				"enemies_close",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.LT,
-				5,
+				5
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_five",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
 				OP.TIMEDIFF,
 				OP.GT,
-				140,
-			},
+				140
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_five",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vs_pact_proximity_banter_four_b",
 		probability = 1,
+		name = "egt_vs_pact_proximity_banter_four_b",
 		response = "egt_vs_pact_proximity_banter_four_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_four_a",
+				"vs_pact_proximity_banter_four_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vs_pact_proximity_banter_fourteen_b",
 		probability = 1,
+		name = "egt_vs_pact_proximity_banter_fourteen_b",
 		response = "egt_vs_pact_proximity_banter_fourteen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_fourteen_a",
+				"vs_pact_proximity_banter_fourteen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vs_pact_proximity_banter_nine_b",
 		probability = 1,
+		name = "egt_vs_pact_proximity_banter_nine_b",
 		response = "egt_vs_pact_proximity_banter_nine_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_nine_a",
+				"vs_pact_proximity_banter_nine_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vs_pact_proximity_banter_nineteen_b",
 		probability = 1,
+		name = "egt_vs_pact_proximity_banter_nineteen_b",
 		response = "egt_vs_pact_proximity_banter_nineteen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_nineteen_a",
+				"vs_pact_proximity_banter_nineteen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vs_pact_proximity_banter_one_b",
 		probability = 1,
+		name = "egt_vs_pact_proximity_banter_one_b",
 		response = "egt_vs_pact_proximity_banter_one_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_one_a",
+				"vs_pact_proximity_banter_one_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vs_pact_proximity_banter_seven_b",
 		probability = 1,
+		name = "egt_vs_pact_proximity_banter_seven_b",
 		response = "egt_vs_pact_proximity_banter_seven_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_seven_a",
+				"vs_pact_proximity_banter_seven_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vs_pact_proximity_banter_seventeen_b",
 		probability = 1,
+		name = "egt_vs_pact_proximity_banter_seventeen_b",
 		response = "egt_vs_pact_proximity_banter_seventeen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_seventeen_a",
+				"vs_pact_proximity_banter_seventeen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vs_pact_proximity_banter_six_b",
 		probability = 1,
+		name = "egt_vs_pact_proximity_banter_six_b",
 		response = "egt_vs_pact_proximity_banter_six_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_six_a",
+				"vs_pact_proximity_banter_six_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vs_pact_proximity_banter_sixteen_b",
 		probability = 1,
+		name = "egt_vs_pact_proximity_banter_sixteen_b",
 		response = "egt_vs_pact_proximity_banter_sixteen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_sixteen_a",
+				"vs_pact_proximity_banter_sixteen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vs_pact_proximity_banter_ten_a",
 		probability = 0.5,
+		name = "egt_vs_pact_proximity_banter_ten_a",
 		response = "egt_vs_pact_proximity_banter_ten_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"friends_close",
+				"friends_close"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				2,
+				2
 			},
 			{
 				"user_context",
 				"enemies_close",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.LT,
-				5,
+				5
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_ten",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
 				OP.TIMEDIFF,
 				OP.GT,
-				140,
-			},
+				140
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_ten",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vs_pact_proximity_banter_thirteen_b",
 		probability = 1,
+		name = "egt_vs_pact_proximity_banter_thirteen_b",
 		response = "egt_vs_pact_proximity_banter_thirteen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_thirteen_a",
+				"vs_pact_proximity_banter_thirteen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vs_pact_proximity_banter_three_b",
 		probability = 1,
+		name = "egt_vs_pact_proximity_banter_three_b",
 		response = "egt_vs_pact_proximity_banter_three_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_three_a",
+				"vs_pact_proximity_banter_three_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vs_pact_proximity_banter_twelve_b",
 		probability = 1,
+		name = "egt_vs_pact_proximity_banter_twelve_b",
 		response = "egt_vs_pact_proximity_banter_twelve_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_twelve_a",
+				"vs_pact_proximity_banter_twelve_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vs_pact_proximity_banter_twenty_a",
 		probability = 0.5,
+		name = "egt_vs_pact_proximity_banter_twenty_a",
 		response = "egt_vs_pact_proximity_banter_twenty_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"friends_close",
+				"friends_close"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				2,
+				2
 			},
 			{
 				"user_context",
 				"enemies_close",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.LT,
-				5,
+				5
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_twenty",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
 				OP.TIMEDIFF,
 				OP.GT,
-				140,
-			},
+				140
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_twenty",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vs_pact_proximity_banter_two_b",
 		probability = 1,
+		name = "egt_vs_pact_proximity_banter_two_b",
 		response = "egt_vs_pact_proximity_banter_two_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_two_a",
+				"vs_pact_proximity_banter_two_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vs_passing_hoisted_hero_a",
 		probability = 1,
+		name = "egt_vs_passing_hoisted_hero_a",
 		response = "egt_vs_passing_hoisted_hero_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_passing_hoisted_hero",
+				"vs_passing_hoisted_hero"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_memory",
 				"vs_passing_hoisted_hero",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"vs_passing_hoisted_hero",
 				OP.ADD,
-				1,
-			},
-		},
+				1
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vw_affirmative",
 		probability = 1,
+		name = "egt_vw_affirmative",
 		response = "egt_vw_affirmative",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_affirmative",
+				"vw_affirmative"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_memory",
 				"time_since_vw_affirmative",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_affirmative",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vw_ambush",
 		probability = 1,
+		name = "egt_vw_ambush",
 		response = "egt_vw_ambush",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_ambush",
+				"vw_ambush"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_memory",
 				"time_since_vw_ambush",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_ambush",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vw_attack_now",
 		probability = 1,
+		name = "egt_vw_attack_now",
 		response = "egt_vw_attack_now",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_attack_now",
+				"vw_attack_now"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_memory",
 				"time_since_vw_attack_now",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_attack_now",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vw_cover_me",
 		probability = 1,
+		name = "egt_vw_cover_me",
 		response = "egt_vw_cover_me",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_cover_me",
+				"vw_cover_me"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_memory",
 				"time_since_vw_cover_me",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_cover_me",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vw_gather",
 		probability = 1,
+		name = "egt_vw_gather",
 		response = "egt_vw_gather",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_gather",
+				"vw_gather"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_memory",
 				"time_since_vw_gather",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_gather",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vw_go_here",
 		probability = 1,
+		name = "egt_vw_go_here",
 		response = "egt_vw_go_here",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_go_here",
+				"vw_go_here"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_memory",
 				"time_since_vw_go_here",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_go_here",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vw_negation",
 		probability = 1,
+		name = "egt_vw_negation",
 		response = "egt_vw_negation",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_negation",
+				"vw_negation"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_memory",
 				"time_since_vw_negation",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_negation",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vw_thanks",
 		probability = 1,
+		name = "egt_vw_thanks",
 		response = "egt_vw_thanks",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_thank_you",
+				"vw_thank_you"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_memory",
 				"time_since_vw_thanks",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_thanks",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "egt_vw_wait",
 		probability = 1,
+		name = "egt_vw_wait",
 		response = "egt_vw_wait",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_wait",
+				"vw_wait"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_gutter_runner",
+				"vs_gutter_runner"
 			},
 			{
 				"user_memory",
 				"time_since_vw_wait",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_wait",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_spawning_globadier",
 		probability = 1,
+		name = "epg_spawning_globadier",
 		response = "epg_spawning_globadier",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"spawning",
+				"spawning"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_memory",
 				"time_since_spawning",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_spawning",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_taunting_bardin",
 		probability = 1,
+		name = "epg_taunting_bardin",
 		response = "epg_taunting_bardin",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_dr_ranger",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_dr_ironbreaker",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_dr_slayer",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"hero_dr_engineer",
+				"hero_dr_engineer"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_memory",
 				"time_since_taunting",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_taunting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_taunting_kerillian",
 		probability = 1,
+		name = "epg_taunting_kerillian",
 		response = "epg_taunting_kerillian",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_we_waywatcher",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_we_maidenguard",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_we_shade",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"hero_we_thornsister",
+				"hero_we_thornsister"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_memory",
 				"time_since_taunting",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_taunting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_taunting_kruber",
 		probability = 1,
+		name = "epg_taunting_kruber",
 		response = "epg_taunting_kruber",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_es_mercenary",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_es_huntsman",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_es_knight",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"hero_es_questingknight",
+				"hero_es_questingknight"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_memory",
 				"time_since_taunting",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_taunting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_taunting_saltzpyre",
 		probability = 1,
+		name = "epg_taunting_saltzpyre",
 		response = "epg_taunting_saltzpyre",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_wh_captain",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_wh_bountyhunter",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_wh_zealot",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"hero_wh_priest",
+				"hero_wh_priest"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_memory",
 				"time_since_taunting",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_taunting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_taunting_sienna",
 		probability = 1,
+		name = "epg_taunting_sienna",
 		response = "epg_taunting_sienna",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_bw_scholar",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_bw_adept",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_bw_unchained",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"hero_bw_necromancer",
+				"hero_bw_necromancer"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_memory",
 				"time_since_taunting",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_taunting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_versus_throwing_globe",
 		probability = 1,
+		name = "epg_versus_throwing_globe",
 		response = "epg_versus_throwing_globe",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"activate_ability",
+				"activate_ability"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_memory",
 				"last_threw_globe",
 				OP.TIMEDIFF,
 				OP.GT,
-				20,
-			},
+				20
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"last_threw_globe",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
+		response = "epg_vs_ability_horde_a",
 		name = "epg_vs_ability_horde_a",
 		probability = 1,
-		response = "epg_vs_ability_horde_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_ability_horde",
+				"vs_ability_horde"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
-			},
-		},
+				"vs_poison_wind_globadier"
+			}
+		}
 	})
 	define_rule({
+		response = "epg_vs_downed_hero_a",
 		name = "epg_vs_downed_hero_a",
 		probability = 1,
-		response = "epg_vs_downed_hero_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_downed_hero",
+				"vs_downed_hero"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
-			},
-		},
+				"vs_poison_wind_globadier"
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vs_globadier_hitting_many_a",
 		probability = 1,
+		name = "epg_vs_globadier_hitting_many_a",
 		response = "epg_vs_globadier_hitting_many_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_globadier_hitting_many",
+				"vs_globadier_hitting_many"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_memory",
 				"vs_globadier_globe_thrown",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_globe_thrown",
 				OP.TIMEDIFF,
 				OP.GT,
-				60,
-			},
+				60
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"vs_globadier_globe_thrown",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_globe_thrown",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vs_globadier_missing_globe_a",
 		probability = 1,
+		name = "epg_vs_globadier_missing_globe_a",
 		response = "epg_vs_globadier_missing_globe_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_globadier_missing_globe",
+				"vs_globadier_missing_globe"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_memory",
 				"vs_globadier_globe_thrown",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_globe_thrown",
 				OP.TIMEDIFF,
 				OP.GT,
-				60,
-			},
+				60
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"vs_globadier_globe_thrown",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_globe_thrown",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vs_globe_on_disabled_hero_a",
 		probability = 1,
+		name = "epg_vs_globe_on_disabled_hero_a",
 		response = "epg_vs_globe_on_disabled_hero_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_globe_on_disabled_hero",
+				"vs_globe_on_disabled_hero"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_memory",
 				"vs_globe_on_disabled_hero",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"vs_globe_on_disabled_hero",
 				OP.ADD,
-				1,
-			},
-		},
+				1
+			}
+		}
 	})
 	define_rule({
+		response = "epg_vs_heroes_objective_almost_completed_b",
 		name = "epg_vs_heroes_objective_almost_completed_b",
 		probability = 1,
-		response = "epg_vs_heroes_objective_almost_completed_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_heroes_objective_almost_completed_a",
+				"vs_heroes_objective_almost_completed_a"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
-			},
-		},
+				"vs_poison_wind_globadier"
+			}
+		}
 	})
 	define_rule({
+		response = "epg_vs_many_heroes_incapacitated_a",
 		name = "epg_vs_many_heroes_incapacitated_a",
 		probability = 1,
-		response = "epg_vs_many_heroes_incapacitated_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_many_heroes_incapacitated",
+				"vs_many_heroes_incapacitated"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
-			},
-		},
+				"vs_poison_wind_globadier"
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vs_pact_proximity_banter_eight_b",
 		probability = 1,
+		name = "epg_vs_pact_proximity_banter_eight_b",
 		response = "epg_vs_pact_proximity_banter_eight_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_eight_a",
+				"vs_pact_proximity_banter_eight_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vs_pact_proximity_banter_eighteen_b",
 		probability = 1,
+		name = "epg_vs_pact_proximity_banter_eighteen_b",
 		response = "epg_vs_pact_proximity_banter_eighteen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_eighteen_a",
+				"vs_pact_proximity_banter_eighteen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vs_pact_proximity_banter_eleven_a",
 		probability = 0.5,
+		name = "epg_vs_pact_proximity_banter_eleven_a",
 		response = "epg_vs_pact_proximity_banter_eleven_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"friends_close",
+				"friends_close"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				2,
+				2
 			},
 			{
 				"user_context",
 				"enemies_close",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.LT,
-				5,
+				5
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_eleven",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
 				OP.TIMEDIFF,
 				OP.GT,
-				140,
-			},
+				140
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_eleven",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vs_pact_proximity_banter_fifteen_b",
 		probability = 1,
+		name = "epg_vs_pact_proximity_banter_fifteen_b",
 		response = "epg_vs_pact_proximity_banter_fifteen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_fifteen_a",
+				"vs_pact_proximity_banter_fifteen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vs_pact_proximity_banter_five_b",
 		probability = 1,
+		name = "epg_vs_pact_proximity_banter_five_b",
 		response = "epg_vs_pact_proximity_banter_five_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_five_a",
+				"vs_pact_proximity_banter_five_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vs_pact_proximity_banter_four_b",
 		probability = 1,
+		name = "epg_vs_pact_proximity_banter_four_b",
 		response = "epg_vs_pact_proximity_banter_four_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_four_a",
+				"vs_pact_proximity_banter_four_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vs_pact_proximity_banter_fourteen_b",
 		probability = 1,
+		name = "epg_vs_pact_proximity_banter_fourteen_b",
 		response = "epg_vs_pact_proximity_banter_fourteen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_fourteen_a",
+				"vs_pact_proximity_banter_fourteen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vs_pact_proximity_banter_nine_b",
 		probability = 1,
+		name = "epg_vs_pact_proximity_banter_nine_b",
 		response = "epg_vs_pact_proximity_banter_nine_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_nine_a",
+				"vs_pact_proximity_banter_nine_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vs_pact_proximity_banter_nineteen_b",
 		probability = 1,
+		name = "epg_vs_pact_proximity_banter_nineteen_b",
 		response = "epg_vs_pact_proximity_banter_nineteen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_nineteen_a",
+				"vs_pact_proximity_banter_nineteen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vs_pact_proximity_banter_one_a",
 		probability = 0.5,
+		name = "epg_vs_pact_proximity_banter_one_a",
 		response = "epg_vs_pact_proximity_banter_one_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"friends_close",
+				"friends_close"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				2,
+				2
 			},
 			{
 				"user_context",
 				"enemies_close",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.LT,
-				5,
+				5
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_one",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
 				OP.TIMEDIFF,
 				OP.GT,
-				140,
-			},
+				140
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_one",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vs_pact_proximity_banter_seven_b",
 		probability = 1,
+		name = "epg_vs_pact_proximity_banter_seven_b",
 		response = "epg_vs_pact_proximity_banter_seven_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_seven_a",
+				"vs_pact_proximity_banter_seven_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vs_pact_proximity_banter_seventeen_b",
 		probability = 1,
+		name = "epg_vs_pact_proximity_banter_seventeen_b",
 		response = "epg_vs_pact_proximity_banter_seventeen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_seventeen_a",
+				"vs_pact_proximity_banter_seventeen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vs_pact_proximity_banter_six_a",
 		probability = 0.5,
+		name = "epg_vs_pact_proximity_banter_six_a",
 		response = "epg_vs_pact_proximity_banter_six_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"friends_close",
+				"friends_close"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				2,
+				2
 			},
 			{
 				"user_context",
 				"enemies_close",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.LT,
-				5,
+				5
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_six",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
 				OP.TIMEDIFF,
 				OP.GT,
-				140,
-			},
+				140
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_six",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vs_pact_proximity_banter_sixteen_a",
 		probability = 0.5,
+		name = "epg_vs_pact_proximity_banter_sixteen_a",
 		response = "epg_vs_pact_proximity_banter_sixteen_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"friends_close",
+				"friends_close"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				2,
+				2
 			},
 			{
 				"user_context",
 				"enemies_close",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.LT,
-				5,
+				5
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_sixteen",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
 				OP.TIMEDIFF,
 				OP.GT,
-				140,
-			},
+				140
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_sixteen",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vs_pact_proximity_banter_ten_b",
 		probability = 1,
+		name = "epg_vs_pact_proximity_banter_ten_b",
 		response = "epg_vs_pact_proximity_banter_ten_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_ten_a",
+				"vs_pact_proximity_banter_ten_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vs_pact_proximity_banter_thirteen_b",
 		probability = 1,
+		name = "epg_vs_pact_proximity_banter_thirteen_b",
 		response = "epg_vs_pact_proximity_banter_thirteen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_thirteen_a",
+				"vs_pact_proximity_banter_thirteen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vs_pact_proximity_banter_three_b",
 		probability = 1,
+		name = "epg_vs_pact_proximity_banter_three_b",
 		response = "epg_vs_pact_proximity_banter_three_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_three_a",
+				"vs_pact_proximity_banter_three_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vs_pact_proximity_banter_twelve_b",
 		probability = 1,
+		name = "epg_vs_pact_proximity_banter_twelve_b",
 		response = "epg_vs_pact_proximity_banter_twelve_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_twelve_a",
+				"vs_pact_proximity_banter_twelve_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vs_pact_proximity_banter_twenty_b",
 		probability = 1,
+		name = "epg_vs_pact_proximity_banter_twenty_b",
 		response = "epg_vs_pact_proximity_banter_twenty_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_twenty_a",
+				"vs_pact_proximity_banter_twenty_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vs_pact_proximity_banter_two_b",
 		probability = 1,
+		name = "epg_vs_pact_proximity_banter_two_b",
 		response = "epg_vs_pact_proximity_banter_two_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_two_a",
+				"vs_pact_proximity_banter_two_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vs_passing_hoisted_hero_a",
 		probability = 1,
+		name = "epg_vs_passing_hoisted_hero_a",
 		response = "epg_vs_passing_hoisted_hero_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_passing_hoisted_hero",
+				"vs_passing_hoisted_hero"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_memory",
 				"vs_passing_hoisted_hero",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"vs_passing_hoisted_hero",
 				OP.ADD,
-				1,
-			},
-		},
+				1
+			}
+		}
 	})
 	define_rule({
+		response = "epg_vs_vw_cheer_a",
 		name = "epg_vs_vw_cheer_a",
 		probability = 0.4,
-		response = "epg_vs_vw_cheer_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_ability_horde_a",
+				"vs_ability_horde_a"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
-			},
-		},
+				"vs_poison_wind_globadier"
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vw_affirmative",
 		probability = 1,
+		name = "epg_vw_affirmative",
 		response = "epg_vw_affirmative",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_affirmative",
+				"vw_affirmative"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_memory",
 				"time_since_vw_affirmative",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_affirmative",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vw_ambush",
 		probability = 1,
+		name = "epg_vw_ambush",
 		response = "epg_vw_ambush",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_ambush",
+				"vw_ambush"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_memory",
 				"time_since_vw_ambush",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_ambush",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vw_attack_now",
 		probability = 1,
+		name = "epg_vw_attack_now",
 		response = "epg_vw_attack_now",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_attack_now",
+				"vw_attack_now"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_memory",
 				"time_since_vw_attack_now",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_attack_now",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vw_cover_me",
 		probability = 1,
+		name = "epg_vw_cover_me",
 		response = "epg_vw_cover_me",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_cover_me",
+				"vw_cover_me"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_memory",
 				"time_since_vw_cover_me",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_cover_me",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vw_gather",
 		probability = 1,
+		name = "epg_vw_gather",
 		response = "epg_vw_gather",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_gather",
+				"vw_gather"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_memory",
 				"time_since_vw_gather",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_gather",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vw_go_here",
 		probability = 1,
+		name = "epg_vw_go_here",
 		response = "epg_vw_go_here",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_go_here",
+				"vw_go_here"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_memory",
 				"time_since_vw_go_here",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_go_here",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vw_negation",
 		probability = 1,
+		name = "epg_vw_negation",
 		response = "epg_vw_negation",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_negation",
+				"vw_negation"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_memory",
 				"time_since_vw_negation",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_negation",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vw_thanks",
 		probability = 1,
+		name = "epg_vw_thanks",
 		response = "epg_vw_thanks",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_thank_you",
+				"vw_thank_you"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_memory",
 				"time_since_vw_thanks",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_thanks",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epg_vw_wait",
 		probability = 1,
+		name = "epg_vw_wait",
 		response = "epg_vw_wait",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_wait",
+				"vw_wait"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_poison_wind_globadier",
+				"vs_poison_wind_globadier"
 			},
 			{
 				"user_memory",
 				"time_since_vw_wait",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_wait",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_packmaster_grab_walk",
 		probability = 1,
+		name = "epm_packmaster_grab_walk",
 		response = "epm_packmaster_grab_walk",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"walking",
+				"walking"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_memory",
 				"time_since_grab_walk",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_grab_walk",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_packmaster_hook_fail",
 		probability = 1,
+		name = "epm_packmaster_hook_fail",
 		response = "epm_packmaster_hook_fail",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"hook_fail",
+				"hook_fail"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_memory",
 				"time_since_hook_fail",
 				OP.TIMEDIFF,
 				OP.GT,
-				2,
-			},
+				2
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_hook_fail",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_packmaster_hook_success",
 		probability = 1,
+		name = "epm_packmaster_hook_success",
 		response = "epm_packmaster_hook_success",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"hook_success",
+				"hook_success"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_memory",
 				"time_since_hook_success",
 				OP.TIMEDIFF,
 				OP.GT,
-				2,
-			},
+				2
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_hook_success",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_spawning_packmaster",
 		probability = 1,
+		name = "epm_spawning_packmaster",
 		response = "epm_spawning_packmaster",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"spawning",
+				"spawning"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_memory",
 				"time_since_spawning",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_spawning",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_taunting_bardin",
 		probability = 1,
+		name = "epm_taunting_bardin",
 		response = "epm_taunting_bardin",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_dr_ranger",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_dr_ironbreaker",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_dr_slayer",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"hero_dr_engineer",
+				"hero_dr_engineer"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_memory",
 				"time_since_taunting",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_taunting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_taunting_kerillian",
 		probability = 1,
+		name = "epm_taunting_kerillian",
 		response = "epm_taunting_kerillian",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_we_waywatcher",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_we_maidenguard",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_we_shade",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"hero_we_thornsister",
+				"hero_we_thornsister"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_memory",
 				"time_since_taunting",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_taunting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_taunting_kruber",
 		probability = 1,
+		name = "epm_taunting_kruber",
 		response = "epm_taunting_kruber",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_es_mercenary",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_es_huntsman",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_es_knight",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"hero_es_questingknight",
+				"hero_es_questingknight"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_memory",
 				"time_since_taunting",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_taunting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_taunting_saltzpyre",
 		probability = 1,
+		name = "epm_taunting_saltzpyre",
 		response = "epm_taunting_saltzpyre",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_wh_captain",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_wh_bountyhunter",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_wh_zealot",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"hero_wh_priest",
+				"hero_wh_priest"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_memory",
 				"time_since_taunting",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_taunting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_taunting_sienna",
 		probability = 1,
+		name = "epm_taunting_sienna",
 		response = "epm_taunting_sienna",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_bw_scholar",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_bw_adept",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_bw_unchained",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"hero_bw_necromancer",
+				"hero_bw_necromancer"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_memory",
 				"time_since_taunting",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_taunting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
+		response = "epm_vs_ability_horde_a",
 		name = "epm_vs_ability_horde_a",
 		probability = 1,
-		response = "epm_vs_ability_horde_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_ability_horde",
+				"vs_ability_horde"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
-			},
-		},
+				"vs_packmaster"
+			}
+		}
 	})
 	define_rule({
+		response = "epm_vs_downed_hero_a",
 		name = "epm_vs_downed_hero_a",
 		probability = 1,
-		response = "epm_vs_downed_hero_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_downed_hero",
+				"vs_downed_hero"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
-			},
-		},
+				"vs_packmaster"
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vs_globadier_hitting_many_a",
 		probability = 1,
+		name = "epm_vs_globadier_hitting_many_a",
 		response = "epm_vs_globadier_hitting_many_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_globadier_hitting_many",
+				"vs_globadier_hitting_many"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_memory",
 				"vs_globadier_globe_thrown",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_globe_thrown",
 				OP.TIMEDIFF,
 				OP.GT,
-				60,
-			},
+				60
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"vs_globadier_globe_thrown",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_globe_thrown",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vs_globadier_missing_globe_a",
 		probability = 1,
+		name = "epm_vs_globadier_missing_globe_a",
 		response = "epm_vs_globadier_missing_globe_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_globadier_missing_globe",
+				"vs_globadier_missing_globe"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_memory",
 				"vs_globadier_globe_thrown",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_globe_thrown",
 				OP.TIMEDIFF,
 				OP.GT,
-				60,
-			},
+				60
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"vs_globadier_globe_thrown",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_globe_thrown",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
+		response = "epm_vs_heroes_objective_almost_completed_b",
 		name = "epm_vs_heroes_objective_almost_completed_b",
 		probability = 1,
-		response = "epm_vs_heroes_objective_almost_completed_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_heroes_objective_almost_completed_a",
+				"vs_heroes_objective_almost_completed_a"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
-			},
-		},
+				"vs_packmaster"
+			}
+		}
 	})
 	define_rule({
+		response = "epm_vs_many_heroes_incapacitated_a",
 		name = "epm_vs_many_heroes_incapacitated_a",
 		probability = 1,
-		response = "epm_vs_many_heroes_incapacitated_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_many_heroes_incapacitated",
+				"vs_many_heroes_incapacitated"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
-			},
-		},
+				"vs_packmaster"
+			}
+		}
 	})
 	define_rule({
+		response = "epm_vs_packmaster_hoisted_player_a",
 		name = "epm_vs_packmaster_hoisted_player_a",
 		probability = 1,
-		response = "epm_vs_packmaster_hoisted_player_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_packmaster_hoisted_player",
+				"vs_packmaster_hoisted_player"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
-			},
-		},
+				"vs_packmaster"
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vs_pact_proximity_banter_eight_b",
 		probability = 1,
+		name = "epm_vs_pact_proximity_banter_eight_b",
 		response = "epm_vs_pact_proximity_banter_eight_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_eight_a",
+				"vs_pact_proximity_banter_eight_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vs_pact_proximity_banter_eighteen_b",
 		probability = 1,
+		name = "epm_vs_pact_proximity_banter_eighteen_b",
 		response = "epm_vs_pact_proximity_banter_eighteen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_eighteen_a",
+				"vs_pact_proximity_banter_eighteen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vs_pact_proximity_banter_eleven_b",
 		probability = 1,
+		name = "epm_vs_pact_proximity_banter_eleven_b",
 		response = "epm_vs_pact_proximity_banter_eleven_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_eleven_a",
+				"vs_pact_proximity_banter_eleven_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vs_pact_proximity_banter_fifteen_b",
 		probability = 1,
+		name = "epm_vs_pact_proximity_banter_fifteen_b",
 		response = "epm_vs_pact_proximity_banter_fifteen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_fifteen_a",
+				"vs_pact_proximity_banter_fifteen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vs_pact_proximity_banter_five_b",
 		probability = 1,
+		name = "epm_vs_pact_proximity_banter_five_b",
 		response = "epm_vs_pact_proximity_banter_five_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_five_a",
+				"vs_pact_proximity_banter_five_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vs_pact_proximity_banter_four_b",
 		probability = 1,
+		name = "epm_vs_pact_proximity_banter_four_b",
 		response = "epm_vs_pact_proximity_banter_four_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_four_a",
+				"vs_pact_proximity_banter_four_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vs_pact_proximity_banter_fourteen_b",
 		probability = 1,
+		name = "epm_vs_pact_proximity_banter_fourteen_b",
 		response = "epm_vs_pact_proximity_banter_fourteen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_fourteen_a",
+				"vs_pact_proximity_banter_fourteen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vs_pact_proximity_banter_nine_b",
 		probability = 1,
+		name = "epm_vs_pact_proximity_banter_nine_b",
 		response = "epm_vs_pact_proximity_banter_nine_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_nine_a",
+				"vs_pact_proximity_banter_nine_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vs_pact_proximity_banter_nineteen_b",
 		probability = 1,
+		name = "epm_vs_pact_proximity_banter_nineteen_b",
 		response = "epm_vs_pact_proximity_banter_nineteen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_nineteen_a",
+				"vs_pact_proximity_banter_nineteen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vs_pact_proximity_banter_one_b",
 		probability = 1,
+		name = "epm_vs_pact_proximity_banter_one_b",
 		response = "epm_vs_pact_proximity_banter_one_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_one_a",
+				"vs_pact_proximity_banter_one_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vs_pact_proximity_banter_seven_a",
 		probability = 0.5,
+		name = "epm_vs_pact_proximity_banter_seven_a",
 		response = "epm_vs_pact_proximity_banter_seven_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"friends_close",
+				"friends_close"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				2,
+				2
 			},
 			{
 				"user_context",
 				"enemies_close",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.LT,
-				5,
+				5
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_seven",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
 				OP.TIMEDIFF,
 				OP.GT,
-				140,
-			},
+				140
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_seven",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vs_pact_proximity_banter_seventeen_a",
 		probability = 0.5,
+		name = "epm_vs_pact_proximity_banter_seventeen_a",
 		response = "epm_vs_pact_proximity_banter_seventeen_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"friends_close",
+				"friends_close"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				2,
+				2
 			},
 			{
 				"user_context",
 				"enemies_close",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.LT,
-				5,
+				5
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_seventeen",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
 				OP.TIMEDIFF,
 				OP.GT,
-				140,
-			},
+				140
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_seventeen",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vs_pact_proximity_banter_six_b",
 		probability = 1,
+		name = "epm_vs_pact_proximity_banter_six_b",
 		response = "epm_vs_pact_proximity_banter_six_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_six_a",
+				"vs_pact_proximity_banter_six_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vs_pact_proximity_banter_sixteen_b",
 		probability = 1,
+		name = "epm_vs_pact_proximity_banter_sixteen_b",
 		response = "epm_vs_pact_proximity_banter_sixteen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_sixteen_a",
+				"vs_pact_proximity_banter_sixteen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vs_pact_proximity_banter_ten_b",
 		probability = 1,
+		name = "epm_vs_pact_proximity_banter_ten_b",
 		response = "epm_vs_pact_proximity_banter_ten_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_ten_a",
+				"vs_pact_proximity_banter_ten_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vs_pact_proximity_banter_thirteen_b",
 		probability = 1,
+		name = "epm_vs_pact_proximity_banter_thirteen_b",
 		response = "epm_vs_pact_proximity_banter_thirteen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_thirteen_a",
+				"vs_pact_proximity_banter_thirteen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vs_pact_proximity_banter_three_b",
 		probability = 1,
+		name = "epm_vs_pact_proximity_banter_three_b",
 		response = "epm_vs_pact_proximity_banter_three_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_three_a",
+				"vs_pact_proximity_banter_three_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vs_pact_proximity_banter_twelve_a",
 		probability = 0.5,
+		name = "epm_vs_pact_proximity_banter_twelve_a",
 		response = "epm_vs_pact_proximity_banter_twelve_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"friends_close",
+				"friends_close"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				2,
+				2
 			},
 			{
 				"user_context",
 				"enemies_close",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.LT,
-				5,
+				5
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_twelve",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
 				OP.TIMEDIFF,
 				OP.GT,
-				140,
-			},
+				140
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_twelve",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vs_pact_proximity_banter_twenty_b",
 		probability = 1,
+		name = "epm_vs_pact_proximity_banter_twenty_b",
 		response = "epm_vs_pact_proximity_banter_twenty_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_twenty_a",
+				"vs_pact_proximity_banter_twenty_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vs_pact_proximity_banter_two_a",
 		probability = 0.5,
+		name = "epm_vs_pact_proximity_banter_two_a",
 		response = "epm_vs_pact_proximity_banter_two_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"friends_close",
+				"friends_close"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				2,
+				2
 			},
 			{
 				"user_context",
 				"enemies_close",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.LT,
-				5,
+				5
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_two",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
 				OP.TIMEDIFF,
 				OP.GT,
-				140,
-			},
+				140
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_two",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vs_passing_hoisted_hero_a",
 		probability = 1,
+		name = "epm_vs_passing_hoisted_hero_a",
 		response = "epm_vs_passing_hoisted_hero_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_passing_hoisted_hero",
+				"vs_passing_hoisted_hero"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_memory",
 				"vs_passing_hoisted_hero",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"vs_passing_hoisted_hero",
 				OP.ADD,
-				1,
-			},
-		},
+				1
+			}
+		}
 	})
 	define_rule({
+		response = "epm_vs_vw_cheer_a",
 		name = "epm_vs_vw_cheer_a",
 		probability = 0.4,
-		response = "epm_vs_vw_cheer_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_ability_horde_a",
+				"vs_ability_horde_a"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
-			},
-		},
+				"vs_packmaster"
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vw_affirmative",
 		probability = 1,
+		name = "epm_vw_affirmative",
 		response = "epm_vw_affirmative",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_affirmative",
+				"vw_affirmative"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_memory",
 				"time_since_vw_affirmative",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_affirmative",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vw_ambush",
 		probability = 1,
+		name = "epm_vw_ambush",
 		response = "epm_vw_ambush",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_ambush",
+				"vw_ambush"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_memory",
 				"time_since_vw_ambush",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_ambush",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vw_attack_now",
 		probability = 1,
+		name = "epm_vw_attack_now",
 		response = "epm_vw_attack_now",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_attack_now",
+				"vw_attack_now"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_memory",
 				"time_since_vw_attack_now",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_attack_now",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vw_cover_me",
 		probability = 1,
+		name = "epm_vw_cover_me",
 		response = "epm_vw_cover_me",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_cover_me",
+				"vw_cover_me"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_memory",
 				"time_since_vw_cover_me",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_cover_me",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vw_gather",
 		probability = 1,
+		name = "epm_vw_gather",
 		response = "epm_vw_gather",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_gather",
+				"vw_gather"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_memory",
 				"time_since_vw_gather",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_gather",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vw_go_here",
 		probability = 1,
+		name = "epm_vw_go_here",
 		response = "epm_vw_go_here",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_go_here",
+				"vw_go_here"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_memory",
 				"time_since_vw_go_here",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_go_here",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vw_negation",
 		probability = 1,
+		name = "epm_vw_negation",
 		response = "epm_vw_negation",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_negation",
+				"vw_negation"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_memory",
 				"time_since_vw_negation",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_negation",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vw_thanks",
 		probability = 1,
+		name = "epm_vw_thanks",
 		response = "epm_vw_thanks",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_thank_you",
+				"vw_thank_you"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_memory",
 				"time_since_vw_thanks",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_thanks",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "epm_vw_wait",
 		probability = 1,
+		name = "epm_vw_wait",
 		response = "epm_vw_wait",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_wait",
+				"vw_wait"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_packmaster",
+				"vs_packmaster"
 			},
 			{
 				"user_memory",
 				"time_since_vw_wait",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_wait",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_spawning_ratling_gunner",
 		probability = 1,
+		name = "erg_spawning_ratling_gunner",
 		response = "erg_spawning_ratling_gunner",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"spawning",
+				"spawning"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_memory",
 				"time_since_spawning",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_spawning",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_taunting_bardin",
 		probability = 1,
+		name = "erg_taunting_bardin",
 		response = "erg_taunting_bardin",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_dr_ranger",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_dr_ironbreaker",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_dr_slayer",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"hero_dr_engineer",
+				"hero_dr_engineer"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_memory",
 				"time_since_taunting",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_taunting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_taunting_kerillian",
 		probability = 1,
+		name = "erg_taunting_kerillian",
 		response = "erg_taunting_kerillian",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_we_waywatcher",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_we_maidenguard",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_we_shade",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"hero_we_thornsister",
+				"hero_we_thornsister"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_memory",
 				"time_since_taunting",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_taunting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_taunting_kruber",
 		probability = 1,
+		name = "erg_taunting_kruber",
 		response = "erg_taunting_kruber",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_es_mercenary",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_es_huntsman",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_es_knight",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"hero_es_questingknight",
+				"hero_es_questingknight"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_memory",
 				"time_since_taunting",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_taunting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_taunting_saltzpyre",
 		probability = 1,
+		name = "erg_taunting_saltzpyre",
 		response = "erg_taunting_saltzpyre",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_wh_captain",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_wh_bountyhunter",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_wh_zealot",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"hero_wh_priest",
+				"hero_wh_priest"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_memory",
 				"time_since_taunting",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_taunting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_taunting_sienna",
 		probability = 1,
+		name = "erg_taunting_sienna",
 		response = "erg_taunting_sienna",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_bw_scholar",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_bw_adept",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_bw_unchained",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"hero_bw_necromancer",
+				"hero_bw_necromancer"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_memory",
 				"time_since_taunting",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_taunting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
+		response = "erg_vs_ability_horde_a",
 		name = "erg_vs_ability_horde_a",
 		probability = 1,
-		response = "erg_vs_ability_horde_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_ability_horde",
+				"vs_ability_horde"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
-			},
-		},
+				"vs_ratling_gunner"
+			}
+		}
 	})
 	define_rule({
+		response = "erg_vs_downed_hero_a",
 		name = "erg_vs_downed_hero_a",
 		probability = 1,
-		response = "erg_vs_downed_hero_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_downed_hero",
+				"vs_downed_hero"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
-			},
-		},
+				"vs_ratling_gunner"
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vs_globadier_hitting_many_a",
 		probability = 1,
+		name = "erg_vs_globadier_hitting_many_a",
 		response = "erg_vs_globadier_hitting_many_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_globadier_hitting_many",
+				"vs_globadier_hitting_many"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_memory",
 				"vs_globadier_globe_thrown",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_globe_thrown",
 				OP.TIMEDIFF,
 				OP.GT,
-				60,
-			},
+				60
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"vs_globadier_globe_thrown",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_globe_thrown",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vs_globadier_missing_globe_a",
 		probability = 1,
+		name = "erg_vs_globadier_missing_globe_a",
 		response = "erg_vs_globadier_missing_globe_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_globadier_missing_globe",
+				"vs_globadier_missing_globe"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_memory",
 				"vs_globadier_globe_thrown",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_globe_thrown",
 				OP.TIMEDIFF,
 				OP.GT,
-				60,
-			},
+				60
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"vs_globadier_globe_thrown",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_globe_thrown",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
+		response = "erg_vs_heroes_objective_almost_completed_b",
 		name = "erg_vs_heroes_objective_almost_completed_b",
 		probability = 1,
-		response = "erg_vs_heroes_objective_almost_completed_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_heroes_objective_almost_completed_a",
+				"vs_heroes_objective_almost_completed_a"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
-			},
-		},
+				"vs_ratling_gunner"
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vs_pact_proximity_banter_eight_b",
 		probability = 1,
+		name = "erg_vs_pact_proximity_banter_eight_b",
 		response = "erg_vs_pact_proximity_banter_eight_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_eight_a",
+				"vs_pact_proximity_banter_eight_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vs_pact_proximity_banter_eighteen_b",
 		probability = 1,
+		name = "erg_vs_pact_proximity_banter_eighteen_b",
 		response = "erg_vs_pact_proximity_banter_eighteen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_eighteen_a",
+				"vs_pact_proximity_banter_eighteen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vs_pact_proximity_banter_eleven_b",
 		probability = 1,
+		name = "erg_vs_pact_proximity_banter_eleven_b",
 		response = "erg_vs_pact_proximity_banter_eleven_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_eleven_a",
+				"vs_pact_proximity_banter_eleven_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vs_pact_proximity_banter_fifteen_b",
 		probability = 1,
+		name = "erg_vs_pact_proximity_banter_fifteen_b",
 		response = "erg_vs_pact_proximity_banter_fifteen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_fifteen_a",
+				"vs_pact_proximity_banter_fifteen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vs_pact_proximity_banter_five_b",
 		probability = 1,
+		name = "erg_vs_pact_proximity_banter_five_b",
 		response = "erg_vs_pact_proximity_banter_five_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_five_a",
+				"vs_pact_proximity_banter_five_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vs_pact_proximity_banter_four_a",
 		probability = 0.5,
+		name = "erg_vs_pact_proximity_banter_four_a",
 		response = "erg_vs_pact_proximity_banter_four_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"friends_close",
+				"friends_close"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				2,
+				2
 			},
 			{
 				"user_context",
 				"enemies_close",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.LT,
-				5,
+				5
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_four",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
 				OP.TIMEDIFF,
 				OP.GT,
-				140,
-			},
+				140
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_four",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vs_pact_proximity_banter_fourteen_a",
 		probability = 0.5,
+		name = "erg_vs_pact_proximity_banter_fourteen_a",
 		response = "erg_vs_pact_proximity_banter_fourteen_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"friends_close",
+				"friends_close"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				2,
+				2
 			},
 			{
 				"user_context",
 				"enemies_close",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.LT,
-				5,
+				5
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_fourteen",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
 				OP.TIMEDIFF,
 				OP.GT,
-				140,
-			},
+				140
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_fourteen",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vs_pact_proximity_banter_nine_a",
 		probability = 0.5,
+		name = "erg_vs_pact_proximity_banter_nine_a",
 		response = "erg_vs_pact_proximity_banter_nine_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"friends_close",
+				"friends_close"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				2,
+				2
 			},
 			{
 				"user_context",
 				"enemies_close",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.LT,
-				5,
+				5
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_nine",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
 				OP.TIMEDIFF,
 				OP.GT,
-				140,
-			},
+				140
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_nine",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vs_pact_proximity_banter_nineteen_a",
 		probability = 0.5,
+		name = "erg_vs_pact_proximity_banter_nineteen_a",
 		response = "erg_vs_pact_proximity_banter_nineteen_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"friends_close",
+				"friends_close"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				2,
+				2
 			},
 			{
 				"user_context",
 				"enemies_close",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.LT,
-				5,
+				5
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_nineteen",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
 				OP.TIMEDIFF,
 				OP.GT,
-				140,
-			},
+				140
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_nineteen",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vs_pact_proximity_banter_one_b",
 		probability = 1,
+		name = "erg_vs_pact_proximity_banter_one_b",
 		response = "erg_vs_pact_proximity_banter_one_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_one_a",
+				"vs_pact_proximity_banter_one_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vs_pact_proximity_banter_seven_b",
 		probability = 1,
+		name = "erg_vs_pact_proximity_banter_seven_b",
 		response = "erg_vs_pact_proximity_banter_seven_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_seven_a",
+				"vs_pact_proximity_banter_seven_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vs_pact_proximity_banter_seventeen_b",
 		probability = 1,
+		name = "erg_vs_pact_proximity_banter_seventeen_b",
 		response = "erg_vs_pact_proximity_banter_seventeen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_seventeen_a",
+				"vs_pact_proximity_banter_seventeen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vs_pact_proximity_banter_six_b",
 		probability = 1,
+		name = "erg_vs_pact_proximity_banter_six_b",
 		response = "erg_vs_pact_proximity_banter_six_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_six_a",
+				"vs_pact_proximity_banter_six_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vs_pact_proximity_banter_sixteen_b",
 		probability = 1,
+		name = "erg_vs_pact_proximity_banter_sixteen_b",
 		response = "erg_vs_pact_proximity_banter_sixteen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_sixteen_a",
+				"vs_pact_proximity_banter_sixteen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vs_pact_proximity_banter_ten_b",
 		probability = 1,
+		name = "erg_vs_pact_proximity_banter_ten_b",
 		response = "erg_vs_pact_proximity_banter_ten_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_ten_a",
+				"vs_pact_proximity_banter_ten_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vs_pact_proximity_banter_thirteen_b",
 		probability = 1,
+		name = "erg_vs_pact_proximity_banter_thirteen_b",
 		response = "erg_vs_pact_proximity_banter_thirteen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_thirteen_a",
+				"vs_pact_proximity_banter_thirteen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vs_pact_proximity_banter_three_b",
 		probability = 1,
+		name = "erg_vs_pact_proximity_banter_three_b",
 		response = "erg_vs_pact_proximity_banter_three_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_three_a",
+				"vs_pact_proximity_banter_three_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vs_pact_proximity_banter_twelve_b",
 		probability = 1,
+		name = "erg_vs_pact_proximity_banter_twelve_b",
 		response = "erg_vs_pact_proximity_banter_twelve_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_twelve_a",
+				"vs_pact_proximity_banter_twelve_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vs_pact_proximity_banter_twenty_b",
 		probability = 1,
+		name = "erg_vs_pact_proximity_banter_twenty_b",
 		response = "erg_vs_pact_proximity_banter_twenty_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_twenty_a",
+				"vs_pact_proximity_banter_twenty_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vs_pact_proximity_banter_two_b",
 		probability = 1,
+		name = "erg_vs_pact_proximity_banter_two_b",
 		response = "erg_vs_pact_proximity_banter_two_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_two_a",
+				"vs_pact_proximity_banter_two_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vs_ratling_hitting_shield_a",
 		probability = 1,
+		name = "erg_vs_ratling_hitting_shield_a",
 		response = "erg_vs_ratling_hitting_shield_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_ratling_hitting_shield",
+				"vs_ratling_hitting_shield"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_memory",
 				"vs_time_since_hit_shield",
 				OP.TIMEDIFF,
 				OP.GT,
-				60,
-			},
+				60
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"vs_time_since_hit_shield",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vs_shooting_hooked_hero_a",
 		probability = 1,
+		name = "erg_vs_shooting_hooked_hero_a",
 		response = "erg_vs_shooting_hooked_hero_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_shooting_hooked_hero",
+				"vs_shooting_hooked_hero"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_memory",
 				"vs_shooting_hooked_hero",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"vs_shooting_hooked_hero",
 				OP.ADD,
-				1,
-			},
-		},
+				1
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vw_affirmative",
 		probability = 1,
+		name = "erg_vw_affirmative",
 		response = "erg_vw_affirmative",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_affirmative",
+				"vw_affirmative"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_memory",
 				"time_since_vw_affirmative",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_affirmative",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vw_ambush",
 		probability = 1,
+		name = "erg_vw_ambush",
 		response = "erg_vw_ambush",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_ambush",
+				"vw_ambush"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_memory",
 				"time_since_vw_ambush",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_ambush",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vw_attack_now",
 		probability = 1,
+		name = "erg_vw_attack_now",
 		response = "erg_vw_attack_now",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_attack_now",
+				"vw_attack_now"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_memory",
 				"time_since_vw_attack_now",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_attack_now",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vw_cover_me",
 		probability = 1,
+		name = "erg_vw_cover_me",
 		response = "erg_vw_cover_me",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_cover_me",
+				"vw_cover_me"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_memory",
 				"time_since_vw_cover_me",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_cover_me",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vw_gather",
 		probability = 1,
+		name = "erg_vw_gather",
 		response = "erg_vw_gather",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_gather",
+				"vw_gather"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_memory",
 				"time_since_vw_gather",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_gather",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vw_go_here",
 		probability = 1,
+		name = "erg_vw_go_here",
 		response = "erg_vw_go_here",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_go_here",
+				"vw_go_here"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_memory",
 				"time_since_vw_go_here",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_go_here",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vw_negation",
 		probability = 1,
+		name = "erg_vw_negation",
 		response = "erg_vw_negation",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_negation",
+				"vw_negation"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_memory",
 				"time_since_vw_negation",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_negation",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vw_thanks",
 		probability = 1,
+		name = "erg_vw_thanks",
 		response = "erg_vw_thanks",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_thank_you",
+				"vw_thank_you"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_memory",
 				"time_since_vw_thanks",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_thanks",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "erg_vw_wait",
 		probability = 1,
+		name = "erg_vw_wait",
 		response = "erg_vw_wait",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_wait",
+				"vw_wait"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_ratling_gunner",
+				"vs_ratling_gunner"
 			},
 			{
 				"user_memory",
 				"time_since_vw_wait",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_wait",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_combat_idle",
 		probability = 1,
+		name = "ewt_combat_idle",
 		response = "ewt_combat_idle",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"walking",
+				"walking"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_memory",
 				"time_since_walk_warpfire_thrower",
 				OP.TIMEDIFF,
 				OP.GT,
-				30,
-			},
+				30
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_walk_warpfire_thrower",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_spawning_warpfire_thrower",
 		probability = 1,
+		name = "ewt_spawning_warpfire_thrower",
 		response = "ewt_spawning_warpfire_thrower",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"spawning",
+				"spawning"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_memory",
 				"time_since_spawning",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_spawning",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_taunting_bardin",
 		probability = 1,
+		name = "ewt_taunting_bardin",
 		response = "ewt_taunting_bardin",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_dr_ranger",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_dr_ironbreaker",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_dr_slayer",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"hero_dr_engineer",
+				"hero_dr_engineer"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_memory",
 				"time_since_taunting",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_taunting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_taunting_kerillian",
 		probability = 1,
+		name = "ewt_taunting_kerillian",
 		response = "ewt_taunting_kerillian",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_we_waywatcher",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_we_maidenguard",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_we_shade",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"hero_we_thornsister",
+				"hero_we_thornsister"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_memory",
 				"time_since_taunting",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_taunting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_taunting_kruber",
 		probability = 1,
+		name = "ewt_taunting_kruber",
 		response = "ewt_taunting_kruber",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_es_mercenary",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_es_huntsman",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_es_knight",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"hero_es_questingknight",
+				"hero_es_questingknight"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_memory",
 				"time_since_taunting",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_taunting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_taunting_saltzpyre",
 		probability = 1,
+		name = "ewt_taunting_saltzpyre",
 		response = "ewt_taunting_saltzpyre",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_wh_captain",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_wh_bountyhunter",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_wh_zealot",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"hero_wh_priest",
+				"hero_wh_priest"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_memory",
 				"time_since_taunting",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_taunting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_taunting_sienna",
 		probability = 1,
+		name = "ewt_taunting_sienna",
 		response = "ewt_taunting_sienna",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_enemy",
+				"seen_enemy"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_bw_scholar",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_bw_adept",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
 				"hero_bw_unchained",
-				CombiningOP.OR_NEXT,
+				CombiningOP.OR_NEXT
 			},
 			{
 				"query_context",
 				"enemy_tag",
 				OP.EQ,
-				"hero_bw_necromancer",
+				"hero_bw_necromancer"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_memory",
 				"time_since_taunting",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_taunting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
+		response = "ewt_vs_ability_horde_a",
 		name = "ewt_vs_ability_horde_a",
 		probability = 1,
-		response = "ewt_vs_ability_horde_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_ability_horde",
+				"vs_ability_horde"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
-			},
-		},
+				"vs_warpfire_thrower"
+			}
+		}
 	})
 	define_rule({
+		response = "ewt_vs_downed_hero_a",
 		name = "ewt_vs_downed_hero_a",
 		probability = 1,
-		response = "ewt_vs_downed_hero_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_downed_hero",
+				"vs_downed_hero"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
-			},
-		},
+				"vs_warpfire_thrower"
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vs_globadier_hitting_many_a",
 		probability = 1,
+		name = "ewt_vs_globadier_hitting_many_a",
 		response = "ewt_vs_globadier_hitting_many_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_globadier_hitting_many",
+				"vs_globadier_hitting_many"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_memory",
 				"vs_globadier_globe_thrown",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_globe_thrown",
 				OP.TIMEDIFF,
 				OP.GT,
-				60,
-			},
+				60
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"vs_globadier_globe_thrown",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_globe_thrown",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vs_globadier_missing_globe_a",
 		probability = 1,
+		name = "ewt_vs_globadier_missing_globe_a",
 		response = "ewt_vs_globadier_missing_globe_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_globadier_missing_globe",
+				"vs_globadier_missing_globe"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_memory",
 				"vs_globadier_globe_thrown",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_globe_thrown",
 				OP.TIMEDIFF,
 				OP.GT,
-				60,
-			},
+				60
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"vs_globadier_globe_thrown",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_globe_thrown",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
+		response = "ewt_vs_heroes_objective_almost_completed_b",
 		name = "ewt_vs_heroes_objective_almost_completed_b",
 		probability = 1,
-		response = "ewt_vs_heroes_objective_almost_completed_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_heroes_objective_almost_completed_a",
+				"vs_heroes_objective_almost_completed_a"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
-			},
-		},
+				"vs_warpfire_thrower"
+			}
+		}
 	})
 	define_rule({
+		response = "ewt_vs_many_heroes_incapacitated_a",
 		name = "ewt_vs_many_heroes_incapacitated_a",
 		probability = 1,
-		response = "ewt_vs_many_heroes_incapacitated_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_many_heroes_incapacitated",
+				"vs_many_heroes_incapacitated"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
-			},
-		},
+				"vs_warpfire_thrower"
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vs_pact_proximity_banter_eight_a",
 		probability = 0.5,
+		name = "ewt_vs_pact_proximity_banter_eight_a",
 		response = "ewt_vs_pact_proximity_banter_eight_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"friends_close",
+				"friends_close"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				2,
+				2
 			},
 			{
 				"user_context",
 				"enemies_close",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.LT,
-				5,
+				5
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_eight",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
 				OP.TIMEDIFF,
 				OP.GT,
-				140,
-			},
+				140
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_eight",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vs_pact_proximity_banter_eighteen_a",
 		probability = 0.5,
+		name = "ewt_vs_pact_proximity_banter_eighteen_a",
 		response = "ewt_vs_pact_proximity_banter_eighteen_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"friends_close",
+				"friends_close"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				2,
+				2
 			},
 			{
 				"user_context",
 				"enemies_close",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.LT,
-				5,
+				5
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_eighteen",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
 				OP.TIMEDIFF,
 				OP.GT,
-				140,
-			},
+				140
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_eighteen",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vs_pact_proximity_banter_eleven_b",
 		probability = 1,
+		name = "ewt_vs_pact_proximity_banter_eleven_b",
 		response = "ewt_vs_pact_proximity_banter_eleven_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_eleven_a",
+				"vs_pact_proximity_banter_eleven_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vs_pact_proximity_banter_fifteen_b",
 		probability = 1,
+		name = "ewt_vs_pact_proximity_banter_fifteen_b",
 		response = "ewt_vs_pact_proximity_banter_fifteen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_fifteen_a",
+				"vs_pact_proximity_banter_fifteen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vs_pact_proximity_banter_five_b",
 		probability = 1,
+		name = "ewt_vs_pact_proximity_banter_five_b",
 		response = "ewt_vs_pact_proximity_banter_five_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_five_a",
+				"vs_pact_proximity_banter_five_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vs_pact_proximity_banter_four_b",
 		probability = 1,
+		name = "ewt_vs_pact_proximity_banter_four_b",
 		response = "ewt_vs_pact_proximity_banter_four_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_four_a",
+				"vs_pact_proximity_banter_four_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vs_pact_proximity_banter_fourteen_b",
 		probability = 1,
+		name = "ewt_vs_pact_proximity_banter_fourteen_b",
 		response = "ewt_vs_pact_proximity_banter_fourteen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_fourteen_a",
+				"vs_pact_proximity_banter_fourteen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vs_pact_proximity_banter_nine_b",
 		probability = 1,
+		name = "ewt_vs_pact_proximity_banter_nine_b",
 		response = "ewt_vs_pact_proximity_banter_nine_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_nine_a",
+				"vs_pact_proximity_banter_nine_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vs_pact_proximity_banter_nineteen_b",
 		probability = 1,
+		name = "ewt_vs_pact_proximity_banter_nineteen_b",
 		response = "ewt_vs_pact_proximity_banter_nineteen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_nineteen_a",
+				"vs_pact_proximity_banter_nineteen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vs_pact_proximity_banter_one_b",
 		probability = 1,
+		name = "ewt_vs_pact_proximity_banter_one_b",
 		response = "ewt_vs_pact_proximity_banter_one_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_one_a",
+				"vs_pact_proximity_banter_one_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vs_pact_proximity_banter_seven_b",
 		probability = 1,
+		name = "ewt_vs_pact_proximity_banter_seven_b",
 		response = "ewt_vs_pact_proximity_banter_seven_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_seven_a",
+				"vs_pact_proximity_banter_seven_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vs_pact_proximity_banter_seventeen_b",
 		probability = 1,
+		name = "ewt_vs_pact_proximity_banter_seventeen_b",
 		response = "ewt_vs_pact_proximity_banter_seventeen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_seventeen_a",
+				"vs_pact_proximity_banter_seventeen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vs_pact_proximity_banter_six_b",
 		probability = 1,
+		name = "ewt_vs_pact_proximity_banter_six_b",
 		response = "ewt_vs_pact_proximity_banter_six_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_six_a",
+				"vs_pact_proximity_banter_six_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vs_pact_proximity_banter_sixteen_b",
 		probability = 1,
+		name = "ewt_vs_pact_proximity_banter_sixteen_b",
 		response = "ewt_vs_pact_proximity_banter_sixteen_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_sixteen_a",
+				"vs_pact_proximity_banter_sixteen_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vs_pact_proximity_banter_ten_b",
 		probability = 1,
+		name = "ewt_vs_pact_proximity_banter_ten_b",
 		response = "ewt_vs_pact_proximity_banter_ten_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_ten_a",
+				"vs_pact_proximity_banter_ten_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vs_pact_proximity_banter_thirteen_a",
 		probability = 0.5,
+		name = "ewt_vs_pact_proximity_banter_thirteen_a",
 		response = "ewt_vs_pact_proximity_banter_thirteen_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"friends_close",
+				"friends_close"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				2,
+				2
 			},
 			{
 				"user_context",
 				"enemies_close",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.LT,
-				5,
+				5
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_thirteen",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
 				OP.TIMEDIFF,
 				OP.GT,
-				140,
-			},
+				140
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_thirteen",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vs_pact_proximity_banter_three_a",
 		probability = 0.5,
+		name = "ewt_vs_pact_proximity_banter_three_a",
 		response = "ewt_vs_pact_proximity_banter_three_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"friends_close",
+				"friends_close"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				2,
+				2
 			},
 			{
 				"user_context",
 				"enemies_close",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"global_context",
 				"game_about_to_end",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.LT,
-				5,
+				5
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_three",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
 				OP.TIMEDIFF,
 				OP.GT,
-				140,
-			},
+				140
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"pact_proximity_banter_master_limit",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"vs_pact_proximity_banter_three",
 				OP.ADD,
-				1,
+				1
 			},
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vs_pact_proximity_banter_twelve_b",
 		probability = 1,
+		name = "ewt_vs_pact_proximity_banter_twelve_b",
 		response = "ewt_vs_pact_proximity_banter_twelve_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_twelve_a",
+				"vs_pact_proximity_banter_twelve_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vs_pact_proximity_banter_twenty_b",
 		probability = 1,
+		name = "ewt_vs_pact_proximity_banter_twenty_b",
 		response = "ewt_vs_pact_proximity_banter_twenty_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_twenty_a",
+				"vs_pact_proximity_banter_twenty_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vs_pact_proximity_banter_two_b",
 		probability = 1,
+		name = "ewt_vs_pact_proximity_banter_two_b",
 		response = "ewt_vs_pact_proximity_banter_two_b",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_pact_proximity_banter_two_a",
+				"vs_pact_proximity_banter_two_a"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"friends_close",
 				OP.GTEQ,
-				1,
+				1
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_pact_banter",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vs_passing_hoisted_hero_a",
 		probability = 1,
+		name = "ewt_vs_passing_hoisted_hero_a",
 		response = "ewt_vs_passing_hoisted_hero_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_passing_hoisted_hero",
+				"vs_passing_hoisted_hero"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"is_in_ghost_mode",
 				OP.EQ,
-				0,
+				0
 			},
 			{
 				"user_memory",
 				"vs_passing_hoisted_hero",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"vs_passing_hoisted_hero",
 				OP.ADD,
-				1,
-			},
-		},
+				1
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vs_shooting_hooked_hero_a",
 		probability = 1,
+		name = "ewt_vs_shooting_hooked_hero_a",
 		response = "ewt_vs_shooting_hooked_hero_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vs_shooting_hooked_hero",
+				"vs_shooting_hooked_hero"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_memory",
 				"vs_shooting_hooked_hero",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"vs_shooting_hooked_hero",
 				OP.ADD,
-				1,
-			},
-		},
+				1
+			}
+		}
 	})
 	define_rule({
+		response = "ewt_vs_vw_cheer_a",
 		name = "ewt_vs_vw_cheer_a",
 		probability = 0.4,
-		response = "ewt_vs_vw_cheer_a",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name_nopre",
 				OP.EQ,
-				"vs_ability_horde_a",
+				"vs_ability_horde_a"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
-			},
-		},
+				"vs_warpfire_thrower"
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vw_affirmative",
 		probability = 1,
+		name = "ewt_vw_affirmative",
 		response = "ewt_vw_affirmative",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_affirmative",
+				"vw_affirmative"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_memory",
 				"time_since_vw_affirmative",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_affirmative",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vw_ambush",
 		probability = 1,
+		name = "ewt_vw_ambush",
 		response = "ewt_vw_ambush",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_ambush",
+				"vw_ambush"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_memory",
 				"time_since_vw_ambush",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_ambush",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vw_attack_now",
 		probability = 1,
+		name = "ewt_vw_attack_now",
 		response = "ewt_vw_attack_now",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_attack_now",
+				"vw_attack_now"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_memory",
 				"time_since_vw_attack_now",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_attack_now",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vw_cover_me",
 		probability = 1,
+		name = "ewt_vw_cover_me",
 		response = "ewt_vw_cover_me",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_cover_me",
+				"vw_cover_me"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_memory",
 				"time_since_vw_cover_me",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_cover_me",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vw_gather",
 		probability = 1,
+		name = "ewt_vw_gather",
 		response = "ewt_vw_gather",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_gather",
+				"vw_gather"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_memory",
 				"time_since_vw_gather",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_gather",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vw_go_here",
 		probability = 1,
+		name = "ewt_vw_go_here",
 		response = "ewt_vw_go_here",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_go_here",
+				"vw_go_here"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_memory",
 				"time_since_vw_go_here",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_go_here",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vw_negation",
 		probability = 1,
+		name = "ewt_vw_negation",
 		response = "ewt_vw_negation",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_negation",
+				"vw_negation"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_memory",
 				"time_since_vw_negation",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_negation",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vw_thanks",
 		probability = 1,
+		name = "ewt_vw_thanks",
 		response = "ewt_vw_thanks",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_thank_you",
+				"vw_thank_you"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_memory",
 				"time_since_vw_thanks",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_thanks",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ewt_vw_wait",
 		probability = 1,
+		name = "ewt_vw_wait",
 		response = "ewt_vw_wait",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"vw_wait",
+				"vw_wait"
 			},
 			{
 				"query_context",
 				"is_ping",
 				OP.EQ,
-				1,
+				1
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"vs_warpfire_thrower",
+				"vs_warpfire_thrower"
 			},
 			{
 				"user_memory",
 				"time_since_vw_wait",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_vw_wait",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	add_dialogues({
 		ebt_vs_low_on_health = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_feedback",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -11371,7 +11371,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -11383,7 +11383,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ebt_vs_low_on_health_a_01",
@@ -11395,7 +11395,7 @@ return function ()
 				"ebt_vs_low_on_health_a_07",
 				"ebt_vs_low_on_health_a_08",
 				"ebt_vs_low_on_health_a_09",
-				"ebt_vs_low_on_health_a_10",
+				"ebt_vs_low_on_health_a_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -11408,7 +11408,7 @@ return function ()
 				"ebt_vs_low_on_health_a_07",
 				"ebt_vs_low_on_health_a_08",
 				"ebt_vs_low_on_health_a_09",
-				"ebt_vs_low_on_health_a_10",
+				"ebt_vs_low_on_health_a_10"
 			},
 			sound_events_duration = {
 				5.004903793335,
@@ -11420,37 +11420,37 @@ return function ()
 				0.63567793369293,
 				0.74162417650223,
 				0.60036242008209,
-				0.74162417650223,
-			},
+				0.74162417650223
+			}
 		},
 		ebt_vs_spawning_troll = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 5,
-			face_animations_n = 5,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 5,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 5,
+			category = "player_alerts",
+			dialogue_animations_n = 5,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ebt_vs_spawning_a_01",
 				"ebt_vs_spawning_a_02",
 				"ebt_vs_spawning_a_03",
 				"ebt_vs_spawning_a_04",
-				"ebt_vs_spawning_a_05",
+				"ebt_vs_spawning_a_05"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -11458,44 +11458,44 @@ return function ()
 				"ebt_vs_spawning_a_02",
 				"ebt_vs_spawning_a_03",
 				"ebt_vs_spawning_a_04",
-				"ebt_vs_spawning_a_05",
+				"ebt_vs_spawning_a_05"
 			},
 			sound_events_duration = {
 				2.847836971283,
 				7.5264263153076,
 				5.0628209114075,
 				5.6730718612671,
-				10.238651275635,
-			},
+				10.238651275635
+			}
 		},
 		egt_spawning_gutter_runner = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 5,
-			face_animations_n = 5,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 5,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 5,
+			category = "player_alerts",
+			dialogue_animations_n = 5,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"egt_spawning_gutter_runner_01",
 				"egt_spawning_gutter_runner_02",
 				"egt_spawning_gutter_runner_03",
 				"egt_spawning_gutter_runner_04",
-				"egt_spawning_gutter_runner_05",
+				"egt_spawning_gutter_runner_05"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -11503,23 +11503,23 @@ return function ()
 				"egt_spawning_gutter_runner_02",
 				"egt_spawning_gutter_runner_03",
 				"egt_spawning_gutter_runner_04",
-				"egt_spawning_gutter_runner_05",
+				"egt_spawning_gutter_runner_05"
 			},
 			sound_events_duration = {
 				3.9157967567444,
 				4.089262008667,
 				3.8005735874176,
 				3.2761778831482,
-				3.0993530750275,
-			},
+				3.0993530750275
+			}
 		},
 		egt_taunting_bardin = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -11530,7 +11530,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -11542,7 +11542,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"egt_taunting_bardin_01",
@@ -11554,7 +11554,7 @@ return function ()
 				"egt_taunting_bardin_07",
 				"egt_taunting_bardin_08",
 				"egt_taunting_bardin_09",
-				"egt_taunting_bardin_10",
+				"egt_taunting_bardin_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -11567,7 +11567,7 @@ return function ()
 				"egt_taunting_bardin_07",
 				"egt_taunting_bardin_08",
 				"egt_taunting_bardin_09",
-				"egt_taunting_bardin_10",
+				"egt_taunting_bardin_10"
 			},
 			sound_events_duration = {
 				3.3408515453339,
@@ -11579,16 +11579,16 @@ return function ()
 				2.0365760326385,
 				2.1176476478577,
 				1.2917845249176,
-				2.0579574108124,
-			},
+				2.0579574108124
+			}
 		},
 		egt_taunting_kerillian = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -11599,7 +11599,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -11611,7 +11611,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"egt_taunting_kerillian_01",
@@ -11623,7 +11623,7 @@ return function ()
 				"egt_taunting_kerillian_07",
 				"egt_taunting_kerillian_08",
 				"egt_taunting_kerillian_09",
-				"egt_taunting_kerillian_10",
+				"egt_taunting_kerillian_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -11636,7 +11636,7 @@ return function ()
 				"egt_taunting_kerillian_07",
 				"egt_taunting_kerillian_08",
 				"egt_taunting_kerillian_09",
-				"egt_taunting_kerillian_10",
+				"egt_taunting_kerillian_10"
 			},
 			sound_events_duration = {
 				3.6455388069153,
@@ -11648,16 +11648,16 @@ return function ()
 				1.9011591672897,
 				1.7363430261612,
 				2.2272281646728,
-				1.8423599004745,
-			},
+				1.8423599004745
+			}
 		},
 		egt_taunting_kruber = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -11668,7 +11668,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -11680,7 +11680,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"egt_taunting_kruber_01",
@@ -11692,7 +11692,7 @@ return function ()
 				"egt_taunting_kruber_07",
 				"egt_taunting_kruber_08",
 				"egt_taunting_kruber_09",
-				"egt_taunting_kruber_10",
+				"egt_taunting_kruber_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -11705,7 +11705,7 @@ return function ()
 				"egt_taunting_kruber_07",
 				"egt_taunting_kruber_08",
 				"egt_taunting_kruber_09",
-				"egt_taunting_kruber_10",
+				"egt_taunting_kruber_10"
 			},
 			sound_events_duration = {
 				2.9862740039825,
@@ -11717,16 +11717,16 @@ return function ()
 				2.4027352333069,
 				2.002721786499,
 				2.2245554924011,
-				2.3608629703522,
-			},
+				2.3608629703522
+			}
 		},
 		egt_taunting_saltzpyre = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 9,
-			face_animations_n = 9,
 			randomize_indexes_n = 0,
+			face_animations_n = 9,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 9,
+			category = "player_alerts",
+			dialogue_animations_n = 9,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -11736,7 +11736,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -11747,7 +11747,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"egt_taunting_saltzpyre_01",
@@ -11758,7 +11758,7 @@ return function ()
 				"egt_taunting_saltzpyre_06",
 				"egt_taunting_saltzpyre_07",
 				"egt_taunting_saltzpyre_09",
-				"egt_taunting_saltzpyre_10",
+				"egt_taunting_saltzpyre_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -11770,7 +11770,7 @@ return function ()
 				"egt_taunting_saltzpyre_06",
 				"egt_taunting_saltzpyre_07",
 				"egt_taunting_saltzpyre_09",
-				"egt_taunting_saltzpyre_10",
+				"egt_taunting_saltzpyre_10"
 			},
 			sound_events_duration = {
 				2.2272281646728,
@@ -11781,16 +11781,16 @@ return function ()
 				2.2708823680878,
 				1.7817788124084,
 				1.4165103435516,
-				1.7443611621857,
-			},
+				1.7443611621857
+			}
 		},
 		egt_taunting_sienna = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -11801,7 +11801,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -11813,7 +11813,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"egt_taunting_sienna_01",
@@ -11825,7 +11825,7 @@ return function ()
 				"egt_taunting_sienna_07",
 				"egt_taunting_sienna_08",
 				"egt_taunting_sienna_09",
-				"egt_taunting_sienna_10",
+				"egt_taunting_sienna_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -11838,7 +11838,7 @@ return function ()
 				"egt_taunting_sienna_07",
 				"egt_taunting_sienna_08",
 				"egt_taunting_sienna_09",
-				"egt_taunting_sienna_10",
+				"egt_taunting_sienna_10"
 			},
 			sound_events_duration = {
 				1.638344168663,
@@ -11850,23 +11850,23 @@ return function ()
 				1.4307647943497,
 				1.8592870235443,
 				1.5234181880951,
-				2.2851364612579,
-			},
+				2.2851364612579
+			}
 		},
 		egt_vs_ability_horde_a = {
-			category = "activate_ability",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 6,
-			face_animations_n = 6,
 			randomize_indexes_n = 0,
+			face_animations_n = 6,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 6,
+			category = "activate_ability",
+			dialogue_animations_n = 6,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -11874,7 +11874,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"egt_vs_ability_horde_a_01",
@@ -11882,7 +11882,7 @@ return function ()
 				"egt_vs_ability_horde_a_03",
 				"egt_vs_ability_horde_a_04",
 				"egt_vs_ability_horde_a_05",
-				"egt_vs_ability_horde_a_06",
+				"egt_vs_ability_horde_a_06"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -11891,7 +11891,7 @@ return function ()
 				"egt_vs_ability_horde_a_03",
 				"egt_vs_ability_horde_a_04",
 				"egt_vs_ability_horde_a_05",
-				"egt_vs_ability_horde_a_06",
+				"egt_vs_ability_horde_a_06"
 			},
 			sound_events_duration = {
 				1.9180769324303,
@@ -11899,683 +11899,683 @@ return function ()
 				3.2492144107819,
 				2.8260586261749,
 				4.0824394226074,
-				3.503338932991,
-			},
+				3.503338932991
+			}
 		},
 		egt_vs_downed_hero_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"egt_vs_downed_hero_a_01",
 				"egt_vs_downed_hero_a_02",
 				"egt_vs_downed_hero_a_03",
-				"egt_vs_downed_hero_a_04",
+				"egt_vs_downed_hero_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"egt_vs_downed_hero_a_01",
 				"egt_vs_downed_hero_a_02",
 				"egt_vs_downed_hero_a_03",
-				"egt_vs_downed_hero_a_04",
+				"egt_vs_downed_hero_a_04"
 			},
 			sound_events_duration = {
 				1.4112113714218,
 				1.9832147359848,
 				3.3062551021576,
-				2.4515862464905,
-			},
+				2.4515862464905
+			}
 		},
 		egt_vs_globadier_hitting_many_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"egt_vs_globadier_hitting_many_a_01",
 				"egt_vs_globadier_hitting_many_a_02",
 				"egt_vs_globadier_hitting_many_a_03",
-				"egt_vs_globadier_hitting_many_a_04",
+				"egt_vs_globadier_hitting_many_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"egt_vs_globadier_hitting_many_a_01",
 				"egt_vs_globadier_hitting_many_a_02",
 				"egt_vs_globadier_hitting_many_a_03",
-				"egt_vs_globadier_hitting_many_a_04",
+				"egt_vs_globadier_hitting_many_a_04"
 			},
 			sound_events_duration = {
 				1.7378277778625,
 				2.4269194602966,
 				2.1431868076324,
-				2.1231043338776,
-			},
+				2.1231043338776
+			}
 		},
 		egt_vs_globadier_missing_globe_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"egt_vs_globadier_missing_globe_a_01",
 				"egt_vs_globadier_missing_globe_a_02",
 				"egt_vs_globadier_missing_globe_a_03",
-				"egt_vs_globadier_missing_globe_a_04",
+				"egt_vs_globadier_missing_globe_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"egt_vs_globadier_missing_globe_a_01",
 				"egt_vs_globadier_missing_globe_a_02",
 				"egt_vs_globadier_missing_globe_a_03",
-				"egt_vs_globadier_missing_globe_a_04",
+				"egt_vs_globadier_missing_globe_a_04"
 			},
 			sound_events_duration = {
 				2.0212264060974,
 				2.0050973892212,
 				1.6031535863876,
-				1.5619682073593,
-			},
+				1.5619682073593
+			}
 		},
 		egt_vs_heroes_objective_almost_completed_b = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"egt_vs_heroes_objective_almost_completed_b_01",
 				"egt_vs_heroes_objective_almost_completed_b_02",
 				"egt_vs_heroes_objective_almost_completed_b_03",
-				"egt_vs_heroes_objective_almost_completed_b_04",
+				"egt_vs_heroes_objective_almost_completed_b_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"egt_vs_heroes_objective_almost_completed_b_01",
 				"egt_vs_heroes_objective_almost_completed_b_02",
 				"egt_vs_heroes_objective_almost_completed_b_03",
-				"egt_vs_heroes_objective_almost_completed_b_04",
+				"egt_vs_heroes_objective_almost_completed_b_04"
 			},
 			sound_events_duration = {
 				1.3400972485542,
 				1.6005923748016,
 				1.888668179512,
-				1.7175970077515,
-			},
+				1.7175970077515
+			}
 		},
 		egt_vs_many_heroes_incapacitated_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"egt_vs_many_heroes_incapacitated_a_01",
 				"egt_vs_many_heroes_incapacitated_a_02",
 				"egt_vs_many_heroes_incapacitated_a_03",
-				"egt_vs_many_heroes_incapacitated_a_04",
+				"egt_vs_many_heroes_incapacitated_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"egt_vs_many_heroes_incapacitated_a_01",
 				"egt_vs_many_heroes_incapacitated_a_02",
 				"egt_vs_many_heroes_incapacitated_a_03",
-				"egt_vs_many_heroes_incapacitated_a_04",
+				"egt_vs_many_heroes_incapacitated_a_04"
 			},
 			sound_events_duration = {
 				2.5100885629654,
 				2.1104462146759,
 				2.478443145752,
-				2.8980934619904,
-			},
+				2.8980934619904
+			}
 		},
 		egt_vs_pact_proximity_banter_eight_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "egt_vs_pact_proximity_banter_eight_b_01",
+				[1] = "egt_vs_pact_proximity_banter_eight_b_01"
 			},
 			sound_events = {
-				[1] = "egt_vs_pact_proximity_banter_eight_b_01",
+				[1] = "egt_vs_pact_proximity_banter_eight_b_01"
 			},
 			sound_events_duration = {
-				[1] = 2.3578932285309,
-			},
+				[1] = 2.3578932285309
+			}
 		},
 		egt_vs_pact_proximity_banter_eighteen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "egt_vs_pact_proximity_banter_eighteen_b_01",
+				[1] = "egt_vs_pact_proximity_banter_eighteen_b_01"
 			},
 			sound_events = {
-				[1] = "egt_vs_pact_proximity_banter_eighteen_b_01",
+				[1] = "egt_vs_pact_proximity_banter_eighteen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 5.2393751144409,
-			},
+				[1] = 5.2393751144409
+			}
 		},
 		egt_vs_pact_proximity_banter_eleven_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "egt_vs_pact_proximity_banter_eleven_b_01",
+				[1] = "egt_vs_pact_proximity_banter_eleven_b_01"
 			},
 			sound_events = {
-				[1] = "egt_vs_pact_proximity_banter_eleven_b_01",
+				[1] = "egt_vs_pact_proximity_banter_eleven_b_01"
 			},
 			sound_events_duration = {
-				[1] = 4.0669527053833,
-			},
+				[1] = 4.0669527053833
+			}
 		},
 		egt_vs_pact_proximity_banter_fifteen_a = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "egt_vs_pact_proximity_banter_fifteen_a_01",
+				[1] = "egt_vs_pact_proximity_banter_fifteen_a_01"
 			},
 			sound_events = {
-				[1] = "egt_vs_pact_proximity_banter_fifteen_a_01",
+				[1] = "egt_vs_pact_proximity_banter_fifteen_a_01"
 			},
 			sound_events_duration = {
-				[1] = 5.0782155990601,
-			},
+				[1] = 5.0782155990601
+			}
 		},
 		egt_vs_pact_proximity_banter_five_a = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "egt_vs_pact_proximity_banter_five_a_01",
+				[1] = "egt_vs_pact_proximity_banter_five_a_01"
 			},
 			sound_events = {
-				[1] = "egt_vs_pact_proximity_banter_five_a_01",
+				[1] = "egt_vs_pact_proximity_banter_five_a_01"
 			},
 			sound_events_duration = {
-				[1] = 3.5441434383392,
-			},
+				[1] = 3.5441434383392
+			}
 		},
 		egt_vs_pact_proximity_banter_four_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "egt_vs_pact_proximity_banter_four_b_01",
+				[1] = "egt_vs_pact_proximity_banter_four_b_01"
 			},
 			sound_events = {
-				[1] = "egt_vs_pact_proximity_banter_four_b_01",
+				[1] = "egt_vs_pact_proximity_banter_four_b_01"
 			},
 			sound_events_duration = {
-				[1] = 4.4363231658936,
-			},
+				[1] = 4.4363231658936
+			}
 		},
 		egt_vs_pact_proximity_banter_fourteen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "egt_vs_pact_proximity_banter_fourteen_b_01",
+				[1] = "egt_vs_pact_proximity_banter_fourteen_b_01"
 			},
 			sound_events = {
-				[1] = "egt_vs_pact_proximity_banter_fourteen_b_01",
+				[1] = "egt_vs_pact_proximity_banter_fourteen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 2.2868256568909,
-			},
+				[1] = 2.2868256568909
+			}
 		},
 		egt_vs_pact_proximity_banter_nine_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "egt_vs_pact_proximity_banter_nine_b_01",
+				[1] = "egt_vs_pact_proximity_banter_nine_b_01"
 			},
 			sound_events = {
-				[1] = "egt_vs_pact_proximity_banter_nine_b_01",
+				[1] = "egt_vs_pact_proximity_banter_nine_b_01"
 			},
 			sound_events_duration = {
-				[1] = 2.3973898887634,
-			},
+				[1] = 2.3973898887634
+			}
 		},
 		egt_vs_pact_proximity_banter_nineteen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "egt_vs_pact_proximity_banter_nineteen_b_01",
+				[1] = "egt_vs_pact_proximity_banter_nineteen_b_01"
 			},
 			sound_events = {
-				[1] = "egt_vs_pact_proximity_banter_nineteen_b_01",
+				[1] = "egt_vs_pact_proximity_banter_nineteen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 2.1619143486023,
-			},
+				[1] = 2.1619143486023
+			}
 		},
 		egt_vs_pact_proximity_banter_one_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "egt_vs_pact_proximity_banter_one_b_01",
+				[1] = "egt_vs_pact_proximity_banter_one_b_01"
 			},
 			sound_events = {
-				[1] = "egt_vs_pact_proximity_banter_one_b_01",
+				[1] = "egt_vs_pact_proximity_banter_one_b_01"
 			},
 			sound_events_duration = {
-				[1] = 3.163135766983,
-			},
+				[1] = 3.163135766983
+			}
 		},
 		egt_vs_pact_proximity_banter_seven_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "egt_vs_pact_proximity_banter_seven_b_01",
+				[1] = "egt_vs_pact_proximity_banter_seven_b_01"
 			},
 			sound_events = {
-				[1] = "egt_vs_pact_proximity_banter_seven_b_01",
+				[1] = "egt_vs_pact_proximity_banter_seven_b_01"
 			},
 			sound_events_duration = {
-				[1] = 2.7864899635315,
-			},
+				[1] = 2.7864899635315
+			}
 		},
 		egt_vs_pact_proximity_banter_seventeen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "egt_vs_pact_proximity_banter_seventeen_b_01",
+				[1] = "egt_vs_pact_proximity_banter_seventeen_b_01"
 			},
 			sound_events = {
-				[1] = "egt_vs_pact_proximity_banter_seventeen_b_01",
+				[1] = "egt_vs_pact_proximity_banter_seventeen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 3.9773428440094,
-			},
+				[1] = 3.9773428440094
+			}
 		},
 		egt_vs_pact_proximity_banter_six_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "egt_vs_pact_proximity_banter_six_b_01",
+				[1] = "egt_vs_pact_proximity_banter_six_b_01"
 			},
 			sound_events = {
-				[1] = "egt_vs_pact_proximity_banter_six_b_01",
+				[1] = "egt_vs_pact_proximity_banter_six_b_01"
 			},
 			sound_events_duration = {
-				[1] = 5.2943511009216,
-			},
+				[1] = 5.2943511009216
+			}
 		},
 		egt_vs_pact_proximity_banter_sixteen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "egt_vs_pact_proximity_banter_sixteen_b_01",
+				[1] = "egt_vs_pact_proximity_banter_sixteen_b_01"
 			},
 			sound_events = {
-				[1] = "egt_vs_pact_proximity_banter_sixteen_b_01",
+				[1] = "egt_vs_pact_proximity_banter_sixteen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 3.9781041145325,
-			},
+				[1] = 3.9781041145325
+			}
 		},
 		egt_vs_pact_proximity_banter_ten_a = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "egt_vs_pact_proximity_banter_ten_a_01",
+				[1] = "egt_vs_pact_proximity_banter_ten_a_01"
 			},
 			sound_events = {
-				[1] = "egt_vs_pact_proximity_banter_ten_a_01",
+				[1] = "egt_vs_pact_proximity_banter_ten_a_01"
 			},
 			sound_events_duration = {
-				[1] = 2.0888047814369,
-			},
+				[1] = 2.0888047814369
+			}
 		},
 		egt_vs_pact_proximity_banter_thirteen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "egt_vs_pact_proximity_banter_thirteen_b_01",
+				[1] = "egt_vs_pact_proximity_banter_thirteen_b_01"
 			},
 			sound_events = {
-				[1] = "egt_vs_pact_proximity_banter_thirteen_b_01",
+				[1] = "egt_vs_pact_proximity_banter_thirteen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 6.0487570762634,
-			},
+				[1] = 6.0487570762634
+			}
 		},
 		egt_vs_pact_proximity_banter_three_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "egt_vs_pact_proximity_banter_three_b_01",
+				[1] = "egt_vs_pact_proximity_banter_three_b_01"
 			},
 			sound_events = {
-				[1] = "egt_vs_pact_proximity_banter_three_b_01",
+				[1] = "egt_vs_pact_proximity_banter_three_b_01"
 			},
 			sound_events_duration = {
-				[1] = 1.9133162498474,
-			},
+				[1] = 1.9133162498474
+			}
 		},
 		egt_vs_pact_proximity_banter_twelve_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "egt_vs_pact_proximity_banter_twelve_b_01",
+				[1] = "egt_vs_pact_proximity_banter_twelve_b_01"
 			},
 			sound_events = {
-				[1] = "egt_vs_pact_proximity_banter_twelve_b_01",
+				[1] = "egt_vs_pact_proximity_banter_twelve_b_01"
 			},
 			sound_events_duration = {
-				[1] = 4.2783184051514,
-			},
+				[1] = 4.2783184051514
+			}
 		},
 		egt_vs_pact_proximity_banter_twenty_a = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "egt_vs_pact_proximity_banter_twenty_a_01",
+				[1] = "egt_vs_pact_proximity_banter_twenty_a_01"
 			},
 			sound_events = {
-				[1] = "egt_vs_pact_proximity_banter_twenty_a_01",
+				[1] = "egt_vs_pact_proximity_banter_twenty_a_01"
 			},
 			sound_events_duration = {
-				[1] = 3.5805962085724,
-			},
+				[1] = 3.5805962085724
+			}
 		},
 		egt_vs_pact_proximity_banter_two_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "egt_vs_pact_proximity_banter_two_b_01",
+				[1] = "egt_vs_pact_proximity_banter_two_b_01"
 			},
 			sound_events = {
-				[1] = "egt_vs_pact_proximity_banter_two_b_01",
+				[1] = "egt_vs_pact_proximity_banter_two_b_01"
 			},
 			sound_events_duration = {
-				[1] = 4.2045407295227,
-			},
+				[1] = 4.2045407295227
+			}
 		},
 		egt_vs_passing_hoisted_hero_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 2,
-			face_animations_n = 2,
 			randomize_indexes_n = 0,
+			face_animations_n = 2,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 2,
+			category = "player_feedback",
+			dialogue_animations_n = 2,
 			dialogue_animations = {
 				[1] = "dialogue_talk",
-				[2] = "dialogue_talk",
+				[2] = "dialogue_talk"
 			},
 			face_animations = {
 				[1] = "face_neutral",
-				[2] = "face_neutral",
+				[2] = "face_neutral"
 			},
 			localization_strings = {
 				[1] = "egt_vs_passing_hoisted_hero_a_01",
-				[2] = "egt_vs_passing_hoisted_hero_a_02",
+				[2] = "egt_vs_passing_hoisted_hero_a_02"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				[1] = "egt_vs_passing_hoisted_hero_a_01",
-				[2] = "egt_vs_passing_hoisted_hero_a_02",
+				[2] = "egt_vs_passing_hoisted_hero_a_02"
 			},
 			sound_events_duration = {
 				[1] = 3.9340603351593,
-				[2] = 3.4575591087341,
-			},
+				[2] = 3.4575591087341
+			}
 		},
 		egt_vw_affirmative = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -12586,7 +12586,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -12598,7 +12598,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"egt_vw_affirmative_01",
@@ -12610,7 +12610,7 @@ return function ()
 				"egt_vw_affirmative_07",
 				"egt_vw_affirmative_08",
 				"egt_vw_affirmative_09",
-				"egt_vw_affirmative_10",
+				"egt_vw_affirmative_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -12623,7 +12623,7 @@ return function ()
 				"egt_vw_affirmative_07",
 				"egt_vw_affirmative_08",
 				"egt_vw_affirmative_09",
-				"egt_vw_affirmative_10",
+				"egt_vw_affirmative_10"
 			},
 			sound_events_duration = {
 				0.79288130998611,
@@ -12635,17 +12635,17 @@ return function ()
 				3.0076553821564,
 				3.9716079235077,
 				1.4904549121857,
-				2.0053944587708,
-			},
+				2.0053944587708
+			}
 		},
 		egt_vw_ambush = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -12656,7 +12656,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -12668,7 +12668,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"egt_vw_ambush_01",
@@ -12680,7 +12680,7 @@ return function ()
 				"egt_vw_ambush_07",
 				"egt_vw_ambush_08",
 				"egt_vw_ambush_09",
-				"egt_vw_ambush_10",
+				"egt_vw_ambush_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -12693,7 +12693,7 @@ return function ()
 				"egt_vw_ambush_07",
 				"egt_vw_ambush_08",
 				"egt_vw_ambush_09",
-				"egt_vw_ambush_10",
+				"egt_vw_ambush_10"
 			},
 			sound_events_duration = {
 				0.64944660663605,
@@ -12705,17 +12705,17 @@ return function ()
 				1.8289965391159,
 				2.3555176258087,
 				2.7065317630768,
-				1.5073820352554,
-			},
+				1.5073820352554
+			}
 		},
 		egt_vw_attack_now = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -12726,7 +12726,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -12738,7 +12738,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"egt_vw_attack_now_01",
@@ -12750,7 +12750,7 @@ return function ()
 				"egt_vw_attack_now_07",
 				"egt_vw_attack_now_08",
 				"egt_vw_attack_now_09",
-				"egt_vw_attack_now_10",
+				"egt_vw_attack_now_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -12763,7 +12763,7 @@ return function ()
 				"egt_vw_attack_now_07",
 				"egt_vw_attack_now_08",
 				"egt_vw_attack_now_09",
-				"egt_vw_attack_now_10",
+				"egt_vw_attack_now_10"
 			},
 			sound_events_duration = {
 				1.2998026609421,
@@ -12775,17 +12775,17 @@ return function ()
 				2.0739934444427,
 				1.9581768512726,
 				2.5755693912506,
-				3.0967452526092,
-			},
+				3.0967452526092
+			}
 		},
 		egt_vw_cover_me = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -12796,7 +12796,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -12808,7 +12808,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"egt_vw_cover_me_01",
@@ -12820,7 +12820,7 @@ return function ()
 				"egt_vw_cover_me_07",
 				"egt_vw_cover_me_08",
 				"egt_vw_cover_me_09",
-				"egt_vw_cover_me_10",
+				"egt_vw_cover_me_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -12833,7 +12833,7 @@ return function ()
 				"egt_vw_cover_me_07",
 				"egt_vw_cover_me_08",
 				"egt_vw_cover_me_09",
-				"egt_vw_cover_me_10",
+				"egt_vw_cover_me_10"
 			},
 			sound_events_duration = {
 				1.3532565832138,
@@ -12845,17 +12845,17 @@ return function ()
 				1.6089444160461,
 				2.0374667644501,
 				2.5809149742127,
-				2.0633029937744,
-			},
+				2.0633029937744
+			}
 		},
 		egt_vw_gather = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -12866,7 +12866,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -12878,7 +12878,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"egt_vw_gather_01",
@@ -12890,7 +12890,7 @@ return function ()
 				"egt_vw_gather_07",
 				"egt_vw_gather_08",
 				"egt_vw_gather_09",
-				"egt_vw_gather_10",
+				"egt_vw_gather_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -12903,7 +12903,7 @@ return function ()
 				"egt_vw_gather_07",
 				"egt_vw_gather_08",
 				"egt_vw_gather_09",
-				"egt_vw_gather_10",
+				"egt_vw_gather_10"
 			},
 			sound_events_duration = {
 				1.3568201065064,
@@ -12915,17 +12915,17 @@ return function ()
 				1.188440322876,
 				1.1777495145798,
 				1.5278726816177,
-				3.2963066101074,
-			},
+				3.2963066101074
+			}
 		},
 		egt_vw_go_here = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -12936,7 +12936,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -12948,7 +12948,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"egt_vw_go_here_01",
@@ -12960,7 +12960,7 @@ return function ()
 				"egt_vw_go_here_07",
 				"egt_vw_go_here_08",
 				"egt_vw_go_here_09",
-				"egt_vw_go_here_10",
+				"egt_vw_go_here_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -12973,7 +12973,7 @@ return function ()
 				"egt_vw_go_here_07",
 				"egt_vw_go_here_08",
 				"egt_vw_go_here_09",
-				"egt_vw_go_here_10",
+				"egt_vw_go_here_10"
 			},
 			sound_events_duration = {
 				1.7594599723816,
@@ -12985,17 +12985,17 @@ return function ()
 				1.7198706865311,
 				1.0156987905502,
 				1.7536505460739,
-				2.0893616676331,
-			},
+				2.0893616676331
+			}
 		},
 		egt_vw_negation = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 11,
-			face_animations_n = 11,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 11,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 11,
+			category = "player_alerts",
+			dialogue_animations_n = 11,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -13007,7 +13007,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -13020,7 +13020,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"egt_vw_negation_01",
@@ -13033,7 +13033,7 @@ return function ()
 				"egt_vw_negation_08",
 				"egt_vw_negation_09",
 				"egt_vw_negation_10",
-				"egt_vw_negation_11",
+				"egt_vw_negation_11"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -13047,7 +13047,7 @@ return function ()
 				"egt_vw_negation_08",
 				"egt_vw_negation_09",
 				"egt_vw_negation_10",
-				"egt_vw_negation_11",
+				"egt_vw_negation_11"
 			},
 			sound_events_duration = {
 				0.51672124862671,
@@ -13060,17 +13060,17 @@ return function ()
 				0.80891746282578,
 				3.4094507694244,
 				1.2410032749176,
-				1.9777764081955,
-			},
+				1.9777764081955
+			}
 		},
 		egt_vw_thanks = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 11,
-			face_animations_n = 11,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 11,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 11,
+			category = "player_alerts",
+			dialogue_animations_n = 11,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -13082,7 +13082,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -13095,7 +13095,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"egt_vs_vw_thanks_a_01",
@@ -13108,7 +13108,7 @@ return function ()
 				"egt_vs_vw_thanks_a_08",
 				"egt_vs_vw_thanks_a_09",
 				"egt_vs_vw_thanks_a_11",
-				"egt_vs_vw_thanks_a_12",
+				"egt_vs_vw_thanks_a_12"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -13122,7 +13122,7 @@ return function ()
 				"egt_vs_vw_thanks_a_08",
 				"egt_vs_vw_thanks_a_09",
 				"egt_vs_vw_thanks_a_11",
-				"egt_vs_vw_thanks_a_12",
+				"egt_vs_vw_thanks_a_12"
 			},
 			sound_events_duration = {
 				1.3801412284374,
@@ -13135,17 +13135,17 @@ return function ()
 				0.85129082202911,
 				1.1165651679039,
 				1.5773918628693,
-				1.1549387574196,
-			},
+				1.1549387574196
+			}
 		},
 		egt_vw_wait = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 11,
-			face_animations_n = 11,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 11,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 11,
+			category = "player_alerts",
+			dialogue_animations_n = 11,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -13157,7 +13157,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -13170,7 +13170,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"egt_vw_wait_01",
@@ -13183,7 +13183,7 @@ return function ()
 				"egt_vw_wait_08",
 				"egt_vw_wait_09",
 				"egt_vw_wait_10",
-				"egt_vw_wait_11",
+				"egt_vw_wait_11"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -13197,7 +13197,7 @@ return function ()
 				"egt_vw_wait_08",
 				"egt_vw_wait_09",
 				"egt_vw_wait_10",
-				"egt_vw_wait_11",
+				"egt_vw_wait_11"
 			},
 			sound_events_duration = {
 				2.6022965908051,
@@ -13210,37 +13210,37 @@ return function ()
 				1.9038319587708,
 				2.4410440921783,
 				2.7412767410278,
-				3.7488832473755,
-			},
+				3.7488832473755
+			}
 		},
 		epg_spawning_globadier = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 5,
-			face_animations_n = 5,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 5,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 5,
+			category = "player_alerts",
+			dialogue_animations_n = 5,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epg_spawning_globadier_01",
 				"epg_spawning_globadier_02",
 				"epg_spawning_globadier_03",
 				"epg_spawning_globadier_04",
-				"epg_spawning_globadier_05",
+				"epg_spawning_globadier_05"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -13248,23 +13248,23 @@ return function ()
 				"epg_spawning_globadier_02",
 				"epg_spawning_globadier_03",
 				"epg_spawning_globadier_04",
-				"epg_spawning_globadier_05",
+				"epg_spawning_globadier_05"
 			},
 			sound_events_duration = {
 				4.0489792823792,
 				3.926479101181,
 				3.0699791908264,
 				3.2434791326523,
-				4.8573522567749,
-			},
+				4.8573522567749
+			}
 		},
 		epg_taunting_bardin = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 9,
-			face_animations_n = 9,
 			randomize_indexes_n = 0,
+			face_animations_n = 9,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 9,
+			category = "player_alerts",
+			dialogue_animations_n = 9,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -13274,7 +13274,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -13285,7 +13285,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epg_taunting_bardin_01",
@@ -13296,7 +13296,7 @@ return function ()
 				"epg_taunting_bardin_06",
 				"epg_taunting_bardin_07",
 				"epg_taunting_bardin_09",
-				"epg_taunting_bardin_10",
+				"epg_taunting_bardin_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -13308,7 +13308,7 @@ return function ()
 				"epg_taunting_bardin_06",
 				"epg_taunting_bardin_07",
 				"epg_taunting_bardin_09",
-				"epg_taunting_bardin_10",
+				"epg_taunting_bardin_10"
 			},
 			sound_events_duration = {
 				1.7689791917801,
@@ -13319,16 +13319,16 @@ return function ()
 				1.8709791898727,
 				1.3509792089462,
 				1.6009999513626,
-				1.6619791984558,
-			},
+				1.6619791984558
+			}
 		},
 		epg_taunting_kerillian = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -13339,7 +13339,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -13351,7 +13351,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epg_taunting_kerillian_01",
@@ -13363,7 +13363,7 @@ return function ()
 				"epg_taunting_kerillian_07",
 				"epg_taunting_kerillian_08",
 				"epg_taunting_kerillian_09",
-				"epg_taunting_kerillian_10",
+				"epg_taunting_kerillian_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -13376,7 +13376,7 @@ return function ()
 				"epg_taunting_kerillian_07",
 				"epg_taunting_kerillian_08",
 				"epg_taunting_kerillian_09",
-				"epg_taunting_kerillian_10",
+				"epg_taunting_kerillian_10"
 			},
 			sound_events_duration = {
 				2.7469792366028,
@@ -13388,16 +13388,16 @@ return function ()
 				1.3849791288376,
 				1.4509791135788,
 				1.4909791946411,
-				1.7069791555405,
-			},
+				1.7069791555405
+			}
 		},
 		epg_taunting_kruber = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -13408,7 +13408,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -13420,7 +13420,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epg_taunting_kruber_01",
@@ -13432,7 +13432,7 @@ return function ()
 				"epg_taunting_kruber_07",
 				"epg_taunting_kruber_08",
 				"epg_taunting_kruber_09",
-				"epg_taunting_kruber_10",
+				"epg_taunting_kruber_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -13445,7 +13445,7 @@ return function ()
 				"epg_taunting_kruber_07",
 				"epg_taunting_kruber_08",
 				"epg_taunting_kruber_09",
-				"epg_taunting_kruber_10",
+				"epg_taunting_kruber_10"
 			},
 			sound_events_duration = {
 				2.9239792823791,
@@ -13457,16 +13457,16 @@ return function ()
 				1.5779792070389,
 				1.7599791288376,
 				3.0509791374206,
-				2.7369792461395,
-			},
+				2.7369792461395
+			}
 		},
 		epg_taunting_saltzpyre = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -13477,7 +13477,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -13489,7 +13489,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epg_taunting_saltzpyre_01",
@@ -13501,7 +13501,7 @@ return function ()
 				"epg_taunting_saltzpyre_07",
 				"epg_taunting_saltzpyre_08",
 				"epg_taunting_saltzpyre_09",
-				"epg_taunting_saltzpyre_10",
+				"epg_taunting_saltzpyre_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -13514,7 +13514,7 @@ return function ()
 				"epg_taunting_saltzpyre_07",
 				"epg_taunting_saltzpyre_08",
 				"epg_taunting_saltzpyre_09",
-				"epg_taunting_saltzpyre_10",
+				"epg_taunting_saltzpyre_10"
 			},
 			sound_events_duration = {
 				2.3039791584015,
@@ -13526,16 +13526,16 @@ return function ()
 				1.3939791917801,
 				2.5139791965485,
 				1.5,
-				3.091979265213,
-			},
+				3.091979265213
+			}
 		},
 		epg_taunting_sienna = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -13546,7 +13546,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -13558,7 +13558,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epg_taunting_sienna_01",
@@ -13570,7 +13570,7 @@ return function ()
 				"epg_taunting_sienna_07",
 				"epg_taunting_sienna_08",
 				"epg_taunting_sienna_09",
-				"epg_taunting_sienna_10",
+				"epg_taunting_sienna_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -13583,7 +13583,7 @@ return function ()
 				"epg_taunting_sienna_07",
 				"epg_taunting_sienna_08",
 				"epg_taunting_sienna_09",
-				"epg_taunting_sienna_10",
+				"epg_taunting_sienna_10"
 			},
 			sound_events_duration = {
 				1.8779791593552,
@@ -13595,16 +13595,16 @@ return function ()
 				1.4889792203903,
 				1.7789791822434,
 				1.6549791097641,
-				1.7689791917801,
-			},
+				1.7689791917801
+			}
 		},
 		epg_versus_throwing_globe = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 8,
-			face_animations_n = 8,
 			randomize_indexes_n = 0,
+			face_animations_n = 8,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 8,
+			category = "player_feedback",
+			dialogue_animations_n = 8,
 			dialogue_animations = {
 				"dialogue_shout",
 				"dialogue_shout",
@@ -13613,7 +13613,7 @@ return function ()
 				"dialogue_shout",
 				"dialogue_shout",
 				"dialogue_shout",
-				"dialogue_shout",
+				"dialogue_shout"
 			},
 			face_animations = {
 				"face_neutral",
@@ -13623,7 +13623,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epg_versus_throwing_globe_01",
@@ -13633,7 +13633,7 @@ return function ()
 				"epg_versus_throwing_globe_06",
 				"epg_versus_throwing_globe_08",
 				"epg_versus_throwing_globe_09",
-				"epg_versus_throwing_globe_10",
+				"epg_versus_throwing_globe_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -13644,7 +13644,7 @@ return function ()
 				"epg_versus_throwing_globe_06",
 				"epg_versus_throwing_globe_08",
 				"epg_versus_throwing_globe_09",
-				"epg_versus_throwing_globe_10",
+				"epg_versus_throwing_globe_10"
 			},
 			sound_events_duration = {
 				1.6094791889191,
@@ -13654,23 +13654,23 @@ return function ()
 				1.8564791679382,
 				1.1764791607857,
 				1.790979206562,
-				1.665479183197,
-			},
+				1.665479183197
+			}
 		},
 		epg_vs_ability_horde_a = {
-			category = "activate_ability",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 6,
-			face_animations_n = 6,
 			randomize_indexes_n = 0,
+			face_animations_n = 6,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 6,
+			category = "activate_ability",
+			dialogue_animations_n = 6,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -13678,7 +13678,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epg_vs_ability_horde_a_01",
@@ -13686,7 +13686,7 @@ return function ()
 				"epg_vs_ability_horde_a_03",
 				"epg_vs_ability_horde_a_04",
 				"epg_vs_ability_horde_a_05",
-				"epg_vs_ability_horde_a_06",
+				"epg_vs_ability_horde_a_06"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -13695,7 +13695,7 @@ return function ()
 				"epg_vs_ability_horde_a_03",
 				"epg_vs_ability_horde_a_04",
 				"epg_vs_ability_horde_a_05",
-				"epg_vs_ability_horde_a_06",
+				"epg_vs_ability_horde_a_06"
 			},
 			sound_events_duration = {
 				2.4853957891464,
@@ -13703,728 +13703,728 @@ return function ()
 				3.8384165763855,
 				4.0857917070389,
 				5.6463751792908,
-				4.1743957996368,
-			},
+				4.1743957996368
+			}
 		},
 		epg_vs_downed_hero_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epg_vs_downed_hero_a_01",
 				"epg_vs_downed_hero_a_02",
 				"epg_vs_downed_hero_a_03",
-				"epg_vs_downed_hero_a_04",
+				"epg_vs_downed_hero_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"epg_vs_downed_hero_a_01",
 				"epg_vs_downed_hero_a_02",
 				"epg_vs_downed_hero_a_03",
-				"epg_vs_downed_hero_a_04",
+				"epg_vs_downed_hero_a_04"
 			},
 			sound_events_duration = {
 				1.5739687681198,
 				0.86397916078568,
 				1.3741979002953,
-				1.5689582824707,
-			},
+				1.5689582824707
+			}
 		},
 		epg_vs_globadier_hitting_many_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epg_vs_globadier_hitting_many_a_01",
 				"epg_vs_globadier_hitting_many_a_02",
 				"epg_vs_globadier_hitting_many_a_03",
-				"epg_vs_globadier_hitting_many_a_04",
+				"epg_vs_globadier_hitting_many_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"epg_vs_globadier_hitting_many_a_01",
 				"epg_vs_globadier_hitting_many_a_02",
 				"epg_vs_globadier_hitting_many_a_03",
-				"epg_vs_globadier_hitting_many_a_04",
+				"epg_vs_globadier_hitting_many_a_04"
 			},
 			sound_events_duration = {
 				2.2619895339012,
 				2.1694375276566,
 				2.9708541631699,
-				2.9632709026337,
-			},
+				2.9632709026337
+			}
 		},
 		epg_vs_globadier_missing_globe_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epg_vs_globadier_missing_globe_a_01",
 				"epg_vs_globadier_missing_globe_a_02",
 				"epg_vs_globadier_missing_globe_a_03",
-				"epg_vs_globadier_missing_globe_a_04",
+				"epg_vs_globadier_missing_globe_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"epg_vs_globadier_missing_globe_a_01",
 				"epg_vs_globadier_missing_globe_a_02",
 				"epg_vs_globadier_missing_globe_a_03",
-				"epg_vs_globadier_missing_globe_a_04",
+				"epg_vs_globadier_missing_globe_a_04"
 			},
 			sound_events_duration = {
 				1.4596562981606,
 				1.4893333315849,
 				2.4838854074478,
-				1.8706458210945,
-			},
+				1.8706458210945
+			}
 		},
 		epg_vs_globe_on_disabled_hero_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epg_vs_globe_on_disabled_hero_a_01",
 				"epg_vs_globe_on_disabled_hero_a_02",
 				"epg_vs_globe_on_disabled_hero_a_03",
-				"epg_vs_globe_on_disabled_hero_a_04",
+				"epg_vs_globe_on_disabled_hero_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"epg_vs_globe_on_disabled_hero_a_01",
 				"epg_vs_globe_on_disabled_hero_a_02",
 				"epg_vs_globe_on_disabled_hero_a_03",
-				"epg_vs_globe_on_disabled_hero_a_04",
+				"epg_vs_globe_on_disabled_hero_a_04"
 			},
 			sound_events_duration = {
 				1.8928750157356,
 				2.4793125391007,
 				1.8167499899864,
-				1.8946562409401,
-			},
+				1.8946562409401
+			}
 		},
 		epg_vs_heroes_objective_almost_completed_b = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epg_vs_heroes_objective_almost_completed_b_01",
 				"epg_vs_heroes_objective_almost_completed_b_02",
 				"epg_vs_heroes_objective_almost_completed_b_03",
-				"epg_vs_heroes_objective_almost_completed_b_04",
+				"epg_vs_heroes_objective_almost_completed_b_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"epg_vs_heroes_objective_almost_completed_b_01",
 				"epg_vs_heroes_objective_almost_completed_b_02",
 				"epg_vs_heroes_objective_almost_completed_b_03",
-				"epg_vs_heroes_objective_almost_completed_b_04",
+				"epg_vs_heroes_objective_almost_completed_b_04"
 			},
 			sound_events_duration = {
 				0.75333335995674,
 				1.6483333110809,
 				1.7566041946411,
-				1.5559583902359,
-			},
+				1.5559583902359
+			}
 		},
 		epg_vs_many_heroes_incapacitated_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epg_vs_many_heroes_incapacitated_a_01",
 				"epg_vs_many_heroes_incapacitated_a_02",
 				"epg_vs_many_heroes_incapacitated_a_03",
-				"epg_vs_many_heroes_incapacitated_a_04",
+				"epg_vs_many_heroes_incapacitated_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"epg_vs_many_heroes_incapacitated_a_01",
 				"epg_vs_many_heroes_incapacitated_a_02",
 				"epg_vs_many_heroes_incapacitated_a_03",
-				"epg_vs_many_heroes_incapacitated_a_04",
+				"epg_vs_many_heroes_incapacitated_a_04"
 			},
 			sound_events_duration = {
 				2.1101040840149,
 				2.0368124842644,
 				0.95401042699814,
-				2.3365624547005,
-			},
+				2.3365624547005
+			}
 		},
 		epg_vs_pact_proximity_banter_eight_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epg_vs_pact_proximity_banter_eight_b_01",
+				[1] = "epg_vs_pact_proximity_banter_eight_b_01"
 			},
 			sound_events = {
-				[1] = "epg_vs_pact_proximity_banter_eight_b_01",
+				[1] = "epg_vs_pact_proximity_banter_eight_b_01"
 			},
 			sound_events_duration = {
-				[1] = 3.7312500476837,
-			},
+				[1] = 3.7312500476837
+			}
 		},
 		epg_vs_pact_proximity_banter_eighteen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epg_vs_pact_proximity_banter_eighteen_b_01",
+				[1] = "epg_vs_pact_proximity_banter_eighteen_b_01"
 			},
 			sound_events = {
-				[1] = "epg_vs_pact_proximity_banter_eighteen_b_01",
+				[1] = "epg_vs_pact_proximity_banter_eighteen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 4.4328956604004,
-			},
+				[1] = 4.4328956604004
+			}
 		},
 		epg_vs_pact_proximity_banter_eleven_a = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epg_vs_pact_proximity_banter_eleven_a_01",
+				[1] = "epg_vs_pact_proximity_banter_eleven_a_01"
 			},
 			sound_events = {
-				[1] = "epg_vs_pact_proximity_banter_eleven_a_01",
+				[1] = "epg_vs_pact_proximity_banter_eleven_a_01"
 			},
 			sound_events_duration = {
-				[1] = 9.5584373474121,
-			},
+				[1] = 9.5584373474121
+			}
 		},
 		epg_vs_pact_proximity_banter_fifteen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epg_vs_pact_proximity_banter_fifteen_b_01",
+				[1] = "epg_vs_pact_proximity_banter_fifteen_b_01"
 			},
 			sound_events = {
-				[1] = "epg_vs_pact_proximity_banter_fifteen_b_01",
+				[1] = "epg_vs_pact_proximity_banter_fifteen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 5.9198751449585,
-			},
+				[1] = 5.9198751449585
+			}
 		},
 		epg_vs_pact_proximity_banter_five_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epg_vs_pact_proximity_banter_five_b_01",
+				[1] = "epg_vs_pact_proximity_banter_five_b_01"
 			},
 			sound_events = {
-				[1] = "epg_vs_pact_proximity_banter_five_b_01",
+				[1] = "epg_vs_pact_proximity_banter_five_b_01"
 			},
 			sound_events_duration = {
-				[1] = 6.5415625572205,
-			},
+				[1] = 6.5415625572205
+			}
 		},
 		epg_vs_pact_proximity_banter_four_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epg_vs_pact_proximity_banter_four_b_01",
+				[1] = "epg_vs_pact_proximity_banter_four_b_01"
 			},
 			sound_events = {
-				[1] = "epg_vs_pact_proximity_banter_four_b_01",
+				[1] = "epg_vs_pact_proximity_banter_four_b_01"
 			},
 			sound_events_duration = {
-				[1] = 4.2673540115356,
-			},
+				[1] = 4.2673540115356
+			}
 		},
 		epg_vs_pact_proximity_banter_fourteen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epg_vs_pact_proximity_banter_fourteen_b_01",
+				[1] = "epg_vs_pact_proximity_banter_fourteen_b_01"
 			},
 			sound_events = {
-				[1] = "epg_vs_pact_proximity_banter_fourteen_b_01",
+				[1] = "epg_vs_pact_proximity_banter_fourteen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 3.8897500038147,
-			},
+				[1] = 3.8897500038147
+			}
 		},
 		epg_vs_pact_proximity_banter_nine_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epg_vs_pact_proximity_banter_nine_b_01",
+				[1] = "epg_vs_pact_proximity_banter_nine_b_01"
 			},
 			sound_events = {
-				[1] = "epg_vs_pact_proximity_banter_nine_b_01",
+				[1] = "epg_vs_pact_proximity_banter_nine_b_01"
 			},
 			sound_events_duration = {
-				[1] = 5.0101041793823,
-			},
+				[1] = 5.0101041793823
+			}
 		},
 		epg_vs_pact_proximity_banter_nineteen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epg_vs_pact_proximity_banter_nineteen_b_01",
+				[1] = "epg_vs_pact_proximity_banter_nineteen_b_01"
 			},
 			sound_events = {
-				[1] = "epg_vs_pact_proximity_banter_nineteen_b_01",
+				[1] = "epg_vs_pact_proximity_banter_nineteen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 6.434645652771,
-			},
+				[1] = 6.434645652771
+			}
 		},
 		epg_vs_pact_proximity_banter_one_a = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epg_vs_pact_proximity_banter_one_a_01",
+				[1] = "epg_vs_pact_proximity_banter_one_a_01"
 			},
 			sound_events = {
-				[1] = "epg_vs_pact_proximity_banter_one_a_01",
+				[1] = "epg_vs_pact_proximity_banter_one_a_01"
 			},
 			sound_events_duration = {
-				[1] = 2.8331665992737,
-			},
+				[1] = 2.8331665992737
+			}
 		},
 		epg_vs_pact_proximity_banter_seven_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epg_vs_pact_proximity_banter_seven_b_01",
+				[1] = "epg_vs_pact_proximity_banter_seven_b_01"
 			},
 			sound_events = {
-				[1] = "epg_vs_pact_proximity_banter_seven_b_01",
+				[1] = "epg_vs_pact_proximity_banter_seven_b_01"
 			},
 			sound_events_duration = {
-				[1] = 5.6720418930054,
-			},
+				[1] = 5.6720418930054
+			}
 		},
 		epg_vs_pact_proximity_banter_seventeen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epg_vs_pact_proximity_banter_seventeen_b_01",
+				[1] = "epg_vs_pact_proximity_banter_seventeen_b_01"
 			},
 			sound_events = {
-				[1] = "epg_vs_pact_proximity_banter_seventeen_b_01",
+				[1] = "epg_vs_pact_proximity_banter_seventeen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 3.2515625953674,
-			},
+				[1] = 3.2515625953674
+			}
 		},
 		epg_vs_pact_proximity_banter_six_a = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epg_vs_pact_proximity_banter_six_a_01",
+				[1] = "epg_vs_pact_proximity_banter_six_a_01"
 			},
 			sound_events = {
-				[1] = "epg_vs_pact_proximity_banter_six_a_01",
+				[1] = "epg_vs_pact_proximity_banter_six_a_01"
 			},
 			sound_events_duration = {
-				[1] = 4.1357498168945,
-			},
+				[1] = 4.1357498168945
+			}
 		},
 		epg_vs_pact_proximity_banter_sixteen_a = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epg_vs_pact_proximity_banter_sixteen_a_01",
+				[1] = "epg_vs_pact_proximity_banter_sixteen_a_01"
 			},
 			sound_events = {
-				[1] = "epg_vs_pact_proximity_banter_sixteen_a_01",
+				[1] = "epg_vs_pact_proximity_banter_sixteen_a_01"
 			},
 			sound_events_duration = {
-				[1] = 2.7954165935516,
-			},
+				[1] = 2.7954165935516
+			}
 		},
 		epg_vs_pact_proximity_banter_ten_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epg_vs_pact_proximity_banter_ten_b_01",
+				[1] = "epg_vs_pact_proximity_banter_ten_b_01"
 			},
 			sound_events = {
-				[1] = "epg_vs_pact_proximity_banter_ten_b_01",
+				[1] = "epg_vs_pact_proximity_banter_ten_b_01"
 			},
 			sound_events_duration = {
-				[1] = 2.5683958530426,
-			},
+				[1] = 2.5683958530426
+			}
 		},
 		epg_vs_pact_proximity_banter_thirteen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epg_vs_pact_proximity_banter_thirteen_b_01",
+				[1] = "epg_vs_pact_proximity_banter_thirteen_b_01"
 			},
 			sound_events = {
-				[1] = "epg_vs_pact_proximity_banter_thirteen_b_01",
+				[1] = "epg_vs_pact_proximity_banter_thirteen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 3.1262707710266,
-			},
+				[1] = 3.1262707710266
+			}
 		},
 		epg_vs_pact_proximity_banter_three_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epg_vs_pact_proximity_banter_three_b_01",
+				[1] = "epg_vs_pact_proximity_banter_three_b_01"
 			},
 			sound_events = {
-				[1] = "epg_vs_pact_proximity_banter_three_b_01",
+				[1] = "epg_vs_pact_proximity_banter_three_b_01"
 			},
 			sound_events_duration = {
-				[1] = 3.0974583625794,
-			},
+				[1] = 3.0974583625794
+			}
 		},
 		epg_vs_pact_proximity_banter_twelve_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epg_vs_pact_proximity_banter_twelve_b_01",
+				[1] = "epg_vs_pact_proximity_banter_twelve_b_01"
 			},
 			sound_events = {
-				[1] = "epg_vs_pact_proximity_banter_twelve_b_01",
+				[1] = "epg_vs_pact_proximity_banter_twelve_b_01"
 			},
 			sound_events_duration = {
-				[1] = 4.8321876525879,
-			},
+				[1] = 4.8321876525879
+			}
 		},
 		epg_vs_pact_proximity_banter_twenty_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epg_vs_pact_proximity_banter_twenty_b_01",
+				[1] = "epg_vs_pact_proximity_banter_twenty_b_01"
 			},
 			sound_events = {
-				[1] = "epg_vs_pact_proximity_banter_twenty_b_01",
+				[1] = "epg_vs_pact_proximity_banter_twenty_b_01"
 			},
 			sound_events_duration = {
-				[1] = 10.622812271118,
-			},
+				[1] = 10.622812271118
+			}
 		},
 		epg_vs_pact_proximity_banter_two_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epg_vs_pact_proximity_banter_two_b_01",
+				[1] = "epg_vs_pact_proximity_banter_two_b_01"
 			},
 			sound_events = {
-				[1] = "epg_vs_pact_proximity_banter_two_b_01",
+				[1] = "epg_vs_pact_proximity_banter_two_b_01"
 			},
 			sound_events_duration = {
-				[1] = 3.7598750591278,
-			},
+				[1] = 3.7598750591278
+			}
 		},
 		epg_vs_passing_hoisted_hero_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 2,
-			face_animations_n = 2,
 			randomize_indexes_n = 0,
+			face_animations_n = 2,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 2,
+			category = "player_feedback",
+			dialogue_animations_n = 2,
 			dialogue_animations = {
 				[1] = "dialogue_talk",
-				[2] = "dialogue_talk",
+				[2] = "dialogue_talk"
 			},
 			face_animations = {
 				[1] = "face_neutral",
-				[2] = "face_neutral",
+				[2] = "face_neutral"
 			},
 			localization_strings = {
 				[1] = "epg_vs_passing_hoisted_hero_a_01",
-				[2] = "epg_vs_passing_hoisted_hero_a_02",
+				[2] = "epg_vs_passing_hoisted_hero_a_02"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				[1] = "epg_vs_passing_hoisted_hero_a_01",
-				[2] = "epg_vs_passing_hoisted_hero_a_02",
+				[2] = "epg_vs_passing_hoisted_hero_a_02"
 			},
 			sound_events_duration = {
 				[1] = 2.036812543869,
-				[2] = 2.2063125371933,
-			},
+				[2] = 2.2063125371933
+			}
 		},
 		epg_vs_vw_cheer_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 6,
-			face_animations_n = 6,
 			randomize_indexes_n = 0,
+			face_animations_n = 6,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 6,
+			category = "player_feedback",
+			dialogue_animations_n = 6,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -14432,7 +14432,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epg_vs_vw_cheer_a_01",
@@ -14440,7 +14440,7 @@ return function ()
 				"epg_vs_vw_cheer_a_03",
 				"epg_vs_vw_cheer_a_04",
 				"epg_vs_vw_cheer_a_05",
-				"epg_vs_vw_cheer_a_06",
+				"epg_vs_vw_cheer_a_06"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -14449,7 +14449,7 @@ return function ()
 				"epg_vs_vw_cheer_a_03",
 				"epg_vs_vw_cheer_a_04",
 				"epg_vs_vw_cheer_a_05",
-				"epg_vs_vw_cheer_a_06",
+				"epg_vs_vw_cheer_a_06"
 			},
 			sound_events_duration = {
 				2.0105520486832,
@@ -14457,17 +14457,17 @@ return function ()
 				2.3434166908264,
 				2.0044583082199,
 				2.2452396154404,
-				2.5033229589462,
-			},
+				2.5033229589462
+			}
 		},
 		epg_vw_affirmative = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -14478,7 +14478,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -14490,7 +14490,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epg_vw_affirmative_01",
@@ -14502,7 +14502,7 @@ return function ()
 				"epg_vw_affirmative_07",
 				"epg_vw_affirmative_08",
 				"epg_vw_affirmative_09",
-				"epg_vw_affirmative_10",
+				"epg_vw_affirmative_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -14515,7 +14515,7 @@ return function ()
 				"epg_vw_affirmative_07",
 				"epg_vw_affirmative_08",
 				"epg_vw_affirmative_09",
-				"epg_vw_affirmative_10",
+				"epg_vw_affirmative_10"
 			},
 			sound_events_duration = {
 				0.62197917699814,
@@ -14527,17 +14527,17 @@ return function ()
 				2.0839791297913,
 				2.3164596557617,
 				1.0130000114441,
-				1.4279791116715,
-			},
+				1.4279791116715
+			}
 		},
 		epg_vw_ambush = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 9,
-			face_animations_n = 9,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 9,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 9,
+			category = "player_alerts",
+			dialogue_animations_n = 9,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -14547,7 +14547,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -14558,7 +14558,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epg_vw_ambush_01",
@@ -14569,7 +14569,7 @@ return function ()
 				"epg_vw_ambush_06",
 				"epg_vw_ambush_08",
 				"epg_vw_ambush_09",
-				"epg_vw_ambush_10",
+				"epg_vw_ambush_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -14581,7 +14581,7 @@ return function ()
 				"epg_vw_ambush_06",
 				"epg_vw_ambush_08",
 				"epg_vw_ambush_09",
-				"epg_vw_ambush_10",
+				"epg_vw_ambush_10"
 			},
 			sound_events_duration = {
 				1.7099791765213,
@@ -14592,17 +14592,17 @@ return function ()
 				2.9916851520538,
 				2.7929792404175,
 				3.7519791126251,
-				1.3009791374207,
-			},
+				1.3009791374207
+			}
 		},
 		epg_vw_attack_now = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -14613,7 +14613,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -14625,7 +14625,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epg_vw_attack_now_01",
@@ -14637,7 +14637,7 @@ return function ()
 				"epg_vw_attack_now_07",
 				"epg_vw_attack_now_08",
 				"epg_vw_attack_now_09",
-				"epg_vw_attack_now_10",
+				"epg_vw_attack_now_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -14650,7 +14650,7 @@ return function ()
 				"epg_vw_attack_now_07",
 				"epg_vw_attack_now_08",
 				"epg_vw_attack_now_09",
-				"epg_vw_attack_now_10",
+				"epg_vw_attack_now_10"
 			},
 			sound_events_duration = {
 				1.1199791431427,
@@ -14662,24 +14662,24 @@ return function ()
 				1.937979221344,
 				1.7899792194366,
 				2.573979139328,
-				3.4079999923706,
-			},
+				3.4079999923706
+			}
 		},
 		epg_vw_cover_me = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 6,
-			face_animations_n = 6,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 6,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 6,
+			category = "player_alerts",
+			dialogue_animations_n = 6,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -14687,7 +14687,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epg_vw_cover_me_01",
@@ -14695,7 +14695,7 @@ return function ()
 				"epg_vw_cover_me_06",
 				"epg_vw_cover_me_08",
 				"epg_vw_cover_me_09",
-				"epg_vw_cover_me_10",
+				"epg_vw_cover_me_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -14704,7 +14704,7 @@ return function ()
 				"epg_vw_cover_me_06",
 				"epg_vw_cover_me_08",
 				"epg_vw_cover_me_09",
-				"epg_vw_cover_me_10",
+				"epg_vw_cover_me_10"
 			},
 			sound_events_duration = {
 				0.65397918224335,
@@ -14712,17 +14712,17 @@ return function ()
 				0.70697915554047,
 				1.5835760831833,
 				1.630979180336,
-				1.7609791755676,
-			},
+				1.7609791755676
+			}
 		},
 		epg_vw_gather = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 9,
-			face_animations_n = 9,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 9,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 9,
+			category = "player_alerts",
+			dialogue_animations_n = 9,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -14732,7 +14732,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -14743,7 +14743,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epg_vw_gather_01",
@@ -14754,7 +14754,7 @@ return function ()
 				"epg_vw_gather_07",
 				"epg_vw_gather_08",
 				"epg_vw_gather_09",
-				"epg_vw_gather_10",
+				"epg_vw_gather_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -14766,7 +14766,7 @@ return function ()
 				"epg_vw_gather_07",
 				"epg_vw_gather_08",
 				"epg_vw_gather_09",
-				"epg_vw_gather_10",
+				"epg_vw_gather_10"
 			},
 			sound_events_duration = {
 				1.1059792041779,
@@ -14777,17 +14777,17 @@ return function ()
 				1.0499999523163,
 				0.89499998092651,
 				0.73799997568131,
-				2.6089792251587,
-			},
+				2.6089792251587
+			}
 		},
 		epg_vw_go_here = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -14798,7 +14798,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -14810,7 +14810,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epg_vw_go_here_01",
@@ -14822,7 +14822,7 @@ return function ()
 				"epg_vw_go_here_07",
 				"epg_vw_go_here_08",
 				"epg_vw_go_here_09",
-				"epg_vw_go_here_10",
+				"epg_vw_go_here_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -14835,7 +14835,7 @@ return function ()
 				"epg_vw_go_here_07",
 				"epg_vw_go_here_08",
 				"epg_vw_go_here_09",
-				"epg_vw_go_here_10",
+				"epg_vw_go_here_10"
 			},
 			sound_events_duration = {
 				0.94497919082642,
@@ -14847,17 +14847,17 @@ return function ()
 				2.881979227066,
 				1.2609791755676,
 				1.6519792079925,
-				1.64297914505,
-			},
+				1.64297914505
+			}
 		},
 		epg_vw_negation = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -14868,7 +14868,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -14880,7 +14880,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epg_vw_negation_01",
@@ -14892,7 +14892,7 @@ return function ()
 				"epg_vw_negation_07",
 				"epg_vw_negation_08",
 				"epg_vw_negation_09",
-				"epg_vw_negation_10",
+				"epg_vw_negation_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -14905,7 +14905,7 @@ return function ()
 				"epg_vw_negation_07",
 				"epg_vw_negation_08",
 				"epg_vw_negation_09",
-				"epg_vw_negation_10",
+				"epg_vw_negation_10"
 			},
 			sound_events_duration = {
 				0.49197915196419,
@@ -14917,17 +14917,17 @@ return function ()
 				1.0799791812897,
 				1.476979136467,
 				2.4069790840149,
-				0.94297915697098,
-			},
+				0.94297915697098
+			}
 		},
 		epg_vw_thanks = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 12,
-			face_animations_n = 12,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 12,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 12,
+			category = "player_alerts",
+			dialogue_animations_n = 12,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -14940,7 +14940,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -14954,7 +14954,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epg_vs_vw_thanks_a_01",
@@ -14968,7 +14968,7 @@ return function ()
 				"epg_vs_vw_thanks_a_09",
 				"epg_vs_vw_thanks_a_10",
 				"epg_vs_vw_thanks_a_11",
-				"epg_vs_vw_thanks_a_12",
+				"epg_vs_vw_thanks_a_12"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -14983,7 +14983,7 @@ return function ()
 				"epg_vs_vw_thanks_a_09",
 				"epg_vs_vw_thanks_a_10",
 				"epg_vs_vw_thanks_a_11",
-				"epg_vs_vw_thanks_a_12",
+				"epg_vs_vw_thanks_a_12"
 			},
 			sound_events_duration = {
 				0.98168751597405,
@@ -14997,17 +14997,17 @@ return function ()
 				0.74645835161209,
 				0.64958333969116,
 				1.7831457853317,
-				1.4487083554268,
-			},
+				1.4487083554268
+			}
 		},
 		epg_vw_wait = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -15018,7 +15018,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -15030,7 +15030,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epg_vw_wait_01",
@@ -15042,7 +15042,7 @@ return function ()
 				"epg_vw_wait_07",
 				"epg_vw_wait_08",
 				"epg_vw_wait_09",
-				"epg_vw_wait_10",
+				"epg_vw_wait_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -15055,7 +15055,7 @@ return function ()
 				"epg_vw_wait_07",
 				"epg_vw_wait_08",
 				"epg_vw_wait_09",
-				"epg_vw_wait_10",
+				"epg_vw_wait_10"
 			},
 			sound_events_duration = {
 				1.8349791765213,
@@ -15067,60 +15067,60 @@ return function ()
 				2.8659791946411,
 				1.6939791440964,
 				1.3099792003632,
-				2.3009791374206,
-			},
+				2.3009791374206
+			}
 		},
 		epm_packmaster_grab_walk = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "player_feedback",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "player_packmaster_vce_grab_walk",
+				[1] = "player_packmaster_vce_grab_walk"
 			},
 			sound_events = {
-				[1] = "player_packmaster_vce_grab_walk",
+				[1] = "player_packmaster_vce_grab_walk"
 			},
 			sound_events_duration = {
-				[1] = 2.4751597046852,
-			},
+				[1] = 2.4751597046852
+			}
 		},
 		epm_packmaster_hook_fail = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "player_alerts",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "player_packmaster_vce_effort_hook_fail",
+				[1] = "player_packmaster_vce_effort_hook_fail"
 			},
 			sound_events = {
-				[1] = "player_packmaster_vce_effort_hook_fail",
+				[1] = "player_packmaster_vce_effort_hook_fail"
 			},
 			sound_events_duration = {
-				[1] = 0.4992898106575,
-			},
+				[1] = 0.4992898106575
+			}
 		},
 		epm_packmaster_hook_success = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 25,
-			face_animations_n = 25,
 			randomize_indexes_n = 0,
+			face_animations_n = 25,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 25,
+			category = "player_alerts",
+			dialogue_animations_n = 25,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -15146,7 +15146,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -15173,7 +15173,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epm_hook_success_01",
@@ -15200,7 +15200,7 @@ return function ()
 				"epm_vs_hook_success_a_01",
 				"epm_vs_hook_success_a_02",
 				"epm_vs_hook_success_a_03",
-				"epm_vs_hook_success_a_04",
+				"epm_vs_hook_success_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -15228,7 +15228,7 @@ return function ()
 				"epm_vs_hook_success_a_01",
 				"epm_vs_hook_success_a_02",
 				"epm_vs_hook_success_a_03",
-				"epm_vs_hook_success_a_04",
+				"epm_vs_hook_success_a_04"
 			},
 			sound_events_duration = {
 				1.0299253463745,
@@ -15255,37 +15255,37 @@ return function ()
 				1.8369759321213,
 				1.6320371627808,
 				3.1155813932419,
-				2.8133449554443,
-			},
+				2.8133449554443
+			}
 		},
 		epm_spawning_packmaster = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 5,
-			face_animations_n = 5,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 5,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 5,
+			category = "player_alerts",
+			dialogue_animations_n = 5,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epm_spawning_packmaster_01",
 				"epm_spawning_packmaster_02",
 				"epm_spawning_packmaster_03",
 				"epm_spawning_packmaster_04",
-				"epm_spawning_packmaster_05",
+				"epm_spawning_packmaster_05"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -15293,23 +15293,23 @@ return function ()
 				"epm_spawning_packmaster_02",
 				"epm_spawning_packmaster_03",
 				"epm_spawning_packmaster_04",
-				"epm_spawning_packmaster_05",
+				"epm_spawning_packmaster_05"
 			},
 			sound_events_duration = {
 				5.3605642318726,
 				5.1071343421936,
 				4.6781826019287,
 				6.229145526886,
-				6.6739654541016,
-			},
+				6.6739654541016
+			}
 		},
 		epm_taunting_bardin = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -15320,7 +15320,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -15332,7 +15332,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epm_taunting_bardin_01",
@@ -15344,7 +15344,7 @@ return function ()
 				"epm_taunting_bardin_07",
 				"epm_taunting_bardin_08",
 				"epm_taunting_bardin_09",
-				"epm_taunting_bardin_10",
+				"epm_taunting_bardin_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -15357,7 +15357,7 @@ return function ()
 				"epm_taunting_bardin_07",
 				"epm_taunting_bardin_08",
 				"epm_taunting_bardin_09",
-				"epm_taunting_bardin_10",
+				"epm_taunting_bardin_10"
 			},
 			sound_events_duration = {
 				3.3167939186096,
@@ -15369,16 +15369,16 @@ return function ()
 				1.5558782815933,
 				1.8112553358078,
 				2.0925102233887,
-				2.2521233558655,
-			},
+				2.2521233558655
+			}
 		},
 		epm_taunting_kerillian = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 9,
-			face_animations_n = 9,
 			randomize_indexes_n = 0,
+			face_animations_n = 9,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 9,
+			category = "player_alerts",
+			dialogue_animations_n = 9,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -15388,7 +15388,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -15399,7 +15399,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epm_taunting_kerillian_01",
@@ -15410,7 +15410,7 @@ return function ()
 				"epm_taunting_kerillian_06",
 				"epm_taunting_kerillian_07",
 				"epm_taunting_kerillian_09",
-				"epm_taunting_kerillian_10",
+				"epm_taunting_kerillian_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -15422,7 +15422,7 @@ return function ()
 				"epm_taunting_kerillian_06",
 				"epm_taunting_kerillian_07",
 				"epm_taunting_kerillian_09",
-				"epm_taunting_kerillian_10",
+				"epm_taunting_kerillian_10"
 			},
 			sound_events_duration = {
 				2.3073987960815,
@@ -15433,16 +15433,16 @@ return function ()
 				2.4642984867096,
 				2.1972999572754,
 				3.8002145290375,
-				2.1999938488007,
-			},
+				2.1999938488007
+			}
 		},
 		epm_taunting_kruber = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -15453,7 +15453,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -15465,7 +15465,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epm_taunting_kruber_01",
@@ -15477,7 +15477,7 @@ return function ()
 				"epm_taunting_kruber_07",
 				"epm_taunting_kruber_08",
 				"epm_taunting_kruber_09",
-				"epm_taunting_kruber_10",
+				"epm_taunting_kruber_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -15490,7 +15490,7 @@ return function ()
 				"epm_taunting_kruber_07",
 				"epm_taunting_kruber_08",
 				"epm_taunting_kruber_09",
-				"epm_taunting_kruber_10",
+				"epm_taunting_kruber_10"
 			},
 			sound_events_duration = {
 				2.7907016277313,
@@ -15502,16 +15502,16 @@ return function ()
 				1.2860286235809,
 				2.4678966999054,
 				3.0628716945648,
-				4.9473757743835,
-			},
+				4.9473757743835
+			}
 		},
 		epm_taunting_saltzpyre = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -15522,7 +15522,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -15534,7 +15534,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epm_taunting_saltzpyre_01",
@@ -15546,7 +15546,7 @@ return function ()
 				"epm_taunting_saltzpyre_07",
 				"epm_taunting_saltzpyre_08",
 				"epm_taunting_saltzpyre_09",
-				"epm_taunting_saltzpyre_10",
+				"epm_taunting_saltzpyre_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -15559,7 +15559,7 @@ return function ()
 				"epm_taunting_saltzpyre_07",
 				"epm_taunting_saltzpyre_08",
 				"epm_taunting_saltzpyre_09",
-				"epm_taunting_saltzpyre_10",
+				"epm_taunting_saltzpyre_10"
 			},
 			sound_events_duration = {
 				3.3467814922333,
@@ -15571,16 +15571,16 @@ return function ()
 				2.1617670059204,
 				2.3701469898224,
 				1.5008976459503,
-				1.9748601913452,
-			},
+				1.9748601913452
+			}
 		},
 		epm_taunting_sienna = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -15591,7 +15591,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -15603,7 +15603,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epm_taunting_sienna_01",
@@ -15615,7 +15615,7 @@ return function ()
 				"epm_taunting_sienna_07",
 				"epm_taunting_sienna_08",
 				"epm_taunting_sienna_09",
-				"epm_taunting_sienna_10",
+				"epm_taunting_sienna_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -15628,7 +15628,7 @@ return function ()
 				"epm_taunting_sienna_07",
 				"epm_taunting_sienna_08",
 				"epm_taunting_sienna_09",
-				"epm_taunting_sienna_10",
+				"epm_taunting_sienna_10"
 			},
 			sound_events_duration = {
 				2.402533531189,
@@ -15640,23 +15640,23 @@ return function ()
 				1.4310313463211,
 				1.615873336792,
 				2.8181331157684,
-				2.0521793365478,
-			},
+				2.0521793365478
+			}
 		},
 		epm_vs_ability_horde_a = {
-			category = "activate_ability",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 6,
-			face_animations_n = 6,
 			randomize_indexes_n = 0,
+			face_animations_n = 6,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 6,
+			category = "activate_ability",
+			dialogue_animations_n = 6,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -15664,7 +15664,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epm_vs_ability_horde_a_01",
@@ -15672,7 +15672,7 @@ return function ()
 				"epm_vs_ability_horde_a_03",
 				"epm_vs_ability_horde_a_04",
 				"epm_vs_ability_horde_a_05",
-				"epm_vs_ability_horde_a_06",
+				"epm_vs_ability_horde_a_06"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -15681,7 +15681,7 @@ return function ()
 				"epm_vs_ability_horde_a_03",
 				"epm_vs_ability_horde_a_04",
 				"epm_vs_ability_horde_a_05",
-				"epm_vs_ability_horde_a_06",
+				"epm_vs_ability_horde_a_06"
 			},
 			sound_events_duration = {
 				5.5769166946411,
@@ -15689,728 +15689,728 @@ return function ()
 				5.0871043205261,
 				3.6119478940964,
 				5.1249167919159,
-				6.2895936965942,
-			},
+				6.2895936965942
+			}
 		},
 		epm_vs_downed_hero_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epm_vs_downed_hero_a_01",
 				"epm_vs_downed_hero_a_02",
 				"epm_vs_downed_hero_a_03",
-				"epm_vs_downed_hero_a_04",
+				"epm_vs_downed_hero_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"epm_vs_downed_hero_a_01",
 				"epm_vs_downed_hero_a_02",
 				"epm_vs_downed_hero_a_03",
-				"epm_vs_downed_hero_a_04",
+				"epm_vs_downed_hero_a_04"
 			},
 			sound_events_duration = {
 				2.5919573307037,
 				1.9467504024506,
 				1.9160450696945,
-				2.7556211948395,
-			},
+				2.7556211948395
+			}
 		},
 		epm_vs_globadier_hitting_many_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epm_vs_globadier_hitting_many_a_01",
 				"epm_vs_globadier_hitting_many_a_02",
 				"epm_vs_globadier_hitting_many_a_03",
-				"epm_vs_globadier_hitting_many_a_04",
+				"epm_vs_globadier_hitting_many_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"epm_vs_globadier_hitting_many_a_01",
 				"epm_vs_globadier_hitting_many_a_02",
 				"epm_vs_globadier_hitting_many_a_03",
-				"epm_vs_globadier_hitting_many_a_04",
+				"epm_vs_globadier_hitting_many_a_04"
 			},
 			sound_events_duration = {
 				2.6478916406632,
 				3.5436773300171,
 				2.0840941667557,
-				3.4749615192413,
-			},
+				3.4749615192413
+			}
 		},
 		epm_vs_globadier_missing_globe_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epm_vs_globadier_missing_globe_a_01",
 				"epm_vs_globadier_missing_globe_a_02",
 				"epm_vs_globadier_missing_globe_a_03",
-				"epm_vs_globadier_missing_globe_a_04",
+				"epm_vs_globadier_missing_globe_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"epm_vs_globadier_missing_globe_a_01",
 				"epm_vs_globadier_missing_globe_a_02",
 				"epm_vs_globadier_missing_globe_a_03",
-				"epm_vs_globadier_missing_globe_a_04",
+				"epm_vs_globadier_missing_globe_a_04"
 			},
 			sound_events_duration = {
 				1.9392879605293,
 				1.5503528118134,
 				1.6636667847633,
-				1.6278783082962,
-			},
+				1.6278783082962
+			}
 		},
 		epm_vs_heroes_objective_almost_completed_b = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epm_vs_heroes_objective_almost_completed_b_01",
 				"epm_vs_heroes_objective_almost_completed_b_02",
 				"epm_vs_heroes_objective_almost_completed_b_03",
-				"epm_vs_heroes_objective_almost_completed_b_04",
+				"epm_vs_heroes_objective_almost_completed_b_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"epm_vs_heroes_objective_almost_completed_b_01",
 				"epm_vs_heroes_objective_almost_completed_b_02",
 				"epm_vs_heroes_objective_almost_completed_b_03",
-				"epm_vs_heroes_objective_almost_completed_b_04",
+				"epm_vs_heroes_objective_almost_completed_b_04"
 			},
 			sound_events_duration = {
 				1.4174433946609,
 				2.2407379150391,
 				1.8182950615883,
-				1.5528304576874,
-			},
+				1.5528304576874
+			}
 		},
 		epm_vs_many_heroes_incapacitated_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epm_vs_many_heroes_incapacitated_a_01",
 				"epm_vs_many_heroes_incapacitated_a_02",
 				"epm_vs_many_heroes_incapacitated_a_03",
-				"epm_vs_many_heroes_incapacitated_a_04",
+				"epm_vs_many_heroes_incapacitated_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"epm_vs_many_heroes_incapacitated_a_01",
 				"epm_vs_many_heroes_incapacitated_a_02",
 				"epm_vs_many_heroes_incapacitated_a_03",
-				"epm_vs_many_heroes_incapacitated_a_04",
+				"epm_vs_many_heroes_incapacitated_a_04"
 			},
 			sound_events_duration = {
 				2.7119964361191,
 				2.3415848016739,
 				2.5715363025665,
-				1.8976492881775,
-			},
+				1.8976492881775
+			}
 		},
 		epm_vs_packmaster_hoisted_player_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epm_vs_packmaster_hoisted_player_a_01",
 				"epm_vs_packmaster_hoisted_player_a_02",
 				"epm_vs_packmaster_hoisted_player_a_03",
-				"epm_vs_packmaster_hoisted_player_a_04",
+				"epm_vs_packmaster_hoisted_player_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"epm_vs_packmaster_hoisted_player_a_01",
 				"epm_vs_packmaster_hoisted_player_a_02",
 				"epm_vs_packmaster_hoisted_player_a_03",
-				"epm_vs_packmaster_hoisted_player_a_04",
+				"epm_vs_packmaster_hoisted_player_a_04"
 			},
 			sound_events_duration = {
 				2.4504548311233,
 				1.8881810307503,
 				2.118309378624,
-				2.4483016729355,
-			},
+				2.4483016729355
+			}
 		},
 		epm_vs_pact_proximity_banter_eight_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epm_vs_pact_proximity_banter_eight_b_01",
+				[1] = "epm_vs_pact_proximity_banter_eight_b_01"
 			},
 			sound_events = {
-				[1] = "epm_vs_pact_proximity_banter_eight_b_01",
+				[1] = "epm_vs_pact_proximity_banter_eight_b_01"
 			},
 			sound_events_duration = {
-				[1] = 4.4684381484985,
-			},
+				[1] = 4.4684381484985
+			}
 		},
 		epm_vs_pact_proximity_banter_eighteen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epm_vs_pact_proximity_banter_eighteen_b_01",
+				[1] = "epm_vs_pact_proximity_banter_eighteen_b_01"
 			},
 			sound_events = {
-				[1] = "epm_vs_pact_proximity_banter_eighteen_b_01",
+				[1] = "epm_vs_pact_proximity_banter_eighteen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 3.2970904111862,
-			},
+				[1] = 3.2970904111862
+			}
 		},
 		epm_vs_pact_proximity_banter_eleven_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epm_vs_pact_proximity_banter_eleven_b_01",
+				[1] = "epm_vs_pact_proximity_banter_eleven_b_01"
 			},
 			sound_events = {
-				[1] = "epm_vs_pact_proximity_banter_eleven_b_01",
+				[1] = "epm_vs_pact_proximity_banter_eleven_b_01"
 			},
 			sound_events_duration = {
-				[1] = 7.7464351654053,
-			},
+				[1] = 7.7464351654053
+			}
 		},
 		epm_vs_pact_proximity_banter_fifteen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epm_vs_pact_proximity_banter_fifteen_b_01",
+				[1] = "epm_vs_pact_proximity_banter_fifteen_b_01"
 			},
 			sound_events = {
-				[1] = "epm_vs_pact_proximity_banter_fifteen_b_01",
+				[1] = "epm_vs_pact_proximity_banter_fifteen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 4.6304306983948,
-			},
+				[1] = 4.6304306983948
+			}
 		},
 		epm_vs_pact_proximity_banter_five_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epm_vs_pact_proximity_banter_five_b_01",
+				[1] = "epm_vs_pact_proximity_banter_five_b_01"
 			},
 			sound_events = {
-				[1] = "epm_vs_pact_proximity_banter_five_b_01",
+				[1] = "epm_vs_pact_proximity_banter_five_b_01"
 			},
 			sound_events_duration = {
-				[1] = 6.0004053115845,
-			},
+				[1] = 6.0004053115845
+			}
 		},
 		epm_vs_pact_proximity_banter_four_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epm_vs_pact_proximity_banter_four_b_01",
+				[1] = "epm_vs_pact_proximity_banter_four_b_01"
 			},
 			sound_events = {
-				[1] = "epm_vs_pact_proximity_banter_four_b_01",
+				[1] = "epm_vs_pact_proximity_banter_four_b_01"
 			},
 			sound_events_duration = {
-				[1] = 1.9324842691422,
-			},
+				[1] = 1.9324842691422
+			}
 		},
 		epm_vs_pact_proximity_banter_fourteen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epm_vs_pact_proximity_banter_fourteen_b_01",
+				[1] = "epm_vs_pact_proximity_banter_fourteen_b_01"
 			},
 			sound_events = {
-				[1] = "epm_vs_pact_proximity_banter_fourteen_b_01",
+				[1] = "epm_vs_pact_proximity_banter_fourteen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 3.4212982654572,
-			},
+				[1] = 3.4212982654572
+			}
 		},
 		epm_vs_pact_proximity_banter_nine_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epm_vs_pact_proximity_banter_nine_b_01",
+				[1] = "epm_vs_pact_proximity_banter_nine_b_01"
 			},
 			sound_events = {
-				[1] = "epm_vs_pact_proximity_banter_nine_b_01",
+				[1] = "epm_vs_pact_proximity_banter_nine_b_01"
 			},
 			sound_events_duration = {
-				[1] = 2.993094086647,
-			},
+				[1] = 2.993094086647
+			}
 		},
 		epm_vs_pact_proximity_banter_nineteen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epm_vs_pact_proximity_banter_nineteen_b_01",
+				[1] = "epm_vs_pact_proximity_banter_nineteen_b_01"
 			},
 			sound_events = {
-				[1] = "epm_vs_pact_proximity_banter_nineteen_b_01",
+				[1] = "epm_vs_pact_proximity_banter_nineteen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 3.7144500017166,
-			},
+				[1] = 3.7144500017166
+			}
 		},
 		epm_vs_pact_proximity_banter_one_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epm_vs_pact_proximity_banter_one_b_01",
+				[1] = "epm_vs_pact_proximity_banter_one_b_01"
 			},
 			sound_events = {
-				[1] = "epm_vs_pact_proximity_banter_one_b_01",
+				[1] = "epm_vs_pact_proximity_banter_one_b_01"
 			},
 			sound_events_duration = {
-				[1] = 3.9229183197022,
-			},
+				[1] = 3.9229183197022
+			}
 		},
 		epm_vs_pact_proximity_banter_seven_a = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epm_vs_pact_proximity_banter_seven_a_01",
+				[1] = "epm_vs_pact_proximity_banter_seven_a_01"
 			},
 			sound_events = {
-				[1] = "epm_vs_pact_proximity_banter_seven_a_01",
+				[1] = "epm_vs_pact_proximity_banter_seven_a_01"
 			},
 			sound_events_duration = {
-				[1] = 5.118649482727,
-			},
+				[1] = 5.118649482727
+			}
 		},
 		epm_vs_pact_proximity_banter_seventeen_a = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epm_vs_pact_proximity_banter_seventeen_a_01",
+				[1] = "epm_vs_pact_proximity_banter_seventeen_a_01"
 			},
 			sound_events = {
-				[1] = "epm_vs_pact_proximity_banter_seventeen_a_01",
+				[1] = "epm_vs_pact_proximity_banter_seventeen_a_01"
 			},
 			sound_events_duration = {
-				[1] = 4.3503360748291,
-			},
+				[1] = 4.3503360748291
+			}
 		},
 		epm_vs_pact_proximity_banter_six_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epm_vs_pact_proximity_banter_six_b_01",
+				[1] = "epm_vs_pact_proximity_banter_six_b_01"
 			},
 			sound_events = {
-				[1] = "epm_vs_pact_proximity_banter_six_b_01",
+				[1] = "epm_vs_pact_proximity_banter_six_b_01"
 			},
 			sound_events_duration = {
-				[1] = 6.2029447555542,
-			},
+				[1] = 6.2029447555542
+			}
 		},
 		epm_vs_pact_proximity_banter_sixteen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epm_vs_pact_proximity_banter_sixteen_b_01",
+				[1] = "epm_vs_pact_proximity_banter_sixteen_b_01"
 			},
 			sound_events = {
-				[1] = "epm_vs_pact_proximity_banter_sixteen_b_01",
+				[1] = "epm_vs_pact_proximity_banter_sixteen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 9.0967748165131,
-			},
+				[1] = 9.0967748165131
+			}
 		},
 		epm_vs_pact_proximity_banter_ten_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epm_vs_pact_proximity_banter_ten_b_01",
+				[1] = "epm_vs_pact_proximity_banter_ten_b_01"
 			},
 			sound_events = {
-				[1] = "epm_vs_pact_proximity_banter_ten_b_01",
+				[1] = "epm_vs_pact_proximity_banter_ten_b_01"
 			},
 			sound_events_duration = {
-				[1] = 2.3985025882721,
-			},
+				[1] = 2.3985025882721
+			}
 		},
 		epm_vs_pact_proximity_banter_thirteen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epm_vs_pact_proximity_banter_thirteen_b_01",
+				[1] = "epm_vs_pact_proximity_banter_thirteen_b_01"
 			},
 			sound_events = {
-				[1] = "epm_vs_pact_proximity_banter_thirteen_b_01",
+				[1] = "epm_vs_pact_proximity_banter_thirteen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 4.0120947360992,
-			},
+				[1] = 4.0120947360992
+			}
 		},
 		epm_vs_pact_proximity_banter_three_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epm_vs_pact_proximity_banter_three_b_01",
+				[1] = "epm_vs_pact_proximity_banter_three_b_01"
 			},
 			sound_events = {
-				[1] = "epm_vs_pact_proximity_banter_three_b_01",
+				[1] = "epm_vs_pact_proximity_banter_three_b_01"
 			},
 			sound_events_duration = {
-				[1] = 6.4127407073975,
-			},
+				[1] = 6.4127407073975
+			}
 		},
 		epm_vs_pact_proximity_banter_twelve_a = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epm_vs_pact_proximity_banter_twelve_a_01",
+				[1] = "epm_vs_pact_proximity_banter_twelve_a_01"
 			},
 			sound_events = {
-				[1] = "epm_vs_pact_proximity_banter_twelve_a_01",
+				[1] = "epm_vs_pact_proximity_banter_twelve_a_01"
 			},
 			sound_events_duration = {
-				[1] = 4.0987935066223,
-			},
+				[1] = 4.0987935066223
+			}
 		},
 		epm_vs_pact_proximity_banter_twenty_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epm_vs_pact_proximity_banter_twenty_b_01",
+				[1] = "epm_vs_pact_proximity_banter_twenty_b_01"
 			},
 			sound_events = {
-				[1] = "epm_vs_pact_proximity_banter_twenty_b_01",
+				[1] = "epm_vs_pact_proximity_banter_twenty_b_01"
 			},
 			sound_events_duration = {
-				[1] = 8.9637472629547,
-			},
+				[1] = 8.9637472629547
+			}
 		},
 		epm_vs_pact_proximity_banter_two_a = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "epm_vs_pact_proximity_banter_two_a_01",
+				[1] = "epm_vs_pact_proximity_banter_two_a_01"
 			},
 			sound_events = {
-				[1] = "epm_vs_pact_proximity_banter_two_a_01",
+				[1] = "epm_vs_pact_proximity_banter_two_a_01"
 			},
 			sound_events_duration = {
-				[1] = 9.1949672698975,
-			},
+				[1] = 9.1949672698975
+			}
 		},
 		epm_vs_passing_hoisted_hero_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 2,
-			face_animations_n = 2,
 			randomize_indexes_n = 0,
+			face_animations_n = 2,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 2,
+			category = "player_feedback",
+			dialogue_animations_n = 2,
 			dialogue_animations = {
 				[1] = "dialogue_talk",
-				[2] = "dialogue_talk",
+				[2] = "dialogue_talk"
 			},
 			face_animations = {
 				[1] = "face_neutral",
-				[2] = "face_neutral",
+				[2] = "face_neutral"
 			},
 			localization_strings = {
 				[1] = "epm_vs_passing_hoisted_hero_a_01",
-				[2] = "epm_vs_passing_hoisted_hero_a_02",
+				[2] = "epm_vs_passing_hoisted_hero_a_02"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				[1] = "epm_vs_passing_hoisted_hero_a_01",
-				[2] = "epm_vs_passing_hoisted_hero_a_02",
+				[2] = "epm_vs_passing_hoisted_hero_a_02"
 			},
 			sound_events_duration = {
 				[1] = 2.1896308064461,
-				[2] = 3.2292788028717,
-			},
+				[2] = 3.2292788028717
+			}
 		},
 		epm_vs_vw_cheer_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 6,
-			face_animations_n = 6,
 			randomize_indexes_n = 0,
+			face_animations_n = 6,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 6,
+			category = "player_feedback",
+			dialogue_animations_n = 6,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -16418,7 +16418,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epm_vs_vw_cheer_a_01",
@@ -16426,7 +16426,7 @@ return function ()
 				"epm_vs_vw_cheer_a_03",
 				"epm_vs_vw_cheer_a_04",
 				"epm_vs_vw_cheer_a_05",
-				"epm_vs_vw_cheer_a_06",
+				"epm_vs_vw_cheer_a_06"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -16435,7 +16435,7 @@ return function ()
 				"epm_vs_vw_cheer_a_03",
 				"epm_vs_vw_cheer_a_04",
 				"epm_vs_vw_cheer_a_05",
-				"epm_vs_vw_cheer_a_06",
+				"epm_vs_vw_cheer_a_06"
 			},
 			sound_events_duration = {
 				2.1676466464996,
@@ -16443,17 +16443,17 @@ return function ()
 				1.7564712762833,
 				2.3419880867004,
 				2.2907336950302,
-				3.0116274356842,
-			},
+				3.0116274356842
+			}
 		},
 		epm_vw_affirmative = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -16464,7 +16464,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -16476,7 +16476,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epm_vw_affirmative_01",
@@ -16488,7 +16488,7 @@ return function ()
 				"epm_vw_affirmative_07",
 				"epm_vw_affirmative_08",
 				"epm_vw_affirmative_09",
-				"epm_vw_affirmative_10",
+				"epm_vw_affirmative_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -16501,7 +16501,7 @@ return function ()
 				"epm_vw_affirmative_07",
 				"epm_vw_affirmative_08",
 				"epm_vw_affirmative_09",
-				"epm_vw_affirmative_10",
+				"epm_vw_affirmative_10"
 			},
 			sound_events_duration = {
 				0.55143886804581,
@@ -16513,17 +16513,17 @@ return function ()
 				3.3063719272613,
 				3.4583353996277,
 				1.3317868709564,
-				1.9670141935349,
-			},
+				1.9670141935349
+			}
 		},
 		epm_vw_ambush = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -16534,7 +16534,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -16546,7 +16546,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epm_vw_ambush_01",
@@ -16558,7 +16558,7 @@ return function ()
 				"epm_vw_ambush_07",
 				"epm_vw_ambush_08",
 				"epm_vw_ambush_09",
-				"epm_vw_ambush_10",
+				"epm_vw_ambush_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -16571,7 +16571,7 @@ return function ()
 				"epm_vw_ambush_07",
 				"epm_vw_ambush_08",
 				"epm_vw_ambush_09",
-				"epm_vw_ambush_10",
+				"epm_vw_ambush_10"
 			},
 			sound_events_duration = {
 				0.6597483754158,
@@ -16583,17 +16583,17 @@ return function ()
 				0.87212014198303,
 				1.7923974990845,
 				2.3049211502075,
-				0.99859935045242,
-			},
+				0.99859935045242
+			}
 		},
 		epm_vw_attack_now = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -16604,7 +16604,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -16616,7 +16616,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epm_vw_attack_now_01",
@@ -16628,7 +16628,7 @@ return function ()
 				"epm_vw_attack_now_07",
 				"epm_vw_attack_now_08",
 				"epm_vw_attack_now_09",
-				"epm_vw_attack_now_10",
+				"epm_vw_attack_now_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -16641,7 +16641,7 @@ return function ()
 				"epm_vw_attack_now_07",
 				"epm_vw_attack_now_08",
 				"epm_vw_attack_now_09",
-				"epm_vw_attack_now_10",
+				"epm_vw_attack_now_10"
 			},
 			sound_events_duration = {
 				0.85984975099564,
@@ -16653,17 +16653,17 @@ return function ()
 				1.4403324127197,
 				1.8056117296219,
 				1.5252811908722,
-				3.7556557655334,
-			},
+				3.7556557655334
+			}
 		},
 		epm_vw_cover_me = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -16674,7 +16674,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -16686,7 +16686,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epm_vw_cover_me_01",
@@ -16698,7 +16698,7 @@ return function ()
 				"epm_vw_cover_me_07",
 				"epm_vw_cover_me_08",
 				"epm_vw_cover_me_09",
-				"epm_vw_cover_me_10",
+				"epm_vw_cover_me_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -16711,7 +16711,7 @@ return function ()
 				"epm_vw_cover_me_07",
 				"epm_vw_cover_me_08",
 				"epm_vw_cover_me_09",
-				"epm_vw_cover_me_10",
+				"epm_vw_cover_me_10"
 			},
 			sound_events_duration = {
 				0.68523299694061,
@@ -16723,17 +16723,17 @@ return function ()
 				1.0788285732269,
 				1.9585193395615,
 				1.6419085264206,
-				1.5639799833298,
-			},
+				1.5639799833298
+			}
 		},
 		epm_vw_gather = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -16744,7 +16744,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -16756,7 +16756,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epm_vw_gather_01",
@@ -16768,7 +16768,7 @@ return function ()
 				"epm_vw_gather_07",
 				"epm_vw_gather_08",
 				"epm_vw_gather_09",
-				"epm_vw_gather_10",
+				"epm_vw_gather_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -16781,7 +16781,7 @@ return function ()
 				"epm_vw_gather_07",
 				"epm_vw_gather_08",
 				"epm_vw_gather_09",
-				"epm_vw_gather_10",
+				"epm_vw_gather_10"
 			},
 			sound_events_duration = {
 				1.2742105722427,
@@ -16793,17 +16793,17 @@ return function ()
 				1.8207137584686,
 				1.2279803752899,
 				1.2978073358536,
-				2.1897685527802,
-			},
+				2.1897685527802
+			}
 		},
 		epm_vw_go_here = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -16814,7 +16814,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -16826,7 +16826,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epm_vw_go_here_01",
@@ -16838,7 +16838,7 @@ return function ()
 				"epm_vw_go_here_07",
 				"epm_vw_go_here_08",
 				"epm_vw_go_here_09",
-				"epm_vw_go_here_10",
+				"epm_vw_go_here_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -16851,7 +16851,7 @@ return function ()
 				"epm_vw_go_here_07",
 				"epm_vw_go_here_08",
 				"epm_vw_go_here_09",
-				"epm_vw_go_here_10",
+				"epm_vw_go_here_10"
 			},
 			sound_events_duration = {
 				0.96461987495422,
@@ -16863,17 +16863,17 @@ return function ()
 				1.576623916626,
 				1.1998018026352,
 				1.0415651798248,
-				1.9574770927429,
-			},
+				1.9574770927429
+			}
 		},
 		epm_vw_negation = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -16884,7 +16884,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -16896,7 +16896,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epm_vw_negation_01",
@@ -16908,7 +16908,7 @@ return function ()
 				"epm_vw_negation_07",
 				"epm_vw_negation_08",
 				"epm_vw_negation_09",
-				"epm_vw_negation_10",
+				"epm_vw_negation_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -16921,7 +16921,7 @@ return function ()
 				"epm_vw_negation_07",
 				"epm_vw_negation_08",
 				"epm_vw_negation_09",
-				"epm_vw_negation_10",
+				"epm_vw_negation_10"
 			},
 			sound_events_duration = {
 				0.68428915739059,
@@ -16933,17 +16933,17 @@ return function ()
 				0.9693391919136,
 				1.5592606067658,
 				2.6267430782318,
-				2.0481872558594,
-			},
+				2.0481872558594
+			}
 		},
 		epm_vw_thanks = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 12,
-			face_animations_n = 12,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 12,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 12,
+			category = "player_alerts",
+			dialogue_animations_n = 12,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -16956,7 +16956,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -16970,7 +16970,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epm_vs_vw_thanks_a_01",
@@ -16984,7 +16984,7 @@ return function ()
 				"epm_vs_vw_thanks_a_09",
 				"epm_vs_vw_thanks_a_10",
 				"epm_vs_vw_thanks_a_11",
-				"epm_vs_vw_thanks_a_12",
+				"epm_vs_vw_thanks_a_12"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -16999,7 +16999,7 @@ return function ()
 				"epm_vs_vw_thanks_a_09",
 				"epm_vs_vw_thanks_a_10",
 				"epm_vs_vw_thanks_a_11",
-				"epm_vs_vw_thanks_a_12",
+				"epm_vs_vw_thanks_a_12"
 			},
 			sound_events_duration = {
 				1.6661936044693,
@@ -17013,17 +17013,17 @@ return function ()
 				1.2619008421898,
 				1.2373208105564,
 				0.66956079006195,
-				1.9211969971657,
-			},
+				1.9211969971657
+			}
 		},
 		epm_vw_wait = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -17034,7 +17034,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -17046,7 +17046,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"epm_vw_wait_01",
@@ -17058,7 +17058,7 @@ return function ()
 				"epm_vw_wait_07",
 				"epm_vw_wait_08",
 				"epm_vw_wait_09",
-				"epm_vw_wait_10",
+				"epm_vw_wait_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -17071,7 +17071,7 @@ return function ()
 				"epm_vw_wait_07",
 				"epm_vw_wait_08",
 				"epm_vw_wait_09",
-				"epm_vw_wait_10",
+				"epm_vw_wait_10"
 			},
 			sound_events_duration = {
 				1.8660197257996,
@@ -17083,37 +17083,37 @@ return function ()
 				1.9660704135895,
 				1.4960210323334,
 				0.87117624282837,
-				1.9906111955643,
-			},
+				1.9906111955643
+			}
 		},
 		erg_spawning_ratling_gunner = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 5,
-			face_animations_n = 5,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 5,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 5,
+			category = "player_alerts",
+			dialogue_animations_n = 5,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"erg_spawning_ratling_gunner_01",
 				"erg_spawning_ratling_gunner_02",
 				"erg_spawning_ratling_gunner_03",
 				"erg_spawning_ratling_gunner_04",
-				"erg_spawning_ratling_gunner_05",
+				"erg_spawning_ratling_gunner_05"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -17121,23 +17121,23 @@ return function ()
 				"erg_spawning_ratling_gunner_02",
 				"erg_spawning_ratling_gunner_03",
 				"erg_spawning_ratling_gunner_04",
-				"erg_spawning_ratling_gunner_05",
+				"erg_spawning_ratling_gunner_05"
 			},
 			sound_events_duration = {
 				3.2514790296555,
 				3.9679791927338,
 				3.6999790668488,
 				2.9299790859222,
-				3.8749792575836,
-			},
+				3.8749792575836
+			}
 		},
 		erg_taunting_bardin = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -17148,7 +17148,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -17160,7 +17160,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"erg_taunting_bardin_01",
@@ -17172,7 +17172,7 @@ return function ()
 				"erg_taunting_bardin_07",
 				"erg_taunting_bardin_08",
 				"erg_taunting_bardin_09",
-				"erg_taunting_bardin_10",
+				"erg_taunting_bardin_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -17185,7 +17185,7 @@ return function ()
 				"erg_taunting_bardin_07",
 				"erg_taunting_bardin_08",
 				"erg_taunting_bardin_09",
-				"erg_taunting_bardin_10",
+				"erg_taunting_bardin_10"
 			},
 			sound_events_duration = {
 				3.3309791088104,
@@ -17197,16 +17197,16 @@ return function ()
 				2.3059792518616,
 				2.1809792518616,
 				2.5479791164398,
-				2.658979177475,
-			},
+				2.658979177475
+			}
 		},
 		erg_taunting_kerillian = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -17217,7 +17217,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -17229,7 +17229,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"erg_taunting_kerillian_01",
@@ -17241,7 +17241,7 @@ return function ()
 				"erg_taunting_kerillian_07",
 				"erg_taunting_kerillian_08",
 				"erg_taunting_kerillian_09",
-				"erg_taunting_kerillian_10",
+				"erg_taunting_kerillian_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -17254,7 +17254,7 @@ return function ()
 				"erg_taunting_kerillian_07",
 				"erg_taunting_kerillian_08",
 				"erg_taunting_kerillian_09",
-				"erg_taunting_kerillian_10",
+				"erg_taunting_kerillian_10"
 			},
 			sound_events_duration = {
 				1.9979791641235,
@@ -17266,16 +17266,16 @@ return function ()
 				1.8509792089462,
 				1.9219791889191,
 				1.8959791660309,
-				2.6259791851044,
-			},
+				2.6259791851044
+			}
 		},
 		erg_taunting_kruber = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -17286,7 +17286,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -17298,7 +17298,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"erg_taunting_kruber_01",
@@ -17310,7 +17310,7 @@ return function ()
 				"erg_taunting_kruber_07",
 				"erg_taunting_kruber_08",
 				"erg_taunting_kruber_09",
-				"erg_taunting_kruber_10",
+				"erg_taunting_kruber_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -17323,7 +17323,7 @@ return function ()
 				"erg_taunting_kruber_07",
 				"erg_taunting_kruber_08",
 				"erg_taunting_kruber_09",
-				"erg_taunting_kruber_10",
+				"erg_taunting_kruber_10"
 			},
 			sound_events_duration = {
 				2.9449791908264,
@@ -17335,16 +17335,16 @@ return function ()
 				1.7949792146683,
 				1.8889791965485,
 				2.0259792804718,
-				2.1419792175293,
-			},
+				2.1419792175293
+			}
 		},
 		erg_taunting_saltzpyre = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -17355,7 +17355,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -17367,7 +17367,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"erg_taunting_saltzpyre_01",
@@ -17379,7 +17379,7 @@ return function ()
 				"erg_taunting_saltzpyre_07",
 				"erg_taunting_saltzpyre_08",
 				"erg_taunting_saltzpyre_09",
-				"erg_taunting_saltzpyre_10",
+				"erg_taunting_saltzpyre_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -17392,7 +17392,7 @@ return function ()
 				"erg_taunting_saltzpyre_07",
 				"erg_taunting_saltzpyre_08",
 				"erg_taunting_saltzpyre_09",
-				"erg_taunting_saltzpyre_10",
+				"erg_taunting_saltzpyre_10"
 			},
 			sound_events_duration = {
 				2.4999792575836,
@@ -17404,16 +17404,16 @@ return function ()
 				2.3059792518616,
 				2.2989792823791,
 				2.3589792251587,
-				1.9989792108536,
-			},
+				1.9989792108536
+			}
 		},
 		erg_taunting_sienna = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -17424,7 +17424,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -17436,7 +17436,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"erg_taunting_sienna_01",
@@ -17448,7 +17448,7 @@ return function ()
 				"erg_taunting_sienna_07",
 				"erg_taunting_sienna_08",
 				"erg_taunting_sienna_09",
-				"erg_taunting_sienna_10",
+				"erg_taunting_sienna_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -17461,7 +17461,7 @@ return function ()
 				"erg_taunting_sienna_07",
 				"erg_taunting_sienna_08",
 				"erg_taunting_sienna_09",
-				"erg_taunting_sienna_10",
+				"erg_taunting_sienna_10"
 			},
 			sound_events_duration = {
 				1.9749791622162,
@@ -17473,23 +17473,23 @@ return function ()
 				1.9579792022705,
 				1.8459792137146,
 				1.7079792022705,
-				2.1649792194366,
-			},
+				2.1649792194366
+			}
 		},
 		erg_vs_ability_horde_a = {
-			category = "activate_ability",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 6,
-			face_animations_n = 6,
 			randomize_indexes_n = 0,
+			face_animations_n = 6,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 6,
+			category = "activate_ability",
+			dialogue_animations_n = 6,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -17497,7 +17497,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"erg_vs_ability_horde_a_01",
@@ -17505,7 +17505,7 @@ return function ()
 				"erg_vs_ability_horde_a_03",
 				"erg_vs_ability_horde_a_04",
 				"erg_vs_ability_horde_a_05",
-				"erg_vs_ability_horde_a_06",
+				"erg_vs_ability_horde_a_06"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -17514,7 +17514,7 @@ return function ()
 				"erg_vs_ability_horde_a_03",
 				"erg_vs_ability_horde_a_04",
 				"erg_vs_ability_horde_a_05",
-				"erg_vs_ability_horde_a_06",
+				"erg_vs_ability_horde_a_06"
 			},
 			sound_events_duration = {
 				2.2112290859222,
@@ -17522,692 +17522,692 @@ return function ()
 				3.5963125228882,
 				2.7414166927338,
 				3.1426665782928,
-				3.5508021116257,
-			},
+				3.5508021116257
+			}
 		},
 		erg_vs_downed_hero_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"erg_vs_downed_hero_a_01",
 				"erg_vs_downed_hero_a_02",
 				"erg_vs_downed_hero_a_03",
-				"erg_vs_downed_hero_a_04",
+				"erg_vs_downed_hero_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"erg_vs_downed_hero_a_01",
 				"erg_vs_downed_hero_a_02",
 				"erg_vs_downed_hero_a_03",
-				"erg_vs_downed_hero_a_04",
+				"erg_vs_downed_hero_a_04"
 			},
 			sound_events_duration = {
 				1.0716041326523,
 				2.4983438253403,
 				2.0298750400543,
-				1.9546562433243,
-			},
+				1.9546562433243
+			}
 		},
 		erg_vs_globadier_hitting_many_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"erg_vs_globadier_hitting_many_a_01",
 				"erg_vs_globadier_hitting_many_a_02",
 				"erg_vs_globadier_hitting_many_a_03",
-				"erg_vs_globadier_hitting_many_a_04",
+				"erg_vs_globadier_hitting_many_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"erg_vs_globadier_hitting_many_a_01",
 				"erg_vs_globadier_hitting_many_a_02",
 				"erg_vs_globadier_hitting_many_a_03",
-				"erg_vs_globadier_hitting_many_a_04",
+				"erg_vs_globadier_hitting_many_a_04"
 			},
 			sound_events_duration = {
 				2.5417499542236,
 				1.937979221344,
 				2.2320208549499,
-				3.3510625362396,
-			},
+				3.3510625362396
+			}
 		},
 		erg_vs_globadier_missing_globe_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"erg_vs_globadier_missing_globe_a_01",
 				"erg_vs_globadier_missing_globe_a_02",
 				"erg_vs_globadier_missing_globe_a_03",
-				"erg_vs_globadier_missing_globe_a_04",
+				"erg_vs_globadier_missing_globe_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"erg_vs_globadier_missing_globe_a_01",
 				"erg_vs_globadier_missing_globe_a_02",
 				"erg_vs_globadier_missing_globe_a_03",
-				"erg_vs_globadier_missing_globe_a_04",
+				"erg_vs_globadier_missing_globe_a_04"
 			},
 			sound_events_duration = {
 				2.5323333740234,
 				2.0942499637604,
 				1.6389791965485,
-				2.6538333892822,
-			},
+				2.6538333892822
+			}
 		},
 		erg_vs_heroes_objective_almost_completed_b = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"erg_vs_heroes_objective_almost_completed_b_01",
 				"erg_vs_heroes_objective_almost_completed_b_02",
 				"erg_vs_heroes_objective_almost_completed_b_03",
-				"erg_vs_heroes_objective_almost_completed_b_04",
+				"erg_vs_heroes_objective_almost_completed_b_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"erg_vs_heroes_objective_almost_completed_b_01",
 				"erg_vs_heroes_objective_almost_completed_b_02",
 				"erg_vs_heroes_objective_almost_completed_b_03",
-				"erg_vs_heroes_objective_almost_completed_b_04",
+				"erg_vs_heroes_objective_almost_completed_b_04"
 			},
 			sound_events_duration = {
 				1.8469062447548,
 				1.687895834446,
 				1.8291562199593,
-				2.5564374923706,
-			},
+				2.5564374923706
+			}
 		},
 		erg_vs_pact_proximity_banter_eight_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "erg_vs_pact_proximity_banter_eight_b_01",
+				[1] = "erg_vs_pact_proximity_banter_eight_b_01"
 			},
 			sound_events = {
-				[1] = "erg_vs_pact_proximity_banter_eight_b_01",
+				[1] = "erg_vs_pact_proximity_banter_eight_b_01"
 			},
 			sound_events_duration = {
-				[1] = 7.5395832061768,
-			},
+				[1] = 7.5395832061768
+			}
 		},
 		erg_vs_pact_proximity_banter_eighteen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "erg_vs_pact_proximity_banter_eighteen_b_01",
+				[1] = "erg_vs_pact_proximity_banter_eighteen_b_01"
 			},
 			sound_events = {
-				[1] = "erg_vs_pact_proximity_banter_eighteen_b_01",
+				[1] = "erg_vs_pact_proximity_banter_eighteen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 8.0016870498657,
-			},
+				[1] = 8.0016870498657
+			}
 		},
 		erg_vs_pact_proximity_banter_eleven_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "erg_vs_pact_proximity_banter_eleven_b_01",
+				[1] = "erg_vs_pact_proximity_banter_eleven_b_01"
 			},
 			sound_events = {
-				[1] = "erg_vs_pact_proximity_banter_eleven_b_01",
+				[1] = "erg_vs_pact_proximity_banter_eleven_b_01"
 			},
 			sound_events_duration = {
-				[1] = 7.8339688777924,
-			},
+				[1] = 7.8339688777924
+			}
 		},
 		erg_vs_pact_proximity_banter_fifteen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "erg_vs_pact_proximity_banter_fifteen_b_01",
+				[1] = "erg_vs_pact_proximity_banter_fifteen_b_01"
 			},
 			sound_events = {
-				[1] = "erg_vs_pact_proximity_banter_fifteen_b_01",
+				[1] = "erg_vs_pact_proximity_banter_fifteen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 2.3817915916443,
-			},
+				[1] = 2.3817915916443
+			}
 		},
 		erg_vs_pact_proximity_banter_five_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "erg_vs_pact_proximity_banter_five_b_01",
+				[1] = "erg_vs_pact_proximity_banter_five_b_01"
 			},
 			sound_events = {
-				[1] = "erg_vs_pact_proximity_banter_five_b_01",
+				[1] = "erg_vs_pact_proximity_banter_five_b_01"
 			},
 			sound_events_duration = {
-				[1] = 4.2901043891907,
-			},
+				[1] = 4.2901043891907
+			}
 		},
 		erg_vs_pact_proximity_banter_four_a = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "erg_vs_pact_proximity_banter_four_a_01",
+				[1] = "erg_vs_pact_proximity_banter_four_a_01"
 			},
 			sound_events = {
-				[1] = "erg_vs_pact_proximity_banter_four_a_01",
+				[1] = "erg_vs_pact_proximity_banter_four_a_01"
 			},
 			sound_events_duration = {
-				[1] = 9.109582901001,
-			},
+				[1] = 9.109582901001
+			}
 		},
 		erg_vs_pact_proximity_banter_fourteen_a = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "erg_vs_pact_proximity_banter_fourteen_a_01",
+				[1] = "erg_vs_pact_proximity_banter_fourteen_a_01"
 			},
 			sound_events = {
-				[1] = "erg_vs_pact_proximity_banter_fourteen_a_01",
+				[1] = "erg_vs_pact_proximity_banter_fourteen_a_01"
 			},
 			sound_events_duration = {
-				[1] = 3.9854791164398,
-			},
+				[1] = 3.9854791164398
+			}
 		},
 		erg_vs_pact_proximity_banter_nine_a = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "erg_vs_pact_proximity_banter_nine_a_01",
+				[1] = "erg_vs_pact_proximity_banter_nine_a_01"
 			},
 			sound_events = {
-				[1] = "erg_vs_pact_proximity_banter_nine_a_01",
+				[1] = "erg_vs_pact_proximity_banter_nine_a_01"
 			},
 			sound_events_duration = {
-				[1] = 4.0539479255676,
-			},
+				[1] = 4.0539479255676
+			}
 		},
 		erg_vs_pact_proximity_banter_nineteen_a = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "erg_vs_pact_proximity_banter_nineteen_a_01",
+				[1] = "erg_vs_pact_proximity_banter_nineteen_a_01"
 			},
 			sound_events = {
-				[1] = "erg_vs_pact_proximity_banter_nineteen_a_01",
+				[1] = "erg_vs_pact_proximity_banter_nineteen_a_01"
 			},
 			sound_events_duration = {
-				[1] = 5.3738541603088,
-			},
+				[1] = 5.3738541603088
+			}
 		},
 		erg_vs_pact_proximity_banter_one_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "erg_vs_pact_proximity_banter_one_b_01",
+				[1] = "erg_vs_pact_proximity_banter_one_b_01"
 			},
 			sound_events = {
-				[1] = "erg_vs_pact_proximity_banter_one_b_01",
+				[1] = "erg_vs_pact_proximity_banter_one_b_01"
 			},
 			sound_events_duration = {
-				[1] = 9.3068122863769,
-			},
+				[1] = 9.3068122863769
+			}
 		},
 		erg_vs_pact_proximity_banter_seven_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "erg_vs_pact_proximity_banter_seven_b_01",
+				[1] = "erg_vs_pact_proximity_banter_seven_b_01"
 			},
 			sound_events = {
-				[1] = "erg_vs_pact_proximity_banter_seven_b_01",
+				[1] = "erg_vs_pact_proximity_banter_seven_b_01"
 			},
 			sound_events_duration = {
-				[1] = 3.1813125610352,
-			},
+				[1] = 3.1813125610352
+			}
 		},
 		erg_vs_pact_proximity_banter_seventeen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "erg_vs_pact_proximity_banter_seventeen_b_01",
+				[1] = "erg_vs_pact_proximity_banter_seventeen_b_01"
 			},
 			sound_events = {
-				[1] = "erg_vs_pact_proximity_banter_seventeen_b_01",
+				[1] = "erg_vs_pact_proximity_banter_seventeen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 4.3256459236145,
-			},
+				[1] = 4.3256459236145
+			}
 		},
 		erg_vs_pact_proximity_banter_six_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "erg_vs_pact_proximity_banter_six_b_01",
+				[1] = "erg_vs_pact_proximity_banter_six_b_01"
 			},
 			sound_events = {
-				[1] = "erg_vs_pact_proximity_banter_six_b_01",
+				[1] = "erg_vs_pact_proximity_banter_six_b_01"
 			},
 			sound_events_duration = {
-				[1] = 4.7612290382385,
-			},
+				[1] = 4.7612290382385
+			}
 		},
 		erg_vs_pact_proximity_banter_sixteen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "erg_vs_pact_proximity_banter_sixteen_b_01",
+				[1] = "erg_vs_pact_proximity_banter_sixteen_b_01"
 			},
 			sound_events = {
-				[1] = "erg_vs_pact_proximity_banter_sixteen_b_01",
+				[1] = "erg_vs_pact_proximity_banter_sixteen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 3.0060000419617,
-			},
+				[1] = 3.0060000419617
+			}
 		},
 		erg_vs_pact_proximity_banter_ten_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "erg_vs_pact_proximity_banter_ten_b_01",
+				[1] = "erg_vs_pact_proximity_banter_ten_b_01"
 			},
 			sound_events = {
-				[1] = "erg_vs_pact_proximity_banter_ten_b_01",
+				[1] = "erg_vs_pact_proximity_banter_ten_b_01"
 			},
 			sound_events_duration = {
-				[1] = 2.4178438186645,
-			},
+				[1] = 2.4178438186645
+			}
 		},
 		erg_vs_pact_proximity_banter_thirteen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "erg_vs_pact_proximity_banter_thirteen_b_01",
+				[1] = "erg_vs_pact_proximity_banter_thirteen_b_01"
 			},
 			sound_events = {
-				[1] = "erg_vs_pact_proximity_banter_thirteen_b_01",
+				[1] = "erg_vs_pact_proximity_banter_thirteen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 3.1031041145325,
-			},
+				[1] = 3.1031041145325
+			}
 		},
 		erg_vs_pact_proximity_banter_three_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "erg_vs_pact_proximity_banter_three_b_01",
+				[1] = "erg_vs_pact_proximity_banter_three_b_01"
 			},
 			sound_events = {
-				[1] = "erg_vs_pact_proximity_banter_three_b_01",
+				[1] = "erg_vs_pact_proximity_banter_three_b_01"
 			},
 			sound_events_duration = {
-				[1] = 5.0212292671204,
-			},
+				[1] = 5.0212292671204
+			}
 		},
 		erg_vs_pact_proximity_banter_twelve_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "erg_vs_pact_proximity_banter_twelve_b_01",
+				[1] = "erg_vs_pact_proximity_banter_twelve_b_01"
 			},
 			sound_events = {
-				[1] = "erg_vs_pact_proximity_banter_twelve_b_01",
+				[1] = "erg_vs_pact_proximity_banter_twelve_b_01"
 			},
 			sound_events_duration = {
-				[1] = 4.8177709579468,
-			},
+				[1] = 4.8177709579468
+			}
 		},
 		erg_vs_pact_proximity_banter_twenty_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "erg_vs_pact_proximity_banter_twenty_b_01",
+				[1] = "erg_vs_pact_proximity_banter_twenty_b_01"
 			},
 			sound_events = {
-				[1] = "erg_vs_pact_proximity_banter_twenty_b_01",
+				[1] = "erg_vs_pact_proximity_banter_twenty_b_01"
 			},
 			sound_events_duration = {
-				[1] = 4.1666250228882,
-			},
+				[1] = 4.1666250228882
+			}
 		},
 		erg_vs_pact_proximity_banter_two_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "erg_vs_pact_proximity_banter_two_b_01",
+				[1] = "erg_vs_pact_proximity_banter_two_b_01"
 			},
 			sound_events = {
-				[1] = "erg_vs_pact_proximity_banter_two_b_01",
+				[1] = "erg_vs_pact_proximity_banter_two_b_01"
 			},
 			sound_events_duration = {
-				[1] = 2.5010833740234,
-			},
+				[1] = 2.5010833740234
+			}
 		},
 		erg_vs_ratling_hitting_shield_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"erg_vs_ratling_hitting_shield_a_01",
 				"erg_vs_ratling_hitting_shield_a_02",
 				"erg_vs_ratling_hitting_shield_a_03",
-				"erg_vs_ratling_hitting_shield_a_04",
+				"erg_vs_ratling_hitting_shield_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"erg_vs_ratling_hitting_shield_a_01",
 				"erg_vs_ratling_hitting_shield_a_02",
 				"erg_vs_ratling_hitting_shield_a_03",
-				"erg_vs_ratling_hitting_shield_a_04",
+				"erg_vs_ratling_hitting_shield_a_04"
 			},
 			sound_events_duration = {
 				2.1894791126251,
 				2.4817917346954,
 				1.6761354207993,
-				2.4546875953674,
-			},
+				2.4546875953674
+			}
 		},
 		erg_vs_shooting_hooked_hero_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"erg_vs_shooting_hooked_hero_a_01",
 				"erg_vs_shooting_hooked_hero_a_02",
 				"erg_vs_shooting_hooked_hero_a_03",
-				"erg_vs_shooting_hooked_hero_a_04",
+				"erg_vs_shooting_hooked_hero_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"erg_vs_shooting_hooked_hero_a_01",
 				"erg_vs_shooting_hooked_hero_a_02",
 				"erg_vs_shooting_hooked_hero_a_03",
-				"erg_vs_shooting_hooked_hero_a_04",
+				"erg_vs_shooting_hooked_hero_a_04"
 			},
 			sound_events_duration = {
 				2.8337082862854,
 				1.8375833034515,
 				2.1348125934601,
-				1.663125038147,
-			},
+				1.663125038147
+			}
 		},
 		erg_vw_affirmative = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -18218,7 +18218,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -18230,7 +18230,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"erg_vw_affirmative_01",
@@ -18242,7 +18242,7 @@ return function ()
 				"erg_vw_affirmative_07",
 				"erg_vw_affirmative_08",
 				"erg_vw_affirmative_09",
-				"erg_vw_affirmative_10",
+				"erg_vw_affirmative_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -18255,7 +18255,7 @@ return function ()
 				"erg_vw_affirmative_07",
 				"erg_vw_affirmative_08",
 				"erg_vw_affirmative_09",
-				"erg_vw_affirmative_10",
+				"erg_vw_affirmative_10"
 			},
 			sound_events_duration = {
 				0.60197919607162,
@@ -18267,17 +18267,17 @@ return function ()
 				2.4259791374206,
 				3.5909790992737,
 				1.7499791383743,
-				2.254979133606,
-			},
+				2.254979133606
+			}
 		},
 		erg_vw_ambush = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -18288,7 +18288,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -18300,7 +18300,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"erg_vw_ambush_01",
@@ -18312,7 +18312,7 @@ return function ()
 				"erg_vw_ambush_07",
 				"erg_vw_ambush_08",
 				"erg_vw_ambush_09",
-				"erg_vw_ambush_10",
+				"erg_vw_ambush_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -18325,7 +18325,7 @@ return function ()
 				"erg_vw_ambush_07",
 				"erg_vw_ambush_08",
 				"erg_vw_ambush_09",
-				"erg_vw_ambush_10",
+				"erg_vw_ambush_10"
 			},
 			sound_events_duration = {
 				1.4229791164398,
@@ -18337,17 +18337,17 @@ return function ()
 				1.7899792194366,
 				2.6869790554047,
 				3.2399792671204,
-				1.601979136467,
-			},
+				1.601979136467
+			}
 		},
 		erg_vw_attack_now = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -18358,7 +18358,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -18370,7 +18370,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"erg_vw_attack_now_01",
@@ -18382,7 +18382,7 @@ return function ()
 				"erg_vw_attack_now_07",
 				"erg_vw_attack_now_08",
 				"erg_vw_attack_now_09",
-				"erg_vw_attack_now_10",
+				"erg_vw_attack_now_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -18395,7 +18395,7 @@ return function ()
 				"erg_vw_attack_now_07",
 				"erg_vw_attack_now_08",
 				"erg_vw_attack_now_09",
-				"erg_vw_attack_now_10",
+				"erg_vw_attack_now_10"
 			},
 			sound_events_duration = {
 				1.0849791765213,
@@ -18407,17 +18407,17 @@ return function ()
 				1.7389792203903,
 				2.1259791851044,
 				1.8439791202545,
-				2.4809792041779,
-			},
+				2.4809792041779
+			}
 		},
 		erg_vw_cover_me = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -18428,7 +18428,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -18440,7 +18440,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"erg_vw_cover_me_01",
@@ -18452,7 +18452,7 @@ return function ()
 				"erg_vw_cover_me_07",
 				"erg_vw_cover_me_08",
 				"erg_vw_cover_me_09",
-				"erg_vw_cover_me_10",
+				"erg_vw_cover_me_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -18465,7 +18465,7 @@ return function ()
 				"erg_vw_cover_me_07",
 				"erg_vw_cover_me_08",
 				"erg_vw_cover_me_09",
-				"erg_vw_cover_me_10",
+				"erg_vw_cover_me_10"
 			},
 			sound_events_duration = {
 				0.85597914457321,
@@ -18477,17 +18477,17 @@ return function ()
 				1.1699792146683,
 				2.1819791793823,
 				1.7609791755676,
-				2.0389790534973,
-			},
+				2.0389790534973
+			}
 		},
 		erg_vw_gather = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -18498,7 +18498,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -18510,7 +18510,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"erg_vw_gather_01",
@@ -18522,7 +18522,7 @@ return function ()
 				"erg_vw_gather_07",
 				"erg_vw_gather_08",
 				"erg_vw_gather_09",
-				"erg_vw_gather_10",
+				"erg_vw_gather_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -18535,7 +18535,7 @@ return function ()
 				"erg_vw_gather_07",
 				"erg_vw_gather_08",
 				"erg_vw_gather_09",
-				"erg_vw_gather_10",
+				"erg_vw_gather_10"
 			},
 			sound_events_duration = {
 				1.3589792251587,
@@ -18547,17 +18547,17 @@ return function ()
 				0.98897916078568,
 				1.3069791793823,
 				1.6699792146683,
-				0.6319791674614,
-			},
+				0.6319791674614
+			}
 		},
 		erg_vw_go_here = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -18568,7 +18568,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -18580,7 +18580,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"erg_vw_go_here_01",
@@ -18592,7 +18592,7 @@ return function ()
 				"erg_vw_go_here_07",
 				"erg_vw_go_here_08",
 				"erg_vw_go_here_09",
-				"erg_vw_go_here_10",
+				"erg_vw_go_here_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -18605,7 +18605,7 @@ return function ()
 				"erg_vw_go_here_07",
 				"erg_vw_go_here_08",
 				"erg_vw_go_here_09",
-				"erg_vw_go_here_10",
+				"erg_vw_go_here_10"
 			},
 			sound_events_duration = {
 				1.2389792203903,
@@ -18617,17 +18617,17 @@ return function ()
 				2.5479791164398,
 				1.2319791316986,
 				1.7119791507721,
-				2.9859790802002,
-			},
+				2.9859790802002
+			}
 		},
 		erg_vw_negation = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -18638,7 +18638,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -18650,7 +18650,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"erg_vw_negation_01",
@@ -18662,7 +18662,7 @@ return function ()
 				"erg_vw_negation_07",
 				"erg_vw_negation_08",
 				"erg_vw_negation_09",
-				"erg_vw_negation_10",
+				"erg_vw_negation_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -18675,7 +18675,7 @@ return function ()
 				"erg_vw_negation_07",
 				"erg_vw_negation_08",
 				"erg_vw_negation_09",
-				"erg_vw_negation_10",
+				"erg_vw_negation_10"
 			},
 			sound_events_duration = {
 				0.948979139328,
@@ -18687,17 +18687,17 @@ return function ()
 				1.5949791669846,
 				1.3619791269302,
 				3.0279791355133,
-				1.7209792137146,
-			},
+				1.7209792137146
+			}
 		},
 		erg_vw_thanks = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 11,
-			face_animations_n = 11,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 11,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 11,
+			category = "player_alerts",
+			dialogue_animations_n = 11,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -18709,7 +18709,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -18722,7 +18722,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"erg_vs_vw_thanks_01",
@@ -18735,7 +18735,7 @@ return function ()
 				"erg_vs_vw_thanks_08",
 				"erg_vs_vw_thanks_09",
 				"erg_vs_vw_thanks_10",
-				"erg_vs_vw_thanks_12",
+				"erg_vs_vw_thanks_12"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -18749,7 +18749,7 @@ return function ()
 				"erg_vs_vw_thanks_08",
 				"erg_vs_vw_thanks_09",
 				"erg_vs_vw_thanks_10",
-				"erg_vs_vw_thanks_12",
+				"erg_vs_vw_thanks_12"
 			},
 			sound_events_duration = {
 				3.4567,
@@ -18762,17 +18762,17 @@ return function ()
 				3.4567,
 				3.4567,
 				3.4567,
-				3.4567,
-			},
+				3.4567
+			}
 		},
 		erg_vw_wait = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -18783,7 +18783,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -18795,7 +18795,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"erg_vw_wait_01",
@@ -18807,7 +18807,7 @@ return function ()
 				"erg_vw_wait_07",
 				"erg_vw_wait_08",
 				"erg_vw_wait_09",
-				"erg_vw_wait_10",
+				"erg_vw_wait_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -18820,7 +18820,7 @@ return function ()
 				"erg_vw_wait_07",
 				"erg_vw_wait_08",
 				"erg_vw_wait_09",
-				"erg_vw_wait_10",
+				"erg_vw_wait_10"
 			},
 			sound_events_duration = {
 				1.6839791536331,
@@ -18832,59 +18832,59 @@ return function ()
 				1.6339792013168,
 				1.9889792203903,
 				1.5549792051315,
-				3.2249791622162,
-			},
+				3.2249791622162
+			}
 		},
 		ewt_combat_idle = {
-			category = "casual_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "casual_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "player_combat_walk_normal",
+				[1] = "player_combat_walk_normal"
 			},
 			sound_events = {
-				[1] = "player_combat_walk_normal",
+				[1] = "player_combat_walk_normal"
 			},
 			sound_events_duration = {
-				[1] = 4.147599697113,
-			},
+				[1] = 4.147599697113
+			}
 		},
 		ewt_spawning_warpfire_thrower = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 5,
-			face_animations_n = 5,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 5,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 5,
+			category = "player_alerts",
+			dialogue_animations_n = 5,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ewt_spawning_warpfire_thrower_01",
 				"ewt_spawning_warpfire_thrower_02",
 				"ewt_spawning_warpfire_thrower_03",
 				"ewt_spawning_warpfire_thrower_04",
-				"ewt_spawning_warpfire_thrower_05",
+				"ewt_spawning_warpfire_thrower_05"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -18892,23 +18892,23 @@ return function ()
 				"ewt_spawning_warpfire_thrower_02",
 				"ewt_spawning_warpfire_thrower_03",
 				"ewt_spawning_warpfire_thrower_04",
-				"ewt_spawning_warpfire_thrower_05",
+				"ewt_spawning_warpfire_thrower_05"
 			},
 			sound_events_duration = {
 				6.5747857093811,
 				6.1404910087585,
 				4.9618492126465,
 				6.3202242851257,
-				3.793289899826,
-			},
+				3.793289899826
+			}
 		},
 		ewt_taunting_bardin = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 9,
-			face_animations_n = 9,
 			randomize_indexes_n = 0,
+			face_animations_n = 9,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 9,
+			category = "player_alerts",
+			dialogue_animations_n = 9,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -18918,7 +18918,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -18929,7 +18929,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ewt_taunting_bardin_01",
@@ -18940,7 +18940,7 @@ return function ()
 				"ewt_taunting_bardin_07",
 				"ewt_taunting_bardin_08",
 				"ewt_taunting_bardin_09",
-				"ewt_taunting_bardin_10",
+				"ewt_taunting_bardin_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -18952,7 +18952,7 @@ return function ()
 				"ewt_taunting_bardin_07",
 				"ewt_taunting_bardin_08",
 				"ewt_taunting_bardin_09",
-				"ewt_taunting_bardin_10",
+				"ewt_taunting_bardin_10"
 			},
 			sound_events_duration = {
 				3.572322845459,
@@ -18963,16 +18963,16 @@ return function ()
 				2.5725963115692,
 				1.5165612697601,
 				2.0479893684387,
-				1.7137824296951,
-			},
+				1.7137824296951
+			}
 		},
 		ewt_taunting_kerillian = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -18983,7 +18983,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -18995,7 +18995,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ewt_taunting_kerillian_01",
@@ -19007,7 +19007,7 @@ return function ()
 				"ewt_taunting_kerillian_07",
 				"ewt_taunting_kerillian_08",
 				"ewt_taunting_kerillian_09",
-				"ewt_taunting_kerillian_10",
+				"ewt_taunting_kerillian_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -19020,7 +19020,7 @@ return function ()
 				"ewt_taunting_kerillian_07",
 				"ewt_taunting_kerillian_08",
 				"ewt_taunting_kerillian_09",
-				"ewt_taunting_kerillian_10",
+				"ewt_taunting_kerillian_10"
 			},
 			sound_events_duration = {
 				2.4414596557617,
@@ -19032,16 +19032,16 @@ return function ()
 				2.0654566287994,
 				1.9925917387009,
 				1.7108677625656,
-				4.2931995391846,
-			},
+				4.2931995391846
+			}
 		},
 		ewt_taunting_kruber = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -19052,7 +19052,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -19064,7 +19064,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ewt_taunting_kruber_01",
@@ -19076,7 +19076,7 @@ return function ()
 				"ewt_taunting_kruber_07",
 				"ewt_taunting_kruber_08",
 				"ewt_taunting_kruber_09",
-				"ewt_taunting_kruber_10",
+				"ewt_taunting_kruber_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -19089,7 +19089,7 @@ return function ()
 				"ewt_taunting_kruber_07",
 				"ewt_taunting_kruber_08",
 				"ewt_taunting_kruber_09",
-				"ewt_taunting_kruber_10",
+				"ewt_taunting_kruber_10"
 			},
 			sound_events_duration = {
 				3.4761412143707,
@@ -19101,16 +19101,16 @@ return function ()
 				1.7604159116745,
 				2.2296454906464,
 				1.6826932430267,
-				3.5208113193512,
-			},
+				3.5208113193512
+			}
 		},
 		ewt_taunting_saltzpyre = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 9,
-			face_animations_n = 9,
 			randomize_indexes_n = 0,
+			face_animations_n = 9,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 9,
+			category = "player_alerts",
+			dialogue_animations_n = 9,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -19120,7 +19120,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -19131,7 +19131,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ewt_taunting_saltzpyre_01",
@@ -19142,7 +19142,7 @@ return function ()
 				"ewt_taunting_saltzpyre_07",
 				"ewt_taunting_saltzpyre_08",
 				"ewt_taunting_saltzpyre_09",
-				"ewt_taunting_saltzpyre_10",
+				"ewt_taunting_saltzpyre_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -19154,7 +19154,7 @@ return function ()
 				"ewt_taunting_saltzpyre_07",
 				"ewt_taunting_saltzpyre_08",
 				"ewt_taunting_saltzpyre_09",
-				"ewt_taunting_saltzpyre_10",
+				"ewt_taunting_saltzpyre_10"
 			},
 			sound_events_duration = {
 				6.0166773796081,
@@ -19165,16 +19165,16 @@ return function ()
 				1.4572776556015,
 				1.5126550197601,
 				1.6477180719376,
-				1.9090399742127,
-			},
+				1.9090399742127
+			}
 		},
 		ewt_taunting_sienna = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -19185,7 +19185,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -19197,7 +19197,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ewt_taunting_sienna_01",
@@ -19209,7 +19209,7 @@ return function ()
 				"ewt_taunting_sienna_07",
 				"ewt_taunting_sienna_08",
 				"ewt_taunting_sienna_09",
-				"ewt_taunting_sienna_10",
+				"ewt_taunting_sienna_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -19222,7 +19222,7 @@ return function ()
 				"ewt_taunting_sienna_07",
 				"ewt_taunting_sienna_08",
 				"ewt_taunting_sienna_09",
-				"ewt_taunting_sienna_10",
+				"ewt_taunting_sienna_10"
 			},
 			sound_events_duration = {
 				1.691437125206,
@@ -19234,23 +19234,23 @@ return function ()
 				2.2665839195252,
 				1.7497290372849,
 				3.6160416603088,
-				3.758857011795,
-			},
+				3.758857011795
+			}
 		},
 		ewt_vs_ability_horde_a = {
-			category = "activate_ability",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 6,
-			face_animations_n = 6,
 			randomize_indexes_n = 0,
+			face_animations_n = 6,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 6,
+			category = "activate_ability",
+			dialogue_animations_n = 6,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -19258,7 +19258,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ewt_vs_ability_horde_a_01",
@@ -19266,7 +19266,7 @@ return function ()
 				"ewt_vs_ability_horde_a_03",
 				"ewt_vs_ability_horde_a_04",
 				"ewt_vs_ability_horde_a_05",
-				"ewt_vs_ability_horde_a_06",
+				"ewt_vs_ability_horde_a_06"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -19275,7 +19275,7 @@ return function ()
 				"ewt_vs_ability_horde_a_03",
 				"ewt_vs_ability_horde_a_04",
 				"ewt_vs_ability_horde_a_05",
-				"ewt_vs_ability_horde_a_06",
+				"ewt_vs_ability_horde_a_06"
 			},
 			sound_events_duration = {
 				2.8182709217072,
@@ -19283,728 +19283,728 @@ return function ()
 				4.059166431427,
 				3.7831873893738,
 				4.8837289810181,
-				4.9164791107178,
-			},
+				4.9164791107178
+			}
 		},
 		ewt_vs_downed_hero_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ewt_vs_downed_hero_a_01",
 				"ewt_vs_downed_hero_a_02",
 				"ewt_vs_downed_hero_a_03",
-				"ewt_vs_downed_hero_a_04",
+				"ewt_vs_downed_hero_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"ewt_vs_downed_hero_a_01",
 				"ewt_vs_downed_hero_a_02",
 				"ewt_vs_downed_hero_a_03",
-				"ewt_vs_downed_hero_a_04",
+				"ewt_vs_downed_hero_a_04"
 			},
 			sound_events_duration = {
 				2.67418217659,
 				3.1081533432007,
 				2.4329588413238,
-				1.9568272233009,
-			},
+				1.9568272233009
+			}
 		},
 		ewt_vs_globadier_hitting_many_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ewt_vs_globadier_hitting_many_a_01",
 				"ewt_vs_globadier_hitting_many_a_02",
 				"ewt_vs_globadier_hitting_many_a_03",
-				"ewt_vs_globadier_hitting_many_a_04",
+				"ewt_vs_globadier_hitting_many_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"ewt_vs_globadier_hitting_many_a_01",
 				"ewt_vs_globadier_hitting_many_a_02",
 				"ewt_vs_globadier_hitting_many_a_03",
-				"ewt_vs_globadier_hitting_many_a_04",
+				"ewt_vs_globadier_hitting_many_a_04"
 			},
 			sound_events_duration = {
 				2.0544257164002,
 				1.7909178733826,
 				2.5814616680145,
-				2.1837610006332,
-			},
+				2.1837610006332
+			}
 		},
 		ewt_vs_globadier_missing_globe_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ewt_vs_globadier_missing_globe_a_01",
 				"ewt_vs_globadier_missing_globe_a_02",
 				"ewt_vs_globadier_missing_globe_a_03",
-				"ewt_vs_globadier_missing_globe_a_04",
+				"ewt_vs_globadier_missing_globe_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"ewt_vs_globadier_missing_globe_a_01",
 				"ewt_vs_globadier_missing_globe_a_02",
 				"ewt_vs_globadier_missing_globe_a_03",
-				"ewt_vs_globadier_missing_globe_a_04",
+				"ewt_vs_globadier_missing_globe_a_04"
 			},
 			sound_events_duration = {
 				3.2152544260025,
 				1.960976421833,
 				2.1212286353111,
-				2.5511415600777,
-			},
+				2.5511415600777
+			}
 		},
 		ewt_vs_heroes_objective_almost_completed_b = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ewt_vs_heroes_objective_almost_completed_b_01",
 				"ewt_vs_heroes_objective_almost_completed_b_02",
 				"ewt_vs_heroes_objective_almost_completed_b_03",
-				"ewt_vs_heroes_objective_almost_completed_b_04",
+				"ewt_vs_heroes_objective_almost_completed_b_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"ewt_vs_heroes_objective_almost_completed_b_01",
 				"ewt_vs_heroes_objective_almost_completed_b_02",
 				"ewt_vs_heroes_objective_almost_completed_b_03",
-				"ewt_vs_heroes_objective_almost_completed_b_04",
+				"ewt_vs_heroes_objective_almost_completed_b_04"
 			},
 			sound_events_duration = {
 				1.146771967411,
 				0.92716526985169,
 				1.3956359624863,
-				1.3322030901909,
-			},
+				1.3322030901909
+			}
 		},
 		ewt_vs_many_heroes_incapacitated_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ewt_vs_many_heroes_incapacitated_a_01",
 				"ewt_vs_many_heroes_incapacitated_a_02",
 				"ewt_vs_many_heroes_incapacitated_a_03",
-				"ewt_vs_many_heroes_incapacitated_a_04",
+				"ewt_vs_many_heroes_incapacitated_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"ewt_vs_many_heroes_incapacitated_a_01",
 				"ewt_vs_many_heroes_incapacitated_a_02",
 				"ewt_vs_many_heroes_incapacitated_a_03",
-				"ewt_vs_many_heroes_incapacitated_a_04",
+				"ewt_vs_many_heroes_incapacitated_a_04"
 			},
 			sound_events_duration = {
 				4.0415930747986,
 				3.2562510967255,
 				2.0220413208008,
-				2.2650661468506,
-			},
+				2.2650661468506
+			}
 		},
 		ewt_vs_pact_proximity_banter_eight_a = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "ewt_vs_pact_proximity_banter_eight_a_01",
+				[1] = "ewt_vs_pact_proximity_banter_eight_a_01"
 			},
 			sound_events = {
-				[1] = "ewt_vs_pact_proximity_banter_eight_a_01",
+				[1] = "ewt_vs_pact_proximity_banter_eight_a_01"
 			},
 			sound_events_duration = {
-				[1] = 4.7859485149384,
-			},
+				[1] = 4.7859485149384
+			}
 		},
 		ewt_vs_pact_proximity_banter_eighteen_a = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "ewt_vs_pact_proximity_banter_eighteen_a_01",
+				[1] = "ewt_vs_pact_proximity_banter_eighteen_a_01"
 			},
 			sound_events = {
-				[1] = "ewt_vs_pact_proximity_banter_eighteen_a_01",
+				[1] = "ewt_vs_pact_proximity_banter_eighteen_a_01"
 			},
 			sound_events_duration = {
-				[1] = 2.6351587772369,
-			},
+				[1] = 2.6351587772369
+			}
 		},
 		ewt_vs_pact_proximity_banter_eleven_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "ewt_vs_pact_proximity_banter_eleven_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_eleven_b_01"
 			},
 			sound_events = {
-				[1] = "ewt_vs_pact_proximity_banter_eleven_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_eleven_b_01"
 			},
 			sound_events_duration = {
-				[1] = 5.766628742218,
-			},
+				[1] = 5.766628742218
+			}
 		},
 		ewt_vs_pact_proximity_banter_fifteen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "ewt_vs_pact_proximity_banter_fifteen_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_fifteen_b_01"
 			},
 			sound_events = {
-				[1] = "ewt_vs_pact_proximity_banter_fifteen_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_fifteen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 4.3224668502808,
-			},
+				[1] = 4.3224668502808
+			}
 		},
 		ewt_vs_pact_proximity_banter_five_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "ewt_vs_pact_proximity_banter_five_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_five_b_01"
 			},
 			sound_events = {
-				[1] = "ewt_vs_pact_proximity_banter_five_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_five_b_01"
 			},
 			sound_events_duration = {
-				[1] = 3.9835338592529,
-			},
+				[1] = 3.9835338592529
+			}
 		},
 		ewt_vs_pact_proximity_banter_four_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "ewt_vs_pact_proximity_banter_four_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_four_b_01"
 			},
 			sound_events = {
-				[1] = "ewt_vs_pact_proximity_banter_four_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_four_b_01"
 			},
 			sound_events_duration = {
-				[1] = 4.6055979728699,
-			},
+				[1] = 4.6055979728699
+			}
 		},
 		ewt_vs_pact_proximity_banter_fourteen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "ewt_vs_pact_proximity_banter_fourteen_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_fourteen_b_01"
 			},
 			sound_events = {
-				[1] = "ewt_vs_pact_proximity_banter_fourteen_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_fourteen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 4.6503791809082,
-			},
+				[1] = 4.6503791809082
+			}
 		},
 		ewt_vs_pact_proximity_banter_nine_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "ewt_vs_pact_proximity_banter_nine_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_nine_b_01"
 			},
 			sound_events = {
-				[1] = "ewt_vs_pact_proximity_banter_nine_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_nine_b_01"
 			},
 			sound_events_duration = {
-				[1] = 5.8382592201233,
-			},
+				[1] = 5.8382592201233
+			}
 		},
 		ewt_vs_pact_proximity_banter_nineteen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "ewt_vs_pact_proximity_banter_nineteen_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_nineteen_b_01"
 			},
 			sound_events = {
-				[1] = "ewt_vs_pact_proximity_banter_nineteen_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_nineteen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 9.5368814468384,
-			},
+				[1] = 9.5368814468384
+			}
 		},
 		ewt_vs_pact_proximity_banter_one_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "ewt_vs_pact_proximity_banter_one_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_one_b_01"
 			},
 			sound_events = {
-				[1] = "ewt_vs_pact_proximity_banter_one_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_one_b_01"
 			},
 			sound_events_duration = {
-				[1] = 5.6475958824158,
-			},
+				[1] = 5.6475958824158
+			}
 		},
 		ewt_vs_pact_proximity_banter_seven_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "ewt_vs_pact_proximity_banter_seven_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_seven_b_01"
 			},
 			sound_events = {
-				[1] = "ewt_vs_pact_proximity_banter_seven_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_seven_b_01"
 			},
 			sound_events_duration = {
-				[1] = 3.3618041276932,
-			},
+				[1] = 3.3618041276932
+			}
 		},
 		ewt_vs_pact_proximity_banter_seventeen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "ewt_vs_pact_proximity_banter_seventeen_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_seventeen_b_01"
 			},
 			sound_events = {
-				[1] = "ewt_vs_pact_proximity_banter_seventeen_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_seventeen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 9.621283531189,
-			},
+				[1] = 9.621283531189
+			}
 		},
 		ewt_vs_pact_proximity_banter_six_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "ewt_vs_pact_proximity_banter_six_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_six_b_01"
 			},
 			sound_events = {
-				[1] = "ewt_vs_pact_proximity_banter_six_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_six_b_01"
 			},
 			sound_events_duration = {
-				[1] = 5.7232336997986,
-			},
+				[1] = 5.7232336997986
+			}
 		},
 		ewt_vs_pact_proximity_banter_sixteen_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "ewt_vs_pact_proximity_banter_sixteen_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_sixteen_b_01"
 			},
 			sound_events = {
-				[1] = "ewt_vs_pact_proximity_banter_sixteen_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_sixteen_b_01"
 			},
 			sound_events_duration = {
-				[1] = 6.2680611610413,
-			},
+				[1] = 6.2680611610413
+			}
 		},
 		ewt_vs_pact_proximity_banter_ten_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "ewt_vs_pact_proximity_banter_ten_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_ten_b_01"
 			},
 			sound_events = {
-				[1] = "ewt_vs_pact_proximity_banter_ten_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_ten_b_01"
 			},
 			sound_events_duration = {
-				[1] = 3.4703222513199,
-			},
+				[1] = 3.4703222513199
+			}
 		},
 		ewt_vs_pact_proximity_banter_thirteen_a = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "ewt_vs_pact_proximity_banter_thirteen_a_01",
+				[1] = "ewt_vs_pact_proximity_banter_thirteen_a_01"
 			},
 			sound_events = {
-				[1] = "ewt_vs_pact_proximity_banter_thirteen_a_01",
+				[1] = "ewt_vs_pact_proximity_banter_thirteen_a_01"
 			},
 			sound_events_duration = {
-				[1] = 2.6792522668839,
-			},
+				[1] = 2.6792522668839
+			}
 		},
 		ewt_vs_pact_proximity_banter_three_a = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "ewt_vs_pact_proximity_banter_three_a_01",
+				[1] = "ewt_vs_pact_proximity_banter_three_a_01"
 			},
 			sound_events = {
-				[1] = "ewt_vs_pact_proximity_banter_three_a_01",
+				[1] = "ewt_vs_pact_proximity_banter_three_a_01"
 			},
 			sound_events_duration = {
-				[1] = 6.3373837471008,
-			},
+				[1] = 6.3373837471008
+			}
 		},
 		ewt_vs_pact_proximity_banter_twelve_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "ewt_vs_pact_proximity_banter_twelve_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_twelve_b_01"
 			},
 			sound_events = {
-				[1] = "ewt_vs_pact_proximity_banter_twelve_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_twelve_b_01"
 			},
 			sound_events_duration = {
-				[1] = 4.2538220882416,
-			},
+				[1] = 4.2538220882416
+			}
 		},
 		ewt_vs_pact_proximity_banter_twenty_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "ewt_vs_pact_proximity_banter_twenty_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_twenty_b_01"
 			},
 			sound_events = {
-				[1] = "ewt_vs_pact_proximity_banter_twenty_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_twenty_b_01"
 			},
 			sound_events_duration = {
-				[1] = 5.8478121757507,
-			},
+				[1] = 5.8478121757507
+			}
 		},
 		ewt_vs_pact_proximity_banter_two_b = {
-			category = "story_talk",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "vs_player_vo_pactsworn",
+			category = "story_talk",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_talk",
+				[1] = "dialogue_talk"
 			},
 			face_animations = {
-				[1] = "face_neutral",
+				[1] = "face_neutral"
 			},
 			localization_strings = {
-				[1] = "ewt_vs_pact_proximity_banter_two_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_two_b_01"
 			},
 			sound_events = {
-				[1] = "ewt_vs_pact_proximity_banter_two_b_01",
+				[1] = "ewt_vs_pact_proximity_banter_two_b_01"
 			},
 			sound_events_duration = {
-				[1] = 4.7335867881775,
-			},
+				[1] = 4.7335867881775
+			}
 		},
 		ewt_vs_passing_hoisted_hero_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 2,
-			face_animations_n = 2,
 			randomize_indexes_n = 0,
+			face_animations_n = 2,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 2,
+			category = "player_feedback",
+			dialogue_animations_n = 2,
 			dialogue_animations = {
 				[1] = "dialogue_talk",
-				[2] = "dialogue_talk",
+				[2] = "dialogue_talk"
 			},
 			face_animations = {
 				[1] = "face_neutral",
-				[2] = "face_neutral",
+				[2] = "face_neutral"
 			},
 			localization_strings = {
 				[1] = "ewt_vs_passing_hoisted_hero_a_01",
-				[2] = "ewt_vs_passing_hoisted_hero_a_02",
+				[2] = "ewt_vs_passing_hoisted_hero_a_02"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				[1] = "ewt_vs_passing_hoisted_hero_a_01",
-				[2] = "ewt_vs_passing_hoisted_hero_a_02",
+				[2] = "ewt_vs_passing_hoisted_hero_a_02"
 			},
 			sound_events_duration = {
 				[1] = 4.2053771018982,
-				[2] = 3.6055371761322,
-			},
+				[2] = 3.6055371761322
+			}
 		},
 		ewt_vs_shooting_hooked_hero_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 4,
+			category = "player_feedback",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ewt_vs_shooting_hooked_hero_a_01",
 				"ewt_vs_shooting_hooked_hero_a_02",
 				"ewt_vs_shooting_hooked_hero_a_03",
-				"ewt_vs_shooting_hooked_hero_a_04",
+				"ewt_vs_shooting_hooked_hero_a_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"ewt_vs_shooting_hooked_hero_a_01",
 				"ewt_vs_shooting_hooked_hero_a_02",
 				"ewt_vs_shooting_hooked_hero_a_03",
-				"ewt_vs_shooting_hooked_hero_a_04",
+				"ewt_vs_shooting_hooked_hero_a_04"
 			},
 			sound_events_duration = {
 				4.0414817333221,
 				2.6375776529312,
 				3.6174281835556,
-				4.1349816322327,
-			},
+				4.1349816322327
+			}
 		},
 		ewt_vs_vw_cheer_a = {
-			category = "player_feedback",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 6,
-			face_animations_n = 6,
 			randomize_indexes_n = 0,
+			face_animations_n = 6,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 6,
+			category = "player_feedback",
+			dialogue_animations_n = 6,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -20012,7 +20012,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ewt_vs_vw_cheer_a_01",
@@ -20020,7 +20020,7 @@ return function ()
 				"ewt_vs_vw_cheer_a_03",
 				"ewt_vs_vw_cheer_a_04",
 				"ewt_vs_vw_cheer_a_05",
-				"ewt_vs_vw_cheer_a_06",
+				"ewt_vs_vw_cheer_a_06"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -20029,7 +20029,7 @@ return function ()
 				"ewt_vs_vw_cheer_a_03",
 				"ewt_vs_vw_cheer_a_04",
 				"ewt_vs_vw_cheer_a_05",
-				"ewt_vs_vw_cheer_a_06",
+				"ewt_vs_vw_cheer_a_06"
 			},
 			sound_events_duration = {
 				2.129314661026,
@@ -20037,17 +20037,17 @@ return function ()
 				2.2117328643799,
 				2.7818195819855,
 				2.2451596856117,
-				3.2408788204193,
-			},
+				3.2408788204193
+			}
 		},
 		ewt_vw_affirmative = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -20058,7 +20058,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -20070,7 +20070,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ewt_vw_affirmative_01",
@@ -20082,7 +20082,7 @@ return function ()
 				"ewt_vw_affirmative_07",
 				"ewt_vw_affirmative_08",
 				"ewt_vw_affirmative_09",
-				"ewt_vw_affirmative_10",
+				"ewt_vw_affirmative_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -20095,7 +20095,7 @@ return function ()
 				"ewt_vw_affirmative_07",
 				"ewt_vw_affirmative_08",
 				"ewt_vw_affirmative_09",
-				"ewt_vw_affirmative_10",
+				"ewt_vw_affirmative_10"
 			},
 			sound_events_duration = {
 				0.65867841243744,
@@ -20107,17 +20107,17 @@ return function ()
 				2.6551764011383,
 				3.6441960334778,
 				1.7914845943451,
-				2.3413715362549,
-			},
+				2.3413715362549
+			}
 		},
 		ewt_vw_ambush = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -20128,7 +20128,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -20140,7 +20140,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ewt_vw_ambush_01",
@@ -20152,7 +20152,7 @@ return function ()
 				"ewt_vw_ambush_07",
 				"ewt_vw_ambush_08",
 				"ewt_vw_ambush_09",
-				"ewt_vw_ambush_10",
+				"ewt_vw_ambush_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -20165,7 +20165,7 @@ return function ()
 				"ewt_vw_ambush_07",
 				"ewt_vw_ambush_08",
 				"ewt_vw_ambush_09",
-				"ewt_vw_ambush_10",
+				"ewt_vw_ambush_10"
 			},
 			sound_events_duration = {
 				0.69755989313126,
@@ -20177,17 +20177,17 @@ return function ()
 				1.8818573951721,
 				2.4773862361908,
 				3.1632876396179,
-				2.2296454906464,
-			},
+				2.2296454906464
+			}
 		},
 		ewt_vw_attack_now = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -20198,7 +20198,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -20210,7 +20210,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ewt_vw_attack_now_01",
@@ -20222,7 +20222,7 @@ return function ()
 				"ewt_vw_attack_now_07",
 				"ewt_vw_attack_now_08",
 				"ewt_vw_attack_now_09",
-				"ewt_vw_attack_now_10",
+				"ewt_vw_attack_now_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -20235,7 +20235,7 @@ return function ()
 				"ewt_vw_attack_now_07",
 				"ewt_vw_attack_now_08",
 				"ewt_vw_attack_now_09",
-				"ewt_vw_attack_now_10",
+				"ewt_vw_attack_now_10"
 			},
 			sound_events_duration = {
 				2.1976053714752,
@@ -20247,17 +20247,17 @@ return function ()
 				1.4485541582108,
 				1.6273158788681,
 				1.4757367372513,
-				4.0570969581604,
-			},
+				4.0570969581604
+			}
 		},
 		ewt_vw_cover_me = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 8,
-			face_animations_n = 8,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 8,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 8,
+			category = "player_alerts",
+			dialogue_animations_n = 8,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -20266,7 +20266,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -20276,7 +20276,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ewt_vw_cover_me_01",
@@ -20286,7 +20286,7 @@ return function ()
 				"ewt_vw_cover_me_05",
 				"ewt_vw_cover_me_06",
 				"ewt_vw_cover_me_07",
-				"ewt_vw_cover_me_09",
+				"ewt_vw_cover_me_09"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -20297,7 +20297,7 @@ return function ()
 				"ewt_vw_cover_me_05",
 				"ewt_vw_cover_me_06",
 				"ewt_vw_cover_me_07",
-				"ewt_vw_cover_me_09",
+				"ewt_vw_cover_me_09"
 			},
 			sound_events_duration = {
 				0.76651847362518,
@@ -20307,17 +20307,17 @@ return function ()
 				1.4980820417404,
 				0.86658620834351,
 				1.415521979332,
-				1.0803434848785,
-			},
+				1.0803434848785
+			}
 		},
 		ewt_vw_gather = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -20328,7 +20328,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -20340,7 +20340,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ewt_vw_gather_01",
@@ -20352,7 +20352,7 @@ return function ()
 				"ewt_vw_gather_07",
 				"ewt_vw_gather_08",
 				"ewt_vw_gather_09",
-				"ewt_vw_gather_10",
+				"ewt_vw_gather_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -20365,7 +20365,7 @@ return function ()
 				"ewt_vw_gather_07",
 				"ewt_vw_gather_08",
 				"ewt_vw_gather_09",
-				"ewt_vw_gather_10",
+				"ewt_vw_gather_10"
 			},
 			sound_events_duration = {
 				1.4912812709808,
@@ -20377,17 +20377,17 @@ return function ()
 				1.5864913463593,
 				0.91518306732178,
 				1.1512451171875,
-				2.5473365783691,
-			},
+				2.5473365783691
+			}
 		},
 		ewt_vw_go_here = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 8,
-			face_animations_n = 8,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 8,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 8,
+			category = "player_alerts",
+			dialogue_animations_n = 8,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -20396,7 +20396,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -20406,7 +20406,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ewt_vw_go_here_01",
@@ -20416,7 +20416,7 @@ return function ()
 				"ewt_vw_go_here_05",
 				"ewt_vw_go_here_06",
 				"ewt_vw_go_here_07",
-				"ewt_vw_go_here_08",
+				"ewt_vw_go_here_08"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -20427,7 +20427,7 @@ return function ()
 				"ewt_vw_go_here_05",
 				"ewt_vw_go_here_06",
 				"ewt_vw_go_here_07",
-				"ewt_vw_go_here_08",
+				"ewt_vw_go_here_08"
 			},
 			sound_events_duration = {
 				1.3202917575836,
@@ -20437,17 +20437,17 @@ return function ()
 				1.6826932430267,
 				2.3792614936829,
 				2.0314528942108,
-				1.6204949617386,
-			},
+				1.6204949617386
+			}
 		},
 		ewt_vw_negation = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 9,
-			face_animations_n = 9,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 9,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 9,
+			category = "player_alerts",
+			dialogue_animations_n = 9,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -20457,7 +20457,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -20468,7 +20468,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ewt_vw_negation_01",
@@ -20479,7 +20479,7 @@ return function ()
 				"ewt_vw_negation_06",
 				"ewt_vw_negation_07",
 				"ewt_vw_negation_08",
-				"ewt_vw_negation_09",
+				"ewt_vw_negation_09"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -20491,7 +20491,7 @@ return function ()
 				"ewt_vw_negation_06",
 				"ewt_vw_negation_07",
 				"ewt_vw_negation_08",
-				"ewt_vw_negation_09",
+				"ewt_vw_negation_09"
 			},
 			sound_events_duration = {
 				0.78014010190964,
@@ -20502,17 +20502,17 @@ return function ()
 				1.1463874578476,
 				1.4300949573517,
 				1.3455514907837,
-				2.2325601577759,
-			},
+				2.2325601577759
+			}
 		},
 		ewt_vw_thanks = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 12,
-			face_animations_n = 12,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 12,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 12,
+			category = "player_alerts",
+			dialogue_animations_n = 12,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -20525,7 +20525,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -20539,7 +20539,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ewt_vs_vw_thanks_01",
@@ -20553,7 +20553,7 @@ return function ()
 				"ewt_vs_vw_thanks_09",
 				"ewt_vs_vw_thanks_10",
 				"ewt_vs_vw_thanks_11",
-				"ewt_vs_vw_thanks_12",
+				"ewt_vs_vw_thanks_12"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -20568,7 +20568,7 @@ return function ()
 				"ewt_vs_vw_thanks_09",
 				"ewt_vs_vw_thanks_10",
 				"ewt_vs_vw_thanks_11",
-				"ewt_vs_vw_thanks_12",
+				"ewt_vs_vw_thanks_12"
 			},
 			sound_events_duration = {
 				3.4567,
@@ -20582,17 +20582,17 @@ return function ()
 				3.4567,
 				3.4567,
 				3.4567,
-				3.4567,
-			},
+				3.4567
+			}
 		},
 		ewt_vw_wait = {
-			category = "player_alerts",
-			database = "vs_player_vo_pactsworn",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			only_allies = true,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "vs_player_vo_pactsworn",
 			sound_events_n = 10,
+			category = "player_alerts",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -20603,7 +20603,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -20615,7 +20615,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ewt_vw_wait_01",
@@ -20627,7 +20627,7 @@ return function ()
 				"ewt_vw_wait_07",
 				"ewt_vw_wait_08",
 				"ewt_vw_wait_09",
-				"ewt_vw_wait_10",
+				"ewt_vw_wait_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -20640,7 +20640,7 @@ return function ()
 				"ewt_vw_wait_07",
 				"ewt_vw_wait_08",
 				"ewt_vw_wait_09",
-				"ewt_vw_wait_10",
+				"ewt_vw_wait_10"
 			},
 			sound_events_duration = {
 				3.4567,
@@ -20652,8 +20652,8 @@ return function ()
 				3.4567,
 				3.4567,
 				3.4567,
-				3.4567,
-			},
-		},
+				3.4567
+			}
+		}
 	})
 end

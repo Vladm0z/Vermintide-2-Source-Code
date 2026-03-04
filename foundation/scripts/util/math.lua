@@ -1,230 +1,229 @@
-﻿-- chunkname: @foundation/scripts/util/math.lua
+-- chunkname: @foundation/scripts/util/math.lua
 
-local math = math
-local math_sqrt, math_cos, math_sin, math_random = math.sqrt, math.cos, math.sin, math.random
-local math_max, math_abs, math_acos = math.max, math.abs, math.acos
-local pi = math.pi
+local var_0_0 = math
+local var_0_1 = var_0_0.sqrt
+local var_0_2 = var_0_0.cos
+local var_0_3 = var_0_0.sin
+local var_0_4 = var_0_0.random
+local var_0_5 = var_0_0.max
+local var_0_6 = var_0_0.abs
+local var_0_7 = var_0_0.acos
+local var_0_8 = var_0_0.pi
 
-math.epsilon = 0.001
-math.tau = 2 * pi
-math.half_pi = 0.5 * pi
-math.inverse_sqrt_2 = 1 / math_sqrt(2)
-math.degrees_to_radians = math.rad
-math.radians_to_degrees = math.deg
+var_0_0.epsilon = 0.001
+var_0_0.tau = 2 * var_0_8
+var_0_0.half_pi = 0.5 * var_0_8
+var_0_0.inverse_sqrt_2 = 1 / var_0_1(2)
+var_0_0.degrees_to_radians = var_0_0.rad
+var_0_0.radians_to_degrees = var_0_0.deg
 
-math.sign = function (x)
-	if x > 0 then
+function var_0_0.sign(arg_1_0)
+	if arg_1_0 > 0 then
 		return 1
-	elseif x < 0 then
+	elseif arg_1_0 < 0 then
 		return -1
 	else
 		return 0
 	end
 end
 
-math.clamp = function (value, min, max)
-	if max < value then
-		return max
-	elseif value < min then
-		return min
+function var_0_0.clamp(arg_2_0, arg_2_1, arg_2_2)
+	if arg_2_2 < arg_2_0 then
+		return arg_2_2
+	elseif arg_2_0 < arg_2_1 then
+		return arg_2_1
 	else
-		return value
+		return arg_2_0
 	end
 end
 
-math.clamp01 = function (value)
-	if value > 1 then
+function var_0_0.clamp01(arg_3_0)
+	if arg_3_0 > 1 then
 		return 1
-	elseif value < 0 then
+	elseif arg_3_0 < 0 then
 		return 0
 	else
-		return value
+		return arg_3_0
 	end
 end
 
-local math_clamp = math.clamp
+local var_0_9 = var_0_0.clamp
 
-math.normalize = function (val, min, max)
-	return (val - min) / (max - min)
+function var_0_0.normalize(arg_4_0, arg_4_1, arg_4_2)
+	return (arg_4_0 - arg_4_1) / (arg_4_2 - arg_4_1)
 end
 
-math.lerp = function (a, b, p)
-	return a * (1 - p) + b * p
+function var_0_0.lerp(arg_5_0, arg_5_1, arg_5_2)
+	return arg_5_0 * (1 - arg_5_2) + arg_5_1 * arg_5_2
 end
 
-local math_lerp = math.lerp
+local var_0_10 = var_0_0.lerp
 
-math.lerp_clamped = function (a, b, v)
-	return math_lerp(a, b, math.clamp01(v))
+function var_0_0.lerp_clamped(arg_6_0, arg_6_1, arg_6_2)
+	return var_0_10(arg_6_0, arg_6_1, var_0_0.clamp01(arg_6_2))
 end
 
-math.inv_lerp = function (a, b, v)
-	return (v - a) / (b - a)
+function var_0_0.inv_lerp(arg_7_0, arg_7_1, arg_7_2)
+	return (arg_7_2 - arg_7_0) / (arg_7_1 - arg_7_0)
 end
 
-math.inv_lerp_clamped = function (a, b, v)
-	v = a < b and math.clamp(v, a, b) or math.clamp(v, b, a)
+function var_0_0.inv_lerp_clamped(arg_8_0, arg_8_1, arg_8_2)
+	arg_8_2 = arg_8_0 < arg_8_1 and var_0_0.clamp(arg_8_2, arg_8_0, arg_8_1) or var_0_0.clamp(arg_8_2, arg_8_1, arg_8_0)
 
-	return math.inv_lerp(a, b, v)
+	return var_0_0.inv_lerp(arg_8_0, arg_8_1, arg_8_2)
 end
 
-math.remap = function (imin, imax, omin, omax, v)
-	return (v - imin) / (imax - imin) * (omax - omin) + omin
+function var_0_0.remap(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	return (arg_9_4 - arg_9_0) / (arg_9_1 - arg_9_0) * (arg_9_3 - arg_9_2) + arg_9_2
 end
 
-math.remap_clamped = function (imin, imax, omin, omax, v)
-	return math.clamp01((v - imin) / (imax - imin)) * (omax - omin) + omin
+function var_0_0.remap_clamped(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	return var_0_0.clamp01((arg_10_4 - arg_10_0) / (arg_10_1 - arg_10_0)) * (arg_10_3 - arg_10_2) + arg_10_2
 end
 
-math.radian_lerp = function (a, b, p)
-	local two_pi = pi * 2
+function var_0_0.radian_lerp(arg_11_0, arg_11_1, arg_11_2)
+	local var_11_0 = var_0_8 * 2
 
-	return a + p * (((b - a) % two_pi + pi) % two_pi - pi)
+	return arg_11_0 + arg_11_2 * (((arg_11_1 - arg_11_0) % var_11_0 + var_0_8) % var_11_0 - var_0_8)
 end
 
-math.angle_lerp = function (a, b, p)
-	return a + (((b - a) % 360 + 540) % 360 - 180) * p
+function var_0_0.angle_lerp(arg_12_0, arg_12_1, arg_12_2)
+	return arg_12_0 + (((arg_12_1 - arg_12_0) % 360 + 540) % 360 - 180) * arg_12_2
 end
 
-math.sirp = function (a, b, t)
-	local p = 0.5 + 0.5 * math_cos((1 + t) * pi)
+function var_0_0.sirp(arg_13_0, arg_13_1, arg_13_2)
+	local var_13_0 = 0.5 + 0.5 * var_0_2((1 + arg_13_2) * var_0_8)
 
-	return math_lerp(a, b, p)
+	return var_0_10(arg_13_0, arg_13_1, var_13_0)
 end
 
-math.auto_lerp = function (index_1, index_2, val_1, val_2, val)
-	local t = (val - index_1) / (index_2 - index_1)
+function var_0_0.auto_lerp(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+	local var_14_0 = (arg_14_4 - arg_14_0) / (arg_14_1 - arg_14_0)
 
-	return math.clamp(math_lerp(val_1, val_2, t), val_1, val_2)
+	return var_0_0.clamp(var_0_10(arg_14_2, arg_14_3, var_14_0), arg_14_2, arg_14_3)
 end
 
-math.round_with_precision = function (value, precision)
-	local mul = 10^(precision or 0)
+function var_0_0.round_with_precision(arg_15_0, arg_15_1)
+	local var_15_0 = 10^(arg_15_1 or 0)
 
-	return math.floor(value * mul + 0.5) / mul
+	return var_0_0.floor(arg_15_0 * var_15_0 + 0.5) / var_15_0
 end
 
-math.round = function (value)
-	return math.floor(value + 0.5)
+function var_0_0.round(arg_16_0)
+	return var_0_0.floor(arg_16_0 + 0.5)
 end
 
-math.round_to_closest_multiple = function (value, multiple)
-	multiple = multiple or 1
+function var_0_0.round_to_closest_multiple(arg_17_0, arg_17_1)
+	arg_17_1 = arg_17_1 or 1
 
-	local modulo = value % multiple
-	local middle_point = multiple / 2
+	local var_17_0 = arg_17_0 % arg_17_1
 
-	if modulo <= middle_point then
-		return value - modulo
+	if var_17_0 <= arg_17_1 / 2 then
+		return arg_17_0 - var_17_0
 	end
 
-	return value + multiple - modulo
+	return arg_17_0 + arg_17_1 - var_17_0
 end
 
-math.smoothstep = function (value, min, max)
-	fassert(min ~= max, "Division by zero.")
+function var_0_0.smoothstep(arg_18_0, arg_18_1, arg_18_2)
+	fassert(arg_18_1 ~= arg_18_2, "Division by zero.")
 
-	local x = math_clamp((value - min) / (max - min), 0, 1)
+	local var_18_0 = var_0_9((arg_18_0 - arg_18_1) / (arg_18_2 - arg_18_1), 0, 1)
 
-	return x * x * x * (x * (x * 6 - 15) + 10)
+	return var_18_0 * var_18_0 * var_18_0 * (var_18_0 * (var_18_0 * 6 - 15) + 10)
 end
 
-Math.random_range = function (min, max)
-	return min + math_random() * (max - min)
+function Math.random_range(arg_19_0, arg_19_1)
+	return arg_19_0 + var_0_4() * (arg_19_1 - arg_19_0)
 end
 
-math.next_random_range = function (seed, min, max)
-	local next_seed, value = Math.next_random(seed)
+function var_0_0.next_random_range(arg_20_0, arg_20_1, arg_20_2)
+	local var_20_0, var_20_1 = Math.next_random(arg_20_0)
 
-	return next_seed, min + value * (max - min)
+	return var_20_0, arg_20_1 + var_20_1 * (arg_20_2 - arg_20_1)
 end
 
-math.point_is_inside_2d_box = function (pos, lower_left_corner, size)
-	return pos[1] > lower_left_corner[1] and pos[1] < lower_left_corner[1] + size[1] and pos[2] > lower_left_corner[2] and pos[2] < lower_left_corner[2] + size[2]
+function var_0_0.point_is_inside_2d_box(arg_21_0, arg_21_1, arg_21_2)
+	return arg_21_0[1] > arg_21_1[1] and arg_21_0[1] < arg_21_1[1] + arg_21_2[1] and arg_21_0[2] > arg_21_1[2] and arg_21_0[2] < arg_21_1[2] + arg_21_2[2]
 end
 
-math.box_overlap_box = function (a_pos, a_size, b_pos, b_size)
-	return a_pos[1] + a_size[1] >= b_pos[1] and b_pos[1] + b_size[1] >= a_pos[1] and a_pos[2] + a_size[2] >= b_pos[2] and b_pos[2] + b_size[2] >= a_pos[2]
+function var_0_0.box_overlap_box(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+	return arg_22_0[1] + arg_22_1[1] >= arg_22_2[1] and arg_22_2[1] + arg_22_3[1] >= arg_22_0[1] and arg_22_0[2] + arg_22_1[2] >= arg_22_2[2] and arg_22_2[2] + arg_22_3[2] >= arg_22_0[2]
 end
 
-math.point_is_inside_aabb = function (pos, aabb_pos, aabb_half_extents)
-	return not (pos[1] < aabb_pos[1] - aabb_half_extents[1]) and not (pos[1] > aabb_pos[1] + aabb_half_extents[1]) and not (pos[2] < aabb_pos[2] - aabb_half_extents[2]) and not (pos[2] > aabb_pos[2] + aabb_half_extents[2]) and not (pos[3] < aabb_pos[3] - aabb_half_extents[3]) and not (pos[3] > aabb_pos[3] + aabb_half_extents[3])
+function var_0_0.point_is_inside_aabb(arg_23_0, arg_23_1, arg_23_2)
+	return not (arg_23_0[1] < arg_23_1[1] - arg_23_2[1]) and not (arg_23_0[1] > arg_23_1[1] + arg_23_2[1]) and not (arg_23_0[2] < arg_23_1[2] - arg_23_2[2]) and not (arg_23_0[2] > arg_23_1[2] + arg_23_2[2]) and not (arg_23_0[3] < arg_23_1[3] - arg_23_2[3]) and not (arg_23_0[3] > arg_23_1[3] + arg_23_2[3])
 end
 
-math.point_is_inside_box = function (pos, box_pose, box_half_extents)
-	local to_local_matrix = Matrix4x4.inverse(box_pose)
-	local local_pos = Matrix4x4.transform(to_local_matrix, pos)
+function var_0_0.point_is_inside_box(arg_24_0, arg_24_1, arg_24_2)
+	local var_24_0 = Matrix4x4.inverse(arg_24_1)
+	local var_24_1 = Matrix4x4.transform(var_24_0, arg_24_0)
 
-	return math.point_is_inside_aabb(local_pos, Vector3.zero(), box_half_extents)
+	return var_0_0.point_is_inside_aabb(var_24_1, Vector3.zero(), arg_24_2)
 end
 
-math.point_is_inside_oobb = function (pos, oobb_pose, oobb_radius)
-	local to_local_matrix = Matrix4x4.inverse(oobb_pose)
-	local local_pos = Matrix4x4.transform(to_local_matrix, pos)
+function var_0_0.point_is_inside_oobb(arg_25_0, arg_25_1, arg_25_2)
+	local var_25_0 = Matrix4x4.inverse(arg_25_1)
+	local var_25_1 = Matrix4x4.transform(var_25_0, arg_25_0)
 
-	if local_pos.x > -oobb_radius[1] and local_pos.x < oobb_radius[1] and local_pos.y > -oobb_radius[2] and local_pos.y < oobb_radius[2] and local_pos.z > -oobb_radius[3] and local_pos.z < oobb_radius[3] then
+	if var_25_1.x > -arg_25_2[1] and var_25_1.x < arg_25_2[1] and var_25_1.y > -arg_25_2[2] and var_25_1.y < arg_25_2[2] and var_25_1.z > -arg_25_2[3] and var_25_1.z < arg_25_2[3] then
 		return true
 	else
 		return false
 	end
 end
 
-math.point_is_inside_2d_triangle = function (pos, p1, p2, p3)
-	local pa = p1 - pos
-	local pb = p2 - pos
-	local pc = p3 - pos
-	local pab_n = Vector3.cross(pa, pb)
-	local pbc_n = Vector3.cross(pb, pc)
+function var_0_0.point_is_inside_2d_triangle(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+	local var_26_0 = arg_26_1 - arg_26_0
+	local var_26_1 = arg_26_2 - arg_26_0
+	local var_26_2 = arg_26_3 - arg_26_0
+	local var_26_3 = Vector3.cross(var_26_0, var_26_1)
+	local var_26_4 = Vector3.cross(var_26_1, var_26_2)
 
-	if Vector3.dot(pab_n, pbc_n) < 0 then
+	if Vector3.dot(var_26_3, var_26_4) < 0 then
 		return false
 	end
 
-	local pca_n = Vector3.cross(pc, pa)
-	local best_normal = Vector3.dot(pab_n, pab_n) > Vector3.dot(pbc_n, pbc_n) and pab_n or pbc_n
-	local dot_product = Vector3.dot(best_normal, pca_n)
+	local var_26_5 = Vector3.cross(var_26_2, var_26_0)
+	local var_26_6 = Vector3.dot(var_26_3, var_26_3) > Vector3.dot(var_26_4, var_26_4) and var_26_3 or var_26_4
+	local var_26_7 = Vector3.dot(var_26_6, var_26_5)
 
-	if dot_product < 0 then
+	if var_26_7 < 0 then
 		return false
-	elseif dot_product > 0 then
+	elseif var_26_7 > 0 then
 		return true
 	else
-		local min_p = Vector3.min(pa, Vector3.min(pb, pc))
-		local max_p = Vector3.max(pa, Vector3.max(pb, pc))
+		local var_26_8 = Vector3.min(var_26_0, Vector3.min(var_26_1, var_26_2))
+		local var_26_9 = Vector3.max(var_26_0, Vector3.max(var_26_1, var_26_2))
 
-		return min_p.x <= 0 and min_p.y <= 0 and max_p.x >= 0 and max_p.y >= 0
+		return var_26_8.x <= 0 and var_26_8.y <= 0 and var_26_9.x >= 0 and var_26_9.y >= 0
 	end
 end
 
-math.point_is_inside_view = function (pos, view_position, view_rotation, vertical_fov_rad, horizontal_fov_rad)
-	local camera_forward = Quaternion.forward(view_rotation)
-	local to_pos_dir = Vector3.normalize(pos - view_position)
-	local dot = Vector3.dot(to_pos_dir, camera_forward)
-	local is_infront = dot > 0
+function var_0_0.point_is_inside_view(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+	local var_27_0 = Quaternion.forward(arg_27_2)
+	local var_27_1 = Vector3.normalize(arg_27_0 - arg_27_1)
+	local var_27_2 = Vector3.dot(var_27_1, var_27_0)
 
-	if is_infront then
-		local camera_right = Quaternion.right(view_rotation)
-		local camera_up = Quaternion.up(view_rotation)
-		local c_x = Vector3.dot(to_pos_dir, camera_right)
-		local c_y = dot
-		local c_z = Vector3.dot(to_pos_dir, camera_up)
-		local dot_xy = c_y
-		local c_to_pos_dir_length_xy = math_sqrt(c_x * c_x + c_y * c_y)
+	if var_27_2 > 0 then
+		local var_27_3 = Quaternion.right(arg_27_2)
+		local var_27_4 = Quaternion.up(arg_27_2)
+		local var_27_5 = Vector3.dot(var_27_1, var_27_3)
+		local var_27_6 = var_27_2
+		local var_27_7 = Vector3.dot(var_27_1, var_27_4)
+		local var_27_8 = var_27_6
+		local var_27_9 = var_0_1(var_27_5 * var_27_5 + var_27_6 * var_27_6)
 
-		if c_to_pos_dir_length_xy == 0 then
+		if var_27_9 == 0 then
 			return false
 		end
 
-		local cos_xy = dot_xy / c_to_pos_dir_length_xy
-		local yaw = math.acos(cos_xy)
+		local var_27_10 = var_27_8 / var_27_9
 
-		if yaw <= horizontal_fov_rad / 2 then
-			local dot_uz = c_to_pos_dir_length_xy
-			local to_pos_dir_length_uz = math_sqrt(c_to_pos_dir_length_xy * c_to_pos_dir_length_xy + c_z * c_z)
-			local cos_uz = dot_uz / to_pos_dir_length_uz
-			local pitch = math.acos(cos_uz)
+		if var_0_0.acos(var_27_10) <= arg_27_4 / 2 then
+			local var_27_11 = var_27_9 / var_0_1(var_27_9 * var_27_9 + var_27_7 * var_27_7)
 
-			if pitch <= vertical_fov_rad / 2 then
+			if var_0_0.acos(var_27_11) <= arg_27_3 / 2 then
 				return true
 			end
 
@@ -235,813 +234,821 @@ math.point_is_inside_view = function (pos, view_position, view_rotation, vertica
 	return false
 end
 
-math.point_is_inside_cylinder = function (point, cylinder_pos, min_radius, radius, half_height)
-	local pz = point[3]
-	local cz = cylinder_pos[3]
+function var_0_0.point_is_inside_cylinder(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+	local var_28_0 = arg_28_0[3]
+	local var_28_1 = arg_28_1[3]
 
-	if pz > cz + half_height or pz < cz - half_height then
+	if var_28_0 > var_28_1 + arg_28_4 or var_28_0 < var_28_1 - arg_28_4 then
 		return false
 	end
 
-	local px, py = point[1], point[2]
-	local cx, cy = cylinder_pos[1], cylinder_pos[2]
-	local dist = (px - cx)^2 + (py - cy)^2
+	local var_28_2 = arg_28_0[1]
+	local var_28_3 = arg_28_0[2]
+	local var_28_4 = arg_28_1[1]
+	local var_28_5 = arg_28_1[2]
+	local var_28_6 = (var_28_2 - var_28_4)^2 + (var_28_3 - var_28_5)^2
 
-	return min_radius < dist and dist < radius^2
+	return arg_28_2 < var_28_6 and var_28_6 < arg_28_3^2
 end
 
-math.cartesian_to_polar = function (x, y)
-	fassert(x ~= 0 and y ~= 0, "Can't convert a zero vector to polar coordinates")
+function var_0_0.cartesian_to_polar(arg_29_0, arg_29_1)
+	fassert(arg_29_0 ~= 0 and arg_29_1 ~= 0, "Can't convert a zero vector to polar coordinates")
 
-	local radius = math_sqrt(x * x + y * y)
-	local theta = math.atan(y / x) * (180 / math.pi)
+	local var_29_0 = var_0_1(arg_29_0 * arg_29_0 + arg_29_1 * arg_29_1)
+	local var_29_1 = var_0_0.atan(arg_29_1 / arg_29_0) * (180 / var_0_0.pi)
 
-	if x < 0 then
-		theta = theta + 180
-	elseif y < 0 then
-		theta = theta + 360
+	if arg_29_0 < 0 then
+		var_29_1 = var_29_1 + 180
+	elseif arg_29_1 < 0 then
+		var_29_1 = var_29_1 + 360
 	end
 
-	return radius, theta
+	return var_29_0, var_29_1
 end
 
-math.circular_to_square_coordinates = function (pos)
-	local x, y = pos.x, pos.y
-	local w = x * x - y * y
-	local k = 4 * math.inverse_sqrt_2
-	local u, v = x * k, y * k
+function var_0_0.circular_to_square_coordinates(arg_30_0)
+	local var_30_0 = arg_30_0.x
+	local var_30_1 = arg_30_0.y
+	local var_30_2 = var_30_0 * var_30_0 - var_30_1 * var_30_1
+	local var_30_3 = 4 * var_0_0.inverse_sqrt_2
+	local var_30_4 = var_30_0 * var_30_3
+	local var_30_5 = var_30_1 * var_30_3
 
-	return Vector2(0.5 * (math_sqrt(math_max(2 + u + w, 0)) - math_sqrt(math_max(2 - u + w, 0))), 0.5 * (math_sqrt(math_max(2 + v - w, 0)) - math_sqrt(math_max(2 - v - w, 0))))
+	return Vector2(0.5 * (var_0_1(var_0_5(2 + var_30_4 + var_30_2, 0)) - var_0_1(var_0_5(2 - var_30_4 + var_30_2, 0))), 0.5 * (var_0_1(var_0_5(2 + var_30_5 - var_30_2, 0)) - var_0_1(var_0_5(2 - var_30_5 - var_30_2, 0))))
 end
 
-math.polar_to_cartesian = function (radius, theta_degrees)
-	local theta = theta_degrees * (pi / 180)
+function var_0_0.polar_to_cartesian(arg_31_0, arg_31_1)
+	local var_31_0 = arg_31_1 * (var_0_8 / 180)
 
-	return radius * math_cos(theta), radius * math_sin(theta)
+	return arg_31_0 * var_0_2(var_31_0), arg_31_0 * var_0_3(var_31_0)
 end
 
-math.catmullrom = function (t, p0, p1, p2, p3)
-	return 0.5 * (2 * p1 + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t * t + (-p0 + 3 * p1 - 3 * p2 + p3) * t * t * t)
+function var_0_0.catmullrom(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+	return 0.5 * (2 * arg_32_2 + (-arg_32_1 + arg_32_3) * arg_32_0 + (2 * arg_32_1 - 5 * arg_32_2 + 4 * arg_32_3 - arg_32_4) * arg_32_0 * arg_32_0 + (-arg_32_1 + 3 * arg_32_2 - 3 * arg_32_3 + arg_32_4) * arg_32_0 * arg_32_0 * arg_32_0)
 end
 
-math.closest_position = function (p0, p1, p2)
-	local p0_p1_dist_sq = Vector3.distance_squared(p0, p1)
-	local p0_p2_dist_sq = Vector3.distance_squared(p0, p2)
-
-	if p0_p1_dist_sq <= p0_p2_dist_sq then
-		return p1
+function var_0_0.closest_position(arg_33_0, arg_33_1, arg_33_2)
+	if Vector3.distance_squared(arg_33_0, arg_33_1) <= Vector3.distance_squared(arg_33_0, arg_33_2) then
+		return arg_33_1
 	else
-		return p2
+		return arg_33_2
 	end
 end
 
-math.dot2D = function (v1, v2)
-	return v1.x * v2.x + v1.y * v2.y
+function var_0_0.dot2D(arg_34_0, arg_34_1)
+	return arg_34_0.x * arg_34_1.x + arg_34_0.y * arg_34_1.y
 end
 
 Geometry = Geometry or {}
 
-Geometry.ccw = function (a, b, c)
-	return (b.x - a.x) * (c.y - a.y) > (b.y - a.y) * (c.x - a.x)
+function Geometry.ccw(arg_35_0, arg_35_1, arg_35_2)
+	return (arg_35_1.x - arg_35_0.x) * (arg_35_2.y - arg_35_0.y) > (arg_35_1.y - arg_35_0.y) * (arg_35_2.x - arg_35_0.x)
 end
 
-local function left_to_right(left, right)
-	return left.x < right.x
+local function var_0_11(arg_36_0, arg_36_1)
+	return arg_36_0.x < arg_36_1.x
 end
 
-local ccw = Geometry.ccw
-local dot2D = math.dot2D
+local var_0_12 = Geometry.ccw
+local var_0_13 = var_0_0.dot2D
 
-Geometry.convex_hull = function (points, hull)
-	local num_points = #points
+function Geometry.convex_hull(arg_37_0, arg_37_1)
+	local var_37_0 = #arg_37_0
 
-	if num_points == 0 then
-		return hull, 0
+	if var_37_0 == 0 then
+		return arg_37_1, 0
 	end
 
-	table.sort(points, left_to_right)
+	table.sort(arg_37_0, var_0_11)
 
-	local num = 0
+	local var_37_1 = 0
 
-	for i = 1, num_points do
-		local pt = points[i]
+	for iter_37_0 = 1, var_37_0 do
+		local var_37_2 = arg_37_0[iter_37_0]
 
-		while num >= 2 and not ccw(hull[num - 1], hull[num], pt) do
-			num = num - 1
+		while var_37_1 >= 2 and not var_0_12(arg_37_1[var_37_1 - 1], arg_37_1[var_37_1], var_37_2) do
+			var_37_1 = var_37_1 - 1
 		end
 
-		num = num + 1
-		hull[num] = pt
+		var_37_1 = var_37_1 + 1
+		arg_37_1[var_37_1] = var_37_2
 	end
 
-	local t = num + 1
+	local var_37_3 = var_37_1 + 1
 
-	for i = num_points, 1, -1 do
-		local pt = points[i]
+	for iter_37_1 = var_37_0, 1, -1 do
+		local var_37_4 = arg_37_0[iter_37_1]
 
-		while t <= num and not ccw(hull[num - 1], hull[num], pt) do
-			num = num - 1
+		while var_37_3 <= var_37_1 and not var_0_12(arg_37_1[var_37_1 - 1], arg_37_1[var_37_1], var_37_4) do
+			var_37_1 = var_37_1 - 1
 		end
 
-		num = num + 1
-		hull[num] = pt
+		var_37_1 = var_37_1 + 1
+		arg_37_1[var_37_1] = var_37_4
 	end
 
-	num = num - 1
+	local var_37_5 = var_37_1 - 1
 
-	return hull, num
+	return arg_37_1, var_37_5
 end
 
-Geometry.convex_hull_tracking = function (points, hull, hull_indexes)
-	local num_points = #points
+function Geometry.convex_hull_tracking(arg_38_0, arg_38_1, arg_38_2)
+	local var_38_0 = #arg_38_0
 
-	if num_points == 0 then
-		return hull, 0
+	if var_38_0 == 0 then
+		return arg_38_1, 0
 	end
 
-	table.sort(points, left_to_right)
+	table.sort(arg_38_0, var_0_11)
 
-	local num = 0
+	local var_38_1 = 0
 
-	for i = 1, num_points do
-		local pt = points[i]
+	for iter_38_0 = 1, var_38_0 do
+		local var_38_2 = arg_38_0[iter_38_0]
 
-		while num >= 2 and not ccw(hull[num - 1], hull[num], pt) do
-			num = num - 1
+		while var_38_1 >= 2 and not var_0_12(arg_38_1[var_38_1 - 1], arg_38_1[var_38_1], var_38_2) do
+			var_38_1 = var_38_1 - 1
 		end
 
-		num = num + 1
-		hull[num] = pt
-		hull_indexes[num] = i
+		var_38_1 = var_38_1 + 1
+		arg_38_1[var_38_1] = var_38_2
+		arg_38_2[var_38_1] = iter_38_0
 	end
 
-	local t = num + 1
+	local var_38_3 = var_38_1 + 1
 
-	for i = num_points, 1, -1 do
-		local pt = points[i]
+	for iter_38_1 = var_38_0, 1, -1 do
+		local var_38_4 = arg_38_0[iter_38_1]
 
-		while t <= num and not ccw(hull[num - 1], hull[num], pt) do
-			num = num - 1
+		while var_38_3 <= var_38_1 and not var_0_12(arg_38_1[var_38_1 - 1], arg_38_1[var_38_1], var_38_4) do
+			var_38_1 = var_38_1 - 1
 		end
 
-		num = num + 1
-		hull[num] = pt
-		hull_indexes[num] = i
+		var_38_1 = var_38_1 + 1
+		arg_38_1[var_38_1] = var_38_4
+		arg_38_2[var_38_1] = iter_38_1
 	end
 
-	num = num - 1
+	local var_38_5 = var_38_1 - 1
 
-	return hull, num, hull_indexes
+	return arg_38_1, var_38_5, arg_38_2
 end
 
-Geometry.concave_hull = function (points, hull)
-	local num_points = #points
+function Geometry.concave_hull(arg_39_0, arg_39_1)
+	local var_39_0 = #arg_39_0
 
-	if num_points == 0 then
-		return hull, 0
+	if var_39_0 == 0 then
+		return arg_39_1, 0
 	end
 
-	table.sort(points, left_to_right)
+	table.sort(arg_39_0, var_0_11)
 
-	local num = 0
+	local var_39_1 = 0
 
-	for i = 1, num_points do
-		local pt = points[i]
+	for iter_39_0 = 1, var_39_0 do
+		local var_39_2 = arg_39_0[iter_39_0]
 
-		while num >= 2 and not ccw(hull[num - 1], hull[num], pt) and not (dot2D(hull[num] - hull[num - 1], pt - hull[num]) > 0.1) do
-			num = num - 1
+		while var_39_1 >= 2 and not var_0_12(arg_39_1[var_39_1 - 1], arg_39_1[var_39_1], var_39_2) and not (var_0_13(arg_39_1[var_39_1] - arg_39_1[var_39_1 - 1], var_39_2 - arg_39_1[var_39_1]) > 0.1) do
+			var_39_1 = var_39_1 - 1
 		end
 
-		num = num + 1
-		hull[num] = pt
+		var_39_1 = var_39_1 + 1
+		arg_39_1[var_39_1] = var_39_2
 	end
 
-	local upper_starts_num = num
-	local t = num + 1
+	local var_39_3 = var_39_1
+	local var_39_4 = var_39_1 + 1
 
-	for i = num_points, 1, -1 do
-		local pt = points[i]
+	for iter_39_1 = var_39_0, 1, -1 do
+		local var_39_5 = arg_39_0[iter_39_1]
 
-		while t <= num and not ccw(hull[num - 1], hull[num], pt) and not (dot2D(hull[num] - hull[num - 1], pt - hull[num]) > 0.1) do
-			num = num - 1
+		while var_39_4 <= var_39_1 and not var_0_12(arg_39_1[var_39_1 - 1], arg_39_1[var_39_1], var_39_5) and not (var_0_13(arg_39_1[var_39_1] - arg_39_1[var_39_1 - 1], var_39_5 - arg_39_1[var_39_1]) > 0.1) do
+			var_39_1 = var_39_1 - 1
 		end
 
-		num = num + 1
-		hull[num] = pt
+		var_39_1 = var_39_1 + 1
+		arg_39_1[var_39_1] = var_39_5
 	end
 
-	num = num - 1
+	local var_39_6 = var_39_1 - 1
 
-	return hull, num, upper_starts_num
+	return arg_39_1, var_39_6, var_39_3
 end
 
-Geometry.is_point_inside_triangle = function (point_on_plane, tri_a, tri_b, tri_c)
-	local pa = tri_a - point_on_plane
-	local pb = tri_b - point_on_plane
-	local pc = tri_c - point_on_plane
-	local pab_n = Vector3.cross(pa, pb)
-	local pbc_n = Vector3.cross(pb, pc)
+function Geometry.is_point_inside_triangle(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+	local var_40_0 = arg_40_1 - arg_40_0
+	local var_40_1 = arg_40_2 - arg_40_0
+	local var_40_2 = arg_40_3 - arg_40_0
+	local var_40_3 = Vector3.cross(var_40_0, var_40_1)
+	local var_40_4 = Vector3.cross(var_40_1, var_40_2)
 
-	if Vector3.dot(pab_n, pbc_n) < 0 then
+	if Vector3.dot(var_40_3, var_40_4) < 0 then
 		return false
 	end
 
-	local pca_n = Vector3.cross(pc, pa)
-	local best_normal = Vector3.dot(pab_n, pab_n) > Vector3.dot(pbc_n, pbc_n) and pab_n or pbc_n
-	local dot_product = Vector3.dot(best_normal, pca_n)
+	local var_40_5 = Vector3.cross(var_40_2, var_40_0)
+	local var_40_6 = Vector3.dot(var_40_3, var_40_3) > Vector3.dot(var_40_4, var_40_4) and var_40_3 or var_40_4
+	local var_40_7 = Vector3.dot(var_40_6, var_40_5)
 
-	if dot_product < 0 then
+	if var_40_7 < 0 then
 		return false
-	elseif dot_product > 0 then
+	elseif var_40_7 > 0 then
 		return true
 	else
-		local min_p = Vector3.min(pa, Vector3.min(pb, pc))
-		local max_p = Vector3.max(pa, Vector3.max(pb, pc))
+		local var_40_8 = Vector3.min(var_40_0, Vector3.min(var_40_1, var_40_2))
+		local var_40_9 = Vector3.max(var_40_0, Vector3.max(var_40_1, var_40_2))
 
-		return min_p.x <= 0 and min_p.y <= 0 and min_p.z <= 0 and max_p.x >= 0 and max_p.y >= 0 and max_p.z >= 0
+		return var_40_8.x <= 0 and var_40_8.y <= 0 and var_40_8.z <= 0 and var_40_9.x >= 0 and var_40_9.y >= 0 and var_40_9.z >= 0
 	end
 end
 
-local Vector3_dot = Vector3 and Vector3.dot
+local var_0_14 = Vector3 and Vector3.dot
 
-Geometry.closest_point_on_line = function (p, p1, p2)
-	local diff = p - p1
-	local dir = p2 - p1
-	local dot1 = Vector3_dot(diff, dir)
+function Geometry.closest_point_on_line(arg_41_0, arg_41_1, arg_41_2)
+	local var_41_0 = arg_41_0 - arg_41_1
+	local var_41_1 = arg_41_2 - arg_41_1
+	local var_41_2 = var_0_14(var_41_0, var_41_1)
 
-	if dot1 <= 0 then
-		return p1
+	if var_41_2 <= 0 then
+		return arg_41_1
 	end
 
-	local dot2 = Vector3_dot(dir, dir)
+	local var_41_3 = var_0_14(var_41_1, var_41_1)
 
-	if dot2 <= dot1 then
-		return p2
+	if var_41_3 <= var_41_2 then
+		return arg_41_2
 	end
 
-	local t = dot1 / dot2
-
-	return p1 + t * dir
+	return arg_41_1 + var_41_2 / var_41_3 * var_41_1
 end
 
 Geometry.closest_point_on_line = EngineOptimized.closest_point_on_line
 
-Geometry.closest_point_on_polyline = function (point, points, start_index, end_index)
-	local vector3_distance_squared = Vector3.distance_squared
-	local closest_point_on_line = Geometry.closest_point_on_line
+function Geometry.closest_point_on_polyline(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+	local var_42_0 = Vector3.distance_squared
+	local var_42_1 = Geometry.closest_point_on_line
 
-	start_index = start_index or 1
-	end_index = end_index or #points
+	arg_42_2 = arg_42_2 or 1
+	arg_42_3 = arg_42_3 or #arg_42_1
 
-	local shortest_distance = math.huge
-	local result_position, result_index
+	local var_42_2 = var_0_0.huge
+	local var_42_3
+	local var_42_4
 
-	for i = start_index, end_index - 1 do
-		local p1 = points[i]
-		local p2 = points[i + 1]
-		local projected_point = closest_point_on_line(point, p1, p2)
-		local distance = vector3_distance_squared(projected_point, point)
+	for iter_42_0 = arg_42_2, arg_42_3 - 1 do
+		local var_42_5 = arg_42_1[iter_42_0]
+		local var_42_6 = arg_42_1[iter_42_0 + 1]
+		local var_42_7 = var_42_1(arg_42_0, var_42_5, var_42_6)
+		local var_42_8 = var_42_0(var_42_7, arg_42_0)
 
-		if distance < shortest_distance then
-			shortest_distance = distance
-			result_position = projected_point
-			result_index = i
+		if var_42_8 < var_42_2 then
+			var_42_2 = var_42_8
+			var_42_3 = var_42_7
+			var_42_4 = iter_42_0
 		end
 	end
 
-	return result_position, result_index
+	return var_42_3, var_42_4
 end
 
 Intersect = Intersect or {}
 
-Intersect.ray_line = function (ray_from, ray_direction, line_point_a, line_point_b)
-	local distance_along_ray, normalized_distance_along_line = Intersect.line_line(ray_from, ray_from + ray_direction, line_point_a, line_point_b)
+function Intersect.ray_line(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+	local var_43_0, var_43_1 = Intersect.line_line(arg_43_0, arg_43_0 + arg_43_1, arg_43_2, arg_43_3)
 
-	if distance_along_ray == nil then
+	if var_43_0 == nil then
 		return nil, nil
-	elseif distance_along_ray < 0 then
+	elseif var_43_0 < 0 then
 		return nil, nil
 	else
-		return distance_along_ray, normalized_distance_along_line
+		return var_43_0, var_43_1
 	end
 end
 
-Intersect.ray_box = function (from, direction, pose, radius)
-	local is_ray_origin_inside_box = Math.point_in_box(from, pose, radius)
-
-	if is_ray_origin_inside_box then
+function Intersect.ray_box(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+	if Math.point_in_box(arg_44_0, arg_44_2, arg_44_3) then
 		return 0
 	end
 
-	local distance_along_ray = Math.ray_box_intersection(from, direction, pose, radius)
-	local is_box_missed_by_ray = distance_along_ray < 0
+	local var_44_0 = Math.ray_box_intersection(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 
-	if is_box_missed_by_ray then
+	if var_44_0 < 0 then
 		return nil
 	end
 
-	return distance_along_ray
+	return var_44_0
 end
 
-Intersect.line_line = function (line_a_pt1, line_a_pt2, line_b_pt1, line_b_pt2)
-	local line_a_vector = line_a_pt2 - line_a_pt1
-	local line_b_vector = line_b_pt2 - line_b_pt1
-	local a = Vector3.dot(line_a_vector, line_a_vector)
-	local e = Vector3.dot(line_b_vector, line_b_vector)
-	local b = Vector3.dot(line_a_vector, line_b_vector)
-	local d = a * e - b * b
+function Intersect.line_line(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+	local var_45_0 = arg_45_1 - arg_45_0
+	local var_45_1 = arg_45_3 - arg_45_2
+	local var_45_2 = Vector3.dot(var_45_0, var_45_0)
+	local var_45_3 = Vector3.dot(var_45_1, var_45_1)
+	local var_45_4 = Vector3.dot(var_45_0, var_45_1)
+	local var_45_5 = var_45_2 * var_45_3 - var_45_4 * var_45_4
 
-	if d < 0.001 then
+	if var_45_5 < 0.001 then
 		return nil, nil
 	end
 
-	local r = line_a_pt1 - line_b_pt1
-	local c = Vector3.dot(line_a_vector, r)
-	local f = Vector3.dot(line_b_vector, r)
-	local normalized_distance_along_line_a = (b * f - c * e) / d
-	local normalized_distance_along_line_b = (a * f - b * c) / d
+	local var_45_6 = arg_45_0 - arg_45_2
+	local var_45_7 = Vector3.dot(var_45_0, var_45_6)
+	local var_45_8 = Vector3.dot(var_45_1, var_45_6)
+	local var_45_9 = (var_45_4 * var_45_8 - var_45_7 * var_45_3) / var_45_5
+	local var_45_10 = (var_45_2 * var_45_8 - var_45_4 * var_45_7) / var_45_5
 
-	return normalized_distance_along_line_a, normalized_distance_along_line_b
+	return var_45_9, var_45_10
 end
 
-Intersect.ray_segment = function (ray_from, ray_direction, segment_start, segment_end)
-	local distance_along_ray, normalized_distance_along_line = Intersect.ray_line(ray_from, ray_direction, segment_start, segment_end)
-	local is_line_parallel_to_or_behind_ray = distance_along_ray == nil
+function Intersect.ray_segment(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+	local var_46_0, var_46_1 = Intersect.ray_line(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
 
-	if is_line_parallel_to_or_behind_ray then
+	if var_46_0 == nil then
 		return nil
 	end
 
-	local is_intersection_inside_segment = normalized_distance_along_line >= 0 and normalized_distance_along_line <= 1
-
-	if is_intersection_inside_segment then
-		return distance_along_ray, normalized_distance_along_line
+	if var_46_1 >= 0 and var_46_1 <= 1 then
+		return var_46_0, var_46_1
 	else
 		return nil, nil
 	end
 end
 
-Intersect.ray_circle = function (ray_from, ray_direction, circle_position, circle_radius)
-	local ray_coord = ray_from - circle_position
-	local rx, ry = Vector3.to_elements(ray_coord)
-	local dx, dy = Vector3.to_elements(ray_direction)
-	local a = dx * dx + dy * dy
-	local a2 = a * 2
-	local b = 2 * (dx * rx + dy * ry)
-	local c = rx * rx + ry * ry - circle_radius * circle_radius
-	local discriminant = b * b - 2 * a2 * c
+function Intersect.ray_circle(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
+	local var_47_0 = arg_47_0 - arg_47_2
+	local var_47_1, var_47_2 = Vector3.to_elements(var_47_0)
+	local var_47_3, var_47_4 = Vector3.to_elements(arg_47_1)
+	local var_47_5 = (var_47_3 * var_47_3 + var_47_4 * var_47_4) * 2
+	local var_47_6 = 2 * (var_47_3 * var_47_1 + var_47_4 * var_47_2)
+	local var_47_7 = var_47_1 * var_47_1 + var_47_2 * var_47_2 - arg_47_3 * arg_47_3
+	local var_47_8 = var_47_6 * var_47_6 - 2 * var_47_5 * var_47_7
 
-	if discriminant < 0 then
+	if var_47_8 < 0 then
 		return nil
 	end
 
-	local sqrt_discriminant = math.sqrt(discriminant)
-	local t1 = (-b + sqrt_discriminant) / a2
-	local pos1_diff = Vector3(dx * t1, dy * t1, 0)
-	local pos1 = ray_from + pos1_diff
+	local var_47_9 = var_0_0.sqrt(var_47_8)
+	local var_47_10 = (-var_47_6 + var_47_9) / var_47_5
+	local var_47_11 = Vector3(var_47_3 * var_47_10, var_47_4 * var_47_10, 0)
+	local var_47_12 = arg_47_0 + var_47_11
 
-	if sqrt_discriminant < math.epsilon then
-		return pos1, pos1, pos1_diff, pos1_diff
+	if var_47_9 < var_0_0.epsilon then
+		return var_47_12, var_47_12, var_47_11, var_47_11
 	end
 
-	local t2 = (-b - sqrt_discriminant) / a2
-	local pos2_diff = Vector3(dx * t2, dy * t2, 0)
-	local pos2 = ray_from + pos2_diff
+	local var_47_13 = (-var_47_6 - var_47_9) / var_47_5
+	local var_47_14 = Vector3(var_47_3 * var_47_13, var_47_4 * var_47_13, 0)
+	local var_47_15 = arg_47_0 + var_47_14
 
-	return pos1, pos2, pos1_diff, pos2_diff
+	return var_47_12, var_47_15, var_47_11, var_47_14
 end
 
-math.ease_exp = function (t)
-	if t < 0.5 then
-		return 0.5 * 2^(20 * (t - 0.5))
+function var_0_0.ease_exp(arg_48_0)
+	if arg_48_0 < 0.5 then
+		return 0.5 * 2^(20 * (arg_48_0 - 0.5))
 	end
 
-	return 1 - 0.5 * 2^(20 * (0.5 - t))
+	return 1 - 0.5 * 2^(20 * (0.5 - arg_48_0))
 end
 
-math.ease_in_exp = function (t)
-	return 2^(10 * (t - 1))
+function var_0_0.ease_in_exp(arg_49_0)
+	return 2^(10 * (arg_49_0 - 1))
 end
 
-math.ease_out_exp = function (t)
-	return 1 - 2^(-10 * t)
+function var_0_0.ease_out_exp(arg_50_0)
+	return 1 - 2^(-10 * arg_50_0)
 end
 
-math.ease_out_sine = function (t)
-	return math.sin(t * math.half_pi)
+function var_0_0.ease_out_sine(arg_51_0)
+	return var_0_0.sin(arg_51_0 * var_0_0.half_pi)
 end
 
-math.easeCubic = function (t)
-	t = t * 2
+function var_0_0.easeCubic(arg_52_0)
+	arg_52_0 = arg_52_0 * 2
 
-	if t < 1 then
-		return 0.5 * t * t * t
+	if arg_52_0 < 1 then
+		return 0.5 * arg_52_0 * arg_52_0 * arg_52_0
 	end
 
-	t = t - 2
+	arg_52_0 = arg_52_0 - 2
 
-	return 0.5 * t * t * t + 1
+	return 0.5 * arg_52_0 * arg_52_0 * arg_52_0 + 1
 end
 
-math.linear = function (t)
-	return t
+function var_0_0.linear(arg_53_0)
+	return arg_53_0
 end
 
-math.linear_inv = function (t)
-	return t
+function var_0_0.linear_inv(arg_54_0)
+	return arg_54_0
 end
 
-math.easeInCubic = function (t)
-	return t * t * t
+function var_0_0.easeInCubic(arg_55_0)
+	return arg_55_0 * arg_55_0 * arg_55_0
 end
 
-math.easeOutCubic = function (t)
-	t = t - 1
+function var_0_0.easeOutCubic(arg_56_0)
+	arg_56_0 = arg_56_0 - 1
 
-	return t * t * t + 1
+	return arg_56_0 * arg_56_0 * arg_56_0 + 1
 end
 
-math.easeOutCubicInv = function (t)
-	return 1 - math.pow(1 - t, 0.3333333333333333)
+function var_0_0.easeOutCubicInv(arg_57_0)
+	return 1 - var_0_0.pow(1 - arg_57_0, 0.3333333333333333)
 end
 
-math.ease_out_quad = function (t)
-	return -1 * t * (t - 2)
+function var_0_0.ease_out_quad(arg_58_0)
+	return -1 * arg_58_0 * (arg_58_0 - 2)
 end
 
-math.ease_in_quart = function (t)
-	return t * t * t * t
+function var_0_0.ease_in_quart(arg_59_0)
+	return arg_59_0 * arg_59_0 * arg_59_0 * arg_59_0
 end
 
-math.ease_out_quart = function (t)
-	return 1 - math.pow(1 - t, 4)
+function var_0_0.ease_out_quart(arg_60_0)
+	return 1 - var_0_0.pow(1 - arg_60_0, 4)
 end
 
-math.ease_out_quart_inv = function (t)
-	return math.pow(-t + 1, 0.25) + 1
+function var_0_0.ease_out_quart_inv(arg_61_0)
+	return var_0_0.pow(-arg_61_0 + 1, 0.25) + 1
 end
 
-math.ease_in_out_quart = function (t)
-	return t < 0.5 and 8 * t * t * t * t or 1 - (-2 * t + 2)^4 / 2
+function var_0_0.ease_in_out_quart(arg_62_0)
+	return arg_62_0 < 0.5 and 8 * arg_62_0 * arg_62_0 * arg_62_0 * arg_62_0 or 1 - (-2 * arg_62_0 + 2)^4 / 2
 end
 
-local math_ease_cubic = math.easeCubic
+local var_0_15 = var_0_0.easeCubic
 
-math.ease_pulse = function (t)
-	if t < 0.5 then
-		return math_ease_cubic(2 * t)
+function var_0_0.ease_pulse(arg_63_0)
+	if arg_63_0 < 0.5 then
+		return var_0_15(2 * arg_63_0)
 	else
-		return math_ease_cubic(2 - 2 * t)
+		return var_0_15(2 - 2 * arg_63_0)
 	end
 end
 
-math.ease_in_circ = function (t)
-	return 1 - math.sqrt(1 - t^2)
+function var_0_0.ease_in_circ(arg_64_0)
+	return 1 - var_0_0.sqrt(1 - arg_64_0^2)
 end
 
-math.ease_out_circ = function (t)
-	return math.sqrt(1 - (t - 1)^2)
+function var_0_0.ease_out_circ(arg_65_0)
+	return var_0_0.sqrt(1 - (arg_65_0 - 1)^2)
 end
 
-math.ease_in_back = function (t)
-	local c1 = 1.70158
-	local c3 = c1 + 1
+function var_0_0.ease_in_back(arg_66_0)
+	local var_66_0 = 1.70158
 
-	return c3 * t * t * t - c1 * t * t
+	return (var_66_0 + 1) * arg_66_0 * arg_66_0 * arg_66_0 - var_66_0 * arg_66_0 * arg_66_0
 end
 
-math.ease_out_back = function (t)
+function var_0_0.ease_out_back(arg_67_0)
 	c1 = 1.70158
 	c3 = c1 + 1
 
-	return 1 + c3 * (t - 1)^3 + c1 * (t - 1)^2
+	return 1 + c3 * (arg_67_0 - 1)^3 + c1 * (arg_67_0 - 1)^2
 end
 
-math.ease_in_out_back = function (t)
-	local c1 = 1.70158
-	local c2 = c1 * 1.525
+function var_0_0.ease_in_out_back(arg_68_0)
+	local var_68_0 = 1.70158
+	local var_68_1 = var_68_0 * 1.525
 
-	return t < 0.5 and (2 * t)^2 * ((c2 + 1) * 2 * t - c2) / 2 or ((2 * t - 2)^2 * ((c2 + 1) * (t * 2 - 2) + c2) + 2) / 2
+	return arg_68_0 < 0.5 and (2 * arg_68_0)^2 * ((var_68_1 + 1) * 2 * arg_68_0 - var_68_1) / 2 or ((2 * arg_68_0 - 2)^2 * ((var_68_1 + 1) * (arg_68_0 * 2 - 2) + var_68_1) + 2) / 2
 end
 
-math.easeOutQuint = function (t)
-	return 1 - (1 - t)^5
+function var_0_0.easeOutQuint(arg_69_0)
+	return 1 - (1 - arg_69_0)^5
 end
 
-math.easeInQuint = function (t)
-	return t * t * t * t * t
+function var_0_0.easeInQuint(arg_70_0)
+	return arg_70_0 * arg_70_0 * arg_70_0 * arg_70_0 * arg_70_0
 end
 
-math.bounce = function (t)
-	return math.abs(math_sin(math.tau * (t + 1) * (t + 1)) * (1 - t))
+function var_0_0.bounce(arg_71_0)
+	return var_0_0.abs(var_0_3(var_0_0.tau * (arg_71_0 + 1) * (arg_71_0 + 1)) * (1 - arg_71_0))
 end
 
-math.ease_out_elastic = function (t)
-	local p = 0
-	local a = 1
+function var_0_0.ease_out_elastic(arg_72_0)
+	local var_72_0 = 0
+	local var_72_1 = 1
 
-	if t == 0 then
+	if arg_72_0 == 0 then
 		return 0
 	end
 
-	if t == 1 then
+	if arg_72_0 == 1 then
 		return 1
 	end
 
-	if p == 0 then
-		p = 0.3
+	if var_72_0 == 0 then
+		var_72_0 = 0.3
 	end
 
-	local s
+	local var_72_2
 
-	if a < 1 then
-		a = 1
-		s = p / 4
+	if var_72_1 < 1 then
+		var_72_1 = 1
+		var_72_2 = var_72_0 / 4
 	else
-		s = p / (2 * math.pi) * math.asin(1 / a)
+		var_72_2 = var_72_0 / (2 * var_0_0.pi) * var_0_0.asin(1 / var_72_1)
 	end
 
-	return a * 2^(-10 * t) * math_sin((t * 1 - s) * (2 * math.pi) / p) + 1
+	return var_72_1 * 2^(-10 * arg_72_0) * var_0_3((arg_72_0 * 1 - var_72_2) * (2 * var_0_0.pi) / var_72_0) + 1
 end
 
-math.easeInOutCubic = function (t)
-	return t < 0.5 and 4 * t * t * t or 1 - math.pow(-2 * t + 2, 3) / 2
+function var_0_0.easeInOutCubic(arg_73_0)
+	return arg_73_0 < 0.5 and 4 * arg_73_0 * arg_73_0 * arg_73_0 or 1 - var_0_0.pow(-2 * arg_73_0 + 2, 3) / 2
 end
 
-math.rand_utf8_string = function (string_length, ignore_chars)
-	fassert(string_length > 0, "String length passed to math.rand_string has to be greater than 0")
+function var_0_0.rand_utf8_string(arg_74_0, arg_74_1)
+	fassert(arg_74_0 > 0, "String length passed to math.rand_string has to be greater than 0")
 
-	ignore_chars = ignore_chars or {
+	arg_74_1 = arg_74_1 or {
 		"\"",
 		"'",
 		"\\",
-		" ",
+		" "
 	}
 
-	local array = {}
+	local var_74_0 = {}
 
-	for i = 1, string_length do
-		local char
+	for iter_74_0 = 1, arg_74_0 do
+		local var_74_1
 
-		while not char or table.contains(ignore_chars, char) do
-			char = string.char(math_random(32, 126))
+		while not var_74_1 or table.contains(arg_74_1, var_74_1) do
+			var_74_1 = string.char(var_0_4(32, 126))
 		end
 
-		array[i] = char
+		var_74_0[iter_74_0] = var_74_1
 	end
 
-	return table.concat(array)
+	return table.concat(var_74_0)
 end
 
-math.uuid = function ()
-	local random = math_random
+function var_0_0.uuid()
+	local var_75_0 = var_0_4
 
-	return string.format("%08x-%04x-4%03x-%x%03x-%012x", random(0, 4294967295), random(0, 65535), random(0, 4095), random(0, 11), random(0, 4095), random(0, 281474976710655))
+	return string.format("%08x-%04x-4%03x-%x%03x-%012x", var_75_0(0, 4294967295), var_75_0(0, 65535), var_75_0(0, 4095), var_75_0(0, 11), var_75_0(0, 4095), var_75_0(0, 281474976710655))
 end
 
-math.get_uniformly_random_point_inside_sector = function (radius1, radius2, angle1, angle2)
-	local radius1_squared = radius1 * radius1
-	local radius2_squared = radius2 * radius2
-	local angle = angle1 + (angle2 - angle1) * math_random()
-	local r = math_sqrt(radius1_squared + (radius2_squared - radius1_squared) * math_random())
+function var_0_0.get_uniformly_random_point_inside_sector(arg_76_0, arg_76_1, arg_76_2, arg_76_3)
+	local var_76_0 = arg_76_0 * arg_76_0
+	local var_76_1 = arg_76_1 * arg_76_1
+	local var_76_2 = arg_76_2 + (arg_76_3 - arg_76_2) * var_0_4()
+	local var_76_3 = var_0_1(var_76_0 + (var_76_1 - var_76_0) * var_0_4())
 
-	return r * math_sin(angle), r * math_cos(angle)
+	return var_76_3 * var_0_3(var_76_2), var_76_3 * var_0_2(var_76_2)
 end
 
-math.get_uniformly_random_point_inside_sector_seeded = function (seed, radius1, radius2, angle1, angle2)
-	local radius1_squared = radius1 * radius1
-	local radius2_squared = radius2 * radius2
-	local rnd1, rnd2
+function var_0_0.get_uniformly_random_point_inside_sector_seeded(arg_77_0, arg_77_1, arg_77_2, arg_77_3, arg_77_4)
+	local var_77_0 = arg_77_1 * arg_77_1
+	local var_77_1 = arg_77_2 * arg_77_2
+	local var_77_2
+	local var_77_3
+	local var_77_4
 
-	seed, rnd1 = Math.next_random(seed)
-	seed, rnd2 = Math.next_random(seed)
+	arg_77_0, var_77_4 = Math.next_random(arg_77_0)
 
-	local angle = angle1 + (angle2 - angle1) * rnd1
-	local r = math.sqrt(radius1_squared + (radius2_squared - radius1_squared) * rnd2)
-	local dx = r * math.sin(angle)
-	local dy = r * math.cos(angle)
+	local var_77_5
 
-	return seed, dx, dy
+	arg_77_0, var_77_5 = Math.next_random(arg_77_0)
+
+	local var_77_6 = arg_77_3 + (arg_77_4 - arg_77_3) * var_77_4
+	local var_77_7 = var_0_0.sqrt(var_77_0 + (var_77_1 - var_77_0) * var_77_5)
+	local var_77_8 = var_77_7 * var_0_0.sin(var_77_6)
+	local var_77_9 = var_77_7 * var_0_0.cos(var_77_6)
+
+	return arg_77_0, var_77_8, var_77_9
 end
 
-math.get_random_point_inside_box_seeded = function (seed, box_pose, bounds)
-	local rnd_x, rnd_y, rnd_z, x, y, z
+function var_0_0.get_random_point_inside_box_seeded(arg_78_0, arg_78_1, arg_78_2)
+	local var_78_0
+	local var_78_1
+	local var_78_2
+	local var_78_3
+	local var_78_4
+	local var_78_5
+	local var_78_6
 
-	seed, rnd_x = Math.next_random(seed)
-	seed, rnd_y = Math.next_random(seed)
-	seed, rnd_z = Math.next_random(seed)
-	x = math.lerp(-bounds[1], bounds[1], rnd_x)
-	y = math.lerp(-bounds[2], bounds[2], rnd_y)
-	z = math.lerp(-bounds[3], bounds[3], rnd_z)
+	arg_78_0, var_78_6 = Math.next_random(arg_78_0)
 
-	local local_pos = Matrix4x4.transform(box_pose, Vector3(x, y, z))
+	local var_78_7
 
-	return seed, local_pos
+	arg_78_0, var_78_7 = Math.next_random(arg_78_0)
+
+	local var_78_8
+
+	arg_78_0, var_78_8 = Math.next_random(arg_78_0)
+
+	local var_78_9 = var_0_0.lerp(-arg_78_2[1], arg_78_2[1], var_78_6)
+	local var_78_10 = var_0_0.lerp(-arg_78_2[2], arg_78_2[2], var_78_7)
+	local var_78_11 = var_0_0.lerp(-arg_78_2[3], arg_78_2[3], var_78_8)
+	local var_78_12 = Matrix4x4.transform(arg_78_1, Vector3(var_78_9, var_78_10, var_78_11))
+
+	return arg_78_0, var_78_12
 end
 
-math.random_seed = function ()
+function var_0_0.random_seed()
 	return Math.random(2147483647)
 end
 
-math.distance_2d = function (x1, y1, x2, y2)
-	return ((x2 - x1)^2 + (y2 - y1)^2)^0.5
+function var_0_0.distance_2d(arg_80_0, arg_80_1, arg_80_2, arg_80_3)
+	return ((arg_80_2 - arg_80_0)^2 + (arg_80_3 - arg_80_1)^2)^0.5
 end
 
-math.diststance_3d = function (x1, y1, z1, x2, y2, z2)
-	return ((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)^0.5
+function var_0_0.diststance_3d(arg_81_0, arg_81_1, arg_81_2, arg_81_3, arg_81_4, arg_81_5)
+	return ((arg_81_3 - arg_81_0)^2 + (arg_81_4 - arg_81_1)^2 + (arg_81_5 - arg_81_2)^2)^0.5
 end
 
-math.angle = function (x1, y1, x2, y2)
-	return math.atan2(y2 - y1, x2 - x1)
+function var_0_0.angle(arg_82_0, arg_82_1, arg_82_2, arg_82_3)
+	return var_0_0.atan2(arg_82_3 - arg_82_1, arg_82_2 - arg_82_0)
 end
 
-math.index_wrapper = function (index, max_index)
-	return (index - 1) % max_index + 1
+function var_0_0.index_wrapper(arg_83_0, arg_83_1)
+	return (arg_83_0 - 1) % arg_83_1 + 1
 end
 
-math.wrap_index_between = function (index, from, to)
-	if to < from then
-		from, to = to, from
+function var_0_0.wrap_index_between(arg_84_0, arg_84_1, arg_84_2)
+	if arg_84_2 < arg_84_1 then
+		arg_84_1, arg_84_2 = arg_84_2, arg_84_1
 	end
 
-	local d_max = to - from
-	local d_idx = index - from
+	local var_84_0 = arg_84_2 - arg_84_1
 
-	return from + d_idx % (d_max + 1)
+	return arg_84_1 + (arg_84_0 - arg_84_1) % (var_84_0 + 1)
 end
 
-math.stride_index = function (index, stride, optional_in_stride_offset)
-	optional_in_stride_offset = optional_in_stride_offset or 1
+function var_0_0.stride_index(arg_85_0, arg_85_1, arg_85_2)
+	arg_85_2 = arg_85_2 or 1
 
-	return (index - 1) * stride + 1 + (optional_in_stride_offset - 1)
+	return (arg_85_0 - 1) * arg_85_1 + 1 + (arg_85_2 - 1)
 end
 
-math.value_inside_range = function (value, min, max)
-	return min <= value and value <= max
+function var_0_0.value_inside_range(arg_86_0, arg_86_1, arg_86_2)
+	return arg_86_1 <= arg_86_0 and arg_86_0 <= arg_86_2
 end
 
-math.quat_angle = function (from, to)
-	local dot = math_abs(Quaternion.dot(from, to))
-	local target_angle = 0
+function var_0_0.quat_angle(arg_87_0, arg_87_1)
+	local var_87_0 = var_0_6(Quaternion.dot(arg_87_0, arg_87_1))
+	local var_87_1 = 0
 
-	if dot < 1 then
-		target_angle = 2 * math_acos(dot)
+	if var_87_0 < 1 then
+		var_87_1 = 2 * var_0_7(var_87_0)
 	end
 
-	return target_angle
+	return var_87_1
 end
 
-local function _calculate_distributed_point_ranks(positions, n, forward, right, center, out_ranks, out_rank_lookup, out_forward_distance_lookup)
-	local rank_precision = 0.8
+local function var_0_16(arg_88_0, arg_88_1, arg_88_2, arg_88_3, arg_88_4, arg_88_5, arg_88_6, arg_88_7)
+	local var_88_0 = 0.8
 
-	for i = 1, n do
-		local position = positions[i]
-		local delta_pos = Vector3.flat(position - center)
-		local projected_right_distance = Vector3.dot(delta_pos, right)
-		local rank_key = math.floor(projected_right_distance / rank_precision + 0.5) * rank_precision
-		local rank = out_ranks[rank_key]
+	for iter_88_0 = 1, arg_88_1 do
+		local var_88_1 = arg_88_0[iter_88_0]
+		local var_88_2 = Vector3.flat(var_88_1 - arg_88_4)
+		local var_88_3 = Vector3.dot(var_88_2, arg_88_3)
+		local var_88_4 = var_0_0.floor(var_88_3 / var_88_0 + 0.5) * var_88_0
+		local var_88_5 = arg_88_5[var_88_4]
 
-		if not rank then
-			rank = FrameTable.alloc_table()
-			out_ranks[rank_key] = rank
-			out_rank_lookup[#out_rank_lookup + 1] = rank_key
+		if not var_88_5 then
+			var_88_5 = FrameTable.alloc_table()
+			arg_88_5[var_88_4] = var_88_5
+			arg_88_6[#arg_88_6 + 1] = var_88_4
 		end
 
-		out_forward_distance_lookup[i] = Vector3.dot(delta_pos, forward)
-		rank[#rank + 1] = i
+		arg_88_7[iter_88_0] = Vector3.dot(var_88_2, arg_88_2)
+		var_88_5[#var_88_5 + 1] = iter_88_0
 	end
 end
 
-local function _match_rank_counts(left_rank_array, left_rank_lookup, left_sort_lookup, right_rank_array, right_rank_lookup, right_sort_lookup)
-	local left_rank_n = #left_rank_lookup
-	local right_rank_n = #right_rank_lookup
-	local min_rank_n = left_rank_n <= right_rank_n and left_rank_n or right_rank_n
+local function var_0_17(arg_89_0, arg_89_1, arg_89_2, arg_89_3, arg_89_4, arg_89_5)
+	local var_89_0 = #arg_89_1
+	local var_89_1 = #arg_89_4
+	local var_89_2 = var_89_0 <= var_89_1 and var_89_0 or var_89_1
 
-	for rank_i = 1, min_rank_n do
-		local left_rank = left_rank_array[left_rank_lookup[rank_i]]
-		local right_rank = right_rank_array[right_rank_lookup[rank_i]]
+	for iter_89_0 = 1, var_89_2 do
+		local var_89_3 = arg_89_0[arg_89_1[iter_89_0]]
+		local var_89_4 = arg_89_3[arg_89_4[iter_89_0]]
 
-		if not left_rank or not right_rank then
-			local rank_array = left_rank and left_rank_array or right_rank_array
-			local rank_lookup = left_rank and left_rank_lookup or right_rank_lookup
-			local sort_lookup = left_rank and left_sort_lookup or right_sort_lookup
+		if not var_89_3 or not var_89_4 then
+			local var_89_5 = var_89_3 and arg_89_0 or arg_89_3
+			local var_89_6 = var_89_3 and arg_89_1 or arg_89_4
+			local var_89_7 = var_89_3 and arg_89_2 or arg_89_5
 
-			for remaining_i = rank_i, #rank_lookup do
-				local other_rank = rank_array[rank_lookup[remaining_i]]
+			for iter_89_1 = iter_89_0, #var_89_6 do
+				local var_89_8 = var_89_5[var_89_6[iter_89_1]]
 
-				table.sort(other_rank, function (a, b)
-					return sort_lookup[a] > sort_lookup[b]
+				table.sort(var_89_8, function(arg_90_0, arg_90_1)
+					return var_89_7[arg_90_0] > var_89_7[arg_90_1]
 				end)
 			end
 
 			break
 		end
 
-		local left_n = #left_rank
-		local right_n = #right_rank
-		local smaller_n, larger_n = left_n, right_n
-		local smaller_rank, smaller_rank_array, smaller_rank_lookup, smaller_sort_lookup
+		local var_89_9 = #var_89_3
+		local var_89_10 = #var_89_4
+		local var_89_11 = var_89_9
+		local var_89_12 = var_89_10
+		local var_89_13
+		local var_89_14
+		local var_89_15
+		local var_89_16
 
-		if left_n <= right_n then
-			smaller_rank = left_rank
-			smaller_rank_array = left_rank_array
-			smaller_rank_lookup = left_rank_lookup
-			smaller_sort_lookup = left_sort_lookup
+		if var_89_9 <= var_89_10 then
+			var_89_13 = var_89_3
+			var_89_14 = arg_89_0
+			var_89_15 = arg_89_1
+			var_89_16 = arg_89_2
 		else
-			smaller_n, larger_n = larger_n, smaller_n
-			smaller_rank = right_rank
-			smaller_rank_array = right_rank_array
-			smaller_rank_lookup = right_rank_lookup
-			smaller_sort_lookup = right_sort_lookup
+			var_89_11, var_89_12 = var_89_12, var_89_11
+			var_89_13 = var_89_4
+			var_89_14 = arg_89_3
+			var_89_15 = arg_89_4
+			var_89_16 = arg_89_5
 		end
 
-		while smaller_n < larger_n do
-			local next_rank = smaller_rank_array[smaller_rank_lookup[rank_i + 1]]
-			local next_rank_n = #next_rank
+		while var_89_11 < var_89_12 do
+			local var_89_17 = var_89_14[var_89_15[iter_89_0 + 1]]
+			local var_89_18 = #var_89_17
 
-			if larger_n >= smaller_n + next_rank_n then
-				for i = 1, next_rank_n do
-					smaller_n = smaller_n + 1
-					smaller_rank[smaller_n] = next_rank[i]
+			if var_89_12 >= var_89_11 + var_89_18 then
+				for iter_89_2 = 1, var_89_18 do
+					var_89_11 = var_89_11 + 1
+					var_89_13[var_89_11] = var_89_17[iter_89_2]
 				end
 
-				table.remove(smaller_rank_lookup, rank_i + 1)
+				table.remove(var_89_15, iter_89_0 + 1)
 			else
-				table.sort(next_rank, function (a, b)
-					return smaller_sort_lookup[a] > smaller_sort_lookup[b]
+				table.sort(var_89_17, function(arg_91_0, arg_91_1)
+					return var_89_16[arg_91_0] > var_89_16[arg_91_1]
 				end)
 
-				for i = next_rank_n, next_rank_n - (larger_n - smaller_n) + 1, -1 do
-					smaller_n = smaller_n + 1
-					smaller_rank[smaller_n] = next_rank[i]
-					next_rank[i] = nil
+				for iter_89_3 = var_89_18, var_89_18 - (var_89_12 - var_89_11) + 1, -1 do
+					var_89_11 = var_89_11 + 1
+					var_89_13[var_89_11] = var_89_17[iter_89_3]
+					var_89_17[iter_89_3] = nil
 				end
 			end
 		end
 
-		table.sort(left_rank, function (a, b)
-			return left_sort_lookup[a] > left_sort_lookup[b]
+		table.sort(var_89_3, function(arg_92_0, arg_92_1)
+			return arg_89_2[arg_92_0] > arg_89_2[arg_92_1]
 		end)
-		table.sort(right_rank, function (a, b)
-			return right_sort_lookup[a] > right_sort_lookup[b]
+		table.sort(var_89_4, function(arg_93_0, arg_93_1)
+			return arg_89_5[arg_93_0] > arg_89_5[arg_93_1]
 		end)
 	end
 end
 
-math.distributed_point_matching = function (source_positions, target_positions, out_indices, use_rows)
-	local num_points = math.min(#source_positions, #target_positions)
+function var_0_0.distributed_point_matching(arg_94_0, arg_94_1, arg_94_2, arg_94_3)
+	local var_94_0 = var_0_0.min(#arg_94_0, #arg_94_1)
 
-	if num_points <= 0 then
+	if var_94_0 <= 0 then
 		return
 	end
 
-	local source_center = Vector3.zero()
-	local target_center = Vector3.zero()
+	local var_94_1 = Vector3.zero()
+	local var_94_2 = Vector3.zero()
 
-	for i = 1, num_points do
-		source_center = source_center + source_positions[i]
-		target_center = target_center + target_positions[i]
+	for iter_94_0 = 1, var_94_0 do
+		var_94_1 = var_94_1 + arg_94_0[iter_94_0]
+		var_94_2 = var_94_2 + arg_94_1[iter_94_0]
 	end
 
-	source_center = source_center / num_points
-	target_center = target_center / num_points
+	local var_94_3 = var_94_1 / var_94_0
+	local var_94_4 = var_94_2 / var_94_0
+	local var_94_5 = Vector3.normalize(Vector3.flat(var_94_4 - var_94_3))
+	local var_94_6 = Vector3.cross(var_94_5, Vector3.up())
 
-	local forward = Vector3.normalize(Vector3.flat(target_center - source_center))
-	local right = Vector3.cross(forward, Vector3.up())
-
-	if use_rows then
-		forward, right = right, forward
+	if arg_94_3 then
+		var_94_5, var_94_6 = var_94_6, var_94_5
 	end
 
-	local out_source_ranks = FrameTable.alloc_table()
-	local out_source_rank_lookup = FrameTable.alloc_table()
-	local out_source_forward_distance_lookup = FrameTable.alloc_table()
+	local var_94_7 = FrameTable.alloc_table()
+	local var_94_8 = FrameTable.alloc_table()
+	local var_94_9 = FrameTable.alloc_table()
 
-	_calculate_distributed_point_ranks(source_positions, num_points, forward, right, source_center, out_source_ranks, out_source_rank_lookup, out_source_forward_distance_lookup)
-	table.sort(out_source_rank_lookup)
+	var_0_16(arg_94_0, var_94_0, var_94_5, var_94_6, var_94_3, var_94_7, var_94_8, var_94_9)
+	table.sort(var_94_8)
 
-	local out_target_ranks = FrameTable.alloc_table()
-	local out_target_rank_lookup = FrameTable.alloc_table()
-	local out_target_forward_distance_lookup = FrameTable.alloc_table()
+	local var_94_10 = FrameTable.alloc_table()
+	local var_94_11 = FrameTable.alloc_table()
+	local var_94_12 = FrameTable.alloc_table()
 
-	_calculate_distributed_point_ranks(target_positions, num_points, forward, right, target_center, out_target_ranks, out_target_rank_lookup, out_target_forward_distance_lookup)
-	table.sort(out_target_rank_lookup)
-	_match_rank_counts(out_source_ranks, out_source_rank_lookup, out_source_forward_distance_lookup, out_target_ranks, out_target_rank_lookup, out_target_forward_distance_lookup)
+	var_0_16(arg_94_1, var_94_0, var_94_5, var_94_6, var_94_4, var_94_10, var_94_11, var_94_12)
+	table.sort(var_94_11)
+	var_0_17(var_94_7, var_94_8, var_94_9, var_94_10, var_94_11, var_94_12)
 
-	local num_ranks = #out_source_rank_lookup
+	local var_94_13 = #var_94_8
 
-	for rank_i = 1, num_ranks do
-		local source_rank = out_source_ranks[out_source_rank_lookup[rank_i]]
-		local target_rank = out_target_ranks[out_target_rank_lookup[rank_i]]
-		local rank_n = #source_rank
+	for iter_94_1 = 1, var_94_13 do
+		local var_94_14 = var_94_7[var_94_8[iter_94_1]]
+		local var_94_15 = var_94_10[var_94_11[iter_94_1]]
+		local var_94_16 = #var_94_14
 
-		for inline_i = 1, rank_n do
-			local source_index = source_rank[inline_i]
-			local target_index = target_rank[inline_i]
-
-			out_indices[source_index] = target_index
+		for iter_94_2 = 1, var_94_16 do
+			arg_94_2[var_94_14[iter_94_2]] = var_94_15[iter_94_2]
 		end
 	end
 
-	return num_points
+	return var_94_0
 end

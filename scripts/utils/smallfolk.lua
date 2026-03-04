@@ -1,290 +1,300 @@
-﻿-- chunkname: @scripts/utils/smallfolk.lua
+-- chunkname: @scripts/utils/smallfolk.lua
 
-local LICENSE = "\tCopyright (c) 2014 Robin Wellner\n\t\n\tPermission is hereby granted, free of charge, to any person obtaining a\n\tcopy of this software and associated documentation files (the\n\t\"Software\"), to deal in the Software without restriction, including\n\twithout limitation the rights to use, copy, modify, merge, publish,\n\tdistribute, sublicense, and/or sell copies of the Software, and to\n\tpermit persons to whom the Software is furnished to do so, subject to\n\tthe following conditions:\n\n\tThe above copyright notice and this permission notice shall be included\n\tin all copies or substantial portions of the Software.\n\n\tTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS\n\tOR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\n\tMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.\n\tIN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\n\tCLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,\n\tTORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE\n\tSOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n"
-local M = {}
-local expect_object, dump_object
-local error, tostring, pairs, type, floor, huge, concat = error, tostring, pairs, type, math.floor, math.huge, table.concat
-local dump_type = {}
+local var_0_0 = "\tCopyright (c) 2014 Robin Wellner\n\t\n\tPermission is hereby granted, free of charge, to any person obtaining a\n\tcopy of this software and associated documentation files (the\n\t\"Software\"), to deal in the Software without restriction, including\n\twithout limitation the rights to use, copy, modify, merge, publish,\n\tdistribute, sublicense, and/or sell copies of the Software, and to\n\tpermit persons to whom the Software is furnished to do so, subject to\n\tthe following conditions:\n\n\tThe above copyright notice and this permission notice shall be included\n\tin all copies or substantial portions of the Software.\n\n\tTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS\n\tOR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\n\tMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.\n\tIN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\n\tCLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,\n\tTORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE\n\tSOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n"
+local var_0_1 = {}
+local var_0_2
+local var_0_3
+local var_0_4 = error
+local var_0_5 = tostring
+local var_0_6 = pairs
+local var_0_7 = type
+local var_0_8 = math.floor
+local var_0_9 = math.huge
+local var_0_10 = table.concat
+local var_0_11 = {
+	string = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+		local var_1_0 = #arg_1_3
 
-dump_type.string = function (self, nmemo, memo, acc)
-	local nacc = #acc
+		arg_1_3[var_1_0 + 1] = "\""
+		arg_1_3[var_1_0 + 2] = arg_1_0:gsub("\"", "\"\"")
+		arg_1_3[var_1_0 + 3] = "\""
 
-	acc[nacc + 1] = "\""
-	acc[nacc + 2] = self:gsub("\"", "\"\"")
-	acc[nacc + 3] = "\""
+		return arg_1_1
+	end,
+	number = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		arg_2_3[#arg_2_3 + 1] = ("%.17g"):format(arg_2_0)
 
-	return nmemo
-end
+		return arg_2_1
+	end,
+	table = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		if arg_3_2[arg_3_0] then
+			arg_3_3[#arg_3_3 + 1] = "@"
+			arg_3_3[#arg_3_3 + 1] = var_0_5(arg_3_2[arg_3_0])
 
-dump_type.number = function (self, nmemo, memo, acc)
-	acc[#acc + 1] = ("%.17g"):format(self)
-
-	return nmemo
-end
-
-dump_type.table = function (self, nmemo, memo, acc)
-	if memo[self] then
-		acc[#acc + 1] = "@"
-		acc[#acc + 1] = tostring(memo[self])
-
-		return nmemo
-	end
-
-	nmemo = nmemo + 1
-	memo[self] = nmemo
-	acc[#acc + 1] = "{"
-
-	local nself = #self
-
-	for i = 1, nself do
-		nmemo = dump_object(self[i], nmemo, memo, acc)
-		acc[#acc + 1] = ","
-	end
-
-	for k, v in pairs(self) do
-		if type(k) ~= "number" or floor(k) ~= k or k < 1 or nself < k then
-			nmemo = dump_object(k, nmemo, memo, acc)
-			acc[#acc + 1] = ":"
-			nmemo = dump_object(v, nmemo, memo, acc)
-			acc[#acc + 1] = ","
+			return arg_3_1
 		end
+
+		arg_3_1 = arg_3_1 + 1
+		arg_3_2[arg_3_0] = arg_3_1
+		arg_3_3[#arg_3_3 + 1] = "{"
+
+		local var_3_0 = #arg_3_0
+
+		for iter_3_0 = 1, var_3_0 do
+			arg_3_1 = var_0_3(arg_3_0[iter_3_0], arg_3_1, arg_3_2, arg_3_3)
+			arg_3_3[#arg_3_3 + 1] = ","
+		end
+
+		for iter_3_1, iter_3_2 in var_0_6(arg_3_0) do
+			if var_0_7(iter_3_1) ~= "number" or var_0_8(iter_3_1) ~= iter_3_1 or iter_3_1 < 1 or var_3_0 < iter_3_1 then
+				arg_3_1 = var_0_3(iter_3_1, arg_3_1, arg_3_2, arg_3_3)
+				arg_3_3[#arg_3_3 + 1] = ":"
+				arg_3_1 = var_0_3(iter_3_2, arg_3_1, arg_3_2, arg_3_3)
+				arg_3_3[#arg_3_3 + 1] = ","
+			end
+		end
+
+		arg_3_3[#arg_3_3] = arg_3_3[#arg_3_3] == "{" and "{}" or "}"
+
+		return arg_3_1
 	end
+}
 
-	acc[#acc] = acc[#acc] == "{" and "{}" or "}"
-
-	return nmemo
-end
-
-function dump_object(object, nmemo, memo, acc)
-	if object == true then
-		acc[#acc + 1] = "t"
-	elseif object == false then
-		acc[#acc + 1] = "f"
-	elseif object == nil then
-		acc[#acc + 1] = "n"
-	elseif object ~= object then
-		if ("" .. object):sub(1, 1) == "-" then
-			acc[#acc + 1] = "N"
+function var_0_3(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	if arg_4_0 == true then
+		arg_4_3[#arg_4_3 + 1] = "t"
+	elseif arg_4_0 == false then
+		arg_4_3[#arg_4_3 + 1] = "f"
+	elseif arg_4_0 == nil then
+		arg_4_3[#arg_4_3 + 1] = "n"
+	elseif arg_4_0 ~= arg_4_0 then
+		if ("" .. arg_4_0):sub(1, 1) == "-" then
+			arg_4_3[#arg_4_3 + 1] = "N"
 		else
-			acc[#acc + 1] = "Q"
+			arg_4_3[#arg_4_3 + 1] = "Q"
 		end
-	elseif object == huge then
-		acc[#acc + 1] = "I"
-	elseif object == -huge then
-		acc[#acc + 1] = "i"
+	elseif arg_4_0 == var_0_9 then
+		arg_4_3[#arg_4_3 + 1] = "I"
+	elseif arg_4_0 == -var_0_9 then
+		arg_4_3[#arg_4_3 + 1] = "i"
 	else
-		local t = type(object)
+		local var_4_0 = var_0_7(arg_4_0)
 
-		if not dump_type[t] then
-			error("cannot dump type " .. t)
+		if not var_0_11[var_4_0] then
+			var_0_4("cannot dump type " .. var_4_0)
 		end
 
-		return dump_type[t](object, nmemo, memo, acc)
+		return var_0_11[var_4_0](arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	end
 
-	return nmemo
+	return arg_4_1
 end
 
-M.dumps = function (object)
-	local nmemo = 0
-	local memo = {}
-	local acc = {}
+function var_0_1.dumps(arg_5_0)
+	local var_5_0 = 0
+	local var_5_1 = {}
+	local var_5_2 = {}
 
-	dump_object(object, nmemo, memo, acc)
+	var_0_3(arg_5_0, var_5_0, var_5_1, var_5_2)
 
-	return concat(acc)
+	return var_0_10(var_5_2)
 end
 
-local function invalid(i)
-	error("invalid input at position " .. i)
+local function var_0_12(arg_6_0)
+	var_0_4("invalid input at position " .. arg_6_0)
 end
 
-local nonzero_digit = {
-	["1"] = true,
+local var_0_13 = {
 	["2"] = true,
-	["3"] = true,
-	["4"] = true,
-	["5"] = true,
-	["6"] = true,
 	["7"] = true,
-	["8"] = true,
+	["3"] = true,
+	["6"] = true,
 	["9"] = true,
+	["5"] = true,
+	["1"] = true,
+	["8"] = true,
+	["4"] = true
 }
-local is_digit = {
+local var_0_14 = {
 	["0"] = true,
-	["1"] = true,
 	["2"] = true,
-	["3"] = true,
-	["4"] = true,
-	["5"] = true,
-	["6"] = true,
 	["7"] = true,
-	["8"] = true,
+	["3"] = true,
+	["6"] = true,
 	["9"] = true,
+	["5"] = true,
+	["1"] = true,
+	["8"] = true,
+	["4"] = true
 }
 
-local function expect_number(string, start)
-	local i = start
-	local head = string:sub(i, i)
+local function var_0_15(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_1
+	local var_7_1 = arg_7_0:sub(var_7_0, var_7_0)
 
-	if head == "-" then
-		i = i + 1
-		head = string:sub(i, i)
+	if var_7_1 == "-" then
+		var_7_0 = var_7_0 + 1
+		var_7_1 = arg_7_0:sub(var_7_0, var_7_0)
 	end
 
-	if nonzero_digit[head] then
+	if var_0_13[var_7_1] then
 		repeat
-			i = i + 1
-			head = string:sub(i, i)
-		until not is_digit[head]
-	elseif head == "0" then
-		i = i + 1
-		head = string:sub(i, i)
+			var_7_0 = var_7_0 + 1
+			var_7_1 = arg_7_0:sub(var_7_0, var_7_0)
+		until not var_0_14[var_7_1]
+	elseif var_7_1 == "0" then
+		var_7_0 = var_7_0 + 1
+		var_7_1 = arg_7_0:sub(var_7_0, var_7_0)
 	else
-		invalid(i)
+		var_0_12(var_7_0)
 	end
 
-	if head == "." then
-		local oldi = i
+	if var_7_1 == "." then
+		local var_7_2 = var_7_0
 
 		repeat
-			i = i + 1
-			head = string:sub(i, i)
-		until not is_digit[head]
+			var_7_0 = var_7_0 + 1
+			var_7_1 = arg_7_0:sub(var_7_0, var_7_0)
+		until not var_0_14[var_7_1]
 
-		if i == oldi + 1 then
-			invalid(i)
+		if var_7_0 == var_7_2 + 1 then
+			var_0_12(var_7_0)
 		end
 	end
 
-	if head == "e" or head == "E" then
-		i = i + 1
-		head = string:sub(i, i)
+	if var_7_1 == "e" or var_7_1 == "E" then
+		var_7_0 = var_7_0 + 1
 
-		if head == "+" or head == "-" then
-			i = i + 1
-			head = string:sub(i, i)
+		local var_7_3 = arg_7_0:sub(var_7_0, var_7_0)
+
+		if var_7_3 == "+" or var_7_3 == "-" then
+			var_7_0 = var_7_0 + 1
+			var_7_3 = arg_7_0:sub(var_7_0, var_7_0)
 		end
 
-		if not is_digit[head] then
-			invalid(i)
+		if not var_0_14[var_7_3] then
+			var_0_12(var_7_0)
 		end
 
 		repeat
-			i = i + 1
-			head = string:sub(i, i)
-		until not is_digit[head]
+			var_7_0 = var_7_0 + 1
+
+			local var_7_4 = arg_7_0:sub(var_7_0, var_7_0)
+		until not var_0_14[var_7_4]
 	end
 
-	return tonumber(string:sub(start, i - 1)), i
+	return tonumber(arg_7_0:sub(arg_7_1, var_7_0 - 1)), var_7_0
 end
 
-local expect_object_head = {
-	t = function (string, i)
-		return true, i
+local var_0_16 = {
+	t = function(arg_8_0, arg_8_1)
+		return true, arg_8_1
 	end,
-	f = function (string, i)
-		return false, i
+	f = function(arg_9_0, arg_9_1)
+		return false, arg_9_1
 	end,
-	n = function (string, i)
-		return nil, i
+	n = function(arg_10_0, arg_10_1)
+		return nil, arg_10_1
 	end,
-	Q = function (string, i)
-		return -(0 / 0), i
+	Q = function(arg_11_0, arg_11_1)
+		return -(0 / 0), arg_11_1
 	end,
-	N = function (string, i)
-		return 0 / 0, i
+	N = function(arg_12_0, arg_12_1)
+		return 0 / 0, arg_12_1
 	end,
-	I = function (string, i)
-		return 1 / 0, i
+	I = function(arg_13_0, arg_13_1)
+		return 1 / 0, arg_13_1
 	end,
-	i = function (string, i)
-		return -1 / 0, i
+	i = function(arg_14_0, arg_14_1)
+		return -1 / 0, arg_14_1
 	end,
-	["\""] = function (string, i)
-		local nexti = i - 1
+	["\""] = function(arg_15_0, arg_15_1)
+		local var_15_0 = arg_15_1 - 1
 
 		repeat
-			nexti = string:find("\"", nexti + 1, true) + 1
-		until string:sub(nexti, nexti) ~= "\""
+			var_15_0 = arg_15_0:find("\"", var_15_0 + 1, true) + 1
+		until arg_15_0:sub(var_15_0, var_15_0) ~= "\""
 
-		return string:sub(i, nexti - 2):gsub("\"\"", "\""), nexti
+		return arg_15_0:sub(arg_15_1, var_15_0 - 2):gsub("\"\"", "\""), var_15_0
 	end,
-	["0"] = function (string, i)
-		return expect_number(string, i - 1)
+	["0"] = function(arg_16_0, arg_16_1)
+		return var_0_15(arg_16_0, arg_16_1 - 1)
 	end,
-	["{"] = function (string, i, tables)
-		local nt, k, v = {}
-		local j = 1
+	["{"] = function(arg_17_0, arg_17_1, arg_17_2)
+		local var_17_0 = {}
+		local var_17_1
+		local var_17_2
+		local var_17_3 = 1
 
-		tables[#tables + 1] = nt
+		arg_17_2[#arg_17_2 + 1] = var_17_0
 
-		if string:sub(i, i) == "}" then
-			return nt, i + 1
+		if arg_17_0:sub(arg_17_1, arg_17_1) == "}" then
+			return var_17_0, arg_17_1 + 1
 		end
 
 		while true do
-			k, i = expect_object(string, i, tables)
+			local var_17_4
 
-			if string:sub(i, i) == ":" then
-				v, i = expect_object(string, i + 1, tables)
-				nt[k] = v
+			var_17_4, arg_17_1 = var_0_2(arg_17_0, arg_17_1, arg_17_2)
+
+			if arg_17_0:sub(arg_17_1, arg_17_1) == ":" then
+				var_17_0[var_17_4], arg_17_1 = var_0_2(arg_17_0, arg_17_1 + 1, arg_17_2)
 			else
-				nt[j] = k
-				j = j + 1
+				var_17_0[var_17_3] = var_17_4
+				var_17_3 = var_17_3 + 1
 			end
 
-			local head = string:sub(i, i)
+			local var_17_5 = arg_17_0:sub(arg_17_1, arg_17_1)
 
-			if head == "," then
-				i = i + 1
-			elseif head == "}" then
-				return nt, i + 1
+			if var_17_5 == "," then
+				arg_17_1 = arg_17_1 + 1
+			elseif var_17_5 == "}" then
+				return var_17_0, arg_17_1 + 1
 			else
-				invalid(i)
+				var_0_12(arg_17_1)
 			end
 		end
 	end,
-	["@"] = function (string, i, tables)
-		local match = string:match("^%d+", i)
-		local ref = tonumber(match)
+	["@"] = function(arg_18_0, arg_18_1, arg_18_2)
+		local var_18_0 = arg_18_0:match("^%d+", arg_18_1)
+		local var_18_1 = tonumber(var_18_0)
 
-		if tables[ref] then
-			return tables[ref], i + #match
+		if arg_18_2[var_18_1] then
+			return arg_18_2[var_18_1], arg_18_1 + #var_18_0
 		end
 
-		invalid(i)
-	end,
+		var_0_12(arg_18_1)
+	end
 }
 
-expect_object_head["1"] = expect_object_head["0"]
-expect_object_head["2"] = expect_object_head["0"]
-expect_object_head["3"] = expect_object_head["0"]
-expect_object_head["4"] = expect_object_head["0"]
-expect_object_head["5"] = expect_object_head["0"]
-expect_object_head["6"] = expect_object_head["0"]
-expect_object_head["7"] = expect_object_head["0"]
-expect_object_head["8"] = expect_object_head["0"]
-expect_object_head["9"] = expect_object_head["0"]
-expect_object_head["-"] = expect_object_head["0"]
-expect_object_head["."] = expect_object_head["0"]
+var_0_16["1"] = var_0_16["0"]
+var_0_16["2"] = var_0_16["0"]
+var_0_16["3"] = var_0_16["0"]
+var_0_16["4"] = var_0_16["0"]
+var_0_16["5"] = var_0_16["0"]
+var_0_16["6"] = var_0_16["0"]
+var_0_16["7"] = var_0_16["0"]
+var_0_16["8"] = var_0_16["0"]
+var_0_16["9"] = var_0_16["0"]
+var_0_16["-"] = var_0_16["0"]
+var_0_16["."] = var_0_16["0"]
 
-function expect_object(string, i, tables)
-	local head = string:sub(i, i)
+function var_0_2(arg_19_0, arg_19_1, arg_19_2)
+	local var_19_0 = arg_19_0:sub(arg_19_1, arg_19_1)
 
-	if expect_object_head[head] then
-		return expect_object_head[head](string, i + 1, tables)
+	if var_0_16[var_19_0] then
+		return var_0_16[var_19_0](arg_19_0, arg_19_1 + 1, arg_19_2)
 	end
 
-	invalid(i)
+	var_0_12(arg_19_1)
 end
 
-M.loads = function (string, maxsize)
-	if #string > (maxsize or 10000) then
-		error("input too large")
+function var_0_1.loads(arg_20_0, arg_20_1)
+	if #arg_20_0 > (arg_20_1 or 10000) then
+		var_0_4("input too large")
 	end
 
-	return (expect_object(string, 1, {}))
+	return (var_0_2(arg_20_0, 1, {}))
 end
 
-return M
+return var_0_1

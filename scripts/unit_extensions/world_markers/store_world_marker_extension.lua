@@ -1,72 +1,72 @@
-﻿-- chunkname: @scripts/unit_extensions/world_markers/store_world_marker_extension.lua
+-- chunkname: @scripts/unit_extensions/world_markers/store_world_marker_extension.lua
 
 require("scripts/unit_extensions/world_markers/world_marker_extension")
 
 StoreWorldMarkerExtension = class(StoreWorldMarkerExtension, WorldMarkerExtension)
 
-StoreWorldMarkerExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	StoreWorldMarkerExtension.super.init(self, extension_init_context, unit, extension_init_data)
+function StoreWorldMarkerExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	StoreWorldMarkerExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
-	self._marker_type = "store"
-	self._add_event_name = "add_world_marker_unit"
-	self._remove_event_name = "remove_world_marker"
-	self._initialized = false
-	self._unseen_shop_items = false
+	arg_1_0._marker_type = "store"
+	arg_1_0._add_event_name = "add_world_marker_unit"
+	arg_1_0._remove_event_name = "remove_world_marker"
+	arg_1_0._initialized = false
+	arg_1_0._unseen_shop_items = false
 
-	Managers.state.event:register(self, "set_all_shop_item_seen", "event_set_all_shop_item_seen")
+	Managers.state.event:register(arg_1_0, "set_all_shop_item_seen", "event_set_all_shop_item_seen")
 end
 
-StoreWorldMarkerExtension._destroy = function (self)
-	Managers.state.event:unregister("set_all_shop_item_seen", self)
+function StoreWorldMarkerExtension._destroy(arg_2_0)
+	Managers.state.event:unregister("set_all_shop_item_seen", arg_2_0)
 end
 
-StoreWorldMarkerExtension.event_set_all_shop_item_seen = function (self)
-	self._unseen_shop_items = false
+function StoreWorldMarkerExtension.event_set_all_shop_item_seen(arg_3_0)
+	arg_3_0._unseen_shop_items = false
 end
 
-StoreWorldMarkerExtension._extensions_ready = function (self)
+function StoreWorldMarkerExtension._extensions_ready(arg_4_0)
 	if DEDICATED_SERVER then
 		return
 	end
 
-	self._local_player = Managers.player:local_player()
-	self._backend_store = Managers.backend:get_interface("peddler")
-	self._unseen_shop_items = ItemHelper.has_unseen_shop_items()
-	self._initialized = true
+	arg_4_0._local_player = Managers.player:local_player()
+	arg_4_0._backend_store = Managers.backend:get_interface("peddler")
+	arg_4_0._unseen_shop_items = ItemHelper.has_unseen_shop_items()
+	arg_4_0._initialized = true
 end
 
-StoreWorldMarkerExtension._add_marker = function (self, cb)
-	local unit = self._unit
-	local add_event_name = self._add_event_name
-	local event_manager = self._event_manager
-	local marker_type = self._marker_type
+function StoreWorldMarkerExtension._add_marker(arg_5_0, arg_5_1)
+	local var_5_0 = arg_5_0._unit
+	local var_5_1 = arg_5_0._add_event_name
+	local var_5_2 = arg_5_0._event_manager
+	local var_5_3 = arg_5_0._marker_type
 
-	event_manager:trigger(add_event_name, marker_type, unit, cb)
+	var_5_2:trigger(var_5_1, var_5_3, var_5_0, arg_5_1)
 end
 
-StoreWorldMarkerExtension.update = function (self, unit, dummy_input, dt, context, t)
-	if not self._initialized then
+function StoreWorldMarkerExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+	if not arg_6_0._initialized then
 		return
 	end
 
-	local player_unit = self._local_player.player_unit
+	local var_6_0 = arg_6_0._local_player.player_unit
 
-	if not ALIVE[player_unit] then
+	if not ALIVE[var_6_0] then
 		return
 	end
 
-	local should_show = false
-	local login_rewards = self._backend_store:get_login_rewards()
+	local var_6_1 = false
+	local var_6_2 = arg_6_0._backend_store:get_login_rewards()
 
-	if login_rewards and login_rewards.next_claim_timestamp < os.time() then
-		should_show = true
+	if var_6_2 and var_6_2.next_claim_timestamp < os.time() then
+		var_6_1 = true
 	end
 
-	if should_show == not self._id then
-		if should_show then
-			self:add_marker()
+	if var_6_1 == not arg_6_0._id then
+		if var_6_1 then
+			arg_6_0:add_marker()
 		else
-			self:remove_marker()
+			arg_6_0:remove_marker()
 		end
 	end
 end

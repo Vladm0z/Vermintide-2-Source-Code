@@ -1,16 +1,16 @@
-﻿-- chunkname: @scripts/settings/dlcs/morris/morris_backend_settings.lua
+-- chunkname: @scripts/settings/dlcs/morris/morris_backend_settings.lua
 
-local settings = DLCSettings.morris
+local var_0_0 = DLCSettings.morris
 
-settings.backend_interfaces = {
+var_0_0.backend_interfaces = {
 	deus = {
 		ignore_on_dedicated_server = true,
-		playfab_class = "BackendInterfaceDeusPlayFab",
 		playfab_file = "scripts/managers/backend_playfab/backend_interface_deus_playfab",
-	},
+		playfab_class = "BackendInterfaceDeusPlayFab"
+	}
 }
-settings.offline_backend_title_data = {
+var_0_0.offline_backend_title_data = {
 	"scripts/settings/offline_backend_playfab/title_internal_data/deus_player_setup",
 	"scripts/settings/offline_backend_playfab/title_internal_data/deus_roll_over_settings",
-	"scripts/settings/offline_backend_playfab/title_internal_data/earn_chests_on_defeat_data",
+	"scripts/settings/offline_backend_playfab/title_internal_data/earn_chests_on_defeat_data"
 }

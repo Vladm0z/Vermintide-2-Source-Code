@@ -1,37 +1,35 @@
-﻿-- chunkname: @scripts/network/script_tss_token.lua
+-- chunkname: @scripts/network/script_tss_token.lua
 
 ScriptTssToken = class(ScriptTssToken)
 
-ScriptTssToken.init = function (self, token)
-	self._token = token
-	self._done = false
-	self._result = nil
+function ScriptTssToken.init(arg_1_0, arg_1_1)
+	arg_1_0._token = arg_1_1
+	arg_1_0._done = false
+	arg_1_0._result = nil
 end
 
-ScriptTssToken.update = function (self)
-	local token = self._token
-	local done = Tss.has_result(token)
+function ScriptTssToken.update(arg_2_0)
+	local var_2_0 = arg_2_0._token
+	local var_2_1 = Tss.has_result(var_2_0)
 
-	if Tss.has_result(token) then
-		local done, result = Tss.get_result(token)
+	if Tss.has_result(var_2_0) then
+		local var_2_2, var_2_3 = Tss.get_result(var_2_0)
 
-		self._done = done
-		self._result = result
+		arg_2_0._done = var_2_2
+		arg_2_0._result = var_2_3
 	end
 end
 
-ScriptTssToken.info = function (self)
-	local info = {}
-
-	info.result = self._result
-
-	return info
+function ScriptTssToken.info(arg_3_0)
+	return {
+		result = arg_3_0._result
+	}
 end
 
-ScriptTssToken.done = function (self)
-	return self._done
+function ScriptTssToken.done(arg_4_0)
+	return arg_4_0._done
 end
 
-ScriptTssToken.close = function (self)
-	Tus.free(self._token)
+function ScriptTssToken.close(arg_5_0)
+	Tus.free(arg_5_0._token)
 end

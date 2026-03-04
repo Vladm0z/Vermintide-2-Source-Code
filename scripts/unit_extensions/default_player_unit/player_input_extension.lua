@@ -1,377 +1,371 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/player_input_extension.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/player_input_extension.lua
 
 require("scripts/unit_extensions/generic/generic_state_machine")
 
 PlayerInputExtension = class(PlayerInputExtension)
 
-PlayerInputExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self.unit = unit
-	self.player = extension_init_data.player
-	self.input_service = self.player.input_source
-	self.enabled = true
-	self.has_released_input = {}
-	self.input_buffer_timer = nil
-	self.buffer_key = nil
-	self.input_buffer = nil
-	self.new_input_buffer_timer = 0
-	self.new_input_buffer = nil
-	self.new_buffer_key = nil
-	self.last_added_buffer_time = 0
-	self.new_buffer_key_doubleclick_window = nil
-	self.input_buffer_reset = false
-	self.added_stun_buffer = false
-	self.wield_cooldown = false
-	self.wield_cooldown_timer = 0
-	self.wield_cooldown_timer_clock = 0
-	self.wield_scroll_value = nil
-	self.double_tap_timers = {}
-	self.input_key_scale = {}
-	self._t = 0
-	self.minimum_dodge_input = 0.3
-	self._game_options_dirty = true
-	self.priority_input = {
-		wield_1 = 2,
+function PlayerInputExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.unit = arg_1_2
+	arg_1_0.player = arg_1_3.player
+	arg_1_0.input_service = arg_1_0.player.input_source
+	arg_1_0.enabled = true
+	arg_1_0.has_released_input = {}
+	arg_1_0.input_buffer_timer = nil
+	arg_1_0.buffer_key = nil
+	arg_1_0.input_buffer = nil
+	arg_1_0.new_input_buffer_timer = 0
+	arg_1_0.new_input_buffer = nil
+	arg_1_0.new_buffer_key = nil
+	arg_1_0.last_added_buffer_time = 0
+	arg_1_0.new_buffer_key_doubleclick_window = nil
+	arg_1_0.input_buffer_reset = false
+	arg_1_0.added_stun_buffer = false
+	arg_1_0.wield_cooldown = false
+	arg_1_0.wield_cooldown_timer = 0
+	arg_1_0.wield_cooldown_timer_clock = 0
+	arg_1_0.wield_scroll_value = nil
+	arg_1_0.double_tap_timers = {}
+	arg_1_0.input_key_scale = {}
+	arg_1_0._t = 0
+	arg_1_0.minimum_dodge_input = 0.3
+	arg_1_0._game_options_dirty = true
+	arg_1_0.priority_input = {
 		wield_2 = 1,
-		wield_3 = 1,
-		wield_4 = 1,
-		wield_5 = 1,
 		wield_next = 1,
+		wield_5 = 1,
 		wield_prev = 1,
 		wield_scroll = 1,
-		wield_switch = 3,
+		wield_3 = 1,
+		wield_1 = 2,
+		wield_4 = 1,
+		wield_switch = 3
 	}
 
-	Managers.state.event:register(self, "on_game_options_changed", "_set_game_options_dirty")
-	self:_update_game_options()
+	Managers.state.event:register(arg_1_0, "on_game_options_changed", "_set_game_options_dirty")
+	arg_1_0:_update_game_options()
 end
 
-PlayerInputExtension.destroy = function (self)
-	Managers.state.event:unregister("on_game_options_changed", self)
+function PlayerInputExtension.destroy(arg_2_0)
+	Managers.state.event:unregister("on_game_options_changed", arg_2_0)
 end
 
-PlayerInputExtension.reset = function (self)
+function PlayerInputExtension.reset(arg_3_0)
 	return
 end
 
-PlayerInputExtension._set_game_options_dirty = function (self)
-	self._game_options_dirty = true
+function PlayerInputExtension._set_game_options_dirty(arg_4_0)
+	arg_4_0._game_options_dirty = true
 end
 
-PlayerInputExtension._update_game_options = function (self)
-	if not self._game_options_dirty then
+function PlayerInputExtension._update_game_options(arg_5_0)
+	if not arg_5_0._game_options_dirty then
 		return
 	end
 
-	self.double_tap_dodge = Application.user_setting("double_tap_dodge")
-	self.toggle_crouch = Application.user_setting("toggle_crouch")
-	self.toggle_alternate_attack = Application.user_setting("toggle_alternate_attack")
-	self.input_buffer_user_setting = Application.user_setting("input_buffer")
-	self.priority_input_buffer_user_setting = Application.user_setting("priority_input_buffer")
-	self._game_options_dirty = false
+	arg_5_0.double_tap_dodge = Application.user_setting("double_tap_dodge")
+	arg_5_0.toggle_crouch = Application.user_setting("toggle_crouch")
+	arg_5_0.toggle_alternate_attack = Application.user_setting("toggle_alternate_attack")
+	arg_5_0.input_buffer_user_setting = Application.user_setting("input_buffer")
+	arg_5_0.priority_input_buffer_user_setting = Application.user_setting("priority_input_buffer")
+	arg_5_0._game_options_dirty = false
 end
 
-PlayerInputExtension.update = function (self, unit, input, dt, context, t)
-	self._t = t
+function PlayerInputExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+	arg_6_0._t = arg_6_5
 
-	self:_update_game_options()
+	arg_6_0:_update_game_options()
 
-	if self.input_buffer_reset then
-		self.last_added_buffer_time = t
-		self.input_buffer_reset = false
+	if arg_6_0.input_buffer_reset then
+		arg_6_0.last_added_buffer_time = arg_6_5
+		arg_6_0.input_buffer_reset = false
 	end
 
-	if self.new_input_buffer then
-		if t > self.last_added_buffer_time + self.new_buffer_key_doubleclick_window then
-			self.input_buffer_timer = self.new_input_buffer_timer
-			self.input_buffer = self.new_input_buffer
-			self.buffer_key = self.new_buffer_key
-			self.last_added_buffer_time = t
+	if arg_6_0.new_input_buffer then
+		if arg_6_5 > arg_6_0.last_added_buffer_time + arg_6_0.new_buffer_key_doubleclick_window then
+			arg_6_0.input_buffer_timer = arg_6_0.new_input_buffer_timer
+			arg_6_0.input_buffer = arg_6_0.new_input_buffer
+			arg_6_0.buffer_key = arg_6_0.new_buffer_key
+			arg_6_0.last_added_buffer_time = arg_6_5
 		end
 
-		self.new_input_buffer_timer = 0
-		self.new_input_buffer = nil
-		self.new_buffer_key = nil
+		arg_6_0.new_input_buffer_timer = 0
+		arg_6_0.new_input_buffer = nil
+		arg_6_0.new_buffer_key = nil
 	end
 
-	if self.input_buffer and self.input_buffer_timer then
-		self.input_buffer_timer = self.input_buffer_timer - dt
+	if arg_6_0.input_buffer and arg_6_0.input_buffer_timer then
+		arg_6_0.input_buffer_timer = arg_6_0.input_buffer_timer - arg_6_3
 
-		if self.input_buffer_timer <= 0 then
-			self.input_buffer_timer = 0
-			self.input_buffer = nil
-			self.buffer_key = nil
+		if arg_6_0.input_buffer_timer <= 0 then
+			arg_6_0.input_buffer_timer = 0
+			arg_6_0.input_buffer = nil
+			arg_6_0.buffer_key = nil
 		end
 	end
 
-	if self.wield_cooldown then
-		if t > self.wield_cooldown_timer then
-			self.wield_cooldown = false
-			self.wield_cooldown_timer_clock = 0
+	if arg_6_0.wield_cooldown then
+		if arg_6_5 > arg_6_0.wield_cooldown_timer then
+			arg_6_0.wield_cooldown = false
+			arg_6_0.wield_cooldown_timer_clock = 0
 		else
-			self.wield_cooldown_timer_clock = self.wield_cooldown_timer_clock + dt
+			arg_6_0.wield_cooldown_timer_clock = arg_6_0.wield_cooldown_timer_clock + arg_6_3
 		end
 	end
 
-	if self._release_input_delay then
-		self._release_input_delay = self._release_input_delay - dt
+	if arg_6_0._release_input_delay then
+		arg_6_0._release_input_delay = arg_6_0._release_input_delay - arg_6_3
 
-		if self._release_input_delay <= 0 then
-			self._release_input_delay = nil
+		if arg_6_0._release_input_delay <= 0 then
+			arg_6_0._release_input_delay = nil
 
-			self:reset_release_input()
+			arg_6_0:reset_release_input()
 		end
 	end
 end
 
-PlayerInputExtension.start_double_tap = function (self, input_key, t)
-	self.double_tap_timers[input_key] = t
+function PlayerInputExtension.start_double_tap(arg_7_0, arg_7_1, arg_7_2)
+	arg_7_0.double_tap_timers[arg_7_1] = arg_7_2
 end
 
-PlayerInputExtension.clear_double_tap = function (self, input_key)
-	self.double_tap_timers[input_key] = nil
+function PlayerInputExtension.clear_double_tap(arg_8_0, arg_8_1)
+	arg_8_0.double_tap_timers[arg_8_1] = nil
 end
 
-PlayerInputExtension.was_double_tap = function (self, input_key, t, max_duration)
-	local last_double_tap = self.double_tap_timers[input_key]
+function PlayerInputExtension.was_double_tap(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	local var_9_0 = arg_9_0.double_tap_timers[arg_9_1]
 
-	return last_double_tap and t < last_double_tap + max_duration
+	return var_9_0 and arg_9_2 < var_9_0 + arg_9_3
 end
 
-local is_windows_platform = IS_WINDOWS
+local var_0_0 = IS_WINDOWS
 
-PlayerInputExtension.is_input_blocked = function (self)
-	return (self.input_service:is_blocked() or is_windows_platform and not Window.has_focus() or HAS_STEAM and Managers.steam:is_overlay_active()) and not DamageUtils.is_in_inn and not Managers.state.entity:system("cutscene_system"):is_active()
+function PlayerInputExtension.is_input_blocked(arg_10_0)
+	return (arg_10_0.input_service:is_blocked() or var_0_0 and not Window.has_focus() or HAS_STEAM and Managers.steam:is_overlay_active()) and not DamageUtils.is_in_inn and not Managers.state.entity:system("cutscene_system"):is_active()
 end
 
-PlayerInputExtension.get = function (self, input_key, consume)
-	local value = self.input_service:get(input_key, consume)
+function PlayerInputExtension.get(arg_11_0, arg_11_1, arg_11_2)
+	local var_11_0 = arg_11_0.input_service:get(arg_11_1, arg_11_2)
 
-	if not self.enabled or self:is_input_blocked() then
-		local value_type = type(value)
-
-		if value_type == "userdata" then
+	if not arg_11_0.enabled or arg_11_0:is_input_blocked() then
+		if type(var_11_0) == "userdata" then
 			return Vector3.zero()
 		end
 
 		return nil
 	end
 
-	local input_key_scale_data = self.input_key_scale[input_key]
+	local var_11_1 = arg_11_0.input_key_scale[arg_11_1]
 
-	if value and input_key_scale_data then
-		local t = self._t
-		local scale
+	if var_11_0 and var_11_1 then
+		local var_11_2 = arg_11_0._t
+		local var_11_3
 
-		if input_key_scale_data.lerp_end_t == nil or t >= input_key_scale_data.lerp_end_t then
-			scale = input_key_scale_data.end_scale
+		if var_11_1.lerp_end_t == nil or var_11_2 >= var_11_1.lerp_end_t then
+			var_11_3 = var_11_1.end_scale
 		else
-			local p = (t - input_key_scale_data.lerp_start_t) / (input_key_scale_data.lerp_end_t - input_key_scale_data.lerp_start_t)
+			local var_11_4 = (var_11_2 - var_11_1.lerp_start_t) / (var_11_1.lerp_end_t - var_11_1.lerp_start_t)
 
-			scale = math.lerp(input_key_scale_data.start_scale, input_key_scale_data.end_scale, p)
+			var_11_3 = math.lerp(var_11_1.start_scale, var_11_1.end_scale, var_11_4)
 		end
 
-		return value * scale
+		return var_11_0 * var_11_3
 	end
 
-	return value
+	return var_11_0
 end
 
-PlayerInputExtension.set_enabled = function (self, enabled)
-	self.enabled = enabled
+function PlayerInputExtension.set_enabled(arg_12_0, arg_12_1)
+	arg_12_0.enabled = arg_12_1
 end
 
-PlayerInputExtension.set_input_key_scale = function (self, input_key, scale, lerp_time)
-	fassert(lerp_time == nil or lerp_time > 0, "PlayerInputExtension:set_input_key_scale: Must enter a lerp_time larger than zero if lerp is to be used!")
+function PlayerInputExtension.set_input_key_scale(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	fassert(arg_13_3 == nil or arg_13_3 > 0, "PlayerInputExtension:set_input_key_scale: Must enter a lerp_time larger than zero if lerp is to be used!")
 
-	local start_scale = 1
-	local t = self._t
-	local lerp_end_t = lerp_time and t + lerp_time or nil
-	local input_key_scale_data = self.input_key_scale[input_key]
+	local var_13_0 = 1
+	local var_13_1 = arg_13_0._t
+	local var_13_2 = arg_13_3 and var_13_1 + arg_13_3 or nil
+	local var_13_3 = arg_13_0.input_key_scale[arg_13_1]
 
-	if input_key_scale_data then
-		if input_key_scale_data.lerp_end_t == nil or t >= input_key_scale_data.lerp_end_t then
-			start_scale = input_key_scale_data.end_scale
+	if var_13_3 then
+		if var_13_3.lerp_end_t == nil or var_13_1 >= var_13_3.lerp_end_t then
+			var_13_0 = var_13_3.end_scale
 		else
-			local p = (t - input_key_scale_data.lerp_start_t) / (input_key_scale_data.lerp_end_t - input_key_scale_data.lerp_start_t)
+			local var_13_4 = (var_13_1 - var_13_3.lerp_start_t) / (var_13_3.lerp_end_t - var_13_3.lerp_start_t)
 
-			start_scale = math.lerp(input_key_scale_data.start_scale, input_key_scale_data.end_scale, p)
+			var_13_0 = math.lerp(var_13_3.start_scale, var_13_3.end_scale, var_13_4)
 		end
 	else
-		input_key_scale_data = {}
-		self.input_key_scale[input_key] = input_key_scale_data
+		var_13_3 = {}
+		arg_13_0.input_key_scale[arg_13_1] = var_13_3
 	end
 
-	input_key_scale_data.lerp_start_t = t
-	input_key_scale_data.lerp_end_t = lerp_end_t
-	input_key_scale_data.start_scale = start_scale
-	input_key_scale_data.end_scale = scale
+	var_13_3.lerp_start_t = var_13_1
+	var_13_3.lerp_end_t = var_13_2
+	var_13_3.start_scale = var_13_0
+	var_13_3.end_scale = arg_13_2
 end
 
-PlayerInputExtension.get_last_scroll_value = function (self)
-	return self.wield_scroll_value
+function PlayerInputExtension.get_last_scroll_value(arg_14_0)
+	return arg_14_0.wield_scroll_value
 end
 
-PlayerInputExtension.set_last_scroll_value = function (self, scroll_value)
-	self.wield_scroll_value = scroll_value
+function PlayerInputExtension.set_last_scroll_value(arg_15_0, arg_15_1)
+	arg_15_0.wield_scroll_value = arg_15_1
 end
 
-PlayerInputExtension.released_input = function (self, input)
-	if self.has_released_input[input] then
+function PlayerInputExtension.released_input(arg_16_0, arg_16_1)
+	if arg_16_0.has_released_input[arg_16_1] then
 		return true
 	end
 
-	local get_input_release = self.input_service:get(input)
-
-	if not get_input_release then
-		self.has_released_input[input] = true
+	if not arg_16_0.input_service:get(arg_16_1) then
+		arg_16_0.has_released_input[arg_16_1] = true
 	end
 
-	return self.has_released_input[input]
+	return arg_16_0.has_released_input[arg_16_1]
 end
 
-PlayerInputExtension.released_softbutton_input = function (self, input, softbutton_threshold)
-	if self.has_released_input[input] then
+function PlayerInputExtension.released_softbutton_input(arg_17_0, arg_17_1, arg_17_2)
+	if arg_17_0.has_released_input[arg_17_1] then
 		return true
 	end
 
-	local input_value = self.input_service:get(input)
+	local var_17_0 = arg_17_0.input_service:get(arg_17_1)
 
-	if not input_value or input_value < softbutton_threshold then
-		self.has_released_input[input] = true
+	if not var_17_0 or var_17_0 < arg_17_2 then
+		arg_17_0.has_released_input[arg_17_1] = true
 	end
 
-	return self.has_released_input[input]
+	return arg_17_0.has_released_input[arg_17_1]
 end
 
-PlayerInputExtension.reset_release_input = function (self)
-	for input, key in pairs(self.has_released_input) do
-		self.has_released_input[input] = false
+function PlayerInputExtension.reset_release_input(arg_18_0)
+	for iter_18_0, iter_18_1 in pairs(arg_18_0.has_released_input) do
+		arg_18_0.has_released_input[iter_18_0] = false
 	end
 
 	return true
 end
 
-PlayerInputExtension.force_release_input = function (self, input)
-	self.has_released_input[input] = true
+function PlayerInputExtension.force_release_input(arg_19_0, arg_19_1)
+	arg_19_0.has_released_input[arg_19_1] = true
 
 	return true
 end
 
-PlayerInputExtension.reset_release_input_with_delay = function (self, delay)
-	self._release_input_delay = self._release_input_delay and self._release_input_delay + delay or delay
+function PlayerInputExtension.reset_release_input_with_delay(arg_20_0, arg_20_1)
+	arg_20_0._release_input_delay = arg_20_0._release_input_delay and arg_20_0._release_input_delay + arg_20_1 or arg_20_1
 end
 
-PlayerInputExtension.get_wield_cooldown = function (self, override_cooldown_time)
-	if override_cooldown_time then
-		if override_cooldown_time < self.wield_cooldown_timer_clock then
+function PlayerInputExtension.get_wield_cooldown(arg_21_0, arg_21_1)
+	if arg_21_1 then
+		if arg_21_1 < arg_21_0.wield_cooldown_timer_clock then
 			return true
 		else
-			self.wield_cooldown = false
+			arg_21_0.wield_cooldown = false
 
 			return false
 		end
-	elseif self.wield_cooldown then
+	elseif arg_21_0.wield_cooldown then
 		return true
 	end
 
 	return false
 end
 
-PlayerInputExtension.add_wield_cooldown = function (self, cooldown_time)
-	self.wield_cooldown = true
-	self.wield_cooldown_timer = cooldown_time
+function PlayerInputExtension.add_wield_cooldown(arg_22_0, arg_22_1)
+	arg_22_0.wield_cooldown = true
+	arg_22_0.wield_cooldown_timer = arg_22_1
 end
 
-PlayerInputExtension.get_buffer = function (self, input_key)
-	if self.input_buffer_timer and self.buffer_key == input_key then
-		return self.input_buffer
+function PlayerInputExtension.get_buffer(arg_23_0, arg_23_1)
+	if arg_23_0.input_buffer_timer and arg_23_0.buffer_key == arg_23_1 then
+		return arg_23_0.input_buffer
 	end
 
 	return nil
 end
 
-local action_one_variants = {
-	action_one = true,
-	action_one_hold = true,
+local var_0_1 = {
 	action_one_release = true,
+	action_one = true,
+	action_one_hold = true
 }
 
-PlayerInputExtension.reset_input_buffer = function (self)
-	if self.priority_input[self.buffer_key] then
+function PlayerInputExtension.reset_input_buffer(arg_24_0)
+	if arg_24_0.priority_input[arg_24_0.buffer_key] then
 		return
 	end
 
-	if self.buffer_key == "action_one" and not self.input_service:get("action_one_hold") then
-		self.buffer_key = "action_one_release"
-		self.input_buffer_timer = self.input_buffer_user_setting
+	if arg_24_0.buffer_key == "action_one" and not arg_24_0.input_service:get("action_one_hold") then
+		arg_24_0.buffer_key = "action_one_release"
+		arg_24_0.input_buffer_timer = arg_24_0.input_buffer_user_setting
 
 		return
 	end
 
-	if self.added_stun_buffer then
-		self.added_stun_buffer = false
+	if arg_24_0.added_stun_buffer then
+		arg_24_0.added_stun_buffer = false
 
 		return
 	else
-		self.input_buffer_timer = 0
-		self.input_buffer = nil
-		self.buffer_key = nil
+		arg_24_0.input_buffer_timer = 0
+		arg_24_0.input_buffer = nil
+		arg_24_0.buffer_key = nil
 	end
 end
 
-PlayerInputExtension.clear_input_buffer = function (self, clear_from_wield)
-	if not clear_from_wield and self.priority_input[self.buffer_key] then
+function PlayerInputExtension.clear_input_buffer(arg_25_0, arg_25_1)
+	if not arg_25_1 and arg_25_0.priority_input[arg_25_0.buffer_key] then
 		return
 	end
 
-	self.input_buffer_reset = true
-	self.input_buffer_timer = 0
-	self.input_buffer = nil
-	self.buffer_key = nil
-	self.new_input_buffer_timer = 0
-	self.new_input_buffer = nil
-	self.new_buffer_key = nil
+	arg_25_0.input_buffer_reset = true
+	arg_25_0.input_buffer_timer = 0
+	arg_25_0.input_buffer = nil
+	arg_25_0.buffer_key = nil
+	arg_25_0.new_input_buffer_timer = 0
+	arg_25_0.new_input_buffer = nil
+	arg_25_0.new_buffer_key = nil
 end
 
-PlayerInputExtension.add_buffer = function (self, input_key, doubleclick_window)
-	if input_key == "action_one_hold" or input_key ~= "action_two_hold" and self.priority_input[self.buffer_key] and not self.priority_input[input_key] then
+function PlayerInputExtension.add_buffer(arg_26_0, arg_26_1, arg_26_2)
+	if arg_26_1 == "action_one_hold" or arg_26_1 ~= "action_two_hold" and arg_26_0.priority_input[arg_26_0.buffer_key] and not arg_26_0.priority_input[arg_26_1] then
 		return
-	elseif input_key == "action_two_hold" then
+	elseif arg_26_1 == "action_two_hold" then
 		return
 	end
 
-	local value = self.input_service:get(input_key)
+	local var_26_0 = arg_26_0.input_service:get(arg_26_1)
 
-	if value then
-		local priority_lookup = self.priority_input
-		local priority = priority_lookup[input_key]
+	if var_26_0 then
+		local var_26_1 = arg_26_0.priority_input
+		local var_26_2 = var_26_1[arg_26_1]
 
-		if priority then
-			local last_priority = priority_lookup[self.buffer_key] or -1
-
-			if last_priority <= priority then
-				self.input_buffer_timer = self.priority_input_buffer_user_setting
-				self.input_buffer = value
-				self.buffer_key = input_key
+		if var_26_2 then
+			if var_26_2 >= (var_26_1[arg_26_0.buffer_key] or -1) then
+				arg_26_0.input_buffer_timer = arg_26_0.priority_input_buffer_user_setting
+				arg_26_0.input_buffer = var_26_0
+				arg_26_0.buffer_key = arg_26_1
 			end
 		else
-			self.new_input_buffer_timer = self.input_buffer_user_setting
-			self.new_input_buffer = value
+			arg_26_0.new_input_buffer_timer = arg_26_0.input_buffer_user_setting
+			arg_26_0.new_input_buffer = var_26_0
 
-			if self.buffer_key and self.buffer_key ~= input_key and (not action_one_variants[self.buffer_key] or not action_one_variants[input_key]) then
-				self.new_buffer_key_doubleclick_window = 0
+			if arg_26_0.buffer_key and arg_26_0.buffer_key ~= arg_26_1 and (not var_0_1[arg_26_0.buffer_key] or not var_0_1[arg_26_1]) then
+				arg_26_0.new_buffer_key_doubleclick_window = 0
 			else
-				self.new_buffer_key_doubleclick_window = doubleclick_window or 0.1
+				arg_26_0.new_buffer_key_doubleclick_window = arg_26_2 or 0.1
 			end
 
-			self.new_buffer_key = input_key
+			arg_26_0.new_buffer_key = arg_26_1
 		end
 	end
 end
 
-PlayerInputExtension.add_stun_buffer = function (self, input_key)
-	self.added_stun_buffer = true
-	self.input_buffer_timer = self.input_buffer_user_setting
-	self.input_buffer = self.input_buffer_user_setting
-	self.buffer_key = input_key
+function PlayerInputExtension.add_stun_buffer(arg_27_0, arg_27_1)
+	arg_27_0.added_stun_buffer = true
+	arg_27_0.input_buffer_timer = arg_27_0.input_buffer_user_setting
+	arg_27_0.input_buffer = arg_27_0.input_buffer_user_setting
+	arg_27_0.buffer_key = arg_27_1
 end

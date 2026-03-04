@@ -1,201 +1,201 @@
-﻿-- chunkname: @scripts/ui/views/hero_view/craft_pages/definitions/craft_page_apply_skin_console_definitions.lua
+-- chunkname: @scripts/ui/views/hero_view/craft_pages/definitions/craft_page_apply_skin_console_definitions.lua
 
-local NUM_CRAFT_SLOTS_X = 1
-local NUM_CRAFT_SLOTS_Y = 1
-local NUM_CRAFT_SLOTS = NUM_CRAFT_SLOTS_X * NUM_CRAFT_SLOTS_Y
-local NUM_RECIPE_SLOTS_X = 1
-local NUM_RECIPE_SLOTS_Y = 1
-local NUM_RECIPE_SLOTS = NUM_RECIPE_SLOTS_X * NUM_RECIPE_SLOTS_Y
-local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
-local scenegraph_definition = {
-	screen = console_menu_scenegraphs.screen,
-	area = console_menu_scenegraphs.area,
-	area_left = console_menu_scenegraphs.area_left,
-	area_right = console_menu_scenegraphs.area_right,
-	area_divider = console_menu_scenegraphs.area_divider,
-	craft_bg_root = console_menu_scenegraphs.craft_bg_root,
-	craft_button = console_menu_scenegraphs.craft_button,
+local var_0_0 = 1
+local var_0_1 = 1
+local var_0_2 = var_0_0 * var_0_1
+local var_0_3 = 1
+local var_0_4 = 1
+local var_0_5 = var_0_3 * var_0_4
+local var_0_6 = UISettings.console_menu_scenegraphs
+local var_0_7 = {
+	screen = var_0_6.screen,
+	area = var_0_6.area,
+	area_left = var_0_6.area_left,
+	area_right = var_0_6.area_right,
+	area_divider = var_0_6.area_divider,
+	craft_bg_root = var_0_6.craft_bg_root,
+	craft_button = var_0_6.craft_button,
 	item_grid_link = {
-		horizontal_alignment = "center",
-		parent = "craft_bg_root",
 		vertical_alignment = "center",
+		parent = "craft_bg_root",
+		horizontal_alignment = "center",
 		size = {
 			55,
-			36,
+			36
 		},
 		position = {
 			0,
 			0,
-			6,
-		},
+			6
+		}
 	},
 	item_grid = {
-		horizontal_alignment = "center",
-		parent = "item_grid_link",
 		vertical_alignment = "center",
+		parent = "item_grid_link",
+		horizontal_alignment = "center",
 		size = {
 			185,
-			182,
+			182
 		},
 		position = {
 			-63,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	item_grid_2 = {
-		horizontal_alignment = "center",
-		parent = "item_grid_link",
 		vertical_alignment = "center",
+		parent = "item_grid_link",
+		horizontal_alignment = "center",
 		size = {
 			185,
-			182,
+			182
 		},
 		position = {
 			61,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	item_grid_icon = {
-		horizontal_alignment = "center",
-		parent = "item_grid",
 		vertical_alignment = "center",
+		parent = "item_grid",
+		horizontal_alignment = "center",
 		size = {
 			60,
-			67,
+			67
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	item_grid_2_icon = {
-		horizontal_alignment = "center",
-		parent = "item_grid_2",
 		vertical_alignment = "center",
+		parent = "item_grid_2",
+		horizontal_alignment = "center",
 		size = {
 			50,
-			55,
+			55
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	material_text_1 = {
-		horizontal_alignment = "center",
-		parent = "craft_bg_root",
 		vertical_alignment = "top",
+		parent = "craft_bg_root",
+		horizontal_alignment = "center",
 		size = {
 			60,
-			100,
+			100
 		},
 		position = {
 			0,
 			-90,
-			2,
-		},
+			2
+		}
 	},
 	material_text_2 = {
-		horizontal_alignment = "center",
-		parent = "craft_bg_root",
 		vertical_alignment = "top",
+		parent = "craft_bg_root",
+		horizontal_alignment = "center",
 		size = {
 			60,
-			100,
+			100
 		},
 		position = {
 			0,
 			-90,
-			2,
-		},
+			2
+		}
 	},
 	material_text_3 = {
-		horizontal_alignment = "center",
-		parent = "craft_bg_root",
 		vertical_alignment = "top",
+		parent = "craft_bg_root",
+		horizontal_alignment = "center",
 		size = {
 			60,
-			100,
+			100
 		},
 		position = {
 			0,
 			-90,
-			2,
-		},
+			2
+		}
 	},
 	material_text_4 = {
-		horizontal_alignment = "center",
-		parent = "craft_bg_root",
 		vertical_alignment = "top",
+		parent = "craft_bg_root",
+		horizontal_alignment = "center",
 		size = {
 			60,
-			100,
+			100
 		},
 		position = {
 			0,
 			-90,
-			2,
-		},
+			2
+		}
 	},
 	material_text_5 = {
-		horizontal_alignment = "center",
-		parent = "craft_bg_root",
 		vertical_alignment = "top",
+		parent = "craft_bg_root",
+		horizontal_alignment = "center",
 		size = {
 			60,
-			100,
+			100
 		},
 		position = {
 			0,
 			-90,
-			2,
-		},
+			2
+		}
 	},
 	material_text_6 = {
-		horizontal_alignment = "center",
-		parent = "craft_bg_root",
 		vertical_alignment = "top",
+		parent = "craft_bg_root",
+		horizontal_alignment = "center",
 		size = {
 			60,
-			100,
+			100
 		},
 		position = {
 			0,
 			-90,
-			2,
-		},
+			2
+		}
 	},
 	material_text_7 = {
-		horizontal_alignment = "center",
-		parent = "craft_bg_root",
 		vertical_alignment = "top",
+		parent = "craft_bg_root",
+		horizontal_alignment = "center",
 		size = {
 			60,
-			100,
+			100
 		},
 		position = {
 			0,
 			-90,
-			2,
-		},
-	},
+			2
+		}
+	}
 }
-local disable_with_gamepad = true
-local widgets = {
+local var_0_8 = true
+local var_0_9 = {
 	item_grid_bg = UIWidgets.create_simple_texture("console_crafting_slot_01", "item_grid", nil, nil, nil, -2),
 	item_grid_bg_2 = UIWidgets.create_simple_texture("console_crafting_slot_01", "item_grid_2", nil, nil, nil, -2),
 	item_grid_link = UIWidgets.create_simple_rotated_texture("console_crafting_slot_connection", 0, {
 		27.5,
-		18,
+		18
 	}, "item_grid_link", nil, nil, nil, 0),
 	item_grid_icon = UIWidgets.create_simple_texture("crafting_icon_01", "item_grid_icon"),
 	item_grid_2_icon = UIWidgets.create_simple_texture("crafting_icon_02", "item_grid_2_icon"),
-	item_grid = UIWidgets.create_grid("item_grid", scenegraph_definition.item_grid.size, NUM_CRAFT_SLOTS_Y, NUM_CRAFT_SLOTS_X, 20, 20),
-	item_grid_2 = UIWidgets.create_grid("item_grid_2", scenegraph_definition.item_grid_2.size, NUM_RECIPE_SLOTS_Y, NUM_RECIPE_SLOTS_X, 30, 30),
+	item_grid = UIWidgets.create_grid("item_grid", var_0_7.item_grid.size, var_0_1, var_0_0, 20, 20),
+	item_grid_2 = UIWidgets.create_grid("item_grid_2", var_0_7.item_grid_2.size, var_0_4, var_0_3, 30, 30),
 	craft_button = UIWidgets.create_console_craft_button("craft_button", "console_crafting_recipe_icon_apply"),
 	material_text_1 = UIWidgets.create_craft_material_widget("material_text_1"),
 	material_text_2 = UIWidgets.create_craft_material_widget("material_text_2"),
@@ -203,49 +203,49 @@ local widgets = {
 	material_text_4 = UIWidgets.create_craft_material_widget("material_text_4"),
 	material_text_5 = UIWidgets.create_craft_material_widget("material_text_5"),
 	material_text_6 = UIWidgets.create_craft_material_widget("material_text_6"),
-	material_text_7 = UIWidgets.create_craft_material_widget("material_text_7"),
+	material_text_7 = UIWidgets.create_craft_material_widget("material_text_7")
 }
-local animation_definitions = {
+local var_0_10 = {
 	on_enter = {
 		{
-			end_progress = 0.3,
 			name = "fade_in",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 0
+			end_progress = 0.3,
+			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				local var_2_0 = math.easeOutCubic(arg_2_3)
 
-				params.render_settings.alpha_multiplier = anim_progress
+				arg_2_4.render_settings.alpha_multiplier = var_2_0
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				return
-			end,
-		},
+			end
+		}
 	},
 	on_exit = {
 		{
-			end_progress = 0.3,
 			name = "fade_out",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 1
+			end_progress = 0.3,
+			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				arg_4_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				local var_5_0 = math.easeOutCubic(arg_5_3)
 
-				params.render_settings.alpha_multiplier = 1 - anim_progress
+				arg_5_4.render_settings.alpha_multiplier = 1 - var_5_0
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				return
-			end,
-		},
-	},
+			end
+		}
+	}
 }
 
 return {
-	widgets = widgets,
-	scenegraph_definition = scenegraph_definition,
-	animation_definitions = animation_definitions,
+	widgets = var_0_9,
+	scenegraph_definition = var_0_7,
+	animation_definitions = var_0_10
 }

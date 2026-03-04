@@ -1,231 +1,225 @@
-﻿-- chunkname: @scripts/settings/dlcs/shovel/action_damage_target.lua
+-- chunkname: @scripts/settings/dlcs/shovel/action_damage_target.lua
 
 ActionDamageTarget = class(ActionDamageTarget, ActionBase)
 
-ActionDamageTarget.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionDamageTarget.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionDamageTarget.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionDamageTarget.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	self.owner_unit = owner_unit
-	self.ammo_extension = ScriptUnit.has_extension(weapon_unit, "ammo_system")
-	self.inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
-	self.overcharge_extension = ScriptUnit.extension(owner_unit, "overcharge_system")
-	self.first_person_extension = ScriptUnit.has_extension(owner_unit, "first_person_system")
-	self.owner_buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
-	self.weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
-	self.status_extension = ScriptUnit.extension(owner_unit, "status_system")
-	self.hud_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
+	arg_1_0.owner_unit = arg_1_4
+	arg_1_0.ammo_extension = ScriptUnit.has_extension(arg_1_7, "ammo_system")
+	arg_1_0.inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
+	arg_1_0.overcharge_extension = ScriptUnit.extension(arg_1_4, "overcharge_system")
+	arg_1_0.first_person_extension = ScriptUnit.has_extension(arg_1_4, "first_person_system")
+	arg_1_0.owner_buff_extension = ScriptUnit.extension(arg_1_4, "buff_system")
+	arg_1_0.weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
+	arg_1_0.status_extension = ScriptUnit.extension(arg_1_4, "status_system")
+	arg_1_0.hud_extension = ScriptUnit.has_extension(arg_1_4, "hud_system")
 
-	if self.first_person_extension then
-		self.first_person_unit = self.first_person_extension:get_first_person_unit()
+	if arg_1_0.first_person_extension then
+		arg_1_0.first_person_unit = arg_1_0.first_person_extension:get_first_person_unit()
 	end
 
-	self._rumble_effect_id = false
-	self.unit_id = self.network_manager.unit_storage:go_id(owner_unit)
+	arg_1_0._rumble_effect_id = false
+	arg_1_0.unit_id = arg_1_0.network_manager.unit_storage:go_id(arg_1_4)
 end
 
-ActionDamageTarget.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level)
-	ActionDamageTarget.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level)
+function ActionDamageTarget.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	ActionDamageTarget.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
-	if not chain_action_data or not chain_action_data.target then
-		self._done = true
+	if not arg_2_3 or not arg_2_3.target then
+		arg_2_0._done = true
 
-		self.weapon_extension:stop_action("action_complete")
+		arg_2_0.weapon_extension:stop_action("action_complete")
 
 		return
 	end
 
-	self._power_level = power_level
-	self._target_unit = chain_action_data.target
-	self._damage_steps = new_action.damage_steps
-	self._step_idx = 1
-	self._num_repeats = 0
+	arg_2_0._power_level = arg_2_4
+	arg_2_0._target_unit = arg_2_3.target
+	arg_2_0._damage_steps = arg_2_1.damage_steps
+	arg_2_0._step_idx = 1
+	arg_2_0._num_repeats = 0
+	arg_2_0._anim_time_scale = ActionUtils.get_action_time_scale(arg_2_0.owner_unit, arg_2_1)
+	arg_2_0._next_update_t = arg_2_2 + arg_2_1.damage_steps[1].start_delay / arg_2_0._anim_time_scale
+	arg_2_0._done = false
 
-	local anim_time_scale = ActionUtils.get_action_time_scale(self.owner_unit, new_action)
+	local var_2_0 = arg_2_0._target_unit
+	local var_2_1 = Unit.has_node(var_2_0, "j_spine") and Unit.node(var_2_0, "j_spine") or 0
 
-	self._anim_time_scale = anim_time_scale
-	self._next_update_t = t + new_action.damage_steps[1].start_delay / self._anim_time_scale
-	self._done = false
+	arg_2_0._target_node_id = var_2_1
+	arg_2_0._target_hit_zone = arg_2_1.target_node
+	arg_2_0._target_hit_zone_id = NetworkLookup.hit_zones[arg_2_1.target_node]
 
-	local target_unit = self._target_unit
-	local target_node_id = Unit.has_node(target_unit, "j_spine") and Unit.node(target_unit, "j_spine") or 0
+	local var_2_2 = Managers.state.network
 
-	self._target_node_id = target_node_id
-	self._target_hit_zone = new_action.target_node
-	self._target_hit_zone_id = NetworkLookup.hit_zones[new_action.target_node]
+	arg_2_0._attacker_unit_id = var_2_2:unit_game_object_id(arg_2_0.owner_unit)
+	arg_2_0._hit_unit_id = var_2_2:unit_game_object_id(arg_2_3.target)
 
-	local network_manager = Managers.state.network
+	AiUtils.alert_unit(arg_2_0.owner_unit, arg_2_0._target_unit)
+	arg_2_0.weapon_system:start_soul_rip(arg_2_0.owner_unit, arg_2_3.target, var_2_1, math.random(0, 65535), true)
 
-	self._attacker_unit_id = network_manager:unit_game_object_id(self.owner_unit)
-	self._hit_unit_id = network_manager:unit_game_object_id(chain_action_data.target)
+	if not arg_2_0.is_bot then
+		local var_2_3, var_2_4 = ActionUtils.start_charge_sound(arg_2_0.wwise_world, arg_2_0.weapon_unit, arg_2_0.owner_unit, arg_2_1)
 
-	AiUtils.alert_unit(self.owner_unit, self._target_unit)
-	self.weapon_system:start_soul_rip(self.owner_unit, chain_action_data.target, target_node_id, math.random(0, 65535), true)
-
-	if not self.is_bot then
-		local wwise_playing_id, wwise_source_id = ActionUtils.start_charge_sound(self.wwise_world, self.weapon_unit, self.owner_unit, new_action)
-
-		self.charging_sound_id = wwise_playing_id
-		self.wwise_source_id = wwise_source_id
+		arg_2_0.charging_sound_id = var_2_3
+		arg_2_0.wwise_source_id = var_2_4
 	end
 end
 
-ActionDamageTarget._apply_damage_step = function (self, hit_unit, power_level, step_data, t)
-	local damage_profile = step_data.damage_profile
-	local overcharge_amount = step_data.overcharge_amount
-	local breed = Unit.get_data(hit_unit, "breed")
+function ActionDamageTarget._apply_damage_step(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local var_3_0 = arg_3_3.damage_profile
+	local var_3_1 = arg_3_3.overcharge_amount
+	local var_3_2 = Unit.get_data(arg_3_1, "breed")
 
-	if breed then
-		overcharge_amount = breed.is_player and step_data.overcharge_amount_player_target or overcharge_amount
+	if var_3_2 then
+		var_3_1 = var_3_2.is_player and arg_3_3.overcharge_amount_player_target or var_3_1
 
-		if step_data.can_crit then
-			self._is_critical_strike = ActionUtils.is_critical_strike(self.owner_unit, self.current_action, t)
+		if arg_3_3.can_crit then
+			arg_3_0._is_critical_strike = ActionUtils.is_critical_strike(arg_3_0.owner_unit, arg_3_0.current_action, arg_3_4)
 
-			self:_handle_critical_strike(self._is_critical_strike, self.buff_extension, self.hud_extension, self.first_person_extension, "on_critical_shot", nil)
+			arg_3_0:_handle_critical_strike(arg_3_0._is_critical_strike, arg_3_0.buff_extension, arg_3_0.hud_extension, arg_3_0.first_person_extension, "on_critical_shot", nil)
 		else
-			self._is_critical_strike = false
+			arg_3_0._is_critical_strike = false
 		end
 
-		if step_data.proc_buffs then
-			local hit_index = 1
-			local send_to_server = true
-			local damage_profile_template = DamageProfileTemplates[damage_profile]
-			local charge_value = damage_profile_template.charge_value or "instant_projectile"
-			local buff_type = DamageUtils.get_item_buff_type(self.item_name)
+		if arg_3_3.proc_buffs then
+			local var_3_3 = 1
+			local var_3_4 = true
+			local var_3_5 = DamageProfileTemplates[var_3_0].charge_value or "instant_projectile"
+			local var_3_6 = DamageUtils.get_item_buff_type(arg_3_0.item_name)
 
-			DamageUtils.buff_on_attack(self.owner_unit, hit_unit, charge_value, self._is_critical_strike, self._target_hit_zone, hit_index, send_to_server, buff_type, nil, self.item_name)
+			DamageUtils.buff_on_attack(arg_3_0.owner_unit, arg_3_1, var_3_5, arg_3_0._is_critical_strike, arg_3_0._target_hit_zone, var_3_3, var_3_4, var_3_6, nil, arg_3_0.item_name)
 		end
 	end
 
-	local _, ranged_boost_curve_multiplier = ActionUtils.get_ranged_boost(self.owner_unit)
-	local damage_source = self.item_name
-	local damage_source_id = NetworkLookup.damage_sources[damage_source]
-	local attacker_unit_id = self._attacker_unit_id
-	local hit_unit_id = self._hit_unit_id
-	local hit_zone_id = self._target_hit_zone_id
-	local hit_position = Unit.world_position(hit_unit, self._target_node_id)
-	local self_pos = self.first_person_extension:current_position()
-	local attack_direction = Vector3.normalize(hit_position - self_pos)
-	local damage_profile_id = NetworkLookup.damage_profiles[damage_profile]
+	local var_3_7, var_3_8 = ActionUtils.get_ranged_boost(arg_3_0.owner_unit)
+	local var_3_9 = arg_3_0.item_name
+	local var_3_10 = NetworkLookup.damage_sources[var_3_9]
+	local var_3_11 = arg_3_0._attacker_unit_id
+	local var_3_12 = arg_3_0._hit_unit_id
+	local var_3_13 = arg_3_0._target_hit_zone_id
+	local var_3_14 = Unit.world_position(arg_3_1, arg_3_0._target_node_id)
+	local var_3_15 = arg_3_0.first_person_extension:current_position()
+	local var_3_16 = Vector3.normalize(var_3_14 - var_3_15)
+	local var_3_17 = NetworkLookup.damage_profiles[var_3_0]
 
-	self.weapon_system:send_rpc_attack_hit(damage_source_id, attacker_unit_id, hit_unit_id, hit_zone_id, hit_position, attack_direction, damage_profile_id, "power_level", power_level, "hit_target_index", 1, "blocking", false, "shield_break_procced", false, "boost_curve_multiplier", ranged_boost_curve_multiplier, "is_critical_strike", self._is_critical_strike, "can_damage", true, "can_stagger", true, "first_hit", true)
+	arg_3_0.weapon_system:send_rpc_attack_hit(var_3_10, var_3_11, var_3_12, var_3_13, var_3_14, var_3_16, var_3_17, "power_level", arg_3_2, "hit_target_index", 1, "blocking", false, "shield_break_procced", false, "boost_curve_multiplier", var_3_8, "is_critical_strike", arg_3_0._is_critical_strike, "can_damage", true, "can_stagger", true, "first_hit", true)
 
-	if overcharge_amount then
-		local buff_extension = self.owner_buff_extension
+	if var_3_1 then
+		local var_3_18 = arg_3_0.owner_buff_extension
 
-		if self._is_critical_strike and buff_extension:has_buff_perk("no_overcharge_crit") then
-			overcharge_amount = 0
+		if arg_3_0._is_critical_strike and var_3_18:has_buff_perk("no_overcharge_crit") then
+			var_3_1 = 0
 		end
 
-		self.overcharge_extension:add_charge(overcharge_amount)
+		arg_3_0.overcharge_extension:add_charge(var_3_1)
 	end
 end
 
-ActionDamageTarget.client_owner_post_update = function (self, dt, t, world, can_damage)
-	local target_unit = self._target_unit
+function ActionDamageTarget.client_owner_post_update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = arg_4_0._target_unit
 
-	if target_unit and not HEALTH_ALIVE[target_unit] then
-		self._done = true
-		self._target_unit = nil
+	if var_4_0 and not HEALTH_ALIVE[var_4_0] then
+		arg_4_0._done = true
+		arg_4_0._target_unit = nil
 
-		if ALIVE[target_unit] then
-			local current_action = self.current_action
+		if ALIVE[var_4_0] then
+			local var_4_1 = arg_4_0.current_action
 
-			self.weapon_system:soul_rip_burst(self.owner_unit, target_unit, self._target_node_id, current_action.last_damage_step_fx_name, math.random(0, 65535), true)
+			arg_4_0.weapon_system:soul_rip_burst(arg_4_0.owner_unit, var_4_0, arg_4_0._target_node_id, var_4_1.last_damage_step_fx_name, math.random(0, 65535), true)
 		end
 
-		self:_start_forced_action(t)
+		arg_4_0:_start_forced_action(arg_4_2)
 	end
 
-	if not self._done and t >= self._next_update_t then
-		local current_step = self._damage_steps[self._step_idx]
+	if not arg_4_0._done and arg_4_2 >= arg_4_0._next_update_t then
+		local var_4_2 = arg_4_0._damage_steps[arg_4_0._step_idx]
 
-		self:_apply_damage_step(target_unit, self._power_level, current_step, t)
+		arg_4_0:_apply_damage_step(var_4_0, arg_4_0._power_level, var_4_2, arg_4_2)
 
-		self._num_repeats = self._num_repeats + 1
+		arg_4_0._num_repeats = arg_4_0._num_repeats + 1
 
-		if self._num_repeats < current_step.repeat_count then
-			self._next_update_t = t + current_step.repeat_delay / self._anim_time_scale
+		if arg_4_0._num_repeats < var_4_2.repeat_count then
+			arg_4_0._next_update_t = arg_4_2 + var_4_2.repeat_delay / arg_4_0._anim_time_scale
 		else
-			self._step_idx = self._step_idx + 1
+			arg_4_0._step_idx = arg_4_0._step_idx + 1
 
-			local next_step = self._damage_steps[self._step_idx]
+			local var_4_3 = arg_4_0._damage_steps[arg_4_0._step_idx]
 
-			if next_step then
-				self._next_update_t = t + next_step.start_delay / self._anim_time_scale
-				self._num_repeats = 0
+			if var_4_3 then
+				arg_4_0._next_update_t = arg_4_2 + var_4_3.start_delay / arg_4_0._anim_time_scale
+				arg_4_0._num_repeats = 0
 			else
-				self._done = true
+				arg_4_0._done = true
 
-				self:_proc_spell_used(self.owner_buff_extension)
-				self:_start_forced_action(t)
+				arg_4_0:_proc_spell_used(arg_4_0.owner_buff_extension)
+				arg_4_0:_start_forced_action(arg_4_2)
 			end
 		end
 	end
 
-	if ALIVE[target_unit] then
-		local position = Unit.world_position(target_unit, self._target_node_id)
-		local to_target, target_dist = Vector3.direction_length(position - self.first_person_extension:current_position())
-		local look_dir = Quaternion.forward(self.first_person_extension:current_rotation())
-		local max_angle = math.cos(math.degrees_to_radians(45))
-		local dot = Vector3.dot(look_dir, to_target)
+	if ALIVE[var_4_0] then
+		local var_4_4 = Unit.world_position(var_4_0, arg_4_0._target_node_id)
+		local var_4_5, var_4_6 = Vector3.direction_length(var_4_4 - arg_4_0.first_person_extension:current_position())
+		local var_4_7 = Quaternion.forward(arg_4_0.first_person_extension:current_rotation())
+		local var_4_8 = math.cos(math.degrees_to_radians(45))
+		local var_4_9 = Vector3.dot(var_4_7, var_4_5)
 
-		if dot < max_angle then
-			local radius = 5
-			local target_break_threshold = math.cos(math.atan2(radius, target_dist))
+		if var_4_9 < var_4_8 then
+			local var_4_10 = 5
 
-			if dot < target_break_threshold then
-				self._done = true
-				self._target_unit = nil
+			if var_4_9 < math.cos(math.atan2(var_4_10, var_4_6)) then
+				arg_4_0._done = true
+				arg_4_0._target_unit = nil
 
-				self.weapon_extension:stop_action("action_complete")
+				arg_4_0.weapon_extension:stop_action("action_complete")
 			end
 		end
 
-		if not self._damage_steps[self._step_idx] then
-			local current_action = self.current_action
+		if not arg_4_0._damage_steps[arg_4_0._step_idx] then
+			local var_4_11 = arg_4_0.current_action
 
-			self.weapon_system:soul_rip_burst(self.owner_unit, target_unit, self._target_node_id, current_action.last_damage_step_fx_name, math.random(0, 65535), true)
+			arg_4_0.weapon_system:soul_rip_burst(arg_4_0.owner_unit, var_4_0, arg_4_0._target_node_id, var_4_11.last_damage_step_fx_name, math.random(0, 65535), true)
 
-			local sound_event = current_action.last_damage_step_sound_event
+			local var_4_12 = var_4_11.last_damage_step_sound_event
 
-			if sound_event then
-				Managers.state.entity:system("audio_system"):play_audio_position_event(sound_event, position)
+			if var_4_12 then
+				Managers.state.entity:system("audio_system"):play_audio_position_event(var_4_12, var_4_4)
 			end
 		end
 	end
 end
 
-ActionDamageTarget._start_forced_action = function (self, t)
-	local forced_action = self.current_action.force_action_on_complete
+function ActionDamageTarget._start_forced_action(arg_5_0, arg_5_1)
+	local var_5_0 = arg_5_0.current_action.force_action_on_complete
 
-	if not forced_action then
+	if not var_5_0 then
 		return
 	end
 
-	local action_name = forced_action.action_name
-	local sub_action_name = forced_action.sub_action_name
-	local power_level = self._power_level
-	local weapon_extension = self.weapon_extension
-	local item_template_name = self.current_action.lookup_data.item_template_name
-	local item_template = WeaponUtils.get_weapon_template(item_template_name)
-	local actions = item_template.actions
+	local var_5_1 = var_5_0.action_name
+	local var_5_2 = var_5_0.sub_action_name
+	local var_5_3 = arg_5_0._power_level
+	local var_5_4 = arg_5_0.weapon_extension
+	local var_5_5 = arg_5_0.current_action.lookup_data.item_template_name
+	local var_5_6 = WeaponUtils.get_weapon_template(var_5_5).actions
 
-	weapon_extension:start_action(action_name, sub_action_name, actions, t, power_level)
+	var_5_4:start_action(var_5_1, var_5_2, var_5_6, arg_5_1, var_5_3)
 end
 
-ActionDamageTarget.finish = function (self, reason)
-	ActionDamageTarget.super.finish(self, reason)
+function ActionDamageTarget.finish(arg_6_0, arg_6_1)
+	ActionDamageTarget.super.finish(arg_6_0, arg_6_1)
 
-	if not self.is_bot then
-		ActionUtils.stop_charge_sound(self.wwise_world, self.charging_sound_id, self.wwise_source_id, self.current_action)
+	if not arg_6_0.is_bot then
+		ActionUtils.stop_charge_sound(arg_6_0.wwise_world, arg_6_0.charging_sound_id, arg_6_0.wwise_source_id, arg_6_0.current_action)
 
-		self.charging_sound_id = nil
-		self.wwise_source_id = nil
+		arg_6_0.charging_sound_id = nil
+		arg_6_0.wwise_source_id = nil
 	end
 
-	self.weapon_system:stop_soul_rip(self.owner_unit, true)
+	arg_6_0.weapon_system:stop_soul_rip(arg_6_0.owner_unit, true)
 end
 
-ActionDamageTarget.destroy = function (self)
+function ActionDamageTarget.destroy(arg_7_0)
 	return
 end

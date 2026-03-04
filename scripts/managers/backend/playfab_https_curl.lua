@@ -1,14 +1,14 @@
-﻿-- chunkname: @scripts/managers/backend/playfab_https_curl.lua
+-- chunkname: @scripts/managers/backend/playfab_https_curl.lua
 
-local json = require("PlayFab.json")
-local PlayFabSettings = require("PlayFab.PlayFabSettings")
+local var_0_0 = require("PlayFab.json")
+local var_0_1 = require("PlayFab.PlayFabSettings")
 
 PlayFabHttpsCurlData = PlayFabHttpsCurlData or {}
 PlayFabHttpsCurlData.request_id = PlayFabHttpsCurlData.request_id or 0
 PlayFabHttpsCurlData.active_requests = PlayFabHttpsCurlData.active_requests or {}
 
-local MAX_RETRIES = 2
-local retry_codes = {
+local var_0_2 = 2
+local var_0_3 = {
 	1199,
 	1342,
 	1133,
@@ -17,45 +17,44 @@ local retry_codes = {
 	1131,
 	1214,
 	1123,
-	1101,
+	1101
 }
 
-local function on_error(request_data, result, id, error_override)
-	local error_code
+local function var_0_4(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	local var_1_0
 
-	if result.data and result.data.Error then
-		local logs = result.data.Logs
+	if arg_1_1.data and arg_1_1.data.Error then
+		local var_1_1 = arg_1_1.data.Logs
 
-		if logs then
-			for i = 1, #logs do
-				local log = logs[i]
-				local data = log.Data
+		if var_1_1 then
+			for iter_1_0 = 1, #var_1_1 do
+				local var_1_2 = var_1_1[iter_1_0].Data
 
-				if data then
-					local api_error = data.apiError
+				if var_1_2 then
+					local var_1_3 = var_1_2.apiError
 
-					if api_error then
-						error_code = api_error.errorCode
+					if var_1_3 then
+						var_1_0 = var_1_3.errorCode
 					end
 				end
 			end
 		end
-	elseif result.errorCode then
-		error_code = result.errorCode
+	elseif arg_1_1.errorCode then
+		var_1_0 = arg_1_1.errorCode
 	end
 
-	local retry = table.contains(retry_codes, error_code)
+	local var_1_4 = table.contains(var_0_3, var_1_0)
 
-	if not retry then
-		local data = result.data
-		local logs = data and data.Logs
+	if not var_1_4 then
+		local var_1_5 = arg_1_1.data
+		local var_1_6 = var_1_5 and var_1_5.Logs
 
-		if logs then
-			for i = 1, #logs do
-				local log = logs[i]
+		if var_1_6 then
+			for iter_1_1 = 1, #var_1_6 do
+				local var_1_7 = var_1_6[iter_1_1]
 
-				if log.Message == "RetriableError" or log.Data and log.Data.error == "Timeout" then
-					retry = true
+				if var_1_7.Message == "RetriableError" or var_1_7.Data and var_1_7.Data.error == "Timeout" then
+					var_1_4 = true
 
 					break
 				end
@@ -63,131 +62,131 @@ local function on_error(request_data, result, id, error_override)
 		end
 	end
 
-	if retry and request_data.retries < MAX_RETRIES then
-		local url = request_data.url
-		local body = request_data.body
-		local headers = request_data.headers
-		local request_cb = request_data.request_cb
-		local options = request_data.options
-		local request = json.decode(body)
+	if var_1_4 and arg_1_0.retries < var_0_2 then
+		local var_1_8 = arg_1_0.url
+		local var_1_9 = arg_1_0.body
+		local var_1_10 = arg_1_0.headers
+		local var_1_11 = arg_1_0.request_cb
+		local var_1_12 = arg_1_0.options
+		local var_1_13 = var_0_0.decode(var_1_9)
 
-		if not request.FunctionParameter then
-			request.FunctionParameter = {}
+		if not var_1_13.FunctionParameter then
+			var_1_13.FunctionParameter = {}
 		end
 
-		request.FunctionParameter.retry = true
-		request.FunctionParameter.final_retry = request_data.retries + 1 == MAX_RETRIES
-		body = json.encode(request)
-		headers[4] = "content-length: " .. tostring(string.len(body))
+		var_1_13.FunctionParameter.retry = true
+		var_1_13.FunctionParameter.final_retry = arg_1_0.retries + 1 == var_0_2
 
-		Managers.curl:post(url, body, headers, request_cb, id, options)
+		local var_1_14 = var_0_0.encode(var_1_13)
 
-		request_data.retries = request_data.retries + 1
+		var_1_10[4] = "content-length: " .. tostring(string.len(var_1_14))
 
-		local override = error_override and string.format(" | Error Override: %s", error_override) or ""
+		Managers.curl:post(var_1_8, var_1_14, var_1_10, var_1_11, arg_1_2, var_1_12)
 
-		printf("[PLAYFAB HTTPS CURL] RESENDING REQUEST. Id: %s | Error Code: %s%s", id, error_code, override)
-		Crashify.print_exception("Backend_Error", "RESENDING REQUEST: %s", request_data)
+		arg_1_0.retries = arg_1_0.retries + 1
+
+		local var_1_15 = arg_1_3 and string.format(" | Error Override: %s", arg_1_3) or ""
+
+		printf("[PLAYFAB HTTPS CURL] RESENDING REQUEST. Id: %s | Error Code: %s%s", arg_1_2, var_1_0, var_1_15)
+		Crashify.print_exception("Backend_Error", "RESENDING REQUEST: %s", arg_1_0)
 	else
-		error_code = error_override and error_override or error_code
+		var_1_0 = arg_1_3 and arg_1_3 or var_1_0
 
-		Managers.backend:playfab_api_error(result, error_code)
+		Managers.backend:playfab_api_error(arg_1_1, var_1_0)
 
-		PlayFabHttpsCurlData.active_requests[id] = nil
+		PlayFabHttpsCurlData.active_requests[arg_1_2] = nil
 	end
 end
 
-function curl_callback(success, code, headers, data, id)
-	local request_data = PlayFabHttpsCurlData.active_requests[id]
+function curl_callback(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	local var_2_0 = PlayFabHttpsCurlData.active_requests[arg_2_4]
 
-	if success then
-		local _, response = pcall(json.decode, data)
+	if arg_2_0 then
+		local var_2_1, var_2_2 = pcall(var_0_0.decode, arg_2_3)
 
-		if response and type(response) == "table" then
-			if response.code == 200 and response.data and not response.data.Error then
-				request_data.onSuccess(response.data)
+		if var_2_2 and type(var_2_2) == "table" then
+			if var_2_2.code == 200 and var_2_2.data and not var_2_2.data.Error then
+				var_2_0.onSuccess(var_2_2.data)
 
-				PlayFabHttpsCurlData.active_requests[id] = nil
-			elseif request_data.onFail then
-				request_data.onFail(response)
+				PlayFabHttpsCurlData.active_requests[arg_2_4] = nil
+			elseif var_2_0.onFail then
+				var_2_0.onFail(var_2_2)
 
-				PlayFabHttpsCurlData.active_requests[id] = nil
+				PlayFabHttpsCurlData.active_requests[arg_2_4] = nil
 			else
-				on_error(request_data, response, id)
+				var_0_4(var_2_0, var_2_2, arg_2_4)
 			end
 		else
-			local error_data = {
+			local var_2_3 = {
 				error = "ServiceUnavailable",
 				errorCode = 1123,
 				status = "",
-				code = code,
+				code = arg_2_1
 			}
 
-			if data then
-				error_data.errorMessage = "Could not deserialize response from server: " .. tostring(data)
+			if arg_2_3 then
+				var_2_3.errorMessage = "Could not deserialize response from server: " .. tostring(arg_2_3)
 			else
-				error_data.errorMessage = "Could not deserialize response from server: NO DATA"
+				var_2_3.errorMessage = "Could not deserialize response from server: NO DATA"
 			end
 
-			on_error(request_data, error_data, id)
+			var_0_4(var_2_0, var_2_3, arg_2_4)
 		end
 	else
-		local error_data = {
+		local var_2_4 = {
 			error = "ServiceUnavailable",
 			errorCode = 1123,
 			status = "",
-			code = code,
+			code = arg_2_1
 		}
 
-		if data then
-			error_data.errorMessage = "Could not deserialize response from server: " .. tostring(data)
+		if arg_2_3 then
+			var_2_4.errorMessage = "Could not deserialize response from server: " .. tostring(arg_2_3)
 		else
-			error_data.errorMessage = "Could not deserialize response from server: NO DATA"
+			var_2_4.errorMessage = "Could not deserialize response from server: NO DATA"
 		end
 
-		on_error(request_data, error_data, id, tostring(data))
+		var_0_4(var_2_0, var_2_4, arg_2_4, tostring(arg_2_3))
 	end
 end
 
-local PlayFabHttpsCurl = {}
+return {
+	MakePlayFabApiCall = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+		local var_3_0 = var_0_0.encode(arg_3_1)
+		local var_3_1 = {
+			"X-ReportErrorAsSuccess: true",
+			"X-PlayFabSDK: " .. var_0_1._internalSettings.sdkVersionString,
+			"Content-Type: application/json",
+			"content-length: " .. string.len(var_3_0)
+		}
 
-PlayFabHttpsCurl.MakePlayFabApiCall = function (url_path, request, auth_key, auth_value, on_success_callback, optional_on_fail_callback)
-	local json_request = json.encode(request)
-	local headers = {
-		"X-ReportErrorAsSuccess: true",
-		"X-PlayFabSDK: " .. PlayFabSettings._internalSettings.sdkVersionString,
-		"Content-Type: application/json",
-		"content-length: " .. string.len(json_request),
-	}
+		if arg_3_2 then
+			var_3_1[#var_3_1 + 1] = arg_3_2 .. ": " .. arg_3_3
+		end
 
-	if auth_key then
-		headers[#headers + 1] = auth_key .. ": " .. auth_value
+		local var_3_2 = "https://" .. var_0_1.settings.titleId .. ".playfabapi.com"
+		local var_3_3 = PlayFabHttpsCurlData.request_id + 1
+		local var_3_4 = Managers.curl
+		local var_3_5 = var_3_2 .. arg_3_0
+		local var_3_6 = {
+			[var_3_4._curl.OPT_SSL_OPTIONS] = var_3_4._curl.SSLOPT_NO_REVOKE
+		}
+		local var_3_7 = {
+			retries = 0,
+			onSuccess = arg_3_4,
+			onFail = arg_3_5,
+			url = var_3_5,
+			body = var_3_0,
+			headers = var_3_1,
+			request_cb = curl_callback,
+			id = var_3_3,
+			options = var_3_6
+		}
+
+		PlayFabHttpsCurlData.active_requests[var_3_3] = var_3_7
+
+		var_3_4:post(var_3_5, var_3_0, var_3_1, curl_callback, var_3_3, var_3_6)
+
+		PlayFabHttpsCurlData.request_id = var_3_3
 	end
-
-	local base_url = "https://" .. PlayFabSettings.settings.titleId .. ".playfabapi.com"
-	local id = PlayFabHttpsCurlData.request_id + 1
-	local curl_manager = Managers.curl
-	local full_url = base_url .. url_path
-	local options = {
-		[curl_manager._curl.OPT_SSL_OPTIONS] = curl_manager._curl.SSLOPT_NO_REVOKE,
-	}
-	local request_data = {
-		retries = 0,
-		onSuccess = on_success_callback,
-		onFail = optional_on_fail_callback,
-		url = full_url,
-		body = json_request,
-		headers = headers,
-		request_cb = curl_callback,
-		id = id,
-		options = options,
-	}
-
-	PlayFabHttpsCurlData.active_requests[id] = request_data
-
-	curl_manager:post(full_url, json_request, headers, curl_callback, id, options)
-
-	PlayFabHttpsCurlData.request_id = id
-end
-
-return PlayFabHttpsCurl
+}

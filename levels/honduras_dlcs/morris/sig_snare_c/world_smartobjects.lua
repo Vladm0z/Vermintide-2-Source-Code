@@ -1,13 +1,13 @@
-﻿-- chunkname: @levels/honduras_dlcs/morris/sig_snare_c/world_smartobjects.lua
+-- chunkname: @levels/honduras_dlcs/morris/sig_snare_c/world_smartobjects.lua
 
-local smart_objects = {}
-local smart_object_count = 0
-local version = "v1"
-local ledgelator_version = "2017.MAY.05.05"
+local var_0_0 = {}
+local var_0_1 = 0
+local var_0_2 = "v1"
+local var_0_3 = "2017.MAY.05.05"
 
 return {
-	smart_objects = smart_objects,
-	smart_object_count = smart_object_count,
-	version = version,
-	ledgelator_version = ledgelator_version,
+	smart_objects = var_0_0,
+	smart_object_count = var_0_1,
+	version = var_0_2,
+	ledgelator_version = var_0_3
 }

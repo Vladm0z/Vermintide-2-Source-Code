@@ -1,4 +1,4 @@
-﻿-- chunkname: @dialogues/generated/lookup_wood_elf_elven_ruins.lua
+-- chunkname: @dialogues/generated/lookup_wood_elf_elven_ruins.lua
 
 assert(DialogueLookup[DialogueLookup_n + 1] == nil)
 assert(DialogueLookup[DialogueLookup_n + 2] == nil)

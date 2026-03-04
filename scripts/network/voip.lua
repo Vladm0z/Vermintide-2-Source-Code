@@ -1,318 +1,315 @@
-﻿-- chunkname: @scripts/network/voip.lua
+-- chunkname: @scripts/network/voip.lua
 
-local function voip_info_print(...)
-	local always_print = true
+local function var_0_0(...)
+	local var_1_0 = true
 
-	if script_data.debug_voip or always_print then
+	if script_data.debug_voip or var_1_0 then
 		printf(...)
 	end
 end
 
-local function voip_warning_print(...)
+local function var_0_1(...)
 	Application.warning(...)
 end
 
 Voip = class(Voip)
 
-local TALKING_THRESHOLD = -65
-local has_steam = rawget(_G, "Steam") and rawget(_G, "Steam").connected() and not Development.parameter("use_lan_backend")
-local disable_voip = Development.parameter("disable_voip")
+local var_0_2 = -65
+local var_0_3 = rawget(_G, "Steam") and rawget(_G, "Steam").connected() and not Development.parameter("use_lan_backend")
+local var_0_4 = Development.parameter("disable_voip")
 
-if has_steam and not disable_voip or DEDICATED_SERVER then
+if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 	require("scripts/ui/views/voice_chat_ui")
 
-	Voip.init = function (self, is_server, _unused_network_lobby_)
-		self._own_peer_id = Network.peer_id()
+	function Voip.init(arg_3_0, arg_3_1, arg_3_2)
+		arg_3_0._own_peer_id = Network.peer_id()
 
-		self:_ensure_voip_set_up()
-		voip_info_print("[Voip] Initializing Steam Voip")
+		arg_3_0:_ensure_voip_set_up()
+		var_0_0("[Voip] Initializing Steam Voip")
 
-		self._is_server = is_server
+		arg_3_0._is_server = arg_3_1
 
-		local world_name = "voip_world"
-		local shading_callback, layer
-		local world = Managers.world:create_world(world_name, GameSettingsDevelopment.default_environment, shading_callback, layer, Application.DISABLE_PHYSICS, Application.DISABLE_APEX_CLOTH, Application.DISABLE_RENDERING)
+		local var_3_0 = "voip_world"
+		local var_3_1
+		local var_3_2
+		local var_3_3 = Managers.world:create_world(var_3_0, GameSettingsDevelopment.default_environment, var_3_1, var_3_2, Application.DISABLE_PHYSICS, Application.DISABLE_APEX_CLOTH, Application.DISABLE_RENDERING)
 
-		self._world = world
-		self._wwise_world = Wwise.wwise_world(world)
-		self._member_buffer = {}
-		self._voip_rooms = {}
-		self._voip_room_by_peer = {}
-		self._added_members = {}
-		self._muted_peers = {}
-		self._peer_playing_id = {}
-		self._push_to_talk = Application.user_setting("voip_push_to_talk")
-		self._push_to_talk_active = false
-		self._enabled = Application.user_setting("voip_is_enabled")
+		arg_3_0._world = var_3_3
+		arg_3_0._wwise_world = Wwise.wwise_world(var_3_3)
+		arg_3_0._member_buffer = {}
+		arg_3_0._voip_rooms = {}
+		arg_3_0._voip_room_by_peer = {}
+		arg_3_0._added_members = {}
+		arg_3_0._muted_peers = {}
+		arg_3_0._peer_playing_id = {}
+		arg_3_0._push_to_talk = Application.user_setting("voip_push_to_talk")
+		arg_3_0._push_to_talk_active = false
+		arg_3_0._enabled = Application.user_setting("voip_is_enabled")
 
-		self:_create_gui()
-		Managers.persistent_event:register(self, "on_player_joined_party", "peer_joined_party")
+		arg_3_0:_create_gui()
+		Managers.persistent_event:register(arg_3_0, "on_player_joined_party", "peer_joined_party")
 	end
 
-	Voip.set_input_manager = function (self, input_manager)
-		self._input_manager = input_manager
+	function Voip.set_input_manager(arg_4_0, arg_4_1)
+		arg_4_0._input_manager = arg_4_1
 
-		if self._voice_chat_ui then
-			self._voice_chat_ui:set_input_manager(input_manager)
+		if arg_4_0._voice_chat_ui then
+			arg_4_0._voice_chat_ui:set_input_manager(arg_4_1)
 		end
 	end
 
-	Voip._create_gui = function (self, own_peer_id)
-		local top_world = Managers.world:world("top_ingame_view")
+	function Voip._create_gui(arg_5_0, arg_5_1)
+		local var_5_0 = Managers.world:world("top_ingame_view")
 
-		self._ui_top_renderer = UIRenderer.create(top_world, "material", "materials/ui/ui_1080p_voice_chat", "material", "materials/fonts/gw_fonts")
+		arg_5_0._ui_top_renderer = UIRenderer.create(var_5_0, "material", "materials/ui/ui_1080p_voice_chat", "material", "materials/fonts/gw_fonts")
 
-		local context = {
+		local var_5_1 = {
 			player_manager = Managers.player,
-			ui_top_renderer = self._ui_top_renderer,
-			voip = self,
+			ui_top_renderer = arg_5_0._ui_top_renderer,
+			voip = arg_5_0
 		}
 
-		self._voice_chat_ui = VoiceChatUI:new(context)
+		arg_5_0._voice_chat_ui = VoiceChatUI:new(var_5_1)
 
-		self._voice_chat_ui:set_input_manager(Managers.input)
+		arg_5_0._voice_chat_ui:set_input_manager(Managers.input)
 	end
 
-	local members_in_own_room = {}
+	local var_0_5 = {}
 
-	Voip.members_in_own_room = function (self)
-		table.clear(members_in_own_room)
+	function Voip.members_in_own_room(arg_6_0)
+		table.clear(var_0_5)
 
-		local peer_room = self._own_voip_room_id
-
-		if not peer_room then
-			return members_in_own_room
+		if not arg_6_0._own_voip_room_id then
+			return var_0_5
 		end
 
-		SteamVoipClient.members(self._own_voip_client, members_in_own_room)
+		SteamVoipClient.members(arg_6_0._own_voip_client, var_0_5)
 
-		return members_in_own_room
+		return var_0_5
 	end
 
-	Voip.register_rpcs = function (self, network_event_delegate, network_transmit)
-		self._network_transmit = network_transmit
-		self._network_event_delegate = network_event_delegate
+	function Voip.register_rpcs(arg_7_0, arg_7_1, arg_7_2)
+		arg_7_0._network_transmit = arg_7_2
+		arg_7_0._network_event_delegate = arg_7_1
 
-		network_event_delegate:register(self, "rpc_voip_room_to_join", "rpc_voip_room_request", "room_member_removed")
-		network_event_delegate:register_with_return(self, "room_member_added")
+		arg_7_1:register(arg_7_0, "rpc_voip_room_to_join", "rpc_voip_room_request", "room_member_removed")
+		arg_7_1:register_with_return(arg_7_0, "room_member_added")
 	end
 
-	Voip.unregister_rpcs = function (self)
-		self._network_event_delegate:unregister(self)
+	function Voip.unregister_rpcs(arg_8_0)
+		arg_8_0._network_event_delegate:unregister(arg_8_0)
 
-		self._network_event_delegate = nil
-		self._network_transmit = nil
+		arg_8_0._network_event_delegate = nil
+		arg_8_0._network_transmit = nil
 	end
 
-	Voip.room_member_removed = function (self, callback_object, room_id, peer_id)
-		if not peer_id then
-			voip_warning_print("[Voip] Got engine callback to remove peer in room %s but peer was nil", room_id)
+	function Voip.room_member_removed(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+		if not arg_9_3 then
+			var_0_1("[Voip] Got engine callback to remove peer in room %s but peer was nil", arg_9_2)
 
 			return
 		end
 
-		self._added_members[peer_id] = nil
+		arg_9_0._added_members[arg_9_3] = nil
 
-		local playing_id = self._peer_playing_id[peer_id]
+		local var_9_0 = arg_9_0._peer_playing_id[arg_9_3]
 
-		if playing_id ~= nil then
-			WwiseWorld.stop_voip_output(self._wwise_world, playing_id)
+		if var_9_0 ~= nil then
+			WwiseWorld.stop_voip_output(arg_9_0._wwise_world, var_9_0)
 
-			self._peer_playing_id[peer_id] = nil
+			arg_9_0._peer_playing_id[arg_9_3] = nil
 		end
 	end
 
-	Voip.room_member_added = function (self, room_id, peer_id)
-		voip_info_print("[Voip] Peer %s joined room %s (my room id %q)", peer_id, room_id, self._own_voip_room_id)
+	function Voip.room_member_added(arg_10_0, arg_10_1, arg_10_2)
+		var_0_0("[Voip] Peer %s joined room %s (my room id %q)", arg_10_2, arg_10_1, arg_10_0._own_voip_room_id)
 
-		self._added_members[peer_id] = true
+		arg_10_0._added_members[arg_10_2] = true
 
-		local playing_id = WwiseWorld.start_voip_output(self._wwise_world, "Play_voip")
+		local var_10_0 = WwiseWorld.start_voip_output(arg_10_0._wwise_world, "Play_voip")
 
-		self._peer_playing_id[peer_id] = playing_id
+		arg_10_0._peer_playing_id[arg_10_2] = var_10_0
 
-		return playing_id
+		return var_10_0
 	end
 
-	Voip.rpc_voip_room_request = function (self, channel_id, enter)
-		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+	function Voip.rpc_voip_room_request(arg_11_0, arg_11_1, arg_11_2)
+		local var_11_0 = CHANNEL_TO_PEER_ID[arg_11_1]
 
-		assert(self._is_server, "[Voip] Got request from %s to %s but is not server", peer_id, enter and "enter" or "leave")
+		assert(arg_11_0._is_server, "[Voip] Got request from %s to %s but is not server", var_11_0, arg_11_2 and "enter" or "leave")
 
-		local party = Managers.party:get_party_from_player_id(peer_id, 1)
+		local var_11_1 = Managers.party:get_party_from_player_id(var_11_0, 1)
 
-		if not party or party.party_id == 0 then
+		if not var_11_1 or var_11_1.party_id == 0 then
 			return
 		end
 
-		local party_id = party.party_id
+		local var_11_2 = var_11_1.party_id
 
-		if self:_is_peer_in_party_room(peer_id, party_id) then
+		if arg_11_0:_is_peer_in_party_room(var_11_0, var_11_2) then
 			return
 		end
 
-		self:_remove_peer_from_room(peer_id)
-		self:_ensure_voip_room_set_up(party_id)
+		arg_11_0:_remove_peer_from_room(var_11_0)
+		arg_11_0:_ensure_voip_room_set_up(var_11_2)
 
-		if enter then
-			self:_add_peer_to_room(peer_id, party_id)
+		if arg_11_2 then
+			arg_11_0:_add_peer_to_room(var_11_0, var_11_2)
 		end
 	end
 
-	Voip.rpc_voip_room_to_join = function (self, channel_id, room_id)
-		local host_peer_id = CHANNEL_TO_PEER_ID[channel_id]
+	function Voip.rpc_voip_room_to_join(arg_12_0, arg_12_1, arg_12_2)
+		local var_12_0 = CHANNEL_TO_PEER_ID[arg_12_1]
 
-		if self:_is_in_room() then
-			voip_warning_print("[Voip] Received rpc 'rpc_voip_room_to_join' from host %s but we're already in a room.", host_peer_id)
+		if arg_12_0:_is_in_room() then
+			var_0_1("[Voip] Received rpc 'rpc_voip_room_to_join' from host %s but we're already in a room.", var_12_0)
 
 			return
 		end
 
-		voip_info_print("[Voip] Joining room %s (host %q) as %s.", room_id, host_peer_id, host_peer_id == self._own_peer_id and "host" or "client")
+		var_0_0("[Voip] Joining room %s (host %q) as %s.", arg_12_2, var_12_0, var_12_0 == arg_12_0._own_peer_id and "host" or "client")
 
-		self._room_host = host_peer_id
-		self._own_voip_room_id = room_id
+		arg_12_0._room_host = var_12_0
+		arg_12_0._own_voip_room_id = arg_12_2
 
-		local voip_client = SteamVoip.join_room(host_peer_id, room_id)
+		local var_12_1 = SteamVoip.join_room(var_12_0, arg_12_2)
 
-		self._voip_room_by_peer[self._own_peer_id] = room_id
-		self._own_voip_client = voip_client
+		arg_12_0._voip_room_by_peer[arg_12_0._own_peer_id] = arg_12_2
+		arg_12_0._own_voip_client = var_12_1
 
-		SteamVoipClient.select_out(voip_client, true)
-		SteamVoipClient.select_in(voip_client, true)
-		self:_update_push_to_talk(true)
+		SteamVoipClient.select_out(var_12_1, true)
+		SteamVoipClient.select_in(var_12_1, true)
+		arg_12_0:_update_push_to_talk(true)
 	end
 
-	Voip.destroy = function (self)
-		voip_info_print("[Voip] Destroying VOIP.")
-		self:_tear_down()
+	function Voip.destroy(arg_13_0)
+		var_0_0("[Voip] Destroying VOIP.")
+		arg_13_0:_tear_down()
 
-		self.room_member_removed = nil
-		self.room_member_added = nil
+		arg_13_0.room_member_removed = nil
+		arg_13_0.room_member_added = nil
 
-		if self._world then
-			Managers.world:destroy_world(self._world)
+		if arg_13_0._world then
+			Managers.world:destroy_world(arg_13_0._world)
 		end
 
-		self:_destroy_voice_chat_ui()
-		Managers.persistent_event:unregister("on_player_joined_party", self)
+		arg_13_0:_destroy_voice_chat_ui()
+		Managers.persistent_event:unregister("on_player_joined_party", arg_13_0)
 	end
 
-	Voip._destroy_voice_chat_ui = function (self)
-		self._voice_chat_ui:destroy()
+	function Voip._destroy_voice_chat_ui(arg_14_0)
+		arg_14_0._voice_chat_ui:destroy()
 
-		self._voice_chat_ui = nil
+		arg_14_0._voice_chat_ui = nil
 
-		local top_world = Managers.world:world("top_ingame_view")
+		local var_14_0 = Managers.world:world("top_ingame_view")
 
-		UIRenderer.destroy(self._ui_top_renderer, top_world)
+		UIRenderer.destroy(arg_14_0._ui_top_renderer, var_14_0)
 
-		self._ui_top_renderer = nil
+		arg_14_0._ui_top_renderer = nil
 	end
 
-	Voip.update = function (self, dt, t)
-		self:_debug_voip(t)
+	function Voip.update(arg_15_0, arg_15_1, arg_15_2)
+		arg_15_0:_debug_voip(arg_15_2)
 
-		if not self._voip_set_up then
+		if not arg_15_0._voip_set_up then
 			return
 		end
 
-		if self._own_voip_client then
-			if SteamVoipClient.broken_host(self._own_voip_client) then
-				voip_warning_print("[STEAM VOIP]: Connection to host %q broken. Leaving room.", tostring(self._room_host))
-				self:_ensure_left_voip_room()
+		if arg_15_0._own_voip_client then
+			if SteamVoipClient.broken_host(arg_15_0._own_voip_client) then
+				var_0_1("[STEAM VOIP]: Connection to host %q broken. Leaving room.", tostring(arg_15_0._room_host))
+				arg_15_0:_ensure_left_voip_room()
 			else
-				for peer_id, _ in pairs(self._added_members) do
-					if not self._muted_peers[peer_id] then
-						self:unmute_member(peer_id)
+				for iter_15_0, iter_15_1 in pairs(arg_15_0._added_members) do
+					if not arg_15_0._muted_peers[iter_15_0] then
+						arg_15_0:unmute_member(iter_15_0)
 					end
 
-					local mute_out = self._push_to_talk and not self._push_to_talk_active
-
-					if mute_out then
-						voip_info_print("[Voip] Muting voip out for %q due to push_to_talk", peer_id)
-						SteamVoipClient.select_out(self._own_voip_client, false, peer_id)
+					if arg_15_0._push_to_talk and not arg_15_0._push_to_talk_active then
+						var_0_0("[Voip] Muting voip out for %q due to push_to_talk", iter_15_0)
+						SteamVoipClient.select_out(arg_15_0._own_voip_client, false, iter_15_0)
 					end
 
-					self._added_members[peer_id] = nil
+					arg_15_0._added_members[iter_15_0] = nil
 				end
 
-				self:_update_push_to_talk(false)
+				arg_15_0:_update_push_to_talk(false)
 			end
 		end
 
-		if self._is_server then
-			for party_id, room_id in pairs(self._voip_rooms) do
-				local broken_members = SteamVoipRoom.broken_members(room_id)
+		if arg_15_0._is_server then
+			for iter_15_2, iter_15_3 in pairs(arg_15_0._voip_rooms) do
+				local var_15_0 = SteamVoipRoom.broken_members(iter_15_3)
 
-				if broken_members then
-					for _, peer_id in pairs(broken_members) do
-						voip_info_print("[Voip] Removing broken voip member: %q", tostring(peer_id))
-						self:_remove_peer_from_room(peer_id)
+				if var_15_0 then
+					for iter_15_4, iter_15_5 in pairs(var_15_0) do
+						var_0_0("[Voip] Removing broken voip member: %q", tostring(iter_15_5))
+						arg_15_0:_remove_peer_from_room(iter_15_5)
 
-						if self._own_voip_room_id == room_id then
-							SteamVoipClient.select_out(self._own_voip_client, false, peer_id)
-							SteamVoipClient.select_in(self._own_voip_client, false, peer_id)
+						if arg_15_0._own_voip_room_id == iter_15_3 then
+							SteamVoipClient.select_out(arg_15_0._own_voip_client, false, iter_15_5)
+							SteamVoipClient.select_in(arg_15_0._own_voip_client, false, iter_15_5)
 						end
 					end
 				end
 			end
 
-			if self:_is_in_room() then
-				local member_buffer, member_count = SteamVoipRoom.members(self._own_voip_room_id, self._member_buffer)
+			if arg_15_0:_is_in_room() then
+				local var_15_1, var_15_2 = SteamVoipRoom.members(arg_15_0._own_voip_room_id, arg_15_0._member_buffer)
 
-				for i = 1, member_count do
-					local peer_id = member_buffer[i]
+				for iter_15_6 = 1, var_15_2 do
+					local var_15_3 = var_15_1[iter_15_6]
 
-					if peer_id ~= self._own_peer_id and PEER_ID_TO_CHANNEL[peer_id] == nil then
-						voip_info_print("[Voip] Removing voip member due to not having a connection to it: %q", tostring(peer_id))
-						self:_remove_peer_from_room(peer_id)
-						SteamVoipClient.select_out(self._own_voip_client, false, peer_id)
-						SteamVoipClient.select_in(self._own_voip_client, false, peer_id)
+					if var_15_3 ~= arg_15_0._own_peer_id and PEER_ID_TO_CHANNEL[var_15_3] == nil then
+						var_0_0("[Voip] Removing voip member due to not having a connection to it: %q", tostring(var_15_3))
+						arg_15_0:_remove_peer_from_room(var_15_3)
+						SteamVoipClient.select_out(arg_15_0._own_voip_client, false, var_15_3)
+						SteamVoipClient.select_in(arg_15_0._own_voip_client, false, var_15_3)
 					end
 				end
 			end
 		end
 
 		if not DEDICATED_SERVER then
-			self._voice_chat_ui:update(dt)
+			arg_15_0._voice_chat_ui:update(arg_15_1)
 		end
 	end
 
-	Voip._debug_voip = function (self, t)
+	function Voip._debug_voip(arg_16_0, arg_16_1)
 		if script_data.debug_voip and not DEDICATED_SERVER then
-			if self._own_voip_client then
+			if arg_16_0._own_voip_client then
 				Debug.text("VoIP")
-				Debug.text("VoIP - PushToTalk %s (%s)", self._push_to_talk and "on" or "off", self._push_to_talk_active and "pushing" or "-")
+				Debug.text("VoIP - PushToTalk %s (%s)", arg_16_0._push_to_talk and "on" or "off", arg_16_0._push_to_talk_active and "pushing" or "-")
 				Debug.text("VoIP - Client members")
 
-				for peer_index, peer_id in pairs(SteamVoipClient.members(self._own_voip_client)) do
-					local level = SteamVoipClient.audio_level(self._own_voip_client, peer_id)
+				for iter_16_0, iter_16_1 in pairs(SteamVoipClient.members(arg_16_0._own_voip_client)) do
+					local var_16_0 = SteamVoipClient.audio_level(arg_16_0._own_voip_client, iter_16_1)
 
-					Debug.text("%s [%s] %s", tostring(peer_index), tostring(peer_id), level)
+					Debug.text("%s [%s] %s", tostring(iter_16_0), tostring(iter_16_1), var_16_0)
 				end
 
-				if self._is_server then
-					for party_id, room_id in pairs(self._voip_rooms) do
-						Debug.text("VoIP - Room members %s", room_id)
+				if arg_16_0._is_server then
+					for iter_16_2, iter_16_3 in pairs(arg_16_0._voip_rooms) do
+						Debug.text("VoIP - Room members %s", iter_16_3)
 
-						for peer_index, peer_id in pairs(SteamVoipRoom.members(room_id)) do
-							if room_id == self._own_voip_room_id then
-								local speaking = self:is_talking(peer_id)
+						for iter_16_4, iter_16_5 in pairs(SteamVoipRoom.members(iter_16_3)) do
+							if iter_16_3 == arg_16_0._own_voip_room_id then
+								local var_16_1 = arg_16_0:is_talking(iter_16_5)
 
-								self._debug_talking_delay = self._debug_talking_delay or {}
+								arg_16_0._debug_talking_delay = arg_16_0._debug_talking_delay or {}
 
-								if speaking then
-									self._debug_talking_delay[peer_id] = t + 0.3
-								elseif t > (self._debug_talking_delay[peer_id] or math.huge) then
-									self._debug_talking_delay[peer_id] = nil
+								if var_16_1 then
+									arg_16_0._debug_talking_delay[iter_16_5] = arg_16_1 + 0.3
+								elseif arg_16_1 > (arg_16_0._debug_talking_delay[iter_16_5] or math.huge) then
+									arg_16_0._debug_talking_delay[iter_16_5] = nil
 								end
 
-								speaking = (not self._push_to_talk or self._push_to_talk_active) and not not self._debug_talking_delay[peer_id]
+								local var_16_2 = (not arg_16_0._push_to_talk or arg_16_0._push_to_talk_active) and not not arg_16_0._debug_talking_delay[iter_16_5]
 
-								Debug.text("[%s] Speaking: %s", peer_id, speaking and "Yes" or "No")
+								Debug.text("[%s] Speaking: %s", iter_16_5, var_16_2 and "Yes" or "No")
 							else
-								Debug.text("[%s] In another room", peer_id)
+								Debug.text("[%s] In another room", iter_16_5)
 							end
 						end
 					end
@@ -323,384 +320,373 @@ if has_steam and not disable_voip or DEDICATED_SERVER then
 		end
 	end
 
-	Voip._update_push_to_talk = function (self, force_update)
-		local input_service = Managers.input:get_service("chat_input")
-		local push_to_talk_active = self._push_to_talk and not not input_service and not not input_service:get("voip_push_to_talk")
+	function Voip._update_push_to_talk(arg_17_0, arg_17_1)
+		local var_17_0 = Managers.input:get_service("chat_input")
+		local var_17_1 = arg_17_0._push_to_talk and not not var_17_0 and not not var_17_0:get("voip_push_to_talk")
 
-		push_to_talk_active = push_to_talk_active and not Managers.chat:chat_is_focused()
+		var_17_1 = var_17_1 and not Managers.chat:chat_is_focused()
 
-		if push_to_talk_active ~= self._push_to_talk_active or force_update then
-			self._push_to_talk_active = push_to_talk_active
+		if var_17_1 ~= arg_17_0._push_to_talk_active or arg_17_1 then
+			arg_17_0._push_to_talk_active = var_17_1
 
-			local should_be_heard = not self._push_to_talk or push_to_talk_active
+			local var_17_2 = not arg_17_0._push_to_talk or var_17_1
 
-			for index, member_peer_id in pairs(SteamVoipClient.members(self._own_voip_client)) do
-				if not self._muted_peers[member_peer_id] then
-					SteamVoipClient.select_out(self._own_voip_client, should_be_heard, member_peer_id)
-					voip_info_print("[Voip] %s voip out for %s due to %s", should_be_heard and "unmuting" or "muting", member_peer_id, self._push_to_talk and "push_to_talk" or "push_to_talk not being active")
+			for iter_17_0, iter_17_1 in pairs(SteamVoipClient.members(arg_17_0._own_voip_client)) do
+				if not arg_17_0._muted_peers[iter_17_1] then
+					SteamVoipClient.select_out(arg_17_0._own_voip_client, var_17_2, iter_17_1)
+					var_0_0("[Voip] %s voip out for %s due to %s", var_17_2 and "unmuting" or "muting", iter_17_1, arg_17_0._push_to_talk and "push_to_talk" or "push_to_talk not being active")
 				end
 			end
 		end
 	end
 
-	Voip.mute_member = function (self, member)
-		if self._own_voip_client == nil then
+	function Voip.mute_member(arg_18_0, arg_18_1)
+		if arg_18_0._own_voip_client == nil then
 			return
 		end
 
-		self._muted_peers[member] = true
+		arg_18_0._muted_peers[arg_18_1] = true
 
-		local members = SteamVoipClient.members(self._own_voip_client)
+		local var_18_0 = SteamVoipClient.members(arg_18_0._own_voip_client)
 
-		if table.contains(members, member) then
-			voip_info_print("[Voip] Muting voip member: %q", tostring(member))
-			SteamVoipClient.select_out(self._own_voip_client, false, member)
-			SteamVoipClient.select_in(self._own_voip_client, false, member)
+		if table.contains(var_18_0, arg_18_1) then
+			var_0_0("[Voip] Muting voip member: %q", tostring(arg_18_1))
+			SteamVoipClient.select_out(arg_18_0._own_voip_client, false, arg_18_1)
+			SteamVoipClient.select_in(arg_18_0._own_voip_client, false, arg_18_1)
 		end
 	end
 
-	Voip.unmute_member = function (self, member)
-		if self._own_voip_client == nil then
+	function Voip.unmute_member(arg_19_0, arg_19_1)
+		if arg_19_0._own_voip_client == nil then
 			return
 		end
 
-		self._muted_peers[member] = nil
+		arg_19_0._muted_peers[arg_19_1] = nil
 
-		local members = SteamVoipClient.members(self._own_voip_client)
+		local var_19_0 = SteamVoipClient.members(arg_19_0._own_voip_client)
 
-		if table.contains(members, member) then
-			voip_info_print("[Voip] Unmuting voip member: %q", tostring(member))
-			SteamVoipClient.select_out(self._own_voip_client, true, member)
-			SteamVoipClient.select_in(self._own_voip_client, true, member)
+		if table.contains(var_19_0, arg_19_1) then
+			var_0_0("[Voip] Unmuting voip member: %q", tostring(arg_19_1))
+			SteamVoipClient.select_out(arg_19_0._own_voip_client, true, arg_19_1)
+			SteamVoipClient.select_in(arg_19_0._own_voip_client, true, arg_19_1)
 		end
 
-		self:_update_push_to_talk(true)
+		arg_19_0:_update_push_to_talk(true)
 	end
 
-	Voip.peer_muted = function (self, peer_id)
-		return self._muted_peers[peer_id]
+	function Voip.peer_muted(arg_20_0, arg_20_1)
+		return arg_20_0._muted_peers[arg_20_1]
 	end
 
-	Voip._ensure_left_voip_room = function (self, is_destroy)
-		if not self:_is_in_room() then
+	function Voip._ensure_left_voip_room(arg_21_0, arg_21_1)
+		if not arg_21_0:_is_in_room() then
 			return
 		end
 
-		voip_info_print("[Voip] Leaving VOIP room %s", self._own_voip_room_id)
+		var_0_0("[Voip] Leaving VOIP room %s", arg_21_0._own_voip_room_id)
 
-		for peer_id, playing_id in pairs(self._peer_playing_id) do
-			WwiseWorld.stop_voip_output(self._wwise_world, playing_id)
+		for iter_21_0, iter_21_1 in pairs(arg_21_0._peer_playing_id) do
+			WwiseWorld.stop_voip_output(arg_21_0._wwise_world, iter_21_1)
 		end
 
-		table.clear(self._peer_playing_id)
-		SteamVoip.leave_room(self._own_voip_client)
+		table.clear(arg_21_0._peer_playing_id)
+		SteamVoip.leave_room(arg_21_0._own_voip_client)
 
-		self._room_host = nil
-		self._own_voip_room_id = nil
-		self._own_voip_client = nil
-		self._voip_room_by_peer[self._own_peer_id] = nil
+		arg_21_0._room_host = nil
+		arg_21_0._own_voip_room_id = nil
+		arg_21_0._own_voip_client = nil
+		arg_21_0._voip_room_by_peer[arg_21_0._own_peer_id] = nil
 
-		if self._is_server then
-			self:rpc_voip_room_request(PEER_ID_TO_CHANNEL[self._own_peer_id], false)
-		elseif self._network_transmit then
-			self._network_transmit:send_rpc_server("rpc_voip_room_request", false)
+		if arg_21_0._is_server then
+			arg_21_0:rpc_voip_room_request(PEER_ID_TO_CHANNEL[arg_21_0._own_peer_id], false)
+		elseif arg_21_0._network_transmit then
+			arg_21_0._network_transmit:send_rpc_server("rpc_voip_room_request", false)
 		end
 	end
 
-	Voip._join_voip_room = function (self)
-		if self:_is_in_room() then
+	function Voip._join_voip_room(arg_22_0)
+		if arg_22_0:_is_in_room() then
 			return
 		end
 
-		if self._is_server then
-			self:rpc_voip_room_request(PEER_ID_TO_CHANNEL[self._own_peer_id], true)
-		elseif self._network_transmit then
-			voip_info_print("[Voip] Asking server to join a voip room")
-			self._network_transmit:send_rpc_server("rpc_voip_room_request", true)
+		if arg_22_0._is_server then
+			arg_22_0:rpc_voip_room_request(PEER_ID_TO_CHANNEL[arg_22_0._own_peer_id], true)
+		elseif arg_22_0._network_transmit then
+			var_0_0("[Voip] Asking server to join a voip room")
+			arg_22_0._network_transmit:send_rpc_server("rpc_voip_room_request", true)
 		end
 	end
 
-	Voip.set_volume = function (self, voip_bus_volume)
-		assert(voip_bus_volume >= 0 and voip_bus_volume <= 100)
-		WwiseWorld.set_global_parameter(self._wwise_world, "voip_bus_volume", voip_bus_volume)
+	function Voip.set_volume(arg_23_0, arg_23_1)
+		assert(arg_23_1 >= 0 and arg_23_1 <= 100)
+		WwiseWorld.set_global_parameter(arg_23_0._wwise_world, "voip_bus_volume", arg_23_1)
 	end
 
-	Voip.set_enabled = function (self, enabled)
-		if not self._own_peer_id then
+	function Voip.set_enabled(arg_24_0, arg_24_1)
+		if not arg_24_0._own_peer_id then
 			return
 		end
 
-		self._enabled = enabled
+		arg_24_0._enabled = arg_24_1
 
-		if enabled then
-			self:_join_voip_room()
+		if arg_24_1 then
+			arg_24_0:_join_voip_room()
 		else
-			self:_ensure_left_voip_room()
+			arg_24_0:_ensure_left_voip_room()
 		end
 	end
 
-	Voip.set_push_to_talk = function (self, push_to_talk)
-		self._push_to_talk = push_to_talk
+	function Voip.set_push_to_talk(arg_25_0, arg_25_1)
+		arg_25_0._push_to_talk = arg_25_1
 
-		if self._own_voip_client then
-			for index, member_peer_id in pairs(SteamVoipClient.members(self._own_voip_client)) do
-				SteamVoipClient.select_out(self._own_voip_client, not push_to_talk, member_peer_id)
+		if arg_25_0._own_voip_client then
+			for iter_25_0, iter_25_1 in pairs(SteamVoipClient.members(arg_25_0._own_voip_client)) do
+				SteamVoipClient.select_out(arg_25_0._own_voip_client, not arg_25_1, iter_25_1)
 			end
 		end
 	end
 
-	Voip.is_talking = function (self, peer_id)
-		if not self._own_voip_client then
+	function Voip.is_talking(arg_26_0, arg_26_1)
+		if not arg_26_0._own_voip_client then
 			return false
 		end
 
-		if peer_id == self._own_peer_id then
-			local audio_recording = SteamVoipClient.audio_recording(self._own_voip_client)
-
-			return audio_recording
+		if arg_26_1 == arg_26_0._own_peer_id then
+			return (SteamVoipClient.audio_recording(arg_26_0._own_voip_client))
 		else
-			local audio_level = SteamVoipClient.audio_level(self._own_voip_client, peer_id)
-
-			return audio_level > TALKING_THRESHOLD
+			return SteamVoipClient.audio_level(arg_26_0._own_voip_client, arg_26_1) > var_0_2
 		end
 	end
 
-	Voip.is_push_to_talk_active = function (self)
-		return self._push_to_talk and self._push_to_talk_active
+	function Voip.is_push_to_talk_active(arg_27_0)
+		return arg_27_0._push_to_talk and arg_27_0._push_to_talk_active
 	end
 
-	Voip.push_to_talk_enabled = function (self)
-		return self._push_to_talk
+	function Voip.push_to_talk_enabled(arg_28_0)
+		return arg_28_0._push_to_talk
 	end
 
-	Voip.audio_level = function (self, peer_id)
-		local audio_level = SteamVoipClient.audio_level(self._own_voip_client, peer_id)
-
-		return audio_level
+	function Voip.audio_level(arg_29_0, arg_29_1)
+		return (SteamVoipClient.audio_level(arg_29_0._own_voip_client, arg_29_1))
 	end
 
-	Voip._tear_down = function (self)
-		if not self._voip_set_up then
+	function Voip._tear_down(arg_30_0)
+		if not arg_30_0._voip_set_up then
 			return
 		end
 
-		voip_info_print("[Voip] Resetting Voip")
-		self:_ensure_left_voip_room()
+		var_0_0("[Voip] Resetting Voip")
+		arg_30_0:_ensure_left_voip_room()
 
-		local voip_rooms = self._voip_rooms
+		local var_30_0 = arg_30_0._voip_rooms
 
-		if voip_rooms then
-			for party_id, voip_room in pairs(voip_rooms) do
-				SteamVoip.destroy_room(voip_room)
+		if var_30_0 then
+			for iter_30_0, iter_30_1 in pairs(var_30_0) do
+				SteamVoip.destroy_room(iter_30_1)
 			end
 
-			table.clear(voip_rooms)
+			table.clear(var_30_0)
 		end
 
-		self._voip_set_up = false
+		arg_30_0._voip_set_up = false
 
 		SteamVoip.shutdown()
 	end
 
-	Voip._ensure_voip_set_up = function (self)
-		if self._voip_set_up then
+	function Voip._ensure_voip_set_up(arg_31_0)
+		if arg_31_0._voip_set_up then
 			return
 		end
 
-		self._voip_set_up = true
+		arg_31_0._voip_set_up = true
 
 		SteamVoip.setup()
 
-		self._voip_rooms = {}
-		self._voip_room_by_peer = {}
+		arg_31_0._voip_rooms = {}
+		arg_31_0._voip_room_by_peer = {}
 	end
 
-	Voip._ensure_voip_room_set_up = function (self, party_id)
-		if not self._is_server or self._voip_rooms[party_id] then
+	function Voip._ensure_voip_room_set_up(arg_32_0, arg_32_1)
+		if not arg_32_0._is_server or arg_32_0._voip_rooms[arg_32_1] then
 			return
 		end
 
-		local voip_room = SteamVoip.create_room()
+		local var_32_0 = SteamVoip.create_room()
 
-		self._voip_rooms[party_id] = voip_room
+		arg_32_0._voip_rooms[arg_32_1] = var_32_0
 	end
 
-	Voip._is_in_room = function (self)
-		return self._own_voip_room_id
+	function Voip._is_in_room(arg_33_0)
+		return arg_33_0._own_voip_room_id
 	end
 
-	local voip_room_members = {}
+	local var_0_6 = {}
 
-	Voip._remove_peer_from_room = function (self, peer_id)
-		local current_room = self._voip_room_by_peer[peer_id]
+	function Voip._remove_peer_from_room(arg_34_0, arg_34_1)
+		local var_34_0 = arg_34_0._voip_room_by_peer[arg_34_1]
 
-		if current_room then
-			voip_info_print("[Voip] Removing voip member %s from room %s", peer_id, current_room)
-			table.clear(voip_room_members)
-			SteamVoipRoom.members(current_room, voip_room_members)
+		if var_34_0 then
+			var_0_0("[Voip] Removing voip member %s from room %s", arg_34_1, var_34_0)
+			table.clear(var_0_6)
+			SteamVoipRoom.members(var_34_0, var_0_6)
 
-			local member_is_in_room = table.find(voip_room_members, peer_id)
+			if table.find(var_0_6, arg_34_1) then
+				SteamVoipRoom.remove_member(var_34_0, arg_34_1)
 
-			if member_is_in_room then
-				SteamVoipRoom.remove_member(current_room, peer_id)
-
-				self._voip_room_by_peer[peer_id] = nil
+				arg_34_0._voip_room_by_peer[arg_34_1] = nil
 			end
 
-			SteamVoipRoom.members(current_room, voip_room_members)
+			SteamVoipRoom.members(var_34_0, var_0_6)
 
-			if table.is_empty(voip_room_members) then
-				SteamVoip.destroy_room(current_room)
+			if table.is_empty(var_0_6) then
+				SteamVoip.destroy_room(var_34_0)
 
-				local party_id = table.find(self._voip_rooms, current_room)
+				local var_34_1 = table.find(arg_34_0._voip_rooms, var_34_0)
 
-				self._voip_rooms[party_id] = nil
+				arg_34_0._voip_rooms[var_34_1] = nil
 			end
 
-			if table.is_empty(self._voip_rooms) then
-				-- Nothing
+			if table.is_empty(arg_34_0._voip_rooms) then
+				-- block empty
 			end
 		end
 	end
 
-	Voip._add_peer_to_room = function (self, peer_id, party_id)
-		assert(self._is_server, "[Voip] '_add_peer_to_room' is a server only function")
+	function Voip._add_peer_to_room(arg_35_0, arg_35_1, arg_35_2)
+		assert(arg_35_0._is_server, "[Voip] '_add_peer_to_room' is a server only function")
 
-		local room_id = self._voip_rooms[party_id]
+		local var_35_0 = arg_35_0._voip_rooms[arg_35_2]
 
-		voip_info_print("[Voip] Adding voip member %s to to room %s", peer_id, room_id)
+		var_0_0("[Voip] Adding voip member %s to to room %s", arg_35_1, var_35_0)
 
-		if peer_id == self._own_peer_id then
-			self:rpc_voip_room_to_join(PEER_ID_TO_CHANNEL[peer_id], room_id)
+		if arg_35_1 == arg_35_0._own_peer_id then
+			arg_35_0:rpc_voip_room_to_join(PEER_ID_TO_CHANNEL[arg_35_1], var_35_0)
 		else
-			local room_members = SteamVoipRoom.members(room_id)
-			local member_is_in_room = table.find(room_members, peer_id)
+			local var_35_1 = SteamVoipRoom.members(var_35_0)
 
-			if not member_is_in_room then
-				self._voip_room_by_peer[peer_id] = room_id
+			if not table.find(var_35_1, arg_35_1) then
+				arg_35_0._voip_room_by_peer[arg_35_1] = var_35_0
 
-				SteamVoipRoom.add_member(room_id, peer_id)
+				SteamVoipRoom.add_member(var_35_0, arg_35_1)
 			end
 
-			self._network_transmit:send_rpc("rpc_voip_room_to_join", peer_id, tostring(room_id))
+			arg_35_0._network_transmit:send_rpc("rpc_voip_room_to_join", arg_35_1, tostring(var_35_0))
 		end
 	end
 
-	Voip.peer_joined_party = function (self, peer_id, local_player_id, party_id, slot_id, is_bot)
-		if party_id == 0 or is_bot then
+	function Voip.peer_joined_party(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5)
+		if arg_36_3 == 0 or arg_36_5 then
 			return
 		end
 
-		if self:_is_peer_in_party_room(peer_id, party_id) then
+		if arg_36_0:_is_peer_in_party_room(arg_36_1, arg_36_3) then
 			return
 		end
 
-		if self._is_server then
-			self:_remove_peer_from_room(peer_id)
+		if arg_36_0._is_server then
+			arg_36_0:_remove_peer_from_room(arg_36_1)
 		end
 
-		local is_local = peer_id == self._own_peer_id
+		if arg_36_1 == arg_36_0._own_peer_id then
+			arg_36_0:_ensure_left_voip_room(arg_36_1)
 
-		if is_local then
-			self:_ensure_left_voip_room(peer_id)
-
-			if self._enabled then
-				self:_join_voip_room()
+			if arg_36_0._enabled then
+				arg_36_0:_join_voip_room()
 			end
 		end
 	end
 
-	Voip._is_peer_in_party_room = function (self, peer_id, party_id)
-		local peer_room = self._voip_room_by_peer[peer_id]
+	function Voip._is_peer_in_party_room(arg_37_0, arg_37_1, arg_37_2)
+		local var_37_0 = arg_37_0._voip_room_by_peer[arg_37_1]
 
-		return peer_room ~= nil and peer_room == self._voip_rooms[party_id]
+		return var_37_0 ~= nil and var_37_0 == arg_37_0._voip_rooms[arg_37_2]
 	end
 
-	Voip.peer_disconnected = function (self, peer_id)
-		if self._is_server then
-			self:_remove_peer_from_room(peer_id)
+	function Voip.peer_disconnected(arg_38_0, arg_38_1)
+		if arg_38_0._is_server then
+			arg_38_0:_remove_peer_from_room(arg_38_1)
 		end
 	end
 else
-	Voip.init = function (self)
+	function Voip.init(arg_39_0)
 		return
 	end
 
-	Voip.set_input_manager = function (self, input_manager)
+	function Voip.set_input_manager(arg_40_0, arg_40_1)
 		return
 	end
 
-	Voip.destroy = function (self)
+	function Voip.destroy(arg_41_0)
 		return
 	end
 
-	Voip.register_rpcs = function (self)
+	function Voip.register_rpcs(arg_42_0)
 		return
 	end
 
-	Voip.unregister_rpcs = function (self)
+	function Voip.unregister_rpcs(arg_43_0)
 		return
 	end
 
-	Voip.mute_member = function (self)
+	function Voip.mute_member(arg_44_0)
 		return
 	end
 
-	Voip.unmute_member = function (self)
+	function Voip.unmute_member(arg_45_0)
 		return
 	end
 
-	Voip.update = function (self)
+	function Voip.update(arg_46_0)
 		return
 	end
 
-	Voip.peer_muted = function (self)
+	function Voip.peer_muted(arg_47_0)
 		return
 	end
 
-	Voip.set_volume = function (self)
+	function Voip.set_volume(arg_48_0)
 		return
 	end
 
-	Voip.set_enabled = function (self)
+	function Voip.set_enabled(arg_49_0)
 		return
 	end
 
-	Voip.set_push_to_talk = function (self)
+	function Voip.set_push_to_talk(arg_50_0)
 		return
 	end
 
-	Voip.is_talking = function (self)
+	function Voip.is_talking(arg_51_0)
 		return
 	end
 
-	Voip.audio_level = function (self)
+	function Voip.audio_level(arg_52_0)
 		return -96
 	end
 
-	Voip.push_to_talk_enabled = function (self)
+	function Voip.push_to_talk_enabled(arg_53_0)
 		return
 	end
 
-	Voip.is_push_to_talk_active = function (self)
+	function Voip.is_push_to_talk_active(arg_54_0)
 		return
 	end
 
-	Voip.peer_joined_party = function (self)
+	function Voip.peer_joined_party(arg_55_0)
 		return
 	end
 
-	local empty_table = {}
+	local var_0_7 = {}
 
-	Voip.members_in_own_room = function (self)
-		return empty_table
+	function Voip.members_in_own_room(arg_56_0)
+		return var_0_7
 	end
 
-	Voip._tear_down = function (self)
+	function Voip._tear_down(arg_57_0)
 		return
 	end
 
-	Voip.peer_disconnected = function (self)
+	function Voip.peer_disconnected(arg_58_0)
 		return
 	end
 end

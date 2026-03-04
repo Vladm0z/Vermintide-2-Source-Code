@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/settings/mutators/mutator_increased_deus_potions.lua
+-- chunkname: @scripts/settings/mutators/mutator_increased_deus_potions.lua
 
 return {
 	description = "mutator_increased_deus_potions_desc",
@@ -6,6 +6,6 @@ return {
 	hide_from_player_ui = true,
 	icon = "mutator_icon_increased_deus_potions",
 	pickup_system_multipliers = {
-		deus_potions = 2,
-	},
+		deus_potions = 2
+	}
 }

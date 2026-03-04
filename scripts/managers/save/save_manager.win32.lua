@@ -1,35 +1,35 @@
-﻿-- chunkname: @scripts/managers/save/save_manager.win32.lua
+-- chunkname: @scripts/managers/save/save_manager.win32.lua
 
 require("scripts/managers/save/script_save_token")
 
 SaveManager = class(SaveManager)
 
-SaveManager.init = function (self, disable_cloud_save)
-	if not disable_cloud_save and rawget(_G, "Steam") and Cloud.enabled() then
+function SaveManager.init(arg_1_0, arg_1_1)
+	if not arg_1_1 and rawget(_G, "Steam") and Cloud.enabled() then
 		fassert(rawget(_G, "Steam"), "Steam is required for cloud saves")
 
-		self._impl = Cloud
+		arg_1_0._impl = Cloud
 	else
-		self._impl = SaveSystem
+		arg_1_0._impl = SaveSystem
 	end
 end
 
-SaveManager.auto_save = function (self, file_name, data, callback, force_local_save)
-	local system = force_local_save and SaveSystem or self._impl
-	local token = system.auto_save(file_name, data)
-	local save_token = ScriptSaveToken:new(system, token)
+function SaveManager.auto_save(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	local var_2_0 = arg_2_4 and SaveSystem or arg_2_0._impl
+	local var_2_1 = var_2_0.auto_save(arg_2_1, arg_2_2)
+	local var_2_2 = ScriptSaveToken:new(var_2_0, var_2_1)
 
-	Managers.token:register_token(save_token, callback)
+	Managers.token:register_token(var_2_2, arg_2_3)
 
-	return save_token
+	return var_2_2
 end
 
-SaveManager.auto_load = function (self, file_name, callback, force_local_save)
-	local system = force_local_save and SaveSystem or self._impl
-	local token = system.auto_load(file_name)
-	local save_token = ScriptSaveToken:new(system, token)
+function SaveManager.auto_load(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	local var_3_0 = arg_3_3 and SaveSystem or arg_3_0._impl
+	local var_3_1 = var_3_0.auto_load(arg_3_1)
+	local var_3_2 = ScriptSaveToken:new(var_3_0, var_3_1)
 
-	Managers.token:register_token(save_token, callback)
+	Managers.token:register_token(var_3_2, arg_3_2)
 
-	return save_token
+	return var_3_2
 end

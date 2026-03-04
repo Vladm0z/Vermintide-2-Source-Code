@@ -1,233 +1,210 @@
-﻿-- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_weave_select_weave.lua
+-- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_weave_select_weave.lua
 
-local definitions = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_weave_select_weave_definitions")
-local widget_definitions = definitions.widgets
-local scenegraph_definition = definitions.scenegraph_definition
-local animation_definitions = definitions.animation_definitions
+local var_0_0 = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_weave_select_weave_definitions")
+local var_0_1 = var_0_0.widgets
+local var_0_2 = var_0_0.scenegraph_definition
+local var_0_3 = var_0_0.animation_definitions
 
 StartGameWindowWeaveSelectWeave = class(StartGameWindowWeaveSelectWeave)
 StartGameWindowWeaveSelectWeave.NAME = "StartGameWindowWeaveSelectWeave"
 
-StartGameWindowWeaveSelectWeave.on_enter = function (self, params, offset)
+function StartGameWindowWeaveSelectWeave.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowWeaveSelectWeave")
 
-	self._parent = params.parent
+	arg_1_0._parent = arg_1_1.parent
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_1_0 = arg_1_1.ingame_ui_context
 
-	self._ui_renderer = ingame_ui_context.ui_renderer
-	self._input_manager = ingame_ui_context.input_manager
-	self._statistics_db = ingame_ui_context.statistics_db
-	self._render_settings = {
-		snap_pixel_positions = true,
+	arg_1_0._ui_renderer = var_1_0.ui_renderer
+	arg_1_0._input_manager = var_1_0.input_manager
+	arg_1_0._statistics_db = var_1_0.statistics_db
+	arg_1_0._render_settings = {
+		snap_pixel_positions = true
 	}
 
-	local player_manager = Managers.player
-	local local_player = player_manager:local_player()
+	local var_1_1 = Managers.player
 
-	self._stats_id = local_player:stats_id()
-	self._player_manager = player_manager
-	self._peer_id = ingame_ui_context.peer_id
+	arg_1_0._stats_id = var_1_1:local_player():stats_id()
+	arg_1_0._player_manager = var_1_1
+	arg_1_0._peer_id = var_1_0.peer_id
 
-	self:_create_ui_elements(params, offset)
+	arg_1_0:_create_ui_elements(arg_1_1, arg_1_2)
 end
 
-StartGameWindowWeaveSelectWeave._create_ui_elements = function (self, params, offset)
-	local ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+function StartGameWindowWeaveSelectWeave._create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+	local var_2_0 = UISceneGraph.init_scenegraph(var_0_2)
 
-	self._ui_scenegraph = ui_scenegraph
+	arg_2_0._ui_scenegraph = var_2_0
 
-	local widgets = {}
-	local widgets_by_name = {}
+	local var_2_1 = {}
+	local var_2_2 = {}
 
-	for name, widget_definition in pairs(widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_2_0, iter_2_1 in pairs(var_0_1) do
+		local var_2_3 = UIWidget.init(iter_2_1)
 
-		widgets[#widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_2_1[#var_2_1 + 1] = var_2_3
+		var_2_2[iter_2_0] = var_2_3
 	end
 
-	self._ui_animations = {}
-	self._widgets = widgets
-	self._widgets_by_name = widgets_by_name
+	arg_2_0._ui_animations = {}
+	arg_2_0._widgets = var_2_1
+	arg_2_0._widgets_by_name = var_2_2
 
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_2_0._ui_renderer)
 
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
+	arg_2_0._ui_animator = UIAnimator:new(arg_2_0._ui_scenegraph, var_0_3)
 
-	local overlay_button = widgets_by_name.overlay_button
-	local anim = self:_animate_pulse(overlay_button.style.glow_frame.color, 1, 255, 100, 2)
+	local var_2_4 = var_2_2.overlay_button
+	local var_2_5 = arg_2_0:_animate_pulse(var_2_4.style.glow_frame.color, 1, 255, 100, 2)
 
-	UIWidget.animate(overlay_button, anim)
+	UIWidget.animate(var_2_4, var_2_5)
 
-	if offset then
-		local window_position = ui_scenegraph.window.local_position
+	if arg_2_2 then
+		local var_2_6 = var_2_0.window.local_position
 
-		window_position[1] = window_position[1] + offset[1]
-		window_position[2] = window_position[2] + offset[2]
-		window_position[3] = window_position[3] + offset[3]
+		var_2_6[1] = var_2_6[1] + arg_2_2[1]
+		var_2_6[2] = var_2_6[2] + arg_2_2[2]
+		var_2_6[3] = var_2_6[3] + arg_2_2[3]
 	end
 end
 
-StartGameWindowWeaveSelectWeave.on_exit = function (self, params)
+function StartGameWindowWeaveSelectWeave.on_exit(arg_3_0, arg_3_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowWeaveSelectWeave")
 
-	self._ui_animator = nil
+	arg_3_0._ui_animator = nil
 end
 
-StartGameWindowWeaveSelectWeave._is_button_hover_enter = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	return hotspot.on_hover_enter
+function StartGameWindowWeaveSelectWeave._is_button_hover_enter(arg_4_0, arg_4_1)
+	return arg_4_1.content.button_hotspot.on_hover_enter
 end
 
-StartGameWindowWeaveSelectWeave._is_button_hover_exit = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	return hotspot.on_hover_exit
+function StartGameWindowWeaveSelectWeave._is_button_hover_exit(arg_5_0, arg_5_1)
+	return arg_5_1.content.button_hotspot.on_hover_exit
 end
 
-StartGameWindowWeaveSelectWeave._update_game_options_hover_effect = function (self)
-	local widgets_by_name = self._widgets_by_name
-	local overlay_button_widget = widgets_by_name.overlay_button
+function StartGameWindowWeaveSelectWeave._update_game_options_hover_effect(arg_6_0)
+	local var_6_0 = arg_6_0._widgets_by_name.overlay_button
 
-	if self:_is_button_hover_enter(overlay_button_widget) then
-		self:_on_option_button_hover_enter(overlay_button_widget, 2)
-	elseif self:_is_button_hover_exit(overlay_button_widget) then
-		self:_on_option_button_hover_exit(overlay_button_widget, 2)
+	if arg_6_0:_is_button_hover_enter(var_6_0) then
+		arg_6_0:_on_option_button_hover_enter(var_6_0, 2)
+	elseif arg_6_0:_is_button_hover_exit(var_6_0) then
+		arg_6_0:_on_option_button_hover_exit(var_6_0, 2)
 	end
 end
 
-StartGameWindowWeaveSelectWeave._on_option_button_hover_enter = function (self, widget, index, instant)
-	self:_create_style_animation_enter(widget, 255, "glow", index, instant)
-	self:_create_style_animation_exit(widget, 0, "button_hover_rect", index, instant)
+function StartGameWindowWeaveSelectWeave._on_option_button_hover_enter(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	arg_7_0:_create_style_animation_enter(arg_7_1, 255, "glow", arg_7_2, arg_7_3)
+	arg_7_0:_create_style_animation_exit(arg_7_1, 0, "button_hover_rect", arg_7_2, arg_7_3)
 end
 
-StartGameWindowWeaveSelectWeave._on_option_button_hover_exit = function (self, widget, index, instant)
-	self:_create_style_animation_exit(widget, 0, "glow", index, instant)
-	self:_create_style_animation_enter(widget, 30, "button_hover_rect", index, instant)
+function StartGameWindowWeaveSelectWeave._on_option_button_hover_exit(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	arg_8_0:_create_style_animation_exit(arg_8_1, 0, "glow", arg_8_2, arg_8_3)
+	arg_8_0:_create_style_animation_enter(arg_8_1, 30, "button_hover_rect", arg_8_2, arg_8_3)
 end
 
-StartGameWindowWeaveSelectWeave._create_style_animation_enter = function (self, widget, target_value, style_id, widget_index, instant)
-	local widget_style = widget.style
-	local pass_style = widget_style[style_id]
+function StartGameWindowWeaveSelectWeave._create_style_animation_enter(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+	local var_9_0 = arg_9_1.style[arg_9_3]
 
-	if not pass_style then
+	if not var_9_0 then
 		return
 	end
 
-	local current_color_value = pass_style.color[1]
-	local target_color_value = target_value
-	local total_time = 0.2
-	local animation_duration = (1 - current_color_value / target_color_value) * total_time
+	local var_9_1 = var_9_0.color[1]
+	local var_9_2 = arg_9_2
+	local var_9_3 = 0.2
+	local var_9_4 = (1 - var_9_1 / var_9_2) * var_9_3
 
-	if animation_duration > 0 and not instant then
-		local ui_animations = self._ui_animations
-		local animation_name = "game_option_" .. style_id
-
-		ui_animations[animation_name .. "_hover_" .. widget_index] = self:_animate_element_by_time(pass_style.color, 1, current_color_value, target_color_value, animation_duration)
+	if var_9_4 > 0 and not arg_9_5 then
+		arg_9_0._ui_animations[("game_option_" .. arg_9_3) .. "_hover_" .. arg_9_4] = arg_9_0:_animate_element_by_time(var_9_0.color, 1, var_9_1, var_9_2, var_9_4)
 	else
-		pass_style.color[1] = target_color_value
+		var_9_0.color[1] = var_9_2
 	end
 end
 
-StartGameWindowWeaveSelectWeave._animate_pulse = function (self, target, target_index, from, to, speed)
-	local new_animation = UIAnimation.init(UIAnimation.pulse_animation, target, target_index, from, to, speed)
-
-	return new_animation
+function StartGameWindowWeaveSelectWeave._animate_pulse(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+	return (UIAnimation.init(UIAnimation.pulse_animation, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5))
 end
 
-StartGameWindowWeaveSelectWeave._animate_element_by_time = function (self, target, target_index, from, to, time)
-	local new_animation = UIAnimation.init(UIAnimation.function_by_time, target, target_index, from, to, time, math.ease_out_quad)
-
-	return new_animation
+function StartGameWindowWeaveSelectWeave._animate_element_by_time(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+	return (UIAnimation.init(UIAnimation.function_by_time, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, math.ease_out_quad))
 end
 
-StartGameWindowWeaveSelectWeave._create_style_animation_exit = function (self, widget, target_value, style_id, widget_index, instant)
-	local widget_style = widget.style
-	local pass_style = widget_style[style_id]
+function StartGameWindowWeaveSelectWeave._create_style_animation_exit(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+	local var_12_0 = arg_12_1.style[arg_12_3]
 
-	if not pass_style then
+	if not var_12_0 then
 		return
 	end
 
-	local current_color_value = pass_style.color[1]
-	local target_color_value = target_value
-	local total_time = 0.2
-	local animation_duration = current_color_value / 255 * total_time
+	local var_12_1 = var_12_0.color[1]
+	local var_12_2 = arg_12_2
+	local var_12_3 = 0.2
+	local var_12_4 = var_12_1 / 255 * var_12_3
 
-	if animation_duration > 0 and not instant then
-		local ui_animations = self._ui_animations
-		local animation_name = "game_option_" .. style_id
-
-		ui_animations[animation_name .. "_hover_" .. widget_index] = self:_animate_element_by_time(pass_style.color, 1, current_color_value, target_color_value, animation_duration)
+	if var_12_4 > 0 and not arg_12_5 then
+		arg_12_0._ui_animations[("game_option_" .. arg_12_3) .. "_hover_" .. arg_12_4] = arg_12_0:_animate_element_by_time(var_12_0.color, 1, var_12_1, var_12_2, var_12_4)
 	else
-		pass_style.color[1] = target_color_value
+		var_12_0.color[1] = var_12_2
 	end
 end
 
-StartGameWindowWeaveSelectWeave._play_sound = function (self, event)
-	self._parent:play_sound(event)
+function StartGameWindowWeaveSelectWeave._play_sound(arg_13_0, arg_13_1)
+	arg_13_0._parent:play_sound(arg_13_1)
 end
 
-StartGameWindowWeaveSelectWeave.update = function (self, dt, t)
-	self:_update_animations(dt, t)
-	self:_update_input(dt, t)
-	self:_draw(dt)
+function StartGameWindowWeaveSelectWeave.update(arg_14_0, arg_14_1, arg_14_2)
+	arg_14_0:_update_animations(arg_14_1, arg_14_2)
+	arg_14_0:_update_input(arg_14_1, arg_14_2)
+	arg_14_0:_draw(arg_14_1)
 end
 
-StartGameWindowWeaveSelectWeave._update_animations = function (self, dt)
-	self:_update_game_options_hover_effect()
+function StartGameWindowWeaveSelectWeave._update_animations(arg_15_0, arg_15_1)
+	arg_15_0:_update_game_options_hover_effect()
 
-	local ui_animations = self._ui_animations or {}
+	local var_15_0 = arg_15_0._ui_animations or {}
 
-	for name, animation in pairs(ui_animations) do
-		UIAnimation.update(animation, dt)
+	for iter_15_0, iter_15_1 in pairs(var_15_0) do
+		UIAnimation.update(iter_15_1, arg_15_1)
 
-		if UIAnimation.completed(animation) then
-			ui_animations[name] = nil
+		if UIAnimation.completed(iter_15_1) then
+			var_15_0[iter_15_0] = nil
 		end
 	end
 
-	local ui_animator = self._ui_animator
-
-	ui_animator:update(dt)
+	arg_15_0._ui_animator:update(arg_15_1)
 end
 
-StartGameWindowWeaveSelectWeave._update_input = function (self, dt, t)
-	local button_widget = self._widgets_by_name.overlay_button
-	local button_widget_content = button_widget.content
-	local button_hotspot = button_widget_content.button_hotspot
+function StartGameWindowWeaveSelectWeave._update_input(arg_16_0, arg_16_1, arg_16_2)
+	local var_16_0 = arg_16_0._widgets_by_name.overlay_button
+	local var_16_1 = var_16_0.content.button_hotspot
 
-	if self:_is_button_hover_enter(button_widget) then
-		self:_play_sound("play_gui_lobby_button_01_difficulty_confirm_hover")
+	if arg_16_0:_is_button_hover_enter(var_16_0) then
+		arg_16_0:_play_sound("play_gui_lobby_button_01_difficulty_confirm_hover")
 	end
 
-	if button_hotspot.on_pressed then
-		self._parent:set_layout_by_name("weave_selection")
+	if var_16_1.on_pressed then
+		arg_16_0._parent:set_layout_by_name("weave_selection")
 	end
 end
 
-StartGameWindowWeaveSelectWeave.post_update = function (self, dt, t)
+function StartGameWindowWeaveSelectWeave.post_update(arg_17_0, arg_17_1, arg_17_2)
 	return
 end
 
-StartGameWindowWeaveSelectWeave._draw = function (self, dt)
-	local ui_renderer = self._ui_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local input_service = self._parent:window_input_service()
+function StartGameWindowWeaveSelectWeave._draw(arg_18_0, arg_18_1)
+	local var_18_0 = arg_18_0._ui_renderer
+	local var_18_1 = arg_18_0._ui_scenegraph
+	local var_18_2 = arg_18_0._parent:window_input_service()
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self._render_settings)
+	UIRenderer.begin_pass(var_18_0, var_18_1, var_18_2, arg_18_1, nil, arg_18_0._render_settings)
 
-	local widgets = self._widgets
+	local var_18_3 = arg_18_0._widgets
 
-	for i = 1, #widgets do
-		local widget = widgets[i]
+	for iter_18_0 = 1, #var_18_3 do
+		local var_18_4 = var_18_3[iter_18_0]
 
-		UIRenderer.draw_widget(ui_renderer, widget)
+		UIRenderer.draw_widget(var_18_0, var_18_4)
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_18_0)
 end

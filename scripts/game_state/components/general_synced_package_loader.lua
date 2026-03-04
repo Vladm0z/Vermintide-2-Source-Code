@@ -1,73 +1,69 @@
-﻿-- chunkname: @scripts/game_state/components/general_synced_package_loader.lua
+-- chunkname: @scripts/game_state/components/general_synced_package_loader.lua
 
 GeneralSyncedPackageLoader = class(GeneralSyncedPackageLoader)
 
-local CACHED_REFERENCES = {}
+local var_0_0 = {}
 
-GeneralSyncedPackageLoader.init = function (self)
-	self._loaded_mutator_map = {}
-	self._cached_mutator_map = {}
+function GeneralSyncedPackageLoader.init(arg_1_0)
+	arg_1_0._loaded_mutator_map = {}
+	arg_1_0._cached_mutator_map = {}
 end
 
-GeneralSyncedPackageLoader.network_context_created = function (self, lobby, server_peer_id, own_peer_id, network_handler)
-	printf("[GeneralSyncedPackageLoader] network_context_created (server_peer_id=%s, own_peer_id=%s)", server_peer_id, own_peer_id)
+function GeneralSyncedPackageLoader.network_context_created(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	printf("[GeneralSyncedPackageLoader] network_context_created (server_peer_id=%s, own_peer_id=%s)", arg_2_2, arg_2_3)
 
-	self._lobby = lobby
-
-	local is_server = server_peer_id == own_peer_id
-
-	self._is_server = is_server
-	self._network_handler = network_handler
+	arg_2_0._lobby = arg_2_1
+	arg_2_0._is_server = arg_2_2 == arg_2_3
+	arg_2_0._network_handler = arg_2_4
 end
 
-GeneralSyncedPackageLoader.matching_session = function (self, network_handler)
-	return self._network_handler == network_handler
+function GeneralSyncedPackageLoader.matching_session(arg_3_0, arg_3_1)
+	return arg_3_0._network_handler == arg_3_1
 end
 
-GeneralSyncedPackageLoader.network_context_destroyed = function (self)
+function GeneralSyncedPackageLoader.network_context_destroyed(arg_4_0)
 	print("[GeneralSyncedPackageLoader] network_context_destroyed")
 
-	self._lobby = nil
-	self._network_handler = nil
+	arg_4_0._lobby = nil
+	arg_4_0._network_handler = nil
 
-	if self._is_server then
-		self._session_mutator_map = nil
+	if arg_4_0._is_server then
+		arg_4_0._session_mutator_map = nil
 	end
 
-	self._is_server = nil
+	arg_4_0._is_server = nil
 end
 
-GeneralSyncedPackageLoader.update = function (self)
-	self:_update_package_diffs()
+function GeneralSyncedPackageLoader.update(arg_5_0)
+	arg_5_0:_update_package_diffs()
 end
 
-GeneralSyncedPackageLoader._mutator_package_reference = function (self, mutator_name)
-	local cached = CACHED_REFERENCES[mutator_name]
+function GeneralSyncedPackageLoader._mutator_package_reference(arg_6_0, arg_6_1)
+	local var_6_0 = var_0_0[arg_6_1]
 
-	if cached then
-		return cached
+	if var_6_0 then
+		return var_6_0
 	end
 
-	CACHED_REFERENCES[mutator_name] = "GeneralSyncedPackageLoader_" .. mutator_name
+	var_0_0[arg_6_1] = "GeneralSyncedPackageLoader_" .. arg_6_1
 
-	return CACHED_REFERENCES[mutator_name]
+	return var_0_0[arg_6_1]
 end
 
-GeneralSyncedPackageLoader._has_loaded_mutator = function (self, mutator_name)
-	local mutator_template = MutatorTemplates[mutator_name]
-	local packages = mutator_template.packages
+function GeneralSyncedPackageLoader._has_loaded_mutator(arg_7_0, arg_7_1)
+	local var_7_0 = MutatorTemplates[arg_7_1].packages
 
-	if not packages then
+	if not var_7_0 then
 		return true
 	end
 
-	local package_reference = self:_mutator_package_reference(mutator_name)
-	local package_manager = Managers.package
+	local var_7_1 = arg_7_0:_mutator_package_reference(arg_7_1)
+	local var_7_2 = Managers.package
 
-	for i = 1, #packages do
-		local package_name = packages[i]
+	for iter_7_0 = 1, #var_7_0 do
+		local var_7_3 = var_7_0[iter_7_0]
 
-		if not package_manager:has_loaded(package_name, package_reference) then
+		if not var_7_2:has_loaded(var_7_3, var_7_1) then
 			return false
 		end
 	end
@@ -75,21 +71,20 @@ GeneralSyncedPackageLoader._has_loaded_mutator = function (self, mutator_name)
 	return true
 end
 
-GeneralSyncedPackageLoader._is_loading_mutator = function (self, mutator_name)
-	local mutator_template = MutatorTemplates[mutator_name]
-	local packages = mutator_template.packages
+function GeneralSyncedPackageLoader._is_loading_mutator(arg_8_0, arg_8_1)
+	local var_8_0 = MutatorTemplates[arg_8_1].packages
 
-	if not packages then
+	if not var_8_0 then
 		return false
 	end
 
-	local package_reference = self:_mutator_package_reference(mutator_name)
-	local package_manager = Managers.package
+	local var_8_1 = arg_8_0:_mutator_package_reference(arg_8_1)
+	local var_8_2 = Managers.package
 
-	for i = 1, #packages do
-		local package_name = packages[i]
+	for iter_8_0 = 1, #var_8_0 do
+		local var_8_3 = var_8_0[iter_8_0]
 
-		if package_manager:is_loading(package_name, package_reference) then
+		if var_8_2:is_loading(var_8_3, var_8_1) then
 			return true
 		end
 	end
@@ -97,90 +92,88 @@ GeneralSyncedPackageLoader._is_loading_mutator = function (self, mutator_name)
 	return false
 end
 
-GeneralSyncedPackageLoader._load_mutator = function (self, mutator_name, async, prioritize)
-	local mutator_template = MutatorTemplates[mutator_name]
-	local packages = mutator_template.packages
+function GeneralSyncedPackageLoader._load_mutator(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	local var_9_0 = MutatorTemplates[arg_9_1].packages
 
-	if not packages then
+	if not var_9_0 then
 		return
 	end
 
-	local package_reference = self:_mutator_package_reference(mutator_name)
-	local package_manager = Managers.package
+	local var_9_1 = arg_9_0:_mutator_package_reference(arg_9_1)
+	local var_9_2 = Managers.package
 
-	for i = 1, #packages do
-		local package_name = packages[i]
+	for iter_9_0 = 1, #var_9_0 do
+		local var_9_3 = var_9_0[iter_9_0]
 
-		package_manager:load(package_name, package_reference, nil, async, prioritize)
+		var_9_2:load(var_9_3, var_9_1, nil, arg_9_2, arg_9_3)
 	end
 end
 
-GeneralSyncedPackageLoader._unload_mutator = function (self, mutator_name)
-	local mutator_template = MutatorTemplates[mutator_name]
-	local packages = mutator_template.packages
+function GeneralSyncedPackageLoader._unload_mutator(arg_10_0, arg_10_1)
+	local var_10_0 = MutatorTemplates[arg_10_1].packages
 
-	if not packages then
+	if not var_10_0 then
 		return
 	end
 
-	local package_reference = self:_mutator_package_reference(mutator_name)
-	local package_manager = Managers.package
+	local var_10_1 = arg_10_0:_mutator_package_reference(arg_10_1)
+	local var_10_2 = Managers.package
 
-	for i = 1, #packages do
-		local package_name = packages[i]
+	for iter_10_0 = 1, #var_10_0 do
+		local var_10_3 = var_10_0[iter_10_0]
 
-		package_manager:unload(package_name, package_reference)
+		var_10_2:unload(var_10_3, var_10_1)
 	end
 end
 
-GeneralSyncedPackageLoader._update_package_diffs = function (self, skip_load)
-	if not self._network_handler or not self._network_handler:is_fully_synced() then
+function GeneralSyncedPackageLoader._update_package_diffs(arg_11_0, arg_11_1)
+	if not arg_11_0._network_handler or not arg_11_0._network_handler:is_fully_synced() then
 		return
 	end
 
-	local async = true
-	local prioritize = true
-	local loaded_mutator_map = self._loaded_mutator_map
-	local wanted_mutator_map = self:_mutator_map()
-	local synced_loaded_mutator_map = self._network_handler:get_own_loaded_mutator_map()
+	local var_11_0 = true
+	local var_11_1 = true
+	local var_11_2 = arg_11_0._loaded_mutator_map
+	local var_11_3 = arg_11_0:_mutator_map()
+	local var_11_4 = arg_11_0._network_handler:get_own_loaded_mutator_map()
 
-	for mutator_name, status in pairs(loaded_mutator_map) do
-		if not wanted_mutator_map[mutator_name] then
-			self:_unload_mutator(mutator_name)
+	for iter_11_0, iter_11_1 in pairs(var_11_2) do
+		if not var_11_3[iter_11_0] then
+			arg_11_0:_unload_mutator(iter_11_0)
 
-			loaded_mutator_map[mutator_name] = nil
+			var_11_2[iter_11_0] = nil
 		end
 	end
 
-	for mutator_name, server_cb_or_true in pairs(wanted_mutator_map) do
-		local has_loaded = self:_has_loaded_mutator(mutator_name)
+	for iter_11_2, iter_11_3 in pairs(var_11_3) do
+		local var_11_5 = arg_11_0:_has_loaded_mutator(iter_11_2)
 
-		if not has_loaded and not self:_is_loading_mutator(mutator_name) then
-			self:_load_mutator(mutator_name, async, prioritize)
-		elseif has_loaded and not loaded_mutator_map[mutator_name] then
-			loaded_mutator_map[mutator_name] = true
-		elseif server_cb_or_true ~= true and self:is_mutator_loaded_on_all_peers(mutator_name) then
-			server_cb_or_true()
+		if not var_11_5 and not arg_11_0:_is_loading_mutator(iter_11_2) then
+			arg_11_0:_load_mutator(iter_11_2, var_11_0, var_11_1)
+		elseif var_11_5 and not var_11_2[iter_11_2] then
+			var_11_2[iter_11_2] = true
+		elseif iter_11_3 ~= true and arg_11_0:is_mutator_loaded_on_all_peers(iter_11_2) then
+			iter_11_3()
 
-			wanted_mutator_map[mutator_name] = true
+			var_11_3[iter_11_2] = true
 		end
 	end
 
-	if not table.shallow_equal(loaded_mutator_map, synced_loaded_mutator_map) then
-		self._network_handler:set_own_loaded_mutator_map(table.shallow_copy(loaded_mutator_map))
+	if not table.shallow_equal(var_11_2, var_11_4) then
+		arg_11_0._network_handler:set_own_loaded_mutator_map(table.shallow_copy(var_11_2))
 	end
 end
 
-GeneralSyncedPackageLoader.load_sync_done_for_peer = function (self, peer_id)
-	if not self._network_handler or not self._network_handler:is_fully_synced() then
+function GeneralSyncedPackageLoader.load_sync_done_for_peer(arg_12_0, arg_12_1)
+	if not arg_12_0._network_handler or not arg_12_0._network_handler:is_fully_synced() then
 		return false
 	end
 
-	local wanted_mutator_map = self:_mutator_map()
-	local loaded_mutator_map = self._network_handler:get_loaded_mutator_map(peer_id)
+	local var_12_0 = arg_12_0:_mutator_map()
+	local var_12_1 = arg_12_0._network_handler:get_loaded_mutator_map(arg_12_1)
 
-	for mutator_name in pairs(wanted_mutator_map) do
-		if not loaded_mutator_map[mutator_name] then
+	for iter_12_0 in pairs(var_12_0) do
+		if not var_12_1[iter_12_0] then
 			return false
 		end
 	end
@@ -188,16 +181,16 @@ GeneralSyncedPackageLoader.load_sync_done_for_peer = function (self, peer_id)
 	return true
 end
 
-GeneralSyncedPackageLoader.loading_completed = function (self)
-	if not self._network_handler or not self._network_handler:is_fully_synced() then
+function GeneralSyncedPackageLoader.loading_completed(arg_13_0)
+	if not arg_13_0._network_handler or not arg_13_0._network_handler:is_fully_synced() then
 		return false
 	end
 
-	local wanted_mutator_map = self:_mutator_map()
-	local loaded_mutator_map = self._loaded_mutator_map
+	local var_13_0 = arg_13_0:_mutator_map()
+	local var_13_1 = arg_13_0._loaded_mutator_map
 
-	for mutator_name in pairs(wanted_mutator_map) do
-		if loaded_mutator_map[mutator_name] ~= true then
+	for iter_13_0 in pairs(var_13_0) do
+		if var_13_1[iter_13_0] ~= true then
 			return false
 		end
 	end
@@ -205,40 +198,37 @@ GeneralSyncedPackageLoader.loading_completed = function (self)
 	return true
 end
 
-GeneralSyncedPackageLoader.on_application_shutdown = function (self)
-	local loaded_mutator_map = self._loaded_mutator_map
+function GeneralSyncedPackageLoader.on_application_shutdown(arg_14_0)
+	local var_14_0 = arg_14_0._loaded_mutator_map
 
-	for mutator_name in pairs(loaded_mutator_map) do
-		local package_reference = self:_mutator_package_reference(mutator_name)
-		local mutator_template = MutatorTemplates[mutator_name]
-		local packages = mutator_template.packages
+	for iter_14_0 in pairs(var_14_0) do
+		local var_14_1 = arg_14_0:_mutator_package_reference(iter_14_0)
+		local var_14_2 = MutatorTemplates[iter_14_0].packages
 
-		if packages then
-			for i = 1, #packages do
-				local package_name = packages[i]
+		if var_14_2 then
+			for iter_14_1 = 1, #var_14_2 do
+				local var_14_3 = var_14_2[iter_14_1]
 
-				Managers.package:unload(package_name, package_reference)
+				Managers.package:unload(var_14_3, var_14_1)
 			end
 		end
 
-		loaded_mutator_map[mutator_name] = nil
+		var_14_0[iter_14_0] = nil
 	end
 end
 
-GeneralSyncedPackageLoader.is_mutator_loaded_on_all_peers = function (self, mutator_name, for_debugging)
-	local peers = self._is_server and self._network_handler:hot_join_synced_peers()
+function GeneralSyncedPackageLoader.is_mutator_loaded_on_all_peers(arg_15_0, arg_15_1, arg_15_2)
+	local var_15_0 = arg_15_0._is_server and arg_15_0._network_handler:hot_join_synced_peers()
 
-	if for_debugging then
-		peers = table.shallow_copy(self._network_handler:get_peers(), true)
-		peers = table.array_to_map(peers, function (i, peer_id)
-			return peer_id, true
+	if arg_15_2 then
+		var_15_0 = table.shallow_copy(arg_15_0._network_handler:get_peers(), true)
+		var_15_0 = table.array_to_map(var_15_0, function(arg_16_0, arg_16_1)
+			return arg_16_1, true
 		end)
 	end
 
-	for peer_id in pairs(peers) do
-		local loaded_mutators = self._network_handler:get_loaded_mutator_map(peer_id)
-
-		if not loaded_mutators[mutator_name] then
+	for iter_15_0 in pairs(var_15_0) do
+		if not arg_15_0._network_handler:get_loaded_mutator_map(iter_15_0)[arg_15_1] then
 			return false
 		end
 	end
@@ -246,62 +236,61 @@ GeneralSyncedPackageLoader.is_mutator_loaded_on_all_peers = function (self, muta
 	return true
 end
 
-GeneralSyncedPackageLoader._mutator_map = function (self)
-	local state_revision = self._network_handler:state_revision()
+function GeneralSyncedPackageLoader._mutator_map(arg_17_0)
+	local var_17_0 = arg_17_0._network_handler:state_revision()
 
-	if self._cached_mutator_map_version == state_revision then
-		return self._cached_mutator_map
+	if arg_17_0._cached_mutator_map_version == var_17_0 then
+		return arg_17_0._cached_mutator_map
 	end
 
-	self._cached_mutator_map_version = state_revision
-	self._cached_mutator_map = {}
+	arg_17_0._cached_mutator_map_version = var_17_0
+	arg_17_0._cached_mutator_map = {}
 
-	local game_mode_event_data = self._network_handler:get_game_mode_event_data()
-	local mutators = game_mode_event_data.mutators
+	local var_17_1 = arg_17_0._network_handler:get_game_mode_event_data().mutators
 
-	if mutators then
-		for i = 1, #mutators do
-			self._cached_mutator_map[mutators[i]] = true
+	if var_17_1 then
+		for iter_17_0 = 1, #var_17_1 do
+			arg_17_0._cached_mutator_map[var_17_1[iter_17_0]] = true
 		end
 	end
 
-	return self._cached_mutator_map
+	return arg_17_0._cached_mutator_map
 end
 
-GeneralSyncedPackageLoader.debug_loaded_packages = function (self)
-	if not self._network_handler then
+function GeneralSyncedPackageLoader.debug_loaded_packages(arg_18_0)
+	if not arg_18_0._network_handler then
 		Debug.text("[GeneralSyncedPackageLoader] network handler not avaiable")
 
 		return
 	end
 
-	local mutator_map = self._network_handler:_mutator_map()
+	local var_18_0 = arg_18_0._network_handler:_mutator_map()
 
-	if table.is_empty(mutator_map) then
+	if table.is_empty(var_18_0) then
 		Debug.text("No mutators initialized. (DynamicPackageLoader)")
 	else
 		Debug.text("Initialized mutators:")
 	end
 
-	local peers = self._is_server and self._network_handler:hot_join_synced_peers() or self._network_handler:get_peers()
+	local var_18_1 = arg_18_0._is_server and arg_18_0._network_handler:hot_join_synced_peers() or arg_18_0._network_handler:get_peers()
 
-	if not self._is_server then
-		peers = table.shallow_copy(self._network_handler:get_peers(), true)
-		peers = table.array_to_map(peers, function (i, peer_id)
-			return peer_id, true
+	if not arg_18_0._is_server then
+		var_18_1 = table.shallow_copy(arg_18_0._network_handler:get_peers(), true)
+		var_18_1 = table.array_to_map(var_18_1, function(arg_19_0, arg_19_1)
+			return arg_19_1, true
 		end)
 	end
 
-	for mutator_name in pairs(mutator_map) do
+	for iter_18_0 in pairs(var_18_0) do
 		repeat
-			Debug.text("   %s", mutator_name)
+			Debug.text("   %s", iter_18_0)
 
-			if not self:is_mutator_loaded_on_all_peers(mutator_name, not self._is_server) then
+			if not arg_18_0:is_mutator_loaded_on_all_peers(iter_18_0, not arg_18_0._is_server) then
 				Debug.text("      --Waiting on Peer(s) to Load--")
 
-				for peer_id, _ in pairs(peers) do
-					if not self._network_handler:get_loaded_mutator_map(peer_id)[mutator_name] then
-						Debug.text("      %s", peer_id)
+				for iter_18_1, iter_18_2 in pairs(var_18_1) do
+					if not arg_18_0._network_handler:get_loaded_mutator_map(iter_18_1)[iter_18_0] then
+						Debug.text("      %s", iter_18_1)
 					end
 				end
 			end

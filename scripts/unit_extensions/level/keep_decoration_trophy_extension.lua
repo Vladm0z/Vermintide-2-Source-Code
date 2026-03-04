@@ -1,223 +1,215 @@
-﻿-- chunkname: @scripts/unit_extensions/level/keep_decoration_trophy_extension.lua
+-- chunkname: @scripts/unit_extensions/level/keep_decoration_trophy_extension.lua
 
 KeepDecorationTrophyExtension = class(KeepDecorationTrophyExtension)
 
-KeepDecorationTrophyExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	local world = extension_init_context.world
-	local level = LevelHelper:current_level(world)
+function KeepDecorationTrophyExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	local var_1_0 = arg_1_1.world
+	local var_1_1 = LevelHelper:current_level(var_1_0)
 
-	self.keep_decoration_system = nil
-	self._decoration_settings_key = Unit.get_data(unit, "decoration_settings_key")
-	self._unit = unit
-	self._current_preview_trophy_unit = unit
-	self._world = world
-	self._level_unit_index = Level.unit_index(level, unit)
-	self._is_leader = Managers.party:is_leader(Network.peer_id())
-	self._trophies_lookup = NetworkLookup.keep_decoration_trophies or {}
-	self._currently_set_trophy = nil
-	self._is_hidden = nil
-	self._next_trophy = {}
+	arg_1_0.keep_decoration_system = nil
+	arg_1_0._decoration_settings_key = Unit.get_data(arg_1_2, "decoration_settings_key")
+	arg_1_0._unit = arg_1_2
+	arg_1_0._current_preview_trophy_unit = arg_1_2
+	arg_1_0._world = var_1_0
+	arg_1_0._level_unit_index = Level.unit_index(var_1_1, arg_1_2)
+	arg_1_0._is_leader = Managers.party:is_leader(Network.peer_id())
+	arg_1_0._trophies_lookup = NetworkLookup.keep_decoration_trophies or {}
+	arg_1_0._currently_set_trophy = nil
+	arg_1_0._is_hidden = nil
+	arg_1_0._next_trophy = {}
 
-	local settings_key = Unit.get_data(unit, "decoration_settings_key")
-	local settings = KeepDecorationSettings[settings_key]
+	local var_1_2 = Unit.get_data(arg_1_2, "decoration_settings_key")
+	local var_1_3 = KeepDecorationSettings[var_1_2]
 
-	self._settings = settings
-	self._backend_key = settings.backend_key
+	arg_1_0._settings = var_1_3
+	arg_1_0._backend_key = var_1_3.backend_key
 end
 
-KeepDecorationTrophyExtension.interacted_with = function (self)
+function KeepDecorationTrophyExtension.interacted_with(arg_2_0)
 	return
 end
 
-KeepDecorationTrophyExtension.destroy = function (self)
-	self._unit = nil
-	self._world = nil
-	self._go_id = nil
+function KeepDecorationTrophyExtension.destroy(arg_3_0)
+	arg_3_0._unit = nil
+	arg_3_0._world = nil
+	arg_3_0._go_id = nil
 end
 
-KeepDecorationTrophyExtension.extensions_ready = function (self)
-	if not self._is_leader then
+function KeepDecorationTrophyExtension.extensions_ready(arg_4_0)
+	if not arg_4_0._is_leader then
 		return
 	end
 
-	local selected_trophy = self:get_selected_decoration()
+	local var_4_0 = arg_4_0:get_selected_decoration()
 
-	self._current_preview_trophy = selected_trophy
+	arg_4_0._current_preview_trophy = var_4_0
 
-	self:_create_game_object(selected_trophy)
+	arg_4_0:_create_game_object(var_4_0)
 
-	self._currently_set_trophy = selected_trophy
+	arg_4_0._currently_set_trophy = var_4_0
 
-	self:_load_trophy(selected_trophy)
+	arg_4_0:_load_trophy(var_4_0)
 end
 
-KeepDecorationTrophyExtension.get_settings = function (self)
-	return self._trophies_lookup
+function KeepDecorationTrophyExtension.get_settings(arg_5_0)
+	return arg_5_0._trophies_lookup
 end
 
-KeepDecorationTrophyExtension.can_interact = function (self)
-	return self._go_id
+function KeepDecorationTrophyExtension.can_interact(arg_6_0)
+	return arg_6_0._go_id
 end
 
-KeepDecorationTrophyExtension.decoration_selected = function (self, current_trophy)
-	self:_load_trophy(current_trophy)
+function KeepDecorationTrophyExtension.decoration_selected(arg_7_0, arg_7_1)
+	arg_7_0:_load_trophy(arg_7_1)
 end
 
-KeepDecorationTrophyExtension.reset_selection = function (self)
-	local current_preview_trophy = self._current_preview_trophy
-	local selected_trophy = self._currently_set_trophy or "hub_trophy_empty"
+function KeepDecorationTrophyExtension.reset_selection(arg_8_0)
+	local var_8_0 = arg_8_0._current_preview_trophy
+	local var_8_1 = arg_8_0._currently_set_trophy or "hub_trophy_empty"
 
-	if selected_trophy ~= current_preview_trophy then
-		self:_load_trophy(selected_trophy)
+	if var_8_1 ~= var_8_0 then
+		arg_8_0:_load_trophy(var_8_1)
 	end
 
-	self._current_preview_trophy = nil
+	arg_8_0._current_preview_trophy = nil
 end
 
-KeepDecorationTrophyExtension.unequip_decoration = function (self, new_trophy)
-	local trophy = new_trophy or "hub_trophy_empty"
+function KeepDecorationTrophyExtension.unequip_decoration(arg_9_0, arg_9_1)
+	local var_9_0 = arg_9_1 or "hub_trophy_empty"
 
-	self:_load_trophy(trophy)
-	self:sync_decoration()
+	arg_9_0:_load_trophy(var_9_0)
+	arg_9_0:sync_decoration()
 end
 
-KeepDecorationTrophyExtension.confirm_selection = function (self)
-	local current_preview_trophy = self._current_preview_trophy
-	local keep_decoration_system = self.keep_decoration_system
+function KeepDecorationTrophyExtension.confirm_selection(arg_10_0)
+	local var_10_0 = arg_10_0._current_preview_trophy
 
-	keep_decoration_system:on_decoration_set(current_preview_trophy, self)
-	self:sync_decoration()
+	arg_10_0.keep_decoration_system:on_decoration_set(var_10_0, arg_10_0)
+	arg_10_0:sync_decoration()
 end
 
-KeepDecorationTrophyExtension.sync_decoration = function (self)
-	local current_preview_trophy = self._current_preview_trophy
+function KeepDecorationTrophyExtension.sync_decoration(arg_11_0)
+	local var_11_0 = arg_11_0._current_preview_trophy
 
-	self:_set_selected_decoration(current_preview_trophy)
+	arg_11_0:_set_selected_decoration(var_11_0)
 
-	local go_id = self._go_id
-	local game_session = Network.game_session()
+	local var_11_1 = arg_11_0._go_id
 
-	if game_session and go_id then
-		local game = Managers.state.network:game()
+	if Network.game_session() and var_11_1 then
+		local var_11_2 = Managers.state.network:game()
 
-		GameSession.set_game_object_field(game, go_id, "trophy_index", self._trophies_lookup[current_preview_trophy])
+		GameSession.set_game_object_field(var_11_2, var_11_1, "trophy_index", arg_11_0._trophies_lookup[var_11_0])
 	end
 end
 
-KeepDecorationTrophyExtension.hot_join_sync = function (self, sender)
+function KeepDecorationTrophyExtension.hot_join_sync(arg_12_0, arg_12_1)
 	return
 end
 
-KeepDecorationTrophyExtension.distributed_update = function (self)
-	if self._is_leader then
-		if self._waiting_for_game_session and Managers.state.network:in_game_session() then
-			local selected_trophy = self:get_selected_decoration()
+function KeepDecorationTrophyExtension.distributed_update(arg_13_0)
+	if arg_13_0._is_leader then
+		if arg_13_0._waiting_for_game_session and Managers.state.network:in_game_session() then
+			local var_13_0 = arg_13_0:get_selected_decoration()
 
-			self:_create_game_object(selected_trophy)
+			arg_13_0:_create_game_object(var_13_0)
 
-			self._waiting_for_game_session = false
+			arg_13_0._waiting_for_game_session = false
 		end
 	else
-		local go_id = self._go_id
-		local game_session = Network.game_session()
+		local var_13_1 = arg_13_0._go_id
+		local var_13_2 = Network.game_session()
 
-		if go_id and game_session then
-			local game = Managers.state.network:game()
-			local trophy_index = GameSession.game_object_field(game, go_id, "trophy_index")
+		if var_13_1 and var_13_2 then
+			local var_13_3 = Managers.state.network:game()
+			local var_13_4 = GameSession.game_object_field(var_13_3, var_13_1, "trophy_index")
 
-			if trophy_index ~= self._go_trophy_index then
-				self._go_trophy_index = trophy_index
+			if var_13_4 ~= arg_13_0._go_trophy_index then
+				arg_13_0._go_trophy_index = var_13_4
 
-				local trophy = self._trophies_lookup[trophy_index]
+				local var_13_5 = arg_13_0._trophies_lookup[var_13_4]
 
-				self._currently_set_trophy = trophy
+				arg_13_0._currently_set_trophy = var_13_5
 
-				self:_load_trophy(trophy)
+				arg_13_0:_load_trophy(var_13_5)
 			end
 		end
 	end
 end
 
-KeepDecorationTrophyExtension.get_selected_decoration = function (self)
-	if self._is_leader then
-		local backend_key = self._backend_key
-		local backend_interface = Managers.backend:get_interface("keep_decorations")
-		local selected_trophy = backend_interface:get_decoration(backend_key)
+function KeepDecorationTrophyExtension.get_selected_decoration(arg_14_0)
+	if arg_14_0._is_leader then
+		local var_14_0 = arg_14_0._backend_key
 
-		selected_trophy = selected_trophy or DefaultTrophies[1]
-
-		return selected_trophy
+		return Managers.backend:get_interface("keep_decorations"):get_decoration(var_14_0) or DefaultTrophies[1]
 	else
-		return self._currently_set_trophy
+		return arg_14_0._currently_set_trophy
 	end
 end
 
-KeepDecorationTrophyExtension._set_selected_decoration = function (self, trophy)
-	local backend_key = self._backend_key
-	local backend_manager = Managers.backend
-	local backend_interface = backend_manager:get_interface("keep_decorations")
+function KeepDecorationTrophyExtension._set_selected_decoration(arg_15_0, arg_15_1)
+	local var_15_0 = arg_15_0._backend_key
+	local var_15_1 = Managers.backend
+	local var_15_2 = var_15_1:get_interface("keep_decorations")
 
-	self._currently_set_trophy = trophy
+	arg_15_0._currently_set_trophy = arg_15_1
 
-	Unit.set_data(self._current_preview_trophy_unit, "decoration_settings_key", self._decoration_settings_key)
-	backend_interface:set_decoration(backend_key, trophy)
-	backend_manager:commit()
+	Unit.set_data(arg_15_0._current_preview_trophy_unit, "decoration_settings_key", arg_15_0._decoration_settings_key)
+	var_15_2:set_decoration(var_15_0, arg_15_1)
+	var_15_1:commit()
 end
 
-KeepDecorationTrophyExtension._load_trophy = function (self, trophy, callback)
-	local unit = self._unit
-	local current_preview_trophy_unit = self._current_preview_trophy_unit
-	local position = Unit.local_position(current_preview_trophy_unit, 0)
-	local rotation = Unit.local_rotation(current_preview_trophy_unit, 0)
+function KeepDecorationTrophyExtension._load_trophy(arg_16_0, arg_16_1, arg_16_2)
+	local var_16_0 = arg_16_0._unit
+	local var_16_1 = arg_16_0._current_preview_trophy_unit
+	local var_16_2 = Unit.local_position(var_16_1, 0)
+	local var_16_3 = Unit.local_rotation(var_16_1, 0)
 
-	if current_preview_trophy_unit == unit then
-		Unit.set_unit_visibility(current_preview_trophy_unit, false)
+	if var_16_1 == var_16_0 then
+		Unit.set_unit_visibility(var_16_1, false)
 	else
-		World.destroy_unit(self._world, current_preview_trophy_unit)
+		World.destroy_unit(arg_16_0._world, var_16_1)
 	end
 
-	local unit_name = Trophies[trophy].unit_name
+	local var_16_4 = Trophies[arg_16_1].unit_name
 
-	if Unit.is_a(unit, unit_name) then
-		Unit.set_unit_visibility(unit, true)
+	if Unit.is_a(var_16_0, var_16_4) then
+		Unit.set_unit_visibility(var_16_0, true)
 
-		self._current_preview_trophy_unit = unit
+		arg_16_0._current_preview_trophy_unit = var_16_0
 	else
-		local new_unit = World.spawn_unit(self._world, unit_name, position, rotation)
-
-		self._current_preview_trophy_unit = new_unit
+		arg_16_0._current_preview_trophy_unit = World.spawn_unit(arg_16_0._world, var_16_4, var_16_2, var_16_3)
 	end
 
-	self._current_preview_trophy = trophy
+	arg_16_0._current_preview_trophy = arg_16_1
 end
 
-KeepDecorationTrophyExtension._create_game_object = function (self, trophy)
-	local go_data_table = {
+function KeepDecorationTrophyExtension._create_game_object(arg_17_0, arg_17_1)
+	local var_17_0 = {
 		go_type = NetworkLookup.go_types.keep_decoration_trophy,
-		level_unit_index = self._level_unit_index,
-		trophy_index = self._trophies_lookup[trophy],
+		level_unit_index = arg_17_0._level_unit_index,
+		trophy_index = arg_17_0._trophies_lookup[arg_17_1]
 	}
-	local callback = callback(self, "cb_game_session_disconnect")
+	local var_17_1 = callback(arg_17_0, "cb_game_session_disconnect")
 
-	self._go_id = Managers.state.network:create_game_object("keep_decoration_trophy", go_data_table, callback)
+	arg_17_0._go_id = Managers.state.network:create_game_object("keep_decoration_trophy", var_17_0, var_17_1)
 end
 
-KeepDecorationTrophyExtension.cb_game_session_disconnect = function (self)
-	self._go_id = nil
+function KeepDecorationTrophyExtension.cb_game_session_disconnect(arg_18_0)
+	arg_18_0._go_id = nil
 end
 
-KeepDecorationTrophyExtension.on_game_object_created = function (self, go_id)
-	local game = Managers.state.network:game()
-	local trophy_index = GameSession.game_object_field(game, go_id, "trophy_index")
-	local trophy = self._trophies_lookup[trophy_index]
+function KeepDecorationTrophyExtension.on_game_object_created(arg_19_0, arg_19_1)
+	local var_19_0 = Managers.state.network:game()
+	local var_19_1 = GameSession.game_object_field(var_19_0, arg_19_1, "trophy_index")
+	local var_19_2 = arg_19_0._trophies_lookup[var_19_1]
 
-	self:_load_trophy(trophy, nil)
+	arg_19_0:_load_trophy(var_19_2, nil)
 
-	self._currently_set_trophy = trophy
-	self._go_trophy_index = trophy_index
-	self._go_id = go_id
+	arg_19_0._currently_set_trophy = var_19_2
+	arg_19_0._go_trophy_index = var_19_1
+	arg_19_0._go_id = arg_19_1
 end
 
-KeepDecorationTrophyExtension.on_game_object_destroyed = function (self)
-	self._go_id = nil
+function KeepDecorationTrophyExtension.on_game_object_destroyed(arg_20_0)
+	arg_20_0._go_id = nil
 end

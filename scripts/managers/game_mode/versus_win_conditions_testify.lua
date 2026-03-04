@@ -1,9 +1,7 @@
-﻿-- chunkname: @scripts/managers/game_mode/versus_win_conditions_testify.lua
+-- chunkname: @scripts/managers/game_mode/versus_win_conditions_testify.lua
 
-local VersusWinConditionsTestify = {
-	versus_party_won_early = function (versus_win_conditions)
-		return versus_win_conditions.party_won_early
-	end,
+return {
+	versus_party_won_early = function(arg_1_0)
+		return arg_1_0.party_won_early
+	end
 }
-
-return VersusWinConditionsTestify

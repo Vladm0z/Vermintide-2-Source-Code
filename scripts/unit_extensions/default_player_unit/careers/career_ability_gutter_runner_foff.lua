@@ -1,21 +1,20 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/careers/career_ability_gutter_runner_foff.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/careers/career_ability_gutter_runner_foff.lua
 
 CareerAbilityGutterRunnerFoff = class(CareerAbilityGutterRunnerFoff, CareerAbilityDarkPactBase)
 
-CareerAbilityGutterRunnerFoff._ability_available = function (self)
-	local ability_available = self.super._ability_available(self)
-	local career_extension = self._career_extension
-	local in_foff_invis = career_extension:get_state() == "vs_gutter_runner_smoke_bomb_invisible"
+function CareerAbilityGutterRunnerFoff._ability_available(arg_1_0)
+	local var_1_0 = arg_1_0.super._ability_available(arg_1_0)
+	local var_1_1 = arg_1_0._career_extension:get_state() == "vs_gutter_runner_smoke_bomb_invisible"
 
-	return ability_available and not in_foff_invis
+	return var_1_0 and not var_1_1
 end
 
-CareerAbilityGutterRunnerFoff._start = function (self)
-	self.super._start(self)
+function CareerAbilityGutterRunnerFoff._start(arg_2_0)
+	arg_2_0.super._start(arg_2_0)
 
-	local career_extension = self._career_extension
-	local id = self._ability_data.ability_id
+	local var_2_0 = arg_2_0._career_extension
+	local var_2_1 = arg_2_0._ability_data.ability_id
 
-	career_extension:start_activated_ability_cooldown(id)
-	career_extension:set_activated_ability_cooldown_paused(id)
+	var_2_0:start_activated_ability_cooldown(var_2_1)
+	var_2_0:set_activated_ability_cooldown_paused(var_2_1)
 end

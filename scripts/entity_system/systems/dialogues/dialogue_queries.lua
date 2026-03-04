@@ -1,176 +1,167 @@
-﻿-- chunkname: @scripts/entity_system/systems/dialogues/dialogue_queries.lua
+-- chunkname: @scripts/entity_system/systems/dialogues/dialogue_queries.lua
 
-local DialogueQueries = {}
-local DUMMY_TABLE = {}
+local var_0_0 = {}
+local var_0_1 = {}
 
-DialogueQueries.get_sound_event_duration = function (dialogue, index)
-	local sound_events_duration = dialogue.sound_events_duration or DUMMY_TABLE
-	local duration = sound_events_duration[index]
+function var_0_0.get_sound_event_duration(arg_1_0, arg_1_1)
+	local var_1_0 = (arg_1_0.sound_events_duration or var_0_1)[arg_1_1]
 
-	if duration then
-		return duration
+	if var_1_0 then
+		return var_1_0
 	end
 
 	return DialogueSettings.sound_event_default_length
 end
 
-DialogueQueries.get_dialogue_event = function (dialogue, index)
-	return dialogue.sound_events[index], dialogue.localization_strings[index], dialogue.face_animations[index], dialogue.dialogue_animations[index]
+function var_0_0.get_dialogue_event(arg_2_0, arg_2_1)
+	return arg_2_0.sound_events[arg_2_1], arg_2_0.localization_strings[arg_2_1], arg_2_0.face_animations[arg_2_1], arg_2_0.dialogue_animations[arg_2_1]
 end
 
-DialogueQueries.build_randomized_indexes = function (dialogue)
-	if dialogue.sound_events_weights then
-		local temp_weight_table = {}
-		local temp_indexes = {}
+function var_0_0.build_randomized_indexes(arg_3_0)
+	if arg_3_0.sound_events_weights then
+		local var_3_0 = {}
+		local var_3_1 = {}
 
-		for i = 1, dialogue.sound_events_n do
-			temp_weight_table[i] = dialogue.sound_events_weights[i]
-			temp_indexes[i] = i
+		for iter_3_0 = 1, arg_3_0.sound_events_n do
+			var_3_0[iter_3_0] = arg_3_0.sound_events_weights[iter_3_0]
+			var_3_1[iter_3_0] = iter_3_0
 		end
 
-		local temp_weight_table_n = dialogue.sound_events_n
-		local max_random = 1
+		local var_3_2 = arg_3_0.sound_events_n
+		local var_3_3 = 1
 
-		for i = 1, dialogue.sound_events_n do
-			local rand = math.random() * max_random
-			local selected_index = 1
+		for iter_3_1 = 1, arg_3_0.sound_events_n do
+			local var_3_4 = math.random() * var_3_3
+			local var_3_5 = 1
 
-			for temp_index = 1, temp_weight_table_n do
-				if rand <= temp_weight_table[temp_index] then
-					selected_index = temp_index
+			for iter_3_2 = 1, var_3_2 do
+				if var_3_4 <= var_3_0[iter_3_2] then
+					var_3_5 = iter_3_2
 
 					break
 				end
 			end
 
-			if temp_weight_table_n > 1 then
-				local length_selected = temp_weight_table[selected_index] - (selected_index == 1 and 0 or temp_weight_table[selected_index - 1])
+			if var_3_2 > 1 then
+				local var_3_6 = var_3_0[var_3_5] - (var_3_5 == 1 and 0 or var_3_0[var_3_5 - 1])
 
-				for accum_index = selected_index + 1, temp_weight_table_n do
-					temp_weight_table[accum_index] = temp_weight_table[accum_index] - length_selected
+				for iter_3_3 = var_3_5 + 1, var_3_2 do
+					var_3_0[iter_3_3] = var_3_0[iter_3_3] - var_3_6
 				end
 
-				table.remove(temp_weight_table, selected_index)
+				table.remove(var_3_0, var_3_5)
 
-				temp_weight_table_n = temp_weight_table_n - 1
-				max_random = max_random - length_selected
+				var_3_2 = var_3_2 - 1
+				var_3_3 = var_3_3 - var_3_6
 			end
 
-			dialogue.randomize_indexes[i] = temp_indexes[selected_index]
+			arg_3_0.randomize_indexes[iter_3_1] = var_3_1[var_3_5]
 
-			table.remove(temp_indexes, selected_index)
+			table.remove(var_3_1, var_3_5)
 		end
 
-		dialogue.randomize_indexes_n = dialogue.sound_events_n
+		arg_3_0.randomize_indexes_n = arg_3_0.sound_events_n
 	else
-		local temp_rand_table = {}
+		local var_3_7 = {}
 
-		for i = 1, dialogue.sound_events_n do
-			temp_rand_table[i] = i
+		for iter_3_4 = 1, arg_3_0.sound_events_n do
+			var_3_7[iter_3_4] = iter_3_4
 		end
 
-		dialogue.randomize_indexes = {}
+		arg_3_0.randomize_indexes = {}
 
-		for i = 1, dialogue.sound_events_n do
-			local rand = math.random(1, dialogue.sound_events_n + 1 - i)
-			local val = table.remove(temp_rand_table, rand)
+		for iter_3_5 = 1, arg_3_0.sound_events_n do
+			local var_3_8 = math.random(1, arg_3_0.sound_events_n + 1 - iter_3_5)
+			local var_3_9 = table.remove(var_3_7, var_3_8)
 
-			dialogue.randomize_indexes[i] = val
+			arg_3_0.randomize_indexes[iter_3_5] = var_3_9
 		end
 
-		dialogue.randomize_indexes_n = dialogue.sound_events_n
+		arg_3_0.randomize_indexes_n = arg_3_0.sound_events_n
 	end
 end
 
-DialogueQueries.get_dialogue_event_index = function (dialogue, wrap_around)
-	local num_events = dialogue.sound_events_n
+function var_0_0.get_dialogue_event_index(arg_4_0, arg_4_1)
+	local var_4_0 = arg_4_0.sound_events_n
 
-	if num_events == 1 then
+	if var_4_0 == 1 then
 		return 1
 	end
 
-	local wrapped = false
+	local var_4_1 = false
 
-	if dialogue.randomize_indexes_n == 0 then
-		if wrap_around then
-			wrapped = true
-			dialogue.randomize_indexes_n = num_events
+	if arg_4_0.randomize_indexes_n == 0 then
+		if arg_4_1 then
+			var_4_1 = true
+			arg_4_0.randomize_indexes_n = var_4_0
 		else
-			DialogueQueries.build_randomized_indexes(dialogue)
+			var_0_0.build_randomized_indexes(arg_4_0)
 		end
 	end
 
-	local current_index = dialogue.randomize_indexes_n
+	local var_4_2 = arg_4_0.randomize_indexes_n
 
-	dialogue.randomize_indexes_n = dialogue.randomize_indexes_n - 1
+	arg_4_0.randomize_indexes_n = arg_4_0.randomize_indexes_n - 1
 
-	return dialogue.randomize_indexes[current_index], wrapped
+	return arg_4_0.randomize_indexes[var_4_2], var_4_1
 end
 
-DialogueQueries.get_filtered_dialogue_event_index = function (dialogue, context, global_filters)
-	local dialogue_index, wrapped = DialogueQueries.get_dialogue_event_index(dialogue)
-	local valid_event = false
+function var_0_0.get_filtered_dialogue_event_index(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0, var_5_1 = var_0_0.get_dialogue_event_index(arg_5_0)
+	local var_5_2 = false
 
-	for i = 1, dialogue.sound_events_n do
-		valid_event = DialogueQueries.filter_sound_event(dialogue, dialogue_index, context, global_filters)
-
-		if valid_event then
+	for iter_5_0 = 1, arg_5_0.sound_events_n do
+		if var_0_0.filter_sound_event(arg_5_0, var_5_0, arg_5_1, arg_5_2) then
 			break
 		end
 
-		local did_wrap
+		local var_5_3
+		local var_5_4
 
-		dialogue_index, did_wrap = DialogueQueries.get_dialogue_event_index(dialogue, true)
-		wrapped = wrapped or did_wrap
+		var_5_0, var_5_4 = var_0_0.get_dialogue_event_index(arg_5_0, true)
+		var_5_1 = var_5_1 or var_5_4
 	end
 
-	if wrapped then
-		DialogueQueries.build_randomized_indexes(dialogue)
+	if var_5_1 then
+		var_0_0.build_randomized_indexes(arg_5_0)
 	end
 
-	return dialogue_index
+	return var_5_0
 end
 
-DialogueQueries.filter_sound_event = function (dialogue, event_index, context, global_filters)
-	local sound_event = dialogue.sound_events[event_index]
+function var_0_0.filter_sound_event(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	local var_6_0 = arg_6_0.sound_events[arg_6_1]
+	local var_6_1 = arg_6_3[var_6_0]
 
-	do
-		local event_filters = global_filters[sound_event]
+	if var_6_1 then
+		for iter_6_0 = 1, #var_6_1 do
+			local var_6_2 = var_6_1[iter_6_0]
+			local var_6_3 = var_6_2[1]
+			local var_6_4 = var_6_2[2]
+			local var_6_5 = var_6_2[3]
+			local var_6_6 = var_6_2[4]
+			local var_6_7 = arg_6_2[var_6_3][var_6_4] or false
 
-		if event_filters then
-			for i = 1, #event_filters do
-				local filter = event_filters[i]
-				local sub_context = filter[1]
-				local context_key = filter[2]
-				local condition = filter[3]
-				local filter_value = filter[4]
-				local real_value = context[sub_context][context_key] or false
-				local op = TagQuery.FilterOP[condition]
-
-				if op(real_value, filter_value) then
-					return false
-				end
+			if TagQuery.FilterOP[var_6_5](var_6_7, var_6_6) then
+				return false
 			end
 		end
 	end
 
-	do
-		local all_filters = dialogue.sound_event_filters
-		local event_filters = all_filters and all_filters[sound_event]
+	local var_6_8 = arg_6_0.sound_event_filters
+	local var_6_9 = var_6_8 and var_6_8[var_6_0]
 
-		if event_filters then
-			for i = 1, #event_filters do
-				local filter = event_filters[i]
-				local sub_context = filter[1]
-				local context_key = filter[2]
-				local condition = filter[3]
-				local filter_value = filter[4]
-				local real_value = context[sub_context][context_key] or false
-				local op = TagQuery.FilterOP[condition]
+	if var_6_9 then
+		for iter_6_1 = 1, #var_6_9 do
+			local var_6_10 = var_6_9[iter_6_1]
+			local var_6_11 = var_6_10[1]
+			local var_6_12 = var_6_10[2]
+			local var_6_13 = var_6_10[3]
+			local var_6_14 = var_6_10[4]
+			local var_6_15 = arg_6_2[var_6_11][var_6_12] or false
 
-				if op(real_value, filter_value) then
-					return false
-				end
+			if TagQuery.FilterOP[var_6_13](var_6_15, var_6_14) then
+				return false
 			end
 		end
 	end
@@ -178,4 +169,4 @@ DialogueQueries.filter_sound_event = function (dialogue, event_index, context, g
 	return true
 end
 
-return DialogueQueries
+return var_0_0

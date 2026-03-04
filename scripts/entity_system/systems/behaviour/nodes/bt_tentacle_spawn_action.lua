@@ -1,41 +1,41 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_tentacle_spawn_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_tentacle_spawn_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTTentacleSpawnAction = class(BTTentacleSpawnAction, BTNode)
 
-BTTentacleSpawnAction.init = function (self, ...)
-	BTTentacleSpawnAction.super.init(self, ...)
+function BTTentacleSpawnAction.init(arg_1_0, ...)
+	BTTentacleSpawnAction.super.init(arg_1_0, ...)
 end
 
 BTTentacleSpawnAction.name = "BTTentacleSpawnAction"
 
-BTTentacleSpawnAction.enter = function (self, unit, blackboard, t)
-	local action = self._tree_node.action_data
+function BTTentacleSpawnAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_0._tree_node.action_data
 
-	blackboard.action = action
+	arg_2_2.action = var_2_0
 
-	if action and action.duration then
-		blackboard.spawn_finished_t = t + action.duration
+	if var_2_0 and var_2_0.duration then
+		arg_2_2.spawn_finished_t = arg_2_3 + var_2_0.duration
 	end
 
-	local network_manager = Managers.state.network
+	local var_2_1 = Managers.state.network
 
-	if action and action.animation then
-		network_manager:anim_event(unit, action.animation)
+	if var_2_0 and var_2_0.animation then
+		var_2_1:anim_event(arg_2_1, var_2_0.animation)
 	end
 end
 
-BTTentacleSpawnAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	blackboard.spawn = false
+function BTTentacleSpawnAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	arg_3_2.spawn = false
 end
 
-BTTentacleSpawnAction.run = function (self, unit, blackboard, t, dt)
-	local action = blackboard.action
+function BTTentacleSpawnAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = arg_4_2.action
 
-	if action and action.duration then
-		if t > blackboard.spawn_finished_t then
-			blackboard.spawn_finished_t = nil
+	if var_4_0 and var_4_0.duration then
+		if arg_4_3 > arg_4_2.spawn_finished_t then
+			arg_4_2.spawn_finished_t = nil
 
 			return "done"
 		end

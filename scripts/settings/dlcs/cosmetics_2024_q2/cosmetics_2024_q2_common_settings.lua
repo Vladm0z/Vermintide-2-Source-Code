@@ -1,7 +1,7 @@
-﻿-- chunkname: @scripts/settings/dlcs/cosmetics_2024_q2/cosmetics_2024_q2_common_settings.lua
+-- chunkname: @scripts/settings/dlcs/cosmetics_2024_q2/cosmetics_2024_q2_common_settings.lua
 
-local settings = DLCSettings.cosmetics_2024_q2
+local var_0_0 = DLCSettings.cosmetics_2024_q2
 
-settings.unlock_settings = {}
-settings.unlock_settings_xb1 = {}
-settings.unlock_settings_ps4 = {}
+var_0_0.unlock_settings = {}
+var_0_0.unlock_settings_xb1 = {}
+var_0_0.unlock_settings_ps4 = {}

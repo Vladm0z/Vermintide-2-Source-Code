@@ -1,180 +1,173 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_emote.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_emote.lua
 
 PlayerCharacterStateEmote = class(PlayerCharacterStateEmote, PlayerCharacterState)
 
-local zoom_sensitivity = 0.05
-local zoom_sensitivity_gamepad = 0.03
-local zoom_lerp_speed = 5
+local var_0_0 = 0.05
+local var_0_1 = 0.03
+local var_0_2 = 5
 
-PlayerCharacterStateEmote.init = function (self, character_state_init_context)
-	PlayerCharacterState.init(self, character_state_init_context, "emote")
+function PlayerCharacterStateEmote.init(arg_1_0, arg_1_1)
+	PlayerCharacterState.init(arg_1_0, arg_1_1, "emote")
 
-	local context = character_state_init_context
+	local var_1_0 = arg_1_1
 end
 
-PlayerCharacterStateEmote.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
-	self.locomotion_extension:set_wanted_velocity(Vector3.zero())
+function PlayerCharacterStateEmote.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	arg_2_0.locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-	local camera_settings = {
-		allow_camera_movement = true,
+	local var_2_0 = {
+		override_node_name = "camera_attach",
 		camera_node = "emotes",
 		force_state_change = true,
-		override_node_name = "camera_attach",
-		override_follow_unit = unit,
+		allow_camera_movement = true,
+		override_follow_unit = arg_2_1
 	}
 
-	CharacterStateHelper.change_camera_state(self.player, "follow_third_person", camera_settings)
-	self.first_person_extension:set_first_person_mode(false)
-	CharacterStateHelper.stop_weapon_actions(self.inventory_extension, "emote")
-	CharacterStateHelper.stop_career_abilities(self.career_extension, "emote")
-	CharacterStateHelper.play_animation_event(unit, "idle")
-	CharacterStateHelper.play_animation_event_first_person(self.first_person_extension, "idle")
-	self.status_extension:set_inspecting(true)
-	self:_update_emote()
+	CharacterStateHelper.change_camera_state(arg_2_0.player, "follow_third_person", var_2_0)
+	arg_2_0.first_person_extension:set_first_person_mode(false)
+	CharacterStateHelper.stop_weapon_actions(arg_2_0.inventory_extension, "emote")
+	CharacterStateHelper.stop_career_abilities(arg_2_0.career_extension, "emote")
+	CharacterStateHelper.play_animation_event(arg_2_1, "idle")
+	CharacterStateHelper.play_animation_event_first_person(arg_2_0.first_person_extension, "idle")
+	arg_2_0.status_extension:set_inspecting(true)
+	arg_2_0:_update_emote()
 
-	self._current_zoom = 0
-	self._current_zoom_target = 0.7
+	arg_2_0._current_zoom = 0
+	arg_2_0._current_zoom_target = 0.7
 
-	Managers.state.camera:set_variable(self.player.viewport_name, "emote_zoom", 1)
+	Managers.state.camera:set_variable(arg_2_0.player.viewport_name, "emote_zoom", 1)
 
-	local emote_ui = Managers.ui:get_hud_component("EmotePhotomodeUI")
+	local var_2_1 = Managers.ui:get_hud_component("EmotePhotomodeUI")
 
-	emote_ui:set_enabled(true)
+	var_2_1:set_enabled(true)
 
-	self._emote_ui = emote_ui
+	arg_2_0._emote_ui = var_2_1
 end
 
-PlayerCharacterStateEmote.on_exit = function (self, unit, input, dt, context, t, next_state)
-	CharacterStateHelper.change_camera_state(self.player, "follow")
-	self.first_person_extension:toggle_visibility(CameraTransitionSettings.perspective_transition_time)
-	self.status_extension:set_inspecting(false)
+function PlayerCharacterStateEmote.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	CharacterStateHelper.change_camera_state(arg_3_0.player, "follow")
+	arg_3_0.first_person_extension:toggle_visibility(CameraTransitionSettings.perspective_transition_time)
+	arg_3_0.status_extension:set_inspecting(false)
 
-	local game = Managers.state.network:game()
+	if Managers.state.network:game() then
+		local var_3_0 = arg_3_0.unit_storage:go_id(arg_3_0.unit)
 
-	if game then
-		local unit_id = self.unit_storage:go_id(self.unit)
-
-		self.network_transmit:send_rpc_server("rpc_server_cancel_emote", unit_id)
+		arg_3_0.network_transmit:send_rpc_server("rpc_server_cancel_emote", var_3_0)
 	end
 
-	local game_mode = Managers.state.game_mode:game_mode()
+	Managers.state.game_mode:game_mode():set_photomode_enabled(false)
+	arg_3_0._emote_ui:set_enabled(false)
 
-	game_mode:set_photomode_enabled(false)
-	self._emote_ui:set_enabled(false)
-
-	self._emote_ui = nil
-	self.current_emote = nil
+	arg_3_0._emote_ui = nil
+	arg_3_0.current_emote = nil
 end
 
-PlayerCharacterStateEmote.update = function (self, unit, input, dt, context, t)
-	local csm = self.csm
-	local input_extension = self.input_extension
-	local camera_manager = Managers.state.camera
-	local status_extension = self.status_extension
-	local first_person_extension = self.first_person_extension
-	local locomotion_extension = self.locomotion_extension
+function PlayerCharacterStateEmote.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	local var_4_0 = arg_4_0.csm
+	local var_4_1 = arg_4_0.input_extension
+	local var_4_2 = Managers.state.camera
+	local var_4_3 = arg_4_0.status_extension
+	local var_4_4 = arg_4_0.first_person_extension
+	local var_4_5 = arg_4_0.locomotion_extension
 
-	input_extension:get("action_career", true)
+	var_4_1:get("action_career", true)
 
-	if CharacterStateHelper.do_common_state_transitions(status_extension, csm) then
+	if CharacterStateHelper.do_common_state_transitions(var_4_3, var_4_0) then
 		return
 	end
 
-	local world = self.world
+	local var_4_6 = arg_4_0.world
 
-	if CharacterStateHelper.is_ledge_hanging(world, unit, self.temp_params) then
-		csm:change_state("ledge_hanging", self.temp_params)
-
-		return
-	end
-
-	if CharacterStateHelper.is_overcharge_exploding(status_extension) then
-		csm:change_state("overcharge_exploding")
+	if CharacterStateHelper.is_ledge_hanging(var_4_6, arg_4_1, arg_4_0.temp_params) then
+		var_4_0:change_state("ledge_hanging", arg_4_0.temp_params)
 
 		return
 	end
 
-	local input_service = Managers.input:get_service("Player")
-	local gamepad_active = Managers.input:is_device_active("gamepad")
+	if CharacterStateHelper.is_overcharge_exploding(var_4_3) then
+		var_4_0:change_state("overcharge_exploding")
 
-	if gamepad_active then
-		if input_service:get("crouch", true) then
-			csm:change_state("standing", self.temp_params)
+		return
+	end
+
+	local var_4_7 = Managers.input:get_service("Player")
+	local var_4_8 = Managers.input:is_device_active("gamepad")
+
+	if var_4_8 then
+		if var_4_7:get("crouch", true) then
+			var_4_0:change_state("standing", arg_4_0.temp_params)
 
 			return
 		end
 	else
-		local is_crouching = status_extension:is_crouching()
+		local var_4_9 = var_4_3:is_crouching()
 
-		if (input_extension:get("jump") or input_extension:get("jump_only")) and not status_extension:is_crouching() and (not is_crouching or CharacterStateHelper.can_uncrouch(unit)) and locomotion_extension:jump_allowed() then
-			if is_crouching then
-				CharacterStateHelper.uncrouch(unit, t, first_person_extension, status_extension)
+		if (var_4_1:get("jump") or var_4_1:get("jump_only")) and not var_4_3:is_crouching() and (not var_4_9 or CharacterStateHelper.can_uncrouch(arg_4_1)) and var_4_5:jump_allowed() then
+			if var_4_9 then
+				CharacterStateHelper.uncrouch(arg_4_1, arg_4_5, var_4_4, var_4_3)
 			end
 
-			csm:change_state("jumping")
-			first_person_extension:change_state("jumping")
+			var_4_0:change_state("jumping")
+			var_4_4:change_state("jumping")
 
 			return
 		end
 
-		local is_moving = CharacterStateHelper.has_move_input(input_extension)
+		if CharacterStateHelper.has_move_input(var_4_1) then
+			local var_4_10 = arg_4_0.temp_params
 
-		if is_moving then
-			local params = self.temp_params
-
-			csm:change_state("walking", params)
-			first_person_extension:change_state("walking")
+			var_4_0:change_state("walking", var_4_10)
+			var_4_4:change_state("walking")
 
 			return
 		end
 	end
 
-	local zoom_input = 0
+	local var_4_11 = 0
 
-	if gamepad_active then
-		zoom_input = input_service:get("emote_camera_zoom_in") - input_service:get("emote_camera_zoom_out")
-		zoom_input = zoom_input * zoom_sensitivity_gamepad
+	if var_4_8 then
+		var_4_11 = var_4_7:get("emote_camera_zoom_in") - var_4_7:get("emote_camera_zoom_out")
+		var_4_11 = var_4_11 * var_0_1
 	else
-		zoom_input = input_service:get("emote_camera_zoom").y * zoom_sensitivity
+		var_4_11 = var_4_7:get("emote_camera_zoom").y * var_0_0
 	end
 
-	local social_wheel_class = Managers.mechanism:get_social_wheel_class()
-	local social_wheel = Managers.ui:get_hud_component(social_wheel_class)
-	local is_social_wheel_active = social_wheel and social_wheel:is_active()
+	local var_4_12 = Managers.mechanism:get_social_wheel_class()
+	local var_4_13 = Managers.ui:get_hud_component(var_4_12)
 
-	if not is_social_wheel_active and input_service:get("emote_toggle_hud_visibility", true) then
-		local game_mode = Managers.state.game_mode:game_mode()
+	if not (var_4_13 and var_4_13:is_active()) and var_4_7:get("emote_toggle_hud_visibility", true) then
+		local var_4_14 = Managers.state.game_mode:game_mode()
 
-		game_mode:set_photomode_enabled(not game_mode:photomode_enabled())
+		var_4_14:set_photomode_enabled(not var_4_14:photomode_enabled())
 	end
 
-	self._current_zoom_target = math.clamp(self._current_zoom_target + zoom_input, 0, 1)
+	arg_4_0._current_zoom_target = math.clamp(arg_4_0._current_zoom_target + var_4_11, 0, 1)
 
-	if self._current_zoom ~= self._current_zoom_target then
-		local current_zoom = self._current_zoom
-		local lerp_t = math.min(dt * zoom_lerp_speed, 1)
+	if arg_4_0._current_zoom ~= arg_4_0._current_zoom_target then
+		local var_4_15 = arg_4_0._current_zoom
+		local var_4_16 = math.min(arg_4_3 * var_0_2, 1)
+		local var_4_17 = math.lerp(var_4_15, arg_4_0._current_zoom_target, var_4_16)
 
-		current_zoom = math.lerp(current_zoom, self._current_zoom_target, lerp_t)
-		self._current_zoom = current_zoom
+		arg_4_0._current_zoom = var_4_17
 
-		camera_manager:set_variable(self.player.viewport_name, "emote_zoom", 1 - current_zoom)
+		var_4_2:set_variable(arg_4_0.player.viewport_name, "emote_zoom", 1 - var_4_17)
 	end
 
-	self:_update_emote()
-	self.locomotion_extension:set_disable_rotation_update()
-	CharacterStateHelper.look(input_extension, self.player.viewport_name, first_person_extension, status_extension, self.inventory_extension)
+	arg_4_0:_update_emote()
+	arg_4_0.locomotion_extension:set_disable_rotation_update()
+	CharacterStateHelper.look(var_4_1, arg_4_0.player.viewport_name, var_4_4, var_4_3, arg_4_0.inventory_extension)
 end
 
-PlayerCharacterStateEmote._update_emote = function (self)
-	local emote_anim_event, hide_weapons = self.cosmetic_extension:get_queued_3p_emote()
+function PlayerCharacterStateEmote._update_emote(arg_5_0)
+	local var_5_0, var_5_1 = arg_5_0.cosmetic_extension:get_queued_3p_emote()
 
-	if emote_anim_event then
-		local unit_id = self.unit_storage:go_id(self.unit)
-		local anim_event_id = NetworkLookup.anims[emote_anim_event]
+	if var_5_0 then
+		local var_5_2 = arg_5_0.unit_storage:go_id(arg_5_0.unit)
+		local var_5_3 = NetworkLookup.anims[var_5_0]
 
-		self.network_transmit:send_rpc_server("rpc_server_request_emote", unit_id, anim_event_id, hide_weapons)
-		self.cosmetic_extension:consume_queued_3p_emote()
+		arg_5_0.network_transmit:send_rpc_server("rpc_server_request_emote", var_5_2, var_5_3, var_5_1)
+		arg_5_0.cosmetic_extension:consume_queued_3p_emote()
 
-		self.current_emote = emote_anim_event
+		arg_5_0.current_emote = var_5_0
 	end
 end

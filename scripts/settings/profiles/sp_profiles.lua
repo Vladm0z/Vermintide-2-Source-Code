@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/settings/profiles/sp_profiles.lua
+-- chunkname: @scripts/settings/profiles/sp_profiles.lua
 
 require("scripts/settings/script_input_settings")
 require("scripts/settings/equipment/weapons")
@@ -13,7 +13,7 @@ if script_data.honduras_demo then
 		5,
 		4,
 		1,
-		2,
+		2
 	}
 elseif LAUNCH_MODE == "attract_benchmark" then
 	ProfilePriority = {
@@ -21,7 +21,7 @@ elseif LAUNCH_MODE == "attract_benchmark" then
 		4,
 		2,
 		1,
-		5,
+		5
 	}
 else
 	ProfilePriority = {
@@ -29,14 +29,14 @@ else
 		3,
 		4,
 		1,
-		2,
+		2
 	}
 end
 
 ProfileIndexToPriorityIndex = {}
 
-for priority_index, profile_index in ipairs(ProfilePriority) do
-	ProfileIndexToPriorityIndex[profile_index] = priority_index
+for iter_0_0, iter_0_1 in ipairs(ProfilePriority) do
+	ProfileIndexToPriorityIndex[iter_0_1] = iter_0_0
 end
 
 SPProfilesAbbreviation = {
@@ -44,10 +44,10 @@ SPProfilesAbbreviation = {
 	"bw",
 	"dr",
 	"we",
-	"es",
+	"es"
 }
 
-local base_character_states = {
+local var_0_0 = {
 	"PlayerCharacterStateDead",
 	"PlayerCharacterStateInteracting",
 	"PlayerCharacterStateInspecting",
@@ -79,9 +79,9 @@ local base_character_states = {
 	"PlayerCharacterStateLeaping",
 	"PlayerCharacterStateOverpowered",
 	"PlayerCharacterStateInHangingCage",
-	"PlayerCharacterStateGrabbedByCorruptor",
+	"PlayerCharacterStateGrabbedByCorruptor"
 }
-local base_camera_states = {
+local var_0_1 = {
 	"CameraStateIdle",
 	"CameraStateFollow",
 	"CameraStateFollowThirdPerson",
@@ -92,9 +92,9 @@ local base_camera_states = {
 	"CameraStateFollowThirdPersonTunneling",
 	"CameraStateFollowChaosSpawnGrabbed",
 	"CameraStateObserver",
-	"CameraStateInteraction",
+	"CameraStateInteraction"
 }
-local hud_components = {
+local var_0_2 = {
 	"LootObjectiveUI",
 	"WaitForRescueUI",
 	"ItemReceivedFeedbackUI",
@@ -115,425 +115,424 @@ local hud_components = {
 	"WeaveProgressUI",
 	"WeaveTimerUI",
 	"WorldMarkerUI",
-	"ChallengeTrackerUI",
+	"ChallengeTrackerUI"
 }
-local default_state_machine = "units/beings/player/first_person_base/state_machines/common"
+local var_0_3 = "units/beings/player/first_person_base/state_machines/common"
 
-for _, dlc in pairs(DLCSettings) do
-	local dlc_hud_components = dlc.hero_hud_components
+for iter_0_2, iter_0_3 in pairs(DLCSettings) do
+	local var_0_4 = iter_0_3.hero_hud_components
 
-	if dlc_hud_components then
-		for _, dlc_hud_component in ipairs(dlc_hud_components) do
-			hud_components[#hud_components + 1] = dlc_hud_component
+	if var_0_4 then
+		for iter_0_4, iter_0_5 in ipairs(var_0_4) do
+			var_0_2[#var_0_2 + 1] = iter_0_5
 		end
 	end
 end
 
 SPProfiles = {
 	{
-		affiliation = "heroes",
 		career_voice_parameter = "victor_career_voice_effect",
-		character_name = "inventory_name_witch_hunter",
-		character_vo = "witch_hunter",
-		default_wielded_slot = "slot_melee",
 		display_name = "witch_hunter",
 		hero_selection_image = "hero_icon_wh",
-		ingame_display_name = "inventory_name_witch_hunter",
 		ingame_short_display_name = "witch_hunter_short",
-		role = "hero",
-		supports_motion_sickness_modes = true,
-		ui_portrait = "unit_frame_portrait_victor_captain",
+		character_name = "inventory_name_witch_hunter",
+		character_vo = "witch_hunter",
 		unit_name = "witch_hunter",
+		supports_motion_sickness_modes = true,
+		default_wielded_slot = "slot_melee",
+		role = "hero",
+		ingame_display_name = "inventory_name_witch_hunter",
+		affiliation = "heroes",
+		ui_portrait = "unit_frame_portrait_victor_captain",
 		career_voice_parameter_values = {
 			0,
 			100,
-			50,
+			50
 		},
 		room_profile = RoomProfiles.witch_hunter,
 		base_units = BaseUnits.witch_hunter,
-		default_state_machine = default_state_machine,
+		default_state_machine = var_0_3,
 		first_person_attachment = FirstPersonAttachments.witch_hunter,
 		first_person_heights = {
 			charged = 1,
 			crouch = 1,
-			grabbed_by_tentacle = 1.9,
-			knocked_down = 1,
 			stand = 1.7,
+			knocked_down = 1,
+			grabbed_by_tentacle = 1.9
 		},
 		careers = {
 			CareerSettings.wh_captain,
 			CareerSettings.wh_bountyhunter,
-			CareerSettings.wh_zealot,
+			CareerSettings.wh_zealot
 		},
-		base_character_states = base_character_states,
-		base_camera_states = base_camera_states,
+		base_character_states = var_0_0,
+		base_camera_states = var_0_1
 	},
 	{
-		affiliation = "heroes",
 		career_voice_parameter = "sienna_career_voice_effect",
-		character_name = "inventory_name_bright_wizard",
-		character_vo = "bright_wizard",
-		default_wielded_slot = "slot_melee",
 		display_name = "bright_wizard",
 		hero_selection_image = "hero_icon_bw",
-		ingame_display_name = "inventory_name_bright_wizard",
 		ingame_short_display_name = "bright_wizard_short",
-		role = "hero",
-		supports_motion_sickness_modes = true,
-		ui_portrait = "unit_frame_portrait_sienna_scholar",
+		character_name = "inventory_name_bright_wizard",
+		character_vo = "bright_wizard",
 		unit_name = "bright_wizard",
+		supports_motion_sickness_modes = true,
+		default_wielded_slot = "slot_melee",
+		role = "hero",
+		ingame_display_name = "inventory_name_bright_wizard",
+		affiliation = "heroes",
+		ui_portrait = "unit_frame_portrait_sienna_scholar",
 		career_voice_parameter_values = {
 			0,
 			100,
-			50,
+			50
 		},
 		room_profile = RoomProfiles.bright_wizard,
 		base_units = BaseUnits.bright_wizard,
-		default_state_machine = default_state_machine,
+		default_state_machine = var_0_3,
 		first_person_attachment = FirstPersonAttachments.bright_wizard,
 		first_person_heights = {
 			charged = 0.9,
 			crouch = 1,
-			grabbed_by_tentacle = 1.7,
-			knocked_down = 0.95,
 			stand = 1.55,
+			knocked_down = 0.95,
+			grabbed_by_tentacle = 1.7
 		},
 		careers = {
 			CareerSettings.bw_adept,
 			CareerSettings.bw_scholar,
-			CareerSettings.bw_unchained,
+			CareerSettings.bw_unchained
 		},
-		base_character_states = base_character_states,
-		base_camera_states = base_camera_states,
+		base_character_states = var_0_0,
+		base_camera_states = var_0_1
 	},
 	{
-		affiliation = "heroes",
 		career_voice_parameter = "dwarf_career_voice_effect",
-		character_name = "inventory_name_dwarf_ranger",
-		character_vo = "dwarf_ranger",
-		default_wielded_slot = "slot_melee",
 		display_name = "dwarf_ranger",
 		hero_selection_image = "hero_icon_dr",
-		ingame_display_name = "inventory_name_dwarf_ranger",
 		ingame_short_display_name = "dwarf_ranger_short",
-		role = "hero",
-		supports_motion_sickness_modes = true,
-		ui_portrait = "unit_frame_portrait_bardin_ranger",
+		character_name = "inventory_name_dwarf_ranger",
+		character_vo = "dwarf_ranger",
 		unit_name = "dwarf_ranger",
+		supports_motion_sickness_modes = true,
+		default_wielded_slot = "slot_melee",
+		role = "hero",
+		ingame_display_name = "inventory_name_dwarf_ranger",
+		affiliation = "heroes",
+		ui_portrait = "unit_frame_portrait_bardin_ranger",
 		career_voice_parameter_values = {
 			0,
 			100,
-			50,
+			50
 		},
 		room_profile = RoomProfiles.dwarf_ranger,
 		base_units = BaseUnits.dwarf_ranger,
-		default_state_machine = default_state_machine,
+		default_state_machine = var_0_3,
 		first_person_attachment = FirstPersonAttachments.dwarf_ranger,
 		first_person_heights = {
 			charged = 0.75,
 			crouch = 1,
-			grabbed_by_tentacle = 1.7,
-			knocked_down = 0.7,
 			stand = 1.3,
+			knocked_down = 0.7,
+			grabbed_by_tentacle = 1.7
 		},
 		careers = {
 			CareerSettings.dr_ranger,
 			CareerSettings.dr_ironbreaker,
-			CareerSettings.dr_slayer,
+			CareerSettings.dr_slayer
 		},
-		base_character_states = base_character_states,
-		base_camera_states = base_camera_states,
+		base_character_states = var_0_0,
+		base_camera_states = var_0_1
 	},
 	{
-		affiliation = "heroes",
 		career_voice_parameter = "kerillian_career_voice_effect",
-		character_name = "inventory_name_wood_elf",
-		character_vo = "wood_elf",
-		default_wielded_slot = "slot_melee",
 		display_name = "wood_elf",
 		hero_selection_image = "hero_icon_ww",
-		ingame_display_name = "inventory_name_wood_elf",
 		ingame_short_display_name = "wood_elf_short",
-		role = "hero",
-		supports_motion_sickness_modes = true,
-		ui_portrait = "unit_frame_portrait_kerillian_waywatcher",
+		character_name = "inventory_name_wood_elf",
+		character_vo = "wood_elf",
 		unit_name = "way_watcher",
+		supports_motion_sickness_modes = true,
+		default_wielded_slot = "slot_melee",
+		role = "hero",
+		ingame_display_name = "inventory_name_wood_elf",
+		affiliation = "heroes",
+		ui_portrait = "unit_frame_portrait_kerillian_waywatcher",
 		career_voice_parameter_values = {
 			0,
 			100,
-			50,
+			50
 		},
 		room_profile = RoomProfiles.wood_elf,
 		base_units = BaseUnits.wood_elf,
-		default_state_machine = default_state_machine,
+		default_state_machine = var_0_3,
 		first_person_attachment = FirstPersonAttachments.wood_elf,
 		first_person_heights = {
 			charged = 0.85,
 			crouch = 1,
-			grabbed_by_tentacle = 1.7,
-			knocked_down = 1,
 			stand = 1.5,
+			knocked_down = 1,
+			grabbed_by_tentacle = 1.7
 		},
 		careers = {
 			CareerSettings.we_waywatcher,
 			CareerSettings.we_maidenguard,
-			CareerSettings.we_shade,
+			CareerSettings.we_shade
 		},
-		base_character_states = base_character_states,
-		base_camera_states = base_camera_states,
+		base_character_states = var_0_0,
+		base_camera_states = var_0_1
 	},
 	{
-		affiliation = "heroes",
 		career_voice_parameter = "markus_career_voice_effect",
-		character_name = "inventory_name_empire_soldier",
-		character_vo = "empire_soldier",
-		default_wielded_slot = "slot_melee",
 		display_name = "empire_soldier",
 		hero_selection_image = "hero_icon_es",
-		ingame_display_name = "inventory_name_empire_soldier",
 		ingame_short_display_name = "empire_soldier_short",
-		role = "hero",
-		supports_motion_sickness_modes = true,
-		ui_portrait = "unit_frame_portrait_kruber_huntsman",
+		character_name = "inventory_name_empire_soldier",
+		character_vo = "empire_soldier",
 		unit_name = "empire_soldier",
+		supports_motion_sickness_modes = true,
+		default_wielded_slot = "slot_melee",
+		role = "hero",
+		ingame_display_name = "inventory_name_empire_soldier",
+		affiliation = "heroes",
+		ui_portrait = "unit_frame_portrait_kruber_huntsman",
 		career_voice_parameter_values = {
 			0,
 			100,
-			50,
+			50
 		},
 		room_profile = RoomProfiles.empire_soldier,
 		base_units = BaseUnits.empire_soldier,
-		default_state_machine = default_state_machine,
+		default_state_machine = var_0_3,
 		first_person_attachment = FirstPersonAttachments.empire_soldier,
 		first_person_heights = {
 			charged = 1,
 			crouch = 1,
-			grabbed_by_tentacle = 1.9,
-			knocked_down = 1,
 			stand = 1.65,
+			knocked_down = 1,
+			grabbed_by_tentacle = 1.9
 		},
 		careers = {
 			CareerSettings.es_mercenary,
 			CareerSettings.es_huntsman,
-			CareerSettings.es_knight,
+			CareerSettings.es_knight
 		},
-		base_character_states = base_character_states,
-		base_camera_states = base_camera_states,
+		base_character_states = var_0_0,
+		base_camera_states = var_0_1
 	},
 	{
-		affiliation = "tutorial",
 		career_voice_parameter = "markus_career_voice_effect",
-		character_name = "inventory_name_empire_soldier",
-		character_vo = "empire_soldier",
-		default_wielded_slot = "slot_melee",
 		display_name = "empire_soldier_tutorial",
 		hero_selection_image = "hero_icon_es",
-		ingame_display_name = "inventory_name_empire_soldier",
 		ingame_short_display_name = "empire_soldier_short",
-		role = "hero",
-		supports_motion_sickness_modes = true,
-		tutorial_profile = true,
-		ui_portrait = "unit_frame_portrait_kruber_knight",
+		character_name = "inventory_name_empire_soldier",
+		character_vo = "empire_soldier",
 		unit_name = "empire_soldier",
 		unit_template_name = "player_unit_3rd_tutorial",
+		tutorial_profile = true,
+		supports_motion_sickness_modes = true,
+		default_wielded_slot = "slot_melee",
+		role = "hero",
+		ingame_display_name = "inventory_name_empire_soldier",
+		affiliation = "tutorial",
+		ui_portrait = "unit_frame_portrait_kruber_knight",
 		career_voice_parameter_values = {
 			0,
 			100,
-			50,
+			50
 		},
 		room_profile = RoomProfiles.empire_soldier,
 		base_units = BaseUnits.empire_soldier,
-		default_state_machine = default_state_machine,
+		default_state_machine = var_0_3,
 		first_person_attachment = FirstPersonAttachments.empire_soldier,
 		first_person_heights = {
-			crouch = 1,
 			grabbed_by_tentacle = 1.9,
 			knocked_down = 1,
-			stand = 1.65,
+			crouch = 1,
+			stand = 1.65
 		},
 		careers = {
 			CareerSettings.empire_soldier_tutorial,
 			CareerSettings.empire_soldier_tutorial,
-			CareerSettings.empire_soldier_tutorial,
+			CareerSettings.empire_soldier_tutorial
 		},
-		base_character_states = base_character_states,
-		base_camera_states = base_camera_states,
-	},
+		base_character_states = var_0_0,
+		base_camera_states = var_0_1
+	}
 }
 TUTORIAL_PROFILE_INDEX = nil
 
-for profile_index, profile in pairs(SPProfiles) do
-	if profile.tutorial_profile then
-		TUTORIAL_PROFILE_INDEX = profile_index
+for iter_0_6, iter_0_7 in pairs(SPProfiles) do
+	if iter_0_7.tutorial_profile then
+		TUTORIAL_PROFILE_INDEX = iter_0_6
 	end
 end
 
-local function process_profiles()
-	for i = 1, #SPProfiles do
-		local profile = SPProfiles[i]
-		local profile_name = profile.display_name
+local function var_0_5()
+	for iter_1_0 = 1, #SPProfiles do
+		local var_1_0 = SPProfiles[iter_1_0]
+		local var_1_1 = var_1_0.display_name
 
-		if not PROFILES_BY_NAME[profile_name] then
-			profile.index = i
-			PROFILES_BY_NAME[profile_name] = profile
+		if not PROFILES_BY_NAME[var_1_1] then
+			var_1_0.index = iter_1_0
+			PROFILES_BY_NAME[var_1_1] = var_1_0
 
-			local affiliation = profile.affiliation or "unfinished"
+			local var_1_2 = var_1_0.affiliation or "unfinished"
 
-			if not PROFILES_BY_AFFILIATION[affiliation] then
-				PROFILES_BY_AFFILIATION[affiliation] = {}
+			if not PROFILES_BY_AFFILIATION[var_1_2] then
+				PROFILES_BY_AFFILIATION[var_1_2] = {}
 			end
 
-			local affiliation_profiles = PROFILES_BY_AFFILIATION[affiliation]
+			local var_1_3 = PROFILES_BY_AFFILIATION[var_1_2]
 
-			affiliation_profiles[#affiliation_profiles + 1] = profile_name
-			affiliation_profiles[profile_name] = true
+			var_1_3[#var_1_3 + 1] = var_1_1
+			var_1_3[var_1_1] = true
 		end
 	end
 end
 
-function FindProfileIndex(profile_name)
-	local profile_settings = PROFILES_BY_NAME[profile_name]
+function FindProfileIndex(arg_2_0)
+	local var_2_0 = PROFILES_BY_NAME[arg_2_0]
 
-	return profile_settings and profile_settings.index
+	return var_2_0 and var_2_0.index
 end
 
-function GetHeroAffiliationIndex(profile_index)
-	local profile = SPProfiles[profile_index]
-	local hero_profiles = PROFILES_BY_AFFILIATION.heroes
+function GetHeroAffiliationIndex(arg_3_0)
+	local var_3_0 = SPProfiles[arg_3_0]
+	local var_3_1 = PROFILES_BY_AFFILIATION.heroes
 
-	for i = 1, #hero_profiles do
-		local hero_profile = hero_profiles[i]
+	for iter_3_0 = 1, #var_3_1 do
+		local var_3_2 = var_3_1[iter_3_0]
 
-		if profile.display_name == hero_profile then
-			return i
+		if var_3_0.display_name == var_3_2 then
+			return iter_3_0
 		end
 	end
 end
 
-function add_career_to_profile(profile_name, career)
-	local profile_idx = FindProfileIndex(profile_name)
-	local profile = SPProfiles[profile_idx]
-	local careers = profile.careers
+function add_career_to_profile(arg_4_0, arg_4_1)
+	local var_4_0 = FindProfileIndex(arg_4_0)
+	local var_4_1 = SPProfiles[var_4_0].careers
 
-	table.insert(careers, career)
+	table.insert(var_4_1, arg_4_1)
 end
 
 PROFILES_BY_NAME = {}
 PROFILES_BY_AFFILIATION = {}
 
-process_profiles()
+var_0_5()
 
-for _, dlc in pairs(DLCSettings) do
-	local profile_files = dlc.profile_files
+for iter_0_8, iter_0_9 in pairs(DLCSettings) do
+	local var_0_6 = iter_0_9.profile_files
 
-	if profile_files then
-		for _, profile_file in ipairs(profile_files) do
-			local additional_profiles = dofile(profile_file)
+	if var_0_6 then
+		for iter_0_10, iter_0_11 in ipairs(var_0_6) do
+			local var_0_7 = dofile(iter_0_11)
 
-			if additional_profiles then
-				table.append(SPProfiles, additional_profiles)
+			if var_0_7 then
+				table.append(SPProfiles, var_0_7)
 			end
 		end
 	end
 end
 
-process_profiles()
+var_0_5()
 
 PROFILES_BY_NAME = {}
 PROFILES_BY_CAREER_NAMES = {}
 PROFILES_BY_AFFILIATION = {}
 
-for i = 1, #SPProfiles do
-	local profile = SPProfiles[i]
+for iter_0_12 = 1, #SPProfiles do
+	local var_0_8 = SPProfiles[iter_0_12]
 
-	profile.index = i
-	PROFILES_BY_NAME[profile.display_name] = profile
+	var_0_8.index = iter_0_12
+	PROFILES_BY_NAME[var_0_8.display_name] = var_0_8
 
-	local affiliation = profile.affiliation or "unfinished"
+	local var_0_9 = var_0_8.affiliation or "unfinished"
 
-	if not PROFILES_BY_AFFILIATION[affiliation] then
-		PROFILES_BY_AFFILIATION[affiliation] = {}
+	if not PROFILES_BY_AFFILIATION[var_0_9] then
+		PROFILES_BY_AFFILIATION[var_0_9] = {}
 	end
 
-	local affiliation_profiles = PROFILES_BY_AFFILIATION[affiliation]
+	local var_0_10 = PROFILES_BY_AFFILIATION[var_0_9]
 
-	affiliation_profiles[#affiliation_profiles + 1] = profile.display_name
-	affiliation_profiles[profile.display_name] = true
+	var_0_10[#var_0_10 + 1] = var_0_8.display_name
+	var_0_10[var_0_8.display_name] = true
 
-	local careers = profile.careers
+	local var_0_11 = var_0_8.careers
 
-	for career_index, career in ipairs(careers) do
-		PROFILES_BY_CAREER_NAMES[career.name] = profile
+	for iter_0_13, iter_0_14 in ipairs(var_0_11) do
+		PROFILES_BY_CAREER_NAMES[iter_0_14.name] = var_0_8
 	end
 end
 
-function career_index_from_name(profile_index, career_name)
-	local careers = SPProfiles[profile_index].careers
+function career_index_from_name(arg_5_0, arg_5_1)
+	local var_5_0 = SPProfiles[arg_5_0].careers
 
-	for career_index, career in ipairs(careers) do
-		if career.name == career_name then
-			return career_index
+	for iter_5_0, iter_5_1 in ipairs(var_5_0) do
+		if iter_5_1.name == arg_5_1 then
+			return iter_5_0
 		end
 	end
 
 	return nil
 end
 
-function hero_and_career_name_from_index(profile_index, career_index)
-	local profile = SPProfiles[profile_index]
-	local career = profile.careers[career_index]
-	local profile_name = profile.display_name
-	local career_name = career.name
+function hero_and_career_name_from_index(arg_6_0, arg_6_1)
+	local var_6_0 = SPProfiles[arg_6_0]
+	local var_6_1 = var_6_0.careers[arg_6_1]
+	local var_6_2 = var_6_0.display_name
+	local var_6_3 = var_6_1.name
 
-	return profile_name, career_name
+	return var_6_2, var_6_3
 end
 
 DefaultUnits = {
 	standard = {
 		backlit_camera = "units/generic/backlit_camera",
-		camera = "core/units/camera",
-	},
+		camera = "core/units/camera"
+	}
 }
 
-local character_state_names = {}
-local camera_state_names = {}
+local var_0_12 = {}
+local var_0_13 = {}
 
-for index, profile in ipairs(SPProfiles) do
-	for i, career_settings in ipairs(profile.careers) do
-		local character_state_list = table.clone(profile.base_character_states)
-		local camera_state_list = table.clone(profile.base_camera_states)
-		local additional_character_states_list = career_settings.additional_character_states_list
+for iter_0_15, iter_0_16 in ipairs(SPProfiles) do
+	for iter_0_17, iter_0_18 in ipairs(iter_0_16.careers) do
+		local var_0_14 = table.clone(iter_0_16.base_character_states)
+		local var_0_15 = table.clone(iter_0_16.base_camera_states)
+		local var_0_16 = iter_0_18.additional_character_states_list
 
-		if additional_character_states_list then
-			for _, character_state_name in ipairs(additional_character_states_list) do
-				character_state_list[#character_state_list + 1] = character_state_name
+		if var_0_16 then
+			for iter_0_19, iter_0_20 in ipairs(var_0_16) do
+				var_0_14[#var_0_14 + 1] = iter_0_20
 			end
 		end
 
-		local additional_camera_states_list = career_settings.additional_camera_states_list
+		local var_0_17 = iter_0_18.additional_camera_states_list
 
-		if additional_camera_states_list then
-			for _, camera_state_name in ipairs(additional_camera_states_list) do
-				camera_state_list[#camera_state_list + 1] = camera_state_name
+		if var_0_17 then
+			for iter_0_21, iter_0_22 in ipairs(var_0_17) do
+				var_0_15[#var_0_15 + 1] = iter_0_22
 			end
 		end
 
-		for _, character_state_name in ipairs(character_state_list) do
-			fassert(character_state_names[character_state_name] == nil, "Character state '%s' referenced more than once in career - %s profile - %s", character_state_name, career_settings.display_name, profile.display_name)
+		for iter_0_23, iter_0_24 in ipairs(var_0_14) do
+			fassert(var_0_12[iter_0_24] == nil, "Character state '%s' referenced more than once in career - %s profile - %s", iter_0_24, iter_0_18.display_name, iter_0_16.display_name)
 
-			character_state_names[character_state_name] = true
+			var_0_12[iter_0_24] = true
 		end
 
-		for _, camera_state_name in ipairs(camera_state_list) do
-			fassert(camera_state_names[camera_state_name] == nil, "Camera state '%s' referenced more than once in career - %s profile - %s", camera_state_name, career_settings.display_name, profile.display_name)
+		for iter_0_25, iter_0_26 in ipairs(var_0_15) do
+			fassert(var_0_13[iter_0_26] == nil, "Camera state '%s' referenced more than once in career - %s profile - %s", iter_0_26, iter_0_18.display_name, iter_0_16.display_name)
 
-			camera_state_names[camera_state_name] = true
+			var_0_13[iter_0_26] = true
 		end
 
-		career_settings.character_state_list = character_state_list
-		career_settings.camera_state_list = camera_state_list
+		iter_0_18.character_state_list = var_0_14
+		iter_0_18.camera_state_list = var_0_15
 
-		table.clear(character_state_names)
-		table.clear(camera_state_names)
+		table.clear(var_0_12)
+		table.clear(var_0_13)
 	end
 end

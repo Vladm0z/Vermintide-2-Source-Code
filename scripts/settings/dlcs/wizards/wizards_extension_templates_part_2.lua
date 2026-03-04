@@ -1,6 +1,6 @@
-﻿-- chunkname: @scripts/settings/dlcs/wizards/wizards_extension_templates_part_2.lua
+-- chunkname: @scripts/settings/dlcs/wizards/wizards_extension_templates_part_2.lua
 
-local unit_extension_templates = {
+return {
 	ethereal_skull_unit = {
 		go_type = "shadow_skull_unit",
 		self_owned_extensions = {
@@ -17,7 +17,7 @@ local unit_extension_templates = {
 			"AISimpleExtension",
 			"ProjectileEtherealSkullLocomotionExtension",
 			"ProjectileLinearSphereSweepImpactUnitExtension",
-			"GenericImpactProjectileUnitExtension",
+			"GenericImpactProjectileUnitExtension"
 		},
 		husk_extensions = {
 			"GenericHitReactionExtension",
@@ -30,9 +30,7 @@ local unit_extension_templates = {
 			"DialogueActorExtension",
 			"AiHuskBaseExtension",
 			"ProjectileExtrapolatedHuskLocomotionExtension",
-			"GenericImpactProjectileUnitExtension",
-		},
-	},
+			"GenericImpactProjectileUnitExtension"
+		}
+	}
 }
-
-return unit_extension_templates

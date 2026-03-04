@@ -1,656 +1,644 @@
-﻿-- chunkname: @scripts/ui/views/level_end/states/end_view_state_summary.lua
+-- chunkname: @scripts/ui/views/level_end/states/end_view_state_summary.lua
 
-local DO_RELOAD = false
+local var_0_0 = false
 
 EndViewStateSummary = class(EndViewStateSummary)
 EndViewStateSummary.NAME = "EndViewStateSummary"
 EndViewStateSummary.CAN_SPEED_UP = true
 
-EndViewStateSummary.on_enter = function (self, params)
+function EndViewStateSummary.on_enter(arg_1_0, arg_1_1)
 	print("[EndViewState] Enter Substate EndViewStateSummary")
 
-	self._params = params
-	self.parent = params.parent
-	self.game_won = params.game_won
-	self.game_mode_key = params.game_mode_key
+	arg_1_0._params = arg_1_1
+	arg_1_0.parent = arg_1_1.parent
+	arg_1_0.game_won = arg_1_1.game_won
+	arg_1_0.game_mode_key = arg_1_1.game_mode_key
 
-	local context = params.context
+	local var_1_0 = arg_1_1.context
 
-	self._context = context
-	self.ui_renderer = context.ui_renderer
-	self.ui_top_renderer = context.ui_top_renderer
-	self.input_manager = context.input_manager
-	self.statistics_db = context.statistics_db
-	self.profile_synchronizer = context.profile_synchronizer
-	self.rewards = context.rewards
-	self.render_settings = {
+	arg_1_0._context = var_1_0
+	arg_1_0.ui_renderer = var_1_0.ui_renderer
+	arg_1_0.ui_top_renderer = var_1_0.ui_top_renderer
+	arg_1_0.input_manager = var_1_0.input_manager
+	arg_1_0.statistics_db = var_1_0.statistics_db
+	arg_1_0.profile_synchronizer = var_1_0.profile_synchronizer
+	arg_1_0.rewards = var_1_0.rewards
+	arg_1_0.render_settings = {
 		alpha_multiplier = 0,
-		snap_pixel_positions = true,
+		snap_pixel_positions = true
 	}
-	self.wwise_world = context.wwise_world
-	self.world_previewer = params.world_previewer
-	self.platform = PLATFORM
-	self._animations = {}
-	self._ui_animations = {}
-	self.peer_id = context.peer_id
-	self._hero_name = context.local_player_hero_name
+	arg_1_0.wwise_world = var_1_0.wwise_world
+	arg_1_0.world_previewer = arg_1_1.world_previewer
+	arg_1_0.platform = PLATFORM
+	arg_1_0._animations = {}
+	arg_1_0._ui_animations = {}
+	arg_1_0.peer_id = var_1_0.peer_id
+	arg_1_0._hero_name = var_1_0.local_player_hero_name
 
-	self:create_ui_elements(params)
+	arg_1_0:create_ui_elements(arg_1_1)
 
-	if params.initial_state then
-		self._initial_preview = true
-		params.initial_state = nil
+	if arg_1_1.initial_state then
+		arg_1_0._initial_preview = true
+		arg_1_1.initial_state = nil
 	end
 
-	if self.game_won then
-		self:_start_transition_animation("on_enter", "transition_enter_fast")
+	if arg_1_0.game_won then
+		arg_1_0:_start_transition_animation("on_enter", "transition_enter_fast")
 	else
-		self:_start_transition_animation("on_enter", "transition_enter")
+		arg_1_0:_start_transition_animation("on_enter", "transition_enter")
 	end
 
-	self._exit_timer = nil
+	arg_1_0._exit_timer = nil
 
-	local level_start = self._context.rewards.level_start
-	local _, start_experience, start_experience_pool = level_start[1], level_start[2], level_start[3]
+	local var_1_1 = arg_1_0._context.rewards.level_start
+	local var_1_2 = var_1_1[1]
+	local var_1_3 = var_1_1[2]
+	local var_1_4 = var_1_1[3]
 
-	self:_setup_essence_presentation()
+	arg_1_0:_setup_essence_presentation()
 
-	self._progress_data = self:_get_total_experience_progress_data(start_experience, start_experience_pool)
+	arg_1_0._progress_data = arg_1_0:_get_total_experience_progress_data(var_1_3, var_1_4)
 
-	local start_level = ExperienceSettings.get_level(start_experience)
-	local current_experience = start_experience + start_experience_pool
+	local var_1_5 = ExperienceSettings.get_level(var_1_3)
+	local var_1_6 = var_1_3 + var_1_4
 
-	if start_level < ExperienceSettings.max_level then
-		current_experience = start_experience
+	if var_1_5 < ExperienceSettings.max_level then
+		var_1_6 = var_1_3
 	end
 
-	local current_level, extra_levels = self:_set_current_experience(current_experience)
+	local var_1_7, var_1_8 = arg_1_0:_set_current_experience(var_1_6)
 
-	self._current_level = current_level
+	arg_1_0._current_level = var_1_7
 
-	if self._progress_data.bonus_experience > 0 then
-		self._extra_levels = extra_levels + self._progress_data.start_extra_level
+	if arg_1_0._progress_data.bonus_experience > 0 then
+		arg_1_0._extra_levels = var_1_8 + arg_1_0._progress_data.start_extra_level
 	else
-		self._extra_levels = extra_levels
+		arg_1_0._extra_levels = var_1_8
 	end
 
-	self._experience_presentation_completed = nil
+	arg_1_0._experience_presentation_completed = nil
 
 	if IS_WINDOWS then
-		self:_set_player_count_presence(context)
+		arg_1_0:_set_player_count_presence(var_1_0)
 	end
 
-	self:_play_sound("play_gui_mission_summary_appear")
+	arg_1_0:_play_sound("play_gui_mission_summary_appear")
 end
 
-EndViewStateSummary.exit = function (self, direction)
-	self._exit_started = true
+function EndViewStateSummary.exit(arg_2_0, arg_2_1)
+	arg_2_0._exit_started = true
 
-	self:_start_transition_animation("on_enter", "transition_exit")
-	self:_play_sound("play_gui_mission_summary_end")
+	arg_2_0:_start_transition_animation("on_enter", "transition_exit")
+	arg_2_0:_play_sound("play_gui_mission_summary_end")
 
-	if self.game_won and Managers.package:has_loaded("resource_packages/levels/ui_end_screen") then
-		local transition_data = {
-			animation_name = "transition",
-			camera_name = "end_screen_camera",
+	if arg_2_0.game_won and Managers.package:has_loaded("resource_packages/levels/ui_end_screen") then
+		local var_2_0 = {
 			level_name = "levels/end_screen_victory/parading_screen",
+			camera_name = "end_screen_camera",
+			animation_name = "transition"
 		}
 
-		self.parent:trigger_transition(transition_data)
+		arg_2_0.parent:trigger_transition(var_2_0)
 	end
 end
 
-EndViewStateSummary.exit_done = function (self)
-	return self._exit_started and self._animations.on_enter == nil
+function EndViewStateSummary.exit_done(arg_3_0)
+	return arg_3_0._exit_started and arg_3_0._animations.on_enter == nil
 end
 
-EndViewStateSummary._get_definitions = function (self)
+function EndViewStateSummary._get_definitions(arg_4_0)
 	return local_require("scripts/ui/views/level_end/states/definitions/end_view_state_summary_definitions")
 end
 
-EndViewStateSummary.create_ui_elements = function (self, params)
-	local definitions = self:_get_definitions()
-	local widget_definitions = definitions.widgets
-	local summary_entry_widget_definitions = definitions.summary_entry_widgets
-	local scenegraph_definition = definitions.scenegraph_definition
-	local animation_definitions = definitions.animation_definitions
+function EndViewStateSummary.create_ui_elements(arg_5_0, arg_5_1)
+	local var_5_0 = arg_5_0:_get_definitions()
+	local var_5_1 = var_5_0.widgets
+	local var_5_2 = var_5_0.summary_entry_widgets
+	local var_5_3 = var_5_0.scenegraph_definition
+	local var_5_4 = var_5_0.animation_definitions
 
-	DO_RELOAD = false
-	self._scenegraph_definition = scenegraph_definition
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	var_0_0 = false
+	arg_5_0._scenegraph_definition = var_5_3
+	arg_5_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_5_3)
 
-	local widgets = {}
-	local widgets_by_name = {}
+	local var_5_5 = {}
+	local var_5_6 = {}
 
-	for name, widget_definition in pairs(widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_5_0, iter_5_1 in pairs(var_5_1) do
+		local var_5_7 = UIWidget.init(iter_5_1)
 
-		widgets[#widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_5_5[#var_5_5 + 1] = var_5_7
+		var_5_6[iter_5_0] = var_5_7
 	end
 
-	self._widgets = widgets
-	self._widgets_by_name = widgets_by_name
+	arg_5_0._widgets = var_5_5
+	arg_5_0._widgets_by_name = var_5_6
 
-	local entry_widgets = {}
-	local entry_widgets_by_name = {}
+	local var_5_8 = {}
+	local var_5_9 = {}
 
-	for name, widget_definition in pairs(summary_entry_widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_5_2, iter_5_3 in pairs(var_5_2) do
+		local var_5_10 = UIWidget.init(iter_5_3)
 
-		entry_widgets[#entry_widgets + 1] = widget
-		entry_widgets_by_name[name] = widget
+		var_5_8[#var_5_8 + 1] = var_5_10
+		var_5_9[iter_5_2] = var_5_10
 	end
 
-	self._entry_widgets = entry_widgets
-	self._entry_widgets_by_name = entry_widgets_by_name
+	arg_5_0._entry_widgets = var_5_8
+	arg_5_0._entry_widgets_by_name = var_5_9
 
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_5_0.ui_renderer)
 
-	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
+	arg_5_0.ui_animator = UIAnimator:new(arg_5_0.ui_scenegraph, var_5_4)
 end
 
-EndViewStateSummary._wanted_state = function (self)
-	local new_state = self.parent:wanted_menu_state()
-
-	return new_state
+function EndViewStateSummary._wanted_state(arg_6_0)
+	return (arg_6_0.parent:wanted_menu_state())
 end
 
-EndViewStateSummary.set_input_manager = function (self, input_manager)
-	self.input_manager = input_manager
+function EndViewStateSummary.set_input_manager(arg_7_0, arg_7_1)
+	arg_7_0.input_manager = arg_7_1
 end
 
-EndViewStateSummary.on_exit = function (self, params)
+function EndViewStateSummary.on_exit(arg_8_0, arg_8_1)
 	print("[EndViewState] Exit Substate EndViewStateSummary")
 
-	self.ui_animator = nil
+	arg_8_0.ui_animator = nil
 end
 
-EndViewStateSummary._update_transition_timer = function (self, dt)
-	if not self._transition_timer then
+function EndViewStateSummary._update_transition_timer(arg_9_0, arg_9_1)
+	if not arg_9_0._transition_timer then
 		return
 	end
 
-	if self._transition_timer == 0 then
-		self._transition_timer = nil
+	if arg_9_0._transition_timer == 0 then
+		arg_9_0._transition_timer = nil
 	else
-		self._transition_timer = math.max(self._transition_timer - dt, 0)
+		arg_9_0._transition_timer = math.max(arg_9_0._transition_timer - arg_9_1, 0)
 	end
 end
 
-EndViewStateSummary.update = function (self, dt, t)
-	if DO_RELOAD then
-		self:on_enter(self._params)
+function EndViewStateSummary.update(arg_10_0, arg_10_1, arg_10_2)
+	if var_0_0 then
+		arg_10_0:on_enter(arg_10_0._params)
 	end
 
-	local input_manager = self.input_manager
-	local input_service = input_manager:get_service("end_of_level")
+	local var_10_0 = arg_10_0.input_manager:get_service("end_of_level")
 
-	if not self._animations.on_enter and not self._summary_entries then
-		self:_initialize_entries()
+	if not arg_10_0._animations.on_enter and not arg_10_0._summary_entries then
+		arg_10_0:_initialize_entries()
 	end
 
-	self:draw(input_service, dt)
-	self:_update_transition_timer(dt)
+	arg_10_0:draw(var_10_0, arg_10_1)
+	arg_10_0:_update_transition_timer(arg_10_1)
 
-	local wanted_state = self:_wanted_state()
+	local var_10_1 = arg_10_0:_wanted_state()
 
-	if not self._transition_timer and (wanted_state or self._new_state) then
-		self.parent:clear_wanted_menu_state()
+	if not arg_10_0._transition_timer and (var_10_1 or arg_10_0._new_state) then
+		arg_10_0.parent:clear_wanted_menu_state()
 
-		return wanted_state or self._new_state
+		return var_10_1 or arg_10_0._new_state
 	end
 
-	local parent = self.parent
-	local displaying_reward_presentation = parent:displaying_reward_presentation()
+	local var_10_2 = arg_10_0.parent:displaying_reward_presentation()
 
-	if self._summary_entries and self._summary_entries.complete then
-		self:_animate_experience_bar(dt, displaying_reward_presentation)
+	if arg_10_0._summary_entries and arg_10_0._summary_entries.complete then
+		arg_10_0:_animate_experience_bar(arg_10_1, var_10_2)
 	end
 
-	if not displaying_reward_presentation then
-		self.ui_animator:update(dt)
-		self:_animate_summary_entries(dt)
+	if not var_10_2 then
+		arg_10_0.ui_animator:update(arg_10_1)
+		arg_10_0:_animate_summary_entries(arg_10_1)
 	end
 
-	self:_update_animations(dt)
+	arg_10_0:_update_animations(arg_10_1)
 
-	local transitioning = self.parent:transitioning()
-
-	if not transitioning and not self._transition_timer then
-		self:_handle_input(dt, t)
+	if not arg_10_0.parent:transitioning() and not arg_10_0._transition_timer then
+		arg_10_0:_handle_input(arg_10_1, arg_10_2)
 	end
 end
 
-EndViewStateSummary.post_update = function (self, dt, t)
+function EndViewStateSummary.post_update(arg_11_0, arg_11_1, arg_11_2)
 	return
 end
 
-EndViewStateSummary._update_animations = function (self, dt)
-	for name, animation in pairs(self._ui_animations) do
-		UIAnimation.update(animation, dt)
+function EndViewStateSummary._update_animations(arg_12_0, arg_12_1)
+	for iter_12_0, iter_12_1 in pairs(arg_12_0._ui_animations) do
+		UIAnimation.update(iter_12_1, arg_12_1)
 
-		if UIAnimation.completed(animation) then
-			self._ui_animations[name] = nil
+		if UIAnimation.completed(iter_12_1) then
+			arg_12_0._ui_animations[iter_12_0] = nil
 		end
 	end
 
-	local animations = self._animations
-	local ui_animator = self.ui_animator
+	local var_12_0 = arg_12_0._animations
+	local var_12_1 = arg_12_0.ui_animator
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_12_2, iter_12_3 in pairs(var_12_0) do
+		if var_12_1:is_animation_completed(iter_12_3) then
+			var_12_1:stop_animation(iter_12_3)
 
-			animations[animation_name] = nil
+			var_12_0[iter_12_2] = nil
 		end
 	end
 
-	if self.level_up_anim_id and ui_animator:is_animation_completed(self.level_up_anim_id) then
-		ui_animator:stop_animation(self.level_up_anim_id)
+	if arg_12_0.level_up_anim_id and var_12_1:is_animation_completed(arg_12_0.level_up_anim_id) then
+		var_12_1:stop_animation(arg_12_0.level_up_anim_id)
 
-		self.level_up_anim_id = nil
+		arg_12_0.level_up_anim_id = nil
 
-		local max_level = ExperienceSettings.max_level
-		local level
+		local var_12_2 = ExperienceSettings.max_level
+		local var_12_3
 
-		if max_level > self._current_level then
-			level = self._current_level
+		if var_12_2 > arg_12_0._current_level then
+			var_12_3 = arg_12_0._current_level
 		else
-			level = self._current_level + (self._extra_levels or 0)
+			var_12_3 = arg_12_0._current_level + (arg_12_0._extra_levels or 0)
 		end
 
-		self.parent:present_level_up(self._hero_name, level)
+		arg_12_0.parent:present_level_up(arg_12_0._hero_name, var_12_3)
 	end
 end
 
-EndViewStateSummary._handle_input = function (self, dt, t)
-	local widgets_by_name = self._widgets_by_name
+function EndViewStateSummary._handle_input(arg_13_0, arg_13_1, arg_13_2)
+	local var_13_0 = arg_13_0._widgets_by_name
 end
 
-EndViewStateSummary.draw = function (self, input_service, dt)
-	local ui_renderer = self.ui_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local render_settings = self.render_settings
+function EndViewStateSummary.draw(arg_14_0, arg_14_1, arg_14_2)
+	local var_14_0 = arg_14_0.ui_renderer
+	local var_14_1 = arg_14_0.ui_scenegraph
+	local var_14_2 = arg_14_0.render_settings
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+	UIRenderer.begin_pass(var_14_0, var_14_1, arg_14_1, arg_14_2, nil, var_14_2)
 
-	for _, widget in ipairs(self._widgets) do
-		UIRenderer.draw_widget(ui_renderer, widget)
+	for iter_14_0, iter_14_1 in ipairs(arg_14_0._widgets) do
+		UIRenderer.draw_widget(var_14_0, iter_14_1)
 	end
 
-	local summary_entries = self._summary_entries
+	local var_14_3 = arg_14_0._summary_entries
 
-	if summary_entries then
-		for index, entry in ipairs(summary_entries) do
-			local widget = entry.widget
+	if var_14_3 then
+		for iter_14_2, iter_14_3 in ipairs(var_14_3) do
+			local var_14_4 = iter_14_3.widget
 
-			if widget then
-				UIRenderer.draw_widget(ui_renderer, widget)
+			if var_14_4 then
+				UIRenderer.draw_widget(var_14_0, var_14_4)
 			end
 		end
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_14_0)
 end
 
-EndViewStateSummary._start_transition_animation = function (self, key, animation_name)
-	local params = {
-		wwise_world = self.wwise_world,
-		render_settings = self.render_settings,
+function EndViewStateSummary._start_transition_animation(arg_15_0, arg_15_1, arg_15_2)
+	local var_15_0 = {
+		wwise_world = arg_15_0.wwise_world,
+		render_settings = arg_15_0.render_settings
 	}
-	local widgets = {}
-	local anim_id = self.ui_animator:start_animation(animation_name, widgets, self._scenegraph_definition, params)
+	local var_15_1 = {}
+	local var_15_2 = arg_15_0.ui_animator:start_animation(arg_15_2, var_15_1, arg_15_0._scenegraph_definition, var_15_0)
 
-	self._animations[key] = anim_id
+	arg_15_0._animations[arg_15_1] = var_15_2
 end
 
-EndViewStateSummary._start_animation = function (self, key, animation_name)
-	local params = {
-		wwise_world = self.wwise_world,
-		render_settings = self.render_settings,
+function EndViewStateSummary._start_animation(arg_16_0, arg_16_1, arg_16_2)
+	local var_16_0 = {
+		wwise_world = arg_16_0.wwise_world,
+		render_settings = arg_16_0.render_settings
 	}
-	local widgets = self._widgets_by_name
-	local anim_id = self.ui_animator:start_animation(animation_name, widgets, self._scenegraph_definition, params)
+	local var_16_1 = arg_16_0._widgets_by_name
+	local var_16_2 = arg_16_0.ui_animator:start_animation(arg_16_2, var_16_1, arg_16_0._scenegraph_definition, var_16_0)
 
-	self._animations[key] = anim_id
+	arg_16_0._animations[arg_16_1] = var_16_2
 end
 
-EndViewStateSummary._animate_element_by_time = function (self, target, target_index, from, to, time)
-	local new_animation = UIAnimation.init(UIAnimation.function_by_time, target, target_index, from, to, time, math.ease_out_quad)
-
-	return new_animation
+function EndViewStateSummary._animate_element_by_time(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
+	return (UIAnimation.init(UIAnimation.function_by_time, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, math.ease_out_quad))
 end
 
-EndViewStateSummary._animate_element_by_catmullrom = function (self, target, target_index, target_value, p0, p1, p2, p3, time)
-	local new_animation = UIAnimation.init(UIAnimation.catmullrom, target, target_index, target_value, p0, p1, p2, p3, time)
-
-	return new_animation
+function EndViewStateSummary._animate_element_by_catmullrom(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8)
+	return (UIAnimation.init(UIAnimation.catmullrom, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8))
 end
 
-EndViewStateSummary._initialize_entries = function (self)
-	local summary_entries, experience_gained = self:_get_summary_entries(self.game_won, self.game_mode_key)
+function EndViewStateSummary._initialize_entries(arg_19_0)
+	local var_19_0, var_19_1 = arg_19_0:_get_summary_entries(arg_19_0.game_won, arg_19_0.game_mode_key)
 
-	self._summary_entries = summary_entries
+	arg_19_0._summary_entries = var_19_0
 end
 
-EndViewStateSummary._get_summary_entries = function (self, game_won, game_mode_key)
-	local mission_rewards = self._context.rewards.mission_results
-	local entry_widgets = self._entry_widgets
-	local entries = {}
-	local widget_index = 0
-	local total_experience_gained = 0
+function EndViewStateSummary._get_summary_entries(arg_20_0, arg_20_1, arg_20_2)
+	local var_20_0 = arg_20_0._context.rewards.mission_results
+	local var_20_1 = arg_20_0._entry_widgets
+	local var_20_2 = {}
+	local var_20_3 = 0
+	local var_20_4 = 0
 
-	for index, mission_reward in ipairs(mission_rewards) do
-		widget_index = widget_index % #entry_widgets + 1
+	for iter_20_0, iter_20_1 in ipairs(var_20_0) do
+		var_20_3 = var_20_3 % #var_20_1 + 1
 
-		local name = "entry_" .. index
-		local text = mission_reward.text
-		local format_values = mission_reward.format_values
-		local experience = mission_reward.experience and math.round(mission_reward.experience)
-		local value = mission_reward.value
-		local bonus = mission_reward.bonus
-		local icon = mission_reward.icon
-		local widget = entry_widgets[widget_index]
-		local title_text
+		local var_20_5 = "entry_" .. iter_20_0
+		local var_20_6 = iter_20_1.text
+		local var_20_7 = iter_20_1.format_values
+		local var_20_8 = iter_20_1.experience and math.round(iter_20_1.experience)
+		local var_20_9 = iter_20_1.value
+		local var_20_10 = iter_20_1.bonus
+		local var_20_11 = iter_20_1.icon
+		local var_20_12 = var_20_1[var_20_3]
+		local var_20_13
 
-		if text then
-			if format_values then
-				title_text = UIUtils.format_localized_description(text, format_values)
+		if var_20_6 then
+			if var_20_7 then
+				var_20_13 = UIUtils.format_localized_description(var_20_6, var_20_7)
 			else
-				title_text = Localize(text)
+				var_20_13 = Localize(var_20_6)
 			end
 		end
 
-		local value_text = experience and tostring(experience) or value and tostring(value) or ""
-		local entry = {
+		local var_20_14 = var_20_8 and tostring(var_20_8) or var_20_9 and tostring(var_20_9) or ""
+
+		var_20_2[iter_20_0] = {
 			spacing = 8,
 			start_counter_sound = true,
-			name = name,
-			title_text = title_text,
-			experience = experience,
-			value = value,
-			value_text = value_text,
-			bonus = bonus,
-			widget = widget,
-			icon = icon,
-			list_index = index,
-			wwise_world = self.wwise_world,
+			name = var_20_5,
+			title_text = var_20_13,
+			experience = var_20_8,
+			value = var_20_9,
+			value_text = var_20_14,
+			bonus = var_20_10,
+			widget = var_20_12,
+			icon = var_20_11,
+			list_index = iter_20_0,
+			wwise_world = arg_20_0.wwise_world
 		}
 
-		entries[index] = entry
-
-		if experience then
-			total_experience_gained = total_experience_gained + experience
+		if var_20_8 then
+			var_20_4 = var_20_4 + var_20_8
 		end
 	end
 
-	return entries, total_experience_gained
+	return var_20_2, var_20_4
 end
 
-EndViewStateSummary._animate_summary_entries = function (self, dt)
-	local summary_entries = self._summary_entries
+function EndViewStateSummary._animate_summary_entries(arg_21_0, arg_21_1)
+	local var_21_0 = arg_21_0._summary_entries
 
-	if not summary_entries or summary_entries.complete then
-		if summary_entries and summary_entries.complete and self._is_max_level and not self._experience_presentation_completed then
-			self._experience_presentation_completed = true
+	if not var_21_0 or var_21_0.complete then
+		if var_21_0 and var_21_0.complete and arg_21_0._is_max_level and not arg_21_0._experience_presentation_completed then
+			arg_21_0._experience_presentation_completed = true
 
-			self.parent:present_additional_rewards()
+			arg_21_0.parent:present_additional_rewards()
 		end
 
 		return
 	end
 
-	local ui_animator = self.ui_animator
-	local enter_animation_name = "summary_entry_initial"
-	local exit_animation_name = "summary_entry_text_shadow"
+	local var_21_1 = arg_21_0.ui_animator
+	local var_21_2 = "summary_entry_initial"
+	local var_21_3 = "summary_entry_text_shadow"
 
-	if self.total_experience_count_anim_id and ui_animator:is_animation_completed(self.total_experience_count_anim_id) then
-		ui_animator:stop_animation(self.total_experience_count_anim_id)
+	if arg_21_0.total_experience_count_anim_id and var_21_1:is_animation_completed(arg_21_0.total_experience_count_anim_id) then
+		var_21_1:stop_animation(arg_21_0.total_experience_count_anim_id)
 
-		self.total_experience_count_anim_id = nil
+		arg_21_0.total_experience_count_anim_id = nil
 	end
 
-	local animations_completed = true
+	local var_21_4 = true
 
-	for index, entry in ipairs(summary_entries) do
-		if not entry.animation_completed then
-			if not self.summary_entry_enter_anim_id then
-				self.summary_entry_enter_anim_id = self.ui_animator:start_animation(enter_animation_name, self._widgets_by_name, self._scenegraph_definition, entry)
-			elseif ui_animator:is_animation_completed(self.summary_entry_enter_anim_id) then
-				ui_animator:stop_animation(self.summary_entry_enter_anim_id)
+	for iter_21_0, iter_21_1 in ipairs(var_21_0) do
+		if not iter_21_1.animation_completed then
+			if not arg_21_0.summary_entry_enter_anim_id then
+				arg_21_0.summary_entry_enter_anim_id = arg_21_0.ui_animator:start_animation(var_21_2, arg_21_0._widgets_by_name, arg_21_0._scenegraph_definition, iter_21_1)
+			elseif var_21_1:is_animation_completed(arg_21_0.summary_entry_enter_anim_id) then
+				var_21_1:stop_animation(arg_21_0.summary_entry_enter_anim_id)
 
-				self.summary_entry_enter_anim_id = nil
-				entry.animation_completed = true
-				self.total_experience_count_anim_id = self.ui_animator:start_animation("total_experience_increase", self._widgets_by_name, self._scenegraph_definition, entry)
+				arg_21_0.summary_entry_enter_anim_id = nil
+				iter_21_1.animation_completed = true
+				arg_21_0.total_experience_count_anim_id = arg_21_0.ui_animator:start_animation("total_experience_increase", arg_21_0._widgets_by_name, arg_21_0._scenegraph_definition, iter_21_1)
 			end
 
-			animations_completed = false
+			var_21_4 = false
 		end
 	end
 
-	summary_entries.complete = animations_completed
+	var_21_0.complete = var_21_4
 
-	if animations_completed then
-		-- Nothing
+	if var_21_4 then
+		-- block empty
 	end
 end
 
-EndViewStateSummary._get_essence_earned = function (self)
-	local essence_data = self._context.rewards.end_of_level_rewards.essence
+function EndViewStateSummary._get_essence_earned(arg_22_0)
+	local var_22_0 = arg_22_0._context.rewards.end_of_level_rewards.essence
 
-	if not essence_data then
+	if not var_22_0 then
 		return nil
 	end
 
-	if essence_data.awarded ~= nil then
-		return essence_data.awarded
+	if var_22_0.awarded ~= nil then
+		return var_22_0.awarded
 	end
 
-	return essence_data[1].awarded
+	return var_22_0[1].awarded
 end
 
-EndViewStateSummary._setup_essence_presentation = function (self)
-	local essence_gained = self:_get_essence_earned()
-	local has_wom_dlc = Managers.unlock:is_dlc_unlocked("scorpion")
-	local draw_essence_presentation = has_wom_dlc and essence_gained ~= nil
-	local widgets_by_name = self._widgets_by_name
-	local draw_essence_icon = true
+function EndViewStateSummary._setup_essence_presentation(arg_23_0)
+	local var_23_0 = arg_23_0:_get_essence_earned()
+	local var_23_1 = Managers.unlock:is_dlc_unlocked("scorpion") and var_23_0 ~= nil
+	local var_23_2 = arg_23_0._widgets_by_name
+	local var_23_3 = true
 
-	if essence_gained then
-		local backend_manger = Managers.backend
-		local backend_interface_weaves = backend_manger:get_interface("weaves")
-		local essence_amount = backend_interface_weaves:get_essence()
-		local total_essence = backend_interface_weaves:get_total_essence()
-		local maximum_essence = backend_interface_weaves:get_maximum_essence()
+	if var_23_0 then
+		local var_23_4 = Managers.backend:get_interface("weaves")
+		local var_23_5 = var_23_4:get_essence()
+		local var_23_6 = var_23_4:get_total_essence()
+		local var_23_7 = var_23_4:get_maximum_essence()
 
-		if maximum_essence < total_essence and maximum_essence > total_essence - essence_gained then
-			essence_gained = essence_gained - (maximum_essence - total_essence)
-		elseif maximum_essence < total_essence - essence_gained then
-			essence_gained = nil
-			draw_essence_icon = false
+		if var_23_7 < var_23_6 and var_23_7 > var_23_6 - var_23_0 then
+			var_23_0 = var_23_0 - (var_23_7 - var_23_6)
+		elseif var_23_7 < var_23_6 - var_23_0 then
+			var_23_0 = nil
+			var_23_3 = false
 		end
 
-		if essence_gained then
-			local essence_total_text = widgets_by_name.essence_total_text
+		if var_23_0 then
+			local var_23_8 = var_23_2.essence_total_text
 
-			essence_total_text.content.text = essence_gained
+			var_23_8.content.text = var_23_0
 
-			local essence_gained_width = UIUtils.get_text_width(self.ui_renderer, essence_total_text.style.text, tostring(essence_gained))
-			local icon_essence = widgets_by_name.icon_essence
+			local var_23_9 = UIUtils.get_text_width(arg_23_0.ui_renderer, var_23_8.style.text, tostring(var_23_0))
 
-			icon_essence.offset[1] = -essence_gained_width
+			var_23_2.icon_essence.offset[1] = -var_23_9
 		end
 	end
 
-	widgets_by_name.essence_background.content.visible = draw_essence_presentation
-	widgets_by_name.essence_background_frame.content.visible = draw_essence_presentation
-	widgets_by_name.essence_background_shadow.content.visible = draw_essence_presentation
-	widgets_by_name.essence_background_effect_left.content.visible = draw_essence_presentation
-	widgets_by_name.essence_background_effect_right.content.visible = draw_essence_presentation
-	widgets_by_name.total_essence_title.content.visible = draw_essence_presentation
-	widgets_by_name.icon_essence.content.visible = draw_essence_icon and draw_essence_presentation or false
-	widgets_by_name.essence_total_text.content.visible = essence_gained ~= nil and draw_essence_presentation or false
-	widgets_by_name.essence_total_text_max.content.visible = draw_essence_presentation and not draw_essence_icon
+	var_23_2.essence_background.content.visible = var_23_1
+	var_23_2.essence_background_frame.content.visible = var_23_1
+	var_23_2.essence_background_shadow.content.visible = var_23_1
+	var_23_2.essence_background_effect_left.content.visible = var_23_1
+	var_23_2.essence_background_effect_right.content.visible = var_23_1
+	var_23_2.total_essence_title.content.visible = var_23_1
+	var_23_2.icon_essence.content.visible = var_23_3 and var_23_1 or false
+	var_23_2.essence_total_text.content.visible = var_23_0 ~= nil and var_23_1 or false
+	var_23_2.essence_total_text_max.content.visible = var_23_1 and not var_23_3
 end
 
-EndViewStateSummary._get_total_experience_progress_data = function (self, start_experience, start_experience_pool)
-	local start_level, start_progress = ExperienceSettings.get_level(start_experience)
-	local start_extra_level, start_extra_level_progress = ExperienceSettings.get_extra_level(start_experience_pool)
-	local hero_name = self._hero_name
-	local end_experience = ExperienceSettings.get_experience(hero_name)
-	local end_level, end_progress = ExperienceSettings.get_level(end_experience)
-	local end_experience_pool = ExperienceSettings.get_experience_pool(hero_name)
-	local end_extra_level, end_extra_levels_progress = ExperienceSettings.get_extra_level(end_experience_pool)
-	local total_start_level = start_level + start_extra_level
-	local total_end_level = end_level + end_extra_level
-	local bonus_experience = 0
+function EndViewStateSummary._get_total_experience_progress_data(arg_24_0, arg_24_1, arg_24_2)
+	local var_24_0, var_24_1 = ExperienceSettings.get_level(arg_24_1)
+	local var_24_2, var_24_3 = ExperienceSettings.get_extra_level(arg_24_2)
+	local var_24_4 = arg_24_0._hero_name
+	local var_24_5 = ExperienceSettings.get_experience(var_24_4)
+	local var_24_6, var_24_7 = ExperienceSettings.get_level(var_24_5)
+	local var_24_8 = ExperienceSettings.get_experience_pool(var_24_4)
+	local var_24_9, var_24_10 = ExperienceSettings.get_extra_level(var_24_8)
+	local var_24_11 = var_24_0 + var_24_2
+	local var_24_12 = var_24_6 + var_24_9
+	local var_24_13 = 0
 
-	if start_level ~= ExperienceSettings.max_level and end_level == ExperienceSettings.max_level then
-		end_progress = start_extra_level_progress
-		bonus_experience = ExperienceSettings.get_experience_required_for_level(ExperienceSettings.max_level) * start_extra_level_progress
+	if var_24_0 ~= ExperienceSettings.max_level and var_24_6 == ExperienceSettings.max_level then
+		var_24_7 = var_24_3
+		var_24_13 = ExperienceSettings.get_experience_required_for_level(ExperienceSettings.max_level) * var_24_3
 	end
 
-	local progress_length = total_end_level - total_start_level + (end_progress - start_progress) + (end_extra_levels_progress - start_extra_level_progress)
-	local experience_gained = end_experience - start_experience + (end_experience_pool - start_experience_pool) + bonus_experience
+	local var_24_14 = var_24_12 - var_24_11 + (var_24_7 - var_24_1) + (var_24_10 - var_24_3)
+	local var_24_15 = var_24_5 - arg_24_1 + (var_24_8 - arg_24_2) + var_24_13
 
-	if start_level == ExperienceSettings.max_level then
-		start_experience = start_experience + start_experience_pool
-		start_progress = start_extra_level_progress
+	if var_24_0 == ExperienceSettings.max_level then
+		arg_24_1 = arg_24_1 + arg_24_2
+		var_24_1 = var_24_3
 	end
 
-	local min_time = UISettings.summary_screen.bar_progress_min_time
-	local max_time = UISettings.summary_screen.bar_progress_max_time
-	local time_multiplier = UISettings.summary_screen.bar_progress_experience_time_multiplier
-	local time = math.min(math.max(time_multiplier * experience_gained, min_time), max_time)
+	local var_24_16 = UISettings.summary_screen.bar_progress_min_time
+	local var_24_17 = UISettings.summary_screen.bar_progress_max_time
+	local var_24_18 = UISettings.summary_screen.bar_progress_experience_time_multiplier
+	local var_24_19 = math.min(math.max(var_24_18 * var_24_15, var_24_16), var_24_17)
 
 	return {
-		complete = false,
 		time = 0,
-		current_experience = start_experience,
-		experience_to_add = experience_gained,
-		total_progress = progress_length,
-		start_progress = start_progress,
-		start_extra_level = start_extra_level,
-		bonus_experience = bonus_experience,
-		total_time = time,
+		complete = false,
+		current_experience = arg_24_1,
+		experience_to_add = var_24_15,
+		total_progress = var_24_14,
+		start_progress = var_24_1,
+		start_extra_level = var_24_2,
+		bonus_experience = var_24_13,
+		total_time = var_24_19
 	}
 end
 
-EndViewStateSummary._animate_experience_bar = function (self, dt, displaying_reward_presentation)
-	local progress_data = self._progress_data
+function EndViewStateSummary._animate_experience_bar(arg_25_0, arg_25_1, arg_25_2)
+	local var_25_0 = arg_25_0._progress_data
 
-	if not progress_data or progress_data.complete or displaying_reward_presentation or self.level_up_anim_id or self._experience_presentation_completed then
+	if not var_25_0 or var_25_0.complete or arg_25_2 or arg_25_0.level_up_anim_id or arg_25_0._experience_presentation_completed then
 		return
 	end
 
-	if not self._experience_bar_started then
-		self:_play_sound("play_gui_mission_summary_experience_bar_begin")
+	if not arg_25_0._experience_bar_started then
+		arg_25_0:_play_sound("play_gui_mission_summary_experience_bar_begin")
 
-		self._experience_bar_started = true
+		arg_25_0._experience_bar_started = true
 	end
 
-	local current_time = progress_data.time
-	local total_time = progress_data.total_time
-	local time_progress = current_time / total_time
-	local smoothstep_progress = math.smoothstep(time_progress, 0, 1)
+	local var_25_1 = var_25_0.time
+	local var_25_2 = var_25_0.total_time
+	local var_25_3 = var_25_1 / var_25_2
+	local var_25_4 = math.smoothstep(var_25_3, 0, 1)
+	local var_25_5 = math.min(var_25_1 + arg_25_1, var_25_2)
 
-	current_time = math.min(current_time + dt, total_time)
-	progress_data.time = current_time
+	var_25_0.time = var_25_5
 
-	local current_experience = progress_data.current_experience
-	local experience_to_add = progress_data.experience_to_add
-	local current_experience_to_add = math.floor(experience_to_add * smoothstep_progress)
-	local presentation_experience = math.floor(current_experience + current_experience_to_add)
-	local level_reached, extra_levels = self:_set_current_experience(presentation_experience)
-	local has_reached_level = level_reached ~= self._current_level
+	local var_25_6 = var_25_0.current_experience
+	local var_25_7 = var_25_0.experience_to_add
+	local var_25_8 = math.floor(var_25_7 * var_25_4)
+	local var_25_9 = math.floor(var_25_6 + var_25_8)
+	local var_25_10, var_25_11 = arg_25_0:_set_current_experience(var_25_9)
+	local var_25_12 = var_25_10 ~= arg_25_0._current_level
 
-	if self._extra_levels ~= nil then
-		if self._progress_data.bonus_experience > 0 then
-			extra_levels = extra_levels + self._progress_data.start_extra_level
+	if arg_25_0._extra_levels ~= nil then
+		if arg_25_0._progress_data.bonus_experience > 0 then
+			var_25_11 = var_25_11 + arg_25_0._progress_data.start_extra_level
 		end
 
-		has_reached_level = has_reached_level or extra_levels ~= self._extra_levels
+		var_25_12 = var_25_12 or var_25_11 ~= arg_25_0._extra_levels
 	end
 
-	if has_reached_level then
-		self._current_level = level_reached
-		self._extra_levels = extra_levels
+	if var_25_12 then
+		arg_25_0._current_level = var_25_10
+		arg_25_0._extra_levels = var_25_11
 
-		self:_play_sound("play_gui_mission_summary_experience_bar_end")
+		arg_25_0:_play_sound("play_gui_mission_summary_experience_bar_end")
 
-		self.level_up_anim_id = self.ui_animator:start_animation("level_up", self._widgets_by_name, self._scenegraph_definition, {
-			wwise_world = self.wwise_world,
+		arg_25_0.level_up_anim_id = arg_25_0.ui_animator:start_animation("level_up", arg_25_0._widgets_by_name, arg_25_0._scenegraph_definition, {
+			wwise_world = arg_25_0.wwise_world
 		})
 	end
 
-	if current_time == total_time then
-		progress_data.complete = true
-		self._experience_presentation_completed = true
+	if var_25_5 == var_25_2 then
+		var_25_0.complete = true
+		arg_25_0._experience_presentation_completed = true
 
-		self:_play_sound("play_gui_mission_summary_experience_bar_end")
-		self.parent:present_additional_rewards()
+		arg_25_0:_play_sound("play_gui_mission_summary_experience_bar_end")
+		arg_25_0.parent:present_additional_rewards()
 	end
 end
 
-EndViewStateSummary._set_current_experience = function (self, current_experience)
-	local level, progress = ExperienceSettings.get_level(current_experience)
-	local extra_levels = 0
+function EndViewStateSummary._set_current_experience(arg_26_0, arg_26_1)
+	local var_26_0, var_26_1 = ExperienceSettings.get_level(arg_26_1)
+	local var_26_2 = 0
 
-	if level == ExperienceSettings.max_level then
-		local overflow_pool = current_experience - ExperienceSettings.max_experience
+	if var_26_0 == ExperienceSettings.max_level then
+		local var_26_3 = arg_26_1 - ExperienceSettings.max_experience
 
-		extra_levels, progress = ExperienceSettings.get_extra_level(overflow_pool)
+		var_26_2, var_26_1 = ExperienceSettings.get_extra_level(var_26_3)
 	end
 
-	local next_level = math.clamp(level + 1, 0, ExperienceSettings.max_level)
+	local var_26_4 = math.clamp(var_26_0 + 1, 0, ExperienceSettings.max_level)
 
-	if self._current_level and level > self._current_level or self._extra_levels and extra_levels > self._extra_levels then
-		progress = 1
+	if arg_26_0._current_level and var_26_0 > arg_26_0._current_level or arg_26_0._extra_levels and var_26_2 > arg_26_0._extra_levels then
+		var_26_1 = 1
 	end
 
-	local widgets_by_name = self._widgets_by_name
-	local experience_bar = widgets_by_name.experience_bar
-	local content = experience_bar.content
-	local style = experience_bar.style
-	local default_size = style.experience_bar.default_size
+	local var_26_5 = arg_26_0._widgets_by_name
+	local var_26_6 = var_26_5.experience_bar
+	local var_26_7 = var_26_6.content
+	local var_26_8 = var_26_6.style
+	local var_26_9 = var_26_8.experience_bar.default_size
 
-	style.experience_bar.size[1] = default_size[1] * progress
-	style.experience_bar_end.offset[1] = default_size[1] * progress
+	var_26_8.experience_bar.size[1] = var_26_9[1] * var_26_1
+	var_26_8.experience_bar_end.offset[1] = var_26_9[1] * var_26_1
 
-	if progress == 1 and level ~= next_level then
-		widgets_by_name.current_level_text.content.text = tostring(level - 1)
-		widgets_by_name.next_level_text.content.text = tostring(next_level - 1)
+	if var_26_1 == 1 and var_26_0 ~= var_26_4 then
+		var_26_5.current_level_text.content.text = tostring(var_26_0 - 1)
+		var_26_5.next_level_text.content.text = tostring(var_26_4 - 1)
 	else
-		widgets_by_name.current_level_text.content.text = tostring(level)
-		widgets_by_name.next_level_text.content.text = tostring(next_level)
+		var_26_5.current_level_text.content.text = tostring(var_26_0)
+		var_26_5.next_level_text.content.text = tostring(var_26_4)
 	end
 
-	WwiseWorld.set_global_parameter(self.wwise_world, "summary_meter_progress", progress)
+	WwiseWorld.set_global_parameter(arg_26_0.wwise_world, "summary_meter_progress", var_26_1)
 
-	return level, extra_levels
+	return var_26_0, var_26_2
 end
 
-EndViewStateSummary.done = function (self)
-	return self._experience_presentation_completed and self._summary_entries.complete
+function EndViewStateSummary.done(arg_27_0)
+	return arg_27_0._experience_presentation_completed and arg_27_0._summary_entries.complete
 end
 
-EndViewStateSummary._play_sound = function (self, event)
-	self.parent:play_sound(event)
+function EndViewStateSummary._play_sound(arg_28_0, arg_28_1)
+	arg_28_0.parent:play_sound(arg_28_1)
 end
 
-EndViewStateSummary._set_player_count_presence = function (self, context)
-	local players_session_score = context.players_session_score
-	local num_human_players = 0
+function EndViewStateSummary._set_player_count_presence(arg_29_0, arg_29_1)
+	local var_29_0 = arg_29_1.players_session_score
+	local var_29_1 = 0
 
-	for stats_id, player_data in pairs(players_session_score) do
-		local peer_id = player_data.peer_id
-		local is_player_controlled = player_data.is_player_controlled
+	for iter_29_0, iter_29_1 in pairs(var_29_0) do
+		local var_29_2 = iter_29_1.peer_id
+		local var_29_3 = iter_29_1.is_player_controlled
 
-		if peer_id and is_player_controlled then
-			num_human_players = num_human_players + 1
+		if var_29_2 and var_29_3 then
+			var_29_1 = var_29_1 + 1
 		end
 	end
 
-	Presence.set_presence("steam_player_group_size", num_human_players)
+	Presence.set_presence("steam_player_group_size", var_29_1)
 end

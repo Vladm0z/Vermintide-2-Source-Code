@@ -1,150 +1,147 @@
-﻿-- chunkname: @scripts/helpers/camera_carrier.lua
+-- chunkname: @scripts/helpers/camera_carrier.lua
 
 CameraCarrier = class(CameraCarrier)
 CameraCarrier.CAMERA_CARRIER_REEVALUATE_PERIOD = 10
 
-CameraCarrier.init = function (self)
-	self._carrier_camera_unit = nil
-	self._camera_carrier_unique_id = nil
-	self._camera_carrier_linked = false
-	self._time_since_reevaluate_camera_carrier = 0
+function CameraCarrier.init(arg_1_0)
+	arg_1_0._carrier_camera_unit = nil
+	arg_1_0._camera_carrier_unique_id = nil
+	arg_1_0._camera_carrier_linked = false
+	arg_1_0._time_since_reevaluate_camera_carrier = 0
 end
 
-CameraCarrier.destroy = function (self)
-	if self._carrier_camera_unit ~= nil then
-		self:_detach_carrier_camera()
-		self:_destroy_carrier_camera()
+function CameraCarrier.destroy(arg_2_0)
+	if arg_2_0._carrier_camera_unit ~= nil then
+		arg_2_0:_detach_carrier_camera()
+		arg_2_0:_destroy_carrier_camera()
 	end
 end
 
-CameraCarrier.update = function (self, dt)
+function CameraCarrier.update(arg_3_0, arg_3_1)
 	if not DEDICATED_SERVER then
 		return
 	end
 
-	self._time_since_reevaluate_camera_carrier = self._time_since_reevaluate_camera_carrier + dt
+	arg_3_0._time_since_reevaluate_camera_carrier = arg_3_0._time_since_reevaluate_camera_carrier + arg_3_1
 
-	if self._time_since_reevaluate_camera_carrier > CameraCarrier.CAMERA_CARRIER_REEVALUATE_PERIOD then
-		self:_reevaluate_camera_carrier()
+	if arg_3_0._time_since_reevaluate_camera_carrier > CameraCarrier.CAMERA_CARRIER_REEVALUATE_PERIOD then
+		arg_3_0:_reevaluate_camera_carrier()
 	end
 end
 
-CameraCarrier._reevaluate_camera_carrier = function (self)
-	self._time_since_reevaluate_camera_carrier = 0
+function CameraCarrier._reevaluate_camera_carrier(arg_4_0)
+	arg_4_0._time_since_reevaluate_camera_carrier = 0
 
 	if not DEDICATED_SERVER then
 		return
 	end
 
-	local carrier_player = self:_best_suited_camera_carrier()
+	local var_4_0 = arg_4_0:_best_suited_camera_carrier()
 
-	if self._camera_carrier_linked then
-		local player = Managers.player:player_from_unique_id(self._camera_carrier_unique_id)
-
-		if player == carrier_player then
+	if arg_4_0._camera_carrier_linked then
+		if Managers.player:player_from_unique_id(arg_4_0._camera_carrier_unique_id) == var_4_0 then
 			return
 		end
 
-		self:_detach_carrier_camera()
+		arg_4_0:_detach_carrier_camera()
 	end
 
-	if carrier_player == nil then
+	if var_4_0 == nil then
 		return
 	end
 
-	print(string.format("Switching camera carrier to %s", carrier_player:name()))
-	self:_attach_carrier_camera(carrier_player)
+	print(string.format("Switching camera carrier to %s", var_4_0:name()))
+	arg_4_0:_attach_carrier_camera(var_4_0)
 end
 
-CameraCarrier._create_carrier_camera = function (self)
-	assert(self._carrier_camera_unit == nil)
+function CameraCarrier._create_carrier_camera(arg_5_0)
+	assert(arg_5_0._carrier_camera_unit == nil)
 	assert(DEDICATED_SERVER)
 
-	local unit_name = DefaultUnits.standard.backlit_camera
-	local position = Vector3.zero()
-	local rotation = Quaternion.identity()
-	local camera_unit = Managers.state.unit_spawner:spawn_local_unit(unit_name, position, rotation)
+	local var_5_0 = DefaultUnits.standard.backlit_camera
+	local var_5_1 = Vector3.zero()
+	local var_5_2 = Quaternion.identity()
 
-	self._carrier_camera_unit = camera_unit
+	arg_5_0._carrier_camera_unit = Managers.state.unit_spawner:spawn_local_unit(var_5_0, var_5_1, var_5_2)
 end
 
-CameraCarrier._destroy_carrier_camera = function (self)
-	assert(self._carrier_camera_unit ~= nil)
+function CameraCarrier._destroy_carrier_camera(arg_6_0)
+	assert(arg_6_0._carrier_camera_unit ~= nil)
 	assert(DEDICATED_SERVER)
-	Managers.state.unit_spawner:mark_for_deletion(self._carrier_camera_unit)
+	Managers.state.unit_spawner:mark_for_deletion(arg_6_0._carrier_camera_unit)
 
-	self._carrier_camera_unit = nil
-	self._camera_carrier_unique_id = nil
+	arg_6_0._carrier_camera_unit = nil
+	arg_6_0._camera_carrier_unique_id = nil
 end
 
-CameraCarrier._attach_carrier_camera = function (self, player)
+function CameraCarrier._attach_carrier_camera(arg_7_0, arg_7_1)
 	assert(DEDICATED_SERVER)
-	assert(player ~= nil)
+	assert(arg_7_1 ~= nil)
 
-	if player.player_unit == nil then
-		print(string.format("Failed to switching camera carrier to %s since there is no unit", player:name()))
-
-		return
-	end
-
-	if not Unit.alive(player.player_unit) then
-		print(string.format("Failed to switching camera carrier to %s since the player unit is not alive", player:name()))
+	if arg_7_1.player_unit == nil then
+		print(string.format("Failed to switching camera carrier to %s since there is no unit", arg_7_1:name()))
 
 		return
 	end
 
-	if self._carrier_camera_unit == nil then
-		self:_create_carrier_camera()
-	end
+	if not Unit.alive(arg_7_1.player_unit) then
+		print(string.format("Failed to switching camera carrier to %s since the player unit is not alive", arg_7_1:name()))
 
-	local world = Unit.world(player.player_unit)
-
-	World.link_unit(world, self._carrier_camera_unit, player.player_unit)
-
-	self._camera_carrier_unique_id = player:profile_id()
-	self._camera_carrier_linked = true
-end
-
-CameraCarrier._detach_carrier_camera = function (self)
-	assert(DEDICATED_SERVER)
-	assert(self._carrier_camera_unit ~= nil)
-
-	if not self._camera_carrier_linked then
 		return
 	end
 
-	local world = Unit.world(self._carrier_camera_unit)
+	if arg_7_0._carrier_camera_unit == nil then
+		arg_7_0:_create_carrier_camera()
+	end
 
-	World.unlink_unit(world, self._carrier_camera_unit)
+	local var_7_0 = Unit.world(arg_7_1.player_unit)
 
-	self._camera_carrier_linked = false
+	World.link_unit(var_7_0, arg_7_0._carrier_camera_unit, arg_7_1.player_unit)
+
+	arg_7_0._camera_carrier_unique_id = arg_7_1:profile_id()
+	arg_7_0._camera_carrier_linked = true
 end
 
-CameraCarrier._most_ahead_player = function (self)
-	local conflict_director = Managers.state.conflict
+function CameraCarrier._detach_carrier_camera(arg_8_0)
+	assert(DEDICATED_SERVER)
+	assert(arg_8_0._carrier_camera_unit ~= nil)
 
-	if conflict_director == nil then
+	if not arg_8_0._camera_carrier_linked then
+		return
+	end
+
+	local var_8_0 = Unit.world(arg_8_0._carrier_camera_unit)
+
+	World.unlink_unit(var_8_0, arg_8_0._carrier_camera_unit)
+
+	arg_8_0._camera_carrier_linked = false
+end
+
+function CameraCarrier._most_ahead_player(arg_9_0)
+	local var_9_0 = Managers.state.conflict
+
+	if var_9_0 == nil then
 		return nil
 	end
 
-	local ahead_unit = conflict_director.main_path_info.ahead_unit
+	local var_9_1 = var_9_0.main_path_info.ahead_unit
 
-	return Managers.player:unit_owner(ahead_unit)
+	return Managers.player:unit_owner(var_9_1)
 end
 
-CameraCarrier._best_suited_camera_carrier = function (self)
-	local most_ahead = self:_most_ahead_player()
+function CameraCarrier._best_suited_camera_carrier(arg_10_0)
+	local var_10_0 = arg_10_0:_most_ahead_player()
 
-	if most_ahead ~= nil then
-		return most_ahead
+	if var_10_0 ~= nil then
+		return var_10_0
 	end
 
-	local leader_peer_id = Managers.party:leader()
-	local players = Managers.player:players_at_peer(leader_peer_id)
+	local var_10_1 = Managers.party:leader()
+	local var_10_2 = Managers.player:players_at_peer(var_10_1)
 
-	if players == nil then
+	if var_10_2 == nil then
 		return nil
 	end
 
-	return players[1]
+	return var_10_2[1]
 end

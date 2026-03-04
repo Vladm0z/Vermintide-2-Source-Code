@@ -1,14 +1,14 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/careers/career_ability_gutter_runner_pounce.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/careers/career_ability_gutter_runner_pounce.lua
 
 CareerAbilityGutterRunnerPounce = class(CareerAbilityGutterRunnerPounce, CareerAbilityDarkPactBase)
 
-CareerAbilityGutterRunnerPounce._ability_available = function (self)
-	local career_extension = self._career_extension
-	local status_extension = self._status_extension
-	local in_foff_invis = career_extension:get_state() == "vs_gutter_runner_smoke_bomb_invisible"
-	local can_use = career_extension:can_use_activated_ability(1)
-	local is_disabled = status_extension:is_disabled()
-	local ability_available = not status_extension:is_disabled()
+function CareerAbilityGutterRunnerPounce._ability_available(arg_1_0)
+	local var_1_0 = arg_1_0._career_extension
+	local var_1_1 = arg_1_0._status_extension
+	local var_1_2 = var_1_0:get_state() == "vs_gutter_runner_smoke_bomb_invisible"
+	local var_1_3 = var_1_0:can_use_activated_ability(1)
+	local var_1_4 = var_1_1:is_disabled()
+	local var_1_5 = not var_1_1:is_disabled()
 
-	return can_use and not is_disabled and not in_foff_invis and ability_available
+	return var_1_3 and not var_1_4 and not var_1_2 and var_1_5
 end

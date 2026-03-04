@@ -1,73 +1,71 @@
-﻿-- chunkname: @scripts/helpers/steam_helper.lua
+-- chunkname: @scripts/helpers/steam_helper.lua
 
 SteamHelper = SteamHelper or {}
 
-local FRIEND_STATUS = {
+local var_0_0 = {
 	[0] = "offline",
 	"online",
 	"busy",
 	"away",
 	"snooze",
 	"trading",
-	"looking_to_play",
+	"looking_to_play"
 }
 
-SteamHelper.debug_friends = function ()
-	local number_of_friends = 5
-	local friends = {}
+function SteamHelper.debug_friends()
+	local var_1_0 = 5
+	local var_1_1 = {}
 
-	for i = 1, number_of_friends do
-		local id = "id_" .. i
-
-		friends[id] = {
+	for iter_1_0 = 1, var_1_0 do
+		var_1_1["id_" .. iter_1_0] = {
 			playing_this_game = false,
-			name = "debug_friend_" .. i,
-			playing_game = i % 2 == 1,
-			status = math.random(1, 6),
+			name = "debug_friend_" .. iter_1_0,
+			playing_game = iter_1_0 % 2 == 1,
+			status = math.random(1, 6)
 		}
 	end
 
-	return friends
+	return var_1_1
 end
 
-SteamHelper.friends = function ()
-	local num_friends = Friends.num_friends()
-	local friends = {}
-	local app_id = Steam.app_id()
+function SteamHelper.friends()
+	local var_2_0 = Friends.num_friends()
+	local var_2_1 = {}
+	local var_2_2 = Steam.app_id()
 
-	for i = 1, num_friends do
-		local id = Friends.id(i)
-		local playing_game = Friends.playing_game(id)
+	for iter_2_0 = 1, var_2_0 do
+		local var_2_3 = Friends.id(iter_2_0)
+		local var_2_4 = Friends.playing_game(var_2_3)
 
-		if playing_game and not playing_game.lobby and not playing_game.ip then
-			local connect_info = Presence.presence(id, "connect")
-			local prefix_len = #"+connect "
+		if var_2_4 and not var_2_4.lobby and not var_2_4.ip then
+			local var_2_5 = Presence.presence(var_2_3, "connect")
+			local var_2_6 = #"+connect "
 
-			if connect_info and prefix_len < #connect_info then
-				local ip_port = string.sub(connect_info, prefix_len + 1, #connect_info)
-				local ip, port = NetworkUtils.split_ip_port(ip_port)
+			if var_2_5 and var_2_6 < #var_2_5 then
+				local var_2_7 = string.sub(var_2_5, var_2_6 + 1, #var_2_5)
+				local var_2_8, var_2_9 = NetworkUtils.split_ip_port(var_2_7)
 
-				if ip then
-					playing_game.ip = ip
-					playing_game.server_port = port
+				if var_2_8 then
+					var_2_4.ip = var_2_8
+					var_2_4.server_port = var_2_9
 				end
 			end
 		end
 
-		local playing_this_game = playing_game and playing_game.app_id == app_id
+		local var_2_10 = var_2_4 and var_2_4.app_id == var_2_2
 
-		friends[id] = {
-			name = Friends.name(id),
-			playing_game = playing_game,
-			playing_this_game = playing_this_game,
-			status = FRIEND_STATUS[Friends.status(id)],
+		var_2_1[var_2_3] = {
+			name = Friends.name(var_2_3),
+			playing_game = var_2_4,
+			playing_this_game = var_2_10,
+			status = var_0_0[Friends.status(var_2_3)]
 		}
 	end
 
-	return friends
+	return var_2_1
 end
 
-SteamHelper.is_dev = function ()
+function SteamHelper.is_dev()
 	if rawget(_G, "Clans") then
 		return SteamHelper.is_in_clan("170000000a021fa")
 	else
@@ -75,13 +73,11 @@ SteamHelper.is_dev = function ()
 	end
 end
 
-SteamHelper.is_in_clan = function (clan_id)
-	local clan_count = Clans.clan_count()
+function SteamHelper.is_in_clan(arg_4_0)
+	local var_4_0 = Clans.clan_count()
 
-	for i = 0, clan_count - 1 do
-		local id = Clans.clan_by_index(i)
-
-		if id == clan_id then
+	for iter_4_0 = 0, var_4_0 - 1 do
+		if Clans.clan_by_index(iter_4_0) == arg_4_0 then
 			return true
 		end
 	end
@@ -89,34 +85,32 @@ SteamHelper.is_in_clan = function (clan_id)
 	return false
 end
 
-SteamHelper.clans_short = function ()
+function SteamHelper.clans_short()
 	if rawget(_G, "Clans") then
-		local clan_count = Clans.clan_count()
-		local clan_names = {}
+		local var_5_0 = Clans.clan_count()
+		local var_5_1 = {}
 
-		for i = 0, clan_count - 1 do
-			local id = Clans.clan_by_index(i)
-			local name = Clans.clan_tag(id)
+		for iter_5_0 = 0, var_5_0 - 1 do
+			local var_5_2 = Clans.clan_by_index(iter_5_0)
 
-			clan_names[id] = name
+			var_5_1[var_5_2] = Clans.clan_tag(var_5_2)
 		end
 
-		return clan_names
+		return var_5_1
 	else
 		return {}
 	end
 end
 
-SteamHelper.clans = function ()
-	local clan_count = Clans.clan_count()
-	local clan_names = {}
+function SteamHelper.clans()
+	local var_6_0 = Clans.clan_count()
+	local var_6_1 = {}
 
-	for i = 0, clan_count - 1 do
-		local id = Clans.clan_by_index(i)
-		local name = Clans.clan_name(id)
+	for iter_6_0 = 0, var_6_0 - 1 do
+		local var_6_2 = Clans.clan_by_index(iter_6_0)
 
-		clan_names[id] = name
+		var_6_1[var_6_2] = Clans.clan_name(var_6_2)
 	end
 
-	return clan_names
+	return var_6_1
 end

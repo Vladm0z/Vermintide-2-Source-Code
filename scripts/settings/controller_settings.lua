@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/settings/controller_settings.lua
+-- chunkname: @scripts/settings/controller_settings.lua
 
 require("scripts/utils/input_helper")
 
@@ -8,626 +8,626 @@ PlayerControllerKeymaps.win32 = InputUtils.keymaps_key_approved("win32") and {
 	toggle_input_helper = {
 		"keyboard",
 		"f1",
-		"pressed",
+		"pressed"
 	},
 	action_one = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	action_one_hold = {
 		"mouse",
 		"left",
-		"held",
+		"held"
 	},
 	action_one_release = {
 		"mouse",
 		"left",
-		"released",
+		"released"
 	},
 	action_two = {
 		"mouse",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	action_two_hold = {
 		"mouse",
 		"right",
-		"held",
+		"held"
 	},
 	action_two_release = {
 		"mouse",
 		"right",
-		"released",
+		"released"
 	},
 	action_three = {
 		"keyboard",
 		"v",
-		"pressed",
+		"pressed"
 	},
 	action_three_hold = {
 		"keyboard",
 		"v",
-		"held",
+		"held"
 	},
 	action_three_release = {
 		"keyboard",
 		"v",
-		"released",
+		"released"
 	},
 	action_middle = {
 		"mouse",
 		"middle",
-		"pressed",
+		"pressed"
 	},
 	action_inspect = {
 		"keyboard",
 		"z",
-		"pressed",
+		"pressed"
 	},
 	action_inspect_hold = {
 		"keyboard",
 		"z",
-		"held",
+		"held"
 	},
 	action_inspect_release = {
 		"keyboard",
 		"z",
-		"released",
+		"released"
 	},
 	action_career = {
 		"keyboard",
 		"f",
-		"pressed",
+		"pressed"
 	},
 	action_career_hold = {
 		"keyboard",
 		"f",
-		"held",
+		"held"
 	},
 	action_career_release = {
 		"keyboard",
 		"f",
-		"released",
+		"released"
 	},
 	action_one_softbutton_gamepad = {},
 	action_one_mouse = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	weapon_reload = {
 		"keyboard",
 		"r",
-		"pressed",
+		"pressed"
 	},
 	weapon_reload_hold = {
 		"keyboard",
 		"r",
-		"held",
+		"held"
 	},
 	character_inspecting = {
 		"keyboard",
 		"x",
-		"held",
+		"held"
 	},
 	wield_1 = {
 		"keyboard",
 		"1",
-		"pressed",
+		"pressed"
 	},
 	wield_2 = {
 		"keyboard",
 		"2",
-		"pressed",
+		"pressed"
 	},
 	wield_3 = {
 		"keyboard",
 		"3",
-		"pressed",
+		"pressed"
 	},
 	wield_4 = IS_XB1 and {
 		"keyboard",
 		"5",
-		"pressed",
+		"pressed"
 	} or {
 		"keyboard",
 		"4",
-		"pressed",
+		"pressed"
 	},
 	wield_4_alt = {
 		"keyboard",
 		UNASSIGNED_KEY,
-		"pressed",
+		"pressed"
 	},
 	wield_5 = IS_XB1 and {
 		"keyboard",
 		"4",
-		"pressed",
+		"pressed"
 	} or {
 		"keyboard",
 		"5",
-		"pressed",
+		"pressed"
 	},
 	wield_6 = {
 		"keyboard",
 		"6",
-		"pressed",
+		"pressed"
 	},
 	wield_7 = {
 		"keyboard",
 		"7",
-		"pressed",
+		"pressed"
 	},
 	wield_8 = {
 		"keyboard",
 		"8",
-		"pressed",
+		"pressed"
 	},
 	wield_9 = {
 		"keyboard",
 		"9",
-		"pressed",
+		"pressed"
 	},
 	wield_0 = {
 		"keyboard",
 		"0",
-		"pressed",
+		"pressed"
 	},
 	wield_switch = {
 		"keyboard",
 		"q",
-		"pressed",
+		"pressed"
 	},
 	wield_switch_1 = {
 		"keyboard",
 		"q",
-		"pressed",
+		"pressed"
 	},
 	wield_switch_2 = {},
 	wield_scroll = {
 		"mouse",
 		"wheel",
-		"axis",
+		"axis"
 	},
 	wield_next = {
 		"mouse",
 		"wheel_down",
-		"pressed",
+		"pressed"
 	},
 	wield_prev = {
 		"mouse",
 		"wheel_up",
-		"pressed",
+		"pressed"
 	},
 	walk = {
 		"keyboard",
 		"left alt",
-		"held",
+		"held"
 	},
 	interact = {
 		"keyboard",
 		"e",
-		"pressed",
+		"pressed"
 	},
 	interacting = {
 		"keyboard",
 		"e",
-		"held",
+		"held"
 	},
 	jump_1 = {
 		"keyboard",
 		"space",
-		"pressed",
+		"pressed"
 	},
 	jump_2 = {},
 	jump_only = {
 		"keyboard",
 		UNASSIGNED_KEY,
-		"pressed",
+		"pressed"
 	},
 	dodge_hold = {
 		"keyboard",
 		"space",
-		"held",
+		"held"
 	},
 	dodge = {
 		"keyboard",
 		UNASSIGNED_KEY,
-		"pressed",
+		"pressed"
 	},
 	crouch = {
 		"keyboard",
 		"left ctrl",
-		"pressed",
+		"pressed"
 	},
 	crouching = {
 		"keyboard",
 		"left ctrl",
-		"held",
+		"held"
 	},
 	look_raw = {
 		"mouse",
 		"mouse",
-		"axis",
+		"axis"
 	},
 	look_raw_controller = {
 		"gamepad",
 		"right",
-		"axis",
+		"axis"
 	},
 	move_controller = {
 		"gamepad",
 		"left",
-		"axis",
+		"axis"
 	},
 	ping = {
 		"keyboard",
 		"t",
-		"pressed",
+		"pressed"
 	},
 	ping_hold = {
 		"keyboard",
 		"t",
-		"held",
+		"held"
 	},
 	ping_release = {
 		"keyboard",
 		"t",
-		"released",
+		"released"
 	},
 	angular_velocity = {},
 	social_wheel_only = {
 		"keyboard",
 		UNASSIGNED_KEY,
-		"pressed",
+		"pressed"
 	},
 	social_wheel_only_hold = {
 		"keyboard",
 		UNASSIGNED_KEY,
-		"held",
+		"held"
 	},
 	social_wheel_only_release = {
 		"keyboard",
 		UNASSIGNED_KEY,
-		"released",
+		"released"
 	},
 	weapon_poses_only = {
 		"keyboard",
 		UNASSIGNED_KEY,
-		"pressed",
+		"pressed"
 	},
 	weapon_poses_only_hold = {
 		"keyboard",
 		UNASSIGNED_KEY,
-		"held",
+		"held"
 	},
 	weapon_poses_only_release = {
 		"keyboard",
 		UNASSIGNED_KEY,
-		"released",
+		"released"
 	},
 	photomode_only = {
 		"keyboard",
 		"u",
-		"pressed",
+		"pressed"
 	},
 	photomode_only_hold = {
 		"keyboard",
 		"u",
-		"held",
+		"held"
 	},
 	photomode_only_release = {
 		"keyboard",
 		"u",
-		"released",
+		"released"
 	},
 	social_wheel_page = {
 		"keyboard",
 		"e",
-		"pressed",
+		"pressed"
 	},
 	ping_only = {
 		"keyboard",
 		UNASSIGNED_KEY,
-		"pressed",
+		"pressed"
 	},
 	move_left = {
 		"keyboard",
 		"a",
-		"soft_button",
+		"soft_button"
 	},
 	move_right = {
 		"keyboard",
 		"d",
-		"soft_button",
+		"soft_button"
 	},
 	move_forward = {
 		"keyboard",
 		"w",
-		"soft_button",
+		"soft_button"
 	},
 	move_back = {
 		"keyboard",
 		"s",
-		"soft_button",
+		"soft_button"
 	},
 	move_left_pressed = {
 		"keyboard",
 		"a",
-		"pressed",
+		"pressed"
 	},
 	move_right_pressed = {
 		"keyboard",
 		"d",
-		"pressed",
+		"pressed"
 	},
 	move_forward_pressed = {
 		"keyboard",
 		"w",
-		"pressed",
+		"pressed"
 	},
 	move_back_pressed = {
 		"keyboard",
 		"s",
-		"pressed",
+		"pressed"
 	},
 	cursor = {
 		"mouse",
 		"cursor",
-		"axis",
+		"axis"
 	},
 	show_career_help = {
 		"keyboard",
 		"f1",
-		"held",
+		"held"
 	},
 	next_observer_target = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	previous_observer_target = {
 		"mouse",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	observer_change_offset = {
 		"mouse",
 		"wheel",
-		"axis",
+		"axis"
 	},
 	previous_observer_view = {
 		"keyboard",
 		"q",
-		"pressed",
+		"pressed"
 	},
 	next_observer_view = {
 		"keyboard",
 		"e",
-		"pressed",
+		"pressed"
 	},
 	next_observer_rotation_state = {
 		"keyboard",
 		"l",
-		"pressed",
+		"pressed"
 	},
 	previous_observer_rotation_state = {
 		"keyboard",
 		"k",
-		"pressed",
+		"pressed"
 	},
 	emote_camera_zoom = {
 		"mouse",
 		"wheel",
-		"axis",
+		"axis"
 	},
 	emote_toggle_hud_visibility = {
 		"keyboard",
 		"h",
-		"pressed",
+		"pressed"
 	},
 	ghost_mode_enter = {
 		"keyboard",
 		"q",
-		"pressed",
+		"pressed"
 	},
 	ghost_mode_exit = {
 		"mouse",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	versus_horde_ability = {
 		"keyboard",
 		"f",
-		"pressed",
+		"pressed"
 	},
 	dark_pact_action_one = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	dark_pact_action_one_hold = {
 		"mouse",
 		"left",
-		"held",
+		"held"
 	},
 	dark_pact_action_one_release = {
 		"mouse",
 		"left",
-		"released",
+		"released"
 	},
 	dark_pact_action_two = {
 		"mouse",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	dark_pact_action_two_hold = {
 		"mouse",
 		"right",
-		"held",
+		"held"
 	},
 	dark_pact_action_two_release = {
 		"mouse",
 		"right",
-		"released",
+		"released"
 	},
 	dark_pact_reload = {
 		"keyboard",
 		"r",
-		"pressed",
+		"pressed"
 	},
 	dark_pact_reload_hold = {
 		"keyboard",
 		"r",
-		"held",
+		"held"
 	},
 	dark_pact_interact = {
 		"keyboard",
 		"e",
-		"pressed",
+		"pressed"
 	},
 	dark_pact_interacting = {
 		"keyboard",
 		"e",
-		"held",
+		"held"
 	},
 	dark_pact_climb_point = {
 		"keyboard",
 		"e",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 PlayerControllerKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	toggle_input_helper = {},
 	action_one = {
 		"gamepad",
 		"right_trigger",
-		"pressed",
+		"pressed"
 	},
 	action_one_hold = {
 		"gamepad",
 		"right_trigger",
-		"held",
+		"held"
 	},
 	action_one_release = {
 		"gamepad",
 		"right_trigger",
-		"released",
+		"released"
 	},
 	action_two = {
 		"gamepad",
 		"left_trigger",
-		"pressed",
+		"pressed"
 	},
 	action_two_hold = {
 		"gamepad",
 		"left_trigger",
-		"held",
+		"held"
 	},
 	action_two_release = {
 		"gamepad",
 		"left_trigger",
-		"released",
+		"released"
 	},
 	action_three = {
 		"gamepad",
 		"right_thumb",
-		"pressed",
+		"pressed"
 	},
 	action_three_hold = {
 		"gamepad",
 		"right_thumb",
-		"held",
+		"held"
 	},
 	action_three_release = {
 		"gamepad",
 		"right_thumb",
-		"released",
+		"released"
 	},
 	action_inspect = {
 		"gamepad",
 		"left_thumb",
-		"pressed",
+		"pressed"
 	},
 	action_inspect_hold = {
 		"gamepad",
 		"left_thumb",
-		"held",
+		"held"
 	},
 	action_inspect_release = {
 		"gamepad",
 		"left_thumb",
-		"released",
+		"released"
 	},
 	active_ability_left_pressed = {
 		"gamepad",
 		"left_shoulder",
-		"pressed",
+		"pressed"
 	},
 	active_ability_right_pressed = {
 		"gamepad",
 		"right_shoulder",
-		"pressed",
+		"pressed"
 	},
 	active_ability_left_held = {
 		"gamepad",
 		"left_shoulder",
-		"held",
+		"held"
 	},
 	active_ability_right_held = {
 		"gamepad",
 		"right_shoulder",
-		"held",
+		"held"
 	},
 	active_ability_left_release = {
 		"gamepad",
 		"left_shoulder",
-		"released",
+		"released"
 	},
 	active_ability_right_release = {
 		"gamepad",
 		"right_shoulder",
-		"released",
+		"released"
 	},
 	action_one_softbutton_gamepad = {
 		"gamepad",
 		"right_trigger",
-		"soft_button",
+		"soft_button"
 	},
 	action_one_mouse = {},
 	weapon_reload_input = {
 		"gamepad",
 		"x",
-		"pressed",
+		"pressed"
 	},
 	weapon_reload_hold_input = {
 		"gamepad",
 		"x",
-		"held",
+		"held"
 	},
 	character_inspecting = {
 		"gamepad",
 		"d_down",
-		"held",
+		"held"
 	},
 	wield_1 = {},
 	wield_2 = {},
 	wield_3 = {
 		"gamepad",
 		"d_left",
-		"pressed",
+		"pressed"
 	},
 	wield_4 = {
 		"gamepad",
 		"d_right",
-		"pressed",
+		"pressed"
 	},
 	wield_4_alt = {},
 	wield_5 = {
 		"gamepad",
 		"d_up",
-		"pressed",
+		"pressed"
 	},
 	wield_6 = {},
 	wield_7 = {},
@@ -637,13 +637,13 @@ PlayerControllerKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	wield_switch_1 = {
 		"gamepad",
 		"y",
-		"pressed",
+		"pressed"
 	},
 	wield_switch_2 = {},
 	wield_scroll = {
 		"mouse",
 		"wheel",
-		"axis",
+		"axis"
 	},
 	wield_next = {},
 	wield_prev = {},
@@ -651,82 +651,82 @@ PlayerControllerKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	interact = {
 		"gamepad",
 		"x",
-		"pressed",
+		"pressed"
 	},
 	interacting = {
 		"gamepad",
 		"x",
-		"held",
+		"held"
 	},
 	jump_1 = {
 		"gamepad",
 		"a",
-		"pressed",
+		"pressed"
 	},
 	jump_2 = {},
 	jump_only = {},
 	dodge_1 = {
 		"gamepad",
 		"a",
-		"held",
+		"held"
 	},
 	dodge_2 = {},
 	dodge = {},
 	crouch = {
 		"gamepad",
 		"b",
-		"pressed",
+		"pressed"
 	},
 	crouching = {
 		"gamepad",
 		"b",
-		"held",
+		"held"
 	},
 	ability = {
 		"gamepad",
 		"left_shoulder",
-		"pressed",
+		"pressed"
 	},
 	ability_hold = {
 		"gamepad",
 		"left_shoulder",
-		"held",
+		"held"
 	},
 	ability_release = {
 		"gamepad",
 		"left_shoulder",
-		"released",
+		"released"
 	},
 	look_raw = {},
 	look_raw_controller = {
 		"gamepad",
 		"right",
-		"axis",
+		"axis"
 	},
 	move_controller = {
 		"gamepad",
 		"left",
-		"axis",
+		"axis"
 	},
 	cursor = {
 		"gamepad",
 		"left",
-		"axis",
+		"axis"
 	},
 	ping = {
 		"gamepad",
 		"right_shoulder",
-		"pressed",
+		"pressed"
 	},
 	ping_hold = {
 		"gamepad",
 		"right_shoulder",
-		"held",
+		"held"
 	},
 	ping_release = {
 		"gamepad",
 		"right_shoulder",
-		"released",
+		"released"
 	},
 	angular_velocity = {},
 	social_wheel_only = {},
@@ -741,7 +741,7 @@ PlayerControllerKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	social_wheel_page = {
 		"gamepad",
 		"x",
-		"pressed",
+		"pressed"
 	},
 	ping_only = {},
 	move_left = {},
@@ -755,238 +755,238 @@ PlayerControllerKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	next_observer_target = {
 		"gamepad",
 		"a",
-		"pressed",
+		"pressed"
 	},
 	previous_observer_target = {
 		"gamepad",
 		"b",
-		"pressed",
+		"pressed"
 	},
 	emote_camera_zoom_in = {
 		"gamepad",
 		"right_trigger",
-		"soft_button",
+		"soft_button"
 	},
 	emote_camera_zoom_out = {
 		"gamepad",
 		"left_trigger",
-		"soft_button",
+		"soft_button"
 	},
 	emote_toggle_hud_visibility = {
 		"gamepad",
 		"x",
-		"pressed",
+		"pressed"
 	},
 	ghost_mode_enter = {
 		"gamepad",
 		"y",
-		"pressed",
+		"pressed"
 	},
 	ghost_mode_exit = {
 		"gamepad",
 		"x",
-		"pressed",
+		"pressed"
 	},
 	versus_horde_ability = {
 		"gamepad",
 		"d_up",
-		"pressed",
+		"pressed"
 	},
 	dark_pact_action_one = {
 		"gamepad",
 		"right_trigger",
-		"pressed",
+		"pressed"
 	},
 	dark_pact_action_one_hold = {
 		"gamepad",
 		"right_trigger",
-		"held",
+		"held"
 	},
 	dark_pact_action_one_release = {
 		"gamepad",
 		"right_trigger",
-		"released",
+		"released"
 	},
 	dark_pact_action_two = {
 		"gamepad",
 		"left_trigger",
-		"pressed",
+		"pressed"
 	},
 	dark_pact_action_two_hold = {
 		"gamepad",
 		"left_trigger",
-		"held",
+		"held"
 	},
 	dark_pact_action_two_release = {
 		"gamepad",
 		"left_trigger",
-		"released",
+		"released"
 	},
 	dark_pact_reload = {
 		"gamepad",
 		"x",
-		"pressed",
+		"pressed"
 	},
 	dark_pact_reload_hold = {
 		"gamepad",
 		"x",
-		"held",
+		"held"
 	},
 	dark_pact_interact = {
 		"gamepad",
 		"x",
-		"pressed",
+		"pressed"
 	},
 	dark_pact_interacting = {
 		"gamepad",
 		"x",
-		"held",
+		"held"
 	},
 	dark_pact_climb_point = {
 		"gamepad",
 		"x",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 PlayerControllerKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 	toggle_input_helper = {
 		"keyboard",
 		"f1",
-		"pressed",
+		"pressed"
 	},
 	action_one = {
 		"gamepad",
 		"r2",
-		"pressed",
+		"pressed"
 	},
 	action_one_hold = {
 		"gamepad",
 		"r2",
-		"held",
+		"held"
 	},
 	action_one_release = {
 		"gamepad",
 		"r2",
-		"released",
+		"released"
 	},
 	action_two = {
 		"gamepad",
 		"l2",
-		"pressed",
+		"pressed"
 	},
 	action_two_hold = {
 		"gamepad",
 		"l2",
-		"held",
+		"held"
 	},
 	action_two_release = {
 		"gamepad",
 		"l2",
-		"released",
+		"released"
 	},
 	action_three = {
 		"gamepad",
 		"r3",
-		"pressed",
+		"pressed"
 	},
 	action_three_hold = {
 		"gamepad",
 		"r3",
-		"held",
+		"held"
 	},
 	action_three_release = {
 		"gamepad",
 		"r3",
-		"released",
+		"released"
 	},
 	action_inspect = {
 		"gamepad",
 		"l3",
-		"pressed",
+		"pressed"
 	},
 	action_inspect_hold = {
 		"gamepad",
 		"l3",
-		"held",
+		"held"
 	},
 	action_inspect_release = {
 		"gamepad",
 		"l3",
-		"released",
+		"released"
 	},
 	reset_view = {
 		"gamepad",
 		"l3",
-		"pressed",
+		"pressed"
 	},
 	active_ability_left_pressed = {
 		"gamepad",
 		"l1",
-		"pressed",
+		"pressed"
 	},
 	active_ability_right_pressed = {
 		"gamepad",
 		"r1",
-		"pressed",
+		"pressed"
 	},
 	active_ability_left_held = {
 		"gamepad",
 		"l1",
-		"held",
+		"held"
 	},
 	active_ability_right_held = {
 		"gamepad",
 		"r1",
-		"held",
+		"held"
 	},
 	active_ability_left_release = {
 		"gamepad",
 		"l1",
-		"released",
+		"released"
 	},
 	active_ability_right_release = {
 		"gamepad",
 		"r1",
-		"released",
+		"released"
 	},
 	action_one_softbutton_gamepad = {
 		"gamepad",
 		"r2",
-		"soft_button",
+		"soft_button"
 	},
 	action_one_mouse = {},
 	weapon_reload_input = {
 		"gamepad",
 		"square",
-		"pressed",
+		"pressed"
 	},
 	weapon_reload_hold_input = {
 		"gamepad",
 		"square",
-		"held",
+		"held"
 	},
 	character_inspecting = {
 		"gamepad",
 		"down",
-		"held",
+		"held"
 	},
 	wield_1 = {},
 	wield_2 = {},
 	wield_3 = {
 		"gamepad",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	wield_4 = {
 		"gamepad",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	wield_4_alt = {},
 	wield_5 = {
 		"gamepad",
 		"up",
-		"pressed",
+		"pressed"
 	},
 	wield_6 = {},
 	wield_7 = {},
@@ -996,13 +996,13 @@ PlayerControllerKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 	wield_switch_1 = {
 		"gamepad",
 		"triangle",
-		"pressed",
+		"pressed"
 	},
 	wield_switch_2 = {},
 	wield_scroll = {
 		"mouse",
 		"wheel",
-		"axis",
+		"axis"
 	},
 	wield_next = {},
 	wield_prev = {},
@@ -1010,87 +1010,87 @@ PlayerControllerKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 	interact = {
 		"gamepad",
 		"square",
-		"pressed",
+		"pressed"
 	},
 	interacting = {
 		"gamepad",
 		"square",
-		"held",
+		"held"
 	},
 	jump_1 = {
 		"gamepad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	jump_2 = {},
 	jump_only = {},
 	dodge_1 = {
 		"gamepad",
 		"cross",
-		"held",
+		"held"
 	},
 	dodge_2 = {},
 	dodge = {},
 	crouch = {
 		"gamepad",
 		"circle",
-		"pressed",
+		"pressed"
 	},
 	crouching = {
 		"gamepad",
 		"circle",
-		"held",
+		"held"
 	},
 	ability = {
 		"gamepad",
 		"l1",
-		"pressed",
+		"pressed"
 	},
 	ability_hold = {
 		"gamepad",
 		"l1",
-		"held",
+		"held"
 	},
 	ability_release = {
 		"gamepad",
 		"l1",
-		"released",
+		"released"
 	},
 	look_raw = {},
 	look_raw_controller = {
 		"gamepad",
 		"right",
-		"axis",
+		"axis"
 	},
 	move_controller = {
 		"gamepad",
 		"left",
-		"axis",
+		"axis"
 	},
 	cursor = {
 		"gamepad",
 		"left",
-		"axis",
+		"axis"
 	},
 	ping = {
 		"gamepad",
 		"r1",
-		"pressed",
+		"pressed"
 	},
 	ping_hold = {
 		"gamepad",
 		"r1",
-		"held",
+		"held"
 	},
 	ping_release = {
 		"gamepad",
 		"r1",
-		"released",
+		"released"
 	},
 	angular_velocity = {
 		"gamepad",
 		"angular_velocity",
-		"axis",
+		"axis"
 	},
 	social_wheel_only = {},
 	social_wheel_only_hold = {},
@@ -1104,7 +1104,7 @@ PlayerControllerKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 	social_wheel_page = {
 		"gamepad",
 		"square",
-		"pressed",
+		"pressed"
 	},
 	ping_only = {},
 	move_left = {},
@@ -1118,238 +1118,238 @@ PlayerControllerKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 	next_observer_target = {
 		"gamepad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	previous_observer_target = {
 		"gamepad",
 		"circle",
-		"pressed",
+		"pressed"
 	},
 	emote_camera_zoom_in = {
 		"gamepad",
 		"r2",
-		"soft_button",
+		"soft_button"
 	},
 	emote_camera_zoom_out = {
 		"gamepad",
 		"l2",
-		"soft_button",
+		"soft_button"
 	},
 	emote_toggle_hud_visibility = {
 		"gamepad",
 		"square",
-		"pressed",
+		"pressed"
 	},
 	ghost_mode_enter = {
 		"gamepad",
 		"triangle",
-		"pressed",
+		"pressed"
 	},
 	ghost_mode_exit = {
 		"gamepad",
 		"square",
-		"pressed",
+		"pressed"
 	},
 	versus_horde_ability = {
 		"gamepad",
 		"up",
-		"pressed",
+		"pressed"
 	},
 	dark_pact_action_one = {
 		"gamepad",
 		"r2",
-		"pressed",
+		"pressed"
 	},
 	dark_pact_action_one_hold = {
 		"gamepad",
 		"r2",
-		"held",
+		"held"
 	},
 	dark_pact_action_one_release = {
 		"gamepad",
 		"r2",
-		"released",
+		"released"
 	},
 	dark_pact_action_two = {
 		"gamepad",
 		"l2",
-		"pressed",
+		"pressed"
 	},
 	dark_pact_action_two_hold = {
 		"gamepad",
 		"l2",
-		"held",
+		"held"
 	},
 	dark_pact_action_two_release = {
 		"gamepad",
 		"l2",
-		"released",
+		"released"
 	},
 	dark_pact_reload = {
 		"gamepad",
 		"square",
-		"pressed",
+		"pressed"
 	},
 	dark_pact_reload_hold = {
 		"gamepad",
 		"square",
-		"held",
+		"held"
 	},
 	dark_pact_interact = {
 		"gamepad",
 		"square",
-		"pressed",
+		"pressed"
 	},
 	dark_pact_interacting = {
 		"gamepad",
 		"square",
-		"held",
+		"held"
 	},
 	dark_pact_climb_point = {
 		"gamepad",
 		"square",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 PlayerControllerKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 	toggle_input_helper = {
 		"keyboard",
 		"f1",
-		"pressed",
+		"pressed"
 	},
 	action_one = {
 		"ps_pad",
 		"r2",
-		"pressed",
+		"pressed"
 	},
 	action_one_hold = {
 		"ps_pad",
 		"r2",
-		"held",
+		"held"
 	},
 	action_one_release = {
 		"ps_pad",
 		"r2",
-		"released",
+		"released"
 	},
 	action_two = {
 		"ps_pad",
 		"l2",
-		"pressed",
+		"pressed"
 	},
 	action_two_hold = {
 		"ps_pad",
 		"l2",
-		"held",
+		"held"
 	},
 	action_two_release = {
 		"ps_pad",
 		"l2",
-		"released",
+		"released"
 	},
 	action_three = {
 		"ps_pad",
 		"r3",
-		"pressed",
+		"pressed"
 	},
 	action_three_hold = {
 		"ps_pad",
 		"r3",
-		"held",
+		"held"
 	},
 	action_three_release = {
 		"ps_pad",
 		"r3",
-		"released",
+		"released"
 	},
 	action_inspect = {
 		"ps_pad",
 		"l3",
-		"pressed",
+		"pressed"
 	},
 	action_inspect_hold = {
 		"ps_pad",
 		"l3",
-		"held",
+		"held"
 	},
 	action_inspect_release = {
 		"ps_pad",
 		"l3",
-		"released",
+		"released"
 	},
 	reset_view = {
 		"ps_pad",
 		"l3",
-		"pressed",
+		"pressed"
 	},
 	active_ability_left_pressed = {
 		"ps_pad",
 		"l1",
-		"pressed",
+		"pressed"
 	},
 	active_ability_right_pressed = {
 		"ps_pad",
 		"r1",
-		"pressed",
+		"pressed"
 	},
 	active_ability_left_held = {
 		"ps_pad",
 		"l1",
-		"held",
+		"held"
 	},
 	active_ability_right_held = {
 		"ps_pad",
 		"r1",
-		"held",
+		"held"
 	},
 	active_ability_left_release = {
 		"ps_pad",
 		"l1",
-		"released",
+		"released"
 	},
 	active_ability_right_release = {
 		"ps_pad",
 		"r1",
-		"released",
+		"released"
 	},
 	action_one_softbutton_gamepad = {
 		"ps_pad",
 		"r2",
-		"soft_button",
+		"soft_button"
 	},
 	action_one_mouse = {},
 	weapon_reload_input = {
 		"ps_pad",
 		"square",
-		"pressed",
+		"pressed"
 	},
 	weapon_reload_hold_input = {
 		"ps_pad",
 		"square",
-		"held",
+		"held"
 	},
 	character_inspecting = {
 		"ps_pad",
 		"down",
-		"held",
+		"held"
 	},
 	wield_1 = {},
 	wield_2 = {},
 	wield_3 = {
 		"ps_pad",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	wield_4 = {
 		"ps_pad",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	wield_4_alt = {},
 	wield_5 = {
 		"ps_pad",
 		"up",
-		"pressed",
+		"pressed"
 	},
 	wield_6 = {},
 	wield_7 = {},
@@ -1359,13 +1359,13 @@ PlayerControllerKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 	wield_switch_1 = {
 		"ps_pad",
 		"triangle",
-		"pressed",
+		"pressed"
 	},
 	wield_switch_2 = {},
 	wield_scroll = {
 		"mouse",
 		"wheel",
-		"axis",
+		"axis"
 	},
 	wield_next = {},
 	wield_prev = {},
@@ -1373,87 +1373,87 @@ PlayerControllerKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 	interact = {
 		"ps_pad",
 		"square",
-		"pressed",
+		"pressed"
 	},
 	interacting = {
 		"ps_pad",
 		"square",
-		"held",
+		"held"
 	},
 	jump_1 = {
 		"ps_pad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	jump_2 = {},
 	jump_only = {},
 	dodge_1 = {
 		"ps_pad",
 		"cross",
-		"held",
+		"held"
 	},
 	dodge_2 = {},
 	dodge = {},
 	crouch = {
 		"ps_pad",
 		"circle",
-		"pressed",
+		"pressed"
 	},
 	crouching = {
 		"ps_pad",
 		"circle",
-		"held",
+		"held"
 	},
 	ability = {
 		"ps_pad",
 		"l1",
-		"pressed",
+		"pressed"
 	},
 	ability_hold = {
 		"ps_pad",
 		"l1",
-		"held",
+		"held"
 	},
 	ability_release = {
 		"ps_pad",
 		"l1",
-		"released",
+		"released"
 	},
 	look_raw = {},
 	look_raw_controller = {
 		"ps_pad",
 		"right",
-		"axis",
+		"axis"
 	},
 	move_controller = {
 		"ps_pad",
 		"left",
-		"axis",
+		"axis"
 	},
 	cursor = {
 		"ps_pad",
 		"left",
-		"axis",
+		"axis"
 	},
 	ping = {
 		"ps_pad",
 		"r1",
-		"pressed",
+		"pressed"
 	},
 	ping_hold = {
 		"ps_pad",
 		"r1",
-		"held",
+		"held"
 	},
 	ping_release = {
 		"ps_pad",
 		"r1",
-		"released",
+		"released"
 	},
 	angular_velocity = {
 		"ps_pad",
 		"angular_velocity",
-		"axis",
+		"axis"
 	},
 	social_wheel_only = {},
 	social_wheel_only_hold = {},
@@ -1467,7 +1467,7 @@ PlayerControllerKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 	social_wheel_page = {
 		"ps_pad",
 		"square",
-		"pressed",
+		"pressed"
 	},
 	ping_only = {},
 	move_left = {},
@@ -1481,98 +1481,98 @@ PlayerControllerKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 	next_observer_target = {
 		"ps_pad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	previous_observer_target = {
 		"ps_pad",
 		"circle",
-		"pressed",
+		"pressed"
 	},
 	emote_camera_zoom_in = {
 		"ps_pad",
 		"r2",
-		"soft_button",
+		"soft_button"
 	},
 	emote_camera_zoom_out = {
 		"ps_pad",
 		"l2",
-		"soft_button",
+		"soft_button"
 	},
 	emote_toggle_hud_visibility = {
 		"ps_pad",
 		"square",
-		"pressed",
+		"pressed"
 	},
 	ghost_mode_enter = {
 		"ps_pad",
 		"triangle",
-		"pressed",
+		"pressed"
 	},
 	ghost_mode_exit = {
 		"ps_pad",
 		"square",
-		"pressed",
+		"pressed"
 	},
 	versus_horde_ability = {
 		"ps_pad",
 		"up",
-		"pressed",
+		"pressed"
 	},
 	dark_pact_action_one = {
 		"ps_pad",
 		"r2",
-		"pressed",
+		"pressed"
 	},
 	dark_pact_action_one_hold = {
 		"ps_pad",
 		"r2",
-		"held",
+		"held"
 	},
 	dark_pact_action_one_release = {
 		"ps_pad",
 		"r2",
-		"released",
+		"released"
 	},
 	dark_pact_action_two = {
 		"ps_pad",
 		"l2",
-		"pressed",
+		"pressed"
 	},
 	dark_pact_action_two_hold = {
 		"ps_pad",
 		"l2",
-		"held",
+		"held"
 	},
 	dark_pact_action_two_release = {
 		"ps_pad",
 		"l2",
-		"released",
+		"released"
 	},
 	dark_pact_reload = {
 		"ps_pad",
 		"square",
-		"pressed",
+		"pressed"
 	},
 	dark_pact_reload_hold = {
 		"ps_pad",
 		"square",
-		"held",
+		"held"
 	},
 	dark_pact_interact = {
 		"ps_pad",
 		"square",
-		"pressed",
+		"pressed"
 	},
 	dark_pact_interacting = {
 		"ps_pad",
 		"square",
-		"held",
+		"held"
 	},
 	dark_pact_climb_point = {
 		"ps_pad",
 		"square",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 TutorialPlayerControllerKeymaps = table.clone(PlayerControllerKeymaps)
 PlayerControllerFilters = {}
@@ -1580,505 +1580,505 @@ PlayerControllerFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 	move = {
 		filter_type = "virtual_axis",
 		input_mappings = {
-			back = "move_back",
-			forward = "move_forward",
-			left = "move_left",
 			right = "move_right",
-		},
+			back = "move_back",
+			left = "move_left",
+			forward = "move_forward"
+		}
 	},
 	look = {
 		filter_type = "scale_vector3_invert_y",
-		input_mapping = "look_raw",
 		multiplier = 0.0006,
+		input_mapping = "look_raw"
 	},
 	jump = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "jump_1",
-			button_2 = "jump_2",
-		},
+			button_2 = "jump_2"
+		}
 	},
 	wield_switch = {
 		filter_type = "or",
 		input_mappings = {
-			button_1 = "wield_switch_1",
-		},
+			button_1 = "wield_switch_1"
+		}
 	},
 	look_controller = {
-		accelerate_time_ref = 0.5,
-		acceleration_delay = 0.2,
-		angle_to_slow_down_inside = 0.5,
 		filter_type = "scale_vector3_xy_accelerated_x",
-		input_mapping = "look_raw_controller",
-		multiplier_min_x = 1.5,
 		multiplier_return_y = 1.75,
-		multiplier_x = 4,
+		acceleration_delay = 0.2,
 		multiplier_y = 0.75,
-		power_of = 1.75,
 		threshold = 0.925,
+		multiplier_min_x = 1.5,
+		accelerate_time_ref = 0.5,
+		angle_to_slow_down_inside = 0.5,
+		input_mapping = "look_raw_controller",
+		power_of = 1.75,
+		multiplier_x = 4
 	},
 	look_controller_ranged = {
-		accelerate_time_ref = 0.6,
-		acceleration_delay = 0.2,
-		angle_to_slow_down_inside = 0.5,
 		filter_type = "scale_vector3_xy_accelerated_x",
-		input_mapping = "look_raw_controller",
-		multiplier_min_x = 1.25,
 		multiplier_return_y = 1.75,
-		multiplier_x = 4,
+		acceleration_delay = 0.2,
 		multiplier_y = 0.75,
-		power_of = 2,
 		threshold = 0.925,
+		multiplier_min_x = 1.25,
+		accelerate_time_ref = 0.6,
+		angle_to_slow_down_inside = 0.5,
+		input_mapping = "look_raw_controller",
+		power_of = 2,
+		multiplier_x = 4
 	},
 	look_controller_melee = {
-		accelerate_time_ref = 0.15,
-		acceleration_delay = 0.2,
-		angle_to_slow_down_inside = 0.5,
 		filter_type = "scale_vector3_xy_accelerated_x",
-		input_mapping = "look_raw_controller",
-		multiplier_min_x = 2.5,
 		multiplier_return_y = 2,
-		multiplier_x = 2,
-		multiplier_y = 1,
-		power_of = 1.5,
-		threshold = 0.65,
-		turnaround_delay = 0.2,
-		turnaround_multiplier_x = 3,
-		turnaround_power_of = 2,
-		turnaround_threshold = 0.925,
+		acceleration_delay = 0.2,
 		turnaround_time_ref = 0.75,
+		threshold = 0.65,
+		multiplier_min_x = 2.5,
+		turnaround_threshold = 0.925,
+		turnaround_delay = 0.2,
+		angle_to_slow_down_inside = 0.5,
+		multiplier_y = 1,
+		turnaround_multiplier_x = 3,
+		input_mapping = "look_raw_controller",
+		accelerate_time_ref = 0.15,
+		power_of = 1.5,
+		multiplier_x = 2,
+		turnaround_power_of = 2
 	},
 	look_controller_zoom = {
-		accelerate_time_ref = 0.3,
-		acceleration_delay = 0,
-		angle_to_slow_down_inside = 0.5,
 		filter_type = "scale_vector3_xy_accelerated_x",
-		input_mapping = "look_raw_controller",
-		multiplier_min_x = 0.5,
 		multiplier_return_y = 1.5,
-		multiplier_x = 1,
+		acceleration_delay = 0,
 		multiplier_y = 0.5,
-		power_of = 1.1,
 		threshold = 0.95,
+		multiplier_min_x = 0.5,
+		accelerate_time_ref = 0.3,
+		angle_to_slow_down_inside = 0.5,
+		input_mapping = "look_raw_controller",
+		power_of = 1.1,
+		multiplier_x = 1
 	},
 	look_controller_3p = {
-		accelerate_time_ref = 0.3,
-		acceleration_delay = 0,
 		filter_type = "scale_vector3_xy_accelerated_x",
-		input_mapping = "look_raw_controller",
 		multiplier_min_x = 0.5,
-		multiplier_x = 1.5,
-		multiplier_y = 0.5,
-		power_of = 1.5,
+		acceleration_delay = 0,
 		threshold = 0.95,
+		accelerate_time_ref = 0.3,
+		multiplier_y = 0.5,
+		input_mapping = "look_raw_controller",
+		power_of = 1.5,
+		multiplier_x = 1.5
 	},
 	action_career_not_hold = {
 		filter_type = "not",
 		input_mappings = {
-			button_1 = "action_career_hold",
-		},
-	},
+			button_1 = "action_career_hold"
+		}
+	}
 }
 PlayerControllerFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	look_controller = {
-		accelerate_time_ref = 0.3,
-		acceleration_delay = 0.01,
-		angle_to_slow_down_inside = 0.5,
 		filter_type = "scale_vector3_xy_accelerated_x",
-		input_mapping = "look_raw_controller",
-		multiplier_min_x = 1.5,
 		multiplier_return_y = 1.75,
-		multiplier_x = 5,
+		acceleration_delay = 0.01,
 		multiplier_y = 0.75,
-		power_of = 2,
 		threshold = 0.925,
+		accelerate_time_ref = 0.3,
+		multiplier_min_x = 1.5,
+		angle_to_slow_down_inside = 0.5,
+		input_mapping = "look_raw_controller",
+		power_of = 2,
+		multiplier_x = 5
 	},
 	look_controller_ranged = {
-		accelerate_time_ref = 0.3,
-		acceleration_delay = 0.01,
-		angle_to_slow_down_inside = 0.5,
 		filter_type = "scale_vector3_xy_accelerated_x",
-		input_mapping = "look_raw_controller",
-		multiplier_min_x = 1.25,
 		multiplier_return_y = 1.75,
-		multiplier_x = 5,
+		acceleration_delay = 0.01,
 		multiplier_y = 0.75,
-		power_of = 1.25,
 		threshold = 0.925,
+		accelerate_time_ref = 0.3,
+		multiplier_min_x = 1.25,
+		angle_to_slow_down_inside = 0.5,
+		input_mapping = "look_raw_controller",
+		power_of = 1.25,
+		multiplier_x = 5
 	},
 	look_controller_melee = {
-		accelerate_time_ref = 0.15,
-		acceleration_delay = 0.2,
-		angle_to_slow_down_inside = 0.5,
 		filter_type = "scale_vector3_xy_accelerated_x",
-		input_mapping = "look_raw_controller",
-		multiplier_min_x = 2.5,
 		multiplier_return_y = 2,
-		multiplier_x = 2,
-		multiplier_y = 1,
-		power_of = 1.5,
-		threshold = 0.65,
-		turnaround_delay = 0.01,
-		turnaround_multiplier_x = 5,
-		turnaround_power_of = 2,
-		turnaround_threshold = 0.925,
+		acceleration_delay = 0.2,
 		turnaround_time_ref = 0.15,
+		threshold = 0.65,
+		multiplier_min_x = 2.5,
+		turnaround_threshold = 0.925,
+		turnaround_delay = 0.01,
+		angle_to_slow_down_inside = 0.5,
+		multiplier_y = 1,
+		turnaround_multiplier_x = 5,
+		input_mapping = "look_raw_controller",
+		accelerate_time_ref = 0.15,
+		power_of = 1.5,
+		multiplier_x = 2,
+		turnaround_power_of = 2
 	},
 	look_controller_zoom = {
-		accelerate_time_ref = 0.3,
-		acceleration_delay = 0,
-		angle_to_slow_down_inside = 0.5,
 		filter_type = "scale_vector3_xy_accelerated_x",
-		input_mapping = "look_raw_controller",
-		multiplier_min_x = 0.5,
 		multiplier_return_y = 1.5,
-		multiplier_x = 1,
+		acceleration_delay = 0,
 		multiplier_y = 0.5,
-		power_of = 1.1,
 		threshold = 0.95,
+		multiplier_min_x = 0.5,
+		accelerate_time_ref = 0.3,
+		angle_to_slow_down_inside = 0.5,
+		input_mapping = "look_raw_controller",
+		power_of = 1.1,
+		multiplier_x = 1
 	},
 	look_controller_3p = {
-		accelerate_time_ref = 0.3,
-		acceleration_delay = 0,
-		angle_to_slow_down_inside = 0.5,
 		filter_type = "scale_vector3_xy_accelerated_x",
-		input_mapping = "look_raw_controller",
-		multiplier_min_x = 0.5,
 		multiplier_return_y = 1.5,
-		multiplier_x = 1.5,
+		acceleration_delay = 0,
 		multiplier_y = 0.5,
-		power_of = 1.5,
 		threshold = 0.95,
+		multiplier_min_x = 0.5,
+		accelerate_time_ref = 0.3,
+		angle_to_slow_down_inside = 0.5,
+		input_mapping = "look_raw_controller",
+		power_of = 1.5,
+		multiplier_x = 1.5
 	},
 	move_controller_up = {
-		axis_requirement = 0.7,
 		filter_type = "axis_check",
+		axis_requirement = 0.7,
 		input_mapping = "move_controller",
 		axis = {
 			0,
 			1,
-			0,
-		},
+			0
+		}
 	},
 	move_controller_down = {
-		axis_requirement = 0.7,
 		filter_type = "axis_check",
+		axis_requirement = 0.7,
 		input_mapping = "move_controller",
 		axis = {
 			0,
 			-1,
-			0,
-		},
+			0
+		}
 	},
 	move_controller_left = {
-		axis_requirement = 0.7,
 		filter_type = "axis_check",
+		axis_requirement = 0.7,
 		input_mapping = "move_controller",
 		axis = {
 			-1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	move_controller_right = {
-		axis_requirement = 0.7,
 		filter_type = "axis_check",
+		axis_requirement = 0.7,
 		input_mapping = "move_controller",
 		axis = {
 			1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	wield_switch = {
 		filter_type = "or",
 		input_mappings = {
-			button_1 = "wield_switch_1",
-		},
+			button_1 = "wield_switch_1"
+		}
 	},
 	jump = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "jump_1",
-			button_2 = "jump_2",
-		},
+			button_2 = "jump_2"
+		}
 	},
 	dodge_hold = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "dodge_1",
-			button_2 = "dodge_2",
-		},
+			button_2 = "dodge_2"
+		}
 	},
 	dodge = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "dodge_1",
-			button_2 = "dodge_2",
-		},
+			button_2 = "dodge_2"
+		}
 	},
 	action_career = {
-		filter_type = "or",
 		max_delay = 0.05,
+		filter_type = "or",
 		input_mappings = {
-			button_1 = "ability",
+			button_1 = "ability"
 		},
 		held = {
-			button_1 = "ability_hold",
-		},
+			button_1 = "ability_hold"
+		}
 	},
 	action_career_hold = {
 		filter_type = "or",
 		input_mappings = {
-			button_1 = "ability_hold",
-		},
+			button_1 = "ability_hold"
+		}
 	},
 	action_career_not_hold = {
 		filter_type = "not",
 		input_mappings = {
-			button_1 = "ability_hold",
-		},
+			button_1 = "ability_hold"
+		}
 	},
 	action_career_release = {
 		filter_type = "or",
 		input_mappings = {
-			button_1 = "ability_release",
-		},
+			button_1 = "ability_release"
+		}
 	},
 	weapon_reload_hold = {
 		filter_type = "or",
 		input_mappings = {
-			button_1 = "weapon_reload_hold_input",
-		},
+			button_1 = "weapon_reload_hold_input"
+		}
 	},
 	weapon_reload = {
 		filter_type = "or",
 		input_mappings = {
-			button_1 = "weapon_reload_input",
-		},
-	},
+			button_1 = "weapon_reload_input"
+		}
+	}
 }
 
-local PlayerControllerFilters_ps4 = {
+local var_0_0 = {
 	look_controller = {
-		accelerate_time_ref = 0.5,
-		acceleration_delay = 0.2,
 		filter_type = "scale_vector3_xy_accelerated_x",
-		input_mapping = "look_raw_controller",
 		multiplier_min_x = 1.5,
-		multiplier_x = 4,
-		multiplier_y = 0.75,
-		power_of = 1.75,
+		acceleration_delay = 0.2,
 		threshold = 0.925,
+		accelerate_time_ref = 0.5,
+		multiplier_y = 0.75,
+		input_mapping = "look_raw_controller",
+		power_of = 1.75,
+		multiplier_x = 4
 	},
 	look_controller_ranged = {
-		accelerate_time_ref = 0.6,
-		acceleration_delay = 0.2,
 		filter_type = "scale_vector3_xy_accelerated_x",
-		input_mapping = "look_raw_controller",
 		multiplier_min_x = 1.25,
-		multiplier_x = 4,
-		multiplier_y = 0.75,
-		power_of = 2,
+		acceleration_delay = 0.2,
 		threshold = 0.925,
+		accelerate_time_ref = 0.6,
+		multiplier_y = 0.75,
+		input_mapping = "look_raw_controller",
+		power_of = 2,
+		multiplier_x = 4
 	},
 	look_controller_melee = {
-		accelerate_time_ref = 0.15,
-		acceleration_delay = 0.2,
 		filter_type = "scale_vector3_xy_accelerated_x",
-		input_mapping = "look_raw_controller",
 		multiplier_min_x = 2.5,
-		multiplier_x = 2,
-		multiplier_y = 1,
-		power_of = 1.5,
+		acceleration_delay = 0.2,
+		turnaround_time_ref = 0.75,
 		threshold = 0.65,
+		accelerate_time_ref = 0.15,
 		turnaround_delay = 0.2,
 		turnaround_multiplier_x = 3,
-		turnaround_power_of = 2,
+		multiplier_y = 1,
+		multiplier_x = 2,
+		input_mapping = "look_raw_controller",
+		power_of = 1.5,
 		turnaround_threshold = 0.925,
-		turnaround_time_ref = 0.75,
+		turnaround_power_of = 2
 	},
 	look_controller_zoom = {
-		accelerate_time_ref = 0.3,
-		acceleration_delay = 0,
 		filter_type = "scale_vector3_xy_accelerated_x",
-		input_mapping = "look_raw_controller",
 		multiplier_min_x = 0.5,
-		multiplier_x = 1,
-		multiplier_y = 0.5,
-		power_of = 1.1,
+		acceleration_delay = 0,
 		threshold = 0.95,
+		accelerate_time_ref = 0.3,
+		multiplier_y = 0.5,
+		input_mapping = "look_raw_controller",
+		power_of = 1.1,
+		multiplier_x = 1
 	},
 	look_controller_3p = {
-		accelerate_time_ref = 0.3,
-		acceleration_delay = 0,
 		filter_type = "scale_vector3_xy_accelerated_x",
-		input_mapping = "look_raw_controller",
 		multiplier_min_x = 0.5,
-		multiplier_x = 1.5,
-		multiplier_y = 0.5,
-		power_of = 1.5,
+		acceleration_delay = 0,
 		threshold = 0.95,
+		accelerate_time_ref = 0.3,
+		multiplier_y = 0.5,
+		input_mapping = "look_raw_controller",
+		power_of = 1.5,
+		multiplier_x = 1.5
 	},
 	move_controller_up = {
-		axis_requirement = 0.7,
 		filter_type = "axis_check",
+		axis_requirement = 0.7,
 		input_mapping = "move_controller",
 		axis = {
 			0,
 			1,
-			0,
-		},
+			0
+		}
 	},
 	move_controller_down = {
-		axis_requirement = 0.7,
 		filter_type = "axis_check",
+		axis_requirement = 0.7,
 		input_mapping = "move_controller",
 		axis = {
 			0,
 			-1,
-			0,
-		},
+			0
+		}
 	},
 	move_controller_left = {
-		axis_requirement = 0.7,
 		filter_type = "axis_check",
+		axis_requirement = 0.7,
 		input_mapping = "move_controller",
 		axis = {
 			-1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	move_controller_right = {
-		axis_requirement = 0.7,
 		filter_type = "axis_check",
+		axis_requirement = 0.7,
 		input_mapping = "move_controller",
 		axis = {
 			1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	wield_switch = {
 		filter_type = "or",
 		input_mappings = {
-			button_1 = "wield_switch_1",
-		},
+			button_1 = "wield_switch_1"
+		}
 	},
 	jump = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "jump_1",
-			button_2 = "jump_2",
-		},
+			button_2 = "jump_2"
+		}
 	},
 	dodge_hold = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "dodge_1",
-			button_2 = "dodge_2",
-		},
+			button_2 = "dodge_2"
+		}
 	},
 	dodge = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "dodge_1",
-			button_2 = "dodge_2",
-		},
+			button_2 = "dodge_2"
+		}
 	},
 	action_career = {
-		filter_type = "or",
 		max_delay = 0.05,
+		filter_type = "or",
 		input_mappings = {
-			button_1 = "ability",
+			button_1 = "ability"
 		},
 		held = {
-			button_1 = "ability_hold",
-		},
+			button_1 = "ability_hold"
+		}
 	},
 	action_career_hold = {
 		filter_type = "or",
 		input_mappings = {
-			button_1 = "ability_hold",
-		},
+			button_1 = "ability_hold"
+		}
 	},
 	action_career_not_hold = {
 		filter_type = "not",
 		input_mappings = {
-			button_1 = "ability_hold",
-		},
+			button_1 = "ability_hold"
+		}
 	},
 	action_career_release = {
 		filter_type = "or",
 		input_mappings = {
-			button_1 = "ability_release",
-		},
+			button_1 = "ability_release"
+		}
 	},
 	weapon_reload_hold = {
 		filter_type = "exclusive_and",
 		input_mappings = {
-			button_1 = "weapon_reload_hold_input",
+			button_1 = "weapon_reload_hold_input"
 		},
 		exclusive_input_mappings = {
-			button_1 = "action_career",
 			button_2 = "action_career_hold",
 			button_3 = "action_career_release",
-		},
+			button_1 = "action_career"
+		}
 	},
 	weapon_reload = {
 		filter_type = "exclusive_and",
 		input_mappings = {
-			button_1 = "weapon_reload_input",
+			button_1 = "weapon_reload_input"
 		},
 		exclusive_input_mappings = {
-			button_1 = "action_career",
 			button_2 = "action_career_hold",
 			button_3 = "action_career_release",
-		},
-	},
+			button_1 = "action_career"
+		}
+	}
 }
 
-PlayerControllerFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and PlayerControllerFilters_ps4
-PlayerControllerFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and PlayerControllerFilters_ps4
+PlayerControllerFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and var_0_0
+PlayerControllerFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and var_0_0
 TutorialPlayerControllerFilters = table.clone(PlayerControllerFilters)
 TwitchControllerSettings = {}
 TwitchControllerSettings.win32 = InputUtils.keymaps_key_approved("win32") and {
 	execute_login_1 = {
 		"keyboard",
 		"enter",
-		"pressed",
+		"pressed"
 	},
 	execute_login_2 = {
 		"keyboard",
 		"numpad enter",
-		"pressed",
+		"pressed"
 	},
 	back = {
 		"keyboard",
 		"esc",
-		"pressed",
+		"pressed"
 	},
 	cursor = {
 		"mouse",
 		"cursor",
-		"axis",
+		"axis"
 	},
 	left_release = {
 		"mouse",
 		"left",
-		"released",
+		"released"
 	},
 	left_press = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	left_hold = {
 		"mouse",
 		"left",
-		"held",
-	},
+		"held"
+	}
 }
 TwitchControllerFilters = {}
 TwitchControllerFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
@@ -2086,485 +2086,485 @@ TwitchControllerFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "execute_login_1",
-			button_2 = "execute_login_2",
-		},
-	},
+			button_2 = "execute_login_2"
+		}
+	}
 }
 ChatControllerSettings = {}
 ChatControllerSettings.win32 = InputUtils.keymaps_key_approved("win32") and {
 	activate_chat_input = {
 		"keyboard",
 		"y",
-		"pressed",
+		"pressed"
 	},
 	execute_chat_input_1 = {
 		"keyboard",
 		"enter",
-		"pressed",
+		"pressed"
 	},
 	execute_chat_input_2 = {
 		"keyboard",
 		"numpad enter",
-		"pressed",
+		"pressed"
 	},
 	execute_chat_input_3 = {
 		"keyboard",
 		"left shift",
-		"held",
+		"held"
 	},
 	deactivate_chat_input = {
 		"keyboard",
 		"esc",
-		"pressed",
+		"pressed"
 	},
 	chat_left_alt_held = {
 		"keyboard",
 		"left alt",
-		"held",
+		"held"
 	},
 	chat_left_alt_pressed = {
 		"keyboard",
 		"left alt",
-		"pressed",
+		"pressed"
 	},
 	chat_left_alt_released = {
 		"keyboard",
 		"left alt",
-		"released",
+		"released"
 	},
 	chat_scroll_up = {
 		"keyboard",
 		"page up",
-		"held",
+		"held"
 	},
 	chat_scroll_down = {
 		"keyboard",
 		"page down",
-		"held",
+		"held"
 	},
 	chat_scroll = {
 		"mouse",
 		"wheel",
-		"axis",
+		"axis"
 	},
 	chat_switch_channel = {
 		"keyboard",
 		"tab",
-		"pressed",
+		"pressed"
 	},
 	chat_left_ctrl = {
 		"keyboard",
 		"left ctrl",
-		"held",
+		"held"
 	},
 	chat_tab_pressed = {
 		"keyboard",
 		"tab",
-		"pressed",
+		"pressed"
 	},
 	chat_backspace_pressed = {
 		"keyboard",
 		"backspace",
-		"pressed",
+		"pressed"
 	},
 	chat_next_old_message = {
 		"keyboard",
 		"up",
-		"pressed",
+		"pressed"
 	},
 	chat_previous_old_message = {
 		"keyboard",
 		"down",
-		"pressed",
+		"pressed"
 	},
 	cursor = {
 		"mouse",
 		"cursor",
-		"axis",
+		"axis"
 	},
 	left_release = {
 		"mouse",
 		"left",
-		"released",
+		"released"
 	},
 	left_press = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	left_hold = {
 		"mouse",
 		"left",
-		"held",
+		"held"
 	},
 	right_release = {
 		"mouse",
 		"right",
-		"released",
+		"released"
 	},
 	right_press = {
 		"mouse",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	right_hold = {
 		"mouse",
 		"right",
-		"held",
+		"held"
 	},
 	voip_push_to_talk = {
 		"keyboard",
 		"g",
-		"held",
-	},
+		"held"
+	}
 }
 ChatControllerSettings.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	activate_chat_input = {
 		"keyboard",
 		"y",
-		"pressed",
+		"pressed"
 	},
 	execute_chat_input = {
 		"keyboard",
 		"enter",
-		"pressed",
+		"pressed"
 	},
 	deactivate_chat_input = {
 		"keyboard",
 		"esc",
-		"pressed",
+		"pressed"
 	},
 	chat_left_alt_held = {
 		"keyboard",
 		"left alt",
-		"held",
+		"held"
 	},
 	chat_left_alt_pressed = {
 		"keyboard",
 		"left alt",
-		"pressed",
+		"pressed"
 	},
 	chat_left_alt_released = {
 		"keyboard",
 		"left alt",
-		"released",
+		"released"
 	},
 	cursor = {
 		"mouse",
 		"cursor",
-		"axis",
+		"axis"
 	},
 	left_release = {
 		"mouse",
 		"left",
-		"released",
+		"released"
 	},
 	left_press = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	left_hold = {
 		"mouse",
 		"left",
-		"held",
+		"held"
 	},
-	voip_push_to_talk = {},
+	voip_push_to_talk = {}
 }
 ChatControllerSettings.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 	activate_chat_input = {
 		"keyboard",
 		"y",
-		"pressed",
+		"pressed"
 	},
 	execute_chat_input = {
 		"keyboard",
 		"enter",
-		"pressed",
+		"pressed"
 	},
 	deactivate_chat_input = {
 		"keyboard",
 		"esc",
-		"pressed",
+		"pressed"
 	},
 	chat_left_alt_held = {
 		"keyboard",
 		"left alt",
-		"held",
+		"held"
 	},
 	chat_left_alt_pressed = {
 		"keyboard",
 		"left alt",
-		"pressed",
+		"pressed"
 	},
 	chat_left_alt_released = {
 		"keyboard",
 		"left alt",
-		"released",
+		"released"
 	},
 	cursor = {
 		"mouse",
 		"cursor",
-		"axis",
+		"axis"
 	},
 	left_release = {
 		"mouse",
 		"left",
-		"released",
+		"released"
 	},
 	left_press = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	left_hold = {
 		"mouse",
 		"left",
-		"held",
+		"held"
 	},
-	voip_push_to_talk = {},
+	voip_push_to_talk = {}
 }
 ChatControllerSettings.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 	activate_chat_input = {
 		"keyboard",
 		"y",
-		"pressed",
+		"pressed"
 	},
 	execute_chat_input = {
 		"keyboard",
 		"enter",
-		"pressed",
+		"pressed"
 	},
 	deactivate_chat_input = {
 		"keyboard",
 		"esc",
-		"pressed",
+		"pressed"
 	},
 	chat_left_alt_held = {
 		"keyboard",
 		"left alt",
-		"held",
+		"held"
 	},
 	chat_left_alt_pressed = {
 		"keyboard",
 		"left alt",
-		"pressed",
+		"pressed"
 	},
 	chat_left_alt_released = {
 		"keyboard",
 		"left alt",
-		"released",
+		"released"
 	},
 	cursor = {
 		"mouse",
 		"cursor",
-		"axis",
+		"axis"
 	},
 	left_release = {
 		"mouse",
 		"left",
-		"released",
+		"released"
 	},
 	left_press = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	left_hold = {
 		"mouse",
 		"left",
-		"held",
+		"held"
 	},
-	voip_push_to_talk = {},
+	voip_push_to_talk = {}
 }
 ChatControllerFilters = {}
 ChatControllerFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 	unallowed_activate_chat_input = {
 		filter_type = "or",
 		input_mappings = {
-			button_1 = "chat_left_alt_held",
 			button_2 = "chat_left_alt_pressed",
 			button_3 = "chat_left_alt_released",
-		},
+			button_1 = "chat_left_alt_held"
+		}
 	},
 	execute_chat_input = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "execute_chat_input_1",
-			button_2 = "execute_chat_input_2",
-		},
+			button_2 = "execute_chat_input_2"
+		}
 	},
 	execute_alt_chat_input = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "execute_chat_input_1",
-			button_2 = "execute_chat_input_3",
-		},
+			button_2 = "execute_chat_input_3"
+		}
 	},
 	chat_switch_view = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "chat_left_ctrl",
-			button_2 = "chat_tab_pressed",
-		},
+			button_2 = "chat_tab_pressed"
+		}
 	},
 	chat_backspace_word = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "chat_left_ctrl",
-			button_2 = "chat_backspace_pressed",
-		},
+			button_2 = "chat_backspace_pressed"
+		}
 	},
 	chat_switch_view = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "chat_left_ctrl",
-			button_2 = "chat_tab_pressed",
-		},
-	},
+			button_2 = "chat_tab_pressed"
+		}
+	}
 }
 ChatControllerFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	unallowed_activate_chat_input = {
 		filter_type = "or",
 		input_mappings = {
-			button_1 = "chat_left_alt_held",
 			button_2 = "chat_left_alt_pressed",
 			button_3 = "chat_left_alt_released",
-		},
+			button_1 = "chat_left_alt_held"
+		}
 	},
 	execute_chat_input = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "execute_chat_input_1",
-			button_2 = "execute_chat_input_2",
-		},
-	},
+			button_2 = "execute_chat_input_2"
+		}
+	}
 }
 
-local ChatControllerFilters_ps4 = {
+local var_0_1 = {
 	unallowed_activate_chat_input = {
 		filter_type = "or",
 		input_mappings = {
-			button_1 = "chat_left_alt_held",
 			button_2 = "chat_left_alt_pressed",
 			button_3 = "chat_left_alt_released",
-		},
+			button_1 = "chat_left_alt_held"
+		}
 	},
 	execute_chat_input = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "execute_chat_input_1",
-			button_2 = "execute_chat_input_2",
-		},
-	},
+			button_2 = "execute_chat_input_2"
+		}
+	}
 }
 
-ChatControllerFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and ChatControllerFilters_ps4
-ChatControllerFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and ChatControllerFilters_ps4
+ChatControllerFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and var_0_1
+ChatControllerFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and var_0_1
 RconControllerSettings = {}
 RconControllerSettings.win32 = InputUtils.keymaps_key_approved("win32") and {
 	activate_menu = {
 		"keyboard",
 		"f2",
-		"pressed",
+		"pressed"
 	},
 	send_input = {
 		"keyboard",
 		"enter",
-		"pressed",
+		"pressed"
 	},
 	deactivate_menu = {
 		"keyboard",
 		"esc",
-		"pressed",
+		"pressed"
 	},
 	cursor = {
 		"mouse",
 		"cursor",
-		"axis",
+		"axis"
 	},
 	left_release = {
 		"mouse",
 		"left",
-		"released",
+		"released"
 	},
 	left_press = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	left_hold = {
 		"mouse",
 		"left",
-		"held",
+		"held"
 	},
 	right_release = {
 		"mouse",
 		"right",
-		"released",
+		"released"
 	},
 	right_press = {
 		"mouse",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	right_hold = {
 		"mouse",
 		"right",
-		"held",
-	},
+		"held"
+	}
 }
 RconControllerSettings.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	activate_menu = {
 		"keyboard",
 		"f2",
-		"pressed",
+		"pressed"
 	},
 	send_input = {
 		"keyboard",
 		"enter",
-		"pressed",
+		"pressed"
 	},
 	deactivate_menu = {
 		"keyboard",
 		"esc",
-		"pressed",
+		"pressed"
 	},
 	cursor = {
 		"mouse",
 		"cursor",
-		"axis",
+		"axis"
 	},
 	left_release = {
 		"mouse",
 		"left",
-		"released",
+		"released"
 	},
 	left_press = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	left_hold = {
 		"mouse",
 		"left",
-		"held",
+		"held"
 	},
 	right_release = {
 		"mouse",
 		"right",
-		"released",
+		"released"
 	},
 	right_press = {
 		"mouse",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	right_hold = {
 		"mouse",
 		"right",
-		"held",
-	},
+		"held"
+	}
 }
 RconControllerFilters = {}
 FreeFlightKeymaps = {}
@@ -2572,1462 +2572,1462 @@ FreeFlightKeymaps.win32 = InputUtils.keymaps_key_approved("win32") and {
 	quit_game = {
 		"keyboard",
 		"esc",
-		"pressed",
+		"pressed"
 	},
 	projection_mode = {
 		"keyboard",
 		"f7",
-		"pressed",
+		"pressed"
 	},
 	free_flight_toggle = {
 		"keyboard",
 		"f8",
-		"pressed",
+		"pressed"
 	},
 	global_free_flight_toggle = {
 		"keyboard",
 		"f9",
-		"pressed",
+		"pressed"
 	},
 	frustum_freeze_toggle = {
 		"keyboard",
 		"right shift",
-		"pressed",
+		"pressed"
 	},
 	player_controls_toggle = {
 		"keyboard",
 		"f10",
-		"pressed",
+		"pressed"
 	},
 	set_drop_position = {
 		"keyboard",
 		"enter",
-		"pressed",
+		"pressed"
 	},
 	increase_fov = {
 		"keyboard",
 		"numpad +",
-		"pressed",
+		"pressed"
 	},
 	decrease_fov = {
 		"keyboard",
 		"num -",
-		"pressed",
+		"pressed"
 	},
 	toggle_debug_info = {
 		"keyboard",
 		"f12",
-		"pressed",
+		"pressed"
 	},
 	move_forward = {
 		"keyboard",
 		"w",
-		"soft_button",
+		"soft_button"
 	},
 	move_right = {
 		"keyboard",
 		"d",
-		"soft_button",
+		"soft_button"
 	},
 	move_left = {
 		"keyboard",
 		"a",
-		"soft_button",
+		"soft_button"
 	},
 	move_back = {
 		"keyboard",
 		"s",
-		"soft_button",
+		"soft_button"
 	},
 	move_down = {
 		"keyboard",
 		"q",
-		"soft_button",
+		"soft_button"
 	},
 	move_up = {
 		"keyboard",
 		"e",
-		"soft_button",
+		"soft_button"
 	},
 	mark = {
 		"keyboard",
 		"c",
-		"pressed",
+		"pressed"
 	},
 	toggle_control_points = {
 		"keyboard",
 		"y",
-		"pressed",
+		"pressed"
 	},
 	step_frame_1 = {
 		"keyboard",
 		"left shift",
-		"held",
+		"held"
 	},
 	step_frame_2 = {
 		"keyboard",
 		"up",
-		"pressed",
+		"pressed"
 	},
 	play_pause_1 = {
 		"keyboard",
 		"left shift",
-		"held",
+		"held"
 	},
 	play_pause_2 = {
 		"keyboard",
 		"down",
-		"pressed",
+		"pressed"
 	},
 	increase_frame_step_1 = {
 		"keyboard",
 		"left shift",
-		"held",
+		"held"
 	},
 	increase_frame_step_2 = {
 		"keyboard",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	decrease_frame_step_1 = {
 		"keyboard",
 		"left shift",
-		"held",
+		"held"
 	},
 	decrease_frame_step_2 = {
 		"keyboard",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	reset_toggle_mod = {
 		"keyboard",
 		"left ctrl",
-		"held",
+		"held"
 	},
 	toggle_dof = {
 		"keyboard",
 		"f",
-		"pressed",
+		"pressed"
 	},
 	inc_dof_distance = {
 		"keyboard",
 		"g",
-		"held",
+		"held"
 	},
 	dec_dof_distance = {
 		"keyboard",
 		"b",
-		"held",
+		"held"
 	},
 	inc_dof_region = {
 		"keyboard",
 		"h",
-		"held",
+		"held"
 	},
 	dec_dof_region = {
 		"keyboard",
 		"n",
-		"held",
+		"held"
 	},
 	inc_dof_padding = {
 		"keyboard",
 		"j",
-		"held",
+		"held"
 	},
 	dec_dof_padding = {
 		"keyboard",
 		"m",
-		"held",
+		"held"
 	},
 	inc_dof_scale = {
 		"keyboard",
 		"k",
-		"held",
+		"held"
 	},
 	dec_dof_scale = {
 		"keyboard",
 		"oem_comma (< ,)",
-		"held",
+		"held"
 	},
 	look = {
 		"mouse",
 		"mouse",
-		"axis",
+		"axis"
 	},
 	speed_change = {
 		"mouse",
 		"wheel",
-		"axis",
+		"axis"
 	},
 	ray = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	toggle_mouse_focus = {
 		"mouse",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	cursor = {
 		"mouse",
 		"cursor",
-		"axis",
+		"axis"
 	},
 	action_one = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	action_two = {
 		"mouse",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	k = {
 		"keyboard",
 		"k",
-		"pressed",
+		"pressed"
 	},
 	l = {
 		"keyboard",
 		"l",
-		"pressed",
+		"pressed"
 	},
 	x = {
 		"keyboard",
 		"x",
-		"pressed",
+		"pressed"
 	},
 	m = {
 		"keyboard",
 		"m",
-		"pressed",
+		"pressed"
 	},
 	comma = {
 		"keyboard",
 		"oem_comma (< ,)",
-		"pressed",
+		"pressed"
 	},
 	period = {
 		"keyboard",
 		"oem_period (> .)",
-		"pressed",
+		"pressed"
 	},
 	left_ctrl = {
 		"keyboard",
 		"left ctrl",
-		"pressed",
+		"pressed"
 	},
 	keyboard_1 = {
 		"keyboard",
 		"1",
-		"pressed",
+		"pressed"
 	},
 	keyboard_2 = {
 		"keyboard",
 		"2",
-		"pressed",
+		"pressed"
 	},
 	keyboard_3 = {
 		"keyboard",
 		"3",
-		"pressed",
+		"pressed"
 	},
 	keyboard_4 = {
 		"keyboard",
 		"4",
-		"pressed",
+		"pressed"
 	},
 	keyboard_5 = {
 		"keyboard",
 		"5",
-		"pressed",
+		"pressed"
 	},
 	keyboard_6 = {
 		"keyboard",
 		"6",
-		"pressed",
+		"pressed"
 	},
 	keyboard_7 = {
 		"keyboard",
 		"7",
-		"pressed",
+		"pressed"
 	},
 	keyboard_8 = {
 		"keyboard",
 		"8",
-		"pressed",
+		"pressed"
 	},
 	keyboard_9 = {
 		"keyboard",
 		"9",
-		"pressed",
+		"pressed"
 	},
 	keyboard_0 = {
 		"keyboard",
 		"0",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 FreeFlightKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	quit_game = {
 		"keyboard",
 		"esc",
-		"pressed",
+		"pressed"
 	},
 	projection_mode = {
 		"keyboard",
 		"f7",
-		"pressed",
+		"pressed"
 	},
 	frustum_freeze_toggle = {
 		"gamepad",
 		"x",
-		"pressed",
+		"pressed"
 	},
 	set_drop_position = {
 		"gamepad",
 		"a",
-		"pressed",
+		"pressed"
 	},
 	increase_fov = {
 		"keyboard",
 		"numpad +",
-		"pressed",
+		"pressed"
 	},
 	decrease_fov = {
 		"keyboard",
 		"num -",
-		"pressed",
+		"pressed"
 	},
 	toggle_debug_info = {
 		"keyboard",
 		"f12",
-		"pressed",
+		"pressed"
 	},
 	move_forward = {
 		"keyboard",
 		"w",
-		"soft_button",
+		"soft_button"
 	},
 	move_right = {
 		"keyboard",
 		"d",
-		"soft_button",
+		"soft_button"
 	},
 	move_left = {
 		"keyboard",
 		"a",
-		"soft_button",
+		"soft_button"
 	},
 	move_back = {
 		"keyboard",
 		"s",
-		"soft_button",
+		"soft_button"
 	},
 	move_down = {
 		"keyboard",
 		"q",
-		"soft_button",
+		"soft_button"
 	},
 	move_up = {
 		"keyboard",
 		"e",
-		"soft_button",
+		"soft_button"
 	},
 	move = {
 		"gamepad",
 		"left",
-		"axis",
+		"axis"
 	},
 	mark = {
 		"keyboard",
 		"c",
-		"pressed",
+		"pressed"
 	},
 	toggle_control_points = {
 		"keyboard",
 		"t",
-		"pressed",
+		"pressed"
 	},
 	step_frame = {
 		"keyboard",
 		"up",
-		"pressed",
+		"pressed"
 	},
 	play_pause = {
 		"keyboard",
 		"down",
-		"pressed",
+		"pressed"
 	},
 	increase_frame_step = {
 		"keyboard",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	decrease_frame_step = {
 		"keyboard",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	left_shoulder_held = {
 		"gamepad",
 		"left_shoulder",
-		"held",
+		"held"
 	},
 	right_shoulder = {
 		"gamepad",
 		"right_shoulder",
-		"pressed",
+		"pressed"
 	},
 	right_thumb_held = {
 		"gamepad",
 		"right_thumb",
-		"held",
+		"held"
 	},
 	left_thumb_held = {
 		"gamepad",
 		"left_thumb",
-		"held",
+		"held"
 	},
 	right_trigger = {
 		"gamepad",
 		"right_trigger",
-		"held",
+		"held"
 	},
 	right_trigger_held = {
 		"gamepad",
 		"right_trigger",
-		"held",
+		"held"
 	},
 	left_trigger_held = {
 		"gamepad",
 		"left_trigger",
-		"held",
+		"held"
 	},
 	look_raw_controller = {
 		"gamepad",
 		"right",
-		"axis",
+		"axis"
 	},
 	speed_change = {
 		"mouse",
 		"wheel",
-		"axis",
+		"axis"
 	},
 	ray = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	toggle_mouse_focus = {
 		"mouse",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	cursor = {
 		"mouse",
 		"cursor",
-		"axis",
+		"axis"
 	},
 	action_one = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	action_two = {
 		"mouse",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	gamepad_x_pressed = {
 		"gamepad",
 		"x",
-		"pressed",
+		"pressed"
 	},
 	gamepad_y_pressed = {
 		"gamepad",
 		"y",
-		"pressed",
+		"pressed"
 	},
 	gamepad_b_pressed = {
 		"gamepad",
 		"b",
-		"pressed",
+		"pressed"
 	},
 	gamepad_a_pressed = {
 		"gamepad",
 		"a",
-		"pressed",
+		"pressed"
 	},
 	gamepad_x_held = {
 		"gamepad",
 		"x",
-		"held",
+		"held"
 	},
 	gamepad_y_held = {
 		"gamepad",
 		"y",
-		"held",
+		"held"
 	},
 	gamepad_b_held = {
 		"gamepad",
 		"b",
-		"held",
+		"held"
 	},
 	gamepad_a_held = {
 		"gamepad",
 		"a",
-		"held",
+		"held"
 	},
 	reset_toggle_mod = {
 		"keyboard",
 		"left ctrl",
-		"held",
+		"held"
 	},
 	toggle_dof = {
 		"gamepad",
 		"right_shoulder",
-		"pressed",
+		"pressed"
 	},
 	inc_dof_distance = {
 		"gamepad",
 		"right_trigger",
-		"held",
+		"held"
 	},
 	dec_dof_distance = {
 		"gamepad",
 		"left_trigger",
-		"held",
+		"held"
 	},
 	k = {
 		"keyboard",
 		"k",
-		"pressed",
+		"pressed"
 	},
 	l = {
 		"keyboard",
 		"l",
-		"pressed",
+		"pressed"
 	},
 	x = {
 		"keyboard",
 		"x",
-		"pressed",
+		"pressed"
 	},
 	m = {
 		"keyboard",
 		"m",
-		"pressed",
+		"pressed"
 	},
 	comma = {
 		"keyboard",
 		"oem_comma (< ,)",
-		"pressed",
+		"pressed"
 	},
 	period = {
 		"keyboard",
 		"oem_period (> .)",
-		"pressed",
+		"pressed"
 	},
 	left_ctrl = {
 		"keyboard",
 		"left ctrl",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 FreeFlightKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 	quit_game = {
 		"keyboard",
 		"esc",
-		"pressed",
+		"pressed"
 	},
 	projection_mode = {
 		"keyboard",
 		"f7",
-		"pressed",
+		"pressed"
 	},
 	frustum_freeze_toggle = {
 		"gamepad",
 		"square",
-		"pressed",
+		"pressed"
 	},
 	set_drop_position = {
 		"gamepad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	increase_fov = {
 		"keyboard",
 		"numpad +",
-		"pressed",
+		"pressed"
 	},
 	decrease_fov = {
 		"keyboard",
 		"num -",
-		"pressed",
+		"pressed"
 	},
 	toggle_debug_info = {
 		"keyboard",
 		"f12",
-		"pressed",
+		"pressed"
 	},
 	move_forward = {
 		"keyboard",
 		"w",
-		"soft_button",
+		"soft_button"
 	},
 	move_right = {
 		"keyboard",
 		"d",
-		"soft_button",
+		"soft_button"
 	},
 	move_left = {
 		"keyboard",
 		"a",
-		"soft_button",
+		"soft_button"
 	},
 	move_back = {
 		"keyboard",
 		"s",
-		"soft_button",
+		"soft_button"
 	},
 	move_down = {
 		"keyboard",
 		"q",
-		"soft_button",
+		"soft_button"
 	},
 	move_up = {
 		"keyboard",
 		"e",
-		"soft_button",
+		"soft_button"
 	},
 	move = {
 		"gamepad",
 		"left",
-		"axis",
+		"axis"
 	},
 	mark = {
 		"keyboard",
 		"c",
-		"pressed",
+		"pressed"
 	},
 	toggle_control_points = {
 		"keyboard",
 		"t",
-		"pressed",
+		"pressed"
 	},
 	step_frame = {
 		"keyboard",
 		"up",
-		"pressed",
+		"pressed"
 	},
 	play_pause = {
 		"keyboard",
 		"down",
-		"pressed",
+		"pressed"
 	},
 	increase_frame_step = {
 		"keyboard",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	decrease_frame_step = {
 		"keyboard",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	left_shoulder = {
 		"gamepad",
 		"l1",
-		"pressed",
+		"pressed"
 	},
 	left_shoulder_held = {
 		"gamepad",
 		"l1",
-		"held",
+		"held"
 	},
 	right_shoulder = {
 		"gamepad",
 		"r1",
-		"pressed",
+		"pressed"
 	},
 	right_shoulder_held = {
 		"gamepad",
 		"r1",
-		"held",
+		"held"
 	},
 	left_trigger = {
 		"gamepad",
 		"l2",
-		"pressed",
+		"pressed"
 	},
 	left_trigger_held = {
 		"gamepad",
 		"l2",
-		"held",
+		"held"
 	},
 	right_trigger = {
 		"gamepad",
 		"r2",
-		"pressed",
+		"pressed"
 	},
 	right_trigger_held = {
 		"gamepad",
 		"r2",
-		"held",
+		"held"
 	},
 	right_thumb = {
 		"gamepad",
 		"r3",
-		"pressed",
+		"pressed"
 	},
 	right_thumb_held = {
 		"gamepad",
 		"r3",
-		"held",
+		"held"
 	},
 	left_thumb = {
 		"gamepad",
 		"l3",
-		"pressed",
+		"pressed"
 	},
 	left_thumb_held = {
 		"gamepad",
 		"l3",
-		"held",
+		"held"
 	},
 	gamepad_cross_pressed = {
 		"gamepad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	gamepad_cross_held = {
 		"gamepad",
 		"cross",
-		"held",
+		"held"
 	},
 	gamepad_square_pressed = {
 		"gamepad",
 		"square",
-		"pressed",
+		"pressed"
 	},
 	gamepad_square_held = {
 		"gamepad",
 		"square",
-		"held",
+		"held"
 	},
 	gamepad_triangle_pressed = {
 		"gamepad",
 		"triangle",
-		"pressed",
+		"pressed"
 	},
 	gamepad_triangle_held = {
 		"gamepad",
 		"triangle",
-		"held",
+		"held"
 	},
 	gamepad_circle_pressed = {
 		"gamepad",
 		"circle",
-		"pressed",
+		"pressed"
 	},
 	gamepad_circle_held = {
 		"gamepad",
 		"circle",
-		"held",
+		"held"
 	},
 	gamepad_left_stick = {
 		"gamepad",
 		"left",
-		"axis",
+		"axis"
 	},
 	gamepad_right_stick = {
 		"gamepad",
 		"right",
-		"axis",
+		"axis"
 	},
 	look_raw_controller = {
 		"gamepad",
 		"right",
-		"axis",
+		"axis"
 	},
 	speed_change = {
 		"mouse",
 		"wheel",
-		"axis",
+		"axis"
 	},
 	ray = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	toggle_mouse_focus = {
 		"mouse",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	cursor = {
 		"mouse",
 		"cursor",
-		"axis",
+		"axis"
 	},
 	action_one = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	action_two = {
 		"mouse",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	reset_toggle_mod = {
 		"keyboard",
 		"left ctrl",
-		"held",
+		"held"
 	},
 	toggle_dof = {
 		"gamepad",
 		"right_shoulder",
-		"pressed",
+		"pressed"
 	},
 	inc_dof_distance = {
 		"gamepad",
 		"right_trigger",
-		"held",
+		"held"
 	},
 	dec_dof_distance = {
 		"gamepad",
 		"left_trigger",
-		"held",
+		"held"
 	},
 	k = {
 		"keyboard",
 		"k",
-		"pressed",
+		"pressed"
 	},
 	l = {
 		"keyboard",
 		"l",
-		"pressed",
+		"pressed"
 	},
 	x = {
 		"keyboard",
 		"x",
-		"pressed",
+		"pressed"
 	},
 	m = {
 		"keyboard",
 		"m",
-		"pressed",
+		"pressed"
 	},
 	comma = {
 		"keyboard",
 		"oem_comma (< ,)",
-		"pressed",
+		"pressed"
 	},
 	period = {
 		"keyboard",
 		"oem_period (> .)",
-		"pressed",
+		"pressed"
 	},
 	left_ctrl = {
 		"keyboard",
 		"left ctrl",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 FreeFlightKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 	quit_game = {
 		"keyboard",
 		"esc",
-		"pressed",
+		"pressed"
 	},
 	projection_mode = {
 		"keyboard",
 		"f7",
-		"pressed",
+		"pressed"
 	},
 	frustum_freeze_toggle = {
 		"ps_pad",
 		"square",
-		"pressed",
+		"pressed"
 	},
 	set_drop_position = {
 		"ps_pad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	increase_fov = {
 		"keyboard",
 		"numpad +",
-		"pressed",
+		"pressed"
 	},
 	decrease_fov = {
 		"keyboard",
 		"num -",
-		"pressed",
+		"pressed"
 	},
 	toggle_debug_info = {
 		"keyboard",
 		"f12",
-		"pressed",
+		"pressed"
 	},
 	move_forward = {
 		"keyboard",
 		"w",
-		"soft_button",
+		"soft_button"
 	},
 	move_right = {
 		"keyboard",
 		"d",
-		"soft_button",
+		"soft_button"
 	},
 	move_left = {
 		"keyboard",
 		"a",
-		"soft_button",
+		"soft_button"
 	},
 	move_back = {
 		"keyboard",
 		"s",
-		"soft_button",
+		"soft_button"
 	},
 	move_down = {
 		"keyboard",
 		"q",
-		"soft_button",
+		"soft_button"
 	},
 	move_up = {
 		"keyboard",
 		"e",
-		"soft_button",
+		"soft_button"
 	},
 	move = {
 		"ps_pad",
 		"left",
-		"axis",
+		"axis"
 	},
 	mark = {
 		"keyboard",
 		"c",
-		"pressed",
+		"pressed"
 	},
 	toggle_control_points = {
 		"keyboard",
 		"t",
-		"pressed",
+		"pressed"
 	},
 	step_frame = {
 		"keyboard",
 		"up",
-		"pressed",
+		"pressed"
 	},
 	play_pause = {
 		"keyboard",
 		"down",
-		"pressed",
+		"pressed"
 	},
 	increase_frame_step = {
 		"keyboard",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	decrease_frame_step = {
 		"keyboard",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	left_shoulder = {
 		"ps_pad",
 		"l1",
-		"pressed",
+		"pressed"
 	},
 	left_shoulder_held = {
 		"ps_pad",
 		"l1",
-		"held",
+		"held"
 	},
 	right_shoulder = {
 		"ps_pad",
 		"r1",
-		"pressed",
+		"pressed"
 	},
 	right_shoulder_held = {
 		"ps_pad",
 		"r1",
-		"held",
+		"held"
 	},
 	left_trigger = {
 		"ps_pad",
 		"l2",
-		"pressed",
+		"pressed"
 	},
 	left_trigger_held = {
 		"ps_pad",
 		"l2",
-		"held",
+		"held"
 	},
 	right_trigger = {
 		"ps_pad",
 		"r2",
-		"pressed",
+		"pressed"
 	},
 	right_trigger_held = {
 		"ps_pad",
 		"r2",
-		"held",
+		"held"
 	},
 	right_thumb = {
 		"ps_pad",
 		"r3",
-		"pressed",
+		"pressed"
 	},
 	right_thumb_held = {
 		"ps_pad",
 		"r3",
-		"held",
+		"held"
 	},
 	left_thumb = {
 		"ps_pad",
 		"l3",
-		"pressed",
+		"pressed"
 	},
 	left_thumb_held = {
 		"ps_pad",
 		"l3",
-		"held",
+		"held"
 	},
 	gamepad_cross_pressed = {
 		"ps_pad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	gamepad_cross_held = {
 		"ps_pad",
 		"cross",
-		"held",
+		"held"
 	},
 	gamepad_square_pressed = {
 		"ps_pad",
 		"square",
-		"pressed",
+		"pressed"
 	},
 	gamepad_square_held = {
 		"ps_pad",
 		"square",
-		"held",
+		"held"
 	},
 	gamepad_triangle_pressed = {
 		"ps_pad",
 		"triangle",
-		"pressed",
+		"pressed"
 	},
 	gamepad_triangle_held = {
 		"ps_pad",
 		"triangle",
-		"held",
+		"held"
 	},
 	gamepad_circle_pressed = {
 		"ps_pad",
 		"circle",
-		"pressed",
+		"pressed"
 	},
 	gamepad_circle_held = {
 		"ps_pad",
 		"circle",
-		"held",
+		"held"
 	},
 	gamepad_left_stick = {
 		"ps_pad",
 		"left",
-		"axis",
+		"axis"
 	},
 	gamepad_right_stick = {
 		"ps_pad",
 		"right",
-		"axis",
+		"axis"
 	},
 	look_raw_controller = {
 		"ps_pad",
 		"right",
-		"axis",
+		"axis"
 	},
 	speed_change = {
 		"mouse",
 		"wheel",
-		"axis",
+		"axis"
 	},
 	ray = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	toggle_mouse_focus = {
 		"mouse",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	cursor = {
 		"mouse",
 		"cursor",
-		"axis",
+		"axis"
 	},
 	action_one = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	action_two = {
 		"mouse",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	reset_toggle_mod = {
 		"keyboard",
 		"left ctrl",
-		"held",
+		"held"
 	},
 	toggle_dof = {
 		"ps_pad",
 		"r1",
-		"pressed",
+		"pressed"
 	},
 	inc_dof_distance = {
 		"ps_pad",
 		"r2",
-		"held",
+		"held"
 	},
 	dec_dof_distance = {
 		"ps_pad",
 		"l2",
-		"held",
+		"held"
 	},
 	k = {
 		"keyboard",
 		"k",
-		"pressed",
+		"pressed"
 	},
 	l = {
 		"keyboard",
 		"l",
-		"pressed",
+		"pressed"
 	},
 	x = {
 		"keyboard",
 		"x",
-		"pressed",
+		"pressed"
 	},
 	m = {
 		"keyboard",
 		"m",
-		"pressed",
+		"pressed"
 	},
 	comma = {
 		"keyboard",
 		"oem_comma (< ,)",
-		"pressed",
+		"pressed"
 	},
 	period = {
 		"keyboard",
 		"oem_period (> .)",
-		"pressed",
+		"pressed"
 	},
 	left_ctrl = {
 		"keyboard",
 		"left ctrl",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 FreeFlightFilters = {}
 FreeFlightFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 	move = {
 		filter_type = "virtual_axis",
 		input_mappings = {
-			back = "move_back",
 			down = "move_down",
-			forward = "move_forward",
-			left = "move_left",
-			right = "move_right",
 			up = "move_up",
-		},
+			forward = "move_forward",
+			back = "move_back",
+			left = "move_left",
+			right = "move_right"
+		}
 	},
 	dof_reset = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "reset_toggle_mod",
-			button_2 = "toggle_dof",
-		},
+			button_2 = "toggle_dof"
+		}
 	},
 	step_frame = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "step_frame_1",
-			button_2 = "step_frame_2",
-		},
+			button_2 = "step_frame_2"
+		}
 	},
 	play_pause = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "play_pause_1",
-			button_2 = "play_pause_2",
-		},
+			button_2 = "play_pause_2"
+		}
 	},
 	increase_frame_step = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "increase_frame_step_1",
-			button_2 = "increase_frame_step_2",
-		},
+			button_2 = "increase_frame_step_2"
+		}
 	},
 	decrease_frame_step = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "decrease_frame_step_1",
-			button_2 = "decrease_frame_step_2",
-		},
-	},
+			button_2 = "decrease_frame_step_2"
+		}
+	}
 }
 FreeFlightFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	look = {
-		accelerate_time_ref = 0.1,
-		acceleration_delay = 0,
-		filter_type = "scale_vector3_xy_accelerated_x",
-		input_mapping = "look_raw_controller",
-		multiplier_x = 600,
 		multiplier_y = -400.5,
 		power_of = 2,
+		acceleration_delay = 0,
+		input_mapping = "look_raw_controller",
 		threshold = 0.925,
+		accelerate_time_ref = 0.1,
+		multiplier_x = 600,
+		filter_type = "scale_vector3_xy_accelerated_x"
 	},
 	dof_reset = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "reset_toggle_mod",
-			button_2 = "toggle_dof",
-		},
+			button_2 = "toggle_dof"
+		}
 	},
 	inc_dof_region = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "right_trigger_held",
-			button_2 = "gamepad_y_held",
-		},
+			button_2 = "gamepad_y_held"
+		}
 	},
 	dec_dof_region = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "left_trigger_held",
-			button_2 = "gamepad_y_held",
-		},
+			button_2 = "gamepad_y_held"
+		}
 	},
 	inc_dof_padding = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "right_trigger_held",
-			button_2 = "gamepad_b_held",
-		},
+			button_2 = "gamepad_b_held"
+		}
 	},
 	dec_dof_padding = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "left_trigger_held",
-			button_2 = "gamepad_b_held",
-		},
+			button_2 = "gamepad_b_held"
+		}
 	},
 	inc_dof_scale = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "right_trigger_held",
-			button_2 = "gamepad_x_held",
-		},
+			button_2 = "gamepad_x_held"
+		}
 	},
 	dec_dof_scale = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "left_trigger_held",
-			button_2 = "gamepad_x_held",
-		},
+			button_2 = "gamepad_x_held"
+		}
 	},
 	free_flight_toggle = {
 		filter_type = "and",
 		name = "free_flight_toggle",
 		input_mappings = {
-			button_1 = "right_thumb_held",
 			button_2 = "left_thumb_held",
 			button_3 = "left_shoulder_held",
-			button_4 = "right_shoulder",
-		},
+			button_1 = "right_thumb_held",
+			button_4 = "right_shoulder"
+		}
 	},
 	global_free_flight_toggle = {
 		filter_type = "and",
 		name = "global_free_flight_toggle",
 		input_mappings = {
 			button_1 = "left_thumb_held",
-			button_2 = "gamepad_a_pressed",
-		},
-	},
+			button_2 = "gamepad_a_pressed"
+		}
+	}
 }
 
-local FreeFlightFilters_ps4 = {
+local var_0_2 = {
 	look = {
-		accelerate_time_ref = 0.1,
-		acceleration_delay = 0,
-		filter_type = "scale_vector3_xy_accelerated_x",
-		input_mapping = "look_raw_controller",
-		multiplier_x = 600,
 		multiplier_y = -400.5,
 		power_of = 2,
+		acceleration_delay = 0,
+		input_mapping = "look_raw_controller",
 		threshold = 0.925,
+		accelerate_time_ref = 0.1,
+		multiplier_x = 600,
+		filter_type = "scale_vector3_xy_accelerated_x"
 	},
 	move = {
 		filter_type = "virtual_axis",
 		input_mappings = {
-			back = "move_back",
 			down = "move_down",
-			forward = "move_forward",
-			left = "move_left",
-			right = "move_right",
 			up = "move_up",
-		},
+			forward = "move_forward",
+			back = "move_back",
+			left = "move_left",
+			right = "move_right"
+		}
 	},
 	dof_reset = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "reset_toggle_mod",
-			button_2 = "toggle_dof",
-		},
+			button_2 = "toggle_dof"
+		}
 	},
 	inc_dof_region = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "right_trigger_held",
-			button_2 = "gamepad_triangle_held",
-		},
+			button_2 = "gamepad_triangle_held"
+		}
 	},
 	dec_dof_region = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "left_trigger_held",
-			button_2 = "gamepad_triangle_held",
-		},
+			button_2 = "gamepad_triangle_held"
+		}
 	},
 	inc_dof_padding = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "right_trigger_held",
-			button_2 = "gamepad_circle_held",
-		},
+			button_2 = "gamepad_circle_held"
+		}
 	},
 	dec_dof_padding = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "left_trigger_held",
-			button_2 = "gamepad_circle_held",
-		},
+			button_2 = "gamepad_circle_held"
+		}
 	},
 	inc_dof_scale = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "right_trigger_held",
-			button_2 = "gamepad_square_held",
-		},
+			button_2 = "gamepad_square_held"
+		}
 	},
 	dec_dof_scale = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "left_trigger_held",
-			button_2 = "gamepad_square_held",
-		},
+			button_2 = "gamepad_square_held"
+		}
 	},
 	free_flight_toggle = {
 		filter_type = "and",
 		input_mappings = {
-			button_1 = "right_thumb_held",
 			button_2 = "left_thumb_held",
 			button_3 = "left_shoulder_held",
-			button_4 = "right_shoulder",
-		},
+			button_1 = "right_thumb_held",
+			button_4 = "right_shoulder"
+		}
 	},
 	global_free_flight_toggle = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "left_thumb_held",
-			button_2 = "gamepad_cross_pressed",
-		},
-	},
+			button_2 = "gamepad_cross_pressed"
+		}
+	}
 }
 
-FreeFlightFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and FreeFlightFilters_ps4
-FreeFlightFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and FreeFlightFilters_ps4
+FreeFlightFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and var_0_2
+FreeFlightFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and var_0_2
 SplashScreenKeymaps = {}
 SplashScreenKeymaps.win32 = InputUtils.keymaps_key_approved("win32") and {
 	skip_splash_1 = {
 		"keyboard",
 		"enter",
-		"pressed",
+		"pressed"
 	},
 	skip_splash_2 = {
 		"keyboard",
 		"space",
-		"pressed",
+		"pressed"
 	},
 	skip_splash_3 = {
 		"keyboard",
 		"esc",
-		"pressed",
+		"pressed"
 	},
 	skip_splash_4 = {
 		"gamepad",
 		"a",
-		"pressed",
+		"pressed"
 	},
 	skip_splash_5 = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	skip_splash_6 = {
 		"mouse",
 		"right",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 SplashScreenKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	skip_splash = {
 		"gamepad",
 		"a",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 SplashScreenKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 	skip_splash = {
 		"gamepad",
 		"cross",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 SplashScreenKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 	skip_splash = {
 		"ps_pad",
 		"cross",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 SplashScreenFilters = {}
 SplashScreenFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 	skip_splash = {
 		filter_type = "or",
 		input_mappings = {
-			button_1 = "skip_splash_1",
-			button_2 = "skip_splash_2",
-			button_3 = "skip_splash_3",
 			button_4 = "skip_splash_4",
 			button_5 = "skip_splash_5",
+			button_3 = "skip_splash_3",
 			button_6 = "skip_splash_6",
-		},
-	},
+			button_2 = "skip_splash_2",
+			button_1 = "skip_splash_1"
+		}
+	}
 }
 SplashScreenFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {}
 SplashScreenFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and {}
@@ -4037,1086 +4037,1086 @@ TitleLoadingKeyMaps.win32 = InputUtils.keymaps_key_approved("win32") and {
 	cancel_video_1 = {
 		"keyboard",
 		"space",
-		"pressed",
+		"pressed"
 	},
 	cancel_video_2 = {
 		"keyboard",
 		"esc",
-		"pressed",
+		"pressed"
 	},
 	cancel_video_3 = {
 		"gamepad",
 		"a",
-		"pressed",
+		"pressed"
 	},
 	cursor = {
 		"mouse",
 		"cursor",
-		"axis",
+		"axis"
 	},
 	left_release = {
 		"mouse",
 		"left",
-		"released",
+		"released"
 	},
 	left_press = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	left_hold = {
 		"mouse",
 		"left",
-		"held",
+		"held"
 	},
 	confirm = {
 		"gamepad",
 		"a",
-		"released",
+		"released"
 	},
 	move_left = {
 		"gamepad",
 		"d_left",
-		"pressed",
+		"pressed"
 	},
 	move_right = {
 		"gamepad",
 		"d_right",
-		"pressed",
+		"pressed"
 	},
 	move_left_hold = {
 		"gamepad",
 		"d_left",
-		"held",
+		"held"
 	},
 	move_right_hold = {
 		"gamepad",
 		"d_right",
-		"held",
+		"held"
 	},
 	analog_input = {
 		"gamepad",
 		"left",
-		"axis",
-	},
+		"axis"
+	}
 }
 TitleLoadingKeyMaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	cancel_video_1 = {
 		"gamepad",
 		"a",
-		"pressed",
+		"pressed"
 	},
 	confirm = {
 		"gamepad",
 		"a",
-		"released",
+		"released"
 	},
 	move_left = {
 		"gamepad",
 		"d_left",
-		"pressed",
+		"pressed"
 	},
 	move_right = {
 		"gamepad",
 		"d_right",
-		"pressed",
+		"pressed"
 	},
 	move_left_hold = {
 		"gamepad",
 		"d_left",
-		"held",
+		"held"
 	},
 	move_right_hold = {
 		"gamepad",
 		"d_right",
-		"held",
+		"held"
 	},
 	analog_input = {
 		"gamepad",
 		"left",
-		"axis",
-	},
+		"axis"
+	}
 }
 TitleLoadingKeyMaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 	cancel_video_1 = {
 		"gamepad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	confirm = {
 		"gamepad",
 		"cross",
-		"released",
+		"released"
 	},
 	move_left = {
 		"gamepad",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	move_right = {
 		"gamepad",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	move_left_hold = {
 		"gamepad",
 		"left",
-		"held",
+		"held"
 	},
 	move_right_hold = {
 		"gamepad",
 		"right",
-		"held",
+		"held"
 	},
 	analog_input = {
 		"gamepad",
 		"left",
-		"axis",
-	},
+		"axis"
+	}
 }
 TitleLoadingKeyMaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 	cancel_video_1 = {
 		"ps_pad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	confirm = {
 		"ps_pad",
 		"cross",
-		"released",
+		"released"
 	},
 	move_left = {
 		"ps_pad",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	move_right = {
 		"ps_pad",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	move_left_hold = {
 		"ps_pad",
 		"left",
-		"held",
+		"held"
 	},
 	move_right_hold = {
 		"ps_pad",
 		"right",
-		"held",
+		"held"
 	},
 	analog_input = {
 		"ps_pad",
 		"left",
-		"axis",
-	},
+		"axis"
+	}
 }
 TitleLoadingFilters = {}
 TitleLoadingFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 	cancel_video = {
 		filter_type = "or",
 		input_mappings = {
-			button_1 = "cancel_video_1",
 			button_2 = "cancel_video_2",
 			button_3 = "cancel_video_3",
-		},
-	},
+			button_1 = "cancel_video_1"
+		}
+	}
 }
 TitleLoadingFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	cancel_video = {
 		filter_type = "or",
 		input_mappings = {
-			button_1 = "cancel_video_1",
-		},
-	},
+			button_1 = "cancel_video_1"
+		}
+	}
 }
 
-local TitleLoadingFilters_ps4 = {
+local var_0_3 = {
 	cancel_video = {
 		filter_type = "or",
 		input_mappings = {
-			button_1 = "cancel_video_1",
-		},
-	},
+			button_1 = "cancel_video_1"
+		}
+	}
 }
 
-TitleLoadingFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and TitleLoadingFilters_ps4
-TitleLoadingFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and TitleLoadingFilters_ps4
+TitleLoadingFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and var_0_3
+TitleLoadingFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and var_0_3
 TitleScreenKeyMaps = {}
 TitleScreenKeyMaps.win32 = InputUtils.keymaps_key_approved("win32") and {
 	move_up_raw = {
 		"keyboard",
 		"up",
-		"pressed",
+		"pressed"
 	},
 	move_down_raw = {
 		"keyboard",
 		"down",
-		"pressed",
+		"pressed"
 	},
 	move_left_raw = {
 		"keyboard",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	move_right_raw = {
 		"keyboard",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	analog_input = {},
 	move_up_alt_raw = {
 		"keyboard",
 		"w",
-		"pressed",
+		"pressed"
 	},
 	move_down_alt_raw = {
 		"keyboard",
 		"s",
-		"pressed",
+		"pressed"
 	},
 	move_left_alt_raw = {
 		"keyboard",
 		"a",
-		"pressed",
+		"pressed"
 	},
 	move_right_alt_raw = {
 		"keyboard",
 		"d",
-		"pressed",
+		"pressed"
 	},
 	cursor = {
 		"mouse",
 		"cursor",
-		"axis",
+		"axis"
 	},
 	left_press = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	left_hold = {
 		"mouse",
 		"left",
-		"held",
+		"held"
 	},
 	left_release = {
 		"mouse",
 		"left",
-		"released",
+		"released"
 	},
 	back_1 = {
 		"gamepad",
 		"b",
-		"pressed",
+		"pressed"
 	},
 	back_2 = {
 		"keyboard",
 		"esc",
-		"pressed",
+		"pressed"
 	},
 	confirm_press = {},
 	start_1 = {
 		"keyboard",
 		"enter",
-		"pressed",
+		"pressed"
 	},
 	start_2 = {
 		"keyboard",
 		"space",
-		"pressed",
+		"pressed"
 	},
 	start_3 = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	start_4 = {
 		"mouse",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	start_5 = {
 		"mouse",
 		"extra_1",
-		"pressed",
+		"pressed"
 	},
 	show_support_info_1 = {
 		"keyboard",
 		"left shift",
-		"held",
+		"held"
 	},
 	show_support_info_2 = {
 		"keyboard",
 		"f12",
-		"held",
+		"held"
 	},
 	previous = {},
 	next = {},
 	scroll_axis = {
 		"mouse",
 		"wheel",
-		"axis",
-	},
+		"axis"
+	}
 }
 TitleScreenKeyMaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	move_left_raw = {
 		"gamepad",
 		"d_left",
-		"pressed",
+		"pressed"
 	},
 	move_right_raw = {
 		"gamepad",
 		"d_right",
-		"pressed",
+		"pressed"
 	},
 	move_up_raw = {
 		"gamepad",
 		"d_up",
-		"pressed",
+		"pressed"
 	},
 	move_down_raw = {
 		"gamepad",
 		"d_down",
-		"pressed",
+		"pressed"
 	},
 	analog_input = {
 		"gamepad",
 		"left",
-		"axis",
+		"axis"
 	},
 	axis_cursor = {
 		"gamepad",
 		"left",
-		"axis",
+		"axis"
 	},
 	left_press = {
 		"gamepad",
 		"a",
-		"pressed",
+		"pressed"
 	},
 	left_hold = {
 		"gamepad",
 		"a",
-		"held",
+		"held"
 	},
 	left_release = {
 		"gamepad",
 		"a",
-		"released",
+		"released"
 	},
 	confirm_press = {
 		"gamepad",
 		"a",
-		"pressed",
+		"pressed"
 	},
 	special_1_press = {
 		"gamepad",
 		"x",
-		"pressed",
+		"pressed"
 	},
 	start_1 = {
 		"gamepad",
 		"a",
-		"pressed",
+		"pressed"
 	},
 	back_1 = {
 		"gamepad",
 		"b",
-		"pressed",
+		"pressed"
 	},
 	delete_save = {
 		"gamepad",
 		"back",
-		"pressed",
+		"pressed"
 	},
 	show_support_info_1 = {
 		"gamepad",
 		"left_shoulder",
-		"held",
+		"held"
 	},
 	show_support_info_2 = {
 		"gamepad",
 		"right_shoulder",
-		"held",
+		"held"
 	},
 	previous = {
 		"gamepad",
 		"left_shoulder",
-		"pressed",
+		"pressed"
 	},
 	next = {
 		"gamepad",
 		"right_shoulder",
-		"pressed",
+		"pressed"
 	},
 	scroll_axis = {
 		"gamepad",
 		"right",
-		"axis",
+		"axis"
 	},
 	gamepad_right_axis = {
 		"gamepad",
 		"right",
-		"axis",
+		"axis"
 	},
 	start_press = {
 		"gamepad",
 		"start",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 TitleScreenKeyMaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 	move_left_raw = {
 		"gamepad",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	move_right_raw = {
 		"gamepad",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	move_up_raw = {
 		"gamepad",
 		"up",
-		"pressed",
+		"pressed"
 	},
 	move_down_raw = {
 		"gamepad",
 		"down",
-		"pressed",
+		"pressed"
 	},
 	analog_input = {
 		"gamepad",
 		"left",
-		"axis",
+		"axis"
 	},
 	axis_cursor = {
 		"gamepad",
 		"left",
-		"axis",
+		"axis"
 	},
 	left_press = {
 		"gamepad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	left_hold = {
 		"gamepad",
 		"cross",
-		"held",
+		"held"
 	},
 	left_release = {
 		"gamepad",
 		"cross",
-		"released",
+		"released"
 	},
 	confirm_press = {
 		"gamepad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	special_1_press = {
 		"gamepad",
 		"square",
-		"pressed",
+		"pressed"
 	},
 	start_1 = {
 		"gamepad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	back_1 = {
 		"gamepad",
 		"circle",
-		"pressed",
+		"pressed"
 	},
 	delete_save = {
 		"gamepad",
 		"touch",
-		"pressed",
+		"pressed"
 	},
 	show_support_info_1 = {
 		"gamepad",
 		"l1",
-		"held",
+		"held"
 	},
 	show_support_info_2 = {
 		"gamepad",
 		"r1",
-		"held",
+		"held"
 	},
 	previous = {
 		"gamepad",
 		"l1",
-		"pressed",
+		"pressed"
 	},
 	next = {
 		"gamepad",
 		"r1",
-		"pressed",
+		"pressed"
 	},
 	scroll_axis = {
 		"gamepad",
 		"right",
-		"axis",
+		"axis"
 	},
 	gamepad_right_axis = {
 		"gamepad",
 		"right",
-		"axis",
+		"axis"
 	},
 	start_press = {
 		"gamepad",
 		"options",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 TitleScreenKeyMaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 	move_left_raw = {
 		"ps_pad",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	move_right_raw = {
 		"ps_pad",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	move_up_raw = {
 		"ps_pad",
 		"up",
-		"pressed",
+		"pressed"
 	},
 	move_down_raw = {
 		"ps_pad",
 		"down",
-		"pressed",
+		"pressed"
 	},
 	analog_input = {
 		"ps_pad",
 		"left",
-		"axis",
+		"axis"
 	},
 	axis_cursor = {
 		"ps_pad",
 		"left",
-		"axis",
+		"axis"
 	},
 	left_press = {
 		"ps_pad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	left_hold = {
 		"ps_pad",
 		"cross",
-		"held",
+		"held"
 	},
 	left_release = {
 		"ps_pad",
 		"cross",
-		"released",
+		"released"
 	},
 	confirm_press = {
 		"ps_pad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	special_1_press = {
 		"ps_pad",
 		"square",
-		"pressed",
+		"pressed"
 	},
 	start_1 = {
 		"ps_pad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	back_1 = {
 		"ps_pad",
 		"circle",
-		"pressed",
+		"pressed"
 	},
 	delete_save = {
 		"ps_pad",
 		"touch",
-		"pressed",
+		"pressed"
 	},
 	show_support_info_1 = {
 		"ps_pad",
 		"l1",
-		"held",
+		"held"
 	},
 	show_support_info_2 = {
 		"ps_pad",
 		"r1",
-		"held",
+		"held"
 	},
 	previous = {
 		"ps_pad",
 		"l1",
-		"pressed",
+		"pressed"
 	},
 	next = {
 		"ps_pad",
 		"r1",
-		"pressed",
+		"pressed"
 	},
 	scroll_axis = {
 		"ps_pad",
 		"right",
-		"axis",
+		"axis"
 	},
 	gamepad_right_axis = {
 		"ps_pad",
 		"right",
-		"axis",
+		"axis"
 	},
 	start_press = {
 		"ps_pad",
 		"options",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 TitleScreenFilters = {}
 TitleScreenFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 	start = {
 		filter_type = "or",
 		input_mappings = {
-			button_1 = "start_1",
-			button_2 = "start_2",
-			button_3 = "start_3",
 			button_4 = "start_4",
 			button_5 = "start_5",
-		},
+			button_3 = "start_3",
+			button_2 = "start_2",
+			button_1 = "start_1"
+		}
 	},
 	back = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "back_1",
-			button_2 = "back_2",
-		},
+			button_2 = "back_2"
+		}
 	},
 	down = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
 			"move_down_raw",
-			"move_down_alt_raw",
+			"move_down_alt_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			0,
 			-1,
-			0,
-		},
+			0
+		}
 	},
 	up = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
 			"move_up_raw",
-			"move_up_alt_raw",
+			"move_up_alt_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			0,
 			1,
-			0,
-		},
+			0
+		}
 	},
 	left = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
 			"move_left_raw",
-			"move_left_altraw",
+			"move_left_altraw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			-1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	right = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
 			"move_right_raw",
-			"move_right_alt_raw",
+			"move_right_alt_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			1,
 			0,
-			0,
-		},
-	},
+			0
+		}
+	}
 }
 TitleScreenFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	start = {
 		filter_type = "or",
 		input_mappings = {
-			button_1 = "start_1",
-		},
+			button_1 = "start_1"
+		}
 	},
 	back = {
 		filter_type = "or",
 		input_mappings = {
-			button_1 = "back_1",
-		},
+			button_1 = "back_1"
+		}
 	},
 	cursor = {
-		accelerate_time_ref = 1.2,
+		filter_type = "gamepad_cursor",
+		multiplier = 1000,
 		acceleration_delay = 0.2,
 		acceleration_threshold = 0.5,
-		filter_type = "gamepad_cursor",
-		hover_multiplier = 0.3,
-		input_mapping = "axis_cursor",
-		min_multiplier_x = 25,
-		min_multiplier_y = 25,
-		multiplier = 1000,
-		multiplier_x = 40,
-		multiplier_y = 40,
 		threshold = 0.1,
+		min_multiplier_y = 25,
+		accelerate_time_ref = 1.2,
+		input_mapping = "axis_cursor",
+		multiplier_y = 40,
+		multiplier_x = 40,
+		min_multiplier_x = 25,
+		hover_multiplier = 0.3
 	},
 	down = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
-			"move_down_raw",
+			"move_down_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			0,
 			-1,
-			0,
-		},
+			0
+		}
 	},
 	up = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
-			"move_up_raw",
+			"move_up_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			0,
 			1,
-			0,
-		},
+			0
+		}
 	},
 	left = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
-			"move_left_raw",
+			"move_left_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			-1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	right = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
-			"move_right_raw",
+			"move_right_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			1,
 			0,
-			0,
-		},
-	},
+			0
+		}
+	}
 }
 
-local TitleScreenFilters_ps4 = {
+local var_0_4 = {
 	start = {
 		filter_type = "or",
 		input_mappings = {
-			button_1 = "start_1",
-		},
+			button_1 = "start_1"
+		}
 	},
 	back = {
 		filter_type = "or",
 		input_mappings = {
-			button_1 = "back_1",
-		},
+			button_1 = "back_1"
+		}
 	},
 	cursor = {
-		accelerate_time_ref = 1.2,
+		filter_type = "gamepad_cursor",
+		multiplier = 1000,
 		acceleration_delay = 0.2,
 		acceleration_threshold = 0.5,
-		filter_type = "gamepad_cursor",
-		hover_multiplier = 0.3,
-		input_mapping = "axis_cursor",
-		min_multiplier_x = 25,
-		min_multiplier_y = 25,
-		multiplier = 1000,
-		multiplier_x = 40,
-		multiplier_y = 40,
 		threshold = 0.1,
+		min_multiplier_y = 25,
+		accelerate_time_ref = 1.2,
+		input_mapping = "axis_cursor",
+		multiplier_y = 40,
+		multiplier_x = 40,
+		min_multiplier_x = 25,
+		hover_multiplier = 0.3
 	},
 	down = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
-			"move_down_raw",
+			"move_down_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			0,
 			-1,
-			0,
-		},
+			0
+		}
 	},
 	up = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
-			"move_up_raw",
+			"move_up_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			0,
 			1,
-			0,
-		},
+			0
+		}
 	},
 	left = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
-			"move_left_raw",
+			"move_left_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			-1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	right = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
-			"move_right_raw",
+			"move_right_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			1,
 			0,
-			0,
-		},
-	},
+			0
+		}
+	}
 }
 
-TitleScreenFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and TitleScreenFilters_ps4
-TitleScreenFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and TitleScreenFilters_ps4
+TitleScreenFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and var_0_4
+TitleScreenFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and var_0_4
 DemoUIKeyMaps = {}
 DemoUIKeyMaps.win32 = InputUtils.keymaps_key_approved("win32") and {
 	left = {
 		"gamepad",
 		"d_left",
-		"pressed",
+		"pressed"
 	},
 	right = {
 		"gamepad",
 		"d_right",
-		"pressed",
+		"pressed"
 	},
 	up = {
 		"gamepad",
 		"d_up",
-		"pressed",
+		"pressed"
 	},
 	down = {
 		"gamepad",
 		"d_down",
-		"pressed",
+		"pressed"
 	},
 	back_1 = {
 		"gamepad",
 		"b",
-		"pressed",
+		"pressed"
 	},
 	back_2 = {
 		"keyboard",
 		"esc",
-		"pressed",
+		"pressed"
 	},
 	confirm_1 = {
 		"keyboard",
 		"enter",
-		"pressed",
+		"pressed"
 	},
 	confirm_2 = {
 		"keyboard",
 		"space",
-		"pressed",
+		"pressed"
 	},
 	confirm_3 = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	confirm_4 = {
 		"mouse",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	confirm_5 = {
 		"mouse",
 		"extra_1",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 DemoUIKeyMaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	left = {
 		"gamepad",
 		"d_left",
-		"pressed",
+		"pressed"
 	},
 	right = {
 		"gamepad",
 		"d_right",
-		"pressed",
+		"pressed"
 	},
 	up = {
 		"gamepad",
 		"d_up",
-		"pressed",
+		"pressed"
 	},
 	down = {
 		"gamepad",
 		"d_down",
-		"pressed",
+		"pressed"
 	},
 	confirm = {
 		"gamepad",
 		"a",
-		"released",
+		"released"
 	},
 	back = {
 		"gamepad",
 		"b",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 DemoUIKeyMaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 	left = {
 		"gamepad",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	right = {
 		"gamepad",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	up = {
 		"gamepad",
 		"up",
-		"pressed",
+		"pressed"
 	},
 	down = {
 		"gamepad",
 		"down",
-		"pressed",
+		"pressed"
 	},
 	confirm = {
 		"gamepad",
 		"cross",
-		"released",
+		"released"
 	},
 	back = {
 		"gamepad",
 		"circle",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 DemoUIKeyMaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 	left = {
 		"ps_pad",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	right = {
 		"ps_pad",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	up = {
 		"ps_pad",
 		"up",
-		"pressed",
+		"pressed"
 	},
 	down = {
 		"ps_pad",
 		"down",
-		"pressed",
+		"pressed"
 	},
 	confirm = {
 		"ps_pad",
 		"cross",
-		"released",
+		"released"
 	},
 	back = {
 		"ps_pad",
 		"circle",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 DemoUIFilters = {}
 DemoUIFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 	start = {
 		filter_type = "or",
 		input_mappings = {
-			button_1 = "start_1",
-			button_2 = "start_2",
-			button_3 = "start_3",
 			button_4 = "start_4",
 			button_5 = "start_5",
-		},
+			button_3 = "start_3",
+			button_2 = "start_2",
+			button_1 = "start_1"
+		}
 	},
 	back = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "back_1",
-			button_2 = "back_2",
-		},
-	},
+			button_2 = "back_2"
+		}
+	}
 }
 DemoUIFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {}
 DemoUIFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and {}
@@ -5126,136 +5126,136 @@ IngamePlayerListKeymaps.win32 = InputUtils.keymaps_key_approved("win32") and {
 	toggle_menu = {
 		"keyboard",
 		"esc",
-		"pressed",
+		"pressed"
 	},
 	cursor = {
 		"mouse",
 		"cursor",
-		"axis",
+		"axis"
 	},
 	left_release = {
 		"mouse",
 		"left",
-		"released",
+		"released"
 	},
 	left_hold = {
 		"mouse",
 		"left",
-		"held",
+		"held"
 	},
 	left_press = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	right_press = {
 		"mouse",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	ingame_player_list_pressed = {
 		"keyboard",
 		"tab",
-		"pressed",
+		"pressed"
 	},
 	ingame_player_list_held = {
 		"keyboard",
 		"tab",
-		"held",
+		"held"
 	},
 	ingame_player_list_toggle = {},
 	ingame_player_list_exit_1 = {
 		"keyboard",
 		"tab",
-		"pressed",
+		"pressed"
 	},
 	ingame_player_list_exit_2 = {
 		"keyboard",
 		"esc",
-		"pressed",
+		"pressed"
 	},
 	close_ingame_player_list = {
 		"keyboard",
 		"tab",
-		"released",
+		"released"
 	},
 	activate_ingame_player_list_1 = {
 		"mouse",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	activate_ingame_player_list_2 = {
 		"keyboard",
 		"enter",
-		"pressed",
+		"pressed"
 	},
 	menu_scroll = {
 		"mouse",
 		"wheel",
-		"axis",
+		"axis"
 	},
 	versus_status_list_pressed_1 = {
 		"keyboard",
 		"left alt",
-		"pressed",
+		"pressed"
 	},
 	versus_status_list_pressed_2 = {
 		"keyboard",
 		"right alt",
-		"pressed",
+		"pressed"
 	},
 	versus_status_list_held_1 = {
 		"keyboard",
 		"left alt",
-		"held",
+		"held"
 	},
 	versus_status_list_held_2 = {
 		"keyboard",
 		"right alt",
-		"held",
+		"held"
 	},
 	versus_status_list_toggle = {},
 	versus_status_list_exit_1 = {
 		"keyboard",
 		"left alt",
-		"pressed",
+		"pressed"
 	},
 	versus_status_list_exit_2 = {
 		"keyboard",
 		"right alt",
-		"pressed",
+		"pressed"
 	},
 	versus_status_list_exit_3 = {
 		"keyboard",
 		"esc",
-		"pressed",
+		"pressed"
 	},
 	close_versus_status_list_1 = {
 		"keyboard",
 		"left alt",
-		"released",
+		"released"
 	},
 	close_versus_status_list_2 = {
 		"keyboard",
 		"right alt",
-		"released",
+		"released"
 	},
 	activate_versus_status_list_1 = {
 		"mouse",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	activate_versus_status_list_2 = {
 		"keyboard",
 		"enter",
-		"pressed",
+		"pressed"
 	},
 	force_start = {},
 	switch_team = {},
 	scroll_axis = {
 		"mouse",
 		"wheel",
-		"axis",
+		"axis"
 	},
 	move_up = {},
 	move_down = {},
@@ -5264,325 +5264,325 @@ IngamePlayerListKeymaps.win32 = InputUtils.keymaps_key_approved("win32") and {
 	kick_player = {},
 	toggle_private = {},
 	back = {},
-	show_profile = {},
+	show_profile = {}
 }
 IngamePlayerListKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	toggle_menu = {
 		"gamepad",
 		"start",
-		"pressed",
+		"pressed"
 	},
 	ingame_player_list_toggle = {
 		"gamepad",
 		"back",
-		"pressed",
+		"pressed"
 	},
 	mute_voice = {
 		"gamepad",
 		"y",
-		"released",
+		"released"
 	},
 	mute_chat = {
 		"gamepad",
 		"x",
-		"released",
+		"released"
 	},
 	kick_player = {
 		"gamepad",
 		"right_thumb",
-		"pressed",
+		"pressed"
 	},
 	toggle_private = {
 		"gamepad",
 		"left_thumb",
-		"pressed",
+		"pressed"
 	},
 	back = {
 		"gamepad",
 		"b",
-		"released",
+		"released"
 	},
 	show_profile = {
 		"gamepad",
 		"a",
-		"pressed",
+		"pressed"
 	},
 	move_up = {
 		"gamepad",
 		"d_up",
-		"pressed",
+		"pressed"
 	},
 	move_down = {
 		"gamepad",
 		"d_down",
-		"pressed",
+		"pressed"
 	},
 	ingame_player_list_exit = {},
 	activate_ingame_player_list = {},
 	axis_cursor = {
 		"gamepad",
 		"left",
-		"axis",
+		"axis"
 	},
 	left_press = {
 		"gamepad",
 		"a",
-		"pressed",
+		"pressed"
 	},
 	left_hold = {
 		"gamepad",
 		"a",
-		"held",
+		"held"
 	},
 	left_release = {
 		"gamepad",
 		"a",
-		"released",
+		"released"
 	},
 	right_press = {
 		"gamepad",
 		"right_shoulder",
-		"pressed",
+		"pressed"
 	},
 	right_hold = {
 		"gamepad",
 		"right_shoulder",
-		"held",
+		"held"
 	},
 	right_release = {
 		"gamepad",
 		"right_shoulder",
-		"released",
+		"released"
 	},
 	versus_status_list_toggle = {
 		"gamepad",
 		"start",
-		"pressed",
+		"pressed"
 	},
 	versus_status_list_exit = {},
 	activate_versus_status_list = {},
 	force_start = {
 		"gamepad",
 		"y",
-		"pressed",
+		"pressed"
 	},
 	switch_team = {
 		"gamepad",
 		"x",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 IngamePlayerListKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 	toggle_menu = {
 		"gamepad",
 		"options",
-		"pressed",
+		"pressed"
 	},
 	ingame_player_list_toggle = {
 		"gamepad",
 		"touch",
-		"pressed",
+		"pressed"
 	},
 	mute_voice = {
 		"gamepad",
 		"triangle",
-		"released",
+		"released"
 	},
 	mute_chat = {
 		"gamepad",
 		"square",
-		"released",
+		"released"
 	},
 	kick_player = {
 		"gamepad",
 		"r3",
-		"pressed",
+		"pressed"
 	},
 	toggle_private = {
 		"gamepad",
 		"l3",
-		"pressed",
+		"pressed"
 	},
 	back = {
 		"gamepad",
 		"circle",
-		"released",
+		"released"
 	},
 	show_profile = {
 		"gamepad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	move_up = {
 		"gamepad",
 		"up",
-		"pressed",
+		"pressed"
 	},
 	move_down = {
 		"gamepad",
 		"down",
-		"pressed",
+		"pressed"
 	},
 	ingame_player_list_exit = {},
 	activate_ingame_player_list = {},
 	axis_cursor = {
 		"gamepad",
 		"left",
-		"axis",
+		"axis"
 	},
 	left_press = {
 		"gamepad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	left_hold = {
 		"gamepad",
 		"cross",
-		"held",
+		"held"
 	},
 	left_release = {
 		"gamepad",
 		"cross",
-		"released",
+		"released"
 	},
 	right_press = {
 		"gamepad",
 		"r1",
-		"pressed",
+		"pressed"
 	},
 	right_hold = {
 		"gamepad",
 		"r1",
-		"held",
+		"held"
 	},
 	right_release = {
 		"gamepad",
 		"r1",
-		"released",
+		"released"
 	},
 	versus_status_list_toggle = {
 		"gamepad",
 		"options",
-		"pressed",
+		"pressed"
 	},
 	versus_status_list_exit = {},
 	activate_versus_status_list = {},
 	force_start = {
 		"gamepad",
 		"triangle",
-		"pressed",
+		"pressed"
 	},
 	switch_team = {
 		"gamepad",
 		"square",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 IngamePlayerListKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 	toggle_menu = {
 		"ps_pad",
 		"options",
-		"pressed",
+		"pressed"
 	},
 	ingame_player_list_toggle = {
 		"ps_pad",
 		"touch",
-		"pressed",
+		"pressed"
 	},
 	mute_voice = {
 		"ps_pad",
 		"triangle",
-		"released",
+		"released"
 	},
 	mute_chat = {
 		"ps_pad",
 		"square",
-		"released",
+		"released"
 	},
 	kick_player = {
 		"ps_pad",
 		"r3",
-		"pressed",
+		"pressed"
 	},
 	toggle_private = {
 		"ps_pad",
 		"l3",
-		"pressed",
+		"pressed"
 	},
 	back = {
 		"ps_pad",
 		"circle",
-		"released",
+		"released"
 	},
 	show_profile = {
 		"ps_pad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	move_up = {
 		"ps_pad",
 		"up",
-		"pressed",
+		"pressed"
 	},
 	move_down = {
 		"ps_pad",
 		"down",
-		"pressed",
+		"pressed"
 	},
 	ingame_player_list_exit = {},
 	activate_ingame_player_list = {},
 	axis_cursor = {
 		"ps_pad",
 		"left",
-		"axis",
+		"axis"
 	},
 	left_press = {
 		"ps_pad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	left_hold = {
 		"ps_pad",
 		"cross",
-		"held",
+		"held"
 	},
 	left_release = {
 		"ps_pad",
 		"cross",
-		"released",
+		"released"
 	},
 	right_press = {
 		"ps_pad",
 		"r1",
-		"pressed",
+		"pressed"
 	},
 	right_hold = {
 		"ps_pad",
 		"r1",
-		"held",
+		"held"
 	},
 	right_release = {
 		"ps_pad",
 		"r1",
-		"released",
+		"released"
 	},
 	versus_status_list_toggle = {
 		"ps_pad",
 		"options",
-		"pressed",
+		"pressed"
 	},
 	versus_status_list_exit = {},
 	activate_versus_status_list = {},
 	force_start = {
 		"ps_pad",
 		"triangle",
-		"pressed",
+		"pressed"
 	},
 	switch_team = {
 		"ps_pad",
 		"square",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 IngamePlayerListFilters = {}
 IngamePlayerListFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
@@ -5590,296 +5590,296 @@ IngamePlayerListFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "ingame_player_list_exit_1",
-			button_2 = "ingame_player_list_exit_2",
-		},
+			button_2 = "ingame_player_list_exit_2"
+		}
 	},
 	activate_ingame_player_list = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "activate_ingame_player_list_1",
-			button_2 = "activate_ingame_player_list_2",
-		},
+			button_2 = "activate_ingame_player_list_2"
+		}
 	},
 	versus_status_list_pressed = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "versus_status_list_pressed_1",
-			button_2 = "versus_status_list_pressed_2",
-		},
+			button_2 = "versus_status_list_pressed_2"
+		}
 	},
 	versus_status_list_held = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "versus_status_list_held_1",
-			button_2 = "versus_status_list_held_2",
-		},
+			button_2 = "versus_status_list_held_2"
+		}
 	},
 	close_versus_status_list = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "close_versus_status_list_1",
-			button_2 = "close_versus_status_list_2",
-		},
+			button_2 = "close_versus_status_list_2"
+		}
 	},
 	versus_status_list_exit = {
 		filter_type = "or",
 		input_mappings = {
-			button_1 = "versus_status_list_exit_1",
 			button_2 = "versus_status_list_exit_2",
 			button_3 = "versus_status_list_exit_2",
-		},
+			button_1 = "versus_status_list_exit_1"
+		}
 	},
 	activate_versus_status_list = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "activate_versus_status_list_1",
-			button_2 = "activate_versus_status_list_2",
-		},
-	},
+			button_2 = "activate_versus_status_list_2"
+		}
+	}
 }
 IngamePlayerListFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	cursor = {
-		accelerate_time_ref = 1.2,
+		filter_type = "gamepad_cursor",
+		multiplier = 1000,
 		acceleration_delay = 0.2,
 		acceleration_threshold = 0.5,
-		filter_type = "gamepad_cursor",
-		hover_multiplier = 0.3,
-		input_mapping = "axis_cursor",
-		min_multiplier_x = 25,
-		min_multiplier_y = 25,
-		multiplier = 1000,
-		multiplier_x = 40,
-		multiplier_y = 40,
 		threshold = 0.1,
-	},
+		min_multiplier_y = 25,
+		accelerate_time_ref = 1.2,
+		input_mapping = "axis_cursor",
+		multiplier_y = 40,
+		multiplier_x = 40,
+		min_multiplier_x = 25,
+		hover_multiplier = 0.3
+	}
 }
 
-local IngamePlayerListFilters_ps4 = {
+local var_0_5 = {
 	cursor = {
-		accelerate_time_ref = 1.2,
+		filter_type = "gamepad_cursor",
+		multiplier = 1000,
 		acceleration_delay = 0.2,
 		acceleration_threshold = 0.5,
-		filter_type = "gamepad_cursor",
-		hover_multiplier = 0.3,
-		input_mapping = "axis_cursor",
-		min_multiplier_x = 25,
-		min_multiplier_y = 25,
-		multiplier = 1000,
-		multiplier_x = 40,
-		multiplier_y = 40,
 		threshold = 0.1,
-	},
+		min_multiplier_y = 25,
+		accelerate_time_ref = 1.2,
+		input_mapping = "axis_cursor",
+		multiplier_y = 40,
+		multiplier_x = 40,
+		min_multiplier_x = 25,
+		hover_multiplier = 0.3
+	}
 }
 
-IngamePlayerListFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and IngamePlayerListFilters_ps4
-IngamePlayerListFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and IngamePlayerListFilters_ps4
+IngamePlayerListFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and var_0_5
+IngamePlayerListFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and var_0_5
 IngameMenuKeymaps = {}
 IngameMenuKeymaps.win32 = InputUtils.keymaps_key_approved("win32") and {
 	ingame_vote_yes = {
 		"keyboard",
 		"f5",
-		"pressed",
+		"pressed"
 	},
 	ingame_vote_no = {
 		"keyboard",
 		"f6",
-		"pressed",
+		"pressed"
 	},
 	ui_reload_debug = {
 		"keyboard",
 		"f5",
-		"pressed",
+		"pressed"
 	},
 	ui_debug = {
 		"keyboard",
 		"f6",
-		"pressed",
+		"pressed"
 	},
 	cancel_matchmaking = {
 		"keyboard",
 		IS_XB1 and "b" or "f10",
-		"pressed",
+		"pressed"
 	},
 	xbox_cancel_matchmaking = {
 		"keyboard",
 		"esc",
-		"pressed",
+		"pressed"
 	},
 	matchmaking_ready_instigate = {
 		"keyboard",
 		"f2",
-		"pressed",
+		"pressed"
 	},
 	matchmaking_ready = {
 		"keyboard",
 		"f2",
-		"pressed",
+		"pressed"
 	},
 	matchmaking_start = {
 		"keyboard",
 		"f3",
-		"pressed",
+		"pressed"
 	},
 	toggle_menu = {
 		"keyboard",
 		"esc",
-		"pressed",
+		"pressed"
 	},
 	back_menu = {
 		"mouse",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	back_menu_alt = {
 		"mouse",
 		"extra_1",
-		"released",
+		"released"
 	},
 	move_up_raw = {
 		"keyboard",
 		"up",
-		"pressed",
+		"pressed"
 	},
 	move_down_raw = {
 		"keyboard",
 		"down",
-		"pressed",
+		"pressed"
 	},
 	move_left_raw = {
 		"keyboard",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	move_right_raw = {
 		"keyboard",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	move_up_hold_raw = {
 		"keyboard",
 		"up",
-		"held",
+		"held"
 	},
 	move_down_hold_raw = {
 		"keyboard",
 		"down",
-		"held",
+		"held"
 	},
 	move_left_hold_raw = {
 		"keyboard",
 		"left",
-		"held",
+		"held"
 	},
 	move_right_hold_raw = {
 		"keyboard",
 		"right",
-		"held",
+		"held"
 	},
 	move_up_alt_raw = {
 		"keyboard",
 		"w",
-		"pressed",
+		"pressed"
 	},
 	move_down_alt_raw = {
 		"keyboard",
 		"s",
-		"pressed",
+		"pressed"
 	},
 	move_left_alt_raw = {
 		"keyboard",
 		"a",
-		"pressed",
+		"pressed"
 	},
 	move_right_alt_raw = {
 		"keyboard",
 		"d",
-		"pressed",
+		"pressed"
 	},
 	move_up_alt_hold_raw = {
 		"keyboard",
 		"w",
-		"held",
+		"held"
 	},
 	move_down_alt_hold_raw = {
 		"keyboard",
 		"s",
-		"held",
+		"held"
 	},
 	move_left_alt_hold_raw = {
 		"keyboard",
 		"a",
-		"held",
+		"held"
 	},
 	move_right_alt_hold_raw = {
 		"keyboard",
 		"d",
-		"held",
+		"held"
 	},
 	versus_menu_toggle = {
 		"keyboard",
 		"left alt",
-		"pressed",
+		"pressed"
 	},
 	analog_input = {},
 	skip = {
 		"keyboard",
 		"space",
-		"held",
+		"held"
 	},
 	skip_pressed = {
 		"keyboard",
 		"space",
-		"pressed",
+		"pressed"
 	},
 	cursor = {
 		"mouse",
 		"cursor",
-		"axis",
+		"axis"
 	},
 	left_release = {
 		"mouse",
 		"left",
-		"released",
+		"released"
 	},
 	left_hold = {
 		"mouse",
 		"left",
-		"held",
+		"held"
 	},
 	left_press = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	right_press = {
 		"mouse",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	mouse_middle_press = {
 		"mouse",
 		"middle",
-		"pressed",
+		"pressed"
 	},
 	mouse_middle_held = {
 		"mouse",
 		"middle",
-		"held",
+		"held"
 	},
 	confirm = {
 		"keyboard",
 		"space",
-		"released",
+		"released"
 	},
 	confirm_hold = {
 		"keyboard",
 		"space",
-		"held",
+		"held"
 	},
 	confirm_press = {
 		"keyboard",
 		"space",
-		"pressed",
+		"pressed"
 	},
 	back = {},
 	refresh = {},
@@ -5893,32 +5893,32 @@ IngameMenuKeymaps.win32 = InputUtils.keymaps_key_approved("win32") and {
 	cycle_next_raw = {
 		"keyboard",
 		"tab",
-		"pressed",
+		"pressed"
 	},
 	cycle_next_raw_hold = {
 		"keyboard",
 		"tab",
-		"held",
+		"held"
 	},
 	cycle_next_alt_raw = {
 		"keyboard",
 		"e",
-		"pressed",
+		"pressed"
 	},
 	cycle_next_alt_raw_hold = {
 		"keyboard",
 		"e",
-		"held",
+		"held"
 	},
 	cycle_prev_raw = {
 		"keyboard",
 		"q",
-		"pressed",
+		"pressed"
 	},
 	cycle_prev_raw_held = {
 		"keyboard",
 		"q",
-		"held",
+		"held"
 	},
 	trigger_left_soft = {},
 	trigger_right_soft = {},
@@ -5932,459 +5932,459 @@ IngameMenuKeymaps.win32 = InputUtils.keymaps_key_approved("win32") and {
 	show_information = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	hotkey_map = {
 		"keyboard",
 		"m",
-		"pressed",
+		"pressed"
 	},
 	hotkey_weave_leaderboard = {
 		"keyboard",
 		"l",
-		"pressed",
+		"pressed"
 	},
 	hotkey_weave_forge = {
 		"keyboard",
 		"k",
-		"pressed",
+		"pressed"
 	},
 	hotkey_weave_play = {
 		"keyboard",
 		"j",
-		"pressed",
+		"pressed"
 	},
 	hotkey_talents = {
 		"keyboard",
 		"t",
-		"pressed",
+		"pressed"
 	},
 	hotkey_hero = {
 		"keyboard",
 		"h",
-		"pressed",
+		"pressed"
 	},
 	hotkey_inventory = {
 		"keyboard",
 		"i",
-		"pressed",
+		"pressed"
 	},
 	hotkey_altar = {
 		"keyboard",
 		"h",
-		"pressed",
+		"pressed"
 	},
 	hotkey_quests = {
 		"keyboard",
 		"u",
-		"pressed",
+		"pressed"
 	},
 	hotkey_achievements = {
 		"keyboard",
 		"o",
-		"pressed",
+		"pressed"
 	},
 	hotkey_mark_favorite_item = {
 		"keyboard",
 		"f",
-		"pressed",
+		"pressed"
 	},
 	hotkey_loot = {
 		"keyboard",
 		"c",
-		"pressed",
+		"pressed"
 	},
 	item_compare_1 = {
 		"keyboard",
 		"left shift",
-		"held",
+		"held"
 	},
 	item_compare_2 = {
 		"keyboard",
 		"right shift",
-		"held",
+		"held"
 	},
 	item_detail_1 = {
 		"keyboard",
 		"left ctrl",
-		"held",
+		"held"
 	},
 	item_detail_2 = {
 		"keyboard",
 		"right ctrl",
-		"held",
+		"held"
 	},
 	keyboard_1 = {
 		"keyboard",
 		"1",
-		"pressed",
+		"pressed"
 	},
 	keyboard_2 = {
 		"keyboard",
 		"2",
-		"pressed",
+		"pressed"
 	},
 	keyboard_3 = {
 		"keyboard",
 		"3",
-		"pressed",
+		"pressed"
 	},
 	keyboard_4 = {
 		"keyboard",
 		"4",
-		"pressed",
+		"pressed"
 	},
 	keyboard_5 = {
 		"keyboard",
 		"5",
-		"pressed",
+		"pressed"
 	},
 	keyboard_6 = {
 		"keyboard",
 		"6",
-		"pressed",
+		"pressed"
 	},
 	keyboard_7 = {
 		"keyboard",
 		"7",
-		"pressed",
+		"pressed"
 	},
 	keyboard_8 = {
 		"keyboard",
 		"8",
-		"pressed",
+		"pressed"
 	},
 	keyboard_9 = {
 		"keyboard",
 		"9",
-		"pressed",
+		"pressed"
 	},
 	keyboard_0 = {
 		"keyboard",
 		"0",
-		"pressed",
+		"pressed"
 	},
 	scroll_axis = {
 		"mouse",
 		"wheel",
-		"axis",
+		"axis"
 	},
 	debug_pixeldistance_1 = {
 		"keyboard",
 		"left shift",
-		"held",
+		"held"
 	},
 	debug_pixeldistance_2 = {
 		"mouse",
 		"right",
-		"held",
+		"held"
 	},
 	execute_login_1 = {
 		"keyboard",
 		"enter",
-		"pressed",
+		"pressed"
 	},
 	execute_login_2 = {
 		"keyboard",
 		"numpad enter",
-		"pressed",
+		"pressed"
 	},
 	cancel_video_1 = {
 		"keyboard",
 		"space",
-		"held",
+		"held"
 	},
 	cancel_video_2 = {
 		"keyboard",
 		"esc",
-		"held",
+		"held"
 	},
 	cancel_video_3 = {
 		"mouse",
 		"left",
-		"held",
-	},
+		"held"
+	}
 }
 IngameMenuKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	ingame_vote_yes = {
 		"gamepad",
 		"back",
-		"held",
+		"held"
 	},
 	ingame_vote_no = {
 		"gamepad",
 		"start",
-		"held",
+		"held"
 	},
 	ui_reload_debug = {
 		"gamepad",
 		"y",
-		"held",
+		"held"
 	},
 	ui_debug = {
 		"gamepad",
 		"y",
-		"held",
+		"held"
 	},
 	cancel_matchmaking = {
 		"gamepad",
 		"back",
-		"pressed",
+		"pressed"
 	},
 	matchmaking_ready_instigate = {
 		"gamepad",
 		"left_shoulder",
-		"pressed",
+		"pressed"
 	},
 	matchmaking_ready = {
 		"gamepad",
 		"left_shoulder",
-		"held",
+		"held"
 	},
 	matchmaking_start = {
 		"gamepad",
 		"left_shoulder",
-		"held",
+		"held"
 	},
 	toggle_menu = {
 		"gamepad",
 		"start",
-		"pressed",
+		"pressed"
 	},
 	back_menu = {
 		"gamepad",
 		"b",
-		"pressed",
+		"pressed"
 	},
 	move_up_raw = {
 		"gamepad",
 		"d_up",
-		"pressed",
+		"pressed"
 	},
 	move_down_raw = {
 		"gamepad",
 		"d_down",
-		"pressed",
+		"pressed"
 	},
 	move_left_raw = {
 		"gamepad",
 		"d_left",
-		"pressed",
+		"pressed"
 	},
 	move_right_raw = {
 		"gamepad",
 		"d_right",
-		"pressed",
+		"pressed"
 	},
 	move_up_hold_raw = {
 		"gamepad",
 		"d_up",
-		"held",
+		"held"
 	},
 	move_down_hold_raw = {
 		"gamepad",
 		"d_down",
-		"held",
+		"held"
 	},
 	move_left_hold_raw = {
 		"gamepad",
 		"d_left",
-		"held",
+		"held"
 	},
 	move_right_hold_raw = {
 		"gamepad",
 		"d_right",
-		"held",
+		"held"
 	},
 	analog_input = {
 		"gamepad",
 		"left",
-		"axis",
+		"axis"
 	},
 	versus_menu_toggle = {
 		"gamepad",
 		"start",
-		"pressed",
+		"pressed"
 	},
 	confirm = {
 		"gamepad",
 		"a",
-		"released",
+		"released"
 	},
 	confirm_hold = {
 		"gamepad",
 		"a",
-		"held",
+		"held"
 	},
 	confirm_press = {
 		"gamepad",
 		"a",
-		"pressed",
+		"pressed"
 	},
 	back = {
 		"gamepad",
 		"b",
-		"released",
+		"released"
 	},
 	refresh = {
 		"gamepad",
 		"y",
-		"released",
+		"released"
 	},
 	refresh_hold = {
 		"gamepad",
 		"y",
-		"held",
+		"held"
 	},
 	refresh_press = {
 		"gamepad",
 		"y",
-		"pressed",
+		"pressed"
 	},
 	special_1 = {
 		"gamepad",
 		"x",
-		"released",
+		"released"
 	},
 	special_1_hold = {
 		"gamepad",
 		"x",
-		"held",
+		"held"
 	},
 	special_1_press = {
 		"gamepad",
 		"x",
-		"pressed",
+		"pressed"
 	},
 	left_stick_press = {
 		"gamepad",
 		"left_thumb",
-		"pressed",
+		"pressed"
 	},
 	right_stick_press = {
 		"gamepad",
 		"right_thumb",
-		"pressed",
+		"pressed"
 	},
 	cycle_next = {
 		"gamepad",
 		"right_shoulder",
-		"pressed",
+		"pressed"
 	},
 	cycle_next_raw = {
 		"gamepad",
 		"right_shoulder",
-		"pressed",
+		"pressed"
 	},
 	cycle_next_alt_raw = {
 		"gamepad",
 		"right_shoulder",
-		"pressed",
+		"pressed"
 	},
 	cycle_next_hold = {
 		"gamepad",
 		"right_shoulder",
-		"held",
+		"held"
 	},
 	cycle_previous = {
 		"gamepad",
 		"left_shoulder",
-		"pressed",
+		"pressed"
 	},
 	cycle_previous_raw = {
 		"gamepad",
 		"left_shoulder",
-		"pressed",
+		"pressed"
 	},
 	cycle_prev_raw = {
 		"gamepad",
 		"left_shoulder",
-		"pressed",
+		"pressed"
 	},
 	cycle_previous_hold = {
 		"gamepad",
 		"left_shoulder",
-		"held",
+		"held"
 	},
 	trigger_left_soft = {
 		"gamepad",
 		"left_trigger",
-		"soft_button",
+		"soft_button"
 	},
 	trigger_right_soft = {
 		"gamepad",
 		"right_trigger",
-		"soft_button",
+		"soft_button"
 	},
 	trigger_cycle_next = {
 		"gamepad",
 		"right_trigger",
-		"pressed",
+		"pressed"
 	},
 	trigger_cycle_next_hold = {
 		"gamepad",
 		"right_trigger",
-		"held",
+		"held"
 	},
 	trigger_cycle_previous = {
 		"gamepad",
 		"left_trigger",
-		"pressed",
+		"pressed"
 	},
 	trigger_cycle_previous_hold = {
 		"gamepad",
 		"left_trigger",
-		"held",
+		"held"
 	},
 	gamepad_left_axis = {
 		"gamepad",
 		"left",
-		"axis",
+		"axis"
 	},
 	gamepad_right_axis = {
 		"gamepad",
 		"right",
-		"axis",
+		"axis"
 	},
 	look_raw_controller = {
 		"gamepad",
 		"left",
-		"axis",
+		"axis"
 	},
 	show_gamercard = {
 		"gamepad",
 		"back",
-		"pressed",
+		"pressed"
 	},
 	hotkey_mark_favorite_item = {
 		"gamepad",
 		"right_thumb",
-		"pressed",
+		"pressed"
 	},
 	show_information = {
 		"gamepad",
 		"right_trigger",
-		"pressed",
+		"pressed"
 	},
 	axis_cursor = {
 		"gamepad",
 		"left",
-		"axis",
+		"axis"
 	},
 	left_press = {
 		"gamepad",
 		"a",
-		"pressed",
+		"pressed"
 	},
 	left_hold = {
 		"gamepad",
 		"a",
-		"held",
+		"held"
 	},
 	left_release = {
 		"gamepad",
 		"a",
-		"released",
+		"released"
 	},
 	right_press = {},
 	right_hold = {},
@@ -6392,279 +6392,279 @@ IngameMenuKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	scroll_axis = {
 		"gamepad",
 		"right",
-		"axis",
+		"axis"
 	},
 	debug_pixeldistance_1 = {
 		"gamepad",
 		"left_trigger",
-		"held",
+		"held"
 	},
 	debug_pixeldistance_2 = {
 		"gamepad",
 		"right_trigger",
-		"held",
+		"held"
 	},
 	cancel_video_1 = {
 		"gamepad",
 		"a",
-		"held",
+		"held"
 	},
 	cancel_video_2 = {
 		"gamepad",
 		"b",
-		"held",
-	},
+		"held"
+	}
 }
 IngameMenuKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 	ingame_vote_yes = {
 		"gamepad",
 		"l1",
-		"held",
+		"held"
 	},
 	ingame_vote_no = {
 		"gamepad",
 		"l2",
-		"held",
+		"held"
 	},
 	ui_reload_debug = {
 		"gamepad",
 		"triangle",
-		"held",
+		"held"
 	},
 	ui_debug = {
 		"gamepad",
 		"triangle",
-		"held",
+		"held"
 	},
 	cancel_matchmaking = {
 		"gamepad",
 		"touch",
-		"pressed",
+		"pressed"
 	},
 	matchmaking_ready_instigate = {
 		"gamepad",
 		"l1",
-		"pressed",
+		"pressed"
 	},
 	matchmaking_ready = {
 		"gamepad",
 		"l1",
-		"held",
+		"held"
 	},
 	matchmaking_start = {
 		"gamepad",
 		"l1",
-		"held",
+		"held"
 	},
 	toggle_menu = {
 		"gamepad",
 		"options",
-		"pressed",
+		"pressed"
 	},
 	back_menu = {
 		"gamepad",
 		"circle",
-		"pressed",
+		"pressed"
 	},
 	move_up_raw = {
 		"gamepad",
 		"up",
-		"pressed",
+		"pressed"
 	},
 	move_down_raw = {
 		"gamepad",
 		"down",
-		"pressed",
+		"pressed"
 	},
 	move_left_raw = {
 		"gamepad",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	move_right_raw = {
 		"gamepad",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	move_up_hold_raw = {
 		"gamepad",
 		"up",
-		"held",
+		"held"
 	},
 	move_down_hold_raw = {
 		"gamepad",
 		"down",
-		"held",
+		"held"
 	},
 	move_left_hold_raw = {
 		"gamepad",
 		"left",
-		"held",
+		"held"
 	},
 	move_right_hold_raw = {
 		"gamepad",
 		"right",
-		"held",
+		"held"
 	},
 	analog_input = {
 		"gamepad",
 		"left",
-		"axis",
+		"axis"
 	},
 	versus_menu_toggle = {
 		"gamepad",
 		"options",
-		"pressed",
+		"pressed"
 	},
 	confirm = {
 		"gamepad",
 		"cross",
-		"released",
+		"released"
 	},
 	confirm_hold = {
 		"gamepad",
 		"cross",
-		"held",
+		"held"
 	},
 	confirm_press = {
 		"gamepad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	back = {
 		"gamepad",
 		"circle",
-		"released",
+		"released"
 	},
 	refresh = {
 		"gamepad",
 		"triangle",
-		"released",
+		"released"
 	},
 	refresh_hold = {
 		"gamepad",
 		"triangle",
-		"held",
+		"held"
 	},
 	refresh_press = {
 		"gamepad",
 		"triangle",
-		"pressed",
+		"pressed"
 	},
 	special_1 = {
 		"gamepad",
 		"square",
-		"released",
+		"released"
 	},
 	special_1_hold = {
 		"gamepad",
 		"square",
-		"held",
+		"held"
 	},
 	special_1_press = {
 		"gamepad",
 		"square",
-		"pressed",
+		"pressed"
 	},
 	left_stick_press = {
 		"gamepad",
 		"l3",
-		"pressed",
+		"pressed"
 	},
 	right_stick_press = {
 		"gamepad",
 		"r3",
-		"pressed",
+		"pressed"
 	},
 	cycle_next = {
 		"gamepad",
 		"r1",
-		"pressed",
+		"pressed"
 	},
 	cycle_next_raw = {
 		"gamepad",
 		"r1",
-		"pressed",
+		"pressed"
 	},
 	cycle_next_alt_raw = {
 		"gamepad",
 		"r1",
-		"pressed",
+		"pressed"
 	},
 	cycle_next_hold = {
 		"gamepad",
 		"r1",
-		"held",
+		"held"
 	},
 	cycle_previous = {
 		"gamepad",
 		"l1",
-		"pressed",
+		"pressed"
 	},
 	cycle_previous_raw = {
 		"gamepad",
 		"l1",
-		"pressed",
+		"pressed"
 	},
 	cycle_prev_raw = {
 		"gamepad",
 		"l1",
-		"pressed",
+		"pressed"
 	},
 	cycle_previous_hold = {
 		"gamepad",
 		"l1",
-		"held",
+		"held"
 	},
 	trigger_left_soft = {
 		"gamepad",
 		"l2",
-		"soft_button",
+		"soft_button"
 	},
 	trigger_right_soft = {
 		"gamepad",
 		"r2",
-		"soft_button",
+		"soft_button"
 	},
 	trigger_cycle_next = {
 		"gamepad",
 		"r2",
-		"pressed",
+		"pressed"
 	},
 	trigger_cycle_next_hold = {
 		"gamepad",
 		"r2",
-		"held",
+		"held"
 	},
 	trigger_cycle_previous = {
 		"gamepad",
 		"l2",
-		"pressed",
+		"pressed"
 	},
 	trigger_cycle_previous_hold = {
 		"gamepad",
 		"l2",
-		"held",
+		"held"
 	},
 	axis_cursor = {
 		"gamepad",
 		"left",
-		"axis",
+		"axis"
 	},
 	left_press = {
 		"gamepad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	left_hold = {
 		"gamepad",
 		"cross",
-		"held",
+		"held"
 	},
 	left_release = {
 		"gamepad",
 		"cross",
-		"released",
+		"released"
 	},
 	right_press = {},
 	right_hold = {},
@@ -6672,309 +6672,309 @@ IngameMenuKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 	gamepad_left_axis = {
 		"gamepad",
 		"left",
-		"axis",
+		"axis"
 	},
 	gamepad_right_axis = {
 		"gamepad",
 		"right",
-		"axis",
+		"axis"
 	},
 	look_raw_controller = {
 		"gamepad",
 		"left",
-		"axis",
+		"axis"
 	},
 	show_gamercard = {
 		"gamepad",
 		"touch",
-		"pressed",
+		"pressed"
 	},
 	hotkey_mark_favorite_item = {
 		"gamepad",
 		"r3",
-		"pressed",
+		"pressed"
 	},
 	show_information = {
 		"gamepad",
 		"r2",
-		"pressed",
+		"pressed"
 	},
 	scroll_axis = {
 		"gamepad",
 		"right",
-		"axis",
+		"axis"
 	},
 	debug_pixeldistance_1 = {
 		"gamepad",
 		"l2",
-		"held",
+		"held"
 	},
 	debug_pixeldistance_2 = {
 		"gamepad",
 		"r2",
-		"held",
+		"held"
 	},
 	cancel_video_1 = {
 		"gamepad",
 		"cross",
-		"held",
+		"held"
 	},
 	cancel_video_2 = {
 		"gamepad",
 		"circle",
-		"held",
-	},
+		"held"
+	}
 }
 IngameMenuKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 	ingame_vote_yes = {
 		"ps_pad",
 		"l1",
-		"held",
+		"held"
 	},
 	ingame_vote_no = {
 		"ps_pad",
 		"l2",
-		"held",
+		"held"
 	},
 	ui_reload_debug = {
 		"ps_pad",
 		"triangle",
-		"held",
+		"held"
 	},
 	ui_debug = {
 		"ps_pad",
 		"triangle",
-		"held",
+		"held"
 	},
 	cancel_matchmaking = {
 		"ps_pad",
 		"touch",
-		"pressed",
+		"pressed"
 	},
 	matchmaking_ready_instigate = {
 		"ps_pad",
 		"l1",
-		"pressed",
+		"pressed"
 	},
 	matchmaking_ready = {
 		"ps_pad",
 		"l1",
-		"held",
+		"held"
 	},
 	matchmaking_start = {
 		"ps_pad",
 		"l1",
-		"held",
+		"held"
 	},
 	toggle_menu = {
 		"ps_pad",
 		"options",
-		"pressed",
+		"pressed"
 	},
 	back_menu = {
 		"ps_pad",
 		"circle",
-		"pressed",
+		"pressed"
 	},
 	move_up_raw = {
 		"ps_pad",
 		"up",
-		"pressed",
+		"pressed"
 	},
 	move_down_raw = {
 		"ps_pad",
 		"down",
-		"pressed",
+		"pressed"
 	},
 	move_left_raw = {
 		"ps_pad",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	move_right_raw = {
 		"ps_pad",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	move_up_hold_raw = {
 		"ps_pad",
 		"up",
-		"held",
+		"held"
 	},
 	move_down_hold_raw = {
 		"ps_pad",
 		"down",
-		"held",
+		"held"
 	},
 	move_left_hold_raw = {
 		"ps_pad",
 		"left",
-		"held",
+		"held"
 	},
 	move_right_hold_raw = {
 		"ps_pad",
 		"right",
-		"held",
+		"held"
 	},
 	analog_input = {
 		"ps_pad",
 		"left",
-		"axis",
+		"axis"
 	},
 	versus_menu_toggle = {
 		"ps_pad",
 		"options",
-		"pressed",
+		"pressed"
 	},
 	confirm = {
 		"ps_pad",
 		"cross",
-		"released",
+		"released"
 	},
 	confirm_hold = {
 		"ps_pad",
 		"cross",
-		"held",
+		"held"
 	},
 	confirm_press = {
 		"ps_pad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	back = {
 		"ps_pad",
 		"circle",
-		"released",
+		"released"
 	},
 	refresh = {
 		"ps_pad",
 		"triangle",
-		"released",
+		"released"
 	},
 	refresh_hold = {
 		"ps_pad",
 		"triangle",
-		"held",
+		"held"
 	},
 	refresh_press = {
 		"ps_pad",
 		"triangle",
-		"pressed",
+		"pressed"
 	},
 	special_1 = {
 		"ps_pad",
 		"square",
-		"released",
+		"released"
 	},
 	special_1_hold = {
 		"ps_pad",
 		"square",
-		"held",
+		"held"
 	},
 	special_1_press = {
 		"ps_pad",
 		"square",
-		"pressed",
+		"pressed"
 	},
 	left_stick_press = {
 		"ps_pad",
 		"l3",
-		"pressed",
+		"pressed"
 	},
 	right_stick_press = {
 		"ps_pad",
 		"r3",
-		"pressed",
+		"pressed"
 	},
 	cycle_next = {
 		"ps_pad",
 		"r1",
-		"pressed",
+		"pressed"
 	},
 	cycle_next_raw = {
 		"ps_pad",
 		"r1",
-		"pressed",
+		"pressed"
 	},
 	cycle_next_alt_raw = {
 		"ps_pad",
 		"r1",
-		"pressed",
+		"pressed"
 	},
 	cycle_next_hold = {
 		"ps_pad",
 		"r1",
-		"held",
+		"held"
 	},
 	cycle_previous = {
 		"ps_pad",
 		"l1",
-		"pressed",
+		"pressed"
 	},
 	cycle_previous_raw = {
 		"ps_pad",
 		"l1",
-		"pressed",
+		"pressed"
 	},
 	cycle_prev_raw = {
 		"ps_pad",
 		"l1",
-		"pressed",
+		"pressed"
 	},
 	cycle_previous_hold = {
 		"ps_pad",
 		"l1",
-		"held",
+		"held"
 	},
 	trigger_left_soft = {
 		"ps_pad",
 		"l2",
-		"soft_button",
+		"soft_button"
 	},
 	trigger_right_soft = {
 		"ps_pad",
 		"r2",
-		"soft_button",
+		"soft_button"
 	},
 	trigger_cycle_next = {
 		"ps_pad",
 		"r2",
-		"pressed",
+		"pressed"
 	},
 	trigger_cycle_next_hold = {
 		"ps_pad",
 		"r2",
-		"held",
+		"held"
 	},
 	trigger_cycle_previous = {
 		"ps_pad",
 		"l2",
-		"pressed",
+		"pressed"
 	},
 	trigger_cycle_previous_hold = {
 		"ps_pad",
 		"l2",
-		"held",
+		"held"
 	},
 	axis_cursor = {
 		"ps_pad",
 		"left",
-		"axis",
+		"axis"
 	},
 	left_press = {
 		"ps_pad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	left_hold = {
 		"ps_pad",
 		"cross",
-		"held",
+		"held"
 	},
 	left_release = {
 		"ps_pad",
 		"cross",
-		"released",
+		"released"
 	},
 	right_press = {},
 	right_hold = {},
@@ -6982,58 +6982,58 @@ IngameMenuKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 	gamepad_left_axis = {
 		"ps_pad",
 		"left",
-		"axis",
+		"axis"
 	},
 	gamepad_right_axis = {
 		"ps_pad",
 		"right",
-		"axis",
+		"axis"
 	},
 	look_raw_controller = {
 		"ps_pad",
 		"left",
-		"axis",
+		"axis"
 	},
 	show_gamercard = {
 		"ps_pad",
 		"touch",
-		"pressed",
+		"pressed"
 	},
 	hotkey_mark_favorite_item = {
 		"ps_pad",
 		"r3",
-		"pressed",
+		"pressed"
 	},
 	show_information = {
 		"ps_pad",
 		"r2",
-		"pressed",
+		"pressed"
 	},
 	scroll_axis = {
 		"ps_pad",
 		"right",
-		"axis",
+		"axis"
 	},
 	debug_pixeldistance_1 = {
 		"ps_pad",
 		"l2",
-		"held",
+		"held"
 	},
 	debug_pixeldistance_2 = {
 		"ps_pad",
 		"r2",
-		"held",
+		"held"
 	},
 	cancel_video_1 = {
 		"ps_pad",
 		"cross",
-		"held",
+		"held"
 	},
 	cancel_video_2 = {
 		"ps_pad",
 		"circle",
-		"held",
-	},
+		"held"
+	}
 }
 IngameMenuFilters = {}
 IngameMenuFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
@@ -7041,86 +7041,86 @@ IngameMenuFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "debug_pixeldistance_1",
-			button_2 = "debug_pixeldistance_2",
-		},
+			button_2 = "debug_pixeldistance_2"
+		}
 	},
 	show_support_info = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "show_support_info_1",
-			button_2 = "show_support_info_2",
-		},
+			button_2 = "show_support_info_2"
+		}
 	},
 	start = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "start_1",
-			button_2 = "start_2",
-		},
+			button_2 = "start_2"
+		}
 	},
 	move_down = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
 			"move_down_raw",
-			"move_down_alt_raw",
+			"move_down_alt_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			0,
 			-1,
-			0,
-		},
+			0
+		}
 	},
 	move_up = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
 			"move_up_raw",
-			"move_up_alt_raw",
+			"move_up_alt_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			0,
 			1,
-			0,
-		},
+			0
+		}
 	},
 	move_left = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
 			"move_left_raw",
-			"move_left_alt_raw",
+			"move_left_alt_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			-1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	move_right = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
 			"move_right_raw",
-			"move_right_alt_raw",
+			"move_right_alt_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	move_down_hold = {
 		filter_type = "move_filter",
@@ -7128,16 +7128,16 @@ IngameMenuFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 		threshold = 0.7,
 		input_mappings = {
 			"move_down_hold_raw",
-			"move_down_alt_hold_raw",
+			"move_down_alt_hold_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			0,
 			-1,
-			0,
-		},
+			0
+		}
 	},
 	move_up_hold = {
 		filter_type = "move_filter",
@@ -7145,16 +7145,16 @@ IngameMenuFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 		threshold = 0.7,
 		input_mappings = {
 			"move_up_hold_raw",
-			"move_up_alt_hold_raw",
+			"move_up_alt_hold_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			0,
 			1,
-			0,
-		},
+			0
+		}
 	},
 	move_left_hold = {
 		filter_type = "move_filter",
@@ -7162,16 +7162,16 @@ IngameMenuFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 		threshold = 0.7,
 		input_mappings = {
 			"move_left_hold_raw",
-			"move_left_alt_hold_raw",
+			"move_left_alt_hold_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			-1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	move_right_hold = {
 		filter_type = "move_filter",
@@ -7179,16 +7179,16 @@ IngameMenuFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 		threshold = 0.7,
 		input_mappings = {
 			"move_right_hold_raw",
-			"move_right_alt_hold_raw",
+			"move_right_alt_hold_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	move_down_hold_continuous = {
 		filter_type = "move_filter_continuous",
@@ -7196,16 +7196,16 @@ IngameMenuFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 		threshold = 0.7,
 		input_mappings = {
 			"move_down_hold_raw",
-			"move_down_alt_hold_raw",
+			"move_down_alt_hold_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			0,
 			-1,
-			0,
-		},
+			0
+		}
 	},
 	move_up_hold_continuous = {
 		filter_type = "move_filter_continuous",
@@ -7213,16 +7213,16 @@ IngameMenuFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 		threshold = 0.7,
 		input_mappings = {
 			"move_up_hold_raw",
-			"move_up_alt_hold_raw",
+			"move_up_alt_hold_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			0,
 			1,
-			0,
-		},
+			0
+		}
 	},
 	move_left_hold_continuous = {
 		filter_type = "move_filter_continuous",
@@ -7230,16 +7230,16 @@ IngameMenuFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 		threshold = 0.7,
 		input_mappings = {
 			"move_left_hold_raw",
-			"move_left_alt_hold_raw",
+			"move_left_alt_hold_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			-1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	move_right_hold_continuous = {
 		filter_type = "move_filter_continuous",
@@ -7247,628 +7247,628 @@ IngameMenuFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 		threshold = 0.7,
 		input_mappings = {
 			"move_right_hold_raw",
-			"move_right_alt_hold_raw",
+			"move_right_alt_hold_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	item_compare = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "item_compare_1",
-			button_2 = "item_compare_2",
-		},
+			button_2 = "item_compare_2"
+		}
 	},
 	item_detail = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "item_detail_1",
-			button_2 = "item_detail_2",
-		},
+			button_2 = "item_detail_2"
+		}
 	},
 	execute_chat_input = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "execute_login_1",
-			button_2 = "execute_login_2",
-		},
+			button_2 = "execute_login_2"
+		}
 	},
 	cycle_next = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "cycle_next_raw",
-			button_2 = "cycle_next_alt_raw",
-		},
+			button_2 = "cycle_next_alt_raw"
+		}
 	},
 	cycle_next_hold = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "cycle_next_raw_hold",
-			button_2 = "cycle_next_alt_raw_hold",
-		},
+			button_2 = "cycle_next_alt_raw_hold"
+		}
 	},
 	cycle_previous = {
 		filter_type = "multiple_and",
 		input_mappings = {
 			{
 				button_1 = "item_detail_1",
-				button_2 = "cycle_next_raw",
+				button_2 = "cycle_next_raw"
 			},
 			{
-				button_1 = "cycle_prev_raw",
-			},
-		},
+				button_1 = "cycle_prev_raw"
+			}
+		}
 	},
 	cycle_previous_hold = {
 		filter_type = "multiple_and",
 		input_mappings = {
 			{
 				button_1 = "item_detail_1",
-				button_2 = "cycle_next_raw_hold",
+				button_2 = "cycle_next_raw_hold"
 			},
 			{
-				button_1 = "cycle_prev_raw_held",
-			},
-		},
+				button_1 = "cycle_prev_raw_held"
+			}
+		}
 	},
 	cancel_video = {
 		filter_type = "or",
 		input_mappings = {
-			button_1 = "cancel_video_1",
 			button_2 = "cancel_video_2",
 			button_3 = "cancel_video_3",
-		},
-	},
+			button_1 = "cancel_video_1"
+		}
+	}
 }
 IngameMenuFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	debug_pixeldistance = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "debug_pixeldistance_1",
-			button_2 = "debug_pixeldistance_2",
-		},
+			button_2 = "debug_pixeldistance_2"
+		}
 	},
 	show_support_info = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "show_support_info_1",
-			button_2 = "show_support_info_2",
-		},
+			button_2 = "show_support_info_2"
+		}
 	},
 	move_down = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
-			"move_down_raw",
+			"move_down_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			0,
 			-1,
-			0,
-		},
+			0
+		}
 	},
 	move_up = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
-			"move_up_raw",
+			"move_up_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			0,
 			1,
-			0,
-		},
+			0
+		}
 	},
 	move_left = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
-			"move_left_raw",
+			"move_left_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			-1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	move_right = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
-			"move_right_raw",
+			"move_right_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	move_down_hold = {
 		filter_type = "move_filter",
 		hold = true,
 		threshold = 0.7,
 		input_mappings = {
-			"move_down_hold_raw",
+			"move_down_hold_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			0,
 			-1,
-			0,
-		},
+			0
+		}
 	},
 	move_up_hold = {
 		filter_type = "move_filter",
 		hold = true,
 		threshold = 0.7,
 		input_mappings = {
-			"move_up_hold_raw",
+			"move_up_hold_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			0,
 			1,
-			0,
-		},
+			0
+		}
 	},
 	move_left_hold = {
 		filter_type = "move_filter",
 		hold = true,
 		threshold = 0.7,
 		input_mappings = {
-			"move_left_hold_raw",
+			"move_left_hold_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			-1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	move_right_hold = {
 		filter_type = "move_filter",
 		hold = true,
 		threshold = 0.7,
 		input_mappings = {
-			"move_right_hold_raw",
+			"move_right_hold_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	move_down_hold_continuous = {
 		filter_type = "move_filter_continuous",
 		hold = true,
 		threshold = 0.7,
 		input_mappings = {
-			"move_down_hold_raw",
+			"move_down_hold_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			0,
 			-1,
-			0,
-		},
+			0
+		}
 	},
 	move_up_hold_continuous = {
 		filter_type = "move_filter_continuous",
 		hold = true,
 		threshold = 0.7,
 		input_mappings = {
-			"move_up_hold_raw",
+			"move_up_hold_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			0,
 			1,
-			0,
-		},
+			0
+		}
 	},
 	move_left_hold_continuous = {
 		filter_type = "move_filter_continuous",
 		hold = true,
 		threshold = 0.7,
 		input_mappings = {
-			"move_left_hold_raw",
+			"move_left_hold_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			-1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	move_right_hold_continuous = {
 		filter_type = "move_filter_continuous",
 		hold = true,
 		threshold = 0.7,
 		input_mappings = {
-			"move_right_hold_raw",
+			"move_right_hold_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	cursor = {
-		accelerate_time_ref = 1.2,
+		filter_type = "gamepad_cursor",
+		multiplier = 1000,
 		acceleration_delay = 0.2,
 		acceleration_threshold = 0.5,
-		filter_type = "gamepad_cursor",
-		hover_multiplier = 0.3,
-		input_mapping = "axis_cursor",
-		min_multiplier_x = 25,
-		min_multiplier_y = 25,
-		multiplier = 1000,
-		multiplier_x = 40,
-		multiplier_y = 40,
 		threshold = 0.1,
+		min_multiplier_y = 25,
+		accelerate_time_ref = 1.2,
+		input_mapping = "axis_cursor",
+		multiplier_y = 40,
+		multiplier_x = 40,
+		min_multiplier_x = 25,
+		hover_multiplier = 0.3
 	},
 	cancel_video = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "cancel_video_1",
-			button_2 = "cancel_video_2",
-		},
-	},
+			button_2 = "cancel_video_2"
+		}
+	}
 }
 
-local IngameMenuFilters_ps4 = {
+local var_0_6 = {
 	debug_pixeldistance = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "debug_pixeldistance_1",
-			button_2 = "debug_pixeldistance_2",
-		},
+			button_2 = "debug_pixeldistance_2"
+		}
 	},
 	show_support_info = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "show_support_info_1",
-			button_2 = "show_support_info_2",
-		},
+			button_2 = "show_support_info_2"
+		}
 	},
 	move_down = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
-			"move_down_raw",
+			"move_down_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			0,
 			-1,
-			0,
-		},
+			0
+		}
 	},
 	move_up = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
-			"move_up_raw",
+			"move_up_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			0,
 			1,
-			0,
-		},
+			0
+		}
 	},
 	move_left = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
-			"move_left_raw",
+			"move_left_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			-1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	move_right = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
-			"move_right_raw",
+			"move_right_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	move_down_hold = {
 		filter_type = "move_filter",
 		hold = true,
 		threshold = 0.7,
 		input_mappings = {
-			"move_down_hold_raw",
+			"move_down_hold_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			0,
 			-1,
-			0,
-		},
+			0
+		}
 	},
 	move_up_hold = {
 		filter_type = "move_filter",
 		hold = true,
 		threshold = 0.7,
 		input_mappings = {
-			"move_up_hold_raw",
+			"move_up_hold_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			0,
 			1,
-			0,
-		},
+			0
+		}
 	},
 	move_left_hold = {
 		filter_type = "move_filter",
 		hold = true,
 		threshold = 0.7,
 		input_mappings = {
-			"move_left_hold_raw",
+			"move_left_hold_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			-1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	move_right_hold = {
 		filter_type = "move_filter",
 		hold = true,
 		threshold = 0.7,
 		input_mappings = {
-			"move_right_hold_raw",
+			"move_right_hold_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	move_down_hold_continuous = {
 		filter_type = "move_filter_continuous",
 		hold = true,
 		threshold = 0.7,
 		input_mappings = {
-			"move_down_hold_raw",
+			"move_down_hold_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			0,
 			-1,
-			0,
-		},
+			0
+		}
 	},
 	move_up_hold_continuous = {
 		filter_type = "move_filter_continuous",
 		hold = true,
 		threshold = 0.7,
 		input_mappings = {
-			"move_up_hold_raw",
+			"move_up_hold_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			0,
 			1,
-			0,
-		},
+			0
+		}
 	},
 	move_left_hold_continuous = {
 		filter_type = "move_filter_continuous",
 		hold = true,
 		threshold = 0.7,
 		input_mappings = {
-			"move_left_hold_raw",
+			"move_left_hold_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			-1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	move_right_hold_continuous = {
 		filter_type = "move_filter_continuous",
 		hold = true,
 		threshold = 0.7,
 		input_mappings = {
-			"move_right_hold_raw",
+			"move_right_hold_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	cursor = {
-		accelerate_time_ref = 1.2,
+		filter_type = "gamepad_cursor",
+		multiplier = 1000,
 		acceleration_delay = 0.2,
 		acceleration_threshold = 0.5,
-		filter_type = "gamepad_cursor",
-		hover_multiplier = 0.3,
-		input_mapping = "axis_cursor",
-		min_multiplier_x = 25,
-		min_multiplier_y = 25,
-		multiplier = 1000,
-		multiplier_x = 40,
-		multiplier_y = 40,
 		threshold = 0.1,
+		min_multiplier_y = 25,
+		accelerate_time_ref = 1.2,
+		input_mapping = "axis_cursor",
+		multiplier_y = 40,
+		multiplier_x = 40,
+		min_multiplier_x = 25,
+		hover_multiplier = 0.3
 	},
 	cancel_video = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "cancel_video_1",
-			button_2 = "cancel_video_2",
-		},
-	},
+			button_2 = "cancel_video_2"
+		}
+	}
 }
 
-IngameMenuFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and IngameMenuFilters_ps4
-IngameMenuFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and IngameMenuFilters_ps4
+IngameMenuFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and var_0_6
+IngameMenuFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and var_0_6
 CutsceneKeymaps = {}
 CutsceneKeymaps.win32 = InputUtils.keymaps_key_approved("win32") and {
 	skip_cutscene_1 = {
 		"keyboard",
 		"enter",
-		"pressed",
+		"pressed"
 	},
 	skip_cutscene_2 = {
 		"keyboard",
 		"space",
-		"pressed",
+		"pressed"
 	},
 	skip_cutscene_3 = {
 		"keyboard",
 		"esc",
-		"pressed",
+		"pressed"
 	},
 	gdc_skip = {
 		"keyboard",
 		"space",
-		"pressed",
+		"pressed"
 	},
 	gdc_debug_skip_1 = {
 		"keyboard",
 		"left shift",
-		"held",
+		"held"
 	},
 	gdc_debug_skip_2 = {
 		"keyboard",
 		"space",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 CutsceneKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	skip_cutscene = {
 		"gamepad",
 		"a",
-		"pressed",
+		"pressed"
 	},
 	gdc_skip = {
 		"gamepad",
 		"a",
-		"pressed",
+		"pressed"
 	},
-	gdc_debug_skip = {},
+	gdc_debug_skip = {}
 }
 CutsceneKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 	skip_cutscene = {
 		"gamepad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	gdc_skip = {
 		"gamepad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
-	gdc_debug_skip = {},
+	gdc_debug_skip = {}
 }
 CutsceneKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 	skip_cutscene = {
 		"ps_pad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
 	gdc_skip = {
 		"ps_pad",
 		"cross",
-		"pressed",
+		"pressed"
 	},
-	gdc_debug_skip = {},
+	gdc_debug_skip = {}
 }
 CutsceneFilters = {}
 CutsceneFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 	skip_cutscene = {
 		filter_type = "or",
 		input_mappings = {
-			button_1 = "skip_cutscene_1",
 			button_2 = "skip_cutscene_2",
 			button_3 = "skip_cutscene_3",
-		},
+			button_1 = "skip_cutscene_1"
+		}
 	},
 	gdc_debug_skip = {
 		filter_type = "and",
 		input_mappings = {
 			button_1 = "gdc_debug_skip_1",
-			button_2 = "gdc_debug_skip_2",
-		},
-	},
+			button_2 = "gdc_debug_skip_2"
+		}
+	}
 }
 CutsceneFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {}
 CutsceneFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and {}
@@ -7878,43 +7878,43 @@ ControllerDisconnectKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	accept_held_1 = {
 		"gamepad",
 		"a",
-		"held",
+		"held"
 	},
 	accept_held_2 = {
 		"gamepad",
 		"start",
-		"held",
+		"held"
 	},
 	cancel_held_1 = {
 		"gamepad",
 		"b",
-		"held",
+		"held"
 	},
 	cancel_held_2 = {
 		"gamepad",
 		"back",
-		"held",
+		"held"
 	},
 	accept_1 = {
 		"gamepad",
 		"a",
-		"released",
+		"released"
 	},
 	accept_2 = {
 		"gamepad",
 		"start",
-		"released",
+		"released"
 	},
 	cancel_1 = {
 		"gamepad",
 		"b",
-		"released",
+		"released"
 	},
 	cancel_2 = {
 		"gamepad",
 		"back",
-		"released",
-	},
+		"released"
+	}
 }
 ControllerDisconnectFilters = {}
 ControllerDisconnectFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
@@ -7922,38 +7922,38 @@ ControllerDisconnectFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "accept_held_1",
-			button_2 = "accept_held_2",
-		},
+			button_2 = "accept_held_2"
+		}
 	},
 	cancel_held = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "cancel_held_1",
-			button_2 = "cancel_held_2",
-		},
+			button_2 = "cancel_held_2"
+		}
 	},
 	accept = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "accept_1",
-			button_2 = "accept_2",
-		},
+			button_2 = "accept_2"
+		}
 	},
 	cancel = {
 		filter_type = "or",
 		input_mappings = {
 			button_1 = "cancel_1",
-			button_2 = "cancel_2",
-		},
-	},
+			button_2 = "cancel_2"
+		}
+	}
 }
 BenchmarkControllerSettings = {}
 BenchmarkControllerSettings.win32 = InputUtils.keymaps_key_approved("win32") and {
 	cycle_through_views = {
 		"keyboard",
 		"tab",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 EndLevelViewKeymapsFilters = table.clone(IngameMenuFilters)
 
@@ -7974,79 +7974,79 @@ DarkPactSelectionUIKeymaps.win32 = InputUtils.keymaps_key_approved("win32") and 
 	switch_dark_pact_profile = {
 		"keyboard",
 		"h",
-		"pressed",
+		"pressed"
 	},
 	cursor = {
 		"mouse",
 		"cursor",
-		"axis",
+		"axis"
 	},
 	left_release = {
 		"mouse",
 		"left",
-		"released",
+		"released"
 	},
 	left_hold = {
 		"mouse",
 		"left",
-		"held",
+		"held"
 	},
 	left_press = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	right_press = {
 		"mouse",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	next_observer_target = {
 		"mouse",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	previous_observer_target = {
 		"mouse",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	enable_camera_movement = {
 		"keyboard",
 		"left alt",
-		"pressed",
+		"pressed"
 	},
 	camera_movement_held = {
 		"keyboard",
 		"left alt",
-		"held",
+		"held"
 	},
 	confirm = {
 		"keyboard",
 		"space",
-		"pressed",
+		"pressed"
 	},
 	move_left_alt_raw = {
 		"keyboard",
 		"a",
-		"pressed",
+		"pressed"
 	},
 	move_right_alt_raw = {
 		"keyboard",
 		"d",
-		"pressed",
+		"pressed"
 	},
 	move_left_raw = {
 		"keyboard",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	move_right_raw = {
 		"keyboard",
 		"right",
-		"pressed",
+		"pressed"
 	},
-	analog_input = {},
+	analog_input = {}
 }
 DarkPactSelectionUIFilters = {}
 DarkPactSelectionUIFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
@@ -8055,248 +8055,248 @@ DarkPactSelectionUIFilters.win32 = InputUtils.keymaps_key_approved("win32") and 
 		threshold = 0.7,
 		input_mappings = {
 			"move_left_raw",
-			"move_left_alt_raw",
+			"move_left_alt_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			-1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	move_right = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
 			"move_right_raw",
-			"move_right_alt_raw",
+			"move_right_alt_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			1,
 			0,
-			0,
-		},
-	},
+			0
+		}
+	}
 }
 DarkPactSelectionUIKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	confirm = {
 		"gamepad",
 		"a",
-		"released",
+		"released"
 	},
 	move_left_raw = {
 		"gamepad",
 		"d_left",
-		"pressed",
+		"pressed"
 	},
 	move_right_raw = {
 		"gamepad",
 		"d_right",
-		"pressed",
+		"pressed"
 	},
 	move_left_hold = {
 		"gamepad",
 		"d_left",
-		"held",
+		"held"
 	},
 	move_right_hold = {
 		"gamepad",
 		"d_right",
-		"held",
+		"held"
 	},
 	analog_input = {
 		"gamepad",
 		"left",
-		"axis",
+		"axis"
 	},
 	next_observer_target = {
 		"gamepad",
 		"right_shoulder",
-		"pressed",
+		"pressed"
 	},
 	previous_observer_target = {
 		"gamepad",
 		"left_shoulder",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 DarkPactSelectionUIFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	move_left = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
-			"move_left_raw",
+			"move_left_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			-1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	move_right = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
-			"move_right_raw",
+			"move_right_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			1,
 			0,
-			0,
-		},
-	},
+			0
+		}
+	}
 }
 DarkPactSelectionUIKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 	confirm = {
 		"gamepad",
 		"cross",
-		"released",
+		"released"
 	},
 	move_left_raw = {
 		"gamepad",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	move_right_raw = {
 		"gamepad",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	move_left_hold = {
 		"gamepad",
 		"left",
-		"held",
+		"held"
 	},
 	move_right_hold = {
 		"gamepad",
 		"right",
-		"held",
+		"held"
 	},
 	analog_input = {
 		"gamepad",
 		"left",
-		"axis",
+		"axis"
 	},
 	next_observer_target = {
 		"gamepad",
 		"r1",
-		"pressed",
+		"pressed"
 	},
 	previous_observer_target = {
 		"gamepad",
 		"l1",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 DarkPactSelectionUIFilters_ps4 = {
 	move_left = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
-			"move_left_raw",
+			"move_left_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			-1,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	move_right = {
 		filter_type = "move_filter",
 		threshold = 0.7,
 		input_mappings = {
-			"move_right_raw",
+			"move_right_raw"
 		},
 		axis_mappings = {
-			"analog_input",
+			"analog_input"
 		},
 		axis = {
 			1,
 			0,
-			0,
-		},
-	},
+			0
+		}
+	}
 }
 DarkPactSelectionUIKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 	confirm = {
 		"ps_pad",
 		"cross",
-		"released",
+		"released"
 	},
 	move_left_raw = {
 		"ps_pad",
 		"left",
-		"pressed",
+		"pressed"
 	},
 	move_right_raw = {
 		"ps_pad",
 		"right",
-		"pressed",
+		"pressed"
 	},
 	move_left_hold = {
 		"ps_pad",
 		"left",
-		"held",
+		"held"
 	},
 	move_right_hold = {
 		"ps_pad",
 		"right",
-		"held",
+		"held"
 	},
 	analog_input = {
 		"ps_pad",
 		"left",
-		"axis",
+		"axis"
 	},
 	next_observer_target = {
 		"ps_pad",
 		"r1",
-		"pressed",
+		"pressed"
 	},
 	previous_observer_target = {
 		"ps_pad",
 		"l1",
-		"pressed",
-	},
+		"pressed"
+	}
 }
 DarkPactSelectionUIFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and table.clone(DarkPactSelectionUIFilters_ps4)
 DarkPactSelectionUIFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and table.clone(DarkPactSelectionUIFilters_ps4)
 GamepadSettings = {
-	menu_analog_deadzone = 0.5,
 	menu_cooldown = 0.25,
-	menu_min_speed_multiplier = 0.5,
-	menu_speed_multiplier_decrease = 1.3,
+	menu_analog_deadzone = 0.5,
 	menu_speed_multiplier_frame_decrease = 0.025,
-	quest_menu_navigation_cooldown = 0.15,
+	menu_speed_multiplier_decrease = 1.3,
+	menu_min_speed_multiplier = 0.5,
+	quest_menu_navigation_cooldown = 0.15
 }
 
-for name, dlc in pairs(DLCSettings) do
-	local controller_settings = dlc.controller_settings
+for iter_0_0, iter_0_1 in pairs(DLCSettings) do
+	local var_0_7 = iter_0_1.controller_settings
 
-	if controller_settings then
-		for input_table_name, input_tables in pairs(controller_settings) do
-			local input_table = rawget(_G, input_table_name)
+	if var_0_7 then
+		for iter_0_2, iter_0_3 in pairs(var_0_7) do
+			local var_0_8 = rawget(_G, iter_0_2)
 
-			fassert(input_table, "controller_settings.lua - Could not find input table for: (%s)", input_table_name)
+			fassert(var_0_8, "controller_settings.lua - Could not find input table for: (%s)", iter_0_2)
 
-			for table_key, inputs in pairs(input_tables) do
-				if InputUtils.keymaps_key_approved(table_key) then
-					for action_name, input_settings in pairs(inputs) do
-						input_table[table_key][action_name] = input_settings
+			for iter_0_4, iter_0_5 in pairs(iter_0_3) do
+				if InputUtils.keymaps_key_approved(iter_0_4) then
+					for iter_0_6, iter_0_7 in pairs(iter_0_5) do
+						var_0_8[iter_0_4][iter_0_6] = iter_0_7
 					end
 				end
 			end

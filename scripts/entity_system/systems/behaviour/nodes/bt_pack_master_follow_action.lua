@@ -1,111 +1,105 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_pack_master_follow_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_pack_master_follow_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTPackMasterFollowAction = class(BTPackMasterFollowAction, BTNode)
 
-BTPackMasterFollowAction.init = function (self, ...)
-	BTPackMasterFollowAction.super.init(self, ...)
+function BTPackMasterFollowAction.init(arg_1_0, ...)
+	BTPackMasterFollowAction.super.init(arg_1_0, ...)
 
-	self.navigation_group_manager = Managers.state.conflict.navigation_group_manager
+	arg_1_0.navigation_group_manager = Managers.state.conflict.navigation_group_manager
 end
 
 BTPackMasterFollowAction.name = "BTPackMasterFollowAction"
 
-BTPackMasterFollowAction.enter = function (self, unit, blackboard, t)
-	local action = self._tree_node.action_data
+function BTPackMasterFollowAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_0._tree_node.action_data
 
-	blackboard.action = action
-	blackboard.time_to_next_evaluate = t + 0.1
+	arg_2_2.action = var_2_0
+	arg_2_2.time_to_next_evaluate = arg_2_3 + 0.1
 
-	local tutorial_message_template = action.tutorial_message_template
+	local var_2_1 = var_2_0.tutorial_message_template
 
-	if tutorial_message_template then
-		local template_id = NetworkLookup.tutorials[tutorial_message_template]
-		local message_id = NetworkLookup.tutorials[blackboard.breed.name]
+	if var_2_1 then
+		local var_2_2 = NetworkLookup.tutorials[var_2_1]
+		local var_2_3 = NetworkLookup.tutorials[arg_2_2.breed.name]
 
-		Managers.state.network.network_transmit:send_rpc_all("rpc_tutorial_message", template_id, message_id)
+		Managers.state.network.network_transmit:send_rpc_all("rpc_tutorial_message", var_2_2, var_2_3)
 	end
 
-	blackboard.start_anim_done = true
-	blackboard.physics_world = blackboard.physics_world or World.get_data(blackboard.world, "physics_world")
+	arg_2_2.start_anim_done = true
+	arg_2_2.physics_world = arg_2_2.physics_world or World.get_data(arg_2_2.world, "physics_world")
 end
 
-BTPackMasterFollowAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	blackboard.action = nil
-	blackboard.start_anim_locked = nil
-	blackboard.anim_cb_rotation_start = nil
-	blackboard.anim_cb_move = nil
-	blackboard.start_anim_done = nil
+function BTPackMasterFollowAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	arg_3_2.action = nil
+	arg_3_2.start_anim_locked = nil
+	arg_3_2.anim_cb_rotation_start = nil
+	arg_3_2.anim_cb_move = nil
+	arg_3_2.start_anim_done = nil
 
-	if reason == "failed" then
-		blackboard.target_unit = nil
+	if arg_3_4 == "failed" then
+		arg_3_2.target_unit = nil
 	end
 end
 
-BTPackMasterFollowAction.run = function (self, unit, blackboard, t, dt)
-	local target_unit = blackboard.target_unit
+function BTPackMasterFollowAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = arg_4_2.target_unit
 
-	if not AiUtils.is_of_interest_to_packmaster(unit, target_unit) then
+	if not AiUtils.is_of_interest_to_packmaster(arg_4_1, var_4_0) then
 		return "failed"
 	end
 
-	local current_position = POSITION_LOOKUP[unit]
-	local target_position = POSITION_LOOKUP[target_unit]
-	local hook_time = 0.4
-	local target_locomotion_extension = ScriptUnit.extension(target_unit, "locomotion_system")
-	local extrapolated_target_position = target_position + target_locomotion_extension:average_velocity() * hook_time
-	local distance_sq = Vector3.distance_squared(current_position, extrapolated_target_position)
-	local attack_distance = blackboard.action.distance_to_attack
+	local var_4_1 = POSITION_LOOKUP[arg_4_1]
+	local var_4_2 = POSITION_LOOKUP[var_4_0]
+	local var_4_3 = 0.4
+	local var_4_4 = var_4_2 + ScriptUnit.extension(var_4_0, "locomotion_system"):average_velocity() * var_4_3
+	local var_4_5 = Vector3.distance_squared(var_4_1, var_4_4)
+	local var_4_6 = arg_4_2.action.distance_to_attack
 
-	if distance_sq < attack_distance * attack_distance then
-		local has_line_of_sight = PerceptionUtils.pack_master_has_line_of_sight_for_attack(blackboard.physics_world, unit, target_unit)
-
-		if has_line_of_sight then
-			return "done"
-		end
+	if var_4_5 < var_4_6 * var_4_6 and PerceptionUtils.pack_master_has_line_of_sight_for_attack(arg_4_2.physics_world, arg_4_1, var_4_0) then
+		return "done"
 	end
 
-	local navigation_extension = blackboard.navigation_extension
+	local var_4_7 = arg_4_2.navigation_extension
 
-	if blackboard.start_anim_done then
-		local whereabouts_extension = ScriptUnit.extension(target_unit, "whereabouts_system")
-		local pos_list, player_position_on_mesh = whereabouts_extension:closest_positions_when_outside_navmesh()
+	if arg_4_2.start_anim_done then
+		local var_4_8, var_4_9 = ScriptUnit.extension(var_4_0, "whereabouts_system"):closest_positions_when_outside_navmesh()
 
-		if player_position_on_mesh then
-			local position = POSITION_LOOKUP[target_unit]
+		if var_4_9 then
+			local var_4_10 = POSITION_LOOKUP[var_4_0]
 
-			navigation_extension:move_to(position)
-		elseif #pos_list > 0 then
-			local position = pos_list[1]
+			var_4_7:move_to(var_4_10)
+		elseif #var_4_8 > 0 then
+			local var_4_11 = var_4_8[1]
 
-			navigation_extension:move_to(position:unbox())
+			var_4_7:move_to(var_4_11:unbox())
 		else
 			return "failed"
 		end
 	end
 
-	if navigation_extension:has_reached_destination() then
+	if var_4_7:has_reached_destination() then
 		return "failed"
 	end
 
-	local should_evaluate
+	local var_4_12
 
-	if t > blackboard.time_to_next_evaluate then
-		should_evaluate = "evaluate"
-		blackboard.time_to_next_evaluate = t + 0.1
+	if arg_4_3 > arg_4_2.time_to_next_evaluate then
+		var_4_12 = "evaluate"
+		arg_4_2.time_to_next_evaluate = arg_4_3 + 0.1
 	end
 
-	local is_computing_path = navigation_extension:is_computing_path()
+	local var_4_13 = var_4_7:is_computing_path()
 
-	if blackboard.move_state ~= "moving" and not is_computing_path then
-		local network_manager = Managers.state.network
+	if arg_4_2.move_state ~= "moving" and not var_4_13 then
+		local var_4_14 = Managers.state.network
 
-		blackboard.move_state = "moving"
+		arg_4_2.move_state = "moving"
 
-		network_manager:anim_event(unit, blackboard.action.move_animation or "move_fwd")
-		navigation_extension:set_enabled(true)
+		var_4_14:anim_event(arg_4_1, arg_4_2.action.move_animation or "move_fwd")
+		var_4_7:set_enabled(true)
 	end
 
-	return "running", should_evaluate
+	return "running", var_4_12
 end

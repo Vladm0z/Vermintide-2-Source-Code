@@ -1,105 +1,101 @@
-﻿-- chunkname: @scripts/game_state/server_search_utils.lua
+-- chunkname: @scripts/game_state/server_search_utils.lua
 
 ServerSearchUtils = {}
 
-ServerSearchUtils.trigger_game_server_finder_search = function (search_type, network_options, num_players, filters)
-	print("Attempting " .. search_type .. " search for game server")
+function ServerSearchUtils.trigger_game_server_finder_search(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	print("Attempting " .. arg_1_0 .. " search for game server")
 
-	local finder = GameServerFinder:new(network_options)
+	local var_1_0 = GameServerFinder:new(arg_1_1)
 
-	finder:set_search_type(search_type)
+	var_1_0:set_search_type(arg_1_0)
 
-	local game_server_requirements = {
-		free_slots = num_players,
+	local var_1_1 = {
+		free_slots = arg_1_2,
 		server_browser_filters = {
 			dedicated = "valuenotused",
 			full = "valuenotused",
-			gamedir = Managers.mechanism:server_universe(),
+			gamedir = Managers.mechanism:server_universe()
 		},
-		matchmaking_filters = {},
+		matchmaking_filters = {}
 	}
 
-	table.merge_recursive(game_server_requirements, filters)
+	table.merge_recursive(var_1_1, arg_1_3)
 
-	local skip_verify_lobby_data = true
+	local var_1_2 = true
 
-	finder:add_filter_requirements(game_server_requirements, skip_verify_lobby_data)
-	finder:refresh()
+	var_1_0:add_filter_requirements(var_1_1, var_1_2)
+	var_1_0:refresh()
 
-	return finder
+	return var_1_0
 end
 
-ServerSearchUtils.trigger_lobby_finder_search = function (network_options, num_players, filters)
-	local requirements = {
+function ServerSearchUtils.trigger_lobby_finder_search(arg_2_0, arg_2_1, arg_2_2)
+	local var_2_0 = {
 		distance_filter = "world",
-		free_slots = num_players,
+		free_slots = arg_2_1,
 		filters = {},
-		near_filters = {},
+		near_filters = {}
 	}
 
-	table.merge_recursive(requirements, filters)
+	table.merge_recursive(var_2_0, arg_2_2)
 
-	local skip_verify_lobby_data = true
-	local finder = LobbyFinder:new(network_options, nil, true)
+	local var_2_1 = true
+	local var_2_2 = LobbyFinder:new(arg_2_0, nil, true)
 
-	finder:add_filter_requirements(requirements, skip_verify_lobby_data)
-	finder:refresh()
+	var_2_2:add_filter_requirements(var_2_0, var_2_1)
+	var_2_2:refresh()
 
-	return finder
+	return var_2_2
 end
 
-ServerSearchUtils.filter_game_server_search = function (servers, network_options, soft_filters, network_hash, black_listed_servers, search_time)
-	table.array_remove_if(servers, function (server)
-		local ignore_network_hash = Development.parameter("force_ignore_network_hash")
+function ServerSearchUtils.filter_game_server_search(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	table.array_remove_if(arg_3_0, function(arg_4_0)
+		if not Development.parameter("force_ignore_network_hash") then
+			local var_4_0 = arg_4_0.network_hash ~= arg_3_3
 
-		if not ignore_network_hash then
-			local wrong_version = server.network_hash ~= network_hash
+			if var_4_0 then
+				printf("Removing server %s with wrong version %s", arg_4_0.server_info.ip_port, arg_4_0.network_hash)
 
-			if wrong_version then
-				printf("Removing server %s with wrong version %s", server.server_info.ip_port, server.network_hash)
-
-				server.matching_fail = "wrong network hash"
+				arg_4_0.matching_fail = "wrong network hash"
 			end
 
-			return wrong_version
+			return var_4_0
 		end
 	end)
-	table.array_remove_if(servers, function (server)
+	table.array_remove_if(arg_3_0, function(arg_5_0)
 		if not script_data.blacklisting_disabled_vs then
-			local blacklisted = black_listed_servers[server.server_info.ip_port] ~= nil
+			local var_5_0 = arg_3_4[arg_5_0.server_info.ip_port] ~= nil
 
-			if blacklisted then
-				printf("Removing black listed server %s", server.server_info.ip_port)
+			if var_5_0 then
+				printf("Removing black listed server %s", arg_5_0.server_info.ip_port)
 
-				server.matching_fail = "blacklisted"
+				arg_5_0.matching_fail = "blacklisted"
 			end
 
-			return blacklisted
+			return var_5_0
 		end
 	end)
-	table.array_remove_if(servers, function (server)
-		local has_password = server.server_info.password
+	table.array_remove_if(arg_3_0, function(arg_6_0)
+		local var_6_0 = arg_6_0.server_info.password
 
-		if has_password then
-			printf("Removing password protected server %s", server.ip_port)
+		if var_6_0 then
+			printf("Removing password protected server %s", arg_6_0.ip_port)
 
-			server.matching_fail = "password protected"
+			arg_6_0.matching_fail = "password protected"
 		end
 
-		return has_password
+		return var_6_0
 	end)
-	table.array_remove_if(servers, function (server)
-		return not server.game_state
+	table.array_remove_if(arg_3_0, function(arg_7_0)
+		return not arg_7_0.game_state
 	end)
-	table.array_remove_if(servers, function (server)
-		return server.game_state == "dedicated_server_abort_game"
+	table.array_remove_if(arg_3_0, function(arg_8_0)
+		return arg_8_0.game_state == "dedicated_server_abort_game"
 	end)
 
-	if soft_filters.hotjoin_disabled_game_states then
-		table.array_remove_if(servers, function (server)
-			local allowed_states = Managers.state.game_mode:setting("allowed_hotjoin_states")
-
-			if allowed_states[server.game_state] then
+	if arg_3_2.hotjoin_disabled_game_states then
+		table.array_remove_if(arg_3_0, function(arg_9_0)
+			if Managers.state.game_mode:setting("allowed_hotjoin_states")[arg_9_0.game_state] then
 				return false
 			end
 
@@ -107,57 +103,52 @@ ServerSearchUtils.filter_game_server_search = function (servers, network_options
 		end)
 	end
 
-	if soft_filters.filter_fully_reserved_servers then
-		table.array_remove_if(servers, function (server)
-			local server_info = server.server_info
+	if arg_3_2.filter_fully_reserved_servers then
+		table.array_remove_if(arg_3_0, function(arg_10_0)
+			local var_10_0 = arg_10_0.server_info
 
-			if not server_info then
+			if not var_10_0 then
 				return false
 			end
 
-			local match_started = server.match_started
-
-			if match_started ~= "true" then
+			if arg_10_0.match_started ~= "true" then
 				return false
 			end
 
-			local num_players = server_info.num_players or 0
-			local max_players = server_info.max_players or 1
-
-			return max_players <= num_players
+			return (var_10_0.num_players or 0) >= (var_10_0.max_players or 1)
 		end)
 	end
 
-	local official_dedicated_server_lookup = tostring(NetworkLookup.host_types.official_dedicated_server)
+	local var_3_0 = tostring(NetworkLookup.host_types.official_dedicated_server)
 
-	table.array_remove_if(servers, function (server)
-		return server.host_type == official_dedicated_server_lookup
+	table.array_remove_if(arg_3_0, function(arg_11_0)
+		return arg_11_0.host_type == var_3_0
 	end)
-	table.array_remove_if(servers, function (server)
-		local ping = server.server_info.ping or math.huge
+	table.array_remove_if(arg_3_0, function(arg_12_0)
+		local var_12_0 = arg_12_0.server_info.ping or math.huge
 
-		if search_time >= 300 then
+		if arg_3_5 >= 300 then
 			return false
 		end
 
-		if search_time >= 240 then
-			return ping >= 250
+		if arg_3_5 >= 240 then
+			return var_12_0 >= 250
 		end
 
-		if search_time >= 180 then
-			return ping >= 200
+		if arg_3_5 >= 180 then
+			return var_12_0 >= 200
 		end
 
-		if search_time >= 120 then
-			return ping >= 160
+		if arg_3_5 >= 120 then
+			return var_12_0 >= 160
 		end
 
-		if search_time >= 60 then
-			return ping >= 120
+		if arg_3_5 >= 60 then
+			return var_12_0 >= 120
 		end
 
-		return ping >= 100
+		return var_12_0 >= 100
 	end)
 
-	return servers
+	return arg_3_0
 end

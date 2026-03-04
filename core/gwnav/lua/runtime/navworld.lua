@@ -1,431 +1,428 @@
-﻿-- chunkname: @core/gwnav/lua/runtime/navworld.lua
+-- chunkname: @core/gwnav/lua/runtime/navworld.lua
 
 require("core/gwnav/lua/safe_require")
 
-local NavWorld = safe_require_guard()
-local NavClass = safe_require("core/gwnav/lua/runtime/navclass")
+local var_0_0 = safe_require_guard()
+local var_0_1 = safe_require("core/gwnav/lua/runtime/navclass")(var_0_0)
+local var_0_2 = safe_require("core/gwnav/lua/runtime/navhelpers")
+local var_0_3 = safe_require("core/gwnav/lua/runtime/navbot")
+local var_0_4 = safe_require("core/gwnav/lua/runtime/navboxobstacle")
+local var_0_5 = safe_require("core/gwnav/lua/runtime/navcylinderobstacle")
+local var_0_6 = safe_require("core/gwnav/lua/runtime/navgraph")
+local var_0_7 = safe_require("core/gwnav/lua/runtime/navtagvolume")
+local var_0_8 = safe_require("core/gwnav/lua/runtime/navbotconfiguration")
+local var_0_9 = stingray.Math
+local var_0_10 = stingray.Vector2
+local var_0_11 = stingray.Vector3
+local var_0_12 = stingray.Vector3Box
+local var_0_13 = stingray.Matrix4x4
+local var_0_14 = stingray.Matrix4x4Box
+local var_0_15 = stingray.Quaternion
+local var_0_16 = stingray.QuaternionBox
+local var_0_17 = stingray.Gui
+local var_0_18 = stingray.World
+local var_0_19 = stingray.Unit
+local var_0_20 = stingray.Camera
+local var_0_21 = stingray.Color
+local var_0_22 = stingray.LineObject
+local var_0_23 = stingray.Level
+local var_0_24 = stingray.Script
+local var_0_25 = stingray.GwNavWorld
+local var_0_26 = stingray.GwNavBot
+local var_0_27 = stingray.GwNavQueries
+local var_0_28 = stingray.GwNavAStar
+local var_0_29 = stingray.GwNavTagVolume
+local var_0_30 = stingray.GwNavBoxObstacle
+local var_0_31 = stingray.GwNavCylinderObstacle
+local var_0_32 = stingray.GwNavGraph
+local var_0_33 = stingray.GwNavTraversal
+local var_0_34 = {}
 
-NavWorld = NavClass(NavWorld)
-
-local NavHelpers = safe_require("core/gwnav/lua/runtime/navhelpers")
-local NavBot = safe_require("core/gwnav/lua/runtime/navbot")
-local NavBoxObstacle = safe_require("core/gwnav/lua/runtime/navboxobstacle")
-local NavCylinderObstacle = safe_require("core/gwnav/lua/runtime/navcylinderobstacle")
-local NavGraph = safe_require("core/gwnav/lua/runtime/navgraph")
-local NavTagVolume = safe_require("core/gwnav/lua/runtime/navtagvolume")
-local NavBotConfiguration = safe_require("core/gwnav/lua/runtime/navbotconfiguration")
-local Math = stingray.Math
-local Vector2 = stingray.Vector2
-local Vector3 = stingray.Vector3
-local Vector3Box = stingray.Vector3Box
-local Matrix4x4 = stingray.Matrix4x4
-local Matrix4x4Box = stingray.Matrix4x4Box
-local Quaternion = stingray.Quaternion
-local QuaternionBox = stingray.QuaternionBox
-local Gui = stingray.Gui
-local World = stingray.World
-local Unit = stingray.Unit
-local Camera = stingray.Camera
-local Color = stingray.Color
-local LineObject = stingray.LineObject
-local Level = stingray.Level
-local Script = stingray.Script
-local GwNavWorld = stingray.GwNavWorld
-local GwNavBot = stingray.GwNavBot
-local GwNavQueries = stingray.GwNavQueries
-local GwNavAStar = stingray.GwNavAStar
-local GwNavTagVolume = stingray.GwNavTagVolume
-local GwNavBoxObstacle = stingray.GwNavBoxObstacle
-local GwNavCylinderObstacle = stingray.GwNavCylinderObstacle
-local GwNavGraph = stingray.GwNavGraph
-local GwNavTraversal = stingray.GwNavTraversal
-local _navworlds = {}
-
-NavWorld.get_navworld = function (level)
-	return _navworlds[level]
+function var_0_1.get_navworld(arg_1_0)
+	return var_0_34[arg_1_0]
 end
 
-NavWorld.init = function (self, world, level)
-	self.world = world
-	self.level = level
-	self.transform = Matrix4x4Box(Level.pose(level))
-	self.bot_configurations = {}
-	self.bots = {}
-	self.navgraphs = {}
-	self.navtagvolumes = {}
-	self.navboxobstacles = {}
-	self.navcylinderobstacles = {}
-	self.smartobject_types = {}
-	self.markers = {}
-	self.gwnavworld = GwNavWorld.create(self.transform:unbox())
-	self.render_mesh = false
+function var_0_1.init(arg_2_0, arg_2_1, arg_2_2)
+	arg_2_0.world = arg_2_1
+	arg_2_0.level = arg_2_2
+	arg_2_0.transform = var_0_14(var_0_23.pose(arg_2_2))
+	arg_2_0.bot_configurations = {}
+	arg_2_0.bots = {}
+	arg_2_0.navgraphs = {}
+	arg_2_0.navtagvolumes = {}
+	arg_2_0.navboxobstacles = {}
+	arg_2_0.navcylinderobstacles = {}
+	arg_2_0.smartobject_types = {}
+	arg_2_0.markers = {}
+	arg_2_0.gwnavworld = var_0_25.create(arg_2_0.transform:unbox())
+	arg_2_0.render_mesh = false
 
-	local visualdebug_server_port = 4888
-	local bot_units = {}
+	local var_2_0 = 4888
+	local var_2_1 = {}
 
-	for ku, unit in pairs(Level.units(level)) do
-		if Unit.alive(unit) and Unit.has_data(unit, "GwNavWorld") then
-			self:init_fromnavworldunit(unit)
-			GwNavWorld.init_visual_debug_server(self.gwnavworld, visualdebug_server_port)
-		elseif Unit.alive(unit) and Unit.has_data(unit, "GwNavBotConfiguration") then
-			self:init_bot_configuration(unit)
-		elseif Unit.alive(unit) and Unit.has_data(unit, "GwNavGraphConnector") then
-			self:init_graph_connector(unit)
-		elseif Unit.alive(unit) and Unit.has_data(unit, "GwNavTagBox") then
-			self:init_tagbox(unit)
-		elseif Unit.alive(unit) and Unit.has_data(unit, "GwNavBoxObstacle") then
-			self:add_boxobstacle(unit)
-		elseif Unit.alive(unit) and Unit.has_data(unit, "GwNavCylinderObstacle") then
-			self:add_cylinderobstacle(unit)
-		elseif Unit.alive(unit) and Unit.has_data(unit, "GwNavMarker") then
-			self:init_navmarker(unit)
-		elseif Unit.alive(unit) and Unit.has_data(unit, "GwNavBot") then
-			bot_units[#bot_units + 1] = unit
+	for iter_2_0, iter_2_1 in pairs(var_0_23.units(arg_2_2)) do
+		if var_0_19.alive(iter_2_1) and var_0_19.has_data(iter_2_1, "GwNavWorld") then
+			arg_2_0:init_fromnavworldunit(iter_2_1)
+			var_0_25.init_visual_debug_server(arg_2_0.gwnavworld, var_2_0)
+		elseif var_0_19.alive(iter_2_1) and var_0_19.has_data(iter_2_1, "GwNavBotConfiguration") then
+			arg_2_0:init_bot_configuration(iter_2_1)
+		elseif var_0_19.alive(iter_2_1) and var_0_19.has_data(iter_2_1, "GwNavGraphConnector") then
+			arg_2_0:init_graph_connector(iter_2_1)
+		elseif var_0_19.alive(iter_2_1) and var_0_19.has_data(iter_2_1, "GwNavTagBox") then
+			arg_2_0:init_tagbox(iter_2_1)
+		elseif var_0_19.alive(iter_2_1) and var_0_19.has_data(iter_2_1, "GwNavBoxObstacle") then
+			arg_2_0:add_boxobstacle(iter_2_1)
+		elseif var_0_19.alive(iter_2_1) and var_0_19.has_data(iter_2_1, "GwNavCylinderObstacle") then
+			arg_2_0:add_cylinderobstacle(iter_2_1)
+		elseif var_0_19.alive(iter_2_1) and var_0_19.has_data(iter_2_1, "GwNavMarker") then
+			arg_2_0:init_navmarker(iter_2_1)
+		elseif var_0_19.alive(iter_2_1) and var_0_19.has_data(iter_2_1, "GwNavBot") then
+			var_2_1[#var_2_1 + 1] = iter_2_1
 		end
 	end
 
-	for ku, unit in pairs(bot_units) do
-		self:init_bot(unit)
+	for iter_2_2, iter_2_3 in pairs(var_2_1) do
+		arg_2_0:init_bot(iter_2_3)
 	end
 
-	_navworlds[level] = self
+	var_0_34[arg_2_2] = arg_2_0
 end
 
-NavWorld.add_navdata = function (self, resource_name)
-	self.navdata = GwNavWorld.add_navdata(self.gwnavworld, resource_name)
+function var_0_1.add_navdata(arg_3_0, arg_3_1)
+	arg_3_0.navdata = var_0_25.add_navdata(arg_3_0.gwnavworld, arg_3_1)
 end
 
-NavWorld.init_bot = function (self, unit)
-	local configuration_name = Unit.get_data(unit, "GwNavBot", "configuration_name")
-	local bot_configuration = self.bot_configurations[configuration_name]
+function var_0_1.init_bot(arg_4_0, arg_4_1)
+	local var_4_0 = var_0_19.get_data(arg_4_1, "GwNavBot", "configuration_name")
+	local var_4_1 = arg_4_0.bot_configurations[var_4_0]
 
-	if bot_configuration then
-		return NavBot(self, unit, bot_configuration)
-	end
-
-	return nil
-end
-
-NavWorld.init_bot_from_unit = function (self, unit, configuration_unit)
-	local configuration_name = Unit.get_data(configuration_unit, "GwNavBotConfiguration", "configuration_name")
-	local bot_configuration = self.bot_configurations[configuration_name]
-
-	if bot_configuration then
-		return NavBot(self, unit, bot_configuration)
+	if var_4_1 then
+		return var_0_3(arg_4_0, arg_4_1, var_4_1)
 	end
 
 	return nil
 end
 
-NavWorld.get_navbot = function (self, unit)
-	return self.bots[unit]
-end
+function var_0_1.init_bot_from_unit(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = var_0_19.get_data(arg_5_2, "GwNavBotConfiguration", "configuration_name")
+	local var_5_1 = arg_5_0.bot_configurations[var_5_0]
 
-NavWorld.init_navmarker = function (self, unit)
-	self.markers[#self.markers + 1] = unit
-end
-
-NavWorld.set_smartobject_cost_multiplier = function (self, smartobject_id, cost_multiplier, smartobject_type)
-	self.smartobject_types[smartobject_id] = smartobject_type
-
-	GwNavWorld.set_smartobject_cost_multiplier(self.gwnavworld, smartobject_id, cost_multiplier)
-end
-
-NavWorld.unset_smartobject = function (self, smartobject_id)
-	GwNavWorld.unset_smartobject(self.gwnavworld, smartobject_id)
-end
-
-NavWorld.allow_smartobject = function (self, smartobject_id)
-	GwNavWorld.allow_smartobject(self.gwnavworld, smartobject_id)
-end
-
-NavWorld.forbid_smartobject = function (self, smartobject_id)
-	GwNavWorld.forbid_smartobject(self.gwnavworld, smartobject_id)
-end
-
-NavWorld.get_smartobject_type = function (self, smartobject_id)
-	return self.smartobject_types[smartobject_id]
-end
-
-NavWorld.set_dynamicnavmesh_budget = function (self, budget)
-	GwNavWorld.set_dynamicnavmesh_budget(self.gwnavworld, budget)
-end
-
-NavWorld.set_pathfinder_budget_in_ms = function (self, budget)
-	GwNavWorld.set_pathfinder_budget(self.gwnavworld, budget)
-end
-
-NavWorld.init_fromnavworldunit = function (self, unit)
-	if Unit.has_data(unit, "GwNavWorld", "dynamicnavmesh_budget") then
-		self:set_dynamicnavmesh_budget(Unit.get_data(unit, "GwNavWorld", "dynamicnavmesh_budget"))
+	if var_5_1 then
+		return var_0_3(arg_5_0, arg_5_1, var_5_1)
 	end
 
-	if Unit.has_data(unit, "GwNavWorld", "pathfinder_budget") then
-		self:set_pathfinder_budget_in(Unit.get_data(unit, "GwNavWorld", "pathfinder_budget"))
+	return nil
+end
+
+function var_0_1.get_navbot(arg_6_0, arg_6_1)
+	return arg_6_0.bots[arg_6_1]
+end
+
+function var_0_1.init_navmarker(arg_7_0, arg_7_1)
+	arg_7_0.markers[#arg_7_0.markers + 1] = arg_7_1
+end
+
+function var_0_1.set_smartobject_cost_multiplier(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	arg_8_0.smartobject_types[arg_8_1] = arg_8_3
+
+	var_0_25.set_smartobject_cost_multiplier(arg_8_0.gwnavworld, arg_8_1, arg_8_2)
+end
+
+function var_0_1.unset_smartobject(arg_9_0, arg_9_1)
+	var_0_25.unset_smartobject(arg_9_0.gwnavworld, arg_9_1)
+end
+
+function var_0_1.allow_smartobject(arg_10_0, arg_10_1)
+	var_0_25.allow_smartobject(arg_10_0.gwnavworld, arg_10_1)
+end
+
+function var_0_1.forbid_smartobject(arg_11_0, arg_11_1)
+	var_0_25.forbid_smartobject(arg_11_0.gwnavworld, arg_11_1)
+end
+
+function var_0_1.get_smartobject_type(arg_12_0, arg_12_1)
+	return arg_12_0.smartobject_types[arg_12_1]
+end
+
+function var_0_1.set_dynamicnavmesh_budget(arg_13_0, arg_13_1)
+	var_0_25.set_dynamicnavmesh_budget(arg_13_0.gwnavworld, arg_13_1)
+end
+
+function var_0_1.set_pathfinder_budget_in_ms(arg_14_0, arg_14_1)
+	var_0_25.set_pathfinder_budget(arg_14_0.gwnavworld, arg_14_1)
+end
+
+function var_0_1.init_fromnavworldunit(arg_15_0, arg_15_1)
+	if var_0_19.has_data(arg_15_1, "GwNavWorld", "dynamicnavmesh_budget") then
+		arg_15_0:set_dynamicnavmesh_budget(var_0_19.get_data(arg_15_1, "GwNavWorld", "dynamicnavmesh_budget"))
 	end
 
-	if Unit.has_data(unit, "GwNavWorld", "render_navdata") then
-		self.render_mesh = Unit.get_data(unit, "GwNavWorld", "render_navdata")
+	if var_0_19.has_data(arg_15_1, "GwNavWorld", "pathfinder_budget") then
+		arg_15_0:set_pathfinder_budget_in(var_0_19.get_data(arg_15_1, "GwNavWorld", "pathfinder_budget"))
 	end
 
-	if Unit.has_data(unit, "GwNavWorld", "enable_crowd_dispersion_navtag") then
-		self:set_pathvariety_mode(Unit.get_data(unit, "GwNavWorld", "enable_crowd_dispersion_navtag"))
+	if var_0_19.has_data(arg_15_1, "GwNavWorld", "render_navdata") then
+		arg_15_0.render_mesh = var_0_19.get_data(arg_15_1, "GwNavWorld", "render_navdata")
+	end
+
+	if var_0_19.has_data(arg_15_1, "GwNavWorld", "enable_crowd_dispersion_navtag") then
+		arg_15_0:set_pathvariety_mode(var_0_19.get_data(arg_15_1, "GwNavWorld", "enable_crowd_dispersion_navtag"))
 	end
 end
 
-NavWorld.init_bot_configuration = function (self, unit)
-	local configuration_name = Unit.get_data(unit, "GwNavBotConfiguration", "configuration_name")
+function var_0_1.init_bot_configuration(arg_16_0, arg_16_1)
+	local var_16_0 = var_0_19.get_data(arg_16_1, "GwNavBotConfiguration", "configuration_name")
 
-	self.bot_configurations[configuration_name] = NavBotConfiguration(unit)
+	arg_16_0.bot_configurations[var_16_0] = var_0_8(arg_16_1)
 end
 
-NavWorld.init_graph_connector = function (self, unit)
-	local sampling_step = math.max(1, NavHelpers.unit_script_data(unit, 1, "GwNavGraphConnector", "sampling_step"))
-	local unitPos = Matrix4x4.transform(self.transform:unbox(), Unit.world_position(unit, 1))
-	local unitRot = Unit.world_rotation(unit, 1)
-	local unitScale = Unit.local_scale(unit, 1)
-	local forward = Quaternion.forward(unitRot)
-	local right = Quaternion.right(unitRot)
-	local up = Quaternion.up(unitRot)
-	local down_up = NavHelpers.unit_script_data(unit, true, "GwNavGraphConnector", "down_up")
-	local up_down = NavHelpers.unit_script_data(unit, true, "GwNavGraphConnector", "up_down")
-	local bidirectional_edges = down_up and up_down
-	local half_subdivision_count = math.floor(0.5 * unitScale[1] / sampling_step)
-	local current_vertex_left_offset = half_subdivision_count * sampling_step
-	local sub_graph_count = half_subdivision_count * 2 + 1
-	local is_exclusive, color, layer_id, smartobject_id, user_data_id = NavHelpers.get_layer_and_smartobject(unit, "GwNavGraphConnector")
+function var_0_1.init_graph_connector(arg_17_0, arg_17_1)
+	local var_17_0 = math.max(1, var_0_2.unit_script_data(arg_17_1, 1, "GwNavGraphConnector", "sampling_step"))
+	local var_17_1 = var_0_13.transform(arg_17_0.transform:unbox(), var_0_19.world_position(arg_17_1, 1))
+	local var_17_2 = var_0_19.world_rotation(arg_17_1, 1)
+	local var_17_3 = var_0_19.local_scale(arg_17_1, 1)
+	local var_17_4 = var_0_15.forward(var_17_2)
+	local var_17_5 = var_0_15.right(var_17_2)
+	local var_17_6 = var_0_15.up(var_17_2)
+	local var_17_7 = var_0_2.unit_script_data(arg_17_1, true, "GwNavGraphConnector", "down_up")
+	local var_17_8 = var_0_2.unit_script_data(arg_17_1, true, "GwNavGraphConnector", "up_down")
+	local var_17_9 = var_17_7 and var_17_8
+	local var_17_10 = math.floor(0.5 * var_17_3[1] / var_17_0)
+	local var_17_11 = var_17_10 * var_17_0
+	local var_17_12 = var_17_10 * 2 + 1
+	local var_17_13, var_17_14, var_17_15, var_17_16, var_17_17 = var_0_2.get_layer_and_smartobject(arg_17_1, "GwNavGraphConnector")
 
-	if is_exclusive then
+	if var_17_13 then
 		error("NavGraph should not have exclusive navtag it will be ignored")
-	elseif smartobject_id == -1 then
+	elseif var_17_16 == -1 then
 		print_warning("NavGraph should be associated to a smartobject id, it will be defaulted to 0")
 
-		smartobject_id = 0
+		var_17_16 = 0
 	end
 
-	if smartobject_id >= 0 then
-		self:set_smartobject_cost_multiplier(smartobject_id, 1, "Jump")
+	if var_17_16 >= 0 then
+		arg_17_0:set_smartobject_cost_multiplier(var_17_16, 1, "Jump")
 	end
 
-	local temp_a = unitPos
-	local temp_b = unitPos - forward * unitScale[2] + up * unitScale[3]
+	local var_17_18 = var_17_1
+	local var_17_19 = var_17_1 - var_17_4 * var_17_3[2] + var_17_6 * var_17_3[3]
 
-	for i = 1, sub_graph_count do
-		local control_points = {}
-		local start_idx = 1
-		local down_idx = 2
+	for iter_17_0 = 1, var_17_12 do
+		local var_17_20 = {}
+		local var_17_21 = 1
+		local var_17_22 = 2
 
-		if bidirectional_edges == false and up_down == true then
-			start_idx = 2
-			down_idx = 1
+		if var_17_9 == false and var_17_8 == true then
+			var_17_21 = 2
+			var_17_22 = 1
 		end
 
-		control_points[start_idx] = temp_a - right * current_vertex_left_offset
-		control_points[down_idx] = temp_b - right * current_vertex_left_offset
+		var_17_20[var_17_21] = var_17_18 - var_17_5 * var_17_11
+		var_17_20[var_17_22] = var_17_19 - var_17_5 * var_17_11
 
-		local navgraph = NavGraph(self.gwnavworld, bidirectional_edges, control_points, color, layer_id, smartobject_id, user_data_id)
+		local var_17_23 = var_0_6(arg_17_0.gwnavworld, var_17_9, var_17_20, var_17_14, var_17_15, var_17_16, var_17_17)
 
-		self.navgraphs[#self.navgraphs + 1] = navgraph
+		arg_17_0.navgraphs[#arg_17_0.navgraphs + 1] = var_17_23
 
-		self.navgraphs[#self.navgraphs]:add_to_database()
+		arg_17_0.navgraphs[#arg_17_0.navgraphs]:add_to_database()
 
-		current_vertex_left_offset = current_vertex_left_offset - sampling_step
+		var_17_11 = var_17_11 - var_17_0
 	end
 end
 
-NavWorld.init_tagbox = function (self, unit)
-	local extent_x = NavHelpers.unit_script_data(unit, 1, "GwNavTagBox", "half_extent", "x")
-	local extent_y = NavHelpers.unit_script_data(unit, 1, "GwNavTagBox", "half_extent", "y")
-	local extent_z = NavHelpers.unit_script_data(unit, 1, "GwNavTagBox", "half_extent", "z")
-	local local_center = Vector3(NavHelpers.unit_script_data(unit, 0, "GwNavTagBox", "offset", "x"), NavHelpers.unit_script_data(unit, 0, "GwNavTagBox", "offset", "y"), NavHelpers.unit_script_data(unit, 0, "GwNavTagBox", "offset", "z"))
-	local is_exclusive, color, layer_id, smartobject_id = NavHelpers.get_layer_and_smartobject(unit, "GwNavTagBox")
-	local unitPos = Unit.world_position(unit, 1) + local_center
-	local unitRot = Unit.world_rotation(unit, 1)
-	local forward = Quaternion.forward(unitRot)
-	local right = Quaternion.right(unitRot)
-	local up = Quaternion.up(unitRot)
-	local point_table = {
-		unitPos + forward * extent_x - right * extent_y,
-		unitPos + forward * extent_x + right * extent_y,
-		unitPos - forward * extent_x + right * extent_y,
-		unitPos - forward * extent_x - right * extent_y,
+function var_0_1.init_tagbox(arg_18_0, arg_18_1)
+	local var_18_0 = var_0_2.unit_script_data(arg_18_1, 1, "GwNavTagBox", "half_extent", "x")
+	local var_18_1 = var_0_2.unit_script_data(arg_18_1, 1, "GwNavTagBox", "half_extent", "y")
+	local var_18_2 = var_0_2.unit_script_data(arg_18_1, 1, "GwNavTagBox", "half_extent", "z")
+	local var_18_3 = var_0_11(var_0_2.unit_script_data(arg_18_1, 0, "GwNavTagBox", "offset", "x"), var_0_2.unit_script_data(arg_18_1, 0, "GwNavTagBox", "offset", "y"), var_0_2.unit_script_data(arg_18_1, 0, "GwNavTagBox", "offset", "z"))
+	local var_18_4, var_18_5, var_18_6, var_18_7 = var_0_2.get_layer_and_smartobject(arg_18_1, "GwNavTagBox")
+	local var_18_8 = var_0_19.world_position(arg_18_1, 1) + var_18_3
+	local var_18_9 = var_0_19.world_rotation(arg_18_1, 1)
+	local var_18_10 = var_0_15.forward(var_18_9)
+	local var_18_11 = var_0_15.right(var_18_9)
+	local var_18_12 = var_0_15.up(var_18_9)
+	local var_18_13 = {
+		var_18_8 + var_18_10 * var_18_0 - var_18_11 * var_18_1,
+		var_18_8 + var_18_10 * var_18_0 + var_18_11 * var_18_1,
+		var_18_8 - var_18_10 * var_18_0 + var_18_11 * var_18_1,
+		var_18_8 - var_18_10 * var_18_0 - var_18_11 * var_18_1
 	}
-	local alt_min = unitPos[3] - extent_z
-	local alt_max = unitPos[3] + extent_z
+	local var_18_14 = var_18_8[3] - var_18_2
+	local var_18_15 = var_18_8[3] + var_18_2
 
-	self.navtagvolumes[#self.navtagvolumes + 1] = NavTagVolume(self.gwnavworld, point_table, alt_min, alt_max, is_exclusive, color, layer_id, smartobject_id)
+	arg_18_0.navtagvolumes[#arg_18_0.navtagvolumes + 1] = var_0_7(arg_18_0.gwnavworld, var_18_13, var_18_14, var_18_15, var_18_4, var_18_5, var_18_6, var_18_7)
 
-	self.navtagvolumes[#self.navtagvolumes]:add_to_world()
+	arg_18_0.navtagvolumes[#arg_18_0.navtagvolumes]:add_to_world()
 end
 
-NavWorld.add_boxobstacle = function (self, unit)
-	self.navboxobstacles[unit] = NavBoxObstacle(self, unit)
+function var_0_1.add_boxobstacle(arg_19_0, arg_19_1)
+	arg_19_0.navboxobstacles[arg_19_1] = var_0_4(arg_19_0, arg_19_1)
 
-	self.navboxobstacles[unit]:add_to_world()
+	arg_19_0.navboxobstacles[arg_19_1]:add_to_world()
 end
 
-NavWorld.remove_boxobstacle = function (self, unit)
-	if self.navboxobstacles[unit] then
-		self.navboxobstacles[unit]:remove_from_world()
+function var_0_1.remove_boxobstacle(arg_20_0, arg_20_1)
+	if arg_20_0.navboxobstacles[arg_20_1] then
+		arg_20_0.navboxobstacles[arg_20_1]:remove_from_world()
 
-		self.navboxobstacles[unit] = nil
+		arg_20_0.navboxobstacles[arg_20_1] = nil
 	end
 end
 
-NavWorld.add_cylinderobstacle = function (self, unit)
-	self.navcylinderobstacles[unit] = NavCylinderObstacle(self, unit)
+function var_0_1.add_cylinderobstacle(arg_21_0, arg_21_1)
+	arg_21_0.navcylinderobstacles[arg_21_1] = var_0_5(arg_21_0, arg_21_1)
 
-	self.navcylinderobstacles[unit]:add_to_world()
+	arg_21_0.navcylinderobstacles[arg_21_1]:add_to_world()
 end
 
-NavWorld.remove_cylinderobstacle = function (self, unit)
-	if self.navcylinderobstacles[unit] then
-		self.navcylinderobstacles[unit]:remove_from_world()
+function var_0_1.remove_cylinderobstacle(arg_22_0, arg_22_1)
+	if arg_22_0.navcylinderobstacles[arg_22_1] then
+		arg_22_0.navcylinderobstacles[arg_22_1]:remove_from_world()
 
-		self.navcylinderobstacles[unit] = nil
+		arg_22_0.navcylinderobstacles[arg_22_1] = nil
 	end
 end
 
-NavWorld.add_bot = function (self, bot)
-	self.bots[bot.unit] = bot
+function var_0_1.add_bot(arg_23_0, arg_23_1)
+	arg_23_0.bots[arg_23_1.unit] = arg_23_1
 end
 
-NavWorld.remove_bot = function (self, bot)
-	self.bots[bot.unit] = nil
+function var_0_1.remove_bot(arg_24_0, arg_24_1)
+	arg_24_0.bots[arg_24_1.unit] = nil
 end
 
-NavWorld.force_all_bots_to_repath = function (self)
-	for kb, bot in pairs(self.bots) do
-		bot:force_repath()
+function var_0_1.force_all_bots_to_repath(arg_25_0)
+	for iter_25_0, iter_25_1 in pairs(arg_25_0.bots) do
+		iter_25_1:force_repath()
 	end
 end
 
-NavWorld.update = function (self, dt)
-	if dt <= 0 then
-		dt = 0.001
+function var_0_1.update(arg_26_0, arg_26_1)
+	if arg_26_1 <= 0 then
+		arg_26_1 = 0.001
 	end
 
-	for kb, bot in pairs(self.bots) do
-		bot:update(dt)
+	for iter_26_0, iter_26_1 in pairs(arg_26_0.bots) do
+		iter_26_1:update(arg_26_1)
 	end
 
-	for kb, box in pairs(self.navboxobstacles) do
-		box:update(dt)
+	for iter_26_2, iter_26_3 in pairs(arg_26_0.navboxobstacles) do
+		iter_26_3:update(arg_26_1)
 	end
 
-	for kc, cylinder in pairs(self.navcylinderobstacles) do
-		cylinder:update(dt)
+	for iter_26_4, iter_26_5 in pairs(arg_26_0.navcylinderobstacles) do
+		iter_26_5:update(arg_26_1)
 	end
 
-	GwNavWorld.update(self.gwnavworld, dt)
+	var_0_25.update(arg_26_0.gwnavworld, arg_26_1)
 end
 
-NavWorld.shutdown = function (self)
-	self.markers = {}
+function var_0_1.shutdown(arg_27_0)
+	arg_27_0.markers = {}
 
-	self:clear_bot_configuration()
-	self:clear_bots()
-	self:clear_navgraphs()
-	self:clear_tagboxes()
-	self:clear_boxobstacles()
-	self:clear_cylinderobstacles()
-	GwNavWorld.remove_navdata(self.gwnavworld, self.navdata)
+	arg_27_0:clear_bot_configuration()
+	arg_27_0:clear_bots()
+	arg_27_0:clear_navgraphs()
+	arg_27_0:clear_tagboxes()
+	arg_27_0:clear_boxobstacles()
+	arg_27_0:clear_cylinderobstacles()
+	var_0_25.remove_navdata(arg_27_0.gwnavworld, arg_27_0.navdata)
 
-	self.navdata = nil
+	arg_27_0.navdata = nil
 
-	GwNavWorld.destroy(self.gwnavworld)
+	var_0_25.destroy(arg_27_0.gwnavworld)
 
-	self.gwnavworld = nil
-	_navworlds[self.level] = nil
+	arg_27_0.gwnavworld = nil
+	var_0_34[arg_27_0.level] = nil
 end
 
-NavWorld.clear_bot_configuration = function (self)
-	for kc, configuration in pairs(self.bot_configurations) do
-		configuration:shutdown()
+function var_0_1.clear_bot_configuration(arg_28_0)
+	for iter_28_0, iter_28_1 in pairs(arg_28_0.bot_configurations) do
+		iter_28_1:shutdown()
 	end
 
-	self.bot_configurations = {}
+	arg_28_0.bot_configurations = {}
 end
 
-NavWorld.clear_navgraphs = function (self)
-	for kg, graph in pairs(self.navgraphs) do
-		graph:shutdown()
+function var_0_1.clear_navgraphs(arg_29_0)
+	for iter_29_0, iter_29_1 in pairs(arg_29_0.navgraphs) do
+		iter_29_1:shutdown()
 	end
 
-	self.navgraphs = {}
+	arg_29_0.navgraphs = {}
 end
 
-NavWorld.clear_tagboxes = function (self)
-	for kn, volume in pairs(self.navtagvolumes) do
-		volume:remove_from_world()
-		volume:shutdown()
+function var_0_1.clear_tagboxes(arg_30_0)
+	for iter_30_0, iter_30_1 in pairs(arg_30_0.navtagvolumes) do
+		iter_30_1:remove_from_world()
+		iter_30_1:shutdown()
 	end
 
-	self.navtagvolumes = {}
+	arg_30_0.navtagvolumes = {}
 end
 
-NavWorld.clear_boxobstacles = function (self)
-	for kb, box in pairs(self.navboxobstacles) do
-		box:remove_from_world()
-		box:shutdown()
+function var_0_1.clear_boxobstacles(arg_31_0)
+	for iter_31_0, iter_31_1 in pairs(arg_31_0.navboxobstacles) do
+		iter_31_1:remove_from_world()
+		iter_31_1:shutdown()
 	end
 
-	self.navboxobstacles = {}
+	arg_31_0.navboxobstacles = {}
 end
 
-NavWorld.clear_cylinderobstacles = function (self)
-	for kc, cylinder in pairs(self.navcylinderobstacles) do
-		cylinder:remove_from_world()
-		cylinder:shutdown()
+function var_0_1.clear_cylinderobstacles(arg_32_0)
+	for iter_32_0, iter_32_1 in pairs(arg_32_0.navcylinderobstacles) do
+		iter_32_1:remove_from_world()
+		iter_32_1:shutdown()
 	end
 
-	self.navcylinderobstacles = {}
+	arg_32_0.navcylinderobstacles = {}
 end
 
-NavWorld.clear_bots = function (self)
-	for kb, bot in pairs(self.bots) do
-		bot:shutdown()
+function var_0_1.clear_bots(arg_33_0)
+	for iter_33_0, iter_33_1 in pairs(arg_33_0.bots) do
+		iter_33_1:shutdown()
 	end
 
-	self.bots = {}
+	arg_33_0.bots = {}
 end
 
-NavWorld.debug_draw = function (self, gui, line_object)
-	if self.render_mesh == false then
+function var_0_1.debug_draw(arg_34_0, arg_34_1, arg_34_2)
+	if arg_34_0.render_mesh == false then
 		return
 	end
 
-	GwNavWorld.build_database_visual_representation(self.gwnavworld)
+	var_0_25.build_database_visual_representation(arg_34_0.gwnavworld)
 
-	local tile_count = GwNavWorld.database_tile_count(self.gwnavworld)
-	local black = Color(255, 0, 0, 0)
+	local var_34_0 = var_0_25.database_tile_count(arg_34_0.gwnavworld)
+	local var_34_1 = var_0_21(255, 0, 0, 0)
 
-	for tile = 1, tile_count do
-		local triangle_count = GwNavWorld.database_tile_triangle_count(self.gwnavworld, tile)
+	for iter_34_0 = 1, var_34_0 do
+		local var_34_2 = var_0_25.database_tile_triangle_count(arg_34_0.gwnavworld, iter_34_0)
 
-		for i = 1, triangle_count do
-			local temp_size = Script.temp_byte_count()
-			local a, b, c, tri_color = GwNavWorld.database_triangle(self.gwnavworld, tile, i)
+		for iter_34_1 = 1, var_34_2 do
+			local var_34_3 = var_0_24.temp_byte_count()
+			local var_34_4, var_34_5, var_34_6, var_34_7 = var_0_25.database_triangle(arg_34_0.gwnavworld, iter_34_0, iter_34_1)
 
-			if a ~= nil then
-				Gui.triangle(gui, a, b, c, 1, tri_color)
-				LineObject.add_line(line_object, black, a, b)
-				LineObject.add_line(line_object, black, b, c)
-				LineObject.add_line(line_object, black, c, a)
+			if var_34_4 ~= nil then
+				var_0_17.triangle(arg_34_1, var_34_4, var_34_5, var_34_6, 1, var_34_7)
+				var_0_22.add_line(arg_34_2, var_34_1, var_34_4, var_34_5)
+				var_0_22.add_line(arg_34_2, var_34_1, var_34_5, var_34_6)
+				var_0_22.add_line(arg_34_2, var_34_1, var_34_6, var_34_4)
 			end
 
-			Script.set_temp_byte_count(temp_size)
+			var_0_24.set_temp_byte_count(var_34_3)
 		end
 	end
 end
 
-NavWorld.visual_debug_camera = function (self, camera)
-	local pos = Camera.world_position(camera)
-	local camera_pose = Camera.world_pose(camera)
-	local forward = Matrix4x4.forward(camera_pose)
-	local up = Matrix4x4.up(camera_pose)
+function var_0_1.visual_debug_camera(arg_35_0, arg_35_1)
+	local var_35_0 = var_0_20.world_position(arg_35_1)
+	local var_35_1 = var_0_20.world_pose(arg_35_1)
+	local var_35_2 = var_0_13.forward(var_35_1)
+	local var_35_3 = var_0_13.up(var_35_1)
 
-	GwNavWorld.set_visual_debug_camera_transform(self.gwnavworld, pos, pos + forward, up)
+	var_0_25.set_visual_debug_camera_transform(arg_35_0.gwnavworld, var_35_0, var_35_0 + var_35_2, var_35_3)
 end
 
-return NavWorld
+return var_0_1

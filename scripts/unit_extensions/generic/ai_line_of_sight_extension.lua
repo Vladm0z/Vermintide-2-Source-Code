@@ -1,111 +1,105 @@
-﻿-- chunkname: @scripts/unit_extensions/generic/ai_line_of_sight_extension.lua
+-- chunkname: @scripts/unit_extensions/generic/ai_line_of_sight_extension.lua
 
 AILineOfSightExtension = class(AILineOfSightExtension)
 
-AILineOfSightExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self.unit = unit
-	self._offsets = {}
+function AILineOfSightExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.unit = arg_1_2
+	arg_1_0._offsets = {}
 end
 
-AILineOfSightExtension.extensions_ready = function (self, world, unit)
-	self._physics_world = World.physics_world(world)
+function AILineOfSightExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+	arg_2_0._physics_world = World.physics_world(arg_2_1)
 end
 
-AILineOfSightExtension.destroy = function (self)
+function AILineOfSightExtension.destroy(arg_3_0)
 	return
 end
 
-AILineOfSightExtension.reset = function (self)
+function AILineOfSightExtension.reset(arg_4_0)
 	return
 end
 
-local MAX_DIST_SQUARED = 36
-local BENEATH_ABOVE_EPSILON = 0.1
-local RAY_DISTANCE_EPSILON = 0.1
+local var_0_0 = 36
+local var_0_1 = 0.1
+local var_0_2 = 0.1
 
-AILineOfSightExtension.has_line_of_sight = function (self, unit, blackboard, override_target, override_distance)
-	if blackboard.pause_line_of_sight_t then
-		local t = Managers.time:time("game")
-
-		if t < blackboard.pause_line_of_sight_t then
+function AILineOfSightExtension.has_line_of_sight(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	if arg_5_2.pause_line_of_sight_t then
+		if Managers.time:time("game") < arg_5_2.pause_line_of_sight_t then
 			return false, 1
 		else
-			blackboard.pause_line_of_sight_t = nil
+			arg_5_2.pause_line_of_sight_t = nil
 		end
 	end
 
-	local offsets = self._offsets
+	local var_5_0 = arg_5_0._offsets
 
-	offsets[1] = Vector3(0, 0, 1.5)
-	offsets[2] = Vector3(0.5, 0, 1.5)
-	offsets[3] = Vector3(-0.5, 0, 1.5)
+	var_5_0[1] = Vector3(0, 0, 1.5)
+	var_5_0[2] = Vector3(0.5, 0, 1.5)
+	var_5_0[3] = Vector3(-0.5, 0, 1.5)
 
-	local ray_from_offset = Vector3(0, 0, 1.5)
-	local num_offsets = 3
-	local physics_world = self._physics_world
-	local up = Vector3.up()
-	local unit_alive = Unit.alive
-	local is_character = DamageUtils.is_character
-	local debug = false
-	local Vector3_distance_squared = Vector3.distance_squared
-	local num_raycasts = 0
-	local success = false
-	local max_distance = override_distance or blackboard.breed.line_of_sight_distance_sq or MAX_DIST_SQUARED
-	local target = override_target or blackboard.attacking_target or blackboard.target_unit
+	local var_5_1 = Vector3(0, 0, 1.5)
+	local var_5_2 = 3
+	local var_5_3 = arg_5_0._physics_world
+	local var_5_4 = Vector3.up()
+	local var_5_5 = Unit.alive
+	local var_5_6 = DamageUtils.is_character
+	local var_5_7 = false
+	local var_5_8 = Vector3.distance_squared
+	local var_5_9 = 0
+	local var_5_10 = false
+	local var_5_11 = arg_5_4 or arg_5_2.breed.line_of_sight_distance_sq or var_0_0
+	local var_5_12 = arg_5_3 or arg_5_2.attacking_target or arg_5_2.target_unit
 
-	if unit_alive(target) and is_character(target) then
-		local self_pos = POSITION_LOOKUP[unit]
-		local target_pos = POSITION_LOOKUP[target]
+	if var_5_5(var_5_12) and var_5_6(var_5_12) then
+		local var_5_13 = POSITION_LOOKUP[arg_5_1]
+		local var_5_14 = POSITION_LOOKUP[var_5_12]
 
-		if target_pos then
-			local dist_sq = Vector3_distance_squared(self_pos, target_pos)
+		if var_5_14 and var_5_11 > var_5_8(var_5_13, var_5_14) then
+			local var_5_15 = var_5_14 - var_5_13
 
-			if dist_sq < max_distance then
-				local target_offset = target_pos - self_pos
+			var_5_10 = false
 
-				success = false
+			if math.abs(var_5_15.x) < var_0_1 and math.abs(var_5_15.y) < var_0_1 then
+				local var_5_16 = var_5_0[1].z
+				local var_5_17 = var_5_13 + var_5_1
+				local var_5_18 = var_5_15 + Vector3(0, 0, var_5_16 - var_5_1.z)
+				local var_5_19 = math.max(Vector3.length(var_5_18), 0.0001)
+				local var_5_20 = var_5_18 / var_5_19
 
-				if math.abs(target_offset.x) < BENEATH_ABOVE_EPSILON and math.abs(target_offset.y) < BENEATH_ABOVE_EPSILON then
-					local z_offset_target = offsets[1].z
-					local from = self_pos + ray_from_offset
-					local to_offset = target_offset + Vector3(0, 0, z_offset_target - ray_from_offset.z)
-					local dist = math.max(Vector3.length(to_offset), 0.0001)
-					local dir = to_offset / dist
+				if var_5_19 > var_0_2 then
+					var_5_9 = var_5_9 + 1
 
-					if dist > RAY_DISTANCE_EPSILON then
-						num_raycasts = num_raycasts + 1
+					local var_5_21, var_5_22, var_5_23, var_5_24, var_5_25 = PhysicsWorld.raycast(var_5_3, var_5_17, var_5_20, var_5_19, "closest", "collision_filter", "filter_ai_line_of_sight_check")
 
-						local hit, _, _, _, hit_actor = PhysicsWorld.raycast(physics_world, from, dir, dist, "closest", "collision_filter", "filter_ai_line_of_sight_check")
-
-						if not hit or Actor.unit(hit_actor) == target then
-							success = true
-						end
-					else
-						success = true
+					if not var_5_21 or Actor.unit(var_5_25) == var_5_12 then
+						var_5_10 = true
 					end
 				else
-					local right_vector = Vector3.normalize(Vector3.cross(target_offset, up))
+					var_5_10 = true
+				end
+			else
+				local var_5_26 = Vector3.normalize(Vector3.cross(var_5_15, var_5_4))
 
-					for i = 1, num_offsets do
-						num_raycasts = num_raycasts + 1
+				for iter_5_0 = 1, var_5_2 do
+					var_5_9 = var_5_9 + 1
 
-						local offset = offsets[i]
-						local from = self_pos + ray_from_offset
-						local to_offset = target_offset + Vector3(right_vector.x * offset.x, right_vector.y * offset.x, offset.z - ray_from_offset.z)
-						local dist = Vector3.length(to_offset)
-						local dir = to_offset / dist
-						local hit, _, _, _, hit_actor = PhysicsWorld.raycast(physics_world, from, dir, dist, "closest", "collision_filter", "filter_ai_line_of_sight_check")
+					local var_5_27 = var_5_0[iter_5_0]
+					local var_5_28 = var_5_13 + var_5_1
+					local var_5_29 = var_5_15 + Vector3(var_5_26.x * var_5_27.x, var_5_26.y * var_5_27.x, var_5_27.z - var_5_1.z)
+					local var_5_30 = Vector3.length(var_5_29)
+					local var_5_31 = var_5_29 / var_5_30
+					local var_5_32, var_5_33, var_5_34, var_5_35, var_5_36 = PhysicsWorld.raycast(var_5_3, var_5_28, var_5_31, var_5_30, "closest", "collision_filter", "filter_ai_line_of_sight_check")
 
-						if not hit or Actor.unit(hit_actor) == target then
-							success = true
+					if not var_5_32 or Actor.unit(var_5_36) == var_5_12 then
+						var_5_10 = true
 
-							break
-						end
+						break
 					end
 				end
 			end
 		end
 	end
 
-	return success, num_raycasts
+	return var_5_10, var_5_9
 end

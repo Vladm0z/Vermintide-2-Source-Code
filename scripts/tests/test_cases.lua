@@ -1,88 +1,88 @@
-﻿-- chunkname: @scripts/tests/test_cases.lua
+-- chunkname: @scripts/tests/test_cases.lua
 
-local TestifyInput = require("scripts/tests/testify_input")
-local TestifySnippets = require("scripts/tests/testify_snippets")
+local var_0_0 = require("scripts/tests/testify_input")
+local var_0_1 = require("scripts/tests/testify_snippets")
 
 TestCases = {}
 
-TestCases.smoke = function ()
-	Testify:run_case(function (dt, t)
-		TestifySnippets.load_level({
-			level_key = "inn_level",
+function TestCases.smoke()
+	Testify:run_case(function(arg_2_0, arg_2_1)
+		var_0_1.load_level({
+			level_key = "inn_level"
 		})
 	end)
 end
 
-TestCases.load_level = function (level_key, skip_cinematic, wait_for_player_to_spawn)
-	Testify:run_case(function (dt, t)
-		TestifySnippets.load_level({
-			level_key = level_key,
+function TestCases.load_level(arg_3_0, arg_3_1, arg_3_2)
+	Testify:run_case(function(arg_4_0, arg_4_1)
+		var_0_1.load_level({
+			level_key = arg_3_0
 		})
 
-		if not skip_cinematic then
+		if not arg_3_1 then
 			Testify:make_request("wait_for_cutscene_to_finish")
 		end
 
-		if wait_for_player_to_spawn then
+		if arg_3_2 then
 			Testify:make_request("wait_for_player_to_spawn")
 		end
 	end)
 end
 
-TestCases.wait_for_state_ingame_reached = function ()
-	Testify:run_case(function (dt, t)
+function TestCases.wait_for_state_ingame_reached()
+	Testify:run_case(function(arg_6_0, arg_6_1)
 		Testify:make_request("wait_for_state_ingame_reached")
 	end)
 end
 
-TestCases.equip_weapons = function (is_magic)
-	Testify:run_case(function (dt, t)
-		if is_magic then
+function TestCases.equip_weapons(arg_7_0)
+	Testify:run_case(function(arg_8_0, arg_8_1)
+		if arg_7_0 then
 			Testify:make_request("set_game_mode_to_weave")
-			TestifySnippets.load_weave("weave_1")
+			var_0_1.load_weave("weave_1")
 		else
-			TestifySnippets.load_level({
-				level_key = "military",
+			var_0_1.load_level({
+				level_key = "military"
 			})
 			Testify:make_request("wait_for_cutscene_to_finish")
 		end
 
 		Testify:make_request("clear_backend_inventory")
 		Testify:make_request("wait_for_players_inventory_ready")
-		TestifySnippets.set_script_data({
+		var_0_1.set_script_data({
 			ai_bots_disabled = true,
-			allow_same_bots = true,
+			allow_same_bots = true
 		})
 
-		local weapons_wielded = {}
-		local profiles = Testify:make_request("request_profiles", "heroes")
+		local var_8_0 = {}
+		local var_8_1 = Testify:make_request("request_profiles", "heroes")
 
-		for _, profile in ipairs(profiles) do
-			for _, career_name in ipairs(profile.careers) do
-				TestifySnippets.set_player_profile(profile.name, career_name)
-				TestifySnippets.set_bot_profile(profile.name, career_name)
+		for iter_8_0, iter_8_1 in ipairs(var_8_1) do
+			for iter_8_2, iter_8_3 in ipairs(iter_8_1.careers) do
+				var_0_1.set_player_profile(iter_8_1.name, iter_8_3)
+				var_0_1.set_bot_profile(iter_8_1.name, iter_8_3)
 				Testify:make_request("add_all_weapon_skins")
 				Testify:make_request("wait_for_players_inventory_ready")
 
-				local weapons
+				local var_8_2
 
-				if is_magic then
-					weapons = Testify:make_request("request_magic_weapons_for_career", career_name)
+				if arg_7_0 then
+					var_8_2 = Testify:make_request("request_magic_weapons_for_career", iter_8_3)
 				else
-					weapons = Testify:make_request("request_non_magic_weapons_for_career", career_name)
+					var_8_2 = Testify:make_request("request_non_magic_weapons_for_career", iter_8_3)
 				end
 
-				for _, weapon in pairs(weapons) do
-					local weapon_id = weapon.backend_id
+				for iter_8_4, iter_8_5 in pairs(var_8_2) do
+					local var_8_3 = iter_8_5.backend_id
 
-					if not weapons_wielded[weapon_id] then
-						printf("[Testify] Wielding weapon %s (%s)", weapon.data.display_name, weapon_id)
+					if not var_8_0[var_8_3] then
+						printf("[Testify] Wielding weapon %s (%s)", iter_8_5.data.display_name, var_8_3)
 
-						weapons_wielded[weapon_id] = true
+						var_8_0[var_8_3] = true
 
-						Testify:make_request("player_wield_weapon", weapon)
+						Testify:make_request("player_wield_weapon", iter_8_5)
 						Testify:make_request("wait_for_inventory_to_be_loaded")
-						Testify:make_request("bot_wield_weapon", weapon)
+						Testify:make_request("bot_wield_weapon", iter_8_5)
 					end
 				end
 			end
@@ -90,230 +90,230 @@ TestCases.equip_weapons = function (is_magic)
 	end)
 end
 
-TestCases.equip_magic_weapons = function ()
+function TestCases.equip_magic_weapons()
 	TestCases.equip_weapons(true)
 end
 
-TestCases.load_all_weaves = function ()
-	Testify:run_case(function ()
+function TestCases.load_all_weaves()
+	Testify:run_case(function()
 		Testify:make_request("set_game_mode_to_weave")
 
-		for weave_number = 1, 160 do
-			local weave_name = "weave_" .. weave_number
+		for iter_11_0 = 1, 160 do
+			local var_11_0 = "weave_" .. iter_11_0
 
-			print("[Testify] Loading " .. weave_name)
-			TestifySnippets.load_weave(weave_name)
-			TestifySnippets.wait(4)
+			print("[Testify] Loading " .. var_11_0)
+			var_0_1.load_weave(var_11_0)
+			var_0_1.wait(4)
 		end
 	end)
 end
 
-TestCases.load_weave = function (weave_number)
-	Testify:run_case(function ()
+function TestCases.load_weave(arg_12_0)
+	Testify:run_case(function()
 		Testify:make_request("set_game_mode_to_weave")
 
-		local weave_name = "weave_" .. weave_number
+		local var_13_0 = "weave_" .. arg_12_0
 
-		TestifySnippets.load_weave(weave_name)
-		TestifySnippets.wait(4)
+		var_0_1.load_weave(var_13_0)
+		var_0_1.wait(4)
 	end)
 end
 
-TestCases.run_through_level = function (case_settings, skip_cinematic)
-	Testify:run_case(function (dt, t)
-		local result = ""
+function TestCases.run_through_level(arg_14_0, arg_14_1)
+	Testify:run_case(function(arg_15_0, arg_15_1)
+		local var_15_0 = ""
 
-		TestifySnippets.set_script_data({
-			ai_bots_disabled = false,
+		var_0_1.set_script_data({
 			power_level_override = 1600,
+			ai_bots_disabled = false
 		})
 
-		local settings = cjson.decode(case_settings or "{}")
-		local level_key = settings.level_key
-		local memory_usage = settings.memory_usage
+		local var_15_1 = cjson.decode(arg_14_0 or "{}")
+		local var_15_2 = var_15_1.level_key
+		local var_15_3 = var_15_1.memory_usage
 
-		TestifySnippets.load_level({
-			level_key = level_key,
+		var_0_1.load_level({
+			level_key = var_15_2
 		})
 
-		if not skip_cinematic then
+		if not arg_14_1 then
 			Testify:make_request("wait_for_cutscene_to_finish")
 		end
 
-		local main_path_point = 0
-		local total_main_path_distance = Testify:make_request("total_main_path_distance")
-		local last_player_teleportation_time = os.clock()
-		local player_teleportation_speed_factor = 2 * GLOBAL_TIME_SCALE
-		local measurement_count = 0
-		local number_of_measurements = 3
-		local main_path_increments = (total_main_path_distance - 10) / (number_of_measurements - 1)
-		local next_memory_measure_point = 0
-		local bots_stuck_data = {}
+		local var_15_4 = 0
+		local var_15_5 = Testify:make_request("total_main_path_distance")
+		local var_15_6 = os.clock()
+		local var_15_7 = 2 * GLOBAL_TIME_SCALE
+		local var_15_8 = 0
+		local var_15_9 = 3
+		local var_15_10 = (var_15_5 - 10) / (var_15_9 - 1)
+		local var_15_11 = 0
+		local var_15_12 = {}
 
-		for i = 1, 3 do
-			bots_stuck_data[i] = {
+		for iter_15_0 = 1, 3 do
+			var_15_12[iter_15_0] = {
 				Vector3Box(Vector3(-999, -999, -999)),
-				os.time(),
+				os.time()
 			}
 		end
 
-		local bot_teleportation_data = {
-			bots_blocked_distance = 2,
-			bots_blocked_time_before_teleportation = 15,
+		local var_15_13 = {
 			main_path_point = 0,
-			bots_stuck_data = bots_stuck_data,
+			bots_blocked_time_before_teleportation = 15,
+			bots_blocked_distance = 2,
+			bots_stuck_data = var_15_12
 		}
 
-		while not Testify:make_request("level_end_screen_displayed") and main_path_point < total_main_path_distance - 10 do
+		while not Testify:make_request("level_end_screen_displayed") and var_15_4 < var_15_5 - 10 do
 			Testify:make_request("set_player_unit_not_visible")
 			Testify:make_request("set_camera_to_observe_first_bot")
 
-			local delta_time = os.clock() - last_player_teleportation_time
+			local var_15_14 = os.clock() - var_15_6
 
-			last_player_teleportation_time = os.clock()
+			var_15_6 = os.clock()
 
-			local player_point = Testify:make_request("closest_travel_distance_to_player")
+			local var_15_15 = Testify:make_request("closest_travel_distance_to_player")
 
-			main_path_point = main_path_point < player_point and player_point or main_path_point
-			main_path_point = main_path_point + player_teleportation_speed_factor * delta_time
+			var_15_4 = var_15_4 < var_15_15 and var_15_15 or var_15_4
+			var_15_4 = var_15_4 + var_15_7 * var_15_14
 
-			Testify:make_request("teleport_player_to_main_path_point", main_path_point)
-			Testify:make_request("teleport_bots_forward_on_main_path_if_blocked", bot_teleportation_data)
+			Testify:make_request("teleport_player_to_main_path_point", var_15_4)
+			Testify:make_request("teleport_bots_forward_on_main_path_if_blocked", var_15_13)
 
-			bot_teleportation_data.main_path_point = main_path_point
+			var_15_13.main_path_point = var_15_4
 
-			if memory_usage and next_memory_measure_point < main_path_point and measurement_count < number_of_measurements then
-				measurement_count = measurement_count + 1
-				next_memory_measure_point = next_memory_measure_point + main_path_increments
+			if var_15_3 and var_15_11 < var_15_4 and var_15_8 < var_15_9 then
+				var_15_8 = var_15_8 + 1
+				var_15_11 = var_15_11 + var_15_10
 
-				Testify:make_request("memory_usage", measurement_count)
+				Testify:make_request("memory_usage", var_15_8)
 			end
 
 			Testify:make_request("make_player_and_two_bots_invicible")
 
-			local timer = 0
+			local var_15_16 = 0
 
-			while timer < 0.1 do
+			while var_15_16 < 0.1 do
 				Testify:make_request("update_camera_to_follow_first_bot_rotation")
 
-				timer = timer + dt
+				var_15_16 = var_15_16 + arg_15_0
 			end
 		end
 
 		if Testify:make_request("level_end_screen_displayed") then
 			if Testify:make_request("has_lost") then
-				result = result .. "Defeated"
+				var_15_0 = var_15_0 .. "Defeated"
 			else
-				result = result .. "Victorious"
+				var_15_0 = var_15_0 .. "Victorious"
 			end
 
 			Testify:make_request("close_level_end_screen")
 		else
-			result = result .. "End of level reached"
+			var_15_0 = var_15_0 .. "End of level reached"
 		end
 
 		Testify:make_request("post_telemetry_events")
-		TestifySnippets.wait(5)
+		var_0_1.wait(5)
 		print("[Testify] Level finished!")
 
-		return result
+		return var_15_0
 	end)
 end
 
-TestCases.run_through_weave = function (case_settings)
-	Testify:run_case(function (dt, t)
-		local result = ""
+function TestCases.run_through_weave(arg_16_0)
+	Testify:run_case(function(arg_17_0, arg_17_1)
+		local var_17_0 = ""
 
-		TestifySnippets.set_script_data({
-			ai_bots_disabled = false,
+		var_0_1.set_script_data({
 			power_level_override = 1600,
+			ai_bots_disabled = false
 		})
 
-		local settings = cjson.decode(case_settings or "{}")
-		local memory_usage = settings.memory_usage
-		local weave_number = settings.weave_number
-		local weave_name = "weave_" .. weave_number
-		local end_zone_name = Testify:make_request("get_weave_end_zone", weave_number)
+		local var_17_1 = cjson.decode(arg_16_0 or "{}")
+		local var_17_2 = var_17_1.memory_usage
+		local var_17_3 = var_17_1.weave_number
+		local var_17_4 = "weave_" .. var_17_3
+		local var_17_5 = Testify:make_request("get_weave_end_zone", var_17_3)
 
 		Testify:make_request("set_game_mode_to_weave")
-		TestifySnippets.load_weave(weave_name)
+		var_0_1.load_weave(var_17_4)
 
-		local end_screen_displayed = false
-		local main_path_point = 0
-		local total_main_path_distance = Testify:make_request("total_main_path_distance")
-		local last_player_teleportation_time = os.clock()
-		local player_teleportation_speed_factor = 1 * GLOBAL_TIME_SCALE
-		local measurement_count = 0
-		local number_of_measurements = 3
-		local main_path_increments = (total_main_path_distance - 10) / (number_of_measurements - 1)
-		local next_memory_measure_point = 0
-		local bots_stuck_data = {}
+		local var_17_6 = false
+		local var_17_7 = 0
+		local var_17_8 = Testify:make_request("total_main_path_distance")
+		local var_17_9 = os.clock()
+		local var_17_10 = 1 * GLOBAL_TIME_SCALE
+		local var_17_11 = 0
+		local var_17_12 = 3
+		local var_17_13 = (var_17_8 - 10) / (var_17_12 - 1)
+		local var_17_14 = 0
+		local var_17_15 = {}
 
-		for i = 1, 3 do
-			bots_stuck_data[i] = {
+		for iter_17_0 = 1, 3 do
+			var_17_15[iter_17_0] = {
 				Vector3Box(Vector3(-999, -999, -999)),
-				os.time(),
+				os.time()
 			}
 		end
 
-		local bot_teleportation_data = {
-			bots_blocked_distance = 2,
-			bots_blocked_time_before_teleportation = 15,
+		local var_17_16 = {
 			main_path_point = 0,
-			bots_stuck_data = bots_stuck_data,
+			bots_blocked_time_before_teleportation = 15,
+			bots_blocked_distance = 2,
+			bots_stuck_data = var_17_15
 		}
 
-		while not Testify:make_request("level_end_screen_displayed") and main_path_point < total_main_path_distance - 10 do
+		while not Testify:make_request("level_end_screen_displayed") and var_17_7 < var_17_8 - 10 do
 			Testify:make_request("set_player_unit_not_visible")
 			Testify:make_request("set_camera_to_observe_first_bot")
-			Testify:make_request("teleport_player_to_main_path_point", main_path_point)
-			Testify:make_request("teleport_bots_forward_on_main_path_if_blocked", bot_teleportation_data)
+			Testify:make_request("teleport_player_to_main_path_point", var_17_7)
+			Testify:make_request("teleport_bots_forward_on_main_path_if_blocked", var_17_16)
 
-			main_path_point = main_path_point + (os.clock() - last_player_teleportation_time) * player_teleportation_speed_factor
-			last_player_teleportation_time = os.clock()
-			bot_teleportation_data.main_path_point = main_path_point
+			var_17_7 = var_17_7 + (os.clock() - var_17_9) * var_17_10
+			var_17_9 = os.clock()
+			var_17_16.main_path_point = var_17_7
 
-			if memory_usage and next_memory_measure_point < main_path_point and measurement_count < number_of_measurements then
-				measurement_count = measurement_count + 1
-				next_memory_measure_point = next_memory_measure_point + main_path_increments
+			if var_17_2 and var_17_14 < var_17_7 and var_17_11 < var_17_12 then
+				var_17_11 = var_17_11 + 1
+				var_17_14 = var_17_14 + var_17_13
 
-				Testify:make_request("memory_usage", measurement_count)
+				Testify:make_request("memory_usage", var_17_11)
 			end
 
 			Testify:make_request("make_players_invicible")
 
-			local timer = 0
+			local var_17_17 = 0
 
-			while timer < 0.1 do
+			while var_17_17 < 0.1 do
 				Testify:make_request("update_camera_to_follow_first_bot_rotation")
 
-				timer = timer + dt
+				var_17_17 = var_17_17 + arg_17_0
 			end
 		end
 
 		if Testify:make_request("level_end_screen_displayed") then
 			if Testify:make_request("weave_remaining_time") == 0 then
-				result = result .. "Out of time, Phase 1"
+				var_17_0 = var_17_0 .. "Out of time, Phase 1"
 			else
-				result = result .. "Defeated Phase 1"
+				var_17_0 = var_17_0 .. "Defeated Phase 1"
 			end
 		end
 
-		if not Testify:make_request("is_end_zone_activated", end_zone_name) then
-			result = result .. "Cheat to complete objectives\n"
+		if not Testify:make_request("is_end_zone_activated", var_17_5) then
+			var_17_0 = var_17_0 .. "Cheat to complete objectives\n"
 		end
 
-		while not Testify:make_request("is_end_zone_activated", end_zone_name) do
-			end_screen_displayed = Testify:make_request("level_end_screen_displayed")
+		while not Testify:make_request("is_end_zone_activated", var_17_5) do
+			var_17_6 = Testify:make_request("level_end_screen_displayed")
 
-			if end_screen_displayed then
+			if var_17_6 then
 				if Testify:make_request("weave_remaining_time") == 0 then
-					result = result .. "Out of time, Phase 1"
+					var_17_0 = var_17_0 .. "Out of time, Phase 1"
 
 					break
 				end
 
-				result = result .. "Defeated Phase 1"
+				var_17_0 = var_17_0 .. "Defeated Phase 1"
 
 				break
 			end
@@ -323,138 +323,138 @@ TestCases.run_through_weave = function (case_settings)
 			Testify:make_request("weave_spawn_essence_on_first_bot_position")
 			Testify:make_request("make_players_invicible")
 
-			local timer = 0
+			local var_17_18 = 0
 
-			while timer < 0.1 do
+			while var_17_18 < 0.1 do
 				Testify:make_request("update_camera_to_follow_first_bot_rotation")
 
-				timer = timer + dt
+				var_17_18 = var_17_18 + arg_17_0
 			end
 		end
 
-		Testify:make_request("teleport_player_to_end_zone_position", end_zone_name)
+		Testify:make_request("teleport_player_to_end_zone_position", var_17_5)
 
-		while not end_screen_displayed do
+		while not var_17_6 do
 			Testify:make_request("set_player_unit_not_visible")
 			Testify:make_request("set_camera_to_observe_first_bot")
 
-			if Testify:make_request("are_bots_blocked", bot_teleportation_data) and Testify:make_request("get_active_weave_phase") == 2 then
+			if Testify:make_request("are_bots_blocked", var_17_16) and Testify:make_request("get_active_weave_phase") == 2 then
 				Testify:make_request("teleport_player_randomly_on_main_path")
 			end
 
 			Testify:make_request("make_players_invicible")
 
-			local timer = 0
+			local var_17_19 = 0
 
-			while timer < 0.1 do
+			while var_17_19 < 0.1 do
 				Testify:make_request("update_camera_to_follow_first_bot_rotation")
 
-				timer = timer + dt
+				var_17_19 = var_17_19 + arg_17_0
 			end
 
 			if Testify:make_request("level_end_screen_displayed") then
 				if Testify:make_request("weave_remaining_time") == 0 then
-					result = result .. "Out of time, Phase 2"
+					var_17_0 = var_17_0 .. "Out of time, Phase 2"
 				elseif Testify:make_request("has_lost") then
-					result = result .. "Defeated Phase 2"
+					var_17_0 = var_17_0 .. "Defeated Phase 2"
 				else
-					result = result .. "Victorious"
+					var_17_0 = var_17_0 .. "Victorious"
 				end
 
-				end_screen_displayed = true
+				var_17_6 = true
 			end
 		end
 
 		Testify:make_request("post_telemetry_events")
 		Testify:make_request("make_game_ready_for_next_weave")
 
-		return result
+		return var_17_0
 	end)
 end
 
-TestCases.load_level_environment_variations = function (level_key)
-	Testify:run_case(function ()
-		local output = "Variations loaded:\n"
-		local weather_variations = Testify:make_request("get_level_weather_variations", level_key)
+function TestCases.load_level_environment_variations(arg_18_0)
+	Testify:run_case(function()
+		local var_19_0 = "Variations loaded:\n"
+		local var_19_1 = Testify:make_request("get_level_weather_variations", arg_18_0)
 
-		if type(weather_variations) ~= "table" or next(weather_variations) == nil then
-			output = output .. "None"
+		if type(var_19_1) ~= "table" or next(var_19_1) == nil then
+			var_19_0 = var_19_0 .. "None"
 
-			print(output)
+			print(var_19_0)
 
-			return output
+			return var_19_0
 		end
 
-		for variation_id, variation_name in ipairs(weather_variations) do
-			local level_settings = {
-				level_key = level_key,
-				environment_variation_id = variation_id,
+		for iter_19_0, iter_19_1 in ipairs(var_19_1) do
+			local var_19_2 = {
+				level_key = arg_18_0,
+				environment_variation_id = iter_19_0
 			}
 
-			TestifySnippets.load_level(level_settings)
+			var_0_1.load_level(var_19_2)
 			Testify:make_request("wait_for_cutscene_to_finish")
 
-			output = output .. variation_name .. " "
+			var_19_0 = var_19_0 .. iter_19_1 .. " "
 		end
 
-		print(output)
+		print(var_19_0)
 
-		return output
+		return var_19_0
 	end)
 end
 
-TestCases.measure_performance = function (level_key, skip_cinematic)
-	Testify:run_case(function ()
-		TestifySnippets.disable_ai()
-		TestifySnippets.disable_level_intro_dialogue()
-		TestifySnippets.load_level({
-			level_key = level_key,
+function TestCases.measure_performance(arg_20_0, arg_20_1)
+	Testify:run_case(function()
+		var_0_1.disable_ai()
+		var_0_1.disable_level_intro_dialogue()
+		var_0_1.load_level({
+			level_key = arg_20_0
 		})
 
-		if not skip_cinematic then
+		if not arg_20_1 then
 			Testify:make_request("wait_for_cutscene_to_finish")
 		end
 
-		local NB_POINTS = 10
-		local TIME_TO_WAIT = 2
-		local ROTATIONS = {
+		local var_21_0 = 10
+		local var_21_1 = 2
+		local var_21_2 = {
 			{
-				x = 0,
-				y = 0,
 				z = -90,
+				x = 0,
+				y = 0
 			},
 			{
-				x = 0,
-				y = 0,
 				z = 0,
+				x = 0,
+				y = 0
 			},
 			{
-				x = 0,
-				y = 0,
 				z = 90,
+				x = 0,
+				y = 0
 			},
 			{
-				x = 0,
-				y = 0,
 				z = 180,
-			},
+				x = 0,
+				y = 0
+			}
 		}
-		local main_path_points = Testify:make_request("get_main_path_points", NB_POINTS)
+		local var_21_3 = Testify:make_request("get_main_path_points", var_21_0)
 
 		Testify:make_request("activate_free_flight")
 
-		for i = 1, NB_POINTS do
-			for j = 1, #ROTATIONS do
+		for iter_21_0 = 1, var_21_0 do
+			for iter_21_1 = 1, #var_21_2 do
 				Testify:make_request("move_free_flight_camera", {
-					position = main_path_points[i],
-					rotation = ROTATIONS[j],
+					position = var_21_3[iter_21_0],
+					rotation = var_21_2[iter_21_1]
 				})
 				Testify:make_request("start_measure_fps")
-				TestifySnippets.wait(TIME_TO_WAIT)
+				var_0_1.wait(var_21_1)
 
-				local point_id = string.format("%d.%d", i, j)
+				local var_21_4 = string.format("%d.%d", iter_21_0, iter_21_1)
 
-				Testify:make_request("stop_measure_fps", point_id)
+				Testify:make_request("stop_measure_fps", var_21_4)
 			end
 		end
 
@@ -462,103 +462,97 @@ TestCases.measure_performance = function (level_key, skip_cinematic)
 	end)
 end
 
-TestCases.measure_deus_performance = function (level_key)
-	TestCases.measure_performance(level_key, true)
+function TestCases.measure_deus_performance(arg_22_0)
+	TestCases.measure_performance(arg_22_0, true)
 end
 
-TestCases.run_through_deus_level = function (case_settings)
-	TestCases.run_through_level(case_settings, true)
+function TestCases.run_through_deus_level(arg_23_0)
+	TestCases.run_through_level(arg_23_0, true)
 end
 
-TestCases.run_through_deus_level_terror_event = function (level_key, terror_event_name, peak_offset)
-	Testify:run_case(function (dt, t)
-		terror_event_name = terror_event_name or "deus_TEST_ALL_BREED"
-		peak_offset = peak_offset or 10
+function TestCases.run_through_deus_level_terror_event(arg_24_0, arg_24_1, arg_24_2)
+	Testify:run_case(function(arg_25_0, arg_25_1)
+		arg_24_1 = arg_24_1 or "deus_TEST_ALL_BREED"
+		arg_24_2 = arg_24_2 or 10
 
-		local result = ""
+		local var_25_0 = ""
 
-		TestifySnippets.load_level({
-			level_key = level_key,
+		var_0_1.load_level({
+			level_key = arg_24_0
 		})
-		TestifySnippets.set_script_data({
-			ai_bots_disabled = false,
-			ai_terror_events_disabled = true,
-			debug_terror = true,
-			disable_catapulting = true,
+		var_0_1.set_script_data({
+			insta_death = true,
 			disable_external_velocity = true,
 			disable_vortex_attraction = true,
+			disable_catapulting = true,
+			ai_terror_events_disabled = true,
+			debug_terror = true,
+			ai_bots_disabled = false,
 			infinite_ammo = true,
-			insta_death = true,
 			power_level_override = 1600,
-			only_allowed_terror_event = terror_event_name,
+			only_allowed_terror_event = arg_24_1
 		})
 
-		local nav_world = Managers.state.entity:system("ai_system"):nav_world()
-		local peaks = Testify:make_request("peaks")
-		local peak_travel_distance = peaks[#peaks]
+		local var_25_1 = Managers.state.entity:system("ai_system"):nav_world()
+		local var_25_2 = Testify:make_request("peaks")
+		local var_25_3 = var_25_2[#var_25_2] + arg_24_2
+		local var_25_4 = Testify:make_request("total_main_path_distance")
+		local var_25_5 = math.clamp(var_25_3, 0, var_25_4 - 1)
+		local var_25_6 = {}
 
-		peak_travel_distance = peak_travel_distance + peak_offset
-
-		local main_path_point = peak_travel_distance
-		local total_main_path_distance = Testify:make_request("total_main_path_distance")
-
-		main_path_point = math.clamp(main_path_point, 0, total_main_path_distance - 1)
-
-		local bots_stuck_data = {}
-
-		for i = 1, 3 do
-			bots_stuck_data[i] = {
+		for iter_25_0 = 1, 3 do
+			var_25_6[iter_25_0] = {
 				Vector3Box(Vector3(-999, -999, -999)),
-				os.time(),
+				os.time()
 			}
 		end
 
-		local bot_teleportation_data = {
-			bots_blocked_distance = 2,
+		local var_25_7 = {
 			bots_blocked_time_before_teleportation = 15,
-			bots_stuck_data = bots_stuck_data,
-			main_path_point = main_path_point,
+			bots_blocked_distance = 2,
+			bots_stuck_data = var_25_6,
+			main_path_point = var_25_5
 		}
 
 		Testify:make_request("make_players_invicible")
 		Testify:make_request("set_player_unit_not_visible")
 		Testify:make_request("set_camera_to_observe_first_bot")
-		Testify:make_request("teleport_player_to_main_path_point", main_path_point)
+		Testify:make_request("teleport_player_to_main_path_point", var_25_5)
 
-		local timer = 0
+		local var_25_8 = 0
 
-		while timer < 0.1 do
+		while var_25_8 < 0.1 do
 			Testify:make_request("update_camera_to_follow_first_bot_rotation")
 
-			timer = timer + dt
+			var_25_8 = var_25_8 + arg_25_0
 		end
 
 		Testify:make_request("add_buffs_to_heroes", {
 			"ledge_rescue",
-			"disable_rescue",
+			"disable_rescue"
 		})
-		Testify:make_request("start_terror_event", terror_event_name)
+		Testify:make_request("start_terror_event", arg_24_1)
 
-		local terror_event_triggered_time = os.clock()
-		local player_position = vector_string(Testify:make_request("get_player_current_position"))
+		local var_25_9 = os.clock()
+		local var_25_10 = vector_string(Testify:make_request("get_player_current_position"))
 
-		printf("[Testify] Terror event triggered at position: %s", player_position)
+		printf("[Testify] Terror event triggered at position: %s", var_25_10)
 
 		while true do
-			if Testify:make_request("terror_event_finished", terror_event_name) then
+			if Testify:make_request("terror_event_finished", arg_24_1) then
 				break
 			end
 
-			local position = MainPathUtils.point_on_mainpath(nil, main_path_point)
-			local teleport_pos = ConflictUtils.get_spawn_pos_on_circle(nav_world, position, 15, 7, 15)
+			local var_25_11 = MainPathUtils.point_on_mainpath(nil, var_25_5)
+			local var_25_12 = ConflictUtils.get_spawn_pos_on_circle(var_25_1, var_25_11, 15, 7, 15)
 
-			if teleport_pos then
-				local boxed_position = Vector3Box(teleport_pos)
+			if var_25_12 then
+				local var_25_13 = Vector3Box(var_25_12)
 
-				Testify:make_request("teleport_player_to_position", boxed_position)
+				Testify:make_request("teleport_player_to_position", var_25_13)
 			end
 
-			Testify:make_request("teleport_bots_forward_on_main_path_if_blocked", bot_teleportation_data)
+			Testify:make_request("teleport_bots_forward_on_main_path_if_blocked", var_25_7)
 
 			if Testify:make_request("level_end_screen_displayed") then
 				if Testify:make_request("has_lost") then
@@ -568,517 +562,503 @@ TestCases.run_through_deus_level_terror_event = function (level_key, terror_even
 				end
 			end
 
-			TestifySnippets.wait(2)
+			var_0_1.wait(2)
 		end
 
-		local terror_event_duration = os.clock() - terror_event_triggered_time
+		local var_25_14 = os.clock() - var_25_9
+		local var_25_15 = var_25_0 .. string.format("Terror event finished after %ss", var_25_14)
 
-		result = result .. string.format("Terror event finished after %ss", terror_event_duration)
-
-		TestifySnippets.wait(5)
+		var_0_1.wait(5)
 		print("[Testify] Level finished!")
 
-		return result
+		return var_25_15
 	end)
 end
 
-TestCases.run_through_pvp_level = function (case_settings)
-	Testify:run_case(function (dt, t)
-		local result = ""
+function TestCases.run_through_pvp_level(arg_26_0)
+	Testify:run_case(function(arg_27_0, arg_27_1)
+		local var_27_0 = ""
 
-		TestifySnippets.set_script_data({
-			ai_bots_disabled = false,
+		var_0_1.set_script_data({
 			power_level_override = 1600,
+			ai_bots_disabled = false
 		})
 
-		local settings = cjson.decode(case_settings or "{}")
-		local level_key = settings.level_key
-		local memory_usage = settings.memory_usage
+		local var_27_1 = cjson.decode(arg_26_0 or "{}")
+		local var_27_2 = var_27_1.level_key
+		local var_27_3 = var_27_1.memory_usage
 
-		TestifySnippets.load_level({
-			level_key = level_key,
+		var_0_1.load_level({
+			level_key = var_27_2
 		})
 
-		local main_path_point = 0
-		local total_main_path_distance = Testify:make_request("total_main_path_distance")
-		local last_player_teleportation_time = os.clock()
-		local player_teleportation_speed_factor = 2 * GLOBAL_TIME_SCALE
-		local measurement_count = 0
-		local number_of_measurements = 3
-		local main_path_increments = (total_main_path_distance - 10) / (number_of_measurements - 1)
-		local next_memory_measure_point = 0
-		local bots_stuck_data = {}
+		local var_27_4 = 0
+		local var_27_5 = Testify:make_request("total_main_path_distance")
+		local var_27_6 = os.clock()
+		local var_27_7 = 2 * GLOBAL_TIME_SCALE
+		local var_27_8 = 0
+		local var_27_9 = 3
+		local var_27_10 = (var_27_5 - 10) / (var_27_9 - 1)
+		local var_27_11 = 0
+		local var_27_12 = {}
 
-		for i = 1, 3 do
-			bots_stuck_data[i] = {
+		for iter_27_0 = 1, 3 do
+			var_27_12[iter_27_0] = {
 				Vector3Box(Vector3(-999, -999, -999)),
-				os.time(),
+				os.time()
 			}
 		end
 
-		local bot_teleportation_data = {
-			bots_blocked_distance = 2,
-			bots_blocked_time_before_teleportation = 15,
+		local var_27_13 = {
 			main_path_point = 0,
-			bots_stuck_data = bots_stuck_data,
+			bots_blocked_time_before_teleportation = 15,
+			bots_blocked_distance = 2,
+			bots_stuck_data = var_27_12
 		}
 
 		Testify:make_request("versus_objective_add_time", 3000)
 
-		local has_lost = false
+		local var_27_14 = false
 
-		while not has_lost and main_path_point < total_main_path_distance - 10 do
+		while not var_27_14 and var_27_4 < var_27_5 - 10 do
 			Testify:make_request("set_player_unit_not_visible")
 			Testify:make_request("set_camera_to_observe_first_bot")
-			Testify:make_request("teleport_player_to_main_path_point", main_path_point)
-			Testify:make_request("teleport_bots_forward_on_main_path_if_blocked", bot_teleportation_data)
+			Testify:make_request("teleport_player_to_main_path_point", var_27_4)
+			Testify:make_request("teleport_bots_forward_on_main_path_if_blocked", var_27_13)
 
-			main_path_point = main_path_point + (os.clock() - last_player_teleportation_time) * player_teleportation_speed_factor
-			last_player_teleportation_time = os.clock()
-			bot_teleportation_data.main_path_point = main_path_point
+			var_27_4 = var_27_4 + (os.clock() - var_27_6) * var_27_7
+			var_27_6 = os.clock()
+			var_27_13.main_path_point = var_27_4
 
-			if memory_usage and next_memory_measure_point < main_path_point and measurement_count < number_of_measurements then
-				measurement_count = measurement_count + 1
-				next_memory_measure_point = next_memory_measure_point + main_path_increments
+			if var_27_3 and var_27_11 < var_27_4 and var_27_8 < var_27_9 then
+				var_27_8 = var_27_8 + 1
+				var_27_11 = var_27_11 + var_27_10
 
-				Testify:make_request("memory_usage", measurement_count)
+				Testify:make_request("memory_usage", var_27_8)
 			end
 
 			Testify:make_request("make_player_and_two_bots_invicible")
 
-			local objective_type = Testify:make_request("versus_objective_type")
-			local objective_data = Testify:make_request("versus_current_objective_position")
+			local var_27_15 = Testify:make_request("versus_objective_type")
+			local var_27_16 = Testify:make_request("versus_current_objective_position")
 
-			if objective_type == "objective_not_supported" then
-				TestifySnippets.wait(1)
+			if var_27_15 == "objective_not_supported" then
+				var_0_1.wait(1)
 				Testify:make_request("versus_complete_objectives")
-				TestifySnippets.wait(1)
-			elseif main_path_point > objective_data.main_path_point then
-				local boxed_position = Vector3Box(objective_data.position)
+				var_0_1.wait(1)
+			elseif var_27_4 > var_27_16.main_path_point then
+				local var_27_17 = Vector3Box(var_27_16.position)
 
-				Testify:make_request("teleport_player_to_position", boxed_position)
+				Testify:make_request("teleport_player_to_position", var_27_17)
 
-				if objective_type == "objective_capture_point" then
-					local objective_name = Testify:make_request("versus_objective_name")
+				if var_27_15 == "objective_capture_point" then
+					local var_27_18 = Testify:make_request("versus_objective_name")
 
-					while objective_name == Testify:make_request("versus_objective_name") do
+					while var_27_18 == Testify:make_request("versus_objective_name") do
 						Testify:make_request("update_camera_to_follow_first_bot_rotation")
 
 						if Testify:make_request("versus_has_lost") then
 							break
 						end
 					end
-				elseif objective_type == "objective_interact" then
+				elseif var_27_15 == "objective_interact" then
 					Testify:make_request("versus_objective_simulate_interaction")
 				end
 			end
 
-			local timer = 0
+			local var_27_19 = 0
 
-			while timer < 0.1 do
+			while var_27_19 < 0.1 do
 				Testify:make_request("update_camera_to_follow_first_bot_rotation")
 
-				timer = timer + dt
+				var_27_19 = var_27_19 + arg_27_0
 			end
 
-			has_lost = Testify:make_request("versus_has_lost") == true
+			var_27_14 = Testify:make_request("versus_has_lost") == true
 		end
 
-		if has_lost then
-			result = result .. "Defeated"
+		if var_27_14 then
+			var_27_0 = var_27_0 .. "Defeated"
 		else
-			result = result .. "End of level reached"
+			var_27_0 = var_27_0 .. "End of level reached"
 		end
 
-		if memory_usage then
+		if var_27_3 then
 			Testify:make_request("post_telemetry_events")
 		end
 
-		TestifySnippets.wait(5)
+		var_0_1.wait(5)
 		print("[Testify] Level finished!")
 
-		return result
+		return var_27_0
 	end)
 end
 
-TestCases.spawn_all_enemies = function (case_settings)
-	Testify:run_case(function (dt, t)
-		local result = ""
-		local minions_auto_killed = {}
-		local spawned_minions = {}
-		local settings = cjson.decode(case_settings or "{}")
-		local kill_timer = settings.kill_timer or 30
-		local spawn_simultaneously = settings.spawn_simultaneously or true
-		local difficulty = settings.difficulty or "hard"
+function TestCases.spawn_all_enemies(arg_28_0)
+	Testify:run_case(function(arg_29_0, arg_29_1)
+		local var_29_0 = ""
+		local var_29_1 = {}
+		local var_29_2 = {}
+		local var_29_3 = cjson.decode(arg_28_0 or "{}")
+		local var_29_4 = var_29_3.kill_timer or 30
+		local var_29_5 = var_29_3.spawn_simultaneously or true
+		local var_29_6 = var_29_3.difficulty or "hard"
 
-		Testify:make_request("set_difficulty", difficulty)
-		TestifySnippets.load_level({
-			level_key = "plaza",
+		Testify:make_request("set_difficulty", var_29_6)
+		var_0_1.load_level({
+			level_key = "plaza"
 		})
 		Testify:make_request("wait_for_cutscene_to_finish")
-		TestifySnippets.set_script_data({
-			ai_bots_disabled = false,
+		var_0_1.set_script_data({
 			power_level_override = 1600,
+			ai_bots_disabled = false
 		})
 		Testify:make_request("make_players_invicible")
 
-		local player_current_position = Testify:make_request("get_player_current_position")
-		local spawn_position_offset = {
-			x = 8,
-			y = -1,
+		local var_29_7 = Testify:make_request("get_player_current_position")
+		local var_29_8 = {
 			z = 1,
+			x = 8,
+			y = -1
 		}
-		local boxed_spawn_position = Vector3Box(player_current_position.x + spawn_position_offset.x, player_current_position.y + spawn_position_offset.y, player_current_position.z + spawn_position_offset.z)
-		local breeds = Testify:make_request("get_all_breeds")
+		local var_29_9 = Vector3Box(var_29_7.x + var_29_8.x, var_29_7.y + var_29_8.y, var_29_7.z + var_29_8.z)
+		local var_29_10 = Testify:make_request("get_all_breeds")
 
-		for breed_name, breed_data in pairs(breeds) do
-			local minion = {
-				breed_name = breed_name,
-				breed_data = breed_data,
-				boxed_spawn_position = boxed_spawn_position,
+		for iter_29_0, iter_29_1 in pairs(var_29_10) do
+			local var_29_11 = {
+				breed_name = iter_29_0,
+				breed_data = iter_29_1,
+				boxed_spawn_position = var_29_9
 			}
 
-			printf("[Testify] " .. breed_name .. " spawned")
-			Testify:make_request("spawn_unit", minion)
+			printf("[Testify] " .. iter_29_0 .. " spawned")
+			Testify:make_request("spawn_unit", var_29_11)
 
-			minion.unit = Testify:make_request("get_unit_of_breed", breed_name)
+			var_29_11.unit = Testify:make_request("get_unit_of_breed", iter_29_0)
 
-			if spawn_simultaneously then
-				table.insert(spawned_minions, minion)
+			if var_29_5 then
+				table.insert(var_29_2, var_29_11)
 			else
-				local is_minion_alive
-				local minion_time_of_spawn = os.clock()
+				local var_29_12
+				local var_29_13 = os.clock()
 
-				while kill_timer > os.clock() - minion_time_of_spawn do
-					is_minion_alive = Testify:make_request("is_unit_alive", minion.unit)
+				while var_29_4 > os.clock() - var_29_13 do
+					var_29_12 = Testify:make_request("is_unit_alive", var_29_11.unit)
 
-					if not is_minion_alive then
+					if not var_29_12 then
 						break
 					end
 				end
 
-				if is_minion_alive then
-					local minion_health_values = Testify:make_request("get_unit_health_values", minion.unit)
-					local output = breed_name .. " " .. minion_health_values.current_health .. "/" .. minion_health_values.max_health
+				if var_29_12 then
+					local var_29_14 = Testify:make_request("get_unit_health_values", var_29_11.unit)
+					local var_29_15 = iter_29_0 .. " " .. var_29_14.current_health .. "/" .. var_29_14.max_health
 
-					printf("[Testify] " .. breed_name .. " has been executed")
-					Testify:make_request("kill_unit", minion.unit)
-					table.insert(minions_auto_killed, output)
+					printf("[Testify] " .. iter_29_0 .. " has been executed")
+					Testify:make_request("kill_unit", var_29_11.unit)
+					table.insert(var_29_1, var_29_15)
 				end
 			end
 		end
 
-		local wait_duration = spawn_simultaneously and kill_timer or 5
+		local var_29_16 = var_29_5 and var_29_4 or 5
 
-		TestifySnippets.wait(wait_duration)
+		var_0_1.wait(var_29_16)
 
-		if spawn_simultaneously then
-			for _, minion in pairs(spawned_minions) do
-				local is_minion_alive = Testify:make_request("is_unit_alive", minion.unit)
+		if var_29_5 then
+			for iter_29_2, iter_29_3 in pairs(var_29_2) do
+				if Testify:make_request("is_unit_alive", iter_29_3.unit) then
+					local var_29_17 = iter_29_3.breed_name
+					local var_29_18 = Testify:make_request("get_unit_health_values", iter_29_3.unit)
+					local var_29_19 = var_29_17 .. " " .. var_29_18.current_health .. "/" .. var_29_18.max_health
 
-				if is_minion_alive then
-					local breed_name = minion.breed_name
-					local minion_health_values = Testify:make_request("get_unit_health_values", minion.unit)
-					local output = breed_name .. " " .. minion_health_values.current_health .. "/" .. minion_health_values.max_health
-
-					printf("[Testify] " .. breed_name .. " has been executed")
-					Testify:make_request("kill_unit", minion.unit)
-					table.insert(minions_auto_killed, output)
+					printf("[Testify] " .. var_29_17 .. " has been executed")
+					Testify:make_request("kill_unit", iter_29_3.unit)
+					table.insert(var_29_1, var_29_19)
 				end
 			end
 
 			Testify:make_request("destroy_all_units")
 		end
 
-		if not spawn_simultaneously and not table.is_empty(minions_auto_killed) then
-			result = "-Bots were unable to kill: " .. table.concat(minions_auto_killed, ", ")
+		if not var_29_5 and not table.is_empty(var_29_1) then
+			var_29_0 = "-Bots were unable to kill: " .. table.concat(var_29_1, ", ")
 		end
 
-		if result == "" then
-			result = "All minion units were spawned and killed"
+		if var_29_0 == "" then
+			var_29_0 = "All minion units were spawned and killed"
 		end
 
-		return result
+		return var_29_0
 	end)
 end
 
-TestCases.equip_deus_power_ups = function (case_settings)
-	Testify:run_case(function (dt, t)
-		local settings = cjson.decode(case_settings or "{}")
-		local power_up_type = settings.power_up_type
-		local terror_event_name = settings.terror_event_name
-		local level_key = settings.level_key
-		local profile_name = settings.profile_name
-		local career_name = settings.career_name
+function TestCases.equip_deus_power_ups(arg_30_0)
+	Testify:run_case(function(arg_31_0, arg_31_1)
+		local var_31_0 = cjson.decode(arg_30_0 or "{}")
+		local var_31_1 = var_31_0.power_up_type
+		local var_31_2 = var_31_0.terror_event_name
+		local var_31_3 = var_31_0.level_key
+		local var_31_4 = var_31_0.profile_name
+		local var_31_5 = var_31_0.career_name
 
 		Testify:make_request("wait_for_state_ingame_reached")
-		TestifySnippets.load_level({
-			level_key = level_key,
+		var_0_1.load_level({
+			level_key = var_31_3
 		})
-		TestifySnippets.set_script_data({
-			ai_bots_disabled = false,
-			ai_terror_events_disabled = true,
-			debug_terror = true,
+		var_0_1.set_script_data({
 			disable_catapulting = true,
 			disable_external_velocity = true,
 			disable_vortex_attraction = true,
+			ai_terror_events_disabled = true,
+			debug_terror = true,
+			ai_bots_disabled = false,
 			infinite_ammo = true,
 			power_level_override = 1600,
-			only_allowed_terror_event = terror_event_name,
+			only_allowed_terror_event = var_31_2
 		})
 
-		local nav_world = Managers.state.entity:system("ai_system"):nav_world()
-		local peaks = Testify:make_request("peaks")
-		local peak_travel_distance = peaks[#peaks]
-		local main_path_point = peak_travel_distance
-		local total_main_path_distance = Testify:make_request("total_main_path_distance")
+		local var_31_6 = Managers.state.entity:system("ai_system"):nav_world()
+		local var_31_7 = Testify:make_request("peaks")
+		local var_31_8 = var_31_7[#var_31_7]
+		local var_31_9 = Testify:make_request("total_main_path_distance")
+		local var_31_10 = math.clamp(var_31_8, 0, var_31_9 - 1)
+		local var_31_11 = {}
 
-		main_path_point = math.clamp(main_path_point, 0, total_main_path_distance - 1)
-
-		local bots_stuck_data = {}
-
-		for i = 1, 3 do
-			bots_stuck_data[i] = {
+		for iter_31_0 = 1, 3 do
+			var_31_11[iter_31_0] = {
 				Vector3Box(Vector3(-999, -999, -999)),
-				os.time(),
+				os.time()
 			}
 		end
 
-		local bot_teleportation_data = {
-			bots_blocked_distance = 2,
+		local var_31_12 = {
 			bots_blocked_time_before_teleportation = 15,
-			bots_stuck_data = bots_stuck_data,
-			main_path_point = main_path_point,
+			bots_blocked_distance = 2,
+			bots_stuck_data = var_31_11,
+			main_path_point = var_31_10
 		}
-		local power_up_tests
+		local var_31_13
 
-		if power_up_type == "talent" then
-			power_up_tests = Testify:make_request("get_available_deus_talent_power_up_tests")
-		elseif power_up_type == "generic" then
-			power_up_tests = Testify:make_request("get_available_deus_generic_power_up_tests")
+		if var_31_1 == "talent" then
+			var_31_13 = Testify:make_request("get_available_deus_talent_power_up_tests")
+		elseif var_31_1 == "generic" then
+			var_31_13 = Testify:make_request("get_available_deus_generic_power_up_tests")
 		end
 
-		for rarity, powerup_tests_for_rarity in pairs(power_up_tests) do
-			for power_up_name, power_up_test_function in pairs(powerup_tests_for_rarity) do
-				TestifySnippets.set_player_profile(profile_name, career_name)
-				TestifySnippets.set_bot_profile(profile_name, career_name)
+		for iter_31_1, iter_31_2 in pairs(var_31_13) do
+			for iter_31_3, iter_31_4 in pairs(iter_31_2) do
+				var_0_1.set_player_profile(var_31_4, var_31_5)
+				var_0_1.set_bot_profile(var_31_4, var_31_5)
 				Testify:make_request("wait_for_players_inventory_ready")
 				Testify:make_request("add_buffs_to_heroes", {
 					"ledge_rescue",
 					"disable_rescue",
-					"blessing_of_isha_invincibility",
+					"blessing_of_isha_invincibility"
 				})
 
-				local request_parameter = {
-					power_up_name = power_up_name,
-					rarity = rarity,
+				local var_31_14 = {
+					power_up_name = iter_31_3,
+					rarity = iter_31_1
 				}
 
-				Testify:make_request("activate_bots_deus_power_up", request_parameter)
-				Testify:make_request("activate_player_deus_power_up", request_parameter)
-				printf("[Testify] Testing %s: for career %s", power_up_name, career_name)
-				power_up_test_function(nav_world, terror_event_name, main_path_point, bot_teleportation_data)
+				Testify:make_request("activate_bots_deus_power_up", var_31_14)
+				Testify:make_request("activate_player_deus_power_up", var_31_14)
+				printf("[Testify] Testing %s: for career %s", iter_31_3, var_31_5)
+				iter_31_4(var_31_6, var_31_2, var_31_10, var_31_12)
 				Testify:make_request("reset_deus_power_ups")
 			end
 		end
 
 		print("[Testify] All deus power ups were tested!")
 
-		local result = string.format("All %s power-ups were test", power_up_type)
-
-		return result
+		return (string.format("All %s power-ups were test", var_31_1))
 	end)
 end
 
-TestCases.write_morris_levels_to_file = function ()
-	Testify:run_case(function (dt, t)
-		local filename = "C:\\deus_erb_variables.yaml"
-		local file = io.open(filename, "w")
+function TestCases.write_morris_levels_to_file()
+	Testify:run_case(function(arg_33_0, arg_33_1)
+		local var_33_0 = "C:\\deus_erb_variables.yaml"
+		local var_33_1 = io.open(var_33_0, "w")
 
-		file:write("# Generated by running the test TestCases.write_morris_levels_to_file()", "\n")
-		file:write("variables:", "\n")
-		file:write("  deus_levels:", "\n")
+		var_33_1:write("# Generated by running the test TestCases.write_morris_levels_to_file()", "\n")
+		var_33_1:write("variables:", "\n")
+		var_33_1:write("  deus_levels:", "\n")
 
-		local levels = {}
-		local LevelSettingsMorris = require("levels/honduras_dlcs/morris/level_settings_morris")
+		local var_33_2 = {}
+		local var_33_3 = require("levels/honduras_dlcs/morris/level_settings_morris")
 
-		for level_name, level_settings in pairs(LevelSettingsMorris) do
-			local level_key = level_settings.level_key
+		for iter_33_0, iter_33_1 in pairs(var_33_3) do
+			local var_33_4 = iter_33_1.level_key
 
-			if level_key then
-				local is_deus_level = level_name == level_key
-
-				if is_deus_level then
-					table.insert(levels, "    - " .. level_key)
-				end
+			if var_33_4 and iter_33_0 == var_33_4 then
+				table.insert(var_33_2, "    - " .. var_33_4)
 			end
 		end
 
-		for i = 1, #levels do
-			file:write(levels[i], "\n")
+		for iter_33_2 = 1, #var_33_2 do
+			var_33_1:write(var_33_2[iter_33_2], "\n")
 		end
 
-		file:flush()
-		file:close()
+		var_33_1:flush()
+		var_33_1:close()
 	end)
 end
 
-TestCases.equip_hats = function ()
-	Testify:run_case(function (dt, t)
-		TestifySnippets.load_level({
-			level_key = "inn_level",
+function TestCases.equip_hats()
+	Testify:run_case(function(arg_35_0, arg_35_1)
+		var_0_1.load_level({
+			level_key = "inn_level"
 		})
 		Testify:make_request("add_all_hats")
 		Testify:make_request("wait_for_playfab_response", "devGrantItems")
 
-		local profiles = Testify:make_request("request_profiles", "heroes")
+		local var_35_0 = Testify:make_request("request_profiles", "heroes")
 
-		for _, profile in ipairs(profiles) do
-			for _, career_name in ipairs(profile.careers) do
-				TestifySnippets.set_player_profile(profile.name, career_name)
+		for iter_35_0, iter_35_1 in ipairs(var_35_0) do
+			for iter_35_2, iter_35_3 in ipairs(iter_35_1.careers) do
+				var_0_1.set_player_profile(iter_35_1.name, iter_35_3)
 				Testify:make_request("wait_for_players_inventory_ready")
-				TestifySnippets.open_hero_view()
-				TestifySnippets.open_cosmetics_inventory()
-				TestifySnippets.equip_hats()
+				var_0_1.open_hero_view()
+				var_0_1.open_cosmetics_inventory()
+				var_0_1.equip_hats()
 				Testify:make_request("close_hero_view")
 			end
 		end
 	end)
 end
 
-TestCases.versus_multiplayer_server = function (case_settings)
-	Testify:run_case(function (dt, t)
-		local settings = cjson.decode(case_settings or "{}")
-		local do_early_win = settings.do_early_win or false
-		local match_outcome = settings.match_outcome or "draw"
+function TestCases.versus_multiplayer_server(arg_36_0)
+	Testify:run_case(function(arg_37_0, arg_37_1)
+		local var_37_0 = cjson.decode(arg_36_0 or "{}")
+		local var_37_1 = var_37_0.do_early_win or false
+		local var_37_2 = var_37_0.match_outcome or "draw"
 
-		fassert(match_outcome == "party_one" or match_outcome == "party_two" or match_outcome == "draw", "Unexpected 'match_outcome' setting. Expected 'party_one', 'party_two' or 'draw'")
-		fassert(not do_early_win or match_outcome ~= "draw", "Unable to do early win and expect a draw")
-		TestifySnippets.set_script_data({
+		fassert(var_37_2 == "party_one" or var_37_2 == "party_two" or var_37_2 == "draw", "Unexpected 'match_outcome' setting. Expected 'party_one', 'party_two' or 'draw'")
+		fassert(not var_37_1 or var_37_2 ~= "draw", "Unable to do early win and expect a draw")
+		var_0_1.set_script_data({
 			player_invincible = true,
-			disable_gamemode_end = not do_early_win,
+			disable_gamemode_end = not var_37_1,
 			versus_config = {
-				filter_on_server_name = true,
-			},
+				filter_on_server_name = true
+			}
 		})
 		Testify:make_request("wait_for_game_mode_state", {
-			game_mode = "inn_vs",
 			state = "dedicated_server_waiting_for_fully_reserved",
+			game_mode = "inn_vs"
 		})
 		Testify:make_request("wait_for_game_mode_state", {
-			game_mode = "inn_vs",
 			state = "dedicated_server_starting_game",
+			game_mode = "inn_vs"
 		})
 		Testify:make_request("wait_for_game_mode_state", {
-			game_mode = "versus",
 			state = "pre_start_round_state",
+			game_mode = "versus"
 		})
 
-		local num_sets = Testify:make_request("versus_get_num_sets")
+		local var_37_3 = Testify:make_request("versus_get_num_sets")
 
-		for i = 1, num_sets * 2 do
-			print(string.format("TESTIFY - start of loop | i = %d | %d", i, num_sets * 2))
-			TestifySnippets.set_script_data({
-				disable_gamemode_end = true,
+		for iter_37_0 = 1, var_37_3 * 2 do
+			print(string.format("TESTIFY - start of loop | i = %d | %d", iter_37_0, var_37_3 * 2))
+			var_0_1.set_script_data({
+				disable_gamemode_end = true
 			})
 
-			local current_round = i % 2
-			local is_winning_partys_turn = match_outcome == "draw" or match_outcome == "party_one" and current_round == 1 or match_outcome == "party_two" and current_round == 0
+			local var_37_4 = iter_37_0 % 2
+			local var_37_5 = var_37_2 == "draw" or var_37_2 == "party_one" and var_37_4 == 1 or var_37_2 == "party_two" and var_37_4 == 0
 
 			Testify:make_request("wait_for_game_mode_state", {
-				game_mode = "versus",
 				state = "pre_start_round_state",
+				game_mode = "versus"
 			})
 			Testify:make_request("versus_wait_for_initial_peers_spawned")
-			TestifySnippets.wait(1)
+			var_0_1.wait(1)
 			Testify:make_request("game_mode_start_round")
 			Testify:make_request("wait_for_game_mode_state", {
-				game_mode = "versus",
 				state = "match_running_state",
+				game_mode = "versus"
 			})
 
-			local early_end
+			local var_37_6
 
-			if is_winning_partys_turn then
-				early_end = TestifySnippets.versus_complete_all_objectives()
+			if var_37_5 then
+				var_37_6 = var_0_1.versus_complete_all_objectives()
 			end
 
-			TestifySnippets.set_script_data({
-				disable_gamemode_end = false,
+			var_0_1.set_script_data({
+				disable_gamemode_end = false
 			})
 			Testify:make_request("versus_set_time", 0)
 
-			if early_end or i >= num_sets * 2 then
+			if var_37_6 or iter_37_0 >= var_37_3 * 2 then
 				Testify:make_request("wait_for_transition_state", "restart_game_server")
 
 				break
 			else
 				Testify:make_request("wait_for_game_mode_state", {
-					game_mode = "versus",
 					state = "post_round_state",
+					game_mode = "versus"
 				})
 			end
 
-			print(string.format("TESTIFY - end of loop | i = %d | %d", i, num_sets * 2))
+			print(string.format("TESTIFY - end of loop | i = %d | %d", iter_37_0, var_37_3 * 2))
 		end
 
 		print("TESTIFY - out of loop")
 	end)
 end
 
-TestCases.versus_multiplayer_client = function (case_settings)
-	Testify:run_case(function (dt, t)
-		TestifySnippets.set_script_data({
+function TestCases.versus_multiplayer_client(arg_38_0)
+	Testify:run_case(function(arg_39_0, arg_39_1)
+		var_0_1.set_script_data({
 			player_invincible = true,
 			versus_config = {
-				filter_on_server_name = true,
-			},
+				filter_on_server_name = true
+			}
 		})
 		Testify:make_request("wait_for_game_mode", "inn_vs")
 		Testify:make_request("wait_for_player_to_spawn")
 		Testify:make_request("request_vote", {
+			private_game = false,
+			player_hosted = false,
 			dedicated_servers_aws = false,
-			dedicated_servers_win = true,
-			difficulty = "versus_base",
 			join_method = "party",
+			request_type = "versus_quickplay",
 			matchmaking_type = "standard",
 			mechanism = "versus",
-			player_hosted = false,
-			private_game = false,
 			quick_game = true,
-			request_type = "versus_quickplay",
+			difficulty = "versus_base",
+			dedicated_servers_win = true
 		})
 		Testify:make_request("wait_for_matchmaking_substate", {
-			state = "MatchmakingStateReserveLobby",
 			substate = "waiting_for_join_message",
+			state = "MatchmakingStateReserveLobby"
 		})
 		Testify:make_request("wait_for_matchmaking_state", "MatchmakingStateRequestJoinGame")
 		Testify:make_request("wait_for_matchmaking_state", "MatchmakingStateJoinGame")
 		Testify:make_request("wait_for_level_to_be_loaded")
 		Testify:make_request("wait_for_game_mode_state", {
-			game_mode = "versus",
 			state = "character_selection_state",
+			game_mode = "versus"
 		})
 		Testify:make_request("versus_wait_for_local_player_hero_picking_turn")
 		Testify:make_request("versus_select_random_available_hero")
 
-		local num_sets = Testify:make_request("versus_get_num_sets")
+		local var_39_0 = Testify:make_request("versus_get_num_sets")
 
-		for i = 1, num_sets * 2 do
-			print(string.format("TESTIFY - start of loop | i = %d | %d", i, num_sets * 2))
+		for iter_39_0 = 1, var_39_0 * 2 do
+			print(string.format("TESTIFY - start of loop | i = %d | %d", iter_39_0, var_39_0 * 2))
 			Testify:make_request("wait_for_game_mode_state", {
-				game_mode = "versus",
 				state = "match_running_state",
+				game_mode = "versus"
 			})
 			Testify:make_request("wait_for_game_mode_state", {
-				game_mode = "versus",
 				state = "post_round_state",
+				game_mode = "versus"
 			})
-			print(string.format("TESTIFY - end of loop | i = %d | %d", i, num_sets * 2))
+			print(string.format("TESTIFY - end of loop | i = %d | %d", iter_39_0, var_39_0 * 2))
 
-			local early_end = Testify:make_request("versus_party_won_early")
-
-			if early_end then
+			if Testify:make_request("versus_party_won_early") then
 				break
 			end
 		end

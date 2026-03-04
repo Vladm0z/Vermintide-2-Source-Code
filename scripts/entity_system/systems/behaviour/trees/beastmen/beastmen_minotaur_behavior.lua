@@ -1,46 +1,46 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_minotaur_behavior.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_minotaur_behavior.lua
 
-local ACTIONS = BreedActions.beastmen_minotaur
+local var_0_0 = BreedActions.beastmen_minotaur
 
 BreedBehaviors.minotaur = {
 	"BTSelector",
 	{
 		"BTSpawningAction",
 		condition = "spawn",
-		name = "spawn",
+		name = "spawn"
 	},
 	{
 		"BTSelector",
 		{
 			"BTTeleportAction",
 			condition = "at_teleport_smartobject",
-			name = "teleport",
+			name = "teleport"
 		},
 		{
 			"BTClimbAction",
-			condition = "at_climb_smartobject",
 			name = "climb",
-			action_data = ACTIONS.climb,
+			condition = "at_climb_smartobject",
+			action_data = var_0_0.climb
 		},
 		{
 			"BTJumpAcrossAction",
 			condition = "at_jump_smartobject",
-			name = "jump_across",
+			name = "jump_across"
 		},
 		{
 			"BTSmashDoorAction",
-			condition = "at_door_smartobject",
 			name = "smash_door",
-			action_data = ACTIONS.smash_door,
+			condition = "at_door_smartobject",
+			action_data = var_0_0.smash_door
 		},
 		condition = "ratogre_at_smartobject",
-		name = "smartobject",
+		name = "smartobject"
 	},
 	{
 		"BTStaggerAction",
-		condition = "stagger",
 		name = "stagger",
-		action_data = ACTIONS.stagger,
+		condition = "stagger",
+		action_data = var_0_0.stagger
 	},
 	{
 		"BTSelector",
@@ -49,42 +49,42 @@ BreedBehaviors.minotaur = {
 			{
 				"BTBossFollowAction",
 				name = "follow",
-				action_data = ACTIONS.follow,
+				action_data = var_0_0.follow
 			},
 			{
 				"BTMeleeOverlapAttackAction",
 				name = "headbutt_attack",
-				action_data = ACTIONS.headbutt_attack,
+				action_data = var_0_0.headbutt_attack
 			},
 			{
 				"BTMeleeOverlapAttackAction",
 				name = "melee_shove",
-				action_data = ACTIONS.melee_shove,
+				action_data = var_0_0.melee_shove
 			},
 			{
 				"BTMeleeOverlapAttackAction",
 				name = "combo_attack",
-				action_data = ACTIONS.combo_attack,
+				action_data = var_0_0.combo_attack
 			},
 			{
 				"BTChargeAttackAction",
 				name = "charge_attack",
-				action_data = ACTIONS.charge_attack,
+				action_data = var_0_0.charge_attack
 			},
 			condition = "ratogre_target_reachable",
-			name = "in_combat",
+			name = "in_combat"
 		},
 		{
 			"BTTargetUnreachableAction",
 			name = "target_unreachable",
-			action_data = ACTIONS.target_unreachable,
+			action_data = var_0_0.target_unreachable
 		},
 		condition = "can_see_player",
-		name = "has_target",
+		name = "has_target"
 	},
 	{
 		"BTIdleAction",
-		name = "idle",
+		name = "idle"
 	},
-	name = "minotaur",
+	name = "minotaur"
 }

@@ -1,68 +1,68 @@
-﻿-- chunkname: @scripts/game_state/game_state_machine.lua
+-- chunkname: @scripts/game_state/game_state_machine.lua
 
 require("foundation/scripts/util/state_machine")
 
 GameStateMachine = class(GameStateMachine, StateMachine)
 
-GameStateMachine.init = function (self, parent, start_state, params, profiling_debugging_enabled)
-	self._notify_mod_manager = params.notify_mod_manager
+function GameStateMachine.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	arg_1_0._notify_mod_manager = arg_1_3.notify_mod_manager
 
-	self.super.init(self, parent, start_state, params, profiling_debugging_enabled)
+	arg_1_0.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 end
 
-GameStateMachine._change_state = function (self, new_state, ...)
-	local notify = self._notify_mod_manager
-	local old_state = self._state
+function GameStateMachine._change_state(arg_2_0, arg_2_1, ...)
+	local var_2_0 = arg_2_0._notify_mod_manager
+	local var_2_1 = arg_2_0._state
 
-	if notify and old_state then
-		Managers.mod:on_game_state_changed("exit", old_state.NAME, old_state)
+	if var_2_0 and var_2_1 then
+		Managers.mod:on_game_state_changed("exit", var_2_1.NAME, var_2_1)
 	end
 
-	self.super._change_state(self, new_state, ...)
+	arg_2_0.super._change_state(arg_2_0, arg_2_1, ...)
 
-	local new_state = self._state
+	local var_2_2 = arg_2_0._state
 
-	if notify then
-		Managers.mod:on_game_state_changed("enter", new_state.NAME, new_state)
-	end
-end
-
-GameStateMachine.pre_update = function (self, dt, t)
-	if self._state and self._state.pre_update then
-		self._state:pre_update(dt, t)
+	if var_2_0 then
+		Managers.mod:on_game_state_changed("enter", var_2_2.NAME, var_2_2)
 	end
 end
 
-GameStateMachine.post_update = function (self, dt, t)
-	if self._state and self._state.post_update then
-		self._state:post_update(dt, t)
+function GameStateMachine.pre_update(arg_3_0, arg_3_1, arg_3_2)
+	if arg_3_0._state and arg_3_0._state.pre_update then
+		arg_3_0._state:pre_update(arg_3_1, arg_3_2)
 	end
 end
 
-GameStateMachine.pre_render = function (self)
-	if self._state and self._state.pre_render then
-		self._state:pre_render()
+function GameStateMachine.post_update(arg_4_0, arg_4_1, arg_4_2)
+	if arg_4_0._state and arg_4_0._state.post_update then
+		arg_4_0._state:post_update(arg_4_1, arg_4_2)
 	end
 end
 
-GameStateMachine.render = function (self)
-	if self._state and self._state.render then
-		self._state:render()
+function GameStateMachine.pre_render(arg_5_0)
+	if arg_5_0._state and arg_5_0._state.pre_render then
+		arg_5_0._state:pre_render()
 	end
 end
 
-GameStateMachine.post_render = function (self)
-	if self._state and self._state.post_render then
-		self._state:post_render()
+function GameStateMachine.render(arg_6_0)
+	if arg_6_0._state and arg_6_0._state.render then
+		arg_6_0._state:render()
 	end
 end
 
-GameStateMachine.destroy = function (self, ...)
-	local old_state = self._state
+function GameStateMachine.post_render(arg_7_0)
+	if arg_7_0._state and arg_7_0._state.post_render then
+		arg_7_0._state:post_render()
+	end
+end
 
-	if self._notify_mod_manager and old_state then
-		Managers.mod:on_game_state_changed("exit", old_state.NAME)
+function GameStateMachine.destroy(arg_8_0, ...)
+	local var_8_0 = arg_8_0._state
+
+	if arg_8_0._notify_mod_manager and var_8_0 then
+		Managers.mod:on_game_state_changed("exit", var_8_0.NAME)
 	end
 
-	self.super.destroy(self, ...)
+	arg_8_0.super.destroy(arg_8_0, ...)
 end

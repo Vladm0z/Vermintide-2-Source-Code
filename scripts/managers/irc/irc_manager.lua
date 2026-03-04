@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/managers/irc/irc_manager.lua
+-- chunkname: @scripts/managers/irc/irc_manager.lua
 
 require("scripts/managers/irc/script_irc_token")
 require("scripts/managers/irc/irc_utils")
@@ -9,29 +9,29 @@ Irc.META_MSG = 9
 Irc.TEAM_MSG = 10
 Irc.ALL_MSG = 11
 
-local DEBUG_PRINT = false
-local CONNECTION_RETRIES = 3
-local MESSAGES_TO_SEND = {}
+local var_0_0 = false
+local var_0_1 = 3
+local var_0_2 = {}
 
-local function debug_print(message, ...)
-	if DEBUG_PRINT then
-		printf("[IRCManager] " .. message, ...)
+local function var_0_3(arg_1_0, ...)
+	if var_0_0 then
+		printf("[IRCManager] " .. arg_1_0, ...)
 	end
 end
 
-IRCManager.init = function (self)
-	self:_reset()
+function IRCManager.init(arg_2_0)
+	arg_2_0:_reset()
 end
 
-IRCManager._reset = function (self)
-	self._state = "none"
-	self._connection_retries = 0
-	self._user_name = nil
-	self._port = nil
-	self._host_address = nil
-	self._channel_members = {}
-	self._channels = {}
-	self._callback_by_type = self._callback_by_type or {
+function IRCManager._reset(arg_3_0)
+	arg_3_0._state = "none"
+	arg_3_0._connection_retries = 0
+	arg_3_0._user_name = nil
+	arg_3_0._port = nil
+	arg_3_0._host_address = nil
+	arg_3_0._channel_members = {}
+	arg_3_0._channels = {}
+	arg_3_0._callback_by_type = arg_3_0._callback_by_type or {
 		[Irc.PRIVATE_MSG] = {},
 		[Irc.CHANNEL_MSG] = {},
 		[Irc.SYSTEM_MSG] = {},
@@ -40,81 +40,81 @@ IRCManager._reset = function (self)
 		[Irc.NAMES_MSG] = {},
 		[Irc.LIST_MSG] = {},
 		[Irc.LIST_END_MSG] = {},
-		[Irc.META_MSG] = {},
+		[Irc.META_MSG] = {}
 	}
 end
 
-IRCManager.connect = function (self, user_name, optional_password, settings, cb)
-	local address = settings.address
-	local port = settings.port or 6667
-	local channel_name = settings.channel_name
-	local allow_send = settings.allow_send
+function IRCManager.connect(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = arg_4_3.address
+	local var_4_1 = arg_4_3.port or 6667
+	local var_4_2 = arg_4_3.channel_name
+	local var_4_3 = arg_4_3.allow_send
 
-	fassert(address and port, "[IRCManager] You need to provide both address and port when connecting to IRC")
+	fassert(var_4_0 and var_4_1, "[IRCManager] You need to provide both address and port when connecting to IRC")
 
-	self._host_address = address
-	self._port = port
+	arg_4_0._host_address = var_4_0
+	arg_4_0._port = var_4_1
 
-	local default_user_name = "justinfan" .. Math.random(99999)
+	local var_4_4 = "justinfan" .. Math.random(99999)
 
-	self._user_name = user_name or self._user_name or default_user_name
-	self._user_name = string.gsub(self._user_name, " ", "_")
-	self._password = optional_password or nil
-	self._auto_join_channel = channel_name
-	self._home_channel = channel_name or ""
+	arg_4_0._user_name = arg_4_1 or arg_4_0._user_name or var_4_4
+	arg_4_0._user_name = string.gsub(arg_4_0._user_name, " ", "_")
+	arg_4_0._password = arg_4_2 or nil
+	arg_4_0._auto_join_channel = var_4_2
+	arg_4_0._home_channel = var_4_2 or ""
 
-	self:_change_state("initialize")
+	arg_4_0:_change_state("initialize")
 
-	self._callback = cb
-	self._allow_send = allow_send
+	arg_4_0._callback = arg_4_4
+	arg_4_0._allow_send = var_4_3
 end
 
-IRCManager.home_channel = function (self)
-	return self._home_channel
+function IRCManager.home_channel(arg_5_0)
+	return arg_5_0._home_channel
 end
 
-IRCManager.set_user_name = function (self, user_name)
-	fassert(self._state == "none", "[IRCManager] You can't change user name after you've connected")
+function IRCManager.set_user_name(arg_6_0, arg_6_1)
+	fassert(arg_6_0._state == "none", "[IRCManager] You can't change user name after you've connected")
 
-	self._user_name = string.gsub(user_name, " ", "_")
+	arg_6_0._user_name = string.gsub(arg_6_1, " ", "_")
 end
 
-IRCManager.register_message_callback = function (self, key, message_type, callback)
-	fassert(self._callback_by_type[message_type], "[IRCManager] There is no message type called %s", message_type)
+function IRCManager.register_message_callback(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	fassert(arg_7_0._callback_by_type[arg_7_2], "[IRCManager] There is no message type called %s", arg_7_2)
 
-	self._callback_by_type[message_type][key] = callback
+	arg_7_0._callback_by_type[arg_7_2][arg_7_1] = arg_7_3
 end
 
-IRCManager.unregister_message_callback = function (self, key, optional_message_type)
-	if optional_message_type then
-		self._callback_by_type[optional_message_type][key] = nil
+function IRCManager.unregister_message_callback(arg_8_0, arg_8_1, arg_8_2)
+	if arg_8_2 then
+		arg_8_0._callback_by_type[arg_8_2][arg_8_1] = nil
 	else
-		for message_type, callbacks in pairs(self._callback_by_type) do
-			self._callback_by_type[message_type][key] = nil
+		for iter_8_0, iter_8_1 in pairs(arg_8_0._callback_by_type) do
+			arg_8_0._callback_by_type[iter_8_0][arg_8_1] = nil
 		end
 	end
 end
 
-IRCManager.user_name = function (self)
-	return self._user_name
+function IRCManager.user_name(arg_9_0)
+	return arg_9_0._user_name
 end
 
-IRCManager.force_disconnect = function (self)
+function IRCManager.force_disconnect(arg_10_0)
 	Irc.disconnect()
 end
 
-IRCManager.send_message = function (self, message, channel_or_user)
-	if self._allow_send then
-		local channel_or_user = channel_or_user
+function IRCManager.send_message(arg_11_0, arg_11_1, arg_11_2)
+	if arg_11_0._allow_send then
+		local var_11_0 = arg_11_2
 
-		if channel_or_user == self._user_name then
+		if var_11_0 == arg_11_0._user_name then
 			Application.error("[IRCManager] You cannot message yourself")
 		else
-			debug_print("message: %s - channel or user: %s", message, tostring(channel_or_user))
+			var_0_3("message: %s - channel or user: %s", arg_11_1, tostring(var_11_0))
 
-			MESSAGES_TO_SEND[#MESSAGES_TO_SEND + 1] = {
-				message = message,
-				channel_or_user = channel_or_user,
+			var_0_2[#var_0_2 + 1] = {
+				message = arg_11_1,
+				channel_or_user = var_11_0
 			}
 
 			return true
@@ -126,137 +126,137 @@ IRCManager.send_message = function (self, message, channel_or_user)
 	return false
 end
 
-IRCManager.join_channel = function (self, channel)
-	debug_print("Joining Channel: %s", tostring(channel))
-	Irc.join_channel(channel)
+function IRCManager.join_channel(arg_12_0, arg_12_1)
+	var_0_3("Joining Channel: %s", tostring(arg_12_1))
+	Irc.join_channel(arg_12_1)
 end
 
-IRCManager.leave_channel = function (self, channel)
-	debug_print("Leaving Channel: %s", tostring(channel))
-	Irc.leave_channel(channel)
+function IRCManager.leave_channel(arg_13_0, arg_13_1)
+	var_0_3("Leaving Channel: %s", tostring(arg_13_1))
+	Irc.leave_channel(arg_13_1)
 end
 
-IRCManager.who = function (self, channel)
-	Irc.who(channel)
+function IRCManager.who(arg_14_0, arg_14_1)
+	Irc.who(arg_14_1)
 end
 
-IRCManager.destroy = function (self)
+function IRCManager.destroy(arg_15_0)
 	Irc.disconnect()
 end
 
-IRCManager._handle_irc_message = function (self, message_type, username, message, parameter)
-	debug_print("Message: %s %s %s %s", message_type, username, message, parameter)
+function IRCManager._handle_irc_message(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+	var_0_3("Message: %s %s %s %s", arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 
-	if self:_handle_meta(message_type, username, message, parameter) then
+	if arg_16_0:_handle_meta(arg_16_1, arg_16_2, arg_16_3, arg_16_4) then
 		return
 	end
 
-	message_type = self:_handle_connections(message_type, username, message, parameter)
+	arg_16_1 = arg_16_0:_handle_connections(arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 
-	local callbacks = self._callback_by_type[message_type]
+	local var_16_0 = arg_16_0._callback_by_type[arg_16_1]
 
-	if callbacks then
-		local message = string.gsub(message, "%c", "")
+	if var_16_0 then
+		local var_16_1 = string.gsub(arg_16_3, "%c", "")
 
-		for key, callback in pairs(callbacks) do
-			callback(key, message_type, username, message, parameter)
+		for iter_16_0, iter_16_1 in pairs(var_16_0) do
+			iter_16_1(iter_16_0, arg_16_1, arg_16_2, var_16_1, arg_16_4)
 		end
 	end
 end
 
-IRCManager._handle_connections = function (self, message_type, username, message, parameter)
-	self._channels = self._channels or {}
-	self._channel_members = self._channel_members or {}
+function IRCManager._handle_connections(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+	arg_17_0._channels = arg_17_0._channels or {}
+	arg_17_0._channel_members = arg_17_0._channel_members or {}
 
-	if message_type == Irc.NAMES_MSG then
-		local channel = parameter
-		local new_members = string.split_deprecated(message, " ")
+	if arg_17_1 == Irc.NAMES_MSG then
+		local var_17_0 = arg_17_4
+		local var_17_1 = string.split_deprecated(arg_17_3, " ")
 
-		self._channels[channel] = true
-		self._channel_members[channel] = self._channel_members[channel] or {}
+		arg_17_0._channels[var_17_0] = true
+		arg_17_0._channel_members[var_17_0] = arg_17_0._channel_members[var_17_0] or {}
 
-		local members = self._channel_members[channel]
+		local var_17_2 = arg_17_0._channel_members[var_17_0]
 
-		for _, name in ipairs(new_members) do
-			if not members[name] then
-				members[name] = {
+		for iter_17_0, iter_17_1 in ipairs(var_17_1) do
+			if not var_17_2[iter_17_1] then
+				var_17_2[iter_17_1] = {
 					icon_id = 0,
 					info = "",
 					level = "n/a",
-					name = name,
-					time = Managers.time:time("main"),
+					name = iter_17_1,
+					time = Managers.time:time("main")
 				}
 			end
 		end
-	elseif message_type == Irc.LEAVE_MSG then
-		if username == self._user_name then
-			local channel = parameter
+	elseif arg_17_1 == Irc.LEAVE_MSG then
+		if arg_17_2 == arg_17_0._user_name then
+			local var_17_3 = arg_17_4
 
-			self._channel_members[channel] = nil
-			self._channels[channel] = nil
+			arg_17_0._channel_members[var_17_3] = nil
+			arg_17_0._channels[var_17_3] = nil
 		else
-			local channel = parameter
+			local var_17_4 = arg_17_4
 
-			self._channel_members[channel] = self._channel_members[channel] or {}
-
-			local channel_members = self._channel_members[channel]
-
-			channel_members[username] = nil
+			arg_17_0._channel_members[var_17_4] = arg_17_0._channel_members[var_17_4] or {}
+			arg_17_0._channel_members[var_17_4][arg_17_2] = nil
 		end
-	elseif message_type == Irc.JOIN_MSG then
-		local channel = parameter
+	elseif arg_17_1 == Irc.JOIN_MSG then
+		local var_17_5 = arg_17_4
 
-		self._channel_members[channel] = self._channel_members[channel] or {}
+		arg_17_0._channel_members[var_17_5] = arg_17_0._channel_members[var_17_5] or {}
 
-		local user_data, icon_id, level, info
+		local var_17_6
+		local var_17_7
+		local var_17_8
+		local var_17_9
 
-		if username == self._user_name then
-			icon_id = 1
-			info = "vermintide owns"
+		if arg_17_2 == arg_17_0._user_name then
+			var_17_7 = 1
+			var_17_9 = "vermintide owns"
 
-			local level = ExperienceSettings.get_highest_character_level()
+			local var_17_10 = ExperienceSettings.get_highest_character_level()
 
-			user_data = {
-				name = username,
+			var_17_6 = {
+				name = arg_17_2,
 				time = Managers.time:time("main"),
-				icon_id = icon_id,
-				level = level,
-				info = info,
+				icon_id = var_17_7,
+				level = var_17_10,
+				info = var_17_9
 			}
 
-			local message = self:_create_metadata_table(username, icon_id, level, info)
+			local var_17_11 = arg_17_0:_create_metadata_table(arg_17_2, var_17_7, var_17_10, var_17_9)
 
-			Irc.send_message(message, parameter)
-			self:_update_meta_data(username, channel, user_data)
+			Irc.send_message(var_17_11, arg_17_4)
+			arg_17_0:_update_meta_data(arg_17_2, var_17_5, var_17_6)
 		else
-			user_data = {
-				name = username,
+			var_17_6 = {
+				name = arg_17_2,
 				time = Managers.time:time("main"),
-				icon_id = icon_id,
-				level = level,
-				info = info,
+				icon_id = var_17_7,
+				level = var_17_8,
+				info = var_17_9
 			}
 		end
 
-		self._channel_members[channel][username] = user_data
-		self._channels[channel] = true
+		arg_17_0._channel_members[var_17_5][arg_17_2] = var_17_6
+		arg_17_0._channels[var_17_5] = true
 
-		Managers.chat:add_message_target(channel, Irc.CHANNEL_MSG)
-	elseif message_type == Irc.LIST_MSG and message == "CHANNELS_END" then
-		message_type = Irc.LIST_END_MSG
+		Managers.chat:add_message_target(var_17_5, Irc.CHANNEL_MSG)
+	elseif arg_17_1 == Irc.LIST_MSG and arg_17_3 == "CHANNELS_END" then
+		arg_17_1 = Irc.LIST_END_MSG
 	end
 
-	return message_type
+	return arg_17_1
 end
 
-IRCManager._handle_meta = function (self, message_type, username, message, parameter)
-	if message_type == Irc.CHANNEL_MSG then
-		local meta_start_index, meta_end_index = string.find(message, "$META;")
+function IRCManager._handle_meta(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+	if arg_18_1 == Irc.CHANNEL_MSG then
+		local var_18_0, var_18_1 = string.find(arg_18_3, "$META;")
 
-		if meta_end_index then
-			local metadata = string.sub(message, meta_end_index + 1)
+		if var_18_1 then
+			local var_18_2 = string.sub(arg_18_3, var_18_1 + 1)
 
-			Managers.irc:parse_metadata(metadata, username, parameter)
+			Managers.irc:parse_metadata(var_18_2, arg_18_2, arg_18_4)
 
 			return true
 		end
@@ -265,203 +265,191 @@ IRCManager._handle_meta = function (self, message_type, username, message, param
 	return false
 end
 
-IRCManager._create_metadata_table = function (self, username, icon_id, level, info)
-	local message = "$META;"
-
-	message = message .. username .. ";" .. icon_id .. ";" .. level .. ";" .. info
-
-	return message
+function IRCManager._create_metadata_table(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+	return "$META;" .. arg_19_1 .. ";" .. arg_19_2 .. ";" .. arg_19_3 .. ";" .. arg_19_4
 end
 
-IRCManager.parse_metadata = function (self, meta_data, username, parameter)
-	local data = string.split_deprecated(meta_data, ";")
-	local user_data = self._channel_members[parameter][username]
+function IRCManager.parse_metadata(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+	local var_20_0 = string.split_deprecated(arg_20_1, ";")
+	local var_20_1 = arg_20_0._channel_members[arg_20_3][arg_20_2]
 
-	if user_data then
-		user_data.icon_id = data[2] and tonumber(data[2])
-		user_data.level = data[3]
-		user_data.info = data[4]
+	if var_20_1 then
+		var_20_1.icon_id = var_20_0[2] and tonumber(var_20_0[2])
+		var_20_1.level = var_20_0[3]
+		var_20_1.info = var_20_0[4]
 
-		self:_update_meta_data(username, parameter, user_data)
+		arg_20_0:_update_meta_data(arg_20_2, arg_20_3, var_20_1)
 	else
 		print("\tMissing user data")
 	end
 end
 
-IRCManager._update_meta_data = function (self, username, channel, user_data)
-	local message_type = Irc.META_MSG
-	local callbacks = self._callback_by_type[message_type]
+function IRCManager._update_meta_data(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+	local var_21_0 = Irc.META_MSG
+	local var_21_1 = arg_21_0._callback_by_type[var_21_0]
 
-	if callbacks then
-		for key, callback in pairs(callbacks) do
-			callback(key, message_type, username, channel, user_data)
+	if var_21_1 then
+		for iter_21_0, iter_21_1 in pairs(var_21_1) do
+			iter_21_1(iter_21_0, var_21_0, arg_21_1, arg_21_2, arg_21_3)
 		end
 	end
 end
 
-IRCManager.get_channel_members = function (self, channel_name)
-	if channel_name and self._channel_members[channel_name] then
-		return self._channel_members[channel_name]
+function IRCManager.get_channel_members(arg_22_0, arg_22_1)
+	if arg_22_1 and arg_22_0._channel_members[arg_22_1] then
+		return arg_22_0._channel_members[arg_22_1]
 	else
 		return {}
 	end
 end
 
-IRCManager.get_channels = function (self)
-	return self._channels
+function IRCManager.get_channels(arg_23_0)
+	return arg_23_0._channels
 end
 
-IRCManager._parse_names_list = function (self, channel, username, members, names_list_parameter)
-	local start_idx, end_idx = string.find(names_list_parameter, channel .. " :")
-	local names_sub_str = string.sub(names_list_parameter, end_idx)
-	local names = string.split_deprecated(names_sub_str, " ")
+function IRCManager._parse_names_list(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+	local var_24_0, var_24_1 = string.find(arg_24_4, arg_24_1 .. " :")
+	local var_24_2 = string.sub(arg_24_4, var_24_1)
+	local var_24_3 = string.split_deprecated(var_24_2, " ")
 
-	for _, names in ipairs(names) do
-		print(names)
+	for iter_24_0, iter_24_1 in ipairs(var_24_3) do
+		print(iter_24_1)
 	end
 end
 
-IRCManager.update = function (self, dt)
-	IRCStates[self._state](self, dt)
+function IRCManager.update(arg_25_0, arg_25_1)
+	IRCStates[arg_25_0._state](arg_25_0, arg_25_1)
 end
 
-IRCManager.cb_connect_token_received = function (self, data)
-	print("[IrcManager:cb_connect_token_received] Result: " .. tostring(data.result))
-	self:_change_state("verify_connection")
+function IRCManager.cb_connect_token_received(arg_26_0, arg_26_1)
+	print("[IrcManager:cb_connect_token_received] Result: " .. tostring(arg_26_1.result))
+	arg_26_0:_change_state("verify_connection")
 end
 
-IRCManager._change_state = function (self, state)
-	fassert(IRCStates[state], "[IRCManager] There is no state called %s", state)
-	debug_print("Leaving state: %s", self._state)
+function IRCManager._change_state(arg_27_0, arg_27_1)
+	fassert(IRCStates[arg_27_1], "[IRCManager] There is no state called %s", arg_27_1)
+	var_0_3("Leaving state: %s", arg_27_0._state)
 
-	self._state = state
+	arg_27_0._state = arg_27_1
 
-	debug_print("Entering state: %s", self._state)
+	var_0_3("Entering state: %s", arg_27_0._state)
 end
 
-IRCManager._notify_connected = function (self, connected)
-	if self._callback then
-		self._callback(connected)
+function IRCManager._notify_connected(arg_28_0, arg_28_1)
+	if arg_28_0._callback then
+		arg_28_0._callback(arg_28_1)
 	end
 end
 
 IRCStates = IRCStates or {}
 
-IRCStates.none = function (irc, dt)
+function IRCStates.none(arg_29_0, arg_29_1)
 	return
 end
 
-IRCStates.initialize = function (irc_manager, dt)
+function IRCStates.initialize(arg_30_0, arg_30_1)
 	if IS_PS4 then
-		irc_manager._initialized = true
+		arg_30_0._initialized = true
 
-		irc_manager:_change_state("connect")
+		arg_30_0:_change_state("connect")
 
 		return
 	end
 
 	if Irc.is_initialized() then
 		Application.error("[IRCManager] Failed initializing IRC")
-		irc_manager:_change_state("disconnect")
+		arg_30_0:_change_state("disconnect")
 
 		return
 	end
 
-	irc_manager._initialized = Irc.initialize()
+	arg_30_0._initialized = Irc.initialize()
 
-	if irc_manager._initialized then
-		irc_manager:_change_state("connect")
+	if arg_30_0._initialized then
+		arg_30_0:_change_state("connect")
 	else
 		Application.error("[IRCManager] Failed initializing IRC")
-		irc_manager:_change_state("disconnect")
+		arg_30_0:_change_state("disconnect")
 	end
 end
 
-IRCStates.connect = function (irc_manager, dt)
-	local host_address = irc_manager._host_address
-	local host_port = irc_manager._port
-	local default_user_name = "justinfan" .. Math.random(9999)
-	local user_name = irc_manager._user_name or default_user_name
-	local password = irc_manager._password or nil
-	local token = Irc.connect_async_token(host_address, host_port, user_name, password)
-	local script_token = ScriptIrcToken:new(token)
+function IRCStates.connect(arg_31_0, arg_31_1)
+	local var_31_0 = arg_31_0._host_address
+	local var_31_1 = arg_31_0._port
+	local var_31_2 = "justinfan" .. Math.random(9999)
+	local var_31_3 = arg_31_0._user_name or var_31_2
+	local var_31_4 = arg_31_0._password or nil
+	local var_31_5 = Irc.connect_async_token(var_31_0, var_31_1, var_31_3, var_31_4)
+	local var_31_6 = ScriptIrcToken:new(var_31_5)
 
-	Managers.token:register_token(script_token, callback(irc_manager, "cb_connect_token_received"))
-	irc_manager:_change_state("wait_for_connection")
+	Managers.token:register_token(var_31_6, callback(arg_31_0, "cb_connect_token_received"))
+	arg_31_0:_change_state("wait_for_connection")
 
-	irc_manager._connection_retries = irc_manager._connection_retries + 1
+	arg_31_0._connection_retries = arg_31_0._connection_retries + 1
 end
 
-IRCStates.join_channel = function (irc_manager, dt)
-	local is_connected = Irc.is_connected()
+function IRCStates.join_channel(arg_32_0, arg_32_1)
+	if Irc.is_connected() then
+		arg_32_0:join_channel(arg_32_0._auto_join_channel)
 
-	if is_connected then
-		irc_manager:join_channel(irc_manager._auto_join_channel)
+		arg_32_0._auto_join_channel = false
 
-		irc_manager._auto_join_channel = false
-
-		irc_manager:_change_state("connected")
-		irc_manager:_notify_connected(true)
+		arg_32_0:_change_state("connected")
+		arg_32_0:_notify_connected(true)
 	else
 		Application.error("[IRCManager] Disconnected from server")
-		irc_manager:_change_state("disconnect")
+		arg_32_0:_change_state("disconnect")
 	end
 end
 
-IRCStates.connected = function (irc_manager, dt)
-	local is_connected = Irc.is_connected()
-
-	if is_connected then
-		for _, message in ipairs(MESSAGES_TO_SEND) do
-			Irc.send_message(message.message, message.channel_or_user)
+function IRCStates.connected(arg_33_0, arg_33_1)
+	if Irc.is_connected() then
+		for iter_33_0, iter_33_1 in ipairs(var_0_2) do
+			Irc.send_message(iter_33_1.message, iter_33_1.channel_or_user)
 		end
 
-		table.clear(MESSAGES_TO_SEND)
+		table.clear(var_0_2)
 
-		local message_type, username, message, parameters = Irc.poll_message()
+		local var_33_0, var_33_1, var_33_2, var_33_3 = Irc.poll_message()
 
-		if message then
-			irc_manager:_handle_irc_message(message_type, username, message, parameters)
+		if var_33_2 then
+			arg_33_0:_handle_irc_message(var_33_0, var_33_1, var_33_2, var_33_3)
 		end
 	else
 		Application.error("[IRCManager] Disconnected from server")
-		irc_manager:_change_state("disconnect")
+		arg_33_0:_change_state("disconnect")
 	end
 end
 
-IRCStates.disconnect = function (irc_manager, dt)
-	local is_connected = Irc.is_connected()
-
-	if is_connected then
+function IRCStates.disconnect(arg_34_0, arg_34_1)
+	if Irc.is_connected() then
 		Irc.disconnect()
 	end
 
-	irc_manager:_notify_connected(false)
-	irc_manager:_reset()
-	irc_manager:_change_state("none")
+	arg_34_0:_notify_connected(false)
+	arg_34_0:_reset()
+	arg_34_0:_change_state("none")
 end
 
-IRCStates.verify_connection = function (irc_manager, dt)
-	local is_connected = Irc.is_connected()
-
-	if is_connected then
-		if irc_manager._auto_join_channel then
-			irc_manager:_change_state("join_channel")
+function IRCStates.verify_connection(arg_35_0, arg_35_1)
+	if Irc.is_connected() then
+		if arg_35_0._auto_join_channel then
+			arg_35_0:_change_state("join_channel")
 		else
-			irc_manager:_change_state("connected")
-			irc_manager:_notify_connected(true)
+			arg_35_0:_change_state("connected")
+			arg_35_0:_notify_connected(true)
 		end
-	elseif irc_manager._connection_retries > CONNECTION_RETRIES then
-		local host_address = irc_manager._host_address
-		local host_port = irc_manager._port
-		local default_user_name = "justinfan" .. Math.random(9999)
-		local user_name = irc_manager._user_name or default_user_name
+	elseif arg_35_0._connection_retries > var_0_1 then
+		local var_35_0 = arg_35_0._host_address
+		local var_35_1 = arg_35_0._port
+		local var_35_2 = "justinfan" .. Math.random(9999)
+		local var_35_3 = arg_35_0._user_name or var_35_2
 
-		Application.error("[IRCManager] Failed connecting to " .. host_address .. ":" .. host_port .. " with user_name: " .. user_name)
-		irc_manager:_change_state("disconnect")
+		Application.error("[IRCManager] Failed connecting to " .. var_35_0 .. ":" .. var_35_1 .. " with user_name: " .. var_35_3)
+		arg_35_0:_change_state("disconnect")
 	end
 end
 
-IRCStates.wait_for_connection = function (irc_manager, dt)
+function IRCStates.wait_for_connection(arg_36_0, arg_36_1)
 	return
 end

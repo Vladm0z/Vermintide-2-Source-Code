@@ -1,64 +1,64 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_dummy_troll_behavior.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_dummy_troll_behavior.lua
 
-local ACTIONS = BreedActions.chaos_dummy_troll
+local var_0_0 = BreedActions.chaos_dummy_troll
 
 BreedBehaviors.dummy_troll = {
 	"BTSelector",
 	{
 		"BTSpawningAction",
 		condition = "spawn",
-		name = "spawn",
+		name = "spawn"
 	},
 	{
 		"BTSelector",
 		{
 			"BTTeleportAction",
 			condition = "at_teleport_smartobject",
-			name = "teleport",
+			name = "teleport"
 		},
 		{
 			"BTClimbAction",
-			condition = "at_climb_smartobject",
 			name = "climb",
-			action_data = ACTIONS.climb,
+			condition = "at_climb_smartobject",
+			action_data = var_0_0.climb
 		},
 		{
 			"BTJumpAcrossAction",
 			condition = "at_jump_smartobject",
-			name = "jump_across",
+			name = "jump_across"
 		},
 		{
 			"BTSmashDoorAction",
-			condition = "at_door_smartobject",
 			name = "smash_door",
-			action_data = ACTIONS.smash_door,
+			condition = "at_door_smartobject",
+			action_data = var_0_0.smash_door
 		},
 		condition = "ratogre_at_smartobject",
-		name = "smartobject",
+		name = "smartobject"
 	},
 	{
 		"BTTrollDownedAction",
-		condition = "troll_downed",
 		name = "downed",
-		action_data = ACTIONS.downed,
+		condition = "troll_downed",
+		action_data = var_0_0.downed
 	},
 	{
 		"BTStaggerAction",
-		condition = "stagger",
 		name = "stagger",
-		action_data = ACTIONS.stagger,
+		condition = "stagger",
+		action_data = var_0_0.stagger
 	},
 	{
 		"BTMoveToGoalAction",
-		condition = "has_goal_destination",
 		enter_hook = "crouch_or_upright_on_enter",
 		name = "move_to_goal",
-		action_data = ACTIONS.follow,
+		condition = "has_goal_destination",
+		action_data = var_0_0.follow
 	},
 	{
 		"BTIdleAction",
 		enter_hook = "crouch_or_upright_on_enter",
-		name = "idle",
+		name = "idle"
 	},
-	name = "chaos_dummy_troll",
+	name = "chaos_dummy_troll"
 }

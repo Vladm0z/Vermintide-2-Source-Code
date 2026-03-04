@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/boot_init.lua
+-- chunkname: @scripts/boot_init.lua
 
 jit.off()
 
@@ -8,27 +8,27 @@ if not LEVEL_EDITOR_TEST then
 	LEVEL_EDITOR_TEST = false
 end
 
-local function import(lib)
-	for k, v in pairs(lib) do
-		rawset(_G, k, v)
+local function var_0_0(arg_1_0)
+	for iter_1_0, iter_1_1 in pairs(arg_1_0) do
+		rawset(_G, iter_1_0, iter_1_1)
 	end
 end
 
 if s3d then
-	import(s3d)
+	var_0_0(s3d)
 end
 
 GLOBAL_MUSIC_WORLD = true
 
-local dummy_wwise_world = {
-	stop_all = function ()
+local var_0_1 = {
+	stop_all = function()
 		return
-	end,
+	end
 }
 
 if GLOBAL_MUSIC_WORLD then
 	MUSIC_WORLD = Application.new_world("music_world", Application.DISABLE_PHYSICS, Application.DISABLE_RENDERING)
-	MUSIC_WWISE_WORLD = Wwise.wwise_world(MUSIC_WORLD) or Application.platform() == "ps4" and dummy_wwise_world or "dedicated_server_no_wwise_dummy"
+	MUSIC_WWISE_WORLD = Wwise.wwise_world(MUSIC_WORLD) or Application.platform() == "ps4" and var_0_1 or "dedicated_server_no_wwise_dummy"
 end
 
 BUILD = BUILD or Application.build()
@@ -47,36 +47,36 @@ LAUNCH_MODE = "game"
 HAS_STEAM = HAS_STEAM ~= false and not not rawget(_G, "Steam")
 DEDICATED_SERVER = Application.is_dedicated_server()
 
-local args = {
-	Application.argv(),
+local var_0_2 = {
+	Application.argv()
 }
 
-for _, arg in pairs(args) do
-	if arg == "-attract-mode" then
+for iter_0_0, iter_0_1 in pairs(var_0_2) do
+	if iter_0_1 == "-attract-mode" then
 		LAUNCH_MODE = "attract"
 
 		break
 	end
 
-	if arg == "-benchmark-mode" then
+	if iter_0_1 == "-benchmark-mode" then
 		LAUNCH_MODE = "attract_benchmark"
 
 		break
 	end
 end
 
-Application.build = function ()
+function Application.build()
 	error("Trying to use Application.build, use global variable BUILD instead.")
 end
 
-Application.platform = function ()
+function Application.platform()
 	error("Trying to use Application.platform(), use global variable PLATFORM instead.")
 end
 
 GLOBAL_FRAME_INDEX = GLOBAL_FRAME_INDEX or 0
 script_data = script_data or {
 	settings = Application.settings(),
-	build_identifier = Application.build_identifier(),
+	build_identifier = Application.build_identifier()
 }
 
 if LEVEL_EDITOR_TEST then
@@ -91,7 +91,7 @@ if LEVEL_EDITOR_TEST then
 		"resource_packages/levels/ui_loot_preview",
 		"resource_packages/breeds",
 		"resource_packages/breeds_common_resources",
-		"resource_packages/dialogues/auto_load_files",
+		"resource_packages/dialogues/auto_load_files"
 	}
 elseif IS_PS4 then
 	GlobalResources = GlobalResources or {
@@ -114,7 +114,7 @@ elseif IS_PS4 then
 		"resource_packages/ingame_sounds_honduras",
 		"resource_packages/breeds",
 		"resource_packages/breeds_common_resources",
-		"resource_packages/dialogues/auto_load_files",
+		"resource_packages/dialogues/auto_load_files"
 	}
 elseif IS_XB1 then
 	GlobalResources = GlobalResources or {
@@ -137,7 +137,7 @@ elseif IS_XB1 then
 		"resource_packages/ingame_sounds_honduras",
 		"resource_packages/breeds",
 		"resource_packages/breeds_common_resources",
-		"resource_packages/dialogues/auto_load_files",
+		"resource_packages/dialogues/auto_load_files"
 	}
 else
 	GlobalResources = GlobalResources or {
@@ -161,57 +161,57 @@ else
 		"resource_packages/slug_core_materials",
 		"resource_packages/breeds",
 		"resource_packages/breeds_common_resources",
-		"resource_packages/dialogues/auto_load_files",
+		"resource_packages/dialogues/auto_load_files"
 	}
 end
 
 GlobalResources.unload = {}
 GlobalResources.handle_and_remove_on_load = {
-	["resource_packages/dialogues/auto_load_files"] = function (name, reference_name)
+	["resource_packages/dialogues/auto_load_files"] = function(arg_5_0, arg_5_1)
 		DialogueSettings.cached_auto_load_files = {}
 
-		local auto_load_files = DialogueSettings.auto_load_files
+		local var_5_0 = DialogueSettings.auto_load_files
 
-		for _, file_name in ipairs(auto_load_files) do
-			if Application.can_get("lua", file_name) then
-				DialogueSettings.cached_auto_load_files[file_name] = require(file_name)
+		for iter_5_0, iter_5_1 in ipairs(var_5_0) do
+			if Application.can_get("lua", iter_5_1) then
+				DialogueSettings.cached_auto_load_files[iter_5_1] = require(iter_5_1)
 			end
 
-			if Application.can_get("lua", file_name .. "_markers") then
-				DialogueSettings.cached_auto_load_files[file_name .. "_markers"] = dofile(file_name .. "_markers")
+			if Application.can_get("lua", iter_5_1 .. "_markers") then
+				DialogueSettings.cached_auto_load_files[iter_5_1 .. "_markers"] = dofile(iter_5_1 .. "_markers")
 			end
 		end
-	end,
+	end
 }
 
-GlobalResources.update_loading = function ()
+function GlobalResources.update_loading()
 	if not GlobalResources.loaded then
-		local is_loaded = true
-		local package_manager = Managers.package
+		local var_6_0 = true
+		local var_6_1 = Managers.package
 
-		for i, name in ipairs(GlobalResources) do
-			if package_manager:is_loading(name, "global") then
-				is_loaded = false
-			elseif not package_manager:has_loaded(name, "global") then
-				package_manager:load(name, "global", nil, true)
+		for iter_6_0, iter_6_1 in ipairs(GlobalResources) do
+			if var_6_1:is_loading(iter_6_1, "global") then
+				var_6_0 = false
+			elseif not var_6_1:has_loaded(iter_6_1, "global") then
+				var_6_1:load(iter_6_1, "global", nil, true)
 
-				is_loaded = false
-			elseif GlobalResources.handle_and_remove_on_load[name] then
-				GlobalResources.handle_and_remove_on_load[name](name, "global")
+				var_6_0 = false
+			elseif GlobalResources.handle_and_remove_on_load[iter_6_1] then
+				GlobalResources.handle_and_remove_on_load[iter_6_1](iter_6_1, "global")
 				table.insert(GlobalResources.unload, {
 					reference_name = "global",
-					name = name,
+					name = iter_6_1
 				})
 			end
 		end
 
-		GlobalResources.loaded = is_loaded
+		GlobalResources.loaded = var_6_0
 
-		for i = 1, #GlobalResources.unload do
-			local unload_data = GlobalResources.unload[i]
+		for iter_6_2 = 1, #GlobalResources.unload do
+			local var_6_2 = GlobalResources.unload[iter_6_2]
 
-			Managers.package:unload(unload_data.name, unload_data.reference_name)
-			table.remove(GlobalResources, table.index_of(GlobalResources, unload_data.name))
+			Managers.package:unload(var_6_2.name, var_6_2.reference_name)
+			table.remove(GlobalResources, table.index_of(GlobalResources, var_6_2.name))
 		end
 	end
 
@@ -219,22 +219,22 @@ GlobalResources.update_loading = function ()
 end
 
 if BUILD ~= "dev" and BUILD ~= "debug" and LAUNCH_MODE ~= "attract_benchmark" then
-	local function scrub_library(lib)
-		rawset(_G, lib, nil)
+	local function var_0_3(arg_7_0)
+		rawset(_G, arg_7_0, nil)
 
-		package.loaded[lib] = nil
-		package.preload[lib] = nil
+		package.loaded[arg_7_0] = nil
+		package.preload[arg_7_0] = nil
 	end
 
-	scrub_library("ffi")
-	scrub_library("io")
+	var_0_3("ffi")
+	var_0_3("io")
 
 	os = {
 		clock = os.clock,
 		date = os.date,
 		difftime = os.difftime,
 		time = os.time,
-		getenv = os.getenv,
+		getenv = os.getenv
 	}
 	package.loadlib = nil
 	package.loaders[3] = nil

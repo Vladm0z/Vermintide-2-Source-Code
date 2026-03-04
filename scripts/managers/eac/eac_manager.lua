@@ -1,16 +1,16 @@
-﻿-- chunkname: @scripts/managers/eac/eac_manager.lua
+-- chunkname: @scripts/managers/eac/eac_manager.lua
 
-local EacState = table.enum("untrusted", "trusted", "banned", "undetermined")
-local HANDSHAKE_TIMEOUT = 15
+local var_0_0 = table.enum("untrusted", "trusted", "banned", "undetermined")
+local var_0_1 = 15
 
-local function eac_printf(...)
+local function var_0_2(...)
 	print("[EACManager] " .. string.format(...))
 end
 
 EacManager = class(EacManager)
 USE_EOS = true
 
-local function check_eac_supported()
+local function var_0_3()
 	if not IS_WINDOWS and not DEDICATED_SERVER then
 		return false, "unsupported platform: " .. tostring(PLATFORM)
 	end
@@ -25,16 +25,14 @@ local function check_eac_supported()
 		end
 
 		if DEDICATED_SERVER then
-			local has_server = EOS_EAC.has_eac_server()
+			local var_2_0 = EOS_EAC.has_eac_server()
 
-			assert(has_server, "Dedicated server is running without EAC running in server mode")
+			assert(var_2_0, "Dedicated server is running without EAC running in server mode")
 
 			return true
 		end
 
-		local has_client = EOS_EAC.has_eac_client()
-
-		return has_client, "EAC client not available"
+		return EOS_EAC.has_eac_client(), "EAC client not available"
 	else
 		if not rawget(_G, "EAC") then
 			return false, "EAC not available"
@@ -44,41 +42,41 @@ local function check_eac_supported()
 	end
 end
 
-EacManager.init = function (self)
-	local eac_supported, disable_reason = check_eac_supported()
+function EacManager.init(arg_3_0)
+	local var_3_0, var_3_1 = var_0_3()
 
-	if eac_supported then
-		eac_printf("EAC enabled")
+	if var_3_0 then
+		var_0_2("EAC enabled")
 	else
-		eac_printf("Disabling EAC due to reason: %s", disable_reason)
+		var_0_2("Disabling EAC due to reason: %s", var_3_1)
 	end
 
-	self._peer_data = {}
-	self._eac_supported = eac_supported
-	self._host_peer_id = nil
-	self._local_role = nil
-	self._network_model = nil
-	self._user_id = "untrusted"
-	self._suppress_popup = not eac_supported
-	self._suppress_panel = not eac_supported
-	self._popup_id = nil
-	self._indicator_offset = 0
+	arg_3_0._peer_data = {}
+	arg_3_0._eac_supported = var_3_0
+	arg_3_0._host_peer_id = nil
+	arg_3_0._local_role = nil
+	arg_3_0._network_model = nil
+	arg_3_0._user_id = "untrusted"
+	arg_3_0._suppress_popup = not var_3_0
+	arg_3_0._suppress_panel = not var_3_0
+	arg_3_0._popup_id = nil
+	arg_3_0._indicator_offset = 0
 end
 
-EacManager.challenge_response = function (self, challenge)
-	if self._eac_supported then
+function EacManager.challenge_response(arg_4_0, arg_4_1)
+	if arg_4_0._eac_supported then
 		if USE_EOS then
-			return EOS_EAC.challenge_response(challenge)
+			return EOS_EAC.challenge_response(arg_4_1)
 		else
-			return EAC.challenge_response(challenge)
+			return EAC.challenge_response(arg_4_1)
 		end
 	end
 
 	return nil
 end
 
-EacManager.is_trusted = function (self)
-	if self._eac_supported then
+function EacManager.is_trusted(arg_5_0)
+	if arg_5_0._eac_supported then
 		if USE_EOS then
 			if EOS_EAC.has_eac_server() then
 				return true
@@ -86,170 +84,163 @@ EacManager.is_trusted = function (self)
 
 			return not EOS_EAC.get_integrity_violation()
 		else
-			local state = EAC.state()
-
-			return state == EacState.trusted
+			return EAC.state() == var_0_0.trusted
 		end
 	end
 
 	return false
 end
 
-EacManager.before_join = function (self, network_model)
-	assert(self._local_role == nil, "Method called in incompatible state")
-	assert(network_model == "client_server" or network_model == "peer_to_peer", "Invalid network_model argument")
+function EacManager.before_join(arg_6_0, arg_6_1)
+	assert(arg_6_0._local_role == nil, "Method called in incompatible state")
+	assert(arg_6_1 == "client_server" or arg_6_1 == "peer_to_peer", "Invalid network_model argument")
 
-	self._local_role = "client"
-	self._network_model = network_model
+	arg_6_0._local_role = "client"
+	arg_6_0._network_model = arg_6_1
 
-	if self._eac_supported then
+	if arg_6_0._eac_supported then
 		if USE_EOS then
-			EOS_EAC.begin_session(network_model)
+			EOS_EAC.begin_session(arg_6_1)
 		else
 			EAC.before_join()
 		end
 	end
 end
 
-EacManager.after_leave = function (self)
-	assert(self._local_role == "client", "Method called in incompatible state")
+function EacManager.after_leave(arg_7_0)
+	assert(arg_7_0._local_role == "client", "Method called in incompatible state")
 
-	if self._eac_supported then
+	if arg_7_0._eac_supported then
 		if USE_EOS then
 			EOS_EAC.end_session()
-			self:_pump_eos_actions()
+			arg_7_0:_pump_eos_actions()
 		else
 			EAC.after_leave()
 		end
 	end
 
-	local host_peer_id = self._host_peer_id
+	local var_7_0 = arg_7_0._host_peer_id
 
-	if host_peer_id then
-		self._peer_data[host_peer_id] = nil
+	if var_7_0 then
+		arg_7_0._peer_data[var_7_0] = nil
 	else
-		eac_printf("Left EAC session without setting the host.")
+		var_0_2("Left EAC session without setting the host.")
 	end
 
-	self._local_role = nil
-	self._session_mode = nil
-	self._host_peer_id = nil
+	arg_7_0._local_role = nil
+	arg_7_0._session_mode = nil
+	arg_7_0._host_peer_id = nil
 end
 
-EacManager.set_host = function (self, peer_id)
-	assert(self._local_role == "client", "Method called in incompatible state")
-	assert(self._host_peer_id == nil, "Host was already set and cannot be changed")
+function EacManager.set_host(arg_8_0, arg_8_1)
+	assert(arg_8_0._local_role == "client", "Method called in incompatible state")
+	assert(arg_8_0._host_peer_id == nil, "Host was already set and cannot be changed")
 
-	local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+	local var_8_0 = PEER_ID_TO_CHANNEL[arg_8_1]
 
-	assert(channel_id, "Must already be connected")
+	assert(var_8_0, "Must already be connected")
 
-	self._host_peer_id = peer_id
+	arg_8_0._host_peer_id = arg_8_1
 
-	local data = {
+	local var_8_1 = {
 		user_id = false,
-		peer_id = peer_id,
-		channel_id = channel_id,
+		peer_id = arg_8_1,
+		channel_id = var_8_0
 	}
 
-	self._peer_data[peer_id] = data
+	arg_8_0._peer_data[arg_8_1] = var_8_1
 
-	if self._eac_supported then
+	if arg_8_0._eac_supported then
 		if USE_EOS then
-			if self._network_model == "peer_to_peer" then
-				self:_initiate_handshake(peer_id)
-			elseif self._network_model == "client_server" then
-				EOS_EAC.set_server_peer_id(peer_id)
+			if arg_8_0._network_model == "peer_to_peer" then
+				arg_8_0:_initiate_handshake(arg_8_1)
+			elseif arg_8_0._network_model == "client_server" then
+				EOS_EAC.set_server_peer_id(arg_8_1)
 
-				data.timeout_t = math.huge
-				data.is_server = true
+				var_8_1.timeout_t = math.huge
+				var_8_1.is_server = true
 			end
 		else
-			EAC.set_host(channel_id)
+			EAC.set_host(var_8_0)
 			EAC.validate_host()
 		end
 	else
-		self:_initiate_handshake(peer_id)
+		arg_8_0:_initiate_handshake(arg_8_1)
 	end
 end
 
-EacManager.check_host = function (self)
-	assert(self._local_role == "client", "Method called in incompatible state")
-	assert(self._host_peer_id, "Cannot check the host before it has been set.")
+function EacManager.check_host(arg_9_0)
+	assert(arg_9_0._local_role == "client", "Method called in incompatible state")
+	assert(arg_9_0._host_peer_id, "Cannot check the host before it has been set.")
 
-	local state_determined, can_play
+	local var_9_0
+	local var_9_1
 
-	if self._eac_supported then
+	if arg_9_0._eac_supported then
 		if USE_EOS then
-			state_determined, can_play = self:_check_peer(self._host_peer_id)
+			var_9_0, var_9_1 = arg_9_0:_check_peer(arg_9_0._host_peer_id)
 		else
-			local server_state = EAC.state(self._host_peer_id)
-			local client_state = EAC.state()
+			local var_9_2 = EAC.state(arg_9_0._host_peer_id)
+			local var_9_3 = EAC.state()
 
-			state_determined, can_play = self:_check_states_compatible(server_state, client_state)
+			var_9_0, var_9_1 = arg_9_0:_check_states_compatible(var_9_2, var_9_3)
 		end
 	else
-		state_determined, can_play = self:_check_peer(self._host_peer_id)
+		var_9_0, var_9_1 = arg_9_0:_check_peer(arg_9_0._host_peer_id)
 	end
 
-	return state_determined, can_play
+	return var_9_0, var_9_1
 end
 
-EacManager._check_peer = function (self, peer_id)
-	local data = self._peer_data[peer_id]
+function EacManager._check_peer(arg_10_0, arg_10_1)
+	local var_10_0 = arg_10_0._peer_data[arg_10_1]
 
-	if data.untrusted then
-		return true, not self._eac_supported
+	if var_10_0.untrusted then
+		return true, not arg_10_0._eac_supported
 	end
 
-	if data.is_server then
+	if var_10_0.is_server then
 		return true, true
 	end
 
-	if not data.user_id then
+	if not var_10_0.user_id then
 		return false, true
 	end
 
-	if USE_EOS and self._eac_supported then
-		local status = EOS_EAC.peer_status(peer_id)
-
-		if status == EOS_EAC_ACCCAS.RemoteAuthComplete then
-			return true, true
-		end
+	if USE_EOS and arg_10_0._eac_supported and EOS_EAC.peer_status(arg_10_1) == EOS_EAC_ACCCAS.RemoteAuthComplete then
+		return true, true
 	end
 
 	return false, true
 end
 
-EacManager._check_states_compatible = function (self, state1, state2)
-	if state1 == EacState.banned or state2 == EacState.banned then
+function EacManager._check_states_compatible(arg_11_0, arg_11_1, arg_11_2)
+	if arg_11_1 == var_0_0.banned or arg_11_2 == var_0_0.banned then
 		return true, false
 	end
 
-	if state1 == EacState.undetermined or state2 == EacState.undetermined then
+	if arg_11_1 == var_0_0.undetermined or arg_11_2 == var_0_0.undetermined then
 		return false, true
 	end
 
-	local can_play = state1 == state2
+	local var_11_0 = arg_11_1 == arg_11_2
 
-	return true, can_play
+	return true, var_11_0
 end
 
-EacManager.is_initialized = function (self)
-	if self._eac_supported then
+function EacManager.is_initialized(arg_12_0)
+	if arg_12_0._eac_supported then
 		if USE_EOS then
-			return self._eos_auth_complete, self._eos_auth_error
+			return arg_12_0._eos_auth_complete, arg_12_0._eos_auth_error
 		else
-			local is_initialized = EAC.is_initialized()
-
-			if not is_initialized then
+			if not EAC.is_initialized() then
 				return false, nil
 			end
 
-			local _, error_message = EAC.initialization_error()
+			local var_12_0, var_12_1 = EAC.initialization_error()
 
-			if error_message then
-				return true, error_message
+			if var_12_1 then
+				return true, var_12_1
 			end
 		end
 	end
@@ -257,430 +248,429 @@ EacManager.is_initialized = function (self)
 	return true, nil
 end
 
-EacManager.server_create = function (self, server_name)
-	assert(self._local_role == nil, "Method called in incompatible state")
-	assert(server_name ~= nil, "Must provide a server_name")
+function EacManager.server_create(arg_13_0, arg_13_1)
+	assert(arg_13_0._local_role == nil, "Method called in incompatible state")
+	assert(arg_13_1 ~= nil, "Must provide a server_name")
 
-	self._local_role = "server"
+	arg_13_0._local_role = "server"
 
-	if self._eac_supported then
+	if arg_13_0._eac_supported then
 		if USE_EOS then
-			local network_model = EOS_EAC.has_eac_server() and "client_server" or "peer_to_peer"
+			local var_13_0 = EOS_EAC.has_eac_server() and "client_server" or "peer_to_peer"
 
-			EOS_EAC.begin_session(network_model)
+			EOS_EAC.begin_session(var_13_0)
 		else
-			assert(self._eac_server == nil, "An EAC server already exists")
+			assert(arg_13_0._eac_server == nil, "An EAC server already exists")
 
-			self._eac_server = EACServer.create(server_name)
+			arg_13_0._eac_server = EACServer.create(arg_13_1)
 		end
 	end
 
-	eac_printf("Created EACServer with name %q", server_name)
+	var_0_2("Created EACServer with name %q", arg_13_1)
 end
 
-EacManager.server_destroy = function (self)
-	assert(self._local_role == "server", "Method called in incompatible state")
+function EacManager.server_destroy(arg_14_0)
+	assert(arg_14_0._local_role == "server", "Method called in incompatible state")
 
-	self._local_role = nil
+	arg_14_0._local_role = nil
 
-	if self._eac_supported then
+	if arg_14_0._eac_supported then
 		if USE_EOS then
 			EOS_EAC.end_session()
-			self:_pump_eos_actions()
+			arg_14_0:_pump_eos_actions()
 		else
-			EACServer.destroy(self._eac_server)
+			EACServer.destroy(arg_14_0._eac_server)
 
-			self._eac_server = nil
+			arg_14_0._eac_server = nil
 		end
 	end
 
-	eac_printf("Destroyed EACServer (%d registered peers)", table.size(self._peer_data))
-	table.clear(self._peer_data)
+	var_0_2("Destroyed EACServer (%d registered peers)", table.size(arg_14_0._peer_data))
+	table.clear(arg_14_0._peer_data)
 end
 
-EacManager.server_add_peer = function (self, peer_id)
-	assert(self._local_role == "server", "Method called in incompatible state")
-	fassert(not self._peer_data[peer_id], "Peer %q was already added", peer_id)
-	eac_printf("Adding peer %s", peer_id)
+function EacManager.server_add_peer(arg_15_0, arg_15_1)
+	assert(arg_15_0._local_role == "server", "Method called in incompatible state")
+	fassert(not arg_15_0._peer_data[arg_15_1], "Peer %q was already added", arg_15_1)
+	var_0_2("Adding peer %s", arg_15_1)
 
-	local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+	local var_15_0 = PEER_ID_TO_CHANNEL[arg_15_1]
 
-	assert(channel_id, "Must already be connected")
+	assert(var_15_0, "Must already be connected")
 
-	local data = {
-		peer_id = peer_id,
-		channel_id = channel_id,
+	local var_15_1 = {
+		peer_id = arg_15_1,
+		channel_id = var_15_0
 	}
 
-	self._peer_data[peer_id] = data
+	arg_15_0._peer_data[arg_15_1] = var_15_1
 
-	if self._eac_supported then
+	if arg_15_0._eac_supported then
 		if USE_EOS then
-			self:_initiate_handshake(peer_id)
+			arg_15_0:_initiate_handshake(arg_15_1)
 		else
-			EACServer.add_peer(self._eac_server, channel_id)
+			EACServer.add_peer(arg_15_0._eac_server, var_15_0)
 		end
 	else
-		self:_initiate_handshake(peer_id)
+		arg_15_0:_initiate_handshake(arg_15_1)
 	end
 end
 
-EacManager.server_remove_peer = function (self, peer_id)
-	assert(self._local_role == "server", "Method called in incompatible state")
-	fassert(self._peer_data[peer_id], "Peer %q was already removed", peer_id)
-	eac_printf("Removing peer %s", peer_id)
+function EacManager.server_remove_peer(arg_16_0, arg_16_1)
+	assert(arg_16_0._local_role == "server", "Method called in incompatible state")
+	fassert(arg_16_0._peer_data[arg_16_1], "Peer %q was already removed", arg_16_1)
+	var_0_2("Removing peer %s", arg_16_1)
 
-	if self._eac_supported then
+	if arg_16_0._eac_supported then
 		if USE_EOS then
-			local data = self._peer_data[peer_id]
-
-			if data.added then
-				EOS_EAC.remove_peer(peer_id)
+			if arg_16_0._peer_data[arg_16_1].added then
+				EOS_EAC.remove_peer(arg_16_1)
 			end
 		else
-			local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+			local var_16_0 = PEER_ID_TO_CHANNEL[arg_16_1]
 
-			EACServer.remove_peer(self._eac_server, channel_id)
+			EACServer.remove_peer(arg_16_0._eac_server, var_16_0)
 		end
 	end
 
-	self._peer_data[peer_id] = nil
+	arg_16_0._peer_data[arg_16_1] = nil
 end
 
-EacManager.server_check_peer = function (self, peer_id)
-	if peer_id == Network.peer_id() then
+function EacManager.server_check_peer(arg_17_0, arg_17_1)
+	if arg_17_1 == Network.peer_id() then
 		return true, true
 	end
 
-	local state_determined, can_play
+	local var_17_0
+	local var_17_1
 
-	if self._eac_supported then
+	if arg_17_0._eac_supported then
 		if USE_EOS then
-			state_determined, can_play = self:_check_peer(peer_id)
+			var_17_0, var_17_1 = arg_17_0:_check_peer(arg_17_1)
 		else
-			local eac_server = self._eac_server
-			local server_state = EACServer.state(eac_server, Network.peer_id())
-			local client_state = EACServer.state(eac_server, peer_id)
+			local var_17_2 = arg_17_0._eac_server
+			local var_17_3 = EACServer.state(var_17_2, Network.peer_id())
+			local var_17_4 = EACServer.state(var_17_2, arg_17_1)
 
-			state_determined, can_play = self:_check_states_compatible(server_state, client_state)
+			var_17_0, var_17_1 = arg_17_0:_check_states_compatible(var_17_3, var_17_4)
 		end
 	else
-		state_determined, can_play = self:_check_peer(peer_id)
+		var_17_0, var_17_1 = arg_17_0:_check_peer(arg_17_1)
 	end
 
-	return state_determined, can_play
+	return var_17_0, var_17_1
 end
 
-EacManager.update = function (self, dt, t)
-	if self._eac_server then
-		EACServer.update(self._eac_server)
+function EacManager.update(arg_18_0, arg_18_1, arg_18_2)
+	if arg_18_0._eac_server then
+		EACServer.update(arg_18_0._eac_server)
 	end
 
-	self:_handle_eos(t)
+	arg_18_0:_handle_eos(arg_18_2)
 
 	if IS_WINDOWS then
-		self:_handle_violations()
-		self:_handle_popups()
+		arg_18_0:_handle_violations()
+		arg_18_0:_handle_popups()
 	end
 end
 
-EacManager.register_network_event_delegate = function (self, network_event_delegate)
-	network_event_delegate:register(self, "rpc_eac_handshake_request", "rpc_eac_handshake_reply")
+function EacManager.register_network_event_delegate(arg_19_0, arg_19_1)
+	arg_19_1:register(arg_19_0, "rpc_eac_handshake_request", "rpc_eac_handshake_reply")
 
-	self._network_event_delegate = network_event_delegate
+	arg_19_0._network_event_delegate = arg_19_1
 end
 
-EacManager.unregister_network_event_delegate = function (self)
-	self._network_event_delegate:unregister(self)
+function EacManager.unregister_network_event_delegate(arg_20_0)
+	arg_20_0._network_event_delegate:unregister(arg_20_0)
 
-	self._network_event_delegate = nil
+	arg_20_0._network_event_delegate = nil
 end
 
-EacManager._initiate_handshake = function (self, peer_id)
-	local data = self._peer_data[peer_id]
+function EacManager._initiate_handshake(arg_21_0, arg_21_1)
+	local var_21_0 = arg_21_0._peer_data[arg_21_1]
 
-	RPC.rpc_eac_handshake_request(data.channel_id)
+	RPC.rpc_eac_handshake_request(var_21_0.channel_id)
 
-	data.timeout_t = Managers.time:time("main") + HANDSHAKE_TIMEOUT
-	data.untrusted = false
+	var_21_0.timeout_t = Managers.time:time("main") + var_0_1
+	var_21_0.untrusted = false
 end
 
-EacManager.rpc_eac_handshake_request = function (self, channel_id)
-	local user_id = self._user_id
+function EacManager.rpc_eac_handshake_request(arg_22_0, arg_22_1)
+	local var_22_0 = arg_22_0._user_id
 
-	RPC.rpc_eac_handshake_reply(channel_id, user_id)
+	RPC.rpc_eac_handshake_reply(arg_22_1, var_22_0)
 end
 
-EacManager.rpc_eac_handshake_reply = function (self, channel_id, user_id)
-	local peer_id = CHANNEL_TO_PEER_ID[channel_id]
-	local data = self._peer_data[peer_id]
+function EacManager.rpc_eac_handshake_reply(arg_23_0, arg_23_1, arg_23_2)
+	local var_23_0 = CHANNEL_TO_PEER_ID[arg_23_1]
+	local var_23_1 = arg_23_0._peer_data[var_23_0]
 
-	if not data then
-		eac_printf("Ignoring handshake reply from unknown peer %s", peer_id)
+	if not var_23_1 then
+		var_0_2("Ignoring handshake reply from unknown peer %s", var_23_0)
 
 		return
 	end
 
-	if data.untrusted then
-		eac_printf("Ignoring handshake reply from already untrusted peer %s", peer_id)
+	if var_23_1.untrusted then
+		var_0_2("Ignoring handshake reply from already untrusted peer %s", var_23_0)
 
 		return
 	end
 
-	if data.added then
-		eac_printf("Ignoring handshake reply from already added peer %s", peer_id)
+	if var_23_1.added then
+		var_0_2("Ignoring handshake reply from already added peer %s", var_23_0)
 
 		return
 	end
 
-	if user_id == "untrusted" then
-		data.untrusted = true
+	if arg_23_2 == "untrusted" then
+		var_23_1.untrusted = true
 	else
-		data.user_id = user_id
-		data.timeout_t = math.huge
+		var_23_1.user_id = arg_23_2
+		var_23_1.timeout_t = math.huge
 
-		if self._eac_supported and USE_EOS then
-			EOS_EAC.add_peer(peer_id, user_id)
+		if arg_23_0._eac_supported and USE_EOS then
+			EOS_EAC.add_peer(var_23_0, arg_23_2)
 
-			data.added = true
+			var_23_1.added = true
 		end
 	end
 end
 
-EacManager._pump_eos_actions = function (self)
+function EacManager._pump_eos_actions(arg_24_0)
 	while EOS_EAC.has_eac_action() do
-		local a = EOS_EAC.next_eac_action()
-		local action_str = table.find(EOS_EAC_ACCCA, a.action) or "?"
-		local reason_str = table.find(EOS_EAC_ACCCAR, a.reason) or "?"
+		local var_24_0 = EOS_EAC.next_eac_action()
+		local var_24_1 = table.find(EOS_EAC_ACCCA, var_24_0.action) or "?"
+		local var_24_2 = table.find(EOS_EAC_ACCCAR, var_24_0.reason) or "?"
 
-		eac_printf("Got action { action=%d %q, reason=%d %q, details=%q, peer=%q }", a.action, action_str, a.reason, reason_str, a.details, a.peer)
+		var_0_2("Got action { action=%d %q, reason=%d %q, details=%q, peer=%q }", var_24_0.action, var_24_1, var_24_0.reason, var_24_2, var_24_0.details, var_24_0.peer)
 
-		local data = self._peer_data[a.peer]
+		local var_24_3 = arg_24_0._peer_data[var_24_0.peer]
 
-		if data then
-			if a.action == EOS_EAC_ACCCA.RemovePlayer then
-				data.untrusted = true
+		if var_24_3 then
+			if var_24_0.action == EOS_EAC_ACCCA.RemovePlayer then
+				var_24_3.untrusted = true
 			else
-				eac_printf("Ignored action because it was unknown")
+				var_0_2("Ignored action because it was unknown")
 			end
 		else
-			eac_printf("Ignored action because peer %q is not registed", a.peer)
+			var_0_2("Ignored action because peer %q is not registed", var_24_0.peer)
 		end
 	end
 end
 
-local AUTH_STATE_MACHINE = {
-	init = function (self)
+local var_0_4 = {
+	init = function(arg_25_0)
 		return "retrieve_ticket"
 	end,
-	retrieve_ticket = function (self, t)
-		eac_printf("Retrieving Steam auth session ticket...")
+	retrieve_ticket = function(arg_26_0, arg_26_1)
+		var_0_2("Retrieving Steam auth session ticket...")
 
-		self._steam_ticket_job = Steam.retrieve_auth_session_ticket("epiconlineservices")
+		arg_26_0._steam_ticket_job = Steam.retrieve_auth_session_ticket("epiconlineservices")
 
 		return "poll_ticket"
 	end,
-	poll_ticket = function (self)
-		local auth_session_ticket = Steam.poll_auth_session_ticket(self._steam_ticket_job)
+	poll_ticket = function(arg_27_0)
+		local var_27_0 = Steam.poll_auth_session_ticket(arg_27_0._steam_ticket_job)
 
-		if auth_session_ticket then
-			self._steam_ticket_job = nil
-			self._auth_session_ticket = auth_session_ticket
+		if var_27_0 then
+			arg_27_0._steam_ticket_job = nil
+			arg_27_0._auth_session_ticket = var_27_0
 
 			return "start_authenticate"
 		end
 	end,
-	start_authenticate = function (self)
-		eac_printf("Authenticating with Steam as an identity provider...")
-		EOS_EAC.authenticate_with_steam(self._auth_session_ticket)
+	start_authenticate = function(arg_28_0)
+		var_0_2("Authenticating with Steam as an identity provider...")
+		EOS_EAC.authenticate_with_steam(arg_28_0._auth_session_ticket)
 
-		self._auth_session_ticket = nil
+		arg_28_0._auth_session_ticket = nil
 
 		return "poll_authenticate"
 	end,
-	poll_authenticate = function (self)
-		local status, result = EOS_EAC.poll_authenticate_status()
+	poll_authenticate = function(arg_29_0)
+		local var_29_0, var_29_1 = EOS_EAC.poll_authenticate_status()
 
-		if status == "in_flight" then
+		if var_29_0 == "in_flight" then
 			return
 		end
 
-		if status == "success" then
-			self._user_id = EOS_EAC.user_id()
-			self._eos_auth_error = nil
+		if var_29_0 == "success" then
+			arg_29_0._user_id = EOS_EAC.user_id()
+			arg_29_0._eos_auth_error = nil
 		else
-			self._eos_auth_error = string.format("EOS auth status=%s, result=%s", status, table.find(EOS_Result, result) or "?")
+			arg_29_0._eos_auth_error = string.format("EOS auth status=%s, result=%s", var_29_0, table.find(EOS_Result, var_29_1) or "?")
 		end
 
-		self._eos_auth_complete = true
+		arg_29_0._eos_auth_complete = true
 
-		eac_printf("Login complete. Error: %s", self._eos_auth_error or "none")
+		var_0_2("Login complete. Error: %s", arg_29_0._eos_auth_error or "none")
 
 		return "poll_valid"
 	end,
-	poll_valid = function (self)
+	poll_valid = function(arg_30_0)
 		if EOS_EAC.poll_authenticate_status() == "expired" then
-			eac_printf("Refreshing user id ...")
+			var_0_2("Refreshing user id ...")
 
 			return "init"
 		end
-	end,
+	end
 }
 
-EacManager._handle_eos = function (self, t)
-	if not USE_EOS or not self._eac_supported then
+function EacManager._handle_eos(arg_31_0, arg_31_1)
+	if not USE_EOS or not arg_31_0._eac_supported then
 		return
 	end
 
 	if not DEDICATED_SERVER then
-		local auth_state = self._auth_state or "init"
-		local handler = AUTH_STATE_MACHINE[auth_state]
-		local next_state = handler(self, t)
+		local var_31_0 = arg_31_0._auth_state or "init"
+		local var_31_1 = var_0_4[var_31_0](arg_31_0, arg_31_1)
 
-		if next_state then
-			self._auth_state = next_state
+		if var_31_1 then
+			arg_31_0._auth_state = var_31_1
 		end
 
-		if not self._user_id then
+		if not arg_31_0._user_id then
 			return
 		end
 	end
 
-	self:_pump_eos_actions()
+	arg_31_0:_pump_eos_actions()
 
-	for _, data in pairs(self._peer_data) do
-		if t > data.timeout_t then
-			data.untrusted = true
+	for iter_31_0, iter_31_1 in pairs(arg_31_0._peer_data) do
+		if arg_31_1 > iter_31_1.timeout_t then
+			iter_31_1.untrusted = true
 		end
 	end
 end
 
-local FILE_RELATED_VIOLATIONS = {}
+local var_0_5 = {}
 
 if USE_EOS then
-	FILE_RELATED_VIOLATIONS.IntegrityCatalogNotFound = true
-	FILE_RELATED_VIOLATIONS.IntegrityCatalogError = true
-	FILE_RELATED_VIOLATIONS.IntegrityCatalogMissingMainExecutable = true
-	FILE_RELATED_VIOLATIONS.GameFileMismatch = true
-	FILE_RELATED_VIOLATIONS.RequiredGameFileNotFound = true
-	FILE_RELATED_VIOLATIONS.UnknownGameFileForbidden = true
+	var_0_5.IntegrityCatalogNotFound = true
+	var_0_5.IntegrityCatalogError = true
+	var_0_5.IntegrityCatalogMissingMainExecutable = true
+	var_0_5.GameFileMismatch = true
+	var_0_5.RequiredGameFileNotFound = true
+	var_0_5.UnknownGameFileForbidden = true
 else
-	FILE_RELATED_VIOLATIONS.hash_catalogue_file_not_found = true
-	FILE_RELATED_VIOLATIONS.hash_catalogue_error = true
-	FILE_RELATED_VIOLATIONS.unknown_game_file_version = true
-	FILE_RELATED_VIOLATIONS.required_game_file_not_found = true
+	var_0_5.hash_catalogue_file_not_found = true
+	var_0_5.hash_catalogue_error = true
+	var_0_5.unknown_game_file_version = true
+	var_0_5.required_game_file_not_found = true
 end
 
-EacManager._handle_violations = function (self)
-	if self._eac_violation_type then
+function EacManager._handle_violations(arg_32_0)
+	if arg_32_0._eac_violation_type then
 		return
 	end
 
 	if USE_EOS and rawget(_G, "EOS_EAC") then
-		local violation, cause
+		local var_32_0
+		local var_32_1
 
 		if not EOS_EAC.has_eac_client() then
-			violation, cause = "NO_BOOTSTRAPPER", "NO_BOOTSTRAPPER"
-		elseif self._eos_auth_error then
-			violation, cause = "AUTH_ERROR", self._eos_auth_error
+			var_32_0, var_32_1 = "NO_BOOTSTRAPPER", "NO_BOOTSTRAPPER"
+		elseif arg_32_0._eos_auth_error then
+			var_32_0, var_32_1 = "AUTH_ERROR", arg_32_0._eos_auth_error
 		else
-			violation, cause = EOS_EAC.get_integrity_violation()
-			violation = violation and (table.find(EOS_EAC_ACCVT, violation) or "UNKNOWN")
+			var_32_0, var_32_1 = EOS_EAC.get_integrity_violation()
+			var_32_0 = var_32_0 and (table.find(EOS_EAC_ACCVT, var_32_0) or "UNKNOWN")
 		end
 
-		if violation then
-			local KEYWORD_START = "{#color(193,91,36)}"
-			local VALUE_START = "{#color(255,255,255)}: "
-			local BODY_START = "{#reset()}"
-			local message = KEYWORD_START .. Localize("eac_state") .. VALUE_START .. Localize("eac_state_untrusted") .. "\n" .. KEYWORD_START .. Localize("eac_violation_type") .. VALUE_START .. violation .. "\n" .. KEYWORD_START .. Localize("eac_cause") .. VALUE_START .. cause .. "\n" .. BODY_START .. Localize("eac_untrusted_explanation")
+		if var_32_0 then
+			local var_32_2 = "{#color(193,91,36)}"
+			local var_32_3 = "{#color(255,255,255)}: "
+			local var_32_4 = "{#reset()}"
 
-			self._eac_violation_message = message
-			self._eac_violation_type = violation
+			arg_32_0._eac_violation_message = var_32_2 .. Localize("eac_state") .. var_32_3 .. Localize("eac_state_untrusted") .. "\n" .. var_32_2 .. Localize("eac_violation_type") .. var_32_3 .. var_32_0 .. "\n" .. var_32_2 .. Localize("eac_cause") .. var_32_3 .. var_32_1 .. "\n" .. var_32_4 .. Localize("eac_untrusted_explanation")
+			arg_32_0._eac_violation_type = var_32_0
 		end
 	elseif rawget(_G, "EAC") then
-		local state, _, cause, violation = EAC.state()
+		local var_32_5, var_32_6, var_32_7, var_32_8 = EAC.state()
 
-		if state == EacState.untrusted or state == EacState.banned then
-			local KEYWORD_START = "{#color(193,91,36)}"
-			local VALUE_START = "{#color(255,255,255)}: "
-			local BODY_START = "{#reset()}"
-			local message = KEYWORD_START .. Localize("eac_state") .. VALUE_START .. Localize("eac_state_untrusted") .. "\n" .. KEYWORD_START .. Localize("eac_violation_type") .. VALUE_START .. violation .. "\n" .. KEYWORD_START .. Localize("eac_cause") .. VALUE_START .. cause .. "\n" .. BODY_START .. Localize(state == EacState.banned and "eac_banned_explanation" or "eac_untrusted_explanation")
+		if var_32_5 == var_0_0.untrusted or var_32_5 == var_0_0.banned then
+			local var_32_9 = "{#color(193,91,36)}"
+			local var_32_10 = "{#color(255,255,255)}: "
+			local var_32_11 = "{#reset()}"
 
-			self._eac_violation_message = message
-			self._eac_violation_type = violation
+			arg_32_0._eac_violation_message = var_32_9 .. Localize("eac_state") .. var_32_10 .. Localize("eac_state_untrusted") .. "\n" .. var_32_9 .. Localize("eac_violation_type") .. var_32_10 .. var_32_8 .. "\n" .. var_32_9 .. Localize("eac_cause") .. var_32_10 .. var_32_7 .. "\n" .. var_32_11 .. Localize(var_32_5 == var_0_0.banned and "eac_banned_explanation" or "eac_untrusted_explanation")
+			arg_32_0._eac_violation_type = var_32_8
 		end
 	end
 
-	if self._eac_violation_type then
-		Crashify.print_exception("EAC", "Integrity violation: %s", self._eac_violation_type)
+	if arg_32_0._eac_violation_type then
+		Crashify.print_exception("EAC", "Integrity violation: %s", arg_32_0._eac_violation_type)
 	end
 end
 
-EacManager._handle_popups = function (self)
-	local popup_manager = Managers.popup
+function EacManager._handle_popups(arg_33_0)
+	local var_33_0 = Managers.popup
 
-	if self._popup_id ~= nil and popup_manager:query_result(self._popup_id) == "quit" then
-		self._popup_id = nil
+	if arg_33_0._popup_id ~= nil and var_33_0:query_result(arg_33_0._popup_id) == "quit" then
+		arg_33_0._popup_id = nil
 
 		Application.quit()
 	end
 
-	if self._suppress_popup then
+	if arg_33_0._suppress_popup then
 		return
 	end
 
-	if not FILE_RELATED_VIOLATIONS[self._eac_violation_type] then
+	if not var_0_5[arg_33_0._eac_violation_type] then
 		return
 	end
 
-	local body = Localize("eac_file_corruption_detected")
-	local title = Localize("eac_file_corruption_topic")
-	local quit_button_text = Localize("menu_quit")
+	local var_33_1 = Localize("eac_file_corruption_detected")
+	local var_33_2 = Localize("eac_file_corruption_topic")
+	local var_33_3 = Localize("menu_quit")
 
-	self._popup_id = popup_manager:queue_popup(body, title, "quit", quit_button_text)
-	self._suppress_popup = true
+	arg_33_0._popup_id = var_33_0:queue_popup(var_33_1, var_33_2, "quit", var_33_3)
+	arg_33_0._suppress_popup = true
 end
 
-EacManager.draw_panel = function (self, gui, dt)
-	local message = self._eac_violation_message
+function EacManager.draw_panel(arg_34_0, arg_34_1, arg_34_2)
+	local var_34_0 = arg_34_0._eac_violation_message
 
-	if not message or self._suppress_panel then
+	if not var_34_0 or arg_34_0._suppress_panel then
 		return
 	end
 
-	local V2, V3, CC = Vector2, Vector3, Color
-	local scale = math.max(RESOLUTION_LOOKUP.scale, 0.5)
-	local screen_size = V2(RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h)
-	local font = "materials/fonts/arial"
-	local font_size = 14 * scale
-	local line_height = 1.1 * font_size
-	local border_color = CC(192, 91, 36)
-	local background_color = CC(200, 0, 0, 0)
-	local text_color = CC(180, 180, 180)
-	local panel_width = 500 * scale
-	local border_width = 1 * scale
-	local padding = V2(15, 10) * scale
-	local margin = V2(40, 20) * scale
-	local panel_layer = 995
-	local lines = Gui.word_wrap(gui, message, font, font_size, panel_width, " ", "_-+&/", "\n", true, Gui.FormatDirectives)
-	local panel_size = 2 * padding + V2(panel_width, #lines * line_height)
-	local panel_pos = screen_size - panel_size - margin + V3(0, 0, panel_layer)
+	local var_34_1 = Vector2
+	local var_34_2 = Vector3
+	local var_34_3 = Color
+	local var_34_4 = math.max(RESOLUTION_LOOKUP.scale, 0.5)
+	local var_34_5 = var_34_1(RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h)
+	local var_34_6 = "materials/fonts/arial"
+	local var_34_7 = 14 * var_34_4
+	local var_34_8 = 1.1 * var_34_7
+	local var_34_9 = var_34_3(192, 91, 36)
+	local var_34_10 = var_34_3(200, 0, 0, 0)
+	local var_34_11 = var_34_3(180, 180, 180)
+	local var_34_12 = 500 * var_34_4
+	local var_34_13 = 1 * var_34_4
+	local var_34_14 = var_34_1(15, 10) * var_34_4
+	local var_34_15 = var_34_1(40, 20) * var_34_4
+	local var_34_16 = 995
+	local var_34_17 = Gui.word_wrap(arg_34_1, var_34_0, var_34_6, var_34_7, var_34_12, " ", "_-+&/", "\n", true, Gui.FormatDirectives)
+	local var_34_18 = 2 * var_34_14 + var_34_1(var_34_12, #var_34_17 * var_34_8)
+	local var_34_19 = var_34_5 - var_34_18 - var_34_15 + var_34_2(0, 0, var_34_16)
 
-	Gui.rect(gui, panel_pos, panel_size, background_color)
-	Gui.rect(gui, panel_pos + V3(0, 0, 1), V2(border_width, panel_size.y), border_color)
-	Gui.rect(gui, panel_pos + V3(0, 0, 1), V2(panel_size.x, border_width), border_color)
-	Gui.rect(gui, panel_pos + V3(0, panel_size.y, 1), V2(panel_size.x, -border_width), border_color)
-	Gui.rect(gui, panel_pos + V3(panel_size.x, 0, 1), V2(-border_width, panel_size.y), border_color)
+	Gui.rect(arg_34_1, var_34_19, var_34_18, var_34_10)
+	Gui.rect(arg_34_1, var_34_19 + var_34_2(0, 0, 1), var_34_1(var_34_13, var_34_18.y), var_34_9)
+	Gui.rect(arg_34_1, var_34_19 + var_34_2(0, 0, 1), var_34_1(var_34_18.x, var_34_13), var_34_9)
+	Gui.rect(arg_34_1, var_34_19 + var_34_2(0, var_34_18.y, 1), var_34_1(var_34_18.x, -var_34_13), var_34_9)
+	Gui.rect(arg_34_1, var_34_19 + var_34_2(var_34_18.x, 0, 1), var_34_1(-var_34_13, var_34_18.y), var_34_9)
 
-	local line_pos = panel_pos + padding + V3(0, 0.18 * font_size, 2)
+	local var_34_20 = var_34_19 + var_34_14 + var_34_2(0, 0.18 * var_34_7, 2)
 
-	for i = #lines, 1, -1 do
-		Gui.text(gui, lines[i], font, font_size, nil, line_pos, text_color, Gui.FormatDirectives)
+	for iter_34_0 = #var_34_17, 1, -1 do
+		Gui.text(arg_34_1, var_34_17[iter_34_0], var_34_6, var_34_7, nil, var_34_20, var_34_11, Gui.FormatDirectives)
 
-		line_pos.y = line_pos.y + line_height
+		var_34_20.y = var_34_20.y + var_34_8
 	end
 end
 
-EacManager.eac_ready_locally = function (self)
-	return not not self._local_role
+function EacManager.eac_ready_locally(arg_35_0)
+	return not not arg_35_0._local_role
 end

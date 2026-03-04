@@ -1,134 +1,132 @@
-﻿-- chunkname: @scripts/managers/popup/popup_manager.lua
+-- chunkname: @scripts/managers/popup/popup_manager.lua
 
 require("scripts/ui/views/popup_handler")
 
 PopupManager = class(PopupManager)
 
-PopupManager.init = function (self)
-	local top_world = Managers.world:world("top_ingame_view")
+function PopupManager.init(arg_1_0)
+	local var_1_0 = Managers.world:world("top_ingame_view")
 
-	self._ui_top_renderer = UIRenderer.create(top_world, "material", "materials/ui/ui_1080p_popup", "material", "materials/fonts/gw_fonts")
+	arg_1_0._ui_top_renderer = UIRenderer.create(var_1_0, "material", "materials/ui/ui_1080p_popup", "material", "materials/fonts/gw_fonts")
 
-	local popup_context = {
-		ui_renderer = self._ui_top_renderer,
-		world = top_world,
+	local var_1_1 = {
+		ui_renderer = arg_1_0._ui_top_renderer,
+		world = var_1_0
 	}
 
-	self:create_own_handler(popup_context)
+	arg_1_0:create_own_handler(var_1_1)
 
-	local poll_data = {
-		num_updates = 0,
+	arg_1_0._poll_data = {
+		num_updates = 0
 	}
-
-	self._poll_data = poll_data
 end
 
-PopupManager.create_own_handler = function (self, popup_context)
-	self._handler = PopupHandler:new(popup_context, true)
+function PopupManager.create_own_handler(arg_2_0, arg_2_1)
+	arg_2_0._handler = PopupHandler:new(arg_2_1, true)
 end
 
-PopupManager.update = function (self, dt)
-	if self._handler then
-		self._handler:update(dt, true)
+function PopupManager.update(arg_3_0, arg_3_1)
+	if arg_3_0._handler then
+		arg_3_0._handler:update(arg_3_1, true)
 
-		local popup_id, popup = self._handler:active_popup()
+		local var_3_0, var_3_1 = arg_3_0._handler:active_popup()
 
-		if not popup_id then
+		if not var_3_0 then
 			return
 		end
 
-		local poll_data = self._poll_data
+		local var_3_2 = arg_3_0._poll_data
 
-		if poll_data.current_popup_id == popup_id then
-			poll_data.num_updates = poll_data.num_updates + 1
+		if var_3_2.current_popup_id == var_3_0 then
+			var_3_2.num_updates = var_3_2.num_updates + 1
 
-			fassert(poll_data.num_updates <= 1, "Not polling current popup %q: %q", popup.topic or "nil", popup.text or "nil")
+			fassert(var_3_2.num_updates <= 1, "Not polling current popup %q: %q", var_3_1.topic or "nil", var_3_1.text or "nil")
 		else
-			poll_data.current_popup_id = popup_id
-			poll_data.num_updates = 1
+			var_3_2.current_popup_id = var_3_0
+			var_3_2.num_updates = 1
 		end
 	end
 end
 
-PopupManager.destroy = function (self)
-	local top_world = Managers.world:world("top_ingame_view")
-	local ui_top_renderer = self._ui_top_renderer
+function PopupManager.destroy(arg_4_0)
+	local var_4_0 = Managers.world:world("top_ingame_view")
+	local var_4_1 = arg_4_0._ui_top_renderer
 
-	UIRenderer.destroy(ui_top_renderer, top_world)
+	UIRenderer.destroy(var_4_1, var_4_0)
 
-	self._ui_top_renderer = nil
+	arg_4_0._ui_top_renderer = nil
 end
 
-PopupManager.set_button_enabled = function (self, popup_id, button_index, enabled)
-	return self._handler:set_button_enabled(popup_id, button_index, enabled)
+function PopupManager.set_button_enabled(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	return arg_5_0._handler:set_button_enabled(arg_5_1, arg_5_2, arg_5_3)
 end
 
-PopupManager.queue_popup = function (self, text, topic, ...)
-	print("PopupManager:queue_default_popup: ", text, topic, ...)
+function PopupManager.queue_popup(arg_6_0, arg_6_1, arg_6_2, ...)
+	print("PopupManager:queue_default_popup: ", arg_6_1, arg_6_2, ...)
 
-	local popup_type = "default"
+	local var_6_0 = "default"
 
-	return self._handler:queue_popup(popup_type, text, topic, ...)
+	return arg_6_0._handler:queue_popup(var_6_0, arg_6_1, arg_6_2, ...)
 end
 
-PopupManager.queue_password_popup = function (self, text, topic, ...)
-	print("PopupManager:queue_password_popup: ", text, topic, ...)
+function PopupManager.queue_password_popup(arg_7_0, arg_7_1, arg_7_2, ...)
+	print("PopupManager:queue_password_popup: ", arg_7_1, arg_7_2, ...)
 
-	local popup_type = "password"
+	local var_7_0 = "password"
 
-	return self._handler:queue_popup(popup_type, text, topic, ...)
+	return arg_7_0._handler:queue_popup(var_7_0, arg_7_1, arg_7_2, ...)
 end
 
-PopupManager.activate_timer = function (self, popup_id, time, default_result, timer_alignment, blink, optional_timer_format_func, optional_font_size)
-	return self._handler:activate_timer(popup_id, time, default_result, timer_alignment, blink, optional_timer_format_func, optional_font_size)
+function PopupManager.activate_timer(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7)
+	return arg_8_0._handler:activate_timer(arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7)
 end
 
-PopupManager.has_popup = function (self)
-	return self._handler:has_popup()
+function PopupManager.has_popup(arg_9_0)
+	return arg_9_0._handler:has_popup()
 end
 
-PopupManager.has_popup_with_id = function (self, popup_id)
-	return self._handler:has_popup_with_id(popup_id)
+function PopupManager.has_popup_with_id(arg_10_0, arg_10_1)
+	return arg_10_0._handler:has_popup_with_id(arg_10_1)
 end
 
-PopupManager.cancel_popup = function (self, popup_id)
-	return self._handler:cancel_popup(popup_id)
+function PopupManager.cancel_popup(arg_11_0, arg_11_1)
+	return arg_11_0._handler:cancel_popup(arg_11_1)
 end
 
-PopupManager.cancel_all_popups = function (self)
+function PopupManager.cancel_all_popups(arg_12_0)
 	Managers.account:cancel_all_popups()
 
-	return self._handler:cancel_all_popups()
+	return arg_12_0._handler:cancel_all_popups()
 end
 
-PopupManager.query_result = function (self, popup_id)
-	local poll_data = self._poll_data
+function PopupManager.query_result(arg_13_0, arg_13_1)
+	local var_13_0 = arg_13_0._poll_data
 
-	if poll_data.current_popup_id == popup_id then
-		poll_data.num_updates = 0
+	if var_13_0.current_popup_id == arg_13_1 then
+		var_13_0.num_updates = 0
 	end
 
-	local result, params = self._handler:query_result(popup_id)
+	local var_13_1, var_13_2 = arg_13_0._handler:query_result(arg_13_1)
 
-	if result then
-		print("PopupManager:query_result returned result:", result)
+	if var_13_1 then
+		print("PopupManager:query_result returned result:", var_13_1)
 	end
 
-	return result, params
+	return var_13_1, var_13_2
 end
 
-PopupManager.set_input_manager = function (self, input_manager)
-	self._handler:set_input_manager(input_manager)
+function PopupManager.set_input_manager(arg_14_0, arg_14_1)
+	arg_14_0._handler:set_input_manager(arg_14_1)
 end
 
-PopupManager.remove_input_manager = function (self, application_shutdown)
-	self._handler:remove_input_manager(application_shutdown)
+function PopupManager.remove_input_manager(arg_15_0, arg_15_1)
+	arg_15_0._handler:remove_input_manager(arg_15_1)
 end
 
-PopupManager.fit_text_width_to_popup = function (self, text)
-	return self._handler:fit_text_width_to_popup(text)
+function PopupManager.fit_text_width_to_popup(arg_16_0, arg_16_1)
+	return arg_16_0._handler:fit_text_width_to_popup(arg_16_1)
 end
 
-PopupManager.set_popup_verifying_password = function (self, popup_id, is_verifying, status_message, error_message)
-	return self._handler:set_popup_verifying_password(popup_id, is_verifying, status_message, error_message)
+function PopupManager.set_popup_verifying_password(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+	return arg_17_0._handler:set_popup_verifying_password(arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 end

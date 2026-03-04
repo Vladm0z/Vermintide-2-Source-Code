@@ -1,561 +1,546 @@
-﻿-- chunkname: @scripts/network/network_transmit.lua
+-- chunkname: @scripts/network/network_transmit.lua
 
-local RPC = RPC
-local shared_scratchpad_table = {}
+local var_0_0 = RPC
+local var_0_1 = {}
 
-function call_RPC(rpc_func_name, peer_id, ...)
-	local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+function call_RPC(arg_1_0, arg_1_1, ...)
+	local var_1_0 = PEER_ID_TO_CHANNEL[arg_1_1]
 
-	RPC[rpc_func_name](channel_id, ...)
+	var_0_0[arg_1_0](var_1_0, ...)
 end
 
-local ignored_rpc_logs = table.mirror_array(GameSettingsDevelopment.ignored_rpc_logs)
+local var_0_2 = table.mirror_array(GameSettingsDevelopment.ignored_rpc_logs)
 
-local function rpc_local_print(rpc_name, ...)
-	if ignored_rpc_logs[rpc_name] == nil then
-		print("[LOCAL RPC] ", rpc_name, ...)
+local function var_0_3(arg_2_0, ...)
+	if var_0_2[arg_2_0] == nil then
+		print("[LOCAL RPC] ", arg_2_0, ...)
 	end
 end
 
 NetworkTransmit = class(NetworkTransmit)
 
-NetworkTransmit.init = function (self, is_server, server_peer_id)
-	self.is_server = is_server
-	self.peer_id = Network.peer_id()
-	self.server_peer_id = server_peer_id
-	self.local_rpc_queue = {
+function NetworkTransmit.init(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_0.is_server = arg_3_1
+	arg_3_0.peer_id = Network.peer_id()
+	arg_3_0.server_peer_id = arg_3_2
+	arg_3_0.local_rpc_queue = {
 		{},
-		{},
+		{}
 	}
-	self.local_rpc_queue_n = {
+	arg_3_0.local_rpc_queue_n = {
 		0,
-		0,
+		0
 	}
-	self.local_rpc_queue_contains_boxed = {
+	arg_3_0.local_rpc_queue_contains_boxed = {
 		{},
-		{},
+		{}
 	}
-	self.local_rpc_buffer_index = 1
-	self.peer_ignore_list = {}
-	self.game_session = nil
+	arg_3_0.local_rpc_buffer_index = 1
+	arg_3_0.peer_ignore_list = {}
+	arg_3_0.game_session = nil
 end
 
-NetworkTransmit.update_receive = function (self)
-	self._pack_temp_types = false
+function NetworkTransmit.update_receive(arg_4_0)
+	arg_4_0._pack_temp_types = false
 end
 
-NetworkTransmit.set_game_session = function (self, session)
-	self.game_session = session
+function NetworkTransmit.set_game_session(arg_5_0, arg_5_1)
+	arg_5_0.game_session = arg_5_1
 end
 
-NetworkTransmit.add_peer_ignore = function (self, peer_id)
-	self.peer_ignore_list[peer_id] = true
+function NetworkTransmit.add_peer_ignore(arg_6_0, arg_6_1)
+	arg_6_0.peer_ignore_list[arg_6_1] = true
 end
 
-NetworkTransmit.remove_peer_ignore = function (self, peer_id)
-	self.peer_ignore_list[peer_id] = nil
+function NetworkTransmit.remove_peer_ignore(arg_7_0, arg_7_1)
+	arg_7_0.peer_ignore_list[arg_7_1] = nil
 end
 
-NetworkTransmit.destroy = function (self)
-	GarbageLeakDetector.register_object(self, "NetworkTransmit")
+function NetworkTransmit.destroy(arg_8_0)
+	GarbageLeakDetector.register_object(arg_8_0, "NetworkTransmit")
 end
 
-NetworkTransmit.pack_temp_types = function (self, optional_num_args, ...)
-	local arguments = {
-		...,
+function NetworkTransmit.pack_temp_types(arg_9_0, arg_9_1, ...)
+	local var_9_0 = {
+		...
 	}
-	local contains_boxed = false
+	local var_9_1 = false
 
-	for i = 1, optional_num_args or #arguments do
-		local arg = arguments[i]
-		local type_name = Script.type_name(arg)
+	for iter_9_0 = 1, arg_9_1 or #var_9_0 do
+		local var_9_2 = var_9_0[iter_9_0]
+		local var_9_3 = Script.type_name(var_9_2)
 
-		if type_name == "Vector3" then
-			arguments[i] = Vector3Box(arg)
-			contains_boxed = true
-		elseif type_name == "Vector4" then
-			arguments[i] = QuaternionBox(arg)
-			contains_boxed = true
+		if var_9_3 == "Vector3" then
+			var_9_0[iter_9_0] = Vector3Box(var_9_2)
+			var_9_1 = true
+		elseif var_9_3 == "Vector4" then
+			var_9_0[iter_9_0] = QuaternionBox(var_9_2)
+			var_9_1 = true
 		end
 	end
 
-	return arguments, contains_boxed
+	return var_9_0, var_9_1
 end
 
-NetworkTransmit.unpack_temp_types = function (self, arguments, optional_offset, optional_num_args)
-	local offset = optional_offset or 0
+function NetworkTransmit.unpack_temp_types(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	local var_10_0 = arg_10_2 or 0
 
-	for j = 1, optional_num_args or #arguments do
-		local argument_index = offset + j
-		local arg = arguments[argument_index]
-		local type_name = Script.type_name(arg)
+	for iter_10_0 = 1, arg_10_3 or #arg_10_1 do
+		local var_10_1 = var_10_0 + iter_10_0
+		local var_10_2 = arg_10_1[var_10_1]
+		local var_10_3 = Script.type_name(var_10_2)
 
-		if type_name == "Vector3Box" or type_name == "QuaternionBox" then
-			arguments[argument_index] = arg:unbox()
+		if var_10_3 == "Vector3Box" or var_10_3 == "QuaternionBox" then
+			arg_10_1[var_10_1] = var_10_2:unbox()
 		end
 	end
 end
 
-NetworkTransmit.queue_local_rpc = function (self, rpc_name, ...)
-	local local_rpc_buffer_index = self.local_rpc_buffer_index
-	local local_rpc_queue = self.local_rpc_queue[local_rpc_buffer_index]
-	local local_rpc_queue_n = self.local_rpc_queue_n[local_rpc_buffer_index]
-	local local_rpc_queue_contains_boxed = self.local_rpc_queue_contains_boxed[local_rpc_buffer_index]
-	local num_varargs = select("#", ...)
+function NetworkTransmit.queue_local_rpc(arg_11_0, arg_11_1, ...)
+	local var_11_0 = arg_11_0.local_rpc_buffer_index
+	local var_11_1 = arg_11_0.local_rpc_queue[var_11_0]
+	local var_11_2 = arg_11_0.local_rpc_queue_n[var_11_0]
+	local var_11_3 = arg_11_0.local_rpc_queue_contains_boxed[var_11_0]
+	local var_11_4 = select("#", ...)
 
-	fassert(pack_index[num_varargs + 2], "Could not pack local rpc %q due to too many varargs. Only 20 is currently supported.", rpc_name)
+	fassert(pack_index[var_11_4 + 2], "Could not pack local rpc %q due to too many varargs. Only 20 is currently supported.", arg_11_1)
 
-	if self._pack_temp_types then
-		local arguments, contains_boxed = self:pack_temp_types(num_varargs, ...)
+	if arg_11_0._pack_temp_types then
+		local var_11_5, var_11_6 = arg_11_0:pack_temp_types(var_11_4, ...)
 
-		pack_index[num_varargs + 2](local_rpc_queue, local_rpc_queue_n, rpc_name, num_varargs, unpack(arguments, 1, num_varargs))
+		pack_index[var_11_4 + 2](var_11_1, var_11_2, arg_11_1, var_11_4, unpack(var_11_5, 1, var_11_4))
 
-		local_rpc_queue_contains_boxed[#local_rpc_queue_contains_boxed + 1] = contains_boxed
+		var_11_3[#var_11_3 + 1] = var_11_6
 	else
-		pack_index[num_varargs + 2](local_rpc_queue, local_rpc_queue_n, rpc_name, num_varargs, ...)
+		pack_index[var_11_4 + 2](var_11_1, var_11_2, arg_11_1, var_11_4, ...)
 
-		local_rpc_queue_contains_boxed[#local_rpc_queue_contains_boxed + 1] = false
+		var_11_3[#var_11_3 + 1] = false
 	end
 
-	self.local_rpc_queue_n[local_rpc_buffer_index] = local_rpc_queue_n + num_varargs + 2
+	arg_11_0.local_rpc_queue_n[var_11_0] = var_11_2 + var_11_4 + 2
 end
 
-NetworkTransmit.transmit_local_rpcs = function (self)
-	self._pack_temp_types = true
+function NetworkTransmit.transmit_local_rpcs(arg_12_0)
+	arg_12_0._pack_temp_types = true
 
-	local local_rpc_buffer_index = self.local_rpc_buffer_index
-	local local_rpc_queue_contains_boxed = self.local_rpc_queue_contains_boxed[local_rpc_buffer_index]
-	local local_rpc_queue_n = self.local_rpc_queue_n[local_rpc_buffer_index]
-	local local_rpc_queue = self.local_rpc_queue[local_rpc_buffer_index]
+	local var_12_0 = arg_12_0.local_rpc_buffer_index
+	local var_12_1 = arg_12_0.local_rpc_queue_contains_boxed[var_12_0]
+	local var_12_2 = arg_12_0.local_rpc_queue_n[var_12_0]
+	local var_12_3 = arg_12_0.local_rpc_queue[var_12_0]
 
-	self.local_rpc_buffer_index = 3 - local_rpc_buffer_index
+	arg_12_0.local_rpc_buffer_index = 3 - var_12_0
 
-	local event_table = self.network_event_delegate.event_table
-	local channel_to_self = 0
-	local do_print_local_rpcs = Development.parameter("network_log_messages")
-	local i = 0
-	local rpc_n = 0
+	local var_12_4 = arg_12_0.network_event_delegate.event_table
+	local var_12_5 = 0
+	local var_12_6 = Development.parameter("network_log_messages")
+	local var_12_7 = 0
+	local var_12_8 = 0
 
-	while i < local_rpc_queue_n do
-		rpc_n = rpc_n + 1
+	while var_12_7 < var_12_2 do
+		var_12_8 = var_12_8 + 1
 
-		local rpc_name = local_rpc_queue[i]
-		local rpc_num_args = local_rpc_queue[i + 1]
+		local var_12_9 = var_12_3[var_12_7]
+		local var_12_10 = var_12_3[var_12_7 + 1]
 
-		if do_print_local_rpcs then
-			rpc_local_print(rpc_name, unpack_index[rpc_num_args](local_rpc_queue, i + 2))
+		if var_12_6 then
+			var_0_3(var_12_9, unpack_index[var_12_10](var_12_3, var_12_7 + 2))
 		end
 
-		if local_rpc_queue_contains_boxed[rpc_n] then
-			self:unpack_temp_types(local_rpc_queue, i + 1, rpc_num_args)
+		if var_12_1[var_12_8] then
+			arg_12_0:unpack_temp_types(var_12_3, var_12_7 + 1, var_12_10)
 		end
 
-		event_table[rpc_name](nil, channel_to_self, unpack_index[rpc_num_args](local_rpc_queue, i + 2))
+		var_12_4[var_12_9](nil, var_12_5, unpack_index[var_12_10](var_12_3, var_12_7 + 2))
 
-		i = i + rpc_num_args + 2
+		var_12_7 = var_12_7 + var_12_10 + 2
 	end
 
-	fassert(i == local_rpc_queue_n, "Couldn't process all local rpcs!")
+	fassert(var_12_7 == var_12_2, "Couldn't process all local rpcs!")
 
-	self.local_rpc_queue_n[local_rpc_buffer_index] = 0
+	arg_12_0.local_rpc_queue_n[var_12_0] = 0
 
-	table.clear(local_rpc_queue_contains_boxed)
+	table.clear(var_12_1)
 end
 
-NetworkTransmit.set_network_event_delegate = function (self, network_event_delegate)
-	self.network_event_delegate = network_event_delegate
+function NetworkTransmit.set_network_event_delegate(arg_13_0, arg_13_1)
+	arg_13_0.network_event_delegate = arg_13_1
 end
 
-NetworkTransmit.send_rpc = function (self, rpc_name, peer_id, ...)
-	local rpc = RPC[rpc_name]
+function NetworkTransmit.send_rpc(arg_14_0, arg_14_1, arg_14_2, ...)
+	local var_14_0 = var_0_0[arg_14_1]
 
-	fassert(rpc, "[NetworkTransmit:send_rpc()] rpc does not exist %q", rpc_name)
+	fassert(var_14_0, "[NetworkTransmit:send_rpc()] rpc does not exist %q", arg_14_1)
 
-	if peer_id == self.peer_id then
-		self:queue_local_rpc(rpc_name, ...)
+	if arg_14_2 == arg_14_0.peer_id then
+		arg_14_0:queue_local_rpc(arg_14_1, ...)
 	else
-		local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+		local var_14_1 = PEER_ID_TO_CHANNEL[arg_14_2]
 
-		rpc(channel_id, ...)
+		var_14_0(var_14_1, ...)
 	end
 
-	local my_peer_id = self.peer_id
+	local var_14_2 = arg_14_0.peer_id
 end
 
-NetworkTransmit.send_rpc_server = function (self, rpc_name, ...)
-	local rpc = RPC[rpc_name]
+function NetworkTransmit.send_rpc_server(arg_15_0, arg_15_1, ...)
+	local var_15_0 = var_0_0[arg_15_1]
 
-	fassert(rpc, "[NetworkTransmit:send_rpc_server()] rpc does not exist %q", rpc_name)
+	fassert(var_15_0, "[NetworkTransmit:send_rpc_server()] rpc does not exist %q", arg_15_1)
 
-	if self.is_server then
-		self:queue_local_rpc(rpc_name, ...)
+	if arg_15_0.is_server then
+		arg_15_0:queue_local_rpc(arg_15_1, ...)
 	else
-		fassert(self.server_peer_id, "We don't have any server connection when trying to send RPC %q", rpc_name)
+		fassert(arg_15_0.server_peer_id, "We don't have any server connection when trying to send RPC %q", arg_15_1)
 
-		local channel_id = PEER_ID_TO_CHANNEL[self.server_peer_id]
+		local var_15_1 = PEER_ID_TO_CHANNEL[arg_15_0.server_peer_id]
 
-		rpc(channel_id, ...)
+		var_15_0(var_15_1, ...)
 	end
 end
 
-NetworkTransmit.send_rpc_dedicated_server = function (self, rpc_name, ...)
-	local rpc = RPC[rpc_name]
+function NetworkTransmit.send_rpc_dedicated_server(arg_16_0, arg_16_1, ...)
+	local var_16_0 = var_0_0[arg_16_1]
 
-	fassert(rpc, "[NetworkTransmit:send_rpc_server()] rpc does not exist %q", rpc_name)
+	fassert(var_16_0, "[NetworkTransmit:send_rpc_server()] rpc does not exist %q", arg_16_1)
 
-	local dedicated_server_peer_id = Managers.mechanism:dedicated_server_peer_id()
+	local var_16_1 = Managers.mechanism:dedicated_server_peer_id()
 
-	fassert(dedicated_server_peer_id, "Failed to get peer id for dedicated server")
+	fassert(var_16_1, "Failed to get peer id for dedicated server")
 
-	if self.peer_id == dedicated_server_peer_id then
-		self:queue_local_rpc(rpc_name, ...)
+	if arg_16_0.peer_id == var_16_1 then
+		arg_16_0:queue_local_rpc(arg_16_1, ...)
 	else
-		local channel_id = PEER_ID_TO_CHANNEL[dedicated_server_peer_id]
+		local var_16_2 = PEER_ID_TO_CHANNEL[var_16_1]
 
-		fassert(channel_id, "Failed to find channel_id for dedicated server")
-		rpc(channel_id, ...)
+		fassert(var_16_2, "Failed to find channel_id for dedicated server")
+		var_16_0(var_16_2, ...)
 	end
 end
 
-NetworkTransmit.send_rpc_party_clients = function (self, rpc_name, party, include_spectators, ...)
-	fassert(self.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", rpc_name)
+function NetworkTransmit.send_rpc_party_clients(arg_17_0, arg_17_1, arg_17_2, arg_17_3, ...)
+	fassert(arg_17_0.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", arg_17_1)
 
-	local rpc = RPC[rpc_name]
+	local var_17_0 = var_0_0[arg_17_1]
 
-	fassert(rpc, "[NetworkTransmit:send_rpc_clients()] rpc does not exist: %q", rpc_name)
+	fassert(var_17_0, "[NetworkTransmit:send_rpc_clients()] rpc does not exist: %q", arg_17_1)
 
-	local session = self.game_session
+	local var_17_1 = arg_17_0.game_session
 
-	if not session then
+	if not var_17_1 then
 		return
 	end
 
-	local occupied_slots = party.occupied_slots
-	local peer_ids = shared_scratchpad_table
+	local var_17_2 = arg_17_2.occupied_slots
+	local var_17_3 = var_0_1
 
-	table.clear(peer_ids)
+	table.clear(var_17_3)
 
-	for _, player_data in ipairs(occupied_slots) do
-		if player_data.is_player then
-			peer_ids[player_data.peer_id] = true
+	for iter_17_0, iter_17_1 in ipairs(var_17_2) do
+		if iter_17_1.is_player then
+			var_17_3[iter_17_1.peer_id] = true
 		end
 	end
 
-	if include_spectators then
-		local spectator_party = Managers.party:get_party_from_name("spectators")
+	if arg_17_3 then
+		local var_17_4 = Managers.party:get_party_from_name("spectators")
 
-		if spectator_party then
-			local occupied_slots = spectator_party.occupied_slots
+		if var_17_4 then
+			local var_17_5 = var_17_4.occupied_slots
 
-			for _, player_data in ipairs(occupied_slots) do
-				if player_data.is_player then
-					peer_ids[player_data.peer_id] = true
+			for iter_17_2, iter_17_3 in ipairs(var_17_5) do
+				if iter_17_3.is_player then
+					var_17_3[iter_17_3.peer_id] = true
 				end
 			end
 		end
 	end
 
-	local peer_ignore_list = self.peer_ignore_list
+	local var_17_6 = arg_17_0.peer_ignore_list
 
-	for _, peer_id in ipairs(GameSession.other_peers(session)) do
-		if not peer_ignore_list[peer_id] and peer_ids[peer_id] then
-			local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+	for iter_17_4, iter_17_5 in ipairs(GameSession.other_peers(var_17_1)) do
+		if not var_17_6[iter_17_5] and var_17_3[iter_17_5] then
+			local var_17_7 = PEER_ID_TO_CHANNEL[iter_17_5]
 
-			rpc(channel_id, ...)
+			var_17_0(var_17_7, ...)
 		end
 	end
 end
 
-NetworkTransmit.send_rpc_party = function (self, rpc_name, party, include_spectators, ...)
-	fassert(self.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", rpc_name)
+function NetworkTransmit.send_rpc_party(arg_18_0, arg_18_1, arg_18_2, arg_18_3, ...)
+	fassert(arg_18_0.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", arg_18_1)
 
-	local rpc = RPC[rpc_name]
+	local var_18_0 = var_0_0[arg_18_1]
 
-	fassert(rpc, "[NetworkTransmit:send_rpc_party()] rpc does not exist: %q", rpc_name)
+	fassert(var_18_0, "[NetworkTransmit:send_rpc_party()] rpc does not exist: %q", arg_18_1)
 
-	local session = self.game_session
+	local var_18_1 = arg_18_0.game_session
 
-	if not session then
+	if not var_18_1 then
 		return
 	end
 
-	local occupied_slots = party.occupied_slots
-	local peer_ids = shared_scratchpad_table
+	local var_18_2 = arg_18_2.occupied_slots
+	local var_18_3 = var_0_1
 
-	table.clear(peer_ids)
+	table.clear(var_18_3)
 
-	for _, player_data in ipairs(occupied_slots) do
-		if player_data.is_player then
-			peer_ids[player_data.peer_id] = true
+	for iter_18_0, iter_18_1 in ipairs(var_18_2) do
+		if iter_18_1.is_player then
+			var_18_3[iter_18_1.peer_id] = true
 		end
 	end
 
-	if include_spectators then
-		local spectator_party = Managers.party:get_party_from_name("spectators")
+	if arg_18_3 then
+		local var_18_4 = Managers.party:get_party_from_name("spectators")
 
-		if spectator_party then
-			local occupied_slots = spectator_party.occupied_slots
+		if var_18_4 then
+			local var_18_5 = var_18_4.occupied_slots
 
-			for _, player_data in ipairs(occupied_slots) do
-				if player_data.is_player then
-					peer_ids[player_data.peer_id] = true
+			for iter_18_2, iter_18_3 in ipairs(var_18_5) do
+				if iter_18_3.is_player then
+					var_18_3[iter_18_3.peer_id] = true
 				end
 			end
 		end
 	end
 
-	if peer_ids[self.peer_id] then
-		self:queue_local_rpc(rpc_name, ...)
+	if var_18_3[arg_18_0.peer_id] then
+		arg_18_0:queue_local_rpc(arg_18_1, ...)
 
-		peer_ids[self.peer_id] = nil
+		var_18_3[arg_18_0.peer_id] = nil
 	end
 
-	local peer_ignore_list = self.peer_ignore_list
+	local var_18_6 = arg_18_0.peer_ignore_list
 
-	for _, peer_id in ipairs(GameSession.other_peers(session)) do
-		if not peer_ignore_list[peer_id] and peer_ids[peer_id] then
-			local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+	for iter_18_4, iter_18_5 in ipairs(GameSession.other_peers(var_18_1)) do
+		if not var_18_6[iter_18_5] and var_18_3[iter_18_5] then
+			local var_18_7 = PEER_ID_TO_CHANNEL[iter_18_5]
 
-			rpc(channel_id, ...)
+			var_18_0(var_18_7, ...)
 		end
 	end
 end
 
-local function get_side_peers(side, include_allies, include_spectators)
-	local peer_ids = shared_scratchpad_table
+local function var_0_4(arg_19_0, arg_19_1, arg_19_2)
+	local var_19_0 = var_0_1
 
-	table.clear(peer_ids)
+	table.clear(var_19_0)
 
-	do
-		local player_units = side.PLAYER_UNITS
+	local var_19_1 = arg_19_0.PLAYER_UNITS
 
-		for _, unit in ipairs(player_units) do
-			local player = Managers.player:owner(unit)
-
-			peer_ids[player:network_id()] = true
-		end
+	for iter_19_0, iter_19_1 in ipairs(var_19_1) do
+		var_19_0[Managers.player:owner(iter_19_1):network_id()] = true
 	end
 
-	if include_allies then
-		local allies = side:get_allied_sides()
+	if arg_19_1 then
+		local var_19_2 = arg_19_0:get_allied_sides()
 
-		for i = 1, #allies do
-			local allied_side = allies[i]
-			local player_units = allied_side.PLAYER_UNITS
+		for iter_19_2 = 1, #var_19_2 do
+			local var_19_3 = var_19_2[iter_19_2].PLAYER_UNITS
 
-			for _, unit in ipairs(player_units) do
-				local player = Managers.player:owner(unit)
-
-				peer_ids[player:network_id()] = true
+			for iter_19_3, iter_19_4 in ipairs(var_19_3) do
+				var_19_0[Managers.player:owner(iter_19_4):network_id()] = true
 			end
 		end
 	end
 
-	if include_spectators then
-		local spectator_side = Managers.state.side:get_side_from_name("spectators")
+	if arg_19_2 and Managers.state.side:get_side_from_name("spectators") then
+		local var_19_4 = arg_19_0.PLAYER_UNITS
 
-		if spectator_side then
-			local player_units = side.PLAYER_UNITS
-
-			for _, unit in ipairs(player_units) do
-				local player = Managers.player:owner(unit)
-
-				peer_ids[player:network_id()] = true
-			end
+		for iter_19_5, iter_19_6 in ipairs(var_19_4) do
+			var_19_0[Managers.player:owner(iter_19_6):network_id()] = true
 		end
 	end
 
-	return peer_ids
+	return var_19_0
 end
 
-NetworkTransmit.send_rpc_side = function (self, rpc_name, side, include_allies, include_spectators, always_include_server, ...)
-	fassert(self.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", rpc_name)
+function NetworkTransmit.send_rpc_side(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, ...)
+	fassert(arg_20_0.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", arg_20_1)
 
-	local rpc = RPC[rpc_name]
+	local var_20_0 = var_0_0[arg_20_1]
 
-	fassert(rpc, "[NetworkTransmit:send_rpc_side()] rpc does not exist: %q", rpc_name)
+	fassert(var_20_0, "[NetworkTransmit:send_rpc_side()] rpc does not exist: %q", arg_20_1)
 
-	local session = self.game_session
+	local var_20_1 = arg_20_0.game_session
 
-	if not session then
+	if not var_20_1 then
 		return
 	end
 
-	local peer_ids = get_side_peers(side, include_allies, include_spectators)
+	local var_20_2 = var_0_4(arg_20_2, arg_20_3, arg_20_4)
 
-	if peer_ids[self.peer_id] or always_include_server then
-		self:queue_local_rpc(rpc_name, ...)
+	if var_20_2[arg_20_0.peer_id] or arg_20_5 then
+		arg_20_0:queue_local_rpc(arg_20_1, ...)
 
-		peer_ids[self.peer_id] = nil
+		var_20_2[arg_20_0.peer_id] = nil
 	end
 
-	local peer_ignore_list = self.peer_ignore_list
+	local var_20_3 = arg_20_0.peer_ignore_list
 
-	for _, peer_id in ipairs(GameSession.other_peers(session)) do
-		if not peer_ignore_list[peer_id] and peer_ids[peer_id] then
-			local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+	for iter_20_0, iter_20_1 in ipairs(GameSession.other_peers(var_20_1)) do
+		if not var_20_3[iter_20_1] and var_20_2[iter_20_1] then
+			local var_20_4 = PEER_ID_TO_CHANNEL[iter_20_1]
 
-			rpc(channel_id, ...)
+			var_20_0(var_20_4, ...)
 		end
 	end
 end
 
-NetworkTransmit.send_rpc_side_clients = function (self, rpc_name, side, include_allies, include_spectators, ...)
-	fassert(self.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", rpc_name)
+function NetworkTransmit.send_rpc_side_clients(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, ...)
+	fassert(arg_21_0.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", arg_21_1)
 
-	local rpc = RPC[rpc_name]
+	local var_21_0 = var_0_0[arg_21_1]
 
-	fassert(rpc, "[NetworkTransmit:send_rpc_side_clients()] rpc does not exist: %q", rpc_name)
+	fassert(var_21_0, "[NetworkTransmit:send_rpc_side_clients()] rpc does not exist: %q", arg_21_1)
 
-	local session = self.game_session
+	local var_21_1 = arg_21_0.game_session
 
-	if not session then
+	if not var_21_1 then
 		return
 	end
 
-	local peer_ids = get_side_peers(side, include_allies, include_spectators)
+	local var_21_2 = var_0_4(arg_21_2, arg_21_3, arg_21_4)
 
-	peer_ids[self.peer_id] = nil
+	var_21_2[arg_21_0.peer_id] = nil
 
-	local peer_ignore_list = self.peer_ignore_list
+	local var_21_3 = arg_21_0.peer_ignore_list
 
-	for _, peer_id in ipairs(GameSession.other_peers(session)) do
-		if not peer_ignore_list[peer_id] and peer_ids[peer_id] then
-			local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+	for iter_21_0, iter_21_1 in ipairs(GameSession.other_peers(var_21_1)) do
+		if not var_21_3[iter_21_1] and var_21_2[iter_21_1] then
+			local var_21_4 = PEER_ID_TO_CHANNEL[iter_21_1]
 
-			rpc(channel_id, ...)
+			var_21_0(var_21_4, ...)
 		end
 	end
 end
 
-NetworkTransmit.send_rpc_clients = function (self, rpc_name, ...)
-	fassert(self.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", rpc_name)
+function NetworkTransmit.send_rpc_clients(arg_22_0, arg_22_1, ...)
+	fassert(arg_22_0.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", arg_22_1)
 
-	local rpc = RPC[rpc_name]
+	local var_22_0 = var_0_0[arg_22_1]
 
-	fassert(rpc, "[NetworkTransmit:send_rpc_clients()] rpc does not exist: %q", rpc_name)
+	fassert(var_22_0, "[NetworkTransmit:send_rpc_clients()] rpc does not exist: %q", arg_22_1)
 
-	local session = self.game_session
+	local var_22_1 = arg_22_0.game_session
 
-	if not session then
+	if not var_22_1 then
 		return
 	end
 
-	local peer_ignore_list = self.peer_ignore_list
+	local var_22_2 = arg_22_0.peer_ignore_list
 
-	for _, peer_id in ipairs(GameSession.other_peers(session)) do
-		if not peer_ignore_list[peer_id] then
-			local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+	for iter_22_0, iter_22_1 in ipairs(GameSession.other_peers(var_22_1)) do
+		if not var_22_2[iter_22_1] then
+			local var_22_3 = PEER_ID_TO_CHANNEL[iter_22_1]
 
-			rpc(channel_id, ...)
+			var_22_0(var_22_3, ...)
 		end
 	end
 end
 
-NetworkTransmit.send_rpc_clients_except = function (self, rpc_name, except, ...)
-	fassert(self.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", rpc_name)
+function NetworkTransmit.send_rpc_clients_except(arg_23_0, arg_23_1, arg_23_2, ...)
+	fassert(arg_23_0.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", arg_23_1)
 
-	local rpc = RPC[rpc_name]
+	local var_23_0 = var_0_0[arg_23_1]
 
-	fassert(rpc, "[NetworkTransmit:send_rpc_clients_except()] rpc does not exist: %q", rpc_name)
+	fassert(var_23_0, "[NetworkTransmit:send_rpc_clients_except()] rpc does not exist: %q", arg_23_1)
 
-	local session = self.game_session
+	local var_23_1 = arg_23_0.game_session
 
-	if not session then
+	if not var_23_1 then
 		return
 	end
 
-	local peer_ignore_list = self.peer_ignore_list
+	local var_23_2 = arg_23_0.peer_ignore_list
 
-	for _, peer_id in ipairs(GameSession.other_peers(session)) do
-		if peer_id ~= except and not peer_ignore_list[peer_id] then
-			local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+	for iter_23_0, iter_23_1 in ipairs(GameSession.other_peers(var_23_1)) do
+		if iter_23_1 ~= arg_23_2 and not var_23_2[iter_23_1] then
+			local var_23_3 = PEER_ID_TO_CHANNEL[iter_23_1]
 
-			rpc(channel_id, ...)
+			var_23_0(var_23_3, ...)
 		end
 	end
 end
 
-NetworkTransmit.send_rpc_side_clients_except = function (self, rpc_name, side, include_allies, include_spectators, except, ...)
-	fassert(self.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", rpc_name)
+function NetworkTransmit.send_rpc_side_clients_except(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, ...)
+	fassert(arg_24_0.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", arg_24_1)
 
-	local rpc = RPC[rpc_name]
+	local var_24_0 = var_0_0[arg_24_1]
 
-	fassert(rpc, "[NetworkTransmit:send_rpc_side_clients_except()] rpc does not exist: %q", rpc_name)
+	fassert(var_24_0, "[NetworkTransmit:send_rpc_side_clients_except()] rpc does not exist: %q", arg_24_1)
 
-	local session = self.game_session
+	local var_24_1 = arg_24_0.game_session
 
-	if not session then
+	if not var_24_1 then
 		return
 	end
 
-	local peer_ids = get_side_peers(side, include_allies, include_spectators)
+	local var_24_2 = var_0_4(arg_24_2, arg_24_3, arg_24_4)
 
-	peer_ids[self.peer_id] = nil
-	peer_ids[except] = nil
+	var_24_2[arg_24_0.peer_id] = nil
+	var_24_2[arg_24_5] = nil
 
-	local peer_ignore_list = self.peer_ignore_list
+	local var_24_3 = arg_24_0.peer_ignore_list
 
-	for _, peer_id in ipairs(GameSession.other_peers(session)) do
-		if not peer_ignore_list[peer_id] and peer_ids[peer_id] then
-			local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+	for iter_24_0, iter_24_1 in ipairs(GameSession.other_peers(var_24_1)) do
+		if not var_24_3[iter_24_1] and var_24_2[iter_24_1] then
+			local var_24_4 = PEER_ID_TO_CHANNEL[iter_24_1]
 
-			rpc(channel_id, ...)
+			var_24_0(var_24_4, ...)
 		end
 	end
 end
 
-NetworkTransmit.send_rpc_all = function (self, rpc_name, ...)
-	fassert(self.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", rpc_name)
+function NetworkTransmit.send_rpc_all(arg_25_0, arg_25_1, ...)
+	fassert(arg_25_0.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", arg_25_1)
 
-	local rpc = RPC[rpc_name]
+	local var_25_0 = var_0_0[arg_25_1]
 
-	fassert(rpc, "[NetworkTransmit:send_rpc_all()] rpc does not exist: %q", rpc_name)
-	self:queue_local_rpc(rpc_name, ...)
+	fassert(var_25_0, "[NetworkTransmit:send_rpc_all()] rpc does not exist: %q", arg_25_1)
+	arg_25_0:queue_local_rpc(arg_25_1, ...)
 
-	local session = self.game_session
+	local var_25_1 = arg_25_0.game_session
 
-	if not session then
+	if not var_25_1 then
 		return
 	end
 
-	local peer_ignore_list = self.peer_ignore_list
+	local var_25_2 = arg_25_0.peer_ignore_list
 
-	for _, peer_id in ipairs(GameSession.other_peers(session)) do
-		if not peer_ignore_list[peer_id] then
-			local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+	for iter_25_0, iter_25_1 in ipairs(GameSession.other_peers(var_25_1)) do
+		if not var_25_2[iter_25_1] then
+			local var_25_3 = PEER_ID_TO_CHANNEL[iter_25_1]
 
-			rpc(channel_id, ...)
+			var_25_0(var_25_3, ...)
 		end
 	end
 end
 
-NetworkTransmit.send_rpc_all_except = function (self, rpc_name, except, ...)
-	fassert(self.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", rpc_name)
+function NetworkTransmit.send_rpc_all_except(arg_26_0, arg_26_1, arg_26_2, ...)
+	fassert(arg_26_0.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", arg_26_1)
 
-	local rpc = RPC[rpc_name]
+	local var_26_0 = var_0_0[arg_26_1]
 
-	fassert(rpc, "[NetworkTransmit:send_rpc_all_except()] rpc does not exist: %q", rpc_name)
+	fassert(var_26_0, "[NetworkTransmit:send_rpc_all_except()] rpc does not exist: %q", arg_26_1)
 
-	local my_peer_id = self.peer_id
-
-	if except ~= my_peer_id then
-		self:queue_local_rpc(rpc_name, ...)
+	if arg_26_2 ~= arg_26_0.peer_id then
+		arg_26_0:queue_local_rpc(arg_26_1, ...)
 	end
 
-	local session = self.game_session
+	local var_26_1 = arg_26_0.game_session
 
-	if not session then
+	if not var_26_1 then
 		return
 	end
 
-	local peer_ignore_list = self.peer_ignore_list
+	local var_26_2 = arg_26_0.peer_ignore_list
 
-	for _, peer_id in ipairs(GameSession.other_peers(session)) do
-		if peer_id ~= except and not peer_ignore_list[peer_id] then
-			local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+	for iter_26_0, iter_26_1 in ipairs(GameSession.other_peers(var_26_1)) do
+		if iter_26_1 ~= arg_26_2 and not var_26_2[iter_26_1] then
+			local var_26_3 = PEER_ID_TO_CHANNEL[iter_26_1]
 
-			rpc(channel_id, ...)
+			var_26_0(var_26_3, ...)
 		end
 	end
 end

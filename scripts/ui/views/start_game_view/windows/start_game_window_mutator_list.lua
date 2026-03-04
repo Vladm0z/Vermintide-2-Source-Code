@@ -1,291 +1,267 @@
-﻿-- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_mutator_list.lua
+-- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_mutator_list.lua
 
-local definitions = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_mutator_list_definitions")
-local widget_definitions = definitions.widgets
-local scenegraph_definition = definitions.scenegraph_definition
-local animation_definitions = definitions.animation_definitions
+local var_0_0 = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_mutator_list_definitions")
+local var_0_1 = var_0_0.widgets
+local var_0_2 = var_0_0.scenegraph_definition
+local var_0_3 = var_0_0.animation_definitions
 
 StartGameWindowMutatorList = class(StartGameWindowMutatorList)
 StartGameWindowMutatorList.NAME = "StartGameWindowMutatorList"
 
-StartGameWindowMutatorList.on_enter = function (self, params, offset)
+function StartGameWindowMutatorList.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowMutatorList")
 
-	self.parent = params.parent
+	arg_1_0.parent = arg_1_1.parent
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_1_0 = arg_1_1.ingame_ui_context
 
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self.input_manager = ingame_ui_context.input_manager
-	self.statistics_db = ingame_ui_context.statistics_db
-	self.render_settings = {
-		snap_pixel_positions = true,
+	arg_1_0.ui_renderer = var_1_0.ui_renderer
+	arg_1_0.input_manager = var_1_0.input_manager
+	arg_1_0.statistics_db = var_1_0.statistics_db
+	arg_1_0.render_settings = {
+		snap_pixel_positions = true
 	}
 
-	local player_manager = Managers.player
-	local local_player = player_manager:local_player()
+	local var_1_1 = Managers.player
 
-	self._stats_id = local_player:stats_id()
-	self.player_manager = player_manager
-	self.peer_id = ingame_ui_context.peer_id
-	self._ui_animations = {}
+	arg_1_0._stats_id = var_1_1:local_player():stats_id()
+	arg_1_0.player_manager = var_1_1
+	arg_1_0.peer_id = var_1_0.peer_id
+	arg_1_0._ui_animations = {}
 
-	self:create_ui_elements(params, offset)
+	arg_1_0:create_ui_elements(arg_1_1, arg_1_2)
 
-	self._active_mutator_widgets = {}
+	arg_1_0._active_mutator_widgets = {}
 end
 
-StartGameWindowMutatorList.create_ui_elements = function (self, params, offset)
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+function StartGameWindowMutatorList.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 
-	local widgets = {}
-	local widgets_by_name = {}
+	local var_2_0 = {}
+	local var_2_1 = {}
 
-	for name, widget_definition in pairs(widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_2_0, iter_2_1 in pairs(var_0_1) do
+		local var_2_2 = UIWidget.init(iter_2_1)
 
-		widgets[#widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_2_0[#var_2_0 + 1] = var_2_2
+		var_2_1[iter_2_0] = var_2_2
 	end
 
-	self._widgets = widgets
-	self._widgets_by_name = widgets_by_name
+	arg_2_0._widgets = var_2_0
+	arg_2_0._widgets_by_name = var_2_1
 
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_renderer)
 
-	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
+	arg_2_0.ui_animator = UIAnimator:new(arg_2_0.ui_scenegraph, var_0_3)
 
-	if offset then
-		local window_position = self.ui_scenegraph.window.local_position
+	if arg_2_2 then
+		local var_2_3 = arg_2_0.ui_scenegraph.window.local_position
 
-		window_position[1] = window_position[1] + offset[1]
-		window_position[2] = window_position[2] + offset[2]
-		window_position[3] = window_position[3] + offset[3]
+		var_2_3[1] = var_2_3[1] + arg_2_2[1]
+		var_2_3[2] = var_2_3[2] + arg_2_2[2]
+		var_2_3[3] = var_2_3[3] + arg_2_2[3]
 	end
 
-	widgets_by_name.play_button.content.button_hotspot.disable_button = true
+	var_2_1.play_button.content.button_hotspot.disable_button = true
 
-	local overlay_button = widgets_by_name.overlay_button
-	local anim = self:_animate_pulse(overlay_button.style.glow_frame.color, 1, 255, 100, 2)
+	local var_2_4 = var_2_1.overlay_button
+	local var_2_5 = arg_2_0:_animate_pulse(var_2_4.style.glow_frame.color, 1, 255, 100, 2)
 
-	UIWidget.animate(overlay_button, anim)
+	UIWidget.animate(var_2_4, var_2_5)
 
-	if self:_has_deed_items() then
-		overlay_button.content.button_hotspot.disable_button = false
+	if arg_2_0:_has_deed_items() then
+		var_2_4.content.button_hotspot.disable_button = false
 	else
-		overlay_button.content.button_hotspot.disable_button = true
+		var_2_4.content.button_hotspot.disable_button = true
 	end
 end
 
-StartGameWindowMutatorList._has_deed_items = function (self)
-	local item_interface = Managers.backend:get_interface("items")
-	local item_filter = "item_type == deed"
-	local items = item_interface:get_filtered_items(item_filter)
+function StartGameWindowMutatorList._has_deed_items(arg_3_0)
+	local var_3_0 = Managers.backend:get_interface("items")
+	local var_3_1 = "item_type == deed"
+	local var_3_2 = var_3_0:get_filtered_items(var_3_1)
 
-	return items and #items > 0
+	return var_3_2 and #var_3_2 > 0
 end
 
-StartGameWindowMutatorList.on_exit = function (self, params)
+function StartGameWindowMutatorList.on_exit(arg_4_0, arg_4_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowMutatorList")
 
-	self.ui_animator = nil
+	arg_4_0.ui_animator = nil
 end
 
-StartGameWindowMutatorList.update = function (self, dt, t)
-	self:_update_animations(dt)
-	self:_handle_input(dt, t)
-	self:_update_selected_item_backend_id()
-	self:draw(dt)
+function StartGameWindowMutatorList.update(arg_5_0, arg_5_1, arg_5_2)
+	arg_5_0:_update_animations(arg_5_1)
+	arg_5_0:_handle_input(arg_5_1, arg_5_2)
+	arg_5_0:_update_selected_item_backend_id()
+	arg_5_0:draw(arg_5_1)
 end
 
-StartGameWindowMutatorList.post_update = function (self, dt, t)
+function StartGameWindowMutatorList.post_update(arg_6_0, arg_6_1, arg_6_2)
 	return
 end
 
-StartGameWindowMutatorList._update_animations = function (self, dt)
-	self:_update_game_options_hover_effect()
+function StartGameWindowMutatorList._update_animations(arg_7_0, arg_7_1)
+	arg_7_0:_update_game_options_hover_effect()
 
-	local ui_animations = self._ui_animations
+	local var_7_0 = arg_7_0._ui_animations
 
-	for name, animation in pairs(ui_animations) do
-		UIAnimation.update(animation, dt)
+	for iter_7_0, iter_7_1 in pairs(var_7_0) do
+		UIAnimation.update(iter_7_1, arg_7_1)
 
-		if UIAnimation.completed(animation) then
-			ui_animations[name] = nil
+		if UIAnimation.completed(iter_7_1) then
+			var_7_0[iter_7_0] = nil
 		end
 	end
 
-	local ui_animator = self.ui_animator
-
-	ui_animator:update(dt)
+	arg_7_0.ui_animator:update(arg_7_1)
 end
 
-StartGameWindowMutatorList._is_button_pressed = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
+function StartGameWindowMutatorList._is_button_pressed(arg_8_0, arg_8_1)
+	local var_8_0 = arg_8_1.content.button_hotspot
 
-	if hotspot.on_release then
-		hotspot.on_release = false
+	if var_8_0.on_release then
+		var_8_0.on_release = false
 
 		return true
 	end
 end
 
-StartGameWindowMutatorList._is_button_hover_enter = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	return hotspot.on_hover_enter
+function StartGameWindowMutatorList._is_button_hover_enter(arg_9_0, arg_9_1)
+	return arg_9_1.content.button_hotspot.on_hover_enter
 end
 
-StartGameWindowMutatorList._is_button_hover_exit = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	return hotspot.on_hover_exit
+function StartGameWindowMutatorList._is_button_hover_exit(arg_10_0, arg_10_1)
+	return arg_10_1.content.button_hotspot.on_hover_exit
 end
 
-StartGameWindowMutatorList._handle_input = function (self, dt, t)
-	local widgets_by_name = self._widgets_by_name
+function StartGameWindowMutatorList._handle_input(arg_11_0, arg_11_1, arg_11_2)
+	local var_11_0 = arg_11_0._widgets_by_name
 
-	if self:_is_button_hover_enter(widgets_by_name.overlay_button) or self:_is_button_hover_enter(widgets_by_name.play_button) then
-		self:_play_sound("play_gui_lobby_button_01_difficulty_confirm_hover")
+	if arg_11_0:_is_button_hover_enter(var_11_0.overlay_button) or arg_11_0:_is_button_hover_enter(var_11_0.play_button) then
+		arg_11_0:_play_sound("play_gui_lobby_button_01_difficulty_confirm_hover")
 	end
 
-	if self:_is_button_pressed(widgets_by_name.overlay_button) then
-		self.parent:set_layout_by_name("heroic_deed_selection")
-	elseif self:_is_button_pressed(widgets_by_name.play_button) and self._selected_backend_id then
-		self.parent:play(t, "deed")
+	if arg_11_0:_is_button_pressed(var_11_0.overlay_button) then
+		arg_11_0.parent:set_layout_by_name("heroic_deed_selection")
+	elseif arg_11_0:_is_button_pressed(var_11_0.play_button) and arg_11_0._selected_backend_id then
+		arg_11_0.parent:play(arg_11_2, "deed")
 	end
 end
 
-StartGameWindowMutatorList._update_selected_item_backend_id = function (self)
-	local backend_id = self.parent:get_selected_heroic_deed_backend_id()
+function StartGameWindowMutatorList._update_selected_item_backend_id(arg_12_0)
+	local var_12_0 = arg_12_0.parent:get_selected_heroic_deed_backend_id()
 
-	if backend_id ~= self._selected_backend_id then
-		self._selected_backend_id = backend_id
+	if var_12_0 ~= arg_12_0._selected_backend_id then
+		arg_12_0._selected_backend_id = var_12_0
 
-		self:_present_item_by_backend_id(backend_id)
+		arg_12_0:_present_item_by_backend_id(var_12_0)
 	end
 
-	if self._selected_backend_id then
-		self.parent:set_input_description("play_available")
+	if arg_12_0._selected_backend_id then
+		arg_12_0.parent:set_input_description("play_available")
 	else
-		self.parent:set_input_description(nil)
+		arg_12_0.parent:set_input_description(nil)
 	end
 end
 
-StartGameWindowMutatorList._present_item_by_backend_id = function (self, backend_id)
-	if not backend_id then
+function StartGameWindowMutatorList._present_item_by_backend_id(arg_13_0, arg_13_1)
+	if not arg_13_1 then
 		return
 	end
 
-	local item_interface = Managers.backend:get_interface("items")
-	local item = item_interface:get_item_from_id(backend_id)
-	local widgets_by_name = self._widgets_by_name
+	local var_13_0 = Managers.backend:get_interface("items"):get_item_from_id(arg_13_1)
+	local var_13_1 = arg_13_0._widgets_by_name
 
-	widgets_by_name.item_presentation.content.item = item
-	widgets_by_name.play_button.content.button_hotspot.disable_button = false
-	widgets_by_name.overlay_button.content.has_item = true
+	var_13_1.item_presentation.content.item = var_13_0
+	var_13_1.play_button.content.button_hotspot.disable_button = false
+	var_13_1.overlay_button.content.has_item = true
 end
 
-StartGameWindowMutatorList.draw = function (self, dt)
-	local ui_renderer = self.ui_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self.parent:window_input_service()
+function StartGameWindowMutatorList.draw(arg_14_0, arg_14_1)
+	local var_14_0 = arg_14_0.ui_renderer
+	local var_14_1 = arg_14_0.ui_scenegraph
+	local var_14_2 = arg_14_0.parent:window_input_service()
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
+	UIRenderer.begin_pass(var_14_0, var_14_1, var_14_2, arg_14_1, nil, arg_14_0.render_settings)
 
-	local widgets = self._widgets
+	local var_14_3 = arg_14_0._widgets
 
-	for i = 1, #widgets do
-		local widget = widgets[i]
+	for iter_14_0 = 1, #var_14_3 do
+		local var_14_4 = var_14_3[iter_14_0]
 
-		UIRenderer.draw_widget(ui_renderer, widget)
+		UIRenderer.draw_widget(var_14_0, var_14_4)
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_14_0)
 end
 
-StartGameWindowMutatorList._play_sound = function (self, event)
-	self.parent:play_sound(event)
+function StartGameWindowMutatorList._play_sound(arg_15_0, arg_15_1)
+	arg_15_0.parent:play_sound(arg_15_1)
 end
 
-StartGameWindowMutatorList._update_game_options_hover_effect = function (self)
-	local widgets_by_name = self._widgets_by_name
-	local overlay_button_widget = widgets_by_name.overlay_button
+function StartGameWindowMutatorList._update_game_options_hover_effect(arg_16_0)
+	local var_16_0 = arg_16_0._widgets_by_name.overlay_button
 
-	if self:_is_button_hover_enter(overlay_button_widget) then
-		self:_on_option_button_hover_enter(overlay_button_widget, 2)
-	elseif self:_is_button_hover_exit(overlay_button_widget) then
-		self:_on_option_button_hover_exit(overlay_button_widget, 2)
+	if arg_16_0:_is_button_hover_enter(var_16_0) then
+		arg_16_0:_on_option_button_hover_enter(var_16_0, 2)
+	elseif arg_16_0:_is_button_hover_exit(var_16_0) then
+		arg_16_0:_on_option_button_hover_exit(var_16_0, 2)
 	end
 end
 
-StartGameWindowMutatorList._on_option_button_hover_enter = function (self, widget, index, instant)
-	self:_create_style_animation_enter(widget, 255, "glow", index, instant)
-	self:_create_style_animation_exit(widget, 0, "button_hover_rect", index, instant)
+function StartGameWindowMutatorList._on_option_button_hover_enter(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+	arg_17_0:_create_style_animation_enter(arg_17_1, 255, "glow", arg_17_2, arg_17_3)
+	arg_17_0:_create_style_animation_exit(arg_17_1, 0, "button_hover_rect", arg_17_2, arg_17_3)
 end
 
-StartGameWindowMutatorList._on_option_button_hover_exit = function (self, widget, index, instant)
-	self:_create_style_animation_exit(widget, 0, "glow", index, instant)
-	self:_create_style_animation_enter(widget, 30, "button_hover_rect", index, instant)
+function StartGameWindowMutatorList._on_option_button_hover_exit(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+	arg_18_0:_create_style_animation_exit(arg_18_1, 0, "glow", arg_18_2, arg_18_3)
+	arg_18_0:_create_style_animation_enter(arg_18_1, 30, "button_hover_rect", arg_18_2, arg_18_3)
 end
 
-StartGameWindowMutatorList._create_style_animation_enter = function (self, widget, target_value, style_id, widget_index, instant)
-	local widget_style = widget.style
-	local pass_style = widget_style[style_id]
+function StartGameWindowMutatorList._create_style_animation_enter(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
+	local var_19_0 = arg_19_1.style[arg_19_3]
 
-	if not pass_style then
+	if not var_19_0 then
 		return
 	end
 
-	local current_color_value = pass_style.color[1]
-	local target_color_value = target_value
-	local total_time = 0.2
-	local animation_duration = (1 - current_color_value / target_color_value) * total_time
+	local var_19_1 = var_19_0.color[1]
+	local var_19_2 = arg_19_2
+	local var_19_3 = 0.2
+	local var_19_4 = (1 - var_19_1 / var_19_2) * var_19_3
 
-	if animation_duration > 0 and not instant then
-		local ui_animations = self._ui_animations
-		local animation_name = "game_option_" .. style_id
-
-		ui_animations[animation_name .. "_hover_" .. widget_index] = self:_animate_element_by_time(pass_style.color, 1, current_color_value, target_color_value, animation_duration)
+	if var_19_4 > 0 and not arg_19_5 then
+		arg_19_0._ui_animations[("game_option_" .. arg_19_3) .. "_hover_" .. arg_19_4] = arg_19_0:_animate_element_by_time(var_19_0.color, 1, var_19_1, var_19_2, var_19_4)
 	else
-		pass_style.color[1] = target_color_value
+		var_19_0.color[1] = var_19_2
 	end
 end
 
-StartGameWindowMutatorList._create_style_animation_exit = function (self, widget, target_value, style_id, widget_index, instant)
-	local widget_style = widget.style
-	local pass_style = widget_style[style_id]
+function StartGameWindowMutatorList._create_style_animation_exit(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+	local var_20_0 = arg_20_1.style[arg_20_3]
 
-	if not pass_style then
+	if not var_20_0 then
 		return
 	end
 
-	local current_color_value = pass_style.color[1]
-	local target_color_value = target_value
-	local total_time = 0.2
-	local animation_duration = current_color_value / 255 * total_time
+	local var_20_1 = var_20_0.color[1]
+	local var_20_2 = arg_20_2
+	local var_20_3 = 0.2
+	local var_20_4 = var_20_1 / 255 * var_20_3
 
-	if animation_duration > 0 and not instant then
-		local ui_animations = self._ui_animations
-		local animation_name = "game_option_" .. style_id
-
-		ui_animations[animation_name .. "_hover_" .. widget_index] = self:_animate_element_by_time(pass_style.color, 1, current_color_value, target_color_value, animation_duration)
+	if var_20_4 > 0 and not arg_20_5 then
+		arg_20_0._ui_animations[("game_option_" .. arg_20_3) .. "_hover_" .. arg_20_4] = arg_20_0:_animate_element_by_time(var_20_0.color, 1, var_20_1, var_20_2, var_20_4)
 	else
-		pass_style.color[1] = target_color_value
+		var_20_0.color[1] = var_20_2
 	end
 end
 
-StartGameWindowMutatorList._animate_pulse = function (self, target, target_index, from, to, speed)
-	local new_animation = UIAnimation.init(UIAnimation.pulse_animation, target, target_index, from, to, speed)
-
-	return new_animation
+function StartGameWindowMutatorList._animate_pulse(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
+	return (UIAnimation.init(UIAnimation.pulse_animation, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5))
 end
 
-StartGameWindowMutatorList._animate_element_by_time = function (self, target, target_index, from, to, time)
-	local new_animation = UIAnimation.init(UIAnimation.function_by_time, target, target_index, from, to, time, math.ease_out_quad)
-
-	return new_animation
+function StartGameWindowMutatorList._animate_element_by_time(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
+	return (UIAnimation.init(UIAnimation.function_by_time, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, math.ease_out_quad))
 end

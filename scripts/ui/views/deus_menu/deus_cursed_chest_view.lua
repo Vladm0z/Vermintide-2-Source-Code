@@ -1,505 +1,488 @@
-﻿-- chunkname: @scripts/ui/views/deus_menu/deus_cursed_chest_view.lua
+-- chunkname: @scripts/ui/views/deus_menu/deus_cursed_chest_view.lua
 
 require("scripts/utils/hash_utils")
 
-local definitions = local_require("scripts/ui/views/deus_menu/deus_cursed_chest_view_definitions")
-local REAL_PLAYER_LOCAL_ID = 1
-local POWER_UP_MAX_SPACING_X = 40
-local POWER_UP_SPACING_Y = 0
-local CIRCLE_SPEED = 1
-local POWER_UP_SELECTED_CIRCLE_SPEED = 12
-local LERP_SPEED = 2.5
-local SOUND_EVENTS = {
-	button_hover = "hud_morris_hover",
+local var_0_0 = local_require("scripts/ui/views/deus_menu/deus_cursed_chest_view_definitions")
+local var_0_1 = 1
+local var_0_2 = 40
+local var_0_3 = 0
+local var_0_4 = 1
+local var_0_5 = 12
+local var_0_6 = 2.5
+local var_0_7 = {
 	close_ui = "hud_morris_weapon_chest_close",
-	open_ui = "hud_morris_cursed_chest_open",
+	button_hover = "hud_morris_hover",
 	power_up_unlocked = "hud_morris_cursed_chest_activate_powerup",
+	open_ui = "hud_morris_cursed_chest_open"
 }
 
 DeusCursedChestView = class(DeusCursedChestView)
 
-DeusCursedChestView.init = function (self, ingame_ui_context)
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self.ingame_ui = ingame_ui_context.ingame_ui
-	self.input_manager = ingame_ui_context.input_manager
-	self.render_settings = {
+function DeusCursedChestView.init(arg_1_0, arg_1_1)
+	arg_1_0.ui_renderer = arg_1_1.ui_renderer
+	arg_1_0.ingame_ui = arg_1_1.ingame_ui
+	arg_1_0.input_manager = arg_1_1.input_manager
+	arg_1_0.render_settings = {
 		alpha_multiplier = 1,
-		snap_pixel_positions = true,
+		snap_pixel_positions = true
 	}
-	self._wwise_world = ingame_ui_context.wwise_world
+	arg_1_0._wwise_world = arg_1_1.wwise_world
 
-	local input_service_name = "deus_cursed_chest_view"
-	local input_manager = ingame_ui_context.input_manager
+	local var_1_0 = "deus_cursed_chest_view"
+	local var_1_1 = arg_1_1.input_manager
 
-	self._input_manager = input_manager
-	self._input_service_name = input_service_name
-	self.ingame_ui = ingame_ui_context.ingame_ui
+	arg_1_0._input_manager = var_1_1
+	arg_1_0._input_service_name = var_1_0
+	arg_1_0.ingame_ui = arg_1_1.ingame_ui
 
-	input_manager:create_input_service(input_service_name, "IngameMenuKeymaps", "IngameMenuFilters")
-	input_manager:map_device_to_service(input_service_name, "keyboard")
-	input_manager:map_device_to_service(input_service_name, "mouse")
-	input_manager:map_device_to_service(input_service_name, "gamepad")
+	var_1_1:create_input_service(var_1_0, "IngameMenuKeymaps", "IngameMenuFilters")
+	var_1_1:map_device_to_service(var_1_0, "keyboard")
+	var_1_1:map_device_to_service(var_1_0, "mouse")
+	var_1_1:map_device_to_service(var_1_0, "gamepad")
 end
 
-DeusCursedChestView.destroy = function (self)
+function DeusCursedChestView.destroy(arg_2_0)
 	return
 end
 
-DeusCursedChestView.on_enter = function (self, params)
-	self._interactable = params and params.interactable_unit
-	self._deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
-	self._circle_speed_modifier = CIRCLE_SPEED
-	self._circle_max_speed_modifier = CIRCLE_SPEED
-	self._power_up_data = Unit.get_data(self._interactable, "power_ups")
+function DeusCursedChestView.on_enter(arg_3_0, arg_3_1)
+	arg_3_0._interactable = arg_3_1 and arg_3_1.interactable_unit
+	arg_3_0._deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
+	arg_3_0._circle_speed_modifier = var_0_4
+	arg_3_0._circle_max_speed_modifier = var_0_4
+	arg_3_0._power_up_data = Unit.get_data(arg_3_0._interactable, "power_ups")
 
-	if not self._power_up_data then
-		local position = Unit.world_position(self._interactable, 0)
-		local seed = HashUtils.fnv32_hash(position.x .. "_" .. position.y .. "_" .. position.z)
-		local power_ups = self._deus_run_controller:generate_random_power_ups(DeusPowerUpSettings.cursed_chest_choice_amount, DeusPowerUpAvailabilityTypes.cursed_chest, seed)
+	if not arg_3_0._power_up_data then
+		local var_3_0 = Unit.world_position(arg_3_0._interactable, 0)
+		local var_3_1 = HashUtils.fnv32_hash(var_3_0.x .. "_" .. var_3_0.y .. "_" .. var_3_0.z)
+		local var_3_2 = arg_3_0._deus_run_controller:generate_random_power_ups(DeusPowerUpSettings.cursed_chest_choice_amount, DeusPowerUpAvailabilityTypes.cursed_chest, var_3_1)
 
-		self._power_up_data = {}
+		arg_3_0._power_up_data = {}
 
-		for i, power_up in ipairs(power_ups) do
-			self._power_up_data[i] = {
+		for iter_3_0, iter_3_1 in ipairs(var_3_2) do
+			arg_3_0._power_up_data[iter_3_0] = {
 				selected = false,
-				power_up = power_up,
+				power_up = iter_3_1
 			}
 		end
 
-		Unit.set_data(self._interactable, "power_ups", self._power_up_data)
+		Unit.set_data(arg_3_0._interactable, "power_ups", arg_3_0._power_up_data)
 	end
 
-	self:_acquire_input()
-	self:create_ui_elements()
-	self:_play_sound(SOUND_EVENTS.open_ui)
+	arg_3_0:_acquire_input()
+	arg_3_0:create_ui_elements()
+	arg_3_0:_play_sound(var_0_7.open_ui)
 end
 
-DeusCursedChestView.create_ui_elements = function (self)
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
+function DeusCursedChestView.create_ui_elements(arg_4_0)
+	arg_4_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
-	local widgets = {}
-	local widgets_by_name = {}
+	local var_4_0 = {}
+	local var_4_1 = {}
 
-	for name, widget_definition in pairs(definitions.background_widgets) do
-		if widget_definition then
-			local widget = UIWidget.init(widget_definition)
+	for iter_4_0, iter_4_1 in pairs(var_0_0.background_widgets) do
+		if iter_4_1 then
+			local var_4_2 = UIWidget.init(iter_4_1)
 
-			widgets[#widgets + 1] = widget
-			widgets_by_name[name] = widget
+			var_4_0[#var_4_0 + 1] = var_4_2
+			var_4_1[iter_4_0] = var_4_2
 		end
 	end
 
-	local local_peer_id = self._deus_run_controller:get_own_peer_id()
-	local profile_index, career_index = self._deus_run_controller:get_player_profile(local_peer_id, REAL_PLAYER_LOCAL_ID)
-	local power_up_templates = DeusPowerUpTemplates
-	local power_up_widgets = {}
-	local num_power_ups = #self._power_up_data
+	local var_4_3 = arg_4_0._deus_run_controller:get_own_peer_id()
+	local var_4_4, var_4_5 = arg_4_0._deus_run_controller:get_player_profile(var_4_3, var_0_1)
+	local var_4_6 = DeusPowerUpTemplates
+	local var_4_7 = {}
+	local var_4_8 = #arg_4_0._power_up_data
 
-	for i = 1, num_power_ups do
-		local power_up = self._power_up_data[i].power_up
-		local power_up_template = power_up_templates[power_up.name]
-		local is_rectangular_icon = power_up_template.rectangular_icon
-		local widget_size = definitions.scenegraph_definition.power_up_root.size
-		local widget_definition = definitions.create_power_up_shop_item("power_up_root", widget_size, false, is_rectangular_icon)
-		local widget = UIWidget.init(widget_definition)
-		local step = i - 1
-		local max_steps = num_power_ups - 1
-		local rad = math.rad(step / max_steps * 180)
-		local widget_offset_y = widget_size[2] + POWER_UP_SPACING_Y
-		local max_spacing_y = widget_offset_y * num_power_ups + widget_size[2]
-		local init_pos_y = max_spacing_y / 2
+	for iter_4_2 = 1, var_4_8 do
+		local var_4_9 = arg_4_0._power_up_data[iter_4_2].power_up
+		local var_4_10 = var_4_6[var_4_9.name].rectangular_icon
+		local var_4_11 = var_0_0.scenegraph_definition.power_up_root.size
+		local var_4_12 = var_0_0.create_power_up_shop_item("power_up_root", var_4_11, false, var_4_10)
+		local var_4_13 = UIWidget.init(var_4_12)
+		local var_4_14 = iter_4_2 - 1
+		local var_4_15 = var_4_8 - 1
+		local var_4_16 = math.rad(var_4_14 / var_4_15 * 180)
+		local var_4_17 = ((var_4_11[2] + var_0_3) * var_4_8 + var_4_11[2]) / 2
 
-		widget.offset = {
-			POWER_UP_MAX_SPACING_X * math.sin(rad),
-			init_pos_y - (POWER_UP_SPACING_Y + widget_size[2]) * i,
-			0,
+		var_4_13.offset = {
+			var_0_2 * math.sin(var_4_16),
+			var_4_17 - (var_0_3 + var_4_11[2]) * iter_4_2,
+			0
 		}
 
-		local max_value
-		local current_value = 0
+		local var_4_18
+		local var_4_19 = 0
 
-		self:_init_power_up_widget(widget, power_up, nil, current_value, max_value, profile_index, career_index)
+		arg_4_0:_init_power_up_widget(var_4_13, var_4_9, nil, var_4_19, var_4_18, var_4_4, var_4_5)
 
-		self._power_up_data[i].widget = widget
-		widgets[#widgets + 1] = widget
-		power_up_widgets[#power_up_widgets + 1] = widget
-		widgets_by_name["power_up_item_" .. i] = widget
+		arg_4_0._power_up_data[iter_4_2].widget = var_4_13
+		var_4_0[#var_4_0 + 1] = var_4_13
+		var_4_7[#var_4_7 + 1] = var_4_13
+		var_4_1["power_up_item_" .. iter_4_2] = var_4_13
 	end
 
-	self._widgets = widgets
-	self._power_up_widgets = power_up_widgets
-	self._widgets_by_name = widgets_by_name
+	arg_4_0._widgets = var_4_0
+	arg_4_0._power_up_widgets = var_4_7
+	arg_4_0._widgets_by_name = var_4_1
 
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_4_0.ui_renderer)
 end
 
-DeusCursedChestView.post_update_on_enter = function (self)
+function DeusCursedChestView.post_update_on_enter(arg_5_0)
 	return
 end
 
-DeusCursedChestView.on_exit = function (self)
-	self._power_up_data = nil
-	self._interactable = nil
+function DeusCursedChestView.on_exit(arg_6_0)
+	arg_6_0._power_up_data = nil
+	arg_6_0._interactable = nil
 
-	self:_release_input()
+	arg_6_0:_release_input()
 end
 
-DeusCursedChestView.post_update_on_exit = function (self)
+function DeusCursedChestView.post_update_on_exit(arg_7_0)
 	return
 end
 
-DeusCursedChestView._init_power_up_widget = function (self, widget, power_up_instance, discount, current_value, max_value, profile_index, career_index)
-	local power_up = DeusPowerUps[power_up_instance.rarity][power_up_instance.name]
-	local rarity = power_up.rarity
-	local content = widget.content
+function DeusCursedChestView._init_power_up_widget(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7)
+	local var_8_0 = DeusPowerUps[arg_8_2.rarity][arg_8_2.name]
+	local var_8_1 = var_8_0.rarity
+	local var_8_2 = arg_8_1.content
 
-	content.title_text = DeusPowerUpUtils.get_power_up_name_text(power_up.name, power_up.talent_index, power_up.talent_tier, profile_index, career_index)
-	content.rarity_text = Localize(RaritySettings[rarity].display_name)
-	content.sub_text = DeusPowerUpUtils.get_power_up_description(power_up, profile_index, career_index)
-	content.has_discount = discount
-	content.icon = DeusPowerUpUtils.get_power_up_icon(power_up, profile_index, career_index)
-	content.max_value_text = nil
-	content.current_value_text = nil
+	var_8_2.title_text = DeusPowerUpUtils.get_power_up_name_text(var_8_0.name, var_8_0.talent_index, var_8_0.talent_tier, arg_8_6, arg_8_7)
+	var_8_2.rarity_text = Localize(RaritySettings[var_8_1].display_name)
+	var_8_2.sub_text = DeusPowerUpUtils.get_power_up_description(var_8_0, arg_8_6, arg_8_7)
+	var_8_2.has_discount = arg_8_3
+	var_8_2.icon = DeusPowerUpUtils.get_power_up_icon(var_8_0, arg_8_6, arg_8_7)
+	var_8_2.max_value_text = nil
+	var_8_2.current_value_text = nil
 
-	local style = widget.style
-	local power_up_sets = DeusPowerUpSetLookup[power_up_instance.rarity] and DeusPowerUpSetLookup[power_up_instance.rarity][power_up_instance.name]
-	local is_part_of_set = false
+	local var_8_3 = arg_8_1.style
+	local var_8_4 = DeusPowerUpSetLookup[arg_8_2.rarity] and DeusPowerUpSetLookup[arg_8_2.rarity][arg_8_2.name]
+	local var_8_5 = false
 
-	if power_up_sets then
-		local set = power_up_sets[1]
-		local piece_count = 0
-		local pieces = set.pieces
+	if var_8_4 then
+		local var_8_6 = var_8_4[1]
+		local var_8_7 = 0
+		local var_8_8 = var_8_6.pieces
 
-		for _, piece in ipairs(pieces) do
-			local name, rarity = piece.name, piece.rarity
-			local local_peer_id = self._deus_run_controller:get_own_peer_id()
+		for iter_8_0, iter_8_1 in ipairs(var_8_8) do
+			local var_8_9 = iter_8_1.name
+			local var_8_10 = iter_8_1.rarity
+			local var_8_11 = arg_8_0._deus_run_controller:get_own_peer_id()
 
-			if self._deus_run_controller:has_power_up_by_name(local_peer_id, name, rarity) then
-				piece_count = piece_count + 1
+			if arg_8_0._deus_run_controller:has_power_up_by_name(var_8_11, var_8_9, var_8_10) then
+				var_8_7 = var_8_7 + 1
 			end
 		end
 
-		is_part_of_set = true
+		var_8_5 = true
 
-		local num_required_pieces = set.num_required_pieces or #pieces
+		local var_8_12 = var_8_6.num_required_pieces or #var_8_8
 
-		content.set_progression = string.format(Localize("set_counter_boons"), piece_count, num_required_pieces)
+		var_8_2.set_progression = string.format(Localize("set_counter_boons"), var_8_7, var_8_12)
 
-		if #pieces == piece_count then
-			style.set_progression.text_color = widget.style.set_progression.progression_colors.complete
+		if #var_8_8 == var_8_7 then
+			var_8_3.set_progression.text_color = arg_8_1.style.set_progression.progression_colors.complete
 		end
 	end
 
-	content.is_part_of_set = is_part_of_set
+	var_8_2.is_part_of_set = var_8_5
 
-	local rarity_color = Colors.get_table(rarity)
+	local var_8_13 = Colors.get_table(var_8_1)
 
-	style.rarity_text.text_color = rarity_color
-	style.price_icon.color[1] = 0
-	style.price_text.text_color[1] = 0
-	style.price_text_shadow.text_color[1] = 0
-	style.price_text_disabled.text_color[1] = 0
+	var_8_3.rarity_text.text_color = var_8_13
+	var_8_3.price_icon.color[1] = 0
+	var_8_3.price_text.text_color[1] = 0
+	var_8_3.price_text_shadow.text_color[1] = 0
+	var_8_3.price_text_disabled.text_color[1] = 0
 
-	local offset_y = 22
+	local var_8_14 = 22
 
-	style.current_value_title_text.offset[2] = style.current_value_title_text.offset[2] + offset_y
-	style.current_value_title_text_shadow.offset[2] = style.current_value_title_text_shadow.offset[2] + offset_y
-	style.current_value_text.offset[2] = style.current_value_text.offset[2] + offset_y
-	style.current_value_text_shadow.offset[2] = style.current_value_text_shadow.offset[2] + offset_y
-	style.max_value_title_text.offset[2] = style.max_value_title_text.offset[2] + offset_y
-	style.max_value_title_text_shadow.offset[2] = style.max_value_title_text_shadow.offset[2] + offset_y
-	style.max_value_text.offset[2] = style.max_value_text.offset[2] + offset_y
-	style.max_value_text_shadow.offset[2] = style.max_value_text_shadow.offset[2] + offset_y
+	var_8_3.current_value_title_text.offset[2] = var_8_3.current_value_title_text.offset[2] + var_8_14
+	var_8_3.current_value_title_text_shadow.offset[2] = var_8_3.current_value_title_text_shadow.offset[2] + var_8_14
+	var_8_3.current_value_text.offset[2] = var_8_3.current_value_text.offset[2] + var_8_14
+	var_8_3.current_value_text_shadow.offset[2] = var_8_3.current_value_text_shadow.offset[2] + var_8_14
+	var_8_3.max_value_title_text.offset[2] = var_8_3.max_value_title_text.offset[2] + var_8_14
+	var_8_3.max_value_title_text_shadow.offset[2] = var_8_3.max_value_title_text_shadow.offset[2] + var_8_14
+	var_8_3.max_value_text.offset[2] = var_8_3.max_value_text.offset[2] + var_8_14
+	var_8_3.max_value_text_shadow.offset[2] = var_8_3.max_value_text_shadow.offset[2] + var_8_14
 end
 
-DeusCursedChestView.draw = function (self, dt)
-	for _, widget in ipairs(self._power_up_widgets) do
-		self:_animate_power_up_widget(dt, widget)
+function DeusCursedChestView.draw(arg_9_0, arg_9_1)
+	for iter_9_0, iter_9_1 in ipairs(arg_9_0._power_up_widgets) do
+		arg_9_0:_animate_power_up_widget(arg_9_1, iter_9_1)
 	end
 
-	local widgets_by_name = self._widgets_by_name
+	local var_9_0 = arg_9_0._widgets_by_name
 
-	UIWidgetUtils.animate_default_button(widgets_by_name.exit_button, dt)
+	UIWidgetUtils.animate_default_button(var_9_0.exit_button, arg_9_1)
 
-	local ui_renderer = self.ui_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self:input_service()
-	local render_settings = self.render_settings
+	local var_9_1 = arg_9_0.ui_renderer
+	local var_9_2 = arg_9_0.ui_scenegraph
+	local var_9_3 = arg_9_0:input_service()
+	local var_9_4 = arg_9_0.render_settings
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+	UIRenderer.begin_pass(var_9_1, var_9_2, var_9_3, arg_9_1, nil, var_9_4)
 
-	local snap_pixel_positions = render_settings.snap_pixel_positions
-	local widgets = self._widgets
+	local var_9_5 = var_9_4.snap_pixel_positions
+	local var_9_6 = arg_9_0._widgets
 
-	for i = 1, #widgets do
-		local widget = widgets[i]
+	for iter_9_2 = 1, #var_9_6 do
+		local var_9_7 = var_9_6[iter_9_2]
 
-		if widget.snap_pixel_positions ~= nil then
-			render_settings.snap_pixel_positions = widget.snap_pixel_positions
+		if var_9_7.snap_pixel_positions ~= nil then
+			var_9_4.snap_pixel_positions = var_9_7.snap_pixel_positions
 		end
 
-		UIRenderer.draw_widget(ui_renderer, widget)
+		UIRenderer.draw_widget(var_9_1, var_9_7)
 
-		render_settings.snap_pixel_positions = snap_pixel_positions
+		var_9_4.snap_pixel_positions = var_9_5
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_9_1)
 end
 
-DeusCursedChestView._get_selected_power_up_count = function (self)
-	local counter = 0
+function DeusCursedChestView._get_selected_power_up_count(arg_10_0)
+	local var_10_0 = 0
 
-	for _, power_up_data in ipairs(self._power_up_data) do
-		if power_up_data.selected then
-			counter = counter + 1
+	for iter_10_0, iter_10_1 in ipairs(arg_10_0._power_up_data) do
+		if iter_10_1.selected then
+			var_10_0 = var_10_0 + 1
 		end
 	end
 
-	return counter
+	return var_10_0
 end
 
-DeusCursedChestView.update = function (self, dt, t)
-	local local_peer_id = self._deus_run_controller:get_own_peer_id()
-	local max_selectable_power_ups = DeusPowerUpSettings.cursed_chest_max_picks
-	local selected_power_ups = self:_get_selected_power_up_count()
-	local max_selectable_power_ups_reached = max_selectable_power_ups <= selected_power_ups
+function DeusCursedChestView.update(arg_11_0, arg_11_1, arg_11_2)
+	local var_11_0 = arg_11_0._deus_run_controller:get_own_peer_id()
+	local var_11_1 = DeusPowerUpSettings.cursed_chest_max_picks
+	local var_11_2 = arg_11_0:_get_selected_power_up_count()
+	local var_11_3 = var_11_1 <= var_11_2
 
-	for _, power_up_data in ipairs(self._power_up_data) do
-		local widget = power_up_data.widget
-		local power_up = power_up_data.power_up
-		local max_power_ups_reached = self._deus_run_controller:reached_max_power_ups(local_peer_id, power_up.name)
-		local content = widget.content
+	for iter_11_0, iter_11_1 in ipairs(arg_11_0._power_up_data) do
+		local var_11_4 = iter_11_1.widget
+		local var_11_5 = iter_11_1.power_up
+		local var_11_6 = arg_11_0._deus_run_controller:reached_max_power_ups(var_11_0, var_11_5.name)
+		local var_11_7 = var_11_4.content
 
-		if power_up_data.selected then
-			content.is_bought = true
-			content.button_hotspot.disable_button = true
-			selected_power_ups = selected_power_ups + 1
-		elseif max_selectable_power_ups_reached or max_power_ups_reached then
-			content.button_hotspot.disable_button = true
+		if iter_11_1.selected then
+			var_11_7.is_bought = true
+			var_11_7.button_hotspot.disable_button = true
+			var_11_2 = var_11_2 + 1
+		elseif var_11_3 or var_11_6 then
+			var_11_7.button_hotspot.disable_button = true
 		else
-			content.is_bought = false
-			content.button_hotspot.disable_button = false
+			var_11_7.is_bought = false
+			var_11_7.button_hotspot.disable_button = false
 		end
 	end
 
-	self:_handle_input(dt)
-	self:_update_background_animations(dt)
-	self:draw(dt)
+	arg_11_0:_handle_input(arg_11_1)
+	arg_11_0:_update_background_animations(arg_11_1)
+	arg_11_0:draw(arg_11_1)
 end
 
-DeusCursedChestView._on_button_pressed = function (self, power_up_data)
-	local power_up = power_up_data.power_up
+function DeusCursedChestView._on_button_pressed(arg_12_0, arg_12_1)
+	local var_12_0 = arg_12_1.power_up
 
-	power_up_data.selected = true
+	arg_12_1.selected = true
 
-	Unit.set_data(self._interactable, "power_ups", self._power_up_data)
+	Unit.set_data(arg_12_0._interactable, "power_ups", arg_12_0._power_up_data)
+	arg_12_0._deus_run_controller:add_power_ups({
+		var_12_0
+	}, var_0_1, true)
 
-	local run_controller = self._deus_run_controller
+	arg_12_0._circle_max_speed_modifier = var_0_5
 
-	run_controller:add_power_ups({
-		power_up,
-	}, REAL_PLAYER_LOCAL_ID, true)
+	arg_12_0:_play_sound(var_0_7.power_up_unlocked)
 
-	self._circle_max_speed_modifier = POWER_UP_SELECTED_CIRCLE_SPEED
+	local var_12_1 = ScriptUnit.has_extension(arg_12_0._interactable, "deus_cursed_chest_system")
 
-	self:_play_sound(SOUND_EVENTS.power_up_unlocked)
-
-	local deus_cursed_chest_extension = ScriptUnit.has_extension(self._interactable, "deus_cursed_chest_system")
-
-	if deus_cursed_chest_extension then
-		deus_cursed_chest_extension:on_reward_collected(power_up)
+	if var_12_1 then
+		var_12_1:on_reward_collected(var_12_0)
 	end
 
-	self:_close()
+	arg_12_0:_close()
 end
 
-DeusCursedChestView._handle_input = function (self, dt)
-	for _, power_up_data in ipairs(self._power_up_data) do
-		local widget = power_up_data.widget
+function DeusCursedChestView._handle_input(arg_13_0, arg_13_1)
+	for iter_13_0, iter_13_1 in ipairs(arg_13_0._power_up_data) do
+		local var_13_0 = iter_13_1.widget
 
-		if self:_is_button_pressed(widget) then
-			local animation_system = Managers.state.entity:system("animation_system")
-
-			animation_system:add_safe_animation_callback(function ()
-				self:_on_button_pressed(power_up_data)
+		if arg_13_0:_is_button_pressed(var_13_0) then
+			Managers.state.entity:system("animation_system"):add_safe_animation_callback(function()
+				arg_13_0:_on_button_pressed(iter_13_1)
 			end)
 		end
 
-		self:_update_button_hover_sound(widget)
+		arg_13_0:_update_button_hover_sound(var_13_0)
 	end
 
-	local widgets_by_name = self._widgets_by_name
-	local input_service = self._input_manager:get_service(self._input_service_name)
-	local exit_widget = widgets_by_name.exit_button
-	local exit_pressed = self:_is_button_pressed(exit_widget)
+	local var_13_1 = arg_13_0._widgets_by_name
+	local var_13_2 = arg_13_0._input_manager:get_service(arg_13_0._input_service_name)
+	local var_13_3 = var_13_1.exit_button
 
-	if exit_pressed or input_service:get("toggle_menu", true) or input_service:get("back", true) then
-		self:_close()
+	if arg_13_0:_is_button_pressed(var_13_3) or var_13_2:get("toggle_menu", true) or var_13_2:get("back", true) then
+		arg_13_0:_close()
 	end
 
-	self:_update_button_hover_sound(exit_widget)
+	arg_13_0:_update_button_hover_sound(var_13_3)
 end
 
-DeusCursedChestView.disable_toggle_menu = function (self)
+function DeusCursedChestView.disable_toggle_menu(arg_15_0)
 	return true
 end
 
-DeusCursedChestView.input_service = function (self)
-	return self._input_manager:get_service(self._input_service_name)
+function DeusCursedChestView.input_service(arg_16_0)
+	return arg_16_0._input_manager:get_service(arg_16_0._input_service_name)
 end
 
-DeusCursedChestView._close = function (self)
-	self:_play_sound(SOUND_EVENTS.close_ui)
-	self.ingame_ui:handle_transition("exit_menu")
+function DeusCursedChestView._close(arg_17_0)
+	arg_17_0:_play_sound(var_0_7.close_ui)
+	arg_17_0.ingame_ui:handle_transition("exit_menu")
 end
 
-DeusCursedChestView._acquire_input = function (self, ignore_cursor_stack)
-	self:_release_input(true)
+function DeusCursedChestView._acquire_input(arg_18_0, arg_18_1)
+	arg_18_0:_release_input(true)
 
-	local input_manager = self._input_manager
-	local input_service_name = self._input_service_name
+	local var_18_0 = arg_18_0._input_manager
+	local var_18_1 = arg_18_0._input_service_name
 
-	input_manager:capture_input({
+	var_18_0:capture_input({
 		"keyboard",
 		"gamepad",
-		"mouse",
-	}, 1, input_service_name, "DeusCursedChestView")
-	input_manager:block_device_except_service(input_service_name, "keyboard")
-	input_manager:block_device_except_service(input_service_name, "mouse")
-	input_manager:block_device_except_service(input_service_name, "gamepad")
+		"mouse"
+	}, 1, var_18_1, "DeusCursedChestView")
+	var_18_0:block_device_except_service(var_18_1, "keyboard")
+	var_18_0:block_device_except_service(var_18_1, "mouse")
+	var_18_0:block_device_except_service(var_18_1, "gamepad")
 
-	if not ignore_cursor_stack then
+	if not arg_18_1 then
 		ShowCursorStack.show("DeusCursedChestView")
-		input_manager:enable_gamepad_cursor()
+		var_18_0:enable_gamepad_cursor()
 	end
 end
 
-DeusCursedChestView._release_input = function (self, ignore_cursor_stack)
-	local input_manager = self._input_manager
+function DeusCursedChestView._release_input(arg_19_0, arg_19_1)
+	local var_19_0 = arg_19_0._input_manager
 
-	input_manager:release_input({
+	var_19_0:release_input({
 		"keyboard",
 		"gamepad",
-		"mouse",
-	}, 1, self._input_service_name, "DeusCursedChestView")
+		"mouse"
+	}, 1, arg_19_0._input_service_name, "DeusCursedChestView")
 
-	if not ignore_cursor_stack then
+	if not arg_19_1 then
 		ShowCursorStack.hide("DeusCursedChestView")
-		input_manager:disable_gamepad_cursor()
+		var_19_0:disable_gamepad_cursor()
 	end
 end
 
-DeusCursedChestView._is_button_pressed = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
+function DeusCursedChestView._is_button_pressed(arg_20_0, arg_20_1)
+	local var_20_0 = arg_20_1.content.button_hotspot
 
-	if hotspot.on_release then
-		hotspot.on_release = false
+	if var_20_0.on_release then
+		var_20_0.on_release = false
 
 		return true
 	end
 end
 
-DeusCursedChestView._is_button_hovered = function (self, widget)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-
-	if hotspot.on_hover_enter then
+function DeusCursedChestView._is_button_hovered(arg_21_0, arg_21_1)
+	if arg_21_1.content.button_hotspot.on_hover_enter then
 		return true
 	end
 end
 
-DeusCursedChestView._update_button_hover_sound = function (self, widget)
-	if self:_is_button_hovered(widget) then
-		self:_play_sound(SOUND_EVENTS.button_hover)
+function DeusCursedChestView._update_button_hover_sound(arg_22_0, arg_22_1)
+	if arg_22_0:_is_button_hovered(arg_22_1) then
+		arg_22_0:_play_sound(var_0_7.button_hover)
 	end
 end
 
-DeusCursedChestView._animate_power_up_widget = function (self, dt, widget)
-	local content = widget.content
-	local style = widget.style
-	local hotspot = content.hotspot or content.button_hotspot
-	local is_hover = hotspot.is_hover
-	local is_bought = content.is_bought
-	local is_selected = hotspot.is_selected
-	local hover_progress = hotspot.hover_progress or 0
-	local highlight_progress = hotspot.highlight_progress or 0
-	local selection_progress = hotspot.selection_progress or 0
-	local speed = 15
+function DeusCursedChestView._animate_power_up_widget(arg_23_0, arg_23_1, arg_23_2)
+	local var_23_0 = arg_23_2.content
+	local var_23_1 = arg_23_2.style
+	local var_23_2 = var_23_0.hotspot or var_23_0.button_hotspot
+	local var_23_3 = var_23_2.is_hover
+	local var_23_4 = var_23_0.is_bought
+	local var_23_5 = var_23_2.is_selected
+	local var_23_6 = var_23_2.hover_progress or 0
+	local var_23_7 = var_23_2.highlight_progress or 0
+	local var_23_8 = var_23_2.selection_progress or 0
+	local var_23_9 = 15
 
-	if is_bought then
-		is_hover = false
+	if var_23_4 then
+		var_23_3 = false
 	end
 
-	if is_hover then
-		hover_progress = math.min(hover_progress + dt * speed, 1)
+	if var_23_3 then
+		var_23_6 = math.min(var_23_6 + arg_23_1 * var_23_9, 1)
 	else
-		hover_progress = math.max(hover_progress - dt * speed, 0)
+		var_23_6 = math.max(var_23_6 - arg_23_1 * var_23_9, 0)
 	end
 
-	if is_bought then
-		highlight_progress = math.min(highlight_progress + dt * speed, 1)
+	if var_23_4 then
+		var_23_7 = math.min(var_23_7 + arg_23_1 * var_23_9, 1)
 	else
-		highlight_progress = math.max(highlight_progress - dt * speed, 0)
+		var_23_7 = math.max(var_23_7 - arg_23_1 * var_23_9, 0)
 	end
 
-	if is_selected then
-		selection_progress = math.min(selection_progress + dt * speed, 1)
+	if var_23_5 then
+		var_23_8 = math.min(var_23_8 + arg_23_1 * var_23_9, 1)
 	else
-		selection_progress = math.max(selection_progress - dt * speed, 0)
+		var_23_8 = math.max(var_23_8 - arg_23_1 * var_23_9, 0)
 	end
 
-	local bought_glow_style_ids = content.bought_glow_style_ids
-
-	if bought_glow_style_ids then
-		for _, style_id in ipairs(content.bought_glow_style_ids) do
-			style[style_id].color[1] = 255 * highlight_progress
+	if var_23_0.bought_glow_style_ids then
+		for iter_23_0, iter_23_1 in ipairs(var_23_0.bought_glow_style_ids) do
+			var_23_1[iter_23_1].color[1] = 255 * var_23_7
 		end
 	end
 
-	style.hover.color[1] = 255 * hover_progress
-	style.icon_hover_frame.color[1] = 255 * hover_progress
+	var_23_1.hover.color[1] = 255 * var_23_6
+	var_23_1.icon_hover_frame.color[1] = 255 * var_23_6
 
-	local value_progress = hotspot.value_progress or 0
+	local var_23_10 = var_23_2.value_progress or 0
+	local var_23_11 = math.max(var_23_10 - arg_23_1 * var_23_9, 0)
 
-	value_progress = math.max(value_progress - dt * speed, 0)
-
-	if style.icon_equipped_frame then
-		style.icon_equipped_frame.color[1] = 255 * value_progress
+	if var_23_1.icon_equipped_frame then
+		var_23_1.icon_equipped_frame.color[1] = 255 * var_23_11
 	end
 
-	hotspot.value_progress = value_progress
-	hotspot.hover_progress = hover_progress
-	hotspot.highlight_progress = highlight_progress
-	hotspot.selection_progress = selection_progress
+	var_23_2.value_progress = var_23_11
+	var_23_2.hover_progress = var_23_6
+	var_23_2.highlight_progress = var_23_7
+	var_23_2.selection_progress = var_23_8
 end
 
-DeusCursedChestView._play_sound = function (self, event)
-	WwiseWorld.trigger_event(self._wwise_world, event)
+function DeusCursedChestView._play_sound(arg_24_0, arg_24_1)
+	WwiseWorld.trigger_event(arg_24_0._wwise_world, arg_24_1)
 end
 
-DeusCursedChestView._update_background_animations = function (self, dt)
-	local widgets_by_name = self._widgets_by_name
-	local speed_modifier = self._circle_speed_modifier
-	local max_speed_modifier = self._circle_max_speed_modifier
-	local is_almost_max_speed = math.value_inside_range(speed_modifier, max_speed_modifier - 0.2, max_speed_modifier + 0.2)
+function DeusCursedChestView._update_background_animations(arg_25_0, arg_25_1)
+	local var_25_0 = arg_25_0._widgets_by_name
+	local var_25_1 = arg_25_0._circle_speed_modifier
+	local var_25_2 = arg_25_0._circle_max_speed_modifier
 
-	if is_almost_max_speed then
-		self._circle_max_speed_modifier = CIRCLE_SPEED
+	if math.value_inside_range(var_25_1, var_25_2 - 0.2, var_25_2 + 0.2) then
+		arg_25_0._circle_max_speed_modifier = var_0_4
 	end
 
-	speed_modifier = math.lerp(speed_modifier, max_speed_modifier, LERP_SPEED * dt)
+	local var_25_3 = math.lerp(var_25_1, var_25_2, var_0_6 * arg_25_1)
 
-	for i = 1, 3 do
-		local wheel_widget = widgets_by_name["background_wheel_0" .. i]
-		local current_angle = wheel_widget.style.texture_id.angle
-		local angle_add = 0
-		local circle_speed
+	for iter_25_0 = 1, 3 do
+		local var_25_4 = var_25_0["background_wheel_0" .. iter_25_0]
+		local var_25_5 = var_25_4.style.texture_id.angle
+		local var_25_6 = 0
+		local var_25_7
+		local var_25_8 = var_25_5 + arg_25_1 * (iter_25_0 == 1 and 0.2 or iter_25_0 == 2 and -0.1 or 0.05) * var_25_3
 
-		circle_speed = i == 1 and 0.2 or i == 2 and -0.1 or 0.05
-		angle_add = current_angle + dt * circle_speed * speed_modifier
-		wheel_widget.style.texture_id.angle = angle_add
+		var_25_4.style.texture_id.angle = var_25_8
 	end
 
-	self._circle_speed_modifier = speed_modifier
+	arg_25_0._circle_speed_modifier = var_25_3
 end

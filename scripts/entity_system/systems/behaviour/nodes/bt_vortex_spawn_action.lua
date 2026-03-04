@@ -1,31 +1,28 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_vortex_spawn_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_vortex_spawn_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTVortexSpawnAction = class(BTVortexSpawnAction, BTNode)
 
-BTVortexSpawnAction.init = function (self, ...)
-	BTVortexSpawnAction.super.init(self, ...)
+function BTVortexSpawnAction.init(arg_1_0, ...)
+	BTVortexSpawnAction.super.init(arg_1_0, ...)
 end
 
 BTVortexSpawnAction.name = "BTVortexSpawnAction"
 
-BTVortexSpawnAction.enter = function (self, unit, blackboard, t)
-	local current_position = POSITION_LOOKUP[unit]
-	local nav_world = blackboard.nav_world
-	local is_position_on_navmesh = GwNavQueries.triangle_from_position(nav_world, current_position, 0.5, 0.5)
+function BTVortexSpawnAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = POSITION_LOOKUP[arg_2_1]
+	local var_2_1 = arg_2_2.nav_world
 
-	if not is_position_on_navmesh then
-		local conflict_director = Managers.state.conflict
-
-		conflict_director:destroy_unit(unit, blackboard, "no_navmesh")
+	if not GwNavQueries.triangle_from_position(var_2_1, var_2_0, 0.5, 0.5) then
+		Managers.state.conflict:destroy_unit(arg_2_1, arg_2_2, "no_navmesh")
 	end
 end
 
-BTVortexSpawnAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	blackboard.spawn = false
+function BTVortexSpawnAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	arg_3_2.spawn = false
 end
 
-BTVortexSpawnAction.run = function (self, unit, blackboard, t, dt)
+function BTVortexSpawnAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	return "done"
 end

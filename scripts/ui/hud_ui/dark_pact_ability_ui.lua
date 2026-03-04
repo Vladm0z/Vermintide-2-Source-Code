@@ -1,505 +1,496 @@
-﻿-- chunkname: @scripts/ui/hud_ui/dark_pact_ability_ui.lua
+-- chunkname: @scripts/ui/hud_ui/dark_pact_ability_ui.lua
 
-local definitions = local_require("scripts/ui/hud_ui/dark_pact_ability_ui_definitions")
-local scenegraph_definition = definitions.scenegraph_definition
-local create_ability_widget = definitions.create_ability_widget
-local profile_ability_templates = definitions.profile_ability_templates
+local var_0_0 = local_require("scripts/ui/hud_ui/dark_pact_ability_ui_definitions")
+local var_0_1 = var_0_0.scenegraph_definition
+local var_0_2 = var_0_0.create_ability_widget
+local var_0_3 = var_0_0.profile_ability_templates
 
 DarkPactAbilityUI = class(DarkPactAbilityUI)
 
-DarkPactAbilityUI.init = function (self, parent, ingame_ui_context)
-	self._parent = parent
-	self._ui_renderer = ingame_ui_context.ui_renderer
-	self._ingame_ui = ingame_ui_context.ingame_ui
-	self._input_manager = ingame_ui_context.input_manager
-	self._peer_id = ingame_ui_context.peer_id
-	self._player_manager = ingame_ui_context.player_manager
-	self._ui_animations = {}
-	self._render_settings = {
-		snap_pixel_positions = true,
+function DarkPactAbilityUI.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0._parent = arg_1_1
+	arg_1_0._ui_renderer = arg_1_2.ui_renderer
+	arg_1_0._ingame_ui = arg_1_2.ingame_ui
+	arg_1_0._input_manager = arg_1_2.input_manager
+	arg_1_0._peer_id = arg_1_2.peer_id
+	arg_1_0._player_manager = arg_1_2.player_manager
+	arg_1_0._ui_animations = {}
+	arg_1_0._render_settings = {
+		snap_pixel_positions = true
 	}
 
-	local world = Managers.world:world("level_world")
+	local var_1_0 = Managers.world:world("level_world")
 
-	self._world = world
-	self._wwise_world = Managers.world:wwise_world(world)
-	self._is_in_inn = ingame_ui_context.is_in_inn
+	arg_1_0._world = var_1_0
+	arg_1_0._wwise_world = Managers.world:wwise_world(var_1_0)
+	arg_1_0._is_in_inn = arg_1_2.is_in_inn
 
-	self:_create_ui_elements()
+	arg_1_0:_create_ui_elements()
 
-	self._ability_events = {}
+	arg_1_0._ability_events = {}
 
-	local event_manager = Managers.state.event
+	local var_1_1 = Managers.state.event
 
-	event_manager:register(self, "input_changed", "event_input_changed")
-	event_manager:register(self, "on_spectator_target_changed", "on_spectator_target_changed")
+	var_1_1:register(arg_1_0, "input_changed", "event_input_changed")
+	var_1_1:register(arg_1_0, "on_spectator_target_changed", "on_spectator_target_changed")
 end
 
-DarkPactAbilityUI._create_ui_elements = function (self)
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+function DarkPactAbilityUI._create_ui_elements(arg_2_0)
+	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 
-	local widgets = {}
-	local widgets_by_name = {}
+	local var_2_0 = {}
+	local var_2_1 = {}
 
-	for name, definition in pairs(definitions.widget_definitions) do
-		local widget = UIWidget.init(definition)
+	for iter_2_0, iter_2_1 in pairs(var_0_0.widget_definitions) do
+		local var_2_2 = UIWidget.init(iter_2_1)
 
-		widgets_by_name[name] = widget
-		widgets[#widgets + 1] = widget
+		var_2_1[iter_2_0] = var_2_2
+		var_2_0[#var_2_0 + 1] = var_2_2
 	end
 
-	self._widgets = widgets
-	self._widgets_by_name = widgets_by_name
-	self._widgets_by_ability_name = {}
-	self._career_ability_widgets_by_name = {}
-	self._ability_hud_widgets_by_name = {}
+	arg_2_0._widgets = var_2_0
+	arg_2_0._widgets_by_name = var_2_1
+	arg_2_0._widgets_by_ability_name = {}
+	arg_2_0._career_ability_widgets_by_name = {}
+	arg_2_0._ability_hud_widgets_by_name = {}
 
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_2_0._ui_renderer)
 end
 
-DarkPactAbilityUI._setup_activated_ability = function (self)
-	local player, player_unit = self:_get_player_unit()
+function DarkPactAbilityUI._setup_activated_ability(arg_3_0)
+	local var_3_0, var_3_1 = arg_3_0:_get_player_unit()
 
-	if not player_unit then
+	if not var_3_1 then
 		return
 	end
 
-	local career_extension = ScriptUnit.extension(player_unit, "career_system")
-	local ability_data = career_extension:get_activated_ability_data()
-	local career_name = career_extension:career_name()
+	local var_3_2 = ScriptUnit.extension(var_3_1, "career_system")
+	local var_3_3 = var_3_2:get_activated_ability_data()
+	local var_3_4 = var_3_2:career_name()
 
-	if not ability_data or not career_name then
+	if not var_3_3 or not var_3_4 then
 		return
 	end
 
-	self._career_name = career_name
-	self._initialized = true
+	arg_3_0._career_name = var_3_4
+	arg_3_0._initialized = true
 end
 
-DarkPactAbilityUI._get_extension = function (self, name)
-	local player, player_unit = self:_get_player_unit()
+function DarkPactAbilityUI._get_extension(arg_4_0, arg_4_1)
+	local var_4_0, var_4_1 = arg_4_0:_get_player_unit()
 
-	if player_unit and Unit.alive(player_unit) then
-		return ScriptUnit.extension(player_unit, name)
+	if var_4_1 and Unit.alive(var_4_1) then
+		return ScriptUnit.extension(var_4_1, arg_4_1)
 	end
 end
 
-DarkPactAbilityUI._update_abilities = function (self, dt, t)
-	local career_extension = self:_get_extension("career_system")
-	local horde_ability_extension = self:_get_extension("versus_horde_ability_system")
-	local career_name = career_extension and career_extension:career_name()
-	local ui_renderer = self._ui_renderer
+function DarkPactAbilityUI._update_abilities(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = arg_5_0:_get_extension("career_system")
+	local var_5_1 = arg_5_0:_get_extension("versus_horde_ability_system")
+	local var_5_2 = var_5_0 and var_5_0:career_name()
+	local var_5_3 = arg_5_0._ui_renderer
 
-	if self._career_name ~= career_name then
-		table.clear(self._ability_hud_widgets_by_name)
+	if arg_5_0._career_name ~= var_5_2 then
+		table.clear(arg_5_0._ability_hud_widgets_by_name)
 
-		self._initialized = false
+		arg_5_0._initialized = false
 
 		return
 	end
 
-	local player, unit = self:_get_player_unit()
-	local ghost_mode_extension = ScriptUnit.has_extension(unit, "ghost_mode_system")
-	local is_in_ghost_mode = ghost_mode_extension and ghost_mode_extension:is_in_ghost_mode()
+	local var_5_4, var_5_5 = arg_5_0:_get_player_unit()
+	local var_5_6 = ScriptUnit.has_extension(var_5_5, "ghost_mode_system")
+	local var_5_7 = var_5_6 and var_5_6:is_in_ghost_mode()
 
-	self:_handle_career_abilities(dt, t, career_name, career_extension, horde_ability_extension, ui_renderer, is_in_ghost_mode)
+	arg_5_0:_handle_career_abilities(arg_5_1, arg_5_2, var_5_2, var_5_0, var_5_1, var_5_3, var_5_7)
 end
 
-DarkPactAbilityUI.destroy = function (self)
-	local event_manager = Managers.state.event
+function DarkPactAbilityUI.destroy(arg_6_0)
+	local var_6_0 = Managers.state.event
 
-	event_manager:unregister("input_changed", self)
-	event_manager:unregister("on_spectator_target_changed", self)
+	var_6_0:unregister("input_changed", arg_6_0)
+	var_6_0:unregister("on_spectator_target_changed", arg_6_0)
 
-	for event_name, _ in pairs(self._ability_events) do
-		event_manager:unregister(event_name, self)
+	for iter_6_0, iter_6_1 in pairs(arg_6_0._ability_events) do
+		var_6_0:unregister(iter_6_0, arg_6_0)
 	end
 
-	self:set_visible(false)
+	arg_6_0:set_visible(false)
 	print("[DarkPactAbilityUI] - Destroy")
 end
 
-DarkPactAbilityUI.set_visible = function (self, visible)
-	self._is_visible = visible
+function DarkPactAbilityUI.set_visible(arg_7_0, arg_7_1)
+	arg_7_0._is_visible = arg_7_1
 
-	self:_set_elements_visible(visible)
+	arg_7_0:_set_elements_visible(arg_7_1)
 end
 
-DarkPactAbilityUI._set_elements_visible = function (self, visible)
-	local ui_renderer = self._ui_renderer
+function DarkPactAbilityUI._set_elements_visible(arg_8_0, arg_8_1)
+	local var_8_0 = arg_8_0._ui_renderer
 
-	for _, widget in ipairs(self._widgets) do
-		UIRenderer.set_element_visible(ui_renderer, widget.element, visible)
+	for iter_8_0, iter_8_1 in ipairs(arg_8_0._widgets) do
+		UIRenderer.set_element_visible(var_8_0, iter_8_1.element, arg_8_1)
 	end
 
-	local ability_widgets = self._ability_widgets
+	local var_8_1 = arg_8_0._ability_widgets
 
-	if ability_widgets then
-		for _, widget in ipairs(ability_widgets) do
-			UIRenderer.set_element_visible(ui_renderer, widget.element, visible)
+	if var_8_1 then
+		for iter_8_2, iter_8_3 in ipairs(var_8_1) do
+			UIRenderer.set_element_visible(var_8_0, iter_8_3.element, arg_8_1)
 		end
 	end
 
-	self._retained_elements_visible = visible
+	arg_8_0._retained_elements_visible = arg_8_1
 
-	self:set_dirty()
+	arg_8_0:set_dirty()
 end
 
-DarkPactAbilityUI._handle_gamepad = function (self)
+function DarkPactAbilityUI._handle_gamepad(arg_9_0)
 	return true
 end
 
-DarkPactAbilityUI.update = function (self, dt, t)
-	if not self._is_visible then
+function DarkPactAbilityUI.update(arg_10_0, arg_10_1, arg_10_2)
+	if not arg_10_0._is_visible then
 		return
 	end
 
-	if not self._initialized then
-		self:_setup_activated_ability()
+	if not arg_10_0._initialized then
+		arg_10_0:_setup_activated_ability()
 
 		return
 	end
 
-	if not self:_handle_gamepad() then
+	if not arg_10_0:_handle_gamepad() then
 		return
 	end
 
-	self:_handle_resolution_modified()
-	self:draw(dt, t)
+	arg_10_0:_handle_resolution_modified()
+	arg_10_0:draw(arg_10_1, arg_10_2)
 end
 
-DarkPactAbilityUI._handle_resolution_modified = function (self)
+function DarkPactAbilityUI._handle_resolution_modified(arg_11_0)
 	if RESOLUTION_LOOKUP.modified then
-		self:_on_resolution_modified()
+		arg_11_0:_on_resolution_modified()
 	end
 end
 
-DarkPactAbilityUI._on_resolution_modified = function (self)
-	for _, widget in ipairs(self._widgets) do
-		self:_set_widget_dirty(widget)
+function DarkPactAbilityUI._on_resolution_modified(arg_12_0)
+	for iter_12_0, iter_12_1 in ipairs(arg_12_0._widgets) do
+		arg_12_0:_set_widget_dirty(iter_12_1)
 	end
 
-	self:set_dirty()
+	arg_12_0:set_dirty()
 end
 
-DarkPactAbilityUI.draw = function (self, dt, t)
-	if not self._is_visible then
+function DarkPactAbilityUI.draw(arg_13_0, arg_13_1, arg_13_2)
+	if not arg_13_0._is_visible then
 		return
 	end
 
-	local player, _ = self:_get_player_unit()
-	local profile_index = player and player:profile_index()
-	local profile_settings = profile_index and SPProfiles[profile_index]
+	local var_13_0, var_13_1 = arg_13_0:_get_player_unit()
+	local var_13_2 = var_13_0 and var_13_0:profile_index()
+	local var_13_3 = var_13_2 and SPProfiles[var_13_2]
 
-	if profile_settings and profile_settings.affiliation ~= "dark_pact" then
-		self:set_visible(false)
+	if var_13_3 and var_13_3.affiliation ~= "dark_pact" then
+		arg_13_0:set_visible(false)
 
 		return
 	end
 
-	local ui_renderer = self._ui_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local input_service = self._input_manager:get_service("ingame_menu")
+	local var_13_4 = arg_13_0._ui_renderer
+	local var_13_5 = arg_13_0._ui_scenegraph
+	local var_13_6 = arg_13_0._input_manager:get_service("ingame_menu")
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self._render_settings)
-	self:_update_abilities(dt, t)
+	UIRenderer.begin_pass(var_13_4, var_13_5, var_13_6, arg_13_1, nil, arg_13_0._render_settings)
+	arg_13_0:_update_abilities(arg_13_1, arg_13_2)
 
-	local ability_widgets = self._ability_widgets
+	local var_13_7 = arg_13_0._ability_widgets
 
-	if ability_widgets then
-		for _, widget in ipairs(ability_widgets) do
-			UIRenderer.draw_widget(ui_renderer, widget)
+	if var_13_7 then
+		for iter_13_0, iter_13_1 in ipairs(var_13_7) do
+			UIRenderer.draw_widget(var_13_4, iter_13_1)
 		end
 	end
 
-	for _, widget in ipairs(self._widgets) do
-		UIRenderer.draw_widget(ui_renderer, widget)
+	for iter_13_2, iter_13_3 in ipairs(arg_13_0._widgets) do
+		UIRenderer.draw_widget(var_13_4, iter_13_3)
 	end
 
-	if self._career_ability_widgets_by_name then
-		for _, widget in pairs(self._career_ability_widgets_by_name) do
-			UIRenderer.draw_widget(ui_renderer, widget)
+	if arg_13_0._career_ability_widgets_by_name then
+		for iter_13_4, iter_13_5 in pairs(arg_13_0._career_ability_widgets_by_name) do
+			UIRenderer.draw_widget(var_13_4, iter_13_5)
 		end
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_13_4)
 
-	self._dirty = false
+	arg_13_0._dirty = false
 end
 
-DarkPactAbilityUI.set_dirty = function (self)
-	self._dirty = true
+function DarkPactAbilityUI.set_dirty(arg_14_0)
+	arg_14_0._dirty = true
 end
 
-DarkPactAbilityUI._set_widget_dirty = function (self, widget)
-	widget.element.dirty = true
+function DarkPactAbilityUI._set_widget_dirty(arg_15_0, arg_15_1)
+	arg_15_1.element.dirty = true
 end
 
-DarkPactAbilityUI._play_sound = function (self, sound_event)
-	WwiseWorld.trigger_event(self._wwise_world, sound_event)
+function DarkPactAbilityUI._play_sound(arg_16_0, arg_16_1)
+	WwiseWorld.trigger_event(arg_16_0._wwise_world, arg_16_1)
 end
 
-DarkPactAbilityUI.event_input_changed = function (self)
-	local default_input_action = "action_career"
-	local ability_widgets = self._ability_widgets
+function DarkPactAbilityUI.event_input_changed(arg_17_0)
+	local var_17_0 = "action_career"
+	local var_17_1 = arg_17_0._ability_widgets
 
-	if ability_widgets then
-		for _, widget in ipairs(ability_widgets) do
-			local content = widget.content
-			local input_action = content.input_action or default_input_action
+	if var_17_1 then
+		for iter_17_0, iter_17_1 in ipairs(var_17_1) do
+			local var_17_2 = iter_17_1.content.input_action or var_17_0
 
-			self:_set_input(widget, input_action)
-			self:_set_widget_dirty(widget)
+			arg_17_0:_set_input(iter_17_1, var_17_2)
+			arg_17_0:_set_widget_dirty(iter_17_1)
 		end
 	end
 
-	self:set_dirty()
+	arg_17_0:set_dirty()
 end
 
-DarkPactAbilityUI._set_input = function (self, widget, input_action)
-	local _, input_text, _ = self:_get_input_texture_data(input_action)
-	local max_length = 100
-	local input_style = widget.style.input_text
-	local ui_renderer = self._ui_renderer
+function DarkPactAbilityUI._set_input(arg_18_0, arg_18_1, arg_18_2)
+	local var_18_0, var_18_1, var_18_2 = arg_18_0:_get_input_texture_data(arg_18_2)
+	local var_18_3 = 100
+	local var_18_4 = arg_18_1.style.input_text
+	local var_18_5 = arg_18_0._ui_renderer
 
-	input_text = input_text and UIRenderer.crop_text_width(ui_renderer, input_text, max_length, input_style)
-	widget.content.input_text = input_text or ""
-	widget.content.input_action = input_action
+	var_18_1 = var_18_1 and UIRenderer.crop_text_width(var_18_5, var_18_1, var_18_3, var_18_4)
+	arg_18_1.content.input_text = var_18_1 or ""
+	arg_18_1.content.input_action = arg_18_2
 end
 
-DarkPactAbilityUI._get_input_texture_data = function (self, input_action)
-	local input_manager = self._input_manager
-	local input_service = input_manager:get_service("Player")
-	local gamepad_active = input_manager:is_device_active("gamepad")
-	local platform = PLATFORM
+function DarkPactAbilityUI._get_input_texture_data(arg_19_0, arg_19_1)
+	local var_19_0 = arg_19_0._input_manager
+	local var_19_1 = var_19_0:get_service("Player")
+	local var_19_2 = var_19_0:is_device_active("gamepad")
+	local var_19_3 = PLATFORM
 
-	if IS_WINDOWS and gamepad_active then
-		platform = "xb1"
+	if IS_WINDOWS and var_19_2 then
+		var_19_3 = "xb1"
 	end
 
-	local keymap_binding = input_service:get_keymapping(input_action, platform)
+	local var_19_4 = var_19_1:get_keymapping(arg_19_1, var_19_3)
 
-	if not keymap_binding then
-		Application.warning(string.format("[DarkPactAbilityUI] There is no keymap for %q on %q", input_action, platform))
+	if not var_19_4 then
+		Application.warning(string.format("[DarkPactAbilityUI] There is no keymap for %q on %q", arg_19_1, var_19_3))
 
 		return nil, ""
 	end
 
-	local device_type = keymap_binding[1]
-	local key_index = keymap_binding[2]
-	local key_action_type = keymap_binding[3]
-	local prefix_text
+	local var_19_5 = var_19_4[1]
+	local var_19_6 = var_19_4[2]
+	local var_19_7 = var_19_4[3]
+	local var_19_8
 
-	if key_action_type == "held" then
-		prefix_text = "matchmaking_prefix_hold"
+	if var_19_7 == "held" then
+		var_19_8 = "matchmaking_prefix_hold"
 	end
 
-	local is_button_unassigned = key_index == UNASSIGNED_KEY
-	local button_name = ""
+	local var_19_9 = var_19_6 == UNASSIGNED_KEY
+	local var_19_10 = ""
 
-	if device_type == "keyboard" then
-		button_name = is_button_unassigned and "" or Keyboard.button_locale_name(key_index)
+	if var_19_5 == "keyboard" then
+		var_19_10 = var_19_9 and "" or Keyboard.button_locale_name(var_19_6)
 
-		return nil, button_name, prefix_text
-	elseif device_type == "mouse" then
-		button_name = is_button_unassigned and "" or Mouse.button_name(key_index)
+		return nil, var_19_10, var_19_8
+	elseif var_19_5 == "mouse" then
+		var_19_10 = var_19_9 and "" or Mouse.button_name(var_19_6)
 
-		return nil, button_name, prefix_text
-	elseif device_type == "gamepad" then
-		button_name = is_button_unassigned and "" or Pad1.button_name(key_index)
+		return nil, var_19_10, var_19_8
+	elseif var_19_5 == "gamepad" then
+		var_19_10 = var_19_9 and "" or Pad1.button_name(var_19_6)
 
-		local button_texture_data = ButtonTextureByName(button_name, platform)
-
-		return button_texture_data, button_name, prefix_text
+		return ButtonTextureByName(var_19_10, var_19_3), var_19_10, var_19_8
 	end
 
-	return nil, button_name
+	return nil, var_19_10
 end
 
-DarkPactAbilityUI._update_ability_animations = function (self, widget, dt)
-	if not self._is_visible then
+function DarkPactAbilityUI._update_ability_animations(arg_20_0, arg_20_1, arg_20_2)
+	if not arg_20_0._is_visible then
 		return false
 	end
 
-	local style = widget.style
-	local pulse_progress = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
+	local var_20_0 = arg_20_1.style
+	local var_20_1 = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
 
-	style.icon_cooldown.color[1] = math.max(style.icon_cooldown.color[1] - dt * 400, 0)
-	style.icon.color[1] = 155 + pulse_progress * 100
+	var_20_0.icon_cooldown.color[1] = math.max(var_20_0.icon_cooldown.color[1] - arg_20_2 * 400, 0)
+	var_20_0.icon.color[1] = 155 + var_20_1 * 100
 
-	self:_set_widget_dirty(widget)
+	arg_20_0:_set_widget_dirty(arg_20_1)
 
 	return true
 end
 
-DarkPactAbilityUI.set_alpha = function (self, alpha)
-	for widget_index, widget in pairs(self._widgets) do
-		self:_set_widget_dirty(widget)
+function DarkPactAbilityUI.set_alpha(arg_21_0, arg_21_1)
+	for iter_21_0, iter_21_1 in pairs(arg_21_0._widgets) do
+		arg_21_0:_set_widget_dirty(iter_21_1)
 	end
 
-	self._render_settings.alpha_multiplier = alpha
+	arg_21_0._render_settings.alpha_multiplier = arg_21_1
 
-	self:set_dirty()
+	arg_21_0:set_dirty()
 end
 
-DarkPactAbilityUI._get_player_unit = function (self)
-	if self._is_spectator then
-		return self._spectated_player, self._spectated_player_unit
+function DarkPactAbilityUI._get_player_unit(arg_22_0)
+	if arg_22_0._is_spectator then
+		return arg_22_0._spectated_player, arg_22_0._spectated_player_unit
 	end
 
-	if self._player then
-		return self._player, self._player.player_unit
+	if arg_22_0._player then
+		return arg_22_0._player, arg_22_0._player.player_unit
 	end
 
-	self._player = self._player_manager:local_player(1)
+	arg_22_0._player = arg_22_0._player_manager:local_player(1)
 
-	return self._player, self._player.player_unit
+	return arg_22_0._player, arg_22_0._player.player_unit
 end
 
-DarkPactAbilityUI.on_spectator_target_changed = function (self, spectated_player_unit)
-	self._spectated_player_unit = spectated_player_unit
-	self._spectated_player = Managers.player:owner(spectated_player_unit)
-	self._is_spectator = true
+function DarkPactAbilityUI.on_spectator_target_changed(arg_23_0, arg_23_1)
+	arg_23_0._spectated_player_unit = arg_23_1
+	arg_23_0._spectated_player = Managers.player:owner(arg_23_1)
+	arg_23_0._is_spectator = true
 
-	local observed_side = Managers.state.side:get_side_from_player_unique_id(self._spectated_player:unique_id())
-
-	if observed_side:name() == "dark_pact" then
-		self:set_visible(true)
+	if Managers.state.side:get_side_from_player_unique_id(arg_23_0._spectated_player:unique_id()):name() == "dark_pact" then
+		arg_23_0:set_visible(true)
 	else
-		self:set_visible(false)
+		arg_23_0:set_visible(false)
 	end
 end
 
-DarkPactAbilityUI.event_on_dark_pact_ammo_changed = function (self, unit, current_ammo)
-	local ability_widgets = self._ability_hud_widgets_by_name and self._ability_hud_widgets_by_name[2]
+function DarkPactAbilityUI.event_on_dark_pact_ammo_changed(arg_24_0, arg_24_1, arg_24_2)
+	local var_24_0 = arg_24_0._ability_hud_widgets_by_name and arg_24_0._ability_hud_widgets_by_name[2]
 
-	if not ability_widgets then
+	if not var_24_0 then
 		return
 	end
 
-	local widget = ability_widgets.ammo
+	local var_24_1 = var_24_0.ammo
 
-	if not widget then
+	if not var_24_1 then
 		return
 	end
 
-	if not current_ammo then
-		local blackboard = BLACKBOARDS[unit]
-		local data = blackboard.attack_pattern_data or {}
+	if not arg_24_2 then
+		local var_24_2 = BLACKBOARDS[arg_24_1].attack_pattern_data or {}
 
-		if data.current_ammo then
-			current_ammo = data.current_ammo
+		if var_24_2.current_ammo then
+			arg_24_2 = var_24_2.current_ammo
 		else
-			local breed = Unit.get_data(unit, "breed")
-
-			current_ammo = breed.max_ammo
+			arg_24_2 = Unit.get_data(arg_24_1, "breed").max_ammo
 		end
 	end
 
-	local remaining_ammo = 0
-	local content = widget.content
-	local ammo_empty = current_ammo + remaining_ammo == 0
-	local ammo_changed = false
+	local var_24_3 = 0
+	local var_24_4 = var_24_1.content
+	local var_24_5
 
-	if self._ammo_count ~= current_ammo then
-		self._ammo_count = current_ammo
-		content.current_ammo = tostring(current_ammo)
-		ammo_changed = true
+	var_24_5 = arg_24_2 + var_24_3 == 0
+
+	local var_24_6 = false
+
+	if arg_24_0._ammo_count ~= arg_24_2 then
+		arg_24_0._ammo_count = arg_24_2
+		var_24_4.current_ammo = tostring(arg_24_2)
+
+		local var_24_7 = true
 	end
 
-	if self._remaining_ammo ~= remaining_ammo then
-		local breed = Unit.get_data(unit, "breed")
+	if arg_24_0._remaining_ammo ~= var_24_3 then
+		local var_24_8 = Unit.get_data(arg_24_1, "breed").max_ammo
 
-		remaining_ammo = breed.max_ammo
-		self._remaining_ammo = remaining_ammo
-		content.remaining_ammo = tostring(remaining_ammo)
-		ammo_changed = true
+		arg_24_0._remaining_ammo = var_24_8
+		var_24_4.remaining_ammo = tostring(var_24_8)
+
+		local var_24_9 = true
 	end
 end
 
-DarkPactAbilityUI._handle_career_abilities = function (self, dt, t, career_name, career_extension, horde_ability_extension, ui_renderer, is_in_ghost_mode)
-	local player, player_unit = self:_get_player_unit()
-	local profile_index = player:profile_index()
-	local career_index = player:career_index()
-	local profile_settings = SPProfiles[profile_index]
-	local career_settings = profile_settings.careers[career_index]
-	local career_info_settings = career_settings.career_info_settings
-	local ability_amount = #career_info_settings
-	local career_name = career_extension and career_extension:career_name()
-	local widgets_by_ability_name = self._widgets_by_ability_name
-	local ability_templates = profile_ability_templates[career_name]
-	local status_extension = self:_get_extension("status_system")
-	local is_dead = true
+function DarkPactAbilityUI._handle_career_abilities(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7)
+	local var_25_0, var_25_1 = arg_25_0:_get_player_unit()
+	local var_25_2 = var_25_0:profile_index()
+	local var_25_3 = var_25_0:career_index()
+	local var_25_4 = SPProfiles[var_25_2].careers[var_25_3].career_info_settings
+	local var_25_5 = #var_25_4
+	local var_25_6 = arg_25_4 and arg_25_4:career_name()
+	local var_25_7 = arg_25_0._widgets_by_ability_name
+	local var_25_8 = var_0_3[var_25_6]
+	local var_25_9 = arg_25_0:_get_extension("status_system")
+	local var_25_10 = true
 
-	if status_extension and not status_extension:is_dead() then
-		is_dead = false
+	if var_25_9 and not var_25_9:is_dead() then
+		var_25_10 = false
 	end
 
-	local base_offset = -(80 * ability_amount * 0.5)
+	local var_25_11 = -(80 * var_25_5 * 0.5)
 
-	for i = 1, #ability_templates do
-		if not self._ability_hud_widgets_by_name[i] then
-			local ability_ui_data = ability_templates[i]
-			local widget_definitions = ability_ui_data.widget_definitions
-			local widgets = {}
+	for iter_25_0 = 1, #var_25_8 do
+		if not arg_25_0._ability_hud_widgets_by_name[iter_25_0] then
+			local var_25_12 = var_25_8[iter_25_0]
+			local var_25_13 = var_25_12.widget_definitions
+			local var_25_14 = {}
 
-			for widget_name, widget_definition in pairs(widget_definitions) do
-				local widget = UIWidget.init(widget_definition)
-
-				widgets[widget_name] = widget
+			for iter_25_1, iter_25_2 in pairs(var_25_13) do
+				var_25_14[iter_25_1] = UIWidget.init(iter_25_2)
 			end
 
-			local ability_widget = widgets.ability_icon
+			local var_25_15 = var_25_14.ability_icon
 
-			if ability_widget then
-				ability_widget.content.settings = career_info_settings[i]
-				ability_widget.offset[1] = base_offset + 80 * (i - 1)
+			if var_25_15 then
+				var_25_15.content.settings = var_25_4[iter_25_0]
+				var_25_15.offset[1] = var_25_11 + 80 * (iter_25_0 - 1)
 			end
 
-			if ability_ui_data.events then
-				local ability_events = ability_ui_data.events
+			if var_25_12.events then
+				local var_25_16 = var_25_12.events
 
-				for event_name, call_back in pairs(ability_events) do
-					self._ability_events[#self._ability_events + 1] = {
-						event_name,
-						call_back,
+				for iter_25_3, iter_25_4 in pairs(var_25_16) do
+					arg_25_0._ability_events[#arg_25_0._ability_events + 1] = {
+						iter_25_3,
+						iter_25_4
 					}
 
-					Managers.state.event:register(self, event_name, call_back)
+					Managers.state.event:register(arg_25_0, iter_25_3, iter_25_4)
 				end
 			end
 
-			self._ability_hud_widgets_by_name[#self._ability_hud_widgets_by_name + 1] = widgets
+			arg_25_0._ability_hud_widgets_by_name[#arg_25_0._ability_hud_widgets_by_name + 1] = var_25_14
 		end
 	end
 
-	local left_detail = self._widgets_by_name.abilities_detail_left
-	local right_detail = self._widgets_by_name.abilities_detail_right
+	local var_25_17 = arg_25_0._widgets_by_name.abilities_detail_left
+	local var_25_18 = arg_25_0._widgets_by_name.abilities_detail_right
 
-	left_detail.offset[1] = base_offset - 88 + 20
-	right_detail.offset[1] = base_offset + 80 * ability_amount - 20
-	left_detail.content.visible = not is_in_ghost_mode
-	right_detail.content.visible = not is_in_ghost_mode
+	var_25_17.offset[1] = var_25_11 - 88 + 20
+	var_25_18.offset[1] = var_25_11 + 80 * var_25_5 - 20
+	var_25_17.content.visible = not arg_25_7
+	var_25_18.content.visible = not arg_25_7
 
-	for i = 1, #ability_templates do
-		local ability_ui_data = ability_templates[i]
-		local update_functions = ability_ui_data.update_functions
-		local ability_widgets = self._ability_hud_widgets_by_name[i]
+	for iter_25_5 = 1, #var_25_8 do
+		local var_25_19 = var_25_8[iter_25_5]
+		local var_25_20 = var_25_19.update_functions
+		local var_25_21 = arg_25_0._ability_hud_widgets_by_name[iter_25_5]
 
-		for widget_name, widget in pairs(ability_widgets) do
-			local update_function = update_functions and update_functions[widget_name]
+		for iter_25_6, iter_25_7 in pairs(var_25_21) do
+			local var_25_22 = var_25_20 and var_25_20[iter_25_6]
 
-			if update_function then
-				if ability_ui_data.ability_name then
-					local ability, ability_id = career_extension:ability_by_name(ability_ui_data.ability_name)
-					local should_draw_in_ghost_mode = is_in_ghost_mode and ability.draw_ui_in_ghost_mode
+			if var_25_22 then
+				if var_25_19.ability_name then
+					local var_25_23, var_25_24 = arg_25_4:ability_by_name(var_25_19.ability_name)
 
-					if should_draw_in_ghost_mode or not is_in_ghost_mode then
-						update_function(dt, t, ui_renderer, career_extension, ability_id, widget, is_dead, player_unit, horde_ability_extension)
+					if arg_25_7 and var_25_23.draw_ui_in_ghost_mode or not arg_25_7 then
+						var_25_22(arg_25_1, arg_25_2, arg_25_6, arg_25_4, var_25_24, iter_25_7, var_25_10, var_25_1, arg_25_5)
 					end
 				end
-			elseif not is_dead and not is_in_ghost_mode then
-				UIRenderer.draw_widget(ui_renderer, widget)
+			elseif not var_25_10 and not arg_25_7 then
+				UIRenderer.draw_widget(arg_25_6, iter_25_7)
 			end
 		end
 	end

@@ -1,42 +1,42 @@
-﻿-- chunkname: @scripts/settings/dlcs/celebrate/celebrate_buff_settings.lua
+-- chunkname: @scripts/settings/dlcs/celebrate/celebrate_buff_settings.lua
 
-local buff_perks = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
-local settings = DLCSettings.celebrate
+local var_0_0 = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local var_0_1 = DLCSettings.celebrate
 
-local function is_server()
+local function var_0_2()
 	return Managers.player.is_server
 end
 
-local function is_local(unit)
-	local player = Managers.player:owner(unit)
+local function var_0_3(arg_2_0)
+	local var_2_0 = Managers.player:owner(arg_2_0)
 
-	return player and not player.remote
+	return var_2_0 and not var_2_0.remote
 end
 
-local function is_bot(unit)
-	local player = Managers.player:owner(unit)
+local function var_0_4(arg_3_0)
+	local var_3_0 = Managers.player:owner(arg_3_0)
 
-	return player and player.bot_player
+	return var_3_0 and var_3_0.bot_player
 end
 
-settings.buff_templates = {
+var_0_1.buff_templates = {
 	celebrate_group = {
 		buffs = {
 			{
-				apply_buff_func = "hot_joined",
 				max_stacks = 1,
 				name = "celebrate_group",
-			},
-		},
+				apply_buff_func = "hot_joined"
+			}
+		}
 	},
 	beer_bottle_pickup_cooldown = {
 		buffs = {
 			{
-				duration = 2.5,
 				max_stacks = 1,
 				name = "beer_bottle_pickup_cooldown",
-			},
-		},
+				duration = 2.5
+			}
+		}
 	},
 	hinder_career_ability = {
 		buffs = {
@@ -44,741 +44,720 @@ settings.buff_templates = {
 				duration = 2.1,
 				name = "hinder_career_ability",
 				perks = {
-					buff_perks.disable_career_ability,
-				},
-			},
-		},
+					var_0_0.disable_career_ability
+				}
+			}
+		}
 	},
 	intoxication_base = {
 		buffs = {
 			{
 				max_stacks = 1,
 				name = "intoxication_base",
-				remove_buff_func = "remove_intoxication_base",
 				update_func = "update_intoxication_level",
-			},
-		},
+				remove_buff_func = "remove_intoxication_base"
+			}
+		}
 	},
 	intoxication_stagger = {
 		buffs = {
 			{
 				duration = 2.5,
-				max_stacks = 1,
 				name = "intoxication_stagger",
+				max_stacks = 1,
 				refresh_durations = true,
 				perks = {
-					buff_perks.intoxication_stagger,
-				},
-			},
-		},
+					var_0_0.intoxication_stagger
+				}
+			}
+		}
 	},
 	increase_intoxication_level = {
 		activation_effect = "fx/screenspace_drink_01",
 		buffs = {
 			{
-				apply_buff_func = "increase_intoxication_level",
-				base_buff = "intoxication_base",
 				effect_buff = "intoxication_effect",
 				name = "increase_intoxication_level",
+				apply_buff_func = "increase_intoxication_level",
+				base_buff = "intoxication_base"
 			},
 			{
-				apply_buff_func = "add_buff",
 				buff_to_add = "intoxication_stagger",
 				name = "add_intoxication_stagger",
+				apply_buff_func = "add_buff"
 			},
 			{
-				apply_buff_func = "add_buff",
 				buff_to_add = "beer_bottle_pickup_cooldown",
 				name = "add_intoxication_pickup_cooldown",
-			},
-		},
+				apply_buff_func = "add_buff"
+			}
+		}
 	},
 	intoxication_effect_vfx = {
 		buffs = {
 			{
-				continuous_effect = "fx/screenspace_drunken_lens_01",
-				duration = 30,
-				max_stacks = 1,
-				name = "intoxication_effect_vfx",
 				refresh_durations = true,
-			},
-		},
+				name = "intoxication_effect_vfx",
+				continuous_effect = "fx/screenspace_drunken_lens_01",
+				max_stacks = 1,
+				duration = 30
+			}
+		}
 	},
 	intoxication_effect_max_stacks_vfx = {
 		buffs = {
 			{
-				continuous_effect = "fx/screenspace_drunken_lens_05",
-				duration = 30,
-				max_stacks = 1,
-				name = "intoxication_effect_max_stacks_vfx",
 				refresh_durations = true,
-			},
-		},
+				name = "intoxication_effect_max_stacks_vfx",
+				continuous_effect = "fx/screenspace_drunken_lens_05",
+				max_stacks = 1,
+				duration = 30
+			}
+		}
 	},
 	intoxication_effect = {
 		buffs = {
 			{
-				continuous_effect = "fx/screenspace_drunken_lens_01",
-				duration = 30,
-				icon = "buff_icon_mutator_icon_drunk",
-				max_stacks = 3,
-				name = "intoxication_effect",
-				priority_buff = true,
-				refresh_durations = true,
 				remove_buff_func = "end_intoxication_effect",
+				name = "intoxication_effect",
+				duration = 30,
+				continuous_effect = "fx/screenspace_drunken_lens_01",
+				max_stacks = 3,
+				icon = "buff_icon_mutator_icon_drunk",
+				priority_buff = true,
+				refresh_durations = true
 			},
 			{
-				duration = 30,
-				max_stacks = 1,
+				refresh_durations = true,
 				name = "intoxication_effect_bloody_mess",
-				refresh_durations = true,
-				perks = {
-					buff_perks.bloody_mess,
-				},
-			},
-			{
-				duration = 30,
 				max_stacks = 1,
-				name = "intoxication_effect_drunk_stagger",
-				refresh_durations = true,
+				duration = 30,
 				perks = {
-					buff_perks.drunk_stagger,
-				},
+					var_0_0.bloody_mess
+				}
 			},
 			{
+				refresh_durations = true,
+				name = "intoxication_effect_drunk_stagger",
+				max_stacks = 1,
 				duration = 30,
-				max_stacks = 3,
-				multiplier = 0.1,
+				perks = {
+					var_0_0.drunk_stagger
+				}
+			},
+			{
 				name = "intoxication_power_level",
-				refresh_durations = true,
+				multiplier = 0.1,
 				stat_buff = "power_level",
+				refresh_durations = true,
+				max_stacks = 3,
+				duration = 30
 			},
 			{
-				duration = 30,
-				max_stacks = 3,
-				multiplier = 0.15,
 				name = "intoxication_critical_hit_chance",
-				refresh_durations = true,
+				multiplier = 0.15,
 				stat_buff = "critical_strike_chance",
-			},
-			{
-				duration = 30,
-				max_stacks = 3,
-				multiplier = 1.5,
-				name = "intoxication_cooldown_regen_increase",
 				refresh_durations = true,
+				max_stacks = 3,
+				duration = 30
+			},
+			{
+				name = "intoxication_cooldown_regen_increase",
+				multiplier = 1.5,
 				stat_buff = "cooldown_regen",
+				refresh_durations = true,
+				max_stacks = 3,
+				duration = 30
 			},
 			{
 				max_stacks = 3,
-				multiplier = 0.02,
 				name = "drunk_attack_speed_slowdown",
 				stat_buff = "attack_speed",
-			},
-		},
+				multiplier = 0.02
+			}
+		}
 	},
 	falling_down_effect = {
-		activation_effect = "fx/screenspace_hungover_01",
 		deactivation_effect = "fx/screenspace_hungover_01",
+		activation_effect = "fx/screenspace_hungover_01",
 		buffs = {
 			{
-				continuous_effect = "fx/screenspace_drink_looping",
-				duration = 5,
-				max_stacks = 1,
-				multiplier = -0.5,
 				name = "falling_down_attack_speed_slowdown",
-				remove_buff_func = "remove_falling_down_effect",
 				stat_buff = "attack_speed",
+				continuous_effect = "fx/screenspace_drink_looping",
+				max_stacks = 1,
+				remove_buff_func = "remove_falling_down_effect",
+				multiplier = -0.5,
+				duration = 5,
 				perks = {
-					buff_perks.falling_down,
-				},
+					var_0_0.falling_down
+				}
 			},
 			{
 				apply_buff_func = "apply_action_lerp_movement_buff",
-				duration = 5,
-				lerp_time = 1,
-				max_stacks = 1,
 				multiplier = 0.5,
 				name = "falling_down_decrease_speed",
+				duration = 5,
 				remove_buff_func = "remove_action_lerp_movement_buff",
 				remove_buff_name = "planted_return_to_normal_movement",
+				lerp_time = 1,
+				max_stacks = 1,
 				update_func = "update_action_lerp_movement_buff",
 				path_to_movement_setting_to_modify = {
-					"move_speed",
-				},
+					"move_speed"
+				}
 			},
 			{
 				apply_buff_func = "apply_action_lerp_movement_buff",
-				duration = 5,
-				lerp_time = 1,
-				max_stacks = 1,
 				multiplier = 0.5,
 				name = "falling_down_decrease_crouch_speed",
+				duration = 5,
 				remove_buff_func = "remove_action_lerp_movement_buff",
 				remove_buff_name = "planted_return_to_normal_crouch_movement",
+				lerp_time = 1,
+				max_stacks = 1,
 				update_func = "update_charging_action_lerp_movement_buff",
 				path_to_movement_setting_to_modify = {
-					"crouch_move_speed",
-				},
+					"crouch_move_speed"
+				}
 			},
 			{
 				apply_buff_func = "apply_action_lerp_movement_buff",
-				duration = 5,
-				lerp_time = 1,
-				max_stacks = 1,
 				multiplier = 0.5,
 				name = "falling_down_decrease_walk_speed",
+				duration = 5,
 				remove_buff_func = "remove_action_lerp_movement_buff",
 				remove_buff_name = "planted_return_to_normal_walk_movement",
+				lerp_time = 1,
+				max_stacks = 1,
 				update_func = "update_charging_action_lerp_movement_buff",
 				path_to_movement_setting_to_modify = {
-					"walk_move_speed",
-				},
-			},
-		},
+					"walk_move_speed"
+				}
+			}
+		}
 	},
 	hungover_effect = {
 		activation_effect = "fx/screenspace_hungover_01",
 		buffs = {
 			{
 				continuous_effect = "fx/screenspace_hungover_lens_01",
-				debuff = true,
-				icon = "debuff_icon_mutator_icon_drunk",
-				max_stacks = 3,
 				name = "hungover_effect",
-				priority_buff = true,
+				debuff = true,
+				max_stacks = 3,
+				icon = "debuff_icon_mutator_icon_drunk",
+				priority_buff = true
 			},
 			{
 				max_stacks = 3,
 				name = "hungover_effect_stagger",
 				perks = {
-					buff_perks.hungover_stagger,
-				},
+					var_0_0.hungover_stagger
+				}
 			},
 			{
 				max_stacks = 3,
-				multiplier = -0.05,
 				name = "hungover_attack_speed_slowdown",
 				stat_buff = "attack_speed",
+				multiplier = -0.05
 			},
 			{
 				max_stacks = 3,
-				multiplier = -0.2,
 				name = "hungover_regen_increase",
 				stat_buff = "fatigue_regen",
+				multiplier = -0.2
 			},
 			{
 				max_stacks = 1,
 				name = "hungover_effect_perk",
 				perks = {
-					buff_perks.hungover,
-				},
-			},
-		},
-	},
+					var_0_0.hungover
+				}
+			}
+		}
+	}
 }
-settings.buff_function_templates = {
-	update_intoxication_level = function (unit, buff, params, world)
-		if not is_local(unit) or is_bot(unit) then
+var_0_1.buff_function_templates = {
+	update_intoxication_level = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+		if not var_0_3(arg_4_0) or var_0_4(arg_4_0) then
 			return
 		end
 
-		local status_extension = ScriptUnit.extension(unit, "status_system")
-		local buff_extension = ScriptUnit.extension(unit, "buff_system")
-		local career_extension = ScriptUnit.extension(unit, "career_system")
-		local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
-		local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
-		local intoxication_level = status_extension:intoxication_level()
+		local var_4_0 = ScriptUnit.extension(arg_4_0, "status_system")
+		local var_4_1 = ScriptUnit.extension(arg_4_0, "buff_system")
+		local var_4_2 = ScriptUnit.extension(arg_4_0, "career_system")
+		local var_4_3 = ScriptUnit.extension(arg_4_0, "inventory_system")
+		local var_4_4 = ScriptUnit.extension_input(arg_4_0, "dialogue_system")
+		local var_4_5 = var_4_0:intoxication_level()
 
-		if not buff.intoxication_stack_ids then
-			buff.intoxication_stack_ids = {}
+		if not arg_4_1.intoxication_stack_ids then
+			arg_4_1.intoxication_stack_ids = {}
 		end
 
-		if not buff.intoxication_vfx_stack_ids then
-			buff.intoxication_vfx_stack_ids = {}
+		if not arg_4_1.intoxication_vfx_stack_ids then
+			arg_4_1.intoxication_vfx_stack_ids = {}
 		end
 
-		if not buff.intoxication_vfx_max_stack_ids then
-			buff.intoxication_vfx_max_stack_ids = {}
+		if not arg_4_1.intoxication_vfx_max_stack_ids then
+			arg_4_1.intoxication_vfx_max_stack_ids = {}
 		end
 
-		if not buff.hungover_stack_ids then
-			buff.hungover_stack_ids = {}
+		if not arg_4_1.hungover_stack_ids then
+			arg_4_1.hungover_stack_ids = {}
 		end
 
-		local t = params.t
-		local falling_down = buff_extension:has_buff_perk("falling_down")
+		local var_4_6 = arg_4_2.t
 
-		if not falling_down and intoxication_level > 0 and intoxication_level > #buff.intoxication_stack_ids then
-			if career_extension and career_extension:current_ability_paused() then
-				career_extension:start_activated_ability_cooldown()
+		if not var_4_1:has_buff_perk("falling_down") and var_4_5 > 0 and var_4_5 > #arg_4_1.intoxication_stack_ids then
+			if var_4_2 and var_4_2:current_ability_paused() then
+				var_4_2:start_activated_ability_cooldown()
 			end
 
-			local num_wanted_buffs = intoxication_level - #buff.intoxication_stack_ids
+			local var_4_7 = var_4_5 - #arg_4_1.intoxication_stack_ids
 
-			for i = 1, num_wanted_buffs do
-				local buff_id = buff_extension:add_buff("intoxication_effect")
+			for iter_4_0 = 1, var_4_7 do
+				local var_4_8 = var_4_1:add_buff("intoxication_effect")
 
-				buff.intoxication_stack_ids[#buff.intoxication_stack_ids + 1] = buff_id
+				arg_4_1.intoxication_stack_ids[#arg_4_1.intoxication_stack_ids + 1] = var_4_8
 			end
 
-			if intoxication_level >= 3 then
-				for i = 1, #buff.intoxication_vfx_stack_ids do
-					local buff_id = buff.intoxication_vfx_stack_ids[i]
+			if var_4_5 >= 3 then
+				for iter_4_1 = 1, #arg_4_1.intoxication_vfx_stack_ids do
+					local var_4_9 = arg_4_1.intoxication_vfx_stack_ids[iter_4_1]
 
-					buff_extension:remove_buff(buff_id)
+					var_4_1:remove_buff(var_4_9)
 				end
 
-				table.clear(buff.intoxication_vfx_stack_ids)
+				table.clear(arg_4_1.intoxication_vfx_stack_ids)
 
-				local buff_id = buff_extension:add_buff("intoxication_effect_max_stacks_vfx")
+				local var_4_10 = var_4_1:add_buff("intoxication_effect_max_stacks_vfx")
 
-				buff.intoxication_vfx_max_stack_ids[#buff.intoxication_vfx_max_stack_ids + 1] = buff_id
+				arg_4_1.intoxication_vfx_max_stack_ids[#arg_4_1.intoxication_vfx_max_stack_ids + 1] = var_4_10
 			else
-				for i = 1, #buff.intoxication_vfx_max_stack_ids do
-					local buff_id = buff.intoxication_vfx_max_stack_ids[i]
+				for iter_4_2 = 1, #arg_4_1.intoxication_vfx_max_stack_ids do
+					local var_4_11 = arg_4_1.intoxication_vfx_max_stack_ids[iter_4_2]
 
-					buff_extension:remove_buff(buff_id)
+					var_4_1:remove_buff(var_4_11)
 				end
 
-				table.clear(buff.intoxication_vfx_max_stack_ids)
+				table.clear(arg_4_1.intoxication_vfx_max_stack_ids)
 
-				local buff_id = buff_extension:add_buff("intoxication_effect_vfx")
+				local var_4_12 = var_4_1:add_buff("intoxication_effect_vfx")
 
-				buff.intoxication_vfx_stack_ids[#buff.intoxication_vfx_stack_ids + 1] = buff_id
+				arg_4_1.intoxication_vfx_stack_ids[#arg_4_1.intoxication_vfx_stack_ids + 1] = var_4_12
 			end
 
-			local num_buffs_to_remove = #buff.hungover_stack_ids
+			local var_4_13 = #arg_4_1.hungover_stack_ids
 
-			for i = 1, num_buffs_to_remove do
-				local buff_id = buff.hungover_stack_ids[i]
+			for iter_4_3 = 1, var_4_13 do
+				local var_4_14 = arg_4_1.hungover_stack_ids[iter_4_3]
 
-				buff_extension:remove_buff(buff_id)
+				var_4_1:remove_buff(var_4_14)
 			end
 
-			table.clear(buff.hungover_stack_ids)
+			table.clear(arg_4_1.hungover_stack_ids)
 
-			if buff.shake_id then
-				Managers.state.camera:stop_camera_effect_shake_event(buff.shake_id)
+			if arg_4_1.shake_id then
+				Managers.state.camera:stop_camera_effect_shake_event(arg_4_1.shake_id)
 
-				buff.shake_id = nil
+				arg_4_1.shake_id = nil
 			end
 
-			Managers.state.camera:set_mood("hangover_01", buff, false)
-			Managers.state.camera:set_mood("drunk_01", buff, true)
-		elseif intoxication_level < 0 and #buff.hungover_stack_ids ~= math.abs(intoxication_level) then
-			if career_extension and not career_extension:current_ability_paused() then
-				CharacterStateHelper.stop_weapon_actions(inventory_extension, "hungover")
-				CharacterStateHelper.stop_career_abilities(career_extension, "hungover")
-				career_extension:reset_cooldown()
-				career_extension:set_activated_ability_cooldown_paused()
+			Managers.state.camera:set_mood("hangover_01", arg_4_1, false)
+			Managers.state.camera:set_mood("drunk_01", arg_4_1, true)
+		elseif var_4_5 < 0 and #arg_4_1.hungover_stack_ids ~= math.abs(var_4_5) then
+			if var_4_2 and not var_4_2:current_ability_paused() then
+				CharacterStateHelper.stop_weapon_actions(var_4_3, "hungover")
+				CharacterStateHelper.stop_career_abilities(var_4_2, "hungover")
+				var_4_2:reset_cooldown()
+				var_4_2:set_activated_ability_cooldown_paused()
 			end
 
-			local num_hungover_stacks = #buff.hungover_stack_ids
-			local adding_buff = num_hungover_stacks < math.abs(intoxication_level)
+			local var_4_15 = #arg_4_1.hungover_stack_ids
 
-			if adding_buff then
-				local num_buffs_to_add = math.abs(intoxication_level)
+			if var_4_15 < math.abs(var_4_5) then
+				local var_4_16 = math.abs(var_4_5)
 
-				for i = #buff.hungover_stack_ids + 1, num_buffs_to_add do
-					local buff_id = buff_extension:add_buff("hungover_effect")
+				for iter_4_4 = #arg_4_1.hungover_stack_ids + 1, var_4_16 do
+					local var_4_17 = var_4_1:add_buff("hungover_effect")
 
-					buff.hungover_stack_ids[i] = buff_id
+					arg_4_1.hungover_stack_ids[iter_4_4] = var_4_17
 				end
 			else
-				local num_buffs_to_remove = num_hungover_stacks - math.abs(intoxication_level)
+				local var_4_18 = var_4_15 - math.abs(var_4_5)
 
-				for i = 1, num_buffs_to_remove do
-					local buff_id = table.remove(buff.hungover_stack_ids, 1)
+				for iter_4_5 = 1, var_4_18 do
+					local var_4_19 = table.remove(arg_4_1.hungover_stack_ids, 1)
 
-					buff_extension:remove_buff(buff_id)
+					var_4_1:remove_buff(var_4_19)
 				end
 			end
 
-			for i = 1, #buff.intoxication_stack_ids do
-				local buff_id = buff.intoxication_stack_ids[i]
+			for iter_4_6 = 1, #arg_4_1.intoxication_stack_ids do
+				local var_4_20 = arg_4_1.intoxication_stack_ids[iter_4_6]
 
-				buff_extension:remove_buff(buff_id)
+				var_4_1:remove_buff(var_4_20)
 			end
 
-			table.clear(buff.intoxication_stack_ids)
+			table.clear(arg_4_1.intoxication_stack_ids)
 
-			for i = 1, #buff.intoxication_vfx_max_stack_ids do
-				local buff_id = buff.intoxication_vfx_max_stack_ids[i]
+			for iter_4_7 = 1, #arg_4_1.intoxication_vfx_max_stack_ids do
+				local var_4_21 = arg_4_1.intoxication_vfx_max_stack_ids[iter_4_7]
 
-				buff_extension:remove_buff(buff_id)
+				var_4_1:remove_buff(var_4_21)
 			end
 
-			table.clear(buff.intoxication_vfx_max_stack_ids)
+			table.clear(arg_4_1.intoxication_vfx_max_stack_ids)
 
-			for i = 1, #buff.intoxication_vfx_stack_ids do
-				local buff_id = buff.intoxication_vfx_stack_ids[i]
+			for iter_4_8 = 1, #arg_4_1.intoxication_vfx_stack_ids do
+				local var_4_22 = arg_4_1.intoxication_vfx_stack_ids[iter_4_8]
 
-				buff_extension:remove_buff(buff_id)
+				var_4_1:remove_buff(var_4_22)
 			end
 
-			table.clear(buff.intoxication_vfx_stack_ids)
+			table.clear(arg_4_1.intoxication_vfx_stack_ids)
 
-			local event_data = FrameTable.alloc_table()
+			local var_4_23 = FrameTable.alloc_table()
 
-			dialogue_input:trigger_dialogue_event("buff_wears_off", event_data)
+			var_4_4:trigger_dialogue_event("buff_wears_off", var_4_23)
 
-			if not buff.shake_id then
-				local shake_id = Managers.state.camera:camera_effect_shake_event("intoxication_after_effect", t)
-
-				buff.shake_id = shake_id
+			if not arg_4_1.shake_id then
+				arg_4_1.shake_id = Managers.state.camera:camera_effect_shake_event("intoxication_after_effect", var_4_6)
 			end
 
-			Managers.state.camera:camera_effect_shake_event("hungover", t)
-			Managers.state.camera:set_mood("drunk_01", buff, false)
-			Managers.state.camera:set_mood("hangover_01", buff, true)
+			Managers.state.camera:camera_effect_shake_event("hungover", var_4_6)
+			Managers.state.camera:set_mood("drunk_01", arg_4_1, false)
+			Managers.state.camera:set_mood("hangover_01", arg_4_1, true)
 
-			local blink_sound_event_name = "Play_eye_blink_hangover"
-			local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
+			local var_4_24 = "Play_eye_blink_hangover"
+			local var_4_25 = ScriptUnit.has_extension(arg_4_0, "first_person_system")
 
-			first_person_extension:play_hud_sound_event(blink_sound_event_name)
+			var_4_25:play_hud_sound_event(var_4_24)
 
-			buff.next_blink_t = t + 3
+			arg_4_1.next_blink_t = var_4_6 + 3
 
-			local hungover_sound_event_name = "Play_player_celebrate_hangover"
+			local var_4_26 = "Play_player_celebrate_hangover"
 
-			first_person_extension:play_hud_sound_event(hungover_sound_event_name)
+			var_4_25:play_hud_sound_event(var_4_26)
 		end
 
-		if buff.delayed_vce_time and t > buff.delayed_vce_time then
-			local delayed_vce_event = buff.delayed_vce_event
-			local event_data = FrameTable.alloc_table()
+		if arg_4_1.delayed_vce_time and var_4_6 > arg_4_1.delayed_vce_time then
+			local var_4_27 = arg_4_1.delayed_vce_event
+			local var_4_28 = FrameTable.alloc_table()
 
-			dialogue_input:trigger_dialogue_event(delayed_vce_event, event_data)
+			var_4_4:trigger_dialogue_event(var_4_27, var_4_28)
 
-			buff.delayed_vce_time = nil
-			buff.delayed_vce_event = nil
+			arg_4_1.delayed_vce_time = nil
+			arg_4_1.delayed_vce_event = nil
 		end
 
-		if buff.delayed_drink_vce_time and t > buff.delayed_drink_vce_time then
-			local delayed_drink_vce_event = buff.delayed_drink_vce_event
-			local event_data = FrameTable.alloc_table()
+		if arg_4_1.delayed_drink_vce_time and var_4_6 > arg_4_1.delayed_drink_vce_time then
+			local var_4_29 = arg_4_1.delayed_drink_vce_event
+			local var_4_30 = FrameTable.alloc_table()
 
-			dialogue_input:trigger_dialogue_event(delayed_drink_vce_event, event_data)
+			var_4_4:trigger_dialogue_event(var_4_29, var_4_30)
 
-			buff.delayed_drink_vce_time = nil
-			buff.delayed_drink_vce_event = nil
+			arg_4_1.delayed_drink_vce_time = nil
+			arg_4_1.delayed_drink_vce_event = nil
 		end
 
-		if not buff.shake_event_settings then
-			local shake_event_settings = {}
-			local event = CameraEffectSettings.shake.intoxication_after_effect
+		if not arg_4_1.shake_event_settings then
+			local var_4_31 = {}
+			local var_4_32 = CameraEffectSettings.shake.intoxication_after_effect
 
-			shake_event_settings.event = event
-			shake_event_settings.start_time = t
-			shake_event_settings.seed = event.seed or Math.random(1, 100)
-			buff.shake_event_settings = shake_event_settings
-			buff.shake_functions = {
-				calculate_perlin_value_func = function (buff, x)
-					local total = 0
-					local shake_settings = buff.shake_event_settings.event
-					local persistance = shake_settings.persistance
-					local number_of_octaves = shake_settings.octaves
+			var_4_31.event = var_4_32
+			var_4_31.start_time = var_4_6
+			var_4_31.seed = var_4_32.seed or Math.random(1, 100)
+			arg_4_1.shake_event_settings = var_4_31
+			arg_4_1.shake_functions = {
+				calculate_perlin_value_func = function(arg_5_0, arg_5_1)
+					local var_5_0 = 0
+					local var_5_1 = arg_5_0.shake_event_settings.event
+					local var_5_2 = var_5_1.persistance
+					local var_5_3 = var_5_1.octaves
 
-					for i = 0, number_of_octaves do
-						local frequency = 2^i
-						local amplitude = persistance^i
+					for iter_5_0 = 0, var_5_3 do
+						local var_5_4 = 2^iter_5_0
+						local var_5_5 = var_5_2^iter_5_0
 
-						total = total + buff.shake_functions.interpolated_noise_func(buff, x * frequency) * amplitude
+						var_5_0 = var_5_0 + arg_5_0.shake_functions.interpolated_noise_func(arg_5_0, arg_5_1 * var_5_4) * var_5_5
 					end
 
-					local amplitude_multiplier = shake_settings.amplitude or 1
-					local fade_multiplier = settings.fade_progress or 1
+					local var_5_6 = var_5_1.amplitude or 1
+					local var_5_7 = var_0_1.fade_progress or 1
 
-					total = total * amplitude_multiplier * fade_multiplier
+					return var_5_0 * var_5_6 * var_5_7
+				end,
+				interpolated_noise_func = function(arg_6_0, arg_6_1)
+					local var_6_0 = math.floor(arg_6_1)
+					local var_6_1 = arg_6_1 - var_6_0
+					local var_6_2 = arg_6_0.shake_functions.smoothed_noise_func(arg_6_0, var_6_0)
+					local var_6_3 = arg_6_0.shake_functions.smoothed_noise_func(arg_6_0, var_6_0 + 1)
 
-					return total
+					return math.lerp(var_6_2, var_6_3, var_6_1)
 				end,
-				interpolated_noise_func = function (buff, x)
-					local x_floored = math.floor(x)
-					local remainder = x - x_floored
-					local v1 = buff.shake_functions.smoothed_noise_func(buff, x_floored)
-					local v2 = buff.shake_functions.smoothed_noise_func(buff, x_floored + 1)
+				smoothed_noise_func = function(arg_7_0, arg_7_1, arg_7_2)
+					return arg_7_0.shake_functions.noise_func(arg_7_0, arg_7_1) / 2 + arg_7_0.shake_functions.noise_func(arg_7_0, arg_7_1 - 1) / 4 + arg_7_0.shake_functions.noise_func(arg_7_0, arg_7_1 + 1) / 4
+				end,
+				noise_func = function(arg_8_0, arg_8_1)
+					local var_8_0, var_8_1 = Math.next_random(arg_8_1 + arg_8_0.shake_event_settings.seed)
+					local var_8_2, var_8_3 = Math.next_random(var_8_0)
 
-					return math.lerp(v1, v2, remainder)
-				end,
-				smoothed_noise_func = function (buff, x, noise_func)
-					return buff.shake_functions.noise_func(buff, x) / 2 + buff.shake_functions.noise_func(buff, x - 1) / 4 + buff.shake_functions.noise_func(buff, x + 1) / 4
-				end,
-				noise_func = function (buff, x)
-					local next_seed, _ = Math.next_random(x + buff.shake_event_settings.seed)
-					local _, value = Math.next_random(next_seed)
-
-					return value * 2 - 1
-				end,
+					return var_8_3 * 2 - 1
+				end
 			}
 		end
 
-		if buff.next_blink_t and t > buff.next_blink_t then
-			local sound_event_name = "Play_eye_blink_hangover"
-			local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
+		if arg_4_1.next_blink_t and var_4_6 > arg_4_1.next_blink_t then
+			local var_4_33 = "Play_eye_blink_hangover"
 
-			first_person_extension:play_hud_sound_event(sound_event_name)
+			ScriptUnit.has_extension(arg_4_0, "first_person_system"):play_hud_sound_event(var_4_33)
 
-			buff.next_blink_t = nil
+			arg_4_1.next_blink_t = nil
 		end
 
-		if not buff.next_noise_t or t > buff.next_noise_t then
-			buff.next_noise_t = t + 2
+		if not arg_4_1.next_noise_t or var_4_6 > arg_4_1.next_noise_t then
+			arg_4_1.next_noise_t = var_4_6 + 2
 
-			local pitch_value = buff.shake_functions.calculate_perlin_value_func(buff, t - buff.shake_event_settings.start_time, buff.shake_event_settings)
-			local yaw_value = buff.shake_functions.calculate_perlin_value_func(buff, t - buff.shake_event_settings.start_time + 10, buff.shake_event_settings)
-			local sine_value = math.abs(math.sin(t * math.pi * 0.5))
-			local sine_value_2 = math.abs(math.sin(t * math.pi))
-			local square = math.sqrt(pitch_value * pitch_value + yaw_value * yaw_value)
+			local var_4_34 = arg_4_1.shake_functions.calculate_perlin_value_func(arg_4_1, var_4_6 - arg_4_1.shake_event_settings.start_time, arg_4_1.shake_event_settings)
+			local var_4_35 = arg_4_1.shake_functions.calculate_perlin_value_func(arg_4_1, var_4_6 - arg_4_1.shake_event_settings.start_time + 10, arg_4_1.shake_event_settings)
+			local var_4_36 = math.abs(math.sin(var_4_6 * math.pi * 0.5))
+			local var_4_37 = math.abs(math.sin(var_4_6 * math.pi))
+			local var_4_38 = math.sqrt(var_4_34 * var_4_34 + var_4_35 * var_4_35)
 
-			assert(square ~= 0, "trying to divide by zero in \"update_intoxication_level\" buff update function")
+			assert(var_4_38 ~= 0, "trying to divide by zero in \"update_intoxication_level\" buff update function")
 
-			pitch_value = pitch_value / square
-			yaw_value = yaw_value / square
+			local var_4_39 = var_4_34 / var_4_38
+			local var_4_40 = var_4_35 / var_4_38
+			local var_4_41 = math.abs(math.lerp(var_4_39, var_4_40, var_4_36)) * math.sign(var_4_5) * 200 + math.sign(var_4_5) * 200 * (math.abs(var_4_5) - 1)
+			local var_4_42 = math.abs(math.lerp(var_4_39, var_4_40, var_4_37)) * math.sign(var_4_5) * 200 + math.sign(var_4_5) * 200 * (math.abs(var_4_5) - 1)
+			local var_4_43 = Managers.world:wwise_world(arg_4_3)
 
-			local final_value = math.abs(math.lerp(pitch_value, yaw_value, sine_value)) * math.sign(intoxication_level) * 200 + math.sign(intoxication_level) * 200 * (math.abs(intoxication_level) - 1)
-			local final_value_2 = math.abs(math.lerp(pitch_value, yaw_value, sine_value_2)) * math.sign(intoxication_level) * 200 + math.sign(intoxication_level) * 200 * (math.abs(intoxication_level) - 1)
-			local wwise_world = Managers.world:wwise_world(world)
-
-			WwiseWorld.set_global_parameter(wwise_world, "player_intoxication_level", final_value)
-			WwiseWorld.set_global_parameter(wwise_world, "player_intoxication_level_2", final_value_2)
+			WwiseWorld.set_global_parameter(var_4_43, "player_intoxication_level", var_4_41)
+			WwiseWorld.set_global_parameter(var_4_43, "player_intoxication_level_2", var_4_42)
 		end
 	end,
-	remove_intoxication_base = function (unit, buff, params, world)
-		local wwise_world = Managers.world:wwise_world(world)
+	remove_intoxication_base = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+		local var_9_0 = Managers.world:wwise_world(arg_9_3)
 
-		WwiseWorld.set_global_parameter(wwise_world, "player_intoxication_level", 0)
-		WwiseWorld.set_global_parameter(wwise_world, "player_intoxication_level_2", 0)
+		WwiseWorld.set_global_parameter(var_9_0, "player_intoxication_level", 0)
+		WwiseWorld.set_global_parameter(var_9_0, "player_intoxication_level_2", 0)
 
-		if buff.shake_id then
-			Managers.state.camera:stop_camera_effect_shake_event(buff.shake_id)
+		if arg_9_1.shake_id then
+			Managers.state.camera:stop_camera_effect_shake_event(arg_9_1.shake_id)
 
-			buff.shake_id = nil
+			arg_9_1.shake_id = nil
 		end
 	end,
-	check_celebrate_buff = function (unit, buff, params, world)
-		if not is_local(unit) or is_bot(unit) then
+	check_celebrate_buff = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+		if not var_0_3(arg_10_0) or var_0_4(arg_10_0) then
 			return
 		end
 
-		local buff_extension = ScriptUnit.extension(unit, "buff_system")
+		if ScriptUnit.extension(arg_10_0, "buff_system"):has_buff_perk("hungover") then
+			local var_10_0 = ScriptUnit.extension(arg_10_0, "status_system")
 
-		if buff_extension:has_buff_perk("hungover") then
-			local status_extension = ScriptUnit.extension(unit, "status_system")
-			local intoxication_level = status_extension:intoxication_level()
+			if var_10_0:intoxication_level() < 0 then
+				var_10_0:invert_intoxication_level()
 
-			if intoxication_level < 0 then
-				status_extension:invert_intoxication_level()
+				local var_10_1 = Managers.time:time("game")
 
-				local t = Managers.time:time("game")
+				Managers.state.camera:camera_effect_shake_event("intoxication", var_10_1)
 
-				Managers.state.camera:camera_effect_shake_event("intoxication", t)
+				local var_10_2 = Managers.state.network
+				local var_10_3 = var_10_2:unit_game_object_id(arg_10_0)
 
-				local network_manager = Managers.state.network
-				local unit_go_id = network_manager:unit_game_object_id(unit)
-
-				network_manager.network_transmit:send_rpc_server("rpc_request_heal_wounds", unit_go_id)
+				var_10_2.network_transmit:send_rpc_server("rpc_request_heal_wounds", var_10_3)
 			end
 
-			local drunk_sound_event_name = "Play_player_celebrate_drunk"
-			local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
+			local var_10_4 = "Play_player_celebrate_drunk"
 
-			first_person_extension:play_hud_sound_event(drunk_sound_event_name)
+			ScriptUnit.has_extension(arg_10_0, "first_person_system"):play_hud_sound_event(var_10_4)
 		end
 	end,
-	increase_intoxication_level = function (unit, buff, params, world)
-		if not is_local(unit) or is_bot(unit) then
+	increase_intoxication_level = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+		if not var_0_3(arg_11_0) or var_0_4(arg_11_0) then
 			return
 		end
 
-		local status_extension = ScriptUnit.extension(unit, "status_system")
-		local buff_extension = ScriptUnit.extension(unit, "buff_system")
+		local var_11_0 = ScriptUnit.extension(arg_11_0, "status_system")
+		local var_11_1 = ScriptUnit.extension(arg_11_0, "buff_system")
 
-		if buff_extension:has_buff_perk("falling_down") then
+		if var_11_1:has_buff_perk("falling_down") then
 			return
 		end
 
-		local buff_template = buff.template
-		local base_buff_name = buff_template.base_buff
-		local base_buff = buff_extension:get_non_stacking_buff(base_buff_name)
-		local intoxication_level = status_extension:intoxication_level()
+		local var_11_2 = arg_11_1.template.base_buff
+		local var_11_3 = var_11_1:get_non_stacking_buff(var_11_2)
+		local var_11_4 = var_11_0:intoxication_level()
 
-		if intoxication_level < 0 then
-			status_extension:invert_intoxication_level()
+		if var_11_4 < 0 then
+			var_11_0:invert_intoxication_level()
 
-			if base_buff then
-				base_buff.delayed_vce_time = params.t + 1
-				base_buff.delayed_vce_event = "buff_begins_from_sick"
+			if var_11_3 then
+				var_11_3.delayed_vce_time = arg_11_2.t + 1
+				var_11_3.delayed_vce_event = "buff_begins_from_sick"
 			end
 		else
-			status_extension:add_intoxication_level(1)
+			var_11_0:add_intoxication_level(1)
 
-			if base_buff then
-				base_buff.delayed_vce_time = params.t + 1
-				base_buff.delayed_vce_event = "buff_begins"
+			if var_11_3 then
+				var_11_3.delayed_vce_time = arg_11_2.t + 1
+				var_11_3.delayed_vce_event = "buff_begins"
 			end
 
-			if intoxication_level >= 3 then
-				buff_extension:add_buff("falling_down_effect")
+			if var_11_4 >= 3 then
+				var_11_1:add_buff("falling_down_effect")
 			end
 		end
 
-		local t = Managers.time:time("game")
+		local var_11_5 = Managers.time:time("game")
 
-		Managers.state.camera:camera_effect_shake_event("intoxication", t)
+		Managers.state.camera:camera_effect_shake_event("intoxication", var_11_5)
 
-		local network_manager = Managers.state.network
-		local unit_go_id = network_manager:unit_game_object_id(unit)
+		local var_11_6 = Managers.state.network
+		local var_11_7 = var_11_6:unit_game_object_id(arg_11_0)
 
-		network_manager.network_transmit:send_rpc_server("rpc_request_heal_wounds", unit_go_id)
+		var_11_6.network_transmit:send_rpc_server("rpc_request_heal_wounds", var_11_7)
 
-		base_buff.delayed_drink_vce_time = params.t + 1.6
-		base_buff.delayed_drink_vce_event = "player_drank_vce"
+		var_11_3.delayed_drink_vce_time = arg_11_2.t + 1.6
+		var_11_3.delayed_drink_vce_event = "player_drank_vce"
 
-		local drunk_sound_event_name = "Play_player_celebrate_drunk"
-		local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
+		local var_11_8 = "Play_player_celebrate_drunk"
 
-		first_person_extension:play_hud_sound_event(drunk_sound_event_name)
+		ScriptUnit.has_extension(arg_11_0, "first_person_system"):play_hud_sound_event(var_11_8)
 
-		if is_server() then
-			local group_buff_template_name = "celebrate_group"
-			local group_buff_name_id = NetworkLookup.group_buff_templates[group_buff_template_name]
-			local buff_system = Managers.state.entity:system("buff_system")
+		if var_0_2() then
+			local var_11_9 = "celebrate_group"
+			local var_11_10 = NetworkLookup.group_buff_templates[var_11_9]
 
-			buff_system:rpc_add_group_buff(nil, group_buff_name_id, 1)
+			Managers.state.entity:system("buff_system"):rpc_add_group_buff(nil, var_11_10, 1)
 		end
 	end,
-	end_intoxication_effect = function (unit, buff, params, world)
-		local status_extension = ScriptUnit.extension(unit, "status_system")
-		local intoxication_level = status_extension:intoxication_level()
+	end_intoxication_effect = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+		local var_12_0 = ScriptUnit.extension(arg_12_0, "status_system")
 
-		if intoxication_level > 0 then
-			status_extension:invert_intoxication_level()
+		if var_12_0:intoxication_level() > 0 then
+			var_12_0:invert_intoxication_level()
 		end
 	end,
-	remove_falling_down_effect = function (unit, buff, params, world)
-		local status_extension = ScriptUnit.extension(unit, "status_system")
-		local intoxication_level = status_extension:intoxication_level()
+	remove_falling_down_effect = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+		local var_13_0 = ScriptUnit.extension(arg_13_0, "status_system")
 
-		if intoxication_level > 0 then
-			status_extension:invert_intoxication_level()
+		if var_13_0:intoxication_level() > 0 then
+			var_13_0:invert_intoxication_level()
 		end
 
-		local network_manager = Managers.state.network
-		local unit_go_id = network_manager:unit_game_object_id(unit)
+		local var_13_1 = Managers.state.network
+		local var_13_2 = var_13_1:unit_game_object_id(arg_13_0)
 
-		network_manager.network_transmit:send_rpc_server("rpc_request_knock_down", unit_go_id)
+		var_13_1.network_transmit:send_rpc_server("rpc_request_knock_down", var_13_2)
 	end,
-	add_buff = function (unit, buff, params, world)
-		local buff_extension = ScriptUnit.extension(unit, "buff_system")
-		local buff_template = buff.template
-		local buff_to_add = buff_template.buff_to_add
+	add_buff = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+		local var_14_0 = ScriptUnit.extension(arg_14_0, "buff_system")
+		local var_14_1 = arg_14_1.template.buff_to_add
 
-		buff_extension:add_buff(buff_to_add)
+		var_14_0:add_buff(var_14_1)
 	end,
-	hot_joined = function (unit, buff, params, world)
-		local status_extension = ScriptUnit.extension(unit, "status_system")
-		local intoxication_level = status_extension:intoxication_level()
+	hot_joined = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+		local var_15_0 = ScriptUnit.extension(arg_15_0, "status_system")
 
-		if intoxication_level == 0 then
-			local buff_extension = ScriptUnit.extension(unit, "buff_system")
-
-			buff_extension:add_buff("intoxication_base")
-			status_extension:add_intoxication_level(1)
-			status_extension:invert_intoxication_level()
+		if var_15_0:intoxication_level() == 0 then
+			ScriptUnit.extension(arg_15_0, "buff_system"):add_buff("intoxication_base")
+			var_15_0:add_intoxication_level(1)
+			var_15_0:invert_intoxication_level()
 		end
-	end,
+	end
 }
-settings.group_buff_templates = {
+var_0_1.group_buff_templates = {
 	celebrate_group = {
 		buff_per_instance = "celebrate_group",
-		side_name = "heroes",
-	},
+		side_name = "heroes"
+	}
 }
-settings.add_sub_buffs_to_core_buffs = {
+var_0_1.add_sub_buffs_to_core_buffs = {
 	{
 		buff_name = "damage_boost_potion",
 		sub_buff_to_add = {
 			apply_buff_func = "check_celebrate_buff",
-			name = "check celebrate",
-		},
+			name = "check celebrate"
+		}
 	},
 	{
 		buff_name = "speed_boost_potion",
 		sub_buff_to_add = {
 			apply_buff_func = "check_celebrate_buff",
-			name = "check celebrate",
-		},
+			name = "check celebrate"
+		}
 	},
 	{
 		buff_name = "cooldown_reduction_potion",
 		sub_buff_to_add = {
 			apply_buff_func = "check_celebrate_buff",
-			name = "check celebrate",
-		},
+			name = "check celebrate"
+		}
 	},
 	{
 		buff_name = "invulnerability_potion",
 		sub_buff_to_add = {
 			apply_buff_func = "check_celebrate_buff",
-			name = "check celebrate",
-		},
+			name = "check celebrate"
+		}
 	},
 	{
 		buff_name = "damage_boost_potion_increased",
 		sub_buff_to_add = {
 			apply_buff_func = "check_celebrate_buff",
-			name = "check celebrate",
-		},
+			name = "check celebrate"
+		}
 	},
 	{
 		buff_name = "speed_boost_potion_increased",
 		sub_buff_to_add = {
 			apply_buff_func = "check_celebrate_buff",
-			name = "check celebrate",
-		},
+			name = "check celebrate"
+		}
 	},
 	{
 		buff_name = "cooldown_reduction_potion_increased",
 		sub_buff_to_add = {
 			apply_buff_func = "check_celebrate_buff",
-			name = "check celebrate",
-		},
+			name = "check celebrate"
+		}
 	},
 	{
 		buff_name = "invulnerability_potion_increased",
 		sub_buff_to_add = {
 			apply_buff_func = "check_celebrate_buff",
-			name = "check celebrate",
-		},
+			name = "check celebrate"
+		}
 	},
 	{
 		buff_name = "damage_boost_potion_reduced",
 		sub_buff_to_add = {
 			apply_buff_func = "check_celebrate_buff",
-			name = "check celebrate",
-		},
+			name = "check celebrate"
+		}
 	},
 	{
 		buff_name = "speed_boost_potion_reduced",
 		sub_buff_to_add = {
 			apply_buff_func = "check_celebrate_buff",
-			name = "check celebrate",
-		},
+			name = "check celebrate"
+		}
 	},
 	{
 		buff_name = "cooldown_reduction_potion_reduced",
 		sub_buff_to_add = {
 			apply_buff_func = "check_celebrate_buff",
-			name = "check celebrate",
-		},
+			name = "check celebrate"
+		}
 	},
 	{
 		buff_name = "invulnerability_potion_reduced",
 		sub_buff_to_add = {
 			apply_buff_func = "check_celebrate_buff",
-			name = "check celebrate",
-		},
-	},
+			name = "check celebrate"
+		}
+	}
 }

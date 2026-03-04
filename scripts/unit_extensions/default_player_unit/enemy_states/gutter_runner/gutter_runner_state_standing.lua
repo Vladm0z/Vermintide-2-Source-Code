@@ -1,39 +1,37 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/gutter_runner/gutter_runner_state_standing.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/gutter_runner/gutter_runner_state_standing.lua
 
 GutterRunnerStateStanding = class(GutterRunnerStateStanding, EnemyCharacterStateStanding)
 
-GutterRunnerStateStanding.init = function (self, character_state_init_context)
-	GutterRunnerStateStanding.super.init(self, character_state_init_context)
+function GutterRunnerStateStanding.init(arg_1_0, arg_1_1)
+	GutterRunnerStateStanding.super.init(arg_1_0, arg_1_1)
 
-	self._pounce_ability_id = self._career_extension:ability_id("pounce")
-	self._foff_ability_id = self._career_extension:ability_id("foff")
+	arg_1_0._pounce_ability_id = arg_1_0._career_extension:ability_id("pounce")
+	arg_1_0._foff_ability_id = arg_1_0._career_extension:ability_id("foff")
 end
 
-GutterRunnerStateStanding.update = function (self, unit, input, dt, context, t)
-	local handled = self:common_state_changes()
-
-	if handled then
+function GutterRunnerStateStanding.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	if arg_2_0:common_state_changes() then
 		return
 	end
 
-	local csm = self._csm
-	local career_extension = self._career_extension
+	local var_2_0 = arg_2_0._csm
+	local var_2_1 = arg_2_0._career_extension
 
-	if career_extension:ability_was_triggered(self._pounce_ability_id) then
-		csm:change_state("gutter_runner_prowling")
-
-		return
-	end
-
-	if career_extension:ability_was_triggered(self._foff_ability_id) then
-		csm:change_state("gutter_runner_foff")
+	if var_2_1:ability_was_triggered(arg_2_0._pounce_ability_id) then
+		var_2_0:change_state("gutter_runner_prowling")
 
 		return
 	end
 
-	if not self._status_extension:is_invisible() then
-		self:_update_taunt_dialogue(t)
+	if var_2_1:ability_was_triggered(arg_2_0._foff_ability_id) then
+		var_2_0:change_state("gutter_runner_foff")
+
+		return
 	end
 
-	handled = self:common_movement(t)
+	if not arg_2_0._status_extension:is_invisible() then
+		arg_2_0:_update_taunt_dialogue(arg_2_5)
+	end
+
+	local var_2_2 = arg_2_0:common_movement(arg_2_5)
 end

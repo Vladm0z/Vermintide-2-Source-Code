@@ -1,34 +1,29 @@
-﻿-- chunkname: @scripts/unit_extensions/generic/overpowered_blob_health_extension.lua
+-- chunkname: @scripts/unit_extensions/generic/overpowered_blob_health_extension.lua
 
 OverpoweredBlobHealthExtension = class(OverpoweredBlobHealthExtension, GenericHealthExtension)
 
-OverpoweredBlobHealthExtension.init = function (self, extension_init_context, unit, extension_init_data, ...)
-	OverpoweredBlobHealthExtension.super.init(self, extension_init_context, unit, extension_init_data, ...)
+function OverpoweredBlobHealthExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, ...)
+	OverpoweredBlobHealthExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, ...)
 
-	self.target_unit = extension_init_data.target_unit
-
-	local t = Managers.time:time("game")
-
-	self.death_time = t + (extension_init_data.life_time or math.huge)
-	self.bots_can_do_damage = true
+	arg_1_0.target_unit = arg_1_3.target_unit
+	arg_1_0.death_time = Managers.time:time("game") + (arg_1_3.life_time or math.huge)
+	arg_1_0.bots_can_do_damage = true
 end
 
-OverpoweredBlobHealthExtension.update = function (self, dt, context, t)
-	local target_status_ext = ScriptUnit.has_extension(self.target_unit, "status_system")
+function OverpoweredBlobHealthExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = ScriptUnit.has_extension(arg_2_0.target_unit, "status_system")
 
-	if not target_status_ext or not target_status_ext.overpowered or t > self.death_time then
-		Managers.state.unit_spawner:mark_for_deletion(self.unit)
+	if not var_2_0 or not var_2_0.overpowered or arg_2_3 > arg_2_0.death_time then
+		Managers.state.unit_spawner:mark_for_deletion(arg_2_0.unit)
 	end
 end
 
-OverpoweredBlobHealthExtension.destroy = function (self)
-	if not Unit.alive(self.target_unit) then
+function OverpoweredBlobHealthExtension.destroy(arg_3_0)
+	if not Unit.alive(arg_3_0.target_unit) then
 		return
 	end
 
-	local target_status_ext = ScriptUnit.has_extension(self.target_unit, "status_system")
-
-	if target_status_ext then
-		StatusUtils.set_overpowered_network(self.target_unit, false)
+	if ScriptUnit.has_extension(arg_3_0.target_unit, "status_system") then
+		StatusUtils.set_overpowered_network(arg_3_0.target_unit, false)
 	end
 end

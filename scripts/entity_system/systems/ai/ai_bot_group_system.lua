@@ -1,280 +1,274 @@
-﻿-- chunkname: @scripts/entity_system/systems/ai/ai_bot_group_system.lua
+-- chunkname: @scripts/entity_system/systems/ai/ai_bot_group_system.lua
 
 require("scripts/settings/player_bots_settings")
 
 AIBotGroupSystem = class(AIBotGroupSystem, ExtensionSystemBase)
 
-local extensions = {
+local var_0_0 = {
 	"AIBotGroupExtension",
-	"BotBreakableExtension",
+	"BotBreakableExtension"
 }
-local bot_threat_queue_position = 1
-local bot_threat_queue_shape = 2
-local bot_threat_queue_size = 3
-local bot_threat_queue_rotation = 4
-local bot_threat_queue_threat_duration = 5
-local bot_threat_source = 6
-local BOT_RADIUS = 1.25
-local BOT_HEIGHT = 1.8
+local var_0_1 = 1
+local var_0_2 = 2
+local var_0_3 = 3
+local var_0_4 = 4
+local var_0_5 = 5
+local var_0_6 = 6
+local var_0_7 = 1.25
+local var_0_8 = 1.8
 
 AIBotGroupExtension = class(AIBotGroupExtension)
 
-AIBotGroupExtension.init = function (self)
+function AIBotGroupExtension.init(arg_1_0)
 	return
 end
 
-AIBotGroupExtension.destroy = function (self)
+function AIBotGroupExtension.destroy(arg_2_0)
 	return
 end
 
-local HOLD_POSITION_EPSILON = 0.05
+local var_0_9 = 0.05
 
-AIBotGroupExtension.set_hold_position = function (self, hold_position, max_allowed_distance)
-	local data = self.data
+function AIBotGroupExtension.set_hold_position(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0 = arg_3_0.data
 
-	if hold_position then
-		local max_allowed_distance_sq = math.max(max_allowed_distance, HOLD_POSITION_EPSILON)^2
-
-		data.hold_position = Vector3Box(hold_position)
-		data.hold_position_max_distance_sq = max_allowed_distance_sq
+	if arg_3_1 then
+		var_3_0.hold_position_max_distance_sq, var_3_0.hold_position = math.max(arg_3_2, var_0_9)^2, Vector3Box(arg_3_1)
 	else
-		data.hold_position = nil
-		data.hold_position_max_distance_sq = nil
+		var_3_0.hold_position = nil
+		var_3_0.hold_position_max_distance_sq = nil
 	end
 end
 
-AIBotGroupExtension.get_hold_position = function (self)
-	local data = self.data
+function AIBotGroupExtension.get_hold_position(arg_4_0)
+	local var_4_0 = arg_4_0.data
 
-	if data.hold_position then
-		local hold_position, distance_sq = data.hold_position:unbox(), data.hold_position_max_distance_sq
+	if var_4_0.hold_position then
+		local var_4_1 = var_4_0.hold_position:unbox()
+		local var_4_2 = var_4_0.hold_position_max_distance_sq
 
-		return hold_position, distance_sq
+		return var_4_1, var_4_2
 	else
 		return nil, nil
 	end
 end
 
-local STICKYNESS_DISTANCE_MODIFIER = -0.2
-local BLACKBOARDS = BLACKBOARDS
+local var_0_10 = -0.2
+local var_0_11 = BLACKBOARDS
 
-AIBotGroupSystem.init = function (self, context, system_name)
-	local entity_manager = context.entity_manager
+function AIBotGroupSystem.init(arg_5_0, arg_5_1, arg_5_2)
+	arg_5_1.entity_manager:register_system(arg_5_0, arg_5_2, var_0_0)
 
-	entity_manager:register_system(self, system_name, extensions)
+	local var_5_0 = arg_5_1.world
 
-	local world = context.world
+	arg_5_0._is_server = arg_5_1.is_server
+	arg_5_0._world = var_5_0
+	arg_5_0._physics_world = World.physics_world(var_5_0)
+	arg_5_0._unit_storage = arg_5_1.unit_storage
+	arg_5_0._network_transmit = arg_5_1.network_transmit
+	arg_5_0._total_num_bots = 0
+	arg_5_0._bot_breakables_broadphase = Broadphase(2, 60)
 
-	self._is_server = context.is_server
-	self._world = world
-	self._physics_world = World.physics_world(world)
-	self._unit_storage = context.unit_storage
-	self._network_transmit = context.network_transmit
-	self._total_num_bots = 0
-	self._bot_breakables_broadphase = Broadphase(2, 60)
+	if arg_5_0._is_server then
+		local var_5_1 = #Managers.state.side:sides()
 
-	if self._is_server then
-		local side_manager = Managers.state.side
-		local sides = side_manager:sides()
-		local num_sides = #sides
+		arg_5_0._last_move_target_unit = Script.new_array(var_5_1)
+		arg_5_0._last_move_target_rotations = {}
+		arg_5_0._bot_threat_queue = {}
 
-		self._last_move_target_unit = Script.new_array(num_sides)
-		self._last_move_target_rotations = {}
-		self._bot_threat_queue = {}
+		local var_5_2 = {}
 
-		local mule_pickups = {}
+		for iter_5_0, iter_5_1 in pairs(AllPickups) do
+			if iter_5_1.bots_mule_pickup then
+				local var_5_3 = iter_5_1.slot_name
 
-		for _, pickup_settings in pairs(AllPickups) do
-			if pickup_settings.bots_mule_pickup then
-				local slot = pickup_settings.slot_name
-
-				mule_pickups[slot] = mule_pickups[slot] or {}
+				var_5_2[var_5_3] = var_5_2[var_5_3] or {}
 			end
 		end
 
-		self._bot_ai_data = Script.new_array(num_sides)
-		self._bot_ai_data_lookup = {}
-		self._old_priority_targets = Script.new_array(num_sides)
-		self._available_mule_pickups = Script.new_array(num_sides)
-		self._available_health_pickups = Script.new_array(num_sides)
-		self._num_bots = Script.new_array(num_sides)
+		arg_5_0._bot_ai_data = Script.new_array(var_5_1)
+		arg_5_0._bot_ai_data_lookup = {}
+		arg_5_0._old_priority_targets = Script.new_array(var_5_1)
+		arg_5_0._available_mule_pickups = Script.new_array(var_5_1)
+		arg_5_0._available_health_pickups = Script.new_array(var_5_1)
+		arg_5_0._num_bots = Script.new_array(var_5_1)
 
-		for i = 1, num_sides do
-			self._bot_ai_data[i] = {}
-			self._old_priority_targets[i] = {}
-			self._available_mule_pickups[i] = table.clone(mule_pickups)
-			self._available_health_pickups[i] = {}
-			self._num_bots[i] = 0
+		for iter_5_2 = 1, var_5_1 do
+			arg_5_0._bot_ai_data[iter_5_2] = {}
+			arg_5_0._old_priority_targets[iter_5_2] = {}
+			arg_5_0._available_mule_pickups[iter_5_2] = table.clone(var_5_2)
+			arg_5_0._available_health_pickups[iter_5_2] = {}
+			arg_5_0._num_bots[iter_5_2] = 0
 		end
 
-		self._existing_bot_threats = {}
-		self._urgent_targets = {}
-		self._ally_needs_aid_priority = {}
-		self._timestamped_positions = {}
-		self._disallowed_tag_layers = {
-			barrel_explosion = true,
+		arg_5_0._existing_bot_threats = {}
+		arg_5_0._urgent_targets = {}
+		arg_5_0._ally_needs_aid_priority = {}
+		arg_5_0._timestamped_positions = {}
+		arg_5_0._disallowed_tag_layers = {
 			bot_poison_wind = true,
+			barrel_explosion = true
 		}
-		self._t = 0
-		self._in_carry_event = Script.new_array(num_sides)
+		arg_5_0._t = 0
+		arg_5_0._in_carry_event = Script.new_array(var_5_1)
 
-		local up = Vector3.up()
+		local var_5_4 = Vector3.up()
 
-		self._left_vectors_outside_volume = {
-			Vector3Box(Quaternion.forward(Quaternion(up, math.pi * 1 / 8))),
-			Vector3Box(Quaternion.forward(Quaternion(up, math.pi * 2 / 8))),
-			Vector3Box(Quaternion.forward(Quaternion(up, math.pi * 3 / 8))),
-			Vector3Box(Quaternion.forward(Quaternion(up, math.pi * 4 / 8))),
-			Vector3Box(Quaternion.forward(Quaternion(up, math.pi * 5 / 8))),
-			Vector3Box(Quaternion.forward(Quaternion(up, math.pi * 6 / 8))),
-			Vector3Box(Quaternion.forward(Quaternion(up, math.pi * 7 / 8))),
-			Vector3Box(Quaternion.forward(Quaternion(up, math.pi * 0 / 8))),
+		arg_5_0._left_vectors_outside_volume = {
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, math.pi * 1 / 8))),
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, math.pi * 2 / 8))),
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, math.pi * 3 / 8))),
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, math.pi * 4 / 8))),
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, math.pi * 5 / 8))),
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, math.pi * 6 / 8))),
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, math.pi * 7 / 8))),
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, math.pi * 0 / 8)))
 		}
-		self._right_vectors_outside_volume = {
-			Vector3Box(Quaternion.forward(Quaternion(up, -math.pi * 1 / 8))),
-			Vector3Box(Quaternion.forward(Quaternion(up, -math.pi * 2 / 8))),
-			Vector3Box(Quaternion.forward(Quaternion(up, -math.pi * 3 / 8))),
-			Vector3Box(Quaternion.forward(Quaternion(up, -math.pi * 4 / 8))),
-			Vector3Box(Quaternion.forward(Quaternion(up, -math.pi * 5 / 8))),
-			Vector3Box(Quaternion.forward(Quaternion(up, -math.pi * 6 / 8))),
-			Vector3Box(Quaternion.forward(Quaternion(up, -math.pi * 7 / 8))),
+		arg_5_0._right_vectors_outside_volume = {
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, -math.pi * 1 / 8))),
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, -math.pi * 2 / 8))),
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, -math.pi * 3 / 8))),
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, -math.pi * 4 / 8))),
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, -math.pi * 5 / 8))),
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, -math.pi * 6 / 8))),
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, -math.pi * 7 / 8)))
 		}
-		self._left_vectors = {
-			Vector3Box(Quaternion.forward(Quaternion(up, math.pi * 0.5))),
-			Vector3Box(Quaternion.forward(Quaternion(up, math.pi * 5 / 8))),
-			Vector3Box(Quaternion.forward(Quaternion(up, math.pi * 3 / 8))),
-			Vector3Box(Quaternion.forward(Quaternion(up, math.pi * 6 / 8))),
-			Vector3Box(Quaternion.forward(Quaternion(up, math.pi * 2 / 8))),
-			Vector3Box(Quaternion.forward(Quaternion(up, math.pi * 7 / 8))),
-			Vector3Box(Quaternion.forward(Quaternion(up, math.pi * 1 / 8))),
+		arg_5_0._left_vectors = {
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, math.pi * 0.5))),
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, math.pi * 5 / 8))),
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, math.pi * 3 / 8))),
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, math.pi * 6 / 8))),
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, math.pi * 2 / 8))),
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, math.pi * 7 / 8))),
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, math.pi * 1 / 8)))
 		}
-		self._right_vectors = {
-			Vector3Box(Quaternion.forward(Quaternion(up, -math.pi * 0.5))),
-			Vector3Box(Quaternion.forward(Quaternion(up, -math.pi * 5 / 8))),
-			Vector3Box(Quaternion.forward(Quaternion(up, -math.pi * 3 / 8))),
-			Vector3Box(Quaternion.forward(Quaternion(up, -math.pi * 6 / 8))),
-			Vector3Box(Quaternion.forward(Quaternion(up, -math.pi * 2 / 8))),
-			Vector3Box(Quaternion.forward(Quaternion(up, -math.pi * 7 / 8))),
-			Vector3Box(Quaternion.forward(Quaternion(up, -math.pi * 1 / 8))),
+		arg_5_0._right_vectors = {
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, -math.pi * 0.5))),
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, -math.pi * 5 / 8))),
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, -math.pi * 3 / 8))),
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, -math.pi * 6 / 8))),
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, -math.pi * 2 / 8))),
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, -math.pi * 7 / 8))),
+			Vector3Box(Quaternion.forward(Quaternion(var_5_4, -math.pi * 1 / 8)))
 		}
-		self._last_key_in_available_pickups = nil
-		self._update_pickups_at = -math.huge
-		self._used_covers = {}
-		self._pathing_points = {}
+		arg_5_0._last_key_in_available_pickups = nil
+		arg_5_0._update_pickups_at = -math.huge
+		arg_5_0._used_covers = {}
+		arg_5_0._pathing_points = {}
 
-		local rpcs = {
-			"rpc_bot_create_threat_oobb",
+		local var_5_5 = {
+			"rpc_bot_create_threat_oobb"
 		}
 
-		for _, order_data in pairs(AIBotGroupSystem.bot_orders) do
-			rpcs[#rpcs + 1] = order_data.rpc_type
+		for iter_5_3, iter_5_4 in pairs(AIBotGroupSystem.bot_orders) do
+			var_5_5[#var_5_5 + 1] = iter_5_4.rpc_type
 		end
 
-		local network_event_delegate = context.network_event_delegate
+		local var_5_6 = arg_5_1.network_event_delegate
 
-		self.network_event_delegate = network_event_delegate
+		arg_5_0.network_event_delegate = var_5_6
 
-		network_event_delegate:register(self, unpack(rpcs))
+		var_5_6:register(arg_5_0, unpack(var_5_5))
 	end
 end
 
-AIBotGroupSystem.destroy = function (self)
-	if self._is_server then
-		self.network_event_delegate:unregister(self)
+function AIBotGroupSystem.destroy(arg_6_0)
+	if arg_6_0._is_server then
+		arg_6_0.network_event_delegate:unregister(arg_6_0)
 	end
 end
 
-AIBotGroupSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
-	if extension_name == "BotBreakableExtension" then
-		local node_name = "rp_center"
-		local node = Unit.has_node(unit, node_name) and Unit.node(unit, node_name) or 0
-		local node_position = Unit.world_position(unit, node)
+function AIBotGroupSystem.on_add_extension(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	if arg_7_3 == "BotBreakableExtension" then
+		local var_7_0 = "rp_center"
+		local var_7_1 = Unit.has_node(arg_7_2, var_7_0) and Unit.node(arg_7_2, var_7_0) or 0
+		local var_7_2 = Unit.world_position(arg_7_2, var_7_1)
 
-		Broadphase.add(self._bot_breakables_broadphase, unit, node_position, 1)
-		ScriptUnit.add_extension(nil, unit, "AIBotGroupExtension", self.NAME)
+		Broadphase.add(arg_7_0._bot_breakables_broadphase, arg_7_2, var_7_2, 1)
+		ScriptUnit.add_extension(nil, arg_7_2, "AIBotGroupExtension", arg_7_0.NAME)
 
 		return {}
 	else
-		local initial_inventory = extension_init_data.initial_inventory
-		local side = extension_init_data.side
-		local data = {
+		local var_7_3 = arg_7_4.initial_inventory
+		local var_7_4 = arg_7_4.side
+		local var_7_5 = {
 			priority_target_distance = math.huge,
 			priority_targets = {},
 			nav_point_utility = {},
-			blackboard = BLACKBOARDS[unit],
+			blackboard = var_0_11[arg_7_2],
 			aoe_threat = {
 				expires = -math.huge,
-				escape_to = Vector3Box(),
+				escape_to = Vector3Box()
 			},
 			previous_bot_breakables = {},
 			current_bot_breakables = {},
 			pickup_orders = {},
-			side = side,
+			side = var_7_4
 		}
-		local slot_name = "slot_potion"
-		local item_name = initial_inventory[slot_name]
-		local item_data = rawget(ItemMasterList, item_name)
+		local var_7_6 = "slot_potion"
+		local var_7_7 = var_7_3[var_7_6]
+		local var_7_8 = rawget(ItemMasterList, var_7_7)
 
-		if item_data then
-			local template_name = item_data.template or item_data.temporary_template
-			local weapon_template = WeaponUtils.get_weapon_template(template_name)
+		if var_7_8 then
+			local var_7_9 = var_7_8.template or var_7_8.temporary_template
 
-			if weapon_template.is_grimoire then
-				local pickup_name = "grimoire"
+			if WeaponUtils.get_weapon_template(var_7_9).is_grimoire then
+				local var_7_10 = "grimoire"
 
-				data.pickup_orders[slot_name] = {
-					pickup_name = pickup_name,
+				var_7_5.pickup_orders[var_7_6] = {
+					pickup_name = var_7_10
 				}
 			end
 		end
 
-		local side_id = side.side_id
+		local var_7_11 = var_7_4.side_id
 
-		self._bot_ai_data_lookup[unit] = data
-		self._bot_ai_data[side_id][unit] = data
+		arg_7_0._bot_ai_data_lookup[arg_7_2] = var_7_5
+		arg_7_0._bot_ai_data[var_7_11][arg_7_2] = var_7_5
 
-		local ext = ScriptUnit.add_extension(nil, unit, "AIBotGroupExtension", self.NAME)
+		local var_7_12 = ScriptUnit.add_extension(nil, arg_7_2, "AIBotGroupExtension", arg_7_0.NAME)
 
-		ext.data = data
-		self._num_bots[side_id] = self._num_bots[side_id] + 1
-		self._total_num_bots = self._total_num_bots + 1
+		var_7_12.data = var_7_5
+		arg_7_0._num_bots[var_7_11] = arg_7_0._num_bots[var_7_11] + 1
+		arg_7_0._total_num_bots = arg_7_0._total_num_bots + 1
 
-		return ext
+		return var_7_12
 	end
 end
 
-local function is_inside_existing_threat(threats, to, bot_radius)
-	for i = 1, #threats do
-		local threat = threats[i]
-		local threat_pos = threat.pos:unbox()
-		local threat_rot = threat.rot and threat.rot:unbox()
-		local shape = threat.shape
-		local size, extents
+local function var_0_12(arg_8_0, arg_8_1, arg_8_2)
+	for iter_8_0 = 1, #arg_8_0 do
+		local var_8_0 = arg_8_0[iter_8_0]
+		local var_8_1 = var_8_0.pos:unbox()
+		local var_8_2 = var_8_0.rot and var_8_0.rot:unbox()
+		local var_8_3 = var_8_0.shape
+		local var_8_4
+		local var_8_5
 
-		if shape == "sphere" then
-			size = threat.size
-			extents = size + bot_radius
-		elseif shape == "cylinder" then
-			size = threat.size:unbox()
-			extents = Vector3(math.max(size[1] - bot_radius, 0), size[2] + bot_radius, size[3] + bot_radius)
+		if var_8_3 == "sphere" then
+			var_8_4 = var_8_0.size
+			var_8_5 = var_8_4 + arg_8_2
+		elseif var_8_3 == "cylinder" then
+			var_8_4 = var_8_0.size:unbox()
+			var_8_5 = Vector3(math.max(var_8_4[1] - arg_8_2, 0), var_8_4[2] + arg_8_2, var_8_4[3] + arg_8_2)
 		else
-			size = threat.size:unbox()
-			extents = size + Vector3(bot_radius, bot_radius, bot_radius)
+			var_8_4 = var_8_0.size:unbox()
+			var_8_5 = var_8_4 + Vector3(arg_8_2, arg_8_2, arg_8_2)
 		end
 
-		local inside
+		local var_8_6
 
-		if shape == "oobb" then
-			local pose = Matrix4x4.from_quaternion_position(threat_rot, threat_pos)
+		if var_8_3 == "oobb" then
+			local var_8_7 = Matrix4x4.from_quaternion_position(var_8_2, var_8_1)
 
-			inside = math.point_is_inside_oobb(to, pose, extents)
-		elseif shape == "cylinder" then
-			inside = math.point_is_inside_cylinder(to, threat_pos, size[1], size[2], size[3])
-		elseif shape == "sphere" then
-			inside = Vector3.distance_squared(to, threat_pos) < size^2
+			var_8_6 = math.point_is_inside_oobb(arg_8_1, var_8_7, var_8_5)
+		elseif var_8_3 == "cylinder" then
+			var_8_6 = math.point_is_inside_cylinder(arg_8_1, var_8_1, var_8_4[1], var_8_4[2], var_8_4[3])
+		elseif var_8_3 == "sphere" then
+			var_8_6 = Vector3.distance_squared(arg_8_1, var_8_1) < var_8_4^2
 		end
 
-		if inside then
+		if var_8_6 then
 			return true
 		end
 	end
@@ -282,145 +276,132 @@ local function is_inside_existing_threat(threats, to, bot_radius)
 	return false
 end
 
-AIBotGroupSystem.is_inside_aoe_threat = function (self, position)
-	return is_inside_existing_threat(self._existing_bot_threats, position, BOT_RADIUS)
+function AIBotGroupSystem.is_inside_aoe_threat(arg_9_0, arg_9_1)
+	return var_0_12(arg_9_0._existing_bot_threats, arg_9_1, var_0_7)
 end
 
-AIBotGroupSystem.extensions_ready = function (self, world, unit, extension_name)
-	if extension_name ~= "BotBreakableExtension" then
-		local data = self._bot_ai_data_lookup[unit]
-
-		data.status_extension = ScriptUnit.extension(unit, "status_system")
+function AIBotGroupSystem.extensions_ready(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	if arg_10_3 ~= "BotBreakableExtension" then
+		arg_10_0._bot_ai_data_lookup[arg_10_2].status_extension = ScriptUnit.extension(arg_10_2, "status_system")
 	end
 end
 
-AIBotGroupSystem.on_remove_extension = function (self, unit, extension_name)
-	if extension_name == "AIBotGroupExtension" then
-		local bot_ai_data = self._bot_ai_data_lookup[unit]
-		local side = bot_ai_data.side
-		local side_id = side.side_id
+function AIBotGroupSystem.on_remove_extension(arg_11_0, arg_11_1, arg_11_2)
+	if arg_11_2 == "AIBotGroupExtension" then
+		local var_11_0 = arg_11_0._bot_ai_data_lookup[arg_11_1].side.side_id
 
-		self._bot_ai_data_lookup[unit] = nil
-		self._bot_ai_data[side_id][unit] = nil
-		self._num_bots[side_id] = self._num_bots[side_id] - 1
-		self._total_num_bots = self._total_num_bots - 1
+		arg_11_0._bot_ai_data_lookup[arg_11_1] = nil
+		arg_11_0._bot_ai_data[var_11_0][arg_11_1] = nil
+		arg_11_0._num_bots[var_11_0] = arg_11_0._num_bots[var_11_0] - 1
+		arg_11_0._total_num_bots = arg_11_0._total_num_bots - 1
 	end
 
-	ScriptUnit.remove_extension(unit, self.NAME)
+	ScriptUnit.remove_extension(arg_11_1, arg_11_0.NAME)
 end
 
-AIBotGroupSystem.hot_join_sync = function (self, peer_id, player)
+function AIBotGroupSystem.hot_join_sync(arg_12_0, arg_12_1, arg_12_2)
 	return
 end
 
-AIBotGroupSystem.set_in_carry_event = function (self, enable, side)
-	local side_id = side.side_id
+function AIBotGroupSystem.set_in_carry_event(arg_13_0, arg_13_1, arg_13_2)
+	local var_13_0 = arg_13_2.side_id
 
-	self._in_carry_event[side_id] = enable
+	arg_13_0._in_carry_event[var_13_0] = arg_13_1
 end
 
-AIBotGroupSystem.update = function (self, context, t)
-	if not self._is_server or self._total_num_bots == 0 then
+function AIBotGroupSystem.update(arg_14_0, arg_14_1, arg_14_2)
+	if not arg_14_0._is_server or arg_14_0._total_num_bots == 0 then
 		return
 	end
 
-	self._t = t
+	arg_14_0._t = arg_14_2
 
-	local dt = context.dt
-	local bot_threats = self._existing_bot_threats
+	local var_14_0 = arg_14_1.dt
+	local var_14_1 = arg_14_0._existing_bot_threats
 
-	for i = #bot_threats, 1, -1 do
-		if t > bot_threats[i].expires then
-			self:remove_threat(bot_threats[i])
+	for iter_14_0 = #var_14_1, 1, -1 do
+		if arg_14_2 > var_14_1[iter_14_0].expires then
+			arg_14_0:remove_threat(var_14_1[iter_14_0])
 		end
 	end
 
-	local bot_threat_queue = self._bot_threat_queue
+	local var_14_2 = arg_14_0._bot_threat_queue
 
-	for i = 1, #bot_threat_queue do
-		local threat = bot_threat_queue[i]
-		local threat_position = threat[bot_threat_queue_position]:unbox()
-		local shape = threat[bot_threat_queue_shape]
-		local threat_size = threat[bot_threat_queue_size]:unbox()
-		local threat_rotation = threat[bot_threat_queue_rotation]:unbox()
-		local threat_duration = threat[bot_threat_queue_threat_duration]
-		local source = threat[bot_threat_source]
+	for iter_14_1 = 1, #var_14_2 do
+		local var_14_3 = var_14_2[iter_14_1]
+		local var_14_4 = var_14_3[var_0_1]:unbox()
+		local var_14_5 = var_14_3[var_0_2]
+		local var_14_6 = var_14_3[var_0_3]:unbox()
+		local var_14_7 = var_14_3[var_0_4]:unbox()
+		local var_14_8 = var_14_3[var_0_5]
+		local var_14_9 = var_14_3[var_0_6]
 
-		self:aoe_threat_created(threat_position, shape, threat_size, threat_rotation, threat_duration, source)
+		arg_14_0:aoe_threat_created(var_14_4, var_14_5, var_14_6, var_14_7, var_14_8, var_14_9)
 
-		bot_threat_queue[i] = nil
+		var_14_2[iter_14_1] = nil
 	end
 
-	self:_update_proximity_bot_breakables(t)
-	self:_update_urgent_targets(dt, t)
-	self:_update_opportunity_targets(dt, t)
-	self:_update_existence_checks(dt, t)
-	self:_update_move_targets(dt, t)
-	self:_update_priority_targets(dt, t)
-	self:_update_pickups(dt, t)
-	self:_update_ally_needs_aid_priority()
+	arg_14_0:_update_proximity_bot_breakables(arg_14_2)
+	arg_14_0:_update_urgent_targets(var_14_0, arg_14_2)
+	arg_14_0:_update_opportunity_targets(var_14_0, arg_14_2)
+	arg_14_0:_update_existence_checks(var_14_0, arg_14_2)
+	arg_14_0:_update_move_targets(var_14_0, arg_14_2)
+	arg_14_0:_update_priority_targets(var_14_0, arg_14_2)
+	arg_14_0:_update_pickups(var_14_0, arg_14_2)
+	arg_14_0:_update_ally_needs_aid_priority()
 end
 
 AIBotGroupSystem.bot_orders = {
 	pickup = {
-		function_name = "_order_pickup",
 		rpc_type = "rpc_bot_unit_order",
+		function_name = "_order_pickup"
 	},
 	drop = {
-		function_name = "_order_drop",
-		lookup = "pickup_names",
 		rpc_type = "rpc_bot_lookup_order",
-	},
+		lookup = "pickup_names",
+		function_name = "_order_drop"
+	}
 }
 
-AIBotGroupSystem.order = function (self, order_type, bot_unit, order_target, ordering_player)
-	local order_data = AIBotGroupSystem.bot_orders[order_type]
+function AIBotGroupSystem.order(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+	local var_15_0 = AIBotGroupSystem.bot_orders[arg_15_1]
 
-	if self._is_server then
-		local func = self[order_data.function_name]
-
-		func(self, bot_unit, order_target, ordering_player)
+	if arg_15_0._is_server then
+		arg_15_0[var_15_0.function_name](arg_15_0, arg_15_2, arg_15_3, arg_15_4)
 	else
-		local rpc_type = order_data.rpc_type
-		local target_id
+		local var_15_1 = var_15_0.rpc_type
+		local var_15_2
 
-		if rpc_type == "rpc_bot_unit_order" then
-			target_id = self._unit_storage:go_id(order_target)
-		elseif rpc_type == "rpc_bot_lookup_order" then
-			target_id = NetworkLookup[order_data.lookup][order_target]
+		if var_15_1 == "rpc_bot_unit_order" then
+			var_15_2 = arg_15_0._unit_storage:go_id(arg_15_3)
+		elseif var_15_1 == "rpc_bot_lookup_order" then
+			var_15_2 = NetworkLookup[var_15_0.lookup][arg_15_3]
 		else
-			ferror("Incorrect rpc_type %q.", rpc_type)
+			ferror("Incorrect rpc_type %q.", var_15_1)
 		end
 
 		if Managers.state.network:game() then
-			local order_type_id = NetworkLookup.bot_orders[order_type]
-			local bot_unit_id = self._unit_storage:go_id(bot_unit)
+			local var_15_3 = NetworkLookup.bot_orders[arg_15_1]
+			local var_15_4 = arg_15_0._unit_storage:go_id(arg_15_2)
 
-			self._network_transmit:send_rpc_server(rpc_type, order_type_id, bot_unit_id, target_id, ordering_player:network_id(), ordering_player:local_player_id())
+			arg_15_0._network_transmit:send_rpc_server(var_15_1, var_15_3, var_15_4, var_15_2, arg_15_4:network_id(), arg_15_4:local_player_id())
 		end
 	end
 end
 
-AIBotGroupSystem.get_pickup_order = function (self, bot_unit, slot_name)
-	local bot_data = self._bot_ai_data_lookup[bot_unit]
-	local order = bot_data.pickup_orders[slot_name]
-
-	return order
+function AIBotGroupSystem.get_pickup_order(arg_16_0, arg_16_1, arg_16_2)
+	return arg_16_0._bot_ai_data_lookup[arg_16_1].pickup_orders[arg_16_2]
 end
 
-AIBotGroupSystem.get_ammo_pickup_order_unit = function (self, bot_unit)
-	local bot_data = self._bot_ai_data_lookup[bot_unit]
-	local pickup_unit = bot_data.ammo_pickup_order_unit
-
-	return pickup_unit
+function AIBotGroupSystem.get_ammo_pickup_order_unit(arg_17_0, arg_17_1)
+	return arg_17_0._bot_ai_data_lookup[arg_17_1].ammo_pickup_order_unit
 end
 
-AIBotGroupSystem.has_pending_pickup_order = function (self, bot_unit)
-	local bot_data = self._bot_ai_data_lookup[bot_unit]
-	local pickup_orders = bot_data.pickup_orders
+function AIBotGroupSystem.has_pending_pickup_order(arg_18_0, arg_18_1)
+	local var_18_0 = arg_18_0._bot_ai_data_lookup[arg_18_1].pickup_orders
 
-	for _, order in pairs(pickup_orders) do
-		if order.unit then
+	for iter_18_0, iter_18_1 in pairs(var_18_0) do
+		if iter_18_1.unit then
 			return true
 		end
 	end
@@ -428,171 +409,159 @@ AIBotGroupSystem.has_pending_pickup_order = function (self, bot_unit)
 	return false
 end
 
-AIBotGroupSystem.rpc_bot_unit_order = function (self, channel_id, order_type_id, bot_unit_id, order_target_id, ordering_player_peer, ordering_local_player_id)
-	local order_type = NetworkLookup.bot_orders[order_type_id]
-	local bot_unit = self._unit_storage:unit(bot_unit_id)
-	local target_unit = self._unit_storage:unit(order_target_id)
-	local ordering_player = Managers.player:player(ordering_player_peer, ordering_local_player_id)
+function AIBotGroupSystem.rpc_bot_unit_order(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
+	local var_19_0 = NetworkLookup.bot_orders[arg_19_2]
+	local var_19_1 = arg_19_0._unit_storage:unit(arg_19_3)
+	local var_19_2 = arg_19_0._unit_storage:unit(arg_19_4)
+	local var_19_3 = Managers.player:player(arg_19_5, arg_19_6)
 
-	if Unit.alive(bot_unit) and Unit.alive(target_unit) and ordering_player then
-		self:order(order_type, bot_unit, target_unit, ordering_player)
+	if Unit.alive(var_19_1) and Unit.alive(var_19_2) and var_19_3 then
+		arg_19_0:order(var_19_0, var_19_1, var_19_2, var_19_3)
 	end
 end
 
-AIBotGroupSystem.rpc_bot_lookup_order = function (self, channel_id, order_type_id, bot_unit_id, order_target_id, ordering_player_peer, ordering_local_player_id)
-	local order_type = NetworkLookup.bot_orders[order_type_id]
-	local bot_unit = self._unit_storage:unit(bot_unit_id)
-	local target = NetworkLookup[AIBotGroupSystem.bot_orders[order_type].lookup][order_target_id]
-	local ordering_player = Managers.player:player(ordering_player_peer, ordering_local_player_id)
+function AIBotGroupSystem.rpc_bot_lookup_order(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6)
+	local var_20_0 = NetworkLookup.bot_orders[arg_20_2]
+	local var_20_1 = arg_20_0._unit_storage:unit(arg_20_3)
+	local var_20_2 = NetworkLookup[AIBotGroupSystem.bot_orders[var_20_0].lookup][arg_20_4]
+	local var_20_3 = Managers.player:player(arg_20_5, arg_20_6)
 
-	if Unit.alive(bot_unit) and ordering_player then
-		self:order(order_type, bot_unit, target, ordering_player)
+	if Unit.alive(var_20_1) and var_20_3 then
+		arg_20_0:order(var_20_0, var_20_1, var_20_2, var_20_3)
 	end
 end
 
-AIBotGroupSystem.queue_aoe_threat = function (self, position, shape, size, rotation, duration, source)
-	if position and shape and size and rotation and duration then
-		local bot_threat_queue = self._bot_threat_queue
-		local new_threat = {
-			Vector3Box(position),
-			shape,
-			Vector3Box(size),
-			QuaternionBox(rotation),
-			duration,
-			source,
+function AIBotGroupSystem.queue_aoe_threat(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6)
+	if arg_21_1 and arg_21_2 and arg_21_3 and arg_21_4 and arg_21_5 then
+		local var_21_0 = arg_21_0._bot_threat_queue
+		local var_21_1 = {
+			Vector3Box(arg_21_1),
+			arg_21_2,
+			Vector3Box(arg_21_3),
+			QuaternionBox(arg_21_4),
+			arg_21_5,
+			arg_21_6
 		}
 
-		bot_threat_queue[#bot_threat_queue + 1] = new_threat
+		var_21_0[#var_21_0 + 1] = var_21_1
 	end
 end
 
-AIBotGroupSystem.rpc_bot_create_threat_oobb = function (self, channel_id, threat_position, threat_rotation, threat_size, threat_duration)
-	self:queue_aoe_threat(threat_position, "oobb", threat_size, threat_rotation, threat_duration, "RPC")
+function AIBotGroupSystem.rpc_bot_create_threat_oobb(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
+	arg_22_0:queue_aoe_threat(arg_22_2, "oobb", arg_22_4, arg_22_3, arg_22_5, "RPC")
 end
 
-AIBotGroupSystem._order_ammo_pickup = function (self, bot_unit, pickup_unit, ordering_player)
-	local bot_data = self._bot_ai_data_lookup[bot_unit]
+function AIBotGroupSystem._order_ammo_pickup(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+	local var_23_0 = arg_23_0._bot_ai_data_lookup[arg_23_1]
 
-	if bot_data then
-		local blackboard = bot_data.blackboard
-		local inventory_extension = blackboard.inventory_extension
-		local has_full_ammo = inventory_extension:has_full_ammo()
+	if var_23_0 then
+		local var_23_1 = var_23_0.blackboard
 
-		if has_full_ammo then
-			self:_chat_message(bot_unit, ordering_player, "has_full_ammo")
+		if var_23_1.inventory_extension:has_full_ammo() then
+			arg_23_0:_chat_message(arg_23_1, arg_23_3, "has_full_ammo")
 		else
-			local time_manager = Managers.time
-			local t = time_manager:time("game")
+			local var_23_2 = Managers.time:time("game")
 
-			blackboard.ammo_pickup = pickup_unit
-			blackboard.ammo_dist = Vector3.distance(POSITION_LOOKUP[bot_unit], POSITION_LOOKUP[pickup_unit])
-			blackboard.ammo_pickup_valid_until = t + 5
-			blackboard.needs_target_position_refresh = true
-			bot_data.ammo_pickup_order_unit = pickup_unit
+			var_23_1.ammo_pickup = arg_23_2
+			var_23_1.ammo_dist = Vector3.distance(POSITION_LOOKUP[arg_23_1], POSITION_LOOKUP[arg_23_2])
+			var_23_1.ammo_pickup_valid_until = var_23_2 + 5
+			var_23_1.needs_target_position_refresh = true
+			var_23_0.ammo_pickup_order_unit = arg_23_2
 
-			self:_chat_message(bot_unit, ordering_player, "acknowledge_ammo")
+			arg_23_0:_chat_message(arg_23_1, arg_23_3, "acknowledge_ammo")
 		end
 	else
-		local party_manager = Managers.party
-		local party = party_manager:get_party_from_player_id(ordering_player:network_id(), ordering_player:local_player_id())
-		local side_manager = Managers.state.side
-		local side = side_manager.side_by_party[party]
-		local side_id = side.side_id
-		local side_bot_data = self._bot_ai_data[side_id]
+		local var_23_3 = Managers.party:get_party_from_player_id(arg_23_3:network_id(), arg_23_3:local_player_id())
+		local var_23_4 = Managers.state.side.side_by_party[var_23_3].side_id
+		local var_23_5 = arg_23_0._bot_ai_data[var_23_4]
 
-		for unit, data in pairs(side_bot_data) do
-			local order_unit = data.ammo_pickup_order_unit
+		for iter_23_0, iter_23_1 in pairs(var_23_5) do
+			if iter_23_1.ammo_pickup_order_unit == arg_23_2 then
+				local var_23_6 = iter_23_1.blackboard
 
-			if order_unit == pickup_unit then
-				local blackboard = data.blackboard
+				arg_23_0:_chat_message(iter_23_0, arg_23_3, "abort_pickup_assigned_to_other")
 
-				self:_chat_message(unit, ordering_player, "abort_pickup_assigned_to_other")
-
-				data.ammo_pickup_order_unit = nil
-				blackboard.ammo_pickup = nil
-				blackboard.needs_target_position_refresh = true
+				iter_23_1.ammo_pickup_order_unit = nil
+				var_23_6.ammo_pickup = nil
+				var_23_6.needs_target_position_refresh = true
 			end
 		end
 	end
 end
 
-AIBotGroupSystem._order_pickup = function (self, bot_unit, pickup_unit, ordering_player)
-	if self._is_server then
-		local pickup_ext = ScriptUnit.extension(pickup_unit, "pickup_system")
-		local settings = pickup_ext:get_pickup_settings()
-		local slot_name = settings.slot_name
+function AIBotGroupSystem._order_pickup(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+	if arg_24_0._is_server then
+		local var_24_0 = ScriptUnit.extension(arg_24_2, "pickup_system")
+		local var_24_1 = var_24_0:get_pickup_settings()
+		local var_24_2 = var_24_1.slot_name
 
-		if settings.type == "ammo" then
-			self:_order_ammo_pickup(bot_unit, pickup_unit, ordering_player)
-		elseif slot_name then
-			local bot_data = self._bot_ai_data_lookup[bot_unit]
+		if var_24_1.type == "ammo" then
+			arg_24_0:_order_ammo_pickup(arg_24_1, arg_24_2, arg_24_3)
+		elseif var_24_2 then
+			local var_24_3 = arg_24_0._bot_ai_data_lookup[arg_24_1]
 
-			if bot_data then
-				local inventory_extension = ScriptUnit.extension(bot_unit, "inventory_system")
-				local slot_data = inventory_extension:get_slot_data(slot_name)
-				local can_hold_more = inventory_extension:can_store_additional_item(slot_name)
+			if var_24_3 then
+				local var_24_4 = ScriptUnit.extension(arg_24_1, "inventory_system")
+				local var_24_5 = var_24_4:get_slot_data(var_24_2)
+				local var_24_6 = var_24_4:can_store_additional_item(var_24_2)
 
-				if slot_data and not can_hold_more then
-					local current_item_template = inventory_extension:get_item_template(slot_data)
-					local has_similar_item_already
+				if var_24_5 and not var_24_6 then
+					local var_24_7 = var_24_4:get_item_template(var_24_5)
+					local var_24_8
 
-					if pickup_ext.pickup_name == "grimoire" then
-						has_similar_item_already = current_item_template.is_grimoire
+					if var_24_0.pickup_name == "grimoire" then
+						var_24_8 = var_24_7.is_grimoire
 					else
-						has_similar_item_already = current_item_template.pickup_data and current_item_template.pickup_data.pickup_name == pickup_ext.pickup_name
+						var_24_8 = var_24_7.pickup_data and var_24_7.pickup_data.pickup_name == var_24_0.pickup_name
 					end
 
-					if has_similar_item_already then
-						self:_chat_message(bot_unit, ordering_player, "already_have_item", Unit.get_data(pickup_unit, "interaction_data", "hud_description"))
+					if var_24_8 then
+						arg_24_0:_chat_message(arg_24_1, arg_24_3, "already_have_item", Unit.get_data(arg_24_2, "interaction_data", "hud_description"))
 
 						return
 					end
 				end
 
-				local side = bot_data.side
-				local side_id = side.side_id
-				local side_bot_data = self._bot_ai_data[side_id]
+				local var_24_9 = var_24_3.side.side_id
+				local var_24_10 = arg_24_0._bot_ai_data[var_24_9]
 
-				for unit, data in pairs(side_bot_data) do
-					local order = data.pickup_orders[slot_name]
+				for iter_24_0, iter_24_1 in pairs(var_24_10) do
+					local var_24_11 = iter_24_1.pickup_orders[var_24_2]
 
-					if order and order.unit == pickup_unit then
-						if unit == bot_unit then
-							self:_chat_message(bot_unit, ordering_player, "already_picking_up")
+					if var_24_11 and var_24_11.unit == arg_24_2 then
+						if iter_24_0 == arg_24_1 then
+							arg_24_0:_chat_message(arg_24_1, arg_24_3, "already_picking_up")
 
 							return
 						end
 
-						self:_chat_message(unit, ordering_player, "abort_pickup_assigned_to_other")
+						arg_24_0:_chat_message(iter_24_0, arg_24_3, "abort_pickup_assigned_to_other")
 
-						data.pickup_orders[slot_name] = nil
-						data.blackboard.needs_target_position_refresh = true
+						iter_24_1.pickup_orders[var_24_2] = nil
+						iter_24_1.blackboard.needs_target_position_refresh = true
 					end
 				end
 
-				self:_chat_message(bot_unit, ordering_player, "acknowledge_pickup", Unit.get_data(pickup_unit, "interaction_data", "hud_description"))
+				arg_24_0:_chat_message(arg_24_1, arg_24_3, "acknowledge_pickup", Unit.get_data(arg_24_2, "interaction_data", "hud_description"))
 
-				bot_data.pickup_orders[slot_name] = {
-					unit = pickup_unit,
-					pickup_name = pickup_ext.pickup_name,
+				var_24_3.pickup_orders[var_24_2] = {
+					unit = arg_24_2,
+					pickup_name = var_24_0.pickup_name
 				}
-				bot_data.blackboard.needs_target_position_refresh = true
+				var_24_3.blackboard.needs_target_position_refresh = true
 			else
-				local party_manager = Managers.party
-				local party = party_manager:get_party_from_player_id(ordering_player:network_id(), ordering_player:local_player_id())
-				local side_manager = Managers.state.side
-				local side = side_manager.side_by_party[party]
-				local side_id = side.side_id
-				local side_bot_data = self._bot_ai_data[side_id]
+				local var_24_12 = Managers.party:get_party_from_player_id(arg_24_3:network_id(), arg_24_3:local_player_id())
+				local var_24_13 = Managers.state.side.side_by_party[var_24_12].side_id
+				local var_24_14 = arg_24_0._bot_ai_data[var_24_13]
 
-				for unit, data in pairs(side_bot_data) do
-					local order = data.pickup_orders[slot_name]
+				for iter_24_2, iter_24_3 in pairs(var_24_14) do
+					local var_24_15 = iter_24_3.pickup_orders[var_24_2]
 
-					if order and order.unit == pickup_unit then
-						self:_chat_message(unit, ordering_player, "abort_pickup_assigned_to_other")
+					if var_24_15 and var_24_15.unit == arg_24_2 then
+						arg_24_0:_chat_message(iter_24_2, arg_24_3, "abort_pickup_assigned_to_other")
 
-						data.pickup_orders[slot_name] = nil
-						data.blackboard.needs_target_position_refresh = true
+						iter_24_3.pickup_orders[var_24_2] = nil
+						iter_24_3.blackboard.needs_target_position_refresh = true
 					end
 				end
 			end
@@ -600,232 +569,224 @@ AIBotGroupSystem._order_pickup = function (self, bot_unit, pickup_unit, ordering
 	end
 end
 
-AIBotGroupSystem._order_drop = function (self, bot_unit, pickup_name, ordering_player)
-	if self._is_server then
-		local bot_data = self._bot_ai_data_lookup[bot_unit]
+function AIBotGroupSystem._order_drop(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+	if arg_25_0._is_server then
+		local var_25_0 = arg_25_0._bot_ai_data_lookup[arg_25_1]
 
-		if bot_data then
-			local pickup_settings = AllPickups[pickup_name]
-			local slot_name = pickup_settings.slot_name
-			local order = bot_data.pickup_orders[slot_name]
+		if var_25_0 then
+			local var_25_1 = AllPickups[arg_25_2].slot_name
+			local var_25_2 = var_25_0.pickup_orders[var_25_1]
 
-			if order and order.pickup_name == pickup_name then
-				bot_data.pickup_orders[slot_name] = nil
+			if var_25_2 and var_25_2.pickup_name == arg_25_2 then
+				var_25_0.pickup_orders[var_25_1] = nil
 
-				self:_chat_message(bot_unit, ordering_player, "acknowledge_drop")
+				arg_25_0:_chat_message(arg_25_1, arg_25_3, "acknowledge_drop")
 			end
 		end
 	end
 end
 
-local PRIORITY_TARGETS_TEMP = {}
-local NEW_TARGETS = {}
-local TEMP_PLAYER_UNITS = {}
-local TEMP_DISABLED_PLAYER_UNITS = {}
-local TEMP_PLAYER_POSITIONS = {}
-local TEMP_MAN_MAN_POINTS = {}
-local VORTEX_STAY_NEAR_PLAYER_MAX_DISTANCE = 3
+local var_0_13 = {}
+local var_0_14 = {}
+local var_0_15 = {}
+local var_0_16 = {}
+local var_0_17 = {}
+local var_0_18 = {}
+local var_0_19 = 3
 
-AIBotGroupSystem._update_existence_checks = function (self, dt, t)
-	local conflict_director = Managers.state.conflict
-	local num_vortex_sorcerer = conflict_director:count_units_by_breed("chaos_vortex_sorcerer")
-	local vortex_sorcerer_exist = num_vortex_sorcerer > 0
-	local num_vortex = conflict_director:count_units_by_breed("chaos_vortex")
-	local vortex_exist = num_vortex > 0
-	local bot_ai_data = self._bot_ai_data
+function AIBotGroupSystem._update_existence_checks(arg_26_0, arg_26_1, arg_26_2)
+	local var_26_0 = Managers.state.conflict
+	local var_26_1 = var_26_0:count_units_by_breed("chaos_vortex_sorcerer") > 0
+	local var_26_2 = var_26_0:count_units_by_breed("chaos_vortex") > 0
+	local var_26_3 = arg_26_0._bot_ai_data
 
-	for side_id = 1, #bot_ai_data do
-		local side_bot_data = bot_ai_data[side_id]
+	for iter_26_0 = 1, #var_26_3 do
+		local var_26_4 = var_26_3[iter_26_0]
 
-		for _, data in pairs(side_bot_data) do
-			local blackboard = data.blackboard
-			local ai_extension = blackboard.ai_extension
+		for iter_26_1, iter_26_2 in pairs(var_26_4) do
+			local var_26_5 = iter_26_2.blackboard
 
-			ai_extension:set_stay_near_player(vortex_sorcerer_exist, VORTEX_STAY_NEAR_PLAYER_MAX_DISTANCE)
+			var_26_5.ai_extension:set_stay_near_player(var_26_1, var_0_19)
 
-			blackboard.vortex_exist = vortex_exist
+			var_26_5.vortex_exist = var_26_2
 		end
 	end
 end
 
-local POSITION_TIMESTAMP_UPDATE_RADIUS = 1
-local AFK_TIME_LIMIT = 20
+local var_0_20 = 1
+local var_0_21 = 20
 
-AIBotGroupSystem._update_player_timestamped_positions = function (self, t, player_units)
-	for i = 1, #player_units do
-		local player_unit = player_units[i]
-		local timestamp_data = self._timestamped_positions[player_unit]
-		local unit_pos = POSITION_LOOKUP[player_unit]
+function AIBotGroupSystem._update_player_timestamped_positions(arg_27_0, arg_27_1, arg_27_2)
+	for iter_27_0 = 1, #arg_27_2 do
+		local var_27_0 = arg_27_2[iter_27_0]
+		local var_27_1 = arg_27_0._timestamped_positions[var_27_0]
+		local var_27_2 = POSITION_LOOKUP[var_27_0]
 
-		if timestamp_data and unit_pos then
-			if Vector3.distance_squared(timestamp_data.position:unbox(), unit_pos) > POSITION_TIMESTAMP_UPDATE_RADIUS^2 then
-				timestamp_data.position = Vector3Box(unit_pos)
-				timestamp_data.timestamp = t
-				timestamp_data.afk = false
-			elseif t > timestamp_data.timestamp + AFK_TIME_LIMIT then
-				timestamp_data.afk = true
+		if var_27_1 and var_27_2 then
+			if Vector3.distance_squared(var_27_1.position:unbox(), var_27_2) > var_0_20^2 then
+				var_27_1.position = Vector3Box(var_27_2)
+				var_27_1.timestamp = arg_27_1
+				var_27_1.afk = false
+			elseif arg_27_1 > var_27_1.timestamp + var_0_21 then
+				var_27_1.afk = true
 			end
 
-			self._timestamped_positions[player_unit] = timestamp_data
-		elseif unit_pos then
-			self._timestamped_positions[player_unit] = {
+			arg_27_0._timestamped_positions[var_27_0] = var_27_1
+		elseif var_27_2 then
+			arg_27_0._timestamped_positions[var_27_0] = {
 				afk = false,
-				position = Vector3Box(unit_pos),
-				timestamp = t,
+				position = Vector3Box(var_27_2),
+				timestamp = arg_27_1
 			}
 		end
 	end
 end
 
-AIBotGroupSystem._update_move_targets = function (self, dt, t)
-	local side_manager = Managers.state.side
-	local nav_world = Managers.state.entity:system("ai_system"):nav_world()
-	local bot_follow_disabled = Managers.state.game_mode:game_mode().bot_follow_disabled
-	local bot_ai_data = self._bot_ai_data
-	local num_bots = self._num_bots
-	local in_carry_event = self._in_carry_event
-	local last_move_target_unit = self._last_move_target_unit
+function AIBotGroupSystem._update_move_targets(arg_28_0, arg_28_1, arg_28_2)
+	local var_28_0 = Managers.state.side
+	local var_28_1 = Managers.state.entity:system("ai_system"):nav_world()
+	local var_28_2 = Managers.state.game_mode:game_mode().bot_follow_disabled
+	local var_28_3 = arg_28_0._bot_ai_data
+	local var_28_4 = arg_28_0._num_bots
+	local var_28_5 = arg_28_0._in_carry_event
+	local var_28_6 = arg_28_0._last_move_target_unit
 
-	for side_id = 1, #bot_ai_data do
+	for iter_28_0 = 1, #var_28_3 do
 		repeat
-			local side = side_manager:get_side(side_id)
-			local side_bot_data = bot_ai_data[side_id]
-			local player_units = side.PLAYER_UNITS
+			local var_28_7 = var_28_0:get_side(iter_28_0)
+			local var_28_8 = var_28_3[iter_28_0]
+			local var_28_9 = var_28_7.PLAYER_UNITS
 
-			for i = 1, #player_units do
-				local player_unit = player_units[i]
-				local status_extension = ScriptUnit.extension(player_unit, "status_system")
+			for iter_28_1 = 1, #var_28_9 do
+				local var_28_10 = var_28_9[iter_28_1]
+				local var_28_11 = ScriptUnit.extension(var_28_10, "status_system")
 
-				if not status_extension.near_vortex then
-					local not_disabled = not status_extension:is_disabled()
-
-					if not_disabled then
-						TEMP_PLAYER_UNITS[#TEMP_PLAYER_UNITS + 1] = player_unit
+				if not var_28_11.near_vortex then
+					if not var_28_11:is_disabled() then
+						var_0_15[#var_0_15 + 1] = var_28_10
 					else
-						TEMP_DISABLED_PLAYER_UNITS[#TEMP_DISABLED_PLAYER_UNITS + 1] = player_unit
+						var_0_16[#var_0_16 + 1] = var_28_10
 					end
 				end
 			end
 
-			local num_units = #TEMP_PLAYER_UNITS
-			local num_disabled_units = #TEMP_DISABLED_PLAYER_UNITS
+			local var_28_12 = #var_0_15
+			local var_28_13 = #var_0_16
 
-			if num_units == 0 and num_disabled_units > 0 then
-				local tmp = TEMP_PLAYER_UNITS
-
-				TEMP_PLAYER_UNITS = TEMP_DISABLED_PLAYER_UNITS
-				TEMP_DISABLED_PLAYER_UNITS = tmp
-				num_units = num_disabled_units
+			if var_28_12 == 0 and var_28_13 > 0 then
+				var_0_16, var_0_15 = var_0_15, var_0_16
+				var_28_12 = var_28_13
 			end
 
-			self:_update_player_timestamped_positions(t, TEMP_PLAYER_UNITS)
+			arg_28_0:_update_player_timestamped_positions(arg_28_2, var_0_15)
 
-			local selected_unit
-			local side_num_bots = num_bots[side_id]
-			local side_in_carry_event = in_carry_event[side_id]
-			local side_last_move_target_unit = last_move_target_unit[side_id]
+			local var_28_14
+			local var_28_15 = var_28_4[iter_28_0]
+			local var_28_16 = var_28_5[iter_28_0]
+			local var_28_17 = var_28_6[iter_28_0]
 
-			if num_units == 0 or side_num_bots == 0 then
-				selected_unit = nil
-			elseif num_units >= 3 then
-				if side_in_carry_event then
-					local bot_unit, _ = next(side_bot_data)
+			if var_28_12 == 0 or var_28_15 == 0 then
+				var_28_14 = nil
+			elseif var_28_12 >= 3 then
+				if var_28_16 then
+					local var_28_18, var_28_19 = next(var_28_8)
 
-					selected_unit = self:_find_most_lonely_move_target(TEMP_PLAYER_UNITS, bot_unit)
+					var_28_14 = arg_28_0:_find_most_lonely_move_target(var_0_15, var_28_18)
 				else
-					selected_unit = self:_find_least_lonely_move_target(TEMP_PLAYER_UNITS, side_last_move_target_unit)
+					var_28_14 = arg_28_0:_find_least_lonely_move_target(var_0_15, var_28_17)
 				end
-			elseif num_units == 2 and side_num_bots == 2 and side_in_carry_event then
-				local points = TEMP_MAN_MAN_POINTS
+			elseif var_28_12 == 2 and var_28_15 == 2 and var_28_16 then
+				local var_28_20 = var_0_18
 
-				for j = 1, num_units do
-					local unit = TEMP_PLAYER_UNITS[j]
-					local unit_pos = POSITION_LOOKUP[unit]
-					local disallowed_at_pos, current_mapping = self:_selected_unit_is_in_disallowed_nav_tag_volume(nav_world, unit_pos)
-					local destination_points
+				for iter_28_2 = 1, var_28_12 do
+					local var_28_21 = var_0_15[iter_28_2]
+					local var_28_22 = POSITION_LOOKUP[var_28_21]
+					local var_28_23, var_28_24 = arg_28_0:_selected_unit_is_in_disallowed_nav_tag_volume(var_28_1, var_28_22)
+					local var_28_25
 
-					if disallowed_at_pos then
-						local origin_point = self:_find_origin(nav_world, unit)
+					if var_28_23 then
+						local var_28_26 = arg_28_0:_find_origin(var_28_1, var_28_21)
 
-						destination_points = self:_find_destination_points_outside_volume(nav_world, unit_pos, current_mapping, origin_point, 1)
+						var_28_25 = arg_28_0:_find_destination_points_outside_volume(var_28_1, var_28_22, var_28_24, var_28_26, 1)
 					else
-						local cluster_position, rotation = self:_find_cluster_position(nav_world, unit)
+						local var_28_27, var_28_28 = arg_28_0:_find_cluster_position(var_28_1, var_28_21)
 
-						destination_points = self:_find_destination_points(nav_world, cluster_position, rotation, 1)
+						var_28_25 = arg_28_0:_find_destination_points(var_28_1, var_28_27, var_28_28, 1)
 					end
 
-					table.append(points, destination_points)
+					table.append(var_28_20, var_28_25)
 				end
 
-				self:_assign_destination_points(side_bot_data, points, nil, TEMP_PLAYER_UNITS)
-				table.clear(TEMP_PLAYER_UNITS)
-				table.clear(points)
+				arg_28_0:_assign_destination_points(var_28_8, var_28_20, nil, var_0_15)
+				table.clear(var_0_15)
+				table.clear(var_28_20)
 
 				break
 			else
-				local average_bot_pos = Vector3(0, 0, 0)
+				local var_28_29 = Vector3(0, 0, 0)
 
-				for unit, _ in pairs(side_bot_data) do
-					average_bot_pos = average_bot_pos + POSITION_LOOKUP[unit]
+				for iter_28_3, iter_28_4 in pairs(var_28_8) do
+					var_28_29 = var_28_29 + POSITION_LOOKUP[iter_28_3]
 				end
 
-				average_bot_pos = average_bot_pos / side_num_bots
-				selected_unit = self:_find_closest_move_target(TEMP_PLAYER_UNITS, side_last_move_target_unit, average_bot_pos)
+				local var_28_30 = var_28_29 / var_28_15
+
+				var_28_14 = arg_28_0:_find_closest_move_target(var_0_15, var_28_17, var_28_30)
 			end
 
-			if selected_unit and not script_data.bots_dont_follow and not bot_follow_disabled then
-				self._last_move_target_unit[side_id] = selected_unit
+			if var_28_14 and not script_data.bots_dont_follow and not var_28_2 then
+				arg_28_0._last_move_target_unit[iter_28_0] = var_28_14
 
-				local unit_pos = POSITION_LOOKUP[selected_unit]
-				local disallowed_at_pos, current_mapping = self:_selected_unit_is_in_disallowed_nav_tag_volume(nav_world, unit_pos)
-				local destination_points
+				local var_28_31 = POSITION_LOOKUP[var_28_14]
+				local var_28_32, var_28_33 = arg_28_0:_selected_unit_is_in_disallowed_nav_tag_volume(var_28_1, var_28_31)
+				local var_28_34
 
-				if disallowed_at_pos then
-					local origin_point = self:_find_origin(nav_world, selected_unit)
+				if var_28_32 then
+					local var_28_35 = arg_28_0:_find_origin(var_28_1, var_28_14)
 
-					destination_points = self:_find_destination_points_outside_volume(nav_world, unit_pos, current_mapping, origin_point, side_num_bots)
+					var_28_34 = arg_28_0:_find_destination_points_outside_volume(var_28_1, var_28_31, var_28_33, var_28_35, var_28_15)
 				else
-					local cluster_position, rotation = self:_find_cluster_position(nav_world, selected_unit)
+					local var_28_36, var_28_37 = arg_28_0:_find_cluster_position(var_28_1, var_28_14)
 
-					destination_points = self:_find_destination_points(nav_world, cluster_position, rotation, side_num_bots)
+					var_28_34 = arg_28_0:_find_destination_points(var_28_1, var_28_36, var_28_37, var_28_15)
 				end
 
-				self:_assign_destination_points(side_bot_data, destination_points, selected_unit)
+				arg_28_0:_assign_destination_points(var_28_8, var_28_34, var_28_14)
 			else
-				for _, data in pairs(side_bot_data) do
-					data.follow_position = nil
-					data.follow_unit = nil
+				for iter_28_5, iter_28_6 in pairs(var_28_8) do
+					iter_28_6.follow_position = nil
+					iter_28_6.follow_unit = nil
 				end
 			end
 
-			table.clear(TEMP_PLAYER_UNITS)
-			table.clear(TEMP_DISABLED_PLAYER_UNITS)
+			table.clear(var_0_15)
+			table.clear(var_0_16)
 		until true
 	end
 end
 
-AIBotGroupSystem._selected_unit_is_in_disallowed_nav_tag_volume = function (self, nav_world, selected_unit_pos)
-	local tag_volumes_query = GwNavQueries.tag_volumes_from_position(nav_world, selected_unit_pos, 2, 2)
+function AIBotGroupSystem._selected_unit_is_in_disallowed_nav_tag_volume(arg_29_0, arg_29_1, arg_29_2)
+	local var_29_0 = GwNavQueries.tag_volumes_from_position(arg_29_1, arg_29_2, 2, 2)
 
-	if tag_volumes_query then
-		local GwNavTagVolume_navtag = GwNavTagVolume.navtag
-		local GwNavQueries_nav_tag_volume = GwNavQueries.nav_tag_volume
-		local volume_system = Managers.state.entity:system("volume_system")
-		local disallowed_tag_layers = self._disallowed_tag_layers
-		local volume_count = GwNavQueries.nav_tag_volume_count(tag_volumes_query)
+	if var_29_0 then
+		local var_29_1 = GwNavTagVolume.navtag
+		local var_29_2 = GwNavQueries.nav_tag_volume
+		local var_29_3 = Managers.state.entity:system("volume_system")
+		local var_29_4 = arg_29_0._disallowed_tag_layers
+		local var_29_5 = GwNavQueries.nav_tag_volume_count(var_29_0)
 
-		for i = 1, volume_count do
-			local nav_tag_volume = GwNavQueries_nav_tag_volume(tag_volumes_query, i)
-			local _, _, layer_id, _, user_data_id = GwNavTagVolume_navtag(nav_tag_volume)
-			local layer_name = LAYER_ID_MAPPING[layer_id]
-			local current_mapping = volume_system:get_volume_mapping_from_lookup_id(user_data_id)
+		for iter_29_0 = 1, var_29_5 do
+			local var_29_6 = var_29_2(var_29_0, iter_29_0)
+			local var_29_7, var_29_8, var_29_9, var_29_10, var_29_11 = var_29_1(var_29_6)
+			local var_29_12 = LAYER_ID_MAPPING[var_29_9]
+			local var_29_13 = var_29_3:get_volume_mapping_from_lookup_id(var_29_11)
 
-			if current_mapping and disallowed_tag_layers[layer_name] then
-				return true, current_mapping
+			if var_29_13 and var_29_4[var_29_12] then
+				return true, var_29_13
 			end
 		end
 
-		GwNavQueries.destroy_query_dynamic_output(tag_volumes_query)
+		GwNavQueries.destroy_query_dynamic_output(var_29_0)
 
 		return false
 	else
@@ -833,995 +794,971 @@ AIBotGroupSystem._selected_unit_is_in_disallowed_nav_tag_volume = function (self
 	end
 end
 
-local CLOSEST_TARGET_PREVIOUS_TARGET_STICKINESS = 9
+local var_0_22 = 9
 
-AIBotGroupSystem._find_closest_move_target = function (self, targets, last_target, position)
-	local closest_index
-	local closest_value = math.huge
-	local active_targets = {}
+function AIBotGroupSystem._find_closest_move_target(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+	local var_30_0
+	local var_30_1 = math.huge
+	local var_30_2 = {}
 
-	for i = 1, #targets do
-		local unit = targets[i]
+	for iter_30_0 = 1, #arg_30_1 do
+		local var_30_3 = arg_30_1[iter_30_0]
 
-		if self._timestamped_positions[unit] and not self._timestamped_positions[unit].afk then
-			active_targets[#active_targets + 1] = unit
+		if arg_30_0._timestamped_positions[var_30_3] and not arg_30_0._timestamped_positions[var_30_3].afk then
+			var_30_2[#var_30_2 + 1] = var_30_3
 		end
 	end
 
-	if #active_targets == 0 then
-		active_targets = targets
+	if #var_30_2 == 0 then
+		var_30_2 = arg_30_1
 	end
 
-	for i = 1, #active_targets do
-		local unit = active_targets[i]
-		local dist_sq = Vector3.distance_squared(position, POSITION_LOOKUP[unit])
+	for iter_30_1 = 1, #var_30_2 do
+		local var_30_4 = var_30_2[iter_30_1]
+		local var_30_5 = Vector3.distance_squared(arg_30_3, POSITION_LOOKUP[var_30_4])
 
-		if unit == last_target then
-			dist_sq = dist_sq - CLOSEST_TARGET_PREVIOUS_TARGET_STICKINESS
+		if var_30_4 == arg_30_2 then
+			var_30_5 = var_30_5 - var_0_22
 		end
 
-		if dist_sq < closest_value then
-			closest_value = dist_sq
-			closest_index = i
+		if var_30_5 < var_30_1 then
+			var_30_1 = var_30_5
+			var_30_0 = iter_30_1
 		end
 	end
 
-	return active_targets[closest_index]
+	return var_30_2[var_30_0]
 end
 
-local LONELINESS_PREVIOUS_TARGET_STICKINESS = 25
+local var_0_23 = 25
 
-AIBotGroupSystem._find_least_lonely_move_target = function (self, targets, last_target)
-	local num_targets = #targets
+function AIBotGroupSystem._find_least_lonely_move_target(arg_31_0, arg_31_1, arg_31_2)
+	local var_31_0 = #arg_31_1
 
-	for i = 1, num_targets do
-		local unit = targets[i]
+	for iter_31_0 = 1, var_31_0 do
+		local var_31_1 = arg_31_1[iter_31_0]
 
-		TEMP_PLAYER_POSITIONS[i] = POSITION_LOOKUP[unit]
+		var_0_17[iter_31_0] = POSITION_LOOKUP[var_31_1]
 	end
 
-	local least_lonely_index
-	local least_lonely_value = math.huge
-	local num_positions = #TEMP_PLAYER_POSITIONS
+	local var_31_2
+	local var_31_3 = math.huge
+	local var_31_4 = #var_0_17
 
-	for i = 1, num_positions do
-		local position1 = TEMP_PLAYER_POSITIONS[i]
-		local loneliness
+	for iter_31_1 = 1, var_31_4 do
+		local var_31_5 = var_0_17[iter_31_1]
+		local var_31_6
 
-		if targets[i] == last_target then
-			loneliness = -LONELINESS_PREVIOUS_TARGET_STICKINESS
+		if arg_31_1[iter_31_1] == arg_31_2 then
+			var_31_6 = -var_0_23
 		else
-			loneliness = 0
+			var_31_6 = 0
 		end
 
-		for j = 1, num_positions do
-			local position2 = TEMP_PLAYER_POSITIONS[j]
+		for iter_31_2 = 1, var_31_4 do
+			local var_31_7 = var_0_17[iter_31_2]
 
-			loneliness = loneliness + Vector3.distance_squared(position1, position2)
+			var_31_6 = var_31_6 + Vector3.distance_squared(var_31_5, var_31_7)
 		end
 
-		if loneliness < least_lonely_value then
-			least_lonely_index = i
-			least_lonely_value = loneliness
+		if var_31_6 < var_31_3 then
+			var_31_2 = iter_31_1
+			var_31_3 = var_31_6
 		end
 	end
 
-	table.clear(TEMP_PLAYER_POSITIONS)
+	table.clear(var_0_17)
 
-	return targets[least_lonely_index]
+	return arg_31_1[var_31_2]
 end
 
-local LONELINESS_FAR_AWAY_MODIFIER = 3
-local LONELINESS_FAR_AWAY_DISTANCE_SQ = 900
+local var_0_24 = 3
+local var_0_25 = 900
 
-AIBotGroupSystem._find_most_lonely_move_target = function (self, targets, origin_unit)
-	local num_targets = #targets
+function AIBotGroupSystem._find_most_lonely_move_target(arg_32_0, arg_32_1, arg_32_2)
+	local var_32_0 = #arg_32_1
 
-	for i = 1, num_targets do
-		local unit = targets[i]
+	for iter_32_0 = 1, var_32_0 do
+		local var_32_1 = arg_32_1[iter_32_0]
 
-		TEMP_PLAYER_POSITIONS[i] = POSITION_LOOKUP[unit]
+		var_0_17[iter_32_0] = POSITION_LOOKUP[var_32_1]
 	end
 
-	local most_lonely_index
-	local most_lonely_value = -math.huge
-	local origin = POSITION_LOOKUP[origin_unit]
-	local num_positions = #TEMP_PLAYER_POSITIONS
+	local var_32_2
+	local var_32_3 = -math.huge
+	local var_32_4 = POSITION_LOOKUP[arg_32_2]
+	local var_32_5 = #var_0_17
 
-	for i = 1, num_positions do
-		local position1 = TEMP_PLAYER_POSITIONS[i]
-		local loneliness
-		local sq_dist = Vector3.distance_squared(position1, origin)
+	for iter_32_1 = 1, var_32_5 do
+		local var_32_6 = var_0_17[iter_32_1]
+		local var_32_7
+		local var_32_8 = Vector3.distance_squared(var_32_6, var_32_4)
 
-		if sq_dist > LONELINESS_FAR_AWAY_DISTANCE_SQ then
-			loneliness = -sq_dist * LONELINESS_FAR_AWAY_MODIFIER
+		if var_32_8 > var_0_25 then
+			var_32_7 = -var_32_8 * var_0_24
 		else
-			loneliness = 0
+			var_32_7 = 0
 		end
 
-		for j = 1, num_positions do
-			local position2 = TEMP_PLAYER_POSITIONS[j]
+		for iter_32_2 = 1, var_32_5 do
+			local var_32_9 = var_0_17[iter_32_2]
 
-			loneliness = loneliness + Vector3.distance_squared(position1, position2)
+			var_32_7 = var_32_7 + Vector3.distance_squared(var_32_6, var_32_9)
 		end
 
-		if most_lonely_value < loneliness then
-			most_lonely_index = i
-			most_lonely_value = loneliness
+		if var_32_3 < var_32_7 then
+			var_32_2 = iter_32_1
+			var_32_3 = var_32_7
 		end
 	end
 
-	table.clear(TEMP_PLAYER_POSITIONS)
+	table.clear(var_0_17)
 
-	return targets[most_lonely_index]
+	return arg_32_1[var_32_2]
 end
 
-AIBotGroupSystem._find_origin = function (self, nav_world, selected_unit)
-	local unit_pos = POSITION_LOOKUP[selected_unit]
-	local unit_is_on_navmesh, z = GwNavQueries.triangle_from_position(nav_world, unit_pos, 5, 5)
-	local origin_pos
+function AIBotGroupSystem._find_origin(arg_33_0, arg_33_1, arg_33_2)
+	local var_33_0 = POSITION_LOOKUP[arg_33_2]
+	local var_33_1, var_33_2 = GwNavQueries.triangle_from_position(arg_33_1, var_33_0, 5, 5)
+	local var_33_3
 
-	if unit_is_on_navmesh then
-		origin_pos = Vector3(unit_pos.x, unit_pos.y, z)
+	if var_33_1 then
+		var_33_3 = Vector3(var_33_0.x, var_33_0.y, var_33_2)
 	else
-		origin_pos = GwNavQueries.inside_position_from_outside_position(nav_world, unit_pos, 5, 5, 5, 0.5)
+		var_33_3 = GwNavQueries.inside_position_from_outside_position(arg_33_1, var_33_0, 5, 5, 5, 0.5)
 	end
 
-	if origin_pos == nil then
-		origin_pos = unit_pos
+	if var_33_3 == nil then
+		var_33_3 = var_33_0
 	end
 
-	return origin_pos
+	return var_33_3
 end
 
-AIBotGroupSystem._find_cluster_position = function (self, nav_world, selected_unit)
-	local locomotion_extension = ScriptUnit.extension(selected_unit, "locomotion_system")
-	local current_velocity = locomotion_extension:current_velocity()
-	local velocity
+function AIBotGroupSystem._find_cluster_position(arg_34_0, arg_34_1, arg_34_2)
+	local var_34_0 = ScriptUnit.extension(arg_34_2, "locomotion_system")
+	local var_34_1 = var_34_0:current_velocity()
+	local var_34_2
 
-	if Vector3.length_squared(current_velocity) < 0.01 then
-		velocity = Vector3(0, 0, 0)
+	if Vector3.length_squared(var_34_1) < 0.01 then
+		var_34_2 = Vector3(0, 0, 0)
 	else
-		velocity = locomotion_extension:average_velocity()
+		var_34_2 = var_34_0:average_velocity()
 	end
 
-	local unit_pos = POSITION_LOOKUP[selected_unit]
-	local last_nav_mesh_pos = ScriptUnit.extension(selected_unit, "whereabouts_system"):last_position_onground_on_navmesh()
-	local ray_start_pos
+	local var_34_3 = POSITION_LOOKUP[arg_34_2]
+	local var_34_4 = ScriptUnit.extension(arg_34_2, "whereabouts_system"):last_position_onground_on_navmesh()
+	local var_34_5
 
-	if last_nav_mesh_pos and Vector3.distance_squared(unit_pos, last_nav_mesh_pos) < 4 then
-		ray_start_pos = last_nav_mesh_pos
+	if var_34_4 and Vector3.distance_squared(var_34_3, var_34_4) < 4 then
+		var_34_5 = var_34_4
 	else
-		local unit_is_on_navmesh, z = GwNavQueries.triangle_from_position(nav_world, unit_pos, 5, 5)
+		local var_34_6, var_34_7 = GwNavQueries.triangle_from_position(arg_34_1, var_34_3, 5, 5)
 
-		if unit_is_on_navmesh then
-			ray_start_pos = Vector3(unit_pos.x, unit_pos.y, z)
+		if var_34_6 then
+			var_34_5 = Vector3(var_34_3.x, var_34_3.y, var_34_7)
 		else
-			ray_start_pos = GwNavQueries.inside_position_from_outside_position(nav_world, unit_pos, 5, 5, 5, 0.5)
+			var_34_5 = GwNavQueries.inside_position_from_outside_position(arg_34_1, var_34_3, 5, 5, 5, 0.5)
 		end
 	end
 
-	local cluster_position
+	local var_34_8
 
-	if ray_start_pos then
-		local _, ray_pos = self:_raycast(nav_world, ray_start_pos, velocity, 5)
+	if var_34_5 then
+		local var_34_9, var_34_10 = arg_34_0:_raycast(arg_34_1, var_34_5, var_34_2, 5)
 
-		cluster_position = Vector3.lerp(ray_start_pos, ray_pos, 0.6)
+		var_34_8 = Vector3.lerp(var_34_5, var_34_10, 0.6)
 
-		local success, z = GwNavQueries.triangle_from_position(nav_world, cluster_position, 5, 5)
+		local var_34_11, var_34_12 = GwNavQueries.triangle_from_position(arg_34_1, var_34_8, 5, 5)
 
-		if success then
-			cluster_position.z = z
+		if var_34_11 then
+			var_34_8.z = var_34_12
 		else
-			cluster_position = ray_pos
+			var_34_8 = var_34_10
 		end
 	else
-		cluster_position = unit_pos
+		var_34_8 = var_34_3
 	end
 
-	local rotation
+	local var_34_13
 
-	if Vector3.length_squared(velocity) > 0.010000000000000002 then
-		rotation = Quaternion.look(velocity, Vector3.up())
-		self._last_move_target_rotations[selected_unit] = nil
-	elseif self._last_move_target_rotations[selected_unit] then
-		rotation = self._last_move_target_rotations[selected_unit]:unbox()
+	if Vector3.length_squared(var_34_2) > 0.010000000000000002 then
+		var_34_13 = Quaternion.look(var_34_2, Vector3.up())
+		arg_34_0._last_move_target_rotations[arg_34_2] = nil
+	elseif arg_34_0._last_move_target_rotations[arg_34_2] then
+		var_34_13 = arg_34_0._last_move_target_rotations[arg_34_2]:unbox()
 	else
-		local game = Managers.state.network:game()
+		local var_34_14 = Managers.state.network:game()
 
-		if game and not LEVEL_EDITOR_TEST then
-			local game_object_id = self._unit_storage:go_id(selected_unit)
-			local aim_direction = GameSession.game_object_field(game, game_object_id, "aim_direction")
+		if var_34_14 and not LEVEL_EDITOR_TEST then
+			local var_34_15 = arg_34_0._unit_storage:go_id(arg_34_2)
+			local var_34_16 = GameSession.game_object_field(var_34_14, var_34_15, "aim_direction")
 
-			rotation = Quaternion.look(Vector3.flat(aim_direction), Vector3.up())
+			var_34_13 = Quaternion.look(Vector3.flat(var_34_16), Vector3.up())
 		else
-			rotation = Unit.local_rotation(selected_unit, 0)
+			var_34_13 = Unit.local_rotation(arg_34_2, 0)
 		end
 
-		self._last_move_target_rotations[selected_unit] = QuaternionBox(rotation)
+		arg_34_0._last_move_target_rotations[arg_34_2] = QuaternionBox(var_34_13)
 	end
 
-	return cluster_position, rotation
+	return var_34_8, var_34_13
 end
 
-local TEMP_UNITS = {}
-local TEMP_TESTED_POINTS = {}
-local TEMP_CURRENT_SOLUTION = {}
-local TEMP_BEST_SOLUTION = {}
+local var_0_26 = {}
+local var_0_27 = {}
+local var_0_28 = {}
+local var_0_29 = {}
 
-local function find_permutation(current_index, units, tested_points, current_solution, utility, data, best_utility, best_solution)
-	local num_units = #units
+local function var_0_30(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6, arg_35_7)
+	local var_35_0 = #arg_35_1
 
-	if num_units < current_index then
-		if best_utility < utility then
-			for i = 1, num_units do
-				best_solution[i] = current_solution[i]
+	if var_35_0 < arg_35_0 then
+		if arg_35_6 < arg_35_4 then
+			for iter_35_0 = 1, var_35_0 do
+				arg_35_7[iter_35_0] = arg_35_3[iter_35_0]
 			end
 
-			return utility
+			return arg_35_4
 		else
-			return best_utility
+			return arg_35_6
 		end
 	else
-		local unit = units[current_index]
+		local var_35_1 = arg_35_1[arg_35_0]
 
-		for i = 1, num_units do
-			if not tested_points[i] then
-				current_solution[current_index] = i
-				tested_points[i] = true
+		for iter_35_1 = 1, var_35_0 do
+			if not arg_35_2[iter_35_1] then
+				arg_35_3[arg_35_0] = iter_35_1
+				arg_35_2[iter_35_1] = true
 
-				local point_utility = data[unit].nav_point_utility[i]
-				local new_utility = utility + point_utility
+				local var_35_2 = arg_35_4 + arg_35_5[var_35_1].nav_point_utility[iter_35_1]
 
-				best_utility = find_permutation(current_index + 1, units, tested_points, current_solution, new_utility, data, best_utility, best_solution)
-				tested_points[i] = false
+				arg_35_6 = var_0_30(arg_35_0 + 1, arg_35_1, arg_35_2, arg_35_3, var_35_2, arg_35_5, arg_35_6, arg_35_7)
+				arg_35_2[iter_35_1] = false
 			end
 		end
 
-		return best_utility
+		return arg_35_6
 	end
 end
 
-AIBotGroupSystem._assign_destination_points = function (self, bot_ai_data, points, follow_unit, follow_unit_table)
-	local units = TEMP_UNITS
+function AIBotGroupSystem._assign_destination_points(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+	local var_36_0 = var_0_26
 
-	for unit, data in pairs(bot_ai_data) do
-		local utility = data.nav_point_utility
+	for iter_36_0, iter_36_1 in pairs(arg_36_1) do
+		local var_36_1 = iter_36_1.nav_point_utility
 
-		table.clear(utility)
+		table.clear(var_36_1)
 
-		local pos = POSITION_LOOKUP[unit]
+		local var_36_2 = POSITION_LOOKUP[iter_36_0]
 
-		for i, point in ipairs(points) do
-			utility[i] = 1 / math.sqrt(math.max(0.001, Vector3.distance(pos, point)))
+		for iter_36_2, iter_36_3 in ipairs(arg_36_2) do
+			var_36_1[iter_36_2] = 1 / math.sqrt(math.max(0.001, Vector3.distance(var_36_2, iter_36_3)))
 		end
 
-		units[#units + 1] = unit
+		var_36_0[#var_36_0 + 1] = iter_36_0
 	end
 
-	local solution = TEMP_BEST_SOLUTION
-	local best_utility = find_permutation(1, units, TEMP_TESTED_POINTS, TEMP_CURRENT_SOLUTION, 0, bot_ai_data, -math.huge, solution)
+	local var_36_3 = var_0_29
+	local var_36_4 = var_0_30(1, var_36_0, var_0_27, var_0_28, 0, arg_36_1, -math.huge, var_36_3)
 
-	for i = 1, #units do
-		local unit = units[i]
-		local data = bot_ai_data[unit]
+	for iter_36_4 = 1, #var_36_0 do
+		local var_36_5 = arg_36_1[var_36_0[iter_36_4]]
 
-		if data.hold_position then
-			data.follow_position = data.hold_position:unbox()
-			data.follow_unit = nil
+		if var_36_5.hold_position then
+			var_36_5.follow_position = var_36_5.hold_position:unbox()
+			var_36_5.follow_unit = nil
 		else
-			local point_index = solution[i]
+			local var_36_6 = var_36_3[iter_36_4]
 
-			data.follow_position = points[point_index]
+			var_36_5.follow_position = arg_36_2[var_36_6]
 
-			if follow_unit_table then
-				data.follow_unit = follow_unit_table[point_index]
-			elseif follow_unit then
-				data.follow_unit = follow_unit
+			if arg_36_4 then
+				var_36_5.follow_unit = arg_36_4[var_36_6]
+			elseif arg_36_3 then
+				var_36_5.follow_unit = arg_36_3
 			else
-				data.follow_unit = nil
+				var_36_5.follow_unit = nil
 			end
 		end
 	end
 
-	table.clear(TEMP_UNITS)
-	table.clear(TEMP_TESTED_POINTS)
-	table.clear(TEMP_CURRENT_SOLUTION)
-	table.clear(TEMP_BEST_SOLUTION)
+	table.clear(var_0_26)
+	table.clear(var_0_27)
+	table.clear(var_0_28)
+	table.clear(var_0_29)
 end
 
-AIBotGroupSystem._calculate_center_of_volume = function (self, volume_mapping)
-	local center_pos = Vector3(0, 0, 0)
+function AIBotGroupSystem._calculate_center_of_volume(arg_37_0, arg_37_1)
+	local var_37_0 = Vector3(0, 0, 0)
 
-	for _, point in pairs(volume_mapping.bottom_points) do
-		center_pos = center_pos + Vector3(point[1], point[2], point[3])
+	for iter_37_0, iter_37_1 in pairs(arg_37_1.bottom_points) do
+		var_37_0 = var_37_0 + Vector3(iter_37_1[1], iter_37_1[2], iter_37_1[3])
 	end
 
-	center_pos = center_pos / #volume_mapping.bottom_points
+	local var_37_1 = var_37_0 / #arg_37_1.bottom_points
+	local var_37_2 = 0
 
-	local longest_distance_sq = 0
-
-	for _, point in pairs(volume_mapping.bottom_points) do
-		longest_distance_sq = math.max(Vector3.distance_squared(center_pos, Vector3(point[1], point[2], point[3])), longest_distance_sq)
+	for iter_37_2, iter_37_3 in pairs(arg_37_1.bottom_points) do
+		var_37_2 = math.max(Vector3.distance_squared(var_37_1, Vector3(iter_37_3[1], iter_37_3[2], iter_37_3[3])), var_37_2)
 	end
 
-	return center_pos, longest_distance_sq
+	return var_37_1, var_37_2
 end
 
-AIBotGroupSystem._find_destination_points_outside_volume = function (self, nav_world, selected_unit_pos, volume_mapping, origin_point, needed_points)
-	local center_point, area_radius_sq = self:_calculate_center_of_volume(volume_mapping)
-	local range = math.sqrt(area_radius_sq) + 1
-	local dir = Vector3.flat(Vector3.normalize(selected_unit_pos - center_point))
-	local rotation = Quaternion.look(dir, Vector3.up())
-	local space_per_player = range - 1
-	local points = self:_find_points(nav_world, Vector3(center_point[1], center_point[2], selected_unit_pos[3]), rotation, self._left_vectors_outside_volume, self._right_vectors_outside_volume, space_per_player, range, needed_points)
-	local num_points = #points
-	local current_index = 1
-	local last_point = points[current_index]
+function AIBotGroupSystem._find_destination_points_outside_volume(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5)
+	local var_38_0, var_38_1 = arg_38_0:_calculate_center_of_volume(arg_38_3)
+	local var_38_2 = math.sqrt(var_38_1) + 1
+	local var_38_3 = Vector3.flat(Vector3.normalize(arg_38_2 - var_38_0))
+	local var_38_4 = Quaternion.look(var_38_3, Vector3.up())
+	local var_38_5 = var_38_2 - 1
+	local var_38_6 = arg_38_0:_find_points(arg_38_1, Vector3(var_38_0[1], var_38_0[2], arg_38_2[3]), var_38_4, arg_38_0._left_vectors_outside_volume, arg_38_0._right_vectors_outside_volume, var_38_5, var_38_2, arg_38_5)
+	local var_38_7 = #var_38_6
+	local var_38_8 = 1
+	local var_38_9 = var_38_6[var_38_8]
 
-	if num_points < needed_points then
-		for i = num_points + 1, needed_points do
-			points[i] = points[current_index] or last_point or origin_point
-			last_point = points[current_index] or last_point
-			current_index = current_index + 1
+	if var_38_7 < arg_38_5 then
+		for iter_38_0 = var_38_7 + 1, arg_38_5 do
+			var_38_6[iter_38_0] = var_38_6[var_38_8] or var_38_9 or arg_38_4
+			var_38_9 = var_38_6[var_38_8] or var_38_9
+			var_38_8 = var_38_8 + 1
 		end
 	end
 
-	return points
+	return var_38_6
 end
 
-AIBotGroupSystem._find_destination_points = function (self, nav_world, origin_point, rotation, needed_points)
-	local range = 3
-	local space_per_player = 1
-	local points = self:_find_points(nav_world, origin_point, rotation, self._left_vectors, self._right_vectors, space_per_player, range, needed_points)
+function AIBotGroupSystem._find_destination_points(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+	local var_39_0 = 3
+	local var_39_1 = 1
+	local var_39_2 = arg_39_0:_find_points(arg_39_1, arg_39_2, arg_39_3, arg_39_0._left_vectors, arg_39_0._right_vectors, var_39_1, var_39_0, arg_39_4)
 
-	if needed_points > #points then
-		for i = #points + 1, needed_points do
-			points[i] = origin_point
+	if arg_39_4 > #var_39_2 then
+		for iter_39_0 = #var_39_2 + 1, arg_39_4 do
+			var_39_2[iter_39_0] = arg_39_2
 		end
 	end
 
-	return points
+	return var_39_2
 end
 
-local function add_points(points, from_pos, to_pos, amount)
-	if amount == 0 then
+local function var_0_31(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+	if arg_40_3 == 0 then
 		return
 	end
 
-	for i = 1, amount do
-		local pos = Vector3.lerp(from_pos, to_pos, i / amount)
+	for iter_40_0 = 1, arg_40_3 do
+		local var_40_0 = Vector3.lerp(arg_40_1, arg_40_2, iter_40_0 / arg_40_3)
 
-		points[#points + 1] = pos
+		arg_40_0[#arg_40_0 + 1] = var_40_0
 	end
 end
 
-AIBotGroupSystem._find_points = function (self, nav_world, origin_point, rotation, left_vectors, right_vectors, space_per_player, range, needed_points)
-	local found_points_left = 0
-	local found_points_right = 0
-	local left_index = 0
-	local right_index = 0
-	local points = self._pathing_points
+function AIBotGroupSystem._find_points(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5, arg_41_6, arg_41_7, arg_41_8)
+	local var_41_0 = 0
+	local var_41_1 = 0
+	local var_41_2 = 0
+	local var_41_3 = 0
+	local var_41_4 = arg_41_0._pathing_points
 
-	self._pathing_points = points
+	arg_41_0._pathing_points = var_41_4
 
-	table.clear(points)
+	table.clear(var_41_4)
 
-	while (left_index < #left_vectors or right_index < #right_vectors) and needed_points > found_points_left + found_points_right do
-		if left_index + 1 > #left_vectors then
-			right_index = right_index + 1
+	while (var_41_2 < #arg_41_4 or var_41_3 < #arg_41_5) and arg_41_8 > var_41_0 + var_41_1 do
+		if var_41_2 + 1 > #arg_41_4 then
+			var_41_3 = var_41_3 + 1
 
-			local distance, hit_pos = self:_raycast(nav_world, origin_point, Quaternion.rotate(rotation, right_vectors[right_index]:unbox()), range)
-			local num_points = math.floor(distance / space_per_player)
+			local var_41_5, var_41_6 = arg_41_0:_raycast(arg_41_1, arg_41_2, Quaternion.rotate(arg_41_3, arg_41_5[var_41_3]:unbox()), arg_41_7)
+			local var_41_7 = math.floor(var_41_5 / arg_41_6)
 
-			add_points(points, origin_point, hit_pos, num_points)
+			var_0_31(var_41_4, arg_41_2, var_41_6, var_41_7)
 
-			found_points_right = found_points_right + num_points
-		elseif right_index + 1 > #right_vectors then
-			left_index = left_index + 1
+			var_41_1 = var_41_1 + var_41_7
+		elseif var_41_3 + 1 > #arg_41_5 then
+			var_41_2 = var_41_2 + 1
 
-			local distance, hit_pos = self:_raycast(nav_world, origin_point, Quaternion.rotate(rotation, left_vectors[left_index]:unbox()), range)
-			local num_points = math.floor(distance / space_per_player)
+			local var_41_8, var_41_9 = arg_41_0:_raycast(arg_41_1, arg_41_2, Quaternion.rotate(arg_41_3, arg_41_4[var_41_2]:unbox()), arg_41_7)
+			local var_41_10 = math.floor(var_41_8 / arg_41_6)
 
-			add_points(points, origin_point, hit_pos, num_points)
+			var_0_31(var_41_4, arg_41_2, var_41_9, var_41_10)
 
-			found_points_left = found_points_left + num_points
-		elseif found_points_right == found_points_left then
-			left_index = left_index + 1
-			right_index = right_index + 1
+			var_41_0 = var_41_0 + var_41_10
+		elseif var_41_1 == var_41_0 then
+			var_41_2 = var_41_2 + 1
+			var_41_3 = var_41_3 + 1
 
-			local distance_left, hit_pos_left = self:_raycast(nav_world, origin_point, Quaternion.rotate(rotation, left_vectors[left_index]:unbox()), range)
-			local distance_right, hit_pos_right = self:_raycast(nav_world, origin_point, Quaternion.rotate(rotation, right_vectors[right_index]:unbox()), range)
-			local points_left = math.floor(distance_left / space_per_player)
-			local points_right = math.floor(distance_right / space_per_player)
-			local points_total = points_left + points_right
+			local var_41_11, var_41_12 = arg_41_0:_raycast(arg_41_1, arg_41_2, Quaternion.rotate(arg_41_3, arg_41_4[var_41_2]:unbox()), arg_41_7)
+			local var_41_13, var_41_14 = arg_41_0:_raycast(arg_41_1, arg_41_2, Quaternion.rotate(arg_41_3, arg_41_5[var_41_3]:unbox()), arg_41_7)
+			local var_41_15 = math.floor(var_41_11 / arg_41_6)
+			local var_41_16 = math.floor(var_41_13 / arg_41_6)
+			local var_41_17 = var_41_15 + var_41_16
 
-			if needed_points < points_total then
-				local assign_left = points_left / points_total * needed_points
-				local assign_right = points_right / points_total * needed_points
-				local floored_assign_left = math.floor(assign_left)
-				local fraction = assign_left - floored_assign_left
+			if arg_41_8 < var_41_17 then
+				local var_41_18 = var_41_15 / var_41_17 * arg_41_8
+				local var_41_19 = var_41_16 / var_41_17 * arg_41_8
+				local var_41_20 = math.floor(var_41_18)
 
-				if fraction >= 0.5 then
-					assign_left = math.ceil(assign_left)
-					assign_right = math.floor(assign_right)
+				if var_41_18 - var_41_20 >= 0.5 then
+					var_41_18 = math.ceil(var_41_18)
+					var_41_19 = math.floor(var_41_19)
 				else
-					assign_left = floored_assign_left
-					assign_right = math.ceil(assign_right)
+					var_41_18 = var_41_20
+					var_41_19 = math.ceil(var_41_19)
 				end
 
-				add_points(points, origin_point, hit_pos_left, assign_left)
-				add_points(points, origin_point, hit_pos_right, assign_right)
+				var_0_31(var_41_4, arg_41_2, var_41_12, var_41_18)
+				var_0_31(var_41_4, arg_41_2, var_41_14, var_41_19)
 
-				found_points_left = found_points_left + assign_left
-				found_points_right = found_points_right + assign_right
+				var_41_0 = var_41_0 + var_41_18
+				var_41_1 = var_41_1 + var_41_19
 			else
-				add_points(points, origin_point, hit_pos_left, points_left)
-				add_points(points, origin_point, hit_pos_right, points_right)
+				var_0_31(var_41_4, arg_41_2, var_41_12, var_41_15)
+				var_0_31(var_41_4, arg_41_2, var_41_14, var_41_16)
 
-				found_points_left = found_points_left + points_left
-				found_points_right = found_points_right + points_right
+				var_41_0 = var_41_0 + var_41_15
+				var_41_1 = var_41_1 + var_41_16
 			end
-		elseif found_points_left < found_points_right then
-			left_index = left_index + 1
+		elseif var_41_0 < var_41_1 then
+			var_41_2 = var_41_2 + 1
 
-			local distance, hit_pos = self:_raycast(nav_world, origin_point, Quaternion.rotate(rotation, left_vectors[left_index]:unbox()), range)
-			local num_points = math.floor(distance / space_per_player)
+			local var_41_21, var_41_22 = arg_41_0:_raycast(arg_41_1, arg_41_2, Quaternion.rotate(arg_41_3, arg_41_4[var_41_2]:unbox()), arg_41_7)
+			local var_41_23 = math.floor(var_41_21 / arg_41_6)
 
-			add_points(points, origin_point, hit_pos, num_points)
+			var_0_31(var_41_4, arg_41_2, var_41_22, var_41_23)
 
-			found_points_left = found_points_left + num_points
-		elseif found_points_right < found_points_left then
-			right_index = right_index + 1
+			var_41_0 = var_41_0 + var_41_23
+		elseif var_41_1 < var_41_0 then
+			var_41_3 = var_41_3 + 1
 
-			local distance, hit_pos = self:_raycast(nav_world, origin_point, Quaternion.rotate(rotation, right_vectors[right_index]:unbox()), range)
-			local num_points = math.floor(distance / space_per_player)
+			local var_41_24, var_41_25 = arg_41_0:_raycast(arg_41_1, arg_41_2, Quaternion.rotate(arg_41_3, arg_41_5[var_41_3]:unbox()), arg_41_7)
+			local var_41_26 = math.floor(var_41_24 / arg_41_6)
 
-			add_points(points, origin_point, hit_pos, num_points)
+			var_0_31(var_41_4, arg_41_2, var_41_25, var_41_26)
 
-			found_points_right = found_points_right + num_points
+			var_41_1 = var_41_1 + var_41_26
 		end
 	end
 
-	return points
+	return var_41_4
 end
 
-local SPACE_NEEDED = 0.25
+local var_0_32 = 0.25
 
-AIBotGroupSystem._raycast = function (self, nav_world, point, vector, range)
-	local ray_range = range + SPACE_NEEDED
-	local to = point + vector * ray_range
-	local success, pos = GwNavQueries.raycast(nav_world, point, to)
+function AIBotGroupSystem._raycast(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
+	local var_42_0 = arg_42_2 + arg_42_3 * (arg_42_4 + var_0_32)
+	local var_42_1, var_42_2 = GwNavQueries.raycast(arg_42_1, arg_42_2, var_42_0)
 
-	if success then
-		return range, pos - vector * SPACE_NEEDED, true
+	if var_42_1 then
+		return arg_42_4, var_42_2 - arg_42_3 * var_0_32, true
 	else
-		local distance = Vector3.length(Vector3.flat(pos - point))
+		local var_42_3 = Vector3.length(Vector3.flat(var_42_2 - arg_42_2))
 
-		if distance < SPACE_NEEDED then
-			return 0, point, false
+		if var_42_3 < var_0_32 then
+			return 0, arg_42_2, false
 		else
-			return distance - SPACE_NEEDED, pos - vector * SPACE_NEEDED, success
+			return var_42_3 - var_0_32, var_42_2 - arg_42_3 * var_0_32, var_42_1
 		end
 	end
 end
 
-AIBotGroupSystem._update_priority_targets = function (self, dt, t)
-	local side_manager = Managers.state.side
-	local bot_ai_data = self._bot_ai_data
-	local old_priority_targets = self._old_priority_targets
+function AIBotGroupSystem._update_priority_targets(arg_43_0, arg_43_1, arg_43_2)
+	local var_43_0 = Managers.state.side
+	local var_43_1 = arg_43_0._bot_ai_data
+	local var_43_2 = arg_43_0._old_priority_targets
 
-	for side_id = 1, #bot_ai_data do
-		local side = side_manager:get_side(side_id)
-		local side_old_priority_targets = old_priority_targets[side_id]
-		local player_and_bot_units = side.PLAYER_AND_BOT_UNITS
-		local num_players = #player_and_bot_units
+	for iter_43_0 = 1, #var_43_1 do
+		local var_43_3 = var_43_0:get_side(iter_43_0)
+		local var_43_4 = var_43_2[iter_43_0]
+		local var_43_5 = var_43_3.PLAYER_AND_BOT_UNITS
+		local var_43_6 = #var_43_5
 
-		for i = 1, num_players do
-			local player_unit = player_and_bot_units[i]
-			local status_ext = ScriptUnit.extension(player_unit, "status_system")
+		for iter_43_1 = 1, var_43_6 do
+			local var_43_7 = var_43_5[iter_43_1]
+			local var_43_8 = ScriptUnit.extension(var_43_7, "status_system")
 
-			if not status_ext.near_vortex then
-				local target
+			if not var_43_8.near_vortex then
+				local var_43_9
 
-				if status_ext:is_pounced_down() then
-					target = status_ext:get_pouncer_unit()
-				elseif status_ext:is_grabbed_by_pack_master() then
-					target = status_ext:get_pack_master_grabber()
-				elseif status_ext:is_overpowered() and status_ext:is_overpowered_by_attacker() then
-					target = status_ext.overpowered_attacking_unit
+				if var_43_8:is_pounced_down() then
+					var_43_9 = var_43_8:get_pouncer_unit()
+				elseif var_43_8:is_grabbed_by_pack_master() then
+					var_43_9 = var_43_8:get_pack_master_grabber()
+				elseif var_43_8:is_overpowered() and var_43_8:is_overpowered_by_attacker() then
+					var_43_9 = var_43_8.overpowered_attacking_unit
 				end
 
-				if HEALTH_ALIVE[target] then
-					PRIORITY_TARGETS_TEMP[player_unit] = target
-					NEW_TARGETS[target] = (side_old_priority_targets[target] or 0) + dt
+				if HEALTH_ALIVE[var_43_9] then
+					var_0_13[var_43_7] = var_43_9
+					var_0_14[var_43_9] = (var_43_4[var_43_9] or 0) + arg_43_1
 				end
 			end
 		end
 
-		local side_bot_data = bot_ai_data[side_id]
+		local var_43_10 = var_43_1[iter_43_0]
 
-		for unit, data in pairs(side_bot_data) do
-			if not ALIVE[data.current_priority_target] then
-				data.current_priority_target = nil
+		for iter_43_2, iter_43_3 in pairs(var_43_10) do
+			if not ALIVE[iter_43_3.current_priority_target] then
+				iter_43_3.current_priority_target = nil
 			end
 
-			local status_ext = data.status_extension
+			local var_43_11 = iter_43_3.status_extension
 
-			table.clear(data.priority_targets)
+			table.clear(iter_43_3.priority_targets)
 
-			if PRIORITY_TARGETS_TEMP[unit] or status_ext:is_disabled() then
-				data.current_priority_target_disabled_ally = nil
-				data.current_priority_target = nil
-				data.priority_target_distance = math.huge
+			if var_0_13[iter_43_2] or var_43_11:is_disabled() then
+				iter_43_3.current_priority_target_disabled_ally = nil
+				iter_43_3.current_priority_target = nil
+				iter_43_3.priority_target_distance = math.huge
 			else
-				local self_pos = POSITION_LOOKUP[unit]
-				local best_target, best_ally
-				local best_utility = -math.huge
-				local best_distance = math.huge
+				local var_43_12 = POSITION_LOOKUP[iter_43_2]
+				local var_43_13
+				local var_43_14
+				local var_43_15 = -math.huge
+				local var_43_16 = math.huge
 
-				for ally, target in pairs(PRIORITY_TARGETS_TEMP) do
-					local utility, distance = self:_calculate_priority_target_utility(self_pos, target, NEW_TARGETS[target], data.current_priority_target)
+				for iter_43_4, iter_43_5 in pairs(var_0_13) do
+					local var_43_17, var_43_18 = arg_43_0:_calculate_priority_target_utility(var_43_12, iter_43_5, var_0_14[iter_43_5], iter_43_3.current_priority_target)
 
-					data.priority_targets[target] = utility
+					iter_43_3.priority_targets[iter_43_5] = var_43_17
 
-					if best_utility < utility then
-						best_utility = utility
-						best_target = target
-						best_distance = distance
-						best_ally = ally
+					if var_43_15 < var_43_17 then
+						var_43_15 = var_43_17
+						var_43_13 = iter_43_5
+						var_43_16 = var_43_18
+						var_43_14 = iter_43_4
 					end
 				end
 
-				data.current_priority_target_disabled_ally = best_ally
-				data.current_priority_target = best_target
-				data.priority_target_distance = best_distance
+				iter_43_3.current_priority_target_disabled_ally = var_43_14
+				iter_43_3.current_priority_target = var_43_13
+				iter_43_3.priority_target_distance = var_43_16
 			end
 
-			local bb = data.blackboard
+			local var_43_19 = iter_43_3.blackboard
 
-			if bb.priority_target_disabled_ally or data.current_priority_target_disabled_ally then
-				bb.priority_target_disabled_ally = data.current_priority_target_disabled_ally
+			if var_43_19.priority_target_disabled_ally or iter_43_3.current_priority_target_disabled_ally then
+				var_43_19.priority_target_disabled_ally = iter_43_3.current_priority_target_disabled_ally
 			end
 
-			if bb.priority_target_enemy or data.current_priority_target then
-				bb.priority_target_enemy = data.current_priority_target
+			if var_43_19.priority_target_enemy or iter_43_3.current_priority_target then
+				var_43_19.priority_target_enemy = iter_43_3.current_priority_target
 			end
 
-			bb.priority_target_distance = data.priority_target_distance
+			var_43_19.priority_target_distance = iter_43_3.priority_target_distance
 		end
 
-		table.clear(PRIORITY_TARGETS_TEMP)
-		table.create_copy(side_old_priority_targets, NEW_TARGETS)
-		table.clear(NEW_TARGETS)
+		table.clear(var_0_13)
+		table.create_copy(var_43_4, var_0_14)
+		table.clear(var_0_14)
 	end
 end
 
-local BOSS_ENGAGE_DISTANCE = 15
-local BOSS_ENGAGE_DISTANCE_SQ = BOSS_ENGAGE_DISTANCE^2
+local var_0_33 = 15
+local var_0_34 = var_0_33^2
 
-AIBotGroupSystem._update_urgent_targets = function (self, dt, t)
-	local conflict_director = Managers.state.conflict
-	local alive_bosses = conflict_director:alive_bosses()
-	local num_alive_bosses = #alive_bosses
-	local bot_ai_data = self._bot_ai_data
-	local urgent_targets = self._urgent_targets
+function AIBotGroupSystem._update_urgent_targets(arg_44_0, arg_44_1, arg_44_2)
+	local var_44_0 = Managers.state.conflict:alive_bosses()
+	local var_44_1 = #var_44_0
+	local var_44_2 = arg_44_0._bot_ai_data
+	local var_44_3 = arg_44_0._urgent_targets
 
-	for side_id = 1, #bot_ai_data do
-		local side_bot_data = bot_ai_data[side_id]
+	for iter_44_0 = 1, #var_44_2 do
+		local var_44_4 = var_44_2[iter_44_0]
 
-		for bot_unit, data in pairs(side_bot_data) do
-			local best_utility = -math.huge
-			local best_target
-			local best_distance = math.huge
-			local blackboard = data.blackboard
-			local self_pos = POSITION_LOOKUP[bot_unit]
-			local old_target = blackboard.urgent_target_enemy
+		for iter_44_1, iter_44_2 in pairs(var_44_4) do
+			local var_44_5 = -math.huge
+			local var_44_6
+			local var_44_7 = math.huge
+			local var_44_8 = iter_44_2.blackboard
+			local var_44_9 = POSITION_LOOKUP[iter_44_1]
+			local var_44_10 = var_44_8.urgent_target_enemy
 
-			for target_unit, is_target_until in pairs(urgent_targets) do
-				local time_left = is_target_until - t
+			for iter_44_3, iter_44_4 in pairs(var_44_3) do
+				if iter_44_4 - arg_44_2 > 0 then
+					if HEALTH_ALIVE[iter_44_3] then
+						local var_44_11, var_44_12 = arg_44_0:_calculate_opportunity_utility(iter_44_1, var_44_8, var_44_9, var_44_10, iter_44_3, arg_44_2, false, false)
 
-				if time_left > 0 then
-					if HEALTH_ALIVE[target_unit] then
-						local utility, distance = self:_calculate_opportunity_utility(bot_unit, blackboard, self_pos, old_target, target_unit, t, false, false)
-
-						if best_utility < utility then
-							best_utility = utility
-							best_target = target_unit
-							best_distance = distance
+						if var_44_5 < var_44_11 then
+							var_44_5 = var_44_11
+							var_44_6 = iter_44_3
+							var_44_7 = var_44_12
 						end
 					else
-						urgent_targets[target_unit] = nil
+						var_44_3[iter_44_3] = nil
 					end
 				else
-					urgent_targets[target_unit] = nil
+					var_44_3[iter_44_3] = nil
 				end
 			end
 
-			if not best_target then
-				for j = 1, num_alive_bosses do
-					local target_unit = alive_bosses[j]
-					local pos = POSITION_LOOKUP[target_unit]
+			if not var_44_6 then
+				for iter_44_5 = 1, var_44_1 do
+					local var_44_13 = var_44_0[iter_44_5]
+					local var_44_14 = POSITION_LOOKUP[var_44_13]
 
-					if HEALTH_ALIVE[target_unit] and not AiUtils.unit_invincible(target_unit) and Vector3.distance_squared(pos, self_pos) < BOSS_ENGAGE_DISTANCE_SQ and not BLACKBOARDS[target_unit].defensive_mode_duration then
-						local utility, distance = self:_calculate_opportunity_utility(bot_unit, blackboard, self_pos, old_target, target_unit, t, false, false)
+					if HEALTH_ALIVE[var_44_13] and not AiUtils.unit_invincible(var_44_13) and Vector3.distance_squared(var_44_14, var_44_9) < var_0_34 and not var_0_11[var_44_13].defensive_mode_duration then
+						local var_44_15, var_44_16 = arg_44_0:_calculate_opportunity_utility(iter_44_1, var_44_8, var_44_9, var_44_10, var_44_13, arg_44_2, false, false)
 
-						if best_utility < utility then
-							best_utility = utility
-							best_target = target_unit
-							best_distance = distance
+						if var_44_5 < var_44_15 then
+							var_44_5 = var_44_15
+							var_44_6 = var_44_13
+							var_44_7 = var_44_16
 						end
 					end
 				end
 			end
 
-			blackboard.revive_with_urgent_target = best_target and self:_can_revive_with_urgent_target(bot_unit, self_pos, blackboard, best_target, t)
-			blackboard.urgent_target_enemy = best_target
-			blackboard.urgent_target_distance = best_distance
+			var_44_8.revive_with_urgent_target = var_44_6 and arg_44_0:_can_revive_with_urgent_target(iter_44_1, var_44_9, var_44_8, var_44_6, arg_44_2)
+			var_44_8.urgent_target_enemy = var_44_6
+			var_44_8.urgent_target_distance = var_44_7
 
-			local hit_by_projectile = blackboard.hit_by_projectile
+			local var_44_17 = var_44_8.hit_by_projectile
 
-			for attacking_unit, _ in pairs(hit_by_projectile) do
-				if not HEALTH_ALIVE[attacking_unit] then
-					hit_by_projectile[attacking_unit] = nil
+			for iter_44_6, iter_44_7 in pairs(var_44_17) do
+				if not HEALTH_ALIVE[iter_44_6] then
+					var_44_17[iter_44_6] = nil
 				end
 			end
 		end
 	end
 end
 
-local URGENT_TARGET_REVIVE_MIN_DISTANCE_SQ = {
-	chaos_corruptor_sorcerer = 100,
+local var_0_35 = {
 	skaven_pack_master = 49,
+	chaos_corruptor_sorcerer = 100,
 	skaven_poison_wind_globadier = 25,
-	skaven_ratling_gunner = 25,
 	skaven_warpfire_thrower = 100,
+	skaven_ratling_gunner = 25
 }
 
-AIBotGroupSystem._can_revive_with_urgent_target = function (self, bot_unit, self_position, blackboard, urgent_target, t)
-	local urgent_target_blackboard = BLACKBOARDS[urgent_target]
-	local breed = urgent_target_blackboard.breed
-	local breed_name = breed.name
-	local target_position = POSITION_LOOKUP[urgent_target]
-	local target_ally_unit = blackboard.target_ally_unit
-	local target_ally_position = POSITION_LOOKUP[target_ally_unit]
-	local distance_squared = target_ally_position and Vector3.distance_squared(target_ally_position, target_position) or Vector3.distance_squared(self_position, target_position)
-	local revive_min_distance_sq = URGENT_TARGET_REVIVE_MIN_DISTANCE_SQ[breed_name] or 25
+function AIBotGroupSystem._can_revive_with_urgent_target(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5)
+	local var_45_0 = var_0_11[arg_45_4]
+	local var_45_1 = var_45_0.breed
+	local var_45_2 = var_45_1.name
+	local var_45_3 = POSITION_LOOKUP[arg_45_4]
+	local var_45_4 = arg_45_3.target_ally_unit
+	local var_45_5 = POSITION_LOOKUP[var_45_4]
+	local var_45_6 = var_45_5 and Vector3.distance_squared(var_45_5, var_45_3) or Vector3.distance_squared(arg_45_2, var_45_3)
+	local var_45_7 = var_0_35[var_45_2] or 25
 
-	if breed.boss then
+	if var_45_1.boss then
 		return true
-	elseif breed_name == "skaven_ratling_gunner" then
-		local hit_by_projectile = blackboard.hit_by_projectile[urgent_target]
+	elseif var_45_2 == "skaven_ratling_gunner" then
+		local var_45_8 = arg_45_3.hit_by_projectile[arg_45_4]
 
-		return (not hit_by_projectile or t > hit_by_projectile + 1) and revive_min_distance_sq < distance_squared
+		return (not var_45_8 or arg_45_5 > var_45_8 + 1) and var_45_7 < var_45_6
 	else
-		local is_bot_target = urgent_target_blackboard.target_unit == bot_unit
-
-		revive_min_distance_sq = revive_min_distance_sq * (is_bot_target and 4 or 1)
-
-		return revive_min_distance_sq < distance_squared
+		return var_45_6 > var_45_7 * (var_45_0.target_unit == arg_45_1 and 4 or 1)
 	end
 end
 
-local FALLBACK_OPPORTUNITY_DISTANCE = 40
-local FALLBACK_OPPORTUNITY_DISTANCE_SQ = FALLBACK_OPPORTUNITY_DISTANCE^2
-local alive_specials_table = {}
+local var_0_36 = 40
+local var_0_37 = var_0_36^2
+local var_0_38 = {}
 
-AIBotGroupSystem._update_opportunity_targets = function (self, dt, t)
-	local conflict_director = Managers.state.conflict
+function AIBotGroupSystem._update_opportunity_targets(arg_46_0, arg_46_1, arg_46_2)
+	local var_46_0 = Managers.state.conflict
 
-	table.clear(alive_specials_table)
+	table.clear(var_0_38)
 
-	local alive_specials = conflict_director:alive_specials(alive_specials_table)
-	local num_alive_specials = #alive_specials
-	local Vector3_distance_squared = Vector3.distance_squared
-	local bot_ai_data = self._bot_ai_data
+	local var_46_1 = var_46_0:alive_specials(var_0_38)
+	local var_46_2 = #var_46_1
+	local var_46_3 = Vector3.distance_squared
+	local var_46_4 = arg_46_0._bot_ai_data
 
-	for side_id = 1, #bot_ai_data do
-		local side_bot_data = bot_ai_data[side_id]
+	for iter_46_0 = 1, #var_46_4 do
+		local var_46_5 = var_46_4[iter_46_0]
 
-		for bot_unit, data in pairs(side_bot_data) do
-			local best_utility = -math.huge
-			local best_target
-			local best_distance = math.huge
-			local blackboard = data.blackboard
-			local self_pos = POSITION_LOOKUP[bot_unit]
-			local old_target = blackboard.opportunity_target_enemy
-			local side = blackboard.side
+		for iter_46_1, iter_46_2 in pairs(var_46_5) do
+			local var_46_6 = -math.huge
+			local var_46_7
+			local var_46_8 = math.huge
+			local var_46_9 = iter_46_2.blackboard
+			local var_46_10 = POSITION_LOOKUP[iter_46_1]
+			local var_46_11 = var_46_9.opportunity_target_enemy
+			local var_46_12 = var_46_9.side
 
-			for i = 1, num_alive_specials do
-				local target_unit = alive_specials[i]
-				local opportunity_target_blackboard = BLACKBOARDS[target_unit]
-				local ignore_bot_opportunity = opportunity_target_blackboard.breed.ignore_bot_opportunity
-				local target_pos = POSITION_LOOKUP[target_unit]
+			for iter_46_3 = 1, var_46_2 do
+				local var_46_13 = var_46_1[iter_46_3]
+				local var_46_14 = var_0_11[var_46_13].breed.ignore_bot_opportunity
+				local var_46_15 = POSITION_LOOKUP[var_46_13]
 
-				if not ignore_bot_opportunity and HEALTH_ALIVE[target_unit] and Vector3_distance_squared(target_pos, self_pos) < FALLBACK_OPPORTUNITY_DISTANCE_SQ then
-					local utility, distance = self:_calculate_opportunity_utility(bot_unit, blackboard, self_pos, old_target, target_unit, t, false, true)
+				if not var_46_14 and HEALTH_ALIVE[var_46_13] and var_46_3(var_46_15, var_46_10) < var_0_37 then
+					local var_46_16, var_46_17 = arg_46_0:_calculate_opportunity_utility(iter_46_1, var_46_9, var_46_10, var_46_11, var_46_13, arg_46_2, false, true)
 
-					if best_utility < utility then
-						best_utility = utility
-						best_target = target_unit
-						best_distance = distance
+					if var_46_6 < var_46_16 then
+						var_46_6 = var_46_16
+						var_46_7 = var_46_13
+						var_46_8 = var_46_17
 					end
 				end
 			end
 
-			local VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS = side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS
+			local var_46_18 = var_46_12.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS
 
-			for target_unit, is_valid in pairs(VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS) do
-				if is_valid then
-					local ghost_mode_ext = ScriptUnit.has_extension(target_unit, "ghost_mode_system")
+			for iter_46_4, iter_46_5 in pairs(var_46_18) do
+				if iter_46_5 then
+					local var_46_19 = ScriptUnit.has_extension(iter_46_4, "ghost_mode_system")
 
-					if not ghost_mode_ext or not ghost_mode_ext:is_in_ghost_mode() then
-						local target_pos = POSITION_LOOKUP[target_unit]
+					if not var_46_19 or not var_46_19:is_in_ghost_mode() then
+						local var_46_20 = POSITION_LOOKUP[iter_46_4]
 
-						if HEALTH_ALIVE[target_unit] and Vector3_distance_squared(target_pos, self_pos) < FALLBACK_OPPORTUNITY_DISTANCE_SQ then
-							local utility, distance = self:_calculate_opportunity_utility(bot_unit, blackboard, self_pos, old_target, target_unit, t, false, true)
+						if HEALTH_ALIVE[iter_46_4] and var_46_3(var_46_20, var_46_10) < var_0_37 then
+							local var_46_21, var_46_22 = arg_46_0:_calculate_opportunity_utility(iter_46_1, var_46_9, var_46_10, var_46_11, iter_46_4, arg_46_2, false, true)
 
-							if best_utility < utility then
-								best_utility = utility
-								best_target = target_unit
-								best_distance = distance
+							if var_46_6 < var_46_21 then
+								var_46_6 = var_46_21
+								var_46_7 = iter_46_4
+								var_46_8 = var_46_22
 							end
 						end
 					end
 				end
 			end
 
-			blackboard.opportunity_target_enemy = best_target
-			blackboard.opportunity_target_distance = best_distance
+			var_46_9.opportunity_target_enemy = var_46_7
+			var_46_9.opportunity_target_distance = var_46_8
 		end
 	end
 end
 
-local OPPORTUNITY_TARGET_MIN_REACTION_TIME = 0.2
-local OPPORTUNITY_TARGET_MAX_REACTION_TIME = 0.65
-local OPPORTUNITY_TARGET_DIFFICULTY_REACTION_TIMES = BotConstants.default.OPPORTUNITY_TARGET_REACTION_TIMES
+local var_0_39 = 0.2
+local var_0_40 = 0.65
+local var_0_41 = BotConstants.default.OPPORTUNITY_TARGET_REACTION_TIMES
 
-AIBotGroupSystem._calculate_opportunity_utility = function (self, bot_unit, bot_blackboard, self_position, current_target, potential_target, t, force_seen, use_difficulty_reaction_times)
-	local side = bot_blackboard.side
-
-	if not side.enemy_units_lookup[potential_target] then
+function AIBotGroupSystem._calculate_opportunity_utility(arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4, arg_47_5, arg_47_6, arg_47_7, arg_47_8)
+	if not arg_47_2.side.enemy_units_lookup[arg_47_5] then
 		return -math.huge, math.huge
 	end
 
-	local prox_ext = ScriptUnit.has_extension(potential_target, "proximity_system")
-	local distance = math.max(Vector3.distance(self_position, POSITION_LOOKUP[potential_target]), 1)
+	local var_47_0 = ScriptUnit.has_extension(arg_47_5, "proximity_system")
+	local var_47_1 = math.max(Vector3.distance(arg_47_3, POSITION_LOOKUP[arg_47_5]), 1)
 
-	if prox_ext and not prox_ext.has_been_seen and not force_seen then
+	if var_47_0 and not var_47_0.has_been_seen and not arg_47_7 then
 		return -math.huge, math.huge
-	elseif prox_ext then
-		local react_at = prox_ext.bot_reaction_times[bot_unit]
+	elseif var_47_0 then
+		local var_47_2 = var_47_0.bot_reaction_times[arg_47_1]
 
-		if not react_at then
-			local min_reaction_time, max_reaction_time
+		if not var_47_2 then
+			local var_47_3
+			local var_47_4
 
-			if use_difficulty_reaction_times then
-				local current_difficulty = Managers.state.difficulty:get_difficulty()
-				local reaction_times = OPPORTUNITY_TARGET_DIFFICULTY_REACTION_TIMES[current_difficulty]
+			if arg_47_8 then
+				local var_47_5 = Managers.state.difficulty:get_difficulty()
+				local var_47_6 = var_0_41[var_47_5]
 
-				min_reaction_time = reaction_times.min
-				max_reaction_time = reaction_times.max
+				var_47_3 = var_47_6.min
+				var_47_4 = var_47_6.max
 			else
-				min_reaction_time = OPPORTUNITY_TARGET_MIN_REACTION_TIME
-				max_reaction_time = OPPORTUNITY_TARGET_MAX_REACTION_TIME
+				var_47_3 = var_0_39
+				var_47_4 = var_0_40
 			end
 
-			prox_ext.bot_reaction_times[bot_unit] = t + Math.random(min_reaction_time, max_reaction_time)
+			var_47_0.bot_reaction_times[arg_47_1] = arg_47_6 + Math.random(var_47_3, var_47_4)
 
 			return -math.huge, math.huge
-		elseif t < react_at then
+		elseif arg_47_6 < var_47_2 then
 			return -math.huge, math.huge
 		end
 	end
 
-	local stickyness_modifier = potential_target == current_target and STICKYNESS_DISTANCE_MODIFIER or 0
-	local proximity = 1 / (distance + stickyness_modifier)
-
-	return proximity, distance
+	return 1 / (var_47_1 + (arg_47_5 == arg_47_4 and var_0_10 or 0)), var_47_1
 end
 
-AIBotGroupSystem._update_pickups = function (self, dt, t)
-	local players = Managers.player:players()
+function AIBotGroupSystem._update_pickups(arg_48_0, arg_48_1, arg_48_2)
+	local var_48_0 = Managers.player:players()
 
-	if t > self._update_pickups_at then
-		self._update_pickups_at = t + 0.15 + Math.random() * 0.1
+	if arg_48_2 > arg_48_0._update_pickups_at then
+		arg_48_0._update_pickups_at = arg_48_2 + 0.15 + Math.random() * 0.1
 
-		local last_key = self._last_key_in_available_pickups
+		local var_48_1 = arg_48_0._last_key_in_available_pickups
 
-		if last_key ~= nil and not players[last_key] then
-			last_key = nil
+		if var_48_1 ~= nil and not var_48_0[var_48_1] then
+			var_48_1 = nil
 		end
 
-		local key, player = next(players, last_key)
+		local var_48_2, var_48_3 = next(var_48_0, var_48_1)
 
-		if not key then
-			key, player = next(players)
+		if not var_48_2 then
+			var_48_2, var_48_3 = next(var_48_0)
 		end
 
-		self._last_key_in_available_pickups = key
+		arg_48_0._last_key_in_available_pickups = var_48_2
 
-		local player_unit = player.player_unit
+		local var_48_4 = var_48_3.player_unit
 
-		if HEALTH_ALIVE[player_unit] and not ScriptUnit.extension(player_unit, "status_system"):is_ready_for_assisted_respawn() then
-			self:_update_pickups_near_player(player_unit, t)
+		if HEALTH_ALIVE[var_48_4] and not ScriptUnit.extension(var_48_4, "status_system"):is_ready_for_assisted_respawn() then
+			arg_48_0:_update_pickups_near_player(var_48_4, arg_48_2)
 		end
 	end
 
-	self:_update_orders(dt, t)
-	self:_update_health_pickups(dt, t)
-	self:_update_mule_pickups(dt, t)
+	arg_48_0:_update_orders(arg_48_1, arg_48_2)
+	arg_48_0:_update_health_pickups(arg_48_1, arg_48_2)
+	arg_48_0:_update_mule_pickups(arg_48_1, arg_48_2)
 end
 
-local PICKUP_CHECK_RANGE = 15
-local PICKUP_FETCH_RESULTS = {}
+local var_0_42 = 15
+local var_0_43 = {}
 
-AIBotGroupSystem._update_orders = function (self, dt, t)
-	local bot_ai_data = self._bot_ai_data
+function AIBotGroupSystem._update_orders(arg_49_0, arg_49_1, arg_49_2)
+	local var_49_0 = arg_49_0._bot_ai_data
 
-	for side_id = 1, #bot_ai_data do
-		local side_bot_data = bot_ai_data[side_id]
+	for iter_49_0 = 1, #var_49_0 do
+		local var_49_1 = var_49_0[iter_49_0]
 
-		for unit, data in pairs(side_bot_data) do
-			local orders = data.pickup_orders
-			local inventory_ext = ScriptUnit.extension(unit, "inventory_system")
+		for iter_49_1, iter_49_2 in pairs(var_49_1) do
+			local var_49_2 = iter_49_2.pickup_orders
+			local var_49_3 = ScriptUnit.extension(iter_49_1, "inventory_system")
 
-			for slot_name, order in pairs(orders) do
-				local slot_data = inventory_ext:get_slot_data(slot_name)
-				local can_hold_more = inventory_ext:can_store_additional_item(slot_name)
+			for iter_49_3, iter_49_4 in pairs(var_49_2) do
+				local var_49_4 = var_49_3:get_slot_data(iter_49_3)
+				local var_49_5 = var_49_3:can_store_additional_item(iter_49_3)
 
-				if slot_data and not can_hold_more then
-					local current_item_template = inventory_ext:get_item_template(slot_data)
-					local has_picked_up_item
+				if var_49_4 and not var_49_5 then
+					local var_49_6 = var_49_3:get_item_template(var_49_4)
+					local var_49_7
 
-					if order.pickup_name == "grimoire" then
-						has_picked_up_item = current_item_template.is_grimoire
+					if iter_49_4.pickup_name == "grimoire" then
+						var_49_7 = var_49_6.is_grimoire
 					else
-						has_picked_up_item = current_item_template.pickup_data and current_item_template.pickup_data.pickup_name == order.pickup_name
+						var_49_7 = var_49_6.pickup_data and var_49_6.pickup_data.pickup_name == iter_49_4.pickup_name
 					end
 
-					if has_picked_up_item then
-						order.unit = nil
-					elseif data.status_extension:is_disabled() then
-						orders[slot_name] = nil
-					elseif order.unit == nil then
-						orders[slot_name] = nil
+					if var_49_7 then
+						iter_49_4.unit = nil
+					elseif iter_49_2.status_extension:is_disabled() then
+						var_49_2[iter_49_3] = nil
+					elseif iter_49_4.unit == nil then
+						var_49_2[iter_49_3] = nil
 					end
-				elseif order.unit == nil then
-					orders[slot_name] = nil
+				elseif iter_49_4.unit == nil then
+					var_49_2[iter_49_3] = nil
 				end
 
-				if order.unit and not Unit.alive(order.unit) then
-					orders[slot_name] = nil
+				if iter_49_4.unit and not Unit.alive(iter_49_4.unit) then
+					var_49_2[iter_49_3] = nil
 				end
 			end
 		end
 	end
 end
 
-AIBotGroupSystem._update_pickups_near_player = function (self, player_unit, t)
-	local side = Managers.state.side.side_by_unit[player_unit]
-	local side_id = side.side_id
-	local side_bot_data = self._bot_ai_data[side_id]
-	local self_pos = POSITION_LOOKUP[player_unit]
-	local hp_pickups = self._available_health_pickups[side_id]
-	local mule_pickups = self._available_mule_pickups[side_id]
+function AIBotGroupSystem._update_pickups_near_player(arg_50_0, arg_50_1, arg_50_2)
+	local var_50_0 = Managers.state.side.side_by_unit[arg_50_1]
+	local var_50_1 = var_50_0.side_id
+	local var_50_2 = arg_50_0._bot_ai_data[var_50_1]
+	local var_50_3 = POSITION_LOOKUP[arg_50_1]
+	local var_50_4 = arg_50_0._available_health_pickups[var_50_1]
+	local var_50_5 = arg_50_0._available_mule_pickups[var_50_1]
 
-	for unit, data in pairs(side_bot_data) do
-		local blackboard = data.blackboard
-		local ammo_pickup = blackboard.ammo_pickup
+	for iter_50_0, iter_50_1 in pairs(var_50_2) do
+		local var_50_6 = iter_50_1.blackboard
+		local var_50_7 = var_50_6.ammo_pickup
 
-		if Unit.alive(ammo_pickup) then
-			local ammo_distance = Vector3.distance(POSITION_LOOKUP[unit], POSITION_LOOKUP[ammo_pickup])
+		if Unit.alive(var_50_7) then
+			local var_50_8 = Vector3.distance(POSITION_LOOKUP[iter_50_0], POSITION_LOOKUP[var_50_7])
 
-			blackboard.ammo_dist = ammo_distance
-			data.ammo_dist = ammo_distance
-		elseif blackboard.ammo_pickup then
-			blackboard.ammo_pickup = nil
-			blackboard.ammo_dist = nil
-			data.ammo_dist = nil
+			var_50_6.ammo_dist = var_50_8
+			iter_50_1.ammo_dist = var_50_8
+		elseif var_50_6.ammo_pickup then
+			var_50_6.ammo_pickup = nil
+			var_50_6.ammo_dist = nil
+			iter_50_1.ammo_dist = nil
 
-			if data.ammo_pickup_order_unit then
-				data.ammo_pickup_order_unit = nil
+			if iter_50_1.ammo_pickup_order_unit then
+				iter_50_1.ammo_pickup_order_unit = nil
 			end
 		end
 	end
 
-	local check_player_ammo = true
-	local all_players_have_ammo = true
-	local valid_until = t + 5
-	local ammo_stickiness = 2.5
-	local allowed_distance_to_self = 5
-	local allowed_distance_to_follow_pos = 15
-	local game_mode_key = Managers.state.game_mode:game_mode_key()
-	local pickup_system = Managers.state.entity:system("pickup_system")
-	local num_pickups = pickup_system:get_pickups(self_pos, PICKUP_CHECK_RANGE, PICKUP_FETCH_RESULTS)
+	local var_50_9 = true
+	local var_50_10 = true
+	local var_50_11 = arg_50_2 + 5
+	local var_50_12 = 2.5
+	local var_50_13 = 5
+	local var_50_14 = 15
+	local var_50_15 = Managers.state.game_mode:game_mode_key()
+	local var_50_16 = Managers.state.entity:system("pickup_system"):get_pickups(var_50_3, var_0_42, var_0_43)
 
-	for i = 1, num_pickups do
-		local pickup_unit = PICKUP_FETCH_RESULTS[i]
-		local pickup_extension = ScriptUnit.has_extension(pickup_unit, "pickup_system")
-		local aware_extension = ScriptUnit.has_extension(pickup_unit, "surrounding_aware_system")
+	for iter_50_2 = 1, var_50_16 do
+		local var_50_17 = var_0_43[iter_50_2]
+		local var_50_18 = ScriptUnit.has_extension(var_50_17, "pickup_system")
+		local var_50_19 = ScriptUnit.has_extension(var_50_17, "surrounding_aware_system")
 
-		if pickup_extension and (not aware_extension or aware_extension.has_been_seen or ScriptUnit.extension(pickup_unit, "ping_system"):pinged()) then
-			local pickup_name = pickup_extension.pickup_name
-			local pickup_data = AllPickups[pickup_name]
+		if var_50_18 and (not var_50_19 or var_50_19.has_been_seen or ScriptUnit.extension(var_50_17, "ping_system"):pinged()) then
+			local var_50_20 = var_50_18.pickup_name
+			local var_50_21 = AllPickups[var_50_20]
 
-			if pickup_name == "healing_draught" or pickup_name == "first_aid_kit" or pickup_name == "tome" then
-				local template = BackendUtils.get_item_template(ItemMasterList[pickup_data.item_name])
+			if var_50_20 == "healing_draught" or var_50_20 == "first_aid_kit" or var_50_20 == "tome" then
+				local var_50_22 = BackendUtils.get_item_template(ItemMasterList[var_50_21.item_name])
 
-				if not hp_pickups[pickup_unit] then
-					hp_pickups[pickup_unit] = {
-						template = template,
-						valid_until = valid_until,
+				if not var_50_4[var_50_17] then
+					var_50_4[var_50_17] = {
+						template = var_50_22,
+						valid_until = var_50_11
 					}
 				else
-					hp_pickups[pickup_unit].valid_until = valid_until
-					hp_pickups[pickup_unit].template = template
+					var_50_4[var_50_17].valid_until = var_50_11
+					var_50_4[var_50_17].template = var_50_22
 				end
-			elseif pickup_data.bots_mule_pickup then
-				local slot_name = pickup_data.slot_name
+			elseif var_50_21.bots_mule_pickup then
+				var_50_5[var_50_21.slot_name][var_50_17] = var_50_11
+			elseif var_50_21.type == "ammo" then
+				if var_50_9 then
+					local var_50_23 = var_50_0.PLAYER_UNITS
+					local var_50_24 = #var_50_23
 
-				mule_pickups[slot_name][pickup_unit] = valid_until
-			elseif pickup_data.type == "ammo" then
-				if check_player_ammo then
-					local PLAYER_UNITS = side.PLAYER_UNITS
-					local num_human_players = #PLAYER_UNITS
+					for iter_50_3 = 1, var_50_24 do
+						local var_50_25 = var_50_23[iter_50_3]
 
-					for i = 1, num_human_players do
-						local player_unit = PLAYER_UNITS[i]
+						if HEALTH_ALIVE[var_50_25] and ScriptUnit.extension(var_50_25, "inventory_system"):ammo_percentage() < 1 then
+							var_50_10 = false
 
-						if HEALTH_ALIVE[player_unit] then
-							local inventory_ext = ScriptUnit.extension(player_unit, "inventory_system")
-							local ammo_percentage = inventory_ext:ammo_percentage()
-
-							if ammo_percentage < 1 then
-								all_players_have_ammo = false
-
-								break
-							end
+							break
 						end
 					end
 
-					check_player_ammo = false
+					var_50_9 = false
 				end
 
-				for unit, data in pairs(side_bot_data) do
-					local bb = data.blackboard
-					local ammo_pickup_order_unit = data.ammo_pickup_order_unit
+				for iter_50_4, iter_50_5 in pairs(var_50_2) do
+					local var_50_26 = iter_50_5.blackboard
+					local var_50_27 = iter_50_5.ammo_pickup_order_unit
 
-					if not ammo_pickup_order_unit or t >= bb.ammo_pickup_valid_until then
-						local current_pickup = bb.ammo_pickup
-						local pickup_pos = POSITION_LOOKUP[pickup_unit]
-						local dist = Vector3.distance(POSITION_LOOKUP[unit], pickup_pos)
-						local follow_pos = data.follow_position
-						local inventory_extension = bb.inventory_extension
-						local equipped_ammo_kind = inventory_extension:current_ammo_kind("slot_ranged")
-						local pickup_ammo_kind = pickup_data.ammo_kind or "default"
-						local same_kind = equipped_ammo_kind == pickup_ammo_kind
-						local allowed_to_take_ammo
+					if not var_50_27 or arg_50_2 >= var_50_26.ammo_pickup_valid_until then
+						local var_50_28 = var_50_26.ammo_pickup
+						local var_50_29 = POSITION_LOOKUP[var_50_17]
+						local var_50_30 = Vector3.distance(POSITION_LOOKUP[iter_50_4], var_50_29)
+						local var_50_31 = iter_50_5.follow_position
+						local var_50_32 = var_50_26.inventory_extension
+						local var_50_33 = var_50_32:current_ammo_kind("slot_ranged")
+						local var_50_34 = var_50_21.ammo_kind or "default"
+						local var_50_35 = var_50_33 == var_50_34
+						local var_50_36
 
-						if game_mode_key == "survival" then
-							if pickup_data.only_once then
-								local current_ammo, _ = inventory_extension:current_ammo_status("slot_ranged")
+						if var_50_15 == "survival" then
+							if var_50_21.only_once then
+								local var_50_37, var_50_38 = var_50_32:current_ammo_status("slot_ranged")
 
-								allowed_to_take_ammo = current_ammo and current_ammo == 0
+								var_50_36 = var_50_37 and var_50_37 == 0
 							else
-								allowed_to_take_ammo = true
+								var_50_36 = true
 							end
 						else
-							allowed_to_take_ammo = pickup_ammo_kind == "thrown" and true or bb.has_ammo_missing and (not pickup_data.only_once or bb.needs_ammo and all_players_have_ammo)
+							var_50_36 = var_50_34 == "thrown" and true or var_50_26.has_ammo_missing and (not var_50_21.only_once or var_50_26.needs_ammo and var_50_10)
 						end
 
-						local ammo_condition = (dist < allowed_distance_to_self or follow_pos and allowed_distance_to_follow_pos > Vector3.distance(follow_pos, pickup_pos)) and (not current_pickup or dist - (current_pickup == pickup_unit and ammo_stickiness or 0) < data.ammo_dist)
+						local var_50_39 = (var_50_30 < var_50_13 or var_50_31 and var_50_14 > Vector3.distance(var_50_31, var_50_29)) and (not var_50_28 or var_50_30 - (var_50_28 == var_50_17 and var_50_12 or 0) < iter_50_5.ammo_dist)
 
-						if same_kind and allowed_to_take_ammo and ammo_condition then
-							bb.ammo_pickup = pickup_unit
-							bb.ammo_pickup_valid_until = valid_until
-							bb.ammo_dist = dist
-							data.ammo_dist = dist
+						if var_50_35 and var_50_36 and var_50_39 then
+							var_50_26.ammo_pickup = var_50_17
+							var_50_26.ammo_pickup_valid_until = var_50_11
+							var_50_26.ammo_dist = var_50_30
+							iter_50_5.ammo_dist = var_50_30
 
-							if ammo_pickup_order_unit then
-								data.ammo_pickup_order_unit = nil
+							if var_50_27 then
+								iter_50_5.ammo_pickup_order_unit = nil
 							end
 						end
 					end
@@ -1830,215 +1767,206 @@ AIBotGroupSystem._update_pickups_near_player = function (self, player_unit, t)
 		end
 	end
 
-	table.clear(PICKUP_FETCH_RESULTS)
+	table.clear(var_0_43)
 end
 
-local RESERVED_HEALTH_ITEMS_TEMP = {}
-local HEALTH_ITEMS_TEMP = {}
-local HEALTH_ITEMS_TEMP_TEMP = {}
-local AUXILIARY_HEALTH_SLOT_ITEMS_TEMP = {}
-local BOT_BBS = {}
-local BOT_POSES = {}
-local BOT_UNITS = {}
-local BOT_HEALTH = {}
-local SOLUTION_TEMP = {}
-local BEST_SOLUTION_TEMP = {}
-local BOT_INDICES = {}
-local MAX_PICKUP_RANGE = 15
-local STICKINESS = 225
-local HP_DISTANCE_MODIFIER = 225
+local var_0_44 = {}
+local var_0_45 = {}
+local var_0_46 = {}
+local var_0_47 = {}
+local var_0_48 = {}
+local var_0_49 = {}
+local var_0_50 = {}
+local var_0_51 = {}
+local var_0_52 = {}
+local var_0_53 = {}
+local var_0_54 = {}
+local var_0_55 = 15
+local var_0_56 = 225
+local var_0_57 = 225
 
-local function find_permutation(current_bot_index, current_utility, solution, best_utility, best_solution, empties_left, health_item_lookup, health_item_list, num_valid_bots)
-	if num_valid_bots < current_bot_index then
-		if current_utility < best_utility then
-			for i = 1, num_valid_bots do
-				best_solution[i] = solution[i]
+local function var_0_58(arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4, arg_51_5, arg_51_6, arg_51_7, arg_51_8)
+	if arg_51_8 < arg_51_0 then
+		if arg_51_1 < arg_51_3 then
+			for iter_51_0 = 1, arg_51_8 do
+				arg_51_4[iter_51_0] = arg_51_2[iter_51_0]
 			end
 
-			return current_utility
+			return arg_51_1
 		else
-			return best_utility
+			return arg_51_3
 		end
 	else
-		local bb = BOT_BBS[current_bot_index]
-		local bot_pos = BOT_POSES[current_bot_index]
-		local current_pickup = bb.health_pickup
-		local bot_hp = BOT_HEALTH[current_bot_index] or 0
+		local var_51_0 = var_0_48[arg_51_0]
+		local var_51_1 = var_0_49[arg_51_0]
+		local var_51_2 = var_51_0.health_pickup
+		local var_51_3 = var_0_51[arg_51_0] or 0
 
-		for unit, pos in pairs(health_item_list) do
-			if health_item_lookup[unit] then
-				local stickiness_modifier = current_pickup == unit and STICKINESS or 0
-				local utility = current_utility + Vector3.distance_squared(bot_pos, pos) - stickiness_modifier - bot_hp * HP_DISTANCE_MODIFIER
+		for iter_51_1, iter_51_2 in pairs(arg_51_7) do
+			if arg_51_6[iter_51_1] then
+				local var_51_4 = var_51_2 == iter_51_1 and var_0_56 or 0
+				local var_51_5 = arg_51_1 + Vector3.distance_squared(var_51_1, iter_51_2) - var_51_4 - var_51_3 * var_0_57
 
-				health_item_lookup[unit] = nil
-				solution[current_bot_index] = unit
-				best_utility = find_permutation(current_bot_index + 1, utility, solution, best_utility, best_solution, empties_left, health_item_lookup, health_item_list, num_valid_bots)
-				solution[current_bot_index] = nil
-				health_item_lookup[unit] = pos
+				arg_51_6[iter_51_1] = nil
+				arg_51_2[arg_51_0] = iter_51_1
+				arg_51_3 = var_0_58(arg_51_0 + 1, var_51_5, arg_51_2, arg_51_3, arg_51_4, arg_51_5, arg_51_6, arg_51_7, arg_51_8)
+				arg_51_2[arg_51_0] = nil
+				arg_51_6[iter_51_1] = iter_51_2
 			end
 		end
 
-		if empties_left > 0 then
-			best_utility = find_permutation(current_bot_index + 1, current_utility, solution, best_utility, best_solution, empties_left - 1, health_item_lookup, health_item_list, num_valid_bots)
+		if arg_51_5 > 0 then
+			arg_51_3 = var_0_58(arg_51_0 + 1, arg_51_1, arg_51_2, arg_51_3, arg_51_4, arg_51_5 - 1, arg_51_6, arg_51_7, arg_51_8)
 		end
 
-		return best_utility
+		return arg_51_3
 	end
 end
 
-local ASSIGNED_MULE_PICKUPS_TEMP = {}
+local var_0_59 = {}
 
-AIBotGroupSystem._update_mule_pickups = function (self, dt, t)
-	local Unit_alive = Unit.alive
-	local Vector3_distance_squared = Vector3.distance_squared
-	local max_pickup_dist_sq = 400
-	local side_manager = Managers.state.side
-	local bot_ai_data = self._bot_ai_data
-	local available_mule_pickups = self._available_mule_pickups
+function AIBotGroupSystem._update_mule_pickups(arg_52_0, arg_52_1, arg_52_2)
+	local var_52_0 = Unit.alive
+	local var_52_1 = Vector3.distance_squared
+	local var_52_2 = 400
+	local var_52_3 = Managers.state.side
+	local var_52_4 = arg_52_0._bot_ai_data
+	local var_52_5 = arg_52_0._available_mule_pickups
 
-	for side_id = 1, #bot_ai_data do
-		table.clear(ASSIGNED_MULE_PICKUPS_TEMP)
+	for iter_52_0 = 1, #var_52_4 do
+		table.clear(var_0_59)
 
-		local side_bot_data = bot_ai_data[side_id]
-		local side_available_mule_pickups = available_mule_pickups[side_id]
+		local var_52_6 = var_52_4[iter_52_0]
+		local var_52_7 = var_52_5[iter_52_0]
 
-		for unit, data in pairs(side_bot_data) do
-			local best_dist = math.huge
-			local best_order
-			local pickup_orders = data.pickup_orders
+		for iter_52_1, iter_52_2 in pairs(var_52_6) do
+			local var_52_8 = math.huge
+			local var_52_9
+			local var_52_10 = iter_52_2.pickup_orders
 
-			for slot_name, available_pickups in pairs(side_available_mule_pickups) do
-				local order = pickup_orders[slot_name]
-				local ordered_unit = order and order.unit
+			for iter_52_3, iter_52_4 in pairs(var_52_7) do
+				local var_52_11 = var_52_10[iter_52_3]
+				local var_52_12 = var_52_11 and var_52_11.unit
 
-				if ordered_unit then
-					available_pickups[ordered_unit] = nil
-					ASSIGNED_MULE_PICKUPS_TEMP[ordered_unit] = true
+				if var_52_12 then
+					iter_52_4[var_52_12] = nil
+					var_0_59[var_52_12] = true
 
-					local dist = Vector3_distance_squared(POSITION_LOOKUP[ordered_unit], POSITION_LOOKUP[unit])
+					local var_52_13 = var_52_1(POSITION_LOOKUP[var_52_12], POSITION_LOOKUP[iter_52_1])
 
-					if dist < best_dist then
-						best_order = ordered_unit
-						best_dist = dist
+					if var_52_13 < var_52_8 then
+						var_52_9 = var_52_12
+						var_52_8 = var_52_13
 					end
 				end
 			end
 
-			if best_order then
-				local blackboard = data.blackboard
+			if var_52_9 then
+				local var_52_14 = iter_52_2.blackboard
 
-				blackboard.mule_pickup = best_order
-				blackboard.mule_pickup_dist_squared = best_dist
+				var_52_14.mule_pickup = var_52_9
+				var_52_14.mule_pickup_dist_squared = var_52_8
 			end
 		end
 
-		for unit, data in pairs(side_bot_data) do
-			local blackboard = data.blackboard
-			local current_pickup = blackboard.mule_pickup
+		for iter_52_5, iter_52_6 in pairs(var_52_6) do
+			local var_52_15 = iter_52_6.blackboard
+			local var_52_16 = var_52_15.mule_pickup
 
-			if current_pickup then
-				if ASSIGNED_MULE_PICKUPS_TEMP[current_pickup] then
-					local pickup_extension = ScriptUnit.extension(current_pickup, "pickup_system")
-					local slot_name = pickup_extension:get_pickup_settings().slot_name
-					local order = data.pickup_orders[slot_name]
+			if var_52_16 then
+				if var_0_59[var_52_16] then
+					local var_52_17 = ScriptUnit.extension(var_52_16, "pickup_system"):get_pickup_settings().slot_name
+					local var_52_18 = iter_52_6.pickup_orders[var_52_17]
 
-					if not order or order.unit ~= current_pickup then
-						blackboard.mule_pickup = nil
+					if not var_52_18 or var_52_18.unit ~= var_52_16 then
+						var_52_15.mule_pickup = nil
 					end
-				elseif not Unit_alive(current_pickup) or max_pickup_dist_sq < Vector3_distance_squared(POSITION_LOOKUP[current_pickup], data.follow_position or POSITION_LOOKUP[current_pickup]) then
-					blackboard.mule_pickup = nil
+				elseif not var_52_0(var_52_16) or var_52_2 < var_52_1(POSITION_LOOKUP[var_52_16], iter_52_6.follow_position or POSITION_LOOKUP[var_52_16]) then
+					var_52_15.mule_pickup = nil
 				else
-					local pickup_ext = ScriptUnit.extension(current_pickup, "pickup_system")
-					local pickup_name = pickup_ext.pickup_name
-					local slot_name = AllPickups[pickup_name].slot_name
-					local inventory_extension = blackboard.inventory_extension
-					local has_item = inventory_extension:get_slot_data(slot_name)
-					local can_hold_more = inventory_extension:can_store_additional_item(slot_name)
+					local var_52_19 = ScriptUnit.extension(var_52_16, "pickup_system").pickup_name
+					local var_52_20 = AllPickups[var_52_19].slot_name
+					local var_52_21 = var_52_15.inventory_extension
+					local var_52_22 = var_52_21:get_slot_data(var_52_20)
+					local var_52_23 = var_52_21:can_store_additional_item(var_52_20)
 
-					if has_item and not can_hold_more then
-						blackboard.mule_pickup = nil
+					if var_52_22 and not var_52_23 then
+						var_52_15.mule_pickup = nil
 					else
-						ASSIGNED_MULE_PICKUPS_TEMP[current_pickup] = true
-						blackboard.mule_pickup_dist_squared = Vector3_distance_squared(POSITION_LOOKUP[unit], POSITION_LOOKUP[current_pickup])
+						var_0_59[var_52_16] = true
+						var_52_15.mule_pickup_dist_squared = var_52_1(POSITION_LOOKUP[iter_52_5], POSITION_LOOKUP[var_52_16])
 					end
 				end
 			end
 		end
 
-		local side = side_manager:get_side(side_id)
-		local PLAYER_UNITS = side.PLAYER_UNITS
-		local num_human_players = #PLAYER_UNITS
+		local var_52_24 = var_52_3:get_side(iter_52_0).PLAYER_UNITS
+		local var_52_25 = #var_52_24
 
-		for slot_name, available_pickups in pairs(side_available_mule_pickups) do
-			local num_items = 0
+		for iter_52_7, iter_52_8 in pairs(var_52_7) do
+			local var_52_26 = 0
 
-			for unit, valid_until in pairs(available_pickups) do
-				if Unit_alive(unit) and t <= valid_until then
-					num_items = num_items + 1
+			for iter_52_9, iter_52_10 in pairs(iter_52_8) do
+				if var_52_0(iter_52_9) and arg_52_2 <= iter_52_10 then
+					var_52_26 = var_52_26 + 1
 				else
-					available_pickups[unit] = nil
+					iter_52_8[iter_52_9] = nil
 				end
 			end
 
-			local num_players = 0
+			local var_52_27 = 0
 
-			for i = 1, num_human_players do
-				if slot_name == "infinite_slot" then
+			for iter_52_11 = 1, var_52_25 do
+				if iter_52_7 == "infinite_slot" then
 					break
 				end
 
-				local player_unit = PLAYER_UNITS[i]
+				local var_52_28 = var_52_24[iter_52_11]
 
-				if HEALTH_ALIVE[player_unit] then
-					local inventory_ext = ScriptUnit.extension(player_unit, "inventory_system")
-					local item = inventory_ext:get_slot_data(slot_name)
+				if HEALTH_ALIVE[var_52_28] and not ScriptUnit.extension(var_52_28, "inventory_system"):get_slot_data(iter_52_7) then
+					local var_52_29 = POSITION_LOOKUP[var_52_28]
 
-					if not item then
-						local player_pos = POSITION_LOOKUP[player_unit]
+					for iter_52_12, iter_52_13 in pairs(iter_52_8) do
+						local var_52_30 = POSITION_LOOKUP[iter_52_12]
 
-						for pickup_unit, _ in pairs(available_pickups) do
-							local pos = POSITION_LOOKUP[pickup_unit]
+						if var_52_2 > var_52_1(var_52_30, var_52_29) then
+							var_52_27 = var_52_27 + 1
 
-							if max_pickup_dist_sq > Vector3_distance_squared(pos, player_pos) then
-								num_players = num_players + 1
-
-								break
-							end
+							break
 						end
 					end
 				end
 			end
 
-			if num_players == 0 then
-				for unit, data in pairs(side_bot_data) do
-					local blackboard = data.blackboard
-					local order = data.pickup_orders[slot_name]
-					local inventory_extension = blackboard.inventory_extension
-					local has_item = inventory_extension:get_slot_data(slot_name)
-					local can_hold_more = inventory_extension:can_store_additional_item(slot_name)
+			if var_52_27 == 0 then
+				for iter_52_14, iter_52_15 in pairs(var_52_6) do
+					local var_52_31 = iter_52_15.blackboard
+					local var_52_32 = iter_52_15.pickup_orders[iter_52_7]
+					local var_52_33 = var_52_31.inventory_extension
+					local var_52_34 = var_52_33:get_slot_data(iter_52_7)
+					local var_52_35 = var_52_33:can_store_additional_item(iter_52_7)
 
-					if not blackboard.mule_pickup and (not has_item or can_hold_more) and not order then
-						local best_pickup_dist_sq = math.huge
-						local best_pickup
+					if not var_52_31.mule_pickup and (not var_52_34 or var_52_35) and not var_52_32 then
+						local var_52_36 = math.huge
+						local var_52_37
 
-						for pickup_unit, _ in pairs(available_pickups) do
-							if not ASSIGNED_MULE_PICKUPS_TEMP[pickup_unit] then
-								local pickup_pos = POSITION_LOOKUP[pickup_unit]
-								local bot_pos = POSITION_LOOKUP[unit]
-								local bot_dist_sq = Vector3_distance_squared(bot_pos, pickup_pos)
-								local follow_dist_sq = Vector3_distance_squared(data.follow_position or bot_pos, pickup_pos)
+						for iter_52_16, iter_52_17 in pairs(iter_52_8) do
+							if not var_0_59[iter_52_16] then
+								local var_52_38 = POSITION_LOOKUP[iter_52_16]
+								local var_52_39 = POSITION_LOOKUP[iter_52_14]
+								local var_52_40 = var_52_1(var_52_39, var_52_38)
 
-								if follow_dist_sq < max_pickup_dist_sq and bot_dist_sq < best_pickup_dist_sq then
-									best_pickup = pickup_unit
-									best_pickup_dist_sq = bot_dist_sq
+								if var_52_2 > var_52_1(iter_52_15.follow_position or var_52_39, var_52_38) and var_52_40 < var_52_36 then
+									var_52_37 = iter_52_16
+									var_52_36 = var_52_40
 								end
 							end
 						end
 
-						if best_pickup then
-							blackboard.mule_pickup = best_pickup
-							blackboard.mule_pickup_dist_squared = best_pickup_dist_sq
-							ASSIGNED_MULE_PICKUPS_TEMP[best_pickup] = true
+						if var_52_37 then
+							var_52_31.mule_pickup = var_52_37
+							var_52_31.mule_pickup_dist_squared = var_52_36
+							var_0_59[var_52_37] = true
 						end
 					end
 				end
@@ -2047,432 +1975,414 @@ AIBotGroupSystem._update_mule_pickups = function (self, dt, t)
 	end
 end
 
-AIBotGroupSystem._update_health_pickups = function (self, dt, t)
-	local Unit_alive = Unit.alive
-	local Vector3_distance = Vector3.distance
-	local Vector3_distance_squared = Vector3.distance_squared
-	local side_manager = Managers.state.side
-	local bot_ai_data = self._bot_ai_data
-	local available_health_pickups = self._available_health_pickups
+function AIBotGroupSystem._update_health_pickups(arg_53_0, arg_53_1, arg_53_2)
+	local var_53_0 = Unit.alive
+	local var_53_1 = Vector3.distance
+	local var_53_2 = Vector3.distance_squared
+	local var_53_3 = Managers.state.side
+	local var_53_4 = arg_53_0._bot_ai_data
+	local var_53_5 = arg_53_0._available_health_pickups
 
-	for side_id = 1, #bot_ai_data do
-		local available_pickups = available_health_pickups[side_id]
-		local num_health_items = 0
-		local num_aux_items = 0
+	for iter_53_0 = 1, #var_53_4 do
+		local var_53_6 = var_53_5[iter_53_0]
+		local var_53_7 = 0
+		local var_53_8 = 0
 
-		for unit, info in pairs(available_pickups) do
-			if not Unit_alive(unit) or t > info.valid_until then
-				available_pickups[unit] = nil
-			elseif info.template.can_heal_self then
-				num_health_items = num_health_items + 1
-				HEALTH_ITEMS_TEMP[unit] = POSITION_LOOKUP[unit]
+		for iter_53_1, iter_53_2 in pairs(var_53_6) do
+			if not var_53_0(iter_53_1) or arg_53_2 > iter_53_2.valid_until then
+				var_53_6[iter_53_1] = nil
+			elseif iter_53_2.template.can_heal_self then
+				var_53_7 = var_53_7 + 1
+				var_0_45[iter_53_1] = POSITION_LOOKUP[iter_53_1]
 			else
-				num_aux_items = num_aux_items + 1
-				AUXILIARY_HEALTH_SLOT_ITEMS_TEMP[unit] = POSITION_LOOKUP[unit]
+				var_53_8 = var_53_8 + 1
+				var_0_47[iter_53_1] = POSITION_LOOKUP[iter_53_1]
 			end
 		end
 
-		table.clear(RESERVED_HEALTH_ITEMS_TEMP)
+		table.clear(var_0_44)
 
-		local side_bot_data = bot_ai_data[side_id]
+		local var_53_9 = var_53_4[iter_53_0]
 
-		for bot_unit, data in pairs(side_bot_data) do
-			local reservation = data.pickup_orders.slot_healthkit
+		for iter_53_3, iter_53_4 in pairs(var_53_9) do
+			local var_53_10 = iter_53_4.pickup_orders.slot_healthkit
 
-			if reservation then
-				local pickup_unit = reservation.unit
+			if var_53_10 then
+				local var_53_11 = var_53_10.unit
 
-				if not pickup_unit then
-					-- Nothing
-				elseif HEALTH_ITEMS_TEMP[pickup_unit] then
-					num_health_items = num_health_items - 1
-					HEALTH_ITEMS_TEMP[pickup_unit] = nil
-				elseif AUXILIARY_HEALTH_SLOT_ITEMS_TEMP[pickup_unit] then
-					num_aux_items = num_aux_items - 1
-					AUXILIARY_HEALTH_SLOT_ITEMS_TEMP[pickup_unit] = nil
+				if not var_53_11 then
+					-- block empty
+				elseif var_0_45[var_53_11] then
+					var_53_7 = var_53_7 - 1
+					var_0_45[var_53_11] = nil
+				elseif var_0_47[var_53_11] then
+					var_53_8 = var_53_8 - 1
+					var_0_47[var_53_11] = nil
 				end
 
-				RESERVED_HEALTH_ITEMS_TEMP[bot_unit] = reservation
+				var_0_44[iter_53_3] = var_53_10
 			end
 		end
 
-		local lowest_human_hp_percent = math.huge
-		local side = side_manager:get_side(side_id)
-		local PLAYER_UNITS = side.PLAYER_UNITS
-		local num_human_players = #PLAYER_UNITS
+		local var_53_12 = math.huge
+		local var_53_13 = var_53_3:get_side(iter_53_0).PLAYER_UNITS
+		local var_53_14 = #var_53_13
 
-		for i = 1, num_human_players do
-			local player_unit = PLAYER_UNITS[i]
+		for iter_53_5 = 1, var_53_14 do
+			local var_53_15 = var_53_13[iter_53_5]
 
-			if HEALTH_ALIVE[player_unit] then
-				local inventory_ext = ScriptUnit.extension(player_unit, "inventory_system")
-				local med_item = inventory_ext:get_slot_data("slot_healthkit")
+			if HEALTH_ALIVE[var_53_15] then
+				if not ScriptUnit.extension(var_53_15, "inventory_system"):get_slot_data("slot_healthkit") and not var_0_44[var_53_15] then
+					local var_53_16 = math.huge
+					local var_53_17
+					local var_53_18 = POSITION_LOOKUP[var_53_15]
 
-				if not med_item and not RESERVED_HEALTH_ITEMS_TEMP[player_unit] then
-					local closest_dist = math.huge
-					local closest_item
-					local pos = POSITION_LOOKUP[player_unit]
+					if var_53_7 > 0 then
+						for iter_53_6, iter_53_7 in pairs(var_0_45) do
+							local var_53_19 = var_53_2(var_53_18, iter_53_7)
 
-					if num_health_items > 0 then
-						for unit, item_pos in pairs(HEALTH_ITEMS_TEMP) do
-							local dist = Vector3_distance_squared(pos, item_pos)
-
-							if dist < closest_dist then
-								closest_dist = dist
-								closest_item = unit
+							if var_53_19 < var_53_16 then
+								var_53_16 = var_53_19
+								var_53_17 = iter_53_6
 							end
 						end
 
-						num_health_items = num_health_items - 1
-						HEALTH_ITEMS_TEMP[closest_item] = nil
-					elseif num_aux_items > 0 then
-						for unit, item_pos in pairs(AUXILIARY_HEALTH_SLOT_ITEMS_TEMP) do
-							local dist = Vector3_distance_squared(pos, item_pos)
+						var_53_7 = var_53_7 - 1
+						var_0_45[var_53_17] = nil
+					elseif var_53_8 > 0 then
+						for iter_53_8, iter_53_9 in pairs(var_0_47) do
+							local var_53_20 = var_53_2(var_53_18, iter_53_9)
 
-							if dist < closest_dist then
-								closest_dist = dist
-								closest_item = unit
+							if var_53_20 < var_53_16 then
+								var_53_16 = var_53_20
+								var_53_17 = iter_53_8
 							end
 						end
 
-						num_aux_items = num_aux_items - 1
-						AUXILIARY_HEALTH_SLOT_ITEMS_TEMP[closest_item] = nil
+						var_53_8 = var_53_8 - 1
+						var_0_47[var_53_17] = nil
 					end
 				end
 
-				local status_ext = ScriptUnit.extension(player_unit, "status_system")
+				local var_53_21 = ScriptUnit.extension(var_53_15, "status_system")
 
-				if status_ext:is_knocked_down() or status_ext:is_wounded() then
-					lowest_human_hp_percent = math.min(0, lowest_human_hp_percent)
+				if var_53_21:is_knocked_down() or var_53_21:is_wounded() then
+					var_53_12 = math.min(0, var_53_12)
 				else
-					local health_extension = ScriptUnit.extension(player_unit, "health_system")
-					local health_percent = health_extension:current_health_percent()
+					local var_53_22 = ScriptUnit.extension(var_53_15, "health_system"):current_health_percent()
 
-					lowest_human_hp_percent = math.min(health_percent, lowest_human_hp_percent)
+					var_53_12 = math.min(var_53_22, var_53_12)
 				end
 			end
 		end
 
-		local num_valid_bots = 0
-		local lowest_bot_health_procent = math.huge
-		local lowest_hp_bot_has_item = false
-		local lowest_hp_bot_blackboard
+		local var_53_23 = 0
+		local var_53_24 = math.huge
+		local var_53_25 = false
+		local var_53_26
 
-		for unit, data in pairs(side_bot_data) do
-			local blackboard = BLACKBOARDS[unit]
+		for iter_53_10, iter_53_11 in pairs(var_53_9) do
+			local var_53_27 = var_0_11[iter_53_10]
 
-			blackboard.allowed_to_take_health_pickup = false
-			blackboard.force_use_health_pickup = false
+			var_53_27.allowed_to_take_health_pickup = false
+			var_53_27.force_use_health_pickup = false
 
-			local inventory_ext = ScriptUnit.extension(unit, "inventory_system")
-			local status_ext = data.status_extension
-			local health_slot_data = inventory_ext:get_slot_data("slot_healthkit")
-			local has_heal_item = health_slot_data and inventory_ext:get_item_template(health_slot_data).can_heal_self
+			local var_53_28 = ScriptUnit.extension(iter_53_10, "inventory_system")
+			local var_53_29 = iter_53_11.status_extension
+			local var_53_30 = var_53_28:get_slot_data("slot_healthkit")
+			local var_53_31 = var_53_30 and var_53_28:get_item_template(var_53_30).can_heal_self
 
-			if RESERVED_HEALTH_ITEMS_TEMP[unit] and not has_heal_item then
-				-- Nothing
-			elseif not has_heal_item and HEALTH_ALIVE[unit] and not status_ext:is_ready_for_assisted_respawn() then
-				num_valid_bots = num_valid_bots + 1
-				BOT_UNITS[num_valid_bots] = unit
-				BOT_BBS[num_valid_bots] = blackboard
-				BOT_POSES[num_valid_bots] = POSITION_LOOKUP[unit]
+			if var_0_44[iter_53_10] and not var_53_31 then
+				-- block empty
+			elseif not var_53_31 and HEALTH_ALIVE[iter_53_10] and not var_53_29:is_ready_for_assisted_respawn() then
+				var_53_23 = var_53_23 + 1
+				var_0_50[var_53_23] = iter_53_10
+				var_0_48[var_53_23] = var_53_27
+				var_0_49[var_53_23] = POSITION_LOOKUP[iter_53_10]
 
-				local health_extension = ScriptUnit.extension(unit, "health_system")
-				local hp_percent = health_extension:current_health_percent()
+				local var_53_32 = ScriptUnit.extension(iter_53_10, "health_system"):current_health_percent()
 
-				if status_ext:is_wounded() then
-					hp_percent = hp_percent / 3
+				if var_53_29:is_wounded() then
+					var_53_32 = var_53_32 / 3
 				end
 
-				BOT_HEALTH[num_valid_bots] = hp_percent
+				var_0_51[var_53_23] = var_53_32
 
-				if hp_percent < lowest_bot_health_procent then
-					lowest_bot_health_procent = hp_percent
-					lowest_hp_bot_has_item = false
-					lowest_hp_bot_blackboard = nil
+				if var_53_32 < var_53_24 then
+					var_53_24 = var_53_32
+					var_53_25 = false
+					var_53_26 = nil
 				end
 
-				BOT_INDICES[unit] = num_valid_bots
-			elseif has_heal_item and HEALTH_ALIVE[unit] and not status_ext:is_ready_for_assisted_respawn() then
-				local health_extension = ScriptUnit.extension(unit, "health_system")
-				local hp_percent = health_extension:current_health_percent()
-				local buff_extension = ScriptUnit.extension(unit, "buff_system")
-				local has_no_permanent_health_from_item_buff = buff_extension:has_buff_type("trait_necklace_no_healing_health_regen")
-				local is_wounded = status_ext:is_wounded()
+				var_0_54[iter_53_10] = var_53_23
+			elseif var_53_31 and HEALTH_ALIVE[iter_53_10] and not var_53_29:is_ready_for_assisted_respawn() then
+				local var_53_33 = ScriptUnit.extension(iter_53_10, "health_system"):current_health_percent()
+				local var_53_34 = ScriptUnit.extension(iter_53_10, "buff_system"):has_buff_type("trait_necklace_no_healing_health_regen")
+				local var_53_35 = var_53_29:is_wounded()
 
-				if hp_percent < lowest_bot_health_procent and (not has_no_permanent_health_from_item_buff or is_wounded) then
-					lowest_bot_health_procent = hp_percent
-					lowest_hp_bot_has_item = true
-					lowest_hp_bot_blackboard = blackboard
+				if var_53_33 < var_53_24 and (not var_53_34 or var_53_35) then
+					var_53_24 = var_53_33
+					var_53_25 = true
+					var_53_26 = var_53_27
 				end
 			end
 		end
 
-		table.merge(HEALTH_ITEMS_TEMP_TEMP, HEALTH_ITEMS_TEMP)
+		table.merge(var_0_46, var_0_45)
 
-		local more_items_than_players = num_valid_bots < num_health_items
-		local allowed_empties = math.max(0, num_valid_bots - num_health_items)
+		local var_53_36 = var_53_23 < var_53_7
+		local var_53_37 = math.max(0, var_53_23 - var_53_7)
 
-		find_permutation(1, 0, SOLUTION_TEMP, math.huge, BEST_SOLUTION_TEMP, allowed_empties, HEALTH_ITEMS_TEMP_TEMP, HEALTH_ITEMS_TEMP, num_valid_bots)
-		table.clear(BOT_HEALTH)
+		var_0_58(1, 0, var_0_52, math.huge, var_0_53, var_53_37, var_0_46, var_0_45, var_53_23)
+		table.clear(var_0_51)
 
-		for unit, data in pairs(side_bot_data) do
-			local index = BOT_INDICES[unit]
+		for iter_53_12, iter_53_13 in pairs(var_53_9) do
+			local var_53_38 = var_0_54[iter_53_12]
 
-			if index then
-				local bb = BOT_BBS[index]
-				local pickup = BEST_SOLUTION_TEMP[index]
+			if var_53_38 then
+				local var_53_39 = var_0_48[var_53_38]
+				local var_53_40 = var_0_53[var_53_38]
 
-				if pickup then
-					bb.health_pickup = pickup
+				if var_53_40 then
+					var_53_39.health_pickup = var_53_40
 
-					local pickup_pos = POSITION_LOOKUP[pickup]
-					local health_dist = Vector3_distance(BOT_POSES[index], pickup_pos)
+					local var_53_41 = POSITION_LOOKUP[var_53_40]
+					local var_53_42 = var_53_1(var_0_49[var_53_38], var_53_41)
 
-					bb.health_dist = health_dist
-					bb.health_pickup_valid_until = math.huge
+					var_53_39.health_dist = var_53_42
+					var_53_39.health_pickup_valid_until = math.huge
 
-					local follow_pos = data.follow_position
-					local in_range = not follow_pos and health_dist < MAX_PICKUP_RANGE or follow_pos and Vector3_distance(follow_pos, pickup_pos) < MAX_PICKUP_RANGE
+					local var_53_43 = iter_53_13.follow_position
 
-					if in_range then
-						bb.allowed_to_take_health_pickup = true
+					if not var_53_43 and var_53_42 < var_0_55 or var_53_43 and var_53_1(var_53_43, var_53_41) < var_0_55 then
+						var_53_39.allowed_to_take_health_pickup = true
 					else
-						bb.allowed_to_take_health_pickup = false
+						var_53_39.allowed_to_take_health_pickup = false
 					end
 				else
-					bb.allowed_to_take_health_pickup = false
-					bb.health_dist = nil
-					bb.health_pickup_valid_until = nil
+					var_53_39.allowed_to_take_health_pickup = false
+					var_53_39.health_dist = nil
+					var_53_39.health_pickup_valid_until = nil
 				end
-			elseif RESERVED_HEALTH_ITEMS_TEMP[unit] and RESERVED_HEALTH_ITEMS_TEMP[unit].unit then
-				local bb = BLACKBOARDS[unit]
-				local pickup_unit = RESERVED_HEALTH_ITEMS_TEMP[unit].unit
+			elseif var_0_44[iter_53_12] and var_0_44[iter_53_12].unit then
+				local var_53_44 = var_0_11[iter_53_12]
+				local var_53_45 = var_0_44[iter_53_12].unit
 
-				bb.health_pickup = pickup_unit
-				bb.health_dist = Vector3_distance(POSITION_LOOKUP[unit], POSITION_LOOKUP[pickup_unit])
-				bb.health_pickup_valid_until = math.huge
-				bb.allowed_to_take_health_pickup = true
+				var_53_44.health_pickup = var_53_45
+				var_53_44.health_dist = var_53_1(POSITION_LOOKUP[iter_53_12], POSITION_LOOKUP[var_53_45])
+				var_53_44.health_pickup_valid_until = math.huge
+				var_53_44.allowed_to_take_health_pickup = true
 			else
-				local bb = BLACKBOARDS[unit]
+				local var_53_46 = var_0_11[iter_53_12]
 
-				if bb.health_pickup then
-					bb.health_pickup = nil
-					bb.health_dist = nil
-					bb.health_pickup_valid_until = nil
+				if var_53_46.health_pickup then
+					var_53_46.health_pickup = nil
+					var_53_46.health_dist = nil
+					var_53_46.health_pickup_valid_until = nil
 				end
 
-				bb.allowed_to_take_health_pickup = false
+				var_53_46.allowed_to_take_health_pickup = false
 			end
 		end
 
-		local current_index = 1
+		local var_53_47 = 1
 
-		for i = 1, num_valid_bots do
-			local unit_i = BOT_UNITS[i]
-			local inventory_ext = ScriptUnit.extension(unit_i, "inventory_system")
-			local has_aux_item = inventory_ext:get_slot_data("slot_healthkit")
-			local in_solution = BEST_SOLUTION_TEMP[i]
+		for iter_53_14 = 1, var_53_23 do
+			local var_53_48 = var_0_50[iter_53_14]
+			local var_53_49 = ScriptUnit.extension(var_53_48, "inventory_system"):get_slot_data("slot_healthkit")
 
-			if not in_solution and not has_aux_item then
-				local unit = BOT_UNITS[i]
+			if not var_0_53[iter_53_14] and not var_53_49 then
+				local var_53_50 = var_0_50[iter_53_14]
 
-				BOT_UNITS[current_index] = unit
-				BOT_BBS[current_index] = BOT_BBS[i]
-				BOT_POSES[current_index] = BOT_POSES[i]
-				BOT_INDICES[unit] = current_index
-				current_index = current_index + 1
+				var_0_50[var_53_47] = var_53_50
+				var_0_48[var_53_47] = var_0_48[iter_53_14]
+				var_0_49[var_53_47] = var_0_49[iter_53_14]
+				var_0_54[var_53_50] = var_53_47
+				var_53_47 = var_53_47 + 1
 			else
-				local unit = BOT_UNITS[i]
+				local var_53_51 = var_0_50[iter_53_14]
 
-				BOT_INDICES[unit] = nil
+				var_0_54[var_53_51] = nil
 			end
 		end
 
-		for i = current_index, num_valid_bots do
-			BOT_UNITS[i] = nil
-			BOT_BBS[i] = nil
-			BOT_POSES[i] = nil
+		for iter_53_15 = var_53_47, var_53_23 do
+			var_0_50[iter_53_15] = nil
+			var_0_48[iter_53_15] = nil
+			var_0_49[iter_53_15] = nil
 		end
 
-		table.clear(HEALTH_ITEMS_TEMP_TEMP)
-		table.clear(SOLUTION_TEMP)
-		table.clear(BEST_SOLUTION_TEMP)
+		table.clear(var_0_46)
+		table.clear(var_0_52)
+		table.clear(var_0_53)
 
-		num_valid_bots = current_index - 1
+		local var_53_52 = var_53_47 - 1
 
-		if num_valid_bots > 0 then
-			table.merge(HEALTH_ITEMS_TEMP_TEMP, AUXILIARY_HEALTH_SLOT_ITEMS_TEMP)
+		if var_53_52 > 0 then
+			table.merge(var_0_46, var_0_47)
 
-			local allowed_empties = math.max(0, num_valid_bots - num_aux_items)
+			local var_53_53 = math.max(0, var_53_52 - var_53_8)
 
-			find_permutation(1, 0, SOLUTION_TEMP, math.huge, BEST_SOLUTION_TEMP, allowed_empties, HEALTH_ITEMS_TEMP_TEMP, AUXILIARY_HEALTH_SLOT_ITEMS_TEMP, num_valid_bots)
+			var_0_58(1, 0, var_0_52, math.huge, var_0_53, var_53_53, var_0_46, var_0_47, var_53_52)
 
-			for unit, data in pairs(side_bot_data) do
-				local index = BOT_INDICES[unit]
+			for iter_53_16, iter_53_17 in pairs(var_53_9) do
+				local var_53_54 = var_0_54[iter_53_16]
 
-				if index then
-					local bb = BOT_BBS[index]
-					local pickup = BEST_SOLUTION_TEMP[index]
+				if var_53_54 then
+					local var_53_55 = var_0_48[var_53_54]
+					local var_53_56 = var_0_53[var_53_54]
 
-					if pickup then
-						bb.health_pickup = pickup
+					if var_53_56 then
+						var_53_55.health_pickup = var_53_56
 
-						local pickup_pos = POSITION_LOOKUP[pickup]
-						local health_dist = Vector3_distance(BOT_POSES[index], pickup_pos)
+						local var_53_57 = POSITION_LOOKUP[var_53_56]
+						local var_53_58 = var_53_1(var_0_49[var_53_54], var_53_57)
 
-						bb.health_dist = health_dist
-						bb.health_pickup_valid_until = math.huge
+						var_53_55.health_dist = var_53_58
+						var_53_55.health_pickup_valid_until = math.huge
 
-						local follow_pos = data.follow_position
-						local in_range = not follow_pos and health_dist < MAX_PICKUP_RANGE or follow_pos and Vector3_distance(follow_pos, pickup_pos) < MAX_PICKUP_RANGE
+						local var_53_59 = iter_53_17.follow_position
 
-						if in_range then
-							bb.allowed_to_take_health_pickup = true
+						if not var_53_59 and var_53_58 < var_0_55 or var_53_59 and var_53_1(var_53_59, var_53_57) < var_0_55 then
+							var_53_55.allowed_to_take_health_pickup = true
 						else
-							bb.allowed_to_take_health_pickup = false
+							var_53_55.allowed_to_take_health_pickup = false
 						end
 					else
-						bb.allowed_to_take_health_pickup = false
-						bb.health_dist = nil
-						bb.health_pickup_valid_until = nil
+						var_53_55.allowed_to_take_health_pickup = false
+						var_53_55.health_dist = nil
+						var_53_55.health_pickup_valid_until = nil
 					end
 				end
 			end
 
-			table.clear(HEALTH_ITEMS_TEMP_TEMP)
-			table.clear(SOLUTION_TEMP)
-			table.clear(BEST_SOLUTION_TEMP)
+			table.clear(var_0_46)
+			table.clear(var_0_52)
+			table.clear(var_0_53)
 		end
 
-		table.clear(BOT_BBS)
-		table.clear(BOT_UNITS)
-		table.clear(BOT_POSES)
-		table.clear(BOT_INDICES)
-		table.clear(HEALTH_ITEMS_TEMP)
-		table.clear(AUXILIARY_HEALTH_SLOT_ITEMS_TEMP)
+		table.clear(var_0_48)
+		table.clear(var_0_50)
+		table.clear(var_0_49)
+		table.clear(var_0_54)
+		table.clear(var_0_45)
+		table.clear(var_0_47)
 
-		local in_carry_event = self._in_carry_event[side_id]
-
-		if not in_carry_event and more_items_than_players and lowest_hp_bot_has_item and lowest_bot_health_procent > 0 and lowest_human_hp_percent > math.min(lowest_bot_health_procent * 1.2, 1) then
-			lowest_hp_bot_blackboard.force_use_health_pickup = true
+		if not arg_53_0._in_carry_event[iter_53_0] and var_53_36 and var_53_25 and var_53_24 > 0 and var_53_12 > math.min(var_53_24 * 1.2, 1) then
+			var_53_26.force_use_health_pickup = true
 		end
 	end
 end
 
-AIBotGroupSystem._calculate_priority_target_utility = function (self, self_position, target, time, current_target)
-	local stickyness_modifier = target == current_target and STICKYNESS_DISTANCE_MODIFIER or 0
-	local distance = math.max(Vector3.distance(self_position, POSITION_LOOKUP[target]), 1)
-	local proximity = 1 / (distance + stickyness_modifier)
-	local duration = time
+function AIBotGroupSystem._calculate_priority_target_utility(arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4)
+	local var_54_0 = arg_54_2 == arg_54_4 and var_0_10 or 0
+	local var_54_1 = math.max(Vector3.distance(arg_54_1, POSITION_LOOKUP[arg_54_2]), 1)
 
-	return proximity + duration, distance
+	return 1 / (var_54_1 + var_54_0) + arg_54_3, var_54_1
 end
 
-AIBotGroupSystem._update_first_person_debug = function (self)
+function AIBotGroupSystem._update_first_person_debug(arg_55_0)
 	if not script_data.ai_bots_debug then
 		return
 	end
 
 	if IS_WINDOWS then
 		if Keyboard.pressed(Keyboard.button_index("numpad 1")) then
-			self:first_person_debug(1)
+			arg_55_0:first_person_debug(1)
 		elseif Keyboard.pressed(Keyboard.button_index("numpad 2")) then
-			self:first_person_debug(2)
+			arg_55_0:first_person_debug(2)
 		elseif Keyboard.pressed(Keyboard.button_index("numpad 3")) then
-			self:first_person_debug(3)
+			arg_55_0:first_person_debug(3)
 		elseif Keyboard.pressed(Keyboard.button_index("numpad enter")) then
-			self:first_person_debug(nil)
+			arg_55_0:first_person_debug(nil)
 		end
 	end
 end
 
-AIBotGroupSystem._update_weapon_debug = function (self)
+function AIBotGroupSystem._update_weapon_debug(arg_56_0)
 	if not script_data.ai_bots_weapon_debug then
 		return
 	end
 
-	local player_manager = Managers.player
+	local var_56_0 = Managers.player
 
 	Debug.text("BOT RANGED WEAPON")
 
-	for side_id = 1, #self._bot_ai_data do
-		local side_bot_data = self._bot_ai_data[side_id]
+	for iter_56_0 = 1, #arg_56_0._bot_ai_data do
+		local var_56_1 = arg_56_0._bot_ai_data[iter_56_0]
 
-		for unit, data in pairs(side_bot_data) do
-			local blackboard = data.blackboard
-			local inventory_extension = blackboard.inventory_extension
-			local slot_data = inventory_extension:get_slot_data("slot_ranged")
+		for iter_56_1, iter_56_2 in pairs(var_56_1) do
+			local var_56_2 = iter_56_2.blackboard
+			local var_56_3 = var_56_2.inventory_extension
+			local var_56_4 = var_56_3:get_slot_data("slot_ranged")
 
-			if slot_data then
-				local player_bot = player_manager:owner(unit)
-				local bot_name = player_bot:profile_display_name()
-				local overcharge_extension = blackboard.overcharge_extension
-				local current_ammo, max_ammo = inventory_extension:current_ammo_status("slot_ranged")
-				local current_oc, threshold_oc, max_oc = overcharge_extension:current_overcharge_status()
-				local item_template = inventory_extension:get_item_template(slot_data)
-				local weapon_name = item_template.name
-				local ammo_substring = current_ammo and string.format(" %d|%d", current_ammo, max_ammo) or ""
-				local oc_substring = current_oc and string.format(" %02d|%d|%d", current_oc, threshold_oc, max_oc) or ""
+			if var_56_4 then
+				local var_56_5 = var_56_0:owner(iter_56_1):profile_display_name()
+				local var_56_6 = var_56_2.overcharge_extension
+				local var_56_7, var_56_8 = var_56_3:current_ammo_status("slot_ranged")
+				local var_56_9, var_56_10, var_56_11 = var_56_6:current_overcharge_status()
+				local var_56_12 = var_56_3:get_item_template(var_56_4).name
+				local var_56_13 = var_56_7 and string.format(" %d|%d", var_56_7, var_56_8) or ""
+				local var_56_14 = var_56_9 and string.format(" %02d|%d|%d", var_56_9, var_56_10, var_56_11) or ""
 
-				Debug.text("%-16s:%s%s [%s]", bot_name, ammo_substring, oc_substring, weapon_name)
+				Debug.text("%-16s:%s%s [%s]", var_56_5, var_56_13, var_56_14, var_56_12)
 			end
 		end
 	end
 end
 
-AIBotGroupSystem._update_order_debug = function (self)
+function AIBotGroupSystem._update_order_debug(arg_57_0)
 	if not script_data.ai_bots_order_debug then
 		return
 	end
 
-	local debug_colors = {
+	local var_57_0 = {
 		slot_healthkit = Color(255, 0, 0),
 		slot_potion = Color(0, 255, 0),
 		slot_level_event = Color(0, 0, 255),
-		slot_grenade = Color(0, 255, 255),
+		slot_grenade = Color(0, 255, 255)
 	}
 
-	for side_id = 1, #self._bot_ai_data do
-		local side_bot_data = self._bot_ai_data[side_id]
+	for iter_57_0 = 1, #arg_57_0._bot_ai_data do
+		local var_57_1 = arg_57_0._bot_ai_data[iter_57_0]
 
-		for bot_unit, data in pairs(side_bot_data) do
-			local orders = data.pickup_orders
+		for iter_57_1, iter_57_2 in pairs(var_57_1) do
+			local var_57_2 = iter_57_2.pickup_orders
 
-			for slot_name, order_data in pairs(orders) do
-				local unit = order_data.unit
+			for iter_57_3, iter_57_4 in pairs(var_57_2) do
+				local var_57_3 = iter_57_4.unit
 
-				if unit then
-					local pos = POSITION_LOOKUP[unit]
-					local color = debug_colors[slot_name] or Color(Math.random() * 255, Math.random() * 255, Math.random() * 255)
+				if var_57_3 then
+					local var_57_4 = POSITION_LOOKUP[var_57_3]
+					local var_57_5 = var_57_0[iter_57_3] or Color(Math.random() * 255, Math.random() * 255, Math.random() * 255)
 
-					QuickDrawer:line(POSITION_LOOKUP[bot_unit], pos, color)
-					QuickDrawer:sphere(pos, 0.25, color)
+					QuickDrawer:line(POSITION_LOOKUP[iter_57_1], var_57_4, var_57_5)
+					QuickDrawer:sphere(var_57_4, 0.25, var_57_5)
 				end
 			end
 		end
 	end
 
 	if Keyboard.pressed(Keyboard.button_index("t")) then
-		local ph_world = self._physics_world
-		local local_player = Managers.player:local_player()
-		local vp_name = local_player.viewport_name
-		local vp = ScriptWorld.viewport(self._world, vp_name, true)
-		local camera = ScriptViewport.camera(vp)
-		local pos = ScriptCamera.position(camera)
-		local rot = ScriptCamera.rotation(camera)
-		local hit, _, _, _, actor = PhysicsWorld.immediate_raycast(ph_world, pos, Quaternion.forward(rot), 100, "closest", "collision_filter", "filter_pickups")
+		local var_57_6 = arg_57_0._physics_world
+		local var_57_7 = Managers.player:local_player()
+		local var_57_8 = var_57_7.viewport_name
+		local var_57_9 = ScriptWorld.viewport(arg_57_0._world, var_57_8, true)
+		local var_57_10 = ScriptViewport.camera(var_57_9)
+		local var_57_11 = ScriptCamera.position(var_57_10)
+		local var_57_12 = ScriptCamera.rotation(var_57_10)
+		local var_57_13, var_57_14, var_57_15, var_57_16, var_57_17 = PhysicsWorld.immediate_raycast(var_57_6, var_57_11, Quaternion.forward(var_57_12), 100, "closest", "collision_filter", "filter_pickups")
 
-		if hit then
-			local unit = Actor.unit(actor)
-			local selected_bot
+		if var_57_13 then
+			local var_57_18 = Actor.unit(var_57_17)
+			local var_57_19
 
-			for side_id = 1, #self._bot_ai_data do
-				local side_bot_data = self._bot_ai_data[side_id]
+			for iter_57_5 = 1, #arg_57_0._bot_ai_data do
+				local var_57_20 = arg_57_0._bot_ai_data[iter_57_5]
 
-				for bot_unit, _ in pairs(side_bot_data) do
-					if HEALTH_ALIVE[bot_unit] then
-						selected_bot = bot_unit
+				for iter_57_6, iter_57_7 in pairs(var_57_20) do
+					if HEALTH_ALIVE[iter_57_6] then
+						var_57_19 = iter_57_6
 
 						if Math.random() < 0.3 then
 							break
@@ -2481,115 +2391,113 @@ AIBotGroupSystem._update_order_debug = function (self)
 				end
 			end
 
-			if selected_bot then
-				self:order("pickup", selected_bot, unit, local_player)
+			if var_57_19 then
+				arg_57_0:order("pickup", var_57_19, var_57_18, var_57_7)
 			end
 		end
 	end
 end
 
-AIBotGroupSystem._update_proximity_bot_breakables_debug = function (self)
+function AIBotGroupSystem._update_proximity_bot_breakables_debug(arg_58_0)
 	if not script_data.ai_bots_proximity_breakables_debug then
 		return
 	end
 
-	for side_id = 1, #self._bot_ai_data do
-		local side_bot_data = self._bot_ai_data[side_id]
+	for iter_58_0 = 1, #arg_58_0._bot_ai_data do
+		local var_58_0 = arg_58_0._bot_ai_data[iter_58_0]
 
-		for bot_unit, data in pairs(side_bot_data) do
-			if bot_unit == script_data.debug_unit then
-				local previous_bot_breakables = data.previous_bot_breakables
+		for iter_58_1, iter_58_2 in pairs(var_58_0) do
+			if iter_58_1 == script_data.debug_unit then
+				local var_58_1 = iter_58_2.previous_bot_breakables
 
-				for unit, _ in pairs(previous_bot_breakables) do
-					local node_name = "rp_center"
-					local node = Unit.has_node(unit, node_name) and Unit.node(unit, node_name) or 0
-					local node_position = Unit.world_position(unit, node)
+				for iter_58_3, iter_58_4 in pairs(var_58_1) do
+					local var_58_2 = "rp_center"
+					local var_58_3 = Unit.has_node(iter_58_3, var_58_2) and Unit.node(iter_58_3, var_58_2) or 0
+					local var_58_4 = Unit.world_position(iter_58_3, var_58_3)
 
-					QuickDrawer:sphere(node_position, 0.25, Colors.get("yellow"))
+					QuickDrawer:sphere(var_58_4, 0.25, Colors.get("yellow"))
 				end
 			end
 		end
 	end
 end
 
-AIBotGroupSystem._update_ally_needs_aid_priority = function (self)
-	local unit_alive = Unit.alive
-	local bot_ai_data_lookup = self._bot_ai_data_lookup
+function AIBotGroupSystem._update_ally_needs_aid_priority(arg_59_0)
+	local var_59_0 = Unit.alive
+	local var_59_1 = arg_59_0._bot_ai_data_lookup
 
-	for target_unit, bot_unit in pairs(self._ally_needs_aid_priority) do
-		local reset_priority_aid = true
+	for iter_59_0, iter_59_1 in pairs(arg_59_0._ally_needs_aid_priority) do
+		local var_59_2 = true
 
-		if unit_alive(bot_unit) then
-			local blackboard = bot_ai_data_lookup[bot_unit].blackboard
+		if var_59_0(iter_59_1) then
+			local var_59_3 = var_59_1[iter_59_1].blackboard
 
-			reset_priority_aid = blackboard.target_ally_unit ~= target_unit or not blackboard.target_ally_needs_aid or not HEALTH_ALIVE[bot_unit]
+			var_59_2 = var_59_3.target_ally_unit ~= iter_59_0 or not var_59_3.target_ally_needs_aid or not HEALTH_ALIVE[iter_59_1]
 		end
 
-		if reset_priority_aid then
-			self._ally_needs_aid_priority[target_unit] = nil
+		if var_59_2 then
+			arg_59_0._ally_needs_aid_priority[iter_59_0] = nil
 		end
 	end
 end
 
-AIBotGroupSystem.first_person_debug = function (self, bot_number)
-	if bot_number == self._debugging_bot then
+function AIBotGroupSystem.first_person_debug(arg_60_0, arg_60_1)
+	if arg_60_1 == arg_60_0._debugging_bot then
 		return
 	end
 
-	local local_player
-	local human_players = Managers.player:human_players()
+	local var_60_0
+	local var_60_1 = Managers.player:human_players()
 
-	for _, player in pairs(human_players) do
-		if not player.remote then
-			local_player = player
+	for iter_60_0, iter_60_1 in pairs(var_60_1) do
+		if not iter_60_1.remote then
+			var_60_0 = iter_60_1
 
 			break
 		end
 	end
 
-	local new_player
+	local var_60_2
 
-	if bot_number then
-		new_player = Managers.player:local_player(bot_number + 1)
+	if arg_60_1 then
+		var_60_2 = Managers.player:local_player(arg_60_1 + 1)
 	else
-		new_player = local_player
+		var_60_2 = var_60_0
 	end
 
-	if not new_player then
+	if not var_60_2 then
 		return
 	end
 
-	local new_unit = new_player.player_unit
+	local var_60_3 = var_60_2.player_unit
 
-	if not Unit.alive(new_unit) then
+	if not Unit.alive(var_60_3) then
 		return
 	end
 
-	local old_player
+	local var_60_4
 
-	if self._debugging_bot then
-		old_player = Managers.player:local_player(self._debugging_bot + 1)
+	if arg_60_0._debugging_bot then
+		var_60_4 = Managers.player:local_player(arg_60_0._debugging_bot + 1)
 	else
-		old_player = local_player
+		var_60_4 = var_60_0
 	end
 
-	local old_unit = old_player.player_unit
+	local var_60_5 = var_60_4.player_unit
 
-	if not Unit.alive(old_unit) then
+	if not Unit.alive(var_60_5) then
 		return
 	end
 
-	local world = self._world
+	local var_60_6 = arg_60_0._world
 
-	if not Managers.state.camera:has_viewport(new_player.viewport_name) then
-		Managers.state.entity:system("camera_system"):local_player_created(new_player)
+	if not Managers.state.camera:has_viewport(var_60_2.viewport_name) then
+		Managers.state.entity:system("camera_system"):local_player_created(var_60_2)
 	else
-		for player, camera_unit in pairs(Managers.state.entity:system("camera_system").camera_units) do
-			if player.viewport_name == new_player.viewport_name then
-				if player ~= new_player then
-					local camera_extension = ScriptUnit.extension(camera_unit, "camera_system")
-
-					camera_extension.player = new_player
+		for iter_60_2, iter_60_3 in pairs(Managers.state.entity:system("camera_system").camera_units) do
+			if iter_60_2.viewport_name == var_60_2.viewport_name then
+				if iter_60_2 ~= var_60_2 then
+					ScriptUnit.extension(iter_60_3, "camera_system").player = var_60_2
 				end
 
 				break
@@ -2597,78 +2505,70 @@ AIBotGroupSystem.first_person_debug = function (self, bot_number)
 		end
 	end
 
-	ScriptWorld.activate_viewport(world, ScriptWorld.viewport(world, new_player.viewport_name))
-	ScriptWorld.deactivate_viewport(world, ScriptWorld.viewport(world, old_player.viewport_name))
-	ScriptUnit.extension(new_unit, "first_person_system"):debug_set_first_person_mode(new_player ~= local_player, true)
-	ScriptUnit.extension(old_unit, "first_person_system"):debug_set_first_person_mode(old_player == local_player, false)
+	ScriptWorld.activate_viewport(var_60_6, ScriptWorld.viewport(var_60_6, var_60_2.viewport_name))
+	ScriptWorld.deactivate_viewport(var_60_6, ScriptWorld.viewport(var_60_6, var_60_4.viewport_name))
+	ScriptUnit.extension(var_60_3, "first_person_system"):debug_set_first_person_mode(var_60_2 ~= var_60_0, true)
+	ScriptUnit.extension(var_60_5, "first_person_system"):debug_set_first_person_mode(var_60_4 == var_60_0, false)
 
-	self._debugging_bot = bot_number
+	arg_60_0._debugging_bot = arg_60_1
 end
 
-AIBotGroupSystem.ranged_attack_started = function (self, attacker_unit, victim_unit, attack_type)
-	if DamageUtils.is_player_unit(victim_unit) then
-		local proximity_extension = ScriptUnit.extension(attacker_unit, "proximity_system")
+function AIBotGroupSystem.ranged_attack_started(arg_61_0, arg_61_1, arg_61_2, arg_61_3)
+	if DamageUtils.is_player_unit(arg_61_2) then
+		ScriptUnit.extension(arg_61_1, "proximity_system").has_been_seen = true
 
-		proximity_extension.has_been_seen = true
+		local var_61_0 = arg_61_0._bot_ai_data
 
-		local bot_ai_data = self._bot_ai_data
+		for iter_61_0 = 1, #var_61_0 do
+			local var_61_1 = var_61_0[iter_61_0]
 
-		for side_id = 1, #bot_ai_data do
-			local side_bot_data = bot_ai_data[side_id]
-
-			for unit, _ in pairs(side_bot_data) do
-				local ai_ext = ScriptUnit.extension(unit, "ai_system")
-
-				ai_ext:ranged_attack_started(attacker_unit, victim_unit, attack_type)
+			for iter_61_1, iter_61_2 in pairs(var_61_1) do
+				ScriptUnit.extension(iter_61_1, "ai_system"):ranged_attack_started(arg_61_1, arg_61_2, arg_61_3)
 			end
 		end
 
-		fassert(self._urgent_targets[attacker_unit] ~= math.huge, "Attacker unit %s is already attacking another victim! max one victim at a time allowed, otherwise we need to add ref counting", attacker_unit)
+		fassert(arg_61_0._urgent_targets[arg_61_1] ~= math.huge, "Attacker unit %s is already attacking another victim! max one victim at a time allowed, otherwise we need to add ref counting", arg_61_1)
 
-		self._urgent_targets[attacker_unit] = math.huge
+		arg_61_0._urgent_targets[arg_61_1] = math.huge
 	end
 end
 
-local OPPORTUNITY_TARGET_COOLDOWN = 30
+local var_0_60 = 30
 
-AIBotGroupSystem.ranged_attack_ended = function (self, attacker_unit, victim_unit, attack_type, optional_cooldown)
-	local bot_ai_data = self._bot_ai_data
+function AIBotGroupSystem.ranged_attack_ended(arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4)
+	local var_62_0 = arg_62_0._bot_ai_data
 
-	for side_id = 1, #bot_ai_data do
-		local side_bot_data = bot_ai_data[side_id]
+	for iter_62_0 = 1, #var_62_0 do
+		local var_62_1 = var_62_0[iter_62_0]
 
-		for unit, _ in pairs(side_bot_data) do
-			local ai_ext = ScriptUnit.extension(unit, "ai_system")
-
-			ai_ext:ranged_attack_ended(attacker_unit, victim_unit, attack_type)
+		for iter_62_1, iter_62_2 in pairs(var_62_1) do
+			ScriptUnit.extension(iter_62_1, "ai_system"):ranged_attack_ended(arg_62_1, arg_62_2, arg_62_3)
 		end
 	end
 
-	self._urgent_targets[attacker_unit] = self._t + (optional_cooldown or OPPORTUNITY_TARGET_COOLDOWN)
+	arg_62_0._urgent_targets[arg_62_1] = arg_62_0._t + (arg_62_4 or var_0_60)
 end
 
-local OPPORTUNITY_TARGET_TELEPORT_DETECTION_DISTANCE = 7
-local OPPORTUNITY_TARGET_TELEPORT_DETECTION_DISTANCE_SQ = OPPORTUNITY_TARGET_TELEPORT_DETECTION_DISTANCE^2
+local var_0_61 = 7
+local var_0_62 = var_0_61^2
 
-AIBotGroupSystem.enemy_teleported = function (self, enemy_unit, teleport_position)
-	local proximity_extension = ScriptUnit.extension(enemy_unit, "proximity_system")
+function AIBotGroupSystem.enemy_teleported(arg_63_0, arg_63_1, arg_63_2)
+	local var_63_0 = ScriptUnit.extension(arg_63_1, "proximity_system")
 
-	proximity_extension.has_been_seen = false
+	var_63_0.has_been_seen = false
 
-	local physics_world = self._physics_world
-	local enemy_side = Managers.state.side.side_by_unit[enemy_unit]
-	local player_and_bot_units = enemy_side.ENEMY_PLAYER_AND_BOT_UNITS
-	local bot_ai_data_lookup = self._bot_ai_data_lookup
+	local var_63_1 = arg_63_0._physics_world
+	local var_63_2 = Managers.state.side.side_by_unit[arg_63_1].ENEMY_PLAYER_AND_BOT_UNITS
+	local var_63_3 = arg_63_0._bot_ai_data_lookup
 
-	for i = 1, #player_and_bot_units do
-		local player_unit = player_and_bot_units[i]
+	for iter_63_0 = 1, #var_63_2 do
+		local var_63_4 = var_63_2[iter_63_0]
 
-		if bot_ai_data_lookup[player_unit] then
-			local position = POSITION_LOOKUP[player_unit]
-			local distance_squared = Vector3.distance_squared(position, teleport_position)
+		if var_63_3[var_63_4] then
+			local var_63_5 = POSITION_LOOKUP[var_63_4]
 
-			if distance_squared < OPPORTUNITY_TARGET_TELEPORT_DETECTION_DISTANCE_SQ and PerceptionUtils.raycast_spine_to_spine(player_unit, enemy_unit, physics_world) then
-				proximity_extension.has_been_seen = true
+			if Vector3.distance_squared(var_63_5, arg_63_2) < var_0_62 and PerceptionUtils.raycast_spine_to_spine(var_63_4, arg_63_1, var_63_1) then
+				var_63_0.has_been_seen = true
 
 				break
 			end
@@ -2676,483 +2576,464 @@ AIBotGroupSystem.enemy_teleported = function (self, enemy_unit, teleport_positio
 	end
 end
 
-local ALLY_AID_PRIORITY_STICKINESS_DISTANCE = 3
+local var_0_63 = 3
 
-AIBotGroupSystem.register_ally_needs_aid_priority = function (self, bot_unit, target_unit)
-	local aider_unit = self._ally_needs_aid_priority[target_unit]
-	local set_new_aider = true
+function AIBotGroupSystem.register_ally_needs_aid_priority(arg_64_0, arg_64_1, arg_64_2)
+	local var_64_0 = arg_64_0._ally_needs_aid_priority[arg_64_2]
+	local var_64_1 = true
 
-	if aider_unit then
-		local bot_ai_data_lookup = self._bot_ai_data_lookup
-		local current_aider_bb = bot_ai_data_lookup[aider_unit].blackboard
-		local new_aider_bb = bot_ai_data_lookup[bot_unit].blackboard
-		local current_aider_dist = current_aider_bb.ally_distance
-		local new_aider_dist = new_aider_bb.ally_distance
+	if var_64_0 then
+		local var_64_2 = arg_64_0._bot_ai_data_lookup
+		local var_64_3 = var_64_2[var_64_0].blackboard
+		local var_64_4 = var_64_2[arg_64_1].blackboard
 
-		set_new_aider = current_aider_dist > new_aider_dist + ALLY_AID_PRIORITY_STICKINESS_DISTANCE
+		var_64_1 = var_64_3.ally_distance > var_64_4.ally_distance + var_0_63
 	end
 
-	if set_new_aider then
-		self._ally_needs_aid_priority[target_unit] = bot_unit
+	if var_64_1 then
+		arg_64_0._ally_needs_aid_priority[arg_64_2] = arg_64_1
 	end
 end
 
-AIBotGroupSystem.is_prioritized_ally = function (self, bot_unit, target_unit)
-	return self._ally_needs_aid_priority[target_unit] == bot_unit
+function AIBotGroupSystem.is_prioritized_ally(arg_65_0, arg_65_1, arg_65_2)
+	return arg_65_0._ally_needs_aid_priority[arg_65_2] == arg_65_1
 end
 
-local BROADPHASE_RESULTS = {}
+local var_0_64 = {}
 
-AIBotGroupSystem._update_proximity_bot_breakables = function (self, t)
-	local nav_world = Managers.state.entity:system("ai_system"):nav_world()
-	local nav_graph_system = Managers.state.entity:system("nav_graph_system")
-	local bot_breakables_broadphase = self._bot_breakables_broadphase
-	local bot_ai_data = self._bot_ai_data
+function AIBotGroupSystem._update_proximity_bot_breakables(arg_66_0, arg_66_1)
+	local var_66_0 = Managers.state.entity:system("ai_system"):nav_world()
+	local var_66_1 = Managers.state.entity:system("nav_graph_system")
+	local var_66_2 = arg_66_0._bot_breakables_broadphase
+	local var_66_3 = arg_66_0._bot_ai_data
 
-	for side_id = 1, #bot_ai_data do
-		local side_bot_data = bot_ai_data[side_id]
+	for iter_66_0 = 1, #var_66_3 do
+		local var_66_4 = var_66_3[iter_66_0]
 
-		for bot_unit, data in pairs(side_bot_data) do
-			local bot_position = POSITION_LOOKUP[bot_unit]
-			local num_hits = Broadphase.query(bot_breakables_broadphase, bot_position, 2, BROADPHASE_RESULTS)
-			local current_bot_breakables = data.current_bot_breakables
-			local previous_bot_breakables = data.previous_bot_breakables
-			local navigation_extension = ScriptUnit.extension(bot_unit, "ai_navigation_system")
+		for iter_66_1, iter_66_2 in pairs(var_66_4) do
+			local var_66_5 = POSITION_LOOKUP[iter_66_1]
+			local var_66_6 = Broadphase.query(var_66_2, var_66_5, 2, var_0_64)
+			local var_66_7 = iter_66_2.current_bot_breakables
+			local var_66_8 = iter_66_2.previous_bot_breakables
+			local var_66_9 = ScriptUnit.extension(iter_66_1, "ai_navigation_system")
 
-			for i = 1, num_hits do
-				local unit = BROADPHASE_RESULTS[i]
+			for iter_66_3 = 1, var_66_6 do
+				local var_66_10 = var_0_64[iter_66_3]
 
-				if HEALTH_ALIVE[unit] then
-					current_bot_breakables[unit] = unit
+				if HEALTH_ALIVE[var_66_10] then
+					var_66_7[var_66_10] = var_66_10
 
-					if previous_bot_breakables[unit] then
-						previous_bot_breakables[unit] = nil
+					if var_66_8[var_66_10] then
+						var_66_8[var_66_10] = nil
 					else
-						local smart_object_id = nav_graph_system:get_smart_object_id(unit)
-						local smart_objects = nav_graph_system:get_smart_objects(smart_object_id)
-						local smart_object_data = smart_objects[1]
-						local entrance_position = Vector3Aux.unbox(smart_object_data.pos1)
-						local entrance_position_on_mesh = LocomotionUtils.pos_on_mesh(nav_world, entrance_position, 1.5, 3)
-						local exit_position = Vector3Aux.unbox(smart_object_data.pos2)
-						local exit_position_on_mesh = LocomotionUtils.pos_on_mesh(nav_world, exit_position, 1.5, 3)
-						local smart_object_type = smart_object_data.smart_object_type
+						local var_66_11 = var_66_1:get_smart_object_id(var_66_10)
+						local var_66_12 = var_66_1:get_smart_objects(var_66_11)[1]
+						local var_66_13 = Vector3Aux.unbox(var_66_12.pos1)
+						local var_66_14 = LocomotionUtils.pos_on_mesh(var_66_0, var_66_13, 1.5, 3)
+						local var_66_15 = Vector3Aux.unbox(var_66_12.pos2)
+						local var_66_16 = LocomotionUtils.pos_on_mesh(var_66_0, var_66_15, 1.5, 3)
+						local var_66_17 = var_66_12.smart_object_type
 
-						if entrance_position_on_mesh and exit_position_on_mesh then
-							navigation_extension:add_transition(unit, smart_object_type, entrance_position_on_mesh, exit_position_on_mesh)
+						if var_66_14 and var_66_16 then
+							var_66_9:add_transition(var_66_10, var_66_17, var_66_14, var_66_16)
 						end
 					end
 				end
 			end
 
-			for unit, _ in pairs(previous_bot_breakables) do
-				navigation_extension:remove_transition(unit)
+			for iter_66_4, iter_66_5 in pairs(var_66_8) do
+				var_66_9:remove_transition(iter_66_4)
 
-				previous_bot_breakables[unit] = nil
+				var_66_8[iter_66_4] = nil
 			end
 
-			fassert(table.is_empty(previous_bot_breakables), "Error! previous_bot_breakables table was not cleared!")
+			fassert(table.is_empty(var_66_8), "Error! previous_bot_breakables table was not cleared!")
 
-			data.current_bot_breakables = previous_bot_breakables
-			data.previous_bot_breakables = current_bot_breakables
+			iter_66_2.current_bot_breakables = var_66_8
+			iter_66_2.previous_bot_breakables = var_66_7
 		end
 	end
 end
 
-AIBotGroupSystem.set_in_cover = function (self, bot_unit, cover_unit)
-	self._used_covers[bot_unit] = cover_unit
+function AIBotGroupSystem.set_in_cover(arg_67_0, arg_67_1, arg_67_2)
+	arg_67_0._used_covers[arg_67_1] = arg_67_2
 end
 
-AIBotGroupSystem.in_cover = function (self, cover_unit)
-	for bot_unit, cover in pairs(self._used_covers) do
-		if cover == cover_unit then
-			return bot_unit
+function AIBotGroupSystem.in_cover(arg_68_0, arg_68_1)
+	for iter_68_0, iter_68_1 in pairs(arg_68_0._used_covers) do
+		if iter_68_1 == arg_68_1 then
+			return iter_68_0
 		end
 	end
 
 	return nil
 end
 
-local function dodges_into_enemies(bot_blackboard, bot_position, to, bot_radius, proximite_enemies)
-	local direction, length = Vector3.direction_length(to - bot_position)
-	local dist_to_target_sq = (length + bot_radius)^2
-	local collides_with_enemy = false
+local function var_0_65(arg_69_0, arg_69_1, arg_69_2, arg_69_3, arg_69_4)
+	local var_69_0, var_69_1 = Vector3.direction_length(arg_69_2 - arg_69_1)
+	local var_69_2 = (var_69_1 + arg_69_3)^2
+	local var_69_3 = false
 
-	for enemy_i = 1, #proximite_enemies do
-		if Unit.alive(proximite_enemies[enemy_i]) then
-			local _, _, delta_1, delta_2 = Intersect.ray_circle(bot_position, direction, Unit.local_position(proximite_enemies[enemy_i], 0), 0.75)
+	for iter_69_0 = 1, #arg_69_4 do
+		if Unit.alive(arg_69_4[iter_69_0]) then
+			local var_69_4, var_69_5, var_69_6, var_69_7 = Intersect.ray_circle(arg_69_1, var_69_0, Unit.local_position(arg_69_4[iter_69_0], 0), 0.75)
 
-			if delta_1 and Vector3.dot(delta_1, to - bot_position) > 0 and (dist_to_target_sq > Vector3.length_squared(delta_1) or dist_to_target_sq > Vector3.length_squared(delta_2)) then
-				collides_with_enemy = true
+			if var_69_6 and Vector3.dot(var_69_6, arg_69_2 - arg_69_1) > 0 and (var_69_2 > Vector3.length_squared(var_69_6) or var_69_2 > Vector3.length_squared(var_69_7)) then
+				var_69_3 = true
 
 				break
 			end
 		end
 	end
 
-	return collides_with_enemy
+	return var_69_3
 end
 
-local cylinder_tries = 6
-local EPSILON = 0.01
+local var_0_66 = 6
+local var_0_67 = 0.01
 
-local function detect_cylinder(nav_world, traverse_logic, bot_position, bot_height, bot_radius, x, y, z, rotation, size, bot_blackboard, existing_threats)
-	local bot_x = bot_position.x
-	local bot_y = bot_position.y
-	local bot_z = bot_position.z
-	local offset_x = bot_x - x
-	local offset_y = bot_y - y
-	local flat_dist_from_center = math.sqrt(offset_x * offset_x + offset_y * offset_y)
-	local radius_min, radius_max = size.x, size.y
-	local half_height = size.z
+local function var_0_68(arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4, arg_70_5, arg_70_6, arg_70_7, arg_70_8, arg_70_9, arg_70_10, arg_70_11)
+	local var_70_0 = arg_70_2.x
+	local var_70_1 = arg_70_2.y
+	local var_70_2 = arg_70_2.z
+	local var_70_3 = var_70_0 - arg_70_5
+	local var_70_4 = var_70_1 - arg_70_6
+	local var_70_5 = math.sqrt(var_70_3 * var_70_3 + var_70_4 * var_70_4)
+	local var_70_6 = arg_70_9.x
+	local var_70_7 = arg_70_9.y
+	local var_70_8 = arg_70_9.z
 
-	if radius_min < bot_radius then
-		radius_min = 0
+	if var_70_6 < arg_70_4 then
+		var_70_6 = 0
 	end
 
-	local stop_at, stop_at_fallback
+	local var_70_9
+	local var_70_10
 
-	if flat_dist_from_center >= radius_min - bot_radius and flat_dist_from_center <= radius_max + bot_radius and bot_z > z - bot_height - half_height and bot_z < z + half_height then
-		local escape_dist
+	if var_70_5 >= var_70_6 - arg_70_4 and var_70_5 <= var_70_7 + arg_70_4 and var_70_2 > arg_70_7 - arg_70_3 - var_70_8 and var_70_2 < arg_70_7 + var_70_8 then
+		local var_70_11
 
-		if radius_min > 0 and flat_dist_from_center < (radius_min + radius_max) * 0.5 then
-			escape_dist = radius_min - bot_radius
+		if var_70_6 > 0 and var_70_5 < (var_70_6 + var_70_7) * 0.5 then
+			var_70_11 = var_70_6 - arg_70_4
 		else
-			escape_dist = radius_max + bot_radius
+			var_70_11 = var_70_7 + arg_70_4
 		end
 
-		local cylinder_position = Vector3(x, y, bot_position[3])
-		local escape_dir, length_to_target = Vector3.direction_length(bot_position - cylinder_position)
+		local var_70_12 = Vector3(arg_70_5, arg_70_6, arg_70_2[3])
+		local var_70_13, var_70_14 = Vector3.direction_length(arg_70_2 - var_70_12)
 
-		if length_to_target < EPSILON then
-			escape_dir = Vector3(0, 1, 0)
+		if var_70_14 < var_0_67 then
+			var_70_13 = Vector3(0, 1, 0)
 		end
 
-		local proximite_enemies = bot_blackboard.proximite_enemies
+		local var_70_15 = arg_70_10.proximite_enemies
 
-		for i = 0, cylinder_tries - 1 do
-			local num_directions = (i == 0 or i == cylinder_tries - 1) and 1 or 2
-			local sign = 1
+		for iter_70_0 = 0, var_0_66 - 1 do
+			local var_70_16 = (iter_70_0 == 0 or iter_70_0 == var_0_66 - 1) and 1 or 2
+			local var_70_17 = 1
 
-			for j = 1, num_directions do
-				local angle = math.pi * (i / (cylinder_tries - 1)) * sign
-				local dir = Quaternion.rotate(Quaternion.axis_angle(Vector3.up(), angle), escape_dir)
-				local to = cylinder_position + dir * escape_dist
-				local above, below = 2, 2
-				local success, z = GwNavQueries.triangle_from_position(nav_world, to, above, below)
+			for iter_70_1 = 1, var_70_16 do
+				local var_70_18 = math.pi * (iter_70_0 / (var_0_66 - 1)) * var_70_17
+				local var_70_19 = var_70_12 + Quaternion.rotate(Quaternion.axis_angle(Vector3.up(), var_70_18), var_70_13) * var_70_11
+				local var_70_20 = 2
+				local var_70_21 = 2
+				local var_70_22, var_70_23 = GwNavQueries.triangle_from_position(arg_70_0, var_70_19, var_70_20, var_70_21)
 
-				if success then
-					to.z = z
-					success = GwNavQueries.raycango(nav_world, bot_position, to, traverse_logic)
+				if var_70_22 then
+					var_70_19.z = var_70_23
 
-					if success then
-						local collides_with_enemy = dodges_into_enemies(bot_blackboard, bot_position, to, bot_radius, proximite_enemies)
-
-						if not collides_with_enemy then
-							local in_existing_threat = is_inside_existing_threat(existing_threats, to, bot_radius)
-
-							if not in_existing_threat then
-								stop_at = to
-							end
+					if GwNavQueries.raycango(arg_70_0, arg_70_2, var_70_19, arg_70_1) then
+						if not var_0_65(arg_70_10, arg_70_2, var_70_19, arg_70_4, var_70_15) and not var_0_12(arg_70_11, var_70_19, arg_70_4) then
+							var_70_9 = var_70_19
 						end
 
-						stop_at_fallback = to
+						var_70_10 = var_70_19
 					end
 
-					sign = sign * -1
+					var_70_17 = var_70_17 * -1
 				end
 
-				if stop_at then
-					return stop_at
+				if var_70_9 then
+					return var_70_9
 				end
 			end
 		end
 	end
 
-	return stop_at_fallback
+	return var_70_10
 end
 
-local function detect_sphere(nav_world, traverse_logic, bot_position, bot_height, bot_radius, sphere_x, sphere_y, sphere_z, rotation, sphere_radius, bot_blackboard, existing_threats)
-	local bot_x = bot_position.x
-	local bot_y = bot_position.y
-	local bot_z = bot_position.z
-	local offset_x = bot_x - sphere_x
-	local offset_y = bot_y - sphere_y
-	local flat_dist_from_center = math.sqrt(offset_x * offset_x + offset_y * offset_y)
+local function var_0_69(arg_71_0, arg_71_1, arg_71_2, arg_71_3, arg_71_4, arg_71_5, arg_71_6, arg_71_7, arg_71_8, arg_71_9, arg_71_10, arg_71_11)
+	local var_71_0 = arg_71_2.x
+	local var_71_1 = arg_71_2.y
+	local var_71_2 = arg_71_2.z
+	local var_71_3 = var_71_0 - arg_71_5
+	local var_71_4 = var_71_1 - arg_71_6
+	local var_71_5 = math.sqrt(var_71_3 * var_71_3 + var_71_4 * var_71_4)
 
-	if flat_dist_from_center > sphere_radius + bot_radius then
+	if var_71_5 > arg_71_9 + arg_71_4 then
 		return
-	elseif bot_z < sphere_z + sphere_radius and bot_z > sphere_z - bot_height - sphere_radius then
-		local stop_at, stop_at_fallback
-		local escape_dist = sphere_radius + bot_radius
-		local escape_dir
+	elseif var_71_2 < arg_71_7 + arg_71_9 and var_71_2 > arg_71_7 - arg_71_3 - arg_71_9 then
+		local var_71_6
+		local var_71_7
+		local var_71_8 = arg_71_9 + arg_71_4
+		local var_71_9
 
-		if flat_dist_from_center < EPSILON then
-			escape_dir = Vector3(0, 1, 0)
+		if var_71_5 < var_0_67 then
+			var_71_9 = Vector3(0, 1, 0)
 		else
-			escape_dir = Vector3(offset_x / flat_dist_from_center, offset_y / flat_dist_from_center, 0)
+			var_71_9 = Vector3(var_71_3 / var_71_5, var_71_4 / var_71_5, 0)
 		end
 
-		local proximite_enemies = bot_blackboard.proximite_enemies
+		local var_71_10 = arg_71_10.proximite_enemies
 
-		for i = 0, cylinder_tries - 1 do
-			local num_directions = (i == 0 or i == cylinder_tries - 1) and 1 or 2
-			local sign = 1
+		for iter_71_0 = 0, var_0_66 - 1 do
+			local var_71_11 = (iter_71_0 == 0 or iter_71_0 == var_0_66 - 1) and 1 or 2
+			local var_71_12 = 1
 
-			for j = 1, num_directions do
-				local angle = math.pi * (i / (cylinder_tries - 1)) * sign
-				local dir = Quaternion.rotate(Quaternion.axis_angle(Vector3.up(), angle), escape_dir)
-				local cylinder_position = Vector3(sphere_x, sphere_y, bot_z)
-				local to = cylinder_position + dir * escape_dist
-				local above, below = 2, 2
-				local success, z = GwNavQueries.triangle_from_position(nav_world, to, above, below)
+			for iter_71_1 = 1, var_71_11 do
+				local var_71_13 = math.pi * (iter_71_0 / (var_0_66 - 1)) * var_71_12
+				local var_71_14 = Quaternion.rotate(Quaternion.axis_angle(Vector3.up(), var_71_13), var_71_9)
+				local var_71_15 = Vector3(arg_71_5, arg_71_6, var_71_2) + var_71_14 * var_71_8
+				local var_71_16 = 2
+				local var_71_17 = 2
+				local var_71_18, var_71_19 = GwNavQueries.triangle_from_position(arg_71_0, var_71_15, var_71_16, var_71_17)
 
-				if success then
-					to.z = z
-					success = GwNavQueries.raycango(nav_world, bot_position, to, traverse_logic)
+				if var_71_18 then
+					var_71_15.z = var_71_19
 
-					if success then
-						local collides_with_enemy = dodges_into_enemies(bot_blackboard, bot_position, to, bot_radius, proximite_enemies)
-
-						if not collides_with_enemy then
-							local in_existing_threat = is_inside_existing_threat(existing_threats, to, bot_radius)
-
-							if not in_existing_threat then
-								stop_at = to
-							end
+					if GwNavQueries.raycango(arg_71_0, arg_71_2, var_71_15, arg_71_1) then
+						if not var_0_65(arg_71_10, arg_71_2, var_71_15, arg_71_4, var_71_10) and not var_0_12(arg_71_11, var_71_15, arg_71_4) then
+							var_71_6 = var_71_15
 						end
 
-						stop_at_fallback = to
+						var_71_7 = var_71_15
 					end
 
-					sign = sign * -1
+					var_71_12 = var_71_12 * -1
 				end
 
-				if stop_at then
-					return stop_at
+				if var_71_6 then
+					return var_71_6
 				end
 			end
 		end
 
-		return stop_at_fallback
+		return var_71_7
 	end
 end
 
-local detection_rotation_order = {
+local var_0_70 = {
 	0,
 	-1,
-	1,
+	1
 }
 
-local function detect_oobb(nav_world, traverse_logic, bot_position, bot_height, bot_radius, x, y, z, rotation, extents, bot_blackboard, existing_threats)
-	local half_bot_height = bot_height * 0.5
-	local offset = bot_position - Vector3(x, y, z - half_bot_height)
-	local right_vector = Quaternion.right(rotation)
-	local x_offset = Vector3.dot(right_vector, offset)
-	local y_offset = Vector3.dot(Quaternion.forward(rotation), offset)
-	local z_offset = Vector3.dot(Quaternion.up(rotation), offset)
-	local extents_x = extents.x + bot_radius
-	local extents_y = extents.y + bot_radius
-	local extents_z = extents.z + half_bot_height
+local function var_0_71(arg_72_0, arg_72_1, arg_72_2, arg_72_3, arg_72_4, arg_72_5, arg_72_6, arg_72_7, arg_72_8, arg_72_9, arg_72_10, arg_72_11)
+	local var_72_0 = arg_72_3 * 0.5
+	local var_72_1 = arg_72_2 - Vector3(arg_72_5, arg_72_6, arg_72_7 - var_72_0)
+	local var_72_2 = Quaternion.right(arg_72_8)
+	local var_72_3 = Vector3.dot(var_72_2, var_72_1)
+	local var_72_4 = Vector3.dot(Quaternion.forward(arg_72_8), var_72_1)
+	local var_72_5 = Vector3.dot(Quaternion.up(arg_72_8), var_72_1)
+	local var_72_6 = arg_72_9.x + arg_72_4
+	local var_72_7 = arg_72_9.y + arg_72_4
+	local var_72_8 = arg_72_9.z + var_72_0
 
-	if extents_x < x_offset or x_offset < -extents_x or extents_y < y_offset or y_offset < -extents_y or extents_z < z_offset or z_offset < -extents_z then
+	if var_72_6 < var_72_3 or var_72_3 < -var_72_6 or var_72_7 < var_72_4 or var_72_4 < -var_72_7 or var_72_8 < var_72_5 or var_72_5 < -var_72_8 then
 		return
 	end
 
-	local area_damage_system = Managers.state.entity:system("area_damage_system")
-	local above, below = 2, 2
-	local sign = x_offset == 0 and 1 - math.random(0, 1) * 2 or math.sign(x_offset)
-	local stop_at, fallback_stop_at
-	local distance = extents_x
-	local proximite_enemies = bot_blackboard.proximite_enemies
+	local var_72_9 = Managers.state.entity:system("area_damage_system")
+	local var_72_10 = 2
+	local var_72_11 = 2
+	local var_72_12 = var_72_3 == 0 and 1 - math.random(0, 1) * 2 or math.sign(var_72_3)
+	local var_72_13
+	local var_72_14
+	local var_72_15 = var_72_6
+	local var_72_16 = arg_72_10.proximite_enemies
 
-	for _ = 1, 2 do
-		for i = 1, #detection_rotation_order do
-			local angle = detection_rotation_order[i] * math.pi * 0.25
-			local projected_distance = 1 / math.cos(angle)
-			local ray_offset = Quaternion.rotate(Quaternion.axis_angle(Vector3.up(), angle), right_vector) * projected_distance
-			local to = bot_position + ray_offset * (sign * distance)
-			local on_nav_mesh, z = GwNavQueries.triangle_from_position(nav_world, to, above, below)
+	for iter_72_0 = 1, 2 do
+		for iter_72_1 = 1, #var_0_70 do
+			local var_72_17 = var_0_70[iter_72_1] * math.pi * 0.25
+			local var_72_18 = 1 / math.cos(var_72_17)
+			local var_72_19 = arg_72_2 + Quaternion.rotate(Quaternion.axis_angle(Vector3.up(), var_72_17), var_72_2) * var_72_18 * (var_72_12 * var_72_15)
+			local var_72_20, var_72_21 = GwNavQueries.triangle_from_position(arg_72_0, var_72_19, var_72_10, var_72_11)
 
-			if on_nav_mesh then
-				to.z = z
+			if var_72_20 then
+				var_72_19.z = var_72_21
 			end
 
-			local raycango = on_nav_mesh and GwNavQueries.raycango(nav_world, bot_position, to, traverse_logic)
+			if var_72_20 and GwNavQueries.raycango(arg_72_0, arg_72_2, var_72_19, arg_72_1) then
+				var_72_14 = var_72_19
 
-			if raycango then
-				fallback_stop_at = to
-
-				local in_liquid = area_damage_system:is_position_in_liquid(to, BotNavTransitionManager.NAV_COST_MAP_LAYERS)
-
-				if not in_liquid then
-					local collides_with_enemy = dodges_into_enemies(bot_blackboard, bot_position, to, bot_radius, proximite_enemies)
-
-					if not collides_with_enemy then
-						local in_existing_threat = is_inside_existing_threat(existing_threats, to, bot_radius)
-
-						if not in_existing_threat then
-							stop_at = to
-						end
+				if not var_72_9:is_position_in_liquid(var_72_19, BotNavTransitionManager.NAV_COST_MAP_LAYERS) then
+					if not var_0_65(arg_72_10, arg_72_2, var_72_19, arg_72_4, var_72_16) and not var_0_12(arg_72_11, var_72_19, arg_72_4) then
+						var_72_13 = var_72_19
 					end
 
-					fallback_stop_at = to
+					var_72_14 = var_72_19
 				end
 			end
 
-			if stop_at then
+			if var_72_13 then
 				break
 			end
 		end
 
-		if stop_at then
+		if var_72_13 then
 			break
 		end
 
-		sign = -sign
+		var_72_12 = -var_72_12
 	end
 
-	return stop_at or fallback_stop_at
+	return var_72_13 or var_72_14
 end
 
-AIBotGroupSystem.aoe_threat_created = function (self, position, shape, size, rotation, duration, source)
-	local t = Managers.time:time("game")
-	local nav_world = Managers.state.entity:system("ai_system"):nav_world()
-	local traverse_logic = Managers.state.bot_nav_transition:traverse_logic()
-	local detect_func
+function AIBotGroupSystem.aoe_threat_created(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4, arg_73_5, arg_73_6)
+	local var_73_0 = Managers.time:time("game")
+	local var_73_1 = Managers.state.entity:system("ai_system"):nav_world()
+	local var_73_2 = Managers.state.bot_nav_transition:traverse_logic()
+	local var_73_3
 
-	if shape == "oobb" then
-		detect_func = detect_oobb
-	elseif shape == "cylinder" then
-		detect_func = detect_cylinder
-	elseif shape == "sphere" then
-		detect_func = detect_sphere
+	if arg_73_2 == "oobb" then
+		var_73_3 = var_0_71
+	elseif arg_73_2 == "cylinder" then
+		var_73_3 = var_0_68
+	elseif arg_73_2 == "sphere" then
+		var_73_3 = var_0_69
 	end
 
-	local expires = t + duration
-	local threat = {
-		pos = Vector3Box(position),
-		rot = rotation and QuaternionBox(rotation) or nil,
-		size = type(size) == "number" and size or Vector3Box(size),
-		shape = shape,
-		expires = expires,
-		source = source,
+	local var_73_4 = var_73_0 + arg_73_5
+	local var_73_5 = {
+		pos = Vector3Box(arg_73_1),
+		rot = arg_73_4 and QuaternionBox(arg_73_4) or nil,
+		size = type(arg_73_3) == "number" and arg_73_3 or Vector3Box(arg_73_3),
+		shape = arg_73_2,
+		expires = var_73_4,
+		source = arg_73_6
 	}
-	local existing_threats = self._existing_bot_threats
-	local pos_x, pos_y, pos_z = position.x, position.y, position.z
-	local bot_ai_data = self._bot_ai_data
+	local var_73_6 = arg_73_0._existing_bot_threats
+	local var_73_7 = arg_73_1.x
+	local var_73_8 = arg_73_1.y
+	local var_73_9 = arg_73_1.z
+	local var_73_10 = arg_73_0._bot_ai_data
 
-	for side_id = 1, #bot_ai_data do
-		local side_bot_data = bot_ai_data[side_id]
+	for iter_73_0 = 1, #var_73_10 do
+		local var_73_11 = var_73_10[iter_73_0]
 
-		for unit, data in pairs(side_bot_data) do
-			local threat_data = data.aoe_threat
-			local escape_to = detect_func(nav_world, traverse_logic, Unit.local_position(unit, 0), BOT_HEIGHT, BOT_RADIUS, pos_x, pos_y, pos_z, rotation, size, BLACKBOARDS[unit], existing_threats)
+		for iter_73_1, iter_73_2 in pairs(var_73_11) do
+			local var_73_12 = iter_73_2.aoe_threat
+			local var_73_13 = var_73_3(var_73_1, var_73_2, Unit.local_position(iter_73_1, 0), var_0_8, var_0_7, var_73_7, var_73_8, var_73_9, arg_73_4, arg_73_3, var_0_11[iter_73_1], var_73_6)
 
-			if escape_to then
-				threat_data.expires = math.max(threat_data.expires, expires)
+			if var_73_13 then
+				var_73_12.expires = math.max(var_73_12.expires, var_73_4)
 
-				threat_data.escape_to:store(escape_to)
+				var_73_12.escape_to:store(var_73_13)
 			end
 		end
 	end
 
-	table.insert(existing_threats, threat)
+	table.insert(var_73_6, var_73_5)
 
-	return threat
+	return var_73_5
 end
 
-AIBotGroupSystem.remove_threat = function (self, threat)
-	local existing_threats = self._existing_bot_threats
-	local idx = table.find(existing_threats, threat)
+function AIBotGroupSystem.remove_threat(arg_74_0, arg_74_1)
+	local var_74_0 = arg_74_0._existing_bot_threats
+	local var_74_1 = table.find(var_74_0, arg_74_1)
 
-	if idx then
-		table.swap_delete(existing_threats, idx)
+	if var_74_1 then
+		table.swap_delete(var_74_0, var_74_1)
 	end
 
-	local longest_expire = 0
+	local var_74_2 = 0
 
-	for i = 1, #existing_threats do
-		local expires = existing_threats[i].expires
+	for iter_74_0 = 1, #var_74_0 do
+		local var_74_3 = var_74_0[iter_74_0].expires
 
-		if expires ~= math.huge then
-			longest_expire = math.max(longest_expire, expires)
+		if var_74_3 ~= math.huge then
+			var_74_2 = math.max(var_74_2, var_74_3)
 		end
 	end
 
-	local bot_ai_data = self._bot_ai_data
+	local var_74_4 = arg_74_0._bot_ai_data
 
-	for side_id = 1, #bot_ai_data do
-		local side_bot_data = bot_ai_data[side_id]
+	for iter_74_1 = 1, #var_74_4 do
+		local var_74_5 = var_74_4[iter_74_1]
 
-		for unit, data in pairs(side_bot_data) do
-			local threat_data = data.aoe_threat
+		for iter_74_2, iter_74_3 in pairs(var_74_5) do
+			local var_74_6 = iter_74_3.aoe_threat
 
-			if threat_data.expires > 0 then
-				threat_data.expires = longest_expire
-			elseif next(existing_threats) then
-				threat_data.expires = math.huge
+			if var_74_6.expires > 0 then
+				var_74_6.expires = var_74_2
+			elseif next(var_74_0) then
+				var_74_6.expires = math.huge
 			end
 		end
 	end
 end
 
-local MESSAGES = {
+local var_0_72 = {
 	abort_pickup_assigned_to_other = {
 		default = {
-			"bot_command_generic_abort_pickup_assigned_to_other_01",
-		},
+			"bot_command_generic_abort_pickup_assigned_to_other_01"
+		}
 	},
 	acknowledge_pickup = {
 		default = {
-			"bot_command_generic_acknowledge_pickup_01",
-		},
+			"bot_command_generic_acknowledge_pickup_01"
+		}
 	},
 	acknowledge_ammo = {
 		default = {
-			"bot_command_generic_acknowledge_ammo_01",
-		},
+			"bot_command_generic_acknowledge_ammo_01"
+		}
 	},
 	has_full_ammo = {
 		default = {
-			"bot_command_generic_has_full_ammo_01",
-		},
+			"bot_command_generic_has_full_ammo_01"
+		}
 	},
 	already_picking_up = {
 		default = {
-			"bot_command_generic_already_picking_up_01",
-		},
+			"bot_command_generic_already_picking_up_01"
+		}
 	},
 	already_have_item = {
 		default = {
-			"bot_command_generic_already_have_item_01",
-		},
+			"bot_command_generic_already_have_item_01"
+		}
 	},
 	acknowledge_drop = {
 		default = {
-			"bot_command_generic_acknowledge_drop_01",
-		},
-	},
+			"bot_command_generic_acknowledge_drop_01"
+		}
+	}
 }
 
-AIBotGroupSystem._chat_message = function (self, unit, ordering_player, message, ...)
-	local player = Managers.player:owner(unit)
-	local character = SPProfiles[player:profile_index()].display_name
-	local msg_table = MESSAGES[message]
-	local chr_table = msg_table[character] or msg_table.default
-	local message_string = chr_table[Math.random(1, #chr_table)]
-	local localize, localize_parameters = true, true
-	local localization_parameters = FrameTable.alloc_table()
+function AIBotGroupSystem._chat_message(arg_75_0, arg_75_1, arg_75_2, arg_75_3, ...)
+	local var_75_0 = Managers.player:owner(arg_75_1)
+	local var_75_1 = SPProfiles[var_75_0:profile_index()].display_name
+	local var_75_2 = var_0_72[arg_75_3]
+	local var_75_3 = var_75_2[var_75_1] or var_75_2.default
+	local var_75_4 = var_75_3[Math.random(1, #var_75_3)]
+	local var_75_5 = true
+	local var_75_6 = true
+	local var_75_7 = FrameTable.alloc_table()
 
-	table.append_varargs(localization_parameters, ...)
+	table.append_varargs(var_75_7, ...)
 
-	local channel_id, message_target = 1
-	local mechanism = Managers.mechanism:game_mechanism()
+	local var_75_8 = 1
+	local var_75_9
+	local var_75_10 = Managers.mechanism:game_mechanism()
 
-	if mechanism.get_chat_channel then
-		local peer_id = ordering_player:network_id()
+	if var_75_10.get_chat_channel then
+		local var_75_11 = arg_75_2:network_id()
 
-		channel_id, message_target = mechanism:get_chat_channel(peer_id, false)
+		var_75_8, var_75_9 = var_75_10:get_chat_channel(var_75_11, false)
 	end
 
-	Managers.chat:send_chat_message(channel_id, player:local_player_id(), message_string, localize, localization_parameters, localize_parameters, nil, message_target)
+	Managers.chat:send_chat_message(var_75_8, var_75_0:local_player_id(), var_75_4, var_75_5, var_75_7, var_75_6, nil, var_75_9)
 end

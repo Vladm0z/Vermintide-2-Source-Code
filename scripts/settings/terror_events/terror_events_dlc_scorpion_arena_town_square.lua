@@ -1,7 +1,7 @@
-﻿-- chunkname: @scripts/settings/terror_events/terror_events_dlc_scorpion_arena_town_square.lua
+-- chunkname: @scripts/settings/terror_events/terror_events_dlc_scorpion_arena_town_square.lua
 
-local terror_event_blueprints = {}
+local var_0_0 = {}
 
 return {
-	terror_event_blueprints,
+	var_0_0
 }

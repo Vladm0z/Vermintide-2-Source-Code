@@ -1,233 +1,224 @@
-﻿-- chunkname: @scripts/ui/diorama/hero_diorama_ui.lua
+-- chunkname: @scripts/ui/diorama/hero_diorama_ui.lua
 
-local definitions = local_require("scripts/ui/diorama/hero_diorama_ui_definitions")
-local animation_definitions = definitions.animation_definitions
-local scenegraph_definition = definitions.scenegraph_definition
-local DO_RELOAD = false
-local OVERLAY_FADE_DURATION = 0.8
+local var_0_0 = local_require("scripts/ui/diorama/hero_diorama_ui_definitions")
+local var_0_1 = var_0_0.animation_definitions
+local var_0_2 = var_0_0.scenegraph_definition
+local var_0_3 = false
+local var_0_4 = 0.8
 
 HeroDioramaUI = class(HeroDioramaUI)
 HeroDioramaUI.unique_id = HeroDioramaUI.unique_id or 0
 
-HeroDioramaUI.init = function (self, ingame_ui_context, settings)
-	self._settings = settings
-	self._ui_renderer = ingame_ui_context.ui_renderer
-	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self._input_manager = ingame_ui_context.input_manager
-	self._ingame_ui_context = ingame_ui_context
-	self._player_manager = ingame_ui_context.player_manager
+function HeroDioramaUI.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0._settings = arg_1_2
+	arg_1_0._ui_renderer = arg_1_1.ui_renderer
+	arg_1_0._ui_top_renderer = arg_1_1.ui_top_renderer
+	arg_1_0._input_manager = arg_1_1.input_manager
+	arg_1_0._ingame_ui_context = arg_1_1
+	arg_1_0._player_manager = arg_1_1.player_manager
 
-	local world = ingame_ui_context.world_manager:world("level_world")
+	local var_1_0 = arg_1_1.world_manager:world("level_world")
 
-	self._wwise_world = Managers.world:wwise_world(world)
-	self._instance_id = self:_get_unique_id()
-	self._animations = {}
-	self._active = false
-	self._render_settings = {
+	arg_1_0._wwise_world = Managers.world:wwise_world(var_1_0)
+	arg_1_0._instance_id = arg_1_0:_get_unique_id()
+	arg_1_0._animations = {}
+	arg_1_0._active = false
+	arg_1_0._render_settings = {
 		alpha_multiplier = 1,
-		snap_pixel_positions = true,
+		snap_pixel_positions = true
 	}
 
-	self:_create_ui_elements()
+	arg_1_0:_create_ui_elements()
 
-	self._viewport_active = true
+	arg_1_0._viewport_active = true
 end
 
-HeroDioramaUI._get_unique_id = function (self)
-	local unique_id = HeroDioramaUI.unique_id
+function HeroDioramaUI._get_unique_id(arg_2_0)
+	local var_2_0 = HeroDioramaUI.unique_id
 
-	HeroDioramaUI.unique_id = unique_id + 1
+	HeroDioramaUI.unique_id = var_2_0 + 1
 
-	return unique_id
+	return var_2_0
 end
 
-HeroDioramaUI._create_ui_elements = function (self)
-	DO_RELOAD = false
+function HeroDioramaUI._create_ui_elements(arg_3_0)
+	var_0_3 = false
 
-	if self._viewport_widget then
-		self:_unload_level_package()
-		self:_unload_diorama_package()
-		UIWidget.destroy(self._ui_renderer, self._viewport_widget)
+	if arg_3_0._viewport_widget then
+		arg_3_0:_unload_level_package()
+		arg_3_0:_unload_diorama_package()
+		UIWidget.destroy(arg_3_0._ui_renderer, arg_3_0._viewport_widget)
 
-		self._viewport_widget = nil
+		arg_3_0._viewport_widget = nil
 	end
 
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
+	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
-	local widgets = {}
-	local widgets_by_name = {}
-	local widget_definitions = definitions.widget_definitions
+	local var_3_0 = {}
+	local var_3_1 = {}
+	local var_3_2 = var_0_0.widget_definitions
 
-	for name, definition in pairs(widget_definitions) do
-		local widget = UIWidget.init(definition)
+	for iter_3_0, iter_3_1 in pairs(var_3_2) do
+		local var_3_3 = UIWidget.init(iter_3_1)
 
-		widgets_by_name[name] = widget
-		widgets[#widgets + 1] = widget
+		var_3_1[iter_3_0] = var_3_3
+		var_3_0[#var_3_0 + 1] = var_3_3
 	end
 
-	self._widgets_by_name = widgets_by_name
-	self._widgets = widgets
-	self._viewport_widget_definition = self:_create_viewport_definition()
+	arg_3_0._widgets_by_name = var_3_1
+	arg_3_0._widgets = var_3_0
+	arg_3_0._viewport_widget_definition = arg_3_0:_create_viewport_definition()
 
-	local resource_id = "diorama_test"
-	local asynchronous = true
-	local cb = callback(self, "_cb_diorama_package_loaded")
+	local var_3_4 = "diorama_test"
+	local var_3_5 = true
+	local var_3_6 = callback(arg_3_0, "_cb_diorama_package_loaded")
 
-	Managers.package:load("resource_packages/dlcs/carousel_diorama", resource_id, cb, asynchronous)
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	Managers.package:load("resource_packages/dlcs/carousel_diorama", var_3_4, var_3_6, var_3_5)
+	UIRenderer.clear_scenegraph_queue(arg_3_0._ui_renderer)
 
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
+	arg_3_0._ui_animator = UIAnimator:new(arg_3_0._ui_scenegraph, var_0_1)
 
-	self:update_position()
-	self:_reset_overlay()
+	arg_3_0:update_position()
+	arg_3_0:_reset_overlay()
 end
 
-HeroDioramaUI._cb_level_package_loaded = function (self)
-	self._level_package_loaded = true
+function HeroDioramaUI._cb_level_package_loaded(arg_4_0)
+	arg_4_0._level_package_loaded = true
 end
 
-HeroDioramaUI._cb_diorama_package_loaded = function (self)
-	self._diorama_package_loaded = true
+function HeroDioramaUI._cb_diorama_package_loaded(arg_5_0)
+	arg_5_0._diorama_package_loaded = true
 
-	local level_package_name = self._viewport_widget_definition.style.viewport.level_package_name
-	local resource_id = self:_resource_id()
-	local asynchronous = true
-	local cb = callback(self, "_cb_level_package_loaded")
+	local var_5_0 = arg_5_0._viewport_widget_definition.style.viewport.level_package_name
+	local var_5_1 = arg_5_0:_resource_id()
+	local var_5_2 = true
+	local var_5_3 = callback(arg_5_0, "_cb_level_package_loaded")
 
-	Managers.package:load(level_package_name, resource_id, cb, asynchronous)
+	Managers.package:load(var_5_0, var_5_1, var_5_3, var_5_2)
 end
 
-HeroDioramaUI.fade_in = function (self, duration)
-	self._fade_in_duration = duration
-	self._fade_timer = 0
+function HeroDioramaUI.fade_in(arg_6_0, arg_6_1)
+	arg_6_0._fade_in_duration = arg_6_1
+	arg_6_0._fade_timer = 0
 end
 
-HeroDioramaUI.fade_out = function (self, duration)
-	self._fade_out_duration = duration
-	self._fade_timer = 0
+function HeroDioramaUI.fade_out(arg_7_0, arg_7_1)
+	arg_7_0._fade_out_duration = arg_7_1
+	arg_7_0._fade_timer = 0
 end
 
-HeroDioramaUI._fade_out_overlay = function (self)
-	self._overlay_fade_out_time = 0
+function HeroDioramaUI._fade_out_overlay(arg_8_0)
+	arg_8_0._overlay_fade_out_time = 0
 end
 
-HeroDioramaUI._reset_overlay = function (self)
-	local widget = self._widgets_by_name.overlay
-
-	widget.alpha_multiplier = 1
-	self._overlay_fade_out_time = nil
-	self._destroy_previewer_on_fade_out = true
+function HeroDioramaUI._reset_overlay(arg_9_0)
+	arg_9_0._widgets_by_name.overlay.alpha_multiplier = 1
+	arg_9_0._overlay_fade_out_time = nil
+	arg_9_0._destroy_previewer_on_fade_out = true
 end
 
-HeroDioramaUI._update_overlay_fade_out_animation = function (self, dt)
-	local time = self._overlay_fade_out_time
+function HeroDioramaUI._update_overlay_fade_out_animation(arg_10_0, arg_10_1)
+	local var_10_0 = arg_10_0._overlay_fade_out_time
 
-	if not time then
+	if not var_10_0 then
 		return
 	end
 
-	time = time + dt
+	local var_10_1 = var_10_0 + arg_10_1
+	local var_10_2 = math.min(var_10_1 / var_0_4, 1)
 
-	local progress = math.min(time / OVERLAY_FADE_DURATION, 1)
-	local widget = self._widgets_by_name.overlay
+	arg_10_0._widgets_by_name.overlay.alpha_multiplier = 1 - var_10_2
 
-	widget.alpha_multiplier = 1 - progress
-
-	if progress == 1 then
-		self._overlay_fade_out_time = nil
+	if var_10_2 == 1 then
+		arg_10_0._overlay_fade_out_time = nil
 	else
-		self._overlay_fade_out_time = time
+		arg_10_0._overlay_fade_out_time = var_10_1
 	end
 end
 
-HeroDioramaUI._update_fade_animations = function (self, dt)
-	self:_update_fade_in_animation(dt)
-	self:_update_fade_out_animation(dt)
-	self:_update_overlay_fade_out_animation(dt)
+function HeroDioramaUI._update_fade_animations(arg_11_0, arg_11_1)
+	arg_11_0:_update_fade_in_animation(arg_11_1)
+	arg_11_0:_update_fade_out_animation(arg_11_1)
+	arg_11_0:_update_overlay_fade_out_animation(arg_11_1)
 end
 
-HeroDioramaUI._update_fade_in_animation = function (self, dt)
-	local time = self._fade_timer
-	local fade_duration = self._fade_in_duration
+function HeroDioramaUI._update_fade_in_animation(arg_12_0, arg_12_1)
+	local var_12_0 = arg_12_0._fade_timer
+	local var_12_1 = arg_12_0._fade_in_duration
 
-	if not time or not fade_duration then
+	if not var_12_0 or not var_12_1 then
 		return
 	end
 
-	time = time + dt
+	local var_12_2 = var_12_0 + arg_12_1
+	local var_12_3 = math.min(var_12_2 / var_12_1, 1)
 
-	local progress = math.min(time / fade_duration, 1)
-	local render_settings = self._render_settings
+	arg_12_0._render_settings.alpha_multiplier = var_12_3
 
-	render_settings.alpha_multiplier = progress
-
-	if progress == 1 then
-		self._fade_in_duration = nil
-		self._fade_timer = nil
+	if var_12_3 == 1 then
+		arg_12_0._fade_in_duration = nil
+		arg_12_0._fade_timer = nil
 	else
-		self._fade_timer = time
+		arg_12_0._fade_timer = var_12_2
 	end
 end
 
-HeroDioramaUI._update_fade_out_animation = function (self, dt)
-	local time = self._fade_timer
-	local fade_duration = self._fade_out_duration
+function HeroDioramaUI._update_fade_out_animation(arg_13_0, arg_13_1)
+	local var_13_0 = arg_13_0._fade_timer
+	local var_13_1 = arg_13_0._fade_out_duration
 
-	if not time or not fade_duration then
+	if not var_13_0 or not var_13_1 then
 		return
 	end
 
-	time = time + dt
+	local var_13_2 = var_13_0 + arg_13_1
+	local var_13_3 = math.min(var_13_2 / var_13_1, 1)
 
-	local progress = math.min(time / fade_duration, 1)
-	local render_settings = self._render_settings
+	arg_13_0._render_settings.alpha_multiplier = 1 - var_13_3
 
-	render_settings.alpha_multiplier = 1 - progress
-
-	if progress == 1 then
-		self._fade_out_duration = nil
-		self._fade_timer = nil
+	if var_13_3 == 1 then
+		arg_13_0._fade_out_duration = nil
+		arg_13_0._fade_timer = nil
 	else
-		self._fade_timer = time
+		arg_13_0._fade_timer = var_13_2
 	end
 end
 
-HeroDioramaUI.set_viewport_active = function (self, active)
-	self._viewport_active = active
+function HeroDioramaUI.set_viewport_active(arg_14_0, arg_14_1)
+	arg_14_0._viewport_active = arg_14_1
 end
 
-HeroDioramaUI._update_viewport_active_state = function (self)
-	local vieport_active = self._viewport_active
+function HeroDioramaUI._update_viewport_active_state(arg_15_0)
+	local var_15_0 = arg_15_0._viewport_active
 
-	if self._synced_viewport_active_state ~= vieport_active then
-		local viewport_widget = self._viewport_widget
-		local style = viewport_widget.style
-		local viewport_style = style.viewport
-		local viewport_name = viewport_style.viewport_name
-		local world_name = viewport_style.world_name
-		local pass_data = viewport_widget.element.pass_data[1]
-		local world = pass_data.world
-		local viewport = pass_data.viewport
+	if arg_15_0._synced_viewport_active_state ~= var_15_0 then
+		local var_15_1 = arg_15_0._viewport_widget
+		local var_15_2 = var_15_1.style.viewport
+		local var_15_3 = var_15_2.viewport_name
+		local var_15_4 = var_15_2.world_name
+		local var_15_5 = var_15_1.element.pass_data[1]
+		local var_15_6 = var_15_5.world
+		local var_15_7 = var_15_5.viewport
 
-		if vieport_active then
-			if self._synced_viewport_active_state == false then
-				ScriptWorld.activate_viewport(world, viewport)
+		if var_15_0 then
+			if arg_15_0._synced_viewport_active_state == false then
+				ScriptWorld.activate_viewport(var_15_6, var_15_7)
 			end
 
-			self:_fade_out_overlay()
+			arg_15_0:_fade_out_overlay()
 		else
-			ScriptWorld.deactivate_viewport(world, viewport)
-			self:_reset_overlay()
+			ScriptWorld.deactivate_viewport(var_15_6, var_15_7)
+			arg_15_0:_reset_overlay()
 		end
 
-		self._synced_viewport_active_state = vieport_active
+		arg_15_0._synced_viewport_active_state = var_15_0
 	end
 end
 
-HeroDioramaUI._create_viewport_definition = function (self)
-	local shading_environment = "environment/ui_store_preview"
-	local instance_id = self._instance_id
-	local dioramas = {
+function HeroDioramaUI._create_viewport_definition(arg_16_0)
+	local var_16_0 = "environment/ui_store_preview"
+	local var_16_1 = arg_16_0._instance_id
+	local var_16_2 = {
 		"fire_01/tier_01",
 		"fire_01/tier_02",
 		"fire_01/tier_03",
@@ -236,509 +227,473 @@ HeroDioramaUI._create_viewport_definition = function (self)
 		"forest_01/tier_03",
 		"snow_01/tier_01",
 		"snow_01/tier_02",
-		"snow_01/tier_03",
+		"snow_01/tier_03"
 	}
-	local level = table.random(dioramas)
+	local var_16_3 = table.random(var_16_2)
 
 	return {
 		scenegraph_id = "viewport",
 		element = UIElements.Viewport,
 		style = {
 			viewport = {
-				enable_sub_gui = false,
-				fov = 30,
 				layer = 800,
 				viewport_type = "default_offscreen",
-				shading_environment = shading_environment,
-				world_name = "diorama_preview_" .. tostring(instance_id),
-				viewport_name = "diorama_preview_viewport_" .. tostring(instance_id),
-				level_name = string.format("levels/diorama/%s/world", level),
-				level_package_name = string.format("resource_packages/levels/dlcs/carousel/diorama/%s", level),
+				enable_sub_gui = false,
+				fov = 30,
+				shading_environment = var_16_0,
+				world_name = "diorama_preview_" .. tostring(var_16_1),
+				viewport_name = "diorama_preview_viewport_" .. tostring(var_16_1),
+				level_name = string.format("levels/diorama/%s/world", var_16_3),
+				level_package_name = string.format("resource_packages/levels/dlcs/carousel/diorama/%s", var_16_3),
 				world_flags = {
 					Application.DISABLE_SOUND,
-					Application.DISABLE_ESRAM,
+					Application.DISABLE_ESRAM
 				},
 				camera_position = {
 					0,
 					0,
-					0,
+					0
 				},
 				camera_lookat = {
 					0,
 					0,
-					0,
+					0
 				},
 				offset = {
 					0,
 					0,
-					0,
-				},
-			},
+					0
+				}
+			}
 		},
 		content = {
 			button_hotspot = {
-				allow_multi_hover = true,
-			},
-		},
+				allow_multi_hover = true
+			}
+		}
 	}
 end
 
-HeroDioramaUI._set_size = function (self, size)
-	local ui_scenegraph = self._ui_scenegraph
-	local background = ui_scenegraph.background
-	local viewport = ui_scenegraph.viewport
-	local hero_text_box = ui_scenegraph.hero_text_box
-	local player_text_box = ui_scenegraph.player_text_box
-	local bottom_panel = ui_scenegraph.bottom_panel
-	local bottom_panel_edge = ui_scenegraph.bottom_panel_edge
-	local bottom_panel_edge_size = bottom_panel_edge.size
-	local bottom_panel_size = bottom_panel.size
-	local hero_text_box_size = hero_text_box.size
-	local player_text_box_size = player_text_box.size
-	local background_size = background.size
-	local viewport_size = viewport.size
+function HeroDioramaUI._set_size(arg_17_0, arg_17_1)
+	local var_17_0 = arg_17_0._ui_scenegraph
+	local var_17_1 = var_17_0.background
+	local var_17_2 = var_17_0.viewport
+	local var_17_3 = var_17_0.hero_text_box
+	local var_17_4 = var_17_0.player_text_box
+	local var_17_5 = var_17_0.bottom_panel
+	local var_17_6 = var_17_0.bottom_panel_edge.size
+	local var_17_7 = var_17_5.size
+	local var_17_8 = var_17_3.size
+	local var_17_9 = var_17_4.size
+	local var_17_10 = var_17_1.size
+	local var_17_11 = var_17_2.size
 
-	background_size[1] = math.max(size and size[1] or 500, 1)
-	background_size[2] = math.max(size and size[2] or 500, 1)
-	viewport_size[1] = math.max(size and size[1] or 500, 1)
-	viewport_size[2] = math.max((size and size[2] or 500) - bottom_panel_size[2], 1)
-	bottom_panel_size[1] = math.max(size and size[1] or 500, 1)
-	bottom_panel_edge_size[1] = math.max(size and size[1] or 500, 1)
-	hero_text_box_size[1] = math.max((size and size[1] or 500) - bottom_panel_size[2] * 2, 1)
-	player_text_box_size[1] = math.max((size and size[1] or 500) - bottom_panel_size[2], 1)
+	var_17_10[1] = math.max(arg_17_1 and arg_17_1[1] or 500, 1)
+	var_17_10[2] = math.max(arg_17_1 and arg_17_1[2] or 500, 1)
+	var_17_11[1] = math.max(arg_17_1 and arg_17_1[1] or 500, 1)
+	var_17_11[2] = math.max((arg_17_1 and arg_17_1[2] or 500) - var_17_7[2], 1)
+	var_17_7[1] = math.max(arg_17_1 and arg_17_1[1] or 500, 1)
+	var_17_6[1] = math.max(arg_17_1 and arg_17_1[1] or 500, 1)
+	var_17_8[1] = math.max((arg_17_1 and arg_17_1[1] or 500) - var_17_7[2] * 2, 1)
+	var_17_9[1] = math.max((arg_17_1 and arg_17_1[1] or 500) - var_17_7[2], 1)
 
-	self:_update_panel_background()
+	arg_17_0:_update_panel_background()
 end
 
-HeroDioramaUI._update_panel_background = function (self, optional_color)
-	local create_panel_background = definitions.create_panel_background
-	local scenegraph_id = "bottom_panel"
-	local size = self._ui_scenegraph[scenegraph_id].size
-	local background_texture = "talent_tree_bg_01"
-	local color = optional_color or {
+function HeroDioramaUI._update_panel_background(arg_18_0, arg_18_1)
+	local var_18_0 = var_0_0.create_panel_background
+	local var_18_1 = "bottom_panel"
+	local var_18_2 = arg_18_0._ui_scenegraph[var_18_1].size
+	local var_18_3 = "talent_tree_bg_01"
+	local var_18_4 = arg_18_1 or {
 		255,
 		255,
 		255,
-		255,
+		255
 	}
-	local definition = create_panel_background(scenegraph_id, size, background_texture, color)
-	local widget = UIWidget.init(definition)
+	local var_18_5 = var_18_0(var_18_1, var_18_2, var_18_3, var_18_4)
 
-	self._bottom_panel_widget = widget
+	arg_18_0._bottom_panel_widget = UIWidget.init(var_18_5)
 end
 
-HeroDioramaUI.update_position = function (self)
-	local settings = self._settings
+function HeroDioramaUI.update_position(arg_19_0)
+	local var_19_0 = arg_19_0._settings
 
-	if settings then
-		local size = settings.size
+	if var_19_0 then
+		local var_19_1 = var_19_0.size
 
-		self:_set_size(size)
+		arg_19_0:_set_size(var_19_1)
 
-		local position = settings.position
-		local vertical_alignment = settings.vertical_alignment
-		local horizontal_alignment = settings.horizontal_alignment
+		local var_19_2 = var_19_0.position
+		local var_19_3 = var_19_0.vertical_alignment
+		local var_19_4 = var_19_0.horizontal_alignment
 
-		self:_set_position(position, horizontal_alignment, vertical_alignment)
+		arg_19_0:_set_position(var_19_2, var_19_4, var_19_3)
 	end
 end
 
-HeroDioramaUI._set_position = function (self, position, horizontal_alignment, vertical_alignment)
-	local scenegraph = self._ui_scenegraph.background
-	local current_position = scenegraph.position
+function HeroDioramaUI._set_position(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+	local var_20_0 = arg_20_0._ui_scenegraph.background
+	local var_20_1 = var_20_0.position
 
-	current_position[1] = position and position[1] or 0
-	current_position[2] = position and position[2] or 0
-	current_position[3] = position and position[3] or 0
-	scenegraph.vertical_alignment = vertical_alignment or "center"
-	scenegraph.horizontal_alignment = horizontal_alignment or "center"
+	var_20_1[1] = arg_20_1 and arg_20_1[1] or 0
+	var_20_1[2] = arg_20_1 and arg_20_1[2] or 0
+	var_20_1[3] = arg_20_1 and arg_20_1[3] or 0
+	var_20_0.vertical_alignment = arg_20_3 or "center"
+	var_20_0.horizontal_alignment = arg_20_2 or "center"
 end
 
-HeroDioramaUI.destroy = function (self)
-	self:_destroy_previewers()
+function HeroDioramaUI.destroy(arg_21_0)
+	arg_21_0:_destroy_previewers()
 
-	if self._viewport_widget then
-		UIWidget.destroy(self._ui_renderer, self._viewport_widget)
+	if arg_21_0._viewport_widget then
+		UIWidget.destroy(arg_21_0._ui_renderer, arg_21_0._viewport_widget)
 
-		self._viewport_widget = nil
+		arg_21_0._viewport_widget = nil
 	end
 
-	self:_unload_level_package()
-	self:_unload_diorama_package()
+	arg_21_0:_unload_level_package()
+	arg_21_0:_unload_diorama_package()
 
-	self._ui_animator = nil
+	arg_21_0._ui_animator = nil
 end
 
-HeroDioramaUI._resource_id = function (self)
-	return "HeroDioramaUI_" .. self._instance_id
+function HeroDioramaUI._resource_id(arg_22_0)
+	return "HeroDioramaUI_" .. arg_22_0._instance_id
 end
 
-HeroDioramaUI._can_create_viewport = function (self)
-	if self._viewport_widget then
+function HeroDioramaUI._can_create_viewport(arg_23_0)
+	if arg_23_0._viewport_widget then
 		return false
 	end
 
-	return self._level_package_loaded and self._cb_diorama_package_loaded
+	return arg_23_0._level_package_loaded and arg_23_0._cb_diorama_package_loaded
 end
 
-HeroDioramaUI.set_hero_profile = function (self, profile_index, career_index)
-	if self._viewport_widget then
-		self._cashed_profile_data = nil
+function HeroDioramaUI.set_hero_profile(arg_24_0, arg_24_1, arg_24_2)
+	if arg_24_0._viewport_widget then
+		arg_24_0._cashed_profile_data = nil
 
-		self:_set_hero_profile(profile_index, career_index)
+		arg_24_0:_set_hero_profile(arg_24_1, arg_24_2)
 	else
-		self._cashed_profile_data = {
-			profile_index = profile_index,
-			career_index = career_index,
+		arg_24_0._cashed_profile_data = {
+			profile_index = arg_24_1,
+			career_index = arg_24_2
 		}
 	end
 end
 
-HeroDioramaUI._set_hero_profile = function (self, profile_index, career_index)
-	self:_setup_character_previewer(profile_index, career_index)
+function HeroDioramaUI._set_hero_profile(arg_25_0, arg_25_1, arg_25_2)
+	arg_25_0:_setup_character_previewer(arg_25_1, arg_25_2)
 
-	local profile = SPProfiles[profile_index]
-	local profile_name = profile.display_name
-	local experience = ExperienceSettings.get_versus_experience()
-	local level_text = ExperienceSettings.get_versus_level_from_experience(experience) or ""
-	local player_portrait_frame = self:_get_portrait_frame(profile_index, career_index)
-	local portrait_texture = career_index and UIUtils.get_portrait_image_by_profile_index(profile_index, career_index) or "unit_frame_portrait_default"
+	local var_25_0 = SPProfiles[arg_25_1].display_name
+	local var_25_1 = ExperienceSettings.get_versus_experience()
+	local var_25_2 = ExperienceSettings.get_versus_level_from_experience(var_25_1) or ""
+	local var_25_3 = arg_25_0:_get_portrait_frame(arg_25_1, arg_25_2)
+	local var_25_4 = arg_25_2 and UIUtils.get_portrait_image_by_profile_index(arg_25_1, arg_25_2) or "unit_frame_portrait_default"
 
-	self:_set_portrait_frame(player_portrait_frame, level_text, portrait_texture)
-	self:_set_career_name(profile_index, career_index)
+	arg_25_0:_set_portrait_frame(var_25_3, var_25_2, var_25_4)
+	arg_25_0:_set_career_name(arg_25_1, arg_25_2)
 
-	local profile = SPProfiles[profile_index]
-	local career_data = profile.careers[career_index]
-	local career_name = career_data.name
-	local career_color = Colors.get_color_table_with_alpha(career_name, 255) or Colors.color_definitions.white
+	local var_25_5 = SPProfiles[arg_25_1].careers[arg_25_2].name
+	local var_25_6 = Colors.get_color_table_with_alpha(var_25_5, 255) or Colors.color_definitions.white
 
-	self:_update_panel_background(career_color)
+	arg_25_0:_update_panel_background(var_25_6)
 end
 
-HeroDioramaUI.post_update = function (self, dt, t)
-	if DO_RELOAD then
-		self:_destroy_previewers()
-		self:_create_ui_elements()
+function HeroDioramaUI.post_update(arg_26_0, arg_26_1, arg_26_2)
+	if var_0_3 then
+		arg_26_0:_destroy_previewers()
+		arg_26_0:_create_ui_elements()
 	end
 
-	if self:_can_create_viewport() then
-		self._viewport_widget = UIWidget.init(self._viewport_widget_definition)
+	if arg_26_0:_can_create_viewport() then
+		arg_26_0._viewport_widget = UIWidget.init(arg_26_0._viewport_widget_definition)
 
-		local cashed_profile_data = self._cashed_profile_data
+		local var_26_0 = arg_26_0._cashed_profile_data
 
-		if cashed_profile_data then
-			local profile_index = cashed_profile_data.profile_index
-			local career_index = cashed_profile_data.career_index
+		if var_26_0 then
+			local var_26_1 = var_26_0.profile_index
+			local var_26_2 = var_26_0.career_index
 
-			self._cashed_profile_data = nil
+			arg_26_0._cashed_profile_data = nil
 
-			self:_set_hero_profile(profile_index, career_index)
+			arg_26_0:_set_hero_profile(var_26_1, var_26_2)
 		end
 	end
 
-	if self._viewport_widget then
-		self:_update_viewport_active_state()
+	if arg_26_0._viewport_widget then
+		arg_26_0:_update_viewport_active_state()
 	end
 
-	if self._world_previewer then
-		self._world_previewer:post_update(dt, t)
+	if arg_26_0._world_previewer then
+		arg_26_0._world_previewer:post_update(arg_26_1, arg_26_2)
 	end
 
 	if RESOLUTION_LOOKUP.modified then
-		self:update_position()
+		arg_26_0:update_position()
 	end
 end
 
-HeroDioramaUI.update = function (self, dt, t)
-	if self._world_previewer and not DO_RELOAD then
-		local input_disabled = true
+function HeroDioramaUI.update(arg_27_0, arg_27_1, arg_27_2)
+	if arg_27_0._world_previewer and not var_0_3 then
+		local var_27_0 = true
 
-		self._world_previewer:update(dt, t, input_disabled)
+		arg_27_0._world_previewer:update(arg_27_1, arg_27_2, var_27_0)
 	end
 
-	self:_update_animations(dt, t)
-	self:_draw(dt)
+	arg_27_0:_update_animations(arg_27_1, arg_27_2)
+	arg_27_0:_draw(arg_27_1)
 end
 
-HeroDioramaUI._update_animations = function (self, dt, t)
-	local animations = self._animations
-	local ui_animator = self._ui_animator
+function HeroDioramaUI._update_animations(arg_28_0, arg_28_1, arg_28_2)
+	local var_28_0 = arg_28_0._animations
+	local var_28_1 = arg_28_0._ui_animator
 
-	ui_animator:update(dt)
+	var_28_1:update(arg_28_1)
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_28_0, iter_28_1 in pairs(var_28_0) do
+		if var_28_1:is_animation_completed(iter_28_1) then
+			var_28_1:stop_animation(iter_28_1)
 
-			animations[animation_name] = nil
+			var_28_0[iter_28_0] = nil
 		end
 	end
 
-	self:_update_fade_animations(dt)
+	arg_28_0:_update_fade_animations(arg_28_1)
 end
 
-HeroDioramaUI._draw = function (self, dt)
-	local ui_renderer = self._ui_renderer
-	local ui_top_renderer = self._ui_top_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local input_manager = self._input_manager
-	local input_service = input_manager:get_service("ingame_menu")
-	local render_settings = self._render_settings
-	local alpha_multiplier = render_settings.alpha_multiplier or 1
+function HeroDioramaUI._draw(arg_29_0, arg_29_1)
+	local var_29_0 = arg_29_0._ui_renderer
+	local var_29_1 = arg_29_0._ui_top_renderer
+	local var_29_2 = arg_29_0._ui_scenegraph
+	local var_29_3 = arg_29_0._input_manager:get_service("ingame_menu")
+	local var_29_4 = arg_29_0._render_settings
+	local var_29_5 = var_29_4.alpha_multiplier or 1
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+	UIRenderer.begin_pass(var_29_0, var_29_2, var_29_3, arg_29_1, nil, var_29_4)
 
-	local viewport_widget = self._viewport_widget
+	local var_29_6 = arg_29_0._viewport_widget
 
-	if viewport_widget then
-		render_settings.alpha_multiplier = math.min(viewport_widget.alpha_multiplier or alpha_multiplier, alpha_multiplier)
+	if var_29_6 then
+		var_29_4.alpha_multiplier = math.min(var_29_6.alpha_multiplier or var_29_5, var_29_5)
 
-		UIRenderer.draw_widget(ui_renderer, viewport_widget)
+		UIRenderer.draw_widget(var_29_0, var_29_6)
 	end
 
-	UIRenderer.end_pass(ui_renderer)
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+	UIRenderer.end_pass(var_29_0)
+	UIRenderer.begin_pass(var_29_1, var_29_2, var_29_3, arg_29_1, nil, var_29_4)
 
-	local widgets = self._widgets
+	local var_29_7 = arg_29_0._widgets
 
-	if widgets then
-		for i = 1, #widgets do
-			local widget = widgets[i]
+	if var_29_7 then
+		for iter_29_0 = 1, #var_29_7 do
+			local var_29_8 = var_29_7[iter_29_0]
 
-			render_settings.alpha_multiplier = math.min(widget.alpha_multiplier or alpha_multiplier, alpha_multiplier)
+			var_29_4.alpha_multiplier = math.min(var_29_8.alpha_multiplier or var_29_5, var_29_5)
 
-			UIRenderer.draw_widget(ui_top_renderer, widget)
+			UIRenderer.draw_widget(var_29_1, var_29_8)
 		end
 	end
 
-	local portrait_widget = self._portrait_widget
+	local var_29_9 = arg_29_0._portrait_widget
 
-	if portrait_widget then
-		render_settings.alpha_multiplier = math.min(portrait_widget.alpha_multiplier or alpha_multiplier, alpha_multiplier)
+	if var_29_9 then
+		var_29_4.alpha_multiplier = math.min(var_29_9.alpha_multiplier or var_29_5, var_29_5)
 
-		UIRenderer.draw_widget(ui_top_renderer, portrait_widget)
+		UIRenderer.draw_widget(var_29_1, var_29_9)
 	end
 
-	local bottom_panel_widget = self._bottom_panel_widget
+	local var_29_10 = arg_29_0._bottom_panel_widget
 
-	if bottom_panel_widget then
-		render_settings.alpha_multiplier = math.min(bottom_panel_widget.alpha_multiplier or alpha_multiplier, alpha_multiplier)
+	if var_29_10 then
+		var_29_4.alpha_multiplier = math.min(var_29_10.alpha_multiplier or var_29_5, var_29_5)
 
-		UIRenderer.draw_widget(ui_top_renderer, bottom_panel_widget)
+		UIRenderer.draw_widget(var_29_1, var_29_10)
 	end
 
-	UIRenderer.end_pass(ui_top_renderer)
+	UIRenderer.end_pass(var_29_1)
 
-	render_settings.alpha_multiplier = alpha_multiplier
+	var_29_4.alpha_multiplier = var_29_5
 end
 
-HeroDioramaUI._unload_level_package = function (self)
-	local resource_id = self:_resource_id()
-	local level_package_name = self._viewport_widget_definition.style.viewport.level_package_name
+function HeroDioramaUI._unload_level_package(arg_30_0)
+	local var_30_0 = arg_30_0:_resource_id()
+	local var_30_1 = arg_30_0._viewport_widget_definition.style.viewport.level_package_name
 
-	Managers.package:unload(level_package_name, resource_id)
+	Managers.package:unload(var_30_1, var_30_0)
 
-	self._level_package_loaded = false
+	arg_30_0._level_package_loaded = false
 end
 
-HeroDioramaUI._unload_diorama_package = function (self)
+function HeroDioramaUI._unload_diorama_package(arg_31_0)
 	Managers.package:unload("resource_packages/dlcs/carousel_diorama", "diorama_test")
 
-	self._diorama_package_loaded = false
+	arg_31_0._diorama_package_loaded = false
 end
 
-HeroDioramaUI._destroy_previewers = function (self)
-	local world_previewer = self._world_previewer
+function HeroDioramaUI._destroy_previewers(arg_32_0)
+	local var_32_0 = arg_32_0._world_previewer
 
-	if world_previewer then
-		world_previewer:prepare_exit()
-		world_previewer:on_exit()
-		world_previewer:destroy()
+	if var_32_0 then
+		var_32_0:prepare_exit()
+		var_32_0:on_exit()
+		var_32_0:destroy()
 
-		self._world_previewer = nil
+		arg_32_0._world_previewer = nil
 	end
 end
 
-local camera_position_by_character = {
+local var_0_5 = {
 	default = {
-		x = 0,
-		y = 0,
 		z = 0.4,
-	},
+		x = 0,
+		y = 0
+	}
 }
 
-HeroDioramaUI._setup_character_previewer = function (self, profile_index, career_index)
-	self:_destroy_previewers()
+function HeroDioramaUI._setup_character_previewer(arg_33_0, arg_33_1, arg_33_2)
+	arg_33_0:_destroy_previewers()
 
-	local viewport_widget = self._viewport_widget
-	local world_previewer = MenuWorldPreviewer:new(self._ingame_ui_context, camera_position_by_character)
+	local var_33_0 = arg_33_0._viewport_widget
+	local var_33_1 = MenuWorldPreviewer:new(arg_33_0._ingame_ui_context, var_0_5)
 
-	world_previewer:on_enter(viewport_widget)
-	world_previewer:set_camera_axis_offset("y", 3.5, 0.01, math.easeOutCubic)
+	var_33_1:on_enter(var_33_0)
+	var_33_1:set_camera_axis_offset("y", 3.5, 0.01, math.easeOutCubic)
 
-	self._world_previewer = world_previewer
+	arg_33_0._world_previewer = var_33_1
 
-	local profile = SPProfiles[profile_index]
-	local profile_name = profile.display_name
-	local career = profile.careers[career_index]
-	local career_name = career.name
-	local career_settings = CareerSettings[career_name]
-	local base_skin = career_settings.base_skin
-	local optional_skin
-	local cb = callback(self, "cb_hero_unit_spawned_preview", world_previewer, profile_name, career_index)
+	local var_33_2 = SPProfiles[arg_33_1]
+	local var_33_3 = var_33_2.display_name
+	local var_33_4 = var_33_2.careers[arg_33_2].name
+	local var_33_5 = CareerSettings[var_33_4].base_skin
+	local var_33_6
+	local var_33_7 = callback(arg_33_0, "cb_hero_unit_spawned_preview", var_33_1, var_33_3, arg_33_2)
 
-	world_previewer:request_spawn_hero_unit(profile_name, career_index, false, cb, 1, nil, optional_skin)
+	var_33_1:request_spawn_hero_unit(var_33_3, arg_33_2, false, var_33_7, 1, nil, var_33_6)
 
-	local flags = {
+	local var_33_8 = {
 		"units/diorama/podium/diorama_banner_flag_01",
-		"units/diorama/podium/diorama_banner_flag_02",
+		"units/diorama/podium/diorama_banner_flag_02"
 	}
+	local var_33_9 = callback(arg_33_0, "cb_flag_spawned", var_33_1)
 
-	cb = callback(self, "cb_flag_spawned", world_previewer)
+	var_33_1:request_spawn_unit(table.random(var_33_8), "flag", var_33_9)
 
-	world_previewer:request_spawn_unit(table.random(flags), "flag", cb)
-
-	local poles = {
+	local var_33_10 = {
 		"units/diorama/podium/diorama_banner_pole_01",
-		"units/diorama/podium/diorama_banner_pole_02",
+		"units/diorama/podium/diorama_banner_pole_02"
 	}
+	local var_33_11 = callback(arg_33_0, "cb_pole_spawned", var_33_1)
 
-	cb = callback(self, "cb_pole_spawned", world_previewer)
+	var_33_1:request_spawn_unit(table.random(var_33_10), "pole", var_33_11)
 
-	world_previewer:request_spawn_unit(table.random(poles), "pole", cb)
-
-	local podiums = {
+	local var_33_12 = {
 		"units/diorama/podium/diorama_podium_rock_01",
 		"units/diorama/podium/diorama_podium_stone_01",
 		"units/diorama/podium/diorama_podium_dwarf_01",
-		"units/diorama/podium/diorama_podium_pile_of_skulls_01",
+		"units/diorama/podium/diorama_podium_pile_of_skulls_01"
 	}
+	local var_33_13 = callback(arg_33_0, "cb_podium_spawned", var_33_1)
 
-	cb = callback(self, "cb_podium_spawned", world_previewer)
-
-	world_previewer:request_spawn_unit(table.random(podiums), "podium", cb)
-	self:_reset_overlay()
+	var_33_1:request_spawn_unit(table.random(var_33_12), "podium", var_33_13)
+	arg_33_0:_reset_overlay()
 end
 
-HeroDioramaUI.cb_hero_unit_spawned_preview = function (self, world_previewer, hero_name, career_index)
-	world_previewer:set_hero_location({
+function HeroDioramaUI.cb_hero_unit_spawned_preview(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+	arg_34_1:set_hero_location({
 		0,
 		0,
-		0.43,
+		0.43
 	})
 
-	local profile_index = FindProfileIndex(hero_name)
-	local profile = SPProfiles[profile_index]
-	local careers = profile.careers
-	local career_settings = careers[career_index]
-	local preview_idle_animation = "store_idle"
-	local preview_items = career_settings.preview_items
+	local var_34_0 = FindProfileIndex(arg_34_2)
+	local var_34_1 = SPProfiles[var_34_0].careers[arg_34_3]
+	local var_34_2 = "store_idle"
+	local var_34_3 = var_34_1.preview_items
 
-	if preview_items then
-		for _, item_data in ipairs(preview_items) do
-			local item_name = item_data.item_name
-			local item_template = ItemMasterList[item_name]
-			local slot_type = item_template.slot_type
-			local slot_names = InventorySettings.slot_names_by_type[slot_type]
-			local slot_name = slot_names[1]
-			local slot = InventorySettings.slots_by_name[slot_name]
-			local is_weapon = slot_type == "melee" or slot_type == "ranged"
+	if var_34_3 then
+		for iter_34_0, iter_34_1 in ipairs(var_34_3) do
+			local var_34_4 = iter_34_1.item_name
+			local var_34_5 = ItemMasterList[var_34_4].slot_type
+			local var_34_6 = InventorySettings.slot_names_by_type[var_34_5][1]
+			local var_34_7 = InventorySettings.slots_by_name[var_34_6]
 
-			if is_weapon then
-				world_previewer:wield_weapon_slot(slot_type)
+			if var_34_5 == "melee" or var_34_5 == "ranged" then
+				arg_34_1:wield_weapon_slot(var_34_5)
 			end
 
-			world_previewer:equip_item(item_name, slot)
+			arg_34_1:equip_item(var_34_4, var_34_7)
 		end
 	end
 
-	if preview_idle_animation then
-		-- Nothing
+	if var_34_2 then
+		-- block empty
 	end
 
-	if self._viewport_active then
-		self:_fade_out_overlay()
+	if arg_34_0._viewport_active then
+		arg_34_0:_fade_out_overlay()
 	end
 end
 
-HeroDioramaUI.cb_flag_spawned = function (self, world_previewer, unit)
-	world_previewer:set_unit_location(unit, {
+function HeroDioramaUI.cb_flag_spawned(arg_35_0, arg_35_1, arg_35_2)
+	arg_35_1:set_unit_location(arg_35_2, {
 		0,
 		-1.5,
-		0,
+		0
 	})
 end
 
-HeroDioramaUI.cb_pole_spawned = function (self, world_previewer, unit)
-	world_previewer:set_unit_location(unit, {
+function HeroDioramaUI.cb_pole_spawned(arg_36_0, arg_36_1, arg_36_2)
+	arg_36_1:set_unit_location(arg_36_2, {
 		0,
 		-1.5,
-		0,
+		0
 	})
 end
 
-HeroDioramaUI.cb_podium_spawned = function (self, world_previewer, unit)
-	world_previewer:set_unit_location(unit, {
+function HeroDioramaUI.cb_podium_spawned(arg_37_0, arg_37_1, arg_37_2)
+	arg_37_1:set_unit_location(arg_37_2, {
 		0,
 		0,
-		0,
+		0
 	})
 end
 
-HeroDioramaUI._set_career_name = function (self, profile_index, career_index)
-	local profile = SPProfiles[profile_index]
-	local career_data = profile.careers[career_index]
-	local display_name = career_data.display_name
-	local widgets_by_name = self._widgets_by_name
-	local widget = widgets_by_name.career_name
-	local content = widget.content
+function HeroDioramaUI._set_career_name(arg_38_0, arg_38_1, arg_38_2)
+	local var_38_0 = SPProfiles[arg_38_1].careers[arg_38_2].display_name
 
-	content.text = Localize(display_name)
+	arg_38_0._widgets_by_name.career_name.content.text = Localize(var_38_0)
 end
 
-HeroDioramaUI._set_hero_name = function (self, profile_index)
-	local profile = SPProfiles[profile_index]
-	local ingame_short_display_name = profile.ingame_short_display_name
-	local widgets_by_name = self._widgets_by_name
-	local widget = widgets_by_name.hero_name
-	local content = widget.content
+function HeroDioramaUI._set_hero_name(arg_39_0, arg_39_1)
+	local var_39_0 = SPProfiles[arg_39_1].ingame_short_display_name
 
-	content.text = Localize(ingame_short_display_name)
+	arg_39_0._widgets_by_name.hero_name.content.text = Localize(var_39_0)
 end
 
-HeroDioramaUI.set_player_name = function (self, text)
-	local widgets_by_name = self._widgets_by_name
-	local widget = widgets_by_name.player_name
-	local content = widget.content
-
-	content.text = text
+function HeroDioramaUI.set_player_name(arg_40_0, arg_40_1)
+	arg_40_0._widgets_by_name.player_name.content.text = arg_40_1
 end
 
-HeroDioramaUI._set_portrait_frame = function (self, frame_settings_name, level_text, portrait_texture, optional_scale)
-	local scale = optional_scale or 1
-	local retained_mode = false
-	local widget_definition = UIWidgets.create_portrait_frame("portrait_pivot", frame_settings_name, level_text, scale, retained_mode, portrait_texture)
-	local widget = UIWidget.init(widget_definition, self._ui_renderer)
-	local widget_content = widget.content
+function HeroDioramaUI._set_portrait_frame(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+	local var_41_0 = arg_41_4 or 1
+	local var_41_1 = false
+	local var_41_2 = UIWidgets.create_portrait_frame("portrait_pivot", arg_41_1, arg_41_2, var_41_0, var_41_1, arg_41_3)
+	local var_41_3 = UIWidget.init(var_41_2, arg_41_0._ui_renderer)
+	local var_41_4 = var_41_3.content
 
-	widget_content.frame_settings_name = frame_settings_name
-	widget_content.level_text = level_text
-	self._portrait_widget = widget
+	var_41_4.frame_settings_name = arg_41_1
+	var_41_4.level_text = arg_41_2
+	arg_41_0._portrait_widget = var_41_3
 end
 
-HeroDioramaUI._get_portrait_frame = function (self, profile_index, career_index)
-	local profile = SPProfiles[profile_index]
-	local career_data = profile.careers[career_index]
-	local career_name = career_data.name
-	local player_portrait_frame = "default"
-	local item = BackendUtils.get_loadout_item(career_name, "slot_frame")
+function HeroDioramaUI._get_portrait_frame(arg_42_0, arg_42_1, arg_42_2)
+	local var_42_0 = SPProfiles[arg_42_1].careers[arg_42_2].name
+	local var_42_1 = "default"
+	local var_42_2 = BackendUtils.get_loadout_item(var_42_0, "slot_frame")
 
-	if item then
-		local item_data = item.data
-		local frame_name = item_data.temporary_template
+	var_42_1 = var_42_2 and var_42_2.data.temporary_template or var_42_1
 
-		player_portrait_frame = frame_name or player_portrait_frame
-	end
-
-	return player_portrait_frame
+	return var_42_1
 end

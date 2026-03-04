@@ -1,120 +1,116 @@
-﻿-- chunkname: @scripts/settings/spawn_unit_templates_vs.lua
+-- chunkname: @scripts/settings/spawn_unit_templates_vs.lua
 
-local spawn_unit_templates_vs = {
+local var_0_0 = {
 	troll_puke = {
-		spawn_func = function (source_unit, position, rotation, state_int)
-			rotation = QuaternionBox(rotation)
-			position = Vector3Box(position)
+		spawn_func = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			arg_1_2 = QuaternionBox(arg_1_2)
+			arg_1_1 = Vector3Box(arg_1_1)
 
-			local function safe_navigation_callback()
-				local dir = Quaternion.forward(rotation:unbox())
-				local extension_init_data = {
+			local function var_1_0()
+				local var_2_0 = Quaternion.forward(arg_1_2:unbox())
+				local var_2_1 = {
 					area_damage_system = {
-						flow_dir = dir,
-						liquid_template = state_int == 1 and "vs_bile_troll_vomit_near" or "vs_bile_troll_vomit",
-						source_unit = source_unit,
-					},
+						flow_dir = var_2_0,
+						liquid_template = arg_1_3 == 1 and "vs_bile_troll_vomit_near" or "vs_bile_troll_vomit",
+						source_unit = arg_1_0
+					}
 				}
-				local aoe_unit_name = "units/hub_elements/empty"
-				local liquid_aoe_unit = Managers.state.unit_spawner:spawn_network_unit(aoe_unit_name, "liquid_aoe_unit", extension_init_data, position:unbox())
-				local liquid_area_damage_extension = ScriptUnit.extension(liquid_aoe_unit, "area_damage_system")
+				local var_2_2 = "units/hub_elements/empty"
+				local var_2_3 = Managers.state.unit_spawner:spawn_network_unit(var_2_2, "liquid_aoe_unit", var_2_1, arg_1_1:unbox())
 
-				liquid_area_damage_extension:ready()
+				ScriptUnit.extension(var_2_3, "area_damage_system"):ready()
 			end
 
-			local ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
-
-			ai_navigation_system:add_safe_navigation_callback(safe_navigation_callback)
-		end,
+			Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(var_1_0)
+		end
 	},
 	vortex = {
-		spawn_func = function (source_unit, position, rotation, state_int)
-			local blackboard = BLACKBOARDS[source_unit]
+		spawn_func = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			local var_3_0 = BLACKBOARDS[arg_3_0]
 
-			if not blackboard then
-				blackboard = {}
-				BLACKBOARDS[source_unit] = blackboard
+			if not var_3_0 then
+				var_3_0 = {}
+				BLACKBOARDS[arg_3_0] = var_3_0
 			end
 
-			blackboard.world = blackboard.world or Managers.state.conflict._world
+			var_3_0.world = var_3_0.world or Managers.state.conflict._world
 
-			local t = Managers.time:time("game")
-			local dt = 0
-			local action = BreedActions.chaos_vortex_sorcerer.spawn_vortex
+			local var_3_1 = Managers.time:time("game")
+			local var_3_2 = 0
+			local var_3_3 = BreedActions.chaos_vortex_sorcerer.spawn_vortex
 
-			blackboard.action = action
+			var_3_0.action = var_3_3
 
-			if not blackboard.vortex_data then
-				local vortex_template_name = "carousel"
+			if not var_3_0.vortex_data then
+				local var_3_4 = "carousel"
 
-				BTChaosSorcererSkulkApproachAction.initialize_vortex_data(nil, blackboard, vortex_template_name)
+				BTChaosSorcererSkulkApproachAction.initialize_vortex_data(nil, var_3_0, var_3_4)
 			end
 
-			local vortex_data = blackboard.vortex_data
+			local var_3_5 = var_3_0.vortex_data
 
-			vortex_data.vortex_spawn_pos:store(position)
+			var_3_5.vortex_spawn_pos:store(arg_3_1)
 
-			vortex_data.vortex_spawn_radius = 10
-			vortex_data.spawn_timer = t + 25
+			var_3_5.vortex_spawn_radius = 10
+			var_3_5.spawn_timer = var_3_1 + 25
 
-			local vortex_template = vortex_data.vortex_template
-			local summon_position = vortex_data.vortex_spawn_pos:unbox()
-			local spawn_radius = vortex_data.vortex_spawn_radius
-			local inner_radius_p = math.min(spawn_radius / vortex_template.full_inner_radius, 1)
-			local owner_is_client = state_int == 0
+			local var_3_6 = var_3_5.vortex_template
+			local var_3_7 = var_3_5.vortex_spawn_pos:unbox()
+			local var_3_8 = var_3_5.vortex_spawn_radius
+			local var_3_9 = math.min(var_3_8 / var_3_6.full_inner_radius, 1)
 
-			if owner_is_client then
-				local inner_decal_unit_name = action.inner_decal_unit_name
+			if arg_3_3 == 0 then
+				local var_3_10 = var_3_3.inner_decal_unit_name
 
-				if inner_decal_unit_name then
-					local inner_spawn_pose = Matrix4x4.from_quaternion_position(Quaternion.identity(), summon_position)
-					local inner_radius = math.max(vortex_template.min_inner_radius, inner_radius_p * vortex_template.full_inner_radius)
+				if var_3_10 then
+					local var_3_11 = Matrix4x4.from_quaternion_position(Quaternion.identity(), var_3_7)
+					local var_3_12 = math.max(var_3_6.min_inner_radius, var_3_9 * var_3_6.full_inner_radius)
 
-					Matrix4x4.set_scale(inner_spawn_pose, Vector3(inner_radius, inner_radius, inner_radius))
+					Matrix4x4.set_scale(var_3_11, Vector3(var_3_12, var_3_12, var_3_12))
 
-					vortex_data.inner_decal_unit = Managers.state.unit_spawner:spawn_network_unit(inner_decal_unit_name, "network_synched_dummy_unit", nil, inner_spawn_pose)
+					var_3_5.inner_decal_unit = Managers.state.unit_spawner:spawn_network_unit(var_3_10, "network_synched_dummy_unit", nil, var_3_11)
 				end
 
-				local outer_decal_unit_name = action.outer_decal_unit_name
+				local var_3_13 = var_3_3.outer_decal_unit_name
 
-				if outer_decal_unit_name then
-					local outer_spawn_pose = Matrix4x4.from_quaternion_position(Quaternion.identity(), summon_position)
-					local outer_radius = math.max(vortex_template.min_outer_radius, inner_radius_p * vortex_template.full_outer_radius)
+				if var_3_13 then
+					local var_3_14 = Matrix4x4.from_quaternion_position(Quaternion.identity(), var_3_7)
+					local var_3_15 = math.max(var_3_6.min_outer_radius, var_3_9 * var_3_6.full_outer_radius)
 
-					Matrix4x4.set_scale(outer_spawn_pose, Vector3(outer_radius, outer_radius, outer_radius))
+					Matrix4x4.set_scale(var_3_14, Vector3(var_3_15, var_3_15, var_3_15))
 
-					vortex_data.outer_decal_unit = Managers.state.unit_spawner:spawn_network_unit(outer_decal_unit_name, "network_synched_dummy_unit", nil, outer_spawn_pose)
+					var_3_5.outer_decal_unit = Managers.state.unit_spawner:spawn_network_unit(var_3_13, "network_synched_dummy_unit", nil, var_3_14)
 				end
 			end
 
-			BTChaosSorcererSummoningAction._spawn_vortex(nil, source_unit, blackboard, t, dt, position, blackboard.vortex_data)
-		end,
+			BTChaosSorcererSummoningAction._spawn_vortex(nil, arg_3_0, var_3_0, var_3_1, var_3_2, arg_3_1, var_3_0.vortex_data)
+		end
 	},
 	vortex_dummy_missile = {
-		spawn_func = function (source_unit, hand_position, summon_rotation, state_int)
-			local blackboard = BLACKBOARDS[source_unit]
+		spawn_func = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			local var_4_0 = BLACKBOARDS[arg_4_0]
 
-			if not blackboard then
-				blackboard = {}
-				BLACKBOARDS[source_unit] = blackboard
+			if not var_4_0 then
+				var_4_0 = {}
+				BLACKBOARDS[arg_4_0] = var_4_0
 			end
 
-			blackboard.world = blackboard.world or Managers.state.conflict._world
-			blackboard.vortex_data = blackboard.vortex_data or {}
+			var_4_0.world = var_4_0.world or Managers.state.conflict._world
+			var_4_0.vortex_data = var_4_0.vortex_data or {}
 
-			local vortex_data = blackboard.vortex_data
+			local var_4_1 = var_4_0.vortex_data
 
-			vortex_data.extra_time = 2
-			vortex_data.max_height = 10
-			vortex_data.num_dummy_missiles = 0
+			var_4_1.extra_time = 2
+			var_4_1.max_height = 10
+			var_4_1.num_dummy_missiles = 0
 
-			local action = BreedActions.chaos_vortex_sorcerer.spawn_vortex
-			local summon_position = vortex_data.summon_position and vortex_data.summon_position:unbox() or POSITION_LOOKUP[source_unit]
-			local summon_direction = Quaternion.forward(summon_rotation)
+			local var_4_2 = BreedActions.chaos_vortex_sorcerer.spawn_vortex
+			local var_4_3 = var_4_1.summon_position and var_4_1.summon_position:unbox() or POSITION_LOOKUP[arg_4_0]
+			local var_4_4 = Quaternion.forward(arg_4_2)
 
-			return BTChaosSorcererSummoningAction._launch_vortex_dummy_missile(nil, source_unit, action, vortex_data, hand_position, summon_position, summon_direction)
-		end,
-	},
+			return BTChaosSorcererSummoningAction._launch_vortex_dummy_missile(nil, arg_4_0, var_4_2, var_4_1, arg_4_1, var_4_3, var_4_4)
+		end
+	}
 }
 
-table.merge_recursive(SpawnUnitTemplates, spawn_unit_templates_vs)
+table.merge_recursive(SpawnUnitTemplates, var_0_0)

@@ -1,78 +1,78 @@
-﻿-- chunkname: @scripts/unit_extensions/world_markers/world_marker_extension.lua
+-- chunkname: @scripts/unit_extensions/world_markers/world_marker_extension.lua
 
 WorldMarkerExtension = class(WorldMarkerExtension)
 
-WorldMarkerExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self._world = extension_init_context.world
-	self._unit = unit
-	self._visible = false
-	self._id = nil
-	self._event_manager = Managers.state.event
-	self._marker_type = nil
-	self._add_event_name = nil
-	self._remove_event_name = nil
+function WorldMarkerExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._world = arg_1_1.world
+	arg_1_0._unit = arg_1_2
+	arg_1_0._visible = false
+	arg_1_0._id = nil
+	arg_1_0._event_manager = Managers.state.event
+	arg_1_0._marker_type = nil
+	arg_1_0._add_event_name = nil
+	arg_1_0._remove_event_name = nil
 end
 
-WorldMarkerExtension.extensions_ready = function (self)
-	if self._extensions_ready then
-		self:_extensions_ready()
+function WorldMarkerExtension.extensions_ready(arg_2_0)
+	if arg_2_0._extensions_ready then
+		arg_2_0:_extensions_ready()
 	end
 end
 
-WorldMarkerExtension.destroy = function (self)
-	if self._destroy then
-		self:_destroy()
+function WorldMarkerExtension.destroy(arg_3_0)
+	if arg_3_0._destroy then
+		arg_3_0:_destroy()
 	end
 
-	self:remove_marker()
+	arg_3_0:remove_marker()
 end
 
-WorldMarkerExtension.add_marker = function (self, cb_func)
-	if self._adding_marker then
+function WorldMarkerExtension.add_marker(arg_4_0, arg_4_1)
+	if arg_4_0._adding_marker then
 		return
 	end
 
-	self:remove_marker()
+	arg_4_0:remove_marker()
 
-	self._adding_marker = true
+	arg_4_0._adding_marker = true
 
-	local cb = callback(self, "cb_add_marker", cb_func)
+	local var_4_0 = callback(arg_4_0, "cb_add_marker", arg_4_1)
 
-	self:_add_marker(cb)
+	arg_4_0:_add_marker(var_4_0)
 end
 
-WorldMarkerExtension.remove_marker = function (self)
-	local id = self._id
+function WorldMarkerExtension.remove_marker(arg_5_0)
+	local var_5_0 = arg_5_0._id
 
-	if id then
-		local event_manager = self._event_manager
-		local remove_event_name = self._remove_event_name
+	if var_5_0 then
+		local var_5_1 = arg_5_0._event_manager
+		local var_5_2 = arg_5_0._remove_event_name
 
-		event_manager:trigger(remove_event_name, id)
+		var_5_1:trigger(var_5_2, var_5_0)
 
-		self._id = nil
-	elseif self._adding_marker then
-		self._remove_marker_queued = true
+		arg_5_0._id = nil
+	elseif arg_5_0._adding_marker then
+		arg_5_0._remove_marker_queued = true
 	end
 end
 
-WorldMarkerExtension.hot_join_sync = function (self, sender)
-	if self._hot_join_sync then
-		self:_hot_join_sync(sender)
+function WorldMarkerExtension.hot_join_sync(arg_6_0, arg_6_1)
+	if arg_6_0._hot_join_sync then
+		arg_6_0:_hot_join_sync(arg_6_1)
 	end
 end
 
-WorldMarkerExtension.cb_add_marker = function (self, cb_func, id)
-	self._id = id
-	self._adding_marker = false
+function WorldMarkerExtension.cb_add_marker(arg_7_0, arg_7_1, arg_7_2)
+	arg_7_0._id = arg_7_2
+	arg_7_0._adding_marker = false
 
-	if cb_func then
-		cb_func(id)
+	if arg_7_1 then
+		arg_7_1(arg_7_2)
 	end
 
-	if self._remove_marker_queued then
-		self._remove_marker_queued = nil
+	if arg_7_0._remove_marker_queued then
+		arg_7_0._remove_marker_queued = nil
 
-		self:remove_marker()
+		arg_7_0:remove_marker()
 	end
 end

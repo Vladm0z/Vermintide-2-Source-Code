@@ -1,46 +1,46 @@
-﻿-- chunkname: @scripts/managers/telemetry/telemetry_reporters.lua
+-- chunkname: @scripts/managers/telemetry/telemetry_reporters.lua
 
 require("scripts/managers/telemetry/reporters/heartbeat_reporter")
 
 TelemetryReporters = class(TelemetryReporters)
 TelemetryReporters.NAME = "TelemetryReporters"
 
-local REPORTER_CLASS_MAP = {
-	heartbeat = HeartbeatReporter,
+local var_0_0 = {
+	heartbeat = HeartbeatReporter
 }
 
-TelemetryReporters.init = function (self)
-	self._reporters = {}
+function TelemetryReporters.init(arg_1_0)
+	arg_1_0._reporters = {}
 
-	self:start_reporter("heartbeat")
+	arg_1_0:start_reporter("heartbeat")
 end
 
-TelemetryReporters.start_reporter = function (self, name, params)
-	local reporter_class = REPORTER_CLASS_MAP[name]
+function TelemetryReporters.start_reporter(arg_2_0, arg_2_1, arg_2_2)
+	local var_2_0 = var_0_0[arg_2_1]
 
-	self._reporters[name] = reporter_class:new(params)
+	arg_2_0._reporters[arg_2_1] = var_2_0:new(arg_2_2)
 end
 
-TelemetryReporters.stop_reporter = function (self, name)
-	self._reporters[name]:report()
-	self._reporters[name]:destroy()
+function TelemetryReporters.stop_reporter(arg_3_0, arg_3_1)
+	arg_3_0._reporters[arg_3_1]:report()
+	arg_3_0._reporters[arg_3_1]:destroy()
 
-	self._reporters[name] = nil
+	arg_3_0._reporters[arg_3_1] = nil
 end
 
-TelemetryReporters.reporter = function (self, name)
-	return self._reporters[name]
+function TelemetryReporters.reporter(arg_4_0, arg_4_1)
+	return arg_4_0._reporters[arg_4_1]
 end
 
-TelemetryReporters.update = function (self, dt, t)
-	for _, reporter in pairs(self._reporters) do
-		reporter:update(dt, t)
+function TelemetryReporters.update(arg_5_0, arg_5_1, arg_5_2)
+	for iter_5_0, iter_5_1 in pairs(arg_5_0._reporters) do
+		iter_5_1:update(arg_5_1, arg_5_2)
 	end
 end
 
-TelemetryReporters.destroy = function (self)
-	for _, reporter in pairs(self._reporters) do
-		reporter:destroy()
+function TelemetryReporters.destroy(arg_6_0)
+	for iter_6_0, iter_6_1 in pairs(arg_6_0._reporters) do
+		iter_6_1:destroy()
 	end
 end
 

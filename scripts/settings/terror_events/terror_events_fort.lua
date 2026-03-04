@@ -1,201 +1,201 @@
-﻿-- chunkname: @scripts/settings/terror_events/terror_events_fort.lua
+-- chunkname: @scripts/settings/terror_events/terror_events_fort.lua
 
-local TerrorEventUtils = require("scripts/settings/terror_events/terror_event_utils")
-local count_event_breed = TerrorEventUtils.count_event_breed
-local HARDEST = TerrorEventUtils.HARDEST
-local weighted_random_terror_events = {
+local var_0_0 = require("scripts/settings/terror_events/terror_event_utils")
+local var_0_1 = var_0_0.count_event_breed
+local var_0_2 = var_0_0.HARDEST
+local var_0_3 = {
 	fort_terror_event_inner_yard = {
 		"fort_terror_event_inner_yard_skaven",
 		1,
 		"fort_terror_event_inner_yard_chaos",
-		1,
+		1
 	},
 	fort_horde_cannon = {
 		"fort_horde_cannon_skaven",
 		1,
 		"fort_horde_cannon_chaos",
-		1,
-	},
+		1
+	}
 }
-local terror_event_blueprints = {
+local var_0_4 = {
 	fort_pacing_off = {
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"control_specials",
-			enable = false,
-		},
+			enable = false
+		}
 	},
 	fort_pacing_on = {
 		{
 			"control_pacing",
-			enable = true,
+			enable = true
 		},
 		{
 			"control_specials",
-			enable = true,
-		},
+			enable = true
+		}
 	},
 	fort_terror_event_climb = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"set_master_event_running",
-			name = "fort_terror_event_climb",
+			name = "fort_terror_event_climb"
 		},
 		{
 			"event_horde",
-			composition_type = "event_smaller",
 			spawner_id = "terror_event_climb",
+			composition_type = "event_smaller"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_slave") < 6
-			end,
+			condition = function(arg_1_0)
+				return var_0_1("skaven_slave") < 6
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "fort_terror_event_climb_done",
-		},
+			flow_event_name = "fort_terror_event_climb_done"
+		}
 	},
 	fort_terror_event_inner_yard_skaven = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"set_master_event_running",
-			name = "fort_terror_event_inner_yard",
+			name = "fort_terror_event_inner_yard"
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_stinger",
+			stinger_name = "enemy_horde_stinger"
 		},
 		{
 			"event_horde",
-			composition_type = "event_smaller",
 			spawner_id = "terror_event_inner_yard",
+			composition_type = "event_smaller"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_slave") < 6
-			end,
+			condition = function(arg_2_0)
+				return var_0_1("skaven_slave") < 6
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "fort_terror_event_inner_yard_done",
-		},
+			flow_event_name = "fort_terror_event_inner_yard_done"
+		}
 	},
 	fort_terror_event_inner_yard_chaos = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"set_master_event_running",
-			name = "fort_terror_event_inner_yard",
+			name = "fort_terror_event_inner_yard"
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_chaos_stinger",
+			stinger_name = "enemy_horde_chaos_stinger"
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			spawner_id = "terror_event_inner_yard",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"delay",
-			duration = 7,
+			duration = 7
 		},
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (t)
-				return count_event_breed("chaos_fanatic") < 3 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
-			end,
+			condition = function(arg_3_0)
+				return var_0_1("chaos_fanatic") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "fort_terror_event_inner_yard_done",
-		},
+			flow_event_name = "fort_terror_event_inner_yard_done"
+		}
 	},
 	fort_horde_gate = {
 		{
 			"set_master_event_running",
-			name = "fort_horde_gate",
+			name = "fort_horde_gate"
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_stinger",
+			stinger_name = "enemy_horde_stinger"
 		},
 		{
-			"disable_kick",
+			"disable_kick"
 		},
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"control_specials",
-			enable = false,
+			enable = false
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"event_horde",
-			composition_type = "event_large_chaos",
 			spawner_id = "fort_horde_gate",
+			composition_type = "event_large_chaos"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (t)
-				return count_event_breed("chaos_marauder") < 4
-			end,
+			condition = function(arg_4_0)
+				return var_0_1("chaos_marauder") < 4
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "fort_horde_gate_done",
-		},
+			flow_event_name = "fort_horde_gate_done"
+		}
 	},
 	fort_horde_cannon_skaven = {
 		{
 			"set_master_event_running",
-			name = "fort_horde_cannon",
+			name = "fort_horde_cannon"
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_stinger",
+			stinger_name = "enemy_horde_stinger"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"event_horde",
-			composition_type = "event_large",
 			spawner_id = "fort_horde_cannon",
+			composition_type = "event_large"
 		},
 		{
 			"spawn_at_raw",
@@ -205,39 +205,39 @@ local terror_event_blueprints = {
 				"skaven_pack_master",
 				"skaven_gutter_runner",
 				"skaven_ratling_gunner",
-				"skaven_warpfire_thrower",
+				"skaven_warpfire_thrower"
 			},
-			difficulty_requirement = HARDEST,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"delay",
-			duration = 8,
+			duration = 8
 		},
 		{
 			"event_horde",
-			composition_type = "event_extra_spice_medium",
 			limit_spawners = 3,
 			spawner_id = "fort_horde_cannon",
-			difficulty_requirement = HARDEST,
+			composition_type = "event_extra_spice_medium",
+			difficulty_requirement = var_0_2
 		},
 		{
 			"delay",
 			duration = 8,
-			difficulty_requirement = HARDEST,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"continue_when",
 			duration = 120,
-			condition = function (t)
-				return count_event_breed("skaven_slave") < 10 and count_event_breed("skaven_clan_rat") < 10
-			end,
+			condition = function(arg_5_0)
+				return var_0_1("skaven_slave") < 10 and var_0_1("skaven_clan_rat") < 10
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_extra_spice_medium",
 			limit_spawners = 3,
 			spawner_id = "fort_horde_cannon",
-			difficulty_requirement = HARDEST,
+			composition_type = "event_extra_spice_medium",
+			difficulty_requirement = var_0_2
 		},
 		{
 			"spawn_at_raw",
@@ -247,56 +247,56 @@ local terror_event_blueprints = {
 				"skaven_pack_master",
 				"skaven_gutter_runner",
 				"skaven_ratling_gunner",
-				"skaven_warpfire_thrower",
+				"skaven_warpfire_thrower"
 			},
-			difficulty_requirement = HARDEST,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"delay",
 			duration = 8,
-			difficulty_requirement = HARDEST,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"continue_when",
 			duration = 120,
-			condition = function (t)
-				return count_event_breed("skaven_slave") < 10 and count_event_breed("skaven_clan_rat") < 10
-			end,
+			condition = function(arg_6_0)
+				return var_0_1("skaven_slave") < 10 and var_0_1("skaven_clan_rat") < 10
+			end
 		},
 		{
 			"event_horde",
+			limit_spawners = 3,
+			spawner_id = "fort_horde_cannon",
 			composition_type = "plague_monks_small",
-			limit_spawners = 3,
-			spawner_id = "fort_horde_cannon",
-			difficulty_requirement = HARDEST,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"delay",
 			duration = 10,
-			difficulty_requirement = HARDEST,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"flow_event",
-			flow_event_name = "fort_horde_cannon_done",
-		},
+			flow_event_name = "fort_horde_cannon_done"
+		}
 	},
 	fort_horde_cannon_chaos = {
 		{
 			"set_master_event_running",
-			name = "fort_horde_cannon",
+			name = "fort_horde_cannon"
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_chaos_stinger",
+			stinger_name = "enemy_horde_chaos_stinger"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			spawner_id = "fort_horde_cannon",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"spawn_at_raw",
@@ -306,40 +306,40 @@ local terror_event_blueprints = {
 				"chaos_vortex_sorcerer",
 				"skaven_gutter_runner",
 				"skaven_ratling_gunner",
-				"skaven_warpfire_thrower",
+				"skaven_warpfire_thrower"
 			},
-			difficulty_requirement = HARDEST,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"delay",
 			duration = 8,
-			difficulty_requirement = HARDEST,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"event_horde",
-			composition_type = "event_chaos_extra_spice_small",
 			limit_spawners = 3,
 			spawner_id = "fort_horde_cannon",
-			difficulty_requirement = HARDEST,
+			composition_type = "event_chaos_extra_spice_small",
+			difficulty_requirement = var_0_2
 		},
 		{
 			"delay",
 			duration = 8,
-			difficulty_requirement = HARDEST,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"continue_when",
 			duration = 120,
-			condition = function (t)
-				return count_event_breed("chaos_fanatic") < 3 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
-			end,
+			condition = function(arg_7_0)
+				return var_0_1("chaos_fanatic") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_chaos_extra_spice_small",
 			limit_spawners = 3,
 			spawner_id = "fort_horde_cannon",
-			difficulty_requirement = HARDEST,
+			composition_type = "event_chaos_extra_spice_small",
+			difficulty_requirement = var_0_2
 		},
 		{
 			"spawn_at_raw",
@@ -349,107 +349,107 @@ local terror_event_blueprints = {
 				"chaos_vortex_sorcerer",
 				"skaven_gutter_runner",
 				"skaven_ratling_gunner",
-				"skaven_warpfire_thrower",
+				"skaven_warpfire_thrower"
 			},
-			difficulty_requirement = HARDEST,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"delay",
 			duration = 8,
-			difficulty_requirement = HARDEST,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"continue_when",
 			duration = 120,
-			condition = function (t)
-				return count_event_breed("chaos_fanatic") < 3 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
-			end,
+			condition = function(arg_8_0)
+				return var_0_1("chaos_fanatic") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "fort_horde_cannon_done",
-		},
+			flow_event_name = "fort_horde_cannon_done"
+		}
 	},
 	fort_horde_fleeing = {
 		{
 			"set_master_event_running",
-			name = "fort_horde_fleeing",
+			name = "fort_horde_fleeing"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			spawner_id = "fort_horde_fleeing",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (t)
-				return count_event_breed("skaven_slave") < 2
-			end,
+			condition = function(arg_9_0)
+				return var_0_1("skaven_slave") < 2
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "fort_horde_small_done",
-		},
+			flow_event_name = "fort_horde_small_done"
+		}
 	},
 	fort_siegers = {
 		{
 			"set_master_event_running",
-			name = "fort_siegers",
+			name = "fort_siegers"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_marauder",
 			spawner_id = "siege_1",
+			breed_name = "chaos_marauder"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_berzerker",
 			spawner_id = "siege_2",
+			breed_name = "chaos_berzerker"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_marauder",
 			spawner_id = "siege_3",
+			breed_name = "chaos_marauder"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_marauder",
 			spawner_id = "siege_4",
+			breed_name = "chaos_marauder"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_berzerker",
 			spawner_id = "siege_5",
+			breed_name = "chaos_berzerker"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_marauder",
 			spawner_id = "siege_6",
+			breed_name = "chaos_marauder"
 		},
 		{
 			"continue_when",
 			duration = 180,
-			condition = function (t)
-				return count_event_breed("chaos_berzerker") < 2 and count_event_breed("chaos_raider") < 2 and count_event_breed("chaos_marauder") < 2 and count_event_breed("chaos_marauder_with_shield") < 2
-			end,
+			condition = function(arg_10_0)
+				return var_0_1("chaos_berzerker") < 2 and var_0_1("chaos_raider") < 2 and var_0_1("chaos_marauder") < 2 and var_0_1("chaos_marauder_with_shield") < 2
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "siege_broken",
-		},
-	},
+			flow_event_name = "siege_broken"
+		}
+	}
 }
 
 return {
-	terror_event_blueprints,
-	weighted_random_terror_events,
+	var_0_4,
+	var_0_3
 }

@@ -1,8 +1,8 @@
-﻿-- chunkname: @scripts/settings/dlcs/holly/holly_achievements_settings.lua
+-- chunkname: @scripts/settings/dlcs/holly/holly_achievements_settings.lua
 
-local settings = DLCSettings.holly
+local var_0_0 = DLCSettings.holly
 
-settings.achievement_outline = {
+var_0_0.achievement_outline = {
 	levels = {
 		entries = {
 			"holly_complete_recruit",
@@ -14,12 +14,12 @@ settings.achievement_outline = {
 			"holly_complete_plaza_veteran",
 			"holly_complete_plaza_champion",
 			"holly_complete_plaza_legend",
-			"scorpion_complete_plaza_cataclysm",
+			"scorpion_complete_plaza_cataclysm"
 		},
 		categories = {
 			{
-				name = "achv_menu_levels_holly_category_title",
 				sorting = 3,
+				name = "achv_menu_levels_holly_category_title",
 				entries = {
 					"holly_find_all_runes",
 					"holly_magnus_barrel_relay_race",
@@ -34,12 +34,12 @@ settings.achievement_outline = {
 					"holly_cemetery_sleep",
 					"holly_cemetery_synchronized_chains",
 					"holly_cemetery_synchronized_chains_hardest",
-					"holly_cemetery_bones",
-				},
-			},
-		},
-	},
+					"holly_cemetery_bones"
+				}
+			}
+		}
+	}
 }
-settings.achievement_template_file_names = {
-	"scripts/managers/achievements/achievement_templates_holly",
+var_0_0.achievement_template_file_names = {
+	"scripts/managers/achievements/achievement_templates_holly"
 }

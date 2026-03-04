@@ -1,289 +1,264 @@
-﻿-- chunkname: @scripts/imgui/imgui_versus_end_of_round_debug.lua
+-- chunkname: @scripts/imgui/imgui_versus_end_of_round_debug.lua
 
 ImguiVersusEndOfRoundDebug = class(ImguiVersusEndOfRoundDebug)
 
-local Gui, Imgui = Gui, Imgui
-local DO_RELOAD = true
+local var_0_0 = Gui
+local var_0_1 = Imgui
+local var_0_2 = true
 
-ImguiVersusEndOfRoundDebug.init = function (self)
-	self._max_score = 0
-	self._local_player_team_available_score = 0
-	self._opponent_team_available_score = 0
-	self._num_rounds = 0
-	self._current_set = 0
-	self._current_round = 0
-	self._local_player_unclaimed_points = {}
-	self._opponent_player_unclaimed_points = {}
-	self._score_threshold = 0
-	self._local_player_score = 0
-	self._local_player_score_to_win = 0
-	self._opponent_team_score = 0
-	self._opponent_team_score_to_win = 0
-	self._winning_party_id = 0
-	self._winning_party_score_to_win = 0
-	self._limit_score_to_round = true
-	self._score_to_add = 0
+function ImguiVersusEndOfRoundDebug.init(arg_1_0)
+	arg_1_0._max_score = 0
+	arg_1_0._local_player_team_available_score = 0
+	arg_1_0._opponent_team_available_score = 0
+	arg_1_0._num_rounds = 0
+	arg_1_0._current_set = 0
+	arg_1_0._current_round = 0
+	arg_1_0._local_player_unclaimed_points = {}
+	arg_1_0._opponent_player_unclaimed_points = {}
+	arg_1_0._score_threshold = 0
+	arg_1_0._local_player_score = 0
+	arg_1_0._local_player_score_to_win = 0
+	arg_1_0._opponent_team_score = 0
+	arg_1_0._opponent_team_score_to_win = 0
+	arg_1_0._winning_party_id = 0
+	arg_1_0._winning_party_score_to_win = 0
+	arg_1_0._limit_score_to_round = true
+	arg_1_0._score_to_add = 0
 end
 
-ImguiVersusEndOfRoundDebug.update = function (self)
-	if DO_RELOAD then
-		self:init()
+function ImguiVersusEndOfRoundDebug.update(arg_2_0)
+	if var_0_2 then
+		arg_2_0:init()
 
-		DO_RELOAD = false
+		var_0_2 = false
 	end
 end
 
-ImguiVersusEndOfRoundDebug.on_show = function (self)
-	self._active = true
+function ImguiVersusEndOfRoundDebug.on_show(arg_3_0)
+	arg_3_0._active = true
 end
 
-ImguiVersusEndOfRoundDebug.on_hide = function (self)
-	self._active = false
+function ImguiVersusEndOfRoundDebug.on_hide(arg_4_0)
+	arg_4_0._active = false
 end
 
-ImguiVersusEndOfRoundDebug.draw = function (self, is_open)
-	local do_close = self:_do_main_window()
-
-	return do_close
+function ImguiVersusEndOfRoundDebug.draw(arg_5_0, arg_5_1)
+	return (arg_5_0:_do_main_window())
 end
 
-ImguiVersusEndOfRoundDebug.is_persistent = function (self)
+function ImguiVersusEndOfRoundDebug.is_persistent(arg_6_0)
 	return true
 end
 
-ImguiVersusEndOfRoundDebug._do_main_window = function (self)
-	if self._first_launch then
-		local w, h = Application.resolution()
+function ImguiVersusEndOfRoundDebug._do_main_window(arg_7_0)
+	if arg_7_0._first_launch then
+		local var_7_0, var_7_1 = Application.resolution()
 
-		Imgui.set_next_window_size(w * 0.4, h * 0.7)
+		var_0_1.set_next_window_size(var_7_0 * 0.4, var_7_1 * 0.7)
 	end
 
-	local do_close = Imgui.begin_window("Versus End of Round Debug", "menu_bar")
+	local var_7_2 = var_0_1.begin_window("Versus End of Round Debug", "menu_bar")
 
 	repeat
-		local game_mode_key = Managers.level_transition_handler:get_current_game_mode()
-
-		if game_mode_key ~= "versus" then
-			Imgui.text_colored("You have to be in a versus match to use this tool", 255, 0, 0, 255)
+		if Managers.level_transition_handler:get_current_game_mode() ~= "versus" then
+			var_0_1.text_colored("You have to be in a versus match to use this tool", 255, 0, 0, 255)
 
 			break
 		end
 
-		local win_conditions = self:_get_win_conditions()
-
-		if not win_conditions then
-			Imgui.text_colored("No Win Conditions", 255, 0, 0, 255)
+		if not arg_7_0:_get_win_conditions() then
+			var_0_1.text_colored("No Win Conditions", 255, 0, 0, 255)
 
 			break
 		end
 
-		self:_collect_data_for_preview()
-		self:_do_preview()
+		arg_7_0:_collect_data_for_preview()
+		arg_7_0:_do_preview()
 	until true
 
-	Imgui:end_window()
+	var_0_1:end_window()
 
-	return do_close
+	return var_7_2
 end
 
-ImguiVersusEndOfRoundDebug._get_win_conditions = function (self)
-	local win_conditions = Managers.mechanism:game_mechanism():win_conditions()
-
-	return win_conditions
+function ImguiVersusEndOfRoundDebug._get_win_conditions(arg_8_0)
+	return (Managers.mechanism:game_mechanism():win_conditions())
 end
 
-ImguiVersusEndOfRoundDebug._get_round_count = function (self)
-	local win_conditions = self:_get_win_conditions()
-	local round_count = win_conditions:get_current_round()
-
-	return round_count
+function ImguiVersusEndOfRoundDebug._get_round_count(arg_9_0)
+	return (arg_9_0:_get_win_conditions():get_current_round())
 end
 
-ImguiVersusEndOfRoundDebug._get_current_set = function (self)
-	local win_conditions = self:_get_win_conditions()
-	local rounds_played = win_conditions:get_current_round()
+function ImguiVersusEndOfRoundDebug._get_current_set(arg_10_0)
+	local var_10_0 = arg_10_0:_get_win_conditions():get_current_round()
 
-	return math.round(rounds_played / 2)
+	return math.round(var_10_0 / 2)
 end
 
-ImguiVersusEndOfRoundDebug._get_num_rounds = function (self)
-	local mechanism_manager = Managers.mechanism:game_mechanism()
-	local number_of_rounds = mechanism_manager:num_sets()
-
-	return number_of_rounds
+function ImguiVersusEndOfRoundDebug._get_num_rounds(arg_11_0)
+	return (Managers.mechanism:game_mechanism():num_sets())
 end
 
-ImguiVersusEndOfRoundDebug._collect_data_for_preview = function (self)
-	local win_conditions = self:_get_win_conditions()
-	local current_set = self:_get_current_set()
-	local current_round = self:_get_round_count()
-	local num_rounds = self:_get_num_rounds()
-	local level_key = Managers.level_transition_handler:get_current_level_key()
-	local max_level_score = VersusObjectiveSettings[level_key].max_score
-	local peer_id = Network.peer_id()
-	local local_player_id = 1
-	local party_manager = Managers.party
-	local _, party_id = party_manager:get_party_from_player_id(peer_id, local_player_id)
-	local local_player_party_id = self._local_player_party_id and self._local_player_party_id or party_id == 0 and 1 or party_id
-	local opponent_party_id = self._opponent_party_id and self._opponent_party_id or party_id == 1 and 2 or 1
-	local local_player_team_score = win_conditions:get_total_score(local_player_party_id)
-	local local_player_team_sets_data = win_conditions:get_sets_data_for_party(local_player_party_id)
-	local opponent_team_score = win_conditions:get_total_score(opponent_party_id)
-	local opponent_team_sets_data = win_conditions:get_sets_data_for_party(opponent_party_id)
-	local local_player_available_score, opponent_team_available_score = max_level_score, max_level_score
-	local player = Managers.player:local_player()
-	local side = Managers.state.side and Managers.state.side:get_side_from_player_unique_id(player:unique_id())
-	local is_hero = side and side:name() == "heroes"
-	local match_state = Managers.mechanism:get_state()
-	local game_mode = Managers.state.game_mode and Managers.state.game_mode:game_mode()
-	local is_round_over = game_mode and game_mode:match_in_round_over_state()
-	local local_player_has_played_round, opponent_has_played_round = false, false
+function ImguiVersusEndOfRoundDebug._collect_data_for_preview(arg_12_0)
+	local var_12_0 = arg_12_0:_get_win_conditions()
+	local var_12_1 = arg_12_0:_get_current_set()
+	local var_12_2 = arg_12_0:_get_round_count()
+	local var_12_3 = arg_12_0:_get_num_rounds()
+	local var_12_4 = Managers.level_transition_handler:get_current_level_key()
+	local var_12_5 = VersusObjectiveSettings[var_12_4].max_score
+	local var_12_6 = Network.peer_id()
+	local var_12_7 = 1
+	local var_12_8, var_12_9 = Managers.party:get_party_from_player_id(var_12_6, var_12_7)
+	local var_12_10 = arg_12_0._local_player_party_id and arg_12_0._local_player_party_id or var_12_9 == 0 and 1 or var_12_9
+	local var_12_11 = arg_12_0._opponent_party_id and arg_12_0._opponent_party_id or var_12_9 == 1 and 2 or 1
+	local var_12_12 = var_12_0:get_total_score(var_12_10)
+	local var_12_13 = var_12_0:get_sets_data_for_party(var_12_10)
+	local var_12_14 = var_12_0:get_total_score(var_12_11)
+	local var_12_15 = var_12_0:get_sets_data_for_party(var_12_11)
+	local var_12_16 = var_12_5
+	local var_12_17 = var_12_5
+	local var_12_18 = Managers.player:local_player()
+	local var_12_19 = Managers.state.side and Managers.state.side:get_side_from_player_unique_id(var_12_18:unique_id())
+	local var_12_20 = var_12_19 and var_12_19:name() == "heroes"
+	local var_12_21 = Managers.mechanism:get_state()
+	local var_12_22 = Managers.state.game_mode and Managers.state.game_mode:game_mode()
+	local var_12_23
 
-	if current_round % current_set ~= 0 then
-		local_player_has_played_round = is_hero
-		opponent_has_played_round = not is_hero
-	elseif current_round % current_set == 0 then
-		local_player_has_played_round = true
-		opponent_has_played_round = true
+	var_12_23 = var_12_22 and var_12_22:match_in_round_over_state()
+
+	local var_12_24 = false
+	local var_12_25 = false
+
+	if var_12_2 % var_12_1 ~= 0 then
+		var_12_24 = var_12_20
+		var_12_25 = not var_12_20
+	elseif var_12_2 % var_12_1 == 0 then
+		var_12_24 = true
+		var_12_25 = true
 	end
 
-	for i = 1, num_rounds do
-		local local_player_set_data = local_player_team_sets_data[i]
-		local opponent_team_set_data = opponent_team_sets_data[i]
+	for iter_12_0 = 1, var_12_3 do
+		local var_12_26 = var_12_13[iter_12_0]
+		local var_12_27 = var_12_15[iter_12_0]
 
-		if i < current_set then
-			local unclaimed_points = local_player_set_data.max_points - local_player_set_data.claimed_points or 0
-
-			local_player_available_score = local_player_available_score - unclaimed_points
-			unclaimed_points = opponent_team_set_data.max_points - opponent_team_set_data.claimed_points or 0
-			opponent_team_available_score = opponent_team_available_score - unclaimed_points
+		if iter_12_0 < var_12_1 then
+			var_12_16 = var_12_16 - (var_12_26.max_points - var_12_26.claimed_points or 0)
+			var_12_17 = var_12_17 - (var_12_27.max_points - var_12_27.claimed_points or 0)
 		end
 	end
 
-	local score_threshold = local_player_available_score < opponent_team_available_score and local_player_available_score or opponent_team_available_score
-	local local_player_score_to_win = score_threshold - local_player_team_score
-	local opponent_team_score_to_win = score_threshold - opponent_team_score
-	local next_round_id = num_rounds >= current_set + 1 and current_set + 1 or num_rounds
-	local is_next_round_last = next_round_id == num_rounds
-	local opp_predicted_score = 0
-	local loc_predicted_score = 0
+	local var_12_28 = var_12_16 < var_12_17 and var_12_16 or var_12_17
+	local var_12_29 = var_12_28 - var_12_12
+	local var_12_30 = var_12_28 - var_12_14
+	local var_12_31 = var_12_3 >= var_12_1 + 1 and var_12_1 + 1 or var_12_3
+	local var_12_32
 
-	if local_player_has_played_round and opponent_has_played_round then
-		local opponent_team_set_data = opponent_team_sets_data[next_round_id]
+	var_12_32 = var_12_31 == var_12_3
 
-		opp_predicted_score = opponent_team_score + opponent_team_set_data.max_points
+	local var_12_33 = 0
+	local var_12_34 = 0
 
-		local local_player_set_data = local_player_team_sets_data[next_round_id]
-
-		loc_predicted_score = local_player_team_score + local_player_set_data.max_points
+	if var_12_24 and var_12_25 then
+		var_12_33 = var_12_14 + var_12_15[var_12_31].max_points
+		var_12_34 = var_12_12 + var_12_13[var_12_31].max_points
 	else
-		local opponent_team_set_data = opponent_team_sets_data[current_set]
+		local var_12_35 = var_12_15[var_12_1]
 
-		opp_predicted_score = opponent_team_score + (opponent_team_set_data.max_points - opponent_team_set_data.claimed_points)
+		var_12_33 = var_12_14 + (var_12_35.max_points - var_12_35.claimed_points)
 
-		local local_player_set_data = local_player_team_sets_data[current_set]
+		local var_12_36 = var_12_13[var_12_1]
 
-		loc_predicted_score = local_player_team_score + (local_player_set_data.max_points - local_player_set_data.claimed_points)
+		var_12_34 = var_12_12 + (var_12_36.max_points - var_12_36.claimed_points)
 	end
 
-	if local_player_score_to_win < opponent_team_score_to_win then
-		local local_player_set_data = local_player_team_sets_data[next_round_id]
-
-		if local_player_score_to_win < local_player_set_data.max_points then
-			self._winning_party_id = local_player_party_id
-			self._winning_party_score_to_win = local_player_score_to_win + 1
+	if var_12_29 < var_12_30 then
+		if var_12_29 < var_12_13[var_12_31].max_points then
+			arg_12_0._winning_party_id = var_12_10
+			arg_12_0._winning_party_score_to_win = var_12_29 + 1
 		end
-	elseif opponent_team_score_to_win < local_player_score_to_win then
-		local opponent_team_set_data = opponent_team_sets_data[next_round_id]
-
-		if opponent_team_score_to_win < opponent_team_set_data.max_points then
-			self._winning_party_id = opponent_party_id
-			self._winning_party_score_to_win = opponent_team_score_to_win + 1
+	elseif var_12_30 < var_12_29 then
+		if var_12_30 < var_12_15[var_12_31].max_points then
+			arg_12_0._winning_party_id = var_12_11
+			arg_12_0._winning_party_score_to_win = var_12_30 + 1
 		end
-	else
-		local local_player_set_data = local_player_team_sets_data[next_round_id]
-
-		if local_player_score_to_win < local_player_set_data.max_points then
-			self._winning_party_id = local_player_party_id
-			self._winning_party_score_to_win = local_player_score_to_win + 1
-		end
+	elseif var_12_29 < var_12_13[var_12_31].max_points then
+		arg_12_0._winning_party_id = var_12_10
+		arg_12_0._winning_party_score_to_win = var_12_29 + 1
 	end
 
-	self._local_player_party_id = local_player_party_id
-	self._opponent_party_id = opponent_party_id
-	self._level_name = level_key
-	self._match_state = match_state
-	self._game_mode_state = game_mode and game_mode:game_mode_state()
-	self._max_score = max_level_score
-	self._local_player_team_available_score = local_player_available_score
-	self._opponent_team_available_score = opponent_team_available_score
-	self._num_rounds = num_rounds
-	self._current_set = current_set
-	self._current_round = current_round
-	self._local_player_has_played_round = local_player_has_played_round
-	self._opponent_has_played_round = opponent_has_played_round
-	self._local_player_sets_data = local_player_team_sets_data
-	self._opponent_player_sets_data = opponent_team_sets_data
-	self._score_threshold = score_threshold
-	self._local_player_score = local_player_team_score
-	self._opponent_team_score = opponent_team_score
-	self._local_player_predicted_score = loc_predicted_score
-	self._opponent_predicted_score = opp_predicted_score
-	self._local_player_score_to_win = local_player_score_to_win
-	self._opponent_team_score_to_win = opponent_team_score_to_win
+	arg_12_0._local_player_party_id = var_12_10
+	arg_12_0._opponent_party_id = var_12_11
+	arg_12_0._level_name = var_12_4
+	arg_12_0._match_state = var_12_21
+	arg_12_0._game_mode_state = var_12_22 and var_12_22:game_mode_state()
+	arg_12_0._max_score = var_12_5
+	arg_12_0._local_player_team_available_score = var_12_16
+	arg_12_0._opponent_team_available_score = var_12_17
+	arg_12_0._num_rounds = var_12_3
+	arg_12_0._current_set = var_12_1
+	arg_12_0._current_round = var_12_2
+	arg_12_0._local_player_has_played_round = var_12_24
+	arg_12_0._opponent_has_played_round = var_12_25
+	arg_12_0._local_player_sets_data = var_12_13
+	arg_12_0._opponent_player_sets_data = var_12_15
+	arg_12_0._score_threshold = var_12_28
+	arg_12_0._local_player_score = var_12_12
+	arg_12_0._opponent_team_score = var_12_14
+	arg_12_0._local_player_predicted_score = var_12_34
+	arg_12_0._opponent_predicted_score = var_12_33
+	arg_12_0._local_player_score_to_win = var_12_29
+	arg_12_0._opponent_team_score_to_win = var_12_30
 end
 
-ImguiVersusEndOfRoundDebug._do_preview = function (self)
-	self:_do_add_score()
-	Imgui.dummy(2, 5)
-	self:_do_end_round()
-	Imgui.dummy(2, 5)
-	Imgui.text_colored("Level Key: " .. tostring(self._level_name), 125, 125, 255, 255)
-	Imgui.text_colored("Match State: " .. tostring(self._match_state), 125, 125, 255, 255)
-	Imgui.text_colored("Game Mode State: " .. tostring(self._game_mode_state), 125, 125, 255, 255)
-	Imgui.text_colored("Max Level Score: " .. tostring(self._max_score), 255, 125, 125, 255)
-	Imgui.text_colored("Local Player Team Max Available Score: " .. tostring(self._local_player_team_available_score), 255, 125, 125, 255)
-	Imgui.text_colored("Opponent Team Max Available Score: " .. tostring(self._opponent_team_available_score), 255, 125, 125, 255)
-	Imgui.text_colored("Number of Rounds (Sets): " .. tostring(self._num_rounds), 255, 125, 125, 255)
-	Imgui.text_colored("Current Set: " .. tostring(self._current_set), 255, 125, 125, 255)
-	Imgui.text_colored("Current Round: " .. tostring(self._current_round), 255, 125, 125, 255)
-	Imgui.text_colored("Has Local Player Played Current Round: " .. tostring(self._local_player_has_played_round), 255, 125, 125, 255)
-	Imgui.text_colored("Has Opponent Played Current Round: " .. tostring(self._opponent_has_played_round), 255, 125, 125, 255)
-	Imgui.text_colored("Score Threshold: " .. tostring(self._score_threshold), 255, 125, 125, 255)
-	Imgui.text_colored("Local Player Team Score: " .. tostring(self._local_player_score), 255, 125, 125, 255)
-	Imgui.text_colored("Local Player Team Score to Win: " .. tostring(self._local_player_score_to_win), 255, 125, 125, 255)
-	Imgui.text_colored("Local Player Team Predicted Score: " .. tostring(self._local_player_predicted_score), 125, 255, 125, 255)
-	Imgui.text_colored("Opponent Team Score: " .. tostring(self._opponent_team_score), 255, 125, 125, 255)
-	Imgui.text_colored("Opponent Team Score to Win: " .. tostring(self._opponent_team_score_to_win), 255, 125, 125, 255)
-	Imgui.text_colored("Opponent Team Predicted Score: " .. tostring(self._opponent_predicted_score), 125, 255, 125, 255)
-	Imgui.text_colored("Winning Party ID: " .. tostring(self._winning_party_id), 125, 255, 125, 255)
-	Imgui.text_colored("Winning Party Score To Win: " .. tostring(self._winning_party_score_to_win), 125, 255, 125, 255)
-	Imgui.dummy(2, 5)
-	self:_do_sets_data_preview()
+function ImguiVersusEndOfRoundDebug._do_preview(arg_13_0)
+	arg_13_0:_do_add_score()
+	var_0_1.dummy(2, 5)
+	arg_13_0:_do_end_round()
+	var_0_1.dummy(2, 5)
+	var_0_1.text_colored("Level Key: " .. tostring(arg_13_0._level_name), 125, 125, 255, 255)
+	var_0_1.text_colored("Match State: " .. tostring(arg_13_0._match_state), 125, 125, 255, 255)
+	var_0_1.text_colored("Game Mode State: " .. tostring(arg_13_0._game_mode_state), 125, 125, 255, 255)
+	var_0_1.text_colored("Max Level Score: " .. tostring(arg_13_0._max_score), 255, 125, 125, 255)
+	var_0_1.text_colored("Local Player Team Max Available Score: " .. tostring(arg_13_0._local_player_team_available_score), 255, 125, 125, 255)
+	var_0_1.text_colored("Opponent Team Max Available Score: " .. tostring(arg_13_0._opponent_team_available_score), 255, 125, 125, 255)
+	var_0_1.text_colored("Number of Rounds (Sets): " .. tostring(arg_13_0._num_rounds), 255, 125, 125, 255)
+	var_0_1.text_colored("Current Set: " .. tostring(arg_13_0._current_set), 255, 125, 125, 255)
+	var_0_1.text_colored("Current Round: " .. tostring(arg_13_0._current_round), 255, 125, 125, 255)
+	var_0_1.text_colored("Has Local Player Played Current Round: " .. tostring(arg_13_0._local_player_has_played_round), 255, 125, 125, 255)
+	var_0_1.text_colored("Has Opponent Played Current Round: " .. tostring(arg_13_0._opponent_has_played_round), 255, 125, 125, 255)
+	var_0_1.text_colored("Score Threshold: " .. tostring(arg_13_0._score_threshold), 255, 125, 125, 255)
+	var_0_1.text_colored("Local Player Team Score: " .. tostring(arg_13_0._local_player_score), 255, 125, 125, 255)
+	var_0_1.text_colored("Local Player Team Score to Win: " .. tostring(arg_13_0._local_player_score_to_win), 255, 125, 125, 255)
+	var_0_1.text_colored("Local Player Team Predicted Score: " .. tostring(arg_13_0._local_player_predicted_score), 125, 255, 125, 255)
+	var_0_1.text_colored("Opponent Team Score: " .. tostring(arg_13_0._opponent_team_score), 255, 125, 125, 255)
+	var_0_1.text_colored("Opponent Team Score to Win: " .. tostring(arg_13_0._opponent_team_score_to_win), 255, 125, 125, 255)
+	var_0_1.text_colored("Opponent Team Predicted Score: " .. tostring(arg_13_0._opponent_predicted_score), 125, 255, 125, 255)
+	var_0_1.text_colored("Winning Party ID: " .. tostring(arg_13_0._winning_party_id), 125, 255, 125, 255)
+	var_0_1.text_colored("Winning Party Score To Win: " .. tostring(arg_13_0._winning_party_score_to_win), 125, 255, 125, 255)
+	var_0_1.dummy(2, 5)
+	arg_13_0:_do_sets_data_preview()
 end
 
-ImguiVersusEndOfRoundDebug._do_add_score = function (self)
-	script_data.disable_gamemode_end = Imgui.checkbox("Disable Gamemode End", not not script_data.disable_gamemode_end)
-	self._limit_score_to_round = Imgui.checkbox("Limit the score that can be added to the max score for this round", self._limit_score_to_round)
-	self._score_to_add = Imgui.input_int("Score", self._score_to_add)
+function ImguiVersusEndOfRoundDebug._do_add_score(arg_14_0)
+	script_data.disable_gamemode_end = var_0_1.checkbox("Disable Gamemode End", not not script_data.disable_gamemode_end)
+	arg_14_0._limit_score_to_round = var_0_1.checkbox("Limit the score that can be added to the max score for this round", arg_14_0._limit_score_to_round)
+	arg_14_0._score_to_add = var_0_1.input_int("Score", arg_14_0._score_to_add)
 
-	if Imgui.button("Add Score", 200, 20) then
+	if var_0_1.button("Add Score", 200, 20) then
 		if Managers.level_transition_handler:in_hub_level() then
 			return
 		end
 
-		if self._limit_score_to_round then
-			-- Nothing
+		if arg_14_0._limit_score_to_round then
+			-- block empty
 		end
 
-		local win_conditions = Managers.mechanism:game_mechanism():win_conditions()
-
-		win_conditions:add_score(self._score_to_add)
+		Managers.mechanism:game_mechanism():win_conditions():add_score(arg_14_0._score_to_add)
 	end
 end
 
-ImguiVersusEndOfRoundDebug._do_end_round = function (self)
-	if Imgui.button("End Round", 200, 20) then
+function ImguiVersusEndOfRoundDebug._do_end_round(arg_15_0)
+	if var_0_1.button("End Round", 200, 20) then
 		if Managers.level_transition_handler:in_hub_level() then
 			printf("Failed to end round - Match not started")
 
@@ -296,51 +271,38 @@ ImguiVersusEndOfRoundDebug._do_end_round = function (self)
 			return false
 		end
 
-		local game_mode_manager = Managers.state.game_mode
-
-		game_mode_manager:round_started()
-
-		local win_conditions = Managers.mechanism:game_mechanism():win_conditions()
-
-		win_conditions:set_time(0)
+		Managers.state.game_mode:round_started()
+		Managers.mechanism:game_mechanism():win_conditions():set_time(0)
 	end
 end
 
-ImguiVersusEndOfRoundDebug._do_sets_data_preview = function (self)
-	local is_local_player_tree_open = Imgui.tree_node("Local Player Sets Data", true)
-
-	if is_local_player_tree_open then
-		for set, set_data in ipairs(self._local_player_sets_data) do
-			local is_node_open = Imgui.tree_node("Local Player Set " .. set .. " Data", false)
-
-			if is_node_open then
-				Imgui.text_colored("Claimed Points: " .. tostring(set_data.claimed_points), 125, 255, 125, 255)
-				Imgui.text_colored("Distance Travelled: " .. tostring(set_data.distance_traveled), 125, 255, 125, 255)
-				Imgui.text_colored("Max Points: " .. tostring(set_data.max_points), 125, 255, 125, 255)
-				Imgui.text_colored("Unclaimed Points: " .. tostring(set_data.unclaimed_points), 125, 255, 125, 255)
-				Imgui.tree_pop()
+function ImguiVersusEndOfRoundDebug._do_sets_data_preview(arg_16_0)
+	if var_0_1.tree_node("Local Player Sets Data", true) then
+		for iter_16_0, iter_16_1 in ipairs(arg_16_0._local_player_sets_data) do
+			if var_0_1.tree_node("Local Player Set " .. iter_16_0 .. " Data", false) then
+				var_0_1.text_colored("Claimed Points: " .. tostring(iter_16_1.claimed_points), 125, 255, 125, 255)
+				var_0_1.text_colored("Distance Travelled: " .. tostring(iter_16_1.distance_traveled), 125, 255, 125, 255)
+				var_0_1.text_colored("Max Points: " .. tostring(iter_16_1.max_points), 125, 255, 125, 255)
+				var_0_1.text_colored("Unclaimed Points: " .. tostring(iter_16_1.unclaimed_points), 125, 255, 125, 255)
+				var_0_1.tree_pop()
 			end
 		end
 	end
 
-	Imgui.tree_pop()
-	Imgui.dummy(2, 5)
+	var_0_1.tree_pop()
+	var_0_1.dummy(2, 5)
 
-	local is_opponent_tree_open = Imgui.tree_node("Opponent Sets Data", true)
-
-	if is_opponent_tree_open then
-		for set, set_data in ipairs(self._opponent_player_sets_data) do
-			local is_node_open = Imgui.tree_node("Opponent Set " .. set .. " Data", false)
-
-			if is_node_open then
-				Imgui.text_colored("Claimed Points: " .. tostring(set_data.claimed_points), 125, 255, 125, 255)
-				Imgui.text_colored("Distance Travelled: " .. tostring(set_data.distance_traveled), 125, 255, 125, 255)
-				Imgui.text_colored("Max Points: " .. tostring(set_data.max_points), 125, 255, 125, 255)
-				Imgui.text_colored("Unclaimed Points: " .. tostring(set_data.unclaimed_points), 125, 255, 125, 255)
-				Imgui.tree_pop()
+	if var_0_1.tree_node("Opponent Sets Data", true) then
+		for iter_16_2, iter_16_3 in ipairs(arg_16_0._opponent_player_sets_data) do
+			if var_0_1.tree_node("Opponent Set " .. iter_16_2 .. " Data", false) then
+				var_0_1.text_colored("Claimed Points: " .. tostring(iter_16_3.claimed_points), 125, 255, 125, 255)
+				var_0_1.text_colored("Distance Travelled: " .. tostring(iter_16_3.distance_traveled), 125, 255, 125, 255)
+				var_0_1.text_colored("Max Points: " .. tostring(iter_16_3.max_points), 125, 255, 125, 255)
+				var_0_1.text_colored("Unclaimed Points: " .. tostring(iter_16_3.unclaimed_points), 125, 255, 125, 255)
+				var_0_1.tree_pop()
 			end
 		end
 	end
 
-	Imgui.tree_pop()
+	var_0_1.tree_pop()
 end

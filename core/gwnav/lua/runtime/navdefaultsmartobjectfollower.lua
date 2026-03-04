@@ -1,126 +1,113 @@
-﻿-- chunkname: @core/gwnav/lua/runtime/navdefaultsmartobjectfollower.lua
+-- chunkname: @core/gwnav/lua/runtime/navdefaultsmartobjectfollower.lua
 
 require("core/gwnav/lua/safe_require")
 
-local NavDefaultSmartObjectFollower = safe_require_guard()
-local NavClass = safe_require("core/gwnav/lua/runtime/navclass")
+local var_0_0 = safe_require_guard()
+local var_0_1 = safe_require("core/gwnav/lua/runtime/navclass")(var_0_0)
+local var_0_2 = stingray.Math
+local var_0_3 = stingray.Vector3
+local var_0_4 = stingray.Vector3Box
+local var_0_5 = stingray.Unit
+local var_0_6 = stingray.Level
+local var_0_7 = stingray.GwNavBot
+local var_0_8 = stingray.GwNavSmartObjectInterval
+local var_0_9 = stingray.Mover
 
-NavDefaultSmartObjectFollower = NavClass(NavDefaultSmartObjectFollower)
-
-local Math = stingray.Math
-local Vector3 = stingray.Vector3
-local Vector3Box = stingray.Vector3Box
-local Unit = stingray.Unit
-local Level = stingray.Level
-local GwNavBot = stingray.GwNavBot
-local GwNavSmartObjectInterval = stingray.GwNavSmartObjectInterval
-local Mover = stingray.Mover
-
-NavDefaultSmartObjectFollower.init = function (self, navbot)
-	self.navbot = navbot
-	self.free_fall_acceleration = 9.81
-	self.jump_start = Vector3Box(0, 0, 0)
-	self.jump_target = Vector3Box(0, 0, 0)
-	self.jump_height = 1
-	self.jump_velocity = Vector3Box(0, 0, 0)
-	self.jump_forward = Vector3Box(0, 0, 0)
+function var_0_1.init(arg_1_0, arg_1_1)
+	arg_1_0.navbot = arg_1_1
+	arg_1_0.free_fall_acceleration = 9.81
+	arg_1_0.jump_start = var_0_4(0, 0, 0)
+	arg_1_0.jump_target = var_0_4(0, 0, 0)
+	arg_1_0.jump_height = 1
+	arg_1_0.jump_velocity = var_0_4(0, 0, 0)
+	arg_1_0.jump_forward = var_0_4(0, 0, 0)
 end
 
-NavDefaultSmartObjectFollower.initial_jump_velocity = function (self)
-	local A = self.jump_start:unbox()
-	local B = self.jump_target:unbox()
-	local Az = Vector3.z(A)
-	local Bz = Vector3.z(B)
-	local Cz = math.max(Az, Bz) + self.jump_height
-	local v0z = math.sqrt(2 * self.free_fall_acceleration * (Cz - Az))
-	local D = v0z * v0z + 2 * self.free_fall_acceleration * (Az - Bz)
-	local tB = (v0z + math.sqrt(D)) / self.free_fall_acceleration
-	local v0 = B - A
+function var_0_1.initial_jump_velocity(arg_2_0)
+	local var_2_0 = arg_2_0.jump_start:unbox()
+	local var_2_1 = arg_2_0.jump_target:unbox()
+	local var_2_2 = var_0_3.z(var_2_0)
+	local var_2_3 = var_0_3.z(var_2_1)
+	local var_2_4 = math.max(var_2_2, var_2_3) + arg_2_0.jump_height
+	local var_2_5 = math.sqrt(2 * arg_2_0.free_fall_acceleration * (var_2_4 - var_2_2))
+	local var_2_6 = var_2_5 * var_2_5 + 2 * arg_2_0.free_fall_acceleration * (var_2_2 - var_2_3)
+	local var_2_7 = (var_2_5 + math.sqrt(var_2_6)) / arg_2_0.free_fall_acceleration
+	local var_2_8 = var_2_1 - var_2_0
 
-	Vector3.set_z(v0, 0)
+	var_0_3.set_z(var_2_8, 0)
 
-	v0 = v0 / tB
+	local var_2_9 = var_2_8 / var_2_7
 
-	self.jump_forward:store(Vector3.normalize(v0))
-	Vector3.set_z(v0, v0z)
-	self.jump_velocity:store(v0)
+	arg_2_0.jump_forward:store(var_0_3.normalize(var_2_9))
+	var_0_3.set_z(var_2_9, var_2_5)
+	arg_2_0.jump_velocity:store(var_2_9)
 end
 
-NavDefaultSmartObjectFollower.update_follow = function (self, dt)
-	local approachingDistance = 0.5
+function var_0_1.update_follow(arg_3_0, arg_3_1)
+	if 0.5 > var_0_3.distance(arg_3_0.jump_target:unbox(), arg_3_0.navbot:get_position()) and var_0_7.exit_manual_control(arg_3_0.navbot.gwnavbot) == true then
+		arg_3_0.navbot.is_smartobject_driven = false
+	end
+end
 
-	if approachingDistance > Vector3.distance(self.jump_target:unbox(), self.navbot:get_position()) then
-		local exit_manualcontrol = GwNavBot.exit_manual_control(self.navbot.gwnavbot)
+function var_0_1.move_unit(arg_4_0, arg_4_1)
+	local var_4_0 = arg_4_0.navbot:get_position()
+	local var_4_1 = arg_4_0.jump_velocity:unbox()
+	local var_4_2 = arg_4_0.jump_forward:unbox()
 
-		if exit_manualcontrol == true then
-			self.navbot.is_smartobject_driven = false
+	arg_4_0.navbot:update_pose(var_4_2, var_4_0 + var_4_1 * arg_4_1)
+	arg_4_0.jump_velocity:store(var_4_1 - var_0_3(0, 0, arg_4_0.free_fall_acceleration) * arg_4_1)
+end
+
+function var_0_1.move_unit_with_mover(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = arg_5_0.navbot:get_position()
+	local var_5_1 = arg_5_0.jump_velocity:unbox()
+	local var_5_2 = arg_5_0.jump_forward:unbox()
+
+	var_0_9.set_position(arg_5_2, var_5_0 + var_5_1 * arg_5_1)
+	arg_5_0.navbot:update_pose(var_5_2, var_0_9.position(arg_5_2))
+	arg_5_0.jump_velocity:store(var_5_1 - var_0_3(0, 0, arg_5_0.free_fall_acceleration) * arg_5_1)
+end
+
+function var_0_1.get_smartobject_type(arg_6_0, arg_6_1)
+	return arg_6_0.navbot.navworld:get_smartobject_type(var_0_8.smartobject_id(arg_6_1))
+end
+
+function var_0_1.handle_next_smartobject(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+	local var_7_0 = 1
+	local var_7_1 = arg_7_0:get_smartobject_type(arg_7_2)
+
+	if var_7_1 == "Door" then
+		arg_7_0:manage_door_smartobject(arg_7_1, arg_7_2, arg_7_3, var_7_0)
+	elseif var_7_1 == "Jump" then
+		arg_7_0:manage_jump_smartobject(arg_7_1, arg_7_2, arg_7_3, arg_7_5, var_7_0)
+	end
+end
+
+function var_0_1.manage_door_smartobject(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	if arg_8_4 > var_0_3.distance(arg_8_3, arg_8_1) and var_0_8.can_traverse_smartobject(arg_8_2) == false then
+		arg_8_0.navbot:repath()
+	end
+end
+
+function var_0_1.start_follow(arg_9_0, arg_9_1, arg_9_2)
+	arg_9_0.navbot.is_smartobject_driven = true
+
+	arg_9_0.jump_start:store(arg_9_0.navbot:get_position())
+	arg_9_0.jump_target:store(arg_9_1)
+	var_0_5.animation_event(arg_9_0.navbot.unit, arg_9_2)
+end
+
+function var_0_1.manage_jump_smartobject(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+	if arg_10_5 > var_0_3.distance(arg_10_3, arg_10_1) then
+		if arg_10_0.navbot.is_smartobject_driven == false and var_0_8.can_traverse_smartobject(arg_10_2) == false then
+			arg_10_0.navbot:repath()
+		end
+
+		if arg_10_0.navbot.is_smartobject_driven == false and var_0_7.enter_manual_control(arg_10_0.navbot.gwnavbot, arg_10_2) == true then
+			arg_10_0:start_follow(arg_10_4, "Jump")
+			arg_10_0:initial_jump_velocity()
 		end
 	end
 end
 
-NavDefaultSmartObjectFollower.move_unit = function (self, dt)
-	local bot_position = self.navbot:get_position()
-	local velocity = self.jump_velocity:unbox()
-	local forward = self.jump_forward:unbox()
-
-	self.navbot:update_pose(forward, bot_position + velocity * dt)
-	self.jump_velocity:store(velocity - Vector3(0, 0, self.free_fall_acceleration) * dt)
-end
-
-NavDefaultSmartObjectFollower.move_unit_with_mover = function (self, dt, mover)
-	local bot_position = self.navbot:get_position()
-	local velocity = self.jump_velocity:unbox()
-	local forward = self.jump_forward:unbox()
-
-	Mover.set_position(mover, bot_position + velocity * dt)
-	self.navbot:update_pose(forward, Mover.position(mover))
-	self.jump_velocity:store(velocity - Vector3(0, 0, self.free_fall_acceleration) * dt)
-end
-
-NavDefaultSmartObjectFollower.get_smartobject_type = function (self, next_smartobject_interval)
-	return self.navbot.navworld:get_smartobject_type(GwNavSmartObjectInterval.smartobject_id(next_smartobject_interval))
-end
-
-NavDefaultSmartObjectFollower.handle_next_smartobject = function (self, botpos, next_smartobject_interval, entrance_pos, entrance_is_at_bot_progress_on_path, exit_pos, exit_is_at_the_end_of_path)
-	local approachingDistance = 1
-	local smartobject_type = self:get_smartobject_type(next_smartobject_interval)
-
-	if smartobject_type == "Door" then
-		self:manage_door_smartobject(botpos, next_smartobject_interval, entrance_pos, approachingDistance)
-	elseif smartobject_type == "Jump" then
-		self:manage_jump_smartobject(botpos, next_smartobject_interval, entrance_pos, exit_pos, approachingDistance)
-	end
-end
-
-NavDefaultSmartObjectFollower.manage_door_smartobject = function (self, botpos, next_smartobject_interval, entrance_pos, approachingDistance)
-	if approachingDistance > Vector3.distance(entrance_pos, botpos) and GwNavSmartObjectInterval.can_traverse_smartobject(next_smartobject_interval) == false then
-		self.navbot:repath()
-	end
-end
-
-NavDefaultSmartObjectFollower.start_follow = function (self, target_pos, start_follow_anim_event)
-	self.navbot.is_smartobject_driven = true
-
-	self.jump_start:store(self.navbot:get_position())
-	self.jump_target:store(target_pos)
-	Unit.animation_event(self.navbot.unit, start_follow_anim_event)
-end
-
-NavDefaultSmartObjectFollower.manage_jump_smartobject = function (self, botpos, next_smartobject_interval, entrance_pos, exit_pos, approachingDistance)
-	if approachingDistance > Vector3.distance(entrance_pos, botpos) then
-		if self.navbot.is_smartobject_driven == false and GwNavSmartObjectInterval.can_traverse_smartobject(next_smartobject_interval) == false then
-			self.navbot:repath()
-		end
-
-		if self.navbot.is_smartobject_driven == false then
-			local in_manual_control = GwNavBot.enter_manual_control(self.navbot.gwnavbot, next_smartobject_interval)
-
-			if in_manual_control == true then
-				self:start_follow(exit_pos, "Jump")
-				self:initial_jump_velocity()
-			end
-		end
-	end
-end
-
-return NavDefaultSmartObjectFollower
+return var_0_1

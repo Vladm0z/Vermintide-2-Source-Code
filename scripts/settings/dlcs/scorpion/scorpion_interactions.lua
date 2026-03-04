@@ -1,29 +1,24 @@
-﻿-- chunkname: @scripts/settings/dlcs/scorpion/scorpion_interactions.lua
+-- chunkname: @scripts/settings/dlcs/scorpion/scorpion_interactions.lua
 
-local function _fulfill_requirements_for_weave()
+local function var_0_0()
 	if script_data.unlock_all_levels then
 		return true
 	end
 
-	local player_manager = Managers.player
-	local statistics_db = player_manager:statistics_db()
-	local player = player_manager:local_player()
-	local stats_id = player:stats_id()
+	local var_1_0 = Managers.player
+	local var_1_1 = var_1_0:statistics_db()
+	local var_1_2 = var_1_0:local_player():stats_id()
 
-	for _, level_key in pairs(HelmgartLevels) do
-		local level_settings = LevelSettings[level_key]
-
-		if level_settings.mechanism == "adventure" and statistics_db:get_persistent_stat(stats_id, "completed_levels", level_key) < 1 then
+	for iter_1_0, iter_1_1 in pairs(HelmgartLevels) do
+		if LevelSettings[iter_1_1].mechanism == "adventure" and var_1_1:get_persistent_stat(var_1_2, "completed_levels", iter_1_1) < 1 then
 			return false
 		end
 	end
 
-	local scorpion_dlc_levels = GameActs.act_scorpion
+	local var_1_3 = GameActs.act_scorpion
 
-	for _, level_key in pairs(scorpion_dlc_levels) do
-		local level_settings = LevelSettings[level_key]
-
-		if level_settings.mechanism == "adventure" and statistics_db:get_persistent_stat(stats_id, "completed_levels", level_key) < 1 then
+	for iter_1_2, iter_1_3 in pairs(var_1_3) do
+		if LevelSettings[iter_1_3].mechanism == "adventure" and var_1_1:get_persistent_stat(var_1_2, "completed_levels", iter_1_3) < 1 then
 			return false
 		end
 	end
@@ -31,10 +26,8 @@ local function _fulfill_requirements_for_weave()
 	return true
 end
 
-local function _fullfill_requirements_for_weave_leaderboards()
-	local weave_access = _fulfill_requirements_for_weave()
-
-	if not weave_access then
+local function var_0_1()
+	if not var_0_0() then
 		return false
 	end
 
@@ -44,127 +37,112 @@ end
 InteractionDefinitions.weave_level_select_access = InteractionDefinitions.weave_level_select_access or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.weave_level_select_access.config.swap_to_3p = false
 
-InteractionDefinitions.weave_level_select_access.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
-	data.start_time = nil
+function InteractionDefinitions.weave_level_select_access.client.stop(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	arg_3_3.start_time = nil
 
-	if result == InteractionResult.SUCCESS and not data.is_husk then
-		local dlc_name = "scorpion"
-		local has_dlc = Managers.unlock:is_dlc_unlocked(dlc_name)
+	if arg_3_6 == InteractionResult.SUCCESS and not arg_3_3.is_husk then
+		local var_3_0 = "scorpion"
 
-		if not has_dlc then
-			Managers.state.event:trigger("ui_show_popup", dlc_name, "upsell")
+		if not Managers.unlock:is_dlc_unlocked(var_3_0) then
+			Managers.state.event:trigger("ui_show_popup", var_3_0, "upsell")
 
 			return
 		end
 
-		local twitch_connection = Managers.twitch and (Managers.twitch:is_connected() or Managers.twitch:is_activated())
-
-		if twitch_connection then
+		if Managers.twitch and (Managers.twitch:is_connected() or Managers.twitch:is_activated()) then
 			Managers.state.event:trigger("weave_tutorial_message", WeaveUITutorials.twitch_not_supported_for_weaves)
 
 			return
-		elseif not Managers.player.is_server then
-			local lobby = Managers.state.network:lobby()
+		elseif not Managers.player.is_server and Managers.state.network:lobby():lobby_data("twitch_enabled") == "true" then
+			Managers.state.event:trigger("weave_tutorial_message", WeaveUITutorials.twitch_not_supported_for_weaves_client)
 
-			if lobby:lobby_data("twitch_enabled") == "true" then
-				Managers.state.event:trigger("weave_tutorial_message", WeaveUITutorials.twitch_not_supported_for_weaves_client)
-
-				return
-			end
+			return
 		end
 
-		local fulfill_requirements_for_weave_levels = _fulfill_requirements_for_weave()
-
-		if fulfill_requirements_for_weave_levels then
+		if var_0_0() then
 			Managers.ui:handle_transition("start_game_view_force", {
-				menu_state_name = "play",
 				menu_sub_state_name = "weave_quickplay",
-				use_fade = true,
+				menu_state_name = "play",
+				use_fade = true
 			})
-			Unit.flow_event(interactable_unit, "lua_interaction_success")
+			Unit.flow_event(arg_3_2, "lua_interaction_success")
 		else
 			Managers.state.event:trigger("weave_tutorial_message", WeaveUITutorials.requirements_not_met)
 		end
 	end
 end
 
-InteractionDefinitions.weave_level_select_access.client.can_interact = function (interactor_unit, interactable_unit, data, config)
+function InteractionDefinitions.weave_level_select_access.client.can_interact(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	return true
 end
 
-InteractionDefinitions.weave_level_select_access.client.hud_description = function (interactable_unit, data, config, fail_reason, interactor_unit)
-	return Unit.get_data(interactable_unit, "interaction_data", "hud_description"), Unit.get_data(interactable_unit, "interaction_data", "hud_interaction_action")
+function InteractionDefinitions.weave_level_select_access.client.hud_description(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	return Unit.get_data(arg_5_0, "interaction_data", "hud_description"), Unit.get_data(arg_5_0, "interaction_data", "hud_interaction_action")
 end
 
 InteractionDefinitions.weave_magic_forge_access = InteractionDefinitions.weave_magic_forge_access or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.weave_magic_forge_access.config.swap_to_3p = false
 
-InteractionDefinitions.weave_magic_forge_access.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
-	data.start_time = nil
+function InteractionDefinitions.weave_magic_forge_access.client.stop(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
+	arg_6_3.start_time = nil
 
-	if result == InteractionResult.SUCCESS and not data.is_husk then
-		local dlc_name = "scorpion"
-		local has_dlc = Managers.unlock:is_dlc_unlocked(dlc_name)
+	if arg_6_6 == InteractionResult.SUCCESS and not arg_6_3.is_husk then
+		local var_6_0 = "scorpion"
 
-		if not has_dlc then
-			Managers.state.event:trigger("ui_show_popup", dlc_name, "upsell")
+		if not Managers.unlock:is_dlc_unlocked(var_6_0) then
+			Managers.state.event:trigger("ui_show_popup", var_6_0, "upsell")
 
 			return
 		end
 
-		local fulfill_requirements_for_weave_forge = _fulfill_requirements_for_weave()
-
-		if fulfill_requirements_for_weave_forge then
+		if var_0_0() then
 			Managers.ui:handle_transition("hero_view_force", {
-				menu_state_name = "weave_forge",
 				use_fade = true,
+				menu_state_name = "weave_forge"
 			})
-			Unit.flow_event(interactable_unit, "lua_interaction_success")
+			Unit.flow_event(arg_6_2, "lua_interaction_success")
 		else
 			Managers.state.event:trigger("weave_tutorial_message", WeaveUITutorials.requirements_not_met)
 		end
 	end
 end
 
-InteractionDefinitions.weave_magic_forge_access.client.can_interact = function (interactor_unit, interactable_unit, data, config)
+function InteractionDefinitions.weave_magic_forge_access.client.can_interact(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	return true
 end
 
-InteractionDefinitions.weave_magic_forge_access.client.hud_description = function (interactable_unit, data, config, fail_reason, interactor_unit)
-	return Unit.get_data(interactable_unit, "interaction_data", "hud_description"), Unit.get_data(interactable_unit, "interaction_data", "hud_interaction_action")
+function InteractionDefinitions.weave_magic_forge_access.client.hud_description(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	return Unit.get_data(arg_8_0, "interaction_data", "hud_description"), Unit.get_data(arg_8_0, "interaction_data", "hud_interaction_action")
 end
 
 InteractionDefinitions.weave_leaderboard_access = InteractionDefinitions.weave_leaderboard_access or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.weave_leaderboard_access.config.swap_to_3p = false
 
-InteractionDefinitions.weave_leaderboard_access.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
-	data.start_time = nil
+function InteractionDefinitions.weave_leaderboard_access.client.stop(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
+	arg_9_3.start_time = nil
 
-	if result == InteractionResult.SUCCESS and not data.is_husk then
-		local dlc_name = "scorpion"
-		local has_dlc = Managers.unlock:is_dlc_unlocked(dlc_name)
+	if arg_9_6 == InteractionResult.SUCCESS and not arg_9_3.is_husk then
+		local var_9_0 = "scorpion"
 
-		if not has_dlc then
-			Managers.state.event:trigger("ui_show_popup", dlc_name, "upsell")
+		if not Managers.unlock:is_dlc_unlocked(var_9_0) then
+			Managers.state.event:trigger("ui_show_popup", var_9_0, "upsell")
 
 			return
 		end
 
-		local fulfill_requirements_for_leaderboard = _fullfill_requirements_for_weave_leaderboards()
-
-		if fulfill_requirements_for_leaderboard then
+		if var_0_1() then
 			Managers.ui:handle_transition("start_game_view_force", {
-				menu_state_name = "leaderboard",
 				use_fade = true,
+				menu_state_name = "leaderboard"
 			})
-			Unit.flow_event(interactable_unit, "lua_interaction_success")
+			Unit.flow_event(arg_9_2, "lua_interaction_success")
 		else
 			Managers.state.event:trigger("weave_tutorial_message", WeaveUITutorials.requirements_not_met)
 		end
 	end
 end
 
-InteractionDefinitions.weave_leaderboard_access.client.can_interact = function (interactor_unit, interactable_unit, data, config)
+function InteractionDefinitions.weave_leaderboard_access.client.can_interact(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	if Managers.account:offline_mode() then
 		return false, "status_offline"
 	end
@@ -172,10 +150,10 @@ InteractionDefinitions.weave_leaderboard_access.client.can_interact = function (
 	return true
 end
 
-InteractionDefinitions.weave_leaderboard_access.client.hud_description = function (interactable_unit, data, config, fail_reason, interactor_unit)
-	if fail_reason == "status_offline" then
-		return Unit.get_data(interactable_unit, "interaction_data", "hud_description"), "status_offline"
+function InteractionDefinitions.weave_leaderboard_access.client.hud_description(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	if arg_11_3 == "status_offline" then
+		return Unit.get_data(arg_11_0, "interaction_data", "hud_description"), "status_offline"
 	else
-		return Unit.get_data(interactable_unit, "interaction_data", "hud_description"), Unit.get_data(interactable_unit, "interaction_data", "hud_interaction_action"), nil, "test"
+		return Unit.get_data(arg_11_0, "interaction_data", "hud_description"), Unit.get_data(arg_11_0, "interaction_data", "hud_interaction_action"), nil, "test"
 	end
 end

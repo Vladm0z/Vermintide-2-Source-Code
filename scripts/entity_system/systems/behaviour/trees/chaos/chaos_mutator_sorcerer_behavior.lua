@@ -1,80 +1,80 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_mutator_sorcerer_behavior.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_mutator_sorcerer_behavior.lua
 
-local ACTIONS = BreedActions.chaos_mutator_sorcerer
+local var_0_0 = BreedActions.chaos_mutator_sorcerer
 
 BreedBehaviors.chaos_mutator_sorcerer = {
 	"BTSelector",
 	{
 		"BTSpawningAction",
-		condition = "spawn",
-		enter_hook = "sorcerer_dummy_idle",
 		name = "spawn",
+		condition = "spawn",
+		enter_hook = "sorcerer_dummy_idle"
 	},
 	{
 		"BTInVortexAction",
 		condition = "in_vortex",
-		name = "in_vortex",
+		name = "in_vortex"
 	},
 	{
 		"BTFallAction",
 		condition = "is_falling",
-		name = "falling",
+		name = "falling"
 	},
 	{
 		"BTQuickTeleportAction",
-		condition = "quick_teleport",
 		leave_hook = "destroy_unit_leave_hook",
 		name = "quick_teleport",
-		action_data = ACTIONS.quick_teleport,
+		condition = "quick_teleport",
+		action_data = var_0_0.quick_teleport
 	},
 	{
 		"BTStaggerAction",
-		condition = "stagger",
 		name = "stagger",
-		action_data = ACTIONS.stagger,
+		condition = "stagger",
+		action_data = var_0_0.stagger
 	},
 	{
 		"BTSelector",
 		{
 			"BTTeleportAction",
 			condition = "at_teleport_smartobject",
-			name = "teleport",
+			name = "teleport"
 		},
 		{
 			"BTVortexFlyAction",
 			condition = "vortex_at_climb_or_jump",
-			name = "fly",
+			name = "fly"
 		},
 		{
 			"BTSmashDoorAction",
-			condition = "at_door_smartobject",
 			name = "smash_door",
-			action_data = ACTIONS.smash_door,
+			condition = "at_door_smartobject",
+			action_data = var_0_0.smash_door
 		},
 		condition = "at_smartobject",
-		name = "smartobject",
+		name = "smartobject"
 	},
 	{
 		"BTSequence",
 		{
 			"BTMutatorSorcererFollowAction",
 			name = "follow",
-			action_data = ACTIONS.follow,
+			action_data = var_0_0.follow
 		},
 		{
 			"BTCorruptorGrabAction",
 			enter_hook = "remove_invincibility",
-			leave_hook = "mutator_sorcerer_activate_teleport",
 			name = "attack",
-			action_data = ACTIONS.grab_attack,
+			leave_hook = "mutator_sorcerer_activate_teleport",
+			action_data = var_0_0.grab_attack
 		},
 		condition = "can_see_player",
-		name = "in_combat",
+		name = "in_combat"
 	},
 	{
 		"BTIdleAction",
 		name = "idle",
-		action_data = ACTIONS.idle,
+		action_data = var_0_0.idle
 	},
-	name = "chaos_mutator_sorcerer",
+	name = "chaos_mutator_sorcerer"
 }

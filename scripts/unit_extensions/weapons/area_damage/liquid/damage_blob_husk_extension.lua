@@ -1,220 +1,207 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/area_damage/liquid/damage_blob_husk_extension.lua
+-- chunkname: @scripts/unit_extensions/weapons/area_damage/liquid/damage_blob_husk_extension.lua
 
 DamageBlobHuskExtension = class(DamageBlobHuskExtension)
 
-DamageBlobHuskExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	local world = extension_init_context.world
+function DamageBlobHuskExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	local var_1_0 = arg_1_1.world
 
-	self.world = world
-	self.game = Managers.state.network:game()
-	self.unit = unit
-	self.nav_world = Managers.state.entity:system("ai_system"):nav_world()
-	self._source_unit = extension_init_data.source_unit
-	self.physics_world = World.physics_world(world)
+	arg_1_0.world = var_1_0
+	arg_1_0.game = Managers.state.network:game()
+	arg_1_0.unit = arg_1_2
+	arg_1_0.nav_world = Managers.state.entity:system("ai_system"):nav_world()
+	arg_1_0._source_unit = arg_1_3.source_unit
+	arg_1_0.physics_world = World.physics_world(var_1_0)
+	arg_1_0.go_id = Managers.state.unit_storage:go_id(arg_1_2)
+	arg_1_0.fx_list = {}
+	arg_1_0.sfx_list = {}
 
-	local unit_storage = Managers.state.unit_storage
+	local var_1_1 = arg_1_3.damage_blob_template_name
+	local var_1_2 = DamageBlobTemplates.templates[var_1_1]
 
-	self.go_id = unit_storage:go_id(unit)
-	self.fx_list = {}
-	self.sfx_list = {}
+	arg_1_0.fx_name_filled = var_1_2.fx_name_filled
+	arg_1_0.fx_name_rim = var_1_2.fx_name_rim
+	arg_1_0.fx_size_variable = var_1_2.fx_size_variable
+	arg_1_0.fx_max_height = var_1_2.fx_max_height
+	arg_1_0.fx_max_radius = var_1_2.fx_max_radius
+	arg_1_0.blob_life_time = var_1_2.blob_life_time
+	arg_1_0._sfx_name_stop = var_1_2.sfx_name_stop
+	arg_1_0._sfx_name_start_remains = var_1_2.sfx_name_start_remains
+	arg_1_0._sfx_name_stop_remains = var_1_2.sfx_name_stop_remains
 
-	local template_name = extension_init_data.damage_blob_template_name
-	local template = DamageBlobTemplates.templates[template_name]
+	local var_1_3 = var_1_2.init_function
 
-	self.fx_name_filled = template.fx_name_filled
-	self.fx_name_rim = template.fx_name_rim
-	self.fx_size_variable = template.fx_size_variable
-	self.fx_max_height = template.fx_max_height
-	self.fx_max_radius = template.fx_max_radius
-	self.blob_life_time = template.blob_life_time
-	self._sfx_name_stop = template.sfx_name_stop
-	self._sfx_name_start_remains = template.sfx_name_start_remains
-	self._sfx_name_stop_remains = template.sfx_name_stop_remains
+	if var_1_3 then
+		local var_1_4 = Managers.time:time("game")
 
-	local init_function = template.init_function
-
-	if init_function then
-		local t = Managers.time:time("game")
-
-		DamageBlobTemplates[init_function](self, t)
+		DamageBlobTemplates[var_1_3](arg_1_0, var_1_4)
 	end
 
-	local update_function = template.update_function
+	local var_1_5 = var_1_2.update_function
 
-	if update_function then
-		self._blob_update_function = DamageBlobTemplates[update_function]
+	if var_1_5 then
+		arg_1_0._blob_update_function = DamageBlobTemplates[var_1_5]
 	end
 
-	local sfx_name_start = template.sfx_name_start
+	local var_1_6 = var_1_2.sfx_name_start
 
-	if sfx_name_start then
-		WwiseUtils.trigger_unit_event(world, sfx_name_start, unit, 0)
+	if var_1_6 then
+		WwiseUtils.trigger_unit_event(var_1_0, var_1_6, arg_1_2, 0)
 	end
 end
 
-DamageBlobHuskExtension.destroy = function (self)
-	local world = self.world
-	local fx_list = self.fx_list
+function DamageBlobHuskExtension.destroy(arg_2_0)
+	local var_2_0 = arg_2_0.world
+	local var_2_1 = arg_2_0.fx_list
 
-	for i = 1, #fx_list do
-		local fx_id = fx_list[i].id
+	for iter_2_0 = 1, #var_2_1 do
+		local var_2_2 = var_2_1[iter_2_0].id
 
-		World.stop_spawning_particles(world, fx_id)
+		World.stop_spawning_particles(var_2_0, var_2_2)
 
-		fx_list[i] = nil
+		var_2_1[iter_2_0] = nil
 	end
 
-	local unit = self.unit
-	local sfx_name_stop = self._sfx_name_stop
+	local var_2_3 = arg_2_0.unit
+	local var_2_4 = arg_2_0._sfx_name_stop
 
-	if sfx_name_stop and Unit.alive(unit) then
-		WwiseUtils.trigger_unit_event(world, sfx_name_stop, unit, 0)
+	if var_2_4 and Unit.alive(var_2_3) then
+		WwiseUtils.trigger_unit_event(var_2_0, var_2_4, var_2_3, 0)
 	end
 
-	local wwise_world = Managers.world:wwise_world(world)
-	local sfx_list = self.sfx_list
+	local var_2_5 = Managers.world:wwise_world(var_2_0)
+	local var_2_6 = arg_2_0.sfx_list
 
-	for i = 1, #sfx_list do
-		local sfx_id = sfx_list[i].source
-		local has_source = WwiseWorld.has_source(wwise_world, sfx_id)
+	for iter_2_1 = 1, #var_2_6 do
+		local var_2_7 = var_2_6[iter_2_1].source
 
-		if has_source then
-			WwiseWorld.trigger_event(wwise_world, self._sfx_name_stop_remains, sfx_id)
+		if WwiseWorld.has_source(var_2_5, var_2_7) then
+			WwiseWorld.trigger_event(var_2_5, arg_2_0._sfx_name_stop_remains, var_2_7)
 		end
 
-		sfx_list[i] = nil
+		var_2_6[iter_2_1] = nil
 	end
 
-	self.aborted = true
+	arg_2_0.aborted = true
 end
 
-DamageBlobHuskExtension.update = function (self, unit, input, dt, context, t)
-	local game = self.game
-	local go_id = self.go_id
-	local position = GameSession.game_object_field(game, go_id, "position")
+function DamageBlobHuskExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	local var_3_0 = arg_3_0.game
+	local var_3_1 = arg_3_0.go_id
+	local var_3_2 = GameSession.game_object_field(var_3_0, var_3_1, "position")
 
-	Unit.set_local_position(unit, 0, position)
+	Unit.set_local_position(arg_3_1, 0, var_3_2)
 
-	local rotation = GameSession.game_object_field(game, go_id, "rotation")
+	local var_3_3 = GameSession.game_object_field(var_3_0, var_3_1, "rotation")
 
-	Unit.set_local_rotation(unit, 0, rotation)
-	self:update_blobs_fx_and_sfx(t, dt)
+	Unit.set_local_rotation(arg_3_1, 0, var_3_3)
+	arg_3_0:update_blobs_fx_and_sfx(arg_3_5, arg_3_3)
 
-	local blob_update_function = self._blob_update_function
-
-	if blob_update_function then
-		local result = self._blob_update_function(self, t, dt, unit, self.physics_world)
-
-		if not result then
-			self._blob_update_function = nil
-		end
+	if arg_3_0._blob_update_function and not arg_3_0._blob_update_function(arg_3_0, arg_3_5, arg_3_3, arg_3_1, arg_3_0.physics_world) then
+		arg_3_0._blob_update_function = nil
 	end
 end
 
-DamageBlobHuskExtension.update_blobs_fx_and_sfx = function (self, t, dt)
-	local world = self.world
-	local fx_name_filled = self.fx_name_filled
-	local fx_size_variable = self.fx_size_variable
-	local fx_max_radius = self.fx_max_radius
-	local fx_max_height = self.fx_max_height
-	local fx_list = self.fx_list
+function DamageBlobHuskExtension.update_blobs_fx_and_sfx(arg_4_0, arg_4_1, arg_4_2)
+	local var_4_0 = arg_4_0.world
+	local var_4_1 = arg_4_0.fx_name_filled
+	local var_4_2 = arg_4_0.fx_size_variable
+	local var_4_3 = arg_4_0.fx_max_radius
+	local var_4_4 = arg_4_0.fx_max_height
+	local var_4_5 = arg_4_0.fx_list
 
-	for i = 1, #fx_list do
-		local fx_entry = fx_list[i]
-		local fx_id = fx_entry.id
-		local fx_size = fx_entry.size
+	for iter_4_0 = 1, #var_4_5 do
+		local var_4_6 = var_4_5[iter_4_0]
+		local var_4_7 = var_4_6.id
+		local var_4_8 = var_4_6.size
 
-		if fx_size then
-			local particle_size = fx_size:unbox()
+		if var_4_8 then
+			local var_4_9 = var_4_8:unbox()
 
-			particle_size[1] = math.min(particle_size[1] + dt * 1.5, fx_max_radius)
-			particle_size[2] = math.min(particle_size[2] + dt * 2, fx_max_height)
+			var_4_9[1] = math.min(var_4_9[1] + arg_4_2 * 1.5, var_4_3)
+			var_4_9[2] = math.min(var_4_9[2] + arg_4_2 * 2, var_4_4)
 
-			local effect_variable_id = World.find_particles_variable(world, fx_name_filled, fx_size_variable)
+			local var_4_10 = World.find_particles_variable(var_4_0, var_4_1, var_4_2)
 
-			World.set_particles_variable(world, fx_id, effect_variable_id, particle_size)
-			fx_size:store(particle_size)
+			World.set_particles_variable(var_4_0, var_4_7, var_4_10, var_4_9)
+			var_4_8:store(var_4_9)
 		end
 
-		local fx_time = fx_entry.time
-
-		if fx_time < t then
-			World.stop_spawning_particles(world, fx_id)
+		if arg_4_1 > var_4_6.time then
+			World.stop_spawning_particles(var_4_0, var_4_7)
 		end
 	end
 
-	local sfx_list = self.sfx_list
-	local sfx_name_stop_remains = self._sfx_name_stop_remains
-	local wwise_world = Managers.world:wwise_world(self.world)
+	local var_4_11 = arg_4_0.sfx_list
+	local var_4_12 = arg_4_0._sfx_name_stop_remains
+	local var_4_13 = Managers.world:wwise_world(arg_4_0.world)
 
-	for i = 1, #sfx_list do
-		local sfx_entry = sfx_list[i]
-		local sfx_source = sfx_entry.source
-		local has_source = WwiseWorld.has_source(wwise_world, sfx_source)
-		local sfx_time = sfx_entry.time
+	for iter_4_1 = 1, #var_4_11 do
+		local var_4_14 = var_4_11[iter_4_1]
+		local var_4_15 = var_4_14.source
+		local var_4_16 = WwiseWorld.has_source(var_4_13, var_4_15)
 
-		if sfx_time < t and has_source then
-			WwiseWorld.trigger_event(wwise_world, sfx_name_stop_remains, sfx_source)
+		if arg_4_1 > var_4_14.time and var_4_16 then
+			WwiseWorld.trigger_event(var_4_13, var_4_12, var_4_15)
 		end
 	end
 end
 
-DamageBlobHuskExtension.add_damage_blob_fx = function (self, position, life_time_percentage)
-	local unit = self.unit
-	local world = self.world
-	local rotation = Unit.local_rotation(unit, 0)
-	local t = Managers.time:time("game")
-	local blob_full_life_time = self.blob_life_time
-	local blob_life_time = life_time_percentage * blob_full_life_time
-	local time_past = math.max(blob_full_life_time - blob_life_time, 0)
-	local blob_death_time = t + blob_life_time
-	local particle_size = Vector3Box(0.6, 1.2, 0)
-	local fx_max_radius = self.fx_max_radius
-	local fx_max_height = self.fx_max_height
+function DamageBlobHuskExtension.add_damage_blob_fx(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = arg_5_0.unit
+	local var_5_1 = arg_5_0.world
+	local var_5_2 = Unit.local_rotation(var_5_0, 0)
+	local var_5_3 = Managers.time:time("game")
+	local var_5_4 = arg_5_0.blob_life_time
+	local var_5_5 = arg_5_2 * var_5_4
+	local var_5_6 = math.max(var_5_4 - var_5_5, 0)
+	local var_5_7 = var_5_3 + var_5_5
+	local var_5_8 = Vector3Box(0.6, 1.2, 0)
+	local var_5_9 = arg_5_0.fx_max_radius
+	local var_5_10 = arg_5_0.fx_max_height
 
-	particle_size[1] = math.min(particle_size[1] + time_past * 1.5, fx_max_radius)
-	particle_size[2] = math.min(particle_size[2] + time_past * 2, fx_max_height)
+	var_5_8[1] = math.min(var_5_8[1] + var_5_6 * 1.5, var_5_9)
+	var_5_8[2] = math.min(var_5_8[2] + var_5_6 * 2, var_5_10)
 
-	print(life_time_percentage, blob_life_time)
+	print(arg_5_2, var_5_5)
 
-	local fx_list = self.fx_list
-	local fx_id_filled = World.create_particles(world, self.fx_name_filled, position, rotation)
+	local var_5_11 = arg_5_0.fx_list
+	local var_5_12 = World.create_particles(var_5_1, arg_5_0.fx_name_filled, arg_5_1, var_5_2)
 
-	fx_list[#fx_list + 1] = {
-		id = fx_id_filled,
-		time = blob_death_time,
-		size = particle_size,
+	var_5_11[#var_5_11 + 1] = {
+		id = var_5_12,
+		time = var_5_7,
+		size = var_5_8
 	}
 
-	local fx_id_rim = World.create_particles(world, self.fx_name_rim, position, rotation)
+	local var_5_13 = World.create_particles(var_5_1, arg_5_0.fx_name_rim, arg_5_1, var_5_2)
 
-	fx_list[#fx_list + 1] = {
-		id = fx_id_rim,
-		time = blob_death_time,
+	var_5_11[#var_5_11 + 1] = {
+		id = var_5_13,
+		time = var_5_7
 	}
 
 	if not DEDICATED_SERVER then
-		local id, source = WwiseUtils.trigger_position_event(world, self._sfx_name_start_remains, position)
-		local sfx_list = self.sfx_list
+		local var_5_14, var_5_15 = WwiseUtils.trigger_position_event(var_5_1, arg_5_0._sfx_name_start_remains, arg_5_1)
+		local var_5_16 = arg_5_0.sfx_list
 
-		sfx_list[#sfx_list + 1] = {
-			source = source,
-			time = blob_death_time,
+		var_5_16[#var_5_16 + 1] = {
+			source = var_5_15,
+			time = var_5_7
 		}
 	end
 end
 
-DamageBlobHuskExtension.abort = function (self)
-	local unit = self.unit
-	local sfx_name_stop = self._sfx_name_stop
+function DamageBlobHuskExtension.abort(arg_6_0)
+	local var_6_0 = arg_6_0.unit
+	local var_6_1 = arg_6_0._sfx_name_stop
 
-	if sfx_name_stop and Unit.alive(unit) then
-		WwiseUtils.trigger_unit_event(self.world, sfx_name_stop, unit, 0)
+	if var_6_1 and Unit.alive(var_6_0) then
+		WwiseUtils.trigger_unit_event(arg_6_0.world, var_6_1, var_6_0, 0)
 	end
 
-	self.aborted = true
+	arg_6_0.aborted = true
 end
 
-DamageBlobHuskExtension.get_source_attacker_unit = function (self)
-	return self._source_unit
+function DamageBlobHuskExtension.get_source_attacker_unit(arg_7_0)
+	return arg_7_0._source_unit
 end

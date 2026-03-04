@@ -1,528 +1,510 @@
-﻿-- chunkname: @scripts/ui/views/hero_view/windows/store/definitions/store_window_category_item_list_definitions.lua
+-- chunkname: @scripts/ui/views/hero_view/windows/store/definitions/store_window_category_item_list_definitions.lua
 
-local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
-local list_size = {
+local var_0_0 = UISettings.console_menu_scenegraphs
+local var_0_1 = {
 	800,
-	700,
+	700
 }
-local list_entry_size = {
+local var_0_2 = {
 	800,
-	220,
+	220
 }
-local list_scrollbar_size = {
+local var_0_3 = {
 	16,
-	list_size[2],
+	var_0_1[2]
 }
-local scenegraph_definition = {
-	screen = console_menu_scenegraphs.screen,
+local var_0_4 = {
+	screen = var_0_0.screen,
 	list_window = {
-		horizontal_alignment = "right",
-		parent = "screen",
 		vertical_alignment = "top",
-		size = list_size,
+		parent = "screen",
+		horizontal_alignment = "right",
+		size = var_0_1,
 		position = {
 			-130,
 			-215,
-			10,
-		},
+			10
+		}
 	},
 	list = {
-		horizontal_alignment = "right",
-		parent = "list_window",
 		vertical_alignment = "top",
-		size = list_size,
+		parent = "list_window",
+		horizontal_alignment = "right",
+		size = var_0_1,
 		position = {
 			0,
-			-list_size[2],
-			0,
-		},
+			-var_0_1[2],
+			0
+		}
 	},
 	list_scrollbar = {
-		horizontal_alignment = "right",
-		parent = "list_window",
 		vertical_alignment = "top",
-		size = list_scrollbar_size,
+		parent = "list_window",
+		horizontal_alignment = "right",
+		size = var_0_3,
 		position = {
 			58,
 			0,
-			10,
-		},
+			10
+		}
 	},
 	list_detail_top_left = {
-		horizontal_alignment = "right",
-		parent = "list_scrollbar",
 		vertical_alignment = "top",
+		parent = "list_scrollbar",
+		horizontal_alignment = "right",
 		size = {
 			157,
-			97,
+			97
 		},
 		position = {
 			45,
 			60,
-			2,
-		},
+			2
+		}
 	},
 	list_detail_bottom_left = {
-		horizontal_alignment = "right",
-		parent = "list_scrollbar",
 		vertical_alignment = "bottom",
+		parent = "list_scrollbar",
+		horizontal_alignment = "right",
 		size = {
 			157,
-			97,
+			97
 		},
 		position = {
 			45,
 			-60,
-			2,
-		},
+			2
+		}
 	},
 	list_detail_top_center = {
-		horizontal_alignment = "right",
-		parent = "list_detail_top_left",
 		vertical_alignment = "top",
+		parent = "list_detail_top_left",
+		horizontal_alignment = "right",
 		size = {
 			750,
-			97,
+			97
 		},
 		position = {
 			-157,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	list_detail_bottom_center = {
-		horizontal_alignment = "right",
-		parent = "list_detail_bottom_left",
 		vertical_alignment = "bottom",
+		parent = "list_detail_bottom_left",
+		horizontal_alignment = "right",
 		size = {
 			750,
-			97,
+			97
 		},
 		position = {
 			-157,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	list_detail_top_right = {
-		horizontal_alignment = "left",
-		parent = "list_detail_top_center",
 		vertical_alignment = "top",
+		parent = "list_detail_top_center",
+		horizontal_alignment = "left",
 		size = {
 			23,
-			97,
+			97
 		},
 		position = {
 			-23,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	list_detail_bottom_right = {
-		horizontal_alignment = "left",
-		parent = "list_detail_bottom_center",
 		vertical_alignment = "bottom",
+		parent = "list_detail_bottom_center",
+		horizontal_alignment = "left",
 		size = {
 			23,
-			97,
+			97
 		},
 		position = {
 			-23,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	title_text = {
-		horizontal_alignment = "left",
-		parent = "list_detail_top_center",
 		vertical_alignment = "top",
+		parent = "list_detail_top_center",
+		horizontal_alignment = "left",
 		size = {
 			780,
-			60,
+			60
 		},
 		position = {
 			5,
 			20,
-			1,
-		},
+			1
+		}
 	},
 	item_root = {
-		horizontal_alignment = "left",
-		parent = "list",
 		vertical_alignment = "top",
+		parent = "list",
+		horizontal_alignment = "left",
 		size = {
 			0,
-			0,
+			0
 		},
 		position = {
 			0,
 			0,
-			1,
-		},
-	},
+			1
+		}
+	}
 }
-local title_text_style = {
-	dynamic_font_size = true,
-	font_size = 64,
-	font_type = "hell_shark_header",
-	horizontal_alignment = "left",
-	localize = false,
-	upper_case = false,
-	use_shadow = true,
-	vertical_alignment = "top",
+local var_0_5 = {
 	word_wrap = true,
+	upper_case = false,
+	localize = false,
+	use_shadow = true,
+	font_size = 64,
+	horizontal_alignment = "left",
+	vertical_alignment = "top",
+	dynamic_font_size = true,
+	font_type = "hell_shark_header",
 	text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 	offset = {
 		0,
 		0,
-		2,
-	},
+		2
+	}
 }
 
-local function create_list_mask(scenegraph_id, list_scenegraph_id, size, entry_size)
-	local masked = true
-	local entry_hover_frame_settings = UIFrameSettings.frame_outer_glow_04_big
-	local entry_hover_frame_spacing = entry_hover_frame_settings.texture_sizes.horizontal[2]
-	local element = {
+local function var_0_6(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	local var_1_0 = true
+	local var_1_1 = UIFrameSettings.frame_outer_glow_04_big.texture_sizes.horizontal[2]
+	local var_1_2 = {
 		passes = {
 			{
-				content_id = "button_hotspot",
-				pass_type = "hotspot",
 				style_id = "hotspot",
+				pass_type = "hotspot",
+				content_id = "button_hotspot"
 			},
 			{
-				content_id = "list_hotspot",
-				pass_type = "hotspot",
 				style_id = "list_hotspot",
+				pass_type = "hotspot",
+				content_id = "list_hotspot"
 			},
 			{
 				pass_type = "texture",
 				style_id = "mask",
-				texture_id = "mask_texture",
+				texture_id = "mask_texture"
 			},
 			{
 				pass_type = "texture",
 				style_id = "mask_top",
-				texture_id = "mask_edge",
+				texture_id = "mask_edge"
 			},
 			{
 				pass_type = "rotated_texture",
 				style_id = "mask_bottom",
-				texture_id = "mask_edge",
-			},
-		},
+				texture_id = "mask_edge"
+			}
+		}
 	}
-	local content = {
+	local var_1_3 = {
 		mask_edge = "mask_rect_edge_fade",
 		mask_texture = "mask_rect",
 		list_hotspot = {},
 		button_hotspot = {},
 		scrollbar = {
-			percentage = 0.1,
 			scroll_amount = 0.1,
-			scroll_value = 1,
-		},
+			percentage = 0.1,
+			scroll_value = 1
+		}
 	}
-	local style = {
+	local var_1_4 = {
 		hotspot = {
 			size = {
-				size[1],
-				size[2],
+				arg_1_2[1],
+				arg_1_2[2]
 			},
 			offset = {
 				0,
 				0,
-				0,
-			},
+				0
+			}
 		},
 		list_hotspot = {
 			size = {
-				size[1] + entry_hover_frame_spacing * 2,
-				size[2] + entry_hover_frame_spacing * 2,
+				arg_1_2[1] + var_1_1 * 2,
+				arg_1_2[2] + var_1_1 * 2
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
-				-entry_hover_frame_spacing,
-				-entry_hover_frame_spacing,
-				0,
-			},
+				-var_1_1,
+				-var_1_1,
+				0
+			}
 		},
 		mask = {
-			horizontal_alignment = "right",
 			vertical_alignment = "bottom",
+			horizontal_alignment = "right",
 			texture_size = {
-				size[1] + entry_hover_frame_spacing * 2,
-				size[2],
+				arg_1_2[1] + var_1_1 * 2,
+				arg_1_2[2]
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
-				entry_hover_frame_spacing,
+				var_1_1,
 				0,
-				0,
-			},
+				0
+			}
 		},
 		mask_top = {
-			horizontal_alignment = "right",
 			vertical_alignment = "bottom",
+			horizontal_alignment = "right",
 			texture_size = {
-				size[1] + entry_hover_frame_spacing * 2,
-				entry_hover_frame_spacing,
+				arg_1_2[1] + var_1_1 * 2,
+				var_1_1
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
-				entry_hover_frame_spacing,
-				size[2],
-				0,
-			},
+				var_1_1,
+				arg_1_2[2],
+				0
+			}
 		},
 		mask_bottom = {
-			horizontal_alignment = "right",
 			vertical_alignment = "bottom",
+			horizontal_alignment = "right",
 			texture_size = {
-				size[1] + entry_hover_frame_spacing * 2,
-				entry_hover_frame_spacing,
+				arg_1_2[1] + var_1_1 * 2,
+				var_1_1
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
-				entry_hover_frame_spacing,
-				-entry_hover_frame_spacing,
-				0,
+				var_1_1,
+				-var_1_1,
+				0
 			},
 			angle = math.pi,
 			pivot = {
-				(size[1] + entry_hover_frame_spacing * 2) / 2,
-				entry_hover_frame_spacing / 2,
-			},
+				(arg_1_2[1] + var_1_1 * 2) / 2,
+				var_1_1 / 2
+			}
+		}
+	}
+
+	return {
+		element = var_1_2,
+		content = var_1_3,
+		style = var_1_4,
+		offset = {
+			0,
+			0,
+			0
 		},
+		scenegraph_id = arg_1_0
 	}
-	local widget = {}
-
-	widget.element = element
-	widget.content = content
-	widget.style = style
-	widget.offset = {
-		0,
-		0,
-		0,
-	}
-	widget.scenegraph_id = scenegraph_id
-
-	return widget
 end
 
-local widgets = {
-	title_text = UIWidgets.create_simple_text("n/a", "title_text", nil, nil, title_text_style),
-	list = create_list_mask("list_window", "list", list_size, list_entry_size),
-	list_scrollbar = UIWidgets.create_chain_scrollbar("list_scrollbar", "list_window", scenegraph_definition.list_scrollbar.size, "gold"),
+local var_0_7 = {
+	title_text = UIWidgets.create_simple_text("n/a", "title_text", nil, nil, var_0_5),
+	list = var_0_6("list_window", "list", var_0_1, var_0_2),
+	list_scrollbar = UIWidgets.create_chain_scrollbar("list_scrollbar", "list_window", var_0_4.list_scrollbar.size, "gold"),
 	list_detail_top_left = UIWidgets.create_simple_uv_texture("divider_skull_left", {
 		{
 			1,
-			0,
+			0
 		},
 		{
 			0,
-			1,
-		},
+			1
+		}
 	}, "list_detail_top_left"),
 	list_detail_bottom_left = UIWidgets.create_simple_uv_texture("divider_skull_left", {
 		{
 			1,
-			1,
+			1
 		},
 		{
 			0,
-			0,
-		},
+			0
+		}
 	}, "list_detail_bottom_left"),
 	list_detail_top_center = UIWidgets.create_tiled_texture("list_detail_top_center", "divider_skull_middle", {
 		64,
-		97,
+		97
 	}),
 	list_detail_bottom_center = UIWidgets.create_tiled_texture("list_detail_bottom_center", "divider_skull_middle_down", {
 		64,
-		97,
+		97
 	}),
 	list_detail_top_right = UIWidgets.create_simple_uv_texture("divider_skull_right", {
 		{
 			1,
-			0,
+			0
 		},
 		{
 			0,
-			1,
-		},
+			1
+		}
 	}, "list_detail_top_right"),
 	list_detail_bottom_right = UIWidgets.create_simple_uv_texture("divider_skull_right", {
 		{
 			1,
-			1,
+			1
 		},
 		{
 			0,
-			0,
-		},
-	}, "list_detail_bottom_right"),
+			0
+		}
+	}, "list_detail_bottom_right")
 }
-local animation_definitions = {
+local var_0_8 = {
 	on_enter = {
 		{
-			end_progress = 0.6,
 			name = "fade_in",
 			start_progress = 0.3,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 0
+			end_progress = 0.6,
+			init = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+				arg_2_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+				local var_3_0 = math.easeOutCubic(arg_3_3)
 
-				params.render_settings.alpha_multiplier = anim_progress
+				arg_3_4.render_settings.alpha_multiplier = var_3_0
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				return
-			end,
-		},
+			end
+		}
 	},
 	on_item_list_initialized = {
 		{
-			end_progress = 0.3,
 			name = "delay",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			end_progress = 0.3,
+			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 				return
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
+			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				return
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				return
-			end,
+			end
 		},
 		{
-			end_progress = 0.6,
 			name = "fade_in",
 			start_progress = 0.3,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.list_alpha_multiplier = 0
-
-				local widgets_by_name = widgets.widgets_by_name
-				local list_widget = widgets_by_name.list
-				local style = list_widget.style
-				local mask_style = style.mask
-				local mask_default_width = mask_style.texture_size[1]
-
-				params.mask_default_width = mask_default_width
+			end_progress = 0.6,
+			init = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+				arg_8_3.render_settings.list_alpha_multiplier = 0
+				arg_8_3.mask_default_width = arg_8_2.widgets_by_name.list.style.mask.texture_size[1]
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+				local var_9_0 = math.easeOutCubic(arg_9_3)
 
-				params.render_settings.list_alpha_multiplier = anim_progress
+				arg_9_4.render_settings.list_alpha_multiplier = var_9_0
 
-				local widgets_by_name = widgets.widgets_by_name
-				local list_widgets = widgets.list_widgets
-				local longest_anim_distance = 0
+				local var_9_1 = arg_9_2.widgets_by_name
+				local var_9_2 = arg_9_2.list_widgets
+				local var_9_3 = 0
 
-				for index, widget in ipairs(list_widgets) do
-					local content = widget.content
-					local offset = widget.offset
-					local default_offset = widget.default_offset
-					local row = content.row
-					local column = content.column
-					local anim_offset = math.min(row * 50 + (4 - column) * 20, 300)
+				for iter_9_0, iter_9_1 in ipairs(var_9_2) do
+					local var_9_4 = iter_9_1.content
+					local var_9_5 = iter_9_1.offset
+					local var_9_6 = iter_9_1.default_offset
+					local var_9_7 = var_9_4.row
+					local var_9_8 = var_9_4.column
+					local var_9_9 = math.min(var_9_7 * 50 + (4 - var_9_8) * 20, 300)
 
-					offset[1] = math.floor(default_offset[1] - anim_offset + anim_offset * anim_progress)
-					longest_anim_distance = math.max(longest_anim_distance, anim_offset)
+					var_9_5[1] = math.floor(var_9_6[1] - var_9_9 + var_9_9 * var_9_0)
+					var_9_3 = math.max(var_9_3, var_9_9)
 				end
 
-				local mask_default_width = params.mask_default_width
-				local mask_size = math.floor(mask_default_width + longest_anim_distance - longest_anim_distance * anim_progress)
-				local list_widget = widgets_by_name.list
-				local style = list_widget.style
+				local var_9_10 = arg_9_4.mask_default_width
+				local var_9_11 = math.floor(var_9_10 + var_9_3 - var_9_3 * var_9_0)
+				local var_9_12 = var_9_1.list.style
 
-				style.mask.texture_size[1] = mask_size
-				style.mask_top.texture_size[1] = mask_size
-				style.mask_bottom.texture_size[1] = mask_size
+				var_9_12.mask.texture_size[1] = var_9_11
+				var_9_12.mask_top.texture_size[1] = var_9_11
+				var_9_12.mask_bottom.texture_size[1] = var_9_11
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 				return
-			end,
-		},
+			end
+		}
 	},
 	on_item_list_updated = {
 		{
-			end_progress = 0.3,
 			name = "fade_in",
 			start_progress = 0,
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.list_alpha_multiplier = 0
-
-				local widgets_by_name = widgets.widgets_by_name
-				local list_widget = widgets_by_name.list
-				local style = list_widget.style
-				local mask_style = style.mask
-				local mask_default_width = mask_style.texture_size[1]
-
-				params.mask_default_width = mask_default_width
+			end_progress = 0.3,
+			init = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+				arg_11_3.render_settings.list_alpha_multiplier = 0
+				arg_11_3.mask_default_width = arg_11_2.widgets_by_name.list.style.mask.texture_size[1]
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				local anim_progress = math.easeOutCubic(progress)
+			update = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+				local var_12_0 = math.easeOutCubic(arg_12_3)
 
-				params.render_settings.list_alpha_multiplier = anim_progress
+				arg_12_4.render_settings.list_alpha_multiplier = var_12_0
 
-				local widgets_by_name = widgets.widgets_by_name
-				local list_widgets = widgets.list_widgets
-				local longest_anim_distance = 0
+				local var_12_1 = arg_12_2.widgets_by_name
+				local var_12_2 = arg_12_2.list_widgets
+				local var_12_3 = 0
 
-				for index, widget in ipairs(list_widgets) do
-					local content = widget.content
-					local offset = widget.offset
-					local default_offset = widget.default_offset
-					local row = content.row
-					local column = content.column
-					local anim_offset = math.min(row * 50 + (4 - column) * 20, 300)
+				for iter_12_0, iter_12_1 in ipairs(var_12_2) do
+					local var_12_4 = iter_12_1.content
+					local var_12_5 = iter_12_1.offset
+					local var_12_6 = iter_12_1.default_offset
+					local var_12_7 = var_12_4.row
+					local var_12_8 = var_12_4.column
+					local var_12_9 = math.min(var_12_7 * 50 + (4 - var_12_8) * 20, 300)
 
-					offset[1] = math.floor(default_offset[1] - anim_offset + anim_offset * anim_progress)
-					longest_anim_distance = math.max(longest_anim_distance, anim_offset)
+					var_12_5[1] = math.floor(var_12_6[1] - var_12_9 + var_12_9 * var_12_0)
+					var_12_3 = math.max(var_12_3, var_12_9)
 				end
 
-				local mask_default_width = params.mask_default_width
-				local mask_size = math.floor(mask_default_width + longest_anim_distance - longest_anim_distance * anim_progress)
-				local list_widget = widgets_by_name.list
-				local style = list_widget.style
+				local var_12_10 = arg_12_4.mask_default_width
+				local var_12_11 = math.floor(var_12_10 + var_12_3 - var_12_3 * var_12_0)
+				local var_12_12 = var_12_1.list.style
 
-				style.mask.texture_size[1] = mask_size
-				style.mask_top.texture_size[1] = mask_size
-				style.mask_bottom.texture_size[1] = mask_size
+				var_12_12.mask.texture_size[1] = var_12_11
+				var_12_12.mask_top.texture_size[1] = var_12_11
+				var_12_12.mask_bottom.texture_size[1] = var_12_11
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				return
-			end,
-		},
-	},
+			end
+		}
+	}
 }
 
 return {
-	widgets = widgets,
+	widgets = var_0_7,
 	title_button_definitions = title_button_definitions,
-	scenegraph_definition = scenegraph_definition,
-	animation_definitions = animation_definitions,
+	scenegraph_definition = var_0_4,
+	animation_definitions = var_0_8
 }

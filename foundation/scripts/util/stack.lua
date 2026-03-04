@@ -1,27 +1,27 @@
-﻿-- chunkname: @foundation/scripts/util/stack.lua
+-- chunkname: @foundation/scripts/util/stack.lua
 
 Stack = class(Stack)
 
-Stack.init = function (self)
-	self._stack = {}
+function Stack.init(arg_1_0)
+	arg_1_0._stack = {}
 end
 
-Stack.push = function (self, node)
-	table.insert(self._stack, node)
+function Stack.push(arg_2_0, arg_2_1)
+	table.insert(arg_2_0._stack, arg_2_1)
 end
 
-Stack.pop = function (self)
-	return table.remove(self._stack)
+function Stack.pop(arg_3_0)
+	return table.remove(arg_3_0._stack)
 end
 
-Stack.top = function (self)
-	return self._stack[#self._stack]
+function Stack.top(arg_4_0)
+	return arg_4_0._stack[#arg_4_0._stack]
 end
 
-Stack.size = function (self)
-	return #self._stack
+function Stack.size(arg_5_0)
+	return #arg_5_0._stack
 end
 
-Stack.clear = function (self)
-	self._stack = {}
+function Stack.clear(arg_6_0)
+	arg_6_0._stack = {}
 end

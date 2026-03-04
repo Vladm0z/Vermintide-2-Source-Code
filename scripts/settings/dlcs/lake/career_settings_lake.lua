@@ -1,70 +1,71 @@
-﻿-- chunkname: @scripts/settings/dlcs/lake/career_settings_lake.lua
+-- chunkname: @scripts/settings/dlcs/lake/career_settings_lake.lua
 
 CareerActionNames.empire_soldier[#CareerActionNames.empire_soldier + 1] = "action_career_es_4"
 CareerSettings.es_questingknight = {
-	base_skin = "skin_es_questingknight_blue_and_white",
-	category_image = "icons_placeholder",
-	description = "markus_3_desc",
-	display_name = "es_questingknight",
-	icon = "icons_placeholder",
-	name = "es_questingknight",
-	package_name = "resource_packages/careers/es_questingknight",
-	picking_image = "medium_unit_frame_portrait_kruber_questingknight",
-	playfab_name = "es_4",
-	portrait_image = "unit_frame_portrait_kruber_questingknight",
-	portrait_image_picking = "picking_portrait_kruber_questingknight",
-	portrait_thumbnail = "portrait_kruber_questingknight_thumbnail",
-	preview_animation = "career_select_04",
-	preview_idle_animation = "career_idle_04",
-	preview_wield_slot = "melee",
 	profile_name = "empire_soldier",
-	required_dlc = "lake",
-	sort_order = 4,
-	sound_character = "empire_soldier_bretonnian_knight",
-	talent_tree_index = 4,
+	display_name = "es_questingknight",
+	package_name = "resource_packages/careers/es_questingknight",
+	name = "es_questingknight",
+	preview_idle_animation = "career_idle_04",
+	preview_animation = "career_select_04",
+	icon = "icons_placeholder",
 	versus_preview_animation = "versus_career_select_04",
+	base_skin = "skin_es_questingknight_blue_and_white",
+	picking_image = "medium_unit_frame_portrait_kruber_questingknight",
+	preview_wield_slot = "melee",
+	playfab_name = "es_4",
+	category_image = "icons_placeholder",
+	sound_character = "empire_soldier_bretonnian_knight",
+	portrait_image_picking = "picking_portrait_kruber_questingknight",
+	talent_tree_index = 4,
+	description = "markus_3_desc",
+	portrait_image = "unit_frame_portrait_kruber_questingknight",
+	portrait_thumbnail = "portrait_kruber_questingknight_thumbnail",
+	sort_order = 4,
+	required_dlc = "lake",
 	breed = PlayerBreeds.hero_es_questingknight,
 	item_types = {},
 	activated_ability = ActivatedAbilitySettings.es_4,
 	passive_ability = PassiveAbilitySettings.es_4,
 	attributes = {
 		base_critical_strike_chance = 0.05,
-		max_hp = 150,
+		max_hp = 150
 	},
 	video = {
 		material_name = "es_questingknight",
-		resource = "video/career_videos/kruber/es_questingknight",
+		resource = "video/career_videos/kruber/es_questingknight"
 	},
 	unique_subtitles = {
 		"gk_",
-		4,
+		4
 	},
 	preview_items = {
 		{
-			item_name = "es_bastard_sword_preview",
+			item_name = "es_bastard_sword_preview"
 		},
 		{
-			item_name = "questing_knight_hat_0000",
-		},
+			item_name = "questing_knight_hat_0000"
+		}
 	},
-	is_unlocked_function = function (career, hero_name, hero_level)
-		local unlocked, reason = career:override_available_for_mechanism()
+	is_unlocked_function = function(arg_1_0, arg_1_1, arg_1_2)
+		local var_1_0, var_1_1 = arg_1_0:override_available_for_mechanism()
 
-		if not unlocked then
-			return unlocked, reason
+		if not var_1_0 then
+			return var_1_0, var_1_1
 		end
 
-		local dlc_name
+		local var_1_2
+		local var_1_3, var_1_4, var_1_5 = arg_1_0:is_dlc_unlocked()
+		local var_1_6 = var_1_5
+		local var_1_7 = var_1_4
 
-		unlocked, reason, dlc_name = career:is_dlc_unlocked()
-
-		if not unlocked then
-			return false, reason, dlc_name
+		if not var_1_3 then
+			return false, var_1_7, var_1_6
 		end
 
-		return true, reason, dlc_name
+		return true, var_1_7, var_1_6
 	end,
-	is_dlc_unlocked = function (career)
+	is_dlc_unlocked = function(arg_2_0)
 		if Managers.unlock:is_dlc_unlocked("lake") then
 			if IS_WINDOWS or Managers.backend:dlc_unlocked_at_signin("lake") then
 				return true, nil, "lake"
@@ -75,11 +76,11 @@ CareerSettings.es_questingknight = {
 			return false, "dlc_not_owned", "lake"
 		end
 	end,
-	override_available_for_mechanism = function (career)
-		local settings = Managers.mechanism:mechanism_setting_for_title("override_career_availability")
-		local career_name = career.display_name
+	override_available_for_mechanism = function(arg_3_0)
+		local var_3_0 = Managers.mechanism:mechanism_setting_for_title("override_career_availability")
+		local var_3_1 = arg_3_0.display_name
 
-		if settings and settings[career_name] == false then
+		if var_3_0 and var_3_0[var_3_1] == false then
 			return false, "disabled_for_mechanism"
 		end
 
@@ -87,33 +88,33 @@ CareerSettings.es_questingknight = {
 	end,
 	item_slot_types_by_slot_name = {
 		slot_melee = {
-			"melee",
+			"melee"
 		},
 		slot_ranged = {
 			"melee",
-			"ranged",
+			"ranged"
 		},
 		slot_necklace = {
-			"necklace",
+			"necklace"
 		},
 		slot_ring = {
-			"ring",
+			"ring"
 		},
 		slot_trinket_1 = {
-			"trinket",
+			"trinket"
 		},
 		slot_hat = {
-			"hat",
+			"hat"
 		},
 		slot_skin = {
-			"skin",
+			"skin"
 		},
 		slot_frame = {
-			"frame",
+			"frame"
 		},
 		slot_pose = {
-			"weapon_pose",
-		},
+			"weapon_pose"
+		}
 	},
 	loadout_equipment_slots = {
 		"melee",
@@ -121,7 +122,7 @@ CareerSettings.es_questingknight = {
 		"necklace",
 		"ring",
 		"trinket",
-		"weapon_pose",
-	},
+		"weapon_pose"
+	}
 }
 CareerNameAchievementMapping.es_questingknight = "questingknight"

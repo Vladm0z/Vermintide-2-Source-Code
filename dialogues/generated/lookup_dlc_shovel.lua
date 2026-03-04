@@ -1,4 +1,4 @@
-﻿-- chunkname: @dialogues/generated/lookup_dlc_shovel.lua
+-- chunkname: @dialogues/generated/lookup_dlc_shovel.lua
 
 assert(DialogueLookup[DialogueLookup_n + 1] == nil)
 assert(DialogueLookup[DialogueLookup_n + 2] == nil)

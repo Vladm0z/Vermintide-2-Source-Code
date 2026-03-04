@@ -1,722 +1,711 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/charge/player_unit_overcharge_extension.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/charge/player_unit_overcharge_extension.lua
 
 require("scripts/unit_extensions/default_player_unit/charge/overcharge_data")
 
 PlayerUnitOverchargeExtension = class(PlayerUnitOverchargeExtension)
 
-local OVERCHARGE_LEVELS = table.enum("none", "low", "medium", "high", "critical", "exploding")
+local var_0_0 = table.enum("none", "low", "medium", "high", "critical", "exploding")
 
-PlayerUnitOverchargeExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self.world = extension_init_context.world
-	self.unit = unit
+function PlayerUnitOverchargeExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.world = arg_1_1.world
+	arg_1_0.unit = arg_1_2
 
-	local overcharge_data = extension_init_data.overcharge_data
+	local var_1_0 = arg_1_3.overcharge_data
 
-	self.max_value = overcharge_data.max_value or 40
-	self.time_when_overcharge_start_decreasing = 0
-	self.overcharge_crit_time = 0
-	self.overcharge_crit_interval = 1
-	self.venting_overcharge = false
-	self.vent_damage_pool = 0
-	self.no_damage = global_is_inside_inn or overcharge_data.no_damage
-	self.lockout = false
-	self.prev_lockout = false
-	self.overcharge_threshold = overcharge_data.overcharge_threshold or 0
-	self.overcharge_value_decrease_rate = overcharge_data.overcharge_value_decrease_rate or 0
-	self.time_until_overcharge_decreases = overcharge_data.time_until_overcharge_decreases or 0
-	self.hit_overcharge_threshold_sound = overcharge_data.hit_overcharge_threshold_sound or "ui_special_attack_ready"
-	self.critical_overcharge_margin = overcharge_data.critical_overcharge_margin or 1.2
-	self.overcharge_depleted_func = overcharge_data.overcharge_depleted_func
-	self.screen_space_particle = overcharge_data.onscreen_particles_id or "fx/screenspace_overheat_indicator"
-	self.screen_space_particle_critical = overcharge_data.critical_onscreen_particles_id or not overcharge_data.no_critical_onscreen_particles and "fx/screenspace_overheat_critical"
-	self._lerped_overcharge_fraction = 0
+	arg_1_0.max_value = var_1_0.max_value or 40
+	arg_1_0.time_when_overcharge_start_decreasing = 0
+	arg_1_0.overcharge_crit_time = 0
+	arg_1_0.overcharge_crit_interval = 1
+	arg_1_0.venting_overcharge = false
+	arg_1_0.vent_damage_pool = 0
+	arg_1_0.no_damage = global_is_inside_inn or var_1_0.no_damage
+	arg_1_0.lockout = false
+	arg_1_0.prev_lockout = false
+	arg_1_0.overcharge_threshold = var_1_0.overcharge_threshold or 0
+	arg_1_0.overcharge_value_decrease_rate = var_1_0.overcharge_value_decrease_rate or 0
+	arg_1_0.time_until_overcharge_decreases = var_1_0.time_until_overcharge_decreases or 0
+	arg_1_0.hit_overcharge_threshold_sound = var_1_0.hit_overcharge_threshold_sound or "ui_special_attack_ready"
+	arg_1_0.critical_overcharge_margin = var_1_0.critical_overcharge_margin or 1.2
+	arg_1_0.overcharge_depleted_func = var_1_0.overcharge_depleted_func
+	arg_1_0.screen_space_particle = var_1_0.onscreen_particles_id or "fx/screenspace_overheat_indicator"
+	arg_1_0.screen_space_particle_critical = var_1_0.critical_onscreen_particles_id or not var_1_0.no_critical_onscreen_particles and "fx/screenspace_overheat_critical"
+	arg_1_0._lerped_overcharge_fraction = 0
 
-	local local_player = Managers.player:local_player()
-	local player_side = local_player and Managers.state.side:get_side_from_player_unique_id(local_player:unique_id())
+	local var_1_1 = Managers.player:local_player()
+	local var_1_2 = var_1_1 and Managers.state.side:get_side_from_player_unique_id(var_1_1:unique_id())
 
-	if player_side and player_side:name() == "dark_pact" then
-		self.screen_space_particle = "fx/screenspace_overheat_indicator_warpfire"
-		self.screen_space_particle_critical = "fx/screenspace_overheat_critical_warpfire"
+	if var_1_2 and var_1_2:name() == "dark_pact" then
+		arg_1_0.screen_space_particle = "fx/screenspace_overheat_indicator_warpfire"
+		arg_1_0.screen_space_particle_critical = "fx/screenspace_overheat_critical_warpfire"
 	end
 
-	self._overcharge_states = {
-		[OVERCHARGE_LEVELS.none] = {},
-		[OVERCHARGE_LEVELS.low] = {
-			sound_event = overcharge_data.overcharge_warning_low_sound_event,
+	arg_1_0._overcharge_states = {
+		[var_0_0.none] = {},
+		[var_0_0.low] = {
+			sound_event = var_1_0.overcharge_warning_low_sound_event,
 			controller_effect = {
-				rumble_effect = "overcharge_rumble",
-			},
+				rumble_effect = "overcharge_rumble"
+			}
 		},
-		[OVERCHARGE_LEVELS.medium] = {
+		[var_0_0.medium] = {
 			dialogue_event = "overcharge",
-			sound_event = overcharge_data.overcharge_warning_med_sound_event,
+			sound_event = var_1_0.overcharge_warning_med_sound_event,
 			controller_effect = {
-				rumble_effect = "overcharge_rumble_overcharged",
-			},
+				rumble_effect = "overcharge_rumble_overcharged"
+			}
 		},
-		[OVERCHARGE_LEVELS.high] = {
+		[var_0_0.high] = {
 			dialogue_event = "overcharge_high",
-			sound_event = overcharge_data.overcharge_warning_high_sound_event,
+			sound_event = var_1_0.overcharge_warning_high_sound_event,
 			controller_effect = {
-				rumble_effect = "overcharge_rumble_crit",
-			},
+				rumble_effect = "overcharge_rumble_crit"
+			}
 		},
-		[OVERCHARGE_LEVELS.critical] = {
+		[var_0_0.critical] = {
 			dialogue_event = "overcharge_critical",
-			sound_event = overcharge_data.overcharge_warning_critical_sound_event,
+			sound_event = var_1_0.overcharge_warning_critical_sound_event
 		},
-		[OVERCHARGE_LEVELS.exploding] = {
-			dialogue_event = "overcharge_explode",
-		},
+		[var_0_0.exploding] = {
+			dialogue_event = "overcharge_explode"
+		}
 	}
-	self.explosion_template = overcharge_data.explosion_template or "overcharge_explosion"
-	self.no_forced_movement = overcharge_data.no_forced_movement
-	self.no_explosion = overcharge_data.no_explosion
-	self.explode_vfx_name = overcharge_data.explode_vfx_name
-	self.overcharge_explosion_time = overcharge_data.overcharge_explosion_time
-	self.percent_health_lost = overcharge_data.percent_health_lost
-	self.lockout_overcharge_decay_rate = overcharge_data.lockout_overcharge_decay_rate
-	self.network_manager = Managers.state.network
-	self.venting_anim = nil
-	self.is_exploding = false
-	self._ignored_overcharge_types = {
-		charging = true,
-		damage_to_overcharge = true,
-		drakegun_charging = true,
+	arg_1_0.explosion_template = var_1_0.explosion_template or "overcharge_explosion"
+	arg_1_0.no_forced_movement = var_1_0.no_forced_movement
+	arg_1_0.no_explosion = var_1_0.no_explosion
+	arg_1_0.explode_vfx_name = var_1_0.explode_vfx_name
+	arg_1_0.overcharge_explosion_time = var_1_0.overcharge_explosion_time
+	arg_1_0.percent_health_lost = var_1_0.percent_health_lost
+	arg_1_0.lockout_overcharge_decay_rate = var_1_0.lockout_overcharge_decay_rate
+	arg_1_0.network_manager = Managers.state.network
+	arg_1_0.venting_anim = nil
+	arg_1_0.is_exploding = false
+	arg_1_0._ignored_overcharge_types = {
 		flamethrower = true,
+		damage_to_overcharge = true,
+		charging = true,
+		drakegun_charging = true
 	}
 
-	local overcharge_opacity = Application.user_setting("overcharge_opacity") or 100
+	local var_1_3 = Application.user_setting("overcharge_opacity") or 100
 
-	self:set_screen_particle_opacity_modifier(overcharge_opacity)
+	arg_1_0:set_screen_particle_opacity_modifier(var_1_3)
 end
 
-PlayerUnitOverchargeExtension.extensions_ready = function (self, world, unit)
-	local first_person_extension = ScriptUnit.extension(self.unit, "first_person_system")
+function PlayerUnitOverchargeExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+	arg_2_0.first_person_extension = ScriptUnit.extension(arg_2_0.unit, "first_person_system")
+	arg_2_0._dialogue_input = ScriptUnit.extension_input(arg_2_0.unit, "dialogue_system")
+	arg_2_0._buff_extension = ScriptUnit.extension(arg_2_0.unit, "buff_system")
+	arg_2_0.overcharge_value = 0
+	arg_2_0.original_max_value = arg_2_0.max_value
 
-	self.first_person_extension = first_person_extension
-	self._dialogue_input = ScriptUnit.extension_input(self.unit, "dialogue_system")
-	self._buff_extension = ScriptUnit.extension(self.unit, "buff_system")
-	self.overcharge_value = 0
-	self.original_max_value = self.max_value
-
-	self:_calculate_and_set_buffed_max_overcharge_values()
+	arg_2_0:_calculate_and_set_buffed_max_overcharge_values()
 end
 
-PlayerUnitOverchargeExtension._calculate_and_set_buffed_max_overcharge_values = function (self)
-	local overcharge_fraction = self:overcharge_fraction()
-	local max_value = self._buff_extension:apply_buffs_to_value(self.original_max_value, "max_overcharge")
+function PlayerUnitOverchargeExtension._calculate_and_set_buffed_max_overcharge_values(arg_3_0)
+	local var_3_0 = arg_3_0:overcharge_fraction()
+	local var_3_1 = arg_3_0._buff_extension:apply_buffs_to_value(arg_3_0.original_max_value, "max_overcharge")
 
-	fassert(max_value >= NetworkConstants.max_overcharge.min and max_value <= NetworkConstants.max_overcharge.max, "Max overcharge outside value bounds allowed by network variable!")
+	fassert(var_3_1 >= NetworkConstants.max_overcharge.min and var_3_1 <= NetworkConstants.max_overcharge.max, "Max overcharge outside value bounds allowed by network variable!")
 
-	self.overcharge_value = overcharge_fraction * max_value
-	self.max_value = max_value
-	self.overcharge_limit = max_value * 0.65
-	self.overcharge_critical_limit = max_value * 0.8
+	arg_3_0.overcharge_value = var_3_0 * var_3_1
+	arg_3_0.max_value = var_3_1
+	arg_3_0.overcharge_limit = var_3_1 * 0.65
+	arg_3_0.overcharge_critical_limit = var_3_1 * 0.8
 end
 
-PlayerUnitOverchargeExtension.set_screen_particle_opacity_modifier = function (self, value)
-	self._screen_particle_opacity_modifier = value / 100
+function PlayerUnitOverchargeExtension.set_screen_particle_opacity_modifier(arg_4_0, arg_4_1)
+	arg_4_0._screen_particle_opacity_modifier = arg_4_1 / 100
 end
 
-PlayerUnitOverchargeExtension.reset = function (self)
-	self:_destroy_all_screen_space_particles()
+function PlayerUnitOverchargeExtension.reset(arg_5_0)
+	arg_5_0:_destroy_all_screen_space_particles()
 
-	local buff_extension = ScriptUnit.has_extension(self.unit, "buff_system")
+	local var_5_0 = ScriptUnit.has_extension(arg_5_0.unit, "buff_system")
 
-	if buff_extension and buff_extension:active_buffs() then
-		self:_add_overcharge_buff(nil)
+	if var_5_0 and var_5_0:active_buffs() then
+		arg_5_0:_add_overcharge_buff(nil)
 	end
 
-	self.lockout = false
-	self.overcharge_value = 0
-	self.played_hit_overcharge_threshold = false
-	self.is_exploding = false
+	arg_5_0.lockout = false
+	arg_5_0.overcharge_value = 0
+	arg_5_0.played_hit_overcharge_threshold = false
+	arg_5_0.is_exploding = false
 
-	StatusUtils.set_overcharge_exploding(self.unit, false)
+	StatusUtils.set_overcharge_exploding(arg_5_0.unit, false)
 
-	local world = self.world
-	local wwise_world = Managers.world:wwise_world(world)
+	local var_5_1 = arg_5_0.world
+	local var_5_2 = Managers.world:wwise_world(var_5_1)
 
-	WwiseWorld.set_global_parameter(wwise_world, "overcharge_status", 0)
-	self:set_animation_variable()
+	WwiseWorld.set_global_parameter(var_5_2, "overcharge_status", 0)
+	arg_5_0:set_animation_variable()
 end
 
-PlayerUnitOverchargeExtension._destroy_all_screen_space_particles = function (self)
-	self:_destroy_screen_space_particles(self.onscreen_particles_id)
+function PlayerUnitOverchargeExtension._destroy_all_screen_space_particles(arg_6_0)
+	arg_6_0:_destroy_screen_space_particles(arg_6_0.onscreen_particles_id)
 
-	self.onscreen_particles_id = nil
+	arg_6_0.onscreen_particles_id = nil
 
-	self:_destroy_screen_space_particles(self.critical_onscreen_particles_id)
+	arg_6_0:_destroy_screen_space_particles(arg_6_0.critical_onscreen_particles_id)
 
-	self.critical_onscreen_particles_id = nil
+	arg_6_0.critical_onscreen_particles_id = nil
 end
 
-PlayerUnitOverchargeExtension._destroy_screen_space_particles = function (self, particle_id)
-	if particle_id then
-		World.destroy_particles(self.world, particle_id)
+function PlayerUnitOverchargeExtension._destroy_screen_space_particles(arg_7_0, arg_7_1)
+	if arg_7_1 then
+		World.destroy_particles(arg_7_0.world, arg_7_1)
 	end
 end
 
-PlayerUnitOverchargeExtension._update_vfx_sfx = function (self, owner_player)
-	if owner_player and not owner_player.bot_player then
-		self:_update_screen_effect()
+function PlayerUnitOverchargeExtension._update_vfx_sfx(arg_8_0, arg_8_1)
+	if arg_8_1 and not arg_8_1.bot_player then
+		arg_8_0:_update_screen_effect()
 
-		local world = self.world
-		local wwise_world = Managers.world:wwise_world(world)
+		local var_8_0 = arg_8_0.world
+		local var_8_1 = Managers.world:wwise_world(var_8_0)
 
-		WwiseWorld.set_global_parameter(wwise_world, "overcharge_status", self._lerped_overcharge_fraction)
+		WwiseWorld.set_global_parameter(var_8_1, "overcharge_status", arg_8_0._lerped_overcharge_fraction)
 	end
 end
 
-PlayerUnitOverchargeExtension.destroy = function (self)
-	self:_destroy_all_screen_space_particles()
+function PlayerUnitOverchargeExtension.destroy(arg_9_0)
+	arg_9_0:_destroy_all_screen_space_particles()
 
-	local buff_extension = ScriptUnit.has_extension(self.unit, "buff_system")
+	local var_9_0 = ScriptUnit.has_extension(arg_9_0.unit, "buff_system")
 
-	if buff_extension and buff_extension:active_buffs() then
-		self:_add_overcharge_buff(nil)
+	if var_9_0 and var_9_0:active_buffs() then
+		arg_9_0:_add_overcharge_buff(nil)
 	end
 end
 
-PlayerUnitOverchargeExtension.set_animation_variable = function (self)
-	local anim_blend_overcharge = self:get_anim_blend_overcharge()
+function PlayerUnitOverchargeExtension.set_animation_variable(arg_10_0)
+	local var_10_0 = arg_10_0:get_anim_blend_overcharge()
 
-	self.first_person_extension:animation_set_variable("overcharge", anim_blend_overcharge, true)
+	arg_10_0.first_person_extension:animation_set_variable("overcharge", var_10_0, true)
 end
 
-PlayerUnitOverchargeExtension._update_game_object = function (self)
-	local network_manager = self.network_manager
-	local unit = self.unit
-	local game = network_manager:game()
-	local go_id = Managers.state.unit_storage:go_id(unit)
+function PlayerUnitOverchargeExtension._update_game_object(arg_11_0)
+	local var_11_0 = arg_11_0.network_manager
+	local var_11_1 = arg_11_0.unit
+	local var_11_2 = var_11_0:game()
+	local var_11_3 = Managers.state.unit_storage:go_id(var_11_1)
 
-	if game and go_id then
-		local current_value_percentage = self:overcharge_fraction()
-		local threshold_percentage = self:threshold_fraction()
-		local max_value = self:get_max_value()
+	if var_11_2 and var_11_3 then
+		local var_11_4 = arg_11_0:overcharge_fraction()
+		local var_11_5 = arg_11_0:threshold_fraction()
+		local var_11_6 = arg_11_0:get_max_value()
 
-		GameSession.set_game_object_field(game, go_id, "overcharge_percentage", current_value_percentage)
-		GameSession.set_game_object_field(game, go_id, "overcharge_threshold_percentage", threshold_percentage)
-		GameSession.set_game_object_field(game, go_id, "overcharge_max_value", max_value)
+		GameSession.set_game_object_field(var_11_2, var_11_3, "overcharge_percentage", var_11_4)
+		GameSession.set_game_object_field(var_11_2, var_11_3, "overcharge_threshold_percentage", var_11_5)
+		GameSession.set_game_object_field(var_11_2, var_11_3, "overcharge_max_value", var_11_6)
 	end
 end
 
-PlayerUnitOverchargeExtension.update = function (self, unit, input, dt, context, t)
-	self:_calculate_and_set_buffed_max_overcharge_values()
-	self:_update_game_object()
+function PlayerUnitOverchargeExtension.update(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+	arg_12_0:_calculate_and_set_buffed_max_overcharge_values()
+	arg_12_0:_update_game_object()
 
-	local pre_amount = self.overcharge_value
+	local var_12_0 = arg_12_0.overcharge_value
 
-	if not self.is_exploding and self.venting_overcharge and self.overcharge_value >= 0 then
-		local buff_extension = self._buff_extension
-		local wielder = self.unit
-		local vent_speed = buff_extension:apply_buffs_to_value(dt, "vent_speed")
-		local vent_amount = self.overcharge_value * (self.original_max_value / 80) * vent_speed
-		local current_overcharge_value = self.overcharge_value
-		local new_overcharge_value = current_overcharge_value - vent_amount
+	if not arg_12_0.is_exploding and arg_12_0.venting_overcharge and arg_12_0.overcharge_value >= 0 then
+		local var_12_1 = arg_12_0._buff_extension
+		local var_12_2 = arg_12_0.unit
+		local var_12_3 = var_12_1:apply_buffs_to_value(arg_12_3, "vent_speed")
+		local var_12_4 = arg_12_0.overcharge_value * (arg_12_0.original_max_value / 80) * var_12_3
+		local var_12_5 = arg_12_0.overcharge_value
+		local var_12_6 = var_12_5 - var_12_4
 
-		self:_update_overcharge_buff_state(current_overcharge_value, new_overcharge_value)
+		arg_12_0:_update_overcharge_buff_state(var_12_5, var_12_6)
 
-		self.overcharge_value = new_overcharge_value
-		self.vent_damage_pool = self.vent_damage_pool + vent_amount * 2
+		arg_12_0.overcharge_value = var_12_6
+		arg_12_0.vent_damage_pool = arg_12_0.vent_damage_pool + var_12_4 * 2
 
-		if self.vent_damage_pool >= 20 and not self.no_damage and self.overcharge_value > self.overcharge_threshold then
-			local _, procced = buff_extension:apply_buffs_to_value(0, "overcharge_damage_immunity")
+		if arg_12_0.vent_damage_pool >= 20 and not arg_12_0.no_damage and arg_12_0.overcharge_value > arg_12_0.overcharge_threshold then
+			local var_12_7, var_12_8 = var_12_1:apply_buffs_to_value(0, "overcharge_damage_immunity")
 
-			if not procced then
-				local damage_amount = 2 + self.overcharge_value / 12
+			if not var_12_8 then
+				local var_12_9 = 2 + arg_12_0.overcharge_value / 12
+				local var_12_10 = var_12_1:apply_buffs_to_value(var_12_9, "vent_damage")
 
-				damage_amount = buff_extension:apply_buffs_to_value(damage_amount, "vent_damage")
-
-				DamageUtils.add_damage_network(wielder, wielder, damage_amount, "torso", "overcharge", nil, Vector3(0, 1, 0), "overcharge", nil, nil, nil, nil, false, false, false, 0, 1, nil, 1)
+				DamageUtils.add_damage_network(var_12_2, var_12_2, var_12_10, "torso", "overcharge", nil, Vector3(0, 1, 0), "overcharge", nil, nil, nil, nil, false, false, false, 0, 1, nil, 1)
 			end
 
-			self.vent_damage_pool = 0
+			arg_12_0.vent_damage_pool = 0
 		end
 	else
-		self.venting_overcharge = false
+		arg_12_0.venting_overcharge = false
 	end
 
-	local first_person_extension = self.first_person_extension
-	local unit_3p = self.unit
+	local var_12_11 = arg_12_0.first_person_extension
+	local var_12_12 = arg_12_0.unit
 
-	if first_person_extension then
-		if self.venting_anim then
-			first_person_extension:animation_event(self.venting_anim)
+	if var_12_11 then
+		if arg_12_0.venting_anim then
+			var_12_11:animation_event(arg_12_0.venting_anim)
 
-			self.venting_anim = nil
+			arg_12_0.venting_anim = nil
 		end
 
-		local lockout = self.lockout
+		local var_12_13 = arg_12_0.lockout
 
-		if self.prev_lockout ~= lockout then
-			self.prev_lockout = lockout
+		if arg_12_0.prev_lockout ~= var_12_13 then
+			arg_12_0.prev_lockout = var_12_13
 
-			local anim_lockout = lockout and 1 or 0
+			local var_12_14 = var_12_13 and 1 or 0
 
-			first_person_extension:animation_set_variable("overcharge_locked_out", anim_lockout, true)
+			var_12_11:animation_set_variable("overcharge_locked_out", var_12_14, true)
 
-			if not lockout then
-				first_person_extension:animation_event("overcharge_end")
-				Managers.state.network:anim_event(unit_3p, "overcharge_end")
+			if not var_12_13 then
+				var_12_11:animation_event("overcharge_end")
+				Managers.state.network:anim_event(var_12_12, "overcharge_end")
 			end
 		end
 	end
 
-	local buff_extension = self._buff_extension
-	local owner_player = Managers.player:owner(self.unit)
+	local var_12_15 = arg_12_0._buff_extension
+	local var_12_16 = Managers.player:owner(arg_12_0.unit)
 
-	if self.overcharge_value > 0 or buff_extension:has_buff_type("sienna_unchained_activated_ability") then
-		self._had_overcharge = true
+	if arg_12_0.overcharge_value > 0 or var_12_15:has_buff_type("sienna_unchained_activated_ability") then
+		arg_12_0._had_overcharge = true
 
-		if not self.is_exploding and t > self.time_when_overcharge_start_decreasing or self.lockout == true then
-			local decay = 1
+		if not arg_12_0.is_exploding and arg_12_5 > arg_12_0.time_when_overcharge_start_decreasing or arg_12_0.lockout == true then
+			local var_12_17 = 1
 
-			if self.overcharge_value >= self.overcharge_threshold then
-				decay = decay * 0.6
-			elseif self.lockout == true then
-				self.lockout = false
-				self.is_exploding = false
+			if arg_12_0.overcharge_value >= arg_12_0.overcharge_threshold then
+				var_12_17 = var_12_17 * 0.6
+			elseif arg_12_0.lockout == true then
+				arg_12_0.lockout = false
+				arg_12_0.is_exploding = false
 
-				self:_trigger_hud_sound("weapon_life_staff_lockout_end", self.first_person_extension)
-				self:_trigger_dialogue("overcharge_lockout_end")
+				arg_12_0:_trigger_hud_sound("weapon_life_staff_lockout_end", arg_12_0.first_person_extension)
+				arg_12_0:_trigger_dialogue("overcharge_lockout_end")
 			end
 
-			if self.lockout then
-				decay = decay * self.lockout_overcharge_decay_rate
+			if arg_12_0.lockout then
+				var_12_17 = var_12_17 * arg_12_0.lockout_overcharge_decay_rate
 			end
 
-			local value = decay * self.overcharge_value_decrease_rate * dt
+			local var_12_18 = var_12_17 * arg_12_0.overcharge_value_decrease_rate * arg_12_3
+			local var_12_19 = arg_12_0.overcharge_value - var_12_15:apply_buffs_to_value(var_12_18, "overcharge_regen")
 
-			value = self.overcharge_value - buff_extension:apply_buffs_to_value(value, "overcharge_regen")
-
-			if buff_extension:has_buff_type("sienna_unchained_activated_ability") and value >= self.max_value then
-				self:add_charge(1)
+			if var_12_15:has_buff_type("sienna_unchained_activated_ability") and var_12_19 >= arg_12_0.max_value then
+				arg_12_0:add_charge(1)
 			end
 
-			local old_overcharge_value = self.overcharge_value
-			local new_overcharge_value = math.min(math.max(0, value), self.max_value)
+			local var_12_20 = arg_12_0.overcharge_value
+			local var_12_21 = math.min(math.max(0, var_12_19), arg_12_0.max_value)
 
-			self.overcharge_value = new_overcharge_value
+			arg_12_0.overcharge_value = var_12_21
 
-			self:_update_overcharge_buff_state(old_overcharge_value, new_overcharge_value)
+			arg_12_0:_update_overcharge_buff_state(var_12_20, var_12_21)
 		end
-	elseif self._had_overcharge then
-		self._had_overcharge = false
+	elseif arg_12_0._had_overcharge then
+		arg_12_0._had_overcharge = false
 
-		self:_update_overcharge_buff(OVERCHARGE_LEVELS.none)
-		self:_trigger_controller_effect(nil)
+		arg_12_0:_update_overcharge_buff(var_0_0.none)
+		arg_12_0:_trigger_controller_effect(nil)
 	end
 
-	local lerped_overcharge_dirty = self:_update_lerped_overcharge(dt)
-
-	if lerped_overcharge_dirty then
-		self:_update_vfx_sfx(owner_player)
-		self:set_animation_variable()
+	if arg_12_0:_update_lerped_overcharge(arg_12_3) then
+		arg_12_0:_update_vfx_sfx(var_12_16)
+		arg_12_0:set_animation_variable()
 	end
 
-	local post_amount = self.overcharge_value
+	local var_12_22 = arg_12_0.overcharge_value
 
-	if post_amount < pre_amount then
-		self._buff_extension:trigger_procs("on_overcharge_lost", pre_amount - post_amount, self.max_value)
+	if var_12_22 < var_12_0 then
+		arg_12_0._buff_extension:trigger_procs("on_overcharge_lost", var_12_0 - var_12_22, arg_12_0.max_value)
 	end
 
-	if self.overcharge_value <= 0 and pre_amount ~= 0 and self.overcharge_depleted_func then
-		self.overcharge_depleted_func(self.world, self.unit, self.first_person_extension)
+	if arg_12_0.overcharge_value <= 0 and var_12_0 ~= 0 and arg_12_0.overcharge_depleted_func then
+		arg_12_0.overcharge_depleted_func(arg_12_0.world, arg_12_0.unit, arg_12_0.first_person_extension)
 	end
 end
 
-PlayerUnitOverchargeExtension.add_charge = function (self, overcharge_amount, charge_level, overcharge_type)
-	local buff_extension = self._buff_extension
-	local max_value = self.max_value
-	local current_overcharge_value = self.overcharge_value
-	local new_overcharge_value
+function PlayerUnitOverchargeExtension.add_charge(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	local var_13_0 = arg_13_0._buff_extension
+	local var_13_1 = arg_13_0.max_value
+	local var_13_2 = arg_13_0.overcharge_value
+	local var_13_3
 
-	if charge_level then
-		overcharge_amount = 0.4 * overcharge_amount + 0.6 * overcharge_amount * charge_level
+	if arg_13_2 then
+		arg_13_1 = 0.4 * arg_13_1 + 0.6 * arg_13_1 * arg_13_2
 	end
 
-	overcharge_amount = self._buff_extension:apply_buffs_to_value(overcharge_amount, "reduced_overcharge")
+	arg_13_1 = arg_13_0._buff_extension:apply_buffs_to_value(arg_13_1, "reduced_overcharge")
 
-	if buff_extension and not self._ignored_overcharge_types[overcharge_type] then
-		overcharge_amount = overcharge_amount * buff_extension:apply_buffs_to_value(1, "ammo_used_multiplier")
+	if var_13_0 and not arg_13_0._ignored_overcharge_types[arg_13_3] then
+		arg_13_1 = arg_13_1 * var_13_0:apply_buffs_to_value(1, "ammo_used_multiplier")
 
-		buff_extension:trigger_procs("on_ammo_used", self, 0)
-		buff_extension:trigger_procs("on_overcharge_used", overcharge_amount)
-		Managers.state.achievement:trigger_event("ammo_used", self.owner_unit)
+		var_13_0:trigger_procs("on_ammo_used", arg_13_0, 0)
+		var_13_0:trigger_procs("on_overcharge_used", arg_13_1)
+		Managers.state.achievement:trigger_event("ammo_used", arg_13_0.owner_unit)
 
-		if not LEVEL_EDITOR_TEST and not self._is_server then
-			local player_manager = Managers.player
-			local owner_player = Managers.player:owner(self.unit)
-			local peer_id = owner_player:network_id()
-			local local_player_id = owner_player:local_player_id()
-			local event_id = NetworkLookup.proc_events.on_ammo_used
+		if not LEVEL_EDITOR_TEST and not arg_13_0._is_server then
+			local var_13_4 = Managers.player
+			local var_13_5 = Managers.player:owner(arg_13_0.unit)
+			local var_13_6 = var_13_5:network_id()
+			local var_13_7 = var_13_5:local_player_id()
+			local var_13_8 = NetworkLookup.proc_events.on_ammo_used
 
-			Managers.state.network.network_transmit:send_rpc_server("rpc_proc_event", peer_id, local_player_id, event_id)
+			Managers.state.network.network_transmit:send_rpc_server("rpc_proc_event", var_13_6, var_13_7, var_13_8)
 		end
 	end
 
-	if buff_extension:has_buff_perk("no_overcharge") then
+	if var_13_0:has_buff_perk("no_overcharge") then
 		return
 	end
 
-	if buff_extension:has_buff_type("twitch_no_overcharge_no_ammo_reloads") then
+	if var_13_0:has_buff_type("twitch_no_overcharge_no_ammo_reloads") then
 		return
 	end
 
-	local critical_overcharge_margin = self.critical_overcharge_margin
+	if var_13_2 <= var_13_1 - arg_13_0.critical_overcharge_margin and var_13_1 <= var_13_2 + arg_13_1 then
+		local var_13_9 = arg_13_0._overcharge_states[var_0_0.critical]
 
-	if current_overcharge_value <= max_value - critical_overcharge_margin and max_value <= current_overcharge_value + overcharge_amount then
-		local state_settings = self._overcharge_states[OVERCHARGE_LEVELS.critical]
+		arg_13_0:_trigger_hud_sound(var_13_9.sound_event, arg_13_0.first_person_extension)
+		arg_13_0:_trigger_dialogue(var_13_9.dialogue_event)
 
-		self:_trigger_hud_sound(state_settings.sound_event, self.first_person_extension)
-		self:_trigger_dialogue(state_settings.dialogue_event)
-
-		new_overcharge_value = max_value - 0.1
+		var_13_3 = var_13_1 - 0.1
 	else
-		new_overcharge_value = math.min(current_overcharge_value + overcharge_amount, max_value)
+		var_13_3 = math.min(var_13_2 + arg_13_1, var_13_1)
 	end
 
-	self:_check_overcharge_level_thresholds(new_overcharge_value)
+	arg_13_0:_check_overcharge_level_thresholds(var_13_3)
 
-	local overcharge_gained = new_overcharge_value - current_overcharge_value
-	local fraction_gained = overcharge_gained / self:get_max_value()
+	local var_13_10 = var_13_3 - var_13_2
+	local var_13_11 = var_13_10 / arg_13_0:get_max_value()
 
-	Managers.state.achievement:trigger_event("overcharge_gained", overcharge_gained, fraction_gained, self.unit)
+	Managers.state.achievement:trigger_event("overcharge_gained", var_13_10, var_13_11, arg_13_0.unit)
 
-	self.time_when_overcharge_start_decreasing = Managers.time:time("game") + self.time_until_overcharge_decreases
-	self.overcharge_value = new_overcharge_value
+	arg_13_0.time_when_overcharge_start_decreasing = Managers.time:time("game") + arg_13_0.time_until_overcharge_decreases
+	arg_13_0.overcharge_value = var_13_3
 end
 
-PlayerUnitOverchargeExtension.remove_charge = function (self, overcharge_amount)
-	if self.is_exploding then
+function PlayerUnitOverchargeExtension.remove_charge(arg_14_0, arg_14_1)
+	if arg_14_0.is_exploding then
 		return
 	end
 
-	local current_overcharge_value = self.overcharge_value
-	local new_overcharge_value = math.max(current_overcharge_value - overcharge_amount, 0)
+	local var_14_0 = arg_14_0.overcharge_value
+	local var_14_1 = math.max(var_14_0 - arg_14_1, 0)
 
-	self:_check_overcharge_level_thresholds(new_overcharge_value)
+	arg_14_0:_check_overcharge_level_thresholds(var_14_1)
 
-	local overcharge_lost = math.max(current_overcharge_value - new_overcharge_value, 0)
+	local var_14_2 = math.max(var_14_0 - var_14_1, 0)
 
-	self._buff_extension:trigger_procs("on_overcharge_lost", overcharge_lost, self.max_value)
+	arg_14_0._buff_extension:trigger_procs("on_overcharge_lost", var_14_2, arg_14_0.max_value)
 
-	self.overcharge_value = new_overcharge_value
+	arg_14_0.overcharge_value = var_14_1
 
-	return current_overcharge_value - new_overcharge_value
+	return var_14_0 - var_14_1
 end
 
-PlayerUnitOverchargeExtension.remove_charge_fraction = function (self, fraction)
-	local max_charge = self:get_max_value()
-	local charge_to_remove = max_charge * fraction
-	local charge_removed = self:remove_charge(charge_to_remove) or 0
+function PlayerUnitOverchargeExtension.remove_charge_fraction(arg_15_0, arg_15_1)
+	local var_15_0 = arg_15_0:get_max_value()
+	local var_15_1 = var_15_0 * arg_15_1
+	local var_15_2 = arg_15_0:remove_charge(var_15_1) or 0
 
-	return charge_removed, charge_removed / max_charge
+	return var_15_2, var_15_2 / var_15_0
 end
 
-PlayerUnitOverchargeExtension._check_overcharge_level_thresholds = function (self, new_overcharge_value)
-	local buff_extension = self._buff_extension
-	local max_value = self.max_value
+function PlayerUnitOverchargeExtension._check_overcharge_level_thresholds(arg_16_0, arg_16_1)
+	local var_16_0 = arg_16_0._buff_extension
+	local var_16_1 = arg_16_0.max_value
 
-	if max_value <= new_overcharge_value then
-		if buff_extension:has_buff_perk("no_overcharge_explosion") then
-			local wielder = self.unit
-			local vent_amount = new_overcharge_value - max_value + 1
-			local damage_amount = 2 + max_value / 12
+	if var_16_1 <= arg_16_1 then
+		if var_16_0:has_buff_perk("no_overcharge_explosion") then
+			local var_16_2 = arg_16_0.unit
+			local var_16_3 = arg_16_1 - var_16_1 + 1
+			local var_16_4 = 2 + var_16_1 / 12
+			local var_16_5 = var_16_0:apply_buffs_to_value(var_16_4, "vent_damage")
 
-			damage_amount = buff_extension:apply_buffs_to_value(damage_amount, "vent_damage")
-
-			self:remove_charge(vent_amount)
+			arg_16_0:remove_charge(var_16_3)
 		else
-			local unit = self.unit
+			local var_16_6 = arg_16_0.unit
 
-			StatusUtils.set_overcharge_exploding(unit, true)
+			StatusUtils.set_overcharge_exploding(var_16_6, true)
 
-			self.is_exploding = true
+			arg_16_0.is_exploding = true
 
-			self:_add_overcharge_buff(nil)
+			arg_16_0:_add_overcharge_buff(nil)
 
-			local state_settings = self._overcharge_states[OVERCHARGE_LEVELS.exploding]
+			local var_16_7 = arg_16_0._overcharge_states[var_0_0.exploding]
 
-			self:_trigger_hud_sound(state_settings.sound_event, self.first_person_extension)
-			self:_trigger_dialogue(state_settings.dialogue_event)
-			self:_trigger_controller_effect("rumble", state_settings.controller_effect)
+			arg_16_0:_trigger_hud_sound(var_16_7.sound_event, arg_16_0.first_person_extension)
+			arg_16_0:_trigger_dialogue(var_16_7.dialogue_event)
+			arg_16_0:_trigger_controller_effect("rumble", var_16_7.controller_effect)
 		end
 	else
-		local charge_fraction = new_overcharge_value / max_value
-		local overcharge_threshold = self.overcharge_threshold
-		local old_state = self:_overcharge_value_state(self.overcharge_value)
-		local new_state = self:_overcharge_value_state(new_overcharge_value)
-		local entered_new_state = old_state ~= new_state
-		local state_settings = self._overcharge_states[new_state]
+		local var_16_8 = arg_16_1 / var_16_1
+		local var_16_9 = arg_16_0.overcharge_threshold
+		local var_16_10 = arg_16_0:_overcharge_value_state(arg_16_0.overcharge_value)
+		local var_16_11 = arg_16_0:_overcharge_value_state(arg_16_1)
+		local var_16_12 = var_16_10 ~= var_16_11
+		local var_16_13 = arg_16_0._overcharge_states[var_16_11]
 
-		if state_settings then
-			if entered_new_state then
-				if new_state == OVERCHARGE_LEVELS.low then
-					local wwise_world = Managers.world:wwise_world(self.world)
+		if var_16_13 then
+			if var_16_12 then
+				if var_16_11 == var_0_0.low then
+					local var_16_14 = Managers.world:wwise_world(arg_16_0.world)
 
-					WwiseWorld.trigger_event(wwise_world, self.hit_overcharge_threshold_sound)
+					WwiseWorld.trigger_event(var_16_14, arg_16_0.hit_overcharge_threshold_sound)
 				end
 
-				self:_trigger_hud_sound(state_settings.sound_event, self.first_person_extension)
-				self:_update_overcharge_buff(new_state)
+				arg_16_0:_trigger_hud_sound(var_16_13.sound_event, arg_16_0.first_person_extension)
+				arg_16_0:_update_overcharge_buff(var_16_11)
 			end
 
-			self:_trigger_dialogue(state_settings.dialogue_event)
-			self:_trigger_controller_effect("rumble", state_settings.controller_effect)
+			arg_16_0:_trigger_dialogue(var_16_13.dialogue_event)
+			arg_16_0:_trigger_controller_effect("rumble", var_16_13.controller_effect)
 		end
 	end
 end
 
-PlayerUnitOverchargeExtension.set_lockout = function (self, new_state)
-	self.lockout = new_state
+function PlayerUnitOverchargeExtension.set_lockout(arg_17_0, arg_17_1)
+	arg_17_0.lockout = arg_17_1
 end
 
-PlayerUnitOverchargeExtension.get_overcharge_value = function (self)
-	return self.overcharge_value
+function PlayerUnitOverchargeExtension.get_overcharge_value(arg_18_0)
+	return arg_18_0.overcharge_value
 end
 
-PlayerUnitOverchargeExtension.is_above_critical_limit = function (self)
-	return self.overcharge_value >= self.overcharge_critical_limit
+function PlayerUnitOverchargeExtension.is_above_critical_limit(arg_19_0)
+	return arg_19_0.overcharge_value >= arg_19_0.overcharge_critical_limit
 end
 
-PlayerUnitOverchargeExtension.get_original_max_value = function (self)
-	return self.original_max_value
+function PlayerUnitOverchargeExtension.get_original_max_value(arg_20_0)
+	return arg_20_0.original_max_value
 end
 
-PlayerUnitOverchargeExtension.get_max_value = function (self)
-	return self.max_value
+function PlayerUnitOverchargeExtension.get_max_value(arg_21_0)
+	return arg_21_0.max_value
 end
 
-PlayerUnitOverchargeExtension.get_overcharge_threshold = function (self)
-	return self.overcharge_threshold
+function PlayerUnitOverchargeExtension.get_overcharge_threshold(arg_22_0)
+	return arg_22_0.overcharge_threshold
 end
 
-PlayerUnitOverchargeExtension.above_overcharge_threshold = function (self)
-	return self.overcharge_value >= self.overcharge_threshold
+function PlayerUnitOverchargeExtension.above_overcharge_threshold(arg_23_0)
+	return arg_23_0.overcharge_value >= arg_23_0.overcharge_threshold
 end
 
-PlayerUnitOverchargeExtension.are_you_exploding = function (self)
-	return self.is_exploding
+function PlayerUnitOverchargeExtension.are_you_exploding(arg_24_0)
+	return arg_24_0.is_exploding
 end
 
-PlayerUnitOverchargeExtension.are_you_locked_out = function (self)
-	return self.lockout
+function PlayerUnitOverchargeExtension.are_you_locked_out(arg_25_0)
+	return arg_25_0.lockout
 end
 
-PlayerUnitOverchargeExtension.overcharge_fraction = function (self)
-	return math.clamp(self.overcharge_value / self.max_value, 0, 1)
+function PlayerUnitOverchargeExtension.overcharge_fraction(arg_26_0)
+	return math.clamp(arg_26_0.overcharge_value / arg_26_0.max_value, 0, 1)
 end
 
-PlayerUnitOverchargeExtension.lerped_overcharge_fraction = function (self)
-	return self._lerped_overcharge_fraction
+function PlayerUnitOverchargeExtension.lerped_overcharge_fraction(arg_27_0)
+	return arg_27_0._lerped_overcharge_fraction
 end
 
-PlayerUnitOverchargeExtension.threshold_fraction = function (self)
-	return self.overcharge_threshold / self.max_value
+function PlayerUnitOverchargeExtension.threshold_fraction(arg_28_0)
+	return arg_28_0.overcharge_threshold / arg_28_0.max_value
 end
 
-PlayerUnitOverchargeExtension.current_overcharge_status = function (self)
-	local value = self:get_overcharge_value()
-	local threshold = self:get_overcharge_threshold()
-	local max_value = self:get_max_value()
+function PlayerUnitOverchargeExtension.current_overcharge_status(arg_29_0)
+	local var_29_0 = arg_29_0:get_overcharge_value()
+	local var_29_1 = arg_29_0:get_overcharge_threshold()
+	local var_29_2 = arg_29_0:get_max_value()
 
-	return value, threshold, max_value
+	return var_29_0, var_29_1, var_29_2
 end
 
-PlayerUnitOverchargeExtension.vent_overcharge = function (self)
-	self.venting_overcharge = true
+function PlayerUnitOverchargeExtension.vent_overcharge(arg_30_0)
+	arg_30_0.venting_overcharge = true
 
-	if self.overcharge_value > 0 then
-		self.vent_damage_pool = 20
+	if arg_30_0.overcharge_value > 0 then
+		arg_30_0.vent_damage_pool = 20
 	else
-		self.vent_damage_pool = 0
+		arg_30_0.vent_damage_pool = 0
 	end
 
-	self.venting_anim = "cooldown_start"
+	arg_30_0.venting_anim = "cooldown_start"
 end
 
-PlayerUnitOverchargeExtension.vent_overcharge_done = function (self)
-	self.venting_overcharge = false
-	self.venting_anim = "cooldown_end"
+function PlayerUnitOverchargeExtension.vent_overcharge_done(arg_31_0)
+	arg_31_0.venting_overcharge = false
+	arg_31_0.venting_anim = "cooldown_end"
 end
 
-PlayerUnitOverchargeExtension.get_anim_blend_overcharge = function (self)
-	local overcharge_value = self._lerped_overcharge_fraction * self:get_max_value()
-	local overcharge_threshold = self.overcharge_threshold
-	local max_value = self.max_value
-	local anim_blend_value = math.clamp((overcharge_value - overcharge_threshold) / (max_value - overcharge_threshold), 0, 1)
+function PlayerUnitOverchargeExtension.get_anim_blend_overcharge(arg_32_0)
+	local var_32_0 = arg_32_0._lerped_overcharge_fraction * arg_32_0:get_max_value()
+	local var_32_1 = arg_32_0.overcharge_threshold
+	local var_32_2 = arg_32_0.max_value
 
-	return anim_blend_value
+	return (math.clamp((var_32_0 - var_32_1) / (var_32_2 - var_32_1), 0, 1))
 end
 
-PlayerUnitOverchargeExtension._trigger_hud_sound = function (self, event, fp_extension)
-	if not event or not fp_extension then
+function PlayerUnitOverchargeExtension._trigger_hud_sound(arg_33_0, arg_33_1, arg_33_2)
+	if not arg_33_1 or not arg_33_2 then
 		return
 	end
 
-	fp_extension:play_hud_sound_event(event)
+	arg_33_2:play_hud_sound_event(arg_33_1)
 end
 
-PlayerUnitOverchargeExtension._trigger_dialogue = function (self, event_name)
-	if not event_name then
+function PlayerUnitOverchargeExtension._trigger_dialogue(arg_34_0, arg_34_1)
+	if not arg_34_1 then
 		return
 	end
 
-	local dialogue_input = self._dialogue_input
-	local event_data = FrameTable.alloc_table()
+	local var_34_0 = arg_34_0._dialogue_input
+	local var_34_1 = FrameTable.alloc_table()
 
-	dialogue_input:trigger_networked_dialogue_event(event_name, event_data)
+	var_34_0:trigger_networked_dialogue_event(arg_34_1, var_34_1)
 end
 
-PlayerUnitOverchargeExtension._trigger_controller_effect = function (self, type, effect)
-	local controller_features = Managers.state.controller_features
-	local _rumble_effect_id = self._rumble_effect_id
+function PlayerUnitOverchargeExtension._trigger_controller_effect(arg_35_0, arg_35_1, arg_35_2)
+	local var_35_0 = Managers.state.controller_features
+	local var_35_1 = arg_35_0._rumble_effect_id
 
-	if _rumble_effect_id then
-		controller_features:stop_effect(_rumble_effect_id)
+	if var_35_1 then
+		var_35_0:stop_effect(var_35_1)
 
-		self._rumble_effect_id = nil
+		arg_35_0._rumble_effect_id = nil
 	end
 
-	if type and effect then
-		self._rumble_effect_id = controller_features:add_effect(type, effect)
-	end
-end
-
-PlayerUnitOverchargeExtension._add_overcharge_buff = function (self, buff_name)
-	local buff_extension = self._buff_extension
-	local overcharged_buff_id = self._overcharged_buff_id
-
-	if overcharged_buff_id then
-		buff_extension:remove_buff(overcharged_buff_id)
-
-		self.overcharged_buff_id = nil
-	end
-
-	if buff_name then
-		self._overcharged_buff_id = buff_extension:add_buff(buff_name)
+	if arg_35_1 and arg_35_2 then
+		arg_35_0._rumble_effect_id = var_35_0:add_effect(arg_35_1, arg_35_2)
 	end
 end
 
-PlayerUnitOverchargeExtension._update_overcharge_buff = function (self, state)
-	local buff_extension = self._buff_extension
+function PlayerUnitOverchargeExtension._add_overcharge_buff(arg_36_0, arg_36_1)
+	local var_36_0 = arg_36_0._buff_extension
+	local var_36_1 = arg_36_0._overcharged_buff_id
 
-	if state == OVERCHARGE_LEVELS.high then
-		if buff_extension:has_buff_type("sienna_unchained_passive") or buff_extension:has_buff_perk("overcharge_no_slow") then
-			self:_add_overcharge_buff("overcharged_critical_no_attack_penalty")
+	if var_36_1 then
+		var_36_0:remove_buff(var_36_1)
+
+		arg_36_0.overcharged_buff_id = nil
+	end
+
+	if arg_36_1 then
+		arg_36_0._overcharged_buff_id = var_36_0:add_buff(arg_36_1)
+	end
+end
+
+function PlayerUnitOverchargeExtension._update_overcharge_buff(arg_37_0, arg_37_1)
+	local var_37_0 = arg_37_0._buff_extension
+
+	if arg_37_1 == var_0_0.high then
+		if var_37_0:has_buff_type("sienna_unchained_passive") or var_37_0:has_buff_perk("overcharge_no_slow") then
+			arg_37_0:_add_overcharge_buff("overcharged_critical_no_attack_penalty")
 		else
-			self:_add_overcharge_buff("overcharged_critical")
+			arg_37_0:_add_overcharge_buff("overcharged_critical")
 		end
-	elseif state == OVERCHARGE_LEVELS.medium then
-		if buff_extension:has_buff_type("sienna_unchained_passive") or buff_extension:has_buff_perk("overcharge_no_slow") then
-			self:_add_overcharge_buff("overcharged_no_attack_penalty")
+	elseif arg_37_1 == var_0_0.medium then
+		if var_37_0:has_buff_type("sienna_unchained_passive") or var_37_0:has_buff_perk("overcharge_no_slow") then
+			arg_37_0:_add_overcharge_buff("overcharged_no_attack_penalty")
 		else
-			self:_add_overcharge_buff("overcharged")
+			arg_37_0:_add_overcharge_buff("overcharged")
 		end
 	else
-		self:_add_overcharge_buff(nil)
+		arg_37_0:_add_overcharge_buff(nil)
 	end
 end
 
-PlayerUnitOverchargeExtension._update_lerped_overcharge = function (self, dt)
-	local target_fraction = self:overcharge_fraction()
-	local lerped_fraction = self._lerped_overcharge_fraction
+function PlayerUnitOverchargeExtension._update_lerped_overcharge(arg_38_0, arg_38_1)
+	local var_38_0 = arg_38_0:overcharge_fraction()
+	local var_38_1 = arg_38_0._lerped_overcharge_fraction
 
-	if target_fraction == lerped_fraction then
+	if var_38_0 == var_38_1 then
 		return false
 	end
 
-	local slow_breakpoint, fast_breakpoint = 0.1, 0.2
-	local fast_multiplier = 10
-	local lerp_speed = 0.3
-	local diff = math.abs(lerped_fraction - target_fraction)
+	local var_38_2 = 0.1
+	local var_38_3 = 0.2
+	local var_38_4 = 10
+	local var_38_5 = 0.3
+	local var_38_6 = math.abs(var_38_1 - var_38_0)
 
-	if fast_breakpoint < diff then
-		lerp_speed = lerp_speed * fast_multiplier
-	elseif slow_breakpoint < diff then
-		lerp_speed = lerp_speed * math.remap(slow_breakpoint, fast_breakpoint, 1, fast_multiplier, diff)
+	if var_38_3 < var_38_6 then
+		var_38_5 = var_38_5 * var_38_4
+	elseif var_38_2 < var_38_6 then
+		var_38_5 = var_38_5 * math.remap(var_38_2, var_38_3, 1, var_38_4, var_38_6)
 	end
 
-	local min_fraction = math.min(lerped_fraction, target_fraction)
-	local max_fraction = math.max(lerped_fraction, target_fraction)
+	local var_38_7 = math.min(var_38_1, var_38_0)
+	local var_38_8 = math.max(var_38_1, var_38_0)
+	local var_38_9 = var_38_1 + math.sign(var_38_0 - var_38_1) * var_38_5 * arg_38_1
 
-	lerped_fraction = lerped_fraction + math.sign(target_fraction - lerped_fraction) * lerp_speed * dt
-	lerped_fraction = math.clamp(lerped_fraction, min_fraction, max_fraction)
-	self._lerped_overcharge_fraction = lerped_fraction
+	arg_38_0._lerped_overcharge_fraction = math.clamp(var_38_9, var_38_7, var_38_8)
 
 	return true
 end
 
-PlayerUnitOverchargeExtension._update_screen_effect = function (self)
+function PlayerUnitOverchargeExtension._update_screen_effect(arg_39_0)
 	if Development.parameter("screen_space_player_camera_reactions") == false then
-		self:_destroy_all_screen_space_particles()
+		arg_39_0:_destroy_all_screen_space_particles()
 
 		return
 	end
 
-	local world = self.world
-	local first_person_extension = self.first_person_extension
-	local material_name = "overlay"
-	local material_variable_name = "intensity"
-	local modifier = self._screen_particle_opacity_modifier
-	local overcharge_fraction = self:lerped_overcharge_fraction()
+	local var_39_0 = arg_39_0.world
+	local var_39_1 = arg_39_0.first_person_extension
+	local var_39_2 = "overlay"
+	local var_39_3 = "intensity"
+	local var_39_4 = arg_39_0._screen_particle_opacity_modifier
+	local var_39_5 = arg_39_0:lerped_overcharge_fraction()
 
-	if overcharge_fraction > 0 then
-		if not self.onscreen_particles_id then
-			self.onscreen_particles_id = first_person_extension:create_screen_particles(self.screen_space_particle)
+	if var_39_5 > 0 then
+		if not arg_39_0.onscreen_particles_id then
+			arg_39_0.onscreen_particles_id = var_39_1:create_screen_particles(arg_39_0.screen_space_particle)
 		end
 
-		World.set_particles_material_scalar(world, self.onscreen_particles_id, material_name, material_variable_name, overcharge_fraction * modifier)
-	elseif self.onscreen_particles_id then
-		self:_destroy_screen_space_particles(self.onscreen_particles_id)
+		World.set_particles_material_scalar(var_39_0, arg_39_0.onscreen_particles_id, var_39_2, var_39_3, var_39_5 * var_39_4)
+	elseif arg_39_0.onscreen_particles_id then
+		arg_39_0:_destroy_screen_space_particles(arg_39_0.onscreen_particles_id)
 
-		self.onscreen_particles_id = nil
+		arg_39_0.onscreen_particles_id = nil
 	end
 
-	if self.screen_space_particle_critical then
-		if self:is_above_critical_limit() then
-			if not self.critical_onscreen_particles_id then
-				self.critical_onscreen_particles_id = first_person_extension:create_screen_particles(self.screen_space_particle_critical)
+	if arg_39_0.screen_space_particle_critical then
+		if arg_39_0:is_above_critical_limit() then
+			if not arg_39_0.critical_onscreen_particles_id then
+				arg_39_0.critical_onscreen_particles_id = var_39_1:create_screen_particles(arg_39_0.screen_space_particle_critical)
 			end
 
-			local critical_fraction = math.min(1, (self.overcharge_value - self.overcharge_critical_limit) / (self.max_value - self.overcharge_critical_limit) * 2)
+			local var_39_6 = math.min(1, (arg_39_0.overcharge_value - arg_39_0.overcharge_critical_limit) / (arg_39_0.max_value - arg_39_0.overcharge_critical_limit) * 2)
 
-			World.set_particles_material_scalar(world, self.critical_onscreen_particles_id, material_name, material_variable_name, critical_fraction * modifier)
-		elseif self.critical_onscreen_particles_id then
-			self:_destroy_screen_space_particles(self.critical_onscreen_particles_id)
+			World.set_particles_material_scalar(var_39_0, arg_39_0.critical_onscreen_particles_id, var_39_2, var_39_3, var_39_6 * var_39_4)
+		elseif arg_39_0.critical_onscreen_particles_id then
+			arg_39_0:_destroy_screen_space_particles(arg_39_0.critical_onscreen_particles_id)
 
-			self.critical_onscreen_particles_id = nil
+			arg_39_0.critical_onscreen_particles_id = nil
 		end
 	end
 end
 
-PlayerUnitOverchargeExtension._update_overcharge_buff_state = function (self, old_overcharge_value, new_overcharge_value)
-	local old_state = self:_overcharge_value_state(old_overcharge_value)
-	local new_state = self:_overcharge_value_state(new_overcharge_value)
-	local entered_new_state = old_state ~= new_state
+function PlayerUnitOverchargeExtension._update_overcharge_buff_state(arg_40_0, arg_40_1, arg_40_2)
+	local var_40_0 = arg_40_0:_overcharge_value_state(arg_40_1)
+	local var_40_1 = arg_40_0:_overcharge_value_state(arg_40_2)
 
-	if entered_new_state then
-		self:_update_overcharge_buff(new_state)
+	if var_40_0 ~= var_40_1 then
+		arg_40_0:_update_overcharge_buff(var_40_1)
 
-		local state_settings = self._overcharge_states[new_state]
+		local var_40_2 = arg_40_0._overcharge_states[var_40_1]
 
-		if state_settings then
-			self:_trigger_controller_effect("rumble", state_settings.controller_effect)
+		if var_40_2 then
+			arg_40_0:_trigger_controller_effect("rumble", var_40_2.controller_effect)
 		end
 	end
 end
 
-PlayerUnitOverchargeExtension._overcharge_value_state = function (self, value)
-	if value >= self.overcharge_critical_limit then
-		return OVERCHARGE_LEVELS.high
-	elseif value >= self.overcharge_limit then
-		return OVERCHARGE_LEVELS.medium
-	elseif value >= self.overcharge_threshold then
-		return OVERCHARGE_LEVELS.low
+function PlayerUnitOverchargeExtension._overcharge_value_state(arg_41_0, arg_41_1)
+	if arg_41_1 >= arg_41_0.overcharge_critical_limit then
+		return var_0_0.high
+	elseif arg_41_1 >= arg_41_0.overcharge_limit then
+		return var_0_0.medium
+	elseif arg_41_1 >= arg_41_0.overcharge_threshold then
+		return var_0_0.low
 	else
-		return OVERCHARGE_LEVELS.none
+		return var_0_0.none
 	end
 end

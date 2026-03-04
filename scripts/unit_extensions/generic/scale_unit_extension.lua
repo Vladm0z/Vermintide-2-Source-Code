@@ -1,44 +1,44 @@
-﻿-- chunkname: @scripts/unit_extensions/generic/scale_unit_extension.lua
+-- chunkname: @scripts/unit_extensions/generic/scale_unit_extension.lua
 
 ScaleUnitExtension = class(ScaleUnitExtension)
 
-ScaleUnitExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	local t = Managers.time:time("game")
+function ScaleUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	local var_1_0 = Managers.time:time("game")
 
-	self.start_size = extension_init_data.start_size
+	arg_1_0.start_size = arg_1_3.start_size
 
-	local end_size = extension_init_data.end_size
+	local var_1_1 = arg_1_3.end_size
 
-	self.duration = extension_init_data.duration
-	self.full_scale = end_size - self.start_size
-	self.timer = 0
+	arg_1_0.duration = arg_1_3.duration
+	arg_1_0.full_scale = var_1_1 - arg_1_0.start_size
+	arg_1_0.timer = 0
 end
 
-ScaleUnitExtension.setup = function (self, start_size, end_size, duration)
-	self.start_size = start_size or self.start_size
-	self.full_scale = end_size - self.start_size
-	self.duration = duration
-	self.timer = 0
+function ScaleUnitExtension.setup(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	arg_2_0.start_size = arg_2_1 or arg_2_0.start_size
+	arg_2_0.full_scale = arg_2_2 - arg_2_0.start_size
+	arg_2_0.duration = arg_2_3
+	arg_2_0.timer = 0
 end
 
-ScaleUnitExtension.update = function (self, unit, input, dt, context, t)
-	local timer = self.timer
+function ScaleUnitExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	local var_3_0 = arg_3_0.timer
 
-	if timer < self.duration then
-		local norm_time = math.clamp(timer / self.duration, 0, 1)
-		local scale_value = self.start_size + math.easeCubic(norm_time) * self.full_scale
-		local scale = Vector3(1, 1, scale_value)
+	if var_3_0 < arg_3_0.duration then
+		local var_3_1 = math.clamp(var_3_0 / arg_3_0.duration, 0, 1)
+		local var_3_2 = arg_3_0.start_size + math.easeCubic(var_3_1) * arg_3_0.full_scale
+		local var_3_3 = Vector3(1, 1, var_3_2)
 
-		Unit.set_local_scale(unit, 0, scale)
+		Unit.set_local_scale(arg_3_1, 0, var_3_3)
 
-		self.timer = self.timer + dt
+		arg_3_0.timer = arg_3_0.timer + arg_3_3
 	end
 end
 
-ScaleUnitExtension.scaling_complete = function (self)
-	return self.timer >= self.duration
+function ScaleUnitExtension.scaling_complete(arg_4_0)
+	return arg_4_0.timer >= arg_4_0.duration
 end
 
-ScaleUnitExtension.despawn = function (self)
+function ScaleUnitExtension.despawn(arg_5_0)
 	return
 end

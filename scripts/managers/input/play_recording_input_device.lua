@@ -1,15 +1,15 @@
-﻿-- chunkname: @scripts/managers/input/play_recording_input_device.lua
+-- chunkname: @scripts/managers/input/play_recording_input_device.lua
 
 PlayRecordingInputDevice = {}
 
-PlayRecordingInputDevice.name = function ()
+function PlayRecordingInputDevice.name()
 	return "PlayRecordingInputDevice"
 end
 
-PlayRecordingInputDevice.category = function ()
+function PlayRecordingInputDevice.category()
 	return "recording"
 end
 
-PlayRecordingInputDevice.active = function ()
+function PlayRecordingInputDevice.active()
 	return true
 end

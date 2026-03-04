@@ -1,122 +1,120 @@
-﻿-- chunkname: @scripts/managers/unlock/unlock_dlc_bundle.lua
+-- chunkname: @scripts/managers/unlock/unlock_dlc_bundle.lua
 
 UnlockDlcBundle = class(UnlockDlcBundle)
 
-UnlockDlcBundle.init = function (self, name, bundle_id, backend_reward_id, always_unlocked_game_app_ids, cosmetic, fallback_id, requires_restart, is_legacy_console_dlc, bundle_contains)
-	self._name = name
-	self._id = bundle_id
-	self._backend_reward_id = backend_reward_id
-	self._requires_restart = requires_restart
-	self._status_changed = false
-	self._bundle_contains = bundle_contains or {}
-	self._installed = false
+function UnlockDlcBundle.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9)
+	arg_1_0._name = arg_1_1
+	arg_1_0._id = arg_1_2
+	arg_1_0._backend_reward_id = arg_1_3
+	arg_1_0._requires_restart = arg_1_7
+	arg_1_0._status_changed = false
+	arg_1_0._bundle_contains = arg_1_9 or {}
+	arg_1_0._installed = false
 
-	if HAS_STEAM and always_unlocked_game_app_ids then
-		local steam_app_id = Steam.app_id()
+	if HAS_STEAM and arg_1_4 then
+		local var_1_0 = Steam.app_id()
 
-		if steam_app_id and table.contains(always_unlocked_game_app_ids, steam_app_id) then
-			self._always_unlocked_for_app_id = true
-			self._unlocked = true
-			self._installed = true
+		if var_1_0 and table.contains(arg_1_4, var_1_0) then
+			arg_1_0._always_unlocked_for_app_id = true
+			arg_1_0._unlocked = true
+			arg_1_0._installed = true
 		end
 	end
 
-	self:update_is_installed()
+	arg_1_0:update_is_installed()
 end
 
-UnlockDlcBundle.is_legacy_console_dlc = function (self)
+function UnlockDlcBundle.is_legacy_console_dlc(arg_2_0)
 	return false
 end
 
-UnlockDlcBundle.ready = function (self)
+function UnlockDlcBundle.ready(arg_3_0)
 	return true
 end
 
-UnlockDlcBundle.has_error = function (self)
+function UnlockDlcBundle.has_error(arg_4_0)
 	return false
 end
 
-UnlockDlcBundle.id = function (self)
-	return self._id
+function UnlockDlcBundle.id(arg_5_0)
+	return arg_5_0._id
 end
 
-UnlockDlcBundle.backend_reward_id = function (self)
-	return self._backend_reward_id
+function UnlockDlcBundle.backend_reward_id(arg_6_0)
+	return arg_6_0._backend_reward_id
 end
 
-UnlockDlcBundle.remove_backend_reward_id = function (self)
-	self._backend_reward_id = nil
+function UnlockDlcBundle.remove_backend_reward_id(arg_7_0)
+	arg_7_0._backend_reward_id = nil
 end
 
-UnlockDlcBundle.unlocked = function (self)
-	return self._unlocked
+function UnlockDlcBundle.unlocked(arg_8_0)
+	return arg_8_0._unlocked
 end
 
-UnlockDlcBundle.installed = function (self)
-	return self._installed
+function UnlockDlcBundle.installed(arg_9_0)
+	return arg_9_0._installed
 end
 
-UnlockDlcBundle.check_all_children_dlc_owned = function (self)
-	if self._always_unlocked_for_app_id then
+function UnlockDlcBundle.check_all_children_dlc_owned(arg_10_0)
+	if arg_10_0._always_unlocked_for_app_id then
 		return
 	end
 
-	local all_dlcs_unlocked = true
+	local var_10_0 = true
 
-	for i = 1, #self._bundle_contains do
-		local bundle_item = self._bundle_contains[i]
-		local dlc = Managers.unlock:get_dlc(bundle_item)
+	for iter_10_0 = 1, #arg_10_0._bundle_contains do
+		local var_10_1 = arg_10_0._bundle_contains[iter_10_0]
 
-		if not dlc:unlocked() then
-			all_dlcs_unlocked = false
+		if not Managers.unlock:get_dlc(var_10_1):unlocked() then
+			var_10_0 = false
 
 			break
 		end
 	end
 
-	self._unlocked = all_dlcs_unlocked
+	arg_10_0._unlocked = var_10_0
 end
 
-UnlockDlcBundle.set_status_changed = function (self, value)
-	self._status_changed = value
+function UnlockDlcBundle.set_status_changed(arg_11_0, arg_11_1)
+	arg_11_0._status_changed = arg_11_1
 end
 
-UnlockDlcBundle.is_cosmetic = function (self)
+function UnlockDlcBundle.is_cosmetic(arg_12_0)
 	return false
 end
 
-UnlockDlcBundle.requires_restart = function (self)
-	return self._status_changed and self._requires_restart
+function UnlockDlcBundle.requires_restart(arg_13_0)
+	return arg_13_0._status_changed and arg_13_0._requires_restart
 end
 
-UnlockDlcBundle.update_is_installed = function (self)
+function UnlockDlcBundle.update_is_installed(arg_14_0)
 	if not HAS_STEAM then
-		return self._installed
+		return arg_14_0._installed
 	end
 
-	if self._always_unlocked_for_app_id then
-		return self._installed
+	if arg_14_0._always_unlocked_for_app_id then
+		return arg_14_0._installed
 	end
 
-	local all_dlcs_installed = true
+	local var_14_0 = true
 
-	for i = 1, #self._bundle_contains do
-		local bundle_item = self._bundle_contains[i]
-		local unlocks = UnlockSettings[1].unlocks
-		local unlock_settings = unlocks[bundle_item]
+	for iter_14_0 = 1, #arg_14_0._bundle_contains do
+		local var_14_1 = arg_14_0._bundle_contains[iter_14_0]
+		local var_14_2 = UnlockSettings[1].unlocks[var_14_1]
 
-		if not Steam.is_installed(unlock_settings.id) then
-			all_dlcs_installed = false
+		if not Steam.is_installed(var_14_2.id) then
+			var_14_0 = false
 
 			break
 		end
 	end
 
-	if self._installed ~= all_dlcs_installed then
-		self._installed = all_dlcs_installed
+	if arg_14_0._installed ~= var_14_0 then
+		arg_14_0._installed = var_14_0
 
-		return all_dlcs_installed, true
+		return var_14_0, true
 	end
 
-	return all_dlcs_installed
+	return var_14_0
 end

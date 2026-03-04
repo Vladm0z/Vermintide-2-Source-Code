@@ -1,161 +1,152 @@
-﻿-- chunkname: @scripts/entity_system/systems/transportation/transportation_system.lua
+-- chunkname: @scripts/entity_system/systems/transportation/transportation_system.lua
 
 require("scripts/unit_extensions/generic/linker_transportation_extension")
 
 TransportationSystem = class(TransportationSystem, ExtensionSystemBase)
 
-local extensions = {
-	"LinkerTransportationExtension",
+local var_0_0 = {
+	"LinkerTransportationExtension"
 }
-local RPCS = {
+local var_0_1 = {
 	"rpc_hot_join_sync_linker_transporting",
 	"rpc_hot_join_sync_linker_transport_state",
 	"rpc_hot_join_sync_linker_transport_generic_units",
 	"rpc_add_transporting_ai_units",
 	"rpc_add_transporting_generic_unit",
-	"rpc_remove_transporting_ai_units",
+	"rpc_remove_transporting_ai_units"
 }
 
-TransportationSystem.init = function (self, context, system_name)
-	TransportationSystem.super.init(self, context, system_name, extensions)
+function TransportationSystem.init(arg_1_0, arg_1_1, arg_1_2)
+	TransportationSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 
-	local network_event_delegate = context.network_event_delegate
+	local var_1_0 = arg_1_1.network_event_delegate
 
-	self.network_event_delegate = network_event_delegate
+	arg_1_0.network_event_delegate = var_1_0
 
-	network_event_delegate:register(self, unpack(RPCS))
+	var_1_0:register(arg_1_0, unpack(var_0_1))
 
-	self._transporting_extension_by_unit = {}
-	self._extension_lut = {}
+	arg_1_0._transporting_extension_by_unit = {}
+	arg_1_0._extension_lut = {}
 end
 
-TransportationSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
-	local extension = TransportationSystem.super.on_add_extension(self, world, unit, extension_name, extension_init_data)
+function TransportationSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	local var_2_0 = TransportationSystem.super.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
-	self._extension_lut[unit] = extension
+	arg_2_0._extension_lut[arg_2_2] = var_2_0
 
-	return extension
+	return var_2_0
 end
 
-TransportationSystem.on_remove_extension = function (self, unit, extension_name)
-	self._extension_lut[unit] = nil
+function TransportationSystem.on_remove_extension(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_0._extension_lut[arg_3_1] = nil
 
-	return TransportationSystem.super.on_remove_extension(self, unit, extension_name)
+	return TransportationSystem.super.on_remove_extension(arg_3_0, arg_3_1, arg_3_2)
 end
 
-TransportationSystem.world_updated = function (self, world, dt, t)
-	for _, extension in pairs(self._extension_lut) do
-		extension:world_updated(world, dt, t)
+function TransportationSystem.world_updated(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	for iter_4_0, iter_4_1 in pairs(arg_4_0._extension_lut) do
+		iter_4_1:world_updated(arg_4_1, arg_4_2, arg_4_3)
 	end
 end
 
-TransportationSystem.clear_transporter_by_linked_unit = function (self, unit)
-	self._transporting_extension_by_unit[unit] = nil
+function TransportationSystem.clear_transporter_by_linked_unit(arg_5_0, arg_5_1)
+	arg_5_0._transporting_extension_by_unit[arg_5_1] = nil
 end
 
-TransportationSystem.try_claim_unit = function (self, unit, transportation_extension, force)
-	local other_extension = self._transporting_extension_by_unit[unit]
+function TransportationSystem.try_claim_unit(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	local var_6_0 = arg_6_0._transporting_extension_by_unit[arg_6_1]
 
-	if not other_extension then
-		self._transporting_extension_by_unit[unit] = transportation_extension
+	if not var_6_0 then
+		arg_6_0._transporting_extension_by_unit[arg_6_1] = arg_6_2
 
 		return true
 	end
 
-	if not force then
-		if other_extension:transporting() then
+	if not arg_6_3 then
+		if var_6_0:transporting() then
 			return false
 		end
 
-		local at_beginning = transportation_extension:beginning()
-		local other_at_beginning = other_extension:beginning()
-
-		if at_beginning == other_at_beginning and not transportation_extension:transporting() then
-			local level_id = Level.unit_index(LevelHelper:current_level(self.world), transportation_extension.unit)
-			local other_level_id = Level.unit_index(LevelHelper:current_level(self.world), other_extension.unit)
-
-			if other_level_id < level_id then
-				return
-			end
+		if arg_6_2:beginning() == var_6_0:beginning() and not arg_6_2:transporting() and Level.unit_index(LevelHelper:current_level(arg_6_0.world), arg_6_2.unit) > Level.unit_index(LevelHelper:current_level(arg_6_0.world), var_6_0.unit) then
+			return
 		end
 	end
 
-	other_extension:force_unlink_unit(unit)
+	var_6_0:force_unlink_unit(arg_6_1)
 
-	self._transporting_extension_by_unit[unit] = transportation_extension
+	arg_6_0._transporting_extension_by_unit[arg_6_1] = arg_6_2
 
 	return true
 end
 
-TransportationSystem.destroy = function (self)
-	self.network_event_delegate:unregister(self)
+function TransportationSystem.destroy(arg_7_0)
+	arg_7_0.network_event_delegate:unregister(arg_7_0)
 
-	self.network_event_delegate = nil
+	arg_7_0.network_event_delegate = nil
 end
 
-TransportationSystem.rpc_hot_join_sync_linker_transporting = function (self, channel_id, level_unit_id, game_object_id)
-	local unit = Level.unit_by_index(LevelHelper:current_level(self.world), level_unit_id)
+function TransportationSystem.rpc_hot_join_sync_linker_transporting(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	local var_8_0 = Level.unit_by_index(LevelHelper:current_level(arg_8_0.world), arg_8_2)
 
-	ScriptUnit.extension(unit, "transportation_system"):rpc_hot_join_sync_linker_transporting(game_object_id)
+	ScriptUnit.extension(var_8_0, "transportation_system"):rpc_hot_join_sync_linker_transporting(arg_8_3)
 end
 
-TransportationSystem.rpc_hot_join_sync_linker_transport_state = function (self, channel_id, level_unit_id, state_id, story_time)
-	local unit = Level.unit_by_index(LevelHelper:current_level(self.world), level_unit_id)
+function TransportationSystem.rpc_hot_join_sync_linker_transport_state(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	local var_9_0 = Level.unit_by_index(LevelHelper:current_level(arg_9_0.world), arg_9_2)
 
-	ScriptUnit.extension(unit, "transportation_system"):rpc_hot_join_sync_linker_transport_state(state_id, story_time)
+	ScriptUnit.extension(var_9_0, "transportation_system"):rpc_hot_join_sync_linker_transport_state(arg_9_3, arg_9_4)
 end
 
-TransportationSystem.rpc_add_transporting_ai_units = function (self, channel_id, level_unit_id, game_object_ids, slot_ids)
-	local unit = Level.unit_by_index(LevelHelper:current_level(self.world), level_unit_id)
-	local extension = ScriptUnit.extension(unit, "transportation_system")
-	local unit_storage = Managers.state.network.unit_storage
+function TransportationSystem.rpc_add_transporting_ai_units(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	local var_10_0 = Level.unit_by_index(LevelHelper:current_level(arg_10_0.world), arg_10_2)
+	local var_10_1 = ScriptUnit.extension(var_10_0, "transportation_system")
+	local var_10_2 = Managers.state.network.unit_storage
 
-	for i = 1, #game_object_ids do
-		local ai_unit = unit_storage:unit(game_object_ids[i])
+	for iter_10_0 = 1, #arg_10_3 do
+		local var_10_3 = var_10_2:unit(arg_10_3[iter_10_0])
 
-		if ai_unit then
-			extension:add_transporting_ai_unit(ai_unit, slot_ids[i])
+		if var_10_3 then
+			var_10_1:add_transporting_ai_unit(var_10_3, arg_10_4[iter_10_0])
 		end
 	end
 end
 
-TransportationSystem.rpc_remove_transporting_ai_units = function (self, channel_id, level_unit_id, game_object_ids)
-	local unit = Level.unit_by_index(LevelHelper:current_level(self.world), level_unit_id)
-	local extension = ScriptUnit.extension(unit, "transportation_system")
-	local unit_storage = Managers.state.network.unit_storage
+function TransportationSystem.rpc_remove_transporting_ai_units(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+	local var_11_0 = Level.unit_by_index(LevelHelper:current_level(arg_11_0.world), arg_11_2)
+	local var_11_1 = ScriptUnit.extension(var_11_0, "transportation_system")
+	local var_11_2 = Managers.state.network.unit_storage
 
-	for i = 1, #game_object_ids do
-		local ai_unit = unit_storage:unit(game_object_ids[i])
+	for iter_11_0 = 1, #arg_11_3 do
+		local var_11_3 = var_11_2:unit(arg_11_3[iter_11_0])
 
-		extension:remove_transporting_ai_unit(ai_unit)
+		var_11_1:remove_transporting_ai_unit(var_11_3)
 	end
 end
 
-TransportationSystem.rpc_hot_join_sync_linker_transport_generic_units = function (self, channel_id, level_unit_id, unit_ids, is_level_unit_arr, positions, rotations)
-	local unit = Level.unit_by_index(LevelHelper:current_level(self.world), level_unit_id)
-	local extension = ScriptUnit.extension(unit, "transportation_system")
-	local network_manager = Managers.state.network
+function TransportationSystem.rpc_hot_join_sync_linker_transport_generic_units(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+	local var_12_0 = Level.unit_by_index(LevelHelper:current_level(arg_12_0.world), arg_12_2)
+	local var_12_1 = ScriptUnit.extension(var_12_0, "transportation_system")
+	local var_12_2 = Managers.state.network
 
-	for i = 1, #unit_ids do
-		local is_level_unit = is_level_unit_arr[i]
-		local generic_unit = network_manager:game_object_or_level_unit(unit_ids[i], is_level_unit)
+	for iter_12_0 = 1, #arg_12_3 do
+		local var_12_3 = arg_12_4[iter_12_0]
+		local var_12_4 = var_12_2:game_object_or_level_unit(arg_12_3[iter_12_0], var_12_3)
 
-		if Unit.alive(generic_unit) then
-			local matrix = Matrix4x4.from_quaternion_position(rotations[i], positions[i])
+		if Unit.alive(var_12_4) then
+			local var_12_5 = Matrix4x4.from_quaternion_position(arg_12_6[iter_12_0], arg_12_5[iter_12_0])
 
-			extension:add_transporting_generic_unit(generic_unit, matrix, true)
+			var_12_1:add_transporting_generic_unit(var_12_4, var_12_5, true)
 		end
 	end
 end
 
-TransportationSystem.rpc_add_transporting_generic_unit = function (self, channel_id, level_unit_id, generic_unit_id, is_level_unit, position, rotation)
-	local generic_unit = Managers.state.network:game_object_or_level_unit(generic_unit_id, is_level_unit)
+function TransportationSystem.rpc_add_transporting_generic_unit(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
+	local var_13_0 = Managers.state.network:game_object_or_level_unit(arg_13_3, arg_13_4)
 
-	if generic_unit then
-		local unit = Level.unit_by_index(LevelHelper:current_level(self.world), level_unit_id)
-		local matrix = Matrix4x4.from_quaternion_position(rotation, position)
-		local extension = ScriptUnit.extension(unit, "transportation_system")
+	if var_13_0 then
+		local var_13_1 = Level.unit_by_index(LevelHelper:current_level(arg_13_0.world), arg_13_2)
+		local var_13_2 = Matrix4x4.from_quaternion_position(arg_13_6, arg_13_5)
 
-		extension:add_transporting_generic_unit(generic_unit, matrix, true)
+		ScriptUnit.extension(var_13_1, "transportation_system"):add_transporting_generic_unit(var_13_0, var_13_2, true)
 	end
 end

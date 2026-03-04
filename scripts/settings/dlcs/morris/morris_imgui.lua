@@ -1,3 +1,3 @@
-﻿-- chunkname: @scripts/settings/dlcs/morris/morris_imgui.lua
+-- chunkname: @scripts/settings/dlcs/morris/morris_imgui.lua
 
-local dlc_settings = DLCSettings.morris
+local var_0_0 = DLCSettings.morris

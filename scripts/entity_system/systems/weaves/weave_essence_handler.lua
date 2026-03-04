@@ -1,150 +1,143 @@
-﻿-- chunkname: @scripts/entity_system/systems/weaves/weave_essence_handler.lua
+-- chunkname: @scripts/entity_system/systems/weaves/weave_essence_handler.lua
 
 WeaveEssenceHandler = class(WeaveEssenceHandler)
 
-WeaveEssenceHandler.init = function (self, world)
-	self._world = world
-	self._spawn_essence_units = true
-	self._essence_unit_names = {
+function WeaveEssenceHandler.init(arg_1_0, arg_1_1)
+	arg_1_0._world = arg_1_1
+	arg_1_0._spawn_essence_units = true
+	arg_1_0._essence_unit_names = {
 		"units/fx/essence_unit",
-		"units/fx/essence_unit",
+		"units/fx/essence_unit"
 	}
-	self._essence_sound_events = {
+	arg_1_0._essence_sound_events = {
 		"Play_hud_wind_collect_essence",
-		"Play_hud_wind_collect_essence_chunk",
+		"Play_hud_wind_collect_essence_chunk"
 	}
-	self._essence_unit_data = {}
+	arg_1_0._essence_unit_data = {}
 
-	for i = 1, 20 do
-		self._essence_unit_data[i] = {}
+	for iter_1_0 = 1, 20 do
+		arg_1_0._essence_unit_data[iter_1_0] = {}
 	end
 
-	self._essence_life_time = 3
+	arg_1_0._essence_life_time = 3
 end
 
-WeaveEssenceHandler.on_objectives_activated = function (self, objectives)
-	if not table.is_empty(objectives) then
-		local audio_system = Managers.state.entity:system("audio_system")
-
-		audio_system:play_2d_audio_event("Play_hud_wind_objective_start")
+function WeaveEssenceHandler.on_objectives_activated(arg_2_0, arg_2_1)
+	if not table.is_empty(arg_2_1) then
+		Managers.state.entity:system("audio_system"):play_2d_audio_event("Play_hud_wind_objective_start")
 	end
 end
 
-WeaveEssenceHandler.update = function (self, dt, t)
-	self:_collect_dropped_essence(dt)
+function WeaveEssenceHandler.update(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_0:_collect_dropped_essence(arg_3_1)
 end
 
-WeaveEssenceHandler.destroy_all_essence = function (self)
-	local essence_unit_data = self._essence_unit_data
+function WeaveEssenceHandler.destroy_all_essence(arg_4_0)
+	local var_4_0 = arg_4_0._essence_unit_data
 
-	for i = 1, #essence_unit_data do
-		local data = essence_unit_data[i]
-		local unit = data.unit
+	for iter_4_0 = 1, #var_4_0 do
+		local var_4_1 = var_4_0[iter_4_0]
+		local var_4_2 = var_4_1.unit
 
-		if Unit.alive(unit) then
-			Managers.state.unit_spawner:mark_for_deletion(unit)
-			table.clear(data)
+		if Unit.alive(var_4_2) then
+			Managers.state.unit_spawner:mark_for_deletion(var_4_2)
+			table.clear(var_4_1)
 		end
 	end
 end
 
-WeaveEssenceHandler.on_ai_killed = function (self, killed_unit, killer_unit, death_data, killing_blow)
-	if not death_data or not death_data.despawned then
-		local killed_unit_position = POSITION_LOOKUP[killed_unit]
+function WeaveEssenceHandler.on_ai_killed(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	if not arg_5_3 or not arg_5_3.despawned then
+		local var_5_0 = POSITION_LOOKUP[arg_5_1]
 
-		self:spawn_essence_unit(killed_unit_position + Vector3(0, 0, 0.2))
+		arg_5_0:spawn_essence_unit(var_5_0 + Vector3(0, 0, 0.2))
 	end
 end
 
-WeaveEssenceHandler.spawn_essence_unit = function (self, position, size)
-	local essence_unit_data = self._essence_unit_data
-	local index
+function WeaveEssenceHandler.spawn_essence_unit(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = arg_6_0._essence_unit_data
+	local var_6_1
 
-	for i = 1, #essence_unit_data do
-		local data = essence_unit_data[i]
-		local unit = data.unit
+	for iter_6_0 = 1, #var_6_0 do
+		local var_6_2 = var_6_0[iter_6_0].unit
 
-		if not Unit.alive(unit) then
-			index = i
+		if not Unit.alive(var_6_2) then
+			var_6_1 = iter_6_0
 
 			break
 		end
 	end
 
-	if not self._spawn_essence_units or not index then
+	if not arg_6_0._spawn_essence_units or not var_6_1 then
 		return
 	end
 
-	local essence_unit_name = self._essence_unit_names[size or 1]
-	local essence_unit = Managers.state.unit_spawner:spawn_local_unit(essence_unit_name, position, Quaternion.identity())
-	local data = self._essence_unit_data[index]
+	local var_6_3 = arg_6_0._essence_unit_names[arg_6_2 or 1]
+	local var_6_4
 
-	data.unit = essence_unit
-	data.life_time = self._essence_life_time
-	data.spawn_pos = Vector3Box(position)
-	data.right_vector_multiplier = 1 - math.random() * 2
-	data.forward_vector_multiplier = 1 - math.random() * 2
-	data.sound_event = self._essence_sound_events[size or 1]
+	var_6_4.unit, var_6_4 = Managers.state.unit_spawner:spawn_local_unit(var_6_3, arg_6_1, Quaternion.identity()), arg_6_0._essence_unit_data[var_6_1]
+	var_6_4.life_time = arg_6_0._essence_life_time
+	var_6_4.spawn_pos = Vector3Box(arg_6_1)
+	var_6_4.right_vector_multiplier = 1 - math.random() * 2
+	var_6_4.forward_vector_multiplier = 1 - math.random() * 2
+	var_6_4.sound_event = arg_6_0._essence_sound_events[arg_6_2 or 1]
 end
 
-WeaveEssenceHandler._collect_dropped_essence = function (self, dt)
-	local local_player = Managers.player:local_player()
+function WeaveEssenceHandler._collect_dropped_essence(arg_7_0, arg_7_1)
+	local var_7_0 = Managers.player:local_player()
 
-	if not local_player or not local_player.player_unit then
+	if not var_7_0 or not var_7_0.player_unit then
 		return
 	end
 
-	local local_player_unit = local_player.player_unit
-	local unit_spawner = Managers.state.unit_spawner
-	local player_position = POSITION_LOOKUP[local_player_unit] + Vector3(0, 0, 0.5)
-	local up_vector = Vector3.up()
-	local right_vector = Vector3.right()
-	local forward_vector = Vector3.forward()
-	local essence_rest_time = 0
-	local collect_essence_time = 0.8
-	local essence_unit_data = self._essence_unit_data
-	local unit_alive = Unit.alive
+	local var_7_1 = var_7_0.player_unit
+	local var_7_2 = Managers.state.unit_spawner
+	local var_7_3 = POSITION_LOOKUP[var_7_1] + Vector3(0, 0, 0.5)
+	local var_7_4 = Vector3.up()
+	local var_7_5 = Vector3.right()
+	local var_7_6 = Vector3.forward()
+	local var_7_7 = 0
+	local var_7_8 = 0.8
+	local var_7_9 = arg_7_0._essence_unit_data
+	local var_7_10 = Unit.alive
 
-	for i = 1, #essence_unit_data do
-		local data = essence_unit_data[i]
-		local unit = data.unit
+	for iter_7_0 = 1, #var_7_9 do
+		local var_7_11 = var_7_9[iter_7_0]
+		local var_7_12 = var_7_11.unit
 
-		if unit_alive(unit) then
-			local unit_position = POSITION_LOOKUP[unit]
-			local distance = Vector3.distance(unit_position, player_position)
-			local remaining_time = data.life_time - dt
+		if var_7_10(var_7_12) then
+			local var_7_13 = POSITION_LOOKUP[var_7_12]
+			local var_7_14 = Vector3.distance(var_7_13, var_7_3)
+			local var_7_15 = var_7_11.life_time - arg_7_1
 
-			if remaining_time <= 0 or distance <= 1 then
-				unit_spawner:mark_for_deletion(unit)
+			if var_7_15 <= 0 or var_7_14 <= 1 then
+				var_7_2:mark_for_deletion(var_7_12)
 
-				if data.sound_event then
-					local wwise_world = Managers.world:wwise_world(self._world)
+				if var_7_11.sound_event then
+					local var_7_16 = Managers.world:wwise_world(arg_7_0._world)
 
-					WwiseWorld.trigger_event(wwise_world, data.sound_event)
+					WwiseWorld.trigger_event(var_7_16, var_7_11.sound_event)
 				end
 
-				table.clear(data)
+				table.clear(var_7_11)
 			else
-				if remaining_time <= collect_essence_time then
-					local direction_vector = Vector3.normalize(player_position - unit_position)
-					local move_vector = direction_vector * dt * math.max(30, distance / (collect_essence_time / 2))
-					local new_position = unit_position + move_vector
+				if var_7_15 <= var_7_8 then
+					local var_7_17 = var_7_13 + Vector3.normalize(var_7_3 - var_7_13) * arg_7_1 * math.max(30, var_7_14 / (var_7_8 / 2))
 
-					Unit.set_local_position(unit, 0, new_position)
-				elseif remaining_time >= collect_essence_time + essence_rest_time then
-					local time = (remaining_time - collect_essence_time - essence_rest_time) / (self._essence_life_time - collect_essence_time - essence_rest_time)
-					local value = 1 - math.easeInCubic(time)
-					local spawn_pos = data.spawn_pos:unbox()
-					local up = up_vector * 2 * value
-					local right = right_vector * data.right_vector_multiplier * (1 - time)
-					local forward = forward_vector * data.forward_vector_multiplier * (1 - time)
-					local offset = up + right + forward
-					local new_position = spawn_pos + offset
+					Unit.set_local_position(var_7_12, 0, var_7_17)
+				elseif var_7_15 >= var_7_8 + var_7_7 then
+					local var_7_18 = (var_7_15 - var_7_8 - var_7_7) / (arg_7_0._essence_life_time - var_7_8 - var_7_7)
+					local var_7_19 = 1 - math.easeInCubic(var_7_18)
+					local var_7_20 = var_7_11.spawn_pos:unbox()
+					local var_7_21 = var_7_4 * 2 * var_7_19
+					local var_7_22 = var_7_5 * var_7_11.right_vector_multiplier * (1 - var_7_18)
+					local var_7_23 = var_7_6 * var_7_11.forward_vector_multiplier * (1 - var_7_18)
+					local var_7_24 = var_7_20 + (var_7_21 + var_7_22 + var_7_23)
 
-					Unit.set_local_position(unit, 0, new_position)
+					Unit.set_local_position(var_7_12, 0, var_7_24)
 				end
 
-				data.life_time = remaining_time
+				var_7_11.life_time = var_7_15
 			end
 		end
 	end

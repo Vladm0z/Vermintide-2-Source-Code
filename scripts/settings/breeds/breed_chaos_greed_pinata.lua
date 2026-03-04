@@ -1,56 +1,56 @@
-﻿-- chunkname: @scripts/settings/breeds/breed_chaos_greed_pinata.lua
+-- chunkname: @scripts/settings/breeds/breed_chaos_greed_pinata.lua
 
-local HEALTH_MULTIPLIER = 2
-local breed_data = {
-	animation_sync_rpc = "rpc_sync_anim_state_1",
-	aoe_height = 1.5,
-	armor_category = 1,
-	awards_positive_reinforcement_message = true,
-	base_unit = "units/props/deus_pinata/deus_pinata_01",
-	behavior = "chaos_greed_pinata",
-	bloodlust_health = 0,
-	bone_lod_level = 0,
-	bot_melee_aim_node = "j_neck",
-	death_reaction = "chaos_greed_pinata",
-	debug_spawn_category = "Misc",
+local var_0_0 = 2
+local var_0_1 = {
 	detection_radius = 12,
-	exchange_order = 1,
-	flingable = false,
+	bot_melee_aim_node = "j_neck",
 	has_inventory = false,
-	height = 1,
-	hit_effect_template = "HitEffectsChaosGreedPinata",
-	hit_reaction = "ai_default",
-	no_stagger_duration = true,
-	override_bot_target_node = "j_neck",
 	perception = "perception_regular",
-	perception_previous_attacker_stickyness_value = 0,
-	player_locomotion_constrain_radius = 0.7,
-	poison_resistance = 70,
-	proximity_system_check = true,
-	race = "chaos",
-	radius = 1,
 	run_speed = 3,
-	smart_object_template = "special",
-	smart_targeting_height_multiplier = 3.5,
-	smart_targeting_outer_width = 0.6,
-	smart_targeting_width = 0.2,
-	target_head_node = "j_neck",
+	death_reaction = "chaos_greed_pinata",
 	target_selection = "pick_closest_target",
+	radius = 1,
+	exchange_order = 1,
+	animation_sync_rpc = "rpc_sync_anim_state_1",
+	smart_targeting_width = 0.2,
+	proximity_system_check = true,
+	no_stagger_duration = true,
+	debug_spawn_category = "Misc",
+	awards_positive_reinforcement_message = true,
+	target_head_node = "j_neck",
+	bone_lod_level = 0,
+	hit_reaction = "ai_default",
+	smart_object_template = "special",
 	target_selection_alerted = "pick_closest_target_infinte_range",
+	flingable = false,
+	override_bot_target_node = "j_neck",
+	smart_targeting_outer_width = 0.6,
 	threat_value = 0,
+	hit_effect_template = "HitEffectsChaosGreedPinata",
+	smart_targeting_height_multiplier = 3.5,
+	height = 1,
 	unit_template = "ai_unit_greed_pinata",
-	vortexable = false,
+	perception_previous_attacker_stickyness_value = 0,
+	race = "chaos",
+	bloodlust_health = 0,
+	poison_resistance = 70,
+	armor_category = 1,
+	player_locomotion_constrain_radius = 0.7,
 	weapon_reach = 1,
+	vortexable = false,
+	behavior = "chaos_greed_pinata",
+	base_unit = "units/props/deus_pinata/deus_pinata_01",
+	aoe_height = 1.5,
 	infighting = InfightingSettings.none,
 	max_health = {
-		25 * HEALTH_MULTIPLIER,
-		25 * HEALTH_MULTIPLIER,
-		37.5 * HEALTH_MULTIPLIER,
-		50 * HEALTH_MULTIPLIER,
-		75 * HEALTH_MULTIPLIER,
-		75 * HEALTH_MULTIPLIER,
-		75 * HEALTH_MULTIPLIER,
-		75 * HEALTH_MULTIPLIER,
+		25 * var_0_0,
+		25 * var_0_0,
+		37.5 * var_0_0,
+		50 * var_0_0,
+		75 * var_0_0,
+		75 * var_0_0,
+		75 * var_0_0,
+		75 * var_0_0
 	},
 	stagger_duration = {
 		1,
@@ -60,184 +60,184 @@ local breed_data = {
 		1,
 		1,
 		1,
-		1,
+		1
 	},
 	debug_color = {
 		255,
 		100,
 		200,
-		200,
+		200
 	},
 	run_on_spawn = AiBreedSnippets.on_greed_pinata_spawned,
 	hit_zones = {
 		torso = {
 			prio = 1,
 			actors = {
-				"j_neck",
-			},
+				"j_neck"
+			}
 		},
 		neck = {
 			prio = 2,
 			actors = {
-				"j_neck",
-			},
+				"j_neck"
+			}
 		},
 		full = {
 			prio = 3,
-			actors = {},
-		},
+			actors = {}
+		}
 	},
 	allowed_layers = {
-		bot_poison_wind = 10,
-		bot_ratling_gun_fire = 10,
-		destructible_wall = 0,
-		doors = 1.5,
-		fire_grenade = 10,
-		jumps = 10,
-		ledges = 10,
-		ledges_with_fence = 10,
 		planks = 1.5,
-		teleporters = 5,
+		ledges = 10,
+		bot_ratling_gun_fire = 10,
+		jumps = 10,
+		destructible_wall = 0,
 		temporary_wall = 1,
-	},
+		ledges_with_fence = 10,
+		doors = 1.5,
+		teleporters = 5,
+		bot_poison_wind = 10,
+		fire_grenade = 10
+	}
 }
 
-Breeds.chaos_greed_pinata = table.create_copy(Breeds.chaos_greed_pinata, breed_data)
+Breeds.chaos_greed_pinata = table.create_copy(Breeds.chaos_greed_pinata, var_0_1)
 
-local action_data = {
+local var_0_2 = {
 	flee = {
-		escaped_players_distance_sq = 10000,
+		escaped_players_distance_sq = 10000
 	},
 	idle = {
 		sound_when_near_distance_sqr = 900,
-		sound_when_near_event = "Play_loot_rat_near_sound",
+		sound_when_near_event = "Play_loot_rat_near_sound"
 	},
 	teleport = {
-		teleport_effect = "fx/deus_prop_pinata_teleport",
+		teleport_effect = "fx/deus_prop_pinata_teleport"
 	},
 	stagger = {
 		custom_exit_function = AiBreedSnippets.on_loot_rat_stagger_action_done,
 		stagger_anims = {
 			{
 				fwd = {
-					"stun_fwd_sword",
+					"stun_fwd_sword"
 				},
 				bwd = {
-					"stun_bwd_sword",
+					"stun_bwd_sword"
 				},
 				left = {
-					"stun_left_sword",
+					"stun_left_sword"
 				},
 				right = {
-					"stun_right_sword",
-				},
+					"stun_right_sword"
+				}
 			},
 			{
 				fwd = {
-					"stun_fwd_sword",
+					"stun_fwd_sword"
 				},
 				bwd = {
-					"stun_bwd_sword",
+					"stun_bwd_sword"
 				},
 				left = {
-					"stun_left_sword",
+					"stun_left_sword"
 				},
 				right = {
-					"stun_right_sword",
-				},
+					"stun_right_sword"
+				}
 			},
 			{
 				fwd = {
-					"stagger_fwd_gather",
+					"stagger_fwd_gather"
 				},
 				bwd = {
-					"stagger_fwd_gather",
+					"stagger_fwd_gather"
 				},
 				left = {
-					"stagger_fwd_gather",
+					"stagger_fwd_gather"
 				},
 				right = {
-					"stagger_fwd_gather",
-				},
+					"stagger_fwd_gather"
+				}
 			},
 			{
 				fwd = {
-					"stagger_fwd_gather",
+					"stagger_fwd_gather"
 				},
 				bwd = {
-					"stagger_fwd_gather",
+					"stagger_fwd_gather"
 				},
 				left = {
-					"stagger_fwd_gather",
+					"stagger_fwd_gather"
 				},
 				right = {
-					"stagger_fwd_gather",
-				},
+					"stagger_fwd_gather"
+				}
 			},
 			{
 				fwd = {
-					"stagger_fwd_gather",
+					"stagger_fwd_gather"
 				},
 				bwd = {
-					"stagger_fwd_gather",
+					"stagger_fwd_gather"
 				},
 				left = {
-					"stagger_fwd_gather",
+					"stagger_fwd_gather"
 				},
 				right = {
-					"stagger_fwd_gather",
-				},
+					"stagger_fwd_gather"
+				}
 			},
 			{
 				fwd = {
-					"stagger_fwd_gather",
+					"stagger_fwd_gather"
 				},
 				bwd = {
-					"stagger_fwd_gather",
+					"stagger_fwd_gather"
 				},
 				left = {
-					"stagger_fwd_gather",
+					"stagger_fwd_gather"
 				},
 				right = {
-					"stagger_fwd_gather",
-				},
+					"stagger_fwd_gather"
+				}
 			},
 			{
 				fwd = {
-					"stagger_fwd_gather",
+					"stagger_fwd_gather"
 				},
 				bwd = {
-					"stagger_fwd_gather",
+					"stagger_fwd_gather"
 				},
 				left = {
-					"stagger_fwd_gather",
+					"stagger_fwd_gather"
 				},
 				right = {
-					"stagger_fwd_gather",
-				},
+					"stagger_fwd_gather"
+				}
 			},
 			{
 				fwd = {},
 				bwd = {},
 				left = {},
-				right = {},
+				right = {}
 			},
 			{
 				fwd = {
-					"stagger_fwd_gather",
+					"stagger_fwd_gather"
 				},
 				bwd = {
-					"stagger_fwd_gather",
+					"stagger_fwd_gather"
 				},
 				left = {
-					"stagger_fwd_gather",
+					"stagger_fwd_gather"
 				},
 				right = {
-					"stagger_fwd_gather",
-				},
-			},
-		},
-	},
+					"stagger_fwd_gather"
+				}
+			}
+		}
+	}
 }
 
-BreedActions.chaos_greed_pinata = table.create_copy(BreedActions.chaos_greed_pinata, action_data)
+BreedActions.chaos_greed_pinata = table.create_copy(BreedActions.chaos_greed_pinata, var_0_2)

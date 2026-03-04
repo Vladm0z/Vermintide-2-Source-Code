@@ -1,9 +1,9 @@
-﻿-- chunkname: @levels/honduras_dlcs/morris/arena_cave/world_nav_tag_volumes.lua
+-- chunkname: @levels/honduras_dlcs/morris/arena_cave/world_nav_tag_volumes.lua
 
-local nav_tag_volumes = {}
-local version = "1"
+local var_0_0 = {}
+local var_0_1 = "1"
 
 return {
-	version = version,
-	nav_tag_volumes = nav_tag_volumes,
+	version = var_0_1,
+	nav_tag_volumes = var_0_0
 }

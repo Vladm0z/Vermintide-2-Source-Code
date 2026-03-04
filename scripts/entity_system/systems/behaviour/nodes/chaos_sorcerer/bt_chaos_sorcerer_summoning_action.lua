@@ -1,745 +1,708 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/chaos_sorcerer/bt_chaos_sorcerer_summoning_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/chaos_sorcerer/bt_chaos_sorcerer_summoning_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTChaosSorcererSummoningAction = class(BTChaosSorcererSummoningAction, BTNode)
 
-BTChaosSorcererSummoningAction.init = function (self, ...)
-	BTChaosSorcererSummoningAction.super.init(self, ...)
+function BTChaosSorcererSummoningAction.init(arg_1_0, ...)
+	BTChaosSorcererSummoningAction.super.init(arg_1_0, ...)
 end
 
 BTChaosSorcererSummoningAction.name = "BTChaosSorcererSummoningAction"
 
-BTChaosSorcererSummoningAction.enter = function (self, unit, blackboard, t)
-	local action = self._tree_node.action_data
+function BTChaosSorcererSummoningAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_0._tree_node.action_data
 
-	blackboard.action = action
-	blackboard.attack_finished = false
+	arg_2_2.action = var_2_0
+	arg_2_2.attack_finished = false
 
-	local vortex_data = blackboard.vortex_data
+	local var_2_1 = arg_2_2.vortex_data
 
-	if action.vortex_template_name then
-		vortex_data.vortex_template = VortexTemplates[action.vortex_template_name]
+	if var_2_0.vortex_template_name then
+		var_2_1.vortex_template = VortexTemplates[var_2_0.vortex_template_name]
 	end
 
-	local target_unit = blackboard.target_unit
+	local var_2_2 = arg_2_2.target_unit
 
-	blackboard.target_position = target_unit and Vector3Box(POSITION_LOOKUP[target_unit]) or Vector3Box()
-	blackboard.spell_count = blackboard.spell_count or 0
+	arg_2_2.target_position = var_2_2 and Vector3Box(POSITION_LOOKUP[var_2_2]) or Vector3Box()
+	arg_2_2.spell_count = arg_2_2.spell_count or 0
 
-	if not action.is_spawner then
-		local locomotion_extension = blackboard.locomotion_extension
+	if not var_2_0.is_spawner then
+		arg_2_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
+		arg_2_2.navigation_extension:set_enabled(false)
 
-		locomotion_extension:set_wanted_velocity(Vector3.zero())
+		local var_2_3 = var_2_0.attack_anim
 
-		local navigation_extension = blackboard.navigation_extension
-
-		navigation_extension:set_enabled(false)
-
-		local attack_animation = action.attack_anim
-
-		if attack_animation then
-			Managers.state.network:anim_event(unit, attack_animation)
+		if var_2_3 then
+			Managers.state.network:anim_event(arg_2_1, var_2_3)
 		end
 
-		local init_func_name = action.init_func_name
+		local var_2_4 = var_2_0.init_func_name
 
-		if init_func_name then
-			self[init_func_name](self, unit, blackboard, t)
+		if var_2_4 then
+			arg_2_0[var_2_4](arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		end
 
-		blackboard.move_state = "attacking"
-		blackboard.summon_target_unit = target_unit
-		blackboard.summoning = true
+		arg_2_2.move_state = "attacking"
+		arg_2_2.summon_target_unit = var_2_2
+		arg_2_2.summoning = true
 	end
 
-	if blackboard.breed.summon_sound_event then
-		self:trigger_summon_sound(unit, blackboard, t)
+	if arg_2_2.breed.summon_sound_event then
+		arg_2_0:trigger_summon_sound(arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-BTChaosSorcererSummoningAction.trigger_summon_sound = function (self, unit, blackboard, t)
-	local breed = blackboard.breed
-	local network_manager = Managers.state.network
-	local summon_sound_event = breed.summon_sound_event
-	local no_summon_sound_for_target = breed.no_summon_sound_for_target
-	local player_manager = Managers.player
-	local player_unit = blackboard.target_unit
-	local player = player_manager:unit_owner(player_unit)
-	local dialogue_input = ScriptUnit.has_extension_input(unit, "dialogue_system")
-	local audio_system_extension = Managers.state.entity:system("audio_system")
-	local unit_id = NetworkUnit.game_object_id(unit)
-	local sound_event_id = NetworkLookup.sound_events[summon_sound_event]
+function BTChaosSorcererSummoningAction.trigger_summon_sound(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	local var_3_0 = arg_3_2.breed
+	local var_3_1 = Managers.state.network
+	local var_3_2 = var_3_0.summon_sound_event
+	local var_3_3 = var_3_0.no_summon_sound_for_target
+	local var_3_4 = Managers.player
+	local var_3_5 = arg_3_2.target_unit
+	local var_3_6 = var_3_4:unit_owner(var_3_5)
+	local var_3_7 = ScriptUnit.has_extension_input(arg_3_1, "dialogue_system")
+	local var_3_8 = Managers.state.entity:system("audio_system")
+	local var_3_9 = NetworkUnit.game_object_id(arg_3_1)
+	local var_3_10 = NetworkLookup.sound_events[var_3_2]
 
-	if no_summon_sound_for_target then
-		if not player.local_player then
-			dialogue_input:play_voice(summon_sound_event, true)
+	if var_3_3 then
+		if not var_3_6.local_player then
+			var_3_7:play_voice(var_3_2, true)
 		end
 
-		network_manager.network_transmit:send_rpc_clients_except("rpc_server_audio_unit_dialogue_event", player.peer_id, sound_event_id, unit_id, 0)
+		var_3_1.network_transmit:send_rpc_clients_except("rpc_server_audio_unit_dialogue_event", var_3_6.peer_id, var_3_10, var_3_9, 0)
 	else
-		dialogue_input:play_voice(summon_sound_event, true)
-		network_manager.network_transmit:send_rpc_clients("rpc_server_audio_unit_dialogue_event", sound_event_id, unit_id, 0)
+		var_3_7:play_voice(var_3_2, true)
+		var_3_1.network_transmit:send_rpc_clients("rpc_server_audio_unit_dialogue_event", var_3_10, var_3_9, 0)
 	end
 end
 
-BTChaosSorcererSummoningAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	local action = blackboard.action
+function BTChaosSorcererSummoningAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	local var_4_0 = arg_4_2.action
 
-	if not action.is_spawner then
-		local navigation_extension = blackboard.navigation_extension
+	if not var_4_0.is_spawner then
+		arg_4_2.navigation_extension:set_enabled(true)
 
-		navigation_extension:set_enabled(true)
+		local var_4_1 = var_4_0.cleanup_func_name
 
-		local cleanup_func_name = action.cleanup_func_name
-
-		if cleanup_func_name then
-			self[cleanup_func_name](self, unit, blackboard, t)
+		if var_4_1 then
+			arg_4_0[var_4_1](arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 		end
 	end
 
-	blackboard.action = nil
-	blackboard.attack_finished = false
-	blackboard.summoning = nil
-	blackboard.summoning_unit = nil
-	blackboard.summon_target_unit = nil
-	blackboard.ready_to_summon = false
-	blackboard.summoning_finished = nil
+	arg_4_2.action = nil
+	arg_4_2.attack_finished = false
+	arg_4_2.summoning = nil
+	arg_4_2.summoning_unit = nil
+	arg_4_2.summon_target_unit = nil
+	arg_4_2.ready_to_summon = false
+	arg_4_2.summoning_finished = nil
 
 	QuickDrawerStay:reset()
 end
 
-BTChaosSorcererSummoningAction.run = function (self, unit, blackboard, t, dt)
-	local action = blackboard.action
-	local target_unit = blackboard.summon_target_unit
+function BTChaosSorcererSummoningAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	local var_5_0 = arg_5_2.action
+	local var_5_1 = arg_5_2.summon_target_unit
 
-	if Unit.alive(target_unit) then
-		local status_ext = ScriptUnit.has_extension(target_unit, "status_system")
+	if Unit.alive(var_5_1) then
+		local var_5_2 = ScriptUnit.has_extension(var_5_1, "status_system")
 
-		if status_ext and not status_ext:is_invisible() and not status_ext:get_is_dodging() and not action.use_first_position then
-			blackboard.target_position:store(POSITION_LOOKUP[target_unit])
+		if var_5_2 and not var_5_2:is_invisible() and not var_5_2:get_is_dodging() and not var_5_0.use_first_position then
+			arg_5_2.target_position:store(POSITION_LOOKUP[var_5_1])
 		end
 
-		if blackboard.face_target_while_summoning then
-			local rotation = LocomotionUtils.rotation_towards_unit_flat(unit, target_unit)
-			local locomotion_extension = blackboard.locomotion_extension
+		if arg_5_2.face_target_while_summoning then
+			local var_5_3 = LocomotionUtils.rotation_towards_unit_flat(arg_5_1, var_5_1)
 
-			locomotion_extension:set_wanted_rotation(rotation)
+			arg_5_2.locomotion_extension:set_wanted_rotation(var_5_3)
 		end
 	end
 
-	if not action.ignore_attack_finished then
-		if blackboard.attack_finished then
-			blackboard.ready_to_summon = false
+	if not var_5_0.ignore_attack_finished then
+		if arg_5_2.attack_finished then
+			arg_5_2.ready_to_summon = false
 
 			return "done"
-		elseif blackboard.summoning_finished then
-			local target_position = blackboard.target_position:unbox()
-			local spawn_func_name = action.spawn_func_name
-			local success = self[spawn_func_name](self, unit, blackboard, t, dt, target_position, blackboard.current_spell)
+		elseif arg_5_2.summoning_finished then
+			local var_5_4 = arg_5_2.target_position:unbox()
+			local var_5_5 = arg_5_0[var_5_0.spawn_func_name](arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, var_5_4, arg_5_2.current_spell)
 
-			blackboard.spell_count = blackboard.spell_count + 1
-			blackboard.summoning_finished = nil
+			arg_5_2.spell_count = arg_5_2.spell_count + 1
+			arg_5_2.summoning_finished = nil
 
-			if not success then
+			if not var_5_5 then
 				return "done"
 			end
 		end
 	end
 
-	local update_func_name = action.update_func_name
+	local var_5_6 = var_5_0.update_func_name
 
-	if update_func_name then
-		local done = self[update_func_name](self, unit, blackboard, t, dt)
+	if var_5_6 and arg_5_0[var_5_6](arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4) then
+		arg_5_2.summoning_finished = nil
 
-		if done then
-			blackboard.summoning_finished = nil
-
-			return "done"
-		end
+		return "done"
 	end
 
 	return "running"
 end
 
-BTChaosSorcererSummoningAction.spawn_exalted_spell = function (self, unit, blackboard, t, dt, target_position)
-	local spell = blackboard.current_spell
+function BTChaosSorcererSummoningAction.spawn_exalted_spell(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+	local var_6_0 = arg_6_2.current_spell
 
-	spell.spawn_function(self, blackboard, t, dt, target_position, spell)
+	var_6_0.spawn_function(arg_6_0, arg_6_2, arg_6_3, arg_6_4, arg_6_5, var_6_0)
 end
 
-local VORTEX_MIN_DUMMY_MISSILE_HEIGHT = 0.25
+local var_0_0 = 0.25
 
-BTChaosSorcererSummoningAction._start_vortex_summoning = function (self, unit, blackboard, t)
-	local world = blackboard.world
-	local action = blackboard.action
-	local vortex_data = blackboard.vortex_data
-	local vortex_template = vortex_data.vortex_template
-	local summon_position = vortex_data.vortex_spawn_pos:unbox()
-	local max_height = vortex_template.max_height
-	local spawn_radius = vortex_data.vortex_spawn_radius
-	local inner_radius_p = math.min(spawn_radius / vortex_template.full_inner_radius, 1)
+function BTChaosSorcererSummoningAction._start_vortex_summoning(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	local var_7_0 = arg_7_2.world
+	local var_7_1 = arg_7_2.action
+	local var_7_2 = arg_7_2.vortex_data
+	local var_7_3 = var_7_2.vortex_template
+	local var_7_4 = var_7_2.vortex_spawn_pos:unbox()
+	local var_7_5 = var_7_3.max_height
+	local var_7_6 = var_7_2.vortex_spawn_radius
+	local var_7_7 = math.min(var_7_6 / var_7_3.full_inner_radius, 1)
 
 	if Managers.player.is_server then
-		local inner_decal_unit_name = action.inner_decal_unit_name
+		local var_7_8 = var_7_1.inner_decal_unit_name
 
-		if inner_decal_unit_name then
-			local inner_spawn_pose = Matrix4x4.from_quaternion_position(Quaternion.identity(), summon_position)
-			local inner_radius = math.max(vortex_template.min_inner_radius, inner_radius_p * vortex_template.full_inner_radius)
+		if var_7_8 then
+			local var_7_9 = Matrix4x4.from_quaternion_position(Quaternion.identity(), var_7_4)
+			local var_7_10 = math.max(var_7_3.min_inner_radius, var_7_7 * var_7_3.full_inner_radius)
 
-			Matrix4x4.set_scale(inner_spawn_pose, Vector3(inner_radius, inner_radius, inner_radius))
+			Matrix4x4.set_scale(var_7_9, Vector3(var_7_10, var_7_10, var_7_10))
 
-			vortex_data.inner_decal_unit = Managers.state.unit_spawner:spawn_network_unit(inner_decal_unit_name, "network_synched_dummy_unit", nil, inner_spawn_pose)
+			var_7_2.inner_decal_unit = Managers.state.unit_spawner:spawn_network_unit(var_7_8, "network_synched_dummy_unit", nil, var_7_9)
 		end
 
-		local outer_decal_unit_name = action.outer_decal_unit_name
+		local var_7_11 = var_7_1.outer_decal_unit_name
 
-		if outer_decal_unit_name then
-			local outer_spawn_pose = Matrix4x4.from_quaternion_position(Quaternion.identity(), summon_position)
-			local outer_radius = math.max(vortex_template.min_outer_radius, inner_radius_p * vortex_template.full_outer_radius)
+		if var_7_11 then
+			local var_7_12 = Matrix4x4.from_quaternion_position(Quaternion.identity(), var_7_4)
+			local var_7_13 = math.max(var_7_3.min_outer_radius, var_7_7 * var_7_3.full_outer_radius)
 
-			Matrix4x4.set_scale(outer_spawn_pose, Vector3(outer_radius, outer_radius, outer_radius))
+			Matrix4x4.set_scale(var_7_12, Vector3(var_7_13, var_7_13, var_7_13))
 
-			vortex_data.outer_decal_unit = Managers.state.unit_spawner:spawn_network_unit(outer_decal_unit_name, "network_synched_dummy_unit", nil, outer_spawn_pose)
+			var_7_2.outer_decal_unit = Managers.state.unit_spawner:spawn_network_unit(var_7_11, "network_synched_dummy_unit", nil, var_7_12)
 		end
 	end
 
-	vortex_data.next_missile_cast_t = t
-	vortex_data.num_dummy_missiles = 0
+	var_7_2.next_missile_cast_t = arg_7_3
+	var_7_2.num_dummy_missiles = 0
 
-	local physics_world = vortex_data.physics_world
-	local start_check_position = summon_position + Vector3.up() * VORTEX_MIN_DUMMY_MISSILE_HEIGHT
-	local hit, hit_position, hit_distance, _, _ = PhysicsWorld.immediate_raycast(physics_world, start_check_position, Vector3.up(), max_height - VORTEX_MIN_DUMMY_MISSILE_HEIGHT, "closest", "collision_filter", "filter_ai_mover")
-	local max_height = hit and VORTEX_MIN_DUMMY_MISSILE_HEIGHT + hit_distance or max_height
+	local var_7_14 = var_7_2.physics_world
+	local var_7_15 = var_7_4 + Vector3.up() * var_0_0
+	local var_7_16, var_7_17, var_7_18, var_7_19, var_7_20 = PhysicsWorld.immediate_raycast(var_7_14, var_7_15, Vector3.up(), var_7_5 - var_0_0, "closest", "collision_filter", "filter_ai_mover")
 
-	vortex_data.max_height = max_height
+	var_7_2.max_height = var_7_16 and var_0_0 + var_7_18 or var_7_5
 
-	local unit_position = POSITION_LOOKUP[unit]
-	local distance = Vector3.distance(unit_position, summon_position)
-	local extra_time = distance * action.extra_time_per_distance
+	local var_7_21 = POSITION_LOOKUP[arg_7_1]
+	local var_7_22 = Vector3.distance(var_7_21, var_7_4) * var_7_1.extra_time_per_distance
 
-	vortex_data.summoning_done_t = t + action.summoning_time + extra_time
-	vortex_data.extra_time = extra_time
+	var_7_2.summoning_done_t = arg_7_3 + var_7_1.summoning_time + var_7_22
+	var_7_2.extra_time = var_7_22
 
-	local breed = blackboard.breed
+	if not arg_7_2.breed.boss then
+		local var_7_23 = arg_7_2.target_unit
 
-	if not breed.boss then
-		local target_unit = blackboard.target_unit
-
-		Managers.state.entity:system("ai_bot_group_system"):ranged_attack_started(unit, target_unit, "chaos_vortex")
+		Managers.state.entity:system("ai_bot_group_system"):ranged_attack_started(arg_7_1, var_7_23, "chaos_vortex")
 	end
 end
 
-BTChaosSorcererSummoningAction._clean_up_vortex_summoning = function (self, unit, blackboard, t)
-	local vortex_data = blackboard.vortex_data
-	local unit_spawner = Managers.state.unit_spawner
-	local inner_decal_unit = vortex_data.inner_decal_unit
+function BTChaosSorcererSummoningAction._clean_up_vortex_summoning(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	local var_8_0 = arg_8_2.vortex_data
+	local var_8_1 = Managers.state.unit_spawner
+	local var_8_2 = var_8_0.inner_decal_unit
 
-	if Unit.alive(inner_decal_unit) then
-		unit_spawner:mark_for_deletion(inner_decal_unit)
+	if Unit.alive(var_8_2) then
+		var_8_1:mark_for_deletion(var_8_2)
 	end
 
-	local outer_decal_unit = vortex_data.outer_decal_unit
+	local var_8_3 = var_8_0.outer_decal_unit
 
-	if Unit.alive(outer_decal_unit) then
-		unit_spawner:mark_for_deletion(outer_decal_unit)
+	if Unit.alive(var_8_3) then
+		var_8_1:mark_for_deletion(var_8_3)
 	end
 
-	vortex_data.inner_decal_unit = nil
-	vortex_data.outer_decal_unit = nil
-	vortex_data.num_dummy_missiles = 0
+	var_8_0.inner_decal_unit = nil
+	var_8_0.outer_decal_unit = nil
+	var_8_0.num_dummy_missiles = 0
 
-	local breed = blackboard.breed
+	if not arg_8_2.breed.boss then
+		local var_8_4 = arg_8_2.target_unit
 
-	if not breed.boss then
-		local target_unit = blackboard.target_unit
-
-		Managers.state.entity:system("ai_bot_group_system"):ranged_attack_ended(unit, target_unit, "chaos_vortex")
+		Managers.state.entity:system("ai_bot_group_system"):ranged_attack_ended(arg_8_1, var_8_4, "chaos_vortex")
 	end
 end
 
-BTChaosSorcererSummoningAction._update_vortex_summoning = function (self, unit, blackboard, t, dt)
-	local vortex_data = blackboard.vortex_data
-	local summon_position = vortex_data.vortex_spawn_pos:unbox()
-	local rotation = LocomotionUtils.look_at_position_flat(unit, summon_position)
-	local locomotion_extension = blackboard.locomotion_extension
+function BTChaosSorcererSummoningAction._update_vortex_summoning(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	local var_9_0 = arg_9_2.vortex_data
+	local var_9_1 = var_9_0.vortex_spawn_pos:unbox()
+	local var_9_2 = LocomotionUtils.look_at_position_flat(arg_9_1, var_9_1)
 
-	locomotion_extension:set_wanted_rotation(rotation)
+	arg_9_2.locomotion_extension:set_wanted_rotation(var_9_2)
 
-	if blackboard.attack_finished then
+	if arg_9_2.attack_finished then
 		return
 	end
 
-	local action = blackboard.action
+	local var_9_3 = arg_9_2.action
 
-	if vortex_data.num_dummy_missiles < action.num_missiles and t > vortex_data.next_missile_cast_t then
-		local unit_position = POSITION_LOOKUP[unit]
-		local to_summon = summon_position - unit_position
-		local summon_direction = Vector3.normalize(to_summon)
-		local hand_node = Unit.node(unit, "j_lefthand")
-		local hand_position = Unit.world_position(unit, hand_node)
+	if var_9_0.num_dummy_missiles < var_9_3.num_missiles and arg_9_3 > var_9_0.next_missile_cast_t then
+		local var_9_4 = var_9_1 - POSITION_LOOKUP[arg_9_1]
+		local var_9_5 = Vector3.normalize(var_9_4)
+		local var_9_6 = Unit.node(arg_9_1, "j_lefthand")
+		local var_9_7 = Unit.world_position(arg_9_1, var_9_6)
 
-		self:_launch_vortex_dummy_missile(unit, action, vortex_data, hand_position, summon_position, summon_direction)
+		arg_9_0:_launch_vortex_dummy_missile(arg_9_1, var_9_3, var_9_0, var_9_7, var_9_1, var_9_5)
 
-		vortex_data.next_missile_cast_t = vortex_data.next_missile_cast_t + action.missile_cast_interval
+		var_9_0.next_missile_cast_t = var_9_0.next_missile_cast_t + var_9_3.missile_cast_interval
 	end
 
-	if t > vortex_data.summoning_done_t then
-		blackboard.summoning_finished = true
+	if arg_9_3 > var_9_0.summoning_done_t then
+		arg_9_2.summoning_finished = true
 	end
 end
 
-BTChaosSorcererSummoningAction._launch_vortex_dummy_missile = function (self, owner_unit, action, vortex_data, spawn_position, target_position, target_dir)
-	local angle = action.missile_launch_angle
-	local speed = action.missile_speed
-	local life_time = action.missile_life_time + vortex_data.extra_time
-	local true_flight_template_name = "sorcerer_vortex_dummy_missile"
-	local max_height = math.max(vortex_data.max_height / 2, VORTEX_MIN_DUMMY_MISSILE_HEIGHT + 0.5)
-	local height_offset = VORTEX_MIN_DUMMY_MISSILE_HEIGHT + (max_height - VORTEX_MIN_DUMMY_MISSILE_HEIGHT) * math.random()
+function BTChaosSorcererSummoningAction._launch_vortex_dummy_missile(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
+	local var_10_0 = arg_10_2.missile_launch_angle
+	local var_10_1 = arg_10_2.missile_speed
+	local var_10_2 = arg_10_2.missile_life_time + arg_10_3.extra_time
+	local var_10_3 = "sorcerer_vortex_dummy_missile"
+	local var_10_4 = math.max(arg_10_3.max_height / 2, var_0_0 + 0.5)
+	local var_10_5 = var_0_0 + (var_10_4 - var_0_0) * math.random()
 
-	target_position = target_position + Vector3.up() * height_offset
+	arg_10_5 = arg_10_5 + Vector3.up() * var_10_5
 
-	local extension_init_data = {
+	local var_10_6 = {
 		projectile_locomotion_system = {
-			gravity_settings = "default",
 			trajectory_template_name = "throw_trajectory",
-			angle = angle,
-			initial_position = spawn_position,
-			height_offset = height_offset,
-			life_time = life_time,
-			owner_unit = owner_unit,
-			position_target = target_position,
-			speed = speed,
-			target_vector = target_dir,
-			true_flight_template_name = true_flight_template_name,
+			gravity_settings = "default",
+			angle = var_10_0,
+			initial_position = arg_10_4,
+			height_offset = var_10_5,
+			life_time = var_10_2,
+			owner_unit = arg_10_1,
+			position_target = arg_10_5,
+			speed = var_10_1,
+			target_vector = arg_10_6,
+			true_flight_template_name = var_10_3
 		},
 		projectile_system = {
-			explosion_template_name = "chaos_vortex_dummy_missile",
 			impact_template_name = "direct_impact",
-			owner_unit = owner_unit,
-		},
+			explosion_template_name = "chaos_vortex_dummy_missile",
+			owner_unit = arg_10_1
+		}
 	}
-	local rotation = Quaternion.look(target_dir)
-	local projectile_unit_name = action.missile_effect_unit_name
-	local projectile_unit, go_id = Managers.state.unit_spawner:spawn_network_unit(projectile_unit_name, "ai_true_flight_projectile_unit_without_raycast", extension_init_data, spawn_position, rotation)
+	local var_10_7 = Quaternion.look(arg_10_6)
+	local var_10_8 = arg_10_2.missile_effect_unit_name
+	local var_10_9, var_10_10 = Managers.state.unit_spawner:spawn_network_unit(var_10_8, "ai_true_flight_projectile_unit_without_raycast", var_10_6, arg_10_4, var_10_7)
 
-	vortex_data.num_dummy_missiles = vortex_data.num_dummy_missiles + 1
+	arg_10_3.num_dummy_missiles = arg_10_3.num_dummy_missiles + 1
 
-	return projectile_unit, go_id
+	return var_10_9, var_10_10
 end
 
-BTChaosSorcererSummoningAction._spawn_boss_vortex = function (self, unit, blackboard, t, dt, target_position)
-	local action = blackboard.action
-	local vortex_template_name = action.vortex_template_name
-	local vortex_template = VortexTemplates[vortex_template_name]
-	local boss_vortex_data = blackboard.boss_vortex_data
-	local spawn_radius = 6
-	local spawn_pos = POSITION_LOOKUP[unit]
+function BTChaosSorcererSummoningAction._spawn_boss_vortex(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+	local var_11_0 = arg_11_2.action
+	local var_11_1 = var_11_0.vortex_template_name
+	local var_11_2 = VortexTemplates[var_11_1]
+	local var_11_3 = arg_11_2.boss_vortex_data
+	local var_11_4 = 6
+	local var_11_5 = POSITION_LOOKUP[arg_11_1]
 
-	boss_vortex_data.vortex_spawn_pos:store(spawn_pos)
+	var_11_3.vortex_spawn_pos:store(var_11_5)
 
-	boss_vortex_data.vortex_spawn_radius = spawn_radius
+	var_11_3.vortex_spawn_radius = var_11_4
 
-	local inner_radius_p = math.min(spawn_radius / vortex_template.full_inner_radius, 1)
-	local inner_decal_unit_name = action.inner_decal_unit_name
+	local var_11_6 = math.min(var_11_4 / var_11_2.full_inner_radius, 1)
+	local var_11_7 = var_11_0.inner_decal_unit_name
 
-	if inner_decal_unit_name then
-		local inner_spawn_pose = Matrix4x4.from_quaternion_position(Quaternion.identity(), spawn_pos)
-		local inner_radius = math.max(vortex_template.min_inner_radius, inner_radius_p * vortex_template.full_inner_radius)
+	if var_11_7 then
+		local var_11_8 = Matrix4x4.from_quaternion_position(Quaternion.identity(), var_11_5)
+		local var_11_9 = math.max(var_11_2.min_inner_radius, var_11_6 * var_11_2.full_inner_radius)
 
-		Matrix4x4.set_scale(inner_spawn_pose, Vector3(inner_radius, inner_radius, inner_radius))
+		Matrix4x4.set_scale(var_11_8, Vector3(var_11_9, var_11_9, var_11_9))
 
-		boss_vortex_data.inner_decal_unit = Managers.state.unit_spawner:spawn_network_unit(inner_decal_unit_name, "network_synched_dummy_unit", nil, inner_spawn_pose)
+		var_11_3.inner_decal_unit = Managers.state.unit_spawner:spawn_network_unit(var_11_7, "network_synched_dummy_unit", nil, var_11_8)
 	end
 
-	local outer_decal_unit_name = action.outer_decal_unit_name
+	local var_11_10 = var_11_0.outer_decal_unit_name
 
-	if outer_decal_unit_name then
-		local outer_spawn_pose = Matrix4x4.from_quaternion_position(Quaternion.identity(), spawn_pos)
-		local outer_radius = math.max(vortex_template.min_outer_radius, inner_radius_p * vortex_template.full_outer_radius)
+	if var_11_10 then
+		local var_11_11 = Matrix4x4.from_quaternion_position(Quaternion.identity(), var_11_5)
+		local var_11_12 = math.max(var_11_2.min_outer_radius, var_11_6 * var_11_2.full_outer_radius)
 
-		Matrix4x4.set_scale(outer_spawn_pose, Vector3(outer_radius, outer_radius, outer_radius))
+		Matrix4x4.set_scale(var_11_11, Vector3(var_11_12, var_11_12, var_11_12))
 
-		boss_vortex_data.outer_decal_unit = Managers.state.unit_spawner:spawn_network_unit(outer_decal_unit_name, "network_synched_dummy_unit", nil, outer_spawn_pose)
+		var_11_3.outer_decal_unit = Managers.state.unit_spawner:spawn_network_unit(var_11_10, "network_synched_dummy_unit", nil, var_11_11)
 	end
 
-	self:_spawn_vortex(unit, blackboard, t, dt, target_position, boss_vortex_data)
+	arg_11_0:_spawn_vortex(arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, var_11_3)
 end
 
-BTChaosSorcererSummoningAction._spawn_vortex = function (self, unit, blackboard, t, dt, target_position, vortex_data)
-	vortex_data = vortex_data or blackboard.vortex_data
+function BTChaosSorcererSummoningAction._spawn_vortex(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+	arg_12_6 = arg_12_6 or arg_12_2.vortex_data
 
-	local action = blackboard.action
-	local vortex_pos = vortex_data.vortex_spawn_pos:unbox()
-	local vortex_template_name = blackboard.breed.vortex_template_name or action.vortex_template_name
-	local vortex_template = VortexTemplates[vortex_template_name]
-	local breed_name = vortex_template.breed_name
-	local breed = Breeds[breed_name]
-	local vortex_units = vortex_data.vortex_units
-	local queued_vortex = vortex_data.queued_vortex
-	local spawn_category = "vortex"
-	local link_decal_units = action.link_decal_units_to_vortex
-	local inner_decal_unit = vortex_data.inner_decal_unit
-	local outer_decal_unit = vortex_data.outer_decal_unit
-	local optional_data = {
-		prepare_func = function (breed, extension_init_data)
-			extension_init_data.ai_supplementary_system = {
-				vortex_template_name = vortex_template_name or "standard",
-				inner_decal_unit = link_decal_units and inner_decal_unit,
-				outer_decal_unit = link_decal_units and outer_decal_unit,
-				owner_unit = unit,
+	local var_12_0 = arg_12_2.action
+	local var_12_1 = arg_12_6.vortex_spawn_pos:unbox()
+	local var_12_2 = arg_12_2.breed.vortex_template_name or var_12_0.vortex_template_name
+	local var_12_3 = VortexTemplates[var_12_2].breed_name
+	local var_12_4 = Breeds[var_12_3]
+	local var_12_5 = arg_12_6.vortex_units
+	local var_12_6 = arg_12_6.queued_vortex
+	local var_12_7 = "vortex"
+	local var_12_8 = var_12_0.link_decal_units_to_vortex
+	local var_12_9 = arg_12_6.inner_decal_unit
+	local var_12_10 = arg_12_6.outer_decal_unit
+	local var_12_11 = {
+		prepare_func = function(arg_13_0, arg_13_1)
+			arg_13_1.ai_supplementary_system = {
+				vortex_template_name = var_12_2 or "standard",
+				inner_decal_unit = var_12_8 and var_12_9,
+				outer_decal_unit = var_12_8 and var_12_10,
+				owner_unit = arg_12_1
 			}
 		end,
-		spawned_func = function (vortex_unit, breed, optional_data)
-			local spawn_queue_index = optional_data.spawn_queue_index
+		spawned_func = function(arg_14_0, arg_14_1, arg_14_2)
+			local var_14_0 = arg_14_2.spawn_queue_index
 
-			queued_vortex[spawn_queue_index] = nil
-			vortex_units[#vortex_units + 1] = vortex_unit
+			var_12_6[var_14_0] = nil
+			var_12_5[#var_12_5 + 1] = arg_14_0
+			BLACKBOARDS[arg_14_0].master_unit = arg_12_1
 
-			local vortex_blackboard = BLACKBOARDS[vortex_unit]
-
-			vortex_blackboard.master_unit = unit
-
-			Managers.state.entity:system("surrounding_aware_system"):add_system_event(vortex_unit, "enemy_attack", DialogueSettings.see_vortex_distance, "attack_tag", "chaos_vortex_spawned")
-		end,
+			Managers.state.entity:system("surrounding_aware_system"):add_system_event(arg_14_0, "enemy_attack", DialogueSettings.see_vortex_distance, "attack_tag", "chaos_vortex_spawned")
+		end
 	}
-	local vortex_queue_id = Managers.state.conflict:spawn_queued_unit(breed, Vector3Box(vortex_pos), QuaternionBox(Quaternion.identity()), spawn_category, nil, nil, optional_data)
+	local var_12_12 = Managers.state.conflict:spawn_queued_unit(var_12_4, Vector3Box(var_12_1), QuaternionBox(Quaternion.identity()), var_12_7, nil, nil, var_12_11)
 
-	vortex_data.queued_vortex[vortex_queue_id] = {
-		inner_decal_unit = link_decal_units and inner_decal_unit,
-		outer_decal_unit = link_decal_units and outer_decal_unit,
+	arg_12_6.queued_vortex[var_12_12] = {
+		inner_decal_unit = var_12_8 and var_12_9,
+		outer_decal_unit = var_12_8 and var_12_10
 	}
 
-	if link_decal_units then
-		vortex_data.inner_decal_unit = nil
-		vortex_data.outer_decal_unit = nil
+	if var_12_8 then
+		arg_12_6.inner_decal_unit = nil
+		arg_12_6.outer_decal_unit = nil
 	end
 
-	blackboard.attack_finished = true
+	arg_12_2.attack_finished = true
 
 	return true
 end
 
-BTChaosSorcererSummoningAction.spawn_portal = function (self, unit, blackboard, t, dt, target_position, portal_data)
-	portal_data = portal_data or blackboard.portal_data
+function BTChaosSorcererSummoningAction.spawn_portal(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6)
+	arg_15_6 = arg_15_6 or arg_15_2.portal_data
 
-	local portal_pos = portal_data.portal_spawn_pos:unbox()
-	local portal_rot = portal_data.portal_spawn_rot:unbox()
-	local portal_type = portal_data.portal_spawn_type
-	local breed = Breeds.chaos_tentacle
-	local inside_wall_spawn_distance = breed.inside_wall_spawn_distance
-	local tentacle_pos
+	local var_15_0 = arg_15_6.portal_spawn_pos:unbox()
+	local var_15_1 = arg_15_6.portal_spawn_rot:unbox()
+	local var_15_2 = arg_15_6.portal_spawn_type
+	local var_15_3 = Breeds.chaos_tentacle
+	local var_15_4 = var_15_3.inside_wall_spawn_distance
+	local var_15_5
 
-	if inside_wall_spawn_distance then
-		local normal = Quaternion.forward(portal_rot)
+	if var_15_4 then
+		local var_15_6 = Quaternion.forward(var_15_1)
 
-		tentacle_pos = portal_pos - normal * inside_wall_spawn_distance
+		var_15_5 = var_15_0 - var_15_6 * var_15_4
 
-		QuickDrawerStay:line(tentacle_pos, tentacle_pos + normal * 5, Colors.get("light_green"))
-		QuickDrawerStay:sphere(tentacle_pos, 0.1, Colors.get("light_green"))
+		QuickDrawerStay:line(var_15_5, var_15_5 + var_15_6 * 5, Colors.get("light_green"))
+		QuickDrawerStay:sphere(var_15_5, 0.1, Colors.get("light_green"))
 	end
 
-	local tentacle_template_name = blackboard.action.tentacle_template_name or "portal"
-	local optional_data = {
-		prepare_func = function (breed, extension_init_data)
-			extension_init_data.ai_supplementary_system = {
-				tentacle_template_name = tentacle_template_name,
+	local var_15_7 = arg_15_2.action.tentacle_template_name or "portal"
+	local var_15_8 = {
+		prepare_func = function(arg_16_0, arg_16_1)
+			arg_16_1.ai_supplementary_system = {
+				tentacle_template_name = var_15_7
 			}
 		end,
-		spawned_func = function (portal_unit, breed, optional_data)
-			optional_data.sorcerer_blackboard.portal_unit = portal_unit
+		spawned_func = function(arg_17_0, arg_17_1, arg_17_2)
+			arg_17_2.sorcerer_blackboard.portal_unit = arg_17_0
 		end,
-		sorcerer_blackboard = blackboard,
+		sorcerer_blackboard = arg_15_2
 	}
-	local spawn_category = "portal"
+	local var_15_9 = "portal"
 
-	if portal_type == "wall" then
-		Managers.state.conflict:spawn_queued_unit(breed, Vector3Box(tentacle_pos), QuaternionBox(portal_rot), spawn_category, nil, nil, optional_data)
-	elseif portal_type == "floor" then
-		Managers.state.conflict:spawn_queued_unit(breed, Vector3Box(tentacle_pos), QuaternionBox(portal_rot), spawn_category, nil, nil, optional_data)
+	if var_15_2 == "wall" then
+		Managers.state.conflict:spawn_queued_unit(var_15_3, Vector3Box(var_15_5), QuaternionBox(var_15_1), var_15_9, nil, nil, var_15_8)
+	elseif var_15_2 == "floor" then
+		Managers.state.conflict:spawn_queued_unit(var_15_3, Vector3Box(var_15_5), QuaternionBox(var_15_1), var_15_9, nil, nil, var_15_8)
 	end
 
-	blackboard.portal_search_active = false
-	blackboard.ready_to_summon = false
+	arg_15_2.portal_search_active = false
+	arg_15_2.ready_to_summon = false
 
 	return true
 end
 
-BTChaosSorcererSummoningAction.boss_sorcerer_spawn_tentacle_in_arena = function (self, unit, blackboard, t)
-	local breed = Breeds.chaos_tentacle
-	local level_analysis = Managers.state.conflict.level_analysis
-	local center_node_units = level_analysis.generic_ai_node_units.sorcerer_boss_wall
-	local wall_unit = center_node_units[math.random(1, #center_node_units)]
-	local portal_pos = Unit.local_position(wall_unit, 0)
-	local portal_rot = Unit.local_rotation(wall_unit, 0)
-	local normal = Quaternion.forward(portal_rot)
-	local inside_wall_spawn_distance = breed.inside_wall_spawn_distance
-	local spawn_category = "portal"
-	local tentacle_pos = portal_pos - normal * inside_wall_spawn_distance
-	local optional_data = {
-		spawned_func = function (portal_unit, breed, optional_data)
-			blackboard.tentacle_portal_units[portal_unit] = true
-
-			local tentacle_blackboard = BLACKBOARDS[portal_unit]
-
-			tentacle_blackboard.boss_master_unit = unit
-			blackboard.num_portals_alive = blackboard.num_portals_alive + 1
-			blackboard.portal_unit = portal_unit
-		end,
+function BTChaosSorcererSummoningAction.boss_sorcerer_spawn_tentacle_in_arena(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+	local var_18_0 = Breeds.chaos_tentacle
+	local var_18_1 = Managers.state.conflict.level_analysis.generic_ai_node_units.sorcerer_boss_wall
+	local var_18_2 = var_18_1[math.random(1, #var_18_1)]
+	local var_18_3 = Unit.local_position(var_18_2, 0)
+	local var_18_4 = Unit.local_rotation(var_18_2, 0)
+	local var_18_5 = Quaternion.forward(var_18_4)
+	local var_18_6 = var_18_0.inside_wall_spawn_distance
+	local var_18_7 = "portal"
+	local var_18_8 = var_18_3 - var_18_5 * var_18_6
+	local var_18_9 = {
+		spawned_func = function(arg_19_0, arg_19_1, arg_19_2)
+			arg_18_2.tentacle_portal_units[arg_19_0] = true
+			BLACKBOARDS[arg_19_0].boss_master_unit = arg_18_1
+			arg_18_2.num_portals_alive = arg_18_2.num_portals_alive + 1
+			arg_18_2.portal_unit = arg_19_0
+		end
 	}
 
-	Managers.state.conflict:spawn_queued_unit(breed, Vector3Box(tentacle_pos), QuaternionBox(portal_rot), spawn_category, nil, nil, optional_data)
+	Managers.state.conflict:spawn_queued_unit(var_18_0, Vector3Box(var_18_8), QuaternionBox(var_18_4), var_18_7, nil, nil, var_18_9)
 end
 
-BTChaosSorcererSummoningAction.init_boss_sorcerer_tentacle = function (self, unit, blackboard, t)
-	blackboard.summon_plague_wave_timer = t + 0.5
+function BTChaosSorcererSummoningAction.init_boss_sorcerer_tentacle(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+	arg_20_2.summon_plague_wave_timer = arg_20_3 + 0.5
 end
 
-BTChaosSorcererSummoningAction.init_summon_plague_wave = function (self, unit, blackboard, t)
-	blackboard.summon_plague_wave_timer = t + 0.1
+function BTChaosSorcererSummoningAction.init_summon_plague_wave(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+	arg_21_2.summon_plague_wave_timer = arg_21_3 + 0.1
 
-	local breed = blackboard.breed
+	if not arg_21_2.breed.boss then
+		local var_21_0 = arg_21_2.target_unit
 
-	if not breed.boss then
-		local target_unit = blackboard.target_unit
-
-		Managers.state.entity:system("ai_bot_group_system"):ranged_attack_started(unit, target_unit, "plague_wave")
+		Managers.state.entity:system("ai_bot_group_system"):ranged_attack_started(arg_21_1, var_21_0, "plague_wave")
 	end
 end
 
-BTChaosSorcererSummoningAction.init_summon_vermintide = function (self, unit, blackboard, t)
-	blackboard.summon_plague_wave_timer = t + 0.1
-	blackboard.damage_wave_template_name = "vermintide"
+function BTChaosSorcererSummoningAction.init_summon_vermintide(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+	arg_22_2.summon_plague_wave_timer = arg_22_3 + 0.1
+	arg_22_2.damage_wave_template_name = "vermintide"
 end
 
-BTChaosSorcererSummoningAction.update_summon_plague_wave = function (self, unit, blackboard, t, dt)
-	if t > blackboard.summon_plague_wave_timer then
-		if not blackboard.summoning_unit then
-			local unit_name = DamageWaveTemplates.templates[blackboard.damage_wave_template_name or "plague_wave"].fx_unit
-			local extension_init_data = {
+function BTChaosSorcererSummoningAction.update_summon_plague_wave(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+	if arg_23_3 > arg_23_2.summon_plague_wave_timer then
+		if not arg_23_2.summoning_unit then
+			local var_23_0 = DamageWaveTemplates.templates[arg_23_2.damage_wave_template_name or "plague_wave"].fx_unit
+			local var_23_1 = {
 				area_damage_system = {
-					damage_wave_template_name = blackboard.damage_wave_template_name or "plague_wave",
-					source_unit = unit,
-				},
+					damage_wave_template_name = arg_23_2.damage_wave_template_name or "plague_wave",
+					source_unit = arg_23_1
+				}
 			}
-			local pos = POSITION_LOOKUP[unit]
-			local rot = Unit.local_rotation(unit, 0)
-			local damage_wave_unit = Managers.state.unit_spawner:spawn_network_unit(unit_name, "damage_wave_unit", extension_init_data, pos, rot)
+			local var_23_2 = POSITION_LOOKUP[arg_23_1]
+			local var_23_3 = Unit.local_rotation(arg_23_1, 0)
+			local var_23_4 = Managers.state.unit_spawner:spawn_network_unit(var_23_0, "damage_wave_unit", var_23_1, var_23_2, var_23_3)
 
-			blackboard.summoning_unit = damage_wave_unit
-			blackboard.damage_wave_extension = ScriptUnit.extension(damage_wave_unit, "area_damage_system")
-		elseif blackboard.summoning_unit then
-			local summoning_unit = blackboard.summoning_unit
-			local go_id = Managers.state.unit_storage:go_id(summoning_unit)
-			local damage_wave_extension = blackboard.damage_wave_extension
-			local source_unit = damage_wave_extension.source_unit
-			local source_unit_rot = Unit.local_rotation(source_unit, 0)
+			arg_23_2.summoning_unit = var_23_4
+			arg_23_2.damage_wave_extension = ScriptUnit.extension(var_23_4, "area_damage_system")
+		elseif arg_23_2.summoning_unit then
+			local var_23_5 = arg_23_2.summoning_unit
+			local var_23_6 = Managers.state.unit_storage:go_id(var_23_5)
+			local var_23_7 = arg_23_2.damage_wave_extension
+			local var_23_8 = var_23_7.source_unit
+			local var_23_9 = Unit.local_rotation(var_23_8, 0)
 
-			Unit.set_local_rotation(summoning_unit, 0, source_unit_rot)
+			Unit.set_local_rotation(var_23_5, 0, var_23_9)
 
-			local current_pos = POSITION_LOOKUP[summoning_unit]
-			local source_unit_pos = POSITION_LOOKUP[source_unit]
-			local source_unit_dir = Quaternion.forward(source_unit_rot)
-			local wanted_pos = source_unit_pos + source_unit_dir * 2
-			local lerp_value = math.min(dt * 2, 1)
-			local pos = Vector3.lerp(current_pos, wanted_pos, lerp_value)
-			local success, altitude, p1, p2, p3 = GwNavQueries.triangle_from_position(blackboard.nav_world, pos, 1.5, 1.5)
+			local var_23_10 = POSITION_LOOKUP[var_23_5]
+			local var_23_11 = POSITION_LOOKUP[var_23_8] + Quaternion.forward(var_23_9) * 2
+			local var_23_12 = math.min(arg_23_4 * 2, 1)
+			local var_23_13 = Vector3.lerp(var_23_10, var_23_11, var_23_12)
+			local var_23_14, var_23_15, var_23_16, var_23_17, var_23_18 = GwNavQueries.triangle_from_position(arg_23_2.nav_world, var_23_13, 1.5, 1.5)
 
-			if success then
-				pos = Vector3(pos.x, pos.y, altitude)
+			if var_23_14 then
+				var_23_13 = Vector3(var_23_13.x, var_23_13.y, var_23_15)
 			end
 
-			Unit.set_local_position(summoning_unit, 0, pos)
-			GameSession.set_game_object_field(damage_wave_extension.game, go_id, "rotation", source_unit_rot)
-			GameSession.set_game_object_field(damage_wave_extension.game, go_id, "position", pos)
+			Unit.set_local_position(var_23_5, 0, var_23_13)
+			GameSession.set_game_object_field(var_23_7.game, var_23_6, "rotation", var_23_9)
+			GameSession.set_game_object_field(var_23_7.game, var_23_6, "position", var_23_13)
 		end
 	end
 end
 
-BTChaosSorcererSummoningAction.spawn_plague_wave = function (self, unit, blackboard, t, dt, target_position)
-	local plague_wave_data = blackboard.plague_wave_data
-	local target_starting_pos = plague_wave_data.target_starting_pos:unbox()
-	local plague_wave_pos = POSITION_LOOKUP[unit]
-	local plague_wave_rot = Quaternion.look(target_position - plague_wave_pos)
-	local target_dist = plague_wave_data.target_dist
-	local nav_world = blackboard.nav_world
-	local projected_start_pos = LocomotionUtils.pos_on_mesh(nav_world, plague_wave_pos, 1, 1)
-	local projected_end_pos = LocomotionUtils.pos_on_mesh(nav_world, target_position, 1, 1)
-	local damage_wave_extension = blackboard.damage_wave_extension
+function BTChaosSorcererSummoningAction.spawn_plague_wave(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
+	local var_24_0 = arg_24_2.plague_wave_data
+	local var_24_1 = var_24_0.target_starting_pos:unbox()
+	local var_24_2 = POSITION_LOOKUP[arg_24_1]
+	local var_24_3 = Quaternion.look(arg_24_5 - var_24_2)
+	local var_24_4 = var_24_0.target_dist
+	local var_24_5 = arg_24_2.nav_world
+	local var_24_6 = LocomotionUtils.pos_on_mesh(var_24_5, var_24_2, 1, 1)
+	local var_24_7 = LocomotionUtils.pos_on_mesh(var_24_5, arg_24_5, 1, 1)
+	local var_24_8 = arg_24_2.damage_wave_extension
 
-	if not projected_end_pos then
-		local p = GwNavQueries.inside_position_from_outside_position(nav_world, target_position, 6, 6, 4, 0.5)
+	if not var_24_7 then
+		local var_24_9 = GwNavQueries.inside_position_from_outside_position(var_24_5, arg_24_5, 6, 6, 4, 0.5)
 
-		if p then
-			projected_end_pos = p
+		if var_24_9 then
+			var_24_7 = var_24_9
 		else
-			blackboard.ready_to_summon = false
+			arg_24_2.ready_to_summon = false
 
-			damage_wave_extension:abort()
+			var_24_8:abort()
 
 			return false
 		end
 	end
 
-	if not projected_start_pos then
-		local p = GwNavQueries.inside_position_from_outside_position(nav_world, plague_wave_pos, 6, 6, 4, 0.5)
+	if not var_24_6 then
+		local var_24_10 = GwNavQueries.inside_position_from_outside_position(var_24_5, var_24_2, 6, 6, 4, 0.5)
 
-		if p then
-			projected_start_pos = p
+		if var_24_10 then
+			var_24_6 = var_24_10
 		else
-			blackboard.ready_to_summon = false
+			arg_24_2.ready_to_summon = false
 
-			damage_wave_extension:abort()
+			var_24_8:abort()
 
 			return false
 		end
 	end
 
-	local success = GwNavQueries.raycango(nav_world, projected_start_pos, projected_end_pos)
-	local optional_target_pos
+	local var_24_11 = GwNavQueries.raycango(var_24_5, var_24_6, var_24_7)
+	local var_24_12
 
-	if success then
-		optional_target_pos = projected_end_pos
+	if var_24_11 then
+		var_24_12 = var_24_7
 	else
-		local found_new_target_pos = false
-		local tries = 5
-		local target_to_start = target_starting_pos - target_position
-		local target_to_start_normalized = Vector3.normalize(target_to_start)
-		local target_to_start_dist = Vector3.distance(target_position, target_starting_pos)
-		local ray_check_offset = 2.5
+		local var_24_13 = false
+		local var_24_14 = 5
+		local var_24_15 = var_24_1 - arg_24_5
+		local var_24_16 = Vector3.normalize(var_24_15)
+		local var_24_17 = Vector3.distance(arg_24_5, var_24_1)
+		local var_24_18 = 2.5
 
-		for i = 1, tries do
-			local ray_check_position = target_position + target_to_start_normalized * (ray_check_offset * i)
-			local success = GwNavQueries.raycango(nav_world, projected_start_pos, ray_check_position)
+		for iter_24_0 = 1, var_24_14 do
+			local var_24_19 = arg_24_5 + var_24_16 * (var_24_18 * iter_24_0)
 
-			if success then
-				found_new_target_pos = true
-				optional_target_pos = ray_check_position
-				plague_wave_rot = Quaternion.look(ray_check_position - plague_wave_pos)
+			if GwNavQueries.raycango(var_24_5, var_24_6, var_24_19) then
+				var_24_13 = true
+				var_24_12 = var_24_19
+
+				local var_24_20 = Quaternion.look(var_24_19 - var_24_2)
 
 				break
 			end
 		end
 
-		if not found_new_target_pos then
-			blackboard.ready_to_summon = false
+		if not var_24_13 then
+			arg_24_2.ready_to_summon = false
 
-			damage_wave_extension:abort()
+			var_24_8:abort()
 
 			return false
 		end
 	end
 
-	local action = blackboard.action
-	local dist_sq = Vector3.distance_squared(optional_target_pos, target_position)
-	local max_dist_sq = action.max_wave_to_target_dist^2
+	local var_24_21 = arg_24_2.action
 
-	if max_dist_sq < dist_sq then
-		blackboard.ready_to_summon = false
+	if Vector3.distance_squared(var_24_12, arg_24_5) > var_24_21.max_wave_to_target_dist^2 then
+		arg_24_2.ready_to_summon = false
 
-		damage_wave_extension:abort()
+		var_24_8:abort()
 
 		return false
 	end
 
-	damage_wave_extension:launch_wave(blackboard.summon_target_unit, optional_target_pos)
+	var_24_8:launch_wave(arg_24_2.summon_target_unit, var_24_12)
 
 	return true
 end
 
-BTChaosSorcererSummoningAction.spawn_plague_wave_from_spawner = function (self, unit, blackboard, t, dt, target_position)
-	local plague_wave_pos = POSITION_LOOKUP[unit]
-	local nav_world = blackboard.nav_world
-	local target_unit = blackboard.target_unit
-	local spawn_pos = LocomotionUtils.pos_on_mesh(nav_world, plague_wave_pos)
+function BTChaosSorcererSummoningAction.spawn_plague_wave_from_spawner(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
+	local var_25_0 = POSITION_LOOKUP[arg_25_1]
+	local var_25_1 = arg_25_2.nav_world
+	local var_25_2 = arg_25_2.target_unit
+	local var_25_3 = LocomotionUtils.pos_on_mesh(var_25_1, var_25_0)
 
-	if not spawn_pos then
+	if not var_25_3 then
 		return false
 	end
 
-	local to_target = target_position - spawn_pos
-	local spawn_rot = Quaternion.look(to_target, Vector3.up())
-	local unit_name = "units/beings/enemies/chaos_sorcerer_fx/chr_chaos_sorcerer_fx"
-	local extension_init_data = {
+	local var_25_4 = arg_25_5 - var_25_3
+	local var_25_5 = Quaternion.look(var_25_4, Vector3.up())
+	local var_25_6 = "units/beings/enemies/chaos_sorcerer_fx/chr_chaos_sorcerer_fx"
+	local var_25_7 = {
 		area_damage_system = {
 			damage_wave_template_name = "plague_wave",
-			source_unit = unit,
-		},
+			source_unit = arg_25_1
+		}
 	}
-	local damage_wave_unit = Managers.state.unit_spawner:spawn_network_unit(unit_name, "damage_wave_unit", extension_init_data, spawn_pos, spawn_rot)
-	local wave_extension = ScriptUnit.extension(damage_wave_unit, "area_damage_system")
+	local var_25_8 = Managers.state.unit_spawner:spawn_network_unit(var_25_6, "damage_wave_unit", var_25_7, var_25_3, var_25_5)
 
-	wave_extension:launch_wave(target_unit)
+	ScriptUnit.extension(var_25_8, "area_damage_system"):launch_wave(var_25_2)
 
-	blackboard.attack_finished = true
+	arg_25_2.attack_finished = true
 
 	return true
 end
 
-BTChaosSorcererSummoningAction.spawn_plague_waves_in_patterns = function (self, unit, blackboard, t, dt, target_position)
-	local nav_world = blackboard.nav_world
-	local action = blackboard.action
-	local spawner_set, reps
+function BTChaosSorcererSummoningAction.spawn_plague_waves_in_patterns(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5)
+	local var_26_0 = arg_26_2.nav_world
+	local var_26_1 = arg_26_2.action
+	local var_26_2
+	local var_26_3
 
-	if action.spawner_set_id then
-		spawner_set = blackboard.spawners[action.spawner_set_id]
+	if var_26_1.spawner_set_id then
+		var_26_2 = arg_26_2.spawners[var_26_1.spawner_set_id]
 	else
-		spawner_set = {
-			unit,
+		var_26_2 = {
+			arg_26_1
 		}
 	end
 
-	reps = action.pattern_repetitions or 1
+	local var_26_4 = var_26_1.pattern_repetitions or 1
+	local var_26_5 = var_26_1.range or 20
 
-	local range = action.range or 20
+	for iter_26_0 = 1, var_26_4 do
+		for iter_26_1 = 1, #var_26_2 do
+			local var_26_6 = var_26_2[iter_26_1]
+			local var_26_7 = Unit.local_position(var_26_6, 0)
+			local var_26_8 = LocomotionUtils.pos_on_mesh(var_26_0, var_26_7)
 
-	for j = 1, reps do
-		for i = 1, #spawner_set do
-			local spawner_unit = spawner_set[i]
-			local spawn_pos = Unit.local_position(spawner_unit, 0)
-
-			spawn_pos = LocomotionUtils.pos_on_mesh(nav_world, spawn_pos)
-
-			if not spawn_pos then
+			if not var_26_8 then
 				return false
 			end
 
-			local spawn_rot, spawn_dir
+			local var_26_9
+			local var_26_10
 
-			if action.spawn_rot_func then
-				spawn_rot = action.spawn_rot_func(unit, blackboard, spawner_unit, j)
+			if var_26_1.spawn_rot_func then
+				var_26_9 = var_26_1.spawn_rot_func(arg_26_1, arg_26_2, var_26_6, iter_26_0)
 			else
-				spawn_rot = Unit.local_rotation(spawner_unit, 0)
+				var_26_9 = Unit.local_rotation(var_26_6, 0)
 			end
 
-			spawn_dir = Quaternion.forward(spawn_rot)
+			local var_26_11 = Quaternion.forward(var_26_9)
+			local var_26_12 = var_26_8 + var_26_11 * var_26_5
 
-			local target_pos = spawn_pos + spawn_dir * range
-
-			if action.goal_pos_func then
-				target_pos = action.goal_pos_func(unit, blackboard, spawner_unit, j, spawn_pos, target_pos, spawn_dir)
+			if var_26_1.goal_pos_func then
+				var_26_12 = var_26_1.goal_pos_func(arg_26_1, arg_26_2, var_26_6, iter_26_0, var_26_8, var_26_12, var_26_11)
 			end
 
-			if target_pos then
-				local unit_name = "units/beings/enemies/chaos_sorcerer_fx/chr_chaos_sorcerer_fx"
-				local extension_init_data = {
+			if var_26_12 then
+				local var_26_13 = "units/beings/enemies/chaos_sorcerer_fx/chr_chaos_sorcerer_fx"
+				local var_26_14 = {
 					area_damage_system = {
-						damage_wave_template_name = action.damage_wave_template,
-						source_unit = unit,
-					},
+						damage_wave_template_name = var_26_1.damage_wave_template,
+						source_unit = arg_26_1
+					}
 				}
-				local damage_wave_unit = Managers.state.unit_spawner:spawn_network_unit(unit_name, "damage_wave_unit", extension_init_data, spawn_pos, spawn_rot)
-				local wave_extension = ScriptUnit.extension(damage_wave_unit, "area_damage_system")
+				local var_26_15 = Managers.state.unit_spawner:spawn_network_unit(var_26_13, "damage_wave_unit", var_26_14, var_26_8, var_26_9)
+				local var_26_16 = ScriptUnit.extension(var_26_15, "area_damage_system")
 
-				if action.damage_wave_update_func then
-					wave_extension:set_update_func(action.damage_wave_update_func, action.damage_wave_init_func, t)
+				if var_26_1.damage_wave_update_func then
+					var_26_16:set_update_func(var_26_1.damage_wave_update_func, var_26_1.damage_wave_init_func, arg_26_3)
 				end
 
-				local target_unit
+				local var_26_17
 
-				wave_extension:launch_wave(target_unit, target_pos)
+				var_26_16:launch_wave(var_26_17, var_26_12)
 
-				blackboard.attack_finished = true
+				arg_26_2.attack_finished = true
 			end
 		end
 	end
@@ -747,246 +710,241 @@ BTChaosSorcererSummoningAction.spawn_plague_waves_in_patterns = function (self, 
 	return true
 end
 
-BTChaosSorcererSummoningAction.init_summon_plague_wave_sequence = function (self, unit, blackboard, t)
-	blackboard.summon_plague_wave_timer = t + 0.5
-	blackboard.next_wave_time = 0
-	blackboard.wave_counter = 0
+function BTChaosSorcererSummoningAction.init_summon_plague_wave_sequence(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+	arg_27_2.summon_plague_wave_timer = arg_27_3 + 0.5
+	arg_27_2.next_wave_time = 0
+	arg_27_2.wave_counter = 0
 
-	local sequence_init_func = blackboard.action.sequence_init_func
+	local var_27_0 = arg_27_2.action.sequence_init_func
 
-	if sequence_init_func then
-		sequence_init_func(unit, blackboard)
+	if var_27_0 then
+		var_27_0(arg_27_1, arg_27_2)
 	end
 end
 
-BTChaosSorcererSummoningAction.update_sequenced_plague_wave_spawning = function (self, unit, blackboard, t, dt)
-	local action = blackboard.action
-	local target_position
+function BTChaosSorcererSummoningAction.update_sequenced_plague_wave_spawning(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+	local var_28_0 = arg_28_2.action
+	local var_28_1
 
-	if t > blackboard.next_wave_time then
-		blackboard.next_wave_time = t + action.duration_between_waves
+	if arg_28_3 > arg_28_2.next_wave_time then
+		arg_28_2.next_wave_time = arg_28_3 + var_28_0.duration_between_waves
 
-		local spawn_func_name = action.spawn_func_name
-		local success = self[spawn_func_name](self, unit, blackboard, t, dt, target_position)
+		local var_28_2 = arg_28_0[var_28_0.spawn_func_name](arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, var_28_1)
 
-		blackboard.wave_counter = blackboard.wave_counter + 1
+		arg_28_2.wave_counter = arg_28_2.wave_counter + 1
 
-		if blackboard.wave_counter > action.num_waves then
+		if arg_28_2.wave_counter > var_28_0.num_waves then
 			return true
 		end
 	end
 end
 
-BTChaosSorcererSummoningAction.clean_up_plague_wave = function (self, unit, blackboard, t)
-	local target_unit = blackboard.target_unit
+function BTChaosSorcererSummoningAction.clean_up_plague_wave(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+	local var_29_0 = arg_29_2.target_unit
 
-	Managers.state.entity:system("ai_bot_group_system"):ranged_attack_ended(unit, target_unit, "plague_wave")
+	Managers.state.entity:system("ai_bot_group_system"):ranged_attack_ended(arg_29_1, var_29_0, "plague_wave")
 end
 
-local debug = false
+local var_0_1 = false
 
-BTChaosSorcererSummoningAction.init_boss_rings = function (self, unit, blackboard, t)
-	blackboard.summoning_finished = true
+function BTChaosSorcererSummoningAction.init_boss_rings(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+	arg_30_2.summoning_finished = true
 end
 
-BTChaosSorcererSummoningAction.spawn_boss_rings = function (self, unit, blackboard, t)
-	local action = blackboard.action
-	local dialogue_extension = ScriptUnit.extension(unit, "dialogue_system")
-	local wwise_world = Managers.world:wwise_world(blackboard.world)
+function BTChaosSorcererSummoningAction.spawn_boss_rings(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+	local var_31_0 = arg_31_2.action
+	local var_31_1 = ScriptUnit.extension(arg_31_1, "dialogue_system")
+	local var_31_2 = Managers.world:wwise_world(arg_31_2.world)
 
-	blackboard.audio_source_id = WwiseWorld.make_manual_source(wwise_world, unit, dialogue_extension.voice_node)
+	arg_31_2.audio_source_id = WwiseWorld.make_manual_source(var_31_2, arg_31_1, var_31_1.voice_node)
 
-	local sound_event = action.start_ability_sound_event
+	local var_31_3 = var_31_0.start_ability_sound_event
 
-	if sound_event then
-		local audio_system = Managers.state.entity:system("audio_system")
+	if var_31_3 then
+		Managers.state.entity:system("audio_system"):_play_event_with_source(var_31_2, var_31_3, arg_31_2.audio_source_id)
 
-		audio_system:_play_event_with_source(wwise_world, sound_event, blackboard.audio_source_id)
-
-		blackboard.summoning_start_event_playing = true
+		arg_31_2.summoning_start_event_playing = true
 	end
 
 	return true
 end
 
-BTChaosSorcererSummoningAction.update_boss_rings = function (self, unit, blackboard, t, dt)
-	local world = blackboard.world
-	local action = blackboard.action
-	local ring_sequence = action.ring_sequence
-	local all_done = true
-	local colors = {
+function BTChaosSorcererSummoningAction.update_boss_rings(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+	local var_32_0 = arg_32_2.world
+	local var_32_1 = arg_32_2.action
+	local var_32_2 = var_32_1.ring_sequence
+	local var_32_3 = true
+	local var_32_4 = {
 		Color(255, 0, 0),
-		Color(255, 0, 0),
+		Color(255, 0, 0)
 	}
-	local bot_reaction_time = 0.5
+	local var_32_5 = 0.5
 
-	for i, ring in ipairs(ring_sequence) do
-		local done = ring.done
+	for iter_32_0, iter_32_1 in ipairs(var_32_2) do
+		if not iter_32_1.done then
+			iter_32_1.delay_time = iter_32_1.delay_time or iter_32_1.delay + arg_32_3 or arg_32_3
 
-		if not done then
-			ring.delay_time = ring.delay_time or ring.delay + t or t
-
-			if t >= ring.delay_time and not ring.damage_effect_time then
-				if debug and ring.delay > 0 then
+			if arg_32_3 >= iter_32_1.delay_time and not iter_32_1.damage_effect_time then
+				if var_0_1 and iter_32_1.delay > 0 then
 					QuickDrawerStay:reset()
 				end
 
-				local premonition_type = ring.premination
-				local ring_info = action.ring_info
-				local origin_pos = Vector3Box.unbox(blackboard.ring_center_position)
-				local ring_position = ring.position
-				local max_radius = ring_info[ring_position].max_radius
-				local min_radius = ring_info[ring_position].min_radius
-				local premonition_time = premonition_type == "short" and 1 or premonition_type == "medium" and 2 or premonition_type == "long" and 3 or 0.75
-				local premonition_effect = premonition_type == "short" and ring_info[ring_position].premonition_effect_name_short or premonition_type == "medium" and ring_info[ring_position].premonition_effect_name_medium or premonition_type == "long" and ring_info[ring_position].premonition_effect_name_long
+				local var_32_6 = iter_32_1.premination
+				local var_32_7 = var_32_1.ring_info
+				local var_32_8 = Vector3Box.unbox(arg_32_2.ring_center_position)
+				local var_32_9 = iter_32_1.position
+				local var_32_10 = var_32_7[var_32_9].max_radius
+				local var_32_11 = var_32_7[var_32_9].min_radius
+				local var_32_12 = var_32_6 == "short" and 1 or var_32_6 == "medium" and 2 or var_32_6 == "long" and 3 or 0.75
+				local var_32_13 = var_32_6 == "short" and var_32_7[var_32_9].premonition_effect_name_short or var_32_6 == "medium" and var_32_7[var_32_9].premonition_effect_name_medium or var_32_6 == "long" and var_32_7[var_32_9].premonition_effect_name_long
 
-				if premonition_effect then
-					Managers.state.network:rpc_play_particle_effect_no_rotation(nil, NetworkLookup.effects[premonition_effect], NetworkConstants.invalid_game_object_id, 0, origin_pos, false)
+				if var_32_13 then
+					Managers.state.network:rpc_play_particle_effect_no_rotation(nil, NetworkLookup.effects[var_32_13], NetworkConstants.invalid_game_object_id, 0, var_32_8, false)
 				end
 
-				local vector_max = Vector3(max_radius, 0, 0)
-				local vector_min = Vector3(min_radius, 0, 0)
+				local var_32_14 = Vector3(var_32_10, 0, 0)
+				local var_32_15 = Vector3(var_32_11, 0, 0)
 
-				if debug then
-					for j = 1, 360 do
-						vector_max = Quaternion.rotate(Quaternion.from_euler_angles_xyz(0, 0, 1), vector_max)
-						vector_min = Quaternion.rotate(Quaternion.from_euler_angles_xyz(0, 0, 1), vector_min)
+				if var_0_1 then
+					for iter_32_2 = 1, 360 do
+						var_32_14 = Quaternion.rotate(Quaternion.from_euler_angles_xyz(0, 0, 1), var_32_14)
+						var_32_15 = Quaternion.rotate(Quaternion.from_euler_angles_xyz(0, 0, 1), var_32_15)
 
-						QuickDrawerStay:line(origin_pos + vector_max + Vector3.up() * 0.6, origin_pos + vector_min + Vector3.up() * 0.1, colors[i % 2 + 1])
+						QuickDrawerStay:line(var_32_8 + var_32_14 + Vector3.up() * 0.6, var_32_8 + var_32_15 + Vector3.up() * 0.1, var_32_4[iter_32_0 % 2 + 1])
 					end
 				end
 
-				fassert(premonition_type, "No or invalid premonition type")
+				fassert(var_32_6, "No or invalid premonition type")
 
-				ring.damage_effect_time = t + premonition_time
-				ring.bot_avoid_time = ring.damage_effect_time - bot_reaction_time
-			elseif ring.bot_avoid_time and t >= ring.bot_avoid_time then
-				ring.bot_avoid_time = nil
+				iter_32_1.damage_effect_time = arg_32_3 + var_32_12
+				iter_32_1.bot_avoid_time = iter_32_1.damage_effect_time - var_32_5
+			elseif iter_32_1.bot_avoid_time and arg_32_3 >= iter_32_1.bot_avoid_time then
+				iter_32_1.bot_avoid_time = nil
 
-				local ring_position = ring.position
-				local ring_info = action.ring_info
-				local origin_pos = blackboard.ring_center_position:unbox()
-				local inner_radius = ring_info[ring_position].min_radius
-				local outer_radius = ring_info[ring_position].max_radius
-				local size = Vector3(inner_radius, outer_radius, 1)
-				local ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
+				local var_32_16 = iter_32_1.position
+				local var_32_17 = var_32_1.ring_info
+				local var_32_18 = arg_32_2.ring_center_position:unbox()
+				local var_32_19 = var_32_17[var_32_16].min_radius
+				local var_32_20 = var_32_17[var_32_16].max_radius
+				local var_32_21 = Vector3(var_32_19, var_32_20, 1)
 
-				ai_bot_group_system:aoe_threat_created(origin_pos, "cylinder", size, Quaternion.identity(), bot_reaction_time, "Chaos Sorcerer")
-			elseif ring.damage_effect_time and t >= ring.damage_effect_time and not ring.premonition_time then
-				local ring_info = action.ring_info
-				local ring_position = ring.position
-				local origin_pos = Vector3Box.unbox(blackboard.ring_center_position)
-				local effect_name = ring_info[ring_position].damage_effect_name
+				Managers.state.entity:system("ai_bot_group_system"):aoe_threat_created(var_32_18, "cylinder", var_32_21, Quaternion.identity(), var_32_5, "Chaos Sorcerer")
+			elseif iter_32_1.damage_effect_time and arg_32_3 >= iter_32_1.damage_effect_time and not iter_32_1.premonition_time then
+				local var_32_22 = var_32_1.ring_info
+				local var_32_23 = iter_32_1.position
+				local var_32_24 = Vector3Box.unbox(arg_32_2.ring_center_position)
+				local var_32_25 = var_32_22[var_32_23].damage_effect_name
 
-				if effect_name then
-					Managers.state.network:rpc_play_particle_effect_no_rotation(nil, NetworkLookup.effects[effect_name], NetworkConstants.invalid_game_object_id, 0, origin_pos, false)
+				if var_32_25 then
+					Managers.state.network:rpc_play_particle_effect_no_rotation(nil, NetworkLookup.effects[var_32_25], NetworkConstants.invalid_game_object_id, 0, var_32_24, false)
 				end
 
-				ring.premonition_time = t
-			elseif ring.premonition_time and t >= ring.premonition_time then
-				local ring_position = ring.position
-				local ring_info = action.ring_info
-				local origin_pos = Vector3Box.unbox(blackboard.ring_center_position)
-				local inner_radius = ring_info[ring_position].min_radius
-				local outer_radius = ring_info[ring_position].max_radius
-				local audio_system = Managers.state.entity:system("audio_system")
+				iter_32_1.premonition_time = arg_32_3
+			elseif iter_32_1.premonition_time and arg_32_3 >= iter_32_1.premonition_time then
+				local var_32_26 = iter_32_1.position
+				local var_32_27 = var_32_1.ring_info
+				local var_32_28 = Vector3Box.unbox(arg_32_2.ring_center_position)
+				local var_32_29 = var_32_27[var_32_26].min_radius
+				local var_32_30 = var_32_27[var_32_26].max_radius
+				local var_32_31 = Managers.state.entity:system("audio_system")
 
-				audio_system:play_audio_position_event(action.damage_sound_event, origin_pos)
+				var_32_31:play_audio_position_event(var_32_1.damage_sound_event, var_32_28)
 
-				if blackboard.summoning_start_event_playing then
-					blackboard.summoning_start_event_playing = nil
+				if arg_32_2.summoning_start_event_playing then
+					arg_32_2.summoning_start_event_playing = nil
 
-					local wwise_world = Managers.world:wwise_world(blackboard.world)
+					local var_32_32 = Managers.world:wwise_world(arg_32_2.world)
 
-					audio_system:_play_event_with_source(wwise_world, action.end_ability_sound_event, blackboard.audio_source_id)
-					WwiseWorld.destroy_manual_source(wwise_world, blackboard.audio_source_id)
+					var_32_31:_play_event_with_source(var_32_32, var_32_1.end_ability_sound_event, arg_32_2.audio_source_id)
+					WwiseWorld.destroy_manual_source(var_32_32, arg_32_2.audio_source_id)
 				end
 
-				local nearby_ais = {}
-				local side = Managers.state.side:get_side_from_name("heroes")
-				local player_units = side.PLAYER_AND_BOT_UNITS
-				local catapult_strength = ring.catapult_strength
+				local var_32_33 = {}
+				local var_32_34 = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_UNITS
+				local var_32_35 = iter_32_1.catapult_strength
 
-				AiUtils.broadphase_query(origin_pos, outer_radius, nearby_ais)
+				AiUtils.broadphase_query(var_32_28, var_32_30, var_32_33)
 
-				local inner_squared = inner_radius * inner_radius
-				local outer_squared = outer_radius * outer_radius
+				local var_32_36 = var_32_29 * var_32_29
+				local var_32_37 = var_32_30 * var_32_30
 
-				for _, hit_unit in ipairs(nearby_ais) do
-					local position = POSITION_LOOKUP[hit_unit]
-					local distance_squared = Vector3.distance_squared(position, origin_pos)
+				for iter_32_3, iter_32_4 in ipairs(var_32_33) do
+					local var_32_38 = POSITION_LOOKUP[iter_32_4]
 
-					if inner_squared < distance_squared and hit_unit ~= unit then
-						local damage_profile_name = action.damage_profile_name
-						local damage_profile = DamageProfileTemplates[damage_profile_name]
-						local difficulty_rank = Managers.state.difficulty:get_difficulty()
-						local actual_power_level = action.power_level[difficulty_rank]
-						local hit_ragdoll_actor, boost_curve_multiplier, is_critical_strike, added_dot, first_hit, total_hits, backstab_multiplier
-						local source_attacker_unit = unit
+					if var_32_36 < Vector3.distance_squared(var_32_38, var_32_28) and iter_32_4 ~= arg_32_1 then
+						local var_32_39 = var_32_1.damage_profile_name
+						local var_32_40 = DamageProfileTemplates[var_32_39]
+						local var_32_41 = Managers.state.difficulty:get_difficulty()
+						local var_32_42 = var_32_1.power_level[var_32_41]
+						local var_32_43
+						local var_32_44
+						local var_32_45
+						local var_32_46
+						local var_32_47
+						local var_32_48
+						local var_32_49
+						local var_32_50 = arg_32_1
 
-						DamageUtils.add_damage_network_player(damage_profile, nil, actual_power_level, hit_unit, unit, "torso", POSITION_LOOKUP[hit_unit], Vector3.up(), "undefined", hit_ragdoll_actor, boost_curve_multiplier, is_critical_strike, added_dot, first_hit, total_hits, backstab_multiplier, source_attacker_unit)
+						DamageUtils.add_damage_network_player(var_32_40, nil, var_32_42, iter_32_4, arg_32_1, "torso", POSITION_LOOKUP[iter_32_4], Vector3.up(), "undefined", var_32_43, var_32_44, var_32_45, var_32_46, var_32_47, var_32_48, var_32_49, var_32_50)
 					end
 				end
 
-				for _, player_unit in ipairs(player_units) do
-					local position = POSITION_LOOKUP[player_unit]
-					local distance_squared = Vector3.distance_squared(position, origin_pos)
-					local catapult_direction = ring.catapult_direction
-					local direction = catapult_direction == "in" and origin_pos - position or position - origin_pos
+				for iter_32_5, iter_32_6 in ipairs(var_32_34) do
+					local var_32_51 = POSITION_LOOKUP[iter_32_6]
+					local var_32_52 = Vector3.distance_squared(var_32_51, var_32_28)
+					local var_32_53 = iter_32_1.catapult_direction == "in" and var_32_28 - var_32_51 or var_32_51 - var_32_28
+					local var_32_54 = Vector3.normalize(var_32_53)
 
-					direction = Vector3.normalize(direction)
+					if var_32_52 < var_32_37 and var_32_36 < var_32_52 then
+						local var_32_55 = var_32_1.damage_profile_name
+						local var_32_56 = DamageProfileTemplates[var_32_55]
+						local var_32_57 = Managers.state.difficulty:get_difficulty()
+						local var_32_58 = Managers.player:owner(iter_32_6)
+						local var_32_59 = var_32_58 and not var_32_58:is_player_controlled() and 0 or var_32_1.power_level[var_32_57]
 
-					if distance_squared < outer_squared and inner_squared < distance_squared then
-						local damage_profile_name = action.damage_profile_name
-						local damage_profile = DamageProfileTemplates[damage_profile_name]
-						local difficulty_rank = Managers.state.difficulty:get_difficulty()
-						local player = Managers.player:owner(player_unit)
-						local is_bot = player and not player:is_player_controlled()
-						local actual_power_level = is_bot and 0 or action.power_level[difficulty_rank]
+						DamageUtils.add_damage_network_player(var_32_56, nil, var_32_59, iter_32_6, arg_32_1, "torso", POSITION_LOOKUP[iter_32_6], Vector3.up(), "undefined")
 
-						DamageUtils.add_damage_network_player(damage_profile, nil, actual_power_level, player_unit, unit, "torso", POSITION_LOOKUP[player_unit], Vector3.up(), "undefined")
-
-						if catapult_strength then
-							StatusUtils.set_catapulted_network(player_unit, true, (direction + Vector3.up()) * catapult_strength)
+						if var_32_35 then
+							StatusUtils.set_catapulted_network(iter_32_6, true, (var_32_54 + Vector3.up()) * var_32_35)
 						end
 
-						blackboard.hit_by_eruptions = true
+						arg_32_2.hit_by_eruptions = true
 					end
 				end
 
-				ring.done = true
+				iter_32_1.done = true
 			else
-				all_done = false
+				var_32_3 = false
 
 				break
 			end
 
-			if not ring.done then
-				all_done = false
+			if not iter_32_1.done then
+				var_32_3 = false
 			end
 		end
 	end
 
-	if all_done then
+	if var_32_3 then
 		return true
 	end
 end
 
-BTChaosSorcererSummoningAction.clean_up_boss_rings = function (self, unit, blackboard, t)
-	for i, ring in ipairs(blackboard.action.ring_sequence) do
-		ring.delay_time = nil
-		ring.premonition_time = nil
-		ring.damage_effect_time = nil
-		ring.done = nil
+function BTChaosSorcererSummoningAction.clean_up_boss_rings(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+	for iter_33_0, iter_33_1 in ipairs(arg_33_2.action.ring_sequence) do
+		iter_33_1.delay_time = nil
+		iter_33_1.premonition_time = nil
+		iter_33_1.damage_effect_time = nil
+		iter_33_1.done = nil
 	end
 
-	if blackboard.summoning_start_event_playing then
-		blackboard.summoning_start_event_playing = nil
+	if arg_33_2.summoning_start_event_playing then
+		arg_33_2.summoning_start_event_playing = nil
 
-		local audio_system = Managers.state.entity:system("audio_system")
-		local wwise_world = Managers.world:wwise_world(blackboard.world)
+		local var_33_0 = Managers.state.entity:system("audio_system")
+		local var_33_1 = Managers.world:wwise_world(arg_33_2.world)
 
-		audio_system:_play_event_with_source(wwise_world, blackboard.action.end_ability_sound_event, blackboard.audio_source_id)
-		WwiseWorld.destroy_manual_source(wwise_world, blackboard.audio_source_id)
+		var_33_0:_play_event_with_source(var_33_1, arg_33_2.action.end_ability_sound_event, arg_33_2.audio_source_id)
+		WwiseWorld.destroy_manual_source(var_33_1, arg_33_2.audio_source_id)
 	end
 end

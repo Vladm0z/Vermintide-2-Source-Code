@@ -1,37 +1,37 @@
-﻿-- chunkname: @scripts/settings/breeds/breed_chaos_dummy_sorcerer.lua
+-- chunkname: @scripts/settings/breeds/breed_chaos_dummy_sorcerer.lua
 
-local stagger_types = require("scripts/utils/stagger_types")
-local breed_data = {
-	animation_sync_rpc = "rpc_sync_anim_state_8",
-	armor_category = 3,
-	armored_on_no_damage = true,
-	base_unit = "units/beings/enemies/chaos_sorcerer_corruptor/chr_chaos_sorcerer_corruptor",
-	behavior = "dummy_sorcerer",
-	bone_lod_level = 0,
+local var_0_0 = require("scripts/utils/stagger_types")
+local var_0_1 = {
 	boss_staggers = true,
-	combat_music_state = "no_boss",
-	death_reaction = "ai_default",
-	debug_spawn_category = "Misc",
-	default_inventory_template = "chaos_sorcerer",
-	exchange_order = 1,
-	far_off_despawn_immunity = true,
-	has_inventory = true,
-	hit_effect_template = "HitEffectsDummySorcerer",
-	hit_mass_count = 8,
-	hit_reaction = "ai_default",
-	no_autoaim = true,
-	not_bot_target = true,
 	perception = "perception_no_seeing",
-	poison_resistance = 100,
-	primary_armor_category = 6,
-	race = "chaos",
-	run_speed = 0.65,
-	stagger_immune = true,
-	target_selection = "pick_no_targets",
-	threat_value = 8,
-	unit_template = "ai_unit_chaos_dummy_sorcerer",
+	has_inventory = true,
+	animation_sync_rpc = "rpc_sync_anim_state_8",
 	walk_speed = 0.65,
+	not_bot_target = true,
+	run_speed = 0.65,
+	target_selection = "pick_no_targets",
+	exchange_order = 1,
+	armored_on_no_damage = true,
+	poison_resistance = 100,
+	combat_music_state = "no_boss",
+	debug_spawn_category = "Misc",
+	bone_lod_level = 0,
+	hit_reaction = "ai_default",
 	wield_inventory_on_spawn = true,
+	default_inventory_template = "chaos_sorcerer",
+	hit_effect_template = "HitEffectsDummySorcerer",
+	primary_armor_category = 6,
+	unit_template = "ai_unit_chaos_dummy_sorcerer",
+	hit_mass_count = 8,
+	race = "chaos",
+	no_autoaim = true,
+	death_reaction = "ai_default",
+	armor_category = 3,
+	far_off_despawn_immunity = true,
+	stagger_immune = true,
+	behavior = "dummy_sorcerer",
+	base_unit = "units/beings/enemies/chaos_sorcerer_corruptor/chr_chaos_sorcerer_corruptor",
+	threat_value = 8,
 	infighting = InfightingSettings.none,
 	max_health = {
 		1500,
@@ -41,7 +41,7 @@ local breed_data = {
 		1500,
 		1500,
 		1500,
-		1500,
+		1500
 	},
 	stagger_duration = BreedTweaks.stagger_duration.sorcerer,
 	hit_mass_counts = {
@@ -49,38 +49,38 @@ local breed_data = {
 		8,
 		10,
 		12,
-		15,
+		15
 	},
-	stagger_modifier_function = function (stagger_type, duration, length, hit_zone_name, blackboard, breed)
-		return stagger_types.none, 0, 0
+	stagger_modifier_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+		return var_0_0.none, 0, 0
 	end,
 	debug_color = {
 		255,
 		255,
 		255,
-		255,
+		255
 	},
 	hitzone_multiplier_types = {},
 	hit_zones = {
 		head = {
 			prio = 1,
 			actors = {
-				"c_head",
+				"c_head"
 			},
 			push_actors = {
 				"j_head",
-				"j_spine1",
-			},
+				"j_spine1"
+			}
 		},
 		neck = {
 			prio = 1,
 			actors = {
-				"c_neck",
+				"c_neck"
 			},
 			push_actors = {
 				"j_head",
-				"j_spine1",
-			},
+				"j_spine1"
+			}
 		},
 		torso = {
 			prio = 2,
@@ -89,33 +89,33 @@ local breed_data = {
 				"c_spine",
 				"c_spine1",
 				"c_leftshoulder",
-				"c_rightshoulder",
+				"c_rightshoulder"
 			},
 			push_actors = {
-				"j_spine1",
-			},
+				"j_spine1"
+			}
 		},
 		left_arm = {
 			prio = 3,
 			actors = {
 				"c_leftarm",
 				"c_leftforearm",
-				"c_lefthand",
+				"c_lefthand"
 			},
 			push_actors = {
-				"j_spine1",
-			},
+				"j_spine1"
+			}
 		},
 		right_arm = {
 			prio = 3,
 			actors = {
 				"c_rightarm",
 				"c_rightforearm",
-				"c_righthand",
+				"c_righthand"
 			},
 			push_actors = {
-				"j_spine1",
-			},
+				"j_spine1"
+			}
 		},
 		left_leg = {
 			prio = 3,
@@ -123,13 +123,13 @@ local breed_data = {
 				"c_leftupleg",
 				"c_leftleg",
 				"c_leftfoot",
-				"c_lefttoebase",
+				"c_lefttoebase"
 			},
 			push_actors = {
 				"j_leftfoot",
 				"j_rightfoot",
-				"j_hips",
-			},
+				"j_hips"
+			}
 		},
 		right_leg = {
 			prio = 3,
@@ -137,36 +137,36 @@ local breed_data = {
 				"c_rightupleg",
 				"c_rightleg",
 				"c_rightfoot",
-				"c_righttoebase",
+				"c_righttoebase"
 			},
 			push_actors = {
 				"j_leftfoot",
 				"j_rightfoot",
-				"j_hips",
-			},
+				"j_hips"
+			}
 		},
 		full = {
 			prio = 4,
-			actors = {},
+			actors = {}
 		},
 		afro = {
 			prio = 5,
 			actors = {
-				"h_afro",
-			},
-		},
+				"h_afro"
+			}
+		}
 	},
-	run_on_spawn = AiBreedSnippets.on_dummy_sorcerer_spawn,
+	run_on_spawn = AiBreedSnippets.on_dummy_sorcerer_spawn
 }
 
-Breeds.chaos_dummy_sorcerer = table.create_copy(Breeds.chaos_dummy_sorcerer, breed_data)
+Breeds.chaos_dummy_sorcerer = table.create_copy(Breeds.chaos_dummy_sorcerer, var_0_1)
 
-local action_data = {
+local var_0_2 = {
 	idle = {
 		idle_animation = {
-			"attack_cast_spell_loop",
-		},
-	},
+			"attack_cast_spell_loop"
+		}
+	}
 }
 
-BreedActions.chaos_dummy_sorcerer = table.create_copy(BreedActions.chaos_dummy_sorcerer, action_data)
+BreedActions.chaos_dummy_sorcerer = table.create_copy(BreedActions.chaos_dummy_sorcerer, var_0_2)

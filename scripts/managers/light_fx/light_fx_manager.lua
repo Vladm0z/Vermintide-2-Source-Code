@@ -1,18 +1,18 @@
-﻿-- chunkname: @scripts/managers/light_fx/light_fx_manager.lua
+-- chunkname: @scripts/managers/light_fx/light_fx_manager.lua
 
 if script_data.debug_lightfx then
 	LightFX = LightFX or {}
 
-	LightFX.set_color_in_cube = function (red, green, blue, intensity, blendtime)
+	function LightFX.set_color_in_cube(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 		LightFX.color = {
-			red,
-			green,
-			blue,
-			intensity,
-			blendtime,
+			arg_1_0,
+			arg_1_1,
+			arg_1_2,
+			arg_1_3,
+			arg_1_4
 		}
 
-		print(red, green, blue, intensity, blendtime)
+		print(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	end
 end
 
@@ -20,67 +20,67 @@ require("scripts/settings/light_fx_settings")
 
 LightFXManager = class(LightFXManager)
 
-LightFXManager.init = function (self)
+function LightFXManager.init(arg_2_0)
 	if not rawget(_G, "LightFX") then
 		return
 	end
 
-	self._color_value = {}
+	arg_2_0._color_value = {}
 
-	self:set_lightfx_color_scheme("loading")
+	arg_2_0:set_lightfx_color_scheme("loading")
 end
 
-LightFXManager.set_lightfx_color_scheme = function (self, color_scheme)
-	fassert(type(color_scheme) == "string", "wrong indata in set_lightfx_color_scheme")
+function LightFXManager.set_lightfx_color_scheme(arg_3_0, arg_3_1)
+	fassert(type(arg_3_1) == "string", "wrong indata in set_lightfx_color_scheme")
 
 	if not rawget(_G, "LightFX") then
 		return
 	end
 
-	if color_scheme == self._color_scheme then
+	if arg_3_1 == arg_3_0._color_scheme then
 		return
 	end
 
-	self._color_scheme = color_scheme
+	arg_3_0._color_scheme = arg_3_1
 
-	if self._conditional_color_scheme then
+	if arg_3_0._conditional_color_scheme then
 		return
 	end
 
-	local v = self:_get_value_from_color_scheme(color_scheme)
+	local var_3_0 = arg_3_0:_get_value_from_color_scheme(arg_3_1)
 
-	self:set_lightfx_color(v[1], v[2], v[3], v[4], v[5])
+	arg_3_0:set_lightfx_color(var_3_0[1], var_3_0[2], var_3_0[3], var_3_0[4], var_3_0[5])
 end
 
-LightFXManager.set_lightfx_color = function (self, red, green, blue, intensity, blendtime)
-	local v = self._color_value
+function LightFXManager.set_lightfx_color(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	local var_4_0 = arg_4_0._color_value
 
-	if v[1] == red and v[2] == green and v[3] == blue and v[4] == intensity and v[5] == blendtime then
+	if var_4_0[1] == arg_4_1 and var_4_0[2] == arg_4_2 and var_4_0[3] == arg_4_3 and var_4_0[4] == arg_4_4 and var_4_0[5] == arg_4_5 then
 		return
 	end
 
-	v[1] = red
-	v[2] = green
-	v[3] = blue
-	v[4] = intensity
-	v[5] = blendtime
+	var_4_0[1] = arg_4_1
+	var_4_0[2] = arg_4_2
+	var_4_0[3] = arg_4_3
+	var_4_0[4] = arg_4_4
+	var_4_0[5] = arg_4_5
 
-	LightFX.set_color_in_cube(red, green, blue, intensity, blendtime)
+	LightFX.set_color_in_cube(arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 end
 
-LightFXManager._get_value_from_color_scheme = function (self, color_scheme)
-	local color_scheme = LightFXSettings[color_scheme]
-	local value = color_scheme.value
-	local update_func = color_scheme.update_func
+function LightFXManager._get_value_from_color_scheme(arg_5_0, arg_5_1)
+	local var_5_0 = LightFXSettings[arg_5_1]
+	local var_5_1 = var_5_0.value
+	local var_5_2 = var_5_0.update_func
 
-	if update_func then
-		value = update_func(value)
+	if var_5_2 then
+		var_5_1 = var_5_2(var_5_1)
 	end
 
-	return value
+	return var_5_1
 end
 
-LightFXManager.update = function (self, dt)
+function LightFXManager.update(arg_6_0, arg_6_1)
 	if not GameSettingsDevelopment.use_alien_fx then
 		return
 	end
@@ -89,83 +89,83 @@ LightFXManager.update = function (self, dt)
 		return
 	end
 
-	local t = Managers.time:time("main")
-	local check_conditions = true
-	local color_scheme = self._color_scheme
-	local color_scheme_data = LightFXSettings[color_scheme]
-	local conditional_color_scheme = self._conditional_color_scheme
-	local conditional_color_scheme_timer = self._conditional_color_scheme_timer
-	local conditional_scheme_was_set = self._conditional_color_scheme ~= nil
+	local var_6_0 = Managers.time:time("main")
+	local var_6_1 = true
+	local var_6_2 = arg_6_0._color_scheme
+	local var_6_3 = LightFXSettings[var_6_2]
+	local var_6_4 = arg_6_0._conditional_color_scheme
+	local var_6_5 = arg_6_0._conditional_color_scheme_timer
+	local var_6_6 = arg_6_0._conditional_color_scheme ~= nil
 
-	if conditional_color_scheme then
-		conditional_color_scheme_timer = conditional_color_scheme_timer and conditional_color_scheme_timer - dt
+	if var_6_4 then
+		var_6_5 = var_6_5 and var_6_5 - arg_6_1
 
-		if conditional_color_scheme_timer and conditional_color_scheme_timer > 0 then
-			check_conditions = false
-		elseif conditional_color_scheme.condition_func() then
-			check_conditions = false
+		if var_6_5 and var_6_5 > 0 then
+			var_6_1 = false
+		elseif var_6_4.condition_func() then
+			var_6_1 = false
 		else
-			conditional_color_scheme = nil
+			var_6_4 = nil
 		end
 	end
 
-	if check_conditions then
-		for _, conditional_scheme in ipairs(LightFXConditionalSettings) do
-			if conditional_scheme.condition_func() then
-				conditional_color_scheme = conditional_scheme
-				conditional_color_scheme_timer = conditional_color_scheme.time
+	if var_6_1 then
+		for iter_6_0, iter_6_1 in ipairs(LightFXConditionalSettings) do
+			if iter_6_1.condition_func() then
+				var_6_4 = iter_6_1
+				var_6_5 = var_6_4.time
 
 				break
 			end
 		end
 	end
 
-	if conditional_color_scheme then
-		local v = conditional_color_scheme.value
+	if var_6_4 then
+		local var_6_7 = var_6_4.value
 
-		conditional_color_scheme.update_func(dt, t, v)
-	elseif conditional_scheme_was_set then
-		local v = self:_get_value_from_color_scheme(self._color_scheme)
+		var_6_4.update_func(arg_6_1, var_6_0, var_6_7)
+	elseif var_6_6 then
+		local var_6_8 = arg_6_0:_get_value_from_color_scheme(arg_6_0._color_scheme)
 
-		self:set_lightfx_color(v[1], v[2], v[3], v[4], v[5])
-	elseif color_scheme_data.update_func then
-		local v = self:_get_value_from_color_scheme(color_scheme)
+		arg_6_0:set_lightfx_color(var_6_8[1], var_6_8[2], var_6_8[3], var_6_8[4], var_6_8[5])
+	elseif var_6_3.update_func then
+		local var_6_9 = arg_6_0:_get_value_from_color_scheme(var_6_2)
 
-		self:set_lightfx_color(v[1], v[2], v[3], v[4], v[5])
+		arg_6_0:set_lightfx_color(var_6_9[1], var_6_9[2], var_6_9[3], var_6_9[4], var_6_9[5])
 	end
 
-	self._conditional_color_scheme = conditional_color_scheme
-	self._conditional_color_scheme_timer = conditional_color_scheme_timer
+	arg_6_0._conditional_color_scheme = var_6_4
+	arg_6_0._conditional_color_scheme_timer = var_6_5
 
 	if script_data.debug_lightfx then
-		self:udpate_debug(dt)
+		arg_6_0:udpate_debug(arg_6_1)
 	end
 end
 
-LightFXManager.udpate_debug = function (self, dt)
+function LightFXManager.udpate_debug(arg_7_0, arg_7_1)
 	if not rawget(_G, "DebugScreen") then
 		return
 	end
 
-	local gui = DebugScreen.gui
+	local var_7_0 = DebugScreen.gui
 
-	if not gui then
+	if not var_7_0 then
 		return
 	end
 
-	local c = LightFX.color
+	local var_7_1 = LightFX.color
 
-	if not c then
+	if not var_7_1 then
 		return
 	end
 
-	local res_x, res_y = Application.resolution()
-	local size_x = 300
-	local size_y = 100
-	local pos_x = res_x / 2 - size_x / 2
-	local pos_y = res_y - 10 - size_y
-	local pos_z = 820
-	local color = Color(c[4], c[1], c[2], c[3])
+	local var_7_2, var_7_3 = Application.resolution()
+	local var_7_4 = 300
+	local var_7_5 = 100
+	local var_7_6 = var_7_2 / 2 - var_7_4 / 2
+	local var_7_7 = var_7_3 - 10 - var_7_5
+	local var_7_8 = 820
+	local var_7_9 = Color(var_7_1[4], var_7_1[1], var_7_1[2], var_7_1[3])
 
-	Gui.rect(gui, Vector3(pos_x, pos_y, pos_z), Vector2(size_x, size_y), color)
+	Gui.rect(var_7_0, Vector3(var_7_6, var_7_7, var_7_8), Vector2(var_7_4, var_7_5), var_7_9)
 end

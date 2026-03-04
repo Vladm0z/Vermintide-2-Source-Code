@@ -1,55 +1,55 @@
-﻿-- chunkname: @scripts/managers/unlock/unlock_game.lua
+-- chunkname: @scripts/managers/unlock/unlock_game.lua
 
 UnlockGame = class(UnlockGame)
 
-UnlockGame.init = function (self, name, app_id, backend_reward_id, always_unlocked_game_app_ids, cosmetic)
+function UnlockGame.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 	return
 end
 
-UnlockGame.is_legacy_console_dlc = function (self)
+function UnlockGame.is_legacy_console_dlc(arg_2_0)
 	return false
 end
 
-UnlockGame.cb_get_inventory_items_done = function (self, info)
+function UnlockGame.cb_get_inventory_items_done(arg_3_0, arg_3_1)
 	return
 end
 
-UnlockGame.ready = function (self)
+function UnlockGame.ready(arg_4_0)
 	return true
 end
 
-UnlockGame.has_error = function (self)
+function UnlockGame.has_error(arg_5_0)
 	return
 end
 
-UnlockGame.id = function (self)
+function UnlockGame.id(arg_6_0)
 	return
 end
 
-UnlockGame.backend_reward_id = function (self)
+function UnlockGame.backend_reward_id(arg_7_0)
 	return
 end
 
-UnlockGame.remove_backend_reward_id = function (self)
+function UnlockGame.remove_backend_reward_id(arg_8_0)
 	return
 end
 
-UnlockGame.set_status_changed = function (self, value)
+function UnlockGame.set_status_changed(arg_9_0, arg_9_1)
 	return
 end
 
-UnlockGame.unlocked = function (self)
+function UnlockGame.unlocked(arg_10_0)
 	return
 end
 
-UnlockGame.installed = function (self)
+function UnlockGame.installed(arg_11_0)
 	return
 end
 
-UnlockGame.is_cosmetic = function (self)
+function UnlockGame.is_cosmetic(arg_12_0)
 	return false
 end
 
-UnlockGame.requires_restart = function (self)
+function UnlockGame.requires_restart(arg_13_0)
 	return false
 end

@@ -1,4 +1,4 @@
-﻿-- chunkname: @foundation/scripts/util/application_parameter.lua
+-- chunkname: @foundation/scripts/util/application_parameter.lua
 
 require("foundation/scripts/util/table")
 
@@ -6,188 +6,184 @@ script_data = script_data or {}
 Development = Development or {}
 Development.application_parameter = {}
 
-Development.init_application_parameters = function (args, do_pretty_print_args)
+function Development.init_application_parameters(arg_1_0, arg_1_1)
 	print("Development.init_application_parameters")
 
 	Development.application_parameter = {}
 
-	local application_parameters = Development.application_parameter
+	local var_1_0 = Development.application_parameter
 
-	local function printf(...)
+	local function var_1_1(...)
 		print(string.format(...))
 	end
 
-	local function first_char(s)
-		return s:sub(1, 1)
+	local function var_1_2(arg_3_0)
+		return arg_3_0:sub(1, 1)
 	end
 
-	local function is_parameter(s)
-		return first_char(s) == "-"
+	local function var_1_3(arg_4_0)
+		return var_1_2(arg_4_0) == "-"
 	end
 
-	local function parameter(s)
-		return s:sub(2)
+	local function var_1_4(arg_5_0)
+		return arg_5_0:sub(2)
 	end
 
-	local num_args = #args
-	local i = 1
+	local var_1_5 = #arg_1_0
+	local var_1_6 = 1
 
-	local function has_more_args()
-		return num_args >= i
+	local function var_1_7()
+		return var_1_5 >= var_1_6
 	end
 
-	local function has_more_args_after_current()
-		return num_args >= i + 1
+	local function var_1_8()
+		return var_1_5 >= var_1_6 + 1
 	end
 
-	local function step_to_next_arg()
-		i = i + 1
+	local function var_1_9()
+		var_1_6 = var_1_6 + 1
 	end
 
-	local function current_arg()
-		return args[i]
+	local function var_1_10()
+		return arg_1_0[var_1_6]
 	end
 
-	local function next_arg()
-		return args[i + 1]
+	local function var_1_11()
+		return arg_1_0[var_1_6 + 1]
 	end
 
-	local function next_is_parameter()
-		assert(has_more_args_after_current())
+	local function var_1_12()
+		assert(var_1_8())
 
-		return is_parameter(next_arg())
+		return var_1_3(var_1_11())
 	end
 
-	local function warn_multiple_definitions(parameter_name, old)
-		local value = application_parameters[parameter_name]
-		local t = type(value) == "table" and value or {
-			value,
+	local function var_1_13(arg_12_0, arg_12_1)
+		local var_12_0 = var_1_0[arg_12_0]
+		local var_12_1 = type(var_12_0) == "table" and var_12_0 or {
+			var_12_0
 		}
 
-		printf("[parse_application_parameters] multiple defintions of '%s' using [%s]. old value [%s]", parameter_name, table.tostring(t), table.tostring(old))
+		var_1_1("[parse_application_parameters] multiple defintions of '%s' using [%s]. old value [%s]", arg_12_0, table.tostring(var_12_1), table.tostring(arg_12_1))
 	end
 
-	local function copy_parameter_value(parameter_name)
-		local value = application_parameters[parameter_name]
+	local function var_1_14(arg_13_0)
+		local var_13_0 = var_1_0[arg_13_0]
 
-		if not value then
+		if not var_13_0 then
 			return nil
 		end
 
-		local t = {}
+		local var_13_1 = {}
 
-		if type(value) == "table" then
-			for i = 1, #value do
-				t[i] = value[i]
+		if type(var_13_0) == "table" then
+			for iter_13_0 = 1, #var_13_0 do
+				var_13_1[iter_13_0] = var_13_0[iter_13_0]
 			end
 		else
-			t[1] = value
+			var_13_1[1] = var_13_0
 		end
 
-		return t
+		return var_13_1
 	end
 
-	local max_param_string_length = 0
+	local var_1_15 = 0
 
-	while has_more_args() do
-		local arg = current_arg()
+	while var_1_7() do
+		local var_1_16 = var_1_10()
 
-		if not is_parameter(arg) then
-			step_to_next_arg()
+		if not var_1_3(var_1_16) then
+			var_1_9()
 		else
-			local param = parameter(arg)
+			local var_1_17 = var_1_4(var_1_16)
 
-			max_param_string_length = math.max(max_param_string_length, #param)
+			var_1_15 = math.max(var_1_15, #var_1_17)
 
-			if application_parameters[param] then
-				local old_values_to_warn_about = copy_parameter_value(param)
+			if var_1_0[var_1_17] then
+				local var_1_18 = var_1_14(var_1_17)
 
-				warn_multiple_definitions(param, old_values_to_warn_about)
+				var_1_13(var_1_17, var_1_18)
 
-				application_parameters[param] = nil
+				var_1_0[var_1_17] = nil
 			end
 
-			local no_value_exists_for_param = has_more_args_after_current() and next_is_parameter() or not has_more_args_after_current()
+			if var_1_8() and var_1_12() or not var_1_8() then
+				var_1_0[var_1_17] = true
 
-			if no_value_exists_for_param then
-				application_parameters[param] = true
-
-				step_to_next_arg()
+				var_1_9()
 			else
-				while has_more_args_after_current() and not next_is_parameter() do
-					step_to_next_arg()
+				while var_1_8() and not var_1_12() do
+					var_1_9()
 
-					local value = current_arg()
-					local current_value = application_parameters[param]
+					local var_1_19 = var_1_10()
+					local var_1_20 = var_1_0[var_1_17]
 
-					if value == "true" then
-						value = true
+					if var_1_19 == "true" then
+						var_1_19 = true
 					end
 
-					if value == "false" then
-						value = false
+					if var_1_19 == "false" then
+						var_1_19 = false
 					end
 
-					if not current_value then
-						application_parameters[param] = value
-					elseif type(application_parameters[param]) == "table" then
-						local value_table = application_parameters[param]
+					if not var_1_20 then
+						var_1_0[var_1_17] = var_1_19
+					elseif type(var_1_0[var_1_17]) == "table" then
+						local var_1_21 = var_1_0[var_1_17]
 
-						value_table[#value_table + 1] = value
+						var_1_21[#var_1_21 + 1] = var_1_19
 					else
-						local value_table = {
-							current_value,
-							value,
+						var_1_0[var_1_17] = {
+							var_1_20,
+							var_1_19
 						}
-
-						application_parameters[param] = value_table
 					end
 				end
 			end
 		end
 	end
 
-	script_data["eac-untrusted"] = application_parameters["eac-untrusted"] ~= nil or application_parameters.eac_untrusted ~= nil
+	script_data["eac-untrusted"] = var_1_0["eac-untrusted"] ~= nil or var_1_0.eac_untrusted ~= nil
 
 	if DEDICATED_SERVER or BUILD ~= "release" then
-		if application_parameters["use-clean-settings"] then
+		if var_1_0["use-clean-settings"] then
 			script_data = {
 				build_identifier = script_data.build_identifier,
-				settings = script_data.settings or {},
+				settings = script_data.settings or {}
 			}
 		end
 
-		for param, value in pairs(application_parameters) do
-			if type(param) == "string" then
-				local fixedparam = string.gsub(param, "-", "_")
+		for iter_1_0, iter_1_1 in pairs(var_1_0) do
+			if type(iter_1_0) == "string" then
+				local var_1_22 = string.gsub(iter_1_0, "-", "_")
 
-				script_data[fixedparam] = value
+				script_data[var_1_22] = iter_1_1
 			else
-				script_data[param] = value
+				script_data[iter_1_0] = iter_1_1
 			end
 		end
 	end
 
-	if do_pretty_print_args then
+	if arg_1_1 then
 		print("-----------------------------------------------------------------")
 		print("--                   Application parameters                    --")
 
-		for param, value in pairs(application_parameters) do
-			if type(value) == "table" then
-				local formatted_string = string.format("%%-%ds = {", max_param_string_length)
-				local output = string.format(formatted_string, param)
+		for iter_1_2, iter_1_3 in pairs(var_1_0) do
+			if type(iter_1_3) == "table" then
+				local var_1_23 = string.format("%%-%ds = {", var_1_15)
+				local var_1_24 = string.format(var_1_23, iter_1_2)
 
-				for i = 1, #value do
-					output = output .. " " .. tostring(value[i])
+				for iter_1_4 = 1, #iter_1_3 do
+					var_1_24 = var_1_24 .. " " .. tostring(iter_1_3[iter_1_4])
 				end
 
-				output = output .. " }"
+				local var_1_25 = var_1_24 .. " }"
 
-				print(output)
+				print(var_1_25)
 			else
-				local formatted_string = string.format("%%-%ds = %%s", max_param_string_length)
+				local var_1_26 = string.format("%%-%ds = %%s", var_1_15)
 
-				printf(formatted_string, param, tostring(value))
+				var_1_1(var_1_26, iter_1_2, tostring(iter_1_3))
 			end
 		end
 

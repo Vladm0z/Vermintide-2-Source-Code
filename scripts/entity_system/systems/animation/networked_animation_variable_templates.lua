@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/entity_system/systems/animation/networked_animation_variable_templates.lua
+-- chunkname: @scripts/entity_system/systems/animation/networked_animation_variable_templates.lua
 
 NetworkedAnimationVariableTemplates = {
 	moving_attack_fwd_speed = {
@@ -10,64 +10,64 @@ NetworkedAnimationVariableTemplates = {
 			"attack_move_2",
 			"attack_move_3",
 			"attack_move_4",
-			"attack_cleave_moving_01",
+			"attack_cleave_moving_01"
 		},
-		init = function (unit, scratchpad)
-			local network_manager = Managers.state.network
-			local unit_id = network_manager:unit_game_object_id(unit)
-			local target_unit_id = GameSession.game_object_field(network_manager:game(), unit_id, "target_unit_id")
+		init = function(arg_1_0, arg_1_1)
+			local var_1_0 = Managers.state.network
+			local var_1_1 = var_1_0:unit_game_object_id(arg_1_0)
+			local var_1_2 = GameSession.game_object_field(var_1_0:game(), var_1_1, "target_unit_id")
 
-			scratchpad.target_unit = network_manager:game_object_or_level_unit(target_unit_id)
-			scratchpad.previous_move_animation_value = nil
-			scratchpad.move_animation_variable = Unit.animation_find_variable(unit, scratchpad.variable_name)
+			arg_1_1.target_unit = var_1_0:game_object_or_level_unit(var_1_2)
+			arg_1_1.previous_move_animation_value = nil
+			arg_1_1.move_animation_variable = Unit.animation_find_variable(arg_1_0, arg_1_1.variable_name)
 		end,
-		update = function (unit, scratchpad, dt, t)
-			local target_unit = scratchpad.target_unit
+		update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			local var_2_0 = arg_2_1.target_unit
 
-			if not target_unit then
-				local network_manager = Managers.state.network
-				local unit_id = network_manager:unit_game_object_id(unit)
-				local target_unit_id = GameSession.game_object_field(network_manager:game(), unit_id, "target_unit_id")
+			if not var_2_0 then
+				local var_2_1 = Managers.state.network
+				local var_2_2 = var_2_1:unit_game_object_id(arg_2_0)
+				local var_2_3 = GameSession.game_object_field(var_2_1:game(), var_2_2, "target_unit_id")
 
-				target_unit = network_manager:game_object_or_level_unit(target_unit_id, false)
-				scratchpad.target_unit = target_unit
+				var_2_0 = var_2_1:game_object_or_level_unit(var_2_3, false)
+				arg_2_1.target_unit = var_2_0
 			end
 
-			if not ALIVE[target_unit] then
+			if not ALIVE[var_2_0] then
 				return
 			end
 
-			local data = scratchpad.variable_data
-			local animation_move_speed_config = data.animation_move_speed_config
+			local var_2_4 = arg_2_1.variable_data
+			local var_2_5 = var_2_4.animation_move_speed_config
 
-			if animation_move_speed_config then
-				local wanted_value = AiUtils.calculate_animation_movespeed(animation_move_speed_config, unit, target_unit, data.estimated_attack_time)
-				local lerp_speed = data.move_speed_variable_lerp_speed
-				local lerp_t = math.min(dt * lerp_speed, 1)
-				local final_value = math.lerp_clamped(scratchpad.previous_move_animation_value or 0, wanted_value, lerp_t)
+			if var_2_5 then
+				local var_2_6 = AiUtils.calculate_animation_movespeed(var_2_5, arg_2_0, var_2_0, var_2_4.estimated_attack_time)
+				local var_2_7 = var_2_4.move_speed_variable_lerp_speed
+				local var_2_8 = math.min(arg_2_2 * var_2_7, 1)
+				local var_2_9 = math.lerp_clamped(arg_2_1.previous_move_animation_value or 0, var_2_6, var_2_8)
 
-				if scratchpad.previous_move_animation_value ~= final_value then
-					scratchpad.previous_move_animation_value = final_value
+				if arg_2_1.previous_move_animation_value ~= var_2_9 then
+					arg_2_1.previous_move_animation_value = var_2_9
 
-					local animation_variable = scratchpad.move_animation_variable
+					local var_2_10 = arg_2_1.move_animation_variable
 
-					if animation_variable then
-						Unit.animation_set_variable(unit, animation_variable, final_value)
+					if var_2_10 then
+						Unit.animation_set_variable(arg_2_0, var_2_10, var_2_9)
 					end
 				end
 			end
-		end,
-	},
+		end
+	}
 }
 NetworkedAnimationVariableTemplatesLookup = {}
 
-local lookup = NetworkedAnimationVariableTemplatesLookup
+local var_0_0 = NetworkedAnimationVariableTemplatesLookup
 
-for variable_name, template in pairs(NetworkedAnimationVariableTemplates) do
-	for _, anim_name in ipairs(template.anims) do
-		local variables = lookup[anim_name] or {}
+for iter_0_0, iter_0_1 in pairs(NetworkedAnimationVariableTemplates) do
+	for iter_0_2, iter_0_3 in ipairs(iter_0_1.anims) do
+		local var_0_1 = var_0_0[iter_0_3] or {}
 
-		variables[#variables + 1] = variable_name
-		lookup[anim_name] = variables
+		var_0_1[#var_0_1 + 1] = iter_0_0
+		var_0_0[iter_0_3] = var_0_1
 	end
 end

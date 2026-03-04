@@ -1,457 +1,457 @@
-﻿-- chunkname: @scripts/ui/views/options_view_settings.lua
+-- chunkname: @scripts/ui/views/options_view_settings.lua
 
-local video_settings_definition = {
+local var_0_0 = {
 	{
 		text = "settings_view_header_display",
-		widget_type = "title",
+		widget_type = "title"
 	},
 	{
-		callback = "cb_fullscreen",
-		saved_value = "cb_fullscreen_saved_value",
 		setup = "cb_fullscreen_setup",
+		saved_value = "cb_fullscreen_saved_value",
+		callback = "cb_fullscreen",
 		tooltip_text = "tooltip_screen_mode",
-		widget_type = "drop_down",
+		widget_type = "drop_down"
 	},
 	{
-		callback = "cb_resolutions",
-		ignore_upper_case = true,
+		setup = "cb_resolutions_setup",
 		name = "resolutions",
 		saved_value = "cb_resolutions_saved_value",
-		setup = "cb_resolutions_setup",
+		callback = "cb_resolutions",
+		ignore_upper_case = true,
 		tooltip_text = "tooltip_resolutions",
-		widget_type = "drop_down",
+		widget_type = "drop_down"
 	},
 	{
-		callback = "cb_minimize_on_alt_tab",
+		setup = "cb_minimize_on_alt_tab_setup",
 		name = "minimize_on_alt_tab",
 		saved_value = "cb_minimize_on_alt_tab_saved_value",
-		setup = "cb_minimize_on_alt_tab_setup",
+		callback = "cb_minimize_on_alt_tab",
 		tooltip_text = "tooltip_minimize_on_alt_tab",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_fov",
-		saved_value = "cb_fov_saved_value",
 		setup = "cb_fov_setup",
+		saved_value = "cb_fov_saved_value",
+		callback = "cb_fov",
 		tooltip_text = "tooltip_fov",
-		widget_type = "slider",
+		widget_type = "slider"
 	},
 	{
+		setup = "cb_vsync_setup",
+		saved_value = "cb_vsync_saved_value",
+		tooltip_text = "tooltip_vsync",
 		callback = "cb_vsync",
 		condition = "cb_vsync_condition",
-		saved_value = "cb_vsync_saved_value",
-		setup = "cb_vsync_setup",
-		tooltip_text = "tooltip_vsync",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_max_stacking_frames",
-		saved_value = "cb_max_stacking_frames_saved_value",
 		setup = "cb_max_stacking_frames_setup",
+		saved_value = "cb_max_stacking_frames_saved_value",
+		callback = "cb_max_stacking_frames",
 		tooltip_text = "tooltip_max_stacking_frames",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_gamma",
-		saved_value = "cb_gamma_saved_value",
 		setup = "cb_gamma_setup",
+		saved_value = "cb_gamma_saved_value",
+		callback = "cb_gamma",
 		tooltip_text = "tooltip_gamma",
 		widget_type = "slider",
 		slider_image = {
 			slider_image = "gamma_settings_image_02",
 			size = {
 				420,
-				50,
-			},
-		},
+				50
+			}
+		}
 	},
 	{
 		size_y = 30,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
 		text = "settings_view_header_overall_quality",
-		widget_type = "title",
+		widget_type = "title"
 	},
 	{
-		callback = "cb_graphics_quality",
+		setup = "cb_graphics_quality_setup",
 		name = "graphics_quality_settings",
 		saved_value = "cb_graphics_quality_saved_value",
-		setup = "cb_graphics_quality_setup",
+		callback = "cb_graphics_quality",
 		tooltip_text = "tooltip_graphics_quality",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
 		size_y = 30,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
 		text = "settings_view_header_textures",
-		widget_type = "title",
+		widget_type = "title"
 	},
 	{
-		callback = "cb_char_texture_quality",
-		saved_value = "cb_char_texture_quality_saved_value",
 		setup = "cb_char_texture_quality_setup",
+		saved_value = "cb_char_texture_quality_saved_value",
+		callback = "cb_char_texture_quality",
 		tooltip_text = "tooltip_char_texture_quality",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_env_texture_quality",
-		saved_value = "cb_env_texture_quality_saved_value",
 		setup = "cb_env_texture_quality_setup",
+		saved_value = "cb_env_texture_quality_saved_value",
+		callback = "cb_env_texture_quality",
 		tooltip_text = "tooltip_env_texture_quality",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
 		size_y = 30,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
 		text = "settings_view_header_particles",
-		widget_type = "title",
+		widget_type = "title"
 	},
 	{
-		callback = "cb_particles_quality",
-		saved_value = "cb_particles_quality_saved_value",
 		setup = "cb_particles_quality_setup",
+		saved_value = "cb_particles_quality_saved_value",
+		callback = "cb_particles_quality",
 		tooltip_text = "tooltip_particle_quality",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_particles_resolution",
-		saved_value = "cb_particles_resolution_saved_value",
 		setup = "cb_particles_resolution_setup",
+		saved_value = "cb_particles_resolution_saved_value",
+		callback = "cb_particles_resolution",
 		tooltip_text = "tooltip_low_resolution_transparency",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_scatter_density",
-		saved_value = "cb_scatter_density_saved_value",
 		setup = "cb_scatter_density_setup",
+		saved_value = "cb_scatter_density_saved_value",
+		callback = "cb_scatter_density",
 		tooltip_text = "tooltip_scatter_density",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_blood_decals",
-		saved_value = "cb_blood_decals_saved_value",
 		setup = "cb_blood_decals_setup",
+		saved_value = "cb_blood_decals_saved_value",
+		callback = "cb_blood_decals",
 		tooltip_text = "tooltip_blood_decals",
-		widget_type = "slider",
+		widget_type = "slider"
 	},
 	{
 		size_y = 30,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
 		text = "settings_view_header_lighting",
-		widget_type = "title",
+		widget_type = "title"
 	},
 	{
-		callback = "cb_local_light_shadow_quality",
-		saved_value = "cb_local_light_shadow_quality_saved_value",
 		setup = "cb_local_light_shadow_quality_setup",
+		saved_value = "cb_local_light_shadow_quality_saved_value",
+		callback = "cb_local_light_shadow_quality",
 		tooltip_text = "tooltip_local_light_shadows",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_sun_shadows",
-		saved_value = "cb_sun_shadows_saved_value",
 		setup = "cb_sun_shadows_setup",
+		saved_value = "cb_sun_shadows_saved_value",
+		callback = "cb_sun_shadows",
 		tooltip_text = "tooltip_sun_shadows",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_maximum_shadow_casting_lights",
-		saved_value = "cb_maximum_shadow_casting_lights_saved_value",
 		setup = "cb_maximum_shadow_casting_lights_setup",
+		saved_value = "cb_maximum_shadow_casting_lights_saved_value",
+		callback = "cb_maximum_shadow_casting_lights",
 		tooltip_text = "tooltip_max_local_light_shadows",
-		widget_type = "slider",
+		widget_type = "slider"
 	},
 	{
-		callback = "cb_volumetric_fog_quality",
-		saved_value = "cb_volumetric_fog_quality_saved_value",
 		setup = "cb_volumetric_fog_quality_setup",
+		saved_value = "cb_volumetric_fog_quality_saved_value",
+		callback = "cb_volumetric_fog_quality",
 		tooltip_text = "tooltip_volumetric_fog_quality",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_ambient_light_quality",
-		saved_value = "cb_ambient_light_quality_saved_value",
 		setup = "cb_ambient_light_quality_setup",
+		saved_value = "cb_ambient_light_quality_saved_value",
+		callback = "cb_ambient_light_quality",
 		tooltip_text = "tooltip_ambient_light_quality",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_auto_exposure_speed",
-		saved_value = "cb_auto_exposure_speed_saved_value",
 		setup = "cb_auto_exposure_speed_setup",
+		saved_value = "cb_auto_exposure_speed_saved_value",
+		callback = "cb_auto_exposure_speed",
 		tooltip_text = "tooltip_auto_exposure",
-		widget_type = "slider",
+		widget_type = "slider"
 	},
 	{
 		size_y = 30,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
 		text = "menu_settings_performance",
-		widget_type = "title",
+		widget_type = "title"
 	},
 	{
-		callback = "cb_fsr_enabled",
-		condition = "cb_fsr_enabled_condition",
-		disabled_tooltip_text = "tooltip_fsr_disabled",
-		name = "fsr_enabled_settings",
-		saved_value = "cb_fsr_enabled_saved_value",
 		setup = "cb_fsr_enabled_setup",
+		name = "fsr_enabled_settings",
 		tooltip_text = "tooltip_fsr_enabled",
-		widget_type = "stepper",
+		callback = "cb_fsr_enabled",
+		disabled_tooltip_text = "tooltip_fsr_disabled",
+		saved_value = "cb_fsr_enabled_saved_value",
+		condition = "cb_fsr_enabled_condition",
+		widget_type = "stepper"
 	},
 	{
+		setup = "cb_fsr_quality_setup",
+		saved_value = "cb_fsr_quality_saved_value",
+		tooltip_text = "tooltip_fsr_quality",
 		callback = "cb_fsr_quality",
-		condition = "cb_fsr_quality_condition",
 		disabled_tooltip_text = "tooltip_fsr_disabled",
 		indent_level = 1,
-		saved_value = "cb_fsr_quality_saved_value",
-		setup = "cb_fsr_quality_setup",
-		tooltip_text = "tooltip_fsr_quality",
-		widget_type = "drop_down",
+		condition = "cb_fsr_quality_condition",
+		widget_type = "drop_down"
 	},
 	{
+		setup = "cb_fsr2_enabled_setup",
+		saved_value = "cb_fsr2_enabled_saved_value",
+		tooltip_text = "tooltip_fsr2_enabled",
 		callback = "cb_fsr2_enabled",
 		condition = "cb_fsr2_enabled_condition",
-		saved_value = "cb_fsr2_enabled_saved_value",
-		setup = "cb_fsr2_enabled_setup",
-		tooltip_text = "tooltip_fsr2_enabled",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_fsr2_quality",
-		condition = "cb_fsr2_quality_condition",
-		indent_level = 1,
-		saved_value = "cb_fsr2_quality_saved_value",
 		setup = "cb_fsr2_quality_setup",
+		saved_value = "cb_fsr2_quality_saved_value",
 		tooltip_text = "tooltip_fsr2_quality",
-		widget_type = "drop_down",
+		callback = "cb_fsr2_quality",
+		indent_level = 1,
+		condition = "cb_fsr2_quality_condition",
+		widget_type = "drop_down"
 	},
 	{
+		setup = "cb_dlss_enabled_setup",
+		saved_value = "cb_dlss_enabled_saved_value",
+		tooltip_text = "tooltip_dlss_enabled",
 		callback = "cb_dlss_enabled",
 		condition = "cb_dlss_enabled_condition",
-		saved_value = "cb_dlss_enabled_saved_value",
-		setup = "cb_dlss_enabled_setup",
-		tooltip_text = "tooltip_dlss_enabled",
 		widget_type = "stepper",
 		required_render_caps = {
-			dlss_supported = true,
-		},
+			dlss_supported = true
+		}
 	},
 	{
-		callback = "cb_dlss_frame_generation",
-		condition = "cb_dlss_frame_generation_condition",
-		indent_level = 1,
-		saved_value = "cb_dlss_frame_generation_saved_value",
 		setup = "cb_dlss_frame_generation_setup",
+		saved_value = "cb_dlss_frame_generation_saved_value",
 		tooltip_text = "tooltip_dlss_frame_generation",
+		callback = "cb_dlss_frame_generation",
+		indent_level = 1,
+		condition = "cb_dlss_frame_generation_condition",
 		widget_type = "stepper",
 		required_render_caps = {
-			dlss_supported = true,
-		},
+			dlss_supported = true
+		}
 	},
 	{
-		callback = "cb_dlss_super_resolution",
-		condition = "cb_dlss_super_resolution_condition",
-		indent_level = 1,
-		saved_value = "cb_dlss_super_resolution_saved_value",
 		setup = "cb_dlss_super_resolution_setup",
+		saved_value = "cb_dlss_super_resolution_saved_value",
 		tooltip_text = "tooltip_dlss_super_resolution",
+		callback = "cb_dlss_super_resolution",
+		indent_level = 1,
+		condition = "cb_dlss_super_resolution_condition",
 		widget_type = "drop_down",
 		required_render_caps = {
-			dlss_supported = true,
-		},
+			dlss_supported = true
+		}
 	},
 	{
+		setup = "cb_reflex_low_latency_setup",
+		saved_value = "cb_reflex_low_latency_saved_value",
+		tooltip_text = "tooltip_reflex_low_latency",
 		callback = "cb_reflex_low_latency",
 		condition = "cb_reflex_low_latency_condition",
-		saved_value = "cb_reflex_low_latency_saved_value",
-		setup = "cb_reflex_low_latency_setup",
-		tooltip_text = "tooltip_reflex_low_latency",
 		widget_type = "drop_down",
 		required_render_caps = {
-			reflex_supported = true,
-		},
+			reflex_supported = true
+		}
 	},
 	{
-		callback = "cb_reflex_framerate_cap",
-		saved_value = "cb_reflex_framerate_cap_saved_value",
 		setup = "cb_reflex_framerate_cap_setup",
+		saved_value = "cb_reflex_framerate_cap_saved_value",
+		callback = "cb_reflex_framerate_cap",
 		tooltip_text = "tooltip_reflex_framerate_cap",
 		widget_type = "drop_down",
 		required_render_caps = {
-			reflex_supported = true,
-		},
+			reflex_supported = true
+		}
 	},
 	{
-		callback = "cb_lock_framerate",
-		saved_value = "cb_lock_framerate_saved_value",
 		setup = "cb_lock_framerate_setup",
+		saved_value = "cb_lock_framerate_saved_value",
+		callback = "cb_lock_framerate",
 		tooltip_text = "tooltip_lock_framerate",
 		widget_type = "drop_down",
 		required_render_caps = {
-			reflex_supported = false,
-		},
+			reflex_supported = false
+		}
 	},
 	{
 		size_y = 30,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
 		text = "settings_view_header_post_processing",
-		widget_type = "title",
+		widget_type = "title"
 	},
 	{
+		setup = "cb_anti_aliasing_setup",
+		saved_value = "cb_anti_aliasing_saved_value",
+		tooltip_text = "tooltip_anti_aliasing",
 		callback = "cb_anti_aliasing",
 		condition = "cb_anti_aliasing_condition",
-		saved_value = "cb_anti_aliasing_saved_value",
-		setup = "cb_anti_aliasing_setup",
-		tooltip_text = "tooltip_anti_aliasing",
-		widget_type = "drop_down",
+		widget_type = "drop_down"
 	},
 	{
+		setup = "cb_sharpen_setup",
+		saved_value = "cb_sharpen_saved_value",
+		tooltip_text = "tooltip_sharpen",
 		callback = "cb_sharpen",
 		condition = "cb_sharpen_condition",
-		saved_value = "cb_sharpen_saved_value",
-		setup = "cb_sharpen_setup",
-		tooltip_text = "tooltip_sharpen",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_ssao",
-		saved_value = "cb_ssao_saved_value",
 		setup = "cb_ssao_setup",
+		saved_value = "cb_ssao_saved_value",
+		callback = "cb_ssao",
 		tooltip_text = "tooltip_ssao",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_bloom",
-		saved_value = "cb_bloom_saved_value",
 		setup = "cb_bloom_setup",
+		saved_value = "cb_bloom_saved_value",
+		callback = "cb_bloom",
 		tooltip_text = "tooltip_bloom",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_skin_shading",
-		saved_value = "cb_skin_shading_saved_value",
 		setup = "cb_skin_shading_setup",
+		saved_value = "cb_skin_shading_saved_value",
+		callback = "cb_skin_shading",
 		tooltip_text = "tooltip_skin_shading",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_dof",
-		saved_value = "cb_dof_saved_value",
 		setup = "cb_dof_setup",
+		saved_value = "cb_dof_saved_value",
+		callback = "cb_dof",
 		tooltip_text = "tooltip_dof",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_ssr",
-		saved_value = "cb_ssr_saved_value",
 		setup = "cb_ssr_setup",
+		saved_value = "cb_ssr_saved_value",
+		callback = "cb_ssr",
 		tooltip_text = "tooltip_ssr",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_light_shafts",
-		saved_value = "cb_light_shafts_saved_value",
 		setup = "cb_light_shafts_setup",
+		saved_value = "cb_light_shafts_saved_value",
+		callback = "cb_light_shafts",
 		tooltip_text = "tooltip_light_shafts",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_sun_flare",
-		saved_value = "cb_sun_flare_saved_value",
 		setup = "cb_sun_flare_setup",
+		saved_value = "cb_sun_flare_saved_value",
+		callback = "cb_sun_flare",
 		tooltip_text = "tooltip_sun_flare",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_lens_quality",
-		saved_value = "cb_lens_quality_saved_value",
 		setup = "cb_lens_quality_setup",
+		saved_value = "cb_lens_quality_saved_value",
+		callback = "cb_lens_quality",
 		tooltip_text = "tooltip_lens_quality",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_motion_blur",
-		saved_value = "cb_motion_blur_saved_value",
 		setup = "cb_motion_blur_setup",
+		saved_value = "cb_motion_blur_saved_value",
+		callback = "cb_motion_blur",
 		tooltip_text = "tooltip_motion_blur",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
 		size_y = 30,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
 		text = "settings_view_header_other",
-		widget_type = "title",
+		widget_type = "title"
 	},
 	{
-		callback = "cb_physic_debris",
-		saved_value = "cb_physic_debris_saved_value",
 		setup = "cb_physic_debris_setup",
+		saved_value = "cb_physic_debris_saved_value",
+		callback = "cb_physic_debris",
 		tooltip_text = "tooltip_physics_debris",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_animation_lod_distance",
-		saved_value = "cb_animation_lod_distance_saved_value",
 		setup = "cb_animation_lod_distance_setup",
+		saved_value = "cb_animation_lod_distance_saved_value",
+		callback = "cb_animation_lod_distance",
 		tooltip_text = "tooltip_animation_lod_distance",
-		widget_type = "slider",
+		widget_type = "slider"
 	},
 	{
 		size_y = 30,
-		widget_type = "empty",
-	},
+		widget_type = "empty"
+	}
 }
-local subtitles_background_color_preview = Colors.get_color_table_with_alpha("black", UISettings.subtitles_background_alpha)
+local var_0_1 = Colors.get_color_table_with_alpha("black", UISettings.subtitles_background_alpha)
 
-local function _update_slider_image_size(content, style, options_view)
-	local text_padding = 5
+local function var_0_2(arg_1_0, arg_1_1, arg_1_2)
+	local var_1_0 = 5
 
-	content.slider_image_base_size_x = content.slider_image_base_size_x or style.slider_image.size[1]
-	content.slider_image_base_offset_x = content.slider_image_base_offset_x or style.slider_image.offset[1]
-	content.slider_image_text_base_offset_x = content.slider_image_text_base_offset_x or style.slider_image_text.offset[1]
+	arg_1_0.slider_image_base_size_x = arg_1_0.slider_image_base_size_x or arg_1_1.slider_image.size[1]
+	arg_1_0.slider_image_base_offset_x = arg_1_0.slider_image_base_offset_x or arg_1_1.slider_image.offset[1]
+	arg_1_0.slider_image_text_base_offset_x = arg_1_0.slider_image_text_base_offset_x or arg_1_1.slider_image_text.offset[1]
 
-	local text = content.slider_image_text
-	local text_width = UIUtils.get_text_width(options_view.ui_renderer, style.slider_image_text, text)
+	local var_1_1 = arg_1_0.slider_image_text
+	local var_1_2 = UIUtils.get_text_width(arg_1_2.ui_renderer, arg_1_1.slider_image_text, var_1_1)
 
-	style.slider_image.size[1] = text_width + text_padding * 2
+	arg_1_1.slider_image.size[1] = var_1_2 + var_1_0 * 2
 
-	local offset_x = text_width - content.slider_image_base_size_x + text_padding * 2
+	local var_1_3 = var_1_2 - arg_1_0.slider_image_base_size_x + var_1_0 * 2
 
-	style.slider_image.offset[1] = content.slider_image_base_offset_x - offset_x
-	style.slider_image_text.offset[1] = content.slider_image_text_base_offset_x - offset_x
+	arg_1_1.slider_image.offset[1] = arg_1_0.slider_image_base_offset_x - var_1_3
+	arg_1_1.slider_image_text.offset[1] = arg_1_0.slider_image_text_base_offset_x - var_1_3
 end
 
-local audio_settings_definition = {
+local var_0_3 = {
 	{
 		text = "settings_view_header_game_sound",
-		widget_type = "title",
+		widget_type = "title"
 	},
 	{
-		callback = "cb_master_volume",
-		saved_value = "cb_master_volume_saved_value",
 		setup = "cb_master_volume_setup",
+		saved_value = "cb_master_volume_saved_value",
+		callback = "cb_master_volume",
 		tooltip_text = "tooltip_master_volume",
-		widget_type = "slider",
+		widget_type = "slider"
 	},
 	{
-		callback = "cb_music_bus_volume",
-		saved_value = "cb_music_bus_volume_saved_value",
 		setup = "cb_music_bus_volume_setup",
+		saved_value = "cb_music_bus_volume_saved_value",
+		callback = "cb_music_bus_volume",
 		tooltip_text = "tooltip_music_volume",
-		widget_type = "slider",
+		widget_type = "slider"
 	},
 	{
 		setting_name = "mute_in_background",
@@ -459,227 +459,227 @@ local audio_settings_definition = {
 		options = {
 			{
 				value = true,
-				text = Localize("menu_settings_on"),
+				text = Localize("menu_settings_on")
 			},
 			{
 				value = false,
-				text = Localize("menu_settings_off"),
-			},
-		},
+				text = Localize("menu_settings_off")
+			}
+		}
 	},
 	{
 		show_only_with_voip = true,
 		size_y = 30,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
-		show_only_with_voip = true,
 		text = "settings_view_header_voice_communication",
-		widget_type = "title",
+		show_only_with_voip = true,
+		widget_type = "title"
 	},
 	{
-		callback = "cb_voip_enabled",
-		saved_value = "cb_voip_enabled_saved_value",
 		setup = "cb_voip_enabled_setup",
+		saved_value = "cb_voip_enabled_saved_value",
 		show_only_with_voip = true,
+		callback = "cb_voip_enabled",
 		tooltip_text = "tooltip_voip_enabled",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_voip_push_to_talk",
-		saved_value = "cb_voip_push_to_talk_saved_value",
 		setup = "cb_voip_push_to_talk_setup",
+		saved_value = "cb_voip_push_to_talk_saved_value",
 		show_only_with_voip = true,
+		callback = "cb_voip_push_to_talk",
 		tooltip_text = "tooltip_voip_push_to_talk",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_voip_bus_volume",
-		saved_value = "cb_voip_bus_volume_saved_value",
 		setup = "cb_voip_bus_volume_setup",
+		saved_value = "cb_voip_bus_volume_saved_value",
 		show_only_with_voip = true,
+		callback = "cb_voip_bus_volume",
 		tooltip_text = "tooltip_voip_volume",
-		widget_type = "slider",
+		widget_type = "slider"
 	},
 	{
 		size_y = 30,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
 		text = "settings_view_header_other",
-		widget_type = "title",
+		widget_type = "title"
 	},
 	{
-		callback = "cb_sound_panning_rule",
-		saved_value = "cb_sound_panning_rule_saved_value",
 		setup = "cb_sound_panning_rule_setup",
+		saved_value = "cb_sound_panning_rule_saved_value",
+		callback = "cb_sound_panning_rule",
 		tooltip_text = "tooltip_panning_rule",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_sound_quality",
-		saved_value = "cb_sound_quality_saved_value",
 		setup = "cb_sound_quality_setup",
+		saved_value = "cb_sound_quality_saved_value",
+		callback = "cb_sound_quality",
 		tooltip_text = "tooltip_sound_quality",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_dynamic_range_sound",
-		saved_value = "cb_dynamic_range_sound_saved_value",
 		setup = "cb_dynamic_range_sound_setup",
+		saved_value = "cb_dynamic_range_sound_saved_value",
+		callback = "cb_dynamic_range_sound",
 		tooltip_text = "tooltip_dynamic_range_sound",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
 		setting_name = "sound_channel_configuration",
 		widget_type = "stepper",
-		value_set_function = function (content, style, value)
-			Wwise.set_bus_config("ingame_mastering_channel", value)
+		value_set_function = function(arg_2_0, arg_2_1, arg_2_2)
+			Wwise.set_bus_config("ingame_mastering_channel", arg_2_2)
 		end,
 		options = {
 			{
 				text = Localize("menu_settings_auto"),
-				value = Wwise.AK_SPEAKER_SETUP_AUTO,
+				value = Wwise.AK_SPEAKER_SETUP_AUTO
 			},
 			{
 				text = Localize("menu_settings_mono"),
-				value = Wwise.AK_SPEAKER_SETUP_MONO,
+				value = Wwise.AK_SPEAKER_SETUP_MONO
 			},
 			{
 				text = Localize("menu_settings_stereo"),
-				value = Wwise.AK_SPEAKER_SETUP_STEREO,
+				value = Wwise.AK_SPEAKER_SETUP_STEREO
 			},
 			{
 				text = Localize("menu_settings_surround_5_1"),
-				value = Wwise.AK_SPEAKER_SETUP_5POINT1,
+				value = Wwise.AK_SPEAKER_SETUP_5POINT1
 			},
 			{
 				text = Localize("menu_settings_surround_7_1"),
-				value = Wwise.AK_SPEAKER_SETUP_7POINT1,
-			},
-		},
+				value = Wwise.AK_SPEAKER_SETUP_7POINT1
+			}
+		}
 	},
 	{
-		callback = "cb_subtitles",
-		saved_value = "cb_subtitles_saved_value",
 		setup = "cb_subtitles_setup",
+		saved_value = "cb_subtitles_saved_value",
+		callback = "cb_subtitles",
 		tooltip_text = "tooltip_subtitles",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
 		setting_name = "subtitles_background_opacity",
 		widget_type = "slider",
-		value_set_function = function (content, style, value)
-			subtitles_background_color_preview[1] = 2.55 * value
+		value_set_function = function(arg_3_0, arg_3_1, arg_3_2)
+			var_0_1[1] = 2.55 * arg_3_2
 		end,
-		value_saved_function = function (content, style, value)
-			subtitles_background_color_preview[1] = 2.55 * value
+		value_saved_function = function(arg_4_0, arg_4_1, arg_4_2)
+			var_0_1[1] = 2.55 * arg_4_2
 		end,
 		options = {
 			decimals = 0,
-			max = 100,
 			min = 0,
-		},
+			max = 100
+		}
 	},
 	{
 		setting_name = "subtitles_font_size",
 		widget_type = "slider",
-		value_set_function = function (content, style, value, options_view)
-			style.slider_image_text.font_size = value
+		value_set_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			arg_5_1.slider_image_text.font_size = arg_5_2
 
-			_update_slider_image_size(content, style, options_view)
+			var_0_2(arg_5_0, arg_5_1, arg_5_3)
 		end,
-		value_saved_function = function (content, style, value, options_view)
-			style.slider_image.color = subtitles_background_color_preview
-			style.slider_image_text.font_size = value
+		value_saved_function = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			arg_6_1.slider_image.color = var_0_1
+			arg_6_1.slider_image_text.font_size = arg_6_2
 
-			_update_slider_image_size(content, style, options_view)
+			var_0_2(arg_6_0, arg_6_1, arg_6_3)
 		end,
 		slider_image = {
 			slider_image = "rect_masked",
 			size = {
 				420,
-				50,
+				50
 			},
-			color = subtitles_background_color_preview,
+			color = var_0_1
 		},
 		slider_image_text = {
 			text = string.format("%s: %s", Localize("subtitle_name_witch_hunter"), Localize("pwh_activate_ability_zealot_03")),
 			font_size = UISettings.subtitles_font_size,
-			color = Colors.get_table("white"),
+			color = Colors.get_table("white")
 		},
 		options = {
 			decimals = 0,
-			max = 32,
 			min = 16,
-		},
-	},
+			max = 32
+		}
+	}
 }
-local audio_settings_definition_without_voip = {}
+local var_0_4 = {}
 
-for i = 1, #audio_settings_definition do
-	local definition = audio_settings_definition[i]
+for iter_0_0 = 1, #var_0_3 do
+	local var_0_5 = var_0_3[iter_0_0]
 
-	if not definition.show_only_with_voip then
-		audio_settings_definition_without_voip[#audio_settings_definition_without_voip + 1] = definition
+	if not var_0_5.show_only_with_voip then
+		var_0_4[#var_0_4 + 1] = var_0_5
 	end
 end
 
-local gameplay_settings_definition = {
+local var_0_6 = {
 	{
 		text = "settings_view_header_input",
-		widget_type = "title",
+		widget_type = "title"
 	},
 	{
-		callback = "cb_mouse_look_sensitivity",
-		saved_value = "cb_mouse_look_sensitivity_saved_value",
 		setup = "cb_mouse_look_sensitivity_setup",
+		saved_value = "cb_mouse_look_sensitivity_saved_value",
+		callback = "cb_mouse_look_sensitivity",
 		tooltip_text = "tooltip_mouselook_sensitivity",
-		widget_type = "slider",
+		widget_type = "slider"
 	},
 	{
-		callback = "cb_mouse_look_invert_y",
-		saved_value = "cb_mouse_look_invert_y_saved_value",
 		setup = "cb_mouse_look_invert_y_setup",
+		saved_value = "cb_mouse_look_invert_y_saved_value",
+		callback = "cb_mouse_look_invert_y",
 		tooltip_text = "tooltip_mouselook_invert_y",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_weapon_scroll_type",
-		saved_value = "cb_weapon_scroll_type_saved_value",
 		setup = "cb_weapon_scroll_type_setup",
+		saved_value = "cb_weapon_scroll_type_saved_value",
+		callback = "cb_weapon_scroll_type",
 		tooltip_text = "tooltip_weapon_scroll_type",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_double_tap_dodge",
-		saved_value = "cb_double_tap_dodge_saved_value",
 		setup = "cb_double_tap_dodge_setup",
+		saved_value = "cb_double_tap_dodge_saved_value",
+		callback = "cb_double_tap_dodge",
 		tooltip_text = "tooltip_double_tap_dodge",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_toggle_crouch",
-		saved_value = "cb_toggle_crouch_saved_value",
 		setup = "cb_toggle_crouch_setup",
+		saved_value = "cb_toggle_crouch_saved_value",
+		callback = "cb_toggle_crouch",
 		tooltip_text = "tooltip_toggle_crouch",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_input_buffer",
+		setup = "cb_input_buffer_setup",
 		saved_value = "cb_input_buffer_saved_value",
 		setting_name = "input_buffer",
-		setup = "cb_input_buffer_setup",
+		callback = "cb_input_buffer",
 		tooltip_text = "tooltip_input_buffer",
-		widget_type = "slider",
+		widget_type = "slider"
 	},
 	{
-		callback = "cb_priority_input_buffer",
+		setup = "cb_priority_input_buffer_setup",
 		saved_value = "cb_priority_input_buffer_saved_value",
 		setting_name = "priority_input_buffer",
-		setup = "cb_priority_input_buffer_setup",
+		callback = "cb_priority_input_buffer",
 		tooltip_text = "tooltip_priority_input_buffer",
-		widget_type = "slider",
+		widget_type = "slider"
 	},
 	{
 		setting_name = "give_on_defend",
@@ -687,22 +687,22 @@ local gameplay_settings_definition = {
 		options = {
 			{
 				value = true,
-				text = Localize("menu_settings_on"),
+				text = Localize("menu_settings_on")
 			},
 			{
 				value = false,
-				text = Localize("menu_settings_off"),
-			},
-		},
+				text = Localize("menu_settings_off")
+			}
+		}
 	},
 	{
 		setting_name = "social_wheel_delay",
 		widget_type = "slider",
 		options = {
 			decimals = 2,
-			max = 0.5,
 			min = 0.01,
-		},
+			max = 0.5
+		}
 	},
 	{
 		setting_name = "social_wheel_gamepad_layout",
@@ -710,25 +710,25 @@ local gameplay_settings_definition = {
 		options = {
 			{
 				value = "auto",
-				text = Localize("menu_settings_auto"),
+				text = Localize("menu_settings_auto")
 			},
 			{
 				value = "always",
-				text = Localize("menu_settings_always"),
+				text = Localize("menu_settings_always")
 			},
 			{
 				value = "never",
-				text = Localize("menu_settings_never"),
-			},
-		},
+				text = Localize("menu_settings_never")
+			}
+		}
 	},
 	{
 		size_y = 30,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
 		text = "settings_view_header_visual_effects",
-		widget_type = "title",
+		widget_type = "title"
 	},
 	{
 		setting_name = "head_bob",
@@ -736,13 +736,13 @@ local gameplay_settings_definition = {
 		options = {
 			{
 				value = true,
-				text = Localize("menu_settings_on"),
+				text = Localize("menu_settings_on")
 			},
 			{
 				value = false,
-				text = Localize("menu_settings_off"),
-			},
-		},
+				text = Localize("menu_settings_off")
+			}
+		}
 	},
 	{
 		setting_name = "motion_sickness_hit",
@@ -750,25 +750,25 @@ local gameplay_settings_definition = {
 		options = {
 			{
 				value = "normal",
-				text = Localize("menu_settings_normal"),
+				text = Localize("menu_settings_normal")
 			},
 			{
 				value = "low",
-				text = Localize("menu_settings_low"),
+				text = Localize("menu_settings_low")
 			},
 			{
 				value = "lower",
-				text = Localize("menu_settings_lower"),
+				text = Localize("menu_settings_lower")
 			},
 			{
 				value = "lowest",
-				text = Localize("menu_settings_lowest"),
+				text = Localize("menu_settings_lowest")
 			},
 			{
 				value = "off",
-				text = Localize("menu_settings_off"),
-			},
-		},
+				text = Localize("menu_settings_off")
+			}
+		}
 	},
 	{
 		setting_name = "motion_sickness_swing",
@@ -776,25 +776,25 @@ local gameplay_settings_definition = {
 		options = {
 			{
 				value = "normal",
-				text = Localize("menu_settings_normal"),
+				text = Localize("menu_settings_normal")
 			},
 			{
 				value = "low",
-				text = Localize("menu_settings_low"),
+				text = Localize("menu_settings_low")
 			},
 			{
 				value = "lower",
-				text = Localize("menu_settings_lower"),
+				text = Localize("menu_settings_lower")
 			},
 			{
 				value = "lowest",
-				text = Localize("menu_settings_lowest"),
+				text = Localize("menu_settings_lowest")
 			},
 			{
 				value = "off",
-				text = Localize("menu_settings_off"),
-			},
-		},
+				text = Localize("menu_settings_off")
+			}
+		}
 	},
 	{
 		setting_name = "motion_sickness_misc_cam",
@@ -802,25 +802,25 @@ local gameplay_settings_definition = {
 		options = {
 			{
 				value = "normal",
-				text = Localize("menu_settings_normal"),
+				text = Localize("menu_settings_normal")
 			},
 			{
 				value = "no_career_camera",
-				text = Localize("menu_settings_no_career"),
+				text = Localize("menu_settings_no_career")
 			},
 			{
 				value = "no_dodge_camera",
-				text = Localize("menu_settings_no_dodge"),
+				text = Localize("menu_settings_no_dodge")
 			},
 			{
 				value = "no_player_hit_camera",
-				text = Localize("menu_settings_no_player_hit"),
+				text = Localize("menu_settings_no_player_hit")
 			},
 			{
 				value = "no_misc_camera",
-				text = Localize("menu_settings_no_misc"),
-			},
-		},
+				text = Localize("menu_settings_no_misc")
+			}
+		}
 	},
 	{
 		setting_name = "camera_shake",
@@ -828,13 +828,13 @@ local gameplay_settings_definition = {
 		options = {
 			{
 				value = true,
-				text = Localize("menu_settings_on"),
+				text = Localize("menu_settings_on")
 			},
 			{
 				value = false,
-				text = Localize("menu_settings_off"),
-			},
-		},
+				text = Localize("menu_settings_off")
+			}
+		}
 	},
 	{
 		setting_name = "weapon_trails",
@@ -842,74 +842,74 @@ local gameplay_settings_definition = {
 		options = {
 			{
 				value = "normal",
-				text = Localize("menu_settings_normal"),
+				text = Localize("menu_settings_normal")
 			},
 			{
 				value = "no_crits",
-				text = Localize("menu_settings_no_crits"),
+				text = Localize("menu_settings_no_crits")
 			},
 			{
 				value = "none",
-				text = Localize("menu_settings_no_misc"),
-			},
-		},
+				text = Localize("menu_settings_no_misc")
+			}
+		}
 	},
 	{
-		callback = "cb_player_outlines",
-		saved_value = "cb_player_outlines_saved_value",
 		setup = "cb_player_outlines_setup",
+		saved_value = "cb_player_outlines_saved_value",
+		callback = "cb_player_outlines",
 		tooltip_text = "tooltip_outlines",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_minion_outlines",
-		saved_value = "cb_minion_outlines_saved_value",
 		setup = "cb_minion_outlines_setup",
+		saved_value = "cb_minion_outlines_saved_value",
+		callback = "cb_minion_outlines",
 		tooltip_text = "tooltip_minion_outlines",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_blood_enabled",
-		saved_value = "cb_blood_enabled_saved_value",
 		setup = "cb_blood_enabled_setup",
+		saved_value = "cb_blood_enabled_saved_value",
+		callback = "cb_blood_enabled",
 		tooltip_text = "tooltip_blood_enabled",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_screen_blood_enabled",
-		saved_value = "cb_screen_blood_enabled_saved_value",
 		setup = "cb_screen_blood_enabled_setup",
+		saved_value = "cb_screen_blood_enabled_saved_value",
+		callback = "cb_screen_blood_enabled",
 		tooltip_text = "tooltip_screen_blood_enabled",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_dismemberment_enabled",
-		saved_value = "cb_dismemberment_enabled_saved_value",
 		setup = "cb_dismemberment_enabled_setup",
+		saved_value = "cb_dismemberment_enabled_saved_value",
+		callback = "cb_dismemberment_enabled",
 		tooltip_text = "tooltip_dismemberment_enabled",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_ragdoll_enabled",
-		saved_value = "cb_ragdoll_enabled_saved_value",
 		setup = "cb_ragdoll_enabled_setup",
+		saved_value = "cb_ragdoll_enabled_saved_value",
+		callback = "cb_ragdoll_enabled",
 		tooltip_text = "tooltip_ragdoll_enabled",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
 		size_y = 30,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
 		text = "settings_view_header_interface",
-		widget_type = "title",
+		widget_type = "title"
 	},
 	{
-		callback = "cb_enabled_pc_menu_layout",
-		saved_value = "cb_enabled_pc_menu_layout_saved_value",
 		setup = "cb_enabled_pc_menu_layout_setup",
+		saved_value = "cb_enabled_pc_menu_layout_saved_value",
+		callback = "cb_enabled_pc_menu_layout",
 		tooltip_text = "tooltip_enabled_pc_menu_layout",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
 		setting_name = "play_intro_cinematic",
@@ -917,34 +917,34 @@ local gameplay_settings_definition = {
 		options = {
 			{
 				value = true,
-				text = Localize("menu_settings_on"),
+				text = Localize("menu_settings_on")
 			},
 			{
 				value = false,
-				text = Localize("menu_settings_off"),
-			},
-		},
+				text = Localize("menu_settings_off")
+			}
+		}
 	},
 	{
-		callback = "cb_chat_enabled",
-		saved_value = "cb_chat_enabled_saved_value",
 		setup = "cb_chat_enabled_setup",
+		saved_value = "cb_chat_enabled_saved_value",
+		callback = "cb_chat_enabled",
 		tooltip_text = "tooltip_chat_enabled",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_chat_font_size",
-		saved_value = "cb_chat_font_size_saved_value",
 		setup = "cb_chat_font_size_setup",
+		saved_value = "cb_chat_font_size_saved_value",
+		callback = "cb_chat_font_size",
 		tooltip_text = "tooltip_chat_font_size",
-		widget_type = "drop_down",
+		widget_type = "drop_down"
 	},
 	{
-		callback = "cb_clan_tag",
-		saved_value = "cb_clan_tag_saved_value",
 		setup = "cb_clan_tag_setup",
+		saved_value = "cb_clan_tag_saved_value",
+		callback = "cb_clan_tag",
 		tooltip_text = "tooltip_clan_tag",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
 		setting_name = "playerlist_build_privacy",
@@ -952,69 +952,69 @@ local gameplay_settings_definition = {
 		options = {
 			{
 				text = Localize("visibility_friends"),
-				value = PrivacyLevels.friends,
+				value = PrivacyLevels.friends
 			},
 			{
 				text = Localize("visibility_private"),
-				value = PrivacyLevels.private,
+				value = PrivacyLevels.private
 			},
 			{
 				text = Localize("visibility_public"),
-				value = PrivacyLevels.public,
-			},
-		},
+				value = PrivacyLevels.public
+			}
+		}
 	},
 	{
 		size_y = 30,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
 		text = "settings_view_header_hud_customization",
-		widget_type = "title",
+		widget_type = "title"
 	},
 	{
-		callback = "cb_enabled_gamepad_hud_layout",
-		saved_value = "cb_enabled_gamepad_hud_layout_saved_value",
 		setup = "cb_enabled_gamepad_hud_layout_setup",
+		saved_value = "cb_enabled_gamepad_hud_layout_saved_value",
+		callback = "cb_enabled_gamepad_hud_layout",
 		tooltip_text = "tooltip_enabled_gamepad_hud_layout",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_hud_custom_scale",
-		saved_value = "cb_hud_custom_scale_saved_value",
 		setup = "cb_hud_custom_scale_setup",
+		saved_value = "cb_hud_custom_scale_saved_value",
+		callback = "cb_hud_custom_scale",
 		tooltip_text = "tooltip_hud_custom_scale",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_hud_scale",
-		callback_on_release = true,
-		name = "hud_scale",
-		saved_value = "cb_hud_scale_saved_value",
 		setup = "cb_hud_scale_setup",
+		callback_on_release = true,
+		saved_value = "cb_hud_scale_saved_value",
+		callback = "cb_hud_scale",
+		name = "hud_scale",
 		tooltip_text = "tooltip_hud_scale",
-		widget_type = "slider",
+		widget_type = "slider"
 	},
 	{
-		callback = "cb_hud_clamp_ui_scaling",
-		saved_value = "cb_hud_clamp_ui_scaling_saved_value",
 		setup = "cb_hud_clamp_ui_scaling_setup",
+		saved_value = "cb_hud_clamp_ui_scaling_saved_value",
+		callback = "cb_hud_clamp_ui_scaling",
 		tooltip_text = "tooltip_hud_clamp_ui_scaling",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_enabled_crosshairs",
-		saved_value = "cb_enabled_crosshairs_saved_value",
 		setup = "cb_enabled_crosshairs_setup",
+		saved_value = "cb_enabled_crosshairs_saved_value",
+		callback = "cb_enabled_crosshairs",
 		tooltip_text = "tooltip_enabled_crosshairs",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_overcharge_opacity",
-		saved_value = "cb_overcharge_opacity_saved_value",
 		setup = "cb_overcharge_opacity_setup",
+		saved_value = "cb_overcharge_opacity_saved_value",
+		callback = "cb_overcharge_opacity",
 		tooltip_text = "tooltip_overcharge_opacity",
-		widget_type = "slider",
+		widget_type = "slider"
 	},
 	{
 		setting_name = "numeric_ui",
@@ -1022,13 +1022,13 @@ local gameplay_settings_definition = {
 		options = {
 			{
 				value = true,
-				text = Localize("menu_settings_on"),
+				text = Localize("menu_settings_on")
 			},
 			{
 				value = false,
-				text = Localize("menu_settings_off"),
-			},
-		},
+				text = Localize("menu_settings_off")
+			}
+		}
 	},
 	{
 		setting_name = "persistent_ammo_counter",
@@ -1036,13 +1036,13 @@ local gameplay_settings_definition = {
 		options = {
 			{
 				value = true,
-				text = Localize("menu_settings_on"),
+				text = Localize("menu_settings_on")
 			},
 			{
 				value = false,
-				text = Localize("menu_settings_off"),
-			},
-		},
+				text = Localize("menu_settings_off")
+			}
+		}
 	},
 	{
 		setting_name = "crosshair_kill_confirm",
@@ -1050,29 +1050,29 @@ local gameplay_settings_definition = {
 		options = {
 			{
 				text = Localize("menu_settings_off"),
-				value = CrosshairKillConfirmSettingsGroups.off,
+				value = CrosshairKillConfirmSettingsGroups.off
 			},
 			{
 				text = Localize("crosshair_kill_confirm_all"),
-				value = CrosshairKillConfirmSettingsGroups.all,
+				value = CrosshairKillConfirmSettingsGroups.all
 			},
 			{
 				text = Localize("crosshair_kill_confirm_elites_above"),
-				value = CrosshairKillConfirmSettingsGroups.elites_above,
+				value = CrosshairKillConfirmSettingsGroups.elites_above
 			},
 			{
 				text = Localize("crosshair_kill_confirm_bosses_specials"),
-				value = CrosshairKillConfirmSettingsGroups.bosses_specials,
+				value = CrosshairKillConfirmSettingsGroups.bosses_specials
 			},
 			{
 				text = Localize("crosshair_kill_confirm_elites_specials"),
-				value = CrosshairKillConfirmSettingsGroups.elites_specials,
+				value = CrosshairKillConfirmSettingsGroups.elites_specials
 			},
 			{
 				text = Localize("crosshair_kill_confirm_specials_only"),
-				value = CrosshairKillConfirmSettingsGroups.specials_only,
-			},
-		},
+				value = CrosshairKillConfirmSettingsGroups.specials_only
+			}
+		}
 	},
 	{
 		setting_name = "friendly_fire_crosshair",
@@ -1080,13 +1080,13 @@ local gameplay_settings_definition = {
 		options = {
 			{
 				value = true,
-				text = Localize("menu_settings_on"),
+				text = Localize("menu_settings_on")
 			},
 			{
 				value = false,
-				text = Localize("menu_settings_off"),
-			},
-		},
+				text = Localize("menu_settings_off")
+			}
+		}
 	},
 	{
 		setting_name = "friendly_fire_hit_marker",
@@ -1094,43 +1094,43 @@ local gameplay_settings_definition = {
 		options = {
 			{
 				value = true,
-				text = Localize("menu_settings_on"),
+				text = Localize("menu_settings_on")
 			},
 			{
 				value = false,
-				text = Localize("menu_settings_off"),
-			},
-		},
+				text = Localize("menu_settings_off")
+			}
+		}
 	},
 	{
 		size_y = 30,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
 		text = "settings_view_header_twitch",
-		widget_type = "title",
+		widget_type = "title"
 	},
 	{
-		callback = "cb_twitch_vote_time",
-		saved_value = "cb_twitch_vote_time_saved_value",
 		setup = "cb_twitch_vote_time_setup",
+		saved_value = "cb_twitch_vote_time_saved_value",
+		callback = "cb_twitch_vote_time",
 		tooltip_text = "tooltip_twitch_vote_time",
-		widget_type = "drop_down",
+		widget_type = "drop_down"
 	},
 	{
-		callback = "cb_twitch_time_between_votes",
-		saved_value = "cb_twitch_time_between_votes_saved_value",
 		setup = "cb_twitch_time_between_votes_setup",
+		saved_value = "cb_twitch_time_between_votes_saved_value",
+		callback = "cb_twitch_time_between_votes",
 		tooltip_text = "tooltip_twitch_time_between_votes",
-		widget_type = "drop_down",
+		widget_type = "drop_down"
 	},
 	{
-		callback = "cb_twitch_spawn_amount",
+		setup = "cb_twitch_spawn_amount_setup",
 		callback_on_release = true,
 		saved_value = "cb_twitch_spawn_amount_saved_value",
-		setup = "cb_twitch_spawn_amount_setup",
+		callback = "cb_twitch_spawn_amount",
 		tooltip_text = "tooltip_twitch_spawn_amount",
-		widget_type = "slider",
+		widget_type = "slider"
 	},
 	{
 		setting_name = "twitch_disable_positive_votes",
@@ -1138,17 +1138,17 @@ local gameplay_settings_definition = {
 		options = {
 			{
 				text = Localize("twitch_enable_positive_votes"),
-				value = TwitchSettings.positive_vote_options.enable_positive_votes,
+				value = TwitchSettings.positive_vote_options.enable_positive_votes
 			},
 			{
 				text = Localize("twitch_disable_giving_items"),
-				value = TwitchSettings.positive_vote_options.disable_giving_items,
+				value = TwitchSettings.positive_vote_options.disable_giving_items
 			},
 			{
 				text = Localize("twitch_disable_positive_votes"),
-				value = TwitchSettings.positive_vote_options.disable_positive_votes,
-			},
-		},
+				value = TwitchSettings.positive_vote_options.disable_positive_votes
+			}
+		}
 	},
 	{
 		menu_setting_name = "menu_settings_twitch_enable_mutators",
@@ -1158,23 +1158,23 @@ local gameplay_settings_definition = {
 		options = {
 			{
 				value = true,
-				text = Localize("menu_settings_on"),
+				text = Localize("menu_settings_on")
 			},
 			{
 				value = false,
-				text = Localize("menu_settings_off"),
-			},
+				text = Localize("menu_settings_off")
+			}
 		},
 		options = {
 			{
 				value = false,
-				text = Localize("menu_settings_on"),
+				text = Localize("menu_settings_on")
 			},
 			{
 				value = true,
-				text = Localize("menu_settings_off"),
-			},
-		},
+				text = Localize("menu_settings_off")
+			}
+		}
 	},
 	{
 		setting_name = "twitch_mutator_duration",
@@ -1182,213 +1182,208 @@ local gameplay_settings_definition = {
 		options = {
 			{
 				value = 1,
-				text = Localize("percent_100"),
+				text = Localize("percent_100")
 			},
 			{
 				value = 1.5,
-				text = Localize("percent_150"),
+				text = Localize("percent_150")
 			},
 			{
 				value = 2,
-				text = Localize("percent_200"),
-			},
-		},
+				text = Localize("percent_200")
+			}
+		}
 	},
 	{
 		size_y = 30,
-		widget_type = "empty",
-	},
+		widget_type = "empty"
+	}
 }
 
-local function get_slider_value(min, max, value)
-	local range = max - min
-	local norm_value = math.clamp(value, min, max) - min
+local function var_0_7(arg_7_0, arg_7_1, arg_7_2)
+	local var_7_0 = arg_7_1 - arg_7_0
 
-	return norm_value / range
+	return (math.clamp(arg_7_2, arg_7_0, arg_7_1) - arg_7_0) / var_7_0
 end
 
-local function set_function(self, user_setting_name, widget_type, content, style, value_set_function)
-	local new_value
+local function var_0_8(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+	local var_8_0
 
-	if widget_type == "slider" then
-		new_value = content.value
+	if arg_8_2 == "slider" then
+		var_8_0 = arg_8_3.value
 	else
-		local options_values = content.options_values
-		local current_selection = content.current_selection
-
-		new_value = options_values[current_selection]
+		var_8_0 = arg_8_3.options_values[arg_8_3.current_selection]
 	end
 
-	local setting_type = content.definition.setting_type or "user_settings"
+	local var_8_1 = arg_8_3.definition.setting_type or "user_settings"
 
-	self:_set_setting(setting_type, user_setting_name, new_value)
-	value_set_function(content, style, new_value, self)
+	arg_8_0:_set_setting(var_8_1, arg_8_1, var_8_0)
+	arg_8_5(arg_8_3, arg_8_4, var_8_0, arg_8_0)
 end
 
-local function setup_function(self, user_setting_name, widget_type, options, definition)
-	local setting_type = definition.setting_type or "user_settings"
-	local default_value = DefaultUserSettings.get(setting_type, user_setting_name)
-	local current_value
+local function var_0_9(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	local var_9_0 = arg_9_4.setting_type or "user_settings"
+	local var_9_1 = DefaultUserSettings.get(var_9_0, arg_9_1)
+	local var_9_2
 
-	if setting_type == "user_settings" then
-		current_value = Application.user_setting(user_setting_name)
+	if var_9_0 == "user_settings" then
+		var_9_2 = Application.user_setting(arg_9_1)
 	else
-		current_value = Application.user_setting(setting_type, user_setting_name)
+		var_9_2 = Application.user_setting(var_9_0, arg_9_1)
 	end
 
-	local menu_setting_name = definition.menu_setting_name
+	local var_9_3 = arg_9_4.menu_setting_name or "menu_settings_" .. arg_9_1
 
-	menu_setting_name = menu_setting_name or "menu_settings_" .. user_setting_name
+	if arg_9_2 == "slider" then
+		local var_9_4 = arg_9_3.min
+		local var_9_5 = arg_9_3.max
+		local var_9_6 = arg_9_3.decimals
 
-	if widget_type == "slider" then
-		local min = options.min
-		local max = options.max
-		local decimals = options.decimals
-		local value = get_slider_value(min, max, current_value)
-
-		return value, min, max, decimals, menu_setting_name, default_value
+		return var_0_7(var_9_4, var_9_5, var_9_2), var_9_4, var_9_5, var_9_6, var_9_3, var_9_1
 	else
-		local selection, default_option
+		local var_9_7
+		local var_9_8
 
-		for index, option in ipairs(options) do
-			local value = option.value
+		for iter_9_0, iter_9_1 in ipairs(arg_9_3) do
+			local var_9_9 = iter_9_1.value
 
-			if value == current_value then
-				selection = index
+			if var_9_9 == var_9_2 then
+				var_9_7 = iter_9_0
 			end
 
-			if value == default_value then
-				default_option = index
+			if var_9_9 == var_9_1 then
+				var_9_8 = iter_9_0
 			end
 		end
 
-		fassert(default_option, "Default value %q for %q does not exist in passed options table", tostring(default_value), user_setting_name)
+		fassert(var_9_8, "Default value %q for %q does not exist in passed options table", tostring(var_9_1), arg_9_1)
 
-		selection = selection or default_option
+		var_9_7 = var_9_7 or var_9_8
 
-		return selection, options, menu_setting_name, default_option
+		return var_9_7, arg_9_3, var_9_3, var_9_8
 	end
 end
 
-local function saved_value_function(self, user_setting_name, widget_type, widget, saved_function)
-	local setting_type = widget.content.definition.setting_type or "user_settings"
-	local saved_value = self:_get_setting(setting_type, user_setting_name)
-	local default_value = DefaultUserSettings.get(setting_type, user_setting_name)
+local function var_0_10(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	local var_10_0 = arg_10_3.content.definition.setting_type or "user_settings"
+	local var_10_1 = arg_10_0:_get_setting(var_10_0, arg_10_1)
+	local var_10_2 = DefaultUserSettings.get(var_10_0, arg_10_1)
 
-	if saved_value == nil then
-		saved_value = default_value
+	if var_10_1 == nil then
+		var_10_1 = var_10_2
 	end
 
-	local content = widget.content
-	local style = widget.style
+	local var_10_3 = arg_10_3.content
+	local var_10_4 = arg_10_3.style
 
-	if widget_type == "slider" then
-		local min, max = content.min, content.max
+	if arg_10_2 == "slider" then
+		local var_10_5 = var_10_3.min
+		local var_10_6 = var_10_3.max
 
-		saved_value = math.clamp(saved_value, min, max)
-		content.internal_value = get_slider_value(min, max, saved_value)
-		content.value = saved_value
+		var_10_1 = math.clamp(var_10_1, var_10_5, var_10_6)
+		var_10_3.internal_value = var_0_7(var_10_5, var_10_6, var_10_1)
+		var_10_3.value = var_10_1
 	else
-		content.current_selection = table.find(content.options_values, saved_value) or table.find(content.options_values, default_value)
+		var_10_3.current_selection = table.find(var_10_3.options_values, var_10_1) or table.find(var_10_3.options_values, var_10_2)
 	end
 
-	saved_function(content, style, saved_value, self)
+	arg_10_4(var_10_3, var_10_4, var_10_1, arg_10_0)
 end
 
-local function generate_settings(settings_definition)
-	for _, definition in pairs(settings_definition) do
-		local setting_name = definition.setting_name
+local function var_0_11(arg_11_0)
+	for iter_11_0, iter_11_1 in pairs(arg_11_0) do
+		local var_11_0 = iter_11_1.setting_name
 
-		if setting_name then
-			local prefix = "cb_" .. setting_name
-			local callback_name = prefix
+		if var_11_0 then
+			local var_11_1 = "cb_" .. var_11_0
+			local var_11_2 = var_11_1
 
-			definition.callback = prefix
+			iter_11_1.callback = var_11_1
 
-			local widget_type = definition.widget_type
+			local var_11_3 = iter_11_1.widget_type
 
-			OptionsView[callback_name] = function (self, content, style)
-				return set_function(self, setting_name, widget_type, content, style, definition.value_set_function or NOP)
+			OptionsView[var_11_2] = function(arg_12_0, arg_12_1, arg_12_2)
+				return var_0_8(arg_12_0, var_11_0, var_11_3, arg_12_1, arg_12_2, iter_11_1.value_set_function or NOP)
 			end
 
-			local setup_function_name = prefix .. "_setup"
+			local var_11_4 = var_11_1 .. "_setup"
 
-			definition.setup = setup_function_name
-			OptionsView[setup_function_name] = function (self)
-				return setup_function(self, setting_name, widget_type, definition.options, definition)
+			iter_11_1.setup = var_11_4
+			OptionsView[var_11_4] = function(arg_13_0)
+				return var_0_9(arg_13_0, var_11_0, var_11_3, iter_11_1.options, iter_11_1)
 			end
 
-			local saved_value_function_name = prefix .. "_saved_value"
+			local var_11_5 = var_11_1 .. "_saved_value"
 
-			definition.saved_value = saved_value_function_name
-			OptionsView[saved_value_function_name] = function (self, widget)
-				return saved_value_function(self, setting_name, widget_type, widget, definition.value_saved_function or NOP)
+			iter_11_1.saved_value = var_11_5
+			OptionsView[var_11_5] = function(arg_14_0, arg_14_1)
+				return var_0_10(arg_14_0, var_11_0, var_11_3, arg_14_1, iter_11_1.value_saved_function or NOP)
 			end
 
-			if not definition.tooltip_text then
-				definition.tooltip_text = "tooltip_" .. setting_name
+			if not iter_11_1.tooltip_text then
+				iter_11_1.tooltip_text = "tooltip_" .. var_11_0
 			end
 		end
 	end
 end
 
-generate_settings(audio_settings_definition)
-generate_settings(gameplay_settings_definition)
-generate_settings(video_settings_definition)
+var_0_11(var_0_3)
+var_0_11(var_0_6)
+var_0_11(var_0_0)
 
-local LightFX = rawget(_G, "LightFX")
-local razerchroma_defined = rawget(_G, "RazerChroma")
+local var_0_12 = rawget(_G, "LightFX")
+local var_0_13 = rawget(_G, "RazerChroma")
 
-if LightFX or RazerChroma then
-	gameplay_settings_definition[#gameplay_settings_definition + 1] = {
+if var_0_12 or RazerChroma then
+	var_0_6[#var_0_6 + 1] = {
 		size_y = 30,
-		widget_type = "empty",
+		widget_type = "empty"
 	}
-	gameplay_settings_definition[#gameplay_settings_definition + 1] = {
+	var_0_6[#var_0_6 + 1] = {
 		text = "settings_view_header_misc",
-		widget_type = "title",
+		widget_type = "title"
 	}
 end
 
-if LightFX then
-	gameplay_settings_definition[#gameplay_settings_definition + 1] = {
-		callback = "cb_alien_fx",
-		saved_value = "cb_alien_fx_saved_value",
+if var_0_12 then
+	var_0_6[#var_0_6 + 1] = {
 		setup = "cb_alien_fx_setup",
+		saved_value = "cb_alien_fx_saved_value",
+		callback = "cb_alien_fx",
 		tooltip_text = "tooltip_alien_fx",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	}
 end
 
 if RazerChroma then
-	gameplay_settings_definition[#gameplay_settings_definition + 1] = {
-		callback = "cb_razer_chroma",
-		saved_value = "cb_razer_chroma_saved_value",
+	var_0_6[#var_0_6 + 1] = {
 		setup = "cb_razer_chroma_setup",
+		saved_value = "cb_razer_chroma_saved_value",
+		callback = "cb_razer_chroma",
 		tooltip_text = "tooltip_razer_chroma",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	}
 end
 
-gameplay_settings_definition[#gameplay_settings_definition + 1] = {
+var_0_6[#var_0_6 + 1] = {
 	size_y = 110,
-	widget_type = "empty",
+	widget_type = "empty"
 }
 
-local display_settings_definition = {
+local var_0_14 = {
 	{
 		size_y = 30,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
 		text = "Monitor",
-		widget_type = "title",
-	},
+		widget_type = "title"
+	}
 }
-local keybind_settings_definition = {
+local var_0_15 = {
 	{
 		text = "settings_view_header_movement",
-		widget_type = "title",
+		widget_type = "title"
 	},
 	{
 		keybind_description = "move_forward",
@@ -1396,8 +1391,8 @@ local keybind_settings_definition = {
 		widget_type = "keybind",
 		actions = {
 			"move_forward",
-			"move_forward_pressed",
-		},
+			"move_forward_pressed"
+		}
 	},
 	{
 		keybind_description = "move_left",
@@ -1405,8 +1400,8 @@ local keybind_settings_definition = {
 		widget_type = "keybind",
 		actions = {
 			"move_left",
-			"move_left_pressed",
-		},
+			"move_left_pressed"
+		}
 	},
 	{
 		keybind_description = "move_back",
@@ -1414,8 +1409,8 @@ local keybind_settings_definition = {
 		widget_type = "keybind",
 		actions = {
 			"move_back",
-			"move_back_pressed",
-		},
+			"move_back_pressed"
+		}
 	},
 	{
 		keybind_description = "move_right",
@@ -1423,8 +1418,8 @@ local keybind_settings_definition = {
 		widget_type = "keybind",
 		actions = {
 			"move_right",
-			"move_right_pressed",
-		},
+			"move_right_pressed"
+		}
 	},
 	{
 		keybind_description = "jump_1",
@@ -1432,24 +1427,24 @@ local keybind_settings_definition = {
 		widget_type = "keybind",
 		actions = {
 			"jump_1",
-			"dodge_hold",
-		},
+			"dodge_hold"
+		}
 	},
 	{
 		keybind_description = "jump_only",
 		keymappings_key = "PlayerControllerKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"jump_only",
-		},
+			"jump_only"
+		}
 	},
 	{
 		keybind_description = "dodge",
 		keymappings_key = "PlayerControllerKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"dodge",
-		},
+			"dodge"
+		}
 	},
 	{
 		keybind_description = "crouch",
@@ -1457,24 +1452,24 @@ local keybind_settings_definition = {
 		widget_type = "keybind",
 		actions = {
 			"crouch",
-			"crouching",
-		},
+			"crouching"
+		}
 	},
 	{
 		keybind_description = "walk",
 		keymappings_key = "PlayerControllerKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"walk",
-		},
+			"walk"
+		}
 	},
 	{
 		size_y = 30,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
 		text = "settings_view_header_combat",
-		widget_type = "title",
+		widget_type = "title"
 	},
 	{
 		keybind_description = "action_one",
@@ -1484,8 +1479,8 @@ local keybind_settings_definition = {
 			"action_one",
 			"action_one_hold",
 			"action_one_release",
-			"action_one_mouse",
-		},
+			"action_one_mouse"
+		}
 	},
 	{
 		keybind_description = "action_two",
@@ -1494,8 +1489,8 @@ local keybind_settings_definition = {
 		actions = {
 			"action_two",
 			"action_two_hold",
-			"action_two_release",
-		},
+			"action_two_release"
+		}
 	},
 	{
 		keybind_description = "weapon_reload",
@@ -1503,8 +1498,8 @@ local keybind_settings_definition = {
 		widget_type = "keybind",
 		actions = {
 			"weapon_reload",
-			"weapon_reload_hold",
-		},
+			"weapon_reload_hold"
+		}
 	},
 	{
 		keybind_description = "action_three",
@@ -1513,8 +1508,8 @@ local keybind_settings_definition = {
 		actions = {
 			"action_three",
 			"action_three_hold",
-			"action_three_release",
-		},
+			"action_three_release"
+		}
 	},
 	{
 		keybind_description = "input_active_ability",
@@ -1523,8 +1518,8 @@ local keybind_settings_definition = {
 		actions = {
 			"action_career",
 			"action_career_hold",
-			"action_career_release",
-		},
+			"action_career_release"
+		}
 	},
 	{
 		keybind_description = "ping",
@@ -1533,16 +1528,16 @@ local keybind_settings_definition = {
 		actions = {
 			"ping",
 			"ping_hold",
-			"ping_release",
-		},
+			"ping_release"
+		}
 	},
 	{
 		keybind_description = "ping_only",
 		keymappings_key = "PlayerControllerKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"ping_only",
-		},
+			"ping_only"
+		}
 	},
 	{
 		keybind_description = "social_wheel_only",
@@ -1551,8 +1546,8 @@ local keybind_settings_definition = {
 		actions = {
 			"social_wheel_only",
 			"social_wheel_only_hold",
-			"social_wheel_only_release",
-		},
+			"social_wheel_only_release"
+		}
 	},
 	{
 		keybind_description = "weapon_poses_only",
@@ -1561,16 +1556,16 @@ local keybind_settings_definition = {
 		actions = {
 			"weapon_poses_only",
 			"weapon_poses_only_hold",
-			"weapon_poses_only_release",
-		},
+			"weapon_poses_only_release"
+		}
 	},
 	{
 		keybind_description = "social_wheel_page",
 		keymappings_key = "PlayerControllerKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"social_wheel_page",
-		},
+			"social_wheel_page"
+		}
 	},
 	{
 		keybind_description = "photomode_only",
@@ -1579,8 +1574,8 @@ local keybind_settings_definition = {
 		actions = {
 			"photomode_only",
 			"photomode_only_hold",
-			"photomode_only_release",
-		},
+			"photomode_only_release"
+		}
 	},
 	{
 		keybind_description = "interact",
@@ -1588,57 +1583,57 @@ local keybind_settings_definition = {
 		widget_type = "keybind",
 		actions = {
 			"interact",
-			"interacting",
-		},
+			"interacting"
+		}
 	},
 	{
 		keybind_description = "wield_1",
 		keymappings_key = "PlayerControllerKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"wield_1",
-		},
+			"wield_1"
+		}
 	},
 	{
 		keybind_description = "wield_2",
 		keymappings_key = "PlayerControllerKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"wield_2",
-		},
+			"wield_2"
+		}
 	},
 	{
 		keybind_description = "wield_3",
 		keymappings_key = "PlayerControllerKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"wield_3",
-		},
+			"wield_3"
+		}
 	},
 	{
 		keybind_description = "wield_4",
 		keymappings_key = "PlayerControllerKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"wield_4",
-		},
+			"wield_4"
+		}
 	},
 	{
 		keybind_description = "wield_4_alt",
-		keymappings_key = "PlayerControllerKeymaps",
 		required_dlc = "shovel",
+		keymappings_key = "PlayerControllerKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"wield_4_alt",
-		},
+			"wield_4_alt"
+		}
 	},
 	{
 		keybind_description = "wield_5",
 		keymappings_key = "PlayerControllerKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"wield_5",
-		},
+			"wield_5"
+		}
 	},
 	{
 		keybind_description = "wield_switch_1",
@@ -1646,32 +1641,32 @@ local keybind_settings_definition = {
 		widget_type = "keybind",
 		actions = {
 			"wield_switch",
-			"wield_switch_1",
-		},
+			"wield_switch_1"
+		}
 	},
 	{
 		keybind_description = "wield_next",
 		keymappings_key = "PlayerControllerKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"wield_next",
-		},
+			"wield_next"
+		}
 	},
 	{
 		keybind_description = "wield_prev",
 		keymappings_key = "PlayerControllerKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"wield_prev",
-		},
+			"wield_prev"
+		}
 	},
 	{
 		keybind_description = "character_inspecting",
 		keymappings_key = "PlayerControllerKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"character_inspecting",
-		},
+			"character_inspecting"
+		}
 	},
 	{
 		keybind_description = "action_inspect",
@@ -1680,16 +1675,16 @@ local keybind_settings_definition = {
 		actions = {
 			"action_inspect",
 			"action_inspect_hold",
-			"action_inspect_release",
-		},
+			"action_inspect_release"
+		}
 	},
 	{
 		size_y = 30,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
 		text = "settings_view_header_menu_hotkeys",
-		widget_type = "title",
+		widget_type = "title"
 	},
 	{
 		keybind_description = "ingame_player_list_pressed",
@@ -1698,144 +1693,144 @@ local keybind_settings_definition = {
 		actions = {
 			"ingame_player_list_pressed",
 			"ingame_player_list_held",
-			"ingame_player_list_exit_1",
-		},
+			"ingame_player_list_exit_1"
+		}
 	},
 	{
 		keybind_description = "hotkey_map",
 		keymappings_key = "IngameMenuKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"hotkey_map",
-		},
+			"hotkey_map"
+		}
 	},
 	{
 		keybind_description = "hotkey_inventory",
 		keymappings_key = "IngameMenuKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"hotkey_inventory",
-		},
+			"hotkey_inventory"
+		}
 	},
 	{
 		keybind_description = "hotkey_loot",
 		keymappings_key = "IngameMenuKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"hotkey_loot",
-		},
+			"hotkey_loot"
+		}
 	},
 	{
 		keybind_description = "hotkey_hero",
 		keymappings_key = "IngameMenuKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"hotkey_hero",
-		},
+			"hotkey_hero"
+		}
 	},
 	{
 		keybind_description = "hotkey_store",
 		keymappings_key = "IngameMenuKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"hotkey_store",
-		},
+			"hotkey_store"
+		}
 	},
 	{
 		keybind_description = "hotkey_achievements",
 		keymappings_key = "IngameMenuKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"hotkey_achievements",
-		},
+			"hotkey_achievements"
+		}
 	},
 	{
 		keybind_description = "hotkey_weave_forge",
 		keymappings_key = "IngameMenuKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"hotkey_weave_forge",
-		},
+			"hotkey_weave_forge"
+		}
 	},
 	{
 		keybind_description = "hotkey_weave_play",
 		keymappings_key = "IngameMenuKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"hotkey_weave_play",
-		},
+			"hotkey_weave_play"
+		}
 	},
 	{
 		keybind_description = "hotkey_weave_leaderboard",
 		keymappings_key = "IngameMenuKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"hotkey_weave_leaderboard",
-		},
+			"hotkey_weave_leaderboard"
+		}
 	},
 	{
 		keybind_description = "hotkey_deus_inventory",
 		keymappings_key = "IngameMenuKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"hotkey_deus_inventory",
-		},
+			"hotkey_deus_inventory"
+		}
 	},
 	{
 		size_y = 30,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
 		text = "settings_view_header_multiplayer",
-		widget_type = "title",
+		widget_type = "title"
 	},
 	{
 		keybind_description = "voip_push_to_talk",
 		keymappings_key = "ChatControllerSettings",
 		widget_type = "keybind",
 		actions = {
-			"voip_push_to_talk",
-		},
+			"voip_push_to_talk"
+		}
 	},
 	{
 		keybind_description = "activate_chat_input",
 		keymappings_key = "ChatControllerSettings",
 		widget_type = "keybind",
 		actions = {
-			"activate_chat_input",
-		},
+			"activate_chat_input"
+		}
 	},
 	{
 		keybind_description = "execute_chat_input_1",
 		keymappings_key = "ChatControllerSettings",
 		widget_type = "keybind",
 		actions = {
-			"execute_chat_input_1",
-		},
+			"execute_chat_input_1"
+		}
 	},
 	{
 		keybind_description = "ingame_vote_yes",
 		keymappings_key = "IngameMenuKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"ingame_vote_yes",
-		},
+			"ingame_vote_yes"
+		}
 	},
 	{
 		keybind_description = "ingame_vote_no",
 		keymappings_key = "IngameMenuKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"ingame_vote_no",
-		},
+			"ingame_vote_no"
+		}
 	},
 	{
 		size_y = 30,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
 		text = "settings_view_versus",
-		widget_type = "title",
+		widget_type = "title"
 	},
 	{
 		keybind_description = "action_dark_pact_action_one",
@@ -1844,8 +1839,8 @@ local keybind_settings_definition = {
 		actions = {
 			"dark_pact_action_one",
 			"dark_pact_action_one_hold",
-			"dark_pact_action_one_release",
-		},
+			"dark_pact_action_one_release"
+		}
 	},
 	{
 		keybind_description = "action_dark_pact_action_two",
@@ -1854,8 +1849,8 @@ local keybind_settings_definition = {
 		actions = {
 			"dark_pact_action_two",
 			"dark_pact_action_two_hold",
-			"dark_pact_action_two_release",
-		},
+			"dark_pact_action_two_release"
+		}
 	},
 	{
 		keybind_description = "action_dark_pact_reload",
@@ -1863,240 +1858,240 @@ local keybind_settings_definition = {
 		widget_type = "keybind",
 		actions = {
 			"dark_pact_reload",
-			"dark_pact_reload_hold",
-		},
+			"dark_pact_reload_hold"
+		}
 	},
 	{
 		keybind_description = "action_versus_horde_ability",
 		keymappings_key = "PlayerControllerKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"versus_horde_ability",
-		},
+			"versus_horde_ability"
+		}
 	},
 	{
 		keybind_description = "action_dark_pact_interact",
 		keymappings_key = "PlayerControllerKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"dark_pact_interact",
-		},
+			"dark_pact_interact"
+		}
 	},
 	{
 		keybind_description = "action_dark_pact_climb_point",
 		keymappings_key = "PlayerControllerKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"dark_pact_climb_point",
-		},
+			"dark_pact_climb_point"
+		}
 	},
 	{
 		keybind_description = "action_ghost_mode_exit",
 		keymappings_key = "PlayerControllerKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"ghost_mode_exit",
-		},
+			"ghost_mode_exit"
+		}
 	},
 	{
 		keybind_description = "vs_ghost_catch_up",
 		keymappings_key = "PlayerControllerKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"ghost_mode_enter",
-		},
+			"ghost_mode_enter"
+		}
 	},
 	{
 		keybind_description = "ping_only_movement",
 		keymappings_key = "PlayerControllerKeymaps",
 		widget_type = "keybind",
 		actions = {
-			"ping_only_movement",
-		},
+			"ping_only_movement"
+		}
 	},
 	{
 		size_y = 30,
-		widget_type = "empty",
-	},
+		widget_type = "empty"
+	}
 }
 
-for i, keybind_setting in ipairs(keybind_settings_definition) do
-	if not keybind_setting.keymappings_table_key then
-		keybind_setting.keymappings_table_key = "win32"
+for iter_0_1, iter_0_2 in ipairs(var_0_15) do
+	if not iter_0_2.keymappings_table_key then
+		iter_0_2.keymappings_table_key = "win32"
 	end
 end
 
-local ignore_keybind = {
-	analog_input = true,
-	cursor = true,
-	gamepad_left_axis = true,
+local var_0_16 = {
 	gamepad_right_axis = true,
+	analog_input = true,
 	look_raw = true,
-	look_raw_controller = true,
-	move_controller = true,
-	scroll_axis = true,
+	gamepad_left_axis = true,
 	wield_scroll = true,
+	move_controller = true,
+	look_raw_controller = true,
+	scroll_axis = true,
+	cursor = true
 }
-local gamepad_settings_definition = {
+local var_0_17 = {
 	{
 		size_y = 30,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
-		bg_image = "controller_image_xb1",
 		bg_image2 = "controller_image_ps4",
+		bg_image = "controller_image_xb1",
 		widget_type = "gamepad_layout",
 		bg_image_size = {
 			1260,
-			400,
+			400
 		},
 		bg_image_size2 = {
 			1260,
-			440,
-		},
+			440
+		}
 	},
 	{
-		callback = "cb_gamepad_layout",
+		setup = "cb_gamepad_layout_setup",
 		name = "gamepad_layout",
 		saved_value = "cb_gamepad_layout_saved_value",
-		setup = "cb_gamepad_layout_setup",
+		callback = "cb_gamepad_layout",
 		tooltip_text = "tooltip_gamepad_layout",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_gamepad_left_handed_enabled",
-		saved_value = "cb_gamepad_left_handed_enabled_saved_value",
 		setup = "cb_gamepad_left_handed_enabled_setup",
+		saved_value = "cb_gamepad_left_handed_enabled_saved_value",
+		callback = "cb_gamepad_left_handed_enabled",
 		tooltip_text = "tooltip_gamepad_left_handed_enabled",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_gamepad_look_invert_y",
-		saved_value = "cb_gamepad_look_invert_y_saved_value",
 		setup = "cb_gamepad_look_invert_y_setup",
+		saved_value = "cb_gamepad_look_invert_y_saved_value",
+		callback = "cb_gamepad_look_invert_y",
 		tooltip_text = "tooltip_gamepad_invert_y",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
 		size_y = 30,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
-		callback = "cb_gamepad_look_sensitivity",
-		saved_value = "cb_gamepad_look_sensitivity_saved_value",
 		setup = "cb_gamepad_look_sensitivity_setup",
+		saved_value = "cb_gamepad_look_sensitivity_saved_value",
+		callback = "cb_gamepad_look_sensitivity",
 		tooltip_text = "tooltip_gamepad_look_sensitivity",
-		widget_type = "slider",
+		widget_type = "slider"
 	},
 	{
 		size_y = 10,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
-		callback = "cb_gamepad_look_sensitivity_y",
-		saved_value = "cb_gamepad_look_sensitivity_y_saved_value",
 		setup = "cb_gamepad_look_sensitivity_y_setup",
+		saved_value = "cb_gamepad_look_sensitivity_y_saved_value",
+		callback = "cb_gamepad_look_sensitivity_y",
 		tooltip_text = "tooltip_gamepad_look_sensitivity",
-		widget_type = "slider",
+		widget_type = "slider"
 	},
 	{
 		size_y = 30,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
-		callback = "cb_gamepad_zoom_sensitivity",
-		saved_value = "cb_gamepad_zoom_sensitivity_saved_value",
 		setup = "cb_gamepad_zoom_sensitivity_setup",
+		saved_value = "cb_gamepad_zoom_sensitivity_saved_value",
+		callback = "cb_gamepad_zoom_sensitivity",
 		tooltip_text = "tooltip_gamepad_zoom_sensitivity",
-		widget_type = "slider",
+		widget_type = "slider"
 	},
 	{
 		size_y = 10,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
-		callback = "cb_gamepad_zoom_sensitivity_y",
-		saved_value = "cb_gamepad_zoom_sensitivity_y_saved_value",
 		setup = "cb_gamepad_zoom_sensitivity_y_setup",
+		saved_value = "cb_gamepad_zoom_sensitivity_y_saved_value",
+		callback = "cb_gamepad_zoom_sensitivity_y",
 		tooltip_text = "tooltip_gamepad_zoom_sensitivity",
-		widget_type = "slider",
+		widget_type = "slider"
 	},
 	{
 		size_y = 30,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
-		callback = "cb_gamepad_auto_aim_enabled",
-		saved_value = "cb_gamepad_auto_aim_enabled_saved_value",
 		setup = "cb_gamepad_auto_aim_enabled_setup",
+		saved_value = "cb_gamepad_auto_aim_enabled_saved_value",
+		callback = "cb_gamepad_auto_aim_enabled",
 		tooltip_text = "tooltip_gamepad_auto_aim_enabled",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_gamepad_acceleration_enabled",
-		saved_value = "cb_gamepad_acceleration_enabled_saved_value",
 		setup = "cb_gamepad_acceleration_enabled_setup",
+		saved_value = "cb_gamepad_acceleration_enabled_saved_value",
+		callback = "cb_gamepad_acceleration_enabled",
 		tooltip_text = "tooltip_gamepad_acceleration_enabled",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_gamepad_rumble_enabled",
-		saved_value = "cb_gamepad_rumble_enabled_saved_value",
 		setup = "cb_gamepad_rumble_enabled_setup",
+		saved_value = "cb_gamepad_rumble_enabled_saved_value",
+		callback = "cb_gamepad_rumble_enabled",
 		tooltip_text = "tooltip_gamepad_rumble_enabled_pc",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_gamepad_use_ps4_style_input_icons",
-		saved_value = "cb_gamepad_use_ps4_style_input_icons_saved_value",
 		setup = "cb_gamepad_use_ps4_style_input_icons_setup",
+		saved_value = "cb_gamepad_use_ps4_style_input_icons_saved_value",
+		callback = "cb_gamepad_use_ps4_style_input_icons",
 		tooltip_text = "tooltip_gamepad_use_ps4_style_input_icons",
-		widget_type = "stepper",
-	},
+		widget_type = "stepper"
+	}
 }
-local tobii_settings_definition
+local var_0_18
 
 if rawget(_G, "Tobii") then
-	tobii_settings_definition = {}
+	var_0_18 = {}
 
-	local function add_stepper(name, tooltip_text)
-		tobii_settings_definition[#tobii_settings_definition + 1] = {
+	local function var_0_19(arg_15_0, arg_15_1)
+		var_0_18[#var_0_18 + 1] = {
 			widget_type = "stepper",
-			callback = "cb_" .. name,
-			setup = "cb_" .. name .. "_setup",
-			saved_value = "cb_" .. name .. "_saved_value",
-			tooltip_text = tooltip_text,
+			callback = "cb_" .. arg_15_0,
+			setup = "cb_" .. arg_15_0 .. "_setup",
+			saved_value = "cb_" .. arg_15_0 .. "_saved_value",
+			tooltip_text = arg_15_1
 		}
 	end
 
-	local function add_slider(name, tooltip_text)
-		tobii_settings_definition[#tobii_settings_definition + 1] = {
+	local function var_0_20(arg_16_0, arg_16_1)
+		var_0_18[#var_0_18 + 1] = {
 			widget_type = "slider",
-			callback = "cb_" .. name,
-			setup = "cb_" .. name .. "_setup",
-			saved_value = "cb_" .. name .. "_saved_value",
-			tooltip_text = tooltip_text,
+			callback = "cb_" .. arg_16_0,
+			setup = "cb_" .. arg_16_0 .. "_setup",
+			saved_value = "cb_" .. arg_16_0 .. "_saved_value",
+			tooltip_text = arg_16_1
 		}
 	end
 
-	tobii_settings_definition[#tobii_settings_definition + 1] = {
+	var_0_18[#var_0_18 + 1] = {
 		text = "settings_view_header_eyetracker",
-		widget_type = "title",
+		widget_type = "title"
 	}
 
-	add_stepper("tobii_eyetracking", "tooltip_tobii_eyetracking")
-	add_stepper("tobii_extended_view", "tooltip_tobii_extended_view")
-	add_slider("tobii_extended_view_sensitivity", "tooltip_tobii_extended_view_sensitivity")
-	add_stepper("tobii_extended_view_use_head_tracking", "tooltip_tobii_extended_view_use_head_tracking")
-	add_stepper("tobii_aim_at_gaze", "tooltip_tobii_aim_at_gaze")
-	add_stepper("tobii_fire_at_gaze", "tooltip_tobii_fire_at_gaze")
-	add_stepper("tobii_clean_ui", "tooltip_tobii_clean_ui")
+	var_0_19("tobii_eyetracking", "tooltip_tobii_eyetracking")
+	var_0_19("tobii_extended_view", "tooltip_tobii_extended_view")
+	var_0_20("tobii_extended_view_sensitivity", "tooltip_tobii_extended_view_sensitivity")
+	var_0_19("tobii_extended_view_use_head_tracking", "tooltip_tobii_extended_view_use_head_tracking")
+	var_0_19("tobii_aim_at_gaze", "tooltip_tobii_aim_at_gaze")
+	var_0_19("tobii_fire_at_gaze", "tooltip_tobii_fire_at_gaze")
+	var_0_19("tobii_clean_ui", "tooltip_tobii_clean_ui")
 end
 
-local network_settings_definition = {
+local var_0_21 = {
 	{
 		text = "settings_view_matchmaking_display",
-		widget_type = "title",
+		widget_type = "title"
 	},
 	{
 		setting_name = "allow_occupied_hero_lobbies",
@@ -2104,13 +2099,13 @@ local network_settings_definition = {
 		options = {
 			{
 				value = true,
-				text = Localize("menu_settings_on"),
+				text = Localize("menu_settings_on")
 			},
 			{
 				value = false,
-				text = Localize("menu_settings_off"),
-			},
-		},
+				text = Localize("menu_settings_off")
+			}
+		}
 	},
 	{
 		setting_name = "always_ask_hero_when_joining",
@@ -2118,13 +2113,13 @@ local network_settings_definition = {
 		options = {
 			{
 				value = true,
-				text = Localize("menu_settings_on"),
+				text = Localize("menu_settings_on")
 			},
 			{
 				value = false,
-				text = Localize("menu_settings_off"),
-			},
-		},
+				text = Localize("menu_settings_off")
+			}
+		}
 	},
 	{
 		setting_name = "friend_join_mode",
@@ -2132,46 +2127,46 @@ local network_settings_definition = {
 		options = {
 			{
 				value = "lobby_friends",
-				text = Localize("menu_settings_friend_join_setting_lobby_friends"),
+				text = Localize("menu_settings_friend_join_setting_lobby_friends")
 			},
 			{
 				value = "host_friends_only",
-				text = Localize("menu_settings_friend_join_setting_host_friends_only"),
+				text = Localize("menu_settings_friend_join_setting_host_friends_only")
 			},
 			{
 				value = "disabled",
-				text = Localize("menu_settings_friend_join_setting_disabled"),
-			},
-		},
+				text = Localize("menu_settings_friend_join_setting_disabled")
+			}
+		}
 	},
 	{
 		size_y = 30,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
 		text = "settings_view_header_other",
-		widget_type = "title",
+		widget_type = "title"
 	},
 	{
-		callback = "cb_max_upload_speed",
-		saved_value = "cb_max_upload_speed_saved_value",
 		setup = "cb_max_upload_speed_setup",
+		saved_value = "cb_max_upload_speed_saved_value",
+		callback = "cb_max_upload_speed",
 		tooltip_text = "tooltip_max_upload_speed",
-		widget_type = "drop_down",
+		widget_type = "drop_down"
 	},
 	{
-		callback = "cb_small_network_packets",
-		saved_value = "cb_small_network_packets_saved_value",
 		setup = "cb_small_network_packets_setup",
+		saved_value = "cb_small_network_packets_saved_value",
+		callback = "cb_small_network_packets",
 		tooltip_text = "tooltip_small_network_packets",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_max_quick_play_search_range",
-		saved_value = "cb_max_quick_play_search_range_saved_value",
 		setup = "cb_max_quick_play_search_range_setup",
+		saved_value = "cb_max_quick_play_search_range_saved_value",
+		callback = "cb_max_quick_play_search_range",
 		tooltip_text = "tooltip_max_quick_play_search_range",
-		widget_type = "drop_down",
+		widget_type = "drop_down"
 	},
 	{
 		setting_name = "show_numerical_latency",
@@ -2179,58 +2174,58 @@ local network_settings_definition = {
 		options = {
 			{
 				value = true,
-				text = Localize("menu_settings_on"),
+				text = Localize("menu_settings_on")
 			},
 			{
 				value = false,
-				text = Localize("menu_settings_off"),
-			},
-		},
-	},
+				text = Localize("menu_settings_off")
+			}
+		}
+	}
 }
 
-generate_settings(network_settings_definition)
+var_0_11(var_0_21)
 
-local versus_settings_definition = {
+local var_0_22 = {
 	{
 		text = "settings_view_versus_damage_feedback",
-		widget_type = "title",
+		widget_type = "title"
 	},
 	{
-		callback = "cb_vs_floating_damage",
-		saved_value = "cb_vs_floating_damage_saved_value",
 		setup = "cb_vs_floating_damage_setup",
+		saved_value = "cb_vs_floating_damage_saved_value",
+		callback = "cb_vs_floating_damage",
 		tooltip_text = "tooltip_vs_floating_damage",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_vs_hud_damage_feedback_in_world",
-		saved_value = "cb_vs_hud_damage_feedback_in_world_saved_value",
 		setup = "cb_vs_hud_damage_feedback_in_world_setup",
+		saved_value = "cb_vs_hud_damage_feedback_in_world_saved_value",
+		callback = "cb_vs_hud_damage_feedback_in_world",
 		tooltip_text = "tooltip_vs_hud_damage_feedback_in_world",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_vs_hud_damage_feedback_on_yourself",
-		saved_value = "cb_vs_hud_damage_feedback_on_yourself_saved_value",
 		setup = "cb_vs_hud_damage_feedback_on_yourself_setup",
+		saved_value = "cb_vs_hud_damage_feedback_on_yourself_saved_value",
+		callback = "cb_vs_hud_damage_feedback_on_yourself",
 		tooltip_text = "tooltip_vs_hud_damage_feedback_on_yourself",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
-		callback = "cb_vs_hud_damage_feedback_on_teammates",
-		saved_value = "cb_vs_hud_damage_feedback_on_yourself_saved_value",
 		setup = "cb_vs_hud_damage_feedback_on_teammates_setup",
+		saved_value = "cb_vs_hud_damage_feedback_on_yourself_saved_value",
+		callback = "cb_vs_hud_damage_feedback_on_teammates",
 		tooltip_text = "tooltip_vs_hud_damage_feedback_on_teammates",
-		widget_type = "stepper",
+		widget_type = "stepper"
 	},
 	{
 		size_y = 30,
-		widget_type = "empty",
+		widget_type = "empty"
 	},
 	{
 		text = "settings_view_header_hud_customization",
-		widget_type = "title",
+		widget_type = "title"
 	},
 	{
 		setting_name = "toggle_pactsworn_help_ui",
@@ -2238,13 +2233,13 @@ local versus_settings_definition = {
 		options = {
 			{
 				value = true,
-				text = Localize("menu_settings_on"),
+				text = Localize("menu_settings_on")
 			},
 			{
 				value = false,
-				text = Localize("menu_settings_off"),
-			},
-		},
+				text = Localize("menu_settings_off")
+			}
+		}
 	},
 	{
 		setting_name = "toggle_pactsworn_overhead_name_ui",
@@ -2252,13 +2247,13 @@ local versus_settings_definition = {
 		options = {
 			{
 				value = true,
-				text = Localize("menu_settings_on"),
+				text = Localize("menu_settings_on")
 			},
 			{
 				value = false,
-				text = Localize("menu_settings_off"),
-			},
-		},
+				text = Localize("menu_settings_off")
+			}
+		}
 	},
 	{
 		setting_name = "toggle_versus_level_in_all_game_modes",
@@ -2266,19 +2261,19 @@ local versus_settings_definition = {
 		options = {
 			{
 				value = true,
-				text = Localize("menu_settings_on"),
+				text = Localize("menu_settings_on")
 			},
 			{
 				value = false,
-				text = Localize("menu_settings_off"),
-			},
-		},
-	},
+				text = Localize("menu_settings_off")
+			}
+		}
+	}
 }
 
-generate_settings(versus_settings_definition)
+var_0_11(var_0_22)
 
-local needs_reload_settings = {
+local var_0_23 = {
 	"screen_resolution",
 	"fullscreen",
 	"borderless_fullscreen",
@@ -2310,13 +2305,13 @@ local needs_reload_settings = {
 	"particles_quality",
 	"ao_quality",
 	"local_probes_enabled",
-	"volumetric_fog_quality",
+	"volumetric_fog_quality"
 }
-local needs_restart_settings = {
+local var_0_24 = {
 	"char_texture_quality",
 	"env_texture_quality",
 	"use_physic_debris",
-	"use_baked_enemy_meshes",
+	"use_baked_enemy_meshes"
 }
 
 SettingsMenuNavigation = {
@@ -2325,7 +2320,7 @@ SettingsMenuNavigation = {
 	"audio_settings",
 	"keybind_settings",
 	"gamepad_settings",
-	"network_settings",
+	"network_settings"
 }
 TutorialSettingsMenuNavigation = {
 	true,
@@ -2334,39 +2329,39 @@ TutorialSettingsMenuNavigation = {
 	true,
 	true,
 	true,
-	true,
+	true
 }
 
-local title_button_definitions = {}
+local var_0_25 = {}
 
-title_button_definitions[#title_button_definitions + 1] = UIWidgets.create_text_button("settings_button_1", "settings_view_gameplay", 18)
-title_button_definitions[#title_button_definitions + 1] = UIWidgets.create_text_button("settings_button_3", "settings_view_video", 18)
-title_button_definitions[#title_button_definitions + 1] = UIWidgets.create_text_button("settings_button_4", "settings_view_sound", 18)
-title_button_definitions[#title_button_definitions + 1] = UIWidgets.create_text_button("settings_button_5", "settings_view_keybind", 18)
-title_button_definitions[#title_button_definitions + 1] = UIWidgets.create_text_button("settings_button_6", "settings_view_gamepad", 18)
-title_button_definitions[#title_button_definitions + 1] = UIWidgets.create_text_button("settings_button_7", "settings_view_network", 18)
+var_0_25[#var_0_25 + 1] = UIWidgets.create_text_button("settings_button_1", "settings_view_gameplay", 18)
+var_0_25[#var_0_25 + 1] = UIWidgets.create_text_button("settings_button_3", "settings_view_video", 18)
+var_0_25[#var_0_25 + 1] = UIWidgets.create_text_button("settings_button_4", "settings_view_sound", 18)
+var_0_25[#var_0_25 + 1] = UIWidgets.create_text_button("settings_button_5", "settings_view_keybind", 18)
+var_0_25[#var_0_25 + 1] = UIWidgets.create_text_button("settings_button_6", "settings_view_gamepad", 18)
+var_0_25[#var_0_25 + 1] = UIWidgets.create_text_button("settings_button_7", "settings_view_network", 18)
 
 if rawget(_G, "Tobii") then
-	title_button_definitions[#title_button_definitions + 1] = UIWidgets.create_text_button("settings_button_8", "settings_view_eyetracking", 18)
+	var_0_25[#var_0_25 + 1] = UIWidgets.create_text_button("settings_button_8", "settings_view_eyetracking", 18)
 	SettingsMenuNavigation[#SettingsMenuNavigation + 1] = "tobii_eyetracking_settings"
 end
 
-title_button_definitions[#title_button_definitions + 1] = UIWidgets.create_text_button("settings_button_10", "settings_view_versus", 18)
+var_0_25[#var_0_25 + 1] = UIWidgets.create_text_button("settings_button_10", "settings_view_versus", 18)
 SettingsMenuNavigation[#SettingsMenuNavigation + 1] = "versus_settings"
 
 return {
-	video_settings_definition = video_settings_definition,
-	audio_settings_definition = audio_settings_definition,
-	audio_settings_definition_without_voip = audio_settings_definition_without_voip,
-	gameplay_settings_definition = gameplay_settings_definition,
-	display_settings_definition = display_settings_definition,
-	keybind_settings_definition = keybind_settings_definition,
-	gamepad_settings_definition = gamepad_settings_definition,
-	tobii_settings_definition = tobii_settings_definition,
-	network_settings_definition = network_settings_definition,
-	versus_settings_definition = versus_settings_definition,
-	needs_restart_settings = needs_restart_settings,
-	needs_reload_settings = needs_reload_settings,
-	ignore_keybind = ignore_keybind,
-	title_button_definitions = title_button_definitions,
+	video_settings_definition = var_0_0,
+	audio_settings_definition = var_0_3,
+	audio_settings_definition_without_voip = var_0_4,
+	gameplay_settings_definition = var_0_6,
+	display_settings_definition = var_0_14,
+	keybind_settings_definition = var_0_15,
+	gamepad_settings_definition = var_0_17,
+	tobii_settings_definition = var_0_18,
+	network_settings_definition = var_0_21,
+	versus_settings_definition = var_0_22,
+	needs_restart_settings = var_0_24,
+	needs_reload_settings = var_0_23,
+	ignore_keybind = var_0_16,
+	title_button_definitions = var_0_25
 }

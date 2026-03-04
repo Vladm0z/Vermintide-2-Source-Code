@@ -1,2 +1,2 @@
-﻿-- chunkname: @scripts/imgui/imgui_backend.lua
+-- chunkname: @scripts/imgui/imgui_backend.lua
 

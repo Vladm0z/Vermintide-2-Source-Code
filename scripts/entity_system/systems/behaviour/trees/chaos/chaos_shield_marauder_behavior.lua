@@ -1,111 +1,111 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_shield_marauder_behavior.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_shield_marauder_behavior.lua
 
-local ACTIONS = BreedActions.chaos_marauder_with_shield
+local var_0_0 = BreedActions.chaos_marauder_with_shield
 
 BreedBehaviors.shield_marauder = {
 	"BTSelector",
 	{
 		"BTSpawningAction",
 		condition = "spawn",
-		name = "spawn",
+		name = "spawn"
 	},
 	{
 		"BTInVortexAction",
 		condition = "in_vortex",
-		name = "in_vortex",
+		name = "in_vortex"
 	},
 	{
 		"BTFallAction",
 		condition = "is_falling",
-		name = "falling",
+		name = "falling"
 	},
 	{
 		"BTStaggerAction",
-		condition = "stagger",
 		name = "stagger",
-		action_data = ACTIONS.stagger,
+		condition = "stagger",
+		action_data = var_0_0.stagger
 	},
 	{
 		"BTBlockedAction",
-		condition = "blocked",
 		name = "blocked",
-		action_data = ACTIONS.blocked,
+		condition = "blocked",
+		action_data = var_0_0.blocked
 	},
 	{
 		"BTSelector",
 		{
 			"BTTeleportAction",
 			condition = "at_teleport_smartobject",
-			name = "teleport",
+			name = "teleport"
 		},
 		{
 			"BTClimbAction",
 			condition = "at_climb_smartobject",
-			name = "climb",
+			name = "climb"
 		},
 		{
 			"BTJumpAcrossAction",
 			condition = "at_jump_smartobject",
-			name = "jump_across",
+			name = "jump_across"
 		},
 		{
 			"BTSmashDoorAction",
-			condition = "at_door_smartobject",
 			name = "smash_door",
-			action_data = ACTIONS.smash_door,
+			condition = "at_door_smartobject",
+			action_data = var_0_0.smash_door
 		},
 		condition = "at_smartobject",
-		name = "smartobject",
+		name = "smartobject"
 	},
 	{
 		"BTHesitateAction",
-		condition = "is_alerted",
 		name = "hesitate",
-		action_data = ACTIONS.alerted,
+		condition = "is_alerted",
+		action_data = var_0_0.alerted
 	},
 	{
 		"BTUtilityNode",
-		action_data = ACTIONS.utility_action,
+		action_data = var_0_0.utility_action,
 		{
 			"BTClanRatFollowAction",
 			name = "follow",
-			action_data = ACTIONS.follow,
+			action_data = var_0_0.follow
 		},
 		{
 			"BTAttackAction",
-			condition = "ask_target_before_attacking",
 			name = "running_attack",
-			action_data = ACTIONS.running_attack,
+			condition = "ask_target_before_attacking",
+			action_data = var_0_0.running_attack
 		},
 		{
 			"BTAttackAction",
-			condition = "ask_target_before_attacking",
 			name = "normal_attack",
-			action_data = ACTIONS.normal_attack,
+			condition = "ask_target_before_attacking",
+			action_data = var_0_0.normal_attack
 		},
-		condition = "confirmed_player_sighting",
 		name = "in_combat",
+		condition = "confirmed_player_sighting"
 	},
 	{
 		"BTAlertedAction",
-		condition = "player_spotted",
 		name = "alerted",
-		action_data = ACTIONS.alerted,
+		condition = "player_spotted",
+		action_data = var_0_0.alerted
 	},
 	{
 		"BTMoveToGoalAction",
-		condition = "has_goal_destination",
 		name = "move_to_goal",
-		action_data = ACTIONS.follow,
+		condition = "has_goal_destination",
+		action_data = var_0_0.follow
 	},
 	{
 		"BTIdleAction",
 		condition = "no_target",
-		name = "idle",
+		name = "idle"
 	},
 	{
 		"BTFallbackIdleAction",
-		name = "fallback_idle",
+		name = "fallback_idle"
 	},
-	name = "shield_marauder",
+	name = "shield_marauder"
 }

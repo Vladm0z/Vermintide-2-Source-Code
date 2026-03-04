@@ -1,149 +1,150 @@
-﻿-- chunkname: @scripts/ui/ui_fonts.lua
+-- chunkname: @scripts/ui/ui_fonts.lua
 
-local Gui = Gui
-local math_floor, math_min, math_max = math.floor, math.min, math.max
+local var_0_0 = Gui
+local var_0_1 = math.floor
+local var_0_2 = math.min
+local var_0_3 = math.max
 
 Fonts = {
 	arial = {
 		"materials/fonts/arial",
 		14,
-		"arial",
+		"arial"
 	},
 	arial_masked = {
 		"materials/fonts/arial",
 		14,
 		"arial",
-		Gui.Masked,
+		var_0_0.Masked
 	},
 	arial_write_mask = {
 		"materials/fonts/arial",
 		14,
 		"arial",
-		Gui.WriteMask,
+		var_0_0.WriteMask
 	},
 	hell_shark_arial = {
 		"materials/fonts/arial",
 		14,
-		"arial",
+		"arial"
 	},
 	hell_shark_arial_masked = {
 		"materials/fonts/arial",
 		14,
 		"arial",
-		Gui.Masked,
+		var_0_0.Masked
 	},
 	hell_shark_arial_write_mask = {
 		"materials/fonts/arial",
 		14,
 		"arial",
-		Gui.WriteMask,
+		var_0_0.WriteMask
 	},
 	hell_shark = {
 		"materials/fonts/gw_body",
 		20,
-		"gw_body",
+		"gw_body"
 	},
 	hell_shark_masked = {
 		"materials/fonts/gw_body",
 		20,
 		"gw_body",
-		Gui.Masked,
+		var_0_0.Masked
 	},
 	hell_shark_write_mask = {
 		"materials/fonts/gw_body",
 		20,
 		"gw_body",
-		Gui.WriteMask,
+		var_0_0.WriteMask
 	},
 	hell_shark_header = {
 		"materials/fonts/gw_head",
 		20,
-		"gw_head",
+		"gw_head"
 	},
 	hell_shark_header_masked = {
 		"materials/fonts/gw_head",
 		20,
 		"gw_head",
-		Gui.Masked,
+		var_0_0.Masked
 	},
 	hell_shark_header_write_mask = {
 		"materials/fonts/gw_head",
 		20,
 		"gw_head",
-		Gui.WriteMask,
+		var_0_0.WriteMask
 	},
 	chat_output_font = {
 		"materials/fonts/arial",
 		14,
 		"arial",
-		Gui.MultiColor + Gui.ForceSuperSampling + Gui.FormatDirectives,
+		var_0_0.MultiColor + var_0_0.ForceSuperSampling + var_0_0.FormatDirectives
 	},
 	chat_output_font_masked = {
 		"materials/fonts/arial",
 		14,
 		"arial",
-		Gui.MultiColor + Gui.ForceSuperSampling + Gui.FormatDirectives + Gui.Masked,
-	},
+		var_0_0.MultiColor + var_0_0.ForceSuperSampling + var_0_0.FormatDirectives + var_0_0.Masked
+	}
 }
 
-function UIFontByResolution(font_style, optional_scale)
-	local font_type = font_style.font_type
-	local font_size = font_style.font_size
-	local scale = RESOLUTION_LOOKUP.scale
+function UIFontByResolution(arg_1_0, arg_1_1)
+	local var_1_0 = arg_1_0.font_type
+	local var_1_1 = arg_1_0.font_size
+	local var_1_2 = RESOLUTION_LOOKUP.scale
 
-	if optional_scale then
-		scale = scale * optional_scale
+	if arg_1_1 then
+		var_1_2 = var_1_2 * arg_1_1
 	end
 
-	font_size = font_size * scale
+	local var_1_3 = var_1_1 * var_1_2
 
-	if not font_style.allow_fractions then
-		font_size = math_floor(font_size)
+	if not arg_1_0.allow_fractions then
+		var_1_3 = var_0_1(var_1_3)
 	end
 
-	return Fonts[font_type], math_max(font_size, 1)
+	return Fonts[var_1_0], var_0_3(var_1_3, 1)
 end
 
 FontHeights = FontHeights or {}
 
-function UISetupFontHeights(gui)
-	local FontHeights = FontHeights
+function UISetupFontHeights(arg_2_0)
+	local var_2_0 = FontHeights
 
-	for font_name, font_data in pairs(Fonts) do
-		if FontHeights[font_name] == nil then
-			UIGetFontHeight(gui, font_name, font_data[2])
+	for iter_2_0, iter_2_1 in pairs(Fonts) do
+		if var_2_0[iter_2_0] == nil then
+			UIGetFontHeight(arg_2_0, iter_2_0, iter_2_1[2])
 		end
 	end
 end
 
-function UIGetFontHeight(gui, font_name, font_size)
-	local FontHeights = FontHeights
+function UIGetFontHeight(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0 = FontHeights
 
-	FontHeights[font_name] = FontHeights[font_name] or {}
+	var_3_0[arg_3_1] = var_3_0[arg_3_1] or {}
 
-	local height_data = FontHeights[font_name][font_size]
+	local var_3_1 = var_3_0[arg_3_1][arg_3_2]
 
-	::label_1_0::
+	::label_3_0::
 
-	if height_data then
-		local scale = RESOLUTION_LOOKUP.scale
-		local extra_base = scale * math_min(font_size * 0.05, 1)
-		local extra_max = 5 * extra_base
-		local extra_min = 4 * extra_base
+	if var_3_1 then
+		local var_3_2 = RESOLUTION_LOOKUP.scale * var_0_2(arg_3_2 * 0.05, 1)
+		local var_3_3 = 5 * var_3_2
+		local var_3_4 = 4 * var_3_2
 
-		return height_data[1] + (extra_min + extra_max), height_data[2] - extra_min, height_data[3] + extra_max
+		return var_3_1[1] + (var_3_4 + var_3_3), var_3_1[2] - var_3_4, var_3_1[3] + var_3_3
 	end
 
-	local material = Fonts[font_name][1]
-	local min, max = Gui.text_extents(gui, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890", material, font_size)
-	local base_min, base_max = Gui.text_extents(gui, "A", material, font_size)
+	local var_3_5 = Fonts[arg_3_1][1]
+	local var_3_6, var_3_7 = var_0_0.text_extents(arg_3_0, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890", var_3_5, arg_3_2)
+	local var_3_8, var_3_9 = var_0_0.text_extents(arg_3_0, "A", var_3_5, arg_3_2)
 
-	height_data = {
-		base_max[2] - base_min[2],
-		min[2],
-		max[2],
+	var_3_1 = {
+		var_3_9[2] - var_3_8[2],
+		var_3_6[2],
+		var_3_7[2]
 	}
-	FontHeights[font_name][font_size] = height_data
+	var_3_0[arg_3_1][arg_3_2] = var_3_1
 
-	goto label_1_0
+	goto label_3_0
 end

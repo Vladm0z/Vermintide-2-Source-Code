@@ -1,188 +1,186 @@
-﻿-- chunkname: @scripts/managers/backend_playfab/backend_interface_cdn_resources_playfab.lua
+-- chunkname: @scripts/managers/backend_playfab/backend_interface_cdn_resources_playfab.lua
 
-local json = require("PlayFab.json")
+local var_0_0 = require("PlayFab.json")
 
 BackendInterfaceCdnResourcesPlayFab = class(BackendInterfaceCdnResourcesPlayFab)
 
-local RESOURCE_URL_SECONDS_TO_LIVE = 3000
-local RESOURCE_URL_REQUEST_LIMIT = 10
-local LOCALIZATION_STATUSES = {
+local var_0_1 = 3000
+local var_0_2 = 10
+local var_0_3 = {
 	failed = 2,
-	loaded = 1,
+	loaded = 1
 }
 
-BackendInterfaceCdnResourcesPlayFab.init = function (self, backend_mirror)
-	self._backend_mirror = backend_mirror
-	self._url_cache = {}
-	self._localization_status = {}
+function BackendInterfaceCdnResourcesPlayFab.init(arg_1_0, arg_1_1)
+	arg_1_0._backend_mirror = arg_1_1
+	arg_1_0._url_cache = {}
+	arg_1_0._localization_status = {}
 end
 
-BackendInterfaceCdnResourcesPlayFab.ready = function (self)
+function BackendInterfaceCdnResourcesPlayFab.ready(arg_2_0)
 	return true
 end
 
-BackendInterfaceCdnResourcesPlayFab.load_backend_localizations = function (self, language_id, external_cb)
-	local backend_resource_ids = {}
-	local localizations_to_load = {}
+function BackendInterfaceCdnResourcesPlayFab.load_backend_localizations(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0 = {}
+	local var_3_1 = {}
 
-	for _, dlc_settings in pairs(DLCSettings) do
-		local backend_localizations = dlc_settings.backend_localizations
+	for iter_3_0, iter_3_1 in pairs(DLCSettings) do
+		local var_3_2 = iter_3_1.backend_localizations
 
-		if backend_localizations then
-			for key, localizations_by_language in pairs(backend_localizations) do
-				local resource_id = localizations_by_language[language_id] or localizations_by_language.en
+		if var_3_2 then
+			for iter_3_2, iter_3_3 in pairs(var_3_2) do
+				local var_3_3 = iter_3_3[arg_3_1] or iter_3_3.en
 
-				backend_resource_ids[#backend_resource_ids + 1] = resource_id
-				localizations_to_load[resource_id] = key
+				var_3_0[#var_3_0 + 1] = var_3_3
+				var_3_1[var_3_3] = iter_3_2
 			end
 		end
 	end
 
-	self:get_resource_urls(backend_resource_ids, callback(self, "_cb_localization_urls_loaded", localizations_to_load, external_cb))
+	arg_3_0:get_resource_urls(var_3_0, callback(arg_3_0, "_cb_localization_urls_loaded", var_3_1, arg_3_2))
 end
 
-BackendInterfaceCdnResourcesPlayFab._cb_localization_urls_loaded = function (self, localizations_to_load, external_cb, result)
-	for resource_id, key in pairs(localizations_to_load) do
-		local url = result[resource_id]
+function BackendInterfaceCdnResourcesPlayFab._cb_localization_urls_loaded(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	for iter_4_0, iter_4_1 in pairs(arg_4_1) do
+		local var_4_0 = arg_4_3[iter_4_0]
 
-		if url then
+		if var_4_0 then
 			if IS_WINDOWS or IS_LINUX then
-				Managers.curl:get(url, {}, callback(self, "_cb_localization_loaded", key, external_cb), nil, {})
+				Managers.curl:get(var_4_0, {}, callback(arg_4_0, "_cb_localization_loaded", iter_4_1, arg_4_2), nil, {})
 			else
-				Managers.rest_transport:get(url, {}, callback(self, "_cb_localization_loaded", key, external_cb), nil, nil)
+				Managers.rest_transport:get(var_4_0, {}, callback(arg_4_0, "_cb_localization_loaded", iter_4_1, arg_4_2), nil, nil)
 			end
 		else
-			self._localization_status[key] = LOCALIZATION_STATUSES.failed
+			arg_4_0._localization_status[iter_4_1] = var_0_3.failed
 		end
 	end
 end
 
-BackendInterfaceCdnResourcesPlayFab._cb_localization_loaded = function (self, key, external_cb, success, code, headers, data)
-	if success then
-		local _, response = pcall(json.decode, data)
+function BackendInterfaceCdnResourcesPlayFab._cb_localization_loaded(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
+	if arg_5_3 then
+		local var_5_0, var_5_1 = pcall(var_0_0.decode, arg_5_6)
 
-		if response and type(response) == "table" then
-			self._localization_status[key] = LOCALIZATION_STATUSES.loaded
+		if var_5_1 and type(var_5_1) == "table" then
+			arg_5_0._localization_status[arg_5_1] = var_0_3.loaded
 
-			local localizations = {}
+			local var_5_2 = {}
 
-			for string_id, value in pairs(response) do
-				if value ~= "" then
-					localizations[string_id] = value
+			for iter_5_0, iter_5_1 in pairs(var_5_1) do
+				if iter_5_1 ~= "" then
+					var_5_2[iter_5_0] = iter_5_1
 				end
 			end
 
-			external_cb(localizations)
+			arg_5_2(var_5_2)
 
 			return
 		end
 	end
 
-	self._localization_status[key] = LOCALIZATION_STATUSES.failed
+	arg_5_0._localization_status[arg_5_1] = var_0_3.failed
 end
 
-local function chunk_array(t, chunk_size)
-	local result = {}
+local function var_0_4(arg_6_0, arg_6_1)
+	local var_6_0 = {}
 
-	for i = 1, #t, chunk_size do
-		result[#result + 1] = table.slice(t, i, chunk_size)
+	for iter_6_0 = 1, #arg_6_0, arg_6_1 do
+		var_6_0[#var_6_0 + 1] = table.slice(arg_6_0, iter_6_0, arg_6_1)
 	end
 
-	return result
+	return var_6_0
 end
 
-BackendInterfaceCdnResourcesPlayFab.has_localization_loaded = function (self, key)
-	return self._localization_status[key] == LOCALIZATION_STATUSES.loaded
+function BackendInterfaceCdnResourcesPlayFab.has_localization_loaded(arg_7_0, arg_7_1)
+	return arg_7_0._localization_status[arg_7_1] == var_0_3.loaded
 end
 
-BackendInterfaceCdnResourcesPlayFab.has_localization_failed = function (self, key)
-	return self._localization_status[key] == LOCALIZATION_STATUSES.failed
+function BackendInterfaceCdnResourcesPlayFab.has_localization_failed(arg_8_0, arg_8_1)
+	return arg_8_0._localization_status[arg_8_1] == var_0_3.failed
 end
 
-BackendInterfaceCdnResourcesPlayFab.get_resource_urls = function (self, resource_ids, external_cb)
-	local result_table = {}
-	local resource_ids_to_request = {}
+function BackendInterfaceCdnResourcesPlayFab.get_resource_urls(arg_9_0, arg_9_1, arg_9_2)
+	local var_9_0 = {}
+	local var_9_1 = {}
 
-	for i = 1, #resource_ids do
-		local resource_id = resource_ids[i]
-		local cached_url = self:_get_url_from_cache(resource_id)
+	for iter_9_0 = 1, #arg_9_1 do
+		local var_9_2 = arg_9_1[iter_9_0]
+		local var_9_3 = arg_9_0:_get_url_from_cache(var_9_2)
 
-		if cached_url then
-			result_table[resource_id] = cached_url
+		if var_9_3 then
+			var_9_0[var_9_2] = var_9_3
 		else
-			resource_ids_to_request[#resource_ids_to_request + 1] = resource_id
+			var_9_1[#var_9_1 + 1] = var_9_2
 		end
 	end
 
-	if #resource_ids_to_request == 0 then
-		external_cb(result_table)
+	if #var_9_1 == 0 then
+		arg_9_2(var_9_0)
 
 		return
 	end
 
-	local resource_id_chunks = chunk_array(resource_ids_to_request, RESOURCE_URL_REQUEST_LIMIT)
+	local var_9_4 = var_0_4(var_9_1, var_0_2)
 
-	self:_request_resource_urls(resource_id_chunks, result_table, external_cb)
+	arg_9_0:_request_resource_urls(var_9_4, var_9_0, arg_9_2)
 end
 
-BackendInterfaceCdnResourcesPlayFab._request_resource_urls = function (self, resource_id_chunks, result_table, external_cb)
-	local resource_ids = table.remove(resource_id_chunks)
-	local request = {
+function BackendInterfaceCdnResourcesPlayFab._request_resource_urls(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	local var_10_0 = table.remove(arg_10_1)
+	local var_10_1 = {
 		FunctionName = "getResourceURL",
 		FunctionParameter = {
-			identifiers = resource_ids,
-		},
+			identifiers = var_10_0
+		}
 	}
-	local mirror = self._backend_mirror
-	local request_queue = mirror:request_queue()
 
-	request_queue:enqueue(request, callback(self, "_request_resource_urls_cb", resource_id_chunks, result_table, external_cb), false)
+	arg_10_0._backend_mirror:request_queue():enqueue(var_10_1, callback(arg_10_0, "_request_resource_urls_cb", arg_10_1, arg_10_2, arg_10_3), false)
 end
 
-BackendInterfaceCdnResourcesPlayFab._request_resource_urls_cb = function (self, resource_id_chunks, result_table, external_cb, response)
-	local function_result = response.FunctionResult
+function BackendInterfaceCdnResourcesPlayFab._request_resource_urls_cb(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	local var_11_0 = arg_11_4.FunctionResult
 
-	for resource_id, url in pairs(function_result) do
-		self:_add_url_to_cache(resource_id, url, RESOURCE_URL_SECONDS_TO_LIVE)
+	for iter_11_0, iter_11_1 in pairs(var_11_0) do
+		arg_11_0:_add_url_to_cache(iter_11_0, iter_11_1, var_0_1)
 
-		result_table[resource_id] = url
+		arg_11_2[iter_11_0] = iter_11_1
 	end
 
-	if #resource_id_chunks == 0 then
-		external_cb(result_table)
+	if #arg_11_1 == 0 then
+		arg_11_3(arg_11_2)
 	else
-		self:_request_resource_urls(resource_id_chunks, result_table, external_cb)
+		arg_11_0:_request_resource_urls(arg_11_1, arg_11_2, arg_11_3)
 	end
 end
 
-BackendInterfaceCdnResourcesPlayFab._add_url_to_cache = function (self, resource_id, url, seconds_to_live)
-	local expire_time
+function BackendInterfaceCdnResourcesPlayFab._add_url_to_cache(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	local var_12_0
 
-	if seconds_to_live then
-		expire_time = os.time() + seconds_to_live
+	if arg_12_3 then
+		var_12_0 = os.time() + arg_12_3
 	end
 
-	self._url_cache[resource_id] = {
-		url = url,
-		expire_time = expire_time,
+	arg_12_0._url_cache[arg_12_1] = {
+		url = arg_12_2,
+		expire_time = var_12_0
 	}
 end
 
-BackendInterfaceCdnResourcesPlayFab._get_url_from_cache = function (self, resource_id)
-	local cache = self._url_cache
-	local cache_entry = cache[resource_id]
+function BackendInterfaceCdnResourcesPlayFab._get_url_from_cache(arg_13_0, arg_13_1)
+	local var_13_0 = arg_13_0._url_cache
+	local var_13_1 = var_13_0[arg_13_1]
 
-	if not cache_entry then
+	if not var_13_1 then
 		return nil
 	end
 
-	local expire_time = cache_entry.expire_time
+	local var_13_2 = var_13_1.expire_time
 
-	if expire_time and expire_time < os.time() then
-		cache[resource_id] = nil
+	if var_13_2 and var_13_2 < os.time() then
+		var_13_0[arg_13_1] = nil
 
 		return nil
 	end
 
-	return cache_entry.url
+	return var_13_1.url
 end

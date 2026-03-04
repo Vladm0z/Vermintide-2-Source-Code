@@ -1,8 +1,8 @@
-﻿-- chunkname: @scripts/entity_system/systems/spawner/spawner_system.lua
+-- chunkname: @scripts/entity_system/systems/spawner/spawner_system.lua
 
 require("scripts/hub_elements/ai_spawner")
 
-local function D(...)
+local function var_0_0(...)
 	if script_data.debug_hordes then
 		printf(...)
 	end
@@ -10,35 +10,33 @@ end
 
 SpawnerSystem = class(SpawnerSystem, ExtensionSystemBase)
 
-local extensions = {
-	"AISpawner",
+local var_0_1 = {
+	"AISpawner"
 }
-local script_data = script_data
+local var_0_2 = script_data
 
-SpawnerSystem.init = function (self, context, system_name)
-	SpawnerSystem.super.init(self, context, system_name, extensions)
+function SpawnerSystem.init(arg_2_0, arg_2_1, arg_2_2)
+	SpawnerSystem.super.init(arg_2_0, arg_2_1, arg_2_2, var_0_1)
 
-	self._spawn_list = {}
-	self._active_spawners = {}
-	self._enabled_spawners = {}
-	self._disabled_spawners = {}
-	self._num_hidden_spawners = 0
-	self._id_lookup = {}
-	self._raw_id_lookup = {}
-	self._hidden_spawners = {}
-	self._disabled_hidden_spawners = {}
-	self._spawner_broadphase_id = {}
+	arg_2_0._spawn_list = {}
+	arg_2_0._active_spawners = {}
+	arg_2_0._enabled_spawners = {}
+	arg_2_0._disabled_spawners = {}
+	arg_2_0._num_hidden_spawners = 0
+	arg_2_0._id_lookup = {}
+	arg_2_0._raw_id_lookup = {}
+	arg_2_0._hidden_spawners = {}
+	arg_2_0._disabled_hidden_spawners = {}
+	arg_2_0._spawner_broadphase_id = {}
 
-	local event_manager = Managers.state.event
+	Managers.state.event:register(arg_2_0, "spawn_horde", "spawn_horde")
 
-	event_manager:register(self, "spawn_horde", "spawn_horde")
-
-	self.hidden_spawners_broadphase = Broadphase(40, 512)
-	self._use_alt_horde_spawning = Managers.mechanism:setting("use_alt_horde_spawning")
-	self._breed_limits = {}
+	arg_2_0.hidden_spawners_broadphase = Broadphase(40, 512)
+	arg_2_0._use_alt_horde_spawning = Managers.mechanism:setting("use_alt_horde_spawning")
+	arg_2_0._breed_limits = {}
 end
 
-local spawn_list = {
+local var_0_3 = {
 	"skaven_slave",
 	"skaven_clan_rat",
 	"skaven_slave",
@@ -48,670 +46,658 @@ local spawn_list = {
 	"skaven_slave",
 	"skaven_clan_rat",
 	"skaven_slave",
-	"skaven_clan_rat",
+	"skaven_clan_rat"
 }
 
-SpawnerSystem.update_test_all_spawners = function (self, t)
-	local spawner_units = self._enabled_spawners
-	local index = self._test_data.index
-	local j = 0
-	local side_id = 2
+function SpawnerSystem.update_test_all_spawners(arg_3_0, arg_3_1)
+	local var_3_0 = arg_3_0._enabled_spawners
+	local var_3_1 = arg_3_0._test_data.index
+	local var_3_2 = 0
+	local var_3_3 = 2
 
-	while index <= #spawner_units and self.tests_running < 6 and j < 10 do
-		local spawner_unit = spawner_units[index]
-		local group_template = {
-			size = 10,
+	while var_3_1 <= #var_3_0 and arg_3_0.tests_running < 6 and var_3_2 < 10 do
+		local var_3_4 = var_3_0[var_3_1]
+		local var_3_5 = {
 			template = "spawn_test",
+			size = 10,
 			id = Managers.state.entity:system("ai_group_system"):generate_group_id(),
-			spawner_unit = spawner_unit,
+			spawner_unit = var_3_4,
 			group_data = {
-				spawner_unit = spawner_unit,
-			},
+				spawner_unit = var_3_4
+			}
 		}
-		local pos = Unit.local_position(spawner_unit, 0)
+		local var_3_6 = Unit.local_position(var_3_4, 0)
 
-		QuickDrawerStay:sphere(pos, 0.66, Color(60, 200, 0))
-		Debug.world_sticky_text(pos, group_template.id, "green")
-		print("START TEST for ", group_template.id)
-		self:spawn_horde(spawner_unit, spawn_list, side_id, group_template)
+		QuickDrawerStay:sphere(var_3_6, 0.66, Color(60, 200, 0))
+		Debug.world_sticky_text(var_3_6, var_3_5.id, "green")
+		print("START TEST for ", var_3_5.id)
+		arg_3_0:spawn_horde(var_3_4, var_0_3, var_3_3, var_3_5)
 
-		index = index + 1
-		j = j + 1
-		self.tests_running = self.tests_running + 1
+		var_3_1 = var_3_1 + 1
+		var_3_2 = var_3_2 + 1
+		arg_3_0.tests_running = arg_3_0.tests_running + 1
 	end
 
-	if index > #spawner_units then
+	if var_3_1 > #var_3_0 then
 		print("All spawners tested")
 
-		self._test_data = nil
+		arg_3_0._test_data = nil
 	else
-		self._test_data.index = index
+		arg_3_0._test_data.index = var_3_1
 	end
 end
 
-SpawnerSystem.test_all_spawners = function (self)
-	self.tests_running = 0
+function SpawnerSystem.test_all_spawners(arg_4_0)
+	arg_4_0.tests_running = 0
 
 	print("")
-	print(string.format("Starting spawner test. Found %d spawners.", #self._enabled_spawners))
+	print(string.format("Starting spawner test. Found %d spawners.", #arg_4_0._enabled_spawners))
 
-	self._test_data = {
-		index = 1,
+	arg_4_0._test_data = {
+		index = 1
 	}
 end
 
-SpawnerSystem.running_spawners = function (self)
-	return self._active_spawners
+function SpawnerSystem.running_spawners(arg_5_0)
+	return arg_5_0._active_spawners
 end
 
-SpawnerSystem.enabled_spawners = function (self)
-	return self._enabled_spawners
+function SpawnerSystem.enabled_spawners(arg_6_0)
+	return arg_6_0._enabled_spawners
 end
 
-SpawnerSystem.hidden_spawners_lookup = function (self)
-	return self._hidden_spawners
+function SpawnerSystem.hidden_spawners_lookup(arg_7_0)
+	return arg_7_0._hidden_spawners
 end
 
-SpawnerSystem.register_enabled_spawner = function (self, spawner, terror_event_id, hidden)
-	self._enabled_spawners[#self._enabled_spawners + 1] = spawner
+function SpawnerSystem.register_enabled_spawner(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	arg_8_0._enabled_spawners[#arg_8_0._enabled_spawners + 1] = arg_8_1
 
-	if terror_event_id then
-		local lookup = self._id_lookup[terror_event_id]
+	if arg_8_2 then
+		local var_8_0 = arg_8_0._id_lookup[arg_8_2]
 
-		if not lookup then
-			lookup = {}
-			self._id_lookup[terror_event_id] = lookup
+		if not var_8_0 then
+			var_8_0 = {}
+			arg_8_0._id_lookup[arg_8_2] = var_8_0
 		end
 
-		lookup[#lookup + 1] = spawner
+		var_8_0[#var_8_0 + 1] = arg_8_1
 	end
 
-	if hidden then
-		self:_add_broadphase(spawner)
+	if arg_8_3 then
+		arg_8_0:_add_broadphase(arg_8_1)
 	end
 end
 
-SpawnerSystem.hibernate_spawner = function (self, spawner, hibernate)
-	local enabled_spawners = self._enabled_spawners
-	local num_enabled_spawners = #enabled_spawners
-	local disabled_spawners = self._disabled_spawners
-	local spawner_was_hibernating = disabled_spawners[spawner]
-	local hidden_spawners = self._hidden_spawners
-	local is_hidden_spawner = hidden_spawners[spawner]
-	local disabled_hidden_spawners = self._disabled_hidden_spawners
-	local hidden_spawner_was_hibernating = disabled_hidden_spawners[spawner]
+function SpawnerSystem.hibernate_spawner(arg_9_0, arg_9_1, arg_9_2)
+	local var_9_0 = arg_9_0._enabled_spawners
+	local var_9_1 = #var_9_0
+	local var_9_2 = arg_9_0._disabled_spawners
+	local var_9_3 = var_9_2[arg_9_1]
+	local var_9_4 = arg_9_0._hidden_spawners
+	local var_9_5 = var_9_4[arg_9_1]
+	local var_9_6 = arg_9_0._disabled_hidden_spawners
+	local var_9_7 = var_9_6[arg_9_1]
 
-	if hibernate then
-		if not spawner_was_hibernating then
-			self:_hibernate_spawner(num_enabled_spawners, enabled_spawners, disabled_spawners, spawner)
+	if arg_9_2 then
+		if not var_9_3 then
+			arg_9_0:_hibernate_spawner(var_9_1, var_9_0, var_9_2, arg_9_1)
 		end
 
-		if is_hidden_spawner and not hidden_spawner_was_hibernating then
-			self:_hibernate_hidden_spawner(hidden_spawners, disabled_hidden_spawners, spawner)
-			self:_remove_broadphase(spawner)
+		if var_9_5 and not var_9_7 then
+			arg_9_0:_hibernate_hidden_spawner(var_9_4, var_9_6, arg_9_1)
+			arg_9_0:_remove_broadphase(arg_9_1)
 		end
 	else
-		if spawner_was_hibernating then
-			self:_awaken_spawner(enabled_spawners, disabled_spawners, spawner)
+		if var_9_3 then
+			arg_9_0:_awaken_spawner(var_9_0, var_9_2, arg_9_1)
 		end
 
-		if hidden_spawner_was_hibernating then
-			self:_awaken_hidden_spawner(hidden_spawners, disabled_hidden_spawners, spawner)
-			self:_add_broadphase(spawner)
+		if var_9_7 then
+			arg_9_0:_awaken_hidden_spawner(var_9_4, var_9_6, arg_9_1)
+			arg_9_0:_add_broadphase(arg_9_1)
 		end
 	end
 end
 
-SpawnerSystem._hibernate_spawner = function (self, num_enabled_spawners, enabled_spawners, disabled_spawners, spawner)
-	for i = 1, num_enabled_spawners do
-		local spawn = enabled_spawners[i]
+function SpawnerSystem._hibernate_spawner(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	for iter_10_0 = 1, arg_10_1 do
+		if arg_10_2[iter_10_0] == arg_10_4 then
+			table.swap_delete(arg_10_2, iter_10_0)
 
-		if spawn == spawner then
-			table.swap_delete(enabled_spawners, i)
-
-			disabled_spawners[spawner] = true
+			arg_10_3[arg_10_4] = true
 
 			break
 		end
 	end
 end
 
-SpawnerSystem._hibernate_hidden_spawner = function (self, hidden_spawners, disabled_hidden_spawners, spawner)
-	hidden_spawners[spawner] = nil
-	disabled_hidden_spawners[spawner] = true
+function SpawnerSystem._hibernate_hidden_spawner(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+	arg_11_1[arg_11_3] = nil
+	arg_11_2[arg_11_3] = true
 end
 
-SpawnerSystem._awaken_spawner = function (self, enabled_spawners, disabled_spawners, spawner)
-	disabled_spawners[spawner] = nil
-	enabled_spawners[#enabled_spawners + 1] = spawner
+function SpawnerSystem._awaken_spawner(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	arg_12_2[arg_12_3] = nil
+	arg_12_1[#arg_12_1 + 1] = arg_12_3
 end
 
-SpawnerSystem._awaken_hidden_spawner = function (self, hidden_spawners, disabled_hidden_spawners, spawner)
-	disabled_hidden_spawners[spawner] = nil
-	hidden_spawners[spawner] = true
+function SpawnerSystem._awaken_hidden_spawner(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	arg_13_2[arg_13_3] = nil
+	arg_13_1[arg_13_3] = true
 end
 
-SpawnerSystem._add_broadphase = function (self, spawner)
-	local pos = Unit.local_position(spawner, 0)
-	local broadphase_id = Broadphase.add(self.hidden_spawners_broadphase, spawner, pos, 1)
+function SpawnerSystem._add_broadphase(arg_14_0, arg_14_1)
+	local var_14_0 = Unit.local_position(arg_14_1, 0)
+	local var_14_1 = Broadphase.add(arg_14_0.hidden_spawners_broadphase, arg_14_1, var_14_0, 1)
 
-	self._hidden_spawners[spawner] = true
-	self._spawner_broadphase_id[spawner] = broadphase_id
-	self._num_hidden_spawners = self._num_hidden_spawners + 1
+	arg_14_0._hidden_spawners[arg_14_1] = true
+	arg_14_0._spawner_broadphase_id[arg_14_1] = var_14_1
+	arg_14_0._num_hidden_spawners = arg_14_0._num_hidden_spawners + 1
 end
 
-SpawnerSystem._remove_broadphase = function (self, spawner)
-	local broadphase_spawner_id = self._spawner_broadphase_id[spawner]
+function SpawnerSystem._remove_broadphase(arg_15_0, arg_15_1)
+	local var_15_0 = arg_15_0._spawner_broadphase_id[arg_15_1]
 
-	Broadphase.remove(self.hidden_spawners_broadphase, broadphase_spawner_id)
+	Broadphase.remove(arg_15_0.hidden_spawners_broadphase, var_15_0)
 
-	self._spawner_broadphase_id[spawner] = nil
-	self._num_hidden_spawners = self._num_hidden_spawners - 1
+	arg_15_0._spawner_broadphase_id[arg_15_1] = nil
+	arg_15_0._num_hidden_spawners = arg_15_0._num_hidden_spawners - 1
 end
 
-SpawnerSystem.register_raw_spawner = function (self, spawner, terror_event_id)
-	if terror_event_id then
-		local lookup = self._raw_id_lookup[terror_event_id]
+function SpawnerSystem.register_raw_spawner(arg_16_0, arg_16_1, arg_16_2)
+	if arg_16_2 then
+		local var_16_0 = arg_16_0._raw_id_lookup[arg_16_2]
 
-		if not lookup then
-			lookup = {}
-			self._raw_id_lookup[terror_event_id] = lookup
+		if not var_16_0 then
+			var_16_0 = {}
+			arg_16_0._raw_id_lookup[arg_16_2] = var_16_0
 		end
 
-		lookup[#lookup + 1] = spawner
+		var_16_0[#var_16_0 + 1] = arg_16_1
 	end
 end
 
-local spawn_list = {}
-local spawn_list_hidden = {}
-local copy_list = {}
+local var_0_4 = {}
+local var_0_5 = {}
+local var_0_6 = {}
 
-SpawnerSystem.spawn_horde = function (self, spawner, breed_list, side_id, group_template, optional_data)
-	local extension = ScriptUnit.extension(spawner, "spawner_system")
+function SpawnerSystem.spawn_horde(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
+	local var_17_0 = ScriptUnit.extension(arg_17_1, "spawner_system")
 
-	self._active_spawners[spawner] = extension
+	arg_17_0._active_spawners[arg_17_1] = var_17_0
 
-	extension:on_activate(breed_list, side_id, group_template, optional_data)
+	var_17_0:on_activate(arg_17_2, arg_17_3, arg_17_4, arg_17_5)
 
-	local spawn_rate = extension:spawn_rate()
-
-	return spawn_rate
+	return (var_17_0:spawn_rate())
 end
 
-local function copy_array(source, index_a, index_b, dest)
-	local j = 1
+local function var_0_7(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+	local var_18_0 = 1
 
-	for i = index_a, index_b do
-		dest[j] = source[i]
-		j = j + 1
+	for iter_18_0 = arg_18_1, arg_18_2 do
+		arg_18_3[var_18_0] = arg_18_0[iter_18_0]
+		var_18_0 = var_18_0 + 1
 	end
 end
 
-SpawnerSystem.set_breed_event_horde_spawn_limit = function (self, breed_name, limit)
-	self._breed_limits[breed_name] = limit
+function SpawnerSystem.set_breed_event_horde_spawn_limit(arg_19_0, arg_19_1, arg_19_2)
+	arg_19_0._breed_limits[arg_19_1] = arg_19_2
 end
 
-local temp_spawn_list_per_breed = {}
-local exchange_order = {}
-local i = 1
+local var_0_8 = {}
+local var_0_9 = {}
+local var_0_10 = 1
 
-for name, data in pairs(Breeds) do
-	exchange_order[i] = name
-	i = i + 1
+for iter_0_0, iter_0_1 in pairs(Breeds) do
+	var_0_9[var_0_10] = iter_0_0
+	var_0_10 = var_0_10 + 1
 end
 
-table.sort(exchange_order, function (name1, name2)
-	return Breeds[name1].exchange_order < Breeds[name2].exchange_order
+table.sort(var_0_9, function(arg_20_0, arg_20_1)
+	return Breeds[arg_20_0].exchange_order < Breeds[arg_20_1].exchange_order
 end)
-table.dump(exchange_order)
+table.dump(var_0_9)
 
-SpawnerSystem._try_spawn_breed = function (self, breed_name, spawn_list_per_breed, spawn_list, breed_limits, active_enemies, side_id, group_template)
-	local amount = spawn_list_per_breed[breed_name]
+function SpawnerSystem._try_spawn_breed(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7)
+	local var_21_0 = arg_21_2[arg_21_1]
 
-	if amount then
-		local limit = breed_limits[breed_name]
+	if var_21_0 then
+		local var_21_1 = arg_21_4[arg_21_1]
 
-		if limit then
-			local overflow = math.min(active_enemies + amount - limit.max_active_enemies, amount)
-			local ratio = limit.exchange_ratio
+		if var_21_1 then
+			local var_21_2 = math.min(arg_21_5 + var_21_0 - var_21_1.max_active_enemies, var_21_0)
+			local var_21_3 = var_21_1.exchange_ratio
 
-			if ratio < overflow then
-				local exchanged_amount = math.floor(overflow / ratio)
+			if var_21_3 < var_21_2 then
+				local var_21_4 = math.floor(var_21_2 / var_21_3)
 
-				amount = amount - exchanged_amount * ratio
+				var_21_0 = var_21_0 - var_21_4 * var_21_3
 
-				local exchange_breed = limit.spawn_breed
+				local var_21_5 = var_21_1.spawn_breed
 
-				if type(exchange_breed) == "table" then
-					local num_breeds = #exchange_breed
+				if type(var_21_5) == "table" then
+					local var_21_6 = #var_21_5
 
-					for i = 1, exchanged_amount do
-						local breed_index = Math.random(1, num_breeds)
-						local exchange_breed_name = exchange_breed[breed_index]
+					for iter_21_0 = 1, var_21_4 do
+						local var_21_7 = var_21_5[Math.random(1, var_21_6)]
 
-						spawn_list_per_breed[exchange_breed_name] = (spawn_list_per_breed[exchange_breed_name] or 0) + 1
+						arg_21_2[var_21_7] = (arg_21_2[var_21_7] or 0) + 1
 					end
 
-					for i = 1, num_breeds do
-						active_enemies = active_enemies + self:_try_spawn_breed(exchange_breed[i], spawn_list_per_breed, spawn_list, breed_limits, active_enemies, side_id, group_template)
+					for iter_21_1 = 1, var_21_6 do
+						arg_21_5 = arg_21_5 + arg_21_0:_try_spawn_breed(var_21_5[iter_21_1], arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7)
 					end
 				else
-					spawn_list_per_breed[exchange_breed] = (spawn_list_per_breed[exchange_breed] or 0) + exchanged_amount
-					active_enemies = active_enemies + self:_try_spawn_breed(exchange_breed, spawn_list_per_breed, spawn_list, breed_limits, active_enemies, side_id, group_template)
+					arg_21_2[var_21_5] = (arg_21_2[var_21_5] or 0) + var_21_4
+					arg_21_5 = arg_21_5 + arg_21_0:_try_spawn_breed(var_21_5, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7)
 				end
 			end
 		end
 
-		local start = #spawn_list + 1
+		local var_21_8 = #arg_21_3 + 1
 
-		active_enemies = active_enemies + amount
+		arg_21_5 = arg_21_5 + var_21_0
 
-		if group_template then
-			group_template.size = group_template.size + amount
+		if arg_21_7 then
+			arg_21_7.size = arg_21_7.size + var_21_0
 		end
 
-		local ends = start + amount - 1
+		local var_21_9 = var_21_8 + var_21_0 - 1
 
-		for j = start, ends do
-			spawn_list[j] = breed_name
+		for iter_21_2 = var_21_8, var_21_9 do
+			arg_21_3[iter_21_2] = arg_21_1
 		end
 	end
 
-	return active_enemies
+	return arg_21_5
 end
 
-SpawnerSystem._fill_spawners = function (self, spawn_list, spawners, limit_spawners, side_id, group_template, use_closest_spawners, source_unit, optional_data)
-	local total_amount = #spawn_list
+function SpawnerSystem._fill_spawners(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8)
+	local var_22_0 = #arg_22_1
 
-	if total_amount <= 0 then
-		return total_amount
+	if var_22_0 <= 0 then
+		return var_22_0
 	end
 
-	local num_spawners_to_use = #spawners
+	local var_22_1 = #arg_22_2
 
-	table.shuffle(spawners)
+	table.shuffle(arg_22_2)
 
-	if limit_spawners then
-		if use_closest_spawners then
-			local source_pos = POSITION_LOOKUP[source_unit]
+	if arg_22_3 then
+		if arg_22_6 then
+			local var_22_2 = POSITION_LOOKUP[arg_22_7]
 
-			while limit_spawners < #spawners do
-				local furthest_index = 1
-				local furthest_length = 0
+			while arg_22_3 < #arg_22_2 do
+				local var_22_3 = 1
+				local var_22_4 = 0
 
-				for i = 1, #spawners do
-					local distance = Vector3.distance_squared(source_pos, Unit.local_position(spawners[i], 0))
+				for iter_22_0 = 1, #arg_22_2 do
+					local var_22_5 = Vector3.distance_squared(var_22_2, Unit.local_position(arg_22_2[iter_22_0], 0))
 
-					if furthest_length < distance then
-						furthest_length = distance
-						furthest_index = i
+					if var_22_4 < var_22_5 then
+						var_22_4 = var_22_5
+						var_22_3 = iter_22_0
 					end
 				end
 
-				table.swap_delete(spawners, furthest_index)
+				table.swap_delete(arg_22_2, var_22_3)
 			end
 		else
-			for i = limit_spawners + 1, num_spawners_to_use do
-				spawners[i] = nil
+			for iter_22_1 = arg_22_3 + 1, var_22_1 do
+				arg_22_2[iter_22_1] = nil
 			end
 		end
 
-		num_spawners_to_use = #spawners
+		var_22_1 = #arg_22_2
 	end
 
-	local start_index = 1
+	local var_22_6 = 1
 
-	for i = 1, num_spawners_to_use do
-		local to_spawn = math.floor(total_amount / (num_spawners_to_use - i + 1))
+	for iter_22_2 = 1, var_22_1 do
+		local var_22_7 = math.floor(var_22_0 / (var_22_1 - iter_22_2 + 1))
 
-		total_amount = total_amount - to_spawn
+		var_22_0 = var_22_0 - var_22_7
 
-		local spawner = spawners[i]
-		local extension = ScriptUnit.extension(spawner, "spawner_system")
+		local var_22_8 = arg_22_2[iter_22_2]
+		local var_22_9 = ScriptUnit.extension(var_22_8, "spawner_system")
 
-		self._active_spawners[spawner] = extension
+		arg_22_0._active_spawners[var_22_8] = var_22_9
 
-		table.clear_array(copy_list, #copy_list)
-		copy_array(spawn_list, start_index, start_index + to_spawn - 1, copy_list)
-		extension:on_activate(copy_list, side_id, group_template, optional_data)
+		table.clear_array(var_0_6, #var_0_6)
+		var_0_7(arg_22_1, var_22_6, var_22_6 + var_22_7 - 1, var_0_6)
+		var_22_9:on_activate(var_0_6, arg_22_4, arg_22_5, arg_22_8)
 
-		start_index = start_index + to_spawn
+		var_22_6 = var_22_6 + var_22_7
 	end
 
-	return #spawn_list
+	return #arg_22_1
 end
 
-local ok_spawner_breeds = {
+local var_0_11 = {
 	skaven_clan_rat = true,
-	skaven_slave = true,
+	skaven_slave = true
 }
 
-SpawnerSystem.spawn_horde_from_terror_event_ids = function (self, event_ids, variant, limit_spawners, group_template, strictly_not_close_to_players, side_id, use_closest_spawners, source_unit, optional_data)
-	local ConflictUtils = ConflictUtils
-	local must_use_hidden_spawners = variant.must_use_hidden_spawners
-	local spawners, hidden_spawners, event_spawn
-	local dont_remove_this = math.random()
+function SpawnerSystem.spawn_horde_from_terror_event_ids(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9)
+	local var_23_0 = ConflictUtils
+	local var_23_1 = arg_23_2.must_use_hidden_spawners
+	local var_23_2
+	local var_23_3
+	local var_23_4
+	local var_23_5 = math.random()
 
-	if event_ids and #event_ids > 0 then
-		spawners = {}
-		hidden_spawners = {}
+	if arg_23_1 and #arg_23_1 > 0 then
+		var_23_2 = {}
+		var_23_3 = {}
 
-		for _, event_id in ipairs(event_ids) do
-			local source_spawners = self._id_lookup[event_id]
+		for iter_23_0, iter_23_1 in ipairs(arg_23_1) do
+			local var_23_6 = arg_23_0._id_lookup[iter_23_1]
 
-			if source_spawners then
-				for i = 1, #source_spawners do
-					local source_spawner = source_spawners[i]
+			if var_23_6 then
+				for iter_23_2 = 1, #var_23_6 do
+					local var_23_7 = var_23_6[iter_23_2]
 
-					if not self._disabled_spawners[source_spawner] then
-						local hidden = Unit.get_data(source_spawner, "hidden")
-
-						if hidden then
-							hidden_spawners[#hidden_spawners + 1] = source_spawner
+					if not arg_23_0._disabled_spawners[var_23_7] then
+						if Unit.get_data(var_23_7, "hidden") then
+							var_23_3[#var_23_3 + 1] = var_23_7
 						end
 
-						spawners[#spawners + 1] = source_spawner
+						var_23_2[#var_23_2 + 1] = var_23_7
 					end
 				end
 			else
-				fassert("No horde spawners found with terror_id %d ", event_id)
+				fassert("No horde spawners found with terror_id %d ", iter_23_1)
 
 				return
 			end
 		end
 
-		if #spawners == 0 then
+		if #var_23_2 == 0 then
 			return
 		end
 
-		event_spawn = self._use_alt_horde_spawning ~= true
+		var_23_4 = arg_23_0._use_alt_horde_spawning ~= true
 	else
-		local side = Managers.state.side:get_side_from_name("heroes")
-		local player_positions = side.PLAYER_POSITIONS
+		local var_23_8 = Managers.state.side:get_side_from_name("heroes").PLAYER_POSITIONS
 
-		if strictly_not_close_to_players then
-			spawners, hidden_spawners = ConflictUtils.filter_horde_spawners_strictly(player_positions, self._enabled_spawners, self._hidden_spawners, 10, 35)
+		if arg_23_5 then
+			var_23_2, var_23_3 = var_23_0.filter_horde_spawners_strictly(var_23_8, arg_23_0._enabled_spawners, arg_23_0._hidden_spawners, 10, 35)
 		else
-			spawners, hidden_spawners = ConflictUtils.filter_horde_spawners(player_positions, self._enabled_spawners, self._hidden_spawners, 10, 35)
+			var_23_2, var_23_3 = var_23_0.filter_horde_spawners(var_23_8, arg_23_0._enabled_spawners, arg_23_0._hidden_spawners, 10, 35)
 		end
 
-		if must_use_hidden_spawners and #hidden_spawners == 0 then
-			local pos = player_positions[1]
+		if var_23_1 and #var_23_3 == 0 then
+			local var_23_9 = var_23_8[1]
 
-			if pos then
-				local spawner = ConflictUtils.get_random_hidden_spawner(pos, 40)
+			if var_23_9 then
+				local var_23_10 = var_23_0.get_random_hidden_spawner(var_23_9, 40)
 
-				if spawner then
-					hidden_spawners = {
-						spawner,
+				if var_23_10 then
+					var_23_3 = {
+						var_23_10
 					}
 				end
 			end
 
-			if #hidden_spawners == 0 then
+			if #var_23_3 == 0 then
 				print("Can't find any hidden spawners for this breed")
 
 				return
 			end
 		end
 
-		if not next(spawners) then
+		if not next(var_23_2) then
 			return
 		end
 	end
 
-	local num_spawners = #spawners
-
-	if num_spawners == 0 then
+	if #var_23_2 == 0 then
 		return
 	end
 
-	local difficulty = Managers.state.difficulty.difficulty
-	local difficulty_breeds = variant.difficulty_breeds
-	local breed_list = difficulty_breeds and difficulty_breeds[difficulty] or variant.breeds
-	local spawn_list = spawn_list
+	local var_23_11 = Managers.state.difficulty.difficulty
+	local var_23_12 = arg_23_2.difficulty_breeds
+	local var_23_13 = var_23_12 and var_23_12[var_23_11] or arg_23_2.breeds
+	local var_23_14 = var_0_4
 
-	table.clear_array(spawn_list, #spawn_list)
+	table.clear_array(var_23_14, #var_23_14)
 
-	local spawn_list_hidden = spawn_list_hidden
+	local var_23_15 = var_0_5
 
-	table.clear_array(spawn_list_hidden, #spawn_list_hidden)
+	table.clear_array(var_23_15, #var_23_15)
 
-	for i = 1, #breed_list, 2 do
-		local breed_name = breed_list[i]
-		local amount = breed_list[i + 1]
-		local num_to_spawn
+	for iter_23_3 = 1, #var_23_13, 2 do
+		local var_23_16 = var_23_13[iter_23_3]
+		local var_23_17 = var_23_13[iter_23_3 + 1]
+		local var_23_18
 
-		if type(amount) == "table" then
-			num_to_spawn = Math.random(amount[1], amount[2])
+		if type(var_23_17) == "table" then
+			var_23_18 = Math.random(var_23_17[1], var_23_17[2])
 		else
-			num_to_spawn = amount
+			var_23_18 = var_23_17
 		end
 
-		if script_data.big_hordes then
-			num_to_spawn = math.round(num_to_spawn * (tonumber(script_data.big_hordes) or 1))
+		if var_0_2.big_hordes then
+			var_23_18 = math.round(var_23_18 * (tonumber(var_0_2.big_hordes) or 1))
 		end
 
-		temp_spawn_list_per_breed[breed_name] = num_to_spawn
+		var_0_8[var_23_16] = var_23_18
 	end
 
-	local exchange_order = exchange_order
-	local breed_limits = self._breed_limits
-	local num_breeds = #exchange_order
-	local active_enemies = Managers.state.performance:num_active_enemies()
+	local var_23_19 = var_0_9
+	local var_23_20 = arg_23_0._breed_limits
+	local var_23_21 = #var_23_19
+	local var_23_22 = Managers.state.performance:num_active_enemies()
 
-	for i = 1, num_breeds do
-		local breed_name = exchange_order[i]
+	for iter_23_4 = 1, var_23_21 do
+		local var_23_23 = var_23_19[iter_23_4]
 
-		if event_spawn or ok_spawner_breeds[breed_name] then
-			self:_try_spawn_breed(breed_name, temp_spawn_list_per_breed, spawn_list, breed_limits, active_enemies, side_id, group_template)
+		if var_23_4 or var_0_11[var_23_23] then
+			arg_23_0:_try_spawn_breed(var_23_23, var_0_8, var_23_14, var_23_20, var_23_22, arg_23_6, arg_23_4)
 		else
-			self:_try_spawn_breed(breed_name, temp_spawn_list_per_breed, spawn_list_hidden, breed_limits, active_enemies, side_id, group_template)
+			arg_23_0:_try_spawn_breed(var_23_23, var_0_8, var_23_15, var_23_20, var_23_22, arg_23_6, arg_23_4)
 		end
 	end
 
-	table.clear(temp_spawn_list_per_breed)
-	table.shuffle(spawn_list)
+	table.clear(var_0_8)
+	table.shuffle(var_23_14)
 
-	local count, hidden_count = 0, 0
+	local var_23_24 = 0
+	local var_23_25 = 0
+	local var_23_26 = arg_23_0:_fill_spawners(var_23_14, var_23_2, arg_23_3, arg_23_6, arg_23_4, arg_23_7, arg_23_8, arg_23_9)
 
-	count = self:_fill_spawners(spawn_list, spawners, limit_spawners, side_id, group_template, use_closest_spawners, source_unit, optional_data)
+	if not var_23_4 and var_23_1 then
+		local var_23_27 = arg_23_0:_fill_spawners(var_23_15, var_23_3, arg_23_3, arg_23_6, arg_23_4, arg_23_7, arg_23_8, arg_23_9)
 
-	if not event_spawn and must_use_hidden_spawners then
-		hidden_count = self:_fill_spawners(spawn_list_hidden, hidden_spawners, limit_spawners, side_id, group_template, use_closest_spawners, source_unit, optional_data)
-
-		if hidden_count > 0 then
-			return "success", count + hidden_count
+		if var_23_27 > 0 then
+			return "success", var_23_26 + var_23_27
 		end
 	end
 
-	if count > 0 then
-		return "success", count
+	if var_23_26 > 0 then
+		return "success", var_23_26
 	end
 end
 
-SpawnerSystem.change_spawner_id = function (self, unit, spawner_id, new_spawner_id)
-	if unit then
-		local old_id = Unit.get_data(unit, "terror_event_id")
+function SpawnerSystem.change_spawner_id(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+	if arg_24_1 then
+		local var_24_0 = Unit.get_data(arg_24_1, "terror_event_id")
 
-		if old_id ~= "" and old_id == new_spawner_id then
+		if var_24_0 ~= "" and var_24_0 == arg_24_3 then
 			return
 		end
 
-		local old_spawners = self._id_lookup[old_id]
+		local var_24_1 = arg_24_0._id_lookup[var_24_0]
 
-		if old_spawners then
-			local num_spawners = #old_spawners
+		if var_24_1 then
+			local var_24_2 = #var_24_1
 
-			for i = 1, num_spawners do
-				if old_spawners[i] == unit then
-					old_spawners[i] = old_spawners[num_spawners]
-					old_spawners[num_spawners] = nil
+			for iter_24_0 = 1, var_24_2 do
+				if var_24_1[iter_24_0] == arg_24_1 then
+					var_24_1[iter_24_0] = var_24_1[var_24_2]
+					var_24_1[var_24_2] = nil
 
 					break
 				end
 			end
 		end
 
-		local new_spawners = self._id_lookup[new_spawner_id]
+		local var_24_3 = arg_24_0._id_lookup[arg_24_3]
 
-		if not new_spawners then
-			new_spawners = {}
-			self._id_lookup[new_spawner_id] = new_spawners
+		if not var_24_3 then
+			var_24_3 = {}
+			arg_24_0._id_lookup[arg_24_3] = var_24_3
 		end
 
-		new_spawners[#new_spawners + 1] = unit
+		var_24_3[#var_24_3 + 1] = arg_24_1
 
-		Unit.set_data(unit, "terror_event_id", new_spawner_id)
+		Unit.set_data(arg_24_1, "terror_event_id", arg_24_3)
 
 		return
 	end
 
-	local spawners = self._id_lookup[spawner_id]
-	local new_spawners = self._id_lookup[new_spawner_id]
+	local var_24_4 = arg_24_0._id_lookup[arg_24_2]
+	local var_24_5 = arg_24_0._id_lookup[arg_24_3]
 
-	if not new_spawners then
-		new_spawners = {}
-		self._id_lookup[new_spawner_id] = new_spawners
+	if not var_24_5 then
+		var_24_5 = {}
+		arg_24_0._id_lookup[arg_24_3] = var_24_5
 	end
 
-	if spawners then
-		local old_start_index = #spawners
-		local new_start_index = #new_spawners
+	if var_24_4 then
+		local var_24_6 = #var_24_4
+		local var_24_7 = #var_24_5
 
-		for i = 1, old_start_index do
-			new_spawners[new_start_index + i] = spawners[i]
+		for iter_24_1 = 1, var_24_6 do
+			var_24_5[var_24_7 + iter_24_1] = var_24_4[iter_24_1]
 
-			Unit.set_data(spawners[i], "terror_event_id", new_spawner_id)
+			Unit.set_data(var_24_4[iter_24_1], "terror_event_id", arg_24_3)
 
-			spawners[i] = nil
+			var_24_4[iter_24_1] = nil
 		end
 	else
-		print("Can't find spawners called: ", spawner_id, " so cannot rename any")
+		print("Can't find spawners called: ", arg_24_2, " so cannot rename any")
 	end
 end
 
-SpawnerSystem.get_raw_spawner_unit = function (self, terror_id)
-	local spawners = self._raw_id_lookup[terror_id] or self._id_lookup[terror_id]
+function SpawnerSystem.get_raw_spawner_unit(arg_25_0, arg_25_1)
+	local var_25_0 = arg_25_0._raw_id_lookup[arg_25_1] or arg_25_0._id_lookup[arg_25_1]
 
-	if spawners then
-		local spawner_unit = spawners[math.random(1, #spawners)]
-		local idle_animation = Unit.get_data(spawner_unit, "idle_animation")
+	if var_25_0 then
+		local var_25_1 = var_25_0[math.random(1, #var_25_0)]
+		local var_25_2 = Unit.get_data(var_25_1, "idle_animation")
 
-		return spawner_unit, idle_animation
+		return var_25_1, var_25_2
 	end
 end
 
-SpawnerSystem.get_raw_spawner_units = function (self, terror_id)
-	return self._raw_id_lookup[terror_id] or self._id_lookup[terror_id]
+function SpawnerSystem.get_raw_spawner_units(arg_26_0, arg_26_1)
+	return arg_26_0._raw_id_lookup[arg_26_1] or arg_26_0._id_lookup[arg_26_1]
 end
 
-SpawnerSystem.deactivate_spawner = function (self, spawner)
-	self._active_spawners[spawner] = nil
+function SpawnerSystem.deactivate_spawner(arg_27_0, arg_27_1)
+	arg_27_0._active_spawners[arg_27_1] = nil
 end
 
-SpawnerSystem.debug_show_spawners = function (self, t, spawners)
-	local h = 70
-	local add_height = Vector3(0, 0, h)
-	local color = Color(255, 0, 200, 0)
+function SpawnerSystem.debug_show_spawners(arg_28_0, arg_28_1, arg_28_2)
+	local var_28_0 = 70
+	local var_28_1 = Vector3(0, 0, var_28_0)
+	local var_28_2 = Color(255, 0, 200, 0)
 
-	for unit, _ in pairs(spawners) do
-		local pos = Unit.local_position(unit, 0)
+	for iter_28_0, iter_28_1 in pairs(arg_28_2) do
+		local var_28_3 = Unit.local_position(iter_28_0, 0)
 
-		QuickDrawer:line(pos, pos + add_height, color)
+		QuickDrawer:line(var_28_3, var_28_3 + var_28_1, var_28_2)
 
-		local d = 7 * (t % 10)
+		local var_28_4 = 7 * (arg_28_1 % 10)
 
-		QuickDrawer:sphere(pos + Vector3(0, 0, d), 0.5, color)
-		QuickDrawer:sphere(pos + Vector3(0, 0, (d + 10) % h), 0.5, color)
-		QuickDrawer:sphere(pos + Vector3(0, 0, (d + 20) % h), 0.5, color)
+		QuickDrawer:sphere(var_28_3 + Vector3(0, 0, var_28_4), 0.5, var_28_2)
+		QuickDrawer:sphere(var_28_3 + Vector3(0, 0, (var_28_4 + 10) % var_28_0), 0.5, var_28_2)
+		QuickDrawer:sphere(var_28_3 + Vector3(0, 0, (var_28_4 + 20) % var_28_0), 0.5, var_28_2)
 	end
 end
 
-SpawnerSystem.set_spawn_list = function (self, list)
-	self._spawn_list = list
+function SpawnerSystem.set_spawn_list(arg_29_0, arg_29_1)
+	arg_29_0._spawn_list = arg_29_1
 end
 
-SpawnerSystem.pop_pawn_list = function (self)
-	local spawn_list = self._spawn_list
-	local size = #spawn_list
+function SpawnerSystem.pop_pawn_list(arg_30_0)
+	local var_30_0 = arg_30_0._spawn_list
+	local var_30_1 = #var_30_0
 
-	if size <= 0 then
+	if var_30_1 <= 0 then
 		return
 	end
 
-	local breed = spawn_list[size]
+	local var_30_2 = var_30_0[var_30_1]
 
-	spawn_list[size] = nil
+	var_30_0[var_30_1] = nil
 
-	return breed
+	return var_30_2
 end
 
-local dummy_input = {}
-local found_hidden_spawners = {}
+local var_0_12 = {}
+local var_0_13 = {}
 
-SpawnerSystem.update = function (self, context, t, dt)
-	for unit, extension in pairs(self._active_spawners) do
-		extension:update(unit, dummy_input, dt, context, t)
+function SpawnerSystem.update(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+	for iter_31_0, iter_31_1 in pairs(arg_31_0._active_spawners) do
+		iter_31_1:update(iter_31_0, var_0_12, arg_31_3, arg_31_1, arg_31_2)
 	end
 end
 
-SpawnerSystem.show_hidden_spawners = function (self, t)
-	local unit_local_position = Unit.local_position
-	local side = Managers.state.side:get_side_from_name("heroes")
-	local PLAYER_POSITIONS = side.PLAYER_POSITIONS
-	local center_pos = PLAYER_POSITIONS[1]
-	local free_flight_manager = Managers.free_flight
-	local in_free_flight = free_flight_manager:active("global")
+function SpawnerSystem.show_hidden_spawners(arg_32_0, arg_32_1)
+	local var_32_0 = Unit.local_position
+	local var_32_1 = Managers.state.side:get_side_from_name("heroes").PLAYER_POSITIONS[1]
+	local var_32_2 = Managers.free_flight
 
-	if in_free_flight then
-		center_pos = free_flight_manager:camera_position_rotation()
+	if var_32_2:active("global") then
+		var_32_1 = var_32_2:camera_position_rotation()
 	end
 
-	local s = math.sin(t * 10)
-	local color = Color(192 + 64 * s, 192 + 64 * s, 0)
-	local fail_color = Color(192 + 64 * s, 0, 0)
-	local amount = 0
-	local bad = 0
-	local radius = 40
+	local var_32_3 = math.sin(arg_32_1 * 10)
+	local var_32_4 = Color(192 + 64 * var_32_3, 192 + 64 * var_32_3, 0)
+	local var_32_5 = Color(192 + 64 * var_32_3, 0, 0)
+	local var_32_6 = 0
+	local var_32_7 = 0
+	local var_32_8 = 40
 
-	if center_pos then
-		local nav_world = Managers.state.entity:system("ai_system"):nav_world()
+	if var_32_1 then
+		local var_32_9 = Managers.state.entity:system("ai_system"):nav_world()
 
-		amount = Broadphase.query(self.hidden_spawners_broadphase, center_pos, radius, found_hidden_spawners)
+		var_32_6 = Broadphase.query(arg_32_0.hidden_spawners_broadphase, var_32_1, var_32_8, var_0_13)
 
-		local spinn = math.sin(t * 5) * 0.33
-		local spinn_vec = Vector3(spinn, spinn, 0)
-		local h_pos = Vector3(spinn, spinn, 30)
+		local var_32_10 = math.sin(arg_32_1 * 5) * 0.33
+		local var_32_11 = Vector3(var_32_10, var_32_10, 0)
+		local var_32_12 = Vector3(var_32_10, var_32_10, 30)
 
-		for i = 1, amount do
-			local spawner_unit = found_hidden_spawners[i]
-			local pos = unit_local_position(spawner_unit, 0)
-			local is_position_on_navmesh = GwNavQueries.triangle_from_position(nav_world, pos, 0.5, 0.5)
+		for iter_32_0 = 1, var_32_6 do
+			local var_32_13 = var_0_13[iter_32_0]
+			local var_32_14 = var_32_0(var_32_13, 0)
 
-			if is_position_on_navmesh then
-				QuickDrawer:line(pos + spinn_vec, pos + h_pos, color)
-				QuickDrawer:sphere(pos, 0.15, color)
+			if GwNavQueries.triangle_from_position(var_32_9, var_32_14, 0.5, 0.5) then
+				QuickDrawer:line(var_32_14 + var_32_11, var_32_14 + var_32_12, var_32_4)
+				QuickDrawer:sphere(var_32_14, 0.15, var_32_4)
 			else
-				QuickDrawer:line(pos + spinn_vec, pos + h_pos, fail_color)
-				QuickDrawer:sphere(pos, 0.15, color)
+				QuickDrawer:line(var_32_14 + var_32_11, var_32_14 + var_32_12, var_32_5)
+				QuickDrawer:sphere(var_32_14, 0.15, var_32_4)
 
-				bad = bad + 1
+				var_32_7 = var_32_7 + 1
 			end
 		end
 	end
 
-	if bad == 0 then
-		Debug.text("This level has %d hidden spawners. (%d within %d meters)", self._num_hidden_spawners, amount, radius)
+	if var_32_7 == 0 then
+		Debug.text("This level has %d hidden spawners. (%d within %d meters)", arg_32_0._num_hidden_spawners, var_32_6, var_32_8)
 
-		if center_pos then
-			QuickDrawer:circle(center_pos + Vector3(0, 0, 20), radius, Vector3.up(), color)
+		if var_32_1 then
+			QuickDrawer:circle(var_32_1 + Vector3(0, 0, 20), var_32_8, Vector3.up(), var_32_4)
 		end
 	else
-		Debug.text("This level has %d hidden spawners. (%d within %d meters, %d are not on nav-mesh)", self._num_hidden_spawners, amount, radius, bad)
+		Debug.text("This level has %d hidden spawners. (%d within %d meters, %d are not on nav-mesh)", arg_32_0._num_hidden_spawners, var_32_6, var_32_8, var_32_7)
 
-		if center_pos then
-			QuickDrawer:circle(center_pos + Vector3(0, 0, 20), radius, Vector3.up(), fail_color)
+		if var_32_1 then
+			QuickDrawer:circle(var_32_1 + Vector3(0, 0, 20), var_32_8, Vector3.up(), var_32_5)
 		end
 	end
 end

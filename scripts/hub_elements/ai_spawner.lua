@@ -1,212 +1,211 @@
-﻿-- chunkname: @scripts/hub_elements/ai_spawner.lua
+-- chunkname: @scripts/hub_elements/ai_spawner.lua
 
 require("scripts/settings/breeds")
 
 AISpawner = class(AISpawner)
 AI_TEST_COUNTER = 0
 
-AISpawner.init = function (self, world, unit)
-	self._spawner_system = Managers.state.entity:system("spawner_system")
-	self._config = {}
-	self._breed_list = {}
-	self._world = world
-	self._unit = unit
-	self._num_queued_units = 0
-	self._next_spawn = 0
-	self._max_amount = 0
-	self._spawned_units = {}
-	self._spawned_unit_handles = {}
-	self._activate_version = 0
+function AISpawner.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0._spawner_system = Managers.state.entity:system("spawner_system")
+	arg_1_0._config = {}
+	arg_1_0._breed_list = {}
+	arg_1_0._world = arg_1_1
+	arg_1_0._unit = arg_1_2
+	arg_1_0._num_queued_units = 0
+	arg_1_0._next_spawn = 0
+	arg_1_0._max_amount = 0
+	arg_1_0._spawned_units = {}
+	arg_1_0._spawned_unit_handles = {}
+	arg_1_0._activate_version = 0
 
-	if Unit.has_data(unit, "spawner_settings") then
-		local spawner_name = self:check_for_enabled()
+	if Unit.has_data(arg_1_2, "spawner_settings") then
+		local var_1_0 = arg_1_0:check_for_enabled()
 
-		if spawner_name ~= nil then
-			local terror_event_id = Unit.get_data(unit, "terror_event_id")
+		if var_1_0 ~= nil then
+			local var_1_1 = Unit.get_data(arg_1_2, "terror_event_id")
 
-			terror_event_id = terror_event_id and terror_event_id ~= "" and terror_event_id
+			var_1_1 = var_1_1 and var_1_1 ~= "" and var_1_1
 
-			local hidden = Unit.get_data(unit, "hidden")
+			local var_1_2 = Unit.get_data(arg_1_2, "hidden")
 
-			self._spawner_system:register_enabled_spawner(unit, terror_event_id, hidden)
+			arg_1_0._spawner_system:register_enabled_spawner(arg_1_2, var_1_1, var_1_2)
 
-			local i = 0
-			local animation_events = {}
+			local var_1_3 = 0
+			local var_1_4 = {}
 
-			while Unit.has_data(unit, "spawner_settings", spawner_name, "animation_events", i) do
-				animation_events[#animation_events + 1] = Unit.get_data(unit, "spawner_settings", spawner_name, "animation_events", i)
-				i = i + 1
+			while Unit.has_data(arg_1_2, "spawner_settings", var_1_0, "animation_events", var_1_3) do
+				var_1_4[#var_1_4 + 1] = Unit.get_data(arg_1_2, "spawner_settings", var_1_0, "animation_events", var_1_3)
+				var_1_3 = var_1_3 + 1
 			end
 
-			self._config = {
-				name = spawner_name,
-				animation_events = animation_events,
-				node = Unit.get_data(unit, "spawner_settings", spawner_name, "node"),
-				spawn_rate = Unit.get_data(unit, "spawner_settings", spawner_name, "spawn_rate"),
+			arg_1_0._config = {
+				name = var_1_0,
+				animation_events = var_1_4,
+				node = Unit.get_data(arg_1_2, "spawner_settings", var_1_0, "node"),
+				spawn_rate = Unit.get_data(arg_1_2, "spawner_settings", var_1_0, "spawn_rate")
 			}
 		end
 	else
-		local terror_event_id = Unit.get_data(self._unit, "terror_event_id")
+		local var_1_5 = Unit.get_data(arg_1_0._unit, "terror_event_id")
 
-		terror_event_id = terror_event_id and terror_event_id ~= "" and terror_event_id
+		var_1_5 = var_1_5 and var_1_5 ~= "" and var_1_5
 
-		self._spawner_system:register_raw_spawner(self._unit, terror_event_id)
+		arg_1_0._spawner_system:register_raw_spawner(arg_1_0._unit, var_1_5)
 	end
 end
 
-AISpawner.check_for_enabled = function (self)
-	local i = 1
-	local name = "spawner"
+function AISpawner.check_for_enabled(arg_2_0)
+	local var_2_0 = 1
+	local var_2_1 = "spawner"
 
 	repeat
-		name = "spawner" .. i
+		local var_2_2 = "spawner" .. var_2_0
 
-		if Unit.has_data(self._unit, "spawner_settings", name) then
-			if Unit.get_data(self._unit, "spawner_settings", name, "enabled") then
-				return name
+		if Unit.has_data(arg_2_0._unit, "spawner_settings", var_2_2) then
+			if Unit.get_data(arg_2_0._unit, "spawner_settings", var_2_2, "enabled") then
+				return var_2_2
 			end
 		else
 			return nil
 		end
 
-		i = i + 1
+		var_2_0 = var_2_0 + 1
 	until true
 end
 
-AISpawner.on_activate = function (self, breed_list, side_id, group_template, optional_data)
-	table.clear(self._spawned_unit_handles)
-	table.clear(self._spawned_units)
+function AISpawner.on_activate(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	table.clear(arg_3_0._spawned_unit_handles)
+	table.clear(arg_3_0._spawned_units)
 
-	self._activate_version = self._activate_version + 1
+	arg_3_0._activate_version = arg_3_0._activate_version + 1
 
-	local spawn_data = {
-		side_id,
-		group_template,
-		optional_data,
+	local var_3_0 = {
+		arg_3_2,
+		arg_3_3,
+		arg_3_4
 	}
-	local list = self._breed_list
-	local size = #list
+	local var_3_1 = arg_3_0._breed_list
+	local var_3_2 = #var_3_1
 
-	self._max_amount = self._max_amount + #breed_list
+	arg_3_0._max_amount = arg_3_0._max_amount + #arg_3_1
 
-	local j = size + 1
+	local var_3_3 = var_3_2 + 1
 
-	for i = 1, #breed_list do
-		list[j] = breed_list[i]
-		j = j + 1
-		list[j] = spawn_data
-		j = j + 1
+	for iter_3_0 = 1, #arg_3_1 do
+		var_3_1[var_3_3] = arg_3_1[iter_3_0]
+		var_3_3 = var_3_3 + 1
+		var_3_1[var_3_3] = var_3_0
+		var_3_3 = var_3_3 + 1
 	end
 end
 
-AISpawner.on_deactivate = function (self)
-	self._max_amount = 0
-	self._num_queued_units = 0
+function AISpawner.on_deactivate(arg_4_0)
+	arg_4_0._max_amount = 0
+	arg_4_0._num_queued_units = 0
 
-	self._spawner_system:deactivate_spawner(self._unit)
-	table.clear(self._breed_list)
+	arg_4_0._spawner_system:deactivate_spawner(arg_4_0._unit)
+	table.clear(arg_4_0._breed_list)
 end
 
-AISpawner.update = function (self, unit, input, dt, context, t)
-	if t > self._next_spawn then
-		if self._num_queued_units < self._max_amount then
-			self:spawn_unit()
+function AISpawner.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	if arg_5_5 > arg_5_0._next_spawn then
+		if arg_5_0._num_queued_units < arg_5_0._max_amount then
+			arg_5_0:spawn_unit()
 
-			self._next_spawn = t + 1 / self._config.spawn_rate
-		elseif self:done_spawning() then
-			Unit.flow_event(self._unit, "lua_all_units_spawned")
-			self:on_deactivate()
+			arg_5_0._next_spawn = arg_5_5 + 1 / arg_5_0._config.spawn_rate
+		elseif arg_5_0:done_spawning() then
+			Unit.flow_event(arg_5_0._unit, "lua_all_units_spawned")
+			arg_5_0:on_deactivate()
 		end
 	end
 end
 
-AISpawner.done_spawning = function (self)
-	return #self._spawned_units == self._max_amount
+function AISpawner.done_spawning(arg_6_0)
+	return #arg_6_0._spawned_units == arg_6_0._max_amount
 end
 
-AISpawner.spawned_units = function (self)
-	return self._spawned_units
+function AISpawner.spawned_units(arg_7_0)
+	return arg_7_0._spawned_units
 end
 
-AISpawner.spawn_rate = function (self)
-	return self._config.spawn_rate
+function AISpawner.spawn_rate(arg_8_0)
+	return arg_8_0._config.spawn_rate
 end
 
-AISpawner.spawn_unit = function (self)
-	local breed_list = self._breed_list
-	local last = #breed_list
-	local spawn_data = breed_list[last]
+function AISpawner.spawn_unit(arg_9_0)
+	local var_9_0 = arg_9_0._breed_list
+	local var_9_1 = #var_9_0
+	local var_9_2 = var_9_0[var_9_1]
 
-	breed_list[last] = nil
-	last = last - 1
+	var_9_0[var_9_1] = nil
 
-	local breed_name = breed_list[last]
+	local var_9_3 = var_9_1 - 1
+	local var_9_4 = var_9_0[var_9_3]
 
-	breed_list[last] = nil
+	var_9_0[var_9_3] = nil
 
-	local breed = Breeds[breed_name]
-	local unit = self._unit
+	local var_9_5 = Breeds[var_9_4]
+	local var_9_6 = arg_9_0._unit
 
-	Unit.flow_event(unit, "lua_spawn")
+	Unit.flow_event(var_9_6, "lua_spawn")
 
-	local conflict_director = Managers.state.conflict
-	local spawn_category = "ai_spawner"
-	local node = Unit.node(unit, self._config.node)
-	local parent_index = Unit.scene_graph_parent(unit, node)
-	local parent_world_rotation = Unit.world_rotation(unit, parent_index)
-	local spawn_node_rotation = Unit.local_rotation(unit, node)
-	local spawn_rotation = Quaternion.multiply(parent_world_rotation, spawn_node_rotation)
-	local spawn_type = Unit.get_data(self._unit, "hidden") and "horde_hidden" or "horde"
-	local spawn_pos = Unit.world_position(unit, node)
-	local animation_events = self._config.animation_events
+	local var_9_7 = Managers.state.conflict
+	local var_9_8 = "ai_spawner"
+	local var_9_9 = Unit.node(var_9_6, arg_9_0._config.node)
+	local var_9_10 = Unit.scene_graph_parent(var_9_6, var_9_9)
+	local var_9_11 = Unit.world_rotation(var_9_6, var_9_10)
+	local var_9_12 = Unit.local_rotation(var_9_6, var_9_9)
+	local var_9_13 = Quaternion.multiply(var_9_11, var_9_12)
+	local var_9_14 = Unit.get_data(arg_9_0._unit, "hidden") and "horde_hidden" or "horde"
+	local var_9_15 = Unit.world_position(var_9_6, var_9_9)
+	local var_9_16 = arg_9_0._config.animation_events
 
-	if spawn_type == "horde_hidden" and breed.use_regular_horde_spawning then
-		spawn_type = "horde"
+	if var_9_14 == "horde_hidden" and var_9_5.use_regular_horde_spawning then
+		var_9_14 = "horde"
 	end
 
-	local spawn_animation = spawn_type == "horde" and animation_events[math.random(#animation_events)]
-	local side_id = spawn_data[1]
-	local optional_data = spawn_data[3] or {}
+	local var_9_17 = var_9_14 == "horde" and var_9_16[math.random(#var_9_16)]
+	local var_9_18
 
-	optional_data.side_id = side_id
+	var_9_18.side_id, var_9_18 = var_9_2[1], var_9_2[3] or {}
 
-	local activate_version = self._activate_version
-	local spawned_func = optional_data.spawned_func
+	local var_9_19 = arg_9_0._activate_version
+	local var_9_20 = var_9_18.spawned_func
 
-	if spawned_func then
-		optional_data.spawned_func = function (spawned_unit, ...)
-			spawned_func(spawned_unit, ...)
+	if var_9_20 then
+		function var_9_18.spawned_func(arg_10_0, ...)
+			var_9_20(arg_10_0, ...)
 
-			if activate_version == self._activate_version then
-				self._spawned_units[#self._spawned_units + 1] = spawned_unit
+			if var_9_19 == arg_9_0._activate_version then
+				arg_9_0._spawned_units[#arg_9_0._spawned_units + 1] = arg_10_0
 			end
 		end
 	end
 
-	local group_template = spawn_data[2]
+	local var_9_21 = var_9_2[2]
 
-	self._num_queued_units = self._num_queued_units + 1
-	self._spawned_unit_handles[self._num_queued_units] = conflict_director:spawn_queued_unit(breed, Vector3Box(spawn_pos), QuaternionBox(spawn_rotation), spawn_category, spawn_animation, spawn_type, optional_data, group_template)
+	arg_9_0._num_queued_units = arg_9_0._num_queued_units + 1
+	arg_9_0._spawned_unit_handles[arg_9_0._num_queued_units] = var_9_7:spawn_queued_unit(var_9_5, Vector3Box(var_9_15), QuaternionBox(var_9_13), var_9_8, var_9_17, var_9_14, var_9_18, var_9_21)
 
-	conflict_director:add_horde(1)
+	var_9_7:add_horde(1)
 end
 
-AISpawner.spawn_rotation = function (self)
-	local unit = self._unit
+function AISpawner.spawn_rotation(arg_11_0)
+	local var_11_0 = arg_11_0._unit
 
-	return Unit.world_rotation(unit, Unit.node(unit, self._config.node))
+	return Unit.world_rotation(var_11_0, Unit.node(var_11_0, arg_11_0._config.node))
 end
 
-AISpawner.spawn_position = function (self)
-	local unit = self._unit
+function AISpawner.spawn_position(arg_12_0)
+	local var_12_0 = arg_12_0._unit
 
-	return Unit.world_position(unit, Unit.node(unit, self._config.node))
+	return Unit.world_position(var_12_0, Unit.node(var_12_0, arg_12_0._config.node))
 end
 
-AISpawner.get_spawner_name = function (self)
-	return self._config.name
+function AISpawner.get_spawner_name(arg_13_0)
+	return arg_13_0._config.name
 end
 
-AISpawner.destroy = function (self)
+function AISpawner.destroy(arg_14_0)
 	return
 end

@@ -1,4 +1,4 @@
-﻿-- chunkname: @foundation/scripts/util/frame_table.lua
+-- chunkname: @foundation/scripts/util/frame_table.lua
 
 if rawget(_G, "FrameTable") then
 	return
@@ -6,55 +6,55 @@ end
 
 FrameTable = {}
 
-local frame_table_max_size = 256
-local frame_table_buffer = Script.new_array(frame_table_max_size)
-local frame_table_back_buffer = Script.new_array(frame_table_max_size)
-local frame_table_count = 0
-local frame_table_back_count = 0
+local var_0_0 = 256
+local var_0_1 = Script.new_array(var_0_0)
+local var_0_2 = Script.new_array(var_0_0)
+local var_0_3 = 0
+local var_0_4 = 0
 
-for i = 1, frame_table_max_size do
-	frame_table_buffer[i] = {}
-	frame_table_back_buffer[i] = {}
+for iter_0_0 = 1, var_0_0 do
+	var_0_1[iter_0_0] = {}
+	var_0_2[iter_0_0] = {}
 end
 
-FrameTable.alloc_table = function ()
-	frame_table_count = frame_table_count + 1
+function FrameTable.alloc_table()
+	var_0_3 = var_0_3 + 1
 
-	if frame_table_count > frame_table_max_size then
-		local n = frame_table_max_size
+	if var_0_3 > var_0_0 then
+		local var_1_0 = var_0_0
 
-		frame_table_max_size = 2 * n
+		var_0_0 = 2 * var_1_0
 
-		Application.warning("[FrameTable] WARNING: Expanding frame table size from %d to %d", n, frame_table_max_size)
+		Application.warning("[FrameTable] WARNING: Expanding frame table size from %d to %d", var_1_0, var_0_0)
 
-		for i = n + 1, frame_table_max_size do
-			frame_table_buffer[i] = {}
-			frame_table_back_buffer[i] = {}
+		for iter_1_0 = var_1_0 + 1, var_0_0 do
+			var_0_1[iter_1_0] = {}
+			var_0_2[iter_1_0] = {}
 		end
 	end
 
-	return frame_table_buffer[frame_table_count]
+	return var_0_1[var_0_3]
 end
 
-FrameTable.swap_and_clear = function ()
-	local table_clear = table.clear
+function FrameTable.swap_and_clear()
+	local var_2_0 = table.clear
 
-	for i = 1, frame_table_back_count do
-		table_clear(frame_table_back_buffer[i])
+	for iter_2_0 = 1, var_0_4 do
+		var_2_0(var_0_2[iter_2_0])
 	end
 
-	frame_table_buffer, frame_table_back_buffer = frame_table_back_buffer, frame_table_buffer
-	frame_table_back_count = frame_table_count
-	frame_table_count = 0
+	var_0_1, var_0_2 = var_0_2, var_0_1
+	var_0_4 = var_0_3
+	var_0_3 = 0
 end
 
-FrameTable.init = function (use_ordinary_tables)
-	if use_ordinary_tables then
+function FrameTable.init(arg_3_0)
+	if arg_3_0 then
 		FrameTable.alloc_table = TABLE_NEW
 		FrameTable.swap_and_clear = NOP
-		frame_table_buffer = nil
-		frame_table_back_buffer = nil
+		var_0_1 = nil
+		var_0_2 = nil
 	end
 
-	printf("[FrameTable] Initialized (use_ordinary_tables=%s)", use_ordinary_tables)
+	printf("[FrameTable] Initialized (use_ordinary_tables=%s)", arg_3_0)
 end

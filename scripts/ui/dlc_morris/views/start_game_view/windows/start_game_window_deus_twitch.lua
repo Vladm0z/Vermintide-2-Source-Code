@@ -1,1108 +1,1048 @@
-﻿-- chunkname: @scripts/ui/dlc_morris/views/start_game_view/windows/start_game_window_deus_twitch.lua
+-- chunkname: @scripts/ui/dlc_morris/views/start_game_view/windows/start_game_window_deus_twitch.lua
 
-local definitions = local_require("scripts/ui/dlc_morris/views/start_game_view/windows/definitions/start_game_window_deus_twitch_definitions")
-local scenegraph_definition = definitions.scenegraph_definition
-local widget_definitions = definitions.widgets
-local selection_widgets_definitions = definitions.selection_widgets
-local client_widget_definitions = definitions.client_widgets
-local server_widget_definitions = definitions.server_widgets
-local additional_settings_widgets_definitions = definitions.additional_settings_widgets
-local animation_definitions = definitions.animation_definitions
-local selector_input_definition = definitions.selector_input_definition
-local START_GAME_INPUT = "refresh_press"
-local SELECTION_INPUT = "confirm_press"
-local CONNECT_INPUT = "special_1_press"
+local var_0_0 = local_require("scripts/ui/dlc_morris/views/start_game_view/windows/definitions/start_game_window_deus_twitch_definitions")
+local var_0_1 = var_0_0.scenegraph_definition
+local var_0_2 = var_0_0.widgets
+local var_0_3 = var_0_0.selection_widgets
+local var_0_4 = var_0_0.client_widgets
+local var_0_5 = var_0_0.server_widgets
+local var_0_6 = var_0_0.additional_settings_widgets
+local var_0_7 = var_0_0.animation_definitions
+local var_0_8 = var_0_0.selector_input_definition
+local var_0_9 = "refresh_press"
+local var_0_10 = "confirm_press"
+local var_0_11 = "special_1_press"
 
 StartGameWindowDeusTwitch = class(StartGameWindowDeusTwitch)
 StartGameWindowDeusTwitch.NAME = "StartGameWindowDeusTwitch"
 
-StartGameWindowDeusTwitch.on_enter = function (self, params, offset)
+function StartGameWindowDeusTwitch.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameViewWindow] Enter Substate StartGameWindowTwitchOverviewConsole")
 
-	self._parent = params.parent
+	arg_1_0._parent = arg_1_1.parent
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_1_0 = arg_1_1.ingame_ui_context
 
-	self._ingame_ui_context = ingame_ui_context
-	self._ui_renderer = ingame_ui_context.ui_renderer
-	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self._input_manager = ingame_ui_context.input_manager
-	self._statistics_db = ingame_ui_context.statistics_db
-	self._is_server = ingame_ui_context.is_server
-	self._mechanism_name = Managers.mechanism:current_mechanism_name()
-
-	local player_manager = Managers.player
-	local local_player = player_manager:local_player()
-
-	self._stats_id = local_player:stats_id()
-	self._render_settings = {
-		snap_pixel_positions = true,
+	arg_1_0._ingame_ui_context = var_1_0
+	arg_1_0._ui_renderer = var_1_0.ui_renderer
+	arg_1_0._ui_top_renderer = var_1_0.ui_top_renderer
+	arg_1_0._input_manager = var_1_0.input_manager
+	arg_1_0._statistics_db = var_1_0.statistics_db
+	arg_1_0._is_server = var_1_0.is_server
+	arg_1_0._mechanism_name = Managers.mechanism:current_mechanism_name()
+	arg_1_0._stats_id = Managers.player:local_player():stats_id()
+	arg_1_0._render_settings = {
+		snap_pixel_positions = true
 	}
-	self._is_focused = false
-	self._play_button_pressed = false
-	self._show_additional_settings = false
-	self._previous_can_play = nil
-	self._current_difficulty = self._parent:get_difficulty_option(true) or Managers.state.difficulty:get_difficulty()
-	self._dlc_name = nil
-	self._backend_deus = Managers.backend:get_interface("deus")
-	self._animations = {}
+	arg_1_0._is_focused = false
+	arg_1_0._play_button_pressed = false
+	arg_1_0._show_additional_settings = false
+	arg_1_0._previous_can_play = nil
+	arg_1_0._current_difficulty = arg_1_0._parent:get_difficulty_option(true) or Managers.state.difficulty:get_difficulty()
+	arg_1_0._dlc_name = nil
+	arg_1_0._backend_deus = Managers.backend:get_interface("deus")
+	arg_1_0._animations = {}
 
-	self:_create_ui_elements(params, offset)
+	arg_1_0:_create_ui_elements(arg_1_1, arg_1_2)
 
-	if self._is_server then
-		self:_gamepad_selector_input_func(params.input_index or 1)
-		self:_update_expedition_option()
-		self:_update_difficulty_option(self._current_difficulty)
+	if arg_1_0._is_server then
+		arg_1_0:_gamepad_selector_input_func(arg_1_1.input_index or 1)
+		arg_1_0:_update_expedition_option()
+		arg_1_0:_update_difficulty_option(arg_1_0._current_difficulty)
 	end
 
-	local connected = Managers.twitch and Managers.twitch:is_connected()
+	local var_1_1 = Managers.twitch and Managers.twitch:is_connected()
 
-	self:_set_input_description(connected)
-	self:_set_disconnect_button_text()
-	self:_setup_connected_status()
+	arg_1_0:_set_input_description(var_1_1)
+	arg_1_0:_set_disconnect_button_text()
+	arg_1_0:_setup_connected_status()
 
 	if Managers.twitch:is_connected() then
-		self:_set_active(true)
+		arg_1_0:_set_active(true)
 	end
 
-	self:_start_transition_animation("on_enter")
-	Managers.state.event:register(self, "_update_additional_curse_frame", "_update_additional_curse_frame")
+	arg_1_0:_start_transition_animation("on_enter")
+	Managers.state.event:register(arg_1_0, "_update_additional_curse_frame", "_update_additional_curse_frame")
 end
 
-StartGameWindowDeusTwitch._create_ui_elements = function (self, params, offset)
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-	self._widgets, self._widgets_by_name = UIUtils.create_widgets(widget_definitions)
-	self._expedition_widgets = {}
+function StartGameWindowDeusTwitch._create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
+	arg_2_0._widgets, arg_2_0._widgets_by_name = UIUtils.create_widgets(var_0_2)
+	arg_2_0._expedition_widgets = {}
 
-	local selection_widgets = {}
-	local selection_widgets_by_name = {}
+	local var_2_0 = {}
+	local var_2_1 = {}
 
-	if self._is_server then
-		selection_widgets, selection_widgets_by_name = UIUtils.create_widgets(selection_widgets_definitions)
+	if arg_2_0._is_server then
+		var_2_0, var_2_1 = UIUtils.create_widgets(var_0_3)
 
-		UIUtils.create_widgets(server_widget_definitions, self._widgets, self._widgets_by_name)
-		self:_gather_unlocked_journeys()
-		self:_setup_journey_widgets()
-		self:_refresh_journey_cycle()
+		UIUtils.create_widgets(var_0_5, arg_2_0._widgets, arg_2_0._widgets_by_name)
+		arg_2_0:_gather_unlocked_journeys()
+		arg_2_0:_setup_journey_widgets()
+		arg_2_0:_refresh_journey_cycle()
 	else
-		UIUtils.create_widgets(client_widget_definitions, self._widgets, self._widgets_by_name)
+		UIUtils.create_widgets(var_0_4, arg_2_0._widgets, arg_2_0._widgets_by_name)
 	end
 
-	self._selection_widgets = selection_widgets
-	self._selection_widgets_by_name = selection_widgets_by_name
-	self._additional_settings_widgets, self._additional_settings_widgets_by_name = UIUtils.create_widgets(additional_settings_widgets_definitions)
+	arg_2_0._selection_widgets = var_2_0
+	arg_2_0._selection_widgets_by_name = var_2_1
+	arg_2_0._additional_settings_widgets, arg_2_0._additional_settings_widgets_by_name = UIUtils.create_widgets(var_0_6)
 
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_2_0._ui_renderer)
 
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
+	arg_2_0._ui_animator = UIAnimator:new(arg_2_0._ui_scenegraph, var_0_7)
 
-	if offset then
-		local window_position = self._ui_scenegraph.window.local_position
+	if arg_2_2 then
+		local var_2_2 = arg_2_0._ui_scenegraph.window.local_position
 
-		window_position[1] = window_position[1] + offset[1]
-		window_position[2] = window_position[2] + offset[2]
-		window_position[3] = window_position[3] + offset[3]
+		var_2_2[1] = var_2_2[1] + arg_2_2[1]
+		var_2_2[2] = var_2_2[2] + arg_2_2[2]
+		var_2_2[3] = var_2_2[3] + arg_2_2[3]
 	end
 
 	if IS_PS4 then
-		local frame_widget = self._widgets_by_name.frame_widget
-		local frame_widget_content = frame_widget.content
-
-		frame_widget_content.twitch_name = PlayerData.twitch_user_name or ""
+		arg_2_0._widgets_by_name.frame_widget.content.twitch_name = PlayerData.twitch_user_name or ""
 	end
 
-	self._widgets_by_name.difficulty_info.content.visible = false
-	self._widgets_by_name.upsell_button.content.visible = false
+	arg_2_0._widgets_by_name.difficulty_info.content.visible = false
+	arg_2_0._widgets_by_name.upsell_button.content.visible = false
 end
 
-StartGameWindowDeusTwitch.set_focus = function (self, focused)
-	self._is_focused = focused
+function StartGameWindowDeusTwitch.set_focus(arg_3_0, arg_3_1)
+	arg_3_0._is_focused = arg_3_1
 end
 
-StartGameWindowDeusTwitch._set_active = function (self, active)
-	if active then
-		Managers.irc:register_message_callback("twitch_gamepad", Irc.CHANNEL_MSG, callback(self, "cb_on_message_received"))
+function StartGameWindowDeusTwitch._set_active(arg_4_0, arg_4_1)
+	if arg_4_1 then
+		Managers.irc:register_message_callback("twitch_gamepad", Irc.CHANNEL_MSG, callback(arg_4_0, "cb_on_message_received"))
 	else
 		Managers.irc:unregister_message_callback("twitch_gamepad")
 
-		local chat_output_widget = self._widgets_by_name.chat_output_widget
-		local chat_output_content = chat_output_widget.content
+		local var_4_0 = arg_4_0._widgets_by_name.chat_output_widget.content
 
-		table.clear(chat_output_content.message_tables)
+		table.clear(var_4_0.message_tables)
 	end
 end
 
-StartGameWindowDeusTwitch._set_disconnect_button_text = function (self)
-	local disconnect_button_widget = self._widgets_by_name.button_2
+function StartGameWindowDeusTwitch._set_disconnect_button_text(arg_5_0)
+	local var_5_0 = arg_5_0._widgets_by_name.button_2
 
-	if disconnect_button_widget then
-		local user_name = Managers.twitch and Managers.twitch:user_name() or "N/A"
+	if var_5_0 then
+		local var_5_1 = Managers.twitch and Managers.twitch:user_name() or "N/A"
 
-		disconnect_button_widget.content.button_hotspot.text = string.format(Localize("start_game_window_twitch_disconnect"), user_name)
+		var_5_0.content.button_hotspot.text = string.format(Localize("start_game_window_twitch_disconnect"), var_5_1)
 	end
 end
 
-StartGameWindowDeusTwitch.cb_on_message_received = function (self, key, message_type, user_name, message, parameter)
-	local chat_output_widget = self._widgets_by_name.chat_output_widget
-	local chat_output_content = chat_output_widget.content
-	local message_tables = chat_output_content.message_tables
-	local new_message_table = {}
+function StartGameWindowDeusTwitch.cb_on_message_received(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+	local var_6_0 = arg_6_0._widgets_by_name.chat_output_widget.content
+	local var_6_1 = var_6_0.message_tables
+	local var_6_2 = {}
 
-	new_message_table.is_dev = false
-	new_message_table.is_system = false
-	new_message_table.sender = string.format("%s: ", user_name)
-	new_message_table.message = message
-	message_tables[#message_tables + 1] = new_message_table
+	var_6_2.is_dev = false
+	var_6_2.is_system = false
+	var_6_2.sender = string.format("%s: ", arg_6_3)
+	var_6_2.message = arg_6_4
+	var_6_1[#var_6_1 + 1] = var_6_2
 
-	if #message_tables > 45 then
-		table.remove(message_tables, 1)
+	if #var_6_1 > 45 then
+		table.remove(var_6_1, 1)
 	else
-		chat_output_content.text_start_offset = chat_output_content.text_start_offset + 1
+		var_6_0.text_start_offset = var_6_0.text_start_offset + 1
 	end
 end
 
-StartGameWindowDeusTwitch.set_input_blocked = function (self, blocked)
-	local input_manager = Managers.input
+function StartGameWindowDeusTwitch.set_input_blocked(arg_7_0, arg_7_1)
+	local var_7_0 = Managers.input
 
-	if blocked then
-		input_manager:block_device_except_service("start_game_view", "keyboard", 1, "twitch")
-		input_manager:block_device_except_service("start_game_view", "mouse", 1, "twitch")
-		input_manager:block_device_except_service("start_game_view", "gamepad", 1, "twitch")
-		self._parent.parent:set_input_blocked(true)
+	if arg_7_1 then
+		var_7_0:block_device_except_service("start_game_view", "keyboard", 1, "twitch")
+		var_7_0:block_device_except_service("start_game_view", "mouse", 1, "twitch")
+		var_7_0:block_device_except_service("start_game_view", "gamepad", 1, "twitch")
+		arg_7_0._parent.parent:set_input_blocked(true)
 	else
-		input_manager:device_unblock_all_services("keyboard")
-		input_manager:device_unblock_all_services("mouse")
-		input_manager:device_unblock_all_services("gamepad")
-		input_manager:block_device_except_service("start_game_view", "keyboard", 1)
-		input_manager:block_device_except_service("start_game_view", "mouse", 1)
-		input_manager:block_device_except_service("start_game_view", "gamepad", 1)
-		self._parent.parent:set_input_blocked(false)
+		var_7_0:device_unblock_all_services("keyboard")
+		var_7_0:device_unblock_all_services("mouse")
+		var_7_0:device_unblock_all_services("gamepad")
+		var_7_0:block_device_except_service("start_game_view", "keyboard", 1)
+		var_7_0:block_device_except_service("start_game_view", "mouse", 1)
+		var_7_0:block_device_except_service("start_game_view", "gamepad", 1)
+		arg_7_0._parent.parent:set_input_blocked(false)
 	end
 end
 
-StartGameWindowDeusTwitch._handle_twitch_login_input = function (self, dt, t, input_service)
-	local is_connecting = Managers.twitch:is_connecting()
-
-	if not is_connecting then
-		local is_connected = Managers.twitch:is_connected()
-		local frame_widget = self._widgets_by_name.frame_widget
+function StartGameWindowDeusTwitch._handle_twitch_login_input(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	if not Managers.twitch:is_connecting() then
+		local var_8_0 = Managers.twitch:is_connected()
+		local var_8_1 = arg_8_0._widgets_by_name.frame_widget
 
 		if IS_WINDOWS then
-			local frame_widget_content = frame_widget.content
-			local text_input_hotspot = frame_widget_content.text_input_hotspot
-			local screen_hotspot = frame_widget_content.screen_hotspot
-			local frame_hotspot = frame_widget_content.frame_hotspot
+			local var_8_2 = var_8_1.content
+			local var_8_3 = var_8_2.text_input_hotspot
+			local var_8_4 = var_8_2.screen_hotspot
+			local var_8_5 = var_8_2.frame_hotspot
 
-			if text_input_hotspot.on_pressed and not is_connected then
-				self:set_input_blocked(true)
+			if var_8_3.on_pressed and not var_8_0 then
+				arg_8_0:set_input_blocked(true)
 
-				frame_widget_content.text_field_active = true
-			elseif screen_hotspot.on_pressed or is_connected then
-				if screen_hotspot.on_pressed and not frame_widget_content.text_field_active and not frame_hotspot.on_pressed then
-					frame_widget_content.text_field_active = false
+				var_8_2.text_field_active = true
+			elseif var_8_4.on_pressed or var_8_0 then
+				if var_8_4.on_pressed and not var_8_2.text_field_active and not var_8_5.on_pressed then
+					var_8_2.text_field_active = false
 
-					self:set_input_blocked(false)
+					arg_8_0:set_input_blocked(false)
 
 					return
 				end
 
-				frame_widget_content.text_field_active = false
+				var_8_2.text_field_active = false
 
-				self:set_input_blocked(false)
+				arg_8_0:set_input_blocked(false)
 			end
 
-			if frame_widget_content.text_field_active then
-				if input_service:get("toggle_menu", true) then
-					frame_widget_content.text_field_active = false
+			if var_8_2.text_field_active then
+				if arg_8_3:get("toggle_menu", true) then
+					var_8_2.text_field_active = false
 
-					self:set_input_blocked(false)
+					arg_8_0:set_input_blocked(false)
 				else
 					Managers.chat:block_chat_input_for_one_frame()
 
-					local keystrokes = Keyboard.keystrokes()
+					local var_8_6 = Keyboard.keystrokes()
 
-					frame_widget_content.twitch_name, frame_widget_content.caret_index = KeystrokeHelper.parse_strokes(frame_widget_content.twitch_name, frame_widget_content.caret_index, "insert", keystrokes)
+					var_8_2.twitch_name, var_8_2.caret_index = KeystrokeHelper.parse_strokes(var_8_2.twitch_name, var_8_2.caret_index, "insert", var_8_6)
 
-					if input_service:get("execute_chat_input", true) then
-						frame_widget_content.text_field_active = false
+					if arg_8_3:get("execute_chat_input", true) then
+						var_8_2.text_field_active = false
 
-						self:set_input_blocked(false)
+						arg_8_0:set_input_blocked(false)
 
-						local user_name = string.gsub(frame_widget_content.twitch_name, " ", "")
+						local var_8_7 = string.gsub(var_8_2.twitch_name, " ", "")
 
-						Managers.twitch:connect(user_name, callback(Managers.twitch, "cb_connection_error_callback"), callback(self, "cb_connection_success_callback"))
+						Managers.twitch:connect(var_8_7, callback(Managers.twitch, "cb_connection_error_callback"), callback(arg_8_0, "cb_connection_success_callback"))
 					end
 				end
 			end
 		end
 
-		if not is_connected then
-			local connect_button_widget = self._widgets_by_name.button_1
+		if not var_8_0 then
+			local var_8_8 = arg_8_0._widgets_by_name.button_1
 
-			if connect_button_widget and UIUtils.is_button_hover_enter(connect_button_widget) then
-				self:_play_sound("Play_hud_hover")
+			if var_8_8 and UIUtils.is_button_hover_enter(var_8_8) then
+				arg_8_0:_play_sound("Play_hud_hover")
 			end
 
-			local button_pressed = connect_button_widget and UIUtils.is_button_pressed(connect_button_widget)
-
-			if button_pressed or input_service:get(CONNECT_INPUT) then
+			if var_8_8 and UIUtils.is_button_pressed(var_8_8) or arg_8_3:get(var_0_11) then
 				if IS_PS4 then
-					local user_id = Managers.account:user_id()
-					local twitch_user_name = PlayerData.twitch_user_name
-					local title = Localize("start_game_window_twitch_login_hint")
-					local position = definitions.twitch_keyboard_anchor_point
-					local inv_scale = RESOLUTION_LOOKUP.inv_scale
+					local var_8_9 = Managers.account:user_id()
+					local var_8_10 = PlayerData.twitch_user_name
+					local var_8_11 = Localize("start_game_window_twitch_login_hint")
+					local var_8_12 = var_0_0.twitch_keyboard_anchor_point
+					local var_8_13 = RESOLUTION_LOOKUP.inv_scale
 
-					self._virtual_keyboard_id = Managers.system_dialog:open_virtual_keyboard(user_id, title, twitch_user_name, position)
+					arg_8_0._virtual_keyboard_id = Managers.system_dialog:open_virtual_keyboard(var_8_9, var_8_11, var_8_10, var_8_12)
 				elseif IS_XB1 then
-					local twitch_user_name = PlayerData.twitch_user_name
-					local title = Localize("start_game_window_twitch_login_hint")
+					local var_8_14 = PlayerData.twitch_user_name
+					local var_8_15 = Localize("start_game_window_twitch_login_hint")
 
-					XboxInterface.show_virtual_keyboard(twitch_user_name, title)
+					XboxInterface.show_virtual_keyboard(var_8_14, var_8_15)
 
-					self._virtual_keyboard_id = true
+					arg_8_0._virtual_keyboard_id = true
 				else
-					local user_name = ""
+					local var_8_16 = ""
 
-					if frame_widget then
-						local frame_widget_content = frame_widget.content
+					if var_8_1 then
+						local var_8_17 = var_8_1.content
 
-						user_name = string.gsub(frame_widget_content.twitch_name, " ", "")
+						var_8_16 = string.gsub(var_8_17.twitch_name, " ", "")
 					end
 
-					Managers.twitch:connect(user_name, callback(Managers.twitch, "cb_connection_error_callback"), callback(self, "cb_connection_success_callback"))
-					self:_play_sound("Play_hud_select")
+					Managers.twitch:connect(var_8_16, callback(Managers.twitch, "cb_connection_error_callback"), callback(arg_8_0, "cb_connection_success_callback"))
+					arg_8_0:_play_sound("Play_hud_select")
 				end
 			end
 		else
-			local disconnect_button_widget = self._widgets_by_name.button_2
+			local var_8_18 = arg_8_0._widgets_by_name.button_2
 
-			if disconnect_button_widget and UIUtils.is_button_hover_enter(disconnect_button_widget) then
-				self:_play_sound("Play_hud_hover")
+			if var_8_18 and UIUtils.is_button_hover_enter(var_8_18) then
+				arg_8_0:_play_sound("Play_hud_hover")
 			end
 
-			local button_pressed = disconnect_button_widget and UIUtils.is_button_pressed(disconnect_button_widget)
-
-			if button_pressed or input_service:get(CONNECT_INPUT) then
-				self:_play_sound("Play_hud_select")
-				self:_set_active(false)
+			if var_8_18 and UIUtils.is_button_pressed(var_8_18) or arg_8_3:get(var_0_11) then
+				arg_8_0:_play_sound("Play_hud_select")
+				arg_8_0:_set_active(false)
 				Managers.twitch:disconnect()
 			end
 		end
 	end
 end
 
-StartGameWindowDeusTwitch.cb_connection_success_callback = function (self, user_data)
-	self:_set_disconnect_button_text()
-	self:_setup_connected_status()
-	self:_set_active(true)
+function StartGameWindowDeusTwitch.cb_connection_success_callback(arg_9_0, arg_9_1)
+	arg_9_0:_set_disconnect_button_text()
+	arg_9_0:_setup_connected_status()
+	arg_9_0:_set_active(true)
 end
 
-StartGameWindowDeusTwitch._setup_connected_status = function (self)
-	local user_name = Managers.twitch and Managers.twitch:user_name() or "N/A"
+function StartGameWindowDeusTwitch._setup_connected_status(arg_10_0)
+	local var_10_0 = Managers.twitch and Managers.twitch:user_name() or "N/A"
 
-	self._widgets_by_name.frame_widget.content.connected = Localize("start_game_window_twitch_connected_to") .. user_name
+	arg_10_0._widgets_by_name.frame_widget.content.connected = Localize("start_game_window_twitch_connected_to") .. var_10_0
 end
 
-local function is_journey_cycle_expired(journey_cycle, current_time)
-	return journey_cycle.remaining_time - (current_time - journey_cycle.time_of_update) < 0
+local function var_0_12(arg_11_0, arg_11_1)
+	return arg_11_0.remaining_time - (arg_11_1 - arg_11_0.time_of_update) < 0
 end
 
-StartGameWindowDeusTwitch._gather_unlocked_journeys = function (self)
-	local unlocked_journeys = {}
+function StartGameWindowDeusTwitch._gather_unlocked_journeys(arg_12_0)
+	local var_12_0 = {}
 
-	for _, journey_name in ipairs(LevelUnlockUtils.unlocked_journeys(self._statistics_db, self._stats_id)) do
-		unlocked_journeys[journey_name] = true
+	for iter_12_0, iter_12_1 in ipairs(LevelUnlockUtils.unlocked_journeys(arg_12_0._statistics_db, arg_12_0._stats_id)) do
+		var_12_0[iter_12_1] = true
 	end
 
-	local journey_cycle = self._backend_deus:get_journey_cycle()
-	local journey_data = journey_cycle.journey_data
+	local var_12_1 = arg_12_0._backend_deus:get_journey_cycle().journey_data
 
-	for k, _ in pairs(unlocked_journeys) do
-		if LevelUnlockUtils.is_chaos_waste_god_disabled(journey_data[k].dominant_god) then
-			unlocked_journeys[k] = nil
+	for iter_12_2, iter_12_3 in pairs(var_12_0) do
+		if LevelUnlockUtils.is_chaos_waste_god_disabled(var_12_1[iter_12_2].dominant_god) then
+			var_12_0[iter_12_2] = nil
 		end
 	end
 
-	self._unlocked_journeys = unlocked_journeys
+	arg_12_0._unlocked_journeys = var_12_0
 end
 
-StartGameWindowDeusTwitch._setup_journey_widgets = function (self)
-	local node_widgets = self._node_widgets
-	local statistics_db = self._statistics_db
-	local stats_id = self._stats_id
-	local unlocked_journeys = self._unlocked_journeys
-	local expedition_widgets = {}
-	local journey_position_x = -365
-	local settings = definitions.journey_widget_settings
-	local available_journey_order = AvailableJourneyOrder
+function StartGameWindowDeusTwitch._setup_journey_widgets(arg_13_0)
+	local var_13_0 = arg_13_0._node_widgets
+	local var_13_1 = arg_13_0._statistics_db
+	local var_13_2 = arg_13_0._stats_id
+	local var_13_3 = arg_13_0._unlocked_journeys
+	local var_13_4 = {}
+	local var_13_5 = -365
+	local var_13_6 = var_0_0.journey_widget_settings
+	local var_13_7 = AvailableJourneyOrder
 
-	for i = 1, #available_journey_order do
-		local journey_name = AvailableJourneyOrder[i]
-		local with_belakor = self._backend_deus:deus_journey_with_belakor(journey_name)
-		local journey_data = DeusJourneySettings[journey_name]
-		local index = #expedition_widgets + 1
-		local next_journey = available_journey_order[index + 1]
-		local widget_data = UIWidgets.create_expedition_widget_func("level_root_node", index, journey_data, journey_name, settings)
-		local widget = UIWidget.init(widget_data)
-		local content = widget.content
+	for iter_13_0 = 1, #var_13_7 do
+		local var_13_8 = AvailableJourneyOrder[iter_13_0]
+		local var_13_9 = arg_13_0._backend_deus:deus_journey_with_belakor(var_13_8)
+		local var_13_10 = DeusJourneySettings[var_13_8]
+		local var_13_11 = #var_13_4 + 1
+		local var_13_12 = var_13_7[var_13_11 + 1]
+		local var_13_13 = UIWidgets.create_expedition_widget_func("level_root_node", var_13_11, var_13_10, var_13_8, var_13_6)
+		local var_13_14 = UIWidget.init(var_13_13)
+		local var_13_15 = var_13_14.content
 
-		content.text = Localize(journey_data.display_name)
+		var_13_15.text = Localize(var_13_10.display_name)
+		var_13_5 = var_13_5 + (var_13_6.width + var_13_6.spacing_x)
 
-		local width_to_next_journey = settings.width + settings.spacing_x
+		local var_13_16 = var_13_14.offset
 
-		journey_position_x = journey_position_x + width_to_next_journey
+		var_13_16[1] = var_13_5
+		var_13_16[2] = 0
 
-		local offset = widget.offset
+		local var_13_17 = LevelUnlockUtils.completed_level_difficulty_index(var_13_1, var_13_2, var_13_8)
+		local var_13_18 = UIWidgetUtils.get_level_frame_by_difficulty_index(var_13_17)
+		local var_13_19 = var_13_3[var_13_8]
 
-		offset[1] = journey_position_x
-		offset[2] = 0
-
-		local completed_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(statistics_db, stats_id, journey_name)
-		local selection_frame_texture = UIWidgetUtils.get_level_frame_by_difficulty_index(completed_difficulty_index)
-		local is_unlocked = unlocked_journeys[journey_name]
-
-		content.level_icon = journey_data.level_image
-		content.locked = not is_unlocked
-		content.frame = selection_frame_texture
-		content.journey_name = journey_name
-		content.level_icon_frame = with_belakor and "morris_expedition_select_border_belakor" or "morris_expedition_select_border"
-		content.draw_path = next_journey ~= nil
-		content.draw_path_fill = unlocked_journeys[next_journey]
-		widget.style.path.texture_size[1] = settings.spacing_x
-		widget.style.path_glow.texture_size[1] = settings.spacing_x
-		expedition_widgets[index] = widget
-		journey_position_x = journey_position_x + settings.spacing_x
+		var_13_15.level_icon = var_13_10.level_image
+		var_13_15.locked = not var_13_19
+		var_13_15.frame = var_13_18
+		var_13_15.journey_name = var_13_8
+		var_13_15.level_icon_frame = var_13_9 and "morris_expedition_select_border_belakor" or "morris_expedition_select_border"
+		var_13_15.draw_path = var_13_12 ~= nil
+		var_13_15.draw_path_fill = var_13_3[var_13_12]
+		var_13_14.style.path.texture_size[1] = var_13_6.spacing_x
+		var_13_14.style.path_glow.texture_size[1] = var_13_6.spacing_x
+		var_13_4[var_13_11] = var_13_14
+		var_13_5 = var_13_5 + var_13_6.spacing_x
 	end
 
-	self._expedition_widgets = expedition_widgets
+	arg_13_0._expedition_widgets = var_13_4
 end
 
-StartGameWindowDeusTwitch._refresh_journey_cycle = function (self)
-	self._journey_cycle = self._backend_deus:get_journey_cycle()
+function StartGameWindowDeusTwitch._refresh_journey_cycle(arg_14_0)
+	arg_14_0._journey_cycle = arg_14_0._backend_deus:get_journey_cycle()
 
-	self:_on_new_journey_cycle()
+	arg_14_0:_on_new_journey_cycle()
 end
 
-StartGameWindowDeusTwitch._on_new_journey_cycle = function (self)
-	self:_update_journey_god_icons()
+function StartGameWindowDeusTwitch._on_new_journey_cycle(arg_15_0)
+	arg_15_0:_update_journey_god_icons()
 end
 
-StartGameWindowDeusTwitch._update_journey_god_icons = function (self)
-	local journey_cycle = self._journey_cycle
+function StartGameWindowDeusTwitch._update_journey_god_icons(arg_16_0)
+	local var_16_0 = arg_16_0._journey_cycle
 
-	for _, widget in ipairs(self._expedition_widgets) do
-		local content = widget.content
-		local theme = journey_cycle.journey_data[content.journey_name].dominant_god
-		local theme_settings = DeusThemeSettings[theme]
+	for iter_16_0, iter_16_1 in ipairs(arg_16_0._expedition_widgets) do
+		local var_16_1 = iter_16_1.content
+		local var_16_2 = var_16_0.journey_data[var_16_1.journey_name].dominant_god
 
-		content.theme_icon = theme_settings.text_icon
+		var_16_1.theme_icon = DeusThemeSettings[var_16_2].text_icon
 	end
 end
 
-StartGameWindowDeusTwitch.update = function (self, dt, t)
-	self:_update_modifiers(dt, t)
-	self:_update_input_description(dt, t)
-	self:_update_can_play(dt, t)
-	self:_update_animations(dt)
-	self:_handle_virtual_keyboard(dt, t)
-	self:_handle_gamepad_activity(dt, t)
-	self:_handle_input(dt, t)
-	self:_draw(dt, t)
+function StartGameWindowDeusTwitch.update(arg_17_0, arg_17_1, arg_17_2)
+	arg_17_0:_update_modifiers(arg_17_1, arg_17_2)
+	arg_17_0:_update_input_description(arg_17_1, arg_17_2)
+	arg_17_0:_update_can_play(arg_17_1, arg_17_2)
+	arg_17_0:_update_animations(arg_17_1)
+	arg_17_0:_handle_virtual_keyboard(arg_17_1, arg_17_2)
+	arg_17_0:_handle_gamepad_activity(arg_17_1, arg_17_2)
+	arg_17_0:_handle_input(arg_17_1, arg_17_2)
+	arg_17_0:_draw(arg_17_1, arg_17_2)
 end
 
-StartGameWindowDeusTwitch.post_update = function (self, dt, t)
+function StartGameWindowDeusTwitch.post_update(arg_18_0, arg_18_1, arg_18_2)
 	return
 end
 
-StartGameWindowDeusTwitch._handle_input = function (self, dt, t)
-	if self._virtual_keyboard_id then
+function StartGameWindowDeusTwitch._handle_input(arg_19_0, arg_19_1, arg_19_2)
+	if arg_19_0._virtual_keyboard_id then
 		return
 	end
 
-	local parent = self._parent
-	local input_service = parent:window_input_service()
-	local mouse_active = Managers.input:is_device_active("mouse")
-	local frame_widget = self._widgets_by_name.frame_widget
-	local frame_widget_content = frame_widget.content
+	local var_19_0 = arg_19_0._parent
+	local var_19_1 = var_19_0:window_input_service()
+	local var_19_2 = Managers.input:is_device_active("mouse")
 
-	if frame_widget_content.text_field_active then
-		input_service:get("move_up", true)
-		input_service:get("move_down", true)
-		input_service:get("move_left", true)
-		input_service:get("move_right", true)
-		input_service:get("cycle_next", true)
-		input_service:get("cycle_previous", true)
+	if arg_19_0._widgets_by_name.frame_widget.content.text_field_active then
+		var_19_1:get("move_up", true)
+		var_19_1:get("move_down", true)
+		var_19_1:get("move_left", true)
+		var_19_1:get("move_right", true)
+		var_19_1:get("cycle_next", true)
+		var_19_1:get("cycle_previous", true)
 	end
 
-	if self._is_server then
-		if not mouse_active then
-			local input_change
-			local input_index = self._input_index
+	if arg_19_0._is_server then
+		if not var_19_2 then
+			local var_19_3
+			local var_19_4 = arg_19_0._input_index
 
-			if input_service:get("move_down") then
-				input_index = input_index + 1
-				input_change = 1
-			elseif input_service:get("move_up") then
-				input_index = input_index - 1
-				input_change = -1
+			if var_19_1:get("move_down") then
+				var_19_4 = var_19_4 + 1
+				var_19_3 = 1
+			elseif var_19_1:get("move_up") then
+				var_19_4 = var_19_4 - 1
+				var_19_3 = -1
 			else
-				local input_funcs = selector_input_definition[input_index]
-
-				input_funcs.update(self, input_service, dt, t)
+				var_0_8[var_19_4].update(arg_19_0, var_19_1, arg_19_1, arg_19_2)
 			end
 
-			if input_index ~= self._input_index then
-				self:_gamepad_selector_input_func(input_index, input_change)
+			if var_19_4 ~= arg_19_0._input_index then
+				arg_19_0:_gamepad_selector_input_func(var_19_4, var_19_3)
 			end
 		else
-			local selection_widgets_by_name = self._selection_widgets_by_name
+			local var_19_5 = arg_19_0._selection_widgets_by_name
 
-			for widget_name, widget in pairs(selection_widgets_by_name) do
-				if widget_name == "difficulty_stepper" then
-					if UIUtils.is_button_pressed(widget, "left_arrow_hotspot") then
-						self:_option_selected(widget_name, "left_arrow", t)
-					elseif UIUtils.is_button_pressed(widget, "right_arrow_hotspot") then
-						self:_option_selected(widget_name, "right_arrow", t)
+			for iter_19_0, iter_19_1 in pairs(var_19_5) do
+				if iter_19_0 == "difficulty_stepper" then
+					if UIUtils.is_button_pressed(iter_19_1, "left_arrow_hotspot") then
+						arg_19_0:_option_selected(iter_19_0, "left_arrow", arg_19_2)
+					elseif UIUtils.is_button_pressed(iter_19_1, "right_arrow_hotspot") then
+						arg_19_0:_option_selected(iter_19_0, "right_arrow", arg_19_2)
 					end
 
-					if UIUtils.is_button_hover(widget, "info_hotspot") or UIUtils.is_button_hover(self._widgets_by_name.difficulty_info, "widget_hotspot") then
-						local widgets = {
-							difficulty_info = self._widgets_by_name.difficulty_info,
-							upsell_button = self._widgets_by_name.upsell_button,
+					if UIUtils.is_button_hover(iter_19_1, "info_hotspot") or UIUtils.is_button_hover(arg_19_0._widgets_by_name.difficulty_info, "widget_hotspot") then
+						local var_19_6 = {
+							difficulty_info = arg_19_0._widgets_by_name.difficulty_info,
+							upsell_button = arg_19_0._widgets_by_name.upsell_button
 						}
 
-						if not self.diff_info_anim_played then
-							self._diff_anim_id = self._ui_animator:start_animation("difficulty_info_enter", widgets, scenegraph_definition)
-							self.diff_info_anim_played = true
+						if not arg_19_0.diff_info_anim_played then
+							arg_19_0._diff_anim_id = arg_19_0._ui_animator:start_animation("difficulty_info_enter", var_19_6, var_0_1)
+							arg_19_0.diff_info_anim_played = true
 						end
 
-						self:_update_difficulty_lock()
+						arg_19_0:_update_difficulty_lock()
 					else
-						if self._diff_anim_id then
-							self._ui_animator:stop_animation(self._diff_anim_id)
+						if arg_19_0._diff_anim_id then
+							arg_19_0._ui_animator:stop_animation(arg_19_0._diff_anim_id)
 						end
 
-						self.diff_info_anim_played = false
-						self._widgets_by_name.upsell_button.content.visible = false
-						self._widgets_by_name.difficulty_info.content.visible = false
+						arg_19_0.diff_info_anim_played = false
+						arg_19_0._widgets_by_name.upsell_button.content.visible = false
+						arg_19_0._widgets_by_name.difficulty_info.content.visible = false
 					end
-				elseif UIUtils.is_button_pressed(widget) then
-					self:_option_selected(widget_name, nil, t)
+				elseif UIUtils.is_button_pressed(iter_19_1) then
+					arg_19_0:_option_selected(iter_19_0, nil, arg_19_2)
 				end
 
-				if widget_name == "difficulty_stepper" then
-					widget.content.is_selected = UIUtils.is_button_hover(widget, "left_arrow_hotspot") or UIUtils.is_button_hover(widget, "right_arrow_hotspot")
+				if iter_19_0 == "difficulty_stepper" then
+					iter_19_1.content.is_selected = UIUtils.is_button_hover(iter_19_1, "left_arrow_hotspot") or UIUtils.is_button_hover(iter_19_1, "right_arrow_hotspot")
 				else
-					widget.content.is_selected = UIUtils.is_button_hover(widget)
+					iter_19_1.content.is_selected = UIUtils.is_button_hover(iter_19_1)
 				end
 			end
 		end
 
-		local index = self._expeditions_selection_index
-		local selected_widget = self._expedition_widgets[self._expeditions_selection_index]
+		local var_19_7 = arg_19_0._expeditions_selection_index
+		local var_19_8 = arg_19_0._expedition_widgets[arg_19_0._expeditions_selection_index]
 
-		for i = 1, #self._expedition_widgets do
-			local widget = self._expedition_widgets[i]
+		for iter_19_2 = 1, #arg_19_0._expedition_widgets do
+			local var_19_9 = arg_19_0._expedition_widgets[iter_19_2]
 
-			if UIUtils.is_button_pressed(widget) then
-				if selected_widget then
-					selected_widget.content.button_hotspot.is_selected = nil
+			if UIUtils.is_button_pressed(var_19_9) then
+				if var_19_8 then
+					var_19_8.content.button_hotspot.is_selected = nil
 				end
 
-				widget.content.button_hotspot.is_selected = true
+				var_19_9.content.button_hotspot.is_selected = true
 
-				local journey_name = widget.content.journey_name
+				local var_19_10 = var_19_9.content.journey_name
 
-				parent:set_selected_level_id(journey_name)
+				var_19_0:set_selected_level_id(var_19_10)
 
-				self._expeditions_selection_index = i
+				arg_19_0._expeditions_selection_index = iter_19_2
 
-				self:_play_sound("play_gui_lobby_button_01_difficulty_select_normal")
+				arg_19_0:_play_sound("play_gui_lobby_button_01_difficulty_select_normal")
 			end
 
-			if UIUtils.is_button_hover_enter(widget) then
-				self._parent:play_sound("Play_hud_hover")
+			if UIUtils.is_button_hover_enter(var_19_9) then
+				arg_19_0._parent:play_sound("Play_hud_hover")
 			end
 		end
 
-		local upsell_button = self._widgets_by_name.upsell_button
+		local var_19_11 = arg_19_0._widgets_by_name.upsell_button
 
-		if UIUtils.is_button_pressed(upsell_button) then
-			Managers.unlock:open_dlc_page(self._dlc_name)
+		if UIUtils.is_button_pressed(var_19_11) then
+			Managers.unlock:open_dlc_page(arg_19_0._dlc_name)
 		end
 
-		if self:_can_play() then
-			local selection_widgets_by_name = self._selection_widgets_by_name
+		if arg_19_0:_can_play() then
+			local var_19_12 = arg_19_0._selection_widgets_by_name
 
-			if UIUtils.is_button_hover_enter(selection_widgets_by_name.play_button) then
-				self._parent:play_sound("Play_hud_hover")
+			if UIUtils.is_button_hover_enter(var_19_12.play_button) then
+				arg_19_0._parent:play_sound("Play_hud_hover")
 			end
 
-			if input_service:get(START_GAME_INPUT) or UIUtils.is_button_pressed(selection_widgets_by_name.play_button) then
-				local twitch_settings = parent:get_twitch_settings(self._mechanism_name) or parent:get_twitch_settings("adventure")
+			if var_19_1:get(var_0_9) or UIUtils.is_button_pressed(var_19_12.play_button) then
+				local var_19_13 = var_19_0:get_twitch_settings(arg_19_0._mechanism_name) or var_19_0:get_twitch_settings("adventure")
 
-				self._parent:set_difficulty_option(self._current_difficulty)
-				parent:play(t, twitch_settings.game_mode_type)
+				arg_19_0._parent:set_difficulty_option(arg_19_0._current_difficulty)
+				var_19_0:play(arg_19_2, var_19_13.game_mode_type)
 
-				self._play_button_pressed = true
+				arg_19_0._play_button_pressed = true
 			end
 		end
 	end
 
-	self:_update_gamemode_info_text(input_service)
-	self:_handle_twitch_login_input(dt, t, input_service)
+	arg_19_0:_update_gamemode_info_text(var_19_1)
+	arg_19_0:_handle_twitch_login_input(arg_19_1, arg_19_2, var_19_1)
 end
 
-StartGameWindowDeusTwitch._update_input_description = function (self, dt, t)
-	local connected = Managers.twitch and Managers.twitch:is_connected()
+function StartGameWindowDeusTwitch._update_input_description(arg_20_0, arg_20_1, arg_20_2)
+	local var_20_0 = Managers.twitch and Managers.twitch:is_connected()
 
-	self:_set_input_description(connected)
+	arg_20_0:_set_input_description(var_20_0)
 end
 
-StartGameWindowDeusTwitch._update_modifiers = function (self, dt, t)
-	local current_time = Managers.time:time("main")
-	local journey_cycle = self._journey_cycle
+function StartGameWindowDeusTwitch._update_modifiers(arg_21_0, arg_21_1, arg_21_2)
+	local var_21_0 = Managers.time:time("main")
+	local var_21_1 = arg_21_0._journey_cycle
 
-	if not journey_cycle or is_journey_cycle_expired(journey_cycle, current_time) then
-		self:_refresh_journey_cycle()
+	if not var_21_1 or var_0_12(var_21_1, var_21_0) then
+		arg_21_0:_refresh_journey_cycle()
 	end
 end
 
-StartGameWindowDeusTwitch._update_expedition_option = function (self)
-	local parent = self._parent
-	local selected_level_id = parent:get_selected_level_id()
+function StartGameWindowDeusTwitch._update_expedition_option(arg_22_0)
+	local var_22_0 = arg_22_0._parent:get_selected_level_id()
 
-	if not selected_level_id then
+	if not var_22_0 then
 		return
 	end
 
-	local level_settings = LevelSettings[selected_level_id]
-	local display_name = level_settings.display_name
-	local icon_texture = level_settings.level_image
-	local completed_difficulty_index = self._parent:get_completed_level_difficulty_index(self._statistics_db, self._stats_id, selected_level_id)
+	local var_22_1 = LevelSettings[var_22_0]
+	local var_22_2 = var_22_1.display_name
+	local var_22_3 = var_22_1.level_image
+	local var_22_4 = arg_22_0._parent:get_completed_level_difficulty_index(arg_22_0._statistics_db, arg_22_0._stats_id, var_22_0)
 
-	for i = 1, #self._expedition_widgets do
-		local widget = self._expedition_widgets[i]
-		local content = widget.content
-		local journey_name = content.journey_name
+	for iter_22_0 = 1, #arg_22_0._expedition_widgets do
+		local var_22_5 = arg_22_0._expedition_widgets[iter_22_0].content
 
-		if selected_level_id == journey_name then
-			content.button_hotspot.is_selected = true
-			self._expeditions_selection_index = i
+		if var_22_0 == var_22_5.journey_name then
+			var_22_5.button_hotspot.is_selected = true
+			arg_22_0._expeditions_selection_index = iter_22_0
 
 			break
 		end
 	end
 end
 
-StartGameWindowDeusTwitch._update_button_animations = function (self, dt)
-	local widgets_by_name = self._widgets_by_name
+function StartGameWindowDeusTwitch._update_button_animations(arg_23_0, arg_23_1)
+	local var_23_0 = arg_23_0._widgets_by_name
 
-	self:_animate_button(widgets_by_name.button_1, dt)
-	self:_animate_button(widgets_by_name.button_2, dt)
+	arg_23_0:_animate_button(var_23_0.button_1, arg_23_1)
+	arg_23_0:_animate_button(var_23_0.button_2, arg_23_1)
 end
 
-StartGameWindowDeusTwitch._update_animations = function (self, dt, t)
+function StartGameWindowDeusTwitch._update_animations(arg_24_0, arg_24_1, arg_24_2)
 	if not IS_PS4 and not Managers.input:is_device_active("gamepad") then
-		self:_update_button_animations(dt)
+		arg_24_0:_update_button_animations(arg_24_1)
 	end
 
-	local ui_animator = self._ui_animator
+	local var_24_0 = arg_24_0._ui_animator
 
-	ui_animator:update(dt)
+	var_24_0:update(arg_24_1)
 
-	local animations = self._animations
+	local var_24_1 = arg_24_0._animations
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			animations[animation_name] = nil
+	for iter_24_0, iter_24_1 in pairs(var_24_1) do
+		if var_24_0:is_animation_completed(iter_24_1) then
+			var_24_1[iter_24_0] = nil
 		end
 	end
 
-	local widgets = self._expedition_widgets
+	local var_24_2 = arg_24_0._expedition_widgets
 
-	for i = 1, #widgets do
-		local widget = widgets[i]
+	for iter_24_2 = 1, #var_24_2 do
+		local var_24_3 = var_24_2[iter_24_2]
 
-		self:_animate_expedition_widget(widget, dt)
+		arg_24_0:_animate_expedition_widget(var_24_3, arg_24_1)
 	end
 end
 
-StartGameWindowDeusTwitch._draw = function (self, dt, t)
-	local ui_top_renderer = self._ui_top_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local input_service = self._parent:window_input_service()
-	local render_settings = self._render_settings
-	local parent_scenegraph_id
+function StartGameWindowDeusTwitch._draw(arg_25_0, arg_25_1, arg_25_2)
+	local var_25_0 = arg_25_0._ui_top_renderer
+	local var_25_1 = arg_25_0._ui_scenegraph
+	local var_25_2 = arg_25_0._parent:window_input_service()
+	local var_25_3 = arg_25_0._render_settings
+	local var_25_4
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, parent_scenegraph_id, render_settings)
-	UIRenderer.draw_all_widgets(ui_top_renderer, self._widgets)
-	UIRenderer.draw_all_widgets(ui_top_renderer, self._expedition_widgets)
-	UIRenderer.draw_all_widgets(ui_top_renderer, self._selection_widgets)
+	UIRenderer.begin_pass(var_25_0, var_25_1, var_25_2, arg_25_1, var_25_4, var_25_3)
+	UIRenderer.draw_all_widgets(var_25_0, arg_25_0._widgets)
+	UIRenderer.draw_all_widgets(var_25_0, arg_25_0._expedition_widgets)
+	UIRenderer.draw_all_widgets(var_25_0, arg_25_0._selection_widgets)
 
-	if self._show_additional_settings then
-		UIRenderer.draw_all_widgets(ui_top_renderer, self._additional_settings_widgets)
+	if arg_25_0._show_additional_settings then
+		UIRenderer.draw_all_widgets(var_25_0, arg_25_0._additional_settings_widgets)
 	end
 
-	UIRenderer.end_pass(ui_top_renderer)
+	UIRenderer.end_pass(var_25_0)
 end
 
-StartGameWindowDeusTwitch._start_transition_animation = function (self, animation_name)
-	local params = {
-		render_settings = self._render_settings,
+function StartGameWindowDeusTwitch._start_transition_animation(arg_26_0, arg_26_1)
+	local var_26_0 = {
+		render_settings = arg_26_0._render_settings
 	}
-	local anim_id = self._ui_animator:start_animation(animation_name, nil, scenegraph_definition, params)
+	local var_26_1 = arg_26_0._ui_animator:start_animation(arg_26_1, nil, var_0_1, var_26_0)
 
-	self._animations[animation_name] = anim_id
+	arg_26_0._animations[arg_26_1] = var_26_1
 end
 
-StartGameWindowDeusTwitch._animate_button = function (self, widget, dt)
-	local content = widget.content
-	local hotspot_name = "button_hotspot"
-	local hotspot = content[hotspot_name]
-	local input_speed = 20
-	local input_progress = hotspot.input_progress or 0
-	local input_pressed = hotspot.is_clicked and hotspot.is_clicked == 0
+function StartGameWindowDeusTwitch._animate_button(arg_27_0, arg_27_1, arg_27_2)
+	local var_27_0 = arg_27_1.content.button_hotspot
+	local var_27_1 = 20
+	local var_27_2 = var_27_0.input_progress or 0
+	local var_27_3 = var_27_0.is_clicked and var_27_0.is_clicked == 0
+	local var_27_4 = UIUtils.animate_value(var_27_2, arg_27_2 * var_27_1, var_27_3)
+	local var_27_5 = 8
+	local var_27_6 = var_27_0.hover_progress or 0
+	local var_27_7 = not var_27_0.disable_button and var_27_0.is_hover
+	local var_27_8 = UIUtils.animate_value(var_27_6, arg_27_2 * var_27_5, var_27_7)
+	local var_27_9 = var_27_0.selection_progress or 0
+	local var_27_10 = not var_27_0.disable_button and var_27_0.is_selected
+	local var_27_11 = UIUtils.animate_value(var_27_9, arg_27_2 * var_27_5, var_27_10)
+	local var_27_12 = math.max(var_27_8, var_27_11)
+	local var_27_13 = arg_27_1.style
 
-	input_progress = UIUtils.animate_value(input_progress, dt * input_speed, input_pressed)
+	var_27_13.clicked_rect.color[1] = 100 * var_27_4
 
-	local speed = 8
-	local hover_progress = hotspot.hover_progress or 0
-	local is_hover = not hotspot.disable_button and hotspot.is_hover
+	local var_27_14 = "hover_glow"
+	local var_27_15 = 255 * var_27_12
 
-	hover_progress = UIUtils.animate_value(hover_progress, dt * speed, is_hover)
+	var_27_13[var_27_14].color[1] = var_27_15
 
-	local selection_progress = hotspot.selection_progress or 0
-	local is_selected = not hotspot.disable_button and hotspot.is_selected
+	local var_27_16 = var_27_13.text
+	local var_27_17 = var_27_16.text_color
+	local var_27_18 = var_27_16.default_text_color
+	local var_27_19 = var_27_16.select_text_color
 
-	selection_progress = UIUtils.animate_value(selection_progress, dt * speed, is_selected)
+	Colors.lerp_color_tables(var_27_18, var_27_19, var_27_12, var_27_17)
 
-	local combined_progress = math.max(hover_progress, selection_progress)
-	local style = widget.style
-	local clicked_rect_name = "clicked_rect"
-
-	style[clicked_rect_name].color[1] = 100 * input_progress
-
-	local hover_glow_name = "hover_glow"
-	local hover_alpha = 255 * combined_progress
-
-	style[hover_glow_name].color[1] = hover_alpha
-
-	local text_name = "text"
-	local text_style = style[text_name]
-	local text_color = text_style.text_color
-	local default_text_color = text_style.default_text_color
-	local select_text_color = text_style.select_text_color
-
-	Colors.lerp_color_tables(default_text_color, select_text_color, combined_progress, text_color)
-
-	hotspot.hover_progress = hover_progress
-	hotspot.input_progress = input_progress
-	hotspot.selection_progress = selection_progress
+	var_27_0.hover_progress = var_27_8
+	var_27_0.input_progress = var_27_4
+	var_27_0.selection_progress = var_27_11
 end
 
-StartGameWindowDeusTwitch._animate_expedition_widget = function (self, widget, dt)
-	local content = widget.content
-	local hotspot = content.button_hotspot
-	local is_selected = hotspot.is_selected
-	local selected_progress = hotspot.selected_progress or 0
-	local selected_speed = 1.5
+function StartGameWindowDeusTwitch._animate_expedition_widget(arg_28_0, arg_28_1, arg_28_2)
+	local var_28_0 = arg_28_1.content.button_hotspot
+	local var_28_1 = var_28_0.is_selected
+	local var_28_2 = var_28_0.selected_progress or 0
+	local var_28_3 = 1.5
+	local var_28_4 = UIUtils.animate_value(var_28_2, var_28_3 * arg_28_2, var_28_1)
 
-	selected_progress = UIUtils.animate_value(selected_progress, selected_speed * dt, is_selected)
-
-	local style = widget.style
-
-	style.purple_glow.color[1] = 255 * selected_progress
-	hotspot.selected_progress = selected_progress
+	arg_28_1.style.purple_glow.color[1] = 255 * var_28_4
+	var_28_0.selected_progress = var_28_4
 end
 
-StartGameWindowDeusTwitch._play_sound = function (self, event)
-	self._parent:play_sound(event)
+function StartGameWindowDeusTwitch._play_sound(arg_29_0, arg_29_1)
+	arg_29_0._parent:play_sound(arg_29_1)
 end
 
-StartGameWindowDeusTwitch._handle_virtual_keyboard = function (self, dt, t)
-	if not self._virtual_keyboard_id then
+function StartGameWindowDeusTwitch._handle_virtual_keyboard(arg_30_0, arg_30_1, arg_30_2)
+	if not arg_30_0._virtual_keyboard_id then
 		return
 	end
 
 	if IS_XB1 then
 		if not XboxInterface.interface_active() then
-			local twitch_user_name = XboxInterface.get_keyboard_result()
+			local var_30_0 = XboxInterface.get_keyboard_result()
 
-			self._virtual_keyboard_id = nil
+			arg_30_0._virtual_keyboard_id = nil
 
-			local twitch_user_name = string.gsub(twitch_user_name, " ", "")
+			local var_30_1 = string.gsub(var_30_0, " ", "")
 
-			if twitch_user_name then
-				PlayerData.twitch_user_name = twitch_user_name
+			if var_30_1 then
+				PlayerData.twitch_user_name = var_30_1
 			end
 
-			local frame_widget = self._widgets_by_name.frame_widget
-			local frame_widget_content = frame_widget.content
+			arg_30_0._widgets_by_name.frame_widget.content.twitch_name = var_30_1
 
-			frame_widget_content.twitch_name = twitch_user_name
-
-			Managers.twitch:connect(twitch_user_name, callback(Managers.twitch, "cb_connection_error_callback"), callback(self, "cb_connection_success_callback"))
-			self:_play_sound("Play_hud_select")
+			Managers.twitch:connect(var_30_1, callback(Managers.twitch, "cb_connection_error_callback"), callback(arg_30_0, "cb_connection_success_callback"))
+			arg_30_0:_play_sound("Play_hud_select")
 		end
 	else
-		local done, success, twitch_user_name = Managers.system_dialog:poll_virtual_keyboard(self._virtual_keyboard_id)
+		local var_30_2, var_30_3, var_30_4 = Managers.system_dialog:poll_virtual_keyboard(arg_30_0._virtual_keyboard_id)
 
-		if done then
-			self._virtual_keyboard_id = nil
+		if var_30_2 then
+			arg_30_0._virtual_keyboard_id = nil
 
-			if success then
-				local twitch_user_name = string.gsub(twitch_user_name, " ", "")
+			if var_30_3 then
+				local var_30_5 = string.gsub(var_30_4, " ", "")
 
-				if twitch_user_name then
-					PlayerData.twitch_user_name = twitch_user_name
+				if var_30_5 then
+					PlayerData.twitch_user_name = var_30_5
 				end
 
-				local frame_widget = self._widgets_by_name.frame_widget
-				local frame_widget_content = frame_widget.content
+				arg_30_0._widgets_by_name.frame_widget.content.twitch_name = var_30_5
 
-				frame_widget_content.twitch_name = twitch_user_name
-
-				Managers.twitch:connect(twitch_user_name, callback(Managers.twitch, "cb_connection_error_callback"), callback(self, "cb_connection_success_callback"))
-				self:_play_sound("Play_hud_select")
+				Managers.twitch:connect(var_30_5, callback(Managers.twitch, "cb_connection_error_callback"), callback(arg_30_0, "cb_connection_success_callback"))
+				arg_30_0:_play_sound("Play_hud_select")
 			end
 		end
 	end
 end
 
-StartGameWindowDeusTwitch._handle_gamepad_activity = function (self, dt, t)
-	local force_update = self.gamepad_active_last_frame == nil
-	local mouse_active = Managers.input:is_device_active("mouse")
+function StartGameWindowDeusTwitch._handle_gamepad_activity(arg_31_0, arg_31_1, arg_31_2)
+	local var_31_0 = arg_31_0.gamepad_active_last_frame == nil
 
-	if not mouse_active then
-		if not self.gamepad_active_last_frame or force_update then
-			self.gamepad_active_last_frame = true
-			self._input_index = 1
+	if not Managers.input:is_device_active("mouse") then
+		if not arg_31_0.gamepad_active_last_frame or var_31_0 then
+			arg_31_0.gamepad_active_last_frame = true
+			arg_31_0._input_index = 1
 
-			local input_funcs = selector_input_definition[self._input_index]
+			local var_31_1 = var_0_8[arg_31_0._input_index]
 
-			if input_funcs and input_funcs.enter_requirements(self) then
-				input_funcs.on_enter(self)
+			if var_31_1 and var_31_1.enter_requirements(arg_31_0) then
+				var_31_1.on_enter(arg_31_0)
 			end
 		end
-	elseif self.gamepad_active_last_frame or force_update then
-		self.gamepad_active_last_frame = false
+	elseif arg_31_0.gamepad_active_last_frame or var_31_0 then
+		arg_31_0.gamepad_active_last_frame = false
 
-		local input_funcs = selector_input_definition[self._input_index]
+		local var_31_2 = var_0_8[arg_31_0._input_index]
 
-		if input_funcs then
-			input_funcs.on_exit(self)
+		if var_31_2 then
+			var_31_2.on_exit(arg_31_0)
 		end
 	end
 end
 
-StartGameWindowDeusTwitch._verify_selection_index = function (self, input_index, input_change)
-	local verified_index = self._input_index
-	local num_inputs = #selector_input_definition
+function StartGameWindowDeusTwitch._verify_selection_index(arg_32_0, arg_32_1, arg_32_2)
+	local var_32_0 = arg_32_0._input_index
+	local var_32_1 = #var_0_8
 
-	input_index = math.clamp(input_index, 1, num_inputs)
+	arg_32_1 = math.clamp(arg_32_1, 1, var_32_1)
 
-	if not input_change then
-		return input_index
+	if not arg_32_2 then
+		return arg_32_1
 	end
 
-	local input_funcs = selector_input_definition[input_index]
+	local var_32_2 = var_0_8[arg_32_1]
 
-	while input_funcs and input_index < num_inputs and not input_funcs.enter_requirements(self) do
-		input_index = input_index + input_change
-		input_funcs = selector_input_definition[input_index]
+	while var_32_2 and arg_32_1 < var_32_1 and not var_32_2.enter_requirements(arg_32_0) do
+		arg_32_1 = arg_32_1 + arg_32_2
+		var_32_2 = var_0_8[arg_32_1]
 	end
 
-	if input_funcs and input_funcs.enter_requirements(self) then
-		verified_index = input_index
+	if var_32_2 and var_32_2.enter_requirements(arg_32_0) then
+		var_32_0 = arg_32_1
 	end
 
-	return verified_index
+	return var_32_0
 end
 
-StartGameWindowDeusTwitch._gamepad_selector_input_func = function (self, input_index, input_change)
-	local mouse_active = Managers.input:is_device_active("mouse")
+function StartGameWindowDeusTwitch._gamepad_selector_input_func(arg_33_0, arg_33_1, arg_33_2)
+	local var_33_0 = Managers.input:is_device_active("mouse")
 
-	input_index = self:_verify_selection_index(input_index, input_change)
+	arg_33_1 = arg_33_0:_verify_selection_index(arg_33_1, arg_33_2)
 
-	if self._input_index ~= input_index and not mouse_active then
-		self._parent:play_sound("play_gui_lobby_button_02_mission_act_click")
+	if arg_33_0._input_index ~= arg_33_1 and not var_33_0 then
+		arg_33_0._parent:play_sound("play_gui_lobby_button_02_mission_act_click")
 
-		if self._input_index then
-			local input_funcs = selector_input_definition[self._input_index]
-
-			input_funcs.on_exit(self)
+		if arg_33_0._input_index then
+			var_0_8[arg_33_0._input_index].on_exit(arg_33_0)
 		end
 
-		local input_funcs = selector_input_definition[input_index]
-
-		input_funcs.on_enter(self)
+		var_0_8[arg_33_1].on_enter(arg_33_0)
 	end
 
-	self._input_index = input_index
+	arg_33_0._input_index = arg_33_1
 end
 
-StartGameWindowDeusTwitch._update_difficulty_option = function (self, difficulty_key)
-	if difficulty_key then
-		local difficulty_settings = DifficultySettings[difficulty_key]
-		local difficulty_widget = self._selection_widgets_by_name.difficulty_stepper
+function StartGameWindowDeusTwitch._update_difficulty_option(arg_34_0, arg_34_1)
+	if arg_34_1 then
+		local var_34_0 = DifficultySettings[arg_34_1]
+		local var_34_1 = arg_34_0._selection_widgets_by_name.difficulty_stepper
 
-		difficulty_widget.content.selected_difficulty_text = Localize(difficulty_settings.display_name)
+		var_34_1.content.selected_difficulty_text = Localize(var_34_0.display_name)
 
-		local display_image = difficulty_settings.display_image
+		local var_34_2 = var_34_0.display_image
 
-		difficulty_widget.content.difficulty_icon = display_image
+		var_34_1.content.difficulty_icon = var_34_2
 
-		self:_set_info_window(difficulty_key)
+		arg_34_0:_set_info_window(arg_34_1)
 
-		self._current_difficulty = difficulty_key
+		arg_34_0._current_difficulty = arg_34_1
 	end
 end
 
-StartGameWindowDeusTwitch._option_selected = function (self, widget_name, button_name, t)
-	local parent = self._parent
-	local twitch_settings = parent:get_twitch_settings(self._mechanism_name) or parent:get_twitch_settings("adventure")
+function StartGameWindowDeusTwitch._option_selected(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+	local var_35_0 = arg_35_0._parent
+	local var_35_1 = var_35_0:get_twitch_settings(arg_35_0._mechanism_name) or var_35_0:get_twitch_settings("adventure")
 
-	if widget_name == "difficulty_stepper" then
-		local difficulty_key = self._current_difficulty
-		local difficulty_list = GameModeSettings.deus.difficulties
-		local current_difficulty_index = table.find(difficulty_list, difficulty_key)
-		local new_current_index = 0
+	if arg_35_1 == "difficulty_stepper" then
+		local var_35_2 = arg_35_0._current_difficulty
+		local var_35_3 = GameModeSettings.deus.difficulties
+		local var_35_4 = table.find(var_35_3, var_35_2)
+		local var_35_5 = 0
 
-		if button_name == "left_arrow" then
-			if current_difficulty_index - 1 >= 1 then
-				new_current_index = current_difficulty_index - 1
+		if arg_35_2 == "left_arrow" then
+			if var_35_4 - 1 >= 1 then
+				var_35_5 = var_35_4 - 1
 
-				self._parent:play_sound("hud_morris_start_menu_set")
+				arg_35_0._parent:play_sound("hud_morris_start_menu_set")
 			end
-		elseif button_name == "right_arrow" and current_difficulty_index + 1 <= #difficulty_list then
-			new_current_index = current_difficulty_index + 1
+		elseif arg_35_2 == "right_arrow" and var_35_4 + 1 <= #var_35_3 then
+			var_35_5 = var_35_4 + 1
 
-			self._parent:play_sound("hud_morris_start_menu_set")
+			arg_35_0._parent:play_sound("hud_morris_start_menu_set")
 		end
 
-		self:_update_difficulty_option(difficulty_list[new_current_index])
-	elseif widget_name == "play_button" then
-		self._play_button_pressed = true
+		arg_35_0:_update_difficulty_option(var_35_3[var_35_5])
+	elseif arg_35_1 == "play_button" then
+		arg_35_0._play_button_pressed = true
 
-		self._parent:set_difficulty_option(self._current_difficulty)
-		self._parent:play(t, twitch_settings.game_mode_type)
+		arg_35_0._parent:set_difficulty_option(arg_35_0._current_difficulty)
+		arg_35_0._parent:play(arg_35_3, var_35_1.game_mode_type)
 	else
-		ferror("Unknown selector_input_definition: %s", widget_name)
+		ferror("Unknown selector_input_definition: %s", arg_35_1)
 	end
 end
 
-StartGameWindowDeusTwitch._set_input_description = function (self, connected)
-	if self._is_server then
-		if connected then
-			local input_actions = self._dlc_locked and "deus_twitch_buy_connected" or "deus_default_twitch_connected"
+function StartGameWindowDeusTwitch._set_input_description(arg_36_0, arg_36_1)
+	if arg_36_0._is_server then
+		if arg_36_1 then
+			local var_36_0 = arg_36_0._dlc_locked and "deus_twitch_buy_connected" or "deus_default_twitch_connected"
 
-			self._parent:change_generic_actions(input_actions)
+			arg_36_0._parent:change_generic_actions(var_36_0)
 		else
-			local input_actions = self._dlc_locked and "deus_twitch_buy" or "deus_default_twitch"
+			local var_36_1 = arg_36_0._dlc_locked and "deus_twitch_buy" or "deus_default_twitch"
 
-			self._parent:change_generic_actions(input_actions)
+			arg_36_0._parent:change_generic_actions(var_36_1)
 		end
-	elseif connected then
-		self._parent:change_generic_actions("deus_default_twitch_client_connected")
+	elseif arg_36_1 then
+		arg_36_0._parent:change_generic_actions("deus_default_twitch_client_connected")
 	else
-		self._parent:change_generic_actions("deus_default_twitch_client")
+		arg_36_0._parent:change_generic_actions("deus_default_twitch_client")
 	end
 
-	self._input_description_connected = connected
+	arg_36_0._input_description_connected = arg_36_1
 end
 
-StartGameWindowDeusTwitch._update_can_play = function (self, dt, t)
-	if self._is_server then
-		local can_play = self:_can_play()
+function StartGameWindowDeusTwitch._update_can_play(arg_37_0, arg_37_1, arg_37_2)
+	if arg_37_0._is_server then
+		local var_37_0 = arg_37_0:_can_play()
 
-		if self._previous_can_play ~= can_play then
-			self._previous_can_play = can_play
+		if arg_37_0._previous_can_play ~= var_37_0 then
+			arg_37_0._previous_can_play = var_37_0
+			arg_37_0._selection_widgets_by_name.play_button.content.button_hotspot.disable_button = not var_37_0
 
-			local play_button = self._selection_widgets_by_name.play_button
-
-			play_button.content.button_hotspot.disable_button = not can_play
-
-			if can_play then
-				self._parent:set_input_description("play_available")
+			if var_37_0 then
+				arg_37_0._parent:set_input_description("play_available")
 			else
-				self._parent:set_input_description(nil)
+				arg_37_0._parent:set_input_description(nil)
 			end
 		end
 	end
 end
 
-StartGameWindowDeusTwitch._can_play = function (self)
-	if not self._is_server then
+function StartGameWindowDeusTwitch._can_play(arg_38_0)
+	if not arg_38_0._is_server then
 		return false
 	end
 
-	local parent = self._parent
-	local selected_level_id = parent:get_selected_level_id()
-	local connected = Managers.twitch and Managers.twitch:is_connected()
-	local can_play = selected_level_id ~= nil and connected and not self._dlc_locked
+	local var_38_0 = arg_38_0._parent:get_selected_level_id()
+	local var_38_1 = Managers.twitch and Managers.twitch:is_connected()
 
-	return can_play
+	return var_38_0 ~= nil and var_38_1 and not arg_38_0._dlc_locked
 end
 
-StartGameWindowDeusTwitch.on_exit = function (self, params)
+function StartGameWindowDeusTwitch.on_exit(arg_39_0, arg_39_1)
 	print("[StartGameViewWindow] Exit Substate StartGameWindowTwitchOverviewConsole")
 
-	self._ui_animator = nil
+	arg_39_0._ui_animator = nil
 
-	if self._play_button_pressed then
-		params.input_index = nil
+	if arg_39_0._play_button_pressed then
+		arg_39_1.input_index = nil
 	else
-		params.input_index = self._input_index
+		arg_39_1.input_index = arg_39_0._input_index
 	end
 
-	self._parent:set_difficulty_option(self._current_difficulty)
-	self:_set_active(false)
-	Managers.state.event:unregister("_update_additional_curse_frame", self)
+	arg_39_0._parent:set_difficulty_option(arg_39_0._current_difficulty)
+	arg_39_0:_set_active(false)
+	Managers.state.event:unregister("_update_additional_curse_frame", arg_39_0)
 end
 
-StartGameWindowDeusTwitch._set_info_window = function (self, difficulty_key)
-	local difficulty_settings = DifficultySettings[difficulty_key]
-	local description = difficulty_settings.description
-	local chest_max_power_level = difficulty_settings.max_chest_power_level
-	local selected_difficulty_info_widget = self._widgets_by_name.difficulty_info
+function StartGameWindowDeusTwitch._set_info_window(arg_40_0, arg_40_1)
+	local var_40_0 = DifficultySettings[arg_40_1]
+	local var_40_1 = var_40_0.description
+	local var_40_2 = var_40_0.max_chest_power_level
+	local var_40_3 = arg_40_0._widgets_by_name.difficulty_info
 
-	selected_difficulty_info_widget.content.difficulty_description = Localize(description)
-	selected_difficulty_info_widget.content.highest_obtainable_level = Localize("difficulty_chest_max_powerlevel") .. ": " .. tostring(chest_max_power_level)
+	var_40_3.content.difficulty_description = Localize(var_40_1)
+	var_40_3.content.highest_obtainable_level = Localize("difficulty_chest_max_powerlevel") .. ": " .. tostring(var_40_2)
 end
 
-StartGameWindowDeusTwitch._update_difficulty_lock = function (self)
-	local selected_difficulty_key = self._current_difficulty
-	local difficulty_info_widget = self._widgets_by_name.difficulty_info
-	local upsell_button = self._widgets_by_name.upsell_button
+function StartGameWindowDeusTwitch._update_difficulty_lock(arg_41_0)
+	local var_41_0 = arg_41_0._current_difficulty
+	local var_41_1 = arg_41_0._widgets_by_name.difficulty_info
+	local var_41_2 = arg_41_0._widgets_by_name.upsell_button
 
-	if selected_difficulty_key then
-		local approved, extra_requirement_failed, dlc_locked, below_power_level = self._parent:is_difficulty_approved(selected_difficulty_key)
+	if var_41_0 then
+		local var_41_3, var_41_4, var_41_5, var_41_6 = arg_41_0._parent:is_difficulty_approved(var_41_0)
 
-		if not approved then
-			if extra_requirement_failed then
-				difficulty_info_widget.content.should_show_diff_lock_text = true
-				difficulty_info_widget.content.difficulty_lock_text = extra_requirement_failed and Localize(extra_requirement_failed) or ""
+		if not var_41_3 then
+			if var_41_4 then
+				var_41_1.content.should_show_diff_lock_text = true
+				var_41_1.content.difficulty_lock_text = var_41_4 and Localize(var_41_4) or ""
 			else
-				difficulty_info_widget.content.should_show_diff_lock_text = false
+				var_41_1.content.should_show_diff_lock_text = false
 			end
 
-			if dlc_locked then
-				difficulty_info_widget.content.should_show_dlc_lock = true
-				self._dlc_locked = dlc_locked
-				self._dlc_name = dlc_locked
-				upsell_button.content.visible = true
+			if var_41_5 then
+				var_41_1.content.should_show_dlc_lock = true
+				arg_41_0._dlc_locked = var_41_5
+				arg_41_0._dlc_name = var_41_5
+				var_41_2.content.visible = true
 			else
-				difficulty_info_widget.content.should_show_dlc_lock = false
-				upsell_button.content.visible = false
-				self._dlc_locked = nil
-				self._dlc_name = nil
+				var_41_1.content.should_show_dlc_lock = false
+				var_41_2.content.visible = false
+				arg_41_0._dlc_locked = nil
+				arg_41_0._dlc_name = nil
 			end
 		else
-			difficulty_info_widget.content.should_show_dlc_lock = false
-			difficulty_info_widget.content.should_show_diff_lock_text = false
-			difficulty_info_widget.content.should_resize = false
-			upsell_button.content.visible = false
-			self._dlc_locked = nil
-			self._dlc_name = nil
+			var_41_1.content.should_show_dlc_lock = false
+			var_41_1.content.should_show_diff_lock_text = false
+			var_41_1.content.should_resize = false
+			var_41_2.content.visible = false
+			arg_41_0._dlc_locked = nil
+			arg_41_0._dlc_name = nil
 		end
 
-		self._difficulty_approved = approved
+		arg_41_0._difficulty_approved = var_41_3
 	else
-		difficulty_info_widget.content.should_show_dlc_lock = false
-		upsell_button.content.visible = false
+		var_41_1.content.should_show_dlc_lock = false
+		var_41_2.content.visible = false
 	end
 
-	local widget_height = self:_calculate_difficulty_info_widget_size(difficulty_info_widget)
-	local offset_y = (math.floor(widget_height) - scenegraph_definition.difficulty_info.size[2]) / 2
+	local var_41_7 = arg_41_0:_calculate_difficulty_info_widget_size(var_41_1)
+	local var_41_8 = (math.floor(var_41_7) - var_0_1.difficulty_info.size[2]) / 2
 
-	self:_resize_difficulty_info({
-		math.floor(scenegraph_definition.difficulty_info.size[1]),
-		math.floor(widget_height),
+	arg_41_0:_resize_difficulty_info({
+		math.floor(var_0_1.difficulty_info.size[1]),
+		math.floor(var_41_7)
 	}, {
 		0,
-		-offset_y,
-		1,
+		-var_41_8,
+		1
 	})
 
-	upsell_button.offset[2] = -math.floor(widget_height) / 2 + 24
+	var_41_2.offset[2] = -math.floor(var_41_7) / 2 + 24
 end
 
-StartGameWindowDeusTwitch._calculate_difficulty_info_widget_size = function (self, diff_widget)
-	local spacing = 20
-	local description_text_style = diff_widget.style.difficulty_description
-	local description_text = diff_widget.content.difficulty_description
-	local description_text_height = UIUtils.get_text_height(self._ui_renderer, description_text_style.size, description_text_style, description_text)
+function StartGameWindowDeusTwitch._calculate_difficulty_info_widget_size(arg_42_0, arg_42_1)
+	local var_42_0 = 20
+	local var_42_1 = arg_42_1.style.difficulty_description
+	local var_42_2 = arg_42_1.content.difficulty_description
+	local var_42_3 = UIUtils.get_text_height(arg_42_0._ui_renderer, var_42_1.size, var_42_1, var_42_2)
 
-	diff_widget.content.difficulty_description_text_size = description_text_height
+	arg_42_1.content.difficulty_description_text_size = var_42_3
 
-	local chest_text_style = diff_widget.style.highest_obtainable_level
-	local chest_text = diff_widget.content.highest_obtainable_level
-	local chest_text_height = UIUtils.get_text_height(self._ui_renderer, chest_text_style.size, chest_text_style, chest_text) + spacing
-	local difficulty_lock_text_style = diff_widget.style.difficulty_lock_text
-	local difficulty_lock_text = diff_widget.content.difficulty_lock_text
-	local difficulty_lock_text_height = 0
+	local var_42_4 = arg_42_1.style.highest_obtainable_level
+	local var_42_5 = arg_42_1.content.highest_obtainable_level
+	local var_42_6 = UIUtils.get_text_height(arg_42_0._ui_renderer, var_42_4.size, var_42_4, var_42_5) + var_42_0
+	local var_42_7 = arg_42_1.style.difficulty_lock_text
+	local var_42_8 = arg_42_1.content.difficulty_lock_text
+	local var_42_9 = 0
 
-	if diff_widget.content.should_show_diff_lock_text then
-		difficulty_lock_text_height = UIUtils.get_text_height(self._ui_renderer, difficulty_lock_text_style.size, difficulty_lock_text_style, difficulty_lock_text) + spacing
-		diff_widget.content.difficulty_lock_text_height = difficulty_lock_text_height
+	if arg_42_1.content.should_show_diff_lock_text then
+		var_42_9 = UIUtils.get_text_height(arg_42_0._ui_renderer, var_42_7.size, var_42_7, var_42_8) + var_42_0
+		arg_42_1.content.difficulty_lock_text_height = var_42_9
 	end
 
-	local dlc_lock_text_style = diff_widget.style.dlc_lock_text
-	local dlc_lock_text = diff_widget.content.dlc_lock_text
-	local dlc_lock_text_height = 0
+	local var_42_10 = arg_42_1.style.dlc_lock_text
+	local var_42_11 = arg_42_1.content.dlc_lock_text
+	local var_42_12 = 0
 
-	if diff_widget.content.should_show_dlc_lock then
-		dlc_lock_text_height = UIUtils.get_text_height(self._ui_renderer, dlc_lock_text_style.size, dlc_lock_text_style, dlc_lock_text) + spacing
+	if arg_42_1.content.should_show_dlc_lock then
+		var_42_12 = UIUtils.get_text_height(arg_42_0._ui_renderer, var_42_10.size, var_42_10, var_42_11) + var_42_0
 	end
 
-	local widget_height = chest_text_height + description_text_height + difficulty_lock_text_height + dlc_lock_text_height + 50
-
-	return widget_height
+	return var_42_6 + var_42_3 + var_42_9 + var_42_12 + 50
 end
 
-StartGameWindowDeusTwitch._resize_difficulty_info = function (self, new_size, new_offset)
-	local difficulty_info_widget = self._widgets_by_name.difficulty_info
+function StartGameWindowDeusTwitch._resize_difficulty_info(arg_43_0, arg_43_1, arg_43_2)
+	local var_43_0 = arg_43_0._widgets_by_name.difficulty_info
 
-	difficulty_info_widget.content.should_resize = true
-	difficulty_info_widget.content.resize_size = new_size
-	difficulty_info_widget.content.resize_offset = new_offset
-	difficulty_info_widget.style.widget_hotspot.size = new_size
-	difficulty_info_widget.style.widget_hotspot.offset = new_offset
+	var_43_0.content.should_resize = true
+	var_43_0.content.resize_size = arg_43_1
+	var_43_0.content.resize_offset = arg_43_2
+	var_43_0.style.widget_hotspot.size = arg_43_1
+	var_43_0.style.widget_hotspot.offset = arg_43_2
 end
 
-StartGameWindowDeusTwitch._update_gamemode_info_text = function (self, input_service)
-	local gamemode_infobox_widget = self._widgets_by_name.twitch_gamemode_info_box
+function StartGameWindowDeusTwitch._update_gamemode_info_text(arg_44_0, arg_44_1)
+	local var_44_0 = arg_44_0._widgets_by_name.twitch_gamemode_info_box
 
-	if input_service:get("trigger_cycle_next") and not gamemode_infobox_widget.content.is_showing_info then
-		self._ui_animator:start_animation("gamemode_text_swap", gamemode_infobox_widget, scenegraph_definition)
+	if arg_44_1:get("trigger_cycle_next") and not var_44_0.content.is_showing_info then
+		arg_44_0._ui_animator:start_animation("gamemode_text_swap", var_44_0, var_0_1)
 
-		gamemode_infobox_widget.content.is_showing_info = true
-	elseif input_service:get("trigger_cycle_next") and gamemode_infobox_widget.content.is_showing_info then
-		self._ui_animator:start_animation("gamemode_text_swap", gamemode_infobox_widget, scenegraph_definition)
+		var_44_0.content.is_showing_info = true
+	elseif arg_44_1:get("trigger_cycle_next") and var_44_0.content.is_showing_info then
+		arg_44_0._ui_animator:start_animation("gamemode_text_swap", var_44_0, var_0_1)
 
-		gamemode_infobox_widget.content.is_showing_info = false
+		var_44_0.content.is_showing_info = false
 	end
 
-	if UIUtils.is_button_pressed(gamemode_infobox_widget, "info_hotspot") then
-		if not gamemode_infobox_widget.content.is_showing_info then
-			self._ui_animator:start_animation("gamemode_text_swap", gamemode_infobox_widget, scenegraph_definition)
+	if UIUtils.is_button_pressed(var_44_0, "info_hotspot") then
+		if not var_44_0.content.is_showing_info then
+			arg_44_0._ui_animator:start_animation("gamemode_text_swap", var_44_0, var_0_1)
 
-			gamemode_infobox_widget.content.is_showing_info = true
+			var_44_0.content.is_showing_info = true
 		else
-			self._ui_animator:start_animation("gamemode_text_swap", gamemode_infobox_widget, scenegraph_definition)
+			arg_44_0._ui_animator:start_animation("gamemode_text_swap", var_44_0, var_0_1)
 
-			gamemode_infobox_widget.content.is_showing_info = false
+			var_44_0.content.is_showing_info = false
 		end
 	end
 end
 
-StartGameWindowDeusTwitch._update_additional_curse_frame = function (self, journey_name)
-	for _, widget in ipairs(self._expedition_widgets) do
-		local content = widget.content
-		local with_belakor = content.journey_name == journey_name
+function StartGameWindowDeusTwitch._update_additional_curse_frame(arg_45_0, arg_45_1)
+	for iter_45_0, iter_45_1 in ipairs(arg_45_0._expedition_widgets) do
+		local var_45_0 = iter_45_1.content
 
-		content.level_icon_frame = with_belakor and "morris_expedition_select_border_belakor" or "morris_expedition_select_border"
+		var_45_0.level_icon_frame = var_45_0.journey_name == arg_45_1 and "morris_expedition_select_border_belakor" or "morris_expedition_select_border"
 	end
 end

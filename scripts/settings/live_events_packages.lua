@@ -1,7 +1,7 @@
-﻿-- chunkname: @scripts/settings/live_events_packages.lua
+-- chunkname: @scripts/settings/live_events_packages.lua
 
-local live_events_packages = {}
+local var_0_0 = {}
 
-DLCUtils.merge("live_events_packages", live_events_packages)
+DLCUtils.merge("live_events_packages", var_0_0)
 
-return live_events_packages
+return var_0_0

@@ -1,40 +1,40 @@
-﻿-- chunkname: @core/gwnav/lua/runtime/navclass.lua
+-- chunkname: @core/gwnav/lua/runtime/navclass.lua
 
 require("core/gwnav/lua/safe_require")
 
-local NavClass = safe_require_guard()
+local var_0_0 = safe_require_guard()
 
-NavClass.NavClass = function (class, super)
-	class = class or {}
+function var_0_0.NavClass(arg_1_0, arg_1_1)
+	arg_1_0 = arg_1_0 or {}
 
-	if next(class) == nil then
-		local meta = {}
+	if next(arg_1_0) == nil then
+		local var_1_0 = {
+			__call = function(arg_2_0, ...)
+				local var_2_0 = {}
 
-		meta.__call = function (self, ...)
-			local object = {}
+				setmetatable(var_2_0, arg_1_0)
 
-			setmetatable(object, class)
+				if var_2_0.init then
+					var_2_0:init(...)
+				end
 
-			if object.init then
-				object:init(...)
+				return var_2_0
 			end
+		}
 
-			return object
-		end
-
-		setmetatable(class, meta)
+		setmetatable(arg_1_0, var_1_0)
 	end
 
-	if super then
-		for k, v in pairs(super) do
-			class[k] = v
+	if arg_1_1 then
+		for iter_1_0, iter_1_1 in pairs(arg_1_1) do
+			arg_1_0[iter_1_0] = iter_1_1
 		end
 	end
 
-	class.Super = super
-	class.__index = class
+	arg_1_0.Super = arg_1_1
+	arg_1_0.__index = arg_1_0
 
-	return class
+	return arg_1_0
 end
 
-return NavClass.NavClass
+return var_0_0.NavClass

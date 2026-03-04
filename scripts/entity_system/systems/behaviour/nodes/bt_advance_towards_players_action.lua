@@ -1,227 +1,212 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_advance_towards_players_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_advance_towards_players_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTAdvanceTowardsPlayersAction = class(BTAdvanceTowardsPlayersAction, BTNode)
 BTAdvanceTowardsPlayersAction.name = "BTAdvanceTowardsPlayersAction"
 
-BTAdvanceTowardsPlayersAction.init = function (self, ...)
-	BTAdvanceTowardsPlayersAction.super.init(self, ...)
+function BTAdvanceTowardsPlayersAction.init(arg_1_0, ...)
+	BTAdvanceTowardsPlayersAction.super.init(arg_1_0, ...)
 end
 
-local EVALUATE_TIME = 1
+local var_0_0 = 1
 
-BTAdvanceTowardsPlayersAction.enter = function (self, unit, blackboard, t)
-	local action = self._tree_node.action_data
+function BTAdvanceTowardsPlayersAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_0._tree_node.action_data
 
-	blackboard.action = action
+	arg_2_2.action = var_2_0
 
-	LocomotionUtils.set_animation_driven_movement(unit, false)
+	LocomotionUtils.set_animation_driven_movement(arg_2_1, false)
 
-	local throw_at_distance = blackboard.has_thrown and action.throw_at_distance or action.throw_at_distance_first_time
-	local advance_towards_players = blackboard.advance_towards_players or {}
+	local var_2_1 = arg_2_2.has_thrown and var_2_0.throw_at_distance or var_2_0.throw_at_distance_first_time
+	local var_2_2 = arg_2_2.advance_towards_players or {}
 
-	advance_towards_players.timer = advance_towards_players.timer or 0
-	advance_towards_players.time_before_throw_timer = 0
-	advance_towards_players.evaluate_timer = EVALUATE_TIME
-	advance_towards_players.direction = advance_towards_players.direction or 1 - math.random(0, 1) * 2
-	advance_towards_players.time_until_first_throw = AiUtils.random(action.time_until_first_throw[1], action.time_until_first_throw[2])
-	advance_towards_players.throw_at_distance = AiUtils.random(throw_at_distance[1], throw_at_distance[2])
-	advance_towards_players.goal_get_fails = advance_towards_players.goal_get_fails or 0
-	blackboard.advance_towards_players = advance_towards_players
+	var_2_2.timer = var_2_2.timer or 0
+	var_2_2.time_before_throw_timer = 0
+	var_2_2.evaluate_timer = var_0_0
+	var_2_2.direction = var_2_2.direction or 1 - math.random(0, 1) * 2
+	var_2_2.time_until_first_throw = AiUtils.random(var_2_0.time_until_first_throw[1], var_2_0.time_until_first_throw[2])
+	var_2_2.throw_at_distance = AiUtils.random(var_2_1[1], var_2_1[2])
+	var_2_2.goal_get_fails = var_2_2.goal_get_fails or 0
+	arg_2_2.advance_towards_players = var_2_2
 
-	if blackboard.move_state ~= "idle" then
-		self:start_idle_animation(unit, blackboard)
+	if arg_2_2.move_state ~= "idle" then
+		arg_2_0:start_idle_animation(arg_2_1, arg_2_2)
 	end
 
-	local ai_navigation_extension = blackboard.navigation_extension
+	local var_2_3 = arg_2_2.navigation_extension
 
-	ai_navigation_extension:set_max_speed(blackboard.breed.walk_speed)
+	var_2_3:set_max_speed(arg_2_2.breed.walk_speed)
 
-	if blackboard.move_pos then
-		local move_pos = blackboard.move_pos:unbox()
+	if arg_2_2.move_pos then
+		local var_2_4 = arg_2_2.move_pos:unbox()
 
-		ai_navigation_extension:move_to(move_pos)
+		var_2_3:move_to(var_2_4)
 	end
 
-	local tutorial_message_template = action.tutorial_message_template
+	local var_2_5 = var_2_0.tutorial_message_template
 
-	if tutorial_message_template then
-		local template_id = NetworkLookup.tutorials[tutorial_message_template]
-		local message_id = NetworkLookup.tutorials[blackboard.breed.name]
+	if var_2_5 then
+		local var_2_6 = NetworkLookup.tutorials[var_2_5]
+		local var_2_7 = NetworkLookup.tutorials[arg_2_2.breed.name]
 
-		Managers.state.network.network_transmit:send_rpc_all("rpc_tutorial_message", template_id, message_id)
+		Managers.state.network.network_transmit:send_rpc_all("rpc_tutorial_message", var_2_6, var_2_7)
 	end
 end
 
-BTAdvanceTowardsPlayersAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	blackboard.action = nil
+function BTAdvanceTowardsPlayersAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	arg_3_2.action = nil
 
-	local navigation_extension = blackboard.navigation_extension
+	local var_3_0 = arg_3_2.navigation_extension
 
-	if reason == "aborted" then
-		local path_found = navigation_extension:is_following_path()
+	if arg_3_4 == "aborted" then
+		local var_3_1 = var_3_0:is_following_path()
 
-		if blackboard.move_pos and path_found and blackboard.move_state == "idle" then
-			self:start_move_animation(unit, blackboard)
+		if arg_3_2.move_pos and var_3_1 and arg_3_2.move_state == "idle" then
+			arg_3_0:start_move_animation(arg_3_1, arg_3_2)
 		end
 
-		blackboard.move_pos = nil
+		arg_3_2.move_pos = nil
 	end
 
-	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
+	local var_3_2 = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
 
-	navigation_extension:set_max_speed(default_move_speed)
+	var_3_0:set_max_speed(var_3_2)
 end
 
-BTAdvanceTowardsPlayersAction.run = function (self, unit, blackboard, t, dt)
-	local ai_navigation = blackboard.navigation_extension
-	local breed = blackboard.breed
-	local action = blackboard.action
-	local advance_towards_players = blackboard.advance_towards_players
+function BTAdvanceTowardsPlayersAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = arg_4_2.navigation_extension
+	local var_4_1 = arg_4_2.breed
+	local var_4_2 = arg_4_2.action
+	local var_4_3 = arg_4_2.advance_towards_players
 
-	advance_towards_players.evaluate_timer = blackboard.times_thrown ~= 0 and 0 or advance_towards_players.evaluate_timer - dt
-	advance_towards_players.timer = advance_towards_players.timer + dt
-	advance_towards_players.time_before_throw_timer = advance_towards_players.time_before_throw_timer + dt
+	var_4_3.evaluate_timer = arg_4_2.times_thrown ~= 0 and 0 or var_4_3.evaluate_timer - arg_4_4
+	var_4_3.timer = var_4_3.timer + arg_4_4
+	var_4_3.time_before_throw_timer = var_4_3.time_before_throw_timer + arg_4_4
 
-	local failed_attempts = ai_navigation:number_failed_move_attempts()
-	local path_found = ai_navigation:is_following_path()
+	local var_4_4 = var_4_0:number_failed_move_attempts()
+	local var_4_5 = var_4_0:is_following_path()
 
-	if not blackboard.move_pos or failed_attempts > 0 then
-		local success = self:get_new_goal(unit, blackboard)
-
-		if not success then
+	if not arg_4_2.move_pos or var_4_4 > 0 then
+		if not arg_4_0:get_new_goal(arg_4_1, arg_4_2) then
 			return "failed"
 		end
 
-		local goal_pos = blackboard.move_pos:unbox()
+		local var_4_6 = arg_4_2.move_pos:unbox()
 
-		ai_navigation:move_to(goal_pos)
+		var_4_0:move_to(var_4_6)
 
 		return "running"
 	end
 
-	if blackboard.move_pos and path_found and blackboard.move_state == "idle" then
-		self:start_move_animation(unit, blackboard)
+	if arg_4_2.move_pos and var_4_5 and arg_4_2.move_state == "idle" then
+		arg_4_0:start_move_animation(arg_4_1, arg_4_2)
 	end
 
-	local locomotion_extension = blackboard.locomotion_extension
+	arg_4_2.locomotion_extension:set_wanted_rotation(nil)
 
-	locomotion_extension:set_wanted_rotation(nil)
+	local var_4_7 = arg_4_2.move_pos:unbox()
+	local var_4_8 = arg_4_2.target_unit
 
-	local goal_pos = blackboard.move_pos:unbox()
-	local target_unit = blackboard.target_unit
-	local goal_distance = Vector3.distance_squared(goal_pos, POSITION_LOOKUP[unit])
-
-	if goal_distance < 0.25 then
-		blackboard.move_pos = nil
+	if Vector3.distance_squared(var_4_7, POSITION_LOOKUP[arg_4_1]) < 0.25 then
+		arg_4_2.move_pos = nil
 	end
 
-	if advance_towards_players.evaluate_timer > 0 then
+	if var_4_3.evaluate_timer > 0 then
 		return "running"
 	end
 
-	if blackboard.target_dist > action.exit_to_skulk_distance then
-		blackboard.skulk_data.radius = blackboard.target_dist
+	if arg_4_2.target_dist > var_4_2.exit_to_skulk_distance then
+		arg_4_2.skulk_data.radius = arg_4_2.target_dist
 
 		return "failed"
 	end
 
-	local want_to_throw = self:want_to_throw(unit, blackboard, t)
-
-	if not want_to_throw then
-		advance_towards_players.evaluate_timer = EVALUATE_TIME
+	if not arg_4_0:want_to_throw(arg_4_1, arg_4_2, arg_4_3) then
+		var_4_3.evaluate_timer = var_0_0
 
 		return "running"
 	end
 
-	local can_throw = self:can_throw(unit, blackboard, t)
+	local var_4_9 = arg_4_0:can_throw(arg_4_1, arg_4_2, arg_4_3)
 
-	if self:has_valid_target(target_unit, blackboard) and can_throw and self:_calculate_trajectory_to_target(unit, blackboard.world, blackboard, action) then
-		blackboard.has_thrown = true
-		blackboard.move_pos = nil
+	if arg_4_0:has_valid_target(var_4_8, arg_4_2) and var_4_9 and arg_4_0:_calculate_trajectory_to_target(arg_4_1, arg_4_2.world, arg_4_2, var_4_2) then
+		arg_4_2.has_thrown = true
+		arg_4_2.move_pos = nil
 
 		return "done"
 	end
 
-	advance_towards_players.evaluate_timer = EVALUATE_TIME
+	var_4_3.evaluate_timer = var_0_0
 
 	return "running"
 end
 
-BTAdvanceTowardsPlayersAction._calculate_trajectory_to_target = function (self, unit, world, blackboard, action)
-	local curr_pos = Vector3.copy(POSITION_LOOKUP[unit])
-	local rot = LocomotionUtils.rotation_towards_unit_flat(unit, blackboard.target_unit)
-	local x, y, z = unpack(action.attack_throw_offset)
-	local pos = Vector3(x, y, z)
-	local throw_offset = Quaternion.rotate(rot, pos)
-	local throw_pos = curr_pos + throw_offset
+function BTAdvanceTowardsPlayersAction._calculate_trajectory_to_target(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	local var_5_0 = Vector3.copy(POSITION_LOOKUP[arg_5_1])
+	local var_5_1 = LocomotionUtils.rotation_towards_unit_flat(arg_5_1, arg_5_3.target_unit)
+	local var_5_2, var_5_3, var_5_4 = unpack(arg_5_4.attack_throw_offset)
+	local var_5_5 = Vector3(var_5_2, var_5_3, var_5_4)
+	local var_5_6 = var_5_0 + Quaternion.rotate(var_5_1, var_5_5)
 
-	curr_pos.z = throw_pos.z
+	var_5_0.z = var_5_6.z
 
-	local root_to_throw = throw_pos - curr_pos
-	local direction = Vector3.normalize(root_to_throw)
-	local length = Vector3.length(root_to_throw)
-	local physics_world = World.get_data(world, "physics_world")
-	local result = PhysicsWorld.immediate_raycast(physics_world, curr_pos, direction, length, "closest", "collision_filter", "filter_enemy_ray_projectile")
+	local var_5_7 = var_5_6 - var_5_0
+	local var_5_8 = Vector3.normalize(var_5_7)
+	local var_5_9 = Vector3.length(var_5_7)
+	local var_5_10 = World.get_data(arg_5_2, "physics_world")
 
-	if result then
+	if PhysicsWorld.immediate_raycast(var_5_10, var_5_0, var_5_8, var_5_9, "closest", "collision_filter", "filter_enemy_ray_projectile") then
 		return false
 	end
 
-	local radius = action.radius - 1
-	local max_distance = action.range
-	local target_position = PerceptionUtils.pick_area_target(unit, blackboard, nil, radius, max_distance)
-	local target_vector = Vector3.normalize(target_position - throw_pos)
-	local hit, angle, speed = WeaponHelper:calculate_trajectory(world, throw_pos, target_position, ProjectileGravitySettings.default, blackboard.breed.max_globe_throw_speed)
+	local var_5_11 = arg_5_4.radius - 1
+	local var_5_12 = arg_5_4.range
+	local var_5_13 = PerceptionUtils.pick_area_target(arg_5_1, arg_5_3, nil, var_5_11, var_5_12)
+	local var_5_14 = Vector3.normalize(var_5_13 - var_5_6)
+	local var_5_15, var_5_16, var_5_17 = WeaponHelper:calculate_trajectory(arg_5_2, var_5_6, var_5_13, ProjectileGravitySettings.default, arg_5_3.breed.max_globe_throw_speed)
 
-	if hit then
-		blackboard.throw_globe_data = blackboard.throw_globe_data or {
+	if var_5_15 then
+		arg_5_3.throw_globe_data = arg_5_3.throw_globe_data or {
 			throw_pos = Vector3Box(),
-			target_direction = Vector3Box(),
+			target_direction = Vector3Box()
 		}
-		blackboard.throw_globe_data.angle = angle
-		blackboard.throw_globe_data.speed = speed
+		arg_5_3.throw_globe_data.angle = var_5_16
+		arg_5_3.throw_globe_data.speed = var_5_17
 
-		blackboard.throw_globe_data.throw_pos:store(throw_pos)
-		blackboard.throw_globe_data.target_direction:store(target_vector)
+		arg_5_3.throw_globe_data.throw_pos:store(var_5_6)
+		arg_5_3.throw_globe_data.target_direction:store(var_5_14)
 	end
 
-	return hit
+	return var_5_15
 end
 
-BTAdvanceTowardsPlayersAction.has_valid_target = function (self, target_unit, blackboard)
-	local side = blackboard.side
-
-	return side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[target_unit]
+function BTAdvanceTowardsPlayersAction.has_valid_target(arg_6_0, arg_6_1, arg_6_2)
+	return arg_6_2.side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[arg_6_1]
 end
 
-BTAdvanceTowardsPlayersAction.want_to_throw = function (self, unit, blackboard, t)
-	local action = blackboard.action
-	local slot_count = blackboard.total_slots_count
-	local advance_towards_players = blackboard.advance_towards_players
-	local time_until_first_throw = advance_towards_players.time_until_first_throw + action.slot_count_time_modifier * slot_count
-	local time_in_approach = advance_towards_players.timer
+function BTAdvanceTowardsPlayersAction.want_to_throw(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	local var_7_0 = arg_7_2.action
+	local var_7_1 = arg_7_2.total_slots_count
+	local var_7_2 = arg_7_2.advance_towards_players
 
-	if time_in_approach < time_until_first_throw then
+	if var_7_2.time_until_first_throw + var_7_0.slot_count_time_modifier * var_7_1 > var_7_2.timer then
 		return false
 	end
 
-	local throw_globe_data = blackboard.throw_globe_data
+	local var_7_3 = arg_7_2.throw_globe_data
 
-	if throw_globe_data and throw_globe_data.next_throw_at and blackboard.target_dist < 4 then
-		throw_globe_data.next_throw_at = -math.huge
+	if var_7_3 and var_7_3.next_throw_at and arg_7_2.target_dist < 4 then
+		var_7_3.next_throw_at = -math.huge
 
 		return true
 	end
 
-	local next_throw_at = throw_globe_data and throw_globe_data.next_throw_at
+	local var_7_4 = var_7_3 and var_7_3.next_throw_at
 
-	if next_throw_at then
-		if next_throw_at < t then
-			local target_dist = blackboard.target_dist
-
-			if target_dist < action.range then
+	if var_7_4 then
+		if var_7_4 < arg_7_3 then
+			if arg_7_2.target_dist < var_7_0.range then
 				return true
 			end
 		else
@@ -229,67 +214,62 @@ BTAdvanceTowardsPlayersAction.want_to_throw = function (self, unit, blackboard, 
 		end
 	end
 
-	local time_before_throw_distance_modifier = action.time_before_throw_distance_modifier * advance_towards_players.time_before_throw_timer
-	local slot_count_distance_modifier = action.slot_count_distance_modifier * slot_count
-	local throw_at_distance = advance_towards_players.throw_at_distance + slot_count_distance_modifier + time_before_throw_distance_modifier
-	local target_dist = blackboard.target_dist
+	local var_7_5 = var_7_0.time_before_throw_distance_modifier * var_7_2.time_before_throw_timer
+	local var_7_6 = var_7_0.slot_count_distance_modifier * var_7_1
 
-	if throw_at_distance < target_dist then
+	if var_7_2.throw_at_distance + var_7_6 + var_7_5 < arg_7_2.target_dist then
 		return false
 	end
 
 	return true
 end
 
-BTAdvanceTowardsPlayersAction.can_throw = function (self, unit, blackboard, t)
-	local action_data = blackboard.action
-
-	if action_data.ignore_LOS_check_after_first_throw and blackboard.has_thrown then
+function BTAdvanceTowardsPlayersAction.can_throw(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	if arg_8_2.action.ignore_LOS_check_after_first_throw and arg_8_2.has_thrown then
 		return true
 	end
 
-	local start_pos = POSITION_LOOKUP[unit] + Vector3.up()
-	local end_pos = POSITION_LOOKUP[blackboard.target_unit] + Vector3.up() * 2
-	local look_vector = end_pos - start_pos
-	local direction = Vector3.normalize(look_vector)
-	local length = Vector3.length(look_vector)
-	local hit, position1, distance1, normal, actor1 = PhysicsWorld.immediate_raycast(World.get_data(blackboard.world, "physics_world"), start_pos, direction, length, "closest", "collision_filter", "filter_ai_line_of_sight_check")
+	local var_8_0 = POSITION_LOOKUP[arg_8_1] + Vector3.up()
+	local var_8_1 = POSITION_LOOKUP[arg_8_2.target_unit] + Vector3.up() * 2 - var_8_0
+	local var_8_2 = Vector3.normalize(var_8_1)
+	local var_8_3 = Vector3.length(var_8_1)
+	local var_8_4, var_8_5, var_8_6, var_8_7, var_8_8 = PhysicsWorld.immediate_raycast(World.get_data(arg_8_2.world, "physics_world"), var_8_0, var_8_2, var_8_3, "closest", "collision_filter", "filter_ai_line_of_sight_check")
 
-	return not hit
+	return not var_8_4
 end
 
-BTAdvanceTowardsPlayersAction.get_new_goal = function (self, unit, blackboard)
-	local action = blackboard.action
-	local min_distance = action.keep_target_distance[1]
-	local max_distance = action.keep_target_distance[2]
-	local advance_towards_players = blackboard.advance_towards_players
-	local fails = advance_towards_players.goal_get_fails
-	local above_below = math.min(3 + 5 * fails, 30)
-	local position, distance, direction = AiUtils.advance_towards_target(unit, blackboard, min_distance, max_distance, nil, nil, nil, nil, advance_towards_players.direction, above_below, above_below)
+function BTAdvanceTowardsPlayersAction.get_new_goal(arg_9_0, arg_9_1, arg_9_2)
+	local var_9_0 = arg_9_2.action
+	local var_9_1 = var_9_0.keep_target_distance[1]
+	local var_9_2 = var_9_0.keep_target_distance[2]
+	local var_9_3 = arg_9_2.advance_towards_players
+	local var_9_4 = var_9_3.goal_get_fails
+	local var_9_5 = math.min(3 + 5 * var_9_4, 30)
+	local var_9_6, var_9_7, var_9_8 = AiUtils.advance_towards_target(arg_9_1, arg_9_2, var_9_1, var_9_2, nil, nil, nil, nil, var_9_3.direction, var_9_5, var_9_5)
 
-	if position then
-		blackboard.move_pos = Vector3Box(position)
-		blackboard.wanted_distance = distance
-		advance_towards_players.direction = direction
-		advance_towards_players.goal_get_fails = 0
+	if var_9_6 then
+		arg_9_2.move_pos = Vector3Box(var_9_6)
+		arg_9_2.wanted_distance = var_9_7
+		var_9_3.direction = var_9_8
+		var_9_3.goal_get_fails = 0
 
 		return true
 	end
 
-	advance_towards_players.goal_get_fails = fails + 1
-	advance_towards_players.direction = math.sign(advance_towards_players.direction)
+	var_9_3.goal_get_fails = var_9_4 + 1
+	var_9_3.direction = math.sign(var_9_3.direction)
 
 	return false
 end
 
-BTAdvanceTowardsPlayersAction.start_idle_animation = function (self, unit, blackboard)
-	Managers.state.network:anim_event(unit, "idle")
+function BTAdvanceTowardsPlayersAction.start_idle_animation(arg_10_0, arg_10_1, arg_10_2)
+	Managers.state.network:anim_event(arg_10_1, "idle")
 
-	blackboard.move_state = "idle"
+	arg_10_2.move_state = "idle"
 end
 
-BTAdvanceTowardsPlayersAction.start_move_animation = function (self, unit, blackboard)
-	Managers.state.network:anim_event(unit, "move_fwd")
+function BTAdvanceTowardsPlayersAction.start_move_animation(arg_11_0, arg_11_1, arg_11_2)
+	Managers.state.network:anim_event(arg_11_1, "move_fwd")
 
-	blackboard.move_state = "moving"
+	arg_11_2.move_state = "moving"
 end

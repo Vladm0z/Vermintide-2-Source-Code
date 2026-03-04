@@ -1,56 +1,56 @@
-﻿-- chunkname: @scripts/managers/debug/updator.lua
+-- chunkname: @scripts/managers/debug/updator.lua
 
 Updator = class(Updator)
 
-Updator.init = function (self)
-	self._updator_autoindex = 1
-	self._updators = {}
+function Updator.init(arg_1_0)
+	arg_1_0._updator_autoindex = 1
+	arg_1_0._updators = {}
 end
 
-local function error_handler(err)
-	return string.format("[Updator] Error: %s\n%s", err, Script.callstack())
+local function var_0_0(arg_2_0)
+	return string.format("[Updator] Error: %s\n%s", arg_2_0, Script.callstack())
 end
 
-Updator.update = function (self, dt)
-	for id, func in pairs(self._updators) do
-		local ok, err_str = xpcall(func, error_handler, dt)
+function Updator.update(arg_3_0, arg_3_1)
+	for iter_3_0, iter_3_1 in pairs(arg_3_0._updators) do
+		local var_3_0, var_3_1 = xpcall(iter_3_1, var_0_0, arg_3_1)
 
-		if not ok then
-			self._updators[id] = nil
+		if not var_3_0 then
+			arg_3_0._updators[iter_3_0] = nil
 
-			print_error(err_str)
-			printf("[Updator] Warning: updator %q threw an error and has been detached", id)
+			print_error(var_3_1)
+			printf("[Updator] Warning: updator %q threw an error and has been detached", iter_3_0)
 		end
 	end
 end
 
-Updator.add = function (self, func, id)
-	if not id then
-		id = self._updator_index
-		self._updator_index = id + 1
+function Updator.add(arg_4_0, arg_4_1, arg_4_2)
+	if not arg_4_2 then
+		arg_4_2 = arg_4_0._updator_index
+		arg_4_0._updator_index = arg_4_2 + 1
 	end
 
-	if not self._updators[id] then
-		printf("[Updator] Warning: replaced updator at index %q", id)
+	if not arg_4_0._updators[arg_4_2] then
+		printf("[Updator] Warning: replaced updator at index %q", arg_4_2)
 	end
 
-	self._updators[id] = func
+	arg_4_0._updators[arg_4_2] = arg_4_1
 
-	return id
+	return arg_4_2
 end
 
-Updator.remove = function (self, id)
-	if not self._updators[id] then
-		printf("[Updator] Warning: tried to remove updator at index %q, but there was none", id)
+function Updator.remove(arg_5_0, arg_5_1)
+	if not arg_5_0._updators[arg_5_1] then
+		printf("[Updator] Warning: tried to remove updator at index %q, but there was none", arg_5_1)
 	end
 
-	self._updators[id] = nil
+	arg_5_0._updators[arg_5_1] = nil
 end
 
-Updator.has = function (self, id)
-	return not not self._updators[id]
+function Updator.has(arg_6_0, arg_6_1)
+	return not not arg_6_0._updators[arg_6_1]
 end
 
-Updator.clear = function (self)
-	table.clear(self._updators)
+function Updator.clear(arg_7_0)
+	table.clear(arg_7_0._updators)
 end

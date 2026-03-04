@@ -1,76 +1,73 @@
-﻿-- chunkname: @scripts/ui/ui_widget.lua
+-- chunkname: @scripts/ui/ui_widget.lua
 
-local function error_prone_clone(value)
-	if not value then
+local function var_0_0(arg_1_0)
+	if not arg_1_0 then
 		return {}
 	end
 
-	return table.clone(value)
+	return table.clone(arg_1_0)
 end
 
 UIWidget = UIWidget or {}
 
-UIWidget.init = function (widget_definition, ui_renderer)
-	local content = error_prone_clone(widget_definition.content)
-	local style = error_prone_clone(widget_definition.style)
-	local offset = widget_definition.offset and error_prone_clone(widget_definition.offset)
-	local passes = widget_definition.element.passes
-	local num_passes = #passes
-	local pass_data = Script.new_array(num_passes)
+function UIWidget.init(arg_2_0, arg_2_1)
+	local var_2_0 = var_0_0(arg_2_0.content)
+	local var_2_1 = var_0_0(arg_2_0.style)
+	local var_2_2 = arg_2_0.offset and var_0_0(arg_2_0.offset)
+	local var_2_3 = arg_2_0.element.passes
+	local var_2_4 = #var_2_3
+	local var_2_5 = Script.new_array(var_2_4)
 
-	for i = 1, num_passes do
-		local pass = passes[i]
-		local pass_type = pass.pass_type
-		local ui_pass = UIPasses[pass_type]
+	for iter_2_0 = 1, var_2_4 do
+		local var_2_6 = var_2_3[iter_2_0]
+		local var_2_7 = var_2_6.pass_type
 
-		pass_data[i] = ui_pass.init(pass, content, style, ui_renderer)
+		var_2_5[iter_2_0] = UIPasses[var_2_7].init(var_2_6, var_2_0, var_2_1, arg_2_1)
 	end
 
-	local widget = {
-		scenegraph_id = widget_definition.scenegraph_id,
-		offset = offset or {
+	return {
+		scenegraph_id = arg_2_0.scenegraph_id,
+		offset = var_2_2 or {
 			0,
 			0,
-			0,
+			0
 		},
 		element = {
-			passes = passes,
-			pass_data = pass_data,
+			passes = var_2_3,
+			pass_data = var_2_5
 		},
-		content = content,
-		style = style,
-		animations = {},
+		content = var_2_0,
+		style = var_2_1,
+		animations = {}
 	}
-
-	return widget
 end
 
-UIWidget.destroy = function (ui_renderer, widget)
-	local element = widget.element
-	local pass_data = element.pass_data
-	local passes = element.passes
+function UIWidget.destroy(arg_3_0, arg_3_1)
+	local var_3_0 = arg_3_1.element
+	local var_3_1 = var_3_0.pass_data
+	local var_3_2 = var_3_0.passes
 
-	for i = 1, #passes do
-		local pass = passes[i]
-		local pass_type = pass.pass_type
-		local ui_pass = UIPasses[pass_type]
+	for iter_3_0 = 1, #var_3_2 do
+		local var_3_3 = var_3_2[iter_3_0]
+		local var_3_4 = var_3_3.pass_type
+		local var_3_5 = UIPasses[var_3_4]
 
-		fassert(ui_pass, "No such pass-type: %s", pass_type)
+		fassert(var_3_5, "No such pass-type: %s", var_3_4)
 
-		if ui_pass.destroy then
-			ui_pass.destroy(ui_renderer, pass_data[i], pass)
+		if var_3_5.destroy then
+			var_3_5.destroy(arg_3_0, var_3_1[iter_3_0], var_3_3)
 		end
 	end
 end
 
-UIWidget.animate = function (widget, animation)
-	widget.animations[animation] = true
+function UIWidget.animate(arg_4_0, arg_4_1)
+	arg_4_0.animations[arg_4_1] = true
 end
 
-UIWidget.stop_animations = function (widget)
-	table.clear(widget.animations)
+function UIWidget.stop_animations(arg_5_0)
+	table.clear(arg_5_0.animations)
 end
 
-UIWidget.has_animation = function (widget)
-	return next(widget.animations) and true or false
+function UIWidget.has_animation(arg_6_0)
+	return next(arg_6_0.animations) and true or false
 end

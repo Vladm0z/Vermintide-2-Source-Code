@@ -1,203 +1,195 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_boss_follow_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_boss_follow_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTBossFollowAction = class(BTBossFollowAction, BTNode)
 
-BTBossFollowAction.init = function (self, ...)
-	BTBossFollowAction.super.init(self, ...)
+function BTBossFollowAction.init(arg_1_0, ...)
+	BTBossFollowAction.super.init(arg_1_0, ...)
 end
 
 BTBossFollowAction.name = "BTBossFollowAction"
 
-BTBossFollowAction.enter = function (self, unit, blackboard, t)
-	local action = self._tree_node.action_data
+function BTBossFollowAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_0._tree_node.action_data
 
-	blackboard.action = action
-	blackboard.remembered_threat_pos = nil
-	blackboard.chasing_timer = blackboard.unreachable_timer or 0
-	blackboard.follow_data = blackboard.follow_data or {}
+	arg_2_2.action = var_2_0
+	arg_2_2.remembered_threat_pos = nil
+	arg_2_2.chasing_timer = arg_2_2.unreachable_timer or 0
+	arg_2_2.follow_data = arg_2_2.follow_data or {}
 
-	if blackboard.fling_skaven_timer and t > blackboard.fling_skaven_timer then
-		blackboard.fling_skaven_timer = t + 0.5
+	if arg_2_2.fling_skaven_timer and arg_2_3 > arg_2_2.fling_skaven_timer then
+		arg_2_2.fling_skaven_timer = arg_2_3 + 0.5
 	end
 
-	local tutorial_message_template = action.tutorial_message_template
+	local var_2_1 = var_2_0.tutorial_message_template
 
-	if tutorial_message_template then
-		local template_id = NetworkLookup.tutorials[tutorial_message_template]
-		local message_id = NetworkLookup.tutorials[blackboard.breed.name]
-		local network_manager = Managers.state.network
+	if var_2_1 then
+		local var_2_2 = NetworkLookup.tutorials[var_2_1]
+		local var_2_3 = NetworkLookup.tutorials[arg_2_2.breed.name]
 
-		network_manager.network_transmit:send_rpc_all("rpc_tutorial_message", template_id, message_id)
+		Managers.state.network.network_transmit:send_rpc_all("rpc_tutorial_message", var_2_2, var_2_3)
 	end
 
-	blackboard.boss_follow_next_line_of_sight_check_t = t
+	arg_2_2.boss_follow_next_line_of_sight_check_t = arg_2_3
 end
 
-BTBossFollowAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
-	local navigation_extension = blackboard.navigation_extension
+function BTBossFollowAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	local var_3_0 = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
 
-	navigation_extension:set_max_speed(default_move_speed)
+	arg_3_2.navigation_extension:set_max_speed(var_3_0)
 
-	if blackboard.is_turning and not destroy then
-		LocomotionUtils.reset_turning(unit, blackboard)
+	if arg_3_2.is_turning and not arg_3_5 then
+		LocomotionUtils.reset_turning(arg_3_1, arg_3_2)
 
-		blackboard.is_turning = nil
+		arg_3_2.is_turning = nil
 	end
 
-	blackboard.move_animation_name = nil
-	blackboard.animation_rotation_lock = nil
-	blackboard.rotate_towards_position = nil
-	blackboard.next_turn_at = nil
-	blackboard.wanted_destination = nil
-	blackboard.anim_cb_rotation_start = nil
-	blackboard.anim_cb_move = nil
-	blackboard.animation_lean = nil
-	blackboard.has_los_to_any_player = nil
-	blackboard.boss_follow_next_line_of_sight_check_t = nil
+	arg_3_2.move_animation_name = nil
+	arg_3_2.animation_rotation_lock = nil
+	arg_3_2.rotate_towards_position = nil
+	arg_3_2.next_turn_at = nil
+	arg_3_2.wanted_destination = nil
+	arg_3_2.anim_cb_rotation_start = nil
+	arg_3_2.anim_cb_move = nil
+	arg_3_2.animation_lean = nil
+	arg_3_2.has_los_to_any_player = nil
+	arg_3_2.boss_follow_next_line_of_sight_check_t = nil
 end
 
-BTBossFollowAction.run = function (self, unit, blackboard, t, dt)
-	local locomotion_extension = blackboard.locomotion_extension
+function BTBossFollowAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = arg_4_2.locomotion_extension
 
-	self:follow(unit, t, dt, blackboard, locomotion_extension)
+	arg_4_0:follow(arg_4_1, arg_4_3, arg_4_4, arg_4_2, var_4_0)
 
-	blackboard.chasing_timer = blackboard.chasing_timer + dt
+	arg_4_2.chasing_timer = arg_4_2.chasing_timer + arg_4_4
 
 	return "running", "evaluate"
 end
 
-BTBossFollowAction._go_idle = function (self, unit, blackboard, navigation_extension, locomotion_extension)
-	blackboard.move_state = "idle"
+function BTBossFollowAction._go_idle(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	arg_5_2.move_state = "idle"
 
-	if navigation_extension:is_following_path() then
-		navigation_extension:stop()
+	if arg_5_3:is_following_path() then
+		arg_5_3:stop()
 	end
 
-	local action = blackboard.action
+	local var_5_0 = arg_5_2.action
 
-	Managers.state.network:anim_event(unit, action.idle_anim or "idle")
+	Managers.state.network:anim_event(arg_5_1, var_5_0.idle_anim or "idle")
 
-	local target_unit = blackboard.target_unit
+	local var_5_1 = arg_5_2.target_unit
 
-	if target_unit then
-		local rot = LocomotionUtils.rotation_towards_unit_flat(unit, target_unit)
+	if var_5_1 then
+		local var_5_2 = LocomotionUtils.rotation_towards_unit_flat(arg_5_1, var_5_1)
 
-		locomotion_extension:set_wanted_rotation(rot)
+		arg_5_4:set_wanted_rotation(var_5_2)
 	end
 end
 
-BTBossFollowAction._go_moving = function (self, unit, blackboard, action)
-	blackboard.move_state = "moving"
+function BTBossFollowAction._go_moving(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	arg_6_2.move_state = "moving"
 
-	Managers.state.network:anim_event(unit, action.move_anim)
+	Managers.state.network:anim_event(arg_6_1, arg_6_3.move_anim)
 end
 
-BTBossFollowAction.follow = function (self, unit, t, dt, blackboard, locomotion_extension)
-	local navigation_extension = blackboard.navigation_extension
+function BTBossFollowAction.follow(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+	local var_7_0 = arg_7_4.navigation_extension
 
-	if navigation_extension:number_failed_move_attempts() > 1 then
-		blackboard.remembered_threat_pos = false
+	if var_7_0:number_failed_move_attempts() > 1 then
+		arg_7_4.remembered_threat_pos = false
 
-		if blackboard.move_state ~= "idle" then
-			self:_go_idle(unit, blackboard, navigation_extension, locomotion_extension)
+		if arg_7_4.move_state ~= "idle" then
+			arg_7_0:_go_idle(arg_7_1, arg_7_4, var_7_0, arg_7_5)
 		end
 	end
 
-	local breed = blackboard.breed
+	local var_7_1 = arg_7_4.breed
 
-	if breed.use_big_boy_turning and blackboard.move_state == "moving" then
-		local is_turning = blackboard.is_turning
-
-		if is_turning then
-			LocomotionUtils.update_turning(unit, t, dt, blackboard)
+	if var_7_1.use_big_boy_turning and arg_7_4.move_state == "moving" then
+		if arg_7_4.is_turning then
+			LocomotionUtils.update_turning(arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 		else
-			LocomotionUtils.check_start_turning(unit, t, dt, blackboard)
+			LocomotionUtils.check_start_turning(arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 		end
 	end
 
-	local action = blackboard.action
-	local new_destination = self[action.follow_target_function_name](self, unit, blackboard, t, dt)
+	local var_7_2 = arg_7_4.action
+	local var_7_3 = arg_7_0[var_7_2.follow_target_function_name](arg_7_0, arg_7_1, arg_7_4, arg_7_2, arg_7_3)
 
-	if new_destination then
-		blackboard.wanted_destination = Vector3Box(new_destination)
+	if var_7_3 then
+		arg_7_4.wanted_destination = Vector3Box(var_7_3)
 	end
 
-	if blackboard.fling_skaven_timer and t > blackboard.fling_skaven_timer then
-		blackboard.fling_skaven_timer = t + 0.5
+	if arg_7_4.fling_skaven_timer and arg_7_2 > arg_7_4.fling_skaven_timer then
+		arg_7_4.fling_skaven_timer = arg_7_2 + 0.5
 
-		self:check_fling_skaven(unit, blackboard, t)
+		arg_7_0:check_fling_skaven(arg_7_1, arg_7_4, arg_7_2)
 	end
 
-	local destination = navigation_extension:destination()
-	local self_position = POSITION_LOOKUP[unit]
-	local to_vec = destination - self_position
+	local var_7_4 = var_7_0:destination() - POSITION_LOOKUP[arg_7_1]
 
-	Vector3.set_z(to_vec, 0)
+	Vector3.set_z(var_7_4, 0)
 
-	local distance_sq = Vector3.length_squared(to_vec)
+	local var_7_5 = Vector3.length_squared(var_7_4)
 
-	if t > blackboard.boss_follow_next_line_of_sight_check_t then
-		blackboard.has_los_to_any_player = PerceptionUtils.has_line_of_sight_to_any_player(unit)
-		blackboard.boss_follow_next_line_of_sight_check_t = t + 2.5
+	if arg_7_2 > arg_7_4.boss_follow_next_line_of_sight_check_t then
+		arg_7_4.has_los_to_any_player = PerceptionUtils.has_line_of_sight_to_any_player(arg_7_1)
+		arg_7_4.boss_follow_next_line_of_sight_check_t = arg_7_2 + 2.5
 	end
 
-	if action.override_move_speed then
-		if breed.catch_up_speed and distance_sq > 1600 and not blackboard.has_los_to_any_player then
-			navigation_extension:set_max_speed(breed.catch_up_speed)
+	if var_7_2.override_move_speed then
+		if var_7_1.catch_up_speed and var_7_5 > 1600 and not arg_7_4.has_los_to_any_player then
+			var_7_0:set_max_speed(var_7_1.catch_up_speed)
 		else
-			navigation_extension:set_max_speed(action.override_move_speed)
+			var_7_0:set_max_speed(var_7_2.override_move_speed)
 		end
-	elseif distance_sq < 1 then
-		navigation_extension:set_max_speed(breed.walk_speed)
-	elseif breed.catch_up_speed and distance_sq > 1600 and not blackboard.has_los_to_any_player then
-		navigation_extension:set_max_speed(breed.catch_up_speed)
-	elseif distance_sq > 4 then
-		navigation_extension:set_max_speed(breed.run_speed)
+	elseif var_7_5 < 1 then
+		var_7_0:set_max_speed(var_7_1.walk_speed)
+	elseif var_7_1.catch_up_speed and var_7_5 > 1600 and not arg_7_4.has_los_to_any_player then
+		var_7_0:set_max_speed(var_7_1.catch_up_speed)
+	elseif var_7_5 > 4 then
+		var_7_0:set_max_speed(var_7_1.run_speed)
 	end
 
-	local is_following_path = navigation_extension:is_following_path()
+	local var_7_6 = var_7_0:is_following_path()
 
-	if blackboard.move_state ~= "moving" and is_following_path and distance_sq > 0.25 then
-		self:_go_moving(unit, blackboard, action)
-	elseif blackboard.move_state ~= "idle" and (not is_following_path or distance_sq < 0.04000000000000001) then
-		self:_go_idle(unit, blackboard, navigation_extension, locomotion_extension)
+	if arg_7_4.move_state ~= "moving" and var_7_6 and var_7_5 > 0.25 then
+		arg_7_0:_go_moving(arg_7_1, arg_7_4, var_7_2)
+	elseif arg_7_4.move_state ~= "idle" and (not var_7_6 or var_7_5 < 0.04000000000000001) then
+		arg_7_0:_go_idle(arg_7_1, arg_7_4, var_7_0, arg_7_5)
 	end
 
-	local can_rotate = not blackboard.animation_rotation_lock
+	if not arg_7_4.animation_rotation_lock then
+		if arg_7_4.target_outside_navmesh then
+			local var_7_7 = LocomotionUtils.rotation_towards_unit_flat(arg_7_1, arg_7_4.target_unit)
 
-	if can_rotate then
-		if blackboard.target_outside_navmesh then
-			local rot = LocomotionUtils.rotation_towards_unit_flat(unit, blackboard.target_unit)
-
-			locomotion_extension:set_wanted_rotation(rot)
+			arg_7_5:set_wanted_rotation(var_7_7)
 		else
-			locomotion_extension:set_wanted_rotation(nil)
+			arg_7_5:set_wanted_rotation(nil)
 		end
 	end
 end
 
-local broad_phase_fling_units = {}
+local var_0_0 = {}
 
-BTBossFollowAction.check_fling_skaven = function (self, unit, blackboard, t)
-	local forward = Quaternion.forward(Unit.local_rotation(unit, 0))
-	local check_pos = POSITION_LOOKUP[unit] + forward * 2.6
-	local ai_system = Managers.state.entity:system("ai_system")
-	local num_units = Broadphase.query(ai_system.broadphase, check_pos, 1, broad_phase_fling_units)
+function BTBossFollowAction.check_fling_skaven(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	local var_8_0 = Quaternion.forward(Unit.local_rotation(arg_8_1, 0))
+	local var_8_1 = POSITION_LOOKUP[arg_8_1] + var_8_0 * 2.6
+	local var_8_2 = Managers.state.entity:system("ai_system")
+	local var_8_3 = Broadphase.query(var_8_2.broadphase, var_8_1, 1, var_0_0)
 
-	if num_units > 0 then
-		local BLACKBOARDS = BLACKBOARDS
+	if var_8_3 > 0 then
+		local var_8_4 = BLACKBOARDS
 
-		for i = 1, num_units do
-			local hit_unit = broad_phase_fling_units[i]
-			local hit_unit_bb = BLACKBOARDS[hit_unit]
-			local hit_unit_breed = hit_unit_bb and hit_unit_bb.breed
+		for iter_8_0 = 1, var_8_3 do
+			local var_8_5 = var_0_0[iter_8_0]
+			local var_8_6 = var_8_4[var_8_5]
+			local var_8_7 = var_8_6 and var_8_6.breed
 
-			if hit_unit_breed and hit_unit_breed.flingable and HEALTH_ALIVE[hit_unit] then
-				blackboard.fling_skaven = true
-				blackboard.fling_skaven_timer = t + 5
+			if var_8_7 and var_8_7.flingable and HEALTH_ALIVE[var_8_5] then
+				arg_8_2.fling_skaven = true
+				arg_8_2.fling_skaven_timer = arg_8_3 + 5
 
 				break
 			end
@@ -205,104 +197,105 @@ BTBossFollowAction.check_fling_skaven = function (self, unit, blackboard, t)
 	end
 end
 
-BTBossFollowAction._follow_target_rat_ogre = function (self, unit, blackboard, t, dt)
-	return LocomotionUtils.follow_target_ogre(unit, blackboard, t, dt)
+function BTBossFollowAction._follow_target_rat_ogre(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	return LocomotionUtils.follow_target_ogre(arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 end
 
-local STORMFIEND_TARGET_HAS_MOVED_DISTANCE_SQ = 25
-local STORMFIEND_MIN_REQUIRED_DISTANCE_CHANGE_SQ = 0.25
+local var_0_1 = 25
+local var_0_2 = 0.25
 
-BTBossFollowAction._follow_target_stormfiend = function (self, unit, blackboard, t, dt)
-	local nav_world = blackboard.nav_world
-	local action = blackboard.action
-	local data = action.follow_target_function_data
-	local check_distance = data.check_distance
-	local target_distance = blackboard.target_dist
-	local navigation_extension = blackboard.navigation_extension
-	local at_goal = navigation_extension:has_reached_destination(0.5)
-	local position
-	local unit_position = POSITION_LOOKUP[unit]
-	local target_unit = blackboard.target_unit
-	local target_position = POSITION_LOOKUP[target_unit]
+function BTBossFollowAction._follow_target_stormfiend(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	local var_10_0 = arg_10_2.nav_world
+	local var_10_1 = arg_10_2.action.follow_target_function_data
+	local var_10_2 = var_10_1.check_distance
+	local var_10_3 = arg_10_2.target_dist
+	local var_10_4 = arg_10_2.navigation_extension
+	local var_10_5 = var_10_4:has_reached_destination(0.5)
+	local var_10_6
+	local var_10_7 = POSITION_LOOKUP[arg_10_1]
+	local var_10_8 = arg_10_2.target_unit
+	local var_10_9 = POSITION_LOOKUP[var_10_8]
 
-	if data.check_ray_can_go_to_target then
-		blackboard.ray_can_go_to_target = LocomotionUtils.ray_can_go_on_mesh(nav_world, unit_position, target_position, nil, 1, 1)
+	if var_10_1.check_ray_can_go_to_target then
+		arg_10_2.ray_can_go_to_target = LocomotionUtils.ray_can_go_on_mesh(var_10_0, var_10_7, var_10_9, nil, 1, 1)
 	end
 
-	local follow_data = blackboard.follow_data
-	local remembered_target_position, target_has_moved
+	local var_10_10 = arg_10_2.follow_data
+	local var_10_11
+	local var_10_12
 
-	if follow_data.remembered_target_position then
-		remembered_target_position = follow_data.remembered_target_position:unbox()
+	if var_10_10.remembered_target_position then
+		local var_10_13 = var_10_10.remembered_target_position:unbox()
 
-		local target_distance_diff_sq = Vector3.distance_squared(target_position, remembered_target_position)
-
-		target_has_moved = target_distance_diff_sq > STORMFIEND_TARGET_HAS_MOVED_DISTANCE_SQ
+		var_10_12 = Vector3.distance_squared(var_10_9, var_10_13) > var_0_1
 	else
-		follow_data.remembered_target_position = Vector3Box(target_position)
-		remembered_target_position = target_position
-		target_has_moved = false
+		var_10_10.remembered_target_position = Vector3Box(var_10_9)
+
+		local var_10_14 = var_10_9
+
+		var_10_12 = false
 	end
 
-	if at_goal and (check_distance < target_distance or blackboard.find_new_shoot_position) or not at_goal and target_has_moved then
-		local min_angle = follow_data.min_angle or 0
-		local min_angle_step = data.min_angle_step
-		local max_angle_step = data.max_angle_step
-		local min_distance = follow_data.min_distance or data.min_wanted_distance
-		local max_distance = follow_data.max_distance or data.max_wanted_distance
+	if var_10_5 and (var_10_2 < var_10_3 or arg_10_2.find_new_shoot_position) or not var_10_5 and var_10_12 then
+		local var_10_15 = var_10_10.min_angle or 0
+		local var_10_16 = var_10_1.min_angle_step
+		local var_10_17 = var_10_1.max_angle_step
+		local var_10_18 = var_10_10.min_distance or var_10_1.min_wanted_distance
+		local var_10_19 = var_10_10.max_distance or var_10_1.max_wanted_distance
 
-		if blackboard.find_new_shoot_position then
-			blackboard.find_new_shoot_position = nil
-			min_angle = min_angle + data.failed_move_attempt_angle_increment
+		if arg_10_2.find_new_shoot_position then
+			arg_10_2.find_new_shoot_position = nil
+			var_10_15 = var_10_15 + var_10_1.failed_move_attempt_angle_increment
 
-			if min_angle >= 360 then
-				min_angle = min_angle - 360
-				min_distance = min_distance * 0.8
-				max_distance = max_distance * 0.8
+			if var_10_15 >= 360 then
+				var_10_15 = var_10_15 - 360
+				var_10_18 = var_10_18 * 0.8
+				var_10_19 = var_10_19 * 0.8
 			end
 		end
 
-		if max_distance < 1 then
-			local above, below = 2, 2
+		if var_10_19 < 1 then
+			local var_10_20 = 2
+			local var_10_21 = 2
 
-			position = LocomotionUtils.pos_on_mesh(nav_world, target_position, above, below)
+			var_10_6 = LocomotionUtils.pos_on_mesh(var_10_0, var_10_9, var_10_20, var_10_21)
 
-			if position == nil then
-				blackboard.target_outside_navmesh = true
+			if var_10_6 == nil then
+				arg_10_2.target_outside_navmesh = true
 			end
 		else
-			position = AiUtils.advance_towards_target(unit, blackboard, min_distance, max_distance, min_angle_step, max_angle_step, min_angle)
+			var_10_6 = AiUtils.advance_towards_target(arg_10_1, arg_10_2, var_10_18, var_10_19, var_10_16, var_10_17, var_10_15)
 		end
 
-		local distance_sq = position and Vector3.distance_squared(unit_position, position)
+		local var_10_22 = var_10_6 and Vector3.distance_squared(var_10_7, var_10_6)
 
-		if position and distance_sq > STORMFIEND_MIN_REQUIRED_DISTANCE_CHANGE_SQ then
-			navigation_extension:move_to(position)
+		if var_10_6 and var_10_22 > var_0_2 then
+			var_10_4:move_to(var_10_6)
 
-			follow_data.min_angle = 0
-			follow_data.min_distance = data.min_wanted_distance
-			follow_data.max_distance = data.max_wanted_distance
+			var_10_10.min_angle = 0
+			var_10_10.min_distance = var_10_1.min_wanted_distance
+			var_10_10.max_distance = var_10_1.max_wanted_distance
 
-			follow_data.remembered_target_position:store(target_position)
+			var_10_10.remembered_target_position:store(var_10_9)
 		else
-			blackboard.find_new_shoot_position = true
-			follow_data.min_angle = min_angle
-			follow_data.min_distance = min_distance
-			follow_data.max_distance = max_distance
+			arg_10_2.find_new_shoot_position = true
+			var_10_10.min_angle = var_10_15
+			var_10_10.min_distance = var_10_18
+			var_10_10.max_distance = var_10_19
 		end
 	end
 
-	return position
+	return var_10_6
 end
 
-BTBossFollowAction._follow_target_chaos_spawn = function (self, unit, blackboard, t, dt)
-	return LocomotionUtils.follow_target_ogre(unit, blackboard, t, dt)
+function BTBossFollowAction._follow_target_chaos_spawn(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	return LocomotionUtils.follow_target_ogre(arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 end
 
-BTBossFollowAction._debug_big_boy_turning = function (self, blackboard)
+function BTBossFollowAction._debug_big_boy_turning(arg_12_0, arg_12_1)
 	if script_data.debug_ai_movement then
-		local turning = blackboard.is_turning and "true" or "false"
+		local var_12_0 = arg_12_1.is_turning and "true" or "false"
 
-		Debug.text("move_state:%s turning:%s", blackboard.move_state, turning)
+		Debug.text("move_state:%s turning:%s", arg_12_1.move_state, var_12_0)
 	end
 end

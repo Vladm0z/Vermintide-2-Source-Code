@@ -1,46 +1,45 @@
-﻿-- chunkname: @scripts/entity_system/systems/props/end_zone_system.lua
+-- chunkname: @scripts/entity_system/systems/props/end_zone_system.lua
 
 EndZoneSystem = class(EndZoneSystem, ExtensionSystemBase)
 
-local extensions = {
-	"EndZoneExtension",
+local var_0_0 = {
+	"EndZoneExtension"
 }
 
-EndZoneSystem.init = function (self, entity_system_creation_context, system_name)
-	PropsSystem.super.init(self, entity_system_creation_context, system_name, extensions)
+function EndZoneSystem.init(arg_1_0, arg_1_1, arg_1_2)
+	PropsSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 end
 
-EndZoneSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
-	return PropsSystem.super.on_add_extension(self, world, unit, extension_name, extension_init_data)
+function EndZoneSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	return PropsSystem.super.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 end
 
-EndZoneSystem.on_remove_extension = function (self, unit, extension_name)
-	PropsSystem.super.on_remove_extension(self, unit, extension_name)
+function EndZoneSystem.on_remove_extension(arg_3_0, arg_3_1, arg_3_2)
+	PropsSystem.super.on_remove_extension(arg_3_0, arg_3_1, arg_3_2)
 end
 
-EndZoneSystem.update = function (self, context, t)
-	PropsSystem.super.update(self, context, t)
+function EndZoneSystem.update(arg_4_0, arg_4_1, arg_4_2)
+	PropsSystem.super.update(arg_4_0, arg_4_1, arg_4_2)
 end
 
-EndZoneSystem.activate_end_zone_by_name = function (self, name)
+function EndZoneSystem.activate_end_zone_by_name(arg_5_0, arg_5_1)
 	if not Managers.player.is_server then
 		return
 	end
 
-	local units = Managers.state.entity:get_entities("EndZoneExtension")
-	local get_data = Unit.get_data
+	local var_5_0 = Managers.state.entity:get_entities("EndZoneExtension")
+	local var_5_1 = Unit.get_data
 
-	for unit, end_zone_extension in pairs(units) do
-		local ez_name = get_data(unit, "activation_name")
+	for iter_5_0, iter_5_1 in pairs(var_5_0) do
+		local var_5_2 = var_5_1(iter_5_0, "activation_name")
 
-		if ez_name and ez_name == name then
-			local position = Unit.world_position(unit, 0)
-			local unit_name = "units/hub_elements/objective_unit"
-			local objective_unit = Managers.state.unit_spawner:spawn_network_unit(unit_name, "objective_unit", nil, position)
-			local objective_unit_extension = ScriptUnit.extension(objective_unit, "tutorial_system")
+		if var_5_2 and var_5_2 == arg_5_1 then
+			local var_5_3 = Unit.world_position(iter_5_0, 0)
+			local var_5_4 = "units/hub_elements/objective_unit"
+			local var_5_5 = Managers.state.unit_spawner:spawn_network_unit(var_5_4, "objective_unit", nil, var_5_3)
 
-			objective_unit_extension:set_active(true)
-			end_zone_extension:activation_allowed(true)
+			ScriptUnit.extension(var_5_5, "tutorial_system"):set_active(true)
+			iter_5_1:activation_allowed(true)
 		end
 	end
 end

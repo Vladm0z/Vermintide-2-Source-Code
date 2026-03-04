@@ -1,197 +1,191 @@
-﻿-- chunkname: @scripts/entity_system/systems/projectile/projectile_linker_system.lua
+-- chunkname: @scripts/entity_system/systems/projectile/projectile_linker_system.lua
 
 require("scripts/unit_extensions/weapons/projectiles/projectile_linker_extension")
 
 ProjectileLinkerSystem = class(ProjectileLinkerSystem, ExtensionSystemBase)
 
-local RPCS = {
+local var_0_0 = {
 	"rpc_link_pickup",
-	"rpc_spawn_and_link_units",
+	"rpc_spawn_and_link_units"
 }
-local extensions = {
-	"ProjectileLinkerExtension",
+local var_0_1 = {
+	"ProjectileLinkerExtension"
 }
-local LINKED_PROJECTILE_LIFETIME = 30
+local var_0_2 = 30
 
-ProjectileLinkerSystem.init = function (self, entity_system_creation_context, system_name)
-	ProjectileLinkerSystem.super.init(self, entity_system_creation_context, system_name, extensions)
+function ProjectileLinkerSystem.init(arg_1_0, arg_1_1, arg_1_2)
+	ProjectileLinkerSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
-	local network_event_delegate = entity_system_creation_context.network_event_delegate
+	local var_1_0 = arg_1_1.network_event_delegate
 
-	self.network_event_delegate = network_event_delegate
+	arg_1_0.network_event_delegate = var_1_0
 
-	network_event_delegate:register(self, unpack(RPCS))
+	var_1_0:register(arg_1_0, unpack(var_0_0))
 
-	self.linked_projectile_units = {}
-	self.owner_units_count = 0
+	arg_1_0.linked_projectile_units = {}
+	arg_1_0.owner_units_count = 0
 
-	self.cb_linked_projectile_owner_destroyed = function (destroyed_linked_projectile_owner_unit)
-		for owner_unit, linked_projectiles in pairs(self.linked_projectile_units) do
-			if owner_unit == destroyed_linked_projectile_owner_unit then
-				for linked_projectile_unit, _ in pairs(linked_projectiles) do
-					if self:_has_reference(linked_projectile_unit) then
-						self:_remove_linked_projectile_reference(linked_projectile_unit)
+	function arg_1_0.cb_linked_projectile_owner_destroyed(arg_2_0)
+		for iter_2_0, iter_2_1 in pairs(arg_1_0.linked_projectile_units) do
+			if iter_2_0 == arg_2_0 then
+				for iter_2_2, iter_2_3 in pairs(iter_2_1) do
+					if arg_1_0:_has_reference(iter_2_2) then
+						arg_1_0:_remove_linked_projectile_reference(iter_2_2)
 					end
 
-					if Unit.alive(linked_projectile_unit) then
-						Managers.state.unit_spawner:mark_for_deletion(linked_projectile_unit)
+					if Unit.alive(iter_2_2) then
+						Managers.state.unit_spawner:mark_for_deletion(iter_2_2)
 					end
 				end
 			end
 		end
 
-		self.linked_projectile_units[destroyed_linked_projectile_owner_unit] = nil
-		self.owner_units_count = self.owner_units_count - 1
+		arg_1_0.linked_projectile_units[arg_2_0] = nil
+		arg_1_0.owner_units_count = arg_1_0.owner_units_count - 1
 	end
 
-	self.cb_linked_pickup_projectile_owner_destroyed = function (destroyed_linked_projectile_owner_unit)
-		for owner_unit, linked_projectiles in pairs(self.linked_projectile_units) do
-			if owner_unit == destroyed_linked_projectile_owner_unit then
-				for linked_projectile_unit, _ in pairs(linked_projectiles) do
-					if self:_has_reference(linked_projectile_unit) then
-						self:_remove_linked_projectile_reference(linked_projectile_unit)
+	function arg_1_0.cb_linked_pickup_projectile_owner_destroyed(arg_3_0)
+		for iter_3_0, iter_3_1 in pairs(arg_1_0.linked_projectile_units) do
+			if iter_3_0 == arg_3_0 then
+				for iter_3_2, iter_3_3 in pairs(iter_3_1) do
+					if arg_1_0:_has_reference(iter_3_2) then
+						arg_1_0:_remove_linked_projectile_reference(iter_3_2)
 					end
 
-					local linker_extension = ScriptUnit.has_extension(owner_unit, "projectile_linker_system")
+					local var_3_0 = ScriptUnit.has_extension(iter_3_0, "projectile_linker_system")
 
-					if linker_extension then
-						linker_extension:unlink_projectile(linked_projectile_unit)
+					if var_3_0 then
+						var_3_0:unlink_projectile(iter_3_2)
 					end
 
-					if Unit.alive(linked_projectile_unit) then
-						local pickup_extension = ScriptUnit.has_extension(linked_projectile_unit, "pickup_system")
+					if Unit.alive(iter_3_2) then
+						local var_3_1 = ScriptUnit.has_extension(iter_3_2, "pickup_system")
 
-						if pickup_extension then
-							pickup_extension:set_physics_enabled(true)
+						if var_3_1 then
+							var_3_1:set_physics_enabled(true)
 						end
 					end
 				end
 			end
 		end
 
-		self.linked_projectile_units[destroyed_linked_projectile_owner_unit] = nil
-		self.owner_units_count = self.owner_units_count - 1
+		arg_1_0.linked_projectile_units[arg_3_0] = nil
+		arg_1_0.owner_units_count = arg_1_0.owner_units_count - 1
 	end
 
-	self.cb_linked_projectile_timeout = function (linked_projectile_owner_unit, linked_projectile_unit)
-		if self:_has_reference(linked_projectile_unit) then
-			self:_remove_linked_projectile_reference(linked_projectile_unit)
+	function arg_1_0.cb_linked_projectile_timeout(arg_4_0, arg_4_1)
+		if arg_1_0:_has_reference(arg_4_1) then
+			arg_1_0:_remove_linked_projectile_reference(arg_4_1)
 		end
 
-		if Unit.alive(linked_projectile_unit) then
-			local unit_spawner = Managers.state.unit_spawner
-
-			unit_spawner:mark_for_deletion(linked_projectile_unit)
+		if Unit.alive(arg_4_1) then
+			Managers.state.unit_spawner:mark_for_deletion(arg_4_1)
 		end
 	end
 
-	self.cb_linked_pickup_projectile_timeout = function (linked_projectile_owner_unit, linked_projectile_unit)
-		if self:_has_reference(linked_projectile_unit) then
-			self:_remove_linked_projectile_reference(linked_projectile_unit)
+	function arg_1_0.cb_linked_pickup_projectile_timeout(arg_5_0, arg_5_1)
+		if arg_1_0:_has_reference(arg_5_1) then
+			arg_1_0:_remove_linked_projectile_reference(arg_5_1)
 		end
 
-		local linker_extension = ScriptUnit.has_extension(linked_projectile_owner_unit, "projectile_linker_system")
+		local var_5_0 = ScriptUnit.has_extension(arg_5_0, "projectile_linker_system")
 
-		if linker_extension then
-			linker_extension:unlink_projectile(linked_projectile_unit)
+		if var_5_0 then
+			var_5_0:unlink_projectile(arg_5_1)
 		end
 
-		if Unit.alive(linked_projectile_unit) then
-			local pickup_extension = ScriptUnit.has_extension(linked_projectile_unit, "pickup_system")
+		if Unit.alive(arg_5_1) then
+			local var_5_1 = ScriptUnit.has_extension(arg_5_1, "pickup_system")
 
-			if pickup_extension then
-				pickup_extension:set_physics_enabled(true)
+			if var_5_1 then
+				var_5_1:set_physics_enabled(true)
 			end
 
-			if Unit.find_actor(linked_projectile_unit, "throw") then
-				Unit.create_actor(linked_projectile_unit, "throw")
+			if Unit.find_actor(arg_5_1, "throw") then
+				Unit.create_actor(arg_5_1, "throw")
 			end
 		end
 	end
 end
 
-ProjectileLinkerSystem.on_remove_extension = function (self, unit, extension_name)
-	self:clear_linked_projectiles(unit)
+function ProjectileLinkerSystem.on_remove_extension(arg_6_0, arg_6_1, arg_6_2)
+	arg_6_0:clear_linked_projectiles(arg_6_1)
 
-	return ProjectileLinkerSystem.super.on_remove_extension(self, unit, extension_name)
+	return ProjectileLinkerSystem.super.on_remove_extension(arg_6_0, arg_6_1, arg_6_2)
 end
 
-ProjectileLinkerSystem.freeze = function (self, unit, extension_name, reason)
-	self:clear_linked_projectiles(unit)
+function ProjectileLinkerSystem.freeze(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	arg_7_0:clear_linked_projectiles(arg_7_1)
 end
 
-ProjectileLinkerSystem.clear_linked_projectiles = function (self, unit)
-	local linked_projectile_units = self.linked_projectile_units[unit]
+function ProjectileLinkerSystem.clear_linked_projectiles(arg_8_0, arg_8_1)
+	local var_8_0 = arg_8_0.linked_projectile_units[arg_8_1]
 
-	if not linked_projectile_units then
+	if not var_8_0 then
 		return
 	end
 
-	for linked_projectile_unit, link_data in pairs(linked_projectile_units) do
-		local cb_function = link_data.cb_timeout
-
-		cb_function(unit, linked_projectile_unit)
+	for iter_8_0, iter_8_1 in pairs(var_8_0) do
+		iter_8_1.cb_timeout(arg_8_1, iter_8_0)
 	end
 end
 
-local linked_projectiles_to_remove = {}
+local var_0_3 = {}
 
-ProjectileLinkerSystem.update = function (self, context, t)
-	ProjectileLinkerSystem.super.update(self, context, t)
+function ProjectileLinkerSystem.update(arg_9_0, arg_9_1, arg_9_2)
+	ProjectileLinkerSystem.super.update(arg_9_0, arg_9_1, arg_9_2)
 
-	local linked_projectile_units = self.linked_projectile_units
+	local var_9_0 = arg_9_0.linked_projectile_units
 
-	for owner_unit, linked_projectiles in pairs(linked_projectile_units) do
-		for linked_projectile_unit, link_data in pairs(linked_projectiles) do
-			if t >= link_data.end_time then
-				linked_projectiles_to_remove[linked_projectile_unit] = {
-					cb_function = link_data.cb_timeout,
-					owner_unit = owner_unit,
+	for iter_9_0, iter_9_1 in pairs(var_9_0) do
+		for iter_9_2, iter_9_3 in pairs(iter_9_1) do
+			if arg_9_2 >= iter_9_3.end_time then
+				var_0_3[iter_9_2] = {
+					cb_function = iter_9_3.cb_timeout,
+					owner_unit = iter_9_0
 				}
 			end
 		end
 	end
 
-	for linked_projectile_unit, removal_data in pairs(linked_projectiles_to_remove) do
-		removal_data.cb_function(removal_data.owner_unit, linked_projectile_unit)
+	for iter_9_4, iter_9_5 in pairs(var_0_3) do
+		iter_9_5.cb_function(iter_9_5.owner_unit, iter_9_4)
 	end
 
-	table.clear(linked_projectiles_to_remove)
+	table.clear(var_0_3)
 end
 
-ProjectileLinkerSystem.destroy = function (self)
-	self.network_event_delegate:unregister(self)
+function ProjectileLinkerSystem.destroy(arg_10_0)
+	arg_10_0.network_event_delegate:unregister(arg_10_0)
 end
 
-ProjectileLinkerSystem.add_linked_projectile_reference = function (self, owner_unit, linked_projectile_unit, destroy_cb_name, timeout_cb_name, add_destroy_listener)
-	local t = Managers.time:time("game")
+function ProjectileLinkerSystem.add_linked_projectile_reference(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+	local var_11_0 = Managers.time:time("game")
 
-	if not self.linked_projectile_units[owner_unit] then
-		self.linked_projectile_units[owner_unit] = {}
-		self.owner_units_count = self.owner_units_count + 1
+	if not arg_11_0.linked_projectile_units[arg_11_1] then
+		arg_11_0.linked_projectile_units[arg_11_1] = {}
+		arg_11_0.owner_units_count = arg_11_0.owner_units_count + 1
 
-		if add_destroy_listener then
-			local unit_spawner = Managers.state.unit_spawner
-
-			unit_spawner:add_destroy_listener(owner_unit, "linked_projectile_owner_" .. self.owner_units_count, self[destroy_cb_name or "cb_linked_projectile_owner_destroyed"])
+		if arg_11_5 then
+			Managers.state.unit_spawner:add_destroy_listener(arg_11_1, "linked_projectile_owner_" .. arg_11_0.owner_units_count, arg_11_0[arg_11_3 or "cb_linked_projectile_owner_destroyed"])
 		end
 	end
 
-	self.linked_projectile_units[owner_unit][linked_projectile_unit] = {
-		end_time = t + LINKED_PROJECTILE_LIFETIME,
-		cb_timeout = self[timeout_cb_name or "cb_linked_projectile_timeout"],
+	arg_11_0.linked_projectile_units[arg_11_1][arg_11_2] = {
+		end_time = var_11_0 + var_0_2,
+		cb_timeout = arg_11_0[arg_11_4 or "cb_linked_projectile_timeout"]
 	}
 end
 
-ProjectileLinkerSystem._remove_linked_projectile_reference = function (self, linked_projectile_unit)
-	for _, linked_projectiles in pairs(self.linked_projectile_units) do
-		linked_projectiles[linked_projectile_unit] = nil
+function ProjectileLinkerSystem._remove_linked_projectile_reference(arg_12_0, arg_12_1)
+	for iter_12_0, iter_12_1 in pairs(arg_12_0.linked_projectile_units) do
+		iter_12_1[arg_12_1] = nil
 	end
 end
 
-ProjectileLinkerSystem._has_reference = function (self, linked_projectile_unit)
-	for _, linked_projectiles in pairs(self.linked_projectile_units) do
-		if linked_projectiles[linked_projectile_unit] then
+function ProjectileLinkerSystem._has_reference(arg_13_0, arg_13_1)
+	for iter_13_0, iter_13_1 in pairs(arg_13_0.linked_projectile_units) do
+		if iter_13_1[arg_13_1] then
 			return true
 		end
 	end
@@ -199,61 +193,55 @@ ProjectileLinkerSystem._has_reference = function (self, linked_projectile_unit)
 	return false
 end
 
-ProjectileLinkerSystem.link_pickup = function (self, pickup_unit, link_position, link_rotation, hit_unit, node_index)
-	local throw_actor = Unit.actor(pickup_unit, "throw")
-
-	if throw_actor then
-		Unit.destroy_actor(pickup_unit, "throw")
+function ProjectileLinkerSystem.link_pickup(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+	if Unit.actor(arg_14_1, "throw") then
+		Unit.destroy_actor(arg_14_1, "throw")
 	end
 
-	if ScriptUnit.has_extension(hit_unit, "projectile_linker_system") then
-		local hit_node_rot = Unit.world_rotation(hit_unit, node_index)
-		local hit_node_pos = Unit.world_position(hit_unit, node_index)
-		local rel_pos = link_position - hit_node_pos
-		local offset_position = Vector3(Vector3.dot(Quaternion.right(hit_node_rot), rel_pos), Vector3.dot(Quaternion.forward(hit_node_rot), rel_pos), Vector3.dot(Quaternion.up(hit_node_rot), rel_pos))
-		local linker_extension = ScriptUnit.extension(hit_unit, "projectile_linker_system")
+	if ScriptUnit.has_extension(arg_14_4, "projectile_linker_system") then
+		local var_14_0 = Unit.world_rotation(arg_14_4, arg_14_5)
+		local var_14_1 = arg_14_2 - Unit.world_position(arg_14_4, arg_14_5)
+		local var_14_2 = Vector3(Vector3.dot(Quaternion.right(var_14_0), var_14_1), Vector3.dot(Quaternion.forward(var_14_0), var_14_1), Vector3.dot(Quaternion.up(var_14_0), var_14_1))
 
-		linker_extension:link_projectile(pickup_unit, offset_position, link_rotation, node_index)
-		self:add_linked_projectile_reference(hit_unit, pickup_unit, "cb_linked_pickup_projectile_owner_destroyed", "cb_linked_pickup_projectile_timeout", self.is_server)
+		ScriptUnit.extension(arg_14_4, "projectile_linker_system"):link_projectile(arg_14_1, var_14_2, arg_14_3, arg_14_5)
+		arg_14_0:add_linked_projectile_reference(arg_14_4, arg_14_1, "cb_linked_pickup_projectile_owner_destroyed", "cb_linked_pickup_projectile_timeout", arg_14_0.is_server)
 	else
-		self:add_linked_projectile_reference(hit_unit, pickup_unit, "cb_linked_pickup_projectile_owner_destroyed", "cb_linked_pickup_projectile_timeout", self.is_server)
+		arg_14_0:add_linked_projectile_reference(arg_14_4, arg_14_1, "cb_linked_pickup_projectile_owner_destroyed", "cb_linked_pickup_projectile_timeout", arg_14_0.is_server)
 	end
 end
 
-ProjectileLinkerSystem.rpc_link_pickup = function (self, channel_id, pickup_unit_go_id, link_position, link_rotation, hit_unit_go_id, node_index, is_level_unit)
-	local pickup_unit = Managers.state.unit_storage:unit(pickup_unit_go_id)
-	local hit_unit = Managers.state.network:game_object_or_level_unit(hit_unit_go_id, is_level_unit)
+function ProjectileLinkerSystem.rpc_link_pickup(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7)
+	local var_15_0 = Managers.state.unit_storage:unit(arg_15_2)
+	local var_15_1 = Managers.state.network:game_object_or_level_unit(arg_15_5, arg_15_7)
 
-	if not Unit.alive(pickup_unit) or not Unit.alive(hit_unit) then
+	if not Unit.alive(var_15_0) or not Unit.alive(var_15_1) then
 		return
 	end
 
-	self:link_pickup(pickup_unit, link_position, link_rotation, hit_unit, node_index)
+	arg_15_0:link_pickup(var_15_0, arg_15_3, arg_15_4, var_15_1, arg_15_6)
 end
 
-ProjectileLinkerSystem.spawn_and_link_units = function (self, linked_unit_name, link_position, link_rotation, hit_unit, node_index)
-	local unit_spawner = Managers.state.unit_spawner
+function ProjectileLinkerSystem.spawn_and_link_units(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+	local var_16_0 = Managers.state.unit_spawner
 
-	if ScriptUnit.has_extension(hit_unit, "projectile_linker_system") then
-		local linked_unit = unit_spawner:spawn_local_unit(linked_unit_name, link_position, link_rotation)
-		local hit_node_rot = Unit.world_rotation(hit_unit, node_index)
-		local hit_node_pos = Unit.world_position(hit_unit, node_index)
-		local rel_pos = link_position - hit_node_pos
-		local offset_position = Vector3(Vector3.dot(Quaternion.right(hit_node_rot), rel_pos), Vector3.dot(Quaternion.forward(hit_node_rot), rel_pos), Vector3.dot(Quaternion.up(hit_node_rot), rel_pos))
-		local linker_extension = ScriptUnit.extension(hit_unit, "projectile_linker_system")
+	if ScriptUnit.has_extension(arg_16_4, "projectile_linker_system") then
+		local var_16_1 = var_16_0:spawn_local_unit(arg_16_1, arg_16_2, arg_16_3)
+		local var_16_2 = Unit.world_rotation(arg_16_4, arg_16_5)
+		local var_16_3 = arg_16_2 - Unit.world_position(arg_16_4, arg_16_5)
+		local var_16_4 = Vector3(Vector3.dot(Quaternion.right(var_16_2), var_16_3), Vector3.dot(Quaternion.forward(var_16_2), var_16_3), Vector3.dot(Quaternion.up(var_16_2), var_16_3))
 
-		linker_extension:link_projectile(linked_unit, offset_position, link_rotation, node_index)
-		self:add_linked_projectile_reference(hit_unit, linked_unit)
+		ScriptUnit.extension(arg_16_4, "projectile_linker_system"):link_projectile(var_16_1, var_16_4, arg_16_3, arg_16_5)
+		arg_16_0:add_linked_projectile_reference(arg_16_4, var_16_1)
 	else
-		local linked_unit = unit_spawner:spawn_local_unit(linked_unit_name, link_position, link_rotation)
+		local var_16_5 = var_16_0:spawn_local_unit(arg_16_1, arg_16_2, arg_16_3)
 
-		self:add_linked_projectile_reference(hit_unit, linked_unit)
+		arg_16_0:add_linked_projectile_reference(arg_16_4, var_16_5)
 	end
 end
 
-ProjectileLinkerSystem.rpc_spawn_and_link_units = function (self, channel_id, linked_unit_name_id, link_position, link_rotation, hit_unit_go_id, node_index, is_level_unit)
-	local hit_unit = Managers.state.network:game_object_or_level_unit(hit_unit_go_id, is_level_unit)
-	local linked_unit_name = NetworkLookup.husks[linked_unit_name_id]
+function ProjectileLinkerSystem.rpc_spawn_and_link_units(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7)
+	local var_17_0 = Managers.state.network:game_object_or_level_unit(arg_17_5, arg_17_7)
+	local var_17_1 = NetworkLookup.husks[arg_17_2]
 
-	self:spawn_and_link_units(linked_unit_name, link_position, link_rotation, hit_unit, node_index)
+	arg_17_0:spawn_and_link_units(var_17_1, arg_17_3, arg_17_4, var_17_0, arg_17_6)
 end

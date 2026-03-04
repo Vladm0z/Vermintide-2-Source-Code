@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/entity_system/systems/projectile_locomotion/projectile_locomotion_system.lua
+-- chunkname: @scripts/entity_system/systems/projectile_locomotion/projectile_locomotion_system.lua
 
 require("scripts/unit_extensions/weapons/projectiles/projectile_physics_husk_locomotion_extension")
 require("scripts/unit_extensions/weapons/projectiles/projectile_physics_unit_locomotion_extension")
@@ -7,13 +7,13 @@ require("scripts/unit_extensions/weapons/projectiles/projectile_sticky_locomotio
 
 ProjectileLocomotionSystem = class(ProjectileLocomotionSystem, ExtensionSystemBase)
 
-local RPCS = {
+local var_0_0 = {
 	"rpc_set_projectile_state",
 	"rpc_projectile_stick_unit",
 	"rpc_projectile_stick_position",
-	"rpc_hot_join_sync_projectile_sticky",
+	"rpc_hot_join_sync_projectile_sticky"
 }
-local extensions = {
+local var_0_1 = {
 	"ProjectilePhysicsHuskLocomotionExtension",
 	"ProjectilePhysicsUnitLocomotionExtension",
 	"ProjectileScriptUnitLocomotionExtension",
@@ -21,142 +21,137 @@ local extensions = {
 	"ProjectileHomingSkullLocomotionExtension",
 	"ProjectileExtrapolatedHuskLocomotionExtension",
 	"ProjectileStickyLocomotion",
-	"ProjectileEtherealSkullLocomotionExtension",
+	"ProjectileEtherealSkullLocomotionExtension"
 }
 
-ProjectileLocomotionSystem.init = function (self, entity_system_creation_context, name)
-	ProjectileLocomotionSystem.super.init(self, entity_system_creation_context, name, extensions)
+function ProjectileLocomotionSystem.init(arg_1_0, arg_1_1, arg_1_2)
+	ProjectileLocomotionSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
-	local network_event_delegate = entity_system_creation_context.network_event_delegate
+	local var_1_0 = arg_1_1.network_event_delegate
 
-	self.network_event_delegate = network_event_delegate
+	arg_1_0.network_event_delegate = var_1_0
 
-	network_event_delegate:register(self, unpack(RPCS))
+	var_1_0:register(arg_1_0, unpack(var_0_0))
 
-	self._server_position_corrected_pickups = {}
+	arg_1_0._server_position_corrected_pickups = {}
 end
 
-ProjectileLocomotionSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data, ...)
-	if extension_name == "ProjectilePhysicsHuskLocomotionExtension" or extension_name == "ProjectilePhysicsUnitLocomotionExtension" then
-		self._server_position_corrected_pickups[unit] = unit
+function ProjectileLocomotionSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, ...)
+	if arg_2_3 == "ProjectilePhysicsHuskLocomotionExtension" or arg_2_3 == "ProjectilePhysicsUnitLocomotionExtension" then
+		arg_2_0._server_position_corrected_pickups[arg_2_2] = arg_2_2
 	end
 
-	return ProjectileLocomotionSystem.super.on_add_extension(self, world, unit, extension_name, extension_init_data, ...)
+	return ProjectileLocomotionSystem.super.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, ...)
 end
 
-ProjectileLocomotionSystem.on_remove_extension = function (self, unit, extension_name, ...)
-	self._server_position_corrected_pickups[unit] = nil
+function ProjectileLocomotionSystem.on_remove_extension(arg_3_0, arg_3_1, arg_3_2, ...)
+	arg_3_0._server_position_corrected_pickups[arg_3_1] = nil
 
-	return ProjectileLocomotionSystem.super.on_remove_extension(self, unit, extension_name, ...)
+	return ProjectileLocomotionSystem.super.on_remove_extension(arg_3_0, arg_3_1, arg_3_2, ...)
 end
 
-ProjectileLocomotionSystem.update = function (self, dt, t)
-	ProjectileLocomotionSystem.super.update(self, dt, t)
+function ProjectileLocomotionSystem.update(arg_4_0, arg_4_1, arg_4_2)
+	ProjectileLocomotionSystem.super.update(arg_4_0, arg_4_1, arg_4_2)
 
-	if self.is_server then
-		self:_server_sync_position_rotation(dt, t)
+	if arg_4_0.is_server then
+		arg_4_0:_server_sync_position_rotation(arg_4_1, arg_4_2)
 	else
-		self:_client_validate_position_rotation(dt, t)
+		arg_4_0:_client_validate_position_rotation(arg_4_1, arg_4_2)
 	end
 end
 
-ProjectileLocomotionSystem.destroy = function (self)
-	self.network_event_delegate:unregister(self)
+function ProjectileLocomotionSystem.destroy(arg_5_0)
+	arg_5_0.network_event_delegate:unregister(arg_5_0)
 end
 
-ProjectileLocomotionSystem._server_sync_position_rotation = function (self, dt, t)
-	local game = Managers.state.network:game()
+function ProjectileLocomotionSystem._server_sync_position_rotation(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = Managers.state.network:game()
 
-	if game then
-		local POSITION_LOOKUP = POSITION_LOOKUP
-		local GameSession_set_game_object_field = GameSession.set_game_object_field
-		local unit_storage = Managers.state.unit_storage
-		local Unit_local_rotation = Unit.local_rotation
-		local position_network_info_min = NetworkConstants.position.min
-		local position_network_info_max = NetworkConstants.position.max
+	if var_6_0 then
+		local var_6_1 = POSITION_LOOKUP
+		local var_6_2 = GameSession.set_game_object_field
+		local var_6_3 = Managers.state.unit_storage
+		local var_6_4 = Unit.local_rotation
+		local var_6_5 = NetworkConstants.position.min
+		local var_6_6 = NetworkConstants.position.max
 
-		for unit, _ in pairs(self._server_position_corrected_pickups) do
-			local game_object_id = unit_storage:go_id(unit)
-			local pos = Vector3.clamp(POSITION_LOOKUP[unit], position_network_info_min, position_network_info_max)
-			local rot = Unit_local_rotation(unit, 0)
+		for iter_6_0, iter_6_1 in pairs(arg_6_0._server_position_corrected_pickups) do
+			local var_6_7 = var_6_3:go_id(iter_6_0)
+			local var_6_8 = Vector3.clamp(var_6_1[iter_6_0], var_6_5, var_6_6)
+			local var_6_9 = var_6_4(iter_6_0, 0)
 
-			GameSession_set_game_object_field(game, game_object_id, "position", pos)
-			GameSession_set_game_object_field(game, game_object_id, "rotation", rot)
+			var_6_2(var_6_0, var_6_7, "position", var_6_8)
+			var_6_2(var_6_0, var_6_7, "rotation", var_6_9)
 		end
 	end
 end
 
-local REST_CORRECTION_DISTANCE = 0.05
-local ACTIVE_CORRECTION_DISTANCE = 5
+local var_0_2 = 0.05
+local var_0_3 = 5
 
-ProjectileLocomotionSystem._client_validate_position_rotation = function (self, dt, t)
-	local game = Managers.state.network:game()
+function ProjectileLocomotionSystem._client_validate_position_rotation(arg_7_0, arg_7_1, arg_7_2)
+	local var_7_0 = Managers.state.network:game()
 
-	if game then
-		local POSITION_LOOKUP = POSITION_LOOKUP
-		local GameSession_game_object_field = GameSession.game_object_field
-		local Vector3_distance_squared = Vector3.distance_squared
-		local ScriptUnit_extension = ScriptUnit.extension
-		local Unit_local_position = Unit.local_position
-		local unit_storage = Managers.state.unit_storage
+	if var_7_0 then
+		local var_7_1 = POSITION_LOOKUP
+		local var_7_2 = GameSession.game_object_field
+		local var_7_3 = Vector3.distance_squared
+		local var_7_4 = ScriptUnit.extension
+		local var_7_5 = Unit.local_position
+		local var_7_6 = Managers.state.unit_storage
 
-		for unit, _ in pairs(self._server_position_corrected_pickups) do
-			local game_object_id = unit_storage:go_id(unit)
-			local server_pos = GameSession_game_object_field(game, game_object_id, "position")
-			local client_pos = POSITION_LOOKUP[unit] or Unit_local_position(unit, 0)
-			local extension = ScriptUnit_extension(unit, "projectile_locomotion_system")
-			local is_at_rest = extension:is_at_rest()
-			local allowed_dist = is_at_rest and REST_CORRECTION_DISTANCE or ACTIVE_CORRECTION_DISTANCE
+		for iter_7_0, iter_7_1 in pairs(arg_7_0._server_position_corrected_pickups) do
+			local var_7_7 = var_7_6:go_id(iter_7_0)
+			local var_7_8 = var_7_2(var_7_0, var_7_7, "position")
+			local var_7_9 = var_7_1[iter_7_0] or var_7_5(iter_7_0, 0)
+			local var_7_10 = var_7_4(iter_7_0, "projectile_locomotion_system")
+			local var_7_11 = var_7_10:is_at_rest() and var_0_2 or var_0_3
 
-			if Vector3_distance_squared(server_pos, client_pos) > allowed_dist * allowed_dist then
-				local server_rot = GameSession_game_object_field(game, game_object_id, "rotation")
+			if var_7_3(var_7_8, var_7_9) > var_7_11 * var_7_11 then
+				local var_7_12 = var_7_2(var_7_0, var_7_7, "rotation")
 
-				extension:teleport(server_pos, server_rot)
+				var_7_10:teleport(var_7_8, var_7_12)
 			end
 		end
 	end
 end
 
-ProjectileLocomotionSystem.rpc_set_projectile_state = function (self, channel_id, projectile_unit_id, state_id)
-	local projectile_unit = self.unit_storage:unit(projectile_unit_id)
-	local extension = ScriptUnit.extension(projectile_unit, "projectile_locomotion_system")
+function ProjectileLocomotionSystem.rpc_set_projectile_state(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	local var_8_0 = arg_8_0.unit_storage:unit(arg_8_2)
 
-	extension:set_projectile_state(projectile_unit, state_id)
+	ScriptUnit.extension(var_8_0, "projectile_locomotion_system"):set_projectile_state(var_8_0, arg_8_3)
 end
 
-ProjectileLocomotionSystem.rpc_projectile_stick_unit = function (self, channel_id, projectile_unit_id, stick_unit_id)
-	local projectile_unit = self.unit_storage:unit(projectile_unit_id)
-	local extension = ScriptUnit.extension(projectile_unit, "projectile_locomotion_system")
-	local stick_unit = self.unit_storage:unit(stick_unit_id)
+function ProjectileLocomotionSystem.rpc_projectile_stick_unit(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	local var_9_0 = arg_9_0.unit_storage:unit(arg_9_2)
+	local var_9_1 = ScriptUnit.extension(var_9_0, "projectile_locomotion_system")
+	local var_9_2 = arg_9_0.unit_storage:unit(arg_9_3)
 
-	extension:stick_to_unit(stick_unit)
+	var_9_1:stick_to_unit(var_9_2)
 
-	if self.is_server then
-		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+	if arg_9_0.is_server then
+		local var_9_3 = CHANNEL_TO_PEER_ID[arg_9_1]
 
-		Managers.state.network.network_transmit:send_rpc_clients_except("rpc_projectile_stick_unit", peer_id, projectile_unit_id, stick_unit_id)
+		Managers.state.network.network_transmit:send_rpc_clients_except("rpc_projectile_stick_unit", var_9_3, arg_9_2, arg_9_3)
 	end
 end
 
-ProjectileLocomotionSystem.rpc_projectile_stick_position = function (self, channel_id, projectile_unit_id, stick_position)
-	local projectile_unit = self.unit_storage:unit(projectile_unit_id)
-	local extension = ScriptUnit.extension(projectile_unit, "projectile_locomotion_system")
+function ProjectileLocomotionSystem.rpc_projectile_stick_position(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	local var_10_0 = arg_10_0.unit_storage:unit(arg_10_2)
 
-	extension:stick_to_position(stick_position)
+	ScriptUnit.extension(var_10_0, "projectile_locomotion_system"):stick_to_position(arg_10_3)
 
-	if self.is_server then
-		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+	if arg_10_0.is_server then
+		local var_10_1 = CHANNEL_TO_PEER_ID[arg_10_1]
 
-		Managers.state.network.network_transmit:send_rpc_clients_except("rpc_projectile_stick_position", peer_id, projectile_unit_id, stick_position)
+		Managers.state.network.network_transmit:send_rpc_clients_except("rpc_projectile_stick_position", var_10_1, arg_10_2, arg_10_3)
 	end
 end
 
-ProjectileLocomotionSystem.rpc_hot_join_sync_projectile_sticky = function (self, channel_id, projectile_unit_id, time_lived, time_stopped)
-	local projectile_unit = self.unit_storage:unit(projectile_unit_id)
+function ProjectileLocomotionSystem.rpc_hot_join_sync_projectile_sticky(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	local var_11_0 = arg_11_0.unit_storage:unit(arg_11_2)
 
-	if projectile_unit then
-		local extension = ScriptUnit.extension(projectile_unit, "projectile_locomotion_system")
-
-		extension:hot_join_sync_projectile_sticky(time_lived, time_stopped)
+	if var_11_0 then
+		ScriptUnit.extension(var_11_0, "projectile_locomotion_system"):hot_join_sync_projectile_sticky(arg_11_3, arg_11_4)
 	end
 end

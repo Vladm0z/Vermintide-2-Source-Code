@@ -1,236 +1,224 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_loot_rat_flee_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_loot_rat_flee_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTLootRatFleeAction = class(BTLootRatFleeAction, BTNode)
 
-BTLootRatFleeAction.init = function (self, ...)
-	BTLootRatFleeAction.super.init(self, ...)
+function BTLootRatFleeAction.init(arg_1_0, ...)
+	BTLootRatFleeAction.super.init(arg_1_0, ...)
 end
 
 BTLootRatFleeAction.name = "BTLootRatFleeAction"
 
-local CHECK_ESCAPED_PLAYERS_INTERVAL = 2
-local BREAK_NODE_MAX_DISTANCE_SQ = 400
-local BREAK_NODE_ASTAR_BOX_EXTENTS = 14
+local var_0_0 = 2
+local var_0_1 = 400
+local var_0_2 = 14
 
-BTLootRatFleeAction.enter = function (self, unit, blackboard, t)
-	blackboard.action = self._tree_node.action_data
-	blackboard.is_fleeing = true
-	blackboard.check_escaped_players_time = t + CHECK_ESCAPED_PLAYERS_INTERVAL
+function BTLootRatFleeAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	arg_2_2.action = arg_2_0._tree_node.action_data
+	arg_2_2.is_fleeing = true
+	arg_2_2.check_escaped_players_time = arg_2_3 + var_0_0
 
-	if not blackboard.flee_node_data then
-		local conflict_manager = Managers.state.conflict
-		local node_data = conflict_manager.main_path_info.merged_main_paths
+	if not arg_2_2.flee_node_data then
+		local var_2_0 = Managers.state.conflict.main_path_info.merged_main_paths
 
-		blackboard.flee_node_data = {
+		arg_2_2.flee_node_data = {
 			direction = "fwd",
 			nodes = {
-				fwd = node_data.forward_list,
-				bwd = node_data.reversed_list,
+				fwd = var_2_0.forward_list,
+				bwd = var_2_0.reversed_list
 			},
 			break_nodes = {
-				fwd = node_data.forward_break_list,
-				bwd = node_data.reversed_break_list,
-			},
+				fwd = var_2_0.forward_break_list,
+				bwd = var_2_0.reversed_break_list
+			}
 		}
 	end
 
-	if not blackboard.flee_astar_data then
-		local navigation_extension = blackboard.navigation_extension
+	if not arg_2_2.flee_astar_data then
+		local var_2_1 = arg_2_2.navigation_extension
 
-		blackboard.astar_id = "flee_astar"
+		arg_2_2.astar_id = "flee_astar"
 
-		local astar = navigation_extension:get_reusable_astar(blackboard.astar_id)
-		local traverse_logic = navigation_extension:traverse_logic()
+		local var_2_2 = var_2_1:get_reusable_astar(arg_2_2.astar_id)
+		local var_2_3 = var_2_1:traverse_logic()
 
-		blackboard.flee_astar_data = {
+		arg_2_2.flee_astar_data = {
 			doing_astar = false,
-			astar = astar,
-			traverse_logic = traverse_logic,
+			astar = var_2_2,
+			traverse_logic = var_2_3
 		}
 	end
 
-	self:enter_state_moving_to_level_end(unit, blackboard)
+	arg_2_0:enter_state_moving_to_level_end(arg_2_1, arg_2_2)
 end
 
-BTLootRatFleeAction.run = function (self, unit, blackboard, t, dt)
-	if blackboard.spawn_to_running then
-		blackboard.spawn_to_running = nil
-		blackboard.start_anim_done = true
-		blackboard.move_state = "moving"
-		blackboard.start_anim_locked = nil
+function BTLootRatFleeAction.run(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	if arg_3_2.spawn_to_running then
+		arg_3_2.spawn_to_running = nil
+		arg_3_2.start_anim_done = true
+		arg_3_2.move_state = "moving"
+		arg_3_2.start_anim_locked = nil
 
-		self:toggle_start_move_animation_lock(unit, false, blackboard)
-	elseif not blackboard.movement_inited then
-		blackboard.spawn_to_running = nil
-		blackboard.start_anim_done = true
-		blackboard.move_state = "moving"
-		blackboard.start_anim_locked = nil
-		blackboard.movement_inited = true
+		arg_3_0:toggle_start_move_animation_lock(arg_3_1, false, arg_3_2)
+	elseif not arg_3_2.movement_inited then
+		arg_3_2.spawn_to_running = nil
+		arg_3_2.start_anim_done = true
+		arg_3_2.move_state = "moving"
+		arg_3_2.start_anim_locked = nil
+		arg_3_2.movement_inited = true
 
-		local network_manager = Managers.state.network
-
-		network_manager:anim_event(unit, "move_fwd")
-		self:toggle_start_move_animation_lock(unit, false, blackboard)
+		Managers.state.network:anim_event(arg_3_1, "move_fwd")
+		arg_3_0:toggle_start_move_animation_lock(arg_3_1, false, arg_3_2)
 	end
 
-	local state = blackboard.flee_state
-
-	if state == "moving_to_level_end" then
-		self:update_state_moving_to_level_end(unit, blackboard, t)
+	if arg_3_2.flee_state == "moving_to_level_end" then
+		arg_3_0:update_state_moving_to_level_end(arg_3_1, arg_3_2, arg_3_3)
 	end
 
-	if t > blackboard.check_escaped_players_time then
-		if self:has_escaped_players(unit, blackboard) then
-			self:despawn(unit, blackboard, "escaped_players")
+	if arg_3_3 > arg_3_2.check_escaped_players_time then
+		if arg_3_0:has_escaped_players(arg_3_1, arg_3_2) then
+			arg_3_0:despawn(arg_3_1, arg_3_2, "escaped_players")
 		end
 
-		blackboard.check_escaped_players_time = t + CHECK_ESCAPED_PLAYERS_INTERVAL
+		arg_3_2.check_escaped_players_time = arg_3_3 + var_0_0
 	end
 
 	return "running"
 end
 
-BTLootRatFleeAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	local astar_data = blackboard.flee_astar_data
+function BTLootRatFleeAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	local var_4_0 = arg_4_2.flee_astar_data
 
-	if not GwNavAStar.processing_finished(astar_data.astar) then
-		GwNavAStar.cancel(astar_data.astar)
+	if not GwNavAStar.processing_finished(var_4_0.astar) then
+		GwNavAStar.cancel(var_4_0.astar)
 	end
 
-	blackboard.action = nil
-	blackboard.check_escaped_players_time = nil
+	arg_4_2.action = nil
+	arg_4_2.check_escaped_players_time = nil
 
-	if not destroy then
-		self:toggle_start_move_animation_lock(unit, false, blackboard)
+	if not arg_4_5 then
+		arg_4_0:toggle_start_move_animation_lock(arg_4_1, false, arg_4_2)
 	end
 
-	blackboard.start_anim_locked = nil
-	blackboard.anim_cb_rotation_start = nil
-	blackboard.anim_cb_move = nil
-	blackboard.start_anim_done = nil
-	blackboard.movement_inited = nil
+	arg_4_2.start_anim_locked = nil
+	arg_4_2.anim_cb_rotation_start = nil
+	arg_4_2.anim_cb_move = nil
+	arg_4_2.start_anim_done = nil
+	arg_4_2.movement_inited = nil
 end
 
-BTLootRatFleeAction.enter_state_moving_to_level_end = function (self, unit, blackboard)
-	self:set_state(blackboard, "moving_to_level_end")
+function BTLootRatFleeAction.enter_state_moving_to_level_end(arg_5_0, arg_5_1, arg_5_2)
+	arg_5_0:set_state(arg_5_2, "moving_to_level_end")
 
-	local unit_position = POSITION_LOOKUP[unit]
-	local node_data = blackboard.flee_node_data
-	local nodes = node_data.nodes[node_data.direction]
-	local node_index
+	local var_5_0 = POSITION_LOOKUP[arg_5_1]
+	local var_5_1 = arg_5_2.flee_node_data
+	local var_5_2 = var_5_1.nodes[var_5_1.direction]
+	local var_5_3
 
-	if node_data.target_node_index then
-		node_index = node_data.target_node_index
+	if var_5_1.target_node_index then
+		var_5_3 = var_5_1.target_node_index
 	else
-		node_index = MainPathUtils.closest_node_in_node_list(nodes, unit_position)
+		var_5_3 = MainPathUtils.closest_node_in_node_list(var_5_2, var_5_0)
 	end
 
-	self:move_to_main_path_node(blackboard, node_index)
+	arg_5_0:move_to_main_path_node(arg_5_2, var_5_3)
 end
 
-BTLootRatFleeAction.update_state_moving_to_level_end = function (self, unit, blackboard, t)
-	local astar_data = blackboard.flee_astar_data
+function BTLootRatFleeAction.update_state_moving_to_level_end(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	local var_6_0 = arg_6_2.flee_astar_data
 
-	if astar_data.doing_astar then
-		local astar = astar_data.astar
+	if var_6_0.doing_astar then
+		local var_6_1 = var_6_0.astar
 
-		if GwNavAStar.processing_finished(astar) then
-			astar_data.doing_astar = false
+		if GwNavAStar.processing_finished(var_6_1) then
+			var_6_0.doing_astar = false
 
-			local node_data = blackboard.flee_node_data
-			local target_node_index = node_data.target_node_index
-			local next_node_index
+			local var_6_2 = arg_6_2.flee_node_data
+			local var_6_3 = var_6_2.target_node_index
+			local var_6_4
 
-			if GwNavAStar.path_found(astar) and GwNavAStar.node_count(astar) > 0 then
-				next_node_index = target_node_index + 1
+			if GwNavAStar.path_found(var_6_1) and GwNavAStar.node_count(var_6_1) > 0 then
+				var_6_4 = var_6_3 + 1
 			else
-				node_data.direction = node_data.direction == "fwd" and "bwd" or "fwd"
-				next_node_index = #node_data.nodes[node_data.direction] - target_node_index + 2
+				var_6_2.direction = var_6_2.direction == "fwd" and "bwd" or "fwd"
+				var_6_4 = #var_6_2.nodes[var_6_2.direction] - var_6_3 + 2
 			end
 
-			self:move_to_main_path_node(blackboard, next_node_index)
+			arg_6_0:move_to_main_path_node(arg_6_2, var_6_4)
 		else
 			return
 		end
 	end
 
-	local unit_position = POSITION_LOOKUP[unit]
-	local node_data = blackboard.flee_node_data
-	local target_node_index = node_data.target_node_index
-	local nodes = node_data.nodes[node_data.direction]
-	local break_nodes = node_data.break_nodes[node_data.direction]
-	local target_node = nodes[target_node_index]
+	local var_6_5 = POSITION_LOOKUP[arg_6_1]
+	local var_6_6 = arg_6_2.flee_node_data
+	local var_6_7 = var_6_6.target_node_index
+	local var_6_8 = var_6_6.nodes[var_6_6.direction]
+	local var_6_9 = var_6_6.break_nodes[var_6_6.direction]
+	local var_6_10 = var_6_8[var_6_7]
 
 	if script_data.ai_loot_rat_behavior then
-		self:debug_draw_path_nodes(blackboard.nav_world, nodes, break_nodes, target_node_index, t)
+		arg_6_0:debug_draw_path_nodes(arg_6_2.nav_world, var_6_8, var_6_9, var_6_7, arg_6_3)
 	end
 
-	local distance_to_target_node_sq = Vector3.length_squared(unit_position - target_node:unbox())
+	if Vector3.length_squared(var_6_5 - var_6_10:unbox()) < 0.25 then
+		local var_6_11 = var_6_7 + 1
+		local var_6_12 = var_6_8[var_6_11]
 
-	if distance_to_target_node_sq < 0.25 then
-		local next_node_index = target_node_index + 1
-		local next_node = nodes[next_node_index]
+		if var_6_12 then
+			if var_6_9[var_6_10] then
+				local var_6_13 = var_6_12:unbox()
 
-		if next_node then
-			if break_nodes[target_node] then
-				local next_node_position = next_node:unbox()
-				local distance_to_next_node_sq = Vector3.length_squared(unit_position - next_node_position)
-
-				if distance_to_next_node_sq < BREAK_NODE_MAX_DISTANCE_SQ then
-					self:do_astar_to_between_main_path_nodes(blackboard, target_node_index)
+				if Vector3.length_squared(var_6_5 - var_6_13) < var_0_1 then
+					arg_6_0:do_astar_to_between_main_path_nodes(arg_6_2, var_6_7)
 
 					return
 				else
-					node_data.direction = node_data.direction == "fwd" and "bwd" or "fwd"
-					next_node_index = #node_data.nodes[node_data.direction] - target_node_index + 2
+					var_6_6.direction = var_6_6.direction == "fwd" and "bwd" or "fwd"
+					var_6_11 = #var_6_6.nodes[var_6_6.direction] - var_6_7 + 2
 				end
 			end
 		else
-			node_data.direction = node_data.direction == "fwd" and "bwd" or "fwd"
-			next_node_index = 2
+			var_6_6.direction = var_6_6.direction == "fwd" and "bwd" or "fwd"
+			var_6_11 = 2
 		end
 
-		self:move_to_main_path_node(blackboard, next_node_index)
+		arg_6_0:move_to_main_path_node(arg_6_2, var_6_11)
 	end
 end
 
-BTLootRatFleeAction.move_to_main_path_node = function (self, blackboard, node_index)
-	local node_data = blackboard.flee_node_data
-	local nodes = node_data.nodes[node_data.direction]
-	local node = nodes[node_index]
+function BTLootRatFleeAction.move_to_main_path_node(arg_7_0, arg_7_1, arg_7_2)
+	local var_7_0 = arg_7_1.flee_node_data
+	local var_7_1 = var_7_0.nodes[var_7_0.direction][arg_7_2]
 
-	node_data.target_node_index = node_index
+	var_7_0.target_node_index = arg_7_2
 
-	blackboard.navigation_extension:move_to(node:unbox())
+	arg_7_1.navigation_extension:move_to(var_7_1:unbox())
 end
 
-BTLootRatFleeAction.do_astar_to_between_main_path_nodes = function (self, blackboard, from_node_index)
-	local node_data = blackboard.flee_node_data
-	local nodes = node_data.nodes[node_data.direction]
-	local from_position = nodes[from_node_index]:unbox()
-	local to_position = nodes[from_node_index + 1]:unbox()
-	local astar_data = blackboard.flee_astar_data
+function BTLootRatFleeAction.do_astar_to_between_main_path_nodes(arg_8_0, arg_8_1, arg_8_2)
+	local var_8_0 = arg_8_1.flee_node_data
+	local var_8_1 = var_8_0.nodes[var_8_0.direction]
+	local var_8_2 = var_8_1[arg_8_2]:unbox()
+	local var_8_3 = var_8_1[arg_8_2 + 1]:unbox()
+	local var_8_4 = arg_8_1.flee_astar_data
 
-	astar_data.doing_astar = true
+	var_8_4.doing_astar = true
 
-	GwNavAStar.start_with_propagation_box(astar_data.astar, blackboard.nav_world, from_position, to_position, BREAK_NODE_ASTAR_BOX_EXTENTS, astar_data.traverse_logic)
+	GwNavAStar.start_with_propagation_box(var_8_4.astar, arg_8_1.nav_world, var_8_2, var_8_3, var_0_2, var_8_4.traverse_logic)
 end
 
-BTLootRatFleeAction.has_escaped_players = function (self, unit, blackboard)
-	local action_data = blackboard.action
-	local escape_distance_sq = action_data.escaped_players_distance_sq
-	local unit_position = POSITION_LOOKUP[unit]
-	local side = blackboard.side
-	local ENEMY_PLAYER_AND_BOT_UNITS = side.ENEMY_PLAYER_AND_BOT_UNITS
+function BTLootRatFleeAction.has_escaped_players(arg_9_0, arg_9_1, arg_9_2)
+	local var_9_0 = arg_9_2.action.escaped_players_distance_sq
+	local var_9_1 = POSITION_LOOKUP[arg_9_1]
+	local var_9_2 = arg_9_2.side.ENEMY_PLAYER_AND_BOT_UNITS
 
-	for i = 1, #ENEMY_PLAYER_AND_BOT_UNITS do
-		local player_unit = ENEMY_PLAYER_AND_BOT_UNITS[i]
-		local player_position = POSITION_LOOKUP[player_unit]
-		local distance_to_player_sq = Vector3.distance_squared(unit_position, player_position)
+	for iter_9_0 = 1, #var_9_2 do
+		local var_9_3 = var_9_2[iter_9_0]
+		local var_9_4 = POSITION_LOOKUP[var_9_3]
 
-		if distance_to_player_sq < escape_distance_sq then
+		if var_9_0 > Vector3.distance_squared(var_9_1, var_9_4) then
 			return false
 		end
 	end
@@ -238,50 +226,44 @@ BTLootRatFleeAction.has_escaped_players = function (self, unit, blackboard)
 	return true
 end
 
-BTLootRatFleeAction.despawn = function (self, unit, blackboard, reason)
-	local conflict = Managers.state.conflict
-
-	conflict:destroy_unit(unit, blackboard, reason)
+function BTLootRatFleeAction.despawn(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	Managers.state.conflict:destroy_unit(arg_10_1, arg_10_2, arg_10_3)
 end
 
-BTLootRatFleeAction.set_state = function (self, blackboard, new_state)
-	blackboard.flee_state = new_state
+function BTLootRatFleeAction.set_state(arg_11_0, arg_11_1, arg_11_2)
+	arg_11_1.flee_state = arg_11_2
 end
 
-BTLootRatFleeAction.toggle_start_move_animation_lock = function (self, unit, should_lock_ani, blackboard)
-	local locomotion_extension = blackboard.locomotion_extension
+function BTLootRatFleeAction.toggle_start_move_animation_lock(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	local var_12_0 = arg_12_3.locomotion_extension
 
-	if should_lock_ani then
-		locomotion_extension:use_lerp_rotation(false)
-		LocomotionUtils.set_animation_driven_movement(unit, true, false, false)
+	if arg_12_2 then
+		var_12_0:use_lerp_rotation(false)
+		LocomotionUtils.set_animation_driven_movement(arg_12_1, true, false, false)
 	else
-		locomotion_extension:use_lerp_rotation(true)
-		LocomotionUtils.set_animation_driven_movement(unit, false)
-		LocomotionUtils.set_animation_rotation_scale(unit, 1)
+		var_12_0:use_lerp_rotation(true)
+		LocomotionUtils.set_animation_driven_movement(arg_12_1, false)
+		LocomotionUtils.set_animation_rotation_scale(arg_12_1, 1)
 	end
 end
 
-BTLootRatFleeAction.debug_draw_path_nodes = function (self, nav_world, nodes, break_nodes, target_node_index, t)
-	for i = 1, #nodes do
-		local node = nodes[i]
-		local node_position = node:unbox()
+function BTLootRatFleeAction.debug_draw_path_nodes(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+	for iter_13_0 = 1, #arg_13_2 do
+		local var_13_0 = arg_13_2[iter_13_0]
+		local var_13_1 = var_13_0:unbox()
 
-		if i == target_node_index then
-			if break_nodes[node] then
-				QuickDrawer:sphere(node_position, 0.25 + math.sin(t) * 0.15, Colors.get("dark_blue"))
+		if iter_13_0 == arg_13_4 then
+			if arg_13_3[var_13_0] then
+				QuickDrawer:sphere(var_13_1, 0.25 + math.sin(arg_13_5) * 0.15, Colors.get("dark_blue"))
+			elseif GwNavQueries.triangle_from_position(arg_13_1, var_13_1, 1, 1) then
+				QuickDrawer:sphere(var_13_1, 0.25 + math.sin(arg_13_5) * 0.15, Colors.get("pink"))
 			else
-				local success = GwNavQueries.triangle_from_position(nav_world, node_position, 1, 1)
-
-				if success then
-					QuickDrawer:sphere(node_position, 0.25 + math.sin(t) * 0.15, Colors.get("pink"))
-				else
-					QuickDrawer:sphere(node_position, 0.25 + math.sin(t) * 0.15, Colors.get("dark_red"))
-				end
+				QuickDrawer:sphere(var_13_1, 0.25 + math.sin(arg_13_5) * 0.15, Colors.get("dark_red"))
 			end
-		elseif break_nodes[node] then
-			QuickDrawer:sphere(node_position, 0.25, Colors.get("orange"))
+		elseif arg_13_3[var_13_0] then
+			QuickDrawer:sphere(var_13_1, 0.25, Colors.get("orange"))
 		else
-			QuickDrawer:sphere(node_position, 0.25, Colors.get("dark_green"))
+			QuickDrawer:sphere(var_13_1, 0.25, Colors.get("dark_green"))
 		end
 	end
 end

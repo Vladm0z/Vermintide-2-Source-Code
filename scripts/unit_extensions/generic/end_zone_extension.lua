@@ -1,605 +1,585 @@
-﻿-- chunkname: @scripts/unit_extensions/generic/end_zone_extension.lua
+-- chunkname: @scripts/unit_extensions/generic/end_zone_extension.lua
 
 require("scripts/settings/end_zone_settings")
 
-local end_zone_extension_testify = script_data.testify and require("scripts/unit_extensions/generic/end_zone_extension_testify")
+local var_0_0 = script_data.testify and require("scripts/unit_extensions/generic/end_zone_extension_testify")
 
 EndZoneExtension = class(EndZoneExtension)
 
-EndZoneExtension.init = function (self, extension_init_context, unit)
-	self._unit = unit
-	self._world = extension_init_context.world
-	self._extension_init_context = extension_init_context
-	self._activated = false
-	self._activation_allowed = false
-	self._closest_player = math.huge
-	self._state = "_idle"
-	self._is_server = extension_init_context.is_server
-	self._state_data = {}
-	self._player_distances = {}
-	self._current_volume_id = nil
-	self._current_id_index = 0
-	self._is_start_waystone = false
-	self._current_end_zone_hidden_long_timer = self:end_zone_hidden_long_timer()
-	self._current_end_zone_visible_long_timer = self:end_zone_visible_long_timer()
-	self._end_zone_timer_started = false
-	self._end_zone_time_since_notify = self:end_zone_long_timer_settings().notify_long_interval
-	self._visible_from_start = Unit.get_data(unit, "visible_from_start") or true
-	self._waystone_type = Unit.get_data(unit, "waystone_type")
-	self.waystone_size = self._waystone_type == 3 and 3.8 or EndZoneSettings.size
-	self._always_activated = Unit.get_data(unit, "always_activated")
-	self._activation_name = Unit.get_data(unit, "activation_name") or ""
-	self._side = Managers.state.side:get_side_from_name("heroes")
+function EndZoneExtension.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0._unit = arg_1_2
+	arg_1_0._world = arg_1_1.world
+	arg_1_0._extension_init_context = arg_1_1
+	arg_1_0._activated = false
+	arg_1_0._activation_allowed = false
+	arg_1_0._closest_player = math.huge
+	arg_1_0._state = "_idle"
+	arg_1_0._is_server = arg_1_1.is_server
+	arg_1_0._state_data = {}
+	arg_1_0._player_distances = {}
+	arg_1_0._current_volume_id = nil
+	arg_1_0._current_id_index = 0
+	arg_1_0._is_start_waystone = false
+	arg_1_0._current_end_zone_hidden_long_timer = arg_1_0:end_zone_hidden_long_timer()
+	arg_1_0._current_end_zone_visible_long_timer = arg_1_0:end_zone_visible_long_timer()
+	arg_1_0._end_zone_timer_started = false
+	arg_1_0._end_zone_time_since_notify = arg_1_0:end_zone_long_timer_settings().notify_long_interval
+	arg_1_0._visible_from_start = Unit.get_data(arg_1_2, "visible_from_start") or true
+	arg_1_0._waystone_type = Unit.get_data(arg_1_2, "waystone_type")
+	arg_1_0.waystone_size = arg_1_0._waystone_type == 3 and 3.8 or EndZoneSettings.size
+	arg_1_0._always_activated = Unit.get_data(arg_1_2, "always_activated")
+	arg_1_0._activation_name = Unit.get_data(arg_1_2, "activation_name") or ""
+	arg_1_0._side = Managers.state.side:get_side_from_name("heroes")
 
-	if Unit.get_data(self._unit, "game_start_waystone") then
-		self._is_start_waystone = true
-		self._game_start_time = Unit.get_data(self._unit, "game_start_time")
+	if Unit.get_data(arg_1_0._unit, "game_start_waystone") then
+		arg_1_0._is_start_waystone = true
+		arg_1_0._game_start_time = Unit.get_data(arg_1_0._unit, "game_start_time")
 	end
 
-	self._disable_complete_level = Unit.get_data(self._unit, "disable_complete_level")
-	self._disable_check_joining_players = Unit.get_data(self._unit, "disable_check_joining_players")
+	arg_1_0._disable_complete_level = Unit.get_data(arg_1_0._unit, "disable_complete_level")
+	arg_1_0._disable_check_joining_players = Unit.get_data(arg_1_0._unit, "disable_check_joining_players")
 
-	local node = Unit.node(self._unit, "ap_dome_scaler")
+	local var_1_0 = Unit.node(arg_1_0._unit, "ap_dome_scaler")
 
-	Unit.set_local_scale(self._unit, node, Vector3(0, 0, 0))
+	Unit.set_local_scale(arg_1_0._unit, var_1_0, Vector3(0, 0, 0))
 
-	if Unit.has_visibility_group(self._unit, "dome") then
-		Unit.set_visibility(self._unit, "dome", false)
+	if Unit.has_visibility_group(arg_1_0._unit, "dome") then
+		Unit.set_visibility(arg_1_0._unit, "dome", false)
 	end
 
-	self:_set_light_intensity(0)
+	arg_1_0:_set_light_intensity(0)
+	Managers.state.network.network_transmit.network_event_delegate:register(arg_1_0, "rpc_activate_end_zone")
 
-	local network_event_delegate = Managers.state.network.network_transmit.network_event_delegate
+	arg_1_0._nav_world_available = not LevelHelper:current_level_settings(arg_1_0._world).no_bots_allowed
 
-	network_event_delegate:register(self, "rpc_activate_end_zone")
-
-	local level_settings = LevelHelper:current_level_settings(self._world)
-
-	self._nav_world_available = not level_settings.no_bots_allowed
-
-	if not self._visible_from_start then
-		Unit.set_unit_visibility(unit, false)
+	if not arg_1_0._visible_from_start then
+		Unit.set_unit_visibility(arg_1_2, false)
 	end
 end
 
-EndZoneExtension.extensions_ready = function (self)
-	Managers.state.event:register(self, "activate_waystone_portal", "activate_waystone_portal")
+function EndZoneExtension.extensions_ready(arg_2_0)
+	Managers.state.event:register(arg_2_0, "activate_waystone_portal", "activate_waystone_portal")
 end
 
-EndZoneExtension.destroy = function (self)
-	Managers.state.event:unregister("activate_waystone_portal", self)
+function EndZoneExtension.destroy(arg_3_0)
+	Managers.state.event:unregister("activate_waystone_portal", arg_3_0)
 end
 
-EndZoneExtension.activate_waystone_portal = function (self, wanted_waystone_type)
-	local unit = self._unit
-	local waystone_type = Unit.get_data(unit, "waystone_type")
+function EndZoneExtension.activate_waystone_portal(arg_4_0, arg_4_1)
+	local var_4_0 = arg_4_0._unit
+	local var_4_1 = Unit.get_data(var_4_0, "waystone_type")
 
-	if not waystone_type then
+	if not var_4_1 then
 		return
 	end
 
-	local event = waystone_type == wanted_waystone_type and "activate" or "deactivate"
+	local var_4_2 = var_4_1 == arg_4_1 and "activate" or "deactivate"
 
-	Unit.flow_event(unit, event)
+	Unit.flow_event(var_4_0, var_4_2)
 end
 
-EndZoneExtension.rpc_activate_end_zone = function (self, channel_id, waystone_type, activate, wind_name_id, activation_name)
-	if waystone_type ~= self._waystone_type then
+function EndZoneExtension.rpc_activate_end_zone(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	if arg_5_2 ~= arg_5_0._waystone_type then
 		return
 	end
 
-	if self._activation_name ~= activation_name then
+	if arg_5_0._activation_name ~= arg_5_5 then
 		return
 	end
 
-	local game_mode_key = Managers.state.game_mode:game_mode_key()
+	local var_5_0 = Managers.state.game_mode:game_mode_key()
 
-	self:_trigger_vo(game_mode_key, "activate")
+	arg_5_0:_trigger_vo(var_5_0, "activate")
 
-	local wind_name = NetworkLookup.weave_winds[wind_name_id]
+	local var_5_1 = NetworkLookup.weave_winds[arg_5_4]
 
-	if wind_name ~= "none" then
-		Unit.flow_event(self._unit, wind_name)
+	if var_5_1 ~= "none" then
+		Unit.flow_event(arg_5_0._unit, var_5_1)
 	end
 
-	if self._activated and not activate then
-		self:_deactivate_volume()
-	elseif not self._activated and activate then
-		self:_activate_volume()
+	if arg_5_0._activated and not arg_5_3 then
+		arg_5_0:_deactivate_volume()
+	elseif not arg_5_0._activated and arg_5_3 then
+		arg_5_0:_activate_volume()
 
-		if not self._visible_from_start then
-			Unit.set_unit_visibility(self._unit, true)
+		if not arg_5_0._visible_from_start then
+			Unit.set_unit_visibility(arg_5_0._unit, true)
 		end
 	end
 
-	self._activated = activate
+	arg_5_0._activated = arg_5_3
 end
 
-EndZoneExtension._trigger_vo = function (self, category, event)
-	local ingame_vo = EndZoneSettings.ingame_vo
-	local category_vo = ingame_vo[category]
+function EndZoneExtension._trigger_vo(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = EndZoneSettings.ingame_vo[arg_6_1]
 
-	if category_vo then
-		local event_vo = category_vo[event]
+	if var_6_0 then
+		local var_6_1 = var_6_0[arg_6_2]
 
-		if event_vo then
-			if type(event_vo) == "table" then
-				local level_seed = Managers.mechanism:get_level_seed()
-				local _, seeded_random_value = Math.next_random(level_seed, #event_vo)
-				local randomized_event_vo = event_vo[seeded_random_value]
+		if var_6_1 then
+			if type(var_6_1) == "table" then
+				local var_6_2 = Managers.mechanism:get_level_seed()
+				local var_6_3, var_6_4 = Math.next_random(var_6_2, #var_6_1)
+				local var_6_5 = var_6_1[var_6_4]
 
-				Managers.music:trigger_event(randomized_event_vo)
+				Managers.music:trigger_event(var_6_5)
 			else
-				Managers.music:trigger_event(event_vo)
+				Managers.music:trigger_event(var_6_1)
 			end
 		end
 	end
 end
 
-EndZoneExtension.activated = function (self)
-	return self._activated
+function EndZoneExtension.activated(arg_7_0)
+	return arg_7_0._activated
 end
 
-EndZoneExtension._set_light_intensity = function (self, intensity)
-	local num_lights = Unit.num_lights(self._unit)
+function EndZoneExtension._set_light_intensity(arg_8_0, arg_8_1)
+	local var_8_0 = Unit.num_lights(arg_8_0._unit)
 
-	for i = 0, num_lights - 1 do
-		local light = Unit.light(self._unit, i)
+	for iter_8_0 = 0, var_8_0 - 1 do
+		local var_8_1 = Unit.light(arg_8_0._unit, iter_8_0)
 
-		Light.set_intensity(light, intensity)
+		Light.set_intensity(var_8_1, arg_8_1)
 	end
 end
 
-EndZoneExtension.end_time = function (self)
-	return self._game_start_time or EndZoneSettings.end_zone_timer
+function EndZoneExtension.end_time(arg_9_0)
+	return arg_9_0._game_start_time or EndZoneSettings.end_zone_timer
 end
 
-EndZoneExtension.end_time_left = function (self)
-	return self._state_data.end_zone_timer or self:end_time()
+function EndZoneExtension.end_time_left(arg_10_0)
+	return arg_10_0._state_data.end_zone_timer or arg_10_0:end_time()
 end
 
-EndZoneExtension.end_zone_long_timer_settings = function (self)
+function EndZoneExtension.end_zone_long_timer_settings(arg_11_0)
 	return EndZoneSettings.end_zone_long_timer_settings
 end
 
-EndZoneExtension.end_zone_hidden_long_timer = function (self)
+function EndZoneExtension.end_zone_hidden_long_timer(arg_12_0)
 	return EndZoneSettings.end_zone_long_timer_settings.hidden_timer
 end
 
-EndZoneExtension.end_zone_visible_long_timer = function (self)
+function EndZoneExtension.end_zone_visible_long_timer(arg_13_0)
 	return EndZoneSettings.end_zone_long_timer_settings.visible_timer
 end
 
-EndZoneExtension.end_long_time_left = function (self)
-	return self._state_data.end_zone_long_timer or self:end_long_time()
+function EndZoneExtension.end_long_time_left(arg_14_0)
+	return arg_14_0._state_data.end_zone_long_timer or arg_14_0:end_long_time()
 end
 
-EndZoneExtension.update = function (self, unit, input, dt, context, t)
-	self:_reset_distances()
-	self:_check_proximity()
-	self:_update_state(dt, t)
+function EndZoneExtension.update(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+	arg_15_0:_reset_distances()
+	arg_15_0:_check_proximity()
+	arg_15_0:_update_state(arg_15_3, arg_15_5)
 
 	if script_data.testify then
-		Testify:poll_requests_through_handler(end_zone_extension_testify, self)
+		Testify:poll_requests_through_handler(var_0_0, arg_15_0)
 	end
 end
 
-EndZoneExtension.activation_allowed = function (self, allowed)
-	self._activation_allowed = allowed
+function EndZoneExtension.activation_allowed(arg_16_0, arg_16_1)
+	arg_16_0._activation_allowed = arg_16_1
 end
 
-EndZoneExtension._activate = function (self, activate)
-	if not self._is_server then
+function EndZoneExtension._activate(arg_17_0, arg_17_1)
+	if not arg_17_0._is_server then
 		return
 	end
 
-	if not self._activated and activate then
-		self:_activate_volume()
+	if not arg_17_0._activated and arg_17_1 then
+		arg_17_0:_activate_volume()
 
-		if not self._visible_from_start then
-			Unit.set_unit_visibility(self._unit, true)
+		if not arg_17_0._visible_from_start then
+			Unit.set_unit_visibility(arg_17_0._unit, true)
 		end
 
-		local wind = self:_get_wind_name() or "none"
-		local wind_name_id = NetworkLookup.weave_winds[wind]
+		local var_17_0 = arg_17_0:_get_wind_name() or "none"
+		local var_17_1 = NetworkLookup.weave_winds[var_17_0]
 
-		if wind ~= "none" then
-			Unit.flow_event(self._unit, wind)
+		if var_17_0 ~= "none" then
+			Unit.flow_event(arg_17_0._unit, var_17_0)
 		end
 
-		local game_mode_key = Managers.state.game_mode:game_mode_key()
+		local var_17_2 = Managers.state.game_mode:game_mode_key()
 
-		self:_trigger_vo(game_mode_key, "activate")
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_activate_end_zone", self._waystone_type, true, wind_name_id, self._activation_name)
-	elseif self._activated and not activate then
-		self:_deactivate_volume()
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_activate_end_zone", self._waystone_type, false, 1, self._activation_name)
+		arg_17_0:_trigger_vo(var_17_2, "activate")
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_activate_end_zone", arg_17_0._waystone_type, true, var_17_1, arg_17_0._activation_name)
+	elseif arg_17_0._activated and not arg_17_1 then
+		arg_17_0:_deactivate_volume()
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_activate_end_zone", arg_17_0._waystone_type, false, 1, arg_17_0._activation_name)
 
-		local player_distances = self._player_distances
+		local var_17_3 = arg_17_0._player_distances
 
-		for unit, _ in pairs(player_distances) do
-			if Unit.alive(unit) then
-				local status_ext = ScriptUnit.extension(unit, "status_system")
-
-				status_ext:set_in_end_zone(false, self._unit)
+		for iter_17_0, iter_17_1 in pairs(var_17_3) do
+			if Unit.alive(iter_17_0) then
+				ScriptUnit.extension(iter_17_0, "status_system"):set_in_end_zone(false, arg_17_0._unit)
 			end
 		end
 	end
 
-	self._activated = activate
+	arg_17_0._activated = arg_17_1
 end
 
-EndZoneExtension._get_wind_name = function (self)
-	local return_value
-	local next_weave = Managers.weave:get_next_weave()
+function EndZoneExtension._get_wind_name(arg_18_0)
+	local var_18_0
+	local var_18_1 = Managers.weave:get_next_weave()
 
-	if next_weave then
-		local template = WeaveSettings.templates[next_weave]
-		local wind = template.wind
-
-		return_value = wind
+	if var_18_1 then
+		var_18_0 = WeaveSettings.templates[var_18_1].wind
 	end
 
-	return return_value
+	return var_18_0
 end
 
-EndZoneExtension._activate_volume = function (self)
-	self:_deactivate_volume(self._current_volume_id)
+function EndZoneExtension._activate_volume(arg_19_0)
+	arg_19_0:_deactivate_volume(arg_19_0._current_volume_id)
 
-	local shading_environment = Unit.get_data(self._unit, "shading_environment")
-	local volume_name = Unit.get_data(self._unit, "volume_name")
+	local var_19_0 = Unit.get_data(arg_19_0._unit, "shading_environment")
+	local var_19_1 = Unit.get_data(arg_19_0._unit, "volume_name")
 
-	self._current_id_index = self._current_id_index + 1
-	self._current_volume_id = "end_zone_id_" .. self._current_id_index
+	arg_19_0._current_id_index = arg_19_0._current_id_index + 1
+	arg_19_0._current_volume_id = "end_zone_id_" .. arg_19_0._current_id_index
 
-	Managers.state.event:trigger("register_environment_volume", volume_name, shading_environment, 999, 0.1, false, 1, Unit.local_position(self._unit, 0), self.waystone_size, self._current_volume_id)
+	Managers.state.event:trigger("register_environment_volume", var_19_1, var_19_0, 999, 0.1, false, 1, Unit.local_position(arg_19_0._unit, 0), arg_19_0.waystone_size, arg_19_0._current_volume_id)
 
-	if self._is_server and self._nav_world_available then
-		local volume_system = Managers.state.entity:system("volume_system")
+	if arg_19_0._is_server and arg_19_0._nav_world_available then
+		local var_19_2 = Managers.state.entity:system("volume_system")
 
-		fassert(volume_system.nav_tag_volume_handler ~= nil, "Cannot activate end_zone at Level Load (before nav_tag_volume_handler has been set)! LD, please use the coop_round_started event or activate it at a later point!")
+		fassert(var_19_2.nav_tag_volume_handler ~= nil, "Cannot activate end_zone at Level Load (before nav_tag_volume_handler has been set)! LD, please use the coop_round_started event or activate it at a later point!")
 
-		local nav_tag_volume_layer = "end_zone"
-		local position = Unit.local_position(self._unit, 0)
+		local var_19_3 = "end_zone"
+		local var_19_4 = Unit.local_position(arg_19_0._unit, 0)
 
-		self._nav_tag_volume_id = volume_system:create_nav_tag_volume_from_data(position, self.waystone_size, nav_tag_volume_layer)
+		arg_19_0._nav_tag_volume_id = var_19_2:create_nav_tag_volume_from_data(var_19_4, arg_19_0.waystone_size, var_19_3)
 	end
 end
 
-EndZoneExtension._deactivate_volume = function (self)
-	if self._current_volume_id then
-		Managers.state.event:trigger("unregister_environment_volume", self._current_volume_id)
+function EndZoneExtension._deactivate_volume(arg_20_0)
+	if arg_20_0._current_volume_id then
+		Managers.state.event:trigger("unregister_environment_volume", arg_20_0._current_volume_id)
 
-		self._current_volume_id = nil
+		arg_20_0._current_volume_id = nil
 	end
 
-	if self._nav_tag_volume_id then
-		local volume_system = Managers.state.entity:system("volume_system")
+	if arg_20_0._nav_tag_volume_id then
+		Managers.state.entity:system("volume_system"):destroy_nav_tag_volume(arg_20_0._nav_tag_volume_id)
 
-		volume_system:destroy_nav_tag_volume(self._nav_tag_volume_id)
-
-		self._nav_tag_volume_id = nil
+		arg_20_0._nav_tag_volume_id = nil
 	end
 end
 
-EndZoneExtension._reset_distances = function (self)
-	self._closest_player = math.huge
+function EndZoneExtension._reset_distances(arg_21_0)
+	arg_21_0._closest_player = math.huge
 
-	table.clear(self._player_distances)
+	table.clear(arg_21_0._player_distances)
 end
 
-EndZoneExtension._check_proximity = function (self)
-	local end_zone_pos = Unit.local_position(self._unit, 0)
-	local player_units, player_and_bot_units
-	local side = self._side
+function EndZoneExtension._check_proximity(arg_22_0)
+	local var_22_0 = Unit.local_position(arg_22_0._unit, 0)
+	local var_22_1
+	local var_22_2
+	local var_22_3 = arg_22_0._side
 
 	if global_is_inside_inn then
-		player_units = side.PLAYER_UNITS
-		player_and_bot_units = side.PLAYER_AND_BOT_UNITS
+		var_22_1 = var_22_3.PLAYER_UNITS
+		var_22_2 = var_22_3.PLAYER_AND_BOT_UNITS
 	else
-		player_units = side.PLAYER_UNITS
-		player_and_bot_units = side.PLAYER_AND_BOT_UNITS
+		var_22_1 = var_22_3.PLAYER_UNITS
+		var_22_2 = var_22_3.PLAYER_AND_BOT_UNITS
 	end
 
-	for _, player_unit in pairs(player_and_bot_units) do
-		local player_pos = POSITION_LOOKUP[player_unit]
+	for iter_22_0, iter_22_1 in pairs(var_22_2) do
+		local var_22_4 = POSITION_LOOKUP[iter_22_1]
 
-		if player_pos then
-			local distance_squared = Vector3.distance_squared(end_zone_pos, player_pos)
+		if var_22_4 then
+			local var_22_5 = Vector3.distance_squared(var_22_0, var_22_4)
 
-			self._closest_player = distance_squared < self._closest_player and distance_squared or self._closest_player
+			arg_22_0._closest_player = var_22_5 < arg_22_0._closest_player and var_22_5 or arg_22_0._closest_player
 
-			if table.contains(player_units, player_unit) then
-				self._player_distances[player_unit] = distance_squared
+			if table.contains(var_22_1, iter_22_1) then
+				arg_22_0._player_distances[iter_22_1] = var_22_5
 			end
 		end
 	end
 end
 
-EndZoneExtension._update_state = function (self, dt, t)
-	if self._is_server then
-		if self._activation_allowed then
-			local game_mode_manager = Managers.state.game_mode
-			local conditions_fulfilled = game_mode_manager:evaluate_end_zone_activation_conditions()
+function EndZoneExtension._update_state(arg_23_0, arg_23_1, arg_23_2)
+	if arg_23_0._is_server then
+		if arg_23_0._activation_allowed then
+			local var_23_0 = Managers.state.game_mode:evaluate_end_zone_activation_conditions()
 
-			if conditions_fulfilled and not self._activated then
-				self:_activate(true)
-			elseif not conditions_fulfilled and self._activated then
-				self:_activate(false)
+			if var_23_0 and not arg_23_0._activated then
+				arg_23_0:_activate(true)
+			elseif not var_23_0 and arg_23_0._activated then
+				arg_23_0:_activate(false)
 			end
-		elseif self._activated then
-			self:_activate(false)
+		elseif arg_23_0._activated then
+			arg_23_0:_activate(false)
 		end
 	else
-		local hej = true
+		local var_23_1 = true
 	end
 
-	self[self._state](self, dt, t, self._state_data)
+	arg_23_0[arg_23_0._state](arg_23_0, arg_23_1, arg_23_2, arg_23_0._state_data)
 end
 
-EndZoneExtension.hot_join_sync = function (self, sender)
-	if self._activated then
-		local wind = self:_get_wind_name() or "none"
-		local wind_name_id = NetworkLookup.weave_winds[wind]
-		local channel_id = PEER_ID_TO_CHANNEL[sender]
+function EndZoneExtension.hot_join_sync(arg_24_0, arg_24_1)
+	if arg_24_0._activated then
+		local var_24_0 = arg_24_0:_get_wind_name() or "none"
+		local var_24_1 = NetworkLookup.weave_winds[var_24_0]
+		local var_24_2 = PEER_ID_TO_CHANNEL[arg_24_1]
 
-		RPC.rpc_activate_end_zone(channel_id, self._waystone_type, true, wind_name_id, self._activation_name)
-	end
-end
-
-EndZoneExtension.destroy = function (self)
-	local network_event_delegate = Managers.state.network.network_transmit.network_event_delegate
-
-	network_event_delegate:unregister(self)
-
-	if self._nav_tag_volume_id then
-		local volume_system = Managers.state.entity:system("volume_system")
-
-		volume_system:destroy_nav_tag_volume(self._nav_tag_volume_id)
+		RPC.rpc_activate_end_zone(var_24_2, arg_24_0._waystone_type, true, var_24_1, arg_24_0._activation_name)
 	end
 end
 
-EndZoneExtension._idle = function (self, dt, t)
-	if not self._activated then
+function EndZoneExtension.destroy(arg_25_0)
+	Managers.state.network.network_transmit.network_event_delegate:unregister(arg_25_0)
+
+	if arg_25_0._nav_tag_volume_id then
+		Managers.state.entity:system("volume_system"):destroy_nav_tag_volume(arg_25_0._nav_tag_volume_id)
+	end
+end
+
+function EndZoneExtension._idle(arg_26_0, arg_26_1, arg_26_2)
+	if not arg_26_0._activated then
 		return
 	end
 
-	if self._always_activated or self._closest_player <= EndZoneSettings.activate_size^2 then
-		self._state_data = {
-			timer = 0,
+	if arg_26_0._always_activated or arg_26_0._closest_player <= EndZoneSettings.activate_size^2 then
+		arg_26_0._state_data = {
+			timer = 0
 		}
-		self._state = "_open"
+		arg_26_0._state = "_open"
 
-		Unit.flow_event(self._unit, "opening_end_zone")
+		Unit.flow_event(arg_26_0._unit, "opening_end_zone")
 
-		if Unit.has_visibility_group(self._unit, "dome") then
-			Unit.set_visibility(self._unit, "dome", true)
+		if Unit.has_visibility_group(arg_26_0._unit, "dome") then
+			Unit.set_visibility(arg_26_0._unit, "dome", true)
 		end
 	end
 end
 
-EndZoneExtension._open = function (self, dt, t)
-	if self._activated and (self._always_activated or self._closest_player <= EndZoneSettings.activate_size^2) then
-		local animation_time = EndZoneSettings.animation_time or 0.5
+function EndZoneExtension._open(arg_27_0, arg_27_1, arg_27_2)
+	if arg_27_0._activated and (arg_27_0._always_activated or arg_27_0._closest_player <= EndZoneSettings.activate_size^2) then
+		local var_27_0 = EndZoneSettings.animation_time or 0.5
 
-		self._state_data.timer = math.clamp(self._state_data.timer + dt, 0, animation_time)
+		arg_27_0._state_data.timer = math.clamp(arg_27_0._state_data.timer + arg_27_1, 0, var_27_0)
 
-		local scale = math.smoothstep(self._state_data.timer / animation_time, 0, 1)
-		local node = Unit.node(self._unit, "ap_dome_scaler")
+		local var_27_1 = math.smoothstep(arg_27_0._state_data.timer / var_27_0, 0, 1)
+		local var_27_2 = Unit.node(arg_27_0._unit, "ap_dome_scaler")
 
-		Unit.set_local_scale(self._unit, node, Vector3(scale, scale, scale))
-		self:_set_light_intensity(scale^3)
+		Unit.set_local_scale(arg_27_0._unit, var_27_2, Vector3(var_27_1, var_27_1, var_27_1))
+		arg_27_0:_set_light_intensity(var_27_1^3)
 
-		if scale == 1 then
-			self._state_data.end_zone_timer = self:end_time()
-			self._state_data.end_zone_hidden_long_timer = self:end_zone_hidden_long_timer()
-			self._state_data.end_zone_visible_long_timer = self:end_zone_visible_long_timer()
-			self._state = "_end_mission_check"
+		if var_27_1 == 1 then
+			arg_27_0._state_data.end_zone_timer = arg_27_0:end_time()
+			arg_27_0._state_data.end_zone_hidden_long_timer = arg_27_0:end_zone_hidden_long_timer()
+			arg_27_0._state_data.end_zone_visible_long_timer = arg_27_0:end_zone_visible_long_timer()
+			arg_27_0._state = "_end_mission_check"
 		end
 	else
-		self._state = "_close"
+		arg_27_0._state = "_close"
 
-		Unit.flow_event(self._unit, "closing_end_zone")
+		Unit.flow_event(arg_27_0._unit, "closing_end_zone")
 	end
 end
 
-EndZoneExtension._close = function (self, dt, t)
-	if self._activated and (self._always_activated or self._closest_player <= EndZoneSettings.activate_size^2) then
-		self._state = "_open"
+function EndZoneExtension._close(arg_28_0, arg_28_1, arg_28_2)
+	if arg_28_0._activated and (arg_28_0._always_activated or arg_28_0._closest_player <= EndZoneSettings.activate_size^2) then
+		arg_28_0._state = "_open"
 
-		Unit.flow_event(self._unit, "opening_end_zone")
+		Unit.flow_event(arg_28_0._unit, "opening_end_zone")
 	else
-		local animation_time = EndZoneSettings.animation_time or 0.5
+		local var_28_0 = EndZoneSettings.animation_time or 0.5
 
-		self._state_data.timer = math.clamp(self._state_data.timer - dt, 0, animation_time)
+		arg_28_0._state_data.timer = math.clamp(arg_28_0._state_data.timer - arg_28_1, 0, var_28_0)
 
-		local scale = math.smoothstep(self._state_data.timer / animation_time, 0, 1)
-		local node = Unit.node(self._unit, "ap_dome_scaler")
+		local var_28_1 = math.smoothstep(arg_28_0._state_data.timer / var_28_0, 0, 1)
+		local var_28_2 = Unit.node(arg_28_0._unit, "ap_dome_scaler")
 
-		Unit.set_local_scale(self._unit, node, Vector3(scale, scale, scale))
-		self:_set_light_intensity(scale^3)
+		Unit.set_local_scale(arg_28_0._unit, var_28_2, Vector3(var_28_1, var_28_1, var_28_1))
+		arg_28_0:_set_light_intensity(var_28_1^3)
 
-		if scale == 0 then
-			self._state = "_idle"
+		if var_28_1 == 0 then
+			arg_28_0._state = "_idle"
 
-			if Unit.has_visibility_group(self._unit, "dome") then
-				Unit.set_visibility(self._unit, "dome", false)
+			if Unit.has_visibility_group(arg_28_0._unit, "dome") then
+				Unit.set_visibility(arg_28_0._unit, "dome", false)
 			end
 		end
 	end
 end
 
-EndZoneExtension._check_end_mission_all_inside = function (self, dt, all_inside)
-	if self._is_start_waystone and not self:_all_players_joined() then
-		self._state_data.end_zone_timer = self:end_time()
+function EndZoneExtension._check_end_mission_all_inside(arg_29_0, arg_29_1, arg_29_2)
+	if arg_29_0._is_start_waystone and not arg_29_0:_all_players_joined() then
+		arg_29_0._state_data.end_zone_timer = arg_29_0:end_time()
 
 		return
 	end
 
-	if all_inside then
-		self._state_data.end_zone_timer = math.clamp(self:end_time_left() - dt, 0, self:end_time())
+	if arg_29_2 then
+		arg_29_0._state_data.end_zone_timer = math.clamp(arg_29_0:end_time_left() - arg_29_1, 0, arg_29_0:end_time())
 
-		if self:end_time_left() <= 0 and not self._disable_complete_level then
+		if arg_29_0:end_time_left() <= 0 and not arg_29_0._disable_complete_level then
 			Managers.state.game_mode:complete_level()
 		end
 	else
-		self._state_data.end_zone_timer = self:end_time()
+		arg_29_0._state_data.end_zone_timer = arg_29_0:end_time()
 	end
 end
 
-EndZoneExtension._check_end_mission_any_inside = function (self, dt, all_inside, any_inside, players_outside_portal)
-	local game_mode_key = Managers.state.game_mode:game_mode_key()
-
-	if game_mode_key == "weave" or all_inside or self._is_start_waystone then
+function EndZoneExtension._check_end_mission_any_inside(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+	if Managers.state.game_mode:game_mode_key() == "weave" or arg_30_2 or arg_30_0._is_start_waystone then
 		return
 	end
 
-	local end_zone_long_timer_settings = self:end_zone_long_timer_settings()
+	local var_30_0 = arg_30_0:end_zone_long_timer_settings()
 
-	if not any_inside then
-		if self._end_zone_timer_started then
-			self._state_data.end_zone_hidden_long_timer = end_zone_long_timer_settings.hidden_timer
-			self._state_data.end_zone_visible_long_timer = end_zone_long_timer_settings.visible_timer
-			self._end_zone_timer_started = false
-			self._end_zone_time_since_notify = 5
+	if not arg_30_3 then
+		if arg_30_0._end_zone_timer_started then
+			arg_30_0._state_data.end_zone_hidden_long_timer = var_30_0.hidden_timer
+			arg_30_0._state_data.end_zone_visible_long_timer = var_30_0.visible_timer
+			arg_30_0._end_zone_timer_started = false
+			arg_30_0._end_zone_time_since_notify = 5
 		end
 
 		return
 	end
 
-	self._end_zone_timer_started = true
+	arg_30_0._end_zone_timer_started = true
 
-	local end_zone_hidden_long_timer = self._state_data.end_zone_hidden_long_timer
-	local end_zone_visible_long_timer = self._state_data.end_zone_visible_long_timer
+	local var_30_1 = arg_30_0._state_data.end_zone_hidden_long_timer
+	local var_30_2 = arg_30_0._state_data.end_zone_visible_long_timer
 
-	if end_zone_hidden_long_timer > 0 then
-		self._state_data.end_zone_hidden_long_timer = end_zone_hidden_long_timer - dt
-	elseif end_zone_visible_long_timer > 0 then
-		self._end_zone_time_since_notify = self._end_zone_time_since_notify + dt
-		end_zone_visible_long_timer = end_zone_visible_long_timer - dt
+	if var_30_1 > 0 then
+		arg_30_0._state_data.end_zone_hidden_long_timer = var_30_1 - arg_30_1
+	elseif var_30_2 > 0 then
+		arg_30_0._end_zone_time_since_notify = arg_30_0._end_zone_time_since_notify + arg_30_1
 
-		if end_zone_visible_long_timer > end_zone_long_timer_settings.notify_interval_threshold then
-			if self._end_zone_time_since_notify >= end_zone_long_timer_settings.notify_long_interval then
-				local message_timer = math.round_to_closest_multiple(end_zone_visible_long_timer, 5)
+		local var_30_3 = var_30_2 - arg_30_1
 
-				Managers.chat:send_system_chat_message(1, "end_game_timer_system_message", message_timer, false, true)
+		if var_30_3 > var_30_0.notify_interval_threshold then
+			if arg_30_0._end_zone_time_since_notify >= var_30_0.notify_long_interval then
+				local var_30_4 = math.round_to_closest_multiple(var_30_3, 5)
 
-				self._end_zone_time_since_notify = 0
+				Managers.chat:send_system_chat_message(1, "end_game_timer_system_message", var_30_4, false, true)
+
+				arg_30_0._end_zone_time_since_notify = 0
 			end
-		elseif self._end_zone_time_since_notify >= end_zone_long_timer_settings.notify_short_interval then
-			local message_timer = math.round_to_closest_multiple(end_zone_visible_long_timer, 1)
+		elseif arg_30_0._end_zone_time_since_notify >= var_30_0.notify_short_interval then
+			local var_30_5 = math.round_to_closest_multiple(var_30_3, 1)
 
-			Managers.chat:send_system_chat_message(1, "end_game_timer_system_message", message_timer, false, true)
+			Managers.chat:send_system_chat_message(1, "end_game_timer_system_message", var_30_5, false, true)
 
-			self._end_zone_time_since_notify = 0
+			arg_30_0._end_zone_time_since_notify = 0
 		end
 
-		self._state_data.end_zone_visible_long_timer = end_zone_visible_long_timer
-	elseif not self._disable_complete_level then
-		local mission_system = Managers.state.entity:system("mission_system")
+		arg_30_0._state_data.end_zone_visible_long_timer = var_30_3
+	elseif not arg_30_0._disable_complete_level then
+		local var_30_6 = Managers.state.entity:system("mission_system")
 
-		for _, player_unit in pairs(players_outside_portal) do
-			local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
+		for iter_30_0, iter_30_1 in pairs(arg_30_4) do
+			local var_30_7 = ScriptUnit.extension(iter_30_1, "inventory_system")
 
-			if inventory_extension:has_inventory_item("slot_potion", "wpn_grimoire_01") then
-				mission_system:update_mission("grimoire_hidden_mission", false, dt, true)
+			if var_30_7:has_inventory_item("slot_potion", "wpn_grimoire_01") then
+				var_30_6:update_mission("grimoire_hidden_mission", false, arg_30_1, true)
 			end
 
-			if inventory_extension:has_inventory_item("slot_healthkit", "wpn_side_objective_tome_01") then
-				mission_system:update_mission("tome_bonus_mission", false, dt, true)
+			if var_30_7:has_inventory_item("slot_healthkit", "wpn_side_objective_tome_01") then
+				var_30_6:update_mission("tome_bonus_mission", false, arg_30_1, true)
 			end
 		end
 
 		Managers.state.game_mode:complete_level()
 
-		self._disable_complete_level = true
+		arg_30_0._disable_complete_level = true
 	end
 end
 
-EndZoneExtension._end_mission_check = function (self, dt, t)
-	if self._activated and (self._always_activated or self._closest_player <= EndZoneSettings.activate_size^2) then
-		local all_inside
-		local any_inside = false
-		local players_outside_portal = FrameTable.alloc_table()
+function EndZoneExtension._end_mission_check(arg_31_0, arg_31_1, arg_31_2)
+	if arg_31_0._activated and (arg_31_0._always_activated or arg_31_0._closest_player <= EndZoneSettings.activate_size^2) then
+		local var_31_0
+		local var_31_1 = false
+		local var_31_2 = FrameTable.alloc_table()
 
-		if self._is_server then
-			local buff_system = Managers.state.entity:system("buff_system")
+		if arg_31_0._is_server then
+			local var_31_3 = Managers.state.entity:system("buff_system")
 
-			for player_unit, distance_squared in pairs(self._player_distances) do
-				if Unit.alive(player_unit) then
-					local status_extension = ScriptUnit.extension(player_unit, "status_system")
+			for iter_31_0, iter_31_1 in pairs(arg_31_0._player_distances) do
+				if Unit.alive(iter_31_0) then
+					local var_31_4 = ScriptUnit.extension(iter_31_0, "status_system")
 
-					if distance_squared > self.waystone_size^2 then
-						if not status_extension:is_disabled_non_temporarily() then
-							all_inside = false
-							players_outside_portal[#players_outside_portal] = player_unit
+					if iter_31_1 > arg_31_0.waystone_size^2 then
+						if not var_31_4:is_disabled_non_temporarily() then
+							var_31_0 = false
+							var_31_2[#var_31_2] = iter_31_0
 						end
 
-						status_extension:set_in_end_zone(false, self._unit)
+						var_31_4:set_in_end_zone(false, arg_31_0._unit)
 					else
-						any_inside = true
+						var_31_1 = true
 
-						if all_inside == nil then
-							all_inside = true
+						if var_31_0 == nil then
+							var_31_0 = true
 						end
 
-						local buff_name = "end_zone_invincibility"
-						local buff_extension = ScriptUnit.extension(player_unit, "buff_system")
-						local has_buff = buff_extension and buff_extension:has_buff_type(buff_name)
+						local var_31_5 = "end_zone_invincibility"
+						local var_31_6 = ScriptUnit.extension(iter_31_0, "buff_system")
+						local var_31_7 = var_31_6 and var_31_6:has_buff_type(var_31_5)
 
-						if buff_extension and not has_buff then
-							buff_system:add_buff(player_unit, buff_name, player_unit, false)
+						if var_31_6 and not var_31_7 then
+							var_31_3:add_buff(iter_31_0, var_31_5, iter_31_0, false)
 						end
 
-						status_extension:set_in_end_zone(true, self._unit)
+						var_31_4:set_in_end_zone(true, arg_31_0._unit)
 					end
 				end
 			end
 
-			self:_check_end_mission_all_inside(dt, all_inside)
-			self:_check_end_mission_any_inside(dt, all_inside, any_inside, players_outside_portal)
+			arg_31_0:_check_end_mission_all_inside(arg_31_1, var_31_0)
+			arg_31_0:_check_end_mission_any_inside(arg_31_1, var_31_0, var_31_1, var_31_2)
 		else
-			all_inside = nil
+			local var_31_8
 
-			for player_unit, _ in pairs(self._player_distances) do
-				if Unit.alive(player_unit) then
-					local status_extension = ScriptUnit.extension(player_unit, "status_system")
+			for iter_31_2, iter_31_3 in pairs(arg_31_0._player_distances) do
+				if Unit.alive(iter_31_2) then
+					local var_31_9 = ScriptUnit.extension(iter_31_2, "status_system")
 
-					if not status_extension:is_disabled() and not status_extension:is_in_end_zone() then
-						all_inside = false
-					elseif all_inside == nil then
-						all_inside = true
+					if not var_31_9:is_disabled() and not var_31_9:is_in_end_zone() then
+						var_31_8 = false
+					elseif var_31_8 == nil then
+						var_31_8 = true
 					end
 				end
 			end
 
-			if self._is_start_waystone then
-				if all_inside and self:_all_players_joined() then
-					self._state_data.end_zone_timer = math.clamp(self:end_time_left() - dt, 0, self:end_time())
+			if arg_31_0._is_start_waystone then
+				if var_31_8 and arg_31_0:_all_players_joined() then
+					arg_31_0._state_data.end_zone_timer = math.clamp(arg_31_0:end_time_left() - arg_31_1, 0, arg_31_0:end_time())
 				else
-					self._state_data.end_zone_timer = self:end_time()
+					arg_31_0._state_data.end_zone_timer = arg_31_0:end_time()
 				end
-			elseif all_inside then
-				self._state_data.end_zone_timer = math.clamp(self:end_time_left() - dt, 0, self:end_time())
+			elseif var_31_8 then
+				arg_31_0._state_data.end_zone_timer = math.clamp(arg_31_0:end_time_left() - arg_31_1, 0, arg_31_0:end_time())
 			else
-				self._state_data.end_zone_timer = self:end_time()
+				arg_31_0._state_data.end_zone_timer = arg_31_0:end_time()
 			end
 		end
 	else
-		self._state = "_close"
+		arg_31_0._state = "_close"
 
-		Unit.flow_event(self._unit, "closing_end_zone")
+		Unit.flow_event(arg_31_0._unit, "closing_end_zone")
 	end
 end
 
-EndZoneExtension._all_players_joined = function (self)
-	if self._disable_check_joining_players then
+function EndZoneExtension._all_players_joined(arg_32_0)
+	if arg_32_0._disable_check_joining_players then
 		return true
 	end
 
-	local all_players_spawned = Managers.matchmaking:are_all_players_spawned()
-
-	if not all_players_spawned then
+	if not Managers.matchmaking:are_all_players_spawned() then
 		return false
 	end
 

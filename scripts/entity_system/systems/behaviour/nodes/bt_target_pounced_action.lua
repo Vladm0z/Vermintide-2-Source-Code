@@ -1,87 +1,86 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_target_pounced_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_target_pounced_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTTargetPouncedAction = class(BTTargetPouncedAction, BTNode)
 
-BTTargetPouncedAction.init = function (self, ...)
-	BTTargetPouncedAction.super.init(self, ...)
+function BTTargetPouncedAction.init(arg_1_0, ...)
+	BTTargetPouncedAction.super.init(arg_1_0, ...)
 end
 
 BTTargetPouncedAction.name = "BTTargetPouncedAction"
 
-local POSITION_LOOKUP = POSITION_LOOKUP
+local var_0_0 = POSITION_LOOKUP
 
-BTTargetPouncedAction.enter = function (self, unit, blackboard, t)
-	local locomotion_extension = blackboard.locomotion_extension
-	local action = self._tree_node.action_data
+function BTTargetPouncedAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_2.locomotion_extension
+	local var_2_1 = arg_2_0._tree_node.action_data
 
-	blackboard.action = action
-	blackboard.active_node = BTTargetPouncedAction
-	blackboard.start_pouncing_time = t
+	arg_2_2.action = var_2_1
+	arg_2_2.active_node = BTTargetPouncedAction
+	arg_2_2.start_pouncing_time = arg_2_3
 
-	local jump_data = blackboard.jump_data
-	local target_unit = jump_data.target_unit
-	local target_position = POSITION_LOOKUP[target_unit]
+	local var_2_2 = arg_2_2.jump_data
+	local var_2_3 = var_2_2.target_unit
+	local var_2_4 = var_0_0[var_2_3]
 
-	if not AiUtils.is_of_interest_to_gutter_runner(unit, jump_data.target_unit, blackboard, true) then
-		blackboard.already_pounced = true
+	if not AiUtils.is_of_interest_to_gutter_runner(arg_2_1, var_2_2.target_unit, arg_2_2, true) then
+		arg_2_2.already_pounced = true
 
-		Mover.set_position(Unit.mover(unit), target_position)
-		locomotion_extension:set_wanted_velocity(Vector3(0, 0, 0))
-		locomotion_extension:set_affected_by_gravity(true)
+		Mover.set_position(Unit.mover(arg_2_1), var_2_4)
+		var_2_0:set_wanted_velocity(Vector3(0, 0, 0))
+		var_2_0:set_affected_by_gravity(true)
 
 		return
 	end
 
-	local breed = blackboard.breed
+	local var_2_5 = arg_2_2.breed
 
-	if action.stab_until_target_is_killed then
-		local ai_extension = ScriptUnit.extension(unit, "ai_system")
-
-		ai_extension:set_perception("perception_no_seeing", "pick_no_targets")
+	if var_2_1.stab_until_target_is_killed then
+		ScriptUnit.extension(arg_2_1, "ai_system"):set_perception("perception_no_seeing", "pick_no_targets")
 	end
 
-	blackboard.pouncing_target = true
+	arg_2_2.pouncing_target = true
 
-	blackboard.navigation_extension:set_enabled(false)
+	arg_2_2.navigation_extension:set_enabled(false)
 
-	local target_position, target_rotation = POSITION_LOOKUP[target_unit], Unit.local_rotation(target_unit, 0)
+	local var_2_6 = var_0_0[var_2_3]
+	local var_2_7 = Unit.local_rotation(var_2_3, 0)
 
-	locomotion_extension:set_wanted_velocity(Vector3.zero())
-	locomotion_extension:teleport_to(target_position)
+	var_2_0:set_wanted_velocity(Vector3.zero())
+	var_2_0:teleport_to(var_2_6)
 
-	local mover = Unit.mover(unit)
+	local var_2_8 = Unit.mover(arg_2_1)
 
-	Mover.set_position(mover, target_position)
-	LocomotionUtils.separate_mover_fallbacks(mover, 1)
+	Mover.set_position(var_2_8, var_2_6)
+	LocomotionUtils.separate_mover_fallbacks(var_2_8, 1)
 
-	local mover_position = Mover.position(mover)
+	local var_2_9 = Mover.position(var_2_8)
 
-	Unit.set_local_position(unit, 0, mover_position)
+	Unit.set_local_position(arg_2_1, 0, var_2_9)
 
-	local network_manager = Managers.state.network
-	local unit_id = network_manager:unit_game_object_id(unit)
+	local var_2_10 = Managers.state.network
+	local var_2_11 = var_2_10:unit_game_object_id(arg_2_1)
 
-	network_manager.network_transmit:send_rpc_clients("rpc_teleport_unit_to", unit_id, mover_position, Quaternion.identity())
-	LocomotionUtils.set_animation_driven_movement(unit, true, true, false)
+	var_2_10.network_transmit:send_rpc_clients("rpc_teleport_unit_to", var_2_11, var_2_9, Quaternion.identity())
+	LocomotionUtils.set_animation_driven_movement(arg_2_1, true, true, false)
 
-	local target_status_extension = ScriptUnit.extension(target_unit, "status_system")
+	local var_2_12 = ScriptUnit.extension(var_2_3, "status_system")
 
-	target_status_extension:set_pounced_down(true, unit)
-	target_status_extension:add_pacing_intensity(CurrentIntensitySettings.intensity_add_pounced_down)
+	var_2_12:set_pounced_down(true, arg_2_1)
+	var_2_12:add_pacing_intensity(CurrentIntensitySettings.intensity_add_pounced_down)
 
-	local dist = jump_data.total_distance
-	local breed_name = breed.name
-	local impact_damage = DamageUtils.calculate_damage(breed.pounce_impact_damage) + dist * breed.pounce_bonus_dmg_per_meter
+	local var_2_13 = var_2_2.total_distance
+	local var_2_14 = var_2_5.name
+	local var_2_15 = DamageUtils.calculate_damage(var_2_5.pounce_impact_damage) + var_2_13 * var_2_5.pounce_bonus_dmg_per_meter
 
-	DamageUtils.add_damage_network(target_unit, unit, impact_damage, "torso", "cutting", nil, Vector3(1, 0, 0), breed_name, nil, nil, nil, action.hit_react_type, nil, nil, nil, nil, nil, nil, 1)
-	BTTargetPouncedAction.impact_pushback(unit, target_position, action.close_impact_radius, action.far_impact_radius, action.impact_speed_given, blackboard.target_unit)
+	DamageUtils.add_damage_network(var_2_3, arg_2_1, var_2_15, "torso", "cutting", nil, Vector3(1, 0, 0), var_2_14, nil, nil, nil, var_2_1.hit_react_type, nil, nil, nil, nil, nil, nil, 1)
+	BTTargetPouncedAction.impact_pushback(arg_2_1, var_2_6, var_2_1.close_impact_radius, var_2_1.far_impact_radius, var_2_1.impact_speed_given, arg_2_2.target_unit)
 
-	local disabled_by_special = blackboard.group_blackboard.disabled_by_special
+	local var_2_16 = arg_2_2.group_blackboard.disabled_by_special
 
-	if not disabled_by_special[target_unit] then
-		disabled_by_special[target_unit] = unit
+	if not var_2_16[var_2_3] then
+		var_2_16[var_2_3] = arg_2_1
 	end
 
 	if script_data.debug_player_intensity then
@@ -89,75 +88,71 @@ BTTargetPouncedAction.enter = function (self, unit, blackboard, t)
 	end
 end
 
-BTTargetPouncedAction.leave = function (self, unit, blackboard, t, reason, destroy)
+function BTTargetPouncedAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	aiprint("LEAVE TARGET POUNCED ACTION")
 
-	local jump_data = blackboard.jump_data
-	local target_unit = jump_data.target_unit
+	local var_3_0 = arg_3_2.jump_data.target_unit
 
-	blackboard.active_node = nil
+	arg_3_2.active_node = nil
 
-	if not blackboard.already_pounced then
-		if blackboard.action.stab_until_target_is_killed then
-			local breed = blackboard.breed
-			local ai_extension = ScriptUnit.extension(unit, "ai_system")
+	if not arg_3_2.already_pounced then
+		if arg_3_2.action.stab_until_target_is_killed then
+			local var_3_1 = arg_3_2.breed
 
-			ai_extension:set_perception(breed.perception, breed.target_selection)
+			ScriptUnit.extension(arg_3_1, "ai_system"):set_perception(var_3_1.perception, var_3_1.target_selection)
 		end
 
-		local disabled_by_special = blackboard.group_blackboard.disabled_by_special
+		local var_3_2 = arg_3_2.group_blackboard.disabled_by_special
 
-		if disabled_by_special[target_unit] == unit then
-			disabled_by_special[target_unit] = nil
+		if var_3_2[var_3_0] == arg_3_1 then
+			var_3_2[var_3_0] = nil
 		end
 
-		if Unit.alive(target_unit) then
-			local target_status_extension = ScriptUnit.extension(target_unit, "status_system")
+		if Unit.alive(var_3_0) then
+			ScriptUnit.extension(var_3_0, "status_system"):set_pounced_down(false, arg_3_1)
 
-			target_status_extension:set_pounced_down(false, unit)
-
-			if not destroy then
-				LocomotionUtils.set_animation_driven_movement(unit, false)
+			if not arg_3_5 then
+				LocomotionUtils.set_animation_driven_movement(arg_3_1, false)
 			end
 		end
 
-		if not destroy then
-			blackboard.locomotion_extension:set_wanted_rotation(nil)
+		if not arg_3_5 then
+			arg_3_2.locomotion_extension:set_wanted_rotation(nil)
 		end
 	else
-		blackboard.already_pounced = nil
+		arg_3_2.already_pounced = nil
 	end
 
-	blackboard.high_ground_opportunity = nil
-	blackboard.jump_data = nil
-	blackboard.action = nil
-	blackboard.pouncing_target = nil
+	arg_3_2.high_ground_opportunity = nil
+	arg_3_2.jump_data = nil
+	arg_3_2.action = nil
+	arg_3_2.pouncing_target = nil
 
-	if not destroy then
-		blackboard.locomotion_extension:set_movement_type("snap_to_navmesh")
+	if not arg_3_5 then
+		arg_3_2.locomotion_extension:set_movement_type("snap_to_navmesh")
 	end
 
-	blackboard.navigation_extension:set_enabled(true)
+	arg_3_2.navigation_extension:set_enabled(true)
 
-	if blackboard.stagger then
-		blackboard.ninja_vanish = true
+	if arg_3_2.stagger then
+		arg_3_2.ninja_vanish = true
 	end
 end
 
-BTTargetPouncedAction.run = function (self, unit, blackboard, t, dt)
-	if blackboard.already_pounced then
+function BTTargetPouncedAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	if arg_4_2.already_pounced then
 		return "failed"
 	end
 
-	local jump_data = blackboard.jump_data
+	local var_4_0 = arg_4_2.jump_data
 
-	if not AiUtils.is_of_interest_to_gutter_runner(unit, jump_data.target_unit, blackboard, blackboard.action.stab_until_target_is_killed) then
-		local network_manager = Managers.state.network
+	if not AiUtils.is_of_interest_to_gutter_runner(arg_4_1, var_4_0.target_unit, arg_4_2, arg_4_2.action.stab_until_target_is_killed) then
+		local var_4_1 = Managers.state.network
 
-		if blackboard.action.foff_after_pounce_kill then
-			blackboard.ninja_vanish = true
+		if arg_4_2.action.foff_after_pounce_kill then
+			arg_4_2.ninja_vanish = true
 		else
-			network_manager:anim_event(unit, "idle")
+			var_4_1:anim_event(arg_4_1, "idle")
 		end
 
 		return "failed"
@@ -166,68 +161,55 @@ BTTargetPouncedAction.run = function (self, unit, blackboard, t, dt)
 	return "running"
 end
 
-BTTargetPouncedAction.impact_pushback = function (pouncing_unit, impact_position, close_impact_radius, far_impact_radius, impact_speed_given, excluded_player_unit)
-	local side = Managers.state.side.side_by_unit[pouncing_unit]
-	local player_and_bot_units = side.ENEMY_PLAYER_AND_BOT_UNITS
+function BTTargetPouncedAction.impact_pushback(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	local var_5_0 = Managers.state.side.side_by_unit[arg_5_0].ENEMY_PLAYER_AND_BOT_UNITS
 
-	for i = 1, #player_and_bot_units do
-		local player_unit = player_and_bot_units[i]
+	for iter_5_0 = 1, #var_5_0 do
+		local var_5_1 = var_5_0[iter_5_0]
 
-		if player_unit ~= excluded_player_unit then
-			local status_ext = ScriptUnit.extension(player_unit, "status_system")
+		if var_5_1 ~= arg_5_5 and not ScriptUnit.extension(var_5_1, "status_system"):is_disabled() then
+			local var_5_2 = var_0_0[var_5_1] - arg_5_1
+			local var_5_3 = Vector3.length(var_5_2)
 
-			if not status_ext:is_disabled() then
-				local to_player = POSITION_LOOKUP[player_unit] - impact_position
-				local player_dist = Vector3.length(to_player)
+			if var_5_3 < arg_5_3 then
+				local var_5_4
 
-				if player_dist < far_impact_radius then
-					local push_velocity
-
-					if player_dist <= close_impact_radius then
-						push_velocity = Vector3.normalize(to_player) * impact_speed_given
-					else
-						push_velocity = Vector3.normalize(to_player) * (1 - (player_dist - close_impact_radius) / (far_impact_radius - close_impact_radius)) * impact_speed_given
-					end
-
-					if script_data.debug_ai_movement then
-						aiprint("Gutter runner pounced: push-speed:", Vector3.length(push_velocity), "dist:", player_dist, "unit:", player_unit)
-					end
-
-					local player_locomotion = ScriptUnit.extension(player_unit, "locomotion_system")
-
-					player_locomotion:add_external_velocity(push_velocity)
+				if var_5_3 <= arg_5_2 then
+					var_5_4 = Vector3.normalize(var_5_2) * arg_5_4
+				else
+					var_5_4 = Vector3.normalize(var_5_2) * (1 - (var_5_3 - arg_5_2) / (arg_5_3 - arg_5_2)) * arg_5_4
 				end
+
+				if script_data.debug_ai_movement then
+					aiprint("Gutter runner pounced: push-speed:", Vector3.length(var_5_4), "dist:", var_5_3, "unit:", var_5_1)
+				end
+
+				ScriptUnit.extension(var_5_1, "locomotion_system"):add_external_velocity(var_5_4)
 			end
 		end
 	end
 end
 
-local temp_damage_triplett = {
+local var_0_1 = {
 	0,
 	0,
-	0,
+	0
 }
 
-BTTargetPouncedAction.direct_damage = function (unit, blackboard)
-	local action = blackboard.action
+function BTTargetPouncedAction.direct_damage(arg_6_0, arg_6_1)
+	local var_6_0 = arg_6_1.action
 
-	if not action then
+	if not var_6_0 then
 		return
 	end
 
-	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local ramp_damage_time = action.time_before_ramping_damage[difficulty_rank] or action.time_before_ramping_damage[2]
-	local time_to_reach_final_multiplier = action.time_to_reach_final_damage_multiplier[difficulty_rank] or action.time_to_reach_final_damage_multiplier[2]
-	local t = Managers.time:time("game")
-	local pounced_time = (t - blackboard.start_pouncing_time - ramp_damage_time) / time_to_reach_final_multiplier
-	local normalized_time = math.clamp(pounced_time, 0, 1)
-	local base_damage = action.damage
-	local multiplier = 1 + normalized_time * action.final_damage_multiplier
+	local var_6_1 = Managers.state.difficulty:get_difficulty_rank()
+	local var_6_2 = var_6_0.time_before_ramping_damage[var_6_1] or var_6_0.time_before_ramping_damage[2]
+	local var_6_3 = var_6_0.time_to_reach_final_damage_multiplier[var_6_1] or var_6_0.time_to_reach_final_damage_multiplier[2]
+	local var_6_4 = (Managers.time:time("game") - arg_6_1.start_pouncing_time - var_6_2) / var_6_3
+	local var_6_5 = math.clamp(var_6_4, 0, 1)
+	local var_6_6 = var_6_0.damage * (1 + var_6_5 * var_6_0.final_damage_multiplier)
+	local var_6_7 = arg_6_1.jump_data.target_unit
 
-	base_damage = base_damage * multiplier
-
-	local jump_data = blackboard.jump_data
-	local target_unit = jump_data.target_unit
-
-	AiUtils.damage_target(target_unit, unit, blackboard.action, base_damage)
+	AiUtils.damage_target(var_6_7, arg_6_0, arg_6_1.action, var_6_6)
 end

@@ -1,811 +1,813 @@
-﻿-- chunkname: @scripts/imgui/imgui_ui_tool.lua
+-- chunkname: @scripts/imgui/imgui_ui_tool.lua
 
 ImguiUITool = class(ImguiUITool)
 
-local Gui, Imgui = Gui, Imgui
-local format = string.format
+local var_0_0 = Gui
+local var_0_1 = Imgui
+local var_0_2 = string.format
 
-local function tab2vec2(t)
-	return Vector2(t[1], t[2])
+local function var_0_3(arg_1_0)
+	return Vector2(arg_1_0[1], arg_1_0[2])
 end
 
-local function tab2col(t)
-	return Color(t[1], t[2], t[3], t[4])
+local function var_0_4(arg_2_0)
+	return Color(arg_2_0[1], arg_2_0[2], arg_2_0[3], arg_2_0[4])
 end
 
-local function settab(t, x, y)
-	t[1] = x
-	t[2] = y
+local function var_0_5(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_0[1] = arg_3_1
+	arg_3_0[2] = arg_3_2
 
-	return t
+	return arg_3_0
 end
 
-local select, find = select, string.find
+local var_0_6 = select
+local var_0_7 = string.find
 
-local function do_search(needle, ...)
-	for i = 1, select("#", ...) do
-		local ok, i, j = pcall(find, select(i, ...), needle)
+local function var_0_8(arg_4_0, ...)
+	for iter_4_0 = 1, var_0_6("#", ...) do
+		local var_4_0, var_4_1, var_4_2 = pcall(var_0_7, var_0_6(iter_4_0, ...), arg_4_0)
 
-		if not ok then
+		if not var_4_0 then
 			return false
-		elseif i then
-			return i, j
+		elseif var_4_1 then
+			return var_4_1, var_4_2
 		end
 	end
 end
 
-ImguiUITool.init = function (self)
-	self._active = false
-	self._draw_ruler = false
-	self._draw_canvas = false
-	self._ruler_color = {
+function ImguiUITool.init(arg_5_0)
+	arg_5_0._active = false
+	arg_5_0._draw_ruler = false
+	arg_5_0._draw_canvas = false
+	arg_5_0._ruler_color = {
 		64,
 		255,
 		0,
-		0,
+		0
 	}
-	self._highlight_textures = true
-	self._drawing_rect = false
-	self._hide_ui = false
-	self._disable_localization = not not script_data.disable_localization
-	self._rect_x, self._rect_y = 0, 0
-	self._data_buffer = {}
-	self._data_back_buffer = {}
-	self._search = ""
-	self._cursor = {
+	arg_5_0._highlight_textures = true
+	arg_5_0._drawing_rect = false
+	arg_5_0._hide_ui = false
+	arg_5_0._disable_localization = not not script_data.disable_localization
+	arg_5_0._rect_x, arg_5_0._rect_y = 0, 0
+	arg_5_0._data_buffer = {}
+	arg_5_0._data_back_buffer = {}
+	arg_5_0._search = ""
+	arg_5_0._cursor = {
 		0,
 		0,
-		0,
+		0
 	}
-	self._scale = 1
-	self._offset = {
+	arg_5_0._scale = 1
+	arg_5_0._offset = {
 		0,
-		0,
+		0
 	}
-	self._tabs = {
+	arg_5_0._tabs = {
 		"Render objects",
 		"Scenegraph",
 		"Atlas browser",
 		"Settings",
-		"Help",
+		"Help"
 	}
-	self._selected_tab = self._tabs[1]
+	arg_5_0._selected_tab = arg_5_0._tabs[1]
 end
 
-local DO_RELOAD = true
+local var_0_9 = true
 
-ImguiUITool.update = function (self)
-	if DO_RELOAD then
-		self:init()
-		self:on_hide()
-		self:on_show()
+function ImguiUITool.update(arg_6_0)
+	if var_0_9 then
+		arg_6_0:init()
+		arg_6_0:on_hide()
+		arg_6_0:on_show()
 
-		DO_RELOAD = false
+		var_0_9 = false
 	end
 
-	if self._active then
-		self._data_buffer, self._data_back_buffer = self._data_back_buffer, self._data_buffer
+	if arg_6_0._active then
+		arg_6_0._data_buffer, arg_6_0._data_back_buffer = arg_6_0._data_back_buffer, arg_6_0._data_buffer
 
-		table.clear(self._data_back_buffer)
+		table.clear(arg_6_0._data_back_buffer)
 	end
 
-	local cursor_vec3 = Mouse.axis(Mouse.axis_id("cursor"))
-	local canvas_w, canvas_h = 1920, 1080
-	local w, h = Gui.resolution()
-	local scale = math.min(w / canvas_w, h / canvas_h)
-	local offset_x, offset_y = 0.5 * (w - canvas_w * scale), 0.5 * (h - canvas_h * scale)
-	local cursor = settab(self._cursor, cursor_vec3[1], cursor_vec3[2])
+	local var_6_0 = Mouse.axis(Mouse.axis_id("cursor"))
+	local var_6_1 = 1920
+	local var_6_2 = 1080
+	local var_6_3, var_6_4 = var_0_0.resolution()
+	local var_6_5 = math.min(var_6_3 / var_6_1, var_6_4 / var_6_2)
+	local var_6_6 = 0.5 * (var_6_3 - var_6_1 * var_6_5)
+	local var_6_7 = 0.5 * (var_6_4 - var_6_2 * var_6_5)
+	local var_6_8 = var_0_5(arg_6_0._cursor, var_6_0[1], var_6_0[2])
 
-	self._scale = scale
+	arg_6_0._scale = var_6_5
 
-	settab(self._offset, offset_x, offset_y)
+	var_0_5(arg_6_0._offset, var_6_6, var_6_7)
 
-	local gui = self:get_gui()
+	local var_6_9 = arg_6_0:get_gui()
 
-	if not gui then
+	if not var_6_9 then
 		return
 	end
 
-	if self._draw_canvas then
-		local margin_color = Color(32, 255, 0, 255)
+	if arg_6_0._draw_canvas then
+		local var_6_10 = Color(32, 255, 0, 255)
 
-		Gui.rect(gui, Vector3(0, 0, 999), Vector2(offset_x, h), margin_color)
-		Gui.rect(gui, Vector3(w, 0, 999), Vector2(-offset_x, h), margin_color)
-		Gui.rect(gui, Vector3(offset_x, 0, 999), Vector2(w - offset_x, offset_y), margin_color)
-		Gui.rect(gui, Vector3(offset_x, h, 999), Vector2(w - offset_x, -offset_y), margin_color)
+		var_0_0.rect(var_6_9, Vector3(0, 0, 999), Vector2(var_6_6, var_6_4), var_6_10)
+		var_0_0.rect(var_6_9, Vector3(var_6_3, 0, 999), Vector2(-var_6_6, var_6_4), var_6_10)
+		var_0_0.rect(var_6_9, Vector3(var_6_6, 0, 999), Vector2(var_6_3 - var_6_6, var_6_7), var_6_10)
+		var_0_0.rect(var_6_9, Vector3(var_6_6, var_6_4, 999), Vector2(var_6_3 - var_6_6, -var_6_7), var_6_10)
 	end
 
-	if self._selected_tab ~= "Atlas browser" then
-		if self._draw_ruler then
-			Gui.rect(gui, Vector3(cursor[1], 0, 1000), Vector2(1, h))
-			Gui.rect(gui, Vector3(0, cursor[2], 1000), Vector2(w, 1))
+	if arg_6_0._selected_tab ~= "Atlas browser" then
+		if arg_6_0._draw_ruler then
+			var_0_0.rect(var_6_9, Vector3(var_6_8[1], 0, 1000), Vector2(1, var_6_4))
+			var_0_0.rect(var_6_9, Vector3(0, var_6_8[2], 1000), Vector2(var_6_3, 1))
 		end
 
-		local mouse_button_idx = Mouse.button_index("right")
+		local var_6_11 = Mouse.button_index("right")
 
-		if Mouse.pressed(mouse_button_idx) then
-			self._drawing_rect = true
-			self._rect_x, self._rect_y = cursor[1], cursor[2]
-		elseif Mouse.released(mouse_button_idx) then
-			self._drawing_rect = false
+		if Mouse.pressed(var_6_11) then
+			arg_6_0._drawing_rect = true
+			arg_6_0._rect_x, arg_6_0._rect_y = var_6_8[1], var_6_8[2]
+		elseif Mouse.released(var_6_11) then
+			arg_6_0._drawing_rect = false
 		end
 
-		if self._drawing_rect then
-			Gui.rect(gui, Vector3(self._rect_x, self._rect_y, 1000), Vector2(cursor[1] - self._rect_x, cursor[2] - self._rect_y), tab2col(self._ruler_color))
+		if arg_6_0._drawing_rect then
+			var_0_0.rect(var_6_9, Vector3(arg_6_0._rect_x, arg_6_0._rect_y, 1000), Vector2(var_6_8[1] - arg_6_0._rect_x, var_6_8[2] - arg_6_0._rect_y), var_0_4(arg_6_0._ruler_color))
 		end
 	end
 end
 
-local WHITE = {
+local var_0_10 = {
 	255,
 	255,
 	255,
-	255,
+	255
 }
-local BORDER = 2
+local var_0_11 = 2
 
-local function inside_2d_box_lenient(cursor, box_pos, box_size)
-	return box_pos[1] - BORDER <= cursor[1] and cursor[1] <= box_pos[1] + box_size[1] + BORDER and box_pos[2] - BORDER <= cursor[2] and cursor[2] <= box_pos[2] + box_size[2] + BORDER
+local function var_0_12(arg_7_0, arg_7_1, arg_7_2)
+	return arg_7_1[1] - var_0_11 <= arg_7_0[1] and arg_7_0[1] <= arg_7_1[1] + arg_7_2[1] + var_0_11 and arg_7_1[2] - var_0_11 <= arg_7_0[2] and arg_7_0[2] <= arg_7_1[2] + arg_7_2[2] + var_0_11
 end
 
-local function draw_border(gui, pos, size, border, color)
-	local w = size[1]
-	local h = size[2] - 2 * BORDER
+local function var_0_13(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	local var_8_0 = arg_8_2[1]
+	local var_8_1 = arg_8_2[2] - 2 * var_0_11
 
-	Gui.rect(gui, Vector3(pos[1], pos[2], pos[3]), Vector2(w, border), color)
-	Gui.rect(gui, Vector3(pos[1], pos[2] + size[2] - border, pos[3]), Vector2(w, border), color)
-	Gui.rect(gui, Vector3(pos[1], pos[2] + border, pos[3]), Vector2(border, h), color)
-	Gui.rect(gui, Vector3(pos[1] + size[1] - border, pos[2] + border, pos[3]), Vector2(border, h), color)
+	var_0_0.rect(arg_8_0, Vector3(arg_8_1[1], arg_8_1[2], arg_8_1[3]), Vector2(var_8_0, arg_8_3), arg_8_4)
+	var_0_0.rect(arg_8_0, Vector3(arg_8_1[1], arg_8_1[2] + arg_8_2[2] - arg_8_3, arg_8_1[3]), Vector2(var_8_0, arg_8_3), arg_8_4)
+	var_0_0.rect(arg_8_0, Vector3(arg_8_1[1], arg_8_1[2] + arg_8_3, arg_8_1[3]), Vector2(arg_8_3, var_8_1), arg_8_4)
+	var_0_0.rect(arg_8_0, Vector3(arg_8_1[1] + arg_8_2[1] - arg_8_3, arg_8_1[2] + arg_8_3, arg_8_1[3]), Vector2(arg_8_3, var_8_1), arg_8_4)
 end
 
-ImguiUITool.draw_border = function (self, pos, size, color, label)
-	local gui = self:get_gui()
+function ImguiUITool.draw_border(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	local var_9_0 = arg_9_0:get_gui()
 
-	if not gui or not self._highlight_textures then
+	if not var_9_0 or not arg_9_0._highlight_textures then
 		return
 	end
 
-	pos = pos + Vector3(0, 0, 1)
+	arg_9_1 = arg_9_1 + Vector3(0, 0, 1)
 
-	return draw_border(gui, pos, size, BORDER, color)
+	return var_0_13(var_9_0, arg_9_1, arg_9_2, var_0_11, arg_9_3)
 end
 
-ImguiUITool.draw_label = function (self, label, pos, color)
-	local gui = self:get_gui()
+function ImguiUITool.draw_label(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	local var_10_0 = arg_10_0:get_gui()
 
-	if not gui or not self._highlight_textures then
+	if not var_10_0 or not arg_10_0._highlight_textures then
 		return
 	end
 
-	Gui.text(gui, label, "materials/fonts/arial", 16, nil, pos + Vector2(BORDER + 2, BORDER + 2), color)
+	var_0_0.text(var_10_0, arg_10_1, "materials/fonts/arial", 16, nil, arg_10_2 + Vector2(var_0_11 + 2, var_0_11 + 2), arg_10_3)
 end
 
-ImguiUITool.texture = function (self, texture_type, texture, pos, size, color)
-	if not do_search(self._search, texture_type, texture) then
+function ImguiUITool.texture(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+	if not var_0_8(arg_11_0._search, arg_11_1, arg_11_2) then
 		return
 	end
 
-	local is_hovered = inside_2d_box_lenient(self._cursor, pos, size)
+	local var_11_0 = var_0_12(arg_11_0._cursor, arg_11_3, arg_11_4)
 
-	if is_hovered then
-		color = color or WHITE
+	if var_11_0 then
+		arg_11_5 = arg_11_5 or var_0_10
 
-		local buffer = self._data_back_buffer
-		local settings = UIAtlasHelper._ui_atlas_settings[texture]
+		local var_11_1 = arg_11_0._data_back_buffer
+		local var_11_2 = UIAtlasHelper._ui_atlas_settings[arg_11_2]
 
-		buffer[#buffer + 1] = texture_type
-		buffer[#buffer + 1] = tostring(texture)
-		buffer[#buffer + 1] = settings and settings.material_name or "n/a"
-		buffer[#buffer + 1] = format("Vector3(%d, %d, %d)", pos[1], pos[2], pos[3])
-		buffer[#buffer + 1] = format("Vector2(%d, %d)", size[1], size[2])
-		buffer[#buffer + 1] = format("Color(%d, %d, %d, %d)", color[1], color[2], color[3], color[4])
+		var_11_1[#var_11_1 + 1] = arg_11_1
+		var_11_1[#var_11_1 + 1] = tostring(arg_11_2)
+		var_11_1[#var_11_1 + 1] = var_11_2 and var_11_2.material_name or "n/a"
+		var_11_1[#var_11_1 + 1] = var_0_2("Vector3(%d, %d, %d)", arg_11_3[1], arg_11_3[2], arg_11_3[3])
+		var_11_1[#var_11_1 + 1] = var_0_2("Vector2(%d, %d)", arg_11_4[1], arg_11_4[2])
+		var_11_1[#var_11_1 + 1] = var_0_2("Color(%d, %d, %d, %d)", arg_11_5[1], arg_11_5[2], arg_11_5[3], arg_11_5[4])
 	end
 
-	local color
-	local alpha = is_hovered and 200 or 30
+	local var_11_3
+	local var_11_4 = var_11_0 and 200 or 30
 
-	if texture_type == "rect" or texture_type == "rounded_rect" then
-		color = Color(alpha, 0, 255, 0)
-	elseif texture_type == "bitmap" then
-		color = Color(alpha, 255, 0, 0)
-	elseif texture_type == "bitmap_uv" then
-		color = Color(alpha, 255, 0, 155)
+	if arg_11_1 == "rect" or arg_11_1 == "rounded_rect" then
+		var_11_3 = Color(var_11_4, 0, 255, 0)
+	elseif arg_11_1 == "bitmap" then
+		var_11_3 = Color(var_11_4, 255, 0, 0)
+	elseif arg_11_1 == "bitmap_uv" then
+		var_11_3 = Color(var_11_4, 255, 0, 155)
 	end
 
-	self:draw_border(Vector3(pos[1], pos[2], 999), Vector2(size[1], size[2]), color)
+	arg_11_0:draw_border(Vector3(arg_11_3[1], arg_11_3[2], 999), Vector2(arg_11_4[1], arg_11_4[2]), var_11_3)
 end
 
-ImguiUITool.text = function (self, ui_renderer, text, font_material, font_size, pos, color)
-	if not do_search(self._search, text, font_material) then
+function ImguiUITool.text(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+	if not var_0_8(arg_12_0._search, arg_12_2, arg_12_3) then
 		return
 	end
 
-	local te_min, te_max, te_caret = Gui.text_extents(ui_renderer.gui, text, font_material, font_size)
-	local size = te_max - te_min
+	local var_12_0, var_12_1, var_12_2 = var_0_0.text_extents(arg_12_1.gui, arg_12_2, arg_12_3, arg_12_4)
+	local var_12_3 = var_12_1 - var_12_0
 
-	pos = pos + te_min
+	arg_12_5 = arg_12_5 + var_12_0
 
-	local is_hovered = inside_2d_box_lenient(self._cursor, pos, size)
+	local var_12_4 = var_0_12(arg_12_0._cursor, arg_12_5, var_12_3)
 
-	if is_hovered then
-		color = color or WHITE
+	if var_12_4 then
+		arg_12_6 = arg_12_6 or var_0_10
 
-		local buffer = self._data_back_buffer
+		local var_12_5 = arg_12_0._data_back_buffer
 
-		buffer[#buffer + 1] = "text"
-		buffer[#buffer + 1] = format("%10q", text)
-		buffer[#buffer + 1] = font_material
-		buffer[#buffer + 1] = format("Vector3(%d, %d, %d)", pos[1], pos[2], pos[3])
-		buffer[#buffer + 1] = format("%d / Vector2(%d, %d)", font_size, size[1], size[2])
-		buffer[#buffer + 1] = format("Color(%d, %d, %d, %d)", color[1], color[2], color[3], color[4])
+		var_12_5[#var_12_5 + 1] = "text"
+		var_12_5[#var_12_5 + 1] = var_0_2("%10q", arg_12_2)
+		var_12_5[#var_12_5 + 1] = arg_12_3
+		var_12_5[#var_12_5 + 1] = var_0_2("Vector3(%d, %d, %d)", arg_12_5[1], arg_12_5[2], arg_12_5[3])
+		var_12_5[#var_12_5 + 1] = var_0_2("%d / Vector2(%d, %d)", arg_12_4, var_12_3[1], var_12_3[2])
+		var_12_5[#var_12_5 + 1] = var_0_2("Color(%d, %d, %d, %d)", arg_12_6[1], arg_12_6[2], arg_12_6[3], arg_12_6[4])
 	end
 
-	self:draw_border(Vector3(pos[1], pos[2], 999), Vector2(size[1], size[2]), Color(is_hovered and 200 or 30, 0, 100, 255))
+	arg_12_0:draw_border(Vector3(arg_12_5[1], arg_12_5[2], 999), Vector2(var_12_3[1], var_12_3[2]), Color(var_12_4 and 200 or 30, 0, 100, 255))
 end
 
-ImguiUITool.node = function (self, node, file)
-	if not do_search(self._search, node.name or "n/a", file) then
+function ImguiUITool.node(arg_13_0, arg_13_1, arg_13_2)
+	if not var_0_8(arg_13_0._search, arg_13_1.name or "n/a", arg_13_2) then
 		return
 	end
 
-	local scale = self._scale
-	local pos = node.world_position
-	local size = node.size
-	local screen_pos = Vector3(pos[1] * scale, pos[2] * scale, pos[3] * scale)
-	local screen_size = Vector2(size[1] * scale, size[2] * scale)
-	local is_hovered = inside_2d_box_lenient(self._cursor, screen_pos, screen_size)
+	local var_13_0 = arg_13_0._scale
+	local var_13_1 = arg_13_1.world_position
+	local var_13_2 = arg_13_1.size
+	local var_13_3 = Vector3(var_13_1[1] * var_13_0, var_13_1[2] * var_13_0, var_13_1[3] * var_13_0)
+	local var_13_4 = Vector2(var_13_2[1] * var_13_0, var_13_2[2] * var_13_0)
+	local var_13_5 = var_0_12(arg_13_0._cursor, var_13_3, var_13_4)
 
-	if is_hovered then
-		local buffer = self._data_back_buffer
+	if var_13_5 then
+		local var_13_6 = arg_13_0._data_back_buffer
 
-		buffer[#buffer + 1] = file or "n/a"
-		buffer[#buffer + 1] = node.name
+		var_13_6[#var_13_6 + 1] = arg_13_2 or "n/a"
+		var_13_6[#var_13_6 + 1] = arg_13_1.name
 
-		if node.parent then
-			buffer[#buffer + 1] = node.parent
-			buffer[#buffer + 1] = format("%s / %s", node.horizontal_alignment or "left", node.vertical_alignment or "bottom")
+		if arg_13_1.parent then
+			var_13_6[#var_13_6 + 1] = arg_13_1.parent
+			var_13_6[#var_13_6 + 1] = var_0_2("%s / %s", arg_13_1.horizontal_alignment or "left", arg_13_1.vertical_alignment or "bottom")
 		else
-			buffer[#buffer + 1] = "n/a"
-			buffer[#buffer + 1] = "n/a"
+			var_13_6[#var_13_6 + 1] = "n/a"
+			var_13_6[#var_13_6 + 1] = "n/a"
 		end
 
-		buffer[#buffer + 1] = format("Vector3(%d, %d, %d)", pos[1], pos[2], pos[3])
-		buffer[#buffer + 1] = format("Vector2(%d, %d)", size[1], size[2])
+		var_13_6[#var_13_6 + 1] = var_0_2("Vector3(%d, %d, %d)", var_13_1[1], var_13_1[2], var_13_1[3])
+		var_13_6[#var_13_6 + 1] = var_0_2("Vector2(%d, %d)", var_13_2[1], var_13_2[2])
 
-		self:draw_label(node.name, Vector3(screen_pos[1], screen_pos[2], 999), Color(is_hovered and 200 or 55, 100, 100, 255))
+		arg_13_0:draw_label(arg_13_1.name, Vector3(var_13_3[1], var_13_3[2], 999), Color(var_13_5 and 200 or 55, 100, 100, 255))
 	end
 
-	self:draw_border(Vector3(screen_pos[1], screen_pos[2], 999), screen_size, Color(is_hovered and 200 or 55, 100, 100, 255))
+	arg_13_0:draw_border(Vector3(var_13_3[1], var_13_3[2], 999), var_13_4, Color(var_13_5 and 200 or 55, 100, 100, 255))
 
-	return is_hovered
+	return var_13_5
 end
 
-ImguiUITool.scenegraph = function (self, scenegraph, parent_scenegraph, scenegraph_id)
-	if parent_scenegraph or scenegraph_id then
+function ImguiUITool.scenegraph(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+	if arg_14_2 or arg_14_3 then
 		return
 	end
 
-	local info = debug.getinfo(4, "S")
-	local file = info and info.short_src and string.match(info.short_src, "/([^/]+)%.lua$")
-	local any_hovered = false
+	local var_14_0 = debug.getinfo(4, "S")
+	local var_14_1 = var_14_0 and var_14_0.short_src and string.match(var_14_0.short_src, "/([^/]+)%.lua$")
+	local var_14_2 = false
 
-	for idx, node in pairs(scenegraph) do
-		if type(idx) ~= "number" and self:node(node, file) then
-			any_hovered = true
+	for iter_14_0, iter_14_1 in pairs(arg_14_1) do
+		if type(iter_14_0) ~= "number" and arg_14_0:node(iter_14_1, var_14_1) then
+			var_14_2 = true
 		end
 	end
 
-	if any_hovered then
-		table.insert(self._data_back_buffer, false)
+	if var_14_2 then
+		table.insert(arg_14_0._data_back_buffer, false)
 	end
 end
 
-ImguiUITool.on_show = function (self)
-	Debug.hook(UIRenderer, "script_draw_bitmap", function (func, gui, render_settings, material, gui_position, gui_size, color, masked, saturated, retained_id)
-		if self._active and self._selected_tab == "Render objects" then
-			self:texture("bitmap", material, gui_position, gui_size, color)
+function ImguiUITool.on_show(arg_15_0)
+	Debug.hook(UIRenderer, "script_draw_bitmap", function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9)
+		if arg_15_0._active and arg_15_0._selected_tab == "Render objects" then
+			arg_15_0:texture("bitmap", arg_16_3, arg_16_4, arg_16_5, arg_16_6)
 		end
 
-		if self._hide_ui then
+		if arg_15_0._hide_ui then
 			return
 		end
 
-		return func(gui, render_settings, material, gui_position, gui_size, color, masked, saturated, retained_id)
+		return arg_16_0(arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9)
 	end)
-	Debug.hook(UIRenderer, "script_draw_bitmap_uv", function (func, gui, render_settings, material, uvs, gui_position, gui_size, color, masked, saturated, retained_id)
-		if self._active and self._selected_tab == "Render objects" then
-			self:texture("bitmap_uv", material, gui_position, gui_size, color)
+	Debug.hook(UIRenderer, "script_draw_bitmap_uv", function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10)
+		if arg_15_0._active and arg_15_0._selected_tab == "Render objects" then
+			arg_15_0:texture("bitmap_uv", arg_17_3, arg_17_5, arg_17_6, arg_17_7)
 		end
 
-		if self._hide_ui then
+		if arg_15_0._hide_ui then
 			return
 		end
 
-		return func(gui, render_settings, material, uvs, gui_position, gui_size, color, masked, saturated, retained_id)
+		return arg_17_0(arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10)
 	end)
-	Debug.hook(UIRenderer, "draw_rect", function (func, ui_renderer, lower_left_corner, size, color, retained_id)
-		if self._active and self._selected_tab == "Render objects" then
-			self:texture("rect", "n/a", UIScaleVectorToResolution(lower_left_corner), UIScaleVectorToResolution(size), color)
+	Debug.hook(UIRenderer, "draw_rect", function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+		if arg_15_0._active and arg_15_0._selected_tab == "Render objects" then
+			arg_15_0:texture("rect", "n/a", UIScaleVectorToResolution(arg_18_2), UIScaleVectorToResolution(arg_18_3), arg_18_4)
 		end
 
-		if self._hide_ui then
+		if arg_15_0._hide_ui then
 			return
 		end
 
-		return func(ui_renderer, lower_left_corner, size, color, retained_id)
+		return arg_18_0(arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
 	end)
-	Debug.hook(UIRenderer, "draw_rounded_rect", function (func, ui_renderer, position, size, radius, color)
-		if self._active and self._selected_tab == "Render objects" then
-			self:texture("rounded_rect", "n/a", UIScaleVectorToResolution(position), UIScaleVectorToResolution(size), color)
+	Debug.hook(UIRenderer, "draw_rounded_rect", function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
+		if arg_15_0._active and arg_15_0._selected_tab == "Render objects" then
+			arg_15_0:texture("rounded_rect", "n/a", UIScaleVectorToResolution(arg_19_2), UIScaleVectorToResolution(arg_19_3), arg_19_5)
 		end
 
-		if self._hide_ui then
+		if arg_15_0._hide_ui then
 			return
 		end
 
-		return func(ui_renderer, position, size, radius, color)
+		return arg_19_0(arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 	end)
-	Debug.hook(UIRenderer, "draw_text", function (func, ui_renderer, text, font_material, font_size, font_name, position, color, retained_id, color_override)
-		if self._active and self._selected_tab == "Render objects" then
-			self:text(ui_renderer, text, font_material, font_size, UIScaleVectorToResolution(position), color)
+	Debug.hook(UIRenderer, "draw_text", function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7, arg_20_8, arg_20_9)
+		if arg_15_0._active and arg_15_0._selected_tab == "Render objects" then
+			arg_15_0:text(arg_20_1, arg_20_2, arg_20_3, arg_20_4, UIScaleVectorToResolution(arg_20_6), arg_20_7)
 		end
 
-		if self._hide_ui then
+		if arg_15_0._hide_ui then
 			return
 		end
 
-		return func(ui_renderer, text, font_material, font_size, font_name, position, color, retained_id, color_override)
+		return arg_20_0(arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7, arg_20_8, arg_20_9)
 	end)
-	Debug.hook(UISceneGraph, "update_scenegraph", function (func, scenegraph, parent_scenegraph, scenegraph_id)
-		if self._active and self._selected_tab == "Scenegraph" then
-			self:scenegraph(scenegraph, parent_scenegraph, scenegraph_id)
+	Debug.hook(UISceneGraph, "update_scenegraph", function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+		if arg_15_0._active and arg_15_0._selected_tab == "Scenegraph" then
+			arg_15_0:scenegraph(arg_21_1, arg_21_2, arg_21_3)
 		end
 
-		return func(scenegraph, parent_scenegraph, scenegraph_id)
+		return arg_21_0(arg_21_1, arg_21_2, arg_21_3)
 	end)
 
-	self._active = true
+	arg_15_0._active = true
 end
 
-ImguiUITool.on_hide = function (self)
+function ImguiUITool.on_hide(arg_22_0)
 	Debug.unhook(UIRenderer, "script_draw_bitmap", true)
 	Debug.unhook(UIRenderer, "script_draw_bitmap_uv", true)
 	Debug.unhook(UIRenderer, "draw_rect", true)
 	Debug.unhook(UIRenderer, "draw_text", true)
 
-	self._active = false
+	arg_22_0._active = false
 end
 
-ImguiUITool.get_gui = function (self)
-	if self._gui then
-		return self._gui
+function ImguiUITool.get_gui(arg_23_0)
+	if arg_23_0._gui then
+		return arg_23_0._gui
 	end
 
-	local world_manager = Managers.world
-
-	if not world_manager then
+	if not Managers.world then
 		return
 	end
 
-	local world = Managers.world:world("top_ingame_view")
+	local var_23_0 = Managers.world:world("top_ingame_view")
 
-	if not world then
+	if not var_23_0 then
 		return
 	end
 
-	self._gui = World.create_screen_gui(world, "immediate")
+	arg_23_0._gui = World.create_screen_gui(var_23_0, "immediate")
 end
 
-ImguiUITool._set_columns = function (self, num_columns, border, columns_width)
-	Imgui.columns(num_columns, not not border)
+function ImguiUITool._set_columns(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+	var_0_1.columns(arg_24_1, not not arg_24_2)
 
-	if not columns_width then
+	if not arg_24_3 then
 		return
 	end
 
-	if type(columns_width) == "table" then
-		for i, width in ipairs(columns_width) do
-			Imgui.set_column_width(width, i - 1)
+	if type(arg_24_3) == "table" then
+		for iter_24_0, iter_24_1 in ipairs(arg_24_3) do
+			var_0_1.set_column_width(iter_24_1, iter_24_0 - 1)
 		end
 	else
-		for i = 0, num_columns - 1 do
-			Imgui.set_column_width(columns_width, i)
+		for iter_24_2 = 0, arg_24_1 - 1 do
+			var_0_1.set_column_width(arg_24_3, iter_24_2)
 		end
 	end
 end
 
-ImguiUITool.do_render_objects = function (self)
-	self:_set_columns(6, true)
-	Imgui.text("Type")
-	Imgui.next_column()
-	Imgui.text("Texture/String")
-	Imgui.next_column()
-	Imgui.text("Material/Font")
-	Imgui.next_column()
-	Imgui.text("Position")
-	Imgui.next_column()
-	Imgui.text("(Font) size")
-	Imgui.next_column()
-	Imgui.text("Color")
-	Imgui.next_column()
-	Imgui.separator()
+function ImguiUITool.do_render_objects(arg_25_0)
+	arg_25_0:_set_columns(6, true)
+	var_0_1.text("Type")
+	var_0_1.next_column()
+	var_0_1.text("Texture/String")
+	var_0_1.next_column()
+	var_0_1.text("Material/Font")
+	var_0_1.next_column()
+	var_0_1.text("Position")
+	var_0_1.next_column()
+	var_0_1.text("(Font) size")
+	var_0_1.next_column()
+	var_0_1.text("Color")
+	var_0_1.next_column()
+	var_0_1.separator()
 
-	local buffer = self._data_buffer
+	local var_25_0 = arg_25_0._data_buffer
 
-	for i = 1, #buffer do
-		local cell = buffer[i]
-		local mod = i % 6
+	for iter_25_0 = 1, #var_25_0 do
+		local var_25_1 = var_25_0[iter_25_0]
+		local var_25_2 = iter_25_0 % 6
 
-		if mod == 1 then
-			if cell == "rect" or cell == "rounded_rect" then
-				Imgui.text_colored(cell, 0, 255, 0, 255)
-			elseif cell == "bitmap" then
-				Imgui.text_colored(cell, 255, 0, 0, 255)
-			elseif cell == "bitmap_uv" then
-				Imgui.text_colored(cell, 255, 0, 155, 255)
-			elseif cell == "text" then
-				Imgui.text_colored(cell, 0, 100, 255, 255)
+		if var_25_2 == 1 then
+			if var_25_1 == "rect" or var_25_1 == "rounded_rect" then
+				var_0_1.text_colored(var_25_1, 0, 255, 0, 255)
+			elseif var_25_1 == "bitmap" then
+				var_0_1.text_colored(var_25_1, 255, 0, 0, 255)
+			elseif var_25_1 == "bitmap_uv" then
+				var_0_1.text_colored(var_25_1, 255, 0, 155, 255)
+			elseif var_25_1 == "text" then
+				var_0_1.text_colored(var_25_1, 0, 100, 255, 255)
 			else
-				Imgui.text(cell)
+				var_0_1.text(var_25_1)
 			end
-		elseif mod == 0 then
-			local a, r, g, b = string.match(cell, "(%d+), (%d+), (%d+), (%d+)")
+		elseif var_25_2 == 0 then
+			local var_25_3, var_25_4, var_25_5, var_25_6 = string.match(var_25_1, "(%d+), (%d+), (%d+), (%d+)")
 
-			Imgui.color_edit_4("##" .. i, r / 255, g / 255, b / 255, a / 255)
+			var_0_1.color_edit_4("##" .. iter_25_0, var_25_4 / 255, var_25_5 / 255, var_25_6 / 255, var_25_3 / 255)
 		else
-			Imgui.text(cell)
+			var_0_1.text(var_25_1)
 		end
 
-		Imgui.next_column()
+		var_0_1.next_column()
 	end
 
-	self:_set_columns(1)
+	arg_25_0:_set_columns(1)
 end
 
-ImguiUITool.do_scenegraph = function (self)
-	self:_set_columns(6, true)
-	Imgui.text("File")
-	Imgui.next_column()
-	Imgui.text("Name")
-	Imgui.next_column()
-	Imgui.text("Parent")
-	Imgui.next_column()
-	Imgui.text("Alignment")
-	Imgui.next_column()
-	Imgui.text("Position")
-	Imgui.next_column()
-	Imgui.text("Size")
-	Imgui.next_column()
-	Imgui.separator()
+function ImguiUITool.do_scenegraph(arg_26_0)
+	arg_26_0:_set_columns(6, true)
+	var_0_1.text("File")
+	var_0_1.next_column()
+	var_0_1.text("Name")
+	var_0_1.next_column()
+	var_0_1.text("Parent")
+	var_0_1.next_column()
+	var_0_1.text("Alignment")
+	var_0_1.next_column()
+	var_0_1.text("Position")
+	var_0_1.next_column()
+	var_0_1.text("Size")
+	var_0_1.next_column()
+	var_0_1.separator()
 
-	local buffer = self._data_buffer
+	local var_26_0 = arg_26_0._data_buffer
 
-	for i = 1, #buffer do
-		local cell = buffer[i]
+	for iter_26_0 = 1, #var_26_0 do
+		local var_26_1 = var_26_0[iter_26_0]
 
-		if cell ~= false then
-			Imgui.text(cell)
-			Imgui.next_column()
+		if var_26_1 ~= false then
+			var_0_1.text(var_26_1)
+			var_0_1.next_column()
 		else
-			Imgui.separator()
+			var_0_1.separator()
 		end
 	end
 
-	self:_set_columns(1)
+	arg_26_0:_set_columns(1)
 end
 
-local function get_texture_name(a)
-	return a.texture_name
+local function var_0_14(arg_27_0)
+	return arg_27_0.texture_name
 end
 
-local function get_material_name(a)
-	return a.material_name
+local function var_0_15(arg_28_0)
+	return arg_28_0.material_name
 end
 
-local function get_area(a)
-	local s = a.size
+local function var_0_16(arg_29_0)
+	local var_29_0 = arg_29_0.size
 
-	return s[1] * s[2]
+	return var_29_0[1] * var_29_0[2]
 end
 
-local function sorters(data, get, id)
-	Imgui.same_line()
+local function var_0_17(arg_30_0, arg_30_1, arg_30_2)
+	var_0_1.same_line()
 
-	if Imgui.small_button("^##ASC_" .. id) then
-		table.sort(data, function (a, b)
-			return get(a) < get(b)
+	if var_0_1.small_button("^##ASC_" .. arg_30_2) then
+		table.sort(arg_30_0, function(arg_31_0, arg_31_1)
+			return arg_30_1(arg_31_0) < arg_30_1(arg_31_1)
 		end)
-		printf("[ImguiUITool] Sorted by %s in ASC order", id)
+		printf("[ImguiUITool] Sorted by %s in ASC order", arg_30_2)
 	end
 
-	Imgui.same_line()
+	var_0_1.same_line()
 
-	if Imgui.small_button("v##DESC_" .. id) then
-		table.sort(data, function (a, b)
-			return get(a) > get(b)
+	if var_0_1.small_button("v##DESC_" .. arg_30_2) then
+		table.sort(arg_30_0, function(arg_32_0, arg_32_1)
+			return arg_30_1(arg_32_0) > arg_30_1(arg_32_1)
 		end)
-		printf("[ImguiUITool] Sorted by %s in DESC order", id)
+		printf("[ImguiUITool] Sorted by %s in DESC order", arg_30_2)
 	end
 end
 
-ImguiUITool.do_asset_browser = function (self)
-	local texture_registry = self._texture_registry
+function ImguiUITool.do_asset_browser(arg_33_0)
+	local var_33_0 = arg_33_0._texture_registry
 
-	if not texture_registry then
-		texture_registry = table.values(UIAtlasHelper._ui_atlas_settings)
-		self._texture_registry = texture_registry
-		self._asset_browser_offset = 0
+	if not var_33_0 then
+		var_33_0 = table.values(UIAtlasHelper._ui_atlas_settings)
+		arg_33_0._texture_registry = var_33_0
+		arg_33_0._asset_browser_offset = 0
 	end
 
-	self:_set_columns(3, true)
-	Imgui.text("Texture")
-	sorters(texture_registry, get_texture_name, "1")
-	Imgui.next_column()
-	Imgui.text("Material")
-	sorters(texture_registry, get_material_name, "2")
-	Imgui.next_column()
-	Imgui.text("Size")
-	sorters(texture_registry, get_area, "3")
-	Imgui.next_column()
-	Imgui.separator()
+	arg_33_0:_set_columns(3, true)
+	var_0_1.text("Texture")
+	var_0_17(var_33_0, var_0_14, "1")
+	var_0_1.next_column()
+	var_0_1.text("Material")
+	var_0_17(var_33_0, var_0_15, "2")
+	var_0_1.next_column()
+	var_0_1.text("Size")
+	var_0_17(var_33_0, var_0_16, "3")
+	var_0_1.next_column()
+	var_0_1.separator()
 
-	local cell_size = Vector2(50, 50)
-	local cursor = self._cursor
-	local w, h = Gui.resolution()
-	local cols = math.floor(w / cell_size[1])
-	local needle = self._search
-	local scroll_sense = 50
-	local wheel_axis = Mouse.axis_index("wheel")
+	local var_33_1 = Vector2(50, 50)
+	local var_33_2 = arg_33_0._cursor
+	local var_33_3, var_33_4 = var_0_0.resolution()
+	local var_33_5 = math.floor(var_33_3 / var_33_1[1])
+	local var_33_6 = arg_33_0._search
+	local var_33_7 = 50
+	local var_33_8 = Mouse.axis_index("wheel")
 
-	if Vector3.y(Mouse.axis(wheel_axis)) > 0 then
-		self._asset_browser_offset = math.min(cell_size[2], self._asset_browser_offset + scroll_sense)
-	elseif Vector3.y(Mouse.axis(wheel_axis)) < 0 then
-		self._asset_browser_offset = self._asset_browser_offset - scroll_sense
+	if Vector3.y(Mouse.axis(var_33_8)) > 0 then
+		arg_33_0._asset_browser_offset = math.min(var_33_1[2], arg_33_0._asset_browser_offset + var_33_7)
+	elseif Vector3.y(Mouse.axis(var_33_8)) < 0 then
+		arg_33_0._asset_browser_offset = arg_33_0._asset_browser_offset - var_33_7
 	elseif Mouse.button(Mouse.button_index("middle")) > 0.5 then
-		self._scroll_hold_pos = self._scroll_hold_pos or Vector3Box(Vector3Aux.unbox(cursor))
-		self._asset_browser_offset = self._asset_browser_offset + (Vector3Aux.unbox(cursor)[2] - self._scroll_hold_pos:unbox()[2])
-		self._asset_browser_offset = math.clamp(self._asset_browser_offset, cell_size[2] * (-math.ceil(#table.select_array(texture_registry, function (_, data)
-			return do_search(needle, data.texture_name, data.material_name)
-		end) / cols) - 1) + h, cell_size[2])
-	elseif self._scroll_hold_pos then
-		self._scroll_hold_pos = nil
+		arg_33_0._scroll_hold_pos = arg_33_0._scroll_hold_pos or Vector3Box(Vector3Aux.unbox(var_33_2))
+		arg_33_0._asset_browser_offset = arg_33_0._asset_browser_offset + (Vector3Aux.unbox(var_33_2)[2] - arg_33_0._scroll_hold_pos:unbox()[2])
+		arg_33_0._asset_browser_offset = math.clamp(arg_33_0._asset_browser_offset, var_33_1[2] * (-math.ceil(#table.select_array(var_33_0, function(arg_34_0, arg_34_1)
+			return var_0_8(var_33_6, arg_34_1.texture_name, arg_34_1.material_name)
+		end) / var_33_5) - 1) + var_33_4, var_33_1[2])
+	elseif arg_33_0._scroll_hold_pos then
+		arg_33_0._scroll_hold_pos = nil
 	end
 
-	local ingame_ui = Managers.ui._ingame_ui
-	local gui = ingame_ui and ingame_ui.ui_top_renderer.gui
-	local cell_index = 0
+	local var_33_9 = Managers.ui._ingame_ui
+	local var_33_10 = var_33_9 and var_33_9.ui_top_renderer.gui
+	local var_33_11 = 0
 
-	for i = 1, #texture_registry do
-		local texture_settings = texture_registry[i]
-		local texture_name = texture_settings.texture_name
-		local material_name = texture_settings.material_name
+	for iter_33_0 = 1, #var_33_0 do
+		local var_33_12 = var_33_0[iter_33_0]
+		local var_33_13 = var_33_12.texture_name
+		local var_33_14 = var_33_12.material_name
 
-		if do_search(needle, texture_name, material_name) then
-			local size = texture_settings.size
-			local is_hover = false
+		if var_0_8(var_33_6, var_33_13, var_33_14) then
+			local var_33_15 = var_33_12.size
+			local var_33_16 = false
 
-			if gui then
-				cell_index = cell_index + 1
+			if var_33_10 then
+				var_33_11 = var_33_11 + 1
 
-				local cell_i = cols - 1 - cell_index % cols
-				local cell_j = math.ceil(cell_index / cols)
-				local cell_pos = Vector3(cell_size[1] * cell_i, h - cell_size[2] * cell_j - self._asset_browser_offset, 950)
+				local var_33_17 = var_33_5 - 1 - var_33_11 % var_33_5
+				local var_33_18 = math.ceil(var_33_11 / var_33_5)
+				local var_33_19 = Vector3(var_33_1[1] * var_33_17, var_33_4 - var_33_1[2] * var_33_18 - arg_33_0._asset_browser_offset, 950)
 
-				is_hover = math.point_is_inside_2d_box(cursor, cell_pos, cell_size)
+				var_33_16 = math.point_is_inside_2d_box(var_33_2, var_33_19, var_33_1)
 
-				if Gui.material(gui, material_name) then
-					local scale = math.min(cell_size[1] / size[1], cell_size[2] / size[2], 1)
-					local tex_size = Vector2(size[1] * scale, size[2] * scale)
-					local tex_pos = cell_pos + 0.5 * (cell_size - tex_size)
+				if var_0_0.material(var_33_10, var_33_14) then
+					local var_33_20 = math.min(var_33_1[1] / var_33_15[1], var_33_1[2] / var_33_15[2], 1)
+					local var_33_21 = Vector2(var_33_15[1] * var_33_20, var_33_15[2] * var_33_20)
+					local var_33_22 = var_33_19 + 0.5 * (var_33_1 - var_33_21)
 
-					Gui.rect(gui, cell_pos, cell_size, Color(127, 127, 127))
-					Gui.bitmap_uv(gui, material_name, tab2vec2(texture_settings.uv00), tab2vec2(texture_settings.uv11), tex_pos, tex_size)
+					var_0_0.rect(var_33_10, var_33_19, var_33_1, Color(127, 127, 127))
+					var_0_0.bitmap_uv(var_33_10, var_33_14, var_0_3(var_33_12.uv00), var_0_3(var_33_12.uv11), var_33_22, var_33_21)
 
-					if is_hover then
-						draw_border(gui, cell_pos + Vector3(0, 0, 1), cell_size, BORDER, Color(255, 0, 0))
+					if var_33_16 then
+						var_0_13(var_33_10, var_33_19 + Vector3(0, 0, 1), var_33_1, var_0_11, Color(255, 0, 0))
 					end
 				else
-					Gui.rect(gui, cell_pos, cell_size, Color(255, 192, 203))
-					Gui.text(gui, "No material", "materials/fonts/arial", 7.5, nil, cell_pos + Vector2(0, 0.5 * (cell_size[2] - 18)), cell_size, Color(0, 0, 0))
+					var_0_0.rect(var_33_10, var_33_19, var_33_1, Color(255, 192, 203))
+					var_0_0.text(var_33_10, "No material", "materials/fonts/arial", 7.5, nil, var_33_19 + Vector2(0, 0.5 * (var_33_1[2] - 18)), var_33_1, Color(0, 0, 0))
 				end
 			end
 
-			if is_hover then
-				Imgui.text_colored(texture_name, 255, 0, 0, 255)
-				Imgui.set_scroll_here()
+			if var_33_16 then
+				var_0_1.text_colored(var_33_13, 255, 0, 0, 255)
+				var_0_1.set_scroll_here()
 
-				local y = math.min((h - size[2]) * 0.5, 100)
+				local var_33_23 = math.min((var_33_4 - var_33_15[2]) * 0.5, 100)
 
-				if cursor[2] < h * 0.25 then
-					y = math.max((h - size[2]) * 0.5, h - size[2] - 100)
+				if var_33_2[2] < var_33_4 * 0.25 then
+					var_33_23 = math.max((var_33_4 - var_33_15[2]) * 0.5, var_33_4 - var_33_15[2] - 100)
 				end
 
-				local big_pos = Vector3((w - size[1]) * 0.5, y, 960)
-				local big_size = tab2vec2(size)
-				local border = Vector2(10, 10)
+				local var_33_24 = Vector3((var_33_3 - var_33_15[1]) * 0.5, var_33_23, 960)
+				local var_33_25 = var_0_3(var_33_15)
+				local var_33_26 = Vector2(10, 10)
 
-				Gui.bitmap(gui, "marching_ants", big_pos - border - Vector3(0, 0, 1), big_size + 2 * border, Color(255, 0, 0))
-				Gui.rect(gui, big_pos - border - Vector3(0, 0, 2), big_size + 2 * border, Color(0, 0, 0))
-				Gui.rect(gui, big_pos, big_size, Color(127, 127, 127))
+				var_0_0.bitmap(var_33_10, "marching_ants", var_33_24 - var_33_26 - Vector3(0, 0, 1), var_33_25 + 2 * var_33_26, Color(255, 0, 0))
+				var_0_0.rect(var_33_10, var_33_24 - var_33_26 - Vector3(0, 0, 2), var_33_25 + 2 * var_33_26, Color(0, 0, 0))
+				var_0_0.rect(var_33_10, var_33_24, var_33_25, Color(127, 127, 127))
 
-				if Gui.material(gui, material_name) then
-					Gui.bitmap_uv(gui, material_name, tab2vec2(texture_settings.uv00), tab2vec2(texture_settings.uv11), big_pos, big_size)
+				if var_0_0.material(var_33_10, var_33_14) then
+					var_0_0.bitmap_uv(var_33_10, var_33_14, var_0_3(var_33_12.uv00), var_0_3(var_33_12.uv11), var_33_24, var_33_25)
 				else
-					Gui.rect(gui, big_pos, big_size, Color(255, 192, 203))
-					Gui.text(gui, "No material", "materials/fonts/arial", 7.5, nil, big_pos + Vector2(0, 0.5 * (big_size[2] - 18)), big_size, Color(0, 0, 0))
+					var_0_0.rect(var_33_10, var_33_24, var_33_25, Color(255, 192, 203))
+					var_0_0.text(var_33_10, "No material", "materials/fonts/arial", 7.5, nil, var_33_24 + Vector2(0, 0.5 * (var_33_25[2] - 18)), var_33_25, Color(0, 0, 0))
 				end
 
-				local display_text = texture_name
-				local t = Managers.time:time("main")
+				local var_33_27 = var_33_13
+				local var_33_28 = Managers.time:time("main")
 
-				if t < (self._copied_t or 0) and self._copied_text == texture_name then
-					display_text = display_text .. " (Copied!)           "
+				if var_33_28 < (arg_33_0._copied_t or 0) and arg_33_0._copied_text == var_33_13 then
+					var_33_27 = var_33_27 .. " (Copied!)           "
 				else
-					display_text = display_text .. " (Left click to copy)"
+					var_33_27 = var_33_27 .. " (Left click to copy)"
 				end
 
-				local text_width = Imgui.calculate_text_size(display_text)
-				local name_offset = Vector3(text_width * 0.5 - size[1] * 0.5, 25, 0)
-				local name_pos = big_pos - name_offset
+				local var_33_29 = var_0_1.calculate_text_size(var_33_27)
+				local var_33_30 = var_33_24 - Vector3(var_33_29 * 0.5 - var_33_15[1] * 0.5, 25, 0)
 
-				Gui.rect(gui, name_pos - Vector2(5, 7), Vector2(text_width, 22), Color(0, 0, 0))
-				Gui.text(gui, display_text, "materials/fonts/arial", 14, nil, name_pos, Color(255, 255, 255, 255))
+				var_0_0.rect(var_33_10, var_33_30 - Vector2(5, 7), Vector2(var_33_29, 22), Color(0, 0, 0))
+				var_0_0.text(var_33_10, var_33_27, "materials/fonts/arial", 14, nil, var_33_30, Color(255, 255, 255, 255))
 
 				if Mouse.pressed(Mouse.button_index("left")) then
-					printf("[ImguiUITool] Copied %s to clipboard", texture_name)
-					Clipboard.put(texture_name)
+					printf("[ImguiUITool] Copied %s to clipboard", var_33_13)
+					Clipboard.put(var_33_13)
 
-					self._copied_t = t + 1.5
-					self._copied_text = texture_name
+					arg_33_0._copied_t = var_33_28 + 1.5
+					arg_33_0._copied_text = var_33_13
 				end
 			end
 
-			Imgui.next_column()
-			Imgui.text(material_name)
-			Imgui.next_column()
-			Imgui.text(format("%4d x %4d", size[1], size[2]))
-			Imgui.next_column()
+			var_0_1.next_column()
+			var_0_1.text(var_33_14)
+			var_0_1.next_column()
+			var_0_1.text(var_0_2("%4d x %4d", var_33_15[1], var_33_15[2]))
+			var_0_1.next_column()
 		end
 	end
 
-	self:_set_columns(1)
+	arg_33_0:_set_columns(1)
 end
 
-ImguiUITool._setting_checkbox = function (self, key, label)
-	if do_search(self._search, label) then
-		self[key] = Imgui.checkbox(label, self[key] or false)
+function ImguiUITool._setting_checkbox(arg_35_0, arg_35_1, arg_35_2)
+	if var_0_8(arg_35_0._search, arg_35_2) then
+		arg_35_0[arg_35_1] = var_0_1.checkbox(arg_35_2, arg_35_0[arg_35_1] or false)
 	end
 end
 
-ImguiUITool._setting_color = function (self, key, label)
-	if do_search(self._search, label) then
-		local col = self[key] or {
+function ImguiUITool._setting_color(arg_36_0, arg_36_1, arg_36_2)
+	if var_0_8(arg_36_0._search, arg_36_2) then
+		local var_36_0 = arg_36_0[arg_36_1] or {
 			255,
 			255,
 			255,
-			255,
+			255
 		}
 
-		Colors.set(col, ImguiX.color_edit_4(label, unpack(col)))
+		Colors.set(var_36_0, ImguiX.color_edit_4(arg_36_2, unpack(var_36_0)))
 
-		self[key] = col
+		arg_36_0[arg_36_1] = var_36_0
 	end
 end
 
-ImguiUITool.do_settings = function (self)
-	Imgui.text("Settings")
-	Imgui.separator()
-	self:_setting_checkbox("_draw_ruler", "Draw ruler crosshair")
-	self:_setting_checkbox("_draw_canvas", "Draw canvas margins")
-	self:_setting_checkbox("_disable_localization", "Disable localization")
-	self:_setting_checkbox("_hide_ui", "Hide immediate-mode UIs")
-	self:_setting_checkbox("_highlight_textures", "Highlight matching objects")
-	self:_setting_color("_ruler_color", "Measurement tool color")
+function ImguiUITool.do_settings(arg_37_0)
+	var_0_1.text("Settings")
+	var_0_1.separator()
+	arg_37_0:_setting_checkbox("_draw_ruler", "Draw ruler crosshair")
+	arg_37_0:_setting_checkbox("_draw_canvas", "Draw canvas margins")
+	arg_37_0:_setting_checkbox("_disable_localization", "Disable localization")
+	arg_37_0:_setting_checkbox("_hide_ui", "Hide immediate-mode UIs")
+	arg_37_0:_setting_checkbox("_highlight_textures", "Highlight matching objects")
+	arg_37_0:_setting_color("_ruler_color", "Measurement tool color")
 
-	script_data.disable_localization = self._disable_localization
+	script_data.disable_localization = arg_37_0._disable_localization
 end
 
-local HELP_TEXT = "UITOOL(1)                    General Tools Manual                    UITOOL(1)\n \nNAME\n\tUI Tool - a suite of utilities to make UI development a wee bit easier\n \nINTRODUCTION\n\tThe UI tool is a collection of disjoint utilities that facilitate examining\n\tvarious UI systems at run time. It is comprised of the following tools:\n\t\tSome common elements.\n\t\tA render object inspector.\n\t\tA scenegraph inspector.\n\t\tAn atlas texture browser.\n\nCOMMON ELEMENTS\n\tThese elements are shared between all tools.\n \n\tThe current cursor position is shown both in screen and canvas coordinates.\n\tMeasurements can be taken by dragging with the RIGHT mouse button.\n \n\tThe search bar can be used to apply filters on any tab, including this one\n\t(try it!). All searches are CASE SENSITIVE and accept Lua string patterns.\n \nRENDER OBJECT INSPECTOR\n\tRender objects are pseudo-objects constructed when Lua code sends draw\n\trequests to the engine. That is to say that there's a 1-to-1 correspondence\n\tbetween render objects and calls to Gui.bitmap, Gui.rect, etc.\n\tRender objects are disposed of once they have been processed by the Gui.\n\tIt is currently not possible to inspect render objects that exist inside a\n\tGui object that was created in retained mode.\n \n\tRender objects are color coded according to the following table:\n\t\tred         Bitmaps\n\t\tpurple      Bitmap UV\n\t\tgreen       Rect\n\t\tblue        Text\n\t\n\tOther types of render objects are not supported at this time.\n \nSCENEGRAPH INSPECTOR\n\tThe scenegraph is a structure to help layout UI elements on the screen.\n\tInternally it is stored as a forest where every node is associated to a\n\tquad region on the screen.\n\tThis tool can be useful to identify the internal name of a UI.\n \nATLAS TEXTURE BROWSER\n\tTextures are packed into atlas to reduce the overhead of loading many\n\tsmall textures from disk to the GPU. For example, it would not be cost\n\teffective applying texture block compression methods on tiny textures, but\n\tby packing them together a reduction in total size can be achieved.\n \n\tThis tool provides a quick way of searching and visualizing all such\n\tatlased textures that are available to the UI systems. Results can be\n\tsorted by texture name, material name or area size with the little ^ and v\n\tbuttons on the header row.\n\tHolding right-click over a texture preview will render it at native size\n\tand scroll the listing results to that point.\n \n\tNOTE: The ruler is disabled while this mode is active.\n"
+local var_0_18 = "UITOOL(1)                    General Tools Manual                    UITOOL(1)\n \nNAME\n\tUI Tool - a suite of utilities to make UI development a wee bit easier\n \nINTRODUCTION\n\tThe UI tool is a collection of disjoint utilities that facilitate examining\n\tvarious UI systems at run time. It is comprised of the following tools:\n\t\tSome common elements.\n\t\tA render object inspector.\n\t\tA scenegraph inspector.\n\t\tAn atlas texture browser.\n\nCOMMON ELEMENTS\n\tThese elements are shared between all tools.\n \n\tThe current cursor position is shown both in screen and canvas coordinates.\n\tMeasurements can be taken by dragging with the RIGHT mouse button.\n \n\tThe search bar can be used to apply filters on any tab, including this one\n\t(try it!). All searches are CASE SENSITIVE and accept Lua string patterns.\n \nRENDER OBJECT INSPECTOR\n\tRender objects are pseudo-objects constructed when Lua code sends draw\n\trequests to the engine. That is to say that there's a 1-to-1 correspondence\n\tbetween render objects and calls to Gui.bitmap, Gui.rect, etc.\n\tRender objects are disposed of once they have been processed by the Gui.\n\tIt is currently not possible to inspect render objects that exist inside a\n\tGui object that was created in retained mode.\n \n\tRender objects are color coded according to the following table:\n\t\tred         Bitmaps\n\t\tpurple      Bitmap UV\n\t\tgreen       Rect\n\t\tblue        Text\n\t\n\tOther types of render objects are not supported at this time.\n \nSCENEGRAPH INSPECTOR\n\tThe scenegraph is a structure to help layout UI elements on the screen.\n\tInternally it is stored as a forest where every node is associated to a\n\tquad region on the screen.\n\tThis tool can be useful to identify the internal name of a UI.\n \nATLAS TEXTURE BROWSER\n\tTextures are packed into atlas to reduce the overhead of loading many\n\tsmall textures from disk to the GPU. For example, it would not be cost\n\teffective applying texture block compression methods on tiny textures, but\n\tby packing them together a reduction in total size can be achieved.\n \n\tThis tool provides a quick way of searching and visualizing all such\n\tatlased textures that are available to the UI systems. Results can be\n\tsorted by texture name, material name or area size with the little ^ and v\n\tbuttons on the header row.\n\tHolding right-click over a texture preview will render it at native size\n\tand scroll the listing results to that point.\n \n\tNOTE: The ruler is disabled while this mode is active.\n"
 
-ImguiUITool.do_help = function (self)
-	local needle = self._search
-	local find, sub = string.find, string.sub
-	local do_scroll = self._search ~= self._help_cached_search
+function ImguiUITool.do_help(arg_38_0)
+	local var_38_0 = arg_38_0._search
+	local var_38_1 = string.find
+	local var_38_2 = string.sub
+	local var_38_3 = arg_38_0._search ~= arg_38_0._help_cached_search
 
-	self._help_cached_search = self._search
+	arg_38_0._help_cached_search = arg_38_0._search
 
-	for line in string.gmatch(HELP_TEXT, "[^\n]+") do
-		local i, j = do_search(needle, line)
+	for iter_38_0 in string.gmatch(var_0_18, "[^\n]+") do
+		local var_38_4, var_38_5 = var_0_8(var_38_0, iter_38_0)
 
-		if not i or j == 0 then
-			Imgui.text(line)
+		if not var_38_4 or var_38_5 == 0 then
+			var_0_1.text(iter_38_0)
 		else
-			Imgui.text(sub(line, 1, i - 1))
-			Imgui.same_line(0)
-			Imgui.text_colored(sub(line, i, j), 255, 0, 0, 255)
-			Imgui.same_line(0)
-			Imgui.text(sub(line, j + 1))
+			var_0_1.text(var_38_2(iter_38_0, 1, var_38_4 - 1))
+			var_0_1.same_line(0)
+			var_0_1.text_colored(var_38_2(iter_38_0, var_38_4, var_38_5), 255, 0, 0, 255)
+			var_0_1.same_line(0)
+			var_0_1.text(var_38_2(iter_38_0, var_38_5 + 1))
 
-			if do_scroll then
-				Imgui.set_scroll_here()
+			if var_38_3 then
+				var_0_1.set_scroll_here()
 
-				do_scroll = false
+				var_38_3 = false
 			end
 		end
 	end
 end
 
-ImguiUITool.draw = function (self)
-	local do_close, is_open = Imgui.begin_window("UI Inspector", "menu_bar")
+function ImguiUITool.draw(arg_39_0)
+	local var_39_0, var_39_1 = var_0_1.begin_window("UI Inspector", "menu_bar")
 
-	if not is_open then
-		return do_close
+	if not var_39_1 then
+		return var_39_0
 	end
 
-	if Imgui.begin_menu_bar() then
-		for i, tab in ipairs(self._tabs) do
-			local label = self._selected_tab ~= tab and " " .. tab .. " " or "[" .. tab .. "]"
+	if var_0_1.begin_menu_bar() then
+		for iter_39_0, iter_39_1 in ipairs(arg_39_0._tabs) do
+			local var_39_2 = arg_39_0._selected_tab ~= iter_39_1 and " " .. iter_39_1 .. " " or "[" .. iter_39_1 .. "]"
 
-			if Imgui.menu_item(label) then
-				self._selected_tab = tab
+			if var_0_1.menu_item(var_39_2) then
+				arg_39_0._selected_tab = iter_39_1
 
-				table.clear(self._data_buffer)
-				table.clear(self._data_back_buffer)
+				table.clear(arg_39_0._data_buffer)
+				table.clear(arg_39_0._data_back_buffer)
 			end
 		end
 
-		Imgui.end_menu_bar()
+		var_0_1.end_menu_bar()
 	end
 
-	local cursor = self._cursor
-	local scale = self._scale
-	local offset = self._offset
+	local var_39_3 = arg_39_0._cursor
+	local var_39_4 = arg_39_0._scale
+	local var_39_5 = arg_39_0._offset
 
-	ImguiX.heading("Screen cursor", "(%4d, %4d)", cursor[1], cursor[2])
-	Imgui.same_line()
+	ImguiX.heading("Screen cursor", "(%4d, %4d)", var_39_3[1], var_39_3[2])
+	var_0_1.same_line()
 
-	if self._drawing_rect then
-		Imgui.text(format("+ [%4dx%4d]", cursor[1] - self._rect_x, cursor[2] - self._rect_y))
+	if arg_39_0._drawing_rect then
+		var_0_1.text(var_0_2("+ [%4dx%4d]", var_39_3[1] - arg_39_0._rect_x, var_39_3[2] - arg_39_0._rect_y))
 	else
-		Imgui.text(string.rep(" ", 13))
+		var_0_1.text(string.rep(" ", 13))
 	end
 
-	Imgui.same_line()
-	ImguiX.heading("Scale", "x%f", scale)
-	ImguiX.heading("Canvas cursor", "(%4d, %4d)", (cursor[1] - offset[1]) / scale, (cursor[2] - offset[2]) / scale)
-	Imgui.same_line()
+	var_0_1.same_line()
+	ImguiX.heading("Scale", "x%f", var_39_4)
+	ImguiX.heading("Canvas cursor", "(%4d, %4d)", (var_39_3[1] - var_39_5[1]) / var_39_4, (var_39_3[2] - var_39_5[2]) / var_39_4)
+	var_0_1.same_line()
 
-	if self._drawing_rect then
-		Imgui.text(format("+ [%4dx%4d]", (cursor[1] - self._rect_x) / scale, (cursor[2] - self._rect_y) / scale))
+	if arg_39_0._drawing_rect then
+		var_0_1.text(var_0_2("+ [%4dx%4d]", (var_39_3[1] - arg_39_0._rect_x) / var_39_4, (var_39_3[2] - arg_39_0._rect_y) / var_39_4))
 	else
-		Imgui.text(string.rep(" ", 13))
+		var_0_1.text(string.rep(" ", 13))
 	end
 
-	Imgui.same_line()
-	ImguiX.heading("Offset", "Vector2(%f, %f)", offset[1], offset[2])
+	var_0_1.same_line()
+	ImguiX.heading("Offset", "Vector2(%f, %f)", var_39_5[1], var_39_5[2])
 
-	self._search = Imgui.input_text("Search", self._search)
+	arg_39_0._search = var_0_1.input_text("Search", arg_39_0._search)
 
-	Imgui.begin_child_window("child_window", 0, 0, true)
+	var_0_1.begin_child_window("child_window", 0, 0, true)
 
-	if self._selected_tab == "Render objects" then
-		self:do_render_objects()
-	elseif self._selected_tab == "Scenegraph" then
-		self:do_scenegraph()
-	elseif self._selected_tab == "Atlas browser" then
-		self:do_asset_browser()
-	elseif self._selected_tab == "Settings" then
-		self:do_settings()
-	elseif self._selected_tab == "Help" then
-		self:do_help()
+	if arg_39_0._selected_tab == "Render objects" then
+		arg_39_0:do_render_objects()
+	elseif arg_39_0._selected_tab == "Scenegraph" then
+		arg_39_0:do_scenegraph()
+	elseif arg_39_0._selected_tab == "Atlas browser" then
+		arg_39_0:do_asset_browser()
+	elseif arg_39_0._selected_tab == "Settings" then
+		arg_39_0:do_settings()
+	elseif arg_39_0._selected_tab == "Help" then
+		arg_39_0:do_help()
 	end
 
-	Imgui.end_child_window()
-	Imgui.end_window()
+	var_0_1.end_child_window()
+	var_0_1.end_window()
 
-	return do_close
+	return var_39_0
 end
 
-ImguiUITool.is_persistent = function (self)
+function ImguiUITool.is_persistent(arg_40_0)
 	return true
 end

@@ -1,71 +1,71 @@
-﻿-- chunkname: @scripts/unit_extensions/generic/invincible_health_extension.lua
+-- chunkname: @scripts/unit_extensions/generic/invincible_health_extension.lua
 
 InvincibleHealthExtension = class(InvincibleHealthExtension, GenericHealthExtension)
 
-InvincibleHealthExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self.unit = unit
-	self.is_server = Managers.player.is_server
-	self.system_data = extension_init_context.system_data
-	self.statistics_db = extension_init_context.statistics_db
-	self.damage_buffers = {
+function InvincibleHealthExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.unit = arg_1_2
+	arg_1_0.is_server = Managers.player.is_server
+	arg_1_0.system_data = arg_1_1.system_data
+	arg_1_0.statistics_db = arg_1_1.statistics_db
+	arg_1_0.damage_buffers = {
 		pdArray.new(),
-		pdArray.new(),
+		pdArray.new()
 	}
-	self.network_transmit = extension_init_context.network_transmit
-	self.is_invincible = true
-	self.health = NetworkConstants.health.max
-	self.damage = 0
-	self.state = "alive"
+	arg_1_0.network_transmit = arg_1_1.network_transmit
+	arg_1_0.is_invincible = true
+	arg_1_0.health = NetworkConstants.health.max
+	arg_1_0.damage = 0
+	arg_1_0.state = "alive"
 end
 
-InvincibleHealthExtension.destroy = function (self)
+function InvincibleHealthExtension.destroy(arg_2_0)
 	return
 end
 
-InvincibleHealthExtension.reset = function (self)
+function InvincibleHealthExtension.reset(arg_3_0)
 	return
 end
 
-InvincibleHealthExtension.hot_join_sync = function (self, sender)
+function InvincibleHealthExtension.hot_join_sync(arg_4_0, arg_4_1)
 	return
 end
 
-InvincibleHealthExtension.is_alive = function (self)
+function InvincibleHealthExtension.is_alive(arg_5_0)
 	return true
 end
 
-InvincibleHealthExtension.current_health_percent = function (self)
+function InvincibleHealthExtension.current_health_percent(arg_6_0)
 	return 1
 end
 
-InvincibleHealthExtension.current_health = function (self)
-	return self.health
+function InvincibleHealthExtension.current_health(arg_7_0)
+	return arg_7_0.health
 end
 
-InvincibleHealthExtension.get_max_health = function (self)
-	return self.health
+function InvincibleHealthExtension.get_max_health(arg_8_0)
+	return arg_8_0.health
 end
 
-InvincibleHealthExtension.set_max_health = function (self, health, update_unmodfied)
-	return self.health
+function InvincibleHealthExtension.set_max_health(arg_9_0, arg_9_1, arg_9_2)
+	return arg_9_0.health
 end
 
-InvincibleHealthExtension.get_damage_taken = function (self)
+function InvincibleHealthExtension.get_damage_taken(arg_10_0)
 	return 0
 end
 
-InvincibleHealthExtension.set_current_damage = function (self, damage)
+function InvincibleHealthExtension.set_current_damage(arg_11_0, arg_11_1)
 	return
 end
 
-InvincibleHealthExtension.die = function (self, damage_type)
+function InvincibleHealthExtension.die(arg_12_0, arg_12_1)
 	fassert(false, "Tried to kill InvincibleHealthExtension")
 end
 
-InvincibleHealthExtension.set_dead = function (self)
+function InvincibleHealthExtension.set_dead(arg_13_0)
 	return
 end
 
-InvincibleHealthExtension.apply_client_predicted_damage = function (self, predicted_damage)
+function InvincibleHealthExtension.apply_client_predicted_damage(arg_14_0, arg_14_1)
 	return
 end

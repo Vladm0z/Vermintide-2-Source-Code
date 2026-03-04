@@ -1,453 +1,447 @@
-﻿-- chunkname: @scripts/managers/conflict_director/gathering.lua
+-- chunkname: @scripts/managers/conflict_director/gathering.lua
 
 Gathering = class(Gathering)
 
-Gathering.init = function (self, nav_world, traverse_logic, start_pos)
-	start_pos = start_pos or Vector3(0, 0, 0)
-	self.traverse_logic = traverse_logic
-	self.balls = {}
-	self.static_units = {}
-	self.num_balls = 0
-	self.dogpiled_attackers_on_unit = {}
-	self.selected_ball = nil
-	self.debug_draw = false
-	self.nav_world = nav_world
-	self.ball_broadphase = Broadphase(1, 128)
-	self.lookup_broadphase_id = {}
-	self.target_unit_to_ball_lookup = {}
-	self.version = "fast"
-	self.last_index = 1
+function Gathering.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_3 = arg_1_3 or Vector3(0, 0, 0)
+	arg_1_0.traverse_logic = arg_1_2
+	arg_1_0.balls = {}
+	arg_1_0.static_units = {}
+	arg_1_0.num_balls = 0
+	arg_1_0.dogpiled_attackers_on_unit = {}
+	arg_1_0.selected_ball = nil
+	arg_1_0.debug_draw = false
+	arg_1_0.nav_world = arg_1_1
+	arg_1_0.ball_broadphase = Broadphase(1, 128)
+	arg_1_0.lookup_broadphase_id = {}
+	arg_1_0.target_unit_to_ball_lookup = {}
+	arg_1_0.version = "fast"
+	arg_1_0.last_index = 1
 end
 
-local DEBUG_SIDE_COLORS = {
+local var_0_0 = {
 	"red",
 	"blue",
 	"green",
-	"yellow",
+	"yellow"
 }
 
-Gathering.write_dogpiled_attackers = function (self, dogpiled_attackers_on_unit)
-	local t = ""
-	local sides = Managers.state.side:sides()
+function Gathering.write_dogpiled_attackers(arg_2_0, arg_2_1)
+	local var_2_0 = ""
+	local var_2_1 = Managers.state.side:sides()
 
-	for i = 1, #sides do
-		local side = sides[i]
-		local units = side._units
-		local side_id = side.side_id
+	for iter_2_0 = 1, #var_2_1 do
+		local var_2_2 = var_2_1[iter_2_0]
+		local var_2_3 = var_2_2._units
+		local var_2_4 = var_2_2.side_id
 
-		for i = 1, #units do
-			local unit = units[i]
-			local color_name = DEBUG_SIDE_COLORS[side_id] or "white"
-			local c = Colors.get(color_name)
-			local pos = POSITION_LOOKUP[unit]
-			local bb = BLACKBOARDS[unit]
-			local breed = bb and bb.breed
+		for iter_2_1 = 1, #var_2_3 do
+			local var_2_5 = var_2_3[iter_2_1]
+			local var_2_6 = var_0_0[var_2_4] or "white"
+			local var_2_7 = Colors.get(var_2_6)
+			local var_2_8 = POSITION_LOOKUP[var_2_5]
+			local var_2_9 = BLACKBOARDS[var_2_5]
+			local var_2_10 = var_2_9 and var_2_9.breed
 
-			if breed and not breed.is_player then
-				local attacker_list = dogpiled_attackers_on_unit[unit]
+			if var_2_10 and not var_2_10.is_player then
+				local var_2_11 = arg_2_1[var_2_5]
 
-				if attacker_list and next(attacker_list) then
-					t = t .. " | ("
+				if var_2_11 and next(var_2_11) then
+					var_2_0 = var_2_0 .. " | ("
 
-					local first = true
+					local var_2_12 = true
 
-					for attacker_unit, b in pairs(attacker_list) do
-						t = t .. (first and "" or ", ") .. tostring(Unit.get_data(attacker_unit, "unique_id"))
-						first = false
+					for iter_2_2, iter_2_3 in pairs(var_2_11) do
+						var_2_0 = var_2_0 .. (var_2_12 and "" or ", ") .. tostring(Unit.get_data(iter_2_2, "unique_id"))
+						var_2_12 = false
 					end
 
-					t = t .. ") -> u" .. tostring(Unit.get_data(unit, "unique_id"))
+					var_2_0 = var_2_0 .. ") -> u" .. tostring(Unit.get_data(var_2_5, "unique_id"))
 				end
 			end
 		end
 	end
 
-	Debug.text("Dogpiled: %s", t)
+	Debug.text("Dogpiled: %s", var_2_0)
 end
 
-Gathering.draw = function (self)
+function Gathering.draw(arg_3_0)
 	if script_data.debug_gathering then
-		Debug.text("balls=%d, bchecks=%d, uchecks=%d", self.num_balls, self.num_boid_checks or 0, self.num_unit_checks or 0)
+		Debug.text("balls=%d, bchecks=%d, uchecks=%d", arg_3_0.num_balls, arg_3_0.num_boid_checks or 0, arg_3_0.num_unit_checks or 0)
 	end
 
-	local dogpiled_attackers_on_unit = self.dogpiled_attackers_on_unit
-	local balls = self.balls
-	local col = Color(0, 200, 200)
-	local static_col = Color(70, 200, 0)
-	local s = ""
+	local var_3_0 = arg_3_0.dogpiled_attackers_on_unit
+	local var_3_1 = arg_3_0.balls
+	local var_3_2 = Color(0, 200, 200)
+	local var_3_3 = Color(70, 200, 0)
+	local var_3_4 = ""
 
-	for i = 1, self.num_balls do
-		local ball = balls[i]
-		local pos = ball.pos
-		local color_name = DEBUG_SIDE_COLORS[ball.side_id] or "white"
-		local c = Colors.get(color_name)
-		local ball_pos = Vector3(pos[1], pos[2], pos[3] + 0.01)
+	for iter_3_0 = 1, arg_3_0.num_balls do
+		local var_3_5 = var_3_1[iter_3_0]
+		local var_3_6 = var_3_5.pos
+		local var_3_7 = var_0_0[var_3_5.side_id] or "white"
+		local var_3_8 = Colors.get(var_3_7)
+		local var_3_9 = Vector3(var_3_6[1], var_3_6[2], var_3_6[3] + 0.01)
 
-		QuickDrawer:circle(ball_pos, ball.rad, Vector3.up(), c)
+		QuickDrawer:circle(var_3_9, var_3_5.rad, Vector3.up(), var_3_8)
 
-		if ball.target_unit and ball.owner_unit then
-			local owner_pos = POSITION_LOOKUP[ball.owner_unit]
+		if var_3_5.target_unit and var_3_5.owner_unit then
+			local var_3_10 = POSITION_LOOKUP[var_3_5.owner_unit]
 
-			QuickDrawer:line(ball_pos, owner_pos, c)
+			QuickDrawer:line(var_3_9, var_3_10, var_3_8)
 		end
 
-		local attacker_list = dogpiled_attackers_on_unit[ball.owner_unit]
-		local num_dogpiled = attacker_list and table.size(attacker_list) or 0
+		local var_3_11 = var_3_0[var_3_5.owner_unit]
+		local var_3_12 = var_3_11 and table.size(var_3_11) or 0
 
-		s = s .. " | " .. ball.id .. "(" .. num_dogpiled .. ")"
+		var_3_4 = var_3_4 .. " | " .. var_3_5.id .. "(" .. var_3_12 .. ")"
 	end
 
 	if script_data.debug_gathering then
-		Debug.text("Balls: %s", s)
+		Debug.text("Balls: %s", var_3_4)
 	end
 
-	if self.version == "fast" and script_data.debug_gathering then
-		self:write_dogpiled_attackers(dogpiled_attackers_on_unit)
-	end
-end
-
-Gathering.respawn_balls = function (self, pos, target_unit)
-	for i = 1, 100 do
-		self:add_ball(pos + Vector3(math.random() * 10 - 5, math.random() * 10 - 5, 0), math.random() + 0.25, nil, target_unit)
+	if arg_3_0.version == "fast" and script_data.debug_gathering then
+		arg_3_0:write_dogpiled_attackers(var_3_0)
 	end
 end
 
-Gathering.add_static_ball = function (self, pos, rad, unit)
-	local ball = self:add_ball(pos, rad, unit, nil, true)
-
-	self.static_units[unit] = ball
+function Gathering.respawn_balls(arg_4_0, arg_4_1, arg_4_2)
+	for iter_4_0 = 1, 100 do
+		arg_4_0:add_ball(arg_4_1 + Vector3(math.random() * 10 - 5, math.random() * 10 - 5, 0), math.random() + 0.25, nil, arg_4_2)
+	end
 end
 
-Gathering.remove_static_ball = function (self, unit)
-	local id = self.static_units[unit].id
+function Gathering.add_static_ball(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	local var_5_0 = arg_5_0:add_ball(arg_5_1, arg_5_2, arg_5_3, nil, true)
 
-	self:remove_ball(id)
-
-	self.static_units[unit] = nil
+	arg_5_0.static_units[arg_5_3] = var_5_0
 end
 
-Gathering.add_ball = function (self, pos, rad, owner_unit, target_unit, is_static)
-	fassert(owner_unit ~= target_unit, "Wut?!? can't have yourself as your target")
+function Gathering.remove_static_ball(arg_6_0, arg_6_1)
+	local var_6_0 = arg_6_0.static_units[arg_6_1].id
 
-	local balls = self.balls
-	local id = self.num_balls + 1
-	local side = Managers.state.side.side_by_unit[owner_unit] or Managers.state.side:sides(1)
-	local broadphase_id = self.version == "fast" and Broadphase.add(self.ball_broadphase, nil, pos, rad) or nil
-	local ball = {
-		id = id,
+	arg_6_0:remove_ball(var_6_0)
+
+	arg_6_0.static_units[arg_6_1] = nil
+end
+
+function Gathering.add_ball(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+	fassert(arg_7_3 ~= arg_7_4, "Wut?!? can't have yourself as your target")
+
+	local var_7_0 = arg_7_0.balls
+	local var_7_1 = arg_7_0.num_balls + 1
+	local var_7_2 = Managers.state.side.side_by_unit[arg_7_3] or Managers.state.side:sides(1)
+	local var_7_3 = arg_7_0.version == "fast" and Broadphase.add(arg_7_0.ball_broadphase, nil, arg_7_1, arg_7_2) or nil
+	local var_7_4 = {
+		id = var_7_1,
 		pos = {
-			pos.x,
-			pos.y,
-			pos.z,
+			arg_7_1.x,
+			arg_7_1.y,
+			arg_7_1.z
 		},
 		last_pos = {
-			pos.x,
-			pos.y,
-			pos.z,
+			arg_7_1.x,
+			arg_7_1.y,
+			arg_7_1.z
 		},
-		rad = rad,
-		owner_unit = owner_unit,
-		target_unit = target_unit,
-		side_id = side.side_id,
-		is_static = is_static,
-		broadphase_id = broadphase_id,
+		rad = arg_7_2,
+		owner_unit = arg_7_3,
+		target_unit = arg_7_4,
+		side_id = var_7_2.side_id,
+		is_static = arg_7_5,
+		broadphase_id = var_7_3
 	}
 
-	balls[id] = ball
-	self.num_balls = id
-	self.target_unit_to_ball_lookup[target_unit] = ball
-	self.lookup_broadphase_id[broadphase_id] = ball
+	var_7_0[var_7_1] = var_7_4
+	arg_7_0.num_balls = var_7_1
+	arg_7_0.target_unit_to_ball_lookup[arg_7_4] = var_7_4
+	arg_7_0.lookup_broadphase_id[var_7_3] = var_7_4
 
-	local dogpiled_attackers = self.dogpiled_attackers_on_unit[target_unit]
+	local var_7_5 = arg_7_0.dogpiled_attackers_on_unit[arg_7_4]
 
-	if not dogpiled_attackers then
-		self.dogpiled_attackers_on_unit[target_unit] = {
-			[owner_unit] = ball,
+	if not var_7_5 then
+		arg_7_0.dogpiled_attackers_on_unit[arg_7_4] = {
+			[arg_7_3] = var_7_4
 		}
 
-		return ball
+		return var_7_4
 	end
 
-	dogpiled_attackers[owner_unit] = ball
+	var_7_5[arg_7_3] = var_7_4
 
-	return ball
+	return var_7_4
 end
 
-Gathering.remove_ball = function (self, ball)
-	if ball.destroyed then
+function Gathering.remove_ball(arg_8_0, arg_8_1)
+	if arg_8_1.destroyed then
 		return
 	end
 
-	local attacker_list = self.dogpiled_attackers_on_unit[ball.target_unit]
+	arg_8_0.dogpiled_attackers_on_unit[arg_8_1.target_unit][arg_8_1.owner_unit] = nil
 
-	attacker_list[ball.owner_unit] = nil
+	local var_8_0 = arg_8_0.balls
+	local var_8_1 = arg_8_1.id
 
-	local balls = self.balls
-	local id = ball.id
+	arg_8_0.target_unit_to_ball_lookup[arg_8_1.target_unit] = nil
 
-	self.target_unit_to_ball_lookup[ball.target_unit] = nil
+	local var_8_2 = arg_8_1.broadphase_id
 
-	local b_id = ball.broadphase_id
-
-	if self.version == "fast" then
-		Broadphase.remove(self.ball_broadphase, b_id)
+	if arg_8_0.version == "fast" then
+		Broadphase.remove(arg_8_0.ball_broadphase, var_8_2)
 	end
 
-	self.lookup_broadphase_id[b_id] = nil
+	arg_8_0.lookup_broadphase_id[var_8_2] = nil
 
-	local num_balls = self.num_balls
+	local var_8_3 = arg_8_0.num_balls
 
-	ball.destroyed = true
+	arg_8_1.destroyed = true
 
-	local replace_ball = balls[num_balls]
+	local var_8_4 = var_8_0[var_8_3]
 
-	balls[id] = replace_ball
-	replace_ball.id = id
-	balls[num_balls] = nil
-	self.num_balls = num_balls - 1
+	var_8_0[var_8_1] = var_8_4
+	var_8_4.id = var_8_1
+	var_8_0[var_8_3] = nil
+	arg_8_0.num_balls = var_8_3 - 1
 end
 
-Gathering.release_attacking_balls = function (self, unit)
+function Gathering.release_attacking_balls(arg_9_0, arg_9_1)
 	return
 end
 
-Gathering.notify_attackers = function (self, unit)
-	notify_attackers(unit, self.dogpiled_attackers_on_unit)
+function Gathering.notify_attackers(arg_10_0, arg_10_1)
+	notify_attackers(arg_10_1, arg_10_0.dogpiled_attackers_on_unit)
 end
 
-function notify_attackers(unit, dogpiled_attackers_on_unit)
-	local dogpiled_attackers = dogpiled_attackers_on_unit[unit]
+function notify_attackers(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_1[arg_11_0]
 
-	if not dogpiled_attackers then
+	if not var_11_0 then
 		return
 	end
 
-	for attacker_unit, ball in pairs(dogpiled_attackers) do
-		fassert(attacker_unit ~= unit, "Waat, unit is enemy of itself?")
+	for iter_11_0, iter_11_1 in pairs(var_11_0) do
+		fassert(iter_11_0 ~= arg_11_0, "Waat, unit is enemy of itself?")
 
-		local ai_slot_extension = ScriptUnit.has_extension(attacker_unit, "ai_slot_system")
+		local var_11_1 = ScriptUnit.has_extension(iter_11_0, "ai_slot_system")
 
-		if ai_slot_extension then
-			ai_slot_extension:_detach_from_ai_slot("notify_attackers")
+		if var_11_1 then
+			var_11_1:_detach_from_ai_slot("notify_attackers")
 		end
 	end
 
-	table.clear(dogpiled_attackers)
+	table.clear(var_11_0)
 end
 
-local function do_circles_overlap(x1, y1, r1, x2, y2, r2)
-	return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) <= (r1 + r2) * (r1 + r2)
+local function var_0_1(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+	return (arg_12_0 - arg_12_3) * (arg_12_0 - arg_12_3) + (arg_12_1 - arg_12_4) * (arg_12_1 - arg_12_4) <= (arg_12_2 + arg_12_5) * (arg_12_2 + arg_12_5)
 end
 
-local result_table = {}
+local var_0_2 = {}
 
-Gathering.overlap_update = function (self, t, dt)
-	local broadphase_query = AiUtils.broadphase_query
+function Gathering.overlap_update(arg_13_0, arg_13_1, arg_13_2)
+	local var_13_0 = AiUtils.broadphase_query
 
-	for i = 1, self.num_balls do
-		local num_ai_units = broadphase_query(position, 3, result_table)
+	for iter_13_0 = 1, arg_13_0.num_balls do
+		local var_13_1 = var_13_0(position, 3, var_0_2)
 	end
 end
 
-Gathering.slot_vs_slot_overlap = function (self, pos, rad, pos2, rad2, ball1, ball2)
-	local dist = Vector3.distance(Vector3(pos[1], pos[2], 0), Vector3(pos2[1], pos2[2], 0))
+function Gathering.slot_vs_slot_overlap(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
+	local var_14_0 = Vector3.distance(Vector3(arg_14_1[1], arg_14_1[2], 0), Vector3(arg_14_3[1], arg_14_3[2], 0))
 
-	if dist < 0.001 then
-		pos[1] = pos[1] - rad * 0.1
-		pos2[2] = pos2[2] - rad * 0.1
+	if var_14_0 < 0.001 then
+		arg_14_1[1] = arg_14_1[1] - arg_14_2 * 0.1
+		arg_14_3[2] = arg_14_3[2] - arg_14_2 * 0.1
 
 		return
 	end
 
-	local overlap = (dist - rad - rad2) * 0.5
+	local var_14_1 = (var_14_0 - arg_14_2 - arg_14_4) * 0.5
 
-	if overlap < 0 then
-		pos[1] = pos[1] - overlap * (pos[1] - pos2[1]) / dist
-		pos[2] = pos[2] - overlap * (pos[2] - pos2[2]) / dist
-		pos2[1] = pos2[1] + overlap * (pos[1] - pos2[1]) / dist
-		pos2[2] = pos2[2] + overlap * (pos[2] - pos2[2]) / dist
+	if var_14_1 < 0 then
+		arg_14_1[1] = arg_14_1[1] - var_14_1 * (arg_14_1[1] - arg_14_3[1]) / var_14_0
+		arg_14_1[2] = arg_14_1[2] - var_14_1 * (arg_14_1[2] - arg_14_3[2]) / var_14_0
+		arg_14_3[1] = arg_14_3[1] + var_14_1 * (arg_14_1[1] - arg_14_3[1]) / var_14_0
+		arg_14_3[2] = arg_14_3[2] + var_14_1 * (arg_14_1[2] - arg_14_3[2]) / var_14_0
 	end
 end
 
-Gathering.slot_vs_breed_overlap = function (self, pos, rad, pos2, rad2, ball1)
-	local dist = Vector3.distance(Vector3(pos[1], pos[2], 0), Vector3(pos2[1], pos2[2], 0))
+function Gathering.slot_vs_breed_overlap(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+	local var_15_0 = Vector3.distance(Vector3(arg_15_1[1], arg_15_1[2], 0), Vector3(arg_15_3[1], arg_15_3[2], 0))
 
-	if dist < 0.001 then
-		pos[1] = pos[1] - rad * 0.1
+	if var_15_0 < 0.001 then
+		arg_15_1[1] = arg_15_1[1] - arg_15_2 * 0.1
 
 		return
 	end
 
-	local overlap = dist - rad - rad2
+	local var_15_1 = var_15_0 - arg_15_2 - arg_15_4
 
-	if overlap < 0 then
-		pos[1] = pos[1] - overlap * (pos[1] - pos2[1]) / dist
-		pos[2] = pos[2] - overlap * (pos[2] - pos2[2]) / dist
+	if var_15_1 < 0 then
+		arg_15_1[1] = arg_15_1[1] - var_15_1 * (arg_15_1[1] - arg_15_3[1]) / var_15_0
+		arg_15_1[2] = arg_15_1[2] - var_15_1 * (arg_15_1[2] - arg_15_3[2]) / var_15_0
 	end
 end
 
-Gathering.update_efficient = function (self, t, dt)
-	local nav_world = self.nav_world
-	local balls = self.balls
-	local broadphase_query = AiUtils.broadphase_query
-	local ball_broadphase = self.ball_broadphase
-	local lookup_broadphase_id = self.lookup_broadphase_id
-	local num_boid_checks = 0
-	local num_unit_checks = 0
-	local max_checks = 10
-	local start_index = self.last_index
-	local end_index = self.last_index + max_checks
+function Gathering.update_efficient(arg_16_0, arg_16_1, arg_16_2)
+	local var_16_0 = arg_16_0.nav_world
+	local var_16_1 = arg_16_0.balls
+	local var_16_2 = AiUtils.broadphase_query
+	local var_16_3 = arg_16_0.ball_broadphase
+	local var_16_4 = arg_16_0.lookup_broadphase_id
+	local var_16_5 = 0
+	local var_16_6 = 0
+	local var_16_7 = 10
+	local var_16_8 = arg_16_0.last_index
+	local var_16_9 = arg_16_0.last_index + var_16_7
 
-	if end_index >= self.num_balls then
-		self.last_index = 1
-		end_index = self.num_balls
+	if var_16_9 >= arg_16_0.num_balls then
+		arg_16_0.last_index = 1
+		var_16_9 = arg_16_0.num_balls
 	else
-		self.last_index = end_index + 1
+		arg_16_0.last_index = var_16_9 + 1
 	end
 
-	for i = start_index, end_index do
+	for iter_16_0 = var_16_8, var_16_9 do
 		repeat
-			local ball = balls[i]
-			local side_id = ball.side_id
-			local pos = ball.pos
-			local rad = ball.rad
-			local ppos = POSITION_LOOKUP[ball.target_unit]
+			local var_16_10 = var_16_1[iter_16_0]
+			local var_16_11 = var_16_10.side_id
+			local var_16_12 = var_16_10.pos
+			local var_16_13 = var_16_10.rad
+			local var_16_14 = POSITION_LOOKUP[var_16_10.target_unit]
 
-			if not ppos then
+			if not var_16_14 then
 				break
 			end
 
-			pos[1] = pos[1] - (pos[1] - ppos[1]) * dt
-			pos[2] = pos[2] - (pos[2] - ppos[2]) * dt
-			pos[3] = ppos[3]
+			var_16_12[1] = var_16_12[1] - (var_16_12[1] - var_16_14[1]) * arg_16_2
+			var_16_12[2] = var_16_12[2] - (var_16_12[2] - var_16_14[2]) * arg_16_2
+			var_16_12[3] = var_16_14[3]
 
-			local broadphase_p = Vector3(pos[1], pos[2], 0)
-			local num_boids = Broadphase.query(ball_broadphase, broadphase_p, 1, result_table)
+			local var_16_15 = Vector3(var_16_12[1], var_16_12[2], 0)
+			local var_16_16 = Broadphase.query(var_16_3, var_16_15, 1, var_0_2)
 
-			for j = 1, num_boids do
-				local id = result_table[j]
-				local other_ball = lookup_broadphase_id[id]
+			for iter_16_1 = 1, var_16_16 do
+				local var_16_17 = var_16_4[var_0_2[iter_16_1]]
 
-				if other_ball ~= ball then
-					self:slot_vs_slot_overlap(pos, rad, other_ball.pos, other_ball.rad, ball, other_ball)
+				if var_16_17 ~= var_16_10 then
+					arg_16_0:slot_vs_slot_overlap(var_16_12, var_16_13, var_16_17.pos, var_16_17.rad, var_16_10, var_16_17)
 
-					num_boid_checks = num_boid_checks + 1
+					var_16_5 = var_16_5 + 1
 				end
 			end
 
-			local static_p = Vector3(pos[1], pos[2], pos[3])
-			local crad = 2.2 + rad
-			local num_units = broadphase_query(static_p, crad, result_table)
+			local var_16_18 = Vector3(var_16_12[1], var_16_12[2], var_16_12[3])
+			local var_16_19 = 2.2 + var_16_13
+			local var_16_20 = var_16_2(var_16_18, var_16_19, var_0_2)
 
-			for j = 1, num_units do
-				local unit = result_table[j]
-				local other_blackboard = BLACKBOARDS[unit]
+			for iter_16_2 = 1, var_16_20 do
+				local var_16_21 = var_0_2[iter_16_2]
 
-				if side_id ~= other_blackboard.side.side_id then
-					local other_unit = result_table[j]
-					local other_pos = POSITION_LOOKUP[other_unit]
-					local other_rad = 2.2
+				if var_16_11 ~= BLACKBOARDS[var_16_21].side.side_id then
+					local var_16_22 = var_0_2[iter_16_2]
+					local var_16_23 = POSITION_LOOKUP[var_16_22]
+					local var_16_24 = 2.2
 
-					self:slot_vs_breed_overlap(pos, rad, other_pos, other_rad, ball)
+					arg_16_0:slot_vs_breed_overlap(var_16_12, var_16_13, var_16_23, var_16_24, var_16_10)
 
-					num_unit_checks = num_unit_checks + 1
+					var_16_6 = var_16_6 + 1
 				end
 			end
 		until true
 	end
 
-	local traverse_logic = self.traverse_logic
+	local var_16_25 = arg_16_0.traverse_logic
 
-	for i = 1, self.num_balls do
-		local ball = balls[i]
-		local pos = ball.pos
-		local last_pos = ball.last_pos
-		local dist_sq = Vector3.distance_squared(Vector3(pos[1], pos[2], pos[3]), Vector3(last_pos[1], last_pos[2], last_pos[3]))
-		local dirty = dist_sq > 0.0001
+	for iter_16_3 = 1, arg_16_0.num_balls do
+		local var_16_26 = var_16_1[iter_16_3]
+		local var_16_27 = var_16_26.pos
+		local var_16_28 = var_16_26.last_pos
 
-		if dirty then
-			local position = Vector3(pos[1], pos[2], pos[3])
-			local target_pos = POSITION_LOOKUP[ball.target_unit]
+		if Vector3.distance_squared(Vector3(var_16_27[1], var_16_27[2], var_16_27[3]), Vector3(var_16_28[1], var_16_28[2], var_16_28[3])) > 0.0001 then
+			local var_16_29 = Vector3(var_16_27[1], var_16_27[2], var_16_27[3])
+			local var_16_30 = POSITION_LOOKUP[var_16_26.target_unit]
 
-			if target_pos then
-				local _, end_pos = GwNavQueries.raycast(nav_world, target_pos, position, traverse_logic)
+			if var_16_30 then
+				local var_16_31, var_16_32 = GwNavQueries.raycast(var_16_0, var_16_30, var_16_29, var_16_25)
 
-				position = end_pos
+				var_16_29 = var_16_32
 			end
 
-			local broadphase_pos = Vector3(position[1], position[2], 0)
+			local var_16_33 = Vector3(var_16_29[1], var_16_29[2], 0)
 
-			Broadphase.move(ball_broadphase, ball.broadphase_id, broadphase_pos)
+			Broadphase.move(var_16_3, var_16_26.broadphase_id, var_16_33)
 
-			pos[1], pos[2], pos[3] = position[1], position[2], position[3]
-			last_pos[1], last_pos[2], last_pos[3] = position[1], position[2], position[3]
+			var_16_27[1], var_16_27[2], var_16_27[3] = var_16_29[1], var_16_29[2], var_16_29[3]
+			var_16_28[1], var_16_28[2], var_16_28[3] = var_16_29[1], var_16_29[2], var_16_29[3]
 		end
 	end
 
-	self.num_boid_checks = num_boid_checks
-	self.num_unit_checks = num_unit_checks
+	arg_16_0.num_boid_checks = var_16_5
+	arg_16_0.num_unit_checks = var_16_6
 end
 
-Gathering.update_brute_force = function (self, t, dt)
-	local nav_world = self.nav_world
-	local balls = self.balls
+function Gathering.update_brute_force(arg_17_0, arg_17_1, arg_17_2)
+	local var_17_0 = arg_17_0.nav_world
+	local var_17_1 = arg_17_0.balls
 
-	for i = 1, self.num_balls do
-		local ball = balls[i]
-		local pos = ball.pos
-		local rad = ball.rad
-		local target_unit = ball.target_unit
+	for iter_17_0 = 1, arg_17_0.num_balls do
+		local var_17_2 = var_17_1[iter_17_0]
+		local var_17_3 = var_17_2.pos
+		local var_17_4 = var_17_2.rad
+		local var_17_5 = var_17_2.target_unit
 
-		if target_unit then
-			local ppos = POSITION_LOOKUP[target_unit]
+		if var_17_5 then
+			local var_17_6 = POSITION_LOOKUP[var_17_5]
 
-			ppos = GwNavQueries.inside_position_from_outside_position(nav_world, ppos, 2, 2) or ppos
-			pos[1] = pos[1] - (pos[1] - ppos[1]) * dt
-			pos[2] = pos[2] - (pos[2] - ppos[2]) * dt
-		elseif ball.is_static then
-			local new_pos = POSITION_LOOKUP[ball.owner_unit]
+			var_17_6 = GwNavQueries.inside_position_from_outside_position(var_17_0, var_17_6, 2, 2) or var_17_6
+			var_17_3[1] = var_17_3[1] - (var_17_3[1] - var_17_6[1]) * arg_17_2
+			var_17_3[2] = var_17_3[2] - (var_17_3[2] - var_17_6[2]) * arg_17_2
+		elseif var_17_2.is_static then
+			local var_17_7 = POSITION_LOOKUP[var_17_2.owner_unit]
 
-			pos[1] = new_pos.x
-			pos[2] = new_pos.y
+			var_17_3[1] = var_17_7.x
+			var_17_3[2] = var_17_7.y
 		end
 
-		local static_a = ball.is_static
-		local boid_a = not static_a
-		local side_a = ball.side_id
-		local broadphase_query = AiUtils.broadphase_query
+		local var_17_8 = var_17_2.is_static
+		local var_17_9 = not var_17_8
+		local var_17_10 = var_17_2.side_id
+		local var_17_11 = AiUtils.broadphase_query
 
-		for j = 1, self.num_balls do
-			local other_ball = balls[j]
-			local static_b = other_ball.is_static
-			local boid_b = not static_b
-			local enemy = other_ball.side_id ~= side_a
-			local allied = not enemy
-			local ok1 = static_a and boid_b and enemy
-			local ok2 = static_b and boid_a and enemy
-			local ok3 = boid_a and boid_b and allied
+		for iter_17_1 = 1, arg_17_0.num_balls do
+			local var_17_12 = var_17_1[iter_17_1]
+			local var_17_13 = var_17_12.is_static
+			local var_17_14 = not var_17_13
+			local var_17_15 = var_17_12.side_id ~= var_17_10
+			local var_17_16 = not var_17_15
+			local var_17_17 = var_17_8 and var_17_14 and var_17_15
+			local var_17_18 = var_17_13 and var_17_9 and var_17_15
+			local var_17_19 = var_17_9 and var_17_14 and var_17_16
 
-			if ball ~= other_ball and (ok1 or ok2 or ok3) then
-				local pos2 = other_ball.pos
-				local rad2 = other_ball.rad
+			if var_17_2 ~= var_17_12 and (var_17_17 or var_17_18 or var_17_19) then
+				local var_17_20 = var_17_12.pos
+				local var_17_21 = var_17_12.rad
 
-				if do_circles_overlap(pos[1], pos[2], rad, pos2[1], pos2[2], rad2) then
-					local dist = Vector3.distance(Vector3(pos[1], pos[2], 0), Vector3(pos2[1], pos2[2], 0))
-					local overlap = (dist - rad - rad2) * 0.5
+				if var_0_1(var_17_3[1], var_17_3[2], var_17_4, var_17_20[1], var_17_20[2], var_17_21) then
+					local var_17_22 = Vector3.distance(Vector3(var_17_3[1], var_17_3[2], 0), Vector3(var_17_20[1], var_17_20[2], 0))
+					local var_17_23 = (var_17_22 - var_17_4 - var_17_21) * 0.5
 
-					pos[1] = pos[1] - overlap * (pos[1] - pos2[1]) / dist
-					pos[2] = pos[2] - overlap * (pos[2] - pos2[2]) / dist
-					pos2[1] = pos2[1] + overlap * (pos[1] - pos2[1]) / dist
-					pos2[2] = pos2[2] + overlap * (pos[2] - pos2[2]) / dist
+					var_17_3[1] = var_17_3[1] - var_17_23 * (var_17_3[1] - var_17_20[1]) / var_17_22
+					var_17_3[2] = var_17_3[2] - var_17_23 * (var_17_3[2] - var_17_20[2]) / var_17_22
+					var_17_20[1] = var_17_20[1] + var_17_23 * (var_17_3[1] - var_17_20[1]) / var_17_22
+					var_17_20[2] = var_17_20[2] + var_17_23 * (var_17_3[2] - var_17_20[2]) / var_17_22
 				end
 			end
 		end
 	end
 end
 
-Gathering.update = function (self, t, dt)
-	self:update_efficient(t, dt)
+function Gathering.update(arg_18_0, arg_18_1, arg_18_2)
+	arg_18_0:update_efficient(arg_18_1, arg_18_2)
 
-	if self.debug_draw then
-		self:draw()
+	if arg_18_0.debug_draw then
+		arg_18_0:draw()
 	end
 end

@@ -1,35 +1,30 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/rat_ogre/rat_ogre_state_walking.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/rat_ogre/rat_ogre_state_walking.lua
 
 RatOgreStateWalking = class(RatOgreStateWalking, EnemyCharacterStateWalking)
 
-RatOgreStateWalking.init = function (self, character_state_init_context)
-	RatOgreStateWalking.super.init(self, character_state_init_context)
+function RatOgreStateWalking.init(arg_1_0, arg_1_1)
+	RatOgreStateWalking.super.init(arg_1_0, arg_1_1)
 
-	self._ogre_jump_ability_id = self._career_extension:ability_id("ogre_jump")
+	arg_1_0._ogre_jump_ability_id = arg_1_0._career_extension:ability_id("ogre_jump")
 end
 
-RatOgreStateWalking.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
-	RatOgreStateWalking.super.on_enter(self, unit, input, dt, context, t, previous_state, params)
+function RatOgreStateWalking.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	RatOgreStateWalking.super.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 end
 
-RatOgreStateWalking.update = function (self, unit, input, dt, context, t)
-	local handled = self:common_state_changes()
-
-	if handled then
+function RatOgreStateWalking.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	if arg_3_0:common_state_changes() then
 		return
 	end
 
-	local csm = self._csm
-	local status_extension = self._status_extension
-	local career_extension = self._career_extension
-	local ghost_mode_extension = self._ghost_mode_extension
-	local in_ghost_mode = ghost_mode_extension:is_in_ghost_mode()
+	local var_3_0 = arg_3_0._csm
+	local var_3_1 = arg_3_0._status_extension
+	local var_3_2 = arg_3_0._career_extension
+	local var_3_3 = arg_3_0._ghost_mode_extension:is_in_ghost_mode()
 
-	self:_update_taunt_dialogue(t)
+	arg_3_0:_update_taunt_dialogue(arg_3_5)
 
-	handled = self:common_movement(in_ghost_mode, dt)
-
-	if not handled then
-		CharacterStateHelper.update_weapon_actions(t, unit, self._input_extension, self._inventory_extension, self._health_extension)
+	if not arg_3_0:common_movement(var_3_3, arg_3_3) then
+		CharacterStateHelper.update_weapon_actions(arg_3_5, arg_3_1, arg_3_0._input_extension, arg_3_0._inventory_extension, arg_3_0._health_extension)
 	end
 end

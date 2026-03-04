@@ -1,132 +1,133 @@
-﻿-- chunkname: @scripts/network/lobby_members.lua
+-- chunkname: @scripts/network/lobby_members.lua
 
 LobbyMembers = class(LobbyMembers)
 
-LobbyMembers.init = function (self, lobby)
-	self.lobby = lobby
-	self.members_joined = {}
-	self.members_left = {}
+function LobbyMembers.init(arg_1_0, arg_1_1)
+	arg_1_0.lobby = arg_1_1
+	arg_1_0.members_joined = {}
+	arg_1_0.members_left = {}
 
-	local current_members, member_count = lobby:members()
+	local var_1_0, var_1_1 = arg_1_1:members()
 
-	member_count = member_count or #current_members
-	self._member_buffer = current_members
-	self.member_count = member_count
+	var_1_1 = var_1_1 or #var_1_0
+	arg_1_0._member_buffer = var_1_0
+	arg_1_0.member_count = var_1_1
 
-	local member_map = {}
+	local var_1_2 = {}
 
-	for i = 1, member_count do
-		local peer_id = current_members[i]
+	for iter_1_0 = 1, var_1_1 do
+		local var_1_3 = var_1_0[iter_1_0]
 
-		member_map[peer_id] = true
-		self.members_joined[i] = peer_id
+		var_1_2[var_1_3] = true
+		arg_1_0.members_joined[iter_1_0] = var_1_3
 	end
 
-	self.members = member_map
-	self._members_changed = true
+	arg_1_0.members = var_1_2
+	arg_1_0._members_changed = true
 
 	if IS_CONSOLE and not Managers.account:offline_mode() then
-		self.lobby:update_user_names()
+		arg_1_0.lobby:update_user_names()
 	end
 end
 
-LobbyMembers.clear = function (self)
+function LobbyMembers.clear(arg_2_0)
 	return
 end
 
-LobbyMembers.update = function (self)
-	local members_joined, members_left = self.members_joined, self.members_left
+function LobbyMembers.update(arg_3_0)
+	local var_3_0 = arg_3_0.members_joined
+	local var_3_1 = arg_3_0.members_left
 
-	table.clear(members_joined)
-	table.clear(members_left)
+	table.clear(var_3_0)
+	table.clear(var_3_1)
 
-	local member_buffer = self._member_buffer
+	local var_3_2 = arg_3_0._member_buffer
 
-	table.clear(member_buffer)
+	table.clear(var_3_2)
 
-	local current_members, member_count = self.lobby:members(member_buffer)
+	local var_3_3, var_3_4 = arg_3_0.lobby:members(var_3_2)
 
-	if not member_count then
-		self._member_buffer = current_members
-		member_count = #current_members
+	if not var_3_4 then
+		arg_3_0._member_buffer = var_3_3
+		var_3_4 = #var_3_3
 	end
 
-	self.member_count = member_count
+	arg_3_0.member_count = var_3_4
 
-	local members = self.members
+	local var_3_5 = arg_3_0.members
 
-	for i = 1, member_count do
-		local peer_id = current_members[i]
+	for iter_3_0 = 1, var_3_4 do
+		local var_3_6 = var_3_3[iter_3_0]
 
-		if members[peer_id] == nil then
-			members_joined[#members_joined + 1] = peer_id
+		if var_3_5[var_3_6] == nil then
+			var_3_0[#var_3_0 + 1] = var_3_6
 
-			printf("[LobbyMembers] Member joined %s", tostring(peer_id))
+			printf("[LobbyMembers] Member joined %s", tostring(var_3_6))
 
 			if IS_CONSOLE then
-				local account_manager = Managers.account
+				local var_3_7 = Managers.account
 
 				if IS_XB1 then
-					account_manager:query_bandwidth()
+					var_3_7:query_bandwidth()
 
-					self._members_changed = true
+					arg_3_0._members_changed = true
 				end
 
-				if not account_manager:offline_mode() then
-					self.lobby:update_user_names()
+				if not var_3_7:offline_mode() then
+					arg_3_0.lobby:update_user_names()
 				end
 			end
 		end
 
-		members[peer_id] = false
+		var_3_5[var_3_6] = false
 	end
 
-	for peer_id, value in pairs(members) do
-		if value == false then
-			members[peer_id] = true
+	for iter_3_1, iter_3_2 in pairs(var_3_5) do
+		if iter_3_2 == false then
+			var_3_5[iter_3_1] = true
 		else
-			printf("[LobbyMembers] Member left %s", tostring(peer_id))
+			printf("[LobbyMembers] Member left %s", tostring(iter_3_1))
 
-			members_left[#members_left + 1] = peer_id
-			members[peer_id] = nil
+			var_3_1[#var_3_1 + 1] = iter_3_1
+			var_3_5[iter_3_1] = nil
 
 			if IS_XB1 then
-				if table.size(members) <= 1 then
+				if table.size(var_3_5) <= 1 then
 					Managers.account:reset_bandwidth_query()
 				end
 
-				self._members_changed = true
+				arg_3_0._members_changed = true
 			end
 		end
 	end
 end
 
-LobbyMembers.get_members_left = function (self)
-	return self.members_left
+function LobbyMembers.get_members_left(arg_4_0)
+	return arg_4_0.members_left
 end
 
-LobbyMembers.get_members_joined = function (self)
-	return self.members_joined
+function LobbyMembers.get_members_joined(arg_5_0)
+	return arg_5_0.members_joined
 end
 
-LobbyMembers.get_members = function (self)
-	return self._member_buffer
+function LobbyMembers.get_members(arg_6_0)
+	return arg_6_0._member_buffer
 end
 
-LobbyMembers.get_member_count = function (self)
-	return self.member_count
+function LobbyMembers.get_member_count(arg_7_0)
+	return arg_7_0.member_count
 end
 
-LobbyMembers.members_map = function (self)
-	return self.members
+function LobbyMembers.members_map(arg_8_0)
+	return arg_8_0.members
 end
 
 if IS_XB1 then
-	LobbyMembers.check_members_changed = function (self)
-		local members_changed = self._members_changed
+	function LobbyMembers.check_members_changed(arg_9_0)
+		local var_9_0 = arg_9_0._members_changed
 
-		self._members_changed = nil
+		arg_9_0._members_changed = nil
 
-		return members_changed
+		return var_9_0
 	end
 end

@@ -1,44 +1,44 @@
-﻿-- chunkname: @scripts/ui/hud_ui/component_list_definitions/hud_component_list_deus.lua
+-- chunkname: @scripts/ui/hud_ui/component_list_definitions/hud_component_list_deus.lua
 
-local adventure_settings = local_require("scripts/ui/hud_ui/component_list_definitions/hud_component_list_adventure")
-local common_settings = require("scripts/ui/hud_ui/component_list_definitions/hud_component_list_deus_common")
-local deus_components = {
+local var_0_0 = local_require("scripts/ui/hud_ui/component_list_definitions/hud_component_list_adventure")
+local var_0_1 = require("scripts/ui/hud_ui/component_list_definitions/hud_component_list_deus_common")
+local var_0_2 = {
 	{
+		use_hud_scale = true,
 		class_name = "DeusCurseUI",
 		filename = "scripts/ui/hud_ui/deus_curse_ui",
-		use_hud_scale = true,
 		visibility_groups = {
-			"alive",
-		},
+			"alive"
+		}
 	},
 	{
+		use_hud_scale = true,
 		class_name = "DeusRunStatsView",
 		filename = "scripts/ui/views/deus_menu/deus_run_stats_view",
-		use_hud_scale = true,
 		visibility_groups = {
 			"deus_run_stats",
 			"game_mode_disable_hud",
 			"dead",
-			"alive",
-		},
-	},
+			"alive"
+		}
+	}
 }
-local components = {}
+local var_0_3 = {}
 
-table.append(components, adventure_settings.components)
-table.append(components, common_settings.components)
-table.append(components, deus_components)
+table.append(var_0_3, var_0_0.components)
+table.append(var_0_3, var_0_1.components)
+table.append(var_0_3, var_0_2)
 
-local visibility_groups = {}
+local var_0_4 = {}
 
-table.append(visibility_groups, common_settings.visibility_groups)
-table.append(visibility_groups, adventure_settings.visibility_groups)
+table.append(var_0_4, var_0_1.visibility_groups)
+table.append(var_0_4, var_0_0.visibility_groups)
 
-for i = 1, #deus_components do
-	require(deus_components[i].filename)
+for iter_0_0 = 1, #var_0_2 do
+	require(var_0_2[iter_0_0].filename)
 end
 
 return {
-	components = components,
-	visibility_groups = visibility_groups,
+	components = var_0_3,
+	visibility_groups = var_0_4
 }

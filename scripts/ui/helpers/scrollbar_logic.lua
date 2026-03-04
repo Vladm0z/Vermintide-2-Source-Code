@@ -1,146 +1,125 @@
-﻿-- chunkname: @scripts/ui/helpers/scrollbar_logic.lua
+-- chunkname: @scripts/ui/helpers/scrollbar_logic.lua
 
 ScrollBarLogic = class(ScrollBarLogic)
 
-ScrollBarLogic.init = function (self, scrollbar_widget)
-	self._scrollbar_widget = scrollbar_widget
-	self._scroll_value = 0
-	self._draw_length = 0
+function ScrollBarLogic.init(arg_1_0, arg_1_1)
+	arg_1_0._scrollbar_widget = arg_1_1
+	arg_1_0._scroll_value = 0
+	arg_1_0._draw_length = 0
 end
 
-ScrollBarLogic.update = function (self, dt, t, disable_mouse_scroll)
-	local scrollbar_enabled = self._scrollbar_enabled
-
-	if not scrollbar_enabled then
+function ScrollBarLogic.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	if not arg_2_0._scrollbar_enabled then
 		return
 	end
 
-	local scroll_bar_info = self:_get_scrollbar_info()
+	local var_2_0 = arg_2_0:_get_scrollbar_info()
 
-	if scroll_bar_info.on_pressed then
-		scroll_bar_info.scroll_add = nil
+	if var_2_0.on_pressed then
+		var_2_0.scroll_add = nil
 	end
 
-	local mouse_scroll_value = scroll_bar_info.scroll_value
+	local var_2_1 = var_2_0.scroll_value
 
-	if not mouse_scroll_value or disable_mouse_scroll then
+	if not var_2_1 or arg_2_3 then
 		return
 	end
 
-	local scroll_bar_value = scroll_bar_info.value
-	local current_scroll_value = self._scroll_value
+	local var_2_2 = var_2_0.value
+	local var_2_3 = arg_2_0._scroll_value
 
-	if current_scroll_value ~= mouse_scroll_value then
-		self:_set_scrollbar_value(mouse_scroll_value)
-	elseif current_scroll_value ~= scroll_bar_value then
-		self:_set_scrollbar_value(scroll_bar_value)
+	if var_2_3 ~= var_2_1 then
+		arg_2_0:_set_scrollbar_value(var_2_1)
+	elseif var_2_3 ~= var_2_2 then
+		arg_2_0:_set_scrollbar_value(var_2_2)
 	end
 end
 
-ScrollBarLogic.set_scrollbar_values = function (self, draw_length, content_length, scrollbar_length, step_size, scroll_step_multiplier)
-	local thumb_scale = math.min(scrollbar_length / content_length, 1)
+function ScrollBarLogic.set_scrollbar_values(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	local var_3_0 = math.min(arg_3_3 / arg_3_2, 1)
 
-	self:_set_thumb_scale(thumb_scale)
+	arg_3_0:_set_thumb_scale(var_3_0)
 
-	local scroll_length = math.max(content_length - draw_length, 0)
+	local var_3_1 = math.max(arg_3_2 - arg_3_1, 0)
 
-	self:_set_scroll_length(scroll_length)
+	arg_3_0:_set_scroll_length(var_3_1)
 
-	scroll_step_multiplier = scroll_step_multiplier or 2
+	arg_3_5 = arg_3_5 or 2
 
-	local scroll_amount = math.max(step_size / scroll_length, 0) * scroll_step_multiplier
+	local var_3_2 = math.max(arg_3_4 / var_3_1, 0) * arg_3_5
 
-	self:_set_scroll_amount(scroll_amount)
+	arg_3_0:_set_scroll_amount(var_3_2)
 
-	self._scrollbar_enabled = scroll_length > 0
-	self._draw_length = draw_length
-	self._initialized = true
+	arg_3_0._scrollbar_enabled = var_3_1 > 0
+	arg_3_0._draw_length = arg_3_1
+	arg_3_0._initialized = true
 end
 
-ScrollBarLogic.set_scroll_percentage = function (self, percentage)
-	self:_set_scrollbar_value(percentage or 0)
+function ScrollBarLogic.set_scroll_percentage(arg_4_0, arg_4_1)
+	arg_4_0:_set_scrollbar_value(arg_4_1 or 0)
 end
 
-ScrollBarLogic.set_scroll_distance = function (self, distance)
-	local percentage = distance / self:get_scroll_length()
+function ScrollBarLogic.set_scroll_distance(arg_5_0, arg_5_1)
+	local var_5_0 = arg_5_1 / arg_5_0:get_scroll_length()
 
-	self:set_scroll_percentage(percentage)
+	arg_5_0:set_scroll_percentage(var_5_0)
 end
 
-ScrollBarLogic.scroll_to_fit = function (self, start, size)
-	local scrolled_length = self:get_scrolled_length()
-	local draw_length = self._draw_length
+function ScrollBarLogic.scroll_to_fit(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = arg_6_0:get_scrolled_length()
+	local var_6_1 = arg_6_0._draw_length
 
-	if start < scrolled_length then
-		self:set_scroll_distance(start)
-	elseif start + size > scrolled_length + draw_length then
-		self:set_scroll_distance(start + draw_length - size)
+	if arg_6_1 < var_6_0 then
+		arg_6_0:set_scroll_distance(arg_6_1)
+	elseif arg_6_1 + arg_6_2 > var_6_0 + var_6_1 then
+		arg_6_0:set_scroll_distance(arg_6_1 + var_6_1 - arg_6_2)
 	end
 end
 
-ScrollBarLogic.get_scroll_percentage = function (self)
-	local value = self._scroll_value
-
-	return value
+function ScrollBarLogic.get_scroll_percentage(arg_7_0)
+	return arg_7_0._scroll_value
 end
 
-ScrollBarLogic.get_scrolled_length = function (self)
-	local value = self._scroll_value
-	local length = self:get_scroll_length()
+function ScrollBarLogic.get_scrolled_length(arg_8_0)
+	local var_8_0 = arg_8_0._scroll_value
 
-	return length * value
+	return arg_8_0:get_scroll_length() * var_8_0
 end
 
-ScrollBarLogic.get_scroll_length = function (self)
-	local scroll_bar_info = self:_get_scrollbar_info()
-	local length = scroll_bar_info.total_scroll_length
-
-	return length or 0
+function ScrollBarLogic.get_scroll_length(arg_9_0)
+	return arg_9_0:_get_scrollbar_info().total_scroll_length or 0
 end
 
-ScrollBarLogic.enabled = function (self)
-	return self._scrollbar_enabled
+function ScrollBarLogic.enabled(arg_10_0)
+	return arg_10_0._scrollbar_enabled
 end
 
-ScrollBarLogic.is_scrolling = function (self)
-	local scroll_bar_info = self:_get_scrollbar_info()
-	local scrolling = scroll_bar_info.scroll_add ~= nil
-
-	return scrolling
+function ScrollBarLogic.is_scrolling(arg_11_0)
+	return arg_11_0:_get_scrollbar_info().scroll_add ~= nil
 end
 
-ScrollBarLogic._get_scrollbar_info = function (self)
-	local scrollbar_widget = self._scrollbar_widget
-	local content = scrollbar_widget.content
-	local scroll_bar_info = content.scroll_bar_info
-
-	return scroll_bar_info
+function ScrollBarLogic._get_scrollbar_info(arg_12_0)
+	return arg_12_0._scrollbar_widget.content.scroll_bar_info
 end
 
-ScrollBarLogic._set_thumb_scale = function (self, scale)
-	local scroll_bar_info = self:_get_scrollbar_info()
-
-	scroll_bar_info.bar_height_percentage = scale
+function ScrollBarLogic._set_thumb_scale(arg_13_0, arg_13_1)
+	arg_13_0:_get_scrollbar_info().bar_height_percentage = arg_13_1
 end
 
-ScrollBarLogic._set_scroll_amount = function (self, amount)
-	local scroll_bar_info = self:_get_scrollbar_info()
-
-	scroll_bar_info.scroll_amount = amount
+function ScrollBarLogic._set_scroll_amount(arg_14_0, arg_14_1)
+	arg_14_0:_get_scrollbar_info().scroll_amount = arg_14_1
 end
 
-ScrollBarLogic._set_scroll_length = function (self, length)
-	local scroll_bar_info = self:_get_scrollbar_info()
-
-	scroll_bar_info.total_scroll_length = length
+function ScrollBarLogic._set_scroll_length(arg_15_0, arg_15_1)
+	arg_15_0:_get_scrollbar_info().total_scroll_length = arg_15_1
 end
 
-ScrollBarLogic._set_scrollbar_value = function (self, value)
-	if value then
-		local scroll_bar_info = self:_get_scrollbar_info()
+function ScrollBarLogic._set_scrollbar_value(arg_16_0, arg_16_1)
+	if arg_16_1 then
+		local var_16_0 = arg_16_0:_get_scrollbar_info()
 
-		scroll_bar_info.value = value
-		scroll_bar_info.scroll_value = value
-		self._scroll_value = value
+		var_16_0.value = arg_16_1
+		var_16_0.scroll_value = arg_16_1
+		arg_16_0._scroll_value = arg_16_1
 	end
 end

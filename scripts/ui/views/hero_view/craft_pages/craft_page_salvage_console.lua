@@ -1,548 +1,528 @@
-﻿-- chunkname: @scripts/ui/views/hero_view/craft_pages/craft_page_salvage_console.lua
+-- chunkname: @scripts/ui/views/hero_view/craft_pages/craft_page_salvage_console.lua
 
 require("scripts/ui/views/menu_world_previewer")
 
-local definitions = local_require("scripts/ui/views/hero_view/craft_pages/definitions/craft_page_salvage_console_definitions")
-local widget_definitions = definitions.widgets
-local category_settings = definitions.category_settings
-local scenegraph_definition = definitions.scenegraph_definition
-local animation_definitions = definitions.animation_definitions
-local NUM_CRAFT_SLOTS = definitions.NUM_CRAFT_SLOTS
-local DO_RELOAD = false
+local var_0_0 = local_require("scripts/ui/views/hero_view/craft_pages/definitions/craft_page_salvage_console_definitions")
+local var_0_1 = var_0_0.widgets
+local var_0_2 = var_0_0.category_settings
+local var_0_3 = var_0_0.scenegraph_definition
+local var_0_4 = var_0_0.animation_definitions
+local var_0_5 = var_0_0.NUM_CRAFT_SLOTS
+local var_0_6 = false
 
 CraftPageSalvageConsole = class(CraftPageSalvageConsole)
 CraftPageSalvageConsole.NAME = "CraftPageSalvageConsole"
 
-CraftPageSalvageConsole.on_enter = function (self, params, settings)
+function CraftPageSalvageConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroWindowCraft] Enter Substate CraftPageSalvageConsole")
 
-	self.parent = params.parent
-	self.super_parent = self.parent.parent
+	arg_1_0.parent = arg_1_1.parent
+	arg_1_0.super_parent = arg_1_0.parent.parent
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_1_0 = arg_1_1.ingame_ui_context
 
-	self.ingame_ui_context = ingame_ui_context
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self.input_manager = ingame_ui_context.input_manager
-	self.statistics_db = ingame_ui_context.statistics_db
-	self.render_settings = {
-		snap_pixel_positions = true,
+	arg_1_0.ingame_ui_context = var_1_0
+	arg_1_0.ui_renderer = var_1_0.ui_renderer
+	arg_1_0.ui_top_renderer = var_1_0.ui_top_renderer
+	arg_1_0.input_manager = var_1_0.input_manager
+	arg_1_0.statistics_db = var_1_0.statistics_db
+	arg_1_0.render_settings = {
+		snap_pixel_positions = true
 	}
-	self.crafting_manager = Managers.state.crafting
+	arg_1_0.crafting_manager = Managers.state.crafting
 
-	local player_manager = Managers.player
-	local local_player = player_manager:local_player()
+	local var_1_1 = Managers.player
 
-	self._stats_id = local_player:stats_id()
-	self.player_manager = player_manager
-	self.peer_id = ingame_ui_context.peer_id
-	self.hero_name = params.hero_name
-	self.career_index = params.career_index
-	self.profile_index = params.profile_index
-	self.wwise_world = params.wwise_world
-	self.settings = settings
-	self._recipe_name = settings.name
-	self._animations = {}
+	arg_1_0._stats_id = var_1_1:local_player():stats_id()
+	arg_1_0.player_manager = var_1_1
+	arg_1_0.peer_id = var_1_0.peer_id
+	arg_1_0.hero_name = arg_1_1.hero_name
+	arg_1_0.career_index = arg_1_1.career_index
+	arg_1_0.profile_index = arg_1_1.profile_index
+	arg_1_0.wwise_world = arg_1_1.wwise_world
+	arg_1_0.settings = arg_1_2
+	arg_1_0._recipe_name = arg_1_2.name
+	arg_1_0._animations = {}
 
-	self:create_ui_elements(params)
+	arg_1_0:create_ui_elements(arg_1_1)
 
-	self._craft_items = {}
+	arg_1_0._craft_items = {}
 
-	self:_reset_reward_materials(false)
-	self.super_parent:clear_disabled_backend_ids()
-	self.super_parent:set_disabled_item_icon("salvage_item_icon")
+	arg_1_0:_reset_reward_materials(false)
+	arg_1_0.super_parent:clear_disabled_backend_ids()
+	arg_1_0.super_parent:set_disabled_item_icon("salvage_item_icon")
 
-	local counter_text = tostring(self._num_craft_items or 0)
+	local var_1_2 = tostring(arg_1_0._num_craft_items or 0)
 
-	self:_set_craft_counter_text(counter_text, true)
-	self:_start_transition_animation("on_enter")
+	arg_1_0:_set_craft_counter_text(var_1_2, true)
+	arg_1_0:_start_transition_animation("on_enter")
 end
 
-CraftPageSalvageConsole._start_transition_animation = function (self, animation_name)
-	local params = {
-		wwise_world = self.wwise_world,
-		render_settings = self.render_settings,
+function CraftPageSalvageConsole._start_transition_animation(arg_2_0, arg_2_1)
+	local var_2_0 = {
+		wwise_world = arg_2_0.wwise_world,
+		render_settings = arg_2_0.render_settings
 	}
-	local widgets = {}
-	local anim_id = self.ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
+	local var_2_1 = {}
+	local var_2_2 = arg_2_0.ui_animator:start_animation(arg_2_1, var_2_1, var_0_3, var_2_0)
 
-	self._animations[animation_name] = anim_id
+	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-CraftPageSalvageConsole.create_ui_elements = function (self, params)
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+function CraftPageSalvageConsole.create_ui_elements(arg_3_0, arg_3_1)
+	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_3)
 
-	local widgets = {}
-	local widgets_by_name = {}
+	local var_3_0 = {}
+	local var_3_1 = {}
 
-	for name, widget_definition in pairs(widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_3_0, iter_3_1 in pairs(var_0_1) do
+		local var_3_2 = UIWidget.init(iter_3_1)
 
-		widgets[#widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_3_0[#var_3_0 + 1] = var_3_2
+		var_3_1[iter_3_0] = var_3_2
 	end
 
-	self._widgets = widgets
-	self._widgets_by_name = widgets_by_name
+	arg_3_0._widgets = var_3_0
+	arg_3_0._widgets_by_name = var_3_1
 
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_3_0.ui_renderer)
 
-	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
+	arg_3_0.ui_animator = UIAnimator:new(arg_3_0.ui_scenegraph, var_0_4)
 
-	self:_set_craft_button_disabled(true)
-	self:_handle_craft_input_progress(0)
+	arg_3_0:_set_craft_button_disabled(true)
+	arg_3_0:_handle_craft_input_progress(0)
 
-	widgets_by_name.max_counter_text.content.text = "/" .. tostring(CraftingSettings.NUM_SALVAGE_SLOTS)
+	var_3_1.max_counter_text.content.text = "/" .. tostring(CraftingSettings.NUM_SALVAGE_SLOTS)
 end
 
-CraftPageSalvageConsole.on_exit = function (self, params)
+function CraftPageSalvageConsole.on_exit(arg_4_0, arg_4_1)
 	print("[HeroWindowCraft] Exit Substate CraftPageSalvageConsole")
 
-	self.ui_animator = nil
+	arg_4_0.ui_animator = nil
 
-	if self._craft_input_time then
-		self:_play_sound("play_gui_craft_forge_button_aborted")
+	if arg_4_0._craft_input_time then
+		arg_4_0:_play_sound("play_gui_craft_forge_button_aborted")
 	end
 
-	self.super_parent:set_disabled_item_icon(nil)
+	arg_4_0.super_parent:set_disabled_item_icon(nil)
 end
 
-CraftPageSalvageConsole.update = function (self, dt, t)
-	if DO_RELOAD then
-		DO_RELOAD = false
+function CraftPageSalvageConsole.update(arg_5_0, arg_5_1, arg_5_2)
+	if var_0_6 then
+		var_0_6 = false
 
-		self:create_ui_elements()
+		arg_5_0:create_ui_elements()
 	end
 
-	self:_handle_input(dt, t)
-	self:_update_animations(dt)
-	self:_update_craft_items()
-	self:_update_reward_material_fade_out(dt)
-	self:draw(dt)
+	arg_5_0:_handle_input(arg_5_1, arg_5_2)
+	arg_5_0:_update_animations(arg_5_1)
+	arg_5_0:_update_craft_items()
+	arg_5_0:_update_reward_material_fade_out(arg_5_1)
+	arg_5_0:draw(arg_5_1)
 end
 
-CraftPageSalvageConsole.post_update = function (self, dt, t)
+function CraftPageSalvageConsole.post_update(arg_6_0, arg_6_1, arg_6_2)
 	return
 end
 
-CraftPageSalvageConsole._update_animations = function (self, dt)
-	self.ui_animator:update(dt)
+function CraftPageSalvageConsole._update_animations(arg_7_0, arg_7_1)
+	arg_7_0.ui_animator:update(arg_7_1)
 
-	local animations = self._animations
-	local ui_animator = self.ui_animator
+	local var_7_0 = arg_7_0._animations
+	local var_7_1 = arg_7_0.ui_animator
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_7_0, iter_7_1 in pairs(var_7_0) do
+		if var_7_1:is_animation_completed(iter_7_1) then
+			var_7_1:stop_animation(iter_7_1)
 
-			animations[animation_name] = nil
+			var_7_0[iter_7_0] = nil
 		end
 	end
 
-	local widgets_by_name = self._widgets_by_name
+	local var_7_2 = arg_7_0._widgets_by_name
 
-	UIWidgetUtils.animate_icon_button(widgets_by_name.auto_fill_plentiful, dt)
-	UIWidgetUtils.animate_icon_button(widgets_by_name.auto_fill_common, dt)
-	UIWidgetUtils.animate_icon_button(widgets_by_name.auto_fill_rare, dt)
-	UIWidgetUtils.animate_icon_button(widgets_by_name.auto_fill_exotic, dt)
-	UIWidgetUtils.animate_icon_button(widgets_by_name.auto_fill_clear, dt)
+	UIWidgetUtils.animate_icon_button(var_7_2.auto_fill_plentiful, arg_7_1)
+	UIWidgetUtils.animate_icon_button(var_7_2.auto_fill_common, arg_7_1)
+	UIWidgetUtils.animate_icon_button(var_7_2.auto_fill_rare, arg_7_1)
+	UIWidgetUtils.animate_icon_button(var_7_2.auto_fill_exotic, arg_7_1)
+	UIWidgetUtils.animate_icon_button(var_7_2.auto_fill_clear, arg_7_1)
 end
 
-CraftPageSalvageConsole._handle_input = function (self, dt, t)
-	local parent = self.parent
+function CraftPageSalvageConsole._handle_input(arg_8_0, arg_8_1, arg_8_2)
+	local var_8_0 = arg_8_0.parent
 
-	if parent:waiting_for_craft() or self._craft_result then
+	if var_8_0:waiting_for_craft() or arg_8_0._craft_result then
 		return
 	end
 
-	local widgets_by_name = self._widgets_by_name
-	local super_parent = self.super_parent
-	local gamepad_active = Managers.input:is_device_active("gamepad")
-	local unblocked = true
-	local filter_selected = super_parent:filter_selected()
-	local filter_active = super_parent:filter_active()
-	local filter_inactive = not filter_selected and not filter_active
+	local var_8_1 = arg_8_0._widgets_by_name
+	local var_8_2 = arg_8_0.super_parent
+	local var_8_3 = Managers.input:is_device_active("gamepad")
+	local var_8_4 = true
+	local var_8_5 = var_8_2:filter_selected()
+	local var_8_6 = var_8_2:filter_active()
+	local var_8_7 = not var_8_5 and not var_8_6
+	local var_8_8 = arg_8_0.super_parent:window_input_service()
+	local var_8_9 = not var_8_1.craft_button.content.button_hotspot.disable_button
+	local var_8_10
 
-	unblocked = filter_inactive
+	if var_8_7 then
+		var_8_10 = UIUtils.is_button_pressed(var_8_1.auto_fill_plentiful) and "plentiful" or var_8_10
+		var_8_10 = UIUtils.is_button_pressed(var_8_1.auto_fill_common) and "common" or var_8_10
+		var_8_10 = UIUtils.is_button_pressed(var_8_1.auto_fill_rare) and "rare" or var_8_10
+		var_8_10 = UIUtils.is_button_pressed(var_8_1.auto_fill_exotic) and "exotic" or var_8_10
 
-	local input_service = self.super_parent:window_input_service()
-	local widget = widgets_by_name.craft_button
-	local is_button_enabled = not widget.content.button_hotspot.disable_button
-	local auto_fill_rarity
-
-	if unblocked then
-		auto_fill_rarity = UIUtils.is_button_pressed(widgets_by_name.auto_fill_plentiful) and "plentiful" or auto_fill_rarity
-		auto_fill_rarity = UIUtils.is_button_pressed(widgets_by_name.auto_fill_common) and "common" or auto_fill_rarity
-		auto_fill_rarity = UIUtils.is_button_pressed(widgets_by_name.auto_fill_rare) and "rare" or auto_fill_rarity
-		auto_fill_rarity = UIUtils.is_button_pressed(widgets_by_name.auto_fill_exotic) and "exotic" or auto_fill_rarity
-
-		self.super_parent:set_auto_fill_rarity(auto_fill_rarity)
+		arg_8_0.super_parent:set_auto_fill_rarity(var_8_10)
 	end
 
-	local clear_input = UIUtils.is_button_pressed(widgets_by_name.auto_fill_clear)
-	local craft_input_held = UIUtils.is_button_held(widgets_by_name.craft_button)
-	local craft_input_gamepad = is_button_enabled and gamepad_active and input_service:get("refresh_hold")
-	local craft_input_keyboard = is_button_enabled and not gamepad_active and input_service:get("skip")
-	local craft_input_accepted = false
+	local var_8_11 = UIUtils.is_button_pressed(var_8_1.auto_fill_clear)
+	local var_8_12 = UIUtils.is_button_held(var_8_1.craft_button)
+	local var_8_13 = var_8_9 and var_8_3 and var_8_8:get("refresh_hold")
+	local var_8_14 = var_8_9 and not var_8_3 and var_8_8:get("skip")
+	local var_8_15 = false
 
-	if (input_service:get("special_1") or clear_input) and unblocked then
-		self:reset()
-	elseif (craft_input_held or craft_input_gamepad or craft_input_keyboard) and unblocked then
-		if not self._craft_input_time then
-			self._craft_input_time = 0
+	if (var_8_8:get("special_1") or var_8_11) and var_8_7 then
+		arg_8_0:reset()
+	elseif (var_8_12 or var_8_13 or var_8_14) and var_8_7 then
+		if not arg_8_0._craft_input_time then
+			arg_8_0._craft_input_time = 0
 
-			self:_play_sound("play_gui_craft_forge_button_begin")
+			arg_8_0:_play_sound("play_gui_craft_forge_button_begin")
 		else
-			self._craft_input_time = self._craft_input_time + dt
+			arg_8_0._craft_input_time = arg_8_0._craft_input_time + arg_8_1
 		end
 
-		local max_time = UISettings.crafting_progress_time
-		local progress = math.min(self._craft_input_time / max_time, 1)
+		local var_8_16 = UISettings.crafting_progress_time
+		local var_8_17 = math.min(arg_8_0._craft_input_time / var_8_16, 1)
 
-		craft_input_accepted = self:_handle_craft_input_progress(progress)
+		var_8_15 = arg_8_0:_handle_craft_input_progress(var_8_17)
 
-		WwiseWorld.set_global_parameter(self.wwise_world, "craft_forge_button_progress", progress)
-	elseif self._craft_input_time then
-		self._craft_input_time = nil
+		WwiseWorld.set_global_parameter(arg_8_0.wwise_world, "craft_forge_button_progress", var_8_17)
+	elseif arg_8_0._craft_input_time then
+		arg_8_0._craft_input_time = nil
 
-		self:_handle_craft_input_progress(0)
-		self:_play_sound("play_gui_craft_forge_button_aborted")
+		arg_8_0:_handle_craft_input_progress(0)
+		arg_8_0:_play_sound("play_gui_craft_forge_button_aborted")
 	end
 
-	if craft_input_accepted then
-		local craft_items = self._craft_items
-		local items = {}
+	if var_8_15 then
+		local var_8_18 = arg_8_0._craft_items
+		local var_8_19 = {}
 
-		for backend_id, _ in pairs(craft_items) do
-			items[#items + 1] = backend_id
+		for iter_8_0, iter_8_1 in pairs(var_8_18) do
+			var_8_19[#var_8_19 + 1] = iter_8_0
 		end
 
-		local recipe_available = parent:craft(items, self._recipe_name)
-
-		if recipe_available then
-			self:_set_craft_button_disabled(true)
-			self:_play_sound("play_gui_craft_forge_button_completed")
-			self:_play_sound("play_gui_craft_forge_begin")
+		if var_8_0:craft(var_8_19, arg_8_0._recipe_name) then
+			arg_8_0:_set_craft_button_disabled(true)
+			arg_8_0:_play_sound("play_gui_craft_forge_button_completed")
+			arg_8_0:_play_sound("play_gui_craft_forge_begin")
 		end
 	end
 end
 
-CraftPageSalvageConsole._handle_craft_input_progress = function (self, progress)
-	return self.parent:_set_input_progress(progress)
+function CraftPageSalvageConsole._handle_craft_input_progress(arg_9_0, arg_9_1)
+	return arg_9_0.parent:_set_input_progress(arg_9_1)
 end
 
-CraftPageSalvageConsole.craft_result = function (self, result, error, reset_slots)
-	if not error then
-		self._craft_result = result
+function CraftPageSalvageConsole.craft_result(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	if not arg_10_2 then
+		arg_10_0._craft_result = arg_10_1
 	end
 end
 
-CraftPageSalvageConsole.reset = function (self)
-	for backend_id, _ in pairs(self._craft_items) do
-		self:_remove_craft_item(backend_id)
+function CraftPageSalvageConsole.reset(arg_11_0)
+	for iter_11_0, iter_11_1 in pairs(arg_11_0._craft_items) do
+		arg_11_0:_remove_craft_item(iter_11_0)
 	end
 
-	self.super_parent:clear_disabled_backend_ids()
-	self.super_parent:update_inventory_items()
+	arg_11_0.super_parent:clear_disabled_backend_ids()
+	arg_11_0.super_parent:update_inventory_items()
 
-	self._material_fade_out_time = 0
+	arg_11_0._material_fade_out_time = 0
 end
 
-CraftPageSalvageConsole.present_results = function (self)
-	self.super_parent:clear_disabled_backend_ids()
-	self.super_parent:update_inventory_items()
+function CraftPageSalvageConsole.present_results(arg_12_0)
+	arg_12_0.super_parent:clear_disabled_backend_ids()
+	arg_12_0.super_parent:update_inventory_items()
 end
 
-CraftPageSalvageConsole.on_craft_completed = function (self)
-	local result = self._craft_result
+function CraftPageSalvageConsole.on_craft_completed(arg_13_0)
+	local var_13_0 = arg_13_0._craft_result
 
-	table.clear(self._craft_items)
+	table.clear(arg_13_0._craft_items)
 
-	local num_reward_items = 0
+	local var_13_1 = 0
 
-	for index, data in pairs(result) do
-		num_reward_items = num_reward_items + 1
+	for iter_13_0, iter_13_1 in pairs(var_13_0) do
+		var_13_1 = var_13_1 + 1
 	end
 
-	self:_reset_reward_materials(true)
+	arg_13_0:_reset_reward_materials(true)
 
-	local ignore_sound = true
+	local var_13_2 = true
 
-	for index, data in pairs(result) do
-		local backend_id = data[1]
-		local amount = data[3]
+	for iter_13_2, iter_13_3 in pairs(var_13_0) do
+		local var_13_3 = iter_13_3[1]
+		local var_13_4 = iter_13_3[3]
 
-		self:_set_reward_material_by_index(backend_id, amount)
+		arg_13_0:_set_reward_material_by_index(var_13_3, var_13_4)
 	end
 
-	self._num_craft_items = 0
+	arg_13_0._num_craft_items = 0
 
-	self:_set_craft_button_disabled(true)
+	arg_13_0:_set_craft_button_disabled(true)
 
-	self._craft_result = nil
+	arg_13_0._craft_result = nil
 
-	self:_set_craft_counter_text("", false)
+	arg_13_0:_set_craft_counter_text("", false)
 
-	self._presenting_rewards = true
+	arg_13_0._presenting_rewards = true
 end
 
-CraftPageSalvageConsole._update_craft_items = function (self)
-	local super_parent = self.super_parent
-	local pressed_backend_id, is_drag_item = super_parent:get_pressed_item_backend_id()
+function CraftPageSalvageConsole._update_craft_items(arg_14_0)
+	local var_14_0 = arg_14_0.super_parent
+	local var_14_1, var_14_2 = var_14_0:get_pressed_item_backend_id()
 
-	if pressed_backend_id then
-		if self:_has_added_item_by_id(pressed_backend_id) then
-			self:_remove_craft_item(pressed_backend_id)
-		elseif (self._num_craft_items or 0) < CraftingSettings.NUM_SALVAGE_SLOTS then
-			self:_add_craft_item(pressed_backend_id)
+	if var_14_1 then
+		if arg_14_0:_has_added_item_by_id(var_14_1) then
+			arg_14_0:_remove_craft_item(var_14_1)
+		elseif (arg_14_0._num_craft_items or 0) < CraftingSettings.NUM_SALVAGE_SLOTS then
+			arg_14_0:_add_craft_item(var_14_1)
 		end
 	end
 
-	local selected_items_backend_ids = super_parent:get_selected_items_backend_ids()
+	local var_14_3 = var_14_0:get_selected_items_backend_ids()
 
-	if selected_items_backend_ids then
-		local item_added = false
+	if var_14_3 then
+		local var_14_4 = false
 
-		for _, selected_backend_id in ipairs(selected_items_backend_ids) do
-			if not self:_has_added_item_by_id(selected_backend_id) and (self._num_craft_items or 0) < CraftingSettings.NUM_SALVAGE_SLOTS then
-				item_added = true
+		for iter_14_0, iter_14_1 in ipairs(var_14_3) do
+			if not arg_14_0:_has_added_item_by_id(iter_14_1) and (arg_14_0._num_craft_items or 0) < CraftingSettings.NUM_SALVAGE_SLOTS then
+				var_14_4 = true
 
-				self:_add_craft_item(selected_backend_id, true)
+				arg_14_0:_add_craft_item(iter_14_1, true)
 			end
 		end
 
-		if item_added then
-			self:_play_sound("play_gui_craft_item_drop")
+		if var_14_4 then
+			arg_14_0:_play_sound("play_gui_craft_item_drop")
 		end
 	end
 end
 
-CraftPageSalvageConsole._remove_craft_item = function (self, backend_id)
-	local craft_items = self._craft_items
+function CraftPageSalvageConsole._remove_craft_item(arg_15_0, arg_15_1)
+	local var_15_0 = arg_15_0._craft_items
 
-	if backend_id then
-		self.super_parent:set_disabled_backend_id(backend_id, false)
+	if arg_15_1 then
+		arg_15_0.super_parent:set_disabled_backend_id(arg_15_1, false)
 
-		craft_items[backend_id] = nil
-		self._num_craft_items = math.max((self._num_craft_items or 0) - 1, 0)
+		var_15_0[arg_15_1] = nil
+		arg_15_0._num_craft_items = math.max((arg_15_0._num_craft_items or 0) - 1, 0)
 
-		if self._num_craft_items == 0 then
-			self:_set_craft_button_disabled(true)
+		if arg_15_0._num_craft_items == 0 then
+			arg_15_0:_set_craft_button_disabled(true)
 		else
-			self:_set_craft_button_disabled(false)
+			arg_15_0:_set_craft_button_disabled(false)
 		end
 
-		local counter_text = tostring(self._num_craft_items)
+		local var_15_1 = tostring(arg_15_0._num_craft_items)
 
-		self:_set_craft_counter_text(counter_text, true)
-		self:_play_sound("play_gui_craft_item_drag")
+		arg_15_0:_set_craft_counter_text(var_15_1, true)
+		arg_15_0:_play_sound("play_gui_craft_item_drag")
 	end
 end
 
-CraftPageSalvageConsole._add_craft_item = function (self, backend_id, ignore_sound, specific_amount)
-	if self._presenting_rewards then
-		self:_on_craft_material_fade_complete()
+function CraftPageSalvageConsole._add_craft_item(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+	if arg_16_0._presenting_rewards then
+		arg_16_0:_on_craft_material_fade_complete()
 	end
 
-	if self._num_craft_items == 0 then
-		table.clear(self._craft_items)
+	if arg_16_0._num_craft_items == 0 then
+		table.clear(arg_16_0._craft_items)
 	end
 
-	local craft_items = self._craft_items
+	arg_16_0._craft_items[arg_16_1] = true
 
-	craft_items[backend_id] = true
+	local var_16_0 = Managers.backend:get_interface("items")
+	local var_16_1
 
-	local item_interface = Managers.backend:get_interface("items")
-	local item = backend_id and item_interface:get_item_from_id(backend_id)
+	var_16_1 = arg_16_1 and var_16_0:get_item_from_id(arg_16_1)
 
-	self.super_parent:set_disabled_backend_id(backend_id, true)
+	arg_16_0.super_parent:set_disabled_backend_id(arg_16_1, true)
 
-	self._num_craft_items = (self._num_craft_items or 0) + 1
+	arg_16_0._num_craft_items = (arg_16_0._num_craft_items or 0) + 1
 
-	if self._num_craft_items > 0 then
-		self:_set_craft_button_disabled(false)
+	if arg_16_0._num_craft_items > 0 then
+		arg_16_0:_set_craft_button_disabled(false)
 	end
 
-	local counter_text = tostring(self._num_craft_items)
+	local var_16_2 = tostring(arg_16_0._num_craft_items)
 
-	self:_set_craft_counter_text(counter_text, true)
+	arg_16_0:_set_craft_counter_text(var_16_2, true)
 
-	if backend_id and not ignore_sound then
-		self:_play_sound("play_gui_craft_item_drop")
+	if arg_16_1 and not arg_16_2 then
+		arg_16_0:_play_sound("play_gui_craft_item_drop")
 	end
 end
 
-CraftPageSalvageConsole._set_craft_counter_text = function (self, counter_text, visible)
-	if self._presenting_rewards then
+function CraftPageSalvageConsole._set_craft_counter_text(arg_17_0, arg_17_1, arg_17_2)
+	if arg_17_0._presenting_rewards then
 		return
 	end
 
-	local widgets_by_name = self._widgets_by_name
-	local counter_text_widget = widgets_by_name.counter_text
-	local max_counter_text_widget = widgets_by_name.max_counter_text
+	local var_17_0 = arg_17_0._widgets_by_name
+	local var_17_1 = var_17_0.counter_text
+	local var_17_2 = var_17_0.max_counter_text
 
-	counter_text_widget.content.text = tostring(counter_text)
-	counter_text_widget.content.visible = visible
-	max_counter_text_widget.content.visible = visible
+	var_17_1.content.text = tostring(arg_17_1)
+	var_17_1.content.visible = arg_17_2
+	var_17_2.content.visible = arg_17_2
 end
 
-CraftPageSalvageConsole._set_craft_button_disabled = function (self, disabled)
-	self._widgets_by_name.craft_button.content.button_hotspot.disable_button = disabled
+function CraftPageSalvageConsole._set_craft_button_disabled(arg_18_0, arg_18_1)
+	arg_18_0._widgets_by_name.craft_button.content.button_hotspot.disable_button = arg_18_1
 
-	local input_settings = not disabled and self.settings.name or "disabled"
+	local var_18_0 = not arg_18_1 and arg_18_0.settings.name or "disabled"
 
-	if (self._num_craft_items or 0) < CraftingSettings.NUM_SALVAGE_SLOTS then
-		input_settings = input_settings .. "_auto"
+	if (arg_18_0._num_craft_items or 0) < CraftingSettings.NUM_SALVAGE_SLOTS then
+		var_18_0 = var_18_0 .. "_auto"
 	end
 
-	self.parent:set_input_description(input_settings)
+	arg_18_0.parent:set_input_description(var_18_0)
 end
 
-CraftPageSalvageConsole._exit = function (self, selected_level)
-	self.exit = true
-	self.exit_level_id = selected_level
+function CraftPageSalvageConsole._exit(arg_19_0, arg_19_1)
+	arg_19_0.exit = true
+	arg_19_0.exit_level_id = arg_19_1
 end
 
-CraftPageSalvageConsole.draw = function (self, dt)
-	local ui_renderer = self.ui_renderer
-	local ui_top_renderer = self.ui_top_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self.super_parent:window_input_service()
+function CraftPageSalvageConsole.draw(arg_20_0, arg_20_1)
+	local var_20_0 = arg_20_0.ui_renderer
+	local var_20_1 = arg_20_0.ui_top_renderer
+	local var_20_2 = arg_20_0.ui_scenegraph
+	local var_20_3 = arg_20_0.super_parent:window_input_service()
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
+	UIRenderer.begin_pass(var_20_1, var_20_2, var_20_3, arg_20_1, nil, arg_20_0.render_settings)
 
-	for _, widget in ipairs(self._widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, widget)
+	for iter_20_0, iter_20_1 in ipairs(arg_20_0._widgets) do
+		UIRenderer.draw_widget(var_20_1, iter_20_1)
 	end
 
-	UIRenderer.end_pass(ui_top_renderer)
+	UIRenderer.end_pass(var_20_1)
 end
 
-CraftPageSalvageConsole._play_sound = function (self, event)
-	self.super_parent:play_sound(event)
+function CraftPageSalvageConsole._play_sound(arg_21_0, arg_21_1)
+	arg_21_0.super_parent:play_sound(arg_21_1)
 end
 
-CraftPageSalvageConsole._set_craft_button_text = function (self, text, localize)
-	local widgets_by_name = self._widgets_by_name
-	local widget = widgets_by_name.craft_button
-
-	widget.content.button_text = localize and Localize(text) or text
+function CraftPageSalvageConsole._set_craft_button_text(arg_22_0, arg_22_1, arg_22_2)
+	arg_22_0._widgets_by_name.craft_button.content.button_text = arg_22_2 and Localize(arg_22_1) or arg_22_1
 end
 
-CraftPageSalvageConsole._has_added_item_by_id = function (self, backend_id)
-	return self._craft_items[backend_id]
+function CraftPageSalvageConsole._has_added_item_by_id(arg_23_0, arg_23_1)
+	return arg_23_0._craft_items[arg_23_1]
 end
 
-CraftPageSalvageConsole._update_reward_material_fade_out = function (self, dt)
-	local material_fade_out_time = self._material_fade_out_time
+function CraftPageSalvageConsole._update_reward_material_fade_out(arg_24_0, arg_24_1)
+	local var_24_0 = arg_24_0._material_fade_out_time
 
-	if material_fade_out_time then
-		local max_time = 2
+	if var_24_0 then
+		local var_24_1 = 2
+		local var_24_2 = math.min(var_24_0 + arg_24_1, var_24_1)
+		local var_24_3 = 1 - var_24_2 / var_24_1
+		local var_24_4 = math.easeOutCubic(var_24_3)
 
-		material_fade_out_time = math.min(material_fade_out_time + dt, max_time)
+		arg_24_0:_set_reward_material_alpha_fraction(var_24_4)
 
-		local progress = 1 - material_fade_out_time / max_time
-		local anim_progress = math.easeOutCubic(progress)
-
-		self:_set_reward_material_alpha_fraction(anim_progress)
-
-		if progress == 0 then
-			self:_on_craft_material_fade_complete()
+		if var_24_3 == 0 then
+			arg_24_0:_on_craft_material_fade_complete()
 		else
-			self._material_fade_out_time = material_fade_out_time
+			arg_24_0._material_fade_out_time = var_24_2
 		end
 	end
 end
 
-CraftPageSalvageConsole._on_craft_material_fade_complete = function (self)
-	self._presenting_rewards = nil
+function CraftPageSalvageConsole._on_craft_material_fade_complete(arg_25_0)
+	arg_25_0._presenting_rewards = nil
 
-	self:_reset_reward_materials(false)
+	arg_25_0:_reset_reward_materials(false)
 
-	local counter_text = tostring(self._num_craft_items or 0)
+	local var_25_0 = tostring(arg_25_0._num_craft_items or 0)
 
-	self:_set_craft_counter_text(counter_text)
+	arg_25_0:_set_craft_counter_text(var_25_0)
 
-	self._material_fade_out_time = nil
+	arg_25_0._material_fade_out_time = nil
 end
 
-CraftPageSalvageConsole._set_reward_material_alpha_fraction = function (self, fraction)
-	local alpha = 255 * fraction
-	local widgets_by_name = self._widgets_by_name
+function CraftPageSalvageConsole._set_reward_material_alpha_fraction(arg_26_0, arg_26_1)
+	local var_26_0 = 255 * arg_26_1
+	local var_26_1 = arg_26_0._widgets_by_name
 
-	for i = 1, #UISettings.crafting_material_order do
-		local widget = widgets_by_name["material_text_" .. i]
-		local style = widget.style
-		local text_style = style.text
-		local text_shadow_style = style.text_shadow
-		local icon_style = style.icon
+	for iter_26_0 = 1, #UISettings.crafting_material_order do
+		local var_26_2 = var_26_1["material_text_" .. iter_26_0].style
+		local var_26_3 = var_26_2.text
+		local var_26_4 = var_26_2.text_shadow
+		local var_26_5 = var_26_2.icon
 
-		text_style.text_color[1] = alpha
-		text_shadow_style.text_color[1] = alpha
-		icon_style.color[1] = alpha
+		var_26_3.text_color[1] = var_26_0
+		var_26_4.text_color[1] = var_26_0
+		var_26_5.color[1] = var_26_0
 	end
 
-	widgets_by_name.material_cross.style.texture_id.color[1] = alpha
+	var_26_1.material_cross.style.texture_id.color[1] = var_26_0
 end
 
-CraftPageSalvageConsole._reset_reward_materials = function (self, visible)
-	local material_textures = UISettings.crafting_material_icons_small
-	local material_presentation_order = UISettings.crafting_material_order_by_item_key
-	local widgets_by_name = self._widgets_by_name
+function CraftPageSalvageConsole._reset_reward_materials(arg_27_0, arg_27_1)
+	local var_27_0 = UISettings.crafting_material_icons_small
+	local var_27_1 = UISettings.crafting_material_order_by_item_key
+	local var_27_2 = arg_27_0._widgets_by_name
 
-	for item_key, index in pairs(material_presentation_order) do
-		local widget = widgets_by_name["material_text_" .. index]
-		local content = widget.content
-		local texture = material_textures[item_key]
+	for iter_27_0, iter_27_1 in pairs(var_27_1) do
+		local var_27_3 = var_27_2["material_text_" .. iter_27_1].content
 
-		content.icon = texture
-		content.visible = visible
-		content.text = "0"
+		var_27_3.icon = var_27_0[iter_27_0]
+		var_27_3.visible = arg_27_1
+		var_27_3.text = "0"
 
-		self:_set_material_enabled_state(index, false)
+		arg_27_0:_set_material_enabled_state(iter_27_1, false)
 	end
 
-	self:_set_reward_material_alpha_fraction(1)
+	arg_27_0:_set_reward_material_alpha_fraction(1)
 
-	widgets_by_name.material_cross.content.visible = visible
+	var_27_2.material_cross.content.visible = arg_27_1
 end
 
-CraftPageSalvageConsole._set_material_enabled_state = function (self, index, enabled)
-	local widgets_by_name = self._widgets_by_name
-	local widget = widgets_by_name["material_text_" .. index]
-	local style = widget.style
-	local text_style = style.text
-	local icon_style = style.icon
-	local color_value = enabled and 255 or 100
-	local text_color = text_style.text_color
+function CraftPageSalvageConsole._set_material_enabled_state(arg_28_0, arg_28_1, arg_28_2)
+	local var_28_0 = arg_28_0._widgets_by_name["material_text_" .. arg_28_1].style
+	local var_28_1 = var_28_0.text
+	local var_28_2 = var_28_0.icon
+	local var_28_3 = arg_28_2 and 255 or 100
+	local var_28_4 = var_28_1.text_color
 
-	text_color[2] = color_value
-	text_color[3] = color_value
-	text_color[4] = color_value
+	var_28_4[2] = var_28_3
+	var_28_4[3] = var_28_3
+	var_28_4[4] = var_28_3
 
-	local icon_color = icon_style.color
+	local var_28_5 = var_28_2.color
 
-	icon_color[2] = color_value
-	icon_color[3] = color_value
-	icon_color[4] = color_value
-	icon_style.saturated = not enabled
+	var_28_5[2] = var_28_3
+	var_28_5[3] = var_28_3
+	var_28_5[4] = var_28_3
+	var_28_2.saturated = not arg_28_2
 end
 
-CraftPageSalvageConsole._set_reward_material_by_index = function (self, backend_id, amount_text)
-	local material_presentation_order = UISettings.crafting_material_order_by_item_key
-	local item_interface = Managers.backend:get_interface("items")
-	local item_key = item_interface:get_key(backend_id)
-	local index = material_presentation_order[item_key]
-	local widgets_by_name = self._widgets_by_name
-	local widget = widgets_by_name["material_text_" .. index]
-	local content = widget.content
+function CraftPageSalvageConsole._set_reward_material_by_index(arg_29_0, arg_29_1, arg_29_2)
+	local var_29_0 = UISettings.crafting_material_order_by_item_key
+	local var_29_1 = Managers.backend:get_interface("items"):get_key(arg_29_1)
+	local var_29_2 = var_29_0[var_29_1]
+	local var_29_3 = arg_29_0._widgets_by_name["material_text_" .. var_29_2].content
 
-	content.visible = true
-	content.text = amount_text
-	content.item = {
-		data = table.clone(ItemMasterList[item_key]),
+	var_29_3.visible = true
+	var_29_3.text = arg_29_2
+	var_29_3.item = {
+		data = table.clone(ItemMasterList[var_29_1])
 	}
 
-	self:_set_material_enabled_state(index, true)
+	arg_29_0:_set_material_enabled_state(var_29_2, true)
 end

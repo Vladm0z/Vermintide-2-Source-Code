@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/settings/dialogue_settings.lua
+-- chunkname: @scripts/settings/dialogue_settings.lua
 
 DialogueSettings = DialogueSettings or {}
 DialogueSettings.auto_load_files = {
@@ -15,7 +15,7 @@ DialogueSettings.auto_load_files = {
 	"dialogues/generated/bright_wizard_generic_vo",
 	"dialogues/generated/dwarf_ranger_generic_vo",
 	"dialogues/generated/witch_hunter_generic_vo",
-	"dialogues/generated/weather_vo",
+	"dialogues/generated/weather_vo"
 }
 DialogueSettings.auto_load_files_mechanism = {}
 DialogueSettings.level_specific_load_files = {
@@ -27,7 +27,7 @@ DialogueSettings.level_specific_load_files = {
 		"dialogues/generated/empire_soldier_prologue",
 		"dialogues/generated/enemies",
 		"dialogues/generated/marker_events",
-		"dialogues/generated/blightreaper_bogenhafen_city",
+		"dialogues/generated/blightreaper_bogenhafen_city"
 	},
 	whitebox_bosses = {
 		"dialogues/generated/dwarf_ranger_ground_zero",
@@ -41,7 +41,7 @@ DialogueSettings.level_specific_load_files = {
 		"dialogues/generated/bright_wizard_skittergate",
 		"dialogues/generated/dwarf_ranger_skittergate",
 		"dialogues/generated/witch_hunter_skittergate",
-		"dialogues/generated/grey_seer_skittergate",
+		"dialogues/generated/grey_seer_skittergate"
 	},
 	elven_ruins = {
 		"dialogues/generated/empire_soldier_elven_ruins",
@@ -49,7 +49,7 @@ DialogueSettings.level_specific_load_files = {
 		"dialogues/generated/dwarf_ranger_elven_ruins",
 		"dialogues/generated/bright_wizard_elven_ruins",
 		"dialogues/generated/witch_hunter_elven_ruins",
-		"dialogues/generated/hero_conversations_elven_ruins",
+		"dialogues/generated/hero_conversations_elven_ruins"
 	},
 	catacombs = {
 		"dialogues/generated/empire_soldier_catacombs",
@@ -57,7 +57,7 @@ DialogueSettings.level_specific_load_files = {
 		"dialogues/generated/dwarf_ranger_catacombs",
 		"dialogues/generated/bright_wizard_catacombs",
 		"dialogues/generated/witch_hunter_catacombs",
-		"dialogues/generated/hero_conversations_catacombs",
+		"dialogues/generated/hero_conversations_catacombs"
 	},
 	military = {
 		"dialogues/generated/wood_elf_military",
@@ -65,11 +65,11 @@ DialogueSettings.level_specific_load_files = {
 		"dialogues/generated/bright_wizard_military",
 		"dialogues/generated/witch_hunter_military",
 		"dialogues/generated/empire_soldier_military",
-		"dialogues/generated/hero_conversations_military",
+		"dialogues/generated/hero_conversations_military"
 	},
 	prologue = {
 		"dialogues/generated/conversations_prologue",
-		"dialogues/generated/enemies",
+		"dialogues/generated/enemies"
 	},
 	mines = {
 		"dialogues/generated/wood_elf_mines",
@@ -77,7 +77,7 @@ DialogueSettings.level_specific_load_files = {
 		"dialogues/generated/bright_wizard_mines",
 		"dialogues/generated/witch_hunter_mines",
 		"dialogues/generated/empire_soldier_mines",
-		"dialogues/generated/hero_conversations_mines",
+		"dialogues/generated/hero_conversations_mines"
 	},
 	ussingen = {
 		"dialogues/generated/wood_elf_ussingen",
@@ -85,7 +85,7 @@ DialogueSettings.level_specific_load_files = {
 		"dialogues/generated/bright_wizard_ussingen",
 		"dialogues/generated/dwarf_ranger_ussingen",
 		"dialogues/generated/witch_hunter_ussingen",
-		"dialogues/generated/hero_conversations_ussingen",
+		"dialogues/generated/hero_conversations_ussingen"
 	},
 	fort = {
 		"dialogues/generated/bright_wizard_fort",
@@ -93,7 +93,7 @@ DialogueSettings.level_specific_load_files = {
 		"dialogues/generated/witch_hunter_fort",
 		"dialogues/generated/empire_soldier_fort",
 		"dialogues/generated/wood_elf_fort",
-		"dialogues/generated/hero_conversations_fort",
+		"dialogues/generated/hero_conversations_fort"
 	},
 	skaven_stronghold = {
 		"dialogues/generated/bright_wizard_skaven_stronghold",
@@ -102,14 +102,14 @@ DialogueSettings.level_specific_load_files = {
 		"dialogues/generated/empire_soldier_skaven_stronghold",
 		"dialogues/generated/wood_elf_skaven_stronghold",
 		"dialogues/generated/hero_conversations_skaven_stronghold",
-		"dialogues/generated/skaven_warlord_skaven_stronghold_level",
+		"dialogues/generated/skaven_warlord_skaven_stronghold_level"
 	},
 	ussingen_demo = {
 		"dialogues/generated/wood_elf_ussingen",
 		"dialogues/generated/empire_soldier_ussingen",
 		"dialogues/generated/bright_wizard_ussingen",
 		"dialogues/generated/dwarf_ranger_ussingen",
-		"dialogues/generated/witch_hunter_ussingen",
+		"dialogues/generated/witch_hunter_ussingen"
 	},
 	nurgle = {
 		"dialogues/generated/wood_elf_nurgle",
@@ -117,7 +117,7 @@ DialogueSettings.level_specific_load_files = {
 		"dialogues/generated/bright_wizard_nurgle",
 		"dialogues/generated/dwarf_ranger_nurgle",
 		"dialogues/generated/witch_hunter_nurgle",
-		"dialogues/generated/hero_conversations_nurgle",
+		"dialogues/generated/hero_conversations_nurgle"
 	},
 	warcamp = {
 		"dialogues/generated/wood_elf_warcamp",
@@ -125,7 +125,7 @@ DialogueSettings.level_specific_load_files = {
 		"dialogues/generated/bright_wizard_warcamp",
 		"dialogues/generated/dwarf_ranger_warcamp",
 		"dialogues/generated/witch_hunter_warcamp",
-		"dialogues/generated/hero_conversations_war_camp",
+		"dialogues/generated/hero_conversations_war_camp"
 	},
 	farmlands = {
 		"dialogues/generated/wood_elf_farmland",
@@ -133,7 +133,7 @@ DialogueSettings.level_specific_load_files = {
 		"dialogues/generated/bright_wizard_farmland",
 		"dialogues/generated/dwarf_ranger_farmland",
 		"dialogues/generated/witch_hunter_farmland",
-		"dialogues/generated/hero_conversations_farmlands",
+		"dialogues/generated/hero_conversations_farmlands"
 	},
 	skittergate = {
 		"dialogues/generated/wood_elf_skittergate",
@@ -141,31 +141,31 @@ DialogueSettings.level_specific_load_files = {
 		"dialogues/generated/bright_wizard_skittergate",
 		"dialogues/generated/dwarf_ranger_skittergate",
 		"dialogues/generated/witch_hunter_skittergate",
-		"dialogues/generated/grey_seer_skittergate",
+		"dialogues/generated/grey_seer_skittergate"
 	},
 	inn_level = {
 		"dialogues/generated/hub_conversations",
 		"dialogues/generated/fleur_conversations",
-		"dialogues/generated/hub_level_specific_greetings",
+		"dialogues/generated/hub_level_specific_greetings"
 	},
 	keep_base = {
-		"dialogues/generated/hub_conversations",
+		"dialogues/generated/hub_conversations"
 	},
 	inn_level_celebrate = {
 		"dialogues/generated/hub_conversations_crawl",
-		"dialogues/generated/hub_level_specific_greetings",
+		"dialogues/generated/hub_level_specific_greetings"
 	},
 	inn_level_halloween = {
 		"dialogues/generated/hub_conversations",
-		"dialogues/generated/hub_level_specific_greetings",
+		"dialogues/generated/hub_level_specific_greetings"
 	},
 	inn_level_skulls = {
 		"dialogues/generated/npc_dlc_event_skulls",
-		"dialogues/generated/hub_level_specific_greetings",
+		"dialogues/generated/hub_level_specific_greetings"
 	},
 	inn_level_sonnstill = {
 		"dialogues/generated/hub_conversations",
-		"dialogues/generated/hub_level_specific_greetings",
+		"dialogues/generated/hub_level_specific_greetings"
 	},
 	bell = {
 		"dialogues/generated/wood_elf_bell",
@@ -173,7 +173,7 @@ DialogueSettings.level_specific_load_files = {
 		"dialogues/generated/bright_wizard_bell",
 		"dialogues/generated/dwarf_ranger_bell",
 		"dialogues/generated/witch_hunter_bell",
-		"dialogues/generated/hero_conversations_bell",
+		"dialogues/generated/hero_conversations_bell"
 	},
 	ground_zero = {
 		"dialogues/generated/wood_elf_ground_zero",
@@ -181,7 +181,7 @@ DialogueSettings.level_specific_load_files = {
 		"dialogues/generated/bright_wizard_ground_zero",
 		"dialogues/generated/dwarf_ranger_ground_zero",
 		"dialogues/generated/witch_hunter_ground_zero",
-		"dialogues/generated/hero_conversations_ground_zero",
+		"dialogues/generated/hero_conversations_ground_zero"
 	},
 	dlc_dwarf_fest = {
 		"dialogues/generated/wood_elf_dlc_dwarf_fest",
@@ -190,7 +190,7 @@ DialogueSettings.level_specific_load_files = {
 		"dialogues/generated/dwarf_ranger_dlc_dwarf_fest",
 		"dialogues/generated/witch_hunter_dlc_dwarf_fest",
 		"dialogues/generated/hero_conversations_dlc_dwarf_fest",
-		"dialogues/generated/npc_dlc_dwarf_fest",
+		"dialogues/generated/npc_dlc_dwarf_fest"
 	},
 	dlc_reikwald_river = {
 		"dialogues/generated/wood_elf_dlc_reikwald_river",
@@ -199,43 +199,43 @@ DialogueSettings.level_specific_load_files = {
 		"dialogues/generated/dwarf_ranger_dlc_reikwald_river",
 		"dialogues/generated/witch_hunter_dlc_reikwald_river",
 		"dialogues/generated/hero_conversations_dlc_reikwald_river",
-		"dialogues/generated/npces_dlc_reikwald_river",
-	},
+		"dialogues/generated/npces_dlc_reikwald_river"
+	}
 }
 DialogueSettings.blocked_auto_load_files = {
-	inn_level = true,
-	inn_level_celebrate = true,
-	inn_level_halloween = true,
-	inn_level_skulls = true,
 	inn_level_sonnstill = true,
-	keep_base = true,
+	inn_level_celebrate = true,
 	prologue = true,
 	tutorial = true,
+	inn_level_skulls = true,
+	inn_level_halloween = true,
+	inn_level = true,
+	keep_base = true
 }
 
 DLCUtils.append("auto_load_files", DialogueSettings.auto_load_files)
 DLCUtils.merge("auto_load_files_mechanism", DialogueSettings.auto_load_files_mechanism, true)
 
-for _, dlc in pairs(DLCSettings) do
-	local dialogue_settings = dlc.dialogue_settings
+for iter_0_0, iter_0_1 in pairs(DLCSettings) do
+	local var_0_0 = iter_0_1.dialogue_settings
 
-	if dialogue_settings then
-		for level_id, dialogue_settings_table in pairs(dialogue_settings) do
-			local current_level_settings = DialogueSettings.level_specific_load_files[level_id]
+	if var_0_0 then
+		for iter_0_2, iter_0_3 in pairs(var_0_0) do
+			local var_0_1 = DialogueSettings.level_specific_load_files[iter_0_2]
 
-			if current_level_settings then
-				table.append(current_level_settings, dialogue_settings_table)
+			if var_0_1 then
+				table.append(var_0_1, iter_0_3)
 			else
-				DialogueSettings.level_specific_load_files[level_id] = dialogue_settings_table
+				DialogueSettings.level_specific_load_files[iter_0_2] = iter_0_3
 			end
 		end
 	end
 
-	local blocked_auto_load_files = dlc.blocked_auto_load_files
+	local var_0_2 = iter_0_1.blocked_auto_load_files
 
-	if blocked_auto_load_files then
-		for name, value in pairs(blocked_auto_load_files) do
-			DialogueSettings.blocked_auto_load_files[name] = value
+	if var_0_2 then
+		for iter_0_4, iter_0_5 in pairs(var_0_2) do
+			DialogueSettings.blocked_auto_load_files[iter_0_4] = iter_0_5
 		end
 	end
 end
@@ -278,16 +278,16 @@ DialogueSettings.vs_many_heroes_incapacitated_num = 2
 DialogueSettings.vs_track_projectiles_blocked_timer = 5
 DialogueSettings.vs_num_blocked_projectiles_to_track = 10
 DialogueSettings.breed_types_trigger_on_spawn = {
-	chaos_corruptor_sorcerer = true,
-	chaos_spawn = true,
 	chaos_troll = true,
+	chaos_spawn = true,
+	chaos_corruptor_sorcerer = true,
 	chaos_vortex_sorcerer = true,
 	skaven_rat_ogre = true,
-	skaven_stormfiend = true,
+	skaven_stormfiend = true
 }
 DialogueSettings.bunny_jumping = {
-	jump_threshold = 6,
 	tick_time = 5,
+	jump_threshold = 6
 }
 DialogueSettings.raycast_enemy_check_interval = 0.25
 DialogueSettings.hear_enemy_check_interval = 10
@@ -297,11 +297,11 @@ HealthTriggerSettings = {}
 HealthTriggerSettings.levels = {
 	0.2,
 	0.5,
-	1,
+	1
 }
 HealthTriggerSettings.rapid_health_loss = {
-	tick_loss_threshold = 0.2,
 	tick_time = 2,
+	tick_loss_threshold = 0.2
 }
 DialogueSettings.max_hear_distance = math.max(25, DialogueSettings.knocked_down_broadcast_range, DialogueSettings.pounced_down_broadcast_range, DialogueSettings.death_discover_distance)
 DialogueSettings.dialogue_category_config = {
@@ -310,535 +310,535 @@ DialogueSettings.dialogue_category_config = {
 		interrupted_by = {},
 		playable_during_category = {
 			enemy_basic_prio = true,
-			enemy_high_prio = true,
-		},
+			enemy_high_prio = true
+		}
 	},
 	special_occasion = {
 		mutually_exclusive = true,
 		interrupted_by = {
-			special_occasion_interrupt = true,
+			special_occasion_interrupt = true
 		},
 		playable_during_category = {
-			casual_talk = true,
 			default = true,
-			enemy_alerts = true,
-			enemy_alerts_high = true,
-			enemy_basic_prio = true,
 			enemy_high_prio = true,
 			guidance = true,
-			knocked_down_override = true,
-			player_alerts = true,
+			enemy_alerts = true,
 			player_alerts_overcharge_explode = true,
-			player_alerts_overcharge_warning = true,
-			player_feedback = true,
+			player_alerts = true,
 			seen_items = true,
+			casual_talk = true,
+			player_alerts_overcharge_warning = true,
 			story_talk = true,
-		},
+			player_feedback = true,
+			enemy_basic_prio = true,
+			enemy_alerts_high = true,
+			knocked_down_override = true
+		}
 	},
 	special_occasion_interrupt = {
 		mutually_exclusive = true,
 		interrupted_by = {},
 		playable_during_category = {
+			enemy_alerts = true,
+			story_talk = true,
+			enemy_alerts_high = true,
+			default = true,
+			player_alerts_overcharge_explode = true,
 			activate_ability = true,
 			casual_singing_01 = true,
-			casual_singing_02 = true,
-			casual_singing_03 = true,
 			casual_talk = true,
-			default = true,
-			enemy_alerts = true,
-			enemy_alerts_high = true,
+			casual_singing_02 = true,
+			player_feedback = true,
+			level_talk = true,
 			enemy_basic_prio = true,
+			knocked_down_override = true,
 			enemy_high_prio = true,
 			guidance = true,
-			knocked_down_override = true,
-			level_talk = true,
-			player_alerts = true,
-			player_alerts_boss = true,
-			player_alerts_overcharge_explode = true,
-			player_alerts_overcharge_warning = true,
-			player_feedback = true,
 			seen_items = true,
+			player_alerts_overcharge_warning = true,
+			player_alerts = true,
+			casual_singing_03 = true,
 			special_occasion = true,
-			story_talk = true,
-		},
+			player_alerts_boss = true
+		}
 	},
 	activate_ability = {
 		interrupted_by = {},
 		playable_during_category = {
-			activate_ability = true,
-			boss_reaction_talk = true,
+			enemy_alerts = true,
+			story_talk = true,
+			npc_talk = true,
+			guidance = true,
+			player_alerts_overcharge_explode = true,
+			default = true,
 			boss_talk = true,
 			casual_talk = true,
-			default = true,
-			enemy_alerts = true,
-			enemy_alerts_high = true,
-			enemy_basic_prio = true,
-			enemy_high_prio = true,
-			guidance = true,
-			help_talk = true,
-			level_talk = true,
-			npc_talk = true,
 			npc_talk_interrupt = true,
-			player_alerts = true,
-			player_alerts_overcharge_explode = true,
-			player_alerts_overcharge_warning = true,
 			player_feedback = true,
-			seen_items = true,
-			story_talk = true,
+			level_talk = true,
+			enemy_basic_prio = true,
+			boss_reaction_talk = true,
 			story_talk_vce = true,
-		},
+			activate_ability = true,
+			enemy_high_prio = true,
+			help_talk = true,
+			seen_items = true,
+			player_alerts_overcharge_warning = true,
+			player_alerts = true,
+			enemy_alerts_high = true
+		}
 	},
 	enemy_alerts_high = {
 		mutually_exclusive = true,
 		interrupted_by = {},
 		playable_during_category = {
-			casual_talk = true,
 			default = true,
+			enemy_high_prio = true,
 			enemy_alerts = true,
 			enemy_basic_prio = true,
-			enemy_high_prio = true,
-			seen_items = true,
 			story_talk_vce = true,
-		},
+			seen_items = true,
+			casual_talk = true
+		}
 	},
 	enemy_alerts = {
 		mutually_exclusive = true,
 		interrupted_by = {},
 		playable_during_category = {
-			casual_talk = true,
 			default = true,
-			enemy_basic_prio = true,
 			enemy_high_prio = true,
-			seen_items = true,
+			enemy_basic_prio = true,
 			story_talk_vce = true,
-		},
+			seen_items = true,
+			casual_talk = true
+		}
 	},
 	player_alerts_boss = {
 		mutually_exclusive = true,
 		interrupted_by = {},
 		playable_during_category = {
-			activate_ability = true,
-			boss_talk = true,
-			boss_talk_interrupt = true,
-			casual_talk = true,
 			default = true,
-			enemy_basic_prio = true,
 			enemy_high_prio = true,
 			guidance = true,
-			help_talk = true,
-			level_talk = true,
 			player_alerts = true,
 			player_alerts_overcharge_explode = true,
 			player_alerts_overcharge_warning = true,
-			player_feedback = true,
 			seen_items = true,
+			casual_talk = true,
+			help_talk = true,
+			player_feedback = true,
+			level_talk = true,
+			enemy_basic_prio = true,
+			boss_talk = true,
 			story_talk_vce = true,
-		},
+			activate_ability = true,
+			boss_talk_interrupt = true
+		}
 	},
 	player_alerts = {
 		mutually_exclusive = true,
 		interrupted_by = {},
 		playable_during_category = {
-			casual_talk = true,
 			default = true,
-			enemy_basic_prio = true,
 			enemy_high_prio = true,
 			guidance = true,
-			player_alerts_overcharge_explode = true,
 			player_alerts_overcharge_warning = true,
+			player_alerts_overcharge_explode = true,
 			seen_items = true,
-			story_talk_vce = true,
-		},
+			casual_talk = true,
+			enemy_basic_prio = true,
+			story_talk_vce = true
+		}
 	},
 	player_alerts_overcharge_warning = {
 		mutually_exclusive = true,
 		interrupted_by = {
-			player_alerts_overcharge_explode = true,
+			player_alerts_overcharge_explode = true
 		},
 		playable_during_category = {
-			casual_talk = true,
 			default = true,
-			enemy_basic_prio = true,
 			enemy_high_prio = true,
 			guidance = true,
-			seen_items = true,
+			enemy_basic_prio = true,
 			story_talk_vce = true,
-		},
+			seen_items = true,
+			casual_talk = true
+		}
 	},
 	player_alerts_overcharge_explode = {
 		mutually_exclusive = true,
 		interrupted_by = {},
 		playable_during_category = {
-			casual_talk = true,
 			default = true,
-			enemy_basic_prio = true,
 			enemy_high_prio = true,
 			guidance = true,
-			player_alerts = true,
 			player_feedback = true,
-			seen_items = true,
 			story_talk = true,
-			story_talk_vce = true,
-		},
+			seen_items = true,
+			casual_talk = true,
+			player_alerts = true,
+			enemy_basic_prio = true,
+			story_talk_vce = true
+		}
 	},
 	player_feedback = {
 		mutually_exclusive = true,
 		interrupted_by = {
-			mutator_special_occasion = true,
+			mutator_special_occasion = true
 		},
 		playable_during_category = {
 			default = true,
-			enemy_basic_prio = true,
 			enemy_high_prio = true,
+			enemy_basic_prio = true,
 			npc_talk_special = true,
-			story_talk_vce = true,
-		},
+			story_talk_vce = true
+		}
 	},
 	mutator_special_occasion = {
 		mutually_exclusive = true,
 		interrupted_by = {},
 		playable_during_category = {
-			casual_talk = true,
 			default = true,
+			story_talk = true,
+			help_talk = true,
 			enemy_alerts = true,
-			enemy_alerts_high = true,
+			player_alerts_overcharge_explode = true,
+			level_talk_tutorial = true,
+			npc_talk_special = true,
+			casual_talk = true,
+			npc_talk = true,
+			player_feedback = true,
+			level_talk = true,
 			enemy_basic_prio = true,
+			knocked_down_override = true,
 			enemy_high_prio = true,
 			guidance = true,
-			help_talk = true,
-			knocked_down_override = true,
-			level_talk = true,
-			level_talk_tutorial = true,
-			npc_talk = true,
-			npc_talk_special = true,
-			player_alerts = true,
-			player_alerts_overcharge_explode = true,
-			player_alerts_overcharge_warning = true,
-			player_feedback = true,
 			seen_items = true,
-			story_talk = true,
-		},
+			player_alerts_overcharge_warning = true,
+			player_alerts = true,
+			enemy_alerts_high = true
+		}
 	},
 	player_feedback_reply = {
 		mutually_exclusive = true,
 		interrupted_by = {},
 		playable_during_category = {
 			default = true,
-			enemy_basic_prio = true,
 			enemy_high_prio = true,
-			npc_talk_special = true,
 			player_feedback = true,
-			story_talk_vce = true,
-		},
+			enemy_basic_prio = true,
+			npc_talk_special = true,
+			story_talk_vce = true
+		}
 	},
 	guidance = {
 		mutually_exclusive = true,
 		interrupted_by = {},
 		playable_during_category = {
 			default = true,
-			enemy_basic_prio = true,
 			enemy_high_prio = true,
 			story_talk_vce = true,
-		},
+			enemy_basic_prio = true
+		}
 	},
 	seen_items = {
 		mutually_exclusive = true,
 		interrupted_by = {},
 		playable_during_category = {
 			default = true,
-			enemy_basic_prio = true,
 			enemy_high_prio = true,
 			story_talk_vce = true,
-		},
+			enemy_basic_prio = true
+		}
 	},
 	level_talk = {
 		mutually_exclusive = true,
 		interrupted_by = {
-			level_talk_must_play = true,
+			level_talk_must_play = true
 		},
 		playable_during_category = {
-			activate_ability = true,
 			default = true,
-			enemy_basic_prio = true,
 			enemy_high_prio = true,
+			activate_ability = true,
+			enemy_basic_prio = true,
 			npc_talk_special = true,
-			story_talk_vce = true,
-		},
+			story_talk_vce = true
+		}
 	},
 	casual_talk = {
 		mutually_exclusive = true,
 		interrupted_by = {},
 		playable_during_category = {
 			default = true,
-			enemy_basic_prio = true,
 			enemy_high_prio = true,
 			story_talk_vce = true,
-		},
+			enemy_basic_prio = true
+		}
 	},
 	story_talk = {
 		mutually_exclusive = true,
 		interrupted_by = {
 			level_talk_must_play = true,
 			npc_talk = true,
-			npc_talk_interrupt = true,
+			npc_talk_interrupt = true
 		},
 		playable_during_category = {
 			default = true,
-			enemy_basic_prio = true,
 			enemy_high_prio = true,
 			story_talk_vce = true,
-		},
+			enemy_basic_prio = true
+		}
 	},
 	story_talk_vce = {
 		mutually_exclusive = false,
 		interrupted_by = {},
 		playable_during_category = {
-			activate_ability = true,
-			boss_reaction_talk = true,
+			enemy_alerts = true,
+			story_talk = true,
+			guidance = true,
+			default = true,
+			player_alerts_overcharge_explode = true,
+			level_talk = true,
 			boss_talk = true,
 			casual_talk = true,
-			cut_scene = true,
-			default = true,
-			enemy_alerts = true,
-			enemy_alerts_high = true,
-			enemy_basic_prio = true,
-			enemy_high_prio = true,
-			guidance = true,
-			help_talk = true,
-			knocked_down_override = true,
-			level_talk = true,
-			npc_talk = true,
 			npc_talk_interrupt = true,
-			player_alerts = true,
-			player_alerts_overcharge_explode = true,
-			player_alerts_overcharge_warning = true,
 			player_feedback = true,
+			npc_talk = true,
+			enemy_basic_prio = true,
+			boss_reaction_talk = true,
+			knocked_down_override = true,
+			activate_ability = true,
+			enemy_high_prio = true,
+			help_talk = true,
+			cut_scene = true,
 			seen_items = true,
-			story_talk = true,
-		},
+			player_alerts_overcharge_warning = true,
+			player_alerts = true,
+			enemy_alerts_high = true
+		}
 	},
 	story_talk_keep = {
 		mutually_exclusive = true,
 		interrupted_by = {},
-		playable_during_category = {},
+		playable_during_category = {}
 	},
 	cut_scene = {
 		mutually_exclusive = true,
 		interrupted_by = {
-			cut_scene_interrupt = true,
+			cut_scene_interrupt = true
 		},
 		playable_during_category = {
-			activate_ability = true,
-			boss_reaction_talk = true,
+			enemy_alerts = true,
+			story_talk = true,
+			guidance = true,
+			default = true,
+			player_alerts_overcharge_explode = true,
+			level_talk_tutorial = true,
 			boss_talk = true,
 			casual_talk = true,
-			cut_scene = true,
-			default = true,
-			enemy_alerts = true,
-			enemy_alerts_high = true,
-			enemy_basic_prio = true,
-			enemy_high_prio = true,
-			guidance = true,
-			help_talk = true,
-			knocked_down_override = true,
-			level_talk = true,
-			level_talk_tutorial = true,
-			npc_talk = true,
-			npc_talk_interrupt = true,
-			player_alerts = true,
-			player_alerts_boss = true,
-			player_alerts_overcharge_explode = true,
-			player_alerts_overcharge_warning = true,
+			boss_reaction_talk = true,
 			player_feedback = true,
-			seen_items = true,
-			story_talk = true,
+			npc_talk = true,
+			enemy_basic_prio = true,
+			npc_talk_interrupt = true,
+			knocked_down_override = true,
+			activate_ability = true,
+			level_talk = true,
 			story_talk_vce = true,
-		},
+			enemy_high_prio = true,
+			help_talk = true,
+			cut_scene = true,
+			seen_items = true,
+			player_alerts_overcharge_warning = true,
+			player_alerts = true,
+			enemy_alerts_high = true,
+			player_alerts_boss = true
+		}
 	},
 	cut_scene_interrupt = {
 		interrupted_by = {
-			cut_scene_interrupt_two = true,
+			cut_scene_interrupt_two = true
 		},
 		playable_during_category = {
-			activate_ability = true,
-			boss_reaction_talk = true,
+			enemy_alerts = true,
+			story_talk = true,
+			guidance = true,
+			default = true,
+			player_alerts_overcharge_explode = true,
+			level_talk_tutorial = true,
 			boss_talk = true,
 			casual_talk = true,
-			cut_scene = true,
-			default = true,
-			enemy_alerts = true,
-			enemy_alerts_high = true,
-			enemy_basic_prio = true,
-			enemy_high_prio = true,
-			guidance = true,
-			help_talk = true,
-			knocked_down_override = true,
-			level_talk = true,
-			level_talk_tutorial = true,
-			npc_talk = true,
 			npc_talk_interrupt = true,
-			player_alerts = true,
-			player_alerts_boss = true,
-			player_alerts_overcharge_explode = true,
-			player_alerts_overcharge_warning = true,
 			player_feedback = true,
-			seen_items = true,
-			story_talk = true,
+			npc_talk = true,
+			enemy_basic_prio = true,
+			boss_reaction_talk = true,
+			knocked_down_override = true,
+			activate_ability = true,
+			level_talk = true,
 			story_talk_vce = true,
-		},
+			enemy_high_prio = true,
+			help_talk = true,
+			cut_scene = true,
+			seen_items = true,
+			player_alerts_overcharge_warning = true,
+			player_alerts = true,
+			enemy_alerts_high = true,
+			player_alerts_boss = true
+		}
 	},
 	cut_scene_interrupt_two = {
 		interrupted_by = {
-			cut_scene_interrupt_three = true,
+			cut_scene_interrupt_three = true
 		},
 		playable_during_category = {
-			activate_ability = true,
-			boss_reaction_talk = true,
+			enemy_alerts = true,
+			story_talk = true,
+			guidance = true,
+			default = true,
+			player_alerts_overcharge_explode = true,
+			level_talk_tutorial = true,
 			boss_talk = true,
 			casual_talk = true,
-			cut_scene = true,
-			cut_scene_interrupt = true,
-			default = true,
-			enemy_alerts = true,
-			enemy_alerts_high = true,
-			enemy_basic_prio = true,
-			enemy_high_prio = true,
-			guidance = true,
-			help_talk = true,
-			knocked_down_override = true,
-			level_talk = true,
-			level_talk_tutorial = true,
-			npc_talk = true,
-			npc_talk_interrupt = true,
-			player_alerts = true,
-			player_alerts_boss = true,
-			player_alerts_overcharge_explode = true,
-			player_alerts_overcharge_warning = true,
+			boss_reaction_talk = true,
 			player_feedback = true,
-			seen_items = true,
-			story_talk = true,
+			npc_talk = true,
+			enemy_basic_prio = true,
+			npc_talk_interrupt = true,
+			knocked_down_override = true,
+			activate_ability = true,
+			level_talk = true,
+			cut_scene_interrupt = true,
+			enemy_high_prio = true,
+			help_talk = true,
 			story_talk_vce = true,
-		},
+			cut_scene = true,
+			seen_items = true,
+			player_alerts_overcharge_warning = true,
+			player_alerts = true,
+			enemy_alerts_high = true,
+			player_alerts_boss = true
+		}
 	},
 	cut_scene_interrupt_three = {
 		mutually_exclusive = true,
 		interrupted_by = {},
 		playable_during_category = {
 			activate_ability = true,
-			boss_reaction_talk = true,
-			boss_talk = true,
-			casual_singing_01 = true,
-			casual_singing_02 = true,
-			casual_singing_03 = true,
-			casual_talk = true,
-			cut_scene = true,
-			cut_scene_interrupt = true,
-			cut_scene_interrupt_two = true,
-			default = true,
-			enemy_alerts = true,
 			enemy_alerts_high = true,
-			enemy_basic_prio = true,
-			enemy_high_prio = true,
-			guidance = true,
-			help_talk = true,
-			knocked_down_override = true,
-			level_talk = true,
-			level_talk_must_play = true,
-			level_talk_tutorial = true,
-			mutator_special_occasion = true,
-			npc_talk = true,
 			npc_talk_interrupt = true,
-			npc_talk_interrupt_special = true,
-			npc_talk_special = true,
-			player_alerts = true,
-			player_alerts_boss = true,
+			enemy_alerts = true,
+			player_feedback = true,
+			level_talk_tutorial = true,
+			boss_talk = true,
+			casual_talk = true,
+			help_talk = true,
+			story_talk = true,
+			npc_talk = true,
+			boss_reaction_talk = true,
+			story_talk_vce = true,
+			knocked_down_override = true,
 			player_alerts_overcharge_explode = true,
 			player_alerts_overcharge_warning = true,
-			player_feedback = true,
-			player_feedback_reply = true,
+			default = true,
+			casual_singing_01 = true,
+			guidance = true,
+			cut_scene = true,
+			mutator_special_occasion = true,
 			seen_items = true,
+			player_alerts = true,
+			casual_singing_03 = true,
 			special_occasion = true,
-			story_talk = true,
-			story_talk_vce = true,
-		},
+			player_alerts_boss = true,
+			npc_talk_special = true,
+			casual_singing_02 = true,
+			level_talk_must_play = true,
+			level_talk = true,
+			enemy_basic_prio = true,
+			cut_scene_interrupt = true,
+			enemy_high_prio = true,
+			npc_talk_interrupt_special = true,
+			player_feedback_reply = true,
+			cut_scene_interrupt_two = true
+		}
 	},
 	npc_talk_special = {
 		mutually_exclusive = true,
 		interrupted_by = {
-			level_talk_tutorial = true,
 			level_talk_tutorial_interrupt = true,
-			npc_talk_interrupt_special = true,
+			level_talk_tutorial = true,
+			npc_talk_interrupt_special = true
 		},
 		playable_during_category = {
-			casual_talk = true,
 			default = true,
-			enemy_alerts = true,
-			enemy_alerts_high = true,
-			enemy_basic_prio = true,
 			enemy_high_prio = true,
 			guidance = true,
-			knocked_down_override = true,
-			level_talk = true,
+			enemy_alerts = true,
 			seen_items = true,
+			casual_talk = true,
 			story_talk = true,
-		},
+			level_talk = true,
+			enemy_basic_prio = true,
+			enemy_alerts_high = true,
+			knocked_down_override = true
+		}
 	},
 	npc_talk_interrupt_special = {
 		mutually_exclusive = true,
 		interrupted_by = {},
 		playable_during_category = {
-			casual_talk = true,
 			default = true,
+			story_talk = true,
+			help_talk = true,
 			enemy_alerts = true,
-			enemy_alerts_high = true,
+			player_alerts_overcharge_explode = true,
+			level_talk_tutorial = true,
+			npc_talk_special = true,
+			casual_talk = true,
+			npc_talk = true,
+			player_feedback = true,
+			level_talk = true,
 			enemy_basic_prio = true,
+			knocked_down_override = true,
 			enemy_high_prio = true,
 			guidance = true,
-			help_talk = true,
-			knocked_down_override = true,
-			level_talk = true,
-			level_talk_tutorial = true,
-			npc_talk = true,
-			npc_talk_special = true,
-			player_alerts = true,
-			player_alerts_overcharge_explode = true,
-			player_alerts_overcharge_warning = true,
-			player_feedback = true,
 			seen_items = true,
-			story_talk = true,
-		},
+			player_alerts_overcharge_warning = true,
+			player_alerts = true,
+			enemy_alerts_high = true
+		}
 	},
 	level_talk_tutorial = {
 		interrupted_by = {
 			activate_ability = true,
 			champion_opening = true,
 			cut_scene = true,
-			enemy_alerts_high = true,
 			level_talk_tutorial_interrupt = true,
-			player_alerts_boss = true,
+			enemy_alerts_high = true,
+			player_alerts_boss = true
 		},
 		playable_during_category = {
-			casual_talk = true,
-			cut_scene = true,
-			cut_scene_interrupt = true,
-			cut_scene_interrupt_three = true,
-			cut_scene_interrupt_two = true,
-			default = true,
 			enemy_alerts = true,
-			enemy_basic_prio = true,
-			enemy_high_prio = true,
-			guidance = true,
-			help_talk = true,
-			knocked_down_override = true,
-			level_talk = true,
-			level_talk_tutorial = true,
 			npc_talk = true,
-			npc_talk_interrupt_special = true,
-			player_alerts = true,
+			help_talk = true,
 			player_feedback = true,
-			seen_items = true,
+			guidance = true,
+			level_talk_tutorial = true,
+			cut_scene_interrupt = true,
+			casual_talk = true,
+			default = true,
 			story_talk = true,
-		},
+			level_talk = true,
+			enemy_basic_prio = true,
+			knocked_down_override = true,
+			cut_scene_interrupt_three = true,
+			enemy_high_prio = true,
+			npc_talk_interrupt_special = true,
+			cut_scene = true,
+			seen_items = true,
+			cut_scene_interrupt_two = true,
+			player_alerts = true
+		}
 	},
 	level_talk_tutorial_interrupt = {
 		interrupted_by = {
@@ -846,497 +846,497 @@ DialogueSettings.dialogue_category_config = {
 			champion_opening = true,
 			cut_scene = true,
 			enemy_alerts_high = true,
-			player_alerts_boss = true,
+			player_alerts_boss = true
 		},
 		playable_during_category = {
-			casual_talk = true,
-			cut_scene = true,
-			cut_scene_interrupt = true,
-			cut_scene_interrupt_three = true,
-			cut_scene_interrupt_two = true,
-			default = true,
 			enemy_alerts = true,
-			enemy_basic_prio = true,
-			enemy_high_prio = true,
-			guidance = true,
-			help_talk = true,
-			knocked_down_override = true,
-			level_talk = true,
-			level_talk_tutorial = true,
-			level_talk_tutorial_interrupt = true,
 			npc_talk = true,
-			npc_talk_interrupt_special = true,
-			player_alerts = true,
+			help_talk = true,
 			player_feedback = true,
-			seen_items = true,
+			guidance = true,
+			level_talk_tutorial = true,
+			cut_scene_interrupt = true,
+			casual_talk = true,
+			default = true,
 			story_talk = true,
-		},
+			level_talk = true,
+			enemy_basic_prio = true,
+			knocked_down_override = true,
+			cut_scene_interrupt_three = true,
+			enemy_high_prio = true,
+			npc_talk_interrupt_special = true,
+			cut_scene = true,
+			seen_items = true,
+			cut_scene_interrupt_two = true,
+			player_alerts = true,
+			level_talk_tutorial_interrupt = true
+		}
 	},
 	level_talk_must_play = {
 		mutually_exclusive = false,
 		interrupted_by = {},
 		playable_during_category = {
-			activate_ability = true,
-			casual_singing_03 = true,
-			casual_talk = true,
-			cut_scene = true,
-			cut_scene_interrupt = true,
-			cut_scene_interrupt_three = true,
-			cut_scene_interrupt_two = true,
 			default = true,
-			enemy_alerts = true,
-			enemy_alerts_high = true,
-			enemy_basic_prio = true,
-			enemy_high_prio = true,
-			guidance = true,
-			help_talk = true,
-			knocked_down_override = true,
-			level_talk = true,
-			level_talk_tutorial = true,
 			npc_talk = true,
-			npc_talk_interrupt_special = true,
-			player_alerts = true,
-			player_alerts_overcharge_explode = true,
-			player_alerts_overcharge_warning = true,
-			player_feedback = true,
-			seen_items = true,
 			story_talk = true,
+			guidance = true,
+			player_alerts_overcharge_explode = true,
+			level_talk_tutorial = true,
+			cut_scene_interrupt = true,
+			casual_talk = true,
+			help_talk = true,
+			player_feedback = true,
+			level_talk = true,
+			enemy_basic_prio = true,
 			story_talk_vce = true,
-		},
+			knocked_down_override = true,
+			activate_ability = true,
+			enemy_alerts = true,
+			cut_scene_interrupt_three = true,
+			enemy_high_prio = true,
+			npc_talk_interrupt_special = true,
+			cut_scene = true,
+			seen_items = true,
+			player_alerts_overcharge_warning = true,
+			cut_scene_interrupt_two = true,
+			player_alerts = true,
+			casual_singing_03 = true,
+			enemy_alerts_high = true
+		}
 	},
 	level_talk_must_play_multiple = {
 		mutually_exclusive = false,
 		interrupted_by = {},
 		playable_during_category = {
-			activate_ability = true,
+			default = true,
+			npc_talk = true,
+			story_talk = true,
+			guidance = true,
+			player_alerts_overcharge_explode = true,
+			level_talk_tutorial = true,
+			level_talk_must_play = true,
 			casual_talk = true,
 			cut_scene = true,
-			cut_scene_interrupt = true,
-			cut_scene_interrupt_three = true,
-			cut_scene_interrupt_two = true,
-			default = true,
-			enemy_alerts = true,
-			enemy_alerts_high = true,
-			enemy_basic_prio = true,
-			enemy_high_prio = true,
-			guidance = true,
-			help_talk = true,
-			knocked_down_override = true,
-			level_talk = true,
-			level_talk_must_play = true,
-			level_talk_must_play_multiple = true,
-			level_talk_tutorial = true,
-			npc_talk = true,
-			npc_talk_interrupt_special = true,
-			player_alerts = true,
-			player_alerts_overcharge_explode = true,
-			player_alerts_overcharge_warning = true,
 			player_feedback = true,
-			seen_items = true,
-			story_talk = true,
+			level_talk = true,
+			enemy_basic_prio = true,
+			cut_scene_interrupt = true,
+			knocked_down_override = true,
+			help_talk = true,
 			story_talk_vce = true,
-		},
+			cut_scene_interrupt_three = true,
+			enemy_high_prio = true,
+			npc_talk_interrupt_special = true,
+			activate_ability = true,
+			level_talk_must_play_multiple = true,
+			enemy_alerts = true,
+			seen_items = true,
+			player_alerts_overcharge_warning = true,
+			cut_scene_interrupt_two = true,
+			player_alerts = true,
+			enemy_alerts_high = true
+		}
 	},
 	story_talk_must_reply = {
 		mutually_exclusive = false,
 		interrupted_by = {
 			level_talk_must_play = true,
-			player_alerts_boss = true,
+			player_alerts_boss = true
 		},
 		playable_during_category = {
-			activate_ability = true,
-			casual_talk = true,
 			default = true,
-			enemy_alerts = true,
-			enemy_alerts_high = true,
-			enemy_basic_prio = true,
-			enemy_high_prio = true,
-			guidance = true,
-			help_talk = true,
-			knocked_down_override = true,
-			level_talk = true,
 			npc_talk = true,
-			npc_talk_interrupt_special = true,
-			player_alerts = true,
-			player_alerts_overcharge_explode = true,
-			player_alerts_overcharge_warning = true,
-			player_feedback = true,
-			seen_items = true,
 			story_talk = true,
+			guidance = true,
+			player_alerts_overcharge_explode = true,
+			help_talk = true,
 			story_talk_vce = true,
-		},
+			casual_talk = true,
+			activate_ability = true,
+			player_feedback = true,
+			level_talk = true,
+			enemy_basic_prio = true,
+			enemy_alerts = true,
+			knocked_down_override = true,
+			enemy_high_prio = true,
+			npc_talk_interrupt_special = true,
+			seen_items = true,
+			player_alerts_overcharge_warning = true,
+			player_alerts = true,
+			enemy_alerts_high = true
+		}
 	},
 	casual_singing_01 = {
 		mutually_exclusive = true,
 		interrupted_by = {},
 		playable_during_category = {
-			casual_singing_02 = true,
-			casual_singing_03 = true,
 			default = true,
-			enemy_basic_prio = true,
 			enemy_high_prio = true,
-			story_talk_vce = true,
-		},
+			casual_singing_03 = true,
+			enemy_basic_prio = true,
+			casual_singing_02 = true,
+			story_talk_vce = true
+		}
 	},
 	casual_singing_02 = {
 		mutually_exclusive = true,
 		interrupted_by = {},
 		playable_during_category = {
-			casual_singing_01 = true,
-			casual_singing_03 = true,
 			default = true,
-			enemy_basic_prio = true,
 			enemy_high_prio = true,
+			casual_singing_03 = true,
+			enemy_basic_prio = true,
 			story_talk_vce = true,
-		},
+			casual_singing_01 = true
+		}
 	},
 	casual_singing_03 = {
 		mutually_exclusive = false,
 		interrupted_by = {
-			level_talk_must_play = true,
+			level_talk_must_play = true
 		},
 		playable_during_category = {
-			casual_singing_01 = true,
-			casual_singing_02 = true,
-			casual_singing_03 = true,
 			default = true,
-			enemy_basic_prio = true,
 			enemy_high_prio = true,
+			casual_singing_03 = true,
+			enemy_basic_prio = true,
+			casual_singing_02 = true,
 			story_talk_vce = true,
-		},
+			casual_singing_01 = true
+		}
 	},
 	npc_talk = {
 		mutually_exclusive = true,
 		interrupted_by = {
 			level_talk_tutorial = true,
-			npc_talk_interrupt = true,
 			npc_talk_interrupt_special = true,
+			npc_talk_interrupt = true
 		},
 		playable_during_category = {
-			activate_ability = true,
-			casual_talk = true,
 			default = true,
+			story_talk = true,
+			help_talk = true,
 			enemy_alerts = true,
-			enemy_alerts_high = true,
+			player_alerts_overcharge_explode = true,
+			level_talk_tutorial = true,
+			story_talk_keep = true,
+			casual_talk = true,
+			story_talk_vce = true,
+			player_feedback = true,
+			level_talk = true,
 			enemy_basic_prio = true,
+			activate_ability = true,
+			knocked_down_override = true,
 			enemy_high_prio = true,
 			guidance = true,
-			help_talk = true,
-			knocked_down_override = true,
-			level_talk = true,
-			level_talk_tutorial = true,
-			player_alerts = true,
-			player_alerts_overcharge_explode = true,
-			player_alerts_overcharge_warning = true,
-			player_feedback = true,
 			seen_items = true,
-			story_talk = true,
-			story_talk_keep = true,
-			story_talk_vce = true,
-		},
+			player_alerts_overcharge_warning = true,
+			player_alerts = true,
+			enemy_alerts_high = true
+		}
 	},
 	npc_talk_interrupt = {
 		mutually_exclusive = true,
 		interrupted_by = {
-			level_talk_tutorial = true,
 			npc_talk_interrupt_special = true,
+			level_talk_tutorial = true
 		},
 		playable_during_category = {
 			activate_ability = true,
-			boss_reaction_talk = true,
-			boss_talk = true,
-			casual_singing_01 = true,
-			casual_singing_02 = true,
-			casual_singing_03 = true,
-			casual_talk = true,
-			cut_scene = true,
-			cut_scene_interrupt = true,
-			cut_scene_interrupt_two = true,
-			default = true,
-			enemy_alerts = true,
 			enemy_alerts_high = true,
-			enemy_basic_prio = true,
-			enemy_high_prio = true,
-			guidance = true,
-			help_talk = true,
-			knocked_down_override = true,
-			level_talk = true,
-			level_talk_must_play = true,
-			level_talk_tutorial = true,
-			mutator_special_occasion = true,
-			npc_talk = true,
 			npc_talk_interrupt = true,
-			npc_talk_interrupt_special = true,
-			npc_talk_special = true,
-			player_alerts = true,
-			player_alerts_boss = true,
+			enemy_alerts = true,
+			player_feedback = true,
+			level_talk_tutorial = true,
+			boss_talk = true,
+			casual_talk = true,
+			help_talk = true,
+			story_talk = true,
+			npc_talk = true,
+			boss_reaction_talk = true,
+			story_talk_vce = true,
+			knocked_down_override = true,
 			player_alerts_overcharge_explode = true,
 			player_alerts_overcharge_warning = true,
-			player_feedback = true,
-			player_feedback_reply = true,
+			default = true,
+			casual_singing_01 = true,
+			guidance = true,
+			cut_scene = true,
+			mutator_special_occasion = true,
 			seen_items = true,
+			player_alerts = true,
+			casual_singing_03 = true,
 			special_occasion = true,
-			story_talk = true,
-			story_talk_vce = true,
-		},
+			player_alerts_boss = true,
+			npc_talk_special = true,
+			casual_singing_02 = true,
+			level_talk_must_play = true,
+			level_talk = true,
+			enemy_basic_prio = true,
+			cut_scene_interrupt = true,
+			enemy_high_prio = true,
+			npc_talk_interrupt_special = true,
+			player_feedback_reply = true,
+			cut_scene_interrupt_two = true
+		}
 	},
 	champion_opening = {
 		interrupted_by = {},
 		playable_during_category = {
-			activate_ability = true,
-			boss_reaction_talk = true,
+			enemy_alerts = true,
+			story_talk = true,
+			guidance = true,
+			default = true,
+			player_alerts_overcharge_explode = true,
+			level_talk = true,
 			boss_talk = true,
 			casual_talk = true,
-			default = true,
-			enemy_alerts = true,
-			enemy_alerts_high = true,
-			enemy_basic_prio = true,
-			enemy_high_prio = true,
-			guidance = true,
-			help_talk = true,
-			knocked_down_override = true,
-			level_talk = true,
-			npc_talk = true,
-			npc_talk_interrupt = true,
-			player_alerts = true,
-			player_alerts_boss = true,
-			player_alerts_overcharge_explode = true,
-			player_alerts_overcharge_warning = true,
+			boss_reaction_talk = true,
 			player_feedback = true,
-			seen_items = true,
-			story_talk = true,
+			npc_talk = true,
+			enemy_basic_prio = true,
+			npc_talk_interrupt = true,
+			knocked_down_override = true,
+			activate_ability = true,
 			story_talk_vce = true,
-		},
+			enemy_high_prio = true,
+			help_talk = true,
+			seen_items = true,
+			player_alerts_overcharge_warning = true,
+			player_alerts = true,
+			enemy_alerts_high = true,
+			player_alerts_boss = true
+		}
 	},
 	boss_talk = {
 		mutually_exclusive = true,
 		interrupted_by = {
-			boss_reaction_talk = true,
-			boss_talk_interrupt = true,
 			champion_opening = true,
+			boss_talk_interrupt = true,
+			boss_reaction_talk = true
 		},
 		playable_during_category = {
-			activate_ability = true,
+			default = true,
+			story_talk = true,
 			boss_reaction_talk = true,
+			guidance = true,
+			player_alerts_overcharge_explode = true,
+			enemy_alerts = true,
 			boss_talk = true,
 			casual_talk = true,
-			default = true,
-			enemy_alerts = true,
-			enemy_alerts_high = true,
-			enemy_basic_prio = true,
-			enemy_high_prio = true,
-			guidance = true,
-			help_talk = true,
-			knocked_down_override = true,
-			level_talk = true,
-			player_alerts = true,
-			player_alerts_boss = true,
-			player_alerts_overcharge_explode = true,
-			player_alerts_overcharge_warning = true,
+			activate_ability = true,
 			player_feedback = true,
-			seen_items = true,
-			story_talk = true,
+			level_talk = true,
+			enemy_basic_prio = true,
 			story_talk_vce = true,
-		},
+			knocked_down_override = true,
+			enemy_high_prio = true,
+			help_talk = true,
+			seen_items = true,
+			player_alerts_overcharge_warning = true,
+			player_alerts = true,
+			enemy_alerts_high = true,
+			player_alerts_boss = true
+		}
 	},
 	boss_talk_interrupt = {
 		mutually_exclusive = true,
 		interrupted_by = {
-			boss_reaction_talk = true,
 			champion_opening = true,
+			boss_reaction_talk = true
 		},
 		playable_during_category = {
-			activate_ability = true,
+			default = true,
+			story_talk = true,
 			boss_reaction_talk = true,
+			guidance = true,
+			player_alerts_overcharge_explode = true,
+			enemy_alerts = true,
 			boss_talk = true,
 			casual_talk = true,
-			default = true,
-			enemy_alerts = true,
-			enemy_alerts_high = true,
-			enemy_basic_prio = true,
-			enemy_high_prio = true,
-			guidance = true,
-			help_talk = true,
-			knocked_down_override = true,
-			level_talk = true,
-			player_alerts = true,
-			player_alerts_overcharge_explode = true,
-			player_alerts_overcharge_warning = true,
+			activate_ability = true,
 			player_feedback = true,
-			seen_items = true,
-			story_talk = true,
+			level_talk = true,
+			enemy_basic_prio = true,
 			story_talk_vce = true,
-		},
+			knocked_down_override = true,
+			enemy_high_prio = true,
+			help_talk = true,
+			seen_items = true,
+			player_alerts_overcharge_warning = true,
+			player_alerts = true,
+			enemy_alerts_high = true
+		}
 	},
 	boss_reaction_talk = {
 		mutually_exclusive = true,
 		interrupted_by = {
 			boss_talk = true,
-			champion_opening = true,
+			champion_opening = true
 		},
 		playable_during_category = {
-			activate_ability = true,
-			casual_talk = true,
 			default = true,
+			story_talk = true,
+			help_talk = true,
 			enemy_alerts = true,
-			enemy_alerts_high = true,
+			player_alerts_overcharge_explode = true,
+			activate_ability = true,
+			story_talk_vce = true,
+			casual_talk = true,
+			player_feedback = true,
+			level_talk = true,
 			enemy_basic_prio = true,
+			knocked_down_override = true,
 			enemy_high_prio = true,
 			guidance = true,
-			help_talk = true,
-			knocked_down_override = true,
-			level_talk = true,
-			player_alerts = true,
-			player_alerts_overcharge_explode = true,
-			player_alerts_overcharge_warning = true,
-			player_feedback = true,
 			seen_items = true,
-			story_talk = true,
-			story_talk_vce = true,
-		},
+			player_alerts_overcharge_warning = true,
+			player_alerts = true,
+			enemy_alerts_high = true
+		}
 	},
 	enemy_basic_prio = {
 		interrupted_by = {
-			enemy_high_prio = true,
+			enemy_high_prio = true
 		},
 		playable_during_category = {
-			boss_reaction_talk = true,
+			enemy_alerts = true,
+			knocked_down_override = true,
+			help_talk = true,
+			player_feedback = true,
+			player_alerts_overcharge_explode = true,
+			default = true,
 			boss_talk = true,
 			casual_talk = true,
-			default = true,
-			enemy_alerts = true,
-			enemy_alerts_high = true,
-			guidance = true,
-			help_talk = true,
-			knocked_down_override = true,
-			level_talk = true,
-			player_alerts = true,
-			player_alerts_overcharge_explode = true,
-			player_alerts_overcharge_warning = true,
-			player_feedback = true,
-			seen_items = true,
 			story_talk = true,
+			level_talk = true,
+			boss_reaction_talk = true,
 			story_talk_vce = true,
-		},
+			guidance = true,
+			seen_items = true,
+			player_alerts_overcharge_warning = true,
+			player_alerts = true,
+			enemy_alerts_high = true
+		}
 	},
 	enemy_high_prio = {
 		interrupted_by = {},
 		playable_during_category = {
-			activate_ability = true,
-			boss_reaction_talk = true,
+			default = true,
+			story_talk = true,
+			guidance = true,
+			enemy_alerts = true,
+			player_alerts_overcharge_explode = true,
+			enemy_basic_prio = true,
 			boss_talk = true,
 			casual_talk = true,
-			default = true,
-			enemy_alerts = true,
-			enemy_alerts_high = true,
-			enemy_basic_prio = true,
-			guidance = true,
-			help_talk = true,
-			knocked_down_override = true,
-			level_talk = true,
-			player_alerts = true,
-			player_alerts_overcharge_explode = true,
-			player_alerts_overcharge_warning = true,
-			player_feedback = true,
-			seen_items = true,
-			special_occasion = true,
-			story_talk = true,
 			story_talk_vce = true,
-		},
-	},
+			player_feedback = true,
+			level_talk = true,
+			boss_reaction_talk = true,
+			special_occasion = true,
+			knocked_down_override = true,
+			activate_ability = true,
+			help_talk = true,
+			seen_items = true,
+			player_alerts_overcharge_warning = true,
+			player_alerts = true,
+			enemy_alerts_high = true
+		}
+	}
 }
 SpecialSubtitleEvents = {
 	end_boss_outro = {
-		outro_subtitle_01 = 0,
-		outro_subtitle_02 = 11,
-		outro_subtitle_03 = 17,
 		outro_subtitle_04 = 24,
-		outro_subtitle_05 = 30,
-		outro_subtitle_06 = 37,
-		outro_subtitle_07 = 40,
-		outro_subtitle_08 = 45,
 		outro_subtitle_09 = 53,
+		outro_subtitle_03 = 17,
+		outro_subtitle_06 = 37,
+		outro_subtitle_05 = 30,
+		outro_subtitle_08 = 45,
+		outro_subtitle_07 = 40,
+		outro_subtitle_02 = 11,
+		outro_subtitle_01 = 0
 	},
 	blightreaper_1 = {
-		nbr_vo_evil_sword_pickup_01 = 0,
+		nbr_vo_evil_sword_pickup_01 = 0
 	},
 	blightreaper_2 = {
-		nbr_vo_evil_sword_pickup_02 = 0,
+		nbr_vo_evil_sword_pickup_02 = 0
 	},
 	blightreaper_3 = {
-		nbr_vo_evil_sword_pickup_03 = 0,
+		nbr_vo_evil_sword_pickup_03 = 0
 	},
 	blightreaper_4 = {
-		nbr_vo_evil_sword_pickup_04 = 0,
-	},
+		nbr_vo_evil_sword_pickup_04 = 0
+	}
 }
 
-local NEUTRAL_COLOR = {
+local var_0_3 = {
 	255,
 	255,
 	217,
-	192,
+	192
 }
-local HOSTILE_COLOR = {
+local var_0_4 = {
 	255,
 	180,
 	37,
-	37,
+	37
 }
 
 DialogueSettings.speaker_color_lookup = {
-	default = NEUTRAL_COLOR,
+	default = var_0_3,
 	bright_wizard = {
 		255,
 		255,
 		93,
-		0,
+		0
 	},
 	wood_elf = {
 		255,
 		55,
 		123,
-		44,
+		44
 	},
 	witch_hunter = {
 		255,
 		153,
 		184,
-		193,
+		193
 	},
 	empire_soldier = {
 		255,
 		204,
 		128,
-		128,
+		128
 	},
 	dwarf_ranger = {
 		255,
 		187,
 		235,
-		30,
+		30
 	},
-	inn_keeper = NEUTRAL_COLOR,
-	ferry_lady = NEUTRAL_COLOR,
-	catrinne = NEUTRAL_COLOR,
-	npc_cage_villager = NEUTRAL_COLOR,
-	player_gods = NEUTRAL_COLOR,
-	chaos_exalted_sorcerer_drachenfels = HOSTILE_COLOR,
-	npc_gatekeeper_daemon = HOSTILE_COLOR,
-	npc_whisper_daemon = HOSTILE_COLOR,
-	blightreaper = HOSTILE_COLOR,
-	blightreaper_alt = HOSTILE_COLOR,
-	chaos_exalted_champion = HOSTILE_COLOR,
-	chaos_exalted_champion2 = HOSTILE_COLOR,
-	chaos_exalted_champion_norsca = HOSTILE_COLOR,
-	chaos_exalted_champion_warcamp = HOSTILE_COLOR,
-	chaos_exalted_sorcerer = HOSTILE_COLOR,
-	grey_seer = HOSTILE_COLOR,
-	skaven_storm_vermin_warlord = HOSTILE_COLOR,
+	inn_keeper = var_0_3,
+	ferry_lady = var_0_3,
+	catrinne = var_0_3,
+	npc_cage_villager = var_0_3,
+	player_gods = var_0_3,
+	chaos_exalted_sorcerer_drachenfels = var_0_4,
+	npc_gatekeeper_daemon = var_0_4,
+	npc_whisper_daemon = var_0_4,
+	blightreaper = var_0_4,
+	blightreaper_alt = var_0_4,
+	chaos_exalted_champion = var_0_4,
+	chaos_exalted_champion2 = var_0_4,
+	chaos_exalted_champion_norsca = var_0_4,
+	chaos_exalted_champion_warcamp = var_0_4,
+	chaos_exalted_sorcerer = var_0_4,
+	grey_seer = var_0_4,
+	skaven_storm_vermin_warlord = var_0_4,
 	sofia_necromancer = {
 		255,
 		0,
 		255,
-		255,
-	},
+		255
+	}
 }

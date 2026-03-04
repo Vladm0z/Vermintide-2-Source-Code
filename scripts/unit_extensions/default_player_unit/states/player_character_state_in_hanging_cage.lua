@@ -1,75 +1,73 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_in_hanging_cage.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_in_hanging_cage.lua
 
 PlayerCharacterStateInHangingCage = class(PlayerCharacterStateInHangingCage, PlayerCharacterState)
 
-PlayerCharacterStateInHangingCage.init = function (self, character_state_init_context)
-	PlayerCharacterState.init(self, character_state_init_context, "in_hanging_cage")
+function PlayerCharacterStateInHangingCage.init(arg_1_0, arg_1_1)
+	PlayerCharacterState.init(arg_1_0, arg_1_1, "in_hanging_cage")
 end
 
-PlayerCharacterStateInHangingCage.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
-	CharacterStateHelper.stop_weapon_actions(self.inventory_extension, "in_hanging_cage")
-	CharacterStateHelper.stop_career_abilities(self.career_extension, "in_hanging_cage")
+function PlayerCharacterStateInHangingCage.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	CharacterStateHelper.stop_weapon_actions(arg_2_0.inventory_extension, "in_hanging_cage")
+	CharacterStateHelper.stop_career_abilities(arg_2_0.career_extension, "in_hanging_cage")
 
-	local cage_unit = params.cage_unit
+	local var_2_0 = arg_2_7.cage_unit
 
-	self.cage_unit = cage_unit
+	arg_2_0.cage_unit = var_2_0
 
-	LocomotionUtils.enable_linked_movement(self.world, unit, cage_unit, 0, Vector3.zero())
+	LocomotionUtils.enable_linked_movement(arg_2_0.world, arg_2_1, var_2_0, 0, Vector3.zero())
 
-	local include_local_player = true
+	local var_2_1 = true
 
-	CharacterStateHelper.show_inventory_3p(unit, false, include_local_player, self.is_server, self.inventory_extension)
+	CharacterStateHelper.show_inventory_3p(arg_2_1, false, var_2_1, arg_2_0.is_server, arg_2_0.inventory_extension)
 
-	local animations = params.animations
-	local idle_animation = animations.idle
+	local var_2_2 = arg_2_7.animations
+	local var_2_3 = var_2_2.idle
 
-	CharacterStateHelper.play_animation_event(unit, idle_animation)
+	CharacterStateHelper.play_animation_event(arg_2_1, var_2_3)
 
-	self.falling_animation = animations.falling
-	self.landing_animation = animations.landing
-	self.state = "hanging"
+	arg_2_0.falling_animation = var_2_2.falling
+	arg_2_0.landing_animation = var_2_2.landing
+	arg_2_0.state = "hanging"
 end
 
-PlayerCharacterStateInHangingCage.on_exit = function (self, unit, input, dt, context, t, next_state)
-	local status_extension = self.status_extension
-
-	status_extension:set_in_hanging_cage(false)
+function PlayerCharacterStateInHangingCage.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	arg_3_0.status_extension:set_in_hanging_cage(false)
 end
 
-PlayerCharacterStateInHangingCage.update = function (self, unit, input, dt, context, t)
-	local csm = self.csm
-	local status_extension = self.status_extension
-	local current_state = self.state
-	local new_state = status_extension.in_hanging_cage_state
-	local cage_unit = self.cage_unit
-	local cage_rotation = Unit.local_rotation(cage_unit, 0)
+function PlayerCharacterStateInHangingCage.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	local var_4_0 = arg_4_0.csm
+	local var_4_1 = arg_4_0.status_extension
+	local var_4_2 = arg_4_0.state
+	local var_4_3 = var_4_1.in_hanging_cage_state
+	local var_4_4 = arg_4_0.cage_unit
+	local var_4_5 = Unit.local_rotation(var_4_4, 0)
 
-	Unit.set_local_rotation(unit, 0, cage_rotation)
+	Unit.set_local_rotation(arg_4_1, 0, var_4_5)
 
-	if current_state ~= new_state then
-		if new_state == "falling" then
-			local falling_animation = self.falling_animation
+	if var_4_2 ~= var_4_3 then
+		if var_4_3 == "falling" then
+			local var_4_6 = arg_4_0.falling_animation
 
-			if falling_animation then
-				CharacterStateHelper.play_animation_event(unit, falling_animation)
+			if var_4_6 then
+				CharacterStateHelper.play_animation_event(arg_4_1, var_4_6)
 			end
-		elseif new_state == "landed" then
-			local landing_animation = self.landing_animation
+		elseif var_4_3 == "landed" then
+			local var_4_7 = arg_4_0.landing_animation
 
-			CharacterStateHelper.play_animation_event(unit, landing_animation)
-			LocomotionUtils.disable_linked_movement(unit)
+			CharacterStateHelper.play_animation_event(arg_4_1, var_4_7)
+			LocomotionUtils.disable_linked_movement(arg_4_1)
 
-			local current_position = POSITION_LOOKUP[unit]
-			local locomotion_extension = self.locomotion_extension
+			local var_4_8 = POSITION_LOOKUP[arg_4_1]
+			local var_4_9 = arg_4_0.locomotion_extension
 
-			locomotion_extension:teleport_to(current_position)
-			locomotion_extension:enable_script_driven_movement()
-			self.health_extension:knock_down(unit)
-			csm:change_state("knocked_down", {
-				already_in_ko_anim = true,
+			var_4_9:teleport_to(var_4_8)
+			var_4_9:enable_script_driven_movement()
+			arg_4_0.health_extension:knock_down(arg_4_1)
+			var_4_0:change_state("knocked_down", {
+				already_in_ko_anim = true
 			})
 		end
 
-		self.state = new_state
+		arg_4_0.state = var_4_3
 	end
 end

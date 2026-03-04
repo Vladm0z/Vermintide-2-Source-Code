@@ -1,271 +1,258 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/chaos_sorcerer/bt_chaos_sorcerer_plague_skulk_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/chaos_sorcerer/bt_chaos_sorcerer_plague_skulk_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTChaosSorcererPlagueSkulkAction = class(BTChaosSorcererPlagueSkulkAction, BTNode)
 
-local BTChaosSorcererPlagueSkulkAction = BTChaosSorcererPlagueSkulkAction
-local POSITION_LOOKUP = POSITION_LOOKUP
+local var_0_0 = BTChaosSorcererPlagueSkulkAction
+local var_0_1 = POSITION_LOOKUP
 
-BTChaosSorcererPlagueSkulkAction.init = function (self, ...)
-	BTChaosSorcererPlagueSkulkAction.super.init(self, ...)
+function var_0_0.init(arg_1_0, ...)
+	var_0_0.super.init(arg_1_0, ...)
 end
 
-BTChaosSorcererPlagueSkulkAction.name = "BTChaosSorcererPlagueSkulkAction"
+var_0_0.name = "BTChaosSorcererPlagueSkulkAction"
 
-BTChaosSorcererPlagueSkulkAction.enter = function (self, unit, blackboard, t)
-	local action = self._tree_node.action_data
-	local breed = blackboard.breed
+function var_0_0.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_0._tree_node.action_data
+	local var_2_1 = arg_2_2.breed
 
-	Managers.state.entity:system("surrounding_aware_system"):add_system_event(unit, "heard_enemy", DialogueSettings.hear_chaos_corruptor_sorcerer, "enemy_tag", breed.name)
+	Managers.state.entity:system("surrounding_aware_system"):add_system_event(arg_2_1, "heard_enemy", DialogueSettings.hear_chaos_corruptor_sorcerer, "enemy_tag", var_2_1.name)
 
-	local skulk_data = blackboard.skulk_data or {}
+	local var_2_2 = arg_2_2.skulk_data or {}
 
-	blackboard.skulk_data = skulk_data
-	skulk_data.direction = skulk_data.direction or 1 - math.random(0, 1) * 2
-	skulk_data.radius = skulk_data.radius or blackboard.target_dist
-	blackboard.action = action
+	arg_2_2.skulk_data = var_2_2
+	var_2_2.direction = var_2_2.direction or 1 - math.random(0, 1) * 2
+	var_2_2.radius = var_2_2.radius or arg_2_2.target_dist
+	arg_2_2.action = var_2_0
 
-	if blackboard.move_state ~= "idle" then
-		self:idle(unit, blackboard)
+	if arg_2_2.move_state ~= "idle" then
+		arg_2_0:idle(arg_2_1, arg_2_2)
 	end
 
-	LocomotionUtils.set_animation_driven_movement(unit, false)
+	LocomotionUtils.set_animation_driven_movement(arg_2_1, false)
 
-	if blackboard.move_pos then
-		local move_pos = blackboard.move_pos:unbox()
+	if arg_2_2.move_pos then
+		local var_2_3 = arg_2_2.move_pos:unbox()
 
-		self:move_to(move_pos, unit, blackboard)
+		arg_2_0:move_to(var_2_3, arg_2_1, arg_2_2)
 	end
 
-	blackboard.ready_to_summon = false
+	arg_2_2.ready_to_summon = false
 
-	local skulk_time = 6
+	local var_2_4 = 6
 
-	if action.skulk_time then
-		if action.initial_skulk_time and not blackboard.initial_skulk_finished then
-			skulk_time = math.random(action.initial_skulk_time[1], action.initial_skulk_time[2])
+	if var_2_0.skulk_time then
+		if var_2_0.initial_skulk_time and not arg_2_2.initial_skulk_finished then
+			var_2_4 = math.random(var_2_0.initial_skulk_time[1], var_2_0.initial_skulk_time[2])
 		else
-			skulk_time = math.random(action.skulk_time[1], action.skulk_time[2])
+			var_2_4 = math.random(var_2_0.skulk_time[1], var_2_0.skulk_time[2])
 		end
 	end
 
-	if not blackboard.plague_wave_data then
-		blackboard.plague_wave_data = {
-			plague_wave_timer = t + skulk_time,
-			physics_world = World.get_data(blackboard.world, "physics_world"),
+	if not arg_2_2.plague_wave_data then
+		arg_2_2.plague_wave_data = {
+			plague_wave_timer = arg_2_3 + var_2_4,
+			physics_world = World.get_data(arg_2_2.world, "physics_world"),
 			target_starting_pos = Vector3Box(),
-			plague_wave_rot = QuaternionBox(),
+			plague_wave_rot = QuaternionBox()
 		}
 	end
 
-	blackboard.health_extension = ScriptUnit.extension(unit, "health_system")
-	blackboard.teleport_health_percent = blackboard.health_extension:current_health_percent() - action.part_hp_lost_to_teleport
-	blackboard.travel_teleport_timer = t + ConflictUtils.random_interval(action.teleport_cooldown)
-	blackboard.face_target_while_summoning = true
-	blackboard.summon_vo_timer = blackboard.summon_vo_timer or t
-	blackboard.initial_skulk_finished = true
+	arg_2_2.health_extension = ScriptUnit.extension(arg_2_1, "health_system")
+	arg_2_2.teleport_health_percent = arg_2_2.health_extension:current_health_percent() - var_2_0.part_hp_lost_to_teleport
+	arg_2_2.travel_teleport_timer = arg_2_3 + ConflictUtils.random_interval(var_2_0.teleport_cooldown)
+	arg_2_2.face_target_while_summoning = true
+	arg_2_2.summon_vo_timer = arg_2_2.summon_vo_timer or arg_2_3
+	arg_2_2.initial_skulk_finished = true
 
-	if not blackboard.played_foreshadow then
-		local audio_system = Managers.state.entity:system("audio_system")
-		local skulk_foreshadowing_sound = action.skulk_foreshadowing_sound
+	if not arg_2_2.played_foreshadow then
+		local var_2_5 = Managers.state.entity:system("audio_system")
+		local var_2_6 = var_2_0.skulk_foreshadowing_sound
 
-		audio_system:play_audio_unit_event(skulk_foreshadowing_sound, unit)
+		var_2_5:play_audio_unit_event(var_2_6, arg_2_1)
 
-		blackboard.played_foreshadow = true
+		arg_2_2.played_foreshadow = true
 	end
 end
 
-BTChaosSorcererPlagueSkulkAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	local skulk_data = blackboard.skulk_data
-	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
-	local navigation_extension = blackboard.navigation_extension
+function var_0_0.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	local var_3_0 = arg_3_2.skulk_data
+	local var_3_1 = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
+	local var_3_2 = arg_3_2.navigation_extension
 
-	navigation_extension:set_max_speed(default_move_speed)
+	var_3_2:set_max_speed(var_3_1)
 
-	if reason == "aborted" then
-		local path_found = navigation_extension:is_following_path()
+	if arg_3_4 == "aborted" then
+		local var_3_3 = var_3_2:is_following_path()
 
-		if blackboard.move_pos and path_found and blackboard.move_state == "idle" then
-			self:start_move_animation(unit, blackboard)
+		if arg_3_2.move_pos and var_3_3 and arg_3_2.move_state == "idle" then
+			arg_3_0:start_move_animation(arg_3_1, arg_3_2)
 		end
 	end
 
-	if blackboard.played_foreshadow then
-		local audio_system = Managers.state.entity:system("audio_system")
-		local skulk_foreshadowing_sound = blackboard.action.skulk_foreshadowing_sound_stop
+	if arg_3_2.played_foreshadow then
+		local var_3_4 = Managers.state.entity:system("audio_system")
+		local var_3_5 = arg_3_2.action.skulk_foreshadowing_sound_stop
 
-		audio_system:play_audio_unit_event(skulk_foreshadowing_sound, unit)
+		var_3_4:play_audio_unit_event(var_3_5, arg_3_1)
 	end
 
-	skulk_data.animation_state = nil
-	blackboard.action = nil
+	var_3_0.animation_state = nil
+	arg_3_2.action = nil
 
-	if reason == "failed" then
-		blackboard.target_unit = nil
+	if arg_3_4 == "failed" then
+		arg_3_2.target_unit = nil
 	end
 end
 
-BTChaosSorcererPlagueSkulkAction.run = function (self, unit, blackboard, t, dt)
-	if not AiUtils.is_of_interest_plague_wave_sorcerer(blackboard.target_unit) then
+function var_0_0.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	if not AiUtils.is_of_interest_plague_wave_sorcerer(arg_4_2.target_unit) then
 		return "failed"
 	end
 
-	local ai_navigation = blackboard.navigation_extension
-	local path_found = ai_navigation:is_following_path()
-	local failed_attempts = ai_navigation:number_failed_move_attempts()
-	local action = blackboard.action
-	local plague_wave_data = blackboard.plague_wave_data
-	local skulk_data = blackboard.skulk_data
-	local target_unit = blackboard.target_unit
+	local var_4_0 = arg_4_2.navigation_extension
+	local var_4_1 = var_4_0:is_following_path()
+	local var_4_2 = var_4_0:number_failed_move_attempts()
+	local var_4_3 = arg_4_2.action
+	local var_4_4 = arg_4_2.plague_wave_data
+	local var_4_5 = arg_4_2.skulk_data
+	local var_4_6 = arg_4_2.target_unit
 
-	if blackboard.move_pos and path_found and blackboard.move_state == "idle" then
-		self:start_move_animation(unit, blackboard)
+	if arg_4_2.move_pos and var_4_1 and arg_4_2.move_state == "idle" then
+		arg_4_0:start_move_animation(arg_4_1, arg_4_2)
 	end
 
-	local current_health_percent = blackboard.health_extension:current_health_percent()
+	if arg_4_2.health_extension:current_health_percent() < arg_4_2.teleport_health_percent then
+		local var_4_7 = var_0_1[arg_4_1]
+		local var_4_8 = math.random() * 5 + math.random() * 5 + math.random() * 5
+		local var_4_9 = var_4_8 * 0.5 + 10
+		local var_4_10 = 5
+		local var_4_11 = ConflictUtils.get_spawn_pos_on_circle(arg_4_2.nav_world, var_4_7, var_4_9, var_4_8, var_4_10)
 
-	if current_health_percent < blackboard.teleport_health_percent then
-		local unit_pos = POSITION_LOOKUP[unit]
-		local spread = math.random() * 5 + math.random() * 5 + math.random() * 5
-		local dist = spread * 0.5 + 10
-		local tries = 5
-		local teleport_pos = ConflictUtils.get_spawn_pos_on_circle(blackboard.nav_world, unit_pos, dist, spread, tries)
-
-		if teleport_pos then
-			blackboard.quick_teleport_exit_pos = Vector3Box(teleport_pos)
-			blackboard.quick_teleport = true
-			skulk_data.direction = nil
-			blackboard.move_pos = nil
+		if var_4_11 then
+			arg_4_2.quick_teleport_exit_pos = Vector3Box(var_4_11)
+			arg_4_2.quick_teleport = true
+			var_4_5.direction = nil
+			arg_4_2.move_pos = nil
 
 			return "done"
 		end
 	end
 
-	if blackboard.vanish_timer and t < blackboard.vanish_timer then
-		local ping_system = Managers.state.entity:system("ping_system")
-
-		ping_system:remove_ping_from_unit(unit)
+	if arg_4_2.vanish_timer and arg_4_3 < arg_4_2.vanish_timer then
+		Managers.state.entity:system("ping_system"):remove_ping_from_unit(arg_4_1)
 
 		return "running"
 	end
 
-	if t > blackboard.travel_teleport_timer then
-		local teleport_pos = self:get_skulk_target(unit, blackboard, true)
+	if arg_4_3 > arg_4_2.travel_teleport_timer then
+		local var_4_12 = arg_4_0:get_skulk_target(arg_4_1, arg_4_2, true)
 
-		if teleport_pos then
-			blackboard.quick_teleport_exit_pos = Vector3Box(teleport_pos)
-			blackboard.quick_teleport = true
-			blackboard.move_pos = nil
+		if var_4_12 then
+			arg_4_2.quick_teleport_exit_pos = Vector3Box(var_4_12)
+			arg_4_2.quick_teleport = true
+			arg_4_2.move_pos = nil
 
 			return "done"
 		end
 	end
 
-	if blackboard.vanish_countdown and t > blackboard.vanish_countdown and self:vanish(unit, blackboard, t) then
+	if arg_4_2.vanish_countdown and arg_4_3 > arg_4_2.vanish_countdown and arg_4_0:vanish(arg_4_1, arg_4_2, arg_4_3) then
 		return "done"
 	end
 
-	if t > plague_wave_data.plague_wave_timer and not ScriptUnit.extension(target_unit, "status_system"):is_invisible() then
-		local teleport_position = self:get_plague_wave_cast_position(unit, blackboard, blackboard.plague_wave_data)
+	if arg_4_3 > var_4_4.plague_wave_timer and not ScriptUnit.extension(var_4_6, "status_system"):is_invisible() then
+		local var_4_13 = arg_4_0:get_plague_wave_cast_position(arg_4_1, arg_4_2, arg_4_2.plague_wave_data)
 
-		if teleport_position then
-			local skulk_time = 6
+		if var_4_13 then
+			local var_4_14 = 6
 
-			if action.skulk_time then
-				skulk_time = math.random(action.skulk_time[1], action.skulk_time[2])
+			if var_4_3.skulk_time then
+				var_4_14 = math.random(var_4_3.skulk_time[1], var_4_3.skulk_time[2])
 			end
 
-			blackboard.face_player_when_teleporting = true
-			blackboard.quick_teleport_exit_pos = Vector3Box(teleport_position)
-			blackboard.quick_teleport = true
-			blackboard.move_pos = nil
-			blackboard.vanish_countdown = t + action.vanish_countdown
-			plague_wave_data.plague_wave_timer = t + skulk_time
-			blackboard.ready_to_summon = true
-			blackboard.num_plague_waves = blackboard.num_plague_waves and blackboard.num_plague_waves + 1 or 1
+			arg_4_2.face_player_when_teleporting = true
+			arg_4_2.quick_teleport_exit_pos = Vector3Box(var_4_13)
+			arg_4_2.quick_teleport = true
+			arg_4_2.move_pos = nil
+			arg_4_2.vanish_countdown = arg_4_3 + var_4_3.vanish_countdown
+			var_4_4.plague_wave_timer = arg_4_3 + var_4_14
+			arg_4_2.ready_to_summon = true
+			arg_4_2.num_plague_waves = arg_4_2.num_plague_waves and arg_4_2.num_plague_waves + 1 or 1
 
-			if blackboard.num_plague_waves >= 4 then
-				blackboard.num_plague_waves = 0
+			if arg_4_2.num_plague_waves >= 4 then
+				arg_4_2.num_plague_waves = 0
 			end
 
-			if blackboard.played_foreshadow then
-				local audio_system = Managers.state.entity:system("audio_system")
-				local skulk_foreshadowing_sound = action.skulk_foreshadowing_sound_stop
+			if arg_4_2.played_foreshadow then
+				local var_4_15 = Managers.state.entity:system("audio_system")
+				local var_4_16 = var_4_3.skulk_foreshadowing_sound_stop
 
-				audio_system:play_audio_unit_event(skulk_foreshadowing_sound, unit)
+				var_4_15:play_audio_unit_event(var_4_16, arg_4_1)
 			end
 
 			return "done"
 		end
 	end
 
-	local position = blackboard.move_pos
-
-	if position then
-		local at_goal = self:at_goal(unit, blackboard)
-
-		if at_goal or failed_attempts > 0 then
-			blackboard.move_pos = nil
+	if arg_4_2.move_pos then
+		if arg_4_0:at_goal(arg_4_1, arg_4_2) or var_4_2 > 0 then
+			arg_4_2.move_pos = nil
 		end
 
 		return "running"
 	end
 
-	position = self:get_skulk_target(unit, blackboard)
+	local var_4_17 = arg_4_0:get_skulk_target(arg_4_1, arg_4_2)
 
-	if position then
-		self:move_to(position, unit, blackboard)
+	if var_4_17 then
+		arg_4_0:move_to(var_4_17, arg_4_1, arg_4_2)
 
 		return "running"
 	end
 
-	if blackboard.move_state ~= "idle" then
-		self:idle(unit, blackboard)
+	if arg_4_2.move_state ~= "idle" then
+		arg_4_0:idle(arg_4_1, arg_4_2)
 	end
 
 	return "running"
 end
 
-BTChaosSorcererPlagueSkulkAction.at_goal = function (self, unit, blackboard)
-	local position_boxed = blackboard.move_pos
-	local unit_position = POSITION_LOOKUP[unit]
+function var_0_0.at_goal(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = arg_5_2.move_pos
+	local var_5_1 = var_0_1[arg_5_1]
 
-	if not position_boxed then
+	if not var_5_0 then
 		return false
 	end
 
-	local goal_position = position_boxed:unbox()
-	local goal_distance = Vector3.distance_squared(unit_position, goal_position)
+	local var_5_2 = var_5_0:unbox()
 
-	if goal_distance < 0.25 then
+	if Vector3.distance_squared(var_5_1, var_5_2) < 0.25 then
 		return true
 	end
 end
 
-BTChaosSorcererPlagueSkulkAction.move_to = function (self, position, unit, blackboard)
-	local ai_navigation = blackboard.navigation_extension
+function var_0_0.move_to(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	arg_6_3.navigation_extension:move_to(arg_6_1)
 
-	ai_navigation:move_to(position)
-
-	blackboard.move_pos = Vector3Box(position)
+	arg_6_3.move_pos = Vector3Box(arg_6_1)
 end
 
-BTChaosSorcererPlagueSkulkAction.vanish = function (self, unit, blackboard, t)
-	local action = blackboard.action
-	local escape_position = BTNinjaVanishAction.find_escape_position(unit, blackboard)
+function var_0_0.vanish(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	local var_7_0 = arg_7_2.action
+	local var_7_1 = BTNinjaVanishAction.find_escape_position(arg_7_1, arg_7_2)
 
-	if escape_position then
-		blackboard.quick_teleport_exit_pos = Vector3Box(escape_position)
-		blackboard.quick_teleport = true
-		blackboard.move_pos = nil
-		blackboard.vanish_countdown = nil
-		blackboard.vanish_timer = t + action.vanish_timer
+	if var_7_1 then
+		arg_7_2.quick_teleport_exit_pos = Vector3Box(var_7_1)
+		arg_7_2.quick_teleport = true
+		arg_7_2.move_pos = nil
+		arg_7_2.vanish_countdown = nil
+		arg_7_2.vanish_timer = arg_7_3 + var_7_0.vanish_timer
 
-		local ai_navigation = blackboard.navigation_extension
-
-		ai_navigation:move_to(escape_position)
-		blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
+		arg_7_2.navigation_extension:move_to(var_7_1)
+		arg_7_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
 
 		return true
 	end
@@ -273,148 +260,145 @@ BTChaosSorcererPlagueSkulkAction.vanish = function (self, unit, blackboard, t)
 	return false
 end
 
-BTChaosSorcererPlagueSkulkAction.idle = function (self, unit, blackboard)
-	self:anim_event(unit, blackboard, "idle")
+function var_0_0.idle(arg_8_0, arg_8_1, arg_8_2)
+	arg_8_0:anim_event(arg_8_1, arg_8_2, "idle")
 
-	blackboard.move_state = "idle"
+	arg_8_2.move_state = "idle"
 end
 
-BTChaosSorcererPlagueSkulkAction.start_move_animation = function (self, unit, blackboard)
-	local move_animation = blackboard.action.move_animation
+function var_0_0.start_move_animation(arg_9_0, arg_9_1, arg_9_2)
+	local var_9_0 = arg_9_2.action.move_animation
 
-	self:anim_event(unit, blackboard, move_animation)
+	arg_9_0:anim_event(arg_9_1, arg_9_2, var_9_0)
 
-	blackboard.move_state = "moving"
+	arg_9_2.move_state = "moving"
 end
 
-BTChaosSorcererPlagueSkulkAction.anim_event = function (self, unit, blackboard, anim)
-	local skulk_data = blackboard.skulk_data
+function var_0_0.anim_event(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	local var_10_0 = arg_10_2.skulk_data
 
-	if skulk_data.animation_state ~= anim then
-		Managers.state.network:anim_event(unit, anim)
+	if var_10_0.animation_state ~= arg_10_3 then
+		Managers.state.network:anim_event(arg_10_1, arg_10_3)
 
-		skulk_data.animation_state = anim
+		var_10_0.animation_state = arg_10_3
 	end
 end
 
-local debug_plague_wave = false
+local var_0_2 = false
 
-BTChaosSorcererPlagueSkulkAction.get_plague_wave_cast_position = function (self, unit, blackboard, plague_wave_data)
-	local action = blackboard.action
-	local nav_world = blackboard.nav_world
-	local target_unit = blackboard.target_unit
-	local target_position = POSITION_LOOKUP[target_unit]
-	local projected_start_pos = LocomotionUtils.pos_on_mesh(nav_world, target_position, 1, 1)
-	local Vector3_dist = Vector3.distance
-	local min_dist = action.min_wave_distance
-	local max_dist = action.max_wave_distance
+function var_0_0.get_plague_wave_cast_position(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+	local var_11_0 = arg_11_2.action
+	local var_11_1 = arg_11_2.nav_world
+	local var_11_2 = arg_11_2.target_unit
+	local var_11_3 = var_0_1[var_11_2]
+	local var_11_4 = LocomotionUtils.pos_on_mesh(var_11_1, var_11_3, 1, 1)
+	local var_11_5 = Vector3.distance
+	local var_11_6 = var_11_0.min_wave_distance
+	local var_11_7 = var_11_0.max_wave_distance
 
-	if blackboard.num_plague_waves and blackboard.num_plague_waves >= 3 then
-		max_dist = action.third_wave_max_distance
-		min_dist = action.third_wave_min_distance
+	if arg_11_2.num_plague_waves and arg_11_2.num_plague_waves >= 3 then
+		var_11_7 = var_11_0.third_wave_max_distance
+		var_11_6 = var_11_0.third_wave_min_distance
 	end
 
-	local mid_dist = (max_dist + min_dist) / 2
-	local pi = math.pi
-	local plague_wave_cast_position
-	local target_start_pos = projected_start_pos
+	local var_11_8 = (var_11_7 + var_11_6) / 2
+	local var_11_9 = math.pi
+	local var_11_10
+	local var_11_11 = var_11_4
 
-	if not target_start_pos then
-		local p = GwNavQueries.inside_position_from_outside_position(nav_world, target_position, 6, 6, 8, 0.5)
+	if not var_11_11 then
+		local var_11_12 = GwNavQueries.inside_position_from_outside_position(var_11_1, var_11_3, 6, 6, 8, 0.5)
 
-		if p then
-			target_start_pos = p
+		if var_11_12 then
+			var_11_11 = var_11_12
 		end
 	end
 
-	if target_start_pos then
-		local rand_deg = math.random(0, 360)
-		local radians = rand_deg * pi / 180
-		local direction = Vector3(math.sin(radians), math.cos(radians), 0)
-		local projected_end_pos = target_position + direction * max_dist
+	if var_11_11 then
+		local var_11_13 = math.random(0, 360) * var_11_9 / 180
+		local var_11_14 = Vector3(math.sin(var_11_13), math.cos(var_11_13), 0)
+		local var_11_15 = var_11_3 + var_11_14 * var_11_7
 
-		if projected_end_pos then
-			local _, hit_position = GwNavQueries.raycast(nav_world, target_start_pos, projected_end_pos)
+		if var_11_15 then
+			local var_11_16, var_11_17 = GwNavQueries.raycast(var_11_1, var_11_11, var_11_15)
 
-			if hit_position then
-				local distance = Vector3_dist(hit_position, target_position)
-				local is_within_bounds = min_dist < distance and distance < max_dist
+			if var_11_17 then
+				local var_11_18 = var_11_5(var_11_17, var_11_3)
 
-				if is_within_bounds then
-					local wanted_pos = target_position + direction * math.random(min_dist, distance)
+				if var_11_6 < var_11_18 and var_11_18 < var_11_7 then
+					local var_11_19 = var_11_3 + var_11_14 * math.random(var_11_6, var_11_18)
 
-					if mid_dist <= distance then
-						wanted_pos = target_position + direction * math.random(mid_dist, distance)
+					if var_11_8 <= var_11_18 then
+						var_11_19 = var_11_3 + var_11_14 * math.random(var_11_8, var_11_18)
 					end
 
-					local teleport_pos_on_mesh = LocomotionUtils.pos_on_mesh(nav_world, wanted_pos, 1, 1)
+					local var_11_20 = LocomotionUtils.pos_on_mesh(var_11_1, var_11_19, 1, 1)
 
-					if teleport_pos_on_mesh then
-						local dir_norm = Vector3.normalize(target_start_pos - teleport_pos_on_mesh)
-						local rotation = Quaternion.look(dir_norm)
+					if var_11_20 then
+						local var_11_21 = Vector3.normalize(var_11_11 - var_11_20)
+						local var_11_22 = Quaternion.look(var_11_21)
 
-						plague_wave_cast_position = teleport_pos_on_mesh
+						var_11_10 = var_11_20
 
-						plague_wave_data.plague_wave_rot:store(rotation)
-						plague_wave_data.target_starting_pos:store(target_start_pos)
+						arg_11_3.plague_wave_rot:store(var_11_22)
+						arg_11_3.target_starting_pos:store(var_11_11)
 					end
 				end
 			end
 		end
 	end
 
-	return plague_wave_cast_position
+	return var_11_10
 end
 
-local TRIES = 15
+local var_0_3 = 15
 
-BTChaosSorcererPlagueSkulkAction.get_skulk_target = function (self, unit, blackboard, teleporting)
-	local action = blackboard.action
-	local nav_world = blackboard.nav_world
-	local skulk_data = blackboard.skulk_data
-	local direction = skulk_data.direction
-	local target_unit = blackboard.target_unit
+function var_0_0.get_skulk_target(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	local var_12_0 = arg_12_2.action
+	local var_12_1 = arg_12_2.nav_world
+	local var_12_2 = arg_12_2.skulk_data
+	local var_12_3 = var_12_2.direction
+	local var_12_4 = arg_12_2.target_unit
 
-	if not target_unit then
+	if not var_12_4 then
 		return
 	end
 
-	local target_position = POSITION_LOOKUP[target_unit]
-	local unit_position = POSITION_LOOKUP[unit]
-	local dist = blackboard.target_dist
-	local to_target = unit_position - target_position
-	local to_target_dir = Vector3.normalize(to_target)
+	local var_12_5 = var_0_1[var_12_4]
+	local var_12_6 = var_0_1[arg_12_1]
+	local var_12_7 = arg_12_2.target_dist
+	local var_12_8 = var_12_6 - var_12_5
+	local var_12_9 = Vector3.normalize(var_12_8)
 
-	if blackboard.is_close then
-		if dist < (action.preferred_distance or 20) then
-			to_target = to_target + to_target_dir * (1 + math.random())
+	if arg_12_2.is_close then
+		if var_12_7 < (var_12_0.preferred_distance or 20) then
+			var_12_8 = var_12_8 + var_12_9 * (1 + math.random())
 		else
-			blackboard.is_close = false
-			to_target = to_target + to_target_dir
+			arg_12_2.is_close = false
+			var_12_8 = var_12_8 + var_12_9
 		end
-	elseif dist < (action.close_distance or 20) then
-		blackboard.is_close = true
-		to_target = to_target + to_target_dir
+	elseif var_12_7 < (var_12_0.close_distance or 20) then
+		arg_12_2.is_close = true
+		var_12_8 = var_12_8 + var_12_9
 	end
 
-	local cross_dir = Vector3(0, 0, direction)
-	local mod = 0.1
-	local alpha = math.pi * math.clamp(mod * 20 / dist, 0.01, 0.15)
+	local var_12_10 = Vector3(0, 0, var_12_3)
+	local var_12_11 = 0.1
+	local var_12_12 = math.pi * math.clamp(var_12_11 * 20 / var_12_7, 0.01, 0.15)
 
-	if teleporting then
-		alpha = alpha * 1.5
+	if arg_12_3 then
+		var_12_12 = var_12_12 * 1.5
 	end
 
-	for i = 1, TRIES do
-		local rot_vec = to_target - to_target_dir * 0.5
-		local pos = target_position + Quaternion.rotate(Quaternion(cross_dir, alpha * i), rot_vec)
+	for iter_12_0 = 1, var_0_3 do
+		local var_12_13 = var_12_8 - var_12_9 * 0.5
+		local var_12_14 = var_12_5 + Quaternion.rotate(Quaternion(var_12_10, var_12_12 * iter_12_0), var_12_13)
+		local var_12_15 = ConflictUtils.find_center_tri(var_12_1, var_12_14)
 
-		pos = ConflictUtils.find_center_tri(nav_world, pos)
-
-		if pos then
-			return pos
+		if var_12_15 then
+			return var_12_15
 		end
 	end
 
-	skulk_data.direction = skulk_data.direction * -1
+	var_12_2.direction = var_12_2.direction * -1
 end

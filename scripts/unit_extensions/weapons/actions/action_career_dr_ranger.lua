@@ -1,136 +1,128 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/actions/action_career_dr_ranger.lua
+-- chunkname: @scripts/unit_extensions/weapons/actions/action_career_dr_ranger.lua
 
 ActionCareerDRRanger = class(ActionCareerDRRanger, ActionBase)
 
-ActionCareerDRRanger.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionCareerDRRanger.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionCareerDRRanger.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionCareerDRRanger.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	self.career_extension = ScriptUnit.extension(owner_unit, "career_system")
-	self.input_extension = ScriptUnit.extension(owner_unit, "input_system")
-	self.inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
-	self.status_extension = ScriptUnit.extension(owner_unit, "status_system")
+	arg_1_0.career_extension = ScriptUnit.extension(arg_1_4, "career_system")
+	arg_1_0.input_extension = ScriptUnit.extension(arg_1_4, "input_system")
+	arg_1_0.inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
+	arg_1_0.status_extension = ScriptUnit.extension(arg_1_4, "status_system")
 end
 
-ActionCareerDRRanger.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level)
-	ActionCareerDRRanger.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level)
+function ActionCareerDRRanger.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	ActionCareerDRRanger.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
-	self.current_action = new_action
-	self.action_time_started = t
-	self.thrown = nil
-	self._cooldown_started = false
+	arg_2_0.current_action = arg_2_1
+	arg_2_0.action_time_started = arg_2_2
+	arg_2_0.thrown = nil
+	arg_2_0._cooldown_started = false
 
-	local slot = new_action.slot_to_wield
+	local var_2_0 = arg_2_1.slot_to_wield
 
-	self.inventory_extension:wield(slot)
+	arg_2_0.inventory_extension:wield(var_2_0)
 
-	self.power_level = power_level
+	arg_2_0.power_level = arg_2_4
 
-	local inventory_extension = ScriptUnit.extension(self.owner_unit, "inventory_system")
-
-	inventory_extension:check_and_drop_pickups("career_ability")
+	ScriptUnit.extension(arg_2_0.owner_unit, "inventory_system"):check_and_drop_pickups("career_ability")
 end
 
-ActionCareerDRRanger._create_smoke_screen = function (self)
-	local owner_unit = self.owner_unit
-	local network_manager = Managers.state.network
-	local network_transmit = network_manager.network_transmit
-	local status_extension = ScriptUnit.extension(owner_unit, "status_system")
-	local career_extension = ScriptUnit.extension(owner_unit, "career_system")
-	local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
-	local buff_name = "bardin_ranger_activated_ability"
-	local talent_extension = ScriptUnit.extension(owner_unit, "talent_system")
+function ActionCareerDRRanger._create_smoke_screen(arg_3_0)
+	local var_3_0 = arg_3_0.owner_unit
+	local var_3_1 = Managers.state.network.network_transmit
+	local var_3_2 = ScriptUnit.extension(var_3_0, "status_system")
+	local var_3_3 = ScriptUnit.extension(var_3_0, "career_system")
+	local var_3_4 = ScriptUnit.extension(var_3_0, "buff_system")
+	local var_3_5 = "bardin_ranger_activated_ability"
+	local var_3_6 = ScriptUnit.extension(var_3_0, "talent_system")
 
-	if talent_extension:has_talent("bardin_ranger_ability_free_grenade", "dwarf_ranger", true) then
-		buff_extension:add_buff("bardin_ranger_ability_free_grenade_buff")
+	if var_3_6:has_talent("bardin_ranger_ability_free_grenade", "dwarf_ranger", true) then
+		var_3_4:add_buff("bardin_ranger_ability_free_grenade_buff")
 	end
 
-	local has_extended_duration_talent = talent_extension:has_talent("bardin_ranger_smoke_attack", "dwarf_ranger", true)
-
-	if has_extended_duration_talent then
-		buff_extension:add_buff("bardin_ranger_smoke_attack")
-		buff_extension:add_buff("bardin_ranger_smoke_heal")
+	if var_3_6:has_talent("bardin_ranger_smoke_attack", "dwarf_ranger", true) then
+		var_3_4:add_buff("bardin_ranger_smoke_attack")
+		var_3_4:add_buff("bardin_ranger_smoke_heal")
 	end
 
-	local has_stealth_outside_of_smoke_talent = talent_extension:has_talent("bardin_ranger_activated_ability_stealth_outside_of_smoke", "dwarf_ranger", true)
-
-	if has_stealth_outside_of_smoke_talent then
-		buff_extension:add_buff("bardin_ranger_activated_ability_stealth_outside_of_smoke")
+	if var_3_6:has_talent("bardin_ranger_activated_ability_stealth_outside_of_smoke", "dwarf_ranger", true) then
+		var_3_4:add_buff("bardin_ranger_activated_ability_stealth_outside_of_smoke")
 
 		return
 	end
 
-	buff_extension:add_buff(buff_name, {
-		attacker_unit = owner_unit,
+	var_3_4:add_buff(var_3_5, {
+		attacker_unit = var_3_0
 	})
 end
 
-ActionCareerDRRanger._play_vo = function (self)
-	local owner_unit = self.owner_unit
-	local dialogue_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
-	local event_data = FrameTable.alloc_table()
+function ActionCareerDRRanger._play_vo(arg_4_0)
+	local var_4_0 = arg_4_0.owner_unit
+	local var_4_1 = ScriptUnit.extension_input(var_4_0, "dialogue_system")
+	local var_4_2 = FrameTable.alloc_table()
 
-	dialogue_input:trigger_networked_dialogue_event("activate_ability", event_data)
+	var_4_1:trigger_networked_dialogue_event("activate_ability", var_4_2)
 end
 
-ActionCareerDRRanger.client_owner_post_update = function (self, dt, t, world, can_damage)
-	if self.thrown then
+function ActionCareerDRRanger.client_owner_post_update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	if arg_5_0.thrown then
 		return
 	end
 
-	local current_action = self.current_action
-	local throw_time = self.action_time_started + current_action.throw_time
+	local var_5_0 = arg_5_0.current_action
 
-	if throw_time <= t then
-		self:_throw()
+	if arg_5_2 >= arg_5_0.action_time_started + var_5_0.throw_time then
+		arg_5_0:_throw()
 	end
 end
 
-ActionCareerDRRanger._stagger_explosion = function (self)
-	local owner_unit = self.owner_unit
-	local world = self.world
-	local is_server = self.is_server
-	local network_manager = Managers.state.network
-	local network_transmit = network_manager.network_transmit
-	local owner_unit_go_id = network_manager:unit_game_object_id(owner_unit)
-	local explosion_template_name = "bardin_ranger_activated_ability_stagger"
-	local explosion_template = ExplosionUtils.get_template(explosion_template_name)
-	local scale = 1
-	local damage_source = "career_ability"
-	local is_husk = false
-	local position = POSITION_LOOKUP[owner_unit]
-	local rotation = Quaternion.identity()
-	local explosion_template_id = NetworkLookup.explosion_templates[explosion_template_name]
-	local damage_source_id = NetworkLookup.damage_sources[damage_source]
+function ActionCareerDRRanger._stagger_explosion(arg_6_0)
+	local var_6_0 = arg_6_0.owner_unit
+	local var_6_1 = arg_6_0.world
+	local var_6_2 = arg_6_0.is_server
+	local var_6_3 = Managers.state.network
+	local var_6_4 = var_6_3.network_transmit
+	local var_6_5 = var_6_3:unit_game_object_id(var_6_0)
+	local var_6_6 = "bardin_ranger_activated_ability_stagger"
+	local var_6_7 = ExplosionUtils.get_template(var_6_6)
+	local var_6_8 = 1
+	local var_6_9 = "career_ability"
+	local var_6_10 = false
+	local var_6_11 = POSITION_LOOKUP[var_6_0]
+	local var_6_12 = Quaternion.identity()
+	local var_6_13 = NetworkLookup.explosion_templates[var_6_6]
+	local var_6_14 = NetworkLookup.damage_sources[var_6_9]
 
-	if is_server then
-		network_transmit:send_rpc_clients("rpc_create_explosion", owner_unit_go_id, false, position, rotation, explosion_template_id, scale, damage_source_id, self.power_level, false, owner_unit_go_id)
+	if var_6_2 then
+		var_6_4:send_rpc_clients("rpc_create_explosion", var_6_5, false, var_6_11, var_6_12, var_6_13, var_6_8, var_6_14, arg_6_0.power_level, false, var_6_5)
 	else
-		network_transmit:send_rpc_server("rpc_create_explosion", owner_unit_go_id, false, position, rotation, explosion_template_id, scale, damage_source_id, self.power_level, false, owner_unit_go_id)
+		var_6_4:send_rpc_server("rpc_create_explosion", var_6_5, false, var_6_11, var_6_12, var_6_13, var_6_8, var_6_14, arg_6_0.power_level, false, var_6_5)
 	end
 
-	DamageUtils.create_explosion(world, owner_unit, position, rotation, explosion_template, scale, damage_source, is_server, is_husk, owner_unit, self.power_level, false, owner_unit)
+	DamageUtils.create_explosion(var_6_1, var_6_0, var_6_11, var_6_12, var_6_7, var_6_8, var_6_9, var_6_2, var_6_10, var_6_0, arg_6_0.power_level, false, var_6_0)
 end
 
-ActionCareerDRRanger._throw = function (self)
-	self:_create_smoke_screen()
-	self:_stagger_explosion()
-	self:_play_vo()
+function ActionCareerDRRanger._throw(arg_7_0)
+	arg_7_0:_create_smoke_screen()
+	arg_7_0:_stagger_explosion()
+	arg_7_0:_play_vo()
 
-	self.thrown = true
+	arg_7_0.thrown = true
 end
 
-ActionCareerDRRanger.finish = function (self, reason)
-	ActionCareerDRRanger.super.finish(self, reason)
+function ActionCareerDRRanger.finish(arg_8_0, arg_8_1)
+	ActionCareerDRRanger.super.finish(arg_8_0, arg_8_1)
 
-	if not self.thrown then
-		self:_throw()
+	if not arg_8_0.thrown then
+		arg_8_0:_throw()
 	end
 
-	if not self._cooldown_started then
-		self._cooldown_started = true
+	if not arg_8_0._cooldown_started then
+		arg_8_0._cooldown_started = true
 
-		self.career_extension:start_activated_ability_cooldown()
+		arg_8_0.career_extension:start_activated_ability_cooldown()
 	end
 
-	self.inventory_extension:wield_previous_non_level_slot()
+	arg_8_0.inventory_extension:wield_previous_non_level_slot()
 end

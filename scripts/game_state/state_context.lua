@@ -1,21 +1,21 @@
-﻿-- chunkname: @scripts/game_state/state_context.lua
+-- chunkname: @scripts/game_state/state_context.lua
 
 StateContext = StateContext or {}
 
-StateContext.set_context = function (c)
-	StateContext.context = c
+function StateContext.set_context(arg_1_0)
+	StateContext.context = arg_1_0
 end
 
-StateContext.get = function (parent, child)
-	assert(StateContext.context[parent], "parent does not exist")
+function StateContext.get(arg_2_0, arg_2_1)
+	assert(StateContext.context[arg_2_0], "parent does not exist")
 
-	return StateContext.context[parent][child]
+	return StateContext.context[arg_2_0][arg_2_1]
 end
 
-StateContext.manager = function (name)
-	return StateContext.get("manager", name)
+function StateContext.manager(arg_3_0)
+	return StateContext.get("manager", arg_3_0)
 end
 
-StateContext.event = function ()
+function StateContext.event()
 	return StateContext.get("manager", "event")
 end

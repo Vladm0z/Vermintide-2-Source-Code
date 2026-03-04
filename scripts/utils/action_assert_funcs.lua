@@ -1,160 +1,160 @@
-﻿-- chunkname: @scripts/utils/action_assert_funcs.lua
+-- chunkname: @scripts/utils/action_assert_funcs.lua
 
 ActionAssertFuncs = {
-	handgun = function (weapon_name, action_name, sub_action_name, action)
-		local impact_data = action.impact_data
+	handgun = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+		local var_1_0 = arg_1_3.impact_data
 
-		if impact_data then
-			local damage_profile = impact_data.damage_profile
+		if var_1_0 then
+			local var_1_1 = var_1_0.damage_profile
 
-			fassert(damage_profile, "No damage profile set in impact_data for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
-			fassert(DamageProfileTemplates[damage_profile], "Damage profile [\"%s\"] does not exist", damage_profile)
+			fassert(var_1_1, "No damage profile set in impact_data for [\"%s.%s\"] in weapon [\"%s\"]", arg_1_1, arg_1_2, arg_1_0)
+			fassert(DamageProfileTemplates[var_1_1], "Damage profile [\"%s\"] does not exist", var_1_1)
 		else
-			local damage_profile = action.damage_profile
+			local var_1_2 = arg_1_3.damage_profile
 
-			fassert(damage_profile, "No damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
-			fassert(DamageProfileTemplates[damage_profile], "Damage profile [\"%s\"] does not exist", damage_profile)
+			fassert(var_1_2, "No damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", arg_1_1, arg_1_2, arg_1_0)
+			fassert(DamageProfileTemplates[var_1_2], "Damage profile [\"%s\"] does not exist", var_1_2)
 		end
 	end,
-	sweep = function (weapon_name, action_name, sub_action_name, action)
-		if action.weapon_action_hand == "both" then
-			local left_damage_profile = action.damage_profile_left
+	sweep = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		if arg_2_3.weapon_action_hand == "both" then
+			local var_2_0 = arg_2_3.damage_profile_left
 
-			fassert(left_damage_profile, "No left damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
-			fassert(DamageProfileTemplates[left_damage_profile], "Damage profile [\"%s\"] does not exist", left_damage_profile)
+			fassert(var_2_0, "No left damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", arg_2_1, arg_2_2, arg_2_0)
+			fassert(DamageProfileTemplates[var_2_0], "Damage profile [\"%s\"] does not exist", var_2_0)
 
-			local right_damage_profile = action.damage_profile_right
+			local var_2_1 = arg_2_3.damage_profile_right
 
-			fassert(right_damage_profile, "No right damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
-			fassert(DamageProfileTemplates[right_damage_profile], "Damage profile [\"%s\"] does not exist", right_damage_profile)
+			fassert(var_2_1, "No right damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", arg_2_1, arg_2_2, arg_2_0)
+			fassert(DamageProfileTemplates[var_2_1], "Damage profile [\"%s\"] does not exist", var_2_1)
 		else
-			local damage_profile = action.damage_profile
+			local var_2_2 = arg_2_3.damage_profile
 
-			fassert(damage_profile, "No damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
-			fassert(DamageProfileTemplates[damage_profile], "Damage profile [\"%s\"] does not exist", damage_profile)
+			fassert(var_2_2, "No damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", arg_2_1, arg_2_2, arg_2_0)
+			fassert(DamageProfileTemplates[var_2_2], "Damage profile [\"%s\"] does not exist", var_2_2)
 		end
 	end,
-	charged_sweep = function (weapon_name, action_name, sub_action_name, action)
-		if action.weapon_action_hand == "both" then
-			local left_damage_profile = action.damage_profile_left
+	charged_sweep = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		if arg_3_3.weapon_action_hand == "both" then
+			local var_3_0 = arg_3_3.damage_profile_left
 
-			fassert(left_damage_profile, "No left damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
-			fassert(DamageProfileTemplates[left_damage_profile], "Damage profile [\"%s\"] does not exist", left_damage_profile)
+			fassert(var_3_0, "No left damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", arg_3_1, arg_3_2, arg_3_0)
+			fassert(DamageProfileTemplates[var_3_0], "Damage profile [\"%s\"] does not exist", var_3_0)
 
-			local right_damage_profile = action.damage_profile_right
+			local var_3_1 = arg_3_3.damage_profile_right
 
-			fassert(right_damage_profile, "No right damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
-			fassert(DamageProfileTemplates[right_damage_profile], "Damage profile [\"%s\"] does not exist", right_damage_profile)
+			fassert(var_3_1, "No right damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", arg_3_1, arg_3_2, arg_3_0)
+			fassert(DamageProfileTemplates[var_3_1], "Damage profile [\"%s\"] does not exist", var_3_1)
 		else
-			local damage_profile = action.damage_profile
+			local var_3_2 = arg_3_3.damage_profile
 
-			fassert(damage_profile, "No damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
-			fassert(DamageProfileTemplates[damage_profile], "Damage profile [\"%s\"] does not exist", damage_profile)
+			fassert(var_3_2, "No damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", arg_3_1, arg_3_2, arg_3_0)
+			fassert(DamageProfileTemplates[var_3_2], "Damage profile [\"%s\"] does not exist", var_3_2)
 		end
 
-		fassert(not action.hit_time, "unsupported parameter hit_time set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
+		fassert(not arg_3_3.hit_time, "unsupported parameter hit_time set for [\"%s.%s\"] in weapon [\"%s\"]", arg_3_1, arg_3_2, arg_3_0)
 
-		if action.discharge_attack then
-			fassert(action.discharge_effects, "Action marked as discharge attack, but no discharge_effects set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
+		if arg_3_3.discharge_attack then
+			fassert(arg_3_3.discharge_effects, "Action marked as discharge attack, but no discharge_effects set for [\"%s.%s\"] in weapon [\"%s\"]", arg_3_1, arg_3_2, arg_3_0)
 		else
-			fassert(action.overcharge_type, "Action marked as charge attack, but no overcharge_type set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
+			fassert(arg_3_3.overcharge_type, "Action marked as charge attack, but no overcharge_type set for [\"%s.%s\"] in weapon [\"%s\"]", arg_3_1, arg_3_2, arg_3_0)
 		end
 	end,
-	push_stagger = function (weapon_name, action_name, sub_action_name, action)
-		local damage_profile_inner = action.damage_profile_inner
+	push_stagger = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+		local var_4_0 = arg_4_3.damage_profile_inner
 
-		fassert(damage_profile_inner, "No inner damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
-		fassert(DamageProfileTemplates[damage_profile_inner], "Damage profile [\"%s\"] does not exist", damage_profile_inner)
+		fassert(var_4_0, "No inner damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", arg_4_1, arg_4_2, arg_4_0)
+		fassert(DamageProfileTemplates[var_4_0], "Damage profile [\"%s\"] does not exist", var_4_0)
 
-		local damage_profile_outer = action.damage_profile_outer
+		local var_4_1 = arg_4_3.damage_profile_outer
 
-		fassert(damage_profile_outer, "No outer damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
-		fassert(DamageProfileTemplates[damage_profile_outer], "Damage profile [\"%s\"] does not exist", damage_profile_outer)
+		fassert(var_4_1, "No outer damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", arg_4_1, arg_4_2, arg_4_0)
+		fassert(DamageProfileTemplates[var_4_1], "Damage profile [\"%s\"] does not exist", var_4_1)
 	end,
-	shield_slam = function (weapon_name, action_name, sub_action_name, action)
-		local damage_profile = action.damage_profile
+	shield_slam = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+		local var_5_0 = arg_5_3.damage_profile
 
-		fassert(damage_profile, "No damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
-		fassert(DamageProfileTemplates[damage_profile], "Damage profile [\"%s\"] does not exist", damage_profile)
+		fassert(var_5_0, "No damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", arg_5_1, arg_5_2, arg_5_0)
+		fassert(DamageProfileTemplates[var_5_0], "Damage profile [\"%s\"] does not exist", var_5_0)
 
-		local damage_profile_aoe = action.damage_profile_aoe
+		local var_5_1 = arg_5_3.damage_profile_aoe
 
-		fassert(damage_profile_aoe, "No aoe damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
-		fassert(DamageProfileTemplates[damage_profile_aoe], "Damage profile [\"%s\"] does not exist", damage_profile_aoe)
+		fassert(var_5_1, "No aoe damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", arg_5_1, arg_5_2, arg_5_0)
+		fassert(DamageProfileTemplates[var_5_1], "Damage profile [\"%s\"] does not exist", var_5_1)
 	end,
-	shotgun = function (weapon_name, action_name, sub_action_name, action)
-		local damage_profile = action.damage_profile
+	shotgun = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+		local var_6_0 = arg_6_3.damage_profile
 
-		fassert(damage_profile, "No damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
-		fassert(DamageProfileTemplates[damage_profile], "Damage profile [\"%s\"] does not exist", damage_profile)
+		fassert(var_6_0, "No damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", arg_6_1, arg_6_2, arg_6_0)
+		fassert(DamageProfileTemplates[var_6_0], "Damage profile [\"%s\"] does not exist", var_6_0)
 	end,
-	geiser = function (weapon_name, action_name, sub_action_name, action)
-		local damage_profile = action.damage_profile
+	geiser = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+		local var_7_0 = arg_7_3.damage_profile
 
-		fassert(damage_profile, "No damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
-		fassert(DamageProfileTemplates[damage_profile], "Damage profile [\"%s\"] does not exist", damage_profile)
+		fassert(var_7_0, "No damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", arg_7_1, arg_7_2, arg_7_0)
+		fassert(DamageProfileTemplates[var_7_0], "Damage profile [\"%s\"] does not exist", var_7_0)
 	end,
-	beam = function (weapon_name, action_name, sub_action_name, action)
-		local damage_profile = action.damage_profile
+	beam = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+		local var_8_0 = arg_8_3.damage_profile
 
-		fassert(damage_profile, "No damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
-		fassert(DamageProfileTemplates[damage_profile], "Damage profile [\"%s\"] does not exist", damage_profile)
+		fassert(var_8_0, "No damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", arg_8_1, arg_8_2, arg_8_0)
+		fassert(DamageProfileTemplates[var_8_0], "Damage profile [\"%s\"] does not exist", var_8_0)
 	end,
-	flamethrower = function (weapon_name, action_name, sub_action_name, action)
-		local damage_profile = action.damage_profile
+	flamethrower = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+		local var_9_0 = arg_9_3.damage_profile
 
-		fassert(damage_profile, "No damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
-		fassert(DamageProfileTemplates[damage_profile], "Damage profile [\"%s\"] does not exist", damage_profile)
+		fassert(var_9_0, "No damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", arg_9_1, arg_9_2, arg_9_0)
+		fassert(DamageProfileTemplates[var_9_0], "Damage profile [\"%s\"] does not exist", var_9_0)
 	end,
-	warpfire_thrower = function (weapon_name, action_name, sub_action_name, action)
-		local damage_profile = action.damage_profile
+	warpfire_thrower = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+		local var_10_0 = arg_10_3.damage_profile
 
-		fassert(damage_profile, "No damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
-		fassert(DamageProfileTemplates[damage_profile], "Damage profile [\"%s\"] does not exist", damage_profile)
+		fassert(var_10_0, "No damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", arg_10_1, arg_10_2, arg_10_0)
+		fassert(DamageProfileTemplates[var_10_0], "Damage profile [\"%s\"] does not exist", var_10_0)
 	end,
-	charge = function (weapon_name, action_name, sub_action_name, action)
-		local charge_time = action.charge_time
+	charge = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+		local var_11_0 = arg_11_3.charge_time
 
-		fassert(charge_time, "No charge time set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
+		fassert(var_11_0, "No charge time set for [\"%s.%s\"] in weapon [\"%s\"]", arg_11_1, arg_11_2, arg_11_0)
 	end,
-	action_selector = function (weapon_name, action_name, sub_action_name, action)
-		local actions = rawget(Weapons, weapon_name).actions
-		local conditional_actions = action.conditional_actions
-		local default_linked_action = action.default_action
+	action_selector = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+		local var_12_0 = rawget(Weapons, arg_12_0).actions
+		local var_12_1 = arg_12_3.conditional_actions
+		local var_12_2 = arg_12_3.default_action
 
-		fassert(conditional_actions, "No conditional_actions set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
-		fassert(default_linked_action, "No default_action set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
-		fassert(actions, "No default_action set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
+		fassert(var_12_1, "No conditional_actions set for [\"%s.%s\"] in weapon [\"%s\"]", arg_12_1, arg_12_2, arg_12_0)
+		fassert(var_12_2, "No default_action set for [\"%s.%s\"] in weapon [\"%s\"]", arg_12_1, arg_12_2, arg_12_0)
+		fassert(var_12_0, "No default_action set for [\"%s.%s\"] in weapon [\"%s\"]", arg_12_1, arg_12_2, arg_12_0)
 
-		local default_action_name = default_linked_action.action or action_name
-		local default_action = actions[default_action_name]
+		local var_12_3 = var_12_2.action or arg_12_1
+		local var_12_4 = var_12_0[var_12_3]
 
-		fassert(default_action, "Linked to invalid default action [\"%s\"] for [\"%s.%s\"] in weapon [\"%s\"]", default_action_name, action_name, sub_action_name, weapon_name)
+		fassert(var_12_4, "Linked to invalid default action [\"%s\"] for [\"%s.%s\"] in weapon [\"%s\"]", var_12_3, arg_12_1, arg_12_2, arg_12_0)
 
-		local default_sub_action_name = default_linked_action.sub_action
-		local default_sub_action = default_action[default_sub_action_name]
+		local var_12_5 = var_12_2.sub_action
+		local var_12_6 = var_12_4[var_12_5]
 
-		fassert(default_sub_action, "Linked to invalid default sub_action [\"%s.%s\"] for [\"%s.%s\"] in weapon [\"%s\"]", default_action_name, default_sub_action_name, action_name, sub_action_name, weapon_name)
-		fassert(default_sub_action.kind ~= "action_selector", "Recursive action_selector in [\"%s.%s\"] -> [\"%s.%s\"]  in weapon [\"%s\"]", action_name, sub_action_name, default_action_name, default_sub_action_name, weapon_name)
+		fassert(var_12_6, "Linked to invalid default sub_action [\"%s.%s\"] for [\"%s.%s\"] in weapon [\"%s\"]", var_12_3, var_12_5, arg_12_1, arg_12_2, arg_12_0)
+		fassert(var_12_6.kind ~= "action_selector", "Recursive action_selector in [\"%s.%s\"] -> [\"%s.%s\"]  in weapon [\"%s\"]", arg_12_1, arg_12_2, var_12_3, var_12_5, arg_12_0)
 
-		for i = 1, #conditional_actions do
-			local linked_sub_action = conditional_actions[i].sub_action
+		for iter_12_0 = 1, #var_12_1 do
+			local var_12_7 = var_12_1[iter_12_0].sub_action
 
-			fassert(linked_sub_action, "No linked sub action set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
+			fassert(var_12_7, "No linked sub action set for [\"%s.%s\"] in weapon [\"%s\"]", arg_12_1, arg_12_2, arg_12_0)
 
-			local condition = conditional_actions[i].condition
+			local var_12_8 = var_12_1[iter_12_0].condition
 
-			fassert(condition, "No linked sub action condition set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
+			fassert(var_12_8, "No linked sub action condition set for [\"%s.%s\"] in weapon [\"%s\"]", arg_12_1, arg_12_2, arg_12_0)
 
-			local linked_action = conditional_actions[i].action or action_name
-			local action = actions[linked_action]
+			local var_12_9 = var_12_1[iter_12_0].action or arg_12_1
+			local var_12_10 = var_12_0[var_12_9]
 
-			fassert(action, "Linked to invalid action [\"%s\"] for [\"%s.%s\"] in weapon [\"%s\"]", linked_action, action_name, sub_action_name, weapon_name)
+			fassert(var_12_10, "Linked to invalid action [\"%s\"] for [\"%s.%s\"] in weapon [\"%s\"]", var_12_9, arg_12_1, arg_12_2, arg_12_0)
 
-			local sub_action = action[linked_sub_action]
+			local var_12_11 = var_12_10[var_12_7]
 
-			fassert(sub_action, "Linked to invalid sub_action [\"%s.%s\"] for [\"%s.%s\"] in weapon [\"%s\"]", linked_action, linked_sub_action, action_name, sub_action_name, weapon_name)
-			fassert(sub_action.kind ~= "action_selector", "Recursive action_selector in [\"%s.%s\"] -> [\"%s.%s\"]  in weapon [\"%s\"]", action_name, sub_action_name, linked_action, linked_sub_action, weapon_name)
+			fassert(var_12_11, "Linked to invalid sub_action [\"%s.%s\"] for [\"%s.%s\"] in weapon [\"%s\"]", var_12_9, var_12_7, arg_12_1, arg_12_2, arg_12_0)
+			fassert(var_12_11.kind ~= "action_selector", "Recursive action_selector in [\"%s.%s\"] -> [\"%s.%s\"]  in weapon [\"%s\"]", arg_12_1, arg_12_2, var_12_9, var_12_7, arg_12_0)
 		end
-	end,
+	end
 }

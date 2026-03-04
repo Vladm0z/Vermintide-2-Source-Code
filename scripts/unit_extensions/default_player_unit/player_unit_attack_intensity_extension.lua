@@ -1,98 +1,97 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/player_unit_attack_intensity_extension.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/player_unit_attack_intensity_extension.lua
 
 require("scripts/settings/attack_intensity_settings")
 
 PlayerUnitAttackIntensityExtension = class(PlayerUnitAttackIntensityExtension)
 
-local DEFAULT_ATTACK_INTENSITY_CLAMP = 25
+local var_0_0 = 25
 
-PlayerUnitAttackIntensityExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self._network_manager = Managers.state.network
-	self._world = extension_init_context.world
-	self._unit = unit
-	self._attack_intensity = {}
-	self._attack_allowed = {}
-	self._attack_intensity_threshold = {}
-	self._attack_intensity_decay = {}
-	self._attack_intensity_decay_grace = {}
-	self._attack_intensity_reset = {}
+function PlayerUnitAttackIntensityExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._network_manager = Managers.state.network
+	arg_1_0._world = arg_1_1.world
+	arg_1_0._unit = arg_1_2
+	arg_1_0._attack_intensity = {}
+	arg_1_0._attack_allowed = {}
+	arg_1_0._attack_intensity_threshold = {}
+	arg_1_0._attack_intensity_decay = {}
+	arg_1_0._attack_intensity_decay_grace = {}
+	arg_1_0._attack_intensity_reset = {}
 
-	local difficulty_manager = Managers.state.difficulty
-	local difficulty_settings = difficulty_manager:get_difficulty_settings()
-	local difficulty_lookup = AttackIntensitySettings.difficulty
+	local var_1_0 = Managers.state.difficulty:get_difficulty_settings()
+	local var_1_1 = AttackIntensitySettings.difficulty
 
-	self._attack_intensity_difficulty = Managers.state.difficulty:get_difficulty_value_from_table(difficulty_lookup)
+	arg_1_0._attack_intensity_difficulty = Managers.state.difficulty:get_difficulty_value_from_table(var_1_1)
 
-	self:_setup_intensity()
+	arg_1_0:_setup_intensity()
 end
 
-PlayerUnitAttackIntensityExtension._setup_intensity = function (self)
-	for type, _ in pairs(AttackIntensitySettings.attack_type_intesities) do
-		local intensity_settings = self._attack_intensity_difficulty[type]
+function PlayerUnitAttackIntensityExtension._setup_intensity(arg_2_0)
+	for iter_2_0, iter_2_1 in pairs(AttackIntensitySettings.attack_type_intesities) do
+		local var_2_0 = arg_2_0._attack_intensity_difficulty[iter_2_0]
 
-		self._attack_intensity[type] = 0
-		self._attack_allowed[type] = true
-		self._attack_intensity_threshold[type] = intensity_settings.threshold
-		self._attack_intensity_decay[type] = intensity_settings.decay
-		self._attack_intensity_decay_grace[type] = 0
-		self._attack_intensity_reset[type] = intensity_settings.reset
+		arg_2_0._attack_intensity[iter_2_0] = 0
+		arg_2_0._attack_allowed[iter_2_0] = true
+		arg_2_0._attack_intensity_threshold[iter_2_0] = var_2_0.threshold
+		arg_2_0._attack_intensity_decay[iter_2_0] = var_2_0.decay
+		arg_2_0._attack_intensity_decay_grace[iter_2_0] = 0
+		arg_2_0._attack_intensity_reset[iter_2_0] = var_2_0.reset
 	end
 end
 
-PlayerUnitAttackIntensityExtension.extensions_ready = function (self, world, unit)
-	self._buff_extension = ScriptUnit.extension(unit, "buff_system")
+function PlayerUnitAttackIntensityExtension.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_0._buff_extension = ScriptUnit.extension(arg_3_2, "buff_system")
 end
 
-PlayerUnitAttackIntensityExtension.update = function (self, unit, input, dt, context, t)
-	for type, _ in pairs(AttackIntensitySettings.attack_type_intesities) do
-		local decay_grace = self._attack_intensity_decay_grace[type]
+function PlayerUnitAttackIntensityExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	for iter_4_0, iter_4_1 in pairs(AttackIntensitySettings.attack_type_intesities) do
+		local var_4_0 = arg_4_0._attack_intensity_decay_grace[iter_4_0]
 
-		if decay_grace > 0 then
-			decay_grace = math.max(decay_grace - dt, 0)
-			self._attack_intensity_decay_grace[type] = decay_grace
+		if var_4_0 > 0 then
+			local var_4_1 = math.max(var_4_0 - arg_4_3, 0)
+
+			arg_4_0._attack_intensity_decay_grace[iter_4_0] = var_4_1
 		else
-			local intensity = self._attack_intensity[type]
+			local var_4_2 = arg_4_0._attack_intensity[iter_4_0]
 
-			if intensity > 0 then
-				local decay = self._attack_allowed[type] and self._attack_intensity_decay[type] * 0.25 or self._attack_intensity_decay[type]
-				local threshold = self._attack_intensity_threshold[type]
-				local reset = self._attack_intensity_reset[type]
-				local buff_extension = self._buff_extension
+			if var_4_2 > 0 then
+				local var_4_3 = arg_4_0._attack_allowed[iter_4_0] and arg_4_0._attack_intensity_decay[iter_4_0] * 0.25 or arg_4_0._attack_intensity_decay[iter_4_0]
+				local var_4_4 = arg_4_0._attack_intensity_threshold[iter_4_0]
+				local var_4_5 = arg_4_0._attack_intensity_reset[iter_4_0]
+				local var_4_6 = arg_4_0._buff_extension
+				local var_4_7 = var_4_6:apply_buffs_to_value(var_4_3, "attack_intensity_decay")
+				local var_4_8 = var_4_6:apply_buffs_to_value(var_4_4, "attack_intensity_threshold")
+				local var_4_9 = var_4_6:apply_buffs_to_value(var_4_5, "attack_intensity_reset")
+				local var_4_10 = math.max(var_4_2 - arg_4_3 * var_4_7 * var_4_8, 0)
 
-				decay = buff_extension:apply_buffs_to_value(decay, "attack_intensity_decay")
-				threshold = buff_extension:apply_buffs_to_value(threshold, "attack_intensity_threshold")
-				reset = buff_extension:apply_buffs_to_value(reset, "attack_intensity_reset")
-				intensity = math.max(intensity - dt * decay * threshold, 0)
-
-				if threshold < intensity then
-					self._attack_allowed[type] = false
+				if var_4_8 < var_4_10 then
+					arg_4_0._attack_allowed[iter_4_0] = false
 				end
 
-				if intensity <= reset then
-					self._attack_allowed[type] = true
+				if var_4_10 <= var_4_9 then
+					arg_4_0._attack_allowed[iter_4_0] = true
 				end
 
-				self._attack_intensity[type] = intensity
+				arg_4_0._attack_intensity[iter_4_0] = var_4_10
 			end
 		end
 	end
 end
 
-PlayerUnitAttackIntensityExtension.add_attack_intensity = function (self, attack_intensity_type, added_attack_intensity, clamp_override)
-	fassert(AttackIntensitySettings.attack_type_intesities[attack_intensity_type], "No attack intesity settings defined for attack type \"%s\"", attack_intensity_type)
+function PlayerUnitAttackIntensityExtension.add_attack_intensity(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	fassert(AttackIntensitySettings.attack_type_intesities[arg_5_1], "No attack intesity settings defined for attack type \"%s\"", arg_5_1)
 
-	self._attack_intensity_decay_grace[attack_intensity_type] = self._attack_intensity_difficulty[attack_intensity_type].decay_grace
-	self._attack_intensity[attack_intensity_type] = math.clamp(self._attack_intensity[attack_intensity_type] + added_attack_intensity, 0, clamp_override or DEFAULT_ATTACK_INTENSITY_CLAMP)
+	arg_5_0._attack_intensity_decay_grace[arg_5_1] = arg_5_0._attack_intensity_difficulty[arg_5_1].decay_grace
+	arg_5_0._attack_intensity[arg_5_1] = math.clamp(arg_5_0._attack_intensity[arg_5_1] + arg_5_2, 0, arg_5_3 or var_0_0)
 
-	if self._attack_intensity[attack_intensity_type] > self._attack_intensity_threshold[attack_intensity_type] then
-		self._attack_allowed[attack_intensity_type] = false
-	elseif not self._attack_allowed[attack_intensity_type] and self._attack_intensity[attack_intensity_type] < self._attack_intensity_reset[attack_intensity_type] then
-		self._attack_allowed[attack_intensity_type] = true
+	if arg_5_0._attack_intensity[arg_5_1] > arg_5_0._attack_intensity_threshold[arg_5_1] then
+		arg_5_0._attack_allowed[arg_5_1] = false
+	elseif not arg_5_0._attack_allowed[arg_5_1] and arg_5_0._attack_intensity[arg_5_1] < arg_5_0._attack_intensity_reset[arg_5_1] then
+		arg_5_0._attack_allowed[arg_5_1] = true
 	end
 end
 
-PlayerUnitAttackIntensityExtension.want_an_attack = function (self, attack_intensity_type)
-	fassert(AttackIntensitySettings.attack_type_intesities[attack_intensity_type], "No attack intesity settings defined for attack type \"%s\"", attack_intensity_type)
+function PlayerUnitAttackIntensityExtension.want_an_attack(arg_6_0, arg_6_1)
+	fassert(AttackIntensitySettings.attack_type_intesities[arg_6_1], "No attack intesity settings defined for attack type \"%s\"", arg_6_1)
 
-	return self._attack_allowed[attack_intensity_type]
+	return arg_6_0._attack_allowed[arg_6_1]
 end

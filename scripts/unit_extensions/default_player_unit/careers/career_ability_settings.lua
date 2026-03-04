@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/careers/career_ability_settings.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/careers/career_ability_settings.lua
 
 require("scripts/settings/profiles/career_constants")
 require("scripts/unit_extensions/default_player_unit/careers/career_ability_bw_adept")
@@ -18,215 +18,215 @@ require("scripts/unit_extensions/default_player_unit/careers/career_ability_wh_z
 ActivatedAbilitySettings = {
 	dr_1 = {
 		{
-			cooldown = 120,
 			description = "career_active_desc_dr_1",
 			display_name = "career_active_name_dr_1",
+			cooldown = 120,
 			icon = "bardin_ironbreaker_activated_ability",
-			ability_class = CareerAbilityDRIronbreaker,
-		},
+			ability_class = CareerAbilityDRIronbreaker
+		}
 	},
 	dr_2 = {
 		{
-			cooldown = 40,
 			description = "career_active_desc_dr_2_2",
 			display_name = "career_active_name_dr_2",
+			cooldown = 40,
 			icon = "bardin_slayer_activated_ability",
-			ability_class = CareerAbilityDRSlayer,
-		},
+			ability_class = CareerAbilityDRSlayer
+		}
 	},
 	dr_3 = {
 		{
-			action_name = "action_career_dr_3",
-			cooldown = 120,
 			description = "career_active_desc_dr_3_2",
-			display_name = "career_active_name_dr_3",
-			icon = "bardin_ranger_activated_ability",
 			weapon_name = "bardin_ranger_career_skill_weapon",
+			display_name = "career_active_name_dr_3",
+			cooldown = 120,
+			icon = "bardin_ranger_activated_ability",
+			action_name = "action_career_dr_3",
 			description_values = {
 				{
-					value = CareerConstants.dr_ranger.ability_duration,
-				},
+					value = CareerConstants.dr_ranger.ability_duration
+				}
 			},
 			mechanism_overrides = {
 				versus = {
 					cooldown = 140,
 					description_values = {
 						{
-							value = CareerConstants.dr_ranger.ability_duration_versus,
-						},
-					},
-				},
-			},
-		},
+							value = CareerConstants.dr_ranger.ability_duration_versus
+						}
+					}
+				}
+			}
+		}
 	},
 	es_1 = {
 		{
-			cooldown = 90,
 			description = "career_active_desc_es_1_2",
 			display_name = "career_active_name_es_1",
+			cooldown = 90,
 			icon = "markus_huntsman_activated_ability",
-			ability_class = CareerAbilityESHuntsman,
-		},
+			ability_class = CareerAbilityESHuntsman
+		}
 	},
 	es_2 = {
 		{
-			cooldown = 30,
 			description = "career_active_desc_es_2",
 			display_name = "career_active_name_es_2",
+			cooldown = 30,
 			icon = "markus_knight_activated_ability",
 			ability_class = CareerAbilityESKnight,
 			mechanism_overrides = {
 				versus = {
-					cooldown = 60,
-				},
-			},
-		},
+					cooldown = 60
+				}
+			}
+		}
 	},
 	es_3 = {
 		{
-			cooldown = 90,
 			description = "career_active_desc_markus_mercenary_2",
 			display_name = "career_active_name_markus_mercenary",
+			cooldown = 90,
 			icon = "markus_mercenary_activated_ability",
 			ability_class = CareerAbilityESMercenary,
 			heal_amount = CareerConstants.es_mercenary.ability_heal_amount,
 			description_values = {
 				{
-					value = CareerConstants.es_mercenary.ability_heal_amount,
-				},
+					value = CareerConstants.es_mercenary.ability_heal_amount
+				}
 			},
 			mechanism_overrides = {
 				versus = {
 					description = "career_active_desc_markus_mercenary_2",
 					description_values = {
 						{
-							value = CareerConstants.es_mercenary.ability_heal_amount_versus,
-						},
+							value = CareerConstants.es_mercenary.ability_heal_amount_versus
+						}
 					},
-					heal_amount = CareerConstants.es_mercenary.ability_heal_amount_versus,
-				},
-			},
-		},
+					heal_amount = CareerConstants.es_mercenary.ability_heal_amount_versus
+				}
+			}
+		}
 	},
 	we_1 = {
 		{
-			cooldown = 70,
 			description = "career_active_desc_we_1_2",
 			display_name = "career_active_name_we_1",
+			cooldown = 70,
 			icon = "kerillian_shade_activated_ability",
-			ability_class = CareerAbilityWEShade,
+			ability_class = CareerAbilityWEShade
 		},
 		{
-			cooldown = 70,
 			description = "career_active_desc_we_1_2",
 			display_name = "career_active_name_we_1",
+			cooldown = 70,
 			icon = "kerillian_shade_activated_ability",
-			ability_class = CareerAbilityWEShadeDash,
-		},
+			ability_class = CareerAbilityWEShadeDash
+		}
 	},
 	we_2 = {
 		{
-			cooldown = 20,
 			description = "career_active_desc_we_2_2",
 			display_name = "career_active_name_we_2",
+			cooldown = 20,
 			icon = "kerillian_maidenguard_activated_ability",
 			ability_class = CareerAbilityWEMaidenGuard,
 			mechanism_overrides = {
 				versus = {
-					cooldown = 40,
-				},
-			},
-		},
+					cooldown = 40
+				}
+			}
+		}
 	},
 	we_3 = {
 		{
-			action_name = "action_career_we_3",
-			cooldown = 80,
 			description = "career_active_desc_we_3",
-			display_name = "career_active_name_we_3",
-			icon = "kerillian_waywatcher_activated_ability",
 			weapon_name = "kerillian_waywatcher_career_skill_weapon",
+			display_name = "career_active_name_we_3",
+			cooldown = 80,
+			icon = "kerillian_waywatcher_activated_ability",
+			action_name = "action_career_we_3"
 		},
 		{
-			action_name = "action_career_we_3_piercing",
-			cooldown = 80,
 			description = "career_active_desc_we_3",
-			display_name = "career_active_name_we_3",
-			icon = "kerillian_waywatcher_activated_ability",
 			weapon_name = "kerillian_waywatcher_career_skill_weapon_piercing_shot",
-		},
+			display_name = "career_active_name_we_3",
+			cooldown = 80,
+			icon = "kerillian_waywatcher_activated_ability",
+			action_name = "action_career_we_3_piercing"
+		}
 	},
 	wh_1 = {
 		{
-			cooldown = 60,
 			description = "career_active_desc_wh_1",
 			display_name = "career_active_name_wh_1",
+			cooldown = 60,
 			icon = "victor_zealot_activated_ability",
-			ability_class = CareerAbilityWHZealot,
-		},
+			ability_class = CareerAbilityWHZealot
+		}
 	},
 	wh_2 = {
 		{
-			action_name = "action_career_wh_2",
-			cooldown = 70,
 			description = "career_active_desc_wh_2",
-			display_name = "career_active_name_wh_2",
-			icon = "victor_bountyhunter_activated_ability",
 			weapon_name = "victor_bountyhunter_career_skill_weapon",
+			display_name = "career_active_name_wh_2",
+			cooldown = 70,
+			icon = "victor_bountyhunter_activated_ability",
+			action_name = "action_career_wh_2",
 			mechanism_overrides = {
 				versus = {
-					weapon_name = "victor_bountyhunter_career_skill_weapon_vs",
-				},
-			},
-		},
+					weapon_name = "victor_bountyhunter_career_skill_weapon_vs"
+				}
+			}
+		}
 	},
 	wh_3 = {
 		{
-			cooldown = 90,
 			description = "career_active_desc_victor_witchhunter_2",
 			display_name = "career_active_name_victor_witchhunter",
+			cooldown = 90,
 			icon = "victor_witchhunter_activated_ability",
-			ability_class = CareerAbilityWHCaptain,
-		},
+			ability_class = CareerAbilityWHCaptain
+		}
 	},
 	bw_1 = {
 		{
-			action_name = "action_career_bw_1",
-			cooldown = 50,
 			description = "career_active_desc_bw_1",
-			display_name = "career_active_name_bw_1",
-			icon = "sienna_scholar_activated_ability",
 			weapon_name = "sienna_scholar_career_skill_weapon",
+			display_name = "career_active_name_bw_1",
+			cooldown = 50,
+			icon = "sienna_scholar_activated_ability",
+			action_name = "action_career_bw_1",
 			mechanism_overrides = {
 				versus = {
-					cooldown = 80,
-				},
-			},
-		},
+					cooldown = 80
+				}
+			}
+		}
 	},
 	bw_2 = {
 		{
-			cooldown = 50,
 			description = "career_active_desc_bw_2_2",
 			display_name = "career_active_name_bw_2",
+			cooldown = 50,
 			icon = "sienna_adept_activated_ability",
 			ability_class = CareerAbilityBWAdept,
 			mechanism_overrides = {
 				versus = {
-					cooldown = 80,
-				},
-			},
-		},
+					cooldown = 80
+				}
+			}
+		}
 	},
 	bw_3 = {
 		{
-			cooldown = 120,
 			description = "career_active_desc_bw_3",
 			display_name = "career_active_name_bw_3",
+			cooldown = 120,
 			icon = "sienna_unchained_activated_ability",
-			ability_class = CareerAbilityBWUnchained,
-		},
-	},
+			ability_class = CareerAbilityBWUnchained
+		}
+	}
 }
 PassiveAbilitySettings = {
 	dr_1 = {
@@ -241,22 +241,22 @@ PassiveAbilitySettings = {
 			"bardin_ironbreaker_passive_reduced_stun_duration",
 			"bardin_ironbreaker_refresh_gromril_armour",
 			"bardin_ironbreaker_ability_cooldown_on_hit",
-			"bardin_ironbreaker_ability_cooldown_on_damage_taken",
+			"bardin_ironbreaker_ability_cooldown_on_damage_taken"
 		},
 		perks = {
 			{
-				description = "career_passive_desc_dr_1b_2",
 				display_name = "career_passive_name_dr_1b",
+				description = "career_passive_desc_dr_1b_2"
 			},
 			{
-				description = "career_passive_desc_dr_1c_2",
 				display_name = "career_passive_name_dr_1c",
+				description = "career_passive_desc_dr_1c_2"
 			},
 			{
-				description = "career_passive_desc_dr_1d_2",
 				display_name = "career_passive_name_dr_1d",
-			},
-		},
+				description = "career_passive_desc_dr_1d_2"
+			}
+		}
 	},
 	dr_2 = {
 		description = "career_passive_desc_dr_2a_2",
@@ -267,18 +267,18 @@ PassiveAbilitySettings = {
 			"bardin_slayer_passive_stacking_damage_buff_on_hit",
 			"bardin_slayer_ability_cooldown_on_damage_taken",
 			"bardin_slayer_ability_cooldown_on_hit",
-			"bardin_slayer_passive_uninterruptible_heavy",
+			"bardin_slayer_passive_uninterruptible_heavy"
 		},
 		perks = {
 			{
-				description = "career_passive_desc_dr_2b_2",
 				display_name = "career_passive_name_dr_2b",
+				description = "career_passive_desc_dr_2b_2"
 			},
 			{
-				description = "career_passive_desc_dr_2c",
 				display_name = "career_passive_name_dr_2c",
-			},
-		},
+				description = "career_passive_desc_dr_2c"
+			}
+		}
 	},
 	dr_3 = {
 		description = "career_passive_desc_dr_3a_2",
@@ -292,22 +292,22 @@ PassiveAbilitySettings = {
 			"bardin_ranger_passive_consumeable_dupe_potion",
 			"bardin_ranger_passive_consumeable_dupe_grenade",
 			"bardin_ranger_ability_cooldown_on_hit",
-			"bardin_ranger_ability_cooldown_on_damage_taken",
+			"bardin_ranger_ability_cooldown_on_damage_taken"
 		},
 		perks = {
 			{
-				description = "career_passive_desc_dr_3b_2",
 				display_name = "career_passive_name_dr_3b",
+				description = "career_passive_desc_dr_3b_2"
 			},
 			{
-				description = "career_passive_desc_dr_3c_2",
 				display_name = "career_passive_name_dr_3c",
+				description = "career_passive_desc_dr_3c_2"
 			},
 			{
-				description = "career_passive_desc_dr_3d",
 				display_name = "career_passive_name_dr_3d",
-			},
-		},
+				description = "career_passive_desc_dr_3d"
+			}
+		}
 	},
 	es_1 = {
 		description = "career_passive_desc_es_1a",
@@ -319,22 +319,22 @@ PassiveAbilitySettings = {
 			"markus_huntsman_passive_no_damage_dropoff",
 			"markus_huntsman_passive_crit_aura",
 			"markus_huntsman_ability_cooldown_on_hit",
-			"markus_huntsman_ability_cooldown_on_damage_taken",
+			"markus_huntsman_ability_cooldown_on_damage_taken"
 		},
 		perks = {
 			{
-				description = "career_passive_desc_es_1b",
 				display_name = "career_passive_name_es_1b",
+				description = "career_passive_desc_es_1b"
 			},
 			{
-				description = "career_passive_desc_es_1c_2",
 				display_name = "career_passive_name_es_1c",
+				description = "career_passive_desc_es_1c_2"
 			},
 			{
-				description = "career_passive_desc_es_1d",
 				display_name = "career_passive_name_es_1d",
-			},
-		},
+				description = "career_passive_desc_es_1d"
+			}
+		}
 	},
 	es_2 = {
 		description = "career_passive_desc_es_2a_2",
@@ -345,18 +345,18 @@ PassiveAbilitySettings = {
 			"markus_knight_passive_damage_reduction",
 			"markus_knight_passive_increased_stamina",
 			"markus_knight_ability_cooldown_on_hit",
-			"markus_knight_ability_cooldown_on_damage_taken",
+			"markus_knight_ability_cooldown_on_damage_taken"
 		},
 		perks = {
 			{
-				description = "career_passive_desc_es_2b_2",
 				display_name = "career_passive_name_es_2b",
+				description = "career_passive_desc_es_2b_2"
 			},
 			{
-				description = "career_passive_desc_es_2c_2",
 				display_name = "career_passive_name_es_2c",
-			},
-		},
+				description = "career_passive_desc_es_2c_2"
+			}
+		}
 	},
 	es_3 = {
 		description = "career_passive_desc_es_3a",
@@ -367,18 +367,18 @@ PassiveAbilitySettings = {
 			"markus_mercenary_ability_cooldown_on_hit",
 			"markus_mercenary_ability_cooldown_on_damage_taken",
 			"markus_mercenary_passive_hit_mass_reduction",
-			"markus_mercenary_passive_crit_chance",
+			"markus_mercenary_passive_crit_chance"
 		},
 		perks = {
 			{
-				description = "career_passive_desc_es_3b",
 				display_name = "career_passive_name_es_3b",
+				description = "career_passive_desc_es_3b"
 			},
 			{
-				description = "career_passive_desc_es_3c_2",
 				display_name = "career_passive_name_es_3c",
-			},
-		},
+				description = "career_passive_desc_es_3c_2"
+			}
+		}
 	},
 	we_1 = {
 		description = "career_passive_desc_we_1b_2",
@@ -392,22 +392,22 @@ PassiveAbilitySettings = {
 			"kerillian_shade_stealth_crits",
 			"kerillian_shade_stealth_crits_remover",
 			"kerillian_shade_ability_cooldown_on_hit",
-			"kerillian_shade_ability_cooldown_on_damage_taken",
+			"kerillian_shade_ability_cooldown_on_damage_taken"
 		},
 		perks = {
 			{
-				description = "career_passive_desc_we_1a_2",
 				display_name = "career_passive_name_we_1_2",
+				description = "career_passive_desc_we_1a_2"
 			},
 			{
-				description = "career_passive_desc_we_1d",
 				display_name = "career_passive_name_we_1d",
+				description = "career_passive_desc_we_1d"
 			},
 			{
-				description = "career_passive_desc_we_1a_3",
 				display_name = "career_passive_name_we_1",
-			},
-		},
+				description = "career_passive_desc_we_1a_3"
+			}
+		}
 	},
 	we_2 = {
 		description = "career_passive_desc_we_2a_2",
@@ -420,18 +420,18 @@ PassiveAbilitySettings = {
 			"kerillian_maidenguard_passive_increased_stamina",
 			"kerillian_maidenguard_ress_time",
 			"kerillian_maidenguard_ability_cooldown_on_hit",
-			"kerillian_maidenguard_ability_cooldown_on_damage_taken",
+			"kerillian_maidenguard_ability_cooldown_on_damage_taken"
 		},
 		perks = {
 			{
-				description = "career_passive_desc_we_2b_2",
 				display_name = "career_passive_name_we_2b",
+				description = "career_passive_desc_we_2b_2"
 			},
 			{
-				description = "career_passive_desc_we_2c_2",
 				display_name = "career_passive_name_we_2c",
-			},
-		},
+				description = "career_passive_desc_we_2c_2"
+			}
+		}
 	},
 	we_3 = {
 		description = "career_passive_desc_we_3a_2",
@@ -443,22 +443,22 @@ PassiveAbilitySettings = {
 			"kerillian_waywatcher_passive_increased_ammunition",
 			"kerillian_waywatcher_passive_increased_zoom",
 			"kerillian_waywatcher_ability_cooldown_on_hit",
-			"kerillian_waywatcher_ability_cooldown_on_damage_taken",
+			"kerillian_waywatcher_ability_cooldown_on_damage_taken"
 		},
 		perks = {
 			{
-				description = "career_passive_desc_we_3b_3",
 				display_name = "career_passive_name_we_3b",
+				description = "career_passive_desc_we_3b_3"
 			},
 			{
-				description = "career_passive_desc_we_3c",
 				display_name = "career_passive_name_we_3c",
+				description = "career_passive_desc_we_3c"
 			},
 			{
-				description = "career_passive_desc_we_3d_2",
 				display_name = "career_passive_name_we_3d",
-			},
-		},
+				description = "career_passive_desc_we_3d_2"
+			}
+		}
 	},
 	wh_1 = {
 		description = "career_passive_desc_wh_1a",
@@ -469,18 +469,18 @@ PassiveAbilitySettings = {
 			"victor_zealot_passive_uninterruptible_heavy",
 			"victor_zealot_gain_invulnerability_on_lethal_damage_taken",
 			"victor_zealot_ability_cooldown_on_hit",
-			"victor_zealot_ability_cooldown_on_damage_taken",
+			"victor_zealot_ability_cooldown_on_damage_taken"
 		},
 		perks = {
 			{
-				description = "career_passive_desc_dr_2c",
 				display_name = "career_passive_name_wh_1b",
+				description = "career_passive_desc_dr_2c"
 			},
 			{
-				description = "career_passive_desc_wh_1c",
 				display_name = "career_passive_name_wh_1c",
-			},
-		},
+				description = "career_passive_desc_wh_1c"
+			}
+		}
 	},
 	wh_2 = {
 		description = "career_passive_desc_wh_2a_2",
@@ -492,18 +492,18 @@ PassiveAbilitySettings = {
 			"victor_bountyhunter_passive_reload_speed",
 			"victor_bountyhunter_passive_increased_ammunition",
 			"victor_bountyhunter_ability_cooldown_on_hit",
-			"victor_bountyhunter_ability_cooldown_on_damage_taken",
+			"victor_bountyhunter_ability_cooldown_on_damage_taken"
 		},
 		perks = {
 			{
-				description = "career_passive_desc_wh_2b_2",
 				display_name = "career_passive_name_wh_2b",
+				description = "career_passive_desc_wh_2b_2"
 			},
 			{
-				description = "career_passive_desc_wh_2c_2",
 				display_name = "career_passive_name_wh_2c",
-			},
-		},
+				description = "career_passive_desc_wh_2c_2"
+			}
+		}
 	},
 	wh_3 = {
 		description = "career_passive_desc_wh_3a_2",
@@ -515,18 +515,18 @@ PassiveAbilitySettings = {
 			"victor_witchhunter_headshot_crit_killing_blow",
 			"victor_witchhunter_headshot_multiplier_increase",
 			"victor_witchhunter_ability_cooldown_on_hit",
-			"victor_witchhunter_ability_cooldown_on_damage_taken",
+			"victor_witchhunter_ability_cooldown_on_damage_taken"
 		},
 		perks = {
 			{
-				description = "career_passive_desc_wh_3b",
 				display_name = "career_passive_name_wh_3b",
+				description = "career_passive_desc_wh_3b"
 			},
 			{
-				description = "career_passive_desc_wh_3c",
 				display_name = "career_passive_name_wh_3c",
-			},
-		},
+				description = "career_passive_desc_wh_3c"
+			}
+		}
 	},
 	bw_1 = {
 		description = "career_passive_desc_bw_1a_2",
@@ -538,16 +538,16 @@ PassiveAbilitySettings = {
 			"sienna_scholar_passive_max_overcharge",
 			"sienna_scholar_ability_cooldown_on_hit",
 			"sienna_scholar_ability_cooldown_on_damage_taken",
-			"sienna_scholar_overcharge_no_slow",
+			"sienna_scholar_overcharge_no_slow"
 		},
 		perks = {
 			{
-				description = "career_passive_desc_bw_1b_2",
 				display_name = "career_passive_name_bw_1b",
+				description = "career_passive_desc_bw_1b_2"
 			},
 			{
-				description = "sienna_scholar_overcharge_no_slow_desc",
 				display_name = "sienna_scholar_overcharge_no_slow",
+				description = "sienna_scholar_overcharge_no_slow_desc"
 			},
 			{
 				description = "sienna_scholar_increased_max_desc",
@@ -555,11 +555,11 @@ PassiveAbilitySettings = {
 				description_values = {
 					{
 						value_type = "percent",
-						value = CareerConstants.bw_scholar.perk_3_max_overcharge,
-					},
-				},
-			},
-		},
+						value = CareerConstants.bw_scholar.perk_3_max_overcharge
+					}
+				}
+			}
+		}
 	},
 	bw_2 = {
 		description = "career_passive_desc_bw_2a_2",
@@ -571,18 +571,18 @@ PassiveAbilitySettings = {
 			"sienna_adept_passive_overcharge_charge_speed_increased",
 			"sienna_adept_passive_ranged_damage",
 			"sienna_adept_ability_cooldown_on_hit",
-			"sienna_adept_ability_cooldown_on_damage_taken",
+			"sienna_adept_ability_cooldown_on_damage_taken"
 		},
 		perks = {
 			{
-				description = "career_passive_desc_bw_2b_2",
 				display_name = "career_passive_name_bw_2b",
+				description = "career_passive_desc_bw_2b_2"
 			},
 			{
-				description = "career_passive_desc_bw_2c_2",
 				display_name = "career_passive_name_bw_2c",
-			},
-		},
+				description = "career_passive_desc_bw_2c_2"
+			}
+		}
 	},
 	bw_3 = {
 		description = "career_passive_desc_bw_3a",
@@ -592,35 +592,35 @@ PassiveAbilitySettings = {
 			"sienna_unchained_passive",
 			"sienna_unchained_passive_increased_melee_power_on_overcharge",
 			"sienna_unchained_ability_cooldown_on_hit",
-			"sienna_unchained_ability_cooldown_on_damage_taken",
+			"sienna_unchained_ability_cooldown_on_damage_taken"
 		},
 		perks = {
 			{
-				description = "career_passive_desc_bw_3b",
 				display_name = "career_passive_name_bw_3b",
+				description = "career_passive_desc_bw_3b"
 			},
 			{
-				description = "career_passive_desc_bw_3c_2",
 				display_name = "career_passive_name_bw_3c",
-			},
-		},
-	},
+				description = "career_passive_desc_bw_3c_2"
+			}
+		}
+	}
 }
 
 DLCUtils.require_list("career_ability_settings")
 
-for career, ability_list in pairs(ActivatedAbilitySettings) do
-	for i = 1, #ability_list do
-		local data = ability_list[i]
+for iter_0_0, iter_0_1 in pairs(ActivatedAbilitySettings) do
+	for iter_0_2 = 1, #iter_0_1 do
+		local var_0_0 = iter_0_1[iter_0_2]
 
-		if data.action_name then
-			fassert(not data.ability_class, "Activated ability for \"%s\" cannot have an ability class if it is a weapon action", career)
+		if var_0_0.action_name then
+			fassert(not var_0_0.ability_class, "Activated ability for \"%s\" cannot have an ability class if it is a weapon action", iter_0_0)
 		end
 
-		if data.ability_class then
-			fassert(not data.action_name, "Activated ability for \"%s\" cannot have a weapon action if it uses an ability class", career)
+		if var_0_0.ability_class then
+			fassert(not var_0_0.action_name, "Activated ability for \"%s\" cannot have a weapon action if it uses an ability class", iter_0_0)
 		end
 
-		fassert(data.action_name or data.ability_class, "Activated ability for \"%s\" must have either a weapon action or an ability class", career)
+		fassert(var_0_0.action_name or var_0_0.ability_class, "Activated ability for \"%s\" must have either a weapon action or an ability class", iter_0_0)
 	end
 end

@@ -1,125 +1,125 @@
-﻿-- chunkname: @scripts/settings/breeds/breed_tower_homing_skull.lua
+-- chunkname: @scripts/settings/breeds/breed_tower_homing_skull.lua
 
-local breed_data = {
-	air_spawning_distance = 20,
-	animation_sync_rpc = "rpc_sync_anim_state_1",
-	aoe_height = 0.2,
-	base_unit = "units/beings/enemies/undead_ethereal_skeleton/chr_undead_ethereal_skeleton_skull",
-	behavior = "tower_homing_skull",
-	bot_threat_start_time = 0,
-	collision_detection_sphere_radius = 0.2,
-	death_reaction = "tower_homing_skull",
-	debug_despawn_immunity = false,
-	debug_spawn_category = "Misc",
-	debug_spawn_func_name = "aim_spawning_air",
+local var_0_0 = {
 	detection_radius = 9999999,
-	exchange_order = 1,
-	far_off_despawn_immunity = true,
-	flesh_material = "stone",
-	hit_effect_template = "HitEffectsShadowSkull",
-	hit_reaction = "ai_ethereal_skull_knock_back",
-	ignore_activate_unit = true,
-	impact_collision_filter = "filter_ray_projectile_enemy",
-	impact_explosion_name = "ethereal_skull_impact",
-	impact_template_name = "no_owner_direct_impact",
-	inside_wall_spawn_distance = -1,
-	is_bot_threat = false,
-	no_autoaim = true,
-	no_blood_splatter_on_damage = true,
-	not_bot_target = true,
-	only_one_impact = true,
-	perception = "perception_all_seeing",
-	poison_resistance = 100,
-	race = "chaos",
-	radius = 1,
-	run_speed = 1,
-	target_head_node = "c_skull",
-	target_selection = "pick_closest_target",
-	threat_value = 0,
-	unit_template = "ethereal_skull_unit",
+	aoe_height = 0.2,
 	walk_speed = 1.5,
+	flesh_material = "stone",
+	debug_spawn_func_name = "aim_spawning_air",
+	race = "chaos",
+	poison_resistance = 100,
+	exchange_order = 1,
+	not_bot_target = true,
+	animation_sync_rpc = "rpc_sync_anim_state_1",
+	run_speed = 1,
+	impact_template_name = "no_owner_direct_impact",
+	impact_collision_filter = "filter_ray_projectile_enemy",
+	debug_spawn_category = "Misc",
+	is_bot_threat = false,
+	target_head_node = "c_skull",
+	debug_despawn_immunity = false,
+	hit_reaction = "ai_ethereal_skull_knock_back",
+	target_selection = "pick_closest_target",
+	death_reaction = "tower_homing_skull",
+	only_one_impact = true,
+	air_spawning_distance = 20,
+	hit_effect_template = "HitEffectsShadowSkull",
+	collision_detection_sphere_radius = 0.2,
+	radius = 1,
+	unit_template = "ethereal_skull_unit",
+	no_blood_splatter_on_damage = true,
+	bot_threat_start_time = 0,
+	no_autoaim = true,
+	perception = "perception_all_seeing",
+	inside_wall_spawn_distance = -1,
+	far_off_despawn_immunity = true,
+	impact_explosion_name = "ethereal_skull_impact",
+	behavior = "tower_homing_skull",
+	base_unit = "units/beings/enemies/undead_ethereal_skeleton/chr_undead_ethereal_skeleton_skull",
+	threat_value = 0,
+	ignore_activate_unit = true,
 	max_health = BreedTweaks.max_health.marauder,
 	infighting = InfightingSettings.small,
 	size_variation_range = {
 		1,
-		1,
+		1
 	},
 	debug_color = {
 		255,
 		255,
 		255,
-		255,
+		255
 	},
 	hit_zones = {
 		full = {
 			prio = 1,
 			actors = {
-				"c_hitbox",
+				"c_hitbox"
 			},
 			push_actors = {
 				"c_skull",
-				"c_jaw",
-			},
+				"c_jaw"
+			}
 		},
 		head = {
 			prio = 2,
 			actors = {
-				"c_hitbox",
+				"c_hitbox"
 			},
 			push_actors = {
 				"c_skull",
-				"c_jaw",
-			},
+				"c_jaw"
+			}
 		},
 		neck = {
 			prio = 3,
 			actors = {
-				"c_hitbox",
+				"c_hitbox"
 			},
 			push_actors = {
 				"c_skull",
-				"c_jaw",
-			},
+				"c_jaw"
+			}
 		},
 		torso = {
 			prio = 4,
 			actors = {
-				"c_hitbox",
+				"c_hitbox"
 			},
 			push_actors = {
 				"c_skull",
-				"c_jaw",
-			},
-		},
+				"c_jaw"
+			}
+		}
 	},
-	modify_extension_init_data = function (breed, is_husk, extension_init_data)
-		local impact_explosion_name = breed.impact_explosion_name
-		local sphere_radius = breed.collision_detection_sphere_radius
-		local only_one_impact = breed.only_one_impact
-		local impact_collision_filter = breed.impact_collision_filter
-		local impact_template_name = breed.impact_template_name
-		local damage_source = "n/a"
-		local projectile_impact_system_data = extension_init_data.projectile_impact_system or {}
+	modify_extension_init_data = function(arg_1_0, arg_1_1, arg_1_2)
+		local var_1_0 = arg_1_0.impact_explosion_name
+		local var_1_1 = arg_1_0.collision_detection_sphere_radius
+		local var_1_2 = arg_1_0.only_one_impact
+		local var_1_3 = arg_1_0.impact_collision_filter
+		local var_1_4 = arg_1_0.impact_template_name
+		local var_1_5 = "n/a"
+		local var_1_6 = arg_1_2.projectile_impact_system or {}
 
-		projectile_impact_system_data.sphere_radius = sphere_radius
-		projectile_impact_system_data.only_one_impact = only_one_impact
-		projectile_impact_system_data.collision_filter = impact_collision_filter
-		extension_init_data.projectile_impact_system = projectile_impact_system_data
+		var_1_6.sphere_radius = var_1_1
+		var_1_6.only_one_impact = var_1_2
+		var_1_6.collision_filter = var_1_3
+		arg_1_2.projectile_impact_system = var_1_6
 
-		local projectile_system_data = extension_init_data.projectile_system or {}
+		local var_1_7 = arg_1_2.projectile_system or {}
 
-		projectile_system_data.damage_source = damage_source
-		projectile_system_data.impact_template_name = impact_template_name
-		projectile_system_data.explosion_template_name = impact_explosion_name
-		extension_init_data.projectile_system = projectile_system_data
+		var_1_7.damage_source = var_1_5
+		var_1_7.impact_template_name = var_1_4
+		var_1_7.explosion_template_name = var_1_0
+		arg_1_2.projectile_system = var_1_7
 	end,
 	debug_spawn_optional_data = {
-		prepare_func = function (breed, extension_init_data)
-			local is_husk = false
+		prepare_func = function(arg_2_0, arg_2_1)
+			local var_2_0 = false
 
-			breed.modify_extension_init_data(breed, is_husk, extension_init_data)
-		end,
-	},
+			arg_2_0.modify_extension_init_data(arg_2_0, var_2_0, arg_2_1)
+		end
+	}
 }
 
-Breeds.tower_homing_skull = table.create_copy(Breeds.tower_homing_skull, breed_data)
+Breeds.tower_homing_skull = table.create_copy(Breeds.tower_homing_skull, var_0_0)

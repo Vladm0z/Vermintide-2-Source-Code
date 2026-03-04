@@ -1,157 +1,150 @@
-﻿-- chunkname: @scripts/managers/conflict_director/weave_spawner.lua
+-- chunkname: @scripts/managers/conflict_director/weave_spawner.lua
 
 require("scripts/settings/weave_spawning_settings")
 
 WeaveSpawner = class(WeaveSpawner)
 
-WeaveSpawner.init = function (self, world)
-	self.main_path_spawning_index = 1
-	self.started_trickle = false
-	self.players_has_left_safe_zone = false
+function WeaveSpawner.init(arg_1_0, arg_1_1)
+	arg_1_0.main_path_spawning_index = 1
+	arg_1_0.started_trickle = false
+	arg_1_0.players_has_left_safe_zone = false
 end
 
-WeaveSpawner.players_left_safe_zone = function (self)
-	self.players_has_left_safe_zone = true
+function WeaveSpawner.players_left_safe_zone(arg_2_0)
+	arg_2_0.players_has_left_safe_zone = true
 end
 
-local DO_RELOAD = true
+local var_0_0 = true
 
-WeaveSpawner.update = function (self, t, dt, objective_template)
-	local spawning_settings = objective_template.spawning_settings
+function WeaveSpawner.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	local var_3_0 = arg_3_3.spawning_settings
 
-	if not spawning_settings or spawning_settings.disabled then
+	if not var_3_0 or var_3_0.disabled then
 		return
 	end
 
-	local terror_event_trickle = spawning_settings.terror_event_trickle
-	local main_path_spawning_settings = spawning_settings.main_path_spawning
+	local var_3_1 = var_3_0.terror_event_trickle
+	local var_3_2 = var_3_0.main_path_spawning
 
-	self:_update_terror_event_trickle(t, dt, terror_event_trickle)
-	self:_update_main_path_spawning(t, dt, main_path_spawning_settings)
+	arg_3_0:_update_terror_event_trickle(arg_3_1, arg_3_2, var_3_1)
+	arg_3_0:_update_main_path_spawning(arg_3_1, arg_3_2, var_3_2)
 end
 
-WeaveSpawner.start_terror_event_from_template = function (self, event_template_name, spawner_id)
-	local seed = self.original_seed
+function WeaveSpawner.start_terror_event_from_template(arg_4_0, arg_4_1, arg_4_2)
+	local var_4_0 = arg_4_0.original_seed
 
-	Managers.state.conflict:start_terror_event_from_template(event_template_name, spawner_id, seed)
+	Managers.state.conflict:start_terror_event_from_template(arg_4_1, arg_4_2, var_4_0)
 end
 
-WeaveSpawner._update_terror_event_trickle = function (self, t, dt, terror_event_trickle)
-	if self.players_has_left_safe_zone and not self.started_trickle and terror_event_trickle and self.conflict_director_setup_done then
-		local all_players_spawned = Managers.matchmaking:are_all_players_spawned()
+function WeaveSpawner._update_terror_event_trickle(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	if arg_5_0.players_has_left_safe_zone and not arg_5_0.started_trickle and arg_5_3 and arg_5_0.conflict_director_setup_done and Managers.matchmaking:are_all_players_spawned() then
+		arg_5_0.started_trickle = true
 
-		if all_players_spawned then
-			self.started_trickle = true
-
-			TerrorEventMixer.start_event(terror_event_trickle)
-		end
+		TerrorEventMixer.start_event(arg_5_3)
 	end
 end
 
-WeaveSpawner._update_main_path_spawning = function (self, t, dt, main_path_spawning_settings)
-	if self.players_has_left_safe_zone and self.conflict_director_setup_done then
-		local main_path_spawning_index = self.main_path_spawning_index
-		local main_path_spawning_setting = main_path_spawning_settings and main_path_spawning_settings[main_path_spawning_index]
+function WeaveSpawner._update_main_path_spawning(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	if arg_6_0.players_has_left_safe_zone and arg_6_0.conflict_director_setup_done then
+		local var_6_0 = arg_6_0.main_path_spawning_index
+		local var_6_1 = arg_6_3 and arg_6_3[var_6_0]
 
-		if main_path_spawning_setting then
-			local conflict_director = Managers.state.conflict
-			local level_analysis = conflict_director.level_analysis
-			local main_path_data = level_analysis.main_path_data
-			local ahead_travel_dist = conflict_director.main_path_info.ahead_travel_dist
-			local total_travel_dist = main_path_data.total_dist
-			local travel_percentage = ahead_travel_dist / total_travel_dist * 100
-			local percentage_threshold = main_path_spawning_setting.percentage
-			local terror_event = main_path_spawning_setting.terror_event_name
+		if var_6_1 then
+			local var_6_2 = Managers.state.conflict
+			local var_6_3 = var_6_2.level_analysis.main_path_data
+			local var_6_4 = var_6_2.main_path_info.ahead_travel_dist
+			local var_6_5 = var_6_3.total_dist
+			local var_6_6 = var_6_4 / var_6_5 * 100
+			local var_6_7 = var_6_1.percentage
+			local var_6_8 = var_6_1.terror_event_name
 
-			if percentage_threshold <= travel_percentage then
-				local main_path_trigger_distance = total_travel_dist * (percentage_threshold * 0.01)
-				local percentage_spawn_offset = main_path_spawning_setting.percentage_spawn_offset
-				local offset_distance = 0
+			if var_6_7 <= var_6_6 then
+				local var_6_9 = var_6_5 * (var_6_7 * 0.01)
+				local var_6_10 = var_6_1.percentage_spawn_offset
+				local var_6_11 = 0
 
-				if percentage_spawn_offset then
-					offset_distance = total_travel_dist * (percentage_spawn_offset * 0.01)
+				if var_6_10 then
+					var_6_11 = var_6_5 * (var_6_10 * 0.01)
 				end
 
-				local data = {
-					main_path_trigger_distance = main_path_trigger_distance + offset_distance,
-					seed = self.original_seed,
+				local var_6_12 = {
+					main_path_trigger_distance = var_6_9 + var_6_11,
+					seed = arg_6_0.original_seed
 				}
 
-				TerrorEventMixer.start_event(terror_event, data)
+				TerrorEventMixer.start_event(var_6_8, var_6_12)
 
-				self.main_path_spawning_index = self.main_path_spawning_index + 1
+				arg_6_0.main_path_spawning_index = arg_6_0.main_path_spawning_index + 1
 			end
 		end
 	end
 end
 
-WeaveSpawner.set_seed = function (self, seed)
-	fassert(seed and type(seed) == "number", "Bad seed input!")
+function WeaveSpawner.set_seed(arg_7_0, arg_7_1)
+	fassert(arg_7_1 and type(arg_7_1) == "number", "Bad seed input!")
 
-	self.seed = seed
-	self.original_seed = seed
+	arg_7_0.seed = arg_7_1
+	arg_7_0.original_seed = arg_7_1
 end
 
-WeaveSpawner._random = function (self, ...)
-	fassert(self.seed, "No seed set for weave spawning!")
+function WeaveSpawner._random(arg_8_0, ...)
+	fassert(arg_8_0.seed, "No seed set for weave spawning!")
 
-	local seed, value = Math.next_random(self.seed, ...)
+	local var_8_0, var_8_1 = Math.next_random(arg_8_0.seed, ...)
 
-	self.seed = seed
+	arg_8_0.seed = var_8_0
 
-	return value
+	return var_8_1
 end
 
-WeaveSpawner.get_hidden_spawn_pos_from_position_seeded = function (self, epicenter)
-	fassert(epicenter ~= nil, "Need to supply position when triggering get_hidden_spawn_pos_from_position_seeded")
+function WeaveSpawner.get_hidden_spawn_pos_from_position_seeded(arg_9_0, arg_9_1)
+	fassert(arg_9_1 ~= nil, "Need to supply position when triggering get_hidden_spawn_pos_from_position_seeded")
 
-	local conflict_director = Managers.state.conflict
-	local world = conflict_director._world
-	local side = Managers.state.side:get_side_from_name("heroes")
-	local avoid_positions = side.PLAYER_POSITIONS
-	local h = Vector3(0, 0, 1)
-	local radius = 30
-	local radius_spread = 10
-	local max_tries = 10
-	local ignore_umbra = not World.umbra_available(world)
-	local hidden_spawn_pos
+	local var_9_0 = Managers.state.conflict
+	local var_9_1 = var_9_0._world
+	local var_9_2 = Managers.state.side:get_side_from_name("heroes").PLAYER_POSITIONS
+	local var_9_3 = Vector3(0, 0, 1)
+	local var_9_4 = 30
+	local var_9_5 = 10
+	local var_9_6 = 10
+	local var_9_7 = not World.umbra_available(var_9_1)
+	local var_9_8
 
-	for i = 1, max_tries do
-		local check_pos
+	for iter_9_0 = 1, var_9_6 do
+		local var_9_9
 
-		for j = 1, max_tries do
-			local add_vec = Vector3(radius + (self:_random() - 0.5) * radius_spread, 0, 1)
-			local pos = epicenter + Quaternion.rotate(Quaternion(Vector3.up(), math.degrees_to_radians(self:_random(1, 360))), add_vec)
-			local circle_pos = ConflictUtils.find_center_tri(conflict_director.nav_world, pos)
+		for iter_9_1 = 1, var_9_6 do
+			local var_9_10 = Vector3(var_9_4 + (arg_9_0:_random() - 0.5) * var_9_5, 0, 1)
+			local var_9_11 = arg_9_1 + Quaternion.rotate(Quaternion(Vector3.up(), math.degrees_to_radians(arg_9_0:_random(1, 360))), var_9_10)
+			local var_9_12 = ConflictUtils.find_center_tri(var_9_0.nav_world, var_9_11)
 
-			if circle_pos then
-				check_pos = circle_pos
+			if var_9_12 then
+				var_9_9 = var_9_12
 			end
 		end
 
-		if check_pos then
-			local hidden = true
+		if var_9_9 then
+			local var_9_13 = true
 
-			for j = 1, #avoid_positions do
-				local avoid_pos = avoid_positions[j]
-				local los = ignore_umbra or World.umbra_has_line_of_sight(world, check_pos + h, avoid_pos + h)
+			for iter_9_2 = 1, #var_9_2 do
+				local var_9_14 = var_9_2[iter_9_2]
 
-				if los then
-					hidden = false
+				if var_9_7 or World.umbra_has_line_of_sight(var_9_1, var_9_9 + var_9_3, var_9_14 + var_9_3) then
+					var_9_13 = false
 
 					break
 				end
 			end
 
-			if hidden then
-				hidden_spawn_pos = check_pos
+			if var_9_13 then
+				var_9_8 = var_9_9
 			end
 		end
 	end
 
-	if not hidden_spawn_pos then
+	if not var_9_8 then
 		return
 	end
 
-	return hidden_spawn_pos
+	return var_9_8
 end

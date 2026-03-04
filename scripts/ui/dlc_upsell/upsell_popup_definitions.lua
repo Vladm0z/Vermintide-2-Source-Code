@@ -1,285 +1,279 @@
-﻿-- chunkname: @scripts/ui/dlc_upsell/upsell_popup_definitions.lua
+-- chunkname: @scripts/ui/dlc_upsell/upsell_popup_definitions.lua
 
-local SIZE_X, SIZE_Y = 1920, 1080
-local content_margin = 50
-local window_w = 455
-local window_h = 636
-local content_w = window_w - content_margin * 2
-local scenegraph_definition = {
+local var_0_0 = 1920
+local var_0_1 = 1080
+local var_0_2 = 50
+local var_0_3 = 455
+local var_0_4 = 636
+local var_0_5 = var_0_3 - var_0_2 * 2
+local var_0_6 = {
 	screen = {
 		scale = "fit",
 		position = {
 			0,
 			0,
-			UILayer.item_display_popup,
+			UILayer.item_display_popup
 		},
 		size = {
-			SIZE_X,
-			SIZE_Y,
-		},
+			var_0_0,
+			var_0_1
+		}
 	},
 	background = {
-		horizontal_alignment = "center",
-		parent = "screen",
 		vertical_alignment = "center",
+		parent = "screen",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			0,
-			1,
+			1
 		},
 		size = {
 			0,
-			0,
-		},
+			0
+		}
 	},
 	window = {
-		horizontal_alignment = "center",
-		parent = "background",
 		vertical_alignment = "center",
+		parent = "background",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			0,
-			2,
+			2
 		},
 		size = {
-			window_w,
-			window_h,
-		},
+			var_0_3,
+			var_0_4
+		}
 	},
 	window_top_detail = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "top",
+		parent = "window",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			0,
-			6,
+			6
 		},
 		size = {
 			45,
-			12,
-		},
+			12
+		}
 	},
 	title = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "top",
+		parent = "window",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			-30,
-			1,
+			1
 		},
 		size = {
-			content_w,
-			60,
-		},
+			var_0_5,
+			60
+		}
 	},
 	body = {
-		horizontal_alignment = "center",
-		parent = "title",
 		vertical_alignment = "top",
+		parent = "title",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			-60,
-			0,
+			0
 		},
 		size = {
-			content_w,
-			380,
-		},
+			var_0_5,
+			380
+		}
 	},
 	store_button = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "bottom",
+		parent = "window",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			50,
-			10,
+			10
 		},
 		size = {
 			320,
-			76,
-		},
+			76
+		}
 	},
 	ok_button = {
-		horizontal_alignment = "center",
-		parent = "window",
 		vertical_alignment = "bottom",
+		parent = "window",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			-20,
-			10,
+			10
 		},
 		size = {
 			160,
-			50,
-		},
-	},
+			50
+		}
+	}
 }
-local title_text_style = {
-	dynamic_font_size = true,
-	font_size = 32,
-	font_type = "hell_shark_header",
-	horizontal_alignment = "left",
-	localize = false,
-	upper_case = true,
+local var_0_7 = {
 	use_shadow = true,
+	upper_case = true,
+	localize = false,
+	font_size = 32,
+	horizontal_alignment = "left",
 	vertical_alignment = "center",
+	dynamic_font_size = true,
+	font_type = "hell_shark_header",
 	text_color = Colors.get_table("cheeseburger"),
 	offset = {
 		0,
 		0,
-		2,
-	},
+		2
+	}
 }
-local body_text_style = {
-	font_size = 20,
-	font_type = "hell_shark",
-	horizontal_alignment = "left",
-	localize = false,
-	upper_case = false,
-	use_shadow = true,
-	vertical_alignment = "top",
+local var_0_8 = {
 	word_wrap = true,
+	upper_case = false,
+	localize = false,
+	use_shadow = true,
+	font_size = 20,
+	horizontal_alignment = "left",
+	vertical_alignment = "top",
+	font_type = "hell_shark",
 	text_color = Colors.get_table("font_default"),
 	offset = {
 		0,
 		0,
-		2,
-	},
+		2
+	}
 }
 
-function create_frameless_button(scenegraph_id, size, background_texture, text, font_size, font_type, upper_case, text_color_name, detail_texture, detail_offset, disable_with_gamepad)
-	background_texture = background_texture or "button_bg_01"
+function create_frameless_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9, arg_1_10)
+	arg_1_2 = arg_1_2 or "button_bg_01"
 
-	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local side_detail_texture = detail_texture or "button_detail_01"
-	local side_detail_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(side_detail_texture)
-	local side_detail_texture_size = side_detail_texture_settings.size
-	local font_size = font_size or 24
-	local font_type = font_type or "hell_shark"
-	local text_color_name = text_color_name or "font_button_normal"
-	local upper_case = upper_case == nil or upper_case
-	local detail_offset = detail_offset or 9
+	local var_1_0 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_1_2)
+	local var_1_1 = arg_1_8 or "button_detail_01"
+	local var_1_2 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_1_1).size
+	local var_1_3 = arg_1_4 or 24
+	local var_1_4 = arg_1_5 or "hell_shark"
+	local var_1_5 = arg_1_7 or "font_button_normal"
+	local var_1_6 = arg_1_6 == nil or arg_1_6
+	local var_1_7 = arg_1_9 or 9
 
 	return {
 		element = {
 			passes = {
 				{
-					content_id = "button_hotspot",
-					pass_type = "hotspot",
 					style_id = "frame",
+					pass_type = "hotspot",
+					content_id = "button_hotspot"
 				},
 				{
-					content_id = "background",
-					pass_type = "texture_uv",
 					style_id = "background",
-				},
-				{
-					pass_type = "texture",
-					style_id = "background_fade",
-					texture_id = "background_fade",
-				},
-				{
-					pass_type = "texture",
-					style_id = "hover_glow",
-					texture_id = "hover_glow",
-				},
-				{
-					pass_type = "rect",
-					style_id = "clicked_rect",
-				},
-				{
-					pass_type = "rect",
-					style_id = "disabled_rect",
-					content_check_function = function (content)
-						local button_hotspot = content.button_hotspot
-
-						return button_hotspot.disable_button
-					end,
-				},
-				{
-					content_id = "side_detail",
 					pass_type = "texture_uv",
+					content_id = "background"
+				},
+				{
+					texture_id = "background_fade",
+					style_id = "background_fade",
+					pass_type = "texture"
+				},
+				{
+					texture_id = "hover_glow",
+					style_id = "hover_glow",
+					pass_type = "texture"
+				},
+				{
+					pass_type = "rect",
+					style_id = "clicked_rect"
+				},
+				{
+					style_id = "disabled_rect",
+					pass_type = "rect",
+					content_check_function = function(arg_2_0)
+						return arg_2_0.button_hotspot.disable_button
+					end
+				},
+				{
 					style_id = "side_detail_right",
+					pass_type = "texture_uv",
+					content_id = "side_detail"
 				},
 				{
-					content_id = "side_detail",
-					pass_type = "texture",
-					style_id = "side_detail_left",
 					texture_id = "texture_id",
+					style_id = "side_detail_left",
+					pass_type = "texture",
+					content_id = "side_detail"
 				},
 				{
-					pass_type = "text",
 					style_id = "title_text",
+					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (content)
-						local button_hotspot = content.button_hotspot
-
-						return not button_hotspot.disable_button
-					end,
+					content_check_function = function(arg_3_0)
+						return not arg_3_0.button_hotspot.disable_button
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "title_text_disabled",
-					text_id = "title_text",
-					content_check_function = function (content)
-						local button_hotspot = content.button_hotspot
-
-						return button_hotspot.disable_button
-					end,
-				},
-				{
 					pass_type = "text",
-					style_id = "title_text_shadow",
 					text_id = "title_text",
+					content_check_function = function(arg_4_0)
+						return arg_4_0.button_hotspot.disable_button
+					end
 				},
 				{
-					pass_type = "texture",
+					style_id = "title_text_shadow",
+					pass_type = "text",
+					text_id = "title_text"
+				},
+				{
+					texture_id = "glass",
 					style_id = "glass_top",
-					texture_id = "glass",
+					pass_type = "texture"
 				},
 				{
-					pass_type = "texture",
-					style_id = "glass_bottom",
 					texture_id = "glass",
-				},
-			},
+					style_id = "glass_bottom",
+					pass_type = "texture"
+				}
+			}
 		},
 		content = {
-			background_fade = "button_bg_fade",
 			glass = "button_glass_02",
 			hover_glow = "button_state_default",
+			background_fade = "button_bg_fade",
 			side_detail = {
 				uvs = {
 					{
 						1,
-						0,
+						0
 					},
 					{
 						0,
-						1,
-					},
+						1
+					}
 				},
-				texture_id = side_detail_texture,
+				texture_id = var_1_1
 			},
 			button_hotspot = {},
-			title_text = text or "n/a",
+			title_text = arg_1_3 or "n/a",
 			background = {
 				uvs = {
 					{
 						0,
-						1 - size[2] / background_texture_settings.size[2],
+						1 - arg_1_1[2] / var_1_0.size[2]
 					},
 					{
-						size[1] / background_texture_settings.size[1],
-						1,
-					},
+						arg_1_1[1] / var_1_0.size[1],
+						1
+					}
 				},
-				texture_id = background_texture,
+				texture_id = arg_1_2
 			},
-			disable_with_gamepad = disable_with_gamepad,
+			disable_with_gamepad = arg_1_10
 		},
 		style = {
 			background = {
@@ -287,267 +281,267 @@ function create_frameless_button(scenegraph_id, size, background_texture, text, 
 					255,
 					150,
 					150,
-					150,
+					150
 				},
 				offset = {
 					0,
 					4,
-					0,
+					0
 				},
 				size = {
-					size[1],
-					size[2] - 8,
-				},
+					arg_1_1[1],
+					arg_1_1[2] - 8
+				}
 			},
 			background_fade = {
 				color = {
 					200,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					4,
-					2,
+					2
 				},
 				size = {
-					size[1],
-					size[2] - 8,
-				},
+					arg_1_1[1],
+					arg_1_1[2] - 8
+				}
 			},
 			hover_glow = {
 				color = {
 					0,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					5,
-					3,
+					3
 				},
 				size = {
-					size[1],
-					math.min(size[2] - 5, 80),
-				},
+					arg_1_1[1],
+					math.min(arg_1_1[2] - 5, 80)
+				}
 			},
 			clicked_rect = {
 				color = {
 					0,
 					0,
 					0,
-					0,
+					0
 				},
 				offset = {
 					0,
 					4,
-					7,
+					7
 				},
 				size = {
-					size[1],
-					size[2] - 8,
-				},
+					arg_1_1[1],
+					arg_1_1[2] - 8
+				}
 			},
 			disabled_rect = {
 				color = {
 					150,
 					20,
 					20,
-					20,
+					20
 				},
 				offset = {
 					0,
 					0,
-					1,
-				},
+					1
+				}
 			},
 			title_text = {
-				dynamic_font_size = true,
+				word_wrap = true,
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
-				word_wrap = true,
-				upper_case = upper_case,
-				font_size = font_size,
-				font_type = font_type,
-				text_color = Colors.get_color_table_with_alpha(text_color_name, 255),
-				default_text_color = Colors.get_color_table_with_alpha(text_color_name, 255),
+				dynamic_font_size = true,
+				upper_case = var_1_6,
+				font_size = var_1_3,
+				font_type = var_1_4,
+				text_color = Colors.get_color_table_with_alpha(var_1_5, 255),
+				default_text_color = Colors.get_color_table_with_alpha(var_1_5, 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
 				size = {
-					size[1] - 40,
-					size[2],
+					arg_1_1[1] - 40,
+					arg_1_1[2]
 				},
 				offset = {
 					20,
 					0,
-					6,
-				},
+					6
+				}
 			},
 			title_text_disabled = {
-				dynamic_font_size = true,
+				word_wrap = true,
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
-				word_wrap = true,
-				upper_case = upper_case,
-				font_size = font_size,
-				font_type = font_type,
+				dynamic_font_size = true,
+				upper_case = var_1_6,
+				font_size = var_1_3,
+				font_type = var_1_4,
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				size = {
-					size[1] - 40,
-					size[2],
+					arg_1_1[1] - 40,
+					arg_1_1[2]
 				},
 				offset = {
 					20,
 					0,
-					6,
-				},
+					6
+				}
 			},
 			title_text_shadow = {
-				dynamic_font_size = true,
+				word_wrap = true,
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
-				word_wrap = true,
-				upper_case = upper_case,
-				font_size = font_size,
-				font_type = font_type,
+				dynamic_font_size = true,
+				upper_case = var_1_6,
+				font_size = var_1_3,
+				font_type = var_1_4,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				size = {
-					size[1] - 40,
-					size[2],
+					arg_1_1[1] - 40,
+					arg_1_1[2]
 				},
 				offset = {
 					22,
 					-2,
-					5,
-				},
+					5
+				}
 			},
 			glass_top = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
-					size[2] - 16,
-					4,
+					arg_1_1[2] - 16,
+					4
 				},
 				size = {
-					size[1],
-					11,
-				},
+					arg_1_1[1],
+					11
+				}
 			},
 			glass_bottom = {
 				color = {
 					100,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					-4,
-					4,
+					4
 				},
 				size = {
-					size[1],
-					11,
-				},
+					arg_1_1[1],
+					11
+				}
 			},
 			side_detail_left = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					-detail_offset,
-					size[2] / 2 - side_detail_texture_size[2] / 2,
-					9,
+					-var_1_7,
+					arg_1_1[2] / 2 - var_1_2[2] / 2,
+					9
 				},
 				size = {
-					side_detail_texture_size[1],
-					side_detail_texture_size[2],
-				},
+					var_1_2[1],
+					var_1_2[2]
+				}
 			},
 			side_detail_right = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					size[1] - side_detail_texture_size[1] + detail_offset,
-					size[2] / 2 - side_detail_texture_size[2] / 2,
-					9,
+					arg_1_1[1] - var_1_2[1] + var_1_7,
+					arg_1_1[2] / 2 - var_1_2[2] / 2,
+					9
 				},
 				size = {
-					side_detail_texture_size[1],
-					side_detail_texture_size[2],
-				},
-			},
+					var_1_2[1],
+					var_1_2[2]
+				}
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_1_0,
 		offset = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	}
 end
 
-local disable_with_gamepad = true
-local widget_definitions = {
+local var_0_9 = true
+local var_0_10 = {
 	window_background = UIWidgets.create_simple_texture("wom_upsell_popup_bg", "window"),
 	window_top_detail = UIWidgets.create_simple_texture("tab_selection_01_bottom", "window_top_detail"),
-	window_frame = UIWidgets.create_frame("window", scenegraph_definition.window.size, "menu_frame_12_gold", 5),
+	window_frame = UIWidgets.create_frame("window", var_0_6.window.size, "menu_frame_12_gold", 5),
 	screen_background = UIWidgets.create_simple_rect("screen", {
 		150,
 		0,
 		0,
-		0,
+		0
 	}),
-	title_text = UIWidgets.create_simple_text("menu_weave_area_no_wom_title", "title", nil, nil, title_text_style),
-	body_text = UIWidgets.create_simple_text("menu_weave_area_no_wom_body", "body", nil, nil, body_text_style),
-	ok_button = create_frameless_button("ok_button", scenegraph_definition.ok_button.size, nil, "", nil, nil, nil, nil, "button_detail_03_gold", nil, disable_with_gamepad),
-	store_button = create_frameless_button("store_button", scenegraph_definition.store_button.size, nil, "", nil, "hell_shark_header", false, "white", "button_detail_01_gold", nil, disable_with_gamepad),
+	title_text = UIWidgets.create_simple_text("menu_weave_area_no_wom_title", "title", nil, nil, var_0_7),
+	body_text = UIWidgets.create_simple_text("menu_weave_area_no_wom_body", "body", nil, nil, var_0_8),
+	ok_button = create_frameless_button("ok_button", var_0_6.ok_button.size, nil, "", nil, nil, nil, nil, "button_detail_03_gold", nil, var_0_9),
+	store_button = create_frameless_button("store_button", var_0_6.store_button.size, nil, "", nil, "hell_shark_header", false, "white", "button_detail_01_gold", nil, var_0_9)
 }
-local animation_definitions = {
+local var_0_11 = {
 	transition_enter = {
 		{
-			duration = 0.2,
 			name = "fade_in",
-			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-				params.render_settings.alpha_multiplier = 0
+			duration = 0.2,
+			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+				arg_5_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-				params.render_settings.alpha_multiplier = math.easeOutCubic(progress)
+			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+				arg_6_4.render_settings.alpha_multiplier = math.easeOutCubic(arg_6_3)
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+			on_complete = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				return
-			end,
-		},
-	},
+			end
+		}
+	}
 }
-local generic_input_actions = {
+local var_0_12 = {
 	default = {
 		{
-			description_text = "input_description_back",
 			input_action = "back",
 			priority = 2,
-		},
-	},
+			description_text = "input_description_back"
+		}
+	}
 }
 
 return {
-	scenegraph_definition = scenegraph_definition,
-	widget_definitions = widget_definitions,
-	animation_definitions = animation_definitions,
-	generic_input_actions = generic_input_actions,
+	scenegraph_definition = var_0_6,
+	widget_definitions = var_0_10,
+	animation_definitions = var_0_11,
+	generic_input_actions = var_0_12
 }

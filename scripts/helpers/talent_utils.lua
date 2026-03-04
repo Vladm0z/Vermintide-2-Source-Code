@@ -1,81 +1,79 @@
-﻿-- chunkname: @scripts/helpers/talent_utils.lua
+-- chunkname: @scripts/helpers/talent_utils.lua
 
 TalentUtils = {}
 TalentUtils.NIL = {}
 
-TalentUtils.get_talent = function (profile_name, talent_name)
-	local talent = TalentIDLookup[talent_name]
+function TalentUtils.get_talent(arg_1_0, arg_1_1)
+	local var_1_0 = TalentIDLookup[arg_1_1]
 
-	return TalentUtils.get_talent_by_id(profile_name, talent.talent_id)
+	return TalentUtils.get_talent_by_id(arg_1_0, var_1_0.talent_id)
 end
 
-TalentUtils.get_talent_by_id = function (profile_name, talent_id)
-	local talents = Talents[profile_name]
+function TalentUtils.get_talent_by_id(arg_2_0, arg_2_1)
+	local var_2_0 = Talents[arg_2_0]
 
-	if not talents then
+	if not var_2_0 then
 		return nil
 	end
 
-	local talent = talents[talent_id]
+	local var_2_1 = var_2_0[arg_2_1]
 
-	if not talent then
+	if not var_2_1 then
 		return nil
 	end
 
-	if talent.mechanism_overrides then
-		local mechanism_name = Managers.mechanism:current_mechanism_name()
-		local mechanism_override = talent.mechanism_overrides[mechanism_name]
+	if var_2_1.mechanism_overrides then
+		local var_2_2 = Managers.mechanism:current_mechanism_name()
+		local var_2_3 = var_2_1.mechanism_overrides[var_2_2]
 
-		if mechanism_override then
-			talent = table.shallow_copy(talent)
+		if var_2_3 then
+			var_2_1 = table.shallow_copy(var_2_1)
 
-			for key, value in pairs(mechanism_override) do
-				if value == TalentUtils.NIL then
-					talent[key] = nil
+			for iter_2_0, iter_2_1 in pairs(var_2_3) do
+				if iter_2_1 == TalentUtils.NIL then
+					var_2_1[iter_2_0] = nil
 				else
-					talent[key] = value
+					var_2_1[iter_2_0] = iter_2_1
 				end
 			end
 		end
 	end
 
-	return talent
+	return var_2_1
 end
 
-TalentUtils.get_talent_attribute = function (talent_name, attribute_name)
-	local talent_info = TalentIDLookup[talent_name]
+function TalentUtils.get_talent_attribute(arg_3_0, arg_3_1)
+	local var_3_0 = TalentIDLookup[arg_3_0]
 
-	if not talent_info then
+	if not var_3_0 then
 		return
 	end
 
-	local hero_name = talent_info.hero_name
-	local talent_id = talent_info.talent_id
-	local talent = Talents[hero_name][talent_id]
+	local var_3_1 = var_3_0.hero_name
+	local var_3_2 = var_3_0.talent_id
+	local var_3_3 = Talents[var_3_1][var_3_2]
 
-	if not talent then
+	if not var_3_3 then
 		return nil
 	end
 
-	local mechanism_overrides = talent.mechanism_overrides
+	local var_3_4 = var_3_3.mechanism_overrides
 
-	if mechanism_overrides then
-		local mechanism_name = Managers.mechanism:current_mechanism_name()
+	if var_3_4 then
+		local var_3_5 = var_3_4[Managers.mechanism:current_mechanism_name()]
 
-		mechanism_overrides = mechanism_overrides[mechanism_name]
+		if var_3_5 then
+			local var_3_6 = var_3_5.attributes
 
-		if mechanism_overrides then
-			local attribute_overrides = mechanism_overrides.attributes
-
-			if attribute_overrides then
-				return attribute_overrides[attribute_name]
+			if var_3_6 then
+				return var_3_6[arg_3_1]
 			end
 		end
 	end
 
-	local attributes = talent.attributes
+	local var_3_7 = var_3_3.attributes
 
-	if attributes then
-		return attributes[attribute_name]
+	if var_3_7 then
+		return var_3_7[arg_3_1]
 	end
 end

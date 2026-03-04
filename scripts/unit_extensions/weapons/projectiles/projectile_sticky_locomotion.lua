@@ -1,277 +1,278 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/projectiles/projectile_sticky_locomotion.lua
+-- chunkname: @scripts/unit_extensions/weapons/projectiles/projectile_sticky_locomotion.lua
 
 require("scripts/helpers/network_utils")
 
 ProjectileStickyLocomotion = class(ProjectileStickyLocomotion)
 
-ProjectileStickyLocomotion.init = function (self, extension_init_context, unit, extension_init_data)
-	self.unit = unit
-	self.world = extension_init_context.world
-	self.is_server = Managers.player.is_server
-	self.spawn_time = Managers.time:time("game")
-	self.time_lived = 0
-	self.stop_time = 0
-	self.stopped = extension_init_data.stopped
-	self.moved = false
-	self.extension_init_data = extension_init_data
-	self.is_husk = not not extension_init_data.is_husk
-	self.rotation_offset = extension_init_data.rotation_offset
-	self.speed = extension_init_data.speed
-	self.target_vector = extension_init_data.target_vector
-	self.target_unit = extension_init_data.target_unit
+function ProjectileStickyLocomotion.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.unit = arg_1_2
+	arg_1_0.world = arg_1_1.world
+	arg_1_0.is_server = Managers.player.is_server
+	arg_1_0.spawn_time = Managers.time:time("game")
+	arg_1_0.time_lived = 0
+	arg_1_0.stop_time = 0
+	arg_1_0.stopped = arg_1_3.stopped
+	arg_1_0.moved = false
+	arg_1_0.extension_init_data = arg_1_3
+	arg_1_0.is_husk = not not arg_1_3.is_husk
+	arg_1_0.rotation_offset = arg_1_3.rotation_offset
+	arg_1_0.speed = arg_1_3.speed
+	arg_1_0.target_vector = arg_1_3.target_vector
+	arg_1_0.target_unit = arg_1_3.target_unit
 
-	self:_init_from_seed(extension_init_data.seed)
+	arg_1_0:_init_from_seed(arg_1_3.seed)
 
-	local initial_position = extension_init_data.initial_position
+	local var_1_0 = arg_1_3.initial_position
 
-	self._last_position = Vector3Box(POSITION_LOOKUP[unit])
-	self.position_boxed = Vector3Box(POSITION_LOOKUP[unit])
-	self._rotation = QuaternionBox(Unit.world_rotation(unit, 0))
-	self.velocity = Vector3Box()
-	self.target_vector_boxed = Vector3Box(self.target_vector)
-	self.initial_position_boxed = Vector3Box(initial_position)
-	self._target_unit_id = NetworkConstants.invalid_game_object_id
+	arg_1_0._last_position = Vector3Box(POSITION_LOOKUP[arg_1_2])
+	arg_1_0.position_boxed = Vector3Box(POSITION_LOOKUP[arg_1_2])
+	arg_1_0._rotation = QuaternionBox(Unit.world_rotation(arg_1_2, 0))
+	arg_1_0.velocity = Vector3Box()
+	arg_1_0.target_vector_boxed = Vector3Box(arg_1_0.target_vector)
+	arg_1_0.initial_position_boxed = Vector3Box(var_1_0)
+	arg_1_0._target_unit_id = NetworkConstants.invalid_game_object_id
 
-	if self.stopped then
-		if ALIVE[self.target_unit] then
-			self:stick_to_unit(self.target_unit)
+	if arg_1_0.stopped then
+		if ALIVE[arg_1_0.target_unit] then
+			arg_1_0:stick_to_unit(arg_1_0.target_unit)
 		else
-			self:stick_to_position(initial_position)
+			arg_1_0:stick_to_position(var_1_0)
 		end
 	end
 end
 
-ProjectileStickyLocomotion._init_from_seed = function (self, seed)
-	seed = seed or 0
-	self._seed = seed
-	self._spin_dir = 1 - bit.band(seed, 128) / 64
-	seed, self._wobble_min = math.next_random_range(seed, 0, 0)
-	seed, self._wobble_max = math.next_random_range(seed, 0.3, 0.5)
-	seed, self._wobble_speed = math.next_random_range(seed, 3, 6)
-	seed, self._wobble_vertical_mult = math.next_random_range(seed, 0.7, 1)
-	seed, self._wobble_horizontal_mult = math.next_random_range(seed, 1, 1.2)
-	seed, self._wobble_stabiliztion_speed = math.next_random_range(seed, 0.5, 0.5)
+function ProjectileStickyLocomotion._init_from_seed(arg_2_0, arg_2_1)
+	arg_2_1 = arg_2_1 or 0
+	arg_2_0._seed = arg_2_1
+	arg_2_0._spin_dir = 1 - bit.band(arg_2_1, 128) / 64
+	arg_2_1, arg_2_0._wobble_min = math.next_random_range(arg_2_1, 0, 0)
+	arg_2_1, arg_2_0._wobble_max = math.next_random_range(arg_2_1, 0.3, 0.5)
+	arg_2_1, arg_2_0._wobble_speed = math.next_random_range(arg_2_1, 3, 6)
+	arg_2_1, arg_2_0._wobble_vertical_mult = math.next_random_range(arg_2_1, 0.7, 1)
+	arg_2_1, arg_2_0._wobble_horizontal_mult = math.next_random_range(arg_2_1, 1, 1.2)
+	arg_2_1, arg_2_0._wobble_stabiliztion_speed = math.next_random_range(arg_2_1, 0.5, 0.5)
 end
 
-ProjectileStickyLocomotion.destroy = function (self)
+function ProjectileStickyLocomotion.destroy(arg_3_0)
 	return
 end
 
-ProjectileStickyLocomotion.update = function (self, unit, input, dt, context, t)
-	self.moved = false
+function ProjectileStickyLocomotion.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	arg_4_0.moved = false
 
-	local time_lived = t - self.spawn_time
+	local var_4_0 = arg_4_5 - arg_4_0.spawn_time
 
-	self.time_lived = time_lived
+	arg_4_0.time_lived = var_4_0
 
-	local new_position, new_rotation
+	local var_4_1
+	local var_4_2
 
-	if self.stopped and self.stop_time then
-		local time_stopped = t - self.stop_time
-		local target_unit = self.target_unit
-		local target_unit_pos = POSITION_LOOKUP[target_unit]
+	if arg_4_0.stopped and arg_4_0.stop_time then
+		local var_4_3 = arg_4_5 - arg_4_0.stop_time
+		local var_4_4 = arg_4_0.target_unit
+		local var_4_5 = POSITION_LOOKUP[var_4_4]
 
-		if target_unit_pos then
-			local stick_animation_time = self._hit_unit_radius * 12 / self.speed
-			local forward = self._impact_offset:unbox()
-			local target_pos = target_unit_pos + Vector3(0, 0, self._hit_unit_height)
+		if var_4_5 then
+			local var_4_6 = arg_4_0._hit_unit_radius * 12 / arg_4_0.speed
+			local var_4_7 = arg_4_0._impact_offset:unbox()
+			local var_4_8 = var_4_5 + Vector3(0, 0, arg_4_0._hit_unit_height)
 
-			if time_stopped < stick_animation_time then
-				local p0 = self.initial_position_boxed:unbox()
-				local p1 = target_pos + Quaternion.rotate(Quaternion.axis_angle(Vector3.up(), time_lived), forward)
-				local c0 = target_pos + forward
-				local c1 = p1 + forward
-				local lerp_t = time_stopped / stick_animation_time
+			if var_4_3 < var_4_6 then
+				local var_4_9 = arg_4_0.initial_position_boxed:unbox()
+				local var_4_10 = var_4_8 + Quaternion.rotate(Quaternion.axis_angle(Vector3.up(), var_4_0), var_4_7)
+				local var_4_11 = var_4_8 + var_4_7
+				local var_4_12 = var_4_10 + var_4_7
+				local var_4_13 = var_4_3 / var_4_6
 
-				new_position = Bezier.calc_point(lerp_t, p0, c0, c1, p1)
+				var_4_1 = Bezier.calc_point(var_4_13, var_4_9, var_4_11, var_4_12, var_4_10)
 			else
-				new_position = target_pos + Quaternion.rotate(Quaternion.axis_angle(Vector3.up(), time_lived), forward)
+				var_4_1 = var_4_8 + Quaternion.rotate(Quaternion.axis_angle(Vector3.up(), var_4_0), var_4_7)
 			end
 		else
-			local stick_animation_time = 0.5
-			local forward = self._impact_offset:unbox()
-			local right = Vector3.cross(forward, Vector3.up())
-			local p0 = self.initial_position_boxed:unbox()
-			local p1 = p0 + Vector3.up() * (0.1 + math.sin(time_lived) * 0.1) + forward * (math.sin(time_lived * 1.4) * 0.1) + right * (math.sin(time_lived * 1.8) * 0.1)
+			local var_4_14 = 0.5
+			local var_4_15 = arg_4_0._impact_offset:unbox()
+			local var_4_16 = Vector3.cross(var_4_15, Vector3.up())
+			local var_4_17 = arg_4_0.initial_position_boxed:unbox()
+			local var_4_18 = var_4_17 + Vector3.up() * (0.1 + math.sin(var_4_0) * 0.1) + var_4_15 * (math.sin(var_4_0 * 1.4) * 0.1) + var_4_16 * (math.sin(var_4_0 * 1.8) * 0.1)
 
-			if time_stopped < stick_animation_time then
-				local lerp_t = math.easeOutCubic(time_stopped / stick_animation_time)
+			if var_4_3 < var_4_14 then
+				local var_4_19 = math.easeOutCubic(var_4_3 / var_4_14)
 
-				new_position = Vector3.lerp(p0, p1, lerp_t)
-				new_rotation = Quaternion.lerp(Quaternion.look(self.target_vector_boxed:unbox()), Quaternion.look(forward), lerp_t)
+				var_4_1 = Vector3.lerp(var_4_17, var_4_18, var_4_19)
+				var_4_2 = Quaternion.lerp(Quaternion.look(arg_4_0.target_vector_boxed:unbox()), Quaternion.look(var_4_15), var_4_19)
 			else
-				new_position = p1
-				new_rotation = Quaternion.look(forward)
+				var_4_1 = var_4_18
+				var_4_2 = Quaternion.look(var_4_15)
 			end
 		end
 	else
-		local target_vector = self.target_vector_boxed:unbox()
-		local move_delta = target_vector * self.speed * time_lived
-		local projectile_speed_scaler = self.speed * 0.1
-		local amount_t = math.easeCubic(math.clamp(time_lived * self._wobble_stabiliztion_speed * projectile_speed_scaler, 0, 1))
-		local transition_scale = math.clamp(amount_t * 250, 0, 1)
-		local amount_mult = math.lerp(self._wobble_max, self._wobble_min, amount_t) * transition_scale
-		local vertical_wobble_amount = amount_mult * self._wobble_vertical_mult
-		local horizontal_wobble_amount = amount_mult * self._wobble_horizontal_mult
-		local wobble_speed = self._wobble_speed * self._spin_dir
-		local wobble_offset = Vector3(math.sin(time_lived * wobble_speed - math.rad(115)) * horizontal_wobble_amount, 0, math.cos(time_lived * wobble_speed - math.rad(115)) * vertical_wobble_amount)
+		local var_4_20 = arg_4_0.target_vector_boxed:unbox()
+		local var_4_21 = var_4_20 * arg_4_0.speed * var_4_0
+		local var_4_22 = arg_4_0.speed * 0.1
+		local var_4_23 = math.easeCubic(math.clamp(var_4_0 * arg_4_0._wobble_stabiliztion_speed * var_4_22, 0, 1))
+		local var_4_24 = math.clamp(var_4_23 * 250, 0, 1)
+		local var_4_25 = math.lerp(arg_4_0._wobble_max, arg_4_0._wobble_min, var_4_23) * var_4_24
+		local var_4_26 = var_4_25 * arg_4_0._wobble_vertical_mult
+		local var_4_27 = var_4_25 * arg_4_0._wobble_horizontal_mult
+		local var_4_28 = arg_4_0._wobble_speed * arg_4_0._spin_dir
+		local var_4_29 = Vector3(math.sin(var_4_0 * var_4_28 - math.rad(115)) * var_4_27, 0, math.cos(var_4_0 * var_4_28 - math.rad(115)) * var_4_26)
+		local var_4_30 = Quaternion.rotate(Quaternion.look(var_4_20), var_4_29)
 
-		wobble_offset = Quaternion.rotate(Quaternion.look(target_vector), wobble_offset)
-		new_position = self.initial_position_boxed:unbox() + move_delta + wobble_offset
+		var_4_1 = arg_4_0.initial_position_boxed:unbox() + var_4_21 + var_4_30
 	end
 
-	if not NetworkUtils.network_safe_position(new_position) then
-		self:stop()
+	if not NetworkUtils.network_safe_position(var_4_1) then
+		arg_4_0:stop()
 
-		if not self.is_husk then
-			Managers.state.unit_spawner:mark_for_deletion(self.unit)
+		if not arg_4_0.is_husk then
+			Managers.state.unit_spawner:mark_for_deletion(arg_4_0.unit)
 		end
 
 		return
 	end
 
-	local position = self.position_boxed:unbox()
-	local velocity = new_position - position
+	local var_4_31 = arg_4_0.position_boxed:unbox()
+	local var_4_32 = var_4_1 - var_4_31
 
-	if Vector3.length_squared(velocity) <= 1e-06 then
+	if Vector3.length_squared(var_4_32) <= 1e-06 then
 		return
 	end
 
-	new_rotation = new_rotation or Quaternion.look(velocity)
+	var_4_2 = var_4_2 or Quaternion.look(var_4_32)
 
-	Unit.set_local_position(unit, 0, new_position)
-	Unit.set_local_rotation(unit, 0, new_rotation)
-	self._last_position:store(position)
-	self.position_boxed:store(new_position)
-	self.velocity:store(velocity)
-	self._rotation:store(new_rotation)
+	Unit.set_local_position(arg_4_1, 0, var_4_1)
+	Unit.set_local_rotation(arg_4_1, 0, var_4_2)
+	arg_4_0._last_position:store(var_4_31)
+	arg_4_0.position_boxed:store(var_4_1)
+	arg_4_0.velocity:store(var_4_32)
+	arg_4_0._rotation:store(var_4_2)
 
-	self.moved = true
+	arg_4_0.moved = true
 end
 
-ProjectileStickyLocomotion.moved_this_frame = function (self)
-	return self.moved
+function ProjectileStickyLocomotion.moved_this_frame(arg_5_0)
+	return arg_5_0.moved
 end
 
-ProjectileStickyLocomotion.current_velocity = function (self)
-	return self.velocity:unbox()
+function ProjectileStickyLocomotion.current_velocity(arg_6_0)
+	return arg_6_0.velocity:unbox()
 end
 
-ProjectileStickyLocomotion.current_position = function (self)
-	return self.position_boxed:unbox()
+function ProjectileStickyLocomotion.current_position(arg_7_0)
+	return arg_7_0.position_boxed:unbox()
 end
 
-ProjectileStickyLocomotion.current_rotation = function (self)
-	return self._rotation:unbox()
+function ProjectileStickyLocomotion.current_rotation(arg_8_0)
+	return arg_8_0._rotation:unbox()
 end
 
-ProjectileStickyLocomotion.last_position = function (self)
-	return self._last_position:unbox()
+function ProjectileStickyLocomotion.last_position(arg_9_0)
+	return arg_9_0._last_position:unbox()
 end
 
-ProjectileStickyLocomotion.stop = function (self, hit_unit, hit_zone_name, hit_normal)
-	if self.is_husk then
+function ProjectileStickyLocomotion.stop(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	if arg_10_0.is_husk then
 		return
 	end
 
-	local ai_extension = ScriptUnit.has_extension(hit_unit, "ai_system")
+	local var_10_0 = ScriptUnit.has_extension(arg_10_1, "ai_system")
 
-	if ai_extension then
-		self:stick_to_unit(hit_unit)
+	if var_10_0 then
+		arg_10_0:stick_to_unit(arg_10_1)
 	else
-		self:stick_to_position(self:current_position(), hit_normal)
+		arg_10_0:stick_to_position(arg_10_0:current_position(), arg_10_3)
 	end
 
-	local network_manager = Managers.state.network
-	local game = network_manager:game()
+	local var_10_1 = Managers.state.network
+	local var_10_2 = var_10_1:game()
 
-	if game then
-		local unit_storage = Managers.state.unit_storage
-		local go_id = unit_storage:go_id(self.unit)
-		local new_initial_pos = self.initial_position_boxed:unbox()
-		local hit_unit_id = ai_extension and unit_storage:go_id(hit_unit)
+	if var_10_2 then
+		local var_10_3 = Managers.state.unit_storage
+		local var_10_4 = var_10_3:go_id(arg_10_0.unit)
+		local var_10_5 = arg_10_0.initial_position_boxed:unbox()
+		local var_10_6 = var_10_0 and var_10_3:go_id(arg_10_1)
 
-		if hit_unit_id then
-			GameSession.set_game_object_field(game, go_id, "target_unit", hit_unit_id)
+		if var_10_6 then
+			GameSession.set_game_object_field(var_10_2, var_10_4, "target_unit", var_10_6)
 
-			if self.is_server then
-				network_manager.network_transmit:send_rpc_clients("rpc_projectile_stick_unit", go_id, hit_unit_id)
+			if arg_10_0.is_server then
+				var_10_1.network_transmit:send_rpc_clients("rpc_projectile_stick_unit", var_10_4, var_10_6)
 			else
-				network_manager.network_transmit:send_rpc_server("rpc_projectile_stick_unit", go_id, hit_unit_id)
+				var_10_1.network_transmit:send_rpc_server("rpc_projectile_stick_unit", var_10_4, var_10_6)
 			end
-		elseif self.is_server then
-			network_manager.network_transmit:send_rpc_clients("rpc_projectile_stick_position", go_id, new_initial_pos)
+		elseif arg_10_0.is_server then
+			var_10_1.network_transmit:send_rpc_clients("rpc_projectile_stick_position", var_10_4, var_10_5)
 		else
-			network_manager.network_transmit:send_rpc_server("rpc_projectile_stick_position", go_id, new_initial_pos)
+			var_10_1.network_transmit:send_rpc_server("rpc_projectile_stick_position", var_10_4, var_10_5)
 		end
 
-		GameSession.set_game_object_field(game, go_id, "initial_position", new_initial_pos)
-		GameSession.set_game_object_field(game, go_id, "stopped", true)
+		GameSession.set_game_object_field(var_10_2, var_10_4, "initial_position", var_10_5)
+		GameSession.set_game_object_field(var_10_2, var_10_4, "stopped", true)
 	end
 end
 
-ProjectileStickyLocomotion.stick_to_unit = function (self, unit)
-	self.stopped = true
-	self.stop_time = Managers.time:time("game")
+function ProjectileStickyLocomotion.stick_to_unit(arg_11_0, arg_11_1)
+	arg_11_0.stopped = true
+	arg_11_0.stop_time = Managers.time:time("game")
 
-	self.initial_position_boxed:store(self:current_position())
+	arg_11_0.initial_position_boxed:store(arg_11_0:current_position())
 
-	self.target_unit = unit
+	arg_11_0.target_unit = arg_11_1
 
-	local ai_extension = ScriptUnit.has_extension(unit, "ai_system")
+	local var_11_0 = ScriptUnit.has_extension(arg_11_1, "ai_system")
 
-	if ai_extension then
-		local breed = ai_extension._breed
-		local breed_radius = breed.radius or 1
+	if var_11_0 then
+		local var_11_1 = var_11_0._breed
+		local var_11_2 = var_11_1.radius or 1
 
-		self._hit_unit_radius = breed_radius
-		self._hit_unit_height = breed.aoe_height and breed.aoe_height / 2 or 1
-		self._impact_offset = Vector3Box(Vector3.normalize(Vector3.flat(self.target_vector_boxed:unbox()) * breed_radius))
+		arg_11_0._hit_unit_radius = var_11_2
+		arg_11_0._hit_unit_height = var_11_1.aoe_height and var_11_1.aoe_height / 2 or 1
+		arg_11_0._impact_offset = Vector3Box(Vector3.normalize(Vector3.flat(arg_11_0.target_vector_boxed:unbox()) * var_11_2))
 
-		Unit.flow_event(self.unit, "stopped")
+		Unit.flow_event(arg_11_0.unit, "stopped")
 	else
-		self:stick_to_position(self:current_position())
+		arg_11_0:stick_to_position(arg_11_0:current_position())
 	end
 end
 
-ProjectileStickyLocomotion.stick_to_position = function (self, position, hit_normal)
-	self.stopped = true
-	self.stop_time = Managers.time:time("game")
+function ProjectileStickyLocomotion.stick_to_position(arg_12_0, arg_12_1, arg_12_2)
+	arg_12_0.stopped = true
+	arg_12_0.stop_time = Managers.time:time("game")
 
-	local new_initial_pos = position
+	local var_12_0 = arg_12_1
 
-	if hit_normal then
-		new_initial_pos = new_initial_pos + hit_normal * 0.1
+	if arg_12_2 then
+		var_12_0 = var_12_0 + arg_12_2 * 0.1
 	end
 
-	self.position_boxed:store(new_initial_pos)
-	self.initial_position_boxed:store(new_initial_pos)
+	arg_12_0.position_boxed:store(var_12_0)
+	arg_12_0.initial_position_boxed:store(var_12_0)
 
-	self.target_unit = nil
-	self._impact_offset = Vector3Box(Vector3.normalize(Vector3.flat(self.target_vector_boxed:unbox())))
+	arg_12_0.target_unit = nil
+	arg_12_0._impact_offset = Vector3Box(Vector3.normalize(Vector3.flat(arg_12_0.target_vector_boxed:unbox())))
 
-	Unit.flow_event(self.unit, "stopped")
+	Unit.flow_event(arg_12_0.unit, "stopped")
 end
 
-ProjectileStickyLocomotion.has_stopped = function (self)
-	return self.stopped
+function ProjectileStickyLocomotion.has_stopped(arg_13_0)
+	return arg_13_0.stopped
 end
 
-ProjectileStickyLocomotion.hot_join_sync = function (self, peer_id)
-	local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+function ProjectileStickyLocomotion.hot_join_sync(arg_14_0, arg_14_1)
+	local var_14_0 = PEER_ID_TO_CHANNEL[arg_14_1]
 
-	if ALIVE[self.unit] then
-		local go_id = Managers.state.unit_storage:go_id(self.unit)
-		local time_stopped = Managers.time:time("game") - self.stop_time
+	if ALIVE[arg_14_0.unit] then
+		local var_14_1 = Managers.state.unit_storage:go_id(arg_14_0.unit)
+		local var_14_2 = Managers.time:time("game") - arg_14_0.stop_time
 
-		RPC.rpc_hot_join_sync_projectile_sticky(channel_id, go_id, self.time_lived, time_stopped)
+		RPC.rpc_hot_join_sync_projectile_sticky(var_14_0, var_14_1, arg_14_0.time_lived, var_14_2)
 	end
 end
 
-ProjectileStickyLocomotion.hot_join_sync_projectile_sticky = function (self, time_lived, time_stopped)
-	local t = Managers.time:time("game")
+function ProjectileStickyLocomotion.hot_join_sync_projectile_sticky(arg_15_0, arg_15_1, arg_15_2)
+	local var_15_0 = Managers.time:time("game")
 
-	self.spawn_time = t - time_lived
-	self.stop_time = t - time_stopped
-	self.time_lived = time_lived
+	arg_15_0.spawn_time = var_15_0 - arg_15_1
+	arg_15_0.stop_time = var_15_0 - arg_15_2
+	arg_15_0.time_lived = arg_15_1
 end

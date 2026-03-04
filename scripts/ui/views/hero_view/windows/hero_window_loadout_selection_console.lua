@@ -1,1046 +1,1004 @@
-﻿-- chunkname: @scripts/ui/views/hero_view/windows/hero_window_loadout_selection_console.lua
+-- chunkname: @scripts/ui/views/hero_view/windows/hero_window_loadout_selection_console.lua
 
-local definitions = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_loadout_selection_console_definitions")
-local widget_definitions = definitions.widgets
-local loadout_button_widgets_definitions = definitions.loadout_button_widgets
-local gamepad_specific_widgets_definitions = definitions.gamepad_specific_widgets
-local context_menu_widgets_definitions = definitions.context_menu_widgets
-local scenegraph_definition = definitions.scenegraph_definition
-local animation_definitions = definitions.animation_definitions
-local BUTTON_SIZE = definitions.button_size
-local BUTTON_SPACING = definitions.button_spacing
-local equipment_slots = definitions.equipment_slots
-local cosmetic_slots = definitions.cosmetic_slots
-local generic_input_actions = definitions.generic_input_actions
+local var_0_0 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_loadout_selection_console_definitions")
+local var_0_1 = var_0_0.widgets
+local var_0_2 = var_0_0.loadout_button_widgets
+local var_0_3 = var_0_0.gamepad_specific_widgets
+local var_0_4 = var_0_0.context_menu_widgets
+local var_0_5 = var_0_0.scenegraph_definition
+local var_0_6 = var_0_0.animation_definitions
+local var_0_7 = var_0_0.button_size
+local var_0_8 = var_0_0.button_spacing
+local var_0_9 = var_0_0.equipment_slots
+local var_0_10 = var_0_0.cosmetic_slots
+local var_0_11 = var_0_0.generic_input_actions
 
 HeroWindowLoadoutSelectionConsole = class(HeroWindowLoadoutSelectionConsole)
 HeroWindowLoadoutSelectionConsole.NAME = "HeroWindowLoadoutSelectionConsole"
 
-HeroWindowLoadoutSelectionConsole.on_enter = function (self, params, offset)
+function HeroWindowLoadoutSelectionConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowLoadoutSelectionConsole")
 
-	self._parent = params.parent
+	arg_1_0._parent = arg_1_1.parent
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_1_0 = arg_1_1.ingame_ui_context
 
-	self._ui_renderer = ingame_ui_context.ui_renderer
-	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self._input_manager = ingame_ui_context.input_manager
-	self._statistics_db = ingame_ui_context.statistics_db
-	self._render_settings = {
-		snap_pixel_positions = true,
+	arg_1_0._ui_renderer = var_1_0.ui_renderer
+	arg_1_0._ui_top_renderer = var_1_0.ui_top_renderer
+	arg_1_0._input_manager = var_1_0.input_manager
+	arg_1_0._statistics_db = var_1_0.statistics_db
+	arg_1_0._render_settings = {
+		snap_pixel_positions = true
 	}
 
-	local player_manager = Managers.player
-	local local_player = player_manager:local_player()
+	local var_1_1 = Managers.player
 
-	self._stats_id = local_player:stats_id()
-	self._player_manager = player_manager
-	self._profile_synchronizer = ingame_ui_context.profile_synchronizer
-	self._peer_id = ingame_ui_context.peer_id
-	self._local_player_id = ingame_ui_context.local_player_id
-	self._game_mode_key = Managers.state.game_mode:game_mode_key()
-	self._hero_name = params.hero_name
-	self._career_index = params.career_index
-	self._profile_index = params.profile_index
-	self._animations = {}
-	self._ui_animations = {}
-	self._gamepad_loadout_grid = {}
-	self._gamepad_grid_index = {}
+	arg_1_0._stats_id = var_1_1:local_player():stats_id()
+	arg_1_0._player_manager = var_1_1
+	arg_1_0._profile_synchronizer = var_1_0.profile_synchronizer
+	arg_1_0._peer_id = var_1_0.peer_id
+	arg_1_0._local_player_id = var_1_0.local_player_id
+	arg_1_0._game_mode_key = Managers.state.game_mode:game_mode_key()
+	arg_1_0._hero_name = arg_1_1.hero_name
+	arg_1_0._career_index = arg_1_1.career_index
+	arg_1_0._profile_index = arg_1_1.profile_index
+	arg_1_0._animations = {}
+	arg_1_0._ui_animations = {}
+	arg_1_0._gamepad_loadout_grid = {}
+	arg_1_0._gamepad_grid_index = {}
 
-	self:_create_ui_elements(params, offset)
-	self:_hide_context_menu()
-	self:_start_transition_animation("on_enter")
+	arg_1_0:_create_ui_elements(arg_1_1, arg_1_2)
+	arg_1_0:_hide_context_menu()
+	arg_1_0:_start_transition_animation("on_enter")
 
-	local input_service = Managers.input:get_service("hero_view")
-	local gui_layer = UILayer.default + 300
-	local default_input_actions = generic_input_actions.default
+	local var_1_2 = Managers.input:get_service("hero_view")
+	local var_1_3 = UILayer.default + 300
+	local var_1_4 = var_0_11.default
 
-	if self._num_loadouts <= 1 then
-		default_input_actions = generic_input_actions.default_no_delete
+	if arg_1_0._num_loadouts <= 1 then
+		var_1_4 = var_0_11.default_no_delete
 	end
 
-	self._menu_input_description = MenuInputDescriptionUI:new(nil, self._ui_top_renderer, input_service, 7, gui_layer, default_input_actions, true)
+	arg_1_0._menu_input_description = MenuInputDescriptionUI:new(nil, arg_1_0._ui_top_renderer, var_1_2, 7, var_1_3, var_1_4, true)
 
-	self._menu_input_description:set_input_description(nil)
+	arg_1_0._menu_input_description:set_input_description(nil)
 end
 
-HeroWindowLoadoutSelectionConsole._start_transition_animation = function (self, animation_name)
-	local params = {
-		render_settings = self._render_settings,
+function HeroWindowLoadoutSelectionConsole._start_transition_animation(arg_2_0, arg_2_1)
+	local var_2_0 = {
+		render_settings = arg_2_0._render_settings
 	}
-	local widgets = {}
-	local anim_id = self._ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
+	local var_2_1 = {}
+	local var_2_2 = arg_2_0._ui_animator:start_animation(arg_2_1, var_2_1, var_0_5, var_2_0)
 
-	self._animations[animation_name] = anim_id
+	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-HeroWindowLoadoutSelectionConsole._create_ui_elements = function (self, params, offset)
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+function HeroWindowLoadoutSelectionConsole._create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_5)
 
-	local widgets = {}
-	local widgets_by_name = {}
+	local var_3_0 = {}
+	local var_3_1 = {}
 
-	for name, widget_definition in pairs(widget_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_3_0, iter_3_1 in pairs(var_0_1) do
+		local var_3_2 = UIWidget.init(iter_3_1)
 
-		widgets[#widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_3_0[#var_3_0 + 1] = var_3_2
+		var_3_1[iter_3_0] = var_3_2
 	end
 
-	self._widgets = widgets
+	arg_3_0._widgets = var_3_0
 
-	local loadout_button_widgets = {}
+	local var_3_3 = {}
 
-	for name, widget_definition in pairs(loadout_button_widgets_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_3_2, iter_3_3 in pairs(var_0_2) do
+		local var_3_4 = UIWidget.init(iter_3_3)
 
-		loadout_button_widgets[#loadout_button_widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_3_3[#var_3_3 + 1] = var_3_4
+		var_3_1[iter_3_2] = var_3_4
 	end
 
-	self._loadout_button_widgets = loadout_button_widgets
+	arg_3_0._loadout_button_widgets = var_3_3
 
-	local context_menu_widgets = {}
+	local var_3_5 = {}
 
-	for name, widget_definition in pairs(context_menu_widgets_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_3_4, iter_3_5 in pairs(var_0_4) do
+		local var_3_6 = UIWidget.init(iter_3_5)
 
-		context_menu_widgets[#context_menu_widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_3_5[#var_3_5 + 1] = var_3_6
+		var_3_1[iter_3_4] = var_3_6
 	end
 
-	widgets_by_name.delete_button_bar.content.visible = false
-	widgets_by_name.delete_button_bar_edge.content.visible = false
-	self._context_menu_widgets = context_menu_widgets
+	var_3_1.delete_button_bar.content.visible = false
+	var_3_1.delete_button_bar_edge.content.visible = false
+	arg_3_0._context_menu_widgets = var_3_5
 
-	local gamepad_specific_widgets = {}
+	local var_3_7 = {}
 
-	for name, widget_definition in pairs(gamepad_specific_widgets_definitions) do
-		local widget = UIWidget.init(widget_definition)
+	for iter_3_6, iter_3_7 in pairs(var_0_3) do
+		local var_3_8 = UIWidget.init(iter_3_7)
 
-		gamepad_specific_widgets[#gamepad_specific_widgets + 1] = widget
-		widgets_by_name[name] = widget
+		var_3_7[#var_3_7 + 1] = var_3_8
+		var_3_1[iter_3_6] = var_3_8
 	end
 
-	self._gamepad_specific_widgets = gamepad_specific_widgets
+	arg_3_0._gamepad_specific_widgets = var_3_7
+	var_3_1.bot_checkbox.content.visible = InventorySettings.bot_loadout_allowed_game_modes[arg_3_0._game_mode_key] or false
+	arg_3_0._widgets_by_name = var_3_1
 
-	local bot_checkbox_widget = widgets_by_name.bot_checkbox
+	UIRenderer.clear_scenegraph_queue(arg_3_0._ui_renderer)
 
-	bot_checkbox_widget.content.visible = InventorySettings.bot_loadout_allowed_game_modes[self._game_mode_key] or false
-	self._widgets_by_name = widgets_by_name
+	arg_3_0._ui_animator = UIAnimator:new(arg_3_0._ui_scenegraph, var_0_6)
 
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	if arg_3_2 then
+		local var_3_9 = arg_3_0._ui_scenegraph.window.local_position
 
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
-
-	if offset then
-		local window_position = self._ui_scenegraph.window.local_position
-
-		window_position[1] = window_position[1] + offset[1]
-		window_position[2] = window_position[2] + offset[2]
-		window_position[3] = window_position[3] + offset[3]
+		var_3_9[1] = var_3_9[1] + arg_3_2[1]
+		var_3_9[2] = var_3_9[2] + arg_3_2[2]
+		var_3_9[3] = var_3_9[3] + arg_3_2[3]
 	end
 
-	self:_populate_loadout_buttons()
+	arg_3_0:_populate_loadout_buttons()
 end
 
-HeroWindowLoadoutSelectionConsole._populate_loadout_buttons = function (self)
-	local profile = SPProfiles[self._profile_index]
-	local career_settings = profile.careers[self._career_index]
-	local career_name = career_settings.name
-	local item_interface = Managers.backend:get_interface("items")
-	local career_loadouts = item_interface:get_career_loadouts(career_name)
-	local selected_loadout_index = item_interface:get_selected_career_loadout(career_name)
+function HeroWindowLoadoutSelectionConsole._populate_loadout_buttons(arg_4_0)
+	local var_4_0 = SPProfiles[arg_4_0._profile_index].careers[arg_4_0._career_index].name
+	local var_4_1 = Managers.backend:get_interface("items")
+	local var_4_2 = var_4_1:get_career_loadouts(var_4_0)
+	local var_4_3 = var_4_1:get_selected_career_loadout(var_4_0)
 
-	self._num_loadouts = #career_loadouts
+	arg_4_0._num_loadouts = #var_4_2
 
-	if selected_loadout_index > self._num_loadouts then
-		selected_loadout_index = 1
+	if var_4_3 > arg_4_0._num_loadouts then
+		var_4_3 = 1
 	end
 
-	self._max_loadouts = 0
+	arg_4_0._max_loadouts = 0
 
-	for _, loadout_setting in ipairs(InventorySettings.loadouts) do
-		if loadout_setting.loadout_type == "custom" then
-			self._max_loadouts = self._max_loadouts + 1
+	for iter_4_0, iter_4_1 in ipairs(InventorySettings.loadouts) do
+		if iter_4_1.loadout_type == "custom" then
+			arg_4_0._max_loadouts = arg_4_0._max_loadouts + 1
 		end
 	end
 
-	local add_loadout_button = self._widgets_by_name.add_loadout_button
+	arg_4_0._widgets_by_name.add_loadout_button.content.button_hotspot.disable_button = arg_4_0._num_loadouts >= arg_4_0._max_loadouts
+	arg_4_0._selected_loadout_index = var_4_3
 
-	add_loadout_button.content.button_hotspot.disable_button = self._num_loadouts >= self._max_loadouts
-	self._selected_loadout_index = selected_loadout_index
-
-	if InventorySettings.bot_loadout_allowed_game_modes[self._game_mode_key] then
+	if InventorySettings.bot_loadout_allowed_game_modes[arg_4_0._game_mode_key] then
 		PlayerData.loadout_selection = PlayerData.loadout_selection or {}
 		PlayerData.loadout_selection.bot_equipment = PlayerData.loadout_selection.bot_equipment or {}
 
-		local bot_equipment_index = PlayerData.loadout_selection.bot_equipment[career_name]
+		local var_4_4 = PlayerData.loadout_selection.bot_equipment[var_4_0]
 
-		if not bot_equipment_index or bot_equipment_index > self._num_loadouts then
-			PlayerData.loadout_selection.bot_equipment[career_name] = selected_loadout_index
+		if not var_4_4 or var_4_4 > arg_4_0._num_loadouts then
+			PlayerData.loadout_selection.bot_equipment[var_4_0] = var_4_3
 		end
 	end
 
-	for idx, loadout_button_widget in ipairs(self._loadout_button_widgets) do
-		local content = loadout_button_widget.content
+	for iter_4_2, iter_4_3 in ipairs(arg_4_0._loadout_button_widgets) do
+		local var_4_5 = iter_4_3.content
 
-		content.visible = career_loadouts[idx] ~= nil
-		content.is_selected = idx == self._selected_loadout_index
-		content.loadout = career_loadouts[idx]
-		content.loadout_index = idx
-		content.career_name = career_name
+		var_4_5.visible = var_4_2[iter_4_2] ~= nil
+		var_4_5.is_selected = iter_4_2 == arg_4_0._selected_loadout_index
+		var_4_5.loadout = var_4_2[iter_4_2]
+		var_4_5.loadout_index = iter_4_2
+		var_4_5.career_name = var_4_0
 	end
 
-	local frame_widget = self._widgets_by_name.loadout_frame
-	local loadout_button_widget = self._loadout_button_widgets[selected_loadout_index]
-	local offset = loadout_button_widget.offset
+	local var_4_6 = arg_4_0._widgets_by_name.loadout_frame
+	local var_4_7 = arg_4_0._loadout_button_widgets[var_4_3].offset
 
-	frame_widget.offset[1] = offset[1]
-	frame_widget.offset[3] = -10
-	self._ui_scenegraph.button.offset[1] = -(BUTTON_SIZE[1] + BUTTON_SPACING) * (self._num_loadouts - 1)
+	var_4_6.offset[1] = var_4_7[1]
+	var_4_6.offset[3] = -10
+	arg_4_0._ui_scenegraph.button.offset[1] = -(var_0_7[1] + var_0_8) * (arg_4_0._num_loadouts - 1)
 end
 
-HeroWindowLoadoutSelectionConsole.on_exit = function (self, params)
+function HeroWindowLoadoutSelectionConsole.on_exit(arg_5_0, arg_5_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowLoadoutSelectionConsole")
 
-	self._ui_animator = nil
+	arg_5_0._ui_animator = nil
 
-	if not InventorySettings.save_local_loadout_selection[self._game_mode_key] then
+	if not InventorySettings.save_local_loadout_selection[arg_5_0._game_mode_key] then
 		return
 	end
 
-	local local_player = Managers.player:local_player()
-	local career_name = local_player and local_player:career_name()
+	local var_5_0 = Managers.player:local_player()
+	local var_5_1 = var_5_0 and var_5_0:career_name()
 
-	if career_name and self._selected_loadout_index then
-		local selected_loadout_index
+	if var_5_1 and arg_5_0._selected_loadout_index then
+		local var_5_2
 
-		for index, loadout_data in ipairs(InventorySettings.loadouts) do
-			local loadout_index = loadout_data.loadout_index
+		for iter_5_0, iter_5_1 in ipairs(InventorySettings.loadouts) do
+			local var_5_3 = iter_5_1.loadout_index
 
-			if loadout_data.loadout_type == "custom" and loadout_index == self._selected_loadout_index then
-				selected_loadout_index = index
+			if iter_5_1.loadout_type == "custom" and var_5_3 == arg_5_0._selected_loadout_index then
+				var_5_2 = iter_5_0
 
 				break
 			end
 		end
 
-		if not selected_loadout_index then
+		if not var_5_2 then
 			return
 		end
 
-		local mechanism_name = Managers.mechanism:current_mechanism_name()
+		local var_5_4 = Managers.mechanism:current_mechanism_name()
 
 		PlayerData.loadout_selection = PlayerData.loadout_selection or {}
-		PlayerData.loadout_selection[mechanism_name] = PlayerData.loadout_selection[mechanism_name] or {}
-		PlayerData.loadout_selection[mechanism_name][career_name] = selected_loadout_index
+		PlayerData.loadout_selection[var_5_4] = PlayerData.loadout_selection[var_5_4] or {}
+		PlayerData.loadout_selection[var_5_4][var_5_1] = var_5_2
 
 		Managers.save:auto_save(SaveFileName, SaveData, nil)
 	end
 end
 
-HeroWindowLoadoutSelectionConsole.update = function (self, dt, t)
-	self:_update_animations(dt)
-	self:_handle_input(dt, t)
-	self:_draw(dt)
+function HeroWindowLoadoutSelectionConsole.update(arg_6_0, arg_6_1, arg_6_2)
+	arg_6_0:_update_animations(arg_6_1)
+	arg_6_0:_handle_input(arg_6_1, arg_6_2)
+	arg_6_0:_draw(arg_6_1)
 end
 
-HeroWindowLoadoutSelectionConsole.post_update = function (self, dt, t)
+function HeroWindowLoadoutSelectionConsole.post_update(arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-HeroWindowLoadoutSelectionConsole._update_animations = function (self, dt)
-	local ui_animations = self._ui_animations
-	local animations = self._animations
-	local ui_animator = self._ui_animator
+function HeroWindowLoadoutSelectionConsole._update_animations(arg_8_0, arg_8_1)
+	local var_8_0 = arg_8_0._ui_animations
+	local var_8_1 = arg_8_0._animations
+	local var_8_2 = arg_8_0._ui_animator
 
-	for name, animation in pairs(self._ui_animations) do
-		UIAnimation.update(animation, dt)
+	for iter_8_0, iter_8_1 in pairs(arg_8_0._ui_animations) do
+		UIAnimation.update(iter_8_1, arg_8_1)
 
-		if UIAnimation.completed(animation) then
-			self._ui_animations[name] = nil
+		if UIAnimation.completed(iter_8_1) then
+			arg_8_0._ui_animations[iter_8_0] = nil
 		end
 	end
 
-	ui_animator:update(dt)
+	var_8_2:update(arg_8_1)
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_8_2, iter_8_3 in pairs(var_8_1) do
+		if var_8_2:is_animation_completed(iter_8_3) then
+			var_8_2:stop_animation(iter_8_3)
 
-			animations[animation_name] = nil
+			var_8_1[iter_8_2] = nil
 		end
 	end
 
-	for _, widget in ipairs(self._loadout_button_widgets) do
-		UIWidgetUtils.animate_default_button(widget, dt)
+	for iter_8_4, iter_8_5 in ipairs(arg_8_0._loadout_button_widgets) do
+		UIWidgetUtils.animate_default_button(iter_8_5, arg_8_1)
 	end
 
-	local add_loadout_button_widget = self._widgets_by_name.add_loadout_button
+	local var_8_3 = arg_8_0._widgets_by_name.add_loadout_button
 
-	UIWidgetUtils.animate_default_button(add_loadout_button_widget, dt)
+	UIWidgetUtils.animate_default_button(var_8_3, arg_8_1)
 
-	if InventorySettings.bot_loadout_allowed_game_modes[self._game_mode_key] then
-		local bot_checkbox_widget = self._widgets_by_name.bot_checkbox
+	if InventorySettings.bot_loadout_allowed_game_modes[arg_8_0._game_mode_key] then
+		local var_8_4 = arg_8_0._widgets_by_name.bot_checkbox
 
-		UIWidgetUtils.animate_default_checkbox_button(bot_checkbox_widget, dt)
+		UIWidgetUtils.animate_default_checkbox_button(var_8_4, arg_8_1)
 	end
 
-	if self._context_menu_active then
-		local delete_button_widget = self._widgets_by_name.delete_button
+	if arg_8_0._context_menu_active then
+		local var_8_5 = arg_8_0._widgets_by_name.delete_button
 
-		UIWidgetUtils.animate_default_button(delete_button_widget, dt)
+		UIWidgetUtils.animate_default_button(var_8_5, arg_8_1)
 	end
 end
 
-HeroWindowLoadoutSelectionConsole._handle_gamepad_activity = function (self)
-	local gamepad_active = Managers.input:is_device_active("gamepad")
+function HeroWindowLoadoutSelectionConsole._handle_gamepad_activity(arg_9_0)
+	local var_9_0 = Managers.input:is_device_active("gamepad")
 
-	if gamepad_active ~= self._gamepad_active_last_frame then
-		self:_hide_context_menu()
+	if var_9_0 ~= arg_9_0._gamepad_active_last_frame then
+		arg_9_0:_hide_context_menu()
 	end
 
-	self._gamepad_active_last_frame = gamepad_active
+	arg_9_0._gamepad_active_last_frame = var_9_0
 end
 
-HeroWindowLoadoutSelectionConsole._handle_input = function (self, dt, t)
-	self:_handle_gamepad_activity(dt, t)
+function HeroWindowLoadoutSelectionConsole._handle_input(arg_10_0, arg_10_1, arg_10_2)
+	arg_10_0:_handle_gamepad_activity(arg_10_1, arg_10_2)
 
-	local input_service = self:_get_input_service()
-	local mouse_active = Managers.input:is_device_active("mouse")
+	local var_10_0 = arg_10_0:_get_input_service()
 
-	if mouse_active then
-		self:_handle_mouse_input(input_service, dt, t)
+	if Managers.input:is_device_active("mouse") then
+		arg_10_0:_handle_mouse_input(var_10_0, arg_10_1, arg_10_2)
 	else
-		self:_handle_gamepad_input(input_service, dt, t)
+		arg_10_0:_handle_gamepad_input(var_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-HeroWindowLoadoutSelectionConsole._get_input_service = function (self)
-	return (self._context_menu_active or self._on_add_loadout_button) and Managers.input:get_service("hero_view") or self._parent:window_input_service()
+function HeroWindowLoadoutSelectionConsole._get_input_service(arg_11_0)
+	return (arg_11_0._context_menu_active or arg_11_0._on_add_loadout_button) and Managers.input:get_service("hero_view") or arg_11_0._parent:window_input_service()
 end
 
-HeroWindowLoadoutSelectionConsole._update_selection_frame = function (self, loadout_button_widget)
-	local content = loadout_button_widget.content
-	local loadout_index = content.loadout_index
-	local frame_widget = self._widgets_by_name.hover_loadout_frame
+function HeroWindowLoadoutSelectionConsole._update_selection_frame(arg_12_0, arg_12_1)
+	local var_12_0 = arg_12_1.content.loadout_index
+	local var_12_1 = arg_12_0._widgets_by_name.hover_loadout_frame
 
-	if loadout_index ~= self._selected_loadout_index then
-		local offset = loadout_button_widget.offset
+	if var_12_0 ~= arg_12_0._selected_loadout_index then
+		local var_12_2 = arg_12_1.offset
 
-		frame_widget.offset = table.clone(offset)
-		frame_widget.content.visible = true
-		frame_widget.content.loadout_index = loadout_index
+		var_12_1.offset = table.clone(var_12_2)
+		var_12_1.content.visible = true
+		var_12_1.content.loadout_index = var_12_0
 	else
-		frame_widget.content.visible = false
+		var_12_1.content.visible = false
 	end
 end
 
-HeroWindowLoadoutSelectionConsole._update_button_hover = function (self, loadout_button_widget, t)
-	self:_update_selection_frame(loadout_button_widget)
+function HeroWindowLoadoutSelectionConsole._update_button_hover(arg_13_0, arg_13_1, arg_13_2)
+	arg_13_0:_update_selection_frame(arg_13_1)
 
-	local hover_enter_time = loadout_button_widget.content.hover_enter_time or math.huge
-
-	if hover_enter_time < t and not self._context_menu_active then
-		self:_show_context_menu(loadout_button_widget)
+	if arg_13_2 > (arg_13_1.content.hover_enter_time or math.huge) and not arg_13_0._context_menu_active then
+		arg_13_0:_show_context_menu(arg_13_1)
 	end
 end
 
-HeroWindowLoadoutSelectionConsole._reset_hover_frame = function (self)
-	local frame_widget = self._widgets_by_name.hover_loadout_frame
+function HeroWindowLoadoutSelectionConsole._reset_hover_frame(arg_14_0)
+	local var_14_0 = arg_14_0._widgets_by_name.hover_loadout_frame
 
-	if self._context_menu_active then
-		if frame_widget.content.loadout_index ~= self._context_menu_loadout_index then
-			frame_widget.content.visible = false
+	if arg_14_0._context_menu_active then
+		if var_14_0.content.loadout_index ~= arg_14_0._context_menu_loadout_index then
+			var_14_0.content.visible = false
 		end
 	else
-		frame_widget.content.visible = false
+		var_14_0.content.visible = false
 	end
 end
 
-HeroWindowLoadoutSelectionConsole._handle_mouse_input = function (self, input_service, dt, t)
-	local loadout_button_index_hovered
+function HeroWindowLoadoutSelectionConsole._handle_mouse_input(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+	local var_15_0
 
-	self:_reset_hover_frame()
+	arg_15_0:_reset_hover_frame()
 
-	for idx, loadout_button_widget in ipairs(self._loadout_button_widgets) do
-		if UIUtils.is_button_hover_enter(loadout_button_widget) then
-			loadout_button_widget.content.hover_enter_time = t + 0
+	for iter_15_0, iter_15_1 in ipairs(arg_15_0._loadout_button_widgets) do
+		if UIUtils.is_button_hover_enter(iter_15_1) then
+			iter_15_1.content.hover_enter_time = arg_15_3 + 0
 
-			self:_play_sound("Play_hud_hover")
-		elseif UIUtils.is_button_hover(loadout_button_widget) then
-			self:_update_button_hover(loadout_button_widget, t)
+			arg_15_0:_play_sound("Play_hud_hover")
+		elseif UIUtils.is_button_hover(iter_15_1) then
+			arg_15_0:_update_button_hover(iter_15_1, arg_15_3)
 
-			loadout_button_index_hovered = idx
+			var_15_0 = iter_15_0
 		end
 
-		if UIUtils.is_button_pressed(loadout_button_widget) then
-			local content = loadout_button_widget.content
+		if UIUtils.is_button_pressed(iter_15_1) then
+			local var_15_1 = iter_15_1.content
 
-			self:_change_loadout(idx)
+			arg_15_0:_change_loadout(iter_15_0)
 
 			return
 		end
 	end
 
-	local context_menu_widget_hotspot = self._widgets_by_name.context_menu_hotspot
+	local var_15_2 = arg_15_0._widgets_by_name.context_menu_hotspot
 
-	if self._context_menu_active and UIUtils.is_button_hover(context_menu_widget_hotspot) or loadout_button_index_hovered == self._context_menu_loadout_index then
-		self:_handle_context_menu_input(input_service, dt, t)
+	if arg_15_0._context_menu_active and UIUtils.is_button_hover(var_15_2) or var_15_0 == arg_15_0._context_menu_loadout_index then
+		arg_15_0:_handle_context_menu_input(arg_15_1, arg_15_2, arg_15_3)
 
-		context_menu_widget_hotspot.content.hover_timer = t + 0.1
-	elseif self._context_menu_active and (loadout_button_index_hovered or t > (context_menu_widget_hotspot.content.hover_timer or 0)) then
-		self:_hide_context_menu()
+		var_15_2.content.hover_timer = arg_15_3 + 0.1
+	elseif arg_15_0._context_menu_active and (var_15_0 or arg_15_3 > (var_15_2.content.hover_timer or 0)) then
+		arg_15_0:_hide_context_menu()
 	end
 
-	local add_loadout_button_widget = self._widgets_by_name.add_loadout_button
+	local var_15_3 = arg_15_0._widgets_by_name.add_loadout_button
 
-	if UIUtils.is_button_hover_enter(add_loadout_button_widget) then
-		self:_play_sound("Play_hud_hover")
-	elseif UIUtils.is_button_pressed(add_loadout_button_widget) then
-		self:_add_loadout()
+	if UIUtils.is_button_hover_enter(var_15_3) then
+		arg_15_0:_play_sound("Play_hud_hover")
+	elseif UIUtils.is_button_pressed(var_15_3) then
+		arg_15_0:_add_loadout()
 	end
 end
 
-HeroWindowLoadoutSelectionConsole._handle_gamepad_input = function (self, input_service, dt, t)
-	if self._inside_context_menu then
-		self:_handle_context_menu_gamepad_input(input_service, dt, t)
-	elseif self._on_add_loadout_button then
-		self:_handle_add_loadout_gamepad_input(input_service, dt, t)
-	elseif self._context_menu_active then
-		if input_service:get("move_left") or input_service:get("trigger_cycle_previous") then
-			local old_context_menu_loadout_index = self._context_menu_loadout_index
-			local new_context_menu_loadout_index = math.max(old_context_menu_loadout_index - 1, 1)
+function HeroWindowLoadoutSelectionConsole._handle_gamepad_input(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+	if arg_16_0._inside_context_menu then
+		arg_16_0:_handle_context_menu_gamepad_input(arg_16_1, arg_16_2, arg_16_3)
+	elseif arg_16_0._on_add_loadout_button then
+		arg_16_0:_handle_add_loadout_gamepad_input(arg_16_1, arg_16_2, arg_16_3)
+	elseif arg_16_0._context_menu_active then
+		if arg_16_1:get("move_left") or arg_16_1:get("trigger_cycle_previous") then
+			local var_16_0 = arg_16_0._context_menu_loadout_index
+			local var_16_1 = math.max(var_16_0 - 1, 1)
 
-			if old_context_menu_loadout_index ~= new_context_menu_loadout_index then
-				self:_hide_context_menu()
+			if var_16_0 ~= var_16_1 then
+				arg_16_0:_hide_context_menu()
 
-				local loadout_button_widget = self._loadout_button_widgets[new_context_menu_loadout_index]
+				local var_16_2 = arg_16_0._loadout_button_widgets[var_16_1]
 
-				self:_show_context_menu(loadout_button_widget)
-				self:_update_selection_frame(loadout_button_widget)
+				arg_16_0:_show_context_menu(var_16_2)
+				arg_16_0:_update_selection_frame(var_16_2)
 			end
-		elseif input_service:get("move_right") or input_service:get("trigger_cycle_next") then
-			local old_context_menu_loadout_index = self._context_menu_loadout_index
-			local new_context_menu_loadout_index = math.min(old_context_menu_loadout_index + 1, self._num_loadouts)
+		elseif arg_16_1:get("move_right") or arg_16_1:get("trigger_cycle_next") then
+			local var_16_3 = arg_16_0._context_menu_loadout_index
+			local var_16_4 = math.min(var_16_3 + 1, arg_16_0._num_loadouts)
 
-			if old_context_menu_loadout_index ~= new_context_menu_loadout_index then
-				self:_hide_context_menu()
+			if var_16_3 ~= var_16_4 then
+				arg_16_0:_hide_context_menu()
 
-				local loadout_button_widget = self._loadout_button_widgets[new_context_menu_loadout_index]
+				local var_16_5 = arg_16_0._loadout_button_widgets[var_16_4]
 
-				self:_show_context_menu(loadout_button_widget)
-				self:_update_selection_frame(loadout_button_widget)
-			elseif self._num_loadouts < self._max_loadouts then
-				self:_on_enter_add_loadout_gamepad()
+				arg_16_0:_show_context_menu(var_16_5)
+				arg_16_0:_update_selection_frame(var_16_5)
+			elseif arg_16_0._num_loadouts < arg_16_0._max_loadouts then
+				arg_16_0:_on_enter_add_loadout_gamepad()
 			end
-		elseif input_service:get("special_1") then
-			self:_enter_details_menu()
-		elseif input_service:get("back") or input_service:get("right_stick_press") or input_service:get("toggle_menu") then
-			self:_hide_context_menu()
-		elseif input_service:get("confirm") then
-			self:_change_loadout(self._context_menu_loadout_index)
-		elseif input_service:get("left_stick_press") then
-			if InventorySettings.bot_loadout_allowed_game_modes[self._game_mode_key] then
-				local bot_checkbox_widget = self._widgets_by_name.bot_checkbox
-				local content = bot_checkbox_widget.content
+		elseif arg_16_1:get("special_1") then
+			arg_16_0:_enter_details_menu()
+		elseif arg_16_1:get("back") or arg_16_1:get("right_stick_press") or arg_16_1:get("toggle_menu") then
+			arg_16_0:_hide_context_menu()
+		elseif arg_16_1:get("confirm") then
+			arg_16_0:_change_loadout(arg_16_0._context_menu_loadout_index)
+		elseif arg_16_1:get("left_stick_press") then
+			if InventorySettings.bot_loadout_allowed_game_modes[arg_16_0._game_mode_key] then
+				local var_16_6 = arg_16_0._widgets_by_name.bot_checkbox.content
 
-				content.button_hotspot.is_selected = true
-				content.button_hotspot.disable_button = true
+				var_16_6.button_hotspot.is_selected = true
+				var_16_6.button_hotspot.disable_button = true
 
-				self:_save_bot_equipment()
+				arg_16_0:_save_bot_equipment()
 			end
 		else
-			self:_handle_delete_input(input_service, dt, t)
+			arg_16_0:_handle_delete_input(arg_16_1, arg_16_2, arg_16_3)
 		end
-	elseif input_service:get("right_stick_press") then
-		local loadout_button_widget = self._loadout_button_widgets[self._selected_loadout_index]
+	elseif arg_16_1:get("right_stick_press") then
+		local var_16_7 = arg_16_0._loadout_button_widgets[arg_16_0._selected_loadout_index]
 
-		if not loadout_button_widget then
+		if not var_16_7 then
 			return
 		end
 
-		self:_show_context_menu(loadout_button_widget)
-		self:_update_selection_frame(loadout_button_widget)
+		arg_16_0:_show_context_menu(var_16_7)
+		arg_16_0:_update_selection_frame(var_16_7)
 
-		local unselect_all = true
+		local var_16_8 = true
 
-		self:_update_gamepad_selections(unselect_all)
+		arg_16_0:_update_gamepad_selections(var_16_8)
 
-		self._inside_context_menu = false
+		arg_16_0._inside_context_menu = false
 
-		self._parent:block_input()
-	elseif input_service:get("trigger_cycle_next") then
-		local loadout_index = math.min(self._selected_loadout_index + 1, self._num_loadouts)
+		arg_16_0._parent:block_input()
+	elseif arg_16_1:get("trigger_cycle_next") then
+		local var_16_9 = math.min(arg_16_0._selected_loadout_index + 1, arg_16_0._num_loadouts)
 
-		self:_change_loadout(loadout_index)
-	elseif input_service:get("trigger_cycle_previous") then
-		local loadout_index = math.max(self._selected_loadout_index - 1, 1)
+		arg_16_0:_change_loadout(var_16_9)
+	elseif arg_16_1:get("trigger_cycle_previous") then
+		local var_16_10 = math.max(arg_16_0._selected_loadout_index - 1, 1)
 
-		self:_change_loadout(loadout_index)
+		arg_16_0:_change_loadout(var_16_10)
 	end
 end
 
-HeroWindowLoadoutSelectionConsole._handle_add_loadout_gamepad_input = function (self, input_service, dt, t)
-	if input_service:get("confirm") then
-		self:_add_loadout()
+function HeroWindowLoadoutSelectionConsole._handle_add_loadout_gamepad_input(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+	if arg_17_1:get("confirm") then
+		arg_17_0:_add_loadout()
 
-		local unselect_all = true
+		local var_17_0 = true
 
-		self:_update_gamepad_selections(unselect_all)
+		arg_17_0:_update_gamepad_selections(var_17_0)
 
-		self._inside_context_menu = false
+		arg_17_0._inside_context_menu = false
 
-		self:_hide_context_menu()
-	elseif input_service:get("back") or input_service:get("right_stick_press") or input_service:get("toggle_menu") then
-		self:_hide_context_menu()
-	elseif input_service:get("move_left") or input_service:get("trigger_cycle_previous") then
-		local loadout_button_widget = self._loadout_button_widgets[self._num_loadouts]
+		arg_17_0:_hide_context_menu()
+	elseif arg_17_1:get("back") or arg_17_1:get("right_stick_press") or arg_17_1:get("toggle_menu") then
+		arg_17_0:_hide_context_menu()
+	elseif arg_17_1:get("move_left") or arg_17_1:get("trigger_cycle_previous") then
+		local var_17_1 = arg_17_0._loadout_button_widgets[arg_17_0._num_loadouts]
 
-		self:_show_context_menu(loadout_button_widget)
-		self:_update_selection_frame(loadout_button_widget)
+		arg_17_0:_show_context_menu(var_17_1)
+		arg_17_0:_update_selection_frame(var_17_1)
 
-		local unselect_all = true
+		local var_17_2 = true
 
-		self:_update_gamepad_selections(unselect_all)
+		arg_17_0:_update_gamepad_selections(var_17_2)
 
-		self._inside_context_menu = false
+		arg_17_0._inside_context_menu = false
 
-		if self._num_loadouts > 1 then
-			self._menu_input_description:change_generic_actions(generic_input_actions.default)
+		if arg_17_0._num_loadouts > 1 then
+			arg_17_0._menu_input_description:change_generic_actions(var_0_11.default)
 		else
-			self._menu_input_description:change_generic_actions(generic_input_actions.default_no_delete)
+			arg_17_0._menu_input_description:change_generic_actions(var_0_11.default_no_delete)
 		end
 
-		self._parent:block_input()
+		arg_17_0._parent:block_input()
 	end
 end
 
-HeroWindowLoadoutSelectionConsole._on_enter_add_loadout_gamepad = function (self)
-	self:_hide_context_menu()
+function HeroWindowLoadoutSelectionConsole._on_enter_add_loadout_gamepad(arg_18_0)
+	arg_18_0:_hide_context_menu()
 
-	self._on_add_loadout_button = true
+	arg_18_0._on_add_loadout_button = true
 
-	local hover_loadout_frame = self._widgets_by_name.hover_loadout_frame
+	local var_18_0 = arg_18_0._widgets_by_name.hover_loadout_frame
 
-	hover_loadout_frame.content.visible = true
-	hover_loadout_frame.offset[1] = self._num_loadouts * (BUTTON_SIZE[1] + BUTTON_SPACING)
+	var_18_0.content.visible = true
+	var_18_0.offset[1] = arg_18_0._num_loadouts * (var_0_7[1] + var_0_8)
 
-	if self._num_loadouts >= self._max_loadouts then
-		self._menu_input_description:change_generic_actions(generic_input_actions.add_loadout_no_add)
+	if arg_18_0._num_loadouts >= arg_18_0._max_loadouts then
+		arg_18_0._menu_input_description:change_generic_actions(var_0_11.add_loadout_no_add)
 	else
-		self._menu_input_description:change_generic_actions(generic_input_actions.add_loadout)
+		arg_18_0._menu_input_description:change_generic_actions(var_0_11.add_loadout)
 	end
 
-	self._parent:block_input()
+	arg_18_0._parent:block_input()
 end
 
-HeroWindowLoadoutSelectionConsole._enter_details_menu = function (self)
-	self._inside_context_menu = true
+function HeroWindowLoadoutSelectionConsole._enter_details_menu(arg_19_0)
+	arg_19_0._inside_context_menu = true
 
-	table.clear(self._gamepad_grid_index)
-	self:_update_gamepad_selections()
-	self._menu_input_description:change_generic_actions(generic_input_actions.details)
+	table.clear(arg_19_0._gamepad_grid_index)
+	arg_19_0:_update_gamepad_selections()
+	arg_19_0._menu_input_description:change_generic_actions(var_0_11.details)
 end
 
-HeroWindowLoadoutSelectionConsole._exit_details_menu = function (self)
-	self._inside_context_menu = nil
+function HeroWindowLoadoutSelectionConsole._exit_details_menu(arg_20_0)
+	arg_20_0._inside_context_menu = nil
 
-	table.clear(self._gamepad_grid_index)
+	table.clear(arg_20_0._gamepad_grid_index)
 
-	local unselect_all = true
+	local var_20_0 = true
 
-	self:_update_gamepad_selections(unselect_all)
+	arg_20_0:_update_gamepad_selections(var_20_0)
 
-	if self._num_loadouts > 1 then
-		self._menu_input_description:change_generic_actions(generic_input_actions.default)
+	if arg_20_0._num_loadouts > 1 then
+		arg_20_0._menu_input_description:change_generic_actions(var_0_11.default)
 	else
-		self._menu_input_description:change_generic_actions(generic_input_actions.default_no_delete)
+		arg_20_0._menu_input_description:change_generic_actions(var_0_11.default_no_delete)
 	end
 end
 
-HeroWindowLoadoutSelectionConsole._handle_context_menu_gamepad_input = function (self, input_service, dt, t)
-	local new_selection = false
-	local row_index = self._gamepad_grid_index[1]
-	local column_index = self._gamepad_grid_index[2]
-	local new_row_index = row_index or #self._gamepad_loadout_grid
-	local new_column_index = column_index or 1
+function HeroWindowLoadoutSelectionConsole._handle_context_menu_gamepad_input(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+	local var_21_0 = false
+	local var_21_1 = arg_21_0._gamepad_grid_index[1]
+	local var_21_2 = arg_21_0._gamepad_grid_index[2]
+	local var_21_3 = var_21_1 or #arg_21_0._gamepad_loadout_grid
+	local var_21_4 = var_21_2 or 1
 
-	if input_service:get("move_left") then
-		new_column_index = math.max(column_index - 1, 1)
-	elseif input_service:get("move_right") then
-		local row_selection = self._gamepad_loadout_grid[row_index]
+	if arg_21_1:get("move_left") then
+		var_21_4 = math.max(var_21_2 - 1, 1)
+	elseif arg_21_1:get("move_right") then
+		local var_21_5 = arg_21_0._gamepad_loadout_grid[var_21_1]
 
-		new_column_index = math.min(column_index + 1, #row_selection)
-	elseif input_service:get("move_up") then
-		local rows = #self._gamepad_loadout_grid
+		var_21_4 = math.min(var_21_2 + 1, #var_21_5)
+	elseif arg_21_1:get("move_up") then
+		local var_21_6 = #arg_21_0._gamepad_loadout_grid
 
-		new_row_index = math.min(row_index + 1, rows)
-	elseif input_service:get("move_down") then
-		local rows = #self._gamepad_loadout_grid
+		var_21_3 = math.min(var_21_1 + 1, var_21_6)
+	elseif arg_21_1:get("move_down") then
+		local var_21_7 = #arg_21_0._gamepad_loadout_grid
 
-		new_row_index = math.max(row_index - 1, 1)
-	elseif input_service:get("special_1") or input_service:get("back") then
-		self:_exit_details_menu()
+		var_21_3 = math.max(var_21_1 - 1, 1)
+	elseif arg_21_1:get("special_1") or arg_21_1:get("back") then
+		arg_21_0:_exit_details_menu()
 
 		return
-	elseif input_service:get("right_stick_press") then
-		self:_exit_details_menu()
-		self:_hide_context_menu()
-	elseif input_service:get("toggle_menu") then
-		self:_exit_details_menu()
-		self:_hide_context_menu()
+	elseif arg_21_1:get("right_stick_press") then
+		arg_21_0:_exit_details_menu()
+		arg_21_0:_hide_context_menu()
+	elseif arg_21_1:get("toggle_menu") then
+		arg_21_0:_exit_details_menu()
+		arg_21_0:_hide_context_menu()
 	else
-		self:_handle_delete_input(input_service, dt, t)
+		arg_21_0:_handle_delete_input(arg_21_1, arg_21_2, arg_21_3)
 	end
 
-	if new_row_index ~= row_index then
-		self._gamepad_grid_index[1] = new_row_index
+	if var_21_3 ~= var_21_1 then
+		arg_21_0._gamepad_grid_index[1] = var_21_3
 
-		local column_items = self._gamepad_loadout_grid[new_row_index]
+		local var_21_8 = arg_21_0._gamepad_loadout_grid[var_21_3]
 
-		self._gamepad_grid_index[2] = math.clamp(new_column_index, 1, #column_items)
+		arg_21_0._gamepad_grid_index[2] = math.clamp(var_21_4, 1, #var_21_8)
 
-		self:_update_gamepad_selections()
-	elseif new_column_index ~= column_index then
-		self._gamepad_grid_index[2] = new_column_index
+		arg_21_0:_update_gamepad_selections()
+	elseif var_21_4 ~= var_21_2 then
+		arg_21_0._gamepad_grid_index[2] = var_21_4
 
-		self:_update_gamepad_selections()
+		arg_21_0:_update_gamepad_selections()
 	end
 end
 
-HeroWindowLoadoutSelectionConsole._handle_delete_input = function (self, input_service, dt, t)
-	if self._num_loadouts == 1 then
+function HeroWindowLoadoutSelectionConsole._handle_delete_input(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+	if arg_22_0._num_loadouts == 1 then
 		return
 	end
 
-	local delete_button = self._widgets_by_name.delete_button
-	local time = 1
-	local delete_progress = self._delete_progress or 0
+	local var_22_0 = arg_22_0._widgets_by_name.delete_button
+	local var_22_1 = 1
+	local var_22_2 = arg_22_0._delete_progress or 0
 
-	if input_service:get("refresh_hold") or UIUtils.is_button_held(delete_button) and UIUtils.is_button_hover(delete_button) then
-		if not self._delete_started then
-			self._delete_started = true
+	if arg_22_1:get("refresh_hold") or UIUtils.is_button_held(var_22_0) and UIUtils.is_button_hover(var_22_0) then
+		if not arg_22_0._delete_started then
+			arg_22_0._delete_started = true
 
-			self:_play_sound("Play_gui_loadout_delete_start")
+			arg_22_0:_play_sound("Play_gui_loadout_delete_start")
 		end
 
-		delete_progress = math.min(delete_progress + dt / time, 1)
+		var_22_2 = math.min(var_22_2 + arg_22_2 / var_22_1, 1)
 	else
-		delete_progress = math.max(delete_progress - dt * time, 0)
+		var_22_2 = math.max(var_22_2 - arg_22_2 * var_22_1, 0)
 
-		if self._delete_started then
-			self._delete_started = false
+		if arg_22_0._delete_started then
+			arg_22_0._delete_started = false
 
-			self:_play_sound("Stop_gui_loadout_delete_start")
+			arg_22_0:_play_sound("Stop_gui_loadout_delete_start")
 		end
 	end
 
-	local eased_progress = math.easeOutCubic(delete_progress)
+	local var_22_3 = math.easeOutCubic(var_22_2)
 
-	self._ui_scenegraph.delete_button_bar.size[1] = 172 * eased_progress
+	arg_22_0._ui_scenegraph.delete_button_bar.size[1] = 172 * var_22_3
+	arg_22_0._widgets_by_name.delete_button_bar.content.texture_id.uvs[2][1] = var_22_3
 
-	local delete_button_bar = self._widgets_by_name.delete_button_bar
-
-	delete_button_bar.content.texture_id.uvs[2][1] = eased_progress
-
-	if delete_progress >= 1 then
-		self:_delete_loadout()
+	if var_22_2 >= 1 then
+		arg_22_0:_delete_loadout()
 	else
-		self._delete_progress = delete_progress
+		arg_22_0._delete_progress = var_22_2
 	end
 end
 
-HeroWindowLoadoutSelectionConsole._handle_bot_checkbox_input = function (self, input_service, dt, t)
-	if InventorySettings.bot_loadout_allowed_game_modes[self._game_mode_key] then
-		local bot_checkbox_widget = self._widgets_by_name.bot_checkbox
+function HeroWindowLoadoutSelectionConsole._handle_bot_checkbox_input(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+	if InventorySettings.bot_loadout_allowed_game_modes[arg_23_0._game_mode_key] then
+		local var_23_0 = arg_23_0._widgets_by_name.bot_checkbox
 
-		if UIUtils.is_button_pressed(bot_checkbox_widget) then
-			local content = bot_checkbox_widget.content
+		if UIUtils.is_button_pressed(var_23_0) then
+			local var_23_1 = var_23_0.content
 
-			content.button_hotspot.is_selected = true
-			content.button_hotspot.disable_button = true
+			var_23_1.button_hotspot.is_selected = true
+			var_23_1.button_hotspot.disable_button = true
 
-			self:_save_bot_equipment()
+			arg_23_0:_save_bot_equipment()
 		end
 	end
 end
 
-HeroWindowLoadoutSelectionConsole._save_bot_equipment = function (self)
-	local profile_index = self._profile_index
-	local career_index = self._career_index
-	local profile = SPProfiles[profile_index]
-	local career_settings = profile.careers[career_index]
-	local career_name = career_settings.name
+function HeroWindowLoadoutSelectionConsole._save_bot_equipment(arg_24_0)
+	local var_24_0 = arg_24_0._profile_index
+	local var_24_1 = arg_24_0._career_index
+	local var_24_2 = SPProfiles[var_24_0].careers[var_24_1].name
 
-	PlayerData.loadout_selection.bot_equipment[career_name] = self._context_menu_loadout_index
+	PlayerData.loadout_selection.bot_equipment[var_24_2] = arg_24_0._context_menu_loadout_index
 
-	local item_interface = Managers.backend:get_interface("items")
-
-	item_interface:refresh_bot_loadouts()
+	Managers.backend:get_interface("items"):refresh_bot_loadouts()
 end
 
-HeroWindowLoadoutSelectionConsole._update_gamepad_selections = function (self, unselect_all)
-	local row_index = unselect_all and 0 or self._gamepad_grid_index[1]
-	local column_index = unselect_all and 0 or self._gamepad_grid_index[2]
+function HeroWindowLoadoutSelectionConsole._update_gamepad_selections(arg_25_0, arg_25_1)
+	local var_25_0 = arg_25_1 and 0 or arg_25_0._gamepad_grid_index[1]
+	local var_25_1 = arg_25_1 and 0 or arg_25_0._gamepad_grid_index[2]
 
-	for row, row_content in ipairs(self._gamepad_loadout_grid) do
-		for column, content in ipairs(row_content) do
-			content.is_selected = column == column_index and row == row_index
+	for iter_25_0, iter_25_1 in ipairs(arg_25_0._gamepad_loadout_grid) do
+		for iter_25_2, iter_25_3 in ipairs(iter_25_1) do
+			iter_25_3.is_selected = iter_25_2 == var_25_1 and iter_25_0 == var_25_0
 		end
 	end
 end
 
-HeroWindowLoadoutSelectionConsole._handle_context_menu_input = function (self, input_service, dt, t)
-	local delete_button = self._widgets_by_name.delete_button
-	local context_menu_hotspot = self._widgets_by_name.context_menu_hotspot
-	local esc_pressed = input_service:get("toggle_menu", true)
+function HeroWindowLoadoutSelectionConsole._handle_context_menu_input(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+	local var_26_0 = arg_26_0._widgets_by_name.delete_button
+	local var_26_1 = arg_26_0._widgets_by_name.context_menu_hotspot
 
-	if esc_pressed then
-		self:_hide_context_menu()
+	if arg_26_1:get("toggle_menu", true) then
+		arg_26_0:_hide_context_menu()
 
 		return
 	end
 
-	local left_press = input_service:get("left_press")
-	local right_press = input_service:get("right_press")
-	local loadout_button = self._loadout_button_widgets[self._context_menu_loadout_index]
+	local var_26_2 = arg_26_1:get("left_press")
+	local var_26_3 = arg_26_1:get("right_press")
+	local var_26_4 = arg_26_0._loadout_button_widgets[arg_26_0._context_menu_loadout_index]
 
-	if not UIUtils.is_button_hover(context_menu_hotspot) and (left_press or right_press) and not UIUtils.is_button_hover(loadout_button) then
-		self:_hide_context_menu()
+	if not UIUtils.is_button_hover(var_26_1) and (var_26_2 or var_26_3) and not UIUtils.is_button_hover(var_26_4) then
+		arg_26_0:_hide_context_menu()
 	else
-		self:_handle_delete_input(input_service, dt, t)
-		self:_handle_bot_checkbox_input(input_service, dt, t)
+		arg_26_0:_handle_delete_input(arg_26_1, arg_26_2, arg_26_3)
+		arg_26_0:_handle_bot_checkbox_input(arg_26_1, arg_26_2, arg_26_3)
 	end
 end
 
-HeroWindowLoadoutSelectionConsole._delete_loadout = function (self)
-	local profile = SPProfiles[self._profile_index]
-	local career_settings = profile.careers[self._career_index]
-	local career_name = career_settings.name
-	local is_current_loadout = self._context_menu_loadout_index == self._selected_loadout_index
-	local backend_items = Managers.backend:get_interface("items")
+function HeroWindowLoadoutSelectionConsole._delete_loadout(arg_27_0)
+	local var_27_0 = SPProfiles[arg_27_0._profile_index].careers[arg_27_0._career_index].name
+	local var_27_1 = arg_27_0._context_menu_loadout_index == arg_27_0._selected_loadout_index
 
-	backend_items:delete_loadout(career_name, self._context_menu_loadout_index)
-	self:_populate_loadout_buttons()
-	self._parent:update_full_loadout()
+	Managers.backend:get_interface("items"):delete_loadout(var_27_0, arg_27_0._context_menu_loadout_index)
+	arg_27_0:_populate_loadout_buttons()
+	arg_27_0._parent:update_full_loadout()
 
-	if is_current_loadout then
-		self._parent:set_loadout_dirty()
+	if var_27_1 then
+		arg_27_0._parent:set_loadout_dirty()
 	end
 
-	self._delete_progress = 0
+	arg_27_0._delete_progress = 0
 
-	self:_exit_details_menu()
-	self:_hide_context_menu()
-	self:_play_sound("Play_gui_loadout_delete_finish")
+	arg_27_0:_exit_details_menu()
+	arg_27_0:_hide_context_menu()
+	arg_27_0:_play_sound("Play_gui_loadout_delete_finish")
 end
 
-HeroWindowLoadoutSelectionConsole._hide_context_menu = function (self)
-	self._context_menu_active = false
-	self._inside_context_menu = false
-	self._on_add_loadout_button = false
+function HeroWindowLoadoutSelectionConsole._hide_context_menu(arg_28_0)
+	arg_28_0._context_menu_active = false
+	arg_28_0._inside_context_menu = false
+	arg_28_0._on_add_loadout_button = false
 
-	local unselect_all = true
+	local var_28_0 = true
 
-	self:_update_gamepad_selections(unselect_all)
-	self:_reset_hover_frame()
-	self._parent:unblock_input()
+	arg_28_0:_update_gamepad_selections(var_28_0)
+	arg_28_0:_reset_hover_frame()
+	arg_28_0._parent:unblock_input()
 end
 
-HeroWindowLoadoutSelectionConsole._show_context_menu = function (self, loadout_button_widget)
-	self._context_menu_active = true
-	self._on_add_loadout_button = false
+function HeroWindowLoadoutSelectionConsole._show_context_menu(arg_29_0, arg_29_1)
+	arg_29_0._context_menu_active = true
+	arg_29_0._on_add_loadout_button = false
 
-	local offset = loadout_button_widget.offset
+	local var_29_0 = arg_29_1.offset
 
-	self._ui_scenegraph.context_menu.offset[1] = offset[1]
+	arg_29_0._ui_scenegraph.context_menu.offset[1] = var_29_0[1]
 
-	local content = loadout_button_widget.content
-	local loadout_index = content.loadout_index
-	local loadout = content.loadout
+	local var_29_1 = arg_29_1.content
+	local var_29_2 = var_29_1.loadout_index
+	local var_29_3 = var_29_1.loadout
 
-	self:_populate_context_menu_loadout(loadout, loadout_index)
+	arg_29_0:_populate_context_menu_loadout(var_29_3, var_29_2)
 
-	local context_frame = self._widgets_by_name.context_menu_bg
-	local context_frame_white = self._widgets_by_name.context_menu_bg_white
+	local var_29_4 = arg_29_0._widgets_by_name.context_menu_bg
+	local var_29_5 = arg_29_0._widgets_by_name.context_menu_bg_white
 
-	if loadout_index == self._selected_loadout_index then
-		context_frame.content.visible = true
-		context_frame_white.content.visible = false
+	if var_29_2 == arg_29_0._selected_loadout_index then
+		var_29_4.content.visible = true
+		var_29_5.content.visible = false
 	else
-		context_frame.content.visible = false
-		context_frame_white.content.visible = true
+		var_29_4.content.visible = false
+		var_29_5.content.visible = true
 	end
 
-	for idx, loadout_button in ipairs(self._loadout_button_widgets) do
-		loadout_button.offset[3] = idx == loadout_index and -20 or -100
+	for iter_29_0, iter_29_1 in ipairs(arg_29_0._loadout_button_widgets) do
+		iter_29_1.offset[3] = iter_29_0 == var_29_2 and -20 or -100
 	end
 
-	self._delete_progress = 0
-	self._ui_scenegraph.delete_button_bar.size[1] = 0
+	arg_29_0._delete_progress = 0
+	arg_29_0._ui_scenegraph.delete_button_bar.size[1] = 0
 
-	local delete_button = self._widgets_by_name.delete_button
+	local var_29_6 = arg_29_0._widgets_by_name.delete_button
 
-	delete_button.content.visible = self._num_loadouts > 1
-	delete_button.content.title_text = Localize("input_description_delete_loadout") .. " " .. loadout_index
+	var_29_6.content.visible = arg_29_0._num_loadouts > 1
+	var_29_6.content.title_text = Localize("input_description_delete_loadout") .. " " .. var_29_2
 
-	local delete_button_bar = self._widgets_by_name.delete_button_bar
+	local var_29_7 = arg_29_0._widgets_by_name.delete_button_bar
 
-	delete_button_bar.content.texture_id.uvs[2][1] = 0
-	delete_button_bar.content.visible = self._num_loadouts > 1
+	var_29_7.content.texture_id.uvs[2][1] = 0
+	var_29_7.content.visible = arg_29_0._num_loadouts > 1
+	arg_29_0._widgets_by_name.delete_button_bar_edge.content.visible = arg_29_0._num_loadouts > 1
+	arg_29_0._context_menu_loadout_index = var_29_2
 
-	local delete_button_bar_edge = self._widgets_by_name.delete_button_bar_edge
+	arg_29_0._parent:block_input()
 
-	delete_button_bar_edge.content.visible = self._num_loadouts > 1
-	self._context_menu_loadout_index = loadout_index
-
-	self._parent:block_input()
-
-	if self._num_loadouts > 1 then
-		self._menu_input_description:change_generic_actions(generic_input_actions.default)
+	if arg_29_0._num_loadouts > 1 then
+		arg_29_0._menu_input_description:change_generic_actions(var_0_11.default)
 	else
-		self._menu_input_description:change_generic_actions(generic_input_actions.default_no_delete)
+		arg_29_0._menu_input_description:change_generic_actions(var_0_11.default_no_delete)
 	end
 end
 
-local EMPTY_TABLE = {}
+local var_0_12 = {}
 
-HeroWindowLoadoutSelectionConsole._populate_context_menu_loadout = function (self, loadout, loadout_index)
-	self._gamepad_loadout_grid = {}
+function HeroWindowLoadoutSelectionConsole._populate_context_menu_loadout(arg_30_0, arg_30_1, arg_30_2)
+	arg_30_0._gamepad_loadout_grid = {}
 
-	local profile_index = self._profile_index
-	local career_index = self._career_index
-	local profile = SPProfiles[profile_index]
-	local career_settings = profile.careers[career_index]
-	local profile_name = profile.display_name
-	local career_name = career_settings.name
-	local custom_loadout_settings = {}
+	local var_30_0 = arg_30_0._profile_index
+	local var_30_1 = arg_30_0._career_index
+	local var_30_2 = SPProfiles[var_30_0]
+	local var_30_3 = var_30_2.careers[var_30_1]
+	local var_30_4 = var_30_2.display_name
+	local var_30_5 = var_30_3.name
+	local var_30_6 = {}
 
-	for _, loadout_setting in ipairs(InventorySettings.loadouts) do
-		if loadout_setting.loadout_type == "custom" then
-			custom_loadout_settings[#custom_loadout_settings + 1] = loadout_setting
+	for iter_30_0, iter_30_1 in ipairs(InventorySettings.loadouts) do
+		if iter_30_1.loadout_type == "custom" then
+			var_30_6[#var_30_6 + 1] = iter_30_1
 		end
 	end
 
-	local loadout_settings = custom_loadout_settings[loadout_index]
-	local icon_widget = self._widgets_by_name.icon
-	local header_widget = self._widgets_by_name.header
+	local var_30_7 = var_30_6[arg_30_2]
+	local var_30_8 = arg_30_0._widgets_by_name.icon
+	local var_30_9 = arg_30_0._widgets_by_name.header
 
-	icon_widget.content.texture_id = loadout_settings.loadout_icon or "icons_placeholder"
-	header_widget.content.text = Localize("custom_loadout_" .. loadout_settings.loadout_index .. "_title")
+	var_30_8.content.texture_id = var_30_7.loadout_icon or "icons_placeholder"
+	var_30_9.content.text = Localize("custom_loadout_" .. var_30_7.loadout_index .. "_title")
 
-	local item_interface = Managers.backend:get_interface("items")
-	local widget = self._widgets_by_name.cosmetics
-	local content = widget.content
-	local cosmetic_gamepad_grid
+	local var_30_10 = Managers.backend:get_interface("items")
+	local var_30_11 = arg_30_0._widgets_by_name.cosmetics.content
+	local var_30_12
 
-	for i, cosmetic_slot in ipairs(cosmetic_slots) do
-		local item
+	for iter_30_2, iter_30_3 in ipairs(var_0_10) do
+		local var_30_13
 
-		if CosmeticUtils.is_cosmetic_slot(cosmetic_slot) then
-			local item_id = loadout[cosmetic_slot]
-			local backend_id = item_interface:get_backend_id_from_cosmetic_item(item_id)
+		if CosmeticUtils.is_cosmetic_slot(iter_30_3) then
+			local var_30_14 = arg_30_1[iter_30_3]
+			local var_30_15 = var_30_10:get_backend_id_from_cosmetic_item(var_30_14)
 
-			item = item_interface:get_item_from_id(backend_id)
-		elseif cosmetic_slot == "slot_pose" then
-			local item_id = loadout[cosmetic_slot]
-			local backend_id = item_id and item_interface:get_backend_id_from_unlocked_weapon_poses(item_id)
+			var_30_13 = var_30_10:get_item_from_id(var_30_15)
+		elseif iter_30_3 == "slot_pose" then
+			local var_30_16 = arg_30_1[iter_30_3]
+			local var_30_17 = var_30_16 and var_30_10:get_backend_id_from_unlocked_weapon_poses(var_30_16)
 
-			item = backend_id and item_interface:get_item_from_id(backend_id)
+			var_30_13 = var_30_17 and var_30_10:get_item_from_id(var_30_17)
 		else
-			item = BackendUtils.get_loadout_item(career_name, cosmetic_slot)
+			var_30_13 = BackendUtils.get_loadout_item(var_30_5, iter_30_3)
 		end
 
-		if item then
-			content[cosmetic_slot].item = item
-			content[cosmetic_slot].icon = item.data.inventory_icon or item.data.hud_icon
-			content[cosmetic_slot].profile_index = self._profile_index
-			content[cosmetic_slot].career_index = self._career_index
-			content[cosmetic_slot].rarity = UISettings.item_rarity_textures[item.rarity]
-			cosmetic_gamepad_grid = cosmetic_gamepad_grid or {}
-			cosmetic_gamepad_grid[#cosmetic_gamepad_grid + 1] = content[cosmetic_slot]
+		if var_30_13 then
+			var_30_11[iter_30_3].item = var_30_13
+			var_30_11[iter_30_3].icon = var_30_13.data.inventory_icon or var_30_13.data.hud_icon
+			var_30_11[iter_30_3].profile_index = arg_30_0._profile_index
+			var_30_11[iter_30_3].career_index = arg_30_0._career_index
+			var_30_11[iter_30_3].rarity = UISettings.item_rarity_textures[var_30_13.rarity]
+			var_30_12 = var_30_12 or {}
+			var_30_12[#var_30_12 + 1] = var_30_11[iter_30_3]
 		else
-			Application.warning(string.format("[HeroWindowLoadoutSelectionConsole] Missing %q for loadout_index: %q", cosmetic_slot, loadout_index))
+			Application.warning(string.format("[HeroWindowLoadoutSelectionConsole] Missing %q for loadout_index: %q", iter_30_3, arg_30_2))
 		end
 	end
 
-	self._gamepad_loadout_grid[#self._gamepad_loadout_grid + 1] = cosmetic_gamepad_grid
+	arg_30_0._gamepad_loadout_grid[#arg_30_0._gamepad_loadout_grid + 1] = var_30_12
 
-	local talent_interface = Managers.backend:get_interface("talents")
-	local career_talents = talent_interface:get_career_talents(career_name)
-	local loadout_talents = career_talents[loadout_index]
-	local loadout_talent_ids = talent_interface:get_career_talent_ids(career_name, loadout_index)
-	local widget = self._widgets_by_name.talents
-	local content = widget.content
-	local talent_gamepad_grid
-	local talent_num = 1
+	local var_30_18 = Managers.backend:get_interface("talents")
+	local var_30_19 = var_30_18:get_career_talents(var_30_5)[arg_30_2]
+	local var_30_20 = var_30_18:get_career_talent_ids(var_30_5, arg_30_2)
+	local var_30_21 = arg_30_0._widgets_by_name.talents.content
+	local var_30_22
+	local var_30_23 = 1
 
-	for i = 1, MaxTalentPoints do
-		local talent_id = "talent_" .. i
-		local talent_content = content[talent_id]
+	for iter_30_4 = 1, MaxTalentPoints do
+		local var_30_24 = var_30_21["talent_" .. iter_30_4]
 
-		if loadout_talents[i] ~= 0 then
-			local id = loadout_talent_ids[talent_num]
-			local talent = TalentUtils.get_talent_by_id(profile_name, id)
-			local talent_icon = talent and talent.icon
+		if var_30_19[iter_30_4] ~= 0 then
+			local var_30_25 = var_30_20[var_30_23]
+			local var_30_26 = TalentUtils.get_talent_by_id(var_30_4, var_30_25)
+			local var_30_27 = var_30_26 and var_30_26.icon
 
-			if not talent_icon then
-				talent = nil
+			if not var_30_27 then
+				var_30_26 = nil
 			end
 
-			talent_content.icon = talent_icon
-			talent_content.talent = talent
-			talent_num = talent_num + 1
+			var_30_24.icon = var_30_27
+			var_30_24.talent = var_30_26
+			var_30_23 = var_30_23 + 1
 
-			if talent then
-				talent_gamepad_grid = talent_gamepad_grid or {}
-				talent_gamepad_grid[#talent_gamepad_grid + 1] = talent_content
+			if var_30_26 then
+				var_30_22 = var_30_22 or {}
+				var_30_22[#var_30_22 + 1] = var_30_24
 			end
 		else
-			talent_content.talent = nil
+			var_30_24.talent = nil
 		end
 	end
 
-	self._gamepad_loadout_grid[#self._gamepad_loadout_grid + 1] = talent_gamepad_grid
+	arg_30_0._gamepad_loadout_grid[#arg_30_0._gamepad_loadout_grid + 1] = var_30_22
 
-	local widget = self._widgets_by_name.equipment
-	local content = widget.content
-	local equipment_gamepad_grid
+	local var_30_28 = arg_30_0._widgets_by_name.equipment.content
+	local var_30_29
 
-	for i, eqiupment_slot in ipairs(equipment_slots) do
-		local item
+	for iter_30_5, iter_30_6 in ipairs(var_0_9) do
+		local var_30_30
 
-		if loadout then
-			local backend_id = loadout[eqiupment_slot]
+		if arg_30_1 then
+			local var_30_31 = arg_30_1[iter_30_6]
 
-			item = item_interface:get_item_from_id(backend_id)
+			var_30_30 = var_30_10:get_item_from_id(var_30_31)
 		else
-			item = BackendUtils.get_loadout_item(career_name, eqiupment_slot)
+			var_30_30 = BackendUtils.get_loadout_item(var_30_5, iter_30_6)
 		end
 
-		local inventory_icon, display_name, _ = UIUtils.get_ui_information_from_item(item)
+		local var_30_32, var_30_33, var_30_34 = UIUtils.get_ui_information_from_item(var_30_30)
 
-		content[eqiupment_slot].item = item
-		content[eqiupment_slot].rarity = UISettings.item_rarity_textures[item.rarity]
-		content[eqiupment_slot].icon = inventory_icon
-		content[eqiupment_slot].profile_index = self._profile_index
-		content[eqiupment_slot].career_index = self._career_index
-		equipment_gamepad_grid = equipment_gamepad_grid or {}
-		equipment_gamepad_grid[#equipment_gamepad_grid + 1] = content[eqiupment_slot]
+		var_30_28[iter_30_6].item = var_30_30
+		var_30_28[iter_30_6].rarity = UISettings.item_rarity_textures[var_30_30.rarity]
+		var_30_28[iter_30_6].icon = var_30_32
+		var_30_28[iter_30_6].profile_index = arg_30_0._profile_index
+		var_30_28[iter_30_6].career_index = arg_30_0._career_index
+		var_30_29 = var_30_29 or {}
+		var_30_29[#var_30_29 + 1] = var_30_28[iter_30_6]
 	end
 
-	self._gamepad_loadout_grid[#self._gamepad_loadout_grid + 1] = equipment_gamepad_grid
+	arg_30_0._gamepad_loadout_grid[#arg_30_0._gamepad_loadout_grid + 1] = var_30_29
 
-	local bot_equipment = PlayerData.loadout_selection and PlayerData.loadout_selection.bot_equipment
-	local bot_equipped
-	local bot_equipped_index = bot_equipment and bot_equipment[career_name]
+	local var_30_35 = PlayerData.loadout_selection and PlayerData.loadout_selection.bot_equipment
+	local var_30_36
+	local var_30_37 = var_30_35 and var_30_35[var_30_5]
 
-	if bot_equipped_index then
-		bot_equipped = bot_equipped_index == loadout_index
+	if var_30_37 then
+		var_30_36 = var_30_37 == arg_30_2
 	else
-		bot_equipped = loadout_index == self._selected_loadout_index
+		var_30_36 = arg_30_2 == arg_30_0._selected_loadout_index
 	end
 
-	local bot_checkbox_widget = self._widgets_by_name.bot_checkbox
-	local content = bot_checkbox_widget.content
+	local var_30_38 = arg_30_0._widgets_by_name.bot_checkbox.content
 
-	content.button_hotspot.is_selected = bot_equipped
-	content.button_hotspot.disable_button = bot_equipped
+	var_30_38.button_hotspot.is_selected = var_30_36
+	var_30_38.button_hotspot.disable_button = var_30_36
 end
 
-HeroWindowLoadoutSelectionConsole._change_loadout = function (self, loadout_index)
-	if loadout_index and loadout_index ~= self._selected_loadout_index then
-		local profile = SPProfiles[self._profile_index]
-		local career_settings = profile.careers[self._career_index]
-		local career_name = career_settings.name
-		local item_interface = Managers.backend:get_interface("items")
+function HeroWindowLoadoutSelectionConsole._change_loadout(arg_31_0, arg_31_1)
+	if arg_31_1 and arg_31_1 ~= arg_31_0._selected_loadout_index then
+		local var_31_0 = SPProfiles[arg_31_0._profile_index].careers[arg_31_0._career_index].name
+		local var_31_1 = Managers.backend:get_interface("items")
 
-		item_interface:set_loadout_index(career_name, loadout_index)
+		var_31_1:set_loadout_index(var_31_0, arg_31_1)
 
-		local selected_loadout_index = item_interface:get_selected_career_loadout(career_name)
+		local var_31_2 = var_31_1:get_selected_career_loadout(var_31_0)
 
-		if selected_loadout_index > self._num_loadouts then
-			selected_loadout_index = 1
+		if var_31_2 > arg_31_0._num_loadouts then
+			var_31_2 = 1
 		end
 
-		self._selected_loadout_index = selected_loadout_index
+		arg_31_0._selected_loadout_index = var_31_2
 
-		local frame_widget = self._widgets_by_name.loadout_frame
-		local loadout_button_widget = self._loadout_button_widgets[loadout_index]
-		local offset = loadout_button_widget.offset
+		local var_31_3 = arg_31_0._widgets_by_name.loadout_frame
+		local var_31_4 = arg_31_0._loadout_button_widgets[arg_31_1].offset
 
-		frame_widget.offset = table.clone(offset)
+		var_31_3.offset = table.clone(var_31_4)
 
-		self._parent:update_full_loadout()
-		self:_play_sound("Play_gui_loadout_select")
-		self:_hide_context_menu()
-		self._parent:set_loadout_dirty()
+		arg_31_0._parent:update_full_loadout()
+		arg_31_0:_play_sound("Play_gui_loadout_select")
+		arg_31_0:_hide_context_menu()
+		arg_31_0._parent:set_loadout_dirty()
 	end
 end
 
-HeroWindowLoadoutSelectionConsole._add_loadout = function (self)
-	local num_loadout_buttons = #self._loadout_button_widgets
+function HeroWindowLoadoutSelectionConsole._add_loadout(arg_32_0)
+	if #arg_32_0._loadout_button_widgets >= arg_32_0._num_loadouts + 1 then
+		local var_32_0 = SPProfiles[arg_32_0._profile_index].careers[arg_32_0._career_index].name
 
-	if num_loadout_buttons >= self._num_loadouts + 1 then
-		local profile = SPProfiles[self._profile_index]
-		local career_settings = profile.careers[self._career_index]
-		local career_name = career_settings.name
-		local item_interface = Managers.backend:get_interface("items")
-
-		item_interface:add_loadout(career_name)
-		self:_play_sound("Play_gui_loadout_add")
-		self._parent:update_full_loadout()
-		self:_populate_loadout_buttons()
+		Managers.backend:get_interface("items"):add_loadout(var_32_0)
+		arg_32_0:_play_sound("Play_gui_loadout_add")
+		arg_32_0._parent:update_full_loadout()
+		arg_32_0:_populate_loadout_buttons()
 	end
 end
 
-HeroWindowLoadoutSelectionConsole.set_focus = function (self, focused)
-	self._focused = focused
+function HeroWindowLoadoutSelectionConsole.set_focus(arg_33_0, arg_33_1)
+	arg_33_0._focused = arg_33_1
 end
 
-HeroWindowLoadoutSelectionConsole._exit = function (self)
-	self.exit = true
+function HeroWindowLoadoutSelectionConsole._exit(arg_34_0)
+	arg_34_0.exit = true
 end
 
-HeroWindowLoadoutSelectionConsole._draw = function (self, dt)
-	local ui_renderer = self._ui_renderer
-	local ui_top_renderer = self._ui_top_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local input_service = self:_get_input_service()
-	local gamepad_active = Managers.input:is_device_active("gamepad")
+function HeroWindowLoadoutSelectionConsole._draw(arg_35_0, arg_35_1)
+	local var_35_0 = arg_35_0._ui_renderer
+	local var_35_1 = arg_35_0._ui_top_renderer
+	local var_35_2 = arg_35_0._ui_scenegraph
+	local var_35_3 = arg_35_0:_get_input_service()
+	local var_35_4 = Managers.input:is_device_active("gamepad")
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self._render_settings)
+	UIRenderer.begin_pass(var_35_1, var_35_2, var_35_3, arg_35_1, nil, arg_35_0._render_settings)
 
-	for _, widget in ipairs(self._widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, widget)
+	for iter_35_0, iter_35_1 in ipairs(arg_35_0._widgets) do
+		UIRenderer.draw_widget(var_35_1, iter_35_1)
 	end
 
-	for _, widget in ipairs(self._loadout_button_widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, widget)
+	for iter_35_2, iter_35_3 in ipairs(arg_35_0._loadout_button_widgets) do
+		UIRenderer.draw_widget(var_35_1, iter_35_3)
 	end
 
-	if self._context_menu_active then
-		for _, widget in ipairs(self._context_menu_widgets) do
-			UIRenderer.draw_widget(ui_top_renderer, widget)
+	if arg_35_0._context_menu_active then
+		for iter_35_4, iter_35_5 in ipairs(arg_35_0._context_menu_widgets) do
+			UIRenderer.draw_widget(var_35_1, iter_35_5)
 		end
 	end
 
-	if gamepad_active and (self._context_menu_active or self._on_add_loadout_button) then
-		for _, widget in ipairs(self._gamepad_specific_widgets) do
-			UIRenderer.draw_widget(ui_top_renderer, widget)
+	if var_35_4 and (arg_35_0._context_menu_active or arg_35_0._on_add_loadout_button) then
+		for iter_35_6, iter_35_7 in ipairs(arg_35_0._gamepad_specific_widgets) do
+			UIRenderer.draw_widget(var_35_1, iter_35_7)
 		end
 	end
 
-	UIRenderer.end_pass(ui_top_renderer)
+	UIRenderer.end_pass(var_35_1)
 
-	if gamepad_active and (self._context_menu_active or self._on_add_loadout_button) then
-		self._menu_input_description:draw(ui_top_renderer, dt)
+	if var_35_4 and (arg_35_0._context_menu_active or arg_35_0._on_add_loadout_button) then
+		arg_35_0._menu_input_description:draw(var_35_1, arg_35_1)
 	end
 end
 
-HeroWindowLoadoutSelectionConsole._play_sound = function (self, event)
-	self._parent:play_sound(event)
+function HeroWindowLoadoutSelectionConsole._play_sound(arg_36_0, arg_36_1)
+	arg_36_0._parent:play_sound(arg_36_1)
 end

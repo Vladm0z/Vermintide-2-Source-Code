@@ -1,35 +1,35 @@
-﻿-- chunkname: @scripts/settings/dlcs/bless/bless_sound_settings.lua
+-- chunkname: @scripts/settings/dlcs/bless/bless_sound_settings.lua
 
-local settings = DLCSettings.bless
+local var_0_0 = DLCSettings.bless
 
-settings.dialogue_lookup = {
+var_0_0.dialogue_lookup = {
 	"dialogues/generated/lookup_witch_hunter_bless",
-	"dialogues/generated/lookup_dlc_bless",
+	"dialogues/generated/lookup_dlc_bless"
 }
-settings.dialogue_settings = {
+var_0_0.dialogue_settings = {
 	inn_level = {
-		"dialogues/generated/dlc_bless",
+		"dialogues/generated/dlc_bless"
 	},
 	inn_level_halloween = {
-		"dialogues/generated/dlc_bless",
+		"dialogues/generated/dlc_bless"
 	},
 	inn_level_skulls = {
-		"dialogues/generated/dlc_bless",
+		"dialogues/generated/dlc_bless"
 	},
 	inn_level_sonnstill = {
-		"dialogues/generated/dlc_bless",
+		"dialogues/generated/dlc_bless"
 	},
 	morris_hub = {
-		"dialogues/generated/dlc_bless",
-	},
+		"dialogues/generated/dlc_bless"
+	}
 }
-settings.dialogue_events = {
-	"activate_fury",
+var_0_0.dialogue_events = {
+	"activate_fury"
 }
-settings.auto_load_files = {
-	"dialogues/generated/witch_hunter_bless",
+var_0_0.auto_load_files = {
+	"dialogues/generated/witch_hunter_bless"
 }
-settings.network_sound_events = {
+var_0_0.network_sound_events = {
 	"career_talent_priest_bolt_cast",
 	"career_talent_priest_bolt_impact",
 	"career_ability_priest_cast_t1",
@@ -50,5 +50,5 @@ settings.network_sound_events = {
 	"career_priest_fury_stop",
 	"career_priest_fury_smite",
 	"career_priest_fury_smite_husk",
-	"career_priest_fury_ready",
+	"career_priest_fury_ready"
 }

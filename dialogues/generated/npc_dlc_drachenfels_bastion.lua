@@ -1,430 +1,430 @@
-﻿-- chunkname: @dialogues/generated/npc_dlc_drachenfels_bastion.lua
+-- chunkname: @dialogues/generated/npc_dlc_drachenfels_bastion.lua
 
-return function ()
+return function()
 	define_rule({
+		response = "ncv1_bastion_vo_first_villager",
 		name = "ncv1_bastion_vo_first_villager",
 		probability = 1,
-		response = "ncv1_bastion_vo_first_villager",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_item",
+				"seen_item"
 			},
 			{
 				"query_context",
 				"item_tag",
 				OP.EQ,
-				"ncv1_bastion_vo_first_villager",
+				"ncv1_bastion_vo_first_villager"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"npc_cage_villager",
-			},
-		},
+				"npc_cage_villager"
+			}
+		}
 	})
 	define_rule({
+		response = "ncv2_bastion_vo_last_villager",
 		name = "ncv2_bastion_vo_last_villager",
 		probability = 1,
-		response = "ncv2_bastion_vo_last_villager",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_item",
+				"seen_item"
 			},
 			{
 				"query_context",
 				"item_tag",
 				OP.EQ,
-				"bastion_vo_last_villager",
+				"bastion_vo_last_villager"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"npc_cage_villager",
-			},
-		},
+				"npc_cage_villager"
+			}
+		}
 	})
 	define_rule({
+		response = "ncv_bastion_vo_freed_villager",
 		name = "ncv_bastion_vo_freed_villager",
 		probability = 1,
-		response = "ncv_bastion_vo_freed_villager",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"seen_item",
+				"seen_item"
 			},
 			{
 				"query_context",
 				"item_tag",
 				OP.EQ,
-				"ncv_bastion_vo_freed_villager",
+				"ncv_bastion_vo_freed_villager"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"npc_cage_villager",
-			},
-		},
+				"npc_cage_villager"
+			}
+		}
 	})
 	define_rule({
+		response = "nngl_bastion_vo_sorcerer_greeting",
 		name = "nngl_bastion_vo_sorcerer_greeting",
 		probability = 1,
-		response = "nngl_bastion_vo_sorcerer_greeting",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"bastion_vo_sorcerer_greeting",
+				"bastion_vo_sorcerer_greeting"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"chaos_exalted_sorcerer_drachenfels",
-			},
-		},
+				"chaos_exalted_sorcerer_drachenfels"
+			}
+		}
 	})
 	define_rule({
+		response = "nngl_bastion_vo_sorcerer_taunt",
 		name = "nngl_bastion_vo_sorcerer_taunt",
 		probability = 1,
-		response = "nngl_bastion_vo_sorcerer_taunt",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"bastion_vo_sorcerer_taunt",
+				"bastion_vo_sorcerer_taunt"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"chaos_exalted_sorcerer_drachenfels",
-			},
-		},
+				"chaos_exalted_sorcerer_drachenfels"
+			}
+		}
 	})
 	define_rule({
-		name = "pbw_bastion_vo_finale_sorcerer",
 		probability = 1,
+		name = "pbw_bastion_vo_finale_sorcerer",
 		response = "pbw_bastion_vo_finale_sorcerer",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name",
 				OP.EQ,
-				"nngl_bastion_vo_sorcerer_greeting",
+				"nngl_bastion_vo_sorcerer_greeting"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"faction_memory",
 				"nngl_bastion_vo_sorcerer_greeting_reply",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"nngl_bastion_vo_sorcerer_greeting_reply",
 				OP.ADD,
-				1,
-			},
-		},
+				1
+			}
+		}
 	})
 	define_rule({
-		name = "pdr_bastion_vo_finale_sorcerer",
 		probability = 1,
+		name = "pdr_bastion_vo_finale_sorcerer",
 		response = "pdr_bastion_vo_finale_sorcerer",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name",
 				OP.EQ,
-				"nngl_bastion_vo_sorcerer_greeting",
+				"nngl_bastion_vo_sorcerer_greeting"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"dwarf_ranger",
+				"dwarf_ranger"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"dwarf_ranger",
+				"dwarf_ranger"
 			},
 			{
 				"faction_memory",
 				"nngl_bastion_vo_sorcerer_greeting_reply",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"nngl_bastion_vo_sorcerer_greeting_reply",
 				OP.ADD,
-				1,
-			},
-		},
+				1
+			}
+		}
 	})
 	define_rule({
-		name = "pes_bastion_vo_finale_sorcerer",
 		probability = 1,
+		name = "pes_bastion_vo_finale_sorcerer",
 		response = "pes_bastion_vo_finale_sorcerer",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name",
 				OP.EQ,
-				"nngl_bastion_vo_sorcerer_greeting",
+				"nngl_bastion_vo_sorcerer_greeting"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"empire_soldier",
+				"empire_soldier"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"empire_soldier",
+				"empire_soldier"
 			},
 			{
 				"faction_memory",
 				"nngl_bastion_vo_sorcerer_greeting_reply",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"nngl_bastion_vo_sorcerer_greeting_reply",
 				OP.ADD,
-				1,
-			},
-		},
+				1
+			}
+		}
 	})
 	define_rule({
-		name = "pwe_bastion_vo_finale_sorcerer",
 		probability = 1,
+		name = "pwe_bastion_vo_finale_sorcerer",
 		response = "pwe_bastion_vo_finale_sorcerer",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name",
 				OP.EQ,
-				"nngl_bastion_vo_sorcerer_greeting",
+				"nngl_bastion_vo_sorcerer_greeting"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"wood_elf",
+				"wood_elf"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"wood_elf",
+				"wood_elf"
 			},
 			{
 				"faction_memory",
 				"nngl_bastion_vo_sorcerer_greeting_reply",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"nngl_bastion_vo_sorcerer_greeting_reply",
 				OP.ADD,
-				1,
-			},
-		},
+				1
+			}
+		}
 	})
 	define_rule({
-		name = "pwh_bastion_vo_finale_sorcerer",
 		probability = 1,
+		name = "pwh_bastion_vo_finale_sorcerer",
 		response = "pwh_bastion_vo_finale_sorcerer",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"heard_speak",
+				"heard_speak"
 			},
 			{
 				"query_context",
 				"dialogue_name",
 				OP.EQ,
-				"nngl_bastion_vo_sorcerer_greeting",
+				"nngl_bastion_vo_sorcerer_greeting"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"witch_hunter",
+				"witch_hunter"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"witch_hunter",
+				"witch_hunter"
 			},
 			{
 				"faction_memory",
 				"nngl_bastion_vo_sorcerer_greeting_reply",
 				OP.EQ,
-				0,
-			},
+				0
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"nngl_bastion_vo_sorcerer_greeting_reply",
 				OP.ADD,
-				1,
-			},
-		},
+				1
+			}
+		}
 	})
 	add_dialogues({
 		ncv1_bastion_vo_first_villager = {
-			category = "npc_talk",
-			database = "npc_dlc_drachenfels_bastion",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "npc_dlc_drachenfels_bastion",
 			sound_events_n = 4,
+			category = "npc_talk",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ncv1_bastion_vo_first_villager_01",
 				"ncv1_bastion_vo_first_villager_02",
 				"ncv1_bastion_vo_first_villager_03",
-				"ncv1_bastion_vo_first_villager_04",
+				"ncv1_bastion_vo_first_villager_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"ncv1_bastion_vo_first_villager_01",
 				"ncv1_bastion_vo_first_villager_02",
 				"ncv1_bastion_vo_first_villager_03",
-				"ncv1_bastion_vo_first_villager_04",
+				"ncv1_bastion_vo_first_villager_04"
 			},
 			sound_events_duration = {
 				1.5944999456406,
 				4.2766251564026,
 				2.5176041126251,
-				1.7337708473206,
-			},
+				1.7337708473206
+			}
 		},
 		ncv2_bastion_vo_last_villager = {
-			category = "npc_talk",
-			database = "npc_dlc_drachenfels_bastion",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "npc_dlc_drachenfels_bastion",
 			sound_events_n = 4,
+			category = "npc_talk",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ncv2_bastion_vo_last_villager_01",
 				"ncv2_bastion_vo_last_villager_02",
 				"ncv2_bastion_vo_last_villager_03",
-				"ncv2_bastion_vo_last_villager_04",
+				"ncv2_bastion_vo_last_villager_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"ncv2_bastion_vo_last_villager_01",
 				"ncv2_bastion_vo_last_villager_02",
 				"ncv2_bastion_vo_last_villager_03",
-				"ncv2_bastion_vo_last_villager_04",
+				"ncv2_bastion_vo_last_villager_04"
 			},
 			sound_events_duration = {
 				4.5085415840149,
 				5.538583278656,
 				4.5786457061768,
-				5.2633957862854,
-			},
+				5.2633957862854
+			}
 		},
 		ncv_bastion_vo_freed_villager = {
-			category = "npc_talk",
-			database = "npc_dlc_drachenfels_bastion",
-			dialogue_animations_n = 8,
-			face_animations_n = 8,
 			randomize_indexes_n = 0,
+			face_animations_n = 8,
+			database = "npc_dlc_drachenfels_bastion",
 			sound_events_n = 8,
+			category = "npc_talk",
+			dialogue_animations_n = 8,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -433,7 +433,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -443,7 +443,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"ncv_bastion_vo_freed_villager_01",
@@ -453,7 +453,7 @@ return function ()
 				"ncv_bastion_vo_freed_villager_05",
 				"ncv_bastion_vo_freed_villager_06",
 				"ncv_bastion_vo_freed_villager_07",
-				"ncv_bastion_vo_freed_villager_08",
+				"ncv_bastion_vo_freed_villager_08"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -464,7 +464,7 @@ return function ()
 				"ncv_bastion_vo_freed_villager_05",
 				"ncv_bastion_vo_freed_villager_06",
 				"ncv_bastion_vo_freed_villager_07",
-				"ncv_bastion_vo_freed_villager_08",
+				"ncv_bastion_vo_freed_villager_08"
 			},
 			sound_events_duration = {
 				0.70122915506363,
@@ -474,55 +474,55 @@ return function ()
 				0.9383749961853,
 				0.95995831489563,
 				1.7581042051315,
-				1.7635208368301,
-			},
+				1.7635208368301
+			}
 		},
 		nngl_bastion_vo_sorcerer_greeting = {
-			category = "boss_talk",
-			database = "npc_dlc_drachenfels_bastion",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "npc_dlc_drachenfels_bastion",
 			sound_events_n = 4,
+			category = "boss_talk",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"nngl_bastion_vo_sorcerer_greeting_01",
 				"nngl_bastion_vo_sorcerer_greeting_02",
 				"nngl_bastion_vo_sorcerer_greeting_03",
-				"nngl_bastion_vo_sorcerer_greeting_04",
+				"nngl_bastion_vo_sorcerer_greeting_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"nngl_bastion_vo_sorcerer_greeting_01",
 				"nngl_bastion_vo_sorcerer_greeting_02",
 				"nngl_bastion_vo_sorcerer_greeting_03",
-				"nngl_bastion_vo_sorcerer_greeting_04",
+				"nngl_bastion_vo_sorcerer_greeting_04"
 			},
 			sound_events_duration = {
 				11.338781356812,
 				11.910452842712,
 				9.147801399231,
-				16.589771270752,
-			},
+				16.589771270752
+			}
 		},
 		nngl_bastion_vo_sorcerer_taunt = {
-			category = "boss_talk",
-			database = "npc_dlc_drachenfels_bastion",
-			dialogue_animations_n = 9,
-			face_animations_n = 9,
 			randomize_indexes_n = 0,
+			face_animations_n = 9,
+			database = "npc_dlc_drachenfels_bastion",
 			sound_events_n = 9,
+			category = "boss_talk",
+			dialogue_animations_n = 9,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -532,7 +532,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -543,7 +543,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"nngl_bastion_vo_sorcerer_taunt_01",
@@ -554,7 +554,7 @@ return function ()
 				"nngl_bastion_vo_sorcerer_taunt_09",
 				"nngl_bastion_vo_sorcerer_taunt_10",
 				"nngl_bastion_vo_sorcerer_taunt_11",
-				"nngl_bastion_vo_sorcerer_taunt_12",
+				"nngl_bastion_vo_sorcerer_taunt_12"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -566,7 +566,7 @@ return function ()
 				"nngl_bastion_vo_sorcerer_taunt_09",
 				"nngl_bastion_vo_sorcerer_taunt_10",
 				"nngl_bastion_vo_sorcerer_taunt_11",
-				"nngl_bastion_vo_sorcerer_taunt_12",
+				"nngl_bastion_vo_sorcerer_taunt_12"
 			},
 			sound_events_duration = {
 				8.5562477111816,
@@ -577,203 +577,203 @@ return function ()
 				6.5117998123169,
 				6.8245222568512,
 				5.9643893241882,
-				6.7347722053528,
-			},
+				6.7347722053528
+			}
 		},
 		pbw_bastion_vo_finale_sorcerer = {
-			category = "player_alerts_boss",
-			database = "npc_dlc_drachenfels_bastion",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "npc_dlc_drachenfels_bastion",
 			sound_events_n = 4,
+			category = "player_alerts_boss",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_calm",
 				"face_calm",
 				"face_calm",
-				"face_calm",
+				"face_calm"
 			},
 			localization_strings = {
 				"pbw_bastion_vo_finale_sorcerer_01",
 				"pbw_bastion_vo_finale_sorcerer_02",
 				"pbw_bastion_vo_finale_sorcerer_03",
-				"pbw_bastion_vo_finale_sorcerer_04",
+				"pbw_bastion_vo_finale_sorcerer_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"pbw_bastion_vo_finale_sorcerer_01",
 				"pbw_bastion_vo_finale_sorcerer_02",
 				"pbw_bastion_vo_finale_sorcerer_03",
-				"pbw_bastion_vo_finale_sorcerer_04",
+				"pbw_bastion_vo_finale_sorcerer_04"
 			},
 			sound_events_duration = {
 				3.5060000419617,
 				3.1559791564941,
 				5.5759792327881,
-				1.6670000553131,
-			},
+				1.6670000553131
+			}
 		},
 		pdr_bastion_vo_finale_sorcerer = {
-			category = "player_alerts_boss",
-			database = "npc_dlc_drachenfels_bastion",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "npc_dlc_drachenfels_bastion",
 			sound_events_n = 4,
+			category = "player_alerts_boss",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_calm",
 				"face_calm",
 				"face_calm",
-				"face_calm",
+				"face_calm"
 			},
 			localization_strings = {
 				"pdr_bastion_vo_finale_sorcerer_01",
 				"pdr_bastion_vo_finale_sorcerer_02",
 				"pdr_bastion_vo_finale_sorcerer_03",
-				"pdr_bastion_vo_finale_sorcerer_04",
+				"pdr_bastion_vo_finale_sorcerer_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"pdr_bastion_vo_finale_sorcerer_01",
 				"pdr_bastion_vo_finale_sorcerer_02",
 				"pdr_bastion_vo_finale_sorcerer_03",
-				"pdr_bastion_vo_finale_sorcerer_04",
+				"pdr_bastion_vo_finale_sorcerer_04"
 			},
 			sound_events_duration = {
 				3.3489792346954,
 				1.6509791612625,
 				3.7299792766571,
-				4.4119791984558,
-			},
+				4.4119791984558
+			}
 		},
 		pes_bastion_vo_finale_sorcerer = {
-			category = "player_alerts_boss",
-			database = "npc_dlc_drachenfels_bastion",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "npc_dlc_drachenfels_bastion",
 			sound_events_n = 4,
+			category = "player_alerts_boss",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_calm",
 				"face_calm",
 				"face_calm",
-				"face_calm",
+				"face_calm"
 			},
 			localization_strings = {
 				"pes_bastion_vo_finale_sorcerer_01",
 				"pes_bastion_vo_finale_sorcerer_02",
 				"pes_bastion_vo_finale_sorcerer_03",
-				"pes_bastion_vo_finale_sorcerer_04",
+				"pes_bastion_vo_finale_sorcerer_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"pes_bastion_vo_finale_sorcerer_01",
 				"pes_bastion_vo_finale_sorcerer_02",
 				"pes_bastion_vo_finale_sorcerer_03",
-				"pes_bastion_vo_finale_sorcerer_04",
+				"pes_bastion_vo_finale_sorcerer_04"
 			},
 			sound_events_duration = {
 				3.1579792499542,
 				2.522979259491,
 				3.2859792709351,
-				2.966979265213,
-			},
+				2.966979265213
+			}
 		},
 		pwe_bastion_vo_finale_sorcerer = {
-			category = "player_alerts_boss",
-			database = "npc_dlc_drachenfels_bastion",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "npc_dlc_drachenfels_bastion",
 			sound_events_n = 4,
+			category = "player_alerts_boss",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_calm",
 				"face_calm",
 				"face_calm",
-				"face_calm",
+				"face_calm"
 			},
 			localization_strings = {
 				"pwe_bastion_vo_finale_sorcerer_01",
 				"pwe_bastion_vo_finale_sorcerer_02",
 				"pwe_bastion_vo_finale_sorcerer_03",
-				"pwe_bastion_vo_finale_sorcerer_04",
+				"pwe_bastion_vo_finale_sorcerer_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"pwe_bastion_vo_finale_sorcerer_01",
 				"pwe_bastion_vo_finale_sorcerer_02",
 				"pwe_bastion_vo_finale_sorcerer_03",
-				"pwe_bastion_vo_finale_sorcerer_04",
+				"pwe_bastion_vo_finale_sorcerer_04"
 			},
 			sound_events_duration = {
 				2.3489792346954,
 				1.6879999637604,
 				2.444000005722,
-				2.2520000934601,
-			},
+				2.2520000934601
+			}
 		},
 		pwh_bastion_vo_finale_sorcerer = {
-			category = "player_alerts_boss",
-			database = "npc_dlc_drachenfels_bastion",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "npc_dlc_drachenfels_bastion",
 			sound_events_n = 4,
+			category = "player_alerts_boss",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_calm",
 				"face_calm",
 				"face_calm",
-				"face_calm",
+				"face_calm"
 			},
 			localization_strings = {
 				"pwh_bastion_vo_finale_sorcerer_01",
 				"pwh_bastion_vo_finale_sorcerer_02",
 				"pwh_bastion_vo_finale_sorcerer_03",
-				"pwh_bastion_vo_finale_sorcerer_04",
+				"pwh_bastion_vo_finale_sorcerer_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"pwh_bastion_vo_finale_sorcerer_01",
 				"pwh_bastion_vo_finale_sorcerer_02",
 				"pwh_bastion_vo_finale_sorcerer_03",
-				"pwh_bastion_vo_finale_sorcerer_04",
+				"pwh_bastion_vo_finale_sorcerer_04"
 			},
 			sound_events_duration = {
 				3.7449791431427,
 				3.2349791526794,
 				5.3779792785644,
-				4.3379793167114,
-			},
-		},
+				4.3379793167114
+			}
+		}
 	})
 end

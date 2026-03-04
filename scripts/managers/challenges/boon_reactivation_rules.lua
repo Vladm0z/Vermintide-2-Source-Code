@@ -1,17 +1,17 @@
-﻿-- chunkname: @scripts/managers/challenges/boon_reactivation_rules.lua
+-- chunkname: @scripts/managers/challenges/boon_reactivation_rules.lua
 
 BoonReactivationRules = BoonReactivationRules or {}
 
-BoonReactivationRules.questing_knight = function (player_unique_id)
-	local status = Managers.party:get_status_from_unique_id(player_unique_id)
+function BoonReactivationRules.questing_knight(arg_1_0)
+	local var_1_0 = Managers.party:get_status_from_unique_id(arg_1_0)
 
-	if status then
-		local profile_index = status.profile_index
-		local career_index = status.career_index
-		local profile = SPProfiles[profile_index]
-		local career_settings = profile and profile.careers[career_index]
+	if var_1_0 then
+		local var_1_1 = var_1_0.profile_index
+		local var_1_2 = var_1_0.career_index
+		local var_1_3 = SPProfiles[var_1_1]
+		local var_1_4 = var_1_3 and var_1_3.careers[var_1_2]
 
-		return career_settings and career_settings == CareerSettings.es_questingknight
+		return var_1_4 and var_1_4 == CareerSettings.es_questingknight
 	end
 
 	return false

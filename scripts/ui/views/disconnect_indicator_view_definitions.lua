@@ -1,106 +1,104 @@
-﻿-- chunkname: @scripts/ui/views/disconnect_indicator_view_definitions.lua
+-- chunkname: @scripts/ui/views/disconnect_indicator_view_definitions.lua
 
-local icon_size = 64
-local padding = 8
-local distance_from_bottom = 200
-local max_text_width = 800
-local scenegraph_definition = {
+local var_0_0 = 64
+local var_0_1 = 8
+local var_0_2 = 200
+local var_0_3 = 800
+local var_0_4 = {
 	screen = {
+		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		scale = "fit",
-		vertical_alignment = "center",
 		position = {
 			0,
 			0,
-			UILayer.transition,
+			UILayer.transition
 		},
 		size = {
 			1920,
-			1080,
-		},
+			1080
+		}
 	},
 	indicator = {
-		horizontal_alignment = "center",
-		parent = "screen",
 		vertical_alignment = "bottom",
+		parent = "screen",
+		horizontal_alignment = "center",
 		size = {
-			icon_size,
-			icon_size,
+			var_0_0,
+			var_0_0
 		},
 		position = {
 			0,
-			distance_from_bottom,
-			1,
-		},
+			var_0_2,
+			1
+		}
 	},
 	text = {
-		horizontal_alignment = "left",
-		parent = "indicator",
 		vertical_alignment = "center",
+		parent = "indicator",
+		horizontal_alignment = "left",
 		size = {
-			max_text_width,
-			100,
+			var_0_3,
+			100
 		},
 		position = {
-			icon_size + padding,
+			var_0_0 + var_0_1,
 			0,
-			1,
-		},
-	},
+			1
+		}
+	}
 }
 
 if not IS_WINDOWS then
-	scenegraph_definition.screen.scale = "hud_fit"
+	var_0_4.screen.scale = "hud_fit"
 end
 
-local function create_texture_with_text(texture, text, scenegraph_id, text_scenegraph_id, text_style)
+local function var_0_5(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	return {
 		element = {
 			passes = {
 				{
-					pass_type = "texture",
-					style_id = "texture_id",
 					texture_id = "texture_id",
+					style_id = "texture_id",
+					pass_type = "texture"
 				},
 				{
-					pass_type = "text",
 					style_id = "text",
-					text_id = "text",
-				},
-			},
+					pass_type = "text",
+					text_id = "text"
+				}
+			}
 		},
 		content = {
-			texture_id = texture,
-			text = text,
+			texture_id = arg_1_0,
+			text = arg_1_1
 		},
 		style = {
-			text = text_style or {
+			text = arg_1_4 or {
+				vertical_alignment = "center",
+				horizontal_alignment = "left",
+				word_wrap = true,
 				font_size = 26,
 				font_type = "hell_shark",
-				horizontal_alignment = "left",
-				vertical_alignment = "center",
-				word_wrap = true,
 				text_color = Colors.get_color_table_with_alpha("white", 255),
-				scenegraph_id = text_scenegraph_id,
+				scenegraph_id = arg_1_3
 			},
 			texture_id = {
 				color = {
 					255,
 					255,
 					255,
-					255,
-				},
-			},
+					255
+				}
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_1_2
 	}
 end
 
-local definitions = {
-	scenegraph_definition = scenegraph_definition,
-	icon_text = create_texture_with_text("icon_connection_lost", "", "indicator", "text", nil),
-	padding = padding,
-	max_text_width = max_text_width,
+return {
+	scenegraph_definition = var_0_4,
+	icon_text = var_0_5("icon_connection_lost", "", "indicator", "text", nil),
+	padding = var_0_1,
+	max_text_width = var_0_3
 }
-
-return definitions

@@ -1,8 +1,8 @@
-﻿-- chunkname: @scripts/settings/dlcs/scorpion/scorpion_ui_settings.lua
+-- chunkname: @scripts/settings/dlcs/scorpion/scorpion_ui_settings.lua
 
-local settings = DLCSettings.scorpion
+local var_0_0 = DLCSettings.scorpion
 
-settings.start_game_windows = {
+var_0_0.start_game_windows = {
 	"scripts/ui/views/start_game_view/windows/start_game_window_weave_list",
 	"scripts/ui/views/start_game_view/windows/definitions/start_game_window_weave_list_definitions",
 	"scripts/ui/views/start_game_view/windows/definitions/start_game_window_weave_list_console_definitions",
@@ -18,211 +18,207 @@ settings.start_game_windows = {
 	"scripts/ui/views/start_game_view/windows/definitions/start_game_window_weave_background_console_definitions",
 	"scripts/ui/views/start_game_view/windows/start_game_window_weave_panel_console",
 	"scripts/ui/views/start_game_view/windows/definitions/start_game_window_weave_panel_console_definitions",
-	"scripts/ui/views/start_game_view/windows/start_game_window_weave_lobby_browser_console",
+	"scripts/ui/views/start_game_view/windows/start_game_window_weave_lobby_browser_console"
 }
-settings.start_game_window_layout = {
+var_0_0.start_game_window_layout = {
 	windows = {
 		weave_list = {
 			class_name = "StartGameWindowWeaveList",
-			name = "weave",
+			name = "weave"
 		},
 		weave_info = {
 			class_name = "StartGameWindowWeaveInfo",
-			name = "weave_info",
+			name = "weave_info"
 		},
 		weave_background = {
 			class_name = "StartGameWindowWeaveBackground",
-			name = "weave_background",
+			name = "weave_background"
 		},
 		weave_panel = {
 			class_name = "StartGameWindowWeavePanel",
-			name = "weave_panel",
+			name = "weave_panel"
 		},
 		weave_quickplay = {
 			class_name = "StartGameWindowWeaveQuickplay",
-			name = "weave_quickplay",
-		},
+			name = "weave_quickplay"
+		}
 	},
 	window_layouts = {
 		{
-			background_icon_name = "button_image_09",
-			close_on_exit = true,
-			display_name = "start_game_window_ranked_weave_title",
 			game_mode_option = true,
-			icon_name = "options_button_icon_event",
+			save_data_table = "weave",
+			display_name = "start_game_window_ranked_weave_title",
+			background_icon_name = "button_image_09",
 			name = "weave",
 			panel_sorting = 10,
-			save_data_table = "weave",
+			close_on_exit = true,
+			icon_name = "options_button_icon_event",
 			windows = {
-				weave_background = 1,
 				weave_info = 4,
+				weave_background = 1,
 				weave_list = 3,
-				weave_panel = 2,
+				weave_panel = 2
 			},
-			can_add_function = function (overview)
-				return overview:is_in_mechanism("weave")
-			end,
+			can_add_function = function(arg_1_0)
+				return arg_1_0:is_in_mechanism("weave")
+			end
 		},
 		{
-			background_icon_name = "button_image_09",
-			close_on_exit = true,
-			display_name = "start_game_window_weave_quickplay_title",
 			game_mode_option = true,
-			icon_name = "options_button_icon_event",
+			save_data_table = "weave",
+			display_name = "start_game_window_weave_quickplay_title",
+			background_icon_name = "button_image_09",
 			name = "weave_quickplay",
 			panel_sorting = 20,
-			save_data_table = "weave",
+			close_on_exit = true,
+			icon_name = "options_button_icon_event",
 			windows = {
-				weave_background = 1,
-				weave_panel = 2,
 				weave_quickplay = 3,
+				weave_background = 1,
+				weave_panel = 2
 			},
-			can_add_function = function (overview)
-				return overview:is_in_mechanism("weave")
-			end,
-		},
-	},
+			can_add_function = function(arg_2_0)
+				return arg_2_0:is_in_mechanism("weave")
+			end
+		}
+	}
 }
-settings.start_game_window_layout_console = {
+var_0_0.start_game_window_layout_console = {
 	windows = {
 		weave_background = {
 			class_name = "StartGameWindowWeaveBackgroundConsole",
-			name = "weave_background",
+			name = "weave_background"
 		},
 		weave_overview = {
 			class_name = "StartGameWindowWeaveOverviewConsole",
-			name = "weave_info",
+			name = "weave_info"
 		},
 		weave_list = {
 			class_name = "StartGameWindowWeaveList",
-			name = "weave",
+			name = "weave"
 		},
 		weave_info = {
 			class_name = "StartGameWindowWeaveInfo",
-			name = "weave_info",
+			name = "weave_info"
 		},
 		weave_quickplay = {
 			class_name = "StartGameWindowWeaveQuickplay",
-			name = "weave_quickplay",
+			name = "weave_quickplay"
 		},
 		weave_panel = {
 			class_name = "StartGameWindowWeavePanelConsole",
-			name = "weave_panel",
+			name = "weave_panel"
 		},
 		weave_console_lobby_browser = {
-			class_name = "StartGameWindowWeaveLobbyBrowserConsole",
 			ignore_alignment = true,
 			name = "weave_console_lobby_browser",
-		},
+			class_name = "StartGameWindowWeaveLobbyBrowserConsole"
+		}
 	},
 	window_layouts = {
 		{
-			close_on_exit = true,
+			sound_event_enter = "play_gui_lobby_button_00_quickplay",
 			disable_function_name = "_weave_disable_function",
 			display_name = "start_game_window_ranked_weave_title",
 			game_mode_option = true,
 			name = "weave_ranked",
-			panel_sorting = 10,
 			save_data_table = "weave",
-			sound_event_enter = "play_gui_lobby_button_00_quickplay",
+			panel_sorting = 10,
+			close_on_exit = true,
 			windows = {
-				weave_background = 2,
 				weave_info = 4,
+				weave_background = 2,
 				weave_list = 3,
-				weave_panel = 1,
+				weave_panel = 1
 			},
-			can_add_function = function (overview)
-				return overview:is_in_mechanism("weave")
-			end,
+			can_add_function = function(arg_3_0)
+				return arg_3_0:is_in_mechanism("weave")
+			end
 		},
 		{
-			close_on_exit = true,
-			disable_function_name = "_weave_disable_function",
+			sound_event_enter = "play_gui_lobby_button_00_quickplay",
 			display_name = "start_game_window_weave_quickplay_title",
 			game_mode_option = true,
 			name = "weave_quickplay",
-			panel_sorting = 20,
+			disable_function_name = "_weave_disable_function",
 			save_data_table = "weave",
-			sound_event_enter = "play_gui_lobby_button_00_quickplay",
-			windows = {
-				weave_background = 2,
-				weave_panel = 1,
-				weave_quickplay = 3,
-			},
-			can_add_function = function (overview)
-				return overview:is_in_mechanism("weave")
-			end,
-		},
-		{
+			panel_sorting = 20,
 			close_on_exit = true,
-			display_name = "start_game_window_lobby_browser",
-			name = "lobby_browser_weave",
-			panel_sorting = 100,
-			save_data_table = "lobby_browser",
-			sound_event_enter = "play_gui_lobby_button_00_lobby_browser",
 			windows = {
+				weave_quickplay = 3,
 				weave_background = 2,
-				weave_console_lobby_browser = 3,
-				weave_panel = 1,
+				weave_panel = 1
 			},
-			can_add_function = function (overview)
-				return overview:is_in_mechanism("weave") and not IS_XB1
-			end,
+			can_add_function = function(arg_4_0)
+				return arg_4_0:is_in_mechanism("weave")
+			end
 		},
 		{
+			sound_event_enter = "play_gui_lobby_button_00_lobby_browser",
+			name = "lobby_browser_weave",
+			display_name = "start_game_window_lobby_browser",
+			save_data_table = "lobby_browser",
+			close_on_exit = true,
+			panel_sorting = 100,
+			windows = {
+				weave_console_lobby_browser = 3,
+				weave_background = 2,
+				weave_panel = 1
+			},
+			can_add_function = function(arg_5_0)
+				return arg_5_0:is_in_mechanism("weave") and not IS_XB1
+			end
+		},
+		{
+			sound_event_enter = "play_gui_lobby_button_00_quickplay",
 			name = "weave_selection",
 			save_data_table = "weave",
-			sound_event_enter = "play_gui_lobby_button_00_quickplay",
 			windows = {
-				weave_background = 2,
 				weave_info = 4,
+				weave_background = 2,
 				weave_list = 3,
-				weave_panel = 1,
-			},
+				weave_panel = 1
+			}
 		},
 		{
-			close_on_exit = false,
-			input_focus_window = "difficulty",
+			sound_event_enter = "play_gui_lobby_button_00_custom",
 			name = "difficulty_selection_weave_quick_play",
 			save_data_table = "weave",
-			sound_event_enter = "play_gui_lobby_button_00_custom",
+			input_focus_window = "difficulty",
+			close_on_exit = false,
 			windows = {
-				difficulty = 3,
 				weave_background = 2,
-				weave_panel = 1,
-			},
-		},
-	},
+				difficulty = 3,
+				weave_panel = 1
+			}
+		}
+	}
 }
-settings.ingame_hud_components = {
+var_0_0.ingame_hud_components = {
 	{
+		use_hud_scale = true,
 		class_name = "WeaveProgressUI",
 		filename = "scripts/ui/hud_ui/weave_progress_ui",
-		use_hud_scale = true,
 		visibility_groups = {
 			"game_mode_disable_hud",
 			"dead",
-			"alive",
+			"alive"
 		},
-		validation_function = function ()
-			local game_mechanism = Managers.mechanism:game_mechanism()
-
-			return game_mechanism:get_state() == "weave"
-		end,
+		validation_function = function()
+			return Managers.mechanism:game_mechanism():get_state() == "weave"
+		end
 	},
 	{
+		use_hud_scale = true,
 		class_name = "WeaveTimerUI",
 		filename = "scripts/ui/hud_ui/weave_timer_ui",
-		use_hud_scale = true,
 		visibility_groups = {
 			"game_mode_disable_hud",
 			"dead",
-			"alive",
+			"alive"
 		},
-		validation_function = function ()
-			local game_mechanism = Managers.mechanism:game_mechanism()
-
-			return game_mechanism:get_state() == "weave"
-		end,
-	},
+		validation_function = function()
+			return Managers.mechanism:game_mechanism():get_state() == "weave"
+		end
+	}
 }

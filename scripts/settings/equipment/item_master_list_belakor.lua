@@ -1,32 +1,32 @@
-﻿-- chunkname: @scripts/settings/equipment/item_master_list_belakor.lua
+-- chunkname: @scripts/settings/equipment/item_master_list_belakor.lua
 
 require("scripts/settings/dlcs/morris/tweak_data/buff_tweak_data")
 
-local item_master_list = {
+local var_0_0 = {
 	belakor_crystal = {
-		gamepad_hud_icon = "consumables_icon_defence",
-		hud_icon = "consumables_icon_defence",
-		inventory_icon = "icons_placeholder",
+		temporary_template = "belakor_crystal",
+		slot_type = "healthkit",
 		is_local = true,
-		item_type = "inventory_item",
+		inventory_icon = "icons_placeholder",
 		left_hand_unit = "units/weapons/player/wpn_belakor_crystal/wpn_belakor_crystal",
 		rarity = "plentiful",
-		slot_type = "healthkit",
-		temporary_template = "belakor_crystal",
-		can_wield = CanWieldAllItemTemplates,
+		gamepad_hud_icon = "consumables_icon_defence",
+		hud_icon = "consumables_icon_defence",
+		item_type = "inventory_item",
+		can_wield = CanWieldAllItemTemplates
 	},
 	frame_deus_portrait_belakor = {
 		description = "frame_deus_portrait_belakor_description",
+		temporary_template = "frame_deus_portrait_belakor",
 		display_name = "frame_deus_portrait_belakor_name",
 		hud_icon = "unit_frame_02",
-		information_text = "information_text_frame",
 		inventory_icon = "deus_icon_portrait_belakor",
-		item_type = "frame",
-		rarity = "promo",
 		slot_type = "frame",
-		temporary_template = "frame_deus_portrait_belakor",
-		can_wield = CanWieldAllItemTemplates,
-	},
+		information_text = "information_text_frame",
+		rarity = "promo",
+		item_type = "frame",
+		can_wield = CanWieldAllItemTemplates
+	}
 }
 
-table.merge(ItemMasterList, item_master_list)
+table.merge(ItemMasterList, var_0_0)

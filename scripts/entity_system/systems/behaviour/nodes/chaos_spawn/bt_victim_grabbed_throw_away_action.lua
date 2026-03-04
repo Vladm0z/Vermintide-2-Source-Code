@@ -1,157 +1,150 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/chaos_spawn/bt_victim_grabbed_throw_away_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/chaos_spawn/bt_victim_grabbed_throw_away_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTVictimGrabbedThrowAwayAction = class(BTVictimGrabbedThrowAwayAction, BTNode)
 BTVictimGrabbedThrowAwayAction.name = "BTVictimGrabbedThrowAwayAction"
 
-BTVictimGrabbedThrowAwayAction.init = function (self, ...)
-	BTVictimGrabbedThrowAwayAction.super.init(self, ...)
+function BTVictimGrabbedThrowAwayAction.init(arg_1_0, ...)
+	BTVictimGrabbedThrowAwayAction.super.init(arg_1_0, ...)
 end
 
-BTVictimGrabbedThrowAwayAction.enter = function (self, unit, blackboard, t)
-	local network_manager = Managers.state.network
-	local animation = "attack_grabbed_throw"
-	local action = self._tree_node.action_data
+function BTVictimGrabbedThrowAwayAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = Managers.state.network
+	local var_2_1 = "attack_grabbed_throw"
 
-	blackboard.action = action
+	arg_2_2.action = arg_2_0._tree_node.action_data
 
-	network_manager:anim_event(unit, animation)
+	var_2_0:anim_event(arg_2_1, var_2_1)
 
-	if blackboard.move_state ~= "idle" then
-		blackboard.move_state = "idle"
+	if arg_2_2.move_state ~= "idle" then
+		arg_2_2.move_state = "idle"
 	end
 
-	blackboard.navigation_extension:set_enabled(false)
-	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
+	arg_2_2.navigation_extension:set_enabled(false)
+	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-	if Unit.alive(blackboard.victim_grabbed) then
-		StatusUtils.set_grabbed_by_chaos_spawn_status_network(blackboard.victim_grabbed, "thrown_away")
+	if Unit.alive(arg_2_2.victim_grabbed) then
+		StatusUtils.set_grabbed_by_chaos_spawn_status_network(arg_2_2.victim_grabbed, "thrown_away")
 	end
 
-	blackboard.anim_cb_finished = nil
-	blackboard.chaos_spawn_is_throwing = true
-	blackboard.grabbed_state = "throw_away"
-	blackboard.throw_direction = Vector3Box()
+	arg_2_2.anim_cb_finished = nil
+	arg_2_2.chaos_spawn_is_throwing = true
+	arg_2_2.grabbed_state = "throw_away"
+	arg_2_2.throw_direction = Vector3Box()
 
-	local ray_length = 3.5
-	local can_go
+	local var_2_2 = 3.5
+	local var_2_3
 
-	if Unit.alive(blackboard.target_unit) then
-		local nav_world = blackboard.nav_world
-		local pos = POSITION_LOOKUP[unit]
-		local target_pos = POSITION_LOOKUP[blackboard.target_unit]
-		local block_check_pos = pos + (target_pos - pos) * ray_length
+	if Unit.alive(arg_2_2.target_unit) then
+		local var_2_4 = arg_2_2.nav_world
+		local var_2_5 = POSITION_LOOKUP[arg_2_1]
+		local var_2_6 = var_2_5 + (POSITION_LOOKUP[arg_2_2.target_unit] - var_2_5) * var_2_2
 
-		can_go = GwNavQueries.raycango(nav_world, pos, block_check_pos)
+		var_2_3 = GwNavQueries.raycango(var_2_4, var_2_5, var_2_6)
 	end
 
-	if not can_go then
-		local new_direction = self:find_throw_direction(unit, blackboard, ray_length)
+	if not var_2_3 then
+		local var_2_7 = arg_2_0:find_throw_direction(arg_2_1, arg_2_2, var_2_2)
 
-		if new_direction then
-			blackboard.throw_direction:store(new_direction)
+		if var_2_7 then
+			arg_2_2.throw_direction:store(var_2_7)
 
-			blackboard.use_stored_throw_direction = true
+			arg_2_2.use_stored_throw_direction = true
 		else
-			blackboard.drop_grabbed_player = true
+			arg_2_2.drop_grabbed_player = true
 		end
 	end
 end
 
-BTVictimGrabbedThrowAwayAction.find_throw_direction = function (self, unit, blackboard, ray_length)
-	local pos = POSITION_LOOKUP[unit] + Vector3.up()
-	local rot = Unit.local_rotation(unit, 0)
-	local nav_world = blackboard.nav_world
+function BTVictimGrabbedThrowAwayAction.find_throw_direction(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	local var_3_0 = POSITION_LOOKUP[arg_3_1] + Vector3.up()
+	local var_3_1 = Unit.local_rotation(arg_3_1, 0)
+	local var_3_2 = arg_3_2.nav_world
 
-	for dir = 1, 4 do
-		local qua = Quaternion.forward
+	for iter_3_0 = 1, 4 do
+		local var_3_3 = Quaternion.forward
 
-		if dir == 2 or dir == 4 then
-			qua = Quaternion.right
+		if iter_3_0 == 2 or iter_3_0 == 4 then
+			var_3_3 = Quaternion.right
 		end
 
-		local direction = qua(rot)
+		local var_3_4 = var_3_3(var_3_1)
 
-		if dir == 3 or dir == 4 then
-			direction = -direction
+		if iter_3_0 == 3 or iter_3_0 == 4 then
+			var_3_4 = -var_3_4
 		end
 
-		local space_check_pos = pos + direction * ray_length
-		local can_go = GwNavQueries.raycango(nav_world, pos, space_check_pos)
+		local var_3_5 = var_3_0 + var_3_4 * arg_3_3
 
-		if can_go then
-			return direction
+		if GwNavQueries.raycango(var_3_2, var_3_0, var_3_5) then
+			return var_3_4
 		end
 	end
 
 	return nil
 end
 
-BTVictimGrabbedThrowAwayAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	blackboard.navigation_extension:set_enabled(true)
+function BTVictimGrabbedThrowAwayAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	arg_4_2.navigation_extension:set_enabled(true)
 
-	blackboard.anim_cb_throw = false
+	arg_4_2.anim_cb_throw = false
 
-	if Unit.alive(blackboard.victim_grabbed) and (reason == "aborted" or blackboard.drop_grabbed_player and blackboard.victim_grabbed) then
-		StatusUtils.set_grabbed_by_chaos_spawn_network(blackboard.victim_grabbed, false, unit)
+	if Unit.alive(arg_4_2.victim_grabbed) and (arg_4_4 == "aborted" or arg_4_2.drop_grabbed_player and arg_4_2.victim_grabbed) then
+		StatusUtils.set_grabbed_by_chaos_spawn_network(arg_4_2.victim_grabbed, false, arg_4_1)
 	end
 
-	blackboard.attack_grabbed_attacks = 0
-	blackboard.has_grabbed_victim = false
-	blackboard.victim_grabbed = nil
-	blackboard.chaos_spawn_is_throwing = false
-	blackboard.grabbed_state = nil
-	blackboard.wants_to_throw = false
-	blackboard.throw_direction = nil
-	blackboard.use_stored_throw_direction = nil
-	blackboard.drop_grabbed_player = nil
-	blackboard.chew_attacks_done = 0
+	arg_4_2.attack_grabbed_attacks = 0
+	arg_4_2.has_grabbed_victim = false
+	arg_4_2.victim_grabbed = nil
+	arg_4_2.chaos_spawn_is_throwing = false
+	arg_4_2.grabbed_state = nil
+	arg_4_2.wants_to_throw = false
+	arg_4_2.throw_direction = nil
+	arg_4_2.use_stored_throw_direction = nil
+	arg_4_2.drop_grabbed_player = nil
+	arg_4_2.chew_attacks_done = 0
 end
 
-BTVictimGrabbedThrowAwayAction.catapult_player = function (self, unit, blackboard, throw_speed, throw_speed_z)
-	local victim_unit = blackboard.victim_grabbed
-	local victim_pos = POSITION_LOOKUP[victim_unit]
-	local target_pos
+function BTVictimGrabbedThrowAwayAction.catapult_player(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	local var_5_0 = arg_5_2.victim_grabbed
+	local var_5_1 = POSITION_LOOKUP[var_5_0]
+	local var_5_2
 
-	if blackboard.target_unit then
-		target_pos = POSITION_LOOKUP[blackboard.target_unit]
+	if arg_5_2.target_unit then
+		var_5_2 = POSITION_LOOKUP[arg_5_2.target_unit]
 	else
-		target_pos = victim_pos + Quaternion.forward(Unit.local_rotation(unit, 0)) * 10
+		var_5_2 = var_5_1 + Quaternion.forward(Unit.local_rotation(arg_5_1, 0)) * 10
 	end
 
-	local saved_throw_dir = blackboard.use_stored_throw_direction and blackboard.throw_direction:unbox()
-	local throw_dir = saved_throw_dir or Vector3.normalize(target_pos - victim_pos)
-	local velocity = throw_speed * throw_dir
+	local var_5_3 = arg_5_3 * (arg_5_2.use_stored_throw_direction and arg_5_2.throw_direction:unbox() or Vector3.normalize(var_5_2 - var_5_1))
 
-	if throw_speed_z then
-		Vector3.set_z(velocity, throw_speed_z)
+	if arg_5_4 then
+		Vector3.set_z(var_5_3, arg_5_4)
 	end
 
-	StatusUtils.set_grabbed_by_chaos_spawn_network(victim_unit, false, unit)
-	StatusUtils.set_catapulted_network(victim_unit, true, velocity)
+	StatusUtils.set_grabbed_by_chaos_spawn_network(var_5_0, false, arg_5_1)
+	StatusUtils.set_catapulted_network(var_5_0, true, var_5_3)
 
-	blackboard.anim_cb_throw = nil
+	arg_5_2.anim_cb_throw = nil
 end
 
-local Unit_alive = Unit.alive
+local var_0_0 = Unit.alive
 
-BTVictimGrabbedThrowAwayAction.run = function (self, unit, blackboard, t, dt)
-	local should_exit = blackboard.attack_finished or not Unit.alive(blackboard.victim_grabbed) or blackboard.drop_grabbed_player
-
-	if should_exit then
+function BTVictimGrabbedThrowAwayAction.run(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	if arg_6_2.attack_finished or not Unit.alive(arg_6_2.victim_grabbed) or arg_6_2.drop_grabbed_player then
 		return "done"
-	elseif blackboard.anim_cb_throw then
-		self:catapult_player(unit, blackboard, 25, 1)
+	elseif arg_6_2.anim_cb_throw then
+		arg_6_0:catapult_player(arg_6_1, arg_6_2, 25, 1)
 	end
 
-	local target_unit = blackboard.target_unit
+	local var_6_0 = arg_6_2.target_unit
 
-	if Unit.alive(target_unit) then
-		local saved_throw_dir = blackboard.use_stored_throw_direction and blackboard.throw_direction:unbox()
-		local rot = saved_throw_dir and Quaternion.look(saved_throw_dir) or Unit_alive(target_unit) and LocomotionUtils.rotation_towards_unit_flat(unit, target_unit)
+	if Unit.alive(var_6_0) then
+		local var_6_1 = arg_6_2.use_stored_throw_direction and arg_6_2.throw_direction:unbox()
+		local var_6_2 = var_6_1 and Quaternion.look(var_6_1) or var_0_0(var_6_0) and LocomotionUtils.rotation_towards_unit_flat(arg_6_1, var_6_0)
 
-		blackboard.locomotion_extension:set_wanted_rotation(rot)
+		arg_6_2.locomotion_extension:set_wanted_rotation(var_6_2)
 	end
 
 	return "running"

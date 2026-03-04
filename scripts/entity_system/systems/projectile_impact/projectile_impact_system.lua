@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/entity_system/systems/projectile_impact/projectile_impact_system.lua
+-- chunkname: @scripts/entity_system/systems/projectile_impact/projectile_impact_system.lua
 
 require("scripts/unit_extensions/weapons/projectiles/projectile_impact/projectile_base_impact_unit_extension")
 require("scripts/unit_extensions/weapons/projectiles/projectile_impact/projectile_raycast_impact_unit_extension")
@@ -8,30 +8,30 @@ require("scripts/unit_extensions/weapons/projectiles/projectile_impact/player_pr
 
 ProjectileImpactSystem = class(ProjectileImpactSystem, ExtensionSystemBase)
 
-local RPCS = {}
-local extensions = {
+local var_0_0 = {}
+local var_0_1 = {
 	"ProjectileBaseImpactUnitExtension",
 	"ProjectileRaycastImpactUnitExtension",
 	"PlayerProjectileImpactUnitExtension",
 	"ProjectileFixedImpactUnitExtension",
-	"ProjectileLinearSphereSweepImpactUnitExtension",
+	"ProjectileLinearSphereSweepImpactUnitExtension"
 }
 
-ProjectileImpactSystem.init = function (self, entity_system_creation_context, system_name)
-	ProjectileImpactSystem.super.init(self, entity_system_creation_context, system_name, extensions)
+function ProjectileImpactSystem.init(arg_1_0, arg_1_1, arg_1_2)
+	ProjectileImpactSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
-	local network_event_delegate = entity_system_creation_context.network_event_delegate
+	local var_1_0 = arg_1_1.network_event_delegate
 
-	self.network_event_delegate = network_event_delegate
+	arg_1_0.network_event_delegate = var_1_0
 
-	network_event_delegate:register(self, unpack(RPCS))
+	var_1_0:register(arg_1_0, unpack(var_0_0))
 
-	self.network_transmit = Managers.state.network.network_transmit
+	arg_1_0.network_transmit = Managers.state.network.network_transmit
 end
 
-ProjectileImpactSystem.destroy = function (self)
-	self.network_event_delegate:unregister(self)
+function ProjectileImpactSystem.destroy(arg_2_0)
+	arg_2_0.network_event_delegate:unregister(arg_2_0)
 
-	self.network_event_delegate = nil
-	self.network_transmit = nil
+	arg_2_0.network_event_delegate = nil
+	arg_2_0.network_transmit = nil
 end

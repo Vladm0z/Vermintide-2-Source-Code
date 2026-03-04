@@ -1,149 +1,149 @@
-﻿-- chunkname: @dialogues/generated/bright_wizard_shovel.lua
+-- chunkname: @dialogues/generated/bright_wizard_shovel.lua
 
-return function ()
+return function()
 	define_rule({
+		response = "pbw_nm_activate_ability",
 		name = "pbw_nm_activate_ability",
 		probability = 1,
-		response = "pbw_nm_activate_ability",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"activate_ability",
+				"activate_ability"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"global_context",
 				"level_time",
 				OP.GT,
-				60,
+				60
 			},
 			{
 				"user_context",
 				"player_career",
 				OP.EQ,
-				"bw_necromancer",
+				"bw_necromancer"
 			},
 			{
 				"faction_memory",
 				"ability_vo_disabled",
 				OP.NEQ,
-				1,
-			},
-		},
+				1
+			}
+		}
 	})
 	define_rule({
-		name = "pbw_nm_command_attack",
 		probability = 1,
+		name = "pbw_nm_command_attack",
 		response = "pbw_nm_command_attack",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"minion_command_attack",
+				"minion_command_attack"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"user_memory",
 				"time_since_command_defend",
 				OP.TIMEDIFF,
 				OP.GT,
-				4,
+				4
 			},
 			{
 				"user_memory",
 				"time_since_command_attack",
 				OP.TIMEDIFF,
 				OP.GT,
-				12,
-			},
+				12
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_command_attack",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "pbw_nm_command_defend",
 		probability = 1,
+		name = "pbw_nm_command_defend",
 		response = "pbw_nm_command_defend",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"minion_command_defend",
+				"minion_command_defend"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"user_context",
 				"player_profile",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"user_memory",
 				"time_since_command_attack",
 				OP.TIMEDIFF,
 				OP.GT,
-				4,
+				4
 			},
 			{
 				"user_memory",
 				"time_since_command_defend",
 				OP.TIMEDIFF,
 				OP.GT,
-				12,
-			},
+				12
+			}
 		},
 		on_done = {
 			{
 				"user_memory",
 				"time_since_command_defend",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	add_dialogues({
 		pbw_nm_activate_ability = {
-			category = "activate_ability",
-			database = "bright_wizard_shovel",
-			dialogue_animations_n = 12,
-			face_animations_n = 12,
 			randomize_indexes_n = 0,
+			face_animations_n = 12,
+			database = "bright_wizard_shovel",
 			sound_events_n = 12,
+			category = "activate_ability",
+			dialogue_animations_n = 12,
 			dialogue_animations = {
 				"dialogue_shout",
 				"dialogue_shout",
@@ -156,7 +156,7 @@ return function ()
 				"dialogue_shout",
 				"dialogue_shout",
 				"dialogue_shout",
-				"dialogue_shout",
+				"dialogue_shout"
 			},
 			face_animations = {
 				"face_happy",
@@ -170,7 +170,7 @@ return function ()
 				"face_happy",
 				"face_happy",
 				"face_happy",
-				"face_happy",
+				"face_happy"
 			},
 			localization_strings = {
 				"pbw_nm_activate_ability_01",
@@ -184,7 +184,7 @@ return function ()
 				"pbw_nm_activate_ability_09",
 				"pbw_nm_activate_ability_10",
 				"pbw_nm_activate_ability_11",
-				"pbw_nm_activate_ability_12",
+				"pbw_nm_activate_ability_12"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -199,7 +199,7 @@ return function ()
 				"pbw_nm_activate_ability_09",
 				"pbw_nm_activate_ability_10",
 				"pbw_nm_activate_ability_11",
-				"pbw_nm_activate_ability_12",
+				"pbw_nm_activate_ability_12"
 			},
 			sound_events_duration = {
 				1.9653124809265,
@@ -213,17 +213,17 @@ return function ()
 				2.3945207595825,
 				2.3321874141693,
 				2.4752917289734,
-				2.872750043869,
-			},
+				2.872750043869
+			}
 		},
 		pbw_nm_command_attack = {
-			category = "default",
-			database = "bright_wizard_shovel",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			intended_player_profile = "bright_wizard",
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "bright_wizard_shovel",
 			sound_events_n = 10,
+			category = "default",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -234,7 +234,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -246,7 +246,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pbw_nm_minion_command_attack_01",
@@ -258,7 +258,7 @@ return function ()
 				"pbw_nm_minion_command_attack_07",
 				"pbw_nm_minion_command_attack_08",
 				"pbw_nm_minion_command_attack_09",
-				"pbw_nm_minion_command_attack_10",
+				"pbw_nm_minion_command_attack_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -271,7 +271,7 @@ return function ()
 				"pbw_nm_minion_command_attack_07",
 				"pbw_nm_minion_command_attack_08",
 				"pbw_nm_minion_command_attack_09",
-				"pbw_nm_minion_command_attack_10",
+				"pbw_nm_minion_command_attack_10"
 			},
 			sound_events_duration = {
 				2.6472916603088,
@@ -283,17 +283,17 @@ return function ()
 				2.2404582500458,
 				2.0471458435059,
 				2.4898540973663,
-				3.014666557312,
-			},
+				3.014666557312
+			}
 		},
 		pbw_nm_command_defend = {
-			category = "default",
-			database = "bright_wizard_shovel",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			intended_player_profile = "bright_wizard",
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "bright_wizard_shovel",
 			sound_events_n = 10,
+			category = "default",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_talk",
 				"dialogue_talk",
@@ -304,7 +304,7 @@ return function ()
 				"dialogue_talk",
 				"dialogue_talk",
 				"dialogue_talk",
-				"dialogue_talk",
+				"dialogue_talk"
 			},
 			face_animations = {
 				"face_neutral",
@@ -316,7 +316,7 @@ return function ()
 				"face_neutral",
 				"face_neutral",
 				"face_neutral",
-				"face_neutral",
+				"face_neutral"
 			},
 			localization_strings = {
 				"pbw_nm_minion_command_defend_01",
@@ -328,7 +328,7 @@ return function ()
 				"pbw_nm_minion_command_defend_07",
 				"pbw_nm_minion_command_defend_08",
 				"pbw_nm_minion_command_defend_09",
-				"pbw_nm_minion_command_defend_10",
+				"pbw_nm_minion_command_defend_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -341,7 +341,7 @@ return function ()
 				"pbw_nm_minion_command_defend_07",
 				"pbw_nm_minion_command_defend_08",
 				"pbw_nm_minion_command_defend_09",
-				"pbw_nm_minion_command_defend_10",
+				"pbw_nm_minion_command_defend_10"
 			},
 			sound_events_duration = {
 				2.3359792232513,
@@ -353,8 +353,8 @@ return function ()
 				1.784500002861,
 				2.1355624198914,
 				2.7974584102631,
-				1.8271666765213,
-			},
-		},
+				1.8271666765213
+			}
+		}
 	})
 end

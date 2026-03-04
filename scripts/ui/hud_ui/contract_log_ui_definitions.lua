@@ -1,39 +1,41 @@
-﻿-- chunkname: @scripts/ui/hud_ui/contract_log_ui_definitions.lua
+-- chunkname: @scripts/ui/hud_ui/contract_log_ui_definitions.lua
 
-local SIZE_X, SIZE_Y = 1920, 1080
-local ENTRY_LENGTH = 300
-local RETAINED_MODE_ENABLED = true
-local scenegraph_definition = {
+local var_0_0 = 1920
+local var_0_1 = 1080
+local var_0_2 = 300
+local var_0_3 = true
+local var_0_4 = {
 	root = {
 		is_root = true,
 		position = {
 			0,
 			0,
-			UILayer.hud,
+			UILayer.hud
 		},
 		size = {
-			SIZE_X,
-			SIZE_Y,
-		},
+			var_0_0,
+			var_0_1
+		}
 	},
 	pivot = {
-		horizontal_alignment = "right",
-		parent = "root",
 		vertical_alignment = "top",
+		parent = "root",
+		horizontal_alignment = "right",
 		position = {
-			-ENTRY_LENGTH - 10,
+			-var_0_2 - 10,
 			-80,
-			1,
+			1
 		},
 		size = {
 			0,
-			0,
-		},
-	},
+			0
+		}
+	}
 }
 
-local function create_log_entry(index)
-	local icon_width, icon_height = 20, 20
+local function var_0_5(arg_1_0)
+	local var_1_0 = 20
+	local var_1_1 = 20
 
 	return {
 		scenegraph_id = "pivot",
@@ -43,220 +45,220 @@ local function create_log_entry(index)
 					pass_type = "texture",
 					style_id = "texture_icon",
 					texture_id = "texture_icon",
-					retained_mode = RETAINED_MODE_ENABLED,
+					retained_mode = var_0_3
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_icon_bg",
 					texture_id = "texture_icon_bg",
-					retained_mode = RETAINED_MODE_ENABLED,
+					retained_mode = var_0_3
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_fade_bg",
 					texture_id = "texture_fade_bg",
-					retained_mode = RETAINED_MODE_ENABLED,
+					retained_mode = var_0_3
 				},
 				{
-					pass_type = "text",
 					style_id = "title_text",
+					pass_type = "text",
 					text_id = "title_text",
-					retained_mode = RETAINED_MODE_ENABLED,
+					retained_mode = var_0_3
 				},
 				{
-					pass_type = "text",
 					style_id = "task_text",
+					pass_type = "text",
 					text_id = "task_text",
-					retained_mode = RETAINED_MODE_ENABLED,
-				},
-			},
+					retained_mode = var_0_3
+				}
+			}
 		},
 		content = {
-			task_text = "n/a",
 			texture_fade_bg = "ingame_contract_bg_02",
-			texture_icon = "hud_quest_icon_01_fg",
-			texture_icon_bg = "hud_quest_icon_01_bg",
 			title_text = "n/a",
+			texture_icon_bg = "hud_quest_icon_01_bg",
+			task_text = "n/a",
+			texture_icon = "hud_quest_icon_01_fg"
 		},
 		style = {
 			texture_icon = {
 				size = {
-					icon_width,
-					icon_height,
+					var_1_0,
+					var_1_1
 				},
 				color = {
 					200,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					ENTRY_LENGTH - 20,
+					var_0_2 - 20,
 					10,
-					4,
-				},
+					4
+				}
 			},
 			texture_icon_bg = {
 				size = {
-					icon_width,
-					icon_height,
+					var_1_0,
+					var_1_1
 				},
 				color = {
 					200,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					ENTRY_LENGTH - 20,
+					var_0_2 - 20,
 					10,
-					3,
-				},
+					3
+				}
 			},
 			texture_fade_bg = {
 				size = {
-					ENTRY_LENGTH + 60,
-					5,
+					var_0_2 + 60,
+					5
 				},
 				color = {
 					200,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					-40,
 					-15,
-					2,
-				},
+					2
+				}
 			},
 			title_text = {
-				font_size = 16,
-				font_type = "hell_shark",
-				horizontal_alignment = "right",
 				vertical_alignment = "bottom",
+				font_size = 16,
+				horizontal_alignment = "right",
+				font_type = "hell_shark",
 				size = {
-					ENTRY_LENGTH,
-					10,
+					var_0_2,
+					10
 				},
 				offset = {
-					-5 - (icon_width + 3),
+					-5 - (var_1_0 + 3),
 					10,
-					4,
+					4
 				},
 				text_color = {
 					170,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			task_text = {
 				dynamic_height = true,
 				font_size = 20,
-				font_type = "hell_shark",
+				word_wrap = true,
 				horizontal_alignment = "right",
 				vertical_alignment = "top",
-				word_wrap = true,
+				font_type = "hell_shark",
 				size = {
-					ENTRY_LENGTH * 2,
-					20,
+					var_0_2 * 2,
+					20
 				},
 				offset = {
-					-5 - ENTRY_LENGTH,
+					-5 - var_0_2,
 					10,
-					4,
+					4
 				},
 				text_color = {
 					170,
 					255,
 					255,
-					255,
-				},
-			},
+					255
+				}
+			}
 		},
 		offset = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	}
 end
 
-local widget_definitions = {
+local var_0_6 = {
 	title_text = {
 		scenegraph_id = "pivot",
 		element = {
 			passes = {
 				{
-					pass_type = "text",
 					style_id = "title_text",
+					pass_type = "text",
 					text_id = "title_text",
-					retained_mode = RETAINED_MODE_ENABLED,
+					retained_mode = var_0_3
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_fade_bg",
 					texture_id = "texture_fade_bg",
-					retained_mode = RETAINED_MODE_ENABLED,
-				},
-			},
+					retained_mode = var_0_3
+				}
+			}
 		},
 		content = {
 			texture_fade_bg = "ingame_contract_bg_02",
-			title_text = Localize("dlc1_3_1_hud_contract_log_title") .. ":",
+			title_text = Localize("dlc1_3_1_hud_contract_log_title") .. ":"
 		},
 		style = {
 			title_text = {
-				font_size = 24,
-				font_type = "hell_shark",
-				horizontal_alignment = "right",
 				vertical_alignment = "bottom",
+				font_size = 24,
+				horizontal_alignment = "right",
+				font_type = "hell_shark",
 				size = {
-					ENTRY_LENGTH,
-					50,
+					var_0_2,
+					50
 				},
 				offset = {
 					-20,
 					30,
-					5,
+					5
 				},
-				text_color = Colors.get_color_table_with_alpha("cheeseburger", 200),
+				text_color = Colors.get_color_table_with_alpha("cheeseburger", 200)
 			},
 			texture_fade_bg = {
 				size = {
-					ENTRY_LENGTH + 60,
-					30,
+					var_0_2 + 60,
+					30
 				},
 				color = {
 					200,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					-40,
 					33,
-					4,
-				},
-			},
+					4
+				}
+			}
 		},
 		offset = {
 			0,
 			0,
-			0,
-		},
-	},
+			0
+		}
+	}
 }
-local entry_widget_definitions = {}
+local var_0_7 = {}
 
-for i = 1, 3 do
-	entry_widget_definitions[i] = create_log_entry(i)
+for iter_0_0 = 1, 3 do
+	var_0_7[iter_0_0] = var_0_5(iter_0_0)
 end
 
 return {
-	scenegraph_definition = scenegraph_definition,
-	entry_widget_definitions = entry_widget_definitions,
-	widget_definitions = widget_definitions,
-	ENTRY_LENGTH = ENTRY_LENGTH,
+	scenegraph_definition = var_0_4,
+	entry_widget_definitions = var_0_7,
+	widget_definitions = var_0_6,
+	ENTRY_LENGTH = var_0_2
 }

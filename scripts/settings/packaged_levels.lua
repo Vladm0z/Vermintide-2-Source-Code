@@ -1,2 +1,2 @@
-﻿-- chunkname: @scripts/settings/packaged_levels.lua
+-- chunkname: @scripts/settings/packaged_levels.lua
 

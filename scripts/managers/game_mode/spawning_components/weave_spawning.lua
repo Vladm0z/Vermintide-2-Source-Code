@@ -1,36 +1,29 @@
-﻿-- chunkname: @scripts/managers/game_mode/spawning_components/weave_spawning.lua
+-- chunkname: @scripts/managers/game_mode/spawning_components/weave_spawning.lua
 
 require("scripts/managers/game_mode/spawning_components/adventure_spawning")
 
 WeaveSpawning = class(WeaveSpawning, AdventureSpawning)
 
-WeaveSpawning._get_spawn_position_close_to_server = function (self)
-	local party = self._side.party
-	local occupied_slots = party.occupied_slots
-	local player_manager = Managers.player
+function WeaveSpawning._get_spawn_position_close_to_server(arg_1_0)
+	local var_1_0 = arg_1_0._side.party.occupied_slots
+	local var_1_1 = Managers.player
 
-	for i = 1, #occupied_slots do
-		local status = occupied_slots[i]
-		local peer_id = status.peer_id
-		local local_player_id = status.local_player_id
-		local player = peer_id and local_player_id and player_manager:player(peer_id, local_player_id)
+	for iter_1_0 = 1, #var_1_0 do
+		local var_1_2 = var_1_0[iter_1_0]
+		local var_1_3 = var_1_2.peer_id
+		local var_1_4 = var_1_2.local_player_id
+		local var_1_5 = var_1_3 and var_1_4 and var_1_1:player(var_1_3, var_1_4)
 
-		if player and player.is_server and player.player_unit then
-			local whereabouts_extension = ScriptUnit.extension(player.player_unit, "whereabouts_system")
-			local last_on_ground_pos = whereabouts_extension:last_position_onground_on_navmesh()
-
-			return last_on_ground_pos
+		if var_1_5 and var_1_5.is_server and var_1_5.player_unit then
+			return (ScriptUnit.extension(var_1_5.player_unit, "whereabouts_system"):last_position_onground_on_navmesh())
 		end
 	end
 end
 
-WeaveSpawning._find_spawn_point = function (self, status)
-	local data = status.game_mode_data
-	local position = self:_get_spawn_position_close_to_server()
+function WeaveSpawning._find_spawn_point(arg_2_0, arg_2_1)
+	local var_2_0 = arg_2_1.game_mode_data
+	local var_2_1 = arg_2_0:_get_spawn_position_close_to_server() or var_2_0.position:unbox()
+	local var_2_2 = var_2_0.rotation:unbox()
 
-	position = position or data.position:unbox()
-
-	local rotation = data.rotation:unbox()
-
-	return position, rotation
+	return var_2_1, var_2_2
 end

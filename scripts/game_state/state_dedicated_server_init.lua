@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/game_state/state_dedicated_server_init.lua
+-- chunkname: @scripts/game_state/state_dedicated_server_init.lua
 
 require("scripts/managers/network/ban_list_manager")
 require("scripts/network/network_server")
@@ -6,14 +6,14 @@ require("scripts/network/network_server")
 StateDedicatedServerInit = class(StateDedicatedServerInit)
 StateDedicatedServerInit.NAME = "StateDedicatedServerInit"
 
-StateDedicatedServerInit.on_enter = function (self, params)
-	self:_init_network()
+function StateDedicatedServerInit.on_enter(arg_1_0, arg_1_1)
+	arg_1_0:_init_network()
 end
 
-StateDedicatedServerInit._init_network = function (self)
+function StateDedicatedServerInit._init_network(arg_2_0)
 	LobbySetup.setup_network_options()
 
-	local platform = PLATFORM
+	local var_2_0 = PLATFORM
 
 	if not rawget(_G, "GameServerInternal") then
 		if IS_WINDOWS or IS_LINUX then
@@ -23,17 +23,17 @@ StateDedicatedServerInit._init_network = function (self)
 
 			require("scripts/network/game_server/game_server_steam")
 		else
-			ferror("Running dedicated server on unsupported platform (%s)", platform)
+			ferror("Running dedicated server on unsupported platform (%s)", var_2_0)
 		end
 	end
 
 	if rawget(_G, "GameliftServer") ~= nil then
 		if GameliftServer.can_get_session() then
-			local session_id, ip_addr, port, gl_server_name, matchmaking = GameliftServer.get_session()
+			local var_2_1, var_2_2, var_2_3, var_2_4, var_2_5 = GameliftServer.get_session()
 
-			print("Got gamelift session data (STATE INIT):", session_id, ip_addr, port, gl_server_name, matchmaking)
+			print("Got gamelift session data (STATE INIT):", var_2_1, var_2_2, var_2_3, var_2_4, var_2_5)
 
-			script_data.server_name = gl_server_name
+			script_data.server_name = var_2_4
 		else
 			script_data.server_name = "AWS Gamelift unknown"
 		end
@@ -41,88 +41,88 @@ StateDedicatedServerInit._init_network = function (self)
 		print("GAMELIFTPROP NOPE")
 	end
 
-	local network_options = LobbySetup.network_options()
-	local game_server_name = script_data.server_name or script_data.settings.server_name
+	local var_2_6 = LobbySetup.network_options()
+	local var_2_7 = script_data.server_name or script_data.settings.server_name
 
 	cprint("Network Options:")
 	cprint("----------------------------------------")
 
-	for k, v in pairs(network_options) do
-		cprintf("%s = %s", k, v)
+	for iter_2_0, iter_2_1 in pairs(var_2_6) do
+		cprintf("%s = %s", iter_2_0, iter_2_1)
 	end
 
-	cprintf("server_name = %s", game_server_name)
+	cprintf("server_name = %s", var_2_7)
 	cprint("----------------------------------------")
-	cprintf("You need to open port %d for incoming traffic to make the server detectable", network_options.query_port)
-	Managers.lobby:make_lobby(GameServer, "matchmaking_session_lobby", "StateDedicatedServerInit", network_options, game_server_name)
+	cprintf("You need to open port %d for incoming traffic to make the server detectable", var_2_6.query_port)
+	Managers.lobby:make_lobby(GameServer, "matchmaking_session_lobby", "StateDedicatedServerInit", var_2_6, var_2_7)
 	Managers.party:set_leader(nil)
-	self:_load_save_data()
+	arg_2_0:_load_save_data()
 
-	self._state = "waiting_for_backend"
+	arg_2_0._state = "waiting_for_backend"
 	Managers.ban_list = Managers.ban_list or BanListManager:new()
 end
 
-StateDedicatedServerInit._load_save_data = function (self)
+function StateDedicatedServerInit._load_save_data(arg_3_0)
 	print("[StateDedicatedServerInit] SaveFileName", SaveFileName)
-	Managers.save:auto_load(SaveFileName, callback(self, "cb_save_data_loaded"))
+	Managers.save:auto_load(SaveFileName, callback(arg_3_0, "cb_save_data_loaded"))
 
-	self._save_data_loaded = false
+	arg_3_0._save_data_loaded = false
 end
 
-StateDedicatedServerInit.cb_save_data_loaded = function (self, info)
-	if info.error then
-		Application.warning("Load error %q", info.error)
+function StateDedicatedServerInit.cb_save_data_loaded(arg_4_0, arg_4_1)
+	if arg_4_1.error then
+		Application.warning("Load error %q", arg_4_1.error)
 	else
-		populate_save_data(info.data)
+		populate_save_data(arg_4_1.data)
 	end
 
-	self._save_data_loaded = true
+	arg_4_0._save_data_loaded = true
 	GameSettingsDevelopment.trunk_path = Development.parameter("trunk_path")
 end
 
-StateDedicatedServerInit.update = function (self, dt, t)
-	local game_server = Managers.lobby:get_lobby("matchmaking_session_lobby")
-	local server_state = game_server:update(dt, t)
-	local state = self._state
+function StateDedicatedServerInit.update(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = Managers.lobby:get_lobby("matchmaking_session_lobby")
+	local var_5_1 = var_5_0:update(arg_5_1, arg_5_2)
+	local var_5_2 = arg_5_0._state
 
-	if state == "waiting_for_backend" then
+	if var_5_2 == "waiting_for_backend" then
 		if Managers.backend:has_loaded() then
 			Managers.backend:signin()
 
-			self._state = "load_save"
+			arg_5_0._state = "load_save"
 
 			cprint("Loading save...")
 		end
-	elseif state == "load_save" then
-		if self._save_data_loaded then
-			self._state = "wait_for_signin"
+	elseif var_5_2 == "load_save" then
+		if arg_5_0._save_data_loaded then
+			arg_5_0._state = "wait_for_signin"
 
 			cprint("Signing in...")
 		end
-	elseif state == "wait_for_signin" then
+	elseif var_5_2 == "wait_for_signin" then
 		if Managers.backend:signed_in() then
-			self._state = "wait_for_connect"
+			arg_5_0._state = "wait_for_connect"
 
 			cprint("Connecting to Steam...")
 		end
-	elseif state == "wait_for_connect" then
-		if server_state == "connected" then
+	elseif var_5_2 == "wait_for_connect" then
+		if var_5_1 == "connected" then
 			cprint("Connected to Steam")
-			self.parent:setup_network_server()
-			self.parent:setup_global_managers(game_server)
+			arg_5_0.parent:setup_network_server()
+			arg_5_0.parent:setup_global_managers(var_5_0)
 
 			return StateDedicatedServerRunning
-		elseif server_state == "disconnected" then
+		elseif var_5_1 == "disconnected" then
 			print("Failed to connect the game server. Check the connection to Steam.")
 			Application.quit()
 		end
 	end
 
-	Managers.backend:update(dt, t)
+	Managers.backend:update(arg_5_1, arg_5_2)
 
 	return nil
 end
 
-StateDedicatedServerInit.on_exit = function (self)
+function StateDedicatedServerInit.on_exit(arg_6_0)
 	return
 end

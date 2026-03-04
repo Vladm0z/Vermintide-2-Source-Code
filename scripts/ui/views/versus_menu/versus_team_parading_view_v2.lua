@@ -1,778 +1,758 @@
-﻿-- chunkname: @scripts/ui/views/versus_menu/versus_team_parading_view_v2.lua
+-- chunkname: @scripts/ui/views/versus_menu/versus_team_parading_view_v2.lua
 
 require("scripts/ui/views/menu_world_previewer")
 
-local definitions = local_require("scripts/ui/views/versus_menu/versus_team_parading_view_v2_definitions")
-local scenegraph_definition = definitions.scenegraph_definition
-local bottom_widgets_definitions = definitions.bottom_widgets_definitions
-local top_widgets_definitions = definitions.top_widgets_definitions
-local team_portrait_frame_widgets = definitions.team_portrait_frame_widgets
-local transition_widget_definitions = definitions.transition_widget_definitions
-local animation_definitions = definitions.animation_definitions
-local create_player_name_career_text = definitions.create_player_name_career_text
-local view_settings = definitions.view_settings
-local dlc_settings = DLCSettings.carousel
+local var_0_0 = local_require("scripts/ui/views/versus_menu/versus_team_parading_view_v2_definitions")
+local var_0_1 = var_0_0.scenegraph_definition
+local var_0_2 = var_0_0.bottom_widgets_definitions
+local var_0_3 = var_0_0.top_widgets_definitions
+local var_0_4 = var_0_0.team_portrait_frame_widgets
+local var_0_5 = var_0_0.transition_widget_definitions
+local var_0_6 = var_0_0.animation_definitions
+local var_0_7 = var_0_0.create_player_name_career_text
+local var_0_8 = var_0_0.view_settings
+local var_0_9 = DLCSettings.carousel
 
 VersusTeamParadingViewV2 = class(VersusTeamParadingViewV2)
 VersusTeamParadingViewV2.NAME = "VersusTeamParadingViewV2"
 
-VersusTeamParadingViewV2.init = function (self, ingame_ui_context)
-	local player = ingame_ui_context.player
+function VersusTeamParadingViewV2.init(arg_1_0, arg_1_1)
+	local var_1_0 = arg_1_1.player
 
-	self._player = player
-	self._peer_id = player:network_id()
-	self._local_player_id = player:local_player_id()
-	self._ingame_ui = ingame_ui_context.ingame_ui
-	self._ui_renderer = ingame_ui_context.ui_renderer
-	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self._input_manager = ingame_ui_context.input_manager
-	self._ingame_ui_context = ingame_ui_context
-	self._input_service_name = "ingame_menu"
-	self._current_state = "none"
-	self._team_heroes = {}
+	arg_1_0._player = var_1_0
+	arg_1_0._peer_id = var_1_0:network_id()
+	arg_1_0._local_player_id = var_1_0:local_player_id()
+	arg_1_0._ingame_ui = arg_1_1.ingame_ui
+	arg_1_0._ui_renderer = arg_1_1.ui_renderer
+	arg_1_0._ui_top_renderer = arg_1_1.ui_top_renderer
+	arg_1_0._input_manager = arg_1_1.input_manager
+	arg_1_0._ingame_ui_context = arg_1_1
+	arg_1_0._input_service_name = "ingame_menu"
+	arg_1_0._current_state = "none"
+	arg_1_0._team_heroes = {}
 
-	local world = ingame_ui_context.world_manager:world("level_world")
+	local var_1_1 = arg_1_1.world_manager:world("level_world")
 
-	self.wwise_world = Managers.world:wwise_world(world)
+	arg_1_0.wwise_world = Managers.world:wwise_world(var_1_1)
 end
 
-VersusTeamParadingViewV2.on_enter = function (self, params)
+function VersusTeamParadingViewV2.on_enter(arg_2_0, arg_2_1)
 	print("[VersusTeamParadingViewV2] Enter Versus Team Parading view")
 
-	self._party_selection_logic = Managers.state.game_mode:game_mode():party_selection_logic()
+	arg_2_0._party_selection_logic = Managers.state.game_mode:game_mode():party_selection_logic()
 
-	self._party_selection_logic:set_ingame_ui(self._ingame_ui)
+	arg_2_0._party_selection_logic:set_ingame_ui(arg_2_0._ingame_ui)
 	ShowCursorStack.show("VersusTeamParadingViewV2")
 
-	local input_manager = self._input_manager
-	local input_service_name = self._input_service_name
+	local var_2_0 = arg_2_0._input_manager
+	local var_2_1 = arg_2_0._input_service_name
 
-	input_manager:block_device_except_service(input_service_name, "keyboard", 1)
-	input_manager:block_device_except_service(input_service_name, "mouse", 1)
-	input_manager:block_device_except_service(input_service_name, "gamepad", 1)
+	var_2_0:block_device_except_service(var_2_1, "keyboard", 1)
+	var_2_0:block_device_except_service(var_2_1, "mouse", 1)
+	var_2_0:block_device_except_service(var_2_1, "gamepad", 1)
 
-	self._animations = {}
-	self.render_settings = {
-		snap_pixel_positions = true,
+	arg_2_0._animations = {}
+	arg_2_0.render_settings = {
+		snap_pixel_positions = true
 	}
 
-	self:_create_ui_elements(params)
-	self:_set_transition_widgets_alpha_multiplier(0)
+	arg_2_0:_create_ui_elements(arg_2_1)
+	arg_2_0:_set_transition_widgets_alpha_multiplier(0)
 end
 
-VersusTeamParadingViewV2.on_exit = function (self)
+function VersusTeamParadingViewV2.on_exit(arg_3_0)
 	print("[VersusTeamParadingViewV2] Exit character selection view")
 	ShowCursorStack.hide("VersusTeamParadingViewV2")
 
-	local input_manager = self._input_manager
+	local var_3_0 = arg_3_0._input_manager
 
-	input_manager:device_unblock_all_services("keyboard", 1)
-	input_manager:device_unblock_all_services("mouse", 1)
-	input_manager:device_unblock_all_services("gamepad", 1)
+	var_3_0:device_unblock_all_services("keyboard", 1)
+	var_3_0:device_unblock_all_services("mouse", 1)
+	var_3_0:device_unblock_all_services("gamepad", 1)
 
-	if self._team_previewer then
-		self:_destroy_team_previewer()
+	if arg_3_0._team_previewer then
+		arg_3_0:_destroy_team_previewer()
 	end
 
-	if self._viewport_widget then
-		UIWidget.destroy(self.ui_renderer, self._viewport_widget)
+	if arg_3_0._viewport_widget then
+		UIWidget.destroy(arg_3_0.ui_renderer, arg_3_0._viewport_widget)
 
-		self._viewport_widget = nil
+		arg_3_0._viewport_widget = nil
 	end
 
-	self:_play_sound("vs_unmute_reset_all")
-	self:_play_sound("menu_versus_character_amb_loop_stop")
+	arg_3_0:_play_sound("vs_unmute_reset_all")
+	arg_3_0:_play_sound("menu_versus_character_amb_loop_stop")
 end
 
-VersusTeamParadingViewV2._create_ui_elements = function (self, params)
-	self._viewport_widget_definition = self:_create_viewport_definition()
+function VersusTeamParadingViewV2._create_ui_elements(arg_4_0, arg_4_1)
+	arg_4_0._viewport_widget_definition = arg_4_0:_create_viewport_definition()
 
-	if self._viewport_widget then
-		UIWidget.destroy(self.ui_renderer, self._viewport_widget)
+	if arg_4_0._viewport_widget then
+		UIWidget.destroy(arg_4_0.ui_renderer, arg_4_0._viewport_widget)
 
-		self._viewport_widget = nil
+		arg_4_0._viewport_widget = nil
 	end
 
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-	self._bottom_widgets = {}
-	self._top_widgets = {}
-	self._transition_widgets = {}
-	self._team_portrait_frame_widgets = {}
-	self._team_insignia_widgets = {}
-	self._player_name_widgets = {}
-	self._widgets_by_name = {}
+	arg_4_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
+	arg_4_0._bottom_widgets = {}
+	arg_4_0._top_widgets = {}
+	arg_4_0._transition_widgets = {}
+	arg_4_0._team_portrait_frame_widgets = {}
+	arg_4_0._team_insignia_widgets = {}
+	arg_4_0._player_name_widgets = {}
+	arg_4_0._widgets_by_name = {}
 
-	UIUtils.create_widgets(bottom_widgets_definitions, self._bottom_widgets, self._widgets_by_name)
-	UIUtils.create_widgets(top_widgets_definitions, self._top_widgets, self._widgets_by_name)
-	UIUtils.create_widgets(transition_widget_definitions, self._transition_widgets, self._widgets_by_name)
+	UIUtils.create_widgets(var_0_2, arg_4_0._bottom_widgets, arg_4_0._widgets_by_name)
+	UIUtils.create_widgets(var_0_3, arg_4_0._top_widgets, arg_4_0._widgets_by_name)
+	UIUtils.create_widgets(var_0_5, arg_4_0._transition_widgets, arg_4_0._widgets_by_name)
 
-	self.ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
+	arg_4_0.ui_animator = UIAnimator:new(arg_4_0._ui_scenegraph, var_0_6)
 
-	UIRenderer.clear_scenegraph_queue(self._ui_top_renderer)
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_4_0._ui_top_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_4_0._ui_renderer)
 end
 
-VersusTeamParadingViewV2.draw = function (self, dt)
-	local ui_renderer = self._ui_renderer
-	local ui_top_renderer = self._ui_top_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local input_manager = self.input_manager
-	local input_service = self:input_service()
-	local render_settings = self.render_settings
-	local alpha_multiplier = render_settings.alpha_multiplier or 1
+function VersusTeamParadingViewV2.draw(arg_5_0, arg_5_1)
+	local var_5_0 = arg_5_0._ui_renderer
+	local var_5_1 = arg_5_0._ui_top_renderer
+	local var_5_2 = arg_5_0._ui_scenegraph
+	local var_5_3 = arg_5_0.input_manager
+	local var_5_4 = arg_5_0:input_service()
+	local var_5_5 = arg_5_0.render_settings
+	local var_5_6 = var_5_5.alpha_multiplier or 1
 
-	if self._viewport_widget then
-		UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
-		UIRenderer.draw_widget(ui_renderer, self._viewport_widget)
-		UIRenderer.end_pass(ui_renderer)
+	if arg_5_0._viewport_widget then
+		UIRenderer.begin_pass(var_5_0, var_5_2, var_5_4, arg_5_1, nil, arg_5_0.render_settings)
+		UIRenderer.draw_widget(var_5_0, arg_5_0._viewport_widget)
+		UIRenderer.end_pass(var_5_0)
 	end
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
-	self:_draw_widgets(self._bottom_widgets, render_settings, ui_top_renderer, alpha_multiplier)
-	self:_draw_widgets(self._top_widgets, render_settings, ui_top_renderer, alpha_multiplier)
-	self:_draw_widgets(self._player_name_widgets, render_settings, ui_top_renderer, alpha_multiplier)
+	UIRenderer.begin_pass(var_5_1, var_5_2, var_5_4, arg_5_1, nil, var_5_5)
+	arg_5_0:_draw_widgets(arg_5_0._bottom_widgets, var_5_5, var_5_1, var_5_6)
+	arg_5_0:_draw_widgets(arg_5_0._top_widgets, var_5_5, var_5_1, var_5_6)
+	arg_5_0:_draw_widgets(arg_5_0._player_name_widgets, var_5_5, var_5_1, var_5_6)
 
-	if self._current_state ~= "none" then
-		self:_draw_widgets(self._transition_widgets, render_settings, ui_top_renderer, alpha_multiplier)
+	if arg_5_0._current_state ~= "none" then
+		arg_5_0:_draw_widgets(arg_5_0._transition_widgets, var_5_5, var_5_1, var_5_6)
 	end
 
-	if self._team_portrait_frame_widgets then
-		self:_draw_widgets(self._team_portrait_frame_widgets, render_settings, ui_top_renderer, alpha_multiplier)
+	if arg_5_0._team_portrait_frame_widgets then
+		arg_5_0:_draw_widgets(arg_5_0._team_portrait_frame_widgets, var_5_5, var_5_1, var_5_6)
 	end
 
-	if self._team_insignia_widgets then
-		self:_draw_widgets(self._team_insignia_widgets, render_settings, ui_top_renderer, alpha_multiplier)
+	if arg_5_0._team_insignia_widgets then
+		arg_5_0:_draw_widgets(arg_5_0._team_insignia_widgets, var_5_5, var_5_1, var_5_6)
 	end
 
-	UIRenderer.end_pass(ui_top_renderer)
+	UIRenderer.end_pass(var_5_1)
 
-	render_settings.alpha_multiplier = alpha_multiplier
+	var_5_5.alpha_multiplier = var_5_6
 end
 
-VersusTeamParadingViewV2.update = function (self, dt, t)
-	self:draw(dt)
+function VersusTeamParadingViewV2.update(arg_6_0, arg_6_1, arg_6_2)
+	arg_6_0:draw(arg_6_1)
 end
 
-VersusTeamParadingViewV2.post_update = function (self, dt, t)
+function VersusTeamParadingViewV2.post_update(arg_7_0, arg_7_1, arg_7_2)
 	if DO_RELOAD then
-		self:_destroy_team_previewer()
-		self:_create_ui_elements(self._params)
+		arg_7_0:_destroy_team_previewer()
+		arg_7_0:_create_ui_elements(arg_7_0._params)
 	end
 
-	if not self._party_id then
-		if self:_setup_teams_party_data() then
-			self:_create_team_portrait_frames(self._party_id, self._local_player_party_data)
-			self:_create_player_name_widgets(self._party_id)
-			self:_set_team_name_widget_colors_and_text(self._party_id)
+	if not arg_7_0._party_id then
+		if arg_7_0:_setup_teams_party_data() then
+			arg_7_0:_create_team_portrait_frames(arg_7_0._party_id, arg_7_0._local_player_party_data)
+			arg_7_0:_create_player_name_widgets(arg_7_0._party_id)
+			arg_7_0:_set_team_name_widget_colors_and_text(arg_7_0._party_id)
 		else
 			return
 		end
 	end
 
-	if not self._viewport_widget then
-		self._viewport_widget = UIWidget.init(self._viewport_widget_definition)
+	if not arg_7_0._viewport_widget then
+		arg_7_0._viewport_widget = UIWidget.init(arg_7_0._viewport_widget_definition)
 
-		local world = self:_get_viewport_world(self._viewport_widget)
-		local camera = self:_get_viewport_camera(self._viewport_widget)
-		local level = self:_get_viewport_level(self._viewport_widget)
+		local var_7_0 = arg_7_0:_get_viewport_world(arg_7_0._viewport_widget)
+		local var_7_1 = arg_7_0:_get_viewport_camera(arg_7_0._viewport_widget)
+		local var_7_2 = arg_7_0:_get_viewport_level(arg_7_0._viewport_widget)
 
-		Level.trigger_level_loaded(level)
-		self:_setup_camera_nodes_data(level)
-		self:_setup_initial_camera(world, camera)
+		Level.trigger_level_loaded(var_7_2)
+		arg_7_0:_setup_camera_nodes_data(var_7_2)
+		arg_7_0:_setup_initial_camera(var_7_0, var_7_1)
 	end
 
-	if #self._team_heroes == 0 and not self._team_previewer then
-		self:_setup_team_heroes(self._party_id, self._local_player_party_data)
-		self:_setup_team_previewer(true)
+	if #arg_7_0._team_heroes == 0 and not arg_7_0._team_previewer then
+		arg_7_0:_setup_team_heroes(arg_7_0._party_id, arg_7_0._local_player_party_data)
+		arg_7_0:_setup_team_previewer(true)
 	end
 
-	if self._team_previewer and not DO_RELOAD then
-		local input_disabled = true
+	if arg_7_0._team_previewer and not DO_RELOAD then
+		local var_7_3 = true
 
-		self:_update_team_previewer(dt, t)
+		arg_7_0:_update_team_previewer(arg_7_1, arg_7_2)
 	end
 
-	self:_update_parading_phases(dt, t)
-	self.ui_animator:update(dt)
-	self:_update_animations(dt, t)
+	arg_7_0:_update_parading_phases(arg_7_1, arg_7_2)
+	arg_7_0.ui_animator:update(arg_7_1)
+	arg_7_0:_update_animations(arg_7_1, arg_7_2)
 end
 
-VersusTeamParadingViewV2._update_animations = function (self, dt, t)
-	local animations = self._animations
-	local ui_animator = self.ui_animator
+function VersusTeamParadingViewV2._update_animations(arg_8_0, arg_8_1, arg_8_2)
+	local var_8_0 = arg_8_0._animations
+	local var_8_1 = arg_8_0.ui_animator
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_8_0, iter_8_1 in pairs(var_8_0) do
+		if var_8_1:is_animation_completed(iter_8_1) then
+			var_8_1:stop_animation(iter_8_1)
 
-			animations[animation_name] = nil
+			var_8_0[iter_8_0] = nil
 		end
 	end
 end
 
-VersusTeamParadingViewV2._set_transition_widgets_alpha_multiplier = function (self, alpha_multiplier)
-	local transition_widgets = self._transition_widgets
+function VersusTeamParadingViewV2._set_transition_widgets_alpha_multiplier(arg_9_0, arg_9_1)
+	local var_9_0 = arg_9_0._transition_widgets
 
-	for _, widget in ipairs(transition_widgets) do
-		widget.alpha_multiplier = alpha_multiplier
+	for iter_9_0, iter_9_1 in ipairs(var_9_0) do
+		iter_9_1.alpha_multiplier = arg_9_1
 	end
 end
 
-VersusTeamParadingViewV2._setup_teams_party_data = function (self)
-	local peer_id, local_player_id = self._peer_id, self._local_player_id
-	local party, party_id = Managers.party:get_party_from_player_id(peer_id, local_player_id)
+function VersusTeamParadingViewV2._setup_teams_party_data(arg_10_0)
+	local var_10_0 = arg_10_0._peer_id
+	local var_10_1 = arg_10_0._local_player_id
+	local var_10_2, var_10_3 = Managers.party:get_party_from_player_id(var_10_0, var_10_1)
 
-	if party_id == 0 then
+	if var_10_3 == 0 then
 		return false
 	end
 
-	local player_status = Managers.party:get_player_status(peer_id, local_player_id)
+	arg_10_0._slot_id = Managers.party:get_player_status(var_10_0, var_10_1).slot_id
+	arg_10_0._party = var_10_2
+	arg_10_0._party_id = var_10_3
+	arg_10_0._is_spectator = var_10_2.name == "spectators"
 
-	self._slot_id = player_status.slot_id
-	self._party = party
-	self._party_id = party_id
-	self._is_spectator = party.name == "spectators"
+	local var_10_4 = Managers.party:get_party(var_10_3)
+	local var_10_5 = arg_10_0:_get_opponent_party_id()
 
-	local local_player_party_data = Managers.party:get_party(party_id)
-	local opponents_party_id = self:_get_opponent_party_id()
-
-	self._opponents_party_id = opponents_party_id
-
-	local opponents_party_data = Managers.party:get_party(opponents_party_id)
-
-	self._local_player_party_data = local_player_party_data
-	self._opponents_party_data = opponents_party_data
+	arg_10_0._opponents_party_id = var_10_5
+	arg_10_0._opponents_party_data, arg_10_0._local_player_party_data = Managers.party:get_party(var_10_5), var_10_4
 
 	return true
 end
 
-VersusTeamParadingViewV2._draw_widgets = function (self, widgets, render_settings, ui_renderer, alpha_multiplier)
-	if not widgets then
+function VersusTeamParadingViewV2._draw_widgets(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	if not arg_11_1 then
 		return
 	end
 
-	for _, widget in ipairs(widgets) do
-		render_settings.alpha_multiplier = widget.alpha_multiplier or alpha_multiplier
+	for iter_11_0, iter_11_1 in ipairs(arg_11_1) do
+		arg_11_2.alpha_multiplier = iter_11_1.alpha_multiplier or arg_11_4
 
-		UIRenderer.draw_widget(ui_renderer, widget)
+		UIRenderer.draw_widget(arg_11_3, iter_11_1)
 	end
 end
 
-VersusTeamParadingViewV2._set_new_camera_pose = function (self, camera, new_pose)
-	ScriptCamera.set_local_pose(camera, new_pose:unbox())
+function VersusTeamParadingViewV2._set_new_camera_pose(arg_12_0, arg_12_1, arg_12_2)
+	ScriptCamera.set_local_pose(arg_12_1, arg_12_2:unbox())
 end
 
-VersusTeamParadingViewV2._create_team_portrait_frames = function (self, party_id, party_data)
-	table.clear(self._team_portrait_frame_widgets)
-	table.clear(self._team_insignia_widgets)
+function VersusTeamParadingViewV2._create_team_portrait_frames(arg_13_0, arg_13_1, arg_13_2)
+	table.clear(arg_13_0._team_portrait_frame_widgets)
+	table.clear(arg_13_0._team_insignia_widgets)
 
-	if not party_data then
+	if not arg_13_2 then
 		return
 	end
 
-	local pick_party_data = self._party_selection_logic:get_party_data(party_id)
-	local picker_list = pick_party_data.picker_list
-	local slots_data = party_data.slots_data
+	local var_13_0 = arg_13_0._party_selection_logic:get_party_data(arg_13_1).picker_list
+	local var_13_1 = arg_13_2.slots_data
 
-	for i, picker in ipairs(picker_list) do
-		local slot_id = picker.slot_id
-		local slot_data = slots_data[slot_id]
-		local status = picker.status
+	for iter_13_0, iter_13_1 in ipairs(var_13_0) do
+		local var_13_2 = var_13_1[iter_13_1.slot_id]
+		local var_13_3 = iter_13_1.status
 
-		if status then
-			local profile_index = status.selected_profile_index
-			local career_index = status.selected_career_index
-			local profile = SPProfiles[profile_index]
-			local scenegraph_node_name = "player_portrait_anchor_" .. i
-			local insignia_scenegraph_node_name = "player_insignia_anchor_" .. i
+		if var_13_3 then
+			local var_13_4 = var_13_3.selected_profile_index
+			local var_13_5 = var_13_3.selected_career_index
+			local var_13_6 = SPProfiles[var_13_4]
+			local var_13_7 = "player_portrait_anchor_" .. iter_13_0
+			local var_13_8 = "player_insignia_anchor_" .. iter_13_0
 
-			if profile then
-				local careers = profile.careers
-				local career_settings = careers[career_index]
-				local is_bot = picker.is_bot
-				local portrait_frame_name = slot_data.slot_frame ~= "n/a" and slot_data.slot_frame or "frame_0000"
-				local level_text = is_bot and "BOT" or status.level or "-"
-				local portrait_image = career_settings.portrait_image
-				local widget_definition = UIWidgets.create_portrait_frame(scenegraph_node_name, portrait_frame_name, level_text, 1, nil, portrait_image)
-				local widget = UIWidget.init(widget_definition, self._ui_top_renderer)
-				local widget_content = widget.content
+			if var_13_6 then
+				local var_13_9 = var_13_6.careers[var_13_5]
+				local var_13_10 = iter_13_1.is_bot
+				local var_13_11 = var_13_2.slot_frame ~= "n/a" and var_13_2.slot_frame or "frame_0000"
+				local var_13_12 = var_13_10 and "BOT" or var_13_3.level or "-"
+				local var_13_13 = var_13_9.portrait_image
+				local var_13_14 = UIWidgets.create_portrait_frame(var_13_7, var_13_11, var_13_12, 1, nil, var_13_13)
+				local var_13_15 = UIWidget.init(var_13_14, arg_13_0._ui_top_renderer)
 
-				widget_content.frame_settings_name = portrait_frame_name
-				widget.offset = {
+				var_13_15.content.frame_settings_name = var_13_11
+				var_13_15.offset = {
 					0,
 					0,
-					20,
+					20
 				}
-				self._team_portrait_frame_widgets[#self._team_portrait_frame_widgets + 1] = widget
+				arg_13_0._team_portrait_frame_widgets[#arg_13_0._team_portrait_frame_widgets + 1] = var_13_15
 
-				local widget_definition = UIWidgets.create_small_insignia(insignia_scenegraph_node_name, status.versus_level or 0)
-				local widget = UIWidget.init(widget_definition, self._ui_top_renderer)
+				local var_13_16 = UIWidgets.create_small_insignia(var_13_8, var_13_3.versus_level or 0)
+				local var_13_17 = UIWidget.init(var_13_16, arg_13_0._ui_top_renderer)
 
-				widget.offset = {
+				var_13_17.offset = {
 					0,
 					0,
-					20,
+					20
 				}
-				self._team_insignia_widgets[#self._team_insignia_widgets + 1] = widget
+				arg_13_0._team_insignia_widgets[#arg_13_0._team_insignia_widgets + 1] = var_13_17
 			end
 		end
 	end
 end
 
-VersusTeamParadingViewV2._create_player_name_widgets = function (self, party_id)
-	local pick_party_data = self._party_selection_logic:get_party_data(party_id)
-	local picker_list = pick_party_data.picker_list
+function VersusTeamParadingViewV2._create_player_name_widgets(arg_14_0, arg_14_1)
+	local var_14_0 = arg_14_0._party_selection_logic:get_party_data(arg_14_1).picker_list
 
-	for i, picker in ipairs(picker_list) do
-		local status = picker.status
-		local player_name, career_name
-		local profile_index = status.selected_profile_index
-		local career_index = status.selected_career_index
-		local profile = SPProfiles[profile_index]
-		local scenegraph_node_name = "player_portrait_anchor_" .. i
+	for iter_14_0, iter_14_1 in ipairs(var_14_0) do
+		local var_14_1 = iter_14_1.status
+		local var_14_2
+		local var_14_3
+		local var_14_4 = var_14_1.selected_profile_index
+		local var_14_5 = var_14_1.selected_career_index
+		local var_14_6 = SPProfiles[var_14_4]
+		local var_14_7 = "player_portrait_anchor_" .. iter_14_0
 
-		if profile then
-			local careers = profile.careers
-			local career_settings = careers[career_index]
-
-			career_name = career_settings.display_name
+		if var_14_6 then
+			var_14_3 = var_14_6.careers[var_14_5].display_name
 		end
 
-		player_name = status.player and self:_set_player_name(status.player) or "BOT"
-		career_name = career_name or "NO_CAREER"
+		local var_14_8 = var_14_1.player and arg_14_0:_set_player_name(var_14_1.player) or "BOT"
 
-		local widget_definition = create_player_name_career_text(scenegraph_node_name)
-		local widget = UIWidget.init(widget_definition)
-		local content = widget.content
+		var_14_3 = var_14_3 or "NO_CAREER"
 
-		content.player_name = player_name
-		content.career_name = career_name
-		self._player_name_widgets[#self._player_name_widgets + 1] = widget
+		local var_14_9 = var_0_7(var_14_7)
+		local var_14_10 = UIWidget.init(var_14_9)
+		local var_14_11 = var_14_10.content
+
+		var_14_11.player_name = var_14_8
+		var_14_11.career_name = var_14_3
+		arg_14_0._player_name_widgets[#arg_14_0._player_name_widgets + 1] = var_14_10
 	end
 end
 
-VersusTeamParadingViewV2._update_parading_phases = function (self, dt, t)
-	local current_state = self._current_state
+function VersusTeamParadingViewV2._update_parading_phases(arg_15_0, arg_15_1, arg_15_2)
+	local var_15_0 = arg_15_0._current_state
 
-	if current_state == "none" then
-		self:_change_state("parade_local_player_team")
-	elseif current_state == "parade_local_player_team" then
-		if not self._parading_duration then
-			self._parading_duration = t + Managers.state.game_mode:setting("parading_times").local_player
+	if var_15_0 == "none" then
+		arg_15_0:_change_state("parade_local_player_team")
+	elseif var_15_0 == "parade_local_player_team" then
+		if not arg_15_0._parading_duration then
+			arg_15_0._parading_duration = arg_15_2 + Managers.state.game_mode:setting("parading_times").local_player
 
-			self:_start_animation("on_enter", "on_enter_local_player")
-			self:_play_parading_sfx(true)
+			arg_15_0:_start_animation("on_enter", "on_enter_local_player")
+			arg_15_0:_play_parading_sfx(true)
 		end
 
-		if t > self._parading_duration then
-			self._parading_duration = nil
+		if arg_15_2 > arg_15_0._parading_duration then
+			arg_15_0._parading_duration = nil
 
-			self:_change_state("team_transition")
-			self:_play_sound("Play_menu_versus_parading_versus_whoosh")
+			arg_15_0:_change_state("team_transition")
+			arg_15_0:_play_sound("Play_menu_versus_parading_versus_whoosh")
 		end
-	elseif current_state == "team_transition" then
-		if not self._parading_duration then
-			self._parading_duration = t + Managers.state.game_mode:setting("parading_times").team_transition
+	elseif var_15_0 == "team_transition" then
+		if not arg_15_0._parading_duration then
+			arg_15_0._parading_duration = arg_15_2 + Managers.state.game_mode:setting("parading_times").team_transition
 
-			self:_start_animation("transition", "team_transition_fade_in")
-		end
-
-		if t > self._parading_duration - 0.25 then
-			self:_start_animation("transition", "team_transition_fade_out")
+			arg_15_0:_start_animation("transition", "team_transition_fade_in")
 		end
 
-		if t > self._parading_duration then
-			self._parading_duration = nil
-
-			self:_change_state("parade_opponent_team")
-			self:_play_parading_sfx(false)
-		end
-	elseif current_state == "parade_opponent_team" then
-		if not self._parading_duration then
-			self._parading_duration = t + Managers.state.game_mode:setting("parading_times").opponent_transition
-
-			self:_start_animation("opponent_parading", "on_enter_opponent_team")
+		if arg_15_2 > arg_15_0._parading_duration - 0.25 then
+			arg_15_0:_start_animation("transition", "team_transition_fade_out")
 		end
 
-		if t > self._parading_duration then
-			self._parading_duration = nil
+		if arg_15_2 > arg_15_0._parading_duration then
+			arg_15_0._parading_duration = nil
 
-			self:_change_state("show_match_info")
+			arg_15_0:_change_state("parade_opponent_team")
+			arg_15_0:_play_parading_sfx(false)
 		end
-	elseif current_state == "show_match_info" and not self._parading_duration then
-		self._parading_duration = t + Managers.state.game_mode:setting("parading_times").show_match_info
+	elseif var_15_0 == "parade_opponent_team" then
+		if not arg_15_0._parading_duration then
+			arg_15_0._parading_duration = arg_15_2 + Managers.state.game_mode:setting("parading_times").opponent_transition
+
+			arg_15_0:_start_animation("opponent_parading", "on_enter_opponent_team")
+		end
+
+		if arg_15_2 > arg_15_0._parading_duration then
+			arg_15_0._parading_duration = nil
+
+			arg_15_0:_change_state("show_match_info")
+		end
+	elseif var_15_0 == "show_match_info" and not arg_15_0._parading_duration then
+		arg_15_0._parading_duration = arg_15_2 + Managers.state.game_mode:setting("parading_times").show_match_info
 	end
 end
 
-VersusTeamParadingViewV2._get_heroes_spawn_locations = function (self, party_id)
-	local spawn_point_unit_prefix = party_id == self._party_id and "character_slot_0" or "character_slot_enemy_0"
-	local unit = "units/hub_elements/versus_podium_character_spawn"
-	local level_name = self:_get_viewport_level_name()
-	local unit_indices = LevelResource.unit_indices(level_name, unit)
-	local hero_locations = {}
+function VersusTeamParadingViewV2._get_heroes_spawn_locations(arg_16_0, arg_16_1)
+	local var_16_0 = arg_16_1 == arg_16_0._party_id and "character_slot_0" or "character_slot_enemy_0"
+	local var_16_1 = "units/hub_elements/versus_podium_character_spawn"
+	local var_16_2 = arg_16_0:_get_viewport_level_name()
+	local var_16_3 = LevelResource.unit_indices(var_16_2, var_16_1)
+	local var_16_4 = {}
 
-	for i = 1, 4 do
-		for _, index in pairs(unit_indices) do
-			local unit_data = LevelResource.unit_data(level_name, index)
-			local name = DynamicData.get(unit_data, "name")
+	for iter_16_0 = 1, 4 do
+		for iter_16_1, iter_16_2 in pairs(var_16_3) do
+			local var_16_5 = LevelResource.unit_data(var_16_2, iter_16_2)
+			local var_16_6 = DynamicData.get(var_16_5, "name")
 
-			if name and name == spawn_point_unit_prefix .. i then
-				local position = LevelResource.unit_position(level_name, index)
-				local x, y, z = Vector3.to_elements(position)
-				local table_vector = {
-					x,
-					y,
-					z,
+			if var_16_6 and var_16_6 == var_16_0 .. iter_16_0 then
+				local var_16_7 = LevelResource.unit_position(var_16_2, iter_16_2)
+				local var_16_8, var_16_9, var_16_10 = Vector3.to_elements(var_16_7)
+				local var_16_11 = {
+					var_16_8,
+					var_16_9,
+					var_16_10
 				}
 
-				hero_locations[#hero_locations + 1] = table_vector
+				var_16_4[#var_16_4 + 1] = var_16_11
 			end
 		end
 	end
 
-	fassert(#hero_locations ~= 0, "[VersusTeamParadingViewV2:_get_heroes_spawn_locations], No hero locations have been found. Check if unit: %s is present in level: %s and has the script data varaible \"name\" set to the correct name.", unit, level_name)
+	fassert(#var_16_4 ~= 0, "[VersusTeamParadingViewV2:_get_heroes_spawn_locations], No hero locations have been found. Check if unit: %s is present in level: %s and has the script data varaible \"name\" set to the correct name.", var_16_1, var_16_2)
 
-	return hero_locations
+	return var_16_4
 end
 
-VersusTeamParadingViewV2._setup_initial_camera = function (self, world, camera)
-	if world then
-		local ref_camera_data = self._cameras.parading_camera_01
+function VersusTeamParadingViewV2._setup_initial_camera(arg_17_0, arg_17_1, arg_17_2)
+	if arg_17_1 then
+		local var_17_0 = arg_17_0._cameras.parading_camera_01
 
-		self._camera = camera
+		arg_17_0._camera = arg_17_2
 
-		local fov = Camera.vertical_fov(ref_camera_data.camera)
+		local var_17_1 = Camera.vertical_fov(var_17_0.camera)
 
-		Camera.set_vertical_fov(camera, fov)
-		ScriptCamera.set_local_pose(camera, ref_camera_data.camera_pose:unbox())
-		ScriptCamera.force_update(world, camera)
+		Camera.set_vertical_fov(arg_17_2, var_17_1)
+		ScriptCamera.set_local_pose(arg_17_2, var_17_0.camera_pose:unbox())
+		ScriptCamera.force_update(arg_17_1, arg_17_2)
 	end
 end
 
-VersusTeamParadingViewV2._setup_camera_nodes_data = function (self, level)
-	local data = {}
-	local init_camera_unit = Level.flow_variable(level, "initial_camera")
-	local parading_camera_01_unit = Level.flow_variable(level, "parading_position_01")
-	local parading_camera_02_unit = Level.flow_variable(level, "parading_position_02")
-	local init_camera_pose = Matrix4x4Box(Unit.local_pose(init_camera_unit, 0))
-	local parading_camera_01_pose = Matrix4x4Box(Unit.local_pose(parading_camera_01_unit, 0))
-	local parading_camera_02_pose = Matrix4x4Box(Unit.local_pose(parading_camera_02_unit, 0))
-	local init_camera = Unit.camera(init_camera_unit, "camera")
-	local parading_camera_01 = Unit.camera(parading_camera_01_unit, "camera")
-	local parading_camera_02 = Unit.camera(parading_camera_02_unit, "camera")
+function VersusTeamParadingViewV2._setup_camera_nodes_data(arg_18_0, arg_18_1)
+	local var_18_0 = {}
+	local var_18_1 = Level.flow_variable(arg_18_1, "initial_camera")
+	local var_18_2 = Level.flow_variable(arg_18_1, "parading_position_01")
+	local var_18_3 = Level.flow_variable(arg_18_1, "parading_position_02")
+	local var_18_4 = Matrix4x4Box(Unit.local_pose(var_18_1, 0))
+	local var_18_5 = Matrix4x4Box(Unit.local_pose(var_18_2, 0))
+	local var_18_6 = Matrix4x4Box(Unit.local_pose(var_18_3, 0))
+	local var_18_7 = Unit.camera(var_18_1, "camera")
+	local var_18_8 = Unit.camera(var_18_2, "camera")
+	local var_18_9 = Unit.camera(var_18_3, "camera")
 
-	data.initial_camera = {
-		camera_unit = init_camera_unit,
-		camera_pose = init_camera_pose,
-		camera = init_camera,
+	var_18_0.initial_camera = {
+		camera_unit = var_18_1,
+		camera_pose = var_18_4,
+		camera = var_18_7
 	}
-	data.parading_camera_01 = {
-		camera_unit = parading_camera_01_unit,
-		camera_pose = parading_camera_01_pose,
-		camera = parading_camera_01,
+	var_18_0.parading_camera_01 = {
+		camera_unit = var_18_2,
+		camera_pose = var_18_5,
+		camera = var_18_8
 	}
-	data.parading_camera_02 = {
-		camera_unit = parading_camera_02_unit,
-		camera_pose = parading_camera_02_pose,
-		camera = parading_camera_02,
+	var_18_0.parading_camera_02 = {
+		camera_unit = var_18_3,
+		camera_pose = var_18_6,
+		camera = var_18_9
 	}
-	self._cameras = data
+	arg_18_0._cameras = var_18_0
 end
 
-VersusTeamParadingViewV2._setup_team_previewer = function (self, spawn_on_setup)
-	if self._team_previewer then
+function VersusTeamParadingViewV2._setup_team_previewer(arg_19_0, arg_19_1)
+	if arg_19_0._team_previewer then
 		return
 	end
 
-	local spawn_on_setup = spawn_on_setup or false
-	local world = self:_get_viewport_world(self._viewport_widget)
-	local viewport = self:_get_viewport(self._viewport_widget)
+	local var_19_0 = arg_19_1 or false
+	local var_19_1 = arg_19_0:_get_viewport_world(arg_19_0._viewport_widget)
+	local var_19_2 = arg_19_0:_get_viewport(arg_19_0._viewport_widget)
 
-	self._team_previewer = TeamPreviewer:new(self._ingame_ui_context, world, viewport)
+	arg_19_0._team_previewer = TeamPreviewer:new(arg_19_0._ingame_ui_context, var_19_1, var_19_2)
 
-	local team_data = self._team_heroes
-	local hero_locations = self:_get_heroes_spawn_locations(self._party_id)
+	local var_19_3 = arg_19_0._team_heroes
+	local var_19_4 = arg_19_0:_get_heroes_spawn_locations(arg_19_0._party_id)
 
-	self._team_previewer:setup_team(team_data, hero_locations, spawn_on_setup)
+	arg_19_0._team_previewer:setup_team(var_19_3, var_19_4, var_19_0)
 end
 
-VersusTeamParadingViewV2._setup_team_heroes = function (self, party_id, party_data)
-	local pick_party_data = self._party_selection_logic:get_party_data(party_id)
-	local picker_list = pick_party_data.picker_list
-	local team_heroes = self._team_heroes
+function VersusTeamParadingViewV2._setup_team_heroes(arg_20_0, arg_20_1, arg_20_2)
+	local var_20_0 = arg_20_0._party_selection_logic:get_party_data(arg_20_1).picker_list
+	local var_20_1 = arg_20_0._team_heroes
 
-	table.clear(team_heroes)
+	table.clear(var_20_1)
 
-	for i, picker in ipairs(picker_list) do
-		local hero_data = self:_get_hero_previewer_data(picker, party_data)
+	for iter_20_0, iter_20_1 in ipairs(var_20_0) do
+		local var_20_2 = arg_20_0:_get_hero_previewer_data(iter_20_1, arg_20_2)
 
-		team_heroes[#team_heroes + 1] = hero_data or true
+		var_20_1[#var_20_1 + 1] = var_20_2 or true
 	end
 end
 
-VersusTeamParadingViewV2._update_team_previewer = function (self, dt, t)
-	local team_previewer = self._team_previewer
+function VersusTeamParadingViewV2._update_team_previewer(arg_21_0, arg_21_1, arg_21_2)
+	local var_21_0 = arg_21_0._team_previewer
 
-	if team_previewer then
-		team_previewer:update(dt, t)
-		team_previewer:post_update(dt, t)
+	if var_21_0 then
+		var_21_0:update(arg_21_1, arg_21_2)
+		var_21_0:post_update(arg_21_1, arg_21_2)
 	end
 end
 
-VersusTeamParadingViewV2._destroy_team_previewer = function (self)
-	if self._team_previewer and self._viewport_widget then
-		self._team_previewer:on_exit()
+function VersusTeamParadingViewV2._destroy_team_previewer(arg_22_0)
+	if arg_22_0._team_previewer and arg_22_0._viewport_widget then
+		arg_22_0._team_previewer:on_exit()
 
-		self._team_previewer = nil
+		arg_22_0._team_previewer = nil
 
-		table.clear(self._team_heroes)
+		table.clear(arg_22_0._team_heroes)
 	end
 end
 
-VersusTeamParadingViewV2._create_viewport_definition = function (self)
+function VersusTeamParadingViewV2._create_viewport_definition(arg_23_0)
 	return {
 		scenegraph_id = "screen",
 		element = UIElements.Viewport,
 		style = {
 			viewport = {
-				clear_screen_on_create = true,
-				enable_sub_gui = false,
-				fov = 50,
 				layer = 990,
 				shading_environment = "environment/ui_end_screen",
 				viewport_name = "versus_parading_preview_viewport",
+				clear_screen_on_create = true,
+				enable_sub_gui = false,
+				fov = 50,
 				world_name = "versus_parading_preview",
 				world_flags = {
 					Application.DISABLE_SOUND,
 					Application.DISABLE_ESRAM,
-					Application.ENABLE_VOLUMETRICS,
+					Application.ENABLE_VOLUMETRICS
 				},
-				level_name = view_settings.level_name,
-				object_sets = LevelResource.object_set_names(view_settings.level_name),
+				level_name = var_0_8.level_name,
+				object_sets = LevelResource.object_set_names(var_0_8.level_name),
 				camera_position = {
 					0,
 					0,
-					0,
+					0
 				},
 				camera_lookat = {
 					0,
 					0,
-					0,
-				},
-			},
+					0
+				}
+			}
 		},
 		content = {
 			button_hotspot = {
-				allow_multi_hover = true,
-			},
-		},
+				allow_multi_hover = true
+			}
+		}
 	}
 end
 
-VersusTeamParadingViewV2._get_hero_previewer_data = function (self, picker, party_data)
-	local status = picker.status
-	local profile_index = status.selected_profile_index
-	local career_index = status.selected_career_index
-	local profile_data = SPProfiles[profile_index]
+function VersusTeamParadingViewV2._get_hero_previewer_data(arg_24_0, arg_24_1, arg_24_2)
+	local var_24_0 = arg_24_1.status
+	local var_24_1 = var_24_0.selected_profile_index
+	local var_24_2 = var_24_0.selected_career_index
+	local var_24_3 = SPProfiles[var_24_1]
 
-	if not profile_data or profile_data.affiliation == "dark_pact" then
+	if not var_24_3 or var_24_3.affiliation == "dark_pact" then
 		return nil
 	end
 
-	local slot_id = picker.slot_id
-	local slot_data = party_data.slots_data[slot_id]
-	local profile_data = SPProfiles[profile_index]
+	local var_24_4 = arg_24_1.slot_id
+	local var_24_5 = arg_24_2.slots_data[var_24_4]
+	local var_24_6 = SPProfiles[var_24_1]
 
-	if profile_data then
-		local careers = profile_data.careers
-		local career_settings = careers[career_index]
-		local preview_animation = career_settings.versus_preview_animation or career_settings.preview_animation
-		local preview_wield_slot = career_settings.preview_wield_slot
-		local hero_name = career_settings.profile_name
-		local weapon = slot_data["slot_" .. preview_wield_slot]
-		local hat = slot_data.slot_hat
-		local preview_items = {
-			career_settings.preview_items[1],
+	if var_24_6 then
+		local var_24_7 = var_24_6.careers[var_24_2]
+		local var_24_8 = var_24_7.versus_preview_animation or var_24_7.preview_animation
+		local var_24_9 = var_24_7.preview_wield_slot
+		local var_24_10 = var_24_7.profile_name
+		local var_24_11 = var_24_5["slot_" .. var_24_9]
+		local var_24_12 = var_24_5.slot_hat
+		local var_24_13 = {
+			var_24_7.preview_items[1],
 			{
-				item_name = hat ~= "n/a" and hat or career_settings.preview_items[2].item_name,
-			},
+				item_name = var_24_12 ~= "n/a" and var_24_12 or var_24_7.preview_items[2].item_name
+			}
 		}
-		local skin_name = slot_data.slot_skin ~= "n/a" and slot_data.slot_skin or career_settings.base_skin
+		local var_24_14 = var_24_5.slot_skin ~= "n/a" and var_24_5.slot_skin or var_24_7.base_skin
 
 		return {
-			profile_index = profile_index,
-			career_index = career_index,
-			skin_name = skin_name,
-			hero_name = hero_name,
-			weapon_slot = preview_wield_slot,
-			preview_items = preview_items,
-			preview_animation = preview_animation,
+			profile_index = var_24_1,
+			career_index = var_24_2,
+			skin_name = var_24_14,
+			hero_name = var_24_10,
+			weapon_slot = var_24_9,
+			preview_items = var_24_13,
+			preview_animation = var_24_8
 		}
 	end
 
 	return nil
 end
 
-VersusTeamParadingViewV2._get_viewport = function (self, viewport_widget)
-	local pass_data = viewport_widget.element.pass_data[1]
-
-	return pass_data.viewport
+function VersusTeamParadingViewV2._get_viewport(arg_25_0, arg_25_1)
+	return arg_25_1.element.pass_data[1].viewport
 end
 
-VersusTeamParadingViewV2._get_viewport_world = function (self, viewport_widget)
-	local pass_data = viewport_widget.element.pass_data[1]
+function VersusTeamParadingViewV2._get_viewport_world(arg_26_0, arg_26_1)
+	local var_26_0 = arg_26_1.element.pass_data[1]
 
-	return pass_data.world, pass_data.world_name
+	return var_26_0.world, var_26_0.world_name
 end
 
-VersusTeamParadingViewV2._get_viewport_level = function (self, viewport_widget)
-	local pass_data = viewport_widget.element.pass_data[1]
-
-	return pass_data.level
+function VersusTeamParadingViewV2._get_viewport_level(arg_27_0, arg_27_1)
+	return arg_27_1.element.pass_data[1].level
 end
 
-VersusTeamParadingViewV2._get_viewport_level_name = function (self)
-	return view_settings.level_name
+function VersusTeamParadingViewV2._get_viewport_level_name(arg_28_0)
+	return var_0_8.level_name
 end
 
-VersusTeamParadingViewV2._get_viewport_camera = function (self, viewport_widget)
-	local pass_data = viewport_widget.element.pass_data[1]
-
-	return pass_data.camera
+function VersusTeamParadingViewV2._get_viewport_camera(arg_29_0, arg_29_1)
+	return arg_29_1.element.pass_data[1].camera
 end
 
-VersusTeamParadingViewV2._get_viewport_name = function (self, viewport_widget)
-	local pass_data = viewport_widget.element.pass_data[1]
-
-	return pass_data.viewport_name
+function VersusTeamParadingViewV2._get_viewport_name(arg_30_0, arg_30_1)
+	return arg_30_1.element.pass_data[1].viewport_name
 end
 
-VersusTeamParadingViewV2._get_opponent_party_id = function (self)
-	return self._party_id == 1 and 2 or 1
+function VersusTeamParadingViewV2._get_opponent_party_id(arg_31_0)
+	return arg_31_0._party_id == 1 and 2 or 1
 end
 
-VersusTeamParadingViewV2._set_camera_pose = function (self, world, camera, new_pose)
-	ScriptCamera.set_local_pose(camera, new_pose:unbox())
-	ScriptCamera.force_update(world, camera)
+function VersusTeamParadingViewV2._set_camera_pose(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+	ScriptCamera.set_local_pose(arg_32_2, arg_32_3:unbox())
+	ScriptCamera.force_update(arg_32_1, arg_32_2)
 end
 
-VersusTeamParadingViewV2.input_service = function (self)
-	return self._input_manager:get_service(self._input_service_name)
+function VersusTeamParadingViewV2.input_service(arg_33_0)
+	return arg_33_0._input_manager:get_service(arg_33_0._input_service_name)
 end
 
-VersusTeamParadingViewV2._change_state = function (self, new_state)
-	self._current_state = new_state
+function VersusTeamParadingViewV2._change_state(arg_34_0, arg_34_1)
+	arg_34_0._current_state = arg_34_1
 end
 
-VersusTeamParadingViewV2._start_animation = function (self, key, animation_name)
-	local params = {
-		wwise_world = self._wwise_world,
-		render_settings = self.render_settings,
-		self = self,
+function VersusTeamParadingViewV2._start_animation(arg_35_0, arg_35_1, arg_35_2)
+	local var_35_0 = {
+		wwise_world = arg_35_0._wwise_world,
+		render_settings = arg_35_0.render_settings,
+		self = arg_35_0
 	}
-	local widgets = {}
-	local anim_id = self.ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
+	local var_35_1 = {}
+	local var_35_2 = arg_35_0.ui_animator:start_animation(arg_35_2, var_35_1, var_0_1, var_35_0)
 
-	self._animations[key] = anim_id
+	arg_35_0._animations[arg_35_1] = var_35_2
 end
 
-VersusTeamParadingViewV2._set_player_name = function (self, player)
-	local player_name = player:name()
-	local player_name_length = UTF8Utils.string_length(player_name)
+function VersusTeamParadingViewV2._set_player_name(arg_36_0, arg_36_1)
+	local var_36_0 = arg_36_1:name()
 
-	if player_name_length > 18 then
-		player_name = string.sub(player_name, 1, 18) .. "..."
+	if UTF8Utils.string_length(var_36_0) > 18 then
+		var_36_0 = string.sub(var_36_0, 1, 18) .. "..."
 	end
 
-	return player_name
+	return var_36_0
 end
 
-VersusTeamParadingViewV2._change_team_info = function (self, party_data)
-	local opponent_team_id = self:_get_opponent_party_id()
+function VersusTeamParadingViewV2._change_team_info(arg_37_0, arg_37_1)
+	local var_37_0 = arg_37_0:_get_opponent_party_id()
 
-	self:_setup_team_heroes(opponent_team_id, party_data)
+	arg_37_0:_setup_team_heroes(var_37_0, arg_37_1)
 
-	local hero_locations = self:_get_heroes_spawn_locations(opponent_team_id)
+	local var_37_1 = arg_37_0:_get_heroes_spawn_locations(var_37_0)
 
-	self._team_previewer:setup_team(self._team_heroes, hero_locations, true)
+	arg_37_0._team_previewer:setup_team(arg_37_0._team_heroes, var_37_1, true)
 
-	local new_camera_data = self._cameras.parading_camera_02
-	local world = self:_get_viewport_world(self._viewport_widget)
-	local camera = self._camera
-	local new_pose = new_camera_data.camera_pose
+	local var_37_2 = arg_37_0._cameras.parading_camera_02
+	local var_37_3 = arg_37_0:_get_viewport_world(arg_37_0._viewport_widget)
+	local var_37_4 = arg_37_0._camera
+	local var_37_5 = var_37_2.camera_pose
 
-	self:_set_camera_pose(world, camera, new_pose)
-	self:_set_opponent_team_names_and_portraits(opponent_team_id, party_data)
+	arg_37_0:_set_camera_pose(var_37_3, var_37_4, var_37_5)
+	arg_37_0:_set_opponent_team_names_and_portraits(var_37_0, arg_37_1)
 end
 
-VersusTeamParadingViewV2._set_team_names_and_careers = function (self, party_id)
-	local pick_party_data = self._party_selection_logic:get_party_data(party_id)
-	local picker_list = pick_party_data.picker_list
+function VersusTeamParadingViewV2._set_team_names_and_careers(arg_38_0, arg_38_1)
+	local var_38_0 = arg_38_0._party_selection_logic:get_party_data(arg_38_1).picker_list
 
-	for i, picker in ipairs(picker_list) do
-		local status = picker.status
-		local player_name, career_name
-		local profile_index = status.selected_profile_index
-		local career_index = status.selected_career_index
-		local profile = SPProfiles[profile_index]
+	for iter_38_0, iter_38_1 in ipairs(var_38_0) do
+		local var_38_1 = iter_38_1.status
+		local var_38_2
+		local var_38_3
+		local var_38_4 = var_38_1.selected_profile_index
+		local var_38_5 = var_38_1.selected_career_index
+		local var_38_6 = SPProfiles[var_38_4]
 
-		if profile then
-			local careers = profile.careers
-			local career_settings = careers[career_index]
-
-			career_name = career_settings.display_name
+		if var_38_6 then
+			var_38_3 = var_38_6.careers[var_38_5].display_name
 		end
 
-		player_name = status.player and self:_set_player_name(status.player) or "BOT"
-		career_name = career_name or "NO_CAREER"
+		local var_38_7 = var_38_1.player and arg_38_0:_set_player_name(var_38_1.player) or "BOT"
 
-		local widget = self._player_name_widgets[i]
-		local style = widget.style
-		local content = widget.content
+		var_38_3 = var_38_3 or "NO_CAREER"
 
-		content.player_name = player_name
-		content.career_name = career_name
-		style.player_name.text_color = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
+		local var_38_8 = arg_38_0._player_name_widgets[iter_38_0]
+		local var_38_9 = var_38_8.style
+		local var_38_10 = var_38_8.content
+
+		var_38_10.player_name = var_38_7
+		var_38_10.career_name = var_38_3
+		var_38_9.player_name.text_color = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
 	end
 end
 
-VersusTeamParadingViewV2._set_opponent_team_names_and_portraits = function (self, party_id, party_data)
-	self:_create_team_portrait_frames(party_id, party_data)
-	self:_set_team_names_and_careers(party_id)
-	self:_set_team_name_widget_colors_and_text(party_id)
+function VersusTeamParadingViewV2._set_opponent_team_names_and_portraits(arg_39_0, arg_39_1, arg_39_2)
+	arg_39_0:_create_team_portrait_frames(arg_39_1, arg_39_2)
+	arg_39_0:_set_team_names_and_careers(arg_39_1)
+	arg_39_0:_set_team_name_widget_colors_and_text(arg_39_1)
 end
 
-VersusTeamParadingViewV2._set_team_name_widget_colors_and_text = function (self, party_id)
-	local team_name_key = Managers.state.game_mode:setting("party_names_lookup_by_id")[party_id]
-	local is_local_player_team = self._party_id == party_id
-	local ui_settings = dlc_settings.teams_ui_assets[team_name_key]
-	local team_color = is_local_player_team and Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
-	local top_detail = self._widgets_by_name.top_background_detail
+function VersusTeamParadingViewV2._set_team_name_widget_colors_and_text(arg_40_0, arg_40_1)
+	local var_40_0 = Managers.state.game_mode:setting("party_names_lookup_by_id")[arg_40_1]
+	local var_40_1 = arg_40_0._party_id == arg_40_1
+	local var_40_2 = var_0_9.teams_ui_assets[var_40_0]
 
-	top_detail.content.divider_edge_left = is_local_player_team and "divider_horizontal_hero_end_blue" or "divider_horizontal_hero_end_red"
-	top_detail.content.divider_mid = is_local_player_team and "divider_horizontal_hero_middle_blue" or "divider_horizontal_hero_middle_red"
-	top_detail.content.divider_edge_right.texture_id = is_local_player_team and "divider_horizontal_hero_end_blue" or "divider_horizontal_hero_end_red"
+	if not var_40_1 or not Colors.get_color_table_with_alpha("local_player_team_lighter", 255) then
+		local var_40_3 = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
+	end
 
-	local team_banner = self._widgets_by_name.team_flag
+	local var_40_4 = arg_40_0._widgets_by_name.top_background_detail
 
-	team_banner.content.texture_id = is_local_player_team and ui_settings.local_flag_long_texture or ui_settings.opponent_flag_long_texture
-	team_banner.offset[1] = is_local_player_team and 30 or 1658
+	var_40_4.content.divider_edge_left = var_40_1 and "divider_horizontal_hero_end_blue" or "divider_horizontal_hero_end_red"
+	var_40_4.content.divider_mid = var_40_1 and "divider_horizontal_hero_middle_blue" or "divider_horizontal_hero_middle_red"
+	var_40_4.content.divider_edge_right.texture_id = var_40_1 and "divider_horizontal_hero_end_blue" or "divider_horizontal_hero_end_red"
 
-	local bottom_detail_widget = self._widgets_by_name.bottom_background_detail
+	local var_40_5 = arg_40_0._widgets_by_name.team_flag
 
-	bottom_detail_widget.content.divider_edge_left = is_local_player_team and "divider_horizontal_hero_end_blue" or "divider_horizontal_hero_end_red"
-	bottom_detail_widget.content.divider_mid = is_local_player_team and "divider_horizontal_hero_middle_blue" or "divider_horizontal_hero_middle_red"
-	bottom_detail_widget.content.divider_edge_right.texture_id = is_local_player_team and "divider_horizontal_hero_end_blue" or "divider_horizontal_hero_end_red"
+	var_40_5.content.texture_id = var_40_1 and var_40_2.local_flag_long_texture or var_40_2.opponent_flag_long_texture
+	var_40_5.offset[1] = var_40_1 and 30 or 1658
+
+	local var_40_6 = arg_40_0._widgets_by_name.bottom_background_detail
+
+	var_40_6.content.divider_edge_left = var_40_1 and "divider_horizontal_hero_end_blue" or "divider_horizontal_hero_end_red"
+	var_40_6.content.divider_mid = var_40_1 and "divider_horizontal_hero_middle_blue" or "divider_horizontal_hero_middle_red"
+	var_40_6.content.divider_edge_right.texture_id = var_40_1 and "divider_horizontal_hero_end_blue" or "divider_horizontal_hero_end_red"
 end
 
-VersusTeamParadingViewV2._play_sound = function (self, event)
-	WwiseWorld.trigger_event(self.wwise_world, event)
+function VersusTeamParadingViewV2._play_sound(arg_41_0, arg_41_1)
+	WwiseWorld.trigger_event(arg_41_0.wwise_world, arg_41_1)
 end
 
-VersusTeamParadingViewV2._play_parading_sfx = function (self, local_player_team)
-	local party_id = local_player_team and self._party_id or self:_get_opponent_party_id()
-	local team_name_key = Managers.state.game_mode:setting("party_names_lookup_by_id")[party_id]
-	local parading_sfx = "Play_menu_versus_parading_" .. (team_name_key == "team_hammers" and "hammers" or "skulls")
+function VersusTeamParadingViewV2._play_parading_sfx(arg_42_0, arg_42_1)
+	local var_42_0 = arg_42_1 and arg_42_0._party_id or arg_42_0:_get_opponent_party_id()
+	local var_42_1 = Managers.state.game_mode:setting("party_names_lookup_by_id")[var_42_0]
+	local var_42_2 = "Play_menu_versus_parading_" .. (var_42_1 == "team_hammers" and "hammers" or "skulls")
 
-	self:_play_sound(parading_sfx)
+	arg_42_0:_play_sound(var_42_2)
 end

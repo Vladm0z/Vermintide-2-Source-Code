@@ -1,98 +1,95 @@
-﻿-- chunkname: @scripts/ui/hud_ui/dark_pact_selection_ui.lua
+-- chunkname: @scripts/ui/hud_ui/dark_pact_selection_ui.lua
 
 require("scripts/ui/views/versus_menu/ui_widgets_vs")
 require("scripts/ui/hud_ui/base_component")
 
-local definitions = local_require("scripts/ui/hud_ui/dark_pact_selection_ui_definitions")
-local ordered_pactsworn_slots = definitions.ordered_pactsworn_slots
-local create_selection_widget = definitions.create_selection_widget
-local scenegraph_definition = definitions.scenegraph_definition
-local PROTRAIT_WIDTH = 148
-local PORTRAIT_HEIGHT = 148
+local var_0_0 = local_require("scripts/ui/hud_ui/dark_pact_selection_ui_definitions")
+local var_0_1 = var_0_0.ordered_pactsworn_slots
+local var_0_2 = var_0_0.create_selection_widget
+local var_0_3 = var_0_0.scenegraph_definition
+local var_0_4 = 148
+local var_0_5 = 148
 
 DarkPactSelectionUI = class(DarkPactSelectionUI, BaseComponent)
 DarkPactSelectionUI._input_service_name = "dark_pact_selection"
 DarkPactSelectionUI._input_methods = {
 	"keyboard",
 	"mouse",
-	"gamepad",
+	"gamepad"
 }
 
-local darkpact_role_lookup = {
-	all = "Pactsworn",
-	area_damage = "Area Damage",
+local var_0_6 = {
 	disabler = "Disabler",
+	all = "Pactsworn",
+	area_damage = "Area Damage"
 }
 
-DarkPactSelectionUI.init = function (self, ingame_hud, ingame_ui_context)
-	DarkPactSelectionUI.super.init(self, ingame_hud, ingame_ui_context, definitions)
+function DarkPactSelectionUI.init(arg_1_0, arg_1_1, arg_1_2)
+	DarkPactSelectionUI.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 
-	self._player = ingame_ui_context.player
-	self._peer_id = ingame_ui_context.peer_id
-	self._local_player_id = ingame_ui_context.local_player_id
+	arg_1_0._player = arg_1_2.player
+	arg_1_0._peer_id = arg_1_2.peer_id
+	arg_1_0._local_player_id = arg_1_2.local_player_id
+	arg_1_0._profile_requester = (arg_1_2.network_server or arg_1_2.network_client):profile_requester()
+	arg_1_0._profile_synchronizer = arg_1_2.profile_synchronizer
+	arg_1_0._ingame_ui = arg_1_2.ingame_ui
+	arg_1_0._game_mode = Managers.state.game_mode:game_mode()
+	arg_1_0._party = Managers.party:get_local_player_party()
 
-	local network = ingame_ui_context.network_server or ingame_ui_context.network_client
+	local var_1_0 = arg_1_2.world
 
-	self._profile_requester = network:profile_requester()
-	self._profile_synchronizer = ingame_ui_context.profile_synchronizer
-	self._ingame_ui = ingame_ui_context.ingame_ui
-	self._game_mode = Managers.state.game_mode:game_mode()
-	self._party = Managers.party:get_local_player_party()
+	arg_1_0._wwise_world = Managers.world:wwise_world(arg_1_0._world)
+	arg_1_0._ui_animator = UIAnimator:new(arg_1_0._ui_scenegraph, var_0_0.animation_definitions)
+	arg_1_0._current_anim_id = 0
+	arg_1_0._selected_index = 0
+	arg_1_0._input_captured = false
+	arg_1_0._pending_profile = false
 
-	local world = ingame_ui_context.world
+	arg_1_0:_hide(100)
 
-	self._wwise_world = Managers.world:wwise_world(self._world)
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, definitions.animation_definitions)
-	self._current_anim_id = 0
-	self._selected_index = 0
-	self._input_captured = false
-	self._pending_profile = false
+	local var_1_1 = arg_1_0._input_manager
+	local var_1_2 = arg_1_0._input_service_name
 
-	self:_hide(100)
-
-	local input_manager = self._input_manager
-	local input_service_name = self._input_service_name
-
-	input_manager:create_input_service(input_service_name, "DarkPactSelectionUIKeymaps", "DarkPactSelectionUIFilters")
-	input_manager:map_device_to_service(input_service_name, "keyboard")
-	input_manager:map_device_to_service(input_service_name, "mouse")
-	input_manager:map_device_to_service(input_service_name, "gamepad")
-	Managers.state.event:register(self, "add_respawn_counter_event", "event_add_respawn_counter_event")
-	Managers.state.event:register(self, "set_new_enemy_role", "event_set_new_enemy_role")
-	Managers.state.event:register(self, "versus_received_selectable_careers_response", "event_versus_received_selectable_careers_response")
+	var_1_1:create_input_service(var_1_2, "DarkPactSelectionUIKeymaps", "DarkPactSelectionUIFilters")
+	var_1_1:map_device_to_service(var_1_2, "keyboard")
+	var_1_1:map_device_to_service(var_1_2, "mouse")
+	var_1_1:map_device_to_service(var_1_2, "gamepad")
+	Managers.state.event:register(arg_1_0, "add_respawn_counter_event", "event_add_respawn_counter_event")
+	Managers.state.event:register(arg_1_0, "set_new_enemy_role", "event_set_new_enemy_role")
+	Managers.state.event:register(arg_1_0, "versus_received_selectable_careers_response", "event_versus_received_selectable_careers_response")
 end
 
-DarkPactSelectionUI.event_add_respawn_counter_event = function (self, player, is_local_player, spawn_timer, show_selection_ui)
-	if self._player == player then
-		if show_selection_ui then
-			self:_show()
+function DarkPactSelectionUI.event_add_respawn_counter_event(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	if arg_2_0._player == arg_2_1 then
+		if arg_2_4 then
+			arg_2_0:_show()
 		else
-			self:_hide()
+			arg_2_0:_hide()
 		end
 	end
 end
 
-DarkPactSelectionUI.destroy = function (self)
-	Managers.state.event:unregister("add_respawn_counter_event", self)
-	Managers.state.event:unregister("set_new_enemy_role", self)
-	Managers.state.event:unregister("versus_received_selectable_careers_response", self)
-	self:_release_input()
-	DarkPactSelectionUI.super.destroy(self)
+function DarkPactSelectionUI.destroy(arg_3_0)
+	Managers.state.event:unregister("add_respawn_counter_event", arg_3_0)
+	Managers.state.event:unregister("set_new_enemy_role", arg_3_0)
+	Managers.state.event:unregister("versus_received_selectable_careers_response", arg_3_0)
+	arg_3_0:_release_input()
+	DarkPactSelectionUI.super.destroy(arg_3_0)
 end
 
-DarkPactSelectionUI._capture_input = function (self)
-	if self._input_captured then
+function DarkPactSelectionUI._capture_input(arg_4_0)
+	if arg_4_0._input_captured then
 		return
 	end
 
-	self._input_manager:capture_input(self._input_methods, 1, self._input_service_name, "DarkPactSelectionUI")
+	arg_4_0._input_manager:capture_input(arg_4_0._input_methods, 1, arg_4_0._input_service_name, "DarkPactSelectionUI")
 	ShowCursorStack.show("DarkPactSelectionUI")
 
-	self._input_captured = true
+	arg_4_0._input_captured = true
 end
 
-DarkPactSelectionUI._release_input = function (self)
-	if not self._input_captured then
+function DarkPactSelectionUI._release_input(arg_5_0)
+	if not arg_5_0._input_captured then
 		return
 	end
 
@@ -100,68 +97,69 @@ DarkPactSelectionUI._release_input = function (self)
 		Window.set_focus()
 	end
 
-	self._input_manager:release_input(self._input_methods, 1, self._input_service_name, "DarkPactSelectionUI")
-	self._input_manager:device_unblock_service("keyboard", 1, self._input_service_name)
+	arg_5_0._input_manager:release_input(arg_5_0._input_methods, 1, arg_5_0._input_service_name, "DarkPactSelectionUI")
+	arg_5_0._input_manager:device_unblock_service("keyboard", 1, arg_5_0._input_service_name)
 
-	local input_service = self:input_service()
+	local var_5_0 = arg_5_0:input_service()
 
-	if input_service then
-		input_service:set_input_blocked("next_observer_target", false, "DarkPactSelectionUI")
-		input_service:set_input_blocked("previous_observer_target", false, "DarkPactSelectionUI")
+	if var_5_0 then
+		var_5_0:set_input_blocked("next_observer_target", false, "DarkPactSelectionUI")
+		var_5_0:set_input_blocked("previous_observer_target", false, "DarkPactSelectionUI")
 	end
 
 	ShowCursorStack.hide("DarkPactSelectionUI")
 
-	self._input_captured = false
+	arg_5_0._input_captured = false
 end
 
-DarkPactSelectionUI._update_occupied_by_role = function (self, enemy_role)
-	if not self._game_mode.get_num_occupied_profile_enemy_role then
+function DarkPactSelectionUI._update_occupied_by_role(arg_6_0, arg_6_1)
+	if not arg_6_0._game_mode.get_num_occupied_profile_enemy_role then
 		return
 	end
 
-	local cur = self._game_mode:get_num_occupied_profile_enemy_role(self._profile_synchronizer, self._party, enemy_role)
-	local max = GameModeSettings.versus.dark_pact_profile_rules[enemy_role]
-	local chrome_widget = self._widgets_by_name.chrome
-	local content = chrome_widget.content
-	local str, col
+	local var_6_0 = arg_6_0._game_mode:get_num_occupied_profile_enemy_role(arg_6_0._profile_synchronizer, arg_6_0._party, arg_6_1)
+	local var_6_1 = GameModeSettings.versus.dark_pact_profile_rules[arg_6_1]
+	local var_6_2 = arg_6_0._widgets_by_name.chrome
+	local var_6_3 = var_6_2.content
+	local var_6_4
+	local var_6_5
 
-	if cur < max then
-		str, col = "vs_ui_dark_pact_selection_available", content.color_available
+	if var_6_0 < var_6_1 then
+		var_6_4, var_6_5 = "vs_ui_dark_pact_selection_available", var_6_3.color_available
 	else
-		str, col = "vs_ui_dark_pact_selection_full", content.color_disabled
+		var_6_4, var_6_5 = "vs_ui_dark_pact_selection_full", var_6_3.color_disabled
 	end
 
-	local widget_id = enemy_role .. "_text"
+	local var_6_6 = arg_6_1 .. "_text"
 
-	content[widget_id] = string.format("%i/%i %s", cur, max, Localize(str))
-	chrome_widget.style[widget_id].text_color = col
+	var_6_3[var_6_6] = string.format("%i/%i %s", var_6_0, var_6_1, Localize(var_6_4))
+	var_6_2.style[var_6_6].text_color = var_6_5
 end
 
-DarkPactSelectionUI._play_anim = function (self, anim_name, speed)
-	self._ui_animator:stop_animation(self._current_anim_id)
+function DarkPactSelectionUI._play_anim(arg_7_0, arg_7_1, arg_7_2)
+	arg_7_0._ui_animator:stop_animation(arg_7_0._current_anim_id)
 
-	self._current_anim_id = self._ui_animator:start_animation(anim_name, self._widgets_by_name, self._definitions.scenegraph_definition, self, speed)
+	arg_7_0._current_anim_id = arg_7_0._ui_animator:start_animation(arg_7_1, arg_7_0._widgets_by_name, arg_7_0._definitions.scenegraph_definition, arg_7_0, arg_7_2)
 end
 
-DarkPactSelectionUI._set_button = function (self, widget, value)
-	widget.style.profile_texture.saturated = not value
-	widget.content.hotspot.disabled = not value
+function DarkPactSelectionUI._set_button(arg_8_0, arg_8_1, arg_8_2)
+	arg_8_1.style.profile_texture.saturated = not arg_8_2
+	arg_8_1.content.hotspot.disabled = not arg_8_2
 end
 
-DarkPactSelectionUI._can_switch_profile = function (self)
-	local peer_id, local_player_id = self._peer_id, self._local_player_id
-	local status = Managers.party:get_player_status(peer_id, local_player_id)
+function DarkPactSelectionUI._can_switch_profile(arg_9_0)
+	local var_9_0 = arg_9_0._peer_id
+	local var_9_1 = arg_9_0._local_player_id
 
-	if status then
-		local player = self._player
-		local player_unit = player and player.player_unit
-		local ghost_mode_extension = ScriptUnit.has_extension(player_unit, "ghost_mode_system")
+	if Managers.party:get_player_status(var_9_0, var_9_1) then
+		local var_9_2 = arg_9_0._player
+		local var_9_3 = var_9_2 and var_9_2.player_unit
+		local var_9_4 = ScriptUnit.has_extension(var_9_3, "ghost_mode_system")
 
-		if ghost_mode_extension then
-			local is_in_ghost_mode, has_left_once = ghost_mode_extension:is_in_ghost_mode()
+		if var_9_4 then
+			local var_9_5, var_9_6 = var_9_4:is_in_ghost_mode()
 
-			return is_in_ghost_mode and not has_left_once
+			return var_9_5 and not var_9_6
 		else
 			return true
 		end
@@ -170,91 +168,89 @@ DarkPactSelectionUI._can_switch_profile = function (self)
 	return false
 end
 
-DarkPactSelectionUI._show = function (self, play_speed)
-	if self._is_visible == true then
+function DarkPactSelectionUI._show(arg_10_0, arg_10_1)
+	if arg_10_0._is_visible == true then
 		return
 	end
 
-	self._show_play_speed = play_speed
+	arg_10_0._show_play_speed = arg_10_1
 
-	self:_request_careers()
-	WwiseWorld.trigger_event(self._wwise_world, "Play_versus_pactsworn_select_start")
+	arg_10_0:_request_careers()
+	WwiseWorld.trigger_event(arg_10_0._wwise_world, "Play_versus_pactsworn_select_start")
 end
 
-DarkPactSelectionUI._hide = function (self, play_speed)
-	if self._is_visible == false then
+function DarkPactSelectionUI._hide(arg_11_0, arg_11_1)
+	if arg_11_0._is_visible == false then
 		return
 	end
 
-	self:_play_anim("on_exit", play_speed)
+	arg_11_0:_play_anim("on_exit", arg_11_1)
 
-	self._is_visible = false
+	arg_11_0._is_visible = false
 
-	local input_service = self:input_service()
+	local var_11_0 = arg_11_0:input_service()
 
-	if input_service then
-		input_service:set_input_blocked("next_observer_target", false, "DarkPactSelectionUI")
-		input_service:set_input_blocked("previous_observer_target", false, "DarkPactSelectionUI")
+	if var_11_0 then
+		var_11_0:set_input_blocked("next_observer_target", false, "DarkPactSelectionUI")
+		var_11_0:set_input_blocked("previous_observer_target", false, "DarkPactSelectionUI")
 	end
 
-	WwiseWorld.trigger_event(self._wwise_world, "Stop_versus_pactsworn_select_start")
+	WwiseWorld.trigger_event(arg_11_0._wwise_world, "Stop_versus_pactsworn_select_start")
 end
 
-DarkPactSelectionUI.update = function (self, dt, t, player)
-	if self._requesting_careers then
+function DarkPactSelectionUI.update(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	if arg_12_0._requesting_careers then
 		return
 	end
 
 	if RESOLUTION_LOOKUP.modified then
-		self:_set_overlay_size()
+		arg_12_0:_set_overlay_size()
 	end
 
-	self._ui_animator:update(dt)
+	arg_12_0._ui_animator:update(arg_12_1)
 
-	local profile_requester = self._profile_requester
+	local var_12_0 = arg_12_0._profile_requester
 
-	if self._pending_profile then
-		local result = profile_requester:result()
+	if arg_12_0._pending_profile then
+		local var_12_1 = var_12_0:result()
 
-		if result == "success" then
-			self._ingame_ui:play_sound("menu_versus_pactsworn_confirmed")
-			self:_hide()
+		if var_12_1 == "success" then
+			arg_12_0._ingame_ui:play_sound("menu_versus_pactsworn_confirmed")
+			arg_12_0:_hide()
 
-			self._pending_profile = nil
-		elseif result == "failure" then
-			local selector_widgets = self._selector_widgets
+			arg_12_0._pending_profile = nil
+		elseif var_12_1 == "failure" then
+			local var_12_2 = arg_12_0._selector_widgets
 
-			for i = 1, #selector_widgets do
-				local widget = selector_widgets[i]
-
-				if widget.content.profile_name == self._pending_profile then
-					self:_set_button(selector_widgets[i], false)
+			for iter_12_0 = 1, #var_12_2 do
+				if var_12_2[iter_12_0].content.profile_name == arg_12_0._pending_profile then
+					arg_12_0:_set_button(var_12_2[iter_12_0], false)
 
 					break
 				end
 			end
 
-			self._pending_profile = nil
+			arg_12_0._pending_profile = nil
 		end
 
 		return
 	end
 
-	local input_service = self:input_service()
+	local var_12_3 = arg_12_0:input_service()
 
-	if self._is_visible then
-		if input_service:get("enable_camera_movement") then
-			self._camera_movement_enabled = true
+	if arg_12_0._is_visible then
+		if var_12_3:get("enable_camera_movement") then
+			arg_12_0._camera_movement_enabled = true
 
-			self:_release_input()
-		elseif self._camera_movement_enabled and not input_service:get("camera_movement_held") then
-			self._camera_movement_enabled = false
+			arg_12_0:_release_input()
+		elseif arg_12_0._camera_movement_enabled and not var_12_3:get("camera_movement_held") then
+			arg_12_0._camera_movement_enabled = false
 
-			self:_capture_input()
+			arg_12_0:_capture_input()
 		end
 	end
 
-	if not self._input_captured then
+	if not arg_12_0._input_captured then
 		return
 	end
 
@@ -262,237 +258,228 @@ DarkPactSelectionUI.update = function (self, dt, t, player)
 		return
 	end
 
-	local mouse_active = Managers.input:is_device_active("mouse")
+	local var_12_4 = Managers.input:is_device_active("mouse")
 
-	if self._mouse_active ~= mouse_active then
-		if mouse_active then
-			self:_deselect()
+	if arg_12_0._mouse_active ~= var_12_4 then
+		if var_12_4 then
+			arg_12_0:_deselect()
 		else
-			self:_select(1)
+			arg_12_0:_select(1)
 		end
 
-		self._mouse_active = mouse_active
+		arg_12_0._mouse_active = var_12_4
 	end
 
-	if mouse_active then
-		self:_handle_mouse_input(dt, t, input_service, profile_requester)
+	if var_12_4 then
+		arg_12_0:_handle_mouse_input(arg_12_1, arg_12_2, var_12_3, var_12_0)
 	else
-		self:_handle_gamepad_input(dt, t, input_service, profile_requester)
+		arg_12_0:_handle_gamepad_input(arg_12_1, arg_12_2, var_12_3, var_12_0)
 	end
 end
 
-DarkPactSelectionUI._handle_mouse_input = function (self, dt, t, input_service, profile_requester)
-	local any_hotspot_hovered = false
-	local peer_id, local_player_id = self._peer_id, self._local_player_id
-	local selector_widgets = self._selector_widgets
+function DarkPactSelectionUI._handle_mouse_input(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+	local var_13_0 = false
+	local var_13_1 = arg_13_0._peer_id
+	local var_13_2 = arg_13_0._local_player_id
+	local var_13_3 = arg_13_0._selector_widgets
 
-	for i = 1, #selector_widgets do
-		local widget = selector_widgets[i]
-		local content = widget.content
-		local hotspot = content.hotspot
-		local profile_name = content.profile_name
+	for iter_13_0 = 1, #var_13_3 do
+		local var_13_4 = var_13_3[iter_13_0].content
+		local var_13_5 = var_13_4.hotspot
+		local var_13_6 = var_13_4.profile_name
 
-		any_hotspot_hovered = any_hotspot_hovered or hotspot.is_hover
+		var_13_0 = var_13_0 or var_13_5.is_hover
 
-		if hotspot.on_release or input_service:get(content.input_key) then
-			self._ingame_ui:play_sound("menu_versus_pactsworn_select")
+		if var_13_5.on_release or arg_13_3:get(var_13_4.input_key) then
+			arg_13_0._ingame_ui:play_sound("menu_versus_pactsworn_select")
 
-			hotspot.on_release = false
+			var_13_5.on_release = false
 
-			profile_requester:request_profile(peer_id, local_player_id, profile_name, profile_name, true)
+			arg_13_4:request_profile(var_13_1, var_13_2, var_13_6, var_13_6, true)
 
-			self._pending_profile = profile_name
+			arg_13_0._pending_profile = var_13_6
 
 			break
-		elseif hotspot.on_hover_enter then
-			self._ingame_ui:play_sound("menu_versus_pactsworn_hover")
+		elseif var_13_5.on_hover_enter then
+			arg_13_0._ingame_ui:play_sound("menu_versus_pactsworn_hover")
 
-			local display_name = CareerSettings[profile_name].display_name
+			local var_13_7 = CareerSettings[var_13_6].display_name
 
-			self:_set_enemy_pick_text(display_name)
-			self:_set_enemy_pick_info_text(profile_name)
-			self:_deselect()
+			arg_13_0:_set_enemy_pick_text(var_13_7)
+			arg_13_0:_set_enemy_pick_info_text(var_13_6)
+			arg_13_0:_deselect()
 		end
 	end
 
-	input_service:set_input_blocked("next_observer_target", any_hotspot_hovered, "DarkPactSelectionUI")
-	input_service:set_input_blocked("previous_observer_target", any_hotspot_hovered, "DarkPactSelectionUI")
+	arg_13_3:set_input_blocked("next_observer_target", var_13_0, "DarkPactSelectionUI")
+	arg_13_3:set_input_blocked("previous_observer_target", var_13_0, "DarkPactSelectionUI")
 end
 
-DarkPactSelectionUI._handle_gamepad_input = function (self, dt, t, input_service, profile_requester)
-	if input_service:get("move_right") then
-		local selected_index = math.min(self._selected_index + 1, #self._selector_widgets)
+function DarkPactSelectionUI._handle_gamepad_input(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+	if arg_14_3:get("move_right") then
+		local var_14_0 = math.min(arg_14_0._selected_index + 1, #arg_14_0._selector_widgets)
 
-		self._ingame_ui:play_sound("menu_versus_pactsworn_hover")
-		self:_select(selected_index)
-	elseif input_service:get("move_left") then
-		local selected_index = math.max(self._selected_index - 1, 1)
+		arg_14_0._ingame_ui:play_sound("menu_versus_pactsworn_hover")
+		arg_14_0:_select(var_14_0)
+	elseif arg_14_3:get("move_left") then
+		local var_14_1 = math.max(arg_14_0._selected_index - 1, 1)
 
-		self._ingame_ui:play_sound("menu_versus_pactsworn_hover")
-		self:_select(selected_index)
+		arg_14_0._ingame_ui:play_sound("menu_versus_pactsworn_hover")
+		arg_14_0:_select(var_14_1)
 	end
 
-	if input_service:get("confirm") then
-		self:_confirm_choice(self._selected_index, profile_requester)
+	if arg_14_3:get("confirm") then
+		arg_14_0:_confirm_choice(arg_14_0._selected_index, arg_14_4)
 	end
 end
 
-DarkPactSelectionUI._select = function (self, index)
-	self:_deselect()
+function DarkPactSelectionUI._select(arg_15_0, arg_15_1)
+	arg_15_0:_deselect()
 
-	self._selected_index = index
+	arg_15_0._selected_index = arg_15_1
 
-	local widget = self._selector_widgets[index]
-	local content = widget.content
+	local var_15_0 = arg_15_0._selector_widgets[arg_15_1].content
 
-	content.selected = true
+	var_15_0.selected = true
 
-	local profile_name = content.profile_name
-	local display_name = CareerSettings[profile_name].display_name
+	local var_15_1 = var_15_0.profile_name
+	local var_15_2 = CareerSettings[var_15_1].display_name
 
-	self:_set_enemy_pick_text(display_name)
-	self:_set_enemy_pick_info_text(profile_name)
+	arg_15_0:_set_enemy_pick_text(var_15_2)
+	arg_15_0:_set_enemy_pick_info_text(var_15_1)
 end
 
-DarkPactSelectionUI._deselect = function (self)
-	local selector_widgets = self._selector_widgets
+function DarkPactSelectionUI._deselect(arg_16_0)
+	local var_16_0 = arg_16_0._selector_widgets
 
-	for _, widget in pairs(selector_widgets) do
-		widget.content.selected = false
+	for iter_16_0, iter_16_1 in pairs(var_16_0) do
+		iter_16_1.content.selected = false
 	end
 
-	self._selected_index = 0
+	arg_16_0._selected_index = 0
 end
 
-DarkPactSelectionUI._confirm_choice = function (self, selected_index, profile_requester)
-	selected_index = math.clamp(selected_index, 1, #self._selector_widgets)
+function DarkPactSelectionUI._confirm_choice(arg_17_0, arg_17_1, arg_17_2)
+	arg_17_1 = math.clamp(arg_17_1, 1, #arg_17_0._selector_widgets)
 
-	local peer_id, local_player_id = self._peer_id, self._local_player_id
-	local widget = self._selector_widgets[selected_index]
-	local content = widget.content
+	local var_17_0 = arg_17_0._peer_id
+	local var_17_1 = arg_17_0._local_player_id
+	local var_17_2 = arg_17_0._selector_widgets[arg_17_1].content
 
-	content.selected = false
+	var_17_2.selected = false
 
-	local profile_name = content.profile_name
+	local var_17_3 = var_17_2.profile_name
 
-	self._ingame_ui:play_sound("menu_versus_pactsworn_select")
-	profile_requester:request_profile(peer_id, local_player_id, profile_name, profile_name, true)
+	arg_17_0._ingame_ui:play_sound("menu_versus_pactsworn_select")
+	arg_17_2:request_profile(var_17_0, var_17_1, var_17_3, var_17_3, true)
 
-	self._pending_profile = profile_name
+	arg_17_0._pending_profile = var_17_3
 end
 
-DarkPactSelectionUI.post_update = function (self, dt, t, player)
-	self:_draw(dt, self:input_service())
+function DarkPactSelectionUI.post_update(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+	arg_18_0:_draw(arg_18_1, arg_18_0:input_service())
 end
 
-DarkPactSelectionUI._draw = function (self, dt, input_service)
-	self.super._draw(self, dt, input_service)
-	UIRenderer.begin_pass(self._ui_renderer, self._ui_scenegraph, input_service, dt, nil, {})
+function DarkPactSelectionUI._draw(arg_19_0, arg_19_1, arg_19_2)
+	arg_19_0.super._draw(arg_19_0, arg_19_1, arg_19_2)
+	UIRenderer.begin_pass(arg_19_0._ui_renderer, arg_19_0._ui_scenegraph, arg_19_2, arg_19_1, nil, {})
 
-	if self._selector_widgets and self._is_visible then
-		UIRenderer.draw_all_widgets(self._ui_renderer, self._selector_widgets)
+	if arg_19_0._selector_widgets and arg_19_0._is_visible then
+		UIRenderer.draw_all_widgets(arg_19_0._ui_renderer, arg_19_0._selector_widgets)
 	end
 
-	UIRenderer.end_pass(self._ui_renderer)
+	UIRenderer.end_pass(arg_19_0._ui_renderer)
 end
 
-DarkPactSelectionUI.event_set_new_enemy_role = function (self)
+function DarkPactSelectionUI.event_set_new_enemy_role(arg_20_0)
 	return
 end
 
-DarkPactSelectionUI._set_enemy_role_text = function (self, enemy_role)
-	local widget = self._widgets_by_name.chrome
-
-	widget.content.category_text = string.format(Localize("vs_profile_selection_reason_unavailable"))
+function DarkPactSelectionUI._set_enemy_role_text(arg_21_0, arg_21_1)
+	arg_21_0._widgets_by_name.chrome.content.category_text = string.format(Localize("vs_profile_selection_reason_unavailable"))
 end
 
-DarkPactSelectionUI._set_enemy_pick_text = function (self, current_pick)
-	local widget = self._widgets_by_name.chrome
-
-	widget.content.pick_text = Utf8.upper(Localize(current_pick))
+function DarkPactSelectionUI._set_enemy_pick_text(arg_22_0, arg_22_1)
+	arg_22_0._widgets_by_name.chrome.content.pick_text = Utf8.upper(Localize(arg_22_1))
 end
 
-DarkPactSelectionUI._set_enemy_pick_info_text = function (self, current_pick)
-	local widget = self._widgets_by_name.info_text
-	local info_text_key = CareerSettings[current_pick].description
+function DarkPactSelectionUI._set_enemy_pick_info_text(arg_23_0, arg_23_1)
+	local var_23_0 = arg_23_0._widgets_by_name.info_text
+	local var_23_1 = CareerSettings[arg_23_1].description
 
-	widget.content.text = Localize(info_text_key)
+	var_23_0.content.text = Localize(var_23_1)
 end
 
-DarkPactSelectionUI._create_ui_elements = function (self)
-	self.super._create_ui_elements(self)
+function DarkPactSelectionUI._create_ui_elements(arg_24_0)
+	arg_24_0.super._create_ui_elements(arg_24_0)
 
-	self._selector_widgets = {}
+	arg_24_0._selector_widgets = {}
 end
 
-DarkPactSelectionUI._request_careers = function (self)
-	self._requesting_careers = true
+function DarkPactSelectionUI._request_careers(arg_25_0)
+	arg_25_0._requesting_careers = true
 
-	local game_mode = Managers.state.game_mode:game_mode()
-
-	game_mode:request_selectable_dark_pact_careers()
+	Managers.state.game_mode:game_mode():request_selectable_dark_pact_careers()
 end
 
-DarkPactSelectionUI.event_versus_received_selectable_careers_response = function (self, enemy_role, careers)
-	self._requesting_careers = false
+function DarkPactSelectionUI.event_versus_received_selectable_careers_response(arg_26_0, arg_26_1, arg_26_2)
+	arg_26_0._requesting_careers = false
 
-	self:_create_selection_widgets(enemy_role, careers)
-	self:_play_anim("on_enter", self._show_play_speed)
+	arg_26_0:_create_selection_widgets(arg_26_1, arg_26_2)
+	arg_26_0:_play_anim("on_enter", arg_26_0._show_play_speed)
 
-	local gamepad_active = Managers.input:is_device_active("gamepad")
-
-	if gamepad_active then
-		self:_select(1)
+	if Managers.input:is_device_active("gamepad") then
+		arg_26_0:_select(1)
 	end
 
-	local selected_career_name = self:_get_current_selected_career_name()
+	local var_26_0 = arg_26_0:_get_current_selected_career_name()
 
-	self:_set_enemy_pick_text(selected_career_name)
-	self:_set_overlay_size()
+	arg_26_0:_set_enemy_pick_text(var_26_0)
+	arg_26_0:_set_overlay_size()
 
-	self._is_visible = true
+	arg_26_0._is_visible = true
 end
 
-DarkPactSelectionUI._create_selection_widgets = function (self, enemy_role, careers)
-	local half_picks = math.floor(#careers / 2)
-	local offset_x = PROTRAIT_WIDTH + 10
-	local even_offset = -(half_picks * offset_x)
-	local odd_offset = -(half_picks * offset_x) - PROTRAIT_WIDTH / 2
-	local offset = #careers % 2 == 0 and even_offset or odd_offset
+function DarkPactSelectionUI._create_selection_widgets(arg_27_0, arg_27_1, arg_27_2)
+	local var_27_0 = math.floor(#arg_27_2 / 2)
+	local var_27_1 = var_0_4 + 10
+	local var_27_2 = -(var_27_0 * var_27_1)
+	local var_27_3 = -(var_27_0 * var_27_1) - var_0_4 / 2
+	local var_27_4 = #arg_27_2 % 2 == 0 and var_27_2 or var_27_3
 
-	self._ui_scenegraph.selection_pivot.position[1] = offset
+	arg_27_0._ui_scenegraph.selection_pivot.position[1] = var_27_4
 
-	UISceneGraph.update_scenegraph(self._ui_scenegraph)
+	UISceneGraph.update_scenegraph(arg_27_0._ui_scenegraph)
 
-	local selector_widgets = {}
+	local var_27_5 = {}
 
-	for i = 1, #careers do
-		local scenegraph_name = "selection_pivot"
-		local widget_name = "selection_widget_" .. i
-		local widget_def = create_selection_widget(scenegraph_name, {
-			PROTRAIT_WIDTH,
-			PORTRAIT_HEIGHT,
+	for iter_27_0 = 1, #arg_27_2 do
+		local var_27_6 = "selection_pivot"
+		local var_27_7 = "selection_widget_" .. iter_27_0
+		local var_27_8 = var_0_2(var_27_6, {
+			var_0_4,
+			var_0_5
 		})
-		local widget = UIWidget.init(widget_def)
-		local profile_name = careers[i]
+		local var_27_9 = UIWidget.init(var_27_8)
+		local var_27_10 = arg_27_2[iter_27_0]
 
-		widget.content.profile_name = profile_name
-		widget.content.profile_texture = CareerSettings[profile_name].picking_image_square or "icons_placeholder"
-		widget.content.input_key = "keyboard_" .. i
-		widget.offset[1] = (i - 1) * offset_x
-		selector_widgets[#selector_widgets + 1] = widget
+		var_27_9.content.profile_name = var_27_10
+		var_27_9.content.profile_texture = CareerSettings[var_27_10].picking_image_square or "icons_placeholder"
+		var_27_9.content.input_key = "keyboard_" .. iter_27_0
+		var_27_9.offset[1] = (iter_27_0 - 1) * var_27_1
+		var_27_5[#var_27_5 + 1] = var_27_9
 	end
 
-	self:_set_enemy_role_text(enemy_role)
+	arg_27_0:_set_enemy_role_text(arg_27_1)
 
-	self._selector_widgets = selector_widgets
+	arg_27_0._selector_widgets = var_27_5
 end
 
-DarkPactSelectionUI.input_service = function (self)
-	return self._input_manager:get_service(self._input_service_name)
+function DarkPactSelectionUI.input_service(arg_28_0)
+	return arg_28_0._input_manager:get_service(arg_28_0._input_service_name)
 end
 
-DarkPactSelectionUI._get_current_selected_career_name = function (self)
+function DarkPactSelectionUI._get_current_selected_career_name(arg_29_0)
 	if not Managers then
 		return "not_assigned"
 	end
@@ -505,34 +492,29 @@ DarkPactSelectionUI._get_current_selected_career_name = function (self)
 		return "not_assigned"
 	end
 
-	local local_player = Managers.player:local_player()
+	local var_29_0 = Managers.player:local_player()
 
-	if not local_player then
+	if not var_29_0 then
 		return "not_assigned"
 	end
 
-	local career_index = local_player:career_index()
-	local profile_index = local_player:profile_index()
+	local var_29_1 = var_29_0:career_index()
+	local var_29_2 = var_29_0:profile_index()
 
-	if not profile_index or not career_index then
+	if not var_29_2 or not var_29_1 then
 		return "not_assigned"
 	end
 
-	local current_profile = SPProfiles[profile_index]
-	local current_career = current_profile.careers[career_index]
-	local display_name = current_career.display_name
-
-	return display_name
+	return SPProfiles[var_29_2].careers[var_29_1].display_name
 end
 
-DarkPactSelectionUI._set_overlay_size = function (self)
-	local w, h = RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h
-	local inv_scale = RESOLUTION_LOOKUP.inv_scale
-	local widget = self._widgets_by_name.overlay
-	local style = widget.style
+function DarkPactSelectionUI._set_overlay_size(arg_30_0)
+	local var_30_0 = RESOLUTION_LOOKUP.res_w
+	local var_30_1 = RESOLUTION_LOOKUP.res_h
+	local var_30_2 = RESOLUTION_LOOKUP.inv_scale
 
-	style.rect.size = {
-		w * inv_scale + 6,
-		h * inv_scale + 6,
+	arg_30_0._widgets_by_name.overlay.style.rect.size = {
+		var_30_0 * var_30_2 + 6,
+		var_30_1 * var_30_2 + 6
 	}
 end

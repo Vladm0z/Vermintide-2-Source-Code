@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/managers/url_loader/url_loader_manager.lua
+-- chunkname: @scripts/managers/url_loader/url_loader_manager.lua
 
 UrlLoaderManager = class(UrlLoaderManager)
 
@@ -7,95 +7,96 @@ if not UrlLoader then
 
 	UrlLoader = {}
 
-	UrlLoader.init = function (loader)
+	function UrlLoader.init(arg_1_0)
 		return
 	end
 
-	UrlLoader.load_texture = function (loader, url)
+	function UrlLoader.load_texture(arg_2_0, arg_2_1)
 		return 0
 	end
 
-	UrlLoader.unload = function (loader, job)
+	function UrlLoader.unload(arg_3_0, arg_3_1)
 		return
 	end
 
-	UrlLoader.done = function (loader, job)
+	function UrlLoader.done(arg_4_0, arg_4_1)
 		return false
 	end
 
-	UrlLoader.success = function (loader, job)
+	function UrlLoader.success(arg_5_0, arg_5_1)
 		return false
 	end
 
-	UrlLoader.texture = function (loader, job)
+	function UrlLoader.texture(arg_6_0, arg_6_1)
 		return nil
 	end
 
-	UrlLoader.update = function (loader)
+	function UrlLoader.update(arg_7_0)
 		return
 	end
 
-	UrlLoader.destroy = function (loader)
+	function UrlLoader.destroy(arg_8_0)
 		return
 	end
 
 	UrlLoader.is_stub = true
 end
 
-UrlLoaderManager.init = function (self)
+function UrlLoaderManager.init(arg_9_0)
 	if not UrlLoader.is_stub then
-		self._url_loader = UrlLoader()
+		arg_9_0._url_loader = UrlLoader()
 	end
 
-	self._jobs = {}
-	self._url_jobs = {}
-	self._texture_resources = {}
-	self._reference_counters = {}
-	self._reference_callbacks = {}
-	self._cleanup = false
+	arg_9_0._jobs = {}
+	arg_9_0._url_jobs = {}
+	arg_9_0._texture_resources = {}
+	arg_9_0._reference_counters = {}
+	arg_9_0._reference_callbacks = {}
+	arg_9_0._cleanup = false
 end
 
-UrlLoaderManager.load_resource = function (self, reference_name, url, callback, cache_key, cache_version, texture_category)
-	cache_key = cache_key or url
-	cache_version = cache_version or "1"
-	texture_category = texture_category or "downloaded_textures"
+function UrlLoaderManager.load_resource(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
+	arg_10_4 = arg_10_4 or arg_10_2
+	arg_10_5 = arg_10_5 or "1"
+	arg_10_6 = arg_10_6 or "downloaded_textures"
 
-	if not self._jobs[cache_key] then
-		local url_job = UrlLoader.load_texture(self._url_loader, url, cache_key, cache_version, texture_category)
-		local job = {}
+	if not arg_10_0._jobs[arg_10_4] then
+		local var_10_0 = UrlLoader.load_texture(arg_10_0._url_loader, arg_10_2, arg_10_4, arg_10_5, arg_10_6)
+		local var_10_1 = {
+			url_job = var_10_0,
+			cache_key = arg_10_4,
+			cache_version = arg_10_5,
+			texture_category = arg_10_6
+		}
 
-		job.url_job = url_job
-		job.cache_key = cache_key
-		job.cache_version = cache_version
-		job.texture_category = texture_category
-		self._jobs[cache_key] = job
-		self._url_jobs[cache_key] = url_job
+		arg_10_0._jobs[arg_10_4] = var_10_1
+		arg_10_0._url_jobs[arg_10_4] = var_10_0
 	end
 
-	if not self._reference_counters[cache_key] then
-		self._reference_counters[cache_key] = {}
+	if not arg_10_0._reference_counters[arg_10_4] then
+		arg_10_0._reference_counters[arg_10_4] = {}
 	end
 
-	if not self._reference_callbacks[cache_key] then
-		self._reference_callbacks[cache_key] = {}
+	if not arg_10_0._reference_callbacks[arg_10_4] then
+		arg_10_0._reference_callbacks[arg_10_4] = {}
 	end
 
-	self._reference_counters[cache_key][reference_name] = true
-	self._reference_callbacks[cache_key][reference_name] = callback
+	arg_10_0._reference_counters[arg_10_4][arg_10_1] = true
+	arg_10_0._reference_callbacks[arg_10_4][arg_10_1] = arg_10_3
 end
 
-UrlLoaderManager.unload_resource = function (self, reference_name)
-	local reference_counters = self._reference_counters
-	local reference_callbacks = self._reference_callbacks
-	local reference_cache_key
+function UrlLoaderManager.unload_resource(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_0._reference_counters
+	local var_11_1 = arg_11_0._reference_callbacks
+	local var_11_2
 
-	for cache_key, references in pairs(reference_counters) do
-		if references[reference_name] then
-			reference_cache_key = cache_key
-			references[reference_name] = nil
-			reference_callbacks[cache_key][reference_name] = nil
+	for iter_11_0, iter_11_1 in pairs(var_11_0) do
+		if iter_11_1[arg_11_1] then
+			var_11_2 = iter_11_0
+			iter_11_1[arg_11_1] = nil
+			var_11_1[iter_11_0][arg_11_1] = nil
 
-			if next(references) then
+			if next(iter_11_1) then
 				return
 			else
 				break
@@ -103,124 +104,115 @@ UrlLoaderManager.unload_resource = function (self, reference_name)
 		end
 	end
 
-	fassert(reference_cache_key, "Could not find any Cache key for reference (%s)", reference_name)
+	fassert(var_11_2, "Could not find any Cache key for reference (%s)", arg_11_1)
 
-	local jobs = self._jobs
-	local url_jobs = self._url_jobs
-	local url_job = url_jobs[reference_cache_key]
-	local url_loader = self._url_loader
+	local var_11_3 = arg_11_0._jobs
+	local var_11_4 = arg_11_0._url_jobs
+	local var_11_5 = var_11_4[var_11_2]
+	local var_11_6 = arg_11_0._url_loader
 
-	UrlLoader.unload(url_loader, url_job)
+	UrlLoader.unload(var_11_6, var_11_5)
 
-	jobs[reference_cache_key] = nil
-	url_jobs[reference_cache_key] = nil
-
-	local texture_resources = self._texture_resources
-
-	texture_resources[reference_cache_key] = nil
-	self._cleanup = true
+	var_11_3[var_11_2] = nil
+	var_11_4[var_11_2] = nil
+	arg_11_0._texture_resources[var_11_2] = nil
+	arg_11_0._cleanup = true
 end
 
-UrlLoaderManager._on_job_complete = function (self, job, success)
-	local url_loader = self._url_loader
-	local url_job = job.url_job
-	local cache_key = job.cache_key
+function UrlLoaderManager._on_job_complete(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = arg_12_0._url_loader
+	local var_12_1 = arg_12_1.url_job
+	local var_12_2 = arg_12_1.cache_key
 
-	if success then
-		local texture_resource = UrlLoader.texture(url_loader, url_job)
+	if arg_12_2 then
+		local var_12_3 = UrlLoader.texture(var_12_0, var_12_1)
 
-		self._texture_resources[cache_key] = texture_resource
+		arg_12_0._texture_resources[var_12_2] = var_12_3
 	else
-		local reference_counters = self._reference_counters
-		local cache_key_references = reference_counters[cache_key]
-		local reference_callbacks = self._reference_callbacks
-		local cache_key_callbacks = reference_callbacks[cache_key]
+		local var_12_4 = arg_12_0._reference_counters[var_12_2]
+		local var_12_5 = arg_12_0._reference_callbacks[var_12_2]
 
-		for reference_name, callback in pairs(cache_key_callbacks) do
-			callback(nil)
+		for iter_12_0, iter_12_1 in pairs(var_12_5) do
+			iter_12_1(nil)
 
-			cache_key_callbacks[reference_name] = nil
-			cache_key_references[reference_name] = nil
+			var_12_5[iter_12_0] = nil
+			var_12_4[iter_12_0] = nil
 		end
 
-		UrlLoader.unload(url_loader, url_job)
+		UrlLoader.unload(var_12_0, var_12_1)
 
-		local url_jobs = self._url_jobs
-
-		url_jobs[cache_key] = nil
+		arg_12_0._url_jobs[var_12_2] = nil
 	end
 
-	local jobs = self._jobs
-
-	jobs[cache_key] = nil
+	arg_12_0._jobs[var_12_2] = nil
 end
 
-UrlLoaderManager.update = function (self, dt)
-	local url_loader = self._url_loader
-	local jobs = self._jobs
+function UrlLoaderManager.update(arg_13_0, arg_13_1)
+	local var_13_0 = arg_13_0._url_loader
+	local var_13_1 = arg_13_0._jobs
 
-	for cache_key, job in pairs(jobs) do
-		local url_job = job.url_job
+	for iter_13_0, iter_13_1 in pairs(var_13_1) do
+		local var_13_2 = iter_13_1.url_job
 
-		if UrlLoader.done(url_loader, url_job) then
-			local success = UrlLoader.success(url_loader, url_job)
+		if UrlLoader.done(var_13_0, var_13_2) then
+			local var_13_3 = UrlLoader.success(var_13_0, var_13_2)
 
-			self:_on_job_complete(job, success)
+			arg_13_0:_on_job_complete(iter_13_1, var_13_3)
 		end
 	end
 
-	local texture_resources = self._texture_resources
-	local reference_callbacks = self._reference_callbacks
+	local var_13_4 = arg_13_0._texture_resources
+	local var_13_5 = arg_13_0._reference_callbacks
 
-	for cache_key, callbacks in pairs(reference_callbacks) do
-		local texture_resource = texture_resources[cache_key]
+	for iter_13_2, iter_13_3 in pairs(var_13_5) do
+		local var_13_6 = var_13_4[iter_13_2]
 
-		if texture_resource then
-			for reference_name, callback in pairs(callbacks) do
-				callback(texture_resource)
+		if var_13_6 then
+			for iter_13_4, iter_13_5 in pairs(iter_13_3) do
+				iter_13_5(var_13_6)
 
-				callbacks[reference_name] = nil
+				iter_13_3[iter_13_4] = nil
 			end
 		end
 	end
 end
 
-UrlLoaderManager.post_render = function (self)
-	if self._cleanup then
-		local url_loader = self._url_loader
+function UrlLoaderManager.post_render(arg_14_0)
+	if arg_14_0._cleanup then
+		local var_14_0 = arg_14_0._url_loader
 
-		UrlLoader.update(url_loader)
+		UrlLoader.update(var_14_0)
 
-		self._cleanup = false
+		arg_14_0._cleanup = false
 	end
 end
 
-UrlLoaderManager.destroy = function (self)
-	local url_loader = self._url_loader
-	local url_jobs = self._url_jobs
-	local texture_resources = self._texture_resources
+function UrlLoaderManager.destroy(arg_15_0)
+	local var_15_0 = arg_15_0._url_loader
+	local var_15_1 = arg_15_0._url_jobs
+	local var_15_2 = arg_15_0._texture_resources
 
-	for cache_key, texture_resource in pairs(texture_resources) do
-		local url_job = url_jobs[cache_key]
+	for iter_15_0, iter_15_1 in pairs(var_15_2) do
+		local var_15_3 = var_15_1[iter_15_0]
 
-		UrlLoader.unload(url_loader, url_job)
+		UrlLoader.unload(var_15_0, var_15_3)
 	end
 
-	local reference_counters = self._reference_counters
+	local var_15_4 = arg_15_0._reference_counters
 
-	for cache_key, references in pairs(reference_counters) do
-		for reference_name, _ in pairs(references) do
-			Application.warning(string.format("[UrlLoaderManager] - [Destroy] - Found existing reference to Cache key: (%s), Reference name: (%s)", cache_key, reference_name))
+	for iter_15_2, iter_15_3 in pairs(var_15_4) do
+		for iter_15_4, iter_15_5 in pairs(iter_15_3) do
+			Application.warning(string.format("[UrlLoaderManager] - [Destroy] - Found existing reference to Cache key: (%s), Reference name: (%s)", iter_15_2, iter_15_4))
 		end
 	end
 
-	UrlLoader.update(url_loader)
-	UrlLoader.destroy(url_loader)
+	UrlLoader.update(var_15_0)
+	UrlLoader.destroy(var_15_0)
 
-	self._url_loader = nil
-	self._jobs = nil
-	self._url_jobs = nil
-	self._texture_resources = nil
-	self._reference_counters = nil
-	self._reference_callbacks = nil
+	arg_15_0._url_loader = nil
+	arg_15_0._jobs = nil
+	arg_15_0._url_jobs = nil
+	arg_15_0._texture_resources = nil
+	arg_15_0._reference_counters = nil
+	arg_15_0._reference_callbacks = nil
 end

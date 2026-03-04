@@ -1,249 +1,239 @@
-﻿-- chunkname: @scripts/managers/backend/backend_utils.lua
+-- chunkname: @scripts/managers/backend/backend_utils.lua
 
 require("scripts/managers/backend_playfab/backend_manager_playfab")
 
 BackendUtils = {}
 
-local placeholder_icon_textures = {
-	hat = "icons_placeholder_hat_01",
+local var_0_0 = {
 	melee = "icons_placeholder_melee_01",
 	ranged = "icons_placeholder_ranged_01",
-	trinket = "icons_placeholder_trinket_01",
+	hat = "icons_placeholder_hat_01",
+	trinket = "icons_placeholder_trinket_01"
 }
 
-BackendUtils.get_loadout_item_id = function (career_name, slot_name, is_bot)
-	local loadout_interface = Managers.backend:get_loadout_interface_by_slot(slot_name)
+function BackendUtils.get_loadout_item_id(arg_1_0, arg_1_1, arg_1_2)
+	local var_1_0 = Managers.backend:get_loadout_interface_by_slot(arg_1_1)
 
-	if loadout_interface then
-		return loadout_interface:get_loadout_item_id(career_name, slot_name, is_bot)
+	if var_1_0 then
+		return var_1_0:get_loadout_item_id(arg_1_0, arg_1_1, arg_1_2)
 	end
 end
 
-BackendUtils.set_loadout_item = function (backend_id, career_name, slot_name)
-	local loadout_interface = Managers.backend:get_loadout_interface_by_slot(slot_name)
+function BackendUtils.set_loadout_item(arg_2_0, arg_2_1, arg_2_2)
+	local var_2_0 = Managers.backend:get_loadout_interface_by_slot(arg_2_2)
 
-	if loadout_interface then
-		loadout_interface:set_loadout_item(backend_id, career_name, slot_name)
+	if var_2_0 then
+		var_2_0:set_loadout_item(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-BackendUtils.get_loadout_item = function (career_name, slot, is_bot)
-	local backend_items = Managers.backend:get_interface("items")
-	local backend_id = BackendUtils.get_loadout_item_id(career_name, slot, is_bot)
+function BackendUtils.get_loadout_item(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0 = Managers.backend:get_interface("items")
+	local var_3_1 = BackendUtils.get_loadout_item_id(arg_3_0, arg_3_1, arg_3_2)
 
-	if not backend_id and CosmeticUtils.is_cosmetic_slot(slot) then
-		local profile = PROFILES_BY_CAREER_NAMES[career_name]
-		local career_settings = CareerSettings[career_name]
+	if not var_3_1 and CosmeticUtils.is_cosmetic_slot(arg_3_1) then
+		local var_3_2 = PROFILES_BY_CAREER_NAMES[arg_3_0]
+		local var_3_3 = CareerSettings[arg_3_0]
 
-		if career_settings.required_dlc and Managers.unlock:is_dlc_unlocked(career_settings.required_dlc) then
-			Crashify.print_exception("BackendUtils", "Failed to find loadout item in slot %q for career %q", slot, career_name)
+		if var_3_3.required_dlc and Managers.unlock:is_dlc_unlocked(var_3_3.required_dlc) then
+			Crashify.print_exception("BackendUtils", "Failed to find loadout item in slot %q for career %q", arg_3_1, arg_3_0)
 		end
 
 		return
 	end
 
-	return backend_items:get_item_from_id(backend_id)
+	return var_3_0:get_item_from_id(var_3_1)
 end
 
-BackendUtils.try_set_loadout_item = function (career_name, slot_name, item_key)
-	local backend_items = Managers.backend:get_interface("items")
-	local item = backend_items:get_item_from_key(item_key)
+function BackendUtils.try_set_loadout_item(arg_4_0, arg_4_1, arg_4_2)
+	local var_4_0 = Managers.backend:get_interface("items"):get_item_from_key(arg_4_2)
 
-	if item then
-		local backend_id = item.backend_id
+	if var_4_0 then
+		local var_4_1 = var_4_0.backend_id
 
-		BackendUtils.set_loadout_item(backend_id, career_name, slot_name)
-	elseif CosmeticUtils.is_cosmetic_slot(slot_name) then
-		Crashify.print_exception("BackendUtils", "Failed to set loadout item %q in slot %q for career %q", item_key, slot_name, career_name)
+		BackendUtils.set_loadout_item(var_4_1, arg_4_0, arg_4_1)
+	elseif CosmeticUtils.is_cosmetic_slot(arg_4_1) then
+		Crashify.print_exception("BackendUtils", "Failed to set loadout item %q in slot %q for career %q", arg_4_2, arg_4_1, arg_4_0)
 	end
 
-	return item
+	return var_4_0
 end
 
-BackendUtils.get_item_from_masterlist = function (backend_id)
-	local backend_items = Managers.backend:get_interface("items")
-	local item_master_list_data = backend_items:get_item_masterlist_data(backend_id)
+function BackendUtils.get_item_from_masterlist(arg_5_0)
+	local var_5_0 = Managers.backend:get_interface("items"):get_item_masterlist_data(arg_5_0)
 
-	if item_master_list_data then
-		local item_data = table.clone(item_master_list_data)
+	if var_5_0 then
+		local var_5_1 = table.clone(var_5_0)
 
-		item_data.backend_id = backend_id
+		var_5_1.backend_id = arg_5_0
 
-		return item_data
+		return var_5_1
 	end
 end
 
-BackendUtils.get_hero_power_level_from_level = function (profile_name)
-	local settings = PowerLevelFromLevelSettings
-	local experience = ExperienceSettings.get_experience(profile_name)
-	local level = ExperienceSettings.get_level(experience)
+function BackendUtils.get_hero_power_level_from_level(arg_6_0)
+	local var_6_0 = PowerLevelFromLevelSettings
+	local var_6_1 = ExperienceSettings.get_experience(arg_6_0)
+	local var_6_2 = ExperienceSettings.get_level(var_6_1)
 
-	return settings.power_level_per_level * level
+	return var_6_0.power_level_per_level * var_6_2
 end
 
-BackendUtils.get_hero_power_level = function (profile_name)
-	local settings = PowerLevelFromLevelSettings
-	local experience = ExperienceSettings.get_experience(profile_name)
-	local level = ExperienceSettings.get_level(experience)
+function BackendUtils.get_hero_power_level(arg_7_0)
+	local var_7_0 = PowerLevelFromLevelSettings
+	local var_7_1 = ExperienceSettings.get_experience(arg_7_0)
+	local var_7_2 = ExperienceSettings.get_level(var_7_1)
 
-	return settings.power_level_per_level * level + settings.starting_power_level
+	return var_7_0.power_level_per_level * var_7_2 + var_7_0.starting_power_level
 end
 
-BackendUtils.get_average_item_power_level = function (career_name)
-	local backend_items = Managers.backend:get_interface("items")
-	local slots = InventorySettings.equipment_slots
-	local num_slots = 5
-	local total_item_power_level = 0
+function BackendUtils.get_average_item_power_level(arg_8_0)
+	local var_8_0 = Managers.backend:get_interface("items")
+	local var_8_1 = InventorySettings.equipment_slots
+	local var_8_2 = 5
+	local var_8_3 = 0
 
-	for _, slot in pairs(slots) do
-		local slot_name = slot.name
-		local item = BackendUtils.get_loadout_item(career_name, slot_name)
+	for iter_8_0, iter_8_1 in pairs(var_8_1) do
+		local var_8_4 = iter_8_1.name
+		local var_8_5 = BackendUtils.get_loadout_item(arg_8_0, var_8_4)
 
-		if item then
-			local backend_id = item.backend_id
-			local power_level = backend_items:get_item_power_level(backend_id)
+		if var_8_5 then
+			local var_8_6 = var_8_5.backend_id
+			local var_8_7 = var_8_0:get_item_power_level(var_8_6)
 
-			if power_level then
-				total_item_power_level = total_item_power_level + power_level
+			if var_8_7 then
+				var_8_3 = var_8_3 + var_8_7
 			end
 		end
 	end
 
-	return total_item_power_level / num_slots
+	return var_8_3 / var_8_2
 end
 
-BackendUtils.get_total_power_level = function (profile_name, career_name, optional_game_mode_key)
+function BackendUtils.get_total_power_level(arg_9_0, arg_9_1, arg_9_2)
 	if script_data.power_level_override then
 		return script_data.power_level_override
 	end
 
-	local game_mode_manager = Managers.state.game_mode
+	local var_9_0 = Managers.state.game_mode
 
-	if game_mode_manager:has_activated_mutator("whiterun") then
+	if var_9_0:has_activated_mutator("whiterun") then
 		return MIN_POWER_LEVEL_CAP
 	end
 
-	local game_mode_key = optional_game_mode_key or game_mode_manager:game_mode_key()
-	local game_mode_setting = GameModeSettings[game_mode_key]
+	local var_9_1 = arg_9_2 or var_9_0:game_mode_key()
+	local var_9_2 = GameModeSettings[var_9_1]
 
-	if game_mode_setting and game_mode_setting.power_level_override then
-		return game_mode_setting.power_level_override
+	if var_9_2 and var_9_2.power_level_override then
+		return var_9_2.power_level_override
 	end
 
-	return Managers.backend:get_total_power_level(profile_name, career_name, game_mode_key)
+	return Managers.backend:get_total_power_level(arg_9_0, arg_9_1, var_9_1)
 end
 
-BackendUtils.get_item_template = function (item_data, backend_id)
-	local backend_items = Managers.backend:get_interface("items")
-	local backend_id = item_data.backend_id or backend_id
-	local template = backend_items:get_item_template(item_data, backend_id)
+function BackendUtils.get_item_template(arg_10_0, arg_10_1)
+	local var_10_0 = Managers.backend:get_interface("items")
+	local var_10_1 = arg_10_0.backend_id or arg_10_1
 
-	return template
+	return (var_10_0:get_item_template(arg_10_0, var_10_1))
 end
 
-BackendUtils.get_item_units = function (item_data, backend_id, skin, career_name)
-	local left_hand_unit = item_data.left_hand_unit
-	local right_hand_unit = item_data.right_hand_unit
-	local ammo_unit = item_data.ammo_unit
-	local ammo_unit_3p = item_data.ammo_unit_3p
-	local is_ammo_weapon = item_data.is_ammo_weapon
-	local projectile_units_template = item_data.projectile_units_template
-	local pickup_template_name = item_data.pickup_template_name
-	local link_pickup_template_name = item_data.link_pickup_template_name
-	local unit = item_data.unit
-	local material = item_data.material
-	local icon = item_data.hud_icon
-	local backend_id = item_data.backend_id or backend_id
-	local skin_name, material_settings
+function BackendUtils.get_item_units(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+	local var_11_0 = arg_11_0.left_hand_unit
+	local var_11_1 = arg_11_0.right_hand_unit
+	local var_11_2 = arg_11_0.ammo_unit
+	local var_11_3 = arg_11_0.ammo_unit_3p
+	local var_11_4 = arg_11_0.is_ammo_weapon
+	local var_11_5 = arg_11_0.projectile_units_template
+	local var_11_6 = arg_11_0.pickup_template_name
+	local var_11_7 = arg_11_0.link_pickup_template_name
+	local var_11_8 = arg_11_0.unit
+	local var_11_9 = arg_11_0.material
+	local var_11_10 = arg_11_0.hud_icon
+	local var_11_11 = arg_11_0.backend_id or arg_11_1
+	local var_11_12
+	local var_11_13
 
-	if career_name then
-		left_hand_unit = item_data.left_hand_unit_override and item_data.left_hand_unit_override[career_name] or left_hand_unit
-		right_hand_unit = item_data.right_hand_unit_override and item_data.right_hand_unit_override[career_name] or right_hand_unit
+	if arg_11_3 then
+		var_11_0 = arg_11_0.left_hand_unit_override and arg_11_0.left_hand_unit_override[arg_11_3] or var_11_0
+		var_11_1 = arg_11_0.right_hand_unit_override and arg_11_0.right_hand_unit_override[arg_11_3] or var_11_1
 	end
 
-	if backend_id or skin then
-		if not skin then
-			local backend_items = Managers.backend:get_interface("items")
+	if var_11_11 or arg_11_2 then
+		arg_11_2 = arg_11_2 or Managers.backend:get_interface("items"):get_skin(var_11_11)
 
-			skin = backend_items:get_skin(backend_id)
-		end
+		if arg_11_2 then
+			local var_11_14 = WeaponSkins.skins[arg_11_2]
 
-		if skin then
-			local skin_template = WeaponSkins.skins[skin]
+			var_11_0 = var_11_14.left_hand_unit
+			var_11_1 = var_11_14.right_hand_unit
+			var_11_2 = var_11_14.ammo_unit
+			var_11_3 = var_11_14.ammo_unit_3p
+			var_11_5 = var_11_14.projectile_units_template
+			var_11_6 = var_11_14.pickup_template_name
+			var_11_7 = var_11_14.link_pickup_template_name
+			var_11_10 = var_11_14.hud_icon
+			var_11_12 = arg_11_2
+			var_11_13 = var_11_14.material_settings_name
 
-			left_hand_unit = skin_template.left_hand_unit
-			right_hand_unit = skin_template.right_hand_unit
-			ammo_unit = skin_template.ammo_unit
-			ammo_unit_3p = skin_template.ammo_unit_3p
-			projectile_units_template = skin_template.projectile_units_template
-			pickup_template_name = skin_template.pickup_template_name
-			link_pickup_template_name = skin_template.link_pickup_template_name
-			icon = skin_template.hud_icon
-			skin_name = skin
-			material_settings = skin_template.material_settings
-
-			if career_name then
-				left_hand_unit = skin_template.left_hand_unit_override and skin_template.left_hand_unit_override[career_name] or left_hand_unit
-				right_hand_unit = skin_template.right_hand_unit_override and skin_template.right_hand_unit_override[career_name] or right_hand_unit
+			if arg_11_3 then
+				var_11_0 = var_11_14.left_hand_unit_override and var_11_14.left_hand_unit_override[arg_11_3] or var_11_0
+				var_11_1 = var_11_14.right_hand_unit_override and var_11_14.right_hand_unit_override[arg_11_3] or var_11_1
 			end
 		end
 	end
 
-	if item_data.item_units_to_replace or left_hand_unit or right_hand_unit or unit or material or icon then
-		local units = {
-			left_hand_unit = left_hand_unit,
-			right_hand_unit = right_hand_unit,
-			ammo_unit = ammo_unit,
-			ammo_unit_3p = ammo_unit_3p,
-			projectile_units_template = projectile_units_template,
-			pickup_template_name = pickup_template_name,
-			link_pickup_template_name = link_pickup_template_name,
-			is_ammo_weapon = is_ammo_weapon,
-			unit = unit,
-			material = material,
-			icon = icon,
-			skin = skin_name,
-			material_settings = material_settings,
+	if arg_11_0.item_units_to_replace or var_11_0 or var_11_1 or var_11_8 or var_11_9 or var_11_10 then
+		return {
+			left_hand_unit = var_11_0,
+			right_hand_unit = var_11_1,
+			ammo_unit = var_11_2,
+			ammo_unit_3p = var_11_3,
+			projectile_units_template = var_11_5,
+			pickup_template_name = var_11_6,
+			link_pickup_template_name = var_11_7,
+			is_ammo_weapon = var_11_4,
+			unit = var_11_8,
+			material = var_11_9,
+			icon = var_11_10,
+			skin = var_11_12,
+			material_settings_name = var_11_13
 		}
-
-		return units
 	end
 
-	if item_data.item_type ~= "chips" then
-		fassert(false, "no left hand or right hand unit defined for : " .. (item_data.backend_id or item_data.display_name))
+	if arg_11_0.item_type ~= "chips" then
+		fassert(false, "no left hand or right hand unit defined for : " .. (arg_11_0.backend_id or arg_11_0.display_name))
 	end
 end
 
-BackendUtils.format_profile_hash = function (hash, num_chars, block_length, block_divider)
-	if not hash then
+function BackendUtils.format_profile_hash(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	if not arg_12_0 then
 		return "n/a"
 	end
 
-	local str = ""
+	local var_12_0 = ""
 
-	for ii = 1, num_chars, block_length do
-		local block = string.sub(hash, ii, ii + block_length - 1)
+	for iter_12_0 = 1, arg_12_1, arg_12_2 do
+		local var_12_1 = string.sub(arg_12_0, iter_12_0, iter_12_0 + arg_12_2 - 1)
 
-		if str == "" then
-			str = block
+		if var_12_0 == "" then
+			var_12_0 = var_12_1
 		else
-			str = string.format("%s%s%s", str, block_divider, block)
+			var_12_0 = string.format("%s%s%s", var_12_0, arg_12_3, var_12_1)
 		end
 	end
 
-	return str
+	return var_12_0
 end
 
-BackendUtils.has_loot_chest = function ()
-	local backend_items = Managers.backend:get_interface("items")
-	local item_filter = "slot_type == " .. ItemType.LOOT_CHEST
-	local items = backend_items:get_filtered_items(item_filter)
-	local has_chest = #items > 0
+function BackendUtils.has_loot_chest()
+	local var_13_0 = Managers.backend:get_interface("items")
+	local var_13_1 = "slot_type == " .. ItemType.LOOT_CHEST
 
-	return has_chest
+	return #var_13_0:get_filtered_items(var_13_1) > 0
 end
 
-local CAREER_ID_LOOKUP = {
+local var_0_1 = {
 	"dr_ranger",
 	"dr_slayer",
 	"dr_ironbreaker",
@@ -263,94 +253,83 @@ local CAREER_ID_LOOKUP = {
 	"wh_zealot",
 	"we_thornsister",
 	"wh_priest",
-	"bw_necromancer",
+	"bw_necromancer"
 }
 
-BackendUtils.calculate_weave_score = function (tier, score, career_name)
-	local career_index = table.find(CAREER_ID_LOOKUP, career_name)
-	local weave_score = math.floor((tier * 100000 + score) * 100 + career_index - 2147483648)
+function BackendUtils.calculate_weave_score(arg_14_0, arg_14_1, arg_14_2)
+	local var_14_0 = table.find(var_0_1, arg_14_2)
 
-	return weave_score
+	return (math.floor((arg_14_0 * 100000 + arg_14_1) * 100 + var_14_0 - 2147483648))
 end
 
-BackendUtils.convert_weave_score = function (weave_score)
-	local value = weave_score + 2147483648
-	local career_index = math.round((value / 100 - math.floor(value / 100)) * 100)
-	local career_name = CAREER_ID_LOOKUP[career_index]
+function BackendUtils.convert_weave_score(arg_15_0)
+	local var_15_0 = arg_15_0 + 2147483648
+	local var_15_1 = math.round((var_15_0 / 100 - math.floor(var_15_0 / 100)) * 100)
+	local var_15_2 = var_0_1[var_15_1]
+	local var_15_3 = math.floor(var_15_0 / 100)
+	local var_15_4 = math.round((var_15_3 / 100000 - math.floor(var_15_3 / 100000)) * 100000)
 
-	value = math.floor(value / 100)
-
-	local score = math.round((value / 100000 - math.floor(value / 100000)) * 100000)
-
-	value = math.floor(value / 100000)
-
-	local tier = value
-
-	return tier, score, career_name
+	return math.floor(var_15_3 / 100000), var_15_4, var_15_2
 end
 
-BackendUtils.commit_load_time_data = function (load_time_data)
-	local common = Managers.backend:get_interface("common")
-
-	common:commit_load_time_data(load_time_data)
+function BackendUtils.commit_load_time_data(arg_16_0)
+	Managers.backend:get_interface("common"):commit_load_time_data(arg_16_0)
 end
 
-local CURRENCY_LOOKUP = {
+local var_0_2 = {
 	SM = {
 		"shillings_01",
-		[5] = "shillings_02",
-		[10] = "shillings_03",
-		[25] = "shillings_04",
-		[50] = "shillings_05",
-		[100] = "shillings_06",
-		large = "shillings_large",
-		medium = "shillings_medium",
 		small = "shillings_small",
+		[25] = "shillings_04",
+		[10] = "shillings_03",
+		[100] = "shillings_06",
+		[5] = "shillings_02",
+		[50] = "shillings_05",
+		medium = "shillings_medium",
+		large = "shillings_large"
 	},
 	VS = {
-		[5] = "versus_currency_01",
-		[25] = "versus_currency_02",
-		[50] = "versus_currency_03",
-		large = "versus_currency_large",
-		medium = "versus_currency_medium",
 		small = "versus_currency_small",
-	},
+		[25] = "versus_currency_02",
+		[5] = "versus_currency_01",
+		medium = "versus_currency_medium",
+		large = "versus_currency_large",
+		[50] = "versus_currency_03"
+	}
 }
 
 CURRENCY_DESC_LOOKUP = {
-	ES = "achv_menu_es_currency_reward_claimed ",
 	SM = "achv_menu_curreny_reward_claimed",
-	VS = "achv_menu_vs_currency_reward_claimed",
+	ES = "achv_menu_es_currency_reward_claimed ",
+	VS = "achv_menu_vs_currency_reward_claimed"
 }
 
-BackendUtils.get_fake_currency_item = function (currency_code, amount)
-	local lookup = CURRENCY_LOOKUP[currency_code]
+function BackendUtils.get_fake_currency_item(arg_17_0, arg_17_1)
+	local var_17_0 = var_0_2[arg_17_0]
 
-	fassert(lookup, "Unsupported currency code '%s'", currency_code)
+	fassert(var_17_0, "Unsupported currency code '%s'", arg_17_0)
 
-	local item_key = lookup[amount]
-	local description = CURRENCY_DESC_LOOKUP[currency_code]
+	local var_17_1 = var_17_0[arg_17_1]
+	local var_17_2 = CURRENCY_DESC_LOOKUP[arg_17_0]
 
-	if not item_key then
-		if amount >= 1 and amount < 50 then
-			item_key = CURRENCY_LOOKUP[currency_code].small
-		elseif amount >= 50 and amount < 100 then
-			item_key = CURRENCY_LOOKUP[currency_code].medium
+	if not var_17_1 then
+		if arg_17_1 >= 1 and arg_17_1 < 50 then
+			var_17_1 = var_0_2[arg_17_0].small
+		elseif arg_17_1 >= 50 and arg_17_1 < 100 then
+			var_17_1 = var_0_2[arg_17_0].medium
 		else
-			item_key = CURRENCY_LOOKUP[currency_code].large
+			var_17_1 = var_0_2[arg_17_0].large
 		end
 	end
 
-	local data = Currencies[item_key]
+	local var_17_3 = Currencies[var_17_1]
 
-	return table.clone(data), item_key, description
+	return table.clone(var_17_3), var_17_1, var_17_2
 end
 
-BackendUtils.best_aquired_power_level = function ()
-	local sum = Managers.backend:get_interface("items"):sum_best_power_levels()
-	local level = ExperienceSettings.get_highest_character_level()
-	local character_power_level = PowerLevelFromLevelSettings.starting_power_level + PowerLevelFromLevelSettings.power_level_per_level * level
-	local best_aquired_power_level = character_power_level + sum / 5
+function BackendUtils.best_aquired_power_level()
+	local var_18_0 = Managers.backend:get_interface("items"):sum_best_power_levels()
+	local var_18_1 = ExperienceSettings.get_highest_character_level()
 
-	return best_aquired_power_level
+	return PowerLevelFromLevelSettings.starting_power_level + PowerLevelFromLevelSettings.power_level_per_level * var_18_1 + var_18_0 / 5
 end

@@ -1,261 +1,253 @@
-﻿-- chunkname: @scripts/ui/hud_ui/floating_icon_ui.lua
+-- chunkname: @scripts/ui/hud_ui/floating_icon_ui.lua
 
-local definitions = local_require("scripts/ui/hud_ui/floating_icon_ui_definitions")
-local animation_definitions = definitions.animation_definitions
-local widget_definitions = definitions.widget_definitions
-local scenegraph_definition = definitions.scenegraph_definition
+local var_0_0 = local_require("scripts/ui/hud_ui/floating_icon_ui_definitions")
+local var_0_1 = var_0_0.animation_definitions
+local var_0_2 = var_0_0.widget_definitions
+local var_0_3 = var_0_0.scenegraph_definition
 
 FloatingIconUI = class(FloatingIconUI)
 
-FloatingIconUI.init = function (self, parent, ingame_ui_context)
-	self._parent = parent
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self.ingame_ui = ingame_ui_context.ingame_ui
-	self.input_manager = ingame_ui_context.input_manager
-	self.world_manager = ingame_ui_context.world_manager
-	self.camera_manager = ingame_ui_context.camera_manager
-	self.player_manager = ingame_ui_context.player_manager
-	self.peer_id = ingame_ui_context.peer_id
+function FloatingIconUI.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0._parent = arg_1_1
+	arg_1_0.ui_renderer = arg_1_2.ui_renderer
+	arg_1_0.ingame_ui = arg_1_2.ingame_ui
+	arg_1_0.input_manager = arg_1_2.input_manager
+	arg_1_0.world_manager = arg_1_2.world_manager
+	arg_1_0.camera_manager = arg_1_2.camera_manager
+	arg_1_0.player_manager = arg_1_2.player_manager
+	arg_1_0.peer_id = arg_1_2.peer_id
 
-	local world = self.world_manager:world("level_world")
+	local var_1_0 = arg_1_0.world_manager:world("level_world")
 
-	self.wwise_world = Managers.world:wwise_world(world)
-	self._animations = {}
-	self.render_settings = {
-		snap_pixel_positions = true,
+	arg_1_0.wwise_world = Managers.world:wwise_world(var_1_0)
+	arg_1_0._animations = {}
+	arg_1_0.render_settings = {
+		snap_pixel_positions = true
 	}
 
-	self:create_ui_elements()
-	Managers.state.event:register(self, "start_progression_zone", "show_progression_bar")
-	Managers.state.event:register(self, "stop_progression_zone", "hide_progression_bar")
+	arg_1_0:create_ui_elements()
+	Managers.state.event:register(arg_1_0, "start_progression_zone", "show_progression_bar")
+	Managers.state.event:register(arg_1_0, "stop_progression_zone", "hide_progression_bar")
 end
 
-local DO_RELOAD = true
+local var_0_4 = true
 
-FloatingIconUI.create_ui_elements = function (self)
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
+function FloatingIconUI.create_ui_elements(arg_2_0)
+	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
-	local widgets = {}
-	local widgets_by_name = {}
+	local var_2_0 = {}
+	local var_2_1 = {}
 
-	for name, widget_definition in pairs(widget_definitions) do
-		if widget_definition then
-			local widget = UIWidget.init(widget_definition)
+	for iter_2_0, iter_2_1 in pairs(var_0_2) do
+		if iter_2_1 then
+			local var_2_2 = UIWidget.init(iter_2_1)
 
-			widgets[#widgets + 1] = widget
-			widgets_by_name[name] = widget
+			var_2_0[#var_2_0 + 1] = var_2_2
+			var_2_1[iter_2_0] = var_2_2
 		end
 	end
 
-	self._widgets = widgets
-	self._widgets_by_name = widgets_by_name
+	arg_2_0._widgets = var_2_0
+	arg_2_0._widgets_by_name = var_2_1
 
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_renderer)
 
-	DO_RELOAD = false
+	var_0_4 = false
 end
 
-FloatingIconUI.destroy = function (self)
-	self.ui_animator = nil
+function FloatingIconUI.destroy(arg_3_0)
+	arg_3_0.ui_animator = nil
 
 	if Managers.state.event then
-		Managers.state.event:unregister("start_progression_zone", self)
-		Managers.state.event:unregister("stop_progression_zone", self)
+		Managers.state.event:unregister("start_progression_zone", arg_3_0)
+		Managers.state.event:unregister("stop_progression_zone", arg_3_0)
 	end
 end
 
-FloatingIconUI.show_progression_bar = function (self, unit, extension)
-	if self._progress_unit and self._progress_unit == unit then
+function FloatingIconUI.show_progression_bar(arg_4_0, arg_4_1, arg_4_2)
+	if arg_4_0._progress_unit and arg_4_0._progress_unit == arg_4_1 then
 		return
 	end
 
-	self._progress_unit = unit
-	self._progress_extension = extension
+	arg_4_0._progress_unit = arg_4_1
+	arg_4_0._progress_extension = arg_4_2
 end
 
-FloatingIconUI.hide_progression_bar = function (self, unit)
-	if self._progress_unit == unit then
-		self._progress_unit = nil
-		self._progress_extension = nil
+function FloatingIconUI.hide_progression_bar(arg_5_0, arg_5_1)
+	if arg_5_0._progress_unit == arg_5_1 then
+		arg_5_0._progress_unit = nil
+		arg_5_0._progress_extension = nil
 	end
 end
 
-FloatingIconUI.update = function (self, dt)
-	if DO_RELOAD then
-		self:create_ui_elements()
+function FloatingIconUI.update(arg_6_0, arg_6_1)
+	if var_0_4 then
+		arg_6_0:create_ui_elements()
 	end
 
-	if self._progress_unit then
-		self:_draw_progressbar(dt)
+	if arg_6_0._progress_unit then
+		arg_6_0:_draw_progressbar(arg_6_1)
 	end
 end
 
-FloatingIconUI._draw_progressbar = function (self, dt)
-	local ui_renderer = self.ui_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self.input_manager:get_service("ingame_menu")
-	local render_settings = self.render_settings
+function FloatingIconUI._draw_progressbar(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_0.ui_renderer
+	local var_7_1 = arg_7_0.ui_scenegraph
+	local var_7_2 = arg_7_0.input_manager:get_service("ingame_menu")
+	local var_7_3 = arg_7_0.render_settings
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+	UIRenderer.begin_pass(var_7_0, var_7_1, var_7_2, arg_7_1, nil, var_7_3)
 
-	local fulfill_show_bar_personal = self._progress_extension:progress_bar_personal() and self._progress_extension:player_been_in_zone()
-	local fulfill_show_bar = self._progress_extension:progress_bar_global() or fulfill_show_bar_personal
+	local var_7_4 = arg_7_0._progress_extension:progress_bar_personal() and arg_7_0._progress_extension:player_been_in_zone()
+	local var_7_5 = arg_7_0._progress_extension:progress_bar_global() or var_7_4
 
-	if fulfill_show_bar_personal or fulfill_show_bar then
-		local progress = self._progress_extension:progress()
+	if var_7_4 or var_7_5 then
+		local var_7_6 = arg_7_0._progress_extension:progress()
 
-		if self._progress_extension:should_progress_count_down() then
-			progress = 1 - self._progress_extension:progress()
+		if arg_7_0._progress_extension:should_progress_count_down() then
+			var_7_6 = 1 - arg_7_0._progress_extension:progress()
 		end
 
-		self:_draw(self._progress_unit, progress, dt)
+		arg_7_0:_draw(arg_7_0._progress_unit, var_7_6, arg_7_1)
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_7_0)
 end
 
-FloatingIconUI._get_camera = function (self)
-	local viewport_name = "player_1"
+function FloatingIconUI._get_camera(arg_8_0)
+	local var_8_0 = "player_1"
 
-	if self.camera_manager:has_viewport(viewport_name) then
-		local world_name = "level_world"
-		local world_manager = self.world_manager
+	if arg_8_0.camera_manager:has_viewport(var_8_0) then
+		local var_8_1 = "level_world"
+		local var_8_2 = arg_8_0.world_manager
 
-		if world_manager:has_world(world_name) then
-			local world = world_manager:world(world_name)
-			local viewport = ScriptWorld.viewport(world, viewport_name)
+		if var_8_2:has_world(var_8_1) then
+			local var_8_3 = var_8_2:world(var_8_1)
+			local var_8_4 = ScriptWorld.viewport(var_8_3, var_8_0)
 
-			return ScriptViewport.camera(viewport)
+			return ScriptViewport.camera(var_8_4)
 		end
 	end
 end
 
-FloatingIconUI._get_player_rotation_and_position = function (self)
-	local first_person_extension = self:get_player_first_person_extension()
-	local player_position = first_person_extension:current_position()
-	local player_rotation = first_person_extension:current_rotation()
+function FloatingIconUI._get_player_rotation_and_position(arg_9_0)
+	local var_9_0 = arg_9_0:get_player_first_person_extension()
+	local var_9_1 = var_9_0:current_position()
+	local var_9_2 = var_9_0:current_rotation()
 
-	return player_position, player_rotation
+	return var_9_1, var_9_2
 end
 
-FloatingIconUI._set_widget_position = function (self, widget, x, y)
-	local offset = widget.offset
+function FloatingIconUI._set_widget_position(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	local var_10_0 = arg_10_1.offset
 
-	offset[1] = x
-	offset[2] = y
+	var_10_0[1] = arg_10_2
+	var_10_0[2] = arg_10_3
 end
 
-FloatingIconUI._set_bar_progress = function (self, widget, progress, dt)
-	local style = widget.style
-	local foreground_style = style.foreground
-	local default_foreground_size = foreground_style.default_size
-	local foreground_size = foreground_style.texture_size
+function FloatingIconUI._set_bar_progress(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+	local var_11_0 = arg_11_1.style.foreground
+	local var_11_1 = var_11_0.default_size
 
-	foreground_size[1] = math.floor(default_foreground_size[1] * progress)
+	var_11_0.texture_size[1] = math.floor(var_11_1[1] * arg_11_2)
 end
 
-FloatingIconUI._draw = function (self, unit, progress, dt)
-	local ui_renderer = self.ui_renderer
-	local widget = self._widgets_by_name.progress_bar
+function FloatingIconUI._draw(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	local var_12_0 = arg_12_0.ui_renderer
+	local var_12_1 = arg_12_0._widgets_by_name.progress_bar
 
-	self:_set_bar_progress(widget, progress, dt)
+	arg_12_0:_set_bar_progress(var_12_1, arg_12_2, arg_12_3)
 
-	local position_x = 100
-	local position_y = 100
+	local var_12_2 = 100
+	local var_12_3 = 100
 
-	self:_set_widget_position(widget, position_x, position_y)
-	UIRenderer.draw_widget(ui_renderer, widget)
+	arg_12_0:_set_widget_position(var_12_1, var_12_2, var_12_3)
+	UIRenderer.draw_widget(var_12_0, var_12_1)
 end
 
-FloatingIconUI.convert_world_to_screen_position = function (self, camera, world_position)
-	if camera then
-		local world_to_screen = Camera.world_to_screen(camera, world_position)
+function FloatingIconUI.convert_world_to_screen_position(arg_13_0, arg_13_1, arg_13_2)
+	if arg_13_1 then
+		local var_13_0 = Camera.world_to_screen(arg_13_1, arg_13_2)
 
-		return world_to_screen.x, world_to_screen.y
+		return var_13_0.x, var_13_0.y
 	end
 end
 
-FloatingIconUI.get_floating_icon_position = function (self, screen_pos_x, screen_pos_y, forward_dot, right_dot, tooltip_settings)
-	local root_size = UISceneGraph.get_size_scaled(self.ui_scenegraph, "screen")
-	local scale = RESOLUTION_LOOKUP.scale
-	local scaled_root_size_x = root_size[1] * scale
-	local scaled_root_size_y = root_size[2] * scale
-	local scaled_root_size_x_half = scaled_root_size_x * 0.5
-	local scaled_root_size_y_half = scaled_root_size_y * 0.5
-	local screen_width, screen_height = RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h
-	local center_pos_x = screen_width / 2
-	local center_pos_y = screen_height / 2
-	local x_diff = screen_pos_x - center_pos_x
-	local y_diff = center_pos_y - screen_pos_y
-	local is_x_clamped = false
-	local is_y_clamped = false
+function FloatingIconUI.get_floating_icon_position(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+	local var_14_0 = UISceneGraph.get_size_scaled(arg_14_0.ui_scenegraph, "screen")
+	local var_14_1 = RESOLUTION_LOOKUP.scale
+	local var_14_2 = var_14_0[1] * var_14_1
+	local var_14_3 = var_14_0[2] * var_14_1
+	local var_14_4 = var_14_2 * 0.5
+	local var_14_5 = var_14_3 * 0.5
+	local var_14_6 = RESOLUTION_LOOKUP.res_w
+	local var_14_7 = RESOLUTION_LOOKUP.res_h
+	local var_14_8 = var_14_6 / 2
+	local var_14_9 = var_14_7 / 2
+	local var_14_10 = arg_14_1 - var_14_8
+	local var_14_11 = var_14_9 - arg_14_2
+	local var_14_12 = false
+	local var_14_13 = false
 
-	if math.abs(x_diff) > scaled_root_size_x_half * 0.9 then
-		is_x_clamped = true
+	if math.abs(var_14_10) > var_14_4 * 0.9 then
+		var_14_12 = true
 	end
 
-	if math.abs(y_diff) > scaled_root_size_y_half * 0.9 then
-		is_y_clamped = true
+	if math.abs(var_14_11) > var_14_5 * 0.9 then
+		var_14_13 = true
 	end
 
-	local clamped_x_pos = screen_pos_x
-	local clamped_y_pos = screen_pos_y
-	local is_behind = forward_dot < 0 and true or false
-	local is_clamped = (is_x_clamped or is_y_clamped) and true or false
-	local screen_pos_diff_x = screen_width - scaled_root_size_x
-	local screen_pos_diff_y = screen_height - scaled_root_size_y
+	local var_14_14 = arg_14_1
+	local var_14_15 = arg_14_2
+	local var_14_16 = arg_14_3 < 0 and true or false
+	local var_14_17 = (var_14_12 or var_14_13) and true or false
+	local var_14_18 = var_14_6 - var_14_2
+	local var_14_19 = var_14_7 - var_14_3
+	local var_14_20 = var_14_14 - var_14_18 / 2
+	local var_14_21 = var_14_15 - var_14_19 / 2
+	local var_14_22 = RESOLUTION_LOOKUP.inv_scale
+	local var_14_23 = var_14_20 * var_14_22
+	local var_14_24 = var_14_21 * var_14_22
 
-	clamped_x_pos = clamped_x_pos - screen_pos_diff_x / 2
-	clamped_y_pos = clamped_y_pos - screen_pos_diff_y / 2
-
-	local inverse_scale = RESOLUTION_LOOKUP.inv_scale
-
-	clamped_x_pos = clamped_x_pos * inverse_scale
-	clamped_y_pos = clamped_y_pos * inverse_scale
-
-	return clamped_x_pos, clamped_y_pos, is_clamped, is_behind
+	return var_14_23, var_14_24, var_14_17, var_14_16
 end
 
-FloatingIconUI.get_icon_size = function (self, position, player_position, current_size, original_size, tooltip_settings)
-	local size = original_size
-	local start_scale_distance = tooltip_settings.start_scale_distance
-	local end_scale_distance = tooltip_settings.end_scale_distance
-	local distance = Vector3.distance(position, player_position)
-	local icon_scale = 1
+function FloatingIconUI.get_icon_size(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+	local var_15_0 = arg_15_4
+	local var_15_1 = arg_15_5.start_scale_distance
+	local var_15_2 = arg_15_5.end_scale_distance
+	local var_15_3 = Vector3.distance(arg_15_1, arg_15_2)
+	local var_15_4 = 1
 
-	if start_scale_distance < distance then
-		icon_scale = self:icon_scale_by_distance(distance - start_scale_distance, end_scale_distance)
-		size = math.lerp(current_size, icon_scale * original_size, 0.2)
+	if var_15_1 < var_15_3 then
+		var_15_4 = arg_15_0:icon_scale_by_distance(var_15_3 - var_15_1, var_15_2)
+		var_15_0 = math.lerp(arg_15_3, var_15_4 * arg_15_4, 0.2)
 	end
 
-	return size, icon_scale
+	return var_15_0, var_15_4
 end
 
-FloatingIconUI.icon_scale_by_distance = function (self, current_distance, max_distance)
-	local distance = math.min(max_distance, current_distance)
+function FloatingIconUI.icon_scale_by_distance(arg_16_0, arg_16_1, arg_16_2)
+	local var_16_0 = math.min(arg_16_2, arg_16_1)
+	local var_16_1 = math.max(0, var_16_0)
+	local var_16_2 = UISettings.tutorial.mission_tooltip.minimum_icon_scale
 
-	distance = math.max(0, distance)
-
-	local min_scale = UISettings.tutorial.mission_tooltip.minimum_icon_scale
-	local scale = math.max(min_scale, 1 - distance / max_distance)
-
-	return scale
+	return (math.max(var_16_2, 1 - var_16_1 / arg_16_2))
 end
 
-FloatingIconUI.get_player_first_person_extension = function (self)
-	if self._first_person_extension then
-		return self._first_person_extension
+function FloatingIconUI.get_player_first_person_extension(arg_17_0)
+	if arg_17_0._first_person_extension then
+		return arg_17_0._first_person_extension
 	else
-		local peer_id = self.peer_id
-		local my_player = self.player_manager:player_from_peer_id(peer_id)
-		local player_unit = my_player.player_unit
+		local var_17_0 = arg_17_0.peer_id
+		local var_17_1 = arg_17_0.player_manager:player_from_peer_id(var_17_0).player_unit
 
-		if player_unit and ScriptUnit.has_extension(player_unit, "first_person_system") then
-			local first_person_extension = ScriptUnit.extension(player_unit, "first_person_system")
+		if var_17_1 and ScriptUnit.has_extension(var_17_1, "first_person_system") then
+			local var_17_2 = ScriptUnit.extension(var_17_1, "first_person_system")
 
-			self._first_person_extension = first_person_extension
+			arg_17_0._first_person_extension = var_17_2
 
-			return first_person_extension
+			return var_17_2
 		end
 	end
 end

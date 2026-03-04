@@ -1,489 +1,482 @@
-﻿-- chunkname: @scripts/ui/hud_ui/contract_log_ui.lua
+-- chunkname: @scripts/ui/hud_ui/contract_log_ui.lua
 
 require("scripts/settings/quest_settings")
 
-local definitions = local_require("scripts/ui/hud_ui/contract_log_ui_definitions")
-local scenegraph_definition = definitions.scenegraph_definition
-local MAX_NUM_CONTRACT_ENTRIES = 3
-local ENTRY_LENGTH = definitions.ENTRY_LENGTH
-local QuestSettings = QuestSettings
-local default_color = {
+local var_0_0 = local_require("scripts/ui/hud_ui/contract_log_ui_definitions")
+local var_0_1 = var_0_0.scenegraph_definition
+local var_0_2 = 3
+local var_0_3 = var_0_0.ENTRY_LENGTH
+local var_0_4 = QuestSettings
+local var_0_5 = {
 	170,
 	255,
 	255,
-	255,
+	255
 }
-local progress_color = Colors.get_color_table_with_alpha("sky_blue", 220)
-local complete_color = Colors.get_color_table_with_alpha("pale_green", 220)
+local var_0_6 = Colors.get_color_table_with_alpha("sky_blue", 220)
+local var_0_7 = Colors.get_color_table_with_alpha("pale_green", 220)
 
 ContractLogUI = class(ContractLogUI)
 
-ContractLogUI.init = function (self, parent, ingame_ui_context)
-	self._parent = parent
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self.ingame_ui = ingame_ui_context.ingame_ui
-	self.input_manager = ingame_ui_context.input_manager
-	self.peer_id = ingame_ui_context.peer_id
-	self.player_manager = ingame_ui_context.player_manager
-	self.ui_animations = {}
+function ContractLogUI.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0._parent = arg_1_1
+	arg_1_0.ui_renderer = arg_1_2.ui_renderer
+	arg_1_0.ingame_ui = arg_1_2.ingame_ui
+	arg_1_0.input_manager = arg_1_2.input_manager
+	arg_1_0.peer_id = arg_1_2.peer_id
+	arg_1_0.player_manager = arg_1_2.player_manager
+	arg_1_0.ui_animations = {}
 
-	local world = ingame_ui_context.world_manager:world("level_world")
+	local var_1_0 = arg_1_2.world_manager:world("level_world")
 
-	self.wwise_world = Managers.world:wwise_world(world)
-	self.num_added_contracts = 0
+	arg_1_0.wwise_world = Managers.world:wwise_world(var_1_0)
+	arg_1_0.num_added_contracts = 0
 
-	self:_create_ui_elements()
+	arg_1_0:_create_ui_elements()
 
-	local _, title_text_width = self:_get_text_size(self.title_widget.style.title_text, self.title_widget.content.title_text)
+	local var_1_1, var_1_2 = arg_1_0:_get_text_size(arg_1_0.title_widget.style.title_text, arg_1_0.title_widget.content.title_text)
 
-	self.min_log_width = math.floor(title_text_width)
+	arg_1_0.min_log_width = math.floor(var_1_2)
+	arg_1_0.quest_manager = Managers.state.quest
 
-	local quest_manager = Managers.state.quest
-
-	self.quest_manager = quest_manager
-
-	self:_align_widgets()
+	arg_1_0:_align_widgets()
 end
 
-ContractLogUI._create_ui_elements = function (self)
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+function ContractLogUI._create_ui_elements(arg_2_0)
+	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 
-	local widgets = {}
-	local unused_widgets = {}
+	local var_2_0 = {}
+	local var_2_1 = {}
 
-	for i, definition in ipairs(definitions.entry_widget_definitions) do
-		widgets[i] = UIWidget.init(definition)
-		unused_widgets[i] = widgets[i]
+	for iter_2_0, iter_2_1 in ipairs(var_0_0.entry_widget_definitions) do
+		var_2_0[iter_2_0] = UIWidget.init(iter_2_1)
+		var_2_1[iter_2_0] = var_2_0[iter_2_0]
 	end
 
-	self._widgets = widgets
-	self._unused_widgets = unused_widgets
-	self._used_widgets = {}
-	self._log_entries = {}
-	self._log_entries_by_contract_id = {}
-	self.title_widget = UIWidget.init(definitions.widget_definitions.title_text)
+	arg_2_0._widgets = var_2_0
+	arg_2_0._unused_widgets = var_2_1
+	arg_2_0._used_widgets = {}
+	arg_2_0._log_entries = {}
+	arg_2_0._log_entries_by_contract_id = {}
+	arg_2_0.title_widget = UIWidget.init(var_0_0.widget_definitions.title_text)
 
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
-	self:set_visible(true)
+	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_renderer)
+	arg_2_0:set_visible(true)
 end
 
-ContractLogUI._align_widgets = function (self)
-	local start_position = 5
-	local longest_width = 0
-	local spacing = 10
+function ContractLogUI._align_widgets(arg_3_0)
+	local var_3_0 = 5
+	local var_3_1 = 0
+	local var_3_2 = 10
 
-	for index, widget in ipairs(self._used_widgets) do
-		local offset = widget.offset
+	for iter_3_0, iter_3_1 in ipairs(arg_3_0._used_widgets) do
+		iter_3_1.offset[2] = -math.floor(var_3_0)
 
-		offset[2] = -math.floor(start_position)
+		local var_3_3 = iter_3_1.content.text_width
+		local var_3_4 = iter_3_1.content.total_height
 
-		local text_width = widget.content.text_width
-		local total_height = widget.content.total_height
+		iter_3_1.style.texture_fade_bg.size[2] = var_3_4
+		var_3_0 = var_3_0 + var_3_4 + var_3_2
 
-		widget.style.texture_fade_bg.size[2] = total_height
-		start_position = start_position + total_height + spacing
-
-		self:_set_widget_dirty(widget)
+		arg_3_0:_set_widget_dirty(iter_3_1)
 	end
 
-	self:set_dirty()
+	arg_3_0:set_dirty()
 end
 
-ContractLogUI.destroy = function (self)
-	self:set_visible(false)
+function ContractLogUI.destroy(arg_4_0)
+	arg_4_0:set_visible(false)
 end
 
-ContractLogUI.set_visible = function (self, visible)
-	self._is_visible = visible
+function ContractLogUI.set_visible(arg_5_0, arg_5_1)
+	arg_5_0._is_visible = arg_5_1
 
-	local ui_renderer = self.ui_renderer
+	local var_5_0 = arg_5_0.ui_renderer
 
-	for _, widget in ipairs(self._widgets) do
-		UIRenderer.set_element_visible(ui_renderer, widget.element, visible)
+	for iter_5_0, iter_5_1 in ipairs(arg_5_0._widgets) do
+		UIRenderer.set_element_visible(var_5_0, iter_5_1.element, arg_5_1)
 	end
 
-	UIRenderer.set_element_visible(ui_renderer, self.title_widget.element, visible)
-	self:set_dirty()
+	UIRenderer.set_element_visible(var_5_0, arg_5_0.title_widget.element, arg_5_1)
+	arg_5_0:set_dirty()
 end
 
-ContractLogUI._sync_active_contracts = function (self)
-	local dirty = false
-	local active_contract_ids = self.quest_manager:get_active_contract_ids()
+function ContractLogUI._sync_active_contracts(arg_6_0)
+	local var_6_0 = false
+	local var_6_1 = arg_6_0.quest_manager:get_active_contract_ids()
 
-	if active_contract_ids then
-		local log_entries_by_contract_id = self._log_entries_by_contract_id
-		local num_added_contracts = self.num_added_contracts
+	if var_6_1 then
+		local var_6_2 = arg_6_0._log_entries_by_contract_id
+		local var_6_3 = arg_6_0.num_added_contracts
 
-		if num_added_contracts and num_added_contracts > 0 then
-			local log_entries = self._log_entries
+		if var_6_3 and var_6_3 > 0 then
+			local var_6_4 = arg_6_0._log_entries
 
-			for i = 1, num_added_contracts do
-				local entry_data = log_entries[i]
+			for iter_6_0 = 1, var_6_3 do
+				local var_6_5 = var_6_4[iter_6_0]
 
-				if entry_data then
-					local added_contract_id = entry_data.contract_id
-					local is_contract_able_to_progress = self.quest_manager:is_contract_able_to_progress(added_contract_id)
+				if var_6_5 then
+					local var_6_6 = var_6_5.contract_id
+					local var_6_7 = arg_6_0.quest_manager:is_contract_able_to_progress(var_6_6)
 
-					if not table.contains(active_contract_ids, added_contract_id) or not is_contract_able_to_progress then
-						self:_remove_contract(added_contract_id)
+					if not table.contains(var_6_1, var_6_6) or not var_6_7 then
+						arg_6_0:_remove_contract(var_6_6)
 
-						dirty = true
+						var_6_0 = true
 					end
 				end
 			end
 		end
 
-		for _, contract_id in pairs(active_contract_ids) do
-			if not log_entries_by_contract_id[contract_id] and self.quest_manager:is_contract_able_to_progress(contract_id) then
-				self:_add_contract(contract_id)
+		for iter_6_1, iter_6_2 in pairs(var_6_1) do
+			if not var_6_2[iter_6_2] and arg_6_0.quest_manager:is_contract_able_to_progress(iter_6_2) then
+				arg_6_0:_add_contract(iter_6_2)
 
-				dirty = true
+				var_6_0 = true
 			end
 		end
 	end
 
-	return dirty
+	return var_6_0
 end
 
-ContractLogUI._sync_contract_progression = function (self)
-	local log_entries = self._log_entries
-	local dirty = false
-	local any_task_completed = false
+function ContractLogUI._sync_contract_progression(arg_7_0)
+	local var_7_0 = arg_7_0._log_entries
+	local var_7_1 = false
+	local var_7_2 = false
 
-	for _, entry_data in ipairs(log_entries) do
-		local contract_id = entry_data.contract_id
+	for iter_7_0, iter_7_1 in ipairs(var_7_0) do
+		local var_7_3 = iter_7_1.contract_id
 
-		if self.quest_manager:has_contract_session_changes(contract_id) then
-			local changed, task_completed = self:_update_contract_goal(entry_data)
+		if arg_7_0.quest_manager:has_contract_session_changes(var_7_3) then
+			local var_7_4, var_7_5 = arg_7_0:_update_contract_goal(iter_7_1)
 
-			if changed then
-				local widget = entry_data.widget
+			if var_7_4 then
+				local var_7_6 = iter_7_1.widget
 
-				self:_set_widget_dirty(widget)
+				arg_7_0:_set_widget_dirty(var_7_6)
 			end
 
-			if task_completed then
-				any_task_completed = true
+			if var_7_5 then
+				var_7_2 = true
 			end
 
-			if changed or task_completed then
-				dirty = true
+			if var_7_4 or var_7_5 then
+				var_7_1 = true
 			end
 		end
 	end
 
-	if any_task_completed then
-		self:play_sound("Play_hud_quest_menu_finish_quest_during_gameplay")
+	if var_7_2 then
+		arg_7_0:play_sound("Play_hud_quest_menu_finish_quest_during_gameplay")
 	end
 
-	return dirty
+	return var_7_1
 end
 
-ContractLogUI._update_contract_goal = function (self, entry_data)
-	local contract_id = entry_data.contract_id
-	local contract_session_progress = self.quest_manager:get_session_progress_by_contract_id(contract_id)
-	local widget = entry_data.widget
-	local widget_content = widget.content
-	local widget_style = widget.style
-	local title_text_width = widget_content.title_text_width
-	local text_color = default_color
-	local task = entry_data.contract_goal
-	local contract_progress = entry_data.contract_goal_start_progress
-	local current_session_progress = entry_data.contract_goal_session_progress
-	local task_text = ""
-	local add_unspecified_task_entry
+function ContractLogUI._update_contract_goal(arg_8_0, arg_8_1)
+	local var_8_0 = arg_8_1.contract_id
+	local var_8_1 = arg_8_0.quest_manager:get_session_progress_by_contract_id(var_8_0)
+	local var_8_2 = arg_8_1.widget
+	local var_8_3 = var_8_2.content
+	local var_8_4 = var_8_2.style
+	local var_8_5 = var_8_3.title_text_width
+	local var_8_6 = var_0_5
+	local var_8_7 = arg_8_1.contract_goal
+	local var_8_8 = arg_8_1.contract_goal_start_progress
+	local var_8_9 = arg_8_1.contract_goal_session_progress
+	local var_8_10 = ""
+	local var_8_11
 
-	widget_style.task_text.text_color = text_color
+	var_8_4.task_text.text_color = var_8_6
 
-	if task then
-		local task_start_progress = contract_progress
-		local task_session_progress = contract_session_progress
-		local task_progress = task_start_progress + task_session_progress
-		local required = task.amount.required
-		local tasks_complete = required <= task_progress
-		local task_progress_made = task_progress ~= task_start_progress
+	if var_8_7 then
+		local var_8_12 = var_8_8
+		local var_8_13 = var_8_1
+		local var_8_14 = var_8_12 + var_8_13
+		local var_8_15 = var_8_7.amount.required
+		local var_8_16 = var_8_15 <= var_8_14
+		local var_8_17 = var_8_14 ~= var_8_12
 
-		if tasks_complete then
-			text_color = complete_color
-		elseif task_progress_made then
-			text_color = progress_color
+		if var_8_16 then
+			var_8_6 = var_0_7
+		elseif var_8_17 then
+			var_8_6 = var_0_6
 		end
 
-		local make_dirty = task_progress ~= widget_content.task_progress
+		local var_8_18 = var_8_14 ~= var_8_3.task_progress
 
-		widget_content.task_progress = task_progress
-		widget_style.task_text.text_color = text_color
+		var_8_3.task_progress = var_8_14
+		var_8_4.task_text.text_color = var_8_6
 
-		local text = Localize(QuestSettings.task_type_to_name_lookup[task.type]) .. ": " .. tostring(task_progress) .. "/" .. tostring(required)
+		local var_8_19 = Localize(var_0_4.task_type_to_name_lookup[var_8_7.type]) .. ": " .. tostring(var_8_14) .. "/" .. tostring(var_8_15)
+		local var_8_20 = var_8_10 .. var_8_19
+		local var_8_21 = var_8_9 ~= var_8_13
+		local var_8_22
 
-		task_text = task_text .. text
+		var_8_22 = var_8_14 ~= var_8_12
 
-		local task_current_session_progress = current_session_progress
-		local new_value = task_current_session_progress ~= task_session_progress
-		local progress_increased = task_progress ~= task_start_progress
-
-		if new_value then
-			current_session_progress = task_session_progress
+		if var_8_21 then
+			local var_8_23 = var_8_13
 		end
 
-		if add_unspecified_task_entry then
-			task_text = task_text .. "..."
+		if var_8_11 then
+			var_8_20 = var_8_20 .. "..."
 		end
 
-		local _, text_width = self:_get_text_size(widget_style.task_text, task_text)
+		local var_8_24, var_8_25 = arg_8_0:_get_text_size(var_8_4.task_text, var_8_20)
 
-		if text_width < title_text_width then
-			text_width = title_text_width
+		if var_8_25 < var_8_5 then
+			var_8_25 = var_8_5
 		end
 
-		widget_content.task_text = task_text
-		widget_content.text_width = text_width
+		var_8_3.task_text = var_8_20
+		var_8_3.text_width = var_8_25
 
-		if not widget_content.tasks_complete and tasks_complete then
-			widget_content.tasks_complete = tasks_complete
+		if not var_8_3.tasks_complete and var_8_16 then
+			var_8_3.tasks_complete = var_8_16
 
-			return make_dirty, tasks_complete
+			return var_8_18, var_8_16
 		else
-			widget_content.tasks_complete = tasks_complete
+			var_8_3.tasks_complete = var_8_16
 		end
 
-		return make_dirty
+		return var_8_18
 	end
 end
 
-ContractLogUI._add_contract = function (self, contract_id)
-	local num_added_contracts = self.num_added_contracts or 0
+function ContractLogUI._add_contract(arg_9_0, arg_9_1)
+	local var_9_0 = arg_9_0.num_added_contracts or 0
 
-	if num_added_contracts >= MAX_NUM_CONTRACT_ENTRIES then
+	if var_9_0 >= var_0_2 then
 		return
 	end
 
-	local entry_data = {}
-	local index = num_added_contracts + 1
-	local widget = table.remove(self._unused_widgets, 1)
-	local widget_content = widget.content
-	local widget_style = widget.style
+	local var_9_1 = {}
+	local var_9_2 = var_9_0 + 1
+	local var_9_3 = table.remove(arg_9_0._unused_widgets, 1)
+	local var_9_4 = var_9_3.content
+	local var_9_5 = var_9_3.style
 
-	widget_style.task_text.text_color = default_color
+	var_9_5.task_text.text_color = var_0_5
 
-	UIRenderer.set_element_visible(self.ui_renderer, widget.element, true)
-	self:_set_widget_dirty(widget)
+	UIRenderer.set_element_visible(arg_9_0.ui_renderer, var_9_3.element, true)
+	arg_9_0:_set_widget_dirty(var_9_3)
 
-	local contract_template = self.quest_manager:get_contract_by_id(contract_id)
-	local task = contract_template.requirements.task
-	local contract_name = self.quest_manager:get_title_for_contract_id(contract_id)
-	local rewards = contract_template.rewards
-	local quest_reward = rewards.quest
-	local contract_color = quest_reward and QuestSettings.contract_ui_dlc_colors[quest_reward.quest_type] or Colors.get_table("white")
-	local icon_color = widget_style.texture_icon_bg.color
+	local var_9_6 = arg_9_0.quest_manager:get_contract_by_id(arg_9_1)
+	local var_9_7 = var_9_6.requirements.task
+	local var_9_8 = arg_9_0.quest_manager:get_title_for_contract_id(arg_9_1)
+	local var_9_9 = var_9_6.rewards.quest
+	local var_9_10 = var_9_9 and var_0_4.contract_ui_dlc_colors[var_9_9.quest_type] or Colors.get_table("white")
+	local var_9_11 = var_9_5.texture_icon_bg.color
 
-	icon_color[2] = contract_color[2]
-	icon_color[3] = contract_color[3]
-	icon_color[4] = contract_color[4]
+	var_9_11[2] = var_9_10[2]
+	var_9_11[3] = var_9_10[3]
+	var_9_11[4] = var_9_10[4]
 
-	local contract_progress = self.quest_manager:get_contract_progress(contract_id)
-	local contract_session_progress
-	local task_text = ""
+	local var_9_12 = arg_9_0.quest_manager:get_contract_progress(arg_9_1)
+	local var_9_13
+	local var_9_14 = ""
 
-	if task then
-		contract_session_progress = 0
+	if var_9_7 then
+		var_9_13 = 0
 
-		local task_start_progress = contract_progress
-		local required = task.amount.required
-		local acquired = task.amount.acquired
+		local var_9_15 = var_9_12
+		local var_9_16 = var_9_7.amount.required
+		local var_9_17 = var_9_7.amount.acquired
 
-		if task_start_progress < required then
-			local text = Localize(QuestSettings.task_type_to_name_lookup[task.type]) .. ":  " .. tostring(task_start_progress) .. "/" .. tostring(required)
+		if var_9_15 < var_9_16 then
+			local var_9_18 = Localize(var_0_4.task_type_to_name_lookup[var_9_7.type]) .. ":  " .. tostring(var_9_15) .. "/" .. tostring(var_9_16)
 
-			task_text = task_text .. text .. "\n"
+			var_9_14 = var_9_14 .. var_9_18 .. "\n"
 		end
 	end
 
-	local _, title_text_width = self:_get_text_size(widget_style.title_text, contract_name)
-	local text_height, text_width = self:_get_text_size(widget_style.task_text, task_text)
+	local var_9_19, var_9_20 = arg_9_0:_get_text_size(var_9_5.title_text, var_9_8)
+	local var_9_21, var_9_22 = arg_9_0:_get_text_size(var_9_5.task_text, var_9_14)
 
-	if text_width < title_text_width then
-		text_width = title_text_width
+	if var_9_22 < var_9_20 then
+		var_9_22 = var_9_20
 	end
 
-	widget_content.title_text = contract_name
-	widget_content.task_text = task_text
-	widget_content.total_height = widget_style.texture_icon.size[2] + text_height
-	widget_content.text_width = text_width
-	widget_content.title_text_width = title_text_width
-	widget_content.tasks_complete = false
-	widget_content.task_progress = 0
-	entry_data.widget = widget
-	entry_data.contract_goal = task
-	entry_data.contract_goal_start_progress = contract_progress
-	entry_data.contract_goal_session_progress = contract_session_progress
-	entry_data.contract_id = contract_id
+	var_9_4.title_text = var_9_8
+	var_9_4.task_text = var_9_14
+	var_9_4.total_height = var_9_5.texture_icon.size[2] + var_9_21
+	var_9_4.text_width = var_9_22
+	var_9_4.title_text_width = var_9_20
+	var_9_4.tasks_complete = false
+	var_9_4.task_progress = 0
+	var_9_1.widget = var_9_3
+	var_9_1.contract_goal = var_9_7
+	var_9_1.contract_goal_start_progress = var_9_12
+	var_9_1.contract_goal_session_progress = var_9_13
+	var_9_1.contract_id = arg_9_1
 
-	local used_widgets = self._used_widgets
+	local var_9_23 = arg_9_0._used_widgets
 
-	table.insert(used_widgets, #used_widgets + 1, widget)
+	table.insert(var_9_23, #var_9_23 + 1, var_9_3)
 
-	local log_entries = self._log_entries
+	local var_9_24 = arg_9_0._log_entries
 
-	table.insert(log_entries, #log_entries + 1, entry_data)
+	table.insert(var_9_24, #var_9_24 + 1, var_9_1)
 
-	self._log_entries_by_contract_id[contract_id] = entry_data
-	self.num_added_contracts = index
+	arg_9_0._log_entries_by_contract_id[arg_9_1] = var_9_1
+	arg_9_0.num_added_contracts = var_9_2
 end
 
-ContractLogUI._remove_contract = function (self, contract_id)
-	local num_added_contracts = self.num_added_contracts or 0
+function ContractLogUI._remove_contract(arg_10_0, arg_10_1)
+	local var_10_0 = arg_10_0.num_added_contracts or 0
 
-	if num_added_contracts <= 0 then
+	if var_10_0 <= 0 then
 		return
 	end
 
-	local contract_data, index
-	local log_entries = self._log_entries
+	local var_10_1
+	local var_10_2
+	local var_10_3 = arg_10_0._log_entries
 
-	for i = 1, #log_entries do
-		local entry_data = log_entries[i]
-		local entry_contract_id = entry_data.contract_id
+	for iter_10_0 = 1, #var_10_3 do
+		local var_10_4 = var_10_3[iter_10_0]
 
-		if entry_contract_id == contract_id then
-			contract_data = entry_data
-			index = i
+		if var_10_4.contract_id == arg_10_1 then
+			var_10_1 = var_10_4
+			var_10_2 = iter_10_0
 
 			break
 		end
 	end
 
-	if not contract_data then
+	if not var_10_1 then
 		return
 	end
 
-	local widget = table.remove(self._used_widgets, index)
+	local var_10_5 = table.remove(arg_10_0._used_widgets, var_10_2)
 
-	UIRenderer.set_element_visible(self.ui_renderer, widget.element, false)
-	self:_set_widget_dirty(widget)
-	table.remove(log_entries, index)
+	UIRenderer.set_element_visible(arg_10_0.ui_renderer, var_10_5.element, false)
+	arg_10_0:_set_widget_dirty(var_10_5)
+	table.remove(var_10_3, var_10_2)
 
-	local unused_widgets = self._unused_widgets
+	local var_10_6 = arg_10_0._unused_widgets
 
-	table.insert(unused_widgets, #unused_widgets + 1, widget)
+	table.insert(var_10_6, #var_10_6 + 1, var_10_5)
 
-	self.num_added_contracts = num_added_contracts - 1
-	self._log_entries_by_contract_id[contract_id] = nil
+	arg_10_0.num_added_contracts = var_10_0 - 1
+	arg_10_0._log_entries_by_contract_id[arg_10_1] = nil
 
-	self:_align_widgets()
+	arg_10_0:_align_widgets()
 end
 
-ContractLogUI._get_text_size = function (self, text_style, text)
-	local ui_renderer = self.ui_renderer
-	local size = text_style.size
-	local text_height = UIUtils.get_text_height(ui_renderer, size, text_style, text)
-	local longest_width = 0
+function ContractLogUI._get_text_size(arg_11_0, arg_11_1, arg_11_2)
+	local var_11_0 = arg_11_0.ui_renderer
+	local var_11_1 = arg_11_1.size
+	local var_11_2 = UIUtils.get_text_height(var_11_0, var_11_1, arg_11_1, arg_11_2)
+	local var_11_3 = 0
 
-	for i = 1, num_texts do
-		local text_line = texts[i]
-		local width = UIUtils.get_text_width(ui_renderer, text_style, text_line)
+	for iter_11_0 = 1, num_texts do
+		local var_11_4 = texts[iter_11_0]
+		local var_11_5 = UIUtils.get_text_width(var_11_0, arg_11_1, var_11_4)
 
-		if longest_width < width then
-			longest_width = width
+		if var_11_3 < var_11_5 then
+			var_11_3 = var_11_5
 		end
 	end
 
-	return text_height, longest_width
+	return var_11_2, var_11_3
 end
 
-ContractLogUI.update = function (self, dt, t)
-	local dirty = false
-	local realign = false
+function ContractLogUI.update(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = false
+	local var_12_1 = false
 
-	if self:_sync_active_contracts() then
-		realign = true
-		dirty = true
+	if arg_12_0:_sync_active_contracts() then
+		var_12_1 = true
+		var_12_0 = true
 	end
 
-	if self:_sync_contract_progression() then
-		realign = true
-		dirty = true
+	if arg_12_0:_sync_contract_progression() then
+		var_12_1 = true
+		var_12_0 = true
 	end
 
-	if self._is_visible and (self.num_added_contracts and self.num_added_contracts <= 0 or not self.num_added_contracts) then
-		self:set_visible(false)
-	elseif not self._is_visible and self.num_added_contracts and self.num_added_contracts > 0 then
-		self:set_visible(true)
+	if arg_12_0._is_visible and (arg_12_0.num_added_contracts and arg_12_0.num_added_contracts <= 0 or not arg_12_0.num_added_contracts) then
+		arg_12_0:set_visible(false)
+	elseif not arg_12_0._is_visible and arg_12_0.num_added_contracts and arg_12_0.num_added_contracts > 0 then
+		arg_12_0:set_visible(true)
 	end
 
-	if self:_handle_resolution_modified() then
-		realign = true
+	if arg_12_0:_handle_resolution_modified() then
+		var_12_1 = true
 	end
 
-	if realign then
-		self:_align_widgets()
+	if var_12_1 then
+		arg_12_0:_align_widgets()
 	end
 
-	if dirty then
-		self:set_dirty()
+	if var_12_0 then
+		arg_12_0:set_dirty()
 	end
 
-	self:draw(dt)
+	arg_12_0:draw(arg_12_1)
 end
 
-ContractLogUI._handle_resolution_modified = function (self)
+function ContractLogUI._handle_resolution_modified(arg_13_0)
 	if RESOLUTION_LOOKUP.modified then
-		self:_on_resolution_modified()
+		arg_13_0:_on_resolution_modified()
 
 		return true
 	end
 end
 
-ContractLogUI._on_resolution_modified = function (self)
-	for _, entry_data in ipairs(self._log_entries) do
-		self:_update_contract_goal(entry_data)
+function ContractLogUI._on_resolution_modified(arg_14_0)
+	for iter_14_0, iter_14_1 in ipairs(arg_14_0._log_entries) do
+		arg_14_0:_update_contract_goal(iter_14_1)
 
-		local widget = entry_data.widget
+		local var_14_0 = iter_14_1.widget
 
-		self:_set_widget_dirty(widget)
+		arg_14_0:_set_widget_dirty(var_14_0)
 	end
 
-	local _, title_text_width = self:_get_text_size(self.title_widget.style.title_text, self.title_widget.content.title_text)
+	local var_14_1, var_14_2 = arg_14_0:_get_text_size(arg_14_0.title_widget.style.title_text, arg_14_0.title_widget.content.title_text)
 
-	self.min_log_width = math.floor(title_text_width)
+	arg_14_0.min_log_width = math.floor(var_14_2)
 
-	self:_set_widget_dirty(self.title_widget)
-	self:set_dirty()
+	arg_14_0:_set_widget_dirty(arg_14_0.title_widget)
+	arg_14_0:set_dirty()
 end
 
-ContractLogUI.draw = function (self, dt)
-	if not self._is_visible then
+function ContractLogUI.draw(arg_15_0, arg_15_1)
+	if not arg_15_0._is_visible then
 		return
 	end
 
-	if not self._dirty then
+	if not arg_15_0._dirty then
 		return
 	end
 
-	local ui_renderer = self.ui_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self.input_manager:get_service("ingame_menu")
+	local var_15_0 = arg_15_0.ui_renderer
+	local var_15_1 = arg_15_0.ui_scenegraph
+	local var_15_2 = arg_15_0.input_manager:get_service("ingame_menu")
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt)
+	UIRenderer.begin_pass(var_15_0, var_15_1, var_15_2, arg_15_1)
 
-	for _, widget in ipairs(self._used_widgets) do
-		UIRenderer.draw_widget(ui_renderer, widget)
+	for iter_15_0, iter_15_1 in ipairs(arg_15_0._used_widgets) do
+		UIRenderer.draw_widget(var_15_0, iter_15_1)
 	end
 
-	UIRenderer.draw_widget(ui_renderer, self.title_widget)
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.draw_widget(var_15_0, arg_15_0.title_widget)
+	UIRenderer.end_pass(var_15_0)
 
-	self._dirty = false
+	arg_15_0._dirty = false
 end
 
-ContractLogUI.set_dirty = function (self)
-	self._dirty = true
+function ContractLogUI.set_dirty(arg_16_0)
+	arg_16_0._dirty = true
 end
 
-ContractLogUI._set_widget_dirty = function (self, widget)
-	widget.element.dirty = true
+function ContractLogUI._set_widget_dirty(arg_17_0, arg_17_1)
+	arg_17_1.element.dirty = true
 end
 
-ContractLogUI.play_sound = function (self, event)
-	WwiseWorld.trigger_event(self.wwise_world, event)
+function ContractLogUI.play_sound(arg_18_0, arg_18_1)
+	WwiseWorld.trigger_event(arg_18_0.wwise_world, arg_18_1)
 end

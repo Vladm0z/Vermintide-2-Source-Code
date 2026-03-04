@@ -1,101 +1,91 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/third_person_idle_fullbody_animation_control.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/third_person_idle_fullbody_animation_control.lua
 
 ThirdPersonIdleFullbodyAnimationControl = class(ThirdPersonIdleFullbodyAnimationControl)
 
-local MOVE_TRANSITION_TIME = 0.12
-local STOP_TRANSITION_TIME = 0.25
-local CROUCH_TRANSITION_TIME = 0.25
-local STOP_VALUE = 1
-local MOVE_VALUE = 0
+local var_0_0 = 0.12
+local var_0_1 = 0.25
+local var_0_2 = 0.25
+local var_0_3 = 1
+local var_0_4 = 0
 
-ThirdPersonIdleFullbodyAnimationControl.init = function (self, unit)
-	self._unit = unit
-	self._idle_fullbody_variable = Unit.animation_find_variable(unit, "idle_fullbody")
-	self._progress = 1
-	self._is_moving = false
-	self._is_crouching = false
-	self._is_moving_transition_start_t = 0
-	self._crouch_t = 0
+function ThirdPersonIdleFullbodyAnimationControl.init(arg_1_0, arg_1_1)
+	arg_1_0._unit = arg_1_1
+	arg_1_0._idle_fullbody_variable = Unit.animation_find_variable(arg_1_1, "idle_fullbody")
+	arg_1_0._progress = 1
+	arg_1_0._is_moving = false
+	arg_1_0._is_crouching = false
+	arg_1_0._is_moving_transition_start_t = 0
+	arg_1_0._crouch_t = 0
 end
 
-ThirdPersonIdleFullbodyAnimationControl.extensions_ready = function (self, world, unit)
-	self._locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
-	self._status_extension = ScriptUnit.extension(unit, "status_system")
+function ThirdPersonIdleFullbodyAnimationControl.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+	arg_2_0._locomotion_extension = ScriptUnit.extension(arg_2_2, "locomotion_system")
+	arg_2_0._status_extension = ScriptUnit.extension(arg_2_2, "status_system")
 end
 
-ThirdPersonIdleFullbodyAnimationControl._total_time = function (self, moving)
-	local total_time = moving and MOVE_TRANSITION_TIME or STOP_TRANSITION_TIME
-
-	return total_time
+function ThirdPersonIdleFullbodyAnimationControl._total_time(arg_3_0, arg_3_1)
+	return arg_3_1 and var_0_0 or var_0_1
 end
 
-ThirdPersonIdleFullbodyAnimationControl._calculate_start_time = function (self, moving, t)
-	local total_time = self:_total_time(moving)
-
-	return t - total_time * (1 - self._progress)
+function ThirdPersonIdleFullbodyAnimationControl._calculate_start_time(arg_4_0, arg_4_1, arg_4_2)
+	return arg_4_2 - arg_4_0:_total_time(arg_4_1) * (1 - arg_4_0._progress)
 end
 
-ThirdPersonIdleFullbodyAnimationControl._wanted_fullbody_value = function (self, time_passed, moving, crouching, time_since_crouch)
-	local total_time = self:_total_time(moving)
-	local lerp_t = math.clamp01(time_passed / total_time)
-	local progress = lerp_t
+function ThirdPersonIdleFullbodyAnimationControl._wanted_fullbody_value(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	local var_5_0 = arg_5_0:_total_time(arg_5_2)
+	local var_5_1 = math.clamp01(arg_5_1 / var_5_0)
+	local var_5_2 = var_5_1
 
-	if not moving then
-		lerp_t = 1 - lerp_t
+	if not arg_5_2 then
+		var_5_1 = 1 - var_5_1
 	end
 
-	local wanted_value = math.lerp(STOP_VALUE, MOVE_VALUE, lerp_t)
-	local crouch_from = crouching and 1 or 0
-	local crouch_to = 1 - crouch_from
-	local crouch_multiplier = math.clamp01(math.inv_lerp(crouch_from, crouch_to, time_since_crouch / CROUCH_TRANSITION_TIME))
+	local var_5_3 = math.lerp(var_0_3, var_0_4, var_5_1)
+	local var_5_4 = arg_5_3 and 1 or 0
+	local var_5_5 = 1 - var_5_4
 
-	wanted_value = wanted_value * crouch_multiplier
-
-	return wanted_value, progress
+	return var_5_3 * math.clamp01(math.inv_lerp(var_5_4, var_5_5, arg_5_4 / var_0_2)), var_5_2
 end
 
-ThirdPersonIdleFullbodyAnimationControl._percentage_done = function (self, current_value)
-	local percentage_done = 0
-
-	return percentage_done
+function ThirdPersonIdleFullbodyAnimationControl._percentage_done(arg_6_0, arg_6_1)
+	return 0
 end
 
-ThirdPersonIdleFullbodyAnimationControl.update = function (self, t)
-	if not self._idle_fullbody_variable then
+function ThirdPersonIdleFullbodyAnimationControl.update(arg_7_0, arg_7_1)
+	if not arg_7_0._idle_fullbody_variable then
 		return
 	end
 
-	local unit = self._unit
-	local is_crouching = self._status_extension:is_crouching()
-	local move_speed_squared = Vector3.length_squared(self._locomotion_extension:current_velocity())
+	local var_7_0 = arg_7_0._unit
+	local var_7_1 = arg_7_0._status_extension:is_crouching()
+	local var_7_2 = Vector3.length_squared(arg_7_0._locomotion_extension:current_velocity())
 
-	if move_speed_squared < NetworkConstants.VELOCITY_EPSILON * NetworkConstants.VELOCITY_EPSILON then
-		move_speed_squared = 0
+	if var_7_2 < NetworkConstants.VELOCITY_EPSILON * NetworkConstants.VELOCITY_EPSILON then
+		var_7_2 = 0
 	end
 
-	local was_moving = self._is_moving
+	local var_7_3 = arg_7_0._is_moving
 
-	if not was_moving and move_speed_squared > 0 then
-		self._is_moving = true
-		self._is_moving_transition_start_t = self:_calculate_start_time(self._is_moving, t)
-	elseif was_moving and move_speed_squared == 0 then
-		self._is_moving = false
-		self._is_moving_transition_start_t = self:_calculate_start_time(self._is_moving, t)
+	if not var_7_3 and var_7_2 > 0 then
+		arg_7_0._is_moving = true
+		arg_7_0._is_moving_transition_start_t = arg_7_0:_calculate_start_time(arg_7_0._is_moving, arg_7_1)
+	elseif var_7_3 and var_7_2 == 0 then
+		arg_7_0._is_moving = false
+		arg_7_0._is_moving_transition_start_t = arg_7_0:_calculate_start_time(arg_7_0._is_moving, arg_7_1)
 	end
 
-	local is_moving = self._is_moving
-	local was_crouching = self._is_crouching
+	local var_7_4 = arg_7_0._is_moving
 
-	if is_crouching ~= was_crouching then
-		self._crouch_t = t
-		self._is_crouching = is_crouching
+	if var_7_1 ~= arg_7_0._is_crouching then
+		arg_7_0._crouch_t = arg_7_1
+		arg_7_0._is_crouching = var_7_1
 	end
 
-	local time_since_stop = t - self._is_moving_transition_start_t
-	local idle_fullbody_value, progress = self:_wanted_fullbody_value(time_since_stop, is_moving, is_crouching, t - self._crouch_t)
+	local var_7_5 = arg_7_1 - arg_7_0._is_moving_transition_start_t
+	local var_7_6, var_7_7 = arg_7_0:_wanted_fullbody_value(var_7_5, var_7_4, var_7_1, arg_7_1 - arg_7_0._crouch_t)
 
-	Unit.animation_set_variable(unit, self._idle_fullbody_variable, idle_fullbody_value)
+	Unit.animation_set_variable(var_7_0, arg_7_0._idle_fullbody_variable, var_7_6)
 
-	self._idle_fullbody_value = idle_fullbody_value
-	self._progress = progress
+	arg_7_0._idle_fullbody_value = var_7_6
+	arg_7_0._progress = var_7_7
 end

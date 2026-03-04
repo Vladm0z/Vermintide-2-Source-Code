@@ -1,112 +1,107 @@
-﻿-- chunkname: @scripts/settings/razer_chroma_settings.lua
+-- chunkname: @scripts/settings/razer_chroma_settings.lua
 
 RazerChromaSettings = {
 	health_potion = {
-		file_path = "razer_chromas/healthpotion",
 		length = 2,
+		file_path = "razer_chromas/healthpotion"
 	},
 	cooldown_reduction_potion = {
-		file_path = "razer_chromas/concentrationpotion",
 		length = 2,
+		file_path = "razer_chromas/concentrationpotion"
 	},
 	cooldown_reduction_potion_increased = {
-		file_path = "razer_chromas/concentrationpotion",
 		length = 2,
+		file_path = "razer_chromas/concentrationpotion"
 	},
 	cooldown_reduction_potion_reduced = {
-		file_path = "razer_chromas/concentrationpotion",
 		length = 2,
+		file_path = "razer_chromas/concentrationpotion"
 	},
 	speed_boost_potion = {
-		file_path = "razer_chromas/speedpotion",
 		length = 2,
+		file_path = "razer_chromas/speedpotion"
 	},
 	speed_boost_potion_increased = {
-		file_path = "razer_chromas/speedpotion",
 		length = 2,
+		file_path = "razer_chromas/speedpotion"
 	},
 	speed_boost_potion_reduced = {
-		file_path = "razer_chromas/speedpotion",
 		length = 2,
+		file_path = "razer_chromas/speedpotion"
 	},
 	damage_boost_potion = {
-		file_path = "razer_chromas/damagepotion",
 		length = 2,
+		file_path = "razer_chromas/damagepotion"
 	},
 	damage_boost_potion_increased = {
-		file_path = "razer_chromas/damagepotion",
 		length = 2,
+		file_path = "razer_chromas/damagepotion"
 	},
 	damage_boost_potion_reduced = {
-		file_path = "razer_chromas/damagepotion",
 		length = 2,
+		file_path = "razer_chromas/damagepotion"
 	},
 	hit = {
 		file_path = "razer_chromas/hit",
 		length = 0.3,
-		condition_play_func = function (manager)
-			if manager.current_animation == "hit" then
+		condition_play_func = function(arg_1_0)
+			if arg_1_0.current_animation == "hit" then
 				return false
 			end
 
-			local game = Managers.state.network and Managers.state.network:game()
-
-			if not game then
+			if not (Managers.state.network and Managers.state.network:game()) then
 				return false
 			end
 
-			local player = Managers.player:local_player()
+			local var_1_0 = Managers.player:local_player()
 
-			if not player then
+			if not var_1_0 then
 				return false
 			end
 
-			local unit = player.player_unit
+			local var_1_1 = var_1_0.player_unit
 
-			if not Unit.alive(unit) then
+			if not Unit.alive(var_1_1) then
 				return false
 			end
 
-			local health_extension = ScriptUnit.extension(unit, "health_system")
-			local damage_type, hit_type = health_extension:recently_damaged()
-			local strided_array, array_length = health_extension:recent_damages()
-			local took_hit = damage_type and not table.contains(NetworkLookup.damage_sources, damage_type)
+			local var_1_2 = ScriptUnit.extension(var_1_1, "health_system")
+			local var_1_3, var_1_4 = var_1_2:recently_damaged()
+			local var_1_5, var_1_6 = var_1_2:recent_damages()
 
-			return took_hit, false, RAZER_ADD_ANIMATION_TYPE.REPLACE
-		end,
+			return var_1_3 and not table.contains(NetworkLookup.damage_sources, var_1_3), false, RAZER_ADD_ANIMATION_TYPE.REPLACE
+		end
 	},
 	knocked_down = {
 		file_path = "razer_chromas/knockeddown",
 		length = 1.2,
-		condition_play_func = function (manager)
-			if manager.current_animation == "knocked_down" then
+		condition_play_func = function(arg_2_0)
+			if arg_2_0.current_animation == "knocked_down" then
 				return false
 			end
 
-			local game = Managers.state.network and Managers.state.network:game()
-
-			if not game then
+			if not (Managers.state.network and Managers.state.network:game()) then
 				return false
 			end
 
-			local player = Managers.player:local_player()
+			local var_2_0 = Managers.player:local_player()
 
-			if not player then
+			if not var_2_0 then
 				return false
 			end
 
-			local unit = player.player_unit
+			local var_2_1 = var_2_0.player_unit
 
-			if not Unit.alive(unit) then
+			if not Unit.alive(var_2_1) then
 				return false
 			end
 
-			local unit = player.player_unit
+			local var_2_2 = var_2_0.player_unit
 
-			if Unit.alive(unit) then
-				local status_ext = ScriptUnit.extension(unit, "status_system")
+			if Unit.alive(var_2_2) then
+				local var_2_3 = ScriptUnit.extension(var_2_2, "status_system")
 
-				if status_ext.knocked_down or status_ext:is_ready_for_assisted_respawn() then
+				if var_2_3.knocked_down or var_2_3:is_ready_for_assisted_respawn() then
 					return true, true, RAZER_ADD_ANIMATION_TYPE.REPLACE
 				end
 			else
@@ -115,31 +110,29 @@ RazerChromaSettings = {
 
 			return false
 		end,
-		condition_stop_func = function (manager)
-			local game = Managers.state.network and Managers.state.network:game()
-
-			if not game then
+		condition_stop_func = function(arg_3_0)
+			if not (Managers.state.network and Managers.state.network:game()) then
 				return true
 			end
 
-			local player = Managers.player:local_player()
+			local var_3_0 = Managers.player:local_player()
 
-			if not player then
+			if not var_3_0 then
 				return true
 			end
 
-			local unit = player.player_unit
+			local var_3_1 = var_3_0.player_unit
 
-			if not Unit.alive(unit) then
+			if not Unit.alive(var_3_1) then
 				return true
 			end
 
-			local unit = player.player_unit
+			local var_3_2 = var_3_0.player_unit
 
-			if Unit.alive(unit) then
-				local status_ext = ScriptUnit.extension(unit, "status_system")
+			if Unit.alive(var_3_2) then
+				local var_3_3 = ScriptUnit.extension(var_3_2, "status_system")
 
-				if status_ext.knocked_down or status_ext:is_ready_for_assisted_respawn() then
+				if var_3_3.knocked_down or var_3_3:is_ready_for_assisted_respawn() then
 					return false
 				end
 			else
@@ -147,6 +140,6 @@ RazerChromaSettings = {
 			end
 
 			return true
-		end,
-	},
+		end
+	}
 }

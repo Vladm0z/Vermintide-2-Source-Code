@@ -1,62 +1,62 @@
-﻿-- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_pet_nameplate.lua
+-- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_pet_nameplate.lua
 
-local NAME = "pet_nameplate"
+local var_0_0 = "pet_nameplate"
 
 WorldMarkerTemplates = WorldMarkerTemplates or {}
 
-local template = WorldMarkerTemplates[NAME] or {}
+local var_0_1 = WorldMarkerTemplates[var_0_0] or {}
 
-WorldMarkerTemplates[NAME] = template
-template.position_offset = {
+WorldMarkerTemplates[var_0_0] = var_0_1
+var_0_1.position_offset = {
 	0,
 	0,
-	1.9,
+	1.9
 }
-template.check_line_of_sight = true
-template.screen_clamp = false
+var_0_1.check_line_of_sight = true
+var_0_1.screen_clamp = false
 
-template.create_widget_definition = function (scenegraph_id)
+function var_0_1.create_widget_definition(arg_1_0)
 	return {
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_1_0,
 		offset = {
 			0,
 			0,
-			0,
+			0
 		},
 		element = {
 			passes = {
 				{
 					pass_type = "rect",
-					style_id = "progress_background",
+					style_id = "progress_background"
 				},
 				{
-					pass_type = "rect",
 					style_id = "progress_foreground",
-					content_change_function = function (content, style)
-						style.texture_size[1] = content.progress * style.max_width
-					end,
+					pass_type = "rect",
+					content_change_function = function(arg_2_0, arg_2_1)
+						arg_2_1.texture_size[1] = arg_2_0.progress * arg_2_1.max_width
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "text_bg",
 					texture_id = "text_bg",
-					content_check_function = function (content)
-						return content.text
-					end,
+					content_check_function = function(arg_3_0)
+						return arg_3_0.text
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "text",
+					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (content)
-						return content.text
-					end,
-				},
-			},
+					content_check_function = function(arg_4_0)
+						return arg_4_0.text
+					end
+				}
+			}
 		},
 		content = {
-			progress = 0.5,
 			text_bg = "tab_menu_bg_03",
+			progress = 0.5
 		},
 		style = {
 			progress_background = {
@@ -65,83 +65,81 @@ template.create_widget_definition = function (scenegraph_id)
 					255,
 					0,
 					0,
-					0,
+					0
 				},
 				offset = {
 					25,
 					0,
-					0,
+					0
 				},
 				texture_size = {
 					50,
-					10,
-				},
+					10
+				}
 			},
 			progress_foreground = {
-				max_width = 46,
 				vertical_alignment = "top",
+				max_width = 46,
 				color = {
 					255,
 					87,
 					161,
-					34,
+					34
 				},
 				offset = {
 					27,
 					-2,
-					1,
+					1
 				},
 				texture_size = {
 					0,
-					6,
-				},
+					6
+				}
 			},
 			text_bg = {
-				horizontal_alignment = "center",
 				vertical_alignment = "top",
+				horizontal_alignment = "center",
 				offset = {
 					40,
 					10,
-					-1,
+					-1
 				},
 				texture_size = {
 					200,
-					30,
+					30
 				},
 				color = {
 					155,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			text = {
-				font_size = 16,
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
 				vertical_alignment = "top",
+				font_type = "hell_shark",
+				font_size = 16,
+				horizontal_alignment = "center",
 				text_color = {
 					255,
 					215,
 					215,
-					215,
+					215
 				},
 				offset = {
 					0,
 					10,
-					3,
+					3
 				},
 				size = {
 					100,
-					10,
-				},
-			},
-		},
+					10
+				}
+			}
+		}
 	}
 end
 
-template.on_enter = function (widget)
-	local content = widget.content
-
-	content.progress = 1
+function var_0_1.on_enter(arg_5_0)
+	arg_5_0.content.progress = 1
 end

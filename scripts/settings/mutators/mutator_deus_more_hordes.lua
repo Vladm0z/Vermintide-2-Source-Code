@@ -1,18 +1,18 @@
-﻿-- chunkname: @scripts/settings/mutators/mutator_deus_more_hordes.lua
+-- chunkname: @scripts/settings/mutators/mutator_deus_more_hordes.lua
 
-local horde_size_multiplier = 1
-local horde_frequency_modifier = 0.4
-local horde_startup_time_modifier = 0.4
-local relax_duration_modifier = 0.4
-local max_delay_modifier = 0.4
+local var_0_0 = 1
+local var_0_1 = 0.4
+local var_0_2 = 0.4
+local var_0_3 = 0.4
+local var_0_4 = 0.4
 
 return {
 	description = "mutator_deus_more_hordes_desc",
 	display_name = "mutator_deus_more_hordes_name",
 	hide_from_player_ui = true,
 	icon = "mutator_icon_deus_more_hordes",
-	update_conflict_settings = function (context, data)
-		MutatorUtils.update_conflict_settings_horde_size_modifier(horde_size_multiplier)
-		MutatorUtils.update_conflict_settings_horde_frequency(horde_frequency_modifier, horde_startup_time_modifier, relax_duration_modifier, max_delay_modifier)
-	end,
+	update_conflict_settings = function(arg_1_0, arg_1_1)
+		MutatorUtils.update_conflict_settings_horde_size_modifier(var_0_0)
+		MutatorUtils.update_conflict_settings_horde_frequency(var_0_1, var_0_2, var_0_3, var_0_4)
+	end
 }

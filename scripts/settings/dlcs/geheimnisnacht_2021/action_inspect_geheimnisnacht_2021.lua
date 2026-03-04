@@ -1,158 +1,158 @@
-﻿-- chunkname: @scripts/settings/dlcs/geheimnisnacht_2021/action_inspect_geheimnisnacht_2021.lua
+-- chunkname: @scripts/settings/dlcs/geheimnisnacht_2021/action_inspect_geheimnisnacht_2021.lua
 
 ActionInspectGeheimnisnacht2021 = class(ActionInspectGeheimnisnacht2021, ActionDummy)
 
-local INFLUENCE_RATE_MULT = 0.05
-local INFLUENCE_RATE_MULT_DOWN = 0.5
-local MAX_INFLUENCE_AT_ANGLE_MULT = 1.05
-local MAX_INFLUENCE_FLOOR = 0
-local MIN_INFLUNECE = 0
-local MAX_INFLUENCE = 1
-local SCREEN_FX_2_NAME = "fx/invisible_screen_distortion_extreme"
-local CURSE_INTERVAL = 0.5
-local CURSE_COVERT_AMOUNT = 5
-local immune_careers = {
+local var_0_0 = 0.05
+local var_0_1 = 0.5
+local var_0_2 = 1.05
+local var_0_3 = 0
+local var_0_4 = 0
+local var_0_5 = 1
+local var_0_6 = "fx/invisible_screen_distortion_extreme"
+local var_0_7 = 0.5
+local var_0_8 = 5
+local var_0_9 = {
 	bw_necromancer = true,
-	dr_slayer = true,
-	es_questingknight = true,
-	we_thornsister = true,
 	wh_priest = true,
+	we_thornsister = true,
+	es_questingknight = true,
+	dr_slayer = true
 }
 
-ActionInspectGeheimnisnacht2021.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionInspectGeheimnisnacht2021.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionInspectGeheimnisnacht2021.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionInspectGeheimnisnacht2021.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	self._first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
-	self._dialogue_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
-	self._buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
-	self._career_extension = ScriptUnit.extension(owner_unit, "career_system")
-	self._health_extension = ScriptUnit.has_extension(owner_unit, "health_system")
-	self._influence_str = 0
-	self._influence_str_max = 0
-	self._screen_fx_id = nil
-	self._is_immune = immune_careers[self._career_extension:career_name()]
-	self._next_curse_time_t = 0
-	self._take_curse_damage = false
-	self._buff_system = Managers.state.entity:system("buff_system")
+	arg_1_0._first_person_extension = ScriptUnit.extension(arg_1_4, "first_person_system")
+	arg_1_0._dialogue_input = ScriptUnit.extension_input(arg_1_4, "dialogue_system")
+	arg_1_0._buff_extension = ScriptUnit.extension(arg_1_4, "buff_system")
+	arg_1_0._career_extension = ScriptUnit.extension(arg_1_4, "career_system")
+	arg_1_0._health_extension = ScriptUnit.has_extension(arg_1_4, "health_system")
+	arg_1_0._influence_str = 0
+	arg_1_0._influence_str_max = 0
+	arg_1_0._screen_fx_id = nil
+	arg_1_0._is_immune = var_0_9[arg_1_0._career_extension:career_name()]
+	arg_1_0._next_curse_time_t = 0
+	arg_1_0._take_curse_damage = false
+	arg_1_0._buff_system = Managers.state.entity:system("buff_system")
 end
 
-ActionInspectGeheimnisnacht2021.client_owner_start_action = function (self, new_action, t)
-	ActionInspectGeheimnisnacht2021.super.client_owner_start_action(self, new_action, t)
+function ActionInspectGeheimnisnacht2021.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
+	ActionInspectGeheimnisnacht2021.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
 
-	self._influence_str = 0
-	self._influence_str_max = 0
-	self._next_curse_time_t = 0
-	self._take_curse_damage = false
+	arg_2_0._influence_str = 0
+	arg_2_0._influence_str_max = 0
+	arg_2_0._next_curse_time_t = 0
+	arg_2_0._take_curse_damage = false
 
-	self._first_person_extension:animation_set_variable("influence", self._influence_str)
+	arg_2_0._first_person_extension:animation_set_variable("influence", arg_2_0._influence_str)
 end
 
-ActionInspectGeheimnisnacht2021.client_owner_post_update = function (self, dt, t, world, can_damage)
-	local old_influnece = self._influence_str
+function ActionInspectGeheimnisnacht2021.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local var_3_0 = arg_3_0._influence_str
 
-	if not self._is_immune then
-		local skull_rotation = Unit.world_rotation(self.weapon_unit, 0)
-		local look_rotation = self._first_person_extension:current_rotation()
-		local skull_look_dir = Quaternion.forward(skull_rotation)
-		local owner_look_dir = Quaternion.forward(look_rotation)
-		local angle = Vector3.dot(skull_look_dir, owner_look_dir)
-		local max_influence_at_angle = angle > 0.9 and math.max(angle * MAX_INFLUENCE_AT_ANGLE_MULT, MAX_INFLUENCE_FLOOR) or 0
-		local influence_inc = INFLUENCE_RATE_MULT * dt
+	if not arg_3_0._is_immune then
+		local var_3_1 = Unit.world_rotation(arg_3_0.weapon_unit, 0)
+		local var_3_2 = arg_3_0._first_person_extension:current_rotation()
+		local var_3_3 = Quaternion.forward(var_3_1)
+		local var_3_4 = Quaternion.forward(var_3_2)
+		local var_3_5 = Vector3.dot(var_3_3, var_3_4)
+		local var_3_6 = var_3_5 > 0.9 and math.max(var_3_5 * var_0_2, var_0_3) or 0
+		local var_3_7 = var_0_0 * arg_3_1
 
-		if max_influence_at_angle < self._influence_str then
-			influence_inc = INFLUENCE_RATE_MULT_DOWN * dt
+		if var_3_6 < arg_3_0._influence_str then
+			var_3_7 = var_0_1 * arg_3_1
 		end
 
-		local influence_rate = max_influence_at_angle * INFLUENCE_RATE_MULT
+		local var_3_8 = var_3_6 * var_0_0
 
-		self._influence_str = math.min(math.lerp(self._influence_str, max_influence_at_angle, influence_inc), MAX_INFLUENCE)
+		arg_3_0._influence_str = math.min(math.lerp(arg_3_0._influence_str, var_3_6, var_3_7), var_0_5)
 	end
 
-	self._first_person_extension:animation_set_variable("influence", self._influence_str)
+	arg_3_0._first_person_extension:animation_set_variable("influence", arg_3_0._influence_str)
 
-	self._influence_str_max = math.max(self._influence_str_max, self._influence_str)
+	arg_3_0._influence_str_max = math.max(arg_3_0._influence_str_max, arg_3_0._influence_str)
 
-	if old_influnece < 0.3 and self._influence_str >= 0.3 then
-		Unit.animation_event(self.first_person_unit, "gehemnisnacht_egg_heartbeat_start")
+	if var_3_0 < 0.3 and arg_3_0._influence_str >= 0.3 then
+		Unit.animation_event(arg_3_0.first_person_unit, "gehemnisnacht_egg_heartbeat_start")
 	end
 
-	if old_influnece > 0.3 and self._influence_str <= 0.3 then
-		Unit.animation_event(self.first_person_unit, "gehemnisnacht_egg_heartbeat_stop")
+	if var_3_0 > 0.3 and arg_3_0._influence_str <= 0.3 then
+		Unit.animation_event(arg_3_0.first_person_unit, "gehemnisnacht_egg_heartbeat_stop")
 	end
 
-	if old_influnece < 0.7 and self._influence_str >= 0.7 then
-		Unit.animation_event(self.first_person_unit, "gehemnisnacht_egg_level2")
-		self:_create_screen_particles()
-		self._first_person_extension:set_weapon_sway_settings({
-			camera_look_sensitivity = 0.03,
-			lerp_speed = 3,
-			look_sensitivity = 8,
+	if var_3_0 < 0.7 and arg_3_0._influence_str >= 0.7 then
+		Unit.animation_event(arg_3_0.first_person_unit, "gehemnisnacht_egg_level2")
+		arg_3_0:_create_screen_particles()
+		arg_3_0._first_person_extension:set_weapon_sway_settings({
 			recentering_lerp_speed = 250,
+			lerp_speed = 3,
 			sway_range = 1,
+			camera_look_sensitivity = 0.03,
+			look_sensitivity = 8
 		})
 	end
 
-	if old_influnece > 0.7 and self._influence_str <= 0.7 then
-		Unit.animation_event(self.first_person_unit, "gehemnisnacht_egg_level1")
-		self._first_person_extension:set_weapon_sway_settings({
-			camera_look_sensitivity = 1,
-			lerp_speed = 10,
-			look_sensitivity = 1.5,
+	if var_3_0 > 0.7 and arg_3_0._influence_str <= 0.7 then
+		Unit.animation_event(arg_3_0.first_person_unit, "gehemnisnacht_egg_level1")
+		arg_3_0._first_person_extension:set_weapon_sway_settings({
 			recentering_lerp_speed = 0,
-			sway_range = 1,
-		})
-	end
-
-	if old_influnece < 0.9 and self._influence_str >= 0.9 then
-		Unit.animation_event(self.first_person_unit, "gehemnisnacht_egg_level3")
-		self._first_person_extension:set_weapon_sway_settings({
-			camera_look_sensitivity = 1,
 			lerp_speed = 10,
-			look_sensitivity = 1.5,
-			recentering_lerp_speed = 10,
 			sway_range = 1,
+			camera_look_sensitivity = 1,
+			look_sensitivity = 1.5
+		})
+	end
+
+	if var_3_0 < 0.9 and arg_3_0._influence_str >= 0.9 then
+		Unit.animation_event(arg_3_0.first_person_unit, "gehemnisnacht_egg_level3")
+		arg_3_0._first_person_extension:set_weapon_sway_settings({
+			recentering_lerp_speed = 10,
+			lerp_speed = 10,
+			sway_range = 1,
+			camera_look_sensitivity = 1,
+			look_sensitivity = 1.5
 		})
 
-		self._take_curse_damage = true
+		arg_3_0._take_curse_damage = true
 	end
 
-	if self._take_curse_damage and t >= self._next_curse_time_t then
-		self._next_curse_time_t = t + CURSE_INTERVAL
+	if arg_3_0._take_curse_damage and arg_3_2 >= arg_3_0._next_curse_time_t then
+		arg_3_0._next_curse_time_t = arg_3_2 + var_0_7
 
-		self._health_extension:convert_to_temp(CURSE_COVERT_AMOUNT)
+		arg_3_0._health_extension:convert_to_temp(var_0_8)
 	end
 
-	if self._screen_fx_id then
-		local player = Managers.player:owner(self.owner_unit)
-		local viewport_name = player.viewport_name
-		local viewport = ScriptWorld.viewport(self.world, viewport_name)
-		local camera = ScriptViewport.camera(viewport)
-		local screen_width, screen_height = RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h
-		local center_pos_x = screen_width / 2
-		local center_pos_y = screen_height / 2
-		local skull_world_pos = Unit.world_position(self.weapon_unit, 0)
-		local view_pos = Camera.world_to_screen(camera, skull_world_pos)
-		local screen_pos = Vector3((view_pos.x - center_pos_x) / center_pos_x, 0, (view_pos.y - center_pos_y) / center_pos_y)
+	if arg_3_0._screen_fx_id then
+		local var_3_9 = Managers.player:owner(arg_3_0.owner_unit).viewport_name
+		local var_3_10 = ScriptWorld.viewport(arg_3_0.world, var_3_9)
+		local var_3_11 = ScriptViewport.camera(var_3_10)
+		local var_3_12 = RESOLUTION_LOOKUP.res_w
+		local var_3_13 = RESOLUTION_LOOKUP.res_h
+		local var_3_14 = var_3_12 / 2
+		local var_3_15 = var_3_13 / 2
+		local var_3_16 = Unit.world_position(arg_3_0.weapon_unit, 0)
+		local var_3_17 = Camera.world_to_screen(var_3_11, var_3_16)
+		local var_3_18 = Vector3((var_3_17.x - var_3_14) / var_3_14, 0, (var_3_17.y - var_3_15) / var_3_15)
 
-		World.move_particles(self.world, self._screen_fx_id, screen_pos)
-	end
-end
-
-ActionInspectGeheimnisnacht2021.finish = function (self, reason)
-	ActionInspectGeheimnisnacht2021.super.finish(self, reason)
-	self:_destroy_screen_particles()
-end
-
-ActionInspectGeheimnisnacht2021._create_screen_particles = function (self)
-	if not self._screen_fx_id then
-		self._screen_fx_id = self._first_person_extension:create_screen_particles(SCREEN_FX_2_NAME, Vector3(1, 0, 0))
+		World.move_particles(arg_3_0.world, arg_3_0._screen_fx_id, var_3_18)
 	end
 end
 
-ActionInspectGeheimnisnacht2021._destroy_screen_particles = function (self)
-	if self._screen_fx_id then
-		self._first_person_extension:stop_spawning_screen_particles(self._screen_fx_id)
+function ActionInspectGeheimnisnacht2021.finish(arg_4_0, arg_4_1)
+	ActionInspectGeheimnisnacht2021.super.finish(arg_4_0, arg_4_1)
+	arg_4_0:_destroy_screen_particles()
+end
 
-		self._screen_fx_id = nil
+function ActionInspectGeheimnisnacht2021._create_screen_particles(arg_5_0)
+	if not arg_5_0._screen_fx_id then
+		arg_5_0._screen_fx_id = arg_5_0._first_person_extension:create_screen_particles(var_0_6, Vector3(1, 0, 0))
+	end
+end
+
+function ActionInspectGeheimnisnacht2021._destroy_screen_particles(arg_6_0)
+	if arg_6_0._screen_fx_id then
+		arg_6_0._first_person_extension:stop_spawning_screen_particles(arg_6_0._screen_fx_id)
+
+		arg_6_0._screen_fx_id = nil
 	end
 end

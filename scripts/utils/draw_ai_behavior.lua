@@ -1,88 +1,86 @@
-﻿-- chunkname: @scripts/utils/draw_ai_behavior.lua
+-- chunkname: @scripts/utils/draw_ai_behavior.lua
 
 require("scripts/utils/script_gui")
 
-local SMALL_FONT_SIZE = 16
-local MEDIUM_FONT_SIZE = 22
-local FONT_SIZE = 26
-local FONT = "arial"
-local FONT_MTRL = "materials/fonts/" .. FONT
-local TINY_FONT = "arial"
-local TINY_FONT_MTRL = "materials/fonts/" .. TINY_FONT
-local TINY_FONT_SIZE = 12
-local LAYER = 100
-local RES_X, RES_Y = Application.resolution()
-local NODE_HEIGHT = 0.04
-local MIN_NODE_WIDTH = 160 / RES_X
-local NODE_SPACING = RES_X * 1e-05
-local TEXT_SPACING = 2 / RES_X
-local THIN_BORDER = 5 / RES_X
-local THICK_BORDER = 15 / RES_X
-local FADE_TIME = 3
-local reuse_fill_lines = {}
-local state_counter = 1
-local draw_timers = {}
-local nodes = {}
-local row_heights = {
-	NODE_HEIGHT,
+local var_0_0 = 16
+local var_0_1 = 22
+local var_0_2 = 26
+local var_0_3 = "arial"
+local var_0_4 = "materials/fonts/" .. var_0_3
+local var_0_5 = "arial"
+local var_0_6 = "materials/fonts/" .. var_0_5
+local var_0_7 = 12
+local var_0_8 = 100
+local var_0_9, var_0_10 = Application.resolution()
+local var_0_11 = 0.04
+local var_0_12 = 160 / var_0_9
+local var_0_13 = var_0_9 * 1e-05
+local var_0_14 = 2 / var_0_9
+local var_0_15 = 5 / var_0_9
+local var_0_16 = 15 / var_0_9
+local var_0_17 = 3
+local var_0_18 = {}
+local var_0_19 = 1
+local var_0_20 = {}
+local var_0_21 = {}
+local var_0_22 = {
+	var_0_11
 }
-local ROW_SPACING = NODE_HEIGHT * 0.5
-local BORDER_SPACING = NODE_HEIGHT
+local var_0_23 = var_0_11 * 0.5
+local var_0_24 = var_0_11
 
 DrawAiBehaviour = {}
 
-local DrawAiBehaviour = DrawAiBehaviour
+local var_0_25 = DrawAiBehaviour
 
-DrawAiBehaviour.winning_utility_value = 0
-DrawAiBehaviour.circle_array = {}
-DrawAiBehaviour.circle_array_index = 0
-DrawAiBehaviour.circle_max_size = 12
+var_0_25.winning_utility_value = 0
+var_0_25.circle_array = {}
+var_0_25.circle_array_index = 0
+var_0_25.circle_max_size = 12
 
-local function rshoot_action_debug(blackboard, fill_lines)
-	local attack_pattern_data = blackboard.attack_pattern_data
+local function var_0_26(arg_1_0, arg_1_1)
+	local var_1_0 = arg_1_0.attack_pattern_data
 
-	fill_lines[1] = "State:" .. tostring(attack_pattern_data and attack_pattern_data.state)
+	arg_1_1[1] = "State:" .. tostring(var_1_0 and var_1_0.state)
 
 	return 1
 end
 
-local function tentacle_action_debug(blackboard, fill_lines)
-	local tentacle_data = blackboard.tentacle_data
+local function var_0_27(arg_2_0, arg_2_1)
+	local var_2_0 = arg_2_0.tentacle_data
 
-	if tentacle_data then
-		fill_lines[1] = "state:" .. tostring(tentacle_data.state) .. "/" .. tostring(tentacle_data.sub_state)
-		fill_lines[2] = "template: " .. tostring(tentacle_data.active_template_name)
-		fill_lines[3] = "mount: " .. tostring(tentacle_data.portal_spawn_type)
-		fill_lines[4] = "path: " .. tostring(tentacle_data.path_type)
+	if var_2_0 then
+		arg_2_1[1] = "state:" .. tostring(var_2_0.state) .. "/" .. tostring(var_2_0.sub_state)
+		arg_2_1[2] = "template: " .. tostring(var_2_0.active_template_name)
+		arg_2_1[3] = "mount: " .. tostring(var_2_0.portal_spawn_type)
+		arg_2_1[4] = "path: " .. tostring(var_2_0.path_type)
 	end
 
 	return 4
 end
 
-local function chaos_sorc_skulk_action_debug(blackboard, fill_lines)
-	local portal_data = blackboard.portal_data
+local function var_0_28(arg_3_0, arg_3_1)
+	local var_3_0 = arg_3_0.portal_data
 
-	if portal_data then
-		local sa = portal_data.portal_search_active and "searching" or "no search"
-		local portal_out = blackboard.portal_unit and "1" or "0"
-		local count = portal_data.search_counter
-		local wall_index = tostring(portal_data.cover_point_index)
+	if var_3_0 then
+		local var_3_1 = var_3_0.portal_search_active and "searching" or "no search"
+		local var_3_2 = arg_3_0.portal_unit and "1" or "0"
+		local var_3_3 = var_3_0.search_counter
+		local var_3_4 = tostring(var_3_0.cover_point_index)
 
-		fill_lines[1] = sa .. " ,P:" .. portal_out .. ",SC:" .. count .. " ,Wi:" .. wall_index
-		fill_lines[2] = "type=" .. tostring(portal_data.placement)
+		arg_3_1[1] = var_3_1 .. " ,P:" .. var_3_2 .. ",SC:" .. var_3_3 .. " ,Wi:" .. var_3_4
+		arg_3_1[2] = "type=" .. tostring(var_3_0.placement)
 
 		return 2
 	end
 
-	local vortex_data = blackboard.vortex_data
+	local var_3_5 = arg_3_0.vortex_data
 
-	if vortex_data then
-		local t = Managers.time:time("game")
-		local next_cast_attempt = string.format("spawn_timer: %.2f | %.2f", vortex_data.spawn_timer, t)
-		local vortex_count = string.format("num_vortex_units: %d", #vortex_data.vortex_units)
+	if var_3_5 then
+		local var_3_6 = Managers.time:time("game")
+		local var_3_7 = string.format("spawn_timer: %.2f | %.2f", var_3_5.spawn_timer, var_3_6)
 
-		fill_lines[1] = next_cast_attempt
-		fill_lines[2] = vortex_count
+		arg_3_1[2], arg_3_1[1] = string.format("num_vortex_units: %d", #var_3_5.vortex_units), var_3_7
 
 		return 2
 	end
@@ -90,23 +88,23 @@ local function chaos_sorc_skulk_action_debug(blackboard, fill_lines)
 	return 0
 end
 
-local function chaos_sorc_exalt_skulk_action_debug(blackboard, fill_lines)
-	fill_lines[1] = "phase=" .. tostring(blackboard.phase)
-	fill_lines[2] = "current_spell=" .. tostring(blackboard.current_spell and blackboard.current_spell.name or "nil")
-	fill_lines[3] = "spell count=" .. tostring(blackboard.spell_count)
-	fill_lines[4] = "freeze spell casting=" .. tostring(blackboard.freeze_spell_casting)
+local function var_0_29(arg_4_0, arg_4_1)
+	arg_4_1[1] = "phase=" .. tostring(arg_4_0.phase)
+	arg_4_1[2] = "current_spell=" .. tostring(arg_4_0.current_spell and arg_4_0.current_spell.name or "nil")
+	arg_4_1[3] = "spell count=" .. tostring(arg_4_0.spell_count)
+	arg_4_1[4] = "freeze spell casting=" .. tostring(arg_4_0.freeze_spell_casting)
 
 	return 4
 end
 
-local function rat_ogre_jump_slam_action_debug(blackboard, fill_lines)
-	local jump_data = blackboard.jump_slam_data
-	local landing_time = jump_data and jump_data.landing_time
+local function var_0_30(arg_5_0, arg_5_1)
+	local var_5_0 = arg_5_0.jump_slam_data
+	local var_5_1 = var_5_0 and var_5_0.landing_time
 
-	if landing_time then
-		local t = Managers.time:time("game")
+	if var_5_1 then
+		local var_5_2 = Managers.time:time("game")
 
-		fill_lines[1] = string.format("landing_time= %.2f | %.2f", landing_time, t)
+		arg_5_1[1] = string.format("landing_time= %.2f | %.2f", var_5_1, var_5_2)
 
 		return 1
 	else
@@ -114,673 +112,674 @@ local function rat_ogre_jump_slam_action_debug(blackboard, fill_lines)
 	end
 end
 
-local show_blackboard_data = {
+local var_0_31 = {
 	BTFallAction = {
 		"is_falling",
 		"fall_done",
-		"fall_state",
+		"fall_state"
 	},
 	BTMoveToGoalAction = {
-		"is_passive",
+		"is_passive"
 	},
 	BTBossFollowAction = {
-		"move_state",
+		"move_state"
 	},
 	BTMeleeSlamAction = {
 		"move_state",
 		"attack_anim",
-		"attack_anim_driven",
+		"attack_anim_driven"
 	},
 	BTTargetUnreachableAction = {
 		"move_state",
-		"target_dist",
+		"target_dist"
 	},
 	BTCrazyJumpAction = {
-		"jump_data",
+		"jump_data"
 	},
 	BTSkulkAroundAction = {
 		"in_los",
 		"skulk_pos",
-		"debug_state",
+		"debug_state"
 	},
 	BTCirclePreyAction = {
-		"move_state",
+		"move_state"
 	},
 	BTAttackAction = {
 		"attacks_done",
 		"target_dist",
-		"slot_layer",
+		"slot_layer"
 	},
 	BTClanRatFollowAction = {
 		"move_state",
-		"using_smart_object",
+		"using_smart_object"
 	},
 	BTCombatShoutAction = {
 		"nav_target_dist_sq",
-		"slot_layer",
+		"slot_layer"
 	},
 	BTClimbAction = {
 		"is_in_smartobject_range",
 		"is_climbing",
-		"climb_state",
+		"climb_state"
 	},
 	BTSkulkAroundAction = {
-		"skulk_jump_tries",
+		"skulk_jump_tries"
 	},
 	BTPackMasterSkulkAroundAction = {
 		"skulk_in_los",
 		"skulk_dogpile",
 		"skulk_time_left",
-		"skulk_debug_state",
+		"skulk_debug_state"
 	},
 	BTPackMasterDragAction = {
 		"drag_check_index",
-		"drag_check_time_debug",
+		"drag_check_time_debug"
 	},
 	BTSkulkApproachAction = {
-		"target_dist",
+		"target_dist"
 	},
 	BTSkulkIdleAction = {
-		"skulk_data",
+		"skulk_data"
 	},
 	BTNinjaApproachAction = {
-		"skulk_pos_is_jump_off_point",
+		"skulk_pos_is_jump_off_point"
 	},
 	BTTrollDownedAction = {
-		"downed_state",
+		"downed_state"
 	},
 	BTRatlingGunnerShootAction = {
-		rshoot_action_debug,
+		var_0_26
 	},
 	BTTentacleAttackAction = {
-		tentacle_action_debug,
+		var_0_27
 	},
 	BTChaosSorcererSkulkApproachAction = {
-		chaos_sorc_skulk_action_debug,
+		var_0_28
 	},
 	BTVortexWanderAction = {
-		"vortex_data",
+		"vortex_data"
 	},
 	BTInVortexAction = {
-		"in_vortex_state",
+		"in_vortex_state"
 	},
 	BTChaosExaltedSorcererSkulkAction = {
-		chaos_sorc_exalt_skulk_action_debug,
+		var_0_29
 	},
 	BTJumpSlamAction = {
-		rat_ogre_jump_slam_action_debug,
-	},
+		var_0_30
+	}
 }
 
-local function reset_circle_array()
-	DrawAiBehaviour.circle_array_index = 0
+local function var_0_32()
+	var_0_25.circle_array_index = 0
 
-	table.clear(DrawAiBehaviour.circle_array)
+	table.clear(var_0_25.circle_array)
 
-	state_counter = 1
+	var_0_19 = 1
 end
 
-local function add_item_to_circle_array(item)
-	DrawAiBehaviour.circle_array_index = DrawAiBehaviour.circle_array_index % DrawAiBehaviour.circle_max_size + 1
-	DrawAiBehaviour.circle_array[DrawAiBehaviour.circle_array_index] = item
+local function var_0_33(arg_7_0)
+	var_0_25.circle_array_index = var_0_25.circle_array_index % var_0_25.circle_max_size + 1
+	var_0_25.circle_array[var_0_25.circle_array_index] = arg_7_0
 end
 
-local function present_circle_array(gui, x, y)
-	local a = DrawAiBehaviour.circle_array
-	local index = DrawAiBehaviour.circle_array_index
-	local max_items = DrawAiBehaviour.circle_max_size
-	local num_items = #a
-	local x1, y1 = x, y
+local function var_0_34(arg_8_0, arg_8_1, arg_8_2)
+	local var_8_0 = var_0_25.circle_array
+	local var_8_1 = var_0_25.circle_array_index
+	local var_8_2 = var_0_25.circle_max_size
+	local var_8_3 = #var_8_0
+	local var_8_4 = arg_8_1
+	local var_8_5 = arg_8_2
 
-	ScriptGUI.icrect(gui, RES_X, RES_Y, x1 - 5, y1 - 5, x1 + 300, y1 + num_items * 20 + 10, LAYER, Color(100, 100, 100, 150))
+	ScriptGUI.icrect(arg_8_0, var_0_9, var_0_10, var_8_4 - 5, var_8_5 - 5, var_8_4 + 300, var_8_5 + var_8_3 * 20 + 10, var_0_8, Color(100, 100, 100, 150))
 
-	for i = 1, num_items do
-		local text = a[index]
+	for iter_8_0 = 1, var_8_3 do
+		local var_8_6 = var_8_0[var_8_1]
 
-		ScriptGUI.ictext(gui, RES_X, RES_Y, text, FONT_MTRL, FONT_SIZE, FONT, x1, y1 + 20 * i, 400, Color(255, 220, 120))
+		ScriptGUI.ictext(arg_8_0, var_0_9, var_0_10, var_8_6, var_0_4, var_0_2, var_0_3, var_8_4, var_8_5 + 20 * iter_8_0, 400, Color(255, 220, 120))
 
-		index = (index - 2) % max_items + 1
+		var_8_1 = (var_8_1 - 2) % var_8_2 + 1
 	end
 end
 
-local function present_perception(gui, x, y, blackboard)
-	local x1, y1, y2 = x, y, y
-	local i = 1
-	local unit = blackboard.unit
+local function var_0_35(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	local var_9_0 = arg_9_1
+	local var_9_1 = arg_9_2
+	local var_9_2 = arg_9_2
+	local var_9_3 = 1
+	local var_9_4 = arg_9_3.unit
 
-	if Unit.alive(unit) then
-		local ai_system = Managers.state.entity:system("ai_system")
-		local col1 = Color(200, 200, 200)
-		local colh = Color(240, 240, 140)
-		local colr = Color(100, 190, 190)
-		local extension = ai_system.ai_units_perception[blackboard.unit]
+	if Unit.alive(var_9_4) then
+		local var_9_5 = Managers.state.entity:system("ai_system")
+		local var_9_6 = Color(200, 200, 200)
+		local var_9_7 = Color(240, 240, 140)
+		local var_9_8 = Color(100, 190, 190)
+		local var_9_9 = var_9_5.ai_units_perception[arg_9_3.unit]
 
-		if extension then
-			local target_unit_text = ""
-			local target_unit = blackboard.target_unit
+		if var_9_9 then
+			local var_9_10 = ""
+			local var_9_11 = arg_9_3.target_unit
 
-			if target_unit and BLACKBOARDS[target_unit] then
-				target_unit_text = "u" .. Unit.get_data(target_unit, "unique_id") .. ") " .. BLACKBOARDS[target_unit].breed.name .. "  (" .. (HEALTH_ALIVE[target_unit] and "alive" or "dead") .. ")"
+			if var_9_11 and BLACKBOARDS[var_9_11] then
+				var_9_10 = "u" .. Unit.get_data(var_9_11, "unique_id") .. ") " .. BLACKBOARDS[var_9_11].breed.name .. "  (" .. (HEALTH_ALIVE[var_9_11] and "alive" or "dead") .. ")"
 			end
 
-			y2 = y2 + 10
+			var_9_2 = var_9_2 + 10
 
-			ScriptGUI.ictext(gui, RES_X, RES_Y, "normal:", FONT_MTRL, SMALL_FONT_SIZE, FONT, x1, y2, 400, colh)
-			ScriptGUI.ictext(gui, RES_X, RES_Y, target_unit_text, FONT_MTRL, TINY_FONT_SIZE, FONT, x1 + 70, y2, 400, colr)
+			ScriptGUI.ictext(arg_9_0, var_0_9, var_0_10, "normal:", var_0_4, var_0_0, var_0_3, var_9_0, var_9_2, 400, var_9_7)
+			ScriptGUI.ictext(arg_9_0, var_0_9, var_0_10, var_9_10, var_0_4, var_0_7, var_0_3, var_9_0 + 70, var_9_2, 400, var_9_8)
 
-			y2 = y2 + 17
+			var_9_2 = var_9_2 + 17
 
-			local p = "p: " .. extension._perception_func_name
-			local t = "t: " .. extension._target_selection_func_name
+			local var_9_12 = "p: " .. var_9_9._perception_func_name
+			local var_9_13 = "t: " .. var_9_9._target_selection_func_name
 
-			ScriptGUI.ictext(gui, RES_X, RES_Y, p, FONT_MTRL, MEDIUM_FONT_SIZE, FONT, x1, y2, 400, col1)
+			ScriptGUI.ictext(arg_9_0, var_0_9, var_0_10, var_9_12, var_0_4, var_0_1, var_0_3, var_9_0, var_9_2, 400, var_9_6)
 
-			y2 = y2 + 20
+			var_9_2 = var_9_2 + 20
 
-			ScriptGUI.ictext(gui, RES_X, RES_Y, t, FONT_MTRL, MEDIUM_FONT_SIZE, FONT, x1, y2, 400, col1)
+			ScriptGUI.ictext(arg_9_0, var_0_9, var_0_10, var_9_13, var_0_4, var_0_1, var_0_3, var_9_0, var_9_2, 400, var_9_6)
 
-			y2 = y2 + 18
+			var_9_2 = var_9_2 + 18
 		end
 
-		local extension = ai_system.ai_units_perception_continuous[blackboard.unit]
+		if var_9_5.ai_units_perception_continuous[arg_9_3.unit] then
+			ScriptGUI.ictext(arg_9_0, var_0_9, var_0_10, "continious:", var_0_4, var_0_0, var_0_3, var_9_0, var_9_2, 400, var_9_7)
 
-		if extension then
-			ScriptGUI.ictext(gui, RES_X, RES_Y, "continious:", FONT_MTRL, SMALL_FONT_SIZE, FONT, x1, y2, 400, colh)
+			local var_9_14 = var_9_2 + 17
+			local var_9_15 = arg_9_3.breed.perception_continuous
 
-			local y2 = y2 + 17
-			local t = blackboard.breed.perception_continuous
+			ScriptGUI.ictext(arg_9_0, var_0_9, var_0_10, var_9_15, var_0_4, var_0_1, var_0_3, var_9_0, var_9_14, 400, var_9_6)
 
-			ScriptGUI.ictext(gui, RES_X, RES_Y, t, FONT_MTRL, MEDIUM_FONT_SIZE, FONT, x1, y2, 400, col1)
-
-			y2 = y2 + 20
+			local var_9_16 = var_9_14 + 20
 		end
 
-		local extension = ai_system.ai_units_perception_prioritized[blackboard.unit]
+		local var_9_17 = var_9_5.ai_units_perception_prioritized[arg_9_3.unit]
 
-		if extension then
-			y2 = y2 + 10
+		if var_9_17 then
+			var_9_2 = var_9_2 + 10
 
-			ScriptGUI.ictext(gui, RES_X, RES_Y, "prioritized:", FONT_MTRL, SMALL_FONT_SIZE, FONT, x1, y2, 400, colh)
+			ScriptGUI.ictext(arg_9_0, var_0_9, var_0_10, "prioritized:", var_0_4, var_0_0, var_0_3, var_9_0, var_9_2, 400, var_9_7)
 
-			local p = "p: " .. extension._perception_func_name
-			local t = "t: " .. extension._target_selection_func_name
+			local var_9_18 = "p: " .. var_9_17._perception_func_name
+			local var_9_19 = "t: " .. var_9_17._target_selection_func_name
 
-			y2 = y2 + 20
+			var_9_2 = var_9_2 + 20
 
-			ScriptGUI.ictext(gui, RES_X, RES_Y, p, FONT_MTRL, MEDIUM_FONT_SIZE, FONT, x1, y2, 400, col1)
+			ScriptGUI.ictext(arg_9_0, var_0_9, var_0_10, var_9_18, var_0_4, var_0_1, var_0_3, var_9_0, var_9_2, 400, var_9_6)
 
-			y2 = y2 + 20
+			var_9_2 = var_9_2 + 20
 
-			ScriptGUI.ictext(gui, RES_X, RES_Y, t, FONT_MTRL, MEDIUM_FONT_SIZE, FONT, x1, y2, 400, col1)
+			ScriptGUI.ictext(arg_9_0, var_0_9, var_0_10, var_9_19, var_0_4, var_0_1, var_0_3, var_9_0, var_9_2, 400, var_9_6)
 		end
 
-		y2 = y2 + 25
+		local var_9_20 = var_9_2 + 25
 
-		ScriptGUI.icrect(gui, RES_X, RES_Y, x1 - 5, y1 - 5, x1 + 380, y2, LAYER, Color(25, 70, 70, 100))
+		ScriptGUI.icrect(arg_9_0, var_0_9, var_0_10, var_9_0 - 5, var_9_1 - 5, var_9_0 + 380, var_9_20, var_0_8, Color(25, 70, 70, 100))
 	end
 end
 
-local function update_node_history(blackboard, node_children, current_identifier)
-	if DrawAiBehaviour.last_blackboard ~= blackboard or blackboard.reset_node_history then
-		DrawAiBehaviour.last_blackboard = blackboard
-		DrawAiBehaviour.last_running_node = nil
-		DrawAiBehaviour.running_node_switch = true
-		blackboard.reset_node_history = nil
+local function var_0_36(arg_10_0, arg_10_1, arg_10_2)
+	if var_0_25.last_blackboard ~= arg_10_0 or arg_10_0.reset_node_history then
+		var_0_25.last_blackboard = arg_10_0
+		var_0_25.last_running_node = nil
+		var_0_25.running_node_switch = true
+		arg_10_0.reset_node_history = nil
 
-		reset_circle_array()
+		var_0_32()
 	end
 
-	local running_nodes = blackboard.running_nodes
+	local var_10_0 = arg_10_0.running_nodes
 
-	for node_id, running_data in pairs(running_nodes) do
-		if running_data._identifier == current_identifier then
-			if not node_children then
-				if DrawAiBehaviour.running_node ~= current_identifier then
-					DrawAiBehaviour.last_running_node = DrawAiBehaviour.running_node
-					DrawAiBehaviour.running_node_switch = true
+	for iter_10_0, iter_10_1 in pairs(var_10_0) do
+		if iter_10_1._identifier == arg_10_2 then
+			if not arg_10_1 then
+				if var_0_25.running_node ~= arg_10_2 then
+					var_0_25.last_running_node = var_0_25.running_node
+					var_0_25.running_node_switch = true
 
-					add_item_to_circle_array(state_counter .. " " .. current_identifier)
+					var_0_33(var_0_19 .. " " .. arg_10_2)
 
-					state_counter = state_counter + 1
+					var_0_19 = var_0_19 + 1
 				else
-					DrawAiBehaviour.running_node_switch = false
+					var_0_25.running_node_switch = false
 				end
 
-				DrawAiBehaviour.running_node = current_identifier
+				var_0_25.running_node = arg_10_2
 			end
 
-			return current_identifier
+			return arg_10_2
 		end
 	end
 end
 
-local function longest_text_length_check(text, longest_text, longest_text_length)
-	local text_length = UTF8Utils.string_length(text)
+local function var_0_37(arg_11_0, arg_11_1, arg_11_2)
+	local var_11_0 = UTF8Utils.string_length(arg_11_0)
 
-	if longest_text_length < text_length then
-		return text, text_length
+	if arg_11_2 < var_11_0 then
+		return arg_11_0, var_11_0
 	else
-		return longest_text, longest_text_length
+		return arg_11_1, arg_11_2
 	end
 end
 
-local v3box_meta = getmetatable(Vector3Box(0, 0, 0))
+local var_0_38 = getmetatable(Vector3Box(0, 0, 0))
 
-local function draw_blackboard(gui, node, blackboard, x1, y1, extra_info, node_width, extra_height, tcolor)
-	local pos_x = x1 + TEXT_SPACING
-	local pos_y = y1 + NODE_HEIGHT * 0.8
-	local text_height = SMALL_FONT_SIZE / RES_Y
-	local text_layer = LAYER + 1
-	local node_type = node.name
-	local bb_color = Color(255, 0, 0, 0)
-	local bb_items = show_blackboard_data[node_type]
-	local bb_text, text_length, longest_text
-	local longest_text_length = 0
-	local enter_hook = node._tree_node.enter_hook
+local function var_0_39(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7, arg_12_8)
+	local var_12_0 = arg_12_3 + var_0_14
+	local var_12_1 = arg_12_4 + var_0_11 * 0.8
+	local var_12_2 = var_0_0 / var_0_10
+	local var_12_3 = var_0_8 + 1
+	local var_12_4 = arg_12_1.name
+	local var_12_5 = Color(255, 0, 0, 0)
+	local var_12_6 = var_0_31[var_12_4]
+	local var_12_7
+	local var_12_8
+	local var_12_9
+	local var_12_10 = 0
+	local var_12_11 = arg_12_1._tree_node.enter_hook
 
-	if enter_hook then
-		longest_text, longest_text_length = longest_text_length_check(enter_hook, longest_text, longest_text_length)
+	if var_12_11 then
+		var_12_9, var_12_10 = var_0_37(var_12_11, var_12_9, var_12_10)
 	end
 
-	local leave_hook = node._tree_node.leave_hook
+	local var_12_12 = arg_12_1._tree_node.leave_hook
 
-	if leave_hook then
-		longest_text, longest_text_length = longest_text_length_check(leave_hook, longest_text, longest_text_length)
+	if var_12_12 then
+		var_12_9, var_12_10 = var_0_37(var_12_12, var_12_9, var_12_10)
 	end
 
-	if bb_items then
-		for _, key in ipairs(bb_items) do
-			if type(blackboard[key]) == "table" then
-				extra_height = extra_height + text_height
-				bb_text = string.format("[%s]", key)
+	if var_12_6 then
+		for iter_12_0, iter_12_1 in ipairs(var_12_6) do
+			if type(arg_12_2[iter_12_1]) == "table" then
+				arg_12_7 = arg_12_7 + var_12_2
+				var_12_7 = string.format("[%s]", iter_12_1)
 
-				ScriptGUI.itext(gui, RES_X, RES_Y, bb_text, FONT_MTRL, SMALL_FONT_SIZE, FONT, pos_x, pos_y + extra_height, text_layer, bb_color)
+				ScriptGUI.itext(arg_12_0, var_0_9, var_0_10, var_12_7, var_0_4, var_0_0, var_0_3, var_12_0, var_12_1 + arg_12_7, var_12_3, var_12_5)
 
-				longest_text, longest_text_length = longest_text_length_check(bb_text, longest_text, longest_text_length)
+				var_12_9, var_12_10 = var_0_37(var_12_7, var_12_9, var_12_10)
 
-				local sub_table = blackboard[key]
+				local var_12_13 = arg_12_2[iter_12_1]
 
-				for sub_key, sub_value in pairs(sub_table) do
-					extra_height = extra_height + text_height
+				for iter_12_2, iter_12_3 in pairs(var_12_13) do
+					arg_12_7 = arg_12_7 + var_12_2
 
-					if type(sub_value) == "number" then
-						bb_text = string.format("  > %s = %.2f", sub_key, sub_value)
-					elseif getmetatable(sub_value) == v3box_meta then
-						bb_text = string.format("  > %s = Vector3Box(%.2f, %.2f, %.2f)", sub_key, sub_value.x, sub_value.y, sub_value.z)
-					elseif type(sub_value) ~= "userdata" then
-						bb_text = string.format("  > %s = %s", sub_key, tostring(sub_value))
+					if type(iter_12_3) == "number" then
+						var_12_7 = string.format("  > %s = %.2f", iter_12_2, iter_12_3)
+					elseif getmetatable(iter_12_3) == var_0_38 then
+						var_12_7 = string.format("  > %s = Vector3Box(%.2f, %.2f, %.2f)", iter_12_2, iter_12_3.x, iter_12_3.y, iter_12_3.z)
+					elseif type(iter_12_3) ~= "userdata" then
+						var_12_7 = string.format("  > %s = %s", iter_12_2, tostring(iter_12_3))
 					else
-						bb_text = string.format("  > %s = %s", sub_key, type(sub_value))
+						var_12_7 = string.format("  > %s = %s", iter_12_2, type(iter_12_3))
 					end
 
-					ScriptGUI.itext(gui, RES_X, RES_Y, bb_text, FONT_MTRL, SMALL_FONT_SIZE, FONT, pos_x, pos_y + extra_height, text_layer, bb_color)
+					ScriptGUI.itext(arg_12_0, var_0_9, var_0_10, var_12_7, var_0_4, var_0_0, var_0_3, var_12_0, var_12_1 + arg_12_7, var_12_3, var_12_5)
 
-					longest_text, longest_text_length = longest_text_length_check(bb_text, longest_text, longest_text_length)
+					var_12_9, var_12_10 = var_0_37(var_12_7, var_12_9, var_12_10)
 				end
-			elseif type(key) == "function" then
-				local num_lines = key(blackboard, reuse_fill_lines)
+			elseif type(iter_12_1) == "function" then
+				local var_12_14 = iter_12_1(arg_12_2, var_0_18)
 
-				for i = 1, num_lines do
-					extra_height = extra_height + text_height
-					bb_text = reuse_fill_lines[i]
+				for iter_12_4 = 1, var_12_14 do
+					arg_12_7 = arg_12_7 + var_12_2
+					var_12_7 = var_0_18[iter_12_4]
 
-					ScriptGUI.itext(gui, RES_X, RES_Y, bb_text, FONT_MTRL, SMALL_FONT_SIZE, FONT, pos_x, pos_y + extra_height, text_layer, bb_color)
+					ScriptGUI.itext(arg_12_0, var_0_9, var_0_10, var_12_7, var_0_4, var_0_0, var_0_3, var_12_0, var_12_1 + arg_12_7, var_12_3, var_12_5)
 
-					longest_text, longest_text_length = longest_text_length_check(bb_text, longest_text, longest_text_length)
+					var_12_9, var_12_10 = var_0_37(var_12_7, var_12_9, var_12_10)
 				end
 			else
-				extra_height = extra_height + text_height
+				arg_12_7 = arg_12_7 + var_12_2
 
-				local data = blackboard[key]
+				local var_12_15 = arg_12_2[iter_12_1]
 
-				if type(data) == "number" then
-					bb_text = string.format("%s = %.2f", key, data)
+				if type(var_12_15) == "number" then
+					var_12_7 = string.format("%s = %.2f", iter_12_1, var_12_15)
 				else
-					bb_text = string.format("%s = %s", key, tostring(data))
+					var_12_7 = string.format("%s = %s", iter_12_1, tostring(var_12_15))
 				end
 
-				ScriptGUI.itext(gui, RES_X, RES_Y, bb_text, FONT_MTRL, SMALL_FONT_SIZE, FONT, pos_x, pos_y + extra_height, text_layer, bb_color)
+				ScriptGUI.itext(arg_12_0, var_0_9, var_0_10, var_12_7, var_0_4, var_0_0, var_0_3, var_12_0, var_12_1 + arg_12_7, var_12_3, var_12_5)
 
-				longest_text, longest_text_length = longest_text_length_check(bb_text, longest_text, longest_text_length)
+				var_12_9, var_12_10 = var_0_37(var_12_7, var_12_9, var_12_10)
 			end
 		end
-	elseif extra_info then
-		extra_height = extra_height + 5 / RES_Y
+	elseif arg_12_5 then
+		arg_12_7 = arg_12_7 + 5 / var_0_10
 
-		local ecolor = Color(240, 255, 55, 100)
+		local var_12_16 = Color(240, 255, 55, 100)
 
-		for k, string in ipairs(extra_info) do
-			extra_height = extra_height + text_height
+		for iter_12_5, iter_12_6 in ipairs(arg_12_5) do
+			arg_12_7 = arg_12_7 + var_12_2
 
-			ScriptGUI.itext(gui, RES_X, RES_Y, string, FONT_MTRL, SMALL_FONT_SIZE, FONT, pos_x, pos_y + extra_height, text_layer, ecolor)
+			ScriptGUI.itext(arg_12_0, var_0_9, var_0_10, iter_12_6, var_0_4, var_0_0, var_0_3, var_12_0, var_12_1 + arg_12_7, var_12_3, var_12_16)
 
-			longest_text, longest_text_length = longest_text_length_check(string, longest_text, longest_text_length)
+			var_12_9, var_12_10 = var_0_37(iter_12_6, var_12_9, var_12_10)
 		end
 	end
 
-	if longest_text_length > 0 then
-		local min_pos, max_pos = Gui.text_extents(gui, longest_text, FONT_MTRL, SMALL_FONT_SIZE)
-		local text_width = (max_pos.x - min_pos.x) / RES_X
+	if var_12_10 > 0 then
+		local var_12_17, var_12_18 = Gui.text_extents(arg_12_0, var_12_9, var_0_4, var_0_0)
+		local var_12_19 = (var_12_18.x - var_12_17.x) / var_0_9
 
-		node_width = math.max(node_width, text_width + TEXT_SPACING)
+		arg_12_6 = math.max(arg_12_6, var_12_19 + var_0_14)
 	end
 
-	return node_width, extra_height
+	return arg_12_6, arg_12_7
 end
 
-local function draw_utility_nodes(gui, blackboard, running, action_data, text, considerations, x1, y1, extra_height, t)
-	local yellow = Color(255, 240, 200, 10)
-	local size = Vector2(160, 100)
-	local step_y = size.y + 40
-	local pos_y = -215
-	local pos = Vector3(x1 * RES_X, (1 - y1 + NODE_HEIGHT - extra_height) * RES_Y, LAYER + 10)
-	local num = 0
+local function var_0_40(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7, arg_13_8, arg_13_9)
+	local var_13_0 = Color(255, 240, 200, 10)
+	local var_13_1 = Vector2(160, 100)
+	local var_13_2 = var_13_1.y + 40
+	local var_13_3 = -215
+	local var_13_4 = Vector3(arg_13_6 * var_0_9, (1 - arg_13_7 + var_0_11 - arg_13_8) * var_0_10, var_0_8 + 10)
+	local var_13_5 = 0
 
-	for name, consideration_data in pairs(considerations) do
-		if type(consideration_data) == "table" then
-			local npos = pos + Vector3(0, pos_y, 0)
+	for iter_13_0, iter_13_1 in pairs(arg_13_5) do
+		if type(iter_13_1) == "table" then
+			local var_13_6 = var_13_4 + Vector3(0, var_13_3, 0)
 
-			EditAiUtility.draw_utility_info(gui, consideration_data, nil, name, npos, size, 1, "tiny")
+			EditAiUtility.draw_utility_info(arg_13_0, iter_13_1, nil, iter_13_0, var_13_6, var_13_1, 1, "tiny")
 
-			if consideration_data.is_condition then
-				EditAiUtility.draw_utility_condition(gui, text, consideration_data, npos, size, blackboard, Color(92, 28, 128, 44))
+			if iter_13_1.is_condition then
+				EditAiUtility.draw_utility_condition(arg_13_0, arg_13_4, iter_13_1, var_13_6, var_13_1, arg_13_1, Color(92, 28, 128, 44))
 			else
-				EditAiUtility.draw_utility_spline(gui, t, consideration_data, nil, name, npos, size, Color(92, 28, 128, 44), 1, 2)
-				EditAiUtility.draw_realtime_utility(gui, text, consideration_data, npos, size, blackboard)
+				EditAiUtility.draw_utility_spline(arg_13_0, arg_13_9, iter_13_1, nil, iter_13_0, var_13_6, var_13_1, Color(92, 28, 128, 44), 1, 2)
+				EditAiUtility.draw_realtime_utility(arg_13_0, arg_13_4, iter_13_1, var_13_6, var_13_1, arg_13_1)
 			end
 
-			pos_y = pos_y - step_y
-			num = num + 1
+			var_13_3 = var_13_3 - var_13_2
+			var_13_5 = var_13_5 + 1
 		end
 	end
 
-	local utility = Utility.get_action_utility(action_data, text, blackboard, t)
+	local var_13_7 = Utility.get_action_utility(arg_13_3, arg_13_4, arg_13_1, arg_13_9)
 
-	if running and DrawAiBehaviour.running_node_switch then
-		DrawAiBehaviour.winning_utility_value = utility
+	if arg_13_2 and var_0_25.running_node_switch then
+		var_0_25.winning_utility_value = var_13_7
 	end
 
-	local sum_text
+	local var_13_8
 
-	if running then
-		sum_text = string.format("sum: %.1f, (%.1f)", utility, DrawAiBehaviour.winning_utility_value)
+	if arg_13_2 then
+		var_13_8 = string.format("sum: %.1f, (%.1f)", var_13_7, var_0_25.winning_utility_value)
 	else
-		sum_text = string.format("sum: %.1f", utility)
+		var_13_8 = string.format("sum: %.1f", var_13_7)
 	end
 
-	ScriptGUI.text(gui, sum_text, TINY_FONT_MTRL, TINY_FONT_SIZE, TINY_FONT, pos + Vector3(3, -102, 0), yellow)
+	ScriptGUI.text(arg_13_0, var_13_8, var_0_6, var_0_7, var_0_5, var_13_4 + Vector3(3, -102, 0), var_13_0)
 
-	local extra_utility_height = num * 0.1
-
-	return extra_utility_height
+	return var_13_5 * 0.1
 end
 
-local function draw_hook_box(gui, node, node_width, extra_height, header_text, hook_id, x1, bottom_y, box_color)
-	local text_height = SMALL_FONT_SIZE / RES_Y
-	local start_y = bottom_y
-	local pos_x = x1
+local function var_0_41(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7, arg_14_8)
+	local var_14_0 = var_0_0 / var_0_10
+	local var_14_1 = arg_14_7
+	local var_14_2 = arg_14_6
 
-	bottom_y = start_y + text_height
+	arg_14_7 = var_14_1 + var_14_0
 
-	ScriptGUI.itext(gui, RES_X, RES_Y, header_text, FONT_MTRL, SMALL_FONT_SIZE, FONT, pos_x, bottom_y, LAYER + 11, Color(255, 255, 255, 255))
+	ScriptGUI.itext(arg_14_0, var_0_9, var_0_10, arg_14_4, var_0_4, var_0_0, var_0_3, var_14_2, arg_14_7, var_0_8 + 11, Color(255, 255, 255, 255))
 
-	bottom_y = bottom_y + text_height
+	arg_14_7 = arg_14_7 + var_14_0
 
-	ScriptGUI.itext(gui, RES_X, RES_Y, hook_id, FONT_MTRL, SMALL_FONT_SIZE, FONT, pos_x, bottom_y, LAYER + 11, Color(255, 255, 255, 255))
+	ScriptGUI.itext(arg_14_0, var_0_9, var_0_10, arg_14_5, var_0_4, var_0_0, var_0_3, var_14_2, arg_14_7, var_0_8 + 11, Color(255, 255, 255, 255))
 
-	bottom_y = bottom_y + THICK_BORDER
+	arg_14_7 = arg_14_7 + var_0_16
 
-	ScriptGUI.irect(gui, RES_X, RES_Y, pos_x, start_y, pos_x + node_width, bottom_y, LAYER + 10, box_color)
+	ScriptGUI.irect(arg_14_0, var_0_9, var_0_10, var_14_2, var_14_1, var_14_2 + arg_14_2, arg_14_7, var_0_8 + 10, arg_14_8)
 
-	local box_height = bottom_y - start_y
+	local var_14_3 = arg_14_7 - var_14_1
 
-	return bottom_y, box_height
+	return arg_14_7, var_14_3
 end
 
-local function draw_node(gui, node, text, running, x1, y1, node_width, extra_height, dt, tcolor)
-	local color
+local function var_0_42(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8, arg_15_9)
+	local var_15_0
 
-	if running then
-		color = Color(200, 242, 152, 7)
+	if arg_15_3 then
+		var_15_0 = Color(200, 242, 152, 7)
 
-		if draw_timers[node] ~= FADE_TIME then
-			for id, timer in pairs(draw_timers) do
-				draw_timers[id] = timer * 0.9
+		if var_0_20[arg_15_1] ~= var_0_17 then
+			for iter_15_0, iter_15_1 in pairs(var_0_20) do
+				var_0_20[iter_15_0] = iter_15_1 * 0.9
 			end
 
-			draw_timers[node] = FADE_TIME
+			var_0_20[arg_15_1] = var_0_17
 		end
 	else
-		local green = 60
-		local timer = draw_timers[node]
+		local var_15_1 = 60
+		local var_15_2 = var_0_20[arg_15_1]
 
-		if timer then
-			timer = timer - dt
+		if var_15_2 then
+			local var_15_3 = var_15_2 - arg_15_8
 
-			if timer <= 0 then
-				draw_timers[node] = nil
+			if var_15_3 <= 0 then
+				var_0_20[arg_15_1] = nil
 			else
-				green = math.lerp(60, 255, timer / FADE_TIME)
-				draw_timers[node] = timer
+				var_15_1 = math.lerp(60, 255, var_15_3 / var_0_17)
+				var_0_20[arg_15_1] = var_15_3
 			end
 		end
 
-		if node._children then
-			color = Color(200, 130, 170, green)
+		if arg_15_1._children then
+			var_15_0 = Color(200, 130, 170, var_15_1)
 		else
-			color = Color(200, 30, 170, green)
+			var_15_0 = Color(200, 30, 170, var_15_1)
 		end
 	end
 
-	local identifier = node._identifier
-	local last_identifier = DrawAiBehaviour.last_running_node
-
-	if identifier == last_identifier then
-		ScriptGUI.irect(gui, RES_X, RES_Y, x1 - THIN_BORDER, y1 - THIN_BORDER, x1 + node_width + THIN_BORDER, y1 + NODE_HEIGHT + extra_height + THIN_BORDER, LAYER - 1, Color(255, 242, 152, 7))
+	if arg_15_1._identifier == var_0_25.last_running_node then
+		ScriptGUI.irect(arg_15_0, var_0_9, var_0_10, arg_15_4 - var_0_15, arg_15_5 - var_0_15, arg_15_4 + arg_15_6 + var_0_15, arg_15_5 + var_0_11 + arg_15_7 + var_0_15, var_0_8 - 1, Color(255, 242, 152, 7))
 	end
 
-	ScriptGUI.itext(gui, RES_X, RES_Y, node.name, FONT_MTRL, SMALL_FONT_SIZE, FONT, x1 + TEXT_SPACING, y1 + NODE_HEIGHT * 0.28, LAYER + 1, tcolor)
+	ScriptGUI.itext(arg_15_0, var_0_9, var_0_10, arg_15_1.name, var_0_4, var_0_0, var_0_3, arg_15_4 + var_0_14, arg_15_5 + var_0_11 * 0.28, var_0_8 + 1, arg_15_9)
 
-	local bottom_y, box_height = y1 + NODE_HEIGHT + extra_height
+	local var_15_4 = arg_15_5 + var_0_11 + arg_15_7
+	local var_15_5
 
-	ScriptGUI.irect(gui, RES_X, RES_Y, x1, y1, x1 + node_width, bottom_y, LAYER, color)
-	ScriptGUI.itext(gui, RES_X, RES_Y, text, FONT_MTRL, FONT_SIZE, FONT, x1 + TEXT_SPACING, y1 + NODE_HEIGHT * 0.7, LAYER + 1, tcolor)
+	ScriptGUI.irect(arg_15_0, var_0_9, var_0_10, arg_15_4, arg_15_5, arg_15_4 + arg_15_6, var_15_4, var_0_8, var_15_0)
+	ScriptGUI.itext(arg_15_0, var_0_9, var_0_10, arg_15_2, var_0_4, var_0_2, var_0_3, arg_15_4 + var_0_14, arg_15_5 + var_0_11 * 0.7, var_0_8 + 1, arg_15_9)
 
-	local enter_hook = node._tree_node.enter_hook
+	local var_15_6 = arg_15_1._tree_node.enter_hook
 
-	if enter_hook then
-		bottom_y, box_height = draw_hook_box(gui, node, node_width, extra_height, "ENTER_HOOK:", enter_hook, x1, bottom_y, Color(200, 100, 100, 150))
-		extra_height = extra_height + box_height
+	if var_15_6 then
+		local var_15_7
+
+		var_15_4, var_15_7 = var_0_41(arg_15_0, arg_15_1, arg_15_6, arg_15_7, "ENTER_HOOK:", var_15_6, arg_15_4, var_15_4, Color(200, 100, 100, 150))
+		arg_15_7 = arg_15_7 + var_15_7
 	end
 
-	local leave_hook = node._tree_node.leave_hook
+	local var_15_8 = arg_15_1._tree_node.leave_hook
 
-	if leave_hook then
-		bottom_y, box_height = draw_hook_box(gui, node, node_width, extra_height, "LEAVE_HOOK:", leave_hook, x1, bottom_y, Color(200, 150, 100, 150))
-		extra_height = extra_height + box_height
+	if var_15_8 then
+		local var_15_9, var_15_10 = var_0_41(arg_15_0, arg_15_1, arg_15_6, arg_15_7, "LEAVE_HOOK:", var_15_8, arg_15_4, var_15_4, Color(200, 150, 100, 150))
+
+		arg_15_7 = arg_15_7 + var_15_10
 	end
 
-	return extra_height
+	return arg_15_7
 end
 
-local function draw_node_children(bt, gui, node, node_children, blackboard, row, x1, y1, node_width, extra_node_height, total_width, extra_utility_height, t, dt)
-	local row_height = row_heights[row] or 0
-	local child_y = y1 + row_height + ROW_SPACING
-	local start_x, start_y
+local function var_0_43(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9, arg_16_10, arg_16_11, arg_16_12, arg_16_13)
+	local var_16_0 = arg_16_7 + (var_0_22[arg_16_5] or 0) + var_0_23
+	local var_16_1
+	local var_16_2
 
-	if node.name == "BTSequence" then
-		start_x = x1
-		start_y = child_y + extra_utility_height
+	if arg_16_2.name == "BTSequence" then
+		var_16_1 = arg_16_6
+		var_16_2 = var_16_0 + arg_16_11
 	else
-		start_x = x1 - total_width * 0.5 + node_width * 0.5
-		start_y = child_y
+		var_16_1 = arg_16_6 - arg_16_10 * 0.5 + arg_16_8 * 0.5
+		var_16_2 = var_16_0
 	end
 
-	local cx, cy = start_x, start_y
-	local next_row = row + 1
-	local draw_utility = node.name == "BTUtilityNode"
-	local line_color_normal = Color(150, 100, 255, 100)
-	local line_color_sequence = Color(150, 100, 50, 200)
-	local line_layer = LAYER - 1
-	local line_x = x1 + node_width * 0.5
-	local line_y1 = y1 + NODE_HEIGHT
-	local line_width_sequence = 6
-	local line_width_normal = 2
-	local max_child_extra_total_width = 0
-	local max_child_width = 0
-	local max_child_extra_height = 0
-	local max_child_extra_total_height = 0
+	local var_16_3 = var_16_1
+	local var_16_4 = var_16_2
+	local var_16_5 = arg_16_5 + 1
+	local var_16_6 = arg_16_2.name == "BTUtilityNode"
+	local var_16_7 = Color(150, 100, 255, 100)
+	local var_16_8 = Color(150, 100, 50, 200)
+	local var_16_9 = var_0_8 - 1
+	local var_16_10 = arg_16_6 + arg_16_8 * 0.5
+	local var_16_11 = arg_16_7 + var_0_11
+	local var_16_12 = 6
+	local var_16_13 = 2
+	local var_16_14 = 0
+	local var_16_15 = 0
+	local var_16_16 = 0
+	local var_16_17 = 0
 
-	for k, child in pairs(node_children) do
-		local child_identifier = child._identifier
-		local child_default_width = nodes[child_identifier].w
-		local child_default_total_width = nodes[child_identifier].total_w or 0
+	for iter_16_0, iter_16_1 in pairs(arg_16_3) do
+		local var_16_18 = iter_16_1._identifier
+		local var_16_19 = var_0_21[var_16_18].w
+		local var_16_20 = var_0_21[var_16_18].total_w or 0
 
-		if node.name ~= "BTSequence" then
-			cx = cx + child_default_total_width * 0.5
+		if arg_16_2.name ~= "BTSequence" then
+			var_16_3 = var_16_3 + var_16_20 * 0.5
 		end
 
-		local child_extra_total_width, child_extra_total_height, child_extra_height, child_width = DrawAiBehaviour.draw_tree(bt, gui, child, blackboard, next_row, t, dt, cx, cy, draw_utility)
+		local var_16_21, var_16_22, var_16_23, var_16_24 = var_0_25.draw_tree(arg_16_0, arg_16_1, iter_16_1, arg_16_4, var_16_5, arg_16_12, arg_16_13, var_16_3, var_16_4, var_16_6)
 
-		max_child_extra_total_width = math.max(max_child_extra_total_width, child_extra_total_width)
-		max_child_extra_height = math.max(max_child_extra_height, child_extra_height)
-		max_child_width = math.max(max_child_width, child_width)
-		max_child_extra_total_height = math.max(max_child_extra_total_height, child_extra_total_height)
+		var_16_14 = math.max(var_16_14, var_16_21)
+		var_16_16 = math.max(var_16_16, var_16_23)
+		var_16_15 = math.max(var_16_15, var_16_24)
+		var_16_17 = math.max(var_16_17, var_16_22)
 
-		if node.name == "BTSequence" then
-			local line_y2 = cy
-			local p1 = Vector2(line_x, line_y1)
-			local p2 = Vector2(line_x, line_y2)
+		if arg_16_2.name == "BTSequence" then
+			local var_16_25 = var_16_4
+			local var_16_26 = Vector2(var_16_10, var_16_11)
+			local var_16_27 = Vector2(var_16_10, var_16_25)
 
-			ScriptGUI.hud_iline(gui, RES_X, RES_Y, p1, p2, line_layer, line_width_sequence, line_color_sequence)
+			ScriptGUI.hud_iline(arg_16_1, var_0_9, var_0_10, var_16_26, var_16_27, var_16_9, var_16_12, var_16_8)
 
-			line_y1 = line_y2 + NODE_HEIGHT + child_extra_height
-			cy = cy + NODE_HEIGHT * 1.5 + child_extra_height + child_extra_total_height
-			line_width_sequence = line_width_normal
+			var_16_11 = var_16_25 + var_0_11 + var_16_23
+			var_16_4 = var_16_4 + var_0_11 * 1.5 + var_16_23 + var_16_22
+			var_16_12 = var_16_13
 		else
-			local p1 = Vector2(x1 + node_width * 0.5, y1 + NODE_HEIGHT)
-			local p2 = Vector2(cx + child_default_width * 0.5, child_y)
+			local var_16_28 = Vector2(arg_16_6 + arg_16_8 * 0.5, arg_16_7 + var_0_11)
+			local var_16_29 = Vector2(var_16_3 + var_16_19 * 0.5, var_16_0)
 
-			ScriptGUI.hud_iline(gui, RES_X, RES_Y, p1, p2, line_layer, line_width_normal, line_color_normal)
+			ScriptGUI.hud_iline(arg_16_1, var_0_9, var_0_10, var_16_28, var_16_29, var_16_9, var_16_13, var_16_7)
 
-			cx = cx + child_default_total_width * 0.5 + child_extra_total_width
-			cx = cx + child_default_width + NODE_SPACING
+			var_16_3 = var_16_3 + var_16_20 * 0.5 + var_16_21
+			var_16_3 = var_16_3 + var_16_19 + var_0_13
 		end
 	end
 
-	row_heights[next_row] = NODE_HEIGHT + max_child_extra_height
+	var_0_22[var_16_5] = var_0_11 + var_16_16
 
-	local xb = 5 / RES_X
-	local yb = 5 / RES_Y
-	local ocolor = Color(70, 55, 155, 200)
-	local bounding_box_x1 = start_x - xb
-	local bounding_box_y1 = child_y - yb
-	local bounding_box_x2, bounding_box_y2
+	local var_16_30 = 5 / var_0_9
+	local var_16_31 = 5 / var_0_10
+	local var_16_32 = Color(70, 55, 155, 200)
+	local var_16_33 = var_16_1 - var_16_30
+	local var_16_34 = var_16_0 - var_16_31
+	local var_16_35
+	local var_16_36
 
-	if node.name == "BTSequence" then
-		bounding_box_x2 = start_x + max_child_width + xb
-		bounding_box_y2 = cy + yb - NODE_HEIGHT * 0.5
-		ocolor = Color(70, 150, 50, 200)
+	if arg_16_2.name == "BTSequence" then
+		var_16_35 = var_16_1 + var_16_15 + var_16_30
+		var_16_36 = var_16_4 + var_16_31 - var_0_11 * 0.5
+		var_16_32 = Color(70, 150, 50, 200)
 	else
-		bounding_box_x2 = cx + xb - NODE_SPACING
-		bounding_box_y2 = cy + NODE_HEIGHT + max_child_extra_height + yb
+		var_16_35 = var_16_3 + var_16_30 - var_0_13
+		var_16_36 = var_16_4 + var_0_11 + var_16_16 + var_16_31
 	end
 
-	ScriptGUI.irect(gui, RES_X, RES_Y, bounding_box_x1, bounding_box_y1, bounding_box_x2, bounding_box_y2, line_layer, ocolor)
+	ScriptGUI.irect(arg_16_1, var_0_9, var_0_10, var_16_33, var_16_34, var_16_35, var_16_36, var_16_9, var_16_32)
 
-	local total_extra_height = 0
+	local var_16_37 = 0
 
-	if node.name == "BTSequence" then
-		total_extra_height = cy - child_y
+	if arg_16_2.name == "BTSequence" then
+		var_16_37 = var_16_4 - var_16_0
 	else
-		total_extra_height = cy - line_y1 + max_child_extra_total_height + NODE_HEIGHT
+		var_16_37 = var_16_4 - var_16_11 + var_16_17 + var_0_11
 	end
 
-	return max_child_extra_total_width, total_extra_height
+	return var_16_14, var_16_37
 end
 
-DrawAiBehaviour.tree_width = function (gui, node)
-	local id = node._identifier
-	local name = node.name
-	local id_min, id_max = Gui.text_extents(gui, id, FONT_MTRL, FONT_SIZE)
-	local name_min, name_max = Gui.text_extents(gui, name, FONT_MTRL, SMALL_FONT_SIZE)
-	local id_width = (id_max.x - id_min.x) / RES_X + TEXT_SPACING
-	local name_width = (name_max.x - name_min.x) / RES_X + TEXT_SPACING
-	local text_width = math.max(MIN_NODE_WIDTH, id_width, name_width)
+function var_0_25.tree_width(arg_17_0, arg_17_1)
+	local var_17_0 = arg_17_1._identifier
+	local var_17_1 = arg_17_1.name
+	local var_17_2, var_17_3 = Gui.text_extents(arg_17_0, var_17_0, var_0_4, var_0_2)
+	local var_17_4, var_17_5 = Gui.text_extents(arg_17_0, var_17_1, var_0_4, var_0_0)
+	local var_17_6 = (var_17_3.x - var_17_2.x) / var_0_9 + var_0_14
+	local var_17_7 = (var_17_5.x - var_17_4.x) / var_0_9 + var_0_14
+	local var_17_8 = math.max(var_0_12, var_17_6, var_17_7)
 
-	nodes[id] = {
-		w = text_width,
+	var_0_21[var_17_0] = {
+		w = var_17_8
 	}
 
-	local node_children = node._children
+	local var_17_9 = arg_17_1._children
 
-	if node_children then
-		local n, w = 0, 0
+	if var_17_9 then
+		local var_17_10 = 0
+		local var_17_11 = 0
 
-		for _, child in pairs(node_children) do
-			local amount, width = DrawAiBehaviour.tree_width(gui, child)
+		for iter_17_0, iter_17_1 in pairs(var_17_9) do
+			local var_17_12, var_17_13 = var_0_25.tree_width(arg_17_0, iter_17_1)
 
-			n = n + amount
+			var_17_10 = var_17_10 + var_17_12
 
-			if node.name ~= "BTSequence" then
-				w = w + width
+			if arg_17_1.name ~= "BTSequence" then
+				var_17_11 = var_17_11 + var_17_13
 			end
 		end
 
-		nodes[id].total_w = w
+		var_0_21[var_17_0].total_w = var_17_11
 
-		return n, w
+		return var_17_10, var_17_11
 	else
-		return 1, text_width
+		return 1, var_17_8
 	end
 end
 
-DrawAiBehaviour.draw_tree = function (bt, gui, node, blackboard, row, t, dt, x, y, draw_utility, extra_info)
-	local identifier = node._identifier
-	local node_children = node._children
-	local running = update_node_history(blackboard, node_children, identifier)
+function var_0_25.draw_tree(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8, arg_18_9, arg_18_10)
+	local var_18_0 = arg_18_2._identifier
+	local var_18_1 = arg_18_2._children
+	local var_18_2 = var_0_36(arg_18_3, var_18_1, var_18_0)
 
 	if not script_data.hide_behavior_tree_node_history then
-		present_circle_array(gui, 20, 400)
-		present_perception(gui, 20, 300, blackboard)
+		var_0_34(arg_18_1, 20, 400)
+		var_0_35(arg_18_1, 20, 300, arg_18_3)
 	end
 
-	local nodes = nodes
-	local node_width = nodes[identifier].w
-	local total_width = nodes[identifier].total_w
-	local x1 = x
-	local y1 = y
+	local var_18_3 = var_0_21
+	local var_18_4 = var_18_3[var_18_0].w
+	local var_18_5 = var_18_3[var_18_0].total_w
+	local var_18_6 = arg_18_7
+	local var_18_7 = arg_18_8
 
-	if row == 1 then
-		y1 = y1 + BORDER_SPACING
+	if arg_18_4 == 1 then
+		var_18_7 = var_18_7 + var_0_24
 	end
 
-	local text = identifier
-	local tcolor = Color(240, 255, 255, 255)
-	local extra_height = 0
+	local var_18_8 = var_18_0
+	local var_18_9 = Color(240, 255, 255, 255)
+	local var_18_10 = 0
+	local var_18_11, var_18_12 = var_0_39(arg_18_1, arg_18_2, arg_18_3, var_18_6, var_18_7, arg_18_10, var_18_4, var_18_10, var_18_9)
+	local var_18_13 = 0
+	local var_18_14 = arg_18_2._tree_node
+	local var_18_15 = var_18_14 and var_18_14.action_data
+	local var_18_16 = var_18_15 and var_18_15.considerations
 
-	node_width, extra_height = draw_blackboard(gui, node, blackboard, x1, y1, extra_info, node_width, extra_height, tcolor)
-
-	local extra_utility_height = 0
-	local tree_node = node._tree_node
-	local action_data = tree_node and tree_node.action_data
-	local considerations = action_data and action_data.considerations
-
-	if draw_utility and tree_node and action_data and considerations then
-		extra_utility_height = draw_utility_nodes(gui, blackboard, running, action_data, text, considerations, x1, y1, extra_height, t)
+	if arg_18_9 and var_18_14 and var_18_15 and var_18_16 then
+		var_18_13 = var_0_40(arg_18_1, arg_18_3, var_18_2, var_18_15, var_18_8, var_18_16, var_18_6, var_18_7, var_18_12, arg_18_5)
 	end
 
-	extra_height = draw_node(gui, node, text, running, x1, y1, node_width, extra_height, dt, tcolor)
+	local var_18_17 = var_0_42(arg_18_1, arg_18_2, var_18_8, var_18_2, var_18_6, var_18_7, var_18_11, var_18_12, arg_18_6, var_18_9)
+	local var_18_18 = 0
+	local var_18_19 = 0
 
-	local max_child_extra_width = 0
-	local max_child_extra_height = 0
-
-	if node_children then
-		max_child_extra_width, max_child_extra_height = draw_node_children(bt, gui, node, node_children, blackboard, row, x1, y1, node_width, extra_height, total_width, extra_utility_height, t, dt)
+	if var_18_1 then
+		var_18_18, var_18_19 = var_0_43(arg_18_0, arg_18_1, arg_18_2, var_18_1, arg_18_3, arg_18_4, var_18_6, var_18_7, var_18_11, var_18_17, var_18_5, var_18_13, arg_18_5, arg_18_6)
 	end
 
-	local current_node_extra_width = node_width - nodes[identifier].w
-	local extra_width = math.max(current_node_extra_width, max_child_extra_width)
+	local var_18_20 = var_18_11 - var_18_3[var_18_0].w
 
-	return extra_width, max_child_extra_height, extra_height, node_width
+	return math.max(var_18_20, var_18_18), var_18_19, var_18_17, var_18_11
 end

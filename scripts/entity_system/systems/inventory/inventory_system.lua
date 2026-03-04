@@ -1,11 +1,11 @@
-﻿-- chunkname: @scripts/entity_system/systems/inventory/inventory_system.lua
+-- chunkname: @scripts/entity_system/systems/inventory/inventory_system.lua
 
 require("scripts/unit_extensions/default_player_unit/inventory/simple_inventory_extension")
 require("scripts/unit_extensions/default_player_unit/inventory/simple_husk_inventory_extension")
 
 InventorySystem = class(InventorySystem, ExtensionSystemBase)
 
-local RPCS = {
+local var_0_0 = {
 	"rpc_show_inventory",
 	"rpc_play_simple_particle_with_vector_variable",
 	"rpc_add_equipment",
@@ -19,491 +19,479 @@ local RPCS = {
 	"rpc_start_weapon_fx",
 	"rpc_stop_weapon_fx",
 	"rpc_update_additional_slot",
-	"rpc_weapon_anim_event",
+	"rpc_weapon_anim_event"
 }
-local extensions = {
+local var_0_1 = {
 	"SimpleHuskInventoryExtension",
-	"SimpleInventoryExtension",
+	"SimpleInventoryExtension"
 }
 
-InventorySystem.init = function (self, entity_system_creation_context, system_name)
-	InventorySystem.super.init(self, entity_system_creation_context, system_name, extensions)
+function InventorySystem.init(arg_1_0, arg_1_1, arg_1_2)
+	InventorySystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
-	local network_event_delegate = entity_system_creation_context.network_event_delegate
+	local var_1_0 = arg_1_1.network_event_delegate
 
-	self.network_event_delegate = network_event_delegate
+	arg_1_0.network_event_delegate = var_1_0
 
-	network_event_delegate:register(self, unpack(RPCS))
+	var_1_0:register(arg_1_0, unpack(var_0_0))
 
-	self.world = entity_system_creation_context.world
-	self.player_manager = entity_system_creation_context.player_manager
-	self.profile_synchronizer = entity_system_creation_context.profile_synchronizer
-	self.num_grimoires = 0
-	self.num_side_objectives = 0
+	arg_1_0.world = arg_1_1.world
+	arg_1_0.player_manager = arg_1_1.player_manager
+	arg_1_0.profile_synchronizer = arg_1_1.profile_synchronizer
+	arg_1_0.num_grimoires = 0
+	arg_1_0.num_side_objectives = 0
 
-	local sides_to_update = {}
-	local sides = Managers.state.side:sides()
-	local j = 1
+	local var_1_1 = {}
+	local var_1_2 = Managers.state.side:sides()
+	local var_1_3 = 1
 
-	for i = 1, #sides do
-		local side = sides[i]
+	for iter_1_0 = 1, #var_1_2 do
+		local var_1_4 = var_1_2[iter_1_0]
 
-		if side.using_grims_and_tomes then
-			sides_to_update[j] = side
-			j = j + 1
+		if var_1_4.using_grims_and_tomes then
+			var_1_1[var_1_3] = var_1_4
+			var_1_3 = var_1_3 + 1
 		end
 	end
 
-	self.sides_to_update = sides_to_update
+	arg_1_0.sides_to_update = var_1_1
 end
 
-local function add_grimoire()
-	local mission_system = Managers.state.entity:system("mission_system")
-	local buff_system = Managers.state.entity:system("buff_system")
-	local mission_name = "grimoire_hidden_mission"
+local function var_0_2()
+	local var_2_0 = Managers.state.entity:system("mission_system")
+	local var_2_1 = Managers.state.entity:system("buff_system")
+	local var_2_2 = "grimoire_hidden_mission"
 
-	mission_system:request_mission(mission_name)
-	mission_system:update_mission(mission_name, true, nil, true)
+	var_2_0:request_mission(var_2_2)
+	var_2_0:update_mission(var_2_2, true, nil, true)
 
-	local group_buff_name_id = NetworkLookup.group_buff_templates.grimoire
+	local var_2_3 = NetworkLookup.group_buff_templates.grimoire
 
-	buff_system:rpc_add_group_buff(nil, group_buff_name_id, 1)
+	var_2_1:rpc_add_group_buff(nil, var_2_3, 1)
 end
 
-local function remove_grimoire()
-	local mission_system = Managers.state.entity:system("mission_system")
-	local buff_system = Managers.state.entity:system("buff_system")
-	local mission_name = "grimoire_hidden_mission"
+local function var_0_3()
+	local var_3_0 = Managers.state.entity:system("mission_system")
+	local var_3_1 = Managers.state.entity:system("buff_system")
+	local var_3_2 = "grimoire_hidden_mission"
 
-	mission_system:update_mission(mission_name, false, nil, true)
+	var_3_0:update_mission(var_3_2, false, nil, true)
 
-	local group_buff_name_id = NetworkLookup.group_buff_templates.grimoire
+	local var_3_3 = NetworkLookup.group_buff_templates.grimoire
 
-	buff_system:rpc_remove_group_buff(nil, group_buff_name_id, 1)
+	var_3_1:rpc_remove_group_buff(nil, var_3_3, 1)
 end
 
-local function add_side_objective()
-	local mission_system = Managers.state.entity:system("mission_system")
-	local mission_name = "tome_bonus_mission"
+local function var_0_4()
+	local var_4_0 = Managers.state.entity:system("mission_system")
+	local var_4_1 = "tome_bonus_mission"
 
-	mission_system:request_mission(mission_name)
-	mission_system:update_mission(mission_name, true, nil, true)
+	var_4_0:request_mission(var_4_1)
+	var_4_0:update_mission(var_4_1, true, nil, true)
 end
 
-local function remove_side_objective()
-	local mission_system = Managers.state.entity:system("mission_system")
-	local mission_name = "tome_bonus_mission"
+local function var_0_5()
+	local var_5_0 = Managers.state.entity:system("mission_system")
+	local var_5_1 = "tome_bonus_mission"
 
-	mission_system:update_mission(mission_name, false, nil, true)
+	var_5_0:update_mission(var_5_1, false, nil, true)
 end
 
-InventorySystem.update = function (self, context, t)
-	InventorySystem.super.update(self, context, t)
+function InventorySystem.update(arg_6_0, arg_6_1, arg_6_2)
+	InventorySystem.super.update(arg_6_0, arg_6_1, arg_6_2)
 
-	if self.is_server then
-		local event_objective = self._event_objective
-		local sides = self.sides_to_update
+	if arg_6_0.is_server then
+		local var_6_0 = arg_6_0._event_objective
+		local var_6_1 = arg_6_0.sides_to_update
 
-		for i = 1, #sides do
-			local side = sides[i]
-			local units = side.PLAYER_AND_BOT_UNITS
+		for iter_6_0 = 1, #var_6_1 do
+			local var_6_2 = var_6_1[iter_6_0].PLAYER_AND_BOT_UNITS
 
-			self.num_grimoires = self:update_mission_inventory_item(units, "slot_potion", "wpn_grimoire_01", self.num_grimoires, add_grimoire, remove_grimoire)
-			self.num_side_objectives = self:update_mission_inventory_item(units, "slot_healthkit", "wpn_side_objective_tome_01", self.num_side_objectives, add_side_objective, remove_side_objective)
+			arg_6_0.num_grimoires = arg_6_0:update_mission_inventory_item(var_6_2, "slot_potion", "wpn_grimoire_01", arg_6_0.num_grimoires, var_0_2, var_0_3)
+			arg_6_0.num_side_objectives = arg_6_0:update_mission_inventory_item(var_6_2, "slot_healthkit", "wpn_side_objective_tome_01", arg_6_0.num_side_objectives, var_0_4, var_0_5)
 
-			if event_objective then
-				self.num_event_objectives = self:update_mission_inventory_item(units, "slot_potion", event_objective, self.num_event_objectives, self._add_event_objective, self._remove_event_objective)
+			if var_6_0 then
+				arg_6_0.num_event_objectives = arg_6_0:update_mission_inventory_item(var_6_2, "slot_potion", var_6_0, arg_6_0.num_event_objectives, arg_6_0._add_event_objective, arg_6_0._remove_event_objective)
 			end
 		end
 	end
 end
 
-InventorySystem.update_mission_inventory_item = function (self, units, slot_name, item_name, previous_num_items, add_func, remove_func)
-	local num_items = 0
+function InventorySystem.update_mission_inventory_item(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+	local var_7_0 = 0
 
-	for i = 1, #units do
-		local unit = units[i]
-		local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
+	for iter_7_0 = 1, #arg_7_1 do
+		local var_7_1 = arg_7_1[iter_7_0]
 
-		if inventory_extension:has_inventory_item(slot_name, item_name) then
-			num_items = num_items + 1
+		if ScriptUnit.extension(var_7_1, "inventory_system"):has_inventory_item(arg_7_2, arg_7_3) then
+			var_7_0 = var_7_0 + 1
 		end
 	end
 
-	if previous_num_items < num_items then
-		local difference = num_items - previous_num_items
+	if arg_7_4 < var_7_0 then
+		local var_7_2 = var_7_0 - arg_7_4
 
-		for i = 1, difference do
-			add_func()
+		for iter_7_1 = 1, var_7_2 do
+			arg_7_5()
 		end
-	elseif num_items < previous_num_items then
-		local difference = previous_num_items - num_items
+	elseif var_7_0 < arg_7_4 then
+		local var_7_3 = arg_7_4 - var_7_0
 
-		for i = 1, difference do
-			remove_func()
+		for iter_7_2 = 1, var_7_3 do
+			arg_7_6()
 		end
 	end
 
-	return num_items
+	return var_7_0
 end
 
-InventorySystem.destroy = function (self)
-	self.network_event_delegate:unregister(self)
+function InventorySystem.destroy(arg_8_0)
+	arg_8_0.network_event_delegate:unregister(arg_8_0)
 end
 
-InventorySystem.register_event_objective = function (self, objective_name, add_func, remove_func)
-	self.num_event_objectives = 0
-	self._event_objective = objective_name
-	self._add_event_objective = add_func
-	self._remove_event_objective = remove_func
+function InventorySystem.register_event_objective(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	arg_9_0.num_event_objectives = 0
+	arg_9_0._event_objective = arg_9_1
+	arg_9_0._add_event_objective = arg_9_2
+	arg_9_0._remove_event_objective = arg_9_3
 end
 
-InventorySystem.rpc_show_inventory = function (self, channel_id, unit_id, show_inventory)
-	local unit = self.unit_storage:unit(unit_id)
+function InventorySystem.rpc_show_inventory(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	local var_10_0 = arg_10_0.unit_storage:unit(arg_10_2)
 
-	if not unit or not ALIVE[unit] then
+	if not var_10_0 or not ALIVE[var_10_0] then
 		return
 	end
 
-	local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
+	ScriptUnit.extension(var_10_0, "inventory_system"):show_third_person_inventory(arg_10_3)
 
-	inventory_extension:show_third_person_inventory(show_inventory)
+	if arg_10_0.is_server then
+		local var_10_1 = CHANNEL_TO_PEER_ID[arg_10_1]
 
-	if self.is_server then
-		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
-
-		Managers.state.network.network_transmit:send_rpc_clients_except("rpc_show_inventory", peer_id, unit_id, show_inventory)
+		Managers.state.network.network_transmit:send_rpc_clients_except("rpc_show_inventory", var_10_1, arg_10_2, arg_10_3)
 	end
 end
 
-InventorySystem.rpc_play_simple_particle_with_vector_variable = function (self, channel_id, effect_id, position, variable_id, variable_value)
-	if self.is_server then
-		self.network_transmit:send_rpc_clients("rpc_play_simple_particle_with_vector_variable", effect_id, position, variable_id, variable_value)
+function InventorySystem.rpc_play_simple_particle_with_vector_variable(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+	if arg_11_0.is_server then
+		arg_11_0.network_transmit:send_rpc_clients("rpc_play_simple_particle_with_vector_variable", arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	end
 
-	local world = self.world
-	local effect_name = NetworkLookup.effects[effect_id]
-	local variable_name = NetworkLookup.effects[variable_id]
-	local effect_id = World.create_particles(world, effect_name, position)
-	local effect_variable_id = World.find_particles_variable(world, effect_name, variable_name)
+	local var_11_0 = arg_11_0.world
+	local var_11_1 = NetworkLookup.effects[arg_11_2]
+	local var_11_2 = NetworkLookup.effects[arg_11_4]
+	local var_11_3 = World.create_particles(var_11_0, var_11_1, arg_11_3)
+	local var_11_4 = World.find_particles_variable(var_11_0, var_11_1, var_11_2)
 
-	World.set_particles_variable(world, effect_id, effect_variable_id, variable_value)
+	World.set_particles_variable(var_11_0, var_11_3, var_11_4, arg_11_5)
 end
 
-InventorySystem.rpc_destroy_slot = function (self, channel_id, go_id, slot_id)
-	if self.is_server then
-		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+function InventorySystem.rpc_destroy_slot(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	if arg_12_0.is_server then
+		local var_12_0 = CHANNEL_TO_PEER_ID[arg_12_1]
 
-		self.network_transmit:send_rpc_clients_except("rpc_destroy_slot", peer_id, go_id, slot_id)
+		arg_12_0.network_transmit:send_rpc_clients_except("rpc_destroy_slot", var_12_0, arg_12_2, arg_12_3)
 	end
 
-	local unit = self.unit_storage:unit(go_id)
-	local slot_name = NetworkLookup.equipment_slots[slot_id]
-	local inventory = ScriptUnit.extension(unit, "inventory_system")
+	local var_12_1 = arg_12_0.unit_storage:unit(arg_12_2)
+	local var_12_2 = NetworkLookup.equipment_slots[arg_12_3]
 
-	inventory:destroy_slot(slot_name)
+	ScriptUnit.extension(var_12_1, "inventory_system"):destroy_slot(var_12_2)
 end
 
-InventorySystem.rpc_give_equipment = function (self, channel_id, interactor_game_object_id, game_object_id, slot_id, item_name_id, position)
-	local unit = self.unit_storage:unit(game_object_id)
-	local failed = false
+function InventorySystem.rpc_give_equipment(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
+	local var_13_0 = arg_13_0.unit_storage:unit(arg_13_3)
+	local var_13_1 = false
 
-	if Unit.alive(unit) and not ScriptUnit.extension(unit, "status_system"):is_dead() then
-		local owner = Managers.player:owner(unit)
+	if Unit.alive(var_13_0) and not ScriptUnit.extension(var_13_0, "status_system"):is_dead() then
+		local var_13_2 = Managers.player:owner(var_13_0)
 
-		if not owner.remote then
-			local inventory = ScriptUnit.extension(unit, "inventory_system")
-			local slot_name = NetworkLookup.equipment_slots[slot_id]
-			local slot_full = inventory:get_slot_data(slot_name)
-			local can_store = slot_full and inventory:can_store_additional_item(slot_name)
+		if not var_13_2.remote then
+			local var_13_3 = ScriptUnit.extension(var_13_0, "inventory_system")
+			local var_13_4 = NetworkLookup.equipment_slots[arg_13_4]
+			local var_13_5 = var_13_3:get_slot_data(var_13_4)
+			local var_13_6 = var_13_5 and var_13_3:can_store_additional_item(var_13_4)
 
-			if slot_full and not can_store then
-				failed = true
+			if var_13_5 and not var_13_6 then
+				var_13_1 = true
 			else
-				local item_name = NetworkLookup.item_names[item_name_id]
-				local item_data = ItemMasterList[item_name]
+				local var_13_7 = NetworkLookup.item_names[arg_13_5]
+				local var_13_8 = ItemMasterList[var_13_7]
 
-				if slot_full then
-					inventory:store_additional_item(slot_name, item_data)
+				if var_13_5 then
+					var_13_3:store_additional_item(var_13_4, var_13_8)
 				else
-					inventory:add_equipment(slot_name, item_data)
+					var_13_3:add_equipment(var_13_4, var_13_8)
 
 					if not LEVEL_EDITOR_TEST then
-						local weapon_skin_id = NetworkLookup.weapon_skins["n/a"]
+						local var_13_9 = NetworkLookup.weapon_skins["n/a"]
 
-						if self.is_server then
-							self.network_transmit:send_rpc_clients("rpc_add_equipment", game_object_id, slot_id, item_name_id, weapon_skin_id)
+						if arg_13_0.is_server then
+							arg_13_0.network_transmit:send_rpc_clients("rpc_add_equipment", arg_13_3, arg_13_4, arg_13_5, var_13_9)
 						else
-							self.network_transmit:send_rpc_server("rpc_add_equipment", game_object_id, slot_id, item_name_id, weapon_skin_id)
+							arg_13_0.network_transmit:send_rpc_server("rpc_add_equipment", arg_13_3, arg_13_4, arg_13_5, var_13_9)
 						end
 					end
 				end
 
-				local pickup_name = BackendUtils.get_item_template(item_data).pickup_data.pickup_name
-				local pickup_settings = AllPickups[pickup_name]
-				local wwise_world = Managers.world:wwise_world(self.world)
-				local sound_event = pickup_settings.pickup_sound_event
-				local interactor_unit = self.unit_storage:unit(interactor_game_object_id)
-				local interactor_player = interactor_unit and Managers.player:owner(interactor_unit)
+				local var_13_10 = BackendUtils.get_item_template(var_13_8).pickup_data.pickup_name
+				local var_13_11 = AllPickups[var_13_10]
+				local var_13_12 = Managers.world:wwise_world(arg_13_0.world)
+				local var_13_13 = var_13_11.pickup_sound_event
+				local var_13_14 = arg_13_0.unit_storage:unit(arg_13_2)
+				local var_13_15 = var_13_14 and Managers.player:owner(var_13_14)
 
-				if not owner.bot_player and interactor_player and not interactor_player.local_player then
-					if sound_event then
-						WwiseWorld.trigger_event(wwise_world, sound_event)
+				if not var_13_2.bot_player and var_13_15 and not var_13_15.local_player then
+					if var_13_13 then
+						WwiseWorld.trigger_event(var_13_12, var_13_13)
 					end
 
-					local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+					local var_13_16 = CHANNEL_TO_PEER_ID[arg_13_1]
 
-					Managers.state.event:trigger("give_item_feedback", peer_id .. item_name, interactor_player, item_name)
+					Managers.state.event:trigger("give_item_feedback", var_13_16 .. var_13_7, var_13_15, var_13_7)
 				end
 			end
 		else
-			assert(self.is_server, "rpc_give_equipment sent to non-owner non-server, should not happen")
-			self.network_transmit:send_rpc("rpc_give_equipment", owner:network_id(), interactor_game_object_id, game_object_id, slot_id, item_name_id, position)
+			assert(arg_13_0.is_server, "rpc_give_equipment sent to non-owner non-server, should not happen")
+			arg_13_0.network_transmit:send_rpc("rpc_give_equipment", var_13_2:network_id(), arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
 		end
 	else
-		failed = true
+		var_13_1 = true
 	end
 
-	if failed then
-		local item_name = NetworkLookup.item_names[item_name_id]
-		local item_data = ItemMasterList[item_name]
-		local pickup_name = BackendUtils.get_item_template(item_data).pickup_data.pickup_name
-		local pickup_name_id = NetworkLookup.pickup_names[pickup_name]
-		local pickup_spawn_type_id = NetworkLookup.pickup_spawn_types.dropped
+	if var_13_1 then
+		local var_13_17 = NetworkLookup.item_names[arg_13_5]
+		local var_13_18 = ItemMasterList[var_13_17]
+		local var_13_19 = BackendUtils.get_item_template(var_13_18).pickup_data.pickup_name
+		local var_13_20 = NetworkLookup.pickup_names[var_13_19]
+		local var_13_21 = NetworkLookup.pickup_spawn_types.dropped
 
-		if self.is_server then
-			self.entity_manager:system("pickup_system"):rpc_spawn_pickup_with_physics(Network.peer_id(), pickup_name_id, position, Quaternion.identity(), pickup_spawn_type_id)
+		if arg_13_0.is_server then
+			arg_13_0.entity_manager:system("pickup_system"):rpc_spawn_pickup_with_physics(Network.peer_id(), var_13_20, arg_13_6, Quaternion.identity(), var_13_21)
 		else
-			self.network_transmit:send_rpc_server("rpc_spawn_pickup_with_physics", pickup_name_id, position, Quaternion.identity(), pickup_spawn_type_id)
+			arg_13_0.network_transmit:send_rpc_server("rpc_spawn_pickup_with_physics", var_13_20, arg_13_6, Quaternion.identity(), var_13_21)
 		end
 	end
 end
 
-InventorySystem.rpc_add_equipment = function (self, channel_id, go_id, slot_id, item_name_id, weapon_skin_id)
-	if self.is_server then
-		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+function InventorySystem.rpc_add_equipment(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+	if arg_14_0.is_server then
+		local var_14_0 = CHANNEL_TO_PEER_ID[arg_14_1]
 
-		self.network_transmit:send_rpc_clients_except("rpc_add_equipment", peer_id, go_id, slot_id, item_name_id, weapon_skin_id)
+		arg_14_0.network_transmit:send_rpc_clients_except("rpc_add_equipment", var_14_0, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 	end
 
-	local unit = self.unit_storage:unit(go_id)
+	local var_14_1 = arg_14_0.unit_storage:unit(arg_14_2)
 
-	if unit == nil or not ALIVE[unit] then
+	if var_14_1 == nil or not ALIVE[var_14_1] then
 		return
 	end
 
-	local inventory_extension = ScriptUnit.has_extension(unit, "inventory_system")
+	local var_14_2 = ScriptUnit.has_extension(var_14_1, "inventory_system")
 
-	if inventory_extension then
-		local slot_name = NetworkLookup.equipment_slots[slot_id]
-		local item_name = NetworkLookup.item_names[item_name_id]
-		local skin_name = NetworkLookup.weapon_skins[weapon_skin_id]
+	if var_14_2 then
+		local var_14_3 = NetworkLookup.equipment_slots[arg_14_3]
+		local var_14_4 = NetworkLookup.item_names[arg_14_4]
+		local var_14_5 = NetworkLookup.weapon_skins[arg_14_5]
 
-		if skin_name == "n/a" then
-			skin_name = nil
+		if var_14_5 == "n/a" then
+			var_14_5 = nil
 		end
 
-		inventory_extension:add_equipment(slot_name, item_name, skin_name)
+		var_14_2:add_equipment(var_14_3, var_14_4, var_14_5)
 	end
 end
 
-InventorySystem.rpc_add_inventory_slot_item = function (self, channel_id, go_id, slot_id, item_name_id, weapon_skin_id)
-	local unit = self.unit_storage:unit(go_id)
+function InventorySystem.rpc_add_inventory_slot_item(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+	local var_15_0 = arg_15_0.unit_storage:unit(arg_15_2)
 
-	if unit == nil or not ALIVE[unit] then
+	if var_15_0 == nil or not ALIVE[var_15_0] then
 		return
 	end
 
-	local inventory_extension = ScriptUnit.has_extension(unit, "inventory_system")
+	local var_15_1 = ScriptUnit.has_extension(var_15_0, "inventory_system")
 
-	if inventory_extension then
-		local slot_name = NetworkLookup.equipment_slots[slot_id]
-		local item_name = NetworkLookup.item_names[item_name_id]
-		local item_data = ItemMasterList[item_name]
+	if var_15_1 then
+		local var_15_2 = NetworkLookup.equipment_slots[arg_15_3]
+		local var_15_3 = NetworkLookup.item_names[arg_15_4]
+		local var_15_4 = ItemMasterList[var_15_3]
 
-		inventory_extension:destroy_slot(slot_name)
-		inventory_extension:add_equipment(slot_name, item_data)
+		var_15_1:destroy_slot(var_15_2)
+		var_15_1:add_equipment(var_15_2, var_15_4)
 
-		local wielded_slot_name = inventory_extension:get_wielded_slot_name()
-
-		if wielded_slot_name == slot_name then
-			CharacterStateHelper.stop_weapon_actions(inventory_extension, "picked_up_object")
-			inventory_extension:wield(slot_name)
+		if var_15_1:get_wielded_slot_name() == var_15_2 then
+			CharacterStateHelper.stop_weapon_actions(var_15_1, "picked_up_object")
+			var_15_1:wield(var_15_2)
 		end
 
-		if self.is_server then
-			self.network_transmit:send_rpc_clients("rpc_add_equipment", go_id, slot_id, item_name_id, weapon_skin_id)
+		if arg_15_0.is_server then
+			arg_15_0.network_transmit:send_rpc_clients("rpc_add_equipment", arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 		else
-			self.network_transmit:send_rpc_server("rpc_add_equipment", go_id, slot_id, item_name_id, weapon_skin_id)
+			arg_15_0.network_transmit:send_rpc_server("rpc_add_equipment", arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 		end
 	end
 end
 
-InventorySystem.rpc_add_equipment_buffs = function (self, channel_id, go_id, slot_id, num_buffs, buff_ids, buff_value_type_ids, buff_values)
-	fassert(self.is_server, "attempting to add buffs as a client VIA rpc_add_equipment_buffs")
+function InventorySystem.rpc_add_equipment_buffs(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7)
+	fassert(arg_16_0.is_server, "attempting to add buffs as a client VIA rpc_add_equipment_buffs")
 
-	local unit = self.unit_storage:unit(go_id)
-	local slot_name = NetworkLookup.equipment_slots[slot_id]
-	local buffs = BuffUtils.buffs_from_rpc_params(num_buffs, buff_ids, buff_value_type_ids, buff_values)
-	local inventory = ScriptUnit.extension(unit, "inventory_system")
-	local reason = "wield"
+	local var_16_0 = arg_16_0.unit_storage:unit(arg_16_2)
+	local var_16_1 = NetworkLookup.equipment_slots[arg_16_3]
+	local var_16_2 = BuffUtils.buffs_from_rpc_params(arg_16_4, arg_16_5, arg_16_6, arg_16_7)
+	local var_16_3 = ScriptUnit.extension(var_16_0, "inventory_system")
+	local var_16_4 = "wield"
 
-	inventory:set_buffs_to_slot(reason, slot_name, buffs)
+	var_16_3:set_buffs_to_slot(var_16_4, var_16_1, var_16_2)
 end
 
-InventorySystem.rpc_add_no_wield_required_equipment_buffs = function (self, sender, go_id, slot_id, num_buffs, buff_ids, buff_value_type_ids, buff_values)
-	fassert(self.is_server, "attempting to add buffs as a client VIA rpc_add_no_wield_required_equipment_buffs")
+function InventorySystem.rpc_add_no_wield_required_equipment_buffs(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7)
+	fassert(arg_17_0.is_server, "attempting to add buffs as a client VIA rpc_add_no_wield_required_equipment_buffs")
 
-	local unit = self.unit_storage:unit(go_id)
-	local slot_name = NetworkLookup.equipment_slots[slot_id]
-	local buffs = BuffUtils.buffs_from_rpc_params(num_buffs, buff_ids, buff_value_type_ids, buff_values)
-	local inventory = ScriptUnit.extension(unit, "inventory_system")
-	local reason = "equip"
+	local var_17_0 = arg_17_0.unit_storage:unit(arg_17_2)
+	local var_17_1 = NetworkLookup.equipment_slots[arg_17_3]
+	local var_17_2 = BuffUtils.buffs_from_rpc_params(arg_17_4, arg_17_5, arg_17_6, arg_17_7)
+	local var_17_3 = ScriptUnit.extension(var_17_0, "inventory_system")
+	local var_17_4 = "equip"
 
-	inventory:set_buffs_to_slot(reason, slot_name, buffs)
+	var_17_3:set_buffs_to_slot(var_17_4, var_17_1, var_17_2)
 end
 
-InventorySystem.rpc_add_equipment_limited_item = function (self, channel_id, go_id, slot_id, item_name_id, spawner_unit_id, limited_item_id)
-	if self.is_server then
-		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+function InventorySystem.rpc_add_equipment_limited_item(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6)
+	if arg_18_0.is_server then
+		local var_18_0 = CHANNEL_TO_PEER_ID[arg_18_1]
 
-		self.network_transmit:send_rpc_clients_except("rpc_add_equipment_limited_item", peer_id, go_id, slot_id, item_name_id, spawner_unit_id, limited_item_id)
+		arg_18_0.network_transmit:send_rpc_clients_except("rpc_add_equipment_limited_item", var_18_0, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6)
 	end
 
-	local unit = self.unit_storage:unit(go_id)
-	local slot_name = NetworkLookup.equipment_slots[slot_id]
-	local item_name = NetworkLookup.item_names[item_name_id]
-	local spawner_unit = Managers.state.network:game_object_or_level_unit(spawner_unit_id, true)
-	local inventory = ScriptUnit.extension(unit, "inventory_system")
+	local var_18_1 = arg_18_0.unit_storage:unit(arg_18_2)
+	local var_18_2 = NetworkLookup.equipment_slots[arg_18_3]
+	local var_18_3 = NetworkLookup.item_names[arg_18_4]
+	local var_18_4 = Managers.state.network:game_object_or_level_unit(arg_18_5, true)
 
-	inventory:add_equipment_limited_item(slot_name, item_name, spawner_unit, limited_item_id)
+	ScriptUnit.extension(var_18_1, "inventory_system"):add_equipment_limited_item(var_18_2, var_18_3, var_18_4, arg_18_6)
 end
 
-InventorySystem.rpc_wield_equipment = function (self, channel_id, go_id, slot_id)
-	if self.is_server then
-		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+function InventorySystem.rpc_wield_equipment(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+	if arg_19_0.is_server then
+		local var_19_0 = CHANNEL_TO_PEER_ID[arg_19_1]
 
-		self.network_transmit:send_rpc_clients_except("rpc_wield_equipment", peer_id, go_id, slot_id)
+		arg_19_0.network_transmit:send_rpc_clients_except("rpc_wield_equipment", var_19_0, arg_19_2, arg_19_3)
 	end
 
-	local unit = self.unit_storage:unit(go_id)
-	local slot_name = NetworkLookup.equipment_slots[slot_id]
-	local inventory = ScriptUnit.extension(unit, "inventory_system")
+	local var_19_1 = arg_19_0.unit_storage:unit(arg_19_2)
+	local var_19_2 = NetworkLookup.equipment_slots[arg_19_3]
 
-	inventory:wield(slot_name)
+	ScriptUnit.extension(var_19_1, "inventory_system"):wield(var_19_2)
 end
 
-InventorySystem.rpc_start_weapon_fx = function (self, channel_id, go_id, item_name_id, fx_id)
-	if self.is_server then
-		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+function InventorySystem.rpc_start_weapon_fx(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+	if arg_20_0.is_server then
+		local var_20_0 = CHANNEL_TO_PEER_ID[arg_20_1]
 
-		self.network_transmit:send_rpc_clients_except("rpc_start_weapon_fx", peer_id, go_id, item_name_id, fx_id)
+		arg_20_0.network_transmit:send_rpc_clients_except("rpc_start_weapon_fx", var_20_0, arg_20_2, arg_20_3, arg_20_4)
 	end
 
-	local item_name = NetworkLookup.item_names[item_name_id]
-	local unit = self.unit_storage:unit(go_id)
-	local inventory = ScriptUnit.extension(unit, "inventory_system")
-	local wielded_slot_data = inventory:get_wielded_slot_data()
-	local wielded_item_data = wielded_slot_data and wielded_slot_data.item_data
-	local wielded_item_name = wielded_item_data and wielded_item_data.name
+	local var_20_1 = NetworkLookup.item_names[arg_20_3]
+	local var_20_2 = arg_20_0.unit_storage:unit(arg_20_2)
+	local var_20_3 = ScriptUnit.extension(var_20_2, "inventory_system")
+	local var_20_4 = var_20_3:get_wielded_slot_data()
+	local var_20_5 = var_20_4 and var_20_4.item_data
+	local var_20_6 = var_20_5 and var_20_5.name
 
-	if item_name and item_name == wielded_item_name then
-		local item_data = ItemMasterList[item_name]
-		local item_template = BackendUtils.get_item_template(item_data)
-		local fx_name = item_template.particle_fx_lookup[fx_id]
+	if var_20_1 and var_20_1 == var_20_6 then
+		local var_20_7 = ItemMasterList[var_20_1]
+		local var_20_8 = BackendUtils.get_item_template(var_20_7).particle_fx_lookup[arg_20_4]
 
-		inventory:start_weapon_fx(fx_name, false)
+		var_20_3:start_weapon_fx(var_20_8, false)
 	end
 end
 
-InventorySystem.rpc_stop_weapon_fx = function (self, channel_id, go_id, item_name_id, fx_id)
-	if self.is_server then
-		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+function InventorySystem.rpc_stop_weapon_fx(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+	if arg_21_0.is_server then
+		local var_21_0 = CHANNEL_TO_PEER_ID[arg_21_1]
 
-		self.network_transmit:send_rpc_clients_except("rpc_stop_weapon_fx", peer_id, go_id, item_name_id, fx_id)
+		arg_21_0.network_transmit:send_rpc_clients_except("rpc_stop_weapon_fx", var_21_0, arg_21_2, arg_21_3, arg_21_4)
 	end
 
-	local item_name = NetworkLookup.item_names[item_name_id]
-	local unit = self.unit_storage:unit(go_id)
-	local inventory = ScriptUnit.extension(unit, "inventory_system")
-	local wielded_slot_data = inventory:get_wielded_slot_data()
-	local wielded_item_data = wielded_slot_data and wielded_slot_data.item_data
-	local wielded_item_name = wielded_item_data and wielded_item_data.name
+	local var_21_1 = NetworkLookup.item_names[arg_21_3]
+	local var_21_2 = arg_21_0.unit_storage:unit(arg_21_2)
+	local var_21_3 = ScriptUnit.extension(var_21_2, "inventory_system")
+	local var_21_4 = var_21_3:get_wielded_slot_data()
+	local var_21_5 = var_21_4 and var_21_4.item_data
+	local var_21_6 = var_21_5 and var_21_5.name
 
-	if item_name and item_name == wielded_item_name then
-		local item_data = ItemMasterList[item_name]
-		local item_template = BackendUtils.get_item_template(item_data)
-		local fx_name = item_template.particle_fx_lookup[fx_id]
+	if var_21_1 and var_21_1 == var_21_6 then
+		local var_21_7 = ItemMasterList[var_21_1]
+		local var_21_8 = BackendUtils.get_item_template(var_21_7).particle_fx_lookup[arg_21_4]
 
-		inventory:stop_weapon_fx(fx_name, false)
+		var_21_3:stop_weapon_fx(var_21_8, false)
 	end
 end
 
-InventorySystem.rpc_update_additional_slot = function (self, channel_id, go_id, slot_id, items)
-	if self.is_server then
-		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+function InventorySystem.rpc_update_additional_slot(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+	if arg_22_0.is_server then
+		local var_22_0 = CHANNEL_TO_PEER_ID[arg_22_1]
 
-		self.network_transmit:send_rpc_clients_except("rpc_update_additional_slot", peer_id, go_id, slot_id, items)
+		arg_22_0.network_transmit:send_rpc_clients_except("rpc_update_additional_slot", var_22_0, arg_22_2, arg_22_3, arg_22_4)
 	end
 
-	local looked_up_items = {}
+	local var_22_1 = {}
 
-	for i = 1, #items do
-		local item = items[i]
+	for iter_22_0 = 1, #arg_22_4 do
+		local var_22_2 = arg_22_4[iter_22_0]
 
-		looked_up_items[#looked_up_items + 1] = NetworkLookup.item_names[item]
+		var_22_1[#var_22_1 + 1] = NetworkLookup.item_names[var_22_2]
 	end
 
-	local unit = self.unit_storage:unit(go_id)
-	local inventory = ScriptUnit.extension(unit, "inventory_system")
-	local slot_name = NetworkLookup.equipment_slots[slot_id]
+	local var_22_3 = arg_22_0.unit_storage:unit(arg_22_2)
+	local var_22_4 = ScriptUnit.extension(var_22_3, "inventory_system")
+	local var_22_5 = NetworkLookup.equipment_slots[arg_22_3]
 
-	inventory:update_additional_items(slot_name, looked_up_items)
+	var_22_4:update_additional_items(var_22_5, var_22_1)
 end
 
-InventorySystem.weapon_anim_event = function (self, owner_unit, event_name, skip_sync)
-	local inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
-	local left_weapon_unit, right_weapon_unit = inventory_extension:get_all_weapon_unit()
+function InventorySystem.weapon_anim_event(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+	local var_23_0 = ScriptUnit.extension(arg_23_1, "inventory_system")
+	local var_23_1, var_23_2 = var_23_0:get_all_weapon_unit()
 
-	if left_weapon_unit then
-		Unit.animation_event(left_weapon_unit, event_name)
+	if var_23_1 then
+		Unit.animation_event(var_23_1, arg_23_2)
 	end
 
-	if right_weapon_unit then
-		Unit.animation_event(right_weapon_unit, event_name)
+	if var_23_2 then
+		Unit.animation_event(var_23_2, arg_23_2)
 	end
 
-	if not skip_sync and Managers.state.network:game() then
-		local owner_unit_id = self.unit_storage:go_id(owner_unit)
-		local event_id = NetworkLookup.anims[event_name]
-		local current_slot_name = inventory_extension:get_wielded_slot_name()
-		local slot_id = NetworkLookup.equipment_slots[current_slot_name]
+	if not arg_23_3 and Managers.state.network:game() then
+		local var_23_3 = arg_23_0.unit_storage:go_id(arg_23_1)
+		local var_23_4 = NetworkLookup.anims[arg_23_2]
+		local var_23_5 = var_23_0:get_wielded_slot_name()
+		local var_23_6 = NetworkLookup.equipment_slots[var_23_5]
 
-		if self.is_server then
-			self.network_transmit:send_rpc_clients("rpc_weapon_anim_event", owner_unit_id, slot_id, event_id)
+		if arg_23_0.is_server then
+			arg_23_0.network_transmit:send_rpc_clients("rpc_weapon_anim_event", var_23_3, var_23_6, var_23_4)
 		else
-			self.network_transmit:send_rpc_server("rpc_weapon_anim_event", owner_unit_id, slot_id, event_id)
+			arg_23_0.network_transmit:send_rpc_server("rpc_weapon_anim_event", var_23_3, var_23_6, var_23_4)
 		end
 	end
 end
 
-InventorySystem.rpc_weapon_anim_event = function (self, channel_id, owner_unit_id, slot_id, anim_event_id)
-	local owner_unit = self.unit_storage:unit(owner_unit_id)
-	local inventory_extension = ScriptUnit.has_extension(owner_unit, "inventory_system")
+function InventorySystem.rpc_weapon_anim_event(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+	local var_24_0 = arg_24_0.unit_storage:unit(arg_24_2)
+	local var_24_1 = ScriptUnit.has_extension(var_24_0, "inventory_system")
 
-	if not inventory_extension then
+	if not var_24_1 then
 		return
 	end
 
-	local wielded_slot_name = inventory_extension:get_wielded_slot_name()
-	local slot_name = NetworkLookup.equipment_slots[slot_id]
+	local var_24_2 = var_24_1:get_wielded_slot_name()
 
-	if slot_name ~= wielded_slot_name then
+	if NetworkLookup.equipment_slots[arg_24_3] ~= var_24_2 then
 		return
 	end
 
-	local skip_sync = true
-	local event_name = NetworkLookup.anims[anim_event_id]
+	local var_24_3 = true
+	local var_24_4 = NetworkLookup.anims[arg_24_4]
 
-	self:weapon_anim_event(owner_unit, event_name, skip_sync)
+	arg_24_0:weapon_anim_event(var_24_0, var_24_4, var_24_3)
 end

@@ -1,28 +1,27 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/boons/boon_extension.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/boons/boon_extension.lua
 
 BoonExtension = class(BoonExtension)
 
-BoonExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self._profile_index = extension_init_data.profile_index
+function BoonExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._profile_index = arg_1_3.profile_index
 end
 
-BoonExtension.game_object_initialized = function (self, unit, go_id)
+function BoonExtension.game_object_initialized(arg_2_0, arg_2_1, arg_2_2)
 	if DamageUtils.is_in_inn then
 		return
 	end
 
-	local boons_backend = Managers.backend:get_interface("boons")
-	local active_boons = boons_backend:get_active_boons()
-	local buff_system = Managers.state.entity:system("buff_system")
+	local var_2_0 = Managers.backend:get_interface("boons"):get_active_boons()
+	local var_2_1 = Managers.state.entity:system("buff_system")
 
-	for _, boon in ipairs(active_boons) do
-		local buff_name = BoonTemplates[boon.boon_name].buff_per_hero[self._profile_index]
+	for iter_2_0, iter_2_1 in ipairs(var_2_0) do
+		local var_2_2 = BoonTemplates[iter_2_1.boon_name].buff_per_hero[arg_2_0._profile_index]
 
-		fassert(buff_name, "boon %s doesn't have buff for profile %d", boon.boon_name, self._profile_index)
-		buff_system:add_buff(unit, buff_name, unit, false)
+		fassert(var_2_2, "boon %s doesn't have buff for profile %d", iter_2_1.boon_name, arg_2_0._profile_index)
+		var_2_1:add_buff(arg_2_1, var_2_2, arg_2_1, false)
 	end
 end
 
-BoonExtension.destroy = function (self)
+function BoonExtension.destroy(arg_3_0)
 	return
 end

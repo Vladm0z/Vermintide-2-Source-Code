@@ -1,26 +1,26 @@
-﻿-- chunkname: @scripts/managers/player/player_sync_data.lua
+-- chunkname: @scripts/managers/player/player_sync_data.lua
 
 PrivacyLevels = table.mirror_array_inplace({
 	"private",
 	"friends",
-	"public",
+	"public"
 })
 PlayerSyncData = class(PlayerSyncData)
 
-PlayerSyncData.init = function (self, player, network_manager)
-	self._player = player
-	self._network_manager = network_manager
+function PlayerSyncData.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0._player = arg_1_1
+	arg_1_0._network_manager = arg_1_2
 
-	if player.local_player or player.bot_player and player.is_server then
-		local highest_unlocked_difficulty = self:_calc_highest_unlocked_difficulty()
-		local game_object_data_table = {
+	if arg_1_1.local_player or arg_1_1.bot_player and arg_1_1.is_server then
+		local var_1_0 = arg_1_0:_calc_highest_unlocked_difficulty()
+		local var_1_1 = {
 			power_level = 0,
 			go_type = NetworkLookup.go_types.player_sync_data,
-			network_id = player:network_id(),
-			local_player_id = player:local_player_id(),
-			is_dev = not player.bot_player and SteamHelper.is_dev(),
+			network_id = arg_1_1:network_id(),
+			local_player_id = arg_1_1:local_player_id(),
+			is_dev = not arg_1_1.bot_player and SteamHelper.is_dev(),
 			best_aquired_power_level = DEDICATED_SERVER and 0 or BackendUtils.best_aquired_power_level(),
-			highest_unlocked_difficulty = NetworkLookup.difficulties[highest_unlocked_difficulty],
+			highest_unlocked_difficulty = NetworkLookup.difficulties[var_1_0],
 			slot_frame = NetworkLookup.cosmetics.default,
 			slot_skin = NetworkLookup.cosmetics.default,
 			slot_hat = NetworkLookup.item_names["n/a"],
@@ -30,140 +30,136 @@ PlayerSyncData.init = function (self, player, network_manager)
 			slot_ranged_skin = NetworkLookup.weapon_skins["n/a"],
 			slot_pose = NetworkLookup.item_names["n/a"],
 			slot_pose_skin = NetworkLookup.item_names["n/a"],
-			playerlist_build_privacy = Application.user_setting("playerlist_build_privacy"),
+			playerlist_build_privacy = Application.user_setting("playerlist_build_privacy")
 		}
-		local callback = callback(self, "cb_game_session_disconnect")
-		local game_object_id = network_manager:create_game_object("player_sync_data", game_object_data_table, callback)
+		local var_1_2 = callback(arg_1_0, "cb_game_session_disconnect")
 
-		self._game_object_id = game_object_id
+		arg_1_0._game_object_id = arg_1_2:create_game_object("player_sync_data", var_1_1, var_1_2)
 
-		Managers.state.event:register(self, "on_game_options_changed", "_on_game_options_changed")
+		Managers.state.event:register(arg_1_0, "on_game_options_changed", "_on_game_options_changed")
 	end
 end
 
-PlayerSyncData._on_game_options_changed = function (self)
-	self:set_data("playerlist_build_privacy", Application.user_setting("playerlist_build_privacy"))
+function PlayerSyncData._on_game_options_changed(arg_2_0)
+	arg_2_0:set_data("playerlist_build_privacy", Application.user_setting("playerlist_build_privacy"))
 end
 
-PlayerSyncData._calc_highest_unlocked_difficulty = function (self)
+function PlayerSyncData._calc_highest_unlocked_difficulty(arg_3_0)
 	if Development.parameter("unlock_all_difficulties") then
-		local highest_unlocked_difficulty = "normal"
-		local highest_rank = 0
+		local var_3_0 = "normal"
+		local var_3_1 = 0
 
-		for difficulty_key, difficulty_settings in pairs(DifficultySettings) do
-			if DefaultDifficultyLookup[difficulty_key] and highest_rank < difficulty_settings.rank then
-				highest_rank = difficulty_settings.rank
-				highest_unlocked_difficulty = difficulty_key
+		for iter_3_0, iter_3_1 in pairs(DifficultySettings) do
+			if DefaultDifficultyLookup[iter_3_0] and var_3_1 < iter_3_1.rank then
+				var_3_1 = iter_3_1.rank
+				var_3_0 = iter_3_0
 			end
 		end
 
-		return highest_unlocked_difficulty
+		return var_3_0
 	end
 
 	if DEDICATED_SERVER then
 		return "versus_base"
 	end
 
-	local highest_unlocked_difficulty = "normal"
-	local highest_rank = 2
+	local var_3_2 = "normal"
+	local var_3_3 = 2
 
-	for difficulty_key, difficulty_settings in pairs(DifficultySettings) do
-		if DefaultDifficultyLookup[difficulty_key] then
-			local difficulty_approved = true
+	for iter_3_2, iter_3_3 in pairs(DifficultySettings) do
+		if DefaultDifficultyLookup[iter_3_2] then
+			local var_3_4 = true
 
-			if difficulty_settings.extra_requirement_name then
-				local extra_requirement_name = difficulty_settings.extra_requirement_name
-				local requirement_data = ExtraDifficultyRequirements[extra_requirement_name]
+			if iter_3_3.extra_requirement_name then
+				local var_3_5 = iter_3_3.extra_requirement_name
 
-				if not requirement_data.requirement_function() then
-					difficulty_approved = false
+				if not ExtraDifficultyRequirements[var_3_5].requirement_function() then
+					var_3_4 = false
 				end
 			end
 
-			if difficulty_approved and highest_rank < difficulty_settings.rank then
-				highest_unlocked_difficulty = difficulty_key
-				highest_rank = difficulty_settings.rank
+			if var_3_4 and var_3_3 < iter_3_3.rank then
+				var_3_2 = iter_3_2
+				var_3_3 = iter_3_3.rank
 			end
 		end
 	end
 
-	return highest_unlocked_difficulty
+	return var_3_2
 end
 
-PlayerSyncData.reevaluate_highest_difficulty = function (self)
-	if not self._game_object_id then
+function PlayerSyncData.reevaluate_highest_difficulty(arg_4_0)
+	if not arg_4_0._game_object_id then
 		return
 	end
 
-	local game = self._network_manager:game()
-
-	if not game then
+	if not arg_4_0._network_manager:game() then
 		return
 	end
 
-	local highest_unlocked_difficulty = self:_calc_highest_unlocked_difficulty()
+	local var_4_0 = arg_4_0:_calc_highest_unlocked_difficulty()
 
-	self:set_data("highest_unlocked_difficulty", NetworkLookup.difficulties[highest_unlocked_difficulty])
+	arg_4_0:set_data("highest_unlocked_difficulty", NetworkLookup.difficulties[var_4_0])
 end
 
-PlayerSyncData.cb_game_session_disconnect = function (self)
-	self._game_object_id = nil
+function PlayerSyncData.cb_game_session_disconnect(arg_5_0)
+	arg_5_0._game_object_id = nil
 end
 
-PlayerSyncData.set_game_object_id = function (self, go_id)
-	self._game_object_id = go_id
+function PlayerSyncData.set_game_object_id(arg_6_0, arg_6_1)
+	arg_6_0._game_object_id = arg_6_1
 end
 
-PlayerSyncData.active = function (self)
-	return self._game_object_id ~= nil
+function PlayerSyncData.active(arg_7_0)
+	return arg_7_0._game_object_id ~= nil
 end
 
-PlayerSyncData.destroy = function (self)
-	local player = self._player
+function PlayerSyncData.destroy(arg_8_0)
+	local var_8_0 = arg_8_0._player
 
-	if (player.local_player or player.bot_player and player.is_server) and self._game_object_id then
-		local game = self._network_manager:game()
+	if (var_8_0.local_player or var_8_0.bot_player and var_8_0.is_server) and arg_8_0._game_object_id then
+		local var_8_1 = arg_8_0._network_manager:game()
 
-		if GameSession.game_object_exists(game, self._game_object_id) then
-			self._network_manager:destroy_game_object(self._game_object_id)
+		if GameSession.game_object_exists(var_8_1, arg_8_0._game_object_id) then
+			arg_8_0._network_manager:destroy_game_object(arg_8_0._game_object_id)
 		end
 
-		Managers.state.event:unregister("on_game_options_changed", self)
+		Managers.state.event:unregister("on_game_options_changed", arg_8_0)
 	end
 
-	self._game_object_id = nil
-	self._network_manager = nil
-	self._player = nil
+	arg_8_0._game_object_id = nil
+	arg_8_0._network_manager = nil
+	arg_8_0._player = nil
 end
 
-PlayerSyncData.set_data = function (self, key, value)
-	if not self._game_object_id then
+function PlayerSyncData.set_data(arg_9_0, arg_9_1, arg_9_2)
+	if not arg_9_0._game_object_id then
 		return
 	end
 
-	local game = self._network_manager:game()
+	local var_9_0 = arg_9_0._network_manager:game()
 
-	if not game then
+	if not var_9_0 then
 		return
 	end
 
-	GameSession.set_game_object_field(game, self._game_object_id, key, value)
+	GameSession.set_game_object_field(var_9_0, arg_9_0._game_object_id, arg_9_1, arg_9_2)
 end
 
-PlayerSyncData.get_data = function (self, key)
-	if not self._game_object_id then
+function PlayerSyncData.get_data(arg_10_0, arg_10_1)
+	if not arg_10_0._game_object_id then
 		print("[PlayerSyncData] Game object id is not initialized")
 
 		return nil
 	end
 
-	local game = self._network_manager:game()
+	local var_10_0 = arg_10_0._network_manager:game()
 
-	if not game then
+	if not var_10_0 then
 		print("[PlayerSyncData] Game session is not initialized")
 
 		return nil
 	end
 
-	return GameSession.game_object_field(game, self._game_object_id, key)
+	return GameSession.game_object_field(var_10_0, arg_10_0._game_object_id, arg_10_1)
 end

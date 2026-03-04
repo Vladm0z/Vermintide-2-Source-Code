@@ -1,93 +1,91 @@
-﻿-- chunkname: @scripts/managers/matchmaking/matchmaking_state_player_hosted_game.lua
+-- chunkname: @scripts/managers/matchmaking/matchmaking_state_player_hosted_game.lua
 
-local ReservationHandlerTypes = require("scripts/managers/game_mode/mechanisms/reservation_handler_types")
+local var_0_0 = require("scripts/managers/game_mode/mechanisms/reservation_handler_types")
 
 MatchmakingStatePlayerHostedGame = class(MatchmakingStatePlayerHostedGame)
 MatchmakingStatePlayerHostedGame.NAME = "MatchmakingStatePlayerHostedGame"
 
-MatchmakingStatePlayerHostedGame.init = function (self, params)
-	self._lobby = params.lobby
-	self._network_transmit = params.network_transmit
-	self._difficulty_manager = params.difficulty
-	self._matchmaking_manager = params.matchmaking_manager
-	self._profile_synchronizer = params.profile_synchronizer
-	self._wwise_world = params.wwise_world
+function MatchmakingStatePlayerHostedGame.init(arg_1_0, arg_1_1)
+	arg_1_0._lobby = arg_1_1.lobby
+	arg_1_0._network_transmit = arg_1_1.network_transmit
+	arg_1_0._difficulty_manager = arg_1_1.difficulty
+	arg_1_0._matchmaking_manager = arg_1_1.matchmaking_manager
+	arg_1_0._profile_synchronizer = arg_1_1.profile_synchronizer
+	arg_1_0._wwise_world = arg_1_1.wwise_world
 end
 
-MatchmakingStatePlayerHostedGame.destroy = function (self)
+function MatchmakingStatePlayerHostedGame.destroy(arg_2_0)
 	return
 end
 
-MatchmakingStatePlayerHostedGame.on_enter = function (self, state_context)
-	self._state_context = state_context
-	self._search_config = state_context.search_config
-	self._search_config.is_player_hosted = true
+function MatchmakingStatePlayerHostedGame.on_enter(arg_3_0, arg_3_1)
+	arg_3_0._state_context = arg_3_1
+	arg_3_0._search_config = arg_3_1.search_config
+	arg_3_0._search_config.is_player_hosted = true
 
-	self:_start_hosting_game()
-	self._matchmaking_manager:send_system_chat_message("matchmaking_status_start_hosting_game")
-	self._matchmaking_manager:set_lobby_data_match_started(false)
+	arg_3_0:_start_hosting_game()
+	arg_3_0._matchmaking_manager:send_system_chat_message("matchmaking_status_start_hosting_game")
+	arg_3_0._matchmaking_manager:set_lobby_data_match_started(false)
 end
 
-MatchmakingStatePlayerHostedGame.on_exit = function (self)
+function MatchmakingStatePlayerHostedGame.on_exit(arg_4_0)
 	return
 end
 
-MatchmakingStatePlayerHostedGame.update = function (self, dt, t)
-	return self._new_state, self._state_context
+function MatchmakingStatePlayerHostedGame.update(arg_5_0, arg_5_1, arg_5_2)
+	return arg_5_0._new_state, arg_5_0._state_context
 end
 
-MatchmakingStatePlayerHostedGame.force_start_game = function (self)
-	local game_mechanism = Managers.mechanism:game_mechanism()
-	local slot_reservation_handler = game_mechanism:get_slot_reservation_handler(Network.peer_id(), ReservationHandlerTypes.pending_custom_game)
+function MatchmakingStatePlayerHostedGame.force_start_game(arg_6_0)
+	local var_6_0 = Managers.mechanism:game_mechanism()
 
-	if slot_reservation_handler:all_teams_have_members() or Development.parameter("allow_versus_force_start_single_player") then
-		self._state_context.clients_not_in_game_session = true
-		self._search_config.is_player_hosted = false
-		self._new_state = MatchmakingStateStartGame
+	if var_6_0:get_slot_reservation_handler(Network.peer_id(), var_0_0.pending_custom_game):all_teams_have_members() or Development.parameter("allow_versus_force_start_single_player") then
+		arg_6_0._state_context.clients_not_in_game_session = true
+		arg_6_0._search_config.is_player_hosted = false
+		arg_6_0._new_state = MatchmakingStateStartGame
 
 		Managers.matchmaking:set_lobby_data_match_started(true)
-		game_mechanism:move_slot_reservation_handler(Network.peer_id(), ReservationHandlerTypes.pending_custom_game, ReservationHandlerTypes.session)
+		var_6_0:move_slot_reservation_handler(Network.peer_id(), var_0_0.pending_custom_game, var_0_0.session)
 
-		local audio_event = "versus_hud_player_lobby_match_found"
-		local audio_system = Managers.state.entity:system("audio_system")
+		local var_6_1 = "versus_hud_player_lobby_match_found"
 
-		audio_system:play_sound_local(audio_event)
+		Managers.state.entity:system("audio_system"):play_sound_local(var_6_1)
 
-		local network_transmit = Managers.state.network.network_transmit
-		local event_id = NetworkLookup.sound_events[audio_event]
-		local leaders = Managers.party:server_get_friend_party_leaders()
+		local var_6_2 = Managers.state.network.network_transmit
+		local var_6_3 = NetworkLookup.sound_events[var_6_1]
+		local var_6_4 = Managers.party:server_get_friend_party_leaders()
 
-		for _, leader in pairs(leaders) do
-			if PEER_ID_TO_CHANNEL[leader] then
-				network_transmit:send_rpc("rpc_vs_play_matchmaking_sfx", leader, event_id)
+		for iter_6_0, iter_6_1 in pairs(var_6_4) do
+			if PEER_ID_TO_CHANNEL[iter_6_1] then
+				var_6_2:send_rpc("rpc_vs_play_matchmaking_sfx", iter_6_1, var_6_3)
 			end
 		end
 
-		if game_mechanism.server_decide_side_order then
-			game_mechanism:server_decide_side_order()
+		if var_6_0.server_decide_side_order then
+			var_6_0:server_decide_side_order()
 		end
 	end
 end
 
-MatchmakingStatePlayerHostedGame._start_hosting_game = function (self)
-	local state_context = self._state_context
-	local search_config = self._search_config
-	local mission_id = search_config.mission_id
-	local difficulty = search_config.difficulty
-	local matchmaking_type = search_config.matchmaking_type
-	local quick_game = search_config.quick_game
-	local private_game = search_config.private_game
-	local mechanism = search_config.mechanism
-	local game_mechanism = Managers.mechanism:game_mechanism()
+function MatchmakingStatePlayerHostedGame._start_hosting_game(arg_7_0)
+	local var_7_0 = arg_7_0._state_context
+	local var_7_1 = arg_7_0._search_config
+	local var_7_2 = var_7_1.mission_id
+	local var_7_3 = var_7_1.difficulty
+	local var_7_4 = var_7_1.matchmaking_type
+	local var_7_5 = var_7_1.quick_game
+	local var_7_6 = var_7_1.private_game
+	local var_7_7 = var_7_1.mechanism
+	local var_7_8 = Managers.mechanism:game_mechanism()
 
-	if game_mechanism.set_is_hosting_versus_custom_game then
-		game_mechanism:set_is_hosting_versus_custom_game(true)
+	if var_7_8.set_is_hosting_versus_custom_game then
+		var_7_8:set_is_hosting_versus_custom_game(true)
 	end
 
-	local eac_authorized = Managers.eac:is_trusted()
+	local var_7_9 = Managers.eac:is_trusted()
 
-	self._difficulty_manager:set_difficulty(difficulty, 0)
-	Managers.party:set_leader(self._lobby:lobby_host())
-	self._matchmaking_manager:set_matchmaking_data(mission_id, difficulty, nil, matchmaking_type, private_game, quick_game, eac_authorized, 0, mechanism)
-	self._matchmaking_manager:set_game_privacy(private_game)
+	arg_7_0._difficulty_manager:set_difficulty(var_7_3, 0)
+	Managers.party:set_leader(arg_7_0._lobby:lobby_host())
+	arg_7_0._matchmaking_manager:set_matchmaking_data(var_7_2, var_7_3, nil, var_7_4, var_7_6, var_7_5, var_7_9, 0, var_7_7)
+	arg_7_0._matchmaking_manager:set_game_privacy(var_7_6)
 end

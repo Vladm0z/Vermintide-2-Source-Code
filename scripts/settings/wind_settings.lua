@@ -1,11 +1,11 @@
-﻿-- chunkname: @scripts/settings/wind_settings.lua
+-- chunkname: @scripts/settings/wind_settings.lua
 
 WindSettings = {
 	metal = {
-		display_name = "wind_metal_name",
 		lore_display_name = "menu_weave_play_wind_title_chamon",
-		mutator = "metal",
+		display_name = "wind_metal_name",
 		thumbnail_icon = "icon_wind_chamon",
+		mutator = "metal",
 		power_level = {
 			normal = {
 				100,
@@ -17,7 +17,7 @@ WindSettings = {
 				400,
 				450,
 				500,
-				600,
+				600
 			},
 			hard = {
 				100,
@@ -29,7 +29,7 @@ WindSettings = {
 				400,
 				450,
 				500,
-				600,
+				600
 			},
 			harder = {
 				100,
@@ -41,7 +41,7 @@ WindSettings = {
 				400,
 				450,
 				500,
-				600,
+				600
 			},
 			hardest = {
 				100,
@@ -53,7 +53,7 @@ WindSettings = {
 				400,
 				450,
 				500,
-				600,
+				600
 			},
 			cataclysm = {
 				100,
@@ -65,7 +65,7 @@ WindSettings = {
 				400,
 				450,
 				500,
-				600,
+				600
 			},
 			cataclysm_2 = {
 				100,
@@ -77,7 +77,7 @@ WindSettings = {
 				400,
 				450,
 				500,
-				600,
+				600
 			},
 			cataclysm_3 = {
 				100,
@@ -89,7 +89,7 @@ WindSettings = {
 				400,
 				450,
 				500,
-				600,
+				600
 			},
 			versus_base = {
 				100,
@@ -101,8 +101,8 @@ WindSettings = {
 				400,
 				450,
 				500,
-				600,
-			},
+				600
+			}
 		},
 		radius = {
 			normal = {
@@ -115,7 +115,7 @@ WindSettings = {
 				3,
 				3,
 				3,
-				3,
+				3
 			},
 			hard = {
 				3,
@@ -127,7 +127,7 @@ WindSettings = {
 				3,
 				3,
 				3,
-				3,
+				3
 			},
 			harder = {
 				3,
@@ -139,7 +139,7 @@ WindSettings = {
 				3,
 				3,
 				3,
-				3,
+				3
 			},
 			hardest = {
 				3,
@@ -151,7 +151,7 @@ WindSettings = {
 				3,
 				3,
 				3,
-				3,
+				3
 			},
 			cataclysm = {
 				3,
@@ -163,7 +163,7 @@ WindSettings = {
 				3,
 				3,
 				3,
-				3,
+				3
 			},
 			cataclysm_2 = {
 				3,
@@ -175,7 +175,7 @@ WindSettings = {
 				3,
 				3,
 				3,
-				3,
+				3
 			},
 			cataclysm_3 = {
 				3,
@@ -187,7 +187,7 @@ WindSettings = {
 				3,
 				3,
 				3,
-				3,
+				3
 			},
 			versus_base = {
 				3,
@@ -199,54 +199,54 @@ WindSettings = {
 				3,
 				3,
 				3,
-				3,
-			},
+				3
+			}
 		},
 		loading_screen_wwise_events = {
 			lore = {
 				"nfl_olesya_gold_weave_lore_01",
 				"nfl_olesya_gold_weave_lore_02",
 				"nfl_olesya_gold_weave_lore_03",
-				"nfl_olesya_gold_weave_lore_04",
+				"nfl_olesya_gold_weave_lore_04"
 			},
 			mechanics = {
 				"nfl_olesya_gold_weave_mechanic_01",
 				"nfl_olesya_gold_weave_mechanic_02",
 				"nfl_olesya_gold_weave_mechanic_03",
-				"nfl_olesya_gold_weave_mechanic_04",
+				"nfl_olesya_gold_weave_mechanic_04"
 			},
 			objectives = {
 				objective_sockets_name = {
 					"nfl_olesya_all_weave_objective_essence_refine_01",
 					"nfl_olesya_all_weave_objective_essence_refine_02",
 					"nfl_olesya_all_weave_objective_essence_refine_03",
-					"nfl_olesya_all_weave_objective_essence_refine_04",
+					"nfl_olesya_all_weave_objective_essence_refine_04"
 				},
 				objective_kill_enemies_name = {
 					"nfl_olesya_all_weave_objective_kill_01",
 					"nfl_olesya_all_weave_objective_kill_02",
 					"nfl_olesya_all_weave_objective_kill_03",
-					"nfl_olesya_all_weave_objective_kill_04",
+					"nfl_olesya_all_weave_objective_kill_04"
 				},
 				objective_destroy_doom_wheels_name = {
 					"nfl_olesya_all_weave_objective_essence_nodes_01",
 					"nfl_olesya_all_weave_objective_essence_nodes_02",
 					"nfl_olesya_all_weave_objective_essence_nodes_03",
-					"nfl_olesya_all_weave_objective_essence_nodes_04",
+					"nfl_olesya_all_weave_objective_essence_nodes_04"
 				},
 				objective_targets_name = {
 					"nfl_olesya_all_weave_objective_essence_shards_01",
 					"nfl_olesya_all_weave_objective_essence_shards_02",
 					"nfl_olesya_all_weave_objective_essence_shards_03",
-					"nfl_olesya_all_weave_objective_essence_shards_04",
+					"nfl_olesya_all_weave_objective_essence_shards_04"
 				},
 				objective_capture_points_name = {
 					"nfl_olesya_all_weave_objective_essence_capture_01",
 					"nfl_olesya_all_weave_objective_essence_capture_02",
 					"nfl_olesya_all_weave_objective_essence_capture_03",
-					"nfl_olesya_all_weave_objective_essence_capture_04",
+					"nfl_olesya_all_weave_objective_essence_capture_04"
 				},
-				objective_kill_bosses_name = {},
+				objective_kill_bosses_name = {}
 			},
 			primary_arena_wwise_events = {
 				"nfl_olesya_final_challenge_prefix_02",
@@ -255,7 +255,7 @@ WindSettings = {
 				"nfl_olesya_final_challenge_prefix_05",
 				"nfl_olesya_final_challenge_prefix_06",
 				"nfl_olesya_final_challenge_prefix_07",
-				"nfl_olesya_final_challenge_prefix_08",
+				"nfl_olesya_final_challenge_prefix_08"
 			},
 			secondary_arena_wwise_events = {
 				"nfl_olesya_final_challenge_01",
@@ -263,15 +263,15 @@ WindSettings = {
 				"nfl_olesya_final_challenge_03",
 				"nfl_olesya_final_challenge_04",
 				"nfl_olesya_final_challenge_05",
-				"nfl_olesya_final_challenge_06",
-			},
-		},
+				"nfl_olesya_final_challenge_06"
+			}
+		}
 	},
 	life = {
-		display_name = "wind_life_name",
 		lore_display_name = "menu_weave_play_wind_title_ghyran",
-		mutator = "life",
+		display_name = "wind_life_name",
 		thumbnail_icon = "icon_wind_ghyran",
+		mutator = "life",
 		thorns_damage = {
 			normal = {
 				5,
@@ -283,7 +283,7 @@ WindSettings = {
 				8,
 				8.5,
 				9,
-				10,
+				10
 			},
 			hard = {
 				6,
@@ -295,7 +295,7 @@ WindSettings = {
 				9,
 				10,
 				11,
-				12,
+				12
 			},
 			harder = {
 				7,
@@ -307,7 +307,7 @@ WindSettings = {
 				11,
 				12,
 				13,
-				14,
+				14
 			},
 			hardest = {
 				9,
@@ -319,7 +319,7 @@ WindSettings = {
 				13,
 				14,
 				15,
-				16,
+				16
 			},
 			cataclysm = {
 				11,
@@ -331,7 +331,7 @@ WindSettings = {
 				17,
 				18,
 				19,
-				20,
+				20
 			},
 			cataclysm_2 = {
 				13,
@@ -343,7 +343,7 @@ WindSettings = {
 				20,
 				21.5,
 				23,
-				25,
+				25
 			},
 			cataclysm_3 = {
 				15,
@@ -355,8 +355,8 @@ WindSettings = {
 				24,
 				25.5,
 				27.5,
-				30,
-			},
+				30
+			}
 		},
 		thorns_life_time = {
 			normal = {
@@ -369,7 +369,7 @@ WindSettings = {
 				22,
 				24,
 				26,
-				28,
+				28
 			},
 			hard = {
 				12,
@@ -381,7 +381,7 @@ WindSettings = {
 				24,
 				26,
 				28,
-				30,
+				30
 			},
 			harder = {
 				14,
@@ -393,7 +393,7 @@ WindSettings = {
 				26,
 				28,
 				30,
-				32,
+				32
 			},
 			hardest = {
 				16,
@@ -405,7 +405,7 @@ WindSettings = {
 				28,
 				30,
 				32,
-				34,
+				34
 			},
 			cataclysm = {
 				18,
@@ -417,7 +417,7 @@ WindSettings = {
 				30,
 				32,
 				34,
-				36,
+				36
 			},
 			cataclysm_2 = {
 				20,
@@ -429,7 +429,7 @@ WindSettings = {
 				32,
 				34,
 				36,
-				38,
+				38
 			},
 			cataclysm_3 = {
 				22,
@@ -441,8 +441,8 @@ WindSettings = {
 				34,
 				36,
 				38,
-				40,
-			},
+				40
+			}
 		},
 		thorns_buff_duration = {
 			normal = {
@@ -455,7 +455,7 @@ WindSettings = {
 				2,
 				2,
 				2,
-				2,
+				2
 			},
 			hard = {
 				2,
@@ -467,7 +467,7 @@ WindSettings = {
 				2,
 				2,
 				2,
-				2,
+				2
 			},
 			harder = {
 				2,
@@ -479,7 +479,7 @@ WindSettings = {
 				2,
 				2,
 				2,
-				2,
+				2
 			},
 			hardest = {
 				2,
@@ -491,7 +491,7 @@ WindSettings = {
 				2,
 				2,
 				2,
-				2,
+				2
 			},
 			cataclysm = {
 				2,
@@ -503,7 +503,7 @@ WindSettings = {
 				2,
 				2,
 				2,
-				2,
+				2
 			},
 			cataclysm_2 = {
 				2,
@@ -515,7 +515,7 @@ WindSettings = {
 				2,
 				2,
 				2,
-				2,
+				2
 			},
 			cataclysm_3 = {
 				2,
@@ -527,54 +527,54 @@ WindSettings = {
 				2,
 				2,
 				2,
-				2,
-			},
+				2
+			}
 		},
 		loading_screen_wwise_events = {
 			lore = {
 				"nfl_olesya_jade_weave_lore_01",
 				"nfl_olesya_jade_weave_lore_02",
 				"nfl_olesya_jade_weave_lore_03",
-				"nfl_olesya_jade_weave_lore_04",
+				"nfl_olesya_jade_weave_lore_04"
 			},
 			mechanics = {
 				"nfl_olesya_jade_weave_mechanic_01",
 				"nfl_olesya_jade_weave_mechanic_02",
 				"nfl_olesya_jade_weave_mechanic_03",
-				"nfl_olesya_jade_weave_mechanic_04",
+				"nfl_olesya_jade_weave_mechanic_04"
 			},
 			objectives = {
 				objective_sockets_name = {
 					"nfl_olesya_all_weave_objective_essence_refine_01",
 					"nfl_olesya_all_weave_objective_essence_refine_02",
 					"nfl_olesya_all_weave_objective_essence_refine_03",
-					"nfl_olesya_all_weave_objective_essence_refine_04",
+					"nfl_olesya_all_weave_objective_essence_refine_04"
 				},
 				objective_kill_enemies_name = {
 					"nfl_olesya_all_weave_objective_kill_01",
 					"nfl_olesya_all_weave_objective_kill_02",
 					"nfl_olesya_all_weave_objective_kill_03",
-					"nfl_olesya_all_weave_objective_kill_04",
+					"nfl_olesya_all_weave_objective_kill_04"
 				},
 				objective_destroy_doom_wheels_name = {
 					"nfl_olesya_all_weave_objective_essence_nodes_01",
 					"nfl_olesya_all_weave_objective_essence_nodes_02",
 					"nfl_olesya_all_weave_objective_essence_nodes_03",
-					"nfl_olesya_all_weave_objective_essence_nodes_04",
+					"nfl_olesya_all_weave_objective_essence_nodes_04"
 				},
 				objective_targets_name = {
 					"nfl_olesya_all_weave_objective_essence_shards_01",
 					"nfl_olesya_all_weave_objective_essence_shards_02",
 					"nfl_olesya_all_weave_objective_essence_shards_03",
-					"nfl_olesya_all_weave_objective_essence_shards_04",
+					"nfl_olesya_all_weave_objective_essence_shards_04"
 				},
 				objective_capture_points_name = {
 					"nfl_olesya_all_weave_objective_essence_capture_01",
 					"nfl_olesya_all_weave_objective_essence_capture_02",
 					"nfl_olesya_all_weave_objective_essence_capture_03",
-					"nfl_olesya_all_weave_objective_essence_capture_04",
+					"nfl_olesya_all_weave_objective_essence_capture_04"
 				},
-				objective_kill_bosses_name = {},
+				objective_kill_bosses_name = {}
 			},
 			primary_arena_wwise_events = {
 				"nfl_olesya_final_challenge_prefix_02",
@@ -583,7 +583,7 @@ WindSettings = {
 				"nfl_olesya_final_challenge_prefix_05",
 				"nfl_olesya_final_challenge_prefix_06",
 				"nfl_olesya_final_challenge_prefix_07",
-				"nfl_olesya_final_challenge_prefix_08",
+				"nfl_olesya_final_challenge_prefix_08"
 			},
 			secondary_arena_wwise_events = {
 				"nfl_olesya_final_challenge_01",
@@ -591,15 +591,15 @@ WindSettings = {
 				"nfl_olesya_final_challenge_03",
 				"nfl_olesya_final_challenge_04",
 				"nfl_olesya_final_challenge_05",
-				"nfl_olesya_final_challenge_06",
-			},
-		},
+				"nfl_olesya_final_challenge_06"
+			}
+		}
 	},
 	heavens = {
 		display_name = "wind_heavens_name",
+		thumbnail_icon = "icon_wind_azyr",
 		lore_display_name = "menu_weave_play_wind_title_azyr",
 		mutator = "heavens",
-		thumbnail_icon = "icon_wind_azyr",
 		timed_explosion_extension_settings = {
 			time_to_explode = {
 				normal = {
@@ -612,7 +612,7 @@ WindSettings = {
 					5,
 					5,
 					5,
-					5,
+					5
 				},
 				hard = {
 					4.6,
@@ -624,7 +624,7 @@ WindSettings = {
 					4.6,
 					4.6,
 					4.6,
-					4.6,
+					4.6
 				},
 				harder = {
 					4.2,
@@ -636,7 +636,7 @@ WindSettings = {
 					4.2,
 					4.2,
 					4.2,
-					4.2,
+					4.2
 				},
 				hardest = {
 					3.8,
@@ -648,7 +648,7 @@ WindSettings = {
 					3.8,
 					3.8,
 					3.8,
-					3.8,
+					3.8
 				},
 				cataclysm = {
 					3.4,
@@ -660,7 +660,7 @@ WindSettings = {
 					3.4,
 					3.4,
 					3.4,
-					3.4,
+					3.4
 				},
 				cataclysm_2 = {
 					3,
@@ -672,7 +672,7 @@ WindSettings = {
 					3,
 					3,
 					3,
-					3,
+					3
 				},
 				cataclysm_3 = {
 					2.6,
@@ -684,8 +684,8 @@ WindSettings = {
 					2.6,
 					2.6,
 					2.6,
-					2.6,
-				},
+					2.6
+				}
 			},
 			follow_time = {
 				normal = {
@@ -698,7 +698,7 @@ WindSettings = {
 					9,
 					9,
 					9,
-					9,
+					9
 				},
 				hard = {
 					8,
@@ -710,7 +710,7 @@ WindSettings = {
 					8,
 					8,
 					8,
-					8,
+					8
 				},
 				harder = {
 					7,
@@ -722,7 +722,7 @@ WindSettings = {
 					7,
 					7,
 					7,
-					7,
+					7
 				},
 				hardest = {
 					6,
@@ -734,7 +734,7 @@ WindSettings = {
 					6,
 					6,
 					6,
-					6,
+					6
 				},
 				cataclysm = {
 					5,
@@ -746,7 +746,7 @@ WindSettings = {
 					5,
 					5,
 					5,
-					5,
+					5
 				},
 				cataclysm_2 = {
 					4,
@@ -758,7 +758,7 @@ WindSettings = {
 					4,
 					4,
 					4,
-					4,
+					4
 				},
 				cataclysm_3 = {
 					3,
@@ -770,7 +770,7 @@ WindSettings = {
 					3,
 					3,
 					3,
-					3,
+					3
 				},
 				versus_base = {
 					3,
@@ -782,9 +782,9 @@ WindSettings = {
 					3,
 					3,
 					3,
-					3,
-				},
-			},
+					3
+				}
+			}
 		},
 		radius = {
 			normal = {
@@ -797,7 +797,7 @@ WindSettings = {
 				4,
 				4,
 				4,
-				4,
+				4
 			},
 			hard = {
 				4,
@@ -809,7 +809,7 @@ WindSettings = {
 				4,
 				4,
 				4,
-				4,
+				4
 			},
 			harder = {
 				4,
@@ -821,7 +821,7 @@ WindSettings = {
 				4,
 				4,
 				4,
-				4,
+				4
 			},
 			hardest = {
 				4,
@@ -833,7 +833,7 @@ WindSettings = {
 				4,
 				4,
 				4,
-				4,
+				4
 			},
 			cataclysm = {
 				4,
@@ -845,7 +845,7 @@ WindSettings = {
 				4,
 				4,
 				4,
-				4,
+				4
 			},
 			cataclysm_2 = {
 				4,
@@ -857,7 +857,7 @@ WindSettings = {
 				4,
 				4,
 				4,
-				4,
+				4
 			},
 			cataclysm_3 = {
 				4,
@@ -869,7 +869,7 @@ WindSettings = {
 				4,
 				4,
 				4,
-				4,
+				4
 			},
 			versus_base = {
 				4,
@@ -881,8 +881,8 @@ WindSettings = {
 				4,
 				4,
 				4,
-				4,
-			},
+				4
+			}
 		},
 		power_level_player = {
 			normal = {
@@ -895,7 +895,7 @@ WindSettings = {
 				70,
 				75,
 				80,
-				85,
+				85
 			},
 			hard = {
 				50,
@@ -907,7 +907,7 @@ WindSettings = {
 				80,
 				85,
 				90,
-				95,
+				95
 			},
 			harder = {
 				60,
@@ -919,7 +919,7 @@ WindSettings = {
 				90,
 				95,
 				100,
-				105,
+				105
 			},
 			hardest = {
 				70,
@@ -931,7 +931,7 @@ WindSettings = {
 				130,
 				140,
 				150,
-				160,
+				160
 			},
 			cataclysm = {
 				80,
@@ -943,7 +943,7 @@ WindSettings = {
 				140,
 				150,
 				160,
-				170,
+				170
 			},
 			cataclysm_2 = {
 				90,
@@ -955,7 +955,7 @@ WindSettings = {
 				150,
 				160,
 				170,
-				180,
+				180
 			},
 			cataclysm_3 = {
 				100,
@@ -967,7 +967,7 @@ WindSettings = {
 				160,
 				170,
 				180,
-				190,
+				190
 			},
 			versus_base = {
 				100,
@@ -979,8 +979,8 @@ WindSettings = {
 				160,
 				170,
 				180,
-				190,
-			},
+				190
+			}
 		},
 		power_level_ai = {
 			normal = {
@@ -993,7 +993,7 @@ WindSettings = {
 				500,
 				500,
 				500,
-				500,
+				500
 			},
 			hard = {
 				475,
@@ -1005,7 +1005,7 @@ WindSettings = {
 				475,
 				475,
 				475,
-				475,
+				475
 			},
 			harder = {
 				450,
@@ -1017,7 +1017,7 @@ WindSettings = {
 				450,
 				450,
 				450,
-				450,
+				450
 			},
 			hardest = {
 				425,
@@ -1029,7 +1029,7 @@ WindSettings = {
 				425,
 				425,
 				425,
-				425,
+				425
 			},
 			cataclysm = {
 				400,
@@ -1041,7 +1041,7 @@ WindSettings = {
 				400,
 				400,
 				400,
-				400,
+				400
 			},
 			cataclysm_2 = {
 				375,
@@ -1053,7 +1053,7 @@ WindSettings = {
 				375,
 				375,
 				375,
-				375,
+				375
 			},
 			cataclysm_3 = {
 				350,
@@ -1065,7 +1065,7 @@ WindSettings = {
 				350,
 				350,
 				350,
-				350,
+				350
 			},
 			versus_base = {
 				350,
@@ -1077,8 +1077,8 @@ WindSettings = {
 				350,
 				350,
 				350,
-				350,
-			},
+				350
+			}
 		},
 		spawn_rate = {
 			normal = {
@@ -1091,7 +1091,7 @@ WindSettings = {
 				40,
 				40,
 				40,
-				40,
+				40
 			},
 			hard = {
 				40,
@@ -1103,7 +1103,7 @@ WindSettings = {
 				40,
 				40,
 				40,
-				40,
+				40
 			},
 			harder = {
 				40,
@@ -1115,7 +1115,7 @@ WindSettings = {
 				40,
 				40,
 				40,
-				40,
+				40
 			},
 			hardest = {
 				40,
@@ -1127,7 +1127,7 @@ WindSettings = {
 				40,
 				40,
 				40,
-				40,
+				40
 			},
 			cataclysm = {
 				40,
@@ -1139,7 +1139,7 @@ WindSettings = {
 				40,
 				40,
 				40,
-				40,
+				40
 			},
 			cataclysm_2 = {
 				40,
@@ -1151,7 +1151,7 @@ WindSettings = {
 				40,
 				40,
 				40,
-				40,
+				40
 			},
 			cataclysm_3 = {
 				40,
@@ -1163,7 +1163,7 @@ WindSettings = {
 				40,
 				40,
 				40,
-				40,
+				40
 			},
 			versus_base = {
 				40,
@@ -1175,54 +1175,54 @@ WindSettings = {
 				40,
 				40,
 				40,
-				40,
-			},
+				40
+			}
 		},
 		loading_screen_wwise_events = {
 			lore = {
 				"nfl_olesya_celestial_weave_lore_01",
 				"nfl_olesya_celestial_weave_lore_02",
 				"nfl_olesya_celestial_weave_lore_03",
-				"nfl_olesya_celestial_weave_lore_04",
+				"nfl_olesya_celestial_weave_lore_04"
 			},
 			mechanics = {
 				"nfl_olesya_celestial_weave_mechanic_01",
 				"nfl_olesya_celestial_weave_mechanic_02",
 				"nfl_olesya_celestial_weave_mechanic_03",
-				"nfl_olesya_celestial_weave_mechanic_04",
+				"nfl_olesya_celestial_weave_mechanic_04"
 			},
 			objectives = {
 				objective_sockets_name = {
 					"nfl_olesya_all_weave_objective_essence_refine_01",
 					"nfl_olesya_all_weave_objective_essence_refine_02",
 					"nfl_olesya_all_weave_objective_essence_refine_03",
-					"nfl_olesya_all_weave_objective_essence_refine_04",
+					"nfl_olesya_all_weave_objective_essence_refine_04"
 				},
 				objective_kill_enemies_name = {
 					"nfl_olesya_all_weave_objective_kill_01",
 					"nfl_olesya_all_weave_objective_kill_02",
 					"nfl_olesya_all_weave_objective_kill_03",
-					"nfl_olesya_all_weave_objective_kill_04",
+					"nfl_olesya_all_weave_objective_kill_04"
 				},
 				objective_destroy_doom_wheels_name = {
 					"nfl_olesya_all_weave_objective_essence_nodes_01",
 					"nfl_olesya_all_weave_objective_essence_nodes_02",
 					"nfl_olesya_all_weave_objective_essence_nodes_03",
-					"nfl_olesya_all_weave_objective_essence_nodes_04",
+					"nfl_olesya_all_weave_objective_essence_nodes_04"
 				},
 				objective_targets_name = {
 					"nfl_olesya_all_weave_objective_essence_shards_01",
 					"nfl_olesya_all_weave_objective_essence_shards_02",
 					"nfl_olesya_all_weave_objective_essence_shards_03",
-					"nfl_olesya_all_weave_objective_essence_shards_04",
+					"nfl_olesya_all_weave_objective_essence_shards_04"
 				},
 				objective_capture_points_name = {
 					"nfl_olesya_all_weave_objective_essence_capture_01",
 					"nfl_olesya_all_weave_objective_essence_capture_02",
 					"nfl_olesya_all_weave_objective_essence_capture_03",
-					"nfl_olesya_all_weave_objective_essence_capture_04",
+					"nfl_olesya_all_weave_objective_essence_capture_04"
 				},
-				objective_kill_bosses_name = {},
+				objective_kill_bosses_name = {}
 			},
 			primary_arena_wwise_events = {
 				"nfl_olesya_final_challenge_prefix_02",
@@ -1231,7 +1231,7 @@ WindSettings = {
 				"nfl_olesya_final_challenge_prefix_05",
 				"nfl_olesya_final_challenge_prefix_06",
 				"nfl_olesya_final_challenge_prefix_07",
-				"nfl_olesya_final_challenge_prefix_08",
+				"nfl_olesya_final_challenge_prefix_08"
 			},
 			secondary_arena_wwise_events = {
 				"nfl_olesya_final_challenge_01",
@@ -1239,15 +1239,15 @@ WindSettings = {
 				"nfl_olesya_final_challenge_03",
 				"nfl_olesya_final_challenge_04",
 				"nfl_olesya_final_challenge_05",
-				"nfl_olesya_final_challenge_06",
-			},
-		},
+				"nfl_olesya_final_challenge_06"
+			}
+		}
 	},
 	fire = {
-		display_name = "wind_fire_name",
 		lore_display_name = "menu_weave_play_wind_title_aqshy",
-		mutator = "fire",
+		display_name = "wind_fire_name",
 		thumbnail_icon = "icon_wind_aqshy",
+		mutator = "fire",
 		buff_time_player = {
 			normal = {
 				1,
@@ -1259,7 +1259,7 @@ WindSettings = {
 				3,
 				3,
 				4,
-				4,
+				4
 			},
 			hard = {
 				1,
@@ -1271,7 +1271,7 @@ WindSettings = {
 				3,
 				3,
 				4,
-				4,
+				4
 			},
 			harder = {
 				1,
@@ -1283,7 +1283,7 @@ WindSettings = {
 				3,
 				3,
 				4,
-				4,
+				4
 			},
 			hardest = {
 				1,
@@ -1295,7 +1295,7 @@ WindSettings = {
 				3,
 				3,
 				4,
-				4,
+				4
 			},
 			cataclysm = {
 				1,
@@ -1307,7 +1307,7 @@ WindSettings = {
 				3,
 				3,
 				4,
-				4,
+				4
 			},
 			cataclysm_2 = {
 				1,
@@ -1319,7 +1319,7 @@ WindSettings = {
 				3,
 				3,
 				4,
-				4,
+				4
 			},
 			cataclysm_3 = {
 				1,
@@ -1331,7 +1331,7 @@ WindSettings = {
 				3,
 				3,
 				4,
-				4,
+				4
 			},
 			versus_base = {
 				1,
@@ -1343,8 +1343,8 @@ WindSettings = {
 				3,
 				3,
 				4,
-				4,
-			},
+				4
+			}
 		},
 		buff_time_enemy = {
 			normal = {
@@ -1357,7 +1357,7 @@ WindSettings = {
 				10,
 				10,
 				10,
-				10,
+				10
 			},
 			hard = {
 				5,
@@ -1369,7 +1369,7 @@ WindSettings = {
 				10,
 				10,
 				10,
-				10,
+				10
 			},
 			harder = {
 				5,
@@ -1381,7 +1381,7 @@ WindSettings = {
 				10,
 				10,
 				10,
-				10,
+				10
 			},
 			hardest = {
 				5,
@@ -1393,7 +1393,7 @@ WindSettings = {
 				10,
 				10,
 				10,
-				10,
+				10
 			},
 			cataclysm = {
 				5,
@@ -1405,7 +1405,7 @@ WindSettings = {
 				10,
 				10,
 				10,
-				10,
+				10
 			},
 			cataclysm_2 = {
 				5,
@@ -1417,7 +1417,7 @@ WindSettings = {
 				10,
 				10,
 				10,
-				10,
+				10
 			},
 			cataclysm_3 = {
 				5,
@@ -1429,7 +1429,7 @@ WindSettings = {
 				10,
 				10,
 				10,
-				10,
+				10
 			},
 			versus_base = {
 				5,
@@ -1441,8 +1441,8 @@ WindSettings = {
 				10,
 				10,
 				10,
-				10,
-			},
+				10
+			}
 		},
 		power_level = {
 			normal = {
@@ -1455,7 +1455,7 @@ WindSettings = {
 				400,
 				450,
 				500,
-				600,
+				600
 			},
 			hard = {
 				100,
@@ -1467,7 +1467,7 @@ WindSettings = {
 				400,
 				450,
 				500,
-				600,
+				600
 			},
 			harder = {
 				100,
@@ -1479,7 +1479,7 @@ WindSettings = {
 				400,
 				450,
 				500,
-				600,
+				600
 			},
 			hardest = {
 				100,
@@ -1491,7 +1491,7 @@ WindSettings = {
 				400,
 				450,
 				500,
-				600,
+				600
 			},
 			cataclysm = {
 				100,
@@ -1503,7 +1503,7 @@ WindSettings = {
 				400,
 				450,
 				500,
-				600,
+				600
 			},
 			cataclysm_2 = {
 				100,
@@ -1515,7 +1515,7 @@ WindSettings = {
 				400,
 				450,
 				500,
-				600,
+				600
 			},
 			cataclysm_3 = {
 				100,
@@ -1527,7 +1527,7 @@ WindSettings = {
 				400,
 				450,
 				500,
-				600,
+				600
 			},
 			versus_base = {
 				100,
@@ -1539,54 +1539,54 @@ WindSettings = {
 				400,
 				450,
 				500,
-				600,
-			},
+				600
+			}
 		},
 		loading_screen_wwise_events = {
 			lore = {
 				"nfl_olesya_bright_weave_lore_01",
 				"nfl_olesya_bright_weave_lore_02",
 				"nfl_olesya_bright_weave_lore_03",
-				"nfl_olesya_bright_weave_lore_04",
+				"nfl_olesya_bright_weave_lore_04"
 			},
 			mechanics = {
 				"nfl_olesya_bright_weave_mechanic_01",
 				"nfl_olesya_bright_weave_mechanic_02",
 				"nfl_olesya_bright_weave_mechanic_03",
-				"nfl_olesya_bright_weave_mechanic_04",
+				"nfl_olesya_bright_weave_mechanic_04"
 			},
 			objectives = {
 				objective_sockets_name = {
 					"nfl_olesya_all_weave_objective_essence_refine_01",
 					"nfl_olesya_all_weave_objective_essence_refine_02",
 					"nfl_olesya_all_weave_objective_essence_refine_03",
-					"nfl_olesya_all_weave_objective_essence_refine_04",
+					"nfl_olesya_all_weave_objective_essence_refine_04"
 				},
 				objective_kill_enemies_name = {
 					"nfl_olesya_all_weave_objective_kill_01",
 					"nfl_olesya_all_weave_objective_kill_02",
 					"nfl_olesya_all_weave_objective_kill_03",
-					"nfl_olesya_all_weave_objective_kill_04",
+					"nfl_olesya_all_weave_objective_kill_04"
 				},
 				objective_destroy_doom_wheels_name = {
 					"nfl_olesya_all_weave_objective_essence_nodes_01",
 					"nfl_olesya_all_weave_objective_essence_nodes_02",
 					"nfl_olesya_all_weave_objective_essence_nodes_03",
-					"nfl_olesya_all_weave_objective_essence_nodes_04",
+					"nfl_olesya_all_weave_objective_essence_nodes_04"
 				},
 				objective_targets_name = {
 					"nfl_olesya_all_weave_objective_essence_shards_01",
 					"nfl_olesya_all_weave_objective_essence_shards_02",
 					"nfl_olesya_all_weave_objective_essence_shards_03",
-					"nfl_olesya_all_weave_objective_essence_shards_04",
+					"nfl_olesya_all_weave_objective_essence_shards_04"
 				},
 				objective_capture_points_name = {
 					"nfl_olesya_all_weave_objective_essence_capture_01",
 					"nfl_olesya_all_weave_objective_essence_capture_02",
 					"nfl_olesya_all_weave_objective_essence_capture_03",
-					"nfl_olesya_all_weave_objective_essence_capture_04",
+					"nfl_olesya_all_weave_objective_essence_capture_04"
 				},
-				objective_kill_bosses_name = {},
+				objective_kill_bosses_name = {}
 			},
 			primary_arena_wwise_events = {
 				"nfl_olesya_final_challenge_prefix_02",
@@ -1595,7 +1595,7 @@ WindSettings = {
 				"nfl_olesya_final_challenge_prefix_05",
 				"nfl_olesya_final_challenge_prefix_06",
 				"nfl_olesya_final_challenge_prefix_07",
-				"nfl_olesya_final_challenge_prefix_08",
+				"nfl_olesya_final_challenge_prefix_08"
 			},
 			secondary_arena_wwise_events = {
 				"nfl_olesya_final_challenge_01",
@@ -1603,15 +1603,15 @@ WindSettings = {
 				"nfl_olesya_final_challenge_03",
 				"nfl_olesya_final_challenge_04",
 				"nfl_olesya_final_challenge_05",
-				"nfl_olesya_final_challenge_06",
-			},
-		},
+				"nfl_olesya_final_challenge_06"
+			}
+		}
 	},
 	shadow = {
-		display_name = "wind_shadow_name",
 		lore_display_name = "menu_weave_play_wind_title_ulgu",
-		mutator = "shadow",
+		display_name = "wind_shadow_name",
 		thumbnail_icon = "icon_wind_ulgu",
+		mutator = "shadow",
 		damage_taken = {
 			normal = {
 				-0.8,
@@ -1623,7 +1623,7 @@ WindSettings = {
 				-0.8,
 				-0.8,
 				-0.8,
-				-0.8,
+				-0.8
 			},
 			hard = {
 				-0.8,
@@ -1635,7 +1635,7 @@ WindSettings = {
 				-0.8,
 				-0.8,
 				-0.8,
-				-0.8,
+				-0.8
 			},
 			harder = {
 				-0.8,
@@ -1647,7 +1647,7 @@ WindSettings = {
 				-0.8,
 				-0.8,
 				-0.8,
-				-0.8,
+				-0.8
 			},
 			hardest = {
 				-0.8,
@@ -1659,7 +1659,7 @@ WindSettings = {
 				-0.8,
 				-0.8,
 				-0.8,
-				-0.8,
+				-0.8
 			},
 			cataclysm = {
 				-0.8,
@@ -1671,7 +1671,7 @@ WindSettings = {
 				-0.8,
 				-0.8,
 				-0.8,
-				-0.8,
+				-0.8
 			},
 			cataclysm_2 = {
 				-0.8,
@@ -1683,7 +1683,7 @@ WindSettings = {
 				-0.8,
 				-0.8,
 				-0.8,
-				-0.8,
+				-0.8
 			},
 			cataclysm_3 = {
 				-0.8,
@@ -1695,7 +1695,7 @@ WindSettings = {
 				-0.8,
 				-0.8,
 				-0.8,
-				-0.8,
+				-0.8
 			},
 			versus_base = {
 				-0.8,
@@ -1707,8 +1707,8 @@ WindSettings = {
 				-0.8,
 				-0.8,
 				-0.8,
-				-0.8,
-			},
+				-0.8
+			}
 		},
 		light_radius = {
 			normal = {
@@ -1721,7 +1721,7 @@ WindSettings = {
 				6,
 				6,
 				6,
-				6,
+				6
 			},
 			hard = {
 				6,
@@ -1733,7 +1733,7 @@ WindSettings = {
 				6,
 				6,
 				6,
-				6,
+				6
 			},
 			harder = {
 				6,
@@ -1745,7 +1745,7 @@ WindSettings = {
 				6,
 				6,
 				6,
-				6,
+				6
 			},
 			hardest = {
 				6,
@@ -1757,7 +1757,7 @@ WindSettings = {
 				6,
 				6,
 				6,
-				6,
+				6
 			},
 			cataclysm = {
 				6,
@@ -1769,7 +1769,7 @@ WindSettings = {
 				6,
 				6,
 				6,
-				6,
+				6
 			},
 			cataclysm_2 = {
 				6,
@@ -1781,7 +1781,7 @@ WindSettings = {
 				6,
 				6,
 				6,
-				6,
+				6
 			},
 			cataclysm_3 = {
 				6,
@@ -1793,7 +1793,7 @@ WindSettings = {
 				6,
 				6,
 				6,
-				6,
+				6
 			},
 			versus_base = {
 				6,
@@ -1805,54 +1805,54 @@ WindSettings = {
 				6,
 				6,
 				6,
-				6,
-			},
+				6
+			}
 		},
 		loading_screen_wwise_events = {
 			lore = {
 				"nfl_olesya_grey_weave_lore_01",
 				"nfl_olesya_grey_weave_lore_02",
 				"nfl_olesya_grey_weave_lore_03",
-				"nfl_olesya_grey_weave_lore_04",
+				"nfl_olesya_grey_weave_lore_04"
 			},
 			mechanics = {
 				"nfl_oleysia_grey_weave_mechanic_01",
 				"nfl_oleysia_grey_weave_mechanic_02",
 				"nfl_oleysia_grey_weave_mechanic_03",
-				"nfl_oleysia_grey_weave_mechanic_04",
+				"nfl_oleysia_grey_weave_mechanic_04"
 			},
 			objectives = {
 				objective_sockets_name = {
 					"nfl_olesya_all_weave_objective_essence_refine_01",
 					"nfl_olesya_all_weave_objective_essence_refine_02",
 					"nfl_olesya_all_weave_objective_essence_refine_03",
-					"nfl_olesya_all_weave_objective_essence_refine_04",
+					"nfl_olesya_all_weave_objective_essence_refine_04"
 				},
 				objective_kill_enemies_name = {
 					"nfl_olesya_all_weave_objective_kill_01",
 					"nfl_olesya_all_weave_objective_kill_02",
 					"nfl_olesya_all_weave_objective_kill_03",
-					"nfl_olesya_all_weave_objective_kill_04",
+					"nfl_olesya_all_weave_objective_kill_04"
 				},
 				objective_destroy_doom_wheels_name = {
 					"nfl_olesya_all_weave_objective_essence_nodes_01",
 					"nfl_olesya_all_weave_objective_essence_nodes_02",
 					"nfl_olesya_all_weave_objective_essence_nodes_03",
-					"nfl_olesya_all_weave_objective_essence_nodes_04",
+					"nfl_olesya_all_weave_objective_essence_nodes_04"
 				},
 				objective_targets_name = {
 					"nfl_olesya_all_weave_objective_essence_shards_01",
 					"nfl_olesya_all_weave_objective_essence_shards_02",
 					"nfl_olesya_all_weave_objective_essence_shards_03",
-					"nfl_olesya_all_weave_objective_essence_shards_04",
+					"nfl_olesya_all_weave_objective_essence_shards_04"
 				},
 				objective_capture_points_name = {
 					"nfl_olesya_all_weave_objective_essence_capture_01",
 					"nfl_olesya_all_weave_objective_essence_capture_02",
 					"nfl_olesya_all_weave_objective_essence_capture_03",
-					"nfl_olesya_all_weave_objective_essence_capture_04",
+					"nfl_olesya_all_weave_objective_essence_capture_04"
 				},
-				objective_kill_bosses_name = {},
+				objective_kill_bosses_name = {}
 			},
 			primary_arena_wwise_events = {
 				"nfl_olesya_final_challenge_prefix_02",
@@ -1861,7 +1861,7 @@ WindSettings = {
 				"nfl_olesya_final_challenge_prefix_05",
 				"nfl_olesya_final_challenge_prefix_06",
 				"nfl_olesya_final_challenge_prefix_07",
-				"nfl_olesya_final_challenge_prefix_08",
+				"nfl_olesya_final_challenge_prefix_08"
 			},
 			secondary_arena_wwise_events = {
 				"nfl_olesya_final_challenge_01",
@@ -1869,15 +1869,15 @@ WindSettings = {
 				"nfl_olesya_final_challenge_03",
 				"nfl_olesya_final_challenge_04",
 				"nfl_olesya_final_challenge_05",
-				"nfl_olesya_final_challenge_06",
-			},
-		},
+				"nfl_olesya_final_challenge_06"
+			}
+		}
 	},
 	death = {
-		display_name = "wind_death_name",
-		lore_display_name = "menu_weave_play_wind_title_shyish",
-		mutator = "death",
 		thumbnail_icon = "icon_wind_shyish",
+		lore_display_name = "menu_weave_play_wind_title_shyish",
+		display_name = "wind_death_name",
+		mutator = "death",
 		spirit_settings = {
 			damage = {
 				normal = {
@@ -1890,7 +1890,7 @@ WindSettings = {
 					11,
 					12,
 					13,
-					14,
+					14
 				},
 				hard = {
 					10,
@@ -1902,7 +1902,7 @@ WindSettings = {
 					22,
 					24,
 					26,
-					28,
+					28
 				},
 				harder = {
 					20,
@@ -1914,7 +1914,7 @@ WindSettings = {
 					32,
 					34,
 					36,
-					38,
+					38
 				},
 				hardest = {
 					30,
@@ -1926,7 +1926,7 @@ WindSettings = {
 					42,
 					44,
 					46,
-					48,
+					48
 				},
 				cataclysm = {
 					40,
@@ -1938,7 +1938,7 @@ WindSettings = {
 					52,
 					54,
 					56,
-					58,
+					58
 				},
 				cataclysm_2 = {
 					45,
@@ -1950,7 +1950,7 @@ WindSettings = {
 					60,
 					62.5,
 					65,
-					67.5,
+					67.5
 				},
 				cataclysm_3 = {
 					50,
@@ -1962,7 +1962,7 @@ WindSettings = {
 					80,
 					85,
 					90,
-					95,
+					95
 				},
 				versus_base = {
 					50,
@@ -1974,8 +1974,8 @@ WindSettings = {
 					80,
 					85,
 					90,
-					95,
-				},
+					95
+				}
 			},
 			wait_time = {
 				normal = {
@@ -1989,7 +1989,7 @@ WindSettings = {
 					1,
 					1,
 					0.75,
-					0.5,
+					0.5
 				},
 				hard = {
 					3,
@@ -2002,7 +2002,7 @@ WindSettings = {
 					1,
 					1,
 					0.75,
-					0.5,
+					0.5
 				},
 				harder = {
 					3,
@@ -2015,7 +2015,7 @@ WindSettings = {
 					1,
 					1,
 					0.75,
-					0.5,
+					0.5
 				},
 				hardest = {
 					3,
@@ -2028,7 +2028,7 @@ WindSettings = {
 					1,
 					1,
 					0.75,
-					0.5,
+					0.5
 				},
 				cataclysm = {
 					3,
@@ -2041,7 +2041,7 @@ WindSettings = {
 					1,
 					1,
 					0.75,
-					0.5,
+					0.5
 				},
 				cataclysm_2 = {
 					3,
@@ -2054,7 +2054,7 @@ WindSettings = {
 					1,
 					1,
 					0.75,
-					0.5,
+					0.5
 				},
 				cataclysm_3 = {
 					3,
@@ -2067,7 +2067,7 @@ WindSettings = {
 					1,
 					1,
 					0.75,
-					0.5,
+					0.5
 				},
 				versus_base = {
 					3,
@@ -2080,8 +2080,8 @@ WindSettings = {
 					1,
 					1,
 					0.75,
-					0.5,
-				},
+					0.5
+				}
 			},
 			chase_speed = {
 				normal = {
@@ -2094,7 +2094,7 @@ WindSettings = {
 					1.6,
 					1.7,
 					1.8,
-					1.9,
+					1.9
 				},
 				hard = {
 					1,
@@ -2106,7 +2106,7 @@ WindSettings = {
 					1.6,
 					1.7,
 					1.8,
-					1.9,
+					1.9
 				},
 				harder = {
 					1,
@@ -2118,7 +2118,7 @@ WindSettings = {
 					1.6,
 					1.7,
 					1.8,
-					1.9,
+					1.9
 				},
 				hardest = {
 					1,
@@ -2130,7 +2130,7 @@ WindSettings = {
 					1.6,
 					1.7,
 					1.8,
-					1.9,
+					1.9
 				},
 				cataclysm = {
 					1,
@@ -2142,7 +2142,7 @@ WindSettings = {
 					1.6,
 					1.7,
 					1.8,
-					1.9,
+					1.9
 				},
 				cataclysm_2 = {
 					1,
@@ -2154,7 +2154,7 @@ WindSettings = {
 					1.6,
 					1.7,
 					1.8,
-					1.9,
+					1.9
 				},
 				cataclysm_3 = {
 					1,
@@ -2166,7 +2166,7 @@ WindSettings = {
 					1.6,
 					1.7,
 					1.8,
-					1.9,
+					1.9
 				},
 				versus_base = {
 					1,
@@ -2178,8 +2178,8 @@ WindSettings = {
 					1.6,
 					1.7,
 					1.8,
-					1.9,
-				},
+					1.9
+				}
 			},
 			chase_time = {
 				normal = {
@@ -2192,7 +2192,7 @@ WindSettings = {
 					6,
 					6,
 					6,
-					6,
+					6
 				},
 				hard = {
 					6,
@@ -2204,7 +2204,7 @@ WindSettings = {
 					6,
 					6,
 					6,
-					6,
+					6
 				},
 				harder = {
 					6,
@@ -2216,7 +2216,7 @@ WindSettings = {
 					6,
 					6,
 					6,
-					6,
+					6
 				},
 				hardest = {
 					6,
@@ -2228,7 +2228,7 @@ WindSettings = {
 					6,
 					6,
 					6,
-					6,
+					6
 				},
 				cataclysm = {
 					6,
@@ -2240,7 +2240,7 @@ WindSettings = {
 					6,
 					6,
 					6,
-					6,
+					6
 				},
 				cataclysm_2 = {
 					6,
@@ -2252,7 +2252,7 @@ WindSettings = {
 					6,
 					6,
 					6,
-					6,
+					6
 				},
 				cataclysm_3 = {
 					6,
@@ -2264,7 +2264,7 @@ WindSettings = {
 					6,
 					6,
 					6,
-					6,
+					6
 				},
 				versus_base = {
 					6,
@@ -2276,55 +2276,55 @@ WindSettings = {
 					6,
 					6,
 					6,
-					6,
-				},
-			},
+					6
+				}
+			}
 		},
 		loading_screen_wwise_events = {
 			lore = {
 				"nfl_olesya_amethyst_weave_lore_01",
 				"nfl_olesya_amethyst_weave_lore_02",
 				"nfl_olesya_amethyst_weave_lore_03",
-				"nfl_olesya_amethyst_weave_lore_04",
+				"nfl_olesya_amethyst_weave_lore_04"
 			},
 			mechanics = {
 				"nfl_olesya_amethyst_weave_mechanic_01",
 				"nfl_olesya_amethyst_weave_mechanic_02",
 				"nfl_olesya_amethyst_weave_mechanic_03",
-				"nfl_olesya_amethyst_weave_mechanic_04",
+				"nfl_olesya_amethyst_weave_mechanic_04"
 			},
 			objectives = {
 				objective_sockets_name = {
 					"nfl_olesya_all_weave_objective_essence_refine_01",
 					"nfl_olesya_all_weave_objective_essence_refine_02",
 					"nfl_olesya_all_weave_objective_essence_refine_03",
-					"nfl_olesya_all_weave_objective_essence_refine_04",
+					"nfl_olesya_all_weave_objective_essence_refine_04"
 				},
 				objective_kill_enemies_name = {
 					"nfl_olesya_all_weave_objective_kill_01",
 					"nfl_olesya_all_weave_objective_kill_02",
 					"nfl_olesya_all_weave_objective_kill_03",
-					"nfl_olesya_all_weave_objective_kill_04",
+					"nfl_olesya_all_weave_objective_kill_04"
 				},
 				objective_destroy_doom_wheels_name = {
 					"nfl_olesya_all_weave_objective_essence_nodes_01",
 					"nfl_olesya_all_weave_objective_essence_nodes_02",
 					"nfl_olesya_all_weave_objective_essence_nodes_03",
-					"nfl_olesya_all_weave_objective_essence_nodes_04",
+					"nfl_olesya_all_weave_objective_essence_nodes_04"
 				},
 				objective_targets_name = {
 					"nfl_olesya_all_weave_objective_essence_shards_01",
 					"nfl_olesya_all_weave_objective_essence_shards_02",
 					"nfl_olesya_all_weave_objective_essence_shards_03",
-					"nfl_olesya_all_weave_objective_essence_shards_04",
+					"nfl_olesya_all_weave_objective_essence_shards_04"
 				},
 				objective_capture_points_name = {
 					"nfl_olesya_all_weave_objective_essence_capture_01",
 					"nfl_olesya_all_weave_objective_essence_capture_02",
 					"nfl_olesya_all_weave_objective_essence_capture_03",
-					"nfl_olesya_all_weave_objective_essence_capture_04",
+					"nfl_olesya_all_weave_objective_essence_capture_04"
 				},
-				objective_kill_bosses_name = {},
+				objective_kill_bosses_name = {}
 			},
 			primary_arena_wwise_events = {
 				"nfl_olesya_final_challenge_prefix_02",
@@ -2333,7 +2333,7 @@ WindSettings = {
 				"nfl_olesya_final_challenge_prefix_05",
 				"nfl_olesya_final_challenge_prefix_06",
 				"nfl_olesya_final_challenge_prefix_07",
-				"nfl_olesya_final_challenge_prefix_08",
+				"nfl_olesya_final_challenge_prefix_08"
 			},
 			secondary_arena_wwise_events = {
 				"nfl_olesya_final_challenge_01",
@@ -2341,26 +2341,26 @@ WindSettings = {
 				"nfl_olesya_final_challenge_03",
 				"nfl_olesya_final_challenge_04",
 				"nfl_olesya_final_challenge_05",
-				"nfl_olesya_final_challenge_06",
-			},
-		},
+				"nfl_olesya_final_challenge_06"
+			}
+		}
 	},
 	light = {
-		cleanse_rate = 1,
-		display_name = "wind_light_name",
 		lore_display_name = "menu_weave_play_wind_title_hysh",
-		mutator = "light",
+		display_name = "wind_light_name",
 		thumbnail_icon = "icon_wind_hysh",
+		mutator = "light",
+		cleanse_rate = 1,
 		curse_settings = {
 			value = {
-				cataclysm = -0.03,
-				cataclysm_2 = -0.03,
-				cataclysm_3 = -0.03,
+				hardest = -0.03,
 				hard = -0.03,
 				harder = -0.03,
-				hardest = -0.03,
-				normal = -0.03,
 				versus_base = -0.03,
+				cataclysm = -0.03,
+				cataclysm_3 = -0.03,
+				cataclysm_2 = -0.03,
+				normal = -0.03
 			},
 			curse_rate = {
 				normal = {
@@ -2373,7 +2373,7 @@ WindSettings = {
 					4,
 					3,
 					2.75,
-					2.5,
+					2.5
 				},
 				hard = {
 					10,
@@ -2385,7 +2385,7 @@ WindSettings = {
 					4,
 					3,
 					2.75,
-					2.5,
+					2.5
 				},
 				harder = {
 					10,
@@ -2397,7 +2397,7 @@ WindSettings = {
 					4,
 					3,
 					2.75,
-					2.5,
+					2.5
 				},
 				hardest = {
 					10,
@@ -2409,7 +2409,7 @@ WindSettings = {
 					4,
 					3,
 					2.75,
-					2.5,
+					2.5
 				},
 				cataclysm = {
 					10,
@@ -2421,7 +2421,7 @@ WindSettings = {
 					4,
 					3,
 					2.75,
-					2.5,
+					2.5
 				},
 				cataclysm_2 = {
 					10,
@@ -2433,7 +2433,7 @@ WindSettings = {
 					4,
 					3,
 					2.75,
-					2.5,
+					2.5
 				},
 				cataclysm_3 = {
 					10,
@@ -2445,7 +2445,7 @@ WindSettings = {
 					4,
 					3,
 					2.75,
-					2.5,
+					2.5
 				},
 				versus_base = {
 					10,
@@ -2457,9 +2457,9 @@ WindSettings = {
 					4,
 					3,
 					2.75,
-					2.5,
-				},
-			},
+					2.5
+				}
+			}
 		},
 		radius = {
 			normal = {
@@ -2472,7 +2472,7 @@ WindSettings = {
 				5,
 				5,
 				5,
-				5,
+				5
 			},
 			hard = {
 				5,
@@ -2484,7 +2484,7 @@ WindSettings = {
 				5,
 				5,
 				5,
-				5,
+				5
 			},
 			harder = {
 				5,
@@ -2496,7 +2496,7 @@ WindSettings = {
 				5,
 				5,
 				5,
-				5,
+				5
 			},
 			hardest = {
 				5,
@@ -2508,7 +2508,7 @@ WindSettings = {
 				5,
 				5,
 				5,
-				5,
+				5
 			},
 			cataclysm = {
 				5,
@@ -2520,7 +2520,7 @@ WindSettings = {
 				5,
 				5,
 				5,
-				5,
+				5
 			},
 			cataclysm_2 = {
 				5,
@@ -2532,7 +2532,7 @@ WindSettings = {
 				5,
 				5,
 				5,
-				5,
+				5
 			},
 			cataclysm_3 = {
 				5,
@@ -2544,7 +2544,7 @@ WindSettings = {
 				5,
 				5,
 				5,
-				5,
+				5
 			},
 			versus_base = {
 				5,
@@ -2556,54 +2556,54 @@ WindSettings = {
 				5,
 				5,
 				5,
-				5,
-			},
+				5
+			}
 		},
 		loading_screen_wwise_events = {
 			lore = {
 				"nfl_olesya_light_weave_lore_01",
 				"nfl_olesya_light_weave_lore_02",
 				"nfl_olesya_light_weave_lore_03",
-				"nfl_olesya_light_weave_lore_04",
+				"nfl_olesya_light_weave_lore_04"
 			},
 			mechanics = {
 				"nfl_olesya_light_weave_mechanic_01",
 				"nfl_olesya_light_weave_mechanic_02",
 				"nfl_olesya_light_weave_mechanic_03",
-				"nfl_olesya_light_weave_mechanic_04",
+				"nfl_olesya_light_weave_mechanic_04"
 			},
 			objectives = {
 				objective_sockets_name = {
 					"nfl_olesya_all_weave_objective_essence_refine_01",
 					"nfl_olesya_all_weave_objective_essence_refine_02",
 					"nfl_olesya_all_weave_objective_essence_refine_03",
-					"nfl_olesya_all_weave_objective_essence_refine_04",
+					"nfl_olesya_all_weave_objective_essence_refine_04"
 				},
 				objective_kill_enemies_name = {
 					"nfl_olesya_all_weave_objective_kill_01",
 					"nfl_olesya_all_weave_objective_kill_02",
 					"nfl_olesya_all_weave_objective_kill_03",
-					"nfl_olesya_all_weave_objective_kill_04",
+					"nfl_olesya_all_weave_objective_kill_04"
 				},
 				objective_destroy_doom_wheels_name = {
 					"nfl_olesya_all_weave_objective_essence_nodes_01",
 					"nfl_olesya_all_weave_objective_essence_nodes_02",
 					"nfl_olesya_all_weave_objective_essence_nodes_03",
-					"nfl_olesya_all_weave_objective_essence_nodes_04",
+					"nfl_olesya_all_weave_objective_essence_nodes_04"
 				},
 				objective_targets_name = {
 					"nfl_olesya_all_weave_objective_essence_shards_01",
 					"nfl_olesya_all_weave_objective_essence_shards_02",
 					"nfl_olesya_all_weave_objective_essence_shards_03",
-					"nfl_olesya_all_weave_objective_essence_shards_04",
+					"nfl_olesya_all_weave_objective_essence_shards_04"
 				},
 				objective_capture_points_name = {
 					"nfl_olesya_all_weave_objective_essence_capture_01",
 					"nfl_olesya_all_weave_objective_essence_capture_02",
 					"nfl_olesya_all_weave_objective_essence_capture_03",
-					"nfl_olesya_all_weave_objective_essence_capture_04",
+					"nfl_olesya_all_weave_objective_essence_capture_04"
 				},
-				objective_kill_bosses_name = {},
+				objective_kill_bosses_name = {}
 			},
 			primary_arena_wwise_events = {
 				"nfl_olesya_final_challenge_prefix_02",
@@ -2612,7 +2612,7 @@ WindSettings = {
 				"nfl_olesya_final_challenge_prefix_05",
 				"nfl_olesya_final_challenge_prefix_06",
 				"nfl_olesya_final_challenge_prefix_07",
-				"nfl_olesya_final_challenge_prefix_08",
+				"nfl_olesya_final_challenge_prefix_08"
 			},
 			secondary_arena_wwise_events = {
 				"nfl_olesya_final_challenge_01",
@@ -2620,16 +2620,16 @@ WindSettings = {
 				"nfl_olesya_final_challenge_03",
 				"nfl_olesya_final_challenge_04",
 				"nfl_olesya_final_challenge_05",
-				"nfl_olesya_final_challenge_06",
-			},
-		},
+				"nfl_olesya_final_challenge_06"
+			}
+		}
 	},
 	beasts = {
-		beacon_unit = "units/weave/beasts/beast_totem_mutator",
 		display_name = "wind_beasts_name",
-		lore_display_name = "menu_weave_play_wind_title_ghur",
-		mutator = "beasts",
 		thumbnail_icon = "icon_wind_ghur",
+		lore_display_name = "menu_weave_play_wind_title_ghur",
+		beacon_unit = "units/weave/beasts/beast_totem_mutator",
+		mutator = "beasts",
 		radius = {
 			normal = {
 				20,
@@ -2641,7 +2641,7 @@ WindSettings = {
 				20,
 				20,
 				20,
-				20,
+				20
 			},
 			hard = {
 				20,
@@ -2653,7 +2653,7 @@ WindSettings = {
 				20,
 				20,
 				20,
-				20,
+				20
 			},
 			harder = {
 				20,
@@ -2665,7 +2665,7 @@ WindSettings = {
 				20,
 				20,
 				20,
-				20,
+				20
 			},
 			hardest = {
 				20,
@@ -2677,7 +2677,7 @@ WindSettings = {
 				20,
 				20,
 				20,
-				20,
+				20
 			},
 			cataclysm = {
 				20,
@@ -2689,7 +2689,7 @@ WindSettings = {
 				20,
 				20,
 				20,
-				20,
+				20
 			},
 			cataclysm_2 = {
 				20,
@@ -2701,7 +2701,7 @@ WindSettings = {
 				20,
 				20,
 				20,
-				20,
+				20
 			},
 			cataclysm_3 = {
 				20,
@@ -2713,7 +2713,7 @@ WindSettings = {
 				20,
 				20,
 				20,
-				20,
+				20
 			},
 			versus_base = {
 				20,
@@ -2725,8 +2725,8 @@ WindSettings = {
 				20,
 				20,
 				20,
-				20,
-			},
+				20
+			}
 		},
 		damage_taken = {
 			normal = {
@@ -2739,7 +2739,7 @@ WindSettings = {
 				-0.75,
 				-0.75,
 				-0.75,
-				-0.75,
+				-0.75
 			},
 			hard = {
 				-0.75,
@@ -2751,7 +2751,7 @@ WindSettings = {
 				-0.75,
 				-0.75,
 				-0.75,
-				-0.75,
+				-0.75
 			},
 			harder = {
 				-0.75,
@@ -2763,7 +2763,7 @@ WindSettings = {
 				-0.75,
 				-0.75,
 				-0.75,
-				-0.75,
+				-0.75
 			},
 			hardest = {
 				-0.75,
@@ -2775,7 +2775,7 @@ WindSettings = {
 				-0.75,
 				-0.75,
 				-0.75,
-				-0.75,
+				-0.75
 			},
 			cataclysm = {
 				-0.75,
@@ -2787,7 +2787,7 @@ WindSettings = {
 				-0.75,
 				-0.75,
 				-0.75,
-				-0.75,
+				-0.75
 			},
 			cataclysm_2 = {
 				-0.75,
@@ -2799,7 +2799,7 @@ WindSettings = {
 				-0.75,
 				-0.75,
 				-0.75,
-				-0.75,
+				-0.75
 			},
 			cataclysm_3 = {
 				-0.75,
@@ -2811,7 +2811,7 @@ WindSettings = {
 				-0.75,
 				-0.75,
 				-0.75,
-				-0.75,
+				-0.75
 			},
 			versus_base = {
 				-0.75,
@@ -2823,8 +2823,8 @@ WindSettings = {
 				-0.75,
 				-0.75,
 				-0.75,
-				-0.75,
-			},
+				-0.75
+			}
 		},
 		respawn_rate = {
 			normal = {
@@ -2837,7 +2837,7 @@ WindSettings = {
 				45,
 				42.5,
 				40,
-				37.5,
+				37.5
 			},
 			hard = {
 				60,
@@ -2849,7 +2849,7 @@ WindSettings = {
 				45,
 				42.5,
 				40,
-				37.5,
+				37.5
 			},
 			harder = {
 				60,
@@ -2861,7 +2861,7 @@ WindSettings = {
 				45,
 				42.5,
 				40,
-				37.5,
+				37.5
 			},
 			hardest = {
 				60,
@@ -2873,7 +2873,7 @@ WindSettings = {
 				45,
 				42.5,
 				40,
-				37.5,
+				37.5
 			},
 			cataclysm = {
 				60,
@@ -2885,7 +2885,7 @@ WindSettings = {
 				45,
 				42.5,
 				40,
-				37.5,
+				37.5
 			},
 			cataclysm_2 = {
 				60,
@@ -2897,7 +2897,7 @@ WindSettings = {
 				45,
 				42.5,
 				40,
-				37.5,
+				37.5
 			},
 			cataclysm_3 = {
 				60,
@@ -2909,7 +2909,7 @@ WindSettings = {
 				45,
 				42.5,
 				40,
-				37.5,
+				37.5
 			},
 			versus_base = {
 				60,
@@ -2921,54 +2921,54 @@ WindSettings = {
 				45,
 				42.5,
 				40,
-				37.5,
-			},
+				37.5
+			}
 		},
 		loading_screen_wwise_events = {
 			lore = {
 				"nfl_olesya_amber_weave_lore_01",
 				"nfl_olesya_amber_weave_lore_02",
 				"nfl_olesya_amber_weave_lore_03",
-				"nfl_olesya_amber_weave_lore_04",
+				"nfl_olesya_amber_weave_lore_04"
 			},
 			mechanics = {
 				"nfl_olesya_amber_weave_mechanic_01",
 				"nfl_olesya_amber_weave_mechanic_02",
 				"nfl_olesya_amber_weave_mechanic_03",
-				"nfl_olesya_amber_weave_mechanic_04",
+				"nfl_olesya_amber_weave_mechanic_04"
 			},
 			objectives = {
 				objective_sockets_name = {
 					"nfl_olesya_all_weave_objective_essence_refine_01",
 					"nfl_olesya_all_weave_objective_essence_refine_02",
 					"nfl_olesya_all_weave_objective_essence_refine_03",
-					"nfl_olesya_all_weave_objective_essence_refine_04",
+					"nfl_olesya_all_weave_objective_essence_refine_04"
 				},
 				objective_kill_enemies_name = {
 					"nfl_olesya_all_weave_objective_kill_01",
 					"nfl_olesya_all_weave_objective_kill_02",
 					"nfl_olesya_all_weave_objective_kill_03",
-					"nfl_olesya_all_weave_objective_kill_04",
+					"nfl_olesya_all_weave_objective_kill_04"
 				},
 				objective_destroy_doom_wheels_name = {
 					"nfl_olesya_all_weave_objective_essence_nodes_01",
 					"nfl_olesya_all_weave_objective_essence_nodes_02",
 					"nfl_olesya_all_weave_objective_essence_nodes_03",
-					"nfl_olesya_all_weave_objective_essence_nodes_04",
+					"nfl_olesya_all_weave_objective_essence_nodes_04"
 				},
 				objective_targets_name = {
 					"nfl_olesya_all_weave_objective_essence_shards_01",
 					"nfl_olesya_all_weave_objective_essence_shards_02",
 					"nfl_olesya_all_weave_objective_essence_shards_03",
-					"nfl_olesya_all_weave_objective_essence_shards_04",
+					"nfl_olesya_all_weave_objective_essence_shards_04"
 				},
 				objective_capture_points_name = {
 					"nfl_olesya_all_weave_objective_essence_capture_01",
 					"nfl_olesya_all_weave_objective_essence_capture_02",
 					"nfl_olesya_all_weave_objective_essence_capture_03",
-					"nfl_olesya_all_weave_objective_essence_capture_04",
+					"nfl_olesya_all_weave_objective_essence_capture_04"
 				},
-				objective_kill_bosses_name = {},
+				objective_kill_bosses_name = {}
 			},
 			primary_arena_wwise_events = {
 				"nfl_olesya_final_challenge_prefix_02",
@@ -2977,7 +2977,7 @@ WindSettings = {
 				"nfl_olesya_final_challenge_prefix_05",
 				"nfl_olesya_final_challenge_prefix_06",
 				"nfl_olesya_final_challenge_prefix_07",
-				"nfl_olesya_final_challenge_prefix_08",
+				"nfl_olesya_final_challenge_prefix_08"
 			},
 			secondary_arena_wwise_events = {
 				"nfl_olesya_final_challenge_01",
@@ -2985,8 +2985,8 @@ WindSettings = {
 				"nfl_olesya_final_challenge_03",
 				"nfl_olesya_final_challenge_04",
 				"nfl_olesya_final_challenge_05",
-				"nfl_olesya_final_challenge_06",
-			},
-		},
-	},
+				"nfl_olesya_final_challenge_06"
+			}
+		}
+	}
 }

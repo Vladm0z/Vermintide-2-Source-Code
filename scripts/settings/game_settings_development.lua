@@ -1,12 +1,12 @@
-﻿-- chunkname: @scripts/settings/game_settings_development.lua
+-- chunkname: @scripts/settings/game_settings_development.lua
 
 require("scripts/helpers/debug_helper")
 require("scripts/settings/backend_settings")
 
 GameSettingsDevelopment = GameSettingsDevelopment or {}
 
-local argv = {
-	Application.argv(),
+local var_0_0 = {
+	Application.argv()
 }
 
 GameSettingsDevelopment.trunk_path = GameSettingsDevelopment.trunk_path or false
@@ -22,12 +22,12 @@ GameSettingsDevelopment.lobby_browser_enabled = true
 GameSettingsDevelopment.disabled_interactions = {}
 GameSettingsDevelopment.store_nags = false
 GameSettingsDevelopment.store_nags = true
-GameSettingsDevelopment.use_global_chat = table.find(argv, "-use-global-chat") and true or false
+GameSettingsDevelopment.use_global_chat = table.find(var_0_0, "-use-global-chat") and true or false
 GameSettingsDevelopment.use_new_tab_menu = true
 
-local network_timeout = Development.parameter("network_timeout_really_long") and 10000 or 15
+local var_0_1 = Development.parameter("network_timeout_really_long") and 10000 or 15
 
-GameSettingsDevelopment.network_timeout = Development.parameter("network_timeout") or network_timeout
+GameSettingsDevelopment.network_timeout = Development.parameter("network_timeout") or var_0_1
 GameSettingsDevelopment.network_silence_warning_delay = 3
 GameSettingsDevelopment.show_version_info = true
 GameSettingsDevelopment.default_environment = "environment/blank"
@@ -40,9 +40,9 @@ GameSettingsDevelopment.allow_retry_weave = false
 GameSettingsDevelopment.disable_carousel = Development.parameter("disable_carousel") or not DLCSettings.carousel
 GameSettingsDevelopment.use_store_unload_list = true
 
-local script_data = script_data
+local var_0_2 = script_data
 
-script_data.debug_behaviour_trees = script_data.debug_behaviour_trees ~= nil and script_data.debug_behaviour_trees or false
+var_0_2.debug_behaviour_trees = var_0_2.debug_behaviour_trees ~= nil and var_0_2.debug_behaviour_trees or false
 
 fassert(not Development.parameter("use_offline_backend") and not Development.parameter("use_local_backend"), "Unable to use local backend with DEBUG stripped. Remove --use-local-backend or --use-offline-backend")
 
@@ -53,13 +53,13 @@ GameSettingsDevelopment.allow_chat_input = true
 GameSettingsDevelopment.disable_intro_trailer = Development.parameter("disable_intro_trailer")
 GameSettingsDevelopment.use_new_pickup_spawning = true
 GameSettingsDevelopment.fade_environments = true
-script_data.debug_enabled = true
+var_0_2.debug_enabled = true
 
 if Development.parameter("gdc") then
 	GameSettingsDevelopment.use_backend = false
 
 	if not Development.parameter("force_debug_enabled") or Development.parameter("force_debug_disabled") then
-		script_data.debug_enabled = false
+		var_0_2.debug_enabled = false
 	end
 end
 
@@ -71,45 +71,45 @@ if Development.parameter("attract_mode") then
 	end
 end
 
-script_data.disable_tutorial_at_start = script_data.disable_tutorial_at_start or Development.parameter("disable_tutorial_at_start")
+var_0_2.disable_tutorial_at_start = var_0_2.disable_tutorial_at_start or Development.parameter("disable_tutorial_at_start")
 
-if script_data.honduras_demo then
+if var_0_2.honduras_demo then
 	GameSettingsDevelopment.use_backend = false
 	GameSettingsDevelopment.skip_start_screen = false
 	GameSettingsDevelopment.use_alien_fx = true
 
 	if not Development.parameter("force_debug_enabled") or Development.parameter("force_debug_disabled") then
-		script_data.debug_enabled = false
+		var_0_2.debug_enabled = false
 	end
 end
 
 if Development.parameter("force_debug_disabled") then
-	script_data.debug_enabled = false
+	var_0_2.debug_enabled = false
 end
 
-local test_backend = Development.parameter("test_backend")
-local settings = script_data.settings
+local var_0_3 = Development.parameter("test_backend")
+local var_0_4 = var_0_2.settings
 
-print("settings.steam: " .. tostring(settings.steam))
+print("settings.steam: " .. tostring(var_0_4.steam))
 print("Steam: " .. tostring(rawget(_G, "Steam")))
 print("force_steam: " .. tostring(Development.parameter("force_steam")))
 print("BUILD: " .. tostring(BUILD))
-print("test_backend: " .. tostring(test_backend))
+print("test_backend: " .. tostring(var_0_3))
 
-if settings.steam or Development.parameter("force_steam") then
+if var_0_4.steam or Development.parameter("force_steam") then
 	if rawget(_G, "Steam") or DEDICATED_SERVER then
-		local app_id
+		local var_0_5
 
 		if DEDICATED_SERVER then
-			app_id = SteamGameServer.app_id()
+			var_0_5 = SteamGameServer.app_id()
 		else
-			app_id = Steam.app_id()
+			var_0_5 = Steam.app_id()
 		end
 
 		print("DEDICATED_SERVER: " .. tostring(DEDICATED_SERVER))
-		print(string.format("Using app_id '%s' to define backend", app_id))
+		print(string.format("Using app_id '%s' to define backend", var_0_5))
 
-		if not DEDICATED_SERVER and not Steam.owns_app(app_id) then
+		if not DEDICATED_SERVER and not Steam.owns_app(var_0_5) then
 			Crashify.print_exception("Game Settings", "Vermintide 2. You need to own game to play it.")
 			Application.quit_with_message("Vermintide 2. You need to own game to play it.")
 		end
@@ -119,17 +119,17 @@ if settings.steam or Development.parameter("force_steam") then
 		GameSettingsDevelopment.show_version_info = true
 		GameSettingsDevelopment.show_fps = Development.parameter("show_fps") or false
 
-		if app_id == 795750 and test_backend == nil then
+		if var_0_5 == 795750 and var_0_3 == nil then
 			GameSettingsDevelopment.backend_settings = BackendSettings.stage_steam_playfab
-		elseif app_id == 1318500 then
+		elseif var_0_5 == 1318500 then
 			GameSettingsDevelopment.backend_settings = BackendSettings.morris_beta_steam_playfab
-		elseif app_id == 552500 then
+		elseif var_0_5 == 552500 then
 			GameSettingsDevelopment.backend_settings = BackendSettings.prod_steam_playfab
-		elseif app_id == 1270350 then
+		elseif var_0_5 == 1270350 then
 			GameSettingsDevelopment.backend_settings = BackendSettings.cat_steam_playfab
-		elseif app_id == 1026050 then
+		elseif var_0_5 == 1026050 then
 			GameSettingsDevelopment.backend_settings = BackendSettings.carousel_steam_playfab
-		elseif app_id == 2792380 then
+		elseif var_0_5 == 2792380 then
 			GameSettingsDevelopment.backend_settings = BackendSettings.beta_steam_playfab
 		end
 	else
@@ -139,14 +139,14 @@ if settings.steam or Development.parameter("force_steam") then
 elseif BUILD == "dev" or BUILD == "debug" then
 	GameSettingsDevelopment.network_mode = LEVEL_EDITOR_TEST and "lan" or Development.parameter("force_steam") and "steam" or "lan"
 	GameSettingsDevelopment.show_fps = Development.parameter("show_fps") == nil or Development.parameter("show_fps")
-	script_data.unlock_all_levels = Development.parameter("unlock-all-levels") or script_data.unlock_all_levels
-elseif not script_data.honduras_demo and not Development.parameter("attract_mode") and not DEDICATED_SERVER then
+	var_0_2.unlock_all_levels = Development.parameter("unlock-all-levels") or var_0_2.unlock_all_levels
+elseif not var_0_2.honduras_demo and not Development.parameter("attract_mode") and not DEDICATED_SERVER then
 	print("Running release game without content revision, quitting.")
 	Application.quit("FAIL")
 end
 
 if Development.parameter("give-all-lan-backend-items") then
-	script_data.give_all_lan_backend_items = true
+	var_0_2.give_all_lan_backend_items = true
 end
 
 GameSettingsDevelopment.disable_crafting = Development.parameter("disable-crafting")
@@ -157,12 +157,12 @@ else
 	GameSettingsDevelopment.disable_free_flight = Development.parameter("disable-free-flight") == nil or Development.parameter("disable-free-flight")
 end
 
-local test_backend = Development.parameter("test_backend")
+local var_0_6 = Development.parameter("test_backend")
 
-if test_backend ~= nil then
-	print("Using test backend:", test_backend)
+if var_0_6 ~= nil then
+	print("Using test backend:", var_0_6)
 
-	GameSettingsDevelopment.backend_settings = BackendSettings[test_backend]
+	GameSettingsDevelopment.backend_settings = BackendSettings[var_0_6]
 end
 
 print("PlayFab Title ID:", GameSettingsDevelopment.backend_settings.title_id)
@@ -201,79 +201,79 @@ else
 	GameSettingsDevelopment.remove_debug_stuff = false
 end
 
-script_data.extrapolation_debug = true
+var_0_2.extrapolation_debug = true
 GameSettingsDevelopment.simple_first_person = true
 GameSettingsDevelopment.debug_unit_colors = {
 	{
 		255,
 		0,
-		0,
+		0
 	},
 	{
 		0,
 		255,
-		0,
+		0
 	},
 	{
 		0,
 		255,
-		255,
+		255
 	},
 	{
 		255,
 		255,
-		0,
+		0
 	},
 	{
 		255,
 		0,
-		255,
-	},
-	{
-		100,
-		0,
-		0,
-	},
-	{
-		0,
-		100,
-		255,
+		255
 	},
 	{
 		100,
 		0,
-		255,
+		0
+	},
+	{
+		0,
+		100,
+		255
+	},
+	{
+		100,
+		0,
+		255
 	},
 	{
 		50,
 		150,
-		255,
+		255
 	},
 	{
 		25,
 		75,
-		100,
+		100
 	},
 	{
 		0,
 		255,
-		110,
+		110
 	},
 	{
 		10,
 		85,
-		10,
+		10
 	},
 	{
 		75,
 		75,
-		255,
+		255
 	},
 	{
 		65,
 		85,
-		100,
-	},
+		100
+	}
 }
 GameSettingsDevelopment.ignored_rpc_logs = {
 	"rpc_network_clock_sync_request",
@@ -373,102 +373,102 @@ GameSettingsDevelopment.ignored_rpc_logs = {
 	"rpc_shared_state_set_bool",
 	"rpc_shared_state_set_server_int",
 	"rpc_shared_state_set_server_string",
-	"rpc_shared_state_set_server_bool",
+	"rpc_shared_state_set_server_bool"
 }
 
-if not script_data.debug_interactions then
+if not var_0_2.debug_interactions then
 	GameSettingsDevelopment.ignored_rpc_logs[#GameSettingsDevelopment.ignored_rpc_logs + 1] = "rpc_interaction_approved"
 	GameSettingsDevelopment.ignored_rpc_logs[#GameSettingsDevelopment.ignored_rpc_logs + 1] = "rpc_interaction_abort"
 	GameSettingsDevelopment.ignored_rpc_logs[#GameSettingsDevelopment.ignored_rpc_logs + 1] = "rpc_interaction_completed"
 end
 
-if not script_data.debug_voip then
+if not var_0_2.debug_voip then
 	GameSettingsDevelopment.ignored_rpc_logs[#GameSettingsDevelopment.ignored_rpc_logs + 1] = "rpc_voip_room_request"
 	GameSettingsDevelopment.ignored_rpc_logs[#GameSettingsDevelopment.ignored_rpc_logs + 1] = "rpc_voip_room_to_join"
 end
 
-local rpcs_logged = false
+local var_0_7 = false
 
-GameSettingsDevelopment.set_ignored_rpc_logs = function ()
-	local ignored_rpc_logs = GameSettingsDevelopment.ignored_rpc_logs
+function GameSettingsDevelopment.set_ignored_rpc_logs()
+	local var_1_0 = GameSettingsDevelopment.ignored_rpc_logs
 
-	for i = 1, #ignored_rpc_logs do
-		local rpc_name = ignored_rpc_logs[i]
+	for iter_1_0 = 1, #var_1_0 do
+		local var_1_1 = var_1_0[iter_1_0]
 
-		Network.ignore_rpc_log(rpc_name)
+		Network.ignore_rpc_log(var_1_1)
 
-		if script_data.network_log_messages and not rpcs_logged then
-			printf("[Network] Setting log ignore for RPC %s", rpc_name)
+		if var_0_2.network_log_messages and not var_0_7 then
+			printf("[Network] Setting log ignore for RPC %s", var_1_1)
 		end
 	end
 
-	rpcs_logged = true
+	var_0_7 = true
 end
 
 DefaultDisplayModes = {
 	{
 		640,
 		480,
-		0,
+		0
 	},
 	{
 		800,
 		600,
-		0,
+		0
 	},
 	{
 		1024,
 		768,
-		0,
+		0
 	},
 	{
 		1280,
 		720,
-		0,
+		0
 	},
 	{
 		1280,
 		1024,
-		0,
+		0
 	},
 	{
 		1344,
 		756,
-		0,
+		0
 	},
 	{
 		1366,
 		768,
-		0,
+		0
 	},
 	{
 		1440,
 		900,
-		0,
+		0
 	},
 	{
 		1600,
 		900,
-		0,
+		0
 	},
 	{
 		1600,
 		1024,
-		0,
+		0
 	},
 	{
 		1600,
 		1200,
-		0,
+		0
 	},
 	{
 		1680,
 		1050,
-		0,
+		0
 	},
 	{
 		1920,
 		1080,
-		0,
-	},
+		0
+	}
 }

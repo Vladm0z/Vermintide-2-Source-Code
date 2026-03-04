@@ -1,86 +1,86 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_warpfire_thrower_behavior.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_warpfire_thrower_behavior.lua
 
-local ACTIONS = BreedActions.skaven_warpfire_thrower
+local var_0_0 = BreedActions.skaven_warpfire_thrower
 
 BreedBehaviors.skaven_warpfire_thrower = {
 	"BTSelector",
 	{
 		"BTSpawningAction",
 		condition = "spawn",
-		name = "spawn",
+		name = "spawn"
 	},
 	{
 		"BTInVortexAction",
 		condition = "in_vortex",
-		name = "in_vortex",
+		name = "in_vortex"
 	},
 	{
 		"BTFallAction",
 		condition = "is_falling",
-		name = "falling",
+		name = "falling"
 	},
 	{
 		"BTStaggerAction",
-		condition = "stagger",
 		name = "stagger",
-		action_data = ACTIONS.stagger,
+		condition = "stagger",
+		action_data = var_0_0.stagger
 	},
 	{
 		"BTSelector",
 		{
 			"BTTeleportAction",
 			condition = "at_teleport_smartobject",
-			name = "teleport",
+			name = "teleport"
 		},
 		{
 			"BTClimbAction",
 			condition = "at_climb_smartobject",
-			name = "climb",
+			name = "climb"
 		},
 		{
 			"BTJumpAcrossAction",
 			condition = "at_jump_smartobject",
-			name = "jump_across",
+			name = "jump_across"
 		},
 		{
 			"BTSmashDoorAction",
-			condition = "at_door_smartobject",
 			name = "smash_door",
-			action_data = ACTIONS.smash_door,
+			condition = "at_door_smartobject",
+			action_data = var_0_0.smash_door
 		},
 		condition = "at_smartobject",
-		name = "smartobject",
+		name = "smartobject"
 	},
 	{
 		"BTSequence",
 		{
 			"BTPackMasterSkulkAroundAction",
-			condition = "path_found",
 			name = "skulk",
-			action_data = ACTIONS.skulk,
+			condition = "path_found",
+			action_data = var_0_0.skulk
 		},
 		{
 			"BTPackMasterFollowAction",
-			condition = "path_found",
 			name = "follow",
-			action_data = ACTIONS.follow,
+			condition = "path_found",
+			action_data = var_0_0.follow
 		},
 		{
 			"BTWarpfireThrowerShootAction",
 			name = "shoot_warpfire_thrower",
-			action_data = ACTIONS.shoot_warpfire_thrower,
+			action_data = var_0_0.shoot_warpfire_thrower
 		},
 		condition = "can_see_player",
-		name = "enemy_spotted",
+		name = "enemy_spotted"
 	},
 	{
 		"BTTriggerMoveToAction",
 		condition = "can_trigger_move_to",
-		name = "trigger_move_to",
+		name = "trigger_move_to"
 	},
 	{
 		"BTIdleAction",
-		name = "idle",
+		name = "idle"
 	},
-	name = "skaven_warpfire_thrower",
+	name = "skaven_warpfire_thrower"
 }

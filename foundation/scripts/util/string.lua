@@ -1,98 +1,99 @@
-﻿-- chunkname: @foundation/scripts/util/string.lua
+-- chunkname: @foundation/scripts/util/string.lua
 
-local format = string.format
-local gsub = string.gsub
-local sub = string.sub
+local var_0_0 = string.format
+local var_0_1 = string.gsub
+local var_0_2 = string.sub
 
-string.starts_with = function (str, start)
-	return sub(str, 1, #start) == start
+function string.starts_with(arg_1_0, arg_1_1)
+	return var_0_2(arg_1_0, 1, #arg_1_1) == arg_1_1
 end
 
-string.ends_with = function (str, ending)
-	return ending == "" or sub(str, -#ending) == ending
+function string.ends_with(arg_2_0, arg_2_1)
+	return arg_2_1 == "" or var_0_2(arg_2_0, -#arg_2_1) == arg_2_1
 end
 
-string.insert = function (str1, str2, pos)
-	return sub(str1, 1, pos) .. str2 .. sub(str1, pos + 1)
+function string.insert(arg_3_0, arg_3_1, arg_3_2)
+	return var_0_2(arg_3_0, 1, arg_3_2) .. arg_3_1 .. var_0_2(arg_3_0, arg_3_2 + 1)
 end
 
-local _fields
+local var_0_3
 
-local function _split_helper(part)
-	_fields[#_fields + 1] = part
+local function var_0_4(arg_4_0)
+	var_0_3[#var_0_3 + 1] = arg_4_0
 end
 
-string.split_deprecated = function (str, sep, dest)
-	_fields = dest or {}
+function string.split_deprecated(arg_5_0, arg_5_1, arg_5_2)
+	var_0_3 = arg_5_2 or {}
 
-	local pattern = format("([^%s]+)", sep or " ")
+	local var_5_0 = var_0_0("([^%s]+)", arg_5_1 or " ")
 
-	gsub(str, pattern, _split_helper)
+	var_0_1(arg_5_0, var_5_0, var_0_4)
 
-	return _fields
+	return var_0_3
 end
 
-string.split = function (str, sep, dest, pattern)
-	sep = sep or " "
-	dest = dest or {}
+function string.split(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	arg_6_1 = arg_6_1 or " "
+	arg_6_2 = arg_6_2 or {}
 
-	local count = 0
+	local var_6_0 = 0
 
-	if str == "" then
-		return dest, count
+	if arg_6_0 == "" then
+		return arg_6_2, var_6_0
 	end
 
-	if sep == "" then
-		local len = #str
+	if arg_6_1 == "" then
+		local var_6_1 = #arg_6_0
 
-		for i = 1, len do
-			dest[i] = string.sub(str, i, i)
+		for iter_6_0 = 1, var_6_1 do
+			arg_6_2[iter_6_0] = string.sub(arg_6_0, iter_6_0, iter_6_0)
 		end
 
-		return dest, len
+		return arg_6_2, var_6_1
 	end
 
-	local offset = 1
-	local from, to = string.find(str, sep, offset, not pattern)
+	local var_6_2 = 1
+	local var_6_3, var_6_4 = string.find(arg_6_0, arg_6_1, var_6_2, not arg_6_3)
 
-	while from do
-		count = count + 1
-		dest[count] = string.sub(str, offset, from - 1)
-		offset = to + 1
-		from, to = string.find(str, sep, offset, not pattern)
+	while var_6_3 do
+		var_6_0 = var_6_0 + 1
+		arg_6_2[var_6_0] = string.sub(arg_6_0, var_6_2, var_6_3 - 1)
+		var_6_2 = var_6_4 + 1
+		var_6_3, var_6_4 = string.find(arg_6_0, arg_6_1, var_6_2, not arg_6_3)
 	end
 
-	count = count + 1
-	dest[count] = string.sub(str, offset, #str)
+	local var_6_5 = var_6_0 + 1
 
-	return dest, count
+	arg_6_2[var_6_5] = string.sub(arg_6_0, var_6_2, #arg_6_0)
+
+	return arg_6_2, var_6_5
 end
 
-string.trim = function (str)
-	return gsub(gsub(str, "^%s+", ""), "%s+$", "")
+function string.trim(arg_7_0)
+	return var_0_1(var_0_1(arg_7_0, "^%s+", ""), "%s+$", "")
 end
 
-string.remove = function (str, i, j)
-	return sub(str, 1, i - 1) .. sub(str, j + 1)
+function string.remove(arg_8_0, arg_8_1, arg_8_2)
+	return var_0_2(arg_8_0, 1, arg_8_1 - 1) .. var_0_2(arg_8_0, arg_8_2 + 1)
 end
 
-string.value_or_nil = function (str)
-	if str == "" or str == false then
+function string.value_or_nil(arg_9_0)
+	if arg_9_0 == "" or arg_9_0 == false then
 		return nil
 	else
-		return str
+		return arg_9_0
 	end
 end
 
-string.is_snake_case = function (str)
-	if string.ends_with(str, "_") then
+function string.is_snake_case(arg_10_0)
+	if string.ends_with(arg_10_0, "_") then
 		return false
 	end
 
-	local arr = string.split_deprecated(str, "_")
+	local var_10_0 = string.split_deprecated(arg_10_0, "_")
 
-	for _, substr in pairs(arr) do
-		if string.match(substr, "%w+") ~= substr or substr:lower() ~= substr then
+	for iter_10_0, iter_10_1 in pairs(var_10_0) do
+		if string.match(iter_10_1, "%w+") ~= iter_10_1 or iter_10_1:lower() ~= iter_10_1 then
 			return false
 		end
 	end
@@ -100,195 +101,196 @@ string.is_snake_case = function (str)
 	return true
 end
 
-string.levenshtein = function (str1, str2)
-	local length1 = #str1
-	local length2 = #str2
+function string.levenshtein(arg_11_0, arg_11_1)
+	local var_11_0 = #arg_11_0
+	local var_11_1 = #arg_11_1
 
-	if length1 == 0 then
-		return length2
+	if var_11_0 == 0 then
+		return var_11_1
 	end
 
-	if length2 == 0 then
-		return length1
+	if var_11_1 == 0 then
+		return var_11_0
 	end
 
-	if str1 == str2 then
+	if arg_11_0 == arg_11_1 then
 		return 0
 	end
 
-	local matrix = {}
-	local cost = 1
-	local min = math.min
+	local var_11_2 = {}
+	local var_11_3 = 1
+	local var_11_4 = math.min
 
-	for i = 0, length1 do
-		matrix[i] = {}
-		matrix[i][0] = i
+	for iter_11_0 = 0, var_11_0 do
+		var_11_2[iter_11_0] = {}
+		var_11_2[iter_11_0][0] = iter_11_0
 	end
 
-	for j = 0, length2 do
-		matrix[0][j] = j
+	for iter_11_1 = 0, var_11_1 do
+		var_11_2[0][iter_11_1] = iter_11_1
 	end
 
-	for i = 1, length1 do
-		for j = 1, length2 do
-			if str1:byte(i) == str2:byte(j) then
-				cost = 0
+	for iter_11_2 = 1, var_11_0 do
+		for iter_11_3 = 1, var_11_1 do
+			if arg_11_0:byte(iter_11_2) == arg_11_1:byte(iter_11_3) then
+				var_11_3 = 0
 			end
 
-			matrix[i][j] = min(matrix[i - 1][j] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j - 1] + cost)
+			var_11_2[iter_11_2][iter_11_3] = var_11_4(var_11_2[iter_11_2 - 1][iter_11_3] + 1, var_11_2[iter_11_2][iter_11_3 - 1] + 1, var_11_2[iter_11_2 - 1][iter_11_3 - 1] + var_11_3)
 		end
 	end
 
-	return matrix[length1][length2]
+	return var_11_2[var_11_0][var_11_1]
 end
 
-string.damerau_levenshtein_distance = function (s, t, lim)
-	local s_len, t_len = #s, #t
+function string.damerau_levenshtein_distance(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = #arg_12_0
+	local var_12_1 = #arg_12_1
 
-	if lim and lim <= math.abs(s_len - t_len) then
-		return lim
+	if arg_12_2 and arg_12_2 <= math.abs(var_12_0 - var_12_1) then
+		return arg_12_2
 	end
 
-	if type(s) == "string" then
-		s = {
-			string.byte(s, 1, s_len),
+	if type(arg_12_0) == "string" then
+		arg_12_0 = {
+			string.byte(arg_12_0, 1, var_12_0)
 		}
 	end
 
-	if type(t) == "string" then
-		t = {
-			string.byte(t, 1, t_len),
+	if type(arg_12_1) == "string" then
+		arg_12_1 = {
+			string.byte(arg_12_1, 1, var_12_1)
 		}
 	end
 
-	local min = math.min
-	local num_columns = t_len + 1
-	local d = {}
+	local var_12_2 = math.min
+	local var_12_3 = var_12_1 + 1
+	local var_12_4 = {}
 
-	for i = 0, s_len do
-		d[i * num_columns] = i
+	for iter_12_0 = 0, var_12_0 do
+		var_12_4[iter_12_0 * var_12_3] = iter_12_0
 	end
 
-	for j = 0, t_len do
-		d[j] = j
+	for iter_12_1 = 0, var_12_1 do
+		var_12_4[iter_12_1] = iter_12_1
 	end
 
-	for i = 1, s_len do
-		local i_pos = i * num_columns
-		local best = lim
+	for iter_12_2 = 1, var_12_0 do
+		local var_12_5 = iter_12_2 * var_12_3
+		local var_12_6 = arg_12_2
 
-		for j = 1, t_len do
-			local add_cost = s[i] ~= t[j] and 1 or 0
-			local val = min(d[i_pos - num_columns + j] + 1, d[i_pos + j - 1] + 1, d[i_pos - num_columns + j - 1] + add_cost)
+		for iter_12_3 = 1, var_12_1 do
+			local var_12_7 = arg_12_0[iter_12_2] ~= arg_12_1[iter_12_3] and 1 or 0
+			local var_12_8 = var_12_2(var_12_4[var_12_5 - var_12_3 + iter_12_3] + 1, var_12_4[var_12_5 + iter_12_3 - 1] + 1, var_12_4[var_12_5 - var_12_3 + iter_12_3 - 1] + var_12_7)
 
-			d[i_pos + j] = val
+			var_12_4[var_12_5 + iter_12_3] = var_12_8
 
-			if i > 1 and j > 1 and s[i] == t[j - 1] and s[i - 1] == t[j] then
-				d[i_pos + j] = min(val, d[i_pos - num_columns - num_columns + j - 2] + add_cost)
+			if iter_12_2 > 1 and iter_12_3 > 1 and arg_12_0[iter_12_2] == arg_12_1[iter_12_3 - 1] and arg_12_0[iter_12_2 - 1] == arg_12_1[iter_12_3] then
+				var_12_4[var_12_5 + iter_12_3] = var_12_2(var_12_8, var_12_4[var_12_5 - var_12_3 - var_12_3 + iter_12_3 - 2] + var_12_7)
 			end
 
-			if lim and val < best then
-				best = val
+			if arg_12_2 and var_12_8 < var_12_6 then
+				var_12_6 = var_12_8
 			end
 		end
 
-		if lim and lim <= best then
-			return lim
+		if arg_12_2 and arg_12_2 <= var_12_6 then
+			return arg_12_2
 		end
 	end
 
-	return d[#d]
+	return var_12_4[#var_12_4]
 end
 
-string.pad_left = function (str, target_length, pad_str)
-	local str_size = #str
-	local pad_size = #pad_str
+function string.pad_left(arg_13_0, arg_13_1, arg_13_2)
+	local var_13_0 = #arg_13_0
+	local var_13_1 = #arg_13_2
 
-	for i = str_size + pad_size, target_length, pad_size do
-		str = pad_str .. str
+	for iter_13_0 = var_13_0 + var_13_1, arg_13_1, var_13_1 do
+		arg_13_0 = arg_13_2 .. arg_13_0
 	end
 
-	local rest = (target_length - str_size) % pad_size
+	local var_13_2 = (arg_13_1 - var_13_0) % var_13_1
 
-	if rest ~= 0 then
-		str = string.sub(pad_str, pad_size - rest + 1, pad_size) .. str
+	if var_13_2 ~= 0 then
+		arg_13_0 = string.sub(arg_13_2, var_13_1 - var_13_2 + 1, var_13_1) .. arg_13_0
 	end
 
-	return str
+	return arg_13_0
 end
 
-string.pad_right = function (str, target_length, pad_str, cache)
-	local str_size = #str
-	local pad_size = #pad_str
+function string.pad_right(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+	local var_14_0 = #arg_14_0
+	local var_14_1 = #arg_14_2
 
-	if cache then
-		local slack = math.max(0, target_length - str_size)
-		local cached = cache[slack]
+	if arg_14_3 then
+		local var_14_2 = math.max(0, arg_14_1 - var_14_0)
+		local var_14_3 = arg_14_3[var_14_2]
 
-		if cached then
-			return str .. cached
+		if var_14_3 then
+			return arg_14_0 .. var_14_3
 		end
 
-		cache[slack] = string.pad_right("", slack, pad_str)
+		arg_14_3[var_14_2] = string.pad_right("", var_14_2, arg_14_2)
 
-		return str .. cache[slack]
+		return arg_14_0 .. arg_14_3[var_14_2]
 	end
 
-	local padding = ""
+	local var_14_4 = ""
 
-	for i = str_size + pad_size, target_length, pad_size do
-		padding = padding .. pad_str
+	for iter_14_0 = var_14_0 + var_14_1, arg_14_1, var_14_1 do
+		var_14_4 = var_14_4 .. arg_14_2
 	end
 
-	local rest = (target_length - str_size) % pad_size
+	local var_14_5 = (arg_14_1 - var_14_0) % var_14_1
 
-	if rest ~= 0 then
-		padding = padding .. string.sub(pad_str, 1, rest)
+	if var_14_5 ~= 0 then
+		var_14_4 = var_14_4 .. string.sub(arg_14_2, 1, var_14_5)
 	end
 
-	return str .. padding
+	return arg_14_0 .. var_14_4
 end
 
-string.rep = function (rep, n)
-	local str = ""
+function string.rep(arg_15_0, arg_15_1)
+	local var_15_0 = ""
 
-	for i = 1, n do
-		str = str .. rep
+	for iter_15_0 = 1, arg_15_1 do
+		var_15_0 = var_15_0 .. arg_15_0
 	end
 
-	return str
+	return var_15_0
 end
 
-local chunk_scratch = {}
+local var_0_5 = {}
 
-string.chunk_from_right = function (str, step_n, sep)
-	sep = sep or " "
+function string.chunk_from_right(arg_16_0, arg_16_1, arg_16_2)
+	arg_16_2 = arg_16_2 or " "
 
-	local str_len = #str
-	local chunk_part_n = math.floor(str_len / step_n)
-	local offset = 0
-	local rest = str_len % step_n
+	local var_16_0 = #arg_16_0
+	local var_16_1 = math.floor(var_16_0 / arg_16_1)
+	local var_16_2 = 0
+	local var_16_3 = var_16_0 % arg_16_1
 
-	if rest > 0 then
-		chunk_scratch[1] = string.sub(str, 1, rest)
-		offset = 1
+	if var_16_3 > 0 then
+		var_0_5[1] = string.sub(arg_16_0, 1, var_16_3)
+		var_16_2 = 1
 	end
 
-	for i = 1, chunk_part_n do
-		chunk_scratch[chunk_part_n - i + 1 + offset] = string.sub(str, -i * step_n, -(i - 1) * step_n - 1)
+	for iter_16_0 = 1, var_16_1 do
+		var_0_5[var_16_1 - iter_16_0 + 1 + var_16_2] = string.sub(arg_16_0, -iter_16_0 * arg_16_1, -(iter_16_0 - 1) * arg_16_1 - 1)
 	end
 
-	local res = table.concat(chunk_scratch, sep)
+	local var_16_4 = table.concat(var_0_5, arg_16_2)
 
-	table.clear(chunk_scratch)
+	table.clear(var_0_5)
 
-	return res
+	return var_16_4
 end
 
-local function hexchar(c)
-	return format("%02x", string.byte(c))
+local function var_0_6(arg_17_0)
+	return var_0_0("%02x", string.byte(arg_17_0))
 end
 
-string.tohex = function (str)
-	return gsub(str, ".", hexchar)
+function string.tohex(arg_18_0)
+	return var_0_1(arg_18_0, ".", var_0_6)
 end

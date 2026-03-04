@@ -1,40 +1,41 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/lure_whereabouts_extension.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/lure_whereabouts_extension.lua
 
 require("scripts/unit_extensions/generic/generic_state_machine")
 
 LureWhereaboutsExtension = class(LureWhereaboutsExtension)
 
-LureWhereaboutsExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self._unit = unit
+function LureWhereaboutsExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._unit = arg_1_2
 
-	local nav_world = Managers.state.entity:system("ai_system"):nav_world()
+	local var_1_0 = Managers.state.entity:system("ai_system"):nav_world()
 
-	self._closest_positions = {}
+	arg_1_0._closest_positions = {}
 
-	local pos = Unit.world_position(unit, 0)
-	local above, below = 1, 5
-	local found, z = GwNavQueries.triangle_from_position(nav_world, pos, above, below)
+	local var_1_1 = Unit.world_position(arg_1_2, 0)
+	local var_1_2 = 1
+	local var_1_3 = 5
+	local var_1_4, var_1_5 = GwNavQueries.triangle_from_position(var_1_0, var_1_1, var_1_2, var_1_3)
 
-	if found then
-		self._closest_positions[1] = Vector3Box(Vector3(pos.x, pos.y, z))
-		self._on_navmesh = true
+	if var_1_4 then
+		arg_1_0._closest_positions[1] = Vector3Box(Vector3(var_1_1.x, var_1_1.y, var_1_5))
+		arg_1_0._on_navmesh = true
 	else
-		self._on_navmesh = false
+		arg_1_0._on_navmesh = false
 
-		local max_lateral_offset = 5
-		local from_border = 0.1
-		local nav_mesh_pos = GwNavQueries.inside_position_from_outside_position(nav_world, pos, above, below, max_lateral_offset, from_border)
+		local var_1_6 = 5
+		local var_1_7 = 0.1
+		local var_1_8 = GwNavQueries.inside_position_from_outside_position(var_1_0, var_1_1, var_1_2, var_1_3, var_1_6, var_1_7)
 
-		if nav_mesh_pos then
-			self._closest_positions[1] = Vector3Box(nav_mesh_pos)
+		if var_1_8 then
+			arg_1_0._closest_positions[1] = Vector3Box(var_1_8)
 		end
 	end
 end
 
-LureWhereaboutsExtension.destroy = function (self)
+function LureWhereaboutsExtension.destroy(arg_2_0)
 	return
 end
 
-LureWhereaboutsExtension.closest_positions_when_outside_navmesh = function (self)
-	return self._closest_positions, self._on_navmesh
+function LureWhereaboutsExtension.closest_positions_when_outside_navmesh(arg_3_0)
+	return arg_3_0._closest_positions, arg_3_0._on_navmesh
 end

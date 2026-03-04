@@ -1,72 +1,62 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_combat_shout_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_combat_shout_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTCombatShoutAction = class(BTCombatShoutAction, BTNode)
 
-BTCombatShoutAction.init = function (self, ...)
-	BTCombatShoutAction.super.init(self, ...)
+function BTCombatShoutAction.init(arg_1_0, ...)
+	BTCombatShoutAction.super.init(arg_1_0, ...)
 end
 
 BTCombatShoutAction.name = "BTCombatShoutAction"
 
-BTCombatShoutAction.enter = function (self, unit, blackboard, t)
-	local action = self._tree_node.action_data
+function BTCombatShoutAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_0._tree_node.action_data
 
-	blackboard.action = action
-	blackboard.anim_cb_shout_finished = nil
-	blackboard.active_node = BTCombatShoutAction
+	arg_2_2.action = var_2_0
+	arg_2_2.anim_cb_shout_finished = nil
+	arg_2_2.active_node = BTCombatShoutAction
 
-	local network_manager = Managers.state.network
+	Managers.state.network:anim_event(arg_2_1, var_2_0.shout_anim)
+	arg_2_2.navigation_extension:set_enabled(false)
 
-	network_manager:anim_event(unit, action.shout_anim)
+	local var_2_1 = arg_2_2.locomotion_extension
 
-	local navigation_extension = blackboard.navigation_extension
+	var_2_1:set_wanted_velocity(Vector3.zero())
 
-	navigation_extension:set_enabled(false)
+	local var_2_2 = LocomotionUtils.rotation_towards_unit_flat(arg_2_1, arg_2_2.target_unit)
 
-	local locomotion_extension = blackboard.locomotion_extension
+	var_2_1:set_wanted_rotation(var_2_2)
 
-	locomotion_extension:set_wanted_velocity(Vector3.zero())
-
-	local rotation = LocomotionUtils.rotation_towards_unit_flat(unit, blackboard.target_unit)
-
-	locomotion_extension:set_wanted_rotation(rotation)
-
-	blackboard.spawn_to_running = nil
+	arg_2_2.spawn_to_running = nil
 end
 
-BTCombatShoutAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	local navigation_extension = blackboard.navigation_extension
+function BTCombatShoutAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	arg_3_2.navigation_extension:set_enabled(true)
 
-	navigation_extension:set_enabled(true)
-
-	blackboard.active_node = nil
+	arg_3_2.active_node = nil
 end
 
-BTCombatShoutAction.run = function (self, unit, blackboard, t, dt)
-	local locomotion_extension = blackboard.locomotion_extension
-	local rot = LocomotionUtils.rotation_towards_unit_flat(unit, blackboard.target_unit)
+function BTCombatShoutAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = arg_4_2.locomotion_extension
+	local var_4_1 = LocomotionUtils.rotation_towards_unit_flat(arg_4_1, arg_4_2.target_unit)
 
-	locomotion_extension:set_wanted_rotation(rot)
+	var_4_0:set_wanted_rotation(var_4_1)
 
-	local have_slot = blackboard.have_slot == 1
+	local var_4_2 = arg_4_2.have_slot == 1
 
-	if blackboard.anim_cb_shout_finished or have_slot then
+	if arg_4_2.anim_cb_shout_finished or var_4_2 then
 		return "done"
 	else
 		return "running"
 	end
 end
 
-BTCombatShoutAction.anim_cb_shout_vo = function (self, unit, blackboard)
-	local network_manager = Managers.state.network
-	local game = network_manager:game()
+function BTCombatShoutAction.anim_cb_shout_vo(arg_5_0, arg_5_1, arg_5_2)
+	if Managers.state.network:game() then
+		local var_5_0 = ScriptUnit.extension_input(arg_5_1, "dialogue_system")
+		local var_5_1 = FrameTable.alloc_table()
 
-	if game then
-		local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
-		local event_data = FrameTable.alloc_table()
-
-		dialogue_input:trigger_networked_dialogue_event("shouting", event_data)
+		var_5_0:trigger_networked_dialogue_event("shouting", var_5_1)
 	end
 end

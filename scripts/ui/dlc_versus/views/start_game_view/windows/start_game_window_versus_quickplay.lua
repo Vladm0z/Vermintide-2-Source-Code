@@ -1,371 +1,359 @@
-﻿-- chunkname: @scripts/ui/dlc_versus/views/start_game_view/windows/start_game_window_versus_quickplay.lua
+-- chunkname: @scripts/ui/dlc_versus/views/start_game_view/windows/start_game_window_versus_quickplay.lua
 
-local definitions = local_require("scripts/ui/dlc_versus/views/start_game_view/windows/definitions/start_game_window_versus_quickplay_definitions")
-local scenegraph_definition = definitions.scenegraph_definition
-local widget_definitions = definitions.widget_definitions
-local animation_definitions = definitions.animation_definitions
-local selector_input_definitions = definitions.selector_input_definitions
-local START_GAME_INPUT = "refresh_press"
-local SELECTION_INPUT = "confirm_press"
+local var_0_0 = local_require("scripts/ui/dlc_versus/views/start_game_view/windows/definitions/start_game_window_versus_quickplay_definitions")
+local var_0_1 = var_0_0.scenegraph_definition
+local var_0_2 = var_0_0.widget_definitions
+local var_0_3 = var_0_0.animation_definitions
+local var_0_4 = var_0_0.selector_input_definitions
+local var_0_5 = "refresh_press"
+local var_0_6 = "confirm_press"
 
 StartGameWindowVersusQuickplay = class(StartGameWindowVersusQuickplay)
 StartGameWindowVersusQuickplay.NAME = "StartGameWindowVersusQuickplay"
 
-StartGameWindowVersusQuickplay.on_enter = function (self, params, offset)
+function StartGameWindowVersusQuickplay.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameViewWindow] Enter Substate StartGameWindowVersusQuickplay")
 
-	self._parent = params.parent
+	arg_1_0._parent = arg_1_1.parent
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_1_0 = arg_1_1.ingame_ui_context
 
-	self._ingame_ui_context = ingame_ui_context
-	self._ui_renderer = ingame_ui_context.ui_renderer
-	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self._input_manager = ingame_ui_context.input_manager
-	self._render_settings = {
-		snap_pixel_positions = true,
+	arg_1_0._ingame_ui_context = var_1_0
+	arg_1_0._ui_renderer = var_1_0.ui_renderer
+	arg_1_0._ui_top_renderer = var_1_0.ui_top_renderer
+	arg_1_0._input_manager = var_1_0.input_manager
+	arg_1_0._render_settings = {
+		snap_pixel_positions = true
 	}
-	self._animations = {}
+	arg_1_0._animations = {}
 
-	self:_create_ui_elements(params, offset)
+	arg_1_0:_create_ui_elements(arg_1_1, arg_1_2)
 
-	self._input_index = params.input_index or 1
+	arg_1_0._input_index = arg_1_1.input_index or 1
 
-	self:_handle_new_selection(self._input_index)
+	arg_1_0:_handle_new_selection(arg_1_0._input_index)
 
-	self._is_focused = false
-	self._play_button_pressed = false
-	self._previous_can_play = nil
+	arg_1_0._is_focused = false
+	arg_1_0._play_button_pressed = false
+	arg_1_0._previous_can_play = nil
 
-	self._parent:change_generic_actions("versus_quickplay_default")
-	self:_start_transition_animation("on_enter")
+	arg_1_0._parent:change_generic_actions("versus_quickplay_default")
+	arg_1_0:_start_transition_animation("on_enter")
 end
 
-StartGameWindowVersusQuickplay._start_transition_animation = function (self, animation_name)
-	local params = {
-		render_settings = self._render_settings,
+function StartGameWindowVersusQuickplay._start_transition_animation(arg_2_0, arg_2_1)
+	local var_2_0 = {
+		render_settings = arg_2_0._render_settings
 	}
-	local widgets = {}
-	local anim_id = self._ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
+	local var_2_1 = {}
+	local var_2_2 = arg_2_0._ui_animator:start_animation(arg_2_1, var_2_1, var_0_1, var_2_0)
 
-	self._animations[animation_name] = anim_id
+	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-StartGameWindowVersusQuickplay._create_ui_elements = function (self, params, offset)
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-	self._widgets, self._widgets_by_name = UIUtils.create_widgets(definitions.widget_definitions)
+function StartGameWindowVersusQuickplay._create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
+	arg_3_0._widgets, arg_3_0._widgets_by_name = UIUtils.create_widgets(var_0_0.widget_definitions)
 
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_3_0._ui_renderer)
 
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
+	arg_3_0._ui_animator = UIAnimator:new(arg_3_0._ui_scenegraph, var_0_3)
 
-	if offset then
-		local window_position = self._ui_scenegraph.window.local_position
+	if arg_3_2 then
+		local var_3_0 = arg_3_0._ui_scenegraph.window.local_position
 
-		window_position[1] = window_position[1] + offset[1]
-		window_position[2] = window_position[2] + offset[2]
-		window_position[3] = window_position[3] + offset[3]
+		var_3_0[1] = var_3_0[1] + arg_3_2[1]
+		var_3_0[2] = var_3_0[2] + arg_3_2[2]
+		var_3_0[3] = var_3_0[3] + arg_3_2[3]
 	end
 end
 
-StartGameWindowVersusQuickplay.on_exit = function (self, params)
+function StartGameWindowVersusQuickplay.on_exit(arg_4_0, arg_4_1)
 	print("[StartGameViewWindow] Exit Substate StartGameWindowVersusQuickplay")
 
-	self._ui_animator = nil
+	arg_4_0._ui_animator = nil
 
-	if self._play_button_pressed then
-		params.input_index = nil
+	if arg_4_0._play_button_pressed then
+		arg_4_1.input_index = nil
 	else
-		params.input_index = self._input_index
+		arg_4_1.input_index = arg_4_0._input_index
 	end
 end
 
-StartGameWindowVersusQuickplay.set_focus = function (self, focused)
-	self._is_focused = focused
+function StartGameWindowVersusQuickplay.set_focus(arg_5_0, arg_5_1)
+	arg_5_0._is_focused = arg_5_1
 end
 
-StartGameWindowVersusQuickplay.update = function (self, dt, t)
-	local gamepad_active = Managers.input:is_device_active("gamepad")
+function StartGameWindowVersusQuickplay.update(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = Managers.input:is_device_active("gamepad")
 
-	self:_update_can_play()
-	self:_update_animations(dt)
-	self:_handle_gamepad_activity()
-	self:_handle_input(dt, t)
-	self:_update_play_button_texture(gamepad_active)
-	self:_draw(dt)
+	arg_6_0:_update_can_play()
+	arg_6_0:_update_animations(arg_6_1)
+	arg_6_0:_handle_gamepad_activity()
+	arg_6_0:_handle_input(arg_6_1, arg_6_2)
+	arg_6_0:_update_play_button_texture(var_6_0)
+	arg_6_0:_draw(arg_6_1)
 end
 
-StartGameWindowVersusQuickplay.post_update = function (self, dt, t)
+function StartGameWindowVersusQuickplay.post_update(arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-StartGameWindowVersusQuickplay._handle_gamepad_activity = function (self)
-	local force_update = self.gamepad_active_last_frame == nil
-	local mouse_active = Managers.input:is_device_active("mouse")
+function StartGameWindowVersusQuickplay._handle_gamepad_activity(arg_8_0)
+	local var_8_0 = arg_8_0.gamepad_active_last_frame == nil
 
-	if not mouse_active then
-		if not self.gamepad_active_last_frame or force_update then
-			self._input_index = 1
+	if not Managers.input:is_device_active("mouse") then
+		if not arg_8_0.gamepad_active_last_frame or var_8_0 then
+			arg_8_0._input_index = 1
 
-			local input_funcs = selector_input_definitions[self._input_index]
+			local var_8_1 = var_0_4[arg_8_0._input_index]
 
-			if input_funcs and input_funcs.enter_requirements(self) then
-				input_funcs.on_enter(self)
+			if var_8_1 and var_8_1.enter_requirements(arg_8_0) then
+				var_8_1.on_enter(arg_8_0)
 			end
 
-			self.gamepad_active_last_frame = true
+			arg_8_0.gamepad_active_last_frame = true
 		end
-	elseif self.gamepad_active_last_frame or force_update then
-		self.gamepad_active_last_frame = false
+	elseif arg_8_0.gamepad_active_last_frame or var_8_0 then
+		arg_8_0.gamepad_active_last_frame = false
 
-		local input_funcs = selector_input_definitions[self._input_index]
-
-		input_funcs.on_exit(self)
+		var_0_4[arg_8_0._input_index].on_exit(arg_8_0)
 	end
 end
 
-StartGameWindowVersusQuickplay._update_can_play = function (self)
-	local can_play, reason = self:_can_play()
-	local play_button = self._widgets_by_name.play_button
+function StartGameWindowVersusQuickplay._update_can_play(arg_9_0)
+	local var_9_0, var_9_1 = arg_9_0:_can_play()
 
-	play_button.content.button_hotspot.disable_button = not can_play
+	arg_9_0._widgets_by_name.play_button.content.button_hotspot.disable_button = not var_9_0
 
-	local quickplay_disabled_disclaimer = self._widgets_by_name.quickplay_disabled_disclaimer
+	local var_9_2 = arg_9_0._widgets_by_name.quickplay_disabled_disclaimer
 
-	quickplay_disabled_disclaimer.content.visible = not can_play
-	quickplay_disabled_disclaimer.content.text = reason
+	var_9_2.content.visible = not var_9_0
+	var_9_2.content.text = var_9_1
 
-	if reason then
-		local localize = Managers.localizer:exists(reason)
+	if var_9_1 then
+		local var_9_3 = Managers.localizer:exists(var_9_1)
 
-		quickplay_disabled_disclaimer.style.text.localize = localize
-		quickplay_disabled_disclaimer.style.text_shadow.localize = localize
+		var_9_2.style.text.localize = var_9_3
+		var_9_2.style.text_shadow.localize = var_9_3
 	end
 
-	local input_desc = "versus_quickplay_default"
+	local var_9_4 = "versus_quickplay_default"
 
-	if can_play then
-		input_desc = "versus_quickplay_play"
+	if var_9_0 then
+		var_9_4 = "versus_quickplay_play"
 	end
 
-	if input_desc ~= self._prev_input_desc then
-		self._parent:set_input_description(input_desc)
+	if var_9_4 ~= arg_9_0._prev_input_desc then
+		arg_9_0._parent:set_input_description(var_9_4)
 
-		self._prev_input_desc = input_desc
+		arg_9_0._prev_input_desc = var_9_4
 	end
 end
 
-StartGameWindowVersusQuickplay._handle_input = function (self, dt, t)
-	if not self._is_focused then
+function StartGameWindowVersusQuickplay._handle_input(arg_10_0, arg_10_1, arg_10_2)
+	if not arg_10_0._is_focused then
 		return
 	end
 
-	local parent = self._parent
-	local input_service = parent:window_input_service()
-	local mouse_active = Managers.input:is_device_active("mouse")
-	local can_play = self:_can_play()
+	local var_10_0 = arg_10_0._parent
+	local var_10_1 = var_10_0:window_input_service()
+	local var_10_2 = Managers.input:is_device_active("mouse")
+	local var_10_3 = arg_10_0:_can_play()
 
-	if not mouse_active then
-		local input_index = self._input_index
-		local input_change
+	if not var_10_2 then
+		local var_10_4 = arg_10_0._input_index
+		local var_10_5
 
-		if input_service:get("move_down") then
-			input_index = input_index + 1
-			input_change = 1
-		elseif input_service:get("move_up") then
-			input_index = input_index - 1
-			input_change = -1
+		if var_10_1:get("move_down") then
+			var_10_4 = var_10_4 + 1
+			var_10_5 = 1
+		elseif var_10_1:get("move_up") then
+			var_10_4 = var_10_4 - 1
+			var_10_5 = -1
 		else
-			local input_funcs = selector_input_definitions[input_index]
-
-			input_funcs.update(self, input_service, can_play, dt, t)
+			var_0_4[var_10_4].update(arg_10_0, var_10_1, var_10_3, arg_10_1, arg_10_2)
 		end
 
-		if input_index ~= self._input_index then
-			self:_gamepad_selector_input_func(input_index, input_change)
+		if var_10_4 ~= arg_10_0._input_index then
+			arg_10_0:_gamepad_selector_input_func(var_10_4, var_10_5)
 		end
 
-		if can_play and input_service:get(START_GAME_INPUT) then
-			self._parent:play(t, "versus_quickplay")
+		if var_10_3 and var_10_1:get(var_0_5) then
+			arg_10_0._parent:play(arg_10_2, "versus_quickplay")
 		end
 	else
-		local widgets_by_name = self._widgets_by_name
+		local var_10_6 = arg_10_0._widgets_by_name
 
-		for i = 1, #selector_input_definitions do
-			local widget_name = selector_input_definitions[i].widget_name
-			local widget = widgets_by_name[widget_name]
-			local is_selected = widget.content.is_selected
+		for iter_10_0 = 1, #var_0_4 do
+			local var_10_7 = var_0_4[iter_10_0].widget_name
+			local var_10_8 = var_10_6[var_10_7].content.is_selected
 
-			if widget_name == "play_button" and self:_can_play() then
-				if not is_selected and UIUtils.is_button_hover_enter(widgets_by_name.play_button) then
-					self:_handle_new_selection(i)
-					self:_play_sound("Play_hud_hover")
+			if var_10_7 == "play_button" and arg_10_0:_can_play() then
+				if not var_10_8 and UIUtils.is_button_hover_enter(var_10_6.play_button) then
+					arg_10_0:_handle_new_selection(iter_10_0)
+					arg_10_0:_play_sound("Play_hud_hover")
 				end
 
-				if UIUtils.is_button_pressed(widgets_by_name.play_button) then
-					self:_option_selected(widget_name, "play_button", t)
+				if UIUtils.is_button_pressed(var_10_6.play_button) then
+					arg_10_0:_option_selected(var_10_7, "play_button", arg_10_2)
 				end
 			end
 		end
 	end
 
-	local consume = true
+	local var_10_9 = true
 
-	if input_service:get("right_stick_press", consume) then
-		parent:set_window_input_focus("versus_additional_quickplay_settings")
+	if var_10_1:get("right_stick_press", var_10_9) then
+		var_10_0:set_window_input_focus("versus_additional_quickplay_settings")
 	end
 end
 
-StartGameWindowVersusQuickplay._play_sound = function (self, event)
-	return self._parent:play_sound(event)
+function StartGameWindowVersusQuickplay._play_sound(arg_11_0, arg_11_1)
+	return arg_11_0._parent:play_sound(arg_11_1)
 end
 
-StartGameWindowVersusQuickplay._can_play = function (self)
+function StartGameWindowVersusQuickplay._can_play(arg_12_0)
 	if script_data["eac-untrusted"] then
 		return false, "versus_disabled_in_modded_realm_disclaimer"
 	end
 
-	local quickplay_enabled, disabled_reason = Managers.backend:get_interface("versus"):matchmaking_enabled("quickplay")
+	local var_12_0, var_12_1 = Managers.backend:get_interface("versus"):matchmaking_enabled("quickplay")
 
-	if not quickplay_enabled then
-		disabled_reason = disabled_reason or "Temporarily disabled"
+	if not var_12_0 then
+		var_12_1 = var_12_1 or "Temporarily disabled"
 
-		return false, disabled_reason
+		return false, var_12_1
 	end
 
 	return true
 end
 
-StartGameWindowVersusQuickplay._option_selected = function (self, widget_name, button_name, t)
-	if widget_name == "play_button" then
-		self._parent:play(t, "versus_quickplay")
+function StartGameWindowVersusQuickplay._option_selected(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	if arg_13_1 == "play_button" then
+		arg_13_0._parent:play(arg_13_3, "versus_quickplay")
 	else
-		ferror("Unknown selector_input_definition: %s", widget_name)
+		ferror("Unknown selector_input_definition: %s", arg_13_1)
 	end
 end
 
-StartGameWindowVersusQuickplay._verify_selection_index = function (self, input_index, input_change)
-	local verified_index = self._input_index
-	local num_inputs = #selector_input_definitions
+function StartGameWindowVersusQuickplay._verify_selection_index(arg_14_0, arg_14_1, arg_14_2)
+	local var_14_0 = arg_14_0._input_index
+	local var_14_1 = #var_0_4
 
-	input_index = math.clamp(input_index, 1, num_inputs)
+	arg_14_1 = math.clamp(arg_14_1, 1, var_14_1)
 
-	if not input_change then
-		return input_index
+	if not arg_14_2 then
+		return arg_14_1
 	end
 
-	local input_funcs = selector_input_definitions[input_index]
+	local var_14_2 = var_0_4[arg_14_1]
 
-	while input_funcs and input_index < num_inputs and not input_funcs.enter_requirements(self) do
-		input_index = input_index + input_change
-		input_funcs = selector_input_definitions[input_index]
+	while var_14_2 and arg_14_1 < var_14_1 and not var_14_2.enter_requirements(arg_14_0) do
+		arg_14_1 = arg_14_1 + arg_14_2
+		var_14_2 = var_0_4[arg_14_1]
 	end
 
-	if input_funcs and input_funcs.enter_requirements(self) then
-		verified_index = input_index
+	if var_14_2 and var_14_2.enter_requirements(arg_14_0) then
+		var_14_0 = arg_14_1
 	end
 
-	return verified_index
+	return var_14_0
 end
 
-StartGameWindowVersusQuickplay._gamepad_selector_input_func = function (self, input_index, input_change)
-	local mouse_active = Managers.input:is_device_active("mouse")
+function StartGameWindowVersusQuickplay._gamepad_selector_input_func(arg_15_0, arg_15_1, arg_15_2)
+	local var_15_0 = Managers.input:is_device_active("mouse")
 
-	input_index = self:_verify_selection_index(input_index, input_change)
+	arg_15_1 = arg_15_0:_verify_selection_index(arg_15_1, arg_15_2)
 
-	if self._input_index ~= input_index and not mouse_active then
-		self._parent:play_sound("play_gui_lobby_button_02_mission_act_click")
+	if arg_15_0._input_index ~= arg_15_1 and not var_15_0 then
+		arg_15_0._parent:play_sound("play_gui_lobby_button_02_mission_act_click")
 
-		if self._input_index then
-			local input_funcs = selector_input_definitions[self._input_index]
-
-			input_funcs.on_exit(self)
+		if arg_15_0._input_index then
+			var_0_4[arg_15_0._input_index].on_exit(arg_15_0)
 		end
 
-		local input_funcs = selector_input_definitions[input_index]
-
-		input_funcs.on_enter(self)
+		var_0_4[arg_15_1].on_enter(arg_15_0)
 	end
 
-	self._input_index = input_index
+	arg_15_0._input_index = arg_15_1
 end
 
-StartGameWindowVersusQuickplay._handle_new_selection = function (self, input_index, input_change)
-	local num_inputs = #selector_input_definitions
+function StartGameWindowVersusQuickplay._handle_new_selection(arg_16_0, arg_16_1, arg_16_2)
+	local var_16_0 = #var_0_4
 
-	input_index = math.clamp(input_index, 1, num_inputs)
+	arg_16_1 = math.clamp(arg_16_1, 1, var_16_0)
 
-	local widgets_by_name = self._widgets_by_name
+	local var_16_1 = arg_16_0._widgets_by_name
 
-	for i = 1, #selector_input_definitions do
-		local widget_name = selector_input_definitions[i].widget_name
-		local widget = widgets_by_name[widget_name]
-		local is_selected = i == input_index and self._gamepad_active
+	for iter_16_0 = 1, #var_0_4 do
+		local var_16_2 = var_16_1[var_0_4[iter_16_0].widget_name]
+		local var_16_3 = iter_16_0 == arg_16_1 and arg_16_0._gamepad_active
 
-		widget.content.is_selected = is_selected
+		var_16_2.content.is_selected = var_16_3
 	end
 
-	self._input_index = input_index
+	arg_16_0._input_index = arg_16_1
 end
 
-StartGameWindowVersusQuickplay._update_animations = function (self, dt)
-	local ui_animator = self._ui_animator
+function StartGameWindowVersusQuickplay._update_animations(arg_17_0, arg_17_1)
+	local var_17_0 = arg_17_0._ui_animator
 
-	ui_animator:update(dt)
+	var_17_0:update(arg_17_1)
 
 	if not Managers.input:is_device_active("gamepad") then
-		self:_update_button_animations(dt)
+		arg_17_0:_update_button_animations(arg_17_1)
 	end
 
-	local animations = self._animations
+	local var_17_1 = arg_17_0._animations
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_17_0, iter_17_1 in pairs(var_17_1) do
+		if var_17_0:is_animation_completed(iter_17_1) then
+			var_17_0:stop_animation(iter_17_1)
 
-			animations[animation_name] = nil
+			var_17_1[iter_17_0] = nil
 		end
 	end
 
-	local widgets_by_name = self._widgets_by_name
+	local var_17_2 = arg_17_0._widgets_by_name
 
-	UIWidgetUtils.animate_play_button(widgets_by_name.play_button, dt)
+	UIWidgetUtils.animate_play_button(var_17_2.play_button, arg_17_1)
 end
 
-StartGameWindowVersusQuickplay._update_button_animations = function (self, dt)
-	local widgets_by_name = self._widgets_by_name
+function StartGameWindowVersusQuickplay._update_button_animations(arg_18_0, arg_18_1)
+	local var_18_0 = arg_18_0._widgets_by_name
 end
 
-StartGameWindowVersusQuickplay._draw = function (self, dt)
-	local ui_top_renderer = self._ui_top_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local input_service = self._parent:window_input_service()
-	local render_settings = self._render_settings
-	local parent_scenegraph_id
+function StartGameWindowVersusQuickplay._draw(arg_19_0, arg_19_1)
+	local var_19_0 = arg_19_0._ui_top_renderer
+	local var_19_1 = arg_19_0._ui_scenegraph
+	local var_19_2 = arg_19_0._parent:window_input_service()
+	local var_19_3 = arg_19_0._render_settings
+	local var_19_4
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, parent_scenegraph_id, render_settings)
-	UIRenderer.draw_all_widgets(ui_top_renderer, self._widgets)
-	UIRenderer.end_pass(ui_top_renderer)
+	UIRenderer.begin_pass(var_19_0, var_19_1, var_19_2, arg_19_1, var_19_4, var_19_3)
+	UIRenderer.draw_all_widgets(var_19_0, arg_19_0._widgets)
+	UIRenderer.end_pass(var_19_0)
 end
 
-StartGameWindowVersusQuickplay._update_play_button_texture = function (self, gamepad_active)
-	local widgets_by_name = self._widgets_by_name
+function StartGameWindowVersusQuickplay._update_play_button_texture(arg_20_0, arg_20_1)
+	local var_20_0 = arg_20_0._widgets_by_name
 
-	if self._gamepad_active ~= gamepad_active then
-		self._gamepad_active = gamepad_active
+	if arg_20_0._gamepad_active ~= arg_20_1 then
+		arg_20_0._gamepad_active = arg_20_1
 
-		if gamepad_active then
-			local input_service = self._parent:window_input_service()
-			local input_action = "refresh"
-			local button_texture_data = UISettings.get_gamepad_input_texture_data(input_service, input_action, gamepad_active)
+		if arg_20_1 then
+			local var_20_1 = arg_20_0._parent:window_input_service()
+			local var_20_2 = "refresh"
+			local var_20_3 = UISettings.get_gamepad_input_texture_data(var_20_1, var_20_2, arg_20_1)
 
-			if button_texture_data then
-				widgets_by_name.play_button.content.texture_icon_id = button_texture_data.texture
+			if var_20_3 then
+				var_20_0.play_button.content.texture_icon_id = var_20_3.texture
 			end
 		else
-			widgets_by_name.play_button.content.texture_icon_id = "options_button_icon_quickplay"
+			var_20_0.play_button.content.texture_icon_id = "options_button_icon_quickplay"
 		end
 
-		self:_handle_new_selection(self._input_index)
+		arg_20_0:_handle_new_selection(arg_20_0._input_index)
 	end
 end

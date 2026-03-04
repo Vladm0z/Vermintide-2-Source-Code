@@ -1,28 +1,28 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_dummy_behavior.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_dummy_behavior.lua
 
-local ACTIONS = BreedActions.beastmen_gor
+local var_0_0 = BreedActions.beastmen_gor
 
 BreedBehaviors.beastmen_dummy = {
 	"BTSelector",
 	{
 		"BTSpawningAction",
 		condition = "spawn",
-		name = "spawn",
+		name = "spawn"
 	},
 	{
 		"BTFallAction",
 		condition = "is_falling",
-		name = "falling",
+		name = "falling"
 	},
 	{
 		"BTIdleAction",
-		condition = "no_target",
 		name = "idle",
-		action_data = ACTIONS.dummy_idle,
+		condition = "no_target",
+		action_data = var_0_0.dummy_idle
 	},
 	{
 		"BTFallbackIdleAction",
-		name = "fallback_idle",
+		name = "fallback_idle"
 	},
-	name = "beastmen_dummy",
+	name = "beastmen_dummy"
 }

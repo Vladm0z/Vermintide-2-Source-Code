@@ -1,92 +1,89 @@
-﻿-- chunkname: @scripts/unit_extensions/wizards/trail_urn_alignment_extension.lua
+-- chunkname: @scripts/unit_extensions/wizards/trail_urn_alignment_extension.lua
 
 TrailUrnAlignmentExtension = class(TrailUrnAlignmentExtension)
 
-local STATE = {
-	IS_ALIGNED = 3,
+local var_0_0 = {
 	MOVE_TO_NODE = 2,
 	WAITING_FOR_INTERACTION = 1,
+	IS_ALIGNED = 3
 }
-local lerp_duration = 0.3
+local var_0_1 = 0.3
 
-TrailUrnAlignmentExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self._unit = unit
-	self._interactable_type = Unit.get_data(unit, "interaction_data", "interaction_type")
-	self._elapsed_time = 0
-	self._start_time = 0
-	self._start_position = nil
-	self._start_offset = nil
-	self._interaction_position = Vector3Box(Vector3.zero())
-	self._position = Vector3Box(Unit.world_position(self._unit, 0))
-	self._nav_world = Managers.state.entity:system("ai_system"):nav_world()
-	self._interaction_distance = Unit.get_data(unit, "animation_distance")
-	self._align_state = STATE.WAITING_FOR_INTERACTION
+function TrailUrnAlignmentExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._unit = arg_1_2
+	arg_1_0._interactable_type = Unit.get_data(arg_1_2, "interaction_data", "interaction_type")
+	arg_1_0._elapsed_time = 0
+	arg_1_0._start_time = 0
+	arg_1_0._start_position = nil
+	arg_1_0._start_offset = nil
+	arg_1_0._interaction_position = Vector3Box(Vector3.zero())
+	arg_1_0._position = Vector3Box(Unit.world_position(arg_1_0._unit, 0))
+	arg_1_0._nav_world = Managers.state.entity:system("ai_system"):nav_world()
+	arg_1_0._interaction_distance = Unit.get_data(arg_1_2, "animation_distance")
+	arg_1_0._align_state = var_0_0.WAITING_FOR_INTERACTION
 end
 
-TrailUrnAlignmentExtension.update_interaction_position = function (self, interactor_unit)
-	local player_pos = POSITION_LOOKUP[interactor_unit]
-	local urn_pos = self._position:unbox()
-	local offset_direction = Vector3.normalize(player_pos - urn_pos)
-	local interaction_offset = offset_direction * self._interaction_distance
-	local interaction_position = interaction_offset + urn_pos
-	local success, z_pos = GwNavQueries.triangle_from_position(self._nav_world, interaction_position, 1, 1)
+function TrailUrnAlignmentExtension.update_interaction_position(arg_2_0, arg_2_1)
+	local var_2_0 = POSITION_LOOKUP[arg_2_1]
+	local var_2_1 = arg_2_0._position:unbox()
+	local var_2_2 = Vector3.normalize(var_2_0 - var_2_1) * arg_2_0._interaction_distance + var_2_1
+	local var_2_3, var_2_4 = GwNavQueries.triangle_from_position(arg_2_0._nav_world, var_2_2, 1, 1)
 
-	if success then
-		interaction_position.z = z_pos
+	if var_2_3 then
+		var_2_2.z = var_2_4
 
-		return interaction_position
+		return var_2_2
 	else
-		local steps = 10
-		local d = 1
+		local var_2_5 = 10
+		local var_2_6 = 1
 
-		for i = 1, steps do
-			local step = 2 * math.pi / steps * i
-			local pos = Vector3(math.sin(step) * self._interaction_distance * d, -math.cos(step) * self._interaction_distance * d, 0)
+		for iter_2_0 = 1, var_2_5 do
+			local var_2_7 = 2 * math.pi / var_2_5 * iter_2_0
+			local var_2_8 = Vector3(math.sin(var_2_7) * arg_2_0._interaction_distance * var_2_6, -math.cos(var_2_7) * arg_2_0._interaction_distance * var_2_6, 0)
 
-			d = d * -1
+			var_2_6 = var_2_6 * -1
 
-			local step_pos = urn_pos + pos
-			local success, z_pos = GwNavQueries.triangle_from_position(self._nav_world, step_pos, 1, 1)
+			local var_2_9 = var_2_1 + var_2_8
+			local var_2_10, var_2_11 = GwNavQueries.triangle_from_position(arg_2_0._nav_world, var_2_9, 1, 1)
 
-			if success then
-				step_pos.z = z_pos
+			if var_2_10 then
+				var_2_9.z = var_2_11
 
-				return step_pos
+				return var_2_9
 			end
 		end
 	end
 end
 
-TrailUrnAlignmentExtension.can_interact = function (self)
-	if self._align_state ~= STATE.WAITING_FOR_INTERACTION then
+function TrailUrnAlignmentExtension.can_interact(arg_3_0)
+	if arg_3_0._align_state ~= var_0_0.WAITING_FOR_INTERACTION then
 		return false
 	end
 
 	return true
 end
 
-TrailUrnAlignmentExtension.on_client_start_interaction = function (self, interactor_unit, t)
-	self._elapsed_time = 0
-	self._start_time = t
-	self._start_position = Vector3Box(POSITION_LOOKUP[interactor_unit])
+function TrailUrnAlignmentExtension.on_client_start_interaction(arg_4_0, arg_4_1, arg_4_2)
+	arg_4_0._elapsed_time = 0
+	arg_4_0._start_time = arg_4_2
+	arg_4_0._start_position = Vector3Box(POSITION_LOOKUP[arg_4_1])
 
-	local interaction_position = self:update_interaction_position(interactor_unit)
+	local var_4_0 = arg_4_0:update_interaction_position(arg_4_1)
 
-	self._interaction_position:store(interaction_position)
+	arg_4_0._interaction_position:store(var_4_0)
 
-	self._align_state = STATE.MOVE_TO_NODE
+	arg_4_0._align_state = var_0_0.MOVE_TO_NODE
 end
 
-local movement_threshold_sq = 1
+local var_0_2 = 1
 
-TrailUrnAlignmentExtension.is_unit_pushed_out_off_range = function (self, interactor_unit, interactable_unit)
-	local interactor_position = POSITION_LOOKUP[interactor_unit]
-	local start_offset = self._start_offset:unbox()
-	local current_offset = interactor_position - self._position:unbox()
-	local pushed_distance_sqr = Vector3.distance_squared(start_offset, current_offset)
+function TrailUrnAlignmentExtension.is_unit_pushed_out_off_range(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = POSITION_LOOKUP[arg_5_1]
+	local var_5_1 = arg_5_0._start_offset:unbox()
+	local var_5_2 = var_5_0 - arg_5_0._position:unbox()
 
-	if pushed_distance_sqr > movement_threshold_sq then
-		self._align_state = STATE.WAITING_FOR_INTERACTION
+	if Vector3.distance_squared(var_5_1, var_5_2) > var_0_2 then
+		arg_5_0._align_state = var_0_0.WAITING_FOR_INTERACTION
 
 		return true
 	end
@@ -94,75 +91,69 @@ TrailUrnAlignmentExtension.is_unit_pushed_out_off_range = function (self, intera
 	return false
 end
 
-TrailUrnAlignmentExtension.on_client_move_to_node = function (self, interactor_unit, interactable_unit, is_husk, t)
-	if self._align_state ~= STATE.MOVE_TO_NODE then
+function TrailUrnAlignmentExtension.on_client_move_to_node(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	if arg_6_0._align_state ~= var_0_0.MOVE_TO_NODE then
 		return false
 	end
 
-	local interactable_position = self._position:unbox()
-	local interactor_position = POSITION_LOOKUP[interactor_unit]
-	local lerped_wanted_position = self:lerp_to_node(interactor_unit, lerp_duration, t)
+	local var_6_0 = arg_6_0._position:unbox()
+	local var_6_1 = POSITION_LOOKUP[arg_6_1]
+	local var_6_2 = arg_6_0:lerp_to_node(arg_6_1, var_0_1, arg_6_4)
 
-	if not is_husk then
-		local locomotion_extension = ScriptUnit.extension(interactor_unit, "locomotion_system")
+	if not arg_6_3 then
+		local var_6_3 = ScriptUnit.extension(arg_6_1, "locomotion_system")
 
-		locomotion_extension:enable_wanted_position_movement()
-		locomotion_extension:set_wanted_pos(lerped_wanted_position)
+		var_6_3:enable_wanted_position_movement()
+		var_6_3:set_wanted_pos(var_6_2)
 
-		local direction = interactable_position - interactor_position
-		local rotation = Quaternion.look(Vector3.flat(direction), Vector3.up())
+		local var_6_4 = var_6_0 - var_6_1
+		local var_6_5 = Quaternion.look(Vector3.flat(var_6_4), Vector3.up())
 
-		Unit.set_local_rotation(interactor_unit, 0, rotation)
+		Unit.set_local_rotation(arg_6_1, 0, var_6_5)
 	end
 
-	local sqr_interaction_distance = self._interaction_distance * self._interaction_distance
-	local sqr_distance = Vector3.distance_squared(interactor_position, self._position:unbox())
-
-	if sqr_distance <= sqr_interaction_distance or self._elapsed_time > lerp_duration then
-		self._start_offset = Vector3Box(POSITION_LOOKUP[interactor_unit] - self._position:unbox())
-		self._align_state = STATE.IS_ALIGNED
+	if arg_6_0._interaction_distance * arg_6_0._interaction_distance >= Vector3.distance_squared(var_6_1, arg_6_0._position:unbox()) or arg_6_0._elapsed_time > var_0_1 then
+		arg_6_0._start_offset = Vector3Box(POSITION_LOOKUP[arg_6_1] - arg_6_0._position:unbox())
+		arg_6_0._align_state = var_0_0.IS_ALIGNED
 	end
 end
 
-TrailUrnAlignmentExtension.lerp_to_node = function (self, interactor_unit, duration, t)
-	self._elapsed_time = t - self._start_time
+function TrailUrnAlignmentExtension.lerp_to_node(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	arg_7_0._elapsed_time = arg_7_3 - arg_7_0._start_time
 
-	local lerp_t = self._elapsed_time / duration
+	local var_7_0 = arg_7_0._elapsed_time / arg_7_2
+	local var_7_1 = math.ease_out_quad(var_7_0)
+	local var_7_2 = math.clamp(var_7_1, 0, 1)
 
-	lerp_t = math.ease_out_quad(lerp_t)
-	lerp_t = math.clamp(lerp_t, 0, 1)
-
-	local new_position = Vector3.lerp(self._start_position:unbox(), self._interaction_position:unbox(), lerp_t)
-
-	return new_position
+	return (Vector3.lerp(arg_7_0._start_position:unbox(), arg_7_0._interaction_position:unbox(), var_7_2))
 end
 
-TrailUrnAlignmentExtension.on_client_stop = function (self, interaction_result)
-	if interaction_result == InteractionResult.SUCCESS then
-		local flow_event = "lua_interaction_stopped_" .. self._interactable_type .. "_" .. interaction_result
+function TrailUrnAlignmentExtension.on_client_stop(arg_8_0, arg_8_1)
+	if arg_8_1 == InteractionResult.SUCCESS then
+		local var_8_0 = "lua_interaction_stopped_" .. arg_8_0._interactable_type .. "_" .. arg_8_1
 
-		Unit.flow_event(self._unit, flow_event)
+		Unit.flow_event(arg_8_0._unit, var_8_0)
 
-		self._align_state = STATE.DONE
+		arg_8_0._align_state = var_0_0.DONE
 	else
-		self._align_state = STATE.WAITING_FOR_INTERACTION
+		arg_8_0._align_state = var_0_0.WAITING_FOR_INTERACTION
 	end
 end
 
-TrailUrnAlignmentExtension.is_state_move_to_node = function (self)
-	if self._align_state == STATE.MOVE_TO_NODE then
+function TrailUrnAlignmentExtension.is_state_move_to_node(arg_9_0)
+	if arg_9_0._align_state == var_0_0.MOVE_TO_NODE then
 		return true
 	end
 
 	return false
 end
 
-TrailUrnAlignmentExtension.set_state_waiting_for_interaction = function (self)
-	self._align_state = STATE.WAITING_FOR_INTERACTION
+function TrailUrnAlignmentExtension.set_state_waiting_for_interaction(arg_10_0)
+	arg_10_0._align_state = var_0_0.WAITING_FOR_INTERACTION
 end
 
-TrailUrnAlignmentExtension.is_state_aligned = function (self)
-	if self._align_state == STATE.IS_ALIGNED then
+function TrailUrnAlignmentExtension.is_state_aligned(arg_11_0)
+	if arg_11_0._align_state == var_0_0.IS_ALIGNED then
 		return true
 	end
 

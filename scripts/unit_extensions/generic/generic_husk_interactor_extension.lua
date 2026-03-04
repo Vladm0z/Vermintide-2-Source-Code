@@ -1,216 +1,209 @@
-﻿-- chunkname: @scripts/unit_extensions/generic/generic_husk_interactor_extension.lua
+-- chunkname: @scripts/unit_extensions/generic/generic_husk_interactor_extension.lua
 
 GenericHuskInteractorExtension = class(GenericHuskInteractorExtension)
 
-GenericHuskInteractorExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self.world = extension_init_context.world
-	self.unit = unit
-	self.state = "waiting_to_interact"
-	self.interaction_context = {
+function GenericHuskInteractorExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.world = arg_1_1.world
+	arg_1_0.unit = arg_1_2
+	arg_1_0.state = "waiting_to_interact"
+	arg_1_0.interaction_context = {
 		data = {
 			is_husk = true,
-			dice_keeper = extension_init_context.dice_keeper,
-			statistics_db = extension_init_context.statistics_db,
-		},
+			dice_keeper = arg_1_1.dice_keeper,
+			statistics_db = arg_1_1.statistics_db
+		}
 	}
-	self.is_server = Managers.player.is_server
+	arg_1_0.is_server = Managers.player.is_server
 
-	self.interactable_unit_destroy_callback = function (destroyed_interactable_unit)
-		local t = Managers.time:time("game")
+	function arg_1_0.interactable_unit_destroy_callback(arg_2_0)
+		local var_2_0 = Managers.time:time("game")
 
-		self:_stop_interaction(destroyed_interactable_unit, t)
+		arg_1_0:_stop_interaction(arg_2_0, var_2_0)
 	end
 end
 
-GenericHuskInteractorExtension.game_object_unit_destroyed = function (self)
-	if Managers.state.network:game() and self.is_server then
-		local interaction_context = self.interaction_context
-		local interactable_unit = interaction_context.interactable_unit
+function GenericHuskInteractorExtension.game_object_unit_destroyed(arg_3_0)
+	if Managers.state.network:game() and arg_3_0.is_server then
+		local var_3_0 = arg_3_0.interaction_context.interactable_unit
 
-		if Unit.alive(interactable_unit) and self.state == "doing_interaction" then
+		if Unit.alive(var_3_0) and arg_3_0.state == "doing_interaction" then
 			InteractionHelper.printf("[GenericHuskInteractorExtension] stopping due to game_object_unit_destroyed")
-			InteractionHelper:complete_interaction(self.unit, interactable_unit, InteractionResult.FAILURE)
+			InteractionHelper:complete_interaction(arg_3_0.unit, var_3_0, InteractionResult.FAILURE)
 		end
 	end
 end
 
-GenericHuskInteractorExtension.destroy = function (self)
-	local interaction_context = self.interaction_context
-	local interactable_unit = interaction_context.interactable_unit
+function GenericHuskInteractorExtension.destroy(arg_4_0)
+	local var_4_0 = arg_4_0.interaction_context.interactable_unit
 
-	if Unit.alive(interactable_unit) then
-		Managers.state.unit_spawner:remove_destroy_listener(interactable_unit, "interactable_unit_for_husk")
+	if Unit.alive(var_4_0) then
+		Managers.state.unit_spawner:remove_destroy_listener(var_4_0, "interactable_unit_for_husk")
 	end
 end
 
-GenericHuskInteractorExtension.update = function (self, unit, input, dt, context, t)
-	local world = self.world
-	local interaction_context = self.interaction_context
-	local interactable_unit = interaction_context.interactable_unit
-	local interaction_data = interaction_context.data
+function GenericHuskInteractorExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	local var_5_0 = arg_5_0.world
+	local var_5_1 = arg_5_0.interaction_context
+	local var_5_2 = var_5_1.interactable_unit
+	local var_5_3 = var_5_1.data
 
-	interaction_data.is_server = self.is_server
+	var_5_3.is_server = arg_5_0.is_server
 
-	local interaction_type = interaction_context.interaction_type
-	local interaction_template = InteractionDefinitions[interaction_type]
-	local interaction_config = interaction_template and interaction_template.config or nil
+	local var_5_4 = var_5_1.interaction_type
+	local var_5_5 = InteractionDefinitions[var_5_4]
+	local var_5_6 = var_5_5 and var_5_5.config or nil
 
-	if self.state == "starting_interaction" then
-		interaction_template.client.start(world, unit, interactable_unit, interaction_data, interaction_config, t)
+	if arg_5_0.state == "starting_interaction" then
+		var_5_5.client.start(var_5_0, arg_5_1, var_5_2, var_5_3, var_5_6, arg_5_5)
 
-		if self.is_server then
-			interaction_template.server.start(world, unit, interactable_unit, interaction_data, interaction_config, t)
+		if arg_5_0.is_server then
+			var_5_5.server.start(var_5_0, arg_5_1, var_5_2, var_5_3, var_5_6, arg_5_5)
 		end
 
-		interaction_context.previous_state = self.state
-		self.state = "doing_interaction"
+		var_5_1.previous_state = arg_5_0.state
+		arg_5_0.state = "doing_interaction"
 	end
 
-	if self.state == "doing_interaction" then
-		interaction_template.client.update(world, unit, interactable_unit, interaction_data, interaction_config, dt, t)
+	if arg_5_0.state == "doing_interaction" then
+		var_5_5.client.update(var_5_0, arg_5_1, var_5_2, var_5_3, var_5_6, arg_5_3, arg_5_5)
 
-		if self.is_server then
-			local interaction_result = interaction_template.server.update(world, unit, interactable_unit, interaction_data, interaction_config, dt, t)
+		if arg_5_0.is_server then
+			local var_5_7 = var_5_5.server.update(var_5_0, arg_5_1, var_5_2, var_5_3, var_5_6, arg_5_3, arg_5_5)
 
-			interaction_context.result = interaction_result
+			var_5_1.result = var_5_7
 
-			if interaction_result ~= InteractionResult.ONGOING then
-				InteractionHelper:complete_interaction(unit, interactable_unit, interaction_result)
+			if var_5_7 ~= InteractionResult.ONGOING then
+				InteractionHelper:complete_interaction(arg_5_1, var_5_2, var_5_7)
 			end
 		end
 	end
 end
 
-GenericHuskInteractorExtension._stop_interaction = function (self, interactable_unit, t)
-	Managers.state.unit_spawner:remove_destroy_listener(interactable_unit, "interactable_unit_for_husk")
+function GenericHuskInteractorExtension._stop_interaction(arg_6_0, arg_6_1, arg_6_2)
+	Managers.state.unit_spawner:remove_destroy_listener(arg_6_1, "interactable_unit_for_husk")
 
-	local world = self.world
-	local unit = self.unit
-	local interaction_context = self.interaction_context
-	local interaction_data = interaction_context.data
+	local var_6_0 = arg_6_0.world
+	local var_6_1 = arg_6_0.unit
+	local var_6_2 = arg_6_0.interaction_context
+	local var_6_3 = var_6_2.data
 
-	interaction_data.is_server = self.is_server
+	var_6_3.is_server = arg_6_0.is_server
 
-	local interaction_type = interaction_context.interaction_type
-	local interaction_template = InteractionDefinitions[interaction_type]
-	local interaction_config = interaction_template and interaction_template.config or nil
-	local local_only = interaction_context.local_only
-	local go_id, is_level_unit = Managers.state.network:game_object_or_level_id(interactable_unit)
+	local var_6_4 = var_6_2.interaction_type
+	local var_6_5 = InteractionDefinitions[var_6_4]
+	local var_6_6 = var_6_5 and var_6_5.config or nil
+	local var_6_7 = var_6_2.local_only
+	local var_6_8, var_6_9 = Managers.state.network:game_object_or_level_id(arg_6_1)
 
-	if not is_level_unit and go_id == nil then
-		InteractionHelper.printf("[GenericUnitInteractorExtension] game object doesnt exist, changing result from %s to %s", InteractionResult[interaction_context.result], InteractionResult[InteractionResult.FAILURE])
+	if not var_6_9 and var_6_8 == nil then
+		InteractionHelper.printf("[GenericUnitInteractorExtension] game object doesnt exist, changing result from %s to %s", InteractionResult[var_6_2.result], InteractionResult[InteractionResult.FAILURE])
 
-		interaction_context.result = InteractionResult.FAILURE
+		var_6_2.result = InteractionResult.FAILURE
 	end
 
-	local interaction_result = interaction_context.result
+	local var_6_10 = var_6_2.result
 
-	if interaction_result == InteractionResult.ONGOING or interaction_result == nil then
-		interaction_result = InteractionResult.FAILURE
-		interaction_context.result = interaction_result
+	if var_6_10 == InteractionResult.ONGOING or var_6_10 == nil then
+		var_6_10 = InteractionResult.FAILURE
+		var_6_2.result = var_6_10
 	end
 
-	InteractionHelper.printf("[GenericHuskInteractorExtension] Stopping interaction %s with result %s", interaction_type, InteractionResult[interaction_result])
-	interaction_template.client.stop(world, unit, interactable_unit, interaction_data, interaction_config, t, interaction_result)
+	InteractionHelper.printf("[GenericHuskInteractorExtension] Stopping interaction %s with result %s", var_6_4, InteractionResult[var_6_10])
+	var_6_5.client.stop(var_6_0, var_6_1, arg_6_1, var_6_3, var_6_6, arg_6_2, var_6_10)
 
-	if self.is_server and not local_only then
-		interaction_template.server.stop(world, unit, interactable_unit, interaction_data, interaction_config, t, interaction_result)
+	if arg_6_0.is_server and not var_6_7 then
+		var_6_5.server.stop(var_6_0, var_6_1, arg_6_1, var_6_3, var_6_6, arg_6_2, var_6_10)
 	end
 
-	interaction_context.previous_state = self.state
-	self.state = "waiting_to_interact"
+	var_6_2.previous_state = arg_6_0.state
+	arg_6_0.state = "waiting_to_interact"
 end
 
-GenericHuskInteractorExtension.is_interacting = function (self)
-	local interaction_context = self.interaction_context
-	local interaction_type = interaction_context.interaction_type
+function GenericHuskInteractorExtension.is_interacting(arg_7_0)
+	local var_7_0 = arg_7_0.interaction_context.interaction_type
 
-	return self.state ~= "waiting_to_interact", interaction_type
+	return arg_7_0.state ~= "waiting_to_interact", var_7_0
 end
 
-GenericHuskInteractorExtension.is_stopping = function (self)
-	return self.state == "stopping_interaction"
+function GenericHuskInteractorExtension.is_stopping(arg_8_0)
+	return arg_8_0.state == "stopping_interaction"
 end
 
-GenericHuskInteractorExtension.interactable_unit = function (self)
-	assert(self:is_interacting(), "Attempted to get interactable unit when interactor unit wasn't interacting.")
+function GenericHuskInteractorExtension.interactable_unit(arg_9_0)
+	assert(arg_9_0:is_interacting(), "Attempted to get interactable unit when interactor unit wasn't interacting.")
 
-	return self.interaction_context.interactable_unit
+	return arg_9_0.interaction_context.interactable_unit
 end
 
-GenericHuskInteractorExtension.hot_join_sync = function (self, peer_id)
-	if not self:is_interacting() then
+function GenericHuskInteractorExtension.hot_join_sync(arg_10_0, arg_10_1)
+	if not arg_10_0:is_interacting() then
 		return
 	end
 
-	local network_manager = Managers.state.network
-	local context = self.interaction_context
-	local state_id = NetworkLookup.interaction_states[self.state]
-	local interaction_type_id = NetworkLookup.interactions[context.interaction_type]
-	local interactable_unit_id, is_level_unit = network_manager:game_object_or_level_id(context.interactable_unit)
-	local data = context.data
-	local start_time = data.start_time
-	local duration = data.duration or 0
-	local unit_id = network_manager:unit_game_object_id(self.unit)
-	local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+	local var_10_0 = Managers.state.network
+	local var_10_1 = arg_10_0.interaction_context
+	local var_10_2 = NetworkLookup.interaction_states[arg_10_0.state]
+	local var_10_3 = NetworkLookup.interactions[var_10_1.interaction_type]
+	local var_10_4, var_10_5 = var_10_0:game_object_or_level_id(var_10_1.interactable_unit)
+	local var_10_6 = var_10_1.data
+	local var_10_7 = var_10_6.start_time
+	local var_10_8 = var_10_6.duration or 0
+	local var_10_9 = var_10_0:unit_game_object_id(arg_10_0.unit)
+	local var_10_10 = PEER_ID_TO_CHANNEL[arg_10_1]
 
-	RPC.rpc_sync_interaction_state(channel_id, unit_id, state_id, interaction_type_id, interactable_unit_id, start_time, duration, is_level_unit)
+	RPC.rpc_sync_interaction_state(var_10_10, var_10_9, var_10_2, var_10_3, var_10_4, var_10_7, var_10_8, var_10_5)
 end
 
-GenericHuskInteractorExtension.set_interaction_context = function (self, state, interaction_type, interactable_unit, start_time, duration)
-	InteractionHelper.printf("[GenericHuskInteractorExtension] set_interaction_context %s %s %s", state, interaction_type, tostring(interactable_unit))
+function GenericHuskInteractorExtension.set_interaction_context(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+	InteractionHelper.printf("[GenericHuskInteractorExtension] set_interaction_context %s %s %s", arg_11_1, arg_11_2, tostring(arg_11_3))
 
-	self.interaction_context.previous_state = self.state
-	self.state = state
-	self.interaction_context.data.start_time = start_time
-	self.interaction_context.data.duration = duration
-	self.interaction_context.interactable_unit = interactable_unit
-	self.interaction_context.interaction_type = interaction_type
-	self.interaction_context.result = InteractionResult.ONGOING
+	arg_11_0.interaction_context.previous_state = arg_11_0.state
+	arg_11_0.state = arg_11_1
+	arg_11_0.interaction_context.data.start_time = arg_11_4
+	arg_11_0.interaction_context.data.duration = arg_11_5
+	arg_11_0.interaction_context.interactable_unit = arg_11_3
+	arg_11_0.interaction_context.interaction_type = arg_11_2
+	arg_11_0.interaction_context.result = InteractionResult.ONGOING
 
-	local interactable_extension = ScriptUnit.extension(interactable_unit, "interactable_system")
-
-	interactable_extension:set_is_being_interacted_with(self.unit)
+	ScriptUnit.extension(arg_11_3, "interactable_system"):set_is_being_interacted_with(arg_11_0.unit)
 end
 
-GenericHuskInteractorExtension.interaction_approved = function (self, interaction_type, interactable_unit)
-	if not Unit.alive(interactable_unit) then
-		InteractionHelper.printf("[GenericHuskInteractorExtension] interaction_approved interactable_unit no longer alive interaction_type:%s", interaction_type)
+function GenericHuskInteractorExtension.interaction_approved(arg_12_0, arg_12_1, arg_12_2)
+	if not Unit.alive(arg_12_2) then
+		InteractionHelper.printf("[GenericHuskInteractorExtension] interaction_approved interactable_unit no longer alive interaction_type:%s", arg_12_1)
 
 		return
 	end
 
-	InteractionHelper.printf("[GenericHuskInteractorExtension] interaction_approved %s %s", interaction_type, tostring(interactable_unit))
+	InteractionHelper.printf("[GenericHuskInteractorExtension] interaction_approved %s %s", arg_12_1, tostring(arg_12_2))
 
-	self.interaction_context.previous_state = self.state
-	self.state = "starting_interaction"
+	arg_12_0.interaction_context.previous_state = arg_12_0.state
+	arg_12_0.state = "starting_interaction"
 
-	local interaction_context = self.interaction_context
+	local var_12_0 = arg_12_0.interaction_context
 
-	interaction_context.interaction_type = interaction_type
-	interaction_context.interactable_unit = interactable_unit
-	interaction_context.result = InteractionResult.ONGOING
+	var_12_0.interaction_type = arg_12_1
+	var_12_0.interactable_unit = arg_12_2
+	var_12_0.result = InteractionResult.ONGOING
 
-	local interaction_data = interaction_context.data
-	local interaction_template = InteractionDefinitions[interaction_type]
-	local interaction_config = interaction_template.config
+	local var_12_1 = var_12_0.data
 
-	interaction_data.duration = interaction_config.duration
-	interaction_data.start_time = Managers.time:time("game")
+	var_12_1.duration = InteractionDefinitions[arg_12_1].config.duration
+	var_12_1.start_time = Managers.time:time("game")
 
-	Managers.state.unit_spawner:add_destroy_listener(interactable_unit, "interactable_unit_for_husk", self.interactable_unit_destroy_callback)
+	Managers.state.unit_spawner:add_destroy_listener(arg_12_2, "interactable_unit_for_husk", arg_12_0.interactable_unit_destroy_callback)
 end
 
-GenericHuskInteractorExtension.interaction_completed = function (self, interaction_result)
-	local state = self.state
+function GenericHuskInteractorExtension.interaction_completed(arg_13_0, arg_13_1)
+	local var_13_0 = arg_13_0.state
 
-	InteractionHelper.printf("[GenericHuskInteractorExtension] interaction_completed during state %s with result %s", state, InteractionResult[interaction_result])
-	assert(state ~= "waiting_to_interact", "Was in wrong state when getting interaction completed.")
+	InteractionHelper.printf("[GenericHuskInteractorExtension] interaction_completed during state %s with result %s", var_13_0, InteractionResult[arg_13_1])
+	assert(var_13_0 ~= "waiting_to_interact", "Was in wrong state when getting interaction completed.")
 
-	self.interaction_context.result = interaction_result
+	arg_13_0.interaction_context.result = arg_13_1
 
-	local interactable_unit = self.interaction_context.interactable_unit
-	local t = Managers.time:time("game")
+	local var_13_1 = arg_13_0.interaction_context.interactable_unit
+	local var_13_2 = Managers.time:time("game")
 
-	self:_stop_interaction(interactable_unit, t)
+	arg_13_0:_stop_interaction(var_13_1, var_13_2)
 end

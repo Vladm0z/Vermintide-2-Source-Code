@@ -1,117 +1,116 @@
-﻿-- chunkname: @scripts/tests/testify_expect.lua
+-- chunkname: @scripts/tests/testify_expect.lua
 
 TestifyExpect = class(TestifyExpect)
 
-TestifyExpect.init = function (self)
-	self._expects = {}
+function TestifyExpect.init(arg_1_0)
+	arg_1_0._expects = {}
 end
 
-TestifyExpect.update = function (self)
-	local expects = self._expects
+function TestifyExpect.update(arg_2_0)
+	local var_2_0 = arg_2_0._expects
 
-	for index, expect in pairs(expects) do
-		self:_handle_expect(expect)
+	for iter_2_0, iter_2_1 in pairs(var_2_0) do
+		arg_2_0:_handle_expect(iter_2_1)
 
-		expects[index] = nil
+		var_2_0[iter_2_0] = nil
 	end
 end
 
-TestifyExpect.fail = function (self, expect, message)
-	self:_expect(expect, false, message)
+function TestifyExpect.fail(arg_3_0, arg_3_1, arg_3_2)
+	arg_3_0:_expect(arg_3_1, false, arg_3_2)
 end
 
-TestifyExpect.is_true = function (self, expect, condition, message)
-	condition = condition == true
+function TestifyExpect.is_true(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	arg_4_2 = arg_4_2 == true
 
-	self:_expect(expect, condition, message)
+	arg_4_0:_expect(arg_4_1, arg_4_2, arg_4_3)
 end
 
-TestifyExpect.is_false = function (self, expect, condition, message)
-	condition = condition == false
+function TestifyExpect.is_false(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	arg_5_2 = arg_5_2 == false
 
-	self:_expect(expect, condition, message)
+	arg_5_0:_expect(arg_5_1, arg_5_2, arg_5_3)
 end
 
-TestifyExpect.is_not_nil = function (self, expect, var, message)
-	local condition = var ~= nil
+function TestifyExpect.is_not_nil(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	local var_6_0 = arg_6_2 ~= nil
 
-	self:_expect(expect, condition, message)
+	arg_6_0:_expect(arg_6_1, var_6_0, arg_6_3)
 end
 
-TestifyExpect.is_nil = function (self, expect, var, message)
-	local condition = var == nil
+function TestifyExpect.is_nil(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	local var_7_0 = arg_7_2 == nil
 
-	self:_expect(expect, condition, message)
+	arg_7_0:_expect(arg_7_1, var_7_0, arg_7_3)
 end
 
-TestifyExpect.are_equal = function (self, expect, var1, var2, message)
-	local condition = self:_are_equal(var1, var2)
+function TestifyExpect.are_equal(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	local var_8_0 = arg_8_0:_are_equal(arg_8_2, arg_8_3)
 
-	self:_expect(expect, condition, message)
+	arg_8_0:_expect(arg_8_1, var_8_0, arg_8_4)
 end
 
-TestifyExpect.are_not_equal = function (self, expect, var1, var2, message)
-	local condition = not self:_are_equal(var1, var2)
+function TestifyExpect.are_not_equal(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	local var_9_0 = not arg_9_0:_are_equal(arg_9_2, arg_9_3)
 
-	self:_expect(expect, condition, message)
+	arg_9_0:_expect(arg_9_1, var_9_0, arg_9_4)
 end
 
-TestifyExpect._expect = function (self, expect, condition, message)
-	local expect_data = {
-		expect = expect,
-		condition = condition,
-		message = message,
+function TestifyExpect._expect(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	local var_10_0 = {
+		expect = arg_10_1,
+		condition = arg_10_2,
+		message = arg_10_3
 	}
-	local expects = self._expects
+	local var_10_1 = arg_10_0._expects
 
-	expects[#expects + 1] = expect_data
+	var_10_1[#var_10_1 + 1] = var_10_0
 end
 
-TestifyExpect._handle_expect = function (self, expect_data)
-	if not string.is_snake_case(expect_data.expect) then
-		ferror("expect parameter must be in snake case format (eg: this_is_snake_case): " .. expect_data.expect)
+function TestifyExpect._handle_expect(arg_11_0, arg_11_1)
+	if not string.is_snake_case(arg_11_1.expect) then
+		ferror("expect parameter must be in snake case format (eg: this_is_snake_case): " .. arg_11_1.expect)
 	end
 
-	local context = {
-		[expect_data.expect] = fassert,
-		expect_data = expect_data,
+	local var_11_0 = {
+		[arg_11_1.expect] = fassert,
+		expect_data = arg_11_1
 	}
-	local func = loadstring(string.format("%s(expect_data.condition, expect_data.message)", expect_data.expect))
+	local var_11_1 = loadstring(string.format("%s(expect_data.condition, expect_data.message)", arg_11_1.expect))
 
-	setfenv(func, context)
-	func(expect_data)
+	setfenv(var_11_1, var_11_0)
+	var_11_1(arg_11_1)
 end
 
-TestifyExpect._are_equal = function (self, o1, o2)
-	if o1 == o2 then
+function TestifyExpect._are_equal(arg_12_0, arg_12_1, arg_12_2)
+	if arg_12_1 == arg_12_2 then
 		return true
 	end
 
-	local o1_type = type(o1)
-	local o2_type = type(o2)
+	local var_12_0 = type(arg_12_1)
 
-	if o1_type ~= o2_type then
+	if var_12_0 ~= type(arg_12_2) then
 		return false
 	end
 
-	if o1_type ~= "table" then
+	if var_12_0 ~= "table" then
 		return false
 	end
 
-	local key_set = {}
+	local var_12_1 = {}
 
-	for key1, value1 in pairs(o1) do
-		local value2 = o2[key1]
+	for iter_12_0, iter_12_1 in pairs(arg_12_1) do
+		local var_12_2 = arg_12_2[iter_12_0]
 
-		if value2 == nil or self:_are_equal(value1, value2) == false then
+		if var_12_2 == nil or arg_12_0:_are_equal(iter_12_1, var_12_2) == false then
 			return false
 		end
 
-		key_set[key1] = true
+		var_12_1[iter_12_0] = true
 	end
 
-	for key2, _ in pairs(o2) do
-		if not key_set[key2] then
+	for iter_12_2, iter_12_3 in pairs(arg_12_2) do
+		if not var_12_1[iter_12_2] then
 			return false
 		end
 	end

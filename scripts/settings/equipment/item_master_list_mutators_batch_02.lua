@@ -1,18 +1,18 @@
-﻿-- chunkname: @scripts/settings/equipment/item_master_list_mutators_batch_02.lua
+-- chunkname: @scripts/settings/equipment/item_master_list_mutators_batch_02.lua
 
-local item_master_list = {
+local var_0_0 = {
 	mutator_statue_01 = {
-		gamepad_hud_icon = "consumables_icon_defence",
-		hud_icon = "consumables_icon_defence",
-		inventory_icon = "icons_placeholder",
+		temporary_template = "mutator_statue_01",
+		slot_type = "healthkit",
 		is_local = true,
-		item_type = "inventory_item",
+		inventory_icon = "icons_placeholder",
 		left_hand_unit = "units/weapons/player/pup_mutator_statue_01/wpn_mutator_statue_01",
 		rarity = "plentiful",
-		slot_type = "healthkit",
-		temporary_template = "mutator_statue_01",
-		can_wield = CanWieldAllItemTemplates,
-	},
+		gamepad_hud_icon = "consumables_icon_defence",
+		hud_icon = "consumables_icon_defence",
+		item_type = "inventory_item",
+		can_wield = CanWieldAllItemTemplates
+	}
 }
 
-table.merge_recursive(ItemMasterList, item_master_list)
+table.merge_recursive(ItemMasterList, var_0_0)

@@ -1,126 +1,113 @@
-﻿-- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_lobby_browser_console_definitions.lua
+-- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_lobby_browser_console_definitions.lua
 
-local function sort_level_list(a, b)
-	local level_settings = LevelSettings
-	local a_map_settings = level_settings[a].map_settings
-	local b_map_settings = level_settings[b].map_settings
-	local a_sorting_index = a_map_settings and a_map_settings.sorting or 0
-	local b_sorting_index = b_map_settings and b_map_settings.sorting or 0
+local function var_0_0(arg_1_0, arg_1_1)
+	local var_1_0 = LevelSettings
+	local var_1_1 = var_1_0[arg_1_0].map_settings
+	local var_1_2 = var_1_0[arg_1_1].map_settings
 
-	return a_sorting_index < b_sorting_index
+	return (var_1_1 and var_1_1.sorting or 0) < (var_1_2 and var_1_2.sorting or 0)
 end
 
-local function setup_game_mode_data(statistics_db, player_stats_id)
-	local game_mode_data = {}
-	local game_mode_index = {}
-	local only_release = GameSettingsDevelopment.release_levels_only
+local function var_0_1(arg_2_0, arg_2_1)
+	local var_2_0 = {}
+	local var_2_1 = {}
+	local var_2_2 = GameSettingsDevelopment.release_levels_only
 
-	for name, level_data in pairs(LevelSettings) do
-		if type(level_data) == "table" and (not only_release or not DebugLevels[name]) then
-			local game_mode = level_data.game_mode or level_data.mechanism
+	for iter_2_0, iter_2_1 in pairs(LevelSettings) do
+		if type(iter_2_1) == "table" and (not var_2_2 or not DebugLevels[iter_2_0]) then
+			local var_2_3 = iter_2_1.game_mode or iter_2_1.mechanism
 
-			if game_mode and game_mode ~= "tutorial" and game_mode ~= "demo" then
-				local unlockable = level_data.unlockable and not level_data.default
+			if var_2_3 and var_2_3 ~= "tutorial" and var_2_3 ~= "demo" and iter_2_1.unlockable and not iter_2_1.default and LevelUnlockUtils.level_unlocked(arg_2_0, arg_2_1, iter_2_0) then
+				if not var_2_1[var_2_3] then
+					local var_2_4 = GameModeSettings[var_2_3]
+					local var_2_5 = var_2_4.difficulties
+					local var_2_6 = var_2_4.display_name
+					local var_2_7 = table.clone(var_2_5)
 
-				if unlockable and LevelUnlockUtils.level_unlocked(statistics_db, player_stats_id, name) then
-					if not game_mode_index[game_mode] then
-						local game_mode_settings = GameModeSettings[game_mode]
-						local game_mode_difficulties = game_mode_settings.difficulties
-						local game_mode_display_name = game_mode_settings.display_name
-						local difficulties = table.clone(game_mode_difficulties)
+					var_2_7[#var_2_7 + 1] = "any"
+					var_2_0[#var_2_0 + 1] = {
+						levels = {},
+						difficulties = var_2_7,
+						game_mode_key = var_2_3,
+						game_mode_display_name = var_2_6
+					}
+					var_2_1[var_2_3] = #var_2_0
+				end
 
-						difficulties[#difficulties + 1] = "any"
-						game_mode_data[#game_mode_data + 1] = {
-							levels = {},
-							difficulties = difficulties,
-							game_mode_key = game_mode,
-							game_mode_display_name = game_mode_display_name,
-						}
-						game_mode_index[game_mode] = #game_mode_data
-					end
+				if (not iter_2_1.supported_game_modes or iter_2_1.supported_game_modes[var_2_3]) and not iter_2_1.ommit_from_lobby_browser then
+					local var_2_8 = var_2_0[var_2_1[var_2_3]].levels
 
-					if (not level_data.supported_game_modes or level_data.supported_game_modes[game_mode]) and not level_data.ommit_from_lobby_browser then
-						local data = game_mode_data[game_mode_index[game_mode]]
-						local levels = data.levels
-
-						levels[#levels + 1] = name
-					end
+					var_2_8[#var_2_8 + 1] = iter_2_0
 				end
 			end
 		end
 	end
 
-	for i = 1, #game_mode_data do
-		local data = game_mode_data[i]
-		local levels = data.levels
+	for iter_2_2 = 1, #var_2_0 do
+		local var_2_9 = var_2_0[iter_2_2].levels
 
-		table.sort(levels, sort_level_list)
+		table.sort(var_2_9, var_0_0)
 
-		levels[#levels + 1] = "any"
+		var_2_9[#var_2_9 + 1] = "any"
 	end
 
-	local function game_mode_sort_func(game_mode_data_a, game_mode_data_b)
-		local game_mode_a_name = Localize(game_mode_data_a.game_mode_display_name)
-		local game_mode_b_name = Localize(game_mode_data_b.game_mode_display_name)
-
-		return game_mode_a_name < game_mode_b_name
+	local function var_2_10(arg_3_0, arg_3_1)
+		return Localize(arg_3_0.game_mode_display_name) < Localize(arg_3_1.game_mode_display_name)
 	end
 
-	table.sort(game_mode_data, game_mode_sort_func)
+	table.sort(var_2_0, var_2_10)
 
-	local game_modes = {}
+	local var_2_11 = {}
 
-	for i = 1, #game_mode_data do
-		local game_mode_key = game_mode_data[i].game_mode_key
-		local game_mode_index = #game_modes + 1
+	for iter_2_3 = 1, #var_2_0 do
+		local var_2_12 = var_2_0[iter_2_3].game_mode_key
+		local var_2_13 = #var_2_11 + 1
 
-		game_modes[game_mode_index] = game_mode_key
-		game_modes[game_mode_key] = game_mode_index
+		var_2_11[var_2_13] = var_2_12
+		var_2_11[var_2_12] = var_2_13
 	end
 
-	local game_mode = "weave"
-	local game_mode_settings = GameModeSettings[game_mode]
-	local game_mode_display_name = game_mode_settings.display_name
-	local index = #game_mode_data + 1
+	local var_2_14 = "weave"
+	local var_2_15 = GameModeSettings[var_2_14].display_name
 
-	game_mode_data[index] = {
+	var_2_0[#var_2_0 + 1] = {
 		levels = {
-			"any",
+			"any"
 		},
 		difficulties = {
-			"any",
+			"any"
 		},
-		game_mode_key = game_mode,
-		game_mode_display_name = game_mode_display_name,
+		game_mode_key = var_2_14,
+		game_mode_display_name = var_2_15
 	}
-	game_modes[game_mode] = #game_modes + 1
-	game_modes[#game_modes + 1] = game_mode
-	game_mode_data.game_modes = game_modes
+	var_2_11[var_2_14] = #var_2_11 + 1
+	var_2_11[#var_2_11 + 1] = var_2_14
+	var_2_0.game_modes = var_2_11
 
-	return game_mode_data
+	return var_2_0
 end
 
-local show_lobbies_array = {
+local var_0_2 = {
 	"lb_show_joinable",
-	"lb_show_all",
+	"lb_show_all"
 }
 
 if IS_PS4 then
-	table.insert(show_lobbies_array, 2, "lb_search_type_friends")
+	table.insert(var_0_2, 2, "lb_search_type_friends")
 end
 
-local distance_array = IS_PS4 and {
+local var_0_3 = IS_PS4 and {
 	"map_zone_options_2",
 	"map_zone_options_3",
-	"map_zone_options_5",
+	"map_zone_options_5"
 } or {
 	"map_zone_options_2",
 	"map_zone_options_4",
-	"map_zone_options_5",
+	"map_zone_options_5"
 }
 
 return {
-	show_lobbies_table = show_lobbies_array,
-	distance_table = distance_array,
-	setup_game_mode_data = setup_game_mode_data,
+	show_lobbies_table = var_0_2,
+	distance_table = var_0_3,
+	setup_game_mode_data = var_0_1
 }

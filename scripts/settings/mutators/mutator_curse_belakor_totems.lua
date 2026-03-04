@@ -1,251 +1,245 @@
-﻿-- chunkname: @scripts/settings/mutators/mutator_curse_belakor_totems.lua
+-- chunkname: @scripts/settings/mutators/mutator_curse_belakor_totems.lua
 
-local TOTEM_STATES = {
-	ACTIVE = "ACTIVE",
+local var_0_0 = {
 	COOLDOWN = "COOLDOWN",
-	READY = "READY",
+	ACTIVE = "ACTIVE",
+	READY = "READY"
 }
 
 script_data.belakor_totems_debug = true
 
-local TIME_BETWEEN_SPAWNS = 0.5
-local global_printf = printf
+local var_0_1 = 0.5
+local var_0_2 = printf
 
-local function printf(...)
-	local message = sprintf(...)
+local function var_0_3(...)
+	local var_1_0 = sprintf(...)
 
-	global_printf("[MutatorCurseBelakorTotems] %s", message)
+	var_0_2("[MutatorCurseBelakorTotems] %s", var_1_0)
 end
 
-local function dprintf(...)
+local function var_0_4(...)
 	if script_data.belakor_totems_debug then
-		local message = sprintf(...)
+		local var_2_0 = sprintf(...)
 
-		global_printf("[MutatorCurseBelakorTotems] %s", message)
+		var_0_2("[MutatorCurseBelakorTotems] %s", var_2_0)
 	end
 end
 
-local RELOCATE_COOLDOWN = 0
-local MIN_COOLDOWN = 25
-local MAX_COOLDOWN = 35
-local MIN_DISTANCE = 10
-local MAX_DISTANCE = 15
-local DISTANCE_TO_FORBIDDEN_POSITION_LIST = 10
-local AHEAD_SPAWN_MAIN_PATH_DISTANCE = 5
-local Totem = class(Totem)
+local var_0_5 = 0
+local var_0_6 = 25
+local var_0_7 = 35
+local var_0_8 = 10
+local var_0_9 = 15
+local var_0_10 = 10
+local var_0_11 = 5
+local var_0_12 = class(Totem)
 
-Totem.init = function (self, logging_prefix)
-	self._logging_prefix = logging_prefix
+function var_0_12.init(arg_3_0, arg_3_1)
+	arg_3_0._logging_prefix = arg_3_1
 
-	dprintf("-%s- init", logging_prefix)
+	var_0_4("-%s- init", arg_3_1)
 
-	self._active_totem_data = nil
-	self._state = TOTEM_STATES.COOLDOWN
+	arg_3_0._active_totem_data = nil
+	arg_3_0._state = var_0_0.COOLDOWN
 end
 
-Totem.destroy = function (self)
-	dprintf("-%s- destroy", self._logging_prefix)
+function var_0_12.destroy(arg_4_0)
+	var_0_4("-%s- destroy", arg_4_0._logging_prefix)
 
-	if self._active_totem_data then
-		self:_clear_active_totem()
+	if arg_4_0._active_totem_data then
+		arg_4_0:_clear_active_totem()
 	end
 end
 
-Totem.update = function (self, dt, t)
-	if self._state == TOTEM_STATES.COOLDOWN then
-		if not self._cooldown_end_t then
-			self._cooldown_end_t = t + Math.random_range(MIN_COOLDOWN, MAX_COOLDOWN)
-			self._state = TOTEM_STATES.READY
-		elseif t > self._cooldown_end_t then
-			self._state = TOTEM_STATES.READY
+function var_0_12.update(arg_5_0, arg_5_1, arg_5_2)
+	if arg_5_0._state == var_0_0.COOLDOWN then
+		if not arg_5_0._cooldown_end_t then
+			arg_5_0._cooldown_end_t = arg_5_2 + Math.random_range(var_0_6, var_0_7)
+			arg_5_0._state = var_0_0.READY
+		elseif arg_5_2 > arg_5_0._cooldown_end_t then
+			arg_5_0._state = var_0_0.READY
 
-			dprintf("-%s- new state %s", self._logging_prefix, self._state)
+			var_0_4("-%s- new state %s", arg_5_0._logging_prefix, arg_5_0._state)
 		end
-	elseif self._state == TOTEM_STATES.READY then
-		-- Nothing
-	elseif self._state == TOTEM_STATES.ACTIVE then
-		local unit = self._active_totem_data.unit
+	elseif arg_5_0._state == var_0_0.READY then
+		-- block empty
+	elseif arg_5_0._state == var_0_0.ACTIVE then
+		local var_5_0 = arg_5_0._active_totem_data.unit
 
-		if unit then
-			if self._active_totem_data.totem_ext:is_despawned() then
-				local blackboard = BLACKBOARDS[unit]
+		if var_5_0 then
+			if arg_5_0._active_totem_data.totem_ext:is_despawned() then
+				local var_5_1 = BLACKBOARDS[var_5_0]
 
-				Managers.state.conflict:destroy_unit(unit, blackboard, "far_off_despawn")
+				Managers.state.conflict:destroy_unit(var_5_0, var_5_1, "far_off_despawn")
 			end
 
-			if not Unit.alive(unit) then
-				if self._active_totem_data.totem_ext:is_despawned() then
-					self._cooldown_end_t = t + RELOCATE_COOLDOWN
+			if not Unit.alive(var_5_0) then
+				if arg_5_0._active_totem_data.totem_ext:is_despawned() then
+					arg_5_0._cooldown_end_t = arg_5_2 + var_0_5
 				else
-					self._cooldown_end_t = t + Math.random_range(MIN_COOLDOWN, MAX_COOLDOWN)
+					arg_5_0._cooldown_end_t = arg_5_2 + Math.random_range(var_0_6, var_0_7)
 				end
 
-				self._state = TOTEM_STATES.COOLDOWN
+				arg_5_0._state = var_0_0.COOLDOWN
 
-				dprintf("-%s- new state %s", self._logging_prefix, self._state)
-				self:_clear_active_totem()
+				var_0_4("-%s- new state %s", arg_5_0._logging_prefix, arg_5_0._state)
+				arg_5_0:_clear_active_totem()
 			else
-				self._active_totem_data.latest_position = Unit.local_position(unit, 0)
+				arg_5_0._active_totem_data.latest_position = Unit.local_position(var_5_0, 0)
 			end
 		end
 	else
-		ferror("unknown state %d", self._state or "nil")
+		ferror("unknown state %d", arg_5_0._state or "nil")
 	end
 end
 
-Totem.spawn = function (self, spawn_position)
-	fassert(self._state == TOTEM_STATES.READY, "prepare_spawn can only be called when the state of the totem is READY")
-	dprintf("-%s- spawn", self._logging_prefix)
+function var_0_12.spawn(arg_6_0, arg_6_1)
+	fassert(arg_6_0._state == var_0_0.READY, "prepare_spawn can only be called when the state of the totem is READY")
+	var_0_4("-%s- spawn", arg_6_0._logging_prefix)
 
-	if self._active_totem_data then
-		self:_clear_active_totem()
+	if arg_6_0._active_totem_data then
+		arg_6_0:_clear_active_totem()
 	end
 
-	local optional_data = {}
+	local var_6_0 = {
+		prepare_func = function(arg_7_0, arg_7_1)
+			local var_7_0 = false
 
-	optional_data.prepare_func = function (breed, extension_init_data)
-		local is_husk = false
-
-		breed.modify_extension_init_data(breed, is_husk, extension_init_data)
-	end
-
-	local _self = self
-
-	optional_data.spawned_func = function (unit, breed, optional_data)
-		_self._active_totem_data.unit = unit
-		_self._active_totem_data.queue_id = nil
-		_self._active_totem_data.totem_ext = ScriptUnit.has_extension(unit, "deus_belakor_totem_system")
-	end
-
-	local rotation = Quaternion.identity()
-	local queue_id = Managers.state.conflict:spawn_queued_unit(Breeds.shadow_totem, Vector3Box(spawn_position), QuaternionBox(rotation), "mutator", "spawn_idle", "terror_event", optional_data)
-
-	self._active_totem_data = {
-		queue_id = queue_id,
-		starting_position = Vector3Box(spawn_position),
+			arg_7_0.modify_extension_init_data(arg_7_0, var_7_0, arg_7_1)
+		end
 	}
-	self._state = TOTEM_STATES.ACTIVE
+	local var_6_1 = arg_6_0
 
-	dprintf("-%s- new state %s", self._logging_prefix, self._state)
+	function var_6_0.spawned_func(arg_8_0, arg_8_1, arg_8_2)
+		var_6_1._active_totem_data.unit = arg_8_0
+		var_6_1._active_totem_data.queue_id = nil
+		var_6_1._active_totem_data.totem_ext = ScriptUnit.has_extension(arg_8_0, "deus_belakor_totem_system")
+	end
+
+	local var_6_2 = Quaternion.identity()
+	local var_6_3 = Managers.state.conflict:spawn_queued_unit(Breeds.shadow_totem, Vector3Box(arg_6_1), QuaternionBox(var_6_2), "mutator", "spawn_idle", "terror_event", var_6_0)
+
+	arg_6_0._active_totem_data = {
+		queue_id = var_6_3,
+		starting_position = Vector3Box(arg_6_1)
+	}
+	arg_6_0._state = var_0_0.ACTIVE
+
+	var_0_4("-%s- new state %s", arg_6_0._logging_prefix, arg_6_0._state)
 end
 
-Totem.get_state = function (self)
-	return self._state
+function var_0_12.get_state(arg_9_0)
+	return arg_9_0._state
 end
 
-Totem.get_position = function (self)
-	local active_totem_data = self._active_totem_data
+function var_0_12.get_position(arg_10_0)
+	local var_10_0 = arg_10_0._active_totem_data
 
-	if not active_totem_data then
+	if not var_10_0 then
 		return nil
 	end
 
-	return active_totem_data.starting_position:unbox()
+	return var_10_0.starting_position:unbox()
 end
 
-Totem.get_unit = function (self)
-	local active_totem_data = self._active_totem_data
+function var_0_12.get_unit(arg_11_0)
+	local var_11_0 = arg_11_0._active_totem_data
 
-	return active_totem_data and active_totem_data.unit
+	return var_11_0 and var_11_0.unit
 end
 
-Totem._clear_active_totem = function (self)
-	local active_totem_data = self._active_totem_data
-	local queue_id = active_totem_data.queue_id
+function var_0_12._clear_active_totem(arg_12_0)
+	local var_12_0 = arg_12_0._active_totem_data.queue_id
 
-	if queue_id then
-		Managers.state.conflict:remove_queued_unit(queue_id)
+	if var_12_0 then
+		Managers.state.conflict:remove_queued_unit(var_12_0)
 	end
 
-	self._active_totem_data = nil
+	arg_12_0._active_totem_data = nil
 end
 
-local TOTEM_COUNT = 1
+local var_0_13 = 1
 
 return {
 	description = "curse_belakor_totems_desc",
 	display_name = "curse_belakor_totems_name",
 	icon = "deus_curse_belakor_01",
 	packages = {
-		"resource_packages/mutators/mutator_curse_belakor_totems",
+		"resource_packages/mutators/mutator_curse_belakor_totems"
 	},
-	server_start_function = function (context, data)
-		local totems = {}
+	server_start_function = function(arg_13_0, arg_13_1)
+		local var_13_0 = {}
 
-		for i = 1, TOTEM_COUNT do
-			totems[#totems + 1] = Totem:new(i)
+		for iter_13_0 = 1, var_0_13 do
+			var_13_0[#var_13_0 + 1] = var_0_12:new(iter_13_0)
 		end
 
-		data.totems = totems
-		data.conflict_director = Managers.state.conflict
+		arg_13_1.totems = var_13_0
+		arg_13_1.conflict_director = Managers.state.conflict
 	end,
-	server_players_left_safe_zone = function (context, data)
-		data.started = true
+	server_players_left_safe_zone = function(arg_14_0, arg_14_1)
+		arg_14_1.started = true
 	end,
-	server_pre_update_function = function (context, data, dt, t)
+	server_pre_update_function = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 		if Managers.state.unit_spawner.game_session == nil or global_is_inside_inn then
 			return
 		end
 
-		if not data.started then
+		if not arg_15_1.started then
 			return
 		end
 
-		local totems = data.totems
+		local var_15_0 = arg_15_1.totems
 
-		for totem_index = 1, #totems do
-			local totem = totems[totem_index]
-
-			totem:update(dt, t)
+		for iter_15_0 = 1, #var_15_0 do
+			var_15_0[iter_15_0]:update(arg_15_2, arg_15_3)
 		end
 
-		local conflict_director = data.conflict_director
+		local var_15_1 = arg_15_1.conflict_director
 
-		if conflict_director.pacing:horde_population() < 1 and conflict_director.pacing:get_state() ~= "pacing_frozen" then
+		if var_15_1.pacing:horde_population() < 1 and var_15_1.pacing:get_state() ~= "pacing_frozen" then
 			return
 		end
 
-		for totem_index = 1, #totems do
-			local totem = totems[totem_index]
-			local state = totem:get_state()
+		for iter_15_1 = 1, #var_15_0 do
+			local var_15_2 = var_15_0[iter_15_1]
 
-			if state == TOTEM_STATES.READY then
-				local main_path_info = Managers.state.conflict.main_path_info
-				local random_player = main_path_info.ahead_unit
+			if var_15_2:get_state() == var_0_0.READY then
+				local var_15_3 = Managers.state.conflict.main_path_info
+				local var_15_4 = var_15_3.ahead_unit
 
-				if ALIVE[random_player] then
-					local travel_dist = main_path_info.ahead_travel_dist
-					local main_path_ahead_pos = MainPathUtils.point_on_mainpath(nil, travel_dist + AHEAD_SPAWN_MAIN_PATH_DISTANCE)
-					local player_pos = POSITION_LOOKUP[random_player]
-					local center_position = player_pos + Vector3.normalize(main_path_ahead_pos - player_pos) * AHEAD_SPAWN_MAIN_PATH_DISTANCE
-					local forbidden_position_list = {}
-					local side = Managers.state.side:get_side_from_name("heroes")
-					local players = side.PLAYER_AND_BOT_UNITS
+				if ALIVE[var_15_4] then
+					local var_15_5 = var_15_3.ahead_travel_dist
+					local var_15_6 = MainPathUtils.point_on_mainpath(nil, var_15_5 + var_0_11)
+					local var_15_7 = POSITION_LOOKUP[var_15_4]
+					local var_15_8 = var_15_7 + Vector3.normalize(var_15_6 - var_15_7) * var_0_11
+					local var_15_9 = {}
+					local var_15_10 = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_UNITS
 
-					for player_index = 1, #players do
-						local unit = players[player_index]
+					for iter_15_2 = 1, #var_15_10 do
+						local var_15_11 = var_15_10[iter_15_2]
 
-						forbidden_position_list[#forbidden_position_list + 1] = POSITION_LOOKUP[unit]
+						var_15_9[#var_15_9 + 1] = POSITION_LOOKUP[var_15_11]
 					end
 
-					for i = 1, #totems do
-						local other_totem = totems[i]
+					for iter_15_3 = 1, #var_15_0 do
+						local var_15_12 = var_15_0[iter_15_3]
 
-						forbidden_position_list[#forbidden_position_list + 1] = other_totem:get_position()
+						var_15_9[#var_15_9 + 1] = var_15_12:get_position()
 					end
 
-					local nav_world = Managers.state.entity:system("ai_system"):nav_world()
-					local output_position_list = {}
+					local var_15_13 = Managers.state.entity:system("ai_system"):nav_world()
+					local var_15_14 = {}
 
-					ConflictUtils.find_positions_around_position(center_position, output_position_list, nav_world, MIN_DISTANCE, MAX_DISTANCE, 1, forbidden_position_list, DISTANCE_TO_FORBIDDEN_POSITION_LIST)
+					ConflictUtils.find_positions_around_position(var_15_8, var_15_14, var_15_13, var_0_8, var_0_9, 1, var_15_9, var_0_10)
 
-					local position_found = output_position_list[1]
+					local var_15_15 = var_15_14[1]
 
-					if position_found then
-						local bot_traverse_logic = Managers.state.bot_nav_transition:traverse_logic()
+					if var_15_15 then
+						local var_15_16 = Managers.state.bot_nav_transition:traverse_logic()
 
-						if GwNavQueries.raycango(nav_world, center_position, position_found, bot_traverse_logic) then
-							totem:spawn(position_found)
+						if GwNavQueries.raycango(var_15_13, var_15_8, var_15_15, var_15_16) then
+							var_15_2:spawn(var_15_15)
 						end
 					end
 				end
@@ -254,7 +248,7 @@ return {
 			end
 		end
 	end,
-	server_player_hit_function = function (context, data, hit_unit, attacker_unit, hit_data)
+	server_player_hit_function = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 		return
-	end,
+	end
 }

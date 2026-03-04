@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/settings/game_mode_settings.lua
+-- chunkname: @scripts/settings/game_mode_settings.lua
 
 require("scripts/settings/difficulty_settings")
 require("scripts/settings/objective_unit_templates")
@@ -6,20 +6,20 @@ require("foundation/scripts/util/error")
 
 GameModeSettings = GameModeSettings or {}
 GameModeSettings.base = {
-	cap_power_level = true,
 	class_name = "GameModeBase",
-	disable_host_migration = false,
-	max_health_kd = 300,
 	use_level_progress = true,
 	use_story_lines = true,
+	cap_power_level = true,
 	visible = false,
+	max_health_kd = 300,
+	disable_host_migration = false,
 	object_sets = {},
 	game_mode_states = {
-		"initial_state",
+		"initial_state"
 	},
 	social_wheel_by_side = {
-		heroes = "general",
-	},
+		heroes = "general"
+	}
 }
 GameModeSettings.adventure = table.clone(GameModeSettings.base)
 GameModeSettings.adventure.key = "adventure"
@@ -28,7 +28,7 @@ GameModeSettings.adventure.display_name = "dlc1_2_map_game_mode_adventure"
 GameModeSettings.adventure.description_text = "game_mode_description_adventure"
 GameModeSettings.adventure.object_sets = {
 	adventure = true,
-	gm_sp = true,
+	gm_sp = true
 }
 GameModeSettings.adventure.lose_condition_time_dead = 4
 GameModeSettings.adventure.lose_condition_time = 10
@@ -42,8 +42,8 @@ GameModeSettings.adventure.ping_mode = {
 	world_markers = false,
 	outlines = {
 		item = true,
-		unit = true,
-	},
+		unit = true
+	}
 }
 GameModeSettings.adventure.max_num_rewards_displayed = 8
 GameModeSettings.survival = table.clone(GameModeSettings.base)
@@ -52,7 +52,7 @@ GameModeSettings.survival.class_name = "GameModeSurvival"
 GameModeSettings.survival.display_name = "dlc1_2_map_game_mode_survival"
 GameModeSettings.survival.description_text = "game_mode_description_survival"
 GameModeSettings.survival.object_sets = {
-	gm_sp = true,
+	gm_sp = true
 }
 GameModeSettings.survival.lose_condition_time_dead = 4
 GameModeSettings.survival.lose_condition_time = 10
@@ -68,8 +68,8 @@ GameModeSettings.survival.ping_mode = {
 	world_markers = false,
 	outlines = {
 		item = true,
-		unit = true,
-	},
+		unit = true
+	}
 }
 GameModeSettings.tutorial = table.clone(GameModeSettings.base)
 GameModeSettings.tutorial.key = "tutorial"
@@ -77,7 +77,7 @@ GameModeSettings.tutorial.private_only = true
 GameModeSettings.tutorial.display_name = "tutorial_no_localization"
 GameModeSettings.tutorial.class_name = "GameModeTutorial"
 GameModeSettings.tutorial.object_sets = {
-	gm_sp = true,
+	gm_sp = true
 }
 GameModeSettings.tutorial.lose_condition_time_dead = 4
 GameModeSettings.tutorial.lose_condition_time = 10
@@ -90,7 +90,7 @@ GameModeSettings.demo.private_only = true
 GameModeSettings.demo.display_name = "demo_no_localization"
 GameModeSettings.demo.class_name = "GameModeDemo"
 GameModeSettings.demo.object_sets = {
-	gm_sp = true,
+	gm_sp = true
 }
 GameModeSettings.demo.lose_condition_time_dead = 4
 GameModeSettings.demo.lose_condition_time = 10
@@ -109,14 +109,14 @@ GameModeSettings.inn.hide_difficulty = true
 GameModeSettings.inn.hud_component_list_path = "scripts/ui/hud_ui/component_list_definitions/hud_component_list_adventure"
 GameModeSettings.inn.use_keep_decorations = true
 GameModeSettings.inn.social_wheel_by_side = {
-	heroes = "general",
+	heroes = "general"
 }
 GameModeSettings.inn.ping_mode = {
 	world_markers = false,
 	outlines = {
 		item = true,
-		unit = true,
-	},
+		unit = true
+	}
 }
 GameModeSettings.weave = table.clone(GameModeSettings.base)
 GameModeSettings.weave.key = "weave"
@@ -125,7 +125,7 @@ GameModeSettings.weave.display_name = "map_game_mode_name_weave"
 GameModeSettings.weave.description_text = "game_mode_description_weave"
 GameModeSettings.weave.hide_difficulty = true
 GameModeSettings.weave.object_sets = {
-	gm_sp = true,
+	gm_sp = true
 }
 GameModeSettings.weave.lose_condition_time_dead = 4
 GameModeSettings.weave.lose_condition_time = 10
@@ -139,14 +139,14 @@ GameModeSettings.weave.difficulties = {
 	"hardest",
 	"cataclysm",
 	"cataclysm_2",
-	"cataclysm_3",
+	"cataclysm_3"
 }
 GameModeSettings.weave.ping_mode = {
 	world_markers = false,
 	outlines = {
 		item = true,
-		unit = true,
-	},
+		unit = true
+	}
 }
 GameModeSettings.weave.bots_disabled = true
 GameModeSettings.weave.end_mission_rewards = true
@@ -154,18 +154,18 @@ GameModeSettings.weave.disable_difficulty_spawning_items = true
 GameModeSettings.weave.max_num_rewards_displayed = 8
 GameModeSettings.weave.static_objective_item_spawners = {
 	kill_enemies = {
-		unit_template = ObjectiveUnitTemplates.weave_kill_enemies,
-	},
+		unit_template = ObjectiveUnitTemplates.weave_kill_enemies
+	}
 }
 GameModeSettings.weave.hud_ui_settings = {
-	killfeed_offset = true,
+	killfeed_offset = true
 }
 
 DLCUtils.require("game_mode")
 
-for table_key, settings in pairs(GameModeSettings) do
-	if table_key ~= "base" then
-		fassert(settings.key, "[GameModeSettings] game mode %q is missing parameter \"key\".", table_key)
-		fassert(settings.display_name, "[GameModeSettings] game mode %q is missing parameter \"display_name\".", table_key)
+for iter_0_0, iter_0_1 in pairs(GameModeSettings) do
+	if iter_0_0 ~= "base" then
+		fassert(iter_0_1.key, "[GameModeSettings] game mode %q is missing parameter \"key\".", iter_0_0)
+		fassert(iter_0_1.display_name, "[GameModeSettings] game mode %q is missing parameter \"display_name\".", iter_0_0)
 	end
 end

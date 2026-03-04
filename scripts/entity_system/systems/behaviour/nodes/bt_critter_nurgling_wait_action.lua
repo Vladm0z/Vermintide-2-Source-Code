@@ -1,41 +1,41 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_critter_nurgling_wait_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_critter_nurgling_wait_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTCritterNurglingWaitAction = class(BTCritterNurglingWaitAction, BTNode)
 
-BTCritterNurglingWaitAction.init = function (self, ...)
-	BTCritterNurglingWaitAction.super.init(self, ...)
+function BTCritterNurglingWaitAction.init(arg_1_0, ...)
+	BTCritterNurglingWaitAction.super.init(arg_1_0, ...)
 end
 
 BTCritterNurglingWaitAction.name = "BTCritterNurglingWaitAction"
 
-BTCritterNurglingWaitAction.enter = function (self, unit, blackboard, t)
-	local wait_data = self._tree_node.action_data
+function BTCritterNurglingWaitAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_0._tree_node.action_data
 
-	blackboard.exit_wait_time = t + Math.random_range(wait_data.wait_time_min, wait_data.wait_time_max)
+	arg_2_2.exit_wait_time = arg_2_3 + Math.random_range(var_2_0.wait_time_min, var_2_0.wait_time_max)
 
-	if blackboard.move_state ~= "idle" then
-		self:start_idle_animation(unit, blackboard)
+	if arg_2_2.move_state ~= "idle" then
+		arg_2_0:start_idle_animation(arg_2_1, arg_2_2)
 
-		blackboard.move_state = "idle"
+		arg_2_2.move_state = "idle"
 	end
 end
 
-BTCritterNurglingWaitAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	blackboard.exit_wait_time = nil
+function BTCritterNurglingWaitAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	arg_3_2.exit_wait_time = nil
 end
 
-BTCritterNurglingWaitAction.run = function (self, unit, blackboard, t)
-	if t > blackboard.exit_wait_time then
+function BTCritterNurglingWaitAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	if arg_4_3 > arg_4_2.exit_wait_time then
 		return "done"
 	end
 
 	return "running"
 end
 
-BTCritterNurglingWaitAction.start_idle_animation = function (self, unit, blackboard)
-	Managers.state.network:anim_event(unit, "idle")
+function BTCritterNurglingWaitAction.start_idle_animation(arg_5_0, arg_5_1, arg_5_2)
+	Managers.state.network:anim_event(arg_5_1, "idle")
 
-	blackboard.move_state = "idle"
+	arg_5_2.move_state = "idle"
 end

@@ -1,810 +1,789 @@
-﻿-- chunkname: @scripts/ui/views/hero_view/states/hero_view_state_handbook.lua
+-- chunkname: @scripts/ui/views/hero_view/states/hero_view_state_handbook.lua
 
 require("scripts/ui/helpers/handbook_logic")
 require("scripts/settings/handbook_settings")
 
-local definitions = local_require("scripts/ui/views/hero_view/states/definitions/hero_view_state_handbook_definitions")
-local widget_definitions = definitions.widgets
-local scenegraph_definition = definitions.scenegraph_definition
-local animation_definitions = definitions.animation_definitions
-local achievement_window_size = definitions.achievement_window_size
-local category_tab_info = definitions.category_tab_info
-local generic_input_actions = definitions.generic_input_actions
-local console_cursor_definition = definitions.console_cursor_definition
-local ACHIEVEMENT_WINDOW_HEIGHT = achievement_window_size[2]
+local var_0_0 = local_require("scripts/ui/views/hero_view/states/definitions/hero_view_state_handbook_definitions")
+local var_0_1 = var_0_0.widgets
+local var_0_2 = var_0_0.scenegraph_definition
+local var_0_3 = var_0_0.animation_definitions
+local var_0_4 = var_0_0.achievement_window_size
+local var_0_5 = var_0_0.category_tab_info
+local var_0_6 = var_0_0.generic_input_actions
+local var_0_7 = var_0_0.console_cursor_definition
+local var_0_8 = var_0_4[2]
 
 HeroViewStateHandbook = class(HeroViewStateHandbook)
 HeroViewStateHandbook.NAME = "HeroViewStateHandbook"
 
-HeroViewStateHandbook.on_enter = function (self, params)
+function HeroViewStateHandbook.on_enter(arg_1_0, arg_1_1)
 	print("[HeroViewState] Enter Substate HeroViewStateHandbook")
 
-	self.parent = params.parent
+	arg_1_0.parent = arg_1_1.parent
 
-	local ingame_ui_context = params.ingame_ui_context
+	local var_1_0 = arg_1_1.ingame_ui_context
 
-	self._ingame_ui_context = ingame_ui_context
-	self._ui_renderer = ingame_ui_context.ui_renderer
-	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self._input_manager = ingame_ui_context.input_manager
-	self._render_settings = {
-		snap_pixel_positions = false,
+	arg_1_0._ingame_ui_context = var_1_0
+	arg_1_0._ui_renderer = var_1_0.ui_renderer
+	arg_1_0._ui_top_renderer = var_1_0.ui_top_renderer
+	arg_1_0._input_manager = var_1_0.input_manager
+	arg_1_0._render_settings = {
+		snap_pixel_positions = false
 	}
-	self._voting_manager = ingame_ui_context.voting_manager
+	arg_1_0._voting_manager = var_1_0.voting_manager
 	SaveData.seen_handbook_pages = SaveData.seen_handbook_pages or {}
 
-	local input_service = self:input_service()
+	local var_1_1 = arg_1_0:input_service()
 
-	self._menu_input_description = MenuInputDescriptionUI:new(ingame_ui_context, self._ui_top_renderer, input_service, 5, 100, generic_input_actions.default)
+	arg_1_0._menu_input_description = MenuInputDescriptionUI:new(var_1_0, arg_1_0._ui_top_renderer, var_1_1, 5, 100, var_0_6.default)
 
-	self._menu_input_description:set_input_description(nil)
+	arg_1_0._menu_input_description:set_input_description(nil)
 
-	self._current_page = 1
-	self._total_pages = 1
+	arg_1_0._current_page = 1
+	arg_1_0._total_pages = 1
 
-	self:play_sound("Play_gui_handbook_open")
+	arg_1_0:play_sound("Play_gui_handbook_open")
 	Managers.input:enable_gamepad_cursor()
-	self:_create_ui_elements(params)
+	arg_1_0:_create_ui_elements(arg_1_1)
 
-	if params.initial_state then
-		params.initial_state = nil
+	if arg_1_1.initial_state then
+		arg_1_1.initial_state = nil
 
-		self:_start_transition_animation("on_enter", "on_enter")
+		arg_1_0:_start_transition_animation("on_enter", "on_enter")
 	end
 end
 
-HeroViewStateHandbook.on_exit = function (self, params)
+function HeroViewStateHandbook.on_exit(arg_2_0, arg_2_1)
 	print("[HeroViewState] Exit Substate HeroViewStateHandbook")
-	self._handbook_logic:delete()
+	arg_2_0._handbook_logic:delete()
 	Managers.input:disable_gamepad_cursor()
 end
 
-HeroViewStateHandbook._create_ui_elements = function (self)
-	local num_categories = #HandbookSettings.outline
-	local category_tab_widget_definitions = definitions.create_category_tab_widgets_func(num_categories)
+function HeroViewStateHandbook._create_ui_elements(arg_3_0)
+	local var_3_0 = #HandbookSettings.outline
+	local var_3_1 = var_0_0.create_category_tab_widgets_func(var_3_0)
 
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-	self._console_cursor_widget = UIWidget.init(console_cursor_definition)
-	self._widgets, self._widgets_by_name = UIUtils.create_widgets(widget_definitions)
-	self._category_tab_widgets = UIUtils.create_widgets(category_tab_widget_definitions)
+	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
+	arg_3_0._console_cursor_widget = UIWidget.init(var_0_7)
+	arg_3_0._widgets, arg_3_0._widgets_by_name = UIUtils.create_widgets(var_0_1)
+	arg_3_0._category_tab_widgets = UIUtils.create_widgets(var_3_1)
 
-	for _, widget in pairs(self._category_tab_widgets) do
-		self:_reset_tab(widget)
+	for iter_3_0, iter_3_1 in pairs(arg_3_0._category_tab_widgets) do
+		arg_3_0:_reset_tab(iter_3_1)
 	end
 
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_3_0._ui_renderer)
 
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
-	self._category_scrollbar = ScrollBarLogic:new(self._widgets_by_name.category_scrollbar)
+	arg_3_0._ui_animator = UIAnimator:new(arg_3_0._ui_scenegraph, var_0_3)
+	arg_3_0._category_scrollbar = ScrollBarLogic:new(arg_3_0._widgets_by_name.category_scrollbar)
 
-	local blueprint_context = {
+	local var_3_2 = {
 		scenegraph_id = "achievement_root",
-		ui_renderer = self._ui_renderer,
-		world = self._ingame_ui_context.world,
+		ui_renderer = arg_3_0._ui_renderer,
+		world = arg_3_0._ingame_ui_context.world
 	}
 
-	self._handbook_logic = HandbookLogic:new(blueprint_context, definitions.content_blueprints)
+	arg_3_0._handbook_logic = HandbookLogic:new(var_3_2, var_0_0.content_blueprints)
 
-	self:_setup_layout()
+	arg_3_0:_setup_layout()
 
-	self._widgets_by_name.achievement_scrollbar.content.visible = true
-	self._widgets_by_name.category_scrollbar.content.visible = true
+	arg_3_0._widgets_by_name.achievement_scrollbar.content.visible = true
+	arg_3_0._widgets_by_name.category_scrollbar.content.visible = true
 
-	self:_update_categories_scroll_height(0)
+	arg_3_0:_update_categories_scroll_height(0)
 
-	local tab_widget = self._category_tab_widgets[1]
+	local var_3_3 = arg_3_0._category_tab_widgets[1]
 
-	self:_activate_tab(tab_widget, 1, 1, true)
+	arg_3_0:_activate_tab(var_3_3, 1, 1, true)
 end
 
-HeroViewStateHandbook._reset_tabs = function (self)
-	for _, widget in ipairs(self._category_tab_widgets) do
-		self:_reset_tab(widget)
+function HeroViewStateHandbook._reset_tabs(arg_4_0)
+	for iter_4_0, iter_4_1 in ipairs(arg_4_0._category_tab_widgets) do
+		arg_4_0:_reset_tab(iter_4_1)
 	end
 end
 
-HeroViewStateHandbook._setup_layout = function (self)
-	local category_tab_widgets = self._category_tab_widgets
-	local num_tab_widgets = #category_tab_widgets
-	local outline = HandbookSettings.outline
+function HeroViewStateHandbook._setup_layout(arg_5_0)
+	local var_5_0 = arg_5_0._category_tab_widgets
+	local var_5_1 = #var_5_0
+	local var_5_2 = HandbookSettings.outline
 
-	for i = 1, num_tab_widgets do
-		local widget = category_tab_widgets[i]
+	for iter_5_0 = 1, var_5_1 do
+		local var_5_3 = var_5_0[iter_5_0]
 
-		self:_reset_tab(widget)
+		arg_5_0:_reset_tab(var_5_3)
 
-		local category = outline[i]
+		local var_5_4 = var_5_2[iter_5_0]
 
-		if category then
-			self:_setup_tab_widget(widget, category)
+		if var_5_4 then
+			arg_5_0:_setup_tab_widget(var_5_3, var_5_4)
 		end
 	end
 end
 
-HeroViewStateHandbook._setup_tab_widget = function (self, widget, category)
-	local children = category.children
-	local content = widget.content
+function HeroViewStateHandbook._setup_tab_widget(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = arg_6_2.children
+	local var_6_1 = arg_6_1.content
 
-	content.title_text = Localize(category.display_name)
-	content.children = category.children
-	content.new = false
+	var_6_1.title_text = Localize(arg_6_2.display_name)
+	var_6_1.children = arg_6_2.children
+	var_6_1.new = false
 
-	if children then
-		local list_content = content.list_content
-		local tab_list_entry_size = category_tab_info.tab_list_entry_size
-		local num_children = #children
-		local tabs_height = tab_list_entry_size[2] * num_children
+	if var_6_0 then
+		local var_6_2 = var_6_1.list_content
+		local var_6_3 = var_0_5.tab_list_entry_size
+		local var_6_4 = #var_6_0
 
-		content.tabs_height = tabs_height
+		var_6_1.tabs_height = var_6_3[2] * var_6_4
 
-		for i = 1, num_children do
-			local pages = children[i]
-			local first_page = pages[1]
-			local page_settings = HandbookSettings.pages[first_page]
-			local new = not SaveData.seen_handbook_pages[first_page]
+		for iter_6_0 = 1, var_6_4 do
+			local var_6_5 = var_6_0[iter_6_0]
+			local var_6_6 = var_6_5[1]
+			local var_6_7 = HandbookSettings.pages[var_6_6]
+			local var_6_8 = not SaveData.seen_handbook_pages[var_6_6]
 
-			if new then
-				content.new = true
+			if var_6_8 then
+				var_6_1.new = true
 			end
 
-			local entry_content = list_content[i]
+			local var_6_9 = var_6_2[iter_6_0]
 
-			entry_content.text = Localize(page_settings.display_name)
-			entry_content.new = new
-			entry_content.pages = pages
+			var_6_9.text = Localize(var_6_7.display_name)
+			var_6_9.new = var_6_8
+			var_6_9.pages = var_6_5
 		end
 
-		local list_style = widget.style.list_style
-
-		list_style.num_draws = num_children
+		arg_6_1.style.list_style.num_draws = var_6_4
 	end
 
-	widget.content.visible = true
+	arg_6_1.content.visible = true
 end
 
-HeroViewStateHandbook._reset_tab = function (self, widget)
-	local content = widget.content
-	local list_style = widget.style.list_style
+function HeroViewStateHandbook._reset_tab(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_1.content
+	local var_7_1 = arg_7_1.style.list_style
 
-	content.active = false
-	content.list_content.active = false
-	content.button_hotspot.is_selected = false
-	content.visible = false
-	content.new = false
-	list_style.num_draws = 0
+	var_7_0.active = false
+	var_7_0.list_content.active = false
+	var_7_0.button_hotspot.is_selected = false
+	var_7_0.visible = false
+	var_7_0.new = false
+	var_7_1.num_draws = 0
 
-	local list_scenegraph_id = list_style.scenegraph_id
-	local list_scenegraph = self._ui_scenegraph[list_scenegraph_id]
+	local var_7_2 = var_7_1.scenegraph_id
 
-	list_scenegraph.size[2] = 0
-	widget.alpha_multiplier = 0
-	widget.alpha_fade_in_delay = nil
-	widget.alpha_fade_multipler = 5
+	arg_7_0._ui_scenegraph[var_7_2].size[2] = 0
+	arg_7_1.alpha_multiplier = 0
+	arg_7_1.alpha_fade_in_delay = nil
+	arg_7_1.alpha_fade_multipler = 5
 end
 
-HeroViewStateHandbook._update_categories_scroll_height = function (self, optional_scroll_value)
-	local window_size = scenegraph_definition.category_window_mask.size
-	local scrollbar_size = scenegraph_definition.category_scrollbar.size
-	local scrollbar_logic = self._category_scrollbar
-	local draw_length = window_size[2]
-	local content_length = self:_get_category_entries_height()
-	local scrollbar_length = scrollbar_size[2]
-	local step_size = 220
-	local scroll_step_multiplier = 1
+function HeroViewStateHandbook._update_categories_scroll_height(arg_8_0, arg_8_1)
+	local var_8_0 = var_0_2.category_window_mask.size
+	local var_8_1 = var_0_2.category_scrollbar.size
+	local var_8_2 = arg_8_0._category_scrollbar
+	local var_8_3 = var_8_0[2]
+	local var_8_4 = arg_8_0:_get_category_entries_height()
+	local var_8_5 = var_8_1[2]
+	local var_8_6 = 220
+	local var_8_7 = 1
 
-	scrollbar_logic:set_scrollbar_values(draw_length, content_length, scrollbar_length, step_size, scroll_step_multiplier)
+	var_8_2:set_scrollbar_values(var_8_3, var_8_4, var_8_5, var_8_6, var_8_7)
 
-	if optional_scroll_value then
-		scrollbar_logic:set_scroll_percentage(optional_scroll_value)
+	if arg_8_1 then
+		var_8_2:set_scroll_percentage(arg_8_1)
 	end
 end
 
-HeroViewStateHandbook._get_category_entries_height = function (self)
-	local num_tabs = #self._category_tab_widgets
-	local tab_size = category_tab_info.tab_size
-	local tab_list_entry_spacing = category_tab_info.tab_list_entry_spacing
-	local tab_height = math.max(tab_size[2] * num_tabs + tab_list_entry_spacing * (num_tabs - 1), 0)
+function HeroViewStateHandbook._get_category_entries_height(arg_9_0)
+	local var_9_0 = #arg_9_0._category_tab_widgets
+	local var_9_1 = var_0_5.tab_size
+	local var_9_2 = var_0_5.tab_list_entry_spacing
 
-	return tab_height + self:_get_active_tabs_height()
+	return math.max(var_9_1[2] * var_9_0 + var_9_2 * (var_9_0 - 1), 0) + arg_9_0:_get_active_tabs_height()
 end
 
-HeroViewStateHandbook._get_active_tabs_height = function (self)
-	local active_tab = self._active_tab
-	local num_sub_tabs = active_tab and active_tab.style.list_style.num_draws or 0
-	local tab_list_entry_size = category_tab_info.tab_list_entry_size
-	local tab_list_entry_spacing = category_tab_info.tab_list_entry_spacing
-	local tab_list_height = math.max(tab_list_entry_size[2] * num_sub_tabs + tab_list_entry_spacing * (num_sub_tabs - 1), 0)
+function HeroViewStateHandbook._get_active_tabs_height(arg_10_0)
+	local var_10_0 = arg_10_0._active_tab
+	local var_10_1 = var_10_0 and var_10_0.style.list_style.num_draws or 0
+	local var_10_2 = var_0_5.tab_list_entry_size
+	local var_10_3 = var_0_5.tab_list_entry_spacing
 
-	return tab_list_height
+	return (math.max(var_10_2[2] * var_10_1 + var_10_3 * (var_10_1 - 1), 0))
 end
 
-HeroViewStateHandbook._get_active_category_height = function (self)
-	local active_tab = self._active_tab_index or 1
-	local num_tabs = active_tab - 1
-	local tab_size = category_tab_info.tab_size
-	local tab_list_entry_spacing = category_tab_info.tab_list_entry_spacing
-	local tab_start_height = math.max(tab_size[2] * num_tabs + tab_list_entry_spacing * (num_tabs - 1), 0)
-	local tab_list_height = self:_get_active_tabs_height()
+function HeroViewStateHandbook._get_active_category_height(arg_11_0)
+	local var_11_0 = (arg_11_0._active_tab_index or 1) - 1
+	local var_11_1 = var_0_5.tab_size
+	local var_11_2 = var_0_5.tab_list_entry_spacing
+	local var_11_3 = math.max(var_11_1[2] * var_11_0 + var_11_2 * (var_11_0 - 1), 0)
+	local var_11_4 = arg_11_0:_get_active_tabs_height()
 
-	return tab_start_height, tab_size[2] + tab_list_entry_spacing + tab_list_height
+	return var_11_3, var_11_1[2] + var_11_2 + var_11_4
 end
 
-HeroViewStateHandbook._setup_scrollbar = function (self, height, optional_value)
-	local widget = self._widgets_by_name.achievement_scrollbar
-	local scenegraph_id = widget.scenegraph_id
-	local scrollbar_size_y = self._ui_scenegraph[scenegraph_id].size[2]
-	local percentage = math.min(scrollbar_size_y / height, 1)
+function HeroViewStateHandbook._setup_scrollbar(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = arg_12_0._widgets_by_name.achievement_scrollbar
+	local var_12_1 = var_12_0.scenegraph_id
+	local var_12_2 = arg_12_0._ui_scenegraph[var_12_1].size[2]
+	local var_12_3 = math.min(var_12_2 / arg_12_1, 1)
 
-	widget.content.scroll_bar_info.bar_height_percentage = percentage
+	var_12_0.content.scroll_bar_info.bar_height_percentage = var_12_3
 
-	self:_set_scrollbar_value(optional_value or 0)
+	arg_12_0:_set_scrollbar_value(arg_12_2 or 0)
 
-	local scroll_step_multiplier = 2
-	local scroll_amount = math.max(110 / self._total_scroll_height, 0) * scroll_step_multiplier
+	local var_12_4 = 2
+	local var_12_5 = math.max(110 / arg_12_0._total_scroll_height, 0) * var_12_4
 
-	self._widgets_by_name.achievement_window.content.scroll_amount = scroll_amount
+	arg_12_0._widgets_by_name.achievement_window.content.scroll_amount = var_12_5
 end
 
-HeroViewStateHandbook._update_mouse_scroll_input = function (self)
-	local using_scrollbar = true
+function HeroViewStateHandbook._update_mouse_scroll_input(arg_13_0)
+	local var_13_0 = true
 
-	if using_scrollbar then
-		local widgets_by_name = self._widgets_by_name
-		local widget = widgets_by_name.achievement_scrollbar
-		local achievement_window_widget = widgets_by_name.achievement_window
+	if var_13_0 then
+		local var_13_1 = arg_13_0._widgets_by_name
+		local var_13_2 = var_13_1.achievement_scrollbar
+		local var_13_3 = var_13_1.achievement_window
 
-		if widget.content.scroll_bar_info.on_pressed then
-			achievement_window_widget.content.scroll_add = nil
+		if var_13_2.content.scroll_bar_info.on_pressed then
+			var_13_3.content.scroll_add = nil
 		end
 
-		local mouse_scroll_value = achievement_window_widget.content.scroll_value
+		local var_13_4 = var_13_3.content.scroll_value
 
-		if not mouse_scroll_value then
+		if not var_13_4 then
 			return
 		end
 
-		local scroll_bar_value = widget.content.scroll_bar_info.value
-		local current_scroll_value = self._scroll_value
+		local var_13_5 = var_13_2.content.scroll_bar_info.value
+		local var_13_6 = arg_13_0._scroll_value
 
-		if current_scroll_value ~= mouse_scroll_value then
-			self:_set_scrollbar_value(mouse_scroll_value)
-		elseif current_scroll_value ~= scroll_bar_value then
-			self:_set_scrollbar_value(scroll_bar_value)
+		if var_13_6 ~= var_13_4 then
+			arg_13_0:_set_scrollbar_value(var_13_4)
+		elseif var_13_6 ~= var_13_5 then
+			arg_13_0:_set_scrollbar_value(var_13_5)
 		end
 	end
 end
 
-HeroViewStateHandbook._set_scrollbar_value = function (self, value)
-	if value then
-		local widgets_by_name = self._widgets_by_name
-		local widget = widgets_by_name.achievement_scrollbar
-		local widget_scroll_bar_info = widget.content.scroll_bar_info
+function HeroViewStateHandbook._set_scrollbar_value(arg_14_0, arg_14_1)
+	if arg_14_1 then
+		local var_14_0 = arg_14_0._widgets_by_name
 
-		widget_scroll_bar_info.value = value
-		widgets_by_name.achievement_window.content.scroll_value = value
+		var_14_0.achievement_scrollbar.content.scroll_bar_info.value = arg_14_1
+		var_14_0.achievement_window.content.scroll_value = arg_14_1
 
-		local total_scroll_height = self._total_scroll_height
-		local height_scrolled = total_scroll_height * value
+		local var_14_1 = arg_14_0._total_scroll_height * arg_14_1
 
-		self._ui_scenegraph.achievement_root.position[2] = math.floor(height_scrolled)
-		self._scroll_value = value
+		arg_14_0._ui_scenegraph.achievement_root.position[2] = math.floor(var_14_1)
+		arg_14_0._scroll_value = arg_14_1
 	end
 end
 
-HeroViewStateHandbook._update_achievement_read_index = function (self, fraction)
+function HeroViewStateHandbook._update_achievement_read_index(arg_15_0, arg_15_1)
 	return
 end
 
-HeroViewStateHandbook._update_category_scroll_position = function (self)
-	local scrollbar_logic = self._category_scrollbar
-	local length = scrollbar_logic:get_scrolled_length()
+function HeroViewStateHandbook._update_category_scroll_position(arg_16_0)
+	local var_16_0 = arg_16_0._category_scrollbar:get_scrolled_length()
 
-	if length ~= self._category_scrolled_length then
-		self._ui_scenegraph.category_root.local_position[2] = math.round(length)
-		self._category_scrolled_length = length
+	if var_16_0 ~= arg_16_0._category_scrolled_length then
+		arg_16_0._ui_scenegraph.category_root.local_position[2] = math.round(var_16_0)
+		arg_16_0._category_scrolled_length = var_16_0
 	end
 end
 
-HeroViewStateHandbook._setup_achievement_entries_animations = function (self)
-	local fade_in_delay = 0.05
-	local global_fade_in_delay = 0
-	local alpha_fade_multipler = 4
-	local achievement_widgets = self._achievement_widgets
+function HeroViewStateHandbook._setup_achievement_entries_animations(arg_17_0)
+	local var_17_0 = 0.05
+	local var_17_1 = 0
+	local var_17_2 = 4
+	local var_17_3 = arg_17_0._achievement_widgets
 
-	for _, widget in ipairs(achievement_widgets) do
-		widget.alpha_multiplier = 0
-		widget.alpha_fade_in_delay = global_fade_in_delay
-		widget.alpha_fade_multipler = alpha_fade_multipler
-		global_fade_in_delay = global_fade_in_delay + fade_in_delay
+	for iter_17_0, iter_17_1 in ipairs(var_17_3) do
+		iter_17_1.alpha_multiplier = 0
+		iter_17_1.alpha_fade_in_delay = var_17_1
+		iter_17_1.alpha_fade_multipler = var_17_2
+		var_17_1 = var_17_1 + var_17_0
 	end
 end
 
-HeroViewStateHandbook.transitioning = function (self)
-	return not not self._exiting
+function HeroViewStateHandbook.transitioning(arg_18_0)
+	return not not arg_18_0._exiting
 end
 
-HeroViewStateHandbook._update_transition_timer = function (self, dt)
-	if not self._transition_timer then
+function HeroViewStateHandbook._update_transition_timer(arg_19_0, arg_19_1)
+	if not arg_19_0._transition_timer then
 		return
 	end
 
-	if self._transition_timer == 0 then
-		self._transition_timer = nil
+	if arg_19_0._transition_timer == 0 then
+		arg_19_0._transition_timer = nil
 	else
-		self._transition_timer = math.max(self._transition_timer - dt, 0)
+		arg_19_0._transition_timer = math.max(arg_19_0._transition_timer - arg_19_1, 0)
 	end
 end
 
-HeroViewStateHandbook.input_service = function (self)
-	return self.parent:input_service()
+function HeroViewStateHandbook.input_service(arg_20_0)
+	return arg_20_0.parent:input_service()
 end
 
-HeroViewStateHandbook.update = function (self, dt, t)
-	local input_service = self._input_blocked and FAKE_INPUT_SERVICE or self:input_service()
-	local is_gamepad_active = Managers.input:is_device_active("gamepad")
+function HeroViewStateHandbook.update(arg_21_0, arg_21_1, arg_21_2)
+	local var_21_0 = arg_21_0._input_blocked and FAKE_INPUT_SERVICE or arg_21_0:input_service()
+	local var_21_1 = Managers.input:is_device_active("gamepad")
 
-	self._ui_animator:update(dt)
+	arg_21_0._ui_animator:update(arg_21_1)
 
-	local widgets_by_name = self._widgets_by_name
-	local exit_button = widgets_by_name.exit_button
+	local var_21_2 = arg_21_0._widgets_by_name.exit_button
 
-	UIWidgetUtils.animate_default_button(exit_button, dt)
+	UIWidgetUtils.animate_default_button(var_21_2, arg_21_1)
 
-	local parent = self.parent
-	local transitioning = parent:transitioning()
-	local wanted_state = parent:wanted_state()
+	local var_21_3 = arg_21_0.parent
+	local var_21_4 = var_21_3:transitioning()
+	local var_21_5 = var_21_3:wanted_state()
 
-	if not self._transition_timer then
-		if not transitioning then
-			if self:_has_active_level_vote() then
-				local ignore_sound_on_close_menu = true
+	if not arg_21_0._transition_timer then
+		if not var_21_4 then
+			if arg_21_0:_has_active_level_vote() then
+				local var_21_6 = true
 
-				self:close_menu(ignore_sound_on_close_menu)
+				arg_21_0:close_menu(var_21_6)
 			else
-				self:_handle_input(input_service, is_gamepad_active, dt, t)
+				arg_21_0:_handle_input(var_21_0, var_21_1, arg_21_1, arg_21_2)
 			end
 		end
 
-		local has_state = wanted_state or self._new_state
+		local var_21_7 = var_21_5 or arg_21_0._new_state
 
-		if has_state then
-			parent:clear_wanted_state()
+		if var_21_7 then
+			var_21_3:clear_wanted_state()
 
-			return has_state
+			return var_21_7
 		end
 	end
 
-	if self._exiting then
+	if arg_21_0._exiting then
 		return
 	end
 
-	self:draw(input_service, is_gamepad_active, dt)
+	arg_21_0:draw(var_21_0, var_21_1, arg_21_1)
 end
 
-HeroViewStateHandbook._has_active_level_vote = function (self)
-	local voting_manager = self._voting_manager
-	local is_mission_vote = voting_manager:vote_in_progress() and voting_manager:is_mission_vote()
+function HeroViewStateHandbook._has_active_level_vote(arg_22_0)
+	local var_22_0 = arg_22_0._voting_manager
 
-	return is_mission_vote and not voting_manager:has_voted(Network.peer_id())
+	return var_22_0:vote_in_progress() and var_22_0:is_mission_vote() and not var_22_0:has_voted(Network.peer_id())
 end
 
-HeroViewStateHandbook._handle_input = function (self, input_service, is_gamepad_active, dt, t)
-	local widgets_by_name = self._widgets_by_name
-	local exit_button = widgets_by_name.exit_button
-	local input_pressed = input_service:get("toggle_menu")
-	local input_close_pressed = is_gamepad_active and input_service:get("back")
+function HeroViewStateHandbook._handle_input(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+	local var_23_0 = arg_23_0._widgets_by_name
+	local var_23_1 = var_23_0.exit_button
+	local var_23_2 = arg_23_1:get("toggle_menu")
+	local var_23_3 = arg_23_2 and arg_23_1:get("back")
 
-	if input_pressed or UIUtils.is_button_pressed(exit_button) or input_close_pressed then
-		self:play_sound("Play_hud_hover")
-		self:close_menu()
+	if var_23_2 or UIUtils.is_button_pressed(var_23_1) or var_23_3 then
+		arg_23_0:play_sound("Play_hud_hover")
+		arg_23_0:close_menu()
 
-		self._exiting = true
+		arg_23_0._exiting = true
 
 		return
 	end
 
-	if UIUtils.is_button_hover_enter(exit_button) then
-		self:play_sound("play_gui_equipment_button_hover")
+	if UIUtils.is_button_hover_enter(var_23_1) then
+		arg_23_0:play_sound("play_gui_equipment_button_hover")
 	end
 
-	self._category_scrollbar:update(dt, t, false)
-	self:_update_category_scroll_position()
+	arg_23_0._category_scrollbar:update(arg_23_3, arg_23_4, false)
+	arg_23_0:_update_category_scroll_position()
 
-	for index, widget in ipairs(self._category_tab_widgets) do
-		local visible = widget.content.visible
+	for iter_23_0, iter_23_1 in ipairs(arg_23_0._category_tab_widgets) do
+		if iter_23_1.content.visible then
+			UIWidgetUtils.animate_default_button(iter_23_1, arg_23_3)
 
-		if visible then
-			UIWidgetUtils.animate_default_button(widget, dt)
-
-			if UIUtils.is_button_hover_enter(widget) then
-				self:play_sound("Play_gui_achivements_menu_hover_category")
+			if UIUtils.is_button_hover_enter(iter_23_1) then
+				arg_23_0:play_sound("Play_gui_achivements_menu_hover_category")
 			end
 
-			if UIUtils.is_button_pressed(widget) then
-				self:_tab_pressed(widget, index)
+			if UIUtils.is_button_pressed(iter_23_1) then
+				arg_23_0:_tab_pressed(iter_23_1, iter_23_0)
 			end
 		end
 	end
 
-	local active_tab = self._active_tab
+	local var_23_4 = arg_23_0._active_tab
 
-	if active_tab then
-		local item_contents = active_tab.content.list_content
-		local list_style = active_tab.style.list_style
-		local num_draws = list_style.num_draws
-		local active_list_index = self._active_list_index
+	if var_23_4 then
+		local var_23_5 = var_23_4.content.list_content
+		local var_23_6 = var_23_4.style.list_style.num_draws
+		local var_23_7 = arg_23_0._active_list_index
 
-		for i = 1, num_draws do
-			local content = item_contents[i]
-			local hotspot = content.button_hotspot or content.hotspot
+		for iter_23_2 = 1, var_23_6 do
+			local var_23_8 = var_23_5[iter_23_2]
+			local var_23_9 = var_23_8.button_hotspot or var_23_8.hotspot
 
-			if hotspot.on_hover_enter then
-				self:play_sound("Play_gui_achivements_menu_hover_category")
+			if var_23_9.on_hover_enter then
+				arg_23_0:play_sound("Play_gui_achivements_menu_hover_category")
 			end
 
-			if hotspot.on_release then
-				hotspot.on_release = false
+			if var_23_9.on_release then
+				var_23_9.on_release = false
 
-				self:_on_tab_list_pressed(i, content, content.pages)
+				arg_23_0:_on_tab_list_pressed(iter_23_2, var_23_8, var_23_8.pages)
 			end
 
-			hotspot.is_selected = active_list_index == i
+			var_23_9.is_selected = var_23_7 == iter_23_2
 		end
 	end
 
-	local achievement_widgets = self._achievement_widgets
-
-	if achievement_widgets then
-		self:_update_mouse_scroll_input()
+	if arg_23_0._achievement_widgets then
+		arg_23_0:_update_mouse_scroll_input()
 	end
 
-	local page_button_next = widgets_by_name.page_button_next
-	local page_button_previous = widgets_by_name.page_button_previous
+	local var_23_10 = var_23_0.page_button_next
+	local var_23_11 = var_23_0.page_button_previous
 
-	self:_set_gamepad_input_buttons_visibility(is_gamepad_active)
-	UIWidgetUtils.animate_arrow_button(page_button_next, dt)
-	UIWidgetUtils.animate_arrow_button(page_button_previous, dt)
+	arg_23_0:_set_gamepad_input_buttons_visibility(arg_23_2)
+	UIWidgetUtils.animate_arrow_button(var_23_10, arg_23_3)
+	UIWidgetUtils.animate_arrow_button(var_23_11, arg_23_3)
 
-	if UIUtils.is_button_hover_enter(page_button_next) or UIUtils.is_button_hover_enter(page_button_previous) then
-		self:play_sound("play_gui_inventory_next_hover")
+	if UIUtils.is_button_hover_enter(var_23_10) or UIUtils.is_button_hover_enter(var_23_11) then
+		arg_23_0:play_sound("play_gui_inventory_next_hover")
 	end
 
-	if UIUtils.is_button_pressed(page_button_next) or input_service:get("cycle_next") then
-		local next_page_index = self._current_page + 1
+	if UIUtils.is_button_pressed(var_23_10) or arg_23_1:get("cycle_next") then
+		local var_23_12 = arg_23_0._current_page + 1
 
-		if next_page_index <= self._total_pages then
-			self:_go_to_page(next_page_index)
-			self:play_sound("play_gui_cosmetics_inventory_next_click")
+		if var_23_12 <= arg_23_0._total_pages then
+			arg_23_0:_go_to_page(var_23_12)
+			arg_23_0:play_sound("play_gui_cosmetics_inventory_next_click")
 		end
-	elseif UIUtils.is_button_pressed(page_button_previous) or input_service:get("cycle_previous") then
-		local next_page_index = self._current_page - 1
+	elseif UIUtils.is_button_pressed(var_23_11) or arg_23_1:get("cycle_previous") then
+		local var_23_13 = arg_23_0._current_page - 1
 
-		if next_page_index >= 1 then
-			self:_go_to_page(next_page_index)
-			self:play_sound("play_gui_cosmetics_inventory_next_click")
+		if var_23_13 >= 1 then
+			arg_23_0:_go_to_page(var_23_13)
+			arg_23_0:play_sound("play_gui_cosmetics_inventory_next_click")
 		end
 	end
 end
 
-HeroViewStateHandbook._go_to_page = function (self, page_index)
-	local page_name = self._active_pages[page_index]
-	local page_settings = HandbookSettings.pages[page_name]
+function HeroViewStateHandbook._go_to_page(arg_24_0, arg_24_1)
+	local var_24_0 = arg_24_0._active_pages[arg_24_1]
+	local var_24_1 = HandbookSettings.pages[var_24_0]
 
-	if not page_settings then
+	if not var_24_1 then
 		return
 	end
 
-	local entry_widgets, total_height = self._handbook_logic:create_entry_widgets(page_settings)
+	local var_24_2, var_24_3 = arg_24_0._handbook_logic:create_entry_widgets(var_24_1)
+	local var_24_4 = var_24_3 + 150
 
-	total_height = total_height + 150
-	self._achievement_widgets = entry_widgets
-	self._total_scroll_height = math.max(total_height - ACHIEVEMENT_WINDOW_HEIGHT, 0)
-	self._scroll_value = nil
+	arg_24_0._achievement_widgets = var_24_2
+	arg_24_0._total_scroll_height = math.max(var_24_4 - var_0_8, 0)
+	arg_24_0._scroll_value = nil
 
-	self:_setup_scrollbar(total_height)
-	self:_setup_achievement_entries_animations()
+	arg_24_0:_setup_scrollbar(var_24_4)
+	arg_24_0:_setup_achievement_entries_animations()
 
-	self._current_page = page_index
+	arg_24_0._current_page = arg_24_1
 
-	self:_update_page_info()
+	arg_24_0:_update_page_info()
 end
 
-HeroViewStateHandbook._on_tab_list_pressed = function (self, list_index, content, pages, ignore_sound)
-	if list_index == self._active_list_index then
+function HeroViewStateHandbook._on_tab_list_pressed(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+	if arg_25_1 == arg_25_0._active_list_index then
 		return
 	end
 
-	self._active_pages = pages
-	self._active_list_index = list_index
-	self._total_pages = #pages
+	arg_25_0._active_pages = arg_25_3
+	arg_25_0._active_list_index = arg_25_1
+	arg_25_0._total_pages = #arg_25_3
 
-	self:_go_to_page(1)
+	arg_25_0:_go_to_page(1)
 
-	if content.new then
-		content.new = false
+	if arg_25_2.new then
+		arg_25_2.new = false
 
-		local page1 = pages[1]
+		local var_25_0 = arg_25_3[1]
 
-		SaveData.seen_handbook_pages[page1] = true
+		SaveData.seen_handbook_pages[var_25_0] = true
 
-		local any_new = false
+		local var_25_1 = false
 
-		for _, entry in ipairs(content.parent.list_content) do
-			if entry.new then
-				any_new = true
+		for iter_25_0, iter_25_1 in ipairs(arg_25_2.parent.list_content) do
+			if iter_25_1.new then
+				var_25_1 = true
 
 				break
 			end
 		end
 
-		content.parent.new = any_new
+		arg_25_2.parent.new = var_25_1
 	end
 
-	if not ignore_sound then
-		self:play_sound("Play_gui_handbook_click")
-	end
-end
-
-HeroViewStateHandbook._tab_pressed = function (self, widget, index, tab_list_index, ignore_sound)
-	local was_active = self._active_tab == widget
-
-	self:_deactivate_active_tab()
-
-	if not was_active then
-		self:_activate_tab(widget, index, tab_list_index, ignore_sound)
+	if not arg_25_4 then
+		arg_25_0:play_sound("Play_gui_handbook_click")
 	end
 end
 
-HeroViewStateHandbook._activate_tab = function (self, widget, index, tab_list_index, ignore_sound)
-	self._active_tab = widget
-	self._active_tab_index = index
+function HeroViewStateHandbook._tab_pressed(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+	local var_26_0 = arg_26_0._active_tab == arg_26_1
 
-	local content = widget.content
-	local style = widget.style
-	local list_style = style.list_style
-	local num_draws = list_style.num_draws
-	local list_scenegraph_id = list_style.scenegraph_id
-	local list_scenegraph = self._ui_scenegraph[list_scenegraph_id]
-	local tab_active_size = category_tab_info.tab_active_size
-	local tab_list_entry_size = category_tab_info.tab_list_entry_size
-	local tab_list_entry_spacing = category_tab_info.tab_list_entry_spacing
-	local tabs_height = math.max(tab_list_entry_size[2] * num_draws + tab_list_entry_spacing * (num_draws - 1), 0)
+	arg_26_0:_deactivate_active_tab()
 
-	list_scenegraph.size[1] = tab_active_size[1]
-	list_scenegraph.size[2] = tabs_height
-	content.button_hotspot.is_selected = true
-	content.active = true
-	content.list_content.active = true
-	self._active_list_index = nil
-	tab_list_index = tab_list_index or 1
+	if not var_26_0 then
+		arg_26_0:_activate_tab(arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+	end
+end
 
-	if tab_list_index then
-		local pages = content.children[tab_list_index]
-		local entry_content = content.list_content[tab_list_index]
+function HeroViewStateHandbook._activate_tab(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+	arg_27_0._active_tab = arg_27_1
+	arg_27_0._active_tab_index = arg_27_2
 
-		entry_content.parent = content
+	local var_27_0 = arg_27_1.content
+	local var_27_1 = arg_27_1.style.list_style
+	local var_27_2 = var_27_1.num_draws
+	local var_27_3 = var_27_1.scenegraph_id
+	local var_27_4 = arg_27_0._ui_scenegraph[var_27_3]
+	local var_27_5 = var_0_5.tab_active_size
+	local var_27_6 = var_0_5.tab_list_entry_size
+	local var_27_7 = var_0_5.tab_list_entry_spacing
+	local var_27_8 = math.max(var_27_6[2] * var_27_2 + var_27_7 * (var_27_2 - 1), 0)
 
-		self:_on_tab_list_pressed(tab_list_index, entry_content, pages, true)
+	var_27_4.size[1] = var_27_5[1]
+	var_27_4.size[2] = var_27_8
+	var_27_0.button_hotspot.is_selected = true
+	var_27_0.active = true
+	var_27_0.list_content.active = true
+	arg_27_0._active_list_index = nil
+	arg_27_3 = arg_27_3 or 1
 
-		if not ignore_sound then
-			self:play_sound("Play_gui_achivements_menu_select_category")
+	if arg_27_3 then
+		local var_27_9 = var_27_0.children[arg_27_3]
+		local var_27_10 = var_27_0.list_content[arg_27_3]
+
+		var_27_10.parent = var_27_0
+
+		arg_27_0:_on_tab_list_pressed(arg_27_3, var_27_10, var_27_9, true)
+
+		if not arg_27_4 then
+			arg_27_0:play_sound("Play_gui_achivements_menu_select_category")
 		end
 	else
-		self._active_list_index = nil
+		arg_27_0._active_list_index = nil
 
-		if not ignore_sound then
-			self:play_sound("Play_gui_achivements_menu_expand_category")
+		if not arg_27_4 then
+			arg_27_0:play_sound("Play_gui_achivements_menu_expand_category")
 		end
 	end
 
-	self:_update_categories_scroll_height()
+	arg_27_0:_update_categories_scroll_height()
 end
 
-HeroViewStateHandbook._deactivate_active_tab = function (self)
-	local widget = self._active_tab
+function HeroViewStateHandbook._deactivate_active_tab(arg_28_0)
+	local var_28_0 = arg_28_0._active_tab
 
-	if not widget then
+	if not var_28_0 then
 		return
 	end
 
-	self._active_tab = nil
-	self._active_tab_index = nil
+	arg_28_0._active_tab = nil
+	arg_28_0._active_tab_index = nil
 
-	local content = widget.content
-	local style = widget.style
-	local list_style = style.list_style
-	local list_scenegraph_id = list_style.scenegraph_id
-	local list_scenegraph = self._ui_scenegraph[list_scenegraph_id]
-	local tab_size = category_tab_info.tab_size
+	local var_28_1 = var_28_0.content
+	local var_28_2 = var_28_0.style.list_style.scenegraph_id
+	local var_28_3 = arg_28_0._ui_scenegraph[var_28_2]
+	local var_28_4 = var_0_5.tab_size
 
-	list_scenegraph.size[1] = tab_size[1]
-	list_scenegraph.size[2] = 0
-	content.active = false
-	content.list_content.active = false
-	content.button_hotspot.is_selected = false
+	var_28_3.size[1] = var_28_4[1]
+	var_28_3.size[2] = 0
+	var_28_1.active = false
+	var_28_1.list_content.active = false
+	var_28_1.button_hotspot.is_selected = false
 end
 
-HeroViewStateHandbook.close_menu = function (self, ignore_sound_on_close_menu)
-	if not ignore_sound_on_close_menu then
-		self:play_sound("Play_gui_achivements_menu_close")
+function HeroViewStateHandbook.close_menu(arg_29_0, arg_29_1)
+	if not arg_29_1 then
+		arg_29_0:play_sound("Play_gui_achivements_menu_close")
 	end
 
-	ignore_sound_on_close_menu = true
+	arg_29_1 = true
 
-	local no_fade = true
+	local var_29_0 = true
 
-	self.parent:close_menu(nil, ignore_sound_on_close_menu, no_fade)
+	arg_29_0.parent:close_menu(nil, arg_29_1, var_29_0)
 end
 
-HeroViewStateHandbook._update_page_info = function (self)
-	local widgets_by_name = self._widgets_by_name
-	local current_page = self._current_page
-	local total_pages = self._total_pages
+function HeroViewStateHandbook._update_page_info(arg_30_0)
+	local var_30_0 = arg_30_0._widgets_by_name
+	local var_30_1 = arg_30_0._current_page
+	local var_30_2 = arg_30_0._total_pages
 
-	widgets_by_name.page_text_left.content.text = tostring(current_page)
-	widgets_by_name.page_text_right.content.text = tostring(total_pages)
-	widgets_by_name.page_button_next.content.hotspot.disable_button = current_page == total_pages
-	widgets_by_name.page_button_previous.content.hotspot.disable_button = current_page == 1
+	var_30_0.page_text_left.content.text = tostring(var_30_1)
+	var_30_0.page_text_right.content.text = tostring(var_30_2)
+	var_30_0.page_button_next.content.hotspot.disable_button = var_30_1 == var_30_2
+	var_30_0.page_button_previous.content.hotspot.disable_button = var_30_1 == 1
 
-	local has_pages = total_pages > 1
+	local var_30_3 = var_30_2 > 1
 
-	widgets_by_name.page_button_next.content.visible = has_pages
-	widgets_by_name.page_button_previous.content.visible = has_pages
-	widgets_by_name.input_icon_next.content.visible = has_pages
-	widgets_by_name.input_icon_previous.content.visible = has_pages
-	widgets_by_name.input_arrow_next.content.visible = has_pages
-	widgets_by_name.input_arrow_previous.content.visible = has_pages
-	widgets_by_name.page_text_center.content.visible = has_pages
-	widgets_by_name.page_text_left.content.visible = has_pages
-	widgets_by_name.page_text_right.content.visible = has_pages
-	widgets_by_name.page_text_area.content.visible = has_pages
+	var_30_0.page_button_next.content.visible = var_30_3
+	var_30_0.page_button_previous.content.visible = var_30_3
+	var_30_0.input_icon_next.content.visible = var_30_3
+	var_30_0.input_icon_previous.content.visible = var_30_3
+	var_30_0.input_arrow_next.content.visible = var_30_3
+	var_30_0.input_arrow_previous.content.visible = var_30_3
+	var_30_0.page_text_center.content.visible = var_30_3
+	var_30_0.page_text_left.content.visible = var_30_3
+	var_30_0.page_text_right.content.visible = var_30_3
+	var_30_0.page_text_area.content.visible = var_30_3
 
-	self._menu_input_description:set_input_description(has_pages and generic_input_actions.has_pages or nil)
+	arg_30_0._menu_input_description:set_input_description(var_30_3 and var_0_6.has_pages or nil)
 end
 
-HeroViewStateHandbook._set_gamepad_input_buttons_visibility = function (self, visible)
-	local widgets_by_name = self._widgets_by_name
-	local has_pages = self._total_pages > 1
+function HeroViewStateHandbook._set_gamepad_input_buttons_visibility(arg_31_0, arg_31_1)
+	local var_31_0 = arg_31_0._widgets_by_name
+	local var_31_1 = arg_31_0._total_pages > 1
 
-	visible = visible and has_pages
+	arg_31_1 = arg_31_1 and var_31_1
 
-	local input_1_widget = widgets_by_name.input_icon_next
-	local input_2_widget = widgets_by_name.input_icon_previous
-	local input_arrow_1_widget = widgets_by_name.input_arrow_next
-	local input_arrow_2_widget = widgets_by_name.input_arrow_previous
+	local var_31_2 = var_31_0.input_icon_next
+	local var_31_3 = var_31_0.input_icon_previous
+	local var_31_4 = var_31_0.input_arrow_next
+	local var_31_5 = var_31_0.input_arrow_previous
 
-	input_1_widget.content.visible = visible
-	input_2_widget.content.visible = visible
-	input_arrow_1_widget.content.visible = visible
-	input_arrow_2_widget.content.visible = visible
+	var_31_2.content.visible = arg_31_1
+	var_31_3.content.visible = arg_31_1
+	var_31_4.content.visible = arg_31_1
+	var_31_5.content.visible = arg_31_1
 end
 
-HeroViewStateHandbook.draw = function (self, input_service, is_gamepad_active, dt)
-	local ui_renderer = self._ui_renderer
-	local ui_top_renderer = self._ui_top_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local render_settings = self._render_settings
+function HeroViewStateHandbook.draw(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+	local var_32_0 = arg_32_0._ui_renderer
+	local var_32_1 = arg_32_0._ui_top_renderer
+	local var_32_2 = arg_32_0._ui_scenegraph
+	local var_32_3 = arg_32_0._render_settings
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+	UIRenderer.begin_pass(var_32_0, var_32_2, arg_32_1, arg_32_3, nil, var_32_3)
 
-	local snap_pixel_positions = render_settings.snap_pixel_positions
-	local base_alpha_multiplier = render_settings.alpha_multiplier or 1
+	local var_32_4 = var_32_3.snap_pixel_positions
+	local var_32_5 = var_32_3.alpha_multiplier or 1
 
-	for _, widget in ipairs(self._widgets) do
-		if widget.snap_pixel_positions ~= nil then
-			render_settings.snap_pixel_positions = widget.snap_pixel_positions
+	for iter_32_0, iter_32_1 in ipairs(arg_32_0._widgets) do
+		if iter_32_1.snap_pixel_positions ~= nil then
+			var_32_3.snap_pixel_positions = iter_32_1.snap_pixel_positions
 		end
 
-		render_settings.alpha_multiplier = widget.alpha_multiplier or base_alpha_multiplier
+		var_32_3.alpha_multiplier = iter_32_1.alpha_multiplier or var_32_5
 
-		UIRenderer.draw_widget(ui_renderer, widget)
+		UIRenderer.draw_widget(var_32_0, iter_32_1)
 
-		render_settings.snap_pixel_positions = snap_pixel_positions
+		var_32_3.snap_pixel_positions = var_32_4
 	end
 
-	local achievement_widgets = self._achievement_widgets
+	local var_32_6 = arg_32_0._achievement_widgets
 
-	if achievement_widgets then
-		for i = 1, #achievement_widgets do
-			local widget = achievement_widgets[i]
+	if var_32_6 then
+		for iter_32_2 = 1, #var_32_6 do
+			local var_32_7 = var_32_6[iter_32_2]
 
-			if widget.snap_pixel_positions ~= nil then
-				render_settings.snap_pixel_positions = widget.snap_pixel_positions
+			if var_32_7.snap_pixel_positions ~= nil then
+				var_32_3.snap_pixel_positions = var_32_7.snap_pixel_positions
 			end
 
-			local alpha_multiplier = widget.alpha_multiplier
-			local alpha_fade_in_delay = widget.alpha_fade_in_delay
+			local var_32_8 = var_32_7.alpha_multiplier
+			local var_32_9 = var_32_7.alpha_fade_in_delay
 
-			if alpha_fade_in_delay then
-				alpha_fade_in_delay = math.max(alpha_fade_in_delay - dt, 0)
+			if var_32_9 then
+				local var_32_10 = math.max(var_32_9 - arg_32_3, 0)
 
-				if alpha_fade_in_delay > 0 then
-					widget.alpha_fade_in_delay = alpha_fade_in_delay
+				if var_32_10 > 0 then
+					var_32_7.alpha_fade_in_delay = var_32_10
 				else
-					widget.alpha_fade_in_delay = nil
+					var_32_7.alpha_fade_in_delay = nil
 				end
 
-				render_settings.alpha_multiplier = 0
-			elseif alpha_multiplier then
-				local alpha_fade_multipler = widget.alpha_fade_multipler or 1
+				var_32_3.alpha_multiplier = 0
+			elseif var_32_8 then
+				local var_32_11 = var_32_7.alpha_fade_multipler or 1
+				local var_32_12 = math.min(var_32_8 + arg_32_3 * var_32_11, 1)
 
-				alpha_multiplier = math.min(alpha_multiplier + dt * alpha_fade_multipler, 1)
-				render_settings.alpha_multiplier = math.easeInCubic(alpha_multiplier)
-				widget.alpha_multiplier = alpha_multiplier
-				widget.offset[1] = -40 * (1 - alpha_multiplier)
+				var_32_3.alpha_multiplier = math.easeInCubic(var_32_12)
+				var_32_7.alpha_multiplier = var_32_12
+				var_32_7.offset[1] = -40 * (1 - var_32_12)
 			end
 
-			UIRenderer.draw_widget(ui_renderer, widget)
+			UIRenderer.draw_widget(var_32_0, var_32_7)
 
-			render_settings.snap_pixel_positions = snap_pixel_positions
+			var_32_3.snap_pixel_positions = var_32_4
 		end
 	end
 
-	for _, widget in ipairs(self._category_tab_widgets) do
-		if widget.snap_pixel_positions ~= nil then
-			render_settings.snap_pixel_positions = widget.snap_pixel_positions
+	for iter_32_3, iter_32_4 in ipairs(arg_32_0._category_tab_widgets) do
+		if iter_32_4.snap_pixel_positions ~= nil then
+			var_32_3.snap_pixel_positions = iter_32_4.snap_pixel_positions
 		end
 
-		local alpha_multiplier = widget.alpha_multiplier
-		local alpha_fade_in_delay = widget.alpha_fade_in_delay
+		local var_32_13 = iter_32_4.alpha_multiplier
+		local var_32_14 = iter_32_4.alpha_fade_in_delay
 
-		if alpha_fade_in_delay then
-			alpha_fade_in_delay = math.max(alpha_fade_in_delay - dt, 0)
+		if var_32_14 then
+			local var_32_15 = math.max(var_32_14 - arg_32_3, 0)
 
-			if alpha_fade_in_delay > 0 then
-				widget.alpha_fade_in_delay = alpha_fade_in_delay
+			if var_32_15 > 0 then
+				iter_32_4.alpha_fade_in_delay = var_32_15
 			else
-				widget.alpha_fade_in_delay = nil
+				iter_32_4.alpha_fade_in_delay = nil
 			end
 
-			render_settings.alpha_multiplier = 0
-		elseif alpha_multiplier then
-			local alpha_fade_multipler = widget.alpha_fade_multipler or 1
+			var_32_3.alpha_multiplier = 0
+		elseif var_32_13 then
+			local var_32_16 = iter_32_4.alpha_fade_multipler or 1
+			local var_32_17 = math.min(var_32_13 + arg_32_3 * var_32_16, 1)
 
-			alpha_multiplier = math.min(alpha_multiplier + dt * alpha_fade_multipler, 1)
-			render_settings.alpha_multiplier = math.easeInCubic(alpha_multiplier)
-			widget.alpha_multiplier = alpha_multiplier
+			var_32_3.alpha_multiplier = math.easeInCubic(var_32_17)
+			iter_32_4.alpha_multiplier = var_32_17
 		end
 
-		UIRenderer.draw_widget(ui_renderer, widget)
+		UIRenderer.draw_widget(var_32_0, iter_32_4)
 
-		render_settings.snap_pixel_positions = snap_pixel_positions
+		var_32_3.snap_pixel_positions = var_32_4
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_32_0)
 
-	render_settings.alpha_multiplier = base_alpha_multiplier
+	var_32_3.alpha_multiplier = var_32_5
 
-	if is_gamepad_active then
-		self._menu_input_description:draw(ui_top_renderer, dt)
-		UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt)
-		UIRenderer.draw_widget(ui_top_renderer, self._console_cursor_widget)
-		UIRenderer.end_pass(ui_top_renderer)
+	if arg_32_2 then
+		arg_32_0._menu_input_description:draw(var_32_1, arg_32_3)
+		UIRenderer.begin_pass(var_32_1, var_32_2, arg_32_1, arg_32_3)
+		UIRenderer.draw_widget(var_32_1, arg_32_0._console_cursor_widget)
+		UIRenderer.end_pass(var_32_1)
 	end
 end
 
-HeroViewStateHandbook.play_sound = function (self, event)
-	self.parent:play_sound(event)
+function HeroViewStateHandbook.play_sound(arg_33_0, arg_33_1)
+	arg_33_0.parent:play_sound(arg_33_1)
 end
 
-HeroViewStateHandbook._start_transition_animation = function (self, key, animation_name)
-	local params = {
-		wwise_world = self._ingame_ui_context.wwise_world,
-		render_settings = self._render_settings,
+function HeroViewStateHandbook._start_transition_animation(arg_34_0, arg_34_1, arg_34_2)
+	local var_34_0 = {
+		wwise_world = arg_34_0._ingame_ui_context.wwise_world,
+		render_settings = arg_34_0._render_settings
 	}
-	local widgets
+	local var_34_1
 
-	self._ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
+	arg_34_0._ui_animator:start_animation(arg_34_2, var_34_1, var_0_2, var_34_0)
 end
 
-HeroViewStateHandbook.block_input = function (self)
-	self._input_blocked = true
+function HeroViewStateHandbook.block_input(arg_35_0)
+	arg_35_0._input_blocked = true
 end
 
-HeroViewStateHandbook.unblock_input = function (self)
-	self._input_blocked = false
+function HeroViewStateHandbook.unblock_input(arg_36_0)
+	arg_36_0._input_blocked = false
 end
 
-HeroViewStateHandbook.input_blocked = function (self)
-	return self._input_blocked
+function HeroViewStateHandbook.input_blocked(arg_37_0)
+	return arg_37_0._input_blocked
 end

@@ -1,615 +1,579 @@
-﻿-- chunkname: @scripts/ui/views/versus_mission_objective_ui.lua
+-- chunkname: @scripts/ui/views/versus_mission_objective_ui.lua
 
-local definitions = local_require("scripts/ui/views/versus_mission_objective_ui_definitions")
-local settings = DLCSettings.carousel
-local animation_definitions = definitions.animation_definitions
-local scenegraph_definition = definitions.scenegraph_definition
-local side_colors = definitions.side_colors
-local OBJECTIVE_MOVE_DURATION = 0.8
-local MAX_VISIBLE_OBJECTIVE = 3
-local OBJECTIVE_WIDTH_SPACING = 120
-local BONUS_TIME_DURATION = 1
-local DO_RELOAD = false
-local RPCS = {
+local var_0_0 = local_require("scripts/ui/views/versus_mission_objective_ui_definitions")
+local var_0_1 = DLCSettings.carousel
+local var_0_2 = var_0_0.animation_definitions
+local var_0_3 = var_0_0.scenegraph_definition
+local var_0_4 = var_0_0.side_colors
+local var_0_5 = 0.8
+local var_0_6 = 3
+local var_0_7 = 120
+local var_0_8 = 1
+local var_0_9 = false
+local var_0_10 = {
 	"rpc_update_start_round_countdown_timer",
-	"rpc_ui_round_started",
+	"rpc_ui_round_started"
 }
 
 VersusMissionObjectiveUI = class(VersusMissionObjectiveUI)
 
-VersusMissionObjectiveUI.init = function (self, parent, ingame_ui_context)
-	local game_mode = Managers.state.game_mode:game_mode()
+function VersusMissionObjectiveUI.init(arg_1_0, arg_1_1, arg_1_2)
+	local var_1_0 = Managers.state.game_mode:game_mode()
 
-	self._active = Managers.state.game_mode:game_mode_key() == "versus" and not game_mode:in_training_mode()
+	arg_1_0._active = Managers.state.game_mode:game_mode_key() == "versus" and not var_1_0:in_training_mode()
 
-	if not self._active then
+	if not arg_1_0._active then
 		return
 	end
 
-	self._parent = parent
-	self._ingame_ui_context = ingame_ui_context
-	self._ui_renderer = ingame_ui_context.ui_renderer
-	self._input_manager = ingame_ui_context.input_manager
+	arg_1_0._parent = arg_1_1
+	arg_1_0._ingame_ui_context = arg_1_2
+	arg_1_0._ui_renderer = arg_1_2.ui_renderer
+	arg_1_0._input_manager = arg_1_2.input_manager
 
-	local world = ingame_ui_context.world_manager:world("level_world")
+	local var_1_1 = arg_1_2.world_manager:world("level_world")
 
-	self._world = world
-	self._wwise_world = Managers.world:wwise_world(world)
-	self._animations = {}
-	self._render_settings = {
+	arg_1_0._world = var_1_1
+	arg_1_0._wwise_world = Managers.world:wwise_world(var_1_1)
+	arg_1_0._animations = {}
+	arg_1_0._render_settings = {
 		alpha_multiplier = 1,
-		snap_pixel_positions = true,
+		snap_pixel_positions = true
 	}
-	self._world_markers = {}
-	self._selected_objective_index = 0
-	self._objectives_widgets = {}
+	arg_1_0._world_markers = {}
+	arg_1_0._selected_objective_index = 0
+	arg_1_0._objectives_widgets = {}
 
-	self:_create_ui_elements()
+	arg_1_0:_create_ui_elements()
 
-	self._round_started = false
-	self._objective_system = Managers.state.entity:system("objective_system")
-	self._objectives_initialized = false
+	arg_1_0._round_started = false
+	arg_1_0._objective_system = Managers.state.entity:system("objective_system")
+	arg_1_0._objectives_initialized = false
 
-	self:_register_rpcs()
-	self:_register_events()
+	arg_1_0:_register_rpcs()
+	arg_1_0:_register_events()
 
-	local _, custom_round_time_limit, custom_settings_enabled = Managers.mechanism:mechanism_try_call("get_custom_game_setting", "round_time_limit")
+	local var_1_2, var_1_3, var_1_4 = Managers.mechanism:mechanism_try_call("get_custom_game_setting", "round_time_limit")
 
-	if custom_settings_enabled and custom_round_time_limit then
-		self._custom_round_timer_active = true
+	if var_1_4 and var_1_3 then
+		arg_1_0._custom_round_timer_active = true
 	end
 
-	self._win_conditions = Managers.mechanism:game_mechanism():win_conditions()
+	arg_1_0._win_conditions = Managers.mechanism:game_mechanism():win_conditions()
 
-	local game_mode_state = Managers.state.game_mode:game_mode():game_mode_state()
-	local round_has_started = game_mode_state == "match_running_state" and true or nil
+	local var_1_5 = Managers.state.game_mode:game_mode():game_mode_state() == "match_running_state" and true or nil
 
-	if round_has_started then
-		self:_on_round_started()
+	if var_1_5 then
+		arg_1_0:_on_round_started()
 	end
 
-	self._round_has_started = round_has_started
+	arg_1_0._round_has_started = var_1_5
 end
 
-VersusMissionObjectiveUI._register_rpcs = function (self)
-	local ingame_ui_context = self._ingame_ui_context
-	local network_event_delegate = ingame_ui_context.network_event_delegate
-
-	network_event_delegate:register(self, unpack(RPCS))
+function VersusMissionObjectiveUI._register_rpcs(arg_2_0)
+	arg_2_0._ingame_ui_context.network_event_delegate:register(arg_2_0, unpack(var_0_10))
 end
 
-VersusMissionObjectiveUI._unregister_rpcs = function (self)
-	local ingame_ui_context = self._ingame_ui_context
-	local network_event_delegate = ingame_ui_context.network_event_delegate
-
-	network_event_delegate:unregister(self)
+function VersusMissionObjectiveUI._unregister_rpcs(arg_3_0)
+	arg_3_0._ingame_ui_context.network_event_delegate:unregister(arg_3_0)
 end
 
-VersusMissionObjectiveUI._is_dark_pact = function (self)
-	local party_id = self:_get_local_player_party_id()
-	local party_manager = Managers.party
-	local party = party_manager:get_party(party_id)
-	local side = Managers.state.side.side_by_party[party]
-	local is_dark_pact = side and side:name() == "dark_pact"
+function VersusMissionObjectiveUI._is_dark_pact(arg_4_0)
+	local var_4_0 = arg_4_0:_get_local_player_party_id()
+	local var_4_1 = Managers.party:get_party(var_4_0)
+	local var_4_2 = Managers.state.side.side_by_party[var_4_1]
 
-	return is_dark_pact
+	return var_4_2 and var_4_2:name() == "dark_pact"
 end
 
-VersusMissionObjectiveUI._start_transition_animation = function (self, key, animation_name)
-	local params = {
-		wwise_world = self._wwise_world,
-		render_settings = self._render_settings,
+function VersusMissionObjectiveUI._start_transition_animation(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = {
+		wwise_world = arg_5_0._wwise_world,
+		render_settings = arg_5_0._render_settings
 	}
-	local widgets = self._widgets_by_name
-	local anim_id = self._ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
+	local var_5_1 = arg_5_0._widgets_by_name
+	local var_5_2 = arg_5_0._ui_animator:start_animation(arg_5_2, var_5_1, var_0_3, var_5_0)
 
-	self._animations[key] = anim_id
+	arg_5_0._animations[arg_5_1] = var_5_2
 end
 
-VersusMissionObjectiveUI._create_ui_elements = function (self)
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
+function VersusMissionObjectiveUI._create_ui_elements(arg_6_0)
+	arg_6_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
-	local widgets = {}
-	local widgets_by_name = {}
-	local widget_definitions = definitions.widget_definitions
+	local var_6_0 = {}
+	local var_6_1 = {}
+	local var_6_2 = var_0_0.widget_definitions
 
-	for name, definition in pairs(widget_definitions) do
-		local widget = UIWidget.init(definition)
+	for iter_6_0, iter_6_1 in pairs(var_6_2) do
+		local var_6_3 = UIWidget.init(iter_6_1)
 
-		widgets_by_name[name] = widget
-		widgets[#widgets + 1] = widget
+		var_6_1[iter_6_0] = var_6_3
+		var_6_0[#var_6_0 + 1] = var_6_3
 	end
 
-	self._objective_text_widget = UIWidget.init(definitions.objective_text)
-	self._widgets_by_name = widgets_by_name
-	self._widgets = widgets
-	self._objective_text_widget.content.visible = false
-	DO_RELOAD = false
+	arg_6_0._objective_text_widget = UIWidget.init(var_0_0.objective_text)
+	arg_6_0._widgets_by_name = var_6_1
+	arg_6_0._widgets = var_6_0
+	arg_6_0._objective_text_widget.content.visible = false
+	var_0_9 = false
 
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_6_0._ui_renderer)
 
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
+	arg_6_0._ui_animator = UIAnimator:new(arg_6_0._ui_scenegraph, var_0_2)
 end
 
-VersusMissionObjectiveUI.destroy = function (self)
-	self:_unregister_rpcs()
-	self:_unregister_events()
+function VersusMissionObjectiveUI.destroy(arg_7_0)
+	arg_7_0:_unregister_rpcs()
+	arg_7_0:_unregister_events()
 
-	self._ui_animator = nil
+	arg_7_0._ui_animator = nil
 end
 
-VersusMissionObjectiveUI.update = function (self, dt, t)
-	if DO_RELOAD then
-		self:_create_ui_elements()
+function VersusMissionObjectiveUI.update(arg_8_0, arg_8_1, arg_8_2)
+	if var_0_9 then
+		arg_8_0:_create_ui_elements()
 	end
 
-	if self._active then
-		self:_update_round_start_timer(dt, t)
-		self:_update_objectives(dt, t)
-		self:_update_animations(dt, t)
-		self:_update_score()
-		self:_draw(dt)
+	if arg_8_0._active then
+		arg_8_0:_update_round_start_timer(arg_8_1, arg_8_2)
+		arg_8_0:_update_objectives(arg_8_1, arg_8_2)
+		arg_8_0:_update_animations(arg_8_1, arg_8_2)
+		arg_8_0:_update_score()
+		arg_8_0:_draw(arg_8_1)
 	end
 end
 
-VersusMissionObjectiveUI._update_objectives = function (self, dt, t)
-	if not self._objective_system:is_active() then
+function VersusMissionObjectiveUI._update_objectives(arg_9_0, arg_9_1, arg_9_2)
+	if not arg_9_0._objective_system:is_active() then
 		return
 	end
 
-	self:_update_world_markers(dt, t)
+	arg_9_0:_update_world_markers(arg_9_1, arg_9_2)
 
-	if not self._objectives_initialized then
-		local local_player_party_id = self:_get_local_player_party_id()
-		local side_name = self:_get_party_side_name(local_player_party_id)
-		local is_hero = side_name == "heroes"
-		local num_main_objectives = self._objective_system:num_main_objectives()
+	if not arg_9_0._objectives_initialized then
+		local var_9_0 = arg_9_0:_get_local_player_party_id()
+		local var_9_1 = arg_9_0:_get_party_side_name(var_9_0) == "heroes"
 
-		self._num_main_objective = num_main_objectives
+		arg_9_0._num_main_objective = arg_9_0._objective_system:num_main_objectives()
 
-		self:_set_active_scoring_side_color(is_hero)
+		arg_9_0:_set_active_scoring_side_color(var_9_1)
 
-		self._objectives_initialized = true
+		arg_9_0._objectives_initialized = true
 	end
 
-	local current_objective_index = self._objective_system:current_objective_index()
-	local num_completed_main_objectives = self._objective_system:num_completed_main_objectives()
+	local var_9_2 = arg_9_0._objective_system:current_objective_index()
+	local var_9_3 = arg_9_0._objective_system:num_completed_main_objectives()
 
-	if current_objective_index > self._selected_objective_index then
-		self._selected_objective_index = current_objective_index
+	if var_9_2 > arg_9_0._selected_objective_index then
+		arg_9_0._selected_objective_index = var_9_2
 
-		self:_update_current_objective(current_objective_index)
+		arg_9_0:_update_current_objective(var_9_2)
 
-		local description = "n/a"
+		local var_9_4 = "n/a"
 
-		if not self:_is_dark_pact() then
-			description = self._objective_system:first_active_objective_description()
+		if not arg_9_0:_is_dark_pact() then
+			local var_9_5 = arg_9_0._objective_system:first_active_objective_description()
 
-			self:_set_objective_text(description)
+			arg_9_0:_set_objective_text(var_9_5)
 
-			local params = {
-				render_settings = self._render_settings,
+			local var_9_6 = {
+				render_settings = arg_9_0._render_settings
 			}
-			local objective_widget = self._objective_text_widget
+			local var_9_7 = arg_9_0._objective_text_widget
 
-			self._ui_animator:start_animation("mission_start", objective_widget, scenegraph_definition, params)
+			arg_9_0._ui_animator:start_animation("mission_start", var_9_7, var_0_3, var_9_6)
 		else
-			description = Localize("level_objective_pactsworn")
+			local var_9_8 = Localize("level_objective_pactsworn")
 
-			self:_set_objective_text(description)
+			arg_9_0:_set_objective_text(var_9_8)
 		end
 	end
 
-	self:_update_objective_progress()
+	arg_9_0:_update_objective_progress()
 end
 
-VersusMissionObjectiveUI._set_active_scoring_side_color = function (self, is_hero)
-	local active_side_color = is_hero and Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
-	local objective_widget = self._widgets_by_name.objective
+function VersusMissionObjectiveUI._set_active_scoring_side_color(arg_10_0, arg_10_1)
+	local var_10_0 = arg_10_1 and Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
+	local var_10_1 = arg_10_0._widgets_by_name.objective
 
-	objective_widget.content.is_hero = is_hero
-	objective_widget.style.progress_bar.color = active_side_color
-	objective_widget.style.objective_icon.color = active_side_color
+	var_10_1.content.is_hero = arg_10_1
+	var_10_1.style.progress_bar.color = var_10_0
+	var_10_1.style.objective_icon.color = var_10_0
 end
 
-VersusMissionObjectiveUI._update_current_objective = function (self)
-	local objective_widget = self._widgets_by_name.objective
-	local objective_icon = self._objective_system:current_objective_icon()
+function VersusMissionObjectiveUI._update_current_objective(arg_11_0)
+	local var_11_0 = arg_11_0._widgets_by_name.objective
+	local var_11_1 = arg_11_0._objective_system:current_objective_icon()
 
-	objective_widget.content.objective_icon = objective_icon
+	var_11_0.content.objective_icon = var_11_1
 end
 
-VersusMissionObjectiveUI._update_objective_status = function (self, current_objective_index)
-	if self._objectives_widgets then
-		for i = 1, #self._objectives_widgets do
-			local is_current_objective = i == current_objective_index
-			local is_completed = i < current_objective_index
-			local is_inactive = current_objective_index < i
-			local widget = self._objectives_widgets[i]
-			local style = widget.style
-			local content = widget.content
-			local objective_progress = is_current_objective and self._objective_system:current_objective_progress() or 0
+function VersusMissionObjectiveUI._update_objective_status(arg_12_0, arg_12_1)
+	if arg_12_0._objectives_widgets then
+		for iter_12_0 = 1, #arg_12_0._objectives_widgets do
+			local var_12_0 = iter_12_0 == arg_12_1
+			local var_12_1 = iter_12_0 < arg_12_1
+			local var_12_2 = arg_12_1 < iter_12_0
+			local var_12_3 = arg_12_0._objectives_widgets[iter_12_0]
+			local var_12_4 = var_12_3.style
+			local var_12_5 = var_12_3.content
 
-			content.objective_progress = objective_progress
-			content.current_objective = is_current_objective
-			content.is_inactive = is_inactive
-			content.completed = is_completed
+			var_12_5.objective_progress = var_12_0 and arg_12_0._objective_system:current_objective_progress() or 0
+			var_12_5.current_objective = var_12_0
+			var_12_5.is_inactive = var_12_2
+			var_12_5.completed = var_12_1
 		end
 	end
 end
 
-VersusMissionObjectiveUI._set_round_text = function (self)
-	local round_text = self._widgets_by_name.round_text
-	local content = round_text.content
-	local rounds = self:_get_round_count()
+function VersusMissionObjectiveUI._set_round_text(arg_13_0)
+	local var_13_0 = arg_13_0._widgets_by_name.round_text.content
+	local var_13_1 = arg_13_0:_get_round_count()
 
-	content.text = string.format("Round: %d", rounds)
+	var_13_0.text = string.format("Round: %d", var_13_1)
 end
 
-VersusMissionObjectiveUI._get_round_count = function (self)
-	local mechanism = Managers.mechanism:game_mechanism()
-	local win_conditions = mechanism:win_conditions()
-	local round_count = win_conditions:get_current_round()
-
-	return round_count
+function VersusMissionObjectiveUI._get_round_count(arg_14_0)
+	return (Managers.mechanism:game_mechanism():win_conditions():get_current_round())
 end
 
-VersusMissionObjectiveUI._update_score = function (self)
-	local local_player_party_id = self:_get_local_player_party_id()
-	local opponent_party_id = self:_get_opponent_party_id()
-	local objective_widget = self._widgets_by_name.objective
+function VersusMissionObjectiveUI._update_score(arg_15_0)
+	local var_15_0 = arg_15_0:_get_local_player_party_id()
+	local var_15_1 = arg_15_0:_get_opponent_party_id()
+	local var_15_2 = arg_15_0._widgets_by_name.objective
 
-	objective_widget.content.team_1_score = self._win_conditions:get_total_score(local_player_party_id)
-	objective_widget.content.team_2_score = self._win_conditions:get_total_score(opponent_party_id)
+	var_15_2.content.team_1_score = arg_15_0._win_conditions:get_total_score(var_15_0)
+	var_15_2.content.team_2_score = arg_15_0._win_conditions:get_total_score(var_15_1)
 end
 
-VersusMissionObjectiveUI._get_party_side_name = function (self, party_id)
-	local local_player_party = Managers.party:get_party(party_id)
-	local side = Managers.state.side.side_by_party[local_player_party]
-	local side_name = side:name()
+function VersusMissionObjectiveUI._get_party_side_name(arg_16_0, arg_16_1)
+	local var_16_0 = Managers.party:get_party(arg_16_1)
 
-	return side_name
+	return (Managers.state.side.side_by_party[var_16_0]:name())
 end
 
-VersusMissionObjectiveUI._get_local_player_party_id = function (self)
-	local peer_id = Network.peer_id()
-	local party_manager = Managers.party
-	local local_player_id = 1
-	local player_status = party_manager:get_player_status(peer_id, local_player_id)
-	local party_id = player_status.party_id
+function VersusMissionObjectiveUI._get_local_player_party_id(arg_17_0)
+	local var_17_0 = Network.peer_id()
+	local var_17_1 = Managers.party
+	local var_17_2 = 1
 
-	return party_id
+	return var_17_1:get_player_status(var_17_0, var_17_2).party_id
 end
 
-VersusMissionObjectiveUI._get_opponent_party_id = function (self)
-	return self:_get_local_player_party_id() == 1 and 2 or 1
+function VersusMissionObjectiveUI._get_opponent_party_id(arg_18_0)
+	return arg_18_0:_get_local_player_party_id() == 1 and 2 or 1
 end
 
-VersusMissionObjectiveUI._reset_timer_size = function (self)
-	local timer_widget = self._widgets_by_name.timer_text
-	local timer_widget_style = timer_widget.style
-	local default_font_size = timer_widget_style.text.default_font_size
+function VersusMissionObjectiveUI._reset_timer_size(arg_19_0)
+	local var_19_0 = arg_19_0._widgets_by_name.timer_text.style
+	local var_19_1 = var_19_0.text.default_font_size
 
-	timer_widget_style.text.font_size = default_font_size
-	timer_widget_style.text_shadow.font_size = default_font_size
+	var_19_0.text.font_size = var_19_1
+	var_19_0.text_shadow.font_size = var_19_1
 end
 
-VersusMissionObjectiveUI._set_objective_bar_end = function (self, fraction)
-	self._widgets_by_name.progress_bar.content.disabled_progress_bar = fraction
+function VersusMissionObjectiveUI._set_objective_bar_end(arg_20_0, arg_20_1)
+	arg_20_0._widgets_by_name.progress_bar.content.disabled_progress_bar = arg_20_1
 end
 
-VersusMissionObjectiveUI._play_sound = function (self, event)
-	WwiseWorld.trigger_event(self._wwise_world, event)
+function VersusMissionObjectiveUI._play_sound(arg_21_0, arg_21_1)
+	WwiseWorld.trigger_event(arg_21_0._wwise_world, arg_21_1)
 end
 
-VersusMissionObjectiveUI._update_animations = function (self, dt, t)
-	local animations = self._animations
-	local ui_animator = self._ui_animator
+function VersusMissionObjectiveUI._update_animations(arg_22_0, arg_22_1, arg_22_2)
+	local var_22_0 = arg_22_0._animations
+	local var_22_1 = arg_22_0._ui_animator
 
-	ui_animator:update(dt)
+	var_22_1:update(arg_22_1)
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_22_0, iter_22_1 in pairs(var_22_0) do
+		if var_22_1:is_animation_completed(iter_22_1) then
+			var_22_1:stop_animation(iter_22_1)
 
-			animations[animation_name] = nil
+			var_22_0[iter_22_0] = nil
 
-			if animation_name == "announcement" then
-				self._bonus_time_timer = BONUS_TIME_DURATION
+			if iter_22_0 == "announcement" then
+				arg_22_0._bonus_time_timer = var_0_8
 			end
 		end
 	end
 end
 
-VersusMissionObjectiveUI._update_round_start_timer = function (self, dt, t)
-	if self._round_has_started then
+function VersusMissionObjectiveUI._update_round_start_timer(arg_23_0, arg_23_1, arg_23_2)
+	if arg_23_0._round_has_started then
 		return
 	end
 
-	if self._countdown_timer and self._countdown_timer <= 0 then
-		self:_set_round_starting_text()
+	if arg_23_0._countdown_timer and arg_23_0._countdown_timer <= 0 then
+		arg_23_0:_set_round_starting_text()
 	end
 end
 
-VersusMissionObjectiveUI._set_pre_round_timer = function (self, time_left)
-	local widget = self._widgets_by_name.objective
+function VersusMissionObjectiveUI._set_pre_round_timer(arg_24_0, arg_24_1)
+	arg_24_0._widgets_by_name.objective.content.pre_round_timer = arg_24_1
 
-	widget.content.pre_round_timer = time_left
+	if arg_24_1 <= 10 and arg_24_1 > 0 then
+		local var_24_0 = var_0_1.versus_round_start_safe_zone_countdown_tick[arg_24_1]
 
-	if time_left <= 10 and time_left > 0 then
-		local tick_sound = settings.versus_round_start_safe_zone_countdown_tick[time_left]
-
-		self:_play_sound(tick_sound)
+		arg_24_0:_play_sound(var_24_0)
 	end
 
-	self._countdown_timer = time_left
+	arg_24_0._countdown_timer = arg_24_1
 end
 
-VersusMissionObjectiveUI.set_round_timer = function (self, time_left)
-	local widget = self._widgets_by_name.objective
-
-	widget.content.pre_round_timer = time_left
+function VersusMissionObjectiveUI.set_round_timer(arg_25_0, arg_25_1)
+	arg_25_0._widgets_by_name.objective.content.pre_round_timer = arg_25_1
 end
 
-VersusMissionObjectiveUI._set_round_starting_text = function (self)
-	local widget = self._widgets_by_name.round_starting_text
-
-	widget.content.text = "Round Starting..."
+function VersusMissionObjectiveUI._set_round_starting_text(arg_26_0)
+	arg_26_0._widgets_by_name.round_starting_text.content.text = "Round Starting..."
 end
 
-VersusMissionObjectiveUI._draw = function (self, dt)
-	local ui_renderer = self._ui_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local input_manager = self._input_manager
-	local input_service = input_manager:get_service("ingame_menu")
-	local render_settings = self._render_settings
-	local alpha_multiplier = render_settings.alpha_multiplier or 1
+function VersusMissionObjectiveUI._draw(arg_27_0, arg_27_1)
+	local var_27_0 = arg_27_0._ui_renderer
+	local var_27_1 = arg_27_0._ui_scenegraph
+	local var_27_2 = arg_27_0._input_manager:get_service("ingame_menu")
+	local var_27_3 = arg_27_0._render_settings
+	local var_27_4 = var_27_3.alpha_multiplier or 1
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+	UIRenderer.begin_pass(var_27_0, var_27_1, var_27_2, arg_27_1, nil, var_27_3)
 
-	local widgets = self._widgets
+	local var_27_5 = arg_27_0._widgets
 
-	if widgets then
-		for i = 1, #widgets do
-			local widget = widgets[i]
+	if var_27_5 then
+		for iter_27_0 = 1, #var_27_5 do
+			local var_27_6 = var_27_5[iter_27_0]
 
-			render_settings.alpha_multiplier = widget.alpha_multiplier or alpha_multiplier
+			var_27_3.alpha_multiplier = var_27_6.alpha_multiplier or var_27_4
 
-			UIRenderer.draw_widget(ui_renderer, widget)
+			UIRenderer.draw_widget(var_27_0, var_27_6)
 		end
 	end
 
-	if self._objectives_widgets and self._round_has_started then
-		UIRenderer.draw_all_widgets(ui_renderer, self._objectives_widgets)
+	if arg_27_0._objectives_widgets and arg_27_0._round_has_started then
+		UIRenderer.draw_all_widgets(var_27_0, arg_27_0._objectives_widgets)
 	end
 
-	if self._objective_text_widget then
-		render_settings.alpha_multiplier = self._objective_text_widget.alpha_multiplier or alpha_multiplier
+	if arg_27_0._objective_text_widget then
+		var_27_3.alpha_multiplier = arg_27_0._objective_text_widget.alpha_multiplier or var_27_4
 
-		UIRenderer.draw_widget(ui_renderer, self._objective_text_widget)
+		UIRenderer.draw_widget(var_27_0, arg_27_0._objective_text_widget)
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_27_0)
 
-	render_settings.alpha_multiplier = alpha_multiplier
+	var_27_3.alpha_multiplier = var_27_4
 end
 
-VersusMissionObjectiveUI._set_objective_text = function (self, text)
-	local widgets_by_name = self._widgets_by_name
-	local widget = self._objective_text_widget
-	local content = widget.content
-	local style = widget.style
+function VersusMissionObjectiveUI._set_objective_text(arg_28_0, arg_28_1)
+	local var_28_0 = arg_28_0._widgets_by_name
+	local var_28_1 = arg_28_0._objective_text_widget
+	local var_28_2 = var_28_1.content
+	local var_28_3 = var_28_1.style
 
-	content.area_text_content = text
+	var_28_2.area_text_content = arg_28_1
 
-	local ui_renderer = self.ui_renderer
-	local max_width, max_height = 287.5, 40
+	local var_28_4 = arg_28_0.ui_renderer
+	local var_28_5 = 287.5
+	local var_28_6 = 40
 
-	content.text_height = 45
+	var_28_2.text_height = 45
 end
 
-VersusMissionObjectiveUI._format_timer = function (self, time)
-	if not time and not (time <= 0) then
+function VersusMissionObjectiveUI._format_timer(arg_29_0, arg_29_1)
+	if not arg_29_1 and not (arg_29_1 <= 0) then
 		return "00:00"
 	end
 
-	return string.format("%02d:%02d", math.floor(time / 60), time % 60)
+	return string.format("%02d:%02d", math.floor(arg_29_1 / 60), arg_29_1 % 60)
 end
 
-local new_world_marker_targets = {}
-local handled_marker_targets_this_frame = {}
+local var_0_11 = {}
+local var_0_12 = {}
 
-VersusMissionObjectiveUI._update_world_markers = function (self, dt, t)
-	local selected_objective_index = self._selected_objective_index
-
-	if selected_objective_index < 1 then
+function VersusMissionObjectiveUI._update_world_markers(arg_30_0, arg_30_1, arg_30_2)
+	if arg_30_0._selected_objective_index < 1 then
 		return
 	end
 
-	if not self._round_has_started then
+	if not arg_30_0._round_has_started then
 		return
 	end
 
-	table.clear(handled_marker_targets_this_frame)
+	table.clear(var_0_12)
 
-	local current_world_markers = self._world_markers
-	local new_world_marker_n = self:_get_world_marker_targets(new_world_marker_targets)
+	local var_30_0 = arg_30_0._world_markers
+	local var_30_1 = arg_30_0:_get_world_marker_targets(var_0_11)
 
-	for i = 1, new_world_marker_n do
-		local unit = new_world_marker_targets[i]
+	for iter_30_0 = 1, var_30_1 do
+		local var_30_2 = var_0_11[iter_30_0]
 
-		handled_marker_targets_this_frame[unit] = true
+		var_0_12[var_30_2] = true
 
-		if not current_world_markers[unit] then
-			self:_request_world_marker(unit)
+		if not var_30_0[var_30_2] then
+			arg_30_0:_request_world_marker(var_30_2)
 		end
 	end
 
-	for unit, marker_id in pairs(current_world_markers) do
-		if not handled_marker_targets_this_frame[unit] then
-			current_world_markers[unit] = nil
+	for iter_30_1, iter_30_2 in pairs(var_30_0) do
+		if not var_0_12[iter_30_1] then
+			var_30_0[iter_30_1] = nil
 
-			self:_remove_world_marker(marker_id)
+			arg_30_0:_remove_world_marker(iter_30_2)
 		end
 	end
 end
 
-VersusMissionObjectiveUI._get_world_marker_targets = function (self, out_tbl)
-	local local_player = Managers.player:local_player()
-	local viewport_name = local_player.viewport_name
-	local viewport = ScriptWorld.viewport(self._world, viewport_name)
-	local camera = ScriptViewport.camera(viewport)
-	local camera_position = ScriptCamera.position(camera)
-	local target_n = 0
-	local closest_unit
-	local closest_dist = math.huge
-	local objective_system = self._objective_system
-	local leaf_objectives = objective_system:active_leaf_objectives()
+function VersusMissionObjectiveUI._get_world_marker_targets(arg_31_0, arg_31_1)
+	local var_31_0 = Managers.player:local_player().viewport_name
+	local var_31_1 = ScriptWorld.viewport(arg_31_0._world, var_31_0)
+	local var_31_2 = ScriptViewport.camera(var_31_1)
+	local var_31_3 = ScriptCamera.position(var_31_2)
+	local var_31_4 = 0
+	local var_31_5
+	local var_31_6 = math.huge
+	local var_31_7 = arg_31_0._objective_system
+	local var_31_8 = var_31_7:active_leaf_objectives()
 
-	for i = 1, #leaf_objectives do
-		local objective_name = leaf_objectives[i]
-		local extension = objective_system:extension_by_objective_name(objective_name)
-		local unit = extension:unit()
+	for iter_31_0 = 1, #var_31_8 do
+		local var_31_9 = var_31_8[iter_31_0]
+		local var_31_10 = var_31_7:extension_by_objective_name(var_31_9)
+		local var_31_11 = var_31_10:unit()
 
-		if Unit.alive(unit) then
-			local unit_position = Unit.local_position(unit, 0)
-			local distance = Vector3.distance_squared(camera_position, unit_position)
+		if Unit.alive(var_31_11) then
+			local var_31_12 = Unit.local_position(var_31_11, 0)
+			local var_31_13 = Vector3.distance_squared(var_31_3, var_31_12)
 
-			if distance < closest_dist then
-				closest_unit = unit
-				closest_dist = distance
+			if var_31_13 < var_31_6 then
+				var_31_5 = var_31_11
+				var_31_6 = var_31_13
 			end
 
-			if extension:always_show_objective_marker() then
-				target_n = target_n + 1
-				out_tbl[target_n] = unit
+			if var_31_10:always_show_objective_marker() then
+				var_31_4 = var_31_4 + 1
+				arg_31_1[var_31_4] = var_31_11
 			end
 		end
 	end
 
-	local has_closest_already = false
+	local var_31_14 = false
 
-	for i = 1, target_n do
-		if out_tbl[i] == closest_unit then
-			has_closest_already = true
+	for iter_31_1 = 1, var_31_4 do
+		if arg_31_1[iter_31_1] == var_31_5 then
+			var_31_14 = true
 
 			break
 		end
 	end
 
-	if closest_unit and not has_closest_already then
-		target_n = target_n + 1
-		out_tbl[target_n] = closest_unit
+	if var_31_5 and not var_31_14 then
+		var_31_4 = var_31_4 + 1
+		arg_31_1[var_31_4] = var_31_5
 	end
 
-	return target_n
+	return var_31_4
 end
 
-VersusMissionObjectiveUI._remove_world_marker = function (self, world_maker_id)
-	Managers.state.event:trigger("remove_world_marker", world_maker_id)
+function VersusMissionObjectiveUI._remove_world_marker(arg_32_0, arg_32_1)
+	Managers.state.event:trigger("remove_world_marker", arg_32_1)
 end
 
-VersusMissionObjectiveUI._request_world_marker = function (self, objective_unit)
-	local event_manager = Managers.state.event
-	local marker_type = "versus_objective"
-	local cb = callback(self, "cb_world_marker_spawned", objective_unit)
+function VersusMissionObjectiveUI._request_world_marker(arg_33_0, arg_33_1)
+	local var_33_0 = Managers.state.event
+	local var_33_1 = "versus_objective"
+	local var_33_2 = callback(arg_33_0, "cb_world_marker_spawned", arg_33_1)
 
-	if ScriptUnit.has_extension(objective_unit, "payload_system") then
-		event_manager:trigger("add_world_marker_unit", marker_type, objective_unit, cb)
+	if ScriptUnit.has_extension(arg_33_1, "payload_system") then
+		var_33_0:trigger("add_world_marker_unit", var_33_1, arg_33_1, var_33_2)
 	else
-		local position = Unit.world_position(objective_unit, 0)
+		local var_33_3 = Unit.world_position(arg_33_1, 0)
 
-		event_manager:trigger("add_world_marker_position", marker_type, position, cb)
+		var_33_0:trigger("add_world_marker_position", var_33_1, var_33_3, var_33_2)
 	end
 end
 
-VersusMissionObjectiveUI.cb_world_marker_spawned = function (self, objective_unit, marker_id)
-	self._world_markers[objective_unit] = marker_id
+function VersusMissionObjectiveUI.cb_world_marker_spawned(arg_34_0, arg_34_1, arg_34_2)
+	arg_34_0._world_markers[arg_34_1] = arg_34_2
 end
 
-VersusMissionObjectiveUI.rpc_update_start_round_countdown_timer = function (self, channel_id, time_left)
-	time_left = math.round(time_left)
+function VersusMissionObjectiveUI.rpc_update_start_round_countdown_timer(arg_35_0, arg_35_1, arg_35_2)
+	arg_35_2 = math.round(arg_35_2)
 
-	Managers.state.event:trigger("ui_update_start_round_counter", time_left)
-	Managers.state.event:trigger("ui_tab_update_start_round_counter", time_left)
+	Managers.state.event:trigger("ui_update_start_round_counter", arg_35_2)
+	Managers.state.event:trigger("ui_tab_update_start_round_counter", arg_35_2)
 end
 
-VersusMissionObjectiveUI.rpc_ui_round_started = function (self, channel_id)
-	self:_on_round_started()
+function VersusMissionObjectiveUI.rpc_ui_round_started(arg_36_0, arg_36_1)
+	arg_36_0:_on_round_started()
 	Managers.state.event:trigger("ui_tab_round_started")
 end
 
-VersusMissionObjectiveUI._on_round_started = function (self)
-	self._round_has_started = true
+function VersusMissionObjectiveUI._on_round_started(arg_37_0)
+	arg_37_0._round_has_started = true
 
-	local round_start_timer_widget = self._widgets_by_name.round_start_timer
-	local round_starting_text_widget = self._widgets_by_name.round_starting_text
-	local obj_text_widget = self._objective_text_widget
-	local objective_widget = self._widgets_by_name.objective
-	local remove_timer = not self._custom_round_timer_active
+	local var_37_0 = arg_37_0._widgets_by_name.round_start_timer
+	local var_37_1 = arg_37_0._widgets_by_name.round_starting_text
+	local var_37_2 = arg_37_0._objective_text_widget
+	local var_37_3 = arg_37_0._widgets_by_name.objective
+	local var_37_4 = not arg_37_0._custom_round_timer_active
 
-	round_start_timer_widget.content.visible = false
-	round_starting_text_widget.content.visible = false
-	obj_text_widget.content.visible = true
-	objective_widget.content.pre_round_timer_done = remove_timer
-	objective_widget.style.pre_round_timer.font_size = remove_timer and 50 or 32
+	var_37_0.content.visible = false
+	var_37_1.content.visible = false
+	var_37_2.content.visible = true
+	var_37_3.content.pre_round_timer_done = var_37_4
+	var_37_3.style.pre_round_timer.font_size = var_37_4 and 50 or 32
 
-	if not remove_timer then
-		local widget = self._widgets_by_name.objective
-
-		widget.content.pre_round_timer = ""
+	if not var_37_4 then
+		arg_37_0._widgets_by_name.objective.content.pre_round_timer = ""
 	end
 
-	local params = {
-		wwise_world = self._wwise_world,
-		render_settings = self._render_settings,
+	local var_37_5 = {
+		wwise_world = arg_37_0._wwise_world,
+		render_settings = arg_37_0._render_settings
 	}
 
-	self._ui_animator:start_animation("mission_start", obj_text_widget, scenegraph_definition, params)
-	self:_play_sound("menu_versus_match_start")
+	arg_37_0._ui_animator:start_animation("mission_start", var_37_2, var_0_3, var_37_5)
+	arg_37_0:_play_sound("menu_versus_match_start")
 end
 
-VersusMissionObjectiveUI._register_events = function (self)
-	local event_manager = Managers.state.event
+function VersusMissionObjectiveUI._register_events(arg_38_0)
+	local var_38_0 = Managers.state.event
 
-	if event_manager then
-		event_manager:register(self, "ui_update_start_round_counter", "update_start_round_counter")
-		event_manager:register(self, "ui_update_round_timer", "set_round_timer")
-		event_manager:register(self, "ui_round_started", "round_started")
+	if var_38_0 then
+		var_38_0:register(arg_38_0, "ui_update_start_round_counter", "update_start_round_counter")
+		var_38_0:register(arg_38_0, "ui_update_round_timer", "set_round_timer")
+		var_38_0:register(arg_38_0, "ui_round_started", "round_started")
 	end
 end
 
-VersusMissionObjectiveUI._unregister_events = function (self)
-	local event_manager = Managers.state.event
+function VersusMissionObjectiveUI._unregister_events(arg_39_0)
+	local var_39_0 = Managers.state.event
 
-	if event_manager then
-		event_manager:unregister("ui_update_start_round_counter", self)
-		event_manager:unregister("ui_update_round_timer", self)
-		event_manager:unregister("ui_round_started", self)
+	if var_39_0 then
+		var_39_0:unregister("ui_update_start_round_counter", arg_39_0)
+		var_39_0:unregister("ui_update_round_timer", arg_39_0)
+		var_39_0:unregister("ui_round_started", arg_39_0)
 	end
 end
 
-VersusMissionObjectiveUI.update_start_round_counter = function (self, time_left)
-	self:_set_pre_round_timer(time_left)
+function VersusMissionObjectiveUI.update_start_round_counter(arg_40_0, arg_40_1)
+	arg_40_0:_set_pre_round_timer(arg_40_1)
 end
 
-VersusMissionObjectiveUI.round_started = function (self)
-	self:_on_round_started()
+function VersusMissionObjectiveUI.round_started(arg_41_0)
+	arg_41_0:_on_round_started()
 end
 
-VersusMissionObjectiveUI._update_objective_progress = function (self)
-	local progress = self._objective_system:current_objective_progress() or 0
-	local starting_degrees = 0
-	local degrees = 360 - starting_degrees * 2
-	local alpha = 255 * math.min(progress * 2, 1)
-	local current_degrees = starting_degrees + degrees * progress
-	local degrees_progress = current_degrees / 360
-	local widgets_by_name = self._widgets_by_name
-	local objective_widget = widgets_by_name.objective
+function VersusMissionObjectiveUI._update_objective_progress(arg_42_0)
+	local var_42_0 = arg_42_0._objective_system:current_objective_progress() or 0
+	local var_42_1 = 0
+	local var_42_2 = 360 - var_42_1 * 2
+	local var_42_3 = 255 * math.min(var_42_0 * 2, 1)
+	local var_42_4 = (var_42_1 + var_42_2 * var_42_0) / 360
 
-	objective_widget.style.progress_bar.gradient_threshold = degrees_progress
+	arg_42_0._widgets_by_name.objective.style.progress_bar.gradient_threshold = var_42_4
 
-	if progress == 1 then
+	if var_42_0 == 1 then
 		return true
 	end
 end

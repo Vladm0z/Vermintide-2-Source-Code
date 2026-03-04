@@ -1,363 +1,357 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/actions/action_push_stagger.lua
+-- chunkname: @scripts/unit_extensions/weapons/actions/action_push_stagger.lua
 
 ActionPushStagger = class(ActionPushStagger, ActionBase)
 
-ActionPushStagger.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionPushStagger.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionPushStagger.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionPushStagger.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	if ScriptUnit.has_extension(weapon_unit, "ammo_system") then
-		self.ammo_extension = ScriptUnit.extension(weapon_unit, "ammo_system")
+	if ScriptUnit.has_extension(arg_1_7, "ammo_system") then
+		arg_1_0.ammo_extension = ScriptUnit.extension(arg_1_7, "ammo_system")
 	end
 
-	self._status_extension = ScriptUnit.extension(owner_unit, "status_system")
-	self.owner_unit_first_person = first_person_unit
-	self.has_played_rumble_effect = false
-	self.hit_units = {}
-	self.push_units = {}
-	self.waiting_for_callback = false
-	self._player_direction = Vector3Box()
+	arg_1_0._status_extension = ScriptUnit.extension(arg_1_4, "status_system")
+	arg_1_0.owner_unit_first_person = arg_1_6
+	arg_1_0.has_played_rumble_effect = false
+	arg_1_0.hit_units = {}
+	arg_1_0.push_units = {}
+	arg_1_0.waiting_for_callback = false
+	arg_1_0._player_direction = Vector3Box()
 end
 
-ActionPushStagger.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
-	ActionPushStagger.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
+function ActionPushStagger.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	ActionPushStagger.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 
-	self.current_action = new_action
+	arg_2_0.current_action = arg_2_1
 
-	local owner_unit = self.owner_unit
-	local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
-	local career_extension = ScriptUnit.extension(owner_unit, "career_system")
-	local status_extension = self._status_extension
+	local var_2_0 = arg_2_0.owner_unit
+	local var_2_1 = ScriptUnit.extension(var_2_0, "buff_system")
+	local var_2_2 = ScriptUnit.extension(var_2_0, "career_system")
+	local var_2_3 = arg_2_0._status_extension
 
-	self.owner_buff_extension = buff_extension
-	self.owner_career_extension = career_extension
+	arg_2_0.owner_buff_extension = var_2_1
+	arg_2_0.owner_career_extension = var_2_2
 
-	local _, melee_boost_curve_multiplier = career_extension:has_melee_boost()
-	local is_critical_strike = ActionUtils.is_critical_strike(owner_unit, new_action, t)
+	local var_2_4, var_2_5 = var_2_2:has_melee_boost()
+	local var_2_6 = ActionUtils.is_critical_strike(var_2_0, arg_2_1, arg_2_2)
 
-	self.melee_boost_curve_multiplier = melee_boost_curve_multiplier
-	self.power_level = power_level
-	self.has_played_rumble_effect = false
+	arg_2_0.melee_boost_curve_multiplier = var_2_5
+	arg_2_0.power_level = arg_2_4
+	arg_2_0.has_played_rumble_effect = false
 
-	for hit_unit, _ in pairs(self.hit_units) do
-		self.hit_units[hit_unit] = nil
+	for iter_2_0, iter_2_1 in pairs(arg_2_0.hit_units) do
+		arg_2_0.hit_units[iter_2_0] = nil
 	end
 
-	for push_unit, _ in pairs(self.push_units) do
-		self.push_units[push_unit] = nil
+	for iter_2_2, iter_2_3 in pairs(arg_2_0.push_units) do
+		arg_2_0.push_units[iter_2_2] = nil
 	end
 
-	self.bot_player = Managers.player:owner(owner_unit).bot_player
+	arg_2_0.bot_player = Managers.player:owner(var_2_0).bot_player
 
-	if not self.bot_player then
+	if not arg_2_0.bot_player then
 		Managers.state.controller_features:add_effect("rumble", {
-			rumble_effect = "light_swing",
+			rumble_effect = "light_swing"
 		})
 	end
 
-	local action_hand = action_init_data and action_init_data.action_hand
-	local damage_profile_name_inner = action_hand and new_action["damage_profile_inner_" .. action_hand] or new_action.damage_profile_inner or "default"
+	local var_2_7 = arg_2_5 and arg_2_5.action_hand
+	local var_2_8 = var_2_7 and arg_2_1["damage_profile_inner_" .. var_2_7] or arg_2_1.damage_profile_inner or "default"
 
-	self.damage_profile_inner_id = NetworkLookup.damage_profiles[damage_profile_name_inner]
-	self.damage_profile_inner = DamageProfileTemplates[damage_profile_name_inner]
+	arg_2_0.damage_profile_inner_id = NetworkLookup.damage_profiles[var_2_8]
+	arg_2_0.damage_profile_inner = DamageProfileTemplates[var_2_8]
 
-	local damage_profile_name_outer = action_hand and new_action["damage_profile_outer_" .. action_hand] or new_action.damage_profile_outer or "default"
+	local var_2_9 = var_2_7 and arg_2_1["damage_profile_outer_" .. var_2_7] or arg_2_1.damage_profile_outer or "default"
 
-	self.damage_profile_outer_id = NetworkLookup.damage_profiles[damage_profile_name_outer]
-	self.damage_profile_outer = DamageProfileTemplates[damage_profile_name_outer]
+	arg_2_0.damage_profile_outer_id = NetworkLookup.damage_profiles[var_2_9]
+	arg_2_0.damage_profile_outer = DamageProfileTemplates[var_2_9]
 
-	self:_handle_fatigue(buff_extension, status_extension, new_action, true)
+	arg_2_0:_handle_fatigue(var_2_1, var_2_3, arg_2_1, true)
 
-	self.block_end_time = t + 0.5
+	arg_2_0.block_end_time = arg_2_2 + 0.5
 
-	local hud_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
-	local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
+	local var_2_10 = ScriptUnit.has_extension(var_2_0, "hud_system")
+	local var_2_11 = ScriptUnit.extension(var_2_0, "first_person_system")
 
-	self:_handle_critical_strike(is_critical_strike, buff_extension, hud_extension, first_person_extension, "on_critical_sweep", "Play_player_combat_crit_swing_2D")
+	arg_2_0:_handle_critical_strike(var_2_6, var_2_1, var_2_10, var_2_11, "on_critical_sweep", "Play_player_combat_crit_swing_2D")
 
-	self._is_critical_strike = is_critical_strike
+	arg_2_0._is_critical_strike = var_2_6
 
 	if not LEVEL_EDITOR_TEST then
-		local go_id = Managers.state.unit_storage:go_id(owner_unit)
+		local var_2_12 = Managers.state.unit_storage:go_id(var_2_0)
 
-		if self.is_server then
-			Managers.state.network.network_transmit:send_rpc_clients("rpc_set_blocking", go_id, true)
+		if arg_2_0.is_server then
+			Managers.state.network.network_transmit:send_rpc_clients("rpc_set_blocking", var_2_12, true)
 		else
-			Managers.state.network.network_transmit:send_rpc_server("rpc_set_blocking", go_id, true)
+			Managers.state.network.network_transmit:send_rpc_server("rpc_set_blocking", var_2_12, true)
 		end
 	end
 
-	status_extension:set_blocking(true)
-	buff_extension:trigger_procs("on_push_used")
-	Unit.animation_event(self.owner_unit_first_person, "hitreaction_defend_reset")
+	var_2_3:set_blocking(true)
+	var_2_1:trigger_procs("on_push_used")
+	Unit.animation_event(arg_2_0.owner_unit_first_person, "hitreaction_defend_reset")
 end
 
-local callback_context = {
+local var_0_0 = {
 	has_gotten_callback = false,
-	overlap_units = {},
+	overlap_units = {}
 }
 
-local function callback(actors)
-	callback_context.has_gotten_callback = true
+local function var_0_1(arg_3_0)
+	var_0_0.has_gotten_callback = true
 
-	local overlap_units = callback_context.overlap_units
+	local var_3_0 = var_0_0.overlap_units
 
-	for k, actor in pairs(actors) do
-		callback_context.num_hits = callback_context.num_hits + 1
+	for iter_3_0, iter_3_1 in pairs(arg_3_0) do
+		var_0_0.num_hits = var_0_0.num_hits + 1
 
-		if overlap_units[callback_context.num_hits] == nil then
-			overlap_units[callback_context.num_hits] = ActorBox()
+		if var_3_0[var_0_0.num_hits] == nil then
+			var_3_0[var_0_0.num_hits] = ActorBox()
 		end
 
-		overlap_units[callback_context.num_hits]:store(actor)
+		var_3_0[var_0_0.num_hits]:store(iter_3_1)
 	end
 end
 
-ActionPushStagger.client_owner_post_update = function (self, dt, t, world, can_damage)
-	local current_action = self.current_action
-	local owner_unit = self.owner_unit
-	local weapon_system = self.weapon_system
+function ActionPushStagger.client_owner_post_update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = arg_4_0.current_action
+	local var_4_1 = arg_4_0.owner_unit
+	local var_4_2 = arg_4_0.weapon_system
 
-	if self.block_end_time and t > self.block_end_time then
+	if arg_4_0.block_end_time and arg_4_2 > arg_4_0.block_end_time then
 		if not LEVEL_EDITOR_TEST then
-			local go_id = Managers.state.unit_storage:go_id(owner_unit)
+			local var_4_3 = Managers.state.unit_storage:go_id(var_4_1)
 
-			if self.is_server then
-				Managers.state.network.network_transmit:send_rpc_clients("rpc_set_blocking", go_id, false)
+			if arg_4_0.is_server then
+				Managers.state.network.network_transmit:send_rpc_clients("rpc_set_blocking", var_4_3, false)
 			else
-				Managers.state.network.network_transmit:send_rpc_server("rpc_set_blocking", go_id, false)
+				Managers.state.network.network_transmit:send_rpc_server("rpc_set_blocking", var_4_3, false)
 			end
 		end
 
-		local status_extension = self._status_extension
+		local var_4_4 = arg_4_0._status_extension
 
-		status_extension:set_blocking(false)
-		status_extension:set_has_blocked(false)
+		var_4_4:set_blocking(false)
+		var_4_4:set_has_blocked(false)
 	end
 
-	if not callback_context.has_gotten_callback and can_damage then
-		self.waiting_for_callback = true
-		callback_context.num_hits = 0
+	if not var_0_0.has_gotten_callback and arg_4_4 then
+		arg_4_0.waiting_for_callback = true
+		var_0_0.num_hits = 0
 
-		local physics_world = World.get_data(world, "physics_world")
-		local pos = POSITION_LOOKUP[owner_unit]
-		local buff_extension = self.owner_buff_extension
-		local push_range = buff_extension:apply_buffs_to_value(2.5, "push_range")
-		local radius = math.max(current_action.push_radius, push_range)
-		local collision_filter = "filter_melee_push"
+		local var_4_5 = World.get_data(arg_4_3, "physics_world")
+		local var_4_6 = POSITION_LOOKUP[var_4_1]
+		local var_4_7 = arg_4_0.owner_buff_extension:apply_buffs_to_value(2.5, "push_range")
+		local var_4_8 = math.max(var_4_0.push_radius, var_4_7)
+		local var_4_9 = "filter_melee_push"
 
-		PhysicsWorld.overlap(physics_world, callback, "shape", "sphere", "position", pos, "size", radius, "types", "dynamics", "collision_filter", collision_filter)
+		PhysicsWorld.overlap(var_4_5, var_0_1, "shape", "sphere", "position", var_4_6, "size", var_4_8, "types", "dynamics", "collision_filter", var_4_9)
 
-		local first_person_unit = self.owner_unit_first_person
-		local player_rotation = Unit.world_rotation(first_person_unit, 0)
-		local player_direction = Vector3.normalize(Quaternion.forward(player_rotation))
+		local var_4_10 = arg_4_0.owner_unit_first_person
+		local var_4_11 = Unit.world_rotation(var_4_10, 0)
+		local var_4_12 = Vector3.normalize(Quaternion.forward(var_4_11))
 
-		self._player_direction:store(player_direction)
-	elseif self.waiting_for_callback and callback_context.has_gotten_callback then
-		self.waiting_for_callback = false
-		callback_context.has_gotten_callback = false
+		arg_4_0._player_direction:store(var_4_12)
+	elseif arg_4_0.waiting_for_callback and var_0_0.has_gotten_callback then
+		arg_4_0.waiting_for_callback = false
+		var_0_0.has_gotten_callback = false
 
-		local network_manager = Managers.state.network
-		local attacker_unit_id = network_manager:unit_game_object_id(owner_unit)
-		local overlap_units = callback_context.overlap_units
-		local hit_units = self.hit_units
-		local push_units = self.push_units
-		local num_hits = callback_context.num_hits
-		local hit_once = false
-		local player_direction = self._player_direction:unbox()
-		local player_direction_flat = Vector3.flat(player_direction)
-		local buff_extension = self.owner_buff_extension
-		local push_half_angle = math.rad(buff_extension:apply_buffs_to_value(current_action.push_angle or 90, "block_angle") * 0.5)
-		local outer_push_half_angle = math.rad(buff_extension:apply_buffs_to_value(current_action.outer_push_angle or 0, "block_angle") * 0.5)
-		local total_hits = 0
+		local var_4_13 = Managers.state.network
+		local var_4_14 = var_4_13:unit_game_object_id(var_4_1)
+		local var_4_15 = var_0_0.overlap_units
+		local var_4_16 = arg_4_0.hit_units
+		local var_4_17 = arg_4_0.push_units
+		local var_4_18 = var_0_0.num_hits
+		local var_4_19 = false
+		local var_4_20 = arg_4_0._player_direction:unbox()
+		local var_4_21 = Vector3.flat(var_4_20)
+		local var_4_22 = arg_4_0.owner_buff_extension
+		local var_4_23 = math.rad(var_4_22:apply_buffs_to_value(var_4_0.push_angle or 90, "block_angle") * 0.5)
+		local var_4_24 = math.rad(var_4_22:apply_buffs_to_value(var_4_0.outer_push_angle or 0, "block_angle") * 0.5)
+		local var_4_25 = 0
 
-		for i = 1, num_hits do
+		for iter_4_0 = 1, var_4_18 do
 			repeat
-				local hit_actor = overlap_units[i]:unbox()
+				local var_4_26 = var_4_15[iter_4_0]:unbox()
 
-				if hit_actor == nil then
+				if var_4_26 == nil then
 					break
 				end
 
-				local hit_unit = Actor.unit(hit_actor)
+				local var_4_27 = Actor.unit(var_4_26)
 
-				if hit_units[hit_unit] == nil and HEALTH_ALIVE[hit_unit] then
-					hit_units[hit_unit] = true
+				if var_4_16[var_4_27] == nil and HEALTH_ALIVE[var_4_27] then
+					var_4_16[var_4_27] = true
 
-					local is_enemy = DamageUtils.is_enemy(owner_unit, hit_unit)
-
-					if not is_enemy then
+					if not DamageUtils.is_enemy(var_4_1, var_4_27) then
 						break
 					end
 
-					local breed = Unit.get_data(hit_unit, "breed")
+					local var_4_28 = Unit.get_data(var_4_27, "breed")
 
-					if not breed then
+					if not var_4_28 then
 						return
 					end
 
-					local node = Actor.node(hit_actor)
-					local hit_zone = breed.hit_zones_lookup[node]
-					local hit_zone_name = hit_zone.name
-					local attack_direction = Vector3.normalize(POSITION_LOOKUP[hit_unit] - POSITION_LOOKUP[owner_unit])
-					local attack_direction_flat = Vector3.flat(attack_direction)
-					local dot = Vector3.dot(attack_direction_flat, player_direction_flat)
-					local angle_to_target = math.acos(dot)
-					local inner_push = angle_to_target <= push_half_angle
-					local outer_push = push_half_angle < angle_to_target and angle_to_target <= outer_push_half_angle
+					local var_4_29 = Actor.node(var_4_26)
+					local var_4_30 = var_4_28.hit_zones_lookup[var_4_29].name
+					local var_4_31 = Vector3.normalize(POSITION_LOOKUP[var_4_27] - POSITION_LOOKUP[var_4_1])
+					local var_4_32 = Vector3.flat(var_4_31)
+					local var_4_33 = Vector3.dot(var_4_32, var_4_21)
+					local var_4_34 = math.acos(var_4_33)
+					local var_4_35 = var_4_34 <= var_4_23
+					local var_4_36 = var_4_23 < var_4_34 and var_4_34 <= var_4_24
 
-					if not inner_push and not outer_push then
+					if not var_4_35 and not var_4_36 then
 						break
 					end
 
-					total_hits = total_hits + 1
-					push_units[hit_unit] = {
-						hit_actor = hit_actor,
-						hit_zone_name = hit_zone_name,
-						inner_push = inner_push,
-						outer_push = outer_push,
-						node = node,
-						attack_direction = attack_direction,
-						target_index = total_hits,
+					var_4_25 = var_4_25 + 1
+					var_4_17[var_4_27] = {
+						hit_actor = var_4_26,
+						hit_zone_name = var_4_30,
+						inner_push = var_4_35,
+						outer_push = var_4_36,
+						node = var_4_29,
+						attack_direction = var_4_31,
+						target_index = var_4_25
 					}
 				end
 			until true
 		end
 
-		if total_hits == 0 then
+		if var_4_25 == 0 then
 			return
 		end
 
-		for hit_unit, info in pairs(push_units) do
+		for iter_4_1, iter_4_2 in pairs(var_4_17) do
 			repeat
-				if not Unit.alive(hit_unit) then
+				if not Unit.alive(iter_4_1) then
 					break
 				end
 
-				if info.inner_push and not info.outer_push then
-					local push_arc_event = "Play_player_push_ark_success"
-					local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
+				if iter_4_2.inner_push and not iter_4_2.outer_push then
+					local var_4_37 = "Play_player_push_ark_success"
 
-					first_person_extension:play_hud_sound_event(push_arc_event, nil, false)
+					ScriptUnit.extension(var_4_1, "first_person_system"):play_hud_sound_event(var_4_37, nil, false)
 				end
 
-				local hit_unit_id = network_manager:unit_game_object_id(hit_unit)
-				local hit_zone_id = NetworkLookup.hit_zones[info.hit_zone_name]
-				local power_level = self.power_level
-				local damage_profile_id_to_use = info.inner_push and self.damage_profile_inner_id or self.damage_profile_outer_id
-				local damage_profile_to_use = info.inner_push and self.damage_profile_inner or self.damage_profile_outer
-				local target_settings = damage_profile_to_use.default_target
-				local hit_position = Unit.world_position(hit_unit, info.node)
-				local hit_effect = current_action.impact_particle_effect or "fx/impact_block_push"
-				local hit_unit_root_pos = POSITION_LOOKUP[hit_unit] or Unit.world_position(hit_unit, 0)
-				local attacker_unit_root_pos = POSITION_LOOKUP[owner_unit] or Unit.world_position(owner_unit, 0)
-				local attack_direction = Vector3.normalize(hit_unit_root_pos - attacker_unit_root_pos)
+				local var_4_38 = var_4_13:unit_game_object_id(iter_4_1)
+				local var_4_39 = NetworkLookup.hit_zones[iter_4_2.hit_zone_name]
+				local var_4_40 = arg_4_0.power_level
+				local var_4_41 = iter_4_2.inner_push and arg_4_0.damage_profile_inner_id or arg_4_0.damage_profile_outer_id
+				local var_4_42 = (iter_4_2.inner_push and arg_4_0.damage_profile_inner or arg_4_0.damage_profile_outer).default_target
+				local var_4_43 = Unit.world_position(iter_4_1, iter_4_2.node)
+				local var_4_44 = var_4_0.impact_particle_effect or "fx/impact_block_push"
+				local var_4_45 = POSITION_LOOKUP[iter_4_1] or Unit.world_position(iter_4_1, 0)
+				local var_4_46 = POSITION_LOOKUP[var_4_1] or Unit.world_position(var_4_1, 0)
+				local var_4_47 = Vector3.normalize(var_4_45 - var_4_46)
 
-				if hit_effect then
-					EffectHelper.player_melee_hit_particles(world, hit_effect, hit_position, attack_direction, nil, hit_unit)
+				if var_4_44 then
+					EffectHelper.player_melee_hit_particles(arg_4_3, var_4_44, var_4_43, var_4_47, nil, iter_4_1)
 				end
 
-				local sound_event = current_action.stagger_impact_sound_event or "blunt_hit"
+				local var_4_48 = var_4_0.stagger_impact_sound_event or "blunt_hit"
 
-				if sound_event then
-					local attack_template = DamageUtils.get_attack_template(target_settings.attack_template)
-					local sound_type = attack_template and attack_template.sound_type or "stun_heavy"
-					local husk = self.bot_player
+				if var_4_48 then
+					local var_4_49 = DamageUtils.get_attack_template(var_4_42.attack_template)
+					local var_4_50 = var_4_49 and var_4_49.sound_type or "stun_heavy"
+					local var_4_51 = arg_4_0.bot_player
 
-					EffectHelper.play_melee_hit_effects(sound_event, world, hit_position, sound_type, husk, hit_unit)
+					EffectHelper.play_melee_hit_effects(var_4_48, arg_4_3, var_4_43, var_4_50, var_4_51, iter_4_1)
 
-					local sound_event_id = NetworkLookup.sound_events[sound_event]
-					local sound_type_id = NetworkLookup.melee_impact_sound_types[sound_type]
+					local var_4_52 = NetworkLookup.sound_events[var_4_48]
+					local var_4_53 = NetworkLookup.melee_impact_sound_types[var_4_50]
 
-					hit_position = Vector3(math.clamp(hit_position.x, -600, 600), math.clamp(hit_position.y, -600, 600), math.clamp(hit_position.z, -600, 600))
+					var_4_43 = Vector3(math.clamp(var_4_43.x, -600, 600), math.clamp(var_4_43.y, -600, 600), math.clamp(var_4_43.z, -600, 600))
 
-					if self.is_server then
-						network_manager.network_transmit:send_rpc_clients("rpc_play_melee_hit_effects", sound_event_id, hit_position, sound_type_id, hit_unit_id)
+					if arg_4_0.is_server then
+						var_4_13.network_transmit:send_rpc_clients("rpc_play_melee_hit_effects", var_4_52, var_4_43, var_4_53, var_4_38)
 					else
-						network_manager.network_transmit:send_rpc_server("rpc_play_melee_hit_effects", sound_event_id, hit_position, sound_type_id, hit_unit_id)
+						var_4_13.network_transmit:send_rpc_server("rpc_play_melee_hit_effects", var_4_52, var_4_43, var_4_53, var_4_38)
 					end
 				else
-					Application.warning("[ActionPushStagger] Missing sound event for push action in unit %q.", self.weapon_unit)
+					Application.warning("[ActionPushStagger] Missing sound event for push action in unit %q.", arg_4_0.weapon_unit)
 				end
 
-				local shield_blocked = AiUtils.attack_is_shield_blocked(hit_unit, owner_unit)
-				local damage_source = self.item_name
-				local damage_source_id = NetworkLookup.damage_sources[damage_source]
-				local is_critical_strike = self._is_critical_strike
-				local target_index = info.target_index or nil
+				local var_4_54 = AiUtils.attack_is_shield_blocked(iter_4_1, var_4_1)
+				local var_4_55 = arg_4_0.item_name
+				local var_4_56 = NetworkLookup.damage_sources[var_4_55]
+				local var_4_57 = arg_4_0._is_critical_strike
+				local var_4_58 = iter_4_2.target_index or nil
 
-				weapon_system:send_rpc_attack_hit(damage_source_id, attacker_unit_id, hit_unit_id, hit_zone_id, hit_position, attack_direction, damage_profile_id_to_use, "power_level", power_level, "hit_target_index", target_index, "blocking", shield_blocked, "shield_break_procced", false, "boost_curve_multiplier", self.melee_boost_curve_multiplier, "is_critical_strike", is_critical_strike, "can_damage", false, "can_stagger", true, "total_hits", total_hits)
+				var_4_2:send_rpc_attack_hit(var_4_56, var_4_14, var_4_38, var_4_39, var_4_43, var_4_47, var_4_41, "power_level", var_4_40, "hit_target_index", var_4_58, "blocking", var_4_54, "shield_break_procced", false, "boost_curve_multiplier", arg_4_0.melee_boost_curve_multiplier, "is_critical_strike", var_4_57, "can_damage", false, "can_stagger", true, "total_hits", var_4_25)
 
-				if Managers.state.controller_features and self.owner.local_player and not self.has_played_rumble_effect then
+				if Managers.state.controller_features and arg_4_0.owner.local_player and not arg_4_0.has_played_rumble_effect then
 					Managers.state.controller_features:add_effect("rumble", {
-						rumble_effect = "push_hit",
+						rumble_effect = "push_hit"
 					})
 
-					self.has_played_rumble_effect = true
+					arg_4_0.has_played_rumble_effect = true
 				end
 
-				Managers.state.entity:system("play_go_tutorial_system"):register_push(hit_unit)
-				buff_extension:trigger_procs("on_push", hit_unit, damage_source)
+				Managers.state.entity:system("play_go_tutorial_system"):register_push(iter_4_1)
+				var_4_22:trigger_procs("on_push", iter_4_1, var_4_55)
 
-				local player_manager = Managers.player
-				local owner_player = player_manager:owner(self.owner_unit)
+				local var_4_59 = Managers.player
+				local var_4_60 = var_4_59:owner(arg_4_0.owner_unit)
 
-				if not LEVEL_EDITOR_TEST and not player_manager.is_server then
-					local peer_id = owner_player:network_id()
-					local local_player_id = owner_player:local_player_id()
-					local event_id = NetworkLookup.proc_events.on_push
+				if not LEVEL_EDITOR_TEST and not var_4_59.is_server then
+					local var_4_61 = var_4_60:network_id()
+					local var_4_62 = var_4_60:local_player_id()
+					local var_4_63 = NetworkLookup.proc_events.on_push
 
-					Managers.state.network.network_transmit:send_rpc_server("rpc_proc_event", peer_id, local_player_id, event_id)
+					Managers.state.network.network_transmit:send_rpc_server("rpc_proc_event", var_4_61, var_4_62, var_4_63)
 				end
 
-				hit_once = true
+				var_4_19 = true
 			until true
 		end
 
-		if hit_once and not self.bot_player then
+		if var_4_19 and not arg_4_0.bot_player then
 			Managers.state.controller_features:add_effect("rumble", {
-				rumble_effect = "hit_character_light",
+				rumble_effect = "hit_character_light"
 			})
 		end
 	end
 end
 
-ActionPushStagger.finish = function (self, reason)
-	local hud_extension = ScriptUnit.has_extension(self.owner_unit, "hud_system")
+function ActionPushStagger.finish(arg_5_0, arg_5_1)
+	local var_5_0 = ScriptUnit.has_extension(arg_5_0.owner_unit, "hud_system")
 
-	if hud_extension then
-		hud_extension.show_critical_indication = false
+	if var_5_0 then
+		var_5_0.show_critical_indication = false
 	end
 
-	self.waiting_for_callback = false
-	callback_context.has_gotten_callback = false
+	arg_5_0.waiting_for_callback = false
+	var_0_0.has_gotten_callback = false
 
-	local ammo_extension = self.ammo_extension
-	local current_action = self.current_action
-	local owner_unit = self.owner_unit
+	local var_5_1 = arg_5_0.ammo_extension
+	local var_5_2 = arg_5_0.current_action
+	local var_5_3 = arg_5_0.owner_unit
 
-	if reason ~= "new_interupting_action" then
-		local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
-		local do_out_of_ammo_reload = not reload_when_out_of_ammo_condition_func and true or reload_when_out_of_ammo_condition_func(owner_unit, reason)
+	if arg_5_1 ~= "new_interupting_action" then
+		local var_5_4 = var_5_2.reload_when_out_of_ammo_condition_func
+		local var_5_5 = not var_5_4 and true or var_5_4(var_5_3, arg_5_1)
 
-		if ammo_extension and current_action.reload_when_out_of_ammo and do_out_of_ammo_reload and ammo_extension:ammo_count() == 0 and ammo_extension:can_reload() then
-			local play_reload_animation = true
+		if var_5_1 and var_5_2.reload_when_out_of_ammo and var_5_5 and var_5_1:ammo_count() == 0 and var_5_1:can_reload() then
+			local var_5_6 = true
 
-			ammo_extension:start_reload(play_reload_animation)
+			var_5_1:start_reload(var_5_6)
 		end
 	end
 
 	if not LEVEL_EDITOR_TEST then
-		local go_id = Managers.state.unit_storage:go_id(owner_unit)
+		local var_5_7 = Managers.state.unit_storage:go_id(var_5_3)
 
-		if self.is_server then
-			Managers.state.network.network_transmit:send_rpc_clients("rpc_set_blocking", go_id, false)
+		if arg_5_0.is_server then
+			Managers.state.network.network_transmit:send_rpc_clients("rpc_set_blocking", var_5_7, false)
 		else
-			Managers.state.network.network_transmit:send_rpc_server("rpc_set_blocking", go_id, false)
+			Managers.state.network.network_transmit:send_rpc_server("rpc_set_blocking", var_5_7, false)
 		end
 	end
 
-	local status_extension = self._status_extension
+	local var_5_8 = arg_5_0._status_extension
 
-	status_extension:set_blocking(false)
-	status_extension:set_has_blocked(false)
+	var_5_8:set_blocking(false)
+	var_5_8:set_has_blocked(false)
 end

@@ -1,7 +1,7 @@
-﻿-- chunkname: @scripts/managers/backend/backend_interface_talents.lua
+-- chunkname: @scripts/managers/backend/backend_interface_talents.lua
 
 BackendInterfaceTalents = class(BackendInterfaceTalents)
 
-BackendInterfaceTalents.init = function (self)
+function BackendInterfaceTalents.init(arg_1_0)
 	return
 end

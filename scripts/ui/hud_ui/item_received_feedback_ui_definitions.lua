@@ -1,62 +1,62 @@
-﻿-- chunkname: @scripts/ui/hud_ui/item_received_feedback_ui_definitions.lua
+-- chunkname: @scripts/ui/hud_ui/item_received_feedback_ui_definitions.lua
 
 local_require("scripts/ui/ui_widgets")
 
-local FONT_SIZE = 18
-local MAX_NUMBER_OF_MESSAGES = 1
-local scenegraph_definition = {
+local var_0_0 = 18
+local var_0_1 = 1
+local var_0_2 = {
 	root = {
 		is_root = true,
 		size = {
 			1920,
-			1080,
+			1080
 		},
 		position = {
 			0,
 			0,
-			UILayer.default,
-		},
+			UILayer.default
+		}
 	},
 	message_animated_parent = {
-		horizontal_alignment = "center",
-		parent = "root",
 		vertical_alignment = "center",
+		parent = "root",
+		horizontal_alignment = "center",
 		size = {
 			0,
-			0,
+			0
 		},
 		position = {
 			-300,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	message_animated = {
 		parent = "message_animated_parent",
 		size = {
 			0,
-			0,
+			0
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	},
 	message_animated_dragger = {
 		parent = "message_animated",
 		size = {
 			200,
-			50,
+			50
 		},
 		position = {
 			0,
 			0,
-			0,
-		},
-	},
+			0
+		}
+	}
 }
-local widget_definitions = {
+local var_0_3 = {
 	message_animated = {
 		scenegraph_id = "message_animated",
 		element = {
@@ -65,104 +65,104 @@ local widget_definitions = {
 					pass_type = "texture",
 					style_id = "icon_1",
 					texture_id = "icon_1",
-					content_check_function = function (content)
-						if not content.icon_1 then
+					content_check_function = function(arg_1_0)
+						if not arg_1_0.icon_1 then
 							return false
 						end
 
 						return true
-					end,
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "icon_2",
 					texture_id = "icon_2",
-					content_check_function = function (content)
-						if not content.icon_2 then
+					content_check_function = function(arg_2_0)
+						if not arg_2_0.icon_2 then
 							return false
 						end
 
 						return true
-					end,
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "icon_3",
 					texture_id = "icon_3",
-					content_check_function = function (content)
-						if not content.icon_3 then
+					content_check_function = function(arg_3_0)
+						if not arg_3_0.icon_3 then
 							return false
 						end
 
 						return true
-					end,
-				},
-			},
+					end
+				}
+			}
 		},
 		content = {
-			icon_texture = "",
 			text = "",
-			message_tables = {},
+			icon_texture = "",
+			message_tables = {}
 		},
 		style = {
 			text = {
-				dynamic_font = true,
-				font_type = "hell_shark",
-				horizontal_alignment = "right",
 				vertical_alignment = "bottom",
-				font_size = FONT_SIZE,
+				dynamic_font = true,
+				horizontal_alignment = "right",
+				font_type = "hell_shark",
+				font_size = var_0_0,
 				text_color = Colors.get_table("white"),
 				offset = {
 					0,
 					-25,
-					0,
-				},
+					0
+				}
 			},
 			icon_1 = {
 				size = {
 					50,
-					50,
+					50
 				},
 				offset = {
 					0,
 					0,
-					0,
+					0
 				},
-				color = Colors.get_table("white"),
+				color = Colors.get_table("white")
 			},
 			icon_2 = {
 				size = {
 					50,
-					50,
+					50
 				},
 				offset = {
 					75,
 					0,
-					0,
+					0
 				},
-				color = Colors.get_table("white"),
+				color = Colors.get_table("white")
 			},
 			icon_3 = {
 				size = {
 					50,
-					50,
+					50
 				},
 				offset = {
 					150,
 					0,
-					0,
+					0
 				},
-				color = Colors.get_table("white"),
-			},
-		},
-	},
+				color = Colors.get_table("white")
+			}
+		}
+	}
 }
 
-local function create_message_widgets(number_of_slots)
-	local entries = {}
+local function var_0_4(arg_4_0)
+	local var_4_0 = {}
 
-	for i = 1, number_of_slots do
-		local message = {
+	for iter_4_0 = 1, arg_4_0 do
+		var_4_0[iter_4_0] = {
 			scenegraph_id = "message_animated",
 			element = {
 				passes = {
@@ -170,269 +170,265 @@ local function create_message_widgets(number_of_slots)
 						pass_type = "texture",
 						style_id = "icon_1",
 						texture_id = "icon_1",
-						content_check_function = function (content)
-							if not content.icon_1 then
+						content_check_function = function(arg_5_0)
+							if not arg_5_0.icon_1 then
 								return false
 							end
 
 							return true
-						end,
+						end
 					},
 					{
 						pass_type = "texture",
 						style_id = "icon_2",
 						texture_id = "icon_2",
-						content_check_function = function (content)
-							if not content.icon_2 then
+						content_check_function = function(arg_6_0)
+							if not arg_6_0.icon_2 then
 								return false
 							end
 
 							return true
-						end,
+						end
 					},
 					{
 						pass_type = "texture",
 						style_id = "icon_3",
 						texture_id = "icon_3",
-						content_check_function = function (content)
-							if not content.icon_3 then
+						content_check_function = function(arg_7_0)
+							if not arg_7_0.icon_3 then
 								return false
 							end
 
 							return true
-						end,
-					},
-				},
+						end
+					}
+				}
 			},
 			content = {
-				icon_texture = "hud_tutorial_icon_info",
 				text = "",
-				message_tables = {},
+				icon_texture = "hud_tutorial_icon_info",
+				message_tables = {}
 			},
 			style = {
 				text = {
-					dynamic_font = true,
-					font_type = "hell_shark",
-					horizontal_alignment = "right",
 					vertical_alignment = "bottom",
-					font_size = FONT_SIZE,
+					dynamic_font = true,
+					horizontal_alignment = "right",
+					font_type = "hell_shark",
+					font_size = var_0_0,
 					text_color = Colors.get_table("white"),
 					offset = {
 						0,
 						-25,
-						0,
-					},
+						0
+					}
 				},
 				icon_1 = {
 					size = {
 						50,
-						50,
+						50
 					},
 					offset = {
 						0,
 						0,
-						0,
+						0
 					},
-					color = Colors.get_table("white"),
+					color = Colors.get_table("white")
 				},
 				icon_2 = {
 					size = {
 						50,
-						50,
+						50
 					},
 					offset = {
 						75,
 						0,
-						0,
+						0
 					},
-					color = Colors.get_table("white"),
+					color = Colors.get_table("white")
 				},
 				icon_3 = {
 					size = {
 						50,
-						50,
+						50
 					},
 					offset = {
 						150,
 						0,
-						0,
+						0
 					},
-					color = Colors.get_table("white"),
-				},
+					color = Colors.get_table("white")
+				}
 			},
 			offset = {
 				0,
 				0,
-				0,
-			},
+				0
+			}
 		}
-
-		entries[i] = message
 	end
 
-	return entries
+	return var_4_0
 end
 
-local function create_reinforcement_widget(index, scenegraph_id, frame_settings_name, scale, retained_mode)
-	scale = scale or 1
+local function var_0_5(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	arg_8_3 = arg_8_3 or 1
 
-	local frame_settings = UIPlayerPortraitFrameSettings[frame_settings_name]
-	local default_color = {
+	local var_8_0 = UIPlayerPortraitFrameSettings[arg_8_2]
+	local var_8_1 = {
 		255,
 		255,
 		255,
-		255,
+		255
 	}
-	local default_offset = {
+	local var_8_2 = {
 		0,
 		0,
-		0,
+		0
 	}
-	local widget = {
-		element = {},
+	local var_8_3 = {
+		element = {}
 	}
-	local passes = {}
-	local content = {
-		scale = scale,
-		frame_settings_name = frame_settings_name,
+	local var_8_4 = {}
+	local var_8_5 = {
+		scale = arg_8_3,
+		frame_settings_name = arg_8_2
 	}
-	local style = {}
-	local text_style_ids = {}
-	local widget_length = 150
-	local center_icon_name = "icon"
+	local var_8_6 = {}
+	local var_8_7 = {}
+	local var_8_8 = 150
+	local var_8_9 = "icon"
 
-	passes[#passes + 1] = {
+	var_8_4[#var_8_4 + 1] = {
 		pass_type = "texture",
-		texture_id = center_icon_name,
-		style_id = center_icon_name,
-		retained_mode = retained_mode,
+		texture_id = var_8_9,
+		style_id = var_8_9,
+		retained_mode = arg_8_4
 	}
-	content[center_icon_name] = "icons_placeholder"
-	style[center_icon_name] = {
-		color = table.clone(default_color),
+	var_8_5[var_8_9] = "icons_placeholder"
+	var_8_6[var_8_9] = {
+		color = table.clone(var_8_1),
 		offset = {
-			widget_length / 2 - 20 - 8,
+			var_8_8 / 2 - 20 - 8,
 			-20,
-			2,
+			2
 		},
 		size = {
 			40,
-			40,
-		},
+			40
+		}
 	}
-	text_style_ids[#text_style_ids + 1] = center_icon_name
+	var_8_7[#var_8_7 + 1] = var_8_9
 
-	local arrow_name = "arrow"
+	local var_8_10 = "arrow"
 
-	passes[#passes + 1] = {
+	var_8_4[#var_8_4 + 1] = {
 		pass_type = "texture",
-		texture_id = arrow_name,
-		style_id = arrow_name,
-		retained_mode = retained_mode,
+		texture_id = var_8_10,
+		style_id = var_8_10,
+		retained_mode = arg_8_4
 	}
-	content[arrow_name] = "reinforcement_arrow"
-	style[arrow_name] = {
-		color = table.clone(default_color),
+	var_8_5[var_8_10] = "reinforcement_arrow"
+	var_8_6[var_8_10] = {
+		color = table.clone(var_8_1),
 		offset = {
 			0,
 			-13,
-			1,
+			1
 		},
 		size = {
 			35,
-			26,
-		},
+			26
+		}
 	}
-	text_style_ids[#text_style_ids + 1] = arrow_name
+	var_8_7[#var_8_7 + 1] = var_8_10
 
-	for i = 1, 1 do
-		local portrait_offset = {
+	for iter_8_0 = 1, 1 do
+		local var_8_11 = {
 			0,
 			0,
-			3,
+			3
 		}
-		local portrait_texture = "icons_placeholder"
-		local portrait_size = {
+		local var_8_12 = "icons_placeholder"
+		local var_8_13 = {
 			86,
-			108,
+			108
 		}
 
-		portrait_size[1] = portrait_size[1] * scale
-		portrait_size[2] = portrait_size[2] * scale
+		var_8_13[1] = var_8_13[1] * arg_8_3
+		var_8_13[2] = var_8_13[2] * arg_8_3
 
-		local offset = table.clone(default_offset)
+		local var_8_14 = table.clone(var_8_2)
 
-		offset[1] = portrait_offset[1] - portrait_size[1] / 2 + offset[1] * scale
-		offset[2] = portrait_offset[2] - portrait_size[2] / 2 + offset[2] * scale
-		offset[3] = portrait_offset[3]
+		var_8_14[1] = var_8_11[1] - var_8_13[1] / 2 + var_8_14[1] * arg_8_3
+		var_8_14[2] = var_8_11[2] - var_8_13[2] / 2 + var_8_14[2] * arg_8_3
+		var_8_14[3] = var_8_11[3]
 
-		local portrait_name = "portrait_" .. i
+		local var_8_15 = "portrait_" .. iter_8_0
 
-		passes[#passes + 1] = {
+		var_8_4[#var_8_4 + 1] = {
 			pass_type = "texture_uv",
-			content_id = portrait_name,
-			style_id = portrait_name,
-			retained_mode = retained_mode,
+			content_id = var_8_15,
+			style_id = var_8_15,
+			retained_mode = arg_8_4
 		}
 
-		local uvs = i == 1 and {
+		local var_8_16 = iter_8_0 == 1 and {
 			{
 				0,
-				0,
+				0
 			},
 			{
 				1,
-				1,
-			},
+				1
+			}
 		} or {
 			{
 				1,
-				0,
+				0
 			},
 			{
 				0,
-				1,
-			},
+				1
+			}
 		}
 
-		content[portrait_name] = {
-			texture_id = portrait_texture,
-			uvs = uvs,
+		var_8_5[var_8_15] = {
+			texture_id = var_8_12,
+			uvs = var_8_16
 		}
-		style[portrait_name] = {
-			color = default_color,
-			offset = offset,
-			size = portrait_size,
-			portrait_offset = portrait_offset,
+		var_8_6[var_8_15] = {
+			color = var_8_1,
+			offset = var_8_14,
+			size = var_8_13,
+			portrait_offset = var_8_11
 		}
-		text_style_ids[#text_style_ids + 1] = portrait_name
+		var_8_7[#var_8_7 + 1] = var_8_15
 	end
 
-	content.text_style_ids = text_style_ids
-	widget.element.passes = passes
-	widget.content = content
-	widget.style = style
-	widget.offset = {
+	var_8_5.text_style_ids = var_8_7
+	var_8_3.element.passes = var_8_4
+	var_8_3.content = var_8_5
+	var_8_3.style = var_8_6
+	var_8_3.offset = {
 		0,
 		0,
-		(index - 1) * 10,
+		(arg_8_0 - 1) * 10
 	}
-	widget.scenegraph_id = scenegraph_id
+	var_8_3.scenegraph_id = arg_8_1
 
-	return widget
+	return var_8_3
 end
 
-local message_widgets = {}
+local var_0_6 = {}
 
-for i = 1, MAX_NUMBER_OF_MESSAGES do
-	local widget = create_reinforcement_widget(i, "message_animated", "positive_reinforcement", 1)
-
-	message_widgets[i] = widget
+for iter_0_0 = 1, var_0_1 do
+	var_0_6[iter_0_0] = var_0_5(iter_0_0, "message_animated", "positive_reinforcement", 1)
 end
 
 return {
-	scenegraph_definition = scenegraph_definition,
-	animated_message_widget = widget_definitions.message_animated,
-	message_widgets = message_widgets,
-	MAX_NUMBER_OF_MESSAGES = MAX_NUMBER_OF_MESSAGES,
+	scenegraph_definition = var_0_2,
+	animated_message_widget = var_0_3.message_animated,
+	message_widgets = var_0_6,
+	MAX_NUMBER_OF_MESSAGES = var_0_1
 }

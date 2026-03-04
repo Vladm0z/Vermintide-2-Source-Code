@@ -1,184 +1,184 @@
-﻿-- chunkname: @scripts/settings/crafting/crafting_data.lua
+-- chunkname: @scripts/settings/crafting/crafting_data.lua
 
 CraftingData = {}
 CraftingData.dust_material_names = {
 	"crafting_material_dust_1",
 	"crafting_material_dust_2",
-	"crafting_material_dust_3",
+	"crafting_material_dust_3"
 }
 CraftingData.act_materials = {
 	"crafting_material_act_1",
 	"crafting_material_act_2",
-	"crafting_material_act_3",
+	"crafting_material_act_3"
 }
 CraftingData.item_materials = {
 	"crafting_material_weapon",
-	"crafting_material_jewellery",
+	"crafting_material_jewellery"
 }
 CraftingData.weapon_slot_types = {
 	"ranged",
-	"melee",
+	"melee"
 }
 CraftingData.jewellery_slot_types = {
 	"ring",
 	"necklace",
-	"trinket",
+	"trinket"
 }
 CraftingData.weapon_skin_slot_types = {
-	"weapon_skin",
+	"weapon_skin"
 }
 CraftingData.equipment_slot_types = {
 	"ranged",
 	"melee",
 	"ring",
 	"necklace",
-	"trinket",
+	"trinket"
 }
 CraftingData.salvage_data = {
 	materials_from_rarity = {
 		plentiful = {
 			{
 				amount = 1,
-				name = "crafting_material_scrap",
-			},
+				name = "crafting_material_scrap"
+			}
 		},
 		common = {
 			{
 				amount = 2,
-				name = "crafting_material_scrap",
+				name = "crafting_material_scrap"
 			},
 			{
 				amount = 1,
-				name = "crafting_material_dust_1",
-			},
+				name = "crafting_material_dust_1"
+			}
 		},
 		rare = {
 			{
 				amount = 3,
-				name = "crafting_material_scrap",
+				name = "crafting_material_scrap"
 			},
 			{
 				amount = 1,
-				name = "crafting_material_dust_2",
-			},
+				name = "crafting_material_dust_2"
+			}
 		},
 		exotic = {
 			{
 				amount = 4,
-				name = "crafting_material_scrap",
+				name = "crafting_material_scrap"
 			},
 			{
 				amount = 1,
-				name = "crafting_material_dust_3",
-			},
+				name = "crafting_material_dust_3"
+			}
 		},
 		unique = {
 			{
 				amount = 5,
-				name = "crafting_material_scrap",
+				name = "crafting_material_scrap"
 			},
 			{
 				amount = 3,
-				name = "crafting_material_dust_3",
-			},
-		},
+				name = "crafting_material_dust_3"
+			}
+		}
 	},
 	materials_from_slot_type = {
 		ring = {
 			{
-				amount = 1,
 				chance = 0.2,
 				name = "crafting_material_jewellery",
-			},
+				amount = 1
+			}
 		},
 		necklace = {
 			{
-				amount = 1,
 				chance = 0.2,
 				name = "crafting_material_jewellery",
-			},
+				amount = 1
+			}
 		},
 		trinket = {
 			{
-				amount = 1,
 				chance = 0.2,
 				name = "crafting_material_jewellery",
-			},
+				amount = 1
+			}
 		},
 		ranged = {
 			{
-				amount = 1,
 				chance = 0.2,
 				name = "crafting_material_weapon",
-			},
+				amount = 1
+			}
 		},
 		melee = {
 			{
-				amount = 1,
 				chance = 0.2,
 				name = "crafting_material_weapon",
-			},
-		},
-	},
+				amount = 1
+			}
+		}
+	}
 }
 CraftingData.craft_jewellery_data = {
 	rarity_weights = {
 		common = 7,
-		exotic = 2,
 		plentiful = 10,
 		rare = 4,
+		exotic = 2
 	},
 	items = {
 		necklace = {
 			plentiful = {
-				"necklace",
+				"necklace"
 			},
 			common = {
-				"necklace",
+				"necklace"
 			},
 			rare = {
-				"necklace",
+				"necklace"
 			},
 			exotic = {
-				"necklace",
-			},
+				"necklace"
+			}
 		},
 		ring = {
 			plentiful = {
-				"ring",
+				"ring"
 			},
 			common = {
-				"ring",
+				"ring"
 			},
 			rare = {
-				"ring",
+				"ring"
 			},
 			exotic = {
-				"ring",
-			},
+				"ring"
+			}
 		},
 		trinket = {
 			plentiful = {
-				"trinket",
+				"trinket"
 			},
 			common = {
-				"trinket",
+				"trinket"
 			},
 			rare = {
-				"trinket",
+				"trinket"
 			},
 			exotic = {
-				"trinket",
-			},
-		},
-	},
+				"trinket"
+			}
+		}
+	}
 }
 CraftingData.craft_weapon_data = {
 	rarity_weights = {
 		common = 7,
-		exotic = 1,
 		plentiful = 10,
 		rare = 2,
+		exotic = 1
 	},
-	items = {},
+	items = {}
 }

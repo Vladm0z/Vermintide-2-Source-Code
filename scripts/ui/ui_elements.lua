@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/ui/ui_elements.lua
+-- chunkname: @scripts/ui/ui_elements.lua
 
 require("scripts/ui/ui_layer")
 
@@ -6,823 +6,806 @@ UIElements = {}
 UIElements.ButtonMenuSteps = {
 	passes = {
 		{
-			content_id = "button_hotspot",
 			pass_type = "hotspot",
-			content_check_function = function (content)
-				return not content.disabled
-			end,
+			content_id = "button_hotspot",
+			content_check_function = function(arg_1_0)
+				return not arg_1_0.disabled
+			end
 		},
 		{
-			pass_type = "texture",
-			style_id = "texture",
 			texture_id = "texture_id",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
+			style_id = "texture",
+			pass_type = "texture",
+			content_check_function = function(arg_2_0)
+				local var_2_0 = arg_2_0.button_hotspot
 
-				return not button_hotspot.disabled and not button_hotspot.is_hover and button_hotspot.is_clicked > 0 and not button_hotspot.is_selected
-			end,
+				return not var_2_0.disabled and not var_2_0.is_hover and var_2_0.is_clicked > 0 and not var_2_0.is_selected
+			end
 		},
 		{
-			pass_type = "texture",
-			style_id = "texture",
 			texture_id = "texture_hover_id",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
+			style_id = "texture",
+			pass_type = "texture",
+			content_check_function = function(arg_3_0)
+				local var_3_0 = arg_3_0.button_hotspot
 
-				return not button_hotspot.disabled and not button_hotspot.is_selected and button_hotspot.is_hover and button_hotspot.is_clicked > 0
-			end,
+				return not var_3_0.disabled and not var_3_0.is_selected and var_3_0.is_hover and var_3_0.is_clicked > 0
+			end
 		},
 		{
-			pass_type = "texture",
-			style_id = "texture",
 			texture_id = "texture_click_id",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
+			style_id = "texture",
+			pass_type = "texture",
+			content_check_function = function(arg_4_0)
+				local var_4_0 = arg_4_0.button_hotspot
 
-				return not button_hotspot.disabled and button_hotspot.is_clicked == 0
-			end,
+				return not var_4_0.disabled and var_4_0.is_clicked == 0
+			end
 		},
 		{
-			pass_type = "texture",
-			style_id = "texture",
 			texture_id = "texture_selected_id",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
-
-				return not button_hotspot.disabled and button_hotspot.is_selected and button_hotspot.is_clicked > 0
-			end,
-		},
-		{
-			pass_type = "texture",
 			style_id = "texture",
+			pass_type = "texture",
+			content_check_function = function(arg_5_0)
+				local var_5_0 = arg_5_0.button_hotspot
+
+				return not var_5_0.disabled and var_5_0.is_selected and var_5_0.is_clicked > 0
+			end
+		},
+		{
 			texture_id = "texture_disabled_id",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
-
-				return button_hotspot.disabled
-			end,
+			style_id = "texture",
+			pass_type = "texture",
+			content_check_function = function(arg_6_0)
+				return arg_6_0.button_hotspot.disabled
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "text",
+			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
+			content_check_function = function(arg_7_0)
+				local var_7_0 = arg_7_0.button_hotspot
 
-				return not button_hotspot.disabled and not button_hotspot.is_hover and not button_hotspot.is_selected and button_hotspot.is_clicked > 0
-			end,
+				return not var_7_0.disabled and not var_7_0.is_hover and not var_7_0.is_selected and var_7_0.is_clicked > 0
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "text_hover",
+			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
+			content_check_function = function(arg_8_0)
+				local var_8_0 = arg_8_0.button_hotspot
 
-				return not button_hotspot.disabled and not button_hotspot.is_selected and button_hotspot.is_hover and button_hotspot.is_clicked > 0
-			end,
+				return not var_8_0.disabled and not var_8_0.is_selected and var_8_0.is_hover and var_8_0.is_clicked > 0
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "text_selected",
+			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
+			content_check_function = function(arg_9_0)
+				local var_9_0 = arg_9_0.button_hotspot
 
-				return not button_hotspot.disabled and (button_hotspot.is_selected or button_hotspot.is_clicked == 0)
-			end,
+				return not var_9_0.disabled and (var_9_0.is_selected or var_9_0.is_clicked == 0)
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "text_disabled",
+			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
-
-				return button_hotspot.disabled
-			end,
-		},
-	},
+			content_check_function = function(arg_10_0)
+				return arg_10_0.button_hotspot.disabled
+			end
+		}
+	}
 }
 UIElements.ButtonMenuStepsWithTimer = {
 	passes = {
 		{
-			content_id = "button_hotspot",
 			pass_type = "hotspot",
-			content_check_function = function (content)
-				return not content.disabled
-			end,
+			content_id = "button_hotspot",
+			content_check_function = function(arg_11_0)
+				return not arg_11_0.disabled
+			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_id",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
+			content_check_function = function(arg_12_0)
+				local var_12_0 = arg_12_0.button_hotspot
 
-				return not button_hotspot.disabled and not button_hotspot.is_hover and button_hotspot.is_clicked > 0 and not button_hotspot.is_selected
-			end,
+				return not var_12_0.disabled and not var_12_0.is_hover and var_12_0.is_clicked > 0 and not var_12_0.is_selected
+			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_hover_id",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
+			content_check_function = function(arg_13_0)
+				local var_13_0 = arg_13_0.button_hotspot
 
-				return not button_hotspot.disabled and not button_hotspot.is_selected and button_hotspot.is_hover and button_hotspot.is_clicked > 0
-			end,
+				return not var_13_0.disabled and not var_13_0.is_selected and var_13_0.is_hover and var_13_0.is_clicked > 0
+			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_click_id",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
+			content_check_function = function(arg_14_0)
+				local var_14_0 = arg_14_0.button_hotspot
 
-				return not button_hotspot.disabled and button_hotspot.is_clicked == 0
-			end,
+				return not var_14_0.disabled and var_14_0.is_clicked == 0
+			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_selected_id",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
+			content_check_function = function(arg_15_0)
+				local var_15_0 = arg_15_0.button_hotspot
 
-				return not button_hotspot.disabled and button_hotspot.is_selected and button_hotspot.is_clicked > 0
-			end,
+				return not var_15_0.disabled and var_15_0.is_selected and var_15_0.is_clicked > 0
+			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_disabled_id",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
-
-				return button_hotspot.disabled
-			end,
+			content_check_function = function(arg_16_0)
+				return arg_16_0.button_hotspot.disabled
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "text",
+			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
+			content_check_function = function(arg_17_0)
+				local var_17_0 = arg_17_0.button_hotspot
 
-				return not button_hotspot.disabled and not button_hotspot.is_hover and not button_hotspot.is_selected and button_hotspot.is_clicked > 0
-			end,
+				return not var_17_0.disabled and not var_17_0.is_hover and not var_17_0.is_selected and var_17_0.is_clicked > 0
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "text_hover",
+			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
+			content_check_function = function(arg_18_0)
+				local var_18_0 = arg_18_0.button_hotspot
 
-				return not button_hotspot.disabled and not button_hotspot.is_selected and button_hotspot.is_hover and button_hotspot.is_clicked > 0
-			end,
+				return not var_18_0.disabled and not var_18_0.is_selected and var_18_0.is_hover and var_18_0.is_clicked > 0
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "text_selected",
+			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
+			content_check_function = function(arg_19_0)
+				local var_19_0 = arg_19_0.button_hotspot
 
-				return not button_hotspot.disabled and (button_hotspot.is_selected or button_hotspot.is_clicked == 0)
-			end,
+				return not var_19_0.disabled and (var_19_0.is_selected or var_19_0.is_clicked == 0)
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "text_disabled",
+			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
-
-				return button_hotspot.disabled
-			end,
+			content_check_function = function(arg_20_0)
+				return arg_20_0.button_hotspot.disabled
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "timer_text_field",
+			pass_type = "text",
 			text_id = "timer_text_field",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
+			content_check_function = function(arg_21_0)
+				local var_21_0 = arg_21_0.button_hotspot
 
-				return not button_hotspot.disabled and not button_hotspot.is_hover and not button_hotspot.is_selected and button_hotspot.is_clicked > 0
-			end,
+				return not var_21_0.disabled and not var_21_0.is_hover and not var_21_0.is_selected and var_21_0.is_clicked > 0
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "timer_text_field_hover",
+			pass_type = "text",
 			text_id = "timer_text_field",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
+			content_check_function = function(arg_22_0)
+				local var_22_0 = arg_22_0.button_hotspot
 
-				return not button_hotspot.disabled and not button_hotspot.is_selected and button_hotspot.is_hover and button_hotspot.is_clicked > 0
-			end,
+				return not var_22_0.disabled and not var_22_0.is_selected and var_22_0.is_hover and var_22_0.is_clicked > 0
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "timer_text_field_selected",
+			pass_type = "text",
 			text_id = "timer_text_field",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
+			content_check_function = function(arg_23_0)
+				local var_23_0 = arg_23_0.button_hotspot
 
-				return not button_hotspot.disabled and (button_hotspot.is_selected or button_hotspot.is_clicked == 0)
-			end,
+				return not var_23_0.disabled and (var_23_0.is_selected or var_23_0.is_clicked == 0)
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "timer_text_field_disabled",
+			pass_type = "text",
 			text_id = "timer_text_field",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
-
-				return button_hotspot.disabled
-			end,
-		},
-	},
+			content_check_function = function(arg_24_0)
+				return arg_24_0.button_hotspot.disabled
+			end
+		}
+	}
 }
 UIElements.ToggleIconButton = {
 	passes = {
 		{
-			content_id = "button_hotspot",
 			pass_type = "hotspot",
+			content_id = "button_hotspot"
 		},
 		{
 			pass_type = "texture",
 			style_id = "normal_texture",
 			texture_id = "normal_texture",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
-
-				return not button_hotspot.is_hover
-			end,
+			content_check_function = function(arg_25_0)
+				return not arg_25_0.button_hotspot.is_hover
+			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "hover_texture",
 			texture_id = "hover_texture",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
+			content_check_function = function(arg_26_0)
+				local var_26_0 = arg_26_0.button_hotspot
 
-				return button_hotspot.is_hover and button_hotspot.is_clicked ~= 0
-			end,
+				return var_26_0.is_hover and var_26_0.is_clicked ~= 0
+			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "click_texture",
 			texture_id = "click_texture",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
+			content_check_function = function(arg_27_0)
+				local var_27_0 = arg_27_0.button_hotspot
 
-				return button_hotspot.is_hover and button_hotspot.is_clicked == 0
-			end,
+				return var_27_0.is_hover and var_27_0.is_clicked == 0
+			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "toggle_texture",
 			texture_id = "toggle_texture",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
+			content_check_function = function(arg_28_0)
+				local var_28_0 = arg_28_0.button_hotspot
 
-				return content.toggled and not button_hotspot.is_hover
-			end,
+				return arg_28_0.toggled and not var_28_0.is_hover
+			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "toggle_hover_texture",
 			texture_id = "toggle_hover_texture",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
+			content_check_function = function(arg_29_0)
+				local var_29_0 = arg_29_0.button_hotspot
 
-				return content.toggled and button_hotspot.is_hover and button_hotspot.is_clicked ~= 0
-			end,
+				return arg_29_0.toggled and var_29_0.is_hover and var_29_0.is_clicked ~= 0
+			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon_texture",
 			texture_id = "icon_texture",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
-
-				return not button_hotspot.is_hover and not content.toggled
-			end,
+			content_check_function = function(arg_30_0)
+				return not arg_30_0.button_hotspot.is_hover and not arg_30_0.toggled
+			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon_hover_texture",
 			texture_id = "icon_hover_texture",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
+			content_check_function = function(arg_31_0)
+				local var_31_0 = arg_31_0.button_hotspot
 
-				return (button_hotspot.is_hover or content.toggled) and button_hotspot.is_clicked ~= 0
-			end,
+				return (var_31_0.is_hover or arg_31_0.toggled) and var_31_0.is_clicked ~= 0
+			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon_click_texture",
 			texture_id = "icon_texture",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
+			content_check_function = function(arg_32_0)
+				local var_32_0 = arg_32_0.button_hotspot
 
-				return button_hotspot.is_hover and button_hotspot.is_clicked == 0
-			end,
+				return var_32_0.is_hover and var_32_0.is_clicked == 0
+			end
 		},
 		{
-			pass_type = "tooltip_text",
 			style_id = "tooltip_text",
+			pass_type = "tooltip_text",
 			text_id = "tooltip_text",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
+			content_check_function = function(arg_33_0)
+				local var_33_0 = arg_33_0.button_hotspot
 
-				return not content.toggled and button_hotspot.is_hover and button_hotspot.is_clicked ~= 0
-			end,
+				return not arg_33_0.toggled and var_33_0.is_hover and var_33_0.is_clicked ~= 0
+			end
 		},
 		{
-			pass_type = "tooltip_text",
 			style_id = "tooltip_text",
+			pass_type = "tooltip_text",
 			text_id = "toggled_tooltip_text",
-			content_check_function = function (content)
-				local button_hotspot = content.button_hotspot
+			content_check_function = function(arg_34_0)
+				local var_34_0 = arg_34_0.button_hotspot
 
-				return content.toggled and button_hotspot.is_hover and button_hotspot.is_clicked == 0
-			end,
-		},
-	},
+				return arg_34_0.toggled and var_34_0.is_hover and var_34_0.is_clicked == 0
+			end
+		}
+	}
 }
 UIElements.SimpleTexture = {
 	passes = {
 		{
 			pass_type = "texture",
-			texture_id = "texture_id",
-		},
-	},
+			texture_id = "texture_id"
+		}
+	}
 }
 UIElements.SimpleRotatedTexture = {
 	passes = {
 		{
 			pass_type = "rotated_texture",
-			texture_id = "texture_id",
-		},
-	},
+			texture_id = "texture_id"
+		}
+	}
 }
 UIElements.SimpleButton = {
 	passes = {
 		{
-			content_id = "button_hotspot",
 			pass_type = "hotspot",
+			content_id = "button_hotspot"
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_id",
-			content_check_function = function (content)
-				return not content.button_hotspot.is_hover
-			end,
+			content_check_function = function(arg_35_0)
+				return not arg_35_0.button_hotspot.is_hover
+			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_hover_id",
-			content_check_function = function (content)
-				return content.button_hotspot.is_hover
-			end,
-		},
-	},
+			content_check_function = function(arg_36_0)
+				return arg_36_0.button_hotspot.is_hover
+			end
+		}
+	}
 }
 UIElements.Button = {
 	passes = {
 		{
-			content_id = "button_hotspot",
 			pass_type = "hover",
+			content_id = "button_hotspot"
 		},
 		{
-			content_id = "button_hotspot",
 			pass_type = "click",
+			content_id = "button_hotspot"
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_id",
-			content_check_function = function (content)
-				return not content.button_hotspot.is_hover
-			end,
+			content_check_function = function(arg_37_0)
+				return not arg_37_0.button_hotspot.is_hover
+			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_hover_id",
-			content_check_function = function (content)
-				return content.button_hotspot.is_hover
-			end,
+			content_check_function = function(arg_38_0)
+				return arg_38_0.button_hotspot.is_hover
+			end
 		},
 		{
 			localize = true,
-			pass_type = "text",
 			style_id = "text",
-			text_id = "text_field",
-		},
-	},
+			pass_type = "text",
+			text_id = "text_field"
+		}
+	}
 }
 UIElements.StandardWindow = {
 	passes = {
 		{
-			content_id = "background",
-			pass_type = "rounded_background",
 			style_id = "background",
+			pass_type = "rounded_background",
+			content_id = "background"
 		},
 		{
-			content_id = "background_border",
-			pass_type = "border",
 			style_id = "background_border",
+			pass_type = "border",
+			content_id = "background_border"
 		},
 		{
-			content_id = "top_drag_bar",
-			pass_type = "hover",
 			scenegraph_id = "top_drag_bar",
+			pass_type = "hover",
+			content_id = "top_drag_bar"
 		},
 		{
-			content_id = "right_drag_bar",
-			pass_type = "hover",
 			scenegraph_id = "right_drag_bar",
+			pass_type = "hover",
+			content_id = "right_drag_bar"
 		},
 		{
-			content_id = "left_drag_bar",
-			pass_type = "hover",
 			scenegraph_id = "left_drag_bar",
+			pass_type = "hover",
+			content_id = "left_drag_bar"
 		},
 		{
-			content_id = "right_drag_bar",
-			pass_type = "hover",
 			scenegraph_id = "right_drag_bar",
-		},
-	},
+			pass_type = "hover",
+			content_id = "right_drag_bar"
+		}
+	}
 }
 UIElements.ScrollBar = {
 	passes = {
 		{
 			pass_type = "rounded_background",
-			style_id = "background",
+			style_id = "background"
 		},
 		{
-			content_id = "scrollbar_up_hotspot",
+			style_id = "bg_up",
 			pass_type = "hover",
-			style_id = "bg_up",
+			content_id = "scrollbar_up_hotspot"
 		},
 		{
-			content_id = "scrollbar_up_hotspot",
-			pass_type = "click",
 			style_id = "bg_up",
+			pass_type = "click",
+			content_id = "scrollbar_up_hotspot"
 		},
 		{
 			pass_type = "rounded_background",
-			style_id = "bg_up",
+			style_id = "bg_up"
 		},
 		{
-			content_id = "scrollbar_down_hotspot",
+			style_id = "bg_down",
 			pass_type = "hover",
-			style_id = "bg_down",
+			content_id = "scrollbar_down_hotspot"
 		},
 		{
-			content_id = "scrollbar_down_hotspot",
-			pass_type = "click",
 			style_id = "bg_down",
+			pass_type = "click",
+			content_id = "scrollbar_down_hotspot"
 		},
 		{
 			pass_type = "rounded_background",
-			style_id = "bg_down",
+			style_id = "bg_down"
 		},
 		{
+			pass_type = "on_click",
 			click_check_content_id = "scrollbar_down_hotspot",
-			pass_type = "on_click",
-			click_function = function (ui_scenegraph, ui_style, ui_content, input_service)
-				ui_content.internal_scroll_value = math.max(0, ui_content.internal_scroll_value - ui_content.scroll_step_size)
-			end,
+			click_function = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+				arg_39_2.internal_scroll_value = math.max(0, arg_39_2.internal_scroll_value - arg_39_2.scroll_step_size)
+			end
 		},
 		{
+			pass_type = "on_click",
 			click_check_content_id = "scrollbar_up_hotspot",
-			pass_type = "on_click",
-			click_function = function (ui_scenegraph, ui_style, ui_content, input_service)
-				ui_content.internal_scroll_value = math.min(1, ui_content.internal_scroll_value + ui_content.scroll_step_size)
-			end,
+			click_function = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+				arg_40_2.internal_scroll_value = math.min(1, arg_40_2.internal_scroll_value + arg_40_2.scroll_step_size)
+			end
 		},
 		{
-			pass_type = "local_offset",
 			style_id = "scrollbar",
-			offset_function = function (ui_scenegraph, ui_style, ui_content)
-				local local_position = UISceneGraph.get_local_position(ui_scenegraph, ui_style.scenegraph_id)
-				local bar_height = ui_content.scroll_bar_height
-				local half_bar_height = bar_height / 2
-				local min = ui_content.scroll_offset_min
-				local max = ui_content.scroll_offset_max
-				local y_pos = math.min(min + (max - min) * ui_content.internal_scroll_value, max - bar_height)
+			pass_type = "local_offset",
+			offset_function = function(arg_41_0, arg_41_1, arg_41_2)
+				local var_41_0 = UISceneGraph.get_local_position(arg_41_0, arg_41_1.scenegraph_id)
+				local var_41_1 = arg_41_2.scroll_bar_height
+				local var_41_2 = var_41_1 / 2
+				local var_41_3 = arg_41_2.scroll_offset_min
+				local var_41_4 = arg_41_2.scroll_offset_max
+				local var_41_5 = math.min(var_41_3 + (var_41_4 - var_41_3) * arg_41_2.internal_scroll_value, var_41_4 - var_41_1)
 
-				local_position[2] = y_pos
-				ui_content.scroll_value = (y_pos - min) / (max - bar_height - min)
-			end,
+				var_41_0[2] = var_41_5
+				arg_41_2.scroll_value = (var_41_5 - var_41_3) / (var_41_4 - var_41_1 - var_41_3)
+			end
 		},
 		{
 			pass_type = "rounded_background",
-			style_id = "scrollbar",
+			style_id = "scrollbar"
 		},
 		{
 			pass_type = "hover",
-			style_id = "background",
+			style_id = "background"
 		},
 		{
-			pass_type = "held",
 			style_id = "background",
-			held_function = function (ui_scenegraph, ui_style, ui_content, input_service)
-				local cursor = UIInverseScaleVectorToResolution(input_service:get("cursor"))
-				local scenegraph_id = ui_style.scenegraph_id
-				local world_position = UISceneGraph.get_world_position(ui_scenegraph, scenegraph_id)
-				local bar_height = ui_content.scroll_bar_height
-				local half_bar_size = bar_height / 2
-				local start_delta_cursor = half_bar_size
-				local y_pos = cursor[2] - start_delta_cursor
-				local size = UISceneGraph.get_size(ui_scenegraph, scenegraph_id)
-				local current_offset_from_bottom = y_pos - world_position[2]
-				local current_offset_center_bar = current_offset_from_bottom
-				local min_world_pos = world_position[2] + half_bar_size
-				local scroll_offset_max = ui_content.scroll_offset_max
-				local max_world_pos = world_position[2] + scroll_offset_max - half_bar_size - ui_content.scroll_offset_min
-				local current_position = math.clamp(current_offset_center_bar, 0, size[2])
-				local delta_value = math.min(current_position / size[2], 1)
+			pass_type = "held",
+			held_function = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+				local var_42_0 = UIInverseScaleVectorToResolution(arg_42_3:get("cursor"))
+				local var_42_1 = arg_42_1.scenegraph_id
+				local var_42_2 = UISceneGraph.get_world_position(arg_42_0, var_42_1)
+				local var_42_3 = arg_42_2.scroll_bar_height / 2
+				local var_42_4 = var_42_3
+				local var_42_5 = var_42_0[2] - var_42_4
+				local var_42_6 = UISceneGraph.get_size(arg_42_0, var_42_1)
+				local var_42_7 = var_42_5 - var_42_2[2]
+				local var_42_8 = var_42_2[2] + var_42_3
+				local var_42_9 = arg_42_2.scroll_offset_max
+				local var_42_10 = var_42_2[2] + var_42_9 - var_42_3 - arg_42_2.scroll_offset_min
+				local var_42_11 = math.clamp(var_42_7, 0, var_42_6[2])
 
-				ui_content.internal_scroll_value = delta_value
-			end,
-		},
-	},
+				arg_42_2.internal_scroll_value = math.min(var_42_11 / var_42_6[2], 1)
+			end
+		}
+	}
 }
 UIElements.StaticTextField = {
 	passes = {
 		{
 			pass_type = "rounded_background",
-			style_id = "background",
+			style_id = "background"
 		},
 		{
-			pass_type = "text",
 			style_id = "text",
-			text_id = "text_field",
-		},
-	},
+			pass_type = "text",
+			text_id = "text_field"
+		}
+	}
 }
 UIElements.TextAreaChat = {
 	passes = {
 		{
 			pass_type = "rounded_background",
-			style_id = "background",
+			style_id = "background"
 		},
 		{
-			pass_type = "text_area_chat",
 			style_id = "text",
-			text_id = "text_field",
-		},
-	},
+			pass_type = "text_area_chat",
+			text_id = "text_field"
+		}
+	}
 }
 UIElements.StaticText = {
 	passes = {
 		{
-			pass_type = "text",
 			style_id = "text",
-			text_id = "text_field",
-		},
-	},
+			pass_type = "text",
+			text_id = "text_field"
+		}
+	}
 }
 UIElements.StaticTextWrappedAroundFields = {
 	passes = {
 		{
-			pass_type = "wrapped_text_around_fields",
 			style_id = "text",
-			text_id = "text_field",
-		},
-	},
+			pass_type = "wrapped_text_around_fields",
+			text_id = "text_field"
+		}
+	}
 }
 UIElements.LorebookMultipleTexts = {
 	passes = {
 		{
-			pass_type = "lorebook_multiple_texts",
 			style_id = "text",
-			text_id = "text_field",
-		},
-	},
+			pass_type = "lorebook_multiple_texts",
+			text_id = "text_field"
+		}
+	}
 }
 UIElements.TextButton = {
 	passes = {
 		{
-			content_id = "button_text",
 			pass_type = "hover",
+			content_id = "button_text"
 		},
 		{
-			content_id = "button_text",
 			pass_type = "click",
+			content_id = "button_text"
 		},
 		{
-			pass_type = "text",
 			style_id = "text_hover",
+			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function (content)
-				return content.button_text.is_hover
-			end,
+			content_check_function = function(arg_43_0)
+				return arg_43_0.button_text.is_hover
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "text",
+			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function (content)
-				return not content.button_text.is_hover
-			end,
-		},
-	},
+			content_check_function = function(arg_44_0)
+				return not arg_44_0.button_text.is_hover
+			end
+		}
+	}
 }
 UIElements.RotatedTexture = {
 	passes = {
 		{
 			pass_type = "rotated_texture",
-			style_id = "rotating_texture",
-		},
-	},
+			style_id = "rotating_texture"
+		}
+	}
 }
 UIElements.Viewport = {
 	passes = {
 		{
 			pass_type = "viewport",
-			style_id = "viewport",
+			style_id = "viewport"
 		},
 		{
-			content_id = "button_hotspot",
 			pass_type = "hotspot",
-		},
-	},
+			content_id = "button_hotspot"
+		}
+	}
 }
 UIElements.Button3States = {
 	passes = {
 		{
-			content_id = "button_hotspot",
 			pass_type = "hotspot",
+			content_id = "button_hotspot"
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_id",
-			content_check_function = function (content)
-				return not content.button_hotspot.is_hover and content.button_hotspot.is_clicked > 0
-			end,
+			content_check_function = function(arg_45_0)
+				return not arg_45_0.button_hotspot.is_hover and arg_45_0.button_hotspot.is_clicked > 0
+			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_hover_id",
-			content_check_function = function (content)
-				return content.button_hotspot.is_hover and content.button_hotspot.is_clicked > 0
-			end,
+			content_check_function = function(arg_46_0)
+				return arg_46_0.button_hotspot.is_hover and arg_46_0.button_hotspot.is_clicked > 0
+			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_click_id",
-			content_check_function = function (content)
-				return content.button_hotspot.is_clicked == 0 or content.button_hotspot.is_selected
-			end,
+			content_check_function = function(arg_47_0)
+				return arg_47_0.button_hotspot.is_clicked == 0 or arg_47_0.button_hotspot.is_selected
+			end
 		},
 		{
 			localize = true,
-			pass_type = "text",
 			style_id = "text",
-			text_id = "text_field",
-		},
-	},
+			pass_type = "text",
+			text_id = "text_field"
+		}
+	}
 }
 UIElements.Button4States = {
 	passes = {
 		{
-			content_id = "button_hotspot",
 			pass_type = "hotspot",
-			content_check_function = function (content)
-				return not content.disabled
-			end,
+			content_id = "button_hotspot",
+			content_check_function = function(arg_48_0)
+				return not arg_48_0.disabled
+			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_id",
-			content_check_function = function (content)
-				return not content.disabled and not content.button_hotspot.is_hover and content.button_hotspot.is_clicked > 0
-			end,
+			content_check_function = function(arg_49_0)
+				return not arg_49_0.disabled and not arg_49_0.button_hotspot.is_hover and arg_49_0.button_hotspot.is_clicked > 0
+			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_hover_id",
-			content_check_function = function (content)
-				return not content.disabled and content.button_hotspot.is_hover and content.button_hotspot.is_clicked > 0
-			end,
+			content_check_function = function(arg_50_0)
+				return not arg_50_0.disabled and arg_50_0.button_hotspot.is_hover and arg_50_0.button_hotspot.is_clicked > 0
+			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_click_id",
-			content_check_function = function (content)
-				return not content.disabled and content.button_hotspot.is_clicked == 0 or content.button_hotspot.is_selected
-			end,
+			content_check_function = function(arg_51_0)
+				return not arg_51_0.disabled and arg_51_0.button_hotspot.is_clicked == 0 or arg_51_0.button_hotspot.is_selected
+			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_disabled_id",
-			content_check_function = function (content)
-				return content.disabled
-			end,
+			content_check_function = function(arg_52_0)
+				return arg_52_0.disabled
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "text",
+			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function (content, style)
-				if style.text_color_disabled and style.text_color_enabled then
-					if content.disabled then
-						style.text_color = style.text_color_disabled
+			content_check_function = function(arg_53_0, arg_53_1)
+				if arg_53_1.text_color_disabled and arg_53_1.text_color_enabled then
+					if arg_53_0.disabled then
+						arg_53_1.text_color = arg_53_1.text_color_disabled
 					else
-						style.text_color = style.text_color_enabled
+						arg_53_1.text_color = arg_53_1.text_color_enabled
 					end
 				end
 
 				return true
-			end,
-		},
-	},
+			end
+		}
+	}
 }
 UIElements.Button3StatesNoText = {
 	passes = {
 		{
-			content_id = "button_hotspot",
 			pass_type = "hotspot",
+			content_id = "button_hotspot"
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_id",
-			content_check_function = function (content)
-				return not content.button_hotspot.is_hover and content.button_hotspot.is_clicked > 0
-			end,
+			content_check_function = function(arg_54_0)
+				return not arg_54_0.button_hotspot.is_hover and arg_54_0.button_hotspot.is_clicked > 0
+			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_hover_id",
-			content_check_function = function (content)
-				return content.button_hotspot.is_hover and content.button_hotspot.is_clicked > 0
-			end,
+			content_check_function = function(arg_55_0)
+				return arg_55_0.button_hotspot.is_hover and arg_55_0.button_hotspot.is_clicked > 0
+			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_click_id",
-			content_check_function = function (content)
-				return content.button_hotspot.is_clicked == 0 or content.button_hotspot.is_selected
-			end,
-		},
-	},
+			content_check_function = function(arg_56_0)
+				return arg_56_0.button_hotspot.is_clicked == 0 or arg_56_0.button_hotspot.is_selected
+			end
+		}
+	}
 }
 
-UIElements.GamepadButton = function (button_type)
+function UIElements.GamepadButton(arg_57_0)
 	return {
 		passes = {
 			{
-				content_id = "button_hotspot",
 				pass_type = "hotspot",
+				content_id = "button_hotspot"
 			},
 			{
-				content_id = "gamepad_button",
 				pass_type = "game_pad_connected",
+				content_id = "gamepad_button"
 			},
 			{
 				content_id = "gamepad_button",
-				pass_type = "gamepad_button_click_" .. button_type,
-				content_check_function = function (content)
-					return content.gamepad_connected
-				end,
+				pass_type = "gamepad_button_click_" .. arg_57_0,
+				content_check_function = function(arg_58_0)
+					return arg_58_0.gamepad_connected
+				end
 			},
 			{
 				pass_type = "texture",
 				texture_id = "texture_id",
-				content_check_function = function (content)
-					return not content.button_hotspot.is_hover and content.button_hotspot.is_clicked > 0 and content.gamepad_button.is_clicked > 0
-				end,
+				content_check_function = function(arg_59_0)
+					return not arg_59_0.button_hotspot.is_hover and arg_59_0.button_hotspot.is_clicked > 0 and arg_59_0.gamepad_button.is_clicked > 0
+				end
 			},
 			{
 				pass_type = "texture",
 				texture_id = "texture_hover_id",
-				content_check_function = function (content)
-					return content.button_hotspot.is_hover and content.button_hotspot.is_clicked > 0
-				end,
+				content_check_function = function(arg_60_0)
+					return arg_60_0.button_hotspot.is_hover and arg_60_0.button_hotspot.is_clicked > 0
+				end
 			},
 			{
 				pass_type = "texture",
 				texture_id = "texture_click_id",
-				content_check_function = function (content)
-					return content.button_hotspot.is_clicked == 0 or content.gamepad_button.is_clicked == 0 or content.button_hotspot.is_selected
-				end,
+				content_check_function = function(arg_61_0)
+					return arg_61_0.button_hotspot.is_clicked == 0 or arg_61_0.gamepad_button.is_clicked == 0 or arg_61_0.button_hotspot.is_selected
+				end
 			},
 			{
 				localize = true,
-				pass_type = "text",
 				style_id = "text",
-				text_id = "text_field",
+				pass_type = "text",
+				text_id = "text_field"
 			},
 			{
 				localize = false,
-				pass_type = "text",
 				style_id = "button_type_text",
+				pass_type = "text",
 				text_id = "button_type_text_field",
-				content_check_function = function (content)
-					return content.gamepad_button.gamepad_connected
-				end,
-			},
-		},
+				content_check_function = function(arg_62_0)
+					return arg_62_0.gamepad_button.gamepad_connected
+				end
+			}
+		}
 	}
 end

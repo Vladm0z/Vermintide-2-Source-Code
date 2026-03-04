@@ -1,149 +1,144 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/packmaster/packmaster_state_hoisting.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/packmaster/packmaster_state_hoisting.lua
 
 PackmasterStateHoisting = class(PackmasterStateHoisting, EnemyCharacterState)
 
-PackmasterStateHoisting.init = function (self, character_state_init_context)
-	EnemyCharacterState.init(self, character_state_init_context, "packmaster_hoisting")
+function PackmasterStateHoisting.init(arg_1_0, arg_1_1)
+	EnemyCharacterState.init(arg_1_0, arg_1_1, "packmaster_hoisting")
 
-	local context = character_state_init_context
+	local var_1_0 = arg_1_1
 
-	self.current_movement_speed_scale = 0
-	self.last_input_direction = Vector3Box(0, 0, 0)
+	arg_1_0.current_movement_speed_scale = 0
+	arg_1_0.last_input_direction = Vector3Box(0, 0, 0)
 end
 
-PackmasterStateHoisting.on_enter = function (self, unit, input, dt, context, t, previous_state, dragged_unit)
-	self._hosting_end_time = t + BreedActions.skaven_pack_master.hoist.hoist_anim_length
-	self._drag_target_unit = dragged_unit
-	self._unit = unit
+function PackmasterStateHoisting.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	arg_2_0._hosting_end_time = arg_2_5 + BreedActions.skaven_pack_master.hoist.hoist_anim_length
+	arg_2_0._drag_target_unit = arg_2_7
+	arg_2_0._unit = arg_2_1
 
-	local drag_target_unit = self._drag_target_unit
-	local velocity = Vector3(0, 0, 0)
+	local var_2_0 = arg_2_0._drag_target_unit
+	local var_2_1 = Vector3(0, 0, 0)
 
-	self._locomotion_extension:set_forced_velocity(velocity)
-	self._locomotion_extension:set_wanted_velocity(Vector3.zero())
-	CharacterStateHelper.change_camera_state(self._player, "follow_third_person")
-	StatusUtils.set_grabbed_by_pack_master_network("pack_master_hoisting", drag_target_unit, true, unit)
-	self:set_breed_action("hoist")
+	arg_2_0._locomotion_extension:set_forced_velocity(var_2_1)
+	arg_2_0._locomotion_extension:set_wanted_velocity(Vector3.zero())
+	CharacterStateHelper.change_camera_state(arg_2_0._player, "follow_third_person")
+	StatusUtils.set_grabbed_by_pack_master_network("pack_master_hoisting", var_2_0, true, arg_2_1)
+	arg_2_0:set_breed_action("hoist")
 end
 
-PackmasterStateHoisting.on_exit = function (self, unit, input, dt, context, t, next_state)
-	local drag_target_unit = self._drag_target_unit
-	local first_person_extension = self._first_person_extension
+function PackmasterStateHoisting.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	local var_3_0 = arg_3_0._drag_target_unit
+	local var_3_1 = arg_3_0._first_person_extension
 
-	if Unit.alive(drag_target_unit) then
-		-- Nothing
+	if Unit.alive(var_3_0) then
+		-- block empty
 	end
 
-	self._drag_target_unit = nil
+	arg_3_0._drag_target_unit = nil
 
-	CharacterStateHelper.change_camera_state(self._player, "follow")
-	first_person_extension:toggle_visibility(CameraTransitionSettings.perspective_transition_time)
-	first_person_extension:set_wanted_player_height("stand", t)
+	CharacterStateHelper.change_camera_state(arg_3_0._player, "follow")
+	var_3_1:toggle_visibility(CameraTransitionSettings.perspective_transition_time)
+	var_3_1:set_wanted_player_height("stand", arg_3_5)
 
-	if self._action_aborted then
+	if arg_3_0._action_aborted then
 		return
 	end
 
-	local include_local_player = true
+	local var_3_2 = true
 
-	if not self._status_extension:get_unarmed() then
-		CharacterStateHelper.show_inventory_3p(unit, true, include_local_player, self._is_server, self._inventory_extension)
-		first_person_extension:unhide_weapons("catapulted")
+	if not arg_3_0._status_extension:get_unarmed() then
+		CharacterStateHelper.show_inventory_3p(arg_3_1, true, var_3_2, arg_3_0._is_server, arg_3_0._inventory_extension)
+		var_3_1:unhide_weapons("catapulted")
 	else
-		CharacterStateHelper.play_animation_event(unit, "to_unarmed")
-		CharacterStateHelper.play_animation_event_first_person(first_person_extension, "to_unarmed")
-		first_person_extension:animation_set_variable("armed", 0)
-		CharacterStateHelper.show_inventory_3p(unit, false, include_local_player, self._is_server, self._inventory_extension)
+		CharacterStateHelper.play_animation_event(arg_3_1, "to_unarmed")
+		CharacterStateHelper.play_animation_event_first_person(var_3_1, "to_unarmed")
+		var_3_1:animation_set_variable("armed", 0)
+		CharacterStateHelper.show_inventory_3p(arg_3_1, false, var_3_2, arg_3_0._is_server, arg_3_0._inventory_extension)
 	end
 
-	self:set_breed_action("n/a")
+	arg_3_0:set_breed_action("n/a")
 
-	local career_extension = self._career_extension
-	local equip_ability_id = career_extension:ability_id("equip")
-	local equip_ability = career_extension:ability_by_id(equip_ability_id)
+	local var_3_3 = arg_3_0._career_extension
+	local var_3_4 = var_3_3:ability_id("equip")
 
-	equip_ability:unfreeze()
+	var_3_3:ability_by_id(var_3_4):unfreeze()
 end
 
-PackmasterStateHoisting.update = function (self, unit, input, dt, context, t)
-	local csm = self._csm
-	local inventory_extension = self._inventory_extension
-	local input_extension = ScriptUnit.extension(unit, "input_system")
-	local status_extension = self._status_extension
-	local drag_target_unit = self._drag_target_unit
-	local target_is_dead
+function PackmasterStateHoisting.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	local var_4_0 = arg_4_0._csm
+	local var_4_1 = arg_4_0._inventory_extension
+	local var_4_2 = ScriptUnit.extension(arg_4_1, "input_system")
+	local var_4_3 = arg_4_0._status_extension
+	local var_4_4 = arg_4_0._drag_target_unit
+	local var_4_5
 
-	if drag_target_unit and HEALTH_ALIVE[drag_target_unit] then
-		local target_unit_status_extension = ScriptUnit.extension(drag_target_unit, "status_system")
+	if var_4_4 and HEALTH_ALIVE[var_4_4] then
+		if ScriptUnit.extension(var_4_4, "status_system"):is_dead() then
+			local var_4_6 = arg_4_0._temp_params
 
-		target_is_dead = target_unit_status_extension:is_dead()
-
-		if target_is_dead then
-			local params = self._temp_params
-
-			csm:change_state("walking", params)
+			var_4_0:change_state("walking", var_4_6)
 
 			return
 		end
 	else
-		local params = self._temp_params
+		local var_4_7 = arg_4_0._temp_params
 
-		csm:change_state("walking", params)
+		var_4_0:change_state("walking", var_4_7)
 
 		return
 	end
 
-	if CharacterStateHelper.is_dead(status_extension) then
-		self:release_dragged_target()
-		csm:change_state("dead")
+	if CharacterStateHelper.is_dead(var_4_3) then
+		arg_4_0:release_dragged_target()
+		var_4_0:change_state("dead")
 
 		return true
 	end
 
-	if CharacterStateHelper.is_staggered(status_extension) then
-		self:release_dragged_target()
-		csm:change_state("staggered")
+	if CharacterStateHelper.is_staggered(var_4_3) then
+		arg_4_0:release_dragged_target()
+		var_4_0:change_state("staggered")
 
 		return true
 	end
 
-	if not self._locomotion_extension:is_on_ground() then
-		self:release_dragged_target()
+	if not arg_4_0._locomotion_extension:is_on_ground() then
+		arg_4_0:release_dragged_target()
 
-		local params = self._temp_params
+		local var_4_8 = arg_4_0._temp_params
 
-		csm:change_state("walking", params)
+		var_4_0:change_state("walking", var_4_8)
 
 		return true
 	end
 
-	if not input_extension then
+	if not var_4_2 then
 		return
 	end
 
-	if t > self._hosting_end_time then
-		StatusUtils.set_grabbed_by_pack_master_network("pack_master_hanging", drag_target_unit, true, unit)
-		status_extension:set_packmaster_released()
-		status_extension:set_unarmed(true)
+	if arg_4_5 > arg_4_0._hosting_end_time then
+		StatusUtils.set_grabbed_by_pack_master_network("pack_master_hanging", var_4_4, true, arg_4_1)
+		var_4_3:set_packmaster_released()
+		var_4_3:set_unarmed(true)
 
-		local params = self._temp_params
-		local career_extension = ScriptUnit.extension(unit, "career_system")
+		local var_4_9 = arg_4_0._temp_params
+		local var_4_10 = ScriptUnit.extension(arg_4_1, "career_system")
 
-		csm:change_state("standing", params)
+		var_4_0:change_state("standing", var_4_9)
 	end
 
-	self._locomotion_extension:set_disable_rotation_update()
-	CharacterStateHelper.look(input_extension, self._player.viewport_name, self._first_person_extension, status_extension, inventory_extension)
+	arg_4_0._locomotion_extension:set_disable_rotation_update()
+	CharacterStateHelper.look(var_4_2, arg_4_0._player.viewport_name, arg_4_0._first_person_extension, var_4_3, var_4_1)
 end
 
-PackmasterStateHoisting.release_dragged_target = function (self)
-	local status_extension = self._status_extension
-	local first_person_extension = self._first_person_extension
-	local drag_target_unit = self._drag_target_unit
-	local target_status_extension = ScriptUnit.extension(drag_target_unit, "status_system")
+function PackmasterStateHoisting.release_dragged_target(arg_5_0)
+	local var_5_0 = arg_5_0._status_extension
+	local var_5_1 = arg_5_0._first_person_extension
+	local var_5_2 = arg_5_0._drag_target_unit
+	local var_5_3 = ScriptUnit.extension(var_5_2, "status_system")
 
-	CharacterStateHelper.show_inventory_3p(self._unit, true, true, Managers.player.is_server, self._inventory_extension)
-	first_person_extension:unhide_weapons("catapulted")
-	StatusUtils.set_grabbed_by_pack_master_network("pack_master_unhooked", drag_target_unit, false, self._unit)
-	status_extension:set_packmaster_released()
+	CharacterStateHelper.show_inventory_3p(arg_5_0._unit, true, true, Managers.player.is_server, arg_5_0._inventory_extension)
+	var_5_1:unhide_weapons("catapulted")
+	StatusUtils.set_grabbed_by_pack_master_network("pack_master_unhooked", var_5_2, false, arg_5_0._unit)
+	var_5_0:set_packmaster_released()
 end

@@ -1,146 +1,136 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_find_ranged_position_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_find_ranged_position_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTFindRangedPositionAction = class(BTFindRangedPositionAction, BTNode)
 
-BTFindRangedPositionAction.init = function (self, ...)
-	BTFindRangedPositionAction.super.init(self, ...)
+function BTFindRangedPositionAction.init(arg_1_0, ...)
+	BTFindRangedPositionAction.super.init(arg_1_0, ...)
 end
 
 BTFindRangedPositionAction.name = "BTFindRangedPositionAction"
 
-BTFindRangedPositionAction.enter = function (self, unit, blackboard, t)
-	local action = self._tree_node.action_data
+function BTFindRangedPositionAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	arg_2_2.action = arg_2_0._tree_node.action_data
 
-	blackboard.action = action
-
-	if blackboard.move_state ~= "idle" then
-		blackboard.move_state = "idle"
+	if arg_2_2.move_state ~= "idle" then
+		arg_2_2.move_state = "idle"
 	end
 
-	blackboard.find_ranged_position_t = t + 0.5
+	arg_2_2.find_ranged_position_t = arg_2_3 + 0.5
 
-	blackboard.navigation_extension:stop()
-	blackboard.navigation_extension:set_enabled(false)
-	blackboard.locomotion_extension:set_wanted_velocity(Vector3(0, 0, 0))
+	arg_2_2.navigation_extension:stop()
+	arg_2_2.navigation_extension:set_enabled(false)
+	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3(0, 0, 0))
 
-	blackboard.num_failed_find_position_attempts = 0
+	arg_2_2.num_failed_find_position_attempts = 0
 
-	local network_manager = Managers.state.network
-
-	network_manager:anim_event(unit, "idle")
-
-	local ai_slot_system = Managers.state.entity:system("ai_slot_system")
-
-	ai_slot_system:do_slot_search(unit, false)
+	Managers.state.network:anim_event(arg_2_1, "idle")
+	Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_2_1, false)
 end
 
-BTFindRangedPositionAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	blackboard.find_ranged_position_t = nil
-	blackboard.action = nil
-	blackboard.num_failed_find_position_attempts = nil
+function BTFindRangedPositionAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	arg_3_2.find_ranged_position_t = nil
+	arg_3_2.action = nil
+	arg_3_2.num_failed_find_position_attempts = nil
 end
 
-BTFindRangedPositionAction.run = function (self, unit, blackboard, t, dt)
-	local find_ranged_position_t = blackboard.find_ranged_position_t
+function BTFindRangedPositionAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = arg_4_2.find_ranged_position_t
 
-	if not Unit.alive(blackboard.target_unit) then
+	if not Unit.alive(arg_4_2.target_unit) then
 		return "done"
 	end
 
-	if find_ranged_position_t < t then
-		local ranged_position = self:_find_ranged_position(unit, blackboard, t)
+	if var_4_0 < arg_4_3 then
+		local var_4_1 = arg_4_0:_find_ranged_position(arg_4_1, arg_4_2, arg_4_3)
 
-		if ranged_position then
-			blackboard.navigation_extension:set_enabled(true)
-			blackboard.navigation_extension:move_to(ranged_position)
+		if var_4_1 then
+			arg_4_2.navigation_extension:set_enabled(true)
+			arg_4_2.navigation_extension:move_to(var_4_1)
 
-			blackboard.ranged_position = Vector3Box(ranged_position)
+			arg_4_2.ranged_position = Vector3Box(var_4_1)
 		else
-			blackboard.find_ranged_position_t = t + 0.25
+			arg_4_2.find_ranged_position_t = arg_4_3 + 0.25
 		end
 	end
 
 	return "running", "evaluate"
 end
 
-BTFindRangedPositionAction._find_ranged_position = function (self, unit, blackboard, t)
-	local action = blackboard.action
-	local nav_world = blackboard.nav_world
-	local target_unit = blackboard.target_unit
-	local target_position = POSITION_LOOKUP[target_unit]
-	local projected_start_pos = LocomotionUtils.pos_on_mesh(nav_world, target_position, 1, 1)
+function BTFindRangedPositionAction._find_ranged_position(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	local var_5_0 = arg_5_2.action
+	local var_5_1 = arg_5_2.nav_world
+	local var_5_2 = arg_5_2.target_unit
+	local var_5_3 = POSITION_LOOKUP[var_5_2]
+	local var_5_4 = LocomotionUtils.pos_on_mesh(var_5_1, var_5_3, 1, 1)
 
-	if not projected_start_pos then
-		local p = GwNavQueries.inside_position_from_outside_position(nav_world, target_position, 6, 6, 8, 0.5)
+	if not var_5_4 then
+		local var_5_5 = GwNavQueries.inside_position_from_outside_position(var_5_1, var_5_3, 6, 6, 8, 0.5)
 
-		if p then
-			projected_start_pos = p
+		if var_5_5 then
+			var_5_4 = var_5_5
 		end
 	end
 
-	local wanted_position
-	local max_tries = 3
+	local var_5_6
+	local var_5_7 = 3
 
-	if projected_start_pos then
-		local self_position = POSITION_LOOKUP[unit]
-		local target_to_self_direction = Vector3.normalize(self_position - target_position)
-		local target_to_self_rotation = Quaternion.look(target_to_self_direction)
-		local num_find_position_attempts = blackboard.num_failed_find_position_attempts
-		local random_deg_range_1 = math.max(-90 - num_find_position_attempts * 10, -180)
-		local random_deg_range_2 = math.min(90 + num_find_position_attempts * 10, 180)
+	if var_5_4 then
+		local var_5_8 = POSITION_LOOKUP[arg_5_1]
+		local var_5_9 = Vector3.normalize(var_5_8 - var_5_3)
+		local var_5_10 = Quaternion.look(var_5_9)
+		local var_5_11 = arg_5_2.num_failed_find_position_attempts
+		local var_5_12 = math.max(-90 - var_5_11 * 10, -180)
+		local var_5_13 = math.min(90 + var_5_11 * 10, 180)
 
-		for i = 1, max_tries do
+		for iter_5_0 = 1, var_5_7 do
 			repeat
-				local pi = math.pi
-				local max_dist = math.random(action.max_dist[1], action.max_dist[2])
-				local min_dist = action.min_dist
-				local rand_deg = math.random(random_deg_range_1, random_deg_range_2)
-				local radians = rand_deg * pi / 180
-				local randomized_direction = Vector3(math.sin(radians), math.cos(radians), 0)
-				local randomized_rotation = Quaternion.look(randomized_direction)
-				local wanted_rotation = Quaternion.multiply(target_to_self_rotation, randomized_rotation)
-				local wanted_direction = Quaternion.forward(wanted_rotation)
-				local projected_end_pos = target_position + wanted_direction * max_dist
+				local var_5_14 = math.pi
+				local var_5_15 = math.random(var_5_0.max_dist[1], var_5_0.max_dist[2])
+				local var_5_16 = var_5_0.min_dist
+				local var_5_17 = math.random(var_5_12, var_5_13) * var_5_14 / 180
+				local var_5_18 = Vector3(math.sin(var_5_17), math.cos(var_5_17), 0)
+				local var_5_19 = Quaternion.look(var_5_18)
+				local var_5_20 = Quaternion.multiply(var_5_10, var_5_19)
+				local var_5_21 = Quaternion.forward(var_5_20)
+				local var_5_22 = var_5_3 + var_5_21 * var_5_15
 
-				if projected_end_pos then
-					local _, hit_position = GwNavQueries.raycast(nav_world, projected_start_pos, projected_end_pos)
+				if var_5_22 then
+					local var_5_23, var_5_24 = GwNavQueries.raycast(var_5_1, var_5_4, var_5_22)
 
-					if hit_position then
-						local distance = Vector3.distance(hit_position, target_position)
-						local is_within_bounds = min_dist < distance
+					if var_5_24 then
+						local var_5_25 = Vector3.distance(var_5_24, var_5_3)
 
-						if is_within_bounds then
-							local wanted_pos = target_position + wanted_direction * math.random(min_dist, distance)
+						if var_5_16 < var_5_25 then
+							local var_5_26 = var_5_3 + var_5_21 * math.random(var_5_16, var_5_25)
 
-							wanted_position = LocomotionUtils.pos_on_mesh(nav_world, wanted_pos, 1, 1)
-
-							break
+							var_5_6 = LocomotionUtils.pos_on_mesh(var_5_1, var_5_26, 1, 1)
 						end
-
-						break
 					end
 				end
+
+				do break end
+				break
 			until true
 		end
 	end
 
-	if not wanted_position then
-		blackboard.num_failed_find_position_attempts = blackboard.num_failed_find_position_attempts + 1
+	if not var_5_6 then
+		arg_5_2.num_failed_find_position_attempts = arg_5_2.num_failed_find_position_attempts + 1
 
-		if blackboard.num_failed_find_position_attempts >= 9 then
-			wanted_position = LocomotionUtils.pos_on_mesh(nav_world, target_position, 1, 1)
+		if arg_5_2.num_failed_find_position_attempts >= 9 then
+			var_5_6 = LocomotionUtils.pos_on_mesh(var_5_1, var_5_3, 1, 1)
 
-			if not wanted_position then
-				local p = GwNavQueries.inside_position_from_outside_position(nav_world, target_position, 6, 6, 8, 0.5)
+			if not var_5_6 then
+				local var_5_27 = GwNavQueries.inside_position_from_outside_position(var_5_1, var_5_3, 6, 6, 8, 0.5)
 
-				if p then
-					wanted_position = p
+				if var_5_27 then
+					var_5_6 = var_5_27
 				end
 			end
 		end
 	end
 
-	return wanted_position
+	return var_5_6
 end

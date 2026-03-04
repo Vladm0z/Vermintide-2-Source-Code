@@ -1,410 +1,403 @@
-﻿-- chunkname: @scripts/managers/conflict_director/main_path_spawning_generator.lua
+-- chunkname: @scripts/managers/conflict_director/main_path_spawning_generator.lua
 
 require("foundation/scripts/util/error")
 
 MainPathSpawningGenerator = {}
 
-MainPathSpawningGenerator._remove_zones_due_to_crossroads = function (zones, num_main_zones, removed_path_distances)
-	local to_remove = FrameTable.alloc_table()
-	local num_removed_dist_pairs = #removed_path_distances
+function MainPathSpawningGenerator._remove_zones_due_to_crossroads(arg_1_0, arg_1_1, arg_1_2)
+	local var_1_0 = FrameTable.alloc_table()
+	local var_1_1 = #arg_1_2
 
-	for i = 1, num_main_zones do
-		local zone = zones[i]
-		local travel_dist = zone.travel_dist
+	for iter_1_0 = 1, arg_1_1 do
+		local var_1_2 = arg_1_0[iter_1_0]
+		local var_1_3 = var_1_2.travel_dist
 
-		fassert(zone.type ~= "island", "Zones badly stored")
+		fassert(var_1_2.type ~= "island", "Zones badly stored")
 
-		for j = 1, num_removed_dist_pairs do
-			local dist_pair = removed_path_distances[j]
+		for iter_1_1 = 1, var_1_1 do
+			local var_1_4 = arg_1_2[iter_1_1]
 
-			if travel_dist > dist_pair[1] and travel_dist < dist_pair[2] then
-				to_remove[#to_remove + 1] = i
+			if var_1_3 > var_1_4[1] and var_1_3 < var_1_4[2] then
+				var_1_0[#var_1_0 + 1] = iter_1_0
 
 				break
 			end
 		end
 	end
 
-	for i = #to_remove, 1, -1 do
-		table.remove(zones, to_remove[i])
+	for iter_1_2 = #var_1_0, 1, -1 do
+		table.remove(arg_1_0, var_1_0[iter_1_2])
 	end
 
-	num_main_zones = num_main_zones - #to_remove
+	arg_1_1 = arg_1_1 - #var_1_0
 
-	return num_main_zones
+	return arg_1_1
 end
 
-MainPathSpawningGenerator.inject_travel_dists = function (main_paths, overrride)
+function MainPathSpawningGenerator.inject_travel_dists(arg_2_0, arg_2_1)
 	print("[MainPathSpawningGenerator] Injecting travel distances")
 
-	local Vector3_distance = Vector3.distance
-	local first_path = main_paths[1]
+	local var_2_0 = Vector3.distance
+	local var_2_1 = arg_2_0[1]
 
-	if not first_path.travel_dist or overrride then
-		local total_travel_dist = 0
-		local p1 = first_path.nodes[1]:unbox()
+	if not var_2_1.travel_dist or arg_2_1 then
+		local var_2_2 = 0
+		local var_2_3 = var_2_1.nodes[1]:unbox()
 
-		for i = 1, #main_paths do
-			local path = main_paths[i]
-			local nodes = path.nodes
-			local p2 = nodes[1]:unbox()
+		for iter_2_0 = 1, #arg_2_0 do
+			local var_2_4 = arg_2_0[iter_2_0]
+			local var_2_5 = var_2_4.nodes
+			local var_2_6 = var_2_5[1]:unbox()
 
-			total_travel_dist = total_travel_dist + Vector3_distance(p1, p2)
+			var_2_2 = var_2_2 + var_2_0(var_2_3, var_2_6)
 
-			local travel_dist = {
-				total_travel_dist,
+			local var_2_7 = {
+				var_2_2
 			}
 
-			for j = 2, #nodes do
-				p1 = nodes[j - 1]:unbox()
-				p2 = nodes[j]:unbox()
-				total_travel_dist = total_travel_dist + Vector3_distance(p1, p2)
-				travel_dist[j] = total_travel_dist
+			for iter_2_1 = 2, #var_2_5 do
+				var_2_3 = var_2_5[iter_2_1 - 1]:unbox()
+				var_2_6 = var_2_5[iter_2_1]:unbox()
+				var_2_2 = var_2_2 + var_2_0(var_2_3, var_2_6)
+				var_2_7[iter_2_1] = var_2_2
 			end
 
-			p1 = p2
-			path.travel_dist = travel_dist
+			var_2_3 = var_2_6
+			var_2_4.travel_dist = var_2_7
 		end
 	end
 end
 
-MainPathSpawningGenerator.main_path_has_marker_type = function (path_markers, main_path_index, marker_type)
-	local has_marker_type
+function MainPathSpawningGenerator.main_path_has_marker_type(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0
 
-	for i = 1, #path_markers do
-		local path_marker = path_markers[i]
-		local path_marker_main_path_index = path_marker.main_path_index
-		local path_marker_type = path_marker.marker_type
+	for iter_3_0 = 1, #arg_3_0 do
+		local var_3_1 = arg_3_0[iter_3_0]
+		local var_3_2 = var_3_1.main_path_index
+		local var_3_3 = var_3_1.marker_type
 
-		if path_marker_main_path_index == main_path_index and path_marker_type == marker_type then
-			has_marker_type = true
+		if var_3_2 == arg_3_1 and var_3_3 == arg_3_2 then
+			var_3_0 = true
 
 			break
 		end
 	end
 
-	return has_marker_type
+	return var_3_0
 end
 
-MainPathSpawningGenerator.load_spawn_zone_data = function (spawn_zone_path)
-	local spawn_data = require(spawn_zone_path)
-	local path_markers = spawn_data.path_markers
+function MainPathSpawningGenerator.load_spawn_zone_data(arg_4_0)
+	local var_4_0 = require(arg_4_0)
+	local var_4_1 = var_4_0.path_markers
 
-	for i = 1, #path_markers do
-		local marker = path_markers[i]
-		local p = marker.pos
+	for iter_4_0 = 1, #var_4_1 do
+		local var_4_2 = var_4_1[iter_4_0]
+		local var_4_3 = var_4_2.pos
 
-		marker.pos = Vector3Box(p[1], p[2], p[3])
+		var_4_2.pos = Vector3Box(var_4_3[1], var_4_3[2], var_4_3[3])
 	end
 
-	return spawn_data
+	return var_4_0
 end
 
-MainPathSpawningGenerator.generate_crossroad_path_choices = function (crossroads, seed)
-	if not crossroads or not next(crossroads) then
+function MainPathSpawningGenerator.generate_crossroad_path_choices(arg_5_0, arg_5_1)
+	if not arg_5_0 or not next(arg_5_0) then
 		return nil
 	end
 
-	local chosen_road_id
-	local chosen_crossroads = {}
+	local var_5_0
+	local var_5_1 = {}
 
-	for crossroad_id, crossroad in pairs(crossroads) do
-		seed, chosen_road_id = Math.next_random(seed, 1, #crossroad.roads)
-		chosen_crossroads[crossroad_id] = chosen_road_id
+	for iter_5_0, iter_5_1 in pairs(arg_5_0) do
+		local var_5_2, var_5_3 = Math.next_random(arg_5_1, 1, #iter_5_1.roads)
+
+		var_5_1[iter_5_0], arg_5_1 = var_5_3, var_5_2
 	end
 
-	return chosen_crossroads
+	return var_5_1
 end
 
-MainPathSpawningGenerator.remove_crossroads_extra_path_branches = function (crossroads, chosen_crossroads, main_paths, zones, num_main_zones, path_markers, seed)
-	if not crossroads or not next(crossroads) then
+function MainPathSpawningGenerator.remove_crossroads_extra_path_branches(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
+	if not arg_6_0 or not next(arg_6_0) then
 		print("[MainPathSpawningGenerator] This levels contains no crossroads")
 
 		return
 	end
 
-	local to_remove = FrameTable.alloc_table()
-	local crossroad_main_path_indices = FrameTable.alloc_table()
-	local chosen_crossroad_paths = FrameTable.alloc_table()
+	local var_6_0 = FrameTable.alloc_table()
+	local var_6_1 = FrameTable.alloc_table()
+	local var_6_2 = FrameTable.alloc_table()
 
-	for crossroads_id, chosen_road_id in pairs(chosen_crossroads) do
-		local crossroad = crossroads[crossroads_id]
+	for iter_6_0, iter_6_1 in pairs(arg_6_1) do
+		local var_6_3 = arg_6_0[iter_6_0]
 
-		printf("[MainPathSpawningGenerator] Using path: %d at crossroad: %s. (1/%d paths).", chosen_road_id, crossroads_id, #crossroad.roads)
+		printf("[MainPathSpawningGenerator] Using path: %d at crossroad: %s. (1/%d paths).", iter_6_1, iter_6_0, #var_6_3.roads)
 
-		for k = #main_paths, 1, -1 do
-			local main_path = main_paths[k]
+		for iter_6_2 = #arg_6_2, 1, -1 do
+			local var_6_4 = arg_6_2[iter_6_2]
 
-			if main_path.crossroads_id == crossroads_id and main_path.road_id == chosen_road_id then
-				chosen_crossroad_paths[k] = true
-				crossroad_main_path_indices[#crossroad_main_path_indices + 1] = k
+			if var_6_4.crossroads_id == iter_6_0 and var_6_4.road_id == iter_6_1 then
+				var_6_2[iter_6_2] = true
+				var_6_1[#var_6_1 + 1] = iter_6_2
 
-				printf("[MainPathSpawningGenerator]\t\t->preparing to stitch road: %d that has main path index: %d ", main_path.road_id, k)
+				printf("[MainPathSpawningGenerator]\t\t->preparing to stitch road: %d that has main path index: %d ", var_6_4.road_id, iter_6_2)
 			end
 		end
 
-		for k = 1, #main_paths do
-			local main_path = main_paths[k]
+		for iter_6_3 = 1, #arg_6_2 do
+			local var_6_5 = arg_6_2[iter_6_3]
 
-			if main_path.crossroads_id == crossroads_id and main_path.road_id ~= chosen_road_id then
-				printf("[MainPathSpawningGenerator]\t\t->removing road: %d from crossroad: %s with main path index: %d", main_path.road_id, main_path.crossroads_id, k)
+			if var_6_5.crossroads_id == iter_6_0 and var_6_5.road_id ~= iter_6_1 then
+				printf("[MainPathSpawningGenerator]\t\t->removing road: %d from crossroad: %s with main path index: %d", var_6_5.road_id, var_6_5.crossroads_id, iter_6_3)
 
-				to_remove[#to_remove + 1] = k
+				var_6_0[#var_6_0 + 1] = iter_6_3
 			end
 		end
 	end
 
-	local to_stitch = FrameTable.alloc_table()
+	local var_6_6 = FrameTable.alloc_table()
 
-	for i = #crossroad_main_path_indices, 1, -1 do
+	for iter_6_4 = #var_6_1, 1, -1 do
 		repeat
-			to_stitch[#to_stitch + 1] = {}
+			var_6_6[#var_6_6 + 1] = {}
 
-			local crossroad_stitch = to_stitch[#to_stitch]
-			local index = crossroad_main_path_indices[i]
-			local previous_main_path_index = index - 1
+			local var_6_7 = var_6_6[#var_6_6]
+			local var_6_8 = var_6_1[iter_6_4]
+			local var_6_9 = var_6_8 - 1
 
-			for k = #to_remove, 1, -1 do
-				local removed_main_path_index = to_remove[k]
-
-				if previous_main_path_index == removed_main_path_index then
-					previous_main_path_index = previous_main_path_index - 1
+			for iter_6_5 = #var_6_0, 1, -1 do
+				if var_6_9 == var_6_0[iter_6_5] then
+					var_6_9 = var_6_9 - 1
 				end
 			end
 
-			local previous_has_break = MainPathSpawningGenerator.main_path_has_marker_type(path_markers, previous_main_path_index, "break")
+			local var_6_10 = MainPathSpawningGenerator.main_path_has_marker_type(arg_6_5, var_6_9, "break")
 
-			if not previous_has_break then
-				crossroad_stitch[#crossroad_stitch + 1] = previous_main_path_index
-				crossroad_stitch[#crossroad_stitch + 1] = index
+			if not var_6_10 then
+				var_6_7[#var_6_7 + 1] = var_6_9
+				var_6_7[#var_6_7 + 1] = var_6_8
 			end
 
-			local crossroad_has_break = MainPathSpawningGenerator.main_path_has_marker_type(path_markers, index, "break")
-
-			if crossroad_has_break then
+			if MainPathSpawningGenerator.main_path_has_marker_type(arg_6_5, var_6_8, "break") then
 				break
 			end
 
-			local next_main_path_index = index + 1
+			local var_6_11 = var_6_8 + 1
 
-			for k = 1, #to_remove do
-				local removed_main_path_index = to_remove[k]
-
-				if next_main_path_index == removed_main_path_index then
-					next_main_path_index = next_main_path_index + 1
+			for iter_6_6 = 1, #var_6_0 do
+				if var_6_11 == var_6_0[iter_6_6] then
+					var_6_11 = var_6_11 + 1
 				end
 			end
 
-			if previous_has_break then
-				crossroad_stitch[#crossroad_stitch + 1] = index
+			if var_6_10 then
+				var_6_7[#var_6_7 + 1] = var_6_8
 			end
 
-			if not chosen_crossroad_paths[next_main_path_index] then
-				crossroad_stitch[#crossroad_stitch + 1] = next_main_path_index
+			if not var_6_2[var_6_11] then
+				var_6_7[#var_6_7 + 1] = var_6_11
 			end
 		until true
 	end
 
-	for i = 1, #to_stitch do
+	for iter_6_7 = 1, #var_6_6 do
 		repeat
-			local stitched_indices = to_stitch[i]
+			local var_6_12 = var_6_6[iter_6_7]
 
-			if #stitched_indices <= 1 then
+			if #var_6_12 <= 1 then
 				break
 			end
 
-			local wanted_main_path_index = stitched_indices[1]
-			local wanted_main_path = main_paths[wanted_main_path_index]
-			local wanted_main_path_nodes = wanted_main_path.nodes
+			local var_6_13 = arg_6_2[var_6_12[1]].nodes
 
-			for k = 2, #stitched_indices do
-				local stitch_index = stitched_indices[k]
-				local stitch_main_path = main_paths[stitch_index]
-				local stitch_main_path_nodes = stitch_main_path.nodes
+			for iter_6_8 = 2, #var_6_12 do
+				local var_6_14 = var_6_12[iter_6_8]
+				local var_6_15 = arg_6_2[var_6_14].nodes
 
-				for j = 1, #stitch_main_path_nodes do
-					local stiched_node = stitch_main_path_nodes[j]
+				for iter_6_9 = 1, #var_6_15 do
+					local var_6_16 = var_6_15[iter_6_9]
 
-					wanted_main_path_nodes[#wanted_main_path_nodes + 1] = stiched_node
+					var_6_13[#var_6_13 + 1] = var_6_16
 				end
 
-				printf("[MainPathSpawningGenerator] Stitched and removed main path index: %d", stitch_index)
+				printf("[MainPathSpawningGenerator] Stitched and removed main path index: %d", var_6_14)
 
-				to_remove[#to_remove + 1] = stitch_index
+				var_6_0[#var_6_0 + 1] = var_6_14
 			end
 		until true
 	end
 
-	table.sort(to_remove, function (a, b)
-		return a < b
+	table.sort(var_6_0, function(arg_7_0, arg_7_1)
+		return arg_7_0 < arg_7_1
 	end)
 
-	local removed_path_distances = {}
+	local var_6_17 = {}
 
-	for k = #to_remove, 1, -1 do
-		local index = to_remove[k]
-		local travel_dist = main_paths[index].travel_dist
-		local was_stitched_path = chosen_crossroad_paths[index]
+	for iter_6_10 = #var_6_0, 1, -1 do
+		local var_6_18 = var_6_0[iter_6_10]
+		local var_6_19 = arg_6_2[var_6_18].travel_dist
 
-		if not was_stitched_path then
-			removed_path_distances[#removed_path_distances + 1] = {
-				travel_dist[1],
-				travel_dist[#travel_dist],
+		if not var_6_2[var_6_18] then
+			var_6_17[#var_6_17 + 1] = {
+				var_6_19[1],
+				var_6_19[#var_6_19]
 			}
 		end
 
-		table.remove(main_paths, index)
+		table.remove(arg_6_2, var_6_18)
 	end
 
-	num_main_zones = MainPathSpawningGenerator._remove_zones_due_to_crossroads(zones, num_main_zones, removed_path_distances)
+	arg_6_4 = MainPathSpawningGenerator._remove_zones_due_to_crossroads(arg_6_3, arg_6_4, var_6_17)
 
-	return true, num_main_zones, removed_path_distances
+	return true, arg_6_4, var_6_17
 end
 
-MainPathSpawningGenerator.generate_great_cycles = function (conflict_director, mutator_list, zones, zone_convert, num_main_zones, spawn_cycle_length, level_seed)
-	local cycle_length, cycle_zones, great_cycles = 0, {}, {}
-	local pack_spawning_setting = conflict_director.pack_spawning
-	local initial_roaming_set = pack_spawning_setting.roaming_set
-	local random_director_list = Managers.state.conflict.enemy_package_loader:random_director_list()
-	local random_director_index = 1
+function MainPathSpawningGenerator.generate_great_cycles(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
+	local var_8_0 = 0
+	local var_8_1 = {}
+	local var_8_2 = {}
+	local var_8_3 = arg_8_0.pack_spawning
+	local var_8_4 = var_8_3.roaming_set
+	local var_8_5 = Managers.state.conflict.enemy_package_loader:random_director_list()
+	local var_8_6 = 1
 
-	MainPathSpawningGenerator.process_conflict_directors_zones(conflict_director.name, zones, num_main_zones, level_seed)
+	MainPathSpawningGenerator.process_conflict_directors_zones(arg_8_0.name, arg_8_2, arg_8_4, arg_8_6)
 
-	local zone_mutator_list = {}
-	local current_director_name = conflict_director.name
+	local var_8_7 = {}
+	local var_8_8 = arg_8_0.name
 
-	for i = 1, num_main_zones do
-		local zone_layer = zones[i]
-		local mutators_updated = false
+	for iter_8_0 = 1, arg_8_4 do
+		local var_8_9 = arg_8_2[iter_8_0]
+		local var_8_10 = false
 
-		if zone_layer.mutators then
-			local mutators_split = {}
+		if var_8_9.mutators then
+			local var_8_11 = {}
 
-			for name in string.gmatch(zone_layer.mutators, "([^[%s,]+)%s*,?%s*") do
-				mutators_split[#mutators_split + 1] = name
+			for iter_8_1 in string.gmatch(var_8_9.mutators, "([^[%s,]+)%s*,?%s*") do
+				var_8_11[#var_8_11 + 1] = iter_8_1
 			end
 
-			if #mutators_split ~= #zone_mutator_list then
-				table.sort(mutators_split)
+			if #var_8_11 ~= #var_8_7 then
+				table.sort(var_8_11)
 
-				zone_mutator_list = mutators_split
-				mutators_updated = true
+				var_8_7 = var_8_11
+				var_8_10 = true
 			else
-				table.sort(mutators_split)
+				table.sort(var_8_11)
 
-				for index, mutator in ipairs(mutators_split) do
-					if mutator ~= zone_mutator_list[index] then
-						zone_mutator_list = mutators_split
-						mutators_updated = true
+				for iter_8_2, iter_8_3 in ipairs(var_8_11) do
+					if iter_8_3 ~= var_8_7[iter_8_2] then
+						var_8_7 = var_8_11
+						var_8_10 = true
 
 						break
 					end
 				end
 			end
-		elseif #zone_mutator_list > 0 then
-			zone_mutator_list = {}
-			mutators_updated = true
+		elseif #var_8_7 > 0 then
+			var_8_7 = {}
+			var_8_10 = true
 		end
 
-		local conflict_director_updated = false
-		local override_conflict_setting = zone_layer.roaming_set
+		local var_8_12 = false
+		local var_8_13 = var_8_9.roaming_set
 
-		if override_conflict_setting then
-			if override_conflict_setting == "random" then
-				override_conflict_setting = random_director_list[random_director_index].name
-				random_director_index = random_director_index + 1
+		if var_8_13 then
+			if var_8_13 == "random" then
+				var_8_13 = var_8_5[var_8_6].name
+				var_8_6 = var_8_6 + 1
 			end
 
-			conflict_director = ConflictDirectors[override_conflict_setting]
-			current_director_name = conflict_director.name
-			conflict_director_updated = true
+			arg_8_0 = ConflictDirectors[var_8_13]
+			var_8_8 = arg_8_0.name
+			var_8_12 = true
 		end
 
-		if mutators_updated or conflict_director_updated then
-			local pack_spawning = conflict_director.pack_spawning
+		if var_8_10 or var_8_12 then
+			local var_8_14 = arg_8_0.pack_spawning
 
-			if pack_spawning then
-				pack_spawning_setting = MutatorHandler.tweak_pack_spawning_settings(zone_mutator_list, mutator_list, current_director_name, pack_spawning)
+			if var_8_14 then
+				var_8_3 = MutatorHandler.tweak_pack_spawning_settings(var_8_7, arg_8_1, var_8_8, var_8_14)
 			end
 		end
 
-		local outer = {}
-		local total_zone_area = zone_layer.sub_areas[1]
-		local pack_type = pack_spawning_setting.roaming_set.breed_packs
-		local zone = {
+		local var_8_15 = {}
+		local var_8_16 = var_8_9.sub_areas[1]
+		local var_8_17 = var_8_3.roaming_set.breed_packs
+		local var_8_18 = {
 			total_area = 0,
-			nodes = zone_layer.sub[1],
-			area = zone_layer.sub_areas[1],
-			outer = outer,
-			pack_type = pack_type,
-			pack_spawning_setting = pack_spawning_setting,
-			conflict_setting = conflict_director,
-			unique_zone_id = zone_layer.unique_zone_id,
-			mutators = zone_mutator_list,
+			nodes = var_8_9.sub[1],
+			area = var_8_9.sub_areas[1],
+			outer = var_8_15,
+			pack_type = var_8_17,
+			pack_spawning_setting = var_8_3,
+			conflict_setting = arg_8_0,
+			unique_zone_id = var_8_9.unique_zone_id,
+			mutators = var_8_7
 		}
 
-		for j = 2, #zone_layer.sub do
-			local area = zone_layer.sub_areas[j]
+		for iter_8_4 = 2, #var_8_9.sub do
+			local var_8_19 = var_8_9.sub_areas[iter_8_4]
 
-			total_zone_area = total_zone_area + (area or 0)
-			outer[#outer + 1] = {
-				nodes = zone_layer.sub[j],
-				area = area,
+			var_8_16 = var_8_16 + (var_8_19 or 0)
+			var_8_15[#var_8_15 + 1] = {
+				nodes = var_8_9.sub[iter_8_4],
+				area = var_8_19
 			}
 		end
 
-		zone.total_area = total_zone_area
-		cycle_length = cycle_length + zone_layer.sub_zone_length
-		cycle_zones[#cycle_zones + 1] = zone
-		zone_convert[i] = zone
+		var_8_18.total_area = var_8_16
+		var_8_0 = var_8_0 + var_8_9.sub_zone_length
+		var_8_1[#var_8_1 + 1] = var_8_18
+		arg_8_3[iter_8_0] = var_8_18
 
-		if spawn_cycle_length <= cycle_length or i == num_main_zones then
-			great_cycles[#great_cycles + 1] = {
-				zones = cycle_zones,
-				length = cycle_length,
+		if arg_8_5 <= var_8_0 or iter_8_0 == arg_8_4 then
+			var_8_2[#var_8_2 + 1] = {
+				zones = var_8_1,
+				length = var_8_0
 			}
-			cycle_length = cycle_length - spawn_cycle_length
-			cycle_zones = {}
+			var_8_0 = var_8_0 - arg_8_5
+			var_8_1 = {}
 		end
 	end
 
-	return great_cycles
+	return var_8_2
 end
 
-MainPathSpawningGenerator.process_conflict_directors_zones = function (default_conflict_director_name, zones, num_main_zones, level_seed)
-	local non_random_conflict_directors = {}
-	local num_random = 0
+function MainPathSpawningGenerator.process_conflict_directors_zones(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	local var_9_0 = {}
+	local var_9_1 = 0
 
-	if num_main_zones > 0 then
-		if zones[1].roaming_set == nil then
-			non_random_conflict_directors[default_conflict_director_name] = true
+	if arg_9_2 > 0 then
+		if arg_9_1[1].roaming_set == nil then
+			var_9_0[arg_9_0] = true
 		end
 
-		for i = 1, num_main_zones do
-			local zone_layer = zones[i]
-			local conflict_directors = zone_layer.roaming_set
+		for iter_9_0 = 1, arg_9_2 do
+			local var_9_2 = arg_9_1[iter_9_0]
+			local var_9_3 = var_9_2.roaming_set
 
-			if conflict_directors then
-				conflict_directors = string.split_deprecated(conflict_directors, "/")
+			if var_9_3 then
+				local var_9_4 = string.split_deprecated(var_9_3, "/")
+				local var_9_5
+				local var_9_6
 
-				local random_int
+				arg_9_3, var_9_6 = Math.next_random(arg_9_3, 1, #var_9_4)
 
-				level_seed, random_int = Math.next_random(level_seed, 1, #conflict_directors)
+				local var_9_7 = var_9_4[var_9_6]
 
-				local conflict_director_name = conflict_directors[random_int]
+				var_9_2.roaming_set = var_9_7
 
-				zone_layer.roaming_set = conflict_director_name
-
-				if conflict_director_name == "random" then
-					num_random = num_random + 1
+				if var_9_7 == "random" then
+					var_9_1 = var_9_1 + 1
 				else
-					non_random_conflict_directors[conflict_director_name] = true
+					var_9_0[var_9_7] = true
 				end
 			end
 		end
 	else
-		non_random_conflict_directors[default_conflict_director_name] = true
+		var_9_0[arg_9_0] = true
 	end
 
-	return non_random_conflict_directors, num_random, level_seed
+	return var_9_0, var_9_1, arg_9_3
 end

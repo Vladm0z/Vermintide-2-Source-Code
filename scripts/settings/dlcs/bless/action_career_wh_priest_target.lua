@@ -1,258 +1,253 @@
-﻿-- chunkname: @scripts/settings/dlcs/bless/action_career_wh_priest_target.lua
+-- chunkname: @scripts/settings/dlcs/bless/action_career_wh_priest_target.lua
 
 ActionCareerWHPriestTarget = class(ActionCareerWHPriestTarget, ActionBase)
 
-local crosshair_lookup = {
-	target_ally = "wh_priest_ally",
+local var_0_0 = {
 	target_self = "wh_priest_self",
+	target_ally = "wh_priest_ally"
 }
 
-ActionCareerWHPriestTarget.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionCareerWHPriestTarget.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionCareerWHPriestTarget.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionCareerWHPriestTarget.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	self.first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
-	self.inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
-	self._outline_system = Managers.state.entity:system("outline_system")
-	self._weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
-	self._marked_target = {}
+	arg_1_0.first_person_extension = ScriptUnit.extension(arg_1_4, "first_person_system")
+	arg_1_0.inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
+	arg_1_0._outline_system = Managers.state.entity:system("outline_system")
+	arg_1_0._weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
+	arg_1_0._marked_target = {}
 end
 
-ActionCareerWHPriestTarget.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
-	ActionCareerWHPriestTarget.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
+function ActionCareerWHPriestTarget.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	ActionCareerWHPriestTarget.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 
-	self.aim_timer = new_action.target_sticky_time
-	self.aimed_target = chain_action_data and chain_action_data.target
+	arg_2_0.aim_timer = arg_2_1.target_sticky_time
+	arg_2_0.aimed_target = arg_2_3 and arg_2_3.target
 
-	self._weapon_extension:set_mode(false)
+	arg_2_0._weapon_extension:set_mode(false)
 
-	self.played_aim_sound = false
-	self.aim_sound_time = t + (new_action.aim_sound_delay or 0)
-	self._max_range = new_action.max_range
-	self._cone_cos_angle = math.cos(math.rad(new_action.target_cone_angle))
+	arg_2_0.played_aim_sound = false
+	arg_2_0.aim_sound_time = arg_2_2 + (arg_2_1.aim_sound_delay or 0)
+	arg_2_0._max_range = arg_2_1.max_range
+	arg_2_0._cone_cos_angle = math.cos(math.rad(arg_2_1.target_cone_angle))
 
-	self:_start_charge_sound()
+	arg_2_0:_start_charge_sound()
 end
 
-ActionCareerWHPriestTarget._start_charge_sound = function (self)
-	local current_action = self.current_action
-	local owner_unit = self.owner_unit
-	local wwise_world = self.wwise_world
-	local is_bot = self.is_bot
+function ActionCareerWHPriestTarget._start_charge_sound(arg_3_0)
+	local var_3_0 = arg_3_0.current_action
+	local var_3_1 = arg_3_0.owner_unit
+	local var_3_2 = arg_3_0.wwise_world
+	local var_3_3 = arg_3_0.is_bot
 
-	if not is_bot then
-		local owner_player = self.owner_player
-		local is_local = owner_player and not owner_player.remote
+	if not var_3_3 then
+		local var_3_4 = arg_3_0.owner_player
 
-		if is_local then
-			local wwise_playing_id, wwise_source_id = ActionUtils.start_charge_sound(wwise_world, self.weapon_unit, owner_unit, current_action)
+		if var_3_4 and not var_3_4.remote then
+			local var_3_5, var_3_6 = ActionUtils.start_charge_sound(var_3_2, arg_3_0.weapon_unit, var_3_1, var_3_0)
 
-			self.charging_sound_id = wwise_playing_id
-			self.wwise_source_id = wwise_source_id
+			arg_3_0.charging_sound_id = var_3_5
+			arg_3_0.wwise_source_id = var_3_6
 		end
 	end
 
-	ActionUtils.play_husk_sound_event(wwise_world, current_action.charge_sound_husk_name, owner_unit, is_bot)
+	ActionUtils.play_husk_sound_event(var_3_2, var_3_0.charge_sound_husk_name, var_3_1, var_3_3)
 end
 
-ActionCareerWHPriestTarget._stop_charge_sound = function (self)
-	local current_action = self.current_action
-	local owner_unit = self.owner_unit
-	local wwise_world = self.wwise_world
-	local is_bot = self.is_bot
+function ActionCareerWHPriestTarget._stop_charge_sound(arg_4_0)
+	local var_4_0 = arg_4_0.current_action
+	local var_4_1 = arg_4_0.owner_unit
+	local var_4_2 = arg_4_0.wwise_world
+	local var_4_3 = arg_4_0.is_bot
 
-	if not is_bot then
-		local owner_player = self.owner_player
-		local is_local = owner_player and not owner_player.remote
+	if not var_4_3 then
+		local var_4_4 = arg_4_0.owner_player
 
-		if is_local then
-			ActionUtils.stop_charge_sound(wwise_world, self.charging_sound_id, self.wwise_source_id, current_action)
+		if var_4_4 and not var_4_4.remote then
+			ActionUtils.stop_charge_sound(var_4_2, arg_4_0.charging_sound_id, arg_4_0.wwise_source_id, var_4_0)
 
-			self.charging_sound_id = nil
-			self.wwise_source_id = nil
+			arg_4_0.charging_sound_id = nil
+			arg_4_0.wwise_source_id = nil
 		end
 	end
 
-	ActionUtils.play_husk_sound_event(wwise_world, current_action.charge_sound_husk_stop_event, owner_unit, is_bot)
+	ActionUtils.play_husk_sound_event(var_4_2, var_4_0.charge_sound_husk_stop_event, var_4_1, var_4_3)
 end
 
-ActionCareerWHPriestTarget.client_owner_post_update = function (self, dt, t, world, can_damage)
-	local current_action = self.current_action
-	local owner_unit = self.owner_unit
-	local current_target = self.aimed_target
-	local old_target = self.aimed_target
-	local is_bot = self.is_bot
-	local outline_system = self._outline_system
+function ActionCareerWHPriestTarget.client_owner_post_update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	local var_5_0 = arg_5_0.current_action
+	local var_5_1 = arg_5_0.owner_unit
+	local var_5_2 = arg_5_0.aimed_target
+	local var_5_3 = arg_5_0.aimed_target
+	local var_5_4 = arg_5_0.is_bot
+	local var_5_5 = arg_5_0._outline_system
 
-	if current_target and not HEALTH_ALIVE[current_target] then
-		self:_mark_target(nil)
+	if var_5_2 and not HEALTH_ALIVE[var_5_2] then
+		arg_5_0:_mark_target(nil)
 
-		current_target = nil
+		var_5_2 = nil
 	end
 
-	local required_aim_time = current_action.target_sticky_time or 0
+	if (var_5_0.target_sticky_time or 0) <= arg_5_0.aim_timer then
+		local var_5_6 = arg_5_0:_target_ally_from_crosshair()
 
-	if required_aim_time <= self.aim_timer then
-		local hit_unit = self:_target_ally_from_crosshair()
+		if var_5_2 ~= var_5_6 then
+			arg_5_0:_mark_target(var_5_6)
 
-		if current_target ~= hit_unit then
-			self:_mark_target(hit_unit)
-
-			self.aim_timer = 0
+			arg_5_0.aim_timer = 0
 		end
 	end
 
-	if not is_bot then
-		if not self.played_aim_sound and t >= self.aim_sound_time then
-			local sound_event = current_action.aim_sound_event
+	if not var_5_4 then
+		if not arg_5_0.played_aim_sound and arg_5_2 >= arg_5_0.aim_sound_time then
+			local var_5_7 = var_5_0.aim_sound_event
 
-			if sound_event then
-				local wwise_world = self.wwise_world
+			if var_5_7 then
+				local var_5_8 = arg_5_0.wwise_world
 
-				WwiseWorld.trigger_event(wwise_world, sound_event)
+				WwiseWorld.trigger_event(var_5_8, var_5_7)
 			end
 
-			self.played_aim_sound = true
+			arg_5_0.played_aim_sound = true
 		end
 	else
-		local blackboard = BLACKBOARDS[owner_unit]
-		local aimed_target = blackboard and blackboard.activate_ability_data.target_unit or owner_unit
+		local var_5_9 = BLACKBOARDS[var_5_1]
+		local var_5_10 = var_5_9 and var_5_9.activate_ability_data.target_unit or var_5_1
 
-		self._weapon_extension:set_mode(aimed_target ~= owner_unit)
+		arg_5_0._weapon_extension:set_mode(var_5_10 ~= var_5_1)
 	end
 
-	self.aim_timer = self.aim_timer + dt
+	arg_5_0.aim_timer = arg_5_0.aim_timer + arg_5_1
 end
 
-ActionCareerWHPriestTarget._mark_target = function (self, new_target)
-	if self.is_bot then
+function ActionCareerWHPriestTarget._mark_target(arg_6_0, arg_6_1)
+	if arg_6_0.is_bot then
 		return
 	end
 
-	local old_marked_target = self._marked_target
+	local var_6_0 = arg_6_0._marked_target
 
-	if old_marked_target.outline_extension then
-		old_marked_target.outline_extension:remove_outline(old_marked_target.outline_id)
+	if var_6_0.outline_extension then
+		var_6_0.outline_extension:remove_outline(var_6_0.outline_id)
 
-		old_marked_target.outline_extension = nil
-		old_marked_target.outline_id = nil
+		var_6_0.outline_extension = nil
+		var_6_0.outline_id = nil
 	end
 
-	if new_target and ALIVE[new_target] then
-		local target_outline_extenson = ScriptUnit.has_extension(new_target, "outline_system")
+	if arg_6_1 and ALIVE[arg_6_1] then
+		local var_6_1 = ScriptUnit.has_extension(arg_6_1, "outline_system")
 
-		if target_outline_extenson then
-			old_marked_target.outline_extension = target_outline_extenson
-			old_marked_target.outline_id = target_outline_extenson:add_outline(OutlineSettings.templates.tutorial_highlight)
+		if var_6_1 then
+			var_6_0.outline_extension = var_6_1
+			var_6_0.outline_id = var_6_1:add_outline(OutlineSettings.templates.tutorial_highlight)
 		end
 	end
 
-	local weapon_extension = self._weapon_extension
-	local is_other_target = new_target and new_target ~= self.owner_unit
+	local var_6_2 = arg_6_0._weapon_extension
+	local var_6_3 = arg_6_1 and arg_6_1 ~= arg_6_0.owner_unit
 
-	weapon_extension:set_mode(is_other_target)
+	var_6_2:set_mode(var_6_3)
 
-	if is_other_target then
-		local owner = Managers.player:owner(new_target)
-		local profile_index = owner:profile_index()
-		local career_index = owner:career_index()
-		local career_portrait = UIUtils.get_portrait_image_by_profile_index(profile_index, career_index)
+	if var_6_3 then
+		local var_6_4 = Managers.player:owner(arg_6_1)
+		local var_6_5 = var_6_4:profile_index()
+		local var_6_6 = var_6_4:career_index()
+		local var_6_7 = UIUtils.get_portrait_image_by_profile_index(var_6_5, var_6_6)
 
-		Managers.state.event:trigger("on_set_ability_target_name", "small_" .. career_portrait, crosshair_lookup.target_ally)
+		Managers.state.event:trigger("on_set_ability_target_name", "small_" .. var_6_7, var_0_0.target_ally)
 	else
-		Managers.state.event:trigger("on_set_ability_target_name", nil, crosshair_lookup.target_self)
+		Managers.state.event:trigger("on_set_ability_target_name", nil, var_0_0.target_self)
 	end
 
-	local current_action = self.current_action
-	local anim_event = is_other_target and current_action.target_other_anim_event or current_action.target_self_anim_event
-	local first_person_unit = self.first_person_extension:get_first_person_unit()
+	local var_6_8 = arg_6_0.current_action
+	local var_6_9 = var_6_3 and var_6_8.target_other_anim_event or var_6_8.target_self_anim_event
+	local var_6_10 = arg_6_0.first_person_extension:get_first_person_unit()
 
-	if anim_event then
-		Unit.animation_event(first_person_unit, anim_event)
+	if var_6_9 then
+		Unit.animation_event(var_6_10, var_6_9)
 	end
 
-	self.aimed_target = new_target
+	arg_6_0.aimed_target = arg_6_1
 end
 
-ActionCareerWHPriestTarget._target_ally_from_crosshair = function (self)
-	local range = self._max_range
-	local range_sq = range * range
-	local dot_threshold = self._cone_cos_angle
-	local owner_unit = self.owner_unit
-	local player_position, player_rotation = self.first_person_extension:camera_position_rotation()
-	local player_direction = Vector3.normalize(Quaternion.forward(player_rotation))
-	local side = Managers.state.side.side_by_unit[owner_unit]
-	local friendly_units = side and side.PLAYER_AND_BOT_UNITS
-	local num_friendly_units = friendly_units and #friendly_units or 0
-	local best_target
-	local best_distance = 0
-	local best_dot_value = 0
+function ActionCareerWHPriestTarget._target_ally_from_crosshair(arg_7_0)
+	local var_7_0 = arg_7_0._max_range
+	local var_7_1 = var_7_0 * var_7_0
+	local var_7_2 = arg_7_0._cone_cos_angle
+	local var_7_3 = arg_7_0.owner_unit
+	local var_7_4, var_7_5 = arg_7_0.first_person_extension:camera_position_rotation()
+	local var_7_6 = Vector3.normalize(Quaternion.forward(var_7_5))
+	local var_7_7 = Managers.state.side.side_by_unit[var_7_3]
+	local var_7_8 = var_7_7 and var_7_7.PLAYER_AND_BOT_UNITS
+	local var_7_9 = var_7_8 and #var_7_8 or 0
+	local var_7_10
+	local var_7_11 = 0
+	local var_7_12 = 0
 
-	for i = 1, num_friendly_units do
-		local friendly_unit = friendly_units[i]
+	for iter_7_0 = 1, var_7_9 do
+		local var_7_13 = var_7_8[iter_7_0]
 
-		if friendly_unit ~= self.owner_unit and HEALTH_ALIVE[friendly_unit] then
-			local is_valid, dot_value, distance_sq = self:_check_cone_from_crosshair(player_position, player_direction, friendly_unit, range_sq, dot_threshold)
+		if var_7_13 ~= arg_7_0.owner_unit and HEALTH_ALIVE[var_7_13] then
+			local var_7_14, var_7_15, var_7_16 = arg_7_0:_check_cone_from_crosshair(var_7_4, var_7_6, var_7_13, var_7_1, var_7_2)
 
-			if is_valid and best_dot_value <= dot_value then
-				best_dot_value = dot_value
-				best_distance = distance_sq
+			if var_7_14 and var_7_12 <= var_7_15 then
+				var_7_12 = var_7_15
+				var_7_11 = var_7_16
 
-				if distance_sq < range_sq then
-					best_target = friendly_unit
+				if var_7_16 < var_7_1 then
+					var_7_10 = var_7_13
 				else
-					best_target = nil
+					var_7_10 = nil
 				end
 			end
 		end
 	end
 
-	return best_target, best_distance
+	return var_7_10, var_7_11
 end
 
-ActionCareerWHPriestTarget._check_cone_from_crosshair = function (self, player_position, player_direction, target, range_sq, dot_threshold)
-	local target_position = Unit.world_position(target, Unit.node(target, "j_claw_attach"))
-	local target_delta = target_position - player_position
-	local distance_sq = Vector3.length_squared(target_delta)
-	local target_direction = Vector3.normalize(target_delta)
-	local target_cos_alpha = Vector3.dot(player_direction, target_direction)
+function ActionCareerWHPriestTarget._check_cone_from_crosshair(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+	local var_8_0 = Unit.world_position(arg_8_3, Unit.node(arg_8_3, "j_claw_attach")) - arg_8_1
+	local var_8_1 = Vector3.length_squared(var_8_0)
+	local var_8_2 = Vector3.normalize(var_8_0)
+	local var_8_3 = Vector3.dot(arg_8_2, var_8_2)
 
-	if dot_threshold <= target_cos_alpha then
-		return true, target_cos_alpha, distance_sq
+	if arg_8_5 <= var_8_3 then
+		return true, var_8_3, var_8_1
 	end
 end
 
-ActionCareerWHPriestTarget.finish = function (self, reason, data)
-	local is_bot = self.is_bot
-	local aimed_target = self.aimed_target or self.owner_unit
+function ActionCareerWHPriestTarget.finish(arg_9_0, arg_9_1, arg_9_2)
+	local var_9_0 = arg_9_0.is_bot
+	local var_9_1 = arg_9_0.aimed_target or arg_9_0.owner_unit
 
-	if is_bot then
-		local blackboard = BLACKBOARDS[self.owner_unit]
+	if var_9_0 then
+		local var_9_2 = BLACKBOARDS[arg_9_0.owner_unit]
 
-		aimed_target = blackboard and blackboard.activate_ability_data.target_unit or self.owner_unit
+		var_9_1 = var_9_2 and var_9_2.activate_ability_data.target_unit or arg_9_0.owner_unit
 	end
 
-	local chain_action_data = {
-		target = aimed_target,
+	local var_9_3 = {
+		target = var_9_1
 	}
-	local current_action = self.current_action
+	local var_9_4 = arg_9_0.current_action
 
-	if not is_bot then
-		local sound_event = current_action.unaim_sound_event
+	if not var_9_0 then
+		local var_9_5 = var_9_4.unaim_sound_event
 
-		if sound_event then
-			local wwise_world = self.wwise_world
+		if var_9_5 then
+			local var_9_6 = arg_9_0.wwise_world
 
-			WwiseWorld.trigger_event(wwise_world, sound_event)
+			WwiseWorld.trigger_event(var_9_6, var_9_5)
 		end
 	end
 
-	if reason ~= "new_interupting_action" then
-		self.inventory_extension:wield_previous_non_level_slot()
-		self.first_person_extension:play_hud_sound_event("priest_book_loop_stop")
+	if arg_9_1 ~= "new_interupting_action" then
+		arg_9_0.inventory_extension:wield_previous_non_level_slot()
+		arg_9_0.first_person_extension:play_hud_sound_event("priest_book_loop_stop")
 	end
 
-	self:_stop_charge_sound()
-	self:_mark_target(nil)
+	arg_9_0:_stop_charge_sound()
+	arg_9_0:_mark_target(nil)
 
-	return chain_action_data
+	return var_9_3
 end

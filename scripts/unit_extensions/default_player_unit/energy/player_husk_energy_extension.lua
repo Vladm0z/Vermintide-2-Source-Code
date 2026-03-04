@@ -1,152 +1,152 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/energy/player_husk_energy_extension.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/energy/player_husk_energy_extension.lua
 
 require("scripts/unit_extensions/default_player_unit/energy/energy_data")
 
 PlayerHuskEnergyExtension = class(PlayerHuskEnergyExtension)
 
-PlayerHuskEnergyExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self.network_manager = Managers.state.network
-	self.unit = unit
+function PlayerHuskEnergyExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.network_manager = Managers.state.network
+	arg_1_0.unit = arg_1_2
 
-	local energy_data = extension_init_data.energy_data
+	local var_1_0 = arg_1_3.energy_data
 
-	self._max_energy = energy_data.max_value or 40
-	self._energy = self._max_energy
-	self._recharge_delay_timer = 0
-	self._recharge_delay = energy_data.recharge_delay or 0
-	self._recharge_rate = energy_data.recharge_rate or 0
-	self._depletion_cooldown_timer = 0
-	self._depletion_cooldown = energy_data.depletion_cooldown or 0
-	self._previous_can_drain = self:is_drainable()
+	arg_1_0._max_energy = var_1_0.max_value or 40
+	arg_1_0._energy = arg_1_0._max_energy
+	arg_1_0._recharge_delay_timer = 0
+	arg_1_0._recharge_delay = var_1_0.recharge_delay or 0
+	arg_1_0._recharge_rate = var_1_0.recharge_rate or 0
+	arg_1_0._depletion_cooldown_timer = 0
+	arg_1_0._depletion_cooldown = var_1_0.depletion_cooldown or 0
+	arg_1_0._previous_can_drain = arg_1_0:is_drainable()
 end
 
-PlayerHuskEnergyExtension.extensions_ready = function (self, world, unit)
+function PlayerHuskEnergyExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
 	return
 end
 
-PlayerHuskEnergyExtension.reset = function (self)
+function PlayerHuskEnergyExtension.reset(arg_3_0)
 	return
 end
 
-PlayerHuskEnergyExtension.destroy = function (self)
+function PlayerHuskEnergyExtension.destroy(arg_4_0)
 	return
 end
 
-PlayerHuskEnergyExtension._update_game_object = function (self)
-	local network_manager = self.network_manager
-	local unit = self.unit
-	local game = network_manager:game()
-	local go_id = Managers.state.unit_storage:go_id(unit)
+function PlayerHuskEnergyExtension._update_game_object(arg_5_0)
+	local var_5_0 = arg_5_0.network_manager
+	local var_5_1 = arg_5_0.unit
+	local var_5_2 = var_5_0:game()
+	local var_5_3 = Managers.state.unit_storage:go_id(var_5_1)
 
-	if game and go_id then
-		local max_energy = GameSession.game_object_field(game, go_id, "energy_max_value")
+	if var_5_2 and var_5_3 then
+		local var_5_4 = GameSession.game_object_field(var_5_2, var_5_3, "energy_max_value")
 
-		self._depletion_cooldown_active = GameSession.game_object_field(game, go_id, "is_on_depletion_cooldown")
-		self._energy = max_energy * GameSession.game_object_field(game, go_id, "energy_percentage")
-		self._max_energy = max_energy
+		arg_5_0._depletion_cooldown_active = GameSession.game_object_field(var_5_2, var_5_3, "is_on_depletion_cooldown")
+		arg_5_0._energy = var_5_4 * GameSession.game_object_field(var_5_2, var_5_3, "energy_percentage")
+		arg_5_0._max_energy = var_5_4
 	end
 end
 
-PlayerHuskEnergyExtension._update_events = function (self)
-	local previous_is_drainable = self._previous_can_drain
-	local is_drainable = self:is_drainable()
+function PlayerHuskEnergyExtension._update_events(arg_6_0)
+	local var_6_0 = arg_6_0._previous_can_drain
+	local var_6_1 = arg_6_0:is_drainable()
 
-	if previous_is_drainable ~= is_drainable then
-		if is_drainable then
-			self:_broadcast_equipment_flow_event("on_energy_drainable")
+	if var_6_0 ~= var_6_1 then
+		if var_6_1 then
+			arg_6_0:_broadcast_equipment_flow_event("on_energy_drainable")
 		else
-			self:_broadcast_equipment_flow_event("on_energy_not_drainable")
+			arg_6_0:_broadcast_equipment_flow_event("on_energy_not_drainable")
 		end
 	end
 
-	self._previous_can_drain = is_drainable
+	arg_6_0._previous_can_drain = var_6_1
 end
 
-PlayerHuskEnergyExtension.update = function (self, unit, input, dt, context, t)
-	self:_update_game_object()
-	self:_update_events()
+function PlayerHuskEnergyExtension.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+	arg_7_0:_update_game_object()
+	arg_7_0:_update_events()
 end
 
-PlayerHuskEnergyExtension.drain = function (self)
+function PlayerHuskEnergyExtension.drain(arg_8_0)
 	return
 end
 
-PlayerHuskEnergyExtension.get_max = function (self)
-	return self._max_energy
+function PlayerHuskEnergyExtension.get_max(arg_9_0)
+	return arg_9_0._max_energy
 end
 
-PlayerHuskEnergyExtension.is_drainable = function (self)
-	local is_depleted = self:is_depleted()
-	local is_on_depletion_cooldown = self:_is_on_depletion_cooldown()
+function PlayerHuskEnergyExtension.is_drainable(arg_10_0)
+	local var_10_0 = arg_10_0:is_depleted()
+	local var_10_1 = arg_10_0:_is_on_depletion_cooldown()
 
-	if is_depleted or is_on_depletion_cooldown then
+	if var_10_0 or var_10_1 then
 		return false
 	end
 
 	return true
 end
 
-PlayerHuskEnergyExtension.is_depleted = function (self)
-	return self._energy <= 0
+function PlayerHuskEnergyExtension.is_depleted(arg_11_0)
+	return arg_11_0._energy <= 0
 end
 
-PlayerHuskEnergyExtension.get_fraction = function (self)
-	return math.clamp(self._energy / self._max_energy, 0, 1)
+function PlayerHuskEnergyExtension.get_fraction(arg_12_0)
+	return math.clamp(arg_12_0._energy / arg_12_0._max_energy, 0, 1)
 end
 
-PlayerHuskEnergyExtension._is_recharging = function (self)
-	return self._recharge_delay_timer <= Managers.time:time("game")
+function PlayerHuskEnergyExtension._is_recharging(arg_13_0)
+	return arg_13_0._recharge_delay_timer <= Managers.time:time("game")
 end
 
-PlayerHuskEnergyExtension._is_on_depletion_cooldown = function (self)
-	return self._depletion_cooldown_active
+function PlayerHuskEnergyExtension._is_on_depletion_cooldown(arg_14_0)
+	return arg_14_0._depletion_cooldown_active
 end
 
-PlayerHuskEnergyExtension._broadcast_equipment_flow_event = function (self, event_name)
-	local inventory_extension = ScriptUnit.has_extension(self.unit, "inventory_system")
-	local equipment = inventory_extension and inventory_extension:equipment()
+function PlayerHuskEnergyExtension._broadcast_equipment_flow_event(arg_15_0, arg_15_1)
+	local var_15_0 = ScriptUnit.has_extension(arg_15_0.unit, "inventory_system")
+	local var_15_1 = var_15_0 and var_15_0:equipment()
 
-	if equipment then
-		local right_hand_wielded_unit_3p = equipment.right_hand_wielded_unit_3p
-		local right_hand_ammo_unit_3p = equipment.right_hand_ammo_unit_3p
-		local right_hand_wielded_unit = equipment.right_hand_wielded_unit
-		local right_hand_ammo_unit_1p = equipment.right_hand_ammo_unit_1p
+	if var_15_1 then
+		local var_15_2 = var_15_1.right_hand_wielded_unit_3p
+		local var_15_3 = var_15_1.right_hand_ammo_unit_3p
+		local var_15_4 = var_15_1.right_hand_wielded_unit
+		local var_15_5 = var_15_1.right_hand_ammo_unit_1p
 
-		if right_hand_wielded_unit_3p then
-			Unit.flow_event(right_hand_wielded_unit_3p, event_name)
+		if var_15_2 then
+			Unit.flow_event(var_15_2, arg_15_1)
 		end
 
-		if right_hand_ammo_unit_3p then
-			Unit.flow_event(right_hand_ammo_unit_3p, event_name)
+		if var_15_3 then
+			Unit.flow_event(var_15_3, arg_15_1)
 		end
 
-		if right_hand_wielded_unit then
-			Unit.flow_event(right_hand_wielded_unit, event_name)
+		if var_15_4 then
+			Unit.flow_event(var_15_4, arg_15_1)
 		end
 
-		if right_hand_ammo_unit_1p then
-			Unit.flow_event(right_hand_ammo_unit_1p, event_name)
+		if var_15_5 then
+			Unit.flow_event(var_15_5, arg_15_1)
 		end
 
-		local left_hand_wielded_unit_3p = equipment.left_hand_wielded_unit_3p
-		local left_hand_ammo_unit_3p = equipment.left_hand_ammo_unit_3p
-		local left_hand_wielded_unit = equipment.left_hand_wielded_unit
-		local left_hand_ammo_unit_1p = equipment.left_hand_ammo_unit_1p
+		local var_15_6 = var_15_1.left_hand_wielded_unit_3p
+		local var_15_7 = var_15_1.left_hand_ammo_unit_3p
+		local var_15_8 = var_15_1.left_hand_wielded_unit
+		local var_15_9 = var_15_1.left_hand_ammo_unit_1p
 
-		if left_hand_wielded_unit_3p then
-			Unit.flow_event(left_hand_wielded_unit_3p, event_name)
+		if var_15_6 then
+			Unit.flow_event(var_15_6, arg_15_1)
 		end
 
-		if left_hand_ammo_unit_3p then
-			Unit.flow_event(left_hand_ammo_unit_3p, event_name)
+		if var_15_7 then
+			Unit.flow_event(var_15_7, arg_15_1)
 		end
 
-		if left_hand_wielded_unit then
-			Unit.flow_event(left_hand_wielded_unit, event_name)
+		if var_15_8 then
+			Unit.flow_event(var_15_8, arg_15_1)
 		end
 
-		if left_hand_ammo_unit_1p then
-			Unit.flow_event(left_hand_ammo_unit_1p, event_name)
+		if var_15_9 then
+			Unit.flow_event(var_15_9, arg_15_1)
 		end
 	end
 end

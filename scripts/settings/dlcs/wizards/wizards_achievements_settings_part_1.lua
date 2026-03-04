@@ -1,14 +1,14 @@
-﻿-- chunkname: @scripts/settings/dlcs/wizards/wizards_achievements_settings_part_1.lua
+-- chunkname: @scripts/settings/dlcs/wizards/wizards_achievements_settings_part_1.lua
 
-local settings = DLCSettings.wizards_part_1
+local var_0_0 = DLCSettings.wizards_part_1
 
-settings.achievement_outline = {
+var_0_0.achievement_outline = {
 	levels = {
 		entries = {},
 		categories = {
 			{
-				name = "area_selection_onions_name",
 				sorting = 8,
+				name = "area_selection_onions_name",
 				entries = {
 					"trail_cog_strike",
 					"trail_shatterer",
@@ -19,12 +19,12 @@ settings.achievement_outline = {
 					"onions_complete_trail_champion",
 					"onions_complete_trail_legend",
 					"onions_complete_trail_cataclysm",
-					"onions_complete_all",
-				},
-			},
-		},
-	},
+					"onions_complete_all"
+				}
+			}
+		}
+	}
 }
-settings.achievement_template_file_names = {
-	"scripts/managers/achievements/achievement_templates_wizards_part_1",
+var_0_0.achievement_template_file_names = {
+	"scripts/managers/achievements/achievement_templates_wizards_part_1"
 }

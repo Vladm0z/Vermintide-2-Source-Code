@@ -1,103 +1,102 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/actions/action_staff.lua
+-- chunkname: @scripts/unit_extensions/weapons/actions/action_staff.lua
 
 ActionStaff = class(ActionStaff, ActionBase)
 
-ActionStaff.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionStaff.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionStaff.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionStaff.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	if ScriptUnit.has_extension(weapon_unit, "ammo_system") then
-		self.ammo_extension = ScriptUnit.extension(weapon_unit, "ammo_system")
+	if ScriptUnit.has_extension(arg_1_7, "ammo_system") then
+		arg_1_0.ammo_extension = ScriptUnit.extension(arg_1_7, "ammo_system")
 	end
 
-	if ScriptUnit.has_extension(weapon_unit, "spread_system") then
-		self.spread_extension = ScriptUnit.extension(weapon_unit, "spread_system")
+	if ScriptUnit.has_extension(arg_1_7, "spread_system") then
+		arg_1_0.spread_extension = ScriptUnit.extension(arg_1_7, "spread_system")
 	end
 
-	self.overcharge_extension = ScriptUnit.extension(owner_unit, "overcharge_system")
+	arg_1_0.overcharge_extension = ScriptUnit.extension(arg_1_4, "overcharge_system")
 end
 
-ActionStaff.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level)
-	ActionStaff.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level)
+function ActionStaff.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	ActionStaff.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
-	self.current_action = new_action
+	arg_2_0.current_action = arg_2_1
 
-	local owner_unit = self.owner_unit
-	local is_critical_strike = ActionUtils.is_critical_strike(owner_unit, new_action, t)
+	local var_2_0 = arg_2_0.owner_unit
+	local var_2_1 = ActionUtils.is_critical_strike(var_2_0, arg_2_1, arg_2_2)
 
-	self.state = "waiting_to_shoot"
-	self.time_to_shoot = t + (new_action.fire_time or 0)
-	self.power_level = power_level
+	arg_2_0.state = "waiting_to_shoot"
+	arg_2_0.time_to_shoot = arg_2_2 + (arg_2_1.fire_time or 0)
+	arg_2_0.power_level = arg_2_4
 
-	local hud_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
+	local var_2_2 = ScriptUnit.has_extension(var_2_0, "hud_system")
 
-	self:_handle_critical_strike(is_critical_strike, nil, hud_extension, nil, "on_critical_shot", nil)
+	arg_2_0:_handle_critical_strike(var_2_1, nil, var_2_2, nil, "on_critical_shot", nil)
 
-	self._is_critical_strike = is_critical_strike
+	arg_2_0._is_critical_strike = var_2_1
 end
 
-ActionStaff.client_owner_post_update = function (self, dt, t, world, can_damage)
-	if self.state == "waiting_to_shoot" and t >= self.time_to_shoot then
-		self.state = "shooting"
+function ActionStaff.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	if arg_3_0.state == "waiting_to_shoot" and arg_3_2 >= arg_3_0.time_to_shoot then
+		arg_3_0.state = "shooting"
 	end
 
-	if self.state == "shooting" then
-		self:fire()
+	if arg_3_0.state == "shooting" then
+		arg_3_0:fire()
 
-		self.state = "shot"
-	end
-end
-
-ActionStaff.finish = function (self, reason)
-	local hud_extension = ScriptUnit.has_extension(self.owner_unit, "hud_system")
-
-	if hud_extension then
-		hud_extension.show_critical_indication = false
+		arg_3_0.state = "shot"
 	end
 end
 
-ActionStaff.fire = function (self, reason)
-	local current_action = self.current_action
-	local owner_unit = self.owner_unit
-	local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
-	local position, rotation = first_person_extension:get_projectile_start_position_rotation()
-	local spread_extension = self.spread_extension
+function ActionStaff.finish(arg_4_0, arg_4_1)
+	local var_4_0 = ScriptUnit.has_extension(arg_4_0.owner_unit, "hud_system")
 
-	if spread_extension then
-		rotation = spread_extension:get_randomised_spread(rotation)
+	if var_4_0 then
+		var_4_0.show_critical_indication = false
+	end
+end
 
-		spread_extension:set_shooting()
+function ActionStaff.fire(arg_5_0, arg_5_1)
+	local var_5_0 = arg_5_0.current_action
+	local var_5_1 = arg_5_0.owner_unit
+	local var_5_2, var_5_3 = ScriptUnit.extension(var_5_1, "first_person_system"):get_projectile_start_position_rotation()
+	local var_5_4 = arg_5_0.spread_extension
+
+	if var_5_4 then
+		var_5_3 = var_5_4:get_randomised_spread(var_5_3)
+
+		var_5_4:set_shooting()
 	end
 
-	local angle = ActionUtils.pitch_from_rotation(rotation)
-	local speed = current_action.speed
-	local target_vector = Vector3.normalize(Vector3.flat(Quaternion.forward(rotation)))
-	local lookup_data = current_action.lookup_data
+	local var_5_5 = ActionUtils.pitch_from_rotation(var_5_3)
+	local var_5_6 = var_5_0.speed
+	local var_5_7 = Vector3.normalize(Vector3.flat(Quaternion.forward(var_5_3)))
+	local var_5_8 = var_5_0.lookup_data
 
-	ActionUtils.spawn_player_projectile(owner_unit, position, rotation, 0, angle, target_vector, speed, self.item_name, lookup_data.item_template_name, lookup_data.action_name, lookup_data.sub_action_name, self._is_critical_strike, self.power_level)
+	ActionUtils.spawn_player_projectile(var_5_1, var_5_2, var_5_3, 0, var_5_5, var_5_7, var_5_6, arg_5_0.item_name, var_5_8.item_template_name, var_5_8.action_name, var_5_8.sub_action_name, arg_5_0._is_critical_strike, arg_5_0.power_level)
 
-	if self.ammo_extension then
-		local ammo_usage = current_action.ammo_usage
+	if arg_5_0.ammo_extension then
+		local var_5_9 = var_5_0.ammo_usage
 
-		self.ammo_extension:use_ammo(ammo_usage)
+		arg_5_0.ammo_extension:use_ammo(var_5_9)
 	end
 
-	local overcharge_type = current_action.overcharge_type
+	local var_5_10 = var_5_0.overcharge_type
 
-	if overcharge_type then
-		local overcharge_amount = PlayerUnitStatusSettings.overcharge_values[overcharge_type]
+	if var_5_10 then
+		local var_5_11 = PlayerUnitStatusSettings.overcharge_values[var_5_10]
 
-		self.overcharge_extension:add_charge(overcharge_amount)
+		arg_5_0.overcharge_extension:add_charge(var_5_11)
 	end
 
-	if self.ammo_extension and self.ammo_extension:can_reload() then
-		local play_reload_animation = true
+	if arg_5_0.ammo_extension and arg_5_0.ammo_extension:can_reload() then
+		local var_5_12 = true
 
-		self.ammo_extension:start_reload(play_reload_animation)
+		arg_5_0.ammo_extension:start_reload(var_5_12)
 	end
 
-	local fire_sound_event = current_action.fire_sound_event
+	local var_5_13 = var_5_0.fire_sound_event
 
-	if fire_sound_event then
-		WwiseUtils.trigger_unit_event(self.world, fire_sound_event, self.weapon_unit)
+	if var_5_13 then
+		WwiseUtils.trigger_unit_event(arg_5_0.world, var_5_13, arg_5_0.weapon_unit)
 	end
 end

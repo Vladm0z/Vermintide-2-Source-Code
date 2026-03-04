@@ -1,81 +1,79 @@
-﻿-- chunkname: @scripts/ui/hud_ui/overcharge_bar_ui_definitions.lua
+-- chunkname: @scripts/ui/hud_ui/overcharge_bar_ui_definitions.lua
 
-local DEFAULT_BAR_SIZE = {
+local var_0_0 = {
 	250,
-	16,
+	16
 }
-local DEFAULT_DARK_PACT_BAR_SIZE = {
+local var_0_1 = {
 	250,
-	70,
+	70
 }
-local scenegraph_definition = {
+local var_0_2 = {
 	screen = {
 		scale = "fit",
 		position = {
 			0,
 			0,
-			UILayer.hud_inventory,
+			UILayer.hud_inventory
 		},
 		size = {
 			1920,
-			1080,
-		},
+			1080
+		}
 	},
 	screen_bottom_pivot_parent = {
 		parent = "screen",
 		position = {
 			0,
 			0,
-			0,
+			0
 		},
 		size = {
 			0,
-			0,
-		},
+			0
+		}
 	},
 	screen_bottom_pivot = {
 		parent = "screen_bottom_pivot_parent",
 		position = {
 			0,
 			0,
-			1,
+			1
 		},
 		size = {
 			0,
-			0,
-		},
+			0
+		}
 	},
 	charge_bar = {
-		horizontal_alignment = "center",
-		parent = "screen_bottom_pivot",
 		vertical_alignment = "center",
-		size = DEFAULT_BAR_SIZE,
+		parent = "screen_bottom_pivot",
+		horizontal_alignment = "center",
+		size = var_0_0,
 		position = {
 			0,
 			-220,
-			1,
-		},
+			1
+		}
 	},
 	charge_bar_dark_pact = {
-		horizontal_alignment = "center",
-		parent = "screen_bottom_pivot",
 		vertical_alignment = "center",
-		size = DEFAULT_DARK_PACT_BAR_SIZE,
+		parent = "screen_bottom_pivot",
+		horizontal_alignment = "center",
+		size = var_0_1,
 		position = {
 			0,
 			-120,
-			1,
-		},
-	},
+			1
+		}
+	}
 }
-local frame_settings = UIFrameSettings.frame_outer_glow_01
-local frame_corner = frame_settings.texture_sizes.corner
-local frame_width = frame_corner[1]
-local widget_definitions = {}
+local var_0_3 = UIFrameSettings.frame_outer_glow_01.texture_sizes.corner[1]
+local var_0_4 = {}
 
 return {
-	scenegraph_definition = scenegraph_definition,
-	widget_definitions = widget_definitions,
-	DEFAULT_BAR_SIZE = DEFAULT_BAR_SIZE,
-	DEFAULT_DARK_PACT_BAR_SIZE = DEFAULT_DARK_PACT_BAR_SIZE,
+	scenegraph_definition = var_0_2,
+	widget_definitions = var_0_4,
+	DEFAULT_BAR_SIZE = var_0_0,
+	DEFAULT_DARK_PACT_BAR_SIZE = var_0_1
 }

@@ -1,53 +1,49 @@
-﻿-- chunkname: @scripts/managers/system_dialog/system_dialog_manager.lua
+-- chunkname: @scripts/managers/system_dialog/system_dialog_manager.lua
 
 SystemDialogManager = class(SystemDialogManager)
 
-local function dprint(...)
+local function var_0_0(...)
 	print("[SystemDialogManager]", ...)
 end
 
-SystemDialogManager.init = function (self)
-	self._dialogs = {}
-	self._virtual_keyboards = {}
-	self._virtual_keyboard_results = {}
-	self._virtual_keyboard_index = 0
+function SystemDialogManager.init(arg_2_0)
+	arg_2_0._dialogs = {}
+	arg_2_0._virtual_keyboards = {}
+	arg_2_0._virtual_keyboard_results = {}
+	arg_2_0._virtual_keyboard_index = 0
 end
 
-SystemDialogManager.destroy = function (self)
+function SystemDialogManager.destroy(arg_3_0)
 	return
 end
 
-SystemDialogManager.update = function (self, dt)
-	self:_handle_dialogs()
+function SystemDialogManager.update(arg_4_0, arg_4_1)
+	arg_4_0:_handle_dialogs()
 end
 
-SystemDialogManager.check_status = function (self, dialog_instance)
-	local data
+function SystemDialogManager.check_status(arg_5_0, arg_5_1)
+	local var_5_0
 
-	if #self._dialogs > 0 then
-		data = self._dialogs[1]
+	if #arg_5_0._dialogs > 0 then
+		var_5_0 = arg_5_0._dialogs[1]
 	end
 
-	local status
+	local var_5_1
 
-	if data then
-		status = self:_get_status(dialog_instance)
+	if var_5_0 then
+		var_5_1 = arg_5_0:_get_status(arg_5_1)
 	end
 
-	return status
+	return var_5_1
 end
 
-SystemDialogManager._get_status = function (self, dialog_instance)
-	local status = dialog_instance.update()
-
-	return status
+function SystemDialogManager._get_status(arg_6_0, arg_6_1)
+	return (arg_6_1.update())
 end
 
-SystemDialogManager._initialize = function (self, dialog_instance)
-	local result = dialog_instance.initialize()
-
-	if result ~= PS4.SCE_OK then
-		dprint("Failed to initialize " .. dialog_instance._name)
+function SystemDialogManager._initialize(arg_7_0, arg_7_1)
+	if arg_7_1.initialize() ~= PS4.SCE_OK then
+		var_0_0("Failed to initialize " .. arg_7_1._name)
 
 		return
 	end
@@ -55,11 +51,9 @@ SystemDialogManager._initialize = function (self, dialog_instance)
 	return true
 end
 
-SystemDialogManager._terminate = function (self, dialog_instance)
-	local result = dialog_instance.terminate()
-
-	if result ~= PS4.SCE_OK then
-		dprint("Failed to terminate " .. dialog_instance._name)
+function SystemDialogManager._terminate(arg_8_0, arg_8_1)
+	if arg_8_1.terminate() ~= PS4.SCE_OK then
+		var_0_0("Failed to terminate " .. arg_8_1._name)
 
 		return
 	end
@@ -67,203 +61,200 @@ SystemDialogManager._terminate = function (self, dialog_instance)
 	return true
 end
 
-SystemDialogManager._handle_dialogs = function (self)
-	local data
+function SystemDialogManager._handle_dialogs(arg_9_0)
+	local var_9_0
 
-	if #self._dialogs > 0 then
-		data = self._dialogs[1]
+	if #arg_9_0._dialogs > 0 then
+		var_9_0 = arg_9_0._dialogs[1]
 	end
 
-	if data then
-		local dialog_instance = data.dialog_instance
-		local status = self:_get_status(dialog_instance)
+	if var_9_0 then
+		local var_9_1 = var_9_0.dialog_instance
+		local var_9_2 = arg_9_0:_get_status(var_9_1)
 
-		self:_abort_virtual_keyboard()
+		arg_9_0:_abort_virtual_keyboard()
 
-		if status == dialog_instance.NONE then
-			self:_initialize(dialog_instance)
-		elseif status == dialog_instance.INITIALIZED then
-			local result = data.open(data)
+		if var_9_2 == var_9_1.NONE then
+			arg_9_0:_initialize(var_9_1)
+		elseif var_9_2 == var_9_1.INITIALIZED then
+			local var_9_3 = var_9_0.open(var_9_0)
 
-			if result then
-				if result == PS4.SCE_OK then
-					dprint("Opened dialog")
+			if var_9_3 then
+				if var_9_3 == PS4.SCE_OK then
+					var_0_0("Opened dialog")
 				else
-					dprint("Failed to open dialog")
+					var_0_0("Failed to open dialog")
 				end
 			end
-		elseif status == dialog_instance.RUNNING then
-			-- Nothing
-		elseif status == dialog_instance.FINISHED then
-			if data.callback then
-				data.callback(status)
+		elseif var_9_2 == var_9_1.RUNNING then
+			-- block empty
+		elseif var_9_2 == var_9_1.FINISHED then
+			if var_9_0.callback then
+				var_9_0.callback(var_9_2)
 			end
 
-			if self:_terminate(dialog_instance) then
-				table.remove(self._dialogs, 1)
+			if arg_9_0:_terminate(var_9_1) then
+				table.remove(arg_9_0._dialogs, 1)
 			end
 		end
 	end
 
-	self:_handle_virtual_keyboards()
+	arg_9_0:_handle_virtual_keyboards()
 end
 
-SystemDialogManager._handle_virtual_keyboards = function (self)
-	local current_virtual_keyboard = self._virtual_keyboards[1]
+function SystemDialogManager._handle_virtual_keyboards(arg_10_0)
+	local var_10_0 = arg_10_0._virtual_keyboards[1]
 
-	if current_virtual_keyboard then
-		local activated = current_virtual_keyboard.activated
-
-		if activated then
+	if var_10_0 then
+		if var_10_0.activated then
 			if PS4ImeDialog.is_finished() then
-				local result, text = PS4ImeDialog.close()
-				local aborted = current_virtual_keyboard.aborted
+				local var_10_1, var_10_2 = PS4ImeDialog.close()
 
-				if aborted then
-					current_virtual_keyboard.aborted = nil
-					current_virtual_keyboard.activated = false
+				if var_10_0.aborted then
+					var_10_0.aborted = nil
+					var_10_0.activated = false
 				else
-					local index = current_virtual_keyboard.index
-					local data = self._virtual_keyboard_results[index]
+					local var_10_3 = var_10_0.index
+					local var_10_4 = arg_10_0._virtual_keyboard_results[var_10_3]
 
-					if data then
-						data.text = result == PS4ImeDialog.END_STATUS_OK and text or current_virtual_keyboard.text
-						data.done = true
-						data.success = result == PS4ImeDialog.END_STATUS_OK
+					if var_10_4 then
+						var_10_4.text = var_10_1 == PS4ImeDialog.END_STATUS_OK and var_10_2 or var_10_0.text
+						var_10_4.done = true
+						var_10_4.success = var_10_1 == PS4ImeDialog.END_STATUS_OK
 					end
 
-					table.remove(self._virtual_keyboards, 1)
+					table.remove(arg_10_0._virtual_keyboards, 1)
 				end
 			end
-		elseif not Managers.account:user_detached() and not self:has_open_dialogs() then
-			table.dump(current_virtual_keyboard, "Virtual Keyboard", 3)
-			PS4ImeDialog.show(current_virtual_keyboard)
+		elseif not Managers.account:user_detached() and not arg_10_0:has_open_dialogs() then
+			table.dump(var_10_0, "Virtual Keyboard", 3)
+			PS4ImeDialog.show(var_10_0)
 
-			current_virtual_keyboard.activated = true
+			var_10_0.activated = true
 		end
 	end
 end
 
-SystemDialogManager._abort_virtual_keyboard = function (self)
-	local current_virtual_keyboard = self._virtual_keyboards[1]
+function SystemDialogManager._abort_virtual_keyboard(arg_11_0)
+	local var_11_0 = arg_11_0._virtual_keyboards[1]
 
-	if current_virtual_keyboard and current_virtual_keyboard.activated then
+	if var_11_0 and var_11_0.activated then
 		if PS4ImeDialog.is_showing() then
 			PS4ImeDialog.abort()
 		end
 
-		current_virtual_keyboard.aborted = true
+		var_11_0.aborted = true
 	end
 end
 
-SystemDialogManager.open_system_dialog = function (self, message, user_id)
-	local function open(data)
-		local dialog_instance = data.dialog_instance
+function SystemDialogManager.open_system_dialog(arg_12_0, arg_12_1, arg_12_2)
+	local function var_12_0(arg_13_0)
+		local var_13_0 = arg_13_0.dialog_instance
 
-		dprint("open_system_dialog", unpack(data.params))
+		var_0_0("open_system_dialog", unpack(arg_13_0.params))
 
-		return dialog_instance.open(unpack(data.params))
+		return var_13_0.open(unpack(arg_13_0.params))
 	end
 
-	local params = {
-		message,
-		user_id,
+	local var_12_1 = {
+		arg_12_1,
+		arg_12_2
 	}
 
-	self._dialogs[#self._dialogs + 1] = {
+	arg_12_0._dialogs[#arg_12_0._dialogs + 1] = {
 		dialog_instance = MsgDialog,
-		params = params,
-		open = open,
+		params = var_12_1,
+		open = var_12_0
 	}
 end
 
-SystemDialogManager.open_save_dialog = function (self, required_blocks)
-	local function open(data)
-		local dialog_instance = data.dialog_instance
+function SystemDialogManager.open_save_dialog(arg_14_0, arg_14_1)
+	local function var_14_0(arg_15_0)
+		local var_15_0 = arg_15_0.dialog_instance
 
-		dprint("open_save_dialog", data.required_blocks)
+		var_0_0("open_save_dialog", arg_15_0.required_blocks)
 
-		return dialog_instance.open(data.required_blocks)
+		return var_15_0.open(arg_15_0.required_blocks)
 	end
 
-	self._dialogs[#self._dialogs + 1] = {
+	arg_14_0._dialogs[#arg_14_0._dialogs + 1] = {
 		dialog_instance = SaveSystemDialog,
-		required_blocks = required_blocks,
-		open = open,
+		required_blocks = arg_14_1,
+		open = var_14_0
 	}
 end
 
-SystemDialogManager.open_commerce_dialog = function (self, mode, user_id, targets)
-	local function open(data)
-		local dialog_instance = data.dialog_instance
-		local targets = data.targets
+function SystemDialogManager.open_commerce_dialog(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+	local function var_16_0(arg_17_0)
+		local var_17_0 = arg_17_0.dialog_instance
+		local var_17_1 = arg_17_0.targets
 
-		dprint("open_commerce_dialog", mode, user_id, targets and unpack(targets))
+		var_0_0("open_commerce_dialog", arg_16_1, arg_16_2, var_17_1 and unpack(var_17_1))
 
-		return dialog_instance.open2(data.mode, data.user_id, targets and unpack(targets))
+		return var_17_0.open2(arg_17_0.mode, arg_17_0.user_id, var_17_1 and unpack(var_17_1))
 	end
 
-	self._dialogs[#self._dialogs + 1] = {
+	arg_16_0._dialogs[#arg_16_0._dialogs + 1] = {
 		dialog_instance = NpCommerceDialog,
-		mode = mode,
-		user_id = user_id,
-		targets = targets,
-		open = open,
+		mode = arg_16_1,
+		user_id = arg_16_2,
+		targets = arg_16_3,
+		open = var_16_0
 	}
 end
 
-SystemDialogManager.open_error_dialog = function (self, error_code, callback)
-	local function open(data)
-		local dialog_instance = data.dialog_instance
+function SystemDialogManager.open_error_dialog(arg_18_0, arg_18_1, arg_18_2)
+	local function var_18_0(arg_19_0)
+		local var_19_0 = arg_19_0.dialog_instance
 
-		dprint("open_error_dialog", data.error_code)
+		var_0_0("open_error_dialog", arg_19_0.error_code)
 
-		return dialog_instance.open(data.error_code)
+		return var_19_0.open(arg_19_0.error_code)
 	end
 
-	self._dialogs[#self._dialogs + 1] = {
+	arg_18_0._dialogs[#arg_18_0._dialogs + 1] = {
 		dialog_instance = ErrorDialog,
-		error_code = error_code,
-		open = open,
-		callback = callback,
+		error_code = arg_18_1,
+		open = var_18_0,
+		callback = arg_18_2
 	}
 end
 
-SystemDialogManager.open_virtual_keyboard = function (self, user_id, optional_title, optional_prefilled_text, optional_position, optional_max_length)
-	fassert(user_id, "[SystemDialogManager] You need to provide a user_id")
+function SystemDialogManager.open_virtual_keyboard(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+	fassert(arg_20_1, "[SystemDialogManager] You need to provide a user_id")
 
-	self._virtual_keyboard_index = self._virtual_keyboard_index + 1
-	self._virtual_keyboards[#self._virtual_keyboards + 1] = {
+	arg_20_0._virtual_keyboard_index = arg_20_0._virtual_keyboard_index + 1
+	arg_20_0._virtual_keyboards[#arg_20_0._virtual_keyboards + 1] = {
 		activated = false,
-		user_id = user_id,
-		title = optional_title,
-		text = optional_prefilled_text,
-		x = optional_position and optional_position[1],
-		y = optional_position and optional_position[2],
-		max_length = optional_max_length,
-		index = self._virtual_keyboard_index,
+		user_id = arg_20_1,
+		title = arg_20_2,
+		text = arg_20_3,
+		x = arg_20_4 and arg_20_4[1],
+		y = arg_20_4 and arg_20_4[2],
+		max_length = arg_20_5,
+		index = arg_20_0._virtual_keyboard_index
 	}
-	self._virtual_keyboard_results[self._virtual_keyboard_index] = {
-		done = false,
+	arg_20_0._virtual_keyboard_results[arg_20_0._virtual_keyboard_index] = {
 		success = false,
-		text = optional_prefilled_text or "",
+		done = false,
+		text = arg_20_3 or ""
 	}
 
-	return self._virtual_keyboard_index
+	return arg_20_0._virtual_keyboard_index
 end
 
-SystemDialogManager.poll_virtual_keyboard = function (self, index)
-	local data = self._virtual_keyboard_results[index]
+function SystemDialogManager.poll_virtual_keyboard(arg_21_0, arg_21_1)
+	local var_21_0 = arg_21_0._virtual_keyboard_results[arg_21_1]
 
-	if data and data.done then
-		self._virtual_keyboard_results[index] = nil
+	if var_21_0 and var_21_0.done then
+		arg_21_0._virtual_keyboard_results[arg_21_1] = nil
 
-		return data.done, data.success, data.text
+		return var_21_0.done, var_21_0.success, var_21_0.text
 	end
 
 	return false
 end
 
-SystemDialogManager.has_open_dialogs = function (self)
-	return #self._dialogs > 0
+function SystemDialogManager.has_open_dialogs(arg_22_0)
+	return #arg_22_0._dialogs > 0
 end

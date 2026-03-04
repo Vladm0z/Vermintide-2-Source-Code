@@ -1,1311 +1,1239 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/player_unit_health_extension.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/player_unit_health_extension.lua
 
-local buff_perks = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local var_0_0 = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
 
 PlayerUnitHealthExtension = class(PlayerUnitHealthExtension, GenericHealthExtension)
 
-PlayerUnitHealthExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	PlayerUnitHealthExtension.super.init(self, extension_init_context, unit, extension_init_data)
+function PlayerUnitHealthExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	PlayerUnitHealthExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
-	local player = extension_init_data.player
-	local is_local_player = player.local_player
-	local is_bot = not player:is_player_controlled()
+	local var_1_0 = arg_1_3.player
+	local var_1_1 = var_1_0.local_player
+	local var_1_2 = not var_1_0:is_player_controlled()
 
-	self.player = player
-	self.is_bot = is_bot
-	self.is_local_player = is_local_player
-	self.network_manager = Managers.state.network
-	self.game = self.network_manager:game()
-	self.unit_storage = extension_init_context.unit_storage
-	self._profile_index = extension_init_data.profile_index
-	self._career_index = extension_init_data.career_index
-	self._shield_amount = 0
-	self._shield_duration_left = 0
-	self._end_reason = ""
-	self.wounded_degen_timer = 0
-	self._is_husk = player.remote or player.bot_player
+	arg_1_0.player = var_1_0
+	arg_1_0.is_bot = var_1_2
+	arg_1_0.is_local_player = var_1_1
+	arg_1_0.network_manager = Managers.state.network
+	arg_1_0.game = arg_1_0.network_manager:game()
+	arg_1_0.unit_storage = arg_1_1.unit_storage
+	arg_1_0._profile_index = arg_1_3.profile_index
+	arg_1_0._career_index = arg_1_3.career_index
+	arg_1_0._shield_amount = 0
+	arg_1_0._shield_duration_left = 0
+	arg_1_0._end_reason = ""
+	arg_1_0.wounded_degen_timer = 0
+	arg_1_0._is_husk = var_1_0.remote or var_1_0.bot_player
 
-	self:update_options()
+	arg_1_0:update_options()
 
-	if self.is_server and not is_local_player and not is_bot then
-		self:create_health_game_object()
+	if arg_1_0.is_server and not var_1_1 and not var_1_2 then
+		arg_1_0:create_health_game_object()
 	end
 
-	self._display_data = {}
-	self._streak_debug_duration = -10
-	self._streak_debug_damage = 0
+	arg_1_0._display_data = {}
+	arg_1_0._streak_debug_duration = -10
+	arg_1_0._streak_debug_damage = 0
 
-	Managers.state.event:register(self, "on_game_options_changed", "update_options")
+	Managers.state.event:register(arg_1_0, "on_game_options_changed", "update_options")
 end
 
-PlayerUnitHealthExtension.update_options = function (self)
-	local game_mode_settings = Managers.state.game_mode:settings()
+function PlayerUnitHealthExtension.update_options(arg_2_0)
+	local var_2_0 = Managers.state.game_mode:settings()
 
-	self._use_floating_damage_numbers = game_mode_settings.use_floating_damage_numbers and not DEDICATED_SERVER
+	arg_2_0._use_floating_damage_numbers = var_2_0.use_floating_damage_numbers and not DEDICATED_SERVER
 
-	local setting = Application.user_setting("vs_floating_damage")
+	local var_2_1 = Application.user_setting("vs_floating_damage")
 
-	self._show_floating_damage = setting == "floating" or setting == "both"
-	self._show_floating_streak_damage = setting == "streak" or setting == "both"
-	self._min_streak_font_size = game_mode_settings.min_streak_font_size or 30
-	self._max_streak_font_size = game_mode_settings.max_streak_font_size or 60
+	arg_2_0._show_floating_damage = var_2_1 == "floating" or var_2_1 == "both"
+	arg_2_0._show_floating_streak_damage = var_2_1 == "streak" or var_2_1 == "both"
+	arg_2_0._min_streak_font_size = var_2_0.min_streak_font_size or 30
+	arg_2_0._max_streak_font_size = var_2_0.max_streak_font_size or 60
 
-	local difficulty_settings = Managers.state.difficulty:get_difficulty_settings()
+	local var_2_2 = Managers.state.difficulty:get_difficulty_settings()
 
-	self._temp_hp_degen_delay_when_wounded = difficulty_settings.no_wound_dependent_temp_hp_degen
-	self._percent_health_on_revive = difficulty_settings.percent_health_on_revive or 0
-	self._percent_temp_health_on_revive = difficulty_settings.percent_temp_health_on_revive or 0.5
+	arg_2_0._temp_hp_degen_delay_when_wounded = var_2_2.no_wound_dependent_temp_hp_degen
+	arg_2_0._percent_health_on_revive = var_2_2.percent_health_on_revive or 0
+	arg_2_0._percent_temp_health_on_revive = var_2_2.percent_temp_health_on_revive or 0.5
 end
 
-PlayerUnitHealthExtension.hot_join_sync = function (self, sender)
+function PlayerUnitHealthExtension.hot_join_sync(arg_3_0, arg_3_1)
 	return
 end
 
-PlayerUnitHealthExtension.cb_game_session_disconnect = function (self)
-	self.health_game_object_id = nil
+function PlayerUnitHealthExtension.cb_game_session_disconnect(arg_4_0)
+	arg_4_0.health_game_object_id = nil
 end
 
-PlayerUnitHealthExtension.set_health_game_object_id = function (self, go_id)
-	self.health_game_object_id = go_id
+function PlayerUnitHealthExtension.set_health_game_object_id(arg_5_0, arg_5_1)
+	arg_5_0.health_game_object_id = arg_5_1
 end
 
-PlayerUnitHealthExtension.create_health_game_object = function (self)
-	fassert(self.is_server, "Trying to create health game object on a client")
+function PlayerUnitHealthExtension.create_health_game_object(arg_6_0)
+	fassert(arg_6_0.is_server, "Trying to create health game object on a client")
 
-	local unit = self.unit
-	local difficulty_manager = Managers.state.difficulty
-	local difficulty_settings = difficulty_manager:get_difficulty_settings()
-	local max_health_alive = self:_get_base_max_health()
-	local game_object_id = self.network_manager:unit_game_object_id(unit)
-	local num_wounds = difficulty_settings.wounds
-	local mechanism_ok, num_wounds_override, custom_settings_enabled = Managers.mechanism:mechanism_try_call("get_setting", "wounds_amount")
+	local var_6_0 = arg_6_0.unit
+	local var_6_1 = Managers.state.difficulty:get_difficulty_settings()
+	local var_6_2 = arg_6_0:_get_base_max_health()
+	local var_6_3 = arg_6_0.network_manager:unit_game_object_id(var_6_0)
+	local var_6_4 = var_6_1.wounds
+	local var_6_5, var_6_6, var_6_7 = Managers.mechanism:mechanism_try_call("get_setting", "wounds_amount")
 
-	if mechanism_ok and custom_settings_enabled then
-		num_wounds = num_wounds_override + 1
+	if var_6_5 and var_6_7 then
+		var_6_4 = var_6_6 + 1
 	end
 
-	local game_object_data_table = {
+	local var_6_8 = {
 		current_temporary_health = 0,
 		go_type = NetworkLookup.go_types.player_unit_health,
-		unit_game_object_id = game_object_id,
-		current_health = max_health_alive,
-		max_health = max_health_alive,
-		uncursed_max_health = max_health_alive,
-		current_wounds = num_wounds,
-		max_wounds = num_wounds,
+		unit_game_object_id = var_6_3,
+		current_health = var_6_2,
+		max_health = var_6_2,
+		uncursed_max_health = var_6_2,
+		current_wounds = var_6_4,
+		max_wounds = var_6_4
 	}
-	local callback = callback(self, "cb_game_session_disconnect")
-	local health_game_object_id = self.network_manager:create_game_object("player_unit_health", game_object_data_table, callback)
+	local var_6_9 = callback(arg_6_0, "cb_game_session_disconnect")
 
-	self.health_game_object_id = health_game_object_id
-	self.previous_max_health = max_health_alive
-	self.previous_state = self.state
+	arg_6_0.health_game_object_id = arg_6_0.network_manager:create_game_object("player_unit_health", var_6_8, var_6_9)
+	arg_6_0.previous_max_health = var_6_2
+	arg_6_0.previous_state = arg_6_0.state
 end
 
-PlayerUnitHealthExtension.sync_health_state = function (self)
-	local player = self.player
-	local status = Managers.party:get_player_status(player:network_id(), player:local_player_id())
-	local data = status.game_mode_data
-	local health_state = data.health_state
-	local health_percentage = data.health_percentage
-	local temporary_health_percentage = data.temporary_health_percentage
-	local melee_ammo = data.ammo.slot_melee
-	local ranged_ammo = data.ammo.slot_ranged
+function PlayerUnitHealthExtension.sync_health_state(arg_7_0)
+	local var_7_0 = arg_7_0.player
+	local var_7_1 = Managers.party:get_player_status(var_7_0:network_id(), var_7_0:local_player_id()).game_mode_data
+	local var_7_2 = var_7_1.health_state
+	local var_7_3 = var_7_1.health_percentage
+	local var_7_4 = var_7_1.temporary_health_percentage
+	local var_7_5 = var_7_1.ammo.slot_melee
+	local var_7_6 = var_7_1.ammo.slot_ranged
 
 	if script_data.network_debug then
-		printf("PlayerUnitHealthExtension:sync_health_state() health_state (%s) health_percentage (%s) temporary_health_percentage (%s) melee slot ammo (%s) ranged slot ammo (%s)", health_state, tostring(health_percentage), tostring(temporary_health_percentage), tostring(melee_ammo), tostring(ranged_ammo))
+		printf("PlayerUnitHealthExtension:sync_health_state() health_state (%s) health_percentage (%s) temporary_health_percentage (%s) melee slot ammo (%s) ranged slot ammo (%s)", var_7_2, tostring(var_7_3), tostring(var_7_4), tostring(var_7_5), tostring(var_7_6))
 	end
 
-	if health_state == nil then
-		print("[PlayerUnitHealthExtension] Spawn manager returned nil value for spawn state, killing character. player:", player)
-		table.dump(player)
+	if var_7_2 == nil then
+		print("[PlayerUnitHealthExtension] Spawn manager returned nil value for spawn state, killing character. player:", var_7_0)
+		table.dump(var_7_0)
 	else
-		self.set_health_percentage = health_percentage
-		self.set_temporary_health_percentage = temporary_health_percentage
+		arg_7_0.set_health_percentage = var_7_3
+		arg_7_0.set_temporary_health_percentage = var_7_4
 
-		if health_state == "knocked_down" then
-			self.set_knocked_down = true
+		if var_7_2 == "knocked_down" then
+			arg_7_0.set_knocked_down = true
 		end
 	end
 end
 
-PlayerUnitHealthExtension._get_base_max_health = function (self)
-	local profile_index = self._profile_index
-	local career_index = self._career_index
-	local current_hero = SPProfiles[profile_index]
-	local career_data = current_hero.careers[career_index]
-	local attributes = career_data.attributes
-	local max_hp = attributes.max_hp
-	local setting_name = career_data.name .. "_hp"
-	local mechanism_ok, hp_override, custom_settings_enabled = Managers.mechanism:mechanism_try_call("get_custom_game_setting", setting_name)
+function PlayerUnitHealthExtension._get_base_max_health(arg_8_0)
+	local var_8_0 = arg_8_0._profile_index
+	local var_8_1 = arg_8_0._career_index
+	local var_8_2 = SPProfiles[var_8_0].careers[var_8_1]
+	local var_8_3 = var_8_2.attributes.max_hp
+	local var_8_4 = var_8_2.name .. "_hp"
+	local var_8_5, var_8_6, var_8_7 = Managers.mechanism:mechanism_try_call("get_custom_game_setting", var_8_4)
 
-	if mechanism_ok and custom_settings_enabled and hp_override then
-		return hp_override
+	if var_8_5 and var_8_7 and var_8_6 then
+		return var_8_6
 	end
 
-	return max_hp
+	return var_8_3
 end
 
-PlayerUnitHealthExtension._calculate_buffed_max_health = function (self)
-	local buff_extension = self.buff_extension
-	local health_state = self.state
-	local max_health
+function PlayerUnitHealthExtension._calculate_buffed_max_health(arg_9_0)
+	local var_9_0 = arg_9_0.buff_extension
+	local var_9_1 = arg_9_0.state
+	local var_9_2
 
-	if health_state == "alive" then
-		local max_health_alive = self:_get_base_max_health()
+	if var_9_1 == "alive" then
+		local var_9_3 = arg_9_0:_get_base_max_health()
 
-		max_health = buff_extension:apply_buffs_to_value(max_health_alive, "max_health_alive")
+		var_9_2 = var_9_0:apply_buffs_to_value(var_9_3, "max_health_alive")
 	else
-		local game_mode_settings = Managers.state.game_mode:settings()
-		local max_health_kd = game_mode_settings.max_health_kd
+		local var_9_4 = Managers.state.game_mode:settings().max_health_kd
 
-		max_health = buff_extension:apply_buffs_to_value(max_health_kd, "max_health_kd")
+		var_9_2 = var_9_0:apply_buffs_to_value(var_9_4, "max_health_kd")
 	end
 
-	max_health = buff_extension:apply_buffs_to_value(max_health, "max_health")
-
-	return max_health
+	return (var_9_0:apply_buffs_to_value(var_9_2, "max_health"))
 end
 
-PlayerUnitHealthExtension.get_buffed_max_health = function (self)
-	local max_health = self:_calculate_buffed_max_health()
-
-	return max_health
+function PlayerUnitHealthExtension.get_buffed_max_health(arg_10_0)
+	return (arg_10_0:_calculate_buffed_max_health())
 end
 
-PlayerUnitHealthExtension._calculate_max_health = function (self)
-	local buff_extension = self.buff_extension
-	local health_state = self.state
-	local modifier = 1
-	local num_grimoires = buff_extension:num_buff_perk("skaven_grimoire")
-	local grimoire_multiplier = buff_extension:apply_buffs_to_value(PlayerUnitDamageSettings.GRIMOIRE_HEALTH_DEBUFF, "curse_protection")
-	local num_twitch_grimoires = buff_extension:num_buff_perk("twitch_grimoire")
-	local twitch_grimoire_multiplier = buff_extension:apply_buffs_to_value(PlayerUnitDamageSettings.GRIMOIRE_HEALTH_DEBUFF, "curse_protection")
-	local num_slayer_curses = buff_extension:num_buff_perk("slayer_curse")
-	local slayer_curse_multiplier = buff_extension:apply_buffs_to_value(PlayerUnitDamageSettings.SLAYER_CURSE_HEALTH_DEBUFF, "curse_protection")
-	local difficulty_name = Managers.state.difficulty:get_difficulty()
-	local num_mutator_curses = buff_extension:num_buff_perk("mutator_curse")
-	local mutator_curse_multiplier = buff_extension:apply_buffs_to_value(WindSettings.light.curse_settings.value[difficulty_name], "curse_protection")
-	local cursed_health = buff_extension:apply_buffs_to_value(0, "health_curse")
+function PlayerUnitHealthExtension._calculate_max_health(arg_11_0)
+	local var_11_0 = arg_11_0.buff_extension
+	local var_11_1 = arg_11_0.state
+	local var_11_2 = 1
+	local var_11_3 = var_11_0:num_buff_perk("skaven_grimoire")
+	local var_11_4 = var_11_0:apply_buffs_to_value(PlayerUnitDamageSettings.GRIMOIRE_HEALTH_DEBUFF, "curse_protection")
+	local var_11_5 = var_11_0:num_buff_perk("twitch_grimoire")
+	local var_11_6 = var_11_0:apply_buffs_to_value(PlayerUnitDamageSettings.GRIMOIRE_HEALTH_DEBUFF, "curse_protection")
+	local var_11_7 = var_11_0:num_buff_perk("slayer_curse")
+	local var_11_8 = var_11_0:apply_buffs_to_value(PlayerUnitDamageSettings.SLAYER_CURSE_HEALTH_DEBUFF, "curse_protection")
+	local var_11_9 = Managers.state.difficulty:get_difficulty()
+	local var_11_10 = var_11_0:num_buff_perk("mutator_curse")
+	local var_11_11 = var_11_0:apply_buffs_to_value(WindSettings.light.curse_settings.value[var_11_9], "curse_protection")
+	local var_11_12 = var_11_0:apply_buffs_to_value(0, "health_curse")
+	local var_11_13 = var_11_0:apply_buffs_to_value(var_11_12, "curse_protection")
 
-	cursed_health = buff_extension:apply_buffs_to_value(cursed_health, "curse_protection")
-
-	if health_state == "knocked_down" then
-		num_slayer_curses = 0
-		cursed_health = 0
+	if var_11_1 == "knocked_down" then
+		var_11_7 = 0
+		var_11_13 = 0
 	end
 
-	if num_grimoires + num_twitch_grimoires + num_slayer_curses + num_mutator_curses + -cursed_health > 0 then
-		modifier = 1 + num_grimoires * grimoire_multiplier + num_twitch_grimoires * twitch_grimoire_multiplier + num_slayer_curses * slayer_curse_multiplier + num_mutator_curses * mutator_curse_multiplier + cursed_health
+	if var_11_3 + var_11_5 + var_11_7 + var_11_10 + -var_11_13 > 0 then
+		var_11_2 = 1 + var_11_3 * var_11_4 + var_11_5 * var_11_6 + var_11_7 * var_11_8 + var_11_10 * var_11_11 + var_11_13
 	end
 
-	local max_health = self:_calculate_buffed_max_health()
-
-	max_health = max_health * math.max(modifier, 0.01)
-
-	return max_health
+	return arg_11_0:_calculate_buffed_max_health() * math.max(var_11_2, 0.01)
 end
 
-PlayerUnitHealthExtension.extensions_ready = function (self, world, unit)
-	self._world = world
-	self.status_extension = ScriptUnit.extension(unit, "status_system")
-	self.buff_extension = ScriptUnit.extension(unit, "buff_system")
+function PlayerUnitHealthExtension.extensions_ready(arg_12_0, arg_12_1, arg_12_2)
+	arg_12_0._world = arg_12_1
+	arg_12_0.status_extension = ScriptUnit.extension(arg_12_2, "status_system")
+	arg_12_0.buff_extension = ScriptUnit.extension(arg_12_2, "buff_system")
 
 	if not DEDICATED_SERVER then
-		self._outline_extension = ScriptUnit.extension(unit, "outline_system")
+		arg_12_0._outline_extension = ScriptUnit.extension(arg_12_2, "outline_system")
 	end
 
-	if self.is_server and not self.is_bot then
-		self:sync_health_state()
+	if arg_12_0.is_server and not arg_12_0.is_bot then
+		arg_12_0:sync_health_state()
 	end
 end
 
-PlayerUnitHealthExtension.knock_down = function (self, unit)
-	assert(self.is_server, "[PlayerUnitHealthExtension] 'knock_down' is a server only function")
+function PlayerUnitHealthExtension.knock_down(arg_13_0, arg_13_1)
+	assert(arg_13_0.is_server, "[PlayerUnitHealthExtension] 'knock_down' is a server only function")
 
-	self.state = "knocked_down"
+	arg_13_0.state = "knocked_down"
 
-	StatusUtils.set_knocked_down_network(unit, true)
-	StatusUtils.set_wounded_network(unit, false, "knocked_down")
+	StatusUtils.set_knocked_down_network(arg_13_1, true)
+	StatusUtils.set_wounded_network(arg_13_1, false, "knocked_down")
 
-	local recent_damages = self:recent_damages()
-	local attacker_unit = recent_damages[DamageDataIndex.SOURCE_ATTACKER_UNIT] or recent_damages[DamageDataIndex.ATTACKER]
-	local attacker_player = Managers.player:owner(attacker_unit)
+	local var_13_0 = arg_13_0:recent_damages()
+	local var_13_1 = var_13_0[DamageDataIndex.SOURCE_ATTACKER_UNIT] or var_13_0[DamageDataIndex.ATTACKER]
+	local var_13_2 = Managers.player:owner(var_13_1)
 
-	if attacker_player and Managers.mechanism:current_mechanism_name() == "versus" then
-		local stats_id = attacker_player:stats_id()
-		local statistics_db = Managers.player:statistics_db()
-		local horde_ability_system = Managers.state.entity:system("versus_horde_ability_system")
+	if var_13_2 and Managers.mechanism:current_mechanism_name() == "versus" then
+		local var_13_3 = var_13_2:stats_id()
+		local var_13_4 = Managers.player:statistics_db()
 
-		horde_ability_system:server_ability_recharge_boost(attacker_player.peer_id, "hero_downed")
+		Managers.state.entity:system("versus_horde_ability_system"):server_ability_recharge_boost(var_13_2.peer_id, "hero_downed")
 
-		local target_breed = Unit.get_data(unit, "breed")
+		local var_13_5 = Unit.get_data(arg_13_1, "breed")
 
-		statistics_db:increment_stat(stats_id, "vs_badge_knocked_down_target_per_breed", target_breed.name)
+		var_13_4:increment_stat(var_13_3, "vs_badge_knocked_down_target_per_breed", var_13_5.name)
 
-		local side_manager = Managers.state.side
-		local attacker_unit_is_dark_pact = side_manager:versus_is_dark_pact(attacker_unit)
-		local killed_unit_is_hero = side_manager:versus_is_hero(unit)
+		local var_13_6 = Managers.state.side
+		local var_13_7 = var_13_6:versus_is_dark_pact(var_13_1)
+		local var_13_8 = var_13_6:versus_is_hero(arg_13_1)
 
-		if attacker_unit_is_dark_pact and killed_unit_is_hero then
-			local dialogue_input = ScriptUnit.extension_input(attacker_unit, "dialogue_system")
-			local side = side_manager.side_by_unit[unit]
-			local num_heroes_downed = 0
-			local human_and_bot_units = side.PLAYER_AND_BOT_UNITS
+		if var_13_7 and var_13_8 then
+			local var_13_9 = ScriptUnit.extension_input(var_13_1, "dialogue_system")
+			local var_13_10 = var_13_6.side_by_unit[arg_13_1]
+			local var_13_11 = 0
+			local var_13_12 = var_13_10.PLAYER_AND_BOT_UNITS
 
-			for i = 1, #human_and_bot_units do
-				local status_extension = ScriptUnit.has_extension(human_and_bot_units[i], "status_system")
+			for iter_13_0 = 1, #var_13_12 do
+				local var_13_13 = ScriptUnit.has_extension(var_13_12[iter_13_0], "status_system")
 
-				if status_extension and status_extension:is_knocked_down() then
-					num_heroes_downed = num_heroes_downed + 1
+				if var_13_13 and var_13_13:is_knocked_down() then
+					var_13_11 = var_13_11 + 1
 				end
 			end
 
-			if num_heroes_downed >= DialogueSettings.vs_many_heroes_incapacitated_num then
-				dialogue_input:trigger_dialogue_event("vs_many_heroes_incapacitated")
+			if var_13_11 >= DialogueSettings.vs_many_heroes_incapacitated_num then
+				var_13_9:trigger_dialogue_event("vs_many_heroes_incapacitated")
 			else
-				dialogue_input:trigger_dialogue_event("vs_downed_hero")
+				var_13_9:trigger_dialogue_event("vs_downed_hero")
 			end
 		end
 	end
 end
 
-PlayerUnitHealthExtension._revive = function (self, unit, t)
-	self.state = "alive"
+function PlayerUnitHealthExtension._revive(arg_14_0, arg_14_1, arg_14_2)
+	arg_14_0.state = "alive"
 
-	StatusUtils.set_knocked_down_network(unit, false)
-	StatusUtils.set_wounded_network(unit, true, "revived", t)
-	StatusUtils.set_revived_network(unit, false)
+	StatusUtils.set_knocked_down_network(arg_14_1, false)
+	StatusUtils.set_wounded_network(arg_14_1, true, "revived", arg_14_2)
+	StatusUtils.set_revived_network(arg_14_1, false)
 end
 
-PlayerUnitHealthExtension.update = function (self, dt, context, t)
-	local status_extension = self.status_extension
-	local unit = self.unit
+function PlayerUnitHealthExtension.update(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+	local var_15_0 = arg_15_0.status_extension
+	local var_15_1 = arg_15_0.unit
 
-	if self._shield_duration_left > 0 then
-		self._shield_duration_left = self._shield_duration_left - dt
-	elseif not self._end_reason then
-		self:remove_assist_shield("timed_out")
+	if arg_15_0._shield_duration_left > 0 then
+		arg_15_0._shield_duration_left = arg_15_0._shield_duration_left - arg_15_1
+	elseif not arg_15_0._end_reason then
+		arg_15_0:remove_assist_shield("timed_out")
 	end
 
-	if self.is_server then
-		if self.set_knocked_down then
-			if not status_extension:is_knocked_down() then
-				self:knock_down(unit)
+	if arg_15_0.is_server then
+		if arg_15_0.set_knocked_down then
+			if not var_15_0:is_knocked_down() then
+				arg_15_0:knock_down(var_15_1)
 			end
 
-			self.set_knocked_down = false
-		elseif self.state == "alive" then
-			if not self:_is_alive() and not status_extension:is_knocked_down() then
-				self:knock_down(unit)
+			arg_15_0.set_knocked_down = false
+		elseif arg_15_0.state == "alive" then
+			if not arg_15_0:_is_alive() and not var_15_0:is_knocked_down() then
+				arg_15_0:knock_down(var_15_1)
 			end
-		elseif self.state == "knocked_down" and self:_is_alive() and status_extension:is_revived() then
-			self:_revive(unit, t)
+		elseif arg_15_0.state == "knocked_down" and arg_15_0:_is_alive() and var_15_0:is_revived() then
+			arg_15_0:_revive(var_15_1, arg_15_3)
 		end
 
-		local game = self.game
-		local game_object_id = self.health_game_object_id
+		local var_15_2 = arg_15_0.game
+		local var_15_3 = arg_15_0.health_game_object_id
 
-		if game or game_object_id then
-			local max_health = self:_calculate_max_health()
+		if var_15_2 or var_15_3 then
+			local var_15_4 = arg_15_0:_calculate_max_health()
+			local var_15_5 = DamageUtils.networkify_health(var_15_4)
+			local var_15_6 = arg_15_0:_calculate_buffed_max_health()
+			local var_15_7 = DamageUtils.networkify_health(var_15_6)
 
-			max_health = DamageUtils.networkify_health(max_health)
+			GameSession.set_game_object_field(var_15_2, var_15_3, "max_health", var_15_5)
+			GameSession.set_game_object_field(var_15_2, var_15_3, "uncursed_max_health", var_15_7)
 
-			local uncursed_max_health = self:_calculate_buffed_max_health()
+			local var_15_8 = arg_15_0.state
+			local var_15_9 = arg_15_0.previous_state
+			local var_15_10 = arg_15_0.previous_max_health
+			local var_15_11 = GameSession.game_object_field(var_15_2, var_15_3, "current_health")
+			local var_15_12 = GameSession.game_object_field(var_15_2, var_15_3, "current_temporary_health")
 
-			uncursed_max_health = DamageUtils.networkify_health(uncursed_max_health)
+			if var_15_9 and var_15_8 ~= var_15_9 then
+				if var_15_8 == "knocked_down" then
+					var_15_11 = 0
+					var_15_12 = var_15_5
+				elseif var_15_8 == "alive" then
+					local var_15_13 = arg_15_0.buff_extension
+					local var_15_14 = var_15_13 and var_15_13:has_buff_perk("temp_to_permanent_health")
 
-			GameSession.set_game_object_field(game, game_object_id, "max_health", max_health)
-			GameSession.set_game_object_field(game, game_object_id, "uncursed_max_health", uncursed_max_health)
+					var_15_11 = arg_15_0._percent_health_on_revive * var_15_5
+					var_15_12 = arg_15_0._percent_temp_health_on_revive * var_15_5
 
-			local state = self.state
-			local previous_state = self.previous_state
-			local previous_max_health = self.previous_max_health
-			local health = GameSession.game_object_field(game, game_object_id, "current_health")
-			local temporary_health = GameSession.game_object_field(game, game_object_id, "current_temporary_health")
-
-			if previous_state and state ~= previous_state then
-				if state == "knocked_down" then
-					health = 0
-					temporary_health = max_health
-				elseif state == "alive" then
-					local buff_extension = self.buff_extension
-					local temp_to_permanent_health = buff_extension and buff_extension:has_buff_perk("temp_to_permanent_health")
-
-					health = self._percent_health_on_revive * max_health
-					temporary_health = self._percent_temp_health_on_revive * max_health
-
-					if temp_to_permanent_health then
-						health = health + temporary_health
-						temporary_health = 0
+					if var_15_14 then
+						var_15_11 = var_15_11 + var_15_12
+						var_15_12 = 0
 					end
 
-					if buff_extension:has_buff_perk(buff_perks.full_health_revive) then
-						health = max_health
-						temporary_health = 0
+					if var_15_13:has_buff_perk(var_0_0.full_health_revive) then
+						var_15_11 = var_15_5
+						var_15_12 = 0
 					end
 				end
-			elseif max_health ~= previous_max_health then
-				local previous_health_percentage, previous_temporary_health_percentage
+			elseif var_15_5 ~= var_15_10 then
+				local var_15_15
+				local var_15_16
+				local var_15_17
 
-				if previous_max_health == 0 then
-					previous_health_percentage = 0
-					previous_temporary_health_percentage = 0
+				if var_15_10 == 0 then
+					var_15_15 = 0
+					var_15_17 = 0
 				else
-					previous_health_percentage = health / previous_max_health
-					previous_temporary_health_percentage = temporary_health / previous_max_health
+					var_15_15 = var_15_11 / var_15_10
+					var_15_17 = var_15_12 / var_15_10
 				end
 
-				health = max_health * previous_health_percentage
-				temporary_health = max_health * previous_temporary_health_percentage
+				var_15_11 = var_15_5 * var_15_15
+				var_15_12 = var_15_5 * var_15_17
 			end
 
-			local set_health_percentage = self.set_health_percentage
+			local var_15_18 = arg_15_0.set_health_percentage
 
-			if set_health_percentage then
-				health = max_health * set_health_percentage
-				self.set_health_percentage = nil
+			if var_15_18 then
+				var_15_11 = var_15_5 * var_15_18
+				arg_15_0.set_health_percentage = nil
 			end
 
-			local set_temporary_health_percentage = self.set_temporary_health_percentage
+			local var_15_19 = arg_15_0.set_temporary_health_percentage
 
-			if set_temporary_health_percentage then
-				temporary_health = max_health * set_temporary_health_percentage
-				self.set_temporary_health_percentage = nil
+			if var_15_19 then
+				var_15_12 = var_15_5 * var_15_19
+				arg_15_0.set_temporary_health_percentage = nil
 			end
 
-			health = DamageUtils.networkify_health(health)
-			temporary_health = DamageUtils.networkify_health(temporary_health)
+			local var_15_20 = DamageUtils.networkify_health(var_15_11)
+			local var_15_21 = DamageUtils.networkify_health(var_15_12)
 
-			GameSession.set_game_object_field(game, game_object_id, "current_health", health)
-			GameSession.set_game_object_field(game, game_object_id, "current_temporary_health", temporary_health)
+			GameSession.set_game_object_field(var_15_2, var_15_3, "current_health", var_15_20)
+			GameSession.set_game_object_field(var_15_2, var_15_3, "current_temporary_health", var_15_21)
 
-			if t >= self.wounded_degen_timer then
-				local wounded = status_extension:is_wounded()
-				local degen_amount = PlayerUnitStatusSettings.WOUNDED_DEGEN_AMOUNT
-				local degen_delay = PlayerUnitStatusSettings.WOUNDED_DEGEN_DELAY
+			if arg_15_3 >= arg_15_0.wounded_degen_timer then
+				local var_15_22 = var_15_0:is_wounded()
+				local var_15_23 = PlayerUnitStatusSettings.WOUNDED_DEGEN_AMOUNT
+				local var_15_24 = PlayerUnitStatusSettings.WOUNDED_DEGEN_DELAY
 
-				if not wounded then
-					degen_amount, degen_delay = self:health_degen_settings()
+				if not var_15_22 then
+					var_15_23, var_15_24 = arg_15_0:health_degen_settings()
 				end
 
-				if temporary_health > 0 and state == "alive" then
-					local mechanism = Managers.mechanism:current_mechanism_name()
-
-					if mechanism == "versus" then
-						local vs_multiplier = {
-							degen_amount = 1.5,
+				if var_15_21 > 0 and var_15_8 == "alive" then
+					if Managers.mechanism:current_mechanism_name() == "versus" then
+						local var_15_25 = {
 							degen_delay = 0.8,
+							degen_amount = 1.5
 						}
 
-						degen_amount = PlayerUnitStatusSettings.WOUNDED_DEGEN_AMOUNT * vs_multiplier.degen_amount
-						degen_delay = PlayerUnitStatusSettings.WOUNDED_DEGEN_DELAY * vs_multiplier.degen_delay
+						var_15_23 = PlayerUnitStatusSettings.WOUNDED_DEGEN_AMOUNT * var_15_25.degen_amount
+						var_15_24 = PlayerUnitStatusSettings.WOUNDED_DEGEN_DELAY * var_15_25.degen_delay
 					end
 
-					local new_temporary_health = temporary_health - degen_amount
-					local min_temporary_health_left = health <= 0 and 1 or 0
-					local damage = temporary_health - math.max(new_temporary_health, min_temporary_health_left)
+					local var_15_26 = var_15_21 - var_15_23
+					local var_15_27 = var_15_20 <= 0 and 1 or 0
+					local var_15_28 = var_15_21 - math.max(var_15_26, var_15_27)
 
-					if damage > 0 then
-						DamageUtils.add_damage_network(unit, unit, damage, "torso", "temporary_health_degen", nil, Vector3(1, 0, 0), "temporary_health_degen", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
+					if var_15_28 > 0 then
+						DamageUtils.add_damage_network(var_15_1, var_15_1, var_15_28, "torso", "temporary_health_degen", nil, Vector3(1, 0, 0), "temporary_health_degen", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 					end
 				end
 
-				self.wounded_degen_timer = t + degen_delay
+				arg_15_0.wounded_degen_timer = arg_15_3 + var_15_24
 			end
 
-			self.previous_state = state
-			self.previous_max_health = max_health
+			arg_15_0.previous_state = var_15_8
+			arg_15_0.previous_max_health = var_15_5
 
-			if max_health <= 0 then
-				local death_system = Managers.state.entity:system("death_system")
-
-				death_system:forced_kill(unit, "forced")
+			if var_15_5 <= 0 then
+				Managers.state.entity:system("death_system"):forced_kill(var_15_1, "forced")
 			end
 		end
 	end
 end
 
-PlayerUnitHealthExtension._update_outline_color = function (self, t, dt)
-	local local_player = Managers.player:local_player()
+function PlayerUnitHealthExtension._update_outline_color(arg_16_0, arg_16_1, arg_16_2)
+	local var_16_0 = Managers.player:local_player()
 
-	if not local_player then
+	if not var_16_0 then
 		return
 	end
 
-	local peer_id = local_player:network_id()
-	local local_player_id = local_player:local_player_id()
-	local new_outline_color
-	local outline_ext = self._outline_extension
-	local is_disabled = self.status_extension:is_disabled()
-	local current_health_percent = self:current_health_percent()
-	local party = Managers.party:get_party_from_player_id(peer_id, local_player_id)
+	local var_16_1 = var_16_0:network_id()
+	local var_16_2 = var_16_0:local_player_id()
+	local var_16_3
+	local var_16_4 = arg_16_0._outline_extension
+	local var_16_5 = arg_16_0.status_extension:is_disabled()
+	local var_16_6 = arg_16_0:current_health_percent()
+	local var_16_7 = Managers.party:get_party_from_player_id(var_16_1, var_16_2)
 
-	if not party then
+	if not var_16_7 then
 		return
 	end
 
-	local side = Managers.state.side.side_by_party[party]
-	local is_dark_pact = side:name() == "dark_pact"
-	local unit_side = Managers.state.side.side_by_unit[self.unit]
-	local unit_is_hero = unit_side:name() == "heroes"
+	local var_16_8 = Managers.state.side.side_by_party[var_16_7]:name() == "dark_pact"
+	local var_16_9 = Managers.state.side.side_by_unit[arg_16_0.unit]
+	local var_16_10 = var_16_9:name() == "heroes"
 
-	if not is_dark_pact or not unit_side or not unit_is_hero then
-		new_outline_color = nil
-	elseif is_disabled then
-		new_outline_color = OutlineSettingsVS.colors.hero_dying
-	elseif current_health_percent >= 0.66 then
-		new_outline_color = OutlineSettingsVS.colors.hero_healthy
-	elseif current_health_percent >= 0.33 then
-		new_outline_color = OutlineSettingsVS.colors.hero_hurt
+	if not var_16_8 or not var_16_9 or not var_16_10 then
+		var_16_3 = nil
+	elseif var_16_5 then
+		var_16_3 = OutlineSettingsVS.colors.hero_dying
+	elseif var_16_6 >= 0.66 then
+		var_16_3 = OutlineSettingsVS.colors.hero_healthy
+	elseif var_16_6 >= 0.33 then
+		var_16_3 = OutlineSettingsVS.colors.hero_hurt
 	else
-		new_outline_color = OutlineSettingsVS.colors.hero_dying
+		var_16_3 = OutlineSettingsVS.colors.hero_dying
 	end
 
-	if not new_outline_color then
-		if self._outline_id then
-			outline_ext:remove_outline(self._outline_id)
+	if not var_16_3 then
+		if arg_16_0._outline_id then
+			var_16_4:remove_outline(arg_16_0._outline_id)
 
-			self._outline_id = nil
+			arg_16_0._outline_id = nil
 		end
-	elseif not self._outline_id then
-		self._outline_id = outline_ext:add_outline({
-			method = "always",
+	elseif not arg_16_0._outline_id then
+		arg_16_0._outline_id = var_16_4:add_outline({
 			priority = 2,
-			outline_color = new_outline_color,
-			flag = OutlineSettings.flags.non_wall_occluded,
+			method = "always",
+			outline_color = var_16_3,
+			flag = OutlineSettings.flags.non_wall_occluded
 		})
-	elseif self._current_outline_color ~= new_outline_color then
-		outline_ext:update_outline({
-			outline_color = new_outline_color,
-		}, self._outline_id)
+	elseif arg_16_0._current_outline_color ~= var_16_3 then
+		var_16_4:update_outline({
+			outline_color = var_16_3
+		}, arg_16_0._outline_id)
 	end
 
-	self._current_outline_color = new_outline_color
+	arg_16_0._current_outline_color = var_16_3
 end
 
-local FORCED_PERMANENT_DAMAGE_TYPES = {
-	death_explosion = true,
+local var_0_1 = {
+	death_explosion = true
 }
 
-PlayerUnitHealthExtension.apply_client_predicted_damage = function (self, predicted_damage)
+function PlayerUnitHealthExtension.apply_client_predicted_damage(arg_17_0, arg_17_1)
 	return
 end
 
-local using_bucket_damage = true
-local streak_duration = 2.2
+local var_0_2 = true
+local var_0_3 = 2.2
 
-PlayerUnitHealthExtension.create_streak_damage = function (self, streak_damage, attacker_breed)
-	local text_size = math.auto_lerp(0, 30, self._min_streak_font_size, self._max_streak_font_size, streak_damage)
-	local duration = streak_duration
-	local c = DamageUtils.get_color_from_damage(streak_damage)
-	local z_offset_override = attacker_breed.z_onscreen_damage_offset
-	local color = Vector3(c[2], c[3], c[4])
-	local dmg_int = math.floor(streak_damage)
-	local dmg_dec = streak_damage % 1 * 100
-	local display_data = self._display_data
+function PlayerUnitHealthExtension.create_streak_damage(arg_18_0, arg_18_1, arg_18_2)
+	local var_18_0 = math.auto_lerp(0, 30, arg_18_0._min_streak_font_size, arg_18_0._max_streak_font_size, arg_18_1)
+	local var_18_1 = var_0_3
+	local var_18_2 = DamageUtils.get_color_from_damage(arg_18_1)
+	local var_18_3 = arg_18_2.z_onscreen_damage_offset
+	local var_18_4 = Vector3(var_18_2[2], var_18_2[3], var_18_2[4])
+	local var_18_5 = math.floor(arg_18_1)
+	local var_18_6 = arg_18_1 % 1 * 100
+	local var_18_7 = arg_18_0._display_data
 
-	display_data.floating_speed = 0
-	display_data.ref = true
-	display_data.using_bucket_damage = using_bucket_damage
-	display_data.damage = streak_damage
-	display_data.variant_name = "streak_damage"
+	var_18_7.floating_speed = 0
+	var_18_7.ref = true
+	var_18_7.using_bucket_damage = var_0_2
+	var_18_7.damage = arg_18_1
+	var_18_7.variant_name = "streak_damage"
 
-	local is_critical_strike = false
-	local text
+	local var_18_8 = false
+	local var_18_9
 
-	if using_bucket_damage and dmg_int >= 1 then
-		text = string.format("{#size(%s)}%s", text_size, dmg_int)
+	if var_0_2 and var_18_5 >= 1 then
+		var_18_9 = string.format("{#size(%s)}%s", var_18_0, var_18_5)
 	else
-		text = string.format("{#size(%s)}%s{#size(%s)}%s", text_size, dmg_int, math.floor(text_size / 2), dmg_dec)
+		var_18_9 = string.format("{#size(%s)}%s{#size(%s)}%s", var_18_0, var_18_5, math.floor(var_18_0 / 2), var_18_6)
 	end
 
-	Managers.state.event:trigger("add_damage_number", text, text_size, self.unit, duration, color, is_critical_strike, z_offset_override, display_data)
+	Managers.state.event:trigger("add_damage_number", var_18_9, var_18_0, arg_18_0.unit, var_18_1, var_18_4, var_18_8, var_18_3, var_18_7)
 
-	if type(display_data.ref) == "table" then
-		self._streak_ref = display_data.ref
+	if type(var_18_7.ref) == "table" then
+		arg_18_0._streak_ref = var_18_7.ref
 	end
 end
 
-PlayerUnitHealthExtension.add_damage = function (self, attacker_unit, damage_amount, hit_zone_name, damage_type, hit_position, damage_direction, damage_source_name, hit_ragdoll_actor, source_attacker_unit, hit_react_type, is_critical_strike, added_dot, first_hit, total_hits, attack_type, backstab_multiplier, target_index)
+function PlayerUnitHealthExtension.add_damage(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9, arg_19_10, arg_19_11, arg_19_12, arg_19_13, arg_19_14, arg_19_15, arg_19_16, arg_19_17)
 	if DamageUtils.is_in_inn then
 		return
 	end
 
-	local status_extension = self.status_extension
+	local var_19_0 = arg_19_0.status_extension
 
-	if status_extension:is_ready_for_assisted_respawn() then
+	if var_19_0:is_ready_for_assisted_respawn() then
 		return
 	end
 
-	local unit = self.unit
-	local attacker_player = AiUtils.get_actual_attacker_player(attacker_unit, unit, damage_source_name)
+	local var_19_1 = arg_19_0.unit
+	local var_19_2 = AiUtils.get_actual_attacker_player(arg_19_1, var_19_1, arg_19_7)
 
-	if not source_attacker_unit then
-		if attacker_player and ALIVE[attacker_player.player_unit] then
-			source_attacker_unit = attacker_player.player_unit
+	if not arg_19_9 then
+		if var_19_2 and ALIVE[var_19_2.player_unit] then
+			arg_19_9 = var_19_2.player_unit
 		end
 
-		source_attacker_unit = AiUtils.get_actual_attacker_unit(source_attacker_unit or attacker_unit)
+		arg_19_9 = AiUtils.get_actual_attacker_unit(arg_19_9 or arg_19_1)
 
-		if not source_attacker_unit then
-			local last_attacker_id = self.last_damage_data.attacker_unit_id
+		if not arg_19_9 then
+			local var_19_3 = arg_19_0.last_damage_data.attacker_unit_id
 
-			source_attacker_unit = last_attacker_id and Managers.state.unit_storage:unit(last_attacker_id)
-		end
-	end
-
-	local bb = BLACKBOARDS[source_attacker_unit]
-	local attacker_breed = ALIVE[source_attacker_unit] and Unit.get_data(source_attacker_unit, "breed") or bb and bb.breed or ALIVE[attacker_unit] and Unit.get_data(attacker_unit, "breed")
-
-	attacker_breed = AiUtils.get_actual_attacker_breed(attacker_breed, unit, damage_source_name, attacker_unit, attacker_player)
-
-	if attacker_player then
-		local attacker_player_unique_id = attacker_player:unique_id()
-		local owner_player = Managers.player:owner(unit)
-		local owner_player_unique_id = owner_player:unique_id()
-
-		if attacker_player_unique_id ~= owner_player_unique_id then
-			local damage_t = Managers.time:time("game")
-
-			self:_register_attacker(attacker_player_unique_id, attacker_breed, damage_t)
+			arg_19_9 = var_19_3 and Managers.state.unit_storage:unit(var_19_3)
 		end
 	end
 
-	if attacker_breed then
-		if self._use_floating_damage_numbers then
-			local show_hud_damage_feedback_in_world = Application.user_setting("hud_damage_feedback_in_world")
+	local var_19_4 = BLACKBOARDS[arg_19_9]
+	local var_19_5 = ALIVE[arg_19_9] and Unit.get_data(arg_19_9, "breed") or var_19_4 and var_19_4.breed or ALIVE[arg_19_1] and Unit.get_data(arg_19_1, "breed")
+	local var_19_6 = AiUtils.get_actual_attacker_breed(var_19_5, var_19_1, arg_19_7, arg_19_1, var_19_2)
 
-			if attacker_player and attacker_player.local_player and attacker_breed.is_player and not attacker_breed.is_hero and show_hud_damage_feedback_in_world then
-				local streak_damage = self._streak_damage or 0
-				local last_dmg_time = self._streak_damage_time or 0
-				local t = Managers.time:time("game")
-				local time_since_last_dmg = t - last_dmg_time
+	if var_19_2 then
+		local var_19_7 = var_19_2:unique_id()
 
-				if time_since_last_dmg > 1 and damage_amount > 0 then
-					streak_damage = damage_amount
+		if var_19_7 ~= Managers.player:owner(var_19_1):unique_id() then
+			local var_19_8 = Managers.time:time("game")
 
-					if self._show_floating_streak_damage then
-						self:create_streak_damage(streak_damage, attacker_breed)
+			arg_19_0:_register_attacker(var_19_7, var_19_6, var_19_8)
+		end
+	end
+
+	if var_19_6 then
+		if arg_19_0._use_floating_damage_numbers then
+			local var_19_9 = Application.user_setting("hud_damage_feedback_in_world")
+
+			if var_19_2 and var_19_2.local_player and var_19_6.is_player and not var_19_6.is_hero and var_19_9 then
+				local var_19_10 = arg_19_0._streak_damage or 0
+				local var_19_11 = arg_19_0._streak_damage_time or 0
+				local var_19_12 = Managers.time:time("game")
+
+				if var_19_12 - var_19_11 > 1 and arg_19_2 > 0 then
+					var_19_10 = arg_19_2
+
+					if arg_19_0._show_floating_streak_damage then
+						arg_19_0:create_streak_damage(var_19_10, var_19_6)
 					end
 				else
-					streak_damage = streak_damage + damage_amount
+					var_19_10 = var_19_10 + arg_19_2
 
-					if self._streak_ref then
-						local dmg_int = math.floor(streak_damage)
-						local ts = math.auto_lerp(0, 30, self._min_streak_font_size, self._max_streak_font_size, streak_damage)
-						local c = DamageUtils.get_color_from_damage(streak_damage)
-						local text
+					if arg_19_0._streak_ref then
+						local var_19_13 = math.floor(var_19_10)
+						local var_19_14 = math.auto_lerp(0, 30, arg_19_0._min_streak_font_size, arg_19_0._max_streak_font_size, var_19_10)
+						local var_19_15 = DamageUtils.get_color_from_damage(var_19_10)
+						local var_19_16
 
-						if using_bucket_damage and streak_damage >= 1 then
-							text = string.format("{#size(%s)}%s", ts, dmg_int)
+						if var_0_2 and var_19_10 >= 1 then
+							local var_19_17 = string.format("{#size(%s)}%s", var_19_14, var_19_13)
 
-							Managers.state.event:trigger("alter_damage_number", unit, self._streak_ref, {
-								text = text,
-								time = streak_duration,
-								color = c,
-								damage = streak_damage,
+							Managers.state.event:trigger("alter_damage_number", var_19_1, arg_19_0._streak_ref, {
+								text = var_19_17,
+								time = var_0_3,
+								color = var_19_15,
+								damage = var_19_10
 							})
 						else
-							local dmg_dec = streak_damage % 1 * 100
+							local var_19_18 = var_19_10 % 1 * 100
+							local var_19_19 = string.format("{#size(%s)}%s{#size(%s)}%s", var_19_14, var_19_13, math.floor(var_19_14 / 2), var_19_18)
 
-							text = string.format("{#size(%s)}%s{#size(%s)}%s", ts, dmg_int, math.floor(ts / 2), dmg_dec)
-
-							Managers.state.event:trigger("alter_damage_number", unit, self._streak_ref, {
-								text = text,
-								time = streak_duration,
-								color = c,
-								damage = streak_damage,
+							Managers.state.event:trigger("alter_damage_number", var_19_1, arg_19_0._streak_ref, {
+								text = var_19_19,
+								time = var_0_3,
+								color = var_19_15,
+								damage = var_19_10
 							})
 						end
 					end
 				end
 
-				self._streak_damage_time = t
-				self._streak_damage = streak_damage
+				arg_19_0._streak_damage_time = var_19_12
+				arg_19_0._streak_damage = var_19_10
 
-				if self._show_floating_damage then
-					DamageUtils.add_unit_floating_damage_numbers(unit, damage_type, damage_amount, is_critical_strike, streak_damage, attacker_breed.z_onscreen_damage_offset, attacker_breed.damage_numbers_font_override, {
+				if arg_19_0._show_floating_damage then
+					DamageUtils.add_unit_floating_damage_numbers(var_19_1, arg_19_4, arg_19_2, arg_19_11, var_19_10, var_19_6.z_onscreen_damage_offset, var_19_6.damage_numbers_font_override, {
 						variant_name = "floating_damage",
-						using_streak_damage = self._show_floating_streak_damage,
+						using_streak_damage = arg_19_0._show_floating_streak_damage
 					})
 				end
 			end
 		end
 
-		local ai_system = Managers.state.entity:system("ai_system")
-		local attributes = ai_system:get_attributes(attacker_unit)
+		local var_19_20 = Managers.state.entity:system("ai_system"):get_attributes(arg_19_1)
 
-		if attacker_breed.boss or attributes.grudge_marked then
-			local owner_player = Managers.player:owner(self.unit)
-			local is_local_and_not_bot = owner_player and owner_player.local_player and not owner_player.bot_player
-			local not_same_player = owner_player and attacker_player and owner_player ~= attacker_player
+		if var_19_6.boss or var_19_20.grudge_marked then
+			local var_19_21 = Managers.player:owner(arg_19_0.unit)
+			local var_19_22 = var_19_21 and var_19_21.local_player and not var_19_21.bot_player
 
-			if not_same_player and is_local_and_not_bot then
-				Managers.state.event:trigger("boss_health_bar_register_unit", attacker_unit, "damage_taken")
+			if var_19_21 and var_19_2 and var_19_21 ~= var_19_2 and var_19_22 then
+				Managers.state.event:trigger("boss_health_bar_register_unit", arg_19_1, "damage_taken")
 			end
 
-			QuestSettings.handle_bastard_block(self.unit, attacker_unit, false)
+			QuestSettings.handle_bastard_block(arg_19_0.unit, arg_19_1, false)
 		end
 	end
 
-	if damage_source_name == "ground_impact" and not attacker_breed.is_hero then
+	if arg_19_7 == "ground_impact" and not var_19_6.is_hero then
 		return
 	end
 
-	fassert(damage_type, "No damage_type!")
+	fassert(arg_19_4, "No damage_type!")
 
-	local damage_table = self:_add_to_damage_history_buffer(unit, attacker_unit, damage_amount, hit_zone_name, damage_type, hit_position, damage_direction, damage_source_name, hit_ragdoll_actor, source_attacker_unit, hit_react_type, is_critical_strike, first_hit, total_hits, attack_type, nil, target_index)
+	local var_19_23 = arg_19_0:_add_to_damage_history_buffer(var_19_1, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9, arg_19_10, arg_19_11, arg_19_13, arg_19_14, arg_19_15, nil, arg_19_17)
 
-	if damage_type ~= "temporary_health_degen" and damage_type ~= "knockdown_bleed" then
-		StatisticsUtil.register_damage(unit, damage_table, self.statistics_db)
+	if arg_19_4 ~= "temporary_health_degen" and arg_19_4 ~= "knockdown_bleed" then
+		StatisticsUtil.register_damage(var_19_1, var_19_23, arg_19_0.statistics_db)
 	end
 
-	self:save_kill_feed_data(attacker_unit, damage_table, hit_zone_name, damage_type, damage_source_name, source_attacker_unit)
+	arg_19_0:save_kill_feed_data(arg_19_1, var_19_23, arg_19_3, arg_19_4, arg_19_7, arg_19_9)
 
-	self._recent_damage_type = damage_type
-	self._recent_hit_react_type = hit_react_type
+	arg_19_0._recent_damage_type = arg_19_4
+	arg_19_0._recent_hit_react_type = arg_19_10
 
-	local controller_features_manager = Managers.state.controller_features
+	local var_19_24 = Managers.state.controller_features
 
-	if controller_features_manager then
-		local player = self.player
-
-		if player.local_player and damage_amount > 0 and damage_type ~= "temporary_health_degen" then
-			controller_features_manager:add_effect("hit_rumble", {
-				damage_amount = damage_amount,
-				unit = unit,
-			})
-		end
+	if var_19_24 and arg_19_0.player.local_player and arg_19_2 > 0 and arg_19_4 ~= "temporary_health_degen" then
+		var_19_24:add_effect("hit_rumble", {
+			damage_amount = arg_19_2,
+			unit = var_19_1
+		})
 	end
 
-	if Script.type_name(damage_amount) == "number" and damage_amount > 0 and damage_type ~= "temporary_health_degen" and damage_source_name ~= "temporary_health_degen" then
-		local player = Managers.player:owner(unit)
-		local position = POSITION_LOOKUP[unit]
+	if Script.type_name(arg_19_2) == "number" and arg_19_2 > 0 and arg_19_4 ~= "temporary_health_degen" and arg_19_7 ~= "temporary_health_degen" then
+		local var_19_25 = Managers.player:owner(var_19_1)
+		local var_19_26 = POSITION_LOOKUP[var_19_1]
 
-		Managers.telemetry_events:player_damaged(player, damage_type, damage_source_name or "n/a", damage_amount, position)
+		Managers.telemetry_events:player_damaged(var_19_25, arg_19_4, arg_19_7 or "n/a", arg_19_2, var_19_26)
 
-		if not DEDICATED_SERVER and attacker_player then
-			local local_player = Managers.player:local_player()
+		if not DEDICATED_SERVER and var_19_2 then
+			local var_19_27 = Managers.player:local_player()
 
-			if attacker_player:unique_id() == local_player:unique_id() then
-				local attacker_position = POSITION_LOOKUP[attacker_unit]
-				local target_breed = Unit.get_data(unit, "breed")
+			if var_19_2:unique_id() == var_19_27:unique_id() then
+				local var_19_28 = POSITION_LOOKUP[arg_19_1]
+				local var_19_29 = Unit.get_data(var_19_1, "breed")
 
-				Managers.telemetry_events:local_player_damaged_player(attacker_player, target_breed.name, damage_amount, attacker_position, position)
+				Managers.telemetry_events:local_player_damaged_player(var_19_2, var_19_29.name, arg_19_2, var_19_28, var_19_26)
 			end
 		end
 	end
 
-	local buff_extension = ScriptUnit.extension(unit, "buff_system")
+	local var_19_30 = ScriptUnit.extension(var_19_1, "buff_system")
 
-	if damage_amount > 0 and damage_source_name ~= "temporary_health_degen" then
-		buff_extension:trigger_procs("on_damage_taken", attacker_unit, damage_amount, damage_type)
+	if arg_19_2 > 0 and arg_19_7 ~= "temporary_health_degen" then
+		var_19_30:trigger_procs("on_damage_taken", arg_19_1, arg_19_2, arg_19_4)
 	end
 
-	local min_health = buff_extension:has_buff_perk("ignore_death") and 1 or 0
+	local var_19_31 = var_19_30:has_buff_perk("ignore_death") and 1 or 0
 
-	if damage_source_name ~= "dot_debuff" and damage_type ~= "temporary_health_degen" and damage_type ~= "overcharge" then
-		local is_enemy = Managers.state.side:is_enemy(source_attacker_unit, unit)
-		local is_player_enemy = is_enemy and DamageUtils.is_player_unit(source_attacker_unit)
+	if arg_19_7 ~= "dot_debuff" and arg_19_4 ~= "temporary_health_degen" and arg_19_4 ~= "overcharge" then
+		local var_19_32 = Managers.state.side:is_enemy(arg_19_9, var_19_1)
+		local var_19_33 = var_19_32 and DamageUtils.is_player_unit(arg_19_9)
 
-		if is_player_enemy then
-			EffectHelper.vs_play_hit_sound(self._world, unit, attack_type, damage_type, damage_source_name)
+		if var_19_33 then
+			EffectHelper.vs_play_hit_sound(arg_19_0._world, var_19_1, arg_19_15, arg_19_4, arg_19_7)
 		end
 
-		local ai_inventory_extension = ScriptUnit.has_extension(attacker_unit, "ai_inventory_system")
+		local var_19_34 = ScriptUnit.has_extension(arg_19_1, "ai_inventory_system")
 
-		if ai_inventory_extension then
-			ai_inventory_extension:play_hit_sound(unit, damage_type)
-		elseif not self._is_husk then
-			if is_player_enemy then
-				local profile = SPProfiles[self._profile_index]
+		if var_19_34 then
+			var_19_34:play_hit_sound(var_19_1, arg_19_4)
+		elseif not arg_19_0._is_husk then
+			if var_19_33 then
+				local var_19_35 = SPProfiles[arg_19_0._profile_index]
 
-				if HEALTH_ALIVE[unit] then
-					local camera_manager = Managers.state.camera
+				if HEALTH_ALIVE[var_19_1] then
+					local var_19_36 = Managers.state.camera
 
-					if profile.role == "boss" then
-						camera_manager:camera_effect_shake_event("damaged_boss", Managers.time:time("game"), 2)
-					elseif profile.role ~= "boss" then
-						camera_manager:camera_effect_shake_event("damaged", Managers.time:time("game"), 2)
+					if var_19_35.role == "boss" then
+						var_19_36:camera_effect_shake_event("damaged_boss", Managers.time:time("game"), 2)
+					elseif var_19_35.role ~= "boss" then
+						var_19_36:camera_effect_shake_event("damaged", Managers.time:time("game"), 2)
 					end
 				end
 			end
 
-			if is_enemy then
-				EffectHelper.play_local_damage_taken_sound(self._world, unit, damage_source_name)
+			if var_19_32 then
+				EffectHelper.play_local_damage_taken_sound(arg_19_0._world, var_19_1, arg_19_7)
 			end
 		end
 
-		if self.player.local_player and (buff_extension:has_buff_type("bardin_ironbreaker_activated_ability") or buff_extension:has_buff_type("bardin_ironbreaker_activated_ability_taunt_range_and_duration")) then
-			local first_person_extension = ScriptUnit.extension(unit, "first_person_system")
-
-			first_person_extension:play_hud_sound_event("Play_career_ability_bardin_ironbreaker_hit")
+		if arg_19_0.player.local_player and (var_19_30:has_buff_type("bardin_ironbreaker_activated_ability") or var_19_30:has_buff_type("bardin_ironbreaker_activated_ability_taunt_range_and_duration")) then
+			ScriptUnit.extension(var_19_1, "first_person_system"):play_hud_sound_event("Play_career_ability_bardin_ironbreaker_hit")
 		end
-	elseif damage_source_name == "dot_debuff" then
-		local is_enemy = Managers.state.side:is_enemy(source_attacker_unit, unit)
-		local is_player_enemy = is_enemy and DamageUtils.is_player_unit(source_attacker_unit)
+	elseif arg_19_7 == "dot_debuff" then
+		local var_19_37 = Managers.state.side:is_enemy(arg_19_9, var_19_1)
 
-		if is_player_enemy then
-			EffectHelper.vs_play_hit_sound(self._world, unit, attack_type, damage_type, damage_source_name)
+		if var_19_37 and DamageUtils.is_player_unit(arg_19_9) then
+			EffectHelper.vs_play_hit_sound(arg_19_0._world, var_19_1, arg_19_15, arg_19_4, arg_19_7)
 
-			if not self._is_husk then
-				local profile = SPProfiles[self._profile_index]
+			if not arg_19_0._is_husk then
+				local var_19_38 = SPProfiles[arg_19_0._profile_index]
 
-				if HEALTH_ALIVE[unit] then
-					local camera_manager = Managers.state.camera
+				if HEALTH_ALIVE[var_19_1] then
+					local var_19_39 = Managers.state.camera
 
-					if profile.role == "boss" then
-						camera_manager:camera_effect_shake_event("damaged_boss", Managers.time:time("game"), 2)
-					elseif profile.role ~= "boss" then
-						camera_manager:camera_effect_shake_event("damaged", Managers.time:time("game"), 2)
+					if var_19_38.role == "boss" then
+						var_19_39:camera_effect_shake_event("damaged_boss", Managers.time:time("game"), 2)
+					elseif var_19_38.role ~= "boss" then
+						var_19_39:camera_effect_shake_event("damaged", Managers.time:time("game"), 2)
 					end
 				end
 			end
 		end
 
-		if is_enemy and not self._is_husk then
-			EffectHelper.play_local_damage_taken_sound(self._world, unit, damage_source_name)
+		if var_19_37 and not arg_19_0._is_husk then
+			EffectHelper.play_local_damage_taken_sound(arg_19_0._world, var_19_1, arg_19_7)
 		end
 	end
 
-	DamageUtils.handle_hit_indication(attacker_unit, unit, damage_amount, hit_zone_name, added_dot)
+	DamageUtils.handle_hit_indication(arg_19_1, var_19_1, arg_19_2, arg_19_3, arg_19_12)
 
-	local weave_manager = Managers.weave
+	local var_19_40 = Managers.weave
 
-	if weave_manager:get_active_weave() and self.is_server and damage_amount > 0 then
-		weave_manager:player_damaged(damage_amount)
+	if var_19_40:get_active_weave() and arg_19_0.is_server and arg_19_2 > 0 then
+		var_19_40:player_damaged(arg_19_2)
 	end
 
-	if self.is_server and not self:get_is_invincible() and not script_data.player_invincible then
-		local game = self.game
-		local game_object_id = self.health_game_object_id
+	if arg_19_0.is_server and not arg_19_0:get_is_invincible() and not script_data.player_invincible then
+		local var_19_41 = arg_19_0.game
+		local var_19_42 = arg_19_0.health_game_object_id
 
-		if game and game_object_id then
-			local force_permanent_damage = FORCED_PERMANENT_DAMAGE_TYPES[damage_type]
-			local current_health = GameSession.game_object_field(game, game_object_id, "current_health")
-			local current_temporary_health = GameSession.game_object_field(game, game_object_id, "current_temporary_health")
-			local permanent_damage_amount, temporary_damage_amount
-			local total_health = current_health + current_temporary_health
-			local modified_damage_amount = total_health <= damage_amount and total_health - min_health or damage_amount
+		if var_19_41 and var_19_42 then
+			local var_19_43 = var_0_1[arg_19_4]
+			local var_19_44 = GameSession.game_object_field(var_19_41, var_19_42, "current_health")
+			local var_19_45 = GameSession.game_object_field(var_19_41, var_19_42, "current_temporary_health")
+			local var_19_46
+			local var_19_47
+			local var_19_48 = var_19_44 + var_19_45
+			local var_19_49 = var_19_48 <= arg_19_2 and var_19_48 - var_19_31 or arg_19_2
 
-			if force_permanent_damage then
-				permanent_damage_amount = current_health < modified_damage_amount and current_health or modified_damage_amount
-				temporary_damage_amount = current_health < modified_damage_amount and modified_damage_amount - current_health or 0
+			if var_19_43 then
+				var_19_46 = var_19_44 < var_19_49 and var_19_44 or var_19_49
+				var_19_47 = var_19_44 < var_19_49 and var_19_49 - var_19_44 or 0
 			else
-				permanent_damage_amount = current_temporary_health < modified_damage_amount and modified_damage_amount - current_temporary_health or 0
-				temporary_damage_amount = current_temporary_health < modified_damage_amount and current_temporary_health or modified_damage_amount
+				var_19_46 = var_19_45 < var_19_49 and var_19_49 - var_19_45 or 0
+				var_19_47 = var_19_45 < var_19_49 and var_19_45 or var_19_49
 			end
 
-			local new_health = current_health < permanent_damage_amount and 0 or current_health - permanent_damage_amount
+			local var_19_50 = var_19_44 < var_19_46 and 0 or var_19_44 - var_19_46
 
 			if script_data.player_unkillable then
-				new_health = math.max(new_health, 1)
+				var_19_50 = math.max(var_19_50, 1)
 			end
 
-			GameSession.set_game_object_field(game, game_object_id, "current_health", new_health)
+			GameSession.set_game_object_field(var_19_41, var_19_42, "current_health", var_19_50)
 
-			local new_temporary_health = current_temporary_health < temporary_damage_amount and 0 or current_temporary_health - temporary_damage_amount
+			local var_19_51 = var_19_45 < var_19_47 and 0 or var_19_45 - var_19_47
 
-			GameSession.set_game_object_field(game, game_object_id, "current_temporary_health", new_temporary_health)
+			GameSession.set_game_object_field(var_19_41, var_19_42, "current_temporary_health", var_19_51)
 
-			local is_dead = new_health + new_temporary_health <= 0 and (self.state ~= "alive" or not status_extension:has_wounds_remaining())
+			local var_19_52 = var_19_50 + var_19_51 <= 0 and (arg_19_0.state ~= "alive" or not var_19_0:has_wounds_remaining())
 
-			if is_dead and self.state ~= "dead" then
-				local death_system = Managers.state.entity:system("death_system")
-
-				death_system:kill_unit(unit, damage_table)
+			if var_19_52 and arg_19_0.state ~= "dead" then
+				Managers.state.entity:system("death_system"):kill_unit(var_19_1, var_19_23)
 			end
 
-			local unit_id = self.unit_storage:go_id(unit)
-			local attacker_unit_id, attacker_is_level_unit = self.network_manager:game_object_or_level_id(attacker_unit)
-			local source_attacker_unit_id = self.network_manager:unit_game_object_id(source_attacker_unit) or attacker_unit_id
-			local hit_zone_id = NetworkLookup.hit_zones[hit_zone_name]
-			local damage_type_id = NetworkLookup.damage_types[damage_type]
-			local damage_source_id = NetworkLookup.damage_sources[damage_source_name or "n/a"]
-			local hit_ragdoll_actor_id = NetworkLookup.hit_ragdoll_actors[hit_ragdoll_actor or "n/a"]
-			local hit_react_type_id = NetworkLookup.hit_react_types[hit_react_type or "light"]
-			local attack_type_id = NetworkLookup.buff_attack_types[attack_type or "n/a"]
+			local var_19_53 = arg_19_0.unit_storage:go_id(var_19_1)
+			local var_19_54, var_19_55 = arg_19_0.network_manager:game_object_or_level_id(arg_19_1)
+			local var_19_56 = arg_19_0.network_manager:unit_game_object_id(arg_19_9) or var_19_54
+			local var_19_57 = NetworkLookup.hit_zones[arg_19_3]
+			local var_19_58 = NetworkLookup.damage_types[arg_19_4]
+			local var_19_59 = NetworkLookup.damage_sources[arg_19_7 or "n/a"]
+			local var_19_60 = NetworkLookup.hit_ragdoll_actors[arg_19_8 or "n/a"]
+			local var_19_61 = NetworkLookup.hit_react_types[arg_19_10 or "light"]
+			local var_19_62 = NetworkLookup.buff_attack_types[arg_19_15 or "n/a"]
 
-			is_critical_strike = is_critical_strike or false
-			added_dot = added_dot or false
-			first_hit = first_hit or false
-			total_hits = total_hits or 1
-			backstab_multiplier = backstab_multiplier or 1
-			target_index = target_index or 1
+			arg_19_11 = arg_19_11 or false
+			arg_19_12 = arg_19_12 or false
+			arg_19_13 = arg_19_13 or false
+			arg_19_14 = arg_19_14 or 1
+			arg_19_16 = arg_19_16 or 1
+			arg_19_17 = arg_19_17 or 1
 
-			self.network_transmit:send_rpc_clients("rpc_add_damage", unit_id, false, attacker_unit_id, attacker_is_level_unit, source_attacker_unit_id, damage_amount, hit_zone_id, damage_type_id, hit_position, damage_direction, damage_source_id, hit_ragdoll_actor_id, hit_react_type_id, is_dead, is_critical_strike, added_dot, first_hit, total_hits, attack_type_id, backstab_multiplier, target_index)
+			arg_19_0.network_transmit:send_rpc_clients("rpc_add_damage", var_19_53, false, var_19_54, var_19_55, var_19_56, arg_19_2, var_19_57, var_19_58, arg_19_5, arg_19_6, var_19_59, var_19_60, var_19_61, var_19_52, arg_19_11, arg_19_12, arg_19_13, arg_19_14, var_19_62, arg_19_16, arg_19_17)
 		end
 	end
 end
 
-PlayerUnitHealthExtension.add_heal = function (self, healer_unit, heal_amount, heal_source_name, heal_type)
-	local unit = self.unit
-	local status_extension = self.status_extension
+function PlayerUnitHealthExtension.add_heal(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+	local var_20_0 = arg_20_0.unit
+	local var_20_1 = arg_20_0.status_extension
 
-	self:_add_to_damage_history_buffer(unit, healer_unit, -heal_amount, nil, "heal", nil, heal_source_name, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+	arg_20_0:_add_to_damage_history_buffer(var_20_0, arg_20_1, -arg_20_2, nil, "heal", nil, arg_20_3, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 
-	if status_extension and status_extension:heal_can_remove_wounded(heal_type) then
-		local razer_chroma = Managers.razer_chroma
-
-		razer_chroma:play_animation("health_potion", false, RAZER_ADD_ANIMATION_TYPE.REPLACE)
+	if var_20_1 and var_20_1:heal_can_remove_wounded(arg_20_4) then
+		Managers.razer_chroma:play_animation("health_potion", false, RAZER_ADD_ANIMATION_TYPE.REPLACE)
 	end
 
-	Managers.state.achievement:trigger_event("register_heal", healer_unit, unit, heal_amount, heal_type)
+	Managers.state.achievement:trigger_event("register_heal", arg_20_1, var_20_0, arg_20_2, arg_20_4)
 
-	if self.is_server then
-		local game = self.game
-		local game_object_id = self.health_game_object_id
+	if arg_20_0.is_server then
+		local var_20_2 = arg_20_0.game
+		local var_20_3 = arg_20_0.health_game_object_id
 
-		if game and game_object_id then
-			local current_health = GameSession.game_object_field(game, game_object_id, "current_health")
-			local current_temporary_health = GameSession.game_object_field(game, game_object_id, "current_temporary_health")
-			local max_health = GameSession.game_object_field(game, game_object_id, "max_health")
+		if var_20_2 and var_20_3 then
+			local var_20_4 = GameSession.game_object_field(var_20_2, var_20_3, "current_health")
+			local var_20_5 = GameSession.game_object_field(var_20_2, var_20_3, "current_temporary_health")
+			local var_20_6 = GameSession.game_object_field(var_20_2, var_20_3, "max_health")
 
-			if status_extension:is_permanent_heal(heal_type) and not status_extension:is_knocked_down() then
-				local new_temporary_health = current_temporary_health < heal_amount and 0 or current_temporary_health - heal_amount
+			if var_20_1:is_permanent_heal(arg_20_4) and not var_20_1:is_knocked_down() then
+				local var_20_7 = var_20_5 < arg_20_2 and 0 or var_20_5 - arg_20_2
 
-				GameSession.set_game_object_field(game, game_object_id, "current_temporary_health", new_temporary_health)
+				GameSession.set_game_object_field(var_20_2, var_20_3, "current_temporary_health", var_20_7)
 
-				local new_health = max_health < current_health + new_temporary_health + heal_amount and max_health or current_health + heal_amount
+				local var_20_8 = var_20_6 < var_20_4 + var_20_7 + arg_20_2 and var_20_6 or var_20_4 + arg_20_2
 
-				GameSession.set_game_object_field(game, game_object_id, "current_health", new_health)
+				GameSession.set_game_object_field(var_20_2, var_20_3, "current_health", var_20_8)
 			else
-				local new_temporary_health = max_health < current_health + current_temporary_health + heal_amount and max_health - current_health or current_temporary_health + heal_amount
+				local var_20_9 = var_20_6 < var_20_4 + var_20_5 + arg_20_2 and var_20_6 - var_20_4 or var_20_5 + arg_20_2
 
-				GameSession.set_game_object_field(game, game_object_id, "current_temporary_health", new_temporary_health)
+				GameSession.set_game_object_field(var_20_2, var_20_3, "current_temporary_health", var_20_9)
 			end
 
-			if heal_type ~= "career_passive" and (not status_extension:is_wounded() or self._temp_hp_degen_delay_when_wounded) then
-				local t = Managers.time:time("game")
-				local _, _, degen_start = self:health_degen_settings()
+			if arg_20_4 ~= "career_passive" and (not var_20_1:is_wounded() or arg_20_0._temp_hp_degen_delay_when_wounded) then
+				local var_20_10 = Managers.time:time("game")
+				local var_20_11, var_20_12, var_20_13 = arg_20_0:health_degen_settings()
 
-				self.wounded_degen_timer = t + degen_start
+				arg_20_0.wounded_degen_timer = var_20_10 + var_20_13
 			end
 
-			local unit_id = self.unit_storage:go_id(unit)
+			local var_20_14 = arg_20_0.unit_storage:go_id(var_20_0)
 
-			if unit_id then
-				local network_transmit = self.network_transmit
-				local network_manager = Managers.state.network
-				local healer_unit_id, healer_is_level_unit = network_manager:game_object_or_level_id(healer_unit)
-				local heal_type_id = NetworkLookup.heal_types[heal_type]
+			if var_20_14 then
+				local var_20_15 = arg_20_0.network_transmit
+				local var_20_16, var_20_17 = Managers.state.network:game_object_or_level_id(arg_20_1)
+				local var_20_18 = NetworkLookup.heal_types[arg_20_4]
 
-				network_transmit:send_rpc_clients("rpc_heal", unit_id, false, healer_unit_id, healer_is_level_unit, heal_amount, heal_type_id)
+				var_20_15:send_rpc_clients("rpc_heal", var_20_14, false, var_20_16, var_20_17, arg_20_2, var_20_18)
 			end
 		end
 	end
 end
 
-PlayerUnitHealthExtension.die = function (self, damage_type)
-	if not self.is_server then
+function PlayerUnitHealthExtension.die(arg_21_0, arg_21_1)
+	if not arg_21_0.is_server then
 		return
 	end
 
-	damage_type = damage_type or "undefined"
+	arg_21_1 = arg_21_1 or "undefined"
 
-	local unit = self.unit
+	local var_21_0 = arg_21_0.unit
 
-	if self.is_bot and damage_type == "volume_insta_kill" then
-		local blackboard = BLACKBOARDS[unit]
-		local nav_world = blackboard.nav_world
-		local side = Managers.state.side.side_by_unit[unit]
-		local PLAYER_POSITIONS = side.PLAYER_POSITIONS
-		local num_player_positions = #PLAYER_POSITIONS
+	if arg_21_0.is_bot and arg_21_1 == "volume_insta_kill" then
+		local var_21_1 = BLACKBOARDS[var_21_0]
+		local var_21_2 = var_21_1.nav_world
+		local var_21_3 = Managers.state.side.side_by_unit[var_21_0].PLAYER_POSITIONS
+		local var_21_4 = #var_21_3
 
-		for i = 1, num_player_positions do
-			local player_position = PLAYER_POSITIONS[i]
-			local position = LocomotionUtils.new_random_goal_uniformly_distributed(nav_world, nil, player_position, 2, 5, 5)
+		for iter_21_0 = 1, var_21_4 do
+			local var_21_5 = var_21_3[iter_21_0]
+			local var_21_6 = LocomotionUtils.new_random_goal_uniformly_distributed(var_21_2, nil, var_21_5, 2, 5, 5)
 
-			if position then
-				blackboard.locomotion_extension:teleport_to(position)
-				blackboard.navigation_extension:teleport(position)
-				blackboard.ai_extension:clear_failed_paths()
+			if var_21_6 then
+				var_21_1.locomotion_extension:teleport_to(var_21_6)
+				var_21_1.navigation_extension:teleport(var_21_6)
+				var_21_1.ai_extension:clear_failed_paths()
 
 				return
 			end
 		end
 	end
 
-	if self.state ~= "dead" then
-		local game = self.game
-		local game_object_id = self.health_game_object_id
+	if arg_21_0.state ~= "dead" then
+		local var_21_7 = arg_21_0.game
+		local var_21_8 = arg_21_0.health_game_object_id
 
-		if game and game_object_id then
-			GameSession.set_game_object_field(game, game_object_id, "current_health", 0)
-			GameSession.set_game_object_field(game, game_object_id, "current_temporary_health", 0)
-
-			local death_system = Managers.state.entity:system("death_system")
-
-			death_system:forced_kill(unit, damage_type)
+		if var_21_7 and var_21_8 then
+			GameSession.set_game_object_field(var_21_7, var_21_8, "current_health", 0)
+			GameSession.set_game_object_field(var_21_7, var_21_8, "current_temporary_health", 0)
+			Managers.state.entity:system("death_system"):forced_kill(var_21_0, arg_21_1)
 		end
 	end
 end
 
-PlayerUnitHealthExtension.entered_kill_volume = function (self, t)
-	if self.is_local_player then
-		local unit_id = self.unit_storage:go_id(self.unit)
+function PlayerUnitHealthExtension.entered_kill_volume(arg_22_0, arg_22_1)
+	if arg_22_0.is_local_player then
+		local var_22_0 = arg_22_0.unit_storage:go_id(arg_22_0.unit)
 
-		if unit_id then
-			local network_transmit = self.network_transmit
-			local damage_type_id = NetworkLookup.damage_types.volume_insta_kill
+		if var_22_0 then
+			local var_22_1 = arg_22_0.network_transmit
+			local var_22_2 = NetworkLookup.damage_types.volume_insta_kill
 
-			network_transmit:send_rpc_server("rpc_request_insta_kill", unit_id, damage_type_id)
+			var_22_1:send_rpc_server("rpc_request_insta_kill", var_22_0, var_22_2)
 		end
 	end
 end
 
-PlayerUnitHealthExtension.destroy = function (self)
-	if self.is_server and self.health_game_object_id then
-		self.network_manager:destroy_game_object(self.health_game_object_id)
+function PlayerUnitHealthExtension.destroy(arg_23_0)
+	if arg_23_0.is_server and arg_23_0.health_game_object_id then
+		arg_23_0.network_manager:destroy_game_object(arg_23_0.health_game_object_id)
 	end
 
-	self.health_game_object_id = nil
+	arg_23_0.health_game_object_id = nil
 end
 
-PlayerUnitHealthExtension.reset = function (self)
-	if self.is_server then
-		self.state = "alive"
+function PlayerUnitHealthExtension.reset(arg_24_0)
+	if arg_24_0.is_server then
+		arg_24_0.state = "alive"
 
-		local game = self.game
-		local game_object_id = self.health_game_object_id
+		local var_24_0 = arg_24_0.game
+		local var_24_1 = arg_24_0.health_game_object_id
 
-		if game and game_object_id then
-			local max_health = GameSession.game_object_field(game, game_object_id, "max_health")
+		if var_24_0 and var_24_1 then
+			local var_24_2 = GameSession.game_object_field(var_24_0, var_24_1, "max_health")
 
-			GameSession.set_game_object_field(game, game_object_id, "current_health", max_health)
-			GameSession.set_game_object_field(game, game_object_id, "current_temporary_health", 0)
+			GameSession.set_game_object_field(var_24_0, var_24_1, "current_health", var_24_2)
+			GameSession.set_game_object_field(var_24_0, var_24_1, "current_temporary_health", 0)
 		end
 	end
 end
 
-PlayerUnitHealthExtension.is_alive = function (self)
-	return self.state ~= "dead"
+function PlayerUnitHealthExtension.is_alive(arg_25_0)
+	return arg_25_0.state ~= "dead"
 end
 
-PlayerUnitHealthExtension._is_alive = function (self)
-	local game = self.game
-	local game_object_id = self.health_game_object_id
+function PlayerUnitHealthExtension._is_alive(arg_26_0)
+	local var_26_0 = arg_26_0.game
+	local var_26_1 = arg_26_0.health_game_object_id
 
-	if game and game_object_id then
-		local health = GameSession.game_object_field(game, game_object_id, "current_health")
-		local temporary_health = GameSession.game_object_field(game, game_object_id, "current_temporary_health")
-
-		return health + temporary_health > 0
+	if var_26_0 and var_26_1 then
+		return GameSession.game_object_field(var_26_0, var_26_1, "current_health") + GameSession.game_object_field(var_26_0, var_26_1, "current_temporary_health") > 0
 	end
 
 	return true
 end
 
-PlayerUnitHealthExtension.current_health_percent = function (self)
-	local game = self.game
-	local game_object_id = self.health_game_object_id
+function PlayerUnitHealthExtension.current_health_percent(arg_27_0)
+	local var_27_0 = arg_27_0.game
+	local var_27_1 = arg_27_0.health_game_object_id
 
-	if game and game_object_id then
-		local health = GameSession.game_object_field(game, game_object_id, "current_health")
-		local temporary_health = GameSession.game_object_field(game, game_object_id, "current_temporary_health")
-		local max_health = GameSession.game_object_field(game, game_object_id, "max_health")
+	if var_27_0 and var_27_1 then
+		local var_27_2 = GameSession.game_object_field(var_27_0, var_27_1, "current_health")
+		local var_27_3 = GameSession.game_object_field(var_27_0, var_27_1, "current_temporary_health")
+		local var_27_4 = GameSession.game_object_field(var_27_0, var_27_1, "max_health")
 
-		if max_health == 0 then
+		if var_27_4 == 0 then
 			return 0
 		else
-			return (health + temporary_health) / max_health
+			return (var_27_2 + var_27_3) / var_27_4
 		end
 	end
 
 	return 1
 end
 
-PlayerUnitHealthExtension.current_permanent_health_percent = function (self)
-	local game = self.game
-	local game_object_id = self.health_game_object_id
+function PlayerUnitHealthExtension.current_permanent_health_percent(arg_28_0)
+	local var_28_0 = arg_28_0.game
+	local var_28_1 = arg_28_0.health_game_object_id
 
-	if game and game_object_id then
-		local health = GameSession.game_object_field(game, game_object_id, "current_health")
-		local max_health = GameSession.game_object_field(game, game_object_id, "max_health")
+	if var_28_0 and var_28_1 then
+		local var_28_2 = GameSession.game_object_field(var_28_0, var_28_1, "current_health")
+		local var_28_3 = GameSession.game_object_field(var_28_0, var_28_1, "max_health")
 
-		if max_health == 0 then
+		if var_28_3 == 0 then
 			return 0
 		else
-			return health / max_health
+			return var_28_2 / var_28_3
 		end
 	end
 
 	return 1
 end
 
-PlayerUnitHealthExtension.current_temporary_health_percent = function (self)
-	local game = self.game
-	local game_object_id = self.health_game_object_id
+function PlayerUnitHealthExtension.current_temporary_health_percent(arg_29_0)
+	local var_29_0 = arg_29_0.game
+	local var_29_1 = arg_29_0.health_game_object_id
 
-	if game and game_object_id then
-		local temporary_health = GameSession.game_object_field(game, game_object_id, "current_temporary_health")
-		local max_health = GameSession.game_object_field(game, game_object_id, "max_health")
+	if var_29_0 and var_29_1 then
+		local var_29_2 = GameSession.game_object_field(var_29_0, var_29_1, "current_temporary_health")
+		local var_29_3 = GameSession.game_object_field(var_29_0, var_29_1, "max_health")
 
-		if max_health == 0 then
+		if var_29_3 == 0 then
 			return 0
 		else
-			return temporary_health / max_health
+			return var_29_2 / var_29_3
 		end
 	end
 
 	return 1
 end
 
-PlayerUnitHealthExtension.current_health = function (self)
-	local game = self.game
-	local game_object_id = self.health_game_object_id
+function PlayerUnitHealthExtension.current_health(arg_30_0)
+	local var_30_0 = arg_30_0.game
+	local var_30_1 = arg_30_0.health_game_object_id
 
-	if game and game_object_id then
-		local health = GameSession.game_object_field(game, game_object_id, "current_health")
-		local temporary_health = GameSession.game_object_field(game, game_object_id, "current_temporary_health")
-
-		return health + temporary_health
+	if var_30_0 and var_30_1 then
+		return GameSession.game_object_field(var_30_0, var_30_1, "current_health") + GameSession.game_object_field(var_30_0, var_30_1, "current_temporary_health")
 	end
 
-	local max_health = self:_calculate_max_health()
+	local var_30_2 = arg_30_0:_calculate_max_health()
 
-	max_health = DamageUtils.networkify_health(max_health)
-
-	return max_health
+	return (DamageUtils.networkify_health(var_30_2))
 end
 
-PlayerUnitHealthExtension.current_permanent_health = function (self)
-	local game = self.game
-	local game_object_id = self.health_game_object_id
+function PlayerUnitHealthExtension.current_permanent_health(arg_31_0)
+	local var_31_0 = arg_31_0.game
+	local var_31_1 = arg_31_0.health_game_object_id
 
-	if game and game_object_id then
-		local health = GameSession.game_object_field(game, game_object_id, "current_health")
-
-		return health
+	if var_31_0 and var_31_1 then
+		return (GameSession.game_object_field(var_31_0, var_31_1, "current_health"))
 	end
 
-	local max_health = self:_calculate_max_health()
+	local var_31_2 = arg_31_0:_calculate_max_health()
 
-	max_health = DamageUtils.networkify_health(max_health)
-
-	return max_health
+	return (DamageUtils.networkify_health(var_31_2))
 end
 
-PlayerUnitHealthExtension.current_temporary_health = function (self)
-	local game = self.game
-	local game_object_id = self.health_game_object_id
+function PlayerUnitHealthExtension.current_temporary_health(arg_32_0)
+	local var_32_0 = arg_32_0.game
+	local var_32_1 = arg_32_0.health_game_object_id
 
-	if game and game_object_id then
-		local temporary_health = GameSession.game_object_field(game, game_object_id, "current_temporary_health")
-
-		return temporary_health
+	if var_32_0 and var_32_1 then
+		return (GameSession.game_object_field(var_32_0, var_32_1, "current_temporary_health"))
 	end
 
-	local max_health = self:_calculate_max_health()
+	local var_32_2 = arg_32_0:_calculate_max_health()
 
-	max_health = DamageUtils.networkify_health(max_health)
-
-	return max_health
+	return (DamageUtils.networkify_health(var_32_2))
 end
 
-PlayerUnitHealthExtension.get_max_health = function (self)
-	local game = self.game
-	local game_object_id = self.health_game_object_id
+function PlayerUnitHealthExtension.get_max_health(arg_33_0)
+	local var_33_0 = arg_33_0.game
+	local var_33_1 = arg_33_0.health_game_object_id
 
-	if game and game_object_id then
-		local max_health = GameSession.game_object_field(game, game_object_id, "max_health")
-
-		return max_health
+	if var_33_0 and var_33_1 then
+		return (GameSession.game_object_field(var_33_0, var_33_1, "max_health"))
 	end
 
-	local max_health = self:_calculate_max_health()
+	local var_33_2 = arg_33_0:_calculate_max_health()
 
-	max_health = DamageUtils.networkify_health(max_health)
-
-	return max_health
+	return (DamageUtils.networkify_health(var_33_2))
 end
 
-PlayerUnitHealthExtension.get_base_max_health = function (self)
-	local base_health = self:_get_base_max_health()
-
-	return base_health
+function PlayerUnitHealthExtension.get_base_max_health(arg_34_0)
+	return (arg_34_0:_get_base_max_health())
 end
 
-PlayerUnitHealthExtension.get_uncursed_max_health = function (self)
-	local game = self.game
-	local game_object_id = self.health_game_object_id
+function PlayerUnitHealthExtension.get_uncursed_max_health(arg_35_0)
+	local var_35_0 = arg_35_0.game
+	local var_35_1 = arg_35_0.health_game_object_id
 
-	if game and game_object_id then
-		local uncursed_max_health = GameSession.game_object_field(game, game_object_id, "uncursed_max_health")
-
-		return uncursed_max_health
+	if var_35_0 and var_35_1 then
+		return (GameSession.game_object_field(var_35_0, var_35_1, "uncursed_max_health"))
 	end
 
-	local max_health = self:_calculate_max_health()
+	local var_35_2 = arg_35_0:_calculate_max_health()
 
-	max_health = DamageUtils.networkify_health(max_health)
-
-	return max_health
+	return (DamageUtils.networkify_health(var_35_2))
 end
 
-PlayerUnitHealthExtension.get_damage_taken = function (self, max_health_go_field)
-	local game = self.game
-	local game_object_id = self.health_game_object_id
+function PlayerUnitHealthExtension.get_damage_taken(arg_36_0, arg_36_1)
+	local var_36_0 = arg_36_0.game
+	local var_36_1 = arg_36_0.health_game_object_id
 
-	if game and game_object_id then
-		local health = GameSession.game_object_field(game, game_object_id, "current_health")
-		local max_health = GameSession.game_object_field(game, game_object_id, max_health_go_field or "max_health")
+	if var_36_0 and var_36_1 then
+		local var_36_2 = GameSession.game_object_field(var_36_0, var_36_1, "current_health")
 
-		return max_health - health
+		return GameSession.game_object_field(var_36_0, var_36_1, arg_36_1 or "max_health") - var_36_2
 	end
 
 	return 0
 end
 
-PlayerUnitHealthExtension.convert_permanent_to_temporary_health = function (self)
-	local game = self.game
-	local game_object_id = self.health_game_object_id
+function PlayerUnitHealthExtension.convert_permanent_to_temporary_health(arg_37_0)
+	local var_37_0 = arg_37_0.game
+	local var_37_1 = arg_37_0.health_game_object_id
 
-	if game and game_object_id then
-		local health = GameSession.game_object_field(game, game_object_id, "current_health")
-		local temporary_health = GameSession.game_object_field(game, game_object_id, "current_temporary_health")
+	if var_37_0 and var_37_1 then
+		local var_37_2 = GameSession.game_object_field(var_37_0, var_37_1, "current_health")
+		local var_37_3 = GameSession.game_object_field(var_37_0, var_37_1, "current_temporary_health")
 
-		GameSession.set_game_object_field(game, game_object_id, "current_health", 0)
-		GameSession.set_game_object_field(game, game_object_id, "current_temporary_health", health + temporary_health)
+		GameSession.set_game_object_field(var_37_0, var_37_1, "current_health", 0)
+		GameSession.set_game_object_field(var_37_0, var_37_1, "current_temporary_health", var_37_2 + var_37_3)
 	end
 end
 
-PlayerUnitHealthExtension.convert_temporary_to_permanent_health = function (self)
-	local game = self.game
-	local game_object_id = self.health_game_object_id
+function PlayerUnitHealthExtension.convert_temporary_to_permanent_health(arg_38_0)
+	local var_38_0 = arg_38_0.game
+	local var_38_1 = arg_38_0.health_game_object_id
 
-	if game and game_object_id then
-		local health = GameSession.game_object_field(game, game_object_id, "current_health")
-		local temporary_health = GameSession.game_object_field(game, game_object_id, "current_temporary_health")
+	if var_38_0 and var_38_1 then
+		local var_38_2 = GameSession.game_object_field(var_38_0, var_38_1, "current_health")
+		local var_38_3 = GameSession.game_object_field(var_38_0, var_38_1, "current_temporary_health")
 
-		GameSession.set_game_object_field(game, game_object_id, "current_health", health + temporary_health)
-		GameSession.set_game_object_field(game, game_object_id, "current_temporary_health", 0)
+		GameSession.set_game_object_field(var_38_0, var_38_1, "current_health", var_38_2 + var_38_3)
+		GameSession.set_game_object_field(var_38_0, var_38_1, "current_temporary_health", 0)
 	end
 end
 
-PlayerUnitHealthExtension.convert_to_temp = function (self, amount)
-	amount = DamageUtils.networkify_damage(amount)
+function PlayerUnitHealthExtension.convert_to_temp(arg_39_0, arg_39_1)
+	arg_39_1 = DamageUtils.networkify_damage(arg_39_1)
 
-	if self.is_server then
-		local game = self.game
-		local game_object_id = self.health_game_object_id
+	if arg_39_0.is_server then
+		local var_39_0 = arg_39_0.game
+		local var_39_1 = arg_39_0.health_game_object_id
 
-		if game and game_object_id then
-			local health = GameSession.game_object_field(game, game_object_id, "current_health")
-			local temporary_health = GameSession.game_object_field(game, game_object_id, "current_temporary_health")
-			local convert_amount = math.min(health, amount)
+		if var_39_0 and var_39_1 then
+			local var_39_2 = GameSession.game_object_field(var_39_0, var_39_1, "current_health")
+			local var_39_3 = GameSession.game_object_field(var_39_0, var_39_1, "current_temporary_health")
+			local var_39_4 = math.min(var_39_2, arg_39_1)
 
-			GameSession.set_game_object_field(game, game_object_id, "current_health", health - convert_amount)
-			GameSession.set_game_object_field(game, game_object_id, "current_temporary_health", temporary_health + convert_amount)
+			GameSession.set_game_object_field(var_39_0, var_39_1, "current_health", var_39_2 - var_39_4)
+			GameSession.set_game_object_field(var_39_0, var_39_1, "current_temporary_health", var_39_3 + var_39_4)
 		end
 	else
-		local unit_id = self.unit_storage:go_id(self.unit)
+		local var_39_5 = arg_39_0.unit_storage:go_id(arg_39_0.unit)
 
-		if unit_id then
-			self.network_transmit:send_rpc_server("rpc_request_convert_temp", unit_id, amount)
+		if var_39_5 then
+			arg_39_0.network_transmit:send_rpc_server("rpc_request_convert_temp", var_39_5, arg_39_1)
 		end
 	end
 end
 
-PlayerUnitHealthExtension.switch_permanent_and_temporary_health = function (self)
-	local game = self.game
-	local game_object_id = self.health_game_object_id
+function PlayerUnitHealthExtension.switch_permanent_and_temporary_health(arg_40_0)
+	local var_40_0 = arg_40_0.game
+	local var_40_1 = arg_40_0.health_game_object_id
 
-	if game and game_object_id then
-		local health = GameSession.game_object_field(game, game_object_id, "current_health")
-		local temporary_health = GameSession.game_object_field(game, game_object_id, "current_temporary_health")
+	if var_40_0 and var_40_1 then
+		local var_40_2 = GameSession.game_object_field(var_40_0, var_40_1, "current_health")
+		local var_40_3 = GameSession.game_object_field(var_40_0, var_40_1, "current_temporary_health")
 
-		GameSession.set_game_object_field(game, game_object_id, "current_health", temporary_health)
-		GameSession.set_game_object_field(game, game_object_id, "current_temporary_health", health)
+		GameSession.set_game_object_field(var_40_0, var_40_1, "current_health", var_40_3)
+		GameSession.set_game_object_field(var_40_0, var_40_1, "current_temporary_health", var_40_2)
 	end
 end
 
-PlayerUnitHealthExtension.shield = function (self, shield_amount)
-	self._shield_amount = shield_amount
-	self._shield_duration_left = 10
-	self._end_reason = nil
+function PlayerUnitHealthExtension.shield(arg_41_0, arg_41_1)
+	arg_41_0._shield_amount = arg_41_1
+	arg_41_0._shield_duration_left = 10
+	arg_41_0._end_reason = nil
 
 	if script_data.damage_debug then
-		printf("[PlayerUnitHealthExtension] shield %.1f to %s", shield_amount, tostring(self.unit))
+		printf("[PlayerUnitHealthExtension] shield %.1f to %s", arg_41_1, tostring(arg_41_0.unit))
 	end
 end
 
-PlayerUnitHealthExtension.has_assist_shield = function (self)
-	return self._shield_duration_left > 0 and self._shield_amount > 0, self._shield_amount
+function PlayerUnitHealthExtension.has_assist_shield(arg_42_0)
+	return arg_42_0._shield_duration_left > 0 and arg_42_0._shield_amount > 0, arg_42_0._shield_amount
 end
 
-PlayerUnitHealthExtension.remove_assist_shield = function (self, end_reason)
-	self._shield_duration_left = 0
-	self._shield_amount = 0
-	self._end_reason = end_reason
+function PlayerUnitHealthExtension.remove_assist_shield(arg_43_0, arg_43_1)
+	arg_43_0._shield_duration_left = 0
+	arg_43_0._shield_amount = 0
+	arg_43_0._end_reason = arg_43_1
 end
 
-PlayerUnitHealthExtension.previous_shield_end_reason = function (self)
-	return self._end_reason
+function PlayerUnitHealthExtension.previous_shield_end_reason(arg_44_0)
+	return arg_44_0._end_reason
 end
 
-PlayerUnitHealthExtension.set_dead = function (self)
-	self.state = "dead"
+function PlayerUnitHealthExtension.set_dead(arg_45_0)
+	arg_45_0.state = "dead"
 
-	self.status_extension:set_dead(true)
+	arg_45_0.status_extension:set_dead(true)
 
-	local unit = self.unit
+	local var_45_0 = arg_45_0.unit
 
-	HEALTH_ALIVE[unit] = nil
+	HEALTH_ALIVE[var_45_0] = nil
 
-	if ScriptUnit.has_extension(unit, "dialogue_system") then
-		local death_discover_distance = DialogueSettings.death_discover_distance
-		local player_profile = ScriptUnit.extension(unit, "dialogue_system").context.player_profile
+	if ScriptUnit.has_extension(var_45_0, "dialogue_system") then
+		local var_45_1 = DialogueSettings.death_discover_distance
+		local var_45_2 = ScriptUnit.extension(var_45_0, "dialogue_system").context.player_profile
 
-		SurroundingAwareSystem.add_event(unit, "player_death", death_discover_distance, "target", unit, "target_name", player_profile)
+		SurroundingAwareSystem.add_event(var_45_0, "player_death", var_45_1, "target", var_45_0, "target_name", var_45_2)
 	end
 
-	local recent_damages = self:recent_damages()
-	local player = Managers.player:owner(unit)
-	local stats_id = player:stats_id()
+	local var_45_3 = arg_45_0:recent_damages()
+	local var_45_4 = Managers.player:owner(var_45_0):stats_id()
 
-	Managers.state.event:trigger("on_player_death", stats_id, unit, recent_damages)
+	Managers.state.event:trigger("on_player_death", var_45_4, var_45_0, var_45_3)
 end
 
-PlayerUnitHealthExtension.set_max_health = function (self, health)
-	return self.health
+function PlayerUnitHealthExtension.set_max_health(arg_46_0, arg_46_1)
+	return arg_46_0.health
 end
 
-PlayerUnitHealthExtension.set_current_damage = function (self, damage)
+function PlayerUnitHealthExtension.set_current_damage(arg_47_0, arg_47_1)
 	return
 end
 
-PlayerUnitHealthExtension.health_degen_settings = function (self)
-	local buff_extension = self.buff_extension
-	local degen_amount = PlayerUnitStatusSettings.NOT_WOUNDED_DEGEN_AMOUNT
-	local degen_delay = PlayerUnitStatusSettings.NOT_WOUNDED_DEGEN_DELAY
-	local degen_start = PlayerUnitStatusSettings.NOT_WOUNDED_DEGEN_START
+function PlayerUnitHealthExtension.health_degen_settings(arg_48_0)
+	local var_48_0 = arg_48_0.buff_extension
+	local var_48_1 = PlayerUnitStatusSettings.NOT_WOUNDED_DEGEN_AMOUNT
+	local var_48_2 = PlayerUnitStatusSettings.NOT_WOUNDED_DEGEN_DELAY
+	local var_48_3 = PlayerUnitStatusSettings.NOT_WOUNDED_DEGEN_START
 
-	if buff_extension then
-		if buff_extension:has_buff_perk("smiter_healing") then
-			degen_amount = PlayerUnitStatusSettings.SMITER_DEGEN_AMOUNT
-			degen_delay = PlayerUnitStatusSettings.SMITER_DEGEN_DELAY
-			degen_start = PlayerUnitStatusSettings.SMITER_DEGEN_START
-		elseif buff_extension:has_buff_perk("linesman_healing") then
-			degen_amount = PlayerUnitStatusSettings.LINESMAN_DEGEN_AMOUNT
-			degen_delay = PlayerUnitStatusSettings.LINESMAN_DEGEN_DELAY
-			degen_start = PlayerUnitStatusSettings.LINESMAN_DEGEN_START
-		elseif buff_extension:has_buff_perk("tank_healing") then
-			degen_amount = PlayerUnitStatusSettings.TANK_DEGEN_AMOUNT
-			degen_delay = PlayerUnitStatusSettings.TANK_DEGEN_DELAY
-			degen_start = PlayerUnitStatusSettings.TANK_DEGEN_START
-		elseif buff_extension:has_buff_perk("ninja_healing") then
-			degen_amount = PlayerUnitStatusSettings.NINJA_DEGEN_AMOUNT
-			degen_delay = PlayerUnitStatusSettings.NINJA_DEGEN_DELAY
-			degen_start = PlayerUnitStatusSettings.NINJA_DEGEN_START
+	if var_48_0 then
+		if var_48_0:has_buff_perk("smiter_healing") then
+			var_48_1 = PlayerUnitStatusSettings.SMITER_DEGEN_AMOUNT
+			var_48_2 = PlayerUnitStatusSettings.SMITER_DEGEN_DELAY
+			var_48_3 = PlayerUnitStatusSettings.SMITER_DEGEN_START
+		elseif var_48_0:has_buff_perk("linesman_healing") then
+			var_48_1 = PlayerUnitStatusSettings.LINESMAN_DEGEN_AMOUNT
+			var_48_2 = PlayerUnitStatusSettings.LINESMAN_DEGEN_DELAY
+			var_48_3 = PlayerUnitStatusSettings.LINESMAN_DEGEN_START
+		elseif var_48_0:has_buff_perk("tank_healing") then
+			var_48_1 = PlayerUnitStatusSettings.TANK_DEGEN_AMOUNT
+			var_48_2 = PlayerUnitStatusSettings.TANK_DEGEN_DELAY
+			var_48_3 = PlayerUnitStatusSettings.TANK_DEGEN_START
+		elseif var_48_0:has_buff_perk("ninja_healing") then
+			var_48_1 = PlayerUnitStatusSettings.NINJA_DEGEN_AMOUNT
+			var_48_2 = PlayerUnitStatusSettings.NINJA_DEGEN_DELAY
+			var_48_3 = PlayerUnitStatusSettings.NINJA_DEGEN_START
 		end
 	end
 
 	if Managers.weave:get_active_wind() == "death" then
-		degen_amount = degen_amount * 2
-		degen_start = 0
+		var_48_1 = var_48_1 * 2
+		var_48_3 = 0
 	end
 
-	return degen_amount, degen_delay, degen_start
+	return var_48_1, var_48_2, var_48_3
 end

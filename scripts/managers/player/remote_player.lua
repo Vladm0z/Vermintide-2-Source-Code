@@ -1,279 +1,267 @@
-﻿-- chunkname: @scripts/managers/player/remote_player.lua
+-- chunkname: @scripts/managers/player/remote_player.lua
 
 RemotePlayer = class(RemotePlayer)
 
-RemotePlayer.init = function (self, network_manager, peer, player_controlled, is_server, local_player_id, unique_id, clan_tag, ui_id, account_id)
-	self.network_manager = network_manager
-	self.remote = true
-	self.peer_id = peer
-	self.is_server = is_server
-	self._player_controlled = player_controlled
-	self._ui_id = ui_id
-	self._observed_unit = nil
-	self._account_id = account_id
-	self._debug_name = Localize("tutorial_no_text")
-	self.owned_units = {}
-	self.game_object_id = nil
-	self._unique_id = unique_id
-	self._local_player_id = local_player_id
-	self._clan_tag = clan_tag
+function RemotePlayer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9)
+	arg_1_0.network_manager = arg_1_1
+	arg_1_0.remote = true
+	arg_1_0.peer_id = arg_1_2
+	arg_1_0.is_server = arg_1_4
+	arg_1_0._player_controlled = arg_1_3
+	arg_1_0._ui_id = arg_1_8
+	arg_1_0._observed_unit = nil
+	arg_1_0._account_id = arg_1_9
+	arg_1_0._debug_name = Localize("tutorial_no_text")
+	arg_1_0.owned_units = {}
+	arg_1_0.game_object_id = nil
+	arg_1_0._unique_id = arg_1_6
+	arg_1_0._local_player_id = arg_1_5
+	arg_1_0._clan_tag = arg_1_7
 
-	if is_server then
-		self:create_game_object()
+	if arg_1_4 then
+		arg_1_0:create_game_object()
 	end
 
-	self.index = self.game_object_id
-	self._cached_name = nil
+	arg_1_0.index = arg_1_0.game_object_id
+	arg_1_0._cached_name = nil
 end
 
-RemotePlayer.profile_id = function (self)
-	return self._unique_id
+function RemotePlayer.profile_id(arg_2_0)
+	return arg_2_0._unique_id
 end
 
-RemotePlayer.ui_id = function (self)
-	return self._ui_id
+function RemotePlayer.ui_id(arg_3_0)
+	return arg_3_0._ui_id
 end
 
-RemotePlayer.unique_id = function (self)
-	return self._unique_id
+function RemotePlayer.unique_id(arg_4_0)
+	return arg_4_0._unique_id
 end
 
-RemotePlayer.platform_id = function (self)
+function RemotePlayer.platform_id(arg_5_0)
 	if IS_WINDOWS or IS_LINUX then
-		return self.peer_id
+		return arg_5_0.peer_id
 	else
-		return self._account_id
+		return arg_5_0._account_id
 	end
 end
 
-RemotePlayer.despawn = function (self)
-	assert(self.is_server)
+function RemotePlayer.despawn(arg_6_0)
+	assert(arg_6_0.is_server)
 end
 
-RemotePlayer.type = function (self)
+function RemotePlayer.type(arg_7_0)
 	return "RemotePlayer"
 end
 
-RemotePlayer.set_player_unit = function (self, unit)
-	self.player_unit = unit
-
-	local career_extension = ScriptUnit.extension(unit, "career_system")
-
-	self._career_index = career_extension:career_index()
+function RemotePlayer.set_player_unit(arg_8_0, arg_8_1)
+	arg_8_0.player_unit = arg_8_1
+	arg_8_0._career_index = ScriptUnit.extension(arg_8_1, "career_system"):career_index()
 end
 
-RemotePlayer.profile_index = function (self)
-	local profile_synchronizer = self.network_manager.profile_synchronizer
-	local profile_index = profile_synchronizer:profile_by_peer(self.peer_id, self._local_player_id)
-
-	return profile_index
+function RemotePlayer.profile_index(arg_9_0)
+	return (arg_9_0.network_manager.profile_synchronizer:profile_by_peer(arg_9_0.peer_id, arg_9_0._local_player_id))
 end
 
-RemotePlayer.set_profile_index = function (self, index)
+function RemotePlayer.set_profile_index(arg_10_0, arg_10_1)
 	assert(true, "Why are we trying to set profile index for a remote player?")
 end
 
-RemotePlayer.set_career_index = function (self, index)
+function RemotePlayer.set_career_index(arg_11_0, arg_11_1)
 	error("Why are we trying to set career index for a remote player?")
 end
 
-RemotePlayer.character_name = function (self)
-	local profile_synchronizer = self.network_manager.profile_synchronizer
-	local profile_index = profile_synchronizer:profile_by_peer(self.peer_id, self._local_player_id)
+function RemotePlayer.character_name(arg_12_0)
+	local var_12_0 = arg_12_0.network_manager.profile_synchronizer:profile_by_peer(arg_12_0.peer_id, arg_12_0._local_player_id)
 
-	if profile_index then
-		local profile = SPProfiles[profile_index]
-		local display_name = profile and profile.character_name
+	if var_12_0 then
+		local var_12_1 = SPProfiles[var_12_0]
 
-		return display_name
+		return var_12_1 and var_12_1.character_name
 	else
 		return ""
 	end
 end
 
-RemotePlayer.profile_display_name = function (self)
-	local profile_synchronizer = self.network_manager.profile_synchronizer
-	local profile_index = profile_synchronizer:profile_by_peer(self.peer_id, self._local_player_id)
+function RemotePlayer.profile_display_name(arg_13_0)
+	local var_13_0 = arg_13_0.network_manager.profile_synchronizer:profile_by_peer(arg_13_0.peer_id, arg_13_0._local_player_id)
 
-	if profile_index then
-		local profile = SPProfiles[profile_index]
-		local display_name = profile and profile.display_name
+	if var_13_0 then
+		local var_13_1 = SPProfiles[var_13_0]
 
-		return display_name
+		return var_13_1 and var_13_1.display_name
 	else
 		return ""
 	end
 end
 
-RemotePlayer.career_index = function (self)
-	local profile_synchronizer = self.network_manager.profile_synchronizer
-	local profile_index, career_index = profile_synchronizer:profile_by_peer(self.peer_id, self._local_player_id)
+function RemotePlayer.career_index(arg_14_0)
+	local var_14_0, var_14_1 = arg_14_0.network_manager.profile_synchronizer:profile_by_peer(arg_14_0.peer_id, arg_14_0._local_player_id)
 
-	return career_index or 1
+	return var_14_1 or 1
 end
 
-RemotePlayer.career_name = function (self)
-	local profile_index = self:profile_index()
-	local profile = SPProfiles[profile_index]
-	local display_name = profile and profile.display_name
+function RemotePlayer.career_name(arg_15_0)
+	local var_15_0 = arg_15_0:profile_index()
+	local var_15_1 = SPProfiles[var_15_0]
 
-	if display_name then
-		local career_index = self:career_index()
+	if var_15_1 and var_15_1.display_name then
+		local var_15_2 = arg_15_0:career_index()
 
-		return profile.careers[career_index].name
+		return var_15_1.careers[var_15_2].name
 	end
 end
 
-RemotePlayer.stats_id = function (self)
-	return self._unique_id
+function RemotePlayer.stats_id(arg_16_0)
+	return arg_16_0._unique_id
 end
 
-RemotePlayer.telemetry_id = function (self)
-	return self._unique_id
+function RemotePlayer.telemetry_id(arg_17_0)
+	return arg_17_0._unique_id
 end
 
-RemotePlayer.local_player_id = function (self)
-	return self._local_player_id
+function RemotePlayer.local_player_id(arg_18_0)
+	return arg_18_0._local_player_id
 end
 
-RemotePlayer.network_id = function (self)
-	return self.peer_id
+function RemotePlayer.network_id(arg_19_0)
+	return arg_19_0.peer_id
 end
 
-RemotePlayer.is_player_controlled = function (self)
-	return self._player_controlled
+function RemotePlayer.is_player_controlled(arg_20_0)
+	return arg_20_0._player_controlled
 end
 
-RemotePlayer.get_data = function (self, key)
-	return self._player_sync_data:get_data(key)
+function RemotePlayer.get_data(arg_21_0, arg_21_1)
+	return arg_21_0._player_sync_data:get_data(arg_21_1)
 end
 
-RemotePlayer.name = function (self)
-	local name
+function RemotePlayer.name(arg_22_0)
+	local var_22_0
 
-	if not self._player_controlled then
-		name = Localize(self:character_name())
-		self._cached_name = name
+	if not arg_22_0._player_controlled then
+		var_22_0 = Localize(arg_22_0:character_name())
+		arg_22_0._cached_name = var_22_0
 	elseif rawget(_G, "Steam") then
-		if self._cached_name then
-			return self._cached_name
+		if arg_22_0._cached_name then
+			return arg_22_0._cached_name
 		else
-			local clan_tag = ""
-			local game = Managers.state.network:game()
-			local game_object_id = self.game_object_id
+			local var_22_1 = ""
+			local var_22_2 = Managers.state.network:game()
+			local var_22_3 = arg_22_0.game_object_id
 
-			if game and game_object_id then
-				local clan_tag_id = GameSession.game_object_field(game, game_object_id, "clan_tag")
+			if var_22_2 and var_22_3 then
+				local var_22_4 = GameSession.game_object_field(var_22_2, var_22_3, "clan_tag")
 
-				if clan_tag_id and clan_tag_id ~= "0" then
-					local clan_tag_string = tostring(Clans.clan_tag(clan_tag_id))
+				if var_22_4 and var_22_4 ~= "0" then
+					local var_22_5 = tostring(Clans.clan_tag(var_22_4))
 
-					if clan_tag_string ~= "" then
-						clan_tag = clan_tag_string .. "|"
+					if var_22_5 ~= "" then
+						var_22_1 = var_22_5 .. "|"
 					end
 				end
 			end
 
-			name = clan_tag .. Steam.user_name(self:network_id())
-			self._cached_name = name
+			var_22_0 = var_22_1 .. Steam.user_name(arg_22_0:network_id())
+			arg_22_0._cached_name = var_22_0
 		end
 	elseif IS_CONSOLE then
-		if self._cached_name then
-			return self._cached_name
+		if arg_22_0._cached_name then
+			return arg_22_0._cached_name
 		end
 
-		local lobby = Managers.state.network:lobby()
-		local network_id = self:network_id()
+		local var_22_6 = Managers.state.network:lobby()
+		local var_22_7 = arg_22_0:network_id()
 
-		if lobby and lobby.user_name and network_id then
-			name = lobby:user_name(network_id)
-			self._cached_name = name or "Remote #" .. tostring(network_id:sub(-3, -1))
+		if var_22_6 and var_22_6.user_name and var_22_7 then
+			var_22_0 = var_22_6:user_name(var_22_7)
+			arg_22_0._cached_name = var_22_0 or "Remote #" .. tostring(var_22_7:sub(-3, -1))
 		end
 	elseif Managers.game_server then
-		if self._cached_name then
-			return self._cached_name
+		if arg_22_0._cached_name then
+			return arg_22_0._cached_name
 		end
 
-		name = Managers.game_server:peer_name(self:network_id())
-		self._cached_name = name
+		var_22_0 = Managers.game_server:peer_name(arg_22_0:network_id())
+		arg_22_0._cached_name = var_22_0
 	else
-		name = "Remote #" .. tostring(self.peer_id:sub(-3, -1))
+		var_22_0 = "Remote #" .. tostring(arg_22_0.peer_id:sub(-3, -1))
 	end
 
-	return name
+	return var_22_0
 end
 
-RemotePlayer.cached_name = function (self)
-	return self._cached_name or self._debug_name
+function RemotePlayer.cached_name(arg_23_0)
+	return arg_23_0._cached_name or arg_23_0._debug_name
 end
 
-RemotePlayer.destroy = function (self)
-	if self._player_sync_data then
-		self._player_sync_data:destroy()
+function RemotePlayer.destroy(arg_24_0)
+	if arg_24_0._player_sync_data then
+		arg_24_0._player_sync_data:destroy()
 	end
 
-	if self.is_server then
-		if self.game_object_id then
-			self.network_manager:destroy_game_object(self.game_object_id)
+	if arg_24_0.is_server then
+		if arg_24_0.game_object_id then
+			arg_24_0.network_manager:destroy_game_object(arg_24_0.game_object_id)
 		end
 
-		Managers.state.event:trigger("delete_limited_owned_pickups", self.peer_id)
+		Managers.state.event:trigger("delete_limited_owned_pickups", arg_24_0.peer_id)
 	end
 end
 
-RemotePlayer.create_game_object = function (self)
-	local game_object_data_table = {
+function RemotePlayer.create_game_object(arg_25_0)
+	local var_25_0 = {
 		ping = 0,
 		go_type = NetworkLookup.go_types.player,
-		network_id = self:network_id(),
-		local_player_id = self:local_player_id(),
-		player_controlled = self._player_controlled,
-		clan_tag = self._clan_tag,
-		account_id = self._account_id,
+		network_id = arg_25_0:network_id(),
+		local_player_id = arg_25_0:local_player_id(),
+		player_controlled = arg_25_0._player_controlled,
+		clan_tag = arg_25_0._clan_tag,
+		account_id = arg_25_0._account_id
 	}
-	local callback = callback(self, "cb_game_session_disconnect")
+	local var_25_1 = callback(arg_25_0, "cb_game_session_disconnect")
 
-	self.game_object_id = self.network_manager:create_player_game_object("player", game_object_data_table, callback)
+	arg_25_0.game_object_id = arg_25_0.network_manager:create_player_game_object("player", var_25_0, var_25_1)
 
-	self:create_sync_data()
+	arg_25_0:create_sync_data()
 
 	if script_data.network_debug then
-		print("RemotePlayer:create_game_object( )", self.game_object_id)
+		print("RemotePlayer:create_game_object( )", arg_25_0.game_object_id)
 	end
 end
 
-RemotePlayer.cb_game_session_disconnect = function (self)
-	self.game_object_id = nil
+function RemotePlayer.cb_game_session_disconnect(arg_26_0)
+	arg_26_0.game_object_id = nil
 end
 
-RemotePlayer.set_game_object_id = function (self, id)
-	self.game_object_id = id
+function RemotePlayer.set_game_object_id(arg_27_0, arg_27_1)
+	arg_27_0.game_object_id = arg_27_1
 end
 
-RemotePlayer.create_sync_data = function (self)
-	assert(self._player_sync_data == nil)
+function RemotePlayer.create_sync_data(arg_28_0)
+	assert(arg_28_0._player_sync_data == nil)
 
-	self._player_sync_data = PlayerSyncData:new(self, self.network_manager)
+	arg_28_0._player_sync_data = PlayerSyncData:new(arg_28_0, arg_28_0.network_manager)
 end
 
-RemotePlayer.set_sync_data_game_object_id = function (self, id)
-	self._player_sync_data:set_game_object_id(id)
+function RemotePlayer.set_sync_data_game_object_id(arg_29_0, arg_29_1)
+	arg_29_0._player_sync_data:set_game_object_id(arg_29_1)
 end
 
-RemotePlayer.sync_data_active = function (self)
-	return self._player_sync_data and self._player_sync_data:active()
+function RemotePlayer.sync_data_active(arg_30_0)
+	return arg_30_0._player_sync_data and arg_30_0._player_sync_data:active()
 end
 
-RemotePlayer.get_party = function (self)
-	local status = Managers.party:get_status_from_unique_id(self._unique_id)
+function RemotePlayer.get_party(arg_31_0)
+	local var_31_0 = Managers.party:get_status_from_unique_id(arg_31_0._unique_id)
 
-	return Managers.party:get_party(status.party_id)
+	return Managers.party:get_party(var_31_0.party_id)
 end
 
-RemotePlayer.observed_unit = function (self)
-	return self._observed_unit
+function RemotePlayer.observed_unit(arg_32_0)
+	return arg_32_0._observed_unit
 end
 
-RemotePlayer.set_observed_unit = function (self, unit)
-	self._observed_unit = unit
+function RemotePlayer.set_observed_unit(arg_33_0, arg_33_1)
+	arg_33_0._observed_unit = arg_33_1
 end

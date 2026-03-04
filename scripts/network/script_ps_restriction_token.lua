@@ -1,39 +1,38 @@
-﻿-- chunkname: @scripts/network/script_ps_restriction_token.lua
+-- chunkname: @scripts/network/script_ps_restriction_token.lua
 
 ScriptPSRestrictionToken = class(ScriptPSRestrictionToken)
 
-ScriptPSRestrictionToken.init = function (self, token)
-	self._token = token
-	self._done = false
+function ScriptPSRestrictionToken.init(arg_1_0, arg_1_1)
+	arg_1_0._token = arg_1_1
+	arg_1_0._done = false
 end
 
-ScriptPSRestrictionToken.update = function (self)
-	local status = NpCheck.status(self._token)
+function ScriptPSRestrictionToken.update(arg_2_0)
+	local var_2_0 = NpCheck.status(arg_2_0._token)
 
-	if status == NpCheck.COMPLETED or status == NpCheck.ERROR then
-		self._done = true
+	if var_2_0 == NpCheck.COMPLETED or var_2_0 == NpCheck.ERROR then
+		arg_2_0._done = true
 	end
 end
 
-ScriptPSRestrictionToken.info = function (self)
-	local info = {}
-	local status = NpCheck.status(self._token)
+function ScriptPSRestrictionToken.info(arg_3_0)
+	local var_3_0 = {}
 
-	if status == NpCheck.ERROR then
-		info.error = NpCheck.error_code(self._token)
+	if NpCheck.status(arg_3_0._token) == NpCheck.ERROR then
+		var_3_0.error = NpCheck.error_code(arg_3_0._token)
 	else
-		info.result = NpCheck.result(self._token)
+		var_3_0.result = NpCheck.result(arg_3_0._token)
 	end
 
-	info.token = self._token
+	var_3_0.token = arg_3_0._token
 
-	return info
+	return var_3_0
 end
 
-ScriptPSRestrictionToken.done = function (self)
-	return self._done
+function ScriptPSRestrictionToken.done(arg_4_0)
+	return arg_4_0._done
 end
 
-ScriptPSRestrictionToken.close = function (self)
-	NpCheck.free(self._token)
+function ScriptPSRestrictionToken.close(arg_5_0)
+	NpCheck.free(arg_5_0._token)
 end

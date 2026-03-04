@@ -1,50 +1,49 @@
-﻿-- chunkname: @scripts/managers/debug/profiler_scopes.lua
+-- chunkname: @scripts/managers/debug/profiler_scopes.lua
 
-local depth = 0
-local dump = false
-local dump_light = false
-local has_started = false
-local last_started
-local started_scopes = {}
-local started_scopes2 = {}
-local overloaded = overloaded or false
+local var_0_0 = 0
+local var_0_1 = false
+local var_0_2 = false
+local var_0_3 = false
+local var_0_4
+local var_0_5 = {}
+local var_0_6 = {}
+local var_0_7 = overloaded or false
 
-local function indent(depth)
-	local ind = ""
+local function var_0_8(arg_1_0)
+	local var_1_0 = ""
 
-	for ii = 0, 2 + depth do
-		ind = ind .. "   "
+	for iter_1_0 = 0, 2 + arg_1_0 do
+		var_1_0 = var_1_0 .. "   "
 	end
 
-	return ind
+	return var_1_0
 end
 
-local function get_line()
-	local tb = debug.traceback()
-	local result = string.match(tb, "\t.-\n\t.-\n\t(.-)\n")
+local function var_0_9()
+	local var_2_0 = debug.traceback()
 
-	return result
+	return (string.match(var_2_0, "\t.-\n\t.-\n\t(.-)\n"))
 end
 
 function profiler_scopes_trace()
-	if overloaded then
+	if var_0_7 then
 		return
 	end
 
-	overloaded = true
+	var_0_7 = true
 end
 
 function profiler_scopes_dump()
 	profiler_scopes_trace()
 
-	dump_light = true
-	dump = true
+	var_0_2 = true
+	var_0_1 = true
 end
 
 function profiler_scopes_dump_light()
 	profiler_scopes_trace()
 
-	dump_light = true
+	var_0_2 = true
 end
 
 if Development.parameter("validate_profiling_scopes") or Development.parameter("debug_profiling_scopes") then

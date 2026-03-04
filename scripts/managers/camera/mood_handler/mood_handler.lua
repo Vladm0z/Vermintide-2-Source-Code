@@ -1,423 +1,414 @@
-﻿-- chunkname: @scripts/managers/camera/mood_handler/mood_handler.lua
+-- chunkname: @scripts/managers/camera/mood_handler/mood_handler.lua
 
 require("scripts/settings/mood_settings")
 
 MoodHandler = class(MoodHandler)
 
-MoodHandler.init = function (self, world)
-	self.world = world
-	self.playing_particles = {}
-	self.current_mood = "default"
-	self.mood_blends = nil
-	self.mood_weights = {}
+function MoodHandler.init(arg_1_0, arg_1_1)
+	arg_1_0.world = arg_1_1
+	arg_1_0.playing_particles = {}
+	arg_1_0.current_mood = "default"
+	arg_1_0.mood_blends = nil
+	arg_1_0.mood_weights = {}
 
-	local environment = require("scripts/settings/lua_environments/moods")
-	local env_vars, type_map = self:parse_environment_settings(environment)
+	local var_1_0 = require("scripts/settings/lua_environments/moods")
+	local var_1_1, var_1_2 = arg_1_0:parse_environment_settings(var_1_0)
 
-	self.environment_variables = env_vars
-	self.environment_variables_type_map = type_map
-	self.environment_variables_to_set = {}
-	self.environment_weight_remainder = 1
-	self._local_moods = {}
-	self._mood_timers = {}
+	arg_1_0.environment_variables = var_1_1
+	arg_1_0.environment_variables_type_map = var_1_2
+	arg_1_0.environment_variables_to_set = {}
+	arg_1_0.environment_weight_remainder = 1
+	arg_1_0._local_moods = {}
+	arg_1_0._mood_timers = {}
 
-	for mood, _ in pairs(MoodSettings) do
-		self._local_moods[mood] = {}
-		self._mood_timers[mood] = {}
+	for iter_1_0, iter_1_1 in pairs(MoodSettings) do
+		arg_1_0._local_moods[iter_1_0] = {}
+		arg_1_0._mood_timers[iter_1_0] = {}
 	end
 end
 
-MoodHandler.destroy = function (self)
-	local world = self.world
-	local playing_particles = self.playing_particles
+function MoodHandler.destroy(arg_2_0)
+	local var_2_0 = arg_2_0.world
+	local var_2_1 = arg_2_0.playing_particles
 
-	for _, particle_id in pairs(playing_particles) do
-		if World.are_particles_playing(world, particle_id) then
-			World.destroy_particles(world, particle_id)
+	for iter_2_0, iter_2_1 in pairs(var_2_1) do
+		if World.are_particles_playing(var_2_0, iter_2_1) then
+			World.destroy_particles(var_2_0, iter_2_1)
 		end
 	end
 
-	self.playing_particles = nil
-	self.world = nil
-	self.environment_variables = nil
-	self.mood_blends = nil
-	self.environment_variables_to_set = nil
-	self.mood_weights = nil
+	arg_2_0.playing_particles = nil
+	arg_2_0.world = nil
+	arg_2_0.environment_variables = nil
+	arg_2_0.mood_blends = nil
+	arg_2_0.environment_variables_to_set = nil
+	arg_2_0.mood_weights = nil
 end
 
-MoodHandler.parse_environment_settings = function (self, environment)
-	local environment_settings = environment.settings
-	local variables = {}
-	local type_map = {}
+function MoodHandler.parse_environment_settings(arg_3_0, arg_3_1)
+	local var_3_0 = arg_3_1.settings
+	local var_3_1 = {}
+	local var_3_2 = {}
 
-	for env_setting_name, env_setting in pairs(environment_settings) do
-		if env_setting_name ~= "default" then
-			variables[env_setting_name] = {}
+	for iter_3_0, iter_3_1 in pairs(var_3_0) do
+		if iter_3_0 ~= "default" then
+			var_3_1[iter_3_0] = {}
 
-			local var_n = 1
+			local var_3_3 = 1
 
-			for var_name, var_value in pairs(env_setting.variables) do
-				local weight = env_setting.variable_weights[var_name]
+			for iter_3_2, iter_3_3 in pairs(iter_3_1.variables) do
+				if iter_3_1.variable_weights[iter_3_2] == 1 then
+					local var_3_4
 
-				if weight == 1 then
-					local var_type
-
-					if type(var_value) == "string" then
-						var_type = "texture"
-					elseif type(var_value) == "number" then
-						var_type = "scalar"
-					elseif type(var_value) == "table" then
-						if #var_value == 2 then
-							var_type = "vector2"
-							var_value = Vector3Box(var_value[1], var_value[2], 0)
-						elseif #var_value == 3 then
-							var_type = "vector3"
-							var_value = Vector3Box(var_value[1], var_value[2], var_value[3])
-						elseif #var_value == 4 then
-							var_type = "vector4"
+					if type(iter_3_3) == "string" then
+						var_3_4 = "texture"
+					elseif type(iter_3_3) == "number" then
+						var_3_4 = "scalar"
+					elseif type(iter_3_3) == "table" then
+						if #iter_3_3 == 2 then
+							var_3_4 = "vector2"
+							iter_3_3 = Vector3Box(iter_3_3[1], iter_3_3[2], 0)
+						elseif #iter_3_3 == 3 then
+							var_3_4 = "vector3"
+							iter_3_3 = Vector3Box(iter_3_3[1], iter_3_3[2], iter_3_3[3])
+						elseif #iter_3_3 == 4 then
+							var_3_4 = "vector4"
 						end
 					end
 
-					if var_type then
-						variables[env_setting_name][var_n] = {
-							name = var_name,
-							value = var_value,
+					if var_3_4 then
+						var_3_1[iter_3_0][var_3_3] = {
+							name = iter_3_2,
+							value = iter_3_3
 						}
-						type_map[var_name] = type_map[var_name] or var_type
-						var_n = var_n + 1
+						var_3_2[iter_3_2] = var_3_2[iter_3_2] or var_3_4
+						var_3_3 = var_3_3 + 1
 					end
 				end
 			end
 		end
 	end
 
-	return variables, type_map
+	return var_3_1, var_3_2
 end
 
-MoodHandler._set_active_mood = function (self, next_mood)
+function MoodHandler._set_active_mood(arg_4_0, arg_4_1)
 	if Development.parameter("screen_space_player_camera_reactions") == false then
 		return
 	end
 
-	fassert(next_mood and (next_mood == "default" or MoodSettings[next_mood]), "Mood %q not defined in MoodSettings.lua", next_mood)
+	fassert(arg_4_1 and (arg_4_1 == "default" or MoodSettings[arg_4_1]), "Mood %q not defined in MoodSettings.lua", arg_4_1)
 
-	local current_mood = self.current_mood
+	local var_4_0 = arg_4_0.current_mood
 
-	if next_mood == current_mood then
+	if arg_4_1 == var_4_0 then
 		return
 	end
 
-	self:add_mood_blend(current_mood, next_mood)
-	self:handle_particles(current_mood, next_mood)
+	arg_4_0:add_mood_blend(var_4_0, arg_4_1)
+	arg_4_0:handle_particles(var_4_0, arg_4_1)
 
-	self.current_mood = next_mood
+	arg_4_0.current_mood = arg_4_1
 end
 
-MoodHandler.add_mood_blend = function (self, current_mood, next_mood)
+function MoodHandler.add_mood_blend(arg_5_0, arg_5_1, arg_5_2)
 	if Development.parameter("screen_space_player_camera_reactions") == false then
 		return
 	end
 
-	local blend_time
+	local var_5_0
 
-	if next_mood == "default" then
-		blend_time = MoodSettings[current_mood].blend_out_time
+	if arg_5_2 == "default" then
+		var_5_0 = MoodSettings[arg_5_1].blend_out_time
 	else
-		blend_time = MoodSettings[next_mood].blend_in_time
+		var_5_0 = MoodSettings[arg_5_2].blend_in_time
 	end
 
-	if blend_time == 0 then
-		self.mood_blends = nil
+	if var_5_0 == 0 then
+		arg_5_0.mood_blends = nil
 	else
-		self.mood_blends = {
+		arg_5_0.mood_blends = {
 			value = 0,
-			mood = current_mood,
-			speed = 1 / blend_time,
-			blends = self.mood_blends,
+			mood = arg_5_1,
+			speed = 1 / var_5_0,
+			blends = arg_5_0.mood_blends
 		}
 	end
 end
 
-MoodHandler.handle_particles = function (self, current_mood, next_mood)
-	local playing_particles = self.playing_particles
-	local world = self.world
+function MoodHandler.handle_particles(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = arg_6_0.playing_particles
+	local var_6_1 = arg_6_0.world
 
-	for _, particle_id in pairs(playing_particles) do
-		if World.are_particles_playing(world, particle_id) then
-			World.stop_spawning_particles(world, particle_id)
+	for iter_6_0, iter_6_1 in pairs(var_6_0) do
+		if World.are_particles_playing(var_6_1, iter_6_1) then
+			World.stop_spawning_particles(var_6_1, iter_6_1)
 		end
 	end
 
-	table.clear(playing_particles)
+	table.clear(var_6_0)
 
-	if current_mood ~= "default" then
-		local on_exit_particles = MoodSettings[current_mood].particle_effects_on_exit
+	if arg_6_1 ~= "default" then
+		local var_6_2 = MoodSettings[arg_6_1].particle_effects_on_exit
 
-		if on_exit_particles then
-			for _, particle_name in pairs(on_exit_particles) do
-				playing_particles[#playing_particles + 1] = World.create_particles(world, particle_name, Vector3.zero())
+		if var_6_2 then
+			for iter_6_2, iter_6_3 in pairs(var_6_2) do
+				var_6_0[#var_6_0 + 1] = World.create_particles(var_6_1, iter_6_3, Vector3.zero())
 			end
 		end
 	end
 
-	if next_mood ~= "default" then
-		local next_mood_settings = MoodSettings[next_mood]
-		local no_particles_on_enter_from = next_mood_settings.no_particles_on_enter_from
-		local play_particles = not no_particles_on_enter_from or not table.find(no_particles_on_enter_from, current_mood)
+	if arg_6_2 ~= "default" then
+		local var_6_3 = MoodSettings[arg_6_2]
+		local var_6_4 = var_6_3.no_particles_on_enter_from
 
-		if play_particles then
-			local on_enter_particles = next_mood_settings.particle_effects_on_enter
+		if not var_6_4 or not table.find(var_6_4, arg_6_1) then
+			local var_6_5 = var_6_3.particle_effects_on_enter
 
-			if on_enter_particles then
-				local playing_particles = self.playing_particles
-				local world = self.world
+			if var_6_5 then
+				local var_6_6 = arg_6_0.playing_particles
+				local var_6_7 = arg_6_0.world
 
-				for _, particle_name in pairs(on_enter_particles) do
-					playing_particles[#playing_particles + 1] = World.create_particles(world, particle_name, Vector3.zero())
+				for iter_6_4, iter_6_5 in pairs(var_6_5) do
+					var_6_6[#var_6_6 + 1] = World.create_particles(var_6_7, iter_6_5, Vector3.zero())
 				end
 			end
 		end
 	end
 end
 
-MoodHandler.update = function (self, dt)
-	self:_update_mood_timers()
-	self:update_mood_blends(dt)
-	self:update_environment_variables()
+function MoodHandler.update(arg_7_0, arg_7_1)
+	arg_7_0:_update_mood_timers()
+	arg_7_0:update_mood_blends(arg_7_1)
+	arg_7_0:update_environment_variables()
 end
 
-MoodHandler.update_mood_blends = function (self, dt)
-	local mood_weights = self.mood_weights
+function MoodHandler.update_mood_blends(arg_8_0, arg_8_1)
+	local var_8_0 = arg_8_0.mood_weights
 
-	table.clear(mood_weights)
+	table.clear(var_8_0)
 
-	mood_weights[1] = self.current_mood
+	var_8_0[1] = arg_8_0.current_mood
 
-	self:set_mood_weights(dt, self.mood_blends, mood_weights, 1)
+	arg_8_0:set_mood_weights(arg_8_1, arg_8_0.mood_blends, var_8_0, 1)
 end
 
-MoodHandler.set_mood_weights = function (self, dt, blend, mood_weights, weight)
-	if blend then
-		blend.value = blend.value + blend.speed * dt
+function MoodHandler.set_mood_weights(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	if arg_9_2 then
+		arg_9_2.value = arg_9_2.value + arg_9_2.speed * arg_9_1
 
-		if blend.value >= 1 then
-			blend.blends = nil
-			mood_weights[#mood_weights + 1] = weight
+		if arg_9_2.value >= 1 then
+			arg_9_2.blends = nil
+			arg_9_3[#arg_9_3 + 1] = arg_9_4
 		else
-			mood_weights[#mood_weights + 1] = blend.value * weight
-			mood_weights[#mood_weights + 1] = blend.mood
+			arg_9_3[#arg_9_3 + 1] = arg_9_2.value * arg_9_4
+			arg_9_3[#arg_9_3 + 1] = arg_9_2.mood
 
-			return self:set_mood_weights(dt, blend.blends, mood_weights, weight * (1 - blend.value))
+			return arg_9_0:set_mood_weights(arg_9_1, arg_9_2.blends, arg_9_3, arg_9_4 * (1 - arg_9_2.value))
 		end
 	else
-		mood_weights[#mood_weights + 1] = weight
+		arg_9_3[#arg_9_3 + 1] = arg_9_4
 	end
 end
 
-MoodHandler.update_environment_variables = function (self)
-	local variables_to_set = self.environment_variables_to_set
+function MoodHandler.update_environment_variables(arg_10_0)
+	local var_10_0 = arg_10_0.environment_variables_to_set
 
-	table.clear(variables_to_set)
+	table.clear(var_10_0)
 
-	local mood_weights = self.mood_weights
-	local environment_vars = self.environment_variables
-	local type_map = self.environment_variables_type_map
-	local weight_remainder = 1
+	local var_10_1 = arg_10_0.mood_weights
+	local var_10_2 = arg_10_0.environment_variables
+	local var_10_3 = arg_10_0.environment_variables_type_map
+	local var_10_4 = 1
 
-	for i = 1, #mood_weights, 2 do
-		local mood_name = mood_weights[i]
+	for iter_10_0 = 1, #var_10_1, 2 do
+		local var_10_5 = var_10_1[iter_10_0]
 
-		if mood_name ~= "default" then
-			local env_setting = MoodSettings[mood_name].environment_setting
-			local variables = environment_vars[env_setting]
-			local mood_weight = mood_weights[i + 1]
+		if var_10_5 ~= "default" then
+			local var_10_6 = var_10_2[MoodSettings[var_10_5].environment_setting]
+			local var_10_7 = var_10_1[iter_10_0 + 1]
 
-			for i = 1, #variables do
-				local var = variables[i]
-				local var_name = var.name
-				local var_value = var.value
-				local var_type = type_map[var_name]
-				local value_to_set = variables_to_set[var_name]
+			for iter_10_1 = 1, #var_10_6 do
+				local var_10_8 = var_10_6[iter_10_1]
+				local var_10_9 = var_10_8.name
+				local var_10_10 = var_10_8.value
+				local var_10_11 = var_10_3[var_10_9]
+				local var_10_12 = var_10_0[var_10_9]
 
-				if var_type == "texture" then
-					value_to_set = value_to_set or var_value
-				elseif var_type == "scalar" then
-					value_to_set = value_to_set or 0
-					value_to_set = value_to_set + var_value * mood_weight
-				elseif var_type == "vector2" or var_type == "vector3" then
-					value_to_set = value_to_set or Vector3(0, 0, 0)
-					value_to_set = value_to_set + var_value:unbox() * mood_weight
-				elseif var_type == "vector4" then
-					value_to_set = value_to_set or {
+				if var_10_11 == "texture" then
+					var_10_12 = var_10_12 or var_10_10
+				elseif var_10_11 == "scalar" then
+					var_10_12 = var_10_12 or 0
+					var_10_12 = var_10_12 + var_10_10 * var_10_7
+				elseif var_10_11 == "vector2" or var_10_11 == "vector3" then
+					var_10_12 = var_10_12 or Vector3(0, 0, 0)
+					var_10_12 = var_10_12 + var_10_10:unbox() * var_10_7
+				elseif var_10_11 == "vector4" then
+					var_10_12 = var_10_12 or {
 						0,
 						0,
 						0,
-						0,
+						0
 					}
-					value_to_set[1] = value_to_set[1] + var_value[1] * mood_weight
-					value_to_set[2] = value_to_set[2] + var_value[2] * mood_weight
-					value_to_set[3] = value_to_set[3] + var_value[3] * mood_weight
-					value_to_set[4] = value_to_set[4] + var_value[4] * mood_weight
+					var_10_12[1] = var_10_12[1] + var_10_10[1] * var_10_7
+					var_10_12[2] = var_10_12[2] + var_10_10[2] * var_10_7
+					var_10_12[3] = var_10_12[3] + var_10_10[3] * var_10_7
+					var_10_12[4] = var_10_12[4] + var_10_10[4] * var_10_7
 				end
 
-				variables_to_set[var_name] = value_to_set
+				var_10_0[var_10_9] = var_10_12
 			end
 
-			weight_remainder = weight_remainder - mood_weight
+			var_10_4 = var_10_4 - var_10_7
 		end
 	end
 
-	for var_name, var_value in pairs(variables_to_set) do
-		local var_type = type_map[var_name]
+	for iter_10_2, iter_10_3 in pairs(var_10_0) do
+		local var_10_13 = var_10_3[iter_10_2]
 
-		if var_type == "vector2" or var_type == "vector3" then
-			variables_to_set[var_name] = Vector3Box(var_value)
+		if var_10_13 == "vector2" or var_10_13 == "vector3" then
+			var_10_0[iter_10_2] = Vector3Box(iter_10_3)
 		end
 	end
 
-	self.environment_weight_remainder = math.max(weight_remainder, 0)
+	arg_10_0.environment_weight_remainder = math.max(var_10_4, 0)
 end
 
-MoodHandler.apply_environment_variables = function (self, shading_environment)
-	local type_map = self.environment_variables_type_map
-	local weight_remainder = self.environment_weight_remainder
+function MoodHandler.apply_environment_variables(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_0.environment_variables_type_map
+	local var_11_1 = arg_11_0.environment_weight_remainder
 
-	for var_name, var_value in pairs(self.environment_variables_to_set) do
-		local var_type = type_map[var_name]
+	for iter_11_0, iter_11_1 in pairs(arg_11_0.environment_variables_to_set) do
+		local var_11_2 = var_11_0[iter_11_0]
 
-		if weight_remainder == 0 then
-			if var_type == "texture" then
-				ShadingEnvironment.set_texture(shading_environment, var_name, var_value)
-			elseif var_type == "scalar" then
-				ShadingEnvironment.set_scalar(shading_environment, var_name, var_value)
-			elseif var_type == "vector2" then
-				ShadingEnvironment.set_vector2(shading_environment, var_name, var_value:unbox())
-			elseif var_type == "vector3" then
-				ShadingEnvironment.set_vector3(shading_environment, var_name, var_value:unbox())
-			elseif var_type == "vector4" then
-				ShadingEnvironment.set_vector4(shading_environment, var_name, var_value[1], var_value[2], var_value[3], var_value[4])
+		if var_11_1 == 0 then
+			if var_11_2 == "texture" then
+				ShadingEnvironment.set_texture(arg_11_1, iter_11_0, iter_11_1)
+			elseif var_11_2 == "scalar" then
+				ShadingEnvironment.set_scalar(arg_11_1, iter_11_0, iter_11_1)
+			elseif var_11_2 == "vector2" then
+				ShadingEnvironment.set_vector2(arg_11_1, iter_11_0, iter_11_1:unbox())
+			elseif var_11_2 == "vector3" then
+				ShadingEnvironment.set_vector3(arg_11_1, iter_11_0, iter_11_1:unbox())
+			elseif var_11_2 == "vector4" then
+				ShadingEnvironment.set_vector4(arg_11_1, iter_11_0, iter_11_1[1], iter_11_1[2], iter_11_1[3], iter_11_1[4])
 			end
-		elseif var_type == "texture" then
-			ShadingEnvironment.set_texture(shading_environment, var_name, var_value)
-		elseif var_type == "scalar" then
-			local default_value = ShadingEnvironment.scalar(shading_environment, var_name) * weight_remainder
-			local set_value = var_value + default_value
+		elseif var_11_2 == "texture" then
+			ShadingEnvironment.set_texture(arg_11_1, iter_11_0, iter_11_1)
+		elseif var_11_2 == "scalar" then
+			local var_11_3 = iter_11_1 + ShadingEnvironment.scalar(arg_11_1, iter_11_0) * var_11_1
 
-			ShadingEnvironment.set_scalar(shading_environment, var_name, set_value)
-		elseif var_type == "vector2" then
-			local default_value = ShadingEnvironment.vector2(shading_environment, var_name) * weight_remainder
-			local set_value = var_value:unbox() + default_value
+			ShadingEnvironment.set_scalar(arg_11_1, iter_11_0, var_11_3)
+		elseif var_11_2 == "vector2" then
+			local var_11_4 = ShadingEnvironment.vector2(arg_11_1, iter_11_0) * var_11_1
+			local var_11_5 = iter_11_1:unbox() + var_11_4
 
-			ShadingEnvironment.set_vector2(shading_environment, var_name, set_value)
-		elseif var_type == "vector3" then
-			local default_value = ShadingEnvironment.vector3(shading_environment, var_name) * weight_remainder
-			local set_value = var_value:unbox() + default_value
+			ShadingEnvironment.set_vector2(arg_11_1, iter_11_0, var_11_5)
+		elseif var_11_2 == "vector3" then
+			local var_11_6 = ShadingEnvironment.vector3(arg_11_1, iter_11_0) * var_11_1
+			local var_11_7 = iter_11_1:unbox() + var_11_6
 
-			ShadingEnvironment.set_vector3(shading_environment, var_name, set_value)
-		elseif var_type == "vector4" then
-			local default_x, default_y, default_z, default_w = Quaternion.to_elements(ShadingEnvironment.vector4(shading_environment, var_name))
+			ShadingEnvironment.set_vector3(arg_11_1, iter_11_0, var_11_7)
+		elseif var_11_2 == "vector4" then
+			local var_11_8, var_11_9, var_11_10, var_11_11 = Quaternion.to_elements(ShadingEnvironment.vector4(arg_11_1, iter_11_0))
+			local var_11_12 = var_11_8 * var_11_1
+			local var_11_13 = var_11_9 * var_11_1
+			local var_11_14 = var_11_10 * var_11_1
+			local var_11_15 = var_11_11 * var_11_1
+			local var_11_16 = iter_11_1[1] + var_11_12
+			local var_11_17 = iter_11_1[2] + var_11_13
+			local var_11_18 = iter_11_1[3] + var_11_14
+			local var_11_19 = iter_11_1[4] + var_11_15
 
-			default_x = default_x * weight_remainder
-			default_y = default_y * weight_remainder
-			default_z = default_z * weight_remainder
-			default_w = default_w * weight_remainder
-
-			local set_x = var_value[1] + default_x
-			local set_y = var_value[2] + default_y
-			local set_z = var_value[3] + default_z
-			local set_w = var_value[4] + default_w
-
-			ShadingEnvironment.set_vector4(shading_environment, var_name, set_x, set_y, set_z, set_w)
+			ShadingEnvironment.set_vector4(arg_11_1, iter_11_0, var_11_16, var_11_17, var_11_18, var_11_19)
 		end
 	end
 end
 
-MoodHandler.set_mood = function (self, mood_name, reason, value)
-	local had_mood = self:has_mood(mood_name)
+function MoodHandler.set_mood(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	local var_12_0 = arg_12_0:has_mood(arg_12_1)
 
-	if not value and not had_mood then
+	if not arg_12_3 and not var_12_0 then
 		return
 	end
 
-	self:_set_mood_internal(mood_name, reason, value)
+	arg_12_0:_set_mood_internal(arg_12_1, arg_12_2, arg_12_3)
 
-	if value and had_mood then
+	if arg_12_3 and var_12_0 then
 		return
 	end
 
-	self:_update_mood_priority()
+	arg_12_0:_update_mood_priority()
 end
 
-MoodHandler._set_mood_internal = function (self, mood_name, reason, value)
-	self._local_moods[mood_name][reason] = value or nil
+function MoodHandler._set_mood_internal(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	arg_13_0._local_moods[arg_13_1][arg_13_2] = arg_13_3 or nil
 
-	if mood_name ~= "default" then
-		local mood_template = MoodSettings[mood_name]
+	if arg_13_1 ~= "default" then
+		local var_13_0 = MoodSettings[arg_13_1]
 
-		if mood_template.hold_time then
-			if value then
-				local t = Managers.time:time("game")
+		if var_13_0.hold_time then
+			if arg_13_3 then
+				local var_13_1 = Managers.time:time("game")
 
-				self._mood_timers[mood_name][reason] = t + mood_template.hold_time
+				arg_13_0._mood_timers[arg_13_1][arg_13_2] = var_13_1 + var_13_0.hold_time
 			else
-				self._mood_timers[mood_name][reason] = nil
+				arg_13_0._mood_timers[arg_13_1][arg_13_2] = nil
 			end
 		end
 	end
 end
 
-MoodHandler.clear_mood = function (self, mood_name)
-	local had_mood = self:has_mood(mood_name)
-
-	if not had_mood then
+function MoodHandler.clear_mood(arg_14_0, arg_14_1)
+	if not arg_14_0:has_mood(arg_14_1) then
 		return
 	end
 
-	table.clear(self._local_moods[mood_name])
-	table.clear(self._mood_timers[mood_name])
-	self:_update_mood_priority()
+	table.clear(arg_14_0._local_moods[arg_14_1])
+	table.clear(arg_14_0._mood_timers[arg_14_1])
+	arg_14_0:_update_mood_priority()
 end
 
-MoodHandler.has_mood = function (self, mood_name)
-	return not table.is_empty(self._local_moods[mood_name])
+function MoodHandler.has_mood(arg_15_0, arg_15_1)
+	return not table.is_empty(arg_15_0._local_moods[arg_15_1])
 end
 
-MoodHandler._update_mood_timers = function (self)
-	local dirty = false
-	local t = Managers.time:time("game")
+function MoodHandler._update_mood_timers(arg_16_0)
+	local var_16_0 = false
+	local var_16_1 = Managers.time:time("game")
 
-	for mood_name, timers in pairs(self._mood_timers) do
-		for reason, end_t in pairs(timers) do
-			if end_t < t then
-				self:set_mood(mood_name, reason, false)
+	for iter_16_0, iter_16_1 in pairs(arg_16_0._mood_timers) do
+		for iter_16_2, iter_16_3 in pairs(iter_16_1) do
+			if iter_16_3 < var_16_1 then
+				arg_16_0:set_mood(iter_16_0, iter_16_2, false)
 
-				dirty = dirty or table.is_empty(timers)
+				var_16_0 = var_16_0 or table.is_empty(iter_16_1)
 			end
 		end
 	end
 
-	if dirty then
-		self:_update_mood_priority()
+	if var_16_0 then
+		arg_16_0:_update_mood_priority()
 	end
 end
 
-MoodHandler._update_mood_priority = function (self)
-	local mood_priority = MoodPriority
-	local wanted_mood
+function MoodHandler._update_mood_priority(arg_17_0)
+	local var_17_0 = MoodPriority
+	local var_17_1
 
-	for i = 1, #mood_priority do
-		local mood = mood_priority[i]
+	for iter_17_0 = 1, #var_17_0 do
+		local var_17_2 = var_17_0[iter_17_0]
 
-		if self:has_mood(mood) then
-			wanted_mood = mood
+		if arg_17_0:has_mood(var_17_2) then
+			var_17_1 = var_17_2
 
 			break
 		end
 	end
 
-	wanted_mood = wanted_mood or "default"
+	var_17_1 = var_17_1 or "default"
 
-	if wanted_mood ~= self.current_mood then
-		self:_set_active_mood(wanted_mood)
+	if var_17_1 ~= arg_17_0.current_mood then
+		arg_17_0:_set_active_mood(var_17_1)
 	end
 end

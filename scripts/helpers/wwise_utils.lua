@@ -1,75 +1,74 @@
-﻿-- chunkname: @scripts/helpers/wwise_utils.lua
+-- chunkname: @scripts/helpers/wwise_utils.lua
 
 WwiseUtils = WwiseUtils or {}
 WwiseUtils.EVENT_ID_NONE = 0
 
-WwiseUtils.trigger_position_event = function (world, event, position)
-	local source, wwise_world = WwiseUtils.make_position_auto_source(world, position)
-	local id = WwiseWorld.trigger_event(wwise_world, event, source)
+function WwiseUtils.trigger_position_event(arg_1_0, arg_1_1, arg_1_2)
+	local var_1_0, var_1_1 = WwiseUtils.make_position_auto_source(arg_1_0, arg_1_2)
 
-	return id, source, wwise_world
+	return WwiseWorld.trigger_event(var_1_1, arg_1_1, var_1_0), var_1_0, var_1_1
 end
 
-WwiseUtils.trigger_unit_event = function (world, event, unit, node_id)
+function WwiseUtils.trigger_unit_event(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	if DEDICATED_SERVER then
 		return nil, nil, nil
 	end
 
-	local source, wwise_world = WwiseUtils.make_unit_auto_source(world, unit, node_id)
-	local id = WwiseWorld.trigger_event(wwise_world, event, source)
+	local var_2_0, var_2_1 = WwiseUtils.make_unit_auto_source(arg_2_0, arg_2_2, arg_2_3)
 
-	return id, source, wwise_world
+	return WwiseWorld.trigger_event(var_2_1, arg_2_1, var_2_0), var_2_0, var_2_1
 end
 
-WwiseUtils.make_position_auto_source = function (world, position)
-	local wwise_world = Managers.world:wwise_world(world)
-	local source = WwiseWorld.make_auto_source(wwise_world, position)
-	local system = Managers.state.entity:system("sound_environment_system")
+function WwiseUtils.make_position_auto_source(arg_3_0, arg_3_1)
+	local var_3_0 = Managers.world:wwise_world(arg_3_0)
+	local var_3_1 = WwiseWorld.make_auto_source(var_3_0, arg_3_1)
+	local var_3_2 = Managers.state.entity:system("sound_environment_system")
 
-	if system ~= nil then
-		system:set_source_environment(source, position)
+	if var_3_2 ~= nil then
+		var_3_2:set_source_environment(var_3_1, arg_3_1)
 	end
 
-	return source, wwise_world
+	return var_3_1, var_3_0
 end
 
-WwiseUtils.make_unit_auto_source = function (world, unit, node_id)
-	local wwise_world = Managers.world:wwise_world(world)
-	local source, position
+function WwiseUtils.make_unit_auto_source(arg_4_0, arg_4_1, arg_4_2)
+	local var_4_0 = Managers.world:wwise_world(arg_4_0)
+	local var_4_1
+	local var_4_2
 
-	if node_id then
-		source = WwiseWorld.make_auto_source(wwise_world, unit, node_id)
-		position = Unit.world_position(unit, node_id)
+	if arg_4_2 then
+		var_4_1 = WwiseWorld.make_auto_source(var_4_0, arg_4_1, arg_4_2)
+		var_4_2 = Unit.world_position(arg_4_1, arg_4_2)
 	else
-		source = WwiseWorld.make_auto_source(wwise_world, unit)
-		position = Unit.world_position(unit, 0)
+		var_4_1 = WwiseWorld.make_auto_source(var_4_0, arg_4_1)
+		var_4_2 = Unit.world_position(arg_4_1, 0)
 	end
 
-	local system = Managers.state.entity:system("sound_environment_system")
+	local var_4_3 = Managers.state.entity:system("sound_environment_system")
 
-	if system ~= nil then
-		system:set_source_environment(source, position)
+	if var_4_3 ~= nil then
+		var_4_3:set_source_environment(var_4_1, var_4_2)
 	end
 
-	return source, wwise_world
+	return var_4_1, var_4_0
 end
 
-WwiseUtils.make_unit_manual_source = function (wwise_world, unit, node_id)
-	local source
+function WwiseUtils.make_unit_manual_source(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0
 
-	if node_id then
-		source = WwiseWorld.make_manual_source(wwise_world, unit, node_id)
+	if arg_5_2 then
+		var_5_0 = WwiseWorld.make_manual_source(arg_5_0, arg_5_1, arg_5_2)
 	else
-		source = WwiseWorld.make_manual_source(wwise_world, unit)
+		var_5_0 = WwiseWorld.make_manual_source(arg_5_0, arg_5_1)
 	end
 
-	local system = Managers.state.entity:system("sound_environment_system")
+	local var_5_1 = Managers.state.entity:system("sound_environment_system")
 
-	if system ~= nil then
-		local position = Unit.world_position(unit, node_id or 0)
+	if var_5_1 ~= nil then
+		local var_5_2 = Unit.world_position(arg_5_1, arg_5_2 or 0)
 
-		system:set_source_environment(source, position)
+		var_5_1:set_source_environment(var_5_0, var_5_2)
 	end
 
-	return source
+	return var_5_0
 end

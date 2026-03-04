@@ -1,89 +1,89 @@
-﻿-- chunkname: @scripts/utils/base64.lua
+-- chunkname: @scripts/utils/base64.lua
 
 require("math")
 
-local __author__ = "Daniel Lindsley"
-local __version__ = "scm-1"
-local __license__ = "BSD"
-local index_table = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+local var_0_0 = "Daniel Lindsley"
+local var_0_1 = "scm-1"
+local var_0_2 = "BSD"
+local var_0_3 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 
-function to_binary(integer)
-	local remaining = tonumber(integer)
-	local bin_bits = ""
+function to_binary(arg_1_0)
+	local var_1_0 = tonumber(arg_1_0)
+	local var_1_1 = ""
 
-	for i = 7, 0, -1 do
-		local current_power = math.pow(2, i)
+	for iter_1_0 = 7, 0, -1 do
+		local var_1_2 = math.pow(2, iter_1_0)
 
-		if current_power <= remaining then
-			bin_bits = bin_bits .. "1"
-			remaining = remaining - current_power
+		if var_1_2 <= var_1_0 then
+			var_1_1 = var_1_1 .. "1"
+			var_1_0 = var_1_0 - var_1_2
 		else
-			bin_bits = bin_bits .. "0"
+			var_1_1 = var_1_1 .. "0"
 		end
 	end
 
-	return bin_bits
+	return var_1_1
 end
 
-function from_binary(bin_bits)
-	return tonumber(bin_bits, 2)
+function from_binary(arg_2_0)
+	return tonumber(arg_2_0, 2)
 end
 
-function to_base64(to_encode)
-	local bit_pattern = ""
-	local encoded = ""
-	local trailing = ""
+function to_base64(arg_3_0)
+	local var_3_0 = ""
+	local var_3_1 = ""
+	local var_3_2 = ""
 
-	for i = 1, string.len(to_encode) do
-		bit_pattern = bit_pattern .. to_binary(string.byte(string.sub(to_encode, i, i)))
+	for iter_3_0 = 1, string.len(arg_3_0) do
+		var_3_0 = var_3_0 .. to_binary(string.byte(string.sub(arg_3_0, iter_3_0, iter_3_0)))
 	end
 
-	if string.len(bit_pattern) % 3 == 2 then
-		trailing = "=="
-		bit_pattern = bit_pattern .. "0000000000000000"
-	elseif string.len(bit_pattern) % 3 == 1 then
-		trailing = "="
-		bit_pattern = bit_pattern .. "00000000"
+	if string.len(var_3_0) % 3 == 2 then
+		var_3_2 = "=="
+		var_3_0 = var_3_0 .. "0000000000000000"
+	elseif string.len(var_3_0) % 3 == 1 then
+		var_3_2 = "="
+		var_3_0 = var_3_0 .. "00000000"
 	end
 
-	for i = 1, string.len(bit_pattern), 6 do
-		local byte = string.sub(bit_pattern, i, i + 5)
-		local offset = tonumber(from_binary(byte))
+	for iter_3_1 = 1, string.len(var_3_0), 6 do
+		local var_3_3 = string.sub(var_3_0, iter_3_1, iter_3_1 + 5)
+		local var_3_4 = tonumber(from_binary(var_3_3))
 
-		encoded = encoded .. string.sub(index_table, offset + 1, offset + 1)
+		var_3_1 = var_3_1 .. string.sub(var_0_3, var_3_4 + 1, var_3_4 + 1)
 	end
 
-	return string.sub(encoded, 1, -1 - string.len(trailing)) .. trailing
+	return string.sub(var_3_1, 1, -1 - string.len(var_3_2)) .. var_3_2
 end
 
-function from_base64(to_decode)
-	local padded = to_decode:gsub("%s", "")
-	local unpadded = padded:gsub("=", "")
-	local bit_pattern = ""
-	local decoded = ""
+function from_base64(arg_4_0)
+	local var_4_0 = arg_4_0:gsub("%s", "")
+	local var_4_1 = var_4_0:gsub("=", "")
+	local var_4_2 = ""
+	local var_4_3 = ""
 
-	for i = 1, string.len(unpadded) do
-		local char = string.sub(to_decode, i, i)
-		local offset, _ = string.find(index_table, char)
+	for iter_4_0 = 1, string.len(var_4_1) do
+		local var_4_4 = string.sub(arg_4_0, iter_4_0, iter_4_0)
+		local var_4_5, var_4_6 = string.find(var_0_3, var_4_4)
 
-		if offset == nil then
-			error("Invalid character '" .. char .. "' found.")
+		if var_4_5 == nil then
+			error("Invalid character '" .. var_4_4 .. "' found.")
 		end
 
-		bit_pattern = bit_pattern .. string.sub(to_binary(offset - 1), 3)
+		var_4_2 = var_4_2 .. string.sub(to_binary(var_4_5 - 1), 3)
 	end
 
-	for i = 1, string.len(bit_pattern), 8 do
-		local byte = string.sub(bit_pattern, i, i + 7)
+	for iter_4_1 = 1, string.len(var_4_2), 8 do
+		local var_4_7 = string.sub(var_4_2, iter_4_1, iter_4_1 + 7)
 
-		decoded = decoded .. string.char(from_binary(byte))
+		var_4_3 = var_4_3 .. string.char(from_binary(var_4_7))
 	end
 
-	local padding_length = padded:len() - unpadded:len()
+	local var_4_8 = var_4_0:len() - var_4_1:len()
 
-	if padding_length == 1 or padding_length == 2 then
-		decoded = decoded:sub(1, -2)
+	if var_4_8 == 1 or var_4_8 == 2 then
+		var_4_3 = var_4_3:sub(1, -2)
 	end
 
-	return decoded
+	return var_4_3
 end

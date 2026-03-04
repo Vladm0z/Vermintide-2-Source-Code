@@ -1,1125 +1,1066 @@
-﻿-- chunkname: @scripts/unit_extensions/generic/aim_templates.lua
+-- chunkname: @scripts/unit_extensions/generic/aim_templates.lua
 
 AimTemplates = AimTemplates or {}
 
-local BLACKBOARDS = BLACKBOARDS
-local AIM_DIRECTION_MAX = 1.9999999
-local HUSK_MIN_PITCH = -0.95
-local HUSK_BOSS_MIN_PITCH = -0.8
-local HUSK_MAX_PITCH = 0.6
-local AIM_DIRECTION_MAGNITUDE = 3
-local BOSS_AIM_DIRECTION_MAGNITUDE = 5
+local var_0_0 = BLACKBOARDS
+local var_0_1 = 1.9999999
+local var_0_2 = -0.95
+local var_0_3 = -0.8
+local var_0_4 = 0.6
+local var_0_5 = 3
+local var_0_6 = 5
 
-local function look_at_target_unit(unit, data, dt, target_unit, target_distance, head_constraint_target, always_on)
-	local previously_used_head_constraint = data.is_using_head_constraint
+local function var_0_7(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
+	local var_1_0 = arg_1_1.is_using_head_constraint
 
-	if not previously_used_head_constraint and not always_on then
-		data.is_using_head_constraint = true
+	if not var_1_0 and not arg_1_6 then
+		arg_1_1.is_using_head_constraint = true
 
-		Unit.animation_event(unit, data.look_at_on_animation or "look_at_on")
+		Unit.animation_event(arg_1_0, arg_1_1.look_at_on_animation or "look_at_on")
 	end
 
-	if not target_unit or not Unit.alive(target_unit) then
-		AiUtils.set_default_anim_constraint(unit, head_constraint_target)
+	if not arg_1_3 or not Unit.alive(arg_1_3) then
+		AiUtils.set_default_anim_constraint(arg_1_0, arg_1_5)
 
 		return
 	end
 
-	local look_target
-	local first_person_extension = ScriptUnit.has_extension(target_unit, "first_person_system")
+	local var_1_1
+	local var_1_2 = ScriptUnit.has_extension(arg_1_3, "first_person_system")
 
-	if first_person_extension ~= nil then
-		look_target = first_person_extension:current_position()
+	if var_1_2 ~= nil then
+		var_1_1 = var_1_2:current_position()
 	else
-		local head_index = Unit.has_node(target_unit, "j_head") and Unit.node(target_unit, "j_head") or 0
+		local var_1_3 = Unit.has_node(arg_1_3, "j_head") and Unit.node(arg_1_3, "j_head") or 0
 
-		look_target = Unit.world_position(target_unit, head_index)
+		var_1_1 = Unit.world_position(arg_1_3, var_1_3)
 	end
 
-	local rotation = Unit.world_rotation(unit, 0)
-	local rotation_forward = Vector3.flat(Quaternion.forward(rotation))
-	local rotation_forward_normalized = Vector3.normalize(rotation_forward)
-	local unit_position = POSITION_LOOKUP[unit]
-	local to_target = Vector3.flat(look_target - unit_position)
-	local to_target_normalized = Vector3.normalize(to_target)
-	local dot = Vector3.dot(to_target_normalized, rotation_forward_normalized)
+	local var_1_4 = Unit.world_rotation(arg_1_0, 0)
+	local var_1_5 = Vector3.flat(Quaternion.forward(var_1_4))
+	local var_1_6 = Vector3.normalize(var_1_5)
+	local var_1_7 = POSITION_LOOKUP[arg_1_0]
+	local var_1_8 = Vector3.flat(var_1_1 - var_1_7)
+	local var_1_9 = Vector3.normalize(var_1_8)
 
-	if dot < math.inverse_sqrt_2 then
-		local old_z = look_target.z
-		local rotation_right = Vector3.flat(Quaternion.right(rotation))
+	if Vector3.dot(var_1_9, var_1_6) < math.inverse_sqrt_2 then
+		local var_1_10 = var_1_1.z
+		local var_1_11 = Vector3.flat(Quaternion.right(var_1_4))
 
-		if Vector3.cross(rotation_forward_normalized, to_target_normalized).z > 0 then
-			look_target = unit_position + (rotation_forward - rotation_right) * target_distance
+		if Vector3.cross(var_1_6, var_1_9).z > 0 then
+			var_1_1 = var_1_7 + (var_1_5 - var_1_11) * arg_1_4
 		else
-			look_target = unit_position + (rotation_forward + rotation_right) * target_distance
+			var_1_1 = var_1_7 + (var_1_5 + var_1_11) * arg_1_4
 		end
 
-		look_target.z = old_z
+		var_1_1.z = var_1_10
 	end
 
-	if previously_used_head_constraint and not data.lerp_aiming_disabled then
-		local previous_look_target = data.previous_look_target:unbox()
-		local lerp_t = math.min(dt * 5, 1)
+	if var_1_0 and not arg_1_1.lerp_aiming_disabled then
+		local var_1_12 = arg_1_1.previous_look_target:unbox()
+		local var_1_13 = math.min(arg_1_2 * 5, 1)
 
-		look_target = Vector3.lerp(previous_look_target, look_target, lerp_t)
+		var_1_1 = Vector3.lerp(var_1_12, var_1_1, var_1_13)
 	end
 
-	data.previous_look_target:store(look_target)
-	Unit.animation_set_constraint_target(unit, head_constraint_target, look_target)
+	arg_1_1.previous_look_target:store(var_1_1)
+	Unit.animation_set_constraint_target(arg_1_0, arg_1_5, var_1_1)
 end
 
 AimTemplates.player = {
 	owner = {
-		init = function (unit, data)
-			data.packmaster_claw_aim_constraint = Unit.animation_find_constraint_target(unit, "packmaster_claw_target")
-			data.aim_constraint_anim_var = Unit.animation_find_constraint_target(unit, "aim_constraint_target")
-			data.look_direction_anim_var = Unit.animation_find_variable(unit, "aim_direction")
-			data.aim_direction_pitch_var = Unit.animation_find_variable(unit, "aim_direction_pitch")
-			data.locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
-			data.status_extension = ScriptUnit.extension(unit, "status_system")
-			data.min_head_lookat_z = -3
+		init = function(arg_2_0, arg_2_1)
+			arg_2_1.packmaster_claw_aim_constraint = Unit.animation_find_constraint_target(arg_2_0, "packmaster_claw_target")
+			arg_2_1.aim_constraint_anim_var = Unit.animation_find_constraint_target(arg_2_0, "aim_constraint_target")
+			arg_2_1.look_direction_anim_var = Unit.animation_find_variable(arg_2_0, "aim_direction")
+			arg_2_1.aim_direction_pitch_var = Unit.animation_find_variable(arg_2_0, "aim_direction_pitch")
+			arg_2_1.locomotion_extension = ScriptUnit.extension(arg_2_0, "locomotion_system")
+			arg_2_1.status_extension = ScriptUnit.extension(arg_2_0, "status_system")
+			arg_2_1.min_head_lookat_z = -3
 
-			local player = Managers.player:owner(unit)
+			local var_2_0 = Managers.player:owner(arg_2_0)
 
-			if player then
-				local profile_index = player:profile_index()
-				local career_index = player:career_index()
-				local profile = SPProfiles[profile_index]
-				local careers = profile and profile.careers
-				local career_settings = careers and careers[career_index]
+			if var_2_0 then
+				local var_2_1 = var_2_0:profile_index()
+				local var_2_2 = var_2_0:career_index()
+				local var_2_3 = SPProfiles[var_2_1]
+				local var_2_4 = var_2_3 and var_2_3.careers
+				local var_2_5 = var_2_4 and var_2_4[var_2_2]
 
-				if career_settings and career_settings.min_head_lookat_z then
-					data.min_head_lookat_z = career_settings.min_head_lookat_z
+				if var_2_5 and var_2_5.min_head_lookat_z then
+					arg_2_1.min_head_lookat_z = var_2_5.min_head_lookat_z
 				end
 			end
 		end,
-		update = function (unit, t, dt, data)
-			local aim_direction
-			local unit_fwd = Quaternion.forward(Unit.local_rotation(unit, 0))
-			local status_extension = data.status_extension
+		update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			local var_3_0
+			local var_3_1 = Quaternion.forward(Unit.local_rotation(arg_3_0, 0))
+			local var_3_2 = arg_3_3.status_extension
 
-			if status_extension:is_grabbed_by_pack_master() then
-				local packmaster_unit = status_extension:get_pack_master_grabber()
-				local node = Unit.node(packmaster_unit, "j_rightweaponcomponent10")
-				local node_position = Unit.world_position(packmaster_unit, node)
+			if var_3_2:is_grabbed_by_pack_master() then
+				local var_3_3 = var_3_2:get_pack_master_grabber()
+				local var_3_4 = Unit.node(var_3_3, "j_rightweaponcomponent10")
+				local var_3_5 = Unit.world_position(var_3_3, var_3_4)
 
-				Unit.animation_set_constraint_target(unit, data.packmaster_claw_aim_constraint, node_position)
+				Unit.animation_set_constraint_target(arg_3_0, arg_3_3.packmaster_claw_aim_constraint, var_3_5)
 
-				aim_direction = unit_fwd
-			elseif status_extension:is_inspecting() then
-				aim_direction = unit_fwd
+				var_3_0 = var_3_1
+			elseif var_3_2:is_inspecting() then
+				var_3_0 = var_3_1
 			else
-				local rotation = data.locomotion_extension:current_rotation()
+				local var_3_6 = arg_3_3.locomotion_extension:current_rotation()
 
-				aim_direction = Quaternion.forward(rotation)
+				var_3_0 = Quaternion.forward(var_3_6)
 			end
 
-			Unit.animation_set_variable(unit, data.aim_direction_pitch_var, math.clamp(Quaternion.pitch(Quaternion.look(aim_direction)), -1, 1))
+			Unit.animation_set_variable(arg_3_0, arg_3_3.aim_direction_pitch_var, math.clamp(Quaternion.pitch(Quaternion.look(var_3_0)), -1, 1))
 
-			local min_head_look_z = data.status_extension:is_crouching() and -3 or data.min_head_lookat_z
-			local aim_direction_scaled = aim_direction * 3
-			local z = aim_direction_scaled.z
+			local var_3_7 = arg_3_3.status_extension:is_crouching() and -3 or arg_3_3.min_head_lookat_z
+			local var_3_8 = var_3_0 * 3
+			local var_3_9 = var_3_8.z
 
-			aim_direction_scaled.z = math.clamp(z, min_head_look_z, 3)
+			var_3_8.z = math.clamp(var_3_9, var_3_7, 3)
 
-			local aim_from_pos = Unit.world_position(unit, Unit.node(unit, "camera_attach"))
-			local aim_target = aim_from_pos + aim_direction_scaled
+			local var_3_10 = Unit.world_position(arg_3_0, Unit.node(arg_3_0, "camera_attach")) + var_3_8
 
-			Unit.animation_set_constraint_target(unit, data.aim_constraint_anim_var, aim_target)
+			Unit.animation_set_constraint_target(arg_3_0, arg_3_3.aim_constraint_anim_var, var_3_10)
 
-			local aim_dir_flat = Vector3.normalize(Vector3.flat(aim_direction))
-			local fwd_flat = Vector3.normalize(Vector3.flat(unit_fwd))
-			local aim_angle = math.atan2(aim_dir_flat.y, aim_dir_flat.x) - math.atan2(fwd_flat.y, fwd_flat.x)
-			local aim_direction_scaled = -((aim_angle / math.pi + 1) % 2 - 1) * 2
+			local var_3_11 = Vector3.normalize(Vector3.flat(var_3_0))
+			local var_3_12 = Vector3.normalize(Vector3.flat(var_3_1))
+			local var_3_13 = -(((math.atan2(var_3_11.y, var_3_11.x) - math.atan2(var_3_12.y, var_3_12.x)) / math.pi + 1) % 2 - 1) * 2
 
-			Unit.animation_set_variable(unit, data.look_direction_anim_var, math.clamp(aim_direction_scaled, -AIM_DIRECTION_MAX, AIM_DIRECTION_MAX))
+			Unit.animation_set_variable(arg_3_0, arg_3_3.look_direction_anim_var, math.clamp(var_3_13, -var_0_1, var_0_1))
 
-			local game = Managers.state.network:game()
-			local go_id = Managers.state.unit_storage:go_id(unit)
+			local var_3_14 = Managers.state.network:game()
+			local var_3_15 = Managers.state.unit_storage:go_id(arg_3_0)
 
-			if game and go_id then
-				local first_person_extension = ScriptUnit.extension(unit, "first_person_system")
-				local aim_position = first_person_extension:current_position()
-				local network_aim_position = NetworkUtils.network_clamp_position(aim_position)
+			if var_3_14 and var_3_15 then
+				local var_3_16 = ScriptUnit.extension(arg_3_0, "first_person_system"):current_position()
+				local var_3_17 = NetworkUtils.network_clamp_position(var_3_16)
 
-				GameSession.set_game_object_field(game, go_id, "aim_direction", aim_direction)
-				GameSession.set_game_object_field(game, go_id, "aim_position", network_aim_position)
+				GameSession.set_game_object_field(var_3_14, var_3_15, "aim_direction", var_3_0)
+				GameSession.set_game_object_field(var_3_14, var_3_15, "aim_position", var_3_17)
 			end
 		end,
-		leave = function (unit, data)
+		leave = function(arg_4_0, arg_4_1)
 			return
-		end,
+		end
 	},
 	husk = {
-		init = function (unit, data)
-			data.aim_constraint_anim_var = Unit.animation_find_constraint_target(unit, "aim_constraint_target")
-			data.look_direction_anim_var = Unit.animation_find_variable(unit, "aim_direction")
-			data.aim_direction_pitch_var = Unit.animation_find_variable(unit, "aim_direction_pitch")
-			data.packmaster_claw_aim_constraint = Unit.animation_find_constraint_target(unit, "packmaster_claw_target")
-			data.camera_attach_node = Unit.node(unit, "camera_attach")
-			data.status_extension = ScriptUnit.extension(unit, "status_system")
-			data.min_head_lookat_z = -3
+		init = function(arg_5_0, arg_5_1)
+			arg_5_1.aim_constraint_anim_var = Unit.animation_find_constraint_target(arg_5_0, "aim_constraint_target")
+			arg_5_1.look_direction_anim_var = Unit.animation_find_variable(arg_5_0, "aim_direction")
+			arg_5_1.aim_direction_pitch_var = Unit.animation_find_variable(arg_5_0, "aim_direction_pitch")
+			arg_5_1.packmaster_claw_aim_constraint = Unit.animation_find_constraint_target(arg_5_0, "packmaster_claw_target")
+			arg_5_1.camera_attach_node = Unit.node(arg_5_0, "camera_attach")
+			arg_5_1.status_extension = ScriptUnit.extension(arg_5_0, "status_system")
+			arg_5_1.min_head_lookat_z = -3
 
-			local player = Managers.player:owner(unit)
+			local var_5_0 = Managers.player:owner(arg_5_0)
 
-			if player then
-				local profile_index = player:profile_index()
-				local career_index = player:career_index()
-				local profile = SPProfiles[profile_index]
-				local careers = profile and profile.careers
-				local career_settings = careers and careers[career_index]
+			if var_5_0 then
+				local var_5_1 = var_5_0:profile_index()
+				local var_5_2 = var_5_0:career_index()
+				local var_5_3 = SPProfiles[var_5_1]
+				local var_5_4 = var_5_3 and var_5_3.careers
+				local var_5_5 = var_5_4 and var_5_4[var_5_2]
 
-				if career_settings and career_settings.min_head_lookat_z then
-					data.min_head_lookat_z = career_settings.min_head_lookat_z
+				if var_5_5 and var_5_5.min_head_lookat_z then
+					arg_5_1.min_head_lookat_z = var_5_5.min_head_lookat_z
 				end
 			end
 		end,
-		update = function (unit, t, dt, data)
-			local game = Managers.state.network:game()
-			local go_id = Managers.state.unit_storage:go_id(unit)
+		update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			local var_6_0 = Managers.state.network:game()
+			local var_6_1 = Managers.state.unit_storage:go_id(arg_6_0)
 
-			if not game or not go_id then
+			if not var_6_0 or not var_6_1 then
 				return
 			end
 
-			local aim_direction = GameSession.game_object_field(game, go_id, "aim_direction")
-			local rotation = Quaternion.look(aim_direction)
-			local yaw = Quaternion.yaw(rotation)
-			local breed = Unit.get_data(unit, "breed")
-			local husk_max_pitch = breed.custom_husk_max_pitch or HUSK_MAX_PITCH
-			local pitch = math.clamp(Quaternion.pitch(rotation), HUSK_MIN_PITCH, husk_max_pitch)
-			local yaw_rotation = Quaternion(Vector3.up(), yaw)
-			local pitch_rotation = Quaternion(Vector3.right(), pitch)
-			local look_rotation = Quaternion.multiply(yaw_rotation, pitch_rotation)
+			local var_6_2 = GameSession.game_object_field(var_6_0, var_6_1, "aim_direction")
+			local var_6_3 = Quaternion.look(var_6_2)
+			local var_6_4 = Quaternion.yaw(var_6_3)
+			local var_6_5 = Unit.get_data(arg_6_0, "breed").custom_husk_max_pitch or var_0_4
+			local var_6_6 = math.clamp(Quaternion.pitch(var_6_3), var_0_2, var_6_5)
+			local var_6_7 = Quaternion(Vector3.up(), var_6_4)
+			local var_6_8 = Quaternion(Vector3.right(), var_6_6)
+			local var_6_9 = Quaternion.multiply(var_6_7, var_6_8)
+			local var_6_10 = Vector3.normalize(Quaternion.forward(var_6_9))
+			local var_6_11 = arg_6_3.status_extension:is_crouching() and -3 or arg_6_3.min_head_lookat_z
+			local var_6_12 = var_6_10 * 3
+			local var_6_13 = var_6_12.z
 
-			aim_direction = Vector3.normalize(Quaternion.forward(look_rotation))
+			var_6_12.z = math.clamp(var_6_13, var_6_11, 3)
 
-			local min_head_look_z = data.status_extension:is_crouching() and -3 or data.min_head_lookat_z
-			local aim_direction_scaled = aim_direction * 3
-			local z = aim_direction_scaled.z
-
-			aim_direction_scaled.z = math.clamp(z, min_head_look_z, 3)
-
-			local from_pos = Unit.world_position(unit, data.camera_attach_node)
+			local var_6_14 = Unit.world_position(arg_6_0, arg_6_3.camera_attach_node)
 
 			if script_data.lerp_debug or script_data.extrapolation_debug then
-				local old_target = Matrix4x4.translation(Unit.animation_get_constraint_target(unit, data.aim_constraint_anim_var))
-				local new_target = from_pos + aim_direction_scaled
+				local var_6_15 = Matrix4x4.translation(Unit.animation_get_constraint_target(arg_6_0, arg_6_3.aim_constraint_anim_var))
+				local var_6_16 = var_6_14 + var_6_12
 
-				Unit.animation_set_constraint_target(unit, data.aim_constraint_anim_var, new_target)
-				Unit.animation_set_variable(unit, Unit.animation_find_variable(unit, "aim_direction_pitch"), math.clamp(pitch, -1, 1))
+				Unit.animation_set_constraint_target(arg_6_0, arg_6_3.aim_constraint_anim_var, var_6_16)
+				Unit.animation_set_variable(arg_6_0, Unit.animation_find_variable(arg_6_0, "aim_direction_pitch"), math.clamp(var_6_6, -1, 1))
 			else
-				Unit.animation_set_constraint_target(unit, data.aim_constraint_anim_var, from_pos + aim_direction_scaled)
+				Unit.animation_set_constraint_target(arg_6_0, arg_6_3.aim_constraint_anim_var, var_6_14 + var_6_12)
 			end
 
-			local new_yaw = GameSession.game_object_field(game, go_id, "yaw")
-			local new_pitch = GameSession.game_object_field(game, go_id, "pitch")
-			local yaw_rotation = Quaternion(Vector3.up(), new_yaw)
-			local pitch_rotation = Quaternion(Vector3.right(), new_pitch)
-			local new_rot = Quaternion.multiply(yaw_rotation, pitch_rotation)
-			local fwd_dir = Quaternion.forward(new_rot)
+			local var_6_17 = GameSession.game_object_field(var_6_0, var_6_1, "yaw")
+			local var_6_18 = GameSession.game_object_field(var_6_0, var_6_1, "pitch")
+			local var_6_19 = Quaternion(Vector3.up(), var_6_17)
+			local var_6_20 = Quaternion(Vector3.right(), var_6_18)
+			local var_6_21 = Quaternion.multiply(var_6_19, var_6_20)
+			local var_6_22 = Quaternion.forward(var_6_21)
 
-			Vector3.set_z(fwd_dir, 0)
-			Vector3.set_z(aim_direction_scaled, 0)
+			Vector3.set_z(var_6_22, 0)
+			Vector3.set_z(var_6_12, 0)
 
-			local fwd_flat = Vector3.normalize(fwd_dir)
-			local aim_dir_flat = Vector3.normalize(aim_direction_scaled)
-			local aim_angle = math.atan2(aim_dir_flat.y, aim_dir_flat.x) - math.atan2(fwd_flat.y, fwd_flat.x)
-			local aim_direction_scaled = -((aim_angle / math.pi + 1) % 2 - 1) * 2
+			local var_6_23 = Vector3.normalize(var_6_22)
+			local var_6_24 = Vector3.normalize(var_6_12)
+			local var_6_25 = -(((math.atan2(var_6_24.y, var_6_24.x) - math.atan2(var_6_23.y, var_6_23.x)) / math.pi + 1) % 2 - 1) * 2
 
-			Unit.animation_set_variable(unit, data.look_direction_anim_var, math.clamp(aim_direction_scaled, -AIM_DIRECTION_MAX, AIM_DIRECTION_MAX))
+			Unit.animation_set_variable(arg_6_0, arg_6_3.look_direction_anim_var, math.clamp(var_6_25, -var_0_1, var_0_1))
 
-			if data.status_extension:is_grabbed_by_pack_master() then
-				local packmaster_unit = data.status_extension:get_pack_master_grabber()
-				local node = Unit.node(packmaster_unit, "j_rightweaponcomponent10")
-				local node_position = Unit.world_position(packmaster_unit, node)
+			if arg_6_3.status_extension:is_grabbed_by_pack_master() then
+				local var_6_26 = arg_6_3.status_extension:get_pack_master_grabber()
+				local var_6_27 = Unit.node(var_6_26, "j_rightweaponcomponent10")
+				local var_6_28 = Unit.world_position(var_6_26, var_6_27)
 
-				Unit.animation_set_constraint_target(unit, data.packmaster_claw_aim_constraint, node_position)
+				Unit.animation_set_constraint_target(arg_6_0, arg_6_3.packmaster_claw_aim_constraint, var_6_28)
 			end
 		end,
-		leave = function (unit, data)
+		leave = function(arg_7_0, arg_7_1)
 			return
-		end,
-	},
+		end
+	}
 }
 AimTemplates.enemy_character = {
 	owner = {
-		init = function (unit, data)
-			local breed = Unit.get_data(unit, "breed")
-
-			data.breed = breed
-			data.aim_constraint_anim_var = Unit.animation_find_constraint_target(unit, "aim_constraint_target")
-			data.look_direction_anim_var = Unit.animation_find_variable(unit, "aim_direction")
-			data.aim_direction_pitch_var = Unit.animation_find_variable(unit, "aim_direction_pitch")
-			data.locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
-			data.status_extension = ScriptUnit.extension(unit, "status_system")
+		init = function(arg_8_0, arg_8_1)
+			arg_8_1.breed = Unit.get_data(arg_8_0, "breed")
+			arg_8_1.aim_constraint_anim_var = Unit.animation_find_constraint_target(arg_8_0, "aim_constraint_target")
+			arg_8_1.look_direction_anim_var = Unit.animation_find_variable(arg_8_0, "aim_direction")
+			arg_8_1.aim_direction_pitch_var = Unit.animation_find_variable(arg_8_0, "aim_direction_pitch")
+			arg_8_1.locomotion_extension = ScriptUnit.extension(arg_8_0, "locomotion_system")
+			arg_8_1.status_extension = ScriptUnit.extension(arg_8_0, "status_system")
 		end,
-		update = function (unit, t, dt, data)
-			local aim_direction
-			local unit_fwd = Quaternion.forward(Unit.local_rotation(unit, 0))
-			local status_extension = data.status_extension
+		update = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			local var_9_0
+			local var_9_1 = Quaternion.forward(Unit.local_rotation(arg_9_0, 0))
+			local var_9_2 = arg_9_3.status_extension
 
-			if status_extension:is_inspecting() then
-				aim_direction = unit_fwd
-			elseif status_extension:get_is_packmaster_dragging() then
-				aim_direction = unit_fwd
+			if var_9_2:is_inspecting() then
+				var_9_0 = var_9_1
+			elseif var_9_2:get_is_packmaster_dragging() then
+				var_9_0 = var_9_1
 			else
-				local rotation = data.locomotion_extension:current_rotation()
+				local var_9_3 = arg_9_3.locomotion_extension:current_rotation()
 
-				aim_direction = Quaternion.forward(rotation)
+				var_9_0 = Quaternion.forward(var_9_3)
 			end
 
-			Unit.animation_set_variable(unit, data.aim_direction_pitch_var, math.clamp(Quaternion.pitch(Quaternion.look(aim_direction)), -1, 1))
+			Unit.animation_set_variable(arg_9_0, arg_9_3.aim_direction_pitch_var, math.clamp(Quaternion.pitch(Quaternion.look(var_9_0)), -1, 1))
 
-			local aim_direction_scaled = aim_direction * AIM_DIRECTION_MAGNITUDE
-			local aim_from_pos = Unit.world_position(unit, Unit.node(unit, "camera_attach"))
-			local aim_target = aim_from_pos + aim_direction_scaled
+			local var_9_4 = var_9_0 * var_0_5
+			local var_9_5 = Unit.world_position(arg_9_0, Unit.node(arg_9_0, "camera_attach")) + var_9_4
 
-			Unit.animation_set_constraint_target(unit, data.aim_constraint_anim_var, aim_target)
+			Unit.animation_set_constraint_target(arg_9_0, arg_9_3.aim_constraint_anim_var, var_9_5)
 
-			local aim_dir_flat = Vector3.normalize(Vector3.flat(aim_direction))
-			local fwd_flat = Vector3.normalize(Vector3.flat(unit_fwd))
-			local aim_angle = math.atan2(aim_dir_flat.y, aim_dir_flat.x) - math.atan2(fwd_flat.y, fwd_flat.x)
-			local aim_direction_scaled = -((aim_angle / math.pi + 1) % 2 - 1) * 2
+			local var_9_6 = Vector3.normalize(Vector3.flat(var_9_0))
+			local var_9_7 = Vector3.normalize(Vector3.flat(var_9_1))
+			local var_9_8 = -(((math.atan2(var_9_6.y, var_9_6.x) - math.atan2(var_9_7.y, var_9_7.x)) / math.pi + 1) % 2 - 1) * 2
 
-			Unit.animation_set_variable(unit, data.look_direction_anim_var, math.clamp(aim_direction_scaled, -AIM_DIRECTION_MAX, AIM_DIRECTION_MAX))
+			Unit.animation_set_variable(arg_9_0, arg_9_3.look_direction_anim_var, math.clamp(var_9_8, -var_0_1, var_0_1))
 
-			local game = Managers.state.network:game()
-			local go_id = Managers.state.unit_storage:go_id(unit)
+			local var_9_9 = Managers.state.network:game()
+			local var_9_10 = Managers.state.unit_storage:go_id(arg_9_0)
 
-			if game and go_id then
-				local first_person_extension = ScriptUnit.extension(unit, "first_person_system")
-				local aim_position = first_person_extension:current_position()
-				local network_aim_position = NetworkUtils.network_clamp_position(aim_position)
+			if var_9_9 and var_9_10 then
+				local var_9_11 = ScriptUnit.extension(arg_9_0, "first_person_system"):current_position()
+				local var_9_12 = NetworkUtils.network_clamp_position(var_9_11)
 
-				GameSession.set_game_object_field(game, go_id, "aim_direction", aim_direction)
-				GameSession.set_game_object_field(game, go_id, "aim_position", network_aim_position)
+				GameSession.set_game_object_field(var_9_9, var_9_10, "aim_direction", var_9_0)
+				GameSession.set_game_object_field(var_9_9, var_9_10, "aim_position", var_9_12)
 			end
 		end,
-		leave = function (unit, data)
+		leave = function(arg_10_0, arg_10_1)
 			return
-		end,
+		end
 	},
 	husk = {
-		init = function (unit, data)
-			local breed = Unit.get_data(unit, "breed")
+		init = function(arg_11_0, arg_11_1)
+			local var_11_0 = Unit.get_data(arg_11_0, "breed")
 
-			data.aim_constraint_anim_var = Unit.animation_find_constraint_target(unit, "aim_constraint_target")
-			data.look_direction_anim_var = Unit.animation_find_variable(unit, "aim_direction")
-			data.aim_direction_pitch_var = Unit.animation_find_variable(unit, "aim_direction_pitch")
-			data.boss = breed.boss or false
-			data.aim_constraint_forward_multiplier = breed.aim_constraint_forward_multiplier or 1
-			data.camera_attach_node = Unit.node(unit, "camera_attach")
-			data.status_extension = ScriptUnit.extension(unit, "status_system")
-			data.husk_locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
+			arg_11_1.aim_constraint_anim_var = Unit.animation_find_constraint_target(arg_11_0, "aim_constraint_target")
+			arg_11_1.look_direction_anim_var = Unit.animation_find_variable(arg_11_0, "aim_direction")
+			arg_11_1.aim_direction_pitch_var = Unit.animation_find_variable(arg_11_0, "aim_direction_pitch")
+			arg_11_1.boss = var_11_0.boss or false
+			arg_11_1.aim_constraint_forward_multiplier = var_11_0.aim_constraint_forward_multiplier or 1
+			arg_11_1.camera_attach_node = Unit.node(arg_11_0, "camera_attach")
+			arg_11_1.status_extension = ScriptUnit.extension(arg_11_0, "status_system")
+			arg_11_1.husk_locomotion_extension = ScriptUnit.extension(arg_11_0, "locomotion_system")
 		end,
-		update = function (unit, t, dt, data)
-			local game = Managers.state.network:game()
-			local go_id = Managers.state.unit_storage:go_id(unit)
+		update = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			local var_12_0 = Managers.state.network:game()
+			local var_12_1 = Managers.state.unit_storage:go_id(arg_12_0)
 
-			if not game or not go_id then
+			if not var_12_0 or not var_12_1 then
 				return
 			end
 
-			local aim_direction = GameSession.game_object_field(game, go_id, "aim_direction")
-			local rotation = Quaternion.look(aim_direction)
-			local yaw = Quaternion.yaw(rotation)
-			local breed = Unit.get_data(unit, "breed")
-			local husk_max_pitch = breed.custom_husk_max_pitch or HUSK_MAX_PITCH
-			local pitch
+			local var_12_2 = GameSession.game_object_field(var_12_0, var_12_1, "aim_direction")
+			local var_12_3 = Quaternion.look(var_12_2)
+			local var_12_4 = Quaternion.yaw(var_12_3)
+			local var_12_5 = Unit.get_data(arg_12_0, "breed").custom_husk_max_pitch or var_0_4
+			local var_12_6
 
-			if data.boss then
-				pitch = math.clamp(Quaternion.pitch(rotation), HUSK_BOSS_MIN_PITCH, husk_max_pitch)
+			if arg_12_3.boss then
+				var_12_6 = math.clamp(Quaternion.pitch(var_12_3), var_0_3, var_12_5)
 			else
-				pitch = math.clamp(Quaternion.pitch(rotation), HUSK_MIN_PITCH, husk_max_pitch)
+				var_12_6 = math.clamp(Quaternion.pitch(var_12_3), var_0_2, var_12_5)
 			end
 
-			local yaw_rotation = Quaternion(Vector3.up(), yaw)
-			local pitch_rotation = Quaternion(Vector3.right(), pitch)
-			local look_rotation = Quaternion.multiply(yaw_rotation, pitch_rotation)
+			local var_12_7 = Quaternion(Vector3.up(), var_12_4)
+			local var_12_8 = Quaternion(Vector3.right(), var_12_6)
+			local var_12_9 = Quaternion.multiply(var_12_7, var_12_8)
+			local var_12_10 = Vector3.normalize(Quaternion.forward(var_12_9))
+			local var_12_11
 
-			aim_direction = Vector3.normalize(Quaternion.forward(look_rotation))
-
-			local aim_direction_scaled
-
-			if data.boss then
-				aim_direction_scaled = aim_direction * BOSS_AIM_DIRECTION_MAGNITUDE
+			if arg_12_3.boss then
+				var_12_11 = var_12_10 * var_0_6
 			else
-				aim_direction_scaled = aim_direction * AIM_DIRECTION_MAGNITUDE
+				var_12_11 = var_12_10 * var_0_5
 			end
 
-			aim_direction_scaled = aim_direction_scaled * data.aim_constraint_forward_multiplier
-
-			local from_pos = Unit.world_position(unit, data.camera_attach_node)
+			local var_12_12 = var_12_11 * arg_12_3.aim_constraint_forward_multiplier
+			local var_12_13 = Unit.world_position(arg_12_0, arg_12_3.camera_attach_node)
 
 			if script_data.lerp_debug or script_data.extrapolation_debug then
-				local old_target = Matrix4x4.translation(Unit.animation_get_constraint_target(unit, data.aim_constraint_anim_var))
-				local new_target = from_pos + aim_direction_scaled
+				local var_12_14 = Matrix4x4.translation(Unit.animation_get_constraint_target(arg_12_0, arg_12_3.aim_constraint_anim_var))
+				local var_12_15 = var_12_13 + var_12_12
 
-				Unit.animation_set_constraint_target(unit, data.aim_constraint_anim_var, new_target)
-				Unit.animation_set_variable(unit, Unit.animation_find_variable(unit, "aim_direction_pitch"), math.clamp(pitch, -1, 1))
+				Unit.animation_set_constraint_target(arg_12_0, arg_12_3.aim_constraint_anim_var, var_12_15)
+				Unit.animation_set_variable(arg_12_0, Unit.animation_find_variable(arg_12_0, "aim_direction_pitch"), math.clamp(var_12_6, -1, 1))
 			else
-				Unit.animation_set_constraint_target(unit, data.aim_constraint_anim_var, from_pos + aim_direction_scaled)
+				Unit.animation_set_constraint_target(arg_12_0, arg_12_3.aim_constraint_anim_var, var_12_13 + var_12_12)
 			end
 
-			local new_yaw = GameSession.game_object_field(game, go_id, "yaw")
-			local new_pitch = GameSession.game_object_field(game, go_id, "pitch")
-			local yaw_rotation = Quaternion(Vector3.up(), new_yaw)
-			local pitch_rotation = Quaternion(Vector3.right(), new_pitch)
-			local new_rot = Quaternion.multiply(yaw_rotation, pitch_rotation)
-			local fwd_dir = Quaternion.forward(new_rot)
+			local var_12_16 = GameSession.game_object_field(var_12_0, var_12_1, "yaw")
+			local var_12_17 = GameSession.game_object_field(var_12_0, var_12_1, "pitch")
+			local var_12_18 = Quaternion(Vector3.up(), var_12_16)
+			local var_12_19 = Quaternion(Vector3.right(), var_12_17)
+			local var_12_20 = Quaternion.multiply(var_12_18, var_12_19)
+			local var_12_21 = Quaternion.forward(var_12_20)
 
-			Vector3.set_z(fwd_dir, 0)
-			Vector3.set_z(aim_direction_scaled, 0)
+			Vector3.set_z(var_12_21, 0)
+			Vector3.set_z(var_12_12, 0)
 
-			local fwd_flat = Vector3.normalize(fwd_dir)
-			local aim_dir_flat = Vector3.normalize(aim_direction_scaled)
-			local aim_angle = math.atan2(aim_dir_flat.y, aim_dir_flat.x) - math.atan2(fwd_flat.y, fwd_flat.x)
-			local aim_direction_scaled = -((aim_angle / math.pi + 1) % 2 - 1) * 2
+			local var_12_22 = Vector3.normalize(var_12_21)
+			local var_12_23 = Vector3.normalize(var_12_12)
+			local var_12_24 = -(((math.atan2(var_12_23.y, var_12_23.x) - math.atan2(var_12_22.y, var_12_22.x)) / math.pi + 1) % 2 - 1) * 2
 
-			Unit.animation_set_variable(unit, data.look_direction_anim_var, math.clamp(aim_direction_scaled, -AIM_DIRECTION_MAX, AIM_DIRECTION_MAX))
+			Unit.animation_set_variable(arg_12_0, arg_12_3.look_direction_anim_var, math.clamp(var_12_24, -var_0_1, var_0_1))
 		end,
-		leave = function (unit, data)
+		leave = function(arg_13_0, arg_13_1)
 			return
-		end,
-	},
+		end
+	}
 }
 AimTemplates.packmaster_claw = {
 	owner = {
-		init = function (unit, data)
-			data.aim_constraint_anim_var = Unit.animation_find_constraint_target(unit, "aim_constraint_target")
+		init = function(arg_14_0, arg_14_1)
+			arg_14_1.aim_constraint_anim_var = Unit.animation_find_constraint_target(arg_14_0, "aim_constraint_target")
 		end,
-		update = function (unit, t, dt, data)
+		update = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 			return
 		end,
-		leave = function (unit, data)
+		leave = function(arg_16_0, arg_16_1)
 			return
-		end,
-	},
+		end
+	}
 }
 AimTemplates.ratling_gunner = {
 	owner = {
-		init = function (unit, data)
-			local blackboard = BLACKBOARDS[unit]
-
-			data.blackboard = blackboard
-			data.constraint_target = Unit.animation_find_constraint_target(unit, "aim_target")
+		init = function(arg_17_0, arg_17_1)
+			arg_17_1.blackboard = var_0_0[arg_17_0]
+			arg_17_1.constraint_target = Unit.animation_find_constraint_target(arg_17_0, "aim_target")
 		end,
-		update = function (unit, t, dt, data)
-			local unit_position = POSITION_LOOKUP[unit]
-			local aim_target
-			local attack_pattern_data = data.blackboard.attack_pattern_data
+		update = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			local var_18_0 = POSITION_LOOKUP[arg_18_0]
+			local var_18_1
+			local var_18_2 = arg_18_3.blackboard.attack_pattern_data
 
-			if attack_pattern_data and attack_pattern_data.shoot_direction_box then
-				local shoot_direction = attack_pattern_data.shoot_direction_box:unbox()
+			if var_18_2 and var_18_2.shoot_direction_box then
+				local var_18_3 = var_18_2.shoot_direction_box:unbox()
 
-				aim_target = unit_position + Vector3.normalize(shoot_direction) * 5
+				var_18_1 = var_18_0 + Vector3.normalize(var_18_3) * 5
 			else
-				local look_direction = Quaternion.forward(Unit.local_rotation(unit, 0))
-
-				aim_target = unit_position + look_direction * 5
+				var_18_1 = var_18_0 + Quaternion.forward(Unit.local_rotation(arg_18_0, 0)) * 5
 			end
 
-			Unit.animation_set_constraint_target(unit, data.constraint_target, aim_target)
+			Unit.animation_set_constraint_target(arg_18_0, arg_18_3.constraint_target, var_18_1)
 
-			local game = Managers.state.network:game()
-			local go_id = Managers.state.unit_storage:go_id(unit)
+			local var_18_4 = Managers.state.network:game()
+			local var_18_5 = Managers.state.unit_storage:go_id(arg_18_0)
 
-			if game and go_id then
-				GameSession.set_game_object_field(game, go_id, "aim_target", aim_target)
+			if var_18_4 and var_18_5 then
+				GameSession.set_game_object_field(var_18_4, var_18_5, "aim_target", var_18_1)
 			end
 		end,
-		leave = function (unit, data)
+		leave = function(arg_19_0, arg_19_1)
 			return
-		end,
+		end
 	},
 	husk = {
-		init = function (unit, data)
-			data.constraint_target = Unit.animation_find_constraint_target(unit, "aim_target")
+		init = function(arg_20_0, arg_20_1)
+			arg_20_1.constraint_target = Unit.animation_find_constraint_target(arg_20_0, "aim_target")
 		end,
-		update = function (unit, t, dt, data)
-			local game = Managers.state.network:game()
-			local go_id = Managers.state.unit_storage:go_id(unit)
+		update = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			local var_21_0 = Managers.state.network:game()
+			local var_21_1 = Managers.state.unit_storage:go_id(arg_21_0)
 
-			if game and go_id then
-				local aim_target = GameSession.game_object_field(game, go_id, "aim_target")
+			if var_21_0 and var_21_1 then
+				local var_21_2 = GameSession.game_object_field(var_21_0, var_21_1, "aim_target")
 
-				Unit.animation_set_constraint_target(unit, data.constraint_target, aim_target)
+				Unit.animation_set_constraint_target(arg_21_0, arg_21_3.constraint_target, var_21_2)
 			else
-				local look_direction = Quaternion.forward(Unit.local_rotation(unit, 0))
-				local aim_target = POSITION_LOOKUP[unit] + look_direction * 5
+				local var_21_3 = Quaternion.forward(Unit.local_rotation(arg_21_0, 0))
+				local var_21_4 = POSITION_LOOKUP[arg_21_0] + var_21_3 * 5
 
-				Unit.animation_set_constraint_target(unit, data.constraint_target, aim_target)
+				Unit.animation_set_constraint_target(arg_21_0, arg_21_3.constraint_target, var_21_4)
 			end
 		end,
-		leave = function (unit, data)
+		leave = function(arg_22_0, arg_22_1)
 			return
-		end,
-	},
+		end
+	}
 }
 AimTemplates.pack_master = {
 	owner = {
-		init = function (unit, data)
-			local blackboard = BLACKBOARDS[unit]
-
-			data.blackboard = blackboard
-			data.constraint_target = Unit.animation_find_constraint_target(unit, "aim_constraint_target")
+		init = function(arg_23_0, arg_23_1)
+			arg_23_1.blackboard = var_0_0[arg_23_0]
+			arg_23_1.constraint_target = Unit.animation_find_constraint_target(arg_23_0, "aim_constraint_target")
 		end,
-		update = function (unit, t, dt, data)
-			local blackboard = data.blackboard
-			local target_unit = blackboard.target_unit
+		update = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			local var_24_0 = arg_24_3.blackboard.target_unit
 
-			if ALIVE[target_unit] then
-				local head_index = Unit.node(target_unit, "j_head")
-				local aim_target = Unit.world_position(target_unit, head_index)
+			if ALIVE[var_24_0] then
+				local var_24_1 = Unit.node(var_24_0, "j_head")
+				local var_24_2 = Unit.world_position(var_24_0, var_24_1)
 
-				Unit.animation_set_constraint_target(unit, data.constraint_target, aim_target)
+				Unit.animation_set_constraint_target(arg_24_0, arg_24_3.constraint_target, var_24_2)
 
-				local game = Managers.state.network:game()
-				local go_id = Managers.state.unit_storage:go_id(unit)
+				local var_24_3 = Managers.state.network:game()
+				local var_24_4 = Managers.state.unit_storage:go_id(arg_24_0)
 
-				if game and go_id then
-					GameSession.set_game_object_field(game, go_id, "aim_target", aim_target)
+				if var_24_3 and var_24_4 then
+					GameSession.set_game_object_field(var_24_3, var_24_4, "aim_target", var_24_2)
 				end
 			end
 		end,
-		leave = function (unit, data)
+		leave = function(arg_25_0, arg_25_1)
 			return
-		end,
+		end
 	},
 	husk = {
-		init = function (unit, data)
-			data.constraint_target = Unit.animation_find_constraint_target(unit, "aim_constraint_target")
+		init = function(arg_26_0, arg_26_1)
+			arg_26_1.constraint_target = Unit.animation_find_constraint_target(arg_26_0, "aim_constraint_target")
 		end,
-		update = function (unit, t, dt, data)
-			local game = Managers.state.network:game()
-			local go_id = Managers.state.unit_storage:go_id(unit)
+		update = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			local var_27_0 = Managers.state.network:game()
+			local var_27_1 = Managers.state.unit_storage:go_id(arg_27_0)
 
-			if game and go_id then
-				local aim_target = GameSession.game_object_field(game, go_id, "aim_target")
+			if var_27_0 and var_27_1 then
+				local var_27_2 = GameSession.game_object_field(var_27_0, var_27_1, "aim_target")
 
-				if aim_target then
-					Unit.animation_set_constraint_target(unit, data.constraint_target, aim_target)
+				if var_27_2 then
+					Unit.animation_set_constraint_target(arg_27_0, arg_27_3.constraint_target, var_27_2)
 
 					return
 				end
 			end
 
-			local look_direction = Quaternion.forward(Unit.local_rotation(unit, 0))
-			local aim_target = POSITION_LOOKUP[unit] + look_direction * 5
+			local var_27_3 = Quaternion.forward(Unit.local_rotation(arg_27_0, 0))
+			local var_27_4 = POSITION_LOOKUP[arg_27_0] + var_27_3 * 5
 
-			Unit.animation_set_constraint_target(unit, data.constraint_target, aim_target)
+			Unit.animation_set_constraint_target(arg_27_0, arg_27_3.constraint_target, var_27_4)
 		end,
-		leave = function (unit, data)
+		leave = function(arg_28_0, arg_28_1)
 			return
-		end,
-	},
+		end
+	}
 }
 AimTemplates.warpfire_thrower = {
 	owner = {
-		init = function (unit, data)
-			local blackboard = BLACKBOARDS[unit]
-
-			data.blackboard = blackboard
-			data.constraint_target = Unit.animation_find_constraint_target(unit, "aim_target")
+		init = function(arg_29_0, arg_29_1)
+			arg_29_1.blackboard = var_0_0[arg_29_0]
+			arg_29_1.constraint_target = Unit.animation_find_constraint_target(arg_29_0, "aim_target")
 		end,
-		update = function (unit, t, dt, data)
-			local unit_position = POSITION_LOOKUP[unit]
-			local aim_target
-			local blackboard = data.blackboard
-			local attack_pattern_data = blackboard.attack_pattern_data
+		update = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			local var_30_0 = POSITION_LOOKUP[arg_30_0]
+			local var_30_1
+			local var_30_2 = arg_30_3.blackboard.attack_pattern_data
 
-			if attack_pattern_data and attack_pattern_data.shoot_direction_box then
-				local shoot_direction = attack_pattern_data.shoot_direction_box:unbox()
+			if var_30_2 and var_30_2.shoot_direction_box then
+				local var_30_3 = var_30_2.shoot_direction_box:unbox()
 
-				aim_target = unit_position + Vector3.normalize(shoot_direction) * 5
+				var_30_1 = var_30_0 + Vector3.normalize(var_30_3) * 5
 			else
-				local look_direction = Quaternion.forward(Unit.local_rotation(unit, 0))
-
-				aim_target = unit_position + look_direction * 5
+				var_30_1 = var_30_0 + Quaternion.forward(Unit.local_rotation(arg_30_0, 0)) * 5
 			end
 
-			Unit.animation_set_constraint_target(unit, data.constraint_target, aim_target)
+			Unit.animation_set_constraint_target(arg_30_0, arg_30_3.constraint_target, var_30_1)
 
-			local game = Managers.state.network:game()
-			local unit_storage = Managers.state.unit_storage
-			local go_id = unit_storage:go_id(unit)
+			local var_30_4 = Managers.state.network:game()
+			local var_30_5 = Managers.state.unit_storage:go_id(arg_30_0)
 
-			if game and go_id then
-				GameSession.set_game_object_field(game, go_id, "aim_target", aim_target)
+			if var_30_4 and var_30_5 then
+				GameSession.set_game_object_field(var_30_4, var_30_5, "aim_target", var_30_1)
 			end
 		end,
-		leave = function (unit, data)
+		leave = function(arg_31_0, arg_31_1)
 			return
-		end,
+		end
 	},
 	husk = {
-		init = function (unit, data)
-			data.constraint_target = Unit.animation_find_constraint_target(unit, "aim_target")
+		init = function(arg_32_0, arg_32_1)
+			arg_32_1.constraint_target = Unit.animation_find_constraint_target(arg_32_0, "aim_target")
 		end,
-		update = function (unit, t, dt, data)
-			local game = Managers.state.network:game()
-			local go_id = Managers.state.unit_storage:go_id(unit)
+		update = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+			local var_33_0 = Managers.state.network:game()
+			local var_33_1 = Managers.state.unit_storage:go_id(arg_33_0)
 
-			if game and go_id then
-				local aim_target = GameSession.game_object_field(game, go_id, "aim_target")
+			if var_33_0 and var_33_1 then
+				local var_33_2 = GameSession.game_object_field(var_33_0, var_33_1, "aim_target")
 
-				Unit.animation_set_constraint_target(unit, data.constraint_target, aim_target)
+				Unit.animation_set_constraint_target(arg_33_0, arg_33_3.constraint_target, var_33_2)
 			else
-				local look_direction = Quaternion.forward(Unit.local_rotation(unit, 0))
-				local aim_target = POSITION_LOOKUP[unit] + look_direction * 5
+				local var_33_3 = Quaternion.forward(Unit.local_rotation(arg_33_0, 0))
+				local var_33_4 = POSITION_LOOKUP[arg_33_0] + var_33_3 * 5
 
-				Unit.animation_set_constraint_target(unit, data.constraint_target, aim_target)
+				Unit.animation_set_constraint_target(arg_33_0, arg_33_3.constraint_target, var_33_4)
 			end
 		end,
-		leave = function (unit, data)
+		leave = function(arg_34_0, arg_34_1)
 			return
-		end,
-	},
+		end
+	}
 }
 AimTemplates.chaos_warrior = {
 	owner = {
-		init = function (unit, data)
-			local blackboard = BLACKBOARDS[unit]
-
-			data.blackboard = blackboard
-			data.constraint_target = Unit.animation_find_constraint_target(unit, "aim_target")
-			data.previous_look_target = Vector3Box()
+		init = function(arg_35_0, arg_35_1)
+			arg_35_1.blackboard = var_0_0[arg_35_0]
+			arg_35_1.constraint_target = Unit.animation_find_constraint_target(arg_35_0, "aim_target")
+			arg_35_1.previous_look_target = Vector3Box()
 		end,
-		update = function (unit, t, dt, data)
-			if not Unit.has_animation_state_machine(unit) then
+		update = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+			if not Unit.has_animation_state_machine(arg_36_0) then
 				return
 			end
 
-			local blackboard = data.blackboard
-			local target_unit = blackboard.target_unit
-			local previous_aim_target_unit = data.previous_aim_target_unit
-			local constraint_target = data.constraint_target
+			local var_36_0 = arg_36_3.blackboard
+			local var_36_1 = var_36_0.target_unit
+			local var_36_2 = arg_36_3.previous_aim_target_unit
+			local var_36_3 = arg_36_3.constraint_target
 
-			if not target_unit or not Unit.alive(target_unit) then
-				AiUtils.set_default_anim_constraint(unit, constraint_target)
+			if not var_36_1 or not Unit.alive(var_36_1) then
+				AiUtils.set_default_anim_constraint(arg_36_0, var_36_3)
 
 				return
 			end
 
-			local aim_target
+			local var_36_4
 
-			if ScriptUnit.has_extension(target_unit, "first_person_system") then
-				local first_person_extension = ScriptUnit.extension(target_unit, "first_person_system")
-
-				aim_target = first_person_extension:current_position()
+			if ScriptUnit.has_extension(var_36_1, "first_person_system") then
+				local var_36_5 = ScriptUnit.extension(var_36_1, "first_person_system"):current_position()
 			else
-				local head_index = Unit.node(target_unit, "j_head")
-
-				aim_target = Unit.world_position(target_unit, head_index)
+				local var_36_6 = Unit.node(var_36_1, "j_head")
+				local var_36_7 = Unit.world_position(var_36_1, var_36_6)
 			end
 
-			local target_distance = blackboard.target_dist
-			local breed = blackboard.breed
-			local use_head_constraint
-			local _, is_level_unit = Managers.state.network:game_object_or_level_id(target_unit)
+			local var_36_8 = var_36_0.target_dist
+			local var_36_9 = var_36_0.breed
+			local var_36_10
+			local var_36_11, var_36_12 = Managers.state.network:game_object_or_level_id(var_36_1)
 
-			if not is_level_unit and target_distance < (breed.look_at_range or 30) then
-				use_head_constraint = true
+			if not var_36_12 and var_36_8 < (var_36_9.look_at_range or 30) then
+				var_36_10 = true
 			end
 
-			if not DEDICATED_SERVER and use_head_constraint then
-				look_at_target_unit(unit, data, dt, target_unit, target_distance, constraint_target, true)
+			if not DEDICATED_SERVER and var_36_10 then
+				var_0_7(arg_36_0, arg_36_3, arg_36_2, var_36_1, var_36_8, var_36_3, true)
 			end
 
-			local have_new_target = target_unit ~= previous_aim_target_unit
-
-			if have_new_target then
-				data.previous_aim_target_unit = target_unit
+			if var_36_1 ~= var_36_2 then
+				arg_36_3.previous_aim_target_unit = var_36_1
 			end
 		end,
-		leave = function (unit, data)
+		leave = function(arg_37_0, arg_37_1)
 			return
-		end,
+		end
 	},
 	husk = {
-		init = function (unit, data)
-			data.constraint_target = Unit.animation_find_constraint_target(unit, "aim_target")
-			data.previous_look_target = Vector3Box()
+		init = function(arg_38_0, arg_38_1)
+			arg_38_1.constraint_target = Unit.animation_find_constraint_target(arg_38_0, "aim_target")
+			arg_38_1.previous_look_target = Vector3Box()
 		end,
-		update = function (unit, t, dt, data)
-			if not Unit.has_animation_state_machine(unit) then
+		update = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+			if not Unit.has_animation_state_machine(arg_39_0) then
 				return
 			end
 
-			local game = Managers.state.network:game()
-			local go_id = Managers.state.unit_storage:go_id(unit)
-			local constraint_target = data.constraint_target
+			local var_39_0 = Managers.state.network:game()
+			local var_39_1 = Managers.state.unit_storage:go_id(arg_39_0)
+			local var_39_2 = arg_39_3.constraint_target
 
-			if game and go_id then
-				local target_unit_id = GameSession.game_object_field(game, go_id, "target_unit_id")
-				local target_unit = Managers.state.unit_storage:unit(target_unit_id)
+			if var_39_0 and var_39_1 then
+				local var_39_3 = GameSession.game_object_field(var_39_0, var_39_1, "target_unit_id")
+				local var_39_4 = Managers.state.unit_storage:unit(var_39_3)
 
-				if not target_unit or not Unit.alive(target_unit) or target_unit_id <= 0 then
-					AiUtils.set_default_anim_constraint(unit, constraint_target)
+				if not var_39_4 or not Unit.alive(var_39_4) or var_39_3 <= 0 then
+					AiUtils.set_default_anim_constraint(arg_39_0, var_39_2)
 
 					return
 				end
 
-				local aim_target
+				local var_39_5
 
-				if ScriptUnit.has_extension(target_unit, "first_person_system") then
-					local first_person_extension = ScriptUnit.extension(target_unit, "first_person_system")
-
-					aim_target = first_person_extension:current_position()
+				if ScriptUnit.has_extension(var_39_4, "first_person_system") then
+					local var_39_6 = ScriptUnit.extension(var_39_4, "first_person_system"):current_position()
+				elseif Unit.has_node(var_39_4, "j_head") then
+					local var_39_7 = Unit.node(var_39_4, "j_head")
+					local var_39_8 = Unit.world_position(var_39_4, var_39_7)
 				else
-					local has_head_index = Unit.has_node(target_unit, "j_head")
+					AiUtils.set_default_anim_constraint(arg_39_0, var_39_2)
 
-					if has_head_index then
-						local head_index = Unit.node(target_unit, "j_head")
-
-						aim_target = Unit.world_position(target_unit, head_index)
-					else
-						AiUtils.set_default_anim_constraint(unit, constraint_target)
-
-						return
-					end
+					return
 				end
 
-				local target_unit = Managers.state.unit_storage:unit(target_unit_id)
-				local target_distance = target_unit and Vector3.distance(POSITION_LOOKUP[unit], POSITION_LOOKUP[target_unit])
-				local use_head_constraint
+				local var_39_9 = Managers.state.unit_storage:unit(var_39_3)
+				local var_39_10 = var_39_9 and Vector3.distance(POSITION_LOOKUP[arg_39_0], POSITION_LOOKUP[var_39_9])
+				local var_39_11
 
-				if target_distance < 30 then
-					use_head_constraint = true
+				if var_39_10 < 30 then
+					var_39_11 = true
 				end
 
-				if use_head_constraint then
-					local head_constraint_target = data.constraint_target
+				if var_39_11 then
+					local var_39_12 = arg_39_3.constraint_target
 
-					data.lerp_aiming_disabled = true
+					arg_39_3.lerp_aiming_disabled = true
 
-					look_at_target_unit(unit, data, dt, target_unit, target_distance, head_constraint_target, true)
+					var_0_7(arg_39_0, arg_39_3, arg_39_2, var_39_9, var_39_10, var_39_12, true)
 				end
 			else
-				AiUtils.set_default_anim_constraint(unit, constraint_target)
+				AiUtils.set_default_anim_constraint(arg_39_0, var_39_2)
 			end
 		end,
-		leave = function (unit, data)
+		leave = function(arg_40_0, arg_40_1)
 			return
-		end,
-	},
+		end
+	}
 }
 AimTemplates.chaos_marauder = {
 	owner = {
-		init = function (unit, data)
-			local blackboard = BLACKBOARDS[unit]
-
-			data.blackboard = blackboard
-			data.ai_extension = ScriptUnit.extension(unit, "ai_system")
-			data.head_constraint_target = Unit.animation_find_constraint_target(unit, "head_aim_target")
-			data.previous_look_target = Vector3Box()
+		init = function(arg_41_0, arg_41_1)
+			arg_41_1.blackboard = var_0_0[arg_41_0]
+			arg_41_1.ai_extension = ScriptUnit.extension(arg_41_0, "ai_system")
+			arg_41_1.head_constraint_target = Unit.animation_find_constraint_target(arg_41_0, "head_aim_target")
+			arg_41_1.previous_look_target = Vector3Box()
 		end,
-		update = function (unit, t, dt, data)
-			local blackboard = data.blackboard
-			local ai_extension = data.ai_extension
-			local current_action = ai_extension:current_action_name()
-			local game = Managers.state.network:game()
-			local go_id = Managers.state.unit_storage:go_id(unit)
-			local use_head_constraint = false
-			local target_distance = blackboard.target_dist
-			local breed = blackboard.breed
-			local target_unit = blackboard.target_unit
-			local head_constraint_target = data.head_constraint_target
+		update = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+			local var_42_0 = arg_42_3.blackboard
+			local var_42_1 = arg_42_3.ai_extension:current_action_name()
+			local var_42_2 = Managers.state.network:game()
+			local var_42_3 = Managers.state.unit_storage:go_id(arg_42_0)
+			local var_42_4 = false
+			local var_42_5 = var_42_0.target_dist
+			local var_42_6 = var_42_0.breed
+			local var_42_7 = var_42_0.target_unit
+			local var_42_8 = arg_42_3.head_constraint_target
 
-			if not target_unit or not Unit.alive(target_unit) then
-				AiUtils.set_default_anim_constraint(unit, head_constraint_target)
+			if not var_42_7 or not Unit.alive(var_42_7) then
+				AiUtils.set_default_anim_constraint(arg_42_0, var_42_8)
 
 				return
 			end
 
-			local _, is_level_unit = Managers.state.network:game_object_or_level_id(target_unit)
-			local is_correct_action = current_action == "follow" or current_action == "combat_step"
+			local var_42_9, var_42_10 = Managers.state.network:game_object_or_level_id(var_42_7)
+			local var_42_11 = var_42_1 == "follow" or var_42_1 == "combat_step"
 
-			if not is_level_unit and is_correct_action and target_distance < (breed.look_at_range or 30) then
-				use_head_constraint = true
+			if not var_42_10 and var_42_11 and var_42_5 < (var_42_6.look_at_range or 30) then
+				var_42_4 = true
 			end
 
-			local death_extension = ScriptUnit.has_extension(unit, "death_system")
+			local var_42_12 = ScriptUnit.has_extension(arg_42_0, "death_system")
 
-			if death_extension and death_extension:has_death_started() then
-				use_head_constraint = false
+			if var_42_12 and var_42_12:has_death_started() then
+				var_42_4 = false
 			end
 
-			if use_head_constraint then
-				local previous_aim_target_unit = data.previous_aim_target_unit
+			if var_42_4 then
+				local var_42_13 = arg_42_3.previous_aim_target_unit
 
-				data.lerp_aiming_disabled = true
+				arg_42_3.lerp_aiming_disabled = true
 
 				if not DEDICATED_SERVER then
-					look_at_target_unit(unit, data, dt, target_unit, target_distance, head_constraint_target)
+					var_0_7(arg_42_0, arg_42_3, arg_42_2, var_42_7, var_42_5, var_42_8)
 				end
 
-				if target_unit ~= previous_aim_target_unit then
-					data.previous_aim_target_unit = target_unit
+				if var_42_7 ~= var_42_13 then
+					arg_42_3.previous_aim_target_unit = var_42_7
 				end
-			elseif data.is_using_head_constraint then
-				data.is_using_head_constraint = false
+			elseif arg_42_3.is_using_head_constraint then
+				arg_42_3.is_using_head_constraint = false
 
-				Unit.animation_event(unit, "look_at_off")
+				Unit.animation_event(arg_42_0, "look_at_off")
 			end
 		end,
-		leave = function (unit, data)
-			if data.is_using_head_constraint then
-				data.is_using_head_constraint = false
+		leave = function(arg_43_0, arg_43_1)
+			if arg_43_1.is_using_head_constraint then
+				arg_43_1.is_using_head_constraint = false
 
-				Unit.animation_event(unit, "look_at_off")
+				Unit.animation_event(arg_43_0, "look_at_off")
 			end
-		end,
+		end
 	},
 	husk = {
-		init = function (unit, data)
-			data.head_constraint_target = Unit.animation_find_constraint_target(unit, "head_aim_target")
-			data.previous_look_target = Vector3Box()
+		init = function(arg_44_0, arg_44_1)
+			arg_44_1.head_constraint_target = Unit.animation_find_constraint_target(arg_44_0, "head_aim_target")
+			arg_44_1.previous_look_target = Vector3Box()
 		end,
-		update = function (unit, t, dt, data)
-			local game = Managers.state.network:game()
-			local unit_storage = Managers.state.unit_storage
-			local go_id = unit_storage:go_id(unit)
+		update = function(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+			local var_45_0 = Managers.state.network:game()
+			local var_45_1 = Managers.state.unit_storage
+			local var_45_2 = var_45_1:go_id(arg_45_0)
 
-			if game and go_id then
-				local action_name_id = GameSession.game_object_field(game, go_id, "bt_action_name")
-				local action_name = NetworkLookup.bt_action_names[action_name_id]
-				local use_head_constraint = false
+			if var_45_0 and var_45_2 then
+				local var_45_3 = GameSession.game_object_field(var_45_0, var_45_2, "bt_action_name")
+				local var_45_4 = NetworkLookup.bt_action_names[var_45_3]
+				local var_45_5 = false
 
-				if action_name == "follow" then
-					use_head_constraint = true
+				if var_45_4 == "follow" then
+					var_45_5 = true
 				end
 
-				if use_head_constraint then
-					local target_unit_id = GameSession.game_object_field(game, go_id, "target_unit_id")
+				if var_45_5 then
+					local var_45_6 = GameSession.game_object_field(var_45_0, var_45_2, "target_unit_id")
 
-					if target_unit_id > 0 then
-						local target_unit = unit_storage:unit(target_unit_id)
-						local target_distance = target_unit and Vector3.distance(POSITION_LOOKUP[unit], POSITION_LOOKUP[target_unit] or Unit.world_position(target_unit, 0))
-						local head_constraint_target = data.head_constraint_target
+					if var_45_6 > 0 then
+						local var_45_7 = var_45_1:unit(var_45_6)
+						local var_45_8 = var_45_7 and Vector3.distance(POSITION_LOOKUP[arg_45_0], POSITION_LOOKUP[var_45_7] or Unit.world_position(var_45_7, 0))
+						local var_45_9 = arg_45_3.head_constraint_target
 
-						data.lerp_aiming_disabled = true
+						arg_45_3.lerp_aiming_disabled = true
 
-						local has_head_index = target_unit and Unit.has_node(target_unit, "j_head")
-
-						if has_head_index then
-							look_at_target_unit(unit, data, dt, target_unit, target_distance, head_constraint_target)
+						if var_45_7 and Unit.has_node(var_45_7, "j_head") then
+							var_0_7(arg_45_0, arg_45_3, arg_45_2, var_45_7, var_45_8, var_45_9)
 						end
 					end
-				elseif data.is_using_head_constraint then
-					data.is_using_head_constraint = false
+				elseif arg_45_3.is_using_head_constraint then
+					arg_45_3.is_using_head_constraint = false
 
-					Unit.animation_event(unit, "look_at_off")
+					Unit.animation_event(arg_45_0, "look_at_off")
 				end
 			end
 		end,
-		leave = function (unit, data)
-			if data.is_using_head_constraint then
-				data.is_using_head_constraint = false
+		leave = function(arg_46_0, arg_46_1)
+			if arg_46_1.is_using_head_constraint then
+				arg_46_1.is_using_head_constraint = false
 
-				Unit.animation_event(unit, "look_at_off")
+				Unit.animation_event(arg_46_0, "look_at_off")
 			end
-		end,
-	},
+		end
+	}
 }
 AimTemplates.stormfiend = {
 	owner = {
-		init = function (unit, data)
-			local blackboard = BLACKBOARDS[unit]
-
-			data.blackboard = blackboard
-			data.ai_extension = ScriptUnit.extension(unit, "ai_system")
-			data.head_constraint_target = Unit.animation_find_constraint_target(unit, "head_aim_target")
-			data.previous_look_target = Vector3Box()
+		init = function(arg_47_0, arg_47_1)
+			arg_47_1.blackboard = var_0_0[arg_47_0]
+			arg_47_1.ai_extension = ScriptUnit.extension(arg_47_0, "ai_system")
+			arg_47_1.head_constraint_target = Unit.animation_find_constraint_target(arg_47_0, "head_aim_target")
+			arg_47_1.previous_look_target = Vector3Box()
 		end,
-		update = function (unit, t, dt, data)
-			local blackboard = data.blackboard
-			local ai_extension = data.ai_extension
-			local current_action = ai_extension:current_action_name()
-			local game = Managers.state.network:game()
-			local go_id = Managers.state.unit_storage:go_id(unit)
-			local use_head_constraint = false
+		update = function(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+			local var_48_0 = arg_48_3.blackboard
+			local var_48_1 = arg_48_3.ai_extension:current_action_name()
+			local var_48_2 = Managers.state.network:game()
+			local var_48_3 = Managers.state.unit_storage:go_id(arg_48_0)
+			local var_48_4 = false
 
-			if current_action == "shoot" then
-				use_head_constraint = true
+			if var_48_1 == "shoot" then
+				var_48_4 = true
 
-				local shoot_data = blackboard.shoot_data
+				local var_48_5 = var_48_0.shoot_data
 
-				if shoot_data.aiming_started then
-					local start_position = shoot_data.aim_start_position:unbox()
-					local current_aim_position
+				if var_48_5.aiming_started then
+					local var_48_6 = var_48_5.aim_start_position:unbox()
+					local var_48_7
 
-					if shoot_data.firing_initiated then
-						local end_position
+					if var_48_5.firing_initiated then
+						local var_48_8
 
-						if blackboard.weapon_setup == "ratling_gun" then
-							end_position = POSITION_LOOKUP[blackboard.target_unit]
+						if var_48_0.weapon_setup == "ratling_gun" then
+							var_48_8 = POSITION_LOOKUP[var_48_0.target_unit]
 						else
-							end_position = shoot_data.aim_end_position:unbox()
+							var_48_8 = var_48_5.aim_end_position:unbox()
 						end
 
-						local firing_time = shoot_data.stop_firing_t - shoot_data.start_firing_t
-						local remaining_t = shoot_data.stop_firing_t - t
-						local anim_align_lerp = math.min((firing_time - remaining_t) / firing_time, 1)
+						local var_48_9 = var_48_5.stop_firing_t - var_48_5.start_firing_t
+						local var_48_10 = var_48_5.stop_firing_t - arg_48_1
+						local var_48_11 = math.min((var_48_9 - var_48_10) / var_48_9, 1)
 
-						current_aim_position = Vector3.lerp(start_position, end_position, anim_align_lerp)
+						var_48_7 = Vector3.lerp(var_48_6, var_48_8, var_48_11)
 					else
-						current_aim_position = start_position
+						var_48_7 = var_48_6
 					end
 
-					shoot_data.current_aim_position:store(current_aim_position)
+					var_48_5.current_aim_position:store(var_48_7)
 
-					local aim_constraint_target_var = shoot_data.aim_constraint_target_var
+					local var_48_12 = var_48_5.aim_constraint_target_var
 
-					Unit.animation_set_constraint_target(unit, aim_constraint_target_var, current_aim_position)
+					Unit.animation_set_constraint_target(arg_48_0, var_48_12, var_48_7)
 
-					if game and go_id then
-						GameSession.set_game_object_field(game, go_id, "aim_target", current_aim_position)
+					if var_48_2 and var_48_3 then
+						GameSession.set_game_object_field(var_48_2, var_48_3, "aim_target", var_48_7)
 					end
 				end
-			elseif current_action == "follow" then
-				use_head_constraint = true
-			elseif current_action == "target_unreachable" then
-				use_head_constraint = true
-			elseif current_action == "target_rage" then
-				use_head_constraint = true
+			elseif var_48_1 == "follow" then
+				var_48_4 = true
+			elseif var_48_1 == "target_unreachable" then
+				var_48_4 = true
+			elseif var_48_1 == "target_rage" then
+				var_48_4 = true
 			end
 
-			if use_head_constraint then
-				local target_unit = blackboard.target_unit
-				local previous_aim_target_unit = data.previous_aim_target_unit
-				local target_distance = blackboard.target_dist
-				local head_constraint_target = data.head_constraint_target
+			if var_48_4 then
+				local var_48_13 = var_48_0.target_unit
+				local var_48_14 = arg_48_3.previous_aim_target_unit
+				local var_48_15 = var_48_0.target_dist
+				local var_48_16 = arg_48_3.head_constraint_target
 
-				if target_distance < 50 and not DEDICATED_SERVER then
-					look_at_target_unit(unit, data, dt, target_unit, target_distance, head_constraint_target)
+				if var_48_15 < 50 and not DEDICATED_SERVER then
+					var_0_7(arg_48_0, arg_48_3, arg_48_2, var_48_13, var_48_15, var_48_16)
 				end
 
-				if target_unit ~= previous_aim_target_unit then
-					data.previous_aim_target_unit = target_unit
+				if var_48_13 ~= var_48_14 then
+					arg_48_3.previous_aim_target_unit = var_48_13
 				end
-			elseif data.is_using_head_constraint then
-				data.is_using_head_constraint = false
+			elseif arg_48_3.is_using_head_constraint then
+				arg_48_3.is_using_head_constraint = false
 
-				Unit.animation_event(unit, "look_at_off")
+				Unit.animation_event(arg_48_0, "look_at_off")
 			end
 		end,
-		leave = function (unit, data)
-			if data.is_using_head_constraint then
-				data.is_using_head_constraint = false
+		leave = function(arg_49_0, arg_49_1)
+			if arg_49_1.is_using_head_constraint then
+				arg_49_1.is_using_head_constraint = false
 
-				Unit.animation_event(unit, "look_at_off")
+				Unit.animation_event(arg_49_0, "look_at_off")
 			end
-		end,
+		end
 	},
 	husk = {
-		init = function (unit, data)
-			data.shoot_constraint_targets = BreedActions.skaven_stormfiend.shoot.aim_constraint_target
-			data.head_constraint_target = Unit.animation_find_constraint_target(unit, "head_aim_target")
-			data.previous_look_target = Vector3Box()
+		init = function(arg_50_0, arg_50_1)
+			arg_50_1.shoot_constraint_targets = BreedActions.skaven_stormfiend.shoot.aim_constraint_target
+			arg_50_1.head_constraint_target = Unit.animation_find_constraint_target(arg_50_0, "head_aim_target")
+			arg_50_1.previous_look_target = Vector3Box()
 		end,
-		update = function (unit, t, dt, data)
-			local game = Managers.state.network:game()
-			local unit_storage = Managers.state.unit_storage
-			local go_id = unit_storage:go_id(unit)
+		update = function(arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+			local var_51_0 = Managers.state.network:game()
+			local var_51_1 = Managers.state.unit_storage
+			local var_51_2 = var_51_1:go_id(arg_51_0)
 
-			if game and go_id then
-				local action_name_id = GameSession.game_object_field(game, go_id, "bt_action_name")
-				local action_name = NetworkLookup.bt_action_names[action_name_id]
-				local use_head_constraint = false
+			if var_51_0 and var_51_2 then
+				local var_51_3 = GameSession.game_object_field(var_51_0, var_51_2, "bt_action_name")
+				local var_51_4 = NetworkLookup.bt_action_names[var_51_3]
+				local var_51_5 = false
 
-				if action_name == "shoot" then
-					use_head_constraint = true
+				if var_51_4 == "shoot" then
+					var_51_5 = true
 
-					local network_aim_target = GameSession.game_object_field(game, go_id, "aim_target")
-					local attack_arm_id = GameSession.game_object_field(game, go_id, "attack_arm")
-					local attack_arm = NetworkLookup.attack_arm[attack_arm_id]
-					local arm_constraint_target_name = data.shoot_constraint_targets[attack_arm]
-					local arm_constraint_target_id = Unit.animation_find_constraint_target(unit, arm_constraint_target_name)
-					local aim_target
+					local var_51_6 = GameSession.game_object_field(var_51_0, var_51_2, "aim_target")
+					local var_51_7 = GameSession.game_object_field(var_51_0, var_51_2, "attack_arm")
+					local var_51_8 = NetworkLookup.attack_arm[var_51_7]
+					local var_51_9 = arg_51_3.shoot_constraint_targets[var_51_8]
+					local var_51_10 = Unit.animation_find_constraint_target(arg_51_0, var_51_9)
+					local var_51_11
 
-					if data.prev_aim_target then
-						aim_target = Vector3.lerp(data.prev_aim_target:unbox(), network_aim_target, 0.5)
+					if arg_51_3.prev_aim_target then
+						var_51_11 = Vector3.lerp(arg_51_3.prev_aim_target:unbox(), var_51_6, 0.5)
 
-						data.prev_aim_target:store(aim_target)
+						arg_51_3.prev_aim_target:store(var_51_11)
 					else
-						aim_target = network_aim_target
-						data.prev_aim_target = Vector3Box(network_aim_target)
+						var_51_11 = var_51_6
+						arg_51_3.prev_aim_target = Vector3Box(var_51_6)
 					end
 
-					Unit.animation_set_constraint_target(unit, arm_constraint_target_id, aim_target)
+					Unit.animation_set_constraint_target(arg_51_0, var_51_10, var_51_11)
 				else
-					if data.prev_aim_target ~= nil then
-						data.prev_aim_target = nil
+					if arg_51_3.prev_aim_target ~= nil then
+						arg_51_3.prev_aim_target = nil
 					end
 
-					if action_name == "follow" then
-						use_head_constraint = true
-					elseif action_name == "target_unreachable" then
-						use_head_constraint = true
-					elseif action_name == "target_rage" then
-						use_head_constraint = true
+					if var_51_4 == "follow" then
+						var_51_5 = true
+					elseif var_51_4 == "target_unreachable" then
+						var_51_5 = true
+					elseif var_51_4 == "target_rage" then
+						var_51_5 = true
 					end
 				end
 
-				if use_head_constraint then
-					local target_unit_id = GameSession.game_object_field(game, go_id, "target_unit_id")
+				if var_51_5 then
+					local var_51_12 = GameSession.game_object_field(var_51_0, var_51_2, "target_unit_id")
 
-					if target_unit_id > 0 then
-						local target_unit = unit_storage:unit(target_unit_id)
-						local target_distance = target_unit and Vector3.distance(POSITION_LOOKUP[unit], POSITION_LOOKUP[target_unit])
-						local head_constraint_target = data.head_constraint_target
+					if var_51_12 > 0 then
+						local var_51_13 = var_51_1:unit(var_51_12)
+						local var_51_14 = var_51_13 and Vector3.distance(POSITION_LOOKUP[arg_51_0], POSITION_LOOKUP[var_51_13])
+						local var_51_15 = arg_51_3.head_constraint_target
 
-						look_at_target_unit(unit, data, dt, target_unit, target_distance, head_constraint_target)
+						var_0_7(arg_51_0, arg_51_3, arg_51_2, var_51_13, var_51_14, var_51_15)
 					end
-				elseif data.is_using_head_constraint then
-					data.is_using_head_constraint = false
+				elseif arg_51_3.is_using_head_constraint then
+					arg_51_3.is_using_head_constraint = false
 
-					Unit.animation_event(unit, "look_at_off")
+					Unit.animation_event(arg_51_0, "look_at_off")
 				end
 			end
 		end,
-		leave = function (unit, data)
-			if data.is_using_head_constraint then
-				data.is_using_head_constraint = false
+		leave = function(arg_52_0, arg_52_1)
+			if arg_52_1.is_using_head_constraint then
+				arg_52_1.is_using_head_constraint = false
 
-				Unit.animation_event(unit, "look_at_off")
+				Unit.animation_event(arg_52_0, "look_at_off")
 			end
-		end,
-	},
+		end
+	}
 }
 AimTemplates.innkeeper = {
 	owner = {
-		init = function (unit, data)
-			data.constraint_target = Unit.animation_find_constraint_target(unit, "lookat")
-			data.current_target = nil
-			data.interpolation_origin_position = Vector3Box()
-			data.last_position = Vector3Box()
-			data.interpolation_time = -math.huge
+		init = function(arg_53_0, arg_53_1)
+			arg_53_1.constraint_target = Unit.animation_find_constraint_target(arg_53_0, "lookat")
+			arg_53_1.current_target = nil
+			arg_53_1.interpolation_origin_position = Vector3Box()
+			arg_53_1.last_position = Vector3Box()
+			arg_53_1.interpolation_time = -math.huge
 		end,
-		update = function (unit, t, dt, data)
-			local inn_keeper_position = Unit.local_position(unit, 0)
-			local best_player
-			local best_dist_sq = 9
-			local side = Managers.state.side:get_side_from_name("heroes")
-			local player_units = side.PLAYER_UNITS
-			local old_target = data.current_target
-			local stickiness_multiplier = 0.9025
+		update = function(arg_54_0, arg_54_1, arg_54_2, arg_54_3)
+			local var_54_0 = Unit.local_position(arg_54_0, 0)
+			local var_54_1
+			local var_54_2 = 9
+			local var_54_3 = Managers.state.side:get_side_from_name("heroes").PLAYER_UNITS
+			local var_54_4 = arg_54_3.current_target
+			local var_54_5 = 0.9025
 
-			for i = 1, #player_units do
-				local player_unit = player_units[i]
-				local dist_sq = Vector3.distance_squared(POSITION_LOOKUP[player_unit], inn_keeper_position)
+			for iter_54_0 = 1, #var_54_3 do
+				local var_54_6 = var_54_3[iter_54_0]
+				local var_54_7 = Vector3.distance_squared(POSITION_LOOKUP[var_54_6], var_54_0)
 
-				if player_unit == old_target then
-					dist_sq = dist_sq * stickiness_multiplier
+				if var_54_6 == var_54_4 then
+					var_54_7 = var_54_7 * var_54_5
 				end
 
-				if dist_sq < best_dist_sq then
-					best_dist_sq = dist_sq
-					best_player = player_unit
+				if var_54_7 < var_54_2 then
+					var_54_2 = var_54_7
+					var_54_1 = var_54_6
 				end
 			end
 
-			local interpolation_duration = 0.5
+			local var_54_8 = 0.5
 
-			if best_player and not old_target then
-				Unit.animation_event(unit, "lookat_on")
-			elseif not best_player and old_target then
-				Unit.animation_event(unit, "lookat_off")
+			if var_54_1 and not var_54_4 then
+				Unit.animation_event(arg_54_0, "lookat_on")
+			elseif not var_54_1 and var_54_4 then
+				Unit.animation_event(arg_54_0, "lookat_off")
 
-				data.interpolation_time = -math.huge
-			elseif best_player ~= old_target then
-				data.interpolation_time = t + interpolation_duration
+				arg_54_3.interpolation_time = -math.huge
+			elseif var_54_1 ~= var_54_4 then
+				arg_54_3.interpolation_time = arg_54_1 + var_54_8
 
-				data.interpolation_origin_position:store(data.last_position:unbox())
+				arg_54_3.interpolation_origin_position:store(arg_54_3.last_position:unbox())
 			end
 
-			local interpolation_time = data.interpolation_time
+			local var_54_9 = arg_54_3.interpolation_time
 
-			if best_player then
-				local aim_target
+			if var_54_1 then
+				local var_54_10
 
-				if ScriptUnit.has_extension(best_player, "first_person_system") then
-					aim_target = ScriptUnit.extension(best_player, "first_person_system"):current_position()
+				if ScriptUnit.has_extension(var_54_1, "first_person_system") then
+					var_54_10 = ScriptUnit.extension(var_54_1, "first_person_system"):current_position()
 				else
-					local head_index = Unit.node(best_player, "j_head")
+					local var_54_11 = Unit.node(var_54_1, "j_head")
 
-					aim_target = Unit.world_position(best_player, head_index)
+					var_54_10 = Unit.world_position(var_54_1, var_54_11)
 				end
 
-				if t < interpolation_time then
-					local lerp_t = math.sin((1 - (interpolation_time - t) / interpolation_duration) * math.pi * 0.5)
-					local from = data.interpolation_origin_position:unbox()
+				if arg_54_1 < var_54_9 then
+					local var_54_12 = math.sin((1 - (var_54_9 - arg_54_1) / var_54_8) * math.pi * 0.5)
+					local var_54_13 = arg_54_3.interpolation_origin_position:unbox()
 
-					aim_target = Vector3.lerp(from, aim_target, lerp_t)
+					var_54_10 = Vector3.lerp(var_54_13, var_54_10, var_54_12)
 				end
 
-				data.last_position:store(aim_target)
-				Unit.animation_set_constraint_target(unit, data.constraint_target, aim_target)
+				arg_54_3.last_position:store(var_54_10)
+				Unit.animation_set_constraint_target(arg_54_0, arg_54_3.constraint_target, var_54_10)
 			end
 
-			data.current_target = best_player
+			arg_54_3.current_target = var_54_1
 		end,
-		leave = function (unit, data)
+		leave = function(arg_55_0, arg_55_1)
 			return
-		end,
-	},
+		end
+	}
 }
 AimTemplates.closest_player = {
 	owner = {
-		init = function (unit, data)
-			data.constraint_target = Unit.animation_find_constraint_target(unit, "aim_constraint_target")
-			data.current_target = nil
-			data.interpolation_origin_position = Vector3Box()
-			data.last_position = Vector3Box()
-			data.interpolation_time = -math.huge
+		init = function(arg_56_0, arg_56_1)
+			arg_56_1.constraint_target = Unit.animation_find_constraint_target(arg_56_0, "aim_constraint_target")
+			arg_56_1.current_target = nil
+			arg_56_1.interpolation_origin_position = Vector3Box()
+			arg_56_1.last_position = Vector3Box()
+			arg_56_1.interpolation_time = -math.huge
 		end,
-		update = function (unit, t, dt, data)
-			local player_manager = Managers.player
-			local local_player = player_manager:local_player()
-			local local_player_unit = local_player.player_unit
+		update = function(arg_57_0, arg_57_1, arg_57_2, arg_57_3)
+			local var_57_0 = Managers.player:local_player().player_unit
 
-			if local_player_unit then
-				local head_index = Unit.node(local_player_unit, "j_head")
-				local aim_target = Unit.world_position(local_player_unit, head_index)
+			if var_57_0 then
+				local var_57_1 = Unit.node(var_57_0, "j_head")
+				local var_57_2 = Unit.world_position(var_57_0, var_57_1)
 
-				Unit.animation_set_constraint_target(unit, data.constraint_target, aim_target)
+				Unit.animation_set_constraint_target(arg_57_0, arg_57_3.constraint_target, var_57_2)
 			end
 		end,
-		leave = function (unit, data)
+		leave = function(arg_58_0, arg_58_1)
 			return
-		end,
-	},
+		end
+	}
 }
 AimTemplates.closest_player_flat = {
 	owner = {
-		init = function (unit, data)
-			data.constraint_target = Unit.animation_find_constraint_target(unit, "aim_constraint_target")
-			data.current_target = nil
-			data.interpolation_origin_position = Vector3Box()
-			data.last_position = Vector3Box()
-			data.interpolation_time = -math.huge
+		init = function(arg_59_0, arg_59_1)
+			arg_59_1.constraint_target = Unit.animation_find_constraint_target(arg_59_0, "aim_constraint_target")
+			arg_59_1.current_target = nil
+			arg_59_1.interpolation_origin_position = Vector3Box()
+			arg_59_1.last_position = Vector3Box()
+			arg_59_1.interpolation_time = -math.huge
 		end,
-		update = function (unit, t, dt, data)
-			local player_manager = Managers.player
-			local local_player = player_manager:local_player()
-			local local_player_unit = local_player.player_unit
+		update = function(arg_60_0, arg_60_1, arg_60_2, arg_60_3)
+			local var_60_0 = Managers.player:local_player().player_unit
 
-			if local_player_unit then
-				local aim_target = Unit.world_position(local_player_unit, 0)
-				local node_index = Unit.node(unit, "j_aim") or 0
-				local constraint_pos = Unit.world_position(unit, node_index)
+			if var_60_0 then
+				local var_60_1 = Unit.world_position(var_60_0, 0)
+				local var_60_2 = Unit.node(arg_60_0, "j_aim") or 0
 
-				aim_target[3] = constraint_pos[3]
+				var_60_1[3] = Unit.world_position(arg_60_0, var_60_2)[3]
 
-				Unit.animation_set_constraint_target(unit, data.constraint_target, aim_target)
+				Unit.animation_set_constraint_target(arg_60_0, arg_60_3.constraint_target, var_60_1)
 			end
 		end,
-		leave = function (unit, data)
+		leave = function(arg_61_0, arg_61_1)
 			return
-		end,
-	},
+		end
+	}
 }
 
 DLCUtils.require_list("aim_templates_file_names")

@@ -1,59 +1,59 @@
-﻿-- chunkname: @scripts/helpers/debug_helper.lua
+-- chunkname: @scripts/helpers/debug_helper.lua
 
 DebugHelper = DebugHelper or {}
 
-DebugHelper.remove_debug_stuff = function ()
-	Commands.script = function ()
+function DebugHelper.remove_debug_stuff()
+	function Commands.script()
 		return
 	end
 
-	Commands.console = function ()
+	function Commands.console()
 		return
 	end
 
-	Commands.game_speed = function ()
+	function Commands.game_speed()
 		return
 	end
 
-	Commands.fov = function ()
+	function Commands.fov()
 		return
 	end
 
-	Commands.free_flight_settings = function ()
+	function Commands.free_flight_settings()
 		return
 	end
 
-	Commands.lag = function ()
+	function Commands.lag()
 		return
 	end
 
-	Commands.location = function ()
+	function Commands.location()
 		return
 	end
 
-	Commands.next_level = function ()
+	function Commands.next_level()
 		return
 	end
 end
 
-DebugHelper.enable_physics_dump = function ()
-	local physics_namespaces = {
+function DebugHelper.enable_physics_dump()
+	local var_10_0 = {
 		"PhysicsWorld",
 		"Actor",
-		"Mover",
+		"Mover"
 	}
 
-	for _, namespace in pairs(physics_namespaces) do
-		local namespace_to_debug = _G[namespace]
+	for iter_10_0, iter_10_1 in pairs(var_10_0) do
+		local var_10_1 = _G[iter_10_1]
 
-		for func_name, func in pairs(namespace_to_debug) do
-			if type(func) == "function" then
-				namespace_to_debug[func_name] = function (...)
-					local output = string.format("%s.%s() : ", namespace, func_name)
+		for iter_10_2, iter_10_3 in pairs(var_10_1) do
+			if type(iter_10_3) == "function" then
+				var_10_1[iter_10_2] = function(...)
+					local var_11_0 = string.format("%s.%s() : ", iter_10_1, iter_10_2)
 
-					print(output, select(2, ...))
+					print(var_11_0, select(2, ...))
 
-					return func(...)
+					return iter_10_3(...)
 				end
 			end
 		end

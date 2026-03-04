@@ -1,28 +1,26 @@
-﻿-- chunkname: @scripts/settings/dlcs/penny/penny_unit_extension_templates.lua
+-- chunkname: @scripts/settings/dlcs/penny/penny_unit_extension_templates.lua
 
-local unit_extension_templates = {
+return {
 	ai_unit_chaos_exalted_sorcerer_drachenfels = {
 		base_template = "ai_unit_base",
 		go_type = "ai_lord_with_inventory",
 		self_owned_extensions = {
 			"AIInventoryExtension",
 			"PingTargetExtension",
-			"AILineOfSightExtension",
+			"AILineOfSightExtension"
 		},
 		husk_extensions = {
 			"AIInventoryExtension",
-			"PingTargetExtension",
+			"PingTargetExtension"
 		},
 		remove_when_killed = {
 			self_owned_extensions = {
 				"AILineOfSightExtension",
-				"PingTargetExtension",
+				"PingTargetExtension"
 			},
 			husk_extensions = {
-				"PingTargetExtension",
-			},
-		},
-	},
+				"PingTargetExtension"
+			}
+		}
+	}
 }
-
-return unit_extension_templates

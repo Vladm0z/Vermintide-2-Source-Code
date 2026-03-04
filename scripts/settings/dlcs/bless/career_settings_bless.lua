@@ -1,81 +1,82 @@
-﻿-- chunkname: @scripts/settings/dlcs/bless/career_settings_bless.lua
+-- chunkname: @scripts/settings/dlcs/bless/career_settings_bless.lua
 
 CareerActionNames.witch_hunter[#CareerActionNames.witch_hunter + 1] = "action_career_wh_priest"
 CareerSettings.wh_priest = {
-	base_skin = "skin_wh_priest",
-	category_image = "store_category_icon_priest",
-	description = "victor_4_desc",
-	display_name = "wh_priest",
-	icon = "icons_placeholder",
-	min_head_lookat_z = -0.5,
-	name = "wh_priest",
-	package_name = "resource_packages/careers/wh_priest",
-	picking_image = "medium_unit_frame_portrait_victor_priest",
-	playfab_name = "wh_priest",
-	portrait_image = "unit_frame_portrait_victor_priest",
-	portrait_image_picking = "picking_portrait_victor_priest",
-	portrait_thumbnail = "portrait_victor_priest_thumbnail",
-	preview_animation = "career_select_04",
-	preview_idle_animation = "career_idle_04",
-	preview_wield_slot = "melee",
 	profile_name = "witch_hunter",
-	required_dlc = "bless",
-	sort_order = 4,
+	display_name = "wh_priest",
+	package_name = "resource_packages/careers/wh_priest",
+	name = "wh_priest",
+	preview_idle_animation = "career_idle_04",
+	preview_animation = "career_select_04",
+	icon = "icons_placeholder",
+	base_skin = "skin_wh_priest",
+	picking_image = "medium_unit_frame_portrait_victor_priest",
+	preview_wield_slot = "melee",
+	playfab_name = "wh_priest",
+	category_image = "store_category_icon_priest",
 	sound_character = "witch_hunter_priest",
+	portrait_image_picking = "picking_portrait_victor_priest",
 	talent_tree_index = 4,
+	description = "victor_4_desc",
+	min_head_lookat_z = -0.5,
+	portrait_image = "unit_frame_portrait_victor_priest",
+	portrait_thumbnail = "portrait_victor_priest_thumbnail",
+	sort_order = 4,
+	required_dlc = "bless",
 	breed = PlayerBreeds.hero_wh_priest,
 	item_types = {},
 	activated_ability = ActivatedAbilitySettings.wh_priest,
 	passive_ability = PassiveAbilitySettings.wh_priest,
 	attributes = {
 		base_critical_strike_chance = 0.05,
-		max_hp = 150,
+		max_hp = 150
 	},
 	video = {
 		material_name = "wh_priest",
-		resource = "video/career_videos/victor/wh_priest",
+		resource = "video/career_videos/victor/wh_priest"
 	},
 	unique_subtitles = {
 		"wp_",
-		4,
+		4
 	},
 	preview_items = {
 		{
-			item_name = "wh_priest_career_weapon_preview",
+			item_name = "wh_priest_career_weapon_preview"
 		},
 		{
-			item_name = "priest_hat_0000",
-		},
+			item_name = "priest_hat_0000"
+		}
 	},
-	is_unlocked_function = function (career, hero_name, hero_level)
-		local unlocked, reason = career:override_available_for_mechanism()
+	is_unlocked_function = function(arg_1_0, arg_1_1, arg_1_2)
+		local var_1_0, var_1_1 = arg_1_0:override_available_for_mechanism()
 
-		if not unlocked then
-			return unlocked, reason
+		if not var_1_0 then
+			return var_1_0, var_1_1
 		end
 
-		local dlc_name
+		local var_1_2
+		local var_1_3, var_1_4, var_1_5 = arg_1_0:is_dlc_unlocked()
+		local var_1_6 = var_1_5
+		local var_1_7 = var_1_4
 
-		unlocked, reason, dlc_name = career:is_dlc_unlocked()
-
-		if not unlocked then
-			return false, reason, dlc_name
+		if not var_1_3 then
+			return false, var_1_7, var_1_6
 		end
 
-		return true, reason, dlc_name
+		return true, var_1_7, var_1_6
 	end,
-	is_dlc_unlocked = function (career)
+	is_dlc_unlocked = function(arg_2_0)
 		if Managers.unlock:is_dlc_unlocked("bless") then
 			return true, nil, "bless"
 		else
 			return false, "dlc_not_owned", "bless"
 		end
 	end,
-	override_available_for_mechanism = function (career)
-		local settings = Managers.mechanism:mechanism_setting_for_title("override_career_availability")
-		local career_name = career.display_name
+	override_available_for_mechanism = function(arg_3_0)
+		local var_3_0 = Managers.mechanism:mechanism_setting_for_title("override_career_availability")
+		local var_3_1 = arg_3_0.display_name
 
-		if settings and settings[career_name] == false then
+		if var_3_0 and var_3_0[var_3_1] == false then
 			return false, "disabled_for_mechanism"
 		end
 
@@ -83,33 +84,33 @@ CareerSettings.wh_priest = {
 	end,
 	item_slot_types_by_slot_name = {
 		slot_melee = {
-			"melee",
+			"melee"
 		},
 		slot_ranged = {
 			"melee",
-			"ranged",
+			"ranged"
 		},
 		slot_necklace = {
-			"necklace",
+			"necklace"
 		},
 		slot_ring = {
-			"ring",
+			"ring"
 		},
 		slot_trinket_1 = {
-			"trinket",
+			"trinket"
 		},
 		slot_hat = {
-			"hat",
+			"hat"
 		},
 		slot_skin = {
-			"skin",
+			"skin"
 		},
 		slot_frame = {
-			"frame",
+			"frame"
 		},
 		slot_pose = {
-			"weapon_pose",
-		},
+			"weapon_pose"
+		}
 	},
 	loadout_equipment_slots = {
 		"melee",
@@ -117,19 +118,19 @@ CareerSettings.wh_priest = {
 		"necklace",
 		"ring",
 		"trinket",
-		"weapon_pose",
-	},
+		"weapon_pose"
+	}
 }
 OverchargeData = OverchargeData or {}
 OverchargeData.wh_priest = {
-	explosion_template = "overcharge_explosion_dwarf",
-	hit_overcharge_threshold_sound = "ui_special_attack_ready",
 	overcharge_threshold = 10,
-	overcharge_value_decrease_rate = 0,
 	overcharge_warning_critical_sound_event = "drakegun_overcharge_warning_critical",
-	overcharge_warning_high_sound_event = "drakegun_overcharge_warning_high",
-	overcharge_warning_low_sound_event = "drakegun_overcharge_warning_low",
-	overcharge_warning_med_sound_event = "drakegun_overcharge_warning_med",
 	time_until_overcharge_decreases = 5,
+	overcharge_warning_low_sound_event = "drakegun_overcharge_warning_low",
+	overcharge_value_decrease_rate = 0,
+	overcharge_warning_high_sound_event = "drakegun_overcharge_warning_high",
+	explosion_template = "overcharge_explosion_dwarf",
+	overcharge_warning_med_sound_event = "drakegun_overcharge_warning_med",
+	hit_overcharge_threshold_sound = "ui_special_attack_ready"
 }
 CareerNameAchievementMapping.wh_priest = "wh_priest"

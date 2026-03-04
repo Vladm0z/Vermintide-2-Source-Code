@@ -1,45 +1,45 @@
-﻿-- chunkname: @scripts/settings/breeds/breed_skaven_dummy_clan_rat.lua
+-- chunkname: @scripts/settings/breeds/breed_skaven_dummy_clan_rat.lua
 
-local breed_data = {
-	behavior = "dummy_clan_rat",
-	debug_spawn_category = "Misc",
-	horde_behavior = "SET_TO_NIL",
-	horde_target_selection = "SET_TO_NIL",
-	no_autoaim = true,
+local var_0_0 = {
 	not_bot_target = true,
-	passive_in_patrol = false,
-	perception = "perception_no_seeing",
-	race = "skaven",
+	horde_behavior = "SET_TO_NIL",
 	target_selection = "pick_no_targets",
+	behavior = "dummy_clan_rat",
+	horde_target_selection = "SET_TO_NIL",
+	passive_in_patrol = false,
+	race = "skaven",
+	no_autoaim = true,
+	perception = "perception_no_seeing",
+	debug_spawn_category = "Misc"
 }
 
-for key, value in pairs(Breeds.skaven_clan_rat) do
-	local keep_value = breed_data[key]
+for iter_0_0, iter_0_1 in pairs(Breeds.skaven_clan_rat) do
+	local var_0_1 = var_0_0[iter_0_0]
 
-	if keep_value == "SET_TO_NIL" then
-		breed_data[key] = nil
-	elseif keep_value ~= nil then
-		breed_data[key] = keep_value
+	if var_0_1 == "SET_TO_NIL" then
+		var_0_0[iter_0_0] = nil
+	elseif var_0_1 ~= nil then
+		var_0_0[iter_0_0] = var_0_1
 	else
-		breed_data[key] = value
+		var_0_0[iter_0_0] = iter_0_1
 	end
 end
 
-Breeds.skaven_dummy_clan_rat = table.create_copy(Breeds.skaven_dummy_clan_rat, breed_data)
+Breeds.skaven_dummy_clan_rat = table.create_copy(Breeds.skaven_dummy_clan_rat, var_0_0)
 Breeds.skaven_dummy_clan_rat.is_always_spawnable = nil
 
-local action_data = {}
+local var_0_2 = {}
 
-for key, value in pairs(BreedActions.skaven_clan_rat) do
-	local keep_value = action_data[key]
+for iter_0_2, iter_0_3 in pairs(BreedActions.skaven_clan_rat) do
+	local var_0_3 = var_0_2[iter_0_2]
 
-	if keep_value == "SET_TO_NIL" then
-		action_data[key] = nil
-	elseif keep_value ~= nil then
-		action_data[key] = keep_value
+	if var_0_3 == "SET_TO_NIL" then
+		var_0_2[iter_0_2] = nil
+	elseif var_0_3 ~= nil then
+		var_0_2[iter_0_2] = var_0_3
 	else
-		action_data[key] = value
+		var_0_2[iter_0_2] = iter_0_3
 	end
 end
 
-BreedActions.skaven_dummy_clan_rat = table.create_copy(BreedActions.skaven_dummy_clan_rat, action_data)
+BreedActions.skaven_dummy_clan_rat = table.create_copy(BreedActions.skaven_dummy_clan_rat, var_0_2)

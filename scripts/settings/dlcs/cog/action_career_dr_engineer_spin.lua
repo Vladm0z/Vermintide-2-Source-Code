@@ -1,48 +1,47 @@
-﻿-- chunkname: @scripts/settings/dlcs/cog/action_career_dr_engineer_spin.lua
+-- chunkname: @scripts/settings/dlcs/cog/action_career_dr_engineer_spin.lua
 
 ActionCareerDREngineerSpin = class(ActionCareerDREngineerSpin, ActionMinigunSpin)
 
-ActionCareerDREngineerSpin.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionCareerDREngineerSpin.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionCareerDREngineerSpin.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionCareerDREngineerSpin.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	self._talent_extension = ScriptUnit.extension(owner_unit, "talent_system")
+	arg_1_0._talent_extension = ScriptUnit.extension(arg_1_4, "talent_system")
 end
 
-ActionCareerDREngineerSpin.client_owner_start_action = function (self, new_action, t)
-	ActionCareerDREngineerSpin.super.client_owner_start_action(self, new_action, t)
+function ActionCareerDREngineerSpin.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
+	ActionCareerDREngineerSpin.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
 
-	self._override_visual_spinup = new_action.override_visual_spinup
-	self._visual_spinup_min = new_action.visual_spinup_min
-	self._visual_spinup_max = new_action.visual_spinup_max
-	self._visual_spinup_time = new_action.visual_spinup_time
-	self._last_update_t = t
+	arg_2_0._override_visual_spinup = arg_2_1.override_visual_spinup
+	arg_2_0._visual_spinup_min = arg_2_1.visual_spinup_min
+	arg_2_0._visual_spinup_max = arg_2_1.visual_spinup_max
+	arg_2_0._visual_spinup_time = arg_2_1.visual_spinup_time
+	arg_2_0._last_update_t = arg_2_2
 
-	if self._talent_extension:has_talent("bardin_engineer_reduced_ability_fire_slowdown") then
-		self._current_windup = CareerConstants.dr_engineer.talent_6_2_starting_rps
+	if arg_2_0._talent_extension:has_talent("bardin_engineer_reduced_ability_fire_slowdown") then
+		arg_2_0._current_windup = CareerConstants.dr_engineer.talent_6_2_starting_rps
 
 		if Managers.mechanism:current_mechanism_name() == "versus" then
-			self._current_windup = CareerConstants.dr_engineer.talent_6_2_starting_rps_vs
+			arg_2_0._current_windup = CareerConstants.dr_engineer.talent_6_2_starting_rps_vs
 		end
 	end
 end
 
-ActionCareerDREngineerSpin.client_owner_post_update = function (self, dt, t, world, can_damage)
-	ActionCareerDREngineerSpin.super.client_owner_post_update(self, dt, t, world, can_damage)
+function ActionCareerDREngineerSpin.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	ActionCareerDREngineerSpin.super.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 
-	self._last_update_t = t
+	arg_3_0._last_update_t = arg_3_2
 end
 
-ActionCareerDREngineerSpin.finish = function (self, reason)
-	ActionCareerDREngineerSpin.super.finish(self, reason)
+function ActionCareerDREngineerSpin.finish(arg_4_0, arg_4_1)
+	ActionCareerDREngineerSpin.super.finish(arg_4_0, arg_4_1)
 
-	local visual_spinup = self.weapon_extension:get_custom_data("windup")
+	local var_4_0 = arg_4_0.weapon_extension:get_custom_data("windup")
 
-	if self._override_visual_spinup then
-		local time_spent = self._last_update_t - self.action_start_t
-		local lerp_t = time_spent / self._visual_spinup_time
+	if arg_4_0._override_visual_spinup then
+		local var_4_1 = (arg_4_0._last_update_t - arg_4_0.action_start_t) / arg_4_0._visual_spinup_time
 
-		visual_spinup = math.lerp(self._visual_spinup_min, self._visual_spinup_max, lerp_t)
+		var_4_0 = math.lerp(arg_4_0._visual_spinup_min, arg_4_0._visual_spinup_max, var_4_1)
 	end
 
-	Managers.state.event:trigger("on_engineer_weapon_spin_up", visual_spinup, self._override_visual_spinup)
+	Managers.state.event:trigger("on_engineer_weapon_spin_up", var_4_0, arg_4_0._override_visual_spinup)
 end

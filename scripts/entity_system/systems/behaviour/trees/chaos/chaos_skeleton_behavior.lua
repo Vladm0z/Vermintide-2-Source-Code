@@ -1,89 +1,89 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_skeleton_behavior.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_skeleton_behavior.lua
 
-local ACTIONS = BreedActions.chaos_skeleton
+local var_0_0 = BreedActions.chaos_skeleton
 
 BreedBehaviors.chaos_skeleton = {
 	"BTSelector",
 	{
 		"BTSpawningAction",
 		condition = "spawn",
-		name = "spawn",
+		name = "spawn"
 	},
 	{
 		"BTInVortexAction",
 		condition = "in_vortex",
-		name = "in_vortex",
+		name = "in_vortex"
 	},
 	{
 		"BTFallAction",
 		condition = "is_falling",
-		name = "falling",
+		name = "falling"
 	},
 	{
 		"BTStaggerAction",
-		condition = "stagger",
 		name = "stagger",
-		action_data = ACTIONS.stagger,
+		condition = "stagger",
+		action_data = var_0_0.stagger
 	},
 	{
 		"BTBlockedAction",
-		condition = "blocked",
 		name = "blocked",
-		action_data = ACTIONS.blocked,
+		condition = "blocked",
+		action_data = var_0_0.blocked
 	},
 	{
 		"BTSelector",
 		{
 			"BTTeleportAction",
 			condition = "at_teleport_smartobject",
-			name = "teleport",
+			name = "teleport"
 		},
 		{
 			"BTClimbAction",
 			condition = "at_climb_smartobject",
-			name = "climb",
+			name = "climb"
 		},
 		{
 			"BTZombieExplodeAction",
-			condition = "at_door_smartobject",
 			name = "explosion_attack",
-			action_data = ACTIONS.explosion_attack,
+			condition = "at_door_smartobject",
+			action_data = var_0_0.explosion_attack
 		},
 		condition = "at_smartobject",
-		name = "smartobject",
+		name = "smartobject"
 	},
 	{
 		"BTUtilityNode",
 		{
 			"BTClanRatFollowAction",
 			name = "follow",
-			action_data = ACTIONS.follow,
+			action_data = var_0_0.follow
 		},
 		condition = "confirmed_player_sighting",
-		name = "in_combat",
+		name = "in_combat"
 	},
 	{
 		"BTAlertedAction",
-		condition = "player_spotted",
 		name = "alerted",
-		action_data = ACTIONS.alerted,
+		condition = "player_spotted",
+		action_data = var_0_0.alerted
 	},
 	{
 		"BTMoveToGoalAction",
-		condition = "has_goal_destination",
 		name = "move_to_goal",
-		action_data = ACTIONS.follow,
+		condition = "has_goal_destination",
+		action_data = var_0_0.follow
 	},
 	{
 		"BTIdleAction",
-		condition = "no_target",
 		name = "idle",
-		action_data = ACTIONS.idle,
+		condition = "no_target",
+		action_data = var_0_0.idle
 	},
 	{
 		"BTFallbackIdleAction",
 		name = "fallback_idle",
-		action_data = ACTIONS.fallback_idle,
+		action_data = var_0_0.fallback_idle
 	},
-	name = "chaos_skeleton",
+	name = "chaos_skeleton"
 }

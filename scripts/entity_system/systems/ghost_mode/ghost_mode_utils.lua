@@ -1,17 +1,16 @@
-﻿-- chunkname: @scripts/entity_system/systems/ghost_mode/ghost_mode_utils.lua
+-- chunkname: @scripts/entity_system/systems/ghost_mode/ghost_mode_utils.lua
 
 GhostModeUtils = GhostModeUtils or {}
 
-GhostModeUtils.in_line_of_sight_of_enemies = function (unit, enemy_positions, physics_world)
-	local pos = POSITION_LOOKUP[unit]
-	local z_offset = Vector3(0, 0, 1)
-	local num_enemy_positions = #enemy_positions
+function GhostModeUtils.in_line_of_sight_of_enemies(arg_1_0, arg_1_1, arg_1_2)
+	local var_1_0 = POSITION_LOOKUP[arg_1_0]
+	local var_1_1 = Vector3(0, 0, 1)
+	local var_1_2 = #arg_1_1
 
-	for i = 1, num_enemy_positions do
-		local target_pos = enemy_positions[i]
-		local in_los = PerceptionUtils.is_position_in_line_of_sight(nil, pos + z_offset, target_pos + z_offset, physics_world)
+	for iter_1_0 = 1, var_1_2 do
+		local var_1_3 = arg_1_1[iter_1_0]
 
-		if in_los then
+		if PerceptionUtils.is_position_in_line_of_sight(nil, var_1_0 + var_1_1, var_1_3 + var_1_1, arg_1_2) then
 			return true
 		end
 	end
@@ -19,95 +18,88 @@ GhostModeUtils.in_line_of_sight_of_enemies = function (unit, enemy_positions, ph
 	return false
 end
 
-GhostModeUtils.in_range_of_enemies = function (position, side, is_boss)
-	local enemy_positions = side.ENEMY_PLAYER_AND_BOT_POSITIONS
-	local in_range = false
-	local min_dist = is_boss and GameModeSettings.versus.boss_minimum_spawn_distance or GameModeSettings.versus.dark_pact_minimum_spawn_distance
-	local min_dist_vertical = GameModeSettings.versus.dark_pact_minimum_spawn_distance_vertical
-	local setting_name = is_boss and "boss_spawn_range_distance" or "special_spawn_range_distance"
-	local mechanism_ok, custom_setting_distance_override, custom_settings_enabled = Managers.mechanism:mechanism_try_call("get_custom_game_setting", setting_name)
+function GhostModeUtils.in_range_of_enemies(arg_2_0, arg_2_1, arg_2_2)
+	local var_2_0 = arg_2_1.ENEMY_PLAYER_AND_BOT_POSITIONS
+	local var_2_1 = false
+	local var_2_2 = arg_2_2 and GameModeSettings.versus.boss_minimum_spawn_distance or GameModeSettings.versus.dark_pact_minimum_spawn_distance
+	local var_2_3 = GameModeSettings.versus.dark_pact_minimum_spawn_distance_vertical
+	local var_2_4 = arg_2_2 and "boss_spawn_range_distance" or "special_spawn_range_distance"
+	local var_2_5, var_2_6, var_2_7 = Managers.mechanism:mechanism_try_call("get_custom_game_setting", var_2_4)
 
-	if mechanism_ok and custom_settings_enabled then
-		min_dist = custom_setting_distance_override
-		min_dist_vertical = math.clamp(0, GameModeSettings.versus.dark_pact_minimum_spawn_distance_vertical, min_dist)
+	if var_2_5 and var_2_7 then
+		var_2_2 = var_2_6
+		var_2_3 = math.clamp(0, GameModeSettings.versus.dark_pact_minimum_spawn_distance_vertical, var_2_2)
 	end
 
-	local min_dist_sq = min_dist^2
+	local var_2_8 = var_2_2^2
 
-	for i = 1, #enemy_positions do
-		local enemy_position = enemy_positions[i]
-		local diff = enemy_position - position
-		local height_diff = math.abs(diff[3])
+	for iter_2_0 = 1, #var_2_0 do
+		local var_2_9 = var_2_0[iter_2_0] - arg_2_0
 
-		if height_diff < min_dist_vertical then
-			local dist_sq = Vector3.length_squared(Vector3.flat(diff))
+		if var_2_3 > math.abs(var_2_9[3]) and var_2_8 > Vector3.length_squared(Vector3.flat(var_2_9)) then
+			var_2_1 = true
 
-			if dist_sq < min_dist_sq then
-				in_range = true
-
-				break
-			end
+			break
 		end
 	end
 
-	return in_range
+	return var_2_1
 end
 
-GhostModeUtils.in_safe_zone = function (unit)
-	local in_safe_zone
-	local level = LevelHelper:current_level(Managers.world:world("level_world"))
-	local versus_safe_zone_name = "versus_activator"
+function GhostModeUtils.in_safe_zone(arg_3_0)
+	local var_3_0
+	local var_3_1 = LevelHelper:current_level(Managers.world:world("level_world"))
+	local var_3_2 = "versus_activator"
 
-	if Level.has_volume(level, versus_safe_zone_name) then
-		local pos = POSITION_LOOKUP[unit]
+	if Level.has_volume(var_3_1, var_3_2) then
+		local var_3_3 = POSITION_LOOKUP[arg_3_0]
 
-		in_safe_zone = Level.is_point_inside_volume(level, versus_safe_zone_name, pos)
+		var_3_0 = Level.is_point_inside_volume(var_3_1, var_3_2, var_3_3)
 	end
 
-	return in_safe_zone
+	return var_3_0
 end
 
-GhostModeUtils.pact_sworn_round_started = function (pact_sworn_unit)
-	local heroes_started, time_since_round_started = Managers.state.game_mode:is_round_started()
+function GhostModeUtils.pact_sworn_round_started(arg_4_0)
+	local var_4_0, var_4_1 = Managers.state.game_mode:is_round_started()
 
-	if not heroes_started then
+	if not var_4_0 then
 		return false
 	end
 
-	local pact_sworn_spawn_delay = GameModeSettings.versus.round_start_pact_sworn_spawn_delay
-	local side = Managers.state.side.side_by_unit[pact_sworn_unit]
+	local var_4_2 = GameModeSettings.versus.round_start_pact_sworn_spawn_delay
+	local var_4_3 = Managers.state.side.side_by_unit[arg_4_0]
 
-	if side then
-		local any_left = false
-		local enemy_player_units = side.ENEMY_PLAYER_AND_BOT_UNITS
+	if var_4_3 then
+		local var_4_4 = false
+		local var_4_5 = var_4_3.ENEMY_PLAYER_AND_BOT_UNITS
 
-		for i = 1, #enemy_player_units do
-			local enemy_unit = enemy_player_units[i]
+		for iter_4_0 = 1, #var_4_5 do
+			local var_4_6 = var_4_5[iter_4_0]
 
-			if not GhostModeUtils.in_safe_zone(enemy_unit) then
-				any_left = true
+			if not GhostModeUtils.in_safe_zone(var_4_6) then
+				var_4_4 = true
 
 				break
 			end
 		end
 
-		if any_left then
-			pact_sworn_spawn_delay = GameModeSettings.versus.round_start_heroes_left_safe_zone_spawn_delay
+		if var_4_4 then
+			var_4_2 = GameModeSettings.versus.round_start_heroes_left_safe_zone_spawn_delay
 		end
 	end
 
-	return pact_sworn_spawn_delay < time_since_round_started
+	return var_4_2 < var_4_1
 end
 
-GhostModeUtils.enemy_players_using_transport = function (unit)
-	local side = Managers.state.side.side_by_unit[unit]
-	local enemy_units = side.ENEMY_PLAYER_UNITS
+function GhostModeUtils.enemy_players_using_transport(arg_5_0)
+	local var_5_0 = Managers.state.side.side_by_unit[arg_5_0].ENEMY_PLAYER_UNITS
 
-	for _, enemy_unit in ipairs(enemy_units) do
-		if HEALTH_ALIVE[enemy_unit] then
-			local status_extension = ScriptUnit.extension(unit, "status_system")
+	for iter_5_0, iter_5_1 in ipairs(var_5_0) do
+		if HEALTH_ALIVE[iter_5_1] then
+			local var_5_1 = ScriptUnit.extension(arg_5_0, "status_system")
 
-			if not status_extension:is_disabled() and status_extension:is_using_transport() then
+			if not var_5_1:is_disabled() and var_5_1:is_using_transport() then
 				return true
 			end
 		end
@@ -116,27 +108,25 @@ GhostModeUtils.enemy_players_using_transport = function (unit)
 	return false
 end
 
-GhostModeUtils.far_enough_to_enter_ghost_mode = function (unit)
-	local unit_pos = POSITION_LOOKUP[unit]
-	local allowed_enter_ghost_dist = GameModeSettings.versus.dark_pact_catch_up_distance
-	local mechanism_ok, custom_setting_distance_override, custom_settings_enabled = Managers.mechanism:mechanism_try_call("get_custom_game_setting", "catch_up_with_heroes")
+function GhostModeUtils.far_enough_to_enter_ghost_mode(arg_6_0)
+	local var_6_0 = POSITION_LOOKUP[arg_6_0]
+	local var_6_1 = GameModeSettings.versus.dark_pact_catch_up_distance
+	local var_6_2, var_6_3, var_6_4 = Managers.mechanism:mechanism_try_call("get_custom_game_setting", "catch_up_with_heroes")
 
-	if custom_settings_enabled then
-		allowed_enter_ghost_dist = custom_setting_distance_override
+	if var_6_4 then
+		var_6_1 = var_6_3
 	end
 
-	local side = Managers.state.side.side_by_unit[unit]
-	local enemy_units = side.ENEMY_PLAYER_AND_BOT_UNITS
+	local var_6_5 = Managers.state.side.side_by_unit[arg_6_0].ENEMY_PLAYER_AND_BOT_UNITS
 
-	for i = 1, #enemy_units do
-		local enemy_unit = enemy_units[i]
-		local status_extension = ScriptUnit.has_extension(enemy_unit, "status_system")
+	for iter_6_0 = 1, #var_6_5 do
+		local var_6_6 = var_6_5[iter_6_0]
+		local var_6_7 = ScriptUnit.has_extension(var_6_6, "status_system")
 
-		if not status_extension or not status_extension:is_disabled() then
-			local target_pos = POSITION_LOOKUP[enemy_unit]
-			local distance_to_hero = Vector3.distance(target_pos, unit_pos)
+		if not var_6_7 or not var_6_7:is_disabled() then
+			local var_6_8 = POSITION_LOOKUP[var_6_6]
 
-			if distance_to_hero < allowed_enter_ghost_dist then
+			if var_6_1 > Vector3.distance(var_6_8, var_6_0) then
 				return false
 			end
 		end

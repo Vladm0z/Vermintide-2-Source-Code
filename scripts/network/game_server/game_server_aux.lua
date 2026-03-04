@@ -1,11 +1,11 @@
-﻿-- chunkname: @scripts/network/game_server/game_server_aux.lua
+-- chunkname: @scripts/network/game_server/game_server_aux.lua
 
 GameServerAux = {}
 
-GameServerAux.create_network_hash = function (config_file_name, project_hash)
-	return LobbyAux.create_network_hash(config_file_name, project_hash)
+function GameServerAux.create_network_hash(arg_1_0, arg_1_1)
+	return LobbyAux.create_network_hash(arg_1_0, arg_1_1)
 end
 
-GameServerAux.verify_lobby_data = function (lobby)
+function GameServerAux.verify_lobby_data(arg_2_0)
 	return true
 end

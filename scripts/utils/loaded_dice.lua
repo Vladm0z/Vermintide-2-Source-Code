@@ -1,145 +1,144 @@
-﻿-- chunkname: @scripts/utils/loaded_dice.lua
+-- chunkname: @scripts/utils/loaded_dice.lua
 
 LoadedDice = {}
 
-LoadedDice.create = function (probabilities, normalized)
-	local n = #probabilities
-	local alias = {}
-	local prob = {}
+function LoadedDice.create(arg_1_0, arg_1_1)
+	local var_1_0 = #arg_1_0
+	local var_1_1 = {}
+	local var_1_2 = {}
 
-	if normalized then
-		prob = table.clone(probabilities)
+	if arg_1_1 then
+		var_1_2 = table.clone(arg_1_0)
 	else
-		local sum = 0
+		local var_1_3 = 0
 
-		for i = 1, n do
-			sum = sum + probabilities[i]
+		for iter_1_0 = 1, var_1_0 do
+			var_1_3 = var_1_3 + arg_1_0[iter_1_0]
 		end
 
-		for i = 1, n do
-			prob[i] = probabilities[i] / sum
+		for iter_1_1 = 1, var_1_0 do
+			var_1_2[iter_1_1] = arg_1_0[iter_1_1] / var_1_3
 		end
 	end
 
-	local small = {}
-	local large = {}
-	local average = 1 / n
+	local var_1_4 = {}
+	local var_1_5 = {}
+	local var_1_6 = 1 / var_1_0
 
-	for i = 1, n do
-		if average <= prob[i] then
-			large[#large + 1] = i
+	for iter_1_2 = 1, var_1_0 do
+		if var_1_6 <= var_1_2[iter_1_2] then
+			var_1_5[#var_1_5 + 1] = iter_1_2
 		else
-			small[#small + 1] = i
+			var_1_4[#var_1_4 + 1] = iter_1_2
 		end
 	end
 
-	while next(small) ~= nil and next(large) ~= nil do
-		local less = small[#small]
+	while next(var_1_4) ~= nil and next(var_1_5) ~= nil do
+		local var_1_7 = var_1_4[#var_1_4]
 
-		small[#small] = nil
+		var_1_4[#var_1_4] = nil
 
-		local more = large[#large]
+		local var_1_8 = var_1_5[#var_1_5]
 
-		large[#large] = nil
-		alias[less] = more
-		prob[more] = prob[more] + prob[less] - average
+		var_1_5[#var_1_5] = nil
+		var_1_1[var_1_7] = var_1_8
+		var_1_2[var_1_8] = var_1_2[var_1_8] + var_1_2[var_1_7] - var_1_6
 
-		if average <= prob[more] then
-			large[#large + 1] = more
+		if var_1_6 <= var_1_2[var_1_8] then
+			var_1_5[#var_1_5 + 1] = var_1_8
 		else
-			small[#small + 1] = more
+			var_1_4[#var_1_4 + 1] = var_1_8
 		end
 	end
 
-	while next(small) ~= nil do
-		prob[small[#small]] = average
-		small[#small] = nil
+	while next(var_1_4) ~= nil do
+		var_1_2[var_1_4[#var_1_4]] = var_1_6
+		var_1_4[#var_1_4] = nil
 	end
 
-	while next(large) ~= nil do
-		prob[large[#large]] = average
-		large[#large] = nil
+	while next(var_1_5) ~= nil do
+		var_1_2[var_1_5[#var_1_5]] = var_1_6
+		var_1_5[#var_1_5] = nil
 	end
 
-	for i = 1, n do
-		prob[i] = prob[i] * n
+	for iter_1_3 = 1, var_1_0 do
+		var_1_2[iter_1_3] = var_1_2[iter_1_3] * var_1_0
 	end
 
-	return prob, alias
+	return var_1_2, var_1_1
 end
 
-LoadedDice.roll = function (prob, alias)
-	local column = math.random(1, #prob)
-	local biased_coin_toss = math.random() < prob[column]
+function LoadedDice.roll(arg_2_0, arg_2_1)
+	local var_2_0 = math.random(1, #arg_2_0)
 
-	return biased_coin_toss and column or alias[column]
+	return math.random() < arg_2_0[var_2_0] and var_2_0 or arg_2_1[var_2_0]
 end
 
-LoadedDice.roll_seeded = function (prob, alias, seed)
-	local seed, column = Math.next_random(seed, 1, #prob)
-	local seed, random_value = Math.next_random(seed)
-	local biased_coin_toss = random_value < prob[column]
+function LoadedDice.roll_seeded(arg_3_0, arg_3_1, arg_3_2)
+	local var_3_0, var_3_1 = Math.next_random(arg_3_2, 1, #arg_3_0)
+	local var_3_2, var_3_3 = Math.next_random(var_3_0)
+	local var_3_4 = var_3_3 < arg_3_0[var_3_1]
 
-	return seed, biased_coin_toss and column or alias[column]
+	return var_3_2, var_3_4 and var_3_1 or arg_3_1[var_3_1]
 end
 
-local only_prob_table = {}
+local var_0_0 = {}
 
-LoadedDice.create_from_mixed = function (mixed_table, normalized)
-	local only_prob_table = only_prob_table
-	local num_probabilities = #mixed_table / 2
+function LoadedDice.create_from_mixed(arg_4_0, arg_4_1)
+	local var_4_0 = var_0_0
+	local var_4_1 = #arg_4_0 / 2
 
-	for i = num_probabilities, #only_prob_table do
-		only_prob_table[i] = nil
+	for iter_4_0 = var_4_1, #var_4_0 do
+		var_4_0[iter_4_0] = nil
 	end
 
-	for i = 1, num_probabilities do
-		only_prob_table[i] = mixed_table[i * 2]
+	for iter_4_1 = 1, var_4_1 do
+		var_4_0[iter_4_1] = arg_4_0[iter_4_1 * 2]
 	end
 
-	local p, a = LoadedDice.create(only_prob_table, normalized)
+	local var_4_2, var_4_3 = LoadedDice.create(var_4_0, arg_4_1)
 
 	return {
-		p,
-		a,
+		var_4_2,
+		var_4_3
 	}
 end
 
-LoadedDice.roll_easy = function (loaded_table)
-	return LoadedDice.roll(loaded_table[1], loaded_table[2])
+function LoadedDice.roll_easy(arg_5_0)
+	return LoadedDice.roll(arg_5_0[1], arg_5_0[2])
 end
 
-LoadedDice.roll_easy_seeded = function (loaded_table, seed)
-	return LoadedDice.roll_seeded(loaded_table[1], loaded_table[2], seed)
+function LoadedDice.roll_easy_seeded(arg_6_0, arg_6_1)
+	return LoadedDice.roll_seeded(arg_6_0[1], arg_6_0[2], arg_6_1)
 end
 
-LoadedDice.test = function ()
-	local test = {
+function LoadedDice.test()
+	local var_7_0 = {
 		10,
 		5,
 		3,
-		2,
+		2
 	}
-	local p, a = LoadedDice.create(test, false)
-	local tries = 100000
-	local count = {
+	local var_7_1, var_7_2 = LoadedDice.create(var_7_0, false)
+	local var_7_3 = 100000
+	local var_7_4 = {
 		0,
 		0,
 		0,
-		0,
+		0
 	}
 
-	for i = 1, tries do
-		local column = LoadedDice.roll(p, a)
+	for iter_7_0 = 1, var_7_3 do
+		local var_7_5 = LoadedDice.roll(var_7_1, var_7_2)
 
-		count[column] = count[column] + 1
+		var_7_4[var_7_5] = var_7_4[var_7_5] + 1
 	end
 
-	local s = "Loaded Dice | "
+	local var_7_6 = "Loaded Dice | "
 
-	for i = 1, #test do
-		s = s .. test[i] .. "->" .. count[i] .. "( " .. count[i] / tries .. "% ) | "
+	for iter_7_1 = 1, #var_7_0 do
+		var_7_6 = var_7_6 .. var_7_0[iter_7_1] .. "->" .. var_7_4[iter_7_1] .. "( " .. var_7_4[iter_7_1] / var_7_3 .. "% ) | "
 	end
 
-	print(s)
+	print(var_7_6)
 end

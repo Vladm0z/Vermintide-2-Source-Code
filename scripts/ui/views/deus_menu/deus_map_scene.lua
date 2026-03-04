@@ -1,847 +1,851 @@
-﻿-- chunkname: @scripts/ui/views/deus_menu/deus_map_scene.lua
+-- chunkname: @scripts/ui/views/deus_menu/deus_map_scene.lua
 
 require("scripts/settings/dlcs/morris/deus_map_visibility_settings")
 
 DeusMapScene = class(DeusMapScene)
 
-local START_NODE_UNIT = "units/morris_map/deus_starting_position_token_01"
-local SIG_NODE_UNIT = "units/morris_map/deus_map_base_sig_belakor_01"
-local TRAVEL_NODE_UNIT = "units/morris_map/deus_map_base_travel_belakor_01"
-local SHRINE_NODE_UNIT = "units/morris_map/deus_map_base_shrine_01"
-local ARENA_NODE_UNIT = "units/morris_map/deus_map_base_arena_belakor_01"
-local EDGE_UNIT = "units/morris_map/deus_map_symbol_03"
-local TOKEN_WH = "units/morris_map/player_token/victor_token"
-local TOKEN_BW = "units/morris_map/player_token/sienna_token"
-local TOKEN_DR = "units/morris_map/player_token/bardin_token"
-local TOKEN_WE = "units/morris_map/player_token/kerillian_token"
-local TOKEN_ES = "units/morris_map/player_token/markus_token"
-local VISIBILITY_LEVEL_MAP = {
+local var_0_0 = "units/morris_map/deus_starting_position_token_01"
+local var_0_1 = "units/morris_map/deus_map_base_sig_belakor_01"
+local var_0_2 = "units/morris_map/deus_map_base_travel_belakor_01"
+local var_0_3 = "units/morris_map/deus_map_base_shrine_01"
+local var_0_4 = "units/morris_map/deus_map_base_arena_belakor_01"
+local var_0_5 = "units/morris_map/deus_map_symbol_03"
+local var_0_6 = "units/morris_map/player_token/victor_token"
+local var_0_7 = "units/morris_map/player_token/sienna_token"
+local var_0_8 = "units/morris_map/player_token/bardin_token"
+local var_0_9 = "units/morris_map/player_token/kerillian_token"
+local var_0_10 = "units/morris_map/player_token/markus_token"
+local var_0_11 = {
 	[DeusMapVisibilitySettings.WEAK_FOG_LEVEL] = 0,
 	[DeusMapVisibilitySettings.WEAK_FOG_LEVEL + 1] = 0.333,
 	[DeusMapVisibilitySettings.WEAK_FOG_LEVEL + 2] = 0.666,
-	[DeusMapVisibilitySettings.WEAK_FOG_LEVEL + 3] = 1,
+	[DeusMapVisibilitySettings.WEAK_FOG_LEVEL + 3] = 1
 }
-local FINAL_HOLE_RADIUS = 0.2
-local HOLE_RADIUS = 0.15
-local BORDER_INSET_U = 0.05
-local BORDER_INSET_V = 0.1
-local FOG_U_OFFSET = 0.015
-local FOG_V_OFFSET = -0.01
-local DEBUG_RAYCASTS = false
-local DEBUG_FOG_MESH = false
+local var_0_12 = 0.2
+local var_0_13 = 0.15
+local var_0_14 = 0.05
+local var_0_15 = 0.1
+local var_0_16 = 0.015
+local var_0_17 = -0.01
+local var_0_18 = false
+local var_0_19 = false
 
-local function setup_scene()
-	local world = Application.main_world()
-	local physics_world = World.physics_world(world)
-	local level = LevelHelper:current_level(world)
-	local viewports = World.get_data(world, "viewports")
-	local _, viewport = next(viewports)
-	local wwise_world = Managers.world:wwise_world(world)
-	local ref_camera_unit = Level.flow_variable(level, "initial_camera")
-	local ref_camera_pose = Unit.local_pose(ref_camera_unit, 0)
-	local ref_camera = Unit.camera(ref_camera_unit, "camera")
-	local camera = ScriptViewport.camera(viewport)
-	local fov = Camera.vertical_fov(ref_camera)
+local function var_0_20()
+	local var_1_0 = Application.main_world()
+	local var_1_1 = World.physics_world(var_1_0)
+	local var_1_2 = LevelHelper:current_level(var_1_0)
+	local var_1_3 = World.get_data(var_1_0, "viewports")
+	local var_1_4, var_1_5 = next(var_1_3)
+	local var_1_6 = Managers.world:wwise_world(var_1_0)
+	local var_1_7 = Level.flow_variable(var_1_2, "initial_camera")
+	local var_1_8 = Unit.local_pose(var_1_7, 0)
+	local var_1_9 = Unit.camera(var_1_7, "camera")
+	local var_1_10 = ScriptViewport.camera(var_1_5)
+	local var_1_11 = Camera.vertical_fov(var_1_9)
 
-	Camera.set_vertical_fov(camera, fov)
-	ScriptCamera.set_local_pose(camera, ref_camera_pose)
-	ScriptCamera.force_update(world, camera)
-	ScriptWorld.activate_viewport(world, viewport)
+	Camera.set_vertical_fov(var_1_10, var_1_11)
+	ScriptCamera.set_local_pose(var_1_10, var_1_8)
+	ScriptCamera.force_update(var_1_0, var_1_10)
+	ScriptWorld.activate_viewport(var_1_0, var_1_5)
 
-	return world, physics_world, camera, fov, level
+	return var_1_0, var_1_1, var_1_10, var_1_11, var_1_2
 end
 
-local function random_z_offset_to_fix_z_fighting()
+local function var_0_21()
 	return math.random() * 0.002 - 0.001
 end
 
-local function get_level_ref_values(level)
-	local bottom_left_unit = Level.flow_variable(level, "map_bottom_left")
-	local bottom_right_unit = Level.flow_variable(level, "map_bottom_right")
-	local top_left_unit = Level.flow_variable(level, "map_top_left")
-	local fog_bottom_left_unit = Level.flow_variable(level, "fog_bottom_left")
-	local fog_bottom_right_unit = Level.flow_variable(level, "fog_bottom_right")
-	local fog_top_left_unit = Level.flow_variable(level, "fog_top_left")
-	local ref_a_node_from = Level.flow_variable(level, "ref_a_node_from")
-	local ref_a_edge = Level.flow_variable(level, "ref_a_edge")
-	local ref_a_node_to = Level.flow_variable(level, "ref_a_node_to")
-	local ref_b_node_from = Level.flow_variable(level, "ref_b_node_from")
-	local ref_b_edge = Level.flow_variable(level, "ref_b_edge")
-	local ref_b_node_to = Level.flow_variable(level, "ref_b_node_to")
-	local ref_token_1 = Level.flow_variable(level, "ref_token_1")
-	local ref_token_2 = Level.flow_variable(level, "ref_token_2")
-	local ref_token_3 = Level.flow_variable(level, "ref_token_3")
-	local ref_token_4 = Level.flow_variable(level, "ref_token_4")
-	local ref_token_node = Level.flow_variable(level, "ref_token_node")
-	local camera_bottom_left = Level.flow_variable(level, "base_camera_bottom_left")
-	local camera_top_right = Level.flow_variable(level, "base_camera_top_right")
-	local camera_zoom_bottom_left = Level.flow_variable(level, "zoom_camera_bottom_left")
-	local camera_zoom_top_right = Level.flow_variable(level, "zoom_camera_top_right")
-	local token_node_pose = Unit.local_pose(ref_token_node, 0)
-	local inverse_token_node_pose = Matrix4x4.inverse(token_node_pose)
-	local token_1_pose = Unit.local_pose(ref_token_1, 0)
-	local token_2_pose = Unit.local_pose(ref_token_2, 0)
-	local token_3_pose = Unit.local_pose(ref_token_3, 0)
-	local token_4_pose = Unit.local_pose(ref_token_4, 0)
-	local referenced_token_1_pose = Matrix4x4.multiply(token_1_pose, inverse_token_node_pose)
-	local referenced_token_2_pose = Matrix4x4.multiply(token_2_pose, inverse_token_node_pose)
-	local referenced_token_3_pose = Matrix4x4.multiply(token_3_pose, inverse_token_node_pose)
-	local referenced_token_4_pose = Matrix4x4.multiply(token_4_pose, inverse_token_node_pose)
-	local data = {
-		map_bottom_left_pos = Vector3Box(Unit.local_position(bottom_left_unit, 0)),
-		map_bottom_right_pos = Vector3Box(Unit.local_position(bottom_right_unit, 0)),
-		map_top_left_pos = Vector3Box(Unit.local_position(top_left_unit, 0)),
-		fog_bottom_left_pos = Vector3Box(Unit.local_position(fog_bottom_left_unit, 0)),
-		fog_bottom_right_pos = Vector3Box(Unit.local_position(fog_bottom_right_unit, 0)),
-		fog_top_left_pos = Vector3Box(Unit.local_position(fog_top_left_unit, 0)),
+local function var_0_22(arg_3_0)
+	local var_3_0 = Level.flow_variable(arg_3_0, "map_bottom_left")
+	local var_3_1 = Level.flow_variable(arg_3_0, "map_bottom_right")
+	local var_3_2 = Level.flow_variable(arg_3_0, "map_top_left")
+	local var_3_3 = Level.flow_variable(arg_3_0, "fog_bottom_left")
+	local var_3_4 = Level.flow_variable(arg_3_0, "fog_bottom_right")
+	local var_3_5 = Level.flow_variable(arg_3_0, "fog_top_left")
+	local var_3_6 = Level.flow_variable(arg_3_0, "ref_a_node_from")
+	local var_3_7 = Level.flow_variable(arg_3_0, "ref_a_edge")
+	local var_3_8 = Level.flow_variable(arg_3_0, "ref_a_node_to")
+	local var_3_9 = Level.flow_variable(arg_3_0, "ref_b_node_from")
+	local var_3_10 = Level.flow_variable(arg_3_0, "ref_b_edge")
+	local var_3_11 = Level.flow_variable(arg_3_0, "ref_b_node_to")
+	local var_3_12 = Level.flow_variable(arg_3_0, "ref_token_1")
+	local var_3_13 = Level.flow_variable(arg_3_0, "ref_token_2")
+	local var_3_14 = Level.flow_variable(arg_3_0, "ref_token_3")
+	local var_3_15 = Level.flow_variable(arg_3_0, "ref_token_4")
+	local var_3_16 = Level.flow_variable(arg_3_0, "ref_token_node")
+	local var_3_17 = Level.flow_variable(arg_3_0, "base_camera_bottom_left")
+	local var_3_18 = Level.flow_variable(arg_3_0, "base_camera_top_right")
+	local var_3_19 = Level.flow_variable(arg_3_0, "zoom_camera_bottom_left")
+	local var_3_20 = Level.flow_variable(arg_3_0, "zoom_camera_top_right")
+	local var_3_21 = Unit.local_pose(var_3_16, 0)
+	local var_3_22 = Matrix4x4.inverse(var_3_21)
+	local var_3_23 = Unit.local_pose(var_3_12, 0)
+	local var_3_24 = Unit.local_pose(var_3_13, 0)
+	local var_3_25 = Unit.local_pose(var_3_14, 0)
+	local var_3_26 = Unit.local_pose(var_3_15, 0)
+	local var_3_27 = Matrix4x4.multiply(var_3_23, var_3_22)
+	local var_3_28 = Matrix4x4.multiply(var_3_24, var_3_22)
+	local var_3_29 = Matrix4x4.multiply(var_3_25, var_3_22)
+	local var_3_30 = Matrix4x4.multiply(var_3_26, var_3_22)
+	local var_3_31 = {
+		map_bottom_left_pos = Vector3Box(Unit.local_position(var_3_0, 0)),
+		map_bottom_right_pos = Vector3Box(Unit.local_position(var_3_1, 0)),
+		map_top_left_pos = Vector3Box(Unit.local_position(var_3_2, 0)),
+		fog_bottom_left_pos = Vector3Box(Unit.local_position(var_3_3, 0)),
+		fog_bottom_right_pos = Vector3Box(Unit.local_position(var_3_4, 0)),
+		fog_top_left_pos = Vector3Box(Unit.local_position(var_3_5, 0)),
 		referenced_token_poses = {
-			Matrix4x4Box(referenced_token_1_pose),
-			Matrix4x4Box(referenced_token_2_pose),
-			Matrix4x4Box(referenced_token_3_pose),
-			(Matrix4x4Box(referenced_token_4_pose)),
+			Matrix4x4Box(var_3_27),
+			Matrix4x4Box(var_3_28),
+			Matrix4x4Box(var_3_29),
+			(Matrix4x4Box(var_3_30))
 		},
-		camera_zoom_bottom_left_pose = Matrix4x4Box(Unit.local_pose(camera_zoom_bottom_left, 0)),
-		camera_zoom_top_right_pose = Matrix4x4Box(Unit.local_pose(camera_zoom_top_right, 0)),
-		camera_bottom_left_pose = Matrix4x4Box(Unit.local_pose(camera_bottom_left, 0)),
-		camera_top_right_pose = Matrix4x4Box(Unit.local_pose(camera_top_right, 0)),
-		ref_a_node_from_pos = Vector3Box(Unit.local_position(ref_a_node_from, 0)),
-		ref_a_node_to_pos = Vector3Box(Unit.local_position(ref_a_node_to, 0)),
-		ref_a_edge_pos = Vector3Box(Unit.local_position(ref_a_edge, 0)),
-		ref_a_edge_scale = Vector3Box(Unit.local_scale(ref_a_edge, 0)),
-		ref_b_node_from_pos = Vector3Box(Unit.local_position(ref_b_node_from, 0)),
-		ref_b_node_to_pos = Vector3Box(Unit.local_position(ref_b_node_to, 0)),
-		ref_b_edge_pos = Vector3Box(Unit.local_position(ref_b_edge, 0)),
-		ref_b_edge_scale = Vector3Box(Unit.local_scale(ref_b_edge, 0)),
+		camera_zoom_bottom_left_pose = Matrix4x4Box(Unit.local_pose(var_3_19, 0)),
+		camera_zoom_top_right_pose = Matrix4x4Box(Unit.local_pose(var_3_20, 0)),
+		camera_bottom_left_pose = Matrix4x4Box(Unit.local_pose(var_3_17, 0)),
+		camera_top_right_pose = Matrix4x4Box(Unit.local_pose(var_3_18, 0)),
+		ref_a_node_from_pos = Vector3Box(Unit.local_position(var_3_6, 0)),
+		ref_a_node_to_pos = Vector3Box(Unit.local_position(var_3_8, 0)),
+		ref_a_edge_pos = Vector3Box(Unit.local_position(var_3_7, 0)),
+		ref_a_edge_scale = Vector3Box(Unit.local_scale(var_3_7, 0)),
+		ref_b_node_from_pos = Vector3Box(Unit.local_position(var_3_9, 0)),
+		ref_b_node_to_pos = Vector3Box(Unit.local_position(var_3_11, 0)),
+		ref_b_edge_pos = Vector3Box(Unit.local_position(var_3_10, 0)),
+		ref_b_edge_scale = Vector3Box(Unit.local_scale(var_3_10, 0))
 	}
 
-	Unit.disable_physics(ref_a_node_from)
-	Unit.disable_physics(ref_a_edge)
-	Unit.disable_physics(ref_a_node_to)
-	Unit.disable_physics(ref_b_node_from)
-	Unit.disable_physics(ref_b_edge)
-	Unit.disable_physics(ref_b_node_to)
-	Unit.disable_physics(ref_token_1)
-	Unit.disable_physics(ref_token_2)
-	Unit.disable_physics(ref_token_3)
-	Unit.disable_physics(ref_token_4)
-	Unit.disable_physics(ref_token_node)
-	Unit.set_unit_visibility(ref_a_node_from, false)
-	Unit.set_unit_visibility(ref_a_edge, false)
-	Unit.set_unit_visibility(ref_a_node_to, false)
-	Unit.set_unit_visibility(ref_b_node_from, false)
-	Unit.set_unit_visibility(ref_b_edge, false)
-	Unit.set_unit_visibility(ref_b_node_to, false)
-	Unit.set_unit_visibility(ref_token_1, false)
-	Unit.set_unit_visibility(ref_token_2, false)
-	Unit.set_unit_visibility(ref_token_3, false)
-	Unit.set_unit_visibility(ref_token_4, false)
-	Unit.set_unit_visibility(ref_token_node, false)
+	Unit.disable_physics(var_3_6)
+	Unit.disable_physics(var_3_7)
+	Unit.disable_physics(var_3_8)
+	Unit.disable_physics(var_3_9)
+	Unit.disable_physics(var_3_10)
+	Unit.disable_physics(var_3_11)
+	Unit.disable_physics(var_3_12)
+	Unit.disable_physics(var_3_13)
+	Unit.disable_physics(var_3_14)
+	Unit.disable_physics(var_3_15)
+	Unit.disable_physics(var_3_16)
+	Unit.set_unit_visibility(var_3_6, false)
+	Unit.set_unit_visibility(var_3_7, false)
+	Unit.set_unit_visibility(var_3_8, false)
+	Unit.set_unit_visibility(var_3_9, false)
+	Unit.set_unit_visibility(var_3_10, false)
+	Unit.set_unit_visibility(var_3_11, false)
+	Unit.set_unit_visibility(var_3_12, false)
+	Unit.set_unit_visibility(var_3_13, false)
+	Unit.set_unit_visibility(var_3_14, false)
+	Unit.set_unit_visibility(var_3_15, false)
+	Unit.set_unit_visibility(var_3_16, false)
 
-	return data
+	return var_3_31
 end
 
-local function spawn_graph_units(world, level_ref_values, graph)
-	local map_bottom_left_pos = level_ref_values.map_bottom_left_pos:unbox()
-	local map_bottom_right_pos = level_ref_values.map_bottom_right_pos:unbox()
-	local map_top_left_pos = level_ref_values.map_top_left_pos:unbox()
-	local ref_a_node_from_pos = level_ref_values.ref_a_node_from_pos:unbox()
-	local ref_a_node_to_pos = level_ref_values.ref_a_node_to_pos:unbox()
-	local ref_a_edge_pos = level_ref_values.ref_a_edge_pos:unbox()
-	local ref_a_edge_scale = level_ref_values.ref_a_edge_scale:unbox()
-	local ref_b_node_from_pos = level_ref_values.ref_b_node_from_pos:unbox()
-	local ref_b_node_to_pos = level_ref_values.ref_b_node_to_pos:unbox()
-	local ref_b_edge_pos = level_ref_values.ref_b_edge_pos:unbox()
-	local ref_b_edge_scale = level_ref_values.ref_b_edge_scale:unbox()
-	local node_to_units = {}
-	local edges_to_units = {}
-	local positions = {}
-	local bottom_vector = map_bottom_right_pos - map_bottom_left_pos
-	local left_vector = map_top_left_pos - map_bottom_left_pos
+local function var_0_23(arg_4_0, arg_4_1, arg_4_2)
+	local var_4_0 = arg_4_1.map_bottom_left_pos:unbox()
+	local var_4_1 = arg_4_1.map_bottom_right_pos:unbox()
+	local var_4_2 = arg_4_1.map_top_left_pos:unbox()
+	local var_4_3 = arg_4_1.ref_a_node_from_pos:unbox()
+	local var_4_4 = arg_4_1.ref_a_node_to_pos:unbox()
+	local var_4_5 = arg_4_1.ref_a_edge_pos:unbox()
+	local var_4_6 = arg_4_1.ref_a_edge_scale:unbox()
+	local var_4_7 = arg_4_1.ref_b_node_from_pos:unbox()
+	local var_4_8 = arg_4_1.ref_b_node_to_pos:unbox()
+	local var_4_9 = arg_4_1.ref_b_edge_pos:unbox()
+	local var_4_10 = arg_4_1.ref_b_edge_scale:unbox()
+	local var_4_11 = {}
+	local var_4_12 = {}
+	local var_4_13 = {}
+	local var_4_14 = var_4_1 - var_4_0
+	local var_4_15 = var_4_2 - var_4_0
 
-	for key, node in pairs(graph) do
-		local bottom_part = bottom_vector * node.layout_x
-		local left_part = left_vector * node.layout_y
-		local pos = map_bottom_left_pos + (bottom_part + left_part)
+	for iter_4_0, iter_4_1 in pairs(arg_4_2) do
+		local var_4_16 = var_4_0 + (var_4_14 * iter_4_1.layout_x + var_4_15 * iter_4_1.layout_y)
 
-		pos.z = pos.z + random_z_offset_to_fix_z_fighting()
-		positions[key] = pos
+		var_4_16.z = var_4_16.z + var_0_21()
+		var_4_13[iter_4_0] = var_4_16
 	end
 
-	local distance_a_squared = Vector3.length_squared(ref_a_node_to_pos - ref_a_node_from_pos)
-	local distance_b_squared = Vector3.length_squared(ref_b_node_to_pos - ref_b_node_from_pos)
-	local distance_to_edge_a_squared = Vector3.length_squared(ref_a_edge_pos - ref_a_node_from_pos)
-	local distance_to_edge_b_squared = Vector3.length_squared(ref_b_edge_pos - ref_b_node_from_pos)
+	local var_4_17 = Vector3.length_squared(var_4_4 - var_4_3)
+	local var_4_18 = Vector3.length_squared(var_4_8 - var_4_7)
+	local var_4_19 = Vector3.length_squared(var_4_5 - var_4_3)
+	local var_4_20 = Vector3.length_squared(var_4_9 - var_4_7)
 
-	for key, node in pairs(graph) do
-		local level_name = node.level
-		local node_unit_name
+	for iter_4_2, iter_4_3 in pairs(arg_4_2) do
+		local var_4_21 = iter_4_3.level
+		local var_4_22
 
-		if key == "start" then
-			node_unit_name = START_NODE_UNIT
+		if iter_4_2 == "start" then
+			var_4_22 = var_0_0
 		else
-			local prefix = string.sub(level_name, 1, string.find(level_name, "_") - 1)
+			local var_4_23 = string.sub(var_4_21, 1, string.find(var_4_21, "_") - 1)
 
-			if prefix == "sig" then
-				node_unit_name = SIG_NODE_UNIT
-			elseif prefix == "pat" then
-				node_unit_name = TRAVEL_NODE_UNIT
-			elseif prefix == "arena" then
-				node_unit_name = ARENA_NODE_UNIT
+			if var_4_23 == "sig" then
+				var_4_22 = var_0_1
+			elseif var_4_23 == "pat" then
+				var_4_22 = var_0_2
+			elseif var_4_23 == "arena" then
+				var_4_22 = var_0_4
 			else
-				node_unit_name = SHRINE_NODE_UNIT
+				var_4_22 = var_0_3
 			end
 		end
 
-		local pos = positions[key]
-		local node_unit = World.spawn_unit(world, node_unit_name, pos)
+		local var_4_24 = var_4_13[iter_4_2]
+		local var_4_25 = World.spawn_unit(arg_4_0, var_4_22, var_4_24)
 
-		node_to_units[key] = node_unit
+		var_4_11[iter_4_2] = var_4_25
 
-		Unit.set_data(node_unit, "deus_node_key", key)
-		Unit.set_data(node_unit, "theme", node.theme)
-		Unit.set_data(node_unit, "level", node.base_level)
+		Unit.set_data(var_4_25, "deus_node_key", iter_4_2)
+		Unit.set_data(var_4_25, "theme", iter_4_3.theme)
+		Unit.set_data(var_4_25, "level", iter_4_3.base_level)
 
-		edges_to_units[key] = {}
+		var_4_12[iter_4_2] = {}
 
-		for _, next in pairs(node.next) do
-			local next_pos = positions[next]
-			local between_nodes_vector = next_pos - pos
-			local edge_unit = World.spawn_unit(world, EDGE_UNIT)
+		for iter_4_4, iter_4_5 in pairs(iter_4_3.next) do
+			local var_4_26 = var_4_13[iter_4_5]
+			local var_4_27 = var_4_26 - var_4_24
+			local var_4_28 = World.spawn_unit(arg_4_0, var_0_5)
 
-			edges_to_units[key][next] = edge_unit
+			var_4_12[iter_4_2][iter_4_5] = var_4_28
 
-			local direction = Vector3.normalize(between_nodes_vector)
-			local rotation = Quaternion.look(direction, Vector3.up())
+			local var_4_29 = Vector3.normalize(var_4_27)
+			local var_4_30 = Quaternion.look(var_4_29, Vector3.up())
 
-			Unit.set_local_rotation(edge_unit, 0, rotation)
+			Unit.set_local_rotation(var_4_28, 0, var_4_30)
 
-			local new_distance_squared = Vector3.length_squared(next_pos - pos)
-			local lerp_ratio = (new_distance_squared - distance_a_squared) / (distance_b_squared - distance_a_squared)
-			local distance_to_edge_squared = math.lerp(distance_to_edge_a_squared, distance_to_edge_b_squared, lerp_ratio)
-			local distance_to_edge = distance_to_edge_squared >= 0 and math.sqrt(distance_to_edge_squared) or 0
-			local edge_pos = pos + direction * distance_to_edge
+			local var_4_31 = (Vector3.length_squared(var_4_26 - var_4_24) - var_4_17) / (var_4_18 - var_4_17)
+			local var_4_32 = math.lerp(var_4_19, var_4_20, var_4_31)
+			local var_4_33 = var_4_24 + var_4_29 * (var_4_32 >= 0 and math.sqrt(var_4_32) or 0)
 
-			edge_pos.z = edge_pos.z + random_z_offset_to_fix_z_fighting()
+			var_4_33.z = var_4_33.z + var_0_21()
 
-			Unit.set_local_position(edge_unit, 0, edge_pos)
+			Unit.set_local_position(var_4_28, 0, var_4_33)
 
-			local new_scale = math.lerp(ref_a_edge_scale, ref_b_edge_scale, lerp_ratio)
+			local var_4_34 = math.lerp(var_4_6, var_4_10, var_4_31)
 
-			Unit.set_local_scale(edge_unit, 0, new_scale)
-			Unit.set_data(edge_unit, "highlighted", false)
-			Unit.flow_event(edge_unit, "update_visuals")
+			Unit.set_local_scale(var_4_28, 0, var_4_34)
+			Unit.set_data(var_4_28, "highlighted", false)
+			Unit.flow_event(var_4_28, "update_visuals")
 		end
 
-		Unit.flow_event(node_unit, "update_visuals")
+		Unit.flow_event(var_4_25, "update_visuals")
 	end
 
-	local token_wh = World.spawn_unit(world, TOKEN_WH)
-	local token_bw = World.spawn_unit(world, TOKEN_BW)
-	local token_dr = World.spawn_unit(world, TOKEN_DR)
-	local token_we = World.spawn_unit(world, TOKEN_WE)
-	local token_es = World.spawn_unit(world, TOKEN_ES)
-	local profile_index_to_token = {
-		token_wh,
-		token_bw,
-		token_dr,
-		token_we,
-		token_es,
+	local var_4_35 = World.spawn_unit(arg_4_0, var_0_6)
+	local var_4_36 = World.spawn_unit(arg_4_0, var_0_7)
+	local var_4_37 = World.spawn_unit(arg_4_0, var_0_8)
+	local var_4_38 = World.spawn_unit(arg_4_0, var_0_9)
+	local var_4_39 = World.spawn_unit(arg_4_0, var_0_10)
+	local var_4_40 = {
+		var_4_35,
+		var_4_36,
+		var_4_37,
+		var_4_38,
+		var_4_39
 	}
 
-	return node_to_units, edges_to_units, profile_index_to_token
+	return var_4_11, var_4_12, var_4_40
 end
 
-local function apply_visibility_to_units(nodes_to_units, edges_to_units, visibility_data)
-	for node_key, level in pairs(visibility_data) do
-		local unit = nodes_to_units[node_key]
+local function var_0_24(arg_5_0, arg_5_1, arg_5_2)
+	for iter_5_0, iter_5_1 in pairs(arg_5_2) do
+		local var_5_0 = arg_5_0[iter_5_0]
 
-		Unit.set_data(unit, "visibility_level", level)
-		Unit.flow_event(unit, "update_visuals")
+		Unit.set_data(var_5_0, "visibility_level", iter_5_1)
+		Unit.flow_event(var_5_0, "update_visuals")
 
-		for _, edge_unit in pairs(edges_to_units[node_key]) do
-			Unit.set_data(edge_unit, "visibility_level", level)
+		for iter_5_2, iter_5_3 in pairs(arg_5_1[iter_5_0]) do
+			Unit.set_data(iter_5_3, "visibility_level", iter_5_1)
 		end
 	end
 end
 
-local function setup_fog_plane(world, level_ref_values, graph_data, visibility_data, debug_drawer)
-	local map_bottom_left_pos = level_ref_values.map_bottom_left_pos:unbox()
-	local map_bottom_right_pos = level_ref_values.map_bottom_right_pos:unbox()
-	local map_top_left_pos = level_ref_values.map_top_left_pos:unbox()
-	local fog_bottom_left_pos = level_ref_values.fog_bottom_left_pos:unbox()
-	local fog_bottom_right_pos = level_ref_values.fog_bottom_right_pos:unbox()
-	local fog_top_left_pos = level_ref_values.fog_top_left_pos:unbox()
-	local bottom_fog_vector = fog_bottom_right_pos - fog_bottom_left_pos
-	local bottom_vector = map_bottom_right_pos - map_bottom_left_pos
-	local left_fog_vector = fog_top_left_pos - fog_bottom_left_pos
-	local left_vector = map_top_left_pos - map_bottom_left_pos
-	local uv_scale = Vector2(bottom_vector.x / bottom_fog_vector.x, left_vector.y / left_fog_vector.y)
-	local bottom_left_vector = map_bottom_left_pos - fog_bottom_left_pos
-	local uv_offset = Vector2(bottom_left_vector.x / bottom_fog_vector.x, bottom_left_vector.y / left_fog_vector.y)
-	local w, h = RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h
+local function var_0_25(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	local var_6_0 = arg_6_1.map_bottom_left_pos:unbox()
+	local var_6_1 = arg_6_1.map_bottom_right_pos:unbox()
+	local var_6_2 = arg_6_1.map_top_left_pos:unbox()
+	local var_6_3 = arg_6_1.fog_bottom_left_pos:unbox()
+	local var_6_4 = arg_6_1.fog_bottom_right_pos:unbox()
+	local var_6_5 = arg_6_1.fog_top_left_pos:unbox()
+	local var_6_6 = var_6_4 - var_6_3
+	local var_6_7 = var_6_1 - var_6_0
+	local var_6_8 = var_6_5 - var_6_3
+	local var_6_9 = var_6_2 - var_6_0
+	local var_6_10 = Vector2(var_6_7.x / var_6_6.x, var_6_9.y / var_6_8.y)
+	local var_6_11 = var_6_0 - var_6_3
+	local var_6_12 = Vector2(var_6_11.x / var_6_6.x, var_6_11.y / var_6_8.y)
+	local var_6_13 = RESOLUTION_LOOKUP.res_w
+	local var_6_14 = RESOLUTION_LOOKUP.res_h
 
-	local function transform_uv(u, v)
-		return u * uv_scale.x + uv_offset.x + FOG_U_OFFSET, v * uv_scale.y + uv_offset.y + FOG_V_OFFSET
+	local function var_6_15(arg_7_0, arg_7_1)
+		return arg_7_0 * var_6_10.x + var_6_12.x + var_0_16, arg_7_1 * var_6_10.y + var_6_12.y + var_0_17
 	end
 
-	local gui = World.create_screen_gui(world, "material", "materials/deus_map_fog_mask/deus_map_fog_mask", "immediate")
-	local width_ratio = Vector3.length(bottom_fog_vector) / Vector3.length(left_fog_vector)
+	local var_6_16 = World.create_screen_gui(arg_6_0, "material", "materials/deus_map_fog_mask/deus_map_fog_mask", "immediate")
+	local var_6_17 = Vector3.length(var_6_6) / Vector3.length(var_6_8)
 
-	Gui.bitmap(gui, "default_deus_map_fog_mask_clear", Vector3(0, 0, 0), Vector2(w, h), Color(255, 0, 0, 0))
+	Gui.bitmap(var_6_16, "default_deus_map_fog_mask_clear", Vector3(0, 0, 0), Vector2(var_6_13, var_6_14), Color(255, 0, 0, 0))
 
-	local function draw_triangle(material, from_multiplier, to_multiplier, x1, y1, x2, y2, x3, y3, u1, v1, u2, v2, u3, v3)
-		Gui.triangle(gui, Vector3(x1, 0, y1), Vector3(x2, 0, y2), Vector3(x3, 0, y3), 0, Color(255, from_multiplier * 255, to_multiplier * 255, 255), material, Vector2(u1, v1), Vector2(u2, v2), Vector2(u3, v3))
+	local function var_6_18(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8, arg_8_9, arg_8_10, arg_8_11, arg_8_12, arg_8_13, arg_8_14)
+		Gui.triangle(var_6_16, Vector3(arg_8_3, 0, arg_8_4), Vector3(arg_8_5, 0, arg_8_6), Vector3(arg_8_7, 0, arg_8_8), 0, Color(255, arg_8_1 * 255, arg_8_2 * 255, 255), arg_8_0, Vector2(arg_8_9, arg_8_10), Vector2(arg_8_11, arg_8_12), Vector2(arg_8_13, arg_8_14))
 	end
 
-	local function draw_quad(material, from_multiplier, to_multiplier, x1, y1, x2, y2, x3, y3, x4, y4, u1, v1, u2, v2, u3, v3, u4, v4)
-		draw_triangle(material, from_multiplier, to_multiplier, x1, y1, x2, y2, x3, y3, u1, v1, u2, v2, u3, v3)
-		draw_triangle(material, from_multiplier, to_multiplier, x3, y3, x4, y4, x1, y1, u3, v3, u4, v4, u1, v1)
+	local function var_6_19(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7, arg_9_8, arg_9_9, arg_9_10, arg_9_11, arg_9_12, arg_9_13, arg_9_14, arg_9_15, arg_9_16, arg_9_17, arg_9_18)
+		var_6_18(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7, arg_9_8, arg_9_11, arg_9_12, arg_9_13, arg_9_14, arg_9_15, arg_9_16)
+		var_6_18(arg_9_0, arg_9_1, arg_9_2, arg_9_7, arg_9_8, arg_9_9, arg_9_10, arg_9_3, arg_9_4, arg_9_15, arg_9_16, arg_9_17, arg_9_18, arg_9_11, arg_9_12)
 	end
 
-	local function draw_edge(start_node_key, end_node_key)
-		local start_alpha = VISIBILITY_LEVEL_MAP[visibility_data[start_node_key]]
-		local end_alpha = VISIBILITY_LEVEL_MAP[visibility_data[end_node_key]]
-		local start_node = graph_data[start_node_key]
-		local end_node = graph_data[end_node_key]
-		local start_layout_x, start_layout_y = transform_uv(start_node.layout_x, start_node.layout_y)
+	local function var_6_20(arg_10_0, arg_10_1)
+		local var_10_0 = var_0_11[arg_6_3[arg_10_0]]
+		local var_10_1 = var_0_11[arg_6_3[arg_10_1]]
+		local var_10_2 = arg_6_2[arg_10_0]
+		local var_10_3 = arg_6_2[arg_10_1]
+		local var_10_4, var_10_5 = var_6_15(var_10_2.layout_x, var_10_2.layout_y)
+		local var_10_6 = var_10_4 * var_6_13
+		local var_10_7 = var_10_5 * var_6_14
+		local var_10_8, var_10_9 = var_6_15(var_10_3.layout_x, var_10_3.layout_y)
+		local var_10_10 = var_10_8 * var_6_13
+		local var_10_11 = var_10_9 * var_6_14
+		local var_10_12 = var_10_10 - var_10_6
+		local var_10_13 = var_10_11 - var_10_7
+		local var_10_14 = math.sqrt(var_10_12 * var_10_12 + var_10_13 * var_10_13)
+		local var_10_15 = var_10_12 / var_10_14
+		local var_10_16 = var_10_13 / var_10_14
+		local var_10_17 = arg_10_0 == "final" and var_0_12 or var_0_13
+		local var_10_18 = var_10_17 * var_6_13
+		local var_10_19 = var_10_17 * var_6_17 * var_6_14
+		local var_10_20 = var_10_6 + var_10_16 * var_10_18
+		local var_10_21 = var_10_7 - var_10_15 * var_10_19
+		local var_10_22 = var_10_6 - var_10_16 * var_10_18
+		local var_10_23 = var_10_7 + var_10_15 * var_10_19
+		local var_10_24 = var_10_10 + var_10_16 * var_10_18
+		local var_10_25 = var_10_11 - var_10_15 * var_10_19
+		local var_10_26 = var_10_10 - var_10_16 * var_10_18
+		local var_10_27 = var_10_11 + var_10_15 * var_10_19
 
-		start_layout_x = start_layout_x * w
-		start_layout_y = start_layout_y * h
-
-		local end_layout_x, end_layout_y = transform_uv(end_node.layout_x, end_node.layout_y)
-
-		end_layout_x = end_layout_x * w
-		end_layout_y = end_layout_y * h
-
-		local vector_x = end_layout_x - start_layout_x
-		local vector_y = end_layout_y - start_layout_y
-		local distance = math.sqrt(vector_x * vector_x + vector_y * vector_y)
-		local unit_vector_x = vector_x / distance
-		local unit_vector_y = vector_y / distance
-		local hole_radius = start_node_key == "final" and FINAL_HOLE_RADIUS or HOLE_RADIUS
-		local hole_width = hole_radius * w
-		local hole_height = hole_radius * width_ratio * h
-		local start_a_x = start_layout_x + unit_vector_y * hole_width
-		local start_a_y = start_layout_y - unit_vector_x * hole_height
-		local start_b_x = start_layout_x - unit_vector_y * hole_width
-		local start_b_y = start_layout_y + unit_vector_x * hole_height
-		local end_a_x = end_layout_x + unit_vector_y * hole_width
-		local end_a_y = end_layout_y - unit_vector_x * hole_height
-		local end_b_x = end_layout_x - unit_vector_y * hole_width
-		local end_b_y = end_layout_y + unit_vector_x * hole_height
-
-		draw_quad("default_deus_map_fog_mask_edge", start_alpha, end_alpha, end_a_x, end_a_y, start_a_x, start_a_y, start_b_x, start_b_y, end_b_x, end_b_y, 1, 0, 0, 0, 0, 1, 1, 1)
+		var_6_19("default_deus_map_fog_mask_edge", var_10_0, var_10_1, var_10_24, var_10_25, var_10_20, var_10_21, var_10_22, var_10_23, var_10_26, var_10_27, 1, 0, 0, 0, 0, 1, 1, 1)
 	end
 
-	local function draw_node(node_key)
-		local alpha = VISIBILITY_LEVEL_MAP[visibility_data[node_key]]
-		local node = graph_data[node_key]
-		local layout_x, layout_y = transform_uv(node.layout_x, node.layout_y)
+	local function var_6_21(arg_11_0)
+		local var_11_0 = var_0_11[arg_6_3[arg_11_0]]
+		local var_11_1 = arg_6_2[arg_11_0]
+		local var_11_2, var_11_3 = var_6_15(var_11_1.layout_x, var_11_1.layout_y)
+		local var_11_4 = var_11_2 * var_6_13
+		local var_11_5 = var_11_3 * var_6_14
+		local var_11_6 = arg_11_0 == "final" and var_0_12 or var_0_13
+		local var_11_7 = var_11_6 * var_6_13
+		local var_11_8 = var_11_6 * var_6_17 * var_6_14
+		local var_11_9 = var_11_4 - var_11_7
+		local var_11_10 = var_11_5 - var_11_8
+		local var_11_11 = var_11_4 + var_11_7
+		local var_11_12 = var_11_5 - var_11_8
+		local var_11_13 = var_11_4 - var_11_7
+		local var_11_14 = var_11_5 + var_11_8
+		local var_11_15 = var_11_4 + var_11_7
+		local var_11_16 = var_11_5 + var_11_8
 
-		layout_x = layout_x * w
-		layout_y = layout_y * h
-
-		local hole_radius = node_key == "final" and FINAL_HOLE_RADIUS or HOLE_RADIUS
-		local hole_width = hole_radius * w
-		local hole_height = hole_radius * width_ratio * h
-		local start_a_x = layout_x - hole_width
-		local start_a_y = layout_y - hole_height
-		local start_b_x = layout_x + hole_width
-		local start_b_y = layout_y - hole_height
-		local end_a_x = layout_x - hole_width
-		local end_a_y = layout_y + hole_height
-		local end_b_x = layout_x + hole_width
-		local end_b_y = layout_y + hole_height
-
-		draw_quad("default_deus_map_fog_mask_node", alpha, alpha, end_a_x, end_a_y, start_a_x, start_a_y, start_b_x, start_b_y, end_b_x, end_b_y, 1, 0, 0, 0, 0, 1, 1, 1)
+		var_6_19("default_deus_map_fog_mask_node", var_11_0, var_11_0, var_11_13, var_11_14, var_11_9, var_11_10, var_11_11, var_11_12, var_11_15, var_11_16, 1, 0, 0, 0, 0, 1, 1, 1)
 	end
 
-	local function draw_fog_from(node_key)
-		local node = graph_data[node_key]
+	local function var_6_22(arg_12_0)
+		local var_12_0 = arg_6_2[arg_12_0]
 
-		draw_node(node_key)
+		var_6_21(arg_12_0)
 
-		for _, next_node_key in ipairs(node.next) do
-			draw_edge(node_key, next_node_key)
-			draw_fog_from(next_node_key)
+		for iter_12_0, iter_12_1 in ipairs(var_12_0.next) do
+			var_6_20(arg_12_0, iter_12_1)
+			var_6_22(iter_12_1)
 		end
 	end
 
-	draw_fog_from("start")
+	var_6_22("start")
 
-	local start_layout_x, _ = transform_uv(graph_data.start.layout_x, graph_data.start.layout_y)
-	local ab2_x, ab2_y = 0, 1
-	local ab1_x, ab1_y = 0, 1 - BORDER_INSET_V
-	local ab4_x, ab4_y = start_layout_x, 1
-	local ab3_x, ab3_y = start_layout_x, 1 - BORDER_INSET_V
-	local aa2_x, aa2_y = 0, BORDER_INSET_V
-	local aa1_x, aa1_y = 0, 0
-	local aa4_x, aa4_y = start_layout_x, BORDER_INSET_V
-	local aa3_x, aa3_y = start_layout_x, 0
-	local ba2_x, ba2_y = 1 - BORDER_INSET_U, BORDER_INSET_V
-	local ba1_x, ba1_y = 1 - BORDER_INSET_U, 0
-	local ba4_x, ba4_y = 1, BORDER_INSET_V
-	local ba3_x, ba3_y = 1, 0
-	local bb2_x, bb2_y = 1 - BORDER_INSET_U, 1
-	local bb1_x, bb1_y = 1 - BORDER_INSET_U, 1 - BORDER_INSET_V
-	local bb4_x, bb4_y = 1, 1
-	local bb3_x, bb3_y = 1, 1 - BORDER_INSET_V
+	local var_6_23, var_6_24 = var_6_15(arg_6_2.start.layout_x, arg_6_2.start.layout_y)
+	local var_6_25 = 0
+	local var_6_26 = 1
+	local var_6_27 = 0
+	local var_6_28 = 1 - var_0_15
+	local var_6_29 = var_6_23
+	local var_6_30 = 1
+	local var_6_31 = var_6_23
+	local var_6_32 = 1 - var_0_15
+	local var_6_33 = 0
+	local var_6_34 = var_0_15
+	local var_6_35 = 0
+	local var_6_36 = 0
+	local var_6_37 = var_6_23
+	local var_6_38 = var_0_15
+	local var_6_39 = var_6_23
+	local var_6_40 = 0
+	local var_6_41 = 1 - var_0_14
+	local var_6_42 = var_0_15
+	local var_6_43 = 1 - var_0_14
+	local var_6_44 = 0
+	local var_6_45 = 1
+	local var_6_46 = var_0_15
+	local var_6_47 = 1
+	local var_6_48 = 0
+	local var_6_49 = 1 - var_0_14
+	local var_6_50 = 1
+	local var_6_51 = 1 - var_0_14
+	local var_6_52 = 1 - var_0_15
+	local var_6_53 = 1
+	local var_6_54 = 1
+	local var_6_55 = 1
+	local var_6_56 = 1 - var_0_15
 
-	draw_quad("default_deus_map_fog_mask_border", 1, 0, ab1_x * w, ab1_y * h, aa2_x * w, aa2_y * h, aa4_x * w, aa4_y * h, ab3_x * w, ab3_y * h, 0, 0, 0, 0, 1, 0, 1, 0)
-	draw_quad("default_deus_map_fog_mask_border", 1, 0, ab1_x * w, ab1_y * h, ab3_x * w, ab3_y * h, ab4_x * w, ab4_y * h, ab2_x * w, ab2_y * h, 0, 0, 1, 0, 0, 0, 0, 0)
-	draw_quad("default_deus_map_fog_mask_border", 1, 0, ab3_x * w, ab3_y * h, bb1_x * w, bb1_y * h, bb2_x * w, bb2_y * h, ab4_x * w, ab4_y * h, 1, 0, 1, 0, 0, 0, 0, 0)
-	draw_quad("default_deus_map_fog_mask_border", 1, 0, bb1_x * w, bb1_y * h, bb3_x * w, bb3_y * h, bb4_x * w, bb4_y * h, bb2_x * w, bb2_y * h, 1, 0, 0, 0, 0, 0, 0, 0)
-	draw_quad("default_deus_map_fog_mask_border", 1, 0, bb1_x * w, bb1_y * h, ba2_x * w, ba2_y * h, ba4_x * w, ba4_y * h, bb3_x * w, bb3_y * h, 1, 0, 1, 0, 0, 0, 0, 0)
-	draw_quad("default_deus_map_fog_mask_border", 1, 0, ba1_x * w, ba1_y * h, ba3_x * w, ba3_y * h, ba4_x * w, ba4_y * h, ba2_x * w, ba2_y * h, 0, 0, 0, 0, 0, 0, 1, 0)
-	draw_quad("default_deus_map_fog_mask_border", 1, 0, aa4_x * w, aa4_y * h, aa3_x * w, aa3_y * h, ba1_x * w, ba1_y * h, ba2_x * w, ba2_y * h, 1, 0, 0, 0, 0, 0, 1, 0)
-	draw_quad("default_deus_map_fog_mask_border", 1, 0, aa1_x * w, aa1_y * h, aa3_x * w, aa3_y * h, aa4_x * w, aa4_y * h, aa2_x * w, aa2_y * h, 0, 0, 0, 0, 1, 0, 0, 0)
+	var_6_19("default_deus_map_fog_mask_border", 1, 0, var_6_27 * var_6_13, var_6_28 * var_6_14, var_6_33 * var_6_13, var_6_34 * var_6_14, var_6_37 * var_6_13, var_6_38 * var_6_14, var_6_31 * var_6_13, var_6_32 * var_6_14, 0, 0, 0, 0, 1, 0, 1, 0)
+	var_6_19("default_deus_map_fog_mask_border", 1, 0, var_6_27 * var_6_13, var_6_28 * var_6_14, var_6_31 * var_6_13, var_6_32 * var_6_14, var_6_29 * var_6_13, var_6_30 * var_6_14, var_6_25 * var_6_13, var_6_26 * var_6_14, 0, 0, 1, 0, 0, 0, 0, 0)
+	var_6_19("default_deus_map_fog_mask_border", 1, 0, var_6_31 * var_6_13, var_6_32 * var_6_14, var_6_51 * var_6_13, var_6_52 * var_6_14, var_6_49 * var_6_13, var_6_50 * var_6_14, var_6_29 * var_6_13, var_6_30 * var_6_14, 1, 0, 1, 0, 0, 0, 0, 0)
+	var_6_19("default_deus_map_fog_mask_border", 1, 0, var_6_51 * var_6_13, var_6_52 * var_6_14, var_6_55 * var_6_13, var_6_56 * var_6_14, var_6_53 * var_6_13, var_6_54 * var_6_14, var_6_49 * var_6_13, var_6_50 * var_6_14, 1, 0, 0, 0, 0, 0, 0, 0)
+	var_6_19("default_deus_map_fog_mask_border", 1, 0, var_6_51 * var_6_13, var_6_52 * var_6_14, var_6_41 * var_6_13, var_6_42 * var_6_14, var_6_45 * var_6_13, var_6_46 * var_6_14, var_6_55 * var_6_13, var_6_56 * var_6_14, 1, 0, 1, 0, 0, 0, 0, 0)
+	var_6_19("default_deus_map_fog_mask_border", 1, 0, var_6_43 * var_6_13, var_6_44 * var_6_14, var_6_47 * var_6_13, var_6_48 * var_6_14, var_6_45 * var_6_13, var_6_46 * var_6_14, var_6_41 * var_6_13, var_6_42 * var_6_14, 0, 0, 0, 0, 0, 0, 1, 0)
+	var_6_19("default_deus_map_fog_mask_border", 1, 0, var_6_37 * var_6_13, var_6_38 * var_6_14, var_6_39 * var_6_13, var_6_40 * var_6_14, var_6_43 * var_6_13, var_6_44 * var_6_14, var_6_41 * var_6_13, var_6_42 * var_6_14, 1, 0, 0, 0, 0, 0, 1, 0)
+	var_6_19("default_deus_map_fog_mask_border", 1, 0, var_6_35 * var_6_13, var_6_36 * var_6_14, var_6_39 * var_6_13, var_6_40 * var_6_14, var_6_37 * var_6_13, var_6_38 * var_6_14, var_6_33 * var_6_13, var_6_34 * var_6_14, 0, 0, 0, 0, 1, 0, 0, 0)
 end
 
-local function raycast_screen(camera, physics_world, screen_position, result_type, range, collision_filter, debug_drawer)
-	local position = Camera.screen_to_world(camera, screen_position, 0)
-	local direction = Camera.screen_to_world(camera, Vector3(screen_position.x, screen_position.y, 0), 1) - position
-	local raycast_dir = Vector3.normalize(direction)
+local function var_0_26(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
+	local var_13_0 = Camera.screen_to_world(arg_13_0, arg_13_2, 0)
+	local var_13_1 = Camera.screen_to_world(arg_13_0, Vector3(arg_13_2.x, arg_13_2.y, 0), 1) - var_13_0
+	local var_13_2 = Vector3.normalize(var_13_1)
 
-	return PhysicsWorld.immediate_raycast(physics_world, position, raycast_dir, range, result_type, "types", "statics", "collision_filter", collision_filter)
+	return PhysicsWorld.immediate_raycast(arg_13_1, var_13_0, var_13_2, arg_13_4, arg_13_3, "types", "statics", "collision_filter", arg_13_5)
 end
 
-local function get_interpolated_camera_pose(bottom_left_pose, top_right_pose, x, y)
-	local translation_bottom_left = Matrix4x4.translation(bottom_left_pose)
-	local translation_top_right = Matrix4x4.translation(top_right_pose)
-	local rotation_bottom_left = Matrix4x4.rotation(bottom_left_pose)
-	local rotation_top_right = Matrix4x4.rotation(top_right_pose)
-	local lerp_z = (x + y) / math.sqrt(2)
-	local new_translation = Vector3(math.lerp(translation_bottom_left[1], translation_top_right[1], x), math.lerp(translation_bottom_left[2], translation_top_right[2], y), math.lerp(translation_bottom_left[3], translation_top_right[3], lerp_z))
-	local new_rotation = Quaternion.lerp(rotation_bottom_left, rotation_top_right, lerp_z)
-	local new_pose = Matrix4x4.from_quaternion_position(new_rotation, new_translation)
+local function var_0_27(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+	local var_14_0 = Matrix4x4.translation(arg_14_0)
+	local var_14_1 = Matrix4x4.translation(arg_14_1)
+	local var_14_2 = Matrix4x4.rotation(arg_14_0)
+	local var_14_3 = Matrix4x4.rotation(arg_14_1)
+	local var_14_4 = (arg_14_2 + arg_14_3) / math.sqrt(2)
+	local var_14_5 = Vector3(math.lerp(var_14_0[1], var_14_1[1], arg_14_2), math.lerp(var_14_0[2], var_14_1[2], arg_14_3), math.lerp(var_14_0[3], var_14_1[3], var_14_4))
+	local var_14_6 = Quaternion.lerp(var_14_2, var_14_3, var_14_4)
 
-	return new_pose
+	return (Matrix4x4.from_quaternion_position(var_14_6, var_14_5))
 end
 
-local function animate_camera(camera, fov, source_pose, target_pose, start_time, end_time, time)
-	local progress
-	local interpolation_time = end_time - start_time
+local function var_0_28(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6)
+	local var_15_0
+	local var_15_1 = arg_15_5 - arg_15_4
+	local var_15_2
 
-	if interpolation_time <= 0.001 then
-		progress = 1
+	if var_15_1 <= 0.001 then
+		var_15_2 = 1
 	else
-		progress = math.clamp((time - start_time) / interpolation_time, 0, 1)
-		progress = (3 - 2 * progress) * progress^2
+		local var_15_3 = math.clamp((arg_15_6 - arg_15_4) / var_15_1, 0, 1)
+
+		var_15_2 = (3 - 2 * var_15_3) * var_15_3^2
 	end
 
-	local new_pose = Matrix4x4.lerp(source_pose, target_pose, progress)
+	local var_15_4 = Matrix4x4.lerp(arg_15_2, arg_15_3, var_15_2)
 
-	ScriptCamera.set_local_pose(camera, new_pose)
-	Camera.set_vertical_fov(camera, fov)
+	ScriptCamera.set_local_pose(arg_15_0, var_15_4)
+	Camera.set_vertical_fov(arg_15_0, arg_15_1)
 end
 
-local function set_camera_pose(camera, fov, pose)
-	ScriptCamera.set_local_pose(camera, pose)
-	Camera.set_vertical_fov(camera, fov)
+local function var_0_29(arg_16_0, arg_16_1, arg_16_2)
+	ScriptCamera.set_local_pose(arg_16_0, arg_16_2)
+	Camera.set_vertical_fov(arg_16_0, arg_16_1)
 end
 
-local STATES = {
-	active = "active",
-	initialized = "initialized",
+local var_0_30 = {
 	paused = "paused",
+	active = "active",
+	initialized = "initialized"
 }
 
-DeusMapScene.init = function (self)
-	self._state = STATES.initialized
+function DeusMapScene.init(arg_17_0)
+	arg_17_0._state = var_0_30.initialized
 end
 
-DeusMapScene.on_enter = function (self, graph_data, input_service, node_pressed_cb, node_hovered_cb, node_unhovered_cb)
-	self:_clear()
+function DeusMapScene.on_enter(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+	arg_18_0:_clear()
 
-	self._state = STATES.active
-	self._world, self._physics_world, self._camera, self._fov, self._level = setup_scene()
-	self._selected_unit = nil
-	self._cursor_update_enabled = true
-	self._input_service = input_service
-	self._node_pressed_cb = node_pressed_cb
-	self._node_hovered_cb = node_hovered_cb
-	self._node_unhovered_cb = node_unhovered_cb
-	self._level_ref_values = get_level_ref_values(self._level)
-	self._graph_data = graph_data
-	self._nodes_to_units, self._edges_to_units, self._profile_index_to_token = spawn_graph_units(self._world, self._level_ref_values, graph_data)
+	arg_18_0._state = var_0_30.active
+	arg_18_0._world, arg_18_0._physics_world, arg_18_0._camera, arg_18_0._fov, arg_18_0._level = var_0_20()
+	arg_18_0._selected_unit = nil
+	arg_18_0._cursor_update_enabled = true
+	arg_18_0._input_service = arg_18_2
+	arg_18_0._node_pressed_cb = arg_18_3
+	arg_18_0._node_hovered_cb = arg_18_4
+	arg_18_0._node_unhovered_cb = arg_18_5
+	arg_18_0._level_ref_values = var_0_22(arg_18_0._level)
+	arg_18_0._graph_data = arg_18_1
+	arg_18_0._nodes_to_units, arg_18_0._edges_to_units, arg_18_0._profile_index_to_token = var_0_23(arg_18_0._world, arg_18_0._level_ref_values, arg_18_1)
 
-	for profile_index, _ in pairs(self._profile_index_to_token) do
-		self:_hide_token(profile_index)
+	for iter_18_0, iter_18_1 in pairs(arg_18_0._profile_index_to_token) do
+		arg_18_0:_hide_token(iter_18_0)
 	end
 
-	self._event_manager = Managers.state.event
+	arg_18_0._event_manager = Managers.state.event
 
-	self._event_manager:register(self, "on_game_options_changed", "_on_game_options_changed")
+	arg_18_0._event_manager:register(arg_18_0, "on_game_options_changed", "_on_game_options_changed")
 end
 
-DeusMapScene.on_finish = function (self)
-	if self._hovered_node_key then
-		self._node_unhovered_cb()
+function DeusMapScene.on_finish(arg_19_0)
+	if arg_19_0._hovered_node_key then
+		arg_19_0._node_unhovered_cb()
 
-		self._hovered_node_key = nil
+		arg_19_0._hovered_node_key = nil
 	end
 
-	self._cursor_update_enabled = false
+	arg_19_0._cursor_update_enabled = false
 
-	self._event_manager:unregister("on_game_options_changed", self)
+	arg_19_0._event_manager:unregister("on_game_options_changed", arg_19_0)
 
-	self._event_manager = nil
+	arg_19_0._event_manager = nil
 end
 
-DeusMapScene.update = function (self, dt, t, gamepad_active)
-	local should_regenerate_fog = RESOLUTION_LOOKUP.modified or self._game_options_changed
-
-	if should_regenerate_fog and self._last_visibility_data then
-		self:setup_fog(self._last_visibility_data)
+function DeusMapScene.update(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+	if (RESOLUTION_LOOKUP.modified or arg_20_0._game_options_changed) and arg_20_0._last_visibility_data then
+		arg_20_0:setup_fog(arg_20_0._last_visibility_data)
 	end
 
-	self._game_options_changed = false
+	arg_20_0._game_options_changed = false
 
-	if self._state == STATES.active and self._cursor_update_enabled then
-		self:_update_cursor(gamepad_active)
+	if arg_20_0._state == var_0_30.active and arg_20_0._cursor_update_enabled then
+		arg_20_0:_update_cursor(arg_20_3)
 	end
 end
 
-DeusMapScene.post_update = function (self, dt, t)
-	if self._state ~= STATES.initialized then
-		self:_update_camera(t)
+function DeusMapScene.post_update(arg_21_0, arg_21_1, arg_21_2)
+	if arg_21_0._state ~= var_0_30.initialized then
+		arg_21_0:_update_camera(arg_21_2)
 	end
 end
 
-DeusMapScene.destroy = function (self)
-	self:_clear()
+function DeusMapScene.destroy(arg_22_0)
+	arg_22_0:_clear()
 
-	if self._event_manager then
-		self._event_manager:unregister("on_game_options_changed", self)
+	if arg_22_0._event_manager then
+		arg_22_0._event_manager:unregister("on_game_options_changed", arg_22_0)
 
-		self._event_manager = nil
+		arg_22_0._event_manager = nil
 	end
 end
 
-DeusMapScene._clear = function (self)
-	self._node_pressed_cb = nil
-	self._node_hovered_cb = nil
-	self._node_unhovered_cb = nil
+function DeusMapScene._clear(arg_23_0)
+	arg_23_0._node_pressed_cb = nil
+	arg_23_0._node_hovered_cb = nil
+	arg_23_0._node_unhovered_cb = nil
 
-	if self._nodes_to_units then
-		for _, unit in pairs(self._nodes_to_units) do
-			World.destroy_unit(self._world, unit)
+	if arg_23_0._nodes_to_units then
+		for iter_23_0, iter_23_1 in pairs(arg_23_0._nodes_to_units) do
+			World.destroy_unit(arg_23_0._world, iter_23_1)
 		end
 	end
 
-	if self._profile_index_to_token then
-		for _, unit in pairs(self._profile_index_to_token) do
-			World.destroy_unit(self._world, unit)
+	if arg_23_0._profile_index_to_token then
+		for iter_23_2, iter_23_3 in pairs(arg_23_0._profile_index_to_token) do
+			World.destroy_unit(arg_23_0._world, iter_23_3)
 		end
 	end
 
-	if self._edges_to_units then
-		for _, other_units in pairs(self._edges_to_units) do
-			for _, unit in pairs(other_units) do
-				World.destroy_unit(self._world, unit)
+	if arg_23_0._edges_to_units then
+		for iter_23_4, iter_23_5 in pairs(arg_23_0._edges_to_units) do
+			for iter_23_6, iter_23_7 in pairs(iter_23_5) do
+				World.destroy_unit(arg_23_0._world, iter_23_7)
 			end
 		end
 	end
 
-	self._profile_index_to_token = nil
-	self._nodes_to_units = nil
-	self._edges_to_units = nil
-	self._own_hero_name = nil
+	arg_23_0._profile_index_to_token = nil
+	arg_23_0._nodes_to_units = nil
+	arg_23_0._edges_to_units = nil
+	arg_23_0._own_hero_name = nil
 end
 
-DeusMapScene._update_camera = function (self, t)
-	if not self._camera_animation_start_time then
-		self._camera_animation_start_time = t
-		self._camera_animation_end_time = t + self._camera_animation_duration
+function DeusMapScene._update_camera(arg_24_0, arg_24_1)
+	if not arg_24_0._camera_animation_start_time then
+		arg_24_0._camera_animation_start_time = arg_24_1
+		arg_24_0._camera_animation_end_time = arg_24_1 + arg_24_0._camera_animation_duration
 	end
 
-	local camera = self._camera
+	local var_24_0 = arg_24_0._camera
 
-	animate_camera(camera, self._fov, self._camera_source_pose:unbox(), self._camera_target_pose:unbox(), self._camera_animation_start_time, self._camera_animation_end_time, t)
-	ScriptCamera.force_update(self._world, camera)
+	var_0_28(var_24_0, arg_24_0._fov, arg_24_0._camera_source_pose:unbox(), arg_24_0._camera_target_pose:unbox(), arg_24_0._camera_animation_start_time, arg_24_0._camera_animation_end_time, arg_24_1)
+	ScriptCamera.force_update(arg_24_0._world, var_24_0)
 end
 
-local NilCursor = {
+local var_0_31 = {
 	0,
 	0,
-	0,
+	0
 }
 
-DeusMapScene._update_cursor = function (self, gamepad_active)
-	local cursor = self._input_service:get("cursor") or NilCursor
-	local cursor_position
+function DeusMapScene._update_cursor(arg_25_0, arg_25_1)
+	local var_25_0 = arg_25_0._input_service:get("cursor") or var_0_31
+	local var_25_1
 
-	if IS_XB1 and not gamepad_active then
-		cursor_position = UIScaleVectorToResolution(Vector3(cursor[1], 1080 - cursor[2], cursor[3]))
-	elseif gamepad_active then
-		cursor_position = UIScaleVectorToResolution(cursor)
+	if IS_XB1 and not arg_25_1 then
+		var_25_1 = UIScaleVectorToResolution(Vector3(var_25_0[1], 1080 - var_25_0[2], var_25_0[3]))
+	elseif arg_25_1 then
+		var_25_1 = UIScaleVectorToResolution(var_25_0)
 	else
-		cursor_position = cursor
+		var_25_1 = var_25_0
 	end
 
-	local raycast, _, _, _, actor = raycast_screen(self._camera, self._physics_world, cursor_position, "closest", 3, "filter_deus_map_node_click", self._debug_drawer_stay)
-	local node_key_under_cursor
+	local var_25_2, var_25_3, var_25_4, var_25_5, var_25_6 = var_0_26(arg_25_0._camera, arg_25_0._physics_world, var_25_1, "closest", 3, "filter_deus_map_node_click", arg_25_0._debug_drawer_stay)
+	local var_25_7
 
-	if raycast then
-		local unit_under_cursor = Actor.unit(actor)
+	if var_25_2 then
+		local var_25_8 = Actor.unit(var_25_6)
 
-		node_key_under_cursor = Unit.get_data(unit_under_cursor, "deus_node_key")
+		var_25_7 = Unit.get_data(var_25_8, "deus_node_key")
 	end
 
-	if node_key_under_cursor then
-		if self._selectables and (self._input_service:get("confirm_press") or self._input_service:get("left_press")) and table.contains(self._selectables, node_key_under_cursor) then
-			self._node_pressed_cb(node_key_under_cursor)
+	if var_25_7 then
+		if arg_25_0._selectables and (arg_25_0._input_service:get("confirm_press") or arg_25_0._input_service:get("left_press")) and table.contains(arg_25_0._selectables, var_25_7) then
+			arg_25_0._node_pressed_cb(var_25_7)
 		end
 
-		if self._hovered_node_key ~= node_key_under_cursor then
-			if self._hovered_node_key then
-				self._node_unhovered_cb()
+		if arg_25_0._hovered_node_key ~= var_25_7 then
+			if arg_25_0._hovered_node_key then
+				arg_25_0._node_unhovered_cb()
 			end
 
-			self._hovered_node_key = node_key_under_cursor
+			arg_25_0._hovered_node_key = var_25_7
 
-			self._node_hovered_cb(node_key_under_cursor)
+			arg_25_0._node_hovered_cb(var_25_7)
 		end
 
-		if gamepad_active then
+		if arg_25_1 then
 			Managers.input:set_hovering(true)
 		end
-	elseif self._hovered_node_key then
-		self._node_unhovered_cb()
+	elseif arg_25_0._hovered_node_key then
+		arg_25_0._node_unhovered_cb()
 
-		self._hovered_node_key = nil
+		arg_25_0._hovered_node_key = nil
 	end
 end
 
-DeusMapScene.setup_fog = function (self, visibility_data)
-	self._last_visibility_data = visibility_data
+function DeusMapScene.setup_fog(arg_26_0, arg_26_1)
+	arg_26_0._last_visibility_data = arg_26_1
 
-	setup_fog_plane(self._world, self._level_ref_values, self._graph_data, self._last_visibility_data, self._debug_drawer)
-	apply_visibility_to_units(self._nodes_to_units, self._edges_to_units, self._last_visibility_data)
+	var_0_25(arg_26_0._world, arg_26_0._level_ref_values, arg_26_0._graph_data, arg_26_0._last_visibility_data, arg_26_0._debug_drawer)
+	var_0_24(arg_26_0._nodes_to_units, arg_26_0._edges_to_units, arg_26_0._last_visibility_data)
 end
 
-DeusMapScene._on_game_options_changed = function (self)
-	self._game_options_changed = true
+function DeusMapScene._on_game_options_changed(arg_27_0)
+	arg_27_0._game_options_changed = true
 end
 
-DeusMapScene.animate_camera_to = function (self, x, y, duration)
-	self._started_once = true
-	self._camera_animation_duration = duration
-	self._camera_animation_start_time = nil
-	self._camera_animation_end_time = nil
-	self._camera_source_pose = Matrix4x4Box(ScriptCamera.pose(self._camera))
+function DeusMapScene.animate_camera_to(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+	arg_28_0._started_once = true
+	arg_28_0._camera_animation_duration = arg_28_3
+	arg_28_0._camera_animation_start_time = nil
+	arg_28_0._camera_animation_end_time = nil
+	arg_28_0._camera_source_pose = Matrix4x4Box(ScriptCamera.pose(arg_28_0._camera))
 
-	local bottom_left_pose = self._level_ref_values.camera_bottom_left_pose:unbox()
-	local top_right_pose = self._level_ref_values.camera_top_right_pose:unbox()
+	local var_28_0 = arg_28_0._level_ref_values.camera_bottom_left_pose:unbox()
+	local var_28_1 = arg_28_0._level_ref_values.camera_top_right_pose:unbox()
 
-	self._camera_target_pose = Matrix4x4Box(get_interpolated_camera_pose(bottom_left_pose, top_right_pose, x, y))
+	arg_28_0._camera_target_pose = Matrix4x4Box(var_0_27(var_28_0, var_28_1, arg_28_1, arg_28_2))
 end
 
-DeusMapScene.zoom_camera_to = function (self, x, y, duration)
-	self._started_once = true
-	self._camera_animation_duration = duration
-	self._camera_animation_start_time = nil
-	self._camera_animation_end_time = nil
-	self._camera_source_pose = Matrix4x4Box(ScriptCamera.pose(self._camera))
+function DeusMapScene.zoom_camera_to(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+	arg_29_0._started_once = true
+	arg_29_0._camera_animation_duration = arg_29_3
+	arg_29_0._camera_animation_start_time = nil
+	arg_29_0._camera_animation_end_time = nil
+	arg_29_0._camera_source_pose = Matrix4x4Box(ScriptCamera.pose(arg_29_0._camera))
 
-	local bottom_left_pose = self._level_ref_values.camera_zoom_bottom_left_pose:unbox()
-	local top_right_pose = self._level_ref_values.camera_zoom_top_right_pose:unbox()
+	local var_29_0 = arg_29_0._level_ref_values.camera_zoom_bottom_left_pose:unbox()
+	local var_29_1 = arg_29_0._level_ref_values.camera_zoom_top_right_pose:unbox()
 
-	self._camera_target_pose = Matrix4x4Box(get_interpolated_camera_pose(bottom_left_pose, top_right_pose, x, y))
+	arg_29_0._camera_target_pose = Matrix4x4Box(var_0_27(var_29_0, var_29_1, arg_29_1, arg_29_2))
 end
 
-DeusMapScene.set_zoomed_camera_to = function (self, x, y)
-	local bottom_left_pose = self._level_ref_values.camera_zoom_bottom_left_pose:unbox()
-	local top_right_pose = self._level_ref_values.camera_zoom_top_right_pose:unbox()
-	local pose = get_interpolated_camera_pose(bottom_left_pose, top_right_pose, x, y)
+function DeusMapScene.set_zoomed_camera_to(arg_30_0, arg_30_1, arg_30_2)
+	local var_30_0 = arg_30_0._level_ref_values.camera_zoom_bottom_left_pose:unbox()
+	local var_30_1 = arg_30_0._level_ref_values.camera_zoom_top_right_pose:unbox()
+	local var_30_2 = var_0_27(var_30_0, var_30_1, arg_30_1, arg_30_2)
 
-	set_camera_pose(self._camera, self._fov, pose)
+	var_0_29(arg_30_0._camera, arg_30_0._fov, var_30_2)
 end
 
-DeusMapScene.place_token = function (self, profile_index, slot, node_key)
-	self:_place_token(profile_index, slot, node_key)
+function DeusMapScene.place_token(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+	arg_31_0:_place_token(arg_31_1, arg_31_2, arg_31_3)
 end
 
-DeusMapScene.hide_token = function (self, profile_index)
-	self:_hide_token(profile_index)
+function DeusMapScene.hide_token(arg_32_0, arg_32_1)
+	arg_32_0:_hide_token(arg_32_1)
 end
 
-DeusMapScene.set_own_hero_name = function (self, hero_name)
-	if self._own_hero_name ~= hero_name then
-		for _, node_unit in pairs(self._nodes_to_units) do
-			Unit.set_data(node_unit, "hero_name", hero_name)
-			Unit.flow_event(node_unit, "update_visuals")
+function DeusMapScene.set_own_hero_name(arg_33_0, arg_33_1)
+	if arg_33_0._own_hero_name ~= arg_33_1 then
+		for iter_33_0, iter_33_1 in pairs(arg_33_0._nodes_to_units) do
+			Unit.set_data(iter_33_1, "hero_name", arg_33_1)
+			Unit.flow_event(iter_33_1, "update_visuals")
 		end
 	end
 
-	self._own_hero_name = hero_name
+	arg_33_0._own_hero_name = arg_33_1
 end
 
-DeusMapScene.undiscover_node = function (self, node_key)
-	local unit = self._nodes_to_units[node_key]
+function DeusMapScene.undiscover_node(arg_34_0, arg_34_1)
+	local var_34_0 = arg_34_0._nodes_to_units[arg_34_1]
 
-	Unit.set_data(unit, "discovered", false)
-	Unit.flow_event(unit, "update_visuals")
+	Unit.set_data(var_34_0, "discovered", false)
+	Unit.flow_event(var_34_0, "update_visuals")
 end
 
-DeusMapScene.discover_node = function (self, node_key)
-	local unit = self._nodes_to_units[node_key]
+function DeusMapScene.discover_node(arg_35_0, arg_35_1)
+	local var_35_0 = arg_35_0._nodes_to_units[arg_35_1]
 
-	Unit.set_data(unit, "discovered", true)
-	Unit.flow_event(unit, "update_visuals")
+	Unit.set_data(var_35_0, "discovered", true)
+	Unit.flow_event(var_35_0, "update_visuals")
 end
 
-DeusMapScene.selectable_node = function (self, node_key)
-	local unit = self._nodes_to_units[node_key]
+function DeusMapScene.selectable_node(arg_36_0, arg_36_1)
+	local var_36_0 = arg_36_0._nodes_to_units[arg_36_1]
 
-	Unit.set_data(unit, "selectable", true)
-	Unit.flow_event(unit, "update_visuals")
+	Unit.set_data(var_36_0, "selectable", true)
+	Unit.flow_event(var_36_0, "update_visuals")
 
-	self._selectables = self._selectables or {}
+	arg_36_0._selectables = arg_36_0._selectables or {}
 
-	for _, selectable in ipairs(self._selectables) do
-		if selectable == node_key then
+	for iter_36_0, iter_36_1 in ipairs(arg_36_0._selectables) do
+		if iter_36_1 == arg_36_1 then
 			return
 		end
 	end
 
-	self._selectables[#self._selectables + 1] = node_key
+	arg_36_0._selectables[#arg_36_0._selectables + 1] = arg_36_1
 end
 
-DeusMapScene.unselectable_node = function (self, node_key)
-	local unit = self._nodes_to_units[node_key]
+function DeusMapScene.unselectable_node(arg_37_0, arg_37_1)
+	local var_37_0 = arg_37_0._nodes_to_units[arg_37_1]
 
-	Unit.set_data(unit, "selectable", false)
-	Unit.flow_event(unit, "update_visuals")
+	Unit.set_data(var_37_0, "selectable", false)
+	Unit.flow_event(var_37_0, "update_visuals")
 
-	if self._selectables then
-		local index = table.index_of(self._selectables, node_key)
+	if arg_37_0._selectables then
+		local var_37_1 = table.index_of(arg_37_0._selectables, arg_37_1)
 
-		if index ~= -1 then
-			table.swap_delete(self._selectables, index)
+		if var_37_1 ~= -1 then
+			table.swap_delete(arg_37_0._selectables, var_37_1)
 		end
 	end
 end
 
-DeusMapScene.untraversed_node = function (self, node_key)
-	local unit = self._nodes_to_units[node_key]
+function DeusMapScene.untraversed_node(arg_38_0, arg_38_1)
+	local var_38_0 = arg_38_0._nodes_to_units[arg_38_1]
 
-	Unit.set_data(unit, "traversed", false)
-	Unit.flow_event(unit, "update_visuals")
+	Unit.set_data(var_38_0, "traversed", false)
+	Unit.flow_event(var_38_0, "update_visuals")
 end
 
-DeusMapScene.traversed_node = function (self, node_key)
-	local unit = self._nodes_to_units[node_key]
+function DeusMapScene.traversed_node(arg_39_0, arg_39_1)
+	local var_39_0 = arg_39_0._nodes_to_units[arg_39_1]
 
-	Unit.set_data(unit, "traversed", true)
-	Unit.flow_event(unit, "update_visuals")
+	Unit.set_data(var_39_0, "traversed", true)
+	Unit.flow_event(var_39_0, "update_visuals")
 end
 
-DeusMapScene.unreachable_node = function (self, node_key)
-	local unit = self._nodes_to_units[node_key]
+function DeusMapScene.unreachable_node(arg_40_0, arg_40_1)
+	local var_40_0 = arg_40_0._nodes_to_units[arg_40_1]
 
-	Unit.set_data(unit, "unreachable", true)
-	Unit.flow_event(unit, "update_visuals")
+	Unit.set_data(var_40_0, "unreachable", true)
+	Unit.flow_event(var_40_0, "update_visuals")
 end
 
-DeusMapScene.select_node = function (self, node_key, sound_event)
-	local unit = self._nodes_to_units[node_key]
+function DeusMapScene.select_node(arg_41_0, arg_41_1, arg_41_2)
+	local var_41_0 = arg_41_0._nodes_to_units[arg_41_1]
 
-	Unit.set_data(unit, "selected", true)
-	Unit.flow_event(unit, "update_visuals")
+	Unit.set_data(var_41_0, "selected", true)
+	Unit.flow_event(var_41_0, "update_visuals")
 
-	if sound_event and Managers.state.network:game() then
-		local audio_system = Managers.state.entity:system("audio_system")
-
-		audio_system:play_2d_audio_event(sound_event)
+	if arg_41_2 and Managers.state.network:game() then
+		Managers.state.entity:system("audio_system"):play_2d_audio_event(arg_41_2)
 	end
 end
 
-DeusMapScene.unselect_node = function (self, node_key)
-	local unit = self._nodes_to_units[node_key]
+function DeusMapScene.unselect_node(arg_42_0, arg_42_1)
+	local var_42_0 = arg_42_0._nodes_to_units[arg_42_1]
 
-	Unit.set_data(unit, "selected", false)
-	Unit.flow_event(unit, "update_visuals")
+	Unit.set_data(var_42_0, "selected", false)
+	Unit.flow_event(var_42_0, "update_visuals")
 end
 
-DeusMapScene.set_final_node = function (self, node_key)
-	local unit = self._nodes_to_units[node_key]
+function DeusMapScene.set_final_node(arg_43_0, arg_43_1)
+	local var_43_0 = arg_43_0._nodes_to_units[arg_43_1]
 
-	Unit.set_data(unit, "selected", true)
-	Unit.set_data(unit, "selectable", true)
-	Unit.flow_event(unit, "update_visuals")
+	Unit.set_data(var_43_0, "selected", true)
+	Unit.set_data(var_43_0, "selectable", true)
+	Unit.flow_event(var_43_0, "update_visuals")
 end
 
-DeusMapScene.highlight_edge = function (self, from, to)
-	local unit = self._edges_to_units[from][to]
+function DeusMapScene.highlight_edge(arg_44_0, arg_44_1, arg_44_2)
+	local var_44_0 = arg_44_0._edges_to_units[arg_44_1][arg_44_2]
 
-	if not unit then
-		local deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
-		local traversed_nodes = deus_run_controller:get_traversed_nodes()
-		local graph_data = deus_run_controller:get_graph_data()
+	if not var_44_0 then
+		local var_44_1 = Managers.mechanism:game_mechanism():get_deus_run_controller()
+		local var_44_2 = var_44_1:get_traversed_nodes()
+		local var_44_3 = var_44_1:get_graph_data()
 
-		printf("self._edges_to_units:%s\ntraversed_nodes:%s\ngraph:%s", table.tostring(self._edges_to_units), table.tostring(traversed_nodes), table.tostring(graph_data, 2))
-		ferror("[DeusMapScene] edge from<%s> to<%s> doesn't exist!", from, to)
+		printf("self._edges_to_units:%s\ntraversed_nodes:%s\ngraph:%s", table.tostring(arg_44_0._edges_to_units), table.tostring(var_44_2), table.tostring(var_44_3, 2))
+		ferror("[DeusMapScene] edge from<%s> to<%s> doesn't exist!", arg_44_1, arg_44_2)
 	end
 
-	Unit.set_data(unit, "highlighted", true)
-	Unit.flow_event(unit, "update_visuals")
+	Unit.set_data(var_44_0, "highlighted", true)
+	Unit.flow_event(var_44_0, "update_visuals")
 end
 
-DeusMapScene.unhighlight_edge = function (self, from, to)
-	local unit = self._edges_to_units[from][to]
+function DeusMapScene.unhighlight_edge(arg_45_0, arg_45_1, arg_45_2)
+	local var_45_0 = arg_45_0._edges_to_units[arg_45_1][arg_45_2]
 
-	if not unit then
-		local deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
-		local traversed_nodes = deus_run_controller:get_traversed_nodes()
-		local graph_data = deus_run_controller:get_graph_data()
+	if not var_45_0 then
+		local var_45_1 = Managers.mechanism:game_mechanism():get_deus_run_controller()
+		local var_45_2 = var_45_1:get_traversed_nodes()
+		local var_45_3 = var_45_1:get_graph_data()
 
-		printf("self._edges_to_units:%s\ntraversed_nodes:%s\ngraph:%s", table.tostring(self._edges_to_units), table.tostring(traversed_nodes), table.tostring(graph_data, 2))
-		ferror("[DeusMapScene] edge from<%s> to<%s> doesn't exist!", from, to)
+		printf("self._edges_to_units:%s\ntraversed_nodes:%s\ngraph:%s", table.tostring(arg_45_0._edges_to_units), table.tostring(var_45_2), table.tostring(var_45_3, 2))
+		ferror("[DeusMapScene] edge from<%s> to<%s> doesn't exist!", arg_45_1, arg_45_2)
 	end
 
-	Unit.set_data(unit, "highlighted", false)
-	Unit.flow_event(unit, "update_visuals")
+	Unit.set_data(var_45_0, "highlighted", false)
+	Unit.flow_event(var_45_0, "update_visuals")
 end
 
-DeusMapScene.hover_node = function (self, node)
-	local unit = self._nodes_to_units[node]
+function DeusMapScene.hover_node(arg_46_0, arg_46_1)
+	local var_46_0 = arg_46_0._nodes_to_units[arg_46_1]
 
-	Unit.set_data(unit, "hovered", true)
-	Unit.flow_event(unit, "update_visuals")
+	Unit.set_data(var_46_0, "hovered", true)
+	Unit.flow_event(var_46_0, "update_visuals")
 end
 
-DeusMapScene.unhover_node = function (self, node)
-	local unit = self._nodes_to_units[node]
+function DeusMapScene.unhover_node(arg_47_0, arg_47_1)
+	local var_47_0 = arg_47_0._nodes_to_units[arg_47_1]
 
-	Unit.set_data(unit, "hovered", false)
-	Unit.flow_event(unit, "update_visuals")
+	Unit.set_data(var_47_0, "hovered", false)
+	Unit.flow_event(var_47_0, "update_visuals")
 end
 
-DeusMapScene.get_screen_pos_of_node = function (self, node_key)
-	local unit = self._nodes_to_units[node_key]
+function DeusMapScene.get_screen_pos_of_node(arg_48_0, arg_48_1)
+	local var_48_0 = arg_48_0._nodes_to_units[arg_48_1]
 
-	return Camera.world_to_screen(self._camera, Unit.local_position(unit, 0))
+	return Camera.world_to_screen(arg_48_0._camera, Unit.local_position(var_48_0, 0))
 end
 
-DeusMapScene.animate_arena_belakor_node = function (self, node_key)
-	local unit = self._nodes_to_units[node_key]
+function DeusMapScene.animate_arena_belakor_node(arg_49_0, arg_49_1)
+	local var_49_0 = arg_49_0._nodes_to_units[arg_49_1]
 
-	Unit.flow_event(unit, "first_time_seeing_arena_belakor_node")
+	Unit.flow_event(var_49_0, "first_time_seeing_arena_belakor_node")
 end
 
-DeusMapScene._place_token = function (self, profile_index, slot, node_key)
-	local token = self._profile_index_to_token[profile_index]
-	local node = self._nodes_to_units[node_key]
-	local referenced_token_pose = self._level_ref_values.referenced_token_poses[slot]
-	local pose = Matrix4x4.multiply(Unit.local_pose(node, 0), referenced_token_pose:unbox())
+function DeusMapScene._place_token(arg_50_0, arg_50_1, arg_50_2, arg_50_3)
+	local var_50_0 = arg_50_0._profile_index_to_token[arg_50_1]
+	local var_50_1 = arg_50_0._nodes_to_units[arg_50_3]
+	local var_50_2 = arg_50_0._level_ref_values.referenced_token_poses[arg_50_2]
+	local var_50_3 = Matrix4x4.multiply(Unit.local_pose(var_50_1, 0), var_50_2:unbox())
 
-	Unit.set_unit_visibility(token, true)
-	Unit.set_local_pose(token, 0, pose)
+	Unit.set_unit_visibility(var_50_0, true)
+	Unit.set_local_pose(var_50_0, 0, var_50_3)
 end
 
-DeusMapScene._hide_token = function (self, profile_index)
-	local token = self._profile_index_to_token[profile_index]
+function DeusMapScene._hide_token(arg_51_0, arg_51_1)
+	local var_51_0 = arg_51_0._profile_index_to_token[arg_51_1]
 
-	Unit.set_unit_visibility(token, false)
+	Unit.set_unit_visibility(var_51_0, false)
 end

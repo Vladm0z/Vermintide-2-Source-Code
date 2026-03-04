@@ -1,8 +1,8 @@
-﻿-- chunkname: @scripts/settings/unit_spawner_settings.lua
+-- chunkname: @scripts/settings/unit_spawner_settings.lua
 
 RagdollSettings = {
-	max_num_ragdolls = 24,
 	min_num_ragdolls = 10,
+	max_num_ragdolls = 24
 }
 
 if IS_XB1 then

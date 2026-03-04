@@ -1,49 +1,47 @@
-﻿-- chunkname: @foundation/scripts/managers/token/token_manager.lua
+-- chunkname: @foundation/scripts/managers/token/token_manager.lua
 
 TokenManager = class(TokenManager)
 
-TokenManager.init = function (self)
-	self._tokens = {}
+function TokenManager.init(arg_1_0)
+	arg_1_0._tokens = {}
 end
 
-TokenManager.register_token = function (self, token, callback, timeout)
-	self._tokens[#self._tokens + 1] = {
-		token = token,
-		callback = callback,
-		timeout = timeout or math.huge,
+function TokenManager.register_token(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	arg_2_0._tokens[#arg_2_0._tokens + 1] = {
+		token = arg_2_1,
+		callback = arg_2_2,
+		timeout = arg_2_3 or math.huge
 	}
 end
 
-TokenManager.update = function (self, dt, t)
-	for id, entry in pairs(self._tokens) do
-		local token = entry.token
+function TokenManager.update(arg_3_0, arg_3_1, arg_3_2)
+	for iter_3_0, iter_3_1 in pairs(arg_3_0._tokens) do
+		local var_3_0 = iter_3_1.token
 
-		token:update()
+		var_3_0:update()
 
-		if token:done() or t >= entry.timeout then
-			local callback = entry.callback
+		if var_3_0:done() or arg_3_2 >= iter_3_1.timeout then
+			local var_3_1 = iter_3_1.callback
 
-			if callback then
-				local info = token:info()
+			if var_3_1 then
+				local var_3_2 = var_3_0:info()
 
-				callback(info)
+				var_3_1(var_3_2)
 			end
 
-			token:close()
+			var_3_0:close()
 
-			self._tokens[id] = nil
+			arg_3_0._tokens[iter_3_0] = nil
 		end
 	end
 end
 
-TokenManager.destroy = function (self)
-	for id, entry in pairs(self._tokens) do
-		local token = entry.token
+function TokenManager.destroy(arg_4_0)
+	for iter_4_0, iter_4_1 in pairs(arg_4_0._tokens) do
+		iter_4_1.token:close()
 
-		token:close()
-
-		self._tokens[id] = nil
+		arg_4_0._tokens[iter_4_0] = nil
 	end
 
-	self._tokens = nil
+	arg_4_0._tokens = nil
 end

@@ -1,81 +1,79 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/actions/action_minigun_spin.lua
+-- chunkname: @scripts/unit_extensions/weapons/actions/action_minigun_spin.lua
 
 ActionMinigunSpin = class(ActionMinigunSpin, ActionBase)
 
-ActionMinigunSpin.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionMinigunSpin.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionMinigunSpin.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionMinigunSpin.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	self.weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
-	self.first_person_extension = ScriptUnit.has_extension(owner_unit, "first_person_system")
+	arg_1_0.weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
+	arg_1_0.first_person_extension = ScriptUnit.has_extension(arg_1_4, "first_person_system")
 end
 
-ActionMinigunSpin.client_owner_start_action = function (self, new_action, t)
-	ActionMinigunSpin.super.client_owner_start_action(self, new_action, t)
+function ActionMinigunSpin.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
+	ActionMinigunSpin.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
 
-	self._initial_windup = new_action.initial_windup
-	self._windup_max = new_action.windup_max
-	self._windup_speed = new_action.windup_speed
+	arg_2_0._initial_windup = arg_2_1.initial_windup
+	arg_2_0._windup_max = arg_2_1.windup_max
+	arg_2_0._windup_speed = arg_2_1.windup_speed
 
-	if new_action.windup_start_on_zero then
-		self._current_windup = 0
+	if arg_2_1.windup_start_on_zero then
+		arg_2_0._current_windup = 0
 	else
-		self._current_windup = self.weapon_extension:get_custom_data("windup")
+		arg_2_0._current_windup = arg_2_0.weapon_extension:get_custom_data("windup")
 	end
 
-	self._last_update_t = t
-	self._audio_loop_id = new_action.audio_loop_id
-	self._fp_speed_anim_variable = new_action.fp_speed_anim_variable
+	arg_2_0._last_update_t = arg_2_2
+	arg_2_0._audio_loop_id = arg_2_1.audio_loop_id
+	arg_2_0._fp_speed_anim_variable = arg_2_1.fp_speed_anim_variable
 
-	self:start_audio_loop()
+	arg_2_0:start_audio_loop()
 end
 
-ActionMinigunSpin.client_owner_post_update = function (self, dt, t, world, can_damage)
-	local weapon_extension = self.weapon_extension
-	local current_windup = self._current_windup
+function ActionMinigunSpin.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local var_3_0 = arg_3_0.weapon_extension
+	local var_3_1 = arg_3_0._current_windup
+	local var_3_2 = math.clamp(var_3_1 + arg_3_0._windup_speed * arg_3_1, arg_3_0._initial_windup, 1)
 
-	current_windup = math.clamp(current_windup + self._windup_speed * dt, self._initial_windup, 1)
+	var_3_0:set_custom_data("windup", var_3_2)
 
-	weapon_extension:set_custom_data("windup", current_windup)
+	arg_3_0._current_windup = var_3_2
+	arg_3_0._last_update_t = arg_3_2
 
-	self._current_windup = current_windup
-	self._last_update_t = t
-
-	self:_update_animation_speed(current_windup)
+	arg_3_0:_update_animation_speed(var_3_2)
 end
 
-ActionMinigunSpin.start_audio_loop = function (self)
-	local audio_loop_id = self._audio_loop_id
+function ActionMinigunSpin.start_audio_loop(arg_4_0)
+	local var_4_0 = arg_4_0._audio_loop_id
 
-	if not audio_loop_id then
+	if not var_4_0 then
 		return
 	end
 
-	local current_action = self.current_action
-	local start_charge_id = current_action.charge_sound_name
-	local stop_charge_id = current_action.charge_sound_stop_event
+	local var_4_1 = arg_4_0.current_action
+	local var_4_2 = var_4_1.charge_sound_name
+	local var_4_3 = var_4_1.charge_sound_stop_event
 
-	if not start_charge_id or not stop_charge_id then
+	if not var_4_2 or not var_4_3 then
 		return
 	end
 
-	local weapon_extension = self.weapon_extension
-	local start_charge_husk_id = current_action.charge_sound_husk_name
-	local stop_charge_husk_id = current_action.charge_sound_husk_stop_event
+	local var_4_4 = arg_4_0.weapon_extension
+	local var_4_5 = var_4_1.charge_sound_husk_name
+	local var_4_6 = var_4_1.charge_sound_husk_stop_event
 
-	weapon_extension:add_looping_audio(audio_loop_id, start_charge_id, stop_charge_id, start_charge_husk_id, stop_charge_husk_id)
-	weapon_extension:start_looping_audio(audio_loop_id)
+	var_4_4:add_looping_audio(var_4_0, var_4_2, var_4_3, var_4_5, var_4_6)
+	var_4_4:start_looping_audio(var_4_0)
 end
 
-ActionMinigunSpin._update_animation_speed = function (self, windup)
-	if self._fp_speed_anim_variable then
-		local anim_time_scale = windup / 3 + 0.67
+function ActionMinigunSpin._update_animation_speed(arg_5_0, arg_5_1)
+	if arg_5_0._fp_speed_anim_variable then
+		local var_5_0 = arg_5_1 / 3 + 0.67
+		local var_5_1 = math.clamp(var_5_0, NetworkConstants.animation_variable_float.min, NetworkConstants.animation_variable_float.max)
 
-		anim_time_scale = math.clamp(anim_time_scale, NetworkConstants.animation_variable_float.min, NetworkConstants.animation_variable_float.max)
-
-		self.first_person_extension:animation_set_variable(self._fp_speed_anim_variable, anim_time_scale)
+		arg_5_0.first_person_extension:animation_set_variable(arg_5_0._fp_speed_anim_variable, var_5_1)
 	end
 end
 
-ActionMinigunSpin.finish = function (self, ...)
-	ActionMinigunSpin.super.finish(self, ...)
+function ActionMinigunSpin.finish(arg_6_0, ...)
+	ActionMinigunSpin.super.finish(arg_6_0, ...)
 end

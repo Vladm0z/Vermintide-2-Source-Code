@@ -1,209 +1,206 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/careers/career_ability_we_maiden_guard.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/careers/career_ability_we_maiden_guard.lua
 
 CareerAbilityWEMaidenGuard = class(CareerAbilityWEMaidenGuard)
 
-CareerAbilityWEMaidenGuard.init = function (self, extension_init_context, unit, extension_init_data)
-	self._owner_unit = unit
-	self._world = extension_init_context.world
-	self._wwise_world = Managers.world:wwise_world(self._world)
+function CareerAbilityWEMaidenGuard.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._owner_unit = arg_1_2
+	arg_1_0._world = arg_1_1.world
+	arg_1_0._wwise_world = Managers.world:wwise_world(arg_1_0._world)
 
-	local player = extension_init_data.player
+	local var_1_0 = arg_1_3.player
 
-	self._player = player
-	self._is_server = player.is_server
-	self._local_player = player.local_player
-	self._bot_player = player.bot_player
-	self._network_manager = Managers.state.network
-	self._input_manager = Managers.input
-	self._decal_unit = nil
-	self._decal_unit_name = "units/decals/decal_arrow_kerillian"
+	arg_1_0._player = var_1_0
+	arg_1_0._is_server = var_1_0.is_server
+	arg_1_0._local_player = var_1_0.local_player
+	arg_1_0._bot_player = var_1_0.bot_player
+	arg_1_0._network_manager = Managers.state.network
+	arg_1_0._input_manager = Managers.input
+	arg_1_0._decal_unit = nil
+	arg_1_0._decal_unit_name = "units/decals/decal_arrow_kerillian"
 end
 
-CareerAbilityWEMaidenGuard.extensions_ready = function (self, world, unit)
-	self._first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
-	self._status_extension = ScriptUnit.extension(unit, "status_system")
-	self._career_extension = ScriptUnit.extension(unit, "career_system")
-	self._buff_extension = ScriptUnit.extension(unit, "buff_system")
-	self._input_extension = ScriptUnit.has_extension(unit, "input_system")
+function CareerAbilityWEMaidenGuard.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+	arg_2_0._first_person_extension = ScriptUnit.has_extension(arg_2_2, "first_person_system")
+	arg_2_0._status_extension = ScriptUnit.extension(arg_2_2, "status_system")
+	arg_2_0._career_extension = ScriptUnit.extension(arg_2_2, "career_system")
+	arg_2_0._buff_extension = ScriptUnit.extension(arg_2_2, "buff_system")
+	arg_2_0._input_extension = ScriptUnit.has_extension(arg_2_2, "input_system")
 
-	if self._first_person_extension then
-		self._first_person_unit = self._first_person_extension:get_first_person_unit()
+	if arg_2_0._first_person_extension then
+		arg_2_0._first_person_unit = arg_2_0._first_person_extension:get_first_person_unit()
 	end
 end
 
-CareerAbilityWEMaidenGuard.destroy = function (self)
+function CareerAbilityWEMaidenGuard.destroy(arg_3_0)
 	return
 end
 
-CareerAbilityWEMaidenGuard.update = function (self, unit, input, dt, context, t)
-	if not self:_ability_available() then
+function CareerAbilityWEMaidenGuard.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	if not arg_4_0:_ability_available() then
 		return
 	end
 
-	local input_extension = self._input_extension
+	local var_4_0 = arg_4_0._input_extension
 
-	if not input_extension then
+	if not var_4_0 then
 		return
 	end
 
-	if not self._is_priming then
-		if input_extension:get("action_career") then
-			self:_start_priming()
+	if not arg_4_0._is_priming then
+		if var_4_0:get("action_career") then
+			arg_4_0:_start_priming()
 		end
-	elseif self._is_priming then
-		self:_update_priming()
+	elseif arg_4_0._is_priming then
+		arg_4_0:_update_priming()
 
-		if input_extension:get("action_two") then
-			self:_stop_priming()
+		if var_4_0:get("action_two") then
+			arg_4_0:_stop_priming()
 
 			return
 		end
 
-		if input_extension:get("weapon_reload") then
-			self:_stop_priming()
+		if var_4_0:get("weapon_reload") then
+			arg_4_0:_stop_priming()
 
 			return
 		end
 
-		if not input_extension:get("action_career_hold") then
-			self:_run_ability()
+		if not var_4_0:get("action_career_hold") then
+			arg_4_0:_run_ability()
 		end
 	end
 end
 
-CareerAbilityWEMaidenGuard.stop = function (self, reason)
-	if reason ~= "pushed" and reason ~= "stunned" and self._is_priming then
-		self:_stop_priming()
+function CareerAbilityWEMaidenGuard.stop(arg_5_0, arg_5_1)
+	if arg_5_1 ~= "pushed" and arg_5_1 ~= "stunned" and arg_5_0._is_priming then
+		arg_5_0:_stop_priming()
 	end
 end
 
-CareerAbilityWEMaidenGuard._ability_available = function (self)
-	local career_extension = self._career_extension
-	local status_extension = self._status_extension
+function CareerAbilityWEMaidenGuard._ability_available(arg_6_0)
+	local var_6_0 = arg_6_0._career_extension
+	local var_6_1 = arg_6_0._status_extension
 
-	return career_extension:can_use_activated_ability() and not status_extension:is_disabled()
+	return var_6_0:can_use_activated_ability() and not var_6_1:is_disabled()
 end
 
-CareerAbilityWEMaidenGuard._start_priming = function (self)
-	if self._local_player then
-		local decal_unit_name = self._decal_unit_name
-		local unit_spawner = Managers.state.unit_spawner
+function CareerAbilityWEMaidenGuard._start_priming(arg_7_0)
+	if arg_7_0._local_player then
+		local var_7_0 = arg_7_0._decal_unit_name
 
-		self._decal_unit = unit_spawner:spawn_local_unit(decal_unit_name)
+		arg_7_0._decal_unit = Managers.state.unit_spawner:spawn_local_unit(var_7_0)
 	end
 
-	self._is_priming = true
+	arg_7_0._is_priming = true
 end
 
-CareerAbilityWEMaidenGuard._update_priming = function (self)
-	if self._decal_unit then
-		local first_person_extension = self._first_person_extension
-		local player_position = Unit.local_position(self._owner_unit, 0)
-		local player_rotation = first_person_extension:current_rotation()
-		local player_direction_flat = Vector3.flat(Vector3.normalize(Quaternion.forward(player_rotation)))
-		local player_rotation_flat = Quaternion.look(player_direction_flat, Vector3.up())
+function CareerAbilityWEMaidenGuard._update_priming(arg_8_0)
+	if arg_8_0._decal_unit then
+		local var_8_0 = arg_8_0._first_person_extension
+		local var_8_1 = Unit.local_position(arg_8_0._owner_unit, 0)
+		local var_8_2 = var_8_0:current_rotation()
+		local var_8_3 = Vector3.flat(Vector3.normalize(Quaternion.forward(var_8_2)))
+		local var_8_4 = Quaternion.look(var_8_3, Vector3.up())
 
-		Unit.set_local_position(self._decal_unit, 0, player_position)
-		Unit.set_local_rotation(self._decal_unit, 0, player_rotation_flat)
+		Unit.set_local_position(arg_8_0._decal_unit, 0, var_8_1)
+		Unit.set_local_rotation(arg_8_0._decal_unit, 0, var_8_4)
 	end
 end
 
-CareerAbilityWEMaidenGuard._stop_priming = function (self)
-	if self._decal_unit then
-		local unit_spawner = Managers.state.unit_spawner
-
-		unit_spawner:mark_for_deletion(self._decal_unit)
+function CareerAbilityWEMaidenGuard._stop_priming(arg_9_0)
+	if arg_9_0._decal_unit then
+		Managers.state.unit_spawner:mark_for_deletion(arg_9_0._decal_unit)
 	end
 
-	self._is_priming = false
+	arg_9_0._is_priming = false
 end
 
-CareerAbilityWEMaidenGuard._run_ability = function (self)
-	self:_stop_priming()
+function CareerAbilityWEMaidenGuard._run_ability(arg_10_0)
+	arg_10_0:_stop_priming()
 
-	local owner_unit = self._owner_unit
-	local is_server = self._is_server
-	local local_player = self._local_player
-	local bot_player = self._bot_player
-	local network_manager = self._network_manager
-	local network_transmit = network_manager.network_transmit
-	local status_extension = self._status_extension
-	local career_extension = self._career_extension
-	local buff_extension = self._buff_extension
-	local talent_extension = ScriptUnit.extension(owner_unit, "talent_system")
+	local var_10_0 = arg_10_0._owner_unit
+	local var_10_1 = arg_10_0._is_server
+	local var_10_2 = arg_10_0._local_player
+	local var_10_3 = arg_10_0._bot_player
+	local var_10_4 = arg_10_0._network_manager
+	local var_10_5 = var_10_4.network_transmit
+	local var_10_6 = arg_10_0._status_extension
+	local var_10_7 = arg_10_0._career_extension
+	local var_10_8 = arg_10_0._buff_extension
+	local var_10_9 = ScriptUnit.extension(var_10_0, "talent_system")
 
-	buff_extension:add_buff("kerillian_maidenguard_activated_ability")
+	var_10_8:add_buff("kerillian_maidenguard_activated_ability")
 
-	if talent_extension:has_talent("kerillian_maidenguard_activated_ability_invis_duration") then
-		buff_extension:add_buff("kerillian_maidenguard_activated_ability_invis_duration")
+	if var_10_9:has_talent("kerillian_maidenguard_activated_ability_invis_duration") then
+		var_10_8:add_buff("kerillian_maidenguard_activated_ability_invis_duration")
 	end
 
-	if is_server and bot_player or local_player then
-		local first_person_extension = self._first_person_extension
+	if var_10_1 and var_10_3 or var_10_2 then
+		local var_10_10 = arg_10_0._first_person_extension
 
-		first_person_extension:animation_event("shade_stealth_ability")
-		first_person_extension:play_remote_unit_sound_event("Play_career_ability_maiden_guard_charge", owner_unit, 0)
-		career_extension:set_state("kerillian_activate_maiden_guard")
+		var_10_10:animation_event("shade_stealth_ability")
+		var_10_10:play_remote_unit_sound_event("Play_career_ability_maiden_guard_charge", var_10_0, 0)
+		var_10_7:set_state("kerillian_activate_maiden_guard")
 
-		if local_player then
-			first_person_extension:play_hud_sound_event("Play_career_ability_maiden_guard_charge")
+		if var_10_2 then
+			var_10_10:play_hud_sound_event("Play_career_ability_maiden_guard_charge")
 		end
 	end
 
-	if network_manager:game() then
-		status_extension:set_is_dodging(true)
+	if var_10_4:game() then
+		var_10_6:set_is_dodging(true)
 
-		local unit_id = network_manager:unit_game_object_id(owner_unit)
+		local var_10_11 = var_10_4:unit_game_object_id(var_10_0)
 
-		network_transmit:send_rpc_server("rpc_status_change_bool", NetworkLookup.statuses.dodging, true, unit_id, 0)
+		var_10_5:send_rpc_server("rpc_status_change_bool", NetworkLookup.statuses.dodging, true, var_10_11, 0)
 	end
 
-	local damage_profile = "maidenguard_dash_ability"
-	local bleed = talent_extension:has_talent("kerillian_maidenguard_activated_ability_damage")
+	local var_10_12 = "maidenguard_dash_ability"
+	local var_10_13 = var_10_9:has_talent("kerillian_maidenguard_activated_ability_damage")
 
-	if bleed then
-		damage_profile = "maidenguard_dash_ability_bleed"
+	if var_10_13 then
+		var_10_12 = "maidenguard_dash_ability_bleed"
 	end
 
-	status_extension.do_lunge = {
-		allow_rotation = false,
+	var_10_6.do_lunge = {
 		animation_end_event = "maiden_guard_active_ability_charge_hit",
-		animation_event = "maiden_guard_active_ability_charge_start",
-		dodge = true,
-		duration = 0.65,
-		falloff_to_speed = 5,
+		allow_rotation = false,
 		first_person_animation_end_event = "dodge_bwd",
-		first_person_animation_end_event_hit = "dodge_bwd",
-		first_person_animation_event = "shade_stealth_ability",
 		first_person_hit_animation_event = "charge_react",
+		falloff_to_speed = 5,
+		dodge = true,
+		first_person_animation_event = "shade_stealth_ability",
+		first_person_animation_end_event_hit = "dodge_bwd",
+		duration = 0.65,
 		initial_speed = 25,
+		animation_event = "maiden_guard_active_ability_charge_start",
 		damage = {
-			allow_backstab = true,
-			collision_filter = "filter_explosion_overlap_no_player",
 			depth_padding = 0.4,
 			height = 1.8,
+			collision_filter = "filter_explosion_overlap_no_player",
 			hit_zone_hit_name = "full",
 			ignore_shield = true,
-			interrupt_on_first_hit = false,
 			interrupt_on_max_hit_mass = false,
+			interrupt_on_first_hit = false,
 			width = 1.5,
-			damage_profile = damage_profile,
-			power_level_multiplier = bleed and 1 or 0,
+			allow_backstab = true,
+			damage_profile = var_10_12,
+			power_level_multiplier = var_10_13 and 1 or 0,
 			stagger_angles = {
 				max = 90,
-				min = 90,
-			},
-		},
+				min = 90
+			}
+		}
 	}
 
-	career_extension:start_activated_ability_cooldown()
-	self:_play_vo()
+	var_10_7:start_activated_ability_cooldown()
+	arg_10_0:_play_vo()
 end
 
-CareerAbilityWEMaidenGuard._play_vo = function (self)
-	local owner_unit = self._owner_unit
-	local dialogue_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
-	local event_data = FrameTable.alloc_table()
+function CareerAbilityWEMaidenGuard._play_vo(arg_11_0)
+	local var_11_0 = arg_11_0._owner_unit
+	local var_11_1 = ScriptUnit.extension_input(var_11_0, "dialogue_system")
+	local var_11_2 = FrameTable.alloc_table()
 
-	dialogue_input:trigger_networked_dialogue_event("activate_ability", event_data)
+	var_11_1:trigger_networked_dialogue_event("activate_ability", var_11_2)
 end

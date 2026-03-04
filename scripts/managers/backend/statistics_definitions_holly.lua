@@ -1,148 +1,148 @@
-﻿-- chunkname: @scripts/managers/backend/statistics_definitions_holly.lua
+-- chunkname: @scripts/managers/backend/statistics_definitions_holly.lua
 
-local player = StatisticsDefinitions.player
+local var_0_0 = StatisticsDefinitions.player
 
-player.holly_magnus_barrel_relay_race = {
+var_0_0.holly_magnus_barrel_relay_race = {
+	value = 0,
 	database_name = "holly_magnus_barrel_relay_race",
-	source = "player_data",
-	value = 0,
+	source = "player_data"
 }
-player.holly_magnus_barrel_relay_race_hardest = {
+var_0_0.holly_magnus_barrel_relay_race_hardest = {
+	value = 0,
 	database_name = "holly_magnus_barrel_relay_race_hardest",
-	source = "player_data",
-	value = 0,
+	source = "player_data"
 }
-player.holly_magnus_secret_room = {
+var_0_0.holly_magnus_secret_room = {
+	value = 0,
 	database_name = "holly_magnus_secret_room",
-	source = "player_data",
-	value = 0,
+	source = "player_data"
 }
-player.holly_magnus_gutter_runner_treasure = {
+var_0_0.holly_magnus_gutter_runner_treasure = {
+	value = 0,
 	database_name = "holly_magnus_gutter_runner_treasure",
-	source = "player_data",
-	value = 0,
+	source = "player_data"
 }
-player.holly_magnus_gutter_runner_treasure_hardest = {
+var_0_0.holly_magnus_gutter_runner_treasure_hardest = {
+	value = 0,
 	database_name = "holly_magnus_gutter_runner_treasure_hardest",
-	source = "player_data",
-	value = 0,
+	source = "player_data"
 }
-player.holly_magnus_rune = {
+var_0_0.holly_magnus_rune = {
+	value = 0,
 	database_name = "holly_magnus_rune",
-	source = "player_data",
-	value = 0,
+	source = "player_data"
 }
-player.holly_forest_ambush_synchronized_explosives = {
+var_0_0.holly_forest_ambush_synchronized_explosives = {
+	value = 0,
 	database_name = "holly_forest_ambush_synchronized_explosives",
-	source = "player_data",
-	value = 0,
+	source = "player_data"
 }
-player.holly_forest_ambush_synchronized_explosives_hardest = {
+var_0_0.holly_forest_ambush_synchronized_explosives_hardest = {
+	value = 0,
 	database_name = "holly_forest_ambush_synchronized_explosives_hardest",
-	source = "player_data",
-	value = 0,
+	source = "player_data"
 }
-player.holly_forest_ambush_bretonnian_dance = {
+var_0_0.holly_forest_ambush_bretonnian_dance = {
+	value = 0,
 	database_name = "holly_forest_ambush_bretonnian_dance",
-	source = "player_data",
-	value = 0,
+	source = "player_data"
 }
-player.holly_forest_ambush_dragonbane_gem = {
+var_0_0.holly_forest_ambush_dragonbane_gem = {
+	value = 0,
 	database_name = "holly_forest_ambush_dragonbane_gem",
-	source = "player_data",
-	value = 0,
+	source = "player_data"
 }
-player.holly_forest_ambush_rune = {
+var_0_0.holly_forest_ambush_rune = {
+	value = 0,
 	database_name = "holly_forest_ambush_rune",
-	source = "player_data",
-	value = 0,
+	source = "player_data"
 }
-player.holly_cemetery_sleep = {
+var_0_0.holly_cemetery_sleep = {
+	value = 0,
 	database_name = "holly_cemetery_sleep",
-	source = "player_data",
-	value = 0,
+	source = "player_data"
 }
-player.holly_cemetery_rune = {
+var_0_0.holly_cemetery_rune = {
+	value = 0,
 	database_name = "holly_cemetery_rune",
-	source = "player_data",
-	value = 0,
+	source = "player_data"
 }
-player.holly_cemetery_bones = {
+var_0_0.holly_cemetery_bones = {
+	value = 0,
 	database_name = "holly_cemetery_bones",
-	source = "player_data",
-	value = 0,
+	source = "player_data"
 }
-player.holly_cemetery_synchronized_chains = {
+var_0_0.holly_cemetery_synchronized_chains = {
+	value = 0,
 	database_name = "holly_cemetery_synchronized_chains",
-	source = "player_data",
-	value = 0,
+	source = "player_data"
 }
-player.holly_cemetery_synchronized_chains_hardest = {
+var_0_0.holly_cemetery_synchronized_chains_hardest = {
+	value = 0,
 	database_name = "holly_cemetery_synchronized_chains_hardest",
-	source = "player_data",
-	value = 0,
+	source = "player_data"
 }
-player.holly_find_all_runes = {
+var_0_0.holly_find_all_runes = {
+	value = 0,
 	database_name = "holly_find_all_runes",
-	source = "player_data",
-	value = 0,
+	source = "player_data"
 }
-player.holly_difficulty_selection_plaza = {
-	database_name = "holly_difficulty_selection_plaza",
-	source = "player_data",
+var_0_0.holly_difficulty_selection_plaza = {
 	value = 1,
+	database_name = "holly_difficulty_selection_plaza",
+	source = "player_data"
 }
-player.holly_kills_we_1h_axe = {
+var_0_0.holly_kills_we_1h_axe = {
+	value = 0,
 	database_name = "holly_kills_we_1h_axe",
-	source = "player_data",
-	value = 0,
+	source = "player_data"
 }
-player.holly_kills_bw_1h_crowbill = {
+var_0_0.holly_kills_bw_1h_crowbill = {
+	value = 0,
 	database_name = "holly_kills_bw_1h_crowbill",
-	source = "player_data",
-	value = 0,
+	source = "player_data"
 }
-player.holly_kills_wh_dual_wield_axe_falchion = {
+var_0_0.holly_kills_wh_dual_wield_axe_falchion = {
+	value = 0,
 	database_name = "holly_kills_wh_dual_wield_axe_falchion",
-	source = "player_data",
-	value = 0,
+	source = "player_data"
 }
-player.holly_kills_dr_dual_wield_hammers = {
+var_0_0.holly_kills_dr_dual_wield_hammers = {
+	value = 0,
 	database_name = "holly_kills_dr_dual_wield_hammers",
-	source = "player_data",
-	value = 0,
+	source = "player_data"
 }
-player.holly_kills_es_dual_wield_hammer_sword = {
-	database_name = "holly_kills_es_dual_wield_hammer_sword",
-	source = "player_data",
+var_0_0.holly_kills_es_dual_wield_hammer_sword = {
 	value = 0,
+	database_name = "holly_kills_es_dual_wield_hammer_sword",
+	source = "player_data"
 }
 
-local holly_lord_levels = {
+local var_0_1 = {
 	"warcamp",
 	"skaven_stronghold",
 	"ground_zero",
-	"skittergate",
+	"skittergate"
 }
-local weapon_names = {
+local var_0_2 = {
 	"we_1h_axe",
 	"bw_1h_crowbill",
 	"wh_dual_wield_axe_falchion",
 	"dr_dual_wield_hammers",
-	"es_dual_wield_hammer_sword",
+	"es_dual_wield_hammer_sword"
 }
 
-for i = 1, #holly_lord_levels do
-	local level_name = holly_lord_levels[i]
+for iter_0_0 = 1, #var_0_1 do
+	local var_0_3 = var_0_1[iter_0_0]
 
-	for j = 1, #weapon_names do
-		local weapon_name = weapon_names[j]
-		local stat_name = "holly_completed_level_" .. level_name .. "_with_" .. weapon_name
+	for iter_0_1 = 1, #var_0_2 do
+		local var_0_4 = var_0_2[iter_0_1]
+		local var_0_5 = "holly_completed_level_" .. var_0_3 .. "_with_" .. var_0_4
 
-		player[stat_name] = {
-			source = "player_data",
+		var_0_0[var_0_5] = {
 			value = 0,
-			database_name = stat_name,
+			source = "player_data",
+			database_name = var_0_5
 		}
 	end
 end

@@ -1,14 +1,14 @@
-﻿-- chunkname: @scripts/settings/dlcs/divine/dlc_reikwald_river_achievements_settings.lua
+-- chunkname: @scripts/settings/dlcs/divine/dlc_reikwald_river_achievements_settings.lua
 
-local settings = DLCSettings.divine
+local var_0_0 = DLCSettings.divine
 
-settings.achievement_outline = {
+var_0_0.achievement_outline = {
 	levels = {
 		entries = {},
 		categories = {
 			{
-				name = "area_selection_divine_name",
 				sorting = 10,
+				name = "area_selection_divine_name",
 				entries = {
 					"divine_all_challenges",
 					"divine_complete_recruit",
@@ -20,12 +20,12 @@ settings.achievement_outline = {
 					"divine_anchor_challenge",
 					"divine_sink_ships_challenge",
 					"divine_cannon_challenge",
-					"divine_chaos_warrior_challenge",
-				},
-			},
-		},
-	},
+					"divine_chaos_warrior_challenge"
+				}
+			}
+		}
+	}
 }
-settings.achievement_template_file_names = {
-	"scripts/managers/achievements/achievement_templates_divine",
+var_0_0.achievement_template_file_names = {
+	"scripts/managers/achievements/achievement_templates_divine"
 }

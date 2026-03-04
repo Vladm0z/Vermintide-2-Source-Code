@@ -1,7 +1,8 @@
-﻿-- chunkname: @scripts/settings/dlcs/morris/morris_unit_extension_templates.lua
+-- chunkname: @scripts/settings/dlcs/morris/morris_unit_extension_templates.lua
 
-local ai_locomotion_name = _G.GameSettingsDevelopment and GameSettingsDevelopment.use_engine_optimized_ai_locomotion and "AILocomotionExtensionC" or "AILocomotionExtension"
-local unit_extension_templates = {
+local var_0_0 = _G.GameSettingsDevelopment and GameSettingsDevelopment.use_engine_optimized_ai_locomotion and "AILocomotionExtensionC" or "AILocomotionExtension"
+
+return {
 	deus_weapon_chest = {
 		go_type = "deus_weapon_chest",
 		self_owned_extensions = {
@@ -12,7 +13,7 @@ local unit_extension_templates = {
 			"DeusChestPreloadExtension",
 			"PingTargetExtension",
 			"GenericUnitAimExtension",
-			"ProjectileLinkerExtension",
+			"ProjectileLinkerExtension"
 		},
 		husk_extensions = {
 			"GenericUnitInteractableExtension",
@@ -22,8 +23,8 @@ local unit_extension_templates = {
 			"DeusChestPreloadExtension",
 			"PingTargetExtension",
 			"GenericUnitAimExtension",
-			"ProjectileLinkerExtension",
-		},
+			"ProjectileLinkerExtension"
+		}
 	},
 	deus_cursed_chest = {
 		go_type = "deus_cursed_chest",
@@ -33,7 +34,7 @@ local unit_extension_templates = {
 			"LookatTargetExtension",
 			"PickupUnitExtension",
 			"PingTargetExtension",
-			"DeusCursedChestExtension",
+			"DeusCursedChestExtension"
 		},
 		husk_extensions = {
 			"GenericUnitInteractableExtension",
@@ -41,24 +42,24 @@ local unit_extension_templates = {
 			"LookatTargetExtension",
 			"PickupUnitExtension",
 			"PingTargetExtension",
-			"DeusCursedChestExtension",
-		},
+			"DeusCursedChestExtension"
+		}
 	},
 	buff_objective_unit = {
 		go_type = "buff_objective_unit",
 		self_owned_extensions = {
 			"BuffExtension",
-			"UnitSynchronizationExtension",
+			"UnitSynchronizationExtension"
 		},
 		husk_extensions = {
 			"BuffExtension",
-			"UnitSynchronizationExtension",
-		},
+			"UnitSynchronizationExtension"
+		}
 	},
 	ai_unit_greed_pinata = {
 		go_type = "ai_unit",
 		self_owned_extensions = {
-			ai_locomotion_name,
+			var_0_0,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"GenericHealthExtension",
@@ -68,7 +69,7 @@ local unit_extension_templates = {
 			"PingTargetExtension",
 			"EnemyOutlineExtension",
 			"AIUnitFadeExtension",
-			"AISimpleExtension",
+			"AISimpleExtension"
 		},
 		husk_extensions = {
 			"AiHuskLocomotionExtension",
@@ -80,8 +81,8 @@ local unit_extension_templates = {
 			"PingTargetExtension",
 			"EnemyOutlineExtension",
 			"AIUnitFadeExtension",
-			"AiHuskBaseExtension",
-		},
+			"AiHuskBaseExtension"
+		}
 	},
 	deus_relic = {
 		go_type = "deus_relic",
@@ -93,7 +94,7 @@ local unit_extension_templates = {
 			"LookatTargetExtension",
 			"PickupProjectileVolumeExtension",
 			"PingTargetExtension",
-			"DeusRelicExtension",
+			"DeusRelicExtension"
 		},
 		husk_extensions = {
 			"ProjectilePhysicsHuskLocomotionExtension",
@@ -101,8 +102,8 @@ local unit_extension_templates = {
 			"GenericUnitInteractableExtension",
 			"ObjectiveLightOutlineExtension",
 			"LookatTargetExtension",
-			"PingTargetExtension",
-		},
+			"PingTargetExtension"
+		}
 	},
 	egg_of_tzeentch_unit = {
 		go_type = "egg_of_tzeentch_unit",
@@ -113,7 +114,7 @@ local unit_extension_templates = {
 			"GenericDeathExtension",
 			"ObjectiveLightOutlineExtension",
 			"TimedSpawnerExtension",
-			"LookatTargetExtension",
+			"LookatTargetExtension"
 		},
 		husk_extensions = {
 			"BuffExtension",
@@ -122,20 +123,18 @@ local unit_extension_templates = {
 			"GenericDeathExtension",
 			"ObjectiveLightOutlineExtension",
 			"TimedSpawnerExtension",
-			"LookatTargetExtension",
-		},
+			"LookatTargetExtension"
+		}
 	},
 	buffed_timed_explosion_unit = {
 		go_type = "buffed_timed_explosion_unit",
 		self_owned_extensions = {
 			"TimedExplosionExtension",
-			"BuffExtension",
+			"BuffExtension"
 		},
 		husk_extensions = {
 			"TimedExplosionExtension",
-			"BuffExtension",
-		},
-	},
+			"BuffExtension"
+		}
+	}
 }
-
-return unit_extension_templates

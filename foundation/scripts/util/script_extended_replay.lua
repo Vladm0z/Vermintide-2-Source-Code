@@ -1,33 +1,33 @@
-﻿-- chunkname: @foundation/scripts/util/script_extended_replay.lua
+-- chunkname: @foundation/scripts/util/script_extended_replay.lua
 
 ScriptExtendedReplay = class(ScriptExtendedReplay)
 
-ScriptExtendedReplay.reload = function ()
+function ScriptExtendedReplay.reload()
 	Managers.replay:reload()
 end
 
-ScriptExtendedReplay.play = function (enable)
-	Managers.replay:play(enable)
+function ScriptExtendedReplay.play(arg_2_0)
+	Managers.replay:play(arg_2_0)
 end
 
-ScriptExtendedReplay.set_frame = function (frame)
-	Managers.replay:set_frame(frame)
+function ScriptExtendedReplay.set_frame(arg_3_0)
+	Managers.replay:set_frame(arg_3_0)
 end
 
-ScriptExtendedReplay.set_level = function (level)
-	Managers.replay:set_level(level)
+function ScriptExtendedReplay.set_level(arg_4_0)
+	Managers.replay:set_level(arg_4_0)
 end
 
-ScriptExtendedReplay.set_stories = function (stories)
-	Managers.replay:set_stories(stories)
+function ScriptExtendedReplay.set_stories(arg_5_0)
+	Managers.replay:set_stories(arg_5_0)
 end
 
-ScriptExtendedReplay.request_moving_units = function ()
-	local cmd = {
+function ScriptExtendedReplay.request_moving_units()
+	local var_6_0 = {
 		message = "moving_units",
 		type = "replay",
-		units = ExtendedReplay.moving_units(),
+		units = ExtendedReplay.moving_units()
 	}
 
-	Application.console_send(cmd)
+	Application.console_send(var_6_0)
 end

@@ -1,4 +1,4 @@
-﻿-- chunkname: @dialogues/generated/lookup_npc_dlc_event_skulls.lua
+-- chunkname: @dialogues/generated/lookup_npc_dlc_event_skulls.lua
 
 assert(DialogueLookup[DialogueLookup_n + 1] == nil)
 assert(DialogueLookup[DialogueLookup_n + 2] == nil)

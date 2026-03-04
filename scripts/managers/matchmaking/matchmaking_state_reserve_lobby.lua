@@ -1,281 +1,275 @@
-﻿-- chunkname: @scripts/managers/matchmaking/matchmaking_state_reserve_lobby.lua
+-- chunkname: @scripts/managers/matchmaking/matchmaking_state_reserve_lobby.lua
 
 require("scripts/game_state/server_search_utils")
 require("scripts/game_state/server_party_reserve_state_machine")
 
-local REQUEST_DATA_DELAY = 2
+local var_0_0 = 2
 
 MatchmakingStateReserveLobby = class(MatchmakingStateReserveLobby)
 MatchmakingStateReserveLobby.NAME = "MatchmakingStateReserveLobby"
 
-MatchmakingStateReserveLobby.init = function (self, params)
-	self._network_options = params.network_options
-	self._network_transmit = params.network_transmit
-	self._reserver = nil
-	self._state = nil
-	self._wait_for_join_message = nil
-	self._join_lobby_data = nil
-	self._received_join_message = nil
-	self._request_timer = 0
-	self._lobby = params.lobby
+function MatchmakingStateReserveLobby.init(arg_1_0, arg_1_1)
+	arg_1_0._network_options = arg_1_1.network_options
+	arg_1_0._network_transmit = arg_1_1.network_transmit
+	arg_1_0._reserver = nil
+	arg_1_0._state = nil
+	arg_1_0._wait_for_join_message = nil
+	arg_1_0._join_lobby_data = nil
+	arg_1_0._received_join_message = nil
+	arg_1_0._request_timer = 0
+	arg_1_0._lobby = arg_1_1.lobby
 
-	Managers.state.event:register(self, "friend_party_peer_left", "on_friend_party_peer_left")
+	Managers.state.event:register(arg_1_0, "friend_party_peer_left", "on_friend_party_peer_left")
 end
 
-MatchmakingStateReserveLobby.terminate = function (self)
+function MatchmakingStateReserveLobby.terminate(arg_2_0)
 	if Managers.lobby:query_lobby("matchmaking_join_lobby") then
 		Managers.lobby:destroy_lobby("matchmaking_join_lobby")
 	end
 end
 
-MatchmakingStateReserveLobby.destroy = function (self)
-	self:_cleanup()
+function MatchmakingStateReserveLobby.destroy(arg_3_0)
+	arg_3_0:_cleanup()
 end
 
-MatchmakingStateReserveLobby.on_enter = function (self, state_context)
-	self._state_context = state_context
-	self._wait_for_join_message = state_context.search_config.wait_for_join_message
+function MatchmakingStateReserveLobby.on_enter(arg_4_0, arg_4_1)
+	arg_4_0._state_context = arg_4_1
+	arg_4_0._wait_for_join_message = arg_4_1.search_config.wait_for_join_message
 
-	local search_config = state_context.search_config
-	local party_lobby_host = search_config.party_lobby_host
+	local var_4_0 = arg_4_1.search_config
+	local var_4_1 = var_4_0.party_lobby_host
 
-	self._party_lobby_host = party_lobby_host
-	self._cleanup_server_lobby = true
+	arg_4_0._party_lobby_host = var_4_1
+	arg_4_0._cleanup_server_lobby = true
 
-	local lobby_members = party_lobby_host:members()
-	local party_members = lobby_members:get_members()
+	local var_4_2 = var_4_1:members():get_members()
 
-	if state_context.is_flexmatch then
-		local server_info = state_context.server_info
+	if arg_4_1.is_flexmatch then
+		local var_4_3 = arg_4_1.server_info
 
-		Managers.lobby:make_lobby(GameServerLobbyClient, "matchmaking_join_lobby", "MatchmakingStateReserveLobby (on_enter)", self._network_options, state_context, server_info.password, party_members)
+		Managers.lobby:make_lobby(GameServerLobbyClient, "matchmaking_join_lobby", "MatchmakingStateReserveLobby (on_enter)", arg_4_0._network_options, arg_4_1, var_4_3.password, var_4_2)
 
-		self._state = "reserving"
+		arg_4_0._state = "reserving"
 	else
-		if not search_config.linux then
-			self._optional_filters = {
+		if not var_4_0.linux then
+			arg_4_0._optional_filters = {
 				matchmaking_filters = {
 					name = {
-						comparison = "not_equal",
 						value = "AWS Gamelift unknown",
-					},
-				},
+						comparison = "not_equal"
+					}
+				}
 			}
 		end
 
-		self:_start_search(party_members, self._optional_filters)
+		arg_4_0:_start_search(var_4_2, arg_4_0._optional_filters)
 	end
 end
 
-MatchmakingStateReserveLobby.on_exit = function (self)
-	self:_cleanup()
+function MatchmakingStateReserveLobby.on_exit(arg_5_0)
+	arg_5_0:_cleanup()
 end
 
-MatchmakingStateReserveLobby.update = function (self, dt, t)
-	local state = self._state
-	local game_server_lobby_client = Managers.lobby:query_lobby("matchmaking_join_lobby")
+function MatchmakingStateReserveLobby.update(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = arg_6_0._state
+	local var_6_1 = Managers.lobby:query_lobby("matchmaking_join_lobby")
 
-	if game_server_lobby_client and t > self._request_timer then
-		game_server_lobby_client:request_data()
+	if var_6_1 and arg_6_2 > arg_6_0._request_timer then
+		var_6_1:request_data()
 
-		self._request_timer = t + REQUEST_DATA_DELAY
+		arg_6_0._request_timer = arg_6_2 + var_0_0
 	end
 
-	if state == "reserving" then
-		local result, lobby_data
+	if var_6_0 == "reserving" then
+		local var_6_2
+		local var_6_3
 
-		if self._reserver then
-			self._reserver:update(dt, t)
+		if arg_6_0._reserver then
+			arg_6_0._reserver:update(arg_6_1, arg_6_2)
 
-			result, game_server_lobby_client, lobby_data = self._reserver:result()
-		elseif game_server_lobby_client then
-			game_server_lobby_client:update(dt)
+			var_6_2, var_6_1, var_6_3 = arg_6_0._reserver:result()
+		elseif var_6_1 then
+			var_6_1:update(arg_6_1)
 
-			result = game_server_lobby_client:state()
+			var_6_2 = var_6_1:state()
 		end
 
-		if result == "reserved" then
-			if self._reserver then
-				Managers.lobby:register_existing_lobby(game_server_lobby_client, "matchmaking_join_lobby", "MatchmakingStateReserveLobby (update)")
+		if var_6_2 == "reserved" then
+			if arg_6_0._reserver then
+				Managers.lobby:register_existing_lobby(var_6_1, "matchmaking_join_lobby", "MatchmakingStateReserveLobby (update)")
 			end
 
-			if self._reserver then
-				self._join_lobby_data = lobby_data
+			if arg_6_0._reserver then
+				arg_6_0._join_lobby_data = var_6_3
 			else
-				self._join_lobby_data = table.clone(self._state_context)
+				arg_6_0._join_lobby_data = table.clone(arg_6_0._state_context)
 			end
 
-			local search_config = self._state_context.search_config
+			local var_6_4 = arg_6_0._state_context.search_config
 
-			if search_config and search_config.aws then
-				self._state = "send_queue_tickets"
-			elseif self._wait_for_join_message then
-				self._state = "waiting_for_join_message"
+			if var_6_4 and var_6_4.aws then
+				arg_6_0._state = "send_queue_tickets"
+			elseif arg_6_0._wait_for_join_message then
+				arg_6_0._state = "waiting_for_join_message"
 			else
-				self:_claim_reservation(self._state_context)
+				arg_6_0:_claim_reservation(arg_6_0._state_context)
 
-				return MatchmakingStateRequestJoinGame, self._state_context
+				return MatchmakingStateRequestJoinGame, arg_6_0._state_context
 			end
-		elseif result == "failed" then
-			local search_config = self._state_context.search_config
+		elseif var_6_2 == "failed" then
+			local var_6_5 = arg_6_0._state_context.search_config
 
-			if self._state_context.is_flexmatch then
-				return MatchmakingStateIdle, self._state_context
-			elseif search_config.player_hosted then
-				return MatchmakingStateSearchPlayerHostedLobby, self._state_context
-			elseif search_config.dedicated_server then
-				self._state = "reserving"
+			if arg_6_0._state_context.is_flexmatch then
+				return MatchmakingStateIdle, arg_6_0._state_context
+			elseif var_6_5.player_hosted then
+				return MatchmakingStateSearchPlayerHostedLobby, arg_6_0._state_context
+			elseif var_6_5.dedicated_server then
+				arg_6_0._state = "reserving"
 			else
-				return MatchmakingStateIdle, self._state_context
+				return MatchmakingStateIdle, arg_6_0._state_context
 			end
 		end
-	elseif state == "send_queue_tickets" then
-		game_server_lobby_client = Managers.lobby:get_lobby("matchmaking_join_lobby")
+	elseif var_6_0 == "send_queue_tickets" then
+		local var_6_6 = Managers.lobby:get_lobby("matchmaking_join_lobby").lobby
 
-		local engine_lobby = game_server_lobby_client.lobby
+		if SteamGameServerLobby.state(var_6_6) == "failed" then
+			arg_6_0:_reset()
 
-		if SteamGameServerLobby.state(engine_lobby) == "failed" then
-			self:_reset()
-
-			return MatchmakingStateIdle, self._state_context
+			return MatchmakingStateIdle, arg_6_0._state_context
 		end
 
 		if not Managers.mechanism:dedicated_server_peer_id() then
 			return
 		end
 
-		if self._wait_for_join_message then
-			self._state = "waiting_for_join_message"
+		if arg_6_0._wait_for_join_message then
+			arg_6_0._state = "waiting_for_join_message"
 		else
-			self:_claim_reservation(self._state_context)
+			arg_6_0:_claim_reservation(arg_6_0._state_context)
 
-			return MatchmakingStateRequestJoinGame, self._state_context
+			return MatchmakingStateRequestJoinGame, arg_6_0._state_context
 		end
-	elseif state == "waiting_for_join_message" then
-		if self._received_join_message then
-			self:_claim_reservation(self._state_context)
+	elseif var_6_0 == "waiting_for_join_message" then
+		if arg_6_0._received_join_message then
+			arg_6_0:_claim_reservation(arg_6_0._state_context)
 
-			return MatchmakingStateRequestJoinGame, self._state_context
+			return MatchmakingStateRequestJoinGame, arg_6_0._state_context
 		end
 
-		game_server_lobby_client = Managers.lobby:get_lobby("matchmaking_join_lobby")
+		local var_6_7 = Managers.lobby:get_lobby("matchmaking_join_lobby").lobby
 
-		local engine_lobby = game_server_lobby_client.lobby
+		if SteamGameServerLobby.state(var_6_7) == "failed" then
+			arg_6_0:_reset()
 
-		if SteamGameServerLobby.state(engine_lobby) == "failed" then
-			self:_reset()
+			local var_6_8 = arg_6_0._state_context.search_config
 
-			local search_config = self._state_context.search_config
-
-			if search_config and search_config.aws then
-				return MatchmakingStateIdle, self._state_context
+			if var_6_8 and var_6_8.aws then
+				return MatchmakingStateIdle, arg_6_0._state_context
 			else
-				local party_lobby_host = self._party_lobby_host
-				local lobby_members = party_lobby_host:members()
-				local party_members = lobby_members:get_members()
+				local var_6_9 = arg_6_0._party_lobby_host:members():get_members()
 
-				self:_start_search(party_members, self._optional_filters)
+				arg_6_0:_start_search(var_6_9, arg_6_0._optional_filters)
 			end
 		end
 	end
 end
 
-MatchmakingStateReserveLobby._reset = function (self)
-	local mechanism = Managers.mechanism:game_mechanism()
+function MatchmakingStateReserveLobby._reset(arg_7_0)
+	local var_7_0 = Managers.mechanism:game_mechanism()
 
-	if mechanism.reset_dedicated_slots_count and mechanism.reset_party_info then
-		mechanism:reset_dedicated_slots_count()
-		mechanism:reset_party_info()
+	if var_7_0.reset_dedicated_slots_count and var_7_0.reset_party_info then
+		var_7_0:reset_dedicated_slots_count()
+		var_7_0:reset_party_info()
 	end
 
 	if Managers.lobby:query_lobby("matchmaking_join_lobby") then
 		Managers.lobby:destroy_lobby("matchmaking_join_lobby")
 	end
 
-	self._join_lobby_data = nil
+	arg_7_0._join_lobby_data = nil
 end
 
-MatchmakingStateReserveLobby.rpc_join_reserved_game_server = function (self, channel_id)
-	self._received_join_message = true
+function MatchmakingStateReserveLobby.rpc_join_reserved_game_server(arg_8_0, arg_8_1)
+	arg_8_0._received_join_message = true
 end
 
-MatchmakingStateReserveLobby._cleanup = function (self)
-	if self._reserver ~= nil then
-		self._reserver:destroy()
+function MatchmakingStateReserveLobby._cleanup(arg_9_0)
+	if arg_9_0._reserver ~= nil then
+		arg_9_0._reserver:destroy()
 
-		self._reserver = nil
+		arg_9_0._reserver = nil
 	end
 
-	if self._cleanup_server_lobby and Managers.lobby:query_lobby("matchmaking_join_lobby") then
+	if arg_9_0._cleanup_server_lobby and Managers.lobby:query_lobby("matchmaking_join_lobby") then
 		Managers.lobby:destroy_lobby("matchmaking_join_lobby")
 	end
 
-	self._state = nil
-	self._wait_for_join_message = nil
+	arg_9_0._state = nil
+	arg_9_0._wait_for_join_message = nil
 
-	local event_manager = Managers.state.event
+	local var_9_0 = Managers.state.event
 
-	if event_manager then
-		event_manager:unregister("friend_party_peer_left", self)
+	if var_9_0 then
+		var_9_0:unregister("friend_party_peer_left", arg_9_0)
 	end
 end
 
-MatchmakingStateReserveLobby._start_search = function (self, party_members, optional_filters)
-	local optional_order_func = Managers.mechanism:get_custom_lobby_sort()
-	local optional_black_listed_servers = Managers.matchmaking:broken_server_map()
-	local allow_hotjoining_ongoing_game = not Managers.state.game_mode:setting("allow_hotjoining_ongoing_game")
-	local check_server_name = false
-	local user_data = {
+function MatchmakingStateReserveLobby._start_search(arg_10_0, arg_10_1, arg_10_2)
+	local var_10_0 = Managers.mechanism:get_custom_lobby_sort()
+	local var_10_1 = Managers.matchmaking:broken_server_map()
+	local var_10_2 = not Managers.state.game_mode:setting("allow_hotjoining_ongoing_game")
+	local var_10_3 = false
+	local var_10_4 = {
 		soft_filters = {
 			filter_fully_reserved_servers = true,
 			hotjoin_disabled_game_states = true,
-			remove_started_servers = allow_hotjoining_ongoing_game,
-			check_server_name = check_server_name,
-		},
+			remove_started_servers = var_10_2,
+			check_server_name = var_10_3
+		}
 	}
 
-	if self._reserver then
-		self._reserver:destroy()
+	if arg_10_0._reserver then
+		arg_10_0._reserver:destroy()
 	end
 
-	self._reserver = ServerPartyReserveStateMachine:new(self._network_options, party_members, optional_order_func, optional_black_listed_servers, optional_filters, user_data)
+	arg_10_0._reserver = ServerPartyReserveStateMachine:new(arg_10_0._network_options, arg_10_1, var_10_0, var_10_1, arg_10_2, var_10_4)
 
-	local lobby_data = self._lobby:get_stored_lobby_data()
+	local var_10_5 = arg_10_0._lobby:get_stored_lobby_data()
 
-	lobby_data.matchmaking = "searching"
-	lobby_data.time_of_search = tostring(os.time())
+	var_10_5.matchmaking = "searching"
+	var_10_5.time_of_search = tostring(os.time())
 
-	self._lobby:set_lobby_data(lobby_data)
+	arg_10_0._lobby:set_lobby_data(var_10_5)
 
-	self._state = "reserving"
+	arg_10_0._state = "reserving"
 end
 
-MatchmakingStateReserveLobby._claim_reservation = function (self, state_context)
-	local game_server_lobby_client = Managers.lobby:free_lobby("matchmaking_join_lobby")
+function MatchmakingStateReserveLobby._claim_reservation(arg_11_0, arg_11_1)
+	local var_11_0 = Managers.lobby:free_lobby("matchmaking_join_lobby")
 
-	state_context.reserved_lobby = game_server_lobby_client
-	state_context.join_lobby_data = self._join_lobby_data
+	arg_11_1.reserved_lobby = var_11_0
+	arg_11_1.join_lobby_data = arg_11_0._join_lobby_data
 
-	game_server_lobby_client:claim_reserved()
+	var_11_0:claim_reserved()
 
-	self._join_lobby_data = nil
-	self._cleanup_server_lobby = false
+	arg_11_0._join_lobby_data = nil
+	arg_11_0._cleanup_server_lobby = false
 end
 
-MatchmakingStateReserveLobby.on_friend_party_peer_left = function (self, peer_id, approved_for_joining, peer_state)
-	if approved_for_joining then
+function MatchmakingStateReserveLobby.on_friend_party_peer_left(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	if arg_12_2 then
 		Managers.matchmaking:cancel_matchmaking()
 	end
 end
 
-MatchmakingStateReserveLobby.rpc_flexmatch_game_session_id_request = function (self, channel_id)
-	if self._flexmatch_response_sent then
+function MatchmakingStateReserveLobby.rpc_flexmatch_game_session_id_request(arg_13_0, arg_13_1)
+	if arg_13_0._flexmatch_response_sent then
 		return
 	end
 
-	local packed_ticket = NetworkUtils.net_pack_flexmatch_ticket(self._state_context.game_session_id)
+	local var_13_0 = NetworkUtils.net_pack_flexmatch_ticket(arg_13_0._state_context.game_session_id)
 
-	RPC.rpc_flexmatch_game_session_id_response(channel_id, packed_ticket)
+	RPC.rpc_flexmatch_game_session_id_response(arg_13_1, var_13_0)
 
-	self._flexmatch_response_sent = true
+	arg_13_0._flexmatch_response_sent = true
 end

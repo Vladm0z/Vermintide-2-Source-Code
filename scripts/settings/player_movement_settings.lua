@@ -1,35 +1,35 @@
-﻿-- chunkname: @scripts/settings/player_movement_settings.lua
+-- chunkname: @scripts/settings/player_movement_settings.lua
 
 PlayerUnitMovementSettings = PlayerUnitMovementSettings or {}
 
-local units_player_movement_setting = {}
+local var_0_0 = {}
 
-PlayerUnitMovementSettings.get_movement_settings_table = function (unit)
-	if not units_player_movement_setting[unit] then
-		PlayerUnitMovementSettings.register_unit(unit)
+function PlayerUnitMovementSettings.get_movement_settings_table(arg_1_0)
+	if not var_0_0[arg_1_0] then
+		PlayerUnitMovementSettings.register_unit(arg_1_0)
 	end
 
-	return units_player_movement_setting[unit]
+	return var_0_0[arg_1_0]
 end
 
-PlayerUnitMovementSettings.register_unit = function (unit)
-	units_player_movement_setting[unit] = table.clone(PlayerUnitMovementSettings)
+function PlayerUnitMovementSettings.register_unit(arg_2_0)
+	var_0_0[arg_2_0] = table.clone(PlayerUnitMovementSettings)
 end
 
-PlayerUnitMovementSettings.unregister_unit = function (unit)
-	units_player_movement_setting[unit] = nil
+function PlayerUnitMovementSettings.unregister_unit(arg_3_0)
+	var_0_0[arg_3_0] = nil
 end
 
-PlayerUnitMovementSettings.get_active_units_in_movement_settings = function ()
-	local units = {}
-	local index = 1
+function PlayerUnitMovementSettings.get_active_units_in_movement_settings()
+	local var_4_0 = {}
+	local var_4_1 = 1
 
-	for unit, __ in pairs(units_player_movement_setting) do
-		units[index] = unit
-		index = index + 1
+	for iter_4_0, iter_4_1 in pairs(var_0_0) do
+		var_4_0[var_4_1] = iter_4_0
+		var_4_1 = var_4_1 + 1
 	end
 
-	return units
+	return var_4_0
 end
 
 PlayerUnitMovementSettings.FWD_MOVE_SPEED_SCALE = 1
@@ -103,20 +103,20 @@ PlayerUnitMovementSettings.soft_collision.idle_speed_threshold = 0.05
 PlayerUnitMovementSettings.catapulted = PlayerUnitMovementSettings.catapulted or {}
 PlayerUnitMovementSettings.catapulted.directions = PlayerUnitMovementSettings.catapulted.directions or {}
 PlayerUnitMovementSettings.catapulted.directions.forward = {
-	land_animation = "airtime_end",
-	start_animation = "airtime_bwd",
 	wall_collide_animation = "airtime_end",
+	start_animation = "airtime_bwd",
+	land_animation = "airtime_end"
 }
 PlayerUnitMovementSettings.catapulted.directions.backward = {
-	land_animation = "airtime_end",
-	start_animation = "airtime_fwd",
 	wall_collide_animation = "airtime_end",
+	start_animation = "airtime_fwd",
+	land_animation = "airtime_end"
 }
 PlayerUnitMovementSettings.catapulted.directions.forward_thrown = {
-	land_animation = "airtime_end",
-	start_animation = "airtime_fwd",
 	start_animation_1p = "airtime_bwd",
+	start_animation = "airtime_fwd",
 	wall_collide_animation = "airtime_end",
+	land_animation = "airtime_end"
 }
 PlayerUnitMovementSettings.gameplay_collision_box = {}
 PlayerUnitMovementSettings.gameplay_collision_box.collision_check_player_half_height = 0.8
@@ -147,29 +147,29 @@ PlayerUnitMovementSettings.dodging = {}
 PlayerUnitMovementSettings.dodging.distance = 2
 PlayerUnitMovementSettings.dodging.speed_at_times = {
 	{
-		speed = 1,
 		time_in_dodge = 0,
+		speed = 1
 	},
 	{
-		speed = 4,
 		time_in_dodge = 0.05,
+		speed = 4
 	},
 	{
-		speed = 7,
 		time_in_dodge = 0.1,
+		speed = 7
 	},
 	{
-		speed = 5,
 		time_in_dodge = 0.25,
+		speed = 5
 	},
 	{
-		speed = 2,
 		time_in_dodge = 0.4,
+		speed = 2
 	},
 	{
-		speed = 1,
 		time_in_dodge = 0.5,
-	},
+		speed = 1
+	}
 }
 PlayerUnitMovementSettings.dodging.dodge_cd = 0.15
 PlayerUnitMovementSettings.dodging.dodge_jump_override_timer = 0.35
@@ -180,211 +180,195 @@ PlayerUnitMovementSettings.first_person_height_knocked_down = 0.25
 PlayerUnitMovementSettings.first_person_height_crouch = 1
 PlayerUnitMovementSettings.first_person_height_stand = 1.65
 PlayerUnitMovementSettings.slowing_damage_types = {
-	blunt = true,
-	crush = true,
-	cutting = true,
-	kinetic = true,
-	piercing = true,
-	plague_face = false,
 	projectile = true,
+	kinetic = true,
+	blunt = true,
 	slashing = true,
 	vomit_face = true,
+	warpfire_ground = false,
+	plague_face = false,
+	piercing = true,
 	vomit_ground = false,
 	warpfire_face = false,
-	warpfire_ground = false,
+	cutting = true,
+	crush = true
 }
 PlayerUnitMovementSettings.charged_settings = PlayerUnitMovementSettings.charged_settings or {}
 PlayerUnitMovementSettings.charged_settings.charged = {
 	duration = 1,
 	first_person_anim_name = "interrupt",
-	third_person_anim_name = "idle",
+	third_person_anim_name = "idle"
 }
 PlayerUnitMovementSettings.stun_settings = PlayerUnitMovementSettings.stun_settings or {}
 PlayerUnitMovementSettings.stun_settings.parry_broken = {
 	duration = 1,
 	first_person_anim_name = "parry_break",
-	third_person_anim_name = "parry_break",
+	third_person_anim_name = "parry_break"
 }
 PlayerUnitMovementSettings.stun_settings.pushed = {
 	duration = 0.2,
 	first_person_anim_name = "interrupt",
-	third_person_anim_name = "idle",
+	third_person_anim_name = "idle"
 }
 PlayerUnitMovementSettings.hit_react_settings = {
 	light_push = {
+		start_look_sense_override = 0.9,
 		end_look_sense_override = 1,
 		movement_speed_modifier = 1,
-		start_look_sense_override = 0.9,
-		look_override_function = function ()
-			local look_override_x = 0.5 * (0.5 - math.random())
-			local look_override_y = -0.1 + math.random() * 0.05
+		look_override_function = function()
+			local var_5_0 = 0.5 * (0.5 - math.random())
+			local var_5_1 = -0.1 + math.random() * 0.05
 
-			return look_override_x, look_override_y
+			return var_5_0, var_5_1
 		end,
-		duration_function = function ()
-			local duration = 0.1
-
-			return duration
+		duration_function = function()
+			return 0.1
 		end,
-		onscreen_particle_function = function (duration)
+		onscreen_particle_function = function(arg_7_0)
 			return "fx/screenspace_head_blow_light_push"
-		end,
+		end
 	},
 	light = {
+		start_look_sense_override = 0.6,
 		end_look_sense_override = 1,
 		movement_speed_modifier = 0.8,
-		start_look_sense_override = 0.6,
-		look_override_function = function ()
-			local look_override_x = 0.5 * (0.5 - math.random())
-			local look_override_y = -0.2 + math.random() * 0.1
+		look_override_function = function()
+			local var_8_0 = 0.5 * (0.5 - math.random())
+			local var_8_1 = -0.2 + math.random() * 0.1
 
-			return look_override_x, look_override_y
+			return var_8_0, var_8_1
 		end,
-		duration_function = function ()
-			local duration = 0.35
-
-			return duration
+		duration_function = function()
+			return 0.35
 		end,
-		onscreen_particle_function = function (duration)
-			if duration < 0.35 then
+		onscreen_particle_function = function(arg_10_0)
+			if arg_10_0 < 0.35 then
 				return
 			end
 
 			return "fx/screenspace_head_blow_light"
-		end,
+		end
 	},
 	medium_push = {
+		start_look_sense_override = 0.6,
 		end_look_sense_override = 1,
 		movement_speed_modifier = 0.8,
-		start_look_sense_override = 0.6,
-		look_override_function = function ()
-			local look_override_x = 0.5 * (0.5 - math.random())
-			local look_override_y = -0.15 + math.random() * 0.1
+		look_override_function = function()
+			local var_11_0 = 0.5 * (0.5 - math.random())
+			local var_11_1 = -0.15 + math.random() * 0.1
 
-			return look_override_x, look_override_y
+			return var_11_0, var_11_1
 		end,
-		duration_function = function ()
-			local duration = 0.35
-
-			return duration
+		duration_function = function()
+			return 0.35
 		end,
-		onscreen_particle_function = function (duration)
+		onscreen_particle_function = function(arg_13_0)
 			return "fx/screenspace_head_blow_medium_push"
-		end,
+		end
 	},
 	medium = {
+		start_look_sense_override = 0.4,
 		end_look_sense_override = 0.8,
 		movement_speed_modifier = 0.65,
-		start_look_sense_override = 0.4,
-		look_override_function = function ()
-			local look_override_x = 0.5 * (0.5 - math.random())
-			local look_override_y = -0.3 + math.random() * 0.2
+		look_override_function = function()
+			local var_14_0 = 0.5 * (0.5 - math.random())
+			local var_14_1 = -0.3 + math.random() * 0.2
 
-			return look_override_x, look_override_y
+			return var_14_0, var_14_1
 		end,
-		duration_function = function ()
-			local duration = 0.6
-
-			return duration
+		duration_function = function()
+			return 0.6
 		end,
-		onscreen_particle_function = function (duration)
-			if duration < 0.6 then
+		onscreen_particle_function = function(arg_16_0)
+			if arg_16_0 < 0.6 then
 				return "fx/screenspace_head_blow_light"
 			end
 
 			return "fx/screenspace_head_blow_medium"
-		end,
+		end
 	},
 	heavy_push = {
+		start_look_sense_override = 0.4,
 		end_look_sense_override = 0.8,
 		movement_speed_modifier = 0.65,
-		start_look_sense_override = 0.4,
-		look_override_function = function ()
-			local look_override_x = 0.5 * (0.5 - math.random())
-			local look_override_y = -0.25 + math.random() * 0.1
+		look_override_function = function()
+			local var_17_0 = 0.5 * (0.5 - math.random())
+			local var_17_1 = -0.25 + math.random() * 0.1
 
-			return look_override_x, look_override_y
+			return var_17_0, var_17_1
 		end,
-		duration_function = function ()
-			local duration = 0.6
-
-			return duration
+		duration_function = function()
+			return 0.6
 		end,
-		onscreen_particle_function = function (duration)
+		onscreen_particle_function = function(arg_19_0)
 			return "fx/screenspace_head_blow_heavy_push"
-		end,
+		end
 	},
 	heavy = {
+		start_look_sense_override = 0.35,
 		end_look_sense_override = 0.7,
 		movement_speed_modifier = 0.5,
-		start_look_sense_override = 0.35,
-		look_override_function = function ()
-			local look_override_x = 0.5 * (0.5 - math.random())
-			local look_override_y = -0.5 + math.random() * 0.2
+		look_override_function = function()
+			local var_20_0 = 0.5 * (0.5 - math.random())
+			local var_20_1 = -0.5 + math.random() * 0.2
 
-			return look_override_x, look_override_y
+			return var_20_0, var_20_1
 		end,
-		duration_function = function ()
-			local duration = 1
-
-			return duration
+		duration_function = function()
+			return 1
 		end,
-		onscreen_particle_function = function (duration)
-			if duration < 1 then
+		onscreen_particle_function = function(arg_22_0)
+			if arg_22_0 < 1 then
 				return "fx/screenspace_head_blow_medium"
 			end
 
 			return "fx/screenspace_head_blow_heavy"
-		end,
+		end
 	},
 	slow_bomb = {
+		start_look_sense_override = 0.35,
 		end_look_sense_override = 0.7,
 		movement_speed_modifier = 0.1,
-		start_look_sense_override = 0.35,
-		look_override_function = function ()
-			local look_override_x = 0.5 * (0.5 - math.random())
-			local look_override_y = -0.5 + math.random() * 0.2
+		look_override_function = function()
+			local var_23_0 = 0.5 * (0.5 - math.random())
+			local var_23_1 = -0.5 + math.random() * 0.2
 
-			return look_override_x, look_override_y
+			return var_23_0, var_23_1
 		end,
-		duration_function = function ()
-			local duration = 7
-
-			return duration
+		duration_function = function()
+			return 7
 		end,
-		onscreen_particle_function = function (duration)
-			if duration < 7 then
+		onscreen_particle_function = function(arg_25_0)
+			if arg_25_0 < 7 then
 				return "fx/screenspace_head_blow_light"
 			end
 
 			return "fx/screenspace_head_blow_heavy"
-		end,
+		end
 	},
 	charged = {
+		start_look_sense_override = 0.4,
 		end_look_sense_override = 0.8,
 		movement_speed_modifier = 0.65,
-		start_look_sense_override = 0.4,
-		look_override_function = function ()
-			local look_override_x = 0
-			local look_override_y = 0.45
+		look_override_function = function()
+			local var_26_0 = 0
+			local var_26_1 = 0.45
 
-			return look_override_x, look_override_y
+			return var_26_0, var_26_1
 		end,
-		duration_function = function ()
-			local duration = 1
-
-			return duration
+		duration_function = function()
+			return 1
 		end,
-		onscreen_particle_function = function (duration)
+		onscreen_particle_function = function(arg_28_0)
 			return "fx/screenspace_head_blow_medium_push"
-		end,
-	},
+		end
+	}
 }
 PlayerUnitMovementSettings.overpowered_templates = PlayerUnitMovementSettings.overpowered_templates or {}
 PlayerUnitMovementSettings.overpowered_templates.slow_bomb = {}
 PlayerUnitMovementSettings.overpowered_templates.fly_bomb = {
 	end_sound_event = "Stop_sorcerer_boss_flies_curse_loop",
-	start_sound_event = "Play_sorcerer_boss_flies_curse_loop",
+	start_sound_event = "Play_sorcerer_boss_flies_curse_loop"
 }
 PlayerUnitMovementSettings.gravity_acceleration = 11
 PlayerUnitMovementSettings.jump = PlayerUnitMovementSettings.jump or {}

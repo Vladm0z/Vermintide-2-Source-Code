@@ -1,393 +1,388 @@
-﻿-- chunkname: @scripts/ui/hud_ui/ability_ui.lua
+-- chunkname: @scripts/ui/hud_ui/ability_ui.lua
 
-local definitions = local_require("scripts/ui/hud_ui/ability_ui_definitions")
-local scenegraph_definition = definitions.scenegraph_definition
+local var_0_0 = local_require("scripts/ui/hud_ui/ability_ui_definitions")
+local var_0_1 = var_0_0.scenegraph_definition
 
 AbilityUI = class(AbilityUI)
 
-AbilityUI.init = function (self, parent, ingame_ui_context)
-	self._ui_renderer = ingame_ui_context.ui_renderer
-	self._input_manager = ingame_ui_context.input_manager
-	self._player = ingame_ui_context.player
-	self._render_settings = {
-		snap_pixel_positions = true,
+function AbilityUI.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0._ui_renderer = arg_1_2.ui_renderer
+	arg_1_0._input_manager = arg_1_2.input_manager
+	arg_1_0._player = arg_1_2.player
+	arg_1_0._render_settings = {
+		snap_pixel_positions = true
 	}
 
-	self:_create_ui_elements()
+	arg_1_0:_create_ui_elements()
 
-	self._is_spectator = false
-	self._spectated_player = nil
-	self._spectated_player_unit = nil
-	self._hide_effects = false
-	self._ability_charge_widgets = {}
+	arg_1_0._is_spectator = false
+	arg_1_0._spectated_player = nil
+	arg_1_0._spectated_player_unit = nil
+	arg_1_0._hide_effects = false
+	arg_1_0._ability_charge_widgets = {}
 
-	local event_manager = Managers.state.event
+	local var_1_0 = Managers.state.event
 
-	event_manager:register(self, "input_changed", "event_input_changed")
-	event_manager:register(self, "on_spectator_target_changed", "on_spectator_target_changed")
+	var_1_0:register(arg_1_0, "input_changed", "event_input_changed")
+	var_1_0:register(arg_1_0, "on_spectator_target_changed", "on_spectator_target_changed")
 end
 
-AbilityUI._create_ui_elements = function (self)
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-	self._widgets, self._widgets_by_name = UIUtils.create_widgets(definitions.widget_definitions)
+function AbilityUI._create_ui_elements(arg_2_0)
+	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
+	arg_2_0._widgets, arg_2_0._widgets_by_name = UIUtils.create_widgets(var_0_0.widget_definitions)
 
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
-	self:event_input_changed()
+	UIRenderer.clear_scenegraph_queue(arg_2_0._ui_renderer)
+	arg_2_0:event_input_changed()
 end
 
-AbilityUI._get_player_unit = function (self)
-	if self._is_spectator then
-		return self._spectated_player, self._spectated_player_unit
+function AbilityUI._get_player_unit(arg_3_0)
+	if arg_3_0._is_spectator then
+		return arg_3_0._spectated_player, arg_3_0._spectated_player_unit
 	end
 
-	local player = self._player
+	local var_3_0 = arg_3_0._player
 
-	return player, player.player_unit
+	return var_3_0, var_3_0.player_unit
 end
 
-AbilityUI._update_ability_widget = function (self, dt, t)
-	local player, player_unit = self:_get_player_unit()
+function AbilityUI._update_ability_widget(arg_4_0, arg_4_1, arg_4_2)
+	local var_4_0, var_4_1 = arg_4_0:_get_player_unit()
 
-	if not player_unit then
+	if not var_4_1 then
 		return false
 	end
 
-	local hide_effects = self._hide_effects
-	local career_extension = ScriptUnit.extension(player_unit, "career_system")
-	local career_name = career_extension:career_name()
+	local var_4_2 = arg_4_0._hide_effects
+	local var_4_3 = ScriptUnit.extension(var_4_1, "career_system")
+	local var_4_4 = var_4_3:career_name()
 
-	if self._career_name ~= career_name then
-		local profile_index = career_extension:profile_index()
-		local career_index = career_extension:career_index()
-		local ability_1 = CareerUtils.get_ability_data(profile_index, career_index, 1)
+	if arg_4_0._career_name ~= var_4_4 then
+		local var_4_5 = var_4_3:profile_index()
+		local var_4_6 = var_4_3:career_index()
 
-		hide_effects = ability_1.hide_ability_ui_effects
-		self._hide_effects = hide_effects
-		self._career_name = career_name
-		self._ability_cooldowns = nil
+		var_4_2 = CareerUtils.get_ability_data(var_4_5, var_4_6, 1).hide_ability_ui_effects
+		arg_4_0._hide_effects = var_4_2
+		arg_4_0._career_name = var_4_4
+		arg_4_0._ability_cooldowns = nil
 
-		table.clear(self._ability_charge_widgets)
+		table.clear(arg_4_0._ability_charge_widgets)
 	end
 
-	local career_data = UISettings.ability_ui_data[career_name] or UISettings.ability_ui_data.default
-	local ability_widget = self._widgets_by_name.ability
-	local content = ability_widget.content
-	local style = ability_widget.style
+	local var_4_7 = UISettings.ability_ui_data[var_4_4] or UISettings.ability_ui_data.default
+	local var_4_8 = arg_4_0._widgets_by_name.ability
+	local var_4_9 = var_4_8.content
+	local var_4_10 = var_4_8.style
 
-	content.ability_effect.texture_id = career_data.ability_effect
-	content.ability_effect_top.texture_id = career_data.ability_effect_top
-	content.ability_bar_highlight = career_data.ability_bar_highlight
+	var_4_9.ability_effect.texture_id = var_4_7.ability_effect
+	var_4_9.ability_effect_top.texture_id = var_4_7.ability_effect_top
+	var_4_9.ability_bar_highlight = var_4_7.ability_bar_highlight
 
-	local can_use_ability = career_extension:can_use_activated_ability()
-	local current_extra_uses, max_extra_uses = career_extension:get_extra_ability_uses()
-	local has_thornsister_passive = current_extra_uses > 0
+	local var_4_11 = var_4_3:can_use_activated_ability()
+	local var_4_12, var_4_13 = var_4_3:get_extra_ability_uses()
+	local var_4_14 = var_4_12 > 0
 
-	if has_thornsister_passive then
-		content.ability_effect.texture_id = career_data.ability_effect_thorn
-		content.ability_effect_top.texture_id = career_data.ability_effect_top_thorn
+	if var_4_14 then
+		var_4_9.ability_effect.texture_id = var_4_7.ability_effect_thorn
+		var_4_9.ability_effect_top.texture_id = var_4_7.ability_effect_top_thorn
 	else
-		content.ability_effect.texture_id = career_data.ability_effect
-		content.ability_effect_top.texture_id = career_data.ability_effect_top
+		var_4_9.ability_effect.texture_id = var_4_7.ability_effect
+		var_4_9.ability_effect_top.texture_id = var_4_7.ability_effect_top
 	end
 
-	if has_thornsister_passive then
-		local pulse_progress = 0.5 + 0.5 * math.sin(t * 5)
-		local effect_alpha = 220 + 35 * pulse_progress
+	if var_4_14 then
+		local var_4_15 = 220 + 35 * (0.5 + 0.5 * math.sin(arg_4_2 * 5))
 
-		style.ability_effect_right.color[1] = effect_alpha
-		style.ability_effect_top_right.color[1] = effect_alpha
-		style.ability_effect_left.color[1] = effect_alpha
-		style.ability_effect_top_left.color[1] = effect_alpha
+		var_4_10.ability_effect_right.color[1] = var_4_15
+		var_4_10.ability_effect_top_right.color[1] = var_4_15
+		var_4_10.ability_effect_left.color[1] = var_4_15
+		var_4_10.ability_effect_top_left.color[1] = var_4_15
 	end
 
-	if can_use_ability then
-		content.can_use = true
-		content.on_cooldown = career_extension:current_ability_cooldown() > 0
+	if var_4_11 then
+		var_4_9.can_use = true
+		var_4_9.on_cooldown = var_4_3:current_ability_cooldown() > 0
 
-		local pulse_progress = 0.5 + 0.5 * math.sin(t * 5)
-		local effect_alpha = math.min(style.ability_effect_left.color[1] + dt * 200, 255)
+		local var_4_16 = 0.5 + 0.5 * math.sin(arg_4_2 * 5)
+		local var_4_17 = math.min(var_4_10.ability_effect_left.color[1] + arg_4_1 * 200, 255)
 
-		if hide_effects then
-			effect_alpha = 0
-			pulse_progress = 0.5
+		if var_4_2 then
+			var_4_17 = 0
+			var_4_16 = 0.5
 		end
 
-		local input_alpha = 100 + pulse_progress * 155
+		local var_4_18 = 100 + var_4_16 * 155
 
-		style.ability_effect_right.color[1] = effect_alpha
-		style.ability_effect_top_right.color[1] = effect_alpha
-		style.ability_effect_left.color[1] = effect_alpha
-		style.ability_effect_top_left.color[1] = effect_alpha
-		style.ability_bar_highlight.color[1] = input_alpha
+		var_4_10.ability_effect_right.color[1] = var_4_17
+		var_4_10.ability_effect_top_right.color[1] = var_4_17
+		var_4_10.ability_effect_left.color[1] = var_4_17
+		var_4_10.ability_effect_top_left.color[1] = var_4_17
+		var_4_10.ability_bar_highlight.color[1] = var_4_18
 
 		return true
-	elseif content.can_use then
-		content.can_use = false
-		content.on_cooldown = true
-		style.ability_effect_right.color[1] = 0
-		style.ability_effect_top_right.color[1] = 0
-		style.ability_effect_left.color[1] = 0
-		style.ability_effect_top_left.color[1] = 0
-		style.ability_bar_highlight.color[1] = 0
+	elseif var_4_9.can_use then
+		var_4_9.can_use = false
+		var_4_9.on_cooldown = true
+		var_4_10.ability_effect_right.color[1] = 0
+		var_4_10.ability_effect_top_right.color[1] = 0
+		var_4_10.ability_effect_left.color[1] = 0
+		var_4_10.ability_effect_top_left.color[1] = 0
+		var_4_10.ability_bar_highlight.color[1] = 0
 
 		return true
 	end
 end
 
-AbilityUI.destroy = function (self)
-	local event_manager = Managers.state.event
+function AbilityUI.destroy(arg_5_0)
+	local var_5_0 = Managers.state.event
 
-	event_manager:unregister("input_changed", self)
-	event_manager:unregister("on_spectator_target_changed", self)
-	UIUtils.destroy_widgets(self._ui_renderer, self._widgets)
+	var_5_0:unregister("input_changed", arg_5_0)
+	var_5_0:unregister("on_spectator_target_changed", arg_5_0)
+	UIUtils.destroy_widgets(arg_5_0._ui_renderer, arg_5_0._widgets)
 	print("[AbilityUI] - Destroy")
 end
 
-AbilityUI.set_visible = function (self, visible)
-	self._is_visible = visible
+function AbilityUI.set_visible(arg_6_0, arg_6_1)
+	arg_6_0._is_visible = arg_6_1
 
-	self:_set_elements_visible(visible)
+	arg_6_0:_set_elements_visible(arg_6_1)
 end
 
-AbilityUI._set_elements_visible = function (self, visible)
-	local ui_renderer = self._ui_renderer
+function AbilityUI._set_elements_visible(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_0._ui_renderer
 
-	for _, widget in pairs(self._widgets) do
-		UIRenderer.set_element_visible(ui_renderer, widget.element, visible)
+	for iter_7_0, iter_7_1 in pairs(arg_7_0._widgets) do
+		UIRenderer.set_element_visible(var_7_0, iter_7_1.element, arg_7_1)
 	end
 
-	self._are_elements_visible = visible
-	self._dirty = true
+	arg_7_0._are_elements_visible = arg_7_1
+	arg_7_0._dirty = true
 end
 
-AbilityUI._smudge = function (self)
-	UIUtils.mark_dirty(self._widgets)
+function AbilityUI._smudge(arg_8_0)
+	UIUtils.mark_dirty(arg_8_0._widgets)
 
-	if self._ability_charge_widgets and not table.is_empty(self._ability_charge_widgets) then
-		UIUtils.mark_dirty(self._ability_charge_widgets)
+	if arg_8_0._ability_charge_widgets and not table.is_empty(arg_8_0._ability_charge_widgets) then
+		UIUtils.mark_dirty(arg_8_0._ability_charge_widgets)
 	end
 
-	self._dirty = true
+	arg_8_0._dirty = true
 end
 
-AbilityUI._handle_gamepad = function (self)
-	local gamepad_active = Managers.input:is_device_active("gamepad")
-	local should_render = (UISettings.use_gamepad_hud_layout ~= "auto" or not gamepad_active) and UISettings.use_gamepad_hud_layout ~= "always" and not IS_CONSOLE
+function AbilityUI._handle_gamepad(arg_9_0)
+	local var_9_0 = Managers.input:is_device_active("gamepad")
+	local var_9_1 = (UISettings.use_gamepad_hud_layout ~= "auto" or not var_9_0) and UISettings.use_gamepad_hud_layout ~= "always" and not IS_CONSOLE
 
-	if should_render ~= self._are_elements_visible then
-		self:_set_elements_visible(should_render)
+	if var_9_1 ~= arg_9_0._are_elements_visible then
+		arg_9_0:_set_elements_visible(var_9_1)
 
-		return should_render
+		return var_9_1
 	end
 
-	return should_render
+	return var_9_1
 end
 
-local customizer_data = {
-	is_child = true,
-	registry_key = "player_status",
+local var_0_2 = {
 	root_scenegraph_id = "ability_root",
+	is_child = true,
+	registry_key = "player_status"
 }
 
-AbilityUI.update = function (self, dt, t)
-	if not self._is_visible then
+function AbilityUI.update(arg_10_0, arg_10_1, arg_10_2)
+	if not arg_10_0._is_visible then
 		return
 	end
 
-	local should_render = self:_handle_gamepad()
-
-	if not should_render then
+	if not arg_10_0:_handle_gamepad() then
 		return
 	end
 
-	local do_smudge = false
+	local var_10_0 = false
 
-	if HudCustomizer.run(self._ui_renderer, self._ui_scenegraph, customizer_data) then
-		do_smudge = true
+	if HudCustomizer.run(arg_10_0._ui_renderer, arg_10_0._ui_scenegraph, var_0_2) then
+		var_10_0 = true
 	end
 
 	if RESOLUTION_LOOKUP.modified then
-		do_smudge = true
+		var_10_0 = true
 	end
 
-	if self:_update_ability_widget(dt, t) then
-		do_smudge = true
+	if arg_10_0:_update_ability_widget(arg_10_1, arg_10_2) then
+		var_10_0 = true
 	end
 
-	if self:_update_ability_charges_widgets(dt, t) then
-		do_smudge = true
+	if arg_10_0:_update_ability_charges_widgets(arg_10_1, arg_10_2) then
+		var_10_0 = true
 	end
 
-	if do_smudge then
-		self:_smudge()
+	if var_10_0 then
+		arg_10_0:_smudge()
 	end
 
-	self:_update_numeric_ui_ability_cooldown()
-	self:draw(dt, t)
+	arg_10_0:_update_numeric_ui_ability_cooldown()
+	arg_10_0:draw(arg_10_1, arg_10_2)
 end
 
-AbilityUI.draw = function (self, dt, t)
-	if not self._is_visible or not self._dirty then
+function AbilityUI.draw(arg_11_0, arg_11_1, arg_11_2)
+	if not arg_11_0._is_visible or not arg_11_0._dirty then
 		return
 	end
 
-	local ui_renderer = self._ui_renderer
+	local var_11_0 = arg_11_0._ui_renderer
 
-	UIRenderer.begin_pass(ui_renderer, self._ui_scenegraph, FAKE_INPUT_SERVICE, dt, nil, self._render_settings)
-	UIRenderer.draw_all_widgets(ui_renderer, self._widgets)
+	UIRenderer.begin_pass(var_11_0, arg_11_0._ui_scenegraph, FAKE_INPUT_SERVICE, arg_11_1, nil, arg_11_0._render_settings)
+	UIRenderer.draw_all_widgets(var_11_0, arg_11_0._widgets)
 
-	if self._ability_charge_widgets and not table.is_empty(self._ability_charge_widgets) and self._ability_cooldowns > 1 then
-		UIRenderer.draw_all_widgets(ui_renderer, self._ability_charge_widgets)
+	if arg_11_0._ability_charge_widgets and not table.is_empty(arg_11_0._ability_charge_widgets) and arg_11_0._ability_cooldowns > 1 then
+		UIRenderer.draw_all_widgets(var_11_0, arg_11_0._ability_charge_widgets)
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_11_0)
 
-	self._dirty = false
+	arg_11_0._dirty = false
 end
 
-AbilityUI.set_alpha = function (self, alpha)
-	self._render_settings.alpha_multiplier = alpha
+function AbilityUI.set_alpha(arg_12_0, arg_12_1)
+	arg_12_0._render_settings.alpha_multiplier = arg_12_1
 
-	self:_smudge()
+	arg_12_0:_smudge()
 end
 
-AbilityUI._get_input_texture_data = function (self, input_action)
-	local input_manager = self._input_manager
-	local input_service = input_manager:get_service("Player")
-	local gamepad_active = input_manager:is_device_active("gamepad")
+function AbilityUI._get_input_texture_data(arg_13_0, arg_13_1)
+	local var_13_0 = arg_13_0._input_manager
+	local var_13_1 = var_13_0:get_service("Player")
+	local var_13_2 = var_13_0:is_device_active("gamepad")
 
-	return UISettings.get_gamepad_input_texture_data(input_service, input_action, gamepad_active)
+	return UISettings.get_gamepad_input_texture_data(var_13_1, arg_13_1, var_13_2)
 end
 
-AbilityUI.event_input_changed = function (self)
-	local gamepad_active = Managers.input:is_device_active("gamepad")
-	local inventory_slots = InventorySettings.slots
-	local num_inventory_slots = #inventory_slots
-	local input_action = gamepad_active and "ability" or "action_career"
-	local widget = self._widgets_by_name.ability
-	local _, input_text = self:_get_input_texture_data(input_action)
-	local text_length = input_text and UTF8Utils.string_length(input_text) or 0
+function AbilityUI.event_input_changed(arg_14_0)
+	local var_14_0 = Managers.input:is_device_active("gamepad")
+	local var_14_1 = #InventorySettings.slots
+	local var_14_2 = var_14_0 and "ability" or "action_career"
+	local var_14_3 = arg_14_0._widgets_by_name.ability
+	local var_14_4, var_14_5 = arg_14_0:_get_input_texture_data(var_14_2)
 
-	if input_text then
-		local ui_renderer = self._ui_renderer
-		local max_length = 40
-		local input_style = widget.style.input_text
-
-		input_text = UIRenderer.crop_text_width(ui_renderer, input_text, max_length, input_style)
+	if not var_14_5 or not UTF8Utils.string_length(var_14_5) then
+		local var_14_6 = 0
 	end
 
-	widget.content.input_text = input_text or ""
-	widget.content.input_action = input_action
+	if var_14_5 then
+		local var_14_7 = arg_14_0._ui_renderer
+		local var_14_8 = 40
+		local var_14_9 = var_14_3.style.input_text
 
-	self:_smudge()
+		var_14_5 = UIRenderer.crop_text_width(var_14_7, var_14_5, var_14_8, var_14_9)
+	end
+
+	var_14_3.content.input_text = var_14_5 or ""
+	var_14_3.content.input_action = var_14_2
+
+	arg_14_0:_smudge()
 end
 
-AbilityUI.on_spectator_target_changed = function (self, spectated_player_unit)
-	self._spectated_player_unit = spectated_player_unit
-	self._spectated_player = Managers.player:owner(spectated_player_unit)
-	self._is_spectator = true
+function AbilityUI.on_spectator_target_changed(arg_15_0, arg_15_1)
+	arg_15_0._spectated_player_unit = arg_15_1
+	arg_15_0._spectated_player = Managers.player:owner(arg_15_1)
+	arg_15_0._is_spectator = true
 
-	local observed_side = Managers.state.side:get_side_from_player_unique_id(self._spectated_player:unique_id())
-	local is_hero = observed_side:name() == "heroes"
+	local var_15_0 = Managers.state.side:get_side_from_player_unique_id(arg_15_0._spectated_player:unique_id()):name() == "heroes"
 
-	self:set_visible(is_hero)
+	arg_15_0:set_visible(var_15_0)
 end
 
-AbilityUI._update_numeric_ui_ability_cooldown = function (self)
-	local player = Managers.player:local_player()
+function AbilityUI._update_numeric_ui_ability_cooldown(arg_16_0)
+	local var_16_0 = Managers.player:local_player()
 
-	if not player then
+	if not var_16_0 then
 		return
 	end
 
-	local player_unit = player.player_unit
+	local var_16_1 = var_16_0.player_unit
 
-	if not ALIVE[player_unit] then
+	if not ALIVE[var_16_1] then
 		return
 	end
 
-	local widget = self._widgets_by_name.ability
+	local var_16_2 = arg_16_0._widgets_by_name.ability
 
-	if not widget then
+	if not var_16_2 then
 		return
 	end
 
-	local career_extension = ScriptUnit.extension(player_unit, "career_system")
-	local can_use_ability = career_extension:can_use_activated_ability(1)
+	local var_16_3 = ScriptUnit.extension(var_16_1, "career_system")
+	local var_16_4 = var_16_3:can_use_activated_ability(1)
 
-	widget.content.can_use_ability = can_use_ability
+	var_16_2.content.can_use_ability = var_16_4
 
-	if can_use_ability then
+	if var_16_4 then
 		return
 	end
 
-	local ability_cooldown, max_cooldown = career_extension:current_ability_cooldown()
+	local var_16_5, var_16_6 = var_16_3:current_ability_cooldown()
 
-	widget.content.ability_cooldown = UIUtils.format_time(ability_cooldown)
+	var_16_2.content.ability_cooldown = UIUtils.format_time(var_16_5)
 
-	self:_smudge()
+	arg_16_0:_smudge()
 end
 
-AbilityUI._update_ability_charges_widgets = function (self, dt, t)
-	local do_smudge = false
-	local player, player_unit = self:_get_player_unit()
+function AbilityUI._update_ability_charges_widgets(arg_17_0, arg_17_1, arg_17_2)
+	local var_17_0 = false
+	local var_17_1, var_17_2 = arg_17_0:_get_player_unit()
 
-	if not player_unit then
-		return do_smudge
+	if not var_17_2 then
+		return var_17_0
 	end
 
-	local career_extension = ScriptUnit.extension(player_unit, "career_system")
-	local ability_cooldowns = career_extension:get_number_of_ability_cooldowns()
+	local var_17_3 = ScriptUnit.extension(var_17_2, "career_system")
+	local var_17_4 = var_17_3:get_number_of_ability_cooldowns()
 
-	if self._ability_cooldowns ~= ability_cooldowns then
-		if not self._ability_cooldowns then
-			for i = 1, ability_cooldowns do
-				if not self._ability_charge_widgets[i] then
-					local offset = {
+	if arg_17_0._ability_cooldowns ~= var_17_4 then
+		if not arg_17_0._ability_cooldowns then
+			for iter_17_0 = 1, var_17_4 do
+				if not arg_17_0._ability_charge_widgets[iter_17_0] then
+					local var_17_5 = {
 						0,
-						(i - 1) * 22,
-						1,
+						(iter_17_0 - 1) * 22,
+						1
 					}
-					local widget_definition = UIWidgets.create_ability_charges_widget("ability_charges", nil, offset)
-					local widget = UIWidget.init(widget_definition)
+					local var_17_6 = UIWidgets.create_ability_charges_widget("ability_charges", nil, var_17_5)
+					local var_17_7 = UIWidget.init(var_17_6)
 
-					self._ability_charge_widgets[#self._ability_charge_widgets + 1] = widget
+					arg_17_0._ability_charge_widgets[#arg_17_0._ability_charge_widgets + 1] = var_17_7
 				end
 			end
-		elseif self._ability_cooldowns and ability_cooldowns < self._ability_cooldowns then
-			self._ability_charge_widgets[#self._ability_charge_widgets] = nil
-		elseif self._ability_cooldowns and ability_cooldowns > self._ability_cooldowns then
-			local difference = ability_cooldowns - self._ability_cooldowns
+		elseif arg_17_0._ability_cooldowns and var_17_4 < arg_17_0._ability_cooldowns then
+			arg_17_0._ability_charge_widgets[#arg_17_0._ability_charge_widgets] = nil
+		elseif arg_17_0._ability_cooldowns and var_17_4 > arg_17_0._ability_cooldowns then
+			local var_17_8 = var_17_4 - arg_17_0._ability_cooldowns
 
-			for i = 1, difference do
-				local offset = {
+			for iter_17_1 = 1, var_17_8 do
+				local var_17_9 = {
 					0,
-					(self._ability_cooldowns + (i - 1)) * 22,
-					1,
+					(arg_17_0._ability_cooldowns + (iter_17_1 - 1)) * 22,
+					1
 				}
-				local widget_definition = UIWidgets.create_ability_charges_widget("ability_charges", nil, offset)
-				local widget = UIWidget.init(widget_definition)
+				local var_17_10 = UIWidgets.create_ability_charges_widget("ability_charges", nil, var_17_9)
+				local var_17_11 = UIWidget.init(var_17_10)
 
-				self._ability_charge_widgets[#self._ability_charge_widgets + 1] = widget
+				arg_17_0._ability_charge_widgets[#arg_17_0._ability_charge_widgets + 1] = var_17_11
 			end
 		end
 
-		self._ability_cooldowns = ability_cooldowns
-		do_smudge = true
+		arg_17_0._ability_cooldowns = var_17_4
+		var_17_0 = true
 	end
 
-	local charges_ready = career_extension:num_charges_ready()
+	local var_17_12 = var_17_3:num_charges_ready()
 
-	if self._charges_ready ~= charges_ready then
-		for i = self._ability_cooldowns, 1, -1 do
-			local w = self._ability_charge_widgets[i]
-
-			w.content.ready = charges_ready ~= 0 and i <= charges_ready
+	if arg_17_0._charges_ready ~= var_17_12 then
+		for iter_17_2 = arg_17_0._ability_cooldowns, 1, -1 do
+			arg_17_0._ability_charge_widgets[iter_17_2].content.ready = var_17_12 ~= 0 and iter_17_2 <= var_17_12
 		end
 
-		self._charges_ready = charges_ready
-		do_smudge = true
+		arg_17_0._charges_ready = var_17_12
+		var_17_0 = true
 	end
 
-	return do_smudge
+	return var_17_0
 end

@@ -1,50 +1,50 @@
-﻿-- chunkname: @scripts/managers/conflict_director/breed_packs.lua
+-- chunkname: @scripts/managers/conflict_director/breed_packs.lua
 
 InterestPointUnits = {
 	{
 		"units/hub_elements/interest_points/pack_spawning/ai_interest_point_1pack",
-		spawn_weight = 1,
+		spawn_weight = 1
 	},
 	{
 		"units/hub_elements/interest_points/pack_spawning/ai_interest_point_2pack",
-		spawn_weight = 2,
+		spawn_weight = 2
 	},
 	{
 		"units/hub_elements/interest_points/pack_spawning/ai_interest_point_3pack",
-		spawn_weight = 4,
+		spawn_weight = 4
 	},
 	{
 		"units/hub_elements/interest_points/pack_spawning/ai_interest_point_4pack",
 		"units/hub_elements/interest_points/pack_spawning/ai_interest_point_4pack_02",
-		spawn_weight = 7,
+		spawn_weight = 7
 	},
-	[5] = false,
 	[7] = false,
+	[5] = false,
 	[6] = {
 		"units/hub_elements/interest_points/pack_spawning/ai_interest_point_6pack_01",
 		"units/hub_elements/interest_points/pack_spawning/ai_interest_point_6pack_02",
-		spawn_weight = 5,
+		spawn_weight = 5
 	},
 	[8] = {
 		"units/hub_elements/interest_points/pack_spawning/ai_interest_point_8pack",
-		spawn_weight = 2,
-	},
+		spawn_weight = 2
+	}
 }
 
-local InterestPointUnits = InterestPointUnits
+local var_0_0 = InterestPointUnits
 
 InterestPointSettings = {
-	interest_point_spawn_chance = 0.5,
 	max_rats_currently_moving_to_ip = 5,
+	interest_point_spawn_chance = 0.5
 }
 
-local HEAVY_WEIGHT = 10
-local MEDIUM_WEIGHT = 5
-local LIGHT_WEIGHT = 2
-local heavy_boys = {
+local var_0_1 = 10
+local var_0_2 = 5
+local var_0_3 = 2
+local var_0_4 = {
 	Breeds.chaos_warrior,
 	Breeds.chaos_warrior,
-	Breeds.chaos_bulwark,
+	Breeds.chaos_bulwark
 }
 
 BreedPacks = {
@@ -55,425 +55,425 @@ BreedPacks = {
 					{
 						1,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hard = {
 					{
 						2,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				harder = {
 					{
 						2,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						2,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hardest = {
 					{
 						7,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						7,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm = {
 					{
 						7,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						7,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_2 = {
 					{
 						7,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						7,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_3 = {
 					{
 						7,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						7,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				versus_base = {
 					{
 						2,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
-				},
+						Breeds.chaos_marauder
+					}
+				}
 			},
 			clamp_breeds_low = {
 				normal = {
 					{
 						0,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hard = {
 					{
 						1,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				harder = {
 					{
 						2,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						2,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hardest = {
 					{
 						5,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						5,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm = {
 					{
 						5,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						5,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_2 = {
 					{
 						5,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						5,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_3 = {
 					{
 						5,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						5,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				versus_base = {
 					{
 						1,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
-				},
-			},
+						Breeds.chaos_marauder
+					}
+				}
+			}
 		},
 		patrol_overrides = {
-			patrol_chance = 1,
+			patrol_chance = 1
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_3,
+			members = {
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.skaven_storm_vermin_commander
+			}
+		},
+		{
+			spawn_weight = var_0_3,
+			members = {
+				Breeds.chaos_marauder
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.chaos_raider
+			}
+		},
+		{
+			spawn_weight = var_0_3,
 			members = {
 				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.skaven_storm_vermin_commander,
-			},
-		},
-		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_3,
 			members = {
 				Breeds.chaos_marauder,
-			},
+				Breeds.chaos_fanatic
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.chaos_raider,
-			},
+				Breeds.chaos_marauder
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_storm_vermin_commander
+			}
+		},
+		{
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.chaos_marauder,
-				Breeds.chaos_fanatic,
-			},
+				Breeds.chaos_marauder,
+				Breeds.chaos_fanatic
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.chaos_raider,
-				Breeds.chaos_marauder,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_storm_vermin_commander,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_fanatic,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
-			members = {
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
-			members = {
-				Breeds.chaos_raider,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
-			members = {
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-			},
+				Breeds.chaos_marauder
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_fanatic,
+				Breeds.chaos_fanatic
+			}
+		},
+		{
+			spawn_weight = var_0_1,
+			members = {
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.chaos_raider,
-				Breeds.chaos_raider,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
-				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-			},
+				Breeds.chaos_marauder
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_fanatic,
+				Breeds.chaos_fanatic
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
-			members = {
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
+				Breeds.chaos_fanatic,
+				Breeds.chaos_fanatic
+			}
+		},
+		{
+			spawn_weight = var_0_1,
+			members = {
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
 				Breeds.chaos_fanatic,
 				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-			},
+				Breeds.chaos_fanatic
+			}
 		},
-		roof_spawning_allowed = true,
+		{
+			spawn_weight = var_0_1,
+			members = {
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = var_0_1,
+			members = {
+				Breeds.chaos_raider,
+				Breeds.chaos_raider,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_fanatic,
+				Breeds.chaos_fanatic,
+				Breeds.chaos_fanatic
+			}
+		},
+		roof_spawning_allowed = true
 	},
 	skaven_beastmen = {
 		zone_checks = {
@@ -482,505 +482,505 @@ BreedPacks = {
 					{
 						1,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						10,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				hard = {
 					{
 						2,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						12,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				harder = {
 					{
 						2,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						2,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						15,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				hardest = {
 					{
 						7,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						3,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						15,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				cataclysm = {
 					{
 						7,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						5,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						15,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				cataclysm_2 = {
 					{
 						7,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						5,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						20,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				cataclysm_3 = {
 					{
 						7,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						7,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						20,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				versus_base = {
 					{
 						2,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						12,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
-				},
+						Breeds.beastmen_ungor
+					}
+				}
 			},
 			clamp_breeds_low = {
 				normal = {
 					{
 						0,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						10,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				hard = {
 					{
 						1,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						10,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				harder = {
 					{
 						2,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						2,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						10,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				hardest = {
 					{
 						5,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						3,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						15,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				cataclysm = {
 					{
 						5,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						4,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						15,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				cataclysm_2 = {
 					{
 						5,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						5,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						15,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				cataclysm_3 = {
 					{
 						5,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						5,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						15,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				versus_base = {
 					{
 						1,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						10,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
-				},
-			},
+						Breeds.beastmen_ungor
+					}
+				}
+			}
 		},
 		patrol_overrides = {
-			patrol_chance = 1,
+			patrol_chance = 1
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_3,
+			members = {
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.skaven_storm_vermin_commander
+			}
+		},
+		{
+			spawn_weight = var_0_3,
+			members = {
+				Breeds.beastmen_gor
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.beastmen_bestigor
+			}
+		},
+		{
+			spawn_weight = var_0_3,
 			members = {
 				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.skaven_storm_vermin_commander,
-			},
-		},
-		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_3,
 			members = {
 				Breeds.beastmen_gor,
-			},
+				Breeds.beastmen_ungor
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.beastmen_bestigor,
-			},
+				Breeds.beastmen_gor
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_storm_vermin_commander
+			}
+		},
+		{
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.beastmen_gor,
-				Breeds.beastmen_ungor,
-			},
+				Breeds.beastmen_gor,
+				Breeds.beastmen_ungor
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.beastmen_bestigor,
-				Breeds.beastmen_gor,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_storm_vermin_commander,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.beastmen_gor,
-				Breeds.beastmen_gor,
-				Breeds.beastmen_ungor,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
-			members = {
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
-			members = {
-				Breeds.beastmen_bestigor,
-				Breeds.beastmen_gor,
-				Breeds.beastmen_gor,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.beastmen_gor,
-				Breeds.beastmen_ungor,
-				Breeds.beastmen_ungor,
-				Breeds.beastmen_ungor,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
-			members = {
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_gor,
-				Breeds.beastmen_gor,
-				Breeds.beastmen_gor,
-			},
+				Breeds.beastmen_gor
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.beastmen_gor,
-				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_ungor_archer,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
-				Breeds.beastmen_bestigor,
-				Breeds.beastmen_bestigor,
-				Breeds.beastmen_gor,
 				Breeds.beastmen_gor,
 				Breeds.beastmen_ungor,
 				Breeds.beastmen_ungor,
-			},
+				Breeds.beastmen_ungor
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.beastmen_bestigor,
+				Breeds.beastmen_gor,
+				Breeds.beastmen_gor,
+				Breeds.beastmen_gor
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.beastmen_gor,
 				Breeds.beastmen_ungor_archer,
 				Breeds.beastmen_ungor_archer,
 				Breeds.beastmen_ungor_archer,
 				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_ungor_archer,
-			},
+				Breeds.beastmen_ungor_archer
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_gor,
 				Breeds.beastmen_gor,
+				Breeds.beastmen_ungor,
+				Breeds.beastmen_ungor
+			}
+		},
+		{
+			spawn_weight = var_0_1,
+			members = {
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.beastmen_gor,
+				Breeds.beastmen_ungor_archer,
+				Breeds.beastmen_ungor_archer,
+				Breeds.beastmen_ungor_archer,
+				Breeds.beastmen_ungor_archer,
+				Breeds.beastmen_ungor_archer,
+				Breeds.beastmen_ungor_archer,
+				Breeds.beastmen_ungor_archer
+			}
+		},
+		{
+			spawn_weight = var_0_1,
+			members = {
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = var_0_1,
+			members = {
+				Breeds.beastmen_bestigor,
+				Breeds.beastmen_bestigor,
+				Breeds.beastmen_gor,
+				Breeds.beastmen_gor,
 				Breeds.beastmen_gor,
 				Breeds.beastmen_ungor,
 				Breeds.beastmen_ungor,
-				Breeds.beastmen_ungor,
-			},
+				Breeds.beastmen_ungor
+			}
 		},
-		roof_spawning_allowed = true,
+		roof_spawning_allowed = true
 	},
 	chaos_beastmen = {
 		zone_checks = {
@@ -989,642 +989,642 @@ BreedPacks = {
 					{
 						1,
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						1,
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						1,
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						1,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						10,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				hard = {
 					{
 						2,
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						1,
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						1,
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						1,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						12,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				harder = {
 					{
 						2,
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						2,
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						2,
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						2,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						15,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				hardest = {
 					{
 						7,
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						3,
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						3,
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						3,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						15,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				cataclysm = {
 					{
 						7,
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						4,
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						4,
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						4,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						20,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				cataclysm_2 = {
 					{
 						7,
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						4,
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						4,
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						4,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						20,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				cataclysm_3 = {
 					{
 						7,
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						5,
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						5,
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						5,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						20,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				versus_base = {
 					{
 						2,
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						1,
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						1,
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						1,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						12,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
-				},
+						Breeds.beastmen_ungor
+					}
+				}
 			},
 			clamp_breeds_low = {
 				normal = {
 					{
 						0,
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						0,
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						0,
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						0,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						10,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				hard = {
 					{
 						1,
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						1,
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						1,
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						1,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						10,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				harder = {
 					{
 						2,
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						2,
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						2,
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						2,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						15,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				hardest = {
 					{
 						5,
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						3,
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						3,
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						3,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						15,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				cataclysm = {
 					{
 						5,
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						5,
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						5,
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						5,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						15,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				cataclysm_2 = {
 					{
 						5,
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						5,
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						5,
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						5,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						15,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				cataclysm_3 = {
 					{
 						5,
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						5,
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						5,
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						5,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						15,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				versus_base = {
 					{
 						1,
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						1,
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						1,
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						1,
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						10,
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
-				},
-			},
+						Breeds.beastmen_ungor
+					}
+				}
+			}
 		},
 		patrol_overrides = {
-			patrol_chance = 1,
+			patrol_chance = 1
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_3,
+			members = {
+				Breeds.chaos_marauder
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.chaos_raider
+			}
+		},
+		{
+			spawn_weight = var_0_3,
+			members = {
+				Breeds.beastmen_gor
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.beastmen_bestigor
+			}
+		},
+		{
+			spawn_weight = var_0_3,
 			members = {
 				Breeds.chaos_marauder,
-			},
+				Breeds.chaos_marauder
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.chaos_raider,
-			},
-		},
-		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_3,
 			members = {
 				Breeds.beastmen_gor,
-			},
+				Breeds.beastmen_ungor
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_3,
+			members = {
+				Breeds.beastmen_ungor_archer,
+				Breeds.beastmen_ungor_archer
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.chaos_raider,
+				Breeds.chaos_marauder
+			}
+		},
+		{
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.beastmen_bestigor,
-			},
+				Breeds.beastmen_gor
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.chaos_raider,
+				Breeds.chaos_raider
+			}
+		},
+		{
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
-			},
+				Breeds.chaos_fanatic
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.beastmen_gor,
-				Breeds.beastmen_ungor,
-			},
+				Breeds.beastmen_gor,
+				Breeds.beastmen_ungor
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.beastmen_ungor_archer,
 				Breeds.beastmen_ungor_archer,
-			},
+				Breeds.beastmen_ungor_archer
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder,
-			},
+				Breeds.chaos_marauder
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.beastmen_bestigor,
-				Breeds.beastmen_gor,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.chaos_raider,
-				Breeds.chaos_raider,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_fanatic,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.beastmen_gor,
-				Breeds.beastmen_gor,
-				Breeds.beastmen_ungor,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_ungor_archer,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
-			members = {
-				Breeds.chaos_raider,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
-			members = {
-				Breeds.beastmen_bestigor,
-				Breeds.beastmen_gor,
-				Breeds.beastmen_gor,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_fanatic,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.beastmen_gor,
-				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_ungor_archer,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
-			members = {
-				Breeds.chaos_raider,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_gor,
-				Breeds.beastmen_gor,
-				Breeds.beastmen_gor,
-			},
+				Breeds.beastmen_gor
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.beastmen_gor,
-				Breeds.beastmen_gor,
-				Breeds.beastmen_gor,
-				Breeds.beastmen_gor,
-				Breeds.beastmen_ungor,
-				Breeds.beastmen_ungor,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-			},
+				Breeds.chaos_fanatic
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
-				Breeds.beastmen_bestigor,
-				Breeds.beastmen_bestigor,
 				Breeds.beastmen_gor,
-				Breeds.beastmen_gor,
-				Breeds.beastmen_ungor,
-				Breeds.beastmen_ungor,
-			},
+				Breeds.beastmen_ungor_archer,
+				Breeds.beastmen_ungor_archer,
+				Breeds.beastmen_ungor_archer
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
-				heavy_boys,
 				Breeds.chaos_raider,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder
+			}
+		},
+		{
+			spawn_weight = var_0_1,
+			members = {
+				Breeds.beastmen_bestigor,
+				Breeds.beastmen_gor,
+				Breeds.beastmen_gor,
+				Breeds.beastmen_gor
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.beastmen_gor,
+				Breeds.beastmen_gor,
+				Breeds.beastmen_gor,
+				Breeds.beastmen_gor,
+				Breeds.beastmen_ungor,
+				Breeds.beastmen_ungor
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
 				Breeds.chaos_fanatic,
-			},
+				Breeds.chaos_fanatic
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
-				heavy_boys,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-			},
+				Breeds.beastmen_bestigor,
+				Breeds.beastmen_bestigor,
+				Breeds.beastmen_gor,
+				Breeds.beastmen_gor,
+				Breeds.beastmen_ungor,
+				Breeds.beastmen_ungor
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_1,
+			members = {
+				var_0_4,
+				Breeds.chaos_raider,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_fanatic
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				var_0_4,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder
+			}
+		},
+		{
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.beastmen_gor,
 				Breeds.beastmen_ungor_archer,
@@ -1633,24 +1633,24 @@ BreedPacks = {
 				Breeds.beastmen_ungor_archer,
 				Breeds.beastmen_ungor_archer,
 				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_ungor_archer,
-			},
+				Breeds.beastmen_ungor_archer
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
-				heavy_boys,
+				var_0_4,
 				Breeds.chaos_raider,
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-			},
+				Breeds.chaos_marauder
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_bestigor,
@@ -1659,10 +1659,10 @@ BreedPacks = {
 				Breeds.beastmen_gor,
 				Breeds.beastmen_ungor_archer,
 				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_ungor_archer,
-			},
+				Breeds.beastmen_ungor_archer
+			}
 		},
-		roof_spawning_allowed = true,
+		roof_spawning_allowed = true
 	},
 	weave_no_elites = {
 		zone_checks = {
@@ -1671,251 +1671,259 @@ BreedPacks = {
 					{
 						1,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hard = {
 					{
 						2,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				harder = {
 					{
 						2,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						2,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hardest = {
 					{
 						7,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						7,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm = {
 					{
 						7,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						7,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_2 = {
 					{
 						7,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						7,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_3 = {
 					{
 						7,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						7,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				versus_base = {
 					{
 						2,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
-				},
+						Breeds.chaos_marauder
+					}
+				}
 			},
 			clamp_breeds_low = {
 				normal = {
 					{
 						0,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hard = {
 					{
 						1,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				harder = {
 					{
 						2,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						2,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hardest = {
 					{
 						5,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						5,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm = {
 					{
 						5,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						5,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_2 = {
 					{
 						5,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						5,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_3 = {
 					{
 						5,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						5,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				versus_base = {
 					{
 						1,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
-				},
-			},
+						Breeds.chaos_marauder
+					}
+				}
+			}
 		},
 		patrol_overrides = {
-			patrol_chance = 1,
+			patrol_chance = 1
+		},
+		{
+			spawn_weight = 10,
+			members = {
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
 			spawn_weight = 10,
 			members = {
 				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = 10,
-			members = {
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
 			spawn_weight = 10,
 			members = {
 				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-			},
+				Breeds.chaos_marauder
+			}
 		},
 		{
 			spawn_weight = 3.5,
 			members = {
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
 			spawn_weight = 10,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
 			spawn_weight = 2,
 			members = {
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-			},
+				Breeds.chaos_marauder
+			}
 		},
 		{
 			spawn_weight = 2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = 10,
+			members = {
 				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
 			spawn_weight = 10,
@@ -1923,16 +1931,8 @@ BreedPacks = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = 10,
-			members = {
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
 			spawn_weight = 4,
@@ -1940,8 +1940,8 @@ BreedPacks = {
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-			},
+				Breeds.chaos_marauder
+			}
 		},
 		{
 			spawn_weight = 3.5,
@@ -1949,8 +1949,8 @@ BreedPacks = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
 			spawn_weight = 10,
@@ -1960,8 +1960,8 @@ BreedPacks = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
 			spawn_weight = 4,
@@ -1969,8 +1969,8 @@ BreedPacks = {
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-			},
+				Breeds.chaos_marauder
+			}
 		},
 		{
 			spawn_weight = 2.5,
@@ -1980,8 +1980,19 @@ BreedPacks = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = 10,
+			members = {
 				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
 			spawn_weight = 10,
@@ -1992,20 +2003,9 @@ BreedPacks = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = 10,
-			members = {
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
 			spawn_weight = 2,
@@ -2017,10 +2017,10 @@ BreedPacks = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
-		roof_spawning_allowed = true,
+		roof_spawning_allowed = true
 	},
 	weave = {
 		zone_checks = {
@@ -2029,425 +2029,425 @@ BreedPacks = {
 					{
 						1,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hard = {
 					{
 						2,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				harder = {
 					{
 						2,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						2,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hardest = {
 					{
 						7,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						7,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm = {
 					{
 						7,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						7,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_2 = {
 					{
 						7,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						7,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_3 = {
 					{
 						7,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						7,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				versus_base = {
 					{
 						2,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
-				},
+						Breeds.chaos_marauder
+					}
+				}
 			},
 			clamp_breeds_low = {
 				normal = {
 					{
 						0,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hard = {
 					{
 						1,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				harder = {
 					{
 						2,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						2,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hardest = {
 					{
 						5,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						5,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm = {
 					{
 						5,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						5,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_2 = {
 					{
 						5,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						5,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_3 = {
 					{
 						5,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						5,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				versus_base = {
 					{
 						1,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
-				},
-			},
+						Breeds.chaos_marauder
+					}
+				}
+			}
 		},
 		patrol_overrides = {
-			patrol_chance = 1,
+			patrol_chance = 1
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_3,
+			members = {
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.skaven_storm_vermin_commander
+			}
+		},
+		{
+			spawn_weight = var_0_3,
+			members = {
+				Breeds.chaos_marauder
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.chaos_raider
+			}
+		},
+		{
+			spawn_weight = var_0_3,
 			members = {
 				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.skaven_storm_vermin_commander,
-			},
-		},
-		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_3,
 			members = {
 				Breeds.chaos_marauder,
-			},
+				Breeds.chaos_fanatic
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.chaos_raider,
-			},
+				Breeds.chaos_marauder
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_storm_vermin_commander
+			}
+		},
+		{
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.chaos_marauder,
-				Breeds.chaos_fanatic,
-			},
+				Breeds.chaos_marauder,
+				Breeds.chaos_fanatic
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.chaos_raider,
-				Breeds.chaos_marauder,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_storm_vermin_commander,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_fanatic,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
-			members = {
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
-			members = {
-				Breeds.chaos_raider,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
-			members = {
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-			},
+				Breeds.chaos_marauder
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_fanatic,
+				Breeds.chaos_fanatic
+			}
+		},
+		{
+			spawn_weight = var_0_1,
+			members = {
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.chaos_raider,
-				Breeds.chaos_raider,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
-				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-			},
+				Breeds.chaos_marauder
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
-			members = {
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
 				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-			},
+				Breeds.chaos_fanatic
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
+				Breeds.chaos_fanatic,
+				Breeds.chaos_fanatic
+			}
+		},
+		{
+			spawn_weight = var_0_1,
+			members = {
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
 				Breeds.chaos_fanatic,
 				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-			},
+				Breeds.chaos_fanatic
+			}
 		},
-		roof_spawning_allowed = true,
+		{
+			spawn_weight = var_0_1,
+			members = {
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = var_0_1,
+			members = {
+				Breeds.chaos_raider,
+				Breeds.chaos_raider,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_fanatic,
+				Breeds.chaos_fanatic,
+				Breeds.chaos_fanatic
+			}
+		},
+		roof_spawning_allowed = true
 	},
 	standard_no_elites = {
 		zone_checks = {
@@ -2456,299 +2456,307 @@ BreedPacks = {
 					{
 						1,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hard = {
 					{
 						2,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				harder = {
 					{
 						2,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						2,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hardest = {
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm = {
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_2 = {
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_3 = {
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				versus_base = {
 					{
 						2,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
-				},
+						Breeds.chaos_marauder
+					}
+				}
 			},
 			clamp_breeds_low = {
 				normal = {
 					{
 						0,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hard = {
 					{
 						1,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				harder = {
 					{
 						2,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						2,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hardest = {
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm = {
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_2 = {
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_3 = {
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				versus_base = {
 					{
 						1,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
-				},
-			},
+						Breeds.chaos_marauder
+					}
+				}
+			}
 		},
 		patrol_overrides = {
-			patrol_chance = 1,
+			patrol_chance = 1
+		},
+		{
+			spawn_weight = 10,
+			members = {
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
 			spawn_weight = 10,
 			members = {
 				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = 10,
-			members = {
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
 			spawn_weight = 10,
 			members = {
 				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-			},
+				Breeds.chaos_marauder
+			}
 		},
 		{
 			spawn_weight = 3.5,
 			members = {
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
 			spawn_weight = 10,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
 			spawn_weight = 2,
 			members = {
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-			},
+				Breeds.chaos_marauder
+			}
 		},
 		{
 			spawn_weight = 2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = 10,
+			members = {
 				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
 			spawn_weight = 10,
@@ -2756,16 +2764,8 @@ BreedPacks = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = 10,
-			members = {
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
 			spawn_weight = 4,
@@ -2773,8 +2773,8 @@ BreedPacks = {
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-			},
+				Breeds.chaos_marauder
+			}
 		},
 		{
 			spawn_weight = 3.5,
@@ -2782,8 +2782,8 @@ BreedPacks = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
 			spawn_weight = 10,
@@ -2793,8 +2793,8 @@ BreedPacks = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
 			spawn_weight = 4,
@@ -2802,8 +2802,8 @@ BreedPacks = {
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-			},
+				Breeds.chaos_marauder
+			}
 		},
 		{
 			spawn_weight = 2.5,
@@ -2813,8 +2813,19 @@ BreedPacks = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = 10,
+			members = {
 				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
 			spawn_weight = 10,
@@ -2825,20 +2836,9 @@ BreedPacks = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = 10,
-			members = {
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
 			spawn_weight = 2,
@@ -2850,14 +2850,14 @@ BreedPacks = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
-		roof_spawning_allowed = true,
+		roof_spawning_allowed = true
 	},
 	skaven = {
 		patrol_overrides = {
-			patrol_chance = 1,
+			patrol_chance = 1
 		},
 		zone_checks = {
 			clamp_breeds_hi = {
@@ -2865,292 +2865,292 @@ BreedPacks = {
 					{
 						2,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				hard = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				harder = {
 					{
 						{
 							5,
-							6,
+							6
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				hardest = {
 					{
 						{
 							12,
-							14,
+							14
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				cataclysm = {
 					{
 						{
 							12,
-							14,
+							14
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				cataclysm_2 = {
 					{
 						{
 							12,
-							14,
+							14
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				cataclysm_3 = {
 					{
 						{
 							12,
-							14,
+							14
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				versus_base = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
-				},
+						Breeds.skaven_clan_rat
+					}
+				}
 			},
 			clamp_breeds_low = {
 				normal = {
 					{
 						0,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				hard = {
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				harder = {
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				hardest = {
 					{
 						{
 							4,
-							6,
+							6
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				cataclysm = {
 					{
 						{
 							4,
-							6,
+							6
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				cataclysm_2 = {
 					{
 						{
 							4,
-							6,
+							6
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				cataclysm_3 = {
 					{
 						{
 							4,
-							6,
+							6
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				versus_base = {
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
-				},
-			},
+						Breeds.skaven_clan_rat
+					}
+				}
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_3,
+			members = {
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = var_0_3,
+			members = {
+				Breeds.skaven_storm_vermin_commander
+			}
+		},
+		{
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
-			members = {
-				Breeds.skaven_storm_vermin_commander,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
-			members = {
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_storm_vermin_commander,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_3,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_storm_vermin_commander
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_1,
+			members = {
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = var_0_1,
+			members = {
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat,
@@ -3159,11 +3159,11 @@ BreedPacks = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_storm_vermin_commander,
@@ -3172,14 +3172,14 @@ BreedPacks = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
-		roof_spawning_allowed = true,
+		roof_spawning_allowed = true
 	},
 	shield_rats_no_elites = {
 		patrol_overrides = {
-			patrol_chance = 1,
+			patrol_chance = 1
 		},
 		zone_checks = {
 			clamp_breeds_hi = {
@@ -3187,290 +3187,306 @@ BreedPacks = {
 					{
 						3,
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				hard = {
 					{
 						10,
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				harder = {
 					{
 						12,
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				hardest = {
 					{
 						20,
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				cataclysm = {
 					{
 						20,
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				cataclysm_2 = {
 					{
 						20,
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				cataclysm_3 = {
 					{
 						20,
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				versus_base = {
 					{
 						10,
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
-				},
+						Breeds.skaven_clan_rat
+					}
+				}
 			},
 			clamp_breeds_low = {
 				normal = {
 					{
 						2,
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				hard = {
 					{
 						4,
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				harder = {
 					{
 						6,
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				hardest = {
 					{
 						10,
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				cataclysm = {
 					{
 						10,
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				cataclysm_2 = {
 					{
 						10,
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				cataclysm_3 = {
 					{
 						10,
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				versus_base = {
 					{
 						4,
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
-				},
-			},
+						Breeds.skaven_clan_rat
+					}
+				}
+			}
 		},
 		{
 			spawn_weight = 1,
 			members = {
+				Breeds.skaven_clan_rat_with_shield
+			}
+		},
+		{
+			spawn_weight = 10,
+			members = {
 				Breeds.skaven_clan_rat_with_shield,
-			},
+				Breeds.skaven_clan_rat_with_shield
+			}
 		},
 		{
 			spawn_weight = 10,
 			members = {
 				Breeds.skaven_clan_rat_with_shield,
 				Breeds.skaven_clan_rat_with_shield,
-			},
+				Breeds.skaven_clan_rat_with_shield
+			}
+		},
+		{
+			spawn_weight = 5,
+			members = {
+				Breeds.skaven_clan_rat_with_shield,
+				Breeds.skaven_clan_rat_with_shield,
+				Breeds.skaven_clan_rat_with_shield
+			}
 		},
 		{
 			spawn_weight = 10,
@@ -3478,7 +3494,8 @@ BreedPacks = {
 				Breeds.skaven_clan_rat_with_shield,
 				Breeds.skaven_clan_rat_with_shield,
 				Breeds.skaven_clan_rat_with_shield,
-			},
+				Breeds.skaven_clan_rat_with_shield
+			}
 		},
 		{
 			spawn_weight = 5,
@@ -3486,25 +3503,8 @@ BreedPacks = {
 				Breeds.skaven_clan_rat_with_shield,
 				Breeds.skaven_clan_rat_with_shield,
 				Breeds.skaven_clan_rat_with_shield,
-			},
-		},
-		{
-			spawn_weight = 10,
-			members = {
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-			},
-		},
-		{
-			spawn_weight = 5,
-			members = {
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-			},
+				Breeds.skaven_clan_rat_with_shield
+			}
 		},
 		{
 			spawn_weight = 10,
@@ -3514,32 +3514,8 @@ BreedPacks = {
 				Breeds.skaven_clan_rat_with_shield,
 				Breeds.skaven_clan_rat_with_shield,
 				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-			},
-		},
-		{
-			spawn_weight = 5,
-			members = {
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-			},
-		},
-		{
-			spawn_weight = 10,
-			members = {
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-			},
+				Breeds.skaven_clan_rat_with_shield
+			}
 		},
 		{
 			spawn_weight = 5,
@@ -3549,16 +3525,40 @@ BreedPacks = {
 				Breeds.skaven_clan_rat_with_shield,
 				Breeds.skaven_clan_rat_with_shield,
 				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-			},
+				Breeds.skaven_clan_rat_with_shield
+			}
 		},
-		roof_spawning_allowed = true,
+		{
+			spawn_weight = 10,
+			members = {
+				Breeds.skaven_clan_rat_with_shield,
+				Breeds.skaven_clan_rat_with_shield,
+				Breeds.skaven_clan_rat_with_shield,
+				Breeds.skaven_clan_rat_with_shield,
+				Breeds.skaven_clan_rat_with_shield,
+				Breeds.skaven_clan_rat_with_shield,
+				Breeds.skaven_clan_rat_with_shield,
+				Breeds.skaven_clan_rat_with_shield
+			}
+		},
+		{
+			spawn_weight = 5,
+			members = {
+				Breeds.skaven_clan_rat_with_shield,
+				Breeds.skaven_clan_rat_with_shield,
+				Breeds.skaven_clan_rat_with_shield,
+				Breeds.skaven_clan_rat_with_shield,
+				Breeds.skaven_clan_rat_with_shield,
+				Breeds.skaven_clan_rat_with_shield,
+				Breeds.skaven_clan_rat_with_shield,
+				Breeds.skaven_clan_rat_with_shield
+			}
+		},
+		roof_spawning_allowed = true
 	},
 	shield_rats = {
 		patrol_overrides = {
-			patrol_chance = 1,
+			patrol_chance = 1
 		},
 		zone_checks = {
 			clamp_breeds_hi = {
@@ -3566,455 +3566,455 @@ BreedPacks = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				hard = {
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				harder = {
 					{
 						{
 							10,
-							15,
+							15
 						},
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							3,
-							4,
+							4
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				hardest = {
 					{
 						100,
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							5,
-							7,
+							7
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				cataclysm = {
 					{
 						100,
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							5,
-							7,
+							7
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				cataclysm_2 = {
 					{
 						100,
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							5,
-							7,
+							7
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				cataclysm_3 = {
 					{
 						100,
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							5,
-							7,
+							7
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				versus_base = {
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
-				},
+						Breeds.skaven_clan_rat
+					}
+				}
 			},
 			clamp_breeds_low = {
 				normal = {
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				hard = {
 					{
 						{
 							0,
-							4,
+							4
 						},
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				harder = {
 					{
 						{
 							0,
-							6,
+							6
 						},
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				hardest = {
 					{
 						100,
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				cataclysm = {
 					{
 						100,
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				cataclysm_2 = {
 					{
 						100,
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				cataclysm_3 = {
 					{
 						100,
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				versus_base = {
 					{
 						{
 							0,
-							4,
+							4
 						},
 						"skaven_clan_rat_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_with_shield",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
-				},
-			},
+						Breeds.skaven_clan_rat
+					}
+				}
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_3,
+			members = {
+				Breeds.skaven_storm_vermin_with_shield
+			}
+		},
+		{
+			spawn_weight = var_0_3,
+			members = {
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_clan_rat_with_shield
+			}
+		},
+		{
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.skaven_storm_vermin_with_shield,
-			},
+				Breeds.skaven_storm_vermin_commander
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat_with_shield,
-			},
+				Breeds.skaven_clan_rat_with_shield
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.skaven_storm_vermin_with_shield,
-				Breeds.skaven_storm_vermin_commander,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.skaven_storm_vermin_with_shield,
 				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_clan_rat_with_shield,
-			},
+				Breeds.skaven_clan_rat_with_shield
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat_with_shield,
 				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-			},
+				Breeds.skaven_clan_rat_with_shield
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
-			members = {
-				Breeds.skaven_storm_vermin_with_shield,
-				Breeds.skaven_storm_vermin_with_shield,
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_clan_rat_with_shield,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.skaven_storm_vermin_with_shield,
 				Breeds.skaven_storm_vermin_with_shield,
 				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-			},
+				Breeds.skaven_clan_rat_with_shield
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_clan_rat_with_shield,
+				Breeds.skaven_clan_rat_with_shield,
+				Breeds.skaven_clan_rat_with_shield,
+				Breeds.skaven_clan_rat_with_shield,
+				Breeds.skaven_clan_rat_with_shield
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.skaven_storm_vermin_with_shield,
+				Breeds.skaven_storm_vermin_with_shield,
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_clan_rat_with_shield,
+				Breeds.skaven_clan_rat_with_shield,
+				Breeds.skaven_clan_rat_with_shield
+			}
+		},
+		{
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat_with_shield,
@@ -4023,11 +4023,11 @@ BreedPacks = {
 				Breeds.skaven_clan_rat_with_shield,
 				Breeds.skaven_clan_rat_with_shield,
 				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-			},
+				Breeds.skaven_clan_rat_with_shield
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.skaven_storm_vermin_with_shield,
 				Breeds.skaven_storm_vermin_with_shield,
@@ -4036,14 +4036,14 @@ BreedPacks = {
 				Breeds.skaven_clan_rat_with_shield,
 				Breeds.skaven_clan_rat_with_shield,
 				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-			},
+				Breeds.skaven_clan_rat_with_shield
+			}
 		},
-		roof_spawning_allowed = true,
+		roof_spawning_allowed = true
 	},
 	plague_monks = {
 		patrol_overrides = {
-			patrol_chance = 1,
+			patrol_chance = 1
 		},
 		zone_checks = {
 			clamp_breeds_hi = {
@@ -4051,223 +4051,223 @@ BreedPacks = {
 					{
 						2,
 						"skaven_plague_monk",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						1,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				hard = {
 					{
 						{
 							4,
-							6,
+							6
 						},
 						"skaven_plague_monk",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						2,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				harder = {
 					{
 						{
 							5,
-							8,
+							8
 						},
 						"skaven_plague_monk",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						3,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				versus_base = {
 					{
 						{
 							4,
-							6,
+							6
 						},
 						"skaven_plague_monk",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						2,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
-				},
+						Breeds.skaven_clan_rat
+					}
+				}
 			},
 			clamp_breeds_low = {
 				normal = {
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"skaven_plague_monk",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						0,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				hard = {
 					{
 						{
 							0,
-							3,
+							3
 						},
 						"skaven_plague_monk",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				harder = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"skaven_plague_monk",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
+						Breeds.skaven_clan_rat
+					}
 				},
 				versus_base = {
 					{
 						{
 							0,
-							3,
+							3
 						},
 						"skaven_plague_monk",
-						Breeds.skaven_clan_rat,
+						Breeds.skaven_clan_rat
 					},
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_clan_rat,
-					},
-				},
-			},
+						Breeds.skaven_clan_rat
+					}
+				}
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_3,
 			members = {
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_3,
+			members = {
+				Breeds.skaven_plague_monk,
+				Breeds.skaven_plague_monk
+			}
+		},
+		{
+			spawn_weight = var_0_3,
+			members = {
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.skaven_plague_monk,
 				Breeds.skaven_plague_monk,
-			},
+				Breeds.skaven_plague_monk
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.skaven_plague_monk,
 				Breeds.skaven_plague_monk,
 				Breeds.skaven_plague_monk,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.skaven_plague_monk,
-				Breeds.skaven_plague_monk,
-				Breeds.skaven_plague_monk,
-				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
-			members = {
-				Breeds.skaven_plague_monk,
-				Breeds.skaven_plague_monk,
-				Breeds.skaven_plague_monk,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_1,
+			members = {
+				Breeds.skaven_plague_monk,
+				Breeds.skaven_plague_monk,
+				Breeds.skaven_plague_monk,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.skaven_plague_monk,
 				Breeds.skaven_plague_monk,
@@ -4276,14 +4276,14 @@ BreedPacks = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-			},
+				Breeds.skaven_clan_rat
+			}
 		},
-		roof_spawning_allowed = true,
+		roof_spawning_allowed = true
 	},
 	marauders_and_warriors = {
 		patrol_overrides = {
-			patrol_chance = 1,
+			patrol_chance = 1
 		},
 		zone_checks = {
 			clamp_breeds_hi = {
@@ -4291,502 +4291,502 @@ BreedPacks = {
 					{
 						1,
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						1,
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						0,
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hard = {
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							3,
-							5,
+							5
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				harder = {
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							3,
-							5,
+							5
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hardest = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							15,
-							20,
+							20
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							15,
-							20,
+							20
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_2 = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							15,
-							20,
+							20
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_3 = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							15,
-							20,
+							20
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				versus_base = {
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							3,
-							5,
+							5
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
-					},
-				},
+						Breeds.chaos_marauder
+					}
+				}
 			},
 			clamp_breeds_low = {
 				normal = {
 					{
 						0,
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						0,
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							0,
-							2,
+							2
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hard = {
 					{
 						0,
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						0,
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							0,
-							5,
+							5
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				harder = {
 					{
 						0,
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						0,
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							3,
-							5,
+							5
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hardest = {
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							8,
-							10,
+							10
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm = {
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							8,
-							10,
+							10
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_2 = {
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							8,
-							10,
+							10
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_3 = {
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							8,
-							10,
+							10
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				versus_base = {
 					{
 						0,
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						0,
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							0,
-							5,
+							5
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
-					},
-				},
-			},
+						Breeds.chaos_marauder
+					}
+				}
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_3,
 			members = {
-				heavy_boys,
-			},
+				var_0_4
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_3,
 			members = {
-				Breeds.chaos_marauder,
-			},
+				Breeds.chaos_marauder
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_3,
 			members = {
-				heavy_boys,
-				Breeds.chaos_marauder,
-			},
+				var_0_4,
+				Breeds.chaos_marauder
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_3,
 			members = {
 				Breeds.chaos_marauder_with_shield,
-				Breeds.chaos_marauder_with_shield,
-			},
+				Breeds.chaos_marauder_with_shield
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
-				heavy_boys,
+				var_0_4,
 				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-			},
+				Breeds.chaos_marauder
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
-				heavy_boys,
+				var_0_4,
 				Breeds.chaos_marauder_with_shield,
-				Breeds.chaos_marauder_with_shield,
-			},
+				Breeds.chaos_marauder_with_shield
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
-				heavy_boys,
+				var_0_4,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-			},
+				Breeds.chaos_marauder
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
-				heavy_boys,
+				var_0_4,
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield,
-				Breeds.chaos_marauder_with_shield,
-			},
+				Breeds.chaos_marauder_with_shield
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
-				heavy_boys,
+				var_0_4,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-			},
+				Breeds.chaos_marauder
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
-				heavy_boys,
+				var_0_4,
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield,
-				Breeds.chaos_marauder_with_shield,
-			},
+				Breeds.chaos_marauder_with_shield
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
-				heavy_boys,
+				var_0_4,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-			},
+				Breeds.chaos_marauder
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
-				heavy_boys,
+				var_0_4,
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-			},
+				Breeds.chaos_marauder
+			}
 		},
-		roof_spawning_allowed = false,
+		roof_spawning_allowed = false
 	},
 	marauders = {
 		patrol_overrides = {
-			patrol_chance = 1,
+			patrol_chance = 1
 		},
 		zone_checks = {
 			clamp_breeds_hi = {
@@ -4794,478 +4794,478 @@ BreedPacks = {
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hard = {
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				harder = {
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							3,
-							4,
+							4
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hardest = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_2 = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_3 = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				versus_base = {
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
-				},
+						Breeds.chaos_marauder
+					}
+				}
 			},
 			clamp_breeds_low = {
 				normal = {
 					{
 						0,
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						0,
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						0,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hard = {
 					{
 						0,
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						0,
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				harder = {
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							1,
-							3,
+							3
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hardest = {
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_2 = {
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_3 = {
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				versus_base = {
 					{
 						0,
 						"chaos_warrior",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						0,
 						"chaos_bulwark",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
-				},
-			},
+						Breeds.chaos_marauder
+					}
+				}
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_3,
 			members = {
-				Breeds.chaos_marauder,
-			},
+				Breeds.chaos_marauder
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
-			members = {
-				Breeds.chaos_raider,
-				Breeds.chaos_fanatic,
-			},
-		},
-		{
-			spawn_weight = LIGHT_WEIGHT,
-			members = {
-				heavy_boys,
-				Breeds.chaos_marauder,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_3,
 			members = {
 				Breeds.chaos_raider,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-			},
+				Breeds.chaos_fanatic
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_3,
 			members = {
-				heavy_boys,
-				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-			},
+				var_0_4,
+				Breeds.chaos_marauder
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				heavy_boys,
-				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.chaos_raider,
-				Breeds.chaos_raider,
 				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-			},
+				Breeds.chaos_marauder
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
-				heavy_boys,
-				Breeds.chaos_raider,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-			},
+				var_0_4,
+				Breeds.chaos_fanatic,
+				Breeds.chaos_fanatic
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
-				Breeds.chaos_raider,
-				Breeds.chaos_raider,
-				Breeds.chaos_raider,
+				var_0_4,
 				Breeds.chaos_fanatic,
 				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-			},
+				Breeds.chaos_fanatic
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
-			members = {
-				heavy_boys,
-				Breeds.chaos_raider,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-			},
+				Breeds.chaos_marauder
+			}
 		},
-		roof_spawning_allowed = false,
+		{
+			spawn_weight = var_0_2,
+			members = {
+				var_0_4,
+				Breeds.chaos_raider,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder
+			}
+		},
+		{
+			spawn_weight = var_0_1,
+			members = {
+				Breeds.chaos_raider,
+				Breeds.chaos_raider,
+				Breeds.chaos_raider,
+				Breeds.chaos_fanatic,
+				Breeds.chaos_fanatic,
+				Breeds.chaos_fanatic
+			}
+		},
+		{
+			spawn_weight = var_0_1,
+			members = {
+				var_0_4,
+				Breeds.chaos_raider,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder
+			}
+		},
+		{
+			spawn_weight = var_0_1,
+			members = {
+				Breeds.chaos_raider,
+				Breeds.chaos_raider,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_fanatic,
+				Breeds.chaos_fanatic,
+				Breeds.chaos_fanatic
+			}
+		},
+		roof_spawning_allowed = false
 	},
 	marauders_shields = {
 		patrol_overrides = {
-			patrol_chance = 1,
+			patrol_chance = 1
 		},
 		zone_checks = {
 			clamp_breeds_hi = {
@@ -5273,366 +5273,366 @@ BreedPacks = {
 					{
 						{
 							4,
-							6,
+							6
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						1,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hard = {
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				harder = {
 					{
 						{
 							8,
-							12,
+							12
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							3,
-							4,
+							4
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hardest = {
 					{
 						{
 							15,
-							20,
+							20
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							7,
-							9,
+							9
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm = {
 					{
 						{
 							15,
-							20,
+							20
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							7,
-							9,
+							9
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_2 = {
 					{
 						{
 							15,
-							20,
+							20
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							7,
-							9,
+							9
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_3 = {
 					{
 						{
 							15,
-							20,
+							20
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							7,
-							9,
+							9
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				versus_base = {
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
-				},
+						Breeds.chaos_marauder
+					}
+				}
 			},
 			clamp_breeds_low = {
 				normal = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						0,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hard = {
 					{
 						{
 							3,
-							5,
+							5
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				harder = {
 					{
 						{
 							4,
-							6,
+							6
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hardest = {
 					{
 						{
 							8,
-							12,
+							12
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							3,
-							4,
+							4
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm = {
 					{
 						{
 							8,
-							12,
+							12
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							3,
-							4,
+							4
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_2 = {
 					{
 						{
 							8,
-							12,
+							12
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							3,
-							4,
+							4
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_3 = {
 					{
 						{
 							8,
-							12,
+							12
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							3,
-							4,
+							4
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				versus_base = {
 					{
 						{
 							3,
-							5,
+							5
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
-				},
-			},
+						Breeds.chaos_marauder
+					}
+				}
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_3,
+			members = {
+				Breeds.chaos_marauder_with_shield
+			}
+		},
+		{
+			spawn_weight = var_0_3,
 			members = {
 				Breeds.chaos_marauder_with_shield,
-			},
+				Breeds.chaos_marauder_with_shield
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
-			members = {
-				Breeds.chaos_marauder_with_shield,
-				Breeds.chaos_marauder_with_shield,
-			},
-		},
-		{
-			spawn_weight = LIGHT_WEIGHT,
-			members = {
-				Breeds.chaos_raider,
-				Breeds.chaos_marauder_with_shield,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_3,
 			members = {
 				Breeds.chaos_raider,
-				Breeds.chaos_marauder_with_shield,
-				Breeds.chaos_marauder_with_shield,
-			},
+				Breeds.chaos_marauder_with_shield
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.chaos_raider,
-				Breeds.chaos_raider,
-				Breeds.chaos_marauder_with_shield,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder_with_shield,
-				Breeds.chaos_marauder_with_shield,
-				Breeds.chaos_marauder_with_shield,
-			},
+				Breeds.chaos_marauder_with_shield
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.chaos_raider,
+				Breeds.chaos_raider,
+				Breeds.chaos_marauder_with_shield
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.chaos_raider,
+				Breeds.chaos_marauder_with_shield,
+				Breeds.chaos_marauder_with_shield,
+				Breeds.chaos_marauder_with_shield
+			}
+		},
+		{
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder_with_shield,
-				Breeds.chaos_marauder_with_shield,
-			},
+				Breeds.chaos_marauder_with_shield
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-			},
+				Breeds.chaos_fanatic
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield,
-				Breeds.chaos_fanatic,
-			},
+				Breeds.chaos_fanatic
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield,
@@ -5641,11 +5641,11 @@ BreedPacks = {
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-			},
+				Breeds.chaos_fanatic
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_raider,
@@ -5654,14 +5654,14 @@ BreedPacks = {
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-			},
+				Breeds.chaos_fanatic
+			}
 		},
-		roof_spawning_allowed = false,
+		roof_spawning_allowed = false
 	},
 	marauders_berzerkers = {
 		patrol_overrides = {
-			patrol_chance = 1,
+			patrol_chance = 1
 		},
 		zone_checks = {
 			clamp_breeds_hi = {
@@ -5669,375 +5669,375 @@ BreedPacks = {
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_berzerker",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hard = {
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"chaos_berzerker",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				harder = {
 					{
 						{
 							5,
-							7,
+							7
 						},
 						"chaos_berzerker",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						3,
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hardest = {
 					{
 						{
 							10,
-							12,
+							12
 						},
 						"chaos_berzerker",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm = {
 					{
 						{
 							10,
-							12,
+							12
 						},
 						"chaos_berzerker",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_2 = {
 					{
 						{
 							10,
-							12,
+							12
 						},
 						"chaos_berzerker",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_3 = {
 					{
 						{
 							10,
-							12,
+							12
 						},
 						"chaos_berzerker",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				versus_base = {
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"chaos_berzerker",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
-				},
+						Breeds.chaos_marauder
+					}
+				}
 			},
 			clamp_breeds_low = {
 				normal = {
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"chaos_berzerker",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hard = {
 					{
 						{
 							3,
-							4,
+							4
 						},
 						"chaos_berzerker",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				harder = {
 					{
 						{
 							5,
-							6,
+							6
 						},
 						"chaos_berzerker",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				hardest = {
 					{
 						{
 							6,
-							7,
+							7
 						},
 						"chaos_berzerker",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							3,
-							4,
+							4
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm = {
 					{
 						{
 							6,
-							7,
+							7
 						},
 						"chaos_berzerker",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							3,
-							4,
+							4
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_2 = {
 					{
 						{
 							6,
-							7,
+							7
 						},
 						"chaos_berzerker",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							3,
-							4,
+							4
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				cataclysm_3 = {
 					{
 						{
 							6,
-							7,
+							7
 						},
 						"chaos_berzerker",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							3,
-							4,
+							4
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
+						Breeds.chaos_marauder
+					}
 				},
 				versus_base = {
 					{
 						{
 							3,
-							4,
+							4
 						},
 						"chaos_berzerker",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
-					},
-				},
-			},
+						Breeds.chaos_marauder
+					}
+				}
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_3,
 			members = {
-				Breeds.chaos_berzerker,
-			},
+				Breeds.chaos_berzerker
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_3,
 			members = {
 				Breeds.chaos_fanatic,
-				Breeds.chaos_berzerker,
-			},
+				Breeds.chaos_berzerker
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.chaos_berzerker,
 				Breeds.chaos_berzerker,
-				Breeds.chaos_fanatic,
-			},
+				Breeds.chaos_fanatic
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.chaos_raider,
-				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.chaos_raider,
-				Breeds.chaos_raider,
 				Breeds.chaos_fanatic,
-			},
+				Breeds.chaos_fanatic
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
-			members = {
-				Breeds.chaos_berzerker,
-				Breeds.chaos_berzerker,
-				Breeds.chaos_berzerker,
-				Breeds.chaos_fanatic,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_raider,
-				Breeds.chaos_raider,
-				Breeds.chaos_fanatic,
-			},
+				Breeds.chaos_fanatic
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.chaos_berzerker,
 				Breeds.chaos_berzerker,
 				Breeds.chaos_berzerker,
-				Breeds.chaos_raider,
-				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-			},
+				Breeds.chaos_fanatic
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_1,
+			members = {
+				Breeds.chaos_raider,
+				Breeds.chaos_raider,
+				Breeds.chaos_raider,
+				Breeds.chaos_fanatic
+			}
+		},
+		{
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.chaos_berzerker,
 				Breeds.chaos_berzerker,
 				Breeds.chaos_berzerker,
 				Breeds.chaos_raider,
+				Breeds.chaos_fanatic,
+				Breeds.chaos_fanatic
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.chaos_berzerker,
+				Breeds.chaos_berzerker,
+				Breeds.chaos_berzerker,
+				Breeds.chaos_raider,
 				Breeds.chaos_raider,
 				Breeds.chaos_fanatic,
 				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-			},
+				Breeds.chaos_fanatic
+			}
 		},
-		roof_spawning_allowed = false,
+		roof_spawning_allowed = false
 	},
 	marauders_elites = {
 		patrol_overrides = {
-			patrol_chance = 1,
+			patrol_chance = 1
 		},
 		zone_checks = {
 			clamp_breeds_hi = {
@@ -6045,520 +6045,520 @@ BreedPacks = {
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_berzerker",
-						Breeds.chaos_fanatic,
+						Breeds.chaos_fanatic
 					},
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_fanatic,
-					},
+						Breeds.chaos_fanatic
+					}
 				},
 				hard = {
 					{
 						{
 							3,
-							4,
+							4
 						},
 						"chaos_berzerker",
-						Breeds.chaos_fanatic,
+						Breeds.chaos_fanatic
 					},
 					{
 						{
 							0,
-							2,
+							2
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							2,
-							5,
+							5
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_fanatic,
-					},
+						Breeds.chaos_fanatic
+					}
 				},
 				harder = {
 					{
 						{
 							5,
-							6,
+							6
 						},
 						"chaos_berzerker",
-						Breeds.chaos_fanatic,
+						Breeds.chaos_fanatic
 					},
 					{
 						{
 							1,
-							3,
+							3
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							4,
-							6,
+							6
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_fanatic,
-					},
+						Breeds.chaos_fanatic
+					}
 				},
 				hardest = {
 					{
 						{
 							7,
-							8,
+							8
 						},
 						"chaos_berzerker",
-						Breeds.chaos_fanatic,
+						Breeds.chaos_fanatic
 					},
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							10,
-							12,
+							12
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_fanatic,
-					},
+						Breeds.chaos_fanatic
+					}
 				},
 				cataclysm = {
 					{
 						{
 							7,
-							8,
+							8
 						},
 						"chaos_berzerker",
-						Breeds.chaos_fanatic,
+						Breeds.chaos_fanatic
 					},
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							10,
-							12,
+							12
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_fanatic,
-					},
+						Breeds.chaos_fanatic
+					}
 				},
 				cataclysm_2 = {
 					{
 						{
 							7,
-							8,
+							8
 						},
 						"chaos_berzerker",
-						Breeds.chaos_fanatic,
+						Breeds.chaos_fanatic
 					},
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							10,
-							12,
+							12
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_fanatic,
-					},
+						Breeds.chaos_fanatic
+					}
 				},
 				cataclysm_3 = {
 					{
 						{
 							7,
-							8,
+							8
 						},
 						"chaos_berzerker",
-						Breeds.chaos_fanatic,
+						Breeds.chaos_fanatic
 					},
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							10,
-							12,
+							12
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_fanatic,
-					},
+						Breeds.chaos_fanatic
+					}
 				},
 				versus_base = {
 					{
 						{
 							3,
-							4,
+							4
 						},
 						"chaos_berzerker",
-						Breeds.chaos_fanatic,
+						Breeds.chaos_fanatic
 					},
 					{
 						{
 							0,
-							2,
+							2
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							2,
-							5,
+							5
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_fanatic,
-					},
-				},
+						Breeds.chaos_fanatic
+					}
+				}
 			},
 			clamp_breeds_low = {
 				normal = {
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"chaos_berzerker",
-						Breeds.chaos_fanatic,
+						Breeds.chaos_fanatic
 					},
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_fanatic,
-					},
+						Breeds.chaos_fanatic
+					}
 				},
 				hard = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_berzerker",
-						Breeds.chaos_fanatic,
+						Breeds.chaos_fanatic
 					},
 					{
 						{
 							0,
-							2,
+							2
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_fanatic,
-					},
+						Breeds.chaos_fanatic
+					}
 				},
 				harder = {
 					{
 						{
 							3,
-							4,
+							4
 						},
 						"chaos_berzerker",
-						Breeds.chaos_fanatic,
+						Breeds.chaos_fanatic
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							3,
-							4,
+							4
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_fanatic,
-					},
+						Breeds.chaos_fanatic
+					}
 				},
 				hardest = {
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"chaos_berzerker",
-						Breeds.chaos_fanatic,
+						Breeds.chaos_fanatic
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_fanatic,
-					},
+						Breeds.chaos_fanatic
+					}
 				},
 				cataclysm = {
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"chaos_berzerker",
-						Breeds.chaos_fanatic,
+						Breeds.chaos_fanatic
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_fanatic,
-					},
+						Breeds.chaos_fanatic
+					}
 				},
 				cataclysm_2 = {
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"chaos_berzerker",
-						Breeds.chaos_fanatic,
+						Breeds.chaos_fanatic
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_fanatic,
-					},
+						Breeds.chaos_fanatic
+					}
 				},
 				cataclysm_3 = {
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"chaos_berzerker",
-						Breeds.chaos_fanatic,
+						Breeds.chaos_fanatic
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_fanatic,
-					},
+						Breeds.chaos_fanatic
+					}
 				},
 				versus_base = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_berzerker",
-						Breeds.chaos_fanatic,
+						Breeds.chaos_fanatic
 					},
 					{
 						{
 							0,
-							2,
+							2
 						},
 						"chaos_raider",
-						Breeds.chaos_marauder,
+						Breeds.chaos_marauder
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"chaos_marauder_with_shield",
-						Breeds.chaos_fanatic,
-					},
-				},
-			},
+						Breeds.chaos_fanatic
+					}
+				}
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_3,
+			members = {
+				Breeds.chaos_raider
+			}
+		},
+		{
+			spawn_weight = var_0_3,
+			members = {
+				Breeds.chaos_berzerker,
+				Breeds.chaos_raider
+			}
+		},
+		{
+			spawn_weight = var_0_3,
+			members = {
+				Breeds.chaos_berzerker,
+				Breeds.chaos_marauder_with_shield
+			}
+		},
+		{
+			spawn_weight = var_0_3,
+			members = {
+				Breeds.chaos_marauder_with_shield,
+				Breeds.chaos_marauder_with_shield
+			}
+		},
+		{
+			spawn_weight = var_0_3,
+			members = {
+				Breeds.chaos_berzerker,
+				Breeds.chaos_berzerker
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.chaos_berzerker,
+				Breeds.chaos_marauder_with_shield,
+				Breeds.chaos_raider
+			}
+		},
+		{
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.chaos_raider,
-			},
-		},
-		{
-			spawn_weight = LIGHT_WEIGHT,
-			members = {
-				Breeds.chaos_berzerker,
 				Breeds.chaos_raider,
-			},
+				Breeds.chaos_marauder_with_shield,
+				Breeds.chaos_marauder_with_shield
+			}
 		},
 		{
-			spawn_weight = LIGHT_WEIGHT,
-			members = {
-				Breeds.chaos_berzerker,
-				Breeds.chaos_marauder_with_shield,
-			},
-		},
-		{
-			spawn_weight = LIGHT_WEIGHT,
-			members = {
-				Breeds.chaos_marauder_with_shield,
-				Breeds.chaos_marauder_with_shield,
-			},
-		},
-		{
-			spawn_weight = LIGHT_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.chaos_berzerker,
 				Breeds.chaos_berzerker,
-			},
+				Breeds.chaos_berzerker,
+				Breeds.chaos_marauder_with_shield
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_1,
+			members = {
+				Breeds.chaos_marauder_with_shield,
+				Breeds.chaos_marauder_with_shield,
+				Breeds.chaos_marauder_with_shield,
+				Breeds.chaos_marauder_with_shield
+			}
+		},
+		{
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.chaos_berzerker,
-				Breeds.chaos_marauder_with_shield,
-				Breeds.chaos_raider,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
-			members = {
-				Breeds.chaos_raider,
+				Breeds.chaos_berzerker,
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield,
-			},
+				Breeds.chaos_fanatic
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.chaos_berzerker,
 				Breeds.chaos_berzerker,
-				Breeds.chaos_berzerker,
-				Breeds.chaos_marauder_with_shield,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
-			members = {
-				Breeds.chaos_marauder_with_shield,
-				Breeds.chaos_marauder_with_shield,
-				Breeds.chaos_marauder_with_shield,
-				Breeds.chaos_marauder_with_shield,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.chaos_berzerker,
-				Breeds.chaos_berzerker,
+				Breeds.chaos_raider,
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_fanatic,
-			},
+				Breeds.chaos_fanatic
+			}
 		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.chaos_berzerker,
-				Breeds.chaos_berzerker,
-				Breeds.chaos_raider,
-				Breeds.chaos_raider,
-				Breeds.chaos_marauder_with_shield,
-				Breeds.chaos_marauder_with_shield,
-				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-			},
-		},
-		roof_spawning_allowed = false,
+		roof_spawning_allowed = false
 	},
 	beastmen = {
 		patrol_overrides = {
-			patrol_chance = 1,
+			patrol_chance = 1
 		},
 		zone_checks = {
 			clamp_breeds_hi = {
@@ -6566,393 +6566,393 @@ BreedPacks = {
 					{
 						{
 							1,
-							1,
+							1
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				hard = {
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							8,
-							10,
+							10
 						},
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				harder = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							10,
-							12,
+							12
 						},
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				hardest = {
 					{
 						{
 							2,
-							4,
+							4
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
-					},
+						Breeds.beastmen_gor
+					}
 				},
 				cataclysm = {
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
-					},
+						Breeds.beastmen_gor
+					}
 				},
 				cataclysm_2 = {
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
-					},
+						Breeds.beastmen_gor
+					}
 				},
 				cataclysm_3 = {
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
-					},
+						Breeds.beastmen_gor
+					}
 				},
 				versus_base = {
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							8,
-							10,
+							10
 						},
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
-				},
+						Breeds.beastmen_ungor
+					}
+				}
 			},
 			clamp_breeds_low = {
 				normal = {
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
+						Breeds.beastmen_ungor
 					},
 					{
 						{
 							0,
-							0,
+							0
 						},
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				hard = {
 					{
 						{
 							0,
-							2,
+							2
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
+						Breeds.beastmen_ungor
 					},
 					{
 						{
 							3,
-							5,
+							5
 						},
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				harder = {
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							3,
-							4,
+							4
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
+						Breeds.beastmen_ungor
 					},
 					{
 						{
 							3,
-							5,
+							5
 						},
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				hardest = {
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				cataclysm = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				cataclysm_2 = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				cataclysm_3 = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				versus_base = {
 					{
 						{
 							0,
-							2,
+							2
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
+						Breeds.beastmen_ungor
 					},
 					{
 						{
 							3,
-							5,
+							5
 						},
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
-				},
-			},
+						Breeds.beastmen_ungor
+					}
+				}
+			}
 		},
 		{
 			spawn_weight = 1,
 			members = {
-				Breeds.beastmen_gor,
-			},
+				Breeds.beastmen_gor
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_1,
+			members = {
+				Breeds.beastmen_bestigor,
+				Breeds.beastmen_gor
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.beastmen_gor,
+				Breeds.beastmen_gor
+			}
+		},
+		{
+			spawn_weight = var_0_1,
+			members = {
+				Breeds.beastmen_ungor_archer,
+				Breeds.beastmen_ungor_archer,
+				Breeds.beastmen_ungor_archer
+			}
+		},
+		{
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_gor,
-			},
+				Breeds.beastmen_gor
+			}
 		},
 		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.beastmen_gor,
-				Breeds.beastmen_gor,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
-			members = {
-				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_ungor_archer,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.beastmen_bestigor,
-				Breeds.beastmen_gor,
-				Breeds.beastmen_gor,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
+			spawn_weight = var_0_2,
 			members = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_ungor,
+				Breeds.beastmen_ungor
+			}
+		},
+		{
+			spawn_weight = var_0_1,
+			members = {
+				Breeds.beastmen_ungor_archer,
+				Breeds.beastmen_ungor_archer,
+				Breeds.beastmen_ungor_archer,
+				Breeds.beastmen_ungor_archer
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.beastmen_bestigor,
+				Breeds.beastmen_gor,
+				Breeds.beastmen_gor,
+				Breeds.beastmen_ungor
+			}
+		},
+		{
+			spawn_weight = var_0_1,
+			members = {
+				Breeds.beastmen_bestigor,
+				Breeds.beastmen_ungor_archer,
+				Breeds.beastmen_ungor_archer,
+				Breeds.beastmen_ungor_archer,
+				Breeds.beastmen_ungor_archer,
+				Breeds.beastmen_ungor_archer
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.beastmen_bestigor,
+				Breeds.beastmen_bestigor,
+				Breeds.beastmen_gor,
+				Breeds.beastmen_gor,
+				Breeds.beastmen_gor,
+				Breeds.beastmen_ungor
+			}
+		},
+		{
+			spawn_weight = var_0_2,
+			members = {
+				Breeds.beastmen_bestigor,
+				Breeds.beastmen_bestigor,
+				Breeds.beastmen_gor,
+				Breeds.beastmen_gor,
+				Breeds.beastmen_gor,
+				Breeds.beastmen_gor,
 				Breeds.beastmen_ungor,
-			},
+				Breeds.beastmen_ungor
+			}
 		},
 		{
-			spawn_weight = HEAVY_WEIGHT,
-			members = {
-				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_ungor_archer,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.beastmen_bestigor,
-				Breeds.beastmen_gor,
-				Breeds.beastmen_gor,
-				Breeds.beastmen_ungor,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
-			members = {
-				Breeds.beastmen_bestigor,
-				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_ungor_archer,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.beastmen_bestigor,
-				Breeds.beastmen_bestigor,
-				Breeds.beastmen_gor,
-				Breeds.beastmen_gor,
-				Breeds.beastmen_gor,
-				Breeds.beastmen_ungor,
-			},
-		},
-		{
-			spawn_weight = MEDIUM_WEIGHT,
-			members = {
-				Breeds.beastmen_bestigor,
-				Breeds.beastmen_bestigor,
-				Breeds.beastmen_gor,
-				Breeds.beastmen_gor,
-				Breeds.beastmen_gor,
-				Breeds.beastmen_gor,
-				Breeds.beastmen_ungor,
-				Breeds.beastmen_ungor,
-			},
-		},
-		{
-			spawn_weight = HEAVY_WEIGHT,
+			spawn_weight = var_0_1,
 			members = {
 				Breeds.beastmen_ungor_archer,
 				Breeds.beastmen_ungor_archer,
@@ -6961,14 +6961,14 @@ BreedPacks = {
 				Breeds.beastmen_ungor_archer,
 				Breeds.beastmen_ungor_archer,
 				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_ungor_archer,
-			},
+				Breeds.beastmen_ungor_archer
+			}
 		},
-		roof_spawning_allowed = true,
+		roof_spawning_allowed = true
 	},
 	beastmen_elites = {
 		patrol_overrides = {
-			patrol_chance = 1,
+			patrol_chance = 1
 		},
 		zone_checks = {
 			clamp_breeds_hi = {
@@ -6976,322 +6976,322 @@ BreedPacks = {
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				hard = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							8,
-							10,
+							10
 						},
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				harder = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							10,
-							12,
+							12
 						},
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				hardest = {
 					{
 						{
 							2,
-							4,
+							4
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
-					},
+						Breeds.beastmen_gor
+					}
 				},
 				cataclysm = {
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
-					},
+						Breeds.beastmen_gor
+					}
 				},
 				cataclysm_2 = {
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
-					},
+						Breeds.beastmen_gor
+					}
 				},
 				cataclysm_3 = {
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
-					},
+						Breeds.beastmen_gor
+					}
 				},
 				versus_base = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							8,
-							10,
+							10
 						},
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
-				},
+						Breeds.beastmen_ungor
+					}
+				}
 			},
 			clamp_breeds_low = {
 				normal = {
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
+						Breeds.beastmen_ungor
 					},
 					{
 						{
 							0,
-							0,
+							0
 						},
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				hard = {
 					{
 						{
 							0,
-							2,
+							2
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
+						Breeds.beastmen_ungor
 					},
 					{
 						{
 							3,
-							5,
+							5
 						},
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				harder = {
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							3,
-							4,
+							4
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
+						Breeds.beastmen_ungor
 					},
 					{
 						{
 							3,
-							5,
+							5
 						},
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				hardest = {
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				cataclysm = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				cataclysm_2 = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				cataclysm_3 = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				versus_base = {
 					{
 						{
 							0,
-							2,
+							2
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
+						Breeds.beastmen_ungor
 					},
 					{
 						{
 							3,
-							5,
+							5
 						},
 						"beastmen_ungor_archer",
-						Breeds.beastmen_ungor,
-					},
-				},
-			},
+						Breeds.beastmen_ungor
+					}
+				}
+			}
 		},
 		{
 			spawn_weight = 1,
 			members = {
-				Breeds.beastmen_gor,
-			},
+				Breeds.beastmen_gor
+			}
 		},
 		{
 			spawn_weight = 10,
 			members = {
 				Breeds.beastmen_bestigor,
-				Breeds.beastmen_gor,
-			},
+				Breeds.beastmen_gor
+			}
 		},
 		{
 			spawn_weight = 10,
 			members = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_bestigor,
-				Breeds.beastmen_bestigor,
-			},
+				Breeds.beastmen_bestigor
+			}
 		},
 		{
 			spawn_weight = 5,
 			members = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_bestigor,
-				Breeds.beastmen_gor,
-			},
+				Breeds.beastmen_gor
+			}
 		},
 		{
 			spawn_weight = 10,
@@ -7299,8 +7299,8 @@ BreedPacks = {
 				Breeds.beastmen_gor,
 				Breeds.beastmen_gor,
 				Breeds.beastmen_bestigor,
-				Breeds.beastmen_bestigor,
-			},
+				Breeds.beastmen_bestigor
+			}
 		},
 		{
 			spawn_weight = 5,
@@ -7308,8 +7308,8 @@ BreedPacks = {
 				Breeds.beastmen_ungor,
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_bestigor,
-				Breeds.beastmen_bestigor,
-			},
+				Breeds.beastmen_bestigor
+			}
 		},
 		{
 			spawn_weight = 10,
@@ -7317,8 +7317,8 @@ BreedPacks = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_bestigor,
-				Breeds.beastmen_bestigor,
-			},
+				Breeds.beastmen_bestigor
+			}
 		},
 		{
 			spawn_weight = 10,
@@ -7326,8 +7326,8 @@ BreedPacks = {
 				Breeds.beastmen_gor,
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_bestigor,
-				Breeds.beastmen_bestigor,
-			},
+				Breeds.beastmen_bestigor
+			}
 		},
 		{
 			spawn_weight = 5,
@@ -7337,8 +7337,8 @@ BreedPacks = {
 				Breeds.beastmen_gor,
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_bestigor,
-				Breeds.beastmen_bestigor,
-			},
+				Breeds.beastmen_bestigor
+			}
 		},
 		{
 			spawn_weight = 5,
@@ -7350,14 +7350,14 @@ BreedPacks = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_gor,
-				Breeds.beastmen_gor,
-			},
+				Breeds.beastmen_gor
+			}
 		},
-		roof_spawning_allowed = true,
+		roof_spawning_allowed = true
 	},
 	beastmen_light = {
 		patrol_overrides = {
-			patrol_chance = 1,
+			patrol_chance = 1
 		},
 		zone_checks = {
 			clamp_breeds_hi = {
@@ -7365,450 +7365,450 @@ BreedPacks = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
+						Breeds.beastmen_ungor
 					},
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				hard = {
 					{
 						{
 							3,
-							4,
+							4
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
+						Breeds.beastmen_ungor
 					},
 					{
 						{
 							0,
-							2,
+							2
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							2,
-							5,
+							5
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				harder = {
 					{
 						{
 							5,
-							6,
+							6
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
+						Breeds.beastmen_ungor
 					},
 					{
 						{
 							1,
-							3,
+							3
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							4,
-							6,
+							6
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				hardest = {
 					{
 						{
 							7,
-							8,
+							8
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
+						Breeds.beastmen_ungor
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							10,
-							12,
+							12
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				cataclysm = {
 					{
 						{
 							7,
-							8,
+							8
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
+						Breeds.beastmen_ungor
 					},
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							10,
-							12,
+							12
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				cataclysm_2 = {
 					{
 						{
 							7,
-							8,
+							8
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
+						Breeds.beastmen_ungor
 					},
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							10,
-							12,
+							12
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				cataclysm_3 = {
 					{
 						{
 							7,
-							8,
+							8
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
+						Breeds.beastmen_ungor
 					},
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							10,
-							12,
+							12
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				versus_base = {
 					{
 						{
 							3,
-							4,
+							4
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
+						Breeds.beastmen_ungor
 					},
 					{
 						{
 							0,
-							2,
+							2
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							2,
-							5,
+							5
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
-					},
-				},
+						Breeds.beastmen_ungor
+					}
+				}
 			},
 			clamp_breeds_low = {
 				normal = {
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
+						Breeds.beastmen_ungor
 					},
 					{
 						{
 							0,
-							1,
+							1
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				hard = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
+						Breeds.beastmen_ungor
 					},
 					{
 						{
 							0,
-							2,
+							2
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				harder = {
 					{
 						{
 							3,
-							4,
+							4
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
+						Breeds.beastmen_ungor
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							3,
-							4,
+							4
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				hardest = {
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
+						Breeds.beastmen_ungor
 					},
 					{
 						{
 							1,
-							2,
+							2
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				cataclysm = {
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
+						Breeds.beastmen_ungor
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				cataclysm_2 = {
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
+						Breeds.beastmen_ungor
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				cataclysm_3 = {
 					{
 						{
 							4,
-							5,
+							5
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
+						Breeds.beastmen_ungor
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							6,
-							8,
+							8
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
-					},
+						Breeds.beastmen_ungor
+					}
 				},
 				versus_base = {
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
+						Breeds.beastmen_ungor
 					},
 					{
 						{
 							0,
-							2,
+							2
 						},
 						"beastmen_bestigor",
-						Breeds.beastmen_gor,
+						Breeds.beastmen_gor
 					},
 					{
 						{
 							2,
-							3,
+							3
 						},
 						"beastmen_gor",
-						Breeds.beastmen_ungor,
-					},
-				},
-			},
+						Breeds.beastmen_ungor
+					}
+				}
+			}
 		},
 		{
 			spawn_weight = 1,
 			members = {
-				Breeds.beastmen_gor,
-			},
+				Breeds.beastmen_gor
+			}
 		},
 		{
 			spawn_weight = 10,
 			members = {
 				Breeds.beastmen_ungor,
-				Breeds.beastmen_gor,
-			},
+				Breeds.beastmen_gor
+			}
 		},
 		{
 			spawn_weight = 10,
 			members = {
 				Breeds.beastmen_ungor_archer,
 				Breeds.beastmen_ungor,
-				Breeds.beastmen_ungor,
-			},
+				Breeds.beastmen_ungor
+			}
 		},
 		{
 			spawn_weight = 5,
 			members = {
 				Breeds.beastmen_gor,
 				Breeds.beastmen_ungor,
-				Breeds.beastmen_ungor,
-			},
+				Breeds.beastmen_ungor
+			}
 		},
 		{
 			spawn_weight = 10,
@@ -7816,8 +7816,8 @@ BreedPacks = {
 				Breeds.beastmen_ungor,
 				Breeds.beastmen_ungor,
 				Breeds.beastmen_ungor,
-				Breeds.beastmen_gor,
-			},
+				Breeds.beastmen_gor
+			}
 		},
 		{
 			spawn_weight = 5,
@@ -7825,8 +7825,8 @@ BreedPacks = {
 				Breeds.beastmen_ungor_archer,
 				Breeds.beastmen_ungor,
 				Breeds.beastmen_ungor,
-				Breeds.beastmen_ungor,
-			},
+				Breeds.beastmen_ungor
+			}
 		},
 		{
 			spawn_weight = 10,
@@ -7834,8 +7834,8 @@ BreedPacks = {
 				Breeds.beastmen_ungor_archer,
 				Breeds.beastmen_ungor,
 				Breeds.beastmen_gor,
-				Breeds.beastmen_gor,
-			},
+				Breeds.beastmen_gor
+			}
 		},
 		{
 			spawn_weight = 10,
@@ -7843,8 +7843,8 @@ BreedPacks = {
 				Breeds.beastmen_gor,
 				Breeds.beastmen_ungor,
 				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_ungor_archer,
-			},
+				Breeds.beastmen_ungor_archer
+			}
 		},
 		{
 			spawn_weight = 5,
@@ -7853,22 +7853,22 @@ BreedPacks = {
 				Breeds.beastmen_gor,
 				Breeds.beastmen_gor,
 				Breeds.beastmen_ungor_archer,
+				Breeds.beastmen_ungor,
+				Breeds.beastmen_bestigor
+			}
+		},
+		{
+			spawn_weight = 5,
+			members = {
+				Breeds.beastmen_ungor,
+				Breeds.beastmen_ungor,
+				Breeds.beastmen_ungor_archer,
+				Breeds.beastmen_bestigor,
 				Breeds.beastmen_ungor,
 				Breeds.beastmen_bestigor,
-			},
-		},
-		{
-			spawn_weight = 5,
-			members = {
-				Breeds.beastmen_ungor,
-				Breeds.beastmen_ungor,
-				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_bestigor,
-				Breeds.beastmen_ungor,
-				Breeds.beastmen_bestigor,
 				Breeds.beastmen_gor,
-				Breeds.beastmen_gor,
-			},
+				Breeds.beastmen_gor
+			}
 		},
 		{
 			spawn_weight = 10,
@@ -7880,10 +7880,10 @@ BreedPacks = {
 				Breeds.beastmen_ungor_archer,
 				Breeds.beastmen_ungor_archer,
 				Breeds.beastmen_ungor_archer,
-				Breeds.beastmen_ungor_archer,
-			},
+				Breeds.beastmen_ungor_archer
+			}
 		},
-		roof_spawning_allowed = true,
+		roof_spawning_allowed = true
 	},
 	code_test = {
 		zone_checks = {
@@ -7893,10 +7893,10 @@ BreedPacks = {
 					{
 						1,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_poison_wind_globadier,
-					},
+						Breeds.skaven_poison_wind_globadier
+					}
 				},
-				versus_base = {},
+				versus_base = {}
 			},
 			clamp_breeds_low = {
 				hi = "LOW ZONE",
@@ -7904,24 +7904,32 @@ BreedPacks = {
 					{
 						1,
 						"skaven_storm_vermin_commander",
-						Breeds.skaven_ratling_gunner,
-					},
+						Breeds.skaven_ratling_gunner
+					}
 				},
-				versus_base = {},
-			},
+				versus_base = {}
+			}
 		},
 		{
 			spawn_weight = 1,
 			members = {
-				Breeds.skaven_storm_vermin_commander,
-			},
+				Breeds.skaven_storm_vermin_commander
+			}
 		},
 		{
 			spawn_weight = 100,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_storm_vermin_commander,
-			},
+				Breeds.skaven_storm_vermin_commander
+			}
+		},
+		{
+			spawn_weight = 1,
+			members = {
+				Breeds.skaven_loot_rat,
+				Breeds.skaven_loot_rat,
+				Breeds.skaven_loot_rat
+			}
 		},
 		{
 			spawn_weight = 1,
@@ -7929,27 +7937,8 @@ BreedPacks = {
 				Breeds.skaven_loot_rat,
 				Breeds.skaven_loot_rat,
 				Breeds.skaven_loot_rat,
-			},
-		},
-		{
-			spawn_weight = 1,
-			members = {
-				Breeds.skaven_loot_rat,
-				Breeds.skaven_loot_rat,
-				Breeds.skaven_loot_rat,
-				Breeds.skaven_loot_rat,
-			},
-		},
-		{
-			spawn_weight = 1,
-			members = {
-				Breeds.skaven_loot_rat,
-				Breeds.skaven_loot_rat,
-				Breeds.skaven_loot_rat,
-				Breeds.skaven_loot_rat,
-				Breeds.skaven_loot_rat,
-				Breeds.skaven_storm_vermin_commander,
-			},
+				Breeds.skaven_loot_rat
+			}
 		},
 		{
 			spawn_weight = 1,
@@ -7959,13 +7948,24 @@ BreedPacks = {
 				Breeds.skaven_loot_rat,
 				Breeds.skaven_loot_rat,
 				Breeds.skaven_loot_rat,
-				Breeds.skaven_loot_rat,
-				Breeds.skaven_loot_rat,
-				Breeds.skaven_loot_rat,
-			},
+				Breeds.skaven_storm_vermin_commander
+			}
 		},
-		roof_spawning_allowed = true,
-	},
+		{
+			spawn_weight = 1,
+			members = {
+				Breeds.skaven_loot_rat,
+				Breeds.skaven_loot_rat,
+				Breeds.skaven_loot_rat,
+				Breeds.skaven_loot_rat,
+				Breeds.skaven_loot_rat,
+				Breeds.skaven_loot_rat,
+				Breeds.skaven_loot_rat,
+				Breeds.skaven_loot_rat
+			}
+		},
+		roof_spawning_allowed = true
+	}
 }
 BackupBreedPack = {
 	pack_type = "backup",
@@ -7975,67 +7975,67 @@ BackupBreedPack = {
 			breed = Breeds.skaven_clan_ratskaven_clan_rat,
 			animation = {
 				"idle",
-				"idle_passive_sit",
-			},
-		},
-	},
+				"idle_passive_sit"
+			}
+		}
+	}
 }
 
-local function calc_num_in_packs(breed_packs, roaming_set_name)
-	local num_breed_packs = #breed_packs
+local function var_0_5(arg_1_0, arg_1_1)
+	local var_1_0 = #arg_1_0
 
-	for i = 1, num_breed_packs do
-		local pack = breed_packs[i]
-		local size = #pack.members
+	for iter_1_0 = 1, var_1_0 do
+		local var_1_1 = arg_1_0[iter_1_0]
+		local var_1_2 = #var_1_1.members
 
-		fassert(InterestPointUnits[size], "The %d pack in BreedPacks[%s] is of size %d. There are no InterestPointUnits matching this size.", i, roaming_set_name, size)
+		fassert(var_0_0[var_1_2], "The %d pack in BreedPacks[%s] is of size %d. There are no InterestPointUnits matching this size.", iter_1_0, arg_1_1, var_1_2)
 
-		pack.members_n = size
+		var_1_1.members_n = var_1_2
 	end
 
-	return num_breed_packs
+	return var_1_0
 end
 
-local function generate_breed_pack_by_size(breed_packs, roaming_set_name)
-	local num_breed_packs = calc_num_in_packs(breed_packs, roaming_set_name)
-	local breed_pack_by_size = {}
-	local by_size = {}
+local function var_0_6(arg_2_0, arg_2_1)
+	local var_2_0 = var_0_5(arg_2_0, arg_2_1)
+	local var_2_1 = {}
+	local var_2_2 = {}
 
-	for i = 1, num_breed_packs do
-		local pack = breed_packs[i]
-		local size = pack.members_n
+	for iter_2_0 = 1, var_2_0 do
+		local var_2_3 = arg_2_0[iter_2_0]
+		local var_2_4 = var_2_3.members_n
 
-		if not by_size[size] then
-			by_size[size] = {
+		if not var_2_2[var_2_4] then
+			var_2_2[var_2_4] = {
 				packs = {},
-				weights = {},
+				weights = {}
 			}
 		end
 
-		local slot = by_size[size]
-		local packs = slot.packs
+		local var_2_5 = var_2_2[var_2_4]
+		local var_2_6 = var_2_5.packs
 
-		packs[#packs + 1] = pack
-		slot.weights[#slot.weights + 1] = pack.spawn_weight
+		var_2_6[#var_2_6 + 1] = var_2_3
+		var_2_5.weights[#var_2_5.weights + 1] = var_2_3.spawn_weight
 	end
 
-	for size, slot in pairs(by_size) do
-		local prob, alias = LoadedDice.create(slot.weights, false)
+	for iter_2_1, iter_2_2 in pairs(var_2_2) do
+		local var_2_7, var_2_8 = LoadedDice.create(iter_2_2.weights, false)
 
-		breed_pack_by_size[size] = {
-			packs = slot.packs,
-			prob = prob,
-			alias = alias,
+		var_2_1[iter_2_1] = {
+			packs = iter_2_2.packs,
+			prob = var_2_7,
+			alias = var_2_8
 		}
 	end
 
-	return breed_pack_by_size
+	return var_2_1
 end
 
 BreedPacksBySize = {}
 
-for roaming_set_name, breed_packs in pairs(BreedPacks) do
-	BreedPacksBySize[roaming_set_name] = generate_breed_pack_by_size(breed_packs, roaming_set_name)
+for iter_0_0, iter_0_1 in pairs(BreedPacks) do
+	BreedPacksBySize[iter_0_0] = var_0_6(iter_0_1, iter_0_0)
 end
 
 InterestPointUnitsLookup = InterestPointUnitsLookup or false
@@ -8044,44 +8044,44 @@ InterestPointPickListIndexLookup = InterestPointPickListIndexLookup or {}
 InterestPointPickList = InterestPointPickList or false
 
 if #InterestPointPickListIndexLookup == 0 then
-	local weight_lookup = InterestPointPickList or {}
-	local items = 0
+	local var_0_7 = InterestPointPickList or {}
+	local var_0_8 = 0
 
-	for i, data in ipairs(InterestPointUnits) do
-		if data then
-			for j = 1, data.spawn_weight do
-				items = items + 1
-				weight_lookup[items] = i
+	for iter_0_2, iter_0_3 in ipairs(var_0_0) do
+		if iter_0_3 then
+			for iter_0_4 = 1, iter_0_3.spawn_weight do
+				var_0_8 = var_0_8 + 1
+				var_0_7[var_0_8] = iter_0_2
 			end
 
-			for j = 1, #data do
-				local unit_name = data[j]
+			for iter_0_5 = 1, #iter_0_3 do
+				local var_0_9 = iter_0_3[iter_0_5]
 
-				SizeOfInterestPoint[unit_name] = i
+				SizeOfInterestPoint[var_0_9] = iter_0_2
 			end
 
-			InterestPointPickListIndexLookup[i] = items
+			InterestPointPickListIndexLookup[iter_0_2] = var_0_8
 
-			for roaming_set_name, breed_packs in pairs(BreedPacks) do
-				fassert(BreedPacksBySize[roaming_set_name][i], "BreedPacks[%s] is missing a pack of size %d. It must be defined, since InterestPointUnits expects there to be a pack like that.", roaming_set_name, i)
+			for iter_0_6, iter_0_7 in pairs(BreedPacks) do
+				fassert(BreedPacksBySize[iter_0_6][iter_0_2], "BreedPacks[%s] is missing a pack of size %d. It must be defined, since InterestPointUnits expects there to be a pack like that.", iter_0_6, iter_0_2)
 			end
 		else
-			InterestPointPickListIndexLookup[i] = InterestPointPickListIndexLookup[#InterestPointPickListIndexLookup]
+			InterestPointPickListIndexLookup[iter_0_2] = InterestPointPickListIndexLookup[#InterestPointPickListIndexLookup]
 		end
 	end
 
-	InterestPointPickList = weight_lookup
+	InterestPointPickList = var_0_7
 end
 
-for pack_name, pack_data in pairs(BreedPacks) do
-	local zone_checks = pack_data.zone_checks
-	local clamp_breeds_hi = zone_checks.clamp_breeds_hi
+for iter_0_8, iter_0_9 in pairs(BreedPacks) do
+	local var_0_10 = iter_0_9.zone_checks
+	local var_0_11 = var_0_10.clamp_breeds_hi
 
-	fassert(not clamp_breeds_hi or clamp_breeds_hi.versus_base, "[BreedPacks] '%s' is missing a 'clamp_breeds_hi' setting for versus and won't be able to limit amount of breeds.", pack_name)
+	fassert(not var_0_11 or var_0_11.versus_base, "[BreedPacks] '%s' is missing a 'clamp_breeds_hi' setting for versus and won't be able to limit amount of breeds.", iter_0_8)
 
-	local clamp_breeds_low = zone_checks.clamp_breeds_low
+	local var_0_12 = var_0_10.clamp_breeds_low
 
-	fassert(not clamp_breeds_low or clamp_breeds_low.versus_base, "[BreedPacks] '%s' is missing a 'clamp_breeds_low' setting for versus and won't be able to limit amount of breeds.", pack_name)
+	fassert(not var_0_12 or var_0_12.versus_base, "[BreedPacks] '%s' is missing a 'clamp_breeds_low' setting for versus and won't be able to limit amount of breeds.", iter_0_8)
 end
 
 BenchmarkSettings.demo_mode_overrides()

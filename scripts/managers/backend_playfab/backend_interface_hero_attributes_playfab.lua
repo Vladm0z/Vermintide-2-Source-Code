@@ -1,109 +1,107 @@
-﻿-- chunkname: @scripts/managers/backend_playfab/backend_interface_hero_attributes_playfab.lua
+-- chunkname: @scripts/managers/backend_playfab/backend_interface_hero_attributes_playfab.lua
 
-local PlayFabClientApi = require("PlayFab.PlayFabClientApi")
+local var_0_0 = require("PlayFab.PlayFabClientApi")
 
 BackendInterfaceHeroAttributesPlayFab = class(BackendInterfaceHeroAttributesPlayFab)
 
-local DEFAULT_READ_ONLY_ATTRIBUTES = {
-	bright_wizard_experience = 0,
-	bright_wizard_experience_pool = 0,
-	bright_wizard_prestige = 0,
-	dwarf_ranger_experience = 0,
-	dwarf_ranger_experience_pool = 0,
-	dwarf_ranger_prestige = 0,
+local var_0_1 = {
+	wood_elf_experience_pool = 0,
 	empire_soldier_experience = 0,
-	empire_soldier_experience_pool = 0,
+	wood_elf_experience = 0,
+	dwarf_ranger_experience = 0,
+	bright_wizard_prestige = 0,
+	dwarf_ranger_prestige = 0,
 	empire_soldier_prestige = 0,
-	empire_soldier_tutorial_experience = 0,
+	bright_wizard_experience = 0,
+	witch_hunter_prestige = 0,
 	empire_soldier_tutorial_experience_pool = 0,
 	empire_soldier_tutorial_prestige = 0,
-	witch_hunter_experience = 0,
 	witch_hunter_experience_pool = 0,
-	witch_hunter_prestige = 0,
-	wood_elf_experience = 0,
-	wood_elf_experience_pool = 0,
+	empire_soldier_experience_pool = 0,
 	wood_elf_prestige = 0,
+	bright_wizard_experience_pool = 0,
+	witch_hunter_experience = 0,
+	dwarf_ranger_experience_pool = 0,
+	empire_soldier_tutorial_experience = 0
 }
-local DEFAULT_CHARACTER_ATTRIBUTES = {
-	bot_career = 1,
+local var_0_2 = {
 	career = 1,
+	bot_career = 1
 }
 
-BackendInterfaceHeroAttributesPlayFab.init = function (self, backend_mirror)
-	self._attributes = {}
-	self._attributes_to_save = {}
-	self._backend_mirror = backend_mirror
+function BackendInterfaceHeroAttributesPlayFab.init(arg_1_0, arg_1_1)
+	arg_1_0._attributes = {}
+	arg_1_0._attributes_to_save = {}
+	arg_1_0._backend_mirror = arg_1_1
 
-	self:_refresh()
+	arg_1_0:_refresh()
 
-	self._initialized = true
+	arg_1_0._initialized = true
 end
 
-BackendInterfaceHeroAttributesPlayFab.make_dirty = function (self)
-	self._dirty = true
+function BackendInterfaceHeroAttributesPlayFab.make_dirty(arg_2_0)
+	arg_2_0._dirty = true
 end
 
-BackendInterfaceHeroAttributesPlayFab._refresh = function (self)
-	table.clear(self._attributes)
+function BackendInterfaceHeroAttributesPlayFab._refresh(arg_3_0)
+	table.clear(arg_3_0._attributes)
 
-	local mirror = self._backend_mirror
+	local var_3_0 = arg_3_0._backend_mirror
 
 	if script_data.honduras_demo then
-		for attribute_name, default_value in pairs(DEFAULT_DEMO_ATTRIBUTES) do
-			self._attributes[attribute_name] = default_value
+		for iter_3_0, iter_3_1 in pairs(DEFAULT_DEMO_ATTRIBUTES) do
+			arg_3_0._attributes[iter_3_0] = iter_3_1
 		end
 	else
-		for attribute_name, default_value in pairs(DEFAULT_READ_ONLY_ATTRIBUTES) do
-			local backend_value = mirror:get_read_only_data(attribute_name)
+		for iter_3_2, iter_3_3 in pairs(var_0_1) do
+			local var_3_1 = var_3_0:get_read_only_data(iter_3_2)
 
-			self._attributes[attribute_name] = backend_value or default_value
+			arg_3_0._attributes[iter_3_2] = var_3_1 or iter_3_3
 		end
 	end
 
-	local characters_data = mirror:get_characters_data()
-	local attributes = self._attributes
+	local var_3_2 = var_3_0:get_characters_data()
+	local var_3_3 = arg_3_0._attributes
 
-	for character, data in pairs(characters_data) do
-		for attribute_name, default_value in pairs(DEFAULT_CHARACTER_ATTRIBUTES) do
-			local key = string.format("%s_%s", character, attribute_name)
-
-			attributes[key] = data[attribute_name] or default_value
+	for iter_3_4, iter_3_5 in pairs(var_3_2) do
+		for iter_3_6, iter_3_7 in pairs(var_0_2) do
+			var_3_3[string.format("%s_%s", iter_3_4, iter_3_6)] = iter_3_5[iter_3_6] or iter_3_7
 		end
 	end
 
-	self._dirty = false
+	arg_3_0._dirty = false
 end
 
-BackendInterfaceHeroAttributesPlayFab.ready = function (self)
-	return self._initialized
+function BackendInterfaceHeroAttributesPlayFab.ready(arg_4_0)
+	return arg_4_0._initialized
 end
 
-BackendInterfaceHeroAttributesPlayFab.update = function (self, dt)
+function BackendInterfaceHeroAttributesPlayFab.update(arg_5_0, arg_5_1)
 	return
 end
 
-BackendInterfaceHeroAttributesPlayFab.get = function (self, hero, attribute)
-	if self._dirty then
-		self:_refresh()
+function BackendInterfaceHeroAttributesPlayFab.get(arg_6_0, arg_6_1, arg_6_2)
+	if arg_6_0._dirty then
+		arg_6_0:_refresh()
 	end
 
-	local key = hero .. "_" .. attribute
+	local var_6_0 = arg_6_1 .. "_" .. arg_6_2
 
-	return self._attributes[key]
+	return arg_6_0._attributes[var_6_0]
 end
 
-BackendInterfaceHeroAttributesPlayFab.set = function (self, hero, attribute, value)
-	fassert(value ~= nil, "Trying to set a hero attribute to nil, don't do this")
+function BackendInterfaceHeroAttributesPlayFab.set(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	fassert(arg_7_3 ~= nil, "Trying to set a hero attribute to nil, don't do this")
 
-	local mirror = self._backend_mirror
+	local var_7_0 = arg_7_0._backend_mirror
 
-	if DEFAULT_CHARACTER_ATTRIBUTES[attribute] then
-		mirror:set_career_read_only_data(hero, attribute, value, nil, false)
+	if var_0_2[arg_7_2] then
+		var_7_0:set_career_read_only_data(arg_7_1, arg_7_2, arg_7_3, nil, false)
 	else
-		local key = hero .. "_" .. attribute
+		local var_7_1 = arg_7_1 .. "_" .. arg_7_2
 
-		mirror:set_read_only_data(key, value, true)
+		var_7_0:set_read_only_data(var_7_1, arg_7_3, true)
 	end
 
-	self._dirty = true
+	arg_7_0._dirty = true
 end

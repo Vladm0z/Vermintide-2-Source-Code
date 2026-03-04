@@ -1,34 +1,34 @@
-﻿-- chunkname: @PlayFab/IPlayFabHttps.lua
+-- chunkname: @PlayFab/IPlayFabHttps.lua
 
-local PlayFabSettings = require("PlayFab.PlayFabSettings")
-local IPlayFabHttps = {
-	_defaultHttpsFile = "PlayFab.PlayFabHttps_LuaSec",
+local var_0_0 = require("PlayFab.PlayFabSettings")
+local var_0_1 = {
+	_defaultHttpsFile = "PlayFab.PlayFabHttps_LuaSec"
 }
 
-IPlayFabHttps.SetHttp = function (httpInterface)
-	if httpInterface then
-		IPlayFabHttps._internalHttp = httpInterface
+function var_0_1.SetHttp(arg_1_0)
+	if arg_1_0 then
+		var_0_1._internalHttp = arg_1_0
 
 		return
 	end
 
-	if IPlayFabHttps._defaultHttpsFile then
-		IPlayFabHttps._internalHttp = require(IPlayFabHttps._defaultHttpsFile)
+	if var_0_1._defaultHttpsFile then
+		var_0_1._internalHttp = require(var_0_1._defaultHttpsFile)
 
 		return
 	end
 end
 
-IPlayFabHttps.MakePlayFabApiCall = function (urlPath, request, authKey, authValue, onSuccess, onError)
-	if IPlayFabHttps._internalHttp == nil then
-		IPlayFabHttps.SetHttp(nil)
+function var_0_1.MakePlayFabApiCall(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	if var_0_1._internalHttp == nil then
+		var_0_1.SetHttp(nil)
 	end
 
-	if PlayFabSettings.settings.titleId == nil then
+	if var_0_0.settings.titleId == nil then
 		error("PlayFabSettings.settings.titleId must be set before making API calls")
 	end
 
-	IPlayFabHttps._internalHttp.MakePlayFabApiCall(urlPath, request, authKey, authValue, onSuccess, onError)
+	var_0_1._internalHttp.MakePlayFabApiCall(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 end
 
-return IPlayFabHttps
+return var_0_1

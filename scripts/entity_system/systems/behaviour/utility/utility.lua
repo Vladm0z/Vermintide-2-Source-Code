@@ -1,58 +1,53 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/utility/utility.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/utility/utility.lua
 
 require("scripts/entity_system/systems/behaviour/utility/utility_considerations")
 
 Utility = Utility or {}
 
-local Utility = Utility
+local var_0_0 = Utility
 
-Utility.GetUtilityValueFromSpline = function (spline, norm_value)
-	for i = 3, #spline, 2 do
-		if norm_value <= spline[i] then
-			local x1 = spline[i]
-			local y1 = spline[i + 1]
-			local x2 = spline[i - 2]
-			local y2 = spline[i - 1]
-			local m = (y1 - y2) / (x1 - x2)
-			local y = m * (norm_value - x1) + y1
+function var_0_0.GetUtilityValueFromSpline(arg_1_0, arg_1_1)
+	for iter_1_0 = 3, #arg_1_0, 2 do
+		if arg_1_1 <= arg_1_0[iter_1_0] then
+			local var_1_0 = arg_1_0[iter_1_0]
+			local var_1_1 = arg_1_0[iter_1_0 + 1]
+			local var_1_2 = arg_1_0[iter_1_0 - 2]
 
-			return y
+			return (var_1_1 - arg_1_0[iter_1_0 - 1]) / (var_1_0 - var_1_2) * (arg_1_1 - var_1_0) + var_1_1
 		end
 	end
 
-	return spline[#spline]
+	return arg_1_0[#arg_1_0]
 end
 
-Utility.get_action_utility = function (breed_action, action_name, blackboard, from_draw_ai_behavior)
-	local total_utility = 1
-	local blackboard_action_data = blackboard.utility_actions[action_name]
-	local get_utility_from_spline = Utility.GetUtilityValueFromSpline
-	local considerations = breed_action.considerations
+function var_0_0.get_action_utility(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = 1
+	local var_2_1 = arg_2_2.utility_actions[arg_2_1]
+	local var_2_2 = var_0_0.GetUtilityValueFromSpline
+	local var_2_3 = arg_2_0.considerations
 
-	for name, consideration in pairs(considerations) do
-		local input = consideration.blackboard_input
-		local blackboard_value = blackboard_action_data[input] or blackboard[input]
-		local utility = 0
+	for iter_2_0, iter_2_1 in pairs(var_2_3) do
+		local var_2_4 = iter_2_1.blackboard_input
+		local var_2_5 = var_2_1[var_2_4] or arg_2_2[var_2_4]
+		local var_2_6 = 0
 
-		if consideration.is_condition then
-			local invert = consideration.invert
+		if iter_2_1.is_condition then
+			local var_2_7 = iter_2_1.invert
 
-			utility = blackboard_value and (invert and 0 or 1) or invert and 1 or 0
+			var_2_6 = var_2_5 and (var_2_7 and 0 or 1) or var_2_7 and 1 or 0
 		else
-			local min_value = consideration.min_value or 0
-			local norm_value = math.clamp((blackboard_value - min_value) / (consideration.max_value - min_value), 0, 1)
+			local var_2_8 = iter_2_1.min_value or 0
+			local var_2_9 = math.clamp((var_2_5 - var_2_8) / (iter_2_1.max_value - var_2_8), 0, 1)
 
-			utility = get_utility_from_spline(consideration.spline, norm_value)
+			var_2_6 = var_2_2(iter_2_1.spline, var_2_9)
 		end
 
-		if utility <= 0 then
+		if var_2_6 <= 0 then
 			return 0
 		end
 
-		total_utility = total_utility * utility
+		var_2_0 = var_2_0 * var_2_6
 	end
 
-	total_utility = total_utility * breed_action.action_weight
-
-	return total_utility
+	return var_2_0 * arg_2_0.action_weight
 end

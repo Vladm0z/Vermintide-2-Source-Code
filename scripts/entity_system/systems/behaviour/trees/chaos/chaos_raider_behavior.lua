@@ -1,90 +1,90 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_raider_behavior.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_raider_behavior.lua
 
-local ACTIONS = BreedActions.chaos_raider
-local CHAOS_RAIDER_COMBAT = {
+local var_0_0 = BreedActions.chaos_raider
+local var_0_1 = {
 	"BTUtilityNode",
 	{
 		"BTClanRatFollowAction",
 		name = "follow",
-		action_data = ACTIONS.follow,
+		action_data = var_0_0.follow
 	},
 	{
 		"BTStormVerminAttackAction",
-		condition = "ask_target_before_attacking",
 		name = "running_attack",
-		action_data = ACTIONS.running_attack,
+		condition = "ask_target_before_attacking",
+		action_data = var_0_0.running_attack
 	},
 	{
 		"BTRandom",
-		action_data = ACTIONS.moving_attack,
+		action_data = var_0_0.moving_attack,
 		{
 			"BTStormVerminAttackAction",
-			condition = "ask_target_before_attacking",
+			weight = 1,
 			name = "running_special_attack_sweep",
-			weight = 1,
-			action_data = ACTIONS.special_attack_sweep,
+			condition = "ask_target_before_attacking",
+			action_data = var_0_0.special_attack_sweep
 		},
 		{
 			"BTStormVerminAttackAction",
-			condition = "ask_target_before_attacking",
-			name = "running_special_attack_cleave",
 			weight = 1,
-			action_data = ACTIONS.special_attack_cleave,
+			name = "running_special_attack_cleave",
+			condition = "ask_target_before_attacking",
+			action_data = var_0_0.special_attack_cleave
 		},
-		name = "moving_attack",
+		name = "moving_attack"
 	},
 	{
 		"BTRandom",
-		action_data = ACTIONS.special_attack,
+		action_data = var_0_0.special_attack,
 		{
 			"BTStormVerminAttackAction",
-			condition = "ask_target_before_attacking",
+			weight = 1,
 			name = "special_attack_cleave",
-			weight = 1,
-			action_data = ACTIONS.special_attack_cleave,
+			condition = "ask_target_before_attacking",
+			action_data = var_0_0.special_attack_cleave
 		},
 		{
 			"BTStormVerminAttackAction",
-			condition = "ask_target_before_attacking",
-			name = "special_attack_sweep",
 			weight = 1,
-			action_data = ACTIONS.special_attack_sweep,
+			name = "special_attack_sweep",
+			condition = "ask_target_before_attacking",
+			action_data = var_0_0.special_attack_sweep
 		},
-		name = "special_attack",
+		name = "special_attack"
 	},
 	{
 		"BTStormVerminPushAction",
 		name = "push_attack",
-		action_data = ACTIONS.push_attack,
+		action_data = var_0_0.push_attack
 	},
 	condition = "confirmed_player_sighting",
-	name = "in_combat",
+	name = "in_combat"
 }
-local CHAOS_RAIDER_SMART_OBJECT = {
+local var_0_2 = {
 	"BTSelector",
 	{
 		"BTTeleportAction",
 		condition = "at_teleport_smartobject",
-		name = "teleport",
+		name = "teleport"
 	},
 	{
 		"BTClimbAction",
 		condition = "at_climb_smartobject",
-		name = "climb",
+		name = "climb"
 	},
 	{
 		"BTJumpAcrossAction",
 		condition = "at_jump_smartobject",
-		name = "jump_across",
+		name = "jump_across"
 	},
 	{
 		"BTSmashDoorAction",
-		condition = "at_door_smartobject",
 		name = "smash_door",
-		action_data = ACTIONS.smash_door,
+		condition = "at_door_smartobject",
+		action_data = var_0_0.smash_door
 	},
 	condition = "at_smartobject",
-	name = "smartobject",
+	name = "smartobject"
 }
 
 BreedBehaviors.raider = {
@@ -92,117 +92,117 @@ BreedBehaviors.raider = {
 	{
 		"BTSpawningAction",
 		condition = "spawn",
-		name = "spawn",
+		name = "spawn"
 	},
 	{
 		"BTInVortexAction",
 		condition = "in_vortex",
-		name = "in_vortex",
+		name = "in_vortex"
 	},
 	{
 		"BTFallAction",
 		condition = "is_falling",
-		name = "falling",
+		name = "falling"
 	},
 	{
 		"BTStaggerAction",
-		condition = "stagger",
 		name = "stagger",
-		action_data = ACTIONS.stagger,
+		condition = "stagger",
+		action_data = var_0_0.stagger
 	},
 	{
 		"BTBlockedAction",
-		condition = "blocked",
 		name = "blocked",
-		action_data = ACTIONS.blocked,
+		condition = "blocked",
+		action_data = var_0_0.blocked
 	},
-	CHAOS_RAIDER_SMART_OBJECT,
-	CHAOS_RAIDER_COMBAT,
+	var_0_2,
+	var_0_1,
 	{
 		"BTAlertedAction",
-		condition = "player_spotted",
 		name = "alerted",
-		action_data = ACTIONS.alerted,
+		condition = "player_spotted",
+		action_data = var_0_0.alerted
 	},
 	{
 		"BTMoveToGoalAction",
-		condition = "has_goal_destination",
 		name = "move_to_goal",
-		action_data = ACTIONS.follow,
+		condition = "has_goal_destination",
+		action_data = var_0_0.follow
 	},
 	{
 		"BTIdleAction",
 		condition = "no_target",
-		name = "idle",
+		name = "idle"
 	},
 	{
 		"BTFallbackIdleAction",
-		name = "fallback_idle",
+		name = "fallback_idle"
 	},
-	name = "horde",
+	name = "horde"
 }
 BreedBehaviors.raider_tutorial = {
 	"BTSelector",
 	{
 		"BTSpawningAction",
 		condition = "spawn",
-		name = "spawn",
+		name = "spawn"
 	},
 	{
 		"BTFallAction",
 		condition = "is_falling",
-		name = "falling",
+		name = "falling"
 	},
 	{
 		"BTStaggerAction",
-		condition = "stagger",
 		name = "stagger",
-		action_data = ACTIONS.stagger,
+		condition = "stagger",
+		action_data = var_0_0.stagger
 	},
 	{
 		"BTBlockedAction",
-		condition = "blocked",
 		name = "blocked",
-		action_data = ACTIONS.blocked,
+		condition = "blocked",
+		action_data = var_0_0.blocked
 	},
-	CHAOS_RAIDER_SMART_OBJECT,
+	var_0_2,
 	{
 		"BTUtilityNode",
 		{
 			"BTClanRatFollowAction",
 			name = "follow",
-			action_data = ACTIONS.follow,
+			action_data = var_0_0.follow
 		},
 		{
 			"BTStormVerminAttackAction",
-			condition = "ask_target_before_attacking",
-			name = "special_attack_cleave_tutorial",
 			weight = 1,
-			action_data = ACTIONS.special_attack_cleave_tutorial,
+			name = "special_attack_cleave_tutorial",
+			condition = "ask_target_before_attacking",
+			action_data = var_0_0.special_attack_cleave_tutorial
 		},
 		condition = "confirmed_player_sighting",
-		name = "in_combat",
+		name = "in_combat"
 	},
 	{
 		"BTAlertedAction",
-		condition = "player_spotted",
 		name = "alerted",
-		action_data = ACTIONS.alerted,
+		condition = "player_spotted",
+		action_data = var_0_0.alerted
 	},
 	{
 		"BTMoveToGoalAction",
-		condition = "has_goal_destination",
 		name = "move_to_goal",
-		action_data = ACTIONS.follow,
+		condition = "has_goal_destination",
+		action_data = var_0_0.follow
 	},
 	{
 		"BTIdleAction",
 		condition = "no_target",
-		name = "idle",
+		name = "idle"
 	},
 	{
 		"BTFallbackIdleAction",
-		name = "fallback_idle",
+		name = "fallback_idle"
 	},
-	name = "horde",
+	name = "horde"
 }

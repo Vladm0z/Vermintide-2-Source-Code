@@ -1,139 +1,140 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/projectiles/generic_impact_projectile_unit_extension.lua
+-- chunkname: @scripts/unit_extensions/weapons/projectiles/generic_impact_projectile_unit_extension.lua
 
 GenericImpactProjectileUnitExtension = class(GenericImpactProjectileUnitExtension)
 
-GenericImpactProjectileUnitExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self.world = extension_init_context.world
-	self.unit = unit
-	self.owner_unit = extension_init_data.owner_unit
-	self.damage_source = extension_init_data.damage_source
-	self.impact_template_name = extension_init_data.impact_template_name
+function GenericImpactProjectileUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.world = arg_1_1.world
+	arg_1_0.unit = arg_1_2
+	arg_1_0.owner_unit = arg_1_3.owner_unit
+	arg_1_0.damage_source = arg_1_3.damage_source
+	arg_1_0.impact_template_name = arg_1_3.impact_template_name
 
-	assert(self.impact_template_name)
+	assert(arg_1_0.impact_template_name)
 
-	self.is_server = Managers.player.is_server
-	self.network_manager = Managers.state.network
-	self.explosion_template_name = extension_init_data.explosion_template_name
+	arg_1_0.is_server = Managers.player.is_server
+	arg_1_0.network_manager = Managers.state.network
+	arg_1_0.explosion_template_name = arg_1_3.explosion_template_name
 
-	Unit.flow_event(unit, "lua_projectile_init")
+	Unit.flow_event(arg_1_2, "lua_projectile_init")
 end
 
-GenericImpactProjectileUnitExtension.extensions_ready = function (self, world, unit)
-	self.locomotion_extension = ScriptUnit.extension(unit, "projectile_locomotion_system")
-	self.impact_extension = ScriptUnit.has_extension(unit, "projectile_impact_system")
+function GenericImpactProjectileUnitExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+	arg_2_0.locomotion_extension = ScriptUnit.extension(arg_2_2, "projectile_locomotion_system")
+	arg_2_0.impact_extension = ScriptUnit.has_extension(arg_2_2, "projectile_impact_system")
 end
 
-GenericImpactProjectileUnitExtension.destroy = function (self)
-	Unit.flow_event(self.unit, "lua_projectile_end")
+function GenericImpactProjectileUnitExtension.destroy(arg_3_0)
+	Unit.flow_event(arg_3_0.unit, "lua_projectile_end")
 end
 
-GenericImpactProjectileUnitExtension.update = function (self, unit, input, _, context, t)
-	local impact_extension = self.impact_extension
+function GenericImpactProjectileUnitExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	local var_4_0 = arg_4_0.impact_extension
 
-	if not impact_extension then
+	if not var_4_0 then
 		return
 	end
 
-	local recent_impacts, num_impacts = impact_extension:recent_impacts()
+	local var_4_1, var_4_2 = var_4_0:recent_impacts()
 
-	if num_impacts == 0 then
+	if var_4_2 == 0 then
 		return
 	end
 
-	self:_execute_impact(recent_impacts, num_impacts, 1)
+	arg_4_0:_execute_impact(var_4_1, var_4_2, 1)
 
-	if self.impact_template_name == "vfx_impact" then
+	if arg_4_0.impact_template_name == "vfx_impact" then
 		return
 	end
 
-	local UNIT = ProjectileImpactDataIndex.UNIT
-	local POSITION = ProjectileImpactDataIndex.POSITION
-	local DIRECTION = ProjectileImpactDataIndex.DIRECTION
-	local NORMAL = ProjectileImpactDataIndex.NORMAL
-	local ACTOR_INDEX = ProjectileImpactDataIndex.ACTOR_INDEX
-	local STRIDE = ProjectileImpactDataIndex.STRIDE
-	local network_manager = self.network_manager
-	local self_unit_id = network_manager:unit_game_object_id(self.unit)
-	local num_units_hits = num_impacts / STRIDE
+	local var_4_3 = ProjectileImpactDataIndex.UNIT
+	local var_4_4 = ProjectileImpactDataIndex.POSITION
+	local var_4_5 = ProjectileImpactDataIndex.DIRECTION
+	local var_4_6 = ProjectileImpactDataIndex.NORMAL
+	local var_4_7 = ProjectileImpactDataIndex.ACTOR_INDEX
+	local var_4_8 = ProjectileImpactDataIndex.STRIDE
+	local var_4_9 = arg_4_0.network_manager
+	local var_4_10 = var_4_9:unit_game_object_id(arg_4_0.unit)
+	local var_4_11 = var_4_2 / var_4_8
 
-	for i = 1, num_units_hits do
-		local j = (i - 1) * STRIDE
-		local unit = recent_impacts[j + UNIT]
-		local position = recent_impacts[j + POSITION]:unbox()
-		local direction = recent_impacts[j + DIRECTION]:unbox()
-		local normal = recent_impacts[j + NORMAL]:unbox()
-		local actor_index = recent_impacts[j + ACTOR_INDEX]
-		local unit_id, is_level_unit = network_manager:game_object_or_level_id(unit)
-		local game_object_id, level_unit_id
+	for iter_4_0 = 1, var_4_11 do
+		local var_4_12 = (iter_4_0 - 1) * var_4_8
+		local var_4_13 = var_4_1[var_4_12 + var_4_3]
+		local var_4_14 = var_4_1[var_4_12 + var_4_4]:unbox()
+		local var_4_15 = var_4_1[var_4_12 + var_4_5]:unbox()
+		local var_4_16 = var_4_1[var_4_12 + var_4_6]:unbox()
+		local var_4_17 = var_4_1[var_4_12 + var_4_7]
+		local var_4_18, var_4_19 = var_4_9:game_object_or_level_id(var_4_13)
+		local var_4_20
+		local var_4_21
 
-		if is_level_unit then
-			game_object_id, level_unit_id = NetworkConstants.game_object_id_max, unit_id
-		elseif unit_id then
-			game_object_id, level_unit_id = unit_id, 0
+		if var_4_19 then
+			var_4_20, var_4_21 = NetworkConstants.game_object_id_max, var_4_18
+		elseif var_4_18 then
+			var_4_20, var_4_21 = var_4_18, 0
 		end
 
-		if unit_id then
-			if self.is_server then
-				network_manager.network_transmit:send_rpc_clients("rpc_generic_impact_projectile_impact", self_unit_id, game_object_id, level_unit_id, position, direction, normal, actor_index, num_units_hits)
+		if var_4_18 then
+			if arg_4_0.is_server then
+				var_4_9.network_transmit:send_rpc_clients("rpc_generic_impact_projectile_impact", var_4_10, var_4_20, var_4_21, var_4_14, var_4_15, var_4_16, var_4_17, var_4_11)
 			else
-				network_manager.network_transmit:send_rpc_server("rpc_generic_impact_projectile_impact", self_unit_id, game_object_id, level_unit_id, position, direction, normal, actor_index, num_units_hits)
+				var_4_9.network_transmit:send_rpc_server("rpc_generic_impact_projectile_impact", var_4_10, var_4_20, var_4_21, var_4_14, var_4_15, var_4_16, var_4_17, var_4_11)
 			end
 		end
 	end
 end
 
-GenericImpactProjectileUnitExtension._execute_impact = function (self, recent_impacts, num_impacts, impact_counter)
-	local impact = ProjectileTemplates.impact_templates[self.impact_template_name]
-	local explosion_template = ExplosionUtils.get_template(self.explosion_template_name)
-	local server_stop = false
+function GenericImpactProjectileUnitExtension._execute_impact(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	local var_5_0 = ProjectileTemplates.impact_templates[arg_5_0.impact_template_name]
+	local var_5_1 = ExplosionUtils.get_template(arg_5_0.explosion_template_name)
+	local var_5_2 = false
 
-	if self.is_server then
-		server_stop = impact.server.execute(self.world, self.damage_source, self.unit, recent_impacts, num_impacts, self.owner_unit, explosion_template, impact_counter)
+	if arg_5_0.is_server then
+		var_5_2 = var_5_0.server.execute(arg_5_0.world, arg_5_0.damage_source, arg_5_0.unit, arg_5_1, arg_5_2, arg_5_0.owner_unit, var_5_1, arg_5_3)
 	end
 
-	local client_stop = impact.client.execute(self.world, self.damage_source, self.unit, recent_impacts, num_impacts, self.owner_unit, explosion_template, impact_counter)
+	local var_5_3 = var_5_0.client.execute(arg_5_0.world, arg_5_0.damage_source, arg_5_0.unit, arg_5_1, arg_5_2, arg_5_0.owner_unit, var_5_1, arg_5_3)
 
-	if server_stop or client_stop then
-		self.locomotion_extension:stop()
+	if var_5_2 or var_5_3 then
+		arg_5_0.locomotion_extension:stop()
 	end
 end
 
-local rpc_dummy_impact = {
+local var_0_0 = {
 	[ProjectileImpactDataIndex.POSITION] = Vector3Box(),
 	[ProjectileImpactDataIndex.DIRECTION] = Vector3Box(),
-	[ProjectileImpactDataIndex.NORMAL] = Vector3Box(),
+	[ProjectileImpactDataIndex.NORMAL] = Vector3Box()
 }
 
-GenericImpactProjectileUnitExtension.impact = function (self, unit, position, direction, normal, actor, impact_counter)
-	rpc_dummy_impact[ProjectileImpactDataIndex.UNIT] = unit
+function GenericImpactProjectileUnitExtension.impact(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
+	var_0_0[ProjectileImpactDataIndex.UNIT] = arg_6_1
 
-	rpc_dummy_impact[ProjectileImpactDataIndex.POSITION]:store(position)
-	rpc_dummy_impact[ProjectileImpactDataIndex.DIRECTION]:store(direction)
-	rpc_dummy_impact[ProjectileImpactDataIndex.NORMAL]:store(normal)
+	var_0_0[ProjectileImpactDataIndex.POSITION]:store(arg_6_2)
+	var_0_0[ProjectileImpactDataIndex.DIRECTION]:store(arg_6_3)
+	var_0_0[ProjectileImpactDataIndex.NORMAL]:store(arg_6_4)
 
-	rpc_dummy_impact[ProjectileImpactDataIndex.ACTOR_INDEX] = actor
+	var_0_0[ProjectileImpactDataIndex.ACTOR_INDEX] = arg_6_5
 
-	self:_execute_impact(rpc_dummy_impact, ProjectileImpactDataIndex.STRIDE, impact_counter)
+	arg_6_0:_execute_impact(var_0_0, ProjectileImpactDataIndex.STRIDE, arg_6_6)
 end
 
-local dummy_impact = {}
+local var_0_1 = {}
 
-GenericImpactProjectileUnitExtension.force_impact = function (self, unit, hit_position)
-	local locomotion_extension = self.locomotion_extension
+function GenericImpactProjectileUnitExtension.force_impact(arg_7_0, arg_7_1, arg_7_2)
+	local var_7_0 = arg_7_0.locomotion_extension
 
-	dummy_impact[ProjectileImpactDataIndex.POSITION] = Vector3Box(hit_position)
+	var_0_1[ProjectileImpactDataIndex.POSITION] = Vector3Box(arg_7_2)
 
-	local impact = ProjectileTemplates.impact_templates[self.impact_template_name]
-	local explosion_template = ExplosionUtils.get_template(self.explosion_template_name)
-	local server_stop = false
+	local var_7_1 = ProjectileTemplates.impact_templates[arg_7_0.impact_template_name]
+	local var_7_2 = ExplosionUtils.get_template(arg_7_0.explosion_template_name)
+	local var_7_3 = false
 
-	if self.is_server then
-		server_stop = impact.server.execute(self.world, self.damage_source, unit, dummy_impact, 1, self.owner_unit, explosion_template)
+	if arg_7_0.is_server then
+		var_7_3 = var_7_1.server.execute(arg_7_0.world, arg_7_0.damage_source, arg_7_1, var_0_1, 1, arg_7_0.owner_unit, var_7_2)
 	end
 
-	local client_stop = impact.client.execute(self.world, self.damage_source, unit, dummy_impact, 1, self.owner_unit, explosion_template)
+	local var_7_4 = var_7_1.client.execute(arg_7_0.world, arg_7_0.damage_source, arg_7_1, var_0_1, 1, arg_7_0.owner_unit, var_7_2)
 
-	if server_stop or client_stop then
-		locomotion_extension:stop()
+	if var_7_3 or var_7_4 then
+		var_7_0:stop()
 	end
 end

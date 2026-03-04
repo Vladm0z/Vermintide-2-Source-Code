@@ -1,2106 +1,2106 @@
-﻿-- chunkname: @scripts/settings/terror_events/terror_events_dlc_portals.lua
+-- chunkname: @scripts/settings/terror_events/terror_events_dlc_portals.lua
 
-local TerrorEventUtils = require("scripts/settings/terror_events/terror_event_utils")
-local count_event_breed = TerrorEventUtils.count_event_breed
-local HARDER = TerrorEventUtils.HARDER
-local weighted_random_terror_events = {
+local var_0_0 = require("scripts/settings/terror_events/terror_event_utils")
+local var_0_1 = var_0_0.count_event_breed
+local var_0_2 = var_0_0.HARDER
+local var_0_3 = {
 	dlc_portals_end_event = {
 		"dlc_portals_end_event_a",
 		1,
 		"dlc_portals_end_event_b",
-		1,
-	},
+		1
+	}
 }
-local terror_event_blueprints = {
+local var_0_4 = {
 	dlc_portals_control_pacing_disabled = {
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"control_hordes",
-			enable = false,
-		},
+			enable = false
+		}
 	},
 	dlc_portals_control_pacing_enabled = {
 		{
 			"control_pacing",
-			enable = true,
+			enable = true
 		},
 		{
 			"control_hordes",
-			enable = true,
-		},
+			enable = true
+		}
 	},
 	dlc_portals_temple_inside = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 80,
+			max_active_enemies = 80
 		},
 		{
 			"set_master_event_running",
-			name = "dlc_portals_temple_inside",
+			name = "dlc_portals_temple_inside"
 		},
 		{
-			"disable_kick",
+			"disable_kick"
 		},
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			spawner_id = "portals_temple_inside",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 6,
+			duration = 6
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_1_0)
+				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "dlc_portals_temple_inside_done",
-		},
+			flow_event_name = "dlc_portals_temple_inside_done"
+		}
 	},
 	dlc_portals_temple_inside_specials = {
 		{
 			"event_horde",
-			composition_type = "plague_monks_small",
 			spawner_id = "portals_temple_inside_specials",
-		},
+			composition_type = "plague_monks_small"
+		}
 	},
 	dlc_portals_temple_yard = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 80,
+			max_active_enemies = 80
 		},
 		{
 			"set_master_event_running",
-			name = "dlc_portals_temple_yard",
+			name = "dlc_portals_temple_yard"
 		},
 		{
-			"disable_kick",
+			"disable_kick"
 		},
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"event_horde",
-			composition_type = "event_medium_chaos",
 			spawner_id = "portals_temple_yard",
+			composition_type = "event_medium_chaos"
 		},
 		{
 			"delay",
-			duration = 6,
+			duration = 6
 		},
 		{
 			"spawn_special",
-			amount = 1,
 			spawner_id = "portals_temple_yard",
+			amount = 1,
 			breed_name = {
 				"chaos_corruptor_sorcerer",
-				"skaven_warpfire_thrower",
-			},
+				"skaven_warpfire_thrower"
+			}
 		},
 		{
 			"event_horde",
-			composition_type = "chaos_warriors",
 			spawner_id = "portals_temple_yard_specials",
+			composition_type = "chaos_warriors"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "event_chaos_extra_spice_medium",
 			spawner_id = "portals_temple_yard",
+			composition_type = "event_chaos_extra_spice_medium"
 		},
 		{
 			"delay",
-			duration = 6,
+			duration = 6
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_fanatic") < 3 and count_event_breed("chaos_raider") < 2
-			end,
+			condition = function(arg_2_0)
+				return var_0_1("chaos_marauder") < 3 and var_0_1("chaos_fanatic") < 3 and var_0_1("chaos_raider") < 2
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "dlc_portals_temple_yard_done",
-		},
+			flow_event_name = "dlc_portals_temple_yard_done"
+		}
 	},
 	dlc_portals_temple_yard_exit = {
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_ratling_gunner",
 			spawner_id = "portals_temple_yard_exit",
-		},
+			breed_name = "skaven_ratling_gunner"
+		}
 	},
 	dlc_portals_end_event_a = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 80,
+			max_active_enemies = 80
 		},
 		{
 			"set_master_event_running",
-			name = "dlc_portals_end_event",
+			name = "dlc_portals_end_event"
 		},
 		{
-			"disable_kick",
+			"disable_kick"
 		},
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"event_horde",
-			composition_type = "event_medium",
 			spawner_id = "portals_end_event_skaven",
+			composition_type = "event_medium"
 		},
 		{
 			"delay",
-			duration = 6,
+			duration = 6
 		},
 		{
 			"spawn_special",
-			amount = 1,
 			spawner_id = "portals_end_event_specials",
+			amount = 1,
 			breed_name = {
 				"skaven_poison_wind_globadier",
-				"skaven_ratling_gunner",
-			},
+				"skaven_ratling_gunner"
+			}
 		},
 		{
 			"spawn_special",
-			amount = 2,
 			breed_name = "skaven_pack_master",
 			spawner_id = "portals_end_event_specials",
-			difficulty_requirement = HARDER,
+			amount = 2,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"delay",
-			duration = 4,
+			duration = 4
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			spawner_id = "portals_end_event_skaven",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_3_0)
+				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "portals_end_event_done",
-		},
+			flow_event_name = "portals_end_event_done"
+		}
 	},
 	dlc_portals_end_event_b = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 80,
+			max_active_enemies = 80
 		},
 		{
 			"set_master_event_running",
-			name = "dlc_portals_end_event",
+			name = "dlc_portals_end_event"
 		},
 		{
-			"disable_kick",
+			"disable_kick"
 		},
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"event_horde",
-			composition_type = "event_large_chaos",
 			spawner_id = "portals_end_event",
+			composition_type = "event_large_chaos"
 		},
 		{
 			"delay",
-			duration = 7,
+			duration = 7
 		},
 		{
 			"spawn_special",
-			amount = 1,
 			spawner_id = "portals_end_event_specials",
+			amount = 1,
 			breed_name = {
 				"chaos_corruptor_sorcerer",
-				"skaven_warpfire_thrower",
-			},
+				"skaven_warpfire_thrower"
+			}
 		},
 		{
 			"spawn_special",
-			amount = 1,
 			spawner_id = "portals_end_event_specials",
+			amount = 1,
 			breed_name = {
-				"skaven_ratling_gunner",
+				"skaven_ratling_gunner"
 			},
-			difficulty_requirement = HARDER,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"delay",
-			duration = 7,
+			duration = 7
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("chaos_marauder") < 4 and count_event_breed("chaos_fanatic") < 4
-			end,
+			condition = function(arg_4_0)
+				return var_0_1("chaos_marauder") < 4 and var_0_1("chaos_fanatic") < 4
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "portals_end_event_done",
-		},
+			flow_event_name = "portals_end_event_done"
+		}
 	},
 	dlc_portals_end_event_c = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 80,
+			max_active_enemies = 80
 		},
 		{
 			"set_master_event_running",
-			name = "dlc_portals_end_event",
+			name = "dlc_portals_end_event"
 		},
 		{
-			"disable_kick",
+			"disable_kick"
 		},
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"event_horde",
-			composition_type = "event_large",
 			spawner_id = "portals_end_event_skaven",
+			composition_type = "event_large"
 		},
 		{
 			"delay",
-			duration = 8,
+			duration = 8
 		},
 		{
 			"event_horde",
-			composition_type = "plague_monks_medium",
 			spawner_id = "portals_end_event",
+			composition_type = "plague_monks_medium"
 		},
 		{
 			"spawn_special",
-			amount = 1,
 			spawner_id = "portals_end_event_specials",
+			amount = 1,
 			breed_name = {
 				"skaven_warpfire_thrower",
-				"skaven_ratling_gunner",
+				"skaven_ratling_gunner"
 			},
-			difficulty_requirement = HARDER,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"delay",
-			duration = 4,
+			duration = 4
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			spawner_id = "portals_end_event_skaven",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 4,
+			duration = 4
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5 and count_event_breed("skaven_plague_monk") < 2
-			end,
+			condition = function(arg_5_0)
+				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5 and var_0_1("skaven_plague_monk") < 2
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "portals_end_event_done",
-		},
+			flow_event_name = "portals_end_event_done"
+		}
 	},
 	dlc_portals_end_event_d = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 80,
+			max_active_enemies = 80
 		},
 		{
 			"set_master_event_running",
-			name = "dlc_portals_end_event",
+			name = "dlc_portals_end_event"
 		},
 		{
-			"disable_kick",
+			"disable_kick"
 		},
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			spawner_id = "portals_end_event",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"delay",
-			duration = 4,
+			duration = 4
 		},
 		{
 			"spawn_special",
-			amount = 2,
 			spawner_id = "portals_end_event_specials",
+			amount = 2,
 			breed_name = {
 				"chaos_corruptor_sorcerer",
-				"skaven_ratling_gunner",
-			},
+				"skaven_ratling_gunner"
+			}
 		},
 		{
 			"delay",
-			duration = 8,
+			duration = 8
 		},
 		{
 			"event_horde",
-			composition_type = "event_chaos_extra_spice_medium",
 			spawner_id = "portals_end_event",
+			composition_type = "event_chaos_extra_spice_medium"
 		},
 		{
 			"event_horde",
+			spawner_id = "portals_end_event",
 			composition_type = "plague_monks_small",
-			spawner_id = "portals_end_event",
-			difficulty_requirement = HARDER,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"delay",
-			duration = 4,
+			duration = 4
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_fanatic") < 3 and count_event_breed("chaos_raider") < 2
-			end,
+			condition = function(arg_6_0)
+				return var_0_1("chaos_marauder") < 3 and var_0_1("chaos_fanatic") < 3 and var_0_1("chaos_raider") < 2
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "portals_end_event_done",
-		},
+			flow_event_name = "portals_end_event_done"
+		}
 	},
 	dlc_portals_end_event_guards = {
 		{
 			"event_horde",
-			composition_type = "chaos_warriors",
 			spawner_id = "portals_end_event_guards",
-		},
+			composition_type = "chaos_warriors"
+		}
 	},
 	dlc_portals_end_escape_specials = {
 		{
 			"event_horde",
-			composition_type = "plague_monks_medium",
 			spawner_id = "portals_end_escape_specials",
-		},
+			composition_type = "plague_monks_medium"
+		}
 	},
 	dlc_portals_end_escape_a = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 80,
+			max_active_enemies = 80
 		},
 		{
 			"set_master_event_running",
-			name = "dlc_portals_end_escape",
+			name = "dlc_portals_end_escape"
 		},
 		{
-			"disable_kick",
+			"disable_kick"
 		},
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_stinger",
+			stinger_name = "enemy_horde_stinger"
 		},
 		{
 			"event_horde",
-			composition_type = "event_medium",
 			spawner_id = "portals_end_event_skaven",
+			composition_type = "event_medium"
 		},
 		{
 			"delay",
-			duration = 6,
+			duration = 6
 		},
 		{
 			"spawn_special",
-			amount = 1,
 			spawner_id = "portals_end_escape_specials",
+			amount = 1,
 			breed_name = {
 				"skaven_poison_wind_globadier",
-				"skaven_ratling_gunner",
-			},
+				"skaven_ratling_gunner"
+			}
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			spawner_id = "portals_end_escape_skaven",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "plague_monks_small",
 			spawner_id = "portals_end_escape",
+			composition_type = "plague_monks_small"
 		},
 		{
 			"delay",
-			duration = 6,
+			duration = 6
 		},
 		{
 			"spawn_special",
-			amount = 1,
 			breed_name = "skaven_warpfire_thrower",
 			spawner_id = "portals_end_escape_specials",
-			difficulty_requirement = HARDER,
+			amount = 1,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			spawner_id = "portals_end_escape_skaven",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 7,
+			duration = 7
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5 and count_event_breed("skaven_plague_monk") < 5
-			end,
+			condition = function(arg_7_0)
+				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5 and var_0_1("skaven_plague_monk") < 5
+			end
 		},
 		{
 			"delay",
 			duration = {
 				1,
-				4,
-			},
+				4
+			}
 		},
 		{
 			"flow_event",
-			flow_event_name = "portals_end_escape_done",
-		},
+			flow_event_name = "portals_end_escape_done"
+		}
 	},
 	dlc_portals_end_escape_b = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 80,
+			max_active_enemies = 80
 		},
 		{
 			"set_master_event_running",
-			name = "dlc_portals_end_escape",
+			name = "dlc_portals_end_escape"
 		},
 		{
-			"disable_kick",
+			"disable_kick"
 		},
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_chaos_stinger",
+			stinger_name = "enemy_horde_chaos_stinger"
 		},
 		{
 			"event_horde",
-			composition_type = "event_medium_chaos",
 			spawner_id = "portals_end_escape",
+			composition_type = "event_medium_chaos"
 		},
 		{
 			"spawn_special",
-			amount = 1,
 			spawner_id = "portals_end_escape_specials",
+			amount = 1,
 			breed_name = {
 				"chaos_corruptor_sorcerer",
-				"skaven_warpfire_thrower",
-			},
+				"skaven_warpfire_thrower"
+			}
 		},
 		{
 			"delay",
-			duration = 7,
+			duration = 7
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("chaos_marauder") < 4 and count_event_breed("chaos_fanatic") < 4
-			end,
+			condition = function(arg_8_0)
+				return var_0_1("chaos_marauder") < 4 and var_0_1("chaos_fanatic") < 4
+			end
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			spawner_id = "portals_end_escape",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"spawn_special",
-			amount = 1,
 			breed_name = "skaven_ratling_gunner",
 			spawner_id = "portals_end_escape_specials",
-			difficulty_requirement = HARDER,
+			amount = 1,
+			difficulty_requirement = var_0_2
 		},
 		{
 			"event_horde",
-			composition_type = "event_chaos_extra_spice_medium",
 			spawner_id = "portals_end_escape",
+			composition_type = "event_chaos_extra_spice_medium"
 		},
 		{
 			"delay",
-			duration = 8,
+			duration = 8
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_fanatic") < 3 and count_event_breed("chaos_raider") < 2
-			end,
+			condition = function(arg_9_0)
+				return var_0_1("chaos_marauder") < 3 and var_0_1("chaos_fanatic") < 3 and var_0_1("chaos_raider") < 2
+			end
 		},
 		{
 			"delay",
 			duration = {
 				1,
-				4,
-			},
+				4
+			}
 		},
 		{
 			"flow_event",
-			flow_event_name = "portals_end_escape_done",
-		},
+			flow_event_name = "portals_end_escape_done"
+		}
 	},
 	dlc_portals_end_escape_yard = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 80,
+			max_active_enemies = 80
 		},
 		{
 			"set_master_event_running",
-			name = "dlc_portals_end_escape_yard",
+			name = "dlc_portals_end_escape_yard"
 		},
 		{
-			"disable_kick",
+			"disable_kick"
 		},
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_chaos_stinger",
+			stinger_name = "enemy_horde_chaos_stinger"
 		},
 		{
 			"event_horde",
-			composition_type = "event_large_chaos",
 			spawner_id = "portals_end_escape_yard",
+			composition_type = "event_large_chaos"
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"event_horde",
-			composition_type = "chaos_warriors",
 			spawner_id = "portals_end_escape_yard_specials",
+			composition_type = "chaos_warriors"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("chaos_marauder") < 4 and count_event_breed("chaos_fanatic") < 4
-			end,
+			condition = function(arg_10_0)
+				return var_0_1("chaos_marauder") < 4 and var_0_1("chaos_fanatic") < 4
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_chaos_extra_spice_medium",
 			spawner_id = "portals_end_escape_yard",
+			composition_type = "event_chaos_extra_spice_medium"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_fanatic") < 3 and count_event_breed("chaos_raider") < 2
-			end,
+			condition = function(arg_11_0)
+				return var_0_1("chaos_marauder") < 3 and var_0_1("chaos_fanatic") < 3 and var_0_1("chaos_raider") < 2
+			end
 		},
 		{
 			"delay",
 			duration = {
 				10,
-				15,
-			},
+				15
+			}
 		},
 		{
 			"flow_event",
-			flow_event_name = "portals_end_escape_yard_done",
-		},
+			flow_event_name = "portals_end_escape_yard_done"
+		}
 	},
 	dlc_portals_grapes_challenge = {
 		{
 			"set_master_event_running",
-			name = "dlc_portals_grapes_challenge",
+			name = "dlc_portals_grapes_challenge"
 		},
 		{
-			"disable_kick",
+			"disable_kick"
 		},
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_vortex_sorcerer",
 			spawner_id = "portals_grapes_challenge_01",
+			breed_name = "chaos_vortex_sorcerer"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_vortex_sorcerer",
 			spawner_id = "portals_grapes_challenge_02",
+			breed_name = "chaos_vortex_sorcerer"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_vortex_sorcerer",
 			spawner_id = "portals_grapes_challenge_03",
+			breed_name = "chaos_vortex_sorcerer"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_vortex_sorcerer",
 			spawner_id = "portals_grapes_challenge_04",
+			breed_name = "chaos_vortex_sorcerer"
 		},
 		{
 			"delay",
-			duration = 6,
+			duration = 6
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("chaos_vortex_sorcerer") < 1
-			end,
+			condition = function(arg_12_0)
+				return var_0_1("chaos_vortex_sorcerer") < 1
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "dlc_portals_grapes_challenge_done",
+			flow_event_name = "dlc_portals_grapes_challenge_done"
 		},
 		{
 			"control_pacing",
-			enable = true,
-		},
+			enable = true
+		}
 	},
 	dlc_portals_portal_challenge_01 = {
 		{
 			"set_master_event_running",
-			name = "dlc_portals_portal_challenge_01",
+			name = "dlc_portals_portal_challenge_01"
 		},
 		{
-			"disable_kick",
+			"disable_kick"
 		},
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_stinger",
+			stinger_name = "enemy_horde_stinger"
 		},
 		{
 			"spawn_special",
 			amount = 2,
-			breed_name = "skaven_poison_wind_globadier",
+			breed_name = "skaven_poison_wind_globadier"
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			spawner_id = "portals_portal_challenge_01",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 2,
+			duration = 2
 		},
 		{
 			"spawn_special",
 			amount = 3,
-			breed_name = "skaven_pack_master",
+			breed_name = "skaven_pack_master"
 		},
 		{
 			"delay",
-			duration = 4,
+			duration = 4
 		},
 		{
 			"event_horde",
-			composition_type = "event_medium",
 			spawner_id = "portals_portal_challenge_01",
+			composition_type = "event_medium"
 		},
 		{
 			"delay",
-			duration = 6,
+			duration = 6
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			spawner_id = "portals_portal_challenge_01",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 4,
+			duration = 4
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 1 and count_event_breed("skaven_slave") < 1 and count_event_breed("skaven_pack_master") < 1 and count_event_breed("skaven_poison_wind_globadier") < 1
-			end,
+			condition = function(arg_13_0)
+				return var_0_1("skaven_clan_rat") < 1 and var_0_1("skaven_slave") < 1 and var_0_1("skaven_pack_master") < 1 and var_0_1("skaven_poison_wind_globadier") < 1
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "dlc_portals_portal_challenge_01_done",
+			flow_event_name = "dlc_portals_portal_challenge_01_done"
 		},
 		{
 			"control_pacing",
-			enable = true,
-		},
+			enable = true
+		}
 	},
 	dlc_portals_portal_challenge_02_horde = {
 		{
 			"set_master_event_running",
-			name = "dlc_portals_portal_challenge_02_horde",
+			name = "dlc_portals_portal_challenge_02_horde"
 		},
 		{
-			"disable_kick",
+			"disable_kick"
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			spawner_id = "portals_portal_challenge_02_horde",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 6,
+			duration = 6
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("skaven_rat_ogre") < 1
-			end,
+			condition = function(arg_14_0)
+				return var_0_1("skaven_rat_ogre") < 1
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "dlc_portals_portal_challenge_02_horde_done",
-		},
+			flow_event_name = "dlc_portals_portal_challenge_02_horde_done"
+		}
 	},
 	dlc_portals_portal_challenge_02 = {
 		{
 			"set_master_event_running",
-			name = "dlc_portals_portal_challenge_02",
+			name = "dlc_portals_portal_challenge_02"
 		},
 		{
-			"disable_kick",
+			"disable_kick"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_rat_ogre",
 			spawner_id = "portals_portal_challenge_02",
+			breed_name = "skaven_rat_ogre"
 		},
 		{
 			"delay",
-			duration = 6,
+			duration = 6
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("skaven_rat_ogre") < 1
-			end,
+			condition = function(arg_15_0)
+				return var_0_1("skaven_rat_ogre") < 1
+			end
 		},
 		{
 			"flow_event",
-			flow_event_name = "dlc_portals_portal_challenge_02_done",
-		},
+			flow_event_name = "dlc_portals_portal_challenge_02_done"
+		}
 	},
 	dlc_portals_a = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 80,
+			max_active_enemies = 80
 		},
 		{
 			"set_master_event_running",
-			name = "dlc_portals_a",
+			name = "dlc_portals_a"
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_a",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 20,
+			duration = 20
 		},
 		{
 			"event_horde",
-			composition_type = "event_extra_spice_medium",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_a",
+			composition_type = "event_extra_spice_medium"
 		},
 		{
 			"delay",
-			duration = 15,
+			duration = 15
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 8
-			end,
+			condition = function(arg_16_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 8
+			end
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_stinger",
+			stinger_name = "enemy_horde_stinger"
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"event_horde",
-			composition_type = "event_extra_spice_large",
+			composition_type = "event_extra_spice_large"
 		},
 		{
 			"delay",
-			duration = 20,
+			duration = 20
 		},
 		{
 			"event_horde",
-			composition_type = "event_medium",
+			composition_type = "event_medium"
 		},
 		{
 			"delay",
-			duration = 8,
+			duration = 8
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_storm_vermin_commander") < 2
-			end,
+			condition = function(arg_17_0)
+				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3 and var_0_1("skaven_storm_vermin_commander") < 2
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_a",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 8,
+			duration = 8
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_storm_vermin_commander") < 2
-			end,
+			condition = function(arg_18_0)
+				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3 and var_0_1("skaven_storm_vermin_commander") < 2
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_a",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"event_horde",
-			composition_type = "event_medium",
+			composition_type = "event_medium"
 		},
 		{
 			"delay",
-			duration = 8,
+			duration = 8
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_storm_vermin_commander") < 2
-			end,
+			condition = function(arg_19_0)
+				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3 and var_0_1("skaven_storm_vermin_commander") < 2
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_medium",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_a",
+			composition_type = "event_medium"
 		},
 		{
 			"delay",
-			duration = 8,
+			duration = 8
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_storm_vermin_commander") < 2
-			end,
+			condition = function(arg_20_0)
+				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3 and var_0_1("skaven_storm_vermin_commander") < 2
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_a",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"control_pacing",
-			enable = true,
+			enable = true
 		},
 		{
 			"flow_event",
-			flow_event_name = "portals_terror_event_a_complete",
-		},
+			flow_event_name = "portals_terror_event_a_complete"
+		}
 	},
 	dlc_portals_b = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 80,
+			max_active_enemies = 80
 		},
 		{
 			"set_master_event_running",
-			name = "dlc_portals_b",
+			name = "dlc_portals_b"
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_b",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 20,
+			duration = 20
 		},
 		{
 			"event_horde",
-			composition_type = "event_extra_spice_medium",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_b",
+			composition_type = "event_extra_spice_medium"
 		},
 		{
 			"delay",
-			duration = 15,
+			duration = 15
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 8
-			end,
+			condition = function(arg_21_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 8
+			end
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_stinger",
+			stinger_name = "enemy_horde_stinger"
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"event_horde",
-			composition_type = "event_medium",
+			composition_type = "event_medium"
 		},
 		{
 			"delay",
-			duration = 20,
+			duration = 20
 		},
 		{
 			"flow_event",
-			flow_event_name = "event_portal_b_spawn_ogre",
+			flow_event_name = "event_portal_b_spawn_ogre"
 		},
 		{
 			"delay",
-			duration = 30,
+			duration = 30
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_rat_ogre") < 1
-			end,
+			condition = function(arg_22_0)
+				return var_0_1("skaven_rat_ogre") < 1
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_medium",
+			composition_type = "event_medium"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_storm_vermin_commander") < 2
-			end,
+			condition = function(arg_23_0)
+				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3 and var_0_1("skaven_storm_vermin_commander") < 2
+			end
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_b",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_storm_vermin_commander") < 2
-			end,
+			condition = function(arg_24_0)
+				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3 and var_0_1("skaven_storm_vermin_commander") < 2
+			end
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"event_horde",
-			composition_type = "event_medium",
+			composition_type = "event_medium"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_storm_vermin_commander") < 2
-			end,
+			condition = function(arg_25_0)
+				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3 and var_0_1("skaven_storm_vermin_commander") < 2
+			end
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_b",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_storm_vermin_commander") < 2
-			end,
+			condition = function(arg_26_0)
+				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3 and var_0_1("skaven_storm_vermin_commander") < 2
+			end
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_storm_vermin_commander") < 2
-			end,
+			condition = function(arg_27_0)
+				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3 and var_0_1("skaven_storm_vermin_commander") < 2
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_b",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_storm_vermin_commander") < 2
-			end,
+			condition = function(arg_28_0)
+				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3 and var_0_1("skaven_storm_vermin_commander") < 2
+			end
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "event_extra_spice_large",
+			composition_type = "event_extra_spice_large"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_storm_vermin_commander") < 2
-			end,
+			condition = function(arg_29_0)
+				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3 and var_0_1("skaven_storm_vermin_commander") < 2
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_b",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_storm_vermin_commander") < 2
-			end,
+			condition = function(arg_30_0)
+				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3 and var_0_1("skaven_storm_vermin_commander") < 2
+			end
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "event_medium",
+			composition_type = "event_medium"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_storm_vermin_commander") < 2
-			end,
+			condition = function(arg_31_0)
+				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3 and var_0_1("skaven_storm_vermin_commander") < 2
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_b",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_storm_vermin_commander") < 2
-			end,
+			condition = function(arg_32_0)
+				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3 and var_0_1("skaven_storm_vermin_commander") < 2
+			end
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "event_extra_spice_large",
+			composition_type = "event_extra_spice_large"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_storm_vermin_commander") < 2
-			end,
+			condition = function(arg_33_0)
+				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3 and var_0_1("skaven_storm_vermin_commander") < 2
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_b",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_storm_vermin_commander") < 2
-			end,
+			condition = function(arg_34_0)
+				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3 and var_0_1("skaven_storm_vermin_commander") < 2
+			end
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "event_medium",
+			composition_type = "event_medium"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_storm_vermin_commander") < 2
-			end,
+			condition = function(arg_35_0)
+				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3 and var_0_1("skaven_storm_vermin_commander") < 2
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_b",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_storm_vermin_commander") < 2
-			end,
+			condition = function(arg_36_0)
+				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3 and var_0_1("skaven_storm_vermin_commander") < 2
+			end
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "event_extra_spice_large",
+			composition_type = "event_extra_spice_large"
 		},
 		{
 			"flow_event",
-			flow_event_name = "portals_terror_event_b_complete",
-		},
+			flow_event_name = "portals_terror_event_b_complete"
+		}
 	},
 	dlc_portals_c = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 80,
+			max_active_enemies = 80
 		},
 		{
 			"set_master_event_running",
-			name = "dlc_portals_c",
+			name = "dlc_portals_c"
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_1",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"event_horde",
-			composition_type = "event_extra_spice_medium",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_2",
+			composition_type = "event_extra_spice_medium"
 		},
 		{
 			"delay",
-			duration = 15,
+			duration = 15
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 2
-			end,
+			condition = function(arg_37_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 2
+			end
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_stinger",
+			stinger_name = "enemy_horde_stinger"
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"event_horde",
-			composition_type = "event_extra_spice_large",
+			composition_type = "event_extra_spice_large"
 		},
 		{
 			"delay",
-			duration = 15,
+			duration = 15
 		},
 		{
 			"flow_event",
-			flow_event_name = "event_portal_c_spawn_ogre",
+			flow_event_name = "event_portal_c_spawn_ogre"
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_storm_vermin_commander") < 2
-			end,
+			condition = function(arg_38_0)
+				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3 and var_0_1("skaven_storm_vermin_commander") < 2
+			end
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_stinger",
+			stinger_name = "enemy_horde_stinger"
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_1",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"event_horde",
-			composition_type = "event_extra_spice_medium",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_2",
+			composition_type = "event_extra_spice_medium"
 		},
 		{
 			"delay",
-			duration = 15,
+			duration = 15
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_storm_vermin_commander") < 2
-			end,
+			condition = function(arg_39_0)
+				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3 and var_0_1("skaven_storm_vermin_commander") < 2
+			end
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_stinger",
+			stinger_name = "enemy_horde_stinger"
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"continue_when",
 			duration = 60,
-			condition = function (t)
-				return count_event_breed("skaven_rat_ogre") < 1
-			end,
+			condition = function(arg_40_0)
+				return var_0_1("skaven_rat_ogre") < 1
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_2",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"event_horde",
-			composition_type = "event_medium",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_1",
+			composition_type = "event_medium"
 		},
 		{
 			"delay",
-			duration = 15,
+			duration = 15
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_storm_vermin_commander") < 2
-			end,
+			condition = function(arg_41_0)
+				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3 and var_0_1("skaven_storm_vermin_commander") < 2
+			end
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_storm_vermin_commander") < 2
-			end,
+			condition = function(arg_42_0)
+				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3 and var_0_1("skaven_storm_vermin_commander") < 2
+			end
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "event_medium",
+			composition_type = "event_medium"
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_1",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"event_horde",
-			composition_type = "event_extra_spice_medium",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_2",
+			composition_type = "event_extra_spice_medium"
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_43_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_2",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"event_horde",
-			composition_type = "event_extra_spice_medium",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_1",
+			composition_type = "event_extra_spice_medium"
 		},
 		{
 			"delay",
-			duration = 15,
+			duration = 15
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_44_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_1",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"event_horde",
-			composition_type = "event_extra_spice_medium",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_2",
+			composition_type = "event_extra_spice_medium"
 		},
 		{
 			"delay",
-			duration = 15,
+			duration = 15
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_45_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_2",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"event_horde",
-			composition_type = "event_extra_spice_medium",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_1",
+			composition_type = "event_extra_spice_medium"
 		},
 		{
 			"delay",
-			duration = 15,
+			duration = 15
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_46_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_1",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"event_horde",
-			composition_type = "event_extra_spice_medium",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_2",
+			composition_type = "event_extra_spice_medium"
 		},
 		{
 			"delay",
-			duration = 15,
+			duration = 15
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_47_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_1",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_48_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_2",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_49_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_1",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_50_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_2",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_51_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_1",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_52_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_2",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_53_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_1",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_54_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_2",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_55_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_1",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_56_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_2",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_57_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_1",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_58_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_2",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_59_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_1",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_60_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_2",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_61_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_1",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_62_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_2",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_63_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_1",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_64_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_2",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_65_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_1",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_66_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_2",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_67_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_1",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_68_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_2",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_69_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_1",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_70_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 5,
 			spawner_id = "spawner_portal_c_2",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 6 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_71_0)
+				return var_0_1("skaven_clan_rat") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_slave") < 5
+			end
 		},
 		{
 			"control_pacing",
-			enable = true,
+			enable = true
 		},
 		{
 			"flow_event",
-			flow_event_name = "portals_terror_event_c_complete",
-		},
+			flow_event_name = "portals_terror_event_c_complete"
+		}
 	},
 	dlc_portals_guards_cliff = {
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_storm_vermin_commander",
 			spawner_id = "spawner_manual_event_stormvermin_guard_1",
-		},
+			breed_name = "skaven_storm_vermin_commander"
+		}
 	},
 	dlc_portals_guards_portal_a = {
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_storm_vermin_commander",
 			spawner_id = "spawner_manual_event_stormvermin_guard_8",
-		},
+			breed_name = "skaven_storm_vermin_commander"
+		}
 	},
 	dlc_portals_guards_camp_a = {
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_storm_vermin_commander",
 			spawner_id = "spawner_manual_event_stormvermin_guard_3",
+			breed_name = "skaven_storm_vermin_commander"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_storm_vermin_commander",
 			spawner_id = "spawner_manual_event_stormvermin_guard_7",
-		},
+			breed_name = "skaven_storm_vermin_commander"
+		}
 	},
 	dlc_portals_guards_portal_b = {
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_storm_vermin_commander",
 			spawner_id = "spawner_manual_event_stormvermin_guard_2",
-		},
+			breed_name = "skaven_storm_vermin_commander"
+		}
 	},
 	dlc_portals_guards_camp_b = {
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_storm_vermin_commander",
 			spawner_id = "spawner_manual_event_stormvermin_guard_4",
+			breed_name = "skaven_storm_vermin_commander"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_storm_vermin_commander",
 			spawner_id = "spawner_manual_event_stormvermin_guard_6",
-		},
+			breed_name = "skaven_storm_vermin_commander"
+		}
 	},
 	dlc_portals_guards_portal_c = {
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_storm_vermin_commander",
 			spawner_id = "spawner_manual_event_stormvermin_guard_5",
-		},
+			breed_name = "skaven_storm_vermin_commander"
+		}
 	},
 	dlc_portals_b_ogre = {
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_rat_ogre",
 			spawner_id = "spawner_manual_event_portal_b",
-		},
+			breed_name = "skaven_rat_ogre"
+		}
 	},
 	dlc_portals_c_ogre = {
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_rat_ogre",
 			spawner_id = "spawner_manual_event_portal_c_2",
-		},
-	},
+			breed_name = "skaven_rat_ogre"
+		}
+	}
 }
 
 return {
-	terror_event_blueprints,
-	weighted_random_terror_events,
+	var_0_4,
+	var_0_3
 }

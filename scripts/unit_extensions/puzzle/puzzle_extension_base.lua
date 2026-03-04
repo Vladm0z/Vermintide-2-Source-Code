@@ -1,33 +1,33 @@
-﻿-- chunkname: @scripts/unit_extensions/puzzle/puzzle_extension_base.lua
+-- chunkname: @scripts/unit_extensions/puzzle/puzzle_extension_base.lua
 
 PuzzleExtensionBase = class(PuzzleExtensionBase)
 
-PuzzleExtensionBase.init = function (self, extension_init_context, unit, extension_init_data)
-	self._unit = unit
-	self._puzzle_group = Unit.get_data(unit, "puzzle_group")
-	self._optional_order_id = tonumber(Unit.get_data(unit, "puzzle_order_id"))
+function PuzzleExtensionBase.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._unit = arg_1_2
+	arg_1_0._puzzle_group = Unit.get_data(arg_1_2, "puzzle_group")
+	arg_1_0._optional_order_id = tonumber(Unit.get_data(arg_1_2, "puzzle_order_id"))
 
-	fassert(self._puzzle_group, "Unit '%s' is missing puzzle group", unit)
-	fassert(self:puzzle_value(), "Unit '%s' does not expose 'puzzle_value' as an External Output or script_data", unit)
+	fassert(arg_1_0._puzzle_group, "Unit '%s' is missing puzzle group", arg_1_2)
+	fassert(arg_1_0:puzzle_value(), "Unit '%s' does not expose 'puzzle_value' as an External Output or script_data", arg_1_2)
 end
 
-PuzzleExtensionBase.puzzle_group_id = function (self)
-	return self._puzzle_group
+function PuzzleExtensionBase.puzzle_group_id(arg_2_0)
+	return arg_2_0._puzzle_group
 end
 
-PuzzleExtensionBase.puzzle_value = function (self)
-	return tostring(Unit.get_data(self._unit, "puzzle_value"))
+function PuzzleExtensionBase.puzzle_value(arg_3_0)
+	return tostring(Unit.get_data(arg_3_0._unit, "puzzle_value"))
 end
 
-PuzzleExtensionBase.order_id = function (self)
-	return self._optional_order_id
+function PuzzleExtensionBase.order_id(arg_4_0)
+	return arg_4_0._optional_order_id
 end
 
-PuzzleExtensionBase.on_puzzle_completed = function (self, puzzle_id)
-	Unit.set_flow_variable(self._unit, "completed_puzzle_name", puzzle_id)
-	Unit.flow_event(self._unit, "on_puzzle_completed")
+function PuzzleExtensionBase.on_puzzle_completed(arg_5_0, arg_5_1)
+	Unit.set_flow_variable(arg_5_0._unit, "completed_puzzle_name", arg_5_1)
+	Unit.flow_event(arg_5_0._unit, "on_puzzle_completed")
 end
 
-PuzzleExtensionBase.destroy = function (self)
+function PuzzleExtensionBase.destroy(arg_6_0)
 	return
 end

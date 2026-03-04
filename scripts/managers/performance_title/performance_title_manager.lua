@@ -1,256 +1,252 @@
-﻿-- chunkname: @scripts/managers/performance_title/performance_title_manager.lua
+-- chunkname: @scripts/managers/performance_title/performance_title_manager.lua
 
 require("scripts/managers/performance_title/performance_title_templates")
 
 PerformanceTitleManager = class(PerformanceTitleManager)
 
-local RPCS = {
-	"rpc_sync_performance_titles",
+local var_0_0 = {
+	"rpc_sync_performance_titles"
 }
-local INVALID_PEER = "0"
+local var_0_1 = "0"
 
-local function networkify_number(number)
-	local uint_16 = NetworkConstants.uint_16
-	local min, max = uint_16.min, uint_16.max
+local function var_0_2(arg_1_0)
+	local var_1_0 = NetworkConstants.uint_16
+	local var_1_1 = var_1_0.min
+	local var_1_2 = var_1_0.max
 
-	return math.clamp(number, min, max)
+	return math.clamp(arg_1_0, var_1_1, var_1_2)
 end
 
-PerformanceTitleManager.init = function (self, network_transmit, statistics_db, is_server)
-	self._network_transmit = network_transmit
-	self._statistics_db = statistics_db
-	self._is_server = is_server
-	self._assigned_titles = {}
+function PerformanceTitleManager.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	arg_2_0._network_transmit = arg_2_1
+	arg_2_0._statistics_db = arg_2_2
+	arg_2_0._is_server = arg_2_3
+	arg_2_0._assigned_titles = {}
 end
 
-PerformanceTitleManager.register_rpcs = function (self, network_event_delegate)
-	network_event_delegate:register(self, unpack(RPCS))
+function PerformanceTitleManager.register_rpcs(arg_3_0, arg_3_1)
+	arg_3_1:register(arg_3_0, unpack(var_0_0))
 
-	self._network_event_delegate = network_event_delegate
+	arg_3_0._network_event_delegate = arg_3_1
 end
 
-PerformanceTitleManager.unregister_rpcs = function (self)
-	self._network_event_delegate:unregister(self)
+function PerformanceTitleManager.unregister_rpcs(arg_4_0)
+	arg_4_0._network_event_delegate:unregister(arg_4_0)
 
-	self._network_event_delegate = nil
+	arg_4_0._network_event_delegate = nil
 end
 
-PerformanceTitleManager.destroy = function (self)
-	self._statistics_db = nil
-	self._network_transmit = nil
+function PerformanceTitleManager.destroy(arg_5_0)
+	arg_5_0._statistics_db = nil
+	arg_5_0._network_transmit = nil
 end
 
-PerformanceTitleManager.assigned_titles = function (self)
-	return self._assigned_titles
+function PerformanceTitleManager.assigned_titles(arg_6_0)
+	return arg_6_0._assigned_titles
 end
 
-PerformanceTitleManager._evaluate_player_titles = function (self, player, eligible_titles)
-	local statistics_db = self._statistics_db
-	local stats_id = player:stats_id()
-	local titles = PerformanceTitles.titles
-	local title_templates = PerformanceTitles.templates
-	local found_any_title = false
+function PerformanceTitleManager._evaluate_player_titles(arg_7_0, arg_7_1, arg_7_2)
+	local var_7_0 = arg_7_0._statistics_db
+	local var_7_1 = arg_7_1:stats_id()
+	local var_7_2 = PerformanceTitles.titles
+	local var_7_3 = PerformanceTitles.templates
+	local var_7_4 = false
 
-	for title_name, data in pairs(titles) do
-		local evaluation_template = title_templates[data.evaluation_template]
-		local success, amount = evaluation_template.evaluate(statistics_db, stats_id, data)
+	for iter_7_0, iter_7_1 in pairs(var_7_2) do
+		local var_7_5, var_7_6 = var_7_3[iter_7_1.evaluation_template].evaluate(var_7_0, var_7_1, iter_7_1)
 
-		if success then
-			eligible_titles[title_name] = amount
-			found_any_title = true
+		if var_7_5 then
+			arg_7_2[iter_7_0] = var_7_6
+			var_7_4 = true
 		end
 	end
 
-	return found_any_title
+	return var_7_4
 end
 
-PerformanceTitleManager._get_title_list_from_player_titles = function (self, player_titles)
-	local title_list = {}
+function PerformanceTitleManager._get_title_list_from_player_titles(arg_8_0, arg_8_1)
+	local var_8_0 = {}
 
-	for _, titles in pairs(player_titles) do
-		for title_name, _ in pairs(titles) do
-			if not table.contains(title_list, title_name) then
-				title_list[#title_list + 1] = title_name
+	for iter_8_0, iter_8_1 in pairs(arg_8_1) do
+		for iter_8_2, iter_8_3 in pairs(iter_8_1) do
+			if not table.contains(var_8_0, iter_8_2) then
+				var_8_0[#var_8_0 + 1] = iter_8_2
 			end
 		end
 	end
 
-	return title_list
+	return var_8_0
 end
 
-PerformanceTitleManager._find_individually_achieved_title = function (self, player_titles, title_name)
-	local found_player
-	local player_amount = 0
+function PerformanceTitleManager._find_individually_achieved_title(arg_9_0, arg_9_1, arg_9_2)
+	local var_9_0
+	local var_9_1 = 0
 
-	for player, titles in pairs(player_titles) do
-		if titles[title_name] then
-			player_amount = player_amount + 1
-			found_player = player
+	for iter_9_0, iter_9_1 in pairs(arg_9_1) do
+		if iter_9_1[arg_9_2] then
+			var_9_1 = var_9_1 + 1
+			var_9_0 = iter_9_0
 		end
 	end
 
-	if player_amount ~= 1 then
-		found_player = nil
+	if var_9_1 ~= 1 then
+		var_9_0 = nil
 	end
 
-	return found_player
+	return var_9_0
 end
 
-PerformanceTitleManager._assign_title = function (self, assigned_titles, player_titles, player, title_name)
-	local achieved_titles = player_titles[player]
-	local amount = achieved_titles[title_name]
-	local peer_id = player:network_id()
-	local local_player_id = player:local_player_id()
+function PerformanceTitleManager._assign_title(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	local var_10_0 = arg_10_2[arg_10_3][arg_10_4]
+	local var_10_1 = arg_10_3:network_id()
+	local var_10_2 = arg_10_3:local_player_id()
 
-	assigned_titles[#assigned_titles + 1] = {
-		peer_id = peer_id,
-		local_player_id = local_player_id,
-		title = title_name,
-		amount = amount,
+	arg_10_1[#arg_10_1 + 1] = {
+		peer_id = var_10_1,
+		local_player_id = var_10_2,
+		title = arg_10_4,
+		amount = var_10_0
 	}
 end
 
-PerformanceTitleManager._remove_title_from_player_titles = function (self, player_titles, title_name)
-	for _, titles in pairs(player_titles) do
-		titles[title_name] = nil
+function PerformanceTitleManager._remove_title_from_player_titles(arg_11_0, arg_11_1, arg_11_2)
+	for iter_11_0, iter_11_1 in pairs(arg_11_1) do
+		iter_11_1[arg_11_2] = nil
 	end
 end
 
-PerformanceTitleManager._assign_individual_titles = function (self, player_titles, assigned_titles)
-	local title_list = self:_get_title_list_from_player_titles(player_titles)
-	local i = 1
+function PerformanceTitleManager._assign_individual_titles(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = arg_12_0:_get_title_list_from_player_titles(arg_12_1)
+	local var_12_1 = 1
 
-	while title_list[i] ~= nil do
-		local title_name = title_list[i]
-		local player = self:_find_individually_achieved_title(player_titles, title_name)
+	while var_12_0[var_12_1] ~= nil do
+		local var_12_2 = var_12_0[var_12_1]
+		local var_12_3 = arg_12_0:_find_individually_achieved_title(arg_12_1, var_12_2)
 
-		if player then
-			self:_assign_title(assigned_titles, player_titles, player, title_name)
+		if var_12_3 then
+			arg_12_0:_assign_title(arg_12_2, arg_12_1, var_12_3, var_12_2)
 
-			player_titles[player] = nil
+			arg_12_1[var_12_3] = nil
 
-			self:_remove_title_from_player_titles(player_titles, title_name)
+			arg_12_0:_remove_title_from_player_titles(arg_12_1, var_12_2)
 
-			i = 1
+			var_12_1 = 1
 		else
-			i = i + 1
+			var_12_1 = var_12_1 + 1
 		end
 	end
 end
 
-PerformanceTitleManager._assign_compared_titles = function (self, player_titles, assigned_titles)
-	local title_list = self:_get_title_list_from_player_titles(player_titles)
-	local title_settings = PerformanceTitles.titles
-	local title_templates = PerformanceTitles.templates
+function PerformanceTitleManager._assign_compared_titles(arg_13_0, arg_13_1, arg_13_2)
+	local var_13_0 = arg_13_0:_get_title_list_from_player_titles(arg_13_1)
+	local var_13_1 = PerformanceTitles.titles
+	local var_13_2 = PerformanceTitles.templates
 
-	for _, title_name in ipairs(title_list) do
-		local best_amount, winner_player = 0
-		local settings = title_settings[title_name]
-		local template = title_templates[settings.evaluation_template]
+	for iter_13_0, iter_13_1 in ipairs(var_13_0) do
+		local var_13_3 = 0
+		local var_13_4
+		local var_13_5 = var_13_2[var_13_1[iter_13_1].evaluation_template]
 
-		for player, titles in pairs(player_titles) do
-			local amount = titles[title_name]
+		for iter_13_2, iter_13_3 in pairs(arg_13_1) do
+			local var_13_6 = iter_13_3[iter_13_1]
 
-			if amount and template.compare(amount, best_amount) then
-				best_amount = amount
-				winner_player = player
+			if var_13_6 and var_13_5.compare(var_13_6, var_13_3) then
+				var_13_3 = var_13_6
+				var_13_4 = iter_13_2
 			end
 		end
 
-		if winner_player then
-			self:_assign_title(assigned_titles, player_titles, winner_player, title_name)
+		if var_13_4 then
+			arg_13_0:_assign_title(arg_13_2, arg_13_1, var_13_4, iter_13_1)
 
-			player_titles[winner_player] = nil
+			arg_13_1[var_13_4] = nil
 		end
 	end
 end
 
-PerformanceTitleManager._sync_assigned_titles = function (self, assigned_titles)
-	local peer_ids = {}
-	local local_player_ids = {}
-	local title_ids = {}
-	local amounts = {}
+function PerformanceTitleManager._sync_assigned_titles(arg_14_0, arg_14_1)
+	local var_14_0 = {}
+	local var_14_1 = {}
+	local var_14_2 = {}
+	local var_14_3 = {}
 
-	for i = 1, 4 do
-		local data = assigned_titles[i]
+	for iter_14_0 = 1, 4 do
+		local var_14_4 = arg_14_1[iter_14_0]
 
-		if data then
-			peer_ids[i] = data.peer_id
-			local_player_ids[i] = data.local_player_id
-			title_ids[i] = NetworkLookup.performance_titles[data.title]
-			amounts[i] = networkify_number(data.amount)
+		if var_14_4 then
+			var_14_0[iter_14_0] = var_14_4.peer_id
+			var_14_1[iter_14_0] = var_14_4.local_player_id
+			var_14_2[iter_14_0] = NetworkLookup.performance_titles[var_14_4.title]
+			var_14_3[iter_14_0] = var_0_2(var_14_4.amount)
 		else
-			peer_ids[i] = INVALID_PEER
-			local_player_ids[i] = 0
-			title_ids[i] = NetworkLookup.performance_titles["n/a"]
-			amounts[i] = 0
+			var_14_0[iter_14_0] = var_0_1
+			var_14_1[iter_14_0] = 0
+			var_14_2[iter_14_0] = NetworkLookup.performance_titles["n/a"]
+			var_14_3[iter_14_0] = 0
 		end
 	end
 
-	self._network_transmit:send_rpc_clients("rpc_sync_performance_titles", peer_ids, local_player_ids, title_ids, amounts)
+	arg_14_0._network_transmit:send_rpc_clients("rpc_sync_performance_titles", var_14_0, var_14_1, var_14_2, var_14_3)
 end
 
-PerformanceTitleManager.evaluate_titles = function (self, players)
-	fassert(self._is_server, "Should only be server calling this")
+function PerformanceTitleManager.evaluate_titles(arg_15_0, arg_15_1)
+	fassert(arg_15_0._is_server, "Should only be server calling this")
 
-	local player_titles = {}
+	local var_15_0 = {}
 
-	for unique_id, player in pairs(players) do
-		local eligible_titles = {}
-		local success = self:_evaluate_player_titles(player, eligible_titles)
+	for iter_15_0, iter_15_1 in pairs(arg_15_1) do
+		local var_15_1 = {}
 
-		if success then
-			player_titles[player] = eligible_titles
+		if arg_15_0:_evaluate_player_titles(iter_15_1, var_15_1) then
+			var_15_0[iter_15_1] = var_15_1
 		end
 	end
 
-	local assigned_titles = {}
+	local var_15_2 = {}
 
-	self:_assign_individual_titles(player_titles, assigned_titles)
+	arg_15_0:_assign_individual_titles(var_15_0, var_15_2)
 
-	if table.size(player_titles) > 0 then
-		self:_assign_compared_titles(player_titles, assigned_titles)
+	if table.size(var_15_0) > 0 then
+		arg_15_0:_assign_compared_titles(var_15_0, var_15_2)
 	end
 
-	self._assigned_titles = assigned_titles
+	arg_15_0._assigned_titles = var_15_2
 
-	self:_sync_assigned_titles(assigned_titles)
+	arg_15_0:_sync_assigned_titles(var_15_2)
 end
 
-PerformanceTitleManager._translate_title_assignment = function (self, peer_id, local_player_id, title_id, amount)
-	if peer_id == INVALID_PEER then
+function PerformanceTitleManager._translate_title_assignment(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+	if arg_16_1 == var_0_1 then
 		return nil
 	end
 
-	local title_assignment = {
-		peer_id = peer_id,
-		local_player_id = local_player_id,
-		title = NetworkLookup.performance_titles[title_id],
-		amount = amount,
+	return {
+		peer_id = arg_16_1,
+		local_player_id = arg_16_2,
+		title = NetworkLookup.performance_titles[arg_16_3],
+		amount = arg_16_4
 	}
-
-	return title_assignment
 end
 
-PerformanceTitleManager.rpc_sync_performance_titles = function (self, channel_id, peer_ids, local_player_ids, title_ids, amounts)
-	local assigned_titles = {}
+function PerformanceTitleManager.rpc_sync_performance_titles(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
+	local var_17_0 = {}
 
-	for i = 1, 4 do
-		local peer_id = peer_ids[i]
+	for iter_17_0 = 1, 4 do
+		local var_17_1 = arg_17_2[iter_17_0]
 
-		if peer_id ~= INVALID_PEER then
-			local local_player_id = local_player_ids[i]
-			local title = NetworkLookup.performance_titles[title_ids[i]]
-			local amount = amounts[i]
+		if var_17_1 ~= var_0_1 then
+			local var_17_2 = arg_17_3[iter_17_0]
+			local var_17_3 = NetworkLookup.performance_titles[arg_17_4[iter_17_0]]
+			local var_17_4 = arg_17_5[iter_17_0]
 
-			assigned_titles[#assigned_titles + 1] = {
-				peer_id = peer_id,
-				local_player_id = local_player_id,
-				title = title,
-				amount = amount,
+			var_17_0[#var_17_0 + 1] = {
+				peer_id = var_17_1,
+				local_player_id = var_17_2,
+				title = var_17_3,
+				amount = var_17_4
 			}
 		end
 	end
 
-	self._assigned_titles = assigned_titles
+	arg_17_0._assigned_titles = var_17_0
 end

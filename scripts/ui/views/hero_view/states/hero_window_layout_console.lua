@@ -1,345 +1,344 @@
-﻿-- chunkname: @scripts/ui/views/hero_view/states/hero_window_layout_console.lua
+-- chunkname: @scripts/ui/views/hero_view/states/hero_window_layout_console.lua
 
-local windows = {
+local var_0_0 = {
 	panel = {
-		class_name = "HeroWindowPanelConsole",
 		ignore_alignment = true,
 		name = "panel",
+		class_name = "HeroWindowPanelConsole"
 	},
 	background = {
-		class_name = "HeroWindowBackgroundConsole",
 		ignore_alignment = true,
 		name = "background",
+		class_name = "HeroWindowBackgroundConsole"
 	},
 	crafting_inventory = {
-		class_name = "HeroWindowCraftingInventoryConsole",
 		ignore_alignment = true,
 		name = "crafting_inventory",
+		class_name = "HeroWindowCraftingInventoryConsole"
 	},
 	loadout_inventory = {
-		class_name = "HeroWindowLoadoutInventoryConsole",
 		ignore_alignment = true,
 		name = "loadout_inventory",
+		class_name = "HeroWindowLoadoutInventoryConsole"
 	},
 	loadout = {
-		class_name = "HeroWindowLoadoutConsole",
 		ignore_alignment = true,
 		name = "loadout",
+		class_name = "HeroWindowLoadoutConsole"
 	},
 	talents = {
-		class_name = "HeroWindowTalentsConsole",
 		ignore_alignment = true,
 		name = "talents",
+		class_name = "HeroWindowTalentsConsole"
 	},
 	crafting = {
-		class_name = "HeroWindowCraftingConsole",
 		ignore_alignment = true,
 		name = "crafting",
+		class_name = "HeroWindowCraftingConsole"
 	},
 	prestige = {
-		class_name = "HeroWindowPrestige",
 		ignore_alignment = true,
 		name = "prestige",
+		class_name = "HeroWindowPrestige"
 	},
 	cosmetics_loadout = {
-		class_name = "HeroWindowCosmeticsLoadoutConsole",
 		ignore_alignment = true,
 		name = "cosmetics_loadout",
+		class_name = "HeroWindowCosmeticsLoadoutConsole"
 	},
 	cosmetics_inventory = {
-		class_name = "HeroWindowCosmeticsLoadoutInventoryConsole",
 		ignore_alignment = true,
 		name = "cosmetics_inventory",
+		class_name = "HeroWindowCosmeticsLoadoutInventoryConsole"
 	},
 	pose_inventory = {
-		class_name = "HeroWindowCosmeticsLoadoutPoseInventoryConsole",
 		ignore_alignment = true,
 		name = "pose_inventory",
+		class_name = "HeroWindowCosmeticsLoadoutPoseInventoryConsole"
 	},
 	character_info = {
-		class_name = "HeroWindowCharacterInfo",
 		ignore_alignment = true,
 		name = "character_info",
+		class_name = "HeroWindowCharacterInfo"
 	},
 	crafting_list = {
-		class_name = "HeroWindowCraftingListConsole",
 		ignore_alignment = true,
 		name = "crafting_list",
+		class_name = "HeroWindowCraftingListConsole"
 	},
 	hero_power = {
-		class_name = "HeroWindowHeroPowerConsole",
 		ignore_alignment = true,
 		name = "hero_power",
+		class_name = "HeroWindowHeroPowerConsole"
 	},
 	loadout_selection = {
-		class_name = "HeroWindowLoadoutSelectionConsole",
 		ignore_alignment = true,
 		name = "loadout_selection",
+		class_name = "HeroWindowLoadoutSelectionConsole"
 	},
 	ingame_view = {
-		class_name = "HeroWindowIngameView",
 		ignore_alignment = true,
 		name = "ingame_view",
+		class_name = "HeroWindowIngameView"
 	},
 	character_selection = {
-		class_name = "HeroWindowCharacterSelectionConsole",
 		ignore_alignment = true,
 		name = "character_selection",
+		class_name = "HeroWindowCharacterSelectionConsole"
 	},
 	item_customization = {
-		class_name = "HeroWindowItemCustomization",
 		ignore_alignment = true,
 		name = "item_customization",
+		class_name = "HeroWindowItemCustomization"
 	},
 	dark_pact_character_selection = {
-		class_name = "HeroWindowDarkPactCharacterSelectionConsole",
 		ignore_alignment = true,
 		name = "dark_pact_character_selection",
-	},
+		class_name = "HeroWindowDarkPactCharacterSelectionConsole"
+	}
 }
-local window_layouts = {
+local var_0_1 = {
 	{
-		close_on_exit = true,
-		name = "equipment",
 		sound_event_enter = "play_gui_equipment_button",
+		name = "equipment",
 		sound_event_exit = "play_gui_equipment_close",
+		close_on_exit = true,
 		windows = {
+			hero_power = 5,
+			loadout_selection = 6,
 			background = 2,
 			character_info = 3,
-			hero_power = 5,
-			loadout = 4,
-			loadout_selection = 6,
 			panel = 1,
-		},
+			loadout = 4
+		}
 	},
 	{
-		close_on_exit = true,
-		name = "talents",
 		sound_event_enter = "play_gui_talents_button",
+		name = "talents",
 		sound_event_exit = "play_gui_talents_close",
+		close_on_exit = true,
 		windows = {
+			loadout_selection = 5,
 			background = 2,
 			character_info = 3,
-			loadout_selection = 5,
 			panel = 1,
-			talents = 4,
-		},
+			talents = 4
+		}
 	},
 	{
-		close_on_exit = true,
+		sound_event_enter = "play_gui_craft_button",
 		name = "forge",
-		sound_event_enter = "play_gui_craft_button",
 		sound_event_exit = "play_gui_craft_close",
-		windows = {
-			background = 2,
-			character_info = 4,
-			crafting_list = 3,
-			panel = 1,
-		},
-		can_add_function = function (mechanism_name)
-			return mechanism_name ~= "versus" and mechanism_name ~= "inn_vs"
-		end,
-	},
-	{
 		close_on_exit = true,
-		name = "cosmetics",
-		sound_event_enter = "play_gui_cosmetics_button",
-		sound_event_exit = "play_gui_cosmetics_close",
 		windows = {
-			background = 2,
 			character_info = 4,
-			cosmetics_loadout = 3,
-			hero_power = 5,
-			loadout_selection = 6,
 			panel = 1,
+			background = 2,
+			crafting_list = 3
 		},
+		can_add_function = function(arg_1_0)
+			return arg_1_0 ~= "versus" and arg_1_0 ~= "inn_vs"
+		end
 	},
 	{
-		close_on_exit = false,
-		input_focus_window = "crafting",
-		name = "crafting_recipe",
-		sound_event_enter = "play_gui_craft_button",
-		sound_event_exit = "play_gui_craft_close",
+		sound_event_enter = "play_gui_cosmetics_button",
+		name = "cosmetics",
+		sound_event_exit = "play_gui_cosmetics_close",
+		close_on_exit = true,
 		windows = {
+			hero_power = 5,
+			cosmetics_loadout = 3,
+			background = 2,
+			loadout_selection = 6,
+			character_info = 4,
+			panel = 1
+		}
+	},
+	{
+		sound_event_enter = "play_gui_craft_button",
+		name = "crafting_recipe",
+		sound_event_exit = "play_gui_craft_close",
+		input_focus_window = "crafting",
+		close_on_exit = false,
+		windows = {
+			crafting_inventory = 4,
 			background = 2,
 			character_info = 5,
-			crafting = 3,
-			crafting_inventory = 4,
 			panel = 1,
-		},
+			crafting = 3
+		}
 	},
 	{
-		close_on_exit = false,
-		input_focus_window = "loadout_inventory",
+		sound_event_enter = "play_gui_equipment_button",
 		name = "equipment_selection",
-		sound_event_enter = "play_gui_equipment_button",
 		sound_event_exit = "play_gui_equipment_close",
+		input_focus_window = "loadout_inventory",
+		close_on_exit = false,
 		windows = {
+			hero_power = 5,
 			background = 2,
 			character_info = 3,
-			hero_power = 5,
-			loadout_inventory = 4,
 			panel = 1,
-		},
+			loadout_inventory = 4
+		}
 	},
 	{
-		close_on_exit = false,
-		input_focus_window = "cosmetics_inventory",
+		sound_event_enter = "play_gui_equipment_button",
 		name = "cosmetics_selection",
-		sound_event_enter = "play_gui_equipment_button",
 		sound_event_exit = "play_gui_equipment_close",
-		windows = {
-			background = 2,
-			character_info = 3,
-			cosmetics_inventory = 4,
-			hero_power = 5,
-			panel = 1,
-		},
-	},
-	{
-		close_on_exit = false,
 		input_focus_window = "cosmetics_inventory",
-		name = "cosmetics_selection_dark_pact",
-		sound_event_enter = "play_gui_equipment_button",
-		sound_event_exit = "play_gui_equipment_close",
-		windows = {
-			background = 2,
-			character_info = 3,
-			cosmetics_inventory = 4,
-			panel = 1,
-		},
-	},
-	{
 		close_on_exit = false,
-		input_focus_window = "pose_inventory",
-		name = "pose_selection",
-		sound_event_enter = "play_gui_equipment_button",
-		sound_event_exit = "play_gui_equipment_close",
 		windows = {
-			background = 2,
-			character_info = 3,
 			hero_power = 5,
-			panel = 1,
-			pose_inventory = 4,
-		},
-	},
-	{
-		close_on_exit = true,
-		name = "system",
-		sound_event_enter = "Play_hud_button_open",
-		sound_event_exit = "Play_hud_button_close",
-		windows = {
+			cosmetics_inventory = 4,
 			background = 2,
 			character_info = 3,
-			ingame_view = 4,
-			panel = 1,
-		},
+			panel = 1
+		}
 	},
 	{
-		close_on_exit = true,
-		name = "store",
-		sound_event_enter = "Play_hud_button_open",
-		sound_event_exit = "Play_hud_button_close",
-		windows = {
-			background = 1,
-		},
-	},
-	{
+		sound_event_enter = "play_gui_equipment_button",
+		name = "cosmetics_selection_dark_pact",
+		sound_event_exit = "play_gui_equipment_close",
+		input_focus_window = "cosmetics_inventory",
 		close_on_exit = false,
-		name = "character_selection",
-		sound_event_enter = "Play_hud_button_open",
-		sound_event_exit = "Play_hud_button_close",
 		windows = {
+			character_info = 3,
+			panel = 1,
 			background = 2,
+			cosmetics_inventory = 4
+		}
+	},
+	{
+		sound_event_enter = "play_gui_equipment_button",
+		name = "pose_selection",
+		sound_event_exit = "play_gui_equipment_close",
+		input_focus_window = "pose_inventory",
+		close_on_exit = false,
+		windows = {
+			pose_inventory = 4,
+			hero_power = 5,
+			background = 2,
+			character_info = 3,
+			panel = 1
+		}
+	},
+	{
+		sound_event_enter = "Play_hud_button_open",
+		name = "system",
+		sound_event_exit = "Play_hud_button_close",
+		close_on_exit = true,
+		windows = {
+			character_info = 3,
+			panel = 1,
+			background = 2,
+			ingame_view = 4
+		}
+	},
+	{
+		sound_event_enter = "Play_hud_button_open",
+		name = "store",
+		sound_event_exit = "Play_hud_button_close",
+		close_on_exit = true,
+		windows = {
+			background = 1
+		}
+	},
+	{
+		sound_event_enter = "Play_hud_button_open",
+		name = "character_selection",
+		sound_event_exit = "Play_hud_button_close",
+		close_on_exit = false,
+		windows = {
 			character_selection = 3,
 			panel = 1,
-		},
+			background = 2
+		}
 	},
 	{
-		close_on_exit = false,
+		sound_event_enter = "Play_hud_button_open",
 		name = "item_customization",
-		sound_event_enter = "Play_hud_button_open",
 		sound_event_exit = "Play_hud_button_close",
+		close_on_exit = false,
 		windows = {
-			background = 2,
 			character_info = 3,
-			item_customization = 4,
 			panel = 1,
-		},
+			background = 2,
+			item_customization = 4
+		}
 	},
 	{
-		close_on_exit = true,
-		name = "pactsworn_equipment",
 		sound_event_enter = "Play_hud_button_open",
+		name = "pactsworn_equipment",
 		sound_event_exit = "Play_hud_button_close",
+		close_on_exit = true,
 		windows = {
-			background = 2,
 			dark_pact_character_selection = 3,
 			panel = 1,
+			background = 2
 		},
-		can_add_function = function (mechanism_name)
-			return mechanism_name == "versus"
+		can_add_function = function(arg_2_0)
+			return arg_2_0 == "versus"
 		end,
-		on_exit = function (parent)
-			local local_player = Managers.player:local_player()
-			local profile_index = local_player:profile_index()
-			local career_index = local_player:career_index()
+		on_exit = function(arg_3_0)
+			local var_3_0 = Managers.player:local_player()
+			local var_3_1 = var_3_0:profile_index()
+			local var_3_2 = var_3_0:career_index()
 
-			parent:change_profile(profile_index, career_index)
+			arg_3_0:change_profile(var_3_1, var_3_2)
 
-			local profile = SPProfiles[profile_index]
+			local var_3_3 = SPProfiles[var_3_1]
 
 			Managers.state.event:trigger("respawn_hero", {
-				hero_name = profile.display_name,
-				career_index = career_index,
+				hero_name = var_3_3.display_name,
+				career_index = var_3_2
 			})
 
-			local mood_settings = DLCSettings.carousel and DLCSettings.carousel.hero_window_mood_settings
-			local mood_setting = mood_settings.default or "default"
+			local var_3_4 = (DLCSettings.carousel and DLCSettings.carousel.hero_window_mood_settings).default or "default"
 
-			parent:set_background_mood(mood_setting)
-		end,
-	},
+			arg_3_0:set_background_mood(var_3_4)
+		end
+	}
 }
-local MAX_ACTIVE_WINDOWS = 6
+local var_0_2 = 6
 
-DLCUtils.map("hero_view_window_layout_console", function (hero_view_window_layout_console)
-	local new_windows = hero_view_window_layout_console.windows
+DLCUtils.map("hero_view_window_layout_console", function(arg_4_0)
+	local var_4_0 = arg_4_0.windows
 
-	if new_windows then
-		for name, window in pairs(new_windows) do
-			windows[name] = window
+	if var_4_0 then
+		for iter_4_0, iter_4_1 in pairs(var_4_0) do
+			var_0_0[iter_4_0] = iter_4_1
 		end
 	end
 
-	local new_window_layouts = hero_view_window_layout_console.window_layouts
+	local var_4_1 = arg_4_0.window_layouts
 
-	if new_window_layouts then
-		for i = 1, #new_window_layouts do
-			window_layouts[#window_layouts + 1] = new_window_layouts[i]
+	if var_4_1 then
+		for iter_4_2 = 1, #var_4_1 do
+			var_0_1[#var_0_1 + 1] = var_4_1[iter_4_2]
 		end
 	end
 end)
-DLCUtils.map("hero_view_window_layout_console", function (hero_view_window_layout_console)
-	local new_windows = hero_view_window_layout_console.windows
+DLCUtils.map("hero_view_window_layout_console", function(arg_5_0)
+	local var_5_0 = arg_5_0.windows
 
-	if new_windows then
-		for name, window in pairs(new_windows) do
-			windows[name] = window
+	if var_5_0 then
+		for iter_5_0, iter_5_1 in pairs(var_5_0) do
+			var_0_0[iter_5_0] = iter_5_1
 		end
 	end
 
-	local new_window_layouts = hero_view_window_layout_console.window_layouts
+	local var_5_1 = arg_5_0.window_layouts
 
-	if new_window_layouts then
-		for i = 1, #new_window_layouts do
-			window_layouts[#window_layouts + 1] = new_window_layouts[i]
+	if var_5_1 then
+		for iter_5_2 = 1, #var_5_1 do
+			var_0_1[#var_0_1 + 1] = var_5_1[iter_5_2]
 		end
 	end
 end)
 
 return {
-	max_active_windows = MAX_ACTIVE_WINDOWS,
-	windows = windows,
-	window_layouts = window_layouts,
+	max_active_windows = var_0_2,
+	windows = var_0_0,
+	window_layouts = var_0_1
 }

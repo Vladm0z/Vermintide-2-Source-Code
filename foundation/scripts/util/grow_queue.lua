@@ -1,46 +1,44 @@
-﻿-- chunkname: @foundation/scripts/util/grow_queue.lua
+-- chunkname: @foundation/scripts/util/grow_queue.lua
 
 GrowQueue = class(GrowQueue)
 
-GrowQueue.init = function (self)
-	self.queue = {}
-	self.first = 1
-	self.last = 0
+function GrowQueue.init(arg_1_0)
+	arg_1_0.queue = {}
+	arg_1_0.first = 1
+	arg_1_0.last = 0
 end
 
-GrowQueue.push_back = function (self, item)
-	self.last = self.last + 1
-	self.queue[self.last] = item
+function GrowQueue.push_back(arg_2_0, arg_2_1)
+	arg_2_0.last = arg_2_0.last + 1
+	arg_2_0.queue[arg_2_0.last] = arg_2_1
 end
 
-GrowQueue.pop_first = function (self)
-	if self.first > self.last then
+function GrowQueue.pop_first(arg_3_0)
+	if arg_3_0.first > arg_3_0.last then
 		return
 	end
 
-	local item = self.queue[self.first]
+	local var_3_0 = arg_3_0.queue[arg_3_0.first]
 
-	self.queue[self.first] = nil
+	arg_3_0.queue[arg_3_0.first] = nil
 
-	if self.first == self.last then
-		self.first = 0
-		self.last = 0
+	if arg_3_0.first == arg_3_0.last then
+		arg_3_0.first = 0
+		arg_3_0.last = 0
 	end
 
-	self.first = self.first + 1
+	arg_3_0.first = arg_3_0.first + 1
 
-	return item
+	return var_3_0
 end
 
-GrowQueue.contains = function (self, item)
-	local first = self.first
-	local last = self.last
-	local queue = self.queue
+function GrowQueue.contains(arg_4_0, arg_4_1)
+	local var_4_0 = arg_4_0.first
+	local var_4_1 = arg_4_0.last
+	local var_4_2 = arg_4_0.queue
 
-	for i = first, last do
-		local queued_item = queue[i]
-
-		if item == queued_item then
+	for iter_4_0 = var_4_0, var_4_1 do
+		if arg_4_1 == var_4_2[iter_4_0] then
 			return true
 		end
 	end
@@ -48,24 +46,24 @@ GrowQueue.contains = function (self, item)
 	return false
 end
 
-GrowQueue.size = function (self)
-	return self.last - self.first + 1
+function GrowQueue.size(arg_5_0)
+	return arg_5_0.last - arg_5_0.first + 1
 end
 
-GrowQueue.get_first = function (self)
-	return self.queue[self.first]
+function GrowQueue.get_first(arg_6_0)
+	return arg_6_0.queue[arg_6_0.first]
 end
 
-GrowQueue.get_last = function (self)
-	return self.queue[self._last]
+function GrowQueue.get_last(arg_7_0)
+	return arg_7_0.queue[arg_7_0._last]
 end
 
-GrowQueue.print_items = function (self, s)
-	local s = (s or "") .. " queue: [" .. self.first .. "->" .. self.last .. "] --> "
+function GrowQueue.print_items(arg_8_0, arg_8_1)
+	local var_8_0 = (arg_8_1 or "") .. " queue: [" .. arg_8_0.first .. "->" .. arg_8_0.last .. "] --> "
 
-	for i = self.first, self.last do
-		s = s .. tostring(self.queue[i]) .. ","
+	for iter_8_0 = arg_8_0.first, arg_8_0.last do
+		var_8_0 = var_8_0 .. tostring(arg_8_0.queue[iter_8_0]) .. ","
 	end
 
-	print(s)
+	print(var_8_0)
 end

@@ -1,53 +1,51 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/projectiles/projectile_templates.lua
+-- chunkname: @scripts/unit_extensions/weapons/projectiles/projectile_templates.lua
 
 ProjectileTemplates = {}
 
-local check_for_afro_hit
+local var_0_0
 
-local function _check_globadier_globe_vo(position, radius, owner_unit)
-	local owner_player = Managers.player:owner(owner_unit)
-
-	if not owner_player then
+local function var_0_1(arg_1_0, arg_1_1, arg_1_2)
+	if not Managers.player:owner(arg_1_2) then
 		return
 	end
 
-	local owner_position = POSITION_LOOKUP[owner_unit]
+	local var_1_0 = POSITION_LOOKUP[arg_1_2]
 
-	if not owner_position then
+	if not var_1_0 then
 		return
 	end
 
-	local owner_side = Managers.state.side.side_by_unit[owner_unit]
+	local var_1_1 = Managers.state.side.side_by_unit[arg_1_2]
 
-	if not owner_side then
+	if not var_1_1 then
 		return
 	end
 
-	local hit_distance_sq = radius * radius
-	local close_distance_from_edge = DialogueSettings.vs_globadier_missing_globe_vo_range_from_edge
-	local close_distance_sq = (radius + close_distance_from_edge) * (radius + close_distance_from_edge)
-	local not_even_close = true
-	local all_hit_disabled = true
-	local num_players_hit = 0
-	local enemy_player_units = owner_side.ENEMY_PLAYER_AND_BOT_UNITS
+	local var_1_2 = arg_1_1 * arg_1_1
+	local var_1_3 = DialogueSettings.vs_globadier_missing_globe_vo_range_from_edge
+	local var_1_4 = (arg_1_1 + var_1_3) * (arg_1_1 + var_1_3)
+	local var_1_5 = true
+	local var_1_6 = true
+	local var_1_7 = 0
+	local var_1_8 = var_1_1.ENEMY_PLAYER_AND_BOT_UNITS
 
-	for i = 1, #enemy_player_units do
-		local enemy_unit = enemy_player_units[i]
+	for iter_1_0 = 1, #var_1_8 do
+		local var_1_9 = var_1_8[iter_1_0]
 
-		if ALIVE[enemy_unit] then
-			local dist_sq = Vector3.distance_squared(Vector3.flat(POSITION_LOOKUP[enemy_unit]), Vector3.flat(position))
+		if ALIVE[var_1_9] then
+			local var_1_10 = Vector3.distance_squared(Vector3.flat(POSITION_LOOKUP[var_1_9]), Vector3.flat(arg_1_0))
 
-			if dist_sq < close_distance_sq then
-				not_even_close = false
+			if var_1_10 < var_1_4 then
+				var_1_5 = false
 
-				if dist_sq < hit_distance_sq then
-					num_players_hit = num_players_hit + 1
+				if var_1_10 < var_1_2 then
+					var_1_7 = var_1_7 + 1
 
-					if all_hit_disabled then
-						local status_extension = ScriptUnit.extension(enemy_unit, "status_system")
+					if var_1_6 then
+						local var_1_11 = ScriptUnit.extension(var_1_9, "status_system")
 
-						if status_extension and not status_extension:is_disabled() then
-							all_hit_disabled = false
+						if var_1_11 and not var_1_11:is_disabled() then
+							var_1_6 = false
 						end
 					end
 				end
@@ -55,41 +53,35 @@ local function _check_globadier_globe_vo(position, radius, owner_unit)
 		end
 	end
 
-	local nearby_ally_dist_sq = DialogueSettings.default_hear_distance * DialogueSettings.default_hear_distance
+	local var_1_12 = DialogueSettings.default_hear_distance * DialogueSettings.default_hear_distance
 
-	if num_players_hit == 0 then
-		if not_even_close then
-			local ally_units = owner_side.PLAYER_AND_BOT_UNITS
+	if var_1_7 == 0 then
+		if var_1_5 then
+			local var_1_13 = var_1_1.PLAYER_AND_BOT_UNITS
 
-			for i = 1, #ally_units do
-				local ally_unit = ally_units[i]
+			for iter_1_1 = 1, #var_1_13 do
+				local var_1_14 = var_1_13[iter_1_1]
 
-				if ALIVE[ally_unit] and ally_unit ~= owner_unit and nearby_ally_dist_sq > Vector3.distance_squared(POSITION_LOOKUP[ally_unit], owner_position) then
-					local dialogue_input = ScriptUnit.extension_input(ally_unit, "dialogue_system")
-
-					dialogue_input:trigger_dialogue_event("vs_globadier_missing_globe")
+				if ALIVE[var_1_14] and var_1_14 ~= arg_1_2 and var_1_12 > Vector3.distance_squared(POSITION_LOOKUP[var_1_14], var_1_0) then
+					ScriptUnit.extension_input(var_1_14, "dialogue_system"):trigger_dialogue_event("vs_globadier_missing_globe")
 				end
 			end
 		end
 	else
-		if num_players_hit >= DialogueSettings.vs_globadier_many_heroes_hit_num then
-			local ally_units = owner_side.PLAYER_AND_BOT_UNITS
+		if var_1_7 >= DialogueSettings.vs_globadier_many_heroes_hit_num then
+			local var_1_15 = var_1_1.PLAYER_AND_BOT_UNITS
 
-			for i = 1, #ally_units do
-				local ally_unit = ally_units[i]
+			for iter_1_2 = 1, #var_1_15 do
+				local var_1_16 = var_1_15[iter_1_2]
 
-				if ALIVE[ally_unit] and nearby_ally_dist_sq > Vector3.distance_squared(POSITION_LOOKUP[ally_unit], owner_position) then
-					local dialogue_input = ScriptUnit.extension_input(ally_unit, "dialogue_system")
-
-					dialogue_input:trigger_dialogue_event("vs_globadier_hitting_many")
+				if ALIVE[var_1_16] and var_1_12 > Vector3.distance_squared(POSITION_LOOKUP[var_1_16], var_1_0) then
+					ScriptUnit.extension_input(var_1_16, "dialogue_system"):trigger_dialogue_event("vs_globadier_hitting_many")
 				end
 			end
 		end
 
-		if num_players_hit == 1 and all_hit_disabled then
-			local dialogue_input = ALIVE[owner_unit] and ScriptUnit.extension_input(owner_unit, "dialogue_system")
-
-			dialogue_input:trigger_dialogue_event("vs_globe_on_disabled_hero")
+		if var_1_7 == 1 and var_1_6 then
+			(ALIVE[arg_1_2] and ScriptUnit.extension_input(arg_1_2, "dialogue_system")):trigger_dialogue_event("vs_globe_on_disabled_hero")
 		end
 	end
 end
@@ -97,674 +89,635 @@ end
 ProjectileTemplates.trajectory_templates = {
 	straight_target_traversal = {
 		unit = {
-			update = function (speed, radians, gravity, initial_position, target_vector, time_lived, dt, traversal_data)
-				local target_position = traversal_data.current_target
-				local position = traversal_data.position
-				local direction = Vector3.normalize(target_position - position)
-				local move_delta = direction * speed * dt
-				local new_position = move_delta + position
+			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+				local var_2_0 = arg_2_7.current_target
+				local var_2_1 = arg_2_7.position
 
-				return new_position
-			end,
+				return Vector3.normalize(var_2_0 - var_2_1) * arg_2_0 * arg_2_6 + var_2_1
+			end
 		},
 		husk = {
-			update = function (speed, radians, gravity, initial_position, target_vector, time_lived, dt, traversal_data)
-				local target_position = traversal_data.current_target
-				local position = traversal_data.position
-				local direction = Vector3.normalize(target_position - position)
-				local move_delta = direction * speed * dt
-				local new_position = move_delta + position
+			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+				local var_3_0 = arg_3_7.current_target
+				local var_3_1 = arg_3_7.position
 
-				return new_position
-			end,
-		},
+				return Vector3.normalize(var_3_0 - var_3_1) * arg_3_0 * arg_3_6 + var_3_1
+			end
+		}
 	},
 	right_spinning_target_traversal = {
 		unit = {
-			update = function (speed, radians, gravity, initial_position, target_vector, time_lived, dt, target_data)
-				local max_t = 0.1
-				local target_position = target_data.current_target
-				local position = target_data.position
-				local direction = Vector3.normalize(target_position - initial_position)
-				local point_on_line = Geometry.closest_point_on_line(position, initial_position, target_position)
-				local dist_to_target = Vector3.distance(point_on_line, target_position)
-				local dist_from_init = Vector3.distance(initial_position, target_position)
-				local current_lerp_t = 1 - dist_to_target / dist_from_init
-				local wanted_pos = Vector3.lerp(initial_position, target_position, current_lerp_t)
-				local lerp_t = current_lerp_t
-				local offset
-				local spin_speed = speed * 2
-				local curve_lerp_t
+			update = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7)
+				local var_4_0 = 0.1
+				local var_4_1 = arg_4_7.current_target
+				local var_4_2 = arg_4_7.position
+				local var_4_3 = Vector3.normalize(var_4_1 - arg_4_3)
+				local var_4_4 = Geometry.closest_point_on_line(var_4_2, arg_4_3, var_4_1)
+				local var_4_5 = 1 - Vector3.distance(var_4_4, var_4_1) / Vector3.distance(arg_4_3, var_4_1)
+				local var_4_6 = Vector3.lerp(arg_4_3, var_4_1, var_4_5)
+				local var_4_7 = var_4_5
+				local var_4_8
+				local var_4_9 = arg_4_0 * 2
+				local var_4_10
 
-				if lerp_t < max_t then
-					curve_lerp_t = math.clamp(lerp_t / max_t, 0, 1)
-					offset = math.easeInCubic(curve_lerp_t)
-				elseif lerp_t < 1 then
-					speed = speed / 5
-					lerp_t = lerp_t / 1
-					curve_lerp_t = math.clamp((lerp_t - max_t) / (1 - max_t), 0, 1)
-					offset = 1 - math.easeOutCubic(curve_lerp_t)
+				if var_4_7 < var_4_0 then
+					local var_4_11 = math.clamp(var_4_7 / var_4_0, 0, 1)
 
-					local offset_speed = offset
+					var_4_8 = math.easeInCubic(var_4_11)
+				elseif var_4_7 < 1 then
+					arg_4_0 = arg_4_0 / 5
+					var_4_7 = var_4_7 / 1
 
-					if offset < 0.3 then
-						offset_speed = 0.3
+					local var_4_12 = math.clamp((var_4_7 - var_4_0) / (1 - var_4_0), 0, 1)
+
+					var_4_8 = 1 - math.easeOutCubic(var_4_12)
+
+					local var_4_13 = var_4_8
+
+					if var_4_8 < 0.3 then
+						var_4_13 = 0.3
 					end
 
-					speed = speed * (1 + math.ease_out_quad(curve_lerp_t)) / offset_speed
-					spin_speed = spin_speed * offset
+					arg_4_0 = arg_4_0 * (1 + math.ease_out_quad(var_4_12)) / var_4_13
+					var_4_9 = var_4_9 * var_4_8
 				else
-					offset = 0
+					var_4_8 = 0
 				end
 
-				local offset_pos = Vector3(math.cos(time_lived * spin_speed), 0, -math.sin(time_lived * spin_speed))
+				local var_4_14 = Vector3(math.cos(arg_4_5 * var_4_9), 0, -math.sin(arg_4_5 * var_4_9))
+				local var_4_15 = Quaternion.rotate(Quaternion.look(var_4_3, Vector3.up()), var_4_14) * var_4_8
 
-				offset_pos = Quaternion.rotate(Quaternion.look(direction, Vector3.up()), offset_pos) * offset
-				speed = speed * (1 + math.easeInCubic(lerp_t))
+				arg_4_0 = arg_4_0 * (1 + math.easeInCubic(var_4_7))
 
-				local max_move_distance = Vector3.distance(target_position, position)
-				local delta_move_distance = math.clamp(speed * dt, 0, max_move_distance)
-				local new_position = wanted_pos + direction * delta_move_distance + offset_pos
+				local var_4_16 = Vector3.distance(var_4_1, var_4_2)
 
-				return new_position
-			end,
-		},
+				return var_4_6 + var_4_3 * math.clamp(arg_4_0 * arg_4_6, 0, var_4_16) + var_4_15
+			end
+		}
 	},
 	left_spinning_target_traversal = {
 		unit = {
-			update = function (speed, radians, gravity, initial_position, target_vector, time_lived, dt, target_data)
-				local max_t = 0.1
-				local target_position = target_data.current_target
-				local position = target_data.position
-				local direction = Vector3.normalize(target_position - initial_position)
-				local point_on_line = Geometry.closest_point_on_line(position, initial_position, target_position)
-				local dist_to_target = Vector3.distance(point_on_line, target_position)
-				local dist_from_init = Vector3.distance(initial_position, target_position)
-				local current_lerp_t = 1 - dist_to_target / dist_from_init
-				local wanted_pos = Vector3.lerp(initial_position, target_position, current_lerp_t)
-				local lerp_t = current_lerp_t
-				local offset
-				local spin_speed = speed * 2
-				local curve_lerp_t
+			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7)
+				local var_5_0 = 0.1
+				local var_5_1 = arg_5_7.current_target
+				local var_5_2 = arg_5_7.position
+				local var_5_3 = Vector3.normalize(var_5_1 - arg_5_3)
+				local var_5_4 = Geometry.closest_point_on_line(var_5_2, arg_5_3, var_5_1)
+				local var_5_5 = 1 - Vector3.distance(var_5_4, var_5_1) / Vector3.distance(arg_5_3, var_5_1)
+				local var_5_6 = Vector3.lerp(arg_5_3, var_5_1, var_5_5)
+				local var_5_7 = var_5_5
+				local var_5_8
+				local var_5_9 = arg_5_0 * 2
+				local var_5_10
 
-				if lerp_t < max_t then
-					curve_lerp_t = math.clamp(lerp_t / max_t, 0, 1)
-					offset = math.easeInCubic(curve_lerp_t)
-				elseif lerp_t < 1 then
-					speed = speed / 5
-					lerp_t = lerp_t / 1
-					curve_lerp_t = math.clamp((lerp_t - max_t) / (1 - max_t), 0, 1)
-					offset = 1 - math.easeOutCubic(curve_lerp_t)
+				if var_5_7 < var_5_0 then
+					local var_5_11 = math.clamp(var_5_7 / var_5_0, 0, 1)
 
-					local offset_speed = offset
+					var_5_8 = math.easeInCubic(var_5_11)
+				elseif var_5_7 < 1 then
+					arg_5_0 = arg_5_0 / 5
+					var_5_7 = var_5_7 / 1
 
-					if offset < 0.3 then
-						offset_speed = 0.3
+					local var_5_12 = math.clamp((var_5_7 - var_5_0) / (1 - var_5_0), 0, 1)
+
+					var_5_8 = 1 - math.easeOutCubic(var_5_12)
+
+					local var_5_13 = var_5_8
+
+					if var_5_8 < 0.3 then
+						var_5_13 = 0.3
 					end
 
-					speed = speed * (1 + math.ease_out_quad(curve_lerp_t)) / offset_speed
-					spin_speed = spin_speed * offset
+					arg_5_0 = arg_5_0 * (1 + math.ease_out_quad(var_5_12)) / var_5_13
+					var_5_9 = var_5_9 * var_5_8
 				else
-					offset = 0
+					var_5_8 = 0
 				end
 
-				local offset_pos = Vector3(math.sin(time_lived * spin_speed), 0, -math.cos(time_lived * spin_speed))
+				local var_5_14 = Vector3(math.sin(arg_5_5 * var_5_9), 0, -math.cos(arg_5_5 * var_5_9))
+				local var_5_15 = Quaternion.rotate(Quaternion.look(var_5_3, Vector3.up()), var_5_14) * var_5_8
 
-				offset_pos = Quaternion.rotate(Quaternion.look(direction, Vector3.up()), offset_pos) * offset
-				speed = speed * (1 + math.easeInCubic(lerp_t))
+				arg_5_0 = arg_5_0 * (1 + math.easeInCubic(var_5_7))
 
-				local max_move_distance = Vector3.distance(target_position, position)
-				local delta_move_distance = math.clamp(speed * dt, 0, max_move_distance)
-				local new_position = wanted_pos + direction * delta_move_distance + offset_pos
+				local var_5_16 = Vector3.distance(var_5_1, var_5_2)
 
-				return new_position
-			end,
-		},
+				return var_5_6 + var_5_3 * math.clamp(arg_5_0 * arg_5_6, 0, var_5_16) + var_5_15
+			end
+		}
 	},
 	random_spinning_target_traversal = {
 		unit = {
-			update = function (speed, radians, gravity, initial_position, target_vector, time_lived, dt, target_data)
-				local max_t = 0.1
-				local target_position = target_data.current_target
-				local position = target_data.position
-				local direction = Vector3.normalize(target_position - initial_position)
-				local point_on_line = Geometry.closest_point_on_line(position, initial_position, target_position)
-				local dist_to_target = Vector3.distance(point_on_line, target_position)
-				local dist_from_init = Vector3.distance(initial_position, target_position)
-				local current_lerp_t = 1 - dist_to_target / dist_from_init
-				local wanted_pos = Vector3.lerp(initial_position, target_position, current_lerp_t)
-				local lerp_t = current_lerp_t
-				local offset
-				local spin_speed = speed * 2
-				local curve_lerp_t
+			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7)
+				local var_6_0 = 0.1
+				local var_6_1 = arg_6_7.current_target
+				local var_6_2 = arg_6_7.position
+				local var_6_3 = Vector3.normalize(var_6_1 - arg_6_3)
+				local var_6_4 = Geometry.closest_point_on_line(var_6_2, arg_6_3, var_6_1)
+				local var_6_5 = 1 - Vector3.distance(var_6_4, var_6_1) / Vector3.distance(arg_6_3, var_6_1)
+				local var_6_6 = Vector3.lerp(arg_6_3, var_6_1, var_6_5)
+				local var_6_7 = var_6_5
+				local var_6_8
+				local var_6_9 = arg_6_0 * 2
+				local var_6_10
 
-				if lerp_t < max_t then
-					curve_lerp_t = math.clamp(lerp_t / max_t, 0, 1)
-					offset = math.easeInCubic(curve_lerp_t)
-				elseif lerp_t < 1 then
-					speed = speed / 5
-					lerp_t = lerp_t / 1
-					curve_lerp_t = math.clamp((lerp_t - max_t) / (1 - max_t), 0, 1)
-					offset = 1 - math.easeOutCubic(curve_lerp_t)
+				if var_6_7 < var_6_0 then
+					local var_6_11 = math.clamp(var_6_7 / var_6_0, 0, 1)
 
-					local offset_speed = offset
+					var_6_8 = math.easeInCubic(var_6_11)
+				elseif var_6_7 < 1 then
+					arg_6_0 = arg_6_0 / 5
+					var_6_7 = var_6_7 / 1
 
-					if offset < 0.3 then
-						offset_speed = 0.3
+					local var_6_12 = math.clamp((var_6_7 - var_6_0) / (1 - var_6_0), 0, 1)
+
+					var_6_8 = 1 - math.easeOutCubic(var_6_12)
+
+					local var_6_13 = var_6_8
+
+					if var_6_8 < 0.3 then
+						var_6_13 = 0.3
 					end
 
-					speed = speed * (1 + math.ease_out_quad(curve_lerp_t)) / offset_speed
-					spin_speed = spin_speed * offset
+					arg_6_0 = arg_6_0 * (1 + math.ease_out_quad(var_6_12)) / var_6_13
+					var_6_9 = var_6_9 * var_6_8
 				else
-					offset = 0
+					var_6_8 = 0
 				end
 
-				local random_spin_dir = target_data.random_spin_dir
-				local offset_pos
+				local var_6_14 = arg_6_7.random_spin_dir
+				local var_6_15
 
-				if random_spin_dir == 1 then
-					offset_pos = Vector3(-math.cos(time_lived * spin_speed), 0, math.sin(time_lived * spin_speed))
+				if var_6_14 == 1 then
+					var_6_15 = Vector3(-math.cos(arg_6_5 * var_6_9), 0, math.sin(arg_6_5 * var_6_9))
 				else
-					offset_pos = Vector3(math.sin(time_lived * spin_speed), 0, -math.cos(time_lived * spin_speed))
+					var_6_15 = Vector3(math.sin(arg_6_5 * var_6_9), 0, -math.cos(arg_6_5 * var_6_9))
 				end
 
-				offset_pos = Quaternion.rotate(Quaternion.look(direction, Vector3.up()), offset_pos) * offset
-				speed = speed * (1 + math.easeInCubic(lerp_t))
+				local var_6_16 = Quaternion.rotate(Quaternion.look(var_6_3, Vector3.up()), var_6_15) * var_6_8
 
-				local max_move_distance = Vector3.distance(target_position, position)
-				local delta_move_distance = math.clamp(speed * dt, 0, max_move_distance)
-				local new_position = wanted_pos + direction * delta_move_distance + offset_pos
+				arg_6_0 = arg_6_0 * (1 + math.easeInCubic(var_6_7))
 
-				QuickDrawer:sphere(new_position, 0.1, Color(255, 0, 0))
+				local var_6_17 = Vector3.distance(var_6_1, var_6_2)
+				local var_6_18 = var_6_6 + var_6_3 * math.clamp(arg_6_0 * arg_6_6, 0, var_6_17) + var_6_16
 
-				return new_position
-			end,
-		},
+				QuickDrawer:sphere(var_6_18, 0.1, Color(255, 0, 0))
+
+				return var_6_18
+			end
+		}
 	},
 	magic_missile_traversal = {
 		unit = {
-			update = function (speed, radians, gravity, initial_position, target_vector, time_lived, dt, traversal_data)
-				local max_t = 0.075
-				local target_position = traversal_data.current_target
-				local position = traversal_data.position
-				local direction = Vector3.normalize(target_position - initial_position)
-				local wanted_position = Geometry.closest_point_on_line(position + direction * speed * dt, initial_position, target_position)
-				local random_x_axis = traversal_data.random_x_axis
-				local random_y_axis = traversal_data.random_y_axis
-				local dist_to_wanted = Vector3.distance(initial_position, wanted_position)
-				local dist_to_target = Vector3.distance(initial_position, target_position)
-				local lerp_t = math.clamp(math.inv_lerp(0, dist_to_target, dist_to_wanted), 0, 1)
-				local offset
+			update = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7)
+				local var_7_0 = 0.075
+				local var_7_1 = arg_7_7.current_target
+				local var_7_2 = arg_7_7.position
+				local var_7_3 = Vector3.normalize(var_7_1 - arg_7_3)
+				local var_7_4 = Geometry.closest_point_on_line(var_7_2 + var_7_3 * arg_7_0 * arg_7_6, arg_7_3, var_7_1)
+				local var_7_5 = arg_7_7.random_x_axis
+				local var_7_6 = arg_7_7.random_y_axis
+				local var_7_7 = Vector3.distance(arg_7_3, var_7_4)
+				local var_7_8 = Vector3.distance(arg_7_3, var_7_1)
+				local var_7_9 = math.clamp(math.inv_lerp(0, var_7_8, var_7_7), 0, 1)
+				local var_7_10
 
-				if lerp_t < max_t then
-					local curve_lerp_t = math.clamp(lerp_t / max_t, 0, 1)
+				if var_7_9 < var_7_0 then
+					local var_7_11 = math.clamp(var_7_9 / var_7_0, 0, 1)
 
-					offset = math.easeInCubic(curve_lerp_t) * 0.75
-					speed = speed * (1 + math.easeInCubic(curve_lerp_t) / 2) * 0.75
-				elseif lerp_t < 1 then
-					local curve_lerp_t = math.clamp((lerp_t - max_t) / (1 - max_t), 0, 1)
+					var_7_10 = math.easeInCubic(var_7_11) * 0.75
+					arg_7_0 = arg_7_0 * (1 + math.easeInCubic(var_7_11) / 2) * 0.75
+				elseif var_7_9 < 1 then
+					local var_7_12 = math.clamp((var_7_9 - var_7_0) / (1 - var_7_0), 0, 1)
 
-					offset = 1 - math.easeOutCubic(curve_lerp_t)
-					speed = speed * (1 + math.easeOutCubic(curve_lerp_t))
+					var_7_10 = 1 - math.easeOutCubic(var_7_12)
+					arg_7_0 = arg_7_0 * (1 + math.easeOutCubic(var_7_12))
 				else
-					offset = 0
+					var_7_10 = 0
 				end
 
-				local local_x_offset_dir = Vector3.right() * random_x_axis
-				local local_y_offset_dir = Vector3.up() * random_y_axis
-				local local_offset_dir = Vector3.normalize(local_x_offset_dir + local_y_offset_dir)
-				local offset_dir = Quaternion.rotate(Quaternion.look(direction), local_offset_dir)
-				local max_move_distance = Vector3.distance(target_position, position)
-				local delta_move_distance = math.clamp(speed * dt, 0, max_move_distance)
+				local var_7_13 = Vector3.right() * var_7_5
+				local var_7_14 = Vector3.up() * var_7_6
+				local var_7_15 = Vector3.normalize(var_7_13 + var_7_14)
+				local var_7_16 = Quaternion.rotate(Quaternion.look(var_7_3), var_7_15)
+				local var_7_17 = Vector3.distance(var_7_1, var_7_2)
+				local var_7_18 = math.clamp(arg_7_0 * arg_7_6, 0, var_7_17)
+				local var_7_19 = var_7_4 + var_7_16 * var_7_10
 
-				wanted_position = wanted_position + offset_dir * offset
-
-				local move = Vector3.normalize(wanted_position - position) * delta_move_distance
-				local new_position = position + move
-
-				return new_position
-			end,
-		},
+				return var_7_2 + Vector3.normalize(var_7_19 - var_7_2) * var_7_18
+			end
+		}
 	},
 	straight_direction_traversal = {
 		unit = {
-			update = function (speed, radians, gravity, initial_position, target_vector, time_lived, dt, optional_data)
-				local move_delta = target_vector * speed * dt
-				local new_position = move_delta + optional_data.position
-
-				return new_position
-			end,
+			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7)
+				return arg_8_4 * arg_8_0 * arg_8_6 + arg_8_7.position
+			end
 		},
 		husk = {
-			update = function (speed, radians, gravity, initial_position, target_vector, time_lived, dt, optional_data)
-				local move_delta = target_vector * speed * dt
-				local new_position = move_delta + optional_data.position
-
-				return new_position
-			end,
-		},
+			update = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
+				return arg_9_4 * arg_9_0 * arg_9_6 + arg_9_7.position
+			end
+		}
 	},
 	throw_trajectory = {
-		prediction_function = function (speed, gravity, initial_position, target_position, target_velocity)
-			local t = 0
-			local angle
-			local EPSILON = 0.01
-			local ITERATIONS = 10
+		prediction_function = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+			local var_10_0 = 0
+			local var_10_1
+			local var_10_2 = 0.01
+			local var_10_3 = 10
 
-			assert(gravity > 0, "Can't solve for <=0 gravity, use different projectile template")
+			assert(arg_10_1 > 0, "Can't solve for <=0 gravity, use different projectile template")
 
-			local estimated_target_position = target_position
+			local var_10_4 = arg_10_3
 
-			for i = 1, ITERATIONS do
-				estimated_target_position = target_position + t * target_velocity
+			for iter_10_0 = 1, var_10_3 do
+				var_10_4 = arg_10_3 + var_10_0 * arg_10_4
 
-				local height = estimated_target_position.z - initial_position.z
-				local speed_squared = speed^2
-				local flat_distance = Vector3.length(Vector3.flat(estimated_target_position - initial_position))
+				local var_10_5 = var_10_4.z - arg_10_2.z
+				local var_10_6 = arg_10_0^2
+				local var_10_7 = Vector3.length(Vector3.flat(var_10_4 - arg_10_2))
 
-				if flat_distance < EPSILON then
-					return 0, estimated_target_position
+				if var_10_7 < var_10_2 then
+					return 0, var_10_4
 				end
 
-				local sqrt_val = speed_squared^2 - gravity * (gravity * flat_distance^2 + 2 * height * speed_squared)
+				local var_10_8 = var_10_6^2 - arg_10_1 * (arg_10_1 * var_10_7^2 + 2 * var_10_5 * var_10_6)
 
-				if sqrt_val <= 0 then
-					return nil, estimated_target_position
+				if var_10_8 <= 0 then
+					return nil, var_10_4
 				end
 
-				local second_degree_component = math.sqrt(sqrt_val)
-				local angle1 = math.atan((speed_squared + second_degree_component) / (gravity * flat_distance))
-				local angle2 = math.atan((speed_squared - second_degree_component) / (gravity * flat_distance))
+				local var_10_9 = math.sqrt(var_10_8)
+				local var_10_10 = math.atan((var_10_6 + var_10_9) / (arg_10_1 * var_10_7))
+				local var_10_11 = math.atan((var_10_6 - var_10_9) / (arg_10_1 * var_10_7))
 
-				angle = math.min(angle1, angle2)
-
-				local flat_distance = Vector3.length(Vector3.flat(estimated_target_position - initial_position))
-
-				t = flat_distance / (speed * math.cos(angle))
+				var_10_1 = math.min(var_10_10, var_10_11)
+				var_10_0 = Vector3.length(Vector3.flat(var_10_4 - arg_10_2)) / (arg_10_0 * math.cos(var_10_1))
 			end
 
-			return angle, estimated_target_position
+			return var_10_1, var_10_4
 		end,
 		unit = {
-			update = function (speed, radians, gravity, initial_position, target_vector, time_lived, dt, optional_data)
-				local position = WeaponHelper:position_on_trajectory(initial_position, target_vector, speed, radians, gravity, time_lived, dt)
-
-				return position
-			end,
+			update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7)
+				return (WeaponHelper:position_on_trajectory(arg_11_3, arg_11_4, arg_11_0, arg_11_1, arg_11_2, arg_11_5, arg_11_6))
+			end
 		},
 		husk = {
-			update = function (speed, radians, gravity, initial_position, target_vector, time_lived, dt, optional_data)
-				local position = WeaponHelper:position_on_trajectory(initial_position, target_vector, speed, radians, gravity, time_lived, dt)
-
-				return position
-			end,
-		},
-	},
+			update = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7)
+				return (WeaponHelper:position_on_trajectory(arg_12_3, arg_12_4, arg_12_0, arg_12_1, arg_12_2, arg_12_5, arg_12_6))
+			end
+		}
+	}
 }
 ProjectileTemplates.impact_templates = {
 	explosion_impact = {
 		server = {
-			execute = function (world, damage_source, unit, recent_impacts, num_impacts, owner_unit)
-				local first_hit_position = Vector3Box.unbox(recent_impacts[ProjectileImpactDataIndex.POSITION])
-				local unit_id = Managers.state.unit_storage:go_id(unit)
+			execute = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+				local var_13_0 = Vector3Box.unbox(arg_13_3[ProjectileImpactDataIndex.POSITION])
+				local var_13_1 = Managers.state.unit_storage:go_id(arg_13_2)
 
-				Managers.state.network.network_transmit:send_rpc_all("rpc_area_damage", unit_id, first_hit_position)
+				Managers.state.network.network_transmit:send_rpc_all("rpc_area_damage", var_13_1, var_13_0)
 
-				if not Unit.alive(owner_unit) then
+				if not Unit.alive(arg_13_5) then
 					return true
 				end
 
-				Unit.set_local_position(unit, 0, first_hit_position)
+				Unit.set_local_position(arg_13_2, 0, var_13_0)
 
-				local ai_base_extension = ScriptUnit.has_extension(owner_unit, "ai_system")
+				local var_13_2 = ScriptUnit.has_extension(arg_13_5, "ai_system")
 
-				if ai_base_extension then
-					local blackboard = ai_base_extension:blackboard()
-
-					blackboard.explosion_impact = true
+				if var_13_2 then
+					var_13_2:blackboard().explosion_impact = true
 				end
 
-				if HEALTH_ALIVE[owner_unit] then
-					local players_inside = 0
-					local area_damage_position = POSITION_LOOKUP[unit]
+				if HEALTH_ALIVE[arg_13_5] then
+					local var_13_3 = 0
+					local var_13_4 = POSITION_LOOKUP[arg_13_2]
 
-					for _, player in pairs(Managers.player:human_players()) do
-						local player_unit = player.player_unit
+					for iter_13_0, iter_13_1 in pairs(Managers.player:human_players()) do
+						local var_13_5 = iter_13_1.player_unit
 
-						if player_unit ~= nil then
-							local unit_position = POSITION_LOOKUP[player_unit]
-							local distance_sq = Vector3.distance_squared(unit_position, area_damage_position)
-							local is_inside_radius = distance_sq < 9
+						if var_13_5 ~= nil then
+							local var_13_6 = POSITION_LOOKUP[var_13_5]
 
-							if is_inside_radius then
-								players_inside = players_inside + 1
+							if Vector3.distance_squared(var_13_6, var_13_4) < 9 then
+								var_13_3 = var_13_3 + 1
 							end
 						end
 					end
 
-					local dialogue_extension = ScriptUnit.has_extension(owner_unit, "dialogue_system")
+					local var_13_7 = ScriptUnit.has_extension(arg_13_5, "dialogue_system")
 
-					if dialogue_extension then
-						local dialogue_input = dialogue_extension.input
-						local event_data = FrameTable.alloc_table()
+					if var_13_7 then
+						local var_13_8 = var_13_7.input
+						local var_13_9 = FrameTable.alloc_table()
 
-						event_data.num_units = players_inside
+						var_13_9.num_units = var_13_3
 
-						dialogue_input:trigger_dialogue_event("pwg_projectile_hit", event_data)
+						var_13_8:trigger_dialogue_event("pwg_projectile_hit", var_13_9)
 					end
 				end
 
 				return true
-			end,
+			end
 		},
 		client = {
-			execute = function (world, damage_source, unit, recent_impacts, num_impacts, owner_unit)
-				Unit.set_unit_visibility(unit, false)
-				Unit.flow_event(unit, "lua_projectile_impact")
+			execute = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+				Unit.set_unit_visibility(arg_14_2, false)
+				Unit.flow_event(arg_14_2, "lua_projectile_impact")
 
 				return true
-			end,
-		},
+			end
+		}
 	},
 	vs_globadier_impact = {
 		server = {
-			execute = function (world, damage_source, unit, recent_impacts, num_impacts, owner_unit, explosion_template, impact_counter)
-				local hit_position = Vector3Box.unbox(recent_impacts[ProjectileImpactDataIndex.POSITION])
+			execute = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7)
+				local var_15_0 = Vector3Box.unbox(arg_15_3[ProjectileImpactDataIndex.POSITION])
 
-				Unit.set_local_position(unit, 0, hit_position)
+				Unit.set_local_position(arg_15_2, 0, var_15_0)
 
-				local unit_id = Managers.state.unit_storage:go_id(unit)
+				local var_15_1 = Managers.state.unit_storage:go_id(arg_15_2)
 
-				Managers.state.network.network_transmit:send_rpc_all("rpc_area_damage", unit_id, hit_position)
+				Managers.state.network.network_transmit:send_rpc_all("rpc_area_damage", var_15_1, var_15_0)
 
-				if not Unit.alive(owner_unit) then
+				if not Unit.alive(arg_15_5) then
 					return true
 				end
 
-				local radius = 3
-				local area_damage_extension = ScriptUnit.has_extension(unit, "area_damage_system")
+				local var_15_2 = 3
+				local var_15_3 = ScriptUnit.has_extension(arg_15_2, "area_damage_system")
 
-				radius = area_damage_extension and area_damage_extension.radius or radius
+				var_15_2 = var_15_3 and var_15_3.radius or var_15_2
 
-				local ai_base_extension = ScriptUnit.has_extension(owner_unit, "ai_system")
+				local var_15_4 = ScriptUnit.has_extension(arg_15_5, "ai_system")
 
-				if ai_base_extension then
-					local blackboard = ai_base_extension:blackboard()
-
-					blackboard.explosion_impact = true
+				if var_15_4 then
+					var_15_4:blackboard().explosion_impact = true
 				end
 
-				if HEALTH_ALIVE[owner_unit] then
-					local players_inside = 0
-					local area_damage_position = POSITION_LOOKUP[unit]
+				if HEALTH_ALIVE[arg_15_5] then
+					local var_15_5 = 0
+					local var_15_6 = POSITION_LOOKUP[arg_15_2]
 
-					for _, player in pairs(Managers.player:human_players()) do
-						local player_unit = player.player_unit
+					for iter_15_0, iter_15_1 in pairs(Managers.player:human_players()) do
+						local var_15_7 = iter_15_1.player_unit
 
-						if player_unit ~= nil then
-							local unit_position = POSITION_LOOKUP[player_unit]
-							local distance_sq = Vector3.distance_squared(unit_position, area_damage_position)
-							local is_inside_radius = distance_sq < radius * radius
+						if var_15_7 ~= nil then
+							local var_15_8 = POSITION_LOOKUP[var_15_7]
 
-							if is_inside_radius then
-								players_inside = players_inside + 1
+							if Vector3.distance_squared(var_15_8, var_15_6) < var_15_2 * var_15_2 then
+								var_15_5 = var_15_5 + 1
 							end
 						end
 					end
 
-					local dialogue_extension = ScriptUnit.has_extension(owner_unit, "dialogue_system")
+					local var_15_9 = ScriptUnit.has_extension(arg_15_5, "dialogue_system")
 
-					if dialogue_extension then
-						local dialogue_input = dialogue_extension.input
-						local event_data = FrameTable.alloc_table()
+					if var_15_9 then
+						local var_15_10 = var_15_9.input
+						local var_15_11 = FrameTable.alloc_table()
 
-						event_data.num_units = players_inside
+						var_15_11.num_units = var_15_5
 
-						dialogue_input:trigger_dialogue_event("pwg_projectile_hit", event_data)
+						var_15_10:trigger_dialogue_event("pwg_projectile_hit", var_15_11)
 					end
 				end
 
-				_check_globadier_globe_vo(hit_position, radius, owner_unit)
+				var_0_1(var_15_0, var_15_2, arg_15_5)
 
 				return true
-			end,
+			end
 		},
 		client = {
-			execute = function (world, damage_source, unit, recent_impacts, num_impacts, owner_unit, explosion_template, impact_counter)
-				local hit_position = Vector3Box.unbox(recent_impacts[ProjectileImpactDataIndex.POSITION])
+			execute = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7)
+				local var_16_0 = Vector3Box.unbox(arg_16_3[ProjectileImpactDataIndex.POSITION])
 
-				Unit.set_local_position(unit, 0, hit_position)
+				Unit.set_local_position(arg_16_2, 0, var_16_0)
 
-				local is_player_unit = DamageUtils.is_player_unit(owner_unit)
+				if DamageUtils.is_player_unit(arg_16_5) then
+					local var_16_1 = Managers.player:owner(arg_16_5)
 
-				if is_player_unit then
-					local owner_player = Managers.player:owner(owner_unit)
-					local owner_is_local = owner_player and owner_player.local_player
-
-					if owner_is_local and not (impact_counter > 1) then
-						WwiseUtils.trigger_position_event(world, "player_versus_globadier_fps_globe_impact", hit_position)
+					if var_16_1 and var_16_1.local_player and not (arg_16_7 > 1) then
+						WwiseUtils.trigger_position_event(arg_16_0, "player_versus_globadier_fps_globe_impact", var_16_0)
 					end
 				end
 
-				Unit.set_unit_visibility(unit, false)
-				Unit.flow_event(unit, "lua_projectile_impact")
+				Unit.set_unit_visibility(arg_16_2, false)
+				Unit.flow_event(arg_16_2, "lua_projectile_impact")
 
 				return true
-			end,
-		},
+			end
+		}
 	},
 	direct_impact = {
 		server = {
-			execute = function (world, damage_source, projectile_unit, recent_impacts, num_impacts, owner_unit, explosion_template)
-				if not Unit.alive(owner_unit) then
-					Managers.state.unit_spawner:mark_for_deletion(projectile_unit)
+			execute = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6)
+				if not Unit.alive(arg_17_5) then
+					Managers.state.unit_spawner:mark_for_deletion(arg_17_2)
 
 					return true
 				end
 
-				if explosion_template then
-					if explosion_template.explosion then
-						local blackboard = BLACKBOARDS[owner_unit]
+				if arg_17_6 then
+					if arg_17_6.explosion then
+						local var_17_0 = BLACKBOARDS[arg_17_5]
 
-						AiUtils.ai_explosion(projectile_unit, owner_unit, blackboard, damage_source, explosion_template)
+						AiUtils.ai_explosion(arg_17_2, arg_17_5, var_17_0, arg_17_1, arg_17_6)
 					end
 
-					local first_hit_position
+					local var_17_1
 
-					if explosion_template.aoe then
-						first_hit_position = Vector3Box.unbox(recent_impacts[ProjectileImpactDataIndex.POSITION])
+					if arg_17_6.aoe then
+						var_17_1 = Vector3Box.unbox(arg_17_3[ProjectileImpactDataIndex.POSITION])
 
-						DamageUtils.create_aoe(world, owner_unit, first_hit_position, damage_source, explosion_template)
+						DamageUtils.create_aoe(arg_17_0, arg_17_5, var_17_1, arg_17_1, arg_17_6)
 					end
 
-					if explosion_template.server_hit_func then
-						first_hit_position = first_hit_position or Vector3Box.unbox(recent_impacts[ProjectileImpactDataIndex.POSITION])
+					if arg_17_6.server_hit_func then
+						var_17_1 = var_17_1 or Vector3Box.unbox(arg_17_3[ProjectileImpactDataIndex.POSITION])
 
-						explosion_template.server_hit_func(projectile_unit, damage_source, owner_unit, first_hit_position, recent_impacts, explosion_template)
+						arg_17_6.server_hit_func(arg_17_2, arg_17_1, arg_17_5, var_17_1, arg_17_3, arg_17_6)
 					end
 				end
 
 				return true
-			end,
+			end
 		},
 		client = {
-			execute = function (world, damage_source, unit, recent_impacts, num_impacts, owner_unit)
-				Unit.set_unit_visibility(unit, false)
-				Unit.flow_event(unit, "lua_projectile_impact")
+			execute = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+				Unit.set_unit_visibility(arg_18_2, false)
+				Unit.flow_event(arg_18_2, "lua_projectile_impact")
 
 				return true
-			end,
-		},
+			end
+		}
 	},
 	no_owner_direct_impact = {
 		server = {
-			execute = function (world, damage_source, projectile_unit, recent_impacts, num_impacts, owner_unit, explosion_template)
-				if explosion_template then
-					if explosion_template.explosion then
-						local blackboard = BLACKBOARDS[owner_unit]
+			execute = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
+				if arg_19_6 then
+					if arg_19_6.explosion then
+						local var_19_0 = BLACKBOARDS[arg_19_5]
 
-						AiUtils.ai_explosion(projectile_unit, owner_unit, blackboard, damage_source, explosion_template)
+						AiUtils.ai_explosion(arg_19_2, arg_19_5, var_19_0, arg_19_1, arg_19_6)
 					end
 
-					local first_hit_position
+					local var_19_1
 
-					if explosion_template.aoe then
-						first_hit_position = Vector3Box.unbox(recent_impacts[ProjectileImpactDataIndex.POSITION])
+					if arg_19_6.aoe then
+						var_19_1 = Vector3Box.unbox(arg_19_3[ProjectileImpactDataIndex.POSITION])
 
-						DamageUtils.create_aoe(world, owner_unit, first_hit_position, damage_source, explosion_template)
+						DamageUtils.create_aoe(arg_19_0, arg_19_5, var_19_1, arg_19_1, arg_19_6)
 					end
 
-					if explosion_template.server_hit_func then
-						first_hit_position = first_hit_position or Vector3Box.unbox(recent_impacts[ProjectileImpactDataIndex.POSITION])
+					if arg_19_6.server_hit_func then
+						var_19_1 = var_19_1 or Vector3Box.unbox(arg_19_3[ProjectileImpactDataIndex.POSITION])
 
-						explosion_template.server_hit_func(projectile_unit, damage_source, owner_unit, first_hit_position, recent_impacts, explosion_template)
+						arg_19_6.server_hit_func(arg_19_2, arg_19_1, arg_19_5, var_19_1, arg_19_3, arg_19_6)
 					end
 				end
 
 				return true
-			end,
+			end
 		},
 		client = {
-			execute = function (world, damage_source, unit, recent_impacts, num_impacts, owner_unit)
-				Unit.set_unit_visibility(unit, false)
-				Unit.flow_event(unit, "lua_projectile_impact")
+			execute = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+				Unit.set_unit_visibility(arg_20_2, false)
+				Unit.flow_event(arg_20_2, "lua_projectile_impact")
 
 				return true
-			end,
-		},
+			end
+		}
 	},
 	vfx_impact = {
 		server = {
-			execute = function (world, damage_source, unit, recent_impacts, num_impacts, owner_unit)
-				Unit.set_unit_visibility(unit, false)
-				Unit.flow_event(unit, "lua_projectile_impact")
+			execute = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
+				Unit.set_unit_visibility(arg_21_2, false)
+				Unit.flow_event(arg_21_2, "lua_projectile_impact")
 
 				return true
-			end,
+			end
 		},
 		client = {
-			execute = function (world, damage_source, unit, recent_impacts, num_impacts, owner_unit)
-				Unit.set_unit_visibility(unit, false)
-				Unit.flow_event(unit, "lua_projectile_impact")
+			execute = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
+				Unit.set_unit_visibility(arg_22_2, false)
+				Unit.flow_event(arg_22_2, "lua_projectile_impact")
 
 				return true
-			end,
-		},
+			end
+		}
 	},
 	necromancer_trapped_soul = {
 		owner_heal_amount = 2,
 		owner_heal_type = "heal_from_proc",
 		server = {
-			execute = function (world, damage_source, unit, recent_impacts, num_impacts, owner_unit)
-				local hit_unit = recent_impacts[ProjectileImpactDataIndex.UNIT]
+			execute = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
+				local var_23_0 = arg_23_3[ProjectileImpactDataIndex.UNIT]
 
-				if not HEALTH_ALIVE[hit_unit] then
+				if not HEALTH_ALIVE[var_23_0] then
 					return true
 				end
 
-				local network_manager = Managers.state.network
-				local hit_unit_id = network_manager:unit_game_object_id(hit_unit)
+				local var_23_1 = Managers.state.network
+				local var_23_2 = var_23_1:unit_game_object_id(var_23_0)
 
-				if hit_unit_id then
-					local hit_position = recent_impacts[ProjectileImpactDataIndex.POSITION]:unbox()
-					local hit_direction = recent_impacts[ProjectileImpactDataIndex.DIRECTION]:unbox()
-					local weapon_system = Managers.state.entity:system("weapon_system")
-					local damage_source_id = NetworkLookup.damage_sources.buff
-					local attacker_unit_id = network_manager:unit_game_object_id(owner_unit)
-					local hit_zone_name = "full"
-					local breed = Breeds[hit_unit]
+				if var_23_2 then
+					local var_23_3 = arg_23_3[ProjectileImpactDataIndex.POSITION]:unbox()
+					local var_23_4 = arg_23_3[ProjectileImpactDataIndex.DIRECTION]:unbox()
+					local var_23_5 = Managers.state.entity:system("weapon_system")
+					local var_23_6 = NetworkLookup.damage_sources.buff
+					local var_23_7 = var_23_1:unit_game_object_id(arg_23_5)
+					local var_23_8 = "full"
+					local var_23_9 = Breeds[var_23_0]
 
-					if breed then
-						local actor_index = recent_impacts[ProjectileImpactDataIndex.ACTOR_INDEX]
-						local actor = Unit.actor(hit_unit, actor_index)
-						local node = Actor.node(actor)
+					if var_23_9 then
+						local var_23_10 = arg_23_3[ProjectileImpactDataIndex.ACTOR_INDEX]
+						local var_23_11 = Unit.actor(var_23_0, var_23_10)
+						local var_23_12 = Actor.node(var_23_11)
 
-						hit_zone_name = breed.hit_zones_lookup[node] or hit_zone_name
+						var_23_8 = var_23_9.hit_zones_lookup[var_23_12] or var_23_8
 					end
 
-					local hit_zone_id = NetworkLookup.hit_zones[hit_zone_name]
-					local damage_profile_id = NetworkLookup.damage_profiles.trapped_soul
-					local power_level = DefaultPowerLevel
-					local career_extension = ScriptUnit.has_extension(owner_unit, "career_system")
+					local var_23_13 = NetworkLookup.hit_zones[var_23_8]
+					local var_23_14 = NetworkLookup.damage_profiles.trapped_soul
+					local var_23_15 = DefaultPowerLevel
+					local var_23_16 = ScriptUnit.has_extension(arg_23_5, "career_system")
 
-					if career_extension then
-						power_level = career_extension:get_career_power_level()
+					if var_23_16 then
+						var_23_15 = var_23_16:get_career_power_level()
 					end
 
-					local health_extension = ScriptUnit.has_extension(owner_unit, "health_system")
+					local var_23_17 = ScriptUnit.has_extension(arg_23_5, "health_system")
 
-					if health_extension then
-						local impact_template = ProjectileTemplates.impact_templates.necromancer_trapped_soul
+					if var_23_17 then
+						local var_23_18 = ProjectileTemplates.impact_templates.necromancer_trapped_soul
 
-						health_extension:add_heal(owner_unit, impact_template.owner_heal_amount, nil, impact_template.owner_heal_type)
+						var_23_17:add_heal(arg_23_5, var_23_18.owner_heal_amount, nil, var_23_18.owner_heal_type)
 					end
 
-					weapon_system:send_rpc_attack_hit(damage_source_id, attacker_unit_id, hit_unit_id, hit_zone_id, hit_position, hit_direction, damage_profile_id, "power_level", power_level)
+					var_23_5:send_rpc_attack_hit(var_23_6, var_23_7, var_23_2, var_23_13, var_23_3, var_23_4, var_23_14, "power_level", var_23_15)
 				end
 
 				return true
-			end,
+			end
 		},
 		client = {
-			execute = function (world, damage_source, unit, recent_impacts, num_impacts, owner_unit)
-				local hit_position = recent_impacts[ProjectileImpactDataIndex.POSITION]:unbox()
+			execute = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
+				local var_24_0 = arg_24_3[ProjectileImpactDataIndex.POSITION]:unbox()
 
-				World.create_particles(world, "fx/necromancer_skeleton_hit", hit_position)
-				Unit.flow_event(unit, "lua_projectile_impact")
+				World.create_particles(arg_24_0, "fx/necromancer_skeleton_hit", var_24_0)
+				Unit.flow_event(arg_24_2, "lua_projectile_impact")
 
 				return true
-			end,
-		},
-	},
+			end
+		}
+	}
 }
 
-ProjectileTemplates.get_trajectory_template = function (trajectory_template_name, is_husk)
-	local templates = ProjectileTemplates.trajectory_templates
-	local husk_key = is_husk == true and "husk" or is_husk == false and "unit"
-	local template = templates[trajectory_template_name][husk_key]
+function ProjectileTemplates.get_trajectory_template(arg_25_0, arg_25_1)
+	local var_25_0 = ProjectileTemplates.trajectory_templates
+	local var_25_1 = arg_25_1 == true and "husk" or arg_25_1 == false and "unit"
 
-	return template
+	return var_25_0[arg_25_0][var_25_1]
 end
 
-ProjectileTemplates.get_impact_template = function (impact_template_name)
-	local templates = ProjectileTemplates.impact_templates
-	local template = templates[impact_template_name]
-
-	return template
+function ProjectileTemplates.get_impact_template(arg_26_0)
+	return ProjectileTemplates.impact_templates[arg_26_0]
 end
 
-function check_for_afro_hit(recent_impacts, num_impacts)
-	local hit_unit, actor_index, hit_actor, node_index
-	local only_hit_afro = true
-	local non_afro_hit_index
+local function var_0_2(arg_27_0, arg_27_1)
+	local var_27_0
+	local var_27_1
+	local var_27_2
+	local var_27_3
+	local var_27_4 = true
+	local var_27_5
 
-	for i = 1, num_impacts / ProjectileImpactDataIndex.STRIDE do
-		local j = (i - 1) * ProjectileImpactDataIndex.STRIDE
+	for iter_27_0 = 1, arg_27_1 / ProjectileImpactDataIndex.STRIDE do
+		local var_27_6 = (iter_27_0 - 1) * ProjectileImpactDataIndex.STRIDE
 
-		hit_unit = recent_impacts[j + ProjectileImpactDataIndex.UNIT]
-		actor_index = recent_impacts[j + ProjectileImpactDataIndex.ACTOR_INDEX]
-		hit_actor = Unit.actor(hit_unit, actor_index)
-		node_index = Actor.node(hit_actor)
+		var_27_0 = arg_27_0[var_27_6 + ProjectileImpactDataIndex.UNIT]
+		var_27_1 = arg_27_0[var_27_6 + ProjectileImpactDataIndex.ACTOR_INDEX]
+		var_27_2 = Unit.actor(var_27_0, var_27_1)
+		var_27_3 = Actor.node(var_27_2)
 
-		local breed = Unit.get_data(hit_unit, "breed")
+		local var_27_7 = Unit.get_data(var_27_0, "breed")
 
-		if breed then
-			local hit_zone = breed.hit_zones_lookup[node_index]
-			local hit_zone_name = hit_zone.name
-
-			if hit_zone_name ~= "afro" then
-				only_hit_afro = false
-				non_afro_hit_index = j
+		if var_27_7 then
+			if var_27_7.hit_zones_lookup[var_27_3].name ~= "afro" then
+				var_27_4 = false
+				var_27_5 = var_27_6
 
 				break
 			end
 		else
-			only_hit_afro = false
-			non_afro_hit_index = j
+			var_27_4 = false
+			var_27_5 = var_27_6
 
 			break
 		end
 	end
 
-	return hit_unit, actor_index, hit_actor, node_index, only_hit_afro, non_afro_hit_index
+	return var_27_0, var_27_1, var_27_2, var_27_3, var_27_4, var_27_5
 end

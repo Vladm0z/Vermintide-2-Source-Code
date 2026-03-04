@@ -1,170 +1,164 @@
-﻿-- chunkname: @foundation/scripts/util/circular_queue.lua
+-- chunkname: @foundation/scripts/util/circular_queue.lua
 
 CircularQueue = class(CircularQueue)
 
-CircularQueue.init = function (self, capacity)
-	self.queue = {}
-	self.capacity = capacity
-	self.first = 1
-	self.last = capacity
-	self.num_items = 0
+function CircularQueue.init(arg_1_0, arg_1_1)
+	arg_1_0.queue = {}
+	arg_1_0.capacity = arg_1_1
+	arg_1_0.first = 1
+	arg_1_0.last = arg_1_1
+	arg_1_0.num_items = 0
 end
 
-CircularQueue.push_back = function (self, item)
-	fassert(item ~= nil, "Queue can't contain nil item!")
+function CircularQueue.push_back(arg_2_0, arg_2_1)
+	fassert(arg_2_1 ~= nil, "Queue can't contain nil item!")
 
-	self.last = self.last % self.capacity + 1
+	arg_2_0.last = arg_2_0.last % arg_2_0.capacity + 1
 
-	fassert(self.num_items < self.capacity, "Can't push to full queue (%d).", self.capacity)
+	fassert(arg_2_0.num_items < arg_2_0.capacity, "Can't push to full queue (%d).", arg_2_0.capacity)
 
-	self.num_items = self.num_items + 1
-	self.queue[self.last] = item
+	arg_2_0.num_items = arg_2_0.num_items + 1
+	arg_2_0.queue[arg_2_0.last] = arg_2_1
 end
 
-CircularQueue.write_at = function (self, item, index)
+function CircularQueue.write_at(arg_3_0, arg_3_1, arg_3_2)
 	ferror("Disabled this for now, should probably assert that index is within first->last")
-	fassert(item ~= nil, "Queue can't contain nil item!")
-	fassert(index > 0 and index <= self.capacity, "Wrong index!")
+	fassert(arg_3_1 ~= nil, "Queue can't contain nil item!")
+	fassert(arg_3_2 > 0 and arg_3_2 <= arg_3_0.capacity, "Wrong index!")
 end
 
-CircularQueue.pop_first = function (self)
-	fassert(self.num_items > 0, "Can't pop empty queue.")
+function CircularQueue.pop_first(arg_4_0)
+	fassert(arg_4_0.num_items > 0, "Can't pop empty queue.")
 
-	local item = self.queue[self.first]
+	local var_4_0 = arg_4_0.queue[arg_4_0.first]
 
-	self.queue[self.first] = nil
-	self.num_items = self.num_items - 1
-	self.first = self.first % self.capacity + 1
+	arg_4_0.queue[arg_4_0.first] = nil
+	arg_4_0.num_items = arg_4_0.num_items - 1
+	arg_4_0.first = arg_4_0.first % arg_4_0.capacity + 1
 
-	fassert(self.num_items == 0 or self.queue[self.first] ~= nil, "Queue contained nil item!")
+	fassert(arg_4_0.num_items == 0 or arg_4_0.queue[arg_4_0.first] ~= nil, "Queue contained nil item!")
 
-	return item
+	return var_4_0
 end
 
-CircularQueue.reset = function (self)
-	self.first = 1
-	self.last = self.capacity
-	self.num_items = 0
+function CircularQueue.reset(arg_5_0)
+	arg_5_0.first = 1
+	arg_5_0.last = arg_5_0.capacity
+	arg_5_0.num_items = 0
 end
 
-CircularQueue.contains = function (self, item)
-	local curr = self.first
-	local queue = self.queue
+function CircularQueue.contains(arg_6_0, arg_6_1)
+	local var_6_0 = arg_6_0.first
+	local var_6_1 = arg_6_0.queue
 
-	for i = 1, self.num_items do
-		local queued_item = queue[curr]
-
-		if item == queued_item then
+	for iter_6_0 = 1, arg_6_0.num_items do
+		if arg_6_1 == var_6_1[var_6_0] then
 			return true
 		end
 
-		curr = curr % self.capacity + 1
+		var_6_0 = var_6_0 % arg_6_0.capacity + 1
 	end
 
 	return false
 end
 
-CircularQueue.size = function (self)
-	return self.num_items
+function CircularQueue.size(arg_7_0)
+	return arg_7_0.num_items
 end
 
-CircularQueue.available = function (self)
-	return self.capacity - self.num_items
+function CircularQueue.available(arg_8_0)
+	return arg_8_0.capacity - arg_8_0.num_items
 end
 
-CircularQueue.is_full = function (self)
-	return self.num_items == self.capacity
+function CircularQueue.is_full(arg_9_0)
+	return arg_9_0.num_items == arg_9_0.capacity
 end
 
-CircularQueue.is_empty = function (self)
-	return self.num_items == 0
+function CircularQueue.is_empty(arg_10_0)
+	return arg_10_0.num_items == 0
 end
 
-CircularQueue.get_first = function (self)
-	return self.queue[self.first]
+function CircularQueue.get_first(arg_11_0)
+	return arg_11_0.queue[arg_11_0.first]
 end
 
-CircularQueue.get_last = function (self)
-	return self.queue[self.last]
+function CircularQueue.get_last(arg_12_0)
+	return arg_12_0.queue[arg_12_0.last]
 end
 
-CircularQueue.foreach = function (self, obj, func, ...)
-	local curr_index = self.first
-	local queue = self.queue
-	local capacity = self.capacity
+function CircularQueue.foreach(arg_13_0, arg_13_1, arg_13_2, ...)
+	local var_13_0 = arg_13_0.first
+	local var_13_1 = arg_13_0.queue
+	local var_13_2 = arg_13_0.capacity
 
-	for i = 1, self.num_items do
-		local queued_item = queue[curr_index]
+	for iter_13_0 = 1, arg_13_0.num_items do
+		local var_13_3 = var_13_1[var_13_0]
 
-		if obj then
-			func(obj, queued_item, ...)
+		if arg_13_1 then
+			arg_13_2(arg_13_1, var_13_3, ...)
 		else
-			func(queued_item, ...)
+			arg_13_2(var_13_3, ...)
 		end
 
-		curr_index = curr_index % capacity + 1
+		var_13_0 = var_13_0 % var_13_2 + 1
 	end
 end
 
-CircularQueue.index_before = function (self, index)
-	return (index - 2) % self.capacity + 1
+function CircularQueue.index_before(arg_14_0, arg_14_1)
+	return (arg_14_1 - 2) % arg_14_0.capacity + 1
 end
 
-CircularQueue.index_after = function (self, index)
-	return index % self.capacity + 1
+function CircularQueue.index_after(arg_15_0, arg_15_1)
+	return arg_15_1 % arg_15_0.capacity + 1
 end
 
-CircularQueue.tostring = function (self, tostringfunc, max_count)
-	tostringfunc = tostringfunc or tostring
-	max_count = max_count or self.num_items
+function CircularQueue.tostring(arg_16_0, arg_16_1, arg_16_2)
+	arg_16_1 = arg_16_1 or tostring
+	arg_16_2 = arg_16_2 or arg_16_0.num_items
 
-	local s = string.format("{[%d->%d][%d/%d] ", self.first, self.last, self.num_items, self.capacity)
-	local curr = self.first
-	local queue = self.queue
+	local var_16_0 = string.format("{[%d->%d][%d/%d] ", arg_16_0.first, arg_16_0.last, arg_16_0.num_items, arg_16_0.capacity)
+	local var_16_1 = arg_16_0.first
+	local var_16_2 = arg_16_0.queue
 
-	for i = 1, math.min(max_count, self.num_items) do
-		s = s .. tostringfunc(queue[curr]) .. ","
-		curr = curr % self.capacity + 1
+	for iter_16_0 = 1, math.min(arg_16_2, arg_16_0.num_items) do
+		var_16_0 = var_16_0 .. arg_16_1(var_16_2[var_16_1]) .. ","
+		var_16_1 = var_16_1 % arg_16_0.capacity + 1
 	end
 
-	if max_count < self.num_items then
-		s = s .. "... "
+	if arg_16_2 < arg_16_0.num_items then
+		var_16_0 = var_16_0 .. "... "
 	end
 
-	s = s .. "}"
-
-	return s
+	return var_16_0 .. "}"
 end
 
-CircularQueue.tostring2 = function (self, tostringfunc, max_count)
-	tostringfunc = tostringfunc or tostring
-	max_count = max_count or self.num_items
+function CircularQueue.tostring2(arg_17_0, arg_17_1, arg_17_2)
+	arg_17_1 = arg_17_1 or tostring
+	arg_17_2 = arg_17_2 or arg_17_0.num_items
 
-	local s = string.format("{[%d->%d][%d/%d] ", self.first, self.last, self.num_items, self.capacity)
-	local queue = self.queue
+	local var_17_0 = string.format("{[%d->%d][%d/%d] ", arg_17_0.first, arg_17_0.last, arg_17_0.num_items, arg_17_0.capacity)
+	local var_17_1 = arg_17_0.queue
 
-	for i = 1, math.min(max_count, self.capacity) do
-		s = s .. (queue[i] and tostringfunc(queue[i]) or "_") .. ","
+	for iter_17_0 = 1, math.min(arg_17_2, arg_17_0.capacity) do
+		var_17_0 = var_17_0 .. (var_17_1[iter_17_0] and arg_17_1(var_17_1[iter_17_0]) or "_") .. ","
 	end
 
-	if max_count < self.num_items then
-		s = s .. "... "
+	if arg_17_2 < arg_17_0.num_items then
+		var_17_0 = var_17_0 .. "... "
 	end
 
-	s = s .. "}"
-
-	return s
+	return var_17_0 .. "}"
 end
 
-CircularQueue.print_items = function (self, s)
-	local s = (s or "") .. " queue: [" .. self.first .. "->" .. self.last .. "] --> "
-	local curr = self.first
-	local queue = self.queue
+function CircularQueue.print_items(arg_18_0, arg_18_1)
+	local var_18_0 = (arg_18_1 or "") .. " queue: [" .. arg_18_0.first .. "->" .. arg_18_0.last .. "] --> "
+	local var_18_1 = arg_18_0.first
+	local var_18_2 = arg_18_0.queue
 
-	for i = 1, self.num_items do
-		s = s .. tostring(queue[curr]) .. ","
-		curr = curr % self.capacity + 1
+	for iter_18_0 = 1, arg_18_0.num_items do
+		var_18_0 = var_18_0 .. tostring(var_18_2[var_18_1]) .. ","
+		var_18_1 = var_18_1 % arg_18_0.capacity + 1
 	end
 
-	print(s)
+	print(var_18_0)
 end

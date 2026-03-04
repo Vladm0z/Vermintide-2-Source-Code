@@ -1,7 +1,7 @@
-﻿-- chunkname: @scripts/settings/terror_events/terror_events_dlc_morris_sig_gorge.lua
+-- chunkname: @scripts/settings/terror_events/terror_events_dlc_morris_sig_gorge.lua
 
-local terror_event_blueprints = {}
+local var_0_0 = {}
 
 return {
-	terror_event_blueprints,
+	var_0_0
 }

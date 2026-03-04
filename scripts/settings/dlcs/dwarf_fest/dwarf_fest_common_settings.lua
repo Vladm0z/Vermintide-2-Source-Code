@@ -1,26 +1,26 @@
-﻿-- chunkname: @scripts/settings/dlcs/dwarf_fest/dwarf_fest_common_settings.lua
+-- chunkname: @scripts/settings/dlcs/dwarf_fest/dwarf_fest_common_settings.lua
 
-local settings = DLCSettings.dwarf_fest
+local var_0_0 = DLCSettings.dwarf_fest
 
-settings.unlock_settings = {
+var_0_0.unlock_settings = {
 	dwarf_fest = {
-		class = "AlwaysUnlocked",
-	},
+		class = "AlwaysUnlocked"
+	}
 }
-settings.unlock_settings_xb1 = {
+var_0_0.unlock_settings_xb1 = {
 	dwarf_fest = {
-		class = "AlwaysUnlocked",
-	},
+		class = "AlwaysUnlocked"
+	}
 }
-settings.unlock_settings_ps4 = {
+var_0_0.unlock_settings_ps4 = {
 	CUSA13595_00 = {
 		dwarf_fest = {
-			class = "AlwaysUnlocked",
-		},
+			class = "AlwaysUnlocked"
+		}
 	},
 	CUSA13645_00 = {
 		dwarf_fest = {
-			class = "AlwaysUnlocked",
-		},
-	},
+			class = "AlwaysUnlocked"
+		}
+	}
 }

@@ -1,183 +1,179 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_throw_poison_globe_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_throw_poison_globe_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTThrowPoisonGlobeAction = class(BTThrowPoisonGlobeAction, BTNode)
 
-BTThrowPoisonGlobeAction.init = function (self, ...)
-	BTThrowPoisonGlobeAction.super.init(self, ...)
+function BTThrowPoisonGlobeAction.init(arg_1_0, ...)
+	BTThrowPoisonGlobeAction.super.init(arg_1_0, ...)
 end
 
 BTThrowPoisonGlobeAction.name = "BTThrowPoisonGlobeAction"
 
-BTThrowPoisonGlobeAction.enter = function (self, unit, blackboard, t)
-	local ai_navigation = blackboard.navigation_extension
+function BTThrowPoisonGlobeAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	arg_2_2.navigation_extension:set_enabled(false)
 
-	ai_navigation:set_enabled(false)
+	arg_2_2.action = arg_2_0._tree_node.action_data
+	arg_2_2.anim_cb_spawn_projectile = false
+	arg_2_2.anim_cb_throw = false
 
-	local action = self._tree_node.action_data
+	local var_2_0 = ScriptUnit.extension(arg_2_1, "locomotion_system")
 
-	blackboard.action = action
-	blackboard.anim_cb_spawn_projectile = false
-	blackboard.anim_cb_throw = false
-
-	local locomotion = ScriptUnit.extension(unit, "locomotion_system")
-
-	locomotion:set_rotation_speed(5)
-	locomotion:set_wanted_velocity(Vector3.zero())
+	var_2_0:set_rotation_speed(5)
+	var_2_0:set_wanted_velocity(Vector3.zero())
 end
 
-BTThrowPoisonGlobeAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	if blackboard.dummy_projectile_unit ~= nil then
-		if Unit.alive(blackboard.dummy_projectile_unit) then
-			local world = blackboard.world
+function BTThrowPoisonGlobeAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	if arg_3_2.dummy_projectile_unit ~= nil then
+		if Unit.alive(arg_3_2.dummy_projectile_unit) then
+			local var_3_0 = arg_3_2.world
 
-			World.unlink_unit(world, blackboard.dummy_projectile_unit)
-			Managers.state.unit_spawner:mark_for_deletion(blackboard.dummy_projectile_unit)
+			World.unlink_unit(var_3_0, arg_3_2.dummy_projectile_unit)
+			Managers.state.unit_spawner:mark_for_deletion(arg_3_2.dummy_projectile_unit)
 		end
 
-		blackboard.dummy_projectile_unit = nil
+		arg_3_2.dummy_projectile_unit = nil
 	end
 
-	blackboard.action = nil
+	arg_3_2.action = nil
 
-	local old_throw_target = blackboard.throw_target
+	local var_3_1 = arg_3_2.throw_target
 
-	if old_throw_target then
-		Managers.state.entity:system("ai_bot_group_system"):ranged_attack_ended(unit, old_throw_target, "poison_wind_globe")
+	if var_3_1 then
+		Managers.state.entity:system("ai_bot_group_system"):ranged_attack_ended(arg_3_1, var_3_1, "poison_wind_globe")
 
-		blackboard.throw_target = nil
+		arg_3_2.throw_target = nil
 	end
 
-	blackboard.navigation_extension:set_enabled(true)
+	arg_3_2.navigation_extension:set_enabled(true)
 end
 
-BTThrowPoisonGlobeAction.run = function (self, unit, blackboard, t, dt)
-	if not Unit.alive(blackboard.target_unit) then
-		blackboard.target_unit = nil
+function BTThrowPoisonGlobeAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	if not Unit.alive(arg_4_2.target_unit) then
+		arg_4_2.target_unit = nil
 
 		return "failed"
 	end
 
-	local action = blackboard.action
-	local world = blackboard.world
+	local var_4_0 = arg_4_2.action
+	local var_4_1 = arg_4_2.world
 
-	if blackboard.anim_cb_spawn_projectile then
-		blackboard.anim_cb_spawn_projectile = false
+	if arg_4_2.anim_cb_spawn_projectile then
+		arg_4_2.anim_cb_spawn_projectile = false
 
-		self:spawn_dummy_projectile(unit, blackboard, world, action)
-	elseif blackboard.anim_cb_throw then
-		blackboard.anim_cb_throw = false
+		arg_4_0:spawn_dummy_projectile(arg_4_1, arg_4_2, var_4_1, var_4_0)
+	elseif arg_4_2.anim_cb_throw then
+		arg_4_2.anim_cb_throw = false
 
-		World.unlink_unit(world, blackboard.dummy_projectile_unit)
-		Managers.state.unit_spawner:mark_for_deletion(blackboard.dummy_projectile_unit)
+		World.unlink_unit(var_4_1, arg_4_2.dummy_projectile_unit)
+		Managers.state.unit_spawner:mark_for_deletion(arg_4_2.dummy_projectile_unit)
 
-		blackboard.dummy_projectile_unit = nil
+		arg_4_2.dummy_projectile_unit = nil
 
-		local throw_pos = blackboard.throw_globe_data.throw_pos:unbox()
-		local target_dir = blackboard.throw_globe_data.target_direction:unbox()
-		local angle = blackboard.throw_globe_data.angle
-		local speed = blackboard.throw_globe_data.speed
+		local var_4_2 = arg_4_2.throw_globe_data.throw_pos:unbox()
+		local var_4_3 = arg_4_2.throw_globe_data.target_direction:unbox()
+		local var_4_4 = arg_4_2.throw_globe_data.angle
+		local var_4_5 = arg_4_2.throw_globe_data.speed
 
-		self:launch_projectile(blackboard, action, throw_pos, target_dir, angle, speed, unit)
-		Managers.state.entity:system("surrounding_aware_system"):add_system_event(unit, "enemy_attack", DialogueSettings.pounced_down_broadcast_range, "attack_tag", "pwg_projectile")
+		arg_4_0:launch_projectile(arg_4_2, var_4_0, var_4_2, var_4_3, var_4_4, var_4_5, arg_4_1)
+		Managers.state.entity:system("surrounding_aware_system"):add_system_event(arg_4_1, "enemy_attack", DialogueSettings.pounced_down_broadcast_range, "attack_tag", "pwg_projectile")
 
-		local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
-		local event_data = FrameTable.alloc_table()
+		local var_4_6 = ScriptUnit.extension_input(arg_4_1, "dialogue_system")
+		local var_4_7 = FrameTable.alloc_table()
 
-		event_data.attack_tag = "pwg_projectile"
-		event_data.distance = math.floor(Vector3.distance(throw_pos, POSITION_LOOKUP[unit]))
+		var_4_7.attack_tag = "pwg_projectile"
+		var_4_7.distance = math.floor(Vector3.distance(var_4_2, POSITION_LOOKUP[arg_4_1]))
 
-		dialogue_input:trigger_networked_dialogue_event("enemy_attack", event_data)
+		var_4_6:trigger_networked_dialogue_event("enemy_attack", var_4_7)
 	end
 
-	if blackboard.start_anim_locked_time and t > blackboard.start_anim_locked_time then
-		LocomotionUtils.set_animation_driven_movement(unit, false)
+	if arg_4_2.start_anim_locked_time and arg_4_3 > arg_4_2.start_anim_locked_time then
+		LocomotionUtils.set_animation_driven_movement(arg_4_1, false)
 
-		blackboard.start_anim_locked_time = nil
+		arg_4_2.start_anim_locked_time = nil
 	end
 
-	local locomotion = ScriptUnit.extension(unit, "locomotion_system")
+	local var_4_8 = ScriptUnit.extension(arg_4_1, "locomotion_system")
 
-	if blackboard.anim_locked and t < blackboard.anim_locked then
-		local rot = LocomotionUtils.rotation_towards_unit_flat(unit, blackboard.target_unit)
+	if arg_4_2.anim_locked and arg_4_3 < arg_4_2.anim_locked then
+		local var_4_9 = LocomotionUtils.rotation_towards_unit_flat(arg_4_1, arg_4_2.target_unit)
 
-		locomotion:set_wanted_rotation(rot)
-	elseif blackboard.move_state == "throwing" then
+		var_4_8:set_wanted_rotation(var_4_9)
+	elseif arg_4_2.move_state == "throwing" then
 		return "done"
 	else
-		self:attack_throw(unit, t, dt, blackboard, locomotion, action)
+		arg_4_0:attack_throw(arg_4_1, arg_4_3, arg_4_4, arg_4_2, var_4_8, var_4_0)
 	end
 
 	return "running"
 end
 
-BTThrowPoisonGlobeAction.attack_throw = function (self, unit, t, dt, blackboard, locomotion, action)
-	if blackboard.move_state ~= "throwing" then
-		local target_unit = blackboard.target_unit
+function BTThrowPoisonGlobeAction.attack_throw(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
+	if arg_5_4.move_state ~= "throwing" then
+		local var_5_0 = arg_5_4.target_unit
 
-		Managers.state.network:anim_event(unit, action.attack_anim)
+		Managers.state.network:anim_event(arg_5_1, arg_5_6.attack_anim)
 
-		blackboard.anim_locked = t + action.attack_time
-		blackboard.move_state = "throwing"
-		blackboard.times_thrown = blackboard.times_thrown and (blackboard.times_thrown + 1) % (action.barrage_count or 2) or 1
+		arg_5_4.anim_locked = arg_5_2 + arg_5_6.attack_time
+		arg_5_4.move_state = "throwing"
+		arg_5_4.times_thrown = arg_5_4.times_thrown and (arg_5_4.times_thrown + 1) % (arg_5_6.barrage_count or 2) or 1
 
-		local action = blackboard.action
-		local throw_globe_data = blackboard.throw_globe_data
+		local var_5_1 = arg_5_4.action
+		local var_5_2 = arg_5_4.throw_globe_data
 
-		throw_globe_data.next_throw_at = t + (blackboard.times_thrown == 0 and action.time_between_throws[1] or action.time_between_throws[2])
-		throw_globe_data.last_throw_at = t
+		var_5_2.next_throw_at = arg_5_2 + (arg_5_4.times_thrown == 0 and var_5_1.time_between_throws[1] or var_5_1.time_between_throws[2])
+		var_5_2.last_throw_at = arg_5_2
 
-		local attack_type = "poison_wind_globe"
-		local old_throw_target = blackboard.throw_target
+		local var_5_3 = "poison_wind_globe"
+		local var_5_4 = arg_5_4.throw_target
 
-		if old_throw_target then
-			Managers.state.entity:system("ai_bot_group_system"):ranged_attack_ended(unit, old_throw_target, attack_type)
+		if var_5_4 then
+			Managers.state.entity:system("ai_bot_group_system"):ranged_attack_ended(arg_5_1, var_5_4, var_5_3)
 		end
 
-		blackboard.throw_target = target_unit
+		arg_5_4.throw_target = var_5_0
 
-		Managers.state.entity:system("ai_bot_group_system"):ranged_attack_started(unit, target_unit, attack_type)
+		Managers.state.entity:system("ai_bot_group_system"):ranged_attack_started(arg_5_1, var_5_0, var_5_3)
 	end
 
-	local rot = LocomotionUtils.rotation_towards_unit_flat(unit, blackboard.throw_target)
+	local var_5_5 = LocomotionUtils.rotation_towards_unit_flat(arg_5_1, arg_5_4.throw_target)
 
-	locomotion:set_wanted_rotation(rot)
+	arg_5_5:set_wanted_rotation(var_5_5)
 end
 
-BTThrowPoisonGlobeAction.spawn_dummy_projectile = function (self, unit, blackboard, world, action)
-	local throw_hand_name = action.weapon_node_name
-	local throw_hand_node = Unit.node(unit, throw_hand_name)
-	local hand_position = Unit.world_position(unit, throw_hand_node)
-	local projectile_unit_name = "units/weapons/projectile/poison_wind_globe/poison_wind_globe"
-	local projectile_unit = Managers.state.unit_spawner:spawn_network_unit(projectile_unit_name, "prop_unit", nil, hand_position)
+function BTThrowPoisonGlobeAction.spawn_dummy_projectile(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	local var_6_0 = arg_6_4.weapon_node_name
+	local var_6_1 = Unit.node(arg_6_1, var_6_0)
+	local var_6_2 = Unit.world_position(arg_6_1, var_6_1)
+	local var_6_3 = "units/weapons/projectile/poison_wind_globe/poison_wind_globe"
+	local var_6_4 = Managers.state.unit_spawner:spawn_network_unit(var_6_3, "prop_unit", nil, var_6_2)
 
-	World.link_unit(world, projectile_unit, 0, unit, throw_hand_node)
+	World.link_unit(arg_6_3, var_6_4, 0, arg_6_1, var_6_1)
 
-	local network_manager = Managers.state.network
-	local child_unit_id = network_manager:unit_game_object_id(projectile_unit)
-	local parent_unit_id = network_manager:unit_game_object_id(unit)
+	local var_6_5 = Managers.state.network
+	local var_6_6 = var_6_5:unit_game_object_id(var_6_4)
+	local var_6_7 = var_6_5:unit_game_object_id(arg_6_1)
 
-	network_manager.network_transmit:send_rpc_clients("rpc_link_unit", child_unit_id, 0, parent_unit_id, throw_hand_node)
+	var_6_5.network_transmit:send_rpc_clients("rpc_link_unit", var_6_6, 0, var_6_7, var_6_1)
 
-	blackboard.dummy_projectile_unit = projectile_unit
+	arg_6_2.dummy_projectile_unit = var_6_4
 end
 
-BTThrowPoisonGlobeAction.launch_projectile = function (self, blackboard, action, initial_position, target_vector, angle, speed, owner_unit)
-	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local aoe_dot_damage_table = action.aoe_dot_damage[difficulty_rank] or action.aoe_dot_damage[2]
-	local aoe_dot_damage = DamageUtils.calculate_damage(aoe_dot_damage_table)
-	local aoe_init_damage_table = action.aoe_init_damage[difficulty_rank] or action.aoe_init_damage[2]
-	local aoe_init_damage = DamageUtils.calculate_damage(aoe_init_damage_table)
-	local aoe_dot_damage_interval = action.aoe_dot_damage_interval
-	local radius = action.radius
-	local initial_radius = action.initial_radius or radius
-	local duration = action.duration
-	local damage_source = blackboard.breed.name
-	local create_nav_tag_volume = action.create_nav_tag_volume
-	local instant_explosion = false
+function BTThrowPoisonGlobeAction.launch_projectile(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7)
+	local var_7_0 = Managers.state.difficulty:get_difficulty_rank()
+	local var_7_1 = arg_7_2.aoe_dot_damage[var_7_0] or arg_7_2.aoe_dot_damage[2]
+	local var_7_2 = DamageUtils.calculate_damage(var_7_1)
+	local var_7_3 = arg_7_2.aoe_init_damage[var_7_0] or arg_7_2.aoe_init_damage[2]
+	local var_7_4 = DamageUtils.calculate_damage(var_7_3)
+	local var_7_5 = arg_7_2.aoe_dot_damage_interval
+	local var_7_6 = arg_7_2.radius
+	local var_7_7 = arg_7_2.initial_radius or var_7_6
+	local var_7_8 = arg_7_2.duration
+	local var_7_9 = arg_7_1.breed.name
+	local var_7_10 = arg_7_2.create_nav_tag_volume
+	local var_7_11 = false
 
-	Managers.state.entity:system("projectile_system"):spawn_globadier_globe(initial_position, target_vector, angle, speed, initial_radius, radius, duration, owner_unit, damage_source, aoe_dot_damage, aoe_init_damage, aoe_dot_damage_interval, create_nav_tag_volume, instant_explosion)
+	Managers.state.entity:system("projectile_system"):spawn_globadier_globe(arg_7_3, arg_7_4, arg_7_5, arg_7_6, var_7_7, var_7_6, var_7_8, arg_7_7, var_7_9, var_7_2, var_7_4, var_7_5, var_7_10, var_7_11)
 
-	blackboard.has_thrown_first_globe = true
+	arg_7_1.has_thrown_first_globe = true
 end

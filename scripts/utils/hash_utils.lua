@@ -1,14 +1,14 @@
-﻿-- chunkname: @scripts/utils/hash_utils.lua
+-- chunkname: @scripts/utils/hash_utils.lua
 
 HashUtils = HashUtils or {}
 
-HashUtils.fnv32_hash = function (text)
-	local counter = 1
-	local len = string.len(text)
+function HashUtils.fnv32_hash(arg_1_0)
+	local var_1_0 = 1
+	local var_1_1 = string.len(arg_1_0)
 
-	for i = 1, len, 3 do
-		counter = math.fmod(counter * 8161, 4294967279) + string.byte(text, i) * 16776193 + (string.byte(text, i + 1) or len - i + 256) * 8372226 + (string.byte(text, i + 2) or len - i + 256) * 3932164
+	for iter_1_0 = 1, var_1_1, 3 do
+		var_1_0 = math.fmod(var_1_0 * 8161, 4294967279) + string.byte(arg_1_0, iter_1_0) * 16776193 + (string.byte(arg_1_0, iter_1_0 + 1) or var_1_1 - iter_1_0 + 256) * 8372226 + (string.byte(arg_1_0, iter_1_0 + 2) or var_1_1 - iter_1_0 + 256) * 3932164
 	end
 
-	return math.fmod(counter, 4294967291)
+	return math.fmod(var_1_0, 4294967291)
 end

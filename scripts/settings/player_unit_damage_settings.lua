@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/settings/player_unit_damage_settings.lua
+-- chunkname: @scripts/settings/player_unit_damage_settings.lua
 
 PlayerUnitDamageSettings = PlayerUnitDamageSettings or {}
 PlayerUnitDamageSettings.chance_to_shield_on_damage_amount = 2
@@ -9,10 +9,10 @@ PlayerUnitDamageSettings.REGEN_DELAY = 6
 PlayerUnitDamageSettings.REGEN_AMOUNT = 20
 PlayerUnitDamageSettings.REGEN_RAMP_SPEED = 1
 
-PlayerUnitDamageSettings.REGEN_FUNCTION = function (real_t)
-	local t = real_t * PlayerUnitDamageSettings.REGEN_RAMP_SPEED
+function PlayerUnitDamageSettings.REGEN_FUNCTION(arg_1_0)
+	local var_1_0 = arg_1_0 * PlayerUnitDamageSettings.REGEN_RAMP_SPEED
 
-	return PlayerUnitDamageSettings.REGEN_AMOUNT * t * t
+	return PlayerUnitDamageSettings.REGEN_AMOUNT * var_1_0 * var_1_0
 end
 
 PlayerUnitDamageSettings.INSTAKILL_THRESHOLD = 100
@@ -29,16 +29,16 @@ PlayerUnitDamageSettings.stun.duration = 0.5
 PlayerUnitDamageSettings.stun.damage_threshold = 95
 PlayerUnitDamageSettings.stun.damage_threshold_with_stun_property = 1
 PlayerUnitDamageSettings.stun.damage_types_with_stun_property = {
+	slashing = false,
 	blunt = false,
 	cutting = false,
-	piercing = false,
-	slashing = false,
+	piercing = false
 }
 PlayerUnitDamageSettings.stun.damage_types_without_stun_property = {
+	slashing = false,
 	blunt = false,
 	cutting = false,
-	piercing = false,
-	slashing = false,
+	piercing = false
 }
 PlayerUnitDamageSettings.stun_dismount = PlayerUnitDamageSettings.stun_dismount or {}
 PlayerUnitDamageSettings.stun_dismount.duration = 1.6666666666666667
@@ -55,5 +55,5 @@ PlayerUnitDamageSettings.kd_bleeding.dps = 0
 PlayerUnitDamageSettings.dead_player_destroy_time = 5
 PlayerUnitDamageSettings.dot_types = {
 	bleeding = {},
-	burning = {},
+	burning = {}
 }

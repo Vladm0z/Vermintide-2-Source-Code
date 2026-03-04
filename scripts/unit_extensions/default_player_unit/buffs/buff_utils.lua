@@ -1,8 +1,8 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/buffs/buff_utils.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/buffs/buff_utils.lua
 
 require("scripts/managers/game_mode/mechanisms/mechanism_overrides")
 
-local buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local var_0_0 = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
 
 BuffUtils = BuffUtils or {}
 
@@ -10,329 +10,321 @@ if script_data then
 	script_data.debug_legendary_traits = script_data.debug_legendary_traits or Development.parameter("debug_legendary_traits")
 end
 
-BuffUtils.apply_buff_tweak_data = function (buffs, tweak_data)
-	for name, buff_data in pairs(buffs) do
-		local data = tweak_data[name]
+function BuffUtils.apply_buff_tweak_data(arg_1_0, arg_1_1)
+	for iter_1_0, iter_1_1 in pairs(arg_1_0) do
+		local var_1_0 = arg_1_1[iter_1_0]
 
-		if data then
-			table.merge(buff_data.buffs[1], data)
+		if var_1_0 then
+			table.merge(iter_1_1.buffs[1], var_1_0)
 		end
 	end
 end
 
-BuffUtils.copy_talent_buff_names = function (talent_data)
-	for name, buff_data in pairs(talent_data) do
-		local buffs = buff_data.buffs
+function BuffUtils.copy_talent_buff_names(arg_2_0)
+	for iter_2_0, iter_2_1 in pairs(arg_2_0) do
+		local var_2_0 = iter_2_1.buffs
 
-		fassert(#buffs == 1, "talent buff has more than one sub buff, add multiple buffs from the talent instead")
+		fassert(#var_2_0 == 1, "talent buff has more than one sub buff, add multiple buffs from the talent instead")
 
-		local buff = buffs[1]
-
-		buff.name = name
+		var_2_0[1].name = iter_2_0
 	end
 end
 
-BuffUtils.get_max_stacks = function (buff_name, buff_index)
-	local buffs = BuffUtils.get_buff_template(buff_name).buffs
-	local max_stacks = buffs[buff_index or 1].max_stacks
-
-	return max_stacks or nil
+function BuffUtils.get_max_stacks(arg_3_0, arg_3_1)
+	return BuffUtils.get_buff_template(arg_3_0).buffs[arg_3_1 or 1].max_stacks or nil
 end
 
-BuffUtils.remove_stacked_buffs = function (buffed_unit, stacked_buff_ids)
-	local buff_extension = buffed_unit and ScriptUnit.has_extension(buffed_unit, "buff_system")
+function BuffUtils.remove_stacked_buffs(arg_4_0, arg_4_1)
+	local var_4_0 = arg_4_0 and ScriptUnit.has_extension(arg_4_0, "buff_system")
 
-	if not buff_extension then
+	if not var_4_0 then
 		return
 	end
 
-	for _, buff_id in ipairs(stacked_buff_ids) do
-		buff_extension:remove_buff(buff_id)
+	for iter_4_0, iter_4_1 in ipairs(arg_4_1) do
+		var_4_0:remove_buff(iter_4_1)
 	end
 
-	table.clear(stacked_buff_ids)
+	table.clear(arg_4_1)
 end
 
-BuffUtils.buffs_from_rpc_params = function (num_buffs, buff_ids, buff_data_type_ids, buff_values)
-	local lookup_templates = NetworkLookup.buff_templates
-	local lookup_data_types = NetworkLookup.buff_data_types
-	local buffs = {}
+function BuffUtils.buffs_from_rpc_params(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	local var_5_0 = NetworkLookup.buff_templates
+	local var_5_1 = NetworkLookup.buff_data_types
+	local var_5_2 = {}
 
-	for i = 1, num_buffs do
-		local id = buff_ids[i]
-		local data_type_id = buff_data_type_ids[i]
-		local value = buff_values[i]
-		local name = lookup_templates[id]
-		local data_type = lookup_data_types[data_type_id]
+	for iter_5_0 = 1, arg_5_0 do
+		local var_5_3 = arg_5_1[iter_5_0]
+		local var_5_4 = arg_5_2[iter_5_0]
+		local var_5_5 = arg_5_3[iter_5_0]
+		local var_5_6 = var_5_0[var_5_3]
+		local var_5_7 = var_5_1[var_5_4]
 
-		buffs[name] = {
-			[data_type] = value,
+		var_5_2[var_5_6] = {
+			[var_5_7] = var_5_5
 		}
 	end
 
-	return buffs
+	return var_5_2
 end
 
-BuffUtils.buffs_to_rpc_params = function (buffs)
-	local lookup_templates = NetworkLookup.buff_templates
-	local lookup_data_types = NetworkLookup.buff_data_types
-	local buff_ids = {}
-	local buff_data_type_ids = {}
-	local buff_values = {}
-	local num_buffs = 0
+function BuffUtils.buffs_to_rpc_params(arg_6_0)
+	local var_6_0 = NetworkLookup.buff_templates
+	local var_6_1 = NetworkLookup.buff_data_types
+	local var_6_2 = {}
+	local var_6_3 = {}
+	local var_6_4 = {}
+	local var_6_5 = 0
 
-	for name, data in pairs(buffs) do
-		num_buffs = num_buffs + 1
+	for iter_6_0, iter_6_1 in pairs(arg_6_0) do
+		var_6_5 = var_6_5 + 1
 
-		local id = lookup_templates[name]
-		local data_type, value = next(data)
-		local data_type_id = lookup_data_types[data_type or "n/a"]
+		local var_6_6 = var_6_0[iter_6_0]
+		local var_6_7, var_6_8 = next(iter_6_1)
 
-		buff_ids[num_buffs] = id
-		buff_data_type_ids[num_buffs] = data_type_id
-		buff_values[num_buffs] = value or 1
+		var_6_3[var_6_5], var_6_2[var_6_5] = var_6_1[var_6_7 or "n/a"], var_6_6
+		var_6_4[var_6_5] = var_6_8 or 1
 	end
 
 	return {
-		num_buffs,
-		buff_ids,
-		buff_data_type_ids,
-		buff_values,
+		var_6_5,
+		var_6_2,
+		var_6_3,
+		var_6_4
 	}
 end
 
-local unit_node = Unit.node
+local var_0_1 = Unit.node
 
-local function _get_particle_link_node(fx, link_target)
-	return fx.link_node and unit_node(link_target, fx.link_node) or 0
+local function var_0_2(arg_7_0, arg_7_1)
+	return arg_7_0.link_node and var_0_1(arg_7_1, arg_7_0.link_node) or 0
 end
 
-BuffUtils.create_attached_particles = function (world, particle_fx, unit, is_first_person, buff_id, end_t)
-	if not world or not particle_fx then
+function BuffUtils.create_attached_particles(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+	if not arg_8_0 or not arg_8_1 then
 		return nil
 	end
 
-	local fx_state = {
-		end_t = end_t,
+	local var_8_0 = {
+		end_t = arg_8_5
 	}
 
-	for i = 1, #particle_fx do
-		local fx = particle_fx[i]
+	for iter_8_0 = 1, #arg_8_1 do
+		local var_8_1 = arg_8_1[iter_8_0]
 
-		if is_first_person and fx.first_person or not is_first_person and fx.third_person then
-			local link_target = unit
+		if arg_8_3 and var_8_1.first_person or not arg_8_3 and var_8_1.third_person then
+			local var_8_2 = arg_8_2
 
-			if link_target then
-				local node_id = _get_particle_link_node(fx, link_target)
-				local pose = fx.pose
+			if var_8_2 then
+				local var_8_3 = var_0_2(var_8_1, var_8_2)
+				local var_8_4 = var_8_1.pose
+				local var_8_5
 
-				pose = pose and Matrix4x4.from_quaternion_position_scale(Quaternion.from_euler_angles_xyz(pose.rotation[1], pose.rotation[2], pose.rotation[3]), Vector3Aux.unbox(pose.position), Vector3Aux.unbox(pose.scale)) or nil
+				var_8_5 = var_8_4 and Matrix4x4.from_quaternion_position_scale(Quaternion.from_euler_angles_xyz(var_8_4.rotation[1], var_8_4.rotation[2], var_8_4.rotation[3]), Vector3Aux.unbox(var_8_4.position), Vector3Aux.unbox(var_8_4.scale)) or nil
 
-				local fx_id = ScriptWorld.create_particles_linked(world, fx.effect, link_target, node_id, fx.orphaned_policy, pose)
+				local var_8_6 = ScriptWorld.create_particles_linked(arg_8_0, var_8_1.effect, var_8_2, var_8_3, var_8_1.orphaned_policy, var_8_5)
 
-				if fx.custom_variables then
-					for variable_i = 1, #fx.custom_variables do
-						local data = fx.custom_variables[variable_i]
-						local name = data.name
+				if var_8_1.custom_variables then
+					for iter_8_1 = 1, #var_8_1.custom_variables do
+						local var_8_7 = var_8_1.custom_variables[iter_8_1]
+						local var_8_8 = var_8_7.name
 
-						data.cached_id = data.cached_id or World.find_particles_variable(world, fx.effect, name)
+						var_8_7.cached_id = var_8_7.cached_id or World.find_particles_variable(arg_8_0, var_8_1.effect, var_8_8)
 
-						local value = data.value or data.dynamic_value()
-						local unit_scale = Unit.local_scale(unit, 0)
-						local effect_variable = Vector3.divide_elements(Vector3Aux.unbox(value), unit_scale)
+						local var_8_9 = var_8_7.value or var_8_7.dynamic_value()
+						local var_8_10 = Unit.local_scale(arg_8_2, 0)
+						local var_8_11 = Vector3.divide_elements(Vector3Aux.unbox(var_8_9), var_8_10)
 
-						World.set_particles_variable(world, fx_id, data.cached_id, effect_variable)
+						World.set_particles_variable(arg_8_0, var_8_6, var_8_7.cached_id, var_8_11)
 					end
 				end
 
-				if fx.material_variables then
-					for variable_i = 1, #fx.material_variables do
-						local data = fx.material_variables[variable_i]
-						local cloud_name = data.cloud_name
-						local material_variable = data.material_variable
-						local value = data.value or data.dynamic_value()
+				if var_8_1.material_variables then
+					for iter_8_2 = 1, #var_8_1.material_variables do
+						local var_8_12 = var_8_1.material_variables[iter_8_2]
+						local var_8_13 = var_8_12.cloud_name
+						local var_8_14 = var_8_12.material_variable
+						local var_8_15 = var_8_12.value or var_8_12.dynamic_value()
 
-						ScriptWorld.set_material_variable_for_particles(world, fx_id, cloud_name, material_variable, value)
+						ScriptWorld.set_material_variable_for_particles(arg_8_0, var_8_6, var_8_13, var_8_14, var_8_15)
 					end
 				end
 
-				if fx.continuous then
-					if fx.destroy_policy == "stop" then
-						local stop_fx = fx_state.stop_fx or {}
+				if var_8_1.continuous then
+					if var_8_1.destroy_policy == "stop" then
+						local var_8_16 = var_8_0.stop_fx or {}
 
-						fx_state.stop_fx = stop_fx
-						stop_fx[#stop_fx + 1] = fx_id
+						var_8_0.stop_fx = var_8_16
+						var_8_16[#var_8_16 + 1] = var_8_6
 					else
-						local destroy_fx = fx_state.destroy_fx or {}
+						local var_8_17 = var_8_0.destroy_fx or {}
 
-						fx_state.destroy_fx = destroy_fx
-						destroy_fx[#destroy_fx + 1] = fx_id
+						var_8_0.destroy_fx = var_8_17
+						var_8_17[#var_8_17 + 1] = var_8_6
 					end
 				end
 
-				if fx.update then
-					local update_fx = fx_state.update_fx or {}
+				if var_8_1.update then
+					local var_8_18 = var_8_0.update_fx or {}
 
-					fx_state.update_fx = update_fx
-					update_fx[fx_id] = fx.update
+					var_8_0.update_fx = var_8_18
+					var_8_18[var_8_6] = var_8_1.update
 				end
 			end
 		end
 	end
 
-	return fx_state
+	return var_8_0
 end
 
-BuffUtils.update_attached_particles = function (world, fx_state, t)
-	local update_fx = fx_state.update_fx
+function BuffUtils.update_attached_particles(arg_9_0, arg_9_1, arg_9_2)
+	local var_9_0 = arg_9_1.update_fx
 
-	for fx_id, update_func in pairs(update_fx) do
-		update_func(fx_id, world, t, fx_state.end_t)
+	for iter_9_0, iter_9_1 in pairs(var_9_0) do
+		iter_9_1(iter_9_0, arg_9_0, arg_9_2, arg_9_1.end_t)
 	end
 end
 
-BuffUtils.destroy_attached_particles = function (world, fx_state)
-	if fx_state and world then
-		local destroy_fx = fx_state.destroy_fx
+function BuffUtils.destroy_attached_particles(arg_10_0, arg_10_1)
+	if arg_10_1 and arg_10_0 then
+		local var_10_0 = arg_10_1.destroy_fx
 
-		if destroy_fx then
-			for i = 1, #destroy_fx do
-				World.destroy_particles(world, destroy_fx[i])
+		if var_10_0 then
+			for iter_10_0 = 1, #var_10_0 do
+				World.destroy_particles(arg_10_0, var_10_0[iter_10_0])
 			end
 		end
 
-		local stop_fx = fx_state.stop_fx
+		local var_10_1 = arg_10_1.stop_fx
 
-		if stop_fx then
-			for i = 1, #stop_fx do
-				World.stop_spawning_particles(world, stop_fx[i])
+		if var_10_1 then
+			for iter_10_1 = 1, #var_10_1 do
+				World.stop_spawning_particles(arg_10_0, var_10_1[iter_10_1])
 			end
 		end
 	end
 end
 
-BuffUtils.create_liquid_forward = function (unit, buff)
-	if ALIVE[unit] then
-		local function safe_navigation_callback()
-			local position = POSITION_LOOKUP[unit]
+function BuffUtils.create_liquid_forward(arg_11_0, arg_11_1)
+	if ALIVE[arg_11_0] then
+		local function var_11_0()
+			local var_12_0 = POSITION_LOOKUP[arg_11_0]
 
-			if position then
-				local template = buff.template
-				local rotation = Unit.local_rotation(unit, 0)
-				local dir = Quaternion.forward(rotation)
-				local extension_init_data = {
+			if var_12_0 then
+				local var_12_1 = arg_11_1.template
+				local var_12_2 = Unit.local_rotation(arg_11_0, 0)
+				local var_12_3 = Quaternion.forward(var_12_2)
+				local var_12_4 = {
 					area_damage_system = {
-						flow_dir = dir,
-						liquid_template = template.liquid_template,
-						source_unit = unit,
-					},
+						flow_dir = var_12_3,
+						liquid_template = var_12_1.liquid_template,
+						source_unit = arg_11_0
+					}
 				}
-				local aoe_unit_name = "units/hub_elements/empty"
-				local liquid_aoe_unit = Managers.state.unit_spawner:spawn_network_unit(aoe_unit_name, "liquid_aoe_unit", extension_init_data, position)
-				local liquid_area_damage_extension = ScriptUnit.extension(liquid_aoe_unit, "area_damage_system")
+				local var_12_5 = "units/hub_elements/empty"
+				local var_12_6 = Managers.state.unit_spawner:spawn_network_unit(var_12_5, "liquid_aoe_unit", var_12_4, var_12_0)
 
-				liquid_area_damage_extension:ready()
+				ScriptUnit.extension(var_12_6, "area_damage_system"):ready()
 			end
 		end
 
-		local ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
+		Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(var_11_0)
 
-		ai_navigation_system:add_safe_navigation_callback(safe_navigation_callback)
+		local var_11_1 = arg_11_1.template.fx_name
 
-		local fx_name = buff.template.fx_name
+		if var_11_1 then
+			local var_11_2 = NetworkLookup.effects[var_11_1]
+			local var_11_3 = 0
+			local var_11_4 = POSITION_LOOKUP[arg_11_0]
+			local var_11_5 = Quaternion.identity()
 
-		if fx_name then
-			local effect_name_id = NetworkLookup.effects[fx_name]
-			local node_id = 0
-			local position = POSITION_LOOKUP[unit]
-			local rotation_offset = Quaternion.identity()
-			local network_manager = Managers.state.network
-
-			network_manager:rpc_play_particle_effect(nil, effect_name_id, NetworkConstants.invalid_game_object_id, node_id, position, rotation_offset, false)
+			Managers.state.network:rpc_play_particle_effect(nil, var_11_2, NetworkConstants.invalid_game_object_id, var_11_3, var_11_4, var_11_5, false)
 		end
 	end
 end
 
-BuffUtils.get_buff_template = function (name, optional_mechanism_name)
-	if not BuffTemplates[name] then
+function BuffUtils.get_buff_template(arg_13_0, arg_13_1)
+	if not BuffTemplates[arg_13_0] then
 		return
 	end
 
-	return MechanismOverrides.get(BuffTemplates[name], optional_mechanism_name)
+	return MechanismOverrides.get(BuffTemplates[arg_13_0], arg_13_1)
 end
 
 BalefireDots = BalefireDots or {}
 BalefireBurnDotLookup = BalefireBurnDotLookup or {}
 
-BuffUtils.generate_balefire_burn_variants = function (buff_templates)
-	for template_name, template in pairs(buff_templates) do
-		local balefire_i = string.find(template_name, "_balefire")
+function BuffUtils.generate_balefire_burn_variants(arg_14_0)
+	for iter_14_0, iter_14_1 in pairs(arg_14_0) do
+		local var_14_0 = string.find(iter_14_0, "_balefire")
 
-		if not balefire_i then
-			local new_name, new_buff_template
+		if not var_14_0 then
+			local var_14_1
+			local var_14_2
 
-			for buff_i, sub_buff in ipairs(template.buffs) do
-				local perks = sub_buff.perks
+			for iter_14_2, iter_14_3 in ipairs(iter_14_1.buffs) do
+				local var_14_3 = iter_14_3.perks
 
-				if perks and table.find(perks, buff_perk_names.burning) then
-					if not new_name then
-						new_name = template_name .. "_balefire"
-						new_buff_template = table.clone(template)
-						BalefireDots[new_name] = true
-						BalefireBurnDotLookup[template_name] = new_name
-						DotTypeLookup[new_name] = DotTypeLookup[template_name]
-						buff_templates[new_name] = new_buff_template
+				if var_14_3 and table.find(var_14_3, var_0_0.burning) then
+					if not var_14_1 then
+						var_14_1 = iter_14_0 .. "_balefire"
+						var_14_2 = table.clone(iter_14_1)
+						BalefireDots[var_14_1] = true
+						BalefireBurnDotLookup[iter_14_0] = var_14_1
+						DotTypeLookup[var_14_1] = DotTypeLookup[iter_14_0]
+						arg_14_0[var_14_1] = var_14_2
 					end
 
-					perks = new_buff_template.buffs[buff_i].perks
+					local var_14_4 = var_14_2.buffs[iter_14_2].perks
 
-					table.remove_array_value(perks, buff_perk_names.burning)
-					table.insert_unique(perks, buff_perk_names.burning_balefire)
+					table.remove_array_value(var_14_4, var_0_0.burning)
+					table.insert_unique(var_14_4, var_0_0.burning_balefire)
 				end
 			end
 		else
-			local original_name = string.sub(template_name, 1, balefire_i - 1)
+			local var_14_5 = string.sub(iter_14_0, 1, var_14_0 - 1)
 
-			DotTypeLookup[template_name] = DotTypeLookup[original_name]
-			BalefireDots[template_name] = true
+			DotTypeLookup[iter_14_0] = DotTypeLookup[var_14_5]
+			BalefireDots[iter_14_0] = true
 		end
 	end
 end
 
 InfiniteBurnDotLookup = InfiniteBurnDotLookup or {}
 
-BuffUtils.generate_infinite_burn_variants = function (buff_templates)
-	for template_name, template in pairs(buff_templates) do
-		if not string.find(template_name, "_infinite") then
-			local new_name, new_buff_template
+function BuffUtils.generate_infinite_burn_variants(arg_15_0)
+	for iter_15_0, iter_15_1 in pairs(arg_15_0) do
+		if not string.find(iter_15_0, "_infinite") then
+			local var_15_0
+			local var_15_1
 
-			for i, sub_buff in ipairs(template.buffs) do
-				local perks = sub_buff.perks
+			for iter_15_2, iter_15_3 in ipairs(iter_15_1.buffs) do
+				local var_15_2 = iter_15_3.perks
 
-				if perks and table.find(perks, buff_perk_names.burning) then
-					if not new_name then
-						new_name = template_name .. "_infinite"
-						new_buff_template = table.clone(template)
-						InfiniteBurnDotLookup[template_name] = new_name
-						buff_templates[new_name] = new_buff_template
+				if var_15_2 and table.find(var_15_2, var_0_0.burning) then
+					if not var_15_0 then
+						var_15_0 = iter_15_0 .. "_infinite"
+						var_15_1 = table.clone(iter_15_1)
+						InfiniteBurnDotLookup[iter_15_0] = var_15_0
+						arg_15_0[var_15_0] = var_15_1
 					end
 
-					sub_buff = new_buff_template.buffs[i]
-					sub_buff.name = "infinite_burning_dot"
-					sub_buff.duration = nil
-					sub_buff.on_max_stacks_overflow_func = "reapply_infinite_burn"
-					sub_buff.max_stacks = 1
+					iter_15_3 = var_15_1.buffs[iter_15_2]
+					iter_15_3.name = "infinite_burning_dot"
+					iter_15_3.duration = nil
+					iter_15_3.on_max_stacks_overflow_func = "reapply_infinite_burn"
+					iter_15_3.max_stacks = 1
 
-					local max_stacks_func = sub_buff.max_stacks_func
+					local var_15_3 = iter_15_3.max_stacks_func
 
-					if max_stacks_func ~= nil then
-						sub_buff.max_stacks_func = function (...)
-							return math.min(max_stacks_func(...), 1)
+					if var_15_3 ~= nil then
+						function iter_15_3.max_stacks_func(...)
+							return math.min(var_15_3(...), 1)
 						end
 					end
 
-					if sub_buff.time_between_dot_damages then
-						sub_buff.time_between_dot_damages = sub_buff.time_between_dot_damages / 2
+					if iter_15_3.time_between_dot_damages then
+						iter_15_3.time_between_dot_damages = iter_15_3.time_between_dot_damages / 2
 					end
 
 					break

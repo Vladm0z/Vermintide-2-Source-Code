@@ -1,14 +1,12 @@
-﻿-- chunkname: @scripts/managers/backend_playfab/settings/flexmatch_queue_status.lua
+-- chunkname: @scripts/managers/backend_playfab/settings/flexmatch_queue_status.lua
 
-local FlexmatchQueueStatus = {
+return {
+	Searching = "SEARCHING",
 	Cancelled = "CANCELLED",
-	Completed = "COMPLETED",
 	Failed = "FAILED",
 	Queued = "QUEUED",
-	RequiredAcceptance = "REQUIRES_ACCEPTANCE",
-	Searching = "SEARCHING",
-	Succeeded = "SUCCEEDED",
+	Completed = "COMPLETED",
 	TimedOut = "TIMED_OUT",
+	Succeeded = "SUCCEEDED",
+	RequiredAcceptance = "REQUIRES_ACCEPTANCE"
 }
-
-return FlexmatchQueueStatus

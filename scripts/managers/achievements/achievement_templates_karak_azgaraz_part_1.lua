@@ -1,242 +1,231 @@
-﻿-- chunkname: @scripts/managers/achievements/achievement_templates_karak_azgaraz_part_1.lua
+-- chunkname: @scripts/managers/achievements/achievement_templates_karak_azgaraz_part_1.lua
 
-local add_event_challenge = AchievementTemplateHelper.add_event_challenge
-local add_levels_complete_challenge = AchievementTemplateHelper.add_levels_complete_challenge
-local add_meta_challenge = AchievementTemplateHelper.add_meta_challenge
-local achievements = AchievementTemplates.achievements
-local add_console_achievements = AchievementTemplateHelper.add_console_achievements
-local XB1_ACHIEVEMENT_ID = {
-	dwarf_barrel_carry = 112,
+local var_0_0 = AchievementTemplateHelper.add_event_challenge
+local var_0_1 = AchievementTemplateHelper.add_levels_complete_challenge
+local var_0_2 = AchievementTemplateHelper.add_meta_challenge
+local var_0_3 = AchievementTemplates.achievements
+local var_0_4 = AchievementTemplateHelper.add_console_achievements
+local var_0_5 = {
 	dwarf_valaya_emote = 113,
-	karak_azgaraz_complete_dlc_dwarf_interior_legend = 119,
+	dwarf_barrel_carry = 112,
+	karak_azgaraz_complete_dlc_dwarf_interior_legend = 119
 }
-local PS4_ACHIEVEMENT_ID = {
-	dwarf_valaya_emote = "092",
+local var_0_6 = {
+	dwarf_valaya_emote = "092"
 }
-local all_difficulties = {}
-local portals = {
-	LevelSettings.dlc_dwarf_interior,
+local var_0_7 = {}
+local var_0_8 = {
+	LevelSettings.dlc_dwarf_interior
 }
-local difficulties = {
+local var_0_9 = {
 	"normal",
 	"hard",
 	"harder",
 	"hardest",
-	"cataclysm",
+	"cataclysm"
 }
-local player_facing_diff_names = {
-	cataclysm = "cataclysm",
+local var_0_10 = {
+	hardest = "legend",
 	hard = "veteran",
 	harder = "champion",
-	hardest = "legend",
-	normal = "recruit",
+	cataclysm = "cataclysm",
+	normal = "recruit"
 }
 
-for i = 1, #difficulties do
-	local difficulty_name = difficulties[i]
-	local name = "karak_azgaraz_complete_dlc_dwarf_interior_" .. player_facing_diff_names[difficulty_name]
-	local icon = "achievement_interior_" .. player_facing_diff_names[difficulty_name]
+for iter_0_0 = 1, #var_0_9 do
+	local var_0_11 = var_0_9[iter_0_0]
+	local var_0_12 = "karak_azgaraz_complete_dlc_dwarf_interior_" .. var_0_10[var_0_11]
+	local var_0_13 = "achievement_interior_" .. var_0_10[var_0_11]
 
-	all_difficulties[i] = name
+	var_0_7[iter_0_0] = var_0_12
 
-	add_levels_complete_challenge(achievements, name, portals, DifficultySettings[difficulty_name].rank, icon, nil, XB1_ACHIEVEMENT_ID[name], PS4_ACHIEVEMENT_ID[name])
+	var_0_1(var_0_3, var_0_12, var_0_8, DifficultySettings[var_0_11].rank, var_0_13, nil, var_0_5[var_0_12], var_0_6[var_0_12])
 end
 
-achievements.dwarf_valaya_emote = {
-	desc = "achv_dwarf_valaya_emote_desc",
+var_0_3.dwarf_valaya_emote = {
+	name = "achv_dwarf_valaya_emote_name",
 	display_completion_ui = true,
 	icon = "achievement_dwarf_valaya_emote",
-	name = "achv_dwarf_valaya_emote_name",
+	desc = "achv_dwarf_valaya_emote_desc",
 	events = {
-		"dwarf_valaya_emote",
+		"dwarf_valaya_emote"
 	},
-	completed = function (statistics_db, stats_id, template_data)
-		return statistics_db:get_persistent_stat(stats_id, "dwarf_valaya_emote") >= 1
+	completed = function(arg_1_0, arg_1_1, arg_1_2)
+		return arg_1_0:get_persistent_stat(arg_1_1, "dwarf_valaya_emote") >= 1
 	end,
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local is_inside = event_data[1]
-
-		if not is_inside then
-			template_data.end_t = nil
+	on_event = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+		if not arg_2_4[1] then
+			arg_2_2.end_t = nil
 
 			return
 		end
 
-		local player = Managers.player:local_player()
-		local unit = player and player.player_unit
+		local var_2_0 = Managers.player:local_player()
+		local var_2_1 = var_2_0 and var_2_0.player_unit
 
-		if not unit then
+		if not var_2_1 then
 			return
 		end
 
-		local character_state_machine_ext = ScriptUnit.extension(unit, "character_state_machine_system")
-		local state_machine = character_state_machine_ext.state_machine
-		local current_state = state_machine and state_machine.state_current
-		local is_emoting = current_state and current_state.name == "emote" and current_state.current_emote == "anim_pose_unarmed_05"
+		local var_2_2 = ScriptUnit.extension(var_2_1, "character_state_machine_system").state_machine
+		local var_2_3 = var_2_2 and var_2_2.state_current
 
-		if not is_emoting then
-			template_data.end_t = nil
-
-			return
-		end
-
-		local t = Managers.time:time("game")
-
-		if not template_data.end_t then
-			template_data.end_t = t + 5
-			template_data.completed = false
+		if not (var_2_3 and var_2_3.name == "emote" and var_2_3.current_emote == "anim_pose_unarmed_05") then
+			arg_2_2.end_t = nil
 
 			return
 		end
 
-		if t > template_data.end_t and not template_data.completed then
-			local audio_system_extension = Managers.state.entity:system("audio_system")
+		local var_2_4 = Managers.time:time("game")
 
-			audio_system_extension:_play_event("Play_hud_small_puzzle_cue", unit)
+		if not arg_2_2.end_t then
+			arg_2_2.end_t = var_2_4 + 5
+			arg_2_2.completed = false
 
-			local health_extension = ScriptUnit.extension(unit, "health_system")
-			local amount_to_heal = health_extension:get_max_health() / 2
+			return
+		end
+
+		if var_2_4 > arg_2_2.end_t and not arg_2_2.completed then
+			Managers.state.entity:system("audio_system"):_play_event("Play_hud_small_puzzle_cue", var_2_1)
+
+			local var_2_5 = ScriptUnit.extension(var_2_1, "health_system"):get_max_health() / 2
 
 			if Managers.player.is_server then
-				DamageUtils.heal_network(unit, unit, amount_to_heal, "healing_draught")
+				DamageUtils.heal_network(var_2_1, var_2_1, var_2_5, "healing_draught")
 			else
-				local network_manager = Managers.state.network
-				local network_transmit = network_manager.network_transmit
-				local unit_id = network_manager:unit_game_object_id(unit)
-				local heal_type_id = NetworkLookup.heal_types.healing_draught
+				local var_2_6 = Managers.state.network
+				local var_2_7 = var_2_6.network_transmit
+				local var_2_8 = var_2_6:unit_game_object_id(var_2_1)
+				local var_2_9 = NetworkLookup.heal_types.healing_draught
 
-				network_transmit:send_rpc_server("rpc_request_heal", unit_id, amount_to_heal, heal_type_id)
+				var_2_7:send_rpc_server("rpc_request_heal", var_2_8, var_2_5, var_2_9)
 			end
 
-			statistics_db:increment_stat(stats_id, "dwarf_valaya_emote")
+			arg_2_0:increment_stat(arg_2_1, "dwarf_valaya_emote")
 
-			template_data.completed = true
+			arg_2_2.completed = true
 		end
-	end,
+	end
 }
-achievements.dwarf_rune = {
-	desc = "achv_dwarf_rune_desc",
+var_0_3.dwarf_rune = {
+	name = "achv_dwarf_rune_name",
 	display_completion_ui = true,
 	icon = "achievement_dwarf_rune",
-	name = "achv_dwarf_rune_name",
+	desc = "achv_dwarf_rune_desc",
 	events = {
-		"dwarf_rune",
+		"dwarf_rune"
 	},
-	completed = function (statistics_db, stats_id, template_data)
-		return statistics_db:get_persistent_stat(stats_id, "dwarf_rune") >= 1
+	completed = function(arg_3_0, arg_3_1, arg_3_2)
+		return arg_3_0:get_persistent_stat(arg_3_1, "dwarf_rune") >= 1
 	end,
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		statistics_db:increment_stat(stats_id, "dwarf_rune")
-	end,
+	on_event = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+		arg_4_0:increment_stat(arg_4_1, "dwarf_rune")
+	end
 }
-achievements.dwarf_barrel_carry = {
-	desc = "achv_dwarf_barrel_carry_desc",
+var_0_3.dwarf_barrel_carry = {
+	name = "achv_dwarf_barrel_carry_name",
 	display_completion_ui = true,
 	icon = "achievement_dwarf_barrel_carry",
-	name = "achv_dwarf_barrel_carry_name",
+	desc = "achv_dwarf_barrel_carry_desc",
 	events = {
 		"objective_entered_socket_zone",
-		"dwarf_barrel_carry",
+		"dwarf_barrel_carry"
 	},
-	completed = function (statistics_db, stats_id, template_data)
-		return statistics_db:get_persistent_stat(stats_id, "dwarf_barrel_carry") >= 1
+	completed = function(arg_5_0, arg_5_1, arg_5_2)
+		return arg_5_0:get_persistent_stat(arg_5_1, "dwarf_barrel_carry") >= 1
 	end,
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		local level_key = Managers.state.game_mode:level_key()
+	on_event = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+		local var_6_0 = Managers.state.game_mode:level_key()
 
-		if not level_key or level_key ~= "dlc_dwarf_interior" then
+		if not var_6_0 or var_6_0 ~= "dlc_dwarf_interior" then
 			return
 		end
 
-		if template_data.failed then
+		if arg_6_2.failed then
 			return
 		end
 
-		local is_limited = event_data[2]
-
-		if is_limited then
-			template_data.failed = true
+		if arg_6_4[2] then
+			arg_6_2.failed = true
 
 			return
 		end
 
-		local success = event_data[1]
-
-		if success then
-			statistics_db:increment_stat(stats_id, "dwarf_barrel_carry")
+		if arg_6_4[1] then
+			arg_6_0:increment_stat(arg_6_1, "dwarf_barrel_carry")
 		end
-	end,
+	end
 }
-achievements.dwarf_bells = {
-	desc = "achv_dwarf_bells_desc",
+var_0_3.dwarf_bells = {
+	name = "achv_dwarf_bells_name",
 	display_completion_ui = true,
 	icon = "achievement_dwarf_bells",
-	name = "achv_dwarf_bells_name",
+	desc = "achv_dwarf_bells_desc",
 	events = {
-		"dwarf_bells",
+		"dwarf_bells"
 	},
-	completed = function (statistics_db, stats_id, template_data)
-		return statistics_db:get_persistent_stat(stats_id, "dwarf_bells") >= 1
+	completed = function(arg_7_0, arg_7_1, arg_7_2)
+		return arg_7_0:get_persistent_stat(arg_7_1, "dwarf_bells") >= 1
 	end,
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		statistics_db:increment_stat(stats_id, "dwarf_bells")
-	end,
+	on_event = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+		arg_8_0:increment_stat(arg_8_1, "dwarf_bells")
+	end
 }
 
-local DWARF_PRESSURE_TIME_LIMIT = 8
+local var_0_14 = 8
 
-achievements.dwarf_pressure = {
+var_0_3.dwarf_pressure = {
+	name = "achv_dwarf_pressure_name",
 	display_completion_ui = true,
 	icon = "achievement_dwarf_pressure",
-	name = "achv_dwarf_pressure_name",
-	desc = function ()
-		return string.format(Localize("achv_dwarf_pressure_desc"), DWARF_PRESSURE_TIME_LIMIT)
+	desc = function()
+		return string.format(Localize("achv_dwarf_pressure_desc"), var_0_14)
 	end,
 	events = {
-		"dwarf_pressure",
+		"dwarf_pressure"
 	},
-	completed = function (statistics_db, stats_id, template_data)
-		return statistics_db:get_persistent_stat(stats_id, "dwarf_pressure") >= 1
+	completed = function(arg_10_0, arg_10_1, arg_10_2)
+		return arg_10_0:get_persistent_stat(arg_10_1, "dwarf_pressure") >= 1
 	end,
-	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
-		if template_data.failed then
+	on_event = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+		if arg_11_2.failed then
 			return
 		end
 
-		local start_timer = event_data[1]
-		local t = Managers.time:time("game")
+		local var_11_0 = arg_11_4[1]
+		local var_11_1 = Managers.time:time("game")
 
-		if not template_data.num_valves then
-			template_data.num_valves = 0
+		if not arg_11_2.num_valves then
+			arg_11_2.num_valves = 0
 		end
 
-		if start_timer then
-			template_data.start_t = t
+		if var_11_0 then
+			arg_11_2.start_t = var_11_1
 
 			return
 		end
 
-		template_data.num_valves = template_data.num_valves + 1
+		arg_11_2.num_valves = arg_11_2.num_valves + 1
 
-		if template_data.num_valves >= 4 then
-			local network_transmit = Managers.state.network.network_transmit
-			local stat_id = NetworkLookup.statistics.dwarf_pressure
+		if arg_11_2.num_valves >= 4 then
+			local var_11_2 = Managers.state.network.network_transmit
+			local var_11_3 = NetworkLookup.statistics.dwarf_pressure
 
 			if Managers.state.network.is_server then
-				network_transmit:send_rpc_clients("rpc_increment_stat_party", stat_id)
+				var_11_2:send_rpc_clients("rpc_increment_stat_party", var_11_3)
 			else
-				network_transmit:send_rpc_server("rpc_increment_stat_party", stat_id)
+				var_11_2:send_rpc_server("rpc_increment_stat_party", var_11_3)
 			end
 		end
 
-		if template_data.start_t and t > template_data.start_t + DWARF_PRESSURE_TIME_LIMIT then
-			template_data.failed = true
+		if arg_11_2.start_t and var_11_1 > arg_11_2.start_t + var_0_14 then
+			arg_11_2.failed = true
 
 			return
 		end
-	end,
+	end
 }
-interior_all_challenges = table.clone(all_difficulties)
+interior_all_challenges = table.clone(var_0_7)
 
 table.remove(interior_all_challenges, #interior_all_challenges)
 
@@ -246,5 +235,5 @@ interior_all_challenges[#interior_all_challenges + 1] = "dwarf_barrel_carry"
 interior_all_challenges[#interior_all_challenges + 1] = "dwarf_bells"
 interior_all_challenges[#interior_all_challenges + 1] = "dwarf_pressure"
 
-add_meta_challenge(achievements, "interior_all_challenges", interior_all_challenges, "achievement_interior_meta", nil, XB1_ACHIEVEMENT_ID[name], PS4_ACHIEVEMENT_ID[name])
-add_console_achievements(XB1_ACHIEVEMENT_ID, PS4_ACHIEVEMENT_ID)
+var_0_2(var_0_3, "interior_all_challenges", interior_all_challenges, "achievement_interior_meta", nil, var_0_5[name], var_0_6[name])
+var_0_4(var_0_5, var_0_6)

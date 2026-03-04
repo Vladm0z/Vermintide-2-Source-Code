@@ -1,238 +1,236 @@
-﻿-- chunkname: @scripts/ui/views/deus_menu/ui_widgets_deus.lua
+-- chunkname: @scripts/ui/views/deus_menu/ui_widgets_deus.lua
 
 UIWidgets = UIWidgets or {}
 
-local health_bar_size = {
+local var_0_0 = {
 	92,
-	8,
+	8
 }
-local health_bar_offset = {
-	-(health_bar_size[1] / 2),
+local var_0_1 = {
+	-(var_0_0[1] / 2),
 	-25,
-	0,
+	0
 }
-local items_offset = {
+local var_0_2 = {
 	-15,
-	-70,
+	-70
 }
 
-local function pulsate_glow(should_pulsate)
-	if not should_pulsate then
+local function var_0_3(arg_1_0)
+	if not arg_1_0 then
 		return 255
 	end
 
 	return 195 + 60 * math.sin(5 * Managers.time:time("ui"))
 end
 
-UIWidgets.create_deus_player_status_portrait = function (scenegraph_id, frame_settings_name, level_text, retained_mode)
-	local widget = {
+function UIWidgets.create_deus_player_status_portrait(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	return {
 		element = {
 			passes = {
 				{
 					pass_type = "texture",
 					style_id = "character_portrait",
 					texture_id = "character_portrait",
-					retained_mode = retained_mode,
+					retained_mode = arg_2_3
 				},
 				{
 					pass_type = "texture",
 					style_id = "host_icon",
 					texture_id = "host_icon",
-					retained_mode = retained_mode,
-					content_check_function = function (content)
-						return content.is_host
-					end,
+					retained_mode = arg_2_3,
+					content_check_function = function(arg_3_0)
+						return arg_3_0.is_host
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "hp_bar_bg",
 					texture_id = "hp_bar_bg",
-					retained_mode = retained_mode,
+					retained_mode = arg_2_3
 				},
 				{
 					pass_type = "texture",
 					style_id = "hp_bar_fg",
 					texture_id = "hp_bar_fg",
-					retained_mode = retained_mode,
+					retained_mode = arg_2_3
 				},
 				{
-					content_id = "hp_bar",
-					pass_type = "gradient_mask_texture",
 					style_id = "hp_bar",
 					texture_id = "texture_id",
-					content_change_function = function (content, style)
-						local bar_value = content.bar_value
-						local size = style.size
-						local bar_length = health_bar_size[1]
+					pass_type = "gradient_mask_texture",
+					content_id = "hp_bar",
+					content_change_function = function(arg_4_0, arg_4_1)
+						local var_4_0 = arg_4_0.bar_value
 
-						size[1] = bar_length * bar_value
+						arg_4_1.size[1] = var_0_0[1] * var_4_0
 					end,
-					retained_mode = retained_mode,
+					retained_mode = arg_2_3
 				},
 				{
 					pass_type = "texture",
 					style_id = "portrait_icon",
 					texture_id = "portrait_icon",
-					retained_mode = retained_mode,
-					content_check_function = function (content)
-						return content.display_portrait_icon
-					end,
+					retained_mode = arg_2_3,
+					content_check_function = function(arg_5_0)
+						return arg_5_0.display_portrait_icon
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "talk_indicator",
 					texture_id = "talk_indicator",
-					retained_mode = retained_mode,
+					retained_mode = arg_2_3
 				},
 				{
 					pass_type = "texture",
 					style_id = "talk_indicator_glow",
 					texture_id = "talk_indicator_glow",
-					retained_mode = retained_mode,
+					retained_mode = arg_2_3
 				},
 				{
 					pass_type = "texture",
 					style_id = "talk_indicator_highlight",
 					texture_id = "talk_indicator_highlight",
-					retained_mode = retained_mode,
+					retained_mode = arg_2_3
 				},
 				{
 					pass_type = "texture",
 					style_id = "talk_indicator_highlight_glow",
 					texture_id = "talk_indicator_highlight_glow",
-					retained_mode = retained_mode,
+					retained_mode = arg_2_3
 				},
 				{
 					pass_type = "rotated_texture",
 					style_id = "connecting_icon",
 					texture_id = "connecting_icon",
-					retained_mode = retained_mode,
-					content_check_function = function (content)
-						return content.connecting
-					end,
+					retained_mode = arg_2_3,
+					content_check_function = function(arg_6_0)
+						return arg_6_0.connecting
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "ammo_indicator",
 					texture_id = "ammo_indicator",
-					retained_mode = retained_mode,
-					content_check_function = function (content)
-						local ammo_progress = content.ammo_percentage
+					retained_mode = arg_2_3,
+					content_check_function = function(arg_7_0)
+						local var_7_0 = arg_7_0.ammo_percentage
 
-						return ammo_progress and ammo_progress > 0 and ammo_progress <= 0.33
-					end,
+						return var_7_0 and var_7_0 > 0 and var_7_0 <= 0.33
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "ammo_indicator",
 					texture_id = "ammo_indicator_empty",
-					retained_mode = retained_mode,
-					content_check_function = function (content)
-						local ammo_progress = content.ammo_percentage
+					retained_mode = arg_2_3,
+					content_check_function = function(arg_8_0)
+						local var_8_0 = arg_8_0.ammo_percentage
 
-						return ammo_progress and ammo_progress <= 0
-					end,
+						return var_8_0 and var_8_0 <= 0
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "healthkit_slot",
 					texture_id = "healthkit_slot",
-					retained_mode = retained_mode,
-					content_check_function = function (content)
-						return content.healthkit_slot
-					end,
+					retained_mode = arg_2_3,
+					content_check_function = function(arg_9_0)
+						return arg_9_0.healthkit_slot
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "healthkit_slot_bg",
 					texture_id = "healthkit_slot_bg",
-					retained_mode = retained_mode,
+					retained_mode = arg_2_3
 				},
 				{
 					pass_type = "texture",
 					style_id = "healthkit_slot_frame",
 					texture_id = "slot_frame",
-					retained_mode = retained_mode,
+					retained_mode = arg_2_3
 				},
 				{
 					pass_type = "texture",
 					style_id = "potion_slot",
 					texture_id = "potion_slot",
-					retained_mode = retained_mode,
-					content_check_function = function (content)
-						return content.potion_slot
-					end,
+					retained_mode = arg_2_3,
+					content_check_function = function(arg_10_0)
+						return arg_10_0.potion_slot
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "potion_slot_bg",
 					texture_id = "potion_slot_bg",
-					retained_mode = retained_mode,
+					retained_mode = arg_2_3
 				},
 				{
 					pass_type = "texture",
 					style_id = "potion_slot_frame",
 					texture_id = "slot_frame",
-					retained_mode = retained_mode,
+					retained_mode = arg_2_3
 				},
 				{
 					pass_type = "texture",
 					style_id = "grenade_slot",
 					texture_id = "grenade_slot",
-					retained_mode = retained_mode,
-					content_check_function = function (content)
-						return content.grenade_slot
-					end,
+					retained_mode = arg_2_3,
+					content_check_function = function(arg_11_0)
+						return arg_11_0.grenade_slot
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "grenade_slot_bg",
 					texture_id = "grenade_slot_bg",
-					retained_mode = retained_mode,
+					retained_mode = arg_2_3
 				},
 				{
 					pass_type = "texture",
 					style_id = "grenade_slot_frame",
 					texture_id = "slot_frame",
-					retained_mode = retained_mode,
+					retained_mode = arg_2_3
 				},
 				{
 					pass_type = "texture",
 					style_id = "token_icon",
 					texture_id = "token_icon",
-					retained_mode = retained_mode,
-					content_check_function = function (content)
-						return content.token_icon and content.show_token_icon
-					end,
-				},
-			},
+					retained_mode = arg_2_3,
+					content_check_function = function(arg_12_0)
+						return arg_12_0.token_icon and arg_12_0.show_token_icon
+					end
+				}
+			}
 		},
 		content = {
-			ammo_indicator = "unit_frame_ammo_low",
-			ammo_indicator_empty = "unit_frame_ammo_empty",
-			ammo_percentage = 1,
-			bar_start_side = "left",
+			talk_indicator_highlight = "voip_wave",
 			character_portrait = "unit_frame_portrait_default",
-			connecting = false,
-			connecting_icon = "matchmaking_connecting_icon",
 			display_portrait_icon = false,
-			display_portrait_overlay = false,
-			grenade_slot_bg = "hud_inventory_slot_bg_small_01",
-			healthkit_slot_bg = "hud_inventory_slot_bg_small_01",
-			host_icon = "host_icon",
-			hp_bar_bg = "hud_teammate_hp_bar_bg",
-			hp_bar_fg = "hud_teammate_hp_bar_frame_dark_pact",
+			ammo_percentage = 1,
 			is_host = false,
 			portrait_icon = "status_icon_needs_assist",
-			potion_slot_bg = "hud_inventory_slot_bg_small_01",
-			slot_frame = "hud_inventory_slot_small",
-			talk_indicator = "voip_speaker",
-			talk_indicator_glow = "voip_speaker_glow",
-			talk_indicator_highlight = "voip_wave",
+			host_icon = "host_icon",
+			hp_bar_bg = "hud_teammate_hp_bar_bg",
+			ammo_indicator_empty = "unit_frame_ammo_empty",
+			connecting_icon = "matchmaking_connecting_icon",
 			talk_indicator_highlight_glow = "voip_wave_glow",
+			hp_bar_fg = "hud_teammate_hp_bar_frame_dark_pact",
+			talk_indicator_glow = "voip_speaker_glow",
+			grenade_slot_bg = "hud_inventory_slot_bg_small_01",
+			connecting = false,
+			healthkit_slot_bg = "hud_inventory_slot_bg_small_01",
+			bar_start_side = "left",
+			slot_frame = "hud_inventory_slot_small",
+			display_portrait_overlay = false,
+			potion_slot_bg = "hud_inventory_slot_bg_small_01",
+			talk_indicator = "voip_speaker",
+			ammo_indicator = "unit_frame_ammo_low",
 			hp_bar = {
-				bar_value = 1,
 				texture_id = "teammate_hp_bar_color_tint_1",
+				bar_value = 1
 			},
 			ammo_bar = {
 				bar_value = 1,
@@ -240,1298 +238,1291 @@ UIWidgets.create_deus_player_status_portrait = function (scenegraph_id, frame_se
 				uvs = {
 					{
 						0,
-						0,
+						0
 					},
 					{
 						1,
-						1,
-					},
-				},
-			},
+						1
+					}
+				}
+			}
 		},
 		style = {
 			character_portrait = {
 				size = {
 					86,
-					108,
+					108
 				},
 				offset = {
 					-43,
 					6,
-					0,
+					0
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			host_icon = {
 				size = {
 					40,
-					40,
+					40
 				},
 				offset = {
 					-65,
 					-2,
-					50,
+					50
 				},
 				color = {
 					150,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			hp_bar_bg = {
 				size = {
 					100,
-					17,
+					17
 				},
 				offset = {
-					health_bar_offset[1] + health_bar_size[1] / 2 - 50,
-					health_bar_offset[2] + health_bar_size[2] / 2 - 6.5,
-					health_bar_offset[3] + 15,
+					var_0_1[1] + var_0_0[1] / 2 - 50,
+					var_0_1[2] + var_0_0[2] / 2 - 6.5,
+					var_0_1[3] + 15
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			hp_bar_fg = {
 				size = {
 					100,
-					24,
+					24
 				},
 				offset = {
-					health_bar_offset[1] + health_bar_size[1] / 2 - 50,
-					health_bar_offset[2] + health_bar_size[2] / 2 - 6.5 - 7,
-					health_bar_offset[3] + 20,
+					var_0_1[1] + var_0_0[1] / 2 - 50,
+					var_0_1[2] + var_0_0[2] / 2 - 6.5 - 7,
+					var_0_1[3] + 20
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			hp_bar = {
 				gradient_threshold = 1,
 				size = {
-					health_bar_size[1],
-					health_bar_size[2],
+					var_0_0[1],
+					var_0_0[2]
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					health_bar_offset[1],
-					health_bar_offset[2],
-					health_bar_offset[3] + 18,
-				},
+					var_0_1[1],
+					var_0_1[2],
+					var_0_1[3] + 18
+				}
 			},
 			ammo_indicator = {
 				size = {
 					32,
-					32,
+					32
 				},
 				offset = {
 					60,
 					-40,
-					5,
+					5
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			talk_indicator = {
 				size = {
 					64,
-					64,
+					64
 				},
 				offset = {
 					60,
 					30,
-					3,
+					3
 				},
 				color = {
 					0,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			talk_indicator_glow = {
 				size = {
 					64,
-					64,
+					64
 				},
 				offset = {
 					60,
 					30,
-					2,
+					2
 				},
 				color = {
 					0,
 					0,
 					0,
-					0,
-				},
+					0
+				}
 			},
 			talk_indicator_highlight = {
 				size = {
 					64,
-					64,
+					64
 				},
 				offset = {
 					60,
 					30,
-					3,
+					3
 				},
 				color = {
 					0,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			talk_indicator_highlight_glow = {
 				size = {
 					64,
-					64,
+					64
 				},
 				offset = {
 					60,
 					30,
-					2,
+					2
 				},
 				color = {
 					0,
 					0,
 					0,
-					0,
-				},
+					0
+				}
 			},
 			connecting_icon = {
 				angle = 0,
 				size = {
 					53,
-					53,
+					53
 				},
 				offset = {
 					-25,
 					34,
-					15,
+					15
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				pivot = {
 					27,
-					27,
-				},
+					27
+				}
 			},
 			portrait_icon = {
 				size = {
 					86,
-					108,
+					108
 				},
 				offset = {
 					-43,
 					0,
-					1,
+					1
 				},
 				color = {
 					150,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			healthkit_slot_bg = {
 				size = {
 					29,
-					29,
+					29
 				},
 				offset = {
-					items_offset[1] + -35,
-					items_offset[2] + 0,
-					7,
+					var_0_2[1] + -35,
+					var_0_2[2] + 0,
+					7
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			healthkit_slot_frame = {
 				size = {
 					29,
-					29,
+					29
 				},
 				offset = {
-					items_offset[1] + -35,
-					items_offset[2] + 0,
-					11,
+					var_0_2[1] + -35,
+					var_0_2[2] + 0,
+					11
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			healthkit_slot = {
 				size = {
 					25,
-					25,
+					25
 				},
 				offset = {
-					items_offset[1] + -35 + 2.5,
-					items_offset[2] + 2,
-					8,
+					var_0_2[1] + -35 + 2.5,
+					var_0_2[2] + 2,
+					8
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			potion_slot_bg = {
 				size = {
 					29,
-					29,
+					29
 				},
 				offset = {
-					items_offset[1] + 0,
-					items_offset[2] + 0,
-					7,
+					var_0_2[1] + 0,
+					var_0_2[2] + 0,
+					7
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			potion_slot_frame = {
 				size = {
 					29,
-					29,
+					29
 				},
 				offset = {
-					items_offset[1] + 0,
-					items_offset[2] + 0,
-					11,
+					var_0_2[1] + 0,
+					var_0_2[2] + 0,
+					11
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			potion_slot = {
 				size = {
 					25,
-					25,
+					25
 				},
 				offset = {
-					items_offset[1] + 2.5,
-					items_offset[2] + 2,
-					8,
+					var_0_2[1] + 2.5,
+					var_0_2[2] + 2,
+					8
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			grenade_slot_bg = {
 				size = {
 					29,
-					29,
+					29
 				},
 				offset = {
-					items_offset[1] + 35,
-					items_offset[2] + 0,
-					7,
+					var_0_2[1] + 35,
+					var_0_2[2] + 0,
+					7
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			grenade_slot_frame = {
 				size = {
 					29,
-					29,
+					29
 				},
 				offset = {
-					items_offset[1] + 35,
-					items_offset[2] + 0,
-					11,
+					var_0_2[1] + 35,
+					var_0_2[2] + 0,
+					11
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			grenade_slot = {
 				size = {
 					25,
-					25,
+					25
 				},
 				offset = {
-					items_offset[1] + 35 + 2.5,
-					items_offset[2] + 2,
-					8,
+					var_0_2[1] + 35 + 2.5,
+					var_0_2[2] + 2,
+					8
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			token_icon = {
 				size = {
 					40,
-					40,
+					40
 				},
 				offset = {
 					15,
 					83,
-					20,
-				},
-			},
+					20
+				}
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_2_0
 	}
-
-	return widget
 end
 
-UIWidgets.deus_create_player_portraits_frame = function (scenegraph_id, frame_settings_name, level_text, retained_mode, offset)
-	local retained_mode = retained_mode
-	local scenegraph_id = scenegraph_id
-	local widget = {
+function UIWidgets.deus_create_player_portraits_frame(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+	local var_13_0 = arg_13_3
+	local var_13_1 = arg_13_0
+	local var_13_2 = {
 		element = {
-			passes = {},
+			passes = {}
 		},
 		content = {},
-		style = {},
+		style = {}
 	}
-	local frame_settings = UIPlayerPortraitFrameSettings[frame_settings_name]
-	local default_color = {
+	local var_13_3 = UIPlayerPortraitFrameSettings[arg_13_1]
+	local var_13_4 = {
 		255,
 		255,
 		255,
-		255,
+		255
 	}
-	local default_offset = offset or {
+	local var_13_5 = arg_13_4 or {
 		0,
 		0,
-		0,
+		0
 	}
 
-	widget.content.frame_settings_name = frame_settings_name
+	var_13_2.content.frame_settings_name = arg_13_1
 
-	for index, data in ipairs(frame_settings) do
-		local name = "texture_" .. index
-		local texture_name = data.texture or "icons_placeholder"
-		local size
+	for iter_13_0, iter_13_1 in ipairs(var_13_3) do
+		local var_13_6 = "texture_" .. iter_13_0
+		local var_13_7 = iter_13_1.texture or "icons_placeholder"
+		local var_13_8
 
-		if UIAtlasHelper.has_atlas_settings_by_texture_name(texture_name) then
-			local texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(texture_name)
-
-			size = texture_settings.size
+		if UIAtlasHelper.has_atlas_settings_by_texture_name(var_13_7) then
+			var_13_8 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_13_7).size
 		else
-			size = data.size
+			var_13_8 = iter_13_1.size
 		end
 
-		size = size and table.clone(size) or {
+		local var_13_9
+
+		var_13_9 = var_13_8 and table.clone(var_13_8) or {
 			0,
-			0,
+			0
 		}
 
-		local offset = {}
+		local var_13_10 = {}
 
-		if data.offset then
-			offset = table.clone(data.offset)
-			offset[1] = default_offset[1] + (-(size[1] / 2) + offset[1])
-			offset[2] = default_offset[2] + 60 + offset[2]
-			offset[3] = data.layer or 0
+		if iter_13_1.offset then
+			var_13_10 = table.clone(iter_13_1.offset)
+			var_13_10[1] = var_13_5[1] + (-(var_13_9[1] / 2) + var_13_10[1])
+			var_13_10[2] = var_13_5[2] + 60 + var_13_10[2]
+			var_13_10[3] = iter_13_1.layer or 0
 		else
-			offset = table.clone(default_offset)
-			offset[1] = -(size[1] / 2) + offset[1]
-			offset[2] = offset[2]
-			offset[3] = data.layer or 0
+			var_13_10 = table.clone(var_13_5)
+			var_13_10[1] = -(var_13_9[1] / 2) + var_13_10[1]
+			var_13_10[2] = var_13_10[2]
+			var_13_10[3] = iter_13_1.layer or 0
 		end
 
-		widget.element.passes[#widget.element.passes + 1] = {
+		var_13_2.element.passes[#var_13_2.element.passes + 1] = {
 			pass_type = "texture",
-			texture_id = name,
-			style_id = name,
-			retained_mode = retained_mode,
+			texture_id = var_13_6,
+			style_id = var_13_6,
+			retained_mode = var_13_0
 		}
-		widget.content[name] = texture_name
-		widget.style[name] = {
-			color = data.color or default_color,
-			offset = offset,
-			size = size,
+		var_13_2.content[var_13_6] = var_13_7
+		var_13_2.style[var_13_6] = {
+			color = iter_13_1.color or var_13_4,
+			offset = var_13_10,
+			size = var_13_9
 		}
 	end
 
-	local portrait_size = {
+	local var_13_11 = {
 		86,
-		108,
+		108
 	}
 
-	portrait_size[1] = portrait_size[1]
-	portrait_size[2] = portrait_size[2]
+	var_13_11[1] = var_13_11[1]
+	var_13_11[2] = var_13_11[2]
 
-	local level_offset = {
+	local var_13_12 = {
 		0,
 		8,
-		0,
+		0
 	}
 
-	level_offset[1] = level_offset[1]
-	level_offset[2] = level_offset[2]
-	level_offset[3] = 15
+	var_13_12[1] = var_13_12[1]
+	var_13_12[2] = var_13_12[2]
+	var_13_12[3] = 15
 
-	local level_name = "level"
+	local var_13_13 = "level"
 
-	widget.element.passes[#widget.element.passes + 1] = {
+	var_13_2.element.passes[#var_13_2.element.passes + 1] = {
 		pass_type = "text",
-		text_id = level_name,
-		style_id = level_name,
-		retained_mode = retained_mode,
+		text_id = var_13_13,
+		style_id = var_13_13,
+		retained_mode = var_13_0
 	}
-	widget.content[level_name] = level_text
-	widget.style[level_name] = {
-		font_size = 12,
-		font_type = "hell_shark",
-		horizontal_alignment = "center",
+	var_13_2.content[var_13_13] = arg_13_2
+	var_13_2.style[var_13_13] = {
 		vertical_alignment = "center",
+		font_type = "hell_shark",
+		font_size = 12,
+		horizontal_alignment = "center",
 		text_color = Colors.get_color_table_with_alpha("white", 255),
-		offset = level_offset,
+		offset = var_13_12
 	}
-	widget.scenegraph_id = scenegraph_id
+	var_13_2.scenegraph_id = var_13_1
 
-	return widget
+	return var_13_2
 end
 
-UIWidgets.create_info_box = function (scenegraph_id, icon, icon_size, icon_frame_name, title, sub_title, info)
-	local icon_offset = {
+function UIWidgets.create_info_box(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
+	local var_14_0 = {
 		0,
-		130 - icon_size[2] / 2,
-		0,
+		130 - arg_14_2[2] / 2,
+		0
 	}
-	local frame_settings = UIFrameSettings[icon_frame_name]
-	local edge_height = frame_settings.texture_sizes.horizontal[2]
-	local frame_size = {
-		icon_size[1] + edge_height * 2,
-		icon_size[2] + edge_height * 2,
+	local var_14_1 = UIFrameSettings[arg_14_3]
+	local var_14_2 = var_14_1.texture_sizes.horizontal[2]
+	local var_14_3 = {
+		arg_14_2[1] + var_14_2 * 2,
+		arg_14_2[2] + var_14_2 * 2
 	}
-	local frame_offset = {
-		icon_offset[1] - edge_height,
-		icon_offset[2] - edge_height,
-		1,
+	local var_14_4 = {
+		var_14_0[1] - var_14_2,
+		var_14_0[2] - var_14_2,
+		1
 	}
-	local icon_text_offset = {
-		icon_size[1] + edge_height + 5,
-		icon_offset[2] - edge_height - 5,
+	local var_14_5 = {
+		arg_14_2[1] + var_14_2 + 5,
+		var_14_0[2] - var_14_2 - 5
 	}
-	local title_text = {
-		dynamic_font_size = true,
+	local var_14_6 = {
 		font_size = 36,
+		dynamic_font_size = true,
 		font_type = "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_title", 255),
 		offset = {
-			icon_text_offset[1],
+			var_14_5[1],
 			125,
-			0,
+			0
 		},
 		size = {
-			400 - icon_text_offset[1],
-			36,
-		},
+			400 - var_14_5[1],
+			36
+		}
 	}
-	local title_text_shadow = table.clone(title_text)
+	local var_14_7 = table.clone(var_14_6)
 
-	title_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
-	title_text_shadow.offset = {
-		title_text.offset[1] + 2,
-		title_text.offset[2] - 2,
-		title_text.offset[3] - 1,
+	var_14_7.text_color = Colors.get_color_table_with_alpha("black", 255)
+	var_14_7.offset = {
+		var_14_6.offset[1] + 2,
+		var_14_6.offset[2] - 2,
+		var_14_6.offset[3] - 1
 	}
 
-	local sub_title_text = {
-		dynamic_font_size = true,
+	local var_14_8 = {
 		font_size = 20,
+		dynamic_font_size = true,
 		font_type = "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
-			icon_text_offset[1],
-			icon_offset[2],
-			0,
+			var_14_5[1],
+			var_14_0[2],
+			0
 		},
 		size = {
-			400 - icon_text_offset[1],
-			20,
-		},
+			400 - var_14_5[1],
+			20
+		}
 	}
-	local sub_title_text_shadow = table.clone(sub_title_text)
+	local var_14_9 = table.clone(var_14_8)
 
-	sub_title_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
-	sub_title_text_shadow.offset = {
-		sub_title_text.offset[1] + 2,
-		sub_title_text.offset[2] - 2,
-		sub_title_text.offset[3] - 1,
+	var_14_9.text_color = Colors.get_color_table_with_alpha("black", 255)
+	var_14_9.offset = {
+		var_14_8.offset[1] + 2,
+		var_14_8.offset[2] - 2,
+		var_14_8.offset[3] - 1
 	}
 
-	local info_text = {
+	local var_14_10 = {
+		vertical_alignment = "top",
+		word_wrap = true,
 		dynamic_font_size_word_wrap = true,
 		font_size = 20,
 		font_type = "hell_shark",
-		vertical_alignment = "top",
-		word_wrap = true,
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
 			0,
 			0,
-			0,
+			0
 		},
 		size = {
 			400,
-			icon_text_offset[2],
-		},
+			var_14_5[2]
+		}
 	}
-	local info_text_shadow = table.clone(info_text)
+	local var_14_11 = table.clone(var_14_10)
 
-	info_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
-	info_text_shadow.offset = {
-		info_text.offset[1] + 2,
-		info_text.offset[2] - 2,
-		info_text.offset[3] - 1,
+	var_14_11.text_color = Colors.get_color_table_with_alpha("black", 255)
+	var_14_11.offset = {
+		var_14_10.offset[1] + 2,
+		var_14_10.offset[2] - 2,
+		var_14_10.offset[3] - 1
 	}
 
-	local widget = {
+	return {
 		element = {
 			passes = {
 				{
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function (content)
-						return content.icon
-					end,
+					content_check_function = function(arg_15_0)
+						return arg_15_0.icon
+					end
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "frame",
 					texture_id = "frame",
-					content_check_function = function (content)
-						return content.icon
-					end,
+					content_check_function = function(arg_16_0)
+						return arg_16_0.icon
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "title_text",
+					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (content)
-						return content.title_text
-					end,
+					content_check_function = function(arg_17_0)
+						return arg_17_0.title_text
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "title_text_shadow",
+					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (content)
-						return content.title_text
-					end,
+					content_check_function = function(arg_18_0)
+						return arg_18_0.title_text
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "sub_title_text",
+					pass_type = "text",
 					text_id = "sub_title_text",
-					content_check_function = function (content)
-						return content.sub_title_text
-					end,
+					content_check_function = function(arg_19_0)
+						return arg_19_0.sub_title_text
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "sub_title_text_shadow",
+					pass_type = "text",
 					text_id = "sub_title_text",
-					content_check_function = function (content)
-						return content.sub_title_text
-					end,
+					content_check_function = function(arg_20_0)
+						return arg_20_0.sub_title_text
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "info_text",
+					pass_type = "text",
 					text_id = "info_text",
-					content_check_function = function (content)
-						return content.info_text
-					end,
+					content_check_function = function(arg_21_0)
+						return arg_21_0.info_text
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "info_text_shadow",
+					pass_type = "text",
 					text_id = "info_text",
-					content_check_function = function (content)
-						return content.info_text
-					end,
-				},
-			},
+					content_check_function = function(arg_22_0)
+						return arg_22_0.info_text
+					end
+				}
+			}
 		},
 		content = {
-			icon = icon,
-			frame = frame_settings.texture,
-			title_text = title,
-			sub_title_text = sub_title,
-			info_text = info,
+			icon = arg_14_1,
+			frame = var_14_1.texture,
+			title_text = arg_14_4,
+			sub_title_text = arg_14_5,
+			info_text = arg_14_6
 		},
 		style = {
 			icon = {
-				offset = icon_offset,
-				texture_size = icon_size or {
+				offset = var_14_0,
+				texture_size = arg_14_2 or {
 					20,
-					20,
-				},
+					20
+				}
 			},
 			frame = {
-				size = frame_size,
-				texture_size = frame_settings.texture_size,
-				texture_sizes = frame_settings.texture_sizes,
-				offset = frame_offset,
+				size = var_14_3,
+				texture_size = var_14_1.texture_size,
+				texture_sizes = var_14_1.texture_sizes,
+				offset = var_14_4
 			},
-			title_text = title_text,
-			title_text_shadow = title_text_shadow,
-			sub_title_text = sub_title_text,
-			sub_title_text_shadow = sub_title_text_shadow,
-			info_text = info_text,
-			info_text_shadow = info_text_shadow,
+			title_text = var_14_6,
+			title_text_shadow = var_14_7,
+			sub_title_text = var_14_8,
+			sub_title_text_shadow = var_14_9,
+			info_text = var_14_10,
+			info_text_shadow = var_14_11
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_14_0
 	}
-
-	return widget
 end
 
-UIWidgets.create_framed_info_box = function (scenegraph_id, title_frame_name, info_frame_name, top_frame_name, top, icon, icon_size, icon_frame_name, title, info, bottom_panel_size)
-	bottom_panel_size = bottom_panel_size or {
+function UIWidgets.create_framed_info_box(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9, arg_23_10)
+	arg_23_10 = arg_23_10 or {
 		340,
-		100,
+		100
 	}
 
-	local bottom_frame_settings = UIFrameSettings[info_frame_name]
-	local bottom_edge_height = bottom_frame_settings.texture_sizes.horizontal[2]
-	local bottom_frame_size = {
-		bottom_panel_size[1] + bottom_edge_height * 2,
-		bottom_panel_size[2] + bottom_edge_height * 2,
+	local var_23_0 = UIFrameSettings[arg_23_2]
+	local var_23_1 = var_23_0.texture_sizes.horizontal[2]
+	local var_23_2 = {
+		arg_23_10[1] + var_23_1 * 2,
+		arg_23_10[2] + var_23_1 * 2
 	}
-	local bottom_frame_offset = {
-		-bottom_edge_height,
-		-bottom_edge_height,
-		1,
+	local var_23_3 = {
+		-var_23_1,
+		-var_23_1,
+		1
 	}
-	local icon_spacing = 12
-	local title_panel_size = {
-		bottom_panel_size[1],
-		icon_size[1] + icon_spacing * 2,
+	local var_23_4 = 12
+	local var_23_5 = {
+		arg_23_10[1],
+		arg_23_6[1] + var_23_4 * 2
 	}
-	local title_panel_offset = {
+	local var_23_6 = {
 		0,
-		bottom_panel_size[2] + 2.5 - bottom_frame_offset[2],
-		-2,
+		arg_23_10[2] + 2.5 - var_23_3[2],
+		-2
 	}
-	local title_frame_settings = UIFrameSettings[title_frame_name]
-	local title_edge_height = title_frame_settings.texture_sizes.horizontal[2]
-	local title_frame_size = {
-		title_panel_size[1] + title_edge_height * 2,
-		title_panel_size[2] + title_edge_height * 2,
+	local var_23_7 = UIFrameSettings[arg_23_1]
+	local var_23_8 = var_23_7.texture_sizes.horizontal[2]
+	local var_23_9 = {
+		var_23_5[1] + var_23_8 * 2,
+		var_23_5[2] + var_23_8 * 2
 	}
-	local title_frame_offset = {
-		-title_edge_height,
-		title_panel_offset[2] - title_edge_height,
-		1,
+	local var_23_10 = {
+		-var_23_8,
+		var_23_6[2] - var_23_8,
+		1
 	}
-	local top_height = 20
-	local top_panel_size = {
-		bottom_panel_size[1] - icon_size[1],
-		top_height,
+	local var_23_11 = 20
+	local var_23_12 = {
+		arg_23_10[1] - arg_23_6[1],
+		var_23_11
 	}
-	local top_panel_offset = {
-		bottom_panel_size[1] / 2 - top_panel_size[1] / 2,
-		title_panel_offset[2] + title_panel_size[2] + title_edge_height * 2,
-		-2,
+	local var_23_13 = {
+		arg_23_10[1] / 2 - var_23_12[1] / 2,
+		var_23_6[2] + var_23_5[2] + var_23_8 * 2,
+		-2
 	}
-	local top_frame_settings = UIFrameSettings[top_frame_name]
-	local top_edge_height = top_frame_settings and top_frame_settings.texture_sizes.horizontal[2] or 0
-	local top_frame_size = {
-		top_panel_size[1] + top_edge_height * 2,
-		top_panel_size[2] + top_edge_height * 2,
+	local var_23_14 = UIFrameSettings[arg_23_3]
+	local var_23_15 = var_23_14 and var_23_14.texture_sizes.horizontal[2] or 0
+	local var_23_16 = {
+		var_23_12[1] + var_23_15 * 2,
+		var_23_12[2] + var_23_15 * 2
 	}
-	local top_frame_offset = {
-		top_panel_offset[1] - top_edge_height,
-		top_panel_offset[2] - top_edge_height,
-		1,
+	local var_23_17 = {
+		var_23_13[1] - var_23_15,
+		var_23_13[2] - var_23_15,
+		1
 	}
-	local icon_offset = {
-		icon_spacing,
-		title_panel_offset[2] + icon_spacing,
-		0,
+	local var_23_18 = {
+		var_23_4,
+		var_23_6[2] + var_23_4,
+		0
 	}
-	local icon_frame_settings = UIFrameSettings[icon_frame_name]
-	local icon_edge_height = icon_frame_settings.texture_sizes.horizontal[2]
-	local icon_frame_size = {
-		icon_size[1] + icon_edge_height * 2,
-		icon_size[2] + icon_edge_height * 2,
+	local var_23_19 = UIFrameSettings[arg_23_7]
+	local var_23_20 = var_23_19.texture_sizes.horizontal[2]
+	local var_23_21 = {
+		arg_23_6[1] + var_23_20 * 2,
+		arg_23_6[2] + var_23_20 * 2
 	}
-	local icon_frame_offset = {
-		icon_offset[1] - icon_edge_height,
-		icon_offset[2] - icon_edge_height,
-		1,
+	local var_23_22 = {
+		var_23_18[1] - var_23_20,
+		var_23_18[2] - var_23_20,
+		1
 	}
-	local total_widget_size = {
-		bottom_frame_size[1],
-		bottom_frame_size[2] + title_frame_size[2],
+	local var_23_23 = {
+		var_23_2[1],
+		var_23_2[2] + var_23_9[2]
 	}
 
-	if top_frame_name then
-		total_widget_size[2] = total_widget_size[2] + top_frame_size[2]
+	if arg_23_3 then
+		var_23_23[2] = var_23_23[2] + var_23_16[2]
 	end
 
-	local top_text = {
+	local var_23_24 = {
+		upper_case = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
 		dynamic_font_size = true,
 		font_type = "hell_shark",
-		horizontal_alignment = "center",
-		upper_case = true,
-		vertical_alignment = "center",
-		font_size = top_height,
+		font_size = var_23_11,
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
-			top_panel_offset[1],
-			top_panel_offset[2] + top_panel_size[2] / 2 - top_height / 2,
-			0,
+			var_23_13[1],
+			var_23_13[2] + var_23_12[2] / 2 - var_23_11 / 2,
+			0
 		},
-		size = top_panel_size,
+		size = var_23_12
 	}
-	local top_text_shadow = table.clone(top_text)
+	local var_23_25 = table.clone(var_23_24)
 
-	top_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
-	top_text_shadow.offset = {
-		top_text.offset[1] + 2,
-		top_text.offset[2] - 2,
-		top_text.offset[3] - 1,
+	var_23_25.text_color = Colors.get_color_table_with_alpha("black", 255)
+	var_23_25.offset = {
+		var_23_24.offset[1] + 2,
+		var_23_24.offset[2] - 2,
+		var_23_24.offset[3] - 1
 	}
 
-	local title_spacing = 5
-	local title_height = 36
-	local title_text = {
+	local var_23_26 = 5
+	local var_23_27 = 36
+	local var_23_28 = {
+		vertical_alignment = "center",
+		horizontal_alignment = "center",
 		dynamic_font_size = true,
 		font_type = "hell_shark",
-		horizontal_alignment = "center",
-		vertical_alignment = "center",
-		font_size = title_height,
+		font_size = var_23_27,
 		text_color = Colors.get_color_table_with_alpha("font_title", 255),
 		offset = {
-			icon_size[1] + icon_spacing + icon_edge_height + title_spacing,
-			title_panel_offset[2] + title_panel_size[2] / 2 - title_height / 2,
-			0,
+			arg_23_6[1] + var_23_4 + var_23_20 + var_23_26,
+			var_23_6[2] + var_23_5[2] / 2 - var_23_27 / 2,
+			0
 		},
 		size = {
-			title_panel_size[1] - icon_size[1] - icon_spacing * 2 - title_spacing * 2,
-			title_height,
-		},
+			var_23_5[1] - arg_23_6[1] - var_23_4 * 2 - var_23_26 * 2,
+			var_23_27
+		}
 	}
-	local title_text_shadow = table.clone(title_text)
+	local var_23_29 = table.clone(var_23_28)
 
-	title_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
-	title_text_shadow.offset = {
-		title_text.offset[1] + 2,
-		title_text.offset[2] - 2,
-		title_text.offset[3] - 1,
+	var_23_29.text_color = Colors.get_color_table_with_alpha("black", 255)
+	var_23_29.offset = {
+		var_23_28.offset[1] + 2,
+		var_23_28.offset[2] - 2,
+		var_23_28.offset[3] - 1
 	}
 
-	local info_spacing = {
+	local var_23_30 = {
 		15,
-		5,
+		5
 	}
-	local info_text = {
+	local var_23_31 = {
+		vertical_alignment = "top",
+		word_wrap = true,
 		dynamic_font_size_word_wrap = true,
 		font_size = 20,
 		font_type = "hell_shark",
-		vertical_alignment = "top",
-		word_wrap = true,
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
-			info_spacing[1],
-			info_spacing[2],
-			0,
+			var_23_30[1],
+			var_23_30[2],
+			0
 		},
 		size = {
-			bottom_panel_size[1] - info_spacing[1] * 2,
-			bottom_panel_size[2] - info_spacing[2] * 2,
-		},
+			arg_23_10[1] - var_23_30[1] * 2,
+			arg_23_10[2] - var_23_30[2] * 2
+		}
 	}
-	local info_text_shadow = table.clone(info_text)
+	local var_23_32 = table.clone(var_23_31)
 
-	info_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
-	info_text_shadow.offset = {
-		info_text.offset[1] + 2,
-		info_text.offset[2] - 2,
-		info_text.offset[3] - 1,
+	var_23_32.text_color = Colors.get_color_table_with_alpha("black", 255)
+	var_23_32.offset = {
+		var_23_31.offset[1] + 2,
+		var_23_31.offset[2] - 2,
+		var_23_31.offset[3] - 1
 	}
 
-	local widget = {
+	return {
 		element = {
 			passes = {
 				{
 					pass_type = "texture_frame",
 					style_id = "top_frame",
 					texture_id = "top_frame",
-					content_check_function = function (content)
-						return content.top_text
-					end,
+					content_check_function = function(arg_24_0)
+						return arg_24_0.top_text
+					end
 				},
 				{
-					pass_type = "rect",
 					style_id = "top_frame_rect",
-					content_check_function = function (content)
-						return content.top_text
-					end,
+					pass_type = "rect",
+					content_check_function = function(arg_25_0)
+						return arg_25_0.top_text
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "top_text",
+					pass_type = "text",
 					text_id = "top_text",
-					content_check_function = function (content)
-						return content.top_text
-					end,
+					content_check_function = function(arg_26_0)
+						return arg_26_0.top_text
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "top_text_shadow",
+					pass_type = "text",
 					text_id = "top_text",
-					content_check_function = function (content)
-						return content.top_text
-					end,
+					content_check_function = function(arg_27_0)
+						return arg_27_0.top_text
+					end
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "title_frame",
 					texture_id = "title_frame",
-					content_check_function = function (content)
-						return content.icon
-					end,
+					content_check_function = function(arg_28_0)
+						return arg_28_0.icon
+					end
 				},
 				{
 					pass_type = "rect",
-					style_id = "title_frame_rect",
+					style_id = "title_frame_rect"
 				},
 				{
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function (content)
-						return content.icon
-					end,
+					content_check_function = function(arg_29_0)
+						return arg_29_0.icon
+					end
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "icon_frame",
 					texture_id = "icon_frame",
-					content_check_function = function (content)
-						return content.icon
-					end,
+					content_check_function = function(arg_30_0)
+						return arg_30_0.icon
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "title_text",
+					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (content)
-						return content.title_text
-					end,
+					content_check_function = function(arg_31_0)
+						return arg_31_0.title_text
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "title_text_shadow",
+					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (content)
-						return content.title_text
-					end,
+					content_check_function = function(arg_32_0)
+						return arg_32_0.title_text
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "title_glow",
 					texture_id = "title_glow",
-					content_check_function = function (content)
-						return content.title_text
-					end,
+					content_check_function = function(arg_33_0)
+						return arg_33_0.title_text
+					end
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "bottom_frame",
 					texture_id = "bottom_frame",
-					content_check_function = function (content)
-						return content.info_text
-					end,
+					content_check_function = function(arg_34_0)
+						return arg_34_0.info_text
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "info_text",
+					pass_type = "text",
 					text_id = "info_text",
-					content_check_function = function (content)
-						return content.info_text
-					end,
+					content_check_function = function(arg_35_0)
+						return arg_35_0.info_text
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "info_text_shadow",
+					pass_type = "text",
 					text_id = "info_text",
-					content_check_function = function (content)
-						return content.info_text
-					end,
+					content_check_function = function(arg_36_0)
+						return arg_36_0.info_text
+					end
 				},
 				{
 					pass_type = "tiled_texture",
 					style_id = "bottom_background",
 					texture_id = "bottom_background",
-					content_check_function = function (content)
-						return content.info_text
-					end,
-				},
-			},
+					content_check_function = function(arg_37_0)
+						return arg_37_0.info_text
+					end
+				}
+			}
 		},
 		content = {
 			bottom_background = "item_tooltip_background",
 			title_glow = "tooltip_power_level_header_glow",
-			top_frame = top_frame_settings and top_frame_settings.texture,
-			title_frame = title_frame_settings.texture,
-			bottom_frame = bottom_frame_settings.texture,
-			icon = icon,
-			icon_frame = icon_frame_settings.texture,
-			title_text = title,
-			info_text = info,
-			top_text = top,
-			total_widget_size = total_widget_size,
+			top_frame = var_23_14 and var_23_14.texture,
+			title_frame = var_23_7.texture,
+			bottom_frame = var_23_0.texture,
+			icon = arg_23_5,
+			icon_frame = var_23_19.texture,
+			title_text = arg_23_8,
+			info_text = arg_23_9,
+			top_text = arg_23_4,
+			total_widget_size = var_23_23
 		},
 		style = {
 			top_frame = {
-				size = top_frame_size,
-				texture_size = top_frame_settings and top_frame_settings.texture_size,
-				texture_sizes = top_frame_settings and top_frame_settings.texture_sizes,
-				offset = top_frame_offset,
+				size = var_23_16,
+				texture_size = var_23_14 and var_23_14.texture_size,
+				texture_sizes = var_23_14 and var_23_14.texture_sizes,
+				offset = var_23_17
 			},
 			top_frame_rect = {
 				color = {
 					255,
 					20,
 					20,
-					20,
+					20
 				},
-				offset = top_panel_offset,
-				size = top_panel_size,
+				offset = var_23_13,
+				size = var_23_12
 			},
-			top_text = top_text,
-			top_text_shadow = top_text_shadow,
+			top_text = var_23_24,
+			top_text_shadow = var_23_25,
 			title_frame = {
-				size = title_frame_size,
-				texture_size = title_frame_settings.texture_size,
-				texture_sizes = title_frame_settings.texture_sizes,
-				offset = title_frame_offset,
+				size = var_23_9,
+				texture_size = var_23_7.texture_size,
+				texture_sizes = var_23_7.texture_sizes,
+				offset = var_23_10
 			},
 			title_frame_rect = {
 				color = Colors.get_table("black"),
-				offset = title_panel_offset,
-				size = title_panel_size,
+				offset = var_23_6,
+				size = var_23_5
 			},
 			icon = {
-				offset = icon_offset,
-				texture_size = icon_size or {
+				offset = var_23_18,
+				texture_size = arg_23_6 or {
 					20,
-					20,
-				},
+					20
+				}
 			},
 			icon_frame = {
-				size = icon_frame_size,
-				texture_size = icon_frame_settings.texture_size,
-				texture_sizes = icon_frame_settings.texture_sizes,
-				offset = icon_frame_offset,
+				size = var_23_21,
+				texture_size = var_23_19.texture_size,
+				texture_sizes = var_23_19.texture_sizes,
+				offset = var_23_22
 			},
 			bottom_frame = {
-				size = bottom_frame_size,
-				texture_size = bottom_frame_settings.texture_size,
-				texture_sizes = bottom_frame_settings.texture_sizes,
-				offset = bottom_frame_offset,
+				size = var_23_2,
+				texture_size = var_23_0.texture_size,
+				texture_sizes = var_23_0.texture_sizes,
+				offset = var_23_3
 			},
-			title_text = title_text,
-			title_text_shadow = title_text_shadow,
+			title_text = var_23_28,
+			title_text_shadow = var_23_29,
 			title_glow = {
 				offset = {
-					title_panel_offset[1],
-					title_panel_offset[2],
-					-1,
+					var_23_6[1],
+					var_23_6[2],
+					-1
 				},
-				size = bottom_panel_size,
+				size = arg_23_10,
 				texture_size = {
-					title_panel_size[1],
-					title_panel_size[2] / 2,
-				},
+					var_23_5[1],
+					var_23_5[2] / 2
+				}
 			},
-			info_text = info_text,
-			info_text_shadow = info_text_shadow,
+			info_text = var_23_31,
+			info_text_shadow = var_23_32,
 			bottom_background = {
 				offset = {
 					0,
 					0,
-					-1,
+					-1
 				},
-				size = bottom_panel_size,
-				texture_tiling_size = bottom_panel_size,
-			},
+				size = arg_23_10,
+				texture_tiling_size = arg_23_10
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_23_0
 	}
-
-	return widget
 end
 
-UIWidgets.create_icon_info_box = function (scenegraph_id, icon, icon_size, icon_offset, background_icon, background_icon_size, background_icon_offset, sub_text, title_text, title_text_color, width, is_rectangular_icon, hide_text, masked, icon_hotspot)
-	local size = {
-		width,
-		background_icon_size[2],
+function UIWidgets.create_icon_info_box(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5, arg_38_6, arg_38_7, arg_38_8, arg_38_9, arg_38_10, arg_38_11, arg_38_12, arg_38_13, arg_38_14)
+	local var_38_0 = {
+		arg_38_10,
+		arg_38_5[2]
 	}
-	local icon_style = {
+	local var_38_1 = {
 		color = {
 			255,
 			138,
 			172,
-			235,
+			235
 		},
-		offset = icon_offset,
-		texture_size = icon_size,
-		masked = masked,
+		offset = arg_38_3,
+		texture_size = arg_38_2,
+		masked = arg_38_13
 	}
-	local icon_background_style = {
+	local var_38_2 = {
 		color = {
 			255,
 			255,
 			255,
-			255,
+			255
 		},
-		offset = background_icon_offset,
-		texture_size = background_icon_size,
-		masked = masked,
+		offset = arg_38_6,
+		texture_size = arg_38_5,
+		masked = arg_38_13
 	}
-	local max_widget_height = icon_background_style.texture_size[2]
-	local icon_spacing = 10
-	local font_size = 20
-	local font_spacing = 2
-	local text_height = font_size * 2 + font_spacing
-	local text_offset = {
-		icon_background_style.texture_size[1] + icon_spacing,
-		max_widget_height / 2 - text_height / 2,
-		0,
+	local var_38_3 = var_38_2.texture_size[2]
+	local var_38_4 = 10
+	local var_38_5 = 20
+	local var_38_6 = 2
+	local var_38_7 = var_38_5 * 2 + var_38_6
+	local var_38_8 = {
+		var_38_2.texture_size[1] + var_38_4,
+		var_38_3 / 2 - var_38_7 / 2,
+		0
 	}
-	local sub_text_style = {
-		dynamic_font_size = true,
+	local var_38_9 = {
 		vertical_alignment = "center",
-		font_size = font_size,
-		font_type = masked and "hell_shark_masked" or "hell_shark",
+		dynamic_font_size = true,
+		font_size = var_38_5,
+		font_type = arg_38_13 and "hell_shark_masked" or "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
-			text_offset[1],
-			text_offset[2],
-			0,
+			var_38_8[1],
+			var_38_8[2],
+			0
 		},
 		size = {
-			size[1] - text_offset[1],
-			font_size,
-		},
+			var_38_0[1] - var_38_8[1],
+			var_38_5
+		}
 	}
-	local sub_text_shadow = table.clone(sub_text_style)
+	local var_38_10 = table.clone(var_38_9)
 
-	sub_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
-	sub_text_shadow.offset = {
-		sub_text_style.offset[1] + 2,
-		sub_text_style.offset[2] - 2,
-		sub_text_style.offset[3] - 1,
+	var_38_10.text_color = Colors.get_color_table_with_alpha("black", 255)
+	var_38_10.offset = {
+		var_38_9.offset[1] + 2,
+		var_38_9.offset[2] - 2,
+		var_38_9.offset[3] - 1
 	}
 
-	local title_text_style = {
-		dynamic_font_size = true,
+	local var_38_11 = {
 		vertical_alignment = "center",
-		font_size = font_size,
-		font_type = masked and "hell_shark_masked" or "hell_shark",
-		text_color = title_text_color or Colors.get_color_table_with_alpha("font_default", 255),
+		dynamic_font_size = true,
+		font_size = var_38_5,
+		font_type = arg_38_13 and "hell_shark_masked" or "hell_shark",
+		text_color = arg_38_9 or Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
-			text_offset[1],
-			text_offset[2] + sub_text_style.size[2] + font_spacing,
-			0,
+			var_38_8[1],
+			var_38_8[2] + var_38_9.size[2] + var_38_6,
+			0
 		},
 		size = {
-			size[1] - text_offset[1],
-			font_size,
-		},
+			var_38_0[1] - var_38_8[1],
+			var_38_5
+		}
 	}
-	local title_text_shadow = table.clone(title_text_style)
+	local var_38_12 = table.clone(var_38_11)
 
-	title_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
-	title_text_shadow.offset = {
-		title_text_style.offset[1] + 2,
-		title_text_style.offset[2] - 2,
-		title_text_style.offset[3] - 1,
+	var_38_12.text_color = Colors.get_color_table_with_alpha("black", 255)
+	var_38_12.offset = {
+		var_38_11.offset[1] + 2,
+		var_38_11.offset[2] - 2,
+		var_38_11.offset[3] - 1
 	}
 
-	local passes = {
+	local var_38_13 = {
 		{
-			content_id = "hotspot",
-			pass_type = "hotspot",
 			style_id = "icon_hotspot",
+			pass_type = "hotspot",
+			content_id = "hotspot"
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon",
 			texture_id = "icon",
-			content_check_function = function (content, style)
-				return not content.hotspot.is_hover
-			end,
+			content_check_function = function(arg_39_0, arg_39_1)
+				return not arg_39_0.hotspot.is_hover
+			end
 		},
 		{
-			pass_type = "rect",
 			style_id = "icon_bg",
-			content_check_function = function (content)
-				return not content.is_rectangular_icon and not masked
-			end,
+			pass_type = "rect",
+			content_check_function = function(arg_40_0)
+				return not arg_40_0.is_rectangular_icon and not arg_38_13
+			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon_bg",
 			texture_id = "rect_masked",
-			content_check_function = function (content)
-				return not content.is_rectangular_icon and masked
-			end,
+			content_check_function = function(arg_41_0)
+				return not arg_41_0.is_rectangular_icon and arg_38_13
+			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon_background",
-			texture_id = "icon_background",
+			texture_id = "icon_background"
 		},
 		{
-			pass_type = "text",
 			style_id = "title_text",
+			pass_type = "text",
 			text_id = "title_text",
-			content_check_function = function (content)
-				return not content.hide_text
-			end,
+			content_check_function = function(arg_42_0)
+				return not arg_42_0.hide_text
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "title_text_shadow",
+			pass_type = "text",
 			text_id = "title_text",
-			content_check_function = function (content)
-				return not content.hide_text
-			end,
+			content_check_function = function(arg_43_0)
+				return not arg_43_0.hide_text
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "sub_text",
+			pass_type = "text",
 			text_id = "sub_text",
-			content_check_function = function (content)
-				return not content.hide_text
-			end,
+			content_check_function = function(arg_44_0)
+				return not arg_44_0.hide_text
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "sub_text_shadow",
+			pass_type = "text",
 			text_id = "sub_text",
-			content_check_function = function (content)
-				return not content.hide_text
-			end,
-		},
+			content_check_function = function(arg_45_0)
+				return not arg_45_0.hide_text
+			end
+		}
 	}
-	local content = {
+	local var_38_14 = {
 		rect_masked = "rect_masked",
 		hotspot = {},
-		icon = icon,
-		icon_background = background_icon,
-		title_text = title_text,
-		sub_text = sub_text,
-		total_widget_size = size,
-		is_rectangular_icon = is_rectangular_icon,
-		hide_text = hide_text,
+		icon = arg_38_1,
+		icon_background = arg_38_4,
+		title_text = arg_38_8,
+		sub_text = arg_38_7,
+		total_widget_size = var_38_0,
+		is_rectangular_icon = arg_38_11,
+		hide_text = arg_38_12
 	}
-	local style = {
-		icon = icon_style,
-		icon_hotspot = icon_hotspot or icon_style,
+	local var_38_15 = {
+		icon = var_38_1,
+		icon_hotspot = arg_38_14 or var_38_1,
 		icon_bg = {
-			horizontal_alignment = "left",
 			vertical_alignment = "center",
+			horizontal_alignment = "left",
 			texture_size = {
 				58,
-				58,
+				58
 			},
 			color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				3,
 				0,
-				0,
-			},
+				0
+			}
 		},
-		icon_background = icon_background_style,
-		title_text = title_text_style,
-		title_text_shadow = title_text_shadow,
-		sub_text = sub_text_style,
-		sub_text_shadow = sub_text_shadow,
+		icon_background = var_38_2,
+		title_text = var_38_11,
+		title_text_shadow = var_38_12,
+		sub_text = var_38_9,
+		sub_text_shadow = var_38_10
 	}
-	local widget = {}
-	local element = {}
 
-	element.passes = passes
-	widget.element = element
-	widget.content = content
-	widget.style = style
-	widget.offset = {
-		0,
-		0,
-		0,
+	return {
+		element = {
+			passes = var_38_13
+		},
+		content = var_38_14,
+		style = var_38_15,
+		offset = {
+			0,
+			0,
+			0
+		},
+		scenegraph_id = arg_38_0
 	}
-	widget.scenegraph_id = scenegraph_id
-
-	return widget
 end
 
-UIWidgets.create_start_game_difficulty_stepper = function (scenegraph_id, difficulty_text, difficulty_icon)
-	local offset = {
+function UIWidgets.create_start_game_difficulty_stepper(arg_46_0, arg_46_1, arg_46_2)
+	local var_46_0 = {
 		-12.5,
 		0,
-		0,
+		0
 	}
-	local arrow_highlight_texture = "morris_arrow_highlight"
+	local var_46_1 = "morris_arrow_highlight"
 
 	return {
 		element = {
@@ -1539,127 +1530,127 @@ UIWidgets.create_start_game_difficulty_stepper = function (scenegraph_id, diffic
 				{
 					pass_type = "texture",
 					style_id = "background",
-					texture_id = "background",
+					texture_id = "background"
 				},
 				{
-					content_id = "info_hotspot",
-					pass_type = "hotspot",
 					style_id = "info_hotspot",
+					pass_type = "hotspot",
+					content_id = "info_hotspot"
 				},
 				{
-					content_id = "left_arrow_hotspot",
-					pass_type = "hotspot",
 					style_id = "left_arrow_hotspot",
-				},
-				{
-					content_id = "left_arrow",
-					pass_type = "texture_uv",
-					style_id = "left_arrow",
-				},
-				{
-					content_id = "left_arrow_hover",
-					pass_type = "texture_uv",
-					style_id = "left_arrow_hover",
-					content_check_function = function (content)
-						return content.parent.left_arrow_hotspot.is_hover
-					end,
-				},
-				{
-					content_id = "left_arrow_gamepad_highlight",
-					pass_type = "texture_uv",
-					style_id = "left_arrow_gamepad_highlight",
-					content_check_function = function (content)
-						return content.parent.left_arrow_pressed
-					end,
-				},
-				{
-					content_id = "left_arrow_clicked",
-					pass_type = "texture_uv",
-					style_id = "left_arrow_clicked",
-					content_check_function = function (content)
-						return content.parent.left_arrow_hotspot.is_clicked == 0
-					end,
-				},
-				{
-					content_id = "right_arrow_hotspot",
 					pass_type = "hotspot",
+					content_id = "left_arrow_hotspot"
+				},
+				{
+					style_id = "left_arrow",
+					pass_type = "texture_uv",
+					content_id = "left_arrow"
+				},
+				{
+					style_id = "left_arrow_hover",
+					pass_type = "texture_uv",
+					content_id = "left_arrow_hover",
+					content_check_function = function(arg_47_0)
+						return arg_47_0.parent.left_arrow_hotspot.is_hover
+					end
+				},
+				{
+					style_id = "left_arrow_gamepad_highlight",
+					pass_type = "texture_uv",
+					content_id = "left_arrow_gamepad_highlight",
+					content_check_function = function(arg_48_0)
+						return arg_48_0.parent.left_arrow_pressed
+					end
+				},
+				{
+					style_id = "left_arrow_clicked",
+					pass_type = "texture_uv",
+					content_id = "left_arrow_clicked",
+					content_check_function = function(arg_49_0)
+						return arg_49_0.parent.left_arrow_hotspot.is_clicked == 0
+					end
+				},
+				{
 					style_id = "right_arrow_hotspot",
+					pass_type = "hotspot",
+					content_id = "right_arrow_hotspot"
 				},
 				{
 					pass_type = "texture",
 					style_id = "right_arrow",
-					texture_id = "right_arrow",
+					texture_id = "right_arrow"
 				},
 				{
 					pass_type = "texture",
 					style_id = "right_arrow_hover",
 					texture_id = "right_arrow_hover",
-					content_check_function = function (content)
-						return content.right_arrow_hotspot.is_hover
-					end,
+					content_check_function = function(arg_50_0)
+						return arg_50_0.right_arrow_hotspot.is_hover
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "right_arrow_gamepad_highlight",
 					texture_id = "right_arrow_gamepad_highlight",
-					content_check_function = function (content)
-						return content.right_arrow_pressed
-					end,
+					content_check_function = function(arg_51_0)
+						return arg_51_0.right_arrow_pressed
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "right_arrow_clicked",
 					texture_id = "right_arrow_clicked",
-					content_check_function = function (content)
-						return content.right_arrow_hotspot.is_clicked == 0
-					end,
+					content_check_function = function(arg_52_0)
+						return arg_52_0.right_arrow_hotspot.is_clicked == 0
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "difficulty_icon",
-					texture_id = "difficulty_icon",
+					texture_id = "difficulty_icon"
 				},
 				{
-					pass_type = "text",
 					style_id = "difficulty_text",
-					text_id = "difficulty_text",
+					pass_type = "text",
+					text_id = "difficulty_text"
 				},
 				{
 					pass_type = "texture",
 					style_id = "selected_difficulty_text_bg",
-					texture_id = "selected_difficulty_text_bg",
+					texture_id = "selected_difficulty_text_bg"
 				},
 				{
 					pass_type = "texture",
 					style_id = "selected_difficulty_text_border",
-					texture_id = "selected_difficulty_text_border",
+					texture_id = "selected_difficulty_text_border"
 				},
 				{
-					pass_type = "texture",
 					style_id = "selected_difficulty_text_selected",
 					texture_id = "selected_difficulty_text_selected",
-					content_check_function = function (content)
-						return content.right_arrow_hotspot.is_hover or content.left_arrow_hotspot.is_hover or not Managers.input:is_device_active("mouse") and content.is_selected
+					pass_type = "texture",
+					content_check_function = function(arg_53_0)
+						return arg_53_0.right_arrow_hotspot.is_hover or arg_53_0.left_arrow_hotspot.is_hover or not Managers.input:is_device_active("mouse") and arg_53_0.is_selected
 					end,
-					content_change_function = function (content, style)
-						style.color[1] = pulsate_glow(not Managers.input:is_device_active("mouse"))
-					end,
+					content_change_function = function(arg_54_0, arg_54_1)
+						arg_54_1.color[1] = var_0_3(not Managers.input:is_device_active("mouse"))
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "selected_difficulty_text",
-					text_id = "selected_difficulty_text",
-				},
-			},
+					pass_type = "text",
+					text_id = "selected_difficulty_text"
+				}
+			}
 		},
 		content = {
-			background = "morris_difficulty_frame",
-			left_arrow_pressed = false,
-			right_arrow = "morris_arrow_neutral",
-			right_arrow_pressed = false,
-			selected_difficulty_text_bg = "morris_difficulty_select_background",
 			selected_difficulty_text_border = "morris_difficulty_select_border",
+			selected_difficulty_text_bg = "morris_difficulty_select_background",
+			right_arrow_pressed = false,
 			selected_difficulty_text_selected = "morris_difficulty_select_highlight",
+			right_arrow = "morris_arrow_neutral",
+			left_arrow_pressed = false,
+			background = "morris_difficulty_frame",
 			info_hotspot = {},
 			left_arrow_hotspot = {},
 			left_arrow = {
@@ -1667,60 +1658,60 @@ UIWidgets.create_start_game_difficulty_stepper = function (scenegraph_id, diffic
 				uvs = {
 					{
 						1,
-						0,
+						0
 					},
 					{
 						0,
-						1,
-					},
-				},
+						1
+					}
+				}
 			},
 			left_arrow_hover = {
 				uvs = {
 					{
 						1,
-						0,
+						0
 					},
 					{
 						0,
-						1,
-					},
+						1
+					}
 				},
-				texture_id = arrow_highlight_texture,
+				texture_id = var_46_1
 			},
 			left_arrow_gamepad_highlight = {
 				uvs = {
 					{
 						1,
-						0,
+						0
 					},
 					{
 						0,
-						1,
-					},
+						1
+					}
 				},
-				texture_id = arrow_highlight_texture,
+				texture_id = var_46_1
 			},
 			left_arrow_clicked = {
 				uvs = {
 					{
 						1,
-						0,
+						0
 					},
 					{
 						0,
-						1,
-					},
+						1
+					}
 				},
-				texture_id = arrow_highlight_texture,
+				texture_id = var_46_1
 			},
-			right_arrow_hover = arrow_highlight_texture,
+			right_arrow_hover = var_46_1,
 			right_arrow_hotspot = {},
-			right_arrow_gamepad_highlight = arrow_highlight_texture,
-			right_arrow_clicked = arrow_highlight_texture,
-			difficulty_icon = difficulty_icon or "difficulty_option_1",
-			difficulty_text = difficulty_text or Localize("not_assigned"),
-			selected_difficulty_text = Localize("not_assigned"),
+			right_arrow_gamepad_highlight = var_46_1,
+			right_arrow_clicked = var_46_1,
+			difficulty_icon = arg_46_2 or "difficulty_option_1",
+			difficulty_text = arg_46_1 or Localize("not_assigned"),
+			selected_difficulty_text = Localize("not_assigned")
 		},
 		style = {
 			background = {
@@ -1728,694 +1719,671 @@ UIWidgets.create_start_game_difficulty_stepper = function (scenegraph_id, diffic
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					offset[1],
-					offset[2],
-					offset[3] + 5,
+					var_46_0[1],
+					var_46_0[2],
+					var_46_0[3] + 5
 				},
 				size = {
 					550,
-					180,
-				},
+					180
+				}
 			},
 			info_hotspot = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					offset[1],
-					offset[2],
-					offset[3] + 6,
+					var_46_0[1],
+					var_46_0[2],
+					var_46_0[3] + 6
 				},
 				size = {
 					600,
-					180,
-				},
+					180
+				}
 			},
 			left_arrow = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					offset[1] + 125,
-					offset[2] + 35,
-					offset[3] + 6,
+					var_46_0[1] + 125,
+					var_46_0[2] + 35,
+					var_46_0[3] + 6
 				},
 				size = {
 					52,
-					71,
-				},
+					71
+				}
 			},
 			left_arrow_hover = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					offset[1] + 125,
-					offset[2] + 35,
-					offset[3] + 6,
+					var_46_0[1] + 125,
+					var_46_0[2] + 35,
+					var_46_0[3] + 6
 				},
 				size = {
 					52,
-					71,
-				},
+					71
+				}
 			},
 			left_arrow_gamepad_highlight = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					offset[1] + 125,
-					offset[2] + 35,
-					offset[3] + 6,
+					var_46_0[1] + 125,
+					var_46_0[2] + 35,
+					var_46_0[3] + 6
 				},
 				size = {
 					52,
-					71,
-				},
+					71
+				}
 			},
 			left_arrow_hotspot = {
 				color = {
 					50,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					offset[1] + 125,
-					offset[2] + 35,
-					offset[3] + 7,
+					var_46_0[1] + 125,
+					var_46_0[2] + 35,
+					var_46_0[3] + 7
 				},
 				size = {
 					52,
-					71,
-				},
+					71
+				}
 			},
 			left_arrow_clicked = {
 				color = {
 					150,
 					150,
 					150,
-					150,
+					150
 				},
 				offset = {
-					offset[1] + 125,
-					offset[2] + 35,
-					offset[3] + 7,
+					var_46_0[1] + 125,
+					var_46_0[2] + 35,
+					var_46_0[3] + 7
 				},
 				size = {
 					52,
-					71,
-				},
+					71
+				}
 			},
 			right_arrow = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					offset[1] + 475,
-					offset[2] + 35,
-					offset[3] + 6,
+					var_46_0[1] + 475,
+					var_46_0[2] + 35,
+					var_46_0[3] + 6
 				},
 				size = {
 					52,
-					71,
-				},
+					71
+				}
 			},
 			right_arrow_hover = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					offset[1] + 475,
-					offset[2] + 35,
-					offset[3] + 6,
+					var_46_0[1] + 475,
+					var_46_0[2] + 35,
+					var_46_0[3] + 6
 				},
 				size = {
 					52,
-					71,
-				},
+					71
+				}
 			},
 			right_arrow_gamepad_highlight = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					offset[1] + 475,
-					offset[2] + 35,
-					offset[3] + 6,
+					var_46_0[1] + 475,
+					var_46_0[2] + 35,
+					var_46_0[3] + 6
 				},
 				size = {
 					52,
-					71,
-				},
+					71
+				}
 			},
 			right_arrow_hotspot = {
 				color = {
 					50,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					offset[1] + 475,
-					offset[2] + 35,
-					offset[3] + 7,
+					var_46_0[1] + 475,
+					var_46_0[2] + 35,
+					var_46_0[3] + 7
 				},
 				size = {
 					52,
-					71,
-				},
+					71
+				}
 			},
 			right_arrow_clicked = {
 				color = {
 					150,
 					150,
 					150,
-					150,
+					150
 				},
 				offset = {
-					offset[1] + 475,
-					offset[2] + 35,
-					offset[3] + 7,
+					var_46_0[1] + 475,
+					var_46_0[2] + 35,
+					var_46_0[3] + 7
 				},
 				size = {
 					52,
-					71,
-				},
+					71
+				}
 			},
 			difficulty_icon = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					offset[1] + 12.5,
-					offset[2] + 17.5,
-					offset[3] + 6,
+					var_46_0[1] + 12.5,
+					var_46_0[2] + 17.5,
+					var_46_0[3] + 6
 				},
 				size = {
 					112.5,
-					112.5,
-				},
+					112.5
+				}
 			},
 			difficulty_text = {
-				dynamic_font_size = true,
 				font_size = 26,
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
 				upper_case = true,
-				vertical_alignment = "center",
 				word_wrap = true,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
+				font_type = "hell_shark",
 				text_color = {
 					255,
 					193,
 					91,
-					36,
+					36
 				},
 				default_text_color = {
 					255,
 					193,
 					91,
-					36,
+					36
 				},
 				offset = {
-					offset[1] + 180,
-					offset[2] + 137.5,
-					12,
+					var_46_0[1] + 180,
+					var_46_0[2] + 137.5,
+					12
 				},
 				size = {
 					200,
-					52,
-				},
+					52
+				}
 			},
 			selected_difficulty_text_bg = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					offset[1] + 175,
-					offset[2] + 45,
-					5,
+					var_46_0[1] + 175,
+					var_46_0[2] + 45,
+					5
 				},
 				size = {
 					305,
-					52,
-				},
+					52
+				}
 			},
 			selected_difficulty_text_border = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					offset[1] + 175,
-					offset[2] + 45,
-					7,
+					var_46_0[1] + 175,
+					var_46_0[2] + 45,
+					7
 				},
 				size = {
 					305,
-					52,
-				},
+					52
+				}
 			},
 			selected_difficulty_text_selected = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					offset[1] + 175,
-					offset[2] + 45,
-					6,
+					var_46_0[1] + 175,
+					var_46_0[2] + 45,
+					6
 				},
 				size = {
 					305,
-					52,
-				},
+					52
+				}
 			},
 			selected_difficulty_text = {
-				dynamic_font_size = true,
 				font_size = 26,
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
 				upper_case = false,
-				vertical_alignment = "center",
 				word_wrap = true,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
+				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				default_text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
-					offset[1] + 175,
-					offset[2] + 45,
-					7,
+					var_46_0[1] + 175,
+					var_46_0[2] + 45,
+					7
 				},
 				size = {
 					305,
-					52,
-				},
-			},
+					52
+				}
+			}
 		},
-		scenegraph_id = scenegraph_id,
-		offset = offset,
+		scenegraph_id = arg_46_0,
+		offset = var_46_0
 	}
 end
 
-UIWidgets.create_deus_panel_with_outer_frame = function (scenegraph_id, size)
-	local frame_border = UIFrameSettings.border_tiled
-	local corner_size = frame_border.texture_sizes.corner
-
-	corner_size = {
-		corner_size[1] + 1,
-		corner_size[2] + 1,
+function UIWidgets.create_deus_panel_with_outer_frame(arg_55_0, arg_55_1)
+	local var_55_0 = UIFrameSettings.border_tiled
+	local var_55_1 = var_55_0.texture_sizes.corner
+	local var_55_2 = {
+		var_55_1[1] + 1,
+		var_55_1[2] + 1
 	}
 
 	return {
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_55_0,
 		offset = {
 			0,
 			0,
-			0,
+			0
 		},
 		element = {
 			passes = {
 				{
 					pass_type = "tiled_texture",
 					style_id = "background",
-					texture_id = "background",
+					texture_id = "background"
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "border",
-					texture_id = "border",
-				},
-			},
+					texture_id = "border"
+				}
+			}
 		},
 		content = {
 			background = "bg_tile",
-			border = frame_border.texture,
+			border = var_55_0.texture
 		},
 		style = {
 			background = {
 				texture_tiling_size = {
 					256,
-					256,
+					256
 				},
-				texture_size = size,
+				texture_size = arg_55_1,
 				offset = {
 					0,
 					0,
-					1,
+					1
 				},
 				color = {
 					200,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			border = {
 				use_tiling = true,
-				texture_size = frame_border.texture_size,
-				texture_sizes = frame_border.texture_sizes,
+				texture_size = var_55_0.texture_size,
+				texture_sizes = var_55_0.texture_sizes,
 				size = {
-					size[1] + 2 * corner_size[1],
-					size[2] + 2 * corner_size[2],
+					arg_55_1[1] + 2 * var_55_2[1],
+					arg_55_1[2] + 2 * var_55_2[2]
 				},
 				offset = {
-					-corner_size[1],
-					-corner_size[2],
-					2,
+					-var_55_2[1],
+					-var_55_2[2],
+					2
 				},
 				color = {
 					200,
 					0,
 					0,
-					0,
-				},
-			},
-		},
+					0
+				}
+			}
+		}
 	}
 end
 
-UIWidgets.create_start_game_deus_play_button = function (scenegraph_id, size, text, font_size, disable_with_gamepad)
-	local background_texture = "background_tiled_morris"
-	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local background_texture_size = background_texture_settings.size
-	local frame_settings = UIFrameSettings.menu_frame_05_morris
-	local glass = "button_glass_02"
-	local glass_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(glass)
-	local glass_size = glass_settings.size
-	local glass_offset_y = frame_settings.texture_sizes.horizontal[2]
-	local side_detail = "button_detail_01_morris"
-	local side_detail_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(side_detail)
-	local side_detail_size = side_detail_settings.size
-	local side_detail_offset = {
+function UIWidgets.create_start_game_deus_play_button(arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
+	local var_56_0 = "background_tiled_morris"
+	local var_56_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_56_0)
+	local var_56_2 = var_56_1.size
+	local var_56_3 = UIFrameSettings.menu_frame_05_morris
+	local var_56_4 = "button_glass_02"
+	local var_56_5 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_56_4).size
+	local var_56_6 = var_56_3.texture_sizes.horizontal[2]
+	local var_56_7 = "button_detail_01_morris"
+	local var_56_8 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_56_7).size
+	local var_56_9 = {
 		45,
-		4,
+		4
 	}
-	local side_detail_glow = "button_detail_01_hover_morris"
-	local side_detail_glow_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(side_detail_glow)
-	local side_detail_glow_size = side_detail_glow_settings.size
+	local var_56_10 = "button_detail_01_hover_morris"
+	local var_56_11 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_56_10).size
 
 	return {
 		element = {
 			passes = {
 				{
-					content_id = "button_hotspot",
+					style_id = "frame",
 					pass_type = "hotspot",
-					style_id = "frame",
+					content_id = "button_hotspot"
 				},
 				{
-					pass_type = "texture_frame",
-					style_id = "frame",
 					texture_id = "frame",
+					style_id = "frame",
+					pass_type = "texture_frame"
 				},
 				{
-					pass_type = "tiled_texture",
-					style_id = "background",
 					texture_id = "background",
+					style_id = "background",
+					pass_type = "tiled_texture"
 				},
 				{
-					pass_type = "rect",
 					style_id = "clicked_rect",
-					content_check_function = function (content)
-						local button_hotspot = content.button_hotspot
-						local is_clicked = button_hotspot.is_clicked
-
-						return not is_clicked or is_clicked == 0
-					end,
-				},
-				{
 					pass_type = "rect",
+					content_check_function = function(arg_57_0)
+						local var_57_0 = arg_57_0.button_hotspot.is_clicked
+
+						return not var_57_0 or var_57_0 == 0
+					end
+				},
+				{
 					style_id = "disabled_rect",
-					content_check_function = function (content)
-						local button_hotspot = content.button_hotspot
-
-						return button_hotspot.disable_button
-					end,
+					pass_type = "rect",
+					content_check_function = function(arg_58_0)
+						return arg_58_0.button_hotspot.disable_button
+					end
 				},
 				{
-					content_id = "side_detail",
-					pass_type = "texture",
 					style_id = "side_detail_left",
-					content_check_function = function (content)
-						local button_hotspot = content.parent.button_hotspot
-
-						return not button_hotspot.disable_button
-					end,
+					pass_type = "texture",
+					content_id = "side_detail",
+					content_check_function = function(arg_59_0)
+						return not arg_59_0.parent.button_hotspot.disable_button
+					end
 				},
 				{
-					content_id = "side_detail",
-					pass_type = "texture_uv",
 					style_id = "side_detail_right",
-					content_check_function = function (content)
-						local button_hotspot = content.parent.button_hotspot
-
-						return not button_hotspot.disable_button
-					end,
+					pass_type = "texture_uv",
+					content_id = "side_detail",
+					content_check_function = function(arg_60_0)
+						return not arg_60_0.parent.button_hotspot.disable_button
+					end
 				},
 				{
-					content_id = "side_detail",
-					pass_type = "texture",
 					style_id = "side_detail_left_disabled",
-					content_check_function = function (content)
-						local button_hotspot = content.parent.button_hotspot
-
-						return button_hotspot.disable_button
-					end,
-				},
-				{
+					pass_type = "texture",
 					content_id = "side_detail",
-					pass_type = "texture_uv",
+					content_check_function = function(arg_61_0)
+						return arg_61_0.parent.button_hotspot.disable_button
+					end
+				},
+				{
 					style_id = "side_detail_right_disabled",
-					content_check_function = function (content)
-						local button_hotspot = content.parent.button_hotspot
-
-						return button_hotspot.disable_button
-					end,
+					pass_type = "texture_uv",
+					content_id = "side_detail",
+					content_check_function = function(arg_62_0)
+						return arg_62_0.parent.button_hotspot.disable_button
+					end
 				},
 				{
-					content_id = "side_detail_glow",
-					pass_type = "texture",
 					style_id = "side_detail_glow_left",
-					content_check_function = function (content)
-						local button_hotspot = content.parent.button_hotspot
-
-						return not button_hotspot.disable_button
-					end,
-					content_change_function = function (content, style)
-						style.color[1] = pulsate_glow(content.parent.is_selected)
-					end,
-				},
-				{
+					pass_type = "texture",
 					content_id = "side_detail_glow",
-					pass_type = "texture_uv",
+					content_check_function = function(arg_63_0)
+						return not arg_63_0.parent.button_hotspot.disable_button
+					end,
+					content_change_function = function(arg_64_0, arg_64_1)
+						arg_64_1.color[1] = var_0_3(arg_64_0.parent.is_selected)
+					end
+				},
+				{
 					style_id = "side_detail_glow_right",
-					content_check_function = function (content)
-						local button_hotspot = content.parent.button_hotspot
-
-						return not button_hotspot.disable_button
-					end,
-					content_change_function = function (content, style)
-						style.color[1] = pulsate_glow(content.parent.is_selected)
-					end,
-				},
-				{
-					pass_type = "text",
-					style_id = "title_text",
-					text_id = "title_text",
-					content_check_function = function (content)
-						local button_hotspot = content.button_hotspot
-
-						return not button_hotspot.disable_button
-					end,
-				},
-				{
-					pass_type = "text",
-					style_id = "title_text_disabled",
-					text_id = "title_text",
-					content_check_function = function (content)
-						local button_hotspot = content.button_hotspot
-
-						return button_hotspot.disable_button
-					end,
-				},
-				{
-					pass_type = "text",
-					style_id = "title_text_shadow",
-					text_id = "title_text",
-				},
-				{
-					pass_type = "texture",
-					style_id = "glass_top",
-					texture_id = "glass",
-				},
-				{
-					pass_type = "texture",
-					style_id = "glass_bottom",
-					texture_id = "glass",
-				},
-				{
-					pass_type = "nop",
-					style_id = "glow",
-					texture_id = "glow",
-				},
-				{
-					pass_type = "texture",
-					style_id = "effect",
-					texture_id = "effect",
-					content_check_function = function (content)
-						local button_hotspot = content.button_hotspot
-
-						return not button_hotspot.disable_button and (button_hotspot.is_hover or content.is_selected)
-					end,
-				},
-				{
-					pass_type = "texture",
-					style_id = "effect_active",
-					texture_id = "effect",
-					content_check_function = function (content)
-						local button_hotspot = content.button_hotspot
-
-						return not button_hotspot.disable_button and not button_hotspot.is_hover
-					end,
-				},
-				{
-					pass_type = "texture",
-					style_id = "hover_glow",
-					texture_id = "hover_glow",
-					content_check_function = function (content)
-						local button_hotspot = content.button_hotspot
-
-						return not button_hotspot.disable_button and (button_hotspot.is_hover or content.is_selected)
-					end,
-				},
-				{
-					pass_type = "texture",
-					style_id = "hover_glow_active",
-					texture_id = "hover_glow",
-					content_check_function = function (content)
-						local button_hotspot = content.button_hotspot
-
-						return not button_hotspot.disable_button and not button_hotspot.is_hover
-					end,
-				},
-				{
-					pass_type = "texture",
-					style_id = "glow",
-					texture_id = "glow",
-					content_check_function = function (content)
-						local button_hotspot = content.button_hotspot
-
-						return not button_hotspot.disable_button and button_hotspot.is_hover
-					end,
-				},
-				{
-					content_id = "fade",
-					pass_type = "texture",
-					style_id = "fade_right",
-				},
-				{
-					content_id = "fade",
 					pass_type = "texture_uv",
-					style_id = "fade_left",
+					content_id = "side_detail_glow",
+					content_check_function = function(arg_65_0)
+						return not arg_65_0.parent.button_hotspot.disable_button
+					end,
+					content_change_function = function(arg_66_0, arg_66_1)
+						arg_66_1.color[1] = var_0_3(arg_66_0.parent.is_selected)
+					end
 				},
-			},
+				{
+					style_id = "title_text",
+					pass_type = "text",
+					text_id = "title_text",
+					content_check_function = function(arg_67_0)
+						return not arg_67_0.button_hotspot.disable_button
+					end
+				},
+				{
+					style_id = "title_text_disabled",
+					pass_type = "text",
+					text_id = "title_text",
+					content_check_function = function(arg_68_0)
+						return arg_68_0.button_hotspot.disable_button
+					end
+				},
+				{
+					style_id = "title_text_shadow",
+					pass_type = "text",
+					text_id = "title_text"
+				},
+				{
+					texture_id = "glass",
+					style_id = "glass_top",
+					pass_type = "texture"
+				},
+				{
+					texture_id = "glass",
+					style_id = "glass_bottom",
+					pass_type = "texture"
+				},
+				{
+					texture_id = "glow",
+					style_id = "glow",
+					pass_type = "nop"
+				},
+				{
+					texture_id = "effect",
+					style_id = "effect",
+					pass_type = "texture",
+					content_check_function = function(arg_69_0)
+						local var_69_0 = arg_69_0.button_hotspot
+
+						return not var_69_0.disable_button and (var_69_0.is_hover or arg_69_0.is_selected)
+					end
+				},
+				{
+					texture_id = "effect",
+					style_id = "effect_active",
+					pass_type = "texture",
+					content_check_function = function(arg_70_0)
+						local var_70_0 = arg_70_0.button_hotspot
+
+						return not var_70_0.disable_button and not var_70_0.is_hover
+					end
+				},
+				{
+					texture_id = "hover_glow",
+					style_id = "hover_glow",
+					pass_type = "texture",
+					content_check_function = function(arg_71_0)
+						local var_71_0 = arg_71_0.button_hotspot
+
+						return not var_71_0.disable_button and (var_71_0.is_hover or arg_71_0.is_selected)
+					end
+				},
+				{
+					texture_id = "hover_glow",
+					style_id = "hover_glow_active",
+					pass_type = "texture",
+					content_check_function = function(arg_72_0)
+						local var_72_0 = arg_72_0.button_hotspot
+
+						return not var_72_0.disable_button and not var_72_0.is_hover
+					end
+				},
+				{
+					texture_id = "glow",
+					style_id = "glow",
+					pass_type = "texture",
+					content_check_function = function(arg_73_0)
+						local var_73_0 = arg_73_0.button_hotspot
+
+						return not var_73_0.disable_button and var_73_0.is_hover
+					end
+				},
+				{
+					style_id = "fade_right",
+					pass_type = "texture",
+					content_id = "fade"
+				},
+				{
+					style_id = "fade_left",
+					pass_type = "texture_uv",
+					content_id = "fade"
+				}
+			}
 		},
 		content = {
 			effect = "play_button_passive_glow",
-			glow = "play_button_glow",
 			hover_glow = "button_state_hover_green",
+			glow = "play_button_glow",
 			is_selected = false,
 			side_detail_glow = {
 				uvs = {
 					{
 						1,
-						0,
+						0
 					},
 					{
 						0,
-						1,
-					},
+						1
+					}
 				},
-				texture_id = side_detail_glow,
+				texture_id = var_56_10
 			},
 			side_detail = {
 				uvs = {
 					{
 						1,
-						0,
+						0
 					},
 					{
 						0,
-						1,
-					},
+						1
+					}
 				},
-				texture_id = side_detail,
+				texture_id = var_56_7
 			},
 			fade = {
 				texture_id = "horizontal_gradient",
 				uvs = {
 					{
 						1,
-						0,
+						0
 					},
 					{
 						0,
-						1,
-					},
-				},
+						1
+					}
+				}
 			},
-			glass = glass,
+			glass = var_56_4,
 			button_hotspot = {},
-			title_text = text or "n/a",
-			frame = frame_settings.texture,
-			disable_with_gamepad = disable_with_gamepad,
+			title_text = arg_56_2 or "n/a",
+			frame = var_56_3.texture,
+			disable_with_gamepad = arg_56_4,
 			background = {
 				uvs = {
 					{
 						0,
-						1 - size[2] / background_texture_settings.size[2],
+						1 - arg_56_1[2] / var_56_1.size[2]
 					},
 					{
-						size[1] / background_texture_settings.size[1],
-						1,
-					},
+						arg_56_1[1] / var_56_1.size[1],
+						1
+					}
 				},
-				texture_id = background_texture,
+				texture_id = var_56_0
 			},
-			background = background_texture,
+			background = var_56_0
 		},
 		style = {
 			background = {
@@ -2423,565 +2391,558 @@ UIWidgets.create_start_game_deus_play_button = function (scenegraph_id, size, te
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					0,
+					0
 				},
 				texture_tiling_size = {
-					background_texture_size[1],
-					background_texture_size[2],
+					var_56_2[1],
+					var_56_2[2]
 				},
 				texture_size = {
-					size[1],
-					size[2],
-				},
+					arg_56_1[1],
+					arg_56_1[2]
+				}
 			},
 			clicked_rect = {
 				color = {
 					100,
 					0,
 					0,
-					0,
+					0
 				},
 				offset = {
 					0,
 					0,
-					7,
+					7
 				},
 				size = {
-					size[1],
-					size[2],
-				},
+					arg_56_1[1],
+					arg_56_1[2]
+				}
 			},
 			disabled_rect = {
 				color = {
 					150,
 					5,
 					5,
-					5,
+					5
 				},
 				offset = {
 					0,
 					0,
-					7,
+					7
 				},
 				size = {
-					size[1],
-					size[2],
-				},
+					arg_56_1[1],
+					arg_56_1[2]
+				}
 			},
 			title_text = {
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
 				upper_case = true,
-				vertical_alignment = "center",
 				word_wrap = true,
-				font_size = font_size or 24,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				font_type = "hell_shark",
+				font_size = arg_56_3 or 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					0,
 					0,
-					9,
+					9
 				},
 				size = {
-					size[1],
-					size[2],
-				},
+					arg_56_1[1],
+					arg_56_1[2]
+				}
 			},
 			title_text_disabled = {
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
 				upper_case = true,
-				vertical_alignment = "center",
 				word_wrap = true,
-				font_size = font_size or 24,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				font_type = "hell_shark",
+				font_size = arg_56_3 or 24,
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				offset = {
 					0,
 					0,
-					9,
+					9
 				},
 				size = {
-					size[1],
-					size[2],
-				},
+					arg_56_1[1],
+					arg_56_1[2]
+				}
 			},
 			title_text_shadow = {
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
 				upper_case = true,
-				vertical_alignment = "center",
 				word_wrap = true,
-				font_size = font_size or 24,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				font_type = "hell_shark",
+				font_size = arg_56_3 or 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					2,
 					-2,
-					8,
+					8
 				},
 				size = {
-					size[1],
-					size[2],
-				},
+					arg_56_1[1],
+					arg_56_1[2]
+				}
 			},
 			frame = {
 				use_tiling = true,
-				texture_size = frame_settings.texture_size,
-				texture_sizes = frame_settings.texture_sizes,
+				texture_size = var_56_3.texture_size,
+				texture_sizes = var_56_3.texture_sizes,
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					8,
+					8
 				},
 				size = {
-					size[1],
-					size[2],
-				},
+					arg_56_1[1],
+					arg_56_1[2]
+				}
 			},
 			hover_glow = {
 				color = {
 					192,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
-					frame_settings.texture_sizes.horizontal[2],
-					1,
+					var_56_3.texture_sizes.horizontal[2],
+					1
 				},
 				size = {
-					size[1],
-					math.min(60, size[2] - frame_settings.texture_sizes.horizontal[2] * 2),
-				},
+					arg_56_1[1],
+					math.min(60, arg_56_1[2] - var_56_3.texture_sizes.horizontal[2] * 2)
+				}
 			},
 			hover_glow_active = {
 				color = {
 					60,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
-					frame_settings.texture_sizes.horizontal[2],
-					1,
+					var_56_3.texture_sizes.horizontal[2],
+					1
 				},
 				size = {
-					size[1],
-					math.min(60, size[2] - frame_settings.texture_sizes.horizontal[2] * 2),
-				},
+					arg_56_1[1],
+					math.min(60, arg_56_1[2] - var_56_3.texture_sizes.horizontal[2] * 2)
+				}
 			},
 			glass_top = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
-					size[2] - glass_size[2] - glass_offset_y,
-					6,
+					arg_56_1[2] - var_56_5[2] - var_56_6,
+					6
 				},
 				size = {
-					size[1],
-					glass_size[2],
-				},
+					arg_56_1[1],
+					var_56_5[2]
+				}
 			},
 			glass_bottom = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
-					glass_offset_y - 8,
-					6,
+					var_56_6 - 8,
+					6
 				},
 				size = {
-					size[1],
-					glass_size[2],
-				},
+					arg_56_1[1],
+					var_56_5[2]
+				}
 			},
 			glow = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
-					glass_offset_y - 1,
-					3,
+					var_56_6 - 1,
+					3
 				},
 				size = {
-					size[1],
-					math.min(60, size[2] - glass_offset_y * 2),
-				},
+					arg_56_1[1],
+					math.min(60, arg_56_1[2] - var_56_6 * 2)
+				}
 			},
 			effect = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					5,
+					5
 				},
 				size = {
-					size[1],
-					size[2],
-				},
+					arg_56_1[1],
+					arg_56_1[2]
+				}
 			},
 			effect_active = {
 				color = {
 					128,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					5,
+					5
 				},
 				size = {
-					size[1],
-					size[2],
-				},
+					arg_56_1[1],
+					arg_56_1[2]
+				}
 			},
 			side_detail_left = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					-side_detail_offset[1],
-					(size[2] - side_detail_size[2]) / 2 + side_detail_offset[2],
-					9,
+					-var_56_9[1],
+					(arg_56_1[2] - var_56_8[2]) / 2 + var_56_9[2],
+					9
 				},
 				size = {
-					side_detail_size[1],
-					side_detail_size[2],
-				},
+					var_56_8[1],
+					var_56_8[2]
+				}
 			},
 			side_detail_right = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					size[1] - side_detail_size[1] + side_detail_offset[1],
-					(size[2] - side_detail_size[2]) / 2 + side_detail_offset[2],
-					9,
+					arg_56_1[1] - var_56_8[1] + var_56_9[1],
+					(arg_56_1[2] - var_56_8[2]) / 2 + var_56_9[2],
+					9
 				},
 				size = {
-					side_detail_size[1],
-					side_detail_size[2],
-				},
+					var_56_8[1],
+					var_56_8[2]
+				}
 			},
 			side_detail_left_disabled = {
 				color = {
 					255,
 					200,
 					200,
-					200,
+					200
 				},
 				offset = {
-					-side_detail_offset[1],
-					(size[2] - side_detail_size[2]) / 2 + side_detail_offset[2],
-					9,
+					-var_56_9[1],
+					(arg_56_1[2] - var_56_8[2]) / 2 + var_56_9[2],
+					9
 				},
 				size = {
-					side_detail_size[1],
-					side_detail_size[2],
-				},
+					var_56_8[1],
+					var_56_8[2]
+				}
 			},
 			side_detail_right_disabled = {
 				color = {
 					255,
 					200,
 					200,
-					200,
+					200
 				},
 				offset = {
-					size[1] - side_detail_size[1] + side_detail_offset[1],
-					(size[2] - side_detail_size[2]) / 2 + side_detail_offset[2],
-					9,
+					arg_56_1[1] - var_56_8[1] + var_56_9[1],
+					(arg_56_1[2] - var_56_8[2]) / 2 + var_56_9[2],
+					9
 				},
 				size = {
-					side_detail_size[1],
-					side_detail_size[2],
-				},
+					var_56_8[1],
+					var_56_8[2]
+				}
 			},
 			side_detail_glow_left = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					-side_detail_offset[1],
-					(size[2] - side_detail_glow_size[2]) / 2 + side_detail_offset[2],
-					10,
+					-var_56_9[1],
+					(arg_56_1[2] - var_56_11[2]) / 2 + var_56_9[2],
+					10
 				},
 				size = {
-					side_detail_glow_size[1],
-					side_detail_glow_size[2],
-				},
+					var_56_11[1],
+					var_56_11[2]
+				}
 			},
 			side_detail_glow_right = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					size[1] - side_detail_glow_size[1] + side_detail_offset[1],
-					(size[2] - side_detail_glow_size[2]) / 2 + side_detail_offset[2],
-					10,
+					arg_56_1[1] - var_56_11[1] + var_56_9[1],
+					(arg_56_1[2] - var_56_11[2]) / 2 + var_56_9[2],
+					10
 				},
 				size = {
-					side_detail_glow_size[1],
-					side_detail_glow_size[2],
-				},
+					var_56_11[1],
+					var_56_11[2]
+				}
 			},
 			fade_left = {
-				horizontal_alignment = "left",
 				vertical_alignment = "center",
+				horizontal_alignment = "left",
 				color = Colors.get_color_table_with_alpha("black", 255),
 				texture_size = {
 					100,
-					size[2],
+					arg_56_1[2]
 				},
 				offset = {
 					0,
 					0,
-					0,
-				},
+					0
+				}
 			},
 			fade_right = {
-				horizontal_alignment = "right",
 				vertical_alignment = "center",
+				horizontal_alignment = "right",
 				color = Colors.get_color_table_with_alpha("black", 255),
 				texture_size = {
 					100,
-					size[2],
+					arg_56_1[2]
 				},
 				offset = {
 					0,
 					0,
-					0,
-				},
-			},
+					0
+				}
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_56_0,
 		offset = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	}
 end
 
-UIWidgets.create_deus_default_button = function (scenegraph_id, size, text, font_size, disable_with_gamepad)
-	local background_texture = "button_bg_01"
-	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local frame_name = "menu_frame_01_morris"
-	local frame_settings = UIFrameSettings[frame_name]
-	local frame_width = frame_settings.texture_sizes.corner[1]
-	local frame_height = frame_settings.texture_sizes.horizontal[2]
-	local side_detail_texture = "button_detail_02_morris"
-	local side_detail_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(side_detail_texture)
-	local side_detail_texture_size = side_detail_texture_settings.size
-	local side_detail_glow_texture = "button_detail_02_hover_morris"
-	local extra_detail_offset_x = 30
-	local extra_detail_offset_y = 5
+function UIWidgets.create_deus_default_button(arg_74_0, arg_74_1, arg_74_2, arg_74_3, arg_74_4)
+	local var_74_0 = "button_bg_01"
+	local var_74_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_74_0)
+	local var_74_2 = "menu_frame_01_morris"
+	local var_74_3 = UIFrameSettings[var_74_2]
+	local var_74_4 = var_74_3.texture_sizes.corner[1]
+	local var_74_5 = var_74_3.texture_sizes.horizontal[2]
+	local var_74_6 = "button_detail_02_morris"
+	local var_74_7 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_74_6).size
+	local var_74_8 = "button_detail_02_hover_morris"
+	local var_74_9 = 30
+	local var_74_10 = 5
 
 	return {
 		element = {
 			passes = {
 				{
-					content_id = "button_hotspot",
+					style_id = "frame",
 					pass_type = "hotspot",
-					style_id = "frame",
+					content_id = "button_hotspot"
 				},
 				{
-					pass_type = "texture_frame",
-					style_id = "frame",
 					texture_id = "frame",
-					content_check_function = function (content)
-						return content.draw_frame
-					end,
+					style_id = "frame",
+					pass_type = "texture_frame",
+					content_check_function = function(arg_75_0)
+						return arg_75_0.draw_frame
+					end
 				},
 				{
-					content_id = "background",
-					pass_type = "texture_uv",
 					style_id = "background",
+					pass_type = "texture_uv",
+					content_id = "background"
 				},
 				{
-					pass_type = "texture",
-					style_id = "background_fade",
 					texture_id = "background_fade",
+					style_id = "background_fade",
+					pass_type = "texture"
 				},
 				{
-					pass_type = "texture",
-					style_id = "hover_glow",
 					texture_id = "hover_glow",
+					style_id = "hover_glow",
+					pass_type = "texture"
 				},
 				{
 					pass_type = "rect",
-					style_id = "clicked_rect",
+					style_id = "clicked_rect"
 				},
 				{
-					pass_type = "rect",
 					style_id = "disabled_rect",
-					content_check_function = function (content)
-						local button_hotspot = content.button_hotspot
-
-						return button_hotspot.disable_button
-					end,
+					pass_type = "rect",
+					content_check_function = function(arg_76_0)
+						return arg_76_0.button_hotspot.disable_button
+					end
 				},
 				{
-					content_id = "side_detail",
-					pass_type = "texture_uv",
 					style_id = "side_detail_right",
-				},
-				{
-					content_id = "side_detail",
-					pass_type = "texture",
-					style_id = "side_detail_left",
-				},
-				{
-					content_id = "side_detail_glow",
 					pass_type = "texture_uv",
-					style_id = "side_detail_right",
-					content_check_function = function (content)
-						local button_hotspot = content.parent.button_hotspot
-
-						return not button_hotspot.disable_button and button_hotspot.is_hover
-					end,
+					content_id = "side_detail"
 				},
 				{
-					content_id = "side_detail_glow",
-					pass_type = "texture",
 					style_id = "side_detail_left",
-					content_check_function = function (content)
-						local button_hotspot = content.parent.button_hotspot
-
-						return not button_hotspot.disable_button and button_hotspot.is_hover
-					end,
+					pass_type = "texture",
+					content_id = "side_detail"
 				},
 				{
-					pass_type = "text",
+					style_id = "side_detail_right",
+					pass_type = "texture_uv",
+					content_id = "side_detail_glow",
+					content_check_function = function(arg_77_0)
+						local var_77_0 = arg_77_0.parent.button_hotspot
+
+						return not var_77_0.disable_button and var_77_0.is_hover
+					end
+				},
+				{
+					style_id = "side_detail_left",
+					pass_type = "texture",
+					content_id = "side_detail_glow",
+					content_check_function = function(arg_78_0)
+						local var_78_0 = arg_78_0.parent.button_hotspot
+
+						return not var_78_0.disable_button and var_78_0.is_hover
+					end
+				},
+				{
 					style_id = "title_text",
+					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (content)
-						local button_hotspot = content.button_hotspot
-
-						return not button_hotspot.disable_button
-					end,
+					content_check_function = function(arg_79_0)
+						return not arg_79_0.button_hotspot.disable_button
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "title_text_disabled",
-					text_id = "title_text",
-					content_check_function = function (content)
-						local button_hotspot = content.button_hotspot
-
-						return button_hotspot.disable_button
-					end,
-				},
-				{
 					pass_type = "text",
-					style_id = "title_text_shadow",
 					text_id = "title_text",
+					content_check_function = function(arg_80_0)
+						return arg_80_0.button_hotspot.disable_button
+					end
 				},
 				{
-					pass_type = "texture",
+					style_id = "title_text_shadow",
+					pass_type = "text",
+					text_id = "title_text"
+				},
+				{
+					texture_id = "glass",
 					style_id = "glass_top",
-					texture_id = "glass",
+					pass_type = "texture"
 				},
 				{
-					pass_type = "texture",
-					style_id = "glass_bottom",
 					texture_id = "glass",
-				},
-			},
+					style_id = "glass_bottom",
+					pass_type = "texture"
+				}
+			}
 		},
 		content = {
-			background_fade = "button_bg_fade",
-			draw_frame = true,
-			glass = "button_glass_02",
 			hover_glow = "button_state_default",
+			background_fade = "button_bg_fade",
+			glass = "button_glass_02",
+			draw_frame = true,
 			side_detail = {
 				uvs = {
 					{
 						1,
-						0,
+						0
 					},
 					{
 						0,
-						1,
-					},
+						1
+					}
 				},
-				texture_id = side_detail_texture,
+				texture_id = var_74_6
 			},
 			side_detail_glow = {
 				uvs = {
 					{
 						1,
-						0,
+						0
 					},
 					{
 						0,
-						1,
-					},
+						1
+					}
 				},
-				texture_id = side_detail_glow_texture,
+				texture_id = var_74_8
 			},
 			button_hotspot = {},
-			title_text = text or "n/a",
-			frame = frame_settings.texture,
+			title_text = arg_74_2 or "n/a",
+			frame = var_74_3.texture,
 			background = {
 				uvs = {
 					{
 						0,
-						1 - size[2] / background_texture_settings.size[2],
+						1 - arg_74_1[2] / var_74_1.size[2]
 					},
 					{
-						size[1] / background_texture_settings.size[1],
-						1,
-					},
+						arg_74_1[1] / var_74_1.size[1],
+						1
+					}
 				},
-				texture_id = background_texture,
+				texture_id = var_74_0
 			},
-			disable_with_gamepad = disable_with_gamepad,
+			disable_with_gamepad = arg_74_4
 		},
 		style = {
 			background = {
@@ -2989,243 +2950,243 @@ UIWidgets.create_deus_default_button = function (scenegraph_id, size, text, font
 					255,
 					150,
 					150,
-					150,
+					150
 				},
 				offset = {
 					0,
 					0,
-					0,
-				},
+					0
+				}
 			},
 			background_fade = {
 				color = {
 					200,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					frame_width,
-					frame_width - 2,
-					2,
+					var_74_4,
+					var_74_4 - 2,
+					2
 				},
 				size = {
-					size[1] - frame_width * 2,
-					size[2] - frame_width * 2,
-				},
+					arg_74_1[1] - var_74_4 * 2,
+					arg_74_1[2] - var_74_4 * 2
+				}
 			},
 			hover_glow = {
 				color = {
 					0,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
-					frame_width - 2,
-					3,
+					var_74_4 - 2,
+					3
 				},
 				size = {
-					size[1],
-					math.min(size[2] - 5, 80),
-				},
+					arg_74_1[1],
+					math.min(arg_74_1[2] - 5, 80)
+				}
 			},
 			clicked_rect = {
 				color = {
 					0,
 					0,
 					0,
-					0,
+					0
 				},
 				offset = {
 					0,
 					0,
-					7,
-				},
+					7
+				}
 			},
 			disabled_rect = {
 				color = {
 					150,
 					20,
 					20,
-					20,
+					20
 				},
 				offset = {
 					0,
 					0,
-					1,
-				},
+					1
+				}
 			},
 			title_text = {
+				upper_case = true,
+				word_wrap = true,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				horizontal_alignment = "center",
-				upper_case = true,
-				vertical_alignment = "center",
-				word_wrap = true,
-				font_size = font_size or 24,
+				font_size = arg_74_3 or 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
 				size = {
-					size[1] - 40,
-					size[2],
+					arg_74_1[1] - 40,
+					arg_74_1[2]
 				},
 				offset = {
 					20,
 					0,
-					6,
-				},
+					6
+				}
 			},
 			title_text_disabled = {
+				upper_case = true,
+				word_wrap = true,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				horizontal_alignment = "center",
-				upper_case = true,
-				vertical_alignment = "center",
-				word_wrap = true,
-				font_size = font_size or 24,
+				font_size = arg_74_3 or 24,
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				size = {
-					size[1] - 40,
-					size[2],
+					arg_74_1[1] - 40,
+					arg_74_1[2]
 				},
 				offset = {
 					20,
 					0,
-					6,
-				},
+					6
+				}
 			},
 			title_text_shadow = {
+				upper_case = true,
+				word_wrap = true,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				horizontal_alignment = "center",
-				upper_case = true,
-				vertical_alignment = "center",
-				word_wrap = true,
-				font_size = font_size or 24,
+				font_size = arg_74_3 or 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				size = {
-					size[1] - 40,
-					size[2],
+					arg_74_1[1] - 40,
+					arg_74_1[2]
 				},
 				offset = {
 					22,
 					-2,
-					5,
-				},
+					5
+				}
 			},
 			frame = {
-				texture_size = frame_settings.texture_size,
-				texture_sizes = frame_settings.texture_sizes,
+				texture_size = var_74_3.texture_size,
+				texture_sizes = var_74_3.texture_sizes,
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					8,
-				},
+					8
+				}
 			},
 			glass_top = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
-					size[2] - (frame_height + 11),
-					4,
+					arg_74_1[2] - (var_74_5 + 11),
+					4
 				},
 				size = {
-					size[1],
-					11,
-				},
+					arg_74_1[1],
+					11
+				}
 			},
 			glass_bottom = {
 				color = {
 					100,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
-					frame_height - 9,
-					4,
+					var_74_5 - 9,
+					4
 				},
 				size = {
-					size[1],
-					11,
-				},
+					arg_74_1[1],
+					11
+				}
 			},
 			side_detail_left = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					-extra_detail_offset_x,
-					size[2] / 2 - side_detail_texture_size[2] / 2 + extra_detail_offset_y,
-					9,
+					-var_74_9,
+					arg_74_1[2] / 2 - var_74_7[2] / 2 + var_74_10,
+					9
 				},
 				size = {
-					side_detail_texture_size[1],
-					side_detail_texture_size[2],
-				},
+					var_74_7[1],
+					var_74_7[2]
+				}
 			},
 			side_detail_right = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					size[1] - side_detail_texture_size[1] + extra_detail_offset_x,
-					size[2] / 2 - side_detail_texture_size[2] / 2 + extra_detail_offset_y,
-					9,
+					arg_74_1[1] - var_74_7[1] + var_74_9,
+					arg_74_1[2] / 2 - var_74_7[2] / 2 + var_74_10,
+					9
 				},
 				size = {
-					side_detail_texture_size[1],
-					side_detail_texture_size[2],
-				},
-			},
+					var_74_7[1],
+					var_74_7[2]
+				}
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_74_0,
 		offset = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	}
 end
 
-UIWidgets.create_start_game_deus_journey_stepper = function (scenegraph_id)
+function UIWidgets.create_start_game_deus_journey_stepper(arg_81_0)
 	return {
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_81_0,
 		offset = {
 			0,
 			0,
-			0,
+			0
 		},
 		element = {
 			passes = {
 				{
 					pass_type = "rect",
-					style_id = "rect",
-				},
-			},
+					style_id = "rect"
+				}
+			}
 		},
 		content = {},
 		style = {
@@ -3234,17 +3195,17 @@ UIWidgets.create_start_game_deus_journey_stepper = function (scenegraph_id)
 					255,
 					0,
 					0,
-					255,
-				},
-			},
-		},
+					255
+				}
+			}
+		}
 	}
 end
 
-UIWidgets.create_start_game_deus_gamemode_info_box = function (scenegraph_id, background_size, gamemode_header_text, game_mode_text, is_twitch, disable_note)
-	local header_text_color_alpha = is_twitch and 0 or 255
-	local info_hotspot_height = is_twitch and background_size[2] / 2 or background_size[2]
-	local info_hotspot_offset_y = is_twitch and background_size[2] / 2 or 0
+function UIWidgets.create_start_game_deus_gamemode_info_box(arg_82_0, arg_82_1, arg_82_2, arg_82_3, arg_82_4, arg_82_5)
+	local var_82_0 = arg_82_4 and 0 or 255
+	local var_82_1 = arg_82_4 and arg_82_1[2] / 2 or arg_82_1[2]
+	local var_82_2 = arg_82_4 and arg_82_1[2] / 2 or 0
 
 	return {
 		element = {
@@ -3252,70 +3213,70 @@ UIWidgets.create_start_game_deus_gamemode_info_box = function (scenegraph_id, ba
 				{
 					pass_type = "texture",
 					style_id = "background",
-					texture_id = "background",
+					texture_id = "background"
 				},
 				{
-					content_id = "info_hotspot",
-					pass_type = "hotspot",
 					style_id = "info_hotspot",
+					pass_type = "hotspot",
+					content_id = "info_hotspot"
 				},
 				{
 					pass_type = "texture",
 					style_id = "header_box_title_frame",
-					texture_id = "header_box_title_frame",
+					texture_id = "header_box_title_frame"
 				},
 				{
-					pass_type = "text",
 					style_id = "header_text",
-					text_id = "header_text",
+					pass_type = "text",
+					text_id = "header_text"
 				},
 				{
 					pass_type = "texture",
 					style_id = "box_left_detail",
-					texture_id = "box_left_detail",
+					texture_id = "box_left_detail"
 				},
 				{
 					pass_type = "texture",
 					style_id = "box_right_detail",
-					texture_id = "box_right_detail",
+					texture_id = "box_right_detail"
 				},
 				{
-					pass_type = "text",
 					style_id = "game_mode_text",
-					text_id = "game_mode_text",
+					pass_type = "text",
+					text_id = "game_mode_text"
 				},
 				{
-					pass_type = "text",
 					style_id = "note_text",
+					pass_type = "text",
 					text_id = "note_text",
-					content_check_function = function (content)
-						return content.show_note and not disable_note
-					end,
+					content_check_function = function(arg_83_0)
+						return arg_83_0.show_note and not arg_82_5
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "press_key_text",
+					pass_type = "text",
 					text_id = "press_key_text",
-					content_check_function = function (content)
-						return not content.show_note and not disable_note
-					end,
-				},
-			},
+					content_check_function = function(arg_84_0)
+						return not arg_84_0.show_note and not arg_82_5
+					end
+				}
+			}
 		},
 		content = {
-			background = "morris_header_background",
 			box_left_detail = "morris_header_end",
-			box_right_detail = "morris_header_end",
-			fade_out_done = false,
 			header_box_title_frame = "morris_header_frame",
 			is_showing_info = false,
+			fade_out_done = false,
+			background = "morris_header_background",
 			show_note = false,
+			box_right_detail = "morris_header_end",
 			info_hotspot = {},
-			header_text = gamemode_header_text or Localize("not_assigned"),
-			game_mode_text = game_mode_text or Localize("not_assigned"),
+			header_text = arg_82_2 or Localize("not_assigned"),
+			game_mode_text = arg_82_3 or Localize("not_assigned"),
 			note_text = Localize("expedition_info_note") or Localize("not_assigned"),
 			press_key_text = string.format(Localize("for_more_info"), "$KEY;start_game_view__show_information:") or Localize("not_assigned"),
-			disable_note = disable_note,
+			disable_note = arg_82_5
 		},
 		style = {
 			background = {
@@ -3323,1016 +3284,1011 @@ UIWidgets.create_start_game_deus_gamemode_info_box = function (scenegraph_id, ba
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					0,
+					0
 				},
-				size = background_size,
+				size = arg_82_1
 			},
 			info_hotspot = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
-					info_hotspot_offset_y,
-					0,
+					var_82_2,
+					0
 				},
 				size = {
-					background_size[1],
-					info_hotspot_height,
-				},
+					arg_82_1[1],
+					var_82_1
+				}
 			},
 			header_box_title_frame = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				size = {
 					846,
-					162,
+					162
 				},
 				offset = {
 					-125,
-					background_size[2] - 30,
-					1,
-				},
+					arg_82_1[2] - 30,
+					1
+				}
 			},
 			header_text = {
-				dynamic_font_size = true,
-				font_size = 50,
-				font_type = "hell_shark_header",
-				horizontal_alignment = "center",
-				localize = false,
-				upper_case = true,
-				vertical_alignment = "center",
 				word_wrap = false,
+				upper_case = true,
+				localize = false,
+				font_size = 50,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
+				font_type = "hell_shark_header",
 				text_color = {
-					header_text_color_alpha,
+					var_82_0,
 					193,
 					91,
-					36,
+					36
 				},
 				size = {
-					background_size[1],
-					40,
+					arg_82_1[1],
+					40
 				},
 				area_size = {
-					background_size[1] - 200,
-					40,
+					arg_82_1[1] - 200,
+					40
 				},
 				offset = {
 					0,
-					background_size[2],
-					2,
-				},
+					arg_82_1[2],
+					2
+				}
 			},
 			box_left_detail = {
 				color = {
 					255,
 					200,
 					200,
-					200,
+					200
 				},
 				offset = {
 					-19,
-					background_size[2] - 182,
-					0,
+					arg_82_1[2] - 182,
+					0
 				},
 				size = {
 					43,
-					background_size[2] - background_size[2] / 5,
-				},
+					arg_82_1[2] - arg_82_1[2] / 5
+				}
 			},
 			box_right_detail = {
 				color = {
 					255,
 					200,
 					200,
-					200,
+					200
 				},
 				offset = {
-					background_size[1] - 19,
-					background_size[2] - 182,
-					0,
+					arg_82_1[1] - 19,
+					arg_82_1[2] - 182,
+					0
 				},
 				size = {
 					43,
-					background_size[2] - background_size[2] / 5,
-				},
+					arg_82_1[2] - arg_82_1[2] / 5
+				}
 			},
 			game_mode_text = {
+				word_wrap = true,
+				upper_case = false,
+				localize = false,
 				dynamic_font_size_word_wrap = true,
 				font_size = 28,
-				font_type = "hell_shark_header",
 				horizontal_alignment = "left",
-				localize = false,
-				upper_case = false,
 				vertical_alignment = "top",
-				word_wrap = true,
+				font_type = "hell_shark_header",
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
 					25,
-					is_twitch and background_size[2] / 2 - 20 or background_size[2] / 2 - 40,
-					2,
+					arg_82_4 and arg_82_1[2] / 2 - 20 or arg_82_1[2] / 2 - 40,
+					2
 				},
 				size = {
-					background_size[1] - 50,
-					is_twitch and background_size[2] / 2 or background_size[2] / 2 + 10,
-				},
+					arg_82_1[1] - 50,
+					arg_82_4 and arg_82_1[2] / 2 or arg_82_1[2] / 2 + 10
+				}
 			},
 			note_text = {
+				word_wrap = true,
+				upper_case = false,
+				localize = false,
 				dynamic_font_size_word_wrap = true,
 				font_size = 28,
-				font_type = "hell_shark_header",
 				horizontal_alignment = "left",
-				localize = false,
-				upper_case = false,
 				vertical_alignment = "bottom",
-				word_wrap = true,
+				font_type = "hell_shark_header",
 				text_color = {
 					255,
 					209,
 					0,
-					28,
+					28
 				},
 				offset = {
 					25,
 					25,
-					2,
+					2
 				},
 				size = {
-					background_size[1] - 50,
-					40,
-				},
+					arg_82_1[1] - 50,
+					40
+				}
 			},
 			press_key_text = {
+				word_wrap = true,
+				upper_case = false,
+				localize = false,
 				dynamic_font_size_word_wrap = true,
 				font_size = 28,
-				font_type = "hell_shark_header",
 				horizontal_alignment = "left",
-				localize = false,
-				upper_case = false,
 				vertical_alignment = "bottom",
-				word_wrap = true,
+				font_type = "hell_shark_header",
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
 					25,
 					25,
-					2,
+					2
 				},
 				size = {
-					background_size[1] - 50,
-					background_size[2] - 50,
-				},
-			},
+					arg_82_1[1] - 50,
+					arg_82_1[2] - 50
+				}
+			}
 		},
 		offset = {
 			0,
 			0,
-			0,
+			0
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_82_0
 	}
 end
 
-UIWidgets.create_expedition_widget_func = function (scenegraph_id, i, journey_data, journey_name, journey_widget_settings, multiplier)
-	local journey_widget_settings = journey_widget_settings or {
-		spacing_x = 40,
+function UIWidgets.create_expedition_widget_func(arg_85_0, arg_85_1, arg_85_2, arg_85_3, arg_85_4, arg_85_5)
+	local var_85_0 = arg_85_4 or {
 		width = 72,
+		spacing_x = 40
 	}
-	local size = {
+	local var_85_1 = {
 		180,
-		180,
+		180
 	}
-	local multiplier = multiplier or 1
-	local widget = {
-		element = {},
+	local var_85_2 = arg_85_5 or 1
+	local var_85_3 = {
+		element = {}
 	}
-	local passes = {
+	local var_85_4 = {
 		{
-			content_id = "button_hotspot",
-			pass_type = "hotspot",
 			style_id = "hotspot",
-			content_check_function = function (content)
-				return not content.parent.locked
-			end,
+			pass_type = "hotspot",
+			content_id = "button_hotspot",
+			content_check_function = function(arg_86_0)
+				return not arg_86_0.parent.locked
+			end
 		},
 		{
-			level_id = "level_data",
-			pass_type = "level_tooltip",
 			style_id = "level_icon",
-			content_check_function = function (content)
-				return content.button_hotspot.is_hover or content.gamepad_selected
-			end,
+			pass_type = "level_tooltip",
+			level_id = "level_data",
+			content_check_function = function(arg_87_0)
+				return arg_87_0.button_hotspot.is_hover or arg_87_0.gamepad_selected
+			end
 		},
 		{
-			pass_type = "texture",
 			style_id = "icon_glow",
 			texture_id = "icon_glow",
-			content_check_function = function (content)
-				local mouse_active = Managers.input:is_device_active("mouse")
+			pass_type = "texture",
+			content_check_function = function(arg_88_0)
+				local var_88_0 = Managers.input:is_device_active("mouse")
 
-				return (content.button_hotspot.is_hover or content.gamepad_selected and not mouse_active) and not content.button_hotspot.is_selected
+				return (arg_88_0.button_hotspot.is_hover or arg_88_0.gamepad_selected and not var_88_0) and not arg_88_0.button_hotspot.is_selected
 			end,
-			content_change_function = function (content, style)
-				style.color[1] = pulsate_glow(content.gamepad_selected)
-			end,
+			content_change_function = function(arg_89_0, arg_89_1)
+				arg_89_1.color[1] = var_0_3(arg_89_0.gamepad_selected)
+			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "level_icon",
 			texture_id = "level_icon",
-			content_check_function = function (content, style)
-				return not content.locked
-			end,
+			content_check_function = function(arg_90_0, arg_90_1)
+				return not arg_90_0.locked
+			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "level_icon_locked",
 			texture_id = "level_icon",
-			content_check_function = function (content)
-				return content.locked
-			end,
+			content_check_function = function(arg_91_0)
+				return arg_91_0.locked
+			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "lock",
 			texture_id = "lock",
-			content_check_function = function (content)
-				return content.locked
-			end,
+			content_check_function = function(arg_92_0)
+				return arg_92_0.locked
+			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "lock_fade",
 			texture_id = "lock_fade",
-			content_check_function = function (content)
-				return content.locked
-			end,
+			content_check_function = function(arg_93_0)
+				return arg_93_0.locked
+			end
 		},
 		{
 			pass_type = "rotated_texture",
 			style_id = "path",
 			texture_id = "path",
-			content_check_function = function (content)
-				return content.draw_path and not content.draw_path_fill
-			end,
+			content_check_function = function(arg_94_0)
+				return arg_94_0.draw_path and not arg_94_0.draw_path_fill
+			end
 		},
 		{
 			pass_type = "rotated_texture",
 			style_id = "path_glow",
 			texture_id = "path_glow",
-			content_check_function = function (content)
-				return content.draw_path and content.draw_path_fill and not content.locked
-			end,
+			content_check_function = function(arg_95_0)
+				return arg_95_0.draw_path and arg_95_0.draw_path_fill and not arg_95_0.locked
+			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "theme_icon",
 			texture_id = "theme_icon",
-			content_check_function = function (content)
-				return content.theme_icon ~= nil
-			end,
+			content_check_function = function(arg_96_0)
+				return arg_96_0.theme_icon ~= nil
+			end
 		},
 		{
 			pass_type = "rotated_texture",
 			style_id = "level_icon_mask",
 			texture_id = "level_icon_mask",
-			content_check_function = function (content)
+			content_check_function = function(arg_97_0)
 				return true
-			end,
+			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "level_icon_frame",
 			texture_id = "level_icon_frame",
-			content_check_function = function (content, style)
-				return not content.locked
-			end,
+			content_check_function = function(arg_98_0, arg_98_1)
+				return not arg_98_0.locked
+			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "purple_glow",
-			texture_id = "purple_glow",
+			texture_id = "purple_glow"
 		},
 		{
 			pass_type = "texture",
 			style_id = "name_frame",
 			texture_id = "name_frame",
-			content_check_function = function (content, style)
-				local gamepad_active = Managers.input:is_device_active("gamepad")
-
-				if gamepad_active then
-					return content.gamepad_selected
+			content_check_function = function(arg_99_0, arg_99_1)
+				if Managers.input:is_device_active("gamepad") then
+					return arg_99_0.gamepad_selected
 				else
-					return content.button_hotspot.is_selected
+					return arg_99_0.button_hotspot.is_selected
 				end
-			end,
+			end
 		},
 		{
-			pass_type = "text",
 			style_id = "journey_name",
+			pass_type = "text",
 			text_id = "journey_name_text",
-			content_check_function = function (content, style)
-				local gamepad_active = Managers.input:is_device_active("gamepad")
-
-				if gamepad_active then
-					return content.gamepad_selected
+			content_check_function = function(arg_100_0, arg_100_1)
+				if Managers.input:is_device_active("gamepad") then
+					return arg_100_0.gamepad_selected
 				else
-					return content.button_hotspot.is_selected
+					return arg_100_0.button_hotspot.is_selected
 				end
-			end,
-		},
+			end
+		}
 	}
-	local content = {
-		chaos_symbol = "map_frame_chaos_slot_01",
-		draw_chaos_symbol = true,
+	local var_85_5 = {
+		level_icon = "level_icon_01",
 		draw_path = false,
+		level_icon_frame = "morris_expedition_select_border",
+		chaos_symbol = "map_frame_chaos_slot_01",
+		path = "mission_select_screen_trail",
+		lock_fade = "map_frame_fade",
+		name_frame = "morris_expedition_name_frame",
+		locked = true,
+		level_icon_mask = "mask_rect",
+		purple_glow = "morris_expedition_glow",
+		lock = "morris_expedition_locked",
+		icon_glow = "morris_expedition_hover",
+		path_glow = "mission_select_screen_trail_fill",
 		draw_path_fill = false,
 		gamepad_selected = false,
-		icon_glow = "morris_expedition_hover",
-		level_icon = "level_icon_01",
-		level_icon_frame = "morris_expedition_select_border",
-		level_icon_mask = "mask_rect",
-		lock = "morris_expedition_locked",
-		lock_fade = "map_frame_fade",
-		locked = true,
-		name_frame = "morris_expedition_name_frame",
-		path = "mission_select_screen_trail",
-		path_glow = "mission_select_screen_trail_fill",
-		purple_glow = "morris_expedition_glow",
+		draw_chaos_symbol = true,
 		button_hotspot = {},
-		journey_data = journey_data,
-		journey_name = journey_name,
-		journey_name_text = journey_data.display_name,
+		journey_data = arg_85_2,
+		journey_name = arg_85_3,
+		journey_name_text = arg_85_2.display_name
 	}
-	local style = {
+	local var_85_6 = {
 		hotspot = {
-			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			horizontal_alignment = "center",
 			area_size = {
-				150 * multiplier,
-				150 * multiplier,
+				150 * var_85_2,
+				150 * var_85_2
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
 				0,
 				0,
-				3,
-			},
+				3
+			}
 		},
 		path = {
-			angle = 0,
-			horizontal_alignment = "left",
 			vertical_alignment = "center",
+			horizontal_alignment = "left",
+			angle = 0,
 			pivot = {
 				0,
-				6.5,
+				6.5
 			},
 			texture_size = {
-				journey_widget_settings.spacing_x,
-				10,
+				var_85_0.spacing_x,
+				10
 			},
 			offset = {
-				(journey_widget_settings.width + journey_widget_settings.spacing_x) * 0.5,
+				(var_85_0.width + var_85_0.spacing_x) * 0.5,
 				-2,
-				2,
+				2
 			},
 			color = {
 				255,
 				255,
 				0,
-				0,
-			},
+				0
+			}
 		},
 		path_glow = {
-			angle = 0,
-			horizontal_alignment = "left",
 			vertical_alignment = "center",
+			horizontal_alignment = "left",
+			angle = 0,
 			pivot = {
 				0,
-				21.5,
+				21.5
 			},
 			texture_size = {
-				journey_widget_settings.spacing_x,
-				30,
+				var_85_0.spacing_x,
+				30
 			},
 			offset = {
-				(journey_widget_settings.width + journey_widget_settings.spacing_x) * 0.5,
+				(var_85_0.width + var_85_0.spacing_x) * 0.5,
 				-2,
-				2,
+				2
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		lock = {
-			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			horizontal_alignment = "center",
 			texture_size = {
-				160 * multiplier,
-				160 * multiplier,
+				160 * var_85_2,
+				160 * var_85_2
 			},
 			offset = {
 				0,
 				0,
-				9,
+				9
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		lock_fade = {
-			horizontal_alignment = "center",
-			masked = true,
 			vertical_alignment = "center",
+			masked = true,
+			horizontal_alignment = "center",
 			texture_size = {
-				180 * multiplier,
-				180 * multiplier,
+				180 * var_85_2,
+				180 * var_85_2
 			},
 			offset = {
 				0,
 				0,
-				5,
+				5
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		level_icon_mask = {
-			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			horizontal_alignment = "center",
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			texture_size = {
-				90 * multiplier,
-				90 * multiplier,
+				90 * var_85_2,
+				90 * var_85_2
 			},
 			angle = math.degrees_to_radians(45),
 			pivot = {
-				90 * multiplier * 0.5,
-				90 * multiplier * 0.5,
-			},
+				90 * var_85_2 * 0.5,
+				90 * var_85_2 * 0.5
+			}
 		},
 		level_icon_frame = {
-			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			horizontal_alignment = "center",
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			texture_size = {
-				160 * multiplier,
-				160 * multiplier,
+				160 * var_85_2,
+				160 * var_85_2
 			},
 			offset = {
 				0,
 				0,
-				5,
-			},
+				5
+			}
 		},
 		level_icon = {
-			horizontal_alignment = "center",
-			masked = true,
 			vertical_alignment = "center",
+			masked = true,
+			horizontal_alignment = "center",
 			texture_size = {
-				160 * multiplier,
-				160 * multiplier,
+				160 * var_85_2,
+				160 * var_85_2
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
+				255
 			},
 			offset = {
 				0,
 				0,
-				3,
-			},
+				3
+			}
 		},
 		level_icon_locked = {
-			horizontal_alignment = "center",
-			masked = true,
-			saturated = true,
 			vertical_alignment = "center",
+			saturated = true,
+			masked = true,
+			horizontal_alignment = "center",
 			texture_size = {
-				168 * multiplier,
-				168 * multiplier,
+				168 * var_85_2,
+				168 * var_85_2
 			},
 			color = {
 				255,
 				100,
 				100,
-				100,
+				100
 			},
 			offset = {
 				0,
 				0,
-				3,
-			},
+				3
+			}
 		},
 		purple_glow = {
-			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			horizontal_alignment = "center",
 			texture_size = {
-				240 * multiplier * 0.9,
-				330 * multiplier * 0.9,
+				240 * var_85_2 * 0.9,
+				330 * var_85_2 * 0.9
 			},
 			offset = {
 				0,
-				45 * multiplier,
-				4,
+				45 * var_85_2,
+				4
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		icon_glow = {
-			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			horizontal_alignment = "center",
 			texture_size = {
-				187 * multiplier + 6,
-				170 * multiplier + 6,
+				187 * var_85_2 + 6,
+				170 * var_85_2 + 6
 			},
 			offset = {
 				-1,
 				-12,
-				4,
+				4
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		chaos_symbol = {
-			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			horizontal_alignment = "center",
 			texture_size = {
-				80 * multiplier,
-				80 * multiplier,
+				80 * var_85_2,
+				80 * var_85_2
 			},
 			offset = {
 				0,
-				80 * multiplier,
-				8,
+				80 * var_85_2,
+				8
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		theme_icon = {
-			horizontal_alignment = "center",
 			vertical_alignment = "center",
+			horizontal_alignment = "center",
 			texture_size = {
-				40 * multiplier,
-				40 * multiplier,
+				40 * var_85_2,
+				40 * var_85_2
 			},
 			offset = {
 				0,
-				65 * multiplier,
-				8,
+				65 * var_85_2,
+				8
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		name_frame = {
-			horizontal_alignment = "center",
 			vertical_alignment = "bottom",
+			horizontal_alignment = "center",
 			texture_size = {
-				294 * multiplier,
-				100 * multiplier,
+				294 * var_85_2,
+				100 * var_85_2
 			},
 			offset = {
 				5,
 				-130,
-				0,
+				0
 			},
 			color = {
 				255,
 				255,
 				255,
-				255,
-			},
+				255
+			}
 		},
 		journey_name = {
-			dynamic_font_size = true,
 			font_size = 28,
-			font_type = "hell_shark_header",
-			horizontal_alignment = "center",
 			localize = true,
-			vertical_alignment = "bottom",
 			word_wrap = false,
+			horizontal_alignment = "center",
+			vertical_alignment = "bottom",
+			dynamic_font_size = true,
+			font_type = "hell_shark_header",
 			area_size = {
 				250,
-				80,
+				80
 			},
 			offset = {
 				0,
 				-120,
-				2,
+				2
 			},
-			text_color = Colors.get_color_table_with_alpha("font_default", 255),
-		},
+			text_color = Colors.get_color_table_with_alpha("font_default", 255)
+		}
 	}
 
-	widget.element.passes = passes
-	widget.content = content
-	widget.style = style
-	widget.offset = {
+	var_85_3.element.passes = var_85_4
+	var_85_3.content = var_85_5
+	var_85_3.style = var_85_6
+	var_85_3.offset = {
 		0,
 		0,
-		0,
+		0
 	}
-	widget.scenegraph_id = scenegraph_id
+	var_85_3.scenegraph_id = arg_85_0
 
-	return widget
+	return var_85_3
 end
 
-UIWidgets.create_start_game_deus_difficulty_info_box = function (scenegraph_id, size)
-	local frame_border = UIFrameSettings.border_tiled
-	local corner_size = frame_border.texture_sizes.corner
-
-	corner_size = {
-		corner_size[1] + 1,
-		corner_size[2] + 1,
+function UIWidgets.create_start_game_deus_difficulty_info_box(arg_101_0, arg_101_1)
+	local var_101_0 = UIFrameSettings.border_tiled
+	local var_101_1 = var_101_0.texture_sizes.corner
+	local var_101_2 = {
+		var_101_1[1] + 1,
+		var_101_1[2] + 1
 	}
 
 	return {
 		element = {
 			passes = {
 				{
-					pass_type = "tiled_texture",
 					style_id = "background",
 					texture_id = "background",
-					content_change_function = function (content, style)
-						local new_offset = {
-							0 + content.resize_offset[1],
-							0 + content.resize_offset[2],
-							1,
+					pass_type = "tiled_texture",
+					content_change_function = function(arg_102_0, arg_102_1)
+						local var_102_0 = {
+							0 + arg_102_0.resize_offset[1],
+							0 + arg_102_0.resize_offset[2],
+							1
 						}
 
-						if content.should_resize then
-							style.texture_size = content.resize_size
-							style.offset = new_offset
+						if arg_102_0.should_resize then
+							arg_102_1.texture_size = arg_102_0.resize_size
+							arg_102_1.offset = var_102_0
 						end
-					end,
+					end
 				},
 				{
-					pass_type = "texture_frame",
 					style_id = "border",
 					texture_id = "border",
-					content_change_function = function (content, style)
-						local new_offset = {
-							-corner_size[1] + content.resize_offset[1],
-							-corner_size[2] + content.resize_offset[2],
-							2,
+					pass_type = "texture_frame",
+					content_change_function = function(arg_103_0, arg_103_1)
+						local var_103_0 = {
+							-var_101_2[1] + arg_103_0.resize_offset[1],
+							-var_101_2[2] + arg_103_0.resize_offset[2],
+							2
 						}
-						local new_size = content.resize_size
+						local var_103_1 = arg_103_0.resize_size
 
-						if content.should_resize then
-							style.size = {
-								new_size[1] + 2 * corner_size[1],
-								new_size[2] + 2 * corner_size[2],
+						if arg_103_0.should_resize then
+							arg_103_1.size = {
+								var_103_1[1] + 2 * var_101_2[1],
+								var_103_1[2] + 2 * var_101_2[2]
 							}
-							style.offset = new_offset
+							arg_103_1.offset = var_103_0
 						end
-					end,
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "difficulty_description",
-					text_id = "difficulty_description",
-					content_change_function = function (content, style)
-						local new_offset = {
-							25 + content.resize_offset[1],
-							160 - content.resize_offset[2],
-							2,
-						}
-
-						if content.should_resize then
-							style.offset = new_offset
-							style.offset = new_offset
-						end
-					end,
-				},
-				{
 					pass_type = "text",
-					style_id = "highest_obtainable_level",
-					text_id = "highest_obtainable_level",
-					content_change_function = function (content, style)
-						local new_offset = {
-							25 + content.resize_offset[1],
-							140 - content.difficulty_description_text_size - content.resize_offset[2],
-							2,
+					text_id = "difficulty_description",
+					content_change_function = function(arg_104_0, arg_104_1)
+						local var_104_0 = {
+							25 + arg_104_0.resize_offset[1],
+							160 - arg_104_0.resize_offset[2],
+							2
 						}
 
-						if content.should_resize then
-							style.offset = new_offset
+						if arg_104_0.should_resize then
+							arg_104_1.offset = var_104_0
+							arg_104_1.offset = var_104_0
 						end
-					end,
+					end
 				},
 				{
-					pass_type = "texture",
+					style_id = "highest_obtainable_level",
+					pass_type = "text",
+					text_id = "highest_obtainable_level",
+					content_change_function = function(arg_105_0, arg_105_1)
+						local var_105_0 = {
+							25 + arg_105_0.resize_offset[1],
+							140 - arg_105_0.difficulty_description_text_size - arg_105_0.resize_offset[2],
+							2
+						}
+
+						if arg_105_0.should_resize then
+							arg_105_1.offset = var_105_0
+						end
+					end
+				},
+				{
 					style_id = "difficulty_separator",
 					texture_id = "difficulty_separator",
-					content_change_function = function (content, style)
-						local new_offset = {
-							size[1] / 4 + content.resize_offset[1],
-							120 - content.difficulty_description_text_size - content.resize_offset[2],
-							2,
+					pass_type = "texture",
+					content_change_function = function(arg_106_0, arg_106_1)
+						local var_106_0 = {
+							arg_101_1[1] / 4 + arg_106_0.resize_offset[1],
+							120 - arg_106_0.difficulty_description_text_size - arg_106_0.resize_offset[2],
+							2
 						}
 
-						if content.should_resize then
-							style.offset = new_offset
+						if arg_106_0.should_resize then
+							arg_106_1.offset = var_106_0
 						end
-					end,
+					end
 				},
 				{
-					content_id = "widget_hotspot",
-					pass_type = "hotspot",
 					style_id = "widget_hotspot",
+					pass_type = "hotspot",
+					content_id = "widget_hotspot"
 				},
 				{
-					pass_type = "text",
 					style_id = "difficulty_lock_text",
+					pass_type = "text",
 					text_id = "difficulty_lock_text",
-					content_check_function = function (content)
-						return content.should_show_diff_lock_text
+					content_check_function = function(arg_107_0)
+						return arg_107_0.should_show_diff_lock_text
 					end,
-					content_change_function = function (content, style)
-						local new_offset = {
-							7.5 + content.resize_offset[1],
-							-content.difficulty_description_text_size - content.resize_offset[2] + 90,
-							2,
+					content_change_function = function(arg_108_0, arg_108_1)
+						local var_108_0 = {
+							7.5 + arg_108_0.resize_offset[1],
+							-arg_108_0.difficulty_description_text_size - arg_108_0.resize_offset[2] + 90,
+							2
 						}
 
-						if content.should_resize then
-							style.offset = new_offset
+						if arg_108_0.should_resize then
+							arg_108_1.offset = var_108_0
 						end
-					end,
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "dlc_lock_text",
+					pass_type = "text",
 					text_id = "dlc_lock_text",
-					content_check_function = function (content)
-						return content.should_show_dlc_lock
+					content_check_function = function(arg_109_0)
+						return arg_109_0.should_show_dlc_lock
 					end,
-					content_change_function = function (content, style)
-						local new_offset = {
-							2.5 + content.resize_offset[1],
-							-content.difficulty_description_text_size - content.resize_offset[2] + 70 - content.difficulty_lock_text_height,
-							2,
+					content_change_function = function(arg_110_0, arg_110_1)
+						local var_110_0 = {
+							2.5 + arg_110_0.resize_offset[1],
+							-arg_110_0.difficulty_description_text_size - arg_110_0.resize_offset[2] + 70 - arg_110_0.difficulty_lock_text_height,
+							2
 						}
 
-						if content.should_resize then
-							style.offset = new_offset
+						if arg_110_0.should_resize then
+							arg_110_1.offset = var_110_0
 						end
-					end,
-				},
-			},
+					end
+				}
+			}
 		},
 		content = {
-			background = "bg_tile",
+			should_show_diff_lock_text = false,
 			difficulty_description = "difficulty description",
-			difficulty_description_text_size = 0,
-			difficulty_lock_text_height = 0,
-			difficulty_separator = "divider_01_bottom",
+			should_show_dlc_lock = false,
 			highest_obtainable_level = "highest obtainable level",
 			should_resize = false,
-			should_show_diff_lock_text = false,
-			should_show_dlc_lock = false,
-			border = frame_border.texture,
+			background = "bg_tile",
+			difficulty_separator = "divider_01_bottom",
+			difficulty_description_text_size = 0,
+			difficulty_lock_text_height = 0,
+			border = var_101_0.texture,
 			widget_hotspot = {},
 			difficulty_lock_text = Localize("required_power_level"),
 			dlc_lock_text = Localize("cataclysm_no_wom"),
 			resize_offset = {
 				0,
 				0,
-				0,
+				0
 			},
 			resize_size = {
 				0,
-				0,
-			},
+				0
+			}
 		},
 		style = {
 			background = {
 				texture_tiling_size = {
 					256,
-					256,
+					256
 				},
-				texture_size = size,
+				texture_size = arg_101_1,
 				offset = {
 					0,
 					0,
-					1,
+					1
 				},
 				color = {
 					200,
 					255,
 					255,
-					255,
-				},
+					255
+				}
 			},
 			border = {
 				use_tiling = true,
-				texture_size = frame_border.texture_size,
-				texture_sizes = frame_border.texture_sizes,
+				texture_size = var_101_0.texture_size,
+				texture_sizes = var_101_0.texture_sizes,
 				size = {
-					size[1] + 2 * corner_size[1],
-					size[2] + 2 * corner_size[2],
+					arg_101_1[1] + 2 * var_101_2[1],
+					arg_101_1[2] + 2 * var_101_2[2]
 				},
 				offset = {
-					-corner_size[1],
-					-corner_size[2],
-					2,
+					-var_101_2[1],
+					-var_101_2[2],
+					2
 				},
 				color = {
 					200,
 					0,
 					0,
-					0,
-				},
+					0
+				}
 			},
 			difficulty_description = {
 				font_size = 20,
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
-				localize = false,
 				upper_case = false,
-				vertical_alignment = "top",
+				localize = false,
 				word_wrap = true,
+				horizontal_alignment = "center",
+				vertical_alignment = "top",
+				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
 					25,
 					-75,
-					2,
+					2
 				},
 				size = {
 					450,
-					20,
-				},
+					20
+				}
 			},
 			highest_obtainable_level = {
 				font_size = 22,
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
-				localize = false,
 				upper_case = false,
-				vertical_alignment = "top",
+				localize = false,
 				word_wrap = true,
+				horizontal_alignment = "center",
+				vertical_alignment = "top",
+				font_type = "hell_shark",
 				text_color = {
 					255,
 					250,
 					250,
-					250,
+					250
 				},
 				offset = {
 					25,
 					0,
-					2,
+					2
 				},
 				size = {
 					450,
-					20,
-				},
+					20
+				}
 			},
 			difficulty_separator = {
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
-					size[1] / 4,
+					arg_101_1[1] / 4,
 					0,
-					2,
+					2
 				},
 				size = {
 					264,
-					21,
-				},
+					21
+				}
 			},
 			widget_hotspot = {
 				color = {
 					0,
 					0,
 					0,
-					0,
+					0
 				},
 				offset = {
 					0,
 					0,
-					0,
+					0
 				},
-				size = size,
+				size = arg_101_1
 			},
 			difficulty_lock_text = {
 				font_size = 20,
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
-				localize = false,
 				upper_case = false,
-				vertical_alignment = "top",
+				localize = false,
 				word_wrap = true,
+				horizontal_alignment = "center",
+				vertical_alignment = "top",
+				font_type = "hell_shark",
 				text_color = {
 					255,
 					199,
 					199,
-					199,
+					199
 				},
 				offset = {
 					7.5,
 					0,
-					1,
+					1
 				},
 				size = {
 					485,
-					20,
-				},
+					20
+				}
 			},
 			dlc_lock_text = {
 				font_size = 20,
-				font_type = "hell_shark",
-				horizontal_alignment = "center",
-				localize = false,
 				upper_case = false,
-				vertical_alignment = "top",
+				localize = false,
 				word_wrap = true,
+				horizontal_alignment = "center",
+				vertical_alignment = "top",
+				font_type = "hell_shark",
 				text_color = {
 					255,
 					220,
 					148,
-					64,
+					64
 				},
 				offset = {
 					2.5,
 					0,
-					1,
+					1
 				},
 				size = {
 					485,
-					20,
-				},
-			},
+					20
+				}
+			}
 		},
 		offset = {
 			0,
 			0,
-			0,
+			0
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_101_0
 	}
 end
 
-UIWidgets.create_ability_charges_widget = function (scenegraph_id, size, offset)
-	local size = size or {
+function UIWidgets.create_ability_charges_widget(arg_111_0, arg_111_1, arg_111_2)
+	local var_111_0 = arg_111_1 or {
 		20,
-		20,
+		20
 	}
 
 	return {
@@ -4341,977 +4297,977 @@ UIWidgets.create_ability_charges_widget = function (scenegraph_id, size, offset)
 				{
 					pass_type = "texture",
 					style_id = "ability_charge_bg",
-					texture_id = "ability_charge_bg",
+					texture_id = "ability_charge_bg"
 				},
 				{
 					pass_type = "texture",
 					style_id = "ability_charge_active",
 					texture_id = "ability_charge_active",
-					content_check_function = function (content, style)
-						return content.ready
-					end,
-				},
-			},
+					content_check_function = function(arg_112_0, arg_112_1)
+						return arg_112_0.ready
+					end
+				}
+			}
 		},
 		content = {
-			ability_charge_active = "hud_career_ability_charge_active",
 			ability_charge_bg = "hud_career_ability_charge_bg",
 			ready = false,
+			ability_charge_active = "hud_career_ability_charge_active"
 		},
 		style = {
 			ability_charge_bg = {
-				texture_size = size,
+				texture_size = var_111_0,
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					0,
 					0,
-					1,
-				},
+					1
+				}
 			},
 			ability_charge_active = {
 				texture_size = {
-					size[1] - 4,
-					size[2] - 4,
+					var_111_0[1] - 4,
+					var_111_0[2] - 4
 				},
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					2,
 					2,
-					2,
-				},
-			},
+					2
+				}
+			}
 		},
-		scenegraph_id = scenegraph_id,
-		offset = offset or {
+		scenegraph_id = arg_111_0,
+		offset = arg_111_2 or {
 			0,
 			0,
-			1,
-		},
+			1
+		}
 	}
 end
 
-UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons, allow_boon_removal)
-	local masked = true
+function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
+	local var_113_0 = true
 
-	if disable_masked_icons then
-		masked = false
+	if arg_113_2 then
+		var_113_0 = false
 	end
 
 	return {
 		element = {
 			passes = {
 				{
-					pass_type = "texture",
+					texture_id = "shrine_bg",
 					style_id = "shrine_bg",
-					texture_id = "shrine_bg",
-					content_check_function = function (content)
-						return not content.extend_left
-					end,
+					pass_type = "texture",
+					content_check_function = function(arg_114_0)
+						return not arg_114_0.extend_left
+					end
 				},
 				{
-					pass_type = "texture",
+					texture_id = "shrine_bg",
 					style_id = "shrine_bg_left",
-					texture_id = "shrine_bg",
-					content_check_function = function (content)
-						return content.extend_left
-					end,
+					pass_type = "texture",
+					content_check_function = function(arg_115_0)
+						return arg_115_0.extend_left
+					end
 				},
 				{
-					content_id = "shrine_bg_frame_left",
-					pass_type = "texture_uv",
 					style_id = "shrine_bg_frame_left",
-					content_check_function = function (content)
-						return not content.parent.extend_left
-					end,
-				},
-				{
-					content_id = "shrine_bg_frame_right",
 					pass_type = "texture_uv",
+					content_id = "shrine_bg_frame_left",
+					content_check_function = function(arg_116_0)
+						return not arg_116_0.parent.extend_left
+					end
+				},
+				{
 					style_id = "shrine_bg_frame_right",
-					content_check_function = function (content)
-						return content.parent.extend_left
-					end,
+					pass_type = "texture_uv",
+					content_id = "shrine_bg_frame_right",
+					content_check_function = function(arg_117_0)
+						return arg_117_0.parent.extend_left
+					end
 				},
 				{
-					pass_type = "texture",
+					texture_id = "icon",
 					style_id = "round_icon",
-					texture_id = "icon",
-					content_check_function = function (content)
-						return content.icon and not content.is_rectangular_icon
-					end,
+					pass_type = "texture",
+					content_check_function = function(arg_118_0)
+						return arg_118_0.icon and not arg_118_0.is_rectangular_icon
+					end
 				},
 				{
-					pass_type = "texture",
-					style_id = "round_icon_bg",
 					texture_id = "round_icon_bg",
-					content_check_function = function (content)
-						return content.icon and not content.is_rectangular_icon and false
-					end,
+					style_id = "round_icon_bg",
+					pass_type = "texture",
+					content_check_function = function(arg_119_0)
+						return arg_119_0.icon and not arg_119_0.is_rectangular_icon and false
+					end
 				},
 				{
-					pass_type = "texture",
-					style_id = "rectangular_icon",
 					texture_id = "icon",
-					content_check_function = function (content)
-						return content.icon and content.is_rectangular_icon
-					end,
-				},
-				{
-					pass_type = "rect",
-					style_id = "rectangular_bg",
-					content_check_function = function (content)
-						return content.icon and not content.is_rectangular_icon
-					end,
-				},
-				{
+					style_id = "rectangular_icon",
 					pass_type = "texture",
-					style_id = "rectangular_icon_bg",
+					content_check_function = function(arg_120_0)
+						return arg_120_0.icon and arg_120_0.is_rectangular_icon
+					end
+				},
+				{
+					style_id = "rectangular_bg",
+					pass_type = "rect",
+					content_check_function = function(arg_121_0)
+						return arg_121_0.icon and not arg_121_0.is_rectangular_icon
+					end
+				},
+				{
 					texture_id = "rectangular_icon_bg",
-					content_check_function = function (content)
+					style_id = "rectangular_icon_bg",
+					pass_type = "texture",
+					content_check_function = function(arg_122_0)
 						return true
-					end,
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "title_text",
+					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (content)
-						return not content.extend_left
-					end,
+					content_check_function = function(arg_123_0)
+						return not arg_123_0.extend_left
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "title_text_shadow",
+					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (content)
-						return not content.extend_left
-					end,
+					content_check_function = function(arg_124_0)
+						return not arg_124_0.extend_left
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "rarity_text",
+					pass_type = "text",
 					text_id = "rarity_text",
-					content_check_function = function (content)
-						return not content.extend_left
-					end,
+					content_check_function = function(arg_125_0)
+						return not arg_125_0.extend_left
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "rarity_text_shadow",
+					pass_type = "text",
 					text_id = "rarity_text",
-					content_check_function = function (content)
-						return not content.extend_left
-					end,
+					content_check_function = function(arg_126_0)
+						return not arg_126_0.extend_left
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "description_text",
+					pass_type = "text",
 					text_id = "description_text",
-					content_check_function = function (content)
-						return not content.extend_left
-					end,
+					content_check_function = function(arg_127_0)
+						return not arg_127_0.extend_left
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "description_text_shadow",
+					pass_type = "text",
 					text_id = "description_text",
-					content_check_function = function (content)
-						return not content.extend_left
-					end,
+					content_check_function = function(arg_128_0)
+						return not arg_128_0.extend_left
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "title_text_left",
+					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (content)
-						return content.extend_left
-					end,
+					content_check_function = function(arg_129_0)
+						return arg_129_0.extend_left
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "title_text_shadow_left",
+					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (content)
-						return content.extend_left
-					end,
+					content_check_function = function(arg_130_0)
+						return arg_130_0.extend_left
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "rarity_text_left",
+					pass_type = "text",
 					text_id = "rarity_text",
-					content_check_function = function (content)
-						return content.extend_left
-					end,
+					content_check_function = function(arg_131_0)
+						return arg_131_0.extend_left
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "rarity_text_shadow_left",
+					pass_type = "text",
 					text_id = "rarity_text",
-					content_check_function = function (content)
-						return content.extend_left
-					end,
+					content_check_function = function(arg_132_0)
+						return arg_132_0.extend_left
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "description_text_left",
+					pass_type = "text",
 					text_id = "description_text",
-					content_check_function = function (content)
-						return content.extend_left
-					end,
+					content_check_function = function(arg_133_0)
+						return arg_133_0.extend_left
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "description_text_shadow_left",
+					pass_type = "text",
 					text_id = "description_text",
-					content_check_function = function (content)
-						return content.extend_left
-					end,
+					content_check_function = function(arg_134_0)
+						return arg_134_0.extend_left
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "set_progression",
+					pass_type = "text",
 					text_id = "set_progression",
-					content_check_function = function (content)
-						return content.is_part_of_set and not content.extend_left
-					end,
+					content_check_function = function(arg_135_0)
+						return arg_135_0.is_part_of_set and not arg_135_0.extend_left
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "set_progression_left",
+					pass_type = "text",
 					text_id = "set_progression",
-					content_check_function = function (content)
-						return content.is_part_of_set and content.extend_left
-					end,
+					content_check_function = function(arg_136_0)
+						return arg_136_0.is_part_of_set and arg_136_0.extend_left
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "remove_tooltip_left",
+					pass_type = "text",
 					text_id = "remove_tooltip",
-					content_check_function = function (content)
-						return not content.locked and content.extend_left and allow_boon_removal
+					content_check_function = function(arg_137_0)
+						return not arg_137_0.locked and arg_137_0.extend_left and arg_113_3
 					end,
-					content_change_function = function (content, style, _, dt)
-						local loc_string = Localize(content.remove_tooltip_key)
-						local input_service_name = content.input_service_name
-						local macro = "$KEY;%s__%s:"
-						local mouse_action = content.mouse_action
-						local gamepad_action = content.gamepad_action
-						local input = Managers.input:is_device_active("gamepad") and gamepad_action or mouse_action
-						local input_macro = string.format(macro, input_service_name, input)
+					content_change_function = function(arg_138_0, arg_138_1, arg_138_2, arg_138_3)
+						local var_138_0 = Localize(arg_138_0.remove_tooltip_key)
+						local var_138_1 = arg_138_0.input_service_name
+						local var_138_2 = "$KEY;%s__%s:"
+						local var_138_3 = arg_138_0.mouse_action
+						local var_138_4 = arg_138_0.gamepad_action
+						local var_138_5 = Managers.input:is_device_active("gamepad") and var_138_4 or var_138_3
+						local var_138_6 = string.format(var_138_2, var_138_1, var_138_5)
 
-						content.remove_tooltip = string.format(loc_string, input_macro)
-					end,
+						arg_138_0.remove_tooltip = string.format(var_138_0, var_138_6)
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "remove_tooltip",
+					pass_type = "text",
 					text_id = "remove_tooltip",
-					content_check_function = function (content)
-						return not content.locked and not content.extend_left and allow_boon_removal
+					content_check_function = function(arg_139_0)
+						return not arg_139_0.locked and not arg_139_0.extend_left and arg_113_3
 					end,
-					content_change_function = function (content, style, _, dt)
-						local loc_string = Localize(content.remove_tooltip_key)
-						local input_service_name = content.input_service_name
-						local macro = "$KEY;%s__%s:"
-						local mouse_action = content.mouse_action
-						local gamepad_action = content.gamepad_action
-						local input = Managers.input:is_device_active("gamepad") and gamepad_action or mouse_action
-						local input_macro = string.format(macro, input_service_name, input)
+					content_change_function = function(arg_140_0, arg_140_1, arg_140_2, arg_140_3)
+						local var_140_0 = Localize(arg_140_0.remove_tooltip_key)
+						local var_140_1 = arg_140_0.input_service_name
+						local var_140_2 = "$KEY;%s__%s:"
+						local var_140_3 = arg_140_0.mouse_action
+						local var_140_4 = arg_140_0.gamepad_action
+						local var_140_5 = Managers.input:is_device_active("gamepad") and var_140_4 or var_140_3
+						local var_140_6 = string.format(var_140_2, var_140_1, var_140_5)
 
-						content.remove_tooltip = string.format(loc_string, input_macro)
-					end,
+						arg_140_0.remove_tooltip = string.format(var_140_0, var_140_6)
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "locked_left",
+					pass_type = "text",
 					text_id = "locked_text_id",
-					content_check_function = function (content)
-						return content.locked and content.extend_left and allow_boon_removal
-					end,
+					content_check_function = function(arg_141_0)
+						return arg_141_0.locked and arg_141_0.extend_left and arg_113_3
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "locked_left_shadow",
+					pass_type = "text",
 					text_id = "locked_text_id",
-					content_check_function = function (content)
-						return content.locked and content.extend_left and allow_boon_removal
-					end,
+					content_check_function = function(arg_142_0)
+						return arg_142_0.locked and arg_142_0.extend_left and arg_113_3
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "locked",
+					pass_type = "text",
 					text_id = "locked_text_id",
-					content_check_function = function (content)
-						return content.locked and not content.extend_left and allow_boon_removal
-					end,
+					content_check_function = function(arg_143_0)
+						return arg_143_0.locked and not arg_143_0.extend_left and arg_113_3
+					end
 				},
 				{
-					pass_type = "text",
 					style_id = "locked_shadow",
+					pass_type = "text",
 					text_id = "locked_text_id",
-					content_check_function = function (content)
-						return content.locked and not content.extend_left and allow_boon_removal
-					end,
+					content_check_function = function(arg_144_0)
+						return arg_144_0.locked and not arg_144_0.extend_left and arg_113_3
+					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "remove_frame",
 					texture_id = "remove_frame",
-					content_check_function = function (content, style)
-						return content.input_made and not content.locked and allow_boon_removal
-					end,
-				},
-			},
+					content_check_function = function(arg_145_0, arg_145_1)
+						return arg_145_0.input_made and not arg_145_0.locked and arg_113_3
+					end
+				}
+			}
 		},
 		content = {
-			description_text = "description_text",
-			extend_left = false,
-			gamepad_action = "special_1",
-			input_service_name = "ingame_menu",
-			is_rectangular_icon = false,
-			locked = false,
-			locked_text_id = "party_locked",
-			mouse_action = "mouse_middle_press",
-			rarity_text = "rarity",
-			rectangular_icon_bg = "button_frame_01",
-			remove_frame = "deus_shop_square_gradient",
-			remove_interaction_duration = 1,
-			remove_tooltip = "",
-			remove_tooltip_key = "remove_boon_tooltip",
 			round_icon_bg = "button_round_bg",
-			set_progression = "%d/%d",
-			shrine_bg = "shrine_blessing_bg_hover",
 			title_text = "header",
+			remove_tooltip = "",
+			rectangular_icon_bg = "button_frame_01",
 			visible = false,
+			input_service_name = "ingame_menu",
+			shrine_bg = "shrine_blessing_bg_hover",
+			locked = false,
+			remove_frame = "deus_shop_square_gradient",
+			is_rectangular_icon = false,
+			remove_interaction_duration = 1,
+			description_text = "description_text",
+			set_progression = "%d/%d",
+			extend_left = false,
+			rarity_text = "rarity",
+			remove_tooltip_key = "remove_boon_tooltip",
+			mouse_action = "mouse_middle_press",
+			locked_text_id = "party_locked",
+			gamepad_action = "special_1",
 			shrine_bg_frame_left = {
 				texture_id = "shrine_blessing_frame",
 				uvs = {
 					{
 						1,
-						0,
+						0
 					},
 					{
 						0,
-						1,
-					},
-				},
+						1
+					}
+				}
 			},
 			shrine_bg_frame_right = {
 				texture_id = "shrine_blessing_frame",
 				uvs = {
 					{
 						0,
-						0,
+						0
 					},
 					{
 						1,
-						1,
-					},
-				},
-			},
+						1
+					}
+				}
+			}
 		},
 		style = {
 			shrine_bg = {
-				horizontal_alignment = "left",
 				vertical_alignment = "top",
+				horizontal_alignment = "left",
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					50,
 					0,
-					0,
+					0
 				},
 				texture_size = {
 					484,
-					194,
-				},
+					194
+				}
 			},
 			shrine_bg_left = {
-				horizontal_alignment = "left",
 				vertical_alignment = "top",
+				horizontal_alignment = "left",
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					-384,
 					0,
-					0,
+					0
 				},
 				texture_size = {
 					484,
-					194,
-				},
+					194
+				}
 			},
 			shrine_bg_frame_left = {
-				horizontal_alignment = "left",
 				vertical_alignment = "top",
+				horizontal_alignment = "left",
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				texture_size = {
-					size[1],
-					size[2],
+					arg_113_1[1],
+					arg_113_1[2]
 				},
 				offset = {
 					0,
 					0,
-					1,
-				},
+					1
+				}
 			},
 			shrine_bg_frame_right = {
-				horizontal_alignment = "right",
 				vertical_alignment = "top",
+				horizontal_alignment = "right",
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				texture_size = {
-					size[1],
-					size[2],
+					arg_113_1[1],
+					arg_113_1[2]
 				},
 				offset = {
 					-384,
 					0,
-					1,
-				},
+					1
+				}
 			},
 			round_icon = {
-				horizontal_alignment = "left",
 				vertical_alignment = "center",
+				horizontal_alignment = "left",
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					28,
 					0,
-					10,
+					10
 				},
 				texture_size = {
 					40,
-					40,
+					40
 				},
-				masked = masked,
+				masked = var_113_0
 			},
 			rectangular_icon = {
-				horizontal_alignment = "left",
 				vertical_alignment = "center",
+				horizontal_alignment = "left",
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					17,
 					0,
-					10,
+					10
 				},
 				texture_size = {
 					63,
-					63,
+					63
 				},
-				masked = masked,
+				masked = var_113_0
 			},
 			rectangular_bg = {
-				horizontal_alignment = "left",
 				vertical_alignment = "center",
+				horizontal_alignment = "left",
 				color = {
 					255,
 					0,
 					0,
-					0,
+					0
 				},
 				offset = {
 					15,
 					0,
-					9,
+					9
 				},
 				texture_size = {
 					63,
-					63,
-				},
+					63
+				}
 			},
 			round_icon_bg = {
-				horizontal_alignment = "left",
 				vertical_alignment = "center",
+				horizontal_alignment = "left",
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					10,
 					0,
-					9,
+					9
 				},
 				texture_size = {
 					74,
-					74,
-				},
+					74
+				}
 			},
 			rectangular_icon_bg = {
-				horizontal_alignment = "left",
 				vertical_alignment = "center",
+				horizontal_alignment = "left",
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					10,
 					0,
-					9,
+					9
 				},
 				texture_size = {
 					75,
-					75,
-				},
+					75
+				}
 			},
 			title_text = {
-				dynamic_font_size = true,
-				font_size = 28,
 				font_type = "hell_shark_header",
-				horizontal_alignment = "left",
-				localize = false,
 				upper_case = true,
-				vertical_alignment = "center",
+				localize = false,
 				word_wrap = false,
+				font_size = 28,
+				horizontal_alignment = "left",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
 				area_size = {
 					250,
-					size[2],
+					arg_113_1[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
 					100,
 					52,
-					3,
-				},
+					3
+				}
 			},
 			rarity_text = {
-				font_size = 22,
-				font_type = "hell_shark",
-				horizontal_alignment = "right",
-				localize = false,
 				vertical_alignment = "top",
+				font_size = 22,
+				localize = false,
+				horizontal_alignment = "right",
 				word_wrap = false,
+				font_type = "hell_shark",
 				text_color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					-60,
 					-30,
-					3,
-				},
+					3
+				}
 			},
 			description_text = {
+				word_wrap = true,
+				font_type = "hell_shark",
+				localize = false,
 				dynamic_font_size_word_wrap = true,
 				font_size = 20,
-				font_type = "hell_shark",
 				horizontal_alignment = "left",
-				localize = false,
 				vertical_alignment = "top",
-				word_wrap = true,
 				area_size = {
 					320,
-					75,
+					75
 				},
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
 					100,
 					-60,
-					3,
-				},
+					3
+				}
 			},
 			title_text_shadow = {
-				dynamic_font_size = true,
-				font_size = 28,
 				font_type = "hell_shark_header",
-				horizontal_alignment = "left",
-				localize = false,
 				upper_case = true,
-				vertical_alignment = "center",
+				localize = false,
 				word_wrap = false,
+				font_size = 28,
+				horizontal_alignment = "left",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
 				area_size = {
 					250,
-					size[2],
+					arg_113_1[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					102,
 					50,
-					2,
-				},
+					2
+				}
 			},
 			rarity_text_shadow = {
-				font_size = 22,
-				font_type = "hell_shark",
-				horizontal_alignment = "right",
-				localize = false,
 				vertical_alignment = "top",
+				font_size = 22,
+				localize = false,
+				horizontal_alignment = "right",
 				word_wrap = false,
+				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					-58,
 					-32,
-					2,
-				},
+					2
+				}
 			},
 			description_text_shadow = {
+				word_wrap = true,
+				font_type = "hell_shark",
+				localize = false,
 				dynamic_font_size_word_wrap = true,
 				font_size = 20,
-				font_type = "hell_shark",
 				horizontal_alignment = "left",
-				localize = false,
 				vertical_alignment = "top",
-				word_wrap = true,
 				area_size = {
 					320,
-					75,
+					75
 				},
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					102,
 					-62,
-					2,
-				},
+					2
+				}
 			},
 			title_text_left = {
-				dynamic_font_size = true,
-				font_size = 28,
 				font_type = "hell_shark_header",
-				horizontal_alignment = "left",
-				localize = false,
 				upper_case = true,
-				vertical_alignment = "center",
+				localize = false,
 				word_wrap = false,
+				font_size = 28,
+				horizontal_alignment = "left",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
 				area_size = {
 					250,
-					size[2],
+					arg_113_1[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
 					-320,
 					52,
-					3,
-				},
+					3
+				}
 			},
 			rarity_text_left = {
-				font_size = 22,
-				font_type = "hell_shark",
-				horizontal_alignment = "right",
-				localize = false,
 				vertical_alignment = "top",
+				font_size = 22,
+				localize = false,
+				horizontal_alignment = "right",
 				word_wrap = false,
+				font_type = "hell_shark",
 				text_color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					-480,
 					-30,
-					3,
-				},
+					3
+				}
 			},
 			description_text_left = {
+				word_wrap = true,
+				font_type = "hell_shark",
+				localize = false,
 				dynamic_font_size_word_wrap = true,
 				font_size = 20,
-				font_type = "hell_shark",
 				horizontal_alignment = "left",
-				localize = false,
 				vertical_alignment = "top",
-				word_wrap = true,
 				area_size = {
 					320,
-					75,
+					75
 				},
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
 					-320,
 					-60,
-					3,
-				},
+					3
+				}
 			},
 			title_text_shadow_left = {
-				dynamic_font_size = true,
-				font_size = 28,
 				font_type = "hell_shark_header",
-				horizontal_alignment = "left",
-				localize = false,
 				upper_case = true,
-				vertical_alignment = "center",
+				localize = false,
 				word_wrap = false,
+				font_size = 28,
+				horizontal_alignment = "left",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
 				area_size = {
 					250,
-					size[2],
+					arg_113_1[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					-318,
 					50,
-					2,
-				},
+					2
+				}
 			},
 			rarity_text_shadow_left = {
-				font_size = 22,
-				font_type = "hell_shark",
-				horizontal_alignment = "right",
-				localize = false,
 				vertical_alignment = "top",
+				font_size = 22,
+				localize = false,
+				horizontal_alignment = "right",
 				word_wrap = false,
+				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					-478,
 					-32,
-					2,
-				},
+					2
+				}
 			},
 			description_text_shadow_left = {
+				word_wrap = true,
+				font_type = "hell_shark",
+				localize = false,
 				dynamic_font_size_word_wrap = true,
 				font_size = 20,
-				font_type = "hell_shark",
 				horizontal_alignment = "left",
-				localize = false,
 				vertical_alignment = "top",
-				word_wrap = true,
 				area_size = {
 					320,
-					75,
+					75
 				},
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					-318,
 					-62,
-					2,
-				},
+					2
+				}
 			},
 			set_progression = {
-				font_size = 20,
-				font_type = "hell_shark",
-				horizontal_alignment = "right",
-				upper_case = false,
-				vertical_alignment = "bottom",
 				word_wrap = false,
+				upper_case = false,
+				font_size = 20,
+				horizontal_alignment = "right",
+				vertical_alignment = "bottom",
+				font_type = "hell_shark",
 				progression_colors = {
 					incomplete = Colors.get_color_table_with_alpha("font_default", 255),
-					complete = Colors.get_color_table_with_alpha("lime_green", 255),
+					complete = Colors.get_color_table_with_alpha("lime_green", 255)
 				},
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
 					-60,
 					18,
-					10,
-				},
+					10
+				}
 			},
 			set_progression_left = {
-				font_size = 20,
-				font_type = "hell_shark",
-				horizontal_alignment = "right",
-				upper_case = false,
-				vertical_alignment = "bottom",
 				word_wrap = false,
+				upper_case = false,
+				font_size = 20,
+				horizontal_alignment = "right",
+				vertical_alignment = "bottom",
+				font_type = "hell_shark",
 				progression_colors = {
 					incomplete = Colors.get_color_table_with_alpha("font_default", 255),
-					complete = Colors.get_color_table_with_alpha("lime_green", 255),
+					complete = Colors.get_color_table_with_alpha("lime_green", 255)
 				},
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
 					-488,
 					18,
-					10,
-				},
+					10
+				}
 			},
 			remove_tooltip = {
-				dynamic_font_size = true,
-				font_size = 22,
-				font_type = "hell_shark_header",
-				horizontal_alignment = "left",
-				localize = false,
-				upper_case = false,
-				use_shadow = true,
-				vertical_alignment = "center",
 				word_wrap = false,
+				upper_case = false,
+				localize = false,
+				font_type = "hell_shark_header",
+				font_size = 22,
+				vertical_alignment = "center",
+				horizontal_alignment = "left",
+				use_shadow = true,
+				dynamic_font_size = true,
 				size = {
 					250,
-					30,
+					30
 				},
 				area_size = {
 					250,
-					30,
+					30
 				},
 				text_color = Colors.get_color_table_with_alpha("cheeseburger", 255),
 				offset = {
 					100,
 					18,
-					1,
-				},
+					1
+				}
 			},
 			remove_tooltip_left = {
-				dynamic_font_size = true,
-				font_size = 22,
-				font_type = "hell_shark_header",
-				horizontal_alignment = "left",
-				localize = false,
-				upper_case = false,
-				use_shadow = true,
-				vertical_alignment = "center",
 				word_wrap = false,
+				upper_case = false,
+				localize = false,
+				font_type = "hell_shark_header",
+				font_size = 22,
+				vertical_alignment = "center",
+				horizontal_alignment = "left",
+				use_shadow = true,
+				dynamic_font_size = true,
 				size = {
 					250,
-					30,
+					30
 				},
 				area_size = {
 					250,
-					30,
+					30
 				},
 				text_color = Colors.get_color_table_with_alpha("cheeseburger", 255),
 				offset = {
 					-320,
 					18,
-					1,
-				},
+					1
+				}
 			},
 			locked = {
-				dynamic_font_size = true,
-				font_size = 22,
-				font_type = "hell_shark_header",
-				horizontal_alignment = "left",
-				localize = true,
-				upper_case = false,
-				use_shadow = true,
-				vertical_alignment = "center",
 				word_wrap = false,
+				upper_case = false,
+				localize = true,
+				font_type = "hell_shark_header",
+				font_size = 22,
+				vertical_alignment = "center",
+				horizontal_alignment = "left",
+				use_shadow = true,
+				dynamic_font_size = true,
 				size = {
 					250,
-					30,
+					30
 				},
 				area_size = {
 					250,
-					30,
+					30
 				},
 				text_color = Colors.get_color_table_with_alpha("firebrick", 255),
 				offset = {
 					100,
 					18,
-					2,
-				},
+					2
+				}
 			},
 			locked_shadow = {
-				dynamic_font_size = true,
-				font_size = 22,
-				font_type = "hell_shark_header",
-				horizontal_alignment = "left",
-				localize = true,
-				upper_case = false,
-				use_shadow = true,
-				vertical_alignment = "center",
 				word_wrap = false,
+				upper_case = false,
+				localize = true,
+				font_type = "hell_shark_header",
+				font_size = 22,
+				vertical_alignment = "center",
+				horizontal_alignment = "left",
+				use_shadow = true,
+				dynamic_font_size = true,
 				size = {
 					250,
-					30,
+					30
 				},
 				area_size = {
 					250,
-					30,
+					30
 				},
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					102,
 					16,
-					1,
-				},
+					1
+				}
 			},
 			locked_left = {
-				dynamic_font_size = true,
-				font_size = 22,
-				font_type = "hell_shark_header",
-				horizontal_alignment = "left",
-				localize = true,
-				upper_case = false,
-				use_shadow = true,
-				vertical_alignment = "center",
 				word_wrap = false,
+				upper_case = false,
+				localize = true,
+				font_type = "hell_shark_header",
+				font_size = 22,
+				vertical_alignment = "center",
+				horizontal_alignment = "left",
+				use_shadow = true,
+				dynamic_font_size = true,
 				size = {
 					250,
-					30,
+					30
 				},
 				area_size = {
 					250,
-					30,
+					30
 				},
 				text_color = Colors.get_color_table_with_alpha("firebrick", 255),
 				offset = {
 					-320,
 					18,
-					2,
-				},
+					2
+				}
 			},
 			locked_left_shadow = {
-				dynamic_font_size = true,
-				font_size = 22,
-				font_type = "hell_shark_header",
-				horizontal_alignment = "left",
-				localize = true,
-				upper_case = false,
-				use_shadow = true,
-				vertical_alignment = "center",
 				word_wrap = false,
+				upper_case = false,
+				localize = true,
+				font_type = "hell_shark_header",
+				font_size = 22,
+				vertical_alignment = "center",
+				horizontal_alignment = "left",
+				use_shadow = true,
+				dynamic_font_size = true,
 				size = {
 					250,
-					30,
+					30
 				},
 				area_size = {
 					250,
-					30,
+					30
 				},
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					-318,
 					16,
-					1,
-				},
+					1
+				}
 			},
 			remove_frame = {
-				horizontal_alignment = "left",
 				vertical_alignment = "center",
+				horizontal_alignment = "left",
 				color = Colors.get_color_table_with_alpha("red", 255),
 				offset = {
 					9,
 					0,
-					11,
+					11
 				},
 				texture_size = {
 					80,
-					80,
-				},
-			},
+					80
+				}
+			}
 		},
 		offset = {
 			-15,
 			-65,
-			50,
+			50
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_113_0
 	}
 end

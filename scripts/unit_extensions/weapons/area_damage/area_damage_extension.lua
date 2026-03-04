@@ -1,400 +1,384 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/area_damage/area_damage_extension.lua
+-- chunkname: @scripts/unit_extensions/weapons/area_damage/area_damage_extension.lua
 
 AreaDamageExtension = class(AreaDamageExtension)
 script_data.debug_area_damage = script_data.debug_area_damage or Development.parameter("debug_area_damage")
 
-local approx_player_radius = 0.5
+local var_0_0 = 0.5
 
-AreaDamageExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self.world = extension_init_context.world
-	self.unit = unit
-	self.aoe_dot_damage = extension_init_data.aoe_dot_damage or Unit.get_data(unit, "aoe_dot_damage")
-	self.aoe_init_damage = extension_init_data.aoe_init_damage or Unit.get_data(unit, "aoe_init_damage")
-	self.aoe_dot_damage_interval = extension_init_data.aoe_dot_damage_interval or Unit.get_data(unit, "aoe_dot_damage_interval")
-	self.damage_ramping_function = extension_init_data.damage_ramping_function
-	self.radius = extension_init_data.radius or Unit.get_data(unit, "radius")
-	self.initial_radius = extension_init_data.initial_radius or extension_init_data.radius or Unit.get_data(unit, "radius")
-	self.life_time = extension_init_data.life_time or Unit.get_data(unit, "life_time")
-	self.player_screen_effect_name = extension_init_data.player_screen_effect_name or Unit.get_data(unit, "player_screen_effect_name")
-	self.dot_effect_name = extension_init_data.dot_effect_name or Unit.get_data(unit, "dot_effect_name")
-	self.extra_dot_effect_name = extension_init_data.extra_dot_effect_name or Unit.get_data(unit, "extra_dot_effect_name")
-	self.nav_mesh_effect = extension_init_data.nav_mesh_effect
-	self.area_damage_template = extension_init_data.area_damage_template or Unit.get_data(unit, "area_damage_template")
-	self.area_ai_random_death_template = extension_init_data.area_ai_random_death_template or Unit.get_data(unit, "area_ai_random_death_template")
-	self.invisible_unit = extension_init_data.invisible_unit or Unit.get_data(unit, "invisible_unit")
-	self.damage_players = T(extension_init_data.damage_players, T(Unit.get_data(unit, "damage_players"), true))
-	self.damage_source = extension_init_data.damage_source or "n/a"
-	self.create_nav_tag_volume = extension_init_data.create_nav_tag_volume or Unit.get_data(unit, "create_nav_tag_volume")
-	self.nav_tag_volume_layer = extension_init_data.nav_tag_volume_layer or Unit.get_data(unit, "nav_tag_volume_layer")
-	self.explosion_template_name = extension_init_data.explosion_template_name
-	self.owner_player = extension_init_data.owner_player
-	self.slow_modifier = extension_init_data.slow_modifier
-	self.source_attacker_unit = extension_init_data.source_attacker_unit
-	self.threat_duration = extension_init_data.threat_duration
-	self.effect_size = self.radius * 1.5
-	self.damage_timer = 0
-	self.life_timer = 0
-	self.is_server = Managers.player.is_server
-	self.num_hits = 0
-	self.enabled = false
-	self.ai_system = Managers.state.entity:system("ai_system")
-	self.player_unit_particles = {}
-	self._current_damage_buffer_index = 1
-	self._damage_buffer = {}
+function AreaDamageExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.world = arg_1_1.world
+	arg_1_0.unit = arg_1_2
+	arg_1_0.aoe_dot_damage = arg_1_3.aoe_dot_damage or Unit.get_data(arg_1_2, "aoe_dot_damage")
+	arg_1_0.aoe_init_damage = arg_1_3.aoe_init_damage or Unit.get_data(arg_1_2, "aoe_init_damage")
+	arg_1_0.aoe_dot_damage_interval = arg_1_3.aoe_dot_damage_interval or Unit.get_data(arg_1_2, "aoe_dot_damage_interval")
+	arg_1_0.damage_ramping_function = arg_1_3.damage_ramping_function
+	arg_1_0.radius = arg_1_3.radius or Unit.get_data(arg_1_2, "radius")
+	arg_1_0.initial_radius = arg_1_3.initial_radius or arg_1_3.radius or Unit.get_data(arg_1_2, "radius")
+	arg_1_0.life_time = arg_1_3.life_time or Unit.get_data(arg_1_2, "life_time")
+	arg_1_0.player_screen_effect_name = arg_1_3.player_screen_effect_name or Unit.get_data(arg_1_2, "player_screen_effect_name")
+	arg_1_0.dot_effect_name = arg_1_3.dot_effect_name or Unit.get_data(arg_1_2, "dot_effect_name")
+	arg_1_0.extra_dot_effect_name = arg_1_3.extra_dot_effect_name or Unit.get_data(arg_1_2, "extra_dot_effect_name")
+	arg_1_0.nav_mesh_effect = arg_1_3.nav_mesh_effect
+	arg_1_0.area_damage_template = arg_1_3.area_damage_template or Unit.get_data(arg_1_2, "area_damage_template")
+	arg_1_0.area_ai_random_death_template = arg_1_3.area_ai_random_death_template or Unit.get_data(arg_1_2, "area_ai_random_death_template")
+	arg_1_0.invisible_unit = arg_1_3.invisible_unit or Unit.get_data(arg_1_2, "invisible_unit")
+	arg_1_0.damage_players = T(arg_1_3.damage_players, T(Unit.get_data(arg_1_2, "damage_players"), true))
+	arg_1_0.damage_source = arg_1_3.damage_source or "n/a"
+	arg_1_0.create_nav_tag_volume = arg_1_3.create_nav_tag_volume or Unit.get_data(arg_1_2, "create_nav_tag_volume")
+	arg_1_0.nav_tag_volume_layer = arg_1_3.nav_tag_volume_layer or Unit.get_data(arg_1_2, "nav_tag_volume_layer")
+	arg_1_0.explosion_template_name = arg_1_3.explosion_template_name
+	arg_1_0.owner_player = arg_1_3.owner_player
+	arg_1_0.slow_modifier = arg_1_3.slow_modifier
+	arg_1_0.source_attacker_unit = arg_1_3.source_attacker_unit
+	arg_1_0.threat_duration = arg_1_3.threat_duration
+	arg_1_0.effect_size = arg_1_0.radius * 1.5
+	arg_1_0.damage_timer = 0
+	arg_1_0.life_timer = 0
+	arg_1_0.is_server = Managers.player.is_server
+	arg_1_0.num_hits = 0
+	arg_1_0.enabled = false
+	arg_1_0.ai_system = Managers.state.entity:system("ai_system")
+	arg_1_0.player_unit_particles = {}
+	arg_1_0._current_damage_buffer_index = 1
+	arg_1_0._damage_buffer = {}
 
-	if self.owner_player then
-		Managers.player:assign_unit_ownership(self.unit, self.owner_player)
+	if arg_1_0.owner_player then
+		Managers.player:assign_unit_ownership(arg_1_0.unit, arg_1_0.owner_player)
 	end
 
-	local side_manager = Managers.state.side
-	local source_attacker_side = side_manager.side_by_unit[self.source_attacker_unit]
+	arg_1_0._side = Managers.state.side.side_by_unit[arg_1_0.source_attacker_unit]
 
-	self._side = source_attacker_side
-
-	if self.invisible_unit then
-		Unit.set_unit_visibility(unit, false)
+	if arg_1_0.invisible_unit then
+		Unit.set_unit_visibility(arg_1_2, false)
 	end
 
-	self._custom_data_table = {
-		parent = self,
+	arg_1_0._custom_data_table = {
+		parent = arg_1_0
 	}
 end
 
-AreaDamageExtension.destroy = function (self)
-	Unit.flow_event(self.unit, "lua_projectile_end")
+function AreaDamageExtension.destroy(arg_2_0)
+	Unit.flow_event(arg_2_0.unit, "lua_projectile_end")
 
-	if not self.area_damage_started then
+	if not arg_2_0.area_damage_started then
 		return
 	end
 
-	local world = self.world
+	local var_2_0 = arg_2_0.world
 
-	if self.explosion_template_name then
-		local explosion_template = ExplosionUtils.get_template(self.explosion_template_name)
-		local stop_aoe_sound_event_name = explosion_template.aoe.stop_aoe_sound_event_name
+	if arg_2_0.explosion_template_name then
+		local var_2_1 = ExplosionUtils.get_template(arg_2_0.explosion_template_name).aoe.stop_aoe_sound_event_name
 
-		if stop_aoe_sound_event_name then
-			WwiseUtils.trigger_unit_event(world, stop_aoe_sound_event_name, self.unit, 0)
+		if var_2_1 then
+			WwiseUtils.trigger_unit_event(var_2_0, var_2_1, arg_2_0.unit, 0)
 		end
 	end
 
-	local area_damage = AreaDamageTemplates.get_template(self.area_damage_template)
+	local var_2_2 = AreaDamageTemplates.get_template(arg_2_0.area_damage_template)
 
-	if self.is_server and area_damage.server.destroy then
-		area_damage.server.destroy(self._custom_data_table)
+	if arg_2_0.is_server and var_2_2.server.destroy then
+		var_2_2.server.destroy(arg_2_0._custom_data_table)
 	end
 
-	if area_damage.client.destroy then
-		area_damage.client.destroy(self._custom_data_table)
+	if var_2_2.client.destroy then
+		var_2_2.client.destroy(arg_2_0._custom_data_table)
 	end
 
-	if self.effect_id then
-		World.stop_spawning_particles(world, self.effect_id)
+	if arg_2_0.effect_id then
+		World.stop_spawning_particles(var_2_0, arg_2_0.effect_id)
 	end
 
-	local ids = self.nav_mesh_effect_ids
+	local var_2_3 = arg_2_0.nav_mesh_effect_ids
 
-	if ids then
-		for i = 1, #ids do
-			local id = ids[i]
+	if var_2_3 then
+		for iter_2_0 = 1, #var_2_3 do
+			local var_2_4 = var_2_3[iter_2_0]
 
-			World.stop_spawning_particles(world, id)
+			World.stop_spawning_particles(var_2_0, var_2_4)
 		end
 	end
 
-	if self.extra_effect_id then
-		World.stop_spawning_particles(world, self.extra_effect_id)
+	if arg_2_0.extra_effect_id then
+		World.stop_spawning_particles(var_2_0, arg_2_0.extra_effect_id)
 	end
 
-	for player_unit, data in pairs(self.player_unit_particles) do
-		World.stop_spawning_particles(world, data.particle_id)
+	for iter_2_1, iter_2_2 in pairs(arg_2_0.player_unit_particles) do
+		World.stop_spawning_particles(var_2_0, iter_2_2.particle_id)
 	end
 
-	table.clear(self.player_unit_particles)
+	table.clear(arg_2_0.player_unit_particles)
 
-	if self.nav_tag_volume_id then
-		local volume_system = Managers.state.entity:system("volume_system")
-
-		volume_system:destroy_nav_tag_volume(self.nav_tag_volume_id)
+	if arg_2_0.nav_tag_volume_id then
+		Managers.state.entity:system("volume_system"):destroy_nav_tag_volume(arg_2_0.nav_tag_volume_id)
 	end
 end
 
-AreaDamageExtension.enable_area_damage = function (self, enable)
-	if enable then
-		self.enabled = true
+function AreaDamageExtension.enable_area_damage(arg_3_0, arg_3_1)
+	if arg_3_1 then
+		arg_3_0.enabled = true
 
-		self:start_area_damage()
+		arg_3_0:start_area_damage()
 	else
-		self.enabled = false
-		self.area_damage_started = false
+		arg_3_0.enabled = false
+		arg_3_0.area_damage_started = false
 
-		if self.effect_id then
-			World.stop_spawning_particles(self.world, self.effect_id)
+		if arg_3_0.effect_id then
+			World.stop_spawning_particles(arg_3_0.world, arg_3_0.effect_id)
 
-			if self.extra_effect_id then
-				World.stop_spawning_particles(self.world, self.extra_effect_id)
+			if arg_3_0.extra_effect_id then
+				World.stop_spawning_particles(arg_3_0.world, arg_3_0.extra_effect_id)
 			end
 		end
 
-		local ids = self.nav_mesh_effect_ids
+		local var_3_0 = arg_3_0.nav_mesh_effect_ids
 
-		if ids then
-			for i = 1, #ids do
-				local id = ids[i]
+		if var_3_0 then
+			for iter_3_0 = 1, #var_3_0 do
+				local var_3_1 = var_3_0[iter_3_0]
 
-				World.stop_spawning_particles(self.world, id)
+				World.stop_spawning_particles(arg_3_0.world, var_3_1)
 			end
 		end
 
-		for player_unit, data in pairs(self.player_unit_particles) do
-			World.stop_spawning_particles(self.world, data.particle_id)
+		for iter_3_1, iter_3_2 in pairs(arg_3_0.player_unit_particles) do
+			World.stop_spawning_particles(arg_3_0.world, iter_3_2.particle_id)
 		end
 
-		table.clear(self.player_unit_particles)
+		table.clear(arg_3_0.player_unit_particles)
 
-		if self.nav_tag_volume_id then
-			local volume_system = Managers.state.entity:system("volume_system")
-
-			volume_system:destroy_nav_tag_volume(self.nav_tag_volume_id)
+		if arg_3_0.nav_tag_volume_id then
+			Managers.state.entity:system("volume_system"):destroy_nav_tag_volume(arg_3_0.nav_tag_volume_id)
 		end
 	end
 end
 
-AreaDamageExtension.start_area_damage = function (self)
-	self.area_damage_started = true
+function AreaDamageExtension.start_area_damage(arg_4_0)
+	arg_4_0.area_damage_started = true
 
-	local area_damage = AreaDamageTemplates.get_template(self.area_damage_template)
+	local var_4_0 = AreaDamageTemplates.get_template(arg_4_0.area_damage_template)
 
-	if self.is_server and self.aoe_init_damage then
-		local updated, damage_buffer = area_damage.server.update(self.damage_source, self.unit, self.initial_radius, self.aoe_init_damage, 0, 0, 0, 0, self.damage_players, self.explosion_template_name, self.slow_modifier, self._side)
+	if arg_4_0.is_server and arg_4_0.aoe_init_damage then
+		local var_4_1, var_4_2 = var_4_0.server.update(arg_4_0.damage_source, arg_4_0.unit, arg_4_0.initial_radius, arg_4_0.aoe_init_damage, 0, 0, 0, 0, arg_4_0.damage_players, arg_4_0.explosion_template_name, arg_4_0.slow_modifier, arg_4_0._side)
 
-		if updated then
-			self:_add_to_damage_buffer(damage_buffer)
+		if var_4_1 then
+			arg_4_0:_add_to_damage_buffer(var_4_2)
 		end
 	end
 
-	local particle_var_table = {
+	local var_4_3 = {
 		{
 			particle_variable = "pool_size",
-			value = Vector3(self.effect_size, self.effect_size, 1),
-		},
+			value = Vector3(arg_4_0.effect_size, arg_4_0.effect_size, 1)
+		}
 	}
 
-	if self.dot_effect_name then
-		self.effect_id = area_damage.client.spawn_effect(self.world, self.unit, self.dot_effect_name, particle_var_table)
+	if arg_4_0.dot_effect_name then
+		arg_4_0.effect_id = var_4_0.client.spawn_effect(arg_4_0.world, arg_4_0.unit, arg_4_0.dot_effect_name, var_4_3)
 	end
 
-	if self.extra_dot_effect_name then
-		self.extra_effect_id = area_damage.client.spawn_effect(self.world, self.unit, self.extra_dot_effect_name)
+	if arg_4_0.extra_dot_effect_name then
+		arg_4_0.extra_effect_id = var_4_0.client.spawn_effect(arg_4_0.world, arg_4_0.unit, arg_4_0.extra_dot_effect_name)
 	end
 
-	local nav_mesh_effect = self.nav_mesh_effect
+	local var_4_4 = arg_4_0.nav_mesh_effect
 
-	if nav_mesh_effect then
-		local unit_pos = Unit.world_position(self.unit, 0)
-		local radius = self.radius
-		local debug = script_data.debug_nav_mesh_vfx
+	if var_4_4 then
+		local var_4_5 = Unit.world_position(arg_4_0.unit, 0)
+		local var_4_6 = arg_4_0.radius
+		local var_4_7 = script_data.debug_nav_mesh_vfx
 
-		if debug then
-			QuickDrawerStay:circle(unit_pos, radius, Vector3.up(), Color(255, 255, 255), 24)
+		if var_4_7 then
+			QuickDrawerStay:circle(var_4_5, var_4_6, Vector3.up(), Color(255, 255, 255), 24)
 		end
 
-		local pi = math.pi
-		local ids = {}
-		local num_particles = 0
+		local var_4_8 = math.pi
+		local var_4_9 = {}
+		local var_4_10 = 0
 
-		self.nav_mesh_effect_ids = ids
+		arg_4_0.nav_mesh_effect_ids = var_4_9
 
-		local particle_radius = nav_mesh_effect.particle_radius
-		local particle_spacing = nav_mesh_effect.particle_spacing
-		local particle_name = nav_mesh_effect.particle_name
-		local particle_diameter = 2 * particle_radius
-		local particle_space_diameter = 2 * particle_spacing
-		local layers = (radius - particle_radius) / particle_space_diameter
-		local floored_layers = math.floor(layers)
-		local nav_world = Managers.state.entity:system("ai_system"):nav_world()
+		local var_4_11 = var_4_4.particle_radius
+		local var_4_12 = var_4_4.particle_spacing
+		local var_4_13 = var_4_4.particle_name
+		local var_4_14 = 2 * var_4_11
+		local var_4_15 = 2 * var_4_12
+		local var_4_16 = (var_4_6 - var_4_11) / var_4_15
+		local var_4_17 = math.floor(var_4_16)
+		local var_4_18 = Managers.state.entity:system("ai_system"):nav_world()
 
-		if debug then
-			QuickDrawerStay:circle(unit_pos, particle_spacing, Vector3.up(), Color(255, 255, 255), 32)
-			QuickDrawerStay:circle(unit_pos, particle_radius, Vector3.up(), Color(255, 0, 255), 32)
+		if var_4_7 then
+			QuickDrawerStay:circle(var_4_5, var_4_12, Vector3.up(), Color(255, 255, 255), 32)
+			QuickDrawerStay:circle(var_4_5, var_4_11, Vector3.up(), Color(255, 0, 255), 32)
 		end
 
-		local id = area_damage.client.spawn_effect(self.world, self.unit, particle_name, nil, unit_pos)
+		local var_4_19
 
-		num_particles = num_particles + 1
-		ids[num_particles] = id
+		var_4_9[var_4_19], var_4_19 = var_4_0.client.spawn_effect(arg_4_0.world, arg_4_0.unit, var_4_13, nil, var_4_5), var_4_10 + 1
 
-		for i = 1, floored_layers do
-			local current_radius = radius - (floored_layers - i) * particle_space_diameter - particle_radius
-			local circumference = current_radius * 2 * pi
-			local particles_in_layer = math.floor(circumference / particle_space_diameter)
-			local particle_radial_spacing = 2 * pi / particles_in_layer
+		for iter_4_0 = 1, var_4_17 do
+			local var_4_20 = var_4_6 - (var_4_17 - iter_4_0) * var_4_15 - var_4_11
+			local var_4_21 = var_4_20 * 2 * var_4_8
+			local var_4_22 = math.floor(var_4_21 / var_4_15)
+			local var_4_23 = 2 * var_4_8 / var_4_22
 
-			for j = 1, particles_in_layer do
-				local angle = j * particle_radial_spacing
-				local particle_pos = unit_pos + current_radius * Vector3(math.cos(angle), math.sin(angle), 0)
-				local success, z = GwNavQueries.triangle_from_position(nav_world, particle_pos, 1.5, 2)
+			for iter_4_1 = 1, var_4_22 do
+				local var_4_24 = iter_4_1 * var_4_23
+				local var_4_25 = var_4_5 + var_4_20 * Vector3(math.cos(var_4_24), math.sin(var_4_24), 0)
+				local var_4_26, var_4_27 = GwNavQueries.triangle_from_position(var_4_18, var_4_25, 1.5, 2)
 
-				if success then
-					particle_pos.z = z
+				if var_4_26 then
+					var_4_25.z = var_4_27
 
-					if debug then
-						QuickDrawerStay:circle(particle_pos, particle_spacing, Vector3.up(), Color(255, 255, 255), 32)
-						QuickDrawerStay:circle(particle_pos, particle_radius, Vector3.up(), Color(255, 0, 255), 32)
+					if var_4_7 then
+						QuickDrawerStay:circle(var_4_25, var_4_12, Vector3.up(), Color(255, 255, 255), 32)
+						QuickDrawerStay:circle(var_4_25, var_4_11, Vector3.up(), Color(255, 0, 255), 32)
 					end
 
-					local id = area_damage.client.spawn_effect(self.world, self.unit, particle_name, nil, particle_pos)
-
-					num_particles = num_particles + 1
-					ids[num_particles] = id
-				elseif debug then
-					QuickDrawerStay:circle(particle_pos, particle_spacing, Vector3.up(), Color(125, 125, 125), 32)
-					QuickDrawerStay:circle(particle_pos, particle_radius, Vector3.up(), Color(125, 125, 125), 32)
+					var_4_9[var_4_19], var_4_19 = var_4_0.client.spawn_effect(arg_4_0.world, arg_4_0.unit, var_4_13, nil, var_4_25), var_4_19 + 1
+				elseif var_4_7 then
+					QuickDrawerStay:circle(var_4_25, var_4_12, Vector3.up(), Color(125, 125, 125), 32)
+					QuickDrawerStay:circle(var_4_25, var_4_11, Vector3.up(), Color(125, 125, 125), 32)
 				end
 			end
 		end
 	end
 
-	if self.explosion_template_name then
-		local unit = self.unit
-		local world = self.world
-		local explosion_template = ExplosionUtils.get_template(self.explosion_template_name)
-		local sound_event_name = explosion_template.aoe.sound_event_name
+	if arg_4_0.explosion_template_name then
+		local var_4_28 = arg_4_0.unit
+		local var_4_29 = arg_4_0.world
+		local var_4_30 = ExplosionUtils.get_template(arg_4_0.explosion_template_name)
+		local var_4_31 = var_4_30.aoe.sound_event_name
 
-		if sound_event_name then
-			local area_damage_position = Unit.local_position(unit, 0)
+		if var_4_31 then
+			local var_4_32 = Unit.local_position(var_4_28, 0)
 
-			WwiseUtils.trigger_position_event(world, sound_event_name, area_damage_position)
+			WwiseUtils.trigger_position_event(var_4_29, var_4_31, var_4_32)
 		end
 
-		local start_aoe_sound_event_name = explosion_template.aoe.start_aoe_sound_event_name
+		local var_4_33 = var_4_30.aoe.start_aoe_sound_event_name
 
-		if start_aoe_sound_event_name then
-			WwiseUtils.trigger_unit_event(world, start_aoe_sound_event_name, unit, 0)
+		if var_4_33 then
+			WwiseUtils.trigger_unit_event(var_4_29, var_4_33, var_4_28, 0)
 		end
 	end
 
-	if self.is_server then
-		if self.create_nav_tag_volume then
-			if self.nav_tag_volume_layer then
-				local volume_system = Managers.state.entity:system("volume_system")
-				local pos = Unit.world_position(self.unit, 0)
+	if arg_4_0.is_server then
+		if arg_4_0.create_nav_tag_volume then
+			if arg_4_0.nav_tag_volume_layer then
+				local var_4_34 = Managers.state.entity:system("volume_system")
+				local var_4_35 = Unit.world_position(arg_4_0.unit, 0)
 
-				self.nav_tag_volume_id = volume_system:create_nav_tag_volume_from_data(pos, self.radius + approx_player_radius, self.nav_tag_volume_layer)
+				arg_4_0.nav_tag_volume_id = var_4_34:create_nav_tag_volume_from_data(var_4_35, arg_4_0.radius + var_0_0, arg_4_0.nav_tag_volume_layer)
 			else
-				Application.warning(string.format("[AreaDamageExtension] create_nav_tag_volume is set but there are no nav_tag_volume_template set for unit %s", self.unit))
+				Application.warning(string.format("[AreaDamageExtension] create_nav_tag_volume is set but there are no nav_tag_volume_template set for unit %s", arg_4_0.unit))
 			end
 		end
 
-		if self.threat_duration and self.threat_duration > 0 then
-			local source = "AreaDamageExtension"
-			local unit_pos = Unit.world_position(self.unit, 0)
-			local ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
+		if arg_4_0.threat_duration and arg_4_0.threat_duration > 0 then
+			local var_4_36 = "AreaDamageExtension"
+			local var_4_37 = Unit.world_position(arg_4_0.unit, 0)
 
-			ai_bot_group_system:aoe_threat_created(unit_pos, "sphere", self.radius + approx_player_radius, nil, self.threat_duration, source)
+			Managers.state.entity:system("ai_bot_group_system"):aoe_threat_created(var_4_37, "sphere", arg_4_0.radius + var_0_0, nil, arg_4_0.threat_duration, var_4_36)
 		end
 	end
 end
 
-AreaDamageExtension.update = function (self, unit, input, dt, context, t)
-	self:_update_damage_buffer()
+function AreaDamageExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	arg_5_0:_update_damage_buffer()
 
-	if not self.area_damage_started then
+	if not arg_5_0.area_damage_started then
 		return
 	end
 
-	local area_damage = AreaDamageTemplates.get_template(self.area_damage_template)
+	local var_5_0 = AreaDamageTemplates.get_template(arg_5_0.area_damage_template)
 
-	if self.is_server then
-		local updated, damage_buffer = area_damage.server.update(self.damage_source, self.unit, self.radius, self.aoe_dot_damage, self.life_time, self.life_timer, self.aoe_dot_damage_interval, self.damage_timer, self.damage_players, self.explosion_template_name, self.slow_modifier, self._side, self._custom_data_table)
+	if arg_5_0.is_server then
+		local var_5_1, var_5_2 = var_5_0.server.update(arg_5_0.damage_source, arg_5_0.unit, arg_5_0.radius, arg_5_0.aoe_dot_damage, arg_5_0.life_time, arg_5_0.life_timer, arg_5_0.aoe_dot_damage_interval, arg_5_0.damage_timer, arg_5_0.damage_players, arg_5_0.explosion_template_name, arg_5_0.slow_modifier, arg_5_0._side, arg_5_0._custom_data_table)
 
-		if updated then
-			self:_add_to_damage_buffer(damage_buffer)
+		if var_5_1 then
+			arg_5_0:_add_to_damage_buffer(var_5_2)
 		end
 
-		if self.area_ai_random_death_template then
-			local ai_random_die = AreaDamageTemplates.get_template(self.area_ai_random_death_template)
-			local updated, damage_buffer = ai_random_die.server.update(self.damage_source, self.unit, self.radius, self.aoe_dot_damage_interval, self.damage_timer)
+		if arg_5_0.area_ai_random_death_template then
+			local var_5_3, var_5_4 = AreaDamageTemplates.get_template(arg_5_0.area_ai_random_death_template).server.update(arg_5_0.damage_source, arg_5_0.unit, arg_5_0.radius, arg_5_0.aoe_dot_damage_interval, arg_5_0.damage_timer)
 
-			if updated then
-				self:_add_to_damage_buffer(damage_buffer)
+			if var_5_3 then
+				arg_5_0:_add_to_damage_buffer(var_5_4)
 			end
 		end
 
-		if updated then
-			self.damage_timer = 0
+		if var_5_1 then
+			arg_5_0.damage_timer = 0
 		end
 	end
 
-	area_damage.client.update(self.world, self.radius, self.unit, self.player_screen_effect_name, self.player_unit_particles, self.damage_players, self.explosion_template_name, self.slow_modifier, self._side, self._custom_data_table)
+	var_5_0.client.update(arg_5_0.world, arg_5_0.radius, arg_5_0.unit, arg_5_0.player_screen_effect_name, arg_5_0.player_unit_particles, arg_5_0.damage_players, arg_5_0.explosion_template_name, arg_5_0.slow_modifier, arg_5_0._side, arg_5_0._custom_data_table)
 
-	self.damage_timer = self.damage_timer + dt
-	self.life_timer = self.life_timer + dt
+	arg_5_0.damage_timer = arg_5_0.damage_timer + arg_5_3
+	arg_5_0.life_timer = arg_5_0.life_timer + arg_5_3
 
 	if script_data.debug_area_damage then
-		QuickDrawer:sphere(Unit.local_position(self.unit, 0), self.radius, Colors.get("hot_pink"))
+		QuickDrawer:sphere(Unit.local_position(arg_5_0.unit, 0), arg_5_0.radius, Colors.get("hot_pink"))
 	end
 end
 
-local NUM_UNITS_PER_FRAME = 1
+local var_0_1 = 1
 
-AreaDamageExtension._update_damage_buffer = function (self)
-	if not self.is_server then
+function AreaDamageExtension._update_damage_buffer(arg_6_0)
+	if not arg_6_0.is_server then
 		return
 	end
 
-	local damage_buffer = self._damage_buffer
-	local num_hits = self.num_hits
+	local var_6_0 = arg_6_0._damage_buffer
+	local var_6_1 = arg_6_0.num_hits
 
-	if #damage_buffer == 0 then
+	if #var_6_0 == 0 then
 		return
 	end
 
-	local current_damage_buffer_index = self._current_damage_buffer_index
-	local num_units_this_frame = current_damage_buffer_index + NUM_UNITS_PER_FRAME - 1
-	local reset = false
+	local var_6_2 = arg_6_0._current_damage_buffer_index
+	local var_6_3 = var_6_2 + var_0_1 - 1
+	local var_6_4 = false
 
-	for i = current_damage_buffer_index, num_units_this_frame do
-		local damage_data = damage_buffer[i]
+	for iter_6_0 = var_6_2, var_6_3 do
+		local var_6_5 = var_6_0[iter_6_0]
 
-		if not damage_data then
-			reset = true
+		if not var_6_5 then
+			var_6_4 = true
 
 			break
 		end
 
-		local unit = damage_data.unit
+		local var_6_6 = var_6_5.unit
 
-		if Unit.alive(unit) then
-			num_hits = num_hits + 1
+		if Unit.alive(var_6_6) then
+			var_6_1 = var_6_1 + 1
 
-			local area_damage = AreaDamageTemplates.get_template(damage_data.area_damage_template)
-
-			area_damage.server.do_damage(damage_data, self.unit, self.source_attacker_unit, self._custom_data_table)
+			AreaDamageTemplates.get_template(var_6_5.area_damage_template).server.do_damage(var_6_5, arg_6_0.unit, arg_6_0.source_attacker_unit, arg_6_0._custom_data_table)
 		end
 	end
 
-	self.num_hits = num_hits
+	arg_6_0.num_hits = var_6_1
 
-	if reset then
-		self._current_damage_buffer_index = 1
+	if var_6_4 then
+		arg_6_0._current_damage_buffer_index = 1
 
-		table.clear(damage_buffer)
+		table.clear(var_6_0)
 	else
-		self._current_damage_buffer_index = num_units_this_frame + 1
+		arg_6_0._current_damage_buffer_index = var_6_3 + 1
 	end
 end
 
-AreaDamageExtension._add_to_damage_buffer = function (self, temp_damage_buffer)
-	local damage_buffer = self._damage_buffer
-	local num_units_in_buffer = #self._damage_buffer
-	local num_units_in_temp_buffer = #temp_damage_buffer
+function AreaDamageExtension._add_to_damage_buffer(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_0._damage_buffer
+	local var_7_1 = #arg_7_0._damage_buffer
+	local var_7_2 = #arg_7_1
 
-	for i = 1, num_units_in_temp_buffer do
-		damage_buffer[num_units_in_buffer + i] = temp_damage_buffer[i]
+	for iter_7_0 = 1, var_7_2 do
+		var_7_0[var_7_1 + iter_7_0] = arg_7_1[iter_7_0]
 	end
 end
 
-AreaDamageExtension.hot_join_sync = function (self, peer_id)
+function AreaDamageExtension.hot_join_sync(arg_8_0, arg_8_1)
 	return
 end

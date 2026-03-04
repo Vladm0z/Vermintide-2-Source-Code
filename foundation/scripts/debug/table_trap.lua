@@ -1,206 +1,207 @@
-﻿-- chunkname: @foundation/scripts/debug/table_trap.lua
+-- chunkname: @foundation/scripts/debug/table_trap.lua
 
 table_trap = table_trap or {}
 
-table_trap.print = function (operation, key, value)
-	print(table_trap._trap_information(operation, key, value))
+function table_trap.print(arg_1_0, arg_1_1, arg_1_2)
+	print(table_trap._trap_information(arg_1_0, arg_1_1, arg_1_2))
 end
 
-table_trap.callstack = function (operation, key, value)
-	print(table_trap._trap_information(operation, key, value) .. "\n" .. Script.callstack())
+function table_trap.callstack(arg_2_0, arg_2_1, arg_2_2)
+	print(table_trap._trap_information(arg_2_0, arg_2_1, arg_2_2) .. "\n" .. Script.callstack())
 end
 
-table_trap.crash = function (operation, key, value)
-	print(table_trap._trap_information(operation, key, value))
+function table_trap.crash(arg_3_0, arg_3_1, arg_3_2)
+	print(table_trap._trap_information(arg_3_0, arg_3_1, arg_3_2))
 	error("Table trap crash")
 end
 
-table_trap.noop = function ()
+function table_trap.noop()
 	return
 end
 
-table_trap.trap_key = function (table_to_debug, key_to_inspect, read_func, write_func)
-	if read_func == nil then
-		read_func = table_trap.noop
+function table_trap.trap_key(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	if arg_5_2 == nil then
+		arg_5_2 = table_trap.noop
 	end
 
-	if write_func == nil then
-		write_func = table_trap.noop
+	if arg_5_3 == nil then
+		arg_5_3 = table_trap.noop
 	end
 
-	local data_table = {}
-	local old_metatable = getmetatable(table_to_debug)
+	local var_5_0 = {}
+	local var_5_1 = getmetatable(arg_5_0)
 
-	setmetatable(table_to_debug, nil)
+	setmetatable(arg_5_0, nil)
 
-	for k, v in pairs(table_to_debug) do
-		data_table[k] = v
-		table_to_debug[k] = nil
+	for iter_5_0, iter_5_1 in pairs(arg_5_0) do
+		var_5_0[iter_5_0] = iter_5_1
+		arg_5_0[iter_5_0] = nil
 	end
 
-	setmetatable(data_table, old_metatable)
+	setmetatable(var_5_0, var_5_1)
 
-	local new_metatable = {}
+	local var_5_2 = {}
 
-	table_trap._add_forwarding_metafunctions(new_metatable, data_table)
+	table_trap._add_forwarding_metafunctions(var_5_2, var_5_0)
 
-	new_metatable.__index = function (t, key)
-		local value = data_table[key]
+	function var_5_2.__index(arg_6_0, arg_6_1)
+		local var_6_0 = var_5_0[arg_6_1]
 
-		if key == key_to_inspect then
-			read_func("read", key, value)
+		if arg_6_1 == arg_5_1 then
+			arg_5_2("read", arg_6_1, var_6_0)
 		end
 
-		return value
+		return var_6_0
 	end
 
-	new_metatable.__newindex = function (t, key, value)
-		if key == key_to_inspect then
-			write_func("write", key, value)
+	function var_5_2.__newindex(arg_7_0, arg_7_1, arg_7_2)
+		if arg_7_1 == arg_5_1 then
+			arg_5_3("write", arg_7_1, arg_7_2)
 		end
 
-		data_table[key] = value
+		var_5_0[arg_7_1] = arg_7_2
 	end
 
-	setmetatable(table_to_debug, new_metatable)
+	setmetatable(arg_5_0, var_5_2)
 end
 
-table_trap.trap_keys = function (table_to_debug, read_func, write_func)
-	if read_func == nil then
-		read_func = table_trap.noop
+function table_trap.trap_keys(arg_8_0, arg_8_1, arg_8_2)
+	if arg_8_1 == nil then
+		arg_8_1 = table_trap.noop
 	end
 
-	if write_func == nil then
-		write_func = table_trap.noop
+	if arg_8_2 == nil then
+		arg_8_2 = table_trap.noop
 	end
 
-	local data_table = {}
-	local old_metatable = getmetatable(table_to_debug)
+	local var_8_0 = {}
+	local var_8_1 = getmetatable(arg_8_0)
 
-	setmetatable(table_to_debug, nil)
+	setmetatable(arg_8_0, nil)
 
-	for k, v in pairs(table_to_debug) do
-		data_table[k] = v
-		table_to_debug[k] = nil
+	for iter_8_0, iter_8_1 in pairs(arg_8_0) do
+		var_8_0[iter_8_0] = iter_8_1
+		arg_8_0[iter_8_0] = nil
 	end
 
-	setmetatable(data_table, old_metatable)
+	setmetatable(var_8_0, var_8_1)
 
-	local new_metatable = {}
+	local var_8_2 = {}
 
-	table_trap._add_forwarding_metafunctions(new_metatable, data_table)
+	table_trap._add_forwarding_metafunctions(var_8_2, var_8_0)
 
-	new_metatable.__index = function (t, key)
-		local value = data_table[key]
+	function var_8_2.__index(arg_9_0, arg_9_1)
+		local var_9_0 = var_8_0[arg_9_1]
 
-		read_func("read", key, value)
+		arg_8_1("read", arg_9_1, var_9_0)
 
-		return value
+		return var_9_0
 	end
 
-	new_metatable.__newindex = function (t, key, value)
-		write_func("write", key, value)
+	function var_8_2.__newindex(arg_10_0, arg_10_1, arg_10_2)
+		arg_8_2("write", arg_10_1, arg_10_2)
 
-		data_table[key] = value
+		var_8_0[arg_10_1] = arg_10_2
 	end
 
-	setmetatable(table_to_debug, new_metatable)
+	setmetatable(arg_8_0, var_8_2)
 end
 
-table_trap._trap_information = function (operation, key, value)
-	if operation == "read" then
-		return string.format("Trap %s '%s':'%s'", operation, tostring(key), tostring(value))
-	elseif operation == "write" then
-		return string.format("Trap %s '%s'='%s'", operation, tostring(key), tostring(value))
+function table_trap._trap_information(arg_11_0, arg_11_1, arg_11_2)
+	if arg_11_0 == "read" then
+		return string.format("Trap %s '%s':'%s'", arg_11_0, tostring(arg_11_1), tostring(arg_11_2))
+	elseif arg_11_0 == "write" then
+		return string.format("Trap %s '%s'='%s'", arg_11_0, tostring(arg_11_1), tostring(arg_11_2))
 	end
 end
 
-table_trap._add_forwarding_metafunctions = function (metatable, data_table)
-	metatable.__unm = function (t)
-		return -data_table
+function table_trap._add_forwarding_metafunctions(arg_12_0, arg_12_1)
+	function arg_12_0.__unm(arg_13_0)
+		return -arg_12_1
 	end
 
-	metatable.__add = function (lhs, rhs)
-		local a, b = table_trap._replace_with_data_if_metatable_matches(lhs, rhs, metatable, data_table)
+	function arg_12_0.__add(arg_14_0, arg_14_1)
+		local var_14_0, var_14_1 = table_trap._replace_with_data_if_metatable_matches(arg_14_0, arg_14_1, arg_12_0, arg_12_1)
 
-		return a + b
+		return var_14_0 + var_14_1
 	end
 
-	metatable.__sub = function (lhs, rhs)
-		local a, b = table_trap._replace_with_data_if_metatable_matches(lhs, rhs, metatable, data_table)
+	function arg_12_0.__sub(arg_15_0, arg_15_1)
+		local var_15_0, var_15_1 = table_trap._replace_with_data_if_metatable_matches(arg_15_0, arg_15_1, arg_12_0, arg_12_1)
 
-		return a - b
+		return var_15_0 - var_15_1
 	end
 
-	metatable.__mul = function (lhs, rhs)
-		local a, b = table_trap._replace_with_data_if_metatable_matches(lhs, rhs, metatable, data_table)
+	function arg_12_0.__mul(arg_16_0, arg_16_1)
+		local var_16_0, var_16_1 = table_trap._replace_with_data_if_metatable_matches(arg_16_0, arg_16_1, arg_12_0, arg_12_1)
 
-		return a * b
+		return var_16_0 * var_16_1
 	end
 
-	metatable.__div = function (lhs, rhs)
-		local a, b = table_trap._replace_with_data_if_metatable_matches(lhs, rhs, metatable, data_table)
+	function arg_12_0.__div(arg_17_0, arg_17_1)
+		local var_17_0, var_17_1 = table_trap._replace_with_data_if_metatable_matches(arg_17_0, arg_17_1, arg_12_0, arg_12_1)
 
-		return a / b
+		return var_17_0 / var_17_1
 	end
 
-	metatable.__mod = function (lhs, rhs)
-		local a, b = table_trap._replace_with_data_if_metatable_matches(lhs, rhs, metatable, data_table)
+	function arg_12_0.__mod(arg_18_0, arg_18_1)
+		local var_18_0, var_18_1 = table_trap._replace_with_data_if_metatable_matches(arg_18_0, arg_18_1, arg_12_0, arg_12_1)
 
-		return a % b
+		return var_18_0 % var_18_1
 	end
 
-	metatable.__pow = function (lhs, rhs)
-		local a, b = table_trap._replace_with_data_if_metatable_matches(lhs, rhs, metatable, data_table)
+	function arg_12_0.__pow(arg_19_0, arg_19_1)
+		local var_19_0, var_19_1 = table_trap._replace_with_data_if_metatable_matches(arg_19_0, arg_19_1, arg_12_0, arg_12_1)
 
-		return a^b
+		return var_19_0^var_19_1
 	end
 
-	metatable.__concat = function (lhs, rhs)
-		local a, b = table_trap._replace_with_data_if_metatable_matches(lhs, rhs, metatable, data_table)
+	function arg_12_0.__concat(arg_20_0, arg_20_1)
+		local var_20_0, var_20_1 = table_trap._replace_with_data_if_metatable_matches(arg_20_0, arg_20_1, arg_12_0, arg_12_1)
 
-		return a .. b
+		return var_20_0 .. var_20_1
 	end
 
-	metatable.__eq = function (lhs, rhs)
+	function arg_12_0.__eq(arg_21_0, arg_21_1)
 		assert(false)
 	end
 
-	metatable.__lt = function (lhs, rhs)
+	function arg_12_0.__lt(arg_22_0, arg_22_1)
 		assert(false)
 	end
 
-	metatable.__le = function (lhs, rhs)
+	function arg_12_0.__le(arg_23_0, arg_23_1)
 		assert(false)
 	end
 
-	metatable.__len = function (t)
-		return #data_table
+	function arg_12_0.__len(arg_24_0)
+		return #arg_12_1
 	end
 
-	metatable.__call = function (f, ...)
-		data_table(f, ...)
+	function arg_12_0.__call(arg_25_0, ...)
+		arg_12_1(arg_25_0, ...)
 	end
 
-	metatable.__tostring = function (s)
-		return tostring(data_table)
+	function arg_12_0.__tostring(arg_26_0)
+		return tostring(arg_12_1)
 	end
 end
 
-table_trap._replace_with_data_if_metatable_matches = function (lhs, rhs, metatable, data)
-	local redir_lhs, redir_rhs
+function table_trap._replace_with_data_if_metatable_matches(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+	local var_27_0
+	local var_27_1
 
-	if getmetatable(lhs) == metatable then
-		redir_lhs = data
+	if getmetatable(arg_27_0) == arg_27_2 then
+		var_27_0 = arg_27_3
 	else
-		redir_lhs = lhs
+		var_27_0 = arg_27_0
 	end
 
-	if getmetatable(rhs) == metatable then
-		redir_rhs = data
+	if getmetatable(arg_27_1) == arg_27_2 then
+		var_27_1 = arg_27_3
 	else
-		redir_rhs = rhs
+		var_27_1 = arg_27_1
 	end
 
-	return redir_lhs, redir_rhs
+	return var_27_0, var_27_1
 end

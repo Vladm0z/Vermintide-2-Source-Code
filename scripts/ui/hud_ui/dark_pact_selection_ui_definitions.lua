@@ -1,90 +1,89 @@
-﻿-- chunkname: @scripts/ui/hud_ui/dark_pact_selection_ui_definitions.lua
+-- chunkname: @scripts/ui/hud_ui/dark_pact_selection_ui_definitions.lua
 
-local scenegraph_definition = {
+local var_0_0 = {
 	screen = {
 		scale = "fit",
 		position = {
 			0,
 			0,
-			UILayer.main_menu,
+			UILayer.main_menu
 		},
 		size = {
 			1920,
-			1080,
-		},
+			1080
+		}
 	},
 	pivot = {
-		horizontal_alignment = "center",
-		parent = "screen",
 		vertical_alignment = "bottom",
+		parent = "screen",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			0,
-			0,
+			0
 		},
 		size = {
 			1920,
-			1080,
-		},
+			1080
+		}
 	},
 	selection_pivot = {
-		horizontal_alignment = "center",
-		parent = "screen",
 		vertical_alignment = "bottom",
+		parent = "screen",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			205,
-			0,
+			0
 		},
 		size = {
 			0,
-			0,
-		},
+			0
+		}
 	},
 	info_text = {
-		horizontal_alignment = "center",
-		parent = "screen",
 		vertical_alignment = "bottom",
+		parent = "screen",
+		horizontal_alignment = "center",
 		position = {
 			0,
 			80,
-			0,
+			0
 		},
 		size = {
 			800,
-			60,
-		},
-	},
+			60
+		}
+	}
 }
-local ordered_ps_names = GameModeSettings.versus.dark_pact_profile_order
-local ordered_pactsworn_slots = {}
+local var_0_1 = GameModeSettings.versus.dark_pact_profile_order
+local var_0_2 = {}
 
-for i = 1, #ordered_ps_names do
-	local name = ordered_ps_names[i]
-	local profile_index = FindProfileIndex(name)
-	local profile = SPProfiles[profile_index]
-	local enemy_role = profile.enemy_role
+for iter_0_0 = 1, #var_0_1 do
+	local var_0_3 = var_0_1[iter_0_0]
+	local var_0_4 = FindProfileIndex(var_0_3)
+	local var_0_5 = SPProfiles[var_0_4].enemy_role
 
-	if ordered_pactsworn_slots[enemy_role] then
-		local slot = ordered_pactsworn_slots[enemy_role]
+	if var_0_2[var_0_5] then
+		local var_0_6 = var_0_2[var_0_5]
 
-		slot[#slot + 1] = name
+		var_0_6[#var_0_6 + 1] = var_0_3
 	else
-		ordered_pactsworn_slots[enemy_role] = {}
+		var_0_2[var_0_5] = {}
 
-		local slot = ordered_pactsworn_slots[enemy_role]
+		local var_0_7 = var_0_2[var_0_5]
 
-		slot[#slot + 1] = name
+		var_0_7[#var_0_7 + 1] = var_0_3
 	end
 end
 
-local function create_selection_widget(scenegraph_id, size)
-	local frame_style = "pactsworn_frame_01"
-	local frame_settings = UIFrameSettings[frame_style]
-	local frame_width = frame_settings.texture_sizes.horizontal[2]
-	local size = size and size or {
+local function var_0_8(arg_1_0, arg_1_1)
+	local var_1_0 = "pactsworn_frame_01"
+	local var_1_1 = UIFrameSettings[var_1_0]
+	local var_1_2 = var_1_1.texture_sizes.horizontal[2]
+	local var_1_3 = arg_1_1 and arg_1_1 or {
 		148,
-		148,
+		148
 	}
 
 	return {
@@ -93,293 +92,293 @@ local function create_selection_widget(scenegraph_id, size)
 				{
 					pass_type = "texture",
 					style_id = "profile_texture",
-					texture_id = "profile_texture",
+					texture_id = "profile_texture"
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "frame",
-					texture_id = "frame",
+					texture_id = "frame"
 				},
 				{
-					content_id = "hotspot",
-					pass_type = "hotspot",
 					style_id = "hotspot",
+					pass_type = "hotspot",
+					content_id = "hotspot"
 				},
 				{
 					pass_type = "texture",
 					style_id = "hovered_frame",
 					texture_id = "hovered_frame",
-					content_check_function = function (content)
-						return content.hotspot.is_hover or content.selected
-					end,
-				},
-			},
+					content_check_function = function(arg_2_0)
+						return arg_2_0.hotspot.is_hover or arg_2_0.selected
+					end
+				}
+			}
 		},
 		content = {
 			hovered_frame = "pactsworn_frame_highlight",
-			profile_texture = "icons_placeholder",
 			selected = false,
-			frame = frame_settings.texture,
-			hotspot = {},
+			profile_texture = "icons_placeholder",
+			frame = var_1_1.texture,
+			hotspot = {}
 		},
 		style = {
 			profile_texture = {
-				size = size,
-				default_size = size,
+				size = var_1_3,
+				default_size = var_1_3,
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					0,
-					1,
+					1
 				},
 				default_offset = {
 					0,
 					0,
-					1,
-				},
+					1
+				}
 			},
 			frame = {
 				size = {
-					size[1] - 2,
-					size[2] - 4,
+					var_1_3[1] - 2,
+					var_1_3[2] - 4
 				},
 				default_size = {
-					size[1] - 2,
-					size[2] - 4,
+					var_1_3[1] - 2,
+					var_1_3[2] - 4
 				},
-				texture_size = frame_settings.texture_size,
-				texture_sizes = frame_settings.texture_sizes,
+				texture_size = var_1_1.texture_size,
+				texture_sizes = var_1_1.texture_sizes,
 				frame_margins = {
-					-frame_width,
-					-frame_width,
+					-var_1_2,
+					-var_1_2
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					0,
 					2,
-					4,
+					4
 				},
 				default_offset = {
 					0,
 					2,
-					4,
-				},
+					4
+				}
 			},
 			hotspot = {
-				size = size,
+				size = var_1_3,
 				offset = {
 					0,
 					0,
-					0,
-				},
+					0
+				}
 			},
 			hovered_frame = {
-				horizontal_alignment = "left",
 				vertical_alignment = "bottom",
+				horizontal_alignment = "left",
 				texture_size = {
-					size[1] + 26,
-					size[2] + 30,
+					var_1_3[1] + 26,
+					var_1_3[2] + 30
 				},
 				default_size = {
-					size[1] + 26,
-					size[2] + 30,
+					var_1_3[1] + 26,
+					var_1_3[2] + 30
 				},
 				color = {
 					255,
 					255,
 					255,
-					255,
+					255
 				},
 				offset = {
 					-14,
 					-16,
-					21,
+					21
 				},
 				default_offset = {
 					-14,
 					-16,
-					21,
-				},
-			},
+					21
+				}
+			}
 		},
-		scenegraph_id = scenegraph_id,
+		scenegraph_id = arg_1_0,
 		offset = {
 			0,
 			0,
-			0,
-		},
+			0
+		}
 	}
 end
 
-local selection_frame_definition = {
+local var_0_9 = {
 	scenegraph_id = "pivot",
 	element = {
 		passes = {
 			{
-				content_id = "hotspot",
-				pass_type = "hotspot",
 				style_id = "hotspot",
+				pass_type = "hotspot",
+				content_id = "hotspot"
 			},
 			{
 				pass_type = "texture",
 				style_id = "gritty_border",
-				texture_id = "gritty_border",
+				texture_id = "gritty_border"
 			},
 			{
 				pass_type = "texture",
 				style_id = "profile_texture",
-				texture_id = "profile_texture",
-			},
-		},
+				texture_id = "profile_texture"
+			}
+		}
 	},
 	content = {
 		gritty_border = "gritty_border",
 		profile_texture = "icons_placeholder",
-		hotspot = {},
+		hotspot = {}
 	},
 	style = {
 		hotspot = {
 			area_size = {
 				148,
-				148,
+				148
 			},
 			offset = {
 				0,
 				80,
-				0,
-			},
+				0
+			}
 		},
 		gritty_border = {
 			texture_size = {
 				150,
-				160,
+				160
 			},
 			color = Colors.get_table("black"),
 			offset = {
 				-20,
 				60,
-				0,
-			},
+				0
+			}
 		},
 		profile_texture = {
 			texture_size = {
 				148,
-				148,
+				148
 			},
 			offset = {
 				0,
 				80,
-				0,
-			},
-		},
-	},
+				0
+			}
+		}
+	}
 }
-local color_disabled = {
+local var_0_10 = {
 	255,
-	Colors.from_hex("545454"),
+	Colors.from_hex("545454")
 }
-local color_available = {
+local var_0_11 = {
 	255,
-	Colors.from_hex("b65b00"),
+	Colors.from_hex("b65b00")
 }
-local info_text_style = {
+local var_0_12 = {
 	font_size = 20,
-	font_type = "hell_shark",
-	horizontal_alignment = "center",
 	localize = false,
 	use_shadow = true,
+	horizontal_alignment = "center",
 	vertical_alignment = "center",
+	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("light_gray", 255),
 	rect_color = Colors.get_color_table_with_alpha("black", 0),
 	line_colors = {},
 	offset = {
 		0,
 		0,
-		50,
-	},
+		50
+	}
 }
-local info_text_style_shadow = {
+local var_0_13 = {
 	font_size = 20,
-	font_type = "hell_shark",
-	horizontal_alignment = "center",
 	localize = false,
+	horizontal_alignment = "center",
 	vertical_alignment = "center",
+	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("black", 255),
 	rect_color = Colors.get_color_table_with_alpha("black", 0),
 	line_colors = {},
 	offset = {
 		1,
 		1,
-		49,
-	},
+		49
+	}
 }
-local widget_definitions = {
+local var_0_14 = {
 	overlay = UIWidgets.create_simple_rect("screen", {
 		255,
 		0,
 		0,
-		0,
+		0
 	}),
 	chrome = {
 		scenegraph_id = "pivot",
 		offset = {
 			0,
 			0,
-			1,
+			1
 		},
 		element = {
 			passes = {
 				{
 					pass_type = "texture",
 					style_id = "bottom_glow",
-					texture_id = "bottom_glow",
+					texture_id = "bottom_glow"
 				},
 				{
 					pass_type = "texture",
 					style_id = "top_detail",
-					texture_id = "top_detail",
+					texture_id = "top_detail"
 				},
 				{
 					pass_type = "rotated_texture",
 					style_id = "bottom_detail",
-					texture_id = "bottom_detail",
+					texture_id = "bottom_detail"
 				},
 				{
-					pass_type = "text",
 					style_id = "category_text",
-					text_id = "category_text",
+					pass_type = "text",
+					text_id = "category_text"
 				},
 				{
-					pass_type = "text",
 					style_id = "pick_text",
-					text_id = "pick_text",
+					pass_type = "text",
+					text_id = "pick_text"
 				},
 				{
 					pass_type = "texture",
 					style_id = "textured_backdrop",
-					texture_id = "textured_backdrop",
-				},
-			},
+					texture_id = "textured_backdrop"
+				}
+			}
 		},
 		content = {
-			bottom_detail = "gritty_frame_wide",
 			bottom_glow = "bottom_glow",
-			category_text = "",
 			pick_text = "",
+			category_text = "",
+			bottom_detail = "gritty_frame_wide",
 			textured_backdrop = "textured_backdrop",
 			top_detail = "gritty_frame_wide",
-			color_disabled = color_disabled,
-			color_available = color_available,
+			color_disabled = var_0_10,
+			color_available = var_0_11
 		},
 		style = {
 			bottom_glow = {
@@ -387,314 +386,292 @@ local widget_definitions = {
 				offset = {
 					0,
 					0,
-					-2,
+					-2
 				},
 				texture_size = {
 					2800,
-					344,
+					344
 				},
-				color = Colors.get_color_table_with_alpha("white", 60),
+				color = Colors.get_color_table_with_alpha("white", 60)
 			},
 			top_detail = {
 				horizontal_alignment = "center",
 				offset = {
 					0,
 					150,
-					0,
+					0
 				},
 				texture_size = {
 					522,
-					65,
+					65
 				},
-				color = Colors.get_color_table_with_alpha("black", 0),
+				color = Colors.get_color_table_with_alpha("black", 0)
 			},
 			bottom_detail = {
 				horizontal_alignment = "center",
 				angle = math.degrees_to_radians(180),
 				pivot = {
 					0,
-					0,
+					0
 				},
 				offset = {
 					522,
 					300,
-					0,
+					0
 				},
 				texture_size = {
 					522,
-					65,
+					65
 				},
-				color = Colors.get_color_table_with_alpha("black", 0),
+				color = Colors.get_color_table_with_alpha("black", 0)
 			},
 			category_text = {
+				use_shadow = true,
+				upper_case = true,
+				localize = false,
 				font_size = 20,
 				font_type = "hell_shark",
 				horizontal_alignment = "center",
-				localize = false,
-				upper_case = true,
-				use_shadow = true,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				offset = {
 					0,
 					160,
-					0,
-				},
+					0
+				}
 			},
 			pick_text = {
-				font_size = 36,
-				font_type = "hell_shark_header",
-				horizontal_alignment = "center",
-				localize = false,
 				upper_case = true,
+				localize = false,
+				font_size = 36,
+				horizontal_alignment = "center",
 				use_shadow = true,
+				font_type = "hell_shark_header",
 				text_color = Colors.get_color_table_with_alpha("light_gray", 255),
 				offset = {
 					0,
 					120,
-					0,
+					0
 				},
 				shadow_offset = {
 					1,
 					1,
-					0,
+					0
 				},
-				shadow_color = Colors.get_color_table_with_alpha("black", 255),
+				shadow_color = Colors.get_color_table_with_alpha("black", 255)
 			},
 			textured_backdrop = {
 				horizontal_alignment = "center",
 				offset = {
 					0,
 					105,
-					-3,
+					-3
 				},
 				texture_size = {
 					616,
-					96,
+					96
 				},
-				color = Colors.get_color_table_with_alpha("white", 255),
-			},
-		},
+				color = Colors.get_color_table_with_alpha("white", 255)
+			}
+		}
 	},
-	info_text = UIWidgets.create_simple_rect_text("info_text", "", nil, nil, nil, info_text_style),
-	info_text_shadow = UIWidgets.create_simple_rect_text("info_text", "", nil, nil, nil, info_text_style_shadow),
+	info_text = UIWidgets.create_simple_rect_text("info_text", "", nil, nil, nil, var_0_12),
+	info_text_shadow = UIWidgets.create_simple_rect_text("info_text", "", nil, nil, nil, var_0_13)
 }
-local animation_definitions = {
+local var_0_15 = {
 	on_enter = {
 		{
-			duration = 0.6,
 			name = "fade_in_glow",
+			duration = 0.6,
 			init = NOP,
-			update = function (ui_scenegraph, scenegraph_def, widgets_by_name, progress, params)
-				local t = progress
+			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+				local var_3_0 = arg_3_3
 
-				widgets_by_name.chrome.style.bottom_glow.color[1] = 150 * t
-				widgets_by_name.chrome.style.textured_backdrop.color[1] = 255 * t
-				widgets_by_name.overlay.style.rect.color[1] = 30 * t
+				arg_3_2.chrome.style.bottom_glow.color[1] = 150 * var_3_0
+				arg_3_2.chrome.style.textured_backdrop.color[1] = 255 * var_3_0
+				arg_3_2.overlay.style.rect.color[1] = 30 * var_3_0
 			end,
-			on_complete = NOP,
+			on_complete = NOP
 		},
 		{
-			duration = 0.5,
 			name = "fade_slide_in_bg",
+			duration = 0.5,
 			init = NOP,
-			update = function (ui_scenegraph, scenegraph_def, widgets_by_name, progress, params)
-				local t = math.easeOutCubic(progress)
-				local widget = widgets_by_name.chrome
-				local alpha, dy, by = 0 * t, 480 * t, 285 * t
+			update = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+				local var_4_0 = math.easeOutCubic(arg_4_3)
+				local var_4_1 = arg_4_2.chrome
+				local var_4_2 = 0 * var_4_0
+				local var_4_3 = 480 * var_4_0
+				local var_4_4 = 285 * var_4_0
 
-				widget.style.top_detail.color[1] = 0
-				widget.style.top_detail.offset[2] = 0
-				widget.style.bottom_detail.color[1] = 0
-				widget.style.bottom_detail.offset[2] = 0
+				var_4_1.style.top_detail.color[1] = 0
+				var_4_1.style.top_detail.offset[2] = 0
+				var_4_1.style.bottom_detail.color[1] = 0
+				var_4_1.style.bottom_detail.offset[2] = 0
 			end,
-			on_complete = NOP,
+			on_complete = NOP
 		},
 		{
+			name = "fade_in_text",
 			delay = 0.3,
 			duration = 0.4,
-			name = "fade_in_text",
-			init = function (ui_scenegraph, scenegraph_def, widgets_by_name, params)
-				local widget = widgets_by_name.chrome
-
-				widget.style.category_text.text_color[1] = 0
+			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+				arg_5_2.chrome.style.category_text.text_color[1] = 0
 			end,
-			update = function (ui_scenegraph, scenegraph_def, widgets_by_name, progress, params)
-				local t = math.easeOutCubic(progress)
-				local widget = widgets_by_name.chrome
-				local alpha = 255 * t
+			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+				local var_6_0 = math.easeOutCubic(arg_6_3)
+				local var_6_1 = arg_6_2.chrome
+				local var_6_2 = 255 * var_6_0
 
-				widget.style.category_text.text_color[1] = alpha
+				var_6_1.style.category_text.text_color[1] = var_6_2
 			end,
-			on_complete = NOP,
+			on_complete = NOP
 		},
 		{
+			name = "fade_in_pick_text",
 			delay = 0.4,
 			duration = 0.5,
-			name = "fade_in_pick_text",
-			init = function (ui_scenegraph, scenegraph_def, widgets_by_name, params)
-				local widget = widgets_by_name.chrome
-
-				widget.style.pick_text.text_color[1] = 0
+			init = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+				arg_7_2.chrome.style.pick_text.text_color[1] = 0
 			end,
-			update = function (ui_scenegraph, scenegraph_def, widgets_by_name, progress, params)
-				local t = math.easeOutCubic(progress)
-				local widget = widgets_by_name.chrome
-				local alpha = 255 * t
+			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+				local var_8_0 = math.easeOutCubic(arg_8_3)
+				local var_8_1 = arg_8_2.chrome
+				local var_8_2 = 255 * var_8_0
 
-				widget.style.pick_text.text_color[1] = alpha
+				var_8_1.style.pick_text.text_color[1] = var_8_2
 			end,
-			on_complete = NOP,
+			on_complete = NOP
 		},
 		{
+			name = "slide_in_frames",
 			delay = 0,
 			duration = 0.5,
-			name = "slide_in_frames",
-			init = function (ui_scenegraph, scenegraph_def, widgets_by_name, params)
-				local selector_widgets = params._selector_widgets
+			init = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+				local var_9_0 = arg_9_3._selector_widgets
 
-				for i = 1, #selector_widgets do
-					local widget = selector_widgets[i]
-
-					widget.offset[2] = -1000
+				for iter_9_0 = 1, #var_9_0 do
+					var_9_0[iter_9_0].offset[2] = -1000
 				end
 			end,
-			update = function (ui_scenegraph, scenegraph_def, widgets_by_name, progress, params)
-				local t = 1 - math.easeOutCubic(progress)
-				local selector_widgets = params._selector_widgets
+			update = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+				local var_10_0 = 1 - math.easeOutCubic(arg_10_3)
+				local var_10_1 = arg_10_4._selector_widgets
 
-				for i = 1, #selector_widgets do
-					local widget = selector_widgets[i]
-
-					widget.offset[2] = (400 + 100 * i) * t
+				for iter_10_0 = 1, #var_10_1 do
+					var_10_1[iter_10_0].offset[2] = (400 + 100 * iter_10_0) * var_10_0
 				end
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_def, widgets_by_name, params)
-				params:_capture_input()
-			end,
+			on_complete = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+				arg_11_3:_capture_input()
+			end
 		},
 		{
-			delay = 0.5,
-			duration = 0.2,
 			name = "fade_in_info_text",
-			init = function (ui_scenegraph, scenegraph_def, widgets_by_name, params)
-				local widget = widgets_by_name.info_text
-
-				widget.style.text.text_color[1] = 0
-			end,
-			update = function (ui_scenegraph, scenegraph_def, widgets_by_name, progress, params)
-				local widget = widgets_by_name.info_text
-
-				widget.style.text.text_color[1] = 255 * math.easeOutCubic(progress)
-			end,
-			on_complete = function (ui_scenegraph, scenegraph_def, widgets_by_name, params)
-				return
-			end,
-		},
-		{
 			delay = 0.5,
 			duration = 0.2,
-			name = "fade_in_info_text_shadow",
-			init = function (ui_scenegraph, scenegraph_def, widgets_by_name, params)
-				local widget = widgets_by_name.info_text_shadow
-
-				widget.style.text.text_color[1] = 0
+			init = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+				arg_12_2.info_text.style.text.text_color[1] = 0
 			end,
-			update = function (ui_scenegraph, scenegraph_def, widgets_by_name, progress, params)
-				local widget = widgets_by_name.info_text_shadow
-
-				widget.style.text.text_color[1] = 255 * math.easeOutCubic(progress)
+			update = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+				arg_13_2.info_text.style.text.text_color[1] = 255 * math.easeOutCubic(arg_13_3)
 			end,
-			on_complete = function (ui_scenegraph, scenegraph_def, widgets_by_name, params)
+			on_complete = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 				return
-			end,
+			end
 		},
+		{
+			name = "fade_in_info_text_shadow",
+			delay = 0.5,
+			duration = 0.2,
+			init = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+				arg_15_2.info_text_shadow.style.text.text_color[1] = 0
+			end,
+			update = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+				arg_16_2.info_text_shadow.style.text.text_color[1] = 255 * math.easeOutCubic(arg_16_3)
+			end,
+			on_complete = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+				return
+			end
+		}
 	},
 	on_exit = {
 		{
-			duration = 0.2,
 			name = "fade_out_glow",
-			init = function (ui_scenegraph, scenegraph_def, widgets_by_name, params)
-				params:_release_input()
+			duration = 0.2,
+			init = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+				arg_18_3:_release_input()
 			end,
-			update = function (ui_scenegraph, scenegraph_def, widgets_by_name, progress, params)
-				local t = 1 - progress
+			update = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+				local var_19_0 = 1 - arg_19_3
 
-				widgets_by_name.chrome.style.bottom_glow.color[1] = 150 * t
-				widgets_by_name.chrome.style.textured_backdrop.color[1] = 255 * t
-				widgets_by_name.overlay.style.rect.color[1] = 30 * t
+				arg_19_2.chrome.style.bottom_glow.color[1] = 150 * var_19_0
+				arg_19_2.chrome.style.textured_backdrop.color[1] = 255 * var_19_0
+				arg_19_2.overlay.style.rect.color[1] = 30 * var_19_0
 			end,
-			on_complete = NOP,
+			on_complete = NOP
 		},
 		{
-			duration = 0.5,
 			name = "fade_slide_out",
+			duration = 0.5,
 			init = NOP,
-			update = function (ui_scenegraph, scenegraph_def, widgets_by_name, progress, params)
-				local t = 1 - math.easeOutCubic(progress)
-				local widget = widgets_by_name.chrome
-				local alpha = 0 * t
+			update = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+				local var_20_0 = 1 - math.easeOutCubic(arg_20_3)
+				local var_20_1 = arg_20_2.chrome
+				local var_20_2 = 0 * var_20_0
 
-				widget.style.top_detail.color[1] = 0
-				widget.style.bottom_detail.color[1] = 0
-				widget.style.category_text.text_color[1] = alpha
-				widget.style.pick_text.text_color[1] = alpha
+				var_20_1.style.top_detail.color[1] = 0
+				var_20_1.style.bottom_detail.color[1] = 0
+				var_20_1.style.category_text.text_color[1] = var_20_2
+				var_20_1.style.pick_text.text_color[1] = var_20_2
 			end,
-			on_complete = NOP,
+			on_complete = NOP
 		},
 		{
-			duration = 0.5,
 			name = "slide_out_frames",
-			init = function (ui_scenegraph, scenegraph_def, widgets_by_name, params)
-				local selector_widgets = params._selector_widgets
+			duration = 0.5,
+			init = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+				local var_21_0 = arg_21_3._selector_widgets
 
-				for i = 1, #selector_widgets do
-					local widget = selector_widgets[i]
-
-					widget.offset[2] = 0
+				for iter_21_0 = 1, #var_21_0 do
+					var_21_0[iter_21_0].offset[2] = 0
 				end
 			end,
-			update = function (ui_scenegraph, scenegraph_def, widgets_by_name, progress, params)
-				local t = math.easeOutCubic(progress)
-				local selector_widgets = params._selector_widgets
+			update = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+				local var_22_0 = math.easeOutCubic(arg_22_3)
+				local var_22_1 = arg_22_4._selector_widgets
 
-				for i = 1, #selector_widgets do
-					local widget = selector_widgets[i]
-
-					widget.offset[2] = -(400 + 100 * i) * t
+				for iter_22_0 = 1, #var_22_1 do
+					var_22_1[iter_22_0].offset[2] = -(400 + 100 * iter_22_0) * var_22_0
 				end
 			end,
-			on_complete = NOP,
+			on_complete = NOP
 		},
 		{
-			duration = 0.5,
 			name = "fade_out_info_text",
+			duration = 0.5,
 			init = NOP,
-			update = function (ui_scenegraph, scenegraph_def, widgets_by_name, progress, params)
-				local widget = widgets_by_name.info_text
-
-				widget.style.text.text_color[1] = 255 * (1 - math.easeOutCubic(progress))
+			update = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+				arg_23_2.info_text.style.text.text_color[1] = 255 * (1 - math.easeOutCubic(arg_23_3))
 			end,
-			on_complete = NOP,
+			on_complete = NOP
 		},
 		{
-			duration = 0.5,
 			name = "fade_out_info_text_shadow",
+			duration = 0.5,
 			init = NOP,
-			update = function (ui_scenegraph, scenegraph_def, widgets_by_name, progress, params)
-				local widget = widgets_by_name.info_text_shadow
-
-				widget.style.text.text_color[1] = 255 * (1 - math.easeOutCubic(progress))
+			update = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+				arg_24_2.info_text_shadow.style.text.text_color[1] = 255 * (1 - math.easeOutCubic(arg_24_3))
 			end,
-			on_complete = NOP,
-		},
-	},
+			on_complete = NOP
+		}
+	}
 }
 
 return {
-	scenegraph_definition = scenegraph_definition,
-	widget_definitions = widget_definitions,
-	animation_definitions = animation_definitions,
-	selection_frame_definition = selection_frame_definition,
-	ordered_pactsworn_slots = ordered_pactsworn_slots,
-	create_selection_widget = create_selection_widget,
+	scenegraph_definition = var_0_0,
+	widget_definitions = var_0_14,
+	animation_definitions = var_0_15,
+	selection_frame_definition = var_0_9,
+	ordered_pactsworn_slots = var_0_2,
+	create_selection_widget = var_0_8
 }

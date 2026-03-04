@@ -1,327 +1,312 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/chaos_sorcerer/bt_chaos_exalted_sorcerer_skulk_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/chaos_sorcerer/bt_chaos_exalted_sorcerer_skulk_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTChaosExaltedSorcererSkulkAction = class(BTChaosExaltedSorcererSkulkAction, BTNode)
 BTChaosExaltedSorcererSkulkAction.name = "BTChaosExaltedSorcererSkulkAction"
 
-local BTChaosExaltedSorcererSkulkAction = BTChaosExaltedSorcererSkulkAction
-local Unit_alive = Unit.alive
-local POSITION_LOOKUP = POSITION_LOOKUP
+local var_0_0 = BTChaosExaltedSorcererSkulkAction
+local var_0_1 = Unit.alive
+local var_0_2 = POSITION_LOOKUP
 
-BTChaosExaltedSorcererSkulkAction.init = function (self, ...)
-	BTChaosExaltedSorcererSkulkAction.super.init(self, ...)
+function var_0_0.init(arg_1_0, ...)
+	var_0_0.super.init(arg_1_0, ...)
 
-	self.cover_points_broadphase = Managers.state.conflict.level_analysis.cover_points_broadphase
+	arg_1_0.cover_points_broadphase = Managers.state.conflict.level_analysis.cover_points_broadphase
 end
 
-BTChaosExaltedSorcererSkulkAction.enter = function (self, unit, blackboard, t)
-	local action = self._tree_node.action_data
-	local breed = blackboard.breed
-	local target_dist = blackboard.target_dist
-	local skulk_data = blackboard.skulk_data or {}
+function var_0_0.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = arg_2_0._tree_node.action_data
+	local var_2_1 = arg_2_2.breed
+	local var_2_2 = arg_2_2.target_dist
+	local var_2_3 = arg_2_2.skulk_data or {}
 
-	blackboard.skulk_data = skulk_data
-	skulk_data.direction = skulk_data.direction or 1 - math.random(0, 1) * 2
-	skulk_data.radius = skulk_data.radius or blackboard.target_dist
-	blackboard.action = action
+	arg_2_2.skulk_data = var_2_3
+	var_2_3.direction = var_2_3.direction or 1 - math.random(0, 1) * 2
+	var_2_3.radius = var_2_3.radius or arg_2_2.target_dist
+	arg_2_2.action = var_2_0
 
-	if blackboard.move_state ~= "idle" then
-		self:idle(unit, blackboard)
+	if arg_2_2.move_state ~= "idle" then
+		arg_2_0:idle(arg_2_1, arg_2_2)
 	end
 
-	local ai_navigation = blackboard.navigation_extension
+	arg_2_2.navigation_extension:set_max_speed(var_2_1.run_speed)
+	LocomotionUtils.set_animation_driven_movement(arg_2_1, false)
 
-	ai_navigation:set_max_speed(breed.run_speed)
-	LocomotionUtils.set_animation_driven_movement(unit, false)
+	if arg_2_2.move_pos then
+		local var_2_4 = arg_2_2.move_pos:unbox()
 
-	if blackboard.move_pos then
-		local move_pos = blackboard.move_pos:unbox()
-
-		self:move_to(move_pos, unit, blackboard)
+		arg_2_0:move_to(var_2_4, arg_2_1, arg_2_2)
 	end
 
-	blackboard.ready_to_summon = false
-	blackboard.num_summons = blackboard.num_summons or 0
-	blackboard.health_extension = ScriptUnit.extension(unit, "health_system")
-	blackboard.teleport_health_percent = blackboard.health_extension:current_health_percent() - action.part_hp_lost_to_teleport
-	blackboard.travel_teleport_timer = t + ConflictUtils.random_interval(action.teleport_cooldown)
+	arg_2_2.ready_to_summon = false
+	arg_2_2.num_summons = arg_2_2.num_summons or 0
+	arg_2_2.health_extension = ScriptUnit.extension(arg_2_1, "health_system")
+	arg_2_2.teleport_health_percent = arg_2_2.health_extension:current_health_percent() - var_2_0.part_hp_lost_to_teleport
+	arg_2_2.travel_teleport_timer = arg_2_3 + ConflictUtils.random_interval(var_2_0.teleport_cooldown)
 
-	local available_spells = action.available_spells
-	local spell_name = available_spells[Math.random(1, #available_spells)]
-	local spell = blackboard.spells_lookup[spell_name]
+	local var_2_5 = var_2_0.available_spells
+	local var_2_6 = var_2_5[Math.random(1, #var_2_5)]
+	local var_2_7 = arg_2_2.spells_lookup[var_2_6]
 
-	blackboard.current_spell = spell
-	blackboard.current_spell_name = spell.name
-	blackboard.face_target_while_summoning = true
+	arg_2_2.current_spell = var_2_7
+	arg_2_2.current_spell_name = var_2_7.name
+	arg_2_2.face_target_while_summoning = true
 end
 
-BTChaosExaltedSorcererSkulkAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	local skulk_data = blackboard.skulk_data
-	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
-	local navigation_extension = blackboard.navigation_extension
+function var_0_0.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	local var_3_0 = arg_3_2.skulk_data
+	local var_3_1 = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
+	local var_3_2 = arg_3_2.navigation_extension
 
-	navigation_extension:set_max_speed(default_move_speed)
+	var_3_2:set_max_speed(var_3_1)
 
-	if reason == "aborted" then
-		local path_found = navigation_extension:is_following_path()
+	if arg_3_4 == "aborted" then
+		local var_3_3 = var_3_2:is_following_path()
 
-		if blackboard.move_pos and path_found and blackboard.move_state == "idle" then
-			self:start_move_animation(unit, blackboard)
+		if arg_3_2.move_pos and var_3_3 and arg_3_2.move_state == "idle" then
+			arg_3_0:start_move_animation(arg_3_1, arg_3_2)
 		end
 
-		local difficulty = Managers.state.difficulty:get_difficulty()
+		local var_3_4 = Managers.state.difficulty:get_difficulty()
 
-		blackboard.done_casting_timer = t + blackboard.action.after_casting_delay[difficulty]
+		arg_3_2.done_casting_timer = arg_3_3 + arg_3_2.action.after_casting_delay[var_3_4]
 	end
 
-	skulk_data.animation_state = nil
-	blackboard.action = nil
+	var_3_0.animation_state = nil
+	arg_3_2.action = nil
 end
 
-BTChaosExaltedSorcererSkulkAction.run = function (self, unit, blackboard, t, dt)
-	local ai_navigation = blackboard.navigation_extension
-	local path_found = ai_navigation:is_following_path()
-	local failed_attempts = ai_navigation:number_failed_move_attempts()
-	local action = blackboard.action
-	local spell = blackboard.current_spell
+function var_0_0.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = arg_4_2.navigation_extension
+	local var_4_1 = var_4_0:is_following_path()
+	local var_4_2 = var_4_0:number_failed_move_attempts()
+	local var_4_3 = arg_4_2.action
+	local var_4_4 = arg_4_2.current_spell
 
-	if t > blackboard.done_casting_timer and spell and spell.search_func(self, unit, blackboard, t, spell) then
+	if arg_4_3 > arg_4_2.done_casting_timer and var_4_4 and var_4_4.search_func(arg_4_0, arg_4_1, arg_4_2, arg_4_3, var_4_4) then
 		return "done"
 	end
 
-	local skulk_data = blackboard.skulk_data
+	local var_4_5 = arg_4_2.skulk_data
 
-	if blackboard.move_pos and path_found and blackboard.move_state == "idle" then
-		self:start_move_animation(unit, blackboard)
+	if arg_4_2.move_pos and var_4_1 and arg_4_2.move_state == "idle" then
+		arg_4_0:start_move_animation(arg_4_1, arg_4_2)
 	end
 
-	local current_health_percent = blackboard.health_extension:current_health_percent()
+	if arg_4_2.health_extension:current_health_percent() < arg_4_2.teleport_health_percent then
+		local var_4_6 = var_0_2[arg_4_1]
+		local var_4_7 = var_0_2[arg_4_2.target_unit]
+		local var_4_8 = var_4_6
 
-	if current_health_percent < blackboard.teleport_health_percent then
-		local unit_pos = POSITION_LOOKUP[unit]
-		local target_pos = POSITION_LOOKUP[blackboard.target_unit]
-		local center_pos = unit_pos
-		local target_dist_sq = Vector3.distance_squared(unit_pos, target_pos)
-
-		if target_dist_sq > action.far_away_from_target_sq then
-			center_pos = target_pos
+		if Vector3.distance_squared(var_4_6, var_4_7) > var_4_3.far_away_from_target_sq then
+			local var_4_9 = var_4_7
 		end
 
-		local spread = math.random() * 5 + math.random() * 5 + math.random() * 5
-		local dist = spread * 0.5 + 10
-		local tries = 5
-		local teleport_pos = ConflictUtils.get_spawn_pos_on_circle_with_func(blackboard.nav_world, unit_pos, dist, spread, tries, blackboard.valid_teleport_pos_func, blackboard)
+		local var_4_10 = math.random() * 5 + math.random() * 5 + math.random() * 5
+		local var_4_11 = var_4_10 * 0.5 + 10
+		local var_4_12 = 5
+		local var_4_13 = ConflictUtils.get_spawn_pos_on_circle_with_func(arg_4_2.nav_world, var_4_6, var_4_11, var_4_10, var_4_12, arg_4_2.valid_teleport_pos_func, arg_4_2)
 
-		if teleport_pos then
-			blackboard.quick_teleport_exit_pos = Vector3Box(teleport_pos)
-			blackboard.quick_teleport = true
-			skulk_data.direction = nil
-			blackboard.move_pos = nil
+		if var_4_13 then
+			arg_4_2.quick_teleport_exit_pos = Vector3Box(var_4_13)
+			arg_4_2.quick_teleport = true
+			var_4_5.direction = nil
+			arg_4_2.move_pos = nil
 
 			return "done"
 		end
-	elseif t > blackboard.travel_teleport_timer then
-		local teleport_pos = BTChaosExaltedSorcererSkulkAction.get_skulk_target(unit, blackboard, true)
+	elseif arg_4_3 > arg_4_2.travel_teleport_timer then
+		local var_4_14 = var_0_0.get_skulk_target(arg_4_1, arg_4_2, true)
 
-		if teleport_pos and blackboard.valid_teleport_pos_func(teleport_pos, blackboard) then
-			blackboard.quick_teleport_exit_pos = Vector3Box(teleport_pos)
-			blackboard.quick_teleport = true
-			blackboard.move_pos = nil
+		if var_4_14 and arg_4_2.valid_teleport_pos_func(var_4_14, arg_4_2) then
+			arg_4_2.quick_teleport_exit_pos = Vector3Box(var_4_14)
+			arg_4_2.quick_teleport = true
+			arg_4_2.move_pos = nil
 
 			return "done"
 		end
 	end
 
-	local position = blackboard.move_pos
-
-	if position then
-		local at_goal = self:at_goal(unit, blackboard)
-
-		if at_goal or failed_attempts > 0 then
-			blackboard.move_pos = nil
+	if arg_4_2.move_pos then
+		if arg_4_0:at_goal(arg_4_1, arg_4_2) or var_4_2 > 0 then
+			arg_4_2.move_pos = nil
 		end
 
 		return "running"
 	end
 
-	local position = BTChaosExaltedSorcererSkulkAction.get_skulk_target(unit, blackboard)
+	local var_4_15 = var_0_0.get_skulk_target(arg_4_1, arg_4_2)
 
-	if position then
-		self:move_to(position, unit, blackboard)
+	if var_4_15 then
+		arg_4_0:move_to(var_4_15, arg_4_1, arg_4_2)
 
 		return "running"
 	end
 
-	if blackboard.move_state ~= "idle" then
-		self:idle(unit, blackboard)
+	if arg_4_2.move_state ~= "idle" then
+		arg_4_0:idle(arg_4_1, arg_4_2)
 	end
 
 	return "running"
 end
 
-BTChaosExaltedSorcererSkulkAction.at_goal = function (self, unit, blackboard)
-	local skulk_data = blackboard.skulk_data
-	local position_boxed = blackboard.move_pos
+function var_0_0.at_goal(arg_5_0, arg_5_1, arg_5_2)
+	local var_5_0 = arg_5_2.skulk_data
+	local var_5_1 = arg_5_2.move_pos
 
-	if not position_boxed then
+	if not var_5_1 then
 		return false
 	end
 
-	local position = position_boxed:unbox()
-	local distance = Vector3.distance_squared(position, POSITION_LOOKUP[unit])
+	local var_5_2 = var_5_1:unbox()
 
-	if distance < 0.25 then
+	if Vector3.distance_squared(var_5_2, var_0_2[arg_5_1]) < 0.25 then
 		return true
 	end
 end
 
-BTChaosExaltedSorcererSkulkAction.move_to = function (self, position, unit, blackboard)
-	local ai_navigation = blackboard.navigation_extension
+function var_0_0.move_to(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	arg_6_3.navigation_extension:move_to(arg_6_1)
 
-	ai_navigation:move_to(position)
-
-	blackboard.move_pos = Vector3Box(position)
+	arg_6_3.move_pos = Vector3Box(arg_6_1)
 end
 
-BTChaosExaltedSorcererSkulkAction.idle = function (self, unit, blackboard)
-	self:anim_event(unit, blackboard, "idle")
+function var_0_0.idle(arg_7_0, arg_7_1, arg_7_2)
+	arg_7_0:anim_event(arg_7_1, arg_7_2, "idle")
 
-	blackboard.move_state = "idle"
+	arg_7_2.move_state = "idle"
 end
 
-BTChaosExaltedSorcererSkulkAction.start_move_animation = function (self, unit, blackboard)
-	local move_animation = blackboard.action.move_animation
+function var_0_0.start_move_animation(arg_8_0, arg_8_1, arg_8_2)
+	local var_8_0 = arg_8_2.action.move_animation
 
-	self:anim_event(unit, blackboard, move_animation)
+	arg_8_0:anim_event(arg_8_1, arg_8_2, var_8_0)
 
-	blackboard.move_state = "moving"
+	arg_8_2.move_state = "moving"
 end
 
-BTChaosExaltedSorcererSkulkAction.anim_event = function (self, unit, blackboard, anim)
-	local skulk_data = blackboard.skulk_data
+function var_0_0.anim_event(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	local var_9_0 = arg_9_2.skulk_data
 
-	if skulk_data.animation_state ~= anim then
-		Managers.state.network:anim_event(unit, anim)
+	if var_9_0.animation_state ~= arg_9_3 then
+		Managers.state.network:anim_event(arg_9_1, arg_9_3)
 
-		skulk_data.animation_state = anim
+		var_9_0.animation_state = arg_9_3
 	end
 end
 
-local TRIES = 15
+local var_0_3 = 15
 
-BTChaosExaltedSorcererSkulkAction.get_skulk_target = function (unit, blackboard, teleporting)
-	local action = blackboard.action
-	local nav_world = blackboard.nav_world
-	local skulk_data = blackboard.skulk_data
-	local direction = skulk_data.direction
-	local target_unit = blackboard.target_unit
-	local target_position = POSITION_LOOKUP[target_unit]
-	local unit_position = POSITION_LOOKUP[unit]
-	local dist = blackboard.target_dist
-	local to_target = unit_position - target_position
-	local to_target_dir = Vector3.normalize(to_target)
-	local preferred_distance = action.preferred_distance
+function var_0_0.get_skulk_target(arg_10_0, arg_10_1, arg_10_2)
+	local var_10_0 = arg_10_1.action
+	local var_10_1 = arg_10_1.nav_world
+	local var_10_2 = arg_10_1.skulk_data
+	local var_10_3 = var_10_2.direction
+	local var_10_4 = arg_10_1.target_unit
+	local var_10_5 = var_0_2[var_10_4]
+	local var_10_6 = var_0_2[arg_10_0]
+	local var_10_7 = arg_10_1.target_dist
+	local var_10_8 = var_10_6 - var_10_5
+	local var_10_9 = Vector3.normalize(var_10_8)
+	local var_10_10 = var_10_0.preferred_distance
 
-	if blackboard.is_close then
-		if dist < preferred_distance then
-			to_target = to_target + to_target_dir * (1 + math.random())
+	if arg_10_1.is_close then
+		if var_10_7 < var_10_10 then
+			var_10_8 = var_10_8 + var_10_9 * (1 + math.random())
 		else
-			blackboard.is_close = false
-			to_target = to_target + to_target_dir
+			arg_10_1.is_close = false
+			var_10_8 = var_10_8 + var_10_9
 		end
-	elseif dist < action.close_distance then
-		blackboard.is_close = true
-		to_target = to_target + to_target_dir
+	elseif var_10_7 < var_10_0.close_distance then
+		arg_10_1.is_close = true
+		var_10_8 = var_10_8 + var_10_9
 	end
 
-	local cross_dir = Vector3(0, 0, direction)
-	local mod = 0.1
-	local alpha = math.pi * math.clamp(mod * 20 / dist, 0.01, 0.15)
+	local var_10_11 = Vector3(0, 0, var_10_3)
+	local var_10_12 = 0.1
+	local var_10_13 = math.pi * math.clamp(var_10_12 * 20 / var_10_7, 0.01, 0.15)
 
-	if teleporting then
-		alpha = alpha * 1.5
+	if arg_10_2 then
+		var_10_13 = var_10_13 * 1.5
 	end
 
-	for i = 1, TRIES do
-		local rot_vec = to_target - to_target_dir * 0.5
+	for iter_10_0 = 1, var_0_3 do
+		local var_10_14 = var_10_8 - var_10_9 * 0.5
 
-		if blackboard.num_summons and blackboard.num_summons >= (action.teleport_closer_summon_limit or 3) then
-			rot_vec = Vector3.normalize(target_position - unit_position) * action.teleport_closer_range
+		if arg_10_1.num_summons and arg_10_1.num_summons >= (var_10_0.teleport_closer_summon_limit or 3) then
+			var_10_14 = Vector3.normalize(var_10_5 - var_10_6) * var_10_0.teleport_closer_range
 		end
 
-		local pos = target_position + Quaternion.rotate(Quaternion(cross_dir, alpha * i), rot_vec)
+		local var_10_15 = var_10_5 + Quaternion.rotate(Quaternion(var_10_11, var_10_13 * iter_10_0), var_10_14)
+		local var_10_16 = ConflictUtils.find_center_tri(var_10_1, var_10_15)
 
-		pos = ConflictUtils.find_center_tri(nav_world, pos)
-
-		if pos then
-			return pos
+		if var_10_16 then
+			return var_10_16
 		end
 	end
 
-	skulk_data.direction = skulk_data.direction * -1
+	var_10_2.direction = var_10_2.direction * -1
 end
 
-BTChaosExaltedSorcererSkulkAction.debug_show_skulk_circle = function (self, unit, blackboard)
-	local action = blackboard.action
-	local skulk_data = blackboard.skulk_data
-	local radius = skulk_data.radius
-	local target_unit = blackboard.target_unit
-	local target_position = POSITION_LOOKUP[target_unit]
-	local offset = Vector3.up() * 0.2
+function var_0_0.debug_show_skulk_circle(arg_11_0, arg_11_1, arg_11_2)
+	local var_11_0 = arg_11_2.action
+	local var_11_1 = arg_11_2.skulk_data
+	local var_11_2 = var_11_1.radius
+	local var_11_3 = arg_11_2.target_unit
+	local var_11_4 = var_0_2[var_11_3]
+	local var_11_5 = Vector3.up() * 0.2
 
-	QuickDrawer:circle(target_position + offset, blackboard.target_dist, Vector3.up(), Colors.get("light_green"))
-	QuickDrawer:circle(target_position + offset, skulk_data.radius, Vector3.up(), Colors.get("light_green"))
+	QuickDrawer:circle(var_11_4 + var_11_5, arg_11_2.target_dist, Vector3.up(), Colors.get("light_green"))
+	QuickDrawer:circle(var_11_4 + var_11_5, var_11_1.radius, Vector3.up(), Colors.get("light_green"))
 
-	skulk_data.radius = blackboard.target_dist
+	var_11_1.radius = arg_11_2.target_dist
 end
 
-BTChaosExaltedSorcererSkulkAction.update_dummy = function (self, unit, blackboard, t)
+function var_0_0.update_dummy(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	return false
 end
 
-BTChaosExaltedSorcererSkulkAction.update_plague_wave = function (self, unit, blackboard, t, plague_wave_data)
-	local target_unit = blackboard.target_unit
-	local teleport_position = BTChaosSorcererPlagueSkulkAction.get_plague_wave_cast_position(self, unit, blackboard, plague_wave_data)
+function var_0_0.update_plague_wave(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+	local var_13_0 = arg_13_2.target_unit
+	local var_13_1 = BTChaosSorcererPlagueSkulkAction.get_plague_wave_cast_position(arg_13_0, arg_13_1, arg_13_2, arg_13_4)
 
-	if teleport_position and blackboard.valid_teleport_pos_func(teleport_position, blackboard) then
-		blackboard.face_player_when_teleporting = true
-		blackboard.quick_teleport_exit_pos = Vector3Box(teleport_position)
-		blackboard.quick_teleport = true
-		blackboard.move_pos = nil
-		blackboard.ready_to_summon = true
-		blackboard.num_plague_waves = blackboard.num_plague_waves and blackboard.num_plague_waves + 1 or 1
+	if var_13_1 and arg_13_2.valid_teleport_pos_func(var_13_1, arg_13_2) then
+		arg_13_2.face_player_when_teleporting = true
+		arg_13_2.quick_teleport_exit_pos = Vector3Box(var_13_1)
+		arg_13_2.quick_teleport = true
+		arg_13_2.move_pos = nil
+		arg_13_2.ready_to_summon = true
+		arg_13_2.num_plague_waves = arg_13_2.num_plague_waves and arg_13_2.num_plague_waves + 1 or 1
 
-		if blackboard.num_plague_waves >= 4 then
-			blackboard.num_plague_waves = 0
+		if arg_13_2.num_plague_waves >= 4 then
+			arg_13_2.num_plague_waves = 0
 		end
 
 		return true
 	end
 end
 
-BTChaosExaltedSorcererSkulkAction.update_cast_missile = function (self, unit, blackboard, t, missile_data)
-	local curr_pos = Vector3.copy(POSITION_LOOKUP[unit])
-	local rot = LocomotionUtils.rotation_towards_unit_flat(unit, blackboard.target_unit)
-	local x, y, z = unpack(blackboard.action.missile_spawn_offset)
-	local pos = Vector3(x, y, z)
-	local throw_offset = Quaternion.rotate(rot, pos)
-	local throw_pos = curr_pos + throw_offset
+function var_0_0.update_cast_missile(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+	local var_14_0 = Vector3.copy(var_0_2[arg_14_1])
+	local var_14_1 = LocomotionUtils.rotation_towards_unit_flat(arg_14_1, arg_14_2.target_unit)
+	local var_14_2, var_14_3, var_14_4 = unpack(arg_14_2.action.missile_spawn_offset)
+	local var_14_5 = Vector3(var_14_2, var_14_3, var_14_4)
+	local var_14_6 = var_14_0 + Quaternion.rotate(var_14_1, var_14_5)
 
-	curr_pos.z = throw_pos.z
+	var_14_0.z = var_14_6.z
 
-	local root_to_throw = throw_pos - curr_pos
-	local direction = Vector3.normalize(root_to_throw)
-	local length = Vector3.length(root_to_throw)
-	local world = blackboard.world
-	local physics_world = World.get_data(world, "physics_world")
-	local result = PhysicsWorld.immediate_raycast(physics_world, curr_pos, direction, length, "closest", "collision_filter", "filter_enemy_ray_projectile")
+	local var_14_7 = var_14_6 - var_14_0
+	local var_14_8 = Vector3.normalize(var_14_7)
+	local var_14_9 = Vector3.length(var_14_7)
+	local var_14_10 = arg_14_2.world
+	local var_14_11 = World.get_data(var_14_10, "physics_world")
 
-	if result then
+	if PhysicsWorld.immediate_raycast(var_14_11, var_14_0, var_14_8, var_14_9, "closest", "collision_filter", "filter_enemy_ray_projectile") then
 		return false
 	end
 
-	blackboard.ready_to_summon = true
+	arg_14_2.ready_to_summon = true
 
 	return true
 end

@@ -1,457 +1,446 @@
-﻿-- chunkname: @scripts/managers/weave/weave_manager.lua
+-- chunkname: @scripts/managers/weave/weave_manager.lua
 
 require("scripts/managers/conflict_director/weave_spawner")
 require("scripts/settings/wind_settings")
 require("scripts/settings/weave_settings")
 
-local weave_manager_testify = script_data.testify and require("scripts/managers/weave/weave_manager_testify")
+local var_0_0 = script_data.testify and require("scripts/managers/weave/weave_manager_testify")
 
 WeaveManager = class(WeaveManager)
 
-local RPCS = {
+local var_0_1 = {
 	"rpc_set_active_weave",
 	"rpc_weave_objective_completed",
 	"rpc_weave_final_objective_completed",
 	"rpc_sync_end_of_weave_data",
 	"rpc_sync_player_count",
-	"rpc_bar_cutoff_reached",
+	"rpc_bar_cutoff_reached"
 }
-local EVENTS = {
+local var_0_2 = {
 	"conflict_director_setup_done",
-	"event_conflict_director_setup_done",
+	"event_conflict_director_setup_done"
 }
 
-WeaveManager.init = function (self)
-	self:_reset()
+function WeaveManager.init(arg_1_0)
+	arg_1_0:_reset()
 end
 
-WeaveManager.initiate = function (self, world, network_event_delegate, is_server, game_mode_key)
-	if game_mode_key == "weave" then
-		self:_setup_weave_data(is_server)
-		self:_setup_data(world, is_server)
-		self:_register_events()
-		self:_register_rpcs(network_event_delegate)
+function WeaveManager.initiate(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	if arg_2_4 == "weave" then
+		arg_2_0:_setup_weave_data(arg_2_3)
+		arg_2_0:_setup_data(arg_2_1, arg_2_3)
+		arg_2_0:_register_events()
+		arg_2_0:_register_rpcs(arg_2_2)
 
-		self._initiated = true
+		arg_2_0._initiated = true
 	else
-		self:_reset()
+		arg_2_0:_reset()
 	end
 end
 
-WeaveManager._reset = function (self)
-	self._world = nil
-	self._initiated = false
-	self._is_server = true
-	self._bar_score = 0
-	self._score = 0
-	self._bar_filled = false
-	self._objective_ui_mission_name = nil
-	self._num_players = nil
+function WeaveManager._reset(arg_3_0)
+	arg_3_0._world = nil
+	arg_3_0._initiated = false
+	arg_3_0._is_server = true
+	arg_3_0._bar_score = 0
+	arg_3_0._score = 0
+	arg_3_0._bar_filled = false
+	arg_3_0._objective_ui_mission_name = nil
+	arg_3_0._num_players = nil
 
-	self:clear_weave_name()
+	arg_3_0:clear_weave_name()
 
-	self._player_ids = {}
-	self._saved_game_mode_data = {}
-	self._remaining_time = WeaveSettings.starting_time
-	self._damage_taken = 0
-	self._weave_spawner = nil
-	self._final_data_synced = false
-	self._has_reset_challenge_stats = false
-	self._pause_timer = true
-	self._track_kills = false
-	self._num_enemies_killed = 0
-	self._enemies_killed = {}
-	self._active_weave_phase = 1
+	arg_3_0._player_ids = {}
+	arg_3_0._saved_game_mode_data = {}
+	arg_3_0._remaining_time = WeaveSettings.starting_time
+	arg_3_0._damage_taken = 0
+	arg_3_0._weave_spawner = nil
+	arg_3_0._final_data_synced = false
+	arg_3_0._has_reset_challenge_stats = false
+	arg_3_0._pause_timer = true
+	arg_3_0._track_kills = false
+	arg_3_0._num_enemies_killed = 0
+	arg_3_0._enemies_killed = {}
+	arg_3_0._active_weave_phase = 1
 end
 
-WeaveManager.clear_weave_data = function (self)
-	self._bar_score = 0
-	self._bar_filled = false
-	self._remaining_time = WeaveSettings.starting_time
-	self._damage_taken = 0
-	self._final_data_synced = false
-	self._active_weave_phase = 1
+function WeaveManager.clear_weave_data(arg_4_0)
+	arg_4_0._bar_score = 0
+	arg_4_0._bar_filled = false
+	arg_4_0._remaining_time = WeaveSettings.starting_time
+	arg_4_0._damage_taken = 0
+	arg_4_0._final_data_synced = false
+	arg_4_0._active_weave_phase = 1
 
-	table.clear(self._saved_game_mode_data)
+	table.clear(arg_4_0._saved_game_mode_data)
 
-	self._track_kills = false
-	self._num_enemies_killed = 0
+	arg_4_0._track_kills = false
+	arg_4_0._num_enemies_killed = 0
 
-	table.clear(self._enemies_killed)
+	table.clear(arg_4_0._enemies_killed)
 end
 
-WeaveManager.clear_weave_name = function (self)
-	self._active_weave_name = nil
-	self._next_weave_name = nil
-	self._active_objective_index = nil
-	self._next_objective_index = nil
+function WeaveManager.clear_weave_name(arg_5_0)
+	arg_5_0._active_weave_name = nil
+	arg_5_0._next_weave_name = nil
+	arg_5_0._active_objective_index = nil
+	arg_5_0._next_objective_index = nil
 end
 
-WeaveManager._setup_data = function (self, world, is_server)
-	self._world = world
-	self._is_server = is_server
-	self._bar_filled = false
-	self._objective_ui_mission_name = nil
-	self._next_weave_name = nil
-	self._final_data_synced = false
-	self._pause_timer = true
-	self._next_objective_index = nil
-	self._track_kills = false
-	self._num_enemies_killed = 0
+function WeaveManager._setup_data(arg_6_0, arg_6_1, arg_6_2)
+	arg_6_0._world = arg_6_1
+	arg_6_0._is_server = arg_6_2
+	arg_6_0._bar_filled = false
+	arg_6_0._objective_ui_mission_name = nil
+	arg_6_0._next_weave_name = nil
+	arg_6_0._final_data_synced = false
+	arg_6_0._pause_timer = true
+	arg_6_0._next_objective_index = nil
+	arg_6_0._track_kills = false
+	arg_6_0._num_enemies_killed = 0
 
-	table.clear(self._enemies_killed)
+	table.clear(arg_6_0._enemies_killed)
 
-	if self._is_server then
-		self._weave_spawner = WeaveSpawner:new(self._world, nil)
+	if arg_6_0._is_server then
+		arg_6_0._weave_spawner = WeaveSpawner:new(arg_6_0._world, nil)
 	else
-		self._weave_spawner = nil
+		arg_6_0._weave_spawner = nil
 	end
 end
 
-WeaveManager.weave_spawner = function (self)
-	return self._weave_spawner
+function WeaveManager.weave_spawner(arg_7_0)
+	return arg_7_0._weave_spawner
 end
 
-WeaveManager._setup_weave_data = function (self, is_server)
-	if not is_server then
+function WeaveManager._setup_weave_data(arg_8_0, arg_8_1)
+	if not arg_8_1 then
 		return
 	end
 
-	local weave_name = self._next_weave_name or Development.parameter("weave_name")
-	local weave_objective_index = self._next_objective_index or Development.parameter("weave_name") and 1
-	local time_left = self._remaining_time or WeaveSettings.starting_time
-	local damage_taken = self._damage_taken or 0
-	local player_ids = self._player_ids
+	local var_8_0 = arg_8_0._next_weave_name or Development.parameter("weave_name")
+	local var_8_1 = arg_8_0._next_objective_index or Development.parameter("weave_name") and 1
+	local var_8_2 = arg_8_0._remaining_time or WeaveSettings.starting_time
+	local var_8_3 = arg_8_0._damage_taken or 0
+	local var_8_4 = arg_8_0._player_ids
 
-	self:_set_active_weave(weave_name)
-	self:_set_active_objective(weave_objective_index)
-	self:_set_time_left(time_left)
-	self:_set_damage_taken(damage_taken)
-	self:_set_player_ids(player_ids)
-	self:_create_game_object()
+	arg_8_0:_set_active_weave(var_8_0)
+	arg_8_0:_set_active_objective(var_8_1)
+	arg_8_0:_set_time_left(var_8_2)
+	arg_8_0:_set_damage_taken(var_8_3)
+	arg_8_0:_set_player_ids(var_8_4)
+	arg_8_0:_create_game_object()
 	Development.set_parameter("weave_name", nil)
 end
 
-WeaveManager._register_events = function (self)
-	local event_manager = Managers.state.event
-
-	event_manager:register(self, unpack(EVENTS))
+function WeaveManager._register_events(arg_9_0)
+	Managers.state.event:register(arg_9_0, unpack(var_0_2))
 end
 
-WeaveManager._unregister_events = function (self)
-	local event_manager = Managers.state.event
+function WeaveManager._unregister_events(arg_10_0)
+	local var_10_0 = Managers.state.event
 
-	if event_manager and self._initiated then
-		for i = 1, #EVENTS, 2 do
-			local event_name = EVENTS[i]
+	if var_10_0 and arg_10_0._initiated then
+		for iter_10_0 = 1, #var_0_2, 2 do
+			local var_10_1 = var_0_2[iter_10_0]
 
-			event_manager:unregister(event_name, self)
+			var_10_0:unregister(var_10_1, arg_10_0)
 		end
 	end
 end
 
-WeaveManager._register_rpcs = function (self, network_event_delegate)
-	self._network_event_delegate = network_event_delegate
+function WeaveManager._register_rpcs(arg_11_0, arg_11_1)
+	arg_11_0._network_event_delegate = arg_11_1
 
-	network_event_delegate:register(self, unpack(RPCS))
+	arg_11_1:register(arg_11_0, unpack(var_0_1))
 end
 
-WeaveManager._unregister_rpcs = function (self)
-	if self._network_event_delegate then
-		self._network_event_delegate:unregister(self)
+function WeaveManager._unregister_rpcs(arg_12_0)
+	if arg_12_0._network_event_delegate then
+		arg_12_0._network_event_delegate:unregister(arg_12_0)
 
-		self._network_event_delegate = nil
+		arg_12_0._network_event_delegate = nil
 	end
 end
 
-WeaveManager.reset_statistics_for_challenges = function (self)
-	if self._has_reset_challenge_stats then
+function WeaveManager.reset_statistics_for_challenges(arg_13_0)
+	if arg_13_0._has_reset_challenge_stats then
 		return
 	end
 
-	local statistics_db = Managers.player:statistics_db()
-	local player = Managers.player:local_player()
-	local stats_id = player:stats_id()
+	local var_13_0 = Managers.player:statistics_db()
+	local var_13_1 = Managers.player:local_player():stats_id()
 
 	if ScorpionSeasonalSettings.current_season_id == 1 then
-		local stat_id = "weave_life_stepped_in_bush"
+		local var_13_2 = "weave_life_stepped_in_bush"
 
-		statistics_db:set_stat(stats_id, "season_1", stat_id, 0)
+		var_13_0:set_stat(var_13_1, "season_1", var_13_2, 0)
 
-		stat_id = "weave_death_hit_by_spirit"
+		local var_13_3 = "weave_death_hit_by_spirit"
 
-		statistics_db:set_stat(stats_id, "season_1", stat_id, 0)
+		var_13_0:set_stat(var_13_1, "season_1", var_13_3, 0)
 
-		stat_id = "weave_beasts_destroyed_totems"
+		local var_13_4 = "weave_beasts_destroyed_totems"
 
-		statistics_db:set_stat(stats_id, "season_1", stat_id, 0)
+		var_13_0:set_stat(var_13_1, "season_1", var_13_4, 0)
 
-		stat_id = "weave_light_low_curse"
+		local var_13_5 = "weave_light_low_curse"
 
-		statistics_db:set_stat(stats_id, "season_1", stat_id, 0)
+		var_13_0:set_stat(var_13_1, "season_1", var_13_5, 0)
 
-		stat_id = "weave_shadow_kill_no_shrouded"
+		local var_13_6 = "weave_shadow_kill_no_shrouded"
 
-		statistics_db:set_stat(stats_id, "season_1", stat_id, 0)
+		var_13_0:set_stat(var_13_1, "season_1", var_13_6, 0)
 	end
 
-	self._has_reset_challenge_stats = true
+	arg_13_0._has_reset_challenge_stats = true
 end
 
-WeaveManager.teardown = function (self)
-	self:_unregister_rpcs()
-	self:_unregister_events()
+function WeaveManager.teardown(arg_14_0)
+	arg_14_0:_unregister_rpcs()
+	arg_14_0:_unregister_events()
 
-	self._go_id = nil
-	self._initiated = false
+	arg_14_0._go_id = nil
+	arg_14_0._initiated = false
 end
 
-WeaveManager.destroy = function (self)
-	self:_unregister_rpcs()
-	self:_unregister_events()
+function WeaveManager.destroy(arg_15_0)
+	arg_15_0:_unregister_rpcs()
+	arg_15_0:_unregister_events()
 end
 
-WeaveManager.update = function (self, dt, t)
+function WeaveManager.update(arg_16_0, arg_16_1, arg_16_2)
 	if script_data.testify then
-		Testify:poll_requests_through_handler(weave_manager_testify, self)
+		Testify:poll_requests_through_handler(var_0_0, arg_16_0)
 	end
 
-	if not self._initiated then
+	if not arg_16_0._initiated then
 		return
 	end
 
-	if self:get_active_weave() and not self._final_data_synced then
-		local objective_template = self:get_active_objective_template()
+	if arg_16_0:get_active_weave() and not arg_16_0._final_data_synced then
+		local var_16_0 = arg_16_0:get_active_objective_template()
 
-		if self._is_server then
-			if not self._pause_timer then
-				self._remaining_time = math.max(self._remaining_time - dt, 0)
+		if arg_16_0._is_server then
+			if not arg_16_0._pause_timer then
+				arg_16_0._remaining_time = math.max(arg_16_0._remaining_time - arg_16_1, 0)
 			end
 
-			self._score = self:_calculate_score()
+			arg_16_0._score = arg_16_0:_calculate_score()
 		end
 
-		local game = Managers.state.network:game()
+		local var_16_1 = Managers.state.network:game()
 
-		if game and self._go_id then
-			if self._is_server then
-				local remaining_time = math.floor(self._remaining_time)
+		if var_16_1 and arg_16_0._go_id then
+			if arg_16_0._is_server then
+				local var_16_2 = math.floor(arg_16_0._remaining_time)
 
-				GameSession.set_game_object_field(game, self._go_id, "remaining_time", remaining_time)
+				GameSession.set_game_object_field(var_16_1, arg_16_0._go_id, "remaining_time", var_16_2)
 
-				if self._bar_score >= objective_template.bar_cutoff and not self._bar_filled then
-					self:_objective_completed()
-
-					local network_transmit = Managers.state.network.network_transmit
-
-					network_transmit:send_rpc_clients("rpc_weave_objective_completed")
+				if arg_16_0._bar_score >= var_16_0.bar_cutoff and not arg_16_0._bar_filled then
+					arg_16_0:_objective_completed()
+					Managers.state.network.network_transmit:send_rpc_clients("rpc_weave_objective_completed")
 				end
 			else
-				self._remaining_time = GameSession.game_object_field(game, self._go_id, "remaining_time")
+				arg_16_0._remaining_time = GameSession.game_object_field(var_16_1, arg_16_0._go_id, "remaining_time")
 			end
 		end
 
-		if self._remaining_time == 0 and self._objective_ui_mission_name ~= "weave_time_out" then
-			if self._objective_ui_mission_name then
-				Managers.state.event:trigger("ui_event_complete_mission", self._objective_ui_mission_name, true)
+		if arg_16_0._remaining_time == 0 and arg_16_0._objective_ui_mission_name ~= "weave_time_out" then
+			if arg_16_0._objective_ui_mission_name then
+				Managers.state.event:trigger("ui_event_complete_mission", arg_16_0._objective_ui_mission_name, true)
 			end
 
 			Managers.state.event:trigger("ui_event_add_mission_objective", "weave_time_out", Localize("weave_time_out"))
 
-			self._objective_ui_mission_name = "weave_time_out"
+			arg_16_0._objective_ui_mission_name = "weave_time_out"
 		end
 
-		if self._weave_spawner then
-			self._weave_spawner:update(t, dt, objective_template)
+		if arg_16_0._weave_spawner then
+			arg_16_0._weave_spawner:update(arg_16_2, arg_16_1, var_16_0)
 		end
 	end
 end
 
-WeaveManager.event_conflict_director_setup_done = function (self)
-	if self:get_active_weave() and self._is_server then
-		local objective_template = self:get_active_objective_template()
-		local spawning_seed = objective_template and objective_template.spawning_seed
+function WeaveManager.event_conflict_director_setup_done(arg_17_0)
+	if arg_17_0:get_active_weave() and arg_17_0._is_server then
+		local var_17_0 = arg_17_0:get_active_objective_template()
+		local var_17_1 = var_17_0 and var_17_0.spawning_seed
 
-		if spawning_seed then
-			self._weave_spawner:set_seed(spawning_seed)
+		if var_17_1 then
+			arg_17_0._weave_spawner:set_seed(var_17_1)
 		end
 
-		self._weave_spawner.conflict_director_setup_done = true
+		arg_17_0._weave_spawner.conflict_director_setup_done = true
 	end
 end
 
-WeaveManager._set_player_ids = function (self, player_ids)
-	if not player_ids then
+function WeaveManager._set_player_ids(arg_18_0, arg_18_1)
+	if not arg_18_1 then
 		return
 	end
 
-	self._player_ids = player_ids
+	arg_18_0._player_ids = arg_18_1
 end
 
-WeaveManager.store_player_ids = function (self)
-	if not table.is_empty(self._player_ids) then
+function WeaveManager.store_player_ids(arg_19_0)
+	if not table.is_empty(arg_19_0._player_ids) then
 		return
 	end
 
-	local lobby = Managers.state.network:lobby()
-	local lobby_members = lobby:members()
-	local member_ids = lobby_members:get_members()
+	local var_19_0 = Managers.state.network:lobby()
+	local var_19_1 = var_19_0:members():get_members()
 
-	for _, peer_id in pairs(member_ids) do
-		self._player_ids[peer_id] = true
+	for iter_19_0, iter_19_1 in pairs(var_19_1) do
+		arg_19_0._player_ids[iter_19_1] = true
 	end
 
-	local matchmaking = lobby:lobby_data("matchmaking")
-	local is_private = lobby:lobby_data("is_private")
+	local var_19_2 = var_19_0:lobby_data("matchmaking")
+	local var_19_3 = var_19_0:lobby_data("is_private")
 
-	if matchmaking == "true" then
-		self._num_players = 4
-	elseif is_private == "false" then
-		self._num_players = 4
+	if var_19_2 == "true" then
+		arg_19_0._num_players = 4
+	elseif var_19_3 == "false" then
+		arg_19_0._num_players = 4
 	else
-		self._num_players = table.size(self._player_ids)
+		arg_19_0._num_players = table.size(arg_19_0._player_ids)
 	end
 
-	local network_transmit = Managers.state.network.network_transmit
-
-	network_transmit:send_rpc_clients("rpc_sync_player_count", self._num_players)
+	Managers.state.network.network_transmit:send_rpc_clients("rpc_sync_player_count", arg_19_0._num_players)
 end
 
-WeaveManager.get_saved_game_mode_data = function (self)
-	if not self._is_server then
+function WeaveManager.get_saved_game_mode_data(arg_20_0)
+	if not arg_20_0._is_server then
 		return
 	end
 
-	return table.clone(self._saved_game_mode_data)
+	return table.clone(arg_20_0._saved_game_mode_data)
 end
 
-WeaveManager.store_saved_game_mode_data = function (self)
-	if not self._is_server then
+function WeaveManager.store_saved_game_mode_data(arg_21_0)
+	if not arg_21_0._is_server then
 		return
 	end
 
-	local saved_game_mode_data = Managers.state.game_mode and Managers.state.game_mode:get_saved_game_mode_data()
+	local var_21_0 = Managers.state.game_mode and Managers.state.game_mode:get_saved_game_mode_data()
 
-	if saved_game_mode_data then
-		for _, slot_data in pairs(saved_game_mode_data) do
-			slot_data.spawn_state = nil
-			slot_data.position = nil
-			slot_data.rotation = nil
+	if var_21_0 then
+		for iter_21_0, iter_21_1 in pairs(var_21_0) do
+			iter_21_1.spawn_state = nil
+			iter_21_1.position = nil
+			iter_21_1.rotation = nil
 		end
 	end
 
-	self._saved_game_mode_data = saved_game_mode_data
+	arg_21_0._saved_game_mode_data = var_21_0
 end
 
-WeaveManager.get_player_ids = function (self)
-	return self._player_ids
+function WeaveManager.get_player_ids(arg_22_0)
+	return arg_22_0._player_ids
 end
 
-WeaveManager.set_next_weave = function (self, weave_name)
-	self._next_weave_name = weave_name
+function WeaveManager.set_next_weave(arg_23_0, arg_23_1)
+	arg_23_0._next_weave_name = arg_23_1
 end
 
-WeaveManager.set_next_objective = function (self, objective_index)
-	self._next_objective_index = objective_index
+function WeaveManager.set_next_objective(arg_24_0, arg_24_1)
+	arg_24_0._next_objective_index = arg_24_1
 end
 
-WeaveManager.get_next_weave = function (self)
-	return self._next_weave_name
+function WeaveManager.get_next_weave(arg_25_0)
+	return arg_25_0._next_weave_name
 end
 
-WeaveManager.get_next_objective = function (self)
-	return self._next_objective_index
+function WeaveManager.get_next_objective(arg_26_0)
+	return arg_26_0._next_objective_index
 end
 
-WeaveManager.get_time_left = function (self)
-	return self._remaining_time
+function WeaveManager.get_time_left(arg_27_0)
+	return arg_27_0._remaining_time
 end
 
-WeaveManager.get_damage_taken = function (self)
-	return self._damage_taken
+function WeaveManager.get_damage_taken(arg_28_0)
+	return arg_28_0._damage_taken
 end
 
-WeaveManager._set_active_weave = function (self, weave_name)
-	self._active_weave_name = weave_name
+function WeaveManager._set_active_weave(arg_29_0, arg_29_1)
+	arg_29_0._active_weave_name = arg_29_1
 end
 
-WeaveManager._report_telemetry = function (self)
-	local wind = self:get_active_wind()
-	local tier = self:get_weave_tier()
+function WeaveManager._report_telemetry(arg_30_0)
+	local var_30_0 = arg_30_0:get_active_wind()
+	local var_30_1 = arg_30_0:get_weave_tier()
 
-	Managers.telemetry_events:weave_activated(wind, tier)
+	Managers.telemetry_events:weave_activated(var_30_0, var_30_1)
 end
 
-WeaveManager._set_active_objective = function (self, objective_index)
-	self._active_objective_index = objective_index
+function WeaveManager._set_active_objective(arg_31_0, arg_31_1)
+	arg_31_0._active_objective_index = arg_31_1
 end
 
-WeaveManager.get_active_objective = function (self)
-	return self._active_objective_index
+function WeaveManager.get_active_objective(arg_32_0)
+	return arg_32_0._active_objective_index
 end
 
-WeaveManager._set_time_left = function (self, remaining_time)
-	self._remaining_time = remaining_time
+function WeaveManager._set_time_left(arg_33_0, arg_33_1)
+	arg_33_0._remaining_time = arg_33_1
 end
 
-WeaveManager._set_damage_taken = function (self, damage_taken)
-	self._damage_taken = damage_taken
+function WeaveManager._set_damage_taken(arg_34_0, arg_34_1)
+	arg_34_0._damage_taken = arg_34_1
 end
 
-WeaveManager.get_active_weave = function (self)
-	return self._active_weave_name
+function WeaveManager.get_active_weave(arg_35_0)
+	return arg_35_0._active_weave_name
 end
 
-WeaveManager.get_active_weave_phase = function (self)
-	return self._active_weave_phase
+function WeaveManager.get_active_weave_phase(arg_36_0)
+	return arg_36_0._active_weave_phase
 end
 
-WeaveManager.set_active_weave_phase = function (self, phase)
-	self._active_weave_phase = phase
+function WeaveManager.set_active_weave_phase(arg_37_0, arg_37_1)
+	arg_37_0._active_weave_phase = arg_37_1
 end
 
-WeaveManager.get_active_wind = function (self)
-	if not self._active_weave_name then
+function WeaveManager.get_active_wind(arg_38_0)
+	if not arg_38_0._active_weave_name then
 		return
 	end
 
-	local template = WeaveSettings.templates[self._active_weave_name]
+	local var_38_0 = WeaveSettings.templates[arg_38_0._active_weave_name]
 
-	return template and template.wind
+	return var_38_0 and var_38_0.wind
 end
 
-WeaveManager.get_active_wind_settings = function (self)
-	if not self._active_weave_name then
+function WeaveManager.get_active_wind_settings(arg_39_0)
+	if not arg_39_0._active_weave_name then
 		return
 	end
 
-	local template = WeaveSettings.templates[self._active_weave_name]
-	local wind = template and template.wind
+	local var_39_0 = WeaveSettings.templates[arg_39_0._active_weave_name]
+	local var_39_1 = var_39_0 and var_39_0.wind
 
-	return WindSettings[wind]
+	return WindSettings[var_39_1]
 end
 
-WeaveManager.get_scaling_value = function (self, scaling_value_key)
-	local lobby = Managers.state.network:lobby()
-	local weave_quick_game = lobby and lobby:lobby_data("weave_quick_game") == "true"
-	local quick_game = weave_quick_game or Managers.venture.quickplay:is_quick_game()
-	local template = WeaveSettings.templates[self._active_weave_name]
-	local scaling_settings = template.scaling_settings
-	local scaling_setting = not quick_game and scaling_settings and scaling_settings[scaling_value_key]
-	local tier = template.tier
-	local previous_breakpoint = 0
+function WeaveManager.get_scaling_value(arg_40_0, arg_40_1)
+	local var_40_0 = Managers.state.network:lobby()
+	local var_40_1 = var_40_0 and var_40_0:lobby_data("weave_quick_game") == "true" or Managers.venture.quickplay:is_quick_game()
+	local var_40_2 = WeaveSettings.templates[arg_40_0._active_weave_name]
+	local var_40_3 = var_40_2.scaling_settings
+	local var_40_4 = not var_40_1 and var_40_3 and var_40_3[arg_40_1]
+	local var_40_5 = var_40_2.tier
+	local var_40_6 = 0
 
-	if scaling_setting then
-		for _, increase_data in ipairs(WeaveSettings.difficulty_increases) do
-			if tier <= increase_data.breakpoint then
-				local scaling_value = (tier - previous_breakpoint) / (increase_data.breakpoint - previous_breakpoint)
-				local min = scaling_setting[1]
-				local max = scaling_setting[2]
-				local final_scaling_value = math.lerp(min, max, scaling_value)
+	if var_40_4 then
+		for iter_40_0, iter_40_1 in ipairs(WeaveSettings.difficulty_increases) do
+			if var_40_5 <= iter_40_1.breakpoint then
+				local var_40_7 = (var_40_5 - var_40_6) / (iter_40_1.breakpoint - var_40_6)
+				local var_40_8 = var_40_4[1]
+				local var_40_9 = var_40_4[2]
 
-				return final_scaling_value
+				return (math.lerp(var_40_8, var_40_9, var_40_7))
 			else
-				previous_breakpoint = increase_data.breakpoint
+				var_40_6 = iter_40_1.breakpoint
 			end
 		end
 	end
@@ -459,440 +448,410 @@ WeaveManager.get_scaling_value = function (self, scaling_value_key)
 	return 0
 end
 
-WeaveManager.start_timer = function (self)
-	self._pause_timer = false
+function WeaveManager.start_timer(arg_41_0)
+	arg_41_0._pause_timer = false
 end
 
-WeaveManager.calculate_next_objective_index = function (self)
-	if not self._active_weave_name then
+function WeaveManager.calculate_next_objective_index(arg_42_0)
+	if not arg_42_0._active_weave_name then
 		return
 	end
 
-	local active_objective_index = self._active_objective_index
-	local template = WeaveSettings.templates[self._active_weave_name]
-	local objectives = template.objectives
+	local var_42_0 = arg_42_0._active_objective_index
 
-	if active_objective_index == #objectives then
+	if var_42_0 == #WeaveSettings.templates[arg_42_0._active_weave_name].objectives then
 		return
 	end
 
-	return active_objective_index + 1
+	return var_42_0 + 1
 end
 
-WeaveManager.sync_end_of_weave_data = function (self)
-	self._final_data_synced = true
+function WeaveManager.sync_end_of_weave_data(arg_43_0)
+	arg_43_0._final_data_synced = true
 
-	local score = self._score
-	local remaining_time = self._remaining_time
-	local num_players = self._num_players
-	local damage_taken = self._damage_taken
-	local network_transmit = Managers.state.network.network_transmit
+	local var_43_0 = arg_43_0._score
+	local var_43_1 = arg_43_0._remaining_time
+	local var_43_2 = arg_43_0._num_players
+	local var_43_3 = arg_43_0._damage_taken
 
-	network_transmit:send_rpc_clients("rpc_sync_end_of_weave_data", score, remaining_time, num_players, damage_taken)
+	Managers.state.network.network_transmit:send_rpc_clients("rpc_sync_end_of_weave_data", var_43_0, var_43_1, var_43_2, var_43_3)
 end
 
-WeaveManager.hot_join_sync = function (self, peer_id)
-	local game_mode_key = Managers.state.game_mode:game_mode_key()
-
-	if game_mode_key ~= "weave" then
+function WeaveManager.hot_join_sync(arg_44_0, arg_44_1)
+	if Managers.state.game_mode:game_mode_key() ~= "weave" then
 		return
 	end
 
-	local network_transmit = Managers.state.network.network_transmit
-	local weave_name = self._active_weave_name
+	local var_44_0 = Managers.state.network.network_transmit
+	local var_44_1 = arg_44_0._active_weave_name
 
-	if weave_name then
-		local weave_name_id = NetworkLookup.weave_names[weave_name]
-		local objective_index = self._active_objective_index
+	if var_44_1 then
+		local var_44_2 = NetworkLookup.weave_names[var_44_1]
+		local var_44_3 = arg_44_0._active_objective_index
 
-		network_transmit:send_rpc("rpc_set_active_weave", peer_id, weave_name_id, objective_index)
+		var_44_0:send_rpc("rpc_set_active_weave", arg_44_1, var_44_2, var_44_3)
 	end
 
-	local player_count = self._num_players
+	local var_44_4 = arg_44_0._num_players
 
-	if player_count then
-		network_transmit:send_rpc("rpc_sync_player_count", peer_id, player_count)
+	if var_44_4 then
+		var_44_0:send_rpc("rpc_sync_player_count", arg_44_1, var_44_4)
 	end
 end
 
-local mutators_temp = {}
+local var_0_3 = {}
 
-WeaveManager.mutators = function (self)
-	table.clear(mutators_temp)
+function WeaveManager.mutators(arg_45_0)
+	table.clear(var_0_3)
 
-	local active_weave_name = self._active_weave_name
+	local var_45_0 = arg_45_0._active_weave_name
 
-	if not active_weave_name then
-		return mutators_temp
+	if not var_45_0 then
+		return var_0_3
 	end
 
-	local template = WeaveSettings.templates[active_weave_name]
-	local wind_strength = template.wind_strength
+	local var_45_1 = WeaveSettings.templates[var_45_0]
 
-	if wind_strength == 0 then
-		return mutators_temp
+	if var_45_1.wind_strength == 0 then
+		return var_0_3
 	end
 
-	local wind = template.wind
-	local wind_settings = WindSettings[wind]
-	local mutator_name = wind_settings.mutator
+	local var_45_2 = var_45_1.wind
+	local var_45_3 = WindSettings[var_45_2].mutator
 
-	mutators_temp[#mutators_temp + 1] = mutator_name
+	var_0_3[#var_0_3 + 1] = var_45_3
 
-	return mutators_temp
+	return var_0_3
 end
 
-WeaveManager.start_objective = function (self)
-	local objective_template = self:get_active_objective_template()
-	local start_flow_event = objective_template.objective_start_flow_event
-	local objective_settings = objective_template.objective_settings
-	local objective_lists = ObjectiveLists[objective_settings and objective_settings.objective_lists]
+function WeaveManager.start_objective(arg_46_0)
+	local var_46_0 = arg_46_0:get_active_objective_template()
+	local var_46_1 = var_46_0.objective_start_flow_event
+	local var_46_2 = var_46_0.objective_settings
+	local var_46_3 = ObjectiveLists[var_46_2 and var_46_2.objective_lists]
 
-	if start_flow_event then
-		LevelHelper:flow_event(self._world, start_flow_event)
+	if var_46_1 then
+		LevelHelper:flow_event(arg_46_0._world, var_46_1)
 	end
 
-	self._track_kills = objective_template.track_kills
+	arg_46_0._track_kills = var_46_0.track_kills
 
-	if objective_lists and self._is_server then
-		local objective_system = Managers.state.entity:system("objective_system")
+	if var_46_3 and arg_46_0._is_server then
+		local var_46_4 = Managers.state.entity:system("objective_system")
 
-		objective_system:server_register_objectives(objective_settings.objective_lists)
-		objective_system:server_activate_first_objective()
+		var_46_4:server_register_objectives(var_46_2.objective_lists)
+		var_46_4:server_activate_first_objective()
 	end
 
-	local objective_text = objective_template.display_name
+	local var_46_5 = var_46_0.display_name
 
-	Managers.state.event:trigger("ui_event_add_mission_objective", "objective", Localize(objective_text))
+	Managers.state.event:trigger("ui_event_add_mission_objective", "objective", Localize(var_46_5))
 
-	self._objective_ui_mission_name = "objective"
+	arg_46_0._objective_ui_mission_name = "objective"
 
 	Managers.state.event:trigger("weave_objective_synced")
-	self:_report_telemetry()
+	arg_46_0:_report_telemetry()
 end
 
-WeaveManager.player_damaged = function (self, damage_amount)
-	self._damage_taken = math.min(WeaveSettings.max_damage_taken, self._damage_taken + damage_amount)
+function WeaveManager.player_damaged(arg_47_0, arg_47_1)
+	arg_47_0._damage_taken = math.min(WeaveSettings.max_damage_taken, arg_47_0._damage_taken + arg_47_1)
 end
 
-WeaveManager.current_bar_score = function (self)
-	local game = Managers.state.network:game()
+function WeaveManager.current_bar_score(arg_48_0)
+	local var_48_0 = Managers.state.network:game()
 
-	if game and self._go_id then
-		local game_object_score = GameSession.game_object_field(game, self._go_id, "bar_score")
-		local bar_score = self._bar_score
-		local score = game_object_score < bar_score and bar_score or game_object_score
+	if var_48_0 and arg_48_0._go_id then
+		local var_48_1 = GameSession.game_object_field(var_48_0, arg_48_0._go_id, "bar_score")
+		local var_48_2 = arg_48_0._bar_score
 
-		return score
+		return var_48_1 < var_48_2 and var_48_2 or var_48_1
 	else
 		return 0
 	end
 end
 
-WeaveManager.increase_bar_score = function (self, amount)
-	fassert(self._is_server, "can't increase weave score as a client")
+function WeaveManager.increase_bar_score(arg_49_0, arg_49_1)
+	fassert(arg_49_0._is_server, "can't increase weave score as a client")
 
-	local objective_template = self:get_active_objective_template()
+	local var_49_0 = arg_49_0:get_active_objective_template()
 
-	if objective_template then
-		local bar_multiplier = objective_template.bar_multiplier
-		local bar_cutoff = objective_template.bar_cutoff
+	if var_49_0 then
+		local var_49_1 = var_49_0.bar_multiplier
+		local var_49_2 = var_49_0.bar_cutoff
 
-		amount = amount * bar_multiplier
+		arg_49_1 = arg_49_1 * var_49_1
 
-		local game = Managers.state.network:game()
+		local var_49_3 = Managers.state.network:game()
 
-		if game and self._go_id then
-			self._bar_score = math.min(math.max(self._bar_score + amount, 0), bar_cutoff)
+		if var_49_3 and arg_49_0._go_id then
+			arg_49_0._bar_score = math.min(math.max(arg_49_0._bar_score + arg_49_1, 0), var_49_2)
 
-			if self._bar_score == bar_cutoff then
-				local network_transmit = Managers.state.network.network_transmit
-
-				network_transmit:send_rpc_clients("rpc_bar_cutoff_reached")
+			if arg_49_0._bar_score == var_49_2 then
+				Managers.state.network.network_transmit:send_rpc_clients("rpc_bar_cutoff_reached")
 			end
 
-			GameSession.set_game_object_field(game, self._go_id, "bar_score", self._bar_score)
+			GameSession.set_game_object_field(var_49_3, arg_49_0._go_id, "bar_score", arg_49_0._bar_score)
 		end
 	end
 end
 
-WeaveManager.show_bar = function (self)
-	local objective_template = self:get_active_objective_template()
+function WeaveManager.show_bar(arg_50_0)
+	local var_50_0 = arg_50_0:get_active_objective_template()
 
-	if objective_template and objective_template.show_bar and not self._bar_filled then
+	if var_50_0 and var_50_0.show_bar and not arg_50_0._bar_filled then
 		return true
 	end
 
 	return false
 end
 
-WeaveManager.get_active_objective_template = function (self)
-	if not self._active_objective_index then
+function WeaveManager.get_active_objective_template(arg_51_0)
+	if not arg_51_0._active_objective_index then
 		return
 	end
 
-	local objective_index = self._active_objective_index
-	local weave_template = WeaveSettings.templates[self._active_weave_name]
-	local objectives = weave_template.objectives
-	local objective_template = objectives[objective_index]
+	local var_51_0 = arg_51_0._active_objective_index
 
-	return objective_template
+	return WeaveSettings.templates[arg_51_0._active_weave_name].objectives[var_51_0]
 end
 
-WeaveManager.get_scaling_difficulty_index = function (self)
+function WeaveManager.get_scaling_difficulty_index(arg_52_0)
 	return
 end
 
-WeaveManager.get_active_weave_template = function (self)
-	if not self._active_weave_name then
+function WeaveManager.get_active_weave_template(arg_53_0)
+	if not arg_53_0._active_weave_name then
 		return
 	end
 
-	return WeaveSettings.templates[self._active_weave_name]
+	return WeaveSettings.templates[arg_53_0._active_weave_name]
 end
 
-WeaveManager.start_terror_event = function (self, event_template_name, spawner_id)
-	local weave_settings = self:get_active_weave_template()
-	local objective_settings = self:get_active_objective_template()
-	local objective_index = self._active_objective_index
+function WeaveManager.start_terror_event(arg_54_0, arg_54_1, arg_54_2)
+	local var_54_0 = arg_54_0:get_active_weave_template()
+	local var_54_1 = arg_54_0:get_active_objective_template()
+	local var_54_2 = arg_54_0._active_objective_index
 
-	fassert(weave_settings ~= nil, "Tried to start terror event from WeaveManager without any active weave")
-	fassert(objective_settings.terror_events ~= nil, string.format("%q does not contain a terror_events table for objective %s", weave_settings.name, objective_index))
-	fassert(table.contains(objective_settings.terror_events, event_template_name), string.format("%q's terror_event table does not contain terror event '%q'", weave_settings.name, event_template_name))
-	self._weave_spawner:start_terror_event_from_template(event_template_name, spawner_id)
+	fassert(var_54_0 ~= nil, "Tried to start terror event from WeaveManager without any active weave")
+	fassert(var_54_1.terror_events ~= nil, string.format("%q does not contain a terror_events table for objective %s", var_54_0.name, var_54_2))
+	fassert(table.contains(var_54_1.terror_events, arg_54_1), string.format("%q's terror_event table does not contain terror event '%q'", var_54_0.name, arg_54_1))
+	arg_54_0._weave_spawner:start_terror_event_from_template(arg_54_1, arg_54_2)
 end
 
-WeaveManager.stop_terror_event = function (self, event_template_name, spawner_id)
-	local weave_settings = self:get_active_weave_template()
-	local objective_settings = self:get_active_objective_template()
-	local objective_index = self._active_objective_index
+function WeaveManager.stop_terror_event(arg_55_0, arg_55_1, arg_55_2)
+	local var_55_0 = arg_55_0:get_active_weave_template()
+	local var_55_1 = arg_55_0:get_active_objective_template()
+	local var_55_2 = arg_55_0._active_objective_index
 
-	fassert(weave_settings ~= nil, "Tried to start terror event from WeaveManager without any active weave")
-	fassert(objective_settings.terror_events ~= nil, string.format("%q does not contain a terror_events table for objective %s", weave_settings.name, objective_index))
-	fassert(table.contains(objective_settings.terror_events, event_template_name), string.format("%q's terror_event table does not contain terror event '%q'", weave_settings.name, event_template_name))
+	fassert(var_55_0 ~= nil, "Tried to start terror event from WeaveManager without any active weave")
+	fassert(var_55_1.terror_events ~= nil, string.format("%q does not contain a terror_events table for objective %s", var_55_0.name, var_55_2))
+	fassert(table.contains(var_55_1.terror_events, arg_55_1), string.format("%q's terror_event table does not contain terror event '%q'", var_55_0.name, arg_55_1))
 
-	local new_terror_event_name = string.format("%s_%s", event_template_name, spawner_id)
+	local var_55_3 = string.format("%s_%s", arg_55_1, arg_55_2)
 
-	TerrorEventMixer.stop_event(new_terror_event_name)
+	TerrorEventMixer.stop_event(var_55_3)
 end
 
-WeaveManager.get_wind_strength = function (self)
-	local weave_template = WeaveSettings.templates[self._active_weave_name]
+function WeaveManager.get_wind_strength(arg_56_0)
+	local var_56_0 = WeaveSettings.templates[arg_56_0._active_weave_name]
 
-	return weave_template and weave_template.wind_strength or 1
+	return var_56_0 and var_56_0.wind_strength or 1
 end
 
-WeaveManager._create_game_object = function (self)
-	local go_data_table = {
+function WeaveManager._create_game_object(arg_57_0)
+	local var_57_0 = {
 		go_type = NetworkLookup.go_types.weave,
-		bar_score = self._bar_score,
-		remaining_time = self._remaining_time,
+		bar_score = arg_57_0._bar_score,
+		remaining_time = arg_57_0._remaining_time
 	}
-	local callback = callback(self, "cb_game_session_disconnect")
+	local var_57_1 = callback(arg_57_0, "cb_game_session_disconnect")
 
-	self._go_id = Managers.state.network:create_game_object("weave", go_data_table, callback)
+	arg_57_0._go_id = Managers.state.network:create_game_object("weave", var_57_0, var_57_1)
 end
 
-WeaveManager.game_object_created = function (self, go_id)
-	self._go_id = go_id
+function WeaveManager.game_object_created(arg_58_0, arg_58_1)
+	arg_58_0._go_id = arg_58_1
 end
 
-WeaveManager.game_object_destroyed = function (self)
-	self._go_id = nil
+function WeaveManager.game_object_destroyed(arg_59_0)
+	arg_59_0._go_id = nil
 end
 
-WeaveManager.cb_game_session_disconnect = function (self)
-	self._go_id = nil
+function WeaveManager.cb_game_session_disconnect(arg_60_0)
+	arg_60_0._go_id = nil
 end
 
-WeaveManager.final_objective_completed = function (self)
-	if self._is_server then
-		local network_transmit = Managers.state.network.network_transmit
+function WeaveManager.final_objective_completed(arg_61_0)
+	if arg_61_0._is_server then
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_weave_final_objective_completed")
 
-		network_transmit:send_rpc_clients("rpc_weave_final_objective_completed")
-
-		self._pause_timer = true
+		arg_61_0._pause_timer = true
 	end
 
-	if self._objective_ui_mission_name then
-		Managers.state.event:trigger("ui_event_complete_mission", self._objective_ui_mission_name, true)
+	if arg_61_0._objective_ui_mission_name then
+		Managers.state.event:trigger("ui_event_complete_mission", arg_61_0._objective_ui_mission_name, true)
 	end
 
-	local wwise_world = Managers.world:wwise_world(self._world)
+	local var_61_0 = Managers.world:wwise_world(arg_61_0._world)
 
-	WwiseWorld.trigger_event(wwise_world, "Play_hud_wind_objectives_complete")
+	WwiseWorld.trigger_event(var_61_0, "Play_hud_wind_objectives_complete")
 	Managers.state.event:trigger("ui_event_add_mission_objective", "weave_victory", Localize("weave_victory"))
 
-	self._objective_ui_mission_name = "weave_victory"
+	arg_61_0._objective_ui_mission_name = "weave_victory"
 end
 
-WeaveManager._objective_completed = function (self)
-	self._bar_filled = true
+function WeaveManager._objective_completed(arg_62_0)
+	arg_62_0._bar_filled = true
 
-	local objective_template = self:get_active_objective_template()
-	local objective_completed_flow_event = objective_template.objective_completed_flow_event
+	local var_62_0 = arg_62_0:get_active_objective_template()
+	local var_62_1 = var_62_0.objective_completed_flow_event
 
-	if objective_completed_flow_event then
-		LevelHelper:flow_event(self._world, objective_completed_flow_event)
+	if var_62_1 then
+		LevelHelper:flow_event(arg_62_0._world, var_62_1)
 	end
 
-	local end_zone_name = objective_template.end_zone_name
+	local var_62_2 = var_62_0.end_zone_name
 
-	if end_zone_name then
-		local end_zone_system = Managers.state.entity:system("end_zone_system")
-
-		end_zone_system:activate_end_zone_by_name(end_zone_name)
+	if var_62_2 then
+		Managers.state.entity:system("end_zone_system"):activate_end_zone_by_name(var_62_2)
 	end
 
-	if self._objective_ui_mission_name then
-		Managers.state.event:trigger("ui_event_complete_mission", self._objective_ui_mission_name)
+	if arg_62_0._objective_ui_mission_name then
+		Managers.state.event:trigger("ui_event_complete_mission", arg_62_0._objective_ui_mission_name)
 	end
 
-	local next_objective_index = self:calculate_next_objective_index()
-	local template = WeaveSettings.templates[self._active_weave_name]
-	local objectives = template.objectives
-	local bonus_time = objective_template.bonus_time_on_complete
-	local time_is_up = self:get_time_left() <= 0
+	local var_62_3 = arg_62_0:calculate_next_objective_index()
+	local var_62_4 = WeaveSettings.templates[arg_62_0._active_weave_name].objectives
+	local var_62_5 = var_62_0.bonus_time_on_complete
 
-	if not time_is_up and bonus_time and self._is_server then
-		self._remaining_time = self._remaining_time + bonus_time
+	if not (arg_62_0:get_time_left() <= 0) and var_62_5 and arg_62_0._is_server then
+		arg_62_0._remaining_time = arg_62_0._remaining_time + var_62_5
 	end
 
-	if next_objective_index == #objectives then
-		local wwise_world = Managers.world:wwise_world(self._world)
+	if var_62_3 == #var_62_4 then
+		local var_62_6 = Managers.world:wwise_world(arg_62_0._world)
 
-		WwiseWorld.trigger_event(wwise_world, "Play_hud_wind_objectives_complete")
+		WwiseWorld.trigger_event(var_62_6, "Play_hud_wind_objectives_complete")
 
-		local text = Localize("reach_final_challenge_text")
+		local var_62_7 = Localize("reach_final_challenge_text")
 
-		if bonus_time then
-			local seconds = math.max(bonus_time, 0)
-			local minutes = math.floor(seconds / 60)
-			local hours = math.floor(minutes / 60)
-			local timer_text = string.format("%d:%02d", minutes - hours * 60, seconds % 60)
+		if var_62_5 then
+			local var_62_8 = math.max(var_62_5, 0)
+			local var_62_9 = math.floor(var_62_8 / 60)
+			local var_62_10 = math.floor(var_62_9 / 60)
+			local var_62_11 = string.format("%d:%02d", var_62_9 - var_62_10 * 60, var_62_8 % 60)
 
-			text = text .. "\n+" .. timer_text
+			var_62_7 = var_62_7 .. "\n+" .. var_62_11
 		end
 
-		Managers.state.event:trigger("ui_event_add_mission_objective", "objective_complete", text)
+		Managers.state.event:trigger("ui_event_add_mission_objective", "objective_complete", var_62_7)
 
-		self._objective_ui_mission_name = "objective_complete"
+		arg_62_0._objective_ui_mission_name = "objective_complete"
 	end
 
-	local objective_system = Managers.state.entity:system("objective_system")
-
-	objective_system:deactivate_all_objectives()
+	Managers.state.entity:system("objective_system"):deactivate_all_objectives()
 end
 
-WeaveManager._calculate_score = function (self)
-	local damage_score = WeaveSettings.max_damage_taken - self._damage_taken
-	local time_score = self._remaining_time * WeaveSettings.time_score_weighting
-	local total_score = math.floor(math.max(time_score + damage_score, 0) * 10)
+function WeaveManager._calculate_score(arg_63_0)
+	local var_63_0 = WeaveSettings.max_damage_taken - arg_63_0._damage_taken
+	local var_63_1 = arg_63_0._remaining_time * WeaveSettings.time_score_weighting
 
-	return total_score
+	return (math.floor(math.max(var_63_1 + var_63_0, 0) * 10))
 end
 
-WeaveManager.get_bar_score = function (self)
-	return self._bar_score
+function WeaveManager.get_bar_score(arg_64_0)
+	return arg_64_0._bar_score
 end
 
-WeaveManager.get_score = function (self)
-	return self._score
+function WeaveManager.get_score(arg_65_0)
+	return arg_65_0._score
 end
 
-WeaveManager.get_time_score = function (self)
-	return math.floor(math.max(self:get_score() - self:get_damage_score(), 0))
+function WeaveManager.get_time_score(arg_66_0)
+	return math.floor(math.max(arg_66_0:get_score() - arg_66_0:get_damage_score(), 0))
 end
 
-WeaveManager.get_damage_score = function (self)
-	return math.floor((WeaveSettings.max_damage_taken - self._damage_taken) * 10)
+function WeaveManager.get_damage_score(arg_67_0)
+	return math.floor((WeaveSettings.max_damage_taken - arg_67_0._damage_taken) * 10)
 end
 
-WeaveManager.get_weave_tier = function (self)
-	local weave_template = WeaveSettings.templates[self._active_weave_name]
-
-	return weave_template.tier
+function WeaveManager.get_weave_tier(arg_68_0)
+	return WeaveSettings.templates[arg_68_0._active_weave_name].tier
 end
 
-WeaveManager.get_num_players = function (self)
-	return self._num_players
+function WeaveManager.get_num_players(arg_69_0)
+	return arg_69_0._num_players
 end
 
-WeaveManager.is_tracking_kills = function (self)
-	return self._track_kills
+function WeaveManager.is_tracking_kills(arg_70_0)
+	return arg_70_0._track_kills
 end
 
-WeaveManager.ai_killed = function (self, killed_unit, killer_unit, death_data, killing_blow)
-	if self._track_kills then
-		self:_track_ai_killed(death_data.breed.name)
+function WeaveManager.ai_killed(arg_71_0, arg_71_1, arg_71_2, arg_71_3, arg_71_4)
+	if arg_71_0._track_kills then
+		arg_71_0:_track_ai_killed(arg_71_3.breed.name)
 	end
 
-	local objective_system = Managers.state.entity:system("objective_system")
-
-	objective_system:on_ai_killed(killed_unit, killer_unit, death_data, killing_blow)
+	Managers.state.entity:system("objective_system"):on_ai_killed(arg_71_1, arg_71_2, arg_71_3, arg_71_4)
 end
 
-WeaveManager._track_ai_killed = function (self, breed_name)
-	if self._is_server then
-		self._enemies_killed[breed_name] = self._enemies_killed[breed_name] or 0
-		self._enemies_killed[breed_name] = self._enemies_killed[breed_name] + 1
-		self._num_enemies_killed = self._num_enemies_killed + 1
+function WeaveManager._track_ai_killed(arg_72_0, arg_72_1)
+	if arg_72_0._is_server then
+		arg_72_0._enemies_killed[arg_72_1] = arg_72_0._enemies_killed[arg_72_1] or 0
+		arg_72_0._enemies_killed[arg_72_1] = arg_72_0._enemies_killed[arg_72_1] + 1
+		arg_72_0._num_enemies_killed = arg_72_0._num_enemies_killed + 1
 
-		local difficulty_key = Managers.state.difficulty:get_difficulty()
-		local current_objective_template = self:get_active_objective_template()
+		local var_72_0 = Managers.state.difficulty:get_difficulty()
+		local var_72_1 = arg_72_0:get_active_objective_template()
 
-		if current_objective_template == nil then
+		if var_72_1 == nil then
 			return
 		end
 
-		local enemy_count = current_objective_template.enemy_count[difficulty_key]
-		local amount = 1 / enemy_count * 100
+		local var_72_2 = 1 / var_72_1.enemy_count[var_72_0] * 100
 
-		self:increase_bar_score(amount)
+		arg_72_0:increase_bar_score(var_72_2)
 	end
 end
 
-WeaveManager.objective_set_completed = function (self)
-	local mission_system = Managers.state.entity:system("mission_system")
-	local active_missions = mission_system:get_missions()
+function WeaveManager.objective_set_completed(arg_73_0)
+	local var_73_0 = Managers.state.entity:system("mission_system")
+	local var_73_1 = var_73_0:get_missions()
 
-	if active_missions and active_missions.weave_collect_limited_item_objective then
-		mission_system:end_mission("weave_collect_limited_item_objective", true)
+	if var_73_1 and var_73_1.weave_collect_limited_item_objective then
+		var_73_0:end_mission("weave_collect_limited_item_objective", true)
 	end
 end
 
-WeaveManager.rpc_bar_cutoff_reached = function (self, channel_id)
-	local objective_template = self:get_active_objective_template()
-	local bar_cutoff = objective_template.bar_cutoff
-
-	self._bar_score = bar_cutoff
+function WeaveManager.rpc_bar_cutoff_reached(arg_74_0, arg_74_1)
+	arg_74_0._bar_score = arg_74_0:get_active_objective_template().bar_cutoff
 end
 
-WeaveManager.rpc_set_active_weave = function (self, channel_id, weave_name_id, objective_index)
-	local weave_name = NetworkLookup.weave_names[weave_name_id]
+function WeaveManager.rpc_set_active_weave(arg_75_0, arg_75_1, arg_75_2, arg_75_3)
+	local var_75_0 = NetworkLookup.weave_names[arg_75_2]
 
-	self:reset_statistics_for_challenges()
-	self:_set_active_weave(weave_name)
-	self:_set_active_objective(objective_index)
-	self:start_objective()
+	arg_75_0:reset_statistics_for_challenges()
+	arg_75_0:_set_active_weave(var_75_0)
+	arg_75_0:_set_active_objective(arg_75_3)
+	arg_75_0:start_objective()
 	Managers.state.event:trigger("weave_objective_synced")
 end
 
-WeaveManager.rpc_weave_objective_completed = function (self, channel_id)
-	self:_objective_completed()
+function WeaveManager.rpc_weave_objective_completed(arg_76_0, arg_76_1)
+	arg_76_0:_objective_completed()
 end
 
-WeaveManager.rpc_sync_end_of_weave_data = function (self, channel_id, score, remaining_time, num_players, damage_taken)
-	self._score = score
-	self._remaining_time = remaining_time
-	self._num_players = num_players
-	self._damage_taken = damage_taken
+function WeaveManager.rpc_sync_end_of_weave_data(arg_77_0, arg_77_1, arg_77_2, arg_77_3, arg_77_4, arg_77_5)
+	arg_77_0._score = arg_77_2
+	arg_77_0._remaining_time = arg_77_3
+	arg_77_0._num_players = arg_77_4
+	arg_77_0._damage_taken = arg_77_5
 end
 
-WeaveManager.rpc_sync_player_count = function (self, channel_id, num_players)
-	self._num_players = num_players
+function WeaveManager.rpc_sync_player_count(arg_78_0, arg_78_1, arg_78_2)
+	arg_78_0._num_players = arg_78_2
 end
 
-WeaveManager.rpc_weave_final_objective_completed = function (self, channel_id)
-	self:final_objective_completed()
+function WeaveManager.rpc_weave_final_objective_completed(arg_79_0, arg_79_1)
+	arg_79_0:final_objective_completed()
 end

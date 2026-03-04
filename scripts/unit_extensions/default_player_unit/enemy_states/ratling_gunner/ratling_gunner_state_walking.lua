@@ -1,34 +1,31 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/ratling_gunner/ratling_gunner_state_walking.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/ratling_gunner/ratling_gunner_state_walking.lua
 
 RatlingGunnerStateWalking = class(RatlingGunnerStateWalking, EnemyCharacterStateWalking)
 
-RatlingGunnerStateWalking.init = function (self, character_state_init_context)
-	RatlingGunnerStateWalking.super.init(self, character_state_init_context)
+function RatlingGunnerStateWalking.init(arg_1_0, arg_1_1)
+	RatlingGunnerStateWalking.super.init(arg_1_0, arg_1_1)
 
-	self._fire_ability_id = self._career_extension:ability_id("fire")
-	self._reload_ability_id = self._career_extension:ability_id("reload")
+	arg_1_0._fire_ability_id = arg_1_0._career_extension:ability_id("fire")
+	arg_1_0._reload_ability_id = arg_1_0._career_extension:ability_id("reload")
 end
 
-RatlingGunnerStateWalking.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
-	RatlingGunnerStateWalking.super.on_enter(self, unit, input, dt, context, t, previous_state, params)
+function RatlingGunnerStateWalking.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	RatlingGunnerStateWalking.super.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 
-	self._left_wpn_particle_node_name = "g_ratlinggun"
-	self._left_wpn_particle_name = "fx/wpnfx_gunner_enemy_in_range_1p"
+	arg_2_0._left_wpn_particle_node_name = "g_ratlinggun"
+	arg_2_0._left_wpn_particle_name = "fx/wpnfx_gunner_enemy_in_range_1p"
 end
 
-RatlingGunnerStateWalking.debug_display_ammo = function (self)
-	local unit = self._unit
-	local blackboard = BLACKBOARDS[unit]
-	local data = blackboard.attack_pattern_data or {}
-	local current_ammo = data.current_ammo or self._breed.max_ammo
-	local screen_width = RESOLUTION_LOOKUP.res_w
-	local screen_height = RESOLUTION_LOOKUP.res_h
-	local pos_y = screen_height * 0.85
-	local pos_x = screen_width * 0.87
-	local color = Color(100, 255, 0)
-	local text_pos = Vector3(pos_x, pos_y, 10)
-	local font_size = 40
-	local string_ammo = string.format("Ammo: %2d", current_ammo)
+function RatlingGunnerStateWalking.debug_display_ammo(arg_3_0)
+	local var_3_0 = arg_3_0._unit
+	local var_3_1 = (BLACKBOARDS[var_3_0].attack_pattern_data or {}).current_ammo or arg_3_0._breed.max_ammo
+	local var_3_2 = RESOLUTION_LOOKUP.res_w
+	local var_3_3 = RESOLUTION_LOOKUP.res_h * 0.85
+	local var_3_4 = var_3_2 * 0.87
+	local var_3_5 = Color(100, 255, 0)
+	local var_3_6 = Vector3(var_3_4, var_3_3, 10)
+	local var_3_7 = 40
+	local var_3_8 = string.format("Ammo: %2d", var_3_1)
 
-	Debug.draw_text(string_ammo, text_pos, font_size, color)
+	Debug.draw_text(var_3_8, var_3_6, var_3_7, var_3_5)
 end

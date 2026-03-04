@@ -1,128 +1,128 @@
-﻿-- chunkname: @scripts/managers/network/ban_list_manager.lua
+-- chunkname: @scripts/managers/network/ban_list_manager.lua
 
 BanListManager = class(BanListManager)
 
-local SAVE_FILE = "ban_list"
+local var_0_0 = "ban_list"
 
-BanListManager.init = function (self)
-	self._bans = {}
+function BanListManager.init(arg_1_0)
+	arg_1_0._bans = {}
 
-	self:_load_bans()
+	arg_1_0:_load_bans()
 end
 
-BanListManager.ban = function (self, peer_id, name, until_time_stamp)
-	self._bans[peer_id] = {
-		name = name,
-		ban_end = until_time_stamp,
+function BanListManager.ban(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	arg_2_0._bans[arg_2_1] = {
+		name = arg_2_2,
+		ban_end = arg_2_3
 	}
 end
 
-BanListManager.unban = function (self, peer_id)
-	self._bans[peer_id] = nil
+function BanListManager.unban(arg_3_0, arg_3_1)
+	arg_3_0._bans[arg_3_1] = nil
 end
 
-BanListManager.save = function (self, callback)
-	local function cb(result)
-		self:_save_done_callback(result, callback)
+function BanListManager.save(arg_4_0, arg_4_1)
+	local function var_4_0(arg_5_0)
+		arg_4_0:_save_done_callback(arg_5_0, arg_4_1)
 	end
 
-	local force_local_save = true
+	local var_4_1 = true
 
-	Managers.save:auto_save(SAVE_FILE, self._bans, cb, force_local_save)
+	Managers.save:auto_save(var_0_0, arg_4_0._bans, var_4_0, var_4_1)
 end
 
-local function in_ban_range(ban_info)
-	local ban_end = ban_info.ban_end
-	local now = os.time()
+local function var_0_1(arg_6_0)
+	local var_6_0 = arg_6_0.ban_end
+	local var_6_1 = os.time()
 
-	return ban_end == nil or now < ban_end
+	return var_6_0 == nil or var_6_1 < var_6_0
 end
 
-BanListManager.is_banned = function (self, peer_id)
-	local ban_info = self._bans[peer_id]
+function BanListManager.is_banned(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_0._bans[arg_7_1]
 
-	if ban_info == nil then
+	if var_7_0 == nil then
 		return false
 	end
 
-	return in_ban_range(ban_info)
+	return var_0_1(var_7_0)
 end
 
-BanListManager.ban_list = function (self)
-	local result = {}
+function BanListManager.ban_list(arg_8_0)
+	local var_8_0 = {}
 
-	local function order_func(t, a, b)
-		local left_name = t[a].name
-		local right_name = t[b].name
+	local function var_8_1(arg_9_0, arg_9_1, arg_9_2)
+		local var_9_0 = arg_9_0[arg_9_1].name
+		local var_9_1 = arg_9_0[arg_9_2].name
 
-		if left_name ~= right_name then
-			return left_name < right_name
+		if var_9_0 ~= var_9_1 then
+			return var_9_0 < var_9_1
 		end
 
-		return a < b
+		return arg_9_1 < arg_9_2
 	end
 
-	for peer_id, ban_info in table.sorted(self._bans, order_func) do
-		result[#result + 1] = {
-			name = ban_info.name,
-			peer_id = peer_id,
-			ban_end = ban_info.ban_end,
+	for iter_8_0, iter_8_1 in table.sorted(arg_8_0._bans, var_8_1) do
+		var_8_0[#var_8_0 + 1] = {
+			name = iter_8_1.name,
+			peer_id = iter_8_0,
+			ban_end = iter_8_1.ban_end
 		}
 	end
 
-	return result
+	return var_8_0
 end
 
-BanListManager.banned_peers = function (self)
-	local result = {}
+function BanListManager.banned_peers(arg_10_0)
+	local var_10_0 = {}
 
-	for peer, _ in pairs(self._bans) do
-		result[#result + 1] = peer
+	for iter_10_0, iter_10_1 in pairs(arg_10_0._bans) do
+		var_10_0[#var_10_0 + 1] = iter_10_0
 	end
 
-	return result
+	return var_10_0
 end
 
-BanListManager._load_bans = function (self)
-	local function callback(result)
-		self:_load_done_callback(result)
+function BanListManager._load_bans(arg_11_0)
+	local function var_11_0(arg_12_0)
+		arg_11_0:_load_done_callback(arg_12_0)
 	end
 
-	local force_local_load = true
+	local var_11_1 = true
 
-	Managers.save:auto_load(SAVE_FILE, callback, force_local_load)
+	Managers.save:auto_load(var_0_0, var_11_0, var_11_1)
 end
 
-BanListManager._load_done_callback = function (self, result)
-	if result.error ~= nil then
-		print(string.format("Failed to load the ban list (%s). It will be empty.", result.error))
+function BanListManager._load_done_callback(arg_13_0, arg_13_1)
+	if arg_13_1.error ~= nil then
+		print(string.format("Failed to load the ban list (%s). It will be empty.", arg_13_1.error))
 
 		return
 	end
 
-	table.merge(self._bans, result.data)
-	self:_remove_old_bans()
+	table.merge(arg_13_0._bans, arg_13_1.data)
+	arg_13_0:_remove_old_bans()
 end
 
-BanListManager._save_done_callback = function (self, result, callback)
-	if result.error ~= nil then
-		print(string.format("Failed to save the ban list (%s).", result.error))
-		callback(result.error)
+function BanListManager._save_done_callback(arg_14_0, arg_14_1, arg_14_2)
+	if arg_14_1.error ~= nil then
+		print(string.format("Failed to save the ban list (%s).", arg_14_1.error))
+		arg_14_2(arg_14_1.error)
 
 		return
 	end
 
-	callback()
+	arg_14_2()
 end
 
-BanListManager._remove_old_bans = function (self)
-	local new_bans = {}
+function BanListManager._remove_old_bans(arg_15_0)
+	local var_15_0 = {}
 
-	for peer_id, ban_info in pairs(self._bans) do
-		if in_ban_range(ban_info) then
-			new_bans[peer_id] = ban_info
+	for iter_15_0, iter_15_1 in pairs(arg_15_0._bans) do
+		if var_0_1(iter_15_1) then
+			var_15_0[iter_15_0] = iter_15_1
 		end
 	end
 
-	self._bans = new_bans
+	arg_15_0._bans = var_15_0
 end

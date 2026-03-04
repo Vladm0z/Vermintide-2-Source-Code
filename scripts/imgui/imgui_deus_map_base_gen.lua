@@ -1,377 +1,380 @@
-﻿-- chunkname: @scripts/imgui/imgui_deus_map_base_gen.lua
+-- chunkname: @scripts/imgui/imgui_deus_map_base_gen.lua
 
 ImguiDeusMapBaseGen = class(ImguiDeusMapBaseGen)
 
-local journey_names = AvailableJourneyOrder
-local layout_editable_keys = {
+local var_0_0 = AvailableJourneyOrder
+local var_0_1 = {
 	{
-		key = "SPRING_CONSTANT",
 		type = "FLOAT",
+		key = "SPRING_CONSTANT"
 	},
 	{
-		key = "FORCE_MAX",
 		type = "FLOAT",
+		key = "FORCE_MAX"
 	},
 	{
-		key = "REPEL_CONSTANT",
 		type = "FLOAT",
+		key = "REPEL_CONSTANT"
 	},
 	{
-		key = "DEFAULT_MASS",
 		type = "FLOAT",
+		key = "DEFAULT_MASS"
 	},
 	{
-		key = "START_MASS",
 		type = "FLOAT",
+		key = "START_MASS"
 	},
 	{
-		key = "END_MASS",
 		type = "FLOAT",
+		key = "END_MASS"
 	},
 	{
-		key = "NODE_SPEED",
 		type = "FLOAT",
+		key = "NODE_SPEED"
 	},
 	{
-		key = "DAMPING_FACTOR",
 		type = "FLOAT",
+		key = "DAMPING_FACTOR"
 	},
 	{
-		key = "WIDTH",
 		type = "INT",
+		key = "WIDTH"
 	},
 	{
-		key = "HEIGHT",
 		type = "INT",
+		key = "HEIGHT"
 	},
 	{
-		key = "LAYOUT_TICKS",
 		type = "INT",
-	},
+		key = "LAYOUT_TICKS"
+	}
 }
-local base_gen_editable_keys = {
+local var_0_2 = {
 	{
-		key = "MAX_STRAIGHT_LINE",
 		type = "INT",
+		key = "MAX_STRAIGHT_LINE"
 	},
 	{
-		key = "MAX_IDEAL_NODES",
 		type = "INT",
+		key = "MAX_IDEAL_NODES"
 	},
 	{
-		key = "MIN_NODES",
 		type = "INT",
+		key = "MIN_NODES"
 	},
 	{
-		key = "MAX_CONNECTIONS_PER_NODE",
 		type = "INT",
+		key = "MAX_CONNECTIONS_PER_NODE"
 	},
 	{
-		key = "MAX_INCOMING_CONNECTIONS_PER_NODE",
 		type = "INT",
+		key = "MAX_INCOMING_CONNECTIONS_PER_NODE"
 	},
 	{
-		key = "MAX_PATHS",
 		type = "INT",
-	},
+		key = "MAX_PATHS"
+	}
 }
 
-local function are_very_different(val1, val2)
-	return math.round(val1 * 10000) ~= math.round(val2 * 10000)
+local function var_0_3(arg_1_0, arg_1_1)
+	return math.round(arg_1_0 * 10000) ~= math.round(arg_1_1 * 10000)
 end
 
-local function render_key_editor(editable_keys, base_config, original_config)
-	for _, key_config in ipairs(editable_keys) do
-		if key_config.type == "FLOAT" then
-			base_config[key_config.key] = Imgui.input_float(key_config.key, base_config[key_config.key])
-		elseif key_config.type == "INT" then
-			base_config[key_config.key] = Imgui.input_int(key_config.key, base_config[key_config.key])
+local function var_0_4(arg_2_0, arg_2_1, arg_2_2)
+	for iter_2_0, iter_2_1 in ipairs(arg_2_0) do
+		if iter_2_1.type == "FLOAT" then
+			arg_2_1[iter_2_1.key] = Imgui.input_float(iter_2_1.key, arg_2_1[iter_2_1.key])
+		elseif iter_2_1.type == "INT" then
+			arg_2_1[iter_2_1.key] = Imgui.input_int(iter_2_1.key, arg_2_1[iter_2_1.key])
 		end
 
-		if are_very_different(base_config[key_config.key], original_config[key_config.key]) then
+		if var_0_3(arg_2_1[iter_2_1.key], arg_2_2[iter_2_1.key]) then
 			Imgui.same_line()
 			Imgui.text("<changed>")
 		end
 	end
 end
 
-local function have_configs_changed(editable_keys, base_config, original_config)
-	for _, key_config in ipairs(editable_keys) do
-		if are_very_different(base_config[key_config.key], original_config[key_config.key]) then
+local function var_0_5(arg_3_0, arg_3_1, arg_3_2)
+	for iter_3_0, iter_3_1 in ipairs(arg_3_0) do
+		if var_0_3(arg_3_1[iter_3_1.key], arg_3_2[iter_3_1.key]) then
 			return true
 		end
 	end
 end
 
-local function write_indent(string_array, indent)
-	for i = 1, indent do
-		string_array[#string_array + 1] = "\t"
+local function var_0_6(arg_4_0, arg_4_1)
+	for iter_4_0 = 1, arg_4_1 do
+		arg_4_0[#arg_4_0 + 1] = "\t"
 	end
 end
 
-local function serialize_table(string_array, indent, table)
-	for key, value in pairs(table) do
-		write_indent(string_array, indent)
+local function var_0_7(arg_5_0, arg_5_1, arg_5_2)
+	for iter_5_0, iter_5_1 in pairs(arg_5_2) do
+		var_0_6(arg_5_0, arg_5_1)
 
-		if type(key) == "string" then
-			string_array[#string_array + 1] = key
+		if type(iter_5_0) == "string" then
+			arg_5_0[#arg_5_0 + 1] = iter_5_0
 		else
-			string_array[#string_array + 1] = "["
-			string_array[#string_array + 1] = tostring(key)
-			string_array[#string_array + 1] = "]"
+			arg_5_0[#arg_5_0 + 1] = "["
+			arg_5_0[#arg_5_0 + 1] = tostring(iter_5_0)
+			arg_5_0[#arg_5_0 + 1] = "]"
 		end
 
-		string_array[#string_array + 1] = " = "
+		arg_5_0[#arg_5_0 + 1] = " = "
 
-		local value_type = type(value)
+		local var_5_0 = type(iter_5_1)
 
-		if value_type == "string" then
-			string_array[#string_array + 1] = "\""
-			string_array[#string_array + 1] = value
-			string_array[#string_array + 1] = "\""
-		elseif value_type == "table" then
-			string_array[#string_array + 1] = "{\n"
-			indent = indent + 1
+		if var_5_0 == "string" then
+			arg_5_0[#arg_5_0 + 1] = "\""
+			arg_5_0[#arg_5_0 + 1] = iter_5_1
+			arg_5_0[#arg_5_0 + 1] = "\""
+		elseif var_5_0 == "table" then
+			arg_5_0[#arg_5_0 + 1] = "{\n"
+			arg_5_1 = arg_5_1 + 1
 
-			serialize_table(string_array, indent, value)
+			var_0_7(arg_5_0, arg_5_1, iter_5_1)
 
-			indent = indent - 1
+			arg_5_1 = arg_5_1 - 1
 
-			write_indent(string_array, indent)
+			var_0_6(arg_5_0, arg_5_1)
 
-			string_array[#string_array + 1] = "}"
+			arg_5_0[#arg_5_0 + 1] = "}"
 		else
-			string_array[#string_array + 1] = tostring(value)
+			arg_5_0[#arg_5_0 + 1] = tostring(iter_5_1)
 		end
 
-		string_array[#string_array + 1] = ",\n"
+		arg_5_0[#arg_5_0 + 1] = ",\n"
 	end
 end
 
-local function serialize_graphs(graphs)
-	local string_array = {}
+local function var_0_8(arg_6_0)
+	local var_6_0 = {}
 
-	string_array[#string_array + 1] = "return {\n"
+	var_6_0[#var_6_0 + 1] = "return {\n"
 
-	serialize_table(string_array, 1, graphs)
+	var_0_7(var_6_0, 1, arg_6_0)
 
-	string_array[#string_array + 1] = "}\n"
+	var_6_0[#var_6_0 + 1] = "}\n"
 
-	return table.concat(string_array)
+	return table.concat(var_6_0)
 end
 
-local RELOAD = true
+local var_0_9 = true
 
-ImguiDeusMapBaseGen.init = function (self)
-	self._seed = tonumber(script_data.debug_draw_base_map_seed) or 0
-	self._journey_index = 1
-	self._draw_realtime = false
-	self._start_paused = false
+function ImguiDeusMapBaseGen.init(arg_7_0)
+	arg_7_0._seed = tonumber(script_data.debug_draw_base_map_seed) or 0
+	arg_7_0._journey_index = 1
+	arg_7_0._draw_realtime = false
+	arg_7_0._start_paused = false
 
-	self:_init_configs()
+	arg_7_0:_init_configs()
 
-	RELOAD = false
+	var_0_9 = false
 end
 
-local GEN_STATE = {
-	BASE_GEN = 1,
+local var_0_10 = {
 	LAYOUT = 2,
+	BASE_GEN = 1
 }
 
-ImguiDeusMapBaseGen.update = function (self, t, dt)
-	if RELOAD then
-		self:_init_configs()
+function ImguiDeusMapBaseGen.update(arg_8_0, arg_8_1, arg_8_2)
+	if var_0_9 then
+		arg_8_0:_init_configs()
 
-		RELOAD = false
+		var_0_9 = false
 	end
 
-	if self._seed_to_render then
-		self._generator_seed = self._seed_to_render
-		self._seed_to_render = nil
-		self._generation_state = GEN_STATE.BASE_GEN
-		self._base_graph_generator = nil
-		self._layout_updater = nil
-		self._nodes_being_generated = nil
-		self._paused = false
-		self._next_step = false
+	if arg_8_0._seed_to_render then
+		arg_8_0._generator_seed = arg_8_0._seed_to_render
+		arg_8_0._seed_to_render = nil
+		arg_8_0._generation_state = var_0_10.BASE_GEN
+		arg_8_0._base_graph_generator = nil
+		arg_8_0._layout_updater = nil
+		arg_8_0._nodes_being_generated = nil
+		arg_8_0._paused = false
+		arg_8_0._next_step = false
 		DeusDebugDrawMapSettings.error_message = nil
 		DeusDebugDrawMapSettings.base_graph = nil
 		DeusDebugDrawMapSettings.final_graph = nil
 	end
 
-	if self._generation_state == GEN_STATE.BASE_GEN then
-		if not self._base_graph_generator then
-			self._base_graph_generator = deus_base_graph_generator(self._generator_seed, self._base_config)
+	if arg_8_0._generation_state == var_0_10.BASE_GEN then
+		if not arg_8_0._base_graph_generator then
+			arg_8_0._base_graph_generator = deus_base_graph_generator(arg_8_0._generator_seed, arg_8_0._base_config)
 
-			if self._draw_realtime and self._start_paused then
-				self._paused = true
+			if arg_8_0._draw_realtime and arg_8_0._start_paused then
+				arg_8_0._paused = true
 			end
 		end
 
-		local generator_done, error_message, nodes
+		local var_8_0
+		local var_8_1
+		local var_8_2
 
-		if not self._paused or self._next_step then
-			if self._draw_realtime then
-				generator_done, error_message, nodes = self._base_graph_generator()
-				DeusDebugDrawMapSettings.base_graph = deus_layout_normalize(nodes)
+		if not arg_8_0._paused or arg_8_0._next_step then
+			if arg_8_0._draw_realtime then
+				var_8_0, var_8_1, var_8_2 = arg_8_0._base_graph_generator()
+				DeusDebugDrawMapSettings.base_graph = deus_layout_normalize(var_8_2)
 				DeusDebugDrawMapSettings.final_graph = nil
 			else
-				local time_start = os.clock()
+				local var_8_3 = os.clock()
 
-				while not generator_done and not (os.clock() - time_start > 0.01) do
-					generator_done, error_message, nodes = self._base_graph_generator()
+				while not var_8_0 and not (os.clock() - var_8_3 > 0.01) do
+					var_8_0, var_8_1, var_8_2 = arg_8_0._base_graph_generator()
 				end
 
-				DeusDebugDrawMapSettings.base_graph = deus_layout_normalize(nodes)
+				DeusDebugDrawMapSettings.base_graph = deus_layout_normalize(var_8_2)
 				DeusDebugDrawMapSettings.final_graph = nil
 			end
 		end
 
-		self._nodes_being_generated = nodes
+		arg_8_0._nodes_being_generated = var_8_2
 
-		if generator_done then
-			if error_message then
-				self._generation_state = nil
-				DeusDebugDrawMapSettings.error_message = error_message
+		if var_8_0 then
+			if var_8_1 then
+				arg_8_0._generation_state = nil
+				DeusDebugDrawMapSettings.error_message = var_8_1
 			else
-				self._generation_state = GEN_STATE.LAYOUT
+				arg_8_0._generation_state = var_0_10.LAYOUT
 			end
 		end
-	elseif self._generation_state == GEN_STATE.LAYOUT then
-		local layed_out_graph
+	elseif arg_8_0._generation_state == var_0_10.LAYOUT then
+		local var_8_4
 
-		if not self._paused or self._next_step then
-			if self._draw_realtime then
-				if not self._layout_updater then
-					self._layout_updater = debug_deus_create_realtime_layout_updater(self._nodes_being_generated, self._layout_config)
+		if not arg_8_0._paused or arg_8_0._next_step then
+			if arg_8_0._draw_realtime then
+				if not arg_8_0._layout_updater then
+					arg_8_0._layout_updater = debug_deus_create_realtime_layout_updater(arg_8_0._nodes_being_generated, arg_8_0._layout_config)
 
-					if self._draw_realtime and self._start_paused then
-						self._paused = true
+					if arg_8_0._draw_realtime and arg_8_0._start_paused then
+						arg_8_0._paused = true
 					end
 				end
 
-				local done
+				local var_8_5
+				local var_8_6
 
-				done, layed_out_graph = self._layout_updater()
-				self._nodes_being_generated = layed_out_graph
+				var_8_6, var_8_4 = arg_8_0._layout_updater()
+				arg_8_0._nodes_being_generated = var_8_4
 
-				if done then
-					self._generation_state = nil
-					self._graph_to_save = self._nodes_being_generated
-					self._nodes_being_generated = nil
+				if var_8_6 then
+					arg_8_0._generation_state = nil
+					arg_8_0._graph_to_save = arg_8_0._nodes_being_generated
+					arg_8_0._nodes_being_generated = nil
 				end
 			else
-				layed_out_graph = deus_layout_base_graph(self._nodes_being_generated, self._layout_config)
-				self._generation_state = nil
-				self._graph_to_save = layed_out_graph
-				self._nodes_being_generated = nil
+				var_8_4 = deus_layout_base_graph(arg_8_0._nodes_being_generated, arg_8_0._layout_config)
+				arg_8_0._generation_state = nil
+				arg_8_0._graph_to_save = var_8_4
+				arg_8_0._nodes_being_generated = nil
 			end
 
-			DeusDebugDrawMapSettings.base_graph = layed_out_graph
+			DeusDebugDrawMapSettings.base_graph = var_8_4
 			DeusDebugDrawMapSettings.final_graph = nil
 		end
 	end
 
-	self._next_step = false
+	arg_8_0._next_step = false
 end
 
-ImguiDeusMapBaseGen.is_persistent = function (self)
+function ImguiDeusMapBaseGen.is_persistent(arg_9_0)
 	return false
 end
 
-ImguiDeusMapBaseGen._init_configs = function (self)
-	self._original_layout_configs = DEUS_MAP_LAYOUT_SETTINGS
-	self._layout_configs = table.clone(DEUS_MAP_LAYOUT_SETTINGS)
-	self._original_base_configs = DEUS_BASE_MAP_GEN_SETTINGS
-	self._base_configs = table.clone(DEUS_BASE_MAP_GEN_SETTINGS)
+function ImguiDeusMapBaseGen._init_configs(arg_10_0)
+	arg_10_0._original_layout_configs = DEUS_MAP_LAYOUT_SETTINGS
+	arg_10_0._layout_configs = table.clone(DEUS_MAP_LAYOUT_SETTINGS)
+	arg_10_0._original_base_configs = DEUS_BASE_MAP_GEN_SETTINGS
+	arg_10_0._base_configs = table.clone(DEUS_BASE_MAP_GEN_SETTINGS)
 
-	self:_reset_configs_for_journey()
+	arg_10_0:_reset_configs_for_journey()
 
-	self._configs_changed = false
+	arg_10_0._configs_changed = false
 end
 
-ImguiDeusMapBaseGen._reset_configs_for_journey = function (self)
-	local journey_name = journey_names[self._journey_index]
+function ImguiDeusMapBaseGen._reset_configs_for_journey(arg_11_0)
+	local var_11_0 = var_0_0[arg_11_0._journey_index]
 
-	self._original_layout_config = DEUS_MAP_LAYOUT_SETTINGS[journey_name] or DEUS_MAP_LAYOUT_SETTINGS.default
-	self._layout_config = self._layout_configs[journey_name] or self._layout_configs.default
-	self._original_base_config = DEUS_BASE_MAP_GEN_SETTINGS[journey_name] or DEUS_BASE_MAP_GEN_SETTINGS.default
-	self._base_config = self._base_configs[journey_name] or self._base_configs.default
+	arg_11_0._original_layout_config = DEUS_MAP_LAYOUT_SETTINGS[var_11_0] or DEUS_MAP_LAYOUT_SETTINGS.default
+	arg_11_0._layout_config = arg_11_0._layout_configs[var_11_0] or arg_11_0._layout_configs.default
+	arg_11_0._original_base_config = DEUS_BASE_MAP_GEN_SETTINGS[var_11_0] or DEUS_BASE_MAP_GEN_SETTINGS.default
+	arg_11_0._base_config = arg_11_0._base_configs[var_11_0] or arg_11_0._base_configs.default
 end
 
-ImguiDeusMapBaseGen.draw = function (self, is_open)
-	local do_close = Imgui.begin_window("DeusMapBaseGen", "always_auto_resize")
+function ImguiDeusMapBaseGen.draw(arg_12_0, arg_12_1)
+	local var_12_0 = Imgui.begin_window("DeusMapBaseGen", "always_auto_resize")
 
-	if self._saved_graphs then
-		Imgui.text("Saving for " .. journey_names[self._journey_index])
+	if arg_12_0._saved_graphs then
+		Imgui.text("Saving for " .. var_0_0[arg_12_0._journey_index])
 	else
-		local prev_journey_index = self._journey_index
+		local var_12_1 = arg_12_0._journey_index
 
-		self._journey_index = Imgui.combo("Journey to change", self._journey_index, journey_names)
+		arg_12_0._journey_index = Imgui.combo("Journey to change", arg_12_0._journey_index, var_0_0)
 
-		if prev_journey_index ~= self._journey_index then
-			self:_reset_configs_for_journey()
+		if var_12_1 ~= arg_12_0._journey_index then
+			arg_12_0:_reset_configs_for_journey()
 
-			self._configs_changed = false
+			arg_12_0._configs_changed = false
 		end
 
 		if Imgui.tree_node("BaseGenSettings") then
-			render_key_editor(base_gen_editable_keys, self._base_config, self._original_base_config)
+			var_0_4(var_0_2, arg_12_0._base_config, arg_12_0._original_base_config)
 			Imgui.tree_pop()
 		end
 
 		if Imgui.tree_node("LayoutSettings") then
-			render_key_editor(layout_editable_keys, self._layout_config, self._original_layout_config)
+			var_0_4(var_0_1, arg_12_0._layout_config, arg_12_0._original_layout_config)
 			Imgui.tree_pop()
 		end
 
-		self._configs_changed = have_configs_changed(base_gen_editable_keys, self._base_config, self._original_base_config) or have_configs_changed(layout_editable_keys, self._layout_config, self._original_layout_config)
+		arg_12_0._configs_changed = var_0_5(var_0_2, arg_12_0._base_config, arg_12_0._original_base_config) or var_0_5(var_0_1, arg_12_0._layout_config, arg_12_0._original_layout_config)
 
 		Imgui.spacing()
 	end
 
-	self._draw_realtime = Imgui.checkbox("see realtime layouting", self._draw_realtime)
+	arg_12_0._draw_realtime = Imgui.checkbox("see realtime layouting", arg_12_0._draw_realtime)
 
-	if self._draw_realtime then
+	if arg_12_0._draw_realtime then
 		script_data.deus_base_graph_generator_debug = Imgui.checkbox("print gen debug info", script_data.deus_base_graph_generator_debug or false)
 	else
 		script_data.deus_base_graph_generator_debug = false
 	end
 
-	if not self._generation_state then
-		if self._draw_realtime then
-			self._start_paused = Imgui.checkbox("start paused", self._start_paused)
+	if not arg_12_0._generation_state then
+		if arg_12_0._draw_realtime then
+			arg_12_0._start_paused = Imgui.checkbox("start paused", arg_12_0._start_paused)
 		end
 
 		Imgui.spacing()
 
-		self._seed = Imgui.input_int("seed", self._seed)
+		arg_12_0._seed = Imgui.input_int("seed", arg_12_0._seed)
 
 		Imgui.spacing()
 
 		if Imgui.button("Generate and show") then
-			self._seed_to_render = self._seed
+			arg_12_0._seed_to_render = arg_12_0._seed
 			script_data.deus_debug_draw_map = true
 		end
 
 		if Imgui.button("Set new seed, Generate and show") then
-			self._seed = self._seed + 1
-			self._seed_to_render = self._seed
+			arg_12_0._seed = arg_12_0._seed + 1
+			arg_12_0._seed_to_render = arg_12_0._seed
 			script_data.deus_debug_draw_map = true
 		end
 
-		if self._graph_to_save then
-			if not self._configs_changed then
+		if arg_12_0._graph_to_save then
+			if not arg_12_0._configs_changed then
 				if Imgui.button("Save seed") then
-					if not self._saved_graphs then
-						self._saved_graphs = {
-							[self._seed] = self._graph_to_save,
+					if not arg_12_0._saved_graphs then
+						arg_12_0._saved_graphs = {
+							[arg_12_0._seed] = arg_12_0._graph_to_save
 						}
 					else
-						self._saved_graphs[self._seed] = self._graph_to_save
+						arg_12_0._saved_graphs[arg_12_0._seed] = arg_12_0._graph_to_save
 					end
 
-					self._graph_to_save = nil
+					arg_12_0._graph_to_save = nil
 				end
 			else
 				Imgui.text("You can't save seeds with changed configs.")
@@ -379,22 +382,22 @@ ImguiDeusMapBaseGen.draw = function (self, is_open)
 			end
 		end
 	else
-		if self._paused then
+		if arg_12_0._paused then
 			if Imgui.button("Next Step") then
-				self._next_step = true
+				arg_12_0._next_step = true
 			end
 
 			if Imgui.button("Continue") then
-				self._paused = false
+				arg_12_0._paused = false
 			end
 		elseif Imgui.button("Pause") then
-			self._paused = true
+			arg_12_0._paused = true
 		end
 
 		if Imgui.button("Stop") then
-			self._generation_state = nil
-			self._next_step = false
-			self._paused = false
+			arg_12_0._generation_state = nil
+			arg_12_0._next_step = false
+			arg_12_0._paused = false
 		end
 	end
 
@@ -405,25 +408,25 @@ ImguiDeusMapBaseGen.draw = function (self, is_open)
 	Imgui.spacing()
 	Imgui.spacing()
 
-	if self._saved_graphs and not self._configs_changed then
-		local graph_count = 0
+	if arg_12_0._saved_graphs and not arg_12_0._configs_changed then
+		local var_12_2 = 0
 
-		for _, _ in pairs(self._saved_graphs) do
-			graph_count = graph_count + 1
+		for iter_12_0, iter_12_1 in pairs(arg_12_0._saved_graphs) do
+			var_12_2 = var_12_2 + 1
 		end
 
-		Imgui.text("Saved graphs " .. graph_count)
+		Imgui.text("Saved graphs " .. var_12_2)
 
 		if Imgui.button("Copy Saved Graphs to Clipboard") then
-			Clipboard.put(serialize_graphs(self._saved_graphs))
+			Clipboard.put(var_0_8(arg_12_0._saved_graphs))
 		end
 
 		if Imgui.button("Clear Saved Graphs") then
-			self._saved_graphs = nil
+			arg_12_0._saved_graphs = nil
 		end
 	end
 
 	Imgui.end_window()
 
-	return do_close
+	return var_12_0
 end

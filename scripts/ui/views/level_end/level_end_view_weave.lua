@@ -1,477 +1,473 @@
-﻿-- chunkname: @scripts/ui/views/level_end/level_end_view_weave.lua
+-- chunkname: @scripts/ui/views/level_end/level_end_view_weave.lua
 
 require("scripts/ui/views/level_end/level_end_view_base")
 require("scripts/ui/views/level_end/states/end_view_state_summary")
 require("scripts/ui/views/team_previewer")
 
-local definitions = local_require("scripts/ui/views/level_end/level_end_view_v2_definitions")
-local widget_definitions = definitions.widgets_definitions
-local scenegraph_definition = definitions.scenegraph_definition
-local animation_definitions = definitions.animations
-local generic_input_actions = definitions.generic_input_actions
-local debug_draw_scenegraph = false
-local debug_menu = false
-local level_end_view_weave_testify = script_data.testify and require("scripts/ui/views/level_end/level_end_view_weave_testify")
+local var_0_0 = local_require("scripts/ui/views/level_end/level_end_view_v2_definitions")
+local var_0_1 = var_0_0.widgets_definitions
+local var_0_2 = var_0_0.scenegraph_definition
+local var_0_3 = var_0_0.animations
+local var_0_4 = var_0_0.generic_input_actions
+local var_0_5 = false
+local var_0_6 = false
+local var_0_7 = script_data.testify and require("scripts/ui/views/level_end/level_end_view_weave_testify")
 
 LevelEndViewWeave = class(LevelEndViewWeave, LevelEndViewBase)
 
-LevelEndViewWeave.init = function (self, context)
-	self._team_heroes = {}
-	self._team_previewer = nil
-	self._peers_with_score = {}
+function LevelEndViewWeave.init(arg_1_0, arg_1_1)
+	arg_1_0._team_heroes = {}
+	arg_1_0._team_previewer = nil
+	arg_1_0._peers_with_score = {}
 
-	LevelEndViewWeave.super.init(self, context)
+	LevelEndViewWeave.super.init(arg_1_0, arg_1_1)
 end
 
-LevelEndViewWeave.start = function (self)
-	LevelEndViewWeave.super.start(self)
+function LevelEndViewWeave.start(arg_2_0)
+	LevelEndViewWeave.super.start(arg_2_0)
 
-	self._playing_music = nil
-	self._start_music_event = self.game_won and "Play_won_music" or "Play_lost_music"
-	self._stop_music_event = self.game_won and "Stop_won_music" or "Stop_lost_music"
+	arg_2_0._playing_music = nil
+	arg_2_0._start_music_event = arg_2_0.game_won and "Play_won_music" or "Play_lost_music"
+	arg_2_0._stop_music_event = arg_2_0.game_won and "Stop_won_music" or "Stop_lost_music"
 end
 
-LevelEndViewWeave.destroy = function (self)
-	LevelEndViewWeave.super.destroy(self)
-	self:_destroy_team_previewer()
-	Managers.state.event:unregister("trigger_hero_pose", self)
+function LevelEndViewWeave.destroy(arg_3_0)
+	LevelEndViewWeave.super.destroy(arg_3_0)
+	arg_3_0:_destroy_team_previewer()
+	Managers.state.event:unregister("trigger_hero_pose", arg_3_0)
 end
 
-LevelEndViewWeave.setup_pages = function (self, game_won, rewards)
-	local index_by_state_name
+function LevelEndViewWeave.setup_pages(arg_4_0, arg_4_1, arg_4_2)
+	local var_4_0
 
-	if self._is_untrusted then
-		index_by_state_name = self:_setup_pages_untrusted()
-	elseif game_won then
-		index_by_state_name = self:_setup_pages_victory(rewards)
+	if arg_4_0._is_untrusted then
+		var_4_0 = arg_4_0:_setup_pages_untrusted()
+	elseif arg_4_1 then
+		var_4_0 = arg_4_0:_setup_pages_victory(arg_4_2)
 	else
-		index_by_state_name = self:_setup_pages_defeat(rewards)
+		var_4_0 = arg_4_0:_setup_pages_defeat(arg_4_2)
 	end
 
-	return index_by_state_name
+	return var_4_0
 end
 
-LevelEndViewWeave._setup_pages_untrusted = function (self)
+function LevelEndViewWeave._setup_pages_untrusted(arg_5_0)
 	return {
-		EndViewStateWeave = 1,
+		EndViewStateWeave = 1
 	}
 end
 
-LevelEndViewWeave._setup_pages_victory = function (self, rewards)
+function LevelEndViewWeave._setup_pages_victory(arg_6_0, arg_6_1)
 	return {
 		EndViewStateSummary = 2,
-		EndViewStateWeave = 1,
+		EndViewStateWeave = 1
 	}
 end
 
-LevelEndViewWeave._setup_pages_defeat = function (self, rewards)
+function LevelEndViewWeave._setup_pages_defeat(arg_7_0, arg_7_1)
 	return {
-		EndViewStateSummary = 1,
+		EndViewStateSummary = 1
 	}
 end
 
-LevelEndViewWeave.create_ui_elements = function (self)
-	if self._team_previewer then
-		self:_destroy_team_previewer()
+function LevelEndViewWeave.create_ui_elements(arg_8_0)
+	if arg_8_0._team_previewer then
+		arg_8_0:_destroy_team_previewer()
 	end
 
-	if self.game_won then
-		local weave_manager = Managers.weave
-		local num_players = weave_manager:get_num_players()
+	if arg_8_0.game_won then
+		local var_8_0 = Managers.weave:get_num_players()
 
-		self:_setup_team_heroes(self.context.players_session_score, num_players)
-		self:_setup_team_previewer(num_players)
+		arg_8_0:_setup_team_heroes(arg_8_0.context.players_session_score, var_8_0)
+		arg_8_0:_setup_team_previewer(var_8_0)
 	end
 end
 
-LevelEndViewWeave.update = function (self, dt, t)
-	LevelEndViewWeave.super.update(self, dt, t)
-	self:_update_team_previewer(dt, t)
-	self:_update_camera_look_up(dt, t)
+function LevelEndViewWeave.update(arg_9_0, arg_9_1, arg_9_2)
+	LevelEndViewWeave.super.update(arg_9_0, arg_9_1, arg_9_2)
+	arg_9_0:_update_team_previewer(arg_9_1, arg_9_2)
+	arg_9_0:_update_camera_look_up(arg_9_1, arg_9_2)
 
-	if not self._playing_music then
-		self._playing_music = true
+	if not arg_9_0._playing_music then
+		arg_9_0._playing_music = true
 
-		self:play_sound(self._start_music_event)
+		arg_9_0:play_sound(arg_9_0._start_music_event)
 	end
 
 	if script_data.testify then
-		Testify:poll_requests_through_handler(level_end_view_weave_testify, self)
+		Testify:poll_requests_through_handler(var_0_7, arg_9_0)
 	end
 end
 
-LevelEndViewWeave.event_trigger_hero_pose = function (self, pose_index)
-	self._team_previewer:trigger_hero_pose(pose_index)
+function LevelEndViewWeave.event_trigger_hero_pose(arg_10_0, arg_10_1)
+	arg_10_0._team_previewer:trigger_hero_pose(arg_10_1)
 end
 
-LevelEndViewWeave.set_input_description = function (self, input_desc)
-	local input_desc = definitions.generic_input_actions[input_desc]
+function LevelEndViewWeave.set_input_description(arg_11_0, arg_11_1)
+	local var_11_0 = var_0_0.generic_input_actions[arg_11_1]
 
-	self._menu_input_description:set_input_description(input_desc)
+	arg_11_0._menu_input_description:set_input_description(var_11_0)
 end
 
-LevelEndViewWeave.destroy = function (self)
-	LevelEndViewWeave.super.destroy(self)
+function LevelEndViewWeave.destroy(arg_12_0)
+	LevelEndViewWeave.super.destroy(arg_12_0)
 end
 
-LevelEndViewWeave.active_input_service = function (self)
-	return self.input_blocked and FAKE_INPUT_SERVICE or self:input_service()
+function LevelEndViewWeave.active_input_service(arg_13_0)
+	return arg_13_0.input_blocked and FAKE_INPUT_SERVICE or arg_13_0:input_service()
 end
 
-LevelEndViewWeave._retry_level = function (self)
-	if self.is_server then
-		self:signal_done(true)
+function LevelEndViewWeave._retry_level(arg_14_0)
+	if arg_14_0.is_server then
+		arg_14_0:signal_done(true)
 	else
-		self:signal_done(true)
+		arg_14_0:signal_done(true)
 	end
 end
 
-LevelEndViewWeave.do_retry = function (self)
+function LevelEndViewWeave.do_retry(arg_15_0)
 	if not GameSettingsDevelopment.allow_retry_weave then
 		return false
 	end
 
-	local do_reload_cnt = 0
-	local num_votes = table.size(self._wants_reload)
+	local var_15_0 = 0
+	local var_15_1 = table.size(arg_15_0._wants_reload)
 
-	for peer_id, wants_reload in pairs(self._wants_reload) do
-		if wants_reload then
-			do_reload_cnt = do_reload_cnt + 1
+	for iter_15_0, iter_15_1 in pairs(arg_15_0._wants_reload) do
+		if iter_15_1 then
+			var_15_0 = var_15_0 + 1
 		end
 	end
 
-	if do_reload_cnt >= num_votes * 0.5 then
-		self:_setup_weave_data()
+	if var_15_0 >= var_15_1 * 0.5 then
+		arg_15_0:_setup_weave_data()
 
 		return true
 	end
 end
 
-LevelEndViewWeave._setup_weave_data = function (self)
-	local weave_manager = Managers.weave
-	local current_objective_index = 1
-	local current_weave = weave_manager:get_active_weave()
-	local current_weave_template = WeaveSettings.templates[current_weave]
-	local current_objective = current_weave_template.objectives[current_objective_index]
-	local level_key = current_objective.level_id
-	local game_mode = "weave"
-	local mechanism = "weave"
+function LevelEndViewWeave._setup_weave_data(arg_16_0)
+	local var_16_0 = Managers.weave
+	local var_16_1 = 1
+	local var_16_2 = var_16_0:get_active_weave()
+	local var_16_3 = WeaveSettings.templates[var_16_2]
+	local var_16_4 = var_16_3.objectives[var_16_1].level_id
+	local var_16_5 = "weave"
+	local var_16_6 = "weave"
 
-	if self.is_server then
-		Managers.mechanism:choose_next_state(game_mode)
+	if arg_16_0.is_server then
+		Managers.mechanism:choose_next_state(var_16_5)
 		Managers.mechanism:progress_state()
 
-		local difficulty_key = current_weave_template.difficulty_key
-		local act_key
-		local private_game = true
-		local weave_quick_game = false
-		local eac_authorized = Managers.eac:is_trusted()
+		local var_16_7 = var_16_3.difficulty_key
+		local var_16_8
+		local var_16_9 = true
+		local var_16_10 = false
+		local var_16_11 = Managers.eac:is_trusted()
 
-		Managers.matchmaking:set_matchmaking_data(level_key, difficulty_key, act_key, game_mode, private_game, weave_quick_game, eac_authorized, nil, mechanism)
+		Managers.matchmaking:set_matchmaking_data(var_16_4, var_16_7, var_16_8, var_16_5, var_16_9, var_16_10, var_16_11, nil, var_16_6)
 	end
 
-	Managers.weave:set_next_weave(current_weave)
-	Managers.weave:set_next_objective(current_objective_index)
+	Managers.weave:set_next_weave(var_16_2)
+	Managers.weave:set_next_objective(var_16_1)
 end
 
-local unit_x = 0.07
-local unit_x_seperation = 1.36
-local unit_y = -1.9
-local unit_y_seperation = 0.15
-local unit_z = 0
-local hero_locations = {
+local var_0_8 = 0.07
+local var_0_9 = 1.36
+local var_0_10 = -1.9
+local var_0_11 = 0.15
+local var_0_12 = 0
+local var_0_13 = {
 	{
 		{
-			unit_x,
-			unit_y,
-			unit_z,
-		},
+			var_0_8,
+			var_0_10,
+			var_0_12
+		}
 	},
 	{
 		{
-			unit_x + unit_x_seperation * 0.5,
-			unit_y + unit_y_seperation * 0.5,
-			unit_z,
+			var_0_8 + var_0_9 * 0.5,
+			var_0_10 + var_0_11 * 0.5,
+			var_0_12
 		},
 		{
-			unit_x + unit_x_seperation * -0.5,
-			unit_y + unit_y_seperation * -0.5,
-			unit_z,
-		},
+			var_0_8 + var_0_9 * -0.5,
+			var_0_10 + var_0_11 * -0.5,
+			var_0_12
+		}
 	},
 	{
 		{
-			unit_x + unit_x_seperation * 1,
-			unit_y + unit_y_seperation * 1,
-			unit_z,
+			var_0_8 + var_0_9 * 1,
+			var_0_10 + var_0_11 * 1,
+			var_0_12
 		},
 		{
-			unit_x + unit_x_seperation * 0,
-			unit_y + unit_y_seperation * 0,
-			unit_z,
+			var_0_8 + var_0_9 * 0,
+			var_0_10 + var_0_11 * 0,
+			var_0_12
 		},
 		{
-			unit_x + unit_x_seperation * -1,
-			unit_y + unit_y_seperation * -1,
-			unit_z,
-		},
+			var_0_8 + var_0_9 * -1,
+			var_0_10 + var_0_11 * -1,
+			var_0_12
+		}
 	},
 	{
 		{
-			unit_x + unit_x_seperation * 1.5,
-			unit_y + unit_y_seperation * 1.5,
-			unit_z,
+			var_0_8 + var_0_9 * 1.5,
+			var_0_10 + var_0_11 * 1.5,
+			var_0_12
 		},
 		{
-			unit_x + unit_x_seperation * 0.5,
-			unit_y + unit_y_seperation * 0.5,
-			unit_z,
+			var_0_8 + var_0_9 * 0.5,
+			var_0_10 + var_0_11 * 0.5,
+			var_0_12
 		},
 		{
-			unit_x + unit_x_seperation * -0.5,
-			unit_y + unit_y_seperation * -0.5,
-			unit_z,
+			var_0_8 + var_0_9 * -0.5,
+			var_0_10 + var_0_11 * -0.5,
+			var_0_12
 		},
 		{
-			unit_x + unit_x_seperation * -1.5,
-			unit_y + unit_y_seperation * -1.5,
-			unit_z,
-		},
-	},
+			var_0_8 + var_0_9 * -1.5,
+			var_0_10 + var_0_11 * -1.5,
+			var_0_12
+		}
+	}
 }
 
-LevelEndViewWeave._destroy_team_previewer = function (self)
-	if self._team_previewer then
-		self._team_previewer:on_exit()
+function LevelEndViewWeave._destroy_team_previewer(arg_17_0)
+	if arg_17_0._team_previewer then
+		arg_17_0._team_previewer:on_exit()
 
-		self._team_previewer = nil
+		arg_17_0._team_previewer = nil
 	end
 end
 
-LevelEndViewWeave._update_team_previewer = function (self, dt, t)
-	local team_previewer = self._team_previewer
+function LevelEndViewWeave._update_team_previewer(arg_18_0, arg_18_1, arg_18_2)
+	local var_18_0 = arg_18_0._team_previewer
 
-	if team_previewer then
-		team_previewer:update(dt, t)
-		team_previewer:post_update(dt, t)
+	if var_18_0 then
+		var_18_0:update(arg_18_1, arg_18_2)
+		var_18_0:post_update(arg_18_1, arg_18_2)
 	end
 end
 
-LevelEndViewWeave._setup_team_previewer = function (self, num_players)
-	if self._team_previewer then
+function LevelEndViewWeave._setup_team_previewer(arg_19_0, arg_19_1)
+	if arg_19_0._team_previewer then
 		return
 	end
 
-	local world, viewport = self:get_viewport_world()
+	local var_19_0, var_19_1 = arg_19_0:get_viewport_world()
 
-	self._team_previewer = TeamPreviewer:new(self.context, world, viewport)
+	arg_19_0._team_previewer = TeamPreviewer:new(arg_19_0.context, var_19_0, var_19_1)
 
-	local team_data = self._team_heroes
-	local player_count = #team_data
+	local var_19_2 = arg_19_0._team_heroes
+	local var_19_3 = #var_19_2
 
-	self._team_previewer:setup_team(team_data, hero_locations[num_players])
+	arg_19_0._team_previewer:setup_team(var_19_2, var_0_13[arg_19_1])
 end
 
-LevelEndViewWeave._setup_team_heroes = function (self, players_session_scores, num_players)
-	local sorted_stat_ids = {}
+function LevelEndViewWeave._setup_team_heroes(arg_20_0, arg_20_1, arg_20_2)
+	local var_20_0 = {}
 
-	for stats_id in pairs(players_session_scores) do
-		table.insert(sorted_stat_ids, stats_id)
+	for iter_20_0 in pairs(arg_20_1) do
+		table.insert(var_20_0, iter_20_0)
 	end
 
-	table.sort(sorted_stat_ids)
+	table.sort(var_20_0)
 
-	local team_heroes = self._team_heroes
-	local players_with_score = self._peers_with_score
+	local var_20_1 = arg_20_0._team_heroes
+	local var_20_2 = arg_20_0._peers_with_score
 
-	table.clear(team_heroes)
-	table.clear(players_with_score)
+	table.clear(var_20_1)
+	table.clear(var_20_2)
 
-	for i = 1, num_players do
-		local player_stat_id = sorted_stat_ids[i]
+	for iter_20_1 = 1, arg_20_2 do
+		local var_20_3 = var_20_0[iter_20_1]
 
-		if player_stat_id then
-			local player_data = players_session_scores[player_stat_id]
+		if var_20_3 then
+			local var_20_4 = arg_20_1[var_20_3]
 
-			team_heroes[#team_heroes + 1] = self:get_hero_from_score(player_data)
-
-			local peer_id = player_data.peer_id
-
-			players_with_score[peer_id] = true
+			var_20_1[#var_20_1 + 1] = arg_20_0:get_hero_from_score(var_20_4)
+			var_20_2[var_20_4.peer_id] = true
 		end
 	end
 end
 
-LevelEndViewWeave.get_hero_from_score = function (self, player_data)
-	local profile_index = player_data.profile_index
-	local career_index = player_data.career_index
-	local profile_data = SPProfiles[profile_index]
-	local careers = profile_data.careers
-	local career_settings = careers[career_index]
-	local weapon_pose_anim_event, weapon_pose_weapon, weapon_pose_slot
-	local weapon_pose = player_data.weapon_pose and player_data.weapon_pose.item_name
+function LevelEndViewWeave.get_hero_from_score(arg_21_0, arg_21_1)
+	local var_21_0 = arg_21_1.profile_index
+	local var_21_1 = arg_21_1.career_index
+	local var_21_2 = SPProfiles[var_21_0].careers[var_21_1]
+	local var_21_3
+	local var_21_4
+	local var_21_5
+	local var_21_6 = arg_21_1.weapon_pose and arg_21_1.weapon_pose.item_name
 
-	if weapon_pose then
-		local item = ItemMasterList[weapon_pose]
+	if var_21_6 then
+		local var_21_7 = ItemMasterList[var_21_6]
 
-		if item then
-			local skin_name = player_data.weapon_pose.skin_name
-			local parent_item_name = item.parent
-			local parent_item = rawget(ItemMasterList, parent_item_name)
+		if var_21_7 then
+			local var_21_8 = arg_21_1.weapon_pose.skin_name
+			local var_21_9 = var_21_7.parent
+			local var_21_10 = rawget(ItemMasterList, var_21_9)
 
-			if parent_item then
-				weapon_pose_weapon = {
-					item_name = parent_item_name,
-					skin_name = skin_name,
+			if var_21_10 then
+				var_21_4 = {
+					item_name = var_21_9,
+					skin_name = var_21_8
 				}
-				weapon_pose_slot = parent_item.slot_type
-				weapon_pose_anim_event = item.data.anim_event
+				var_21_5 = var_21_10.slot_type
+				var_21_3 = var_21_7.data.anim_event
 			end
 		end
 	end
 
 	return {
-		profile_index = profile_index,
-		career_index = career_index,
-		hero_name = career_settings.profile_name,
-		skin_name = player_data.hero_skin,
-		weapon_slot = weapon_pose_slot or player_data.weapon and career_settings.preview_wield_slot or nil,
-		weapon_pose_anim_event = weapon_pose_anim_event,
+		profile_index = var_21_0,
+		career_index = var_21_1,
+		hero_name = var_21_2.profile_name,
+		skin_name = arg_21_1.hero_skin,
+		weapon_slot = var_21_5 or arg_21_1.weapon and var_21_2.preview_wield_slot or nil,
+		weapon_pose_anim_event = var_21_3,
 		preview_items = {
-			player_data.hat,
-			weapon_pose_weapon or player_data.weapon,
-		},
+			arg_21_1.hat,
+			var_21_4 or arg_21_1.weapon
+		}
 	}
 end
 
-local level_name = "levels/end_screen_victory/world"
+local var_0_14 = "levels/end_screen_victory/world"
 
-LevelEndViewWeave.setup_camera = function (self)
-	local camera_pose
-	local unit_indices = LevelResource.unit_indices(level_name, "units/hub_elements/cutscene_camera/cutscene_camera")
+function LevelEndViewWeave.setup_camera(arg_22_0)
+	local var_22_0
+	local var_22_1 = LevelResource.unit_indices(var_0_14, "units/hub_elements/cutscene_camera/cutscene_camera")
 
-	for _, index in pairs(unit_indices) do
-		local unit_data = LevelResource.unit_data(level_name, index)
-		local name = DynamicData.get(unit_data, "name")
+	for iter_22_0, iter_22_1 in pairs(var_22_1) do
+		local var_22_2 = LevelResource.unit_data(var_0_14, iter_22_1)
+		local var_22_3 = DynamicData.get(var_22_2, "name")
 
-		if name and name == "end_screen_camera" then
-			local position = LevelResource.unit_position(level_name, index)
-			local rotation = LevelResource.unit_rotation(level_name, index)
-			local pose = Matrix4x4.from_quaternion_position(rotation, position)
+		if var_22_3 and var_22_3 == "end_screen_camera" then
+			local var_22_4 = LevelResource.unit_position(var_0_14, iter_22_1)
+			local var_22_5 = LevelResource.unit_rotation(var_0_14, iter_22_1)
+			local var_22_6 = Matrix4x4.from_quaternion_position(var_22_5, var_22_4)
 
-			camera_pose = Matrix4x4Box(pose)
+			var_22_0 = Matrix4x4Box(var_22_6)
 
-			print("Found camera: " .. name)
+			print("Found camera: " .. var_22_3)
 
-			self._camera_unit = Level.unit_by_index(self._level, index)
+			arg_22_0._camera_unit = Level.unit_by_index(arg_22_0._level, iter_22_1)
 		end
 	end
 
-	self._camera_pose = camera_pose
+	arg_22_0._camera_pose = var_22_0
 
-	self:position_camera(nil, 45)
+	arg_22_0:position_camera(nil, 45)
 end
 
-LevelEndViewWeave.start_camera_look_up = function (self, transition_delay, transition_duration, degrees)
-	self._camera_look_up_time = -transition_delay
-	self._camera_look_up_duration = transition_duration
-	self._camera_look_up_degrees = degrees
+function LevelEndViewWeave.start_camera_look_up(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+	arg_23_0._camera_look_up_time = -arg_23_1
+	arg_23_0._camera_look_up_duration = arg_23_2
+	arg_23_0._camera_look_up_degrees = arg_23_3
 
-	if self._story_id then
-		if self._storyteller:is_playing(self._story_id) then
-			self._storyteller:stop(self._story_id)
+	if arg_23_0._story_id then
+		if arg_23_0._storyteller:is_playing(arg_23_0._story_id) then
+			arg_23_0._storyteller:stop(arg_23_0._story_id)
 		end
 
-		self._story_id = nil
+		arg_23_0._story_id = nil
 	end
 end
 
-LevelEndViewWeave._update_camera_look_up = function (self, dt, t)
-	local camera_look_up_time = self._camera_look_up_time
+function LevelEndViewWeave._update_camera_look_up(arg_24_0, arg_24_1, arg_24_2)
+	local var_24_0 = arg_24_0._camera_look_up_time
 
-	if not camera_look_up_time then
+	if not var_24_0 then
 		return
 	end
 
-	local camera_look_up_duration = self._camera_look_up_duration
-	local camera_look_up_degrees = self._camera_look_up_degrees
-	local previous_progress = math.clamp(camera_look_up_time / camera_look_up_duration, 0, 1)
-	local previous_animation_progress = math.easeCubic(previous_progress)
+	local var_24_1 = arg_24_0._camera_look_up_duration
+	local var_24_2 = arg_24_0._camera_look_up_degrees
+	local var_24_3 = math.clamp(var_24_0 / var_24_1, 0, 1)
+	local var_24_4 = math.easeCubic(var_24_3)
+	local var_24_5 = var_24_0 + arg_24_1
+	local var_24_6 = math.clamp(var_24_5 / var_24_1, 0, 1)
+	local var_24_7 = math.easeCubic(var_24_6)
+	local var_24_8 = math.degrees_to_radians(var_24_2 * var_24_4)
+	local var_24_9 = math.degrees_to_radians(var_24_2 * var_24_7)
+	local var_24_10 = Quaternion(Vector3.right(), var_24_9 - var_24_8)
+	local var_24_11 = arg_24_0:get_camera_rotation()
+	local var_24_12 = Quaternion.multiply(var_24_11, var_24_10)
 
-	camera_look_up_time = camera_look_up_time + dt
+	arg_24_0:set_camera_rotation(var_24_12)
 
-	local progress = math.clamp(camera_look_up_time / camera_look_up_duration, 0, 1)
-	local animation_progress = math.easeCubic(progress)
-	local previous_angle = math.degrees_to_radians(camera_look_up_degrees * previous_animation_progress)
-	local angle = math.degrees_to_radians(camera_look_up_degrees * animation_progress)
-	local animation_rotation = Quaternion(Vector3.right(), angle - previous_angle)
-	local current_rotation = self:get_camera_rotation()
-	local new_rotation = Quaternion.multiply(current_rotation, animation_rotation)
-
-	self:set_camera_rotation(new_rotation)
-
-	if progress == 1 then
-		self._camera_look_up_time = nil
+	if var_24_6 == 1 then
+		arg_24_0._camera_look_up_time = nil
 	else
-		self._camera_look_up_time = camera_look_up_time
+		arg_24_0._camera_look_up_time = var_24_5
 	end
 end
 
-LevelEndViewWeave.spawn_level = function (self, context, world)
-	local object_sets = {}
-	local position, rotation, shading_callback, mood_setting
-	local time_sliced_spawn = false
-	local level = ScriptWorld.spawn_level(world, level_name, object_sets, position, rotation, shading_callback, mood_setting, time_sliced_spawn)
+function LevelEndViewWeave.spawn_level(arg_25_0, arg_25_1, arg_25_2)
+	local var_25_0 = {}
+	local var_25_1
+	local var_25_2
+	local var_25_3
+	local var_25_4
+	local var_25_5 = false
+	local var_25_6 = ScriptWorld.spawn_level(arg_25_2, var_0_14, var_25_0, var_25_1, var_25_2, var_25_3, var_25_4, var_25_5)
 
-	Level.spawn_background(level)
-	Level.trigger_level_loaded(level)
-	self:_register_object_sets(level, level_name)
+	Level.spawn_background(var_25_6)
+	Level.trigger_level_loaded(var_25_6)
+	arg_25_0:_register_object_sets(var_25_6, var_0_14)
 
-	return level
+	return var_25_6
 end
 
-LevelEndViewWeave.exit_to_game = function (self)
-	self:play_sound(self._stop_music_event)
+function LevelEndViewWeave.exit_to_game(arg_26_0)
+	arg_26_0:play_sound(arg_26_0._stop_music_event)
 
-	self._exit_timer = 0.5
-	self._started_exit = true
+	arg_26_0._exit_timer = 0.5
+	arg_26_0._started_exit = true
 end
 
-LevelEndViewWeave.update_force_shutdown = function (self, dt)
-	self._force_shutdown_timer = math.max(0, self._force_shutdown_timer - dt)
+function LevelEndViewWeave.update_force_shutdown(arg_27_0, arg_27_1)
+	arg_27_0._force_shutdown_timer = math.max(0, arg_27_0._force_shutdown_timer - arg_27_1)
 
-	if self._force_shutdown_timer == 0 and not self._signaled_done then
-		self:signal_done(false)
+	if arg_27_0._force_shutdown_timer == 0 and not arg_27_0._signaled_done then
+		arg_27_0:signal_done(false)
 
-		self._signaled_done = true
-	elseif not self._left_lobby then
-		local all_done = true
-		local lobby_members = self._lobby:members()
+		arg_27_0._signaled_done = true
+	elseif not arg_27_0._left_lobby then
+		local var_27_0 = true
+		local var_27_1 = arg_27_0._lobby:members()
 
-		if lobby_members then
-			local members = lobby_members:get_members()
+		if var_27_1 then
+			local var_27_2 = var_27_1:get_members()
 
-			for i = 1, #members do
-				local peer_id = members[i]
-				local is_done = self._done_peers[peer_id]
-				local has_result = self._peers_with_score[peer_id]
+			for iter_27_0 = 1, #var_27_2 do
+				local var_27_3 = var_27_2[iter_27_0]
+				local var_27_4 = arg_27_0._done_peers[var_27_3]
+				local var_27_5 = arg_27_0._peers_with_score[var_27_3]
 
-				if not is_done and has_result then
-					all_done = false
+				if not var_27_4 and var_27_5 then
+					var_27_0 = false
 
 					break
 				end
 			end
 		end
 
-		self._all_signaled_done = all_done
+		arg_27_0._all_signaled_done = var_27_0
 	end
 
-	if self._started_exit then
-		self._started_force_shutdown = false
+	if arg_27_0._started_exit then
+		arg_27_0._started_force_shutdown = false
 	end
 end
 
-LevelEndViewWeave.get_all_signaled_done = function (self)
-	return self._all_signaled_done
+function LevelEndViewWeave.get_all_signaled_done(arg_28_0)
+	return arg_28_0._all_signaled_done
 end

@@ -1,153 +1,149 @@
-﻿-- chunkname: @scripts/settings/dlcs/bless/action_career_wh_priest.lua
+-- chunkname: @scripts/settings/dlcs/bless/action_career_wh_priest.lua
 
 require("scripts/settings/profiles/career_constants")
 
-local spell_params = {}
-local spell_params_improved = {
+local var_0_0 = {}
+local var_0_1 = {
 	external_optional_duration = CareerConstants.wh_priest.talent_6_1_improved_ability_duration,
 	mechanism_overrides = {
 		versus = {
-			external_optional_duration = CareerConstants.wh_priest.talent_6_1_improved_ability_duration_versus,
-		},
-	},
+			external_optional_duration = CareerConstants.wh_priest.talent_6_1_improved_ability_duration_versus
+		}
+	}
 }
-local spell_buffs = {
+local var_0_2 = {
 	"victor_priest_activated_ability_invincibility",
 	"victor_priest_activated_ability_nuke",
-	"victor_priest_activated_noclip",
+	"victor_priest_activated_noclip"
 }
 
 ActionCareerWHPriestUtility = {}
 
-ActionCareerWHPriestUtility.cast_spell = function (target_unit, warrior_priest_unit)
-	ActionCareerWHPriestUtility._add_buffs_to_target(target_unit, warrior_priest_unit)
+function ActionCareerWHPriestUtility.cast_spell(arg_1_0, arg_1_1)
+	ActionCareerWHPriestUtility._add_buffs_to_target(arg_1_0, arg_1_1)
 
-	local talent_extension = ScriptUnit.extension(warrior_priest_unit, "talent_system")
+	local var_1_0 = ScriptUnit.extension(arg_1_1, "talent_system")
 
-	if talent_extension:has_talent("victor_priest_4_2_new") then
-		local career_extension = ScriptUnit.extension(warrior_priest_unit, "career_system")
-		local career_passive = career_extension:get_passive_ability_by_name("wh_priest")
-
-		career_passive:modify_resource_percent(CareerConstants.wh_priest.talent_4_2_fury_to_gain_percent)
+	if var_1_0:has_talent("victor_priest_4_2_new") then
+		ScriptUnit.extension(arg_1_1, "career_system"):get_passive_ability_by_name("wh_priest"):modify_resource_percent(CareerConstants.wh_priest.talent_4_2_fury_to_gain_percent)
 	end
 
-	if talent_extension:has_talent("victor_priest_6_2") then
-		if target_unit ~= warrior_priest_unit then
-			ActionCareerWHPriestUtility._add_buffs_to_target(warrior_priest_unit, warrior_priest_unit)
+	if var_1_0:has_talent("victor_priest_6_2") then
+		if arg_1_0 ~= arg_1_1 then
+			ActionCareerWHPriestUtility._add_buffs_to_target(arg_1_1, arg_1_1)
 		else
-			local side = Managers.state.side.side_by_unit[warrior_priest_unit]
+			local var_1_1 = Managers.state.side.side_by_unit[arg_1_1]
 
-			if not side then
+			if not var_1_1 then
 				return
 			end
 
-			local player_and_bot_units = side.PLAYER_AND_BOT_UNITS
-			local num_units = #player_and_bot_units
-			local current_min_dist = math.huge
-			local current_target
-			local owner_position = POSITION_LOOKUP[warrior_priest_unit]
+			local var_1_2 = var_1_1.PLAYER_AND_BOT_UNITS
+			local var_1_3 = #var_1_2
+			local var_1_4 = math.huge
+			local var_1_5
+			local var_1_6 = POSITION_LOOKUP[arg_1_1]
 
-			for i = 1, num_units do
-				local unit = player_and_bot_units[i]
+			for iter_1_0 = 1, var_1_3 do
+				local var_1_7 = var_1_2[iter_1_0]
 
-				if ALIVE[unit] and unit ~= warrior_priest_unit then
-					local unit_position = POSITION_LOOKUP[unit]
-					local dist_squared = Vector3.distance_squared(owner_position, unit_position)
+				if ALIVE[var_1_7] and var_1_7 ~= arg_1_1 then
+					local var_1_8 = POSITION_LOOKUP[var_1_7]
+					local var_1_9 = Vector3.distance_squared(var_1_6, var_1_8)
 
-					if dist_squared < current_min_dist then
-						current_min_dist = dist_squared
-						current_target = unit
+					if var_1_9 < var_1_4 then
+						var_1_4 = var_1_9
+						var_1_5 = var_1_7
 					end
 				end
 			end
 
-			ActionCareerWHPriestUtility._add_buffs_to_target(current_target, warrior_priest_unit)
+			ActionCareerWHPriestUtility._add_buffs_to_target(var_1_5, arg_1_1)
 		end
 	end
 end
 
-ActionCareerWHPriestUtility._add_buffs_to_target = function (target_unit, warrior_priest_unit)
-	local spell_buffs = spell_buffs
-	local params = spell_params
-	local talent_extension = ScriptUnit.extension(warrior_priest_unit, "talent_system")
+function ActionCareerWHPriestUtility._add_buffs_to_target(arg_2_0, arg_2_1)
+	local var_2_0 = var_0_2
+	local var_2_1 = var_0_0
 
-	if talent_extension:has_talent("victor_priest_6_1") then
-		params = MechanismOverrides.get(spell_params_improved)
-		params.external_optional_duration = spell_params_improved.external_optional_duration
+	if ScriptUnit.extension(arg_2_1, "talent_system"):has_talent("victor_priest_6_1") then
+		var_2_1 = MechanismOverrides.get(var_0_1)
+		var_2_1.external_optional_duration = var_0_1.external_optional_duration
 
-		local mechanism_name = Managers.mechanism:current_mechanism_name()
+		local var_2_2 = Managers.mechanism:current_mechanism_name()
 
-		if spell_params_improved.mechanism_overrides[mechanism_name] then
-			params.external_optional_duration = spell_params_improved.mechanism_overrides[mechanism_name].external_optional_duration
+		if var_0_1.mechanism_overrides[var_2_2] then
+			var_2_1.external_optional_duration = var_0_1.mechanism_overrides[var_2_2].external_optional_duration
 		end
 	end
 
-	params.attacker_unit = warrior_priest_unit
+	var_2_1.attacker_unit = arg_2_1
 
-	if ALIVE[target_unit] then
-		local buff_system = Managers.state.entity:system("buff_system")
+	if ALIVE[arg_2_0] then
+		local var_2_3 = Managers.state.entity:system("buff_system")
 
-		for i = 1, #spell_buffs do
-			local buff_name = spell_buffs[i]
+		for iter_2_0 = 1, #var_2_0 do
+			local var_2_4 = var_2_0[iter_2_0]
 
-			buff_system:add_buff_synced(target_unit, buff_name, BuffSyncType.All, params)
+			var_2_3:add_buff_synced(arg_2_0, var_2_4, BuffSyncType.All, var_2_1)
 		end
 	end
 end
 
 ActionCareerWHPriest = class(ActionCareerWHPriest, ActionBase)
 
-ActionCareerWHPriest.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionCareerWHPriest.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionCareerWHPriest.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8)
+	ActionCareerWHPriest.super.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8)
 
-	self.owner_unit = owner_unit
-	self.career_extension = ScriptUnit.extension(owner_unit, "career_system")
-	self.input_extension = ScriptUnit.extension(owner_unit, "input_system")
-	self.inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
-	self.status_extension = ScriptUnit.extension(owner_unit, "status_system")
-	self.first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
-	self.talent_extension = ScriptUnit.extension(owner_unit, "talent_system")
-	self.world = world
+	arg_3_0.owner_unit = arg_3_4
+	arg_3_0.career_extension = ScriptUnit.extension(arg_3_4, "career_system")
+	arg_3_0.input_extension = ScriptUnit.extension(arg_3_4, "input_system")
+	arg_3_0.inventory_extension = ScriptUnit.extension(arg_3_4, "inventory_system")
+	arg_3_0.status_extension = ScriptUnit.extension(arg_3_4, "status_system")
+	arg_3_0.first_person_extension = ScriptUnit.extension(arg_3_4, "first_person_system")
+	arg_3_0.talent_extension = ScriptUnit.extension(arg_3_4, "talent_system")
+	arg_3_0.world = arg_3_1
 end
 
-ActionCareerWHPriest.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
-	action_init_data = action_init_data or {}
+function ActionCareerWHPriest.client_owner_start_action(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	arg_4_5 = arg_4_5 or {}
 
-	ActionCareerWHPriest.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
+	ActionCareerWHPriest.super.client_owner_start_action(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 
-	local spell_target = chain_action_data and chain_action_data.target
+	local var_4_0 = arg_4_3 and arg_4_3.target
 
-	if new_action.target_self and not self.is_bot then
-		spell_target = self.owner_unit
+	if arg_4_1.target_self and not arg_4_0.is_bot then
+		var_4_0 = arg_4_0.owner_unit
 	end
 
-	if ALIVE[spell_target] then
-		ActionCareerWHPriestUtility.cast_spell(spell_target, self.owner_unit)
-		self.career_extension:start_activated_ability_cooldown()
-		CharacterStateHelper.play_animation_event(self.owner_unit, "witch_hunter_active_ability")
-		self:_play_vo()
+	if ALIVE[var_4_0] then
+		ActionCareerWHPriestUtility.cast_spell(var_4_0, arg_4_0.owner_unit)
+		arg_4_0.career_extension:start_activated_ability_cooldown()
+		CharacterStateHelper.play_animation_event(arg_4_0.owner_unit, "witch_hunter_active_ability")
+		arg_4_0:_play_vo()
 	end
 end
 
-ActionCareerWHPriest.client_owner_post_update = function (self, dt, t, world, can_damage, current_time_in_action)
+function ActionCareerWHPriest.client_owner_post_update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	return
 end
 
-ActionCareerWHPriest.finish = function (self, reason)
-	ActionCareerWHPriest.super.finish(self, reason)
-	self.inventory_extension:wield_previous_non_level_slot()
+function ActionCareerWHPriest.finish(arg_6_0, arg_6_1)
+	ActionCareerWHPriest.super.finish(arg_6_0, arg_6_1)
+	arg_6_0.inventory_extension:wield_previous_non_level_slot()
 end
 
-ActionCareerWHPriest._play_vo = function (self)
-	local owner_unit = self.owner_unit
-	local dialogue_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
-	local event_data = FrameTable.alloc_table()
+function ActionCareerWHPriest._play_vo(arg_7_0)
+	local var_7_0 = arg_7_0.owner_unit
+	local var_7_1 = ScriptUnit.extension_input(var_7_0, "dialogue_system")
+	local var_7_2 = FrameTable.alloc_table()
 
-	dialogue_input:trigger_networked_dialogue_event("activate_ability", event_data)
+	var_7_1:trigger_networked_dialogue_event("activate_ability", var_7_2)
 
-	local first_person_extension = self.first_person_extension
-	local audio_event = "career_ability_priest_cast_t3"
+	local var_7_3 = arg_7_0.first_person_extension
+	local var_7_4 = "career_ability_priest_cast_t3"
 
-	first_person_extension:play_hud_sound_event(audio_event)
-	first_person_extension:play_remote_unit_sound_event(audio_event, owner_unit, 0)
+	var_7_3:play_hud_sound_event(var_7_4)
+	var_7_3:play_remote_unit_sound_event(var_7_4, var_7_0, 0)
 end

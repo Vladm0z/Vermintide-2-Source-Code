@@ -1,116 +1,116 @@
-﻿-- chunkname: @scripts/settings/breeds/breed_chaos_spawn.lua
+-- chunkname: @scripts/settings/breeds/breed_chaos_spawn.lua
 
-local stagger_types = require("scripts/utils/stagger_types")
-local pushed_data = {
+local var_0_0 = require("scripts/utils/stagger_types")
+local var_0_1 = {
 	ahead_dist = 1.5,
-	player_pushed_speed = 8,
+	push_width = 2.5,
 	push_forward_offset = 1,
 	push_stagger_distance = 1,
-	push_width = 2.5,
+	player_pushed_speed = 8,
 	push_stagger_impact = {
-		stagger_types.medium,
-		stagger_types.medium,
-		stagger_types.none,
-		stagger_types.none,
+		var_0_0.medium,
+		var_0_0.medium,
+		var_0_0.none,
+		var_0_0.none
 	},
 	push_stagger_duration = {
 		1.5,
 		1,
 		0,
-		0,
-	},
+		0
+	}
 }
-local default_bot_threat_difficulty_data = BotConstants and BotConstants.default.DEFAULT_BOT_THREAT_DIFFICULTY_DATA
-local breed_data = {
-	ai_strength = 10,
+local var_0_2 = BotConstants and BotConstants.default.DEFAULT_BOT_THREAT_DIFFICULTY_DATA
+local var_0_3 = {
+	detection_radius = 9999999,
+	boss_damage_reduction = true,
+	walk_speed = 3.5,
+	big_boy_turning_dot = 0.4,
+	player_locomotion_constrain_radius = 1.5,
+	max_grabbed_attacks = 2,
+	target_selection = "pick_rat_ogre_target_idle",
+	use_avoidance = false,
 	ai_toughness = 10,
 	animation_sync_rpc = "rpc_sync_anim_state_12",
-	aoe_height = 2.4,
 	aoe_radius = 1,
-	armor_category = 3,
-	awards_positive_reinforcement_message = true,
-	base_unit = "units/beings/enemies/chaos_spawn/chr_chaos_spawn",
-	behavior = "chaos_spawn",
-	big_boy_turning_dot = 0.4,
-	bone_lod_level = 0,
-	boost_curve_multiplier_override = 1.8,
-	boss = true,
-	boss_damage_reduction = true,
-	boss_staggers = true,
-	bot_hitbox_radius_approximation = 0.8,
-	bot_opportunity_target_melee_range = 7,
-	bot_opportunity_target_melee_range_while_ranged = 5,
-	bots_should_flank = true,
-	catch_up_speed = 12,
-	combat_music_state = "chaos_spawn",
-	death_reaction = "ai_default",
-	detection_radius = 9999999,
-	disable_local_hit_reactions = true,
-	distance_sq_can_detect_target = 2025,
-	distance_sq_idle_auto_detect_target = 49,
-	exchange_order = 1,
-	far_off_despawn_immunity = true,
-	has_inventory = false,
-	headshot_coop_stamina_fatigue_type = "headshot_special",
+	is_always_spawnable = true,
+	proximity_system_check = true,
+	scale_death_push = 1,
 	height = 2.85,
-	hit_effect_template = "HitEffectsChaosSpawn",
-	hit_mass_count = 50,
-	hit_reaction = "ai_default",
+	target_selection_angry = "pick_rat_ogre_target_with_weights",
+	death_reaction = "ai_default",
 	husk_hit_reaction_cooldown = 1,
 	ignore_nav_propagation_box = true,
-	is_always_spawnable = true,
-	is_bot_aid_threat = true,
-	max_grabbed_attacks = 2,
-	minion_detection_radius = 10,
-	navigation_spline_distance_to_borders = 1,
-	no_stagger_duration = false,
-	override_mover_move_distance = 1.5,
-	perception = "perception_rat_ogre",
-	perception_continuous = "perception_continuous_chaos_spawn",
-	player_locomotion_constrain_radius = 1.5,
-	poison_resistance = 100,
-	proximity_system_check = true,
-	race = "chaos",
-	radius = 2,
-	reach_distance = 3,
-	run_speed = 7,
-	scale_death_push = 1,
-	show_health_bar = true,
 	slot_template = "boss",
-	smart_object_template = "chaos_spawn",
-	smart_targeting_height_multiplier = 1.5,
-	smart_targeting_outer_width = 1.4,
-	smart_targeting_width = 0.6,
+	bot_opportunity_target_melee_range = 7,
+	is_bot_aid_threat = true,
+	no_stagger_duration = false,
+	bot_opportunity_target_melee_range_while_ranged = 5,
 	stagger_resistance = 100,
-	stagger_threshold_explosion = 1,
-	stagger_threshold_heavy = 1,
-	stagger_threshold_light = 1,
-	stagger_threshold_medium = 1,
-	target_selection = "pick_rat_ogre_target_idle",
-	target_selection_angry = "pick_rat_ogre_target_with_weights",
+	bots_should_flank = true,
+	bot_hitbox_radius_approximation = 0.8,
+	boss_staggers = true,
+	combat_music_state = "chaos_spawn",
+	headshot_coop_stamina_fatigue_type = "headshot_special",
+	radius = 2,
 	threat_value = 32,
-	trigger_dialogue_on_target_switch = true,
-	unit_template = "ai_unit_chaos_spawn",
-	use_avoidance = false,
+	boss = true,
+	hit_mass_count = 50,
+	stagger_threshold_explosion = 1,
+	race = "chaos",
+	bone_lod_level = 0,
+	ai_strength = 10,
+	poison_resistance = 100,
+	armor_category = 3,
+	show_health_bar = true,
 	use_big_boy_turning = false,
 	use_navigation_path_splines = false,
-	walk_speed = 3.5,
+	distance_sq_can_detect_target = 2025,
+	smart_targeting_width = 0.6,
+	perception_continuous = "perception_continuous_chaos_spawn",
+	behavior = "chaos_spawn",
+	boost_curve_multiplier_override = 1.8,
+	has_inventory = false,
+	run_speed = 7,
+	awards_positive_reinforcement_message = true,
+	exchange_order = 1,
+	stagger_threshold_heavy = 1,
+	reach_distance = 3,
+	navigation_spline_distance_to_borders = 1,
+	stagger_threshold_light = 1,
+	hit_reaction = "ai_default",
+	smart_targeting_outer_width = 1.4,
+	hit_effect_template = "HitEffectsChaosSpawn",
+	smart_targeting_height_multiplier = 1.5,
+	unit_template = "ai_unit_chaos_spawn",
+	catch_up_speed = 12,
+	smart_object_template = "chaos_spawn",
+	perception = "perception_rat_ogre",
+	minion_detection_radius = 10,
+	stagger_threshold_medium = 1,
+	distance_sq_idle_auto_detect_target = 49,
+	far_off_despawn_immunity = true,
+	trigger_dialogue_on_target_switch = true,
+	override_mover_move_distance = 1.5,
+	disable_local_hit_reactions = true,
+	base_unit = "units/beings/enemies/chaos_spawn/chr_chaos_spawn",
+	aoe_height = 2.4,
 	infighting = InfightingSettings.boss,
 	perception_weights = {
-		aggro_decay_per_sec = 1,
-		distance_weight = 100,
-		max_distance = 50,
-		old_target_aggro_mul = 1,
 		target_catapulted_mul = 0.5,
-		target_disabled_aggro_mul = 0.1,
-		target_disabled_mul = 0.15,
-		target_outside_navmesh_mul = 0.5,
-		target_staggered_you_bonus = 100,
-		target_stickyness_bonus_a = 75,
 		target_stickyness_bonus_b = 10,
-		target_stickyness_duration_a = 5,
-		target_stickyness_duration_b = 20,
 		targeted_by_other_special = -10,
+		target_staggered_you_bonus = 100,
+		target_stickyness_duration_b = 20,
+		aggro_decay_per_sec = 1,
+		target_outside_navmesh_mul = 0.5,
+		old_target_aggro_mul = 1,
+		target_disabled_aggro_mul = 0.1,
+		target_stickyness_duration_a = 5,
+		max_distance = 50,
+		target_stickyness_bonus_a = 75,
+		distance_weight = 100,
+		target_disabled_mul = 0.15
 	},
 	max_health = BreedTweaks.max_health.chaos_spawn,
 	bloodlust_health = BreedTweaks.bloodlust_health.monster,
@@ -122,48 +122,48 @@ local breed_data = {
 		0,
 		1.5,
 		0,
-		1,
+		1
 	},
 	status_effect_settings = {
 		category = "large",
 		ignored_statuses = table.set({
 			StatusEffectNames.burning_warpfire,
-			StatusEffectNames.poisoned,
-		}),
+			StatusEffectNames.poisoned
+		})
 	},
 	debug_color = {
 		255,
 		20,
 		20,
-		20,
+		20
 	},
 	run_on_spawn = AiBreedSnippets.on_chaos_spawn_spawn,
 	run_on_death = AiBreedSnippets.on_chaos_spawn_death,
 	run_on_despawn = AiBreedSnippets.on_chaos_spawn_despawn,
 	hitzone_multiplier_types = {
-		head = "headshot",
+		head = "headshot"
 	},
 	hit_zones = {
 		head = {
 			prio = 1,
 			actors = {
-				"c_head",
+				"c_head"
 			},
 			push_actors = {
 				"j_head",
-				"j_spine1",
-			},
+				"j_spine1"
+			}
 		},
 		neck = {
 			prio = 1,
 			actors = {
 				"c_neck1",
-				"c_neck2",
+				"c_neck2"
 			},
 			push_actors = {
 				"j_head",
-				"j_spine1",
-			},
+				"j_spine1"
+			}
 		},
 		torso = {
 			prio = 2,
@@ -172,24 +172,24 @@ local breed_data = {
 				"c_spine",
 				"c_hips",
 				"c_leftshoulder",
-				"c_rightshoulder",
+				"c_rightshoulder"
 			},
 			push_actors = {
-				"j_spine1",
-			},
+				"j_spine1"
+			}
 		},
 		left_arm = {
 			prio = 3,
 			actors = {
 				"c_leftarm",
 				"c_leftforearm",
-				"c_lefthand",
+				"c_lefthand"
 			},
 			push_actors = {
 				"j_leftarm",
 				"j_leftforearm",
-				"j_lefthand",
-			},
+				"j_lefthand"
+			}
 		},
 		left_tentacle = {
 			prio = 3,
@@ -198,15 +198,15 @@ local breed_data = {
 				"c_leftfinger2_jnt",
 				"c_leftfinger3_jnt",
 				"c_leftfinger4_jnt",
-				"c_leftfinger5_jnt",
+				"c_leftfinger5_jnt"
 			},
 			push_actors = {
 				"j_leftfinger1_jnt",
 				"j_leftfinger2_jnt",
 				"j_leftfinger3_jnt",
 				"j_leftfinger4_jnt",
-				"j_leftfinger5_jnt",
-			},
+				"j_leftfinger5_jnt"
+			}
 		},
 		right_arm = {
 			prio = 3,
@@ -223,13 +223,13 @@ local breed_data = {
 				"c_righthandmiddle1",
 				"c_righthandpinky1",
 				"c_righthandmiddle2",
-				"c_righthandindex2",
+				"c_righthandindex2"
 			},
 			push_actors = {
 				"j_rightarm",
 				"j_rightforearm",
-				"j_righthand",
-			},
+				"j_righthand"
+			}
 		},
 		left_leg = {
 			prio = 3,
@@ -237,26 +237,26 @@ local breed_data = {
 				"c_leftupleg",
 				"c_leftleg",
 				"c_leftfoot",
-				"c_lefttoebase",
+				"c_lefttoebase"
 			},
 			push_actors = {
 				"j_leftupleg",
 				"j_leftleg",
-				"j_leftfoot",
-			},
+				"j_leftfoot"
+			}
 		},
 		right_leg = {
 			prio = 3,
 			actors = {
 				"c_rightupleg",
 				"c_rightleg",
-				"c_rightfoot",
+				"c_rightfoot"
 			},
 			push_actors = {
 				"j_rightupleg",
 				"j_rightleg",
-				"j_rightfoot",
-			},
+				"j_rightfoot"
+			}
 		},
 		aux = {
 			prio = 3,
@@ -300,844 +300,842 @@ local breed_data = {
 				"c_tentacleD1",
 				"c_tentacleD2",
 				"c_tentacleD3",
-				"c_tentacleD4",
+				"c_tentacleD4"
 			},
 			push_actors = {
-				"j_spine1",
-			},
+				"j_spine1"
+			}
 		},
 		full = {
 			prio = 4,
-			actors = {},
+			actors = {}
 		},
 		afro = {
 			prio = 5,
 			actors = {
-				"c_afro",
-			},
-		},
+				"c_afro"
+			}
+		}
 	},
 	allowed_layers = {
-		big_boy_destructible = 1.5,
-		bot_poison_wind = 1.5,
-		bot_ratling_gun_fire = 15,
-		destructible_wall = 5,
-		doors = 1.5,
-		fire_grenade = 15,
-		jumps = 1.5,
-		ledges = 1.5,
-		ledges_with_fence = 1.5,
 		planks = 1.5,
-		teleporters = 5,
+		ledges = 1.5,
+		bot_ratling_gun_fire = 15,
+		jumps = 1.5,
+		big_boy_destructible = 1.5,
 		temporary_wall = 0,
+		destructible_wall = 5,
+		ledges_with_fence = 1.5,
+		doors = 1.5,
+		teleporters = 5,
+		bot_poison_wind = 1.5,
+		fire_grenade = 15
 	},
 	nav_cost_map_allowed_layers = {
-		lamp_oil_fire = 15,
 		plague_wave = 1,
-		stormfiend_warpfire = 1,
 		troll_bile = 1,
-		vortex_danger_zone = 1,
-		vortex_near = 1,
+		lamp_oil_fire = 15,
 		warpfire_thrower_warpfire = 1,
+		vortex_near = 1,
+		stormfiend_warpfire = 1,
+		vortex_danger_zone = 1
 	},
-	custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone, t, damage_source)
-		local blackboard = BLACKBOARDS[unit]
+	custom_death_enter_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+		local var_1_0 = BLACKBOARDS[arg_1_0]
 
-		if not Unit.alive(killer_unit) then
+		if not Unit.alive(arg_1_1) then
 			return
 		end
 
-		QuestSettings.check_chaos_spawn_killed_while_grabbing(blackboard, killer_unit)
-		QuestSettings.check_chaos_spawn_killed_without_having_grabbed(blackboard, killer_unit)
-	end,
+		QuestSettings.check_chaos_spawn_killed_while_grabbing(var_1_0, arg_1_1)
+		QuestSettings.check_chaos_spawn_killed_without_having_grabbed(var_1_0, arg_1_1)
+	end
 }
 
-Breeds.chaos_spawn = table.create_copy(Breeds.chaos_spawn, breed_data)
+Breeds.chaos_spawn = table.create_copy(Breeds.chaos_spawn, var_0_3)
 
-local breed_data_norsca = {
+local var_0_4 = {
 	combat_music_state = "champion_chaos_exalted_norsca",
 	allowed_layers = {
-		barrel_explosion = 10,
-		big_boy_destructible = 0,
-		bot_poison_wind = 1.5,
-		bot_ratling_gun_fire = 3,
-		destructible_wall = 0,
-		doors = 1.5,
 		end_zone = 0,
-		fire_grenade = 10,
-		jumps = 1.5,
 		ledges = 1.5,
-		ledges_with_fence = 1.5,
-		planks = 1.5,
-		teleporters = 5,
+		barrel_explosion = 10,
+		jumps = 1.5,
+		bot_ratling_gun_fire = 3,
 		temporary_wall = 1,
-	},
+		planks = 1.5,
+		big_boy_destructible = 0,
+		destructible_wall = 0,
+		ledges_with_fence = 1.5,
+		doors = 1.5,
+		teleporters = 5,
+		bot_poison_wind = 1.5,
+		fire_grenade = 10
+	}
 }
 
-for key, value in pairs(breed_data) do
-	local keep_value = breed_data_norsca[key]
+for iter_0_0, iter_0_1 in pairs(var_0_3) do
+	local var_0_5 = var_0_4[iter_0_0]
 
-	if keep_value == "SET_TO_NIL" then
-		breed_data_norsca[key] = nil
-	elseif keep_value ~= nil then
-		breed_data_norsca[key] = keep_value
+	if var_0_5 == "SET_TO_NIL" then
+		var_0_4[iter_0_0] = nil
+	elseif var_0_5 ~= nil then
+		var_0_4[iter_0_0] = var_0_5
 	else
-		breed_data_norsca[key] = value
+		var_0_4[iter_0_0] = iter_0_1
 	end
 end
 
-Breeds.chaos_spawn_exalted_champion_norsca = table.create_copy(Breeds.chaos_spawn_exalted_champion_norsca, breed_data_norsca)
+Breeds.chaos_spawn_exalted_champion_norsca = table.create_copy(Breeds.chaos_spawn_exalted_champion_norsca, var_0_4)
 Breeds.chaos_spawn_exalted_champion_norsca.is_always_spawnable = nil
 
-local AttackIntensityPerDifficulty = {
+local var_0_6 = {
 	melee_slam = {
 		easy = {
-			normal = 5,
 			running = 2,
+			normal = 5
 		},
 		normal = {
-			normal = 5,
 			running = 2,
+			normal = 5
 		},
 		hard = {
-			normal = 5,
 			running = 2,
+			normal = 5
 		},
 		harder = {
-			normal = 5,
 			running = 2,
+			normal = 5
 		},
 		hardest = {
-			normal = 5,
 			running = 2,
+			normal = 5
 		},
 		cataclysm = {
-			normal = 5,
 			running = 2,
+			normal = 5
 		},
 		cataclysm_2 = {
-			normal = 5,
 			running = 2,
+			normal = 5
 		},
 		cataclysm_3 = {
-			normal = 5,
 			running = 2,
+			normal = 5
 		},
 		versus_base = {
-			normal = 5,
 			running = 2,
-		},
+			normal = 5
+		}
 	},
 	combo = {
 		easy = {
-			normal = 3,
 			running = 0.5,
+			normal = 3
 		},
 		normal = {
-			normal = 3,
 			running = 0.5,
+			normal = 3
 		},
 		hard = {
-			normal = 3,
 			running = 0.5,
+			normal = 3
 		},
 		harder = {
-			normal = 3,
 			running = 0.5,
+			normal = 3
 		},
 		hardest = {
-			normal = 3,
 			running = 0.5,
+			normal = 3
 		},
 		cataclysm = {
-			normal = 3,
 			running = 0.5,
+			normal = 3
 		},
 		cataclysm_2 = {
-			normal = 3,
 			running = 0.5,
+			normal = 3
 		},
 		cataclysm_3 = {
-			normal = 3,
 			running = 0.5,
+			normal = 3
 		},
 		versus_base = {
-			normal = 3,
 			running = 0.5,
-		},
+			normal = 3
+		}
 	},
 	shove = {
 		easy = {
-			normal = 1,
+			normal = 1
 		},
 		normal = {
-			normal = 1,
+			normal = 1
 		},
 		hard = {
-			normal = 1,
+			normal = 1
 		},
 		harder = {
-			normal = 1,
+			normal = 1
 		},
 		hardest = {
-			normal = 1,
+			normal = 1
 		},
 		cataclysm = {
-			normal = 1,
+			normal = 1
 		},
 		cataclysm_2 = {
-			normal = 1,
+			normal = 1
 		},
 		cataclysm_3 = {
-			normal = 1,
+			normal = 1
 		},
 		versus_base = {
-			normal = 1,
-		},
-	},
+			normal = 1
+		}
+	}
 }
-local action_data = {
+local var_0_7 = {
 	climb = {
 		catapult_players = {
-			collision_filter = "filter_player_hit_box_check",
-			radius = 2,
 			speed = 7,
-			angle = math.pi / 6,
-		},
+			radius = 2,
+			collision_filter = "filter_player_hit_box_check",
+			angle = math.pi / 6
+		}
 	},
 	combo_attack = {
-		action_weight = 1,
-		allow_friendly_fire = true,
-		attack_intensity_type = "combo",
-		damage = 15,
-		damage_type = "cutting",
 		fatigue_type = "chaos_spawn_combo",
 		shield_blocked_fatigue_type = "chaos_spawn_combo",
-		difficulty_attack_intensity = AttackIntensityPerDifficulty,
+		damage = 15,
+		damage_type = "cutting",
+		allow_friendly_fire = true,
+		attack_intensity_type = "combo",
+		action_weight = 1,
+		difficulty_attack_intensity = var_0_6,
 		considerations = UtilityConsiderations.chaos_spawn_combo,
 		attacks = {
 			{
-				anim_driven = true,
-				attack_time = 2.5,
-				damage_done_time = 1.5666666666666667,
-				height = 2.5,
 				hit_multiple_targets = true,
-				ignores_dodging = true,
 				offset_forward = 1.5,
+				height = 2.5,
+				ignores_dodging = true,
+				rotation_time = 2,
+				anim_driven = true,
 				offset_up = 0,
+				range = 2.5,
 				player_push_speed = 7,
+				triggers_anim_cb_damage_multiple_times = true,
+				damage_done_time = 1.5666666666666667,
+				rotation_speed = 2.5,
 				player_push_speed_blocked = 7,
 				push_close_units_during_attack = true,
-				range = 2.5,
-				rotation_speed = 2.5,
-				rotation_time = 2,
-				triggers_anim_cb_damage_multiple_times = true,
+				attack_time = 2.5,
 				width = 1.5,
 				attack_anim = {
-					"attack_melee_combo",
+					"attack_melee_combo"
 				},
-				push_units_in_the_way = pushed_data,
+				push_units_in_the_way = var_0_1,
 				bot_threats = {
 					{
-						duration = 0.3333333333333333,
 						range = 3.5,
-						start_time = 0,
+						duration = 0.3333333333333333,
+						start_time = 0
 					},
 					{
-						duration = 0.3333333333333333,
 						range = 3.5,
-						start_time = 0.4,
+						duration = 0.3333333333333333,
+						start_time = 0.4
 					},
 					{
-						duration = 0.3333333333333333,
 						range = 3.5,
-						start_time = 0.8333333333333334,
+						duration = 0.3333333333333333,
+						start_time = 0.8333333333333334
 					},
 					{
-						duration = 0.3333333333333333,
 						range = 3.5,
-						start_time = 1.2333333333333334,
-					},
-				},
+						duration = 0.3333333333333333,
+						start_time = 1.2333333333333334
+					}
+				}
 			},
 			{
-				anim_driven = true,
-				attack_time = 2.5,
-				damage_done_time = 1.9333333333333333,
-				height = 2.5,
 				hit_multiple_targets = true,
-				ignores_dodging = true,
 				offset_forward = 1.5,
+				height = 2.5,
+				ignores_dodging = true,
+				rotation_time = 1.5,
+				anim_driven = true,
 				offset_up = 0,
+				range = 2.5,
 				player_push_speed = 9,
+				triggers_anim_cb_damage_multiple_times = true,
+				damage_done_time = 1.9333333333333333,
+				rotation_speed = 5,
 				player_push_speed_blocked = 9,
 				push_close_units_during_attack = true,
-				range = 2.5,
-				rotation_speed = 5,
-				rotation_time = 1.5,
-				triggers_anim_cb_damage_multiple_times = true,
+				attack_time = 2.5,
 				width = 1.5,
 				attack_anim = {
-					"attack_melee_combo_2",
+					"attack_melee_combo_2"
 				},
-				push_units_in_the_way = pushed_data,
+				push_units_in_the_way = var_0_1,
 				bot_threats = {
 					{
-						duration = 0.3333333333333333,
 						range = 3.5,
-						start_time = 0.2,
+						duration = 0.3333333333333333,
+						start_time = 0.2
 					},
 					{
-						duration = 0.3333333333333333,
 						range = 3.5,
-						start_time = 0.9333333333333333,
+						duration = 0.3333333333333333,
+						start_time = 0.9333333333333333
 					},
 					{
-						duration = 0.3333333333333333,
 						range = 3.5,
-						start_time = 1.5666666666666667,
-					},
-				},
-			},
+						duration = 0.3333333333333333,
+						start_time = 1.5666666666666667
+					}
+				}
+			}
 		},
-		difficulty_damage = BreedTweaks.difficulty_damage.boss_combo_attack,
+		difficulty_damage = BreedTweaks.difficulty_damage.boss_combo_attack
 	},
 	melee_slam = {
-		action_weight = 1,
-		attack_intensity_type = "melee_slam",
-		attack_time = 1.1666666666666667,
-		blocked_damage = 5,
-		cooldown = -1,
-		damage = 20,
-		damage_type = "cutting",
-		dodge_mitigation_radius_squared = 2.25,
-		fatigue_type = "blocked_slam",
-		forward_offset = 1.75,
-		height = 2.5,
-		player_push_speed = 8,
-		player_push_speed_blocked = 4,
-		radius = 1.2,
 		stagger_distance = 7,
+		height = 2.5,
+		forward_offset = 1.75,
+		cooldown = -1,
+		fatigue_type = "blocked_slam",
+		radius = 1.2,
+		damage_type = "cutting",
+		damage = 20,
+		player_push_speed = 8,
+		attack_intensity_type = "melee_slam",
+		action_weight = 1,
+		blocked_damage = 5,
+		player_push_speed_blocked = 4,
 		unblockable = false,
-		difficulty_attack_intensity = AttackIntensityPerDifficulty,
+		attack_time = 1.1666666666666667,
+		dodge_mitigation_radius_squared = 2.25,
+		difficulty_attack_intensity = var_0_6,
 		considerations = UtilityConsiderations.chaos_spawn_melee_slam,
 		attack_anim = {
-			"attack_melee_claw",
+			"attack_melee_claw"
 		},
 		blocked_difficulty_damage = BreedTweaks.difficulty_damage.boss_slam_attack_blocked,
 		difficulty_damage = BreedTweaks.difficulty_damage.boss_slam_attack,
 		stagger_impact = {
-			stagger_types.weak,
-			stagger_types.medium,
-			stagger_types.none,
-			stagger_types.none,
+			var_0_0.weak,
+			var_0_0.medium,
+			var_0_0.none,
+			var_0_0.none
 		},
 		bot_threats = {
 			{
 				duration = 0.3333333333333333,
-				start_time = 0.16666666666666666,
-			},
-		},
+				start_time = 0.16666666666666666
+			}
+		}
 	},
 	melee_shove = {
-		action_weight = 1,
+		fatigue_type = "ogre_shove",
+		damage = 20,
 		allow_friendly_fire = true,
 		attack_intensity_type = "shove",
-		damage = 20,
-		damage_type = "cutting",
-		fatigue_type = "ogre_shove",
+		action_weight = 1,
 		ignore_ai_damage = true,
-		difficulty_attack_intensity = AttackIntensityPerDifficulty,
+		damage_type = "cutting",
+		difficulty_attack_intensity = var_0_6,
 		considerations = UtilityConsiderations.spawn_melee_shove,
 		attacks = {
 			{
 				anim_driven = false,
-				attack_time = 2,
-				catapult_player = true,
-				damage_done_time = 1.2666666666666666,
-				freeze_intensity_decay_time = 15,
 				height = 2,
-				hit_multiple_targets = true,
 				hit_only_players = false,
 				ignore_targets_behind = true,
 				ignores_dodging = false,
+				rotation_time = 0.3,
+				freeze_intensity_decay_time = 15,
+				catapult_player = true,
 				offset_forward = 0,
-				offset_up = 0,
-				player_push_speed = 16,
-				player_push_speed_blocked = 9.6,
 				player_push_speed_blocked_z = 4,
+				offset_up = 0,
 				player_push_speed_z = 4,
 				range = 2,
-				rotation_time = 0.3,
+				player_push_speed = 16,
+				damage_done_time = 1.2666666666666666,
+				hit_multiple_targets = true,
+				player_push_speed_blocked = 9.6,
+				attack_time = 2,
 				width = 0.4,
 				attack_anim = {
-					"attack_melee_sweep",
+					"attack_melee_sweep"
 				},
 				continious_overlap = {
 					attack_melee_sweep = {
 						base_node_name = "j_leftforearm",
-						start_time = 0.9333333333333333,
 						tip_node_name = "j_lefthand",
-					},
+						start_time = 0.9333333333333333
+					}
 				},
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						stagger_types.explosion,
-						stagger_types.heavy,
-						stagger_types.none,
-						stagger_types.none,
-						stagger_types.explosion,
+						var_0_0.explosion,
+						var_0_0.heavy,
+						var_0_0.none,
+						var_0_0.none,
+						var_0_0.explosion
 					},
 					stagger_duration = {
 						4.5,
 						1,
 						0,
 						0,
-						4,
-					},
+						4
+					}
 				},
-				bot_threat_difficulty_data = default_bot_threat_difficulty_data,
+				bot_threat_difficulty_data = var_0_2,
 				bot_threats = {
 					{
 						collision_type = "cylinder",
-						duration = 1.4333333333333333,
-						height = 4,
 						offset_forward = 1,
+						radius = 4,
+						height = 4,
 						offset_right = 0,
 						offset_up = 0,
-						radius = 4,
-						start_time = 0.16666666666666666,
-					},
-				},
-			},
+						duration = 1.4333333333333333,
+						start_time = 0.16666666666666666
+					}
+				}
+			}
 		},
-		difficulty_damage = BreedTweaks.difficulty_damage.boss_slam_attack,
+		difficulty_damage = BreedTweaks.difficulty_damage.boss_slam_attack
 	},
 	attack_grabbed_smash = {
-		action_weight = 1,
-		allow_friendly_fire = true,
-		damage = 20,
 		damage_type = "cutting",
+		damage = 20,
+		allow_friendly_fire = true,
 		fatigue_type = "ogre_shove",
+		action_weight = 1,
 		ignore_ai_damage = true,
 		considerations = UtilityConsiderations.attack_grabbed_smash,
 		attacks = {
 			{
 				anim_driven = false,
-				attack_time = 1.8,
-				catapult_player = false,
-				freeze_intensity_decay_time = 15,
 				height = 2,
-				hit_multiple_targets = true,
+				catapult_player = false,
 				hit_only_players = false,
-				ignore_targets_behind = true,
 				ignores_dodging = false,
+				rotation_time = 0.3,
+				freeze_intensity_decay_time = 15,
+				ignore_targets_behind = true,
 				offset_forward = 0,
-				offset_up = 0,
-				player_push_speed = 5,
-				player_push_speed_blocked = 2.6,
 				player_push_speed_blocked_z = 4,
+				offset_up = 0,
 				player_push_speed_z = 4,
 				range = 2,
-				rotation_time = 0.3,
+				player_push_speed = 5,
+				hit_multiple_targets = true,
+				player_push_speed_blocked = 2.6,
+				attack_time = 1.8,
 				width = 0.4,
 				attack_anim = {
-					"attack_grabbed_smash",
+					"attack_grabbed_smash"
 				},
 				continious_overlap = {
 					attack_grabbed_smash = {
 						base_node_name = "j_leftforearm",
-						start_time = 0.3333333333333333,
 						tip_node_name = "j_lefthand",
-					},
+						start_time = 0.3333333333333333
+					}
 				},
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						stagger_types.explosion,
-						stagger_types.heavy,
-						stagger_types.none,
-						stagger_types.none,
-						stagger_types.explosion,
+						var_0_0.explosion,
+						var_0_0.heavy,
+						var_0_0.none,
+						var_0_0.none,
+						var_0_0.explosion
 					},
 					stagger_duration = {
 						4.5,
 						1,
 						0,
 						0,
-						4,
-					},
+						4
+					}
 				},
 				bot_threats = {
 					{
 						collision_type = "cylinder",
-						duration = 1.8,
-						height = 5,
 						offset_forward = 0,
+						radius = 3.5,
+						height = 5,
 						offset_right = 0,
 						offset_up = 0,
-						radius = 3.5,
-						start_time = 0,
-					},
-				},
-			},
+						duration = 1.8,
+						start_time = 0
+					}
+				}
+			}
 		},
 		difficulty_damage = {
-			cataclysm = 32,
-			cataclysm_2 = 40,
-			cataclysm_3 = 50,
-			easy = 3,
-			hard = 8,
-			harder = 15,
 			hardest = 25,
 			normal = 5,
+			hard = 8,
+			harder = 15,
+			cataclysm = 32,
+			easy = 3,
 			versus_base = 5,
-		},
+			cataclysm_3 = 50,
+			cataclysm_2 = 40
+		}
 	},
 	attack_grabbed_throw = {
 		action_weight = 1,
-		considerations = UtilityConsiderations.attack_grabbed_throw,
+		considerations = UtilityConsiderations.attack_grabbed_throw
 	},
 	attack_grabbed_chew = {
-		action_weight = 1,
-		damage = 15,
 		damage_type = "cutting",
+		damage = 15,
 		max_chew_attacks = 3,
+		action_weight = 1,
 		considerations = UtilityConsiderations.attack_grabbed_chew,
 		difficulty_damage = {
-			cataclysm = 32,
-			cataclysm_2 = 40,
-			cataclysm_3 = 50,
-			easy = 3,
-			hard = 8,
-			harder = 15,
 			hardest = 25,
 			normal = 5,
+			hard = 8,
+			harder = 15,
+			cataclysm = 32,
+			easy = 3,
 			versus_base = 5,
+			cataclysm_3 = 50,
+			cataclysm_2 = 40
 		},
 		health_leech_multiplier = {
-			cataclysm = 12.5,
-			cataclysm_2 = 11.25,
-			cataclysm_3 = 10,
-			easy = 3.33,
-			hard = 12.5,
-			harder = 13.33,
 			hardest = 12,
 			normal = 2,
+			hard = 12.5,
+			harder = 13.33,
+			cataclysm = 12.5,
+			easy = 3.33,
 			versus_base = 2,
-		},
+			cataclysm_3 = 10,
+			cataclysm_2 = 11.25
+		}
 	},
 	tentacle_grab = {
-		action_weight = 6,
-		allow_friendly_fire = true,
-		damage = 20,
 		damage_type = "cutting",
+		damage = 20,
+		allow_friendly_fire = true,
 		fatigue_type = "ogre_shove",
+		action_weight = 6,
 		ignore_ai_damage = true,
 		ignore_shield_block = true,
 		considerations = UtilityConsiderations.chaos_spawn_tentacle_grab,
 		attacks = {
 			{
-				anim_driven = false,
-				attack_time = 1.75,
-				catapult_player = false,
-				damage_done_time = 1,
 				freeze_intensity_decay_time = 15,
 				height = 2,
-				hit_multiple_targets = false,
 				hit_only_players = true,
 				ignore_targets_behind = true,
+				catapult_player = false,
+				rotation_time = 0.3,
+				anim_driven = false,
 				ignores_dodging = false,
 				offset_forward = 0,
 				offset_up = 0,
 				range = 2,
-				rotation_time = 0.3,
+				damage_done_time = 1,
+				hit_multiple_targets = false,
+				attack_time = 1.75,
 				width = 0.4,
 				attack_anim = {
-					"attack_grab",
+					"attack_grab"
 				},
-				hit_player_func = function (unit, blackboard, hit_unit, action, attack)
-					local status_extension = ScriptUnit.has_extension(hit_unit, "status_system")
+				hit_player_func = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+					local var_2_0 = ScriptUnit.has_extension(arg_2_2, "status_system")
 
-					if not status_extension:is_disabled() and not status_extension:is_invisible() then
-						blackboard.victim_grabbed = hit_unit
-						blackboard.has_grabbed = true
+					if not var_2_0:is_disabled() and not var_2_0:is_invisible() then
+						arg_2_1.victim_grabbed = arg_2_2
+						arg_2_1.has_grabbed = true
 
-						local network_manager = Managers.state.network
+						Managers.state.network:anim_event(arg_2_0, "attack_grab_player")
+						StatusUtils.set_grabbed_by_chaos_spawn_network(arg_2_2, true, arg_2_0)
 
-						network_manager:anim_event(unit, "attack_grab_player")
-						StatusUtils.set_grabbed_by_chaos_spawn_network(hit_unit, true, unit)
-
-						blackboard.grabbed_time = 0
-						blackboard.grabbed_state = "tentacle_grab"
+						arg_2_1.grabbed_time = 0
+						arg_2_1.grabbed_state = "tentacle_grab"
 					end
 				end,
 				continious_overlap = {
 					attack_grab = {
 						base_node_name = "j_leftforearm",
-						start_time = 0.6666666666666666,
 						tip_node_name = "j_lefthand",
-					},
+						start_time = 0.6666666666666666
+					}
 				},
-				bot_threat_difficulty_data = default_bot_threat_difficulty_data,
+				bot_threat_difficulty_data = var_0_2,
 				bot_threats = {
 					{
 						collision_type = "cylinder",
-						duration = 1.0666666666666667,
-						height = 4,
 						offset_forward = 1,
+						radius = 3.75,
+						height = 4,
 						offset_right = 0,
 						offset_up = 0,
-						radius = 3.75,
-						start_time = 0.16666666666666666,
-					},
-				},
-			},
+						duration = 1.0666666666666667,
+						start_time = 0.16666666666666666
+					}
+				}
+			}
 		},
 		difficulty_damage = {
-			cataclysm = 10,
-			cataclysm_2 = 10,
-			cataclysm_3 = 10,
-			easy = 3,
-			hard = 6,
-			harder = 7,
 			hardest = 8,
 			normal = 5,
+			hard = 6,
+			harder = 7,
+			cataclysm = 10,
+			easy = 3,
 			versus_base = 5,
-		},
+			cataclysm_3 = 10,
+			cataclysm_2 = 10
+		}
 	},
 	erratic_follow = {
-		action_weight = 1,
 		enter_catch_up_dist_sq = 1600,
 		enter_walk_dist_sq = 4,
-		jump_dist = 10,
 		leave_walk_dist_sq = 9,
-		move_anim = "move_fwd",
 		uses_high_jumps = true,
+		jump_dist = 10,
+		action_weight = 1,
+		move_anim = "move_fwd",
 		walk_anim = "walk_fwd",
 		considerations = UtilityConsiderations.follow,
 		start_anims_name = {
 			bwd = "move_start_bwd",
 			fwd = "move_start_fwd",
 			left = "move_start_left",
-			right = "move_start_right",
+			right = "move_start_right"
 		},
 		walk_start_anims_name = {
 			bwd = "walk_start_bwd",
 			fwd = "walk_start_fwd",
 			left = "walk_start_left",
-			right = "walk_start_right",
+			right = "walk_start_right"
 		},
 		start_anims_data = {
 			move_start_fwd = {},
 			move_start_bwd = {
 				dir = -1,
-				rad = math.pi,
+				rad = math.pi
 			},
 			move_start_left = {
 				dir = 1,
-				rad = math.pi / 2,
+				rad = math.pi / 2
 			},
 			move_start_right = {
 				dir = -1,
-				rad = math.pi / 2,
-			},
+				rad = math.pi / 2
+			}
 		},
 		init_blackboard = {
-			chasing_timer = -10,
+			chasing_timer = -10
 		},
 		move_jump_left_anims = {
 			ray_angle = math.pi * 0.25,
 			{
 				"move_jump_left_45",
-				ray_angle = 0,
 				ray_dist = 5,
+				ray_angle = 0
 			},
 			{
 				"move_jump_left_45_turn_right_45",
 				ray_dist = 5,
-				ray_angle = -math.pi * 0.25,
+				ray_angle = -math.pi * 0.25
 			},
 			{
 				"move_jump_left_45_turn_right_90",
 				ray_dist = 5,
-				ray_angle = -math.pi * 0.5,
+				ray_angle = -math.pi * 0.5
 			},
 			name = "move_jump_left_anims",
-			ray_dist = 8,
+			ray_dist = 8
 		},
 		move_jump_right_anims = {
 			ray_angle = -math.pi * 0.25,
 			{
 				"move_jump_right_45",
-				ray_angle = 0,
 				ray_dist = 5,
+				ray_angle = 0
 			},
 			{
 				"move_jump_right_45_turn_left_45",
 				ray_dist = 5,
-				ray_angle = math.pi * 0.25,
+				ray_angle = math.pi * 0.25
 			},
 			{
 				"move_jump_right_45_turn_left_90",
 				ray_dist = 5,
-				ray_angle = math.pi * 0.5,
+				ray_angle = math.pi * 0.5
 			},
 			name = "move_jump_right_anims",
-			ray_dist = 8,
+			ray_dist = 8
 		},
 		move_jump_fwd_anims = {
 			{
 				"move_jump_fwd",
-				ray_angle = 0,
 				ray_dist = 5,
+				ray_angle = 0
 			},
 			{
 				"move_jump_fwd_turn_left_45",
 				ray_dist = 5,
-				ray_angle = math.pi * 0.25,
+				ray_angle = math.pi * 0.25
 			},
 			{
 				"move_jump_fwd_turn_left_90",
 				ray_dist = 5,
-				ray_angle = math.pi * 0.5,
+				ray_angle = math.pi * 0.5
 			},
 			{
 				"move_jump_fwd_turn_right_45",
 				ray_dist = 5,
-				ray_angle = -math.pi * 0.25,
+				ray_angle = -math.pi * 0.25
 			},
 			{
 				"move_jump_fwd_turn_right_90",
 				ray_dist = 5,
-				ray_angle = -math.pi * 0.5,
+				ray_angle = -math.pi * 0.5
 			},
-			name = "move_jump_fwd_anims",
 			ray_angle = 0,
-			ray_dist = 8,
+			name = "move_jump_fwd_anims",
+			ray_dist = 8
 		},
 		move_jump_only_left_anims = {
 			ray_angle = math.pi * 0.25,
 			{
 				"move_jump_left_45",
-				ray_angle = 0,
 				ray_dist = 5,
+				ray_angle = 0
 			},
 			{
 				"move_jump_left_90",
-				ray_angle = 0,
 				ray_dist = 5,
+				ray_angle = 0
 			},
-			ray_dist = 8,
+			ray_dist = 8
 		},
 		move_jump_only_fwd_left_anims = {
 			{
 				"move_jump_fwd_turn_left_45",
 				ray_dist = 5,
-				ray_angle = math.pi * 0.25,
+				ray_angle = math.pi * 0.25
 			},
 			{
 				"move_jump_fwd_turn_left_90",
 				ray_dist = 5,
-				ray_angle = math.pi * 0.5,
+				ray_angle = math.pi * 0.5
 			},
 			ray_angle = 0,
-			ray_dist = 8,
+			ray_dist = 8
 		},
 		move_jump_only_right_anims = {
 			ray_angle = -math.pi * 0.25,
 			{
 				"move_jump_right_45",
-				ray_angle = 0,
 				ray_dist = 5,
+				ray_angle = 0
 			},
 			{
 				"move_jump_right_90",
-				ray_angle = 0,
 				ray_dist = 5,
+				ray_angle = 0
 			},
-			ray_dist = 8,
+			ray_dist = 8
 		},
 		move_jump_only_fwd_right_anims = {
 			{
 				"move_jump_fwd_turn_right_45",
 				ray_dist = 5,
-				ray_angle = -math.pi * 0.25,
+				ray_angle = -math.pi * 0.25
 			},
 			{
 				"move_jump_fwd_turn_right_90",
 				ray_dist = 5,
-				ray_angle = -math.pi * 0.5,
+				ray_angle = -math.pi * 0.5
 			},
 			ray_angle = 0,
-			ray_dist = 8,
-		},
+			ray_dist = 8
+		}
 	},
 	smash_door = {
-		attack_anim = "attack_melee_claw",
+		unblockable = true,
+		name = "smash_door",
 		damage = 25,
 		damage_type = "cutting",
-		door_attack_distance = 2,
 		move_anim = "move_fwd",
-		name = "smash_door",
-		unblockable = true,
+		attack_anim = "attack_melee_claw",
+		door_attack_distance = 2,
 		ignore_staggers = {
 			false,
 			true,
 			true,
 			true,
 			false,
-			true,
-		},
+			true
+		}
 	},
 	target_rage = {
-		close_anims_dist = 16,
 		close_rage_time = 1,
+		close_anims_dist = 16,
 		rage_time = 3,
 		start_anims_name = {
 			bwd = "change_target_bwd",
 			fwd = "change_target_fwd",
 			left = "change_target_left",
-			right = "change_target_right",
+			right = "change_target_right"
 		},
 		start_anims_data = {
 			change_target_fwd = {},
 			change_target_bwd = {
 				dir = -1,
-				rad = math.pi,
+				rad = math.pi
 			},
 			change_target_left = {
 				dir = 1,
-				rad = math.pi / 2,
+				rad = math.pi / 2
 			},
 			change_target_right = {
 				dir = -1,
-				rad = math.pi / 2,
-			},
+				rad = math.pi / 2
+			}
 		},
 		close_anims_name = {
 			bwd = "turn_bwd",
 			left = "turn_left",
-			right = "turn_right",
+			right = "turn_right"
 		},
 		close_anims_data = {
 			turn_bwd = {
 				dir = -1,
-				rad = math.pi,
+				rad = math.pi
 			},
 			turn_left = {
 				dir = 1,
-				rad = math.pi / 2,
+				rad = math.pi / 2
 			},
 			turn_right = {
 				dir = -1,
-				rad = math.pi / 2,
-			},
-		},
+				rad = math.pi / 2
+			}
+		}
 	},
 	target_unreachable = {
-		move_anim = "move_start_fwd",
+		move_anim = "move_start_fwd"
 	},
 	stagger = {
 		scale_animation_speeds = true,
@@ -1147,66 +1145,66 @@ local action_data = {
 				fwd = {},
 				bwd = {},
 				left = {},
-				right = {},
+				right = {}
 			},
 			{
 				fwd = {},
 				bwd = {},
 				left = {},
-				right = {},
+				right = {}
 			},
 			{
 				fwd = {},
 				bwd = {},
 				left = {},
-				right = {},
+				right = {}
 			},
 			{
 				fwd = {},
 				bwd = {},
 				left = {},
-				right = {},
+				right = {}
 			},
 			{
 				fwd = {},
 				bwd = {},
 				left = {},
-				right = {},
+				right = {}
 			},
 			{
 				fwd = {
-					"stagger_fwd_exp",
+					"stagger_fwd_exp"
 				},
 				bwd = {
-					"stagger_bwd_exp",
+					"stagger_bwd_exp"
 				},
 				left = {
-					"stagger_left_exp",
+					"stagger_left_exp"
 				},
 				right = {
-					"stagger_right_exp",
-				},
+					"stagger_right_exp"
+				}
 			},
 			{
 				fwd = {},
 				bwd = {},
 				left = {},
-				right = {},
+				right = {}
 			},
 			{
 				fwd = {},
 				bwd = {},
 				left = {},
-				right = {},
+				right = {}
 			},
 			{
 				fwd = {},
 				bwd = {},
 				left = {},
-				right = {},
-			},
-		},
-	},
+				right = {}
+			}
+		}
+	}
 }
 
-BreedActions.chaos_spawn = table.create_copy(BreedActions.chaos_spawn, action_data)
+BreedActions.chaos_spawn = table.create_copy(BreedActions.chaos_spawn, var_0_7)

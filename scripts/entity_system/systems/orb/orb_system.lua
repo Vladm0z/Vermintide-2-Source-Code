@@ -1,139 +1,135 @@
-﻿-- chunkname: @scripts/entity_system/systems/orb/orb_system.lua
+-- chunkname: @scripts/entity_system/systems/orb/orb_system.lua
 
 OrbSystem = class(OrbSystem, ExtensionSystemBase)
 
-local RPCS = {
-	"rpc_spawn_orb",
+local var_0_0 = {
+	"rpc_spawn_orb"
 }
-local ORB_START_RADIUS = 1
-local ORB_END_RADIUS = 3
+local var_0_1 = 1
+local var_0_2 = 3
 
-local function spawn_orb(nav_world, orb_name, owner_peer_id, orb_starting_position, cake_slice_dir, cake_slice_angle_radians)
-	local slice_angle = math.atan2(cake_slice_dir.x, cake_slice_dir.y)
-	local half_slice_angle = cake_slice_angle_radians * 0.5
-	local angle1 = slice_angle - half_slice_angle
-	local angle2 = slice_angle + half_slice_angle
-	local start_radius = ORB_START_RADIUS
-	local end_radius = ORB_END_RADIUS
-	local orb_flight_target_position
+local function var_0_3(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	local var_1_0 = math.atan2(arg_1_4.x, arg_1_4.y)
+	local var_1_1 = arg_1_5 * 0.5
+	local var_1_2 = var_1_0 - var_1_1
+	local var_1_3 = var_1_0 + var_1_1
+	local var_1_4 = var_0_1
+	local var_1_5 = var_0_2
+	local var_1_6
 
-	for i = 1, 5 do
-		local x, y = math.get_uniformly_random_point_inside_sector(start_radius, end_radius, angle1, angle2)
-		local position_found = Vector3(orb_starting_position.x + x, orb_starting_position.y + y, orb_starting_position.z)
-		local success, z = GwNavQueries.triangle_from_position(nav_world, position_found, 5, 5)
+	for iter_1_0 = 1, 5 do
+		local var_1_7, var_1_8 = math.get_uniformly_random_point_inside_sector(var_1_4, var_1_5, var_1_2, var_1_3)
+		local var_1_9 = Vector3(arg_1_3.x + var_1_7, arg_1_3.y + var_1_8, arg_1_3.z)
+		local var_1_10, var_1_11 = GwNavQueries.triangle_from_position(arg_1_0, var_1_9, 5, 5)
 
-		if success then
-			Vector3.set_z(position_found, z)
+		if var_1_10 then
+			Vector3.set_z(var_1_9, var_1_11)
 
-			orb_flight_target_position = Vector3Box(position_found)
+			var_1_6 = Vector3Box(var_1_9)
 
 			break
 		end
 	end
 
-	if not orb_flight_target_position then
-		local success, z = GwNavQueries.triangle_from_position(nav_world, orb_starting_position, 5, 5)
+	if not var_1_6 then
+		local var_1_12, var_1_13 = GwNavQueries.triangle_from_position(arg_1_0, arg_1_3, 5, 5)
 
-		if success then
-			local pos = Vector3(orb_starting_position[1], orb_starting_position[2], z)
+		if var_1_12 then
+			local var_1_14 = Vector3(arg_1_3[1], arg_1_3[2], var_1_13)
 
-			orb_flight_target_position = Vector3Box(pos)
+			var_1_6 = Vector3Box(var_1_14)
 		else
-			local pos = GwNavQueries.inside_position_from_outside_position(nav_world, orb_starting_position, 4, 4, 5)
+			local var_1_15 = GwNavQueries.inside_position_from_outside_position(arg_1_0, arg_1_3, 4, 4, 5)
 
-			if pos then
-				orb_flight_target_position = Vector3Box(pos)
+			if var_1_15 then
+				var_1_6 = Vector3Box(var_1_15)
 			end
 		end
 	end
 
-	if not orb_flight_target_position then
+	if not var_1_6 then
 		return
 	end
 
-	local pickup_settings = AllPickups[orb_name]
-	local projectile_unit_name = pickup_settings.unit_name
-	local projectile_unit_template_name = pickup_settings.unit_template_name
-	local spawn_type = "buff"
-	local extension_init_data = {
+	local var_1_16 = AllPickups[arg_1_1]
+	local var_1_17 = var_1_16.unit_name
+	local var_1_18 = var_1_16.unit_template_name
+	local var_1_19 = "buff"
+	local var_1_20 = {
 		pickup_system = {
-			flight_enabled = true,
 			has_physics = false,
 			spawn_limit = 1,
-			pickup_name = orb_name,
-			spawn_type = spawn_type,
-			owner_peer_id = owner_peer_id,
-			orb_flight_target_position = orb_flight_target_position,
-		},
+			flight_enabled = true,
+			pickup_name = arg_1_1,
+			spawn_type = var_1_19,
+			owner_peer_id = arg_1_2,
+			orb_flight_target_position = var_1_6
+		}
 	}
 
-	if pickup_settings.local_only then
-		return Managers.state.unit_spawner:spawn_local_unit_with_extensions(projectile_unit_name, projectile_unit_template_name, extension_init_data, orb_starting_position)
+	if var_1_16.local_only then
+		return Managers.state.unit_spawner:spawn_local_unit_with_extensions(var_1_17, var_1_18, var_1_20, arg_1_3)
 	else
-		return Managers.state.unit_spawner:spawn_network_unit(projectile_unit_name, projectile_unit_template_name, extension_init_data, orb_starting_position)
+		return Managers.state.unit_spawner:spawn_network_unit(var_1_17, var_1_18, var_1_20, arg_1_3)
 	end
 end
 
-OrbSystem.init = function (self, entity_system_creation_context, ...)
-	OrbSystem.super.init(self, entity_system_creation_context, ...)
+function OrbSystem.init(arg_2_0, arg_2_1, ...)
+	OrbSystem.super.init(arg_2_0, arg_2_1, ...)
 
-	local network_event_delegate = entity_system_creation_context.network_event_delegate
+	local var_2_0 = arg_2_1.network_event_delegate
 
-	self.network_event_delegate = network_event_delegate
+	arg_2_0.network_event_delegate = var_2_0
 
-	network_event_delegate:register(self, unpack(RPCS))
+	var_2_0:register(arg_2_0, unpack(var_0_0))
 
-	self._is_server = entity_system_creation_context.is_server
+	arg_2_0._is_server = arg_2_1.is_server
 end
 
-OrbSystem.rpc_spawn_orb = function (self, channel_id, orb_name, owner_peer_id, orb_starting_position, cake_slice_dir, cake_slice_angle_radians)
-	local nav_world = Managers.state.entity:system("ai_system"):nav_world()
+function OrbSystem.rpc_spawn_orb(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	local var_3_0 = Managers.state.entity:system("ai_system"):nav_world()
 
-	if not nav_world then
+	if not var_3_0 then
 		return
 	end
 
-	orb_name = NetworkLookup.pickup_names[orb_name]
+	arg_3_2 = NetworkLookup.pickup_names[arg_3_2]
 
-	local start_pos = Vector3Box(orb_starting_position)
-	local slice_dir = Vector3Box(cake_slice_dir)
+	local var_3_1 = Vector3Box(arg_3_4)
+	local var_3_2 = Vector3Box(arg_3_5)
 
-	local function nav_callback()
-		spawn_orb(nav_world, orb_name, owner_peer_id, start_pos:unbox(), slice_dir:unbox(), cake_slice_angle_radians)
+	local function var_3_3()
+		var_0_3(var_3_0, arg_3_2, arg_3_3, var_3_1:unbox(), var_3_2:unbox(), arg_3_6)
 	end
 
-	local ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
-
-	ai_navigation_system:add_safe_navigation_callback(nav_callback)
+	Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(var_3_3)
 end
 
-OrbSystem.spawn_orb = function (self, orb_name, owner_peer_id, orb_starting_position, cake_slice_dir, cake_slice_angle_radians, optional_spawn_succeeded_func, optional_spawn_fail_func)
-	local nav_world = Managers.state.entity:system("ai_system"):nav_world()
+function OrbSystem.spawn_orb(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7)
+	local var_5_0 = Managers.state.entity:system("ai_system"):nav_world()
 
-	if not nav_world then
+	if not var_5_0 then
 		return
 	end
 
-	local start_pos = Vector3Box(orb_starting_position)
-	local slice_dir = Vector3Box(cake_slice_dir)
+	local var_5_1 = Vector3Box(arg_5_3)
+	local var_5_2 = Vector3Box(arg_5_4)
 
-	local function nav_callback()
-		local unit = spawn_orb(nav_world, orb_name, owner_peer_id, start_pos:unbox(), slice_dir:unbox(), cake_slice_angle_radians)
+	local function var_5_3()
+		local var_6_0 = var_0_3(var_5_0, arg_5_1, arg_5_2, var_5_1:unbox(), var_5_2:unbox(), arg_5_5)
 
-		if unit then
-			if optional_spawn_succeeded_func then
-				optional_spawn_succeeded_func(unit)
+		if var_6_0 then
+			if arg_5_6 then
+				arg_5_6(var_6_0)
 			end
-		elseif optional_spawn_fail_func then
-			optional_spawn_fail_func()
+		elseif arg_5_7 then
+			arg_5_7()
 		end
 	end
 
-	local ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
-
-	ai_navigation_system:add_safe_navigation_callback(nav_callback)
+	Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(var_5_3)
 end
 
-OrbSystem.destroy = function (self)
-	self.network_event_delegate:unregister(self)
+function OrbSystem.destroy(arg_7_0)
+	arg_7_0.network_event_delegate:unregister(arg_7_0)
 end

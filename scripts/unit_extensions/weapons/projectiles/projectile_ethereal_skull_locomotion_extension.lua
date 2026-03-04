@@ -1,21 +1,22 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/projectiles/projectile_ethereal_skull_locomotion_extension.lua
+-- chunkname: @scripts/unit_extensions/weapons/projectiles/projectile_ethereal_skull_locomotion_extension.lua
 
 ProjectileEtherealSkullLocomotionExtension = class(ProjectileEtherealSkullLocomotionExtension)
 
-local settings = DLCSettings.wizards_part_2.ethereal_skull_settings
-local group_data = AIGroupTemplates.ethereal_skulls
-local unit_local_position = Unit.local_position
-local length_squared = Vector3.length_squared
-local direction_length = Vector3.direction_length
-local rotate = Quaternion.rotate
+local var_0_0 = DLCSettings.wizards_part_2.ethereal_skull_settings
+local var_0_1 = AIGroupTemplates.ethereal_skulls
+local var_0_2 = Unit.local_position
+local var_0_3 = Vector3.length_squared
+local var_0_4 = Vector3.direction_length
+local var_0_5 = Quaternion.rotate
 
-local function valid_position(position)
-	local pmin, pmax = NetworkConstants.position.min, NetworkConstants.position.max
+local function var_0_6(arg_1_0)
+	local var_1_0 = NetworkConstants.position.min
+	local var_1_1 = NetworkConstants.position.max
 
-	for i = 1, 3 do
-		local coord = position[i]
+	for iter_1_0 = 1, 3 do
+		local var_1_2 = arg_1_0[iter_1_0]
 
-		if coord < pmin or pmax < coord then
+		if var_1_2 < var_1_0 or var_1_1 < var_1_2 then
 			print("[ProjectileEtherealSkullLocomotionExtension] position is not valid, outside of NetworkConstants.position")
 
 			return false
@@ -25,315 +26,303 @@ local function valid_position(position)
 	return true
 end
 
-ProjectileEtherealSkullLocomotionExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	local t = Managers.time:time("game")
+function ProjectileEtherealSkullLocomotionExtension.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local var_2_0 = Managers.time:time("game")
 
-	self._spawn_time = t
+	arg_2_0._spawn_time = var_2_0
 
-	local max_speed_multiplier = settings.min_speed_multiplier
-	local min_speed_multiplier = settings.max_speed_multiplier
-	local delta = max_speed_multiplier - min_speed_multiplier
+	local var_2_1 = var_0_0.min_speed_multiplier
+	local var_2_2 = var_0_0.max_speed_multiplier
+	local var_2_3 = var_2_1 - var_2_2
 
-	self._speed_multiplier = min_speed_multiplier + math.random() * delta
-	self._use_sin_for_vertical_trajectory = math.random(1, 2) == 1
-	self._base_position = Vector3Box(unit_local_position(unit, 0))
-	self._unit = unit
+	arg_2_0._speed_multiplier = var_2_2 + math.random() * var_2_3
+	arg_2_0._use_sin_for_vertical_trajectory = math.random(1, 2) == 1
+	arg_2_0._base_position = Vector3Box(var_0_2(arg_2_2, 0))
+	arg_2_0._unit = arg_2_2
 
-	local bb = BLACKBOARDS[unit]
+	local var_2_4 = BLACKBOARDS[arg_2_2]
 
-	self._patrol_origin = bb.optional_spawn_data.sofia_unit_pos
+	arg_2_0._patrol_origin = var_2_4.optional_spawn_data.sofia_unit_pos
 
-	local origin = bb.optional_spawn_data.sofia_unit_pos:unbox()
+	local var_2_5 = var_2_4.optional_spawn_data.sofia_unit_pos:unbox()
 
-	self._origin_x = origin.x
-	self._origin_y = origin.y
-	self._current_state = "spawn_traversal"
-	self._spawn_traversal_start = t
+	arg_2_0._origin_x = var_2_5.x
+	arg_2_0._origin_y = var_2_5.y
+	arg_2_0._current_state = "spawn_traversal"
+	arg_2_0._spawn_traversal_start = var_2_0
 
-	if bb.optional_spawn_data.target then
-		self:set_target(bb.optional_spawn_data.target)
+	if var_2_4.optional_spawn_data.target then
+		arg_2_0:set_target(var_2_4.optional_spawn_data.target)
 	end
 
-	self._cached_direction = Vector3Box(Vector3.right())
+	arg_2_0._cached_direction = Vector3Box(Vector3.right())
 
-	Managers.state.event:register(self, "set_tower_skulls_target", "set_target")
+	Managers.state.event:register(arg_2_0, "set_tower_skulls_target", "set_target")
 end
 
-ProjectileEtherealSkullLocomotionExtension.update = function (self, unit, input, dt, context, t)
-	self._moved = false
+function ProjectileEtherealSkullLocomotionExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	arg_3_0._moved = false
 
-	if self._stopped then
+	if arg_3_0._stopped then
 		return
 	end
 
-	local base_position = self._base_position:unbox()
-	local target_direction, new_position
-	local current_state = self._current_state
+	local var_3_0 = arg_3_0._base_position:unbox()
+	local var_3_1
+	local var_3_2
+	local var_3_3 = arg_3_0._current_state
 
-	if current_state == "homing" then
-		new_position, target_direction = self:get_homing_movement(unit, base_position, t, dt)
-	elseif current_state == "patrol" then
-		new_position, target_direction = self:get_patrol_movement(unit, base_position, t, dt)
-	elseif current_state == "spawn_traversal" then
-		new_position, target_direction = self:get_spawn_traversal_movement(unit, base_position, t, dt)
+	if var_3_3 == "homing" then
+		var_3_2, var_3_1 = arg_3_0:get_homing_movement(arg_3_1, var_3_0, arg_3_5, arg_3_3)
+	elseif var_3_3 == "patrol" then
+		var_3_2, var_3_1 = arg_3_0:get_patrol_movement(arg_3_1, var_3_0, arg_3_5, arg_3_3)
+	elseif var_3_3 == "spawn_traversal" then
+		var_3_2, var_3_1 = arg_3_0:get_spawn_traversal_movement(arg_3_1, var_3_0, arg_3_5, arg_3_3)
 	end
 
-	local game = Managers.state.network:game()
-	local id = Managers.state.unit_storage:go_id(unit)
+	local var_3_4 = Managers.state.network:game()
+	local var_3_5 = Managers.state.unit_storage:go_id(arg_3_1)
 
-	self:set_rotation(unit, target_direction, game, id, dt)
-	self:set_movement(unit, base_position, new_position, game, id, t, dt)
+	arg_3_0:set_rotation(arg_3_1, var_3_1, var_3_4, var_3_5, arg_3_3)
+	arg_3_0:set_movement(arg_3_1, var_3_0, var_3_2, var_3_4, var_3_5, arg_3_5, arg_3_3)
 
-	self._moved = true
+	arg_3_0._moved = true
 end
 
-ProjectileEtherealSkullLocomotionExtension.get_homing_movement = function (self, unit, base_position, t, dt)
-	local origin = self._patrol_origin:unbox()
-	local origin_dist_sq = Vector3.distance_squared(origin, base_position)
+function ProjectileEtherealSkullLocomotionExtension.get_homing_movement(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local var_4_0 = arg_4_0._patrol_origin:unbox()
 
-	if origin_dist_sq > settings.despawn_dist_sq then
-		AiUtils.kill_unit(self._unit, nil, nil, nil, nil)
+	if Vector3.distance_squared(var_4_0, arg_4_2) > var_0_0.despawn_dist_sq then
+		AiUtils.kill_unit(arg_4_0._unit, nil, nil, nil, nil)
 	end
 
-	local speed_multiplier = self._speed_multiplier
-	local speed = settings.base_speed * speed_multiplier
-	local spawn_time = self._spawn_time
-	local lifetime = t - spawn_time
+	local var_4_1 = arg_4_0._speed_multiplier
+	local var_4_2 = var_0_0.base_speed * var_4_1
+	local var_4_3 = arg_4_3 - arg_4_0._spawn_time
+	local var_4_4 = var_4_2 * var_0_0.speed_multiplier_curve_func(var_4_3)
+	local var_4_5 = arg_4_0:get_homing_target_direction(arg_4_2)
 
-	speed = speed * settings.speed_multiplier_curve_func(lifetime)
-
-	local target_direction = self:get_homing_target_direction(base_position)
-	local new_position = base_position + target_direction * speed * dt
-
-	return new_position, target_direction
+	return arg_4_2 + var_4_5 * var_4_4 * arg_4_4, var_4_5
 end
 
-ProjectileEtherealSkullLocomotionExtension.get_patrol_movement = function (self, unit, base_position, t, dt)
-	local origin = Vector3(self._origin_x, self._origin_y, base_position.z)
-	local direction_from_origin, dist_from_origin = direction_length(base_position - origin)
-	local target_displacement_horizontal = dist_from_origin - settings.patrol_target_horizontal_dist_from_origin
-	local target_displacement_vertical = base_position.z - settings.patrol_target_height
-	local target_trajectory_adjusment = Vector3.zero()
-	local adjustment_magnitude = settings.patrol_target_adjustment_speed * dt
+function ProjectileEtherealSkullLocomotionExtension.get_patrol_movement(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	local var_5_0 = Vector3(arg_5_0._origin_x, arg_5_0._origin_y, arg_5_2.z)
+	local var_5_1, var_5_2 = var_0_4(arg_5_2 - var_5_0)
+	local var_5_3 = var_5_2 - var_0_0.patrol_target_horizontal_dist_from_origin
+	local var_5_4 = arg_5_2.z - var_0_0.patrol_target_height
+	local var_5_5 = Vector3.zero()
+	local var_5_6 = var_0_0.patrol_target_adjustment_speed * arg_5_4
 
-	if math.abs(target_displacement_horizontal) > settings.patrol_target_marginal then
-		local sign = math.sign(target_displacement_horizontal)
+	if math.abs(var_5_3) > var_0_0.patrol_target_marginal then
+		local var_5_7 = math.sign(var_5_3)
 
-		target_trajectory_adjusment = direction_from_origin * adjustment_magnitude * -sign
+		var_5_5 = var_5_1 * var_5_6 * -var_5_7
 	end
 
-	if math.abs(target_displacement_vertical) > settings.patrol_target_marginal then
-		local sign = math.sign(target_displacement_vertical)
+	if math.abs(var_5_4) > var_0_0.patrol_target_marginal then
+		local var_5_8 = math.sign(var_5_4)
 
-		target_trajectory_adjusment = target_trajectory_adjusment + Vector3.up() * adjustment_magnitude * -sign
+		var_5_5 = var_5_5 + Vector3.up() * var_5_6 * -var_5_8
 	end
 
-	local angle = settings.patrol_speed / (dist_from_origin * math.pi * 2) * dt
-	local added_rot = Quaternion(Vector3.up(), angle)
-	local new_position = origin + rotate(added_rot, direction_from_origin * dist_from_origin) + target_trajectory_adjusment
-	local target_direction = Vector3.normalize(new_position - base_position)
+	local var_5_9 = var_0_0.patrol_speed / (var_5_2 * math.pi * 2) * arg_5_4
+	local var_5_10 = Quaternion(Vector3.up(), var_5_9)
+	local var_5_11 = var_5_0 + var_0_5(var_5_10, var_5_1 * var_5_2) + var_5_5
+	local var_5_12 = Vector3.normalize(var_5_11 - arg_5_2)
 
-	if self:has_target() then
-		local target_pos = Unit.world_position(self._target_unit, 0)
-		local target_distance_sq = Vector3.distance_squared(Vector3.flat(new_position), Vector3.flat(target_pos))
+	if arg_5_0:has_target() then
+		local var_5_13 = Unit.world_position(arg_5_0._target_unit, 0)
 
-		if target_distance_sq < settings.aggro_distance_sq then
-			self._current_state = "homing"
+		if Vector3.distance_squared(Vector3.flat(var_5_11), Vector3.flat(var_5_13)) < var_0_0.aggro_distance_sq then
+			arg_5_0._current_state = "homing"
 
-			Unit.flow_event(self._unit, "on_aggro")
+			Unit.flow_event(arg_5_0._unit, "on_aggro")
 		end
 	end
 
-	return new_position, target_direction
+	return var_5_11, var_5_12
 end
 
-ProjectileEtherealSkullLocomotionExtension.get_spawn_traversal_movement = function (self, unit, base_position, t, dt)
-	local alpha = (t - self._spawn_traversal_start) / settings.spawn_traversal_duration
-	local origin = Vector3(self._origin_x, self._origin_y, base_position.z)
-	local origin_to_current_dir, dist_from_origin = direction_length(base_position - origin)
-	local outward_displacement_radius = dist_from_origin + settings.spawn_traversal_outward_speed * dt
-	local outward_displacement = origin_to_current_dir * outward_displacement_radius
-	local downwards_displacement = Vector3(0, 0, -settings.spawn_traversal_downward_speed * dt)
-	local angle = settings.patrol_speed / (outward_displacement_radius * math.pi * 2) * dt
-	local added_rot = Quaternion(Vector3.up(), angle)
-	local rotated_position_downward = origin + rotate(added_rot, origin_to_current_dir * dist_from_origin) + downwards_displacement
-	local rotated_position_outward = origin + rotate(added_rot, outward_displacement)
-	local new_position = Vector3.smoothstep(alpha, rotated_position_downward, rotated_position_outward)
-	local target_direction = Vector3.normalize(new_position - base_position)
+function ProjectileEtherealSkullLocomotionExtension.get_spawn_traversal_movement(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	local var_6_0 = (arg_6_3 - arg_6_0._spawn_traversal_start) / var_0_0.spawn_traversal_duration
+	local var_6_1 = Vector3(arg_6_0._origin_x, arg_6_0._origin_y, arg_6_2.z)
+	local var_6_2, var_6_3 = var_0_4(arg_6_2 - var_6_1)
+	local var_6_4 = var_6_3 + var_0_0.spawn_traversal_outward_speed * arg_6_4
+	local var_6_5 = var_6_2 * var_6_4
+	local var_6_6 = Vector3(0, 0, -var_0_0.spawn_traversal_downward_speed * arg_6_4)
+	local var_6_7 = var_0_0.patrol_speed / (var_6_4 * math.pi * 2) * arg_6_4
+	local var_6_8 = Quaternion(Vector3.up(), var_6_7)
+	local var_6_9 = var_6_1 + var_0_5(var_6_8, var_6_2 * var_6_3) + var_6_6
+	local var_6_10 = var_6_1 + var_0_5(var_6_8, var_6_5)
+	local var_6_11 = Vector3.smoothstep(var_6_0, var_6_9, var_6_10)
+	local var_6_12 = Vector3.normalize(var_6_11 - arg_6_2)
 
-	if t > self._spawn_traversal_start + settings.spawn_traversal_duration then
-		self._current_state = "patrol"
+	if arg_6_3 > arg_6_0._spawn_traversal_start + var_0_0.spawn_traversal_duration then
+		arg_6_0._current_state = "patrol"
 	end
 
-	return new_position, target_direction
+	return var_6_11, var_6_12
 end
 
-ProjectileEtherealSkullLocomotionExtension.set_movement = function (self, unit, current_base_position, new_base_position, game, id, t, dt)
-	if not game and id then
+function ProjectileEtherealSkullLocomotionExtension.set_movement(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7)
+	if not arg_7_4 and arg_7_5 then
 		return
 	end
 
-	if not new_base_position then
+	if not arg_7_3 then
 		return
 	end
 
-	if self._in_knockback then
-		local knockback_end = self._knockback_start + settings.knockback_duration
-		local alpha = math.inv_lerp(self._knockback_start, knockback_end, t)
-		local alpha_cubic = math.easeOutCubic(alpha)
-		local knockback_position = current_base_position + self._knockback_velocity:unbox() * dt
+	if arg_7_0._in_knockback then
+		local var_7_0 = arg_7_0._knockback_start + var_0_0.knockback_duration
+		local var_7_1 = math.inv_lerp(arg_7_0._knockback_start, var_7_0, arg_7_6)
+		local var_7_2 = math.easeOutCubic(var_7_1)
+		local var_7_3 = arg_7_2 + arg_7_0._knockback_velocity:unbox() * arg_7_7
 
-		new_base_position = Vector3.lerp(knockback_position, new_base_position, alpha_cubic)
+		arg_7_3 = Vector3.lerp(var_7_3, arg_7_3, var_7_2)
 
-		if knockback_end < t then
-			self._in_knockback = false
+		if var_7_0 < arg_7_6 then
+			arg_7_0._in_knockback = false
 		end
 	end
 
-	self._base_position:store(new_base_position)
+	arg_7_0._base_position:store(arg_7_3)
 
-	local v_offset = self:get_vertical_offset(t)
-	local new_position = new_base_position + v_offset
-	local old_position = unit_local_position(unit, 0)
-	local velocity = new_position - old_position
-	local magnitude_sq = length_squared(velocity)
+	local var_7_4 = arg_7_3 + arg_7_0:get_vertical_offset(arg_7_6)
+	local var_7_5 = var_7_4 - var_0_2(arg_7_1, 0)
 
-	if magnitude_sq <= 1e-06 then
+	if var_0_3(var_7_5) <= 1e-06 then
 		return
 	end
 
-	if not valid_position(new_position) then
-		self:stop()
+	if not var_0_6(var_7_4) then
+		arg_7_0:stop()
 
 		return
 	end
 
-	Unit.set_local_position(unit, 0, new_position)
-	GameSession.set_game_object_field(game, id, "position", new_position)
+	Unit.set_local_position(arg_7_1, 0, var_7_4)
+	GameSession.set_game_object_field(arg_7_4, arg_7_5, "position", var_7_4)
 
-	local constant = NetworkConstants.enemy_velocity
-	local vel_min = constant.min
-	local vel_max = constant.max
-	local vel_min_v3 = Vector3(vel_min, vel_min, vel_min)
-	local vel_max_v3 = Vector3(vel_max, vel_max, vel_max)
+	local var_7_6 = NetworkConstants.enemy_velocity
+	local var_7_7 = var_7_6.min
+	local var_7_8 = var_7_6.max
+	local var_7_9 = Vector3(var_7_7, var_7_7, var_7_7)
+	local var_7_10 = Vector3(var_7_8, var_7_8, var_7_8)
+	local var_7_11 = Vector3.min(Vector3.max(var_7_5, var_7_9), var_7_10)
 
-	velocity = Vector3.min(Vector3.max(velocity, vel_min_v3), vel_max_v3)
-
-	GameSession.set_game_object_field(game, id, "velocity", velocity)
+	GameSession.set_game_object_field(arg_7_4, arg_7_5, "velocity", var_7_11)
 end
 
-ProjectileEtherealSkullLocomotionExtension.set_knockback = function (self, attacker_unit, hit_dir, hit_pos, t)
-	hit_dir = Vector3(hit_dir[1], hit_dir[2], hit_dir[3])
-	self._knockback_end = t + settings.knockback_duration
-	self._knockback_start = t
-	self._in_knockback = true
+function ProjectileEtherealSkullLocomotionExtension.set_knockback(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	arg_8_2 = Vector3(arg_8_2[1], arg_8_2[2], arg_8_2[3])
+	arg_8_0._knockback_end = arg_8_4 + var_0_0.knockback_duration
+	arg_8_0._knockback_start = arg_8_4
+	arg_8_0._in_knockback = true
 
-	local current_position = Unit.world_position(self._unit, 0)
-	local first_person_extension = ScriptUnit.has_extension(attacker_unit, "first_person_system")
-	local look_direction
+	local var_8_0 = Unit.world_position(arg_8_0._unit, 0)
+	local var_8_1 = ScriptUnit.has_extension(arg_8_1, "first_person_system")
+	local var_8_2
 
-	if first_person_extension then
-		local camera_rotation = first_person_extension:current_rotation()
+	if var_8_1 then
+		local var_8_3 = var_8_1:current_rotation()
 
-		look_direction = Quaternion.forward(camera_rotation)
+		var_8_2 = Quaternion.forward(var_8_3)
 	else
-		local target_position = self:get_target_node_position(attacker_unit)
+		local var_8_4 = arg_8_0:get_target_node_position(arg_8_1)
 
-		look_direction = Vector3.normalize(target_position - current_position)
+		var_8_2 = Vector3.normalize(var_8_4 - var_8_0)
 	end
 
-	local velocity = Vector3.normalize(hit_dir + look_direction * 0.5) * settings.knockback_speed
+	local var_8_5 = Vector3.normalize(arg_8_2 + var_8_2 * 0.5) * var_0_0.knockback_speed
 
-	self._knockback_velocity = Vector3Box(velocity)
+	arg_8_0._knockback_velocity = Vector3Box(var_8_5)
 end
 
-ProjectileEtherealSkullLocomotionExtension.set_rotation = function (self, unit, target_direction, game, id, dt)
-	if not game and id then
+function ProjectileEtherealSkullLocomotionExtension.set_rotation(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+	if not arg_9_3 and arg_9_4 then
 		return
 	end
 
-	local target_rotation = Quaternion.look(target_direction)
-	local current_rotation = Unit.local_rotation(self._unit, 0)
-	local lerp_value = dt * settings.lerp_constant
-	local rotation = Quaternion.lerp(current_rotation, target_rotation, lerp_value)
+	local var_9_0 = Quaternion.look(arg_9_2)
+	local var_9_1 = Unit.local_rotation(arg_9_0._unit, 0)
+	local var_9_2 = arg_9_5 * var_0_0.lerp_constant
+	local var_9_3 = Quaternion.lerp(var_9_1, var_9_0, var_9_2)
 
-	Unit.set_local_rotation(unit, 0, rotation)
-	GameSession.set_game_object_field(game, id, "rotation", rotation)
+	Unit.set_local_rotation(arg_9_1, 0, var_9_3)
+	GameSession.set_game_object_field(arg_9_3, arg_9_4, "rotation", var_9_3)
 
-	self._direction = Quaternion.forward(rotation)
-	self._target_direction = target_direction
+	arg_9_0._direction = Quaternion.forward(var_9_3)
+	arg_9_0._target_direction = arg_9_2
 
-	self._cached_direction:store(target_direction)
+	arg_9_0._cached_direction:store(arg_9_2)
 end
 
-ProjectileEtherealSkullLocomotionExtension.get_vertical_offset = function (self, t)
-	local spawn_time = self._spawn_time
-	local lifetime = t - spawn_time
-	local target_direction = self._target_direction
-	local direction = self._direction
-	local cross_vector = Vector3(target_direction.x, target_direction.y, math.abs(direction.z) + 1)
-	local u_vector = Vector3.cross(target_direction, cross_vector)
-	local v_vector = Vector3.cross(target_direction, u_vector)
-	local curve_func = self._use_sin_for_vertical_trajectory and math.sin or math.cos
-	local v_offset = Vector3.normalize(v_vector) * settings.vertical_offset_multiplier * curve_func(lifetime * settings.vertical_offset_frequency_multiplier)
+function ProjectileEtherealSkullLocomotionExtension.get_vertical_offset(arg_10_0, arg_10_1)
+	local var_10_0 = arg_10_1 - arg_10_0._spawn_time
+	local var_10_1 = arg_10_0._target_direction
+	local var_10_2 = arg_10_0._direction
+	local var_10_3 = Vector3(var_10_1.x, var_10_1.y, math.abs(var_10_2.z) + 1)
+	local var_10_4 = Vector3.cross(var_10_1, var_10_3)
+	local var_10_5 = Vector3.cross(var_10_1, var_10_4)
+	local var_10_6 = arg_10_0._use_sin_for_vertical_trajectory and math.sin or math.cos
 
-	return v_offset
+	return Vector3.normalize(var_10_5) * var_0_0.vertical_offset_multiplier * var_10_6(var_10_0 * var_0_0.vertical_offset_frequency_multiplier)
 end
 
-ProjectileEtherealSkullLocomotionExtension.get_homing_target_direction = function (self, base_position)
-	local target_direction
-	local has_target = self:has_target()
+function ProjectileEtherealSkullLocomotionExtension.get_homing_target_direction(arg_11_0, arg_11_1)
+	local var_11_0
 
-	if not has_target then
-		target_direction = self._cached_direction:unbox()
+	if not arg_11_0:has_target() then
+		var_11_0 = arg_11_0._cached_direction:unbox()
 	else
-		local target_position = self:get_target_node_position(self._target_unit)
+		local var_11_1 = arg_11_0:get_target_node_position(arg_11_0._target_unit)
 
-		target_direction = Vector3.normalize(target_position - base_position)
-		self._cached_direction = Vector3Box(target_direction)
+		var_11_0 = Vector3.normalize(var_11_1 - arg_11_1)
+		arg_11_0._cached_direction = Vector3Box(var_11_0)
 	end
 
-	return target_direction
+	return var_11_0
 end
 
-ProjectileEtherealSkullLocomotionExtension.set_target = function (self, target_unit, thrown)
+function ProjectileEtherealSkullLocomotionExtension.set_target(arg_12_0, arg_12_1, arg_12_2)
 	if AIGroupTemplates.ethereal_skulls.last_state == "spawned" then
 		return
 	end
 
-	self._thrown = thrown
-	self._target_unit = target_unit
+	arg_12_0._thrown = arg_12_2
+	arg_12_0._target_unit = arg_12_1
 end
 
-ProjectileEtherealSkullLocomotionExtension.get_target_node_position = function (self, unit)
-	local blackboard = BLACKBOARDS[unit]
-	local breed = blackboard and blackboard.breed
-	local is_pickup = ScriptUnit.has_extension(unit, "pickup_system")
+function ProjectileEtherealSkullLocomotionExtension.get_target_node_position(arg_13_0, arg_13_1)
+	local var_13_0 = BLACKBOARDS[arg_13_1]
+	local var_13_1 = var_13_0 and var_13_0.breed
+	local var_13_2 = ScriptUnit.has_extension(arg_13_1, "pickup_system")
 
-	if breed and breed.target_head_node then
-		return Unit.world_position(unit, Unit.node(unit, breed.target_head_node))
-	elseif is_pickup and is_pickup.pickup_name == "wizards_barrel" then
-		return Unit.world_position(unit, Unit.node(unit, "fx_fuse"))
+	if var_13_1 and var_13_1.target_head_node then
+		return Unit.world_position(arg_13_1, Unit.node(arg_13_1, var_13_1.target_head_node))
+	elseif var_13_2 and var_13_2.pickup_name == "wizards_barrel" then
+		return Unit.world_position(arg_13_1, Unit.node(arg_13_1, "fx_fuse"))
 	else
-		return Unit.world_position(unit, Unit.node(unit, "c_head"))
+		return Unit.world_position(arg_13_1, Unit.node(arg_13_1, "c_head"))
 	end
 end
 
-ProjectileEtherealSkullLocomotionExtension.has_target = function (self)
-	return self._target_unit and Unit.alive(self._target_unit)
+function ProjectileEtherealSkullLocomotionExtension.has_target(arg_14_0)
+	return arg_14_0._target_unit and Unit.alive(arg_14_0._target_unit)
 end
 
-ProjectileEtherealSkullLocomotionExtension.moved_this_frame = function (self)
-	return not self._stopped and self._moved
+function ProjectileEtherealSkullLocomotionExtension.moved_this_frame(arg_15_0)
+	return not arg_15_0._stopped and arg_15_0._moved
 end
 
-ProjectileEtherealSkullLocomotionExtension.destroy = function (self)
-	self._stopped = true
-	self._target_unit = nil
+function ProjectileEtherealSkullLocomotionExtension.destroy(arg_16_0)
+	arg_16_0._stopped = true
+	arg_16_0._target_unit = nil
 
-	Managers.state.event:unregister("set_tower_skulls_target", self)
+	Managers.state.event:unregister("set_tower_skulls_target", arg_16_0)
 end
 
-ProjectileEtherealSkullLocomotionExtension.stop = function (self)
-	self._stopped = true
+function ProjectileEtherealSkullLocomotionExtension.stop(arg_17_0)
+	arg_17_0._stopped = true
 end

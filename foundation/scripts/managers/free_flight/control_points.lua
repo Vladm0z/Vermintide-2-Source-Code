@@ -1,4 +1,4 @@
-﻿-- chunkname: @foundation/scripts/managers/free_flight/control_points.lua
+-- chunkname: @foundation/scripts/managers/free_flight/control_points.lua
 
 FreeFlightControlPoints = FreeFlightControlPoints or {}
 FreeFlightControlPoints[1] = Matrix4x4Box(Matrix4x4(0.982197, 0.187878, -8.95601e-06, -0.186902, 0.977093, -0.101824, -0.0191216, 0.100011, 0.994805, -46.7333, -353.843, 33.7841))

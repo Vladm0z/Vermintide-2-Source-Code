@@ -1,968 +1,932 @@
-﻿-- chunkname: @scripts/ui/social_wheel/social_wheel_ui_settings.lua
+-- chunkname: @scripts/ui/social_wheel/social_wheel_ui_settings.lua
 
-local function fetch_player_from_profile_display_name(wanted_profile_name)
-	local player_manager = Managers.player
-	local players = player_manager:players()
+local function var_0_0(arg_1_0)
+	local var_1_0 = Managers.player:players()
 
-	for _, player in pairs(players) do
-		local profile_display_name = player:profile_display_name()
-
-		if profile_display_name == wanted_profile_name then
-			return player
+	for iter_1_0, iter_1_1 in pairs(var_1_0) do
+		if iter_1_1:profile_display_name() == arg_1_0 then
+			return iter_1_1
 		end
 	end
 end
 
-local function get_pickup_event_text(target_unit, event_settings)
-	local callee_profile_name = event_settings.data
-	local callee_player = fetch_player_from_profile_display_name(callee_profile_name)
+local function var_0_1(arg_2_0, arg_2_1)
+	local var_2_0 = arg_2_1.data
+	local var_2_1 = var_0_0(var_2_0)
 
-	if callee_player then
-		local pickup_extension = ScriptUnit.extension(target_unit, "pickup_system")
-		local settings = pickup_extension:get_pickup_settings()
-		local parameters = FrameTable.alloc_table()
-		local event_text_id
+	if var_2_1 then
+		local var_2_2 = ScriptUnit.extension(arg_2_0, "pickup_system"):get_pickup_settings()
+		local var_2_3 = FrameTable.alloc_table()
+		local var_2_4
 
-		if settings.type == "ammo" then
-			event_text_id = "social_wheel_pickup_item_ammo_event"
+		if var_2_2.type == "ammo" then
+			var_2_4 = "social_wheel_pickup_item_ammo_event"
 		else
-			event_text_id = "social_wheel_pickup_item_event"
+			var_2_4 = "social_wheel_pickup_item_event"
 
-			local item_name = Unit.get_data(target_unit, "interaction_data", "hud_description")
+			local var_2_5 = Unit.get_data(arg_2_0, "interaction_data", "hud_description")
 
-			parameters[#parameters + 1] = item_name
+			var_2_3[#var_2_3 + 1] = var_2_5
 		end
 
-		local profile_index = callee_player:profile_index()
-		local profile = SPProfiles[profile_index]
-		local display_name_short = profile.ingame_short_display_name
+		local var_2_6 = var_2_1:profile_index()
+		local var_2_7 = SPProfiles[var_2_6].ingame_short_display_name
 
-		parameters[#parameters + 1] = display_name_short
+		var_2_3[#var_2_3 + 1] = var_2_7
 
-		return event_text_id, parameters
+		return var_2_4, var_2_3
 	end
 end
 
-local function get_drop_event_text(target_unit, event_settings)
-	local player_manager = Managers.player
-	local callee_player = player_manager:owner(target_unit)
+local function var_0_2(arg_3_0, arg_3_1)
+	local var_3_0 = Managers.player:owner(arg_3_0)
 
-	if callee_player then
-		local event_text_id = "social_wheel_player_drop_event"
-		local item_name = event_settings.data
-		local item_data = AllPickups[item_name]
-		local item_hud_description = item_data.hud_description
-		local profile_index = callee_player:profile_index()
-		local profile = SPProfiles[profile_index]
-		local display_name_short = profile.ingame_short_display_name
-		local parameters = FrameTable.alloc_table()
+	if var_3_0 then
+		local var_3_1 = "social_wheel_player_drop_event"
+		local var_3_2 = arg_3_1.data
+		local var_3_3 = AllPickups[var_3_2].hud_description
+		local var_3_4 = var_3_0:profile_index()
+		local var_3_5 = SPProfiles[var_3_4].ingame_short_display_name
+		local var_3_6 = FrameTable.alloc_table()
 
-		parameters[1] = item_hud_description
-		parameters[2] = display_name_short
+		var_3_6[1] = var_3_3
+		var_3_6[2] = var_3_5
 
-		return event_text_id, parameters
+		return var_3_1, var_3_6
 	end
 end
 
-local function pickup_item(callee_profile_name, item_unit, caller_player, settings)
-	local callee_player = fetch_player_from_profile_display_name(callee_profile_name)
+local function var_0_3(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	local var_4_0 = var_0_0(arg_4_0)
 
-	if callee_player and item_unit then
-		local callee_player_unit = callee_player.player_unit
-		local ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
+	if var_4_0 and arg_4_1 then
+		local var_4_1 = var_4_0.player_unit
 
-		ai_bot_group_system:order("pickup", callee_player_unit, item_unit, caller_player)
+		Managers.state.entity:system("ai_bot_group_system"):order("pickup", var_4_1, arg_4_1, arg_4_2)
 	end
 end
 
-local function play_emote(social_wheel_event_data, pinged_unit, sender_player, social_wheel_category)
-	local unit = sender_player and sender_player.player_unit
+local function var_0_4(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	local var_5_0 = arg_5_2 and arg_5_2.player_unit
 
-	if unit then
-		local cosmetic_extension = ScriptUnit.has_extension(unit, "cosmetic_system")
+	if var_5_0 then
+		local var_5_1 = ScriptUnit.has_extension(var_5_0, "cosmetic_system")
 
-		if cosmetic_extension then
-			cosmetic_extension:queue_3p_emote(social_wheel_event_data.anim_event, social_wheel_event_data.hide_weapons)
+		if var_5_1 then
+			var_5_1:queue_3p_emote(arg_5_0.anim_event, arg_5_0.hide_weapons)
 		end
 	end
 end
 
-local function drop_item(item_name, callee_player_unit, caller_player)
-	local ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
-
-	ai_bot_group_system:order("drop", callee_player_unit, item_name, caller_player)
+local function var_0_5(arg_6_0, arg_6_1, arg_6_2)
+	Managers.state.entity:system("ai_bot_group_system"):order("drop", arg_6_1, arg_6_0, arg_6_2)
 end
 
-local function has_item(item_name, active_context)
-	local player_unit = active_context.unit
-	local player_unit_alive = Unit.alive(player_unit)
+local function var_0_6(arg_7_0, arg_7_1)
+	local var_7_0 = arg_7_1.unit
 
-	if not player_unit_alive then
+	if not Unit.alive(var_7_0) then
 		return false
 	end
 
-	local item = AllPickups[item_name]
-	local slot_name = item.slot_name
-	local inventory_extension = ScriptUnit.has_extension(player_unit, "inventory_system")
-	local slot_data = inventory_extension:get_slot_data(slot_name)
+	local var_7_1 = AllPickups[arg_7_0].slot_name
+	local var_7_2 = ScriptUnit.has_extension(var_7_0, "inventory_system")
+	local var_7_3 = var_7_2:get_slot_data(var_7_1)
 
-	if slot_data then
-		local item_template = inventory_extension:get_item_template(slot_data)
+	if var_7_3 then
+		local var_7_4 = var_7_2:get_item_template(var_7_3)
 
-		if item_name == "grimoire" then
-			return item_template.is_grimoire
+		if arg_7_0 == "grimoire" then
+			return var_7_4.is_grimoire
 		else
-			local pickup_data = item_template.pickup_data
-
-			return pickup_data.pickup_name == item_name
+			return var_7_4.pickup_data.pickup_name == arg_7_0
 		end
 	else
 		return false
 	end
 end
 
-local function is_valid_player_and_target_unit_exclude_local_player(player_profile_name, active_context)
-	local target_unit = active_context.unit
+local function var_0_7(arg_8_0, arg_8_1)
+	local var_8_0 = arg_8_1.unit
 
-	if not Unit.alive(target_unit) then
+	if not Unit.alive(var_8_0) then
 		return false
 	end
 
-	local player_manager = Managers.player
-	local local_player = player_manager:local_player()
-	local player = fetch_player_from_profile_display_name(player_profile_name)
+	local var_8_1 = Managers.player:local_player()
+	local var_8_2 = var_0_0(arg_8_0)
 
-	if not player or player == local_player or not Unit.alive(player.player_unit) then
+	if not var_8_2 or var_8_2 == var_8_1 or not Unit.alive(var_8_2.player_unit) then
 		return false
 	end
 
-	local status_extension = ScriptUnit.extension(player.player_unit, "status_system")
+	local var_8_3 = ScriptUnit.extension(var_8_2.player_unit, "status_system")
 
-	if status_extension:is_ready_for_assisted_respawn() or status_extension:is_dead() then
+	if var_8_3:is_ready_for_assisted_respawn() or var_8_3:is_dead() then
 		return false
 	end
 
-	local is_bot = not player:is_player_controlled()
-	local pickup_extension = ScriptUnit.extension(target_unit, "pickup_system")
-	local settings = pickup_extension:get_pickup_settings()
+	local var_8_4 = not var_8_2:is_player_controlled()
+	local var_8_5 = ScriptUnit.extension(var_8_0, "pickup_system"):get_pickup_settings()
 
-	if is_bot and (settings.slot_name == "slot_level_event" or settings.disallow_bot_pickup) then
+	if var_8_4 and (var_8_5.slot_name == "slot_level_event" or var_8_5.disallow_bot_pickup) then
 		return false
 	else
 		return true
 	end
 end
 
-local function is_weapon_pose_available(data, active_context, content, style)
-	local pose_index = data.pose_index
-	local player = Managers.player:local_player()
-	local player_unit = player.player_unit
+local function var_0_8(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	local var_9_0 = arg_9_0.pose_index
+	local var_9_1 = Managers.player:local_player().player_unit
 
-	if not ALIVE[player_unit] then
+	if not ALIVE[var_9_1] then
 		return false
 	end
 
-	local inventory_ext = ScriptUnit.extension(player_unit, "inventory_system")
-	local wielded_slot_data = inventory_ext:get_wielded_slot_data()
-	local item_data = wielded_slot_data.item_data
-	local item_name = item_data.name
-	local pose_name = item_data.pose_name
-	local backend_crafting = Managers.backend:get_interface("items")
-	local unlocked_weapon_poses = backend_crafting:get_unlocked_weapon_poses()
+	local var_9_2 = ScriptUnit.extension(var_9_1, "inventory_system"):get_wielded_slot_data().item_data
+	local var_9_3 = var_9_2.name
+	local var_9_4 = var_9_2.pose_name
+	local var_9_5 = Managers.backend:get_interface("items"):get_unlocked_weapon_poses()
 
-	return unlocked_weapon_poses[item_name] and unlocked_weapon_poses[item_name][pose_name]
+	return var_9_5[var_9_3] and var_9_5[var_9_3][var_9_4]
 end
 
-local function get_ping_hero_event_text(target_unit, event_settings)
-	local player_manager = Managers.player
-	local callee_player = player_manager:owner(target_unit)
+local function var_0_9(arg_10_0, arg_10_1)
+	local var_10_0 = Managers.player:owner(arg_10_0)
 
-	if callee_player then
-		local event_text_id = event_settings.event_text
-		local profile_index = callee_player:profile_index()
-		local profile = SPProfiles[profile_index]
-		local display_name_short = profile.ingame_short_display_name
-		local parameters = FrameTable.alloc_table()
+	if var_10_0 then
+		local var_10_1 = arg_10_1.event_text
+		local var_10_2 = var_10_0:profile_index()
+		local var_10_3
 
-		parameters[1] = display_name_short
+		var_10_3[1], var_10_3 = SPProfiles[var_10_2].ingame_short_display_name, FrameTable.alloc_table()
 
-		return event_text_id, parameters
+		return var_10_1, var_10_3
 	end
 end
 
 SocialWheelPriority = {
 	{
 		"item",
-		function (active_context, player, social_wheel_unit)
-			if not social_wheel_unit then
+		function(arg_11_0, arg_11_1, arg_11_2)
+			if not arg_11_2 then
 				return false
 			end
 
-			if not ScriptUnit.has_extension(social_wheel_unit, "pickup_system") then
+			if not ScriptUnit.has_extension(arg_11_2, "pickup_system") then
 				return false
 			end
 
-			local interactable_ext = ScriptUnit.has_extension(social_wheel_unit, "interactable_system")
+			local var_11_0 = ScriptUnit.has_extension(arg_11_2, "interactable_system")
 
-			if not interactable_ext then
+			if not var_11_0 then
 				return false
 			end
 
-			local game_mode = Managers.state.game_mode:game_mode()
+			local var_11_1 = Managers.state.game_mode:game_mode()
 
-			if game_mode.allowed_interactions and not game_mode:allowed_interactions(player.player_unit, interactable_ext.interactable_type) then
+			if var_11_1.allowed_interactions and not var_11_1:allowed_interactions(arg_11_1.player_unit, var_11_0.interactable_type) then
 				return false
 			end
 
 			return true
-		end,
+		end
 	},
 	{
 		"friendly_hero_player",
-		function (active_context, player, social_wheel_unit)
-			local target_player = social_wheel_unit and Managers.player:owner(social_wheel_unit)
+		function(arg_12_0, arg_12_1, arg_12_2)
+			local var_12_0 = arg_12_2 and Managers.player:owner(arg_12_2)
 
-			if not target_player then
+			if not var_12_0 then
 				return false
 			end
 
-			if target_player.player_unit == player.player_unit then
+			if var_12_0.player_unit == arg_12_1.player_unit then
 				return false
 			end
 
-			local player_side = Managers.state.side.side_by_unit[player.player_unit]
+			local var_12_1 = Managers.state.side.side_by_unit[arg_12_1.player_unit]
 
-			if player_side:name() ~= "heroes" then
+			if var_12_1:name() ~= "heroes" then
 				return false
 			end
 
-			local target_side = Managers.state.side.side_by_unit[target_player.player_unit]
+			local var_12_2 = Managers.state.side.side_by_unit[var_12_0.player_unit]
 
-			return not Managers.state.side:is_enemy_by_side(player_side, target_side)
-		end,
+			return not Managers.state.side:is_enemy_by_side(var_12_1, var_12_2)
+		end
 	},
 	{
 		"enemy_hero_player",
-		function (active_context, player, social_wheel_unit)
-			local target_player = social_wheel_unit and Managers.player:owner(social_wheel_unit)
+		function(arg_13_0, arg_13_1, arg_13_2)
+			local var_13_0 = arg_13_2 and Managers.player:owner(arg_13_2)
 
-			if not target_player then
+			if not var_13_0 then
 				return false
 			end
 
-			local player_side = Managers.state.side.side_by_unit[player.player_unit]
+			local var_13_1 = Managers.state.side.side_by_unit[arg_13_1.player_unit]
 
-			if player_side:name() ~= "dark_pact" then
+			if var_13_1:name() ~= "dark_pact" then
 				return false
 			end
 
-			local target_side = Managers.state.side.side_by_unit[target_player.player_unit]
+			local var_13_2 = Managers.state.side.side_by_unit[var_13_0.player_unit]
 
-			return Managers.state.side:is_enemy_by_side(player_side, target_side)
-		end,
-	},
+			return Managers.state.side:is_enemy_by_side(var_13_1, var_13_2)
+		end
+	}
 }
 
-local general_emotes = {
+local var_0_10 = {
 	{
-		icon = "radial_chat_icon_thank_you",
-		name = "social_wheel_general_pose_01",
 		text = "social_wheel_pose_test_01",
-		execute_func = play_emote,
-		is_valid_func = is_weapon_pose_available,
+		name = "social_wheel_general_pose_01",
+		icon = "radial_chat_icon_thank_you",
+		execute_func = var_0_4,
+		is_valid_func = var_0_8,
 		data = {
 			anim_event = "anim_pose_01",
 			hide_weapons = false,
-			pose_index = 1,
+			pose_index = 1
 		},
-		ping_type = PingTypes.LOCAL_ONLY,
+		ping_type = PingTypes.LOCAL_ONLY
 	},
 	{
-		icon = "radial_chat_icon_thank_you",
-		name = "social_wheel_general_pose_02",
 		text = "social_wheel_pose_test_02",
-		execute_func = play_emote,
-		is_valid_func = is_weapon_pose_available,
+		name = "social_wheel_general_pose_02",
+		icon = "radial_chat_icon_thank_you",
+		execute_func = var_0_4,
+		is_valid_func = var_0_8,
 		data = {
 			anim_event = "anim_pose_02",
 			hide_weapons = false,
-			pose_index = 2,
+			pose_index = 2
 		},
-		ping_type = PingTypes.LOCAL_ONLY,
+		ping_type = PingTypes.LOCAL_ONLY
 	},
 	{
-		icon = "radial_chat_icon_thank_you",
-		name = "social_wheel_general_pose_03",
 		text = "social_wheel_pose_test_03",
-		execute_func = play_emote,
-		is_valid_func = is_weapon_pose_available,
+		name = "social_wheel_general_pose_03",
+		icon = "radial_chat_icon_thank_you",
+		execute_func = var_0_4,
+		is_valid_func = var_0_8,
 		data = {
 			anim_event = "anim_pose_03",
 			hide_weapons = false,
-			pose_index = 3,
+			pose_index = 3
 		},
-		ping_type = PingTypes.LOCAL_ONLY,
+		ping_type = PingTypes.LOCAL_ONLY
 	},
 	{
-		icon = "radial_chat_icon_thank_you",
-		name = "social_wheel_general_pose_04",
 		text = "social_wheel_pose_test_04",
-		execute_func = play_emote,
-		is_valid_func = is_weapon_pose_available,
+		name = "social_wheel_general_pose_04",
+		icon = "radial_chat_icon_thank_you",
+		execute_func = var_0_4,
+		is_valid_func = var_0_8,
 		data = {
 			anim_event = "anim_pose_04",
 			hide_weapons = false,
-			pose_index = 4,
+			pose_index = 4
 		},
-		ping_type = PingTypes.LOCAL_ONLY,
+		ping_type = PingTypes.LOCAL_ONLY
 	},
 	{
-		icon = "radial_chat_icon_thank_you",
-		name = "social_wheel_general_pose_05",
 		text = "social_wheel_pose_test_05",
-		execute_func = play_emote,
-		is_valid_func = is_weapon_pose_available,
+		name = "social_wheel_general_pose_05",
+		icon = "radial_chat_icon_thank_you",
+		execute_func = var_0_4,
+		is_valid_func = var_0_8,
 		data = {
 			anim_event = "anim_pose_05",
 			hide_weapons = false,
-			pose_index = 5,
+			pose_index = 5
 		},
-		ping_type = PingTypes.LOCAL_ONLY,
+		ping_type = PingTypes.LOCAL_ONLY
 	},
 	{
-		icon = "radial_chat_icon_thank_you",
-		name = "social_wheel_general_pose_06",
 		text = "social_wheel_pose_test_06",
-		execute_func = play_emote,
-		is_valid_func = is_weapon_pose_available,
+		name = "social_wheel_general_pose_06",
+		icon = "radial_chat_icon_thank_you",
+		execute_func = var_0_4,
+		is_valid_func = var_0_8,
 		data = {
 			anim_event = "anim_pose_06",
 			hide_weapons = false,
-			pose_index = 6,
+			pose_index = 6
 		},
-		ping_type = PingTypes.LOCAL_ONLY,
+		ping_type = PingTypes.LOCAL_ONLY
 	},
-	emotes = true,
+	emotes = true
 }
-local unarmed_emotes = {
+local var_0_11 = {
 	{
-		icon = "radial_chat_pose_wheel_icon_unarmed",
-		name = "social_wheel_general_pose_unarmed_01",
 		text = "social_wheel_pose_unarmed_01",
-		execute_func = play_emote,
+		name = "social_wheel_general_pose_unarmed_01",
+		icon = "radial_chat_pose_wheel_icon_unarmed",
+		execute_func = var_0_4,
 		data = {
 			anim_event = "anim_pose_unarmed_01",
-			hide_weapons = true,
+			hide_weapons = true
 		},
-		ping_type = PingTypes.LOCAL_ONLY,
+		ping_type = PingTypes.LOCAL_ONLY
 	},
 	{
-		icon = "radial_chat_pose_wheel_icon_unarmed",
-		name = "social_wheel_general_pose_unarmed_02",
 		text = "social_wheel_pose_unarmed_02",
-		execute_func = play_emote,
+		name = "social_wheel_general_pose_unarmed_02",
+		icon = "radial_chat_pose_wheel_icon_unarmed",
+		execute_func = var_0_4,
 		data = {
 			anim_event = "anim_pose_unarmed_02",
-			hide_weapons = true,
+			hide_weapons = true
 		},
-		ping_type = PingTypes.LOCAL_ONLY,
+		ping_type = PingTypes.LOCAL_ONLY
 	},
 	{
-		icon = "radial_chat_pose_wheel_icon_unarmed",
-		name = "social_wheel_general_pose_unarmed_03",
 		text = "social_wheel_pose_unarmed_03",
-		execute_func = play_emote,
+		name = "social_wheel_general_pose_unarmed_03",
+		icon = "radial_chat_pose_wheel_icon_unarmed",
+		execute_func = var_0_4,
 		data = {
 			anim_event = "anim_pose_unarmed_03",
-			hide_weapons = true,
+			hide_weapons = true
 		},
-		ping_type = PingTypes.LOCAL_ONLY,
+		ping_type = PingTypes.LOCAL_ONLY
 	},
 	{
-		icon = "radial_chat_pose_wheel_icon_unarmed",
-		name = "social_wheel_general_pose_unarmed_04",
 		text = "social_wheel_pose_unarmed_04",
-		execute_func = play_emote,
+		name = "social_wheel_general_pose_unarmed_04",
+		icon = "radial_chat_pose_wheel_icon_unarmed",
+		execute_func = var_0_4,
 		data = {
 			anim_event = "anim_pose_unarmed_04",
-			hide_weapons = true,
+			hide_weapons = true
 		},
-		ping_type = PingTypes.LOCAL_ONLY,
+		ping_type = PingTypes.LOCAL_ONLY
 	},
 	{
-		icon = "radial_chat_pose_wheel_icon_unarmed",
-		name = "social_wheel_general_pose_unarmed_05",
 		text = "social_wheel_pose_unarmed_05",
-		execute_func = play_emote,
+		name = "social_wheel_general_pose_unarmed_05",
+		icon = "radial_chat_pose_wheel_icon_unarmed",
+		execute_func = var_0_4,
 		data = {
 			anim_event = "anim_pose_unarmed_05",
-			hide_weapons = true,
+			hide_weapons = true
 		},
-		ping_type = PingTypes.LOCAL_ONLY,
+		ping_type = PingTypes.LOCAL_ONLY
 	},
 	{
-		icon = "radial_chat_pose_wheel_icon_unarmed",
-		name = "social_wheel_general_pose_unarmed_06",
 		text = "social_wheel_pose_unarmed_06",
-		execute_func = play_emote,
+		name = "social_wheel_general_pose_unarmed_06",
+		icon = "radial_chat_pose_wheel_icon_unarmed",
+		execute_func = var_0_4,
 		data = {
 			anim_event = "anim_pose_unarmed_06",
-			hide_weapons = true,
+			hide_weapons = true
 		},
-		ping_type = PingTypes.LOCAL_ONLY,
+		ping_type = PingTypes.LOCAL_ONLY
 	},
-	emotes = true,
+	emotes = true
 }
 
-local function clone_wheel_settings(settings, unique_name_postfix)
-	local new_settings = table.clone(settings)
+local function var_0_12(arg_14_0, arg_14_1)
+	local var_14_0 = table.clone(arg_14_0)
 
-	for i = 1, #new_settings do
-		new_settings[i].name = new_settings[i].name .. unique_name_postfix
+	for iter_14_0 = 1, #var_14_0 do
+		var_14_0[iter_14_0].name = var_14_0[iter_14_0].name .. arg_14_1
 	end
 
-	return new_settings
+	return var_14_0
 end
 
-local general_emotes_gamepad = clone_wheel_settings(general_emotes, "_gp")
-local unarmed_emotes_gamepad = clone_wheel_settings(unarmed_emotes, "_gp")
-local unarmed_emotes_gamepad_versus = clone_wheel_settings(unarmed_emotes, "_gp_versus")
+local var_0_13 = var_0_12(var_0_10, "_gp")
+local var_0_14 = var_0_12(var_0_11, "_gp")
+local var_0_15 = var_0_12(var_0_11, "_gp_versus")
 
 SocialWheelSettings = {
 	general = {
 		angle = 1.7 * math.pi,
 		size = {
 			500,
-			250,
+			250
 		},
 		{
 			{
-				event_text = "social_wheel_general_no",
-				icon = "radial_chat_icon_no",
-				name = "social_wheel_general_no",
 				text = "social_wheel_general_no",
+				event_text = "social_wheel_general_no",
+				name = "social_wheel_general_no",
+				icon = "radial_chat_icon_no",
 				vo_event_name = "vw_negation",
 				data = {},
-				ping_type = PingTypes.DENY,
+				ping_type = PingTypes.DENY
 			},
 			{
-				event_text = "social_wheel_general_come_here",
-				icon = "radial_chat_icon_come_here",
-				name = "social_wheel_general_come_here",
 				text = "social_wheel_general_come_here",
+				event_text = "social_wheel_general_come_here",
+				name = "social_wheel_general_come_here",
+				icon = "radial_chat_icon_come_here",
 				vo_event_name = "vw_gather",
 				data = {},
-				ping_type = PingTypes.MOVEMENTY_COME_HERE,
+				ping_type = PingTypes.MOVEMENTY_COME_HERE
 			},
 			{
-				event_text = "social_wheel_general_patrol",
-				icon = "radial_chat_icon_patrol",
-				name = "social_wheel_general_patrol",
 				text = "social_wheel_general_patrol",
+				event_text = "social_wheel_general_patrol",
+				name = "social_wheel_general_patrol",
+				icon = "radial_chat_icon_patrol",
 				vo_event_name = "vw_patrol",
 				data = {},
-				ping_type = PingTypes.ENEMY_PATROL,
+				ping_type = PingTypes.ENEMY_PATROL
 			},
 			{
-				event_text = "social_wheel_general_help",
-				icon = "radial_chat_icon_help",
-				name = "social_wheel_general_help",
 				text = "social_wheel_general_help",
+				event_text = "social_wheel_general_help",
+				name = "social_wheel_general_help",
+				icon = "radial_chat_icon_help",
 				vo_event_name = "vw_help",
 				data = {},
-				ping_type = PingTypes.PLAYER_HELP,
+				ping_type = PingTypes.PLAYER_HELP
 			},
 			{
-				event_text = "social_wheel_general_boss",
-				icon = "radial_chat_icon_boss",
-				name = "social_wheel_general_boss",
 				text = "social_wheel_general_boss",
+				event_text = "social_wheel_general_boss",
+				name = "social_wheel_general_boss",
+				icon = "radial_chat_icon_boss",
 				vo_event_name = "vw_boss",
 				data = {},
-				ping_type = PingTypes.ENEMY_BOSS,
+				ping_type = PingTypes.ENEMY_BOSS
 			},
 			{
-				event_text = "social_wheel_general_thank_you",
-				icon = "radial_chat_icon_thank_you",
-				name = "social_wheel_general_thank_you",
 				text = "social_wheel_general_thank_you",
+				event_text = "social_wheel_general_thank_you",
+				name = "social_wheel_general_thank_you",
+				icon = "radial_chat_icon_thank_you",
 				vo_event_name = "vw_thank_you",
 				data = {},
-				ping_type = PingTypes.PLAYER_THANK_YOU,
+				ping_type = PingTypes.PLAYER_THANK_YOU
 			},
 			{
-				event_text = "social_wheel_general_yes",
-				icon = "radial_chat_icon_yes",
-				name = "social_wheel_general_yes",
 				text = "social_wheel_general_yes",
+				event_text = "social_wheel_general_yes",
+				name = "social_wheel_general_yes",
+				icon = "radial_chat_icon_yes",
 				vo_event_name = "vw_affirmative",
 				data = {},
-				ping_type = PingTypes.ACKNOWLEDGE,
-			},
+				ping_type = PingTypes.ACKNOWLEDGE
+			}
 		},
-		unarmed_emotes,
-		has_pages = true,
-		individual_bg = true,
+		var_0_11,
 		wedge_adjustment = 0.85,
+		has_pages = true,
+		individual_bg = true
 	},
 	general_gamepad = {
 		angle = 2 * math.pi,
 		size = {
 			250,
-			250,
+			250
 		},
 		{
 			{
-				event_text = "social_wheel_general_no",
-				icon = "radial_chat_icon_no",
-				name = "social_wheel_general_no_gp",
 				text = "social_wheel_general_no",
-				data = {},
+				event_text = "social_wheel_general_no",
+				name = "social_wheel_general_no_gp",
+				icon = "radial_chat_icon_no",
+				data = {}
 			},
 			{
-				event_text = "social_wheel_general_come_here",
-				icon = "radial_chat_icon_come_here",
-				name = "social_wheel_general_come_here_gp",
 				text = "social_wheel_general_come_here",
-				data = {},
+				event_text = "social_wheel_general_come_here",
+				name = "social_wheel_general_come_here_gp",
+				icon = "radial_chat_icon_come_here",
+				data = {}
 			},
 			{
-				event_text = "social_wheel_general_patrol",
-				icon = "radial_chat_icon_patrol",
-				name = "social_wheel_general_patrol_gp",
 				text = "social_wheel_general_patrol",
-				data = {},
+				event_text = "social_wheel_general_patrol",
+				name = "social_wheel_general_patrol_gp",
+				icon = "radial_chat_icon_patrol",
+				data = {}
 			},
 			{
-				event_text = "social_wheel_general_help",
-				icon = "radial_chat_icon_help",
-				name = "social_wheel_general_help_gp",
 				text = "social_wheel_general_help",
-				data = {},
+				event_text = "social_wheel_general_help",
+				name = "social_wheel_general_help_gp",
+				icon = "radial_chat_icon_help",
+				data = {}
 			},
 			{
-				event_text = "social_wheel_general_boss",
-				icon = "radial_chat_icon_boss",
-				name = "social_wheel_general_boss_gp",
 				text = "social_wheel_general_boss",
-				data = {},
+				event_text = "social_wheel_general_boss",
+				name = "social_wheel_general_boss_gp",
+				icon = "radial_chat_icon_boss",
+				data = {}
 			},
 			{
-				event_text = "social_wheel_general_thank_you",
-				icon = "radial_chat_icon_thank_you",
-				name = "social_wheel_general_thank_you_gp",
 				text = "social_wheel_general_thank_you",
-				data = {},
+				event_text = "social_wheel_general_thank_you",
+				name = "social_wheel_general_thank_you_gp",
+				icon = "radial_chat_icon_thank_you",
+				data = {}
 			},
 			{
-				event_text = "social_wheel_general_yes",
-				icon = "radial_chat_icon_yes",
-				name = "social_wheel_general_yes_gp",
 				text = "social_wheel_general_yes",
-				data = {},
-			},
+				event_text = "social_wheel_general_yes",
+				name = "social_wheel_general_yes_gp",
+				icon = "radial_chat_icon_yes",
+				data = {}
+			}
 		},
-		unarmed_emotes_gamepad,
-		has_pages = true,
-		individual_bg = false,
+		var_0_14,
 		wedge_adjustment = 0.85,
+		has_pages = true,
+		individual_bg = false
 	},
 	item = {
 		size = {
 			250,
-			250,
+			250
 		},
 		angle = math.pi * 2,
 		{
-			data = "witch_hunter",
-			icon = "radial_chat_icon_saltzpyre",
-			name = "social_wheel_item_pick_up_witch_hunter",
 			text = "witch_hunter_short",
-			event_text_func = get_pickup_event_text,
-			execute_func = pickup_item,
-			is_valid_func = is_valid_player_and_target_unit_exclude_local_player,
-			ping_type = PingTypes.PLAYER_PICK_UP,
+			name = "social_wheel_item_pick_up_witch_hunter",
+			icon = "radial_chat_icon_saltzpyre",
+			data = "witch_hunter",
+			event_text_func = var_0_1,
+			execute_func = var_0_3,
+			is_valid_func = var_0_7,
+			ping_type = PingTypes.PLAYER_PICK_UP
 		},
 		{
-			data = "bright_wizard",
-			icon = "radial_chat_icon_sienna",
-			name = "social_wheel_item_pick_up_bright_wizard",
 			text = "bright_wizard_short",
-			event_text_func = get_pickup_event_text,
-			execute_func = pickup_item,
-			is_valid_func = is_valid_player_and_target_unit_exclude_local_player,
-			ping_type = PingTypes.PLAYER_PICK_UP,
+			name = "social_wheel_item_pick_up_bright_wizard",
+			icon = "radial_chat_icon_sienna",
+			data = "bright_wizard",
+			event_text_func = var_0_1,
+			execute_func = var_0_3,
+			is_valid_func = var_0_7,
+			ping_type = PingTypes.PLAYER_PICK_UP
 		},
 		{
-			data = "dwarf_ranger",
-			icon = "radial_chat_icon_bardin",
-			name = "social_wheel_item_pick_up_dwarf_ranger",
 			text = "dwarf_ranger_short",
-			event_text_func = get_pickup_event_text,
-			execute_func = pickup_item,
-			is_valid_func = is_valid_player_and_target_unit_exclude_local_player,
-			ping_type = PingTypes.PLAYER_PICK_UP,
+			name = "social_wheel_item_pick_up_dwarf_ranger",
+			icon = "radial_chat_icon_bardin",
+			data = "dwarf_ranger",
+			event_text_func = var_0_1,
+			execute_func = var_0_3,
+			is_valid_func = var_0_7,
+			ping_type = PingTypes.PLAYER_PICK_UP
 		},
 		{
-			data = "wood_elf",
-			icon = "radial_chat_icon_kerillian",
-			name = "social_wheel_item_pick_up_wood_elf",
 			text = "wood_elf_short",
-			event_text_func = get_pickup_event_text,
-			execute_func = pickup_item,
-			is_valid_func = is_valid_player_and_target_unit_exclude_local_player,
-			ping_type = PingTypes.PLAYER_PICK_UP,
+			name = "social_wheel_item_pick_up_wood_elf",
+			icon = "radial_chat_icon_kerillian",
+			data = "wood_elf",
+			event_text_func = var_0_1,
+			execute_func = var_0_3,
+			is_valid_func = var_0_7,
+			ping_type = PingTypes.PLAYER_PICK_UP
 		},
 		{
-			data = "empire_soldier",
-			icon = "radial_chat_icon_kruber",
-			name = "social_wheel_item_pick_up_empire_soldier",
 			text = "empire_soldier_short",
-			event_text_func = get_pickup_event_text,
-			execute_func = pickup_item,
-			is_valid_func = is_valid_player_and_target_unit_exclude_local_player,
-			ping_type = PingTypes.PLAYER_PICK_UP,
+			name = "social_wheel_item_pick_up_empire_soldier",
+			icon = "radial_chat_icon_kruber",
+			data = "empire_soldier",
+			event_text_func = var_0_1,
+			execute_func = var_0_3,
+			is_valid_func = var_0_7,
+			ping_type = PingTypes.PLAYER_PICK_UP
 		},
-		ping = true,
 		wedge_adjustment = 0.9,
+		ping = true
 	},
 	friendly_hero_player = {
 		size = {
 			250,
-			250,
+			250
 		},
 		angle = math.pi,
 		{
-			data = "grimoire",
-			icon = "radial_chat_icon_drop_grimoire",
-			name = "social_wheel_player_drop_grimoire",
 			text = "social_wheel_player_drop_grimoire",
-			event_text_func = get_drop_event_text,
-			execute_func = drop_item,
-			is_valid_func = has_item,
-			ping_type = PingTypes.CHAT_ONLY,
+			name = "social_wheel_player_drop_grimoire",
+			icon = "radial_chat_icon_drop_grimoire",
+			data = "grimoire",
+			event_text_func = var_0_2,
+			execute_func = var_0_5,
+			is_valid_func = var_0_6,
+			ping_type = PingTypes.CHAT_ONLY
 		},
-		ping = false,
 		wedge_adjustment = 1,
+		ping = false
 	},
 	versus_heroes_gamepad = {
 		angle = 2 * math.pi,
 		size = {
 			250,
-			250,
+			250
 		},
-		validation_function = function ()
-			local is_versus = Managers.mechanism:current_mechanism_name() == "versus"
-
-			if not is_versus then
+		validation_function = function()
+			if not (Managers.mechanism:current_mechanism_name() == "versus") then
 				return false
 			end
 
-			local game_mode = Managers.state.game_mode:game_mode_key()
-			local mechanism_settings = MechanismSettings[Managers.mechanism:current_mechanism_name()]
-			local is_in_versus_gamemode = mechanism_settings.gamemode_lookup.default == game_mode
+			local var_15_0 = Managers.state.game_mode:game_mode_key()
 
-			return is_in_versus_gamemode
+			return MechanismSettings[Managers.mechanism:current_mechanism_name()].gamemode_lookup.default == var_15_0
 		end,
 		{
 			{
+				text = "social_wheel_heroes_general_help",
 				event_text = "social_wheel_heroes_general_help",
-				icon = "radial_chat_icon_help",
 				name = "social_wheel_heroes_general_help",
 				ping_sound_effect = "versus_ping_marker_imminent",
-				text = "social_wheel_heroes_general_help",
 				vo_event_name = "vw_cover_me",
+				icon = "radial_chat_icon_help",
 				data = {},
-				ping_type = PingTypes.VO_ONLY,
+				ping_type = PingTypes.VO_ONLY
 			},
 			{
+				text = "social_wheel_heroes_general_need_ammunition",
 				event_text = "social_wheel_heroes_general_need_ammunition",
-				icon = "radial_chat_icon_need_ammo",
 				name = "social_wheel_heroes_general_need_ammunition",
 				ping_sound_effect = "versus_ping_marker_communication",
-				text = "social_wheel_heroes_general_need_ammunition",
+				icon = "radial_chat_icon_need_ammo",
 				data = {},
-				ping_type = PingTypes.VO_ONLY,
+				ping_type = PingTypes.VO_ONLY
 			},
 			{
+				text = "social_wheel_heroes_general_come_here",
 				event_text = "social_wheel_heroes_general_come_here",
-				icon = "radial_chat_icon_come_here",
 				name = "social_wheel_heroes_general_come_here",
 				ping_sound_effect = "versus_ping_marker_tactical",
-				text = "social_wheel_heroes_general_come_here",
 				vo_event_name = "vw_gather",
+				icon = "radial_chat_icon_come_here",
 				data = {},
-				ping_type = PingTypes.VO_ONLY,
+				ping_type = PingTypes.VO_ONLY
 			},
 			{
+				text = "social_wheel_heroes_general_yes",
 				event_text = "social_wheel_heroes_general_yes",
-				icon = "radial_chat_icon_yes",
 				name = "social_wheel_heroes_general_yes",
 				ping_sound_effect = "versus_ping_marker_communication",
-				text = "social_wheel_heroes_general_yes",
 				vo_event_name = "vw_affirmative",
+				icon = "radial_chat_icon_yes",
 				data = {},
-				ping_type = PingTypes.VO_ONLY,
+				ping_type = PingTypes.VO_ONLY
 			},
 			{
+				text = "social_wheel_heroes_general_thank_you",
 				event_text = "social_wheel_heroes_general_thank_you",
-				icon = "radial_chat_icon_thank_you",
 				name = "social_wheel_heroes_general_thank_you",
 				ping_sound_effect = "versus_ping_marker_communication",
-				text = "social_wheel_heroes_general_thank_you",
 				vo_event_name = "vw_thank_you",
+				icon = "radial_chat_icon_thank_you",
 				data = {},
-				ping_type = PingTypes.VO_ONLY,
+				ping_type = PingTypes.VO_ONLY
 			},
 			{
+				text = "social_wheel_heroes_general_no",
 				event_text = "social_wheel_heroes_general_no",
-				icon = "radial_chat_icon_no",
 				name = "social_wheel_heroes_general_no",
 				ping_sound_effect = "versus_ping_marker_communication_no",
-				text = "social_wheel_heroes_general_no",
 				vo_event_name = "vw_negation",
+				icon = "radial_chat_icon_no",
 				data = {},
-				ping_type = PingTypes.VO_ONLY,
+				ping_type = PingTypes.VO_ONLY
 			},
 			{
+				text = "social_wheel_heroes_general_boss",
 				event_text = "social_wheel_heroes_general_boss",
-				icon = "radial_chat_icon_boss",
 				name = "social_wheel_heroes_general_boss",
 				ping_sound_effect = "versus_ping_marker_imminent",
-				text = "social_wheel_heroes_general_boss",
+				icon = "radial_chat_icon_boss",
 				data = {},
-				ping_type = PingTypes.VO_ONLY,
+				ping_type = PingTypes.VO_ONLY
 			},
 			{
+				text = "social_wheel_heroes_general_need_healing",
 				event_text = "social_wheel_heroes_general_need_healing",
-				icon = "radial_chat_icon_need_healing",
 				name = "social_wheel_heroes_general_need_healing",
 				ping_sound_effect = "versus_ping_marker_communication",
-				text = "social_wheel_heroes_general_need_healing",
+				icon = "radial_chat_icon_need_healing",
 				data = {},
-				ping_type = PingTypes.VO_ONLY,
-			},
+				ping_type = PingTypes.VO_ONLY
+			}
 		},
-		unarmed_emotes_gamepad_versus,
-		has_pages = true,
-		individual_bg = false,
+		var_0_15,
 		wedge_adjustment = 0.85,
+		has_pages = true,
+		individual_bg = false
 	},
 	dark_pact_gamepad = {
 		angle = 2 * math.pi,
 		size = {
 			250,
-			250,
+			250
 		},
-		validation_function = function ()
-			local is_versus = Managers.mechanism:current_mechanism_name() == "versus"
-
-			if not is_versus then
+		validation_function = function()
+			if not (Managers.mechanism:current_mechanism_name() == "versus") then
 				return false
 			end
 
-			local game_mode = Managers.state.game_mode:game_mode_key()
-			local mechanism_settings = MechanismSettings[Managers.mechanism:current_mechanism_name()]
-			local is_in_versus_gamemode = mechanism_settings.gamemode_lookup.default == game_mode
+			local var_16_0 = Managers.state.game_mode:game_mode_key()
 
-			return is_in_versus_gamemode
+			return MechanismSettings[Managers.mechanism:current_mechanism_name()].gamemode_lookup.default == var_16_0
 		end,
 		{
 			{
+				text = "vs_social_wheel_dark_pact_general_attack",
 				event_text = "vs_social_wheel_dark_pact_general_attack",
-				icon = "radial_chat_icon_attack",
 				name = "vs_social_wheel_dark_pact_general_attack",
 				ping_sound_effect = "versus_ping_marker_imminent",
-				text = "vs_social_wheel_dark_pact_general_attack",
 				vo_event_name = "vw_attack_now",
+				icon = "radial_chat_icon_attack",
 				data = {},
-				ping_type = PingTypes.VO_ONLY,
+				ping_type = PingTypes.VO_ONLY
 			},
 			{
+				text = "vs_social_wheel_dark_pact_general_ready",
 				event_text = "vs_social_wheel_dark_pact_general_ready",
-				icon = "radial_chat_icon_ready",
 				name = "vs_social_wheel_dark_pact_general_ready",
 				ping_sound_effect = "versus_ping_marker_tactical",
-				text = "vs_social_wheel_dark_pact_general_ready",
 				vo_event_name = "vw_affirmative",
+				icon = "radial_chat_icon_ready",
 				data = {},
-				ping_type = PingTypes.VO_ONLY,
+				ping_type = PingTypes.VO_ONLY
 			},
 			{
+				text = "vs_social_wheel_dark_pact_general_group_up",
 				event_text = "vs_social_wheel_dark_pact_general_group_up",
-				icon = "radial_chat_icon_gather",
 				name = "vs_social_wheel_dark_pact_general_group_up",
 				ping_sound_effect = "versus_ping_marker_tactical",
-				text = "vs_social_wheel_dark_pact_general_group_up",
 				vo_event_name = "vw_gather",
+				icon = "radial_chat_icon_gather",
 				data = {},
-				ping_type = PingTypes.VO_ONLY,
+				ping_type = PingTypes.VO_ONLY
 			},
 			{
+				text = "vs_social_wheel_dark_pact_general_yes",
 				event_text = "vs_social_wheel_dark_pact_general_yes",
-				icon = "radial_chat_icon_yes",
 				name = "vs_social_wheel_dark_pact_general_yes",
 				ping_sound_effect = "versus_ping_marker_communication",
-				text = "vs_social_wheel_dark_pact_general_yes",
 				vo_event_name = "vw_affirmative",
+				icon = "radial_chat_icon_yes",
 				data = {},
-				ping_type = PingTypes.VO_ONLY,
+				ping_type = PingTypes.VO_ONLY
 			},
 			{
+				text = "social_wheel_dark_pact_general_thank_you",
 				event_text = "social_wheel_dark_pact_general_thank_you",
-				icon = "radial_chat_icon_thank_you",
 				name = "social_wheel_dark_pact_general_thank_you",
 				ping_sound_effect = "versus_ping_marker_communication",
-				text = "social_wheel_dark_pact_general_thank_you",
 				vo_event_name = "vw_thank_you",
+				icon = "radial_chat_icon_thank_you",
 				data = {},
-				ping_type = PingTypes.VO_ONLY,
+				ping_type = PingTypes.VO_ONLY
 			},
 			{
+				text = "vs_social_wheel_dark_pact_general_no",
 				event_text = "vs_social_wheel_dark_pact_general_no",
-				icon = "radial_chat_icon_no",
 				name = "vs_social_wheel_dark_pact_general_no",
 				ping_sound_effect = "versus_ping_marker_communication",
-				text = "vs_social_wheel_dark_pact_general_no",
 				vo_event_name = "vw_negation",
+				icon = "radial_chat_icon_no",
 				data = {},
-				ping_type = PingTypes.VO_ONLY,
+				ping_type = PingTypes.VO_ONLY
 			},
 			{
+				text = "vs_social_wheel_dark_pact_general_cover_me",
 				event_text = "vs_social_wheel_dark_pact_general_cover_me",
-				icon = "radial_chat_icon_cover",
 				name = "vs_social_wheel_dark_pact_general_cover_me",
 				ping_sound_effect = "versus_ping_marker_tactical",
-				text = "vs_social_wheel_dark_pact_general_cover_me",
 				vo_event_name = "vw_cover_me",
+				icon = "radial_chat_icon_cover",
 				data = {},
-				ping_type = PingTypes.VO_ONLY,
+				ping_type = PingTypes.VO_ONLY
 			},
 			{
+				text = "vs_social_wheel_dark_pact_general_wait",
 				event_text = "vs_social_wheel_dark_pact_general_wait",
-				icon = "radial_chat_icon_wait",
 				name = "vs_social_wheel_dark_pact_general_wait",
 				ping_sound_effect = "versus_ping_marker_tactical",
-				text = "vs_social_wheel_dark_pact_general_wait",
 				vo_event_name = "vw_wait",
+				icon = "radial_chat_icon_wait",
 				data = {},
-				ping_type = PingTypes.VO_ONLY,
-			},
+				ping_type = PingTypes.VO_ONLY
+			}
 		},
-		has_pages = true,
-		individual_bg = false,
 		wedge_adjustment = 0.85,
+		has_pages = true,
+		individual_bg = false
 	},
 	enemy_hero_player = {
 		angle = 2 * math.pi,
 		size = {
 			250,
-			250,
+			250
 		},
-		validation_function = function ()
-			local is_versus = Managers.mechanism:current_mechanism_name() == "versus"
-
-			if not is_versus then
+		validation_function = function()
+			if not (Managers.mechanism:current_mechanism_name() == "versus") then
 				return false
 			end
 
-			local game_mode = Managers.state.game_mode:game_mode_key()
-			local mechanism_settings = MechanismSettings[Managers.mechanism:current_mechanism_name()]
-			local is_in_versus_gamemode = mechanism_settings.gamemode_lookup.default == game_mode
+			local var_17_0 = Managers.state.game_mode:game_mode_key()
 
-			return is_in_versus_gamemode
+			return MechanismSettings[Managers.mechanism:current_mechanism_name()].gamemode_lookup.default == var_17_0
 		end,
 		{
 			{
-				event_text = "vs_social_wheel_dark_pact_general_ambush",
 				icon = "radial_chat_icon_ambush",
-				name = "vs_social_wheel_dark_pact_player_ambush",
-				ping_sound_effect = "versus_ping_marker_imminent",
-				text = "vs_social_wheel_dark_pact_general_ambush",
 				vo_event_name = "vw_ambush",
-				event_text_func = get_ping_hero_event_text,
-				data = {},
-				ping_type = PingTypes.ENEMY_AMBUSH,
-			},
-			{
-				event_text = "vs_social_wheel_dark_pact_player_cover_me",
-				icon = "radial_chat_icon_cover",
-				name = "vs_social_wheel_dark_pact_player_cover_me",
-				ping_sound_effect = "versus_ping_marker_tactical",
-				text = "vs_social_wheel_dark_pact_general_cover_me",
-				vo_event_name = "vw_cover_me",
-				event_text_func = get_ping_hero_event_text,
-				data = {},
-				ping_type = PingTypes.PLAYER_COVER_ME,
-			},
-			{
-				event_text = "vs_social_wheel_dark_pact_general_attack",
-				icon = "radial_chat_icon_attack",
-				name = "vs_social_wheel_dark_pact_player_attack",
+				event_text = "vs_social_wheel_dark_pact_general_ambush",
 				ping_sound_effect = "versus_ping_marker_imminent",
-				text = "vs_social_wheel_dark_pact_general_attack",
-				vo_event_name = "vw_attack_now",
-				event_text_func = get_ping_hero_event_text,
+				name = "vs_social_wheel_dark_pact_player_ambush",
+				text = "vs_social_wheel_dark_pact_general_ambush",
+				event_text_func = var_0_9,
 				data = {},
-				ping_type = PingTypes.ENEMY_ATTACK,
+				ping_type = PingTypes.ENEMY_AMBUSH
 			},
+			{
+				icon = "radial_chat_icon_cover",
+				vo_event_name = "vw_cover_me",
+				event_text = "vs_social_wheel_dark_pact_player_cover_me",
+				ping_sound_effect = "versus_ping_marker_tactical",
+				name = "vs_social_wheel_dark_pact_player_cover_me",
+				text = "vs_social_wheel_dark_pact_general_cover_me",
+				event_text_func = var_0_9,
+				data = {},
+				ping_type = PingTypes.PLAYER_COVER_ME
+			},
+			{
+				icon = "radial_chat_icon_attack",
+				vo_event_name = "vw_attack_now",
+				event_text = "vs_social_wheel_dark_pact_general_attack",
+				ping_sound_effect = "versus_ping_marker_imminent",
+				name = "vs_social_wheel_dark_pact_player_attack",
+				text = "vs_social_wheel_dark_pact_general_attack",
+				event_text_func = var_0_9,
+				data = {},
+				ping_type = PingTypes.ENEMY_ATTACK
+			}
 		},
 		{},
-		has_pages = true,
-		individual_bg = false,
 		wedge_adjustment = 0.85,
-	},
+		has_pages = true,
+		individual_bg = false
+	}
 }
 
 DLCUtils.dofile("social_wheel_settings")
 
-for category_name, category_settings in pairs(SocialWheelSettings) do
-	for idx, setting in ipairs(category_settings) do
-		setting.index = idx
-		setting.category_name = category_name
+for iter_0_0, iter_0_1 in pairs(SocialWheelSettings) do
+	for iter_0_2, iter_0_3 in ipairs(iter_0_1) do
+		iter_0_3.index = iter_0_2
+		iter_0_3.category_name = iter_0_0
 	end
 end
 
 if not rawget(_G, "SocialWheelSettingsLookup") then
 	SocialWheelSettingsLookup = {}
 
-	for _, category_settings in pairs(SocialWheelSettings) do
-		if category_settings.has_pages then
-			for i = 1, #category_settings do
-				for _, setting in ipairs(category_settings[i]) do
-					local name = setting.name or settings.category_name
+	for iter_0_4, iter_0_5 in pairs(SocialWheelSettings) do
+		if iter_0_5.has_pages then
+			for iter_0_6 = 1, #iter_0_5 do
+				for iter_0_7, iter_0_8 in ipairs(iter_0_5[iter_0_6]) do
+					local var_0_16 = iter_0_8.name or settings.category_name
 
-					fassert(SocialWheelSettingsLookup[name] == nil, "You have a duplicate entry in SocialWheelSettings (%s), each entry must have a unique name!", name)
+					fassert(SocialWheelSettingsLookup[var_0_16] == nil, "You have a duplicate entry in SocialWheelSettings (%s), each entry must have a unique name!", var_0_16)
 
-					SocialWheelSettingsLookup[name] = setting
+					SocialWheelSettingsLookup[var_0_16] = iter_0_8
 				end
 			end
 		else
-			for _, setting in ipairs(category_settings) do
-				local name = setting.name or setting.category_name
+			for iter_0_9, iter_0_10 in ipairs(iter_0_5) do
+				local var_0_17 = iter_0_10.name or iter_0_10.category_name
 
-				fassert(SocialWheelSettingsLookup[name] == nil, "You have a duplicate entry in SocialWheelSettings (%s), each entry must have a unique name!", name)
+				fassert(SocialWheelSettingsLookup[var_0_17] == nil, "You have a duplicate entry in SocialWheelSettings (%s), each entry must have a unique name!", var_0_17)
 
-				SocialWheelSettingsLookup[name] = setting
+				SocialWheelSettingsLookup[var_0_17] = iter_0_10
 			end
 		end
 	end
 
 	SocialWheelSettingsNetworkLookupBase = {
-		"n/a",
+		"n/a"
 	}
 
-	local MAX_WEAPON_POSES = 13
+	local var_0_18 = 13
 
-	for i = 1, MAX_WEAPON_POSES do
-		SocialWheelSettingsNetworkLookupBase[#SocialWheelSettingsNetworkLookupBase + 1] = string.format("social_wheel_weapon_pose_general_pose_%02d", i)
+	for iter_0_11 = 1, var_0_18 do
+		SocialWheelSettingsNetworkLookupBase[#SocialWheelSettingsNetworkLookupBase + 1] = string.format("social_wheel_weapon_pose_general_pose_%02d", iter_0_11)
 	end
 end
 
 return {
 	functions = {
-		play_emote = play_emote,
-		is_weapon_pose_available = is_weapon_pose_available,
-		clone_wheel_settings = clone_wheel_settings,
-	},
+		play_emote = var_0_4,
+		is_weapon_pose_available = var_0_8,
+		clone_wheel_settings = var_0_12
+	}
 }

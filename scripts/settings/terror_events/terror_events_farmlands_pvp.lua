@@ -1,1009 +1,1008 @@
-﻿-- chunkname: @scripts/settings/terror_events/terror_events_farmlands_pvp.lua
+-- chunkname: @scripts/settings/terror_events/terror_events_farmlands_pvp.lua
 
-local TerrorEventUtils = require("scripts/settings/terror_events/terror_event_utils")
-local count_event_breed = TerrorEventUtils.count_event_breed
-local terror_event_blueprints = {
+local var_0_0 = require("scripts/settings/terror_events/terror_event_utils").count_event_breed
+local var_0_1 = {
 	farmlands_oak_hill_event = {
 		{
 			"set_master_event_running",
-			name = "farmlands_oak_hill_event",
+			name = "farmlands_oak_hill_event"
 		},
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			spawner_id = "oak_hill_event_spawner",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "event_extra_spice_small",
 			spawner_id = "oak_hill_event_spawner",
+			composition_type = "event_extra_spice_small"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "plague_monks_small",
 			spawner_id = "oak_hill_event_spawner",
+			composition_type = "plague_monks_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 90,
-			condition = function (t)
-				return count_event_breed("skaven_slave") < 2 and count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_clan_rat_with_shield") < 3 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_plague_monk") < 1
-			end,
+			condition = function(arg_1_0)
+				return var_0_0("skaven_slave") < 2 and var_0_0("skaven_clan_rat") < 3 and var_0_0("skaven_clan_rat_with_shield") < 3 and var_0_0("skaven_storm_vermin_commander") < 2 and var_0_0("skaven_plague_monk") < 1
+			end
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"flow_event",
-			flow_event_name = "farmlands_oak_hill_event_done",
-		},
+			flow_event_name = "farmlands_oak_hill_event_done"
+		}
 	},
 	farmlands_rat_ogre = {
 		{
 			"set_master_event_running",
-			name = "farmlands_boss_barn",
+			name = "farmlands_boss_barn"
 		},
 		{
 			"event_horde",
-			composition_type = "chaos_warriors",
 			spawner_id = "farmlands_rat_ogre",
+			composition_type = "chaos_warriors"
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"spawn_at_raw",
 			spawner_id = "farmlands_rat_ogre_3",
 			breed_name = {
-				"chaos_warrior",
-			},
+				"chaos_warrior"
+			}
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"spawn_at_raw",
 			spawner_id = "farmlands_rat_ogre_up",
 			breed_name = {
-				"chaos_warrior",
-			},
+				"chaos_warrior"
+			}
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
 			duration = 90,
-			condition = function (t)
-				return count_event_breed("chaos_warrior") < 1
-			end,
+			condition = function(arg_2_0)
+				return var_0_0("chaos_warrior") < 1
+			end
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"flow_event",
-			flow_event_name = "farmlands_barn_boss_dead",
-		},
+			flow_event_name = "farmlands_barn_boss_dead"
+		}
 	},
 	farmlands_rat_ogre_loft = {
 		{
 			"set_master_event_running",
-			name = "farmlands_boss_barn",
+			name = "farmlands_boss_barn"
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			spawner_id = "farmlands_rat_ogre_loft",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_fanatics",
 			spawner_id = "farmlands_rat_ogre_loft",
+			composition_type = "event_small_fanatics"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
 			duration = 60,
-			condition = function (t)
-				return count_event_breed("chaos_marauder") < 1 and count_event_breed("chaos_marauder_with_shield") < 1 and count_event_breed("chaos_fanatic") < 1
-			end,
+			condition = function(arg_3_0)
+				return var_0_0("chaos_marauder") < 1 and var_0_0("chaos_marauder_with_shield") < 1 and var_0_0("chaos_fanatic") < 1
+			end
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"flow_event",
-			flow_event_name = "farmlands_rat_ogre_loft_done",
-		},
+			flow_event_name = "farmlands_rat_ogre_loft_done"
+		}
 	},
 	farmlands_storm_fiend = {
 		{
 			"set_master_event_running",
-			name = "farmlands_boss_barn",
+			name = "farmlands_boss_barn"
 		},
 		{
 			"event_horde",
-			composition_type = "plague_monks_medium",
 			spawner_id = "farmlands_rat_ogre",
+			composition_type = "plague_monks_medium"
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"spawn_at_raw",
 			spawner_id = "farmlands_rat_ogre_3",
 			breed_name = {
-				"skaven_plague_monk",
-			},
+				"skaven_plague_monk"
+			}
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"spawn_at_raw",
 			spawner_id = "farmlands_rat_ogre_up",
 			breed_name = {
-				"skaven_plague_monk",
-			},
+				"skaven_plague_monk"
+			}
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
 			duration = 90,
-			condition = function (t)
-				return count_event_breed("skaven_plague_monk") < 1
-			end,
+			condition = function(arg_4_0)
+				return var_0_0("skaven_plague_monk") < 1
+			end
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"flow_event",
-			flow_event_name = "farmlands_barn_boss_dead",
-		},
+			flow_event_name = "farmlands_barn_boss_dead"
+		}
 	},
 	farmlands_storm_fiend_loft = {
 		{
 			"set_master_event_running",
-			name = "farmlands_boss_barn",
+			name = "farmlands_boss_barn"
 		},
 		{
 			"event_horde",
-			composition_type = "event_extra_spice_medium",
 			spawner_id = "farmlands_rat_ogre_loft",
+			composition_type = "event_extra_spice_medium"
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"continue_when",
 			duration = 60,
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat_with_shield") < 1 and count_event_breed("skaven_clan_rat") < 1 and count_event_breed("skaven_storm_vermin_commander") < 1
-			end,
+			condition = function(arg_5_0)
+				return var_0_0("skaven_clan_rat_with_shield") < 1 and var_0_0("skaven_clan_rat") < 1 and var_0_0("skaven_storm_vermin_commander") < 1
+			end
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"flow_event",
-			flow_event_name = "farmlands_storm_fiend_loft_done",
-		},
+			flow_event_name = "farmlands_storm_fiend_loft_done"
+		}
 	},
 	farmlands_chaos_troll = {
 		{
 			"set_master_event_running",
-			name = "farmlands_boss_barn",
+			name = "farmlands_boss_barn"
 		},
 		{
 			"event_horde",
-			composition_type = "chaos_berzerkers_medium",
 			spawner_id = "farmlands_rat_ogre",
+			composition_type = "chaos_berzerkers_medium"
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"spawn_at_raw",
 			spawner_id = "farmlands_rat_ogre_3",
 			breed_name = {
-				"chaos_berzerker",
-			},
+				"chaos_berzerker"
+			}
 		},
 		{
 			"spawn_at_raw",
 			spawner_id = "farmlands_rat_ogre_5",
 			breed_name = {
-				"chaos_berzerker",
-			},
+				"chaos_berzerker"
+			}
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"spawn_at_raw",
 			spawner_id = "farmlands_rat_ogre_up",
 			breed_name = {
-				"chaos_berzerker",
-			},
+				"chaos_berzerker"
+			}
 		},
 		{
 			"spawn_at_raw",
 			spawner_id = "farmlands_rat_ogre_4",
 			breed_name = {
-				"chaos_berzerker",
-			},
+				"chaos_berzerker"
+			}
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
 			duration = 90,
-			condition = function (t)
-				return count_event_breed("chaos_berzerker") < 1
-			end,
+			condition = function(arg_6_0)
+				return var_0_0("chaos_berzerker") < 1
+			end
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"flow_event",
-			flow_event_name = "farmlands_barn_boss_dead",
-		},
+			flow_event_name = "farmlands_barn_boss_dead"
+		}
 	},
 	farmlands_chaos_troll_loft = {
 		{
 			"set_master_event_running",
-			name = "farmlands_boss_barn",
+			name = "farmlands_boss_barn"
 		},
 		{
 			"event_horde",
-			composition_type = "chaos_raiders_medium",
 			spawner_id = "farmlands_rat_ogre_loft",
+			composition_type = "chaos_raiders_medium"
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			spawner_id = "farmlands_rat_ogre_loft",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
 			duration = 60,
-			condition = function (t)
-				return count_event_breed("chaos_marauder") < 1 and count_event_breed("chaos_marauder_with_shield") < 1 and count_event_breed("chaos_raider") < 1
-			end,
+			condition = function(arg_7_0)
+				return var_0_0("chaos_marauder") < 1 and var_0_0("chaos_marauder_with_shield") < 1 and var_0_0("chaos_raider") < 1
+			end
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"flow_event",
-			flow_event_name = "farmlands_chaos_troll_loft_done",
-		},
+			flow_event_name = "farmlands_chaos_troll_loft_done"
+		}
 	},
 	farmlands_chaos_spawn = {
 		{
 			"set_master_event_running",
-			name = "farmlands_boss_barn",
+			name = "farmlands_boss_barn"
 		},
 		{
 			"event_horde",
-			composition_type = "bestigors",
 			spawner_id = "farmlands_rat_ogre",
+			composition_type = "bestigors"
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"event_horde",
-			composition_type = "ungor_archers",
 			spawner_id = "farmlands_rat_ogre_4",
+			composition_type = "ungor_archers"
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"event_horde",
-			composition_type = "end_event_crater_medium",
 			spawner_id = "farmlands_rat_ogre_5",
+			composition_type = "end_event_crater_medium"
 		},
 		{
 			"spawn_at_raw",
 			spawner_id = "farmlands_rat_ogre_3",
 			breed_name = {
-				"beastmen_bestigor",
-			},
+				"beastmen_bestigor"
+			}
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"spawn_at_raw",
 			spawner_id = "farmlands_rat_ogre_up",
 			breed_name = {
-				"beastmen_bestigor",
-			},
+				"beastmen_bestigor"
+			}
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
 			duration = 90,
-			condition = function (t)
-				return count_event_breed("beastmen_ungor_archer") < 2 and count_event_breed("beastmen_bestigor") < 2
-			end,
+			condition = function(arg_8_0)
+				return var_0_0("beastmen_ungor_archer") < 2 and var_0_0("beastmen_bestigor") < 2
+			end
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"flow_event",
-			flow_event_name = "farmlands_barn_boss_dead",
-		},
+			flow_event_name = "farmlands_barn_boss_dead"
+		}
 	},
 	farmlands_chaos_spawn_loft = {
 		{
 			"set_master_event_running",
-			name = "farmlands_boss_barn",
+			name = "farmlands_boss_barn"
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_beastmen",
 			spawner_id = "farmlands_rat_ogre_loft",
+			composition_type = "event_small_beastmen"
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"event_horde",
-			composition_type = "standard_bearer_ambush",
 			spawner_id = "farmlands_rat_ogre_loft",
+			composition_type = "standard_bearer_ambush"
 		},
 		{
 			"delay",
-			duration = 1,
+			duration = 1
 		},
 		{
 			"event_horde",
-			composition_type = "ungor_archers",
 			spawner_id = "farmlands_rat_ogre_loft",
+			composition_type = "ungor_archers"
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"continue_when",
 			duration = 60,
-			condition = function (t)
-				return count_event_breed("beastmen_gor") < 1 and count_event_breed("beastmen_ungor_archer") < 1 and count_event_breed("beastmen_ungor") < 1
-			end,
+			condition = function(arg_9_0)
+				return var_0_0("beastmen_gor") < 1 and var_0_0("beastmen_ungor_archer") < 1 and var_0_0("beastmen_ungor") < 1
+			end
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"flow_event",
-			flow_event_name = "farmlands_chaos_spawn_loft_done",
-		},
+			flow_event_name = "farmlands_chaos_spawn_loft_done"
+		}
 	},
 	farmlands_spawn_guards = {
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_raider",
 			spawner_id = "wall_guard_01",
+			breed_name = "chaos_raider"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_storm_vermin_commander",
 			spawner_id = "wall_guard_02",
+			breed_name = "skaven_storm_vermin_commander"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "skaven_storm_vermin_commander",
 			spawner_id = "wall_guard_03",
+			breed_name = "skaven_storm_vermin_commander"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_warrior",
 			spawner_id = "windmill_guard",
-		},
+			breed_name = "chaos_warrior"
+		}
 	},
 	farmlands_prisoner_event_01 = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
-			"disable_kick",
+			"disable_kick"
 		},
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"set_master_event_running",
-			name = "farmlands_prisoner_event_01",
+			name = "farmlands_prisoner_event_01"
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_stinger",
+			stinger_name = "enemy_horde_stinger"
 		},
 		{
 			"event_horde",
-			composition_type = "event_smaller",
 			spawner_id = "square_front",
+			composition_type = "event_smaller"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			spawner_id = "hay_barn_bridge_invis",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"event_horde",
-			composition_type = "event_smaller",
 			spawner_id = "square_center",
+			composition_type = "event_smaller"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("chaos_marauder") < 3
-			end,
+			condition = function(arg_10_0)
+				return var_0_0("chaos_marauder") < 3
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			spawner_id = "sawmill_yard_invis",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_11_0)
+				return var_0_0("skaven_clan_rat") < 5 and var_0_0("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			spawner_id = "hay_barn_back",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
-			end,
-		},
+			condition = function(arg_12_0)
+				return var_0_0("skaven_clan_rat") < 5 and var_0_0("skaven_slave") < 5
+			end
+		}
 	},
 	farmlands_hay_barn_bridge_guards = {
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_warrior",
 			spawner_id = "hay_barn_bridge_guards",
+			breed_name = "chaos_warrior"
 		},
 		{
 			"set_time_challenge",
-			time_challenge_name = "farmlands_speed_event",
+			time_challenge_name = "farmlands_speed_event"
 		},
 		{
 			"set_time_challenge",
-			time_challenge_name = "farmlands_speed_event_cata",
-		},
+			time_challenge_name = "farmlands_speed_event_cata"
+		}
 	},
 	farmlands_prisoner_event_hay_barn = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
-			"disable_kick",
+			"disable_kick"
 		},
 		{
 			"set_master_event_running",
-			name = "farmlands_prisoner_event_hay_barn",
+			name = "farmlands_prisoner_event_hay_barn"
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_stinger",
+			stinger_name = "enemy_horde_stinger"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_raider",
 			spawner_id = "hay_barn_guards",
+			breed_name = "chaos_raider"
 		},
 		{
 			"spawn_at_raw",
-			breed_name = "chaos_marauder",
 			spawner_id = "hay_barn_manual_spawns",
+			breed_name = "chaos_marauder"
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			spawner_id = "hay_barn_cellar_invis",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			spawner_id = "hay_barn_front_invis",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			spawner_id = "hay_barn_interior",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("chaos_marauder") < 5
-			end,
+			condition = function(arg_13_0)
+				return var_0_0("chaos_marauder") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 2,
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_14_0)
+				return var_0_0("skaven_clan_rat") < 5 and var_0_0("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 4 and count_event_breed("skaven_slave") < 4
-			end,
+			condition = function(arg_15_0)
+				return var_0_0("skaven_clan_rat") < 4 and var_0_0("skaven_slave") < 4
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_16_0)
+				return var_0_0("skaven_clan_rat") < 5 and var_0_0("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
-			end,
-		},
+			condition = function(arg_17_0)
+				return var_0_0("skaven_clan_rat") < 5 and var_0_0("skaven_slave") < 5
+			end
+		}
 	},
 	farmlands_prisoner_event_upper_square = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
-			"disable_kick",
+			"disable_kick"
 		},
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"set_master_event_running",
-			name = "farmlands_prisoner_event_upper_square",
+			name = "farmlands_prisoner_event_upper_square"
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_stinger",
+			stinger_name = "enemy_horde_stinger"
 		},
 		{
 			"event_horde",
-			composition_type = "event_smaller",
 			spawner_id = "square_center",
+			composition_type = "event_smaller"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			spawner_id = "sawmill_yard_invis",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"event_horde",
-			composition_type = "event_smaller",
 			spawner_id = "sawmill_yard",
+			composition_type = "event_smaller"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("chaos_marauder") < 3
-			end,
+			condition = function(arg_18_0)
+				return var_0_0("chaos_marauder") < 3
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			spawner_id = "sawmill_yard_invis",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_19_0)
+				return var_0_0("skaven_clan_rat") < 5 and var_0_0("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			spawner_id = "sawmill_creek",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
-			end,
-		},
+			condition = function(arg_20_0)
+				return var_0_0("skaven_clan_rat") < 5 and var_0_0("skaven_slave") < 5
+			end
+		}
 	},
 	farmlands_prisoner_event_sawmill_door = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"set_master_event_running",
-			name = "farmlands_prisoner_event_sawmill_door",
+			name = "farmlands_prisoner_event_sawmill_door"
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_stinger",
+			stinger_name = "enemy_horde_stinger"
 		},
 		{
 			"event_horde",
-			composition_type = "event_medium",
 			spawner_id = "sawmill_interior",
+			composition_type = "event_medium"
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
-			end,
-		},
+			condition = function(arg_21_0)
+				return var_0_0("skaven_clan_rat") < 5 and var_0_0("skaven_slave") < 5
+			end
+		}
 	},
 	farmlands_prisoner_event_sawmill = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"set_master_event_running",
-			name = "farmlands_prisoner_event_sawmill",
+			name = "farmlands_prisoner_event_sawmill"
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_stinger",
+			stinger_name = "enemy_horde_stinger"
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			spawner_id = "sawmill_interior",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 3,
+			duration = 3
 		},
 		{
 			"event_horde",
-			composition_type = "event_small_chaos",
 			spawner_id = "sawmill_interior_invis",
+			composition_type = "event_small_chaos"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_22_0)
+				return var_0_0("skaven_clan_rat") < 5 and var_0_0("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_23_0)
+				return var_0_0("skaven_clan_rat") < 5 and var_0_0("skaven_slave") < 5
+			end
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 2,
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			spawner_id = "sawmill_yard",
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_24_0)
+				return var_0_0("skaven_clan_rat") < 5 and var_0_0("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 2,
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
-			end,
+			condition = function(arg_25_0)
+				return var_0_0("skaven_clan_rat") < 5 and var_0_0("skaven_slave") < 5
+			end
 		},
 		{
 			"event_horde",
-			composition_type = "event_small",
 			limit_spawners = 2,
+			composition_type = "event_small"
 		},
 		{
 			"delay",
-			duration = 10,
+			duration = 10
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (t)
-				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
-			end,
-		},
+			condition = function(arg_26_0)
+				return var_0_0("skaven_clan_rat") < 5 and var_0_0("skaven_slave") < 5
+			end
+		}
 	},
 	farmlands_pvp_pacing_off = {
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"control_specials",
-			enable = false,
+			enable = false
 		},
 		{
 			"control_hordes",
-			enable = false,
-		},
+			enable = false
+		}
 	},
 	farmlands_pvp_pacing_on = {
 		{
 			"control_pacing",
-			enable = true,
+			enable = true
 		},
 		{
 			"control_specials",
-			enable = true,
+			enable = true
 		},
 		{
 			"control_hordes",
-			enable = true,
-		},
+			enable = true
+		}
 	},
 	farmlands_gate_open_event_challenge = {
 		{
 			"has_completed_time_challenge",
-			time_challenge_name = "farmlands_speed_event",
+			time_challenge_name = "farmlands_speed_event"
 		},
 		{
 			"has_completed_time_challenge",
-			time_challenge_name = "farmlands_speed_event_cata",
-		},
+			time_challenge_name = "farmlands_speed_event_cata"
+		}
 	},
 	farmlands_gate_open_event_horde = {
 		{
 			"set_freeze_condition",
-			max_active_enemies = 100,
+			max_active_enemies = 100
 		},
 		{
 			"control_pacing",
-			enable = false,
+			enable = false
 		},
 		{
 			"play_stinger",
-			stinger_name = "enemy_horde_stinger",
+			stinger_name = "enemy_horde_stinger"
 		},
 		{
 			"event_horde",
-			composition_type = "event_medium",
 			spawner_id = "sawmill_yard",
+			composition_type = "event_medium"
 		},
 		{
 			"delay",
-			duration = 5,
+			duration = 5
 		},
 		{
 			"control_pacing",
-			enable = true,
-		},
-	},
+			enable = true
+		}
+	}
 }
 
 return {
-	terror_event_blueprints,
+	var_0_1
 }

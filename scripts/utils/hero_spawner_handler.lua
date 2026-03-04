@@ -1,121 +1,121 @@
-﻿-- chunkname: @scripts/utils/hero_spawner_handler.lua
+-- chunkname: @scripts/utils/hero_spawner_handler.lua
 
 HeroSpawnerHandler = class(HeroSpawnerHandler)
 
-HeroSpawnerHandler.init = function (self, is_server, profile_synchronizer, network_event_delegate)
-	self.profile_synchronizer = profile_synchronizer
-	self.is_server = is_server
-	self.request_id = 0
-	self.network_event_delegate = network_event_delegate
+function HeroSpawnerHandler.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.profile_synchronizer = arg_1_2
+	arg_1_0.is_server = arg_1_1
+	arg_1_0.request_id = 0
+	arg_1_0.network_event_delegate = arg_1_3
 
-	network_event_delegate:register(self, "rpc_to_client_spawn_player")
+	arg_1_3:register(arg_1_0, "rpc_to_client_spawn_player")
 end
 
-HeroSpawnerHandler.destroy = function (self)
-	self.network_event_delegate:unregister(self)
+function HeroSpawnerHandler.destroy(arg_2_0)
+	arg_2_0.network_event_delegate:unregister(arg_2_0)
 end
 
-HeroSpawnerHandler.spawn_hero_request = function (self, player, hero_name)
-	if self.pending_profile_request then
+function HeroSpawnerHandler.spawn_hero_request(arg_3_0, arg_3_1, arg_3_2)
+	if arg_3_0.pending_profile_request then
 		return false
 	end
 
-	self.peer_id = Network.peer_id()
-	self.player = player
-	self.hero_name = hero_name
-	self.hero_index = FindProfileIndex(hero_name)
-	self.result = nil
-	self.request_id = self.request_id + 1
+	arg_3_0.peer_id = Network.peer_id()
+	arg_3_0.player = arg_3_1
+	arg_3_0.hero_name = arg_3_2
+	arg_3_0.hero_index = FindProfileIndex(arg_3_2)
+	arg_3_0.result = nil
+	arg_3_0.request_id = arg_3_0.request_id + 1
 
-	Managers.transition:fade_in(2, callback(self, "start"))
+	Managers.transition:fade_in(2, callback(arg_3_0, "start"))
 
-	self.hero_spawner_faded_in = true
+	arg_3_0.hero_spawner_faded_in = true
 
-	return self.request_id
+	return arg_3_0.request_id
 end
 
-HeroSpawnerHandler.start = function (self)
-	local player = self.player
-	local player_unit = player.player_unit
+function HeroSpawnerHandler.start(arg_4_0)
+	local var_4_0 = arg_4_0.player
+	local var_4_1 = var_4_0.player_unit
 
-	if player_unit then
-		local position = Unit.world_position(player_unit, 0)
-		local rotation = Unit.world_rotation(player_unit, 0)
+	if var_4_1 then
+		local var_4_2 = Unit.world_position(var_4_1, 0)
+		local var_4_3 = Unit.world_rotation(var_4_1, 0)
 
-		player:set_spawn_position_rotation(position, rotation)
+		var_4_0:set_spawn_position_rotation(var_4_2, var_4_3)
 
-		self.despawning_player_unit = player.player_unit
+		arg_4_0.despawning_player_unit = var_4_0.player_unit
 
-		Managers.state.spawn:delayed_despawn(player)
+		Managers.state.spawn:delayed_despawn(var_4_0)
 	else
-		self.profile_synchronizer:request_select_profile(self.hero_index, player:local_player_id())
+		arg_4_0.profile_synchronizer:request_select_profile(arg_4_0.hero_index, var_4_0:local_player_id())
 	end
 
-	self.pending_profile_request = true
+	arg_4_0.pending_profile_request = true
 end
 
-HeroSpawnerHandler.update = function (self, dt)
-	if self.pending_profile_request then
-		local profile_synchronizer = self.profile_synchronizer
+function HeroSpawnerHandler.update(arg_5_0, arg_5_1)
+	if arg_5_0.pending_profile_request then
+		local var_5_0 = arg_5_0.profile_synchronizer
 
-		if self.despawning_player_unit then
-			if not Unit.alive(self.despawning_player_unit) then
-				profile_synchronizer:request_select_profile(self.hero_index, self.player:local_player_id())
+		if arg_5_0.despawning_player_unit then
+			if not Unit.alive(arg_5_0.despawning_player_unit) then
+				var_5_0:request_select_profile(arg_5_0.hero_index, arg_5_0.player:local_player_id())
 
-				self.hero_index = nil
-				self.despawning_player_unit = nil
+				arg_5_0.hero_index = nil
+				arg_5_0.despawning_player_unit = nil
 
-				if self.is_server then
-					Managers.state.network.network_server:peer_despawned_player(self.peer_id)
+				if arg_5_0.is_server then
+					Managers.state.network.network_server:peer_despawned_player(arg_5_0.peer_id)
 				end
 			end
 		else
-			local result, result_local_player_id = profile_synchronizer:profile_request_result()
-			local local_player_id = self.player:local_player_id()
+			local var_5_1, var_5_2 = var_5_0:profile_request_result()
+			local var_5_3 = arg_5_0.player:local_player_id()
 
-			assert(not result or local_player_id == result_local_player_id, "Local player id mismatch between ui and request.")
+			assert(not var_5_1 or var_5_3 == var_5_2, "Local player id mismatch between ui and request.")
 
-			if result == "success" then
-				local peer_id = self.peer_id
-				local hero_index = profile_synchronizer:profile_by_peer(peer_id, local_player_id)
+			if var_5_1 == "success" then
+				local var_5_4 = arg_5_0.peer_id
+				local var_5_5 = var_5_0:profile_by_peer(var_5_4, var_5_3)
 
-				self.player:set_profile_index(hero_index)
-				self:save_selected_profile(hero_index)
+				arg_5_0.player:set_profile_index(var_5_5)
+				arg_5_0:save_selected_profile(var_5_5)
 
-				self.result = "success"
+				arg_5_0.result = "success"
 
-				profile_synchronizer:clear_profile_request_result()
+				var_5_0:clear_profile_request_result()
 
-				self.pending_profile_request = nil
-			elseif result then
-				self.result = "failed"
+				arg_5_0.pending_profile_request = nil
+			elseif var_5_1 then
+				arg_5_0.result = "failed"
 
-				profile_synchronizer:clear_profile_request_result()
+				var_5_0:clear_profile_request_result()
 
-				self.pending_profile_request = nil
+				arg_5_0.pending_profile_request = nil
 			end
 		end
 	end
 end
 
-HeroSpawnerHandler.save_selected_profile = function (self, index)
-	local save_manager = Managers.save
+function HeroSpawnerHandler.save_selected_profile(arg_6_0, arg_6_1)
+	local var_6_0 = Managers.save
 
-	SaveData.wanted_profile_index = index
+	SaveData.wanted_profile_index = arg_6_1
 
-	save_manager:auto_save(SaveFileName, SaveData, nil)
+	var_6_0:auto_save(SaveFileName, SaveData, nil)
 end
 
-HeroSpawnerHandler.query_result = function (self, request_id)
-	fassert(request_id == self.request_id, "HeroSpawnerHandler:query_result with invalid request_id")
+function HeroSpawnerHandler.query_result(arg_7_0, arg_7_1)
+	fassert(arg_7_1 == arg_7_0.request_id, "HeroSpawnerHandler:query_result with invalid request_id")
 
-	return self.result
+	return arg_7_0.result
 end
 
-HeroSpawnerHandler.rpc_to_client_spawn_player = function (self, channel_id, local_player_id, profile_index, career_index, position, rotation, is_initial_spawn)
-	if self.hero_spawner_faded_in then
+function HeroSpawnerHandler.rpc_to_client_spawn_player(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7)
+	if arg_8_0.hero_spawner_faded_in then
 		Managers.transition:fade_out(1)
 
-		self.hero_spawner_faded_in = false
+		arg_8_0.hero_spawner_faded_in = false
 	end
 end

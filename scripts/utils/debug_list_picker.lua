@@ -1,138 +1,138 @@
-﻿-- chunkname: @scripts/utils/debug_list_picker.lua
+-- chunkname: @scripts/utils/debug_list_picker.lua
 
 DebugListPicker = class(DebugListPicker)
 
-local font_size = 22
-local font = "arial"
-local font_mtrl = "materials/fonts/" .. font
-local font_height = 22
-local COLUMN_SPACING = 10
-local max_display_items = 20
+local var_0_0 = 22
+local var_0_1 = "arial"
+local var_0_2 = "materials/fonts/" .. var_0_1
+local var_0_3 = 22
+local var_0_4 = 10
+local var_0_5 = 20
 
-DebugListPicker.init = function (self, list, save_data_name, item_validation_func)
-	self.pick_list = list
-	self.save_data_name = save_data_name
-	self._item_validation_func = item_validation_func or function ()
+function DebugListPicker.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.pick_list = arg_1_1
+	arg_1_0.save_data_name = arg_1_2
+	arg_1_0._item_validation_func = arg_1_3 or function()
 		return true
 	end
-	self.column_index, self.row_index = 1, 1
-	self.move_cursor_timer = 0
-	self.gui = Debug.gui
-	self.font_mtrl = font_mtrl
-	self.font = font
-	self.font_size = font_size
+	arg_1_0.column_index, arg_1_0.row_index = 1, 1
+	arg_1_0.move_cursor_timer = 0
+	arg_1_0.gui = Debug.gui
+	arg_1_0.font_mtrl = var_0_2
+	arg_1_0.font = var_0_1
+	arg_1_0.font_size = var_0_0
 
-	self:setup(save_data_name)
+	arg_1_0:setup(arg_1_2)
 
-	self.column = self.pick_list[self.column_index]
-	self.item = self.column[self.row_index] or "?"
-	self.max_cols_seen = 3
+	arg_1_0.column = arg_1_0.pick_list[arg_1_0.column_index]
+	arg_1_0.item = arg_1_0.column[arg_1_0.row_index] or "?"
+	arg_1_0.max_cols_seen = 3
 end
 
-DebugListPicker.destroy = function (self)
+function DebugListPicker.destroy(arg_3_0)
 	return
 end
 
-DebugListPicker.setup = function (self)
-	local save_data = SaveData[self.save_data_name]
+function DebugListPicker.setup(arg_4_0)
+	local var_4_0 = SaveData[arg_4_0.save_data_name]
 
-	save_data = type(save_data) == "table" and save_data or {
+	var_4_0 = type(var_4_0) == "table" and var_4_0 or {
 		last_column_index = 1,
-		columns = {},
+		columns = {}
 	}
-	self.save_data = save_data
+	arg_4_0.save_data = var_4_0
 
-	local columns = save_data.columns
+	local var_4_1 = var_4_0.columns
 
-	self.column_index = columns[save_data.last_column_index] and save_data.last_column_index or 1
-	self.row_index = columns[self.column_index] and columns[self.column_index].row_index or 1
+	arg_4_0.column_index = var_4_1[var_4_0.last_column_index] and var_4_0.last_column_index or 1
+	arg_4_0.row_index = var_4_1[arg_4_0.column_index] and var_4_1[arg_4_0.column_index].row_index or 1
 
-	local start_item
-	local max_width, max_height = 0, 0
-	local pick_list = self.pick_list
-	local max_rows = 0
+	local var_4_2
+	local var_4_3 = 0
+	local var_4_4 = 0
+	local var_4_5 = arg_4_0.pick_list
+	local var_4_6 = 0
 
-	self.column_index = pick_list[self.column_index] and self.column_index or 1
-	self.column = pick_list[self.column_index]
-	self.row_index = self.column[self.row_index] and self.row_index or 1
-	self.item = self.column[self.row_index]
+	arg_4_0.column_index = var_4_5[arg_4_0.column_index] and arg_4_0.column_index or 1
+	arg_4_0.column = var_4_5[arg_4_0.column_index]
+	arg_4_0.row_index = arg_4_0.column[arg_4_0.row_index] and arg_4_0.row_index or 1
+	arg_4_0.item = arg_4_0.column[arg_4_0.row_index]
 
-	for i = 1, #pick_list do
-		local column = pick_list[i]
+	for iter_4_0 = 1, #var_4_5 do
+		local var_4_7 = var_4_5[iter_4_0]
 
-		column.last_row_index = columns[i] and columns[i].row_index or 1
+		var_4_7.last_row_index = var_4_1[iter_4_0] and var_4_1[iter_4_0].row_index or 1
 
-		local num_rows = #column
+		local var_4_8 = #var_4_7
 
-		if max_rows < num_rows then
-			max_rows = num_rows
+		if var_4_6 < var_4_8 then
+			var_4_6 = var_4_8
 		end
 
-		for j = 1, num_rows do
-			local item = column[j]
-			local text = item[1] .. "(Load)"
-			local min, max = Gui.text_extents(self.gui, text:upper(), self.font_mtrl, self.font_size)
-			local width = max.x - min.x
-			local height = max.y - min.y
+		for iter_4_1 = 1, var_4_8 do
+			local var_4_9 = var_4_7[iter_4_1][1] .. "(Load)"
+			local var_4_10, var_4_11 = Gui.text_extents(arg_4_0.gui, var_4_9:upper(), arg_4_0.font_mtrl, arg_4_0.font_size)
+			local var_4_12 = var_4_11.x - var_4_10.x
+			local var_4_13 = var_4_11.y - var_4_10.y
 
-			if max_width < width then
-				max_width = width
+			if var_4_3 < var_4_12 then
+				var_4_3 = var_4_12
 			end
 
-			if max_height < height then
-				max_height = height
+			if var_4_4 < var_4_13 then
+				var_4_4 = var_4_13
 			end
 		end
 	end
 
-	self.max_height = max_height
-	self.max_width = max_width + 40
-	self.max_rows = max_rows + 1
+	arg_4_0.max_height = var_4_4
+	arg_4_0.max_width = var_4_3 + 40
+	arg_4_0.max_rows = var_4_6 + 1
 end
 
-DebugListPicker.activate = function (self)
-	self.active = not self.active
+function DebugListPicker.activate(arg_5_0)
+	arg_5_0.active = not arg_5_0.active
 
-	DebugScreen.set_blocked(self.active)
+	DebugScreen.set_blocked(arg_5_0.active)
 
-	if not self.active and self.save_data_name then
-		local pick_list = self.pick_list
-		local save_data = self.save_data
-		local columns = save_data.columns or {}
+	if not arg_5_0.active and arg_5_0.save_data_name then
+		local var_5_0 = arg_5_0.pick_list
+		local var_5_1 = arg_5_0.save_data
+		local var_5_2 = var_5_1.columns or {}
 
-		save_data.columns = columns
-		save_data.last_column_index = self.column_index
+		var_5_1.columns = var_5_2
+		var_5_1.last_column_index = arg_5_0.column_index
 
-		for i = 1, #pick_list do
-			local column = pick_list[i]
+		for iter_5_0 = 1, #var_5_0 do
+			local var_5_3 = var_5_0[iter_5_0]
 
-			columns[i] = columns[i] or {}
-			columns[i].row_index = column.last_row_index
+			var_5_2[iter_5_0] = var_5_2[iter_5_0] or {}
+			var_5_2[iter_5_0].row_index = var_5_3.last_row_index
 		end
 
-		SaveData[self.save_data_name] = save_data
+		SaveData[arg_5_0.save_data_name] = var_5_1
 
 		Managers.save:auto_save(SaveFileName, SaveData)
 	end
 end
 
-DebugListPicker.current_item = function (self)
-	return self.item
+function DebugListPicker.current_item(arg_6_0)
+	return arg_6_0.item
 end
 
-DebugListPicker.current_item_name = function (self)
-	return self.item[1]
+function DebugListPicker.current_item_name(arg_7_0)
+	return arg_7_0.item[1]
 end
 
-DebugListPicker._sort_column = function (self, column)
-	local valid = self._item_validation_func
+function DebugListPicker._sort_column(arg_8_0, arg_8_1)
+	local var_8_0 = arg_8_0._item_validation_func
 
-	table.sort(column, function (a, b)
-		local a_valid, b_valid = not not valid(a[1]), not not valid(b[1])
+	table.sort(arg_8_1, function(arg_9_0, arg_9_1)
+		local var_9_0 = not not var_8_0(arg_9_0[1])
 
-		if a_valid == b_valid then
-			return a[1] < b[1]
-		elseif a_valid then
+		if var_9_0 == not not var_8_0(arg_9_1[1]) then
+			return arg_9_0[1] < arg_9_1[1]
+		elseif var_9_0 then
 			return true
 		end
 
@@ -140,137 +140,139 @@ DebugListPicker._sort_column = function (self, column)
 	end)
 end
 
-DebugListPicker.update = function (self, t, dt)
-	if not self.active then
+function DebugListPicker.update(arg_10_0, arg_10_1, arg_10_2)
+	if not arg_10_0.active then
 		return
 	end
 
-	local wall_time = Application.time_since_launch()
-	local pick_list = self.pick_list
-	local column = self.column
-	local item = self.item
-	local last_row = self.row_index
+	local var_10_0 = Application.time_since_launch()
+	local var_10_1 = arg_10_0.pick_list
+	local var_10_2 = arg_10_0.column
+	local var_10_3 = arg_10_0.item
+	local var_10_4 = arg_10_0.row_index
 
 	if DebugKeyHandler.key_pressed("right_key", "switch spawn category", "ai") then
-		self.column_index = self.column_index + 1
-		self.column_index = (self.column_index - 1) % #pick_list + 1
-		self.column = self.pick_list[self.column_index]
-		self.row_index = math.clamp(self.column.last_row_index or self.row_index, 1, #self.column)
+		arg_10_0.column_index = arg_10_0.column_index + 1
+		arg_10_0.column_index = (arg_10_0.column_index - 1) % #var_10_1 + 1
+		arg_10_0.column = arg_10_0.pick_list[arg_10_0.column_index]
+		arg_10_0.row_index = math.clamp(arg_10_0.column.last_row_index or arg_10_0.row_index, 1, #arg_10_0.column)
 	end
 
 	if DebugKeyHandler.key_pressed("left_key", "switch spawn category", "ai") then
-		self.column_index = self.column_index - 1
-		self.column_index = (self.column_index - 1) % #pick_list + 1
-		self.column = self.pick_list[self.column_index]
-		self.row_index = math.clamp(self.column.last_row_index or self.row_index, 1, #self.column)
+		arg_10_0.column_index = arg_10_0.column_index - 1
+		arg_10_0.column_index = (arg_10_0.column_index - 1) % #var_10_1 + 1
+		arg_10_0.column = arg_10_0.pick_list[arg_10_0.column_index]
+		arg_10_0.row_index = math.clamp(arg_10_0.column.last_row_index or arg_10_0.row_index, 1, #arg_10_0.column)
 	end
 
-	if DebugKeyHandler.key_pressed("up_key", "switch spawn category", "ai") and wall_time > self.move_cursor_timer then
-		self.row_index = self.row_index - 1
-		self.row_index = (self.row_index - 1) % #column + 1
-		self.move_cursor_timer = wall_time + 0.1
-		column.last_row_index = self.row_index
+	if DebugKeyHandler.key_pressed("up_key", "switch spawn category", "ai") and var_10_0 > arg_10_0.move_cursor_timer then
+		arg_10_0.row_index = arg_10_0.row_index - 1
+		arg_10_0.row_index = (arg_10_0.row_index - 1) % #var_10_2 + 1
+		arg_10_0.move_cursor_timer = var_10_0 + 0.1
+		var_10_2.last_row_index = arg_10_0.row_index
 	end
 
-	if DebugKeyHandler.key_pressed("down_key", "switch spawn category", "ai") and wall_time > self.move_cursor_timer then
-		self.row_index = self.row_index + 1
-		self.row_index = (self.row_index - 1) % #column + 1
-		self.move_cursor_timer = wall_time + 0.1
-		column.last_row_index = self.row_index
+	if DebugKeyHandler.key_pressed("down_key", "switch spawn category", "ai") and var_10_0 > arg_10_0.move_cursor_timer then
+		arg_10_0.row_index = arg_10_0.row_index + 1
+		arg_10_0.row_index = (arg_10_0.row_index - 1) % #var_10_2 + 1
+		arg_10_0.move_cursor_timer = var_10_0 + 0.1
+		var_10_2.last_row_index = arg_10_0.row_index
 	end
 
-	local same_row = last_row == self.row_index
+	local var_10_5 = var_10_4 == arg_10_0.row_index
 
-	self.item = self.column[self.row_index]
+	arg_10_0.item = arg_10_0.column[arg_10_0.row_index]
 
 	if not script_data.disable_debug_draw then
-		local item = self.item
-		local column = self.column
-		local col_in = self.column_index
-		local num_cols = #self.pick_list
-		local c1, c2 = col_in - 1, col_in + 1
+		local var_10_6 = arg_10_0.item
+		local var_10_7 = arg_10_0.column
+		local var_10_8 = arg_10_0.column_index
+		local var_10_9 = #arg_10_0.pick_list
+		local var_10_10 = var_10_8 - 1
+		local var_10_11 = var_10_8 + 1
 
-		if col_in == 1 then
-			c1 = 1
-			c2 = c1 + (self.max_cols_seen - 1)
-		elseif col_in == num_cols then
-			c1 = num_cols - (self.max_cols_seen - 1)
-			c2 = num_cols
+		if var_10_8 == 1 then
+			var_10_10 = 1
+			var_10_11 = var_10_10 + (arg_10_0.max_cols_seen - 1)
+		elseif var_10_8 == var_10_9 then
+			var_10_10 = var_10_9 - (arg_10_0.max_cols_seen - 1)
+			var_10_11 = var_10_9
 		end
 
-		local res_x, res_y = RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h
-		local opacity = 0.85
-		local height = self.font_size * (max_display_items + 1) + COLUMN_SPACING
-		local col_text = ""
-		local header_color
-		local base_header_color = Color(200, 100, 0)
-		local selected_header_color = Color(255, 155, 0)
-		local upper_pos = Vector3(5, res_y - 80 - font_height, 900)
-		local text_position = Vector3.copy(upper_pos)
-		local curr_column
+		local var_10_12 = RESOLUTION_LOOKUP.res_w
+		local var_10_13 = RESOLUTION_LOOKUP.res_h
+		local var_10_14 = 0.85
+		local var_10_15 = arg_10_0.font_size * (var_0_5 + 1) + var_0_4
+		local var_10_16 = ""
+		local var_10_17
+		local var_10_18 = Color(200, 100, 0)
+		local var_10_19 = Color(255, 155, 0)
+		local var_10_20 = Vector3(5, var_10_13 - 80 - var_0_3, 900)
+		local var_10_21 = Vector3.copy(var_10_20)
+		local var_10_22
 
-		for i = c1, c2 do
-			local column_i = pick_list[i]
+		for iter_10_0 = var_10_10, var_10_11 do
+			local var_10_23 = var_10_1[iter_10_0]
 
-			if column == column_i then
-				curr_column = column
-				col_text = string.upper(column_i.name)
-				header_color = selected_header_color
+			if var_10_7 == var_10_23 then
+				var_10_22 = var_10_7
+				var_10_16 = string.upper(var_10_23.name)
+				var_10_17 = var_10_19
 			else
-				col_text = column_i.name
-				header_color = base_header_color
+				var_10_16 = var_10_23.name
+				var_10_17 = var_10_18
 			end
 
-			Gui.text(self.gui, col_text, self.font_mtrl, self.font_size, self.font, text_position, header_color)
+			Gui.text(arg_10_0.gui, var_10_16, arg_10_0.font_mtrl, arg_10_0.font_size, arg_10_0.font, var_10_21, var_10_17)
 
-			local min_pos, max_pos = Gui.text_extents(self.gui, col_text, self.font_mtrl, self.font_size)
-			local text_width = max_pos.x - min_pos.x + COLUMN_SPACING
+			local var_10_24, var_10_25 = Gui.text_extents(arg_10_0.gui, var_10_16, arg_10_0.font_mtrl, arg_10_0.font_size)
+			local var_10_26 = var_10_25.x - var_10_24.x + var_0_4
 
-			text_position.x = text_position.x + text_width
+			var_10_21.x = var_10_21.x + var_10_26
 		end
 
-		if curr_column.column_run_func then
-			curr_column.column_run_func(self, item, text_position)
+		if var_10_22.column_run_func then
+			var_10_22.column_run_func(arg_10_0, var_10_6, var_10_21)
 		end
 
-		self:_sort_column(column)
+		arg_10_0:_sort_column(var_10_7)
 
-		if same_row and self.item and self._last_selected_item and self.item ~= self._last_selected_item then
-			local found_i = table.find_func(column, function (_, col)
-				return type(col) == "table" and col[1] == self._last_selected_item[1]
+		if var_10_5 and arg_10_0.item and arg_10_0._last_selected_item and arg_10_0.item ~= arg_10_0._last_selected_item then
+			local var_10_27 = table.find_func(var_10_7, function(arg_11_0, arg_11_1)
+				return type(arg_11_1) == "table" and arg_11_1[1] == arg_10_0._last_selected_item[1]
 			end)
 
-			if found_i then
-				self.row_index = found_i
+			if var_10_27 then
+				arg_10_0.row_index = var_10_27
 			end
 		else
-			self._last_selected_item = self.item
+			arg_10_0._last_selected_item = arg_10_0.item
 		end
 
-		local start_idx = math.clamp(self.row_index - max_display_items + 1, 1, #column)
-		local end_idx = math.min(#column, max_display_items) + (start_idx - 1)
+		local var_10_28 = math.clamp(arg_10_0.row_index - var_0_5 + 1, 1, #var_10_7)
+		local var_10_29 = math.min(#var_10_7, var_0_5) + (var_10_28 - 1)
 
-		for i = start_idx, end_idx do
-			local item_pos = upper_pos - Vector3(0, (i - start_idx + 1) * font_height, 0)
-			local item_text = column[i][1]
+		for iter_10_1 = var_10_28, var_10_29 do
+			local var_10_30 = var_10_20 - Vector3(0, (iter_10_1 - var_10_28 + 1) * var_0_3, 0)
+			local var_10_31 = var_10_7[iter_10_1][1]
 
-			if curr_column.row_func then
-				item_text = item_text .. curr_column.row_func(self, column[i])
+			if var_10_22.row_func then
+				var_10_31 = var_10_31 .. var_10_22.row_func(arg_10_0, var_10_7[iter_10_1])
 			end
 
-			local loaded = self._item_validation_func(item_text)
+			local var_10_32 = arg_10_0._item_validation_func(var_10_31)
 
-			if not loaded then
-				item_text = item_text .. " (Load)"
+			if not var_10_32 then
+				var_10_31 = var_10_31 .. " (Load)"
 			end
 
-			if i == self.row_index then
-				Gui.text(self.gui, " > " .. item_text:upper(), self.font_mtrl, self.font_size, self.font, item_pos, loaded and Color(200, 200, 200) or Color(100, 50, 200, 0))
+			if iter_10_1 == arg_10_0.row_index then
+				Gui.text(arg_10_0.gui, " > " .. var_10_31:upper(), arg_10_0.font_mtrl, arg_10_0.font_size, arg_10_0.font, var_10_30, var_10_32 and Color(200, 200, 200) or Color(100, 50, 200, 0))
 			else
-				Gui.text(self.gui, "     " .. item_text, self.font_mtrl, self.font_size, self.font, item_pos, loaded and Color(50, 200, 0) or Color(100, 50, 200, 0))
+				Gui.text(arg_10_0.gui, "     " .. var_10_31, arg_10_0.font_mtrl, arg_10_0.font_size, arg_10_0.font, var_10_30, var_10_32 and Color(50, 200, 0) or Color(100, 50, 200, 0))
 			end
 		end
 
-		Gui.rect(self.gui, Vector3(5, res_y - height - 80, 899), Vector3(self.max_width, height, 899), Color(230 * opacity, 10, 10, 10))
+		Gui.rect(arg_10_0.gui, Vector3(5, var_10_13 - var_10_15 - 80, 899), Vector3(arg_10_0.max_width, var_10_15, 899), Color(230 * var_10_14, 10, 10, 10))
 	end
 end

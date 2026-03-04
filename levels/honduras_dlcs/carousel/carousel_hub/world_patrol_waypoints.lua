@@ -1,13 +1,13 @@
-﻿-- chunkname: @levels/honduras_dlcs/carousel/carousel_hub/world_patrol_waypoints.lua
+-- chunkname: @levels/honduras_dlcs/carousel/carousel_hub/world_patrol_waypoints.lua
 
-local boss_waypoints = {}
-local patrol_waypoints = {}
-local event_waypoints = {}
-local patrol_spline_version = "1"
+local var_0_0 = {}
+local var_0_1 = {}
+local var_0_2 = {}
+local var_0_3 = "1"
 
 return {
-	version = patrol_spline_version,
-	boss_waypoints = boss_waypoints,
-	patrol_waypoints = patrol_waypoints,
-	event_waypoints = event_waypoints,
+	version = var_0_3,
+	boss_waypoints = var_0_0,
+	patrol_waypoints = var_0_1,
+	event_waypoints = var_0_2
 }

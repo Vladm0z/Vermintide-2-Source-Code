@@ -1,216 +1,215 @@
-﻿-- chunkname: @scripts/managers/debug/debug_drawer.lua
+-- chunkname: @scripts/managers/debug/debug_drawer.lua
 
 DebugDrawer = class(DebugDrawer)
 
-DebugDrawer.init = function (self, line_object, mode)
-	self._line_object = line_object
-	self._mode = mode
+function DebugDrawer.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0._line_object = arg_1_1
+	arg_1_0._mode = arg_1_2
 end
 
-DebugDrawer.reset = function (self)
-	LineObject.reset(self._line_object)
+function DebugDrawer.reset(arg_2_0)
+	LineObject.reset(arg_2_0._line_object)
 end
 
-DebugDrawer.line_object = function (self)
-	return self._line_object
+function DebugDrawer.line_object(arg_3_0)
+	return arg_3_0._line_object
 end
 
-DebugDrawer.line = function (self, from, to, color)
-	color = color or Color(255, 255, 255)
+function DebugDrawer.line(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	arg_4_3 = arg_4_3 or Color(255, 255, 255)
 
-	LineObject.add_line(self._line_object, color, from, to)
+	LineObject.add_line(arg_4_0._line_object, arg_4_3, arg_4_1, arg_4_2)
 end
 
-DebugDrawer.sphere = function (self, center, radius, color, segments, parts)
-	color = color or Color(255, 255, 255)
+function DebugDrawer.sphere(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	arg_5_3 = arg_5_3 or Color(255, 255, 255)
 
-	LineObject.add_sphere(self._line_object, color, center, radius, segments or 20, parts or 2)
+	LineObject.add_sphere(arg_5_0._line_object, arg_5_3, arg_5_1, arg_5_2, arg_5_4 or 20, arg_5_5 or 2)
 end
 
-DebugDrawer.capsule_overlap = function (self, position, size, rotation, color)
-	fassert(size.x == size.z, "Passing diffent x and y size doesn't do anything, capsules overlaps are always sphere swept, not spheroid shaped.")
+function DebugDrawer.capsule_overlap(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	fassert(arg_6_2.x == arg_6_2.z, "Passing diffent x and y size doesn't do anything, capsules overlaps are always sphere swept, not spheroid shaped.")
 
-	local radius = (size.x + size.z) * 0.5
-	local forward = Quaternion.forward(rotation)
-	local offset_y = forward * (size.y - radius)
-	local from = position - offset_y
-	local to = position + offset_y
+	local var_6_0 = (arg_6_2.x + arg_6_2.z) * 0.5
+	local var_6_1 = Quaternion.forward(arg_6_3) * (arg_6_2.y - var_6_0)
+	local var_6_2 = arg_6_1 - var_6_1
+	local var_6_3 = arg_6_1 + var_6_1
 
-	self:capsule(from, to, radius, color)
+	arg_6_0:capsule(var_6_2, var_6_3, var_6_0, arg_6_4)
 end
 
-DebugDrawer.oobb_overlap = function (self, position, size, rotation, color)
-	local pose = Matrix4x4.from_quaternion_position(rotation, position)
+function DebugDrawer.oobb_overlap(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	local var_7_0 = Matrix4x4.from_quaternion_position(arg_7_3, arg_7_1)
 
-	self:box(pose, size, color)
+	arg_7_0:box(var_7_0, arg_7_2, arg_7_4)
 end
 
-DebugDrawer.box_sweep = function (self, pose, extents, movement_vector, color1, color2)
-	color1 = color1 or Color(255, 255, 255)
-	color2 = color2 or Color(255, 0, 0)
+function DebugDrawer.box_sweep(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+	arg_8_4 = arg_8_4 or Color(255, 255, 255)
+	arg_8_5 = arg_8_5 or Color(255, 0, 0)
 
-	local rot = Matrix4x4.rotation(pose)
-	local pos = Matrix4x4.translation(pose)
-	local box2_pose = Matrix4x4.from_quaternion_position(rot, pos + movement_vector)
+	local var_8_0 = Matrix4x4.rotation(arg_8_1)
+	local var_8_1 = Matrix4x4.translation(arg_8_1)
+	local var_8_2 = Matrix4x4.from_quaternion_position(var_8_0, var_8_1 + arg_8_3)
 
-	self:box(pose, extents, color1)
-	self:box(box2_pose, extents, color1)
+	arg_8_0:box(arg_8_1, arg_8_2, arg_8_4)
+	arg_8_0:box(var_8_2, arg_8_2, arg_8_4)
 
-	local x_vect = Matrix4x4.right(pose)
-	local y_vect = Matrix4x4.forward(pose)
-	local z_vect = Matrix4x4.up(pose)
-	local x_positive = x_vect * extents.x
-	local x_negative = -x_vect * extents.x
-	local y_positive = y_vect * extents.y
-	local y_negative = -y_vect * extents.y
-	local z_positive = z_vect * extents.z
-	local z_negative = -z_vect * extents.z
-	local box1corner1 = pos + x_positive + y_positive + z_positive
-	local box1corner2 = pos + x_negative + y_positive + z_positive
-	local box1corner3 = pos + x_negative + y_negative + z_positive
-	local box1corner4 = pos + x_positive + y_negative + z_positive
-	local box1corner5 = pos + x_positive + y_positive + z_negative
-	local box1corner6 = pos + x_negative + y_positive + z_negative
-	local box1corner7 = pos + x_negative + y_negative + z_negative
-	local box1corner8 = pos + x_positive + y_negative + z_negative
+	local var_8_3 = Matrix4x4.right(arg_8_1)
+	local var_8_4 = Matrix4x4.forward(arg_8_1)
+	local var_8_5 = Matrix4x4.up(arg_8_1)
+	local var_8_6 = var_8_3 * arg_8_2.x
+	local var_8_7 = -var_8_3 * arg_8_2.x
+	local var_8_8 = var_8_4 * arg_8_2.y
+	local var_8_9 = -var_8_4 * arg_8_2.y
+	local var_8_10 = var_8_5 * arg_8_2.z
+	local var_8_11 = -var_8_5 * arg_8_2.z
+	local var_8_12 = var_8_1 + var_8_6 + var_8_8 + var_8_10
+	local var_8_13 = var_8_1 + var_8_7 + var_8_8 + var_8_10
+	local var_8_14 = var_8_1 + var_8_7 + var_8_9 + var_8_10
+	local var_8_15 = var_8_1 + var_8_6 + var_8_9 + var_8_10
+	local var_8_16 = var_8_1 + var_8_6 + var_8_8 + var_8_11
+	local var_8_17 = var_8_1 + var_8_7 + var_8_8 + var_8_11
+	local var_8_18 = var_8_1 + var_8_7 + var_8_9 + var_8_11
+	local var_8_19 = var_8_1 + var_8_6 + var_8_9 + var_8_11
 
-	self:line(box1corner1, box1corner1 + movement_vector, color2)
-	self:line(box1corner2, box1corner2 + movement_vector, color2)
-	self:line(box1corner3, box1corner3 + movement_vector, color2)
-	self:line(box1corner4, box1corner4 + movement_vector, color2)
-	self:line(box1corner5, box1corner5 + movement_vector, color2)
-	self:line(box1corner6, box1corner6 + movement_vector, color2)
-	self:line(box1corner7, box1corner7 + movement_vector, color2)
-	self:line(box1corner8, box1corner8 + movement_vector, color2)
+	arg_8_0:line(var_8_12, var_8_12 + arg_8_3, arg_8_5)
+	arg_8_0:line(var_8_13, var_8_13 + arg_8_3, arg_8_5)
+	arg_8_0:line(var_8_14, var_8_14 + arg_8_3, arg_8_5)
+	arg_8_0:line(var_8_15, var_8_15 + arg_8_3, arg_8_5)
+	arg_8_0:line(var_8_16, var_8_16 + arg_8_3, arg_8_5)
+	arg_8_0:line(var_8_17, var_8_17 + arg_8_3, arg_8_5)
+	arg_8_0:line(var_8_18, var_8_18 + arg_8_3, arg_8_5)
+	arg_8_0:line(var_8_19, var_8_19 + arg_8_3, arg_8_5)
 end
 
-DebugDrawer.capsule = function (self, from, to, radius, color)
-	color = color or Color(255, 255, 255)
+function DebugDrawer.capsule(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	arg_9_4 = arg_9_4 or Color(255, 255, 255)
 
-	LineObject.add_capsule(self._line_object, color, from, to, radius)
+	LineObject.add_capsule(arg_9_0._line_object, arg_9_4, arg_9_1, arg_9_2, arg_9_3)
 end
 
-DebugDrawer.actor = function (self, actor, color, camera_pose)
-	color = color or Color(255, 255, 255)
+function DebugDrawer.actor(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	arg_10_2 = arg_10_2 or Color(255, 255, 255)
 
-	Actor.debug_draw(actor, self._line_object, color, camera_pose)
+	Actor.debug_draw(arg_10_1, arg_10_0._line_object, arg_10_2, arg_10_3)
 end
 
-DebugDrawer.box = function (self, pose, extents, color)
-	color = color or Color(255, 255, 255)
+function DebugDrawer.box(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+	arg_11_3 = arg_11_3 or Color(255, 255, 255)
 
-	LineObject.add_box(self._line_object, color, pose, extents)
+	LineObject.add_box(arg_11_0._line_object, arg_11_3, arg_11_1, arg_11_2)
 end
 
-DebugDrawer.cone = function (self, from, to, radius, color, segments, bars)
-	color = color or Color(255, 255, 255)
+function DebugDrawer.cone(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+	arg_12_4 = arg_12_4 or Color(255, 255, 255)
 
-	LineObject.add_cone(self._line_object, color, from, to, radius, segments, bars)
+	LineObject.add_cone(arg_12_0._line_object, arg_12_4, arg_12_1, arg_12_2, arg_12_3, arg_12_5, arg_12_6)
 end
 
-DebugDrawer.circle = function (self, center, radius, normal, color, segments)
-	color = color or Color(255, 255, 255)
+function DebugDrawer.circle(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+	arg_13_4 = arg_13_4 or Color(255, 255, 255)
 
-	LineObject.add_circle(self._line_object, color, center, radius, normal, segments or 20)
+	LineObject.add_circle(arg_13_0._line_object, arg_13_4, arg_13_1, arg_13_2, arg_13_3, arg_13_5 or 20)
 end
 
-DebugDrawer.arrow_2d = function (self, from, to, color)
-	self:line(from, to, color)
+function DebugDrawer.arrow_2d(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+	arg_14_0:line(arg_14_1, arg_14_2, arg_14_3)
 
-	local vector = to - from
-	local length = Vector3.length(vector)
-	local base_axis = Vector3.cross(Vector3.normalize(vector), Vector3.up())
+	local var_14_0 = arg_14_2 - arg_14_1
+	local var_14_1 = Vector3.length(var_14_0)
+	local var_14_2 = Vector3.cross(Vector3.normalize(var_14_0), Vector3.up())
 
-	self:line(to, to - 0.2 * vector + base_axis * length * 0.2, color)
-	self:line(to, to - 0.2 * vector - base_axis * length * 0.2, color)
+	arg_14_0:line(arg_14_2, arg_14_2 - 0.2 * var_14_0 + var_14_2 * var_14_1 * 0.2, arg_14_3)
+	arg_14_0:line(arg_14_2, arg_14_2 - 0.2 * var_14_0 - var_14_2 * var_14_1 * 0.2, arg_14_3)
 end
 
-DebugDrawer.cylinder = function (self, pos1, pos2, radius, color, segments)
-	color = color or Color(255, 255, 255)
-	segments = segments or 5
+function DebugDrawer.cylinder(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+	arg_15_4 = arg_15_4 or Color(255, 255, 255)
+	arg_15_5 = arg_15_5 or 5
 
-	local step = (pos2 - pos1) / segments
-	local pos = pos1
-	local normal = Vector3.normalize(step)
+	local var_15_0 = (arg_15_2 - arg_15_1) / arg_15_5
+	local var_15_1 = arg_15_1
+	local var_15_2 = Vector3.normalize(var_15_0)
 
-	LineObject.add_circle(self._line_object, color, pos1, radius, normal, 20)
+	LineObject.add_circle(arg_15_0._line_object, arg_15_4, arg_15_1, arg_15_3, var_15_2, 20)
 
-	for i = 1, segments - 1 do
-		pos = pos + step
+	for iter_15_0 = 1, arg_15_5 - 1 do
+		var_15_1 = var_15_1 + var_15_0
 
-		LineObject.add_circle(self._line_object, color, pos, radius, normal, 20)
+		LineObject.add_circle(arg_15_0._line_object, arg_15_4, var_15_1, arg_15_3, var_15_2, 20)
 	end
 end
 
-DebugDrawer.vector = function (self, position, vector, color)
-	color = color or Color(255, 255, 255)
+function DebugDrawer.vector(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+	arg_16_3 = arg_16_3 or Color(255, 255, 255)
 
-	local length = Vector3.length(vector)
-	local normalized = Vector3.normalize(vector)
-	local tip_scale = 0.2
-	local tip_length = length * tip_scale
-	local tip_width = length * tip_scale / 2
-	local tip = position + vector
-	local x, y = Vector3.make_axes(normalized)
-	local aux = tip - normalized * tip_length
+	local var_16_0 = Vector3.length(arg_16_2)
+	local var_16_1 = Vector3.normalize(arg_16_2)
+	local var_16_2 = 0.2
+	local var_16_3 = var_16_0 * var_16_2
+	local var_16_4 = var_16_0 * var_16_2 / 2
+	local var_16_5 = arg_16_1 + arg_16_2
+	local var_16_6, var_16_7 = Vector3.make_axes(var_16_1)
+	local var_16_8 = var_16_5 - var_16_1 * var_16_3
 
-	self:line(position, tip, color)
-	self:line(tip, aux - x * tip_width, color)
-	self:line(tip, aux + x * tip_width, color)
-	self:line(tip, aux - y * tip_width, color)
-	self:line(tip, aux + y * tip_width, color)
+	arg_16_0:line(arg_16_1, var_16_5, arg_16_3)
+	arg_16_0:line(var_16_5, var_16_8 - var_16_6 * var_16_4, arg_16_3)
+	arg_16_0:line(var_16_5, var_16_8 + var_16_6 * var_16_4, arg_16_3)
+	arg_16_0:line(var_16_5, var_16_8 - var_16_7 * var_16_4, arg_16_3)
+	arg_16_0:line(var_16_5, var_16_8 + var_16_7 * var_16_4, arg_16_3)
 end
 
-DebugDrawer.quaternion = function (self, position, quaternion, scale)
-	scale = scale or 1
+function DebugDrawer.quaternion(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+	arg_17_3 = arg_17_3 or 1
 
-	self:vector(position, scale * Quaternion.right(quaternion), Color(255, 0, 0))
-	self:vector(position, scale * Quaternion.forward(quaternion), Color(0, 255, 0))
-	self:vector(position, scale * Quaternion.up(quaternion), Color(0, 0, 255))
+	arg_17_0:vector(arg_17_1, arg_17_3 * Quaternion.right(arg_17_2), Color(255, 0, 0))
+	arg_17_0:vector(arg_17_1, arg_17_3 * Quaternion.forward(arg_17_2), Color(0, 255, 0))
+	arg_17_0:vector(arg_17_1, arg_17_3 * Quaternion.up(arg_17_2), Color(0, 0, 255))
 end
 
-DebugDrawer.matrix4x4 = function (self, matrix, scale)
-	scale = scale or 1
+function DebugDrawer.matrix4x4(arg_18_0, arg_18_1, arg_18_2)
+	arg_18_2 = arg_18_2 or 1
 
-	local position = Matrix4x4.translation(matrix)
+	local var_18_0 = Matrix4x4.translation(arg_18_1)
 
-	self:sphere(position, scale * 0.25)
+	arg_18_0:sphere(var_18_0, arg_18_2 * 0.25)
 
-	local rotation = Matrix4x4.rotation(matrix)
+	local var_18_1 = Matrix4x4.rotation(arg_18_1)
 
-	self:quaternion(position, rotation, scale)
+	arg_18_0:quaternion(var_18_0, var_18_1, arg_18_2)
 end
 
-DebugDrawer.unit = function (self, unit, color)
-	color = color or Color(255, 255, 255)
+function DebugDrawer.unit(arg_19_0, arg_19_1, arg_19_2)
+	arg_19_2 = arg_19_2 or Color(255, 255, 255)
 
-	local box_pose, box_extents = Unit.box(unit)
+	local var_19_0, var_19_1 = Unit.box(arg_19_1)
 
-	self:box(box_pose, box_extents, color)
+	arg_19_0:box(var_19_0, var_19_1, arg_19_2)
 
-	local position = Unit.world_position(unit, 0)
+	local var_19_2 = Unit.world_position(arg_19_1, 0)
 
-	position.z = position.z + box_extents.z
+	var_19_2.z = var_19_2.z + var_19_1.z
 
-	local rotation = Unit.world_rotation(unit, 0)
+	local var_19_3 = Unit.world_rotation(arg_19_1, 0)
 
-	self:quaternion(position, rotation)
+	arg_19_0:quaternion(var_19_2, var_19_3)
 end
 
-DebugDrawer.navigation_mesh_search = function (self, mesh)
-	NavigationMesh.visualize_last_search(mesh, self._line_object)
+function DebugDrawer.navigation_mesh_search(arg_20_0, arg_20_1)
+	NavigationMesh.visualize_last_search(arg_20_1, arg_20_0._line_object)
 end
 
-DebugDrawer.update = function (self, world)
+function DebugDrawer.update(arg_21_0, arg_21_1)
 	if script_data and script_data.disable_debug_draw then
-		self:reset()
+		arg_21_0:reset()
 
 		return
 	end
 
-	LineObject.dispatch(world, self._line_object)
+	LineObject.dispatch(arg_21_1, arg_21_0._line_object)
 
-	if self._mode == "immediate" then
-		self:reset()
+	if arg_21_0._mode == "immediate" then
+		arg_21_0:reset()
 	end
 end

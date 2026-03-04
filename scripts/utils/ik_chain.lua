@@ -1,235 +1,227 @@
-﻿-- chunkname: @scripts/utils/ik_chain.lua
+-- chunkname: @scripts/utils/ik_chain.lua
 
 IkChain = class(IkChain)
 
-local function unbox_pos_array(boxed_source_array, target_array, num)
-	for i = 1, num do
-		target_array[i] = boxed_source_array[i]:unbox()
+local function var_0_0(arg_1_0, arg_1_1, arg_1_2)
+	for iter_1_0 = 1, arg_1_2 do
+		arg_1_1[iter_1_0] = arg_1_0[iter_1_0]:unbox()
 	end
 
-	return target_array
+	return arg_1_1
 end
 
-local function save_joints_in_boxed_array(source_array, target_array, num)
-	for i = 1, num do
-		target_array[i]:store(source_array[i])
-	end
-end
-
-IkChain.init = function (self, joints, start_pos, target_pos, tolerance, use_max_joint_angle)
-	self._nodes = {}
-
-	local lengths = {}
-	local sum = 0
-	local boxed_joints = {}
-
-	for i = 1, #joints - 1 do
-		local d = Vector3.length(joints[i] - joints[i + 1])
-
-		lengths[i] = d
-		sum = sum + d
-	end
-
-	for i = 1, #joints do
-		boxed_joints[i] = Vector3Box(joints[i])
-	end
-
-	self.n = #joints
-	self.tolerance = tolerance or 0.1
-	self.target_pos = Vector3Box(target_pos)
-	self.aim_pos = Vector3Box(joints[self.n])
-	self.joints = boxed_joints
-	self.lengths = lengths
-	self.origin_pos = Vector3Box(joints[1])
-	self.totallength = sum
-
-	if use_max_joint_angle then
-		self.constrain_angle = use_max_joint_angle
-		self.dot_constrain = math.cos(use_max_joint_angle)
+local function var_0_1(arg_2_0, arg_2_1, arg_2_2)
+	for iter_2_0 = 1, arg_2_2 do
+		arg_2_1[iter_2_0]:store(arg_2_0[iter_2_0])
 	end
 end
 
-IkChain.set_origin_pos = function (self, pos)
-	self.origin_pos:store(pos)
-end
+function IkChain.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	arg_3_0._nodes = {}
 
-IkChain.set_target_pos = function (self, target_pos, acceleration)
-	self.target_pos:store(target_pos)
+	local var_3_0 = {}
+	local var_3_1 = 0
+	local var_3_2 = {}
 
-	self.acc = acceleration or 1
-end
+	for iter_3_0 = 1, #arg_3_1 - 1 do
+		local var_3_3 = Vector3.length(arg_3_1[iter_3_0] - arg_3_1[iter_3_0 + 1])
 
-IkChain.set_whip = function (self, angle_velocity)
-	self.whip_angle_velocity = angle_velocity
-end
-
-IkChain.update_whip = function (self, joints, angular_velocity, t, dt)
-	local n1 = 1
-	local n2 = 2
-	local q = Quaternion.axis_angle(Vector3.up(), t % 6.28)
-	local j1 = joints[n1]
-	local j2 = joints[n2]
-	local k = j2 - j1
-	local k2 = Quaternion.rotate(q, k)
-
-	joints[n2] = j1 + k2
-
-	QuickDrawer:line(joints[n1], joints[n2], Color(20, 255, 175))
-end
-
-IkChain.debug_draw = function (self, joints, num_joints)
-	local line_color = self.constrain_angle and Color(120, 0, 120) or Color(120, 255, 0)
-	local ball_color = Color(0, 155, 255)
-
-	for i = 1, num_joints - 1 do
-		QuickDrawer:line(joints[i], joints[i + 1], line_color)
-		QuickDrawer:sphere(joints[i], 0.05 + i * 0.01, ball_color)
+		var_3_0[iter_3_0] = var_3_3
+		var_3_1 = var_3_1 + var_3_3
 	end
 
-	QuickDrawer:sphere(joints[num_joints], 0.05, ball_color)
-	QuickDrawer:sphere(self.target_pos:unbox(), 0.1, Color(255, 45, 0))
-	QuickDrawer:sphere(self.aim_pos:unbox(), 0.095, Color(255, 0, 200))
-end
+	for iter_3_1 = 1, #arg_3_1 do
+		var_3_2[iter_3_1] = Vector3Box(arg_3_1[iter_3_1])
+	end
 
-IkChain.backward = function (self, joints, lengths, num_joints, target_pos)
-	joints[num_joints] = target_pos
+	arg_3_0.n = #arg_3_1
+	arg_3_0.tolerance = arg_3_4 or 0.1
+	arg_3_0.target_pos = Vector3Box(arg_3_3)
+	arg_3_0.aim_pos = Vector3Box(arg_3_1[arg_3_0.n])
+	arg_3_0.joints = var_3_2
+	arg_3_0.lengths = var_3_0
+	arg_3_0.origin_pos = Vector3Box(arg_3_1[1])
+	arg_3_0.totallength = var_3_1
 
-	for i = num_joints - 1, 1, -1 do
-		local r = joints[i + 1] - joints[i]
-		local l = lengths[i] / Vector3.length(r)
-		local pos = (1 - l) * joints[i + 1] + l * joints[i]
-
-		joints[i] = pos
+	if arg_3_5 then
+		arg_3_0.constrain_angle = arg_3_5
+		arg_3_0.dot_constrain = math.cos(arg_3_5)
 	end
 end
 
-IkChain.forward = function (self, joints, lengths, num_joints, start_pos)
-	joints[1] = start_pos
+function IkChain.set_origin_pos(arg_4_0, arg_4_1)
+	arg_4_0.origin_pos:store(arg_4_1)
+end
 
-	for i = 1, num_joints - 1 do
-		local r = joints[i + 1] - joints[i]
-		local l = lengths[i] / Vector3.length(r)
-		local pos = (1 - l) * joints[i] + l * joints[i + 1]
+function IkChain.set_target_pos(arg_5_0, arg_5_1, arg_5_2)
+	arg_5_0.target_pos:store(arg_5_1)
 
-		joints[i + 1] = pos
+	arg_5_0.acc = arg_5_2 or 1
+end
+
+function IkChain.set_whip(arg_6_0, arg_6_1)
+	arg_6_0.whip_angle_velocity = arg_6_1
+end
+
+function IkChain.update_whip(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	local var_7_0 = 1
+	local var_7_1 = 2
+	local var_7_2 = Quaternion.axis_angle(Vector3.up(), arg_7_3 % 6.28)
+	local var_7_3 = arg_7_1[var_7_0]
+	local var_7_4 = arg_7_1[var_7_1] - var_7_3
+
+	arg_7_1[var_7_1] = var_7_3 + Quaternion.rotate(var_7_2, var_7_4)
+
+	QuickDrawer:line(arg_7_1[var_7_0], arg_7_1[var_7_1], Color(20, 255, 175))
+end
+
+function IkChain.debug_draw(arg_8_0, arg_8_1, arg_8_2)
+	local var_8_0 = arg_8_0.constrain_angle and Color(120, 0, 120) or Color(120, 255, 0)
+	local var_8_1 = Color(0, 155, 255)
+
+	for iter_8_0 = 1, arg_8_2 - 1 do
+		QuickDrawer:line(arg_8_1[iter_8_0], arg_8_1[iter_8_0 + 1], var_8_0)
+		QuickDrawer:sphere(arg_8_1[iter_8_0], 0.05 + iter_8_0 * 0.01, var_8_1)
+	end
+
+	QuickDrawer:sphere(arg_8_1[arg_8_2], 0.05, var_8_1)
+	QuickDrawer:sphere(arg_8_0.target_pos:unbox(), 0.1, Color(255, 45, 0))
+	QuickDrawer:sphere(arg_8_0.aim_pos:unbox(), 0.095, Color(255, 0, 200))
+end
+
+function IkChain.backward(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	arg_9_1[arg_9_3] = arg_9_4
+
+	for iter_9_0 = arg_9_3 - 1, 1, -1 do
+		local var_9_0 = arg_9_1[iter_9_0 + 1] - arg_9_1[iter_9_0]
+		local var_9_1 = arg_9_2[iter_9_0] / Vector3.length(var_9_0)
+
+		arg_9_1[iter_9_0] = (1 - var_9_1) * arg_9_1[iter_9_0 + 1] + var_9_1 * arg_9_1[iter_9_0]
 	end
 end
 
-local dot_constrain = 0.7
-local constrain_angle = math.acos(dot_constrain)
+function IkChain.forward(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	arg_10_1[1] = arg_10_4
 
-IkChain.forward_constrained = function (self, joints, lengths, num_joints, start_pos)
-	local dot_constrain = self.dot_constrain
-	local constrain_angle = self.constrain_angle
-	local up = Vector3.up()
+	for iter_10_0 = 1, arg_10_3 - 1 do
+		local var_10_0 = arg_10_1[iter_10_0 + 1] - arg_10_1[iter_10_0]
+		local var_10_1 = arg_10_2[iter_10_0] / Vector3.length(var_10_0)
+		local var_10_2 = (1 - var_10_1) * arg_10_1[iter_10_0] + var_10_1 * arg_10_1[iter_10_0 + 1]
 
-	joints[1] = start_pos
+		arg_10_1[iter_10_0 + 1] = var_10_2
+	end
+end
 
-	local cone_dir = Vector3.normalize(joints[2] - start_pos)
+local var_0_2 = 0.7
+local var_0_3 = math.acos(var_0_2)
 
-	for i = 1, num_joints - 1 do
-		local r = joints[i + 1] - joints[i]
-		local l = lengths[i] / Vector3.length(r)
-		local pos = (1 - l) * joints[i] + l * joints[i + 1]
-		local wanted_dir = Vector3.normalize(pos - joints[i])
-		local dot = Vector3.dot(cone_dir, wanted_dir)
+function IkChain.forward_constrained(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	local var_11_0 = arg_11_0.dot_constrain
+	local var_11_1 = arg_11_0.constrain_angle
+	local var_11_2 = Vector3.up()
 
-		if dot_constrain < dot then
-			joints[i + 1] = pos
+	arg_11_1[1] = arg_11_4
+
+	local var_11_3 = Vector3.normalize(arg_11_1[2] - arg_11_4)
+
+	for iter_11_0 = 1, arg_11_3 - 1 do
+		local var_11_4 = arg_11_1[iter_11_0 + 1] - arg_11_1[iter_11_0]
+		local var_11_5 = arg_11_2[iter_11_0] / Vector3.length(var_11_4)
+		local var_11_6 = (1 - var_11_5) * arg_11_1[iter_11_0] + var_11_5 * arg_11_1[iter_11_0 + 1]
+		local var_11_7 = Vector3.normalize(var_11_6 - arg_11_1[iter_11_0])
+
+		if var_11_0 < Vector3.dot(var_11_3, var_11_7) then
+			arg_11_1[iter_11_0 + 1] = var_11_6
 		else
-			local axis_dir = Vector3.cross(cone_dir, wanted_dir)
-			local axis_rot = Quaternion(axis_dir, constrain_angle)
-			local constrained_vec = Quaternion.rotate(axis_rot, cone_dir)
+			local var_11_8 = Vector3.cross(var_11_3, var_11_7)
+			local var_11_9 = Quaternion(var_11_8, var_11_1)
+			local var_11_10 = Quaternion.rotate(var_11_9, var_11_3)
 
-			joints[i + 1] = joints[i] + constrained_vec * lengths[i]
+			arg_11_1[iter_11_0 + 1] = arg_11_1[iter_11_0] + var_11_10 * arg_11_2[iter_11_0]
 		end
 
-		cone_dir = Vector3.normalize(joints[i + 1] - joints[i])
+		var_11_3 = Vector3.normalize(arg_11_1[iter_11_0 + 1] - arg_11_1[iter_11_0])
 	end
 end
 
-local temp_joints = {}
+local var_0_4 = {}
 
-IkChain.solve = function (self, t, dt)
-	local target_pos = self.target_pos:unbox()
-	local aim_pos = self.aim_pos:unbox()
-	local to_target = target_pos - aim_pos
-	local target_pos = aim_pos + to_target * (self.acc or 1) * dt
+function IkChain.solve(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = arg_12_0.target_pos:unbox()
+	local var_12_1 = arg_12_0.aim_pos:unbox()
+	local var_12_2 = var_12_1 + (var_12_0 - var_12_1) * (arg_12_0.acc or 1) * arg_12_2
 
-	self.aim_pos:store(target_pos)
+	arg_12_0.aim_pos:store(var_12_2)
 
-	local start_pos = self.origin_pos:unbox()
-	local num_joints = self.n
-	local joints = unbox_pos_array(self.joints, temp_joints, num_joints)
+	local var_12_3 = arg_12_0.origin_pos:unbox()
+	local var_12_4 = arg_12_0.n
+	local var_12_5 = var_0_0(arg_12_0.joints, var_0_4, var_12_4)
 
-	if self.whip_angle_velocity then
-		self:update_whip(joints, self.whip_angle_velocity, t, dt)
+	if arg_12_0.whip_angle_velocity then
+		arg_12_0:update_whip(var_12_5, arg_12_0.whip_angle_velocity, arg_12_1, arg_12_2)
 	end
 
-	local lengths = self.lengths
-	local count = 0
-	local distance = Vector3.length(joints[1] - target_pos)
+	local var_12_6 = arg_12_0.lengths
+	local var_12_7 = 0
 
-	if distance > self.totallength then
-		for i = 1, num_joints - 1 do
-			local r = Vector3.length(target_pos - joints[i])
-			local l = lengths[i] / r
+	if Vector3.length(var_12_5[1] - var_12_2) > arg_12_0.totallength then
+		for iter_12_0 = 1, var_12_4 - 1 do
+			local var_12_8 = Vector3.length(var_12_2 - var_12_5[iter_12_0])
+			local var_12_9 = var_12_6[iter_12_0] / var_12_8
 
-			joints[i + 1] = (1 - l) * joints[i] + l * target_pos
+			var_12_5[iter_12_0 + 1] = (1 - var_12_9) * var_12_5[iter_12_0] + var_12_9 * var_12_2
 		end
 	else
-		local dif = Vector3.length(joints[num_joints] - target_pos)
+		local var_12_10 = Vector3.length(var_12_5[var_12_4] - var_12_2)
 
-		while dif > self.tolerance do
-			self:backward(joints, lengths, num_joints, target_pos)
+		while var_12_10 > arg_12_0.tolerance do
+			arg_12_0:backward(var_12_5, var_12_6, var_12_4, var_12_2)
 
-			if self.constrain_angle then
-				self:forward_constrained(joints, lengths, num_joints, start_pos)
+			if arg_12_0.constrain_angle then
+				arg_12_0:forward_constrained(var_12_5, var_12_6, var_12_4, var_12_3)
 			else
-				self:forward(joints, lengths, num_joints, start_pos)
+				arg_12_0:forward(var_12_5, var_12_6, var_12_4, var_12_3)
 			end
 
-			dif = Vector3.length(joints[num_joints] - target_pos)
-			count = count + 1
+			var_12_10 = Vector3.length(var_12_5[var_12_4] - var_12_2)
+			var_12_7 = var_12_7 + 1
 
-			if count > 10 then
+			if var_12_7 > 10 then
 				break
 			end
 		end
 	end
 
-	save_joints_in_boxed_array(joints, self.joints, num_joints)
-	self:debug_draw(joints, num_joints)
-	Debug.text("Solving tentacle: %d iterations, %d joints", count, self.n)
+	var_0_1(var_12_5, arg_12_0.joints, var_12_4)
+	arg_12_0:debug_draw(var_12_5, var_12_4)
+	Debug.text("Solving tentacle: %d iterations, %d joints", var_12_7, arg_12_0.n)
 end
 
-IkChain.solve_dragging = function (self, t, dt)
-	local target_pos = self.target_pos:unbox()
-	local aim_pos = self.aim_pos:unbox()
-	local to_target = target_pos - aim_pos
-	local target_pos = aim_pos + to_target * (self.acc or 1) * dt
+function IkChain.solve_dragging(arg_13_0, arg_13_1, arg_13_2)
+	local var_13_0 = arg_13_0.target_pos:unbox()
+	local var_13_1 = arg_13_0.aim_pos:unbox()
+	local var_13_2 = var_13_1 + (var_13_0 - var_13_1) * (arg_13_0.acc or 1) * arg_13_2
 
-	self.aim_pos:store(target_pos)
+	arg_13_0.aim_pos:store(var_13_2)
 
-	local start_pos = self.origin_pos:unbox()
-	local num_joints = self.n
-	local joints = unbox_pos_array(self.joints, temp_joints, num_joints)
-	local lengths = self.lengths
-	local count = 0
-	local distance = Vector3.length(joints[1] - target_pos)
+	local var_13_3 = arg_13_0.origin_pos:unbox()
+	local var_13_4 = arg_13_0.n
+	local var_13_5 = var_0_0(arg_13_0.joints, var_0_4, var_13_4)
+	local var_13_6 = arg_13_0.lengths
+	local var_13_7 = 0
 
-	if distance > self.totallength then
-		for i = 1, num_joints - 1 do
-			local r = Vector3.length(target_pos - joints[i])
-			local l = lengths[i] / r
+	if Vector3.length(var_13_5[1] - var_13_2) > arg_13_0.totallength then
+		for iter_13_0 = 1, var_13_4 - 1 do
+			local var_13_8 = Vector3.length(var_13_2 - var_13_5[iter_13_0])
+			local var_13_9 = var_13_6[iter_13_0] / var_13_8
 
-			joints[i + 1] = (1 - l) * joints[i] + l * target_pos
+			var_13_5[iter_13_0 + 1] = (1 - var_13_9) * var_13_5[iter_13_0] + var_13_9 * var_13_2
 		end
 	else
-		self:backward(joints, lengths, num_joints, target_pos)
+		arg_13_0:backward(var_13_5, var_13_6, var_13_4, var_13_2)
 	end
 
-	save_joints_in_boxed_array(joints, self.joints, num_joints)
-	self:debug_draw(joints, num_joints)
-	Debug.text("Solving tentacle dragging: %d iterations, %d joints", count, self.n)
+	var_0_1(var_13_5, arg_13_0.joints, var_13_4)
+	arg_13_0:debug_draw(var_13_5, var_13_4)
+	Debug.text("Solving tentacle dragging: %d iterations, %d joints", var_13_7, arg_13_0.n)
 end

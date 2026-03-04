@@ -1,223 +1,219 @@
-﻿-- chunkname: @scripts/entity_system/systems/ghost_mode/ghost_mode_system.lua
+-- chunkname: @scripts/entity_system/systems/ghost_mode/ghost_mode_system.lua
 
 require("scripts/unit_extensions/default_player_unit/ghost_mode/player_unit_ghost_mode_extension")
 require("scripts/unit_extensions/default_player_unit/ghost_mode/player_husk_ghost_mode_extension")
 
 GhostModeSystem = class(GhostModeSystem, ExtensionSystemBase)
 
-local RPCS = {
+local var_0_0 = {
 	"rpc_entered_ghost_mode",
 	"rpc_left_ghost_mode",
-	"rpc_set_safe_spot",
+	"rpc_set_safe_spot"
 }
-local EXTENSIONS = {
+local var_0_1 = {
 	"PlayerUnitGhostModeExtension",
-	"PlayerHuskGhostModeExtension",
+	"PlayerHuskGhostModeExtension"
 }
 
-GhostModeSystem.init = function (self, entity_system_creation_context, system_name)
-	GhostModeSystem.super.init(self, entity_system_creation_context, system_name, EXTENSIONS)
+function GhostModeSystem.init(arg_1_0, arg_1_1, arg_1_2)
+	GhostModeSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
-	self._network_transmit = entity_system_creation_context.network_transmit
-	self._is_server = entity_system_creation_context.is_server
-	self._unit_extensions = {}
+	arg_1_0._network_transmit = arg_1_1.network_transmit
+	arg_1_0._is_server = arg_1_1.is_server
+	arg_1_0._unit_extensions = {}
 
-	local network_event_delegate = entity_system_creation_context.network_event_delegate
+	local var_1_0 = arg_1_1.network_event_delegate
 
-	self._network_event_delegate = network_event_delegate
-	self._next_can_spawn_check = 0
-	self._enter_ghost_mode_allowance_check_time = 0
-	self._path_index = 0
-	self._safe_spot = nil
+	arg_1_0._network_event_delegate = var_1_0
+	arg_1_0._next_can_spawn_check = 0
+	arg_1_0._enter_ghost_mode_allowance_check_time = 0
+	arg_1_0._path_index = 0
+	arg_1_0._safe_spot = nil
 
-	network_event_delegate:register(self, unpack(RPCS))
+	var_1_0:register(arg_1_0, unpack(var_0_0))
 
-	self._active = false
+	arg_1_0._active = false
 end
 
-GhostModeSystem.destroy = function (self)
-	self._network_event_delegate:unregister(self)
+function GhostModeSystem.destroy(arg_2_0)
+	arg_2_0._network_event_delegate:unregister(arg_2_0)
 
-	self._network_event_delegate = nil
+	arg_2_0._network_event_delegate = nil
 end
 
-GhostModeSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
-	local extension = GhostModeSystem.super.on_add_extension(self, world, unit, extension_name, extension_init_data)
+function GhostModeSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local var_3_0 = GhostModeSystem.super.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 
-	self._unit_extensions[unit] = extension
+	arg_3_0._unit_extensions[arg_3_2] = var_3_0
 
-	extension:set_safe_spot(self._safe_spot)
+	var_3_0:set_safe_spot(arg_3_0._safe_spot)
 
-	return extension
+	return var_3_0
 end
 
-GhostModeSystem.on_remove_extension = function (self, unit, extension_name)
-	GhostModeSystem.super.on_remove_extension(self, unit, extension_name)
+function GhostModeSystem.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
+	GhostModeSystem.super.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
 
-	self._unit_extensions[unit] = nil
+	arg_4_0._unit_extensions[arg_4_1] = nil
 end
 
-GhostModeSystem.set_active = function (self, active)
-	self._active = active
+function GhostModeSystem.set_active(arg_5_0, arg_5_1)
+	arg_5_0._active = arg_5_1
 end
 
-GhostModeSystem.update = function (self, context, t)
-	if self._is_server and self._active then
-		self:_update_safe_spot()
+function GhostModeSystem.update(arg_6_0, arg_6_1, arg_6_2)
+	if arg_6_0._is_server and arg_6_0._active then
+		arg_6_0:_update_safe_spot()
 	end
 
-	GhostModeSystem.super.update(self, context, t)
+	GhostModeSystem.super.update(arg_6_0, arg_6_1, arg_6_2)
 end
 
-local IS_LOCAL_CALL = "is_local_call"
+local var_0_2 = "is_local_call"
 
-GhostModeSystem._update_safe_spot = function (self)
-	local conflict_director = Managers.state.conflict
-	local current_path_index = conflict_director.main_path_info.current_path_index
+function GhostModeSystem._update_safe_spot(arg_7_0)
+	local var_7_0 = Managers.state.conflict
+	local var_7_1 = var_7_0.main_path_info.current_path_index
 
-	if current_path_index > self._path_index then
-		self._path_index = current_path_index
+	if var_7_1 > arg_7_0._path_index then
+		arg_7_0._path_index = var_7_1
 
-		local next_path_index = current_path_index + 1
-		local main_paths = conflict_director.main_path_info.main_paths
+		local var_7_2 = var_7_1 + 1
+		local var_7_3 = var_7_0.main_path_info.main_paths
 
-		if not main_paths then
+		if not var_7_3 then
 			return
 		end
 
-		local next_main_path = main_paths[next_path_index]
+		local var_7_4 = var_7_3[var_7_2]
 
-		if not next_main_path then
+		if not var_7_4 then
 			return
 		end
 
-		local safe_spot = next_main_path.nodes[1]:unbox()
+		local var_7_5 = var_7_4.nodes[1]:unbox()
 
-		self:rpc_set_safe_spot(IS_LOCAL_CALL, safe_spot)
-		self._network_transmit:send_rpc_clients("rpc_set_safe_spot", safe_spot)
+		arg_7_0:rpc_set_safe_spot(var_0_2, var_7_5)
+		arg_7_0._network_transmit:send_rpc_clients("rpc_set_safe_spot", var_7_5)
 	end
 end
 
-GhostModeSystem.rpc_entered_ghost_mode = function (self, channel_id, unit_go_id)
-	local unit = self.unit_storage:unit(unit_go_id)
+function GhostModeSystem.rpc_entered_ghost_mode(arg_8_0, arg_8_1, arg_8_2)
+	local var_8_0 = arg_8_0.unit_storage:unit(arg_8_2)
 
-	if not ALIVE[unit] then
+	if not ALIVE[var_8_0] then
 		return
 	end
 
-	if CHANNEL_TO_PEER_ID[channel_id] ~= Network.peer_id() then
-		local husk_ghost_mode_extension = ScriptUnit.extension(unit, "ghost_mode_system")
-
-		husk_ghost_mode_extension:husk_enter_ghost_mode()
+	if CHANNEL_TO_PEER_ID[arg_8_1] ~= Network.peer_id() then
+		ScriptUnit.extension(var_8_0, "ghost_mode_system"):husk_enter_ghost_mode()
 	end
 
-	if self._is_server then
-		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+	if arg_8_0._is_server then
+		local var_8_1 = CHANNEL_TO_PEER_ID[arg_8_1]
 
-		self._network_transmit:send_rpc_clients_except("rpc_entered_ghost_mode", peer_id, unit_go_id)
+		arg_8_0._network_transmit:send_rpc_clients_except("rpc_entered_ghost_mode", var_8_1, arg_8_2)
 	end
 end
 
-GhostModeSystem.rpc_left_ghost_mode = function (self, channel_id, unit_go_id)
-	local unit = self.unit_storage:unit(unit_go_id)
+function GhostModeSystem.rpc_left_ghost_mode(arg_9_0, arg_9_1, arg_9_2)
+	local var_9_0 = arg_9_0.unit_storage:unit(arg_9_2)
 
-	if not ALIVE[unit] then
+	if not ALIVE[var_9_0] then
 		return
 	end
 
-	if CHANNEL_TO_PEER_ID[channel_id] ~= Network.peer_id() then
-		local ghost_mode_extension = ScriptUnit.extension(unit, "ghost_mode_system")
-
-		ghost_mode_extension:husk_leave_ghost_mode()
+	if CHANNEL_TO_PEER_ID[arg_9_1] ~= Network.peer_id() then
+		ScriptUnit.extension(var_9_0, "ghost_mode_system"):husk_leave_ghost_mode()
 	end
 
-	if self._is_server then
-		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+	if arg_9_0._is_server then
+		local var_9_1 = CHANNEL_TO_PEER_ID[arg_9_1]
 
-		self._network_transmit:send_rpc_clients_except("rpc_left_ghost_mode", peer_id, unit_go_id)
+		arg_9_0._network_transmit:send_rpc_clients_except("rpc_left_ghost_mode", var_9_1, arg_9_2)
 	end
 end
 
-GhostModeSystem.rpc_set_safe_spot = function (self, sender, safe_spot_position)
-	self._safe_spot = Vector3Box(safe_spot_position)
+function GhostModeSystem.rpc_set_safe_spot(arg_10_0, arg_10_1, arg_10_2)
+	arg_10_0._safe_spot = Vector3Box(arg_10_2)
 
-	local player = Managers.player:local_player()
-	local unit = player and player.player_unit
+	local var_10_0 = Managers.player:local_player()
+	local var_10_1 = var_10_0 and var_10_0.player_unit
 
-	if not unit then
+	if not var_10_1 then
 		return
 	end
 
-	local extension = self._unit_extensions[unit]
+	local var_10_2 = arg_10_0._unit_extensions[var_10_1]
 
-	if not extension then
+	if not var_10_2 then
 		return
 	end
 
-	extension:set_safe_spot(self._safe_spot)
+	var_10_2:set_safe_spot(arg_10_0._safe_spot)
 end
 
-GhostModeSystem.set_sweep_actors = function (unit, breed, enable)
-	if enable then
-		Unit.enable_proximity_unit(unit)
+function GhostModeSystem.set_sweep_actors(arg_11_0, arg_11_1, arg_11_2)
+	if arg_11_2 then
+		Unit.enable_proximity_unit(arg_11_0)
 	else
-		Unit.disable_proximity_unit(unit)
+		Unit.disable_proximity_unit(arg_11_0)
 	end
 
-	local hit_zones = breed.hit_zones
+	local var_11_0 = arg_11_1.hit_zones
 
-	for hit_zone_name, hit_zone in pairs(hit_zones) do
-		local actor_names = hit_zone.actors
+	for iter_11_0, iter_11_1 in pairs(var_11_0) do
+		local var_11_1 = iter_11_1.actors
 
-		if hit_zone_name ~= "afro" then
-			for i = 1, #actor_names do
-				local actor_name = actor_names[i]
-				local actor = Unit.actor(unit, actor_name)
+		if iter_11_0 ~= "afro" then
+			for iter_11_2 = 1, #var_11_1 do
+				local var_11_2 = var_11_1[iter_11_2]
+				local var_11_3 = Unit.actor(arg_11_0, var_11_2)
 
-				Actor.set_scene_query_enabled(actor, enable)
+				Actor.set_scene_query_enabled(var_11_3, arg_11_2)
 			end
 		end
 	end
 end
 
-GhostModeSystem.test_actors = function (unit, breed)
-	local hit_zones = breed.hit_zones
+function GhostModeSystem.test_actors(arg_12_0, arg_12_1)
+	local var_12_0 = arg_12_1.hit_zones
 
-	for hit_zone_name, hit_zone in pairs(hit_zones) do
-		local actor_names = hit_zone.actors
+	for iter_12_0, iter_12_1 in pairs(var_12_0) do
+		local var_12_1 = iter_12_1.actors
 
-		if hit_zone_name ~= "afro" then
-			for i = 1, #actor_names do
-				local actor_name = actor_names[i]
-				local actor = Unit.actor(unit, actor_name)
+		if iter_12_0 ~= "afro" then
+			for iter_12_2 = 1, #var_12_1 do
+				local var_12_2 = var_12_1[iter_12_2]
+				local var_12_3 = Unit.actor(arg_12_0, var_12_2)
 
-				if Actor.is_scene_query_enabled(actor) then
-					Debug.text("Actor %s is ON", actor_name)
+				if Actor.is_scene_query_enabled(var_12_3) then
+					Debug.text("Actor %s is ON", var_12_2)
 				end
 			end
 		end
 	end
 end
 
-GhostModeSystem.hot_join_sync = function (self, sender)
-	if not self._active then
+function GhostModeSystem.hot_join_sync(arg_13_0, arg_13_1)
+	if not arg_13_0._active then
 		return
 	end
 
-	if self._safe_spot then
-		self._network_transmit:send_rpc("rpc_set_safe_spot", sender, self._safe_spot:unbox())
+	if arg_13_0._safe_spot then
+		arg_13_0._network_transmit:send_rpc("rpc_set_safe_spot", arg_13_1, arg_13_0._safe_spot:unbox())
 	end
 
-	local extensions = self._unit_extensions
+	local var_13_0 = arg_13_0._unit_extensions
 
-	for unit, extension in pairs(extensions) do
-		local unit_go_id = self.unit_storage:go_id(unit)
+	for iter_13_0, iter_13_1 in pairs(var_13_0) do
+		local var_13_1 = arg_13_0.unit_storage:go_id(iter_13_0)
 
-		if unit_go_id then
-			if extension:is_in_ghost_mode() then
-				self._network_transmit:send_rpc("rpc_entered_ghost_mode", sender, unit_go_id)
+		if var_13_1 then
+			if iter_13_1:is_in_ghost_mode() then
+				arg_13_0._network_transmit:send_rpc("rpc_entered_ghost_mode", arg_13_1, var_13_1)
 			else
-				self._network_transmit:send_rpc("rpc_left_ghost_mode", sender, unit_go_id)
+				arg_13_0._network_transmit:send_rpc("rpc_left_ghost_mode", arg_13_1, var_13_1)
 			end
 		end
 	end

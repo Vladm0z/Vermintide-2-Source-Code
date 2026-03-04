@@ -1,159 +1,157 @@
-﻿-- chunkname: @scripts/settings/dlcs/woods/passive_ability_thornsister.lua
+-- chunkname: @scripts/settings/dlcs/woods/passive_ability_thornsister.lua
 
 PassiveAbilityThornsister = class(PassiveAbilityThornsister)
 
-PassiveAbilityThornsister.init = function (self, extension_init_context, unit, extension_init_data, ability_init_data)
-	self._owner_unit = unit
-	self._ability_init_data = ability_init_data
-	self._cooldown_buff = nil
-	self._stack_buffs = {}
-	self._num_stack_buffs = 0
+function PassiveAbilityThornsister.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	arg_1_0._owner_unit = arg_1_2
+	arg_1_0._ability_init_data = arg_1_4
+	arg_1_0._cooldown_buff = nil
+	arg_1_0._stack_buffs = {}
+	arg_1_0._num_stack_buffs = 0
 end
 
-PassiveAbilityThornsister.extensions_ready = function (self, world, unit)
-	self._career_extension = ScriptUnit.has_extension(unit, "career_system")
-	self._buff_extension = ScriptUnit.has_extension(unit, "buff_system")
+function PassiveAbilityThornsister.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+	arg_2_0._career_extension = ScriptUnit.has_extension(arg_2_2, "career_system")
+	arg_2_0._buff_extension = ScriptUnit.has_extension(arg_2_2, "buff_system")
 
-	local ability_init_data = self._ability_init_data
+	local var_2_0 = arg_2_0._ability_init_data
 
-	self._career_extension:setup_extra_ability_uses(0, ability_init_data.cooldown, ability_init_data.starting_stack_count, ability_init_data.max_stacks)
+	arg_2_0._career_extension:setup_extra_ability_uses(0, var_2_0.cooldown, var_2_0.starting_stack_count, var_2_0.max_stacks)
 
-	local talent_extension = ScriptUnit.has_extension(unit, "talent_system")
+	local var_2_1 = ScriptUnit.has_extension(arg_2_2, "talent_system")
 
-	self:_update_extra_abilities_info(talent_extension)
-	self:_register_events()
+	arg_2_0:_update_extra_abilities_info(var_2_1)
+	arg_2_0:_register_events()
 end
 
-PassiveAbilityThornsister.destroy = function (self)
-	self:_unregister_events()
+function PassiveAbilityThornsister.destroy(arg_3_0)
+	arg_3_0:_unregister_events()
 end
 
-PassiveAbilityThornsister._register_events = function (self)
-	Managers.state.event:register(self, "on_talents_changed", "on_talents_changed")
+function PassiveAbilityThornsister._register_events(arg_4_0)
+	Managers.state.event:register(arg_4_0, "on_talents_changed", "on_talents_changed")
 end
 
-PassiveAbilityThornsister._unregister_events = function (self)
-	local event_manager = Managers.state.event
-
-	if event_manager then
-		Managers.state.event:unregister("on_talents_changed", self)
+function PassiveAbilityThornsister._unregister_events(arg_5_0)
+	if Managers.state.event then
+		Managers.state.event:unregister("on_talents_changed", arg_5_0)
 	end
 end
 
-PassiveAbilityThornsister.update = function (self, dt, t)
-	local career_ext = self._career_extension
+function PassiveAbilityThornsister.update(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = arg_6_0._career_extension
 
-	if not career_ext then
+	if not var_6_0 then
 		return
 	end
 
-	career_ext:modify_extra_ability_charge(dt)
+	var_6_0:modify_extra_ability_charge(arg_6_1)
 
-	local buff_extension = self._buff_extension
+	local var_6_1 = arg_6_0._buff_extension
 
-	if buff_extension then
-		local extra_ability_uses, extra_ability_uses_max = career_ext:get_extra_ability_uses()
-		local extra_ability_use_charge, extra_ability_use_required_charge = career_ext:get_extra_ability_charge()
-		local cooldown_buff = self._cooldown_buff
+	if var_6_1 then
+		local var_6_2, var_6_3 = var_6_0:get_extra_ability_uses()
+		local var_6_4, var_6_5 = var_6_0:get_extra_ability_charge()
+		local var_6_6 = arg_6_0._cooldown_buff
 
-		if cooldown_buff and cooldown_buff.is_stale then
-			cooldown_buff = nil
+		if var_6_6 and var_6_6.is_stale then
+			var_6_6 = nil
 		end
 
-		if extra_ability_uses < extra_ability_uses_max then
-			if not cooldown_buff then
-				local buff_id = buff_extension:add_buff("kerillian_thorn_sister_free_ability_cooldown")
+		if var_6_2 < var_6_3 then
+			if not var_6_6 then
+				local var_6_7 = var_6_1:add_buff("kerillian_thorn_sister_free_ability_cooldown")
 
-				cooldown_buff = buff_extension:get_buff_by_id(buff_id)
-				self._cooldown_buff = cooldown_buff
+				var_6_6 = var_6_1:get_buff_by_id(var_6_7)
+				arg_6_0._cooldown_buff = var_6_6
 			end
 
-			cooldown_buff.start_time = t - extra_ability_use_charge
-			cooldown_buff.duration = extra_ability_use_required_charge
-		elseif cooldown_buff then
-			buff_extension:remove_buff(cooldown_buff.id)
+			var_6_6.start_time = arg_6_2 - var_6_4
+			var_6_6.duration = var_6_5
+		elseif var_6_6 then
+			var_6_1:remove_buff(var_6_6.id)
 
-			self._cooldown_buff = nil
+			arg_6_0._cooldown_buff = nil
 		end
 
-		local stack_buffs = self._stack_buffs
-		local num_stacks = self._num_stack_buffs
+		local var_6_8 = arg_6_0._stack_buffs
+		local var_6_9 = arg_6_0._num_stack_buffs
 
-		if num_stacks < extra_ability_uses then
-			for i = 1, extra_ability_uses - num_stacks do
-				stack_buffs[num_stacks + i] = buff_extension:add_buff("kerillian_thorn_sister_free_ability_stack")
+		if var_6_9 < var_6_2 then
+			for iter_6_0 = 1, var_6_2 - var_6_9 do
+				var_6_8[var_6_9 + iter_6_0] = var_6_1:add_buff("kerillian_thorn_sister_free_ability_stack")
 			end
-		elseif extra_ability_uses < num_stacks then
-			for i = 1, num_stacks - extra_ability_uses do
-				local index = num_stacks - i + 1
+		elseif var_6_2 < var_6_9 then
+			for iter_6_1 = 1, var_6_9 - var_6_2 do
+				local var_6_10 = var_6_9 - iter_6_1 + 1
 
-				buff_extension:remove_buff(stack_buffs[index])
+				var_6_1:remove_buff(var_6_8[var_6_10])
 
-				stack_buffs[index] = nil
+				var_6_8[var_6_10] = nil
 			end
 		end
 
-		self._num_stack_buffs = extra_ability_uses
+		arg_6_0._num_stack_buffs = var_6_2
 	end
 end
 
-PassiveAbilityThornsister.on_talents_changed = function (self, unit, talent_extension)
-	if unit ~= self._owner_unit then
+function PassiveAbilityThornsister.on_talents_changed(arg_7_0, arg_7_1, arg_7_2)
+	if arg_7_1 ~= arg_7_0._owner_unit then
 		return
 	end
 
-	local buff_extension = self._buff_extension
+	local var_7_0 = arg_7_0._buff_extension
 
-	if buff_extension then
-		local cooldown_buff = self._cooldown_buff
+	if var_7_0 then
+		local var_7_1 = arg_7_0._cooldown_buff
 
-		if cooldown_buff and not cooldown_buff.is_stale then
-			buff_extension:remove_buff(cooldown_buff.id)
+		if var_7_1 and not var_7_1.is_stale then
+			var_7_0:remove_buff(var_7_1.id)
 		end
 
-		self._cooldown_buff = nil
+		arg_7_0._cooldown_buff = nil
 
-		local stack_buffs = self._stack_buffs
-		local num_stacks = self._num_stack_buffs
+		local var_7_2 = arg_7_0._stack_buffs
+		local var_7_3 = arg_7_0._num_stack_buffs
 
-		for i = 1, num_stacks do
-			local index = num_stacks - i + 1
+		for iter_7_0 = 1, var_7_3 do
+			local var_7_4 = var_7_3 - iter_7_0 + 1
 
-			buff_extension:remove_buff(stack_buffs[index])
+			var_7_0:remove_buff(var_7_2[var_7_4])
 
-			stack_buffs[index] = nil
+			var_7_2[var_7_4] = nil
 		end
 
-		self._num_stack_buffs = 0
+		arg_7_0._num_stack_buffs = 0
 	end
 
-	self:_update_extra_abilities_info(talent_extension)
+	arg_7_0:_update_extra_abilities_info(arg_7_2)
 end
 
-PassiveAbilityThornsister._update_extra_abilities_info = function (self, talent_extension)
-	if not talent_extension then
+function PassiveAbilityThornsister._update_extra_abilities_info(arg_8_0, arg_8_1)
+	if not arg_8_1 then
 		return
 	end
 
-	local career_ext = self._career_extension
+	local var_8_0 = arg_8_0._career_extension
 
-	if not career_ext then
+	if not var_8_0 then
 		return
 	end
 
-	local max_uses = self._ability_init_data.max_stacks
+	local var_8_1 = arg_8_0._ability_init_data.max_stacks
 
-	if talent_extension:has_talent("kerillian_double_passive") then
-		max_uses = max_uses + 1
+	if arg_8_1:has_talent("kerillian_double_passive") then
+		var_8_1 = var_8_1 + 1
 	end
 
-	career_ext:update_extra_ability_uses_max(max_uses)
+	var_8_0:update_extra_ability_uses_max(var_8_1)
 
-	local cooldown = self._ability_init_data.cooldown
+	local var_8_2 = arg_8_0._ability_init_data.cooldown
 
-	if talent_extension:has_talent("kerillian_thorn_sister_faster_passive") then
-		cooldown = cooldown * 0.5
+	if arg_8_1:has_talent("kerillian_thorn_sister_faster_passive") then
+		var_8_2 = var_8_2 * 0.5
 	end
 
-	career_ext:update_extra_ability_charge(cooldown)
+	var_8_0:update_extra_ability_charge(var_8_2)
 end

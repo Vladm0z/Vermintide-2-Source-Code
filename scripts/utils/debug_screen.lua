@@ -1,257 +1,259 @@
-﻿-- chunkname: @scripts/utils/debug_screen.lua
+-- chunkname: @scripts/utils/debug_screen.lua
 
-local font = "arial"
-local font_mtrl = "materials/fonts/" .. font
-local fade_speed = 10
-local base_layer = UILayer.debug_screen
+local var_0_0 = "arial"
+local var_0_1 = "materials/fonts/" .. var_0_0
+local var_0_2 = 10
+local var_0_3 = UILayer.debug_screen
 
-local function ease_out_quad(t, b, c, d)
-	t = t / d
+local function var_0_4(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0 = arg_1_0 / arg_1_3
 
-	return -c * t * (t - 2) + b
+	return -arg_1_2 * arg_1_0 * (arg_1_0 - 2) + arg_1_1
 end
 
-local indicator_offset = 0
+local var_0_5 = 0
 
-local function update_option(cs, option_index, dont_save, ignore_propagation)
-	if cs.propagate_to_server and not DebugScreen._is_server and not ignore_propagation then
-		DebugScreen._propagate_option(cs.setting_id, option_index, not not dont_save)
+local function var_0_6(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	if arg_2_0.propagate_to_server and not DebugScreen._is_server and not arg_2_3 then
+		DebugScreen._propagate_option(arg_2_0.setting_id, arg_2_1, not not arg_2_2)
 	end
 
-	local option = cs.options[option_index]
+	local var_2_0 = arg_2_0.options[arg_2_1]
 
-	cs.selected_id = option_index
+	arg_2_0.selected_id = arg_2_1
 
-	if option == "[clear value]" then
-		option = nil
-		cs.selected_id = nil
+	if var_2_0 == "[clear value]" then
+		var_2_0 = nil
+		arg_2_0.selected_id = nil
 	end
 
-	if cs.copy then
-		cs.copy.selected_id = cs.selected_id
+	if arg_2_0.copy then
+		arg_2_0.copy.selected_id = arg_2_0.selected_id
 	end
 
-	if cs.commands then
-		local command_list = cs.commands[cs.hot_id]
+	if arg_2_0.commands then
+		local var_2_1 = arg_2_0.commands[arg_2_0.hot_id]
 
-		if command_list then
-			for i = 1, #command_list do
-				local command_table = command_list[i]
+		if var_2_1 then
+			for iter_2_0 = 1, #var_2_1 do
+				local var_2_2 = var_2_1[iter_2_0]
 
-				Application.console_command(unpack(command_table))
+				Application.console_command(unpack(var_2_2))
 			end
 		end
 	end
 
-	Development.set_setting(cs.title, option)
+	Development.set_setting(arg_2_0.title, var_2_0)
 
-	script_data[cs.title] = option
+	script_data[arg_2_0.title] = var_2_0
 
-	Development.clear_param_cache(cs.title)
+	Development.clear_param_cache(arg_2_0.title)
 
-	if cs.callback then
-		cs.callback(option)
+	if arg_2_0.callback then
+		arg_2_0.callback(var_2_0)
 	end
 
-	if not dont_save and not cs.never_save then
-		printf("DebugScreen: script_data.%-35s = %s", cs.title, tostring(cs.options[option_index]))
+	if not arg_2_2 and not arg_2_0.never_save then
+		printf("DebugScreen: script_data.%-35s = %s", arg_2_0.title, tostring(arg_2_0.options[arg_2_1]))
 		Application.save_user_settings()
 	end
 
-	Profiler.event("%s = %s", cs.title, tostring(cs.options[option_index]))
+	Profiler.event("%s = %s", arg_2_0.title, tostring(arg_2_0.options[arg_2_1]))
 end
 
-local function exec_func(cs)
-	if cs.propagate_to_server and not DebugScreen._is_server then
-		DebugScreen._propagate_option(cs.setting_id, 0, true)
+local function var_0_7(arg_3_0)
+	if arg_3_0.propagate_to_server and not DebugScreen._is_server then
+		DebugScreen._propagate_option(arg_3_0.setting_id, 0, true)
 	end
 
-	cs.func(cs.options, cs.hot_id)
+	arg_3_0.func(arg_3_0.options, arg_3_0.hot_id)
 
-	if cs.clear_setting then
-		cs.selected_id = nil
+	if arg_3_0.clear_setting then
+		arg_3_0.selected_id = nil
 
-		Development.set_setting(cs.title, nil)
+		Development.set_setting(arg_3_0.title, nil)
 
-		script_data[cs.title] = nil
+		script_data[arg_3_0.title] = nil
 
-		Development.clear_param_cache(cs.title)
+		Development.clear_param_cache(arg_3_0.title)
 	end
 end
 
-local function activate_preset(cs)
-	for preset_key, preset_value in pairs(cs.preset) do
-		for cs2_i = 1, #DebugScreen.console_settings do
-			local cs2 = DebugScreen.console_settings[cs2_i]
+local function var_0_8(arg_4_0)
+	for iter_4_0, iter_4_1 in pairs(arg_4_0.preset) do
+		for iter_4_2 = 1, #DebugScreen.console_settings do
+			local var_4_0 = DebugScreen.console_settings[iter_4_2]
 
-			if cs2.title == preset_key and cs2.is_boolean then
-				update_option(cs2, preset_value and 1 or 2)
+			if var_4_0.title == iter_4_0 and var_4_0.is_boolean then
+				var_0_6(var_4_0, iter_4_1 and 1 or 2)
 			end
 		end
 	end
 
-	cs.selected_id = nil
+	arg_4_0.selected_id = nil
 
-	Development.set_setting(cs.title, nil)
+	Development.set_setting(arg_4_0.title, nil)
 
-	script_data[cs.title] = nil
+	script_data[arg_4_0.title] = nil
 
-	Development.clear_param_cache(cs.title)
+	Development.clear_param_cache(arg_4_0.title)
 end
 
 DebugScreen = DebugScreen or {}
 
-local DebugScreen = DebugScreen
+local var_0_9 = DebugScreen
 
-DebugScreen.console_width = DebugScreen.console_width or 800 * (RESOLUTION_LOOKUP.scale or 1)
-DebugScreen.font_size = DebugScreen.font_size or 20 * (RESOLUTION_LOOKUP.scale or 1)
-DebugScreen.numpad_presses = {}
-DebugScreen.shortcut_any = "_any_"
-DebugScreen.shortcut_version = 1
+var_0_9.console_width = var_0_9.console_width or 800 * (RESOLUTION_LOOKUP.scale or 1)
+var_0_9.font_size = var_0_9.font_size or 20 * (RESOLUTION_LOOKUP.scale or 1)
+var_0_9.numpad_presses = {}
+var_0_9.shortcut_any = "_any_"
+var_0_9.shortcut_version = 1
 
-local function migrate_shortcuts(saved_data, version)
-	if version == 0 then
-		for i = 1, #saved_data / 2 do
-			table.insert(saved_data, i * 3, DebugScreen.shortcut_any)
+local function var_0_10(arg_5_0, arg_5_1)
+	if arg_5_1 == 0 then
+		for iter_5_0 = 1, #arg_5_0 / 2 do
+			table.insert(arg_5_0, iter_5_0 * 3, var_0_9.shortcut_any)
 		end
 	end
 
-	return saved_data
+	return arg_5_0
 end
 
-DebugScreen.setup = function (world, settings, callbacks, is_server)
-	local DebugScreen = DebugScreen
+function var_0_9.setup(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	local var_6_0 = var_0_9
 
-	DebugScreen.world = world
-	DebugScreen.gui = World.create_screen_gui(world, "material", "materials/fonts/gw_fonts", "material", "materials/menu/debug_screen", "immediate")
-	DebugScreen.active = false
-	DebugScreen._is_server = is_server
+	var_6_0.world = arg_6_0
+	var_6_0.gui = World.create_screen_gui(arg_6_0, "material", "materials/fonts/gw_fonts", "material", "materials/menu/debug_screen", "immediate")
+	var_6_0.active = false
+	var_6_0._is_server = arg_6_3
 
-	local script_data = script_data
+	local var_6_1 = script_data
 
-	DebugScreen.console_settings = {}
+	var_6_0.console_settings = {}
 
-	for i = 1, #settings do
-		local cs = {
+	for iter_6_0 = 1, #arg_6_1 do
+		local var_6_2 = {
 			hot_id = 1,
-			options = {},
+			options = {}
 		}
-		local setting = settings[i]
+		local var_6_3 = arg_6_1[iter_6_0]
 
-		if setting.item_source then
-			local item_source = setting.item_source
+		if var_6_3.item_source then
+			local var_6_4 = var_6_3.item_source
 
-			if setting.custom_item_source_order then
-				setting.custom_item_source_order(item_source, cs.options)
+			if var_6_3.custom_item_source_order then
+				var_6_3.custom_item_source_order(var_6_4, var_6_2.options)
 			else
-				for k, v in pairs(item_source) do
-					local option = k
+				for iter_6_1, iter_6_2 in pairs(var_6_4) do
+					local var_6_5 = iter_6_1
 
-					cs.options[#cs.options + 1] = option
+					var_6_2.options[#var_6_2.options + 1] = var_6_5
 				end
 			end
 
-			if setting.func then
-				cs.func = setting.func
-				cs.clear_setting = false
+			if var_6_3.func then
+				var_6_2.func = var_6_3.func
+				var_6_2.clear_setting = false
 			end
 
-			cs.load_items_source_func = setting.load_items_source_func
-		elseif setting.is_boolean then
-			cs.is_boolean = true
-			cs.options[#cs.options + 1] = true
-			cs.options[#cs.options + 1] = false
+			var_6_2.load_items_source_func = var_6_3.load_items_source_func
+		elseif var_6_3.is_boolean then
+			var_6_2.is_boolean = true
+			var_6_2.options[#var_6_2.options + 1] = true
+			var_6_2.options[#var_6_2.options + 1] = false
 
-			if setting.func then
-				cs.func = setting.func
+			if var_6_3.func then
+				var_6_2.func = var_6_3.func
 			end
-		elseif setting.command_list then
-			cs.commands = {}
+		elseif var_6_3.command_list then
+			var_6_2.commands = {}
 
-			for j = 1, #setting.command_list do
-				local command = setting.command_list[j]
+			for iter_6_3 = 1, #var_6_3.command_list do
+				local var_6_6 = var_6_3.command_list[iter_6_3]
 
-				cs.options[#cs.options + 1] = command.description
-				cs.commands[#cs.commands + 1] = command.commands
+				var_6_2.options[#var_6_2.options + 1] = var_6_6.description
+				var_6_2.commands[#var_6_2.commands + 1] = var_6_6.commands
 			end
-		elseif setting.func then
-			cs.options[1] = "Activate function"
-			cs.func = setting.func
-		elseif setting.preset then
-			cs.options[1] = "Activate preset"
-			cs.preset = setting.preset
+		elseif var_6_3.func then
+			var_6_2.options[1] = "Activate function"
+			var_6_2.func = var_6_3.func
+		elseif var_6_3.preset then
+			var_6_2.options[1] = "Activate preset"
+			var_6_2.preset = var_6_3.preset
 		end
 
-		cs.propagate_to_server = setting.propagate_to_server
-		cs.never_save = setting.never_save
-		cs.item_display_func = setting.item_display_func
+		var_6_2.propagate_to_server = var_6_3.propagate_to_server
+		var_6_2.never_save = var_6_3.never_save
+		var_6_2.item_display_func = var_6_3.item_display_func
 
-		if setting.bitmap then
-			cs.bitmap = setting.bitmap
-			cs.bitmap_size = setting.bitmap_size
+		if var_6_3.bitmap then
+			var_6_2.bitmap = var_6_3.bitmap
+			var_6_2.bitmap_size = var_6_3.bitmap_size
 		end
 
-		if setting.callback then
-			cs.callback = callbacks[setting.callback]
+		if var_6_3.callback then
+			var_6_2.callback = arg_6_2[var_6_3.callback]
 		end
 
-		cs.title = setting.setting_name
-		cs.description = setting.description
-		cs.category = setting.category
-		cs.close_when_selected = setting.close_when_selected
-		cs.clear_when_selected = setting.clear_when_selected
-		cs.setting_id = i
+		var_6_2.title = var_6_3.setting_name
+		var_6_2.description = var_6_3.description
+		var_6_2.category = var_6_3.category
+		var_6_2.close_when_selected = var_6_3.close_when_selected
+		var_6_2.clear_when_selected = var_6_3.clear_when_selected
+		var_6_2.setting_id = iter_6_0
 
-		for j = 1, #cs.options do
-			local option = cs.options[j]
+		for iter_6_4 = 1, #var_6_2.options do
+			local var_6_7 = var_6_2.options[iter_6_4]
 
-			if Development.parameter(cs.title) == option then
-				cs.selected_id = j
-				cs.hot_id = j
+			if Development.parameter(var_6_2.title) == var_6_7 then
+				var_6_2.selected_id = iter_6_4
+				var_6_2.hot_id = iter_6_4
 
-				update_option(cs, j, true, true)
+				var_0_6(var_6_2, iter_6_4, true, true)
 			end
 		end
 
-		if #cs.options > 0 and not setting.no_nil and not setting.func and not setting.preset then
-			cs.options[#cs.options + 1] = "[clear value]"
+		if #var_6_2.options > 0 and not var_6_3.no_nil and not var_6_3.func and not var_6_3.preset then
+			var_6_2.options[#var_6_2.options + 1] = "[clear value]"
 		end
 
-		DebugScreen.console_settings[#DebugScreen.console_settings + 1] = cs
+		var_6_0.console_settings[#var_6_0.console_settings + 1] = var_6_2
 	end
 
-	DebugScreen.settings_hash = HashUtils.fnv32_hash(table.concat(table.select_array(settings, function (idx, setting)
-		return setting.setting_name or idx
+	var_6_0.settings_hash = HashUtils.fnv32_hash(table.concat(table.select_array(arg_6_1, function(arg_7_0, arg_7_1)
+		return arg_7_1.setting_name or arg_7_0
 	end), ","))
 
-	for i = 1, #DebugScreen.console_settings do
-		local cs = DebugScreen.console_settings[i]
+	for iter_6_5 = 1, #var_6_0.console_settings do
+		local var_6_8 = var_6_0.console_settings[iter_6_5]
 
-		if cs.preset and Development.parameter(cs.title) then
-			activate_preset(cs)
+		if var_6_8.preset and Development.parameter(var_6_8.title) then
+			var_0_8(var_6_8)
 		end
 	end
 
-	DebugScreen.shortcut_list = {}
-	DebugScreen.shortcuts = Development.setting("debug_shortcuts") or {
+	var_6_0.shortcut_list = {}
+	var_6_0.shortcuts = Development.setting("debug_shortcuts") or {
 		"numpad 0",
-		"debug_weapons",
+		"debug_weapons"
 	}
 
-	local saved_version = tonumber(DebugScreen.shortcuts[1]) or 0
+	local var_6_9 = tonumber(var_6_0.shortcuts[1]) or 0
 
-	migrate_shortcuts(DebugScreen.shortcuts, saved_version)
+	var_0_10(var_6_0.shortcuts, var_6_9)
 
-	for i = 1, #DebugScreen.shortcuts, 3 do
-		local shortcut_input, shortcut_setting, shortcut_option = DebugScreen.shortcuts[i], DebugScreen.shortcuts[i + 1], DebugScreen.shortcuts[i + 2]
+	for iter_6_6 = 1, #var_6_0.shortcuts, 3 do
+		local var_6_10 = var_6_0.shortcuts[iter_6_6]
+		local var_6_11 = var_6_0.shortcuts[iter_6_6 + 1]
+		local var_6_12 = var_6_0.shortcuts[iter_6_6 + 2]
 
-		for j = 1, #DebugScreen.console_settings do
-			local cs = DebugScreen.console_settings[j]
+		for iter_6_7 = 1, #var_6_0.console_settings do
+			local var_6_13 = var_6_0.console_settings[iter_6_7]
 
-			if cs.title == shortcut_setting then
-				DebugScreen.shortcut_list[shortcut_input] = {
-					cs = cs,
-					option = shortcut_option,
+			if var_6_13.title == var_6_11 then
+				var_6_0.shortcut_list[var_6_10] = {
+					cs = var_6_13,
+					option = var_6_12
 				}
 
 				break
@@ -259,851 +261,832 @@ DebugScreen.setup = function (world, settings, callbacks, is_server)
 		end
 	end
 
-	DebugScreen.favorites = Development.setting("debug_favorites") or {}
+	var_6_0.favorites = Development.setting("debug_favorites") or {}
 
-	for i = 1, #DebugScreen.favorites do
-		local favorite = DebugScreen.favorites[i]
+	for iter_6_8 = 1, #var_6_0.favorites do
+		local var_6_14 = var_6_0.favorites[iter_6_8]
 
-		for j = 1, #DebugScreen.console_settings do
-			local cs = DebugScreen.console_settings[j]
+		for iter_6_9 = 1, #var_6_0.console_settings do
+			local var_6_15 = var_6_0.console_settings[iter_6_9]
 
-			if cs.title == favorite then
-				local cs_copy = table.clone(cs)
+			if var_6_15.title == var_6_14 then
+				local var_6_16 = table.clone(var_6_15)
 
-				cs_copy.category = "Favorites"
-				cs.copy = cs_copy
-				cs_copy.copy = cs
+				var_6_16.category = "Favorites"
+				var_6_15.copy = var_6_16
+				var_6_16.copy = var_6_15
 
-				table.insert(DebugScreen.console_settings, 1, cs_copy)
+				table.insert(var_6_0.console_settings, 1, var_6_16)
 
 				break
 			end
 		end
 	end
 
-	if not script_data.debug_enabled then
-		script_data.disable_debug_draw = true
+	if not var_6_1.debug_enabled then
+		var_6_1.disable_debug_draw = true
 	end
 
-	DebugScreen.active_id = nil
-	DebugScreen.hot_id = 1
-	DebugScreen.fade_timer = 0
-	DebugScreen.closing = false
-	DebugScreen.target_y_offset = 0
-	DebugScreen.text_effects = {}
-	DebugScreen.hold_to_move_timer = 0
-	DebugScreen.is_holding = false
-	DebugScreen.active_shortcut_data = {
-		time = 0,
+	var_6_0.active_id = nil
+	var_6_0.hot_id = 1
+	var_6_0.fade_timer = 0
+	var_6_0.closing = false
+	var_6_0.target_y_offset = 0
+	var_6_0.text_effects = {}
+	var_6_0.hold_to_move_timer = 0
+	var_6_0.is_holding = false
+	var_6_0.active_shortcut_data = {
+		time = 0
 	}
-	DebugScreen.unblocked_services = {}
-	DebugScreen.unblocked_services_n = 0
-	DebugScreen.search_active = false
-	DebugScreen.search_string = ""
-	DebugScreen.filtered_console_settings = DebugScreen.console_settings
-	DebugScreen.allow_to_open = true
+	var_6_0.unblocked_services = {}
+	var_6_0.unblocked_services_n = 0
+	var_6_0.search_active = false
+	var_6_0.search_string = ""
+	var_6_0.filtered_console_settings = var_6_0.console_settings
+	var_6_0.allow_to_open = true
 end
 
-DebugScreen.destroy = function ()
-	World.destroy_gui(DebugScreen.world, DebugScreen.gui)
+function var_0_9.destroy()
+	World.destroy_gui(var_0_9.world, var_0_9.gui)
 
-	DebugScreen.world = nil
-	DebugScreen.gui = nil
+	var_0_9.world = nil
+	var_0_9.gui = nil
 end
 
-DebugScreen.set_blocked = function (is_blocked)
-	DebugScreen.is_blocked = is_blocked
+function var_0_9.set_blocked(arg_9_0)
+	var_0_9.is_blocked = arg_9_0
 end
 
-DebugScreen.reset_setting_size = function (cs, pos_y, root_y)
-	cs.setting_height = 0
-	cs.setting_pos = math.abs(pos_y - root_y)
-	cs.option_pos = nil
+function var_0_9.reset_setting_size(arg_10_0, arg_10_1, arg_10_2)
+	arg_10_0.setting_height = 0
+	arg_10_0.setting_pos = math.abs(arg_10_1 - arg_10_2)
+	arg_10_0.option_pos = nil
 end
 
-DebugScreen.push_setting_size = function (cs, pos_y, size)
-	pos_y = pos_y - size
-	cs.setting_height = cs.setting_height + size
+function var_0_9.push_setting_size(arg_11_0, arg_11_1, arg_11_2)
+	arg_11_1 = arg_11_1 - arg_11_2
+	arg_11_0.setting_height = arg_11_0.setting_height + arg_11_2
 
-	return pos_y
+	return arg_11_1
 end
 
-DebugScreen.accelerate_factor = DebugScreen.accelerate_factor or 1
+var_0_9.accelerate_factor = var_0_9.accelerate_factor or 1
 
-DebugScreen.update = function (dt, t, input_service, input_manager)
-	local DebugScreen = DebugScreen
+function var_0_9.update(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	local var_12_0 = var_0_9
 
-	if DebugScreen.is_blocked or not script_data.debug_enabled or not input_service or IS_LINUX then
+	if var_12_0.is_blocked or not script_data.debug_enabled or not arg_12_2 or IS_LINUX then
 		return
 	end
 
-	local gui = DebugScreen.gui
+	local var_12_1 = var_12_0.gui
 
-	dt = dt / GLOBAL_TIME_SCALE
+	arg_12_0 = arg_12_0 / GLOBAL_TIME_SCALE
 
-	local opened_this_frame = false
-	local font_size = DebugScreen.font_size
-	local console_width = DebugScreen.console_width
-	local mod_key_down = input_service:get("console_mod_key")
+	local var_12_2 = false
+	local var_12_3 = var_12_0.font_size
+	local var_12_4 = var_12_0.console_width
+	local var_12_5 = arg_12_2:get("console_mod_key")
 
-	if input_service:get("console_open_key") or DebugScreen.active and input_service:is_blocked() then
-		DebugScreen.active = not DebugScreen.active
+	if arg_12_2:get("console_open_key") or var_12_0.active and arg_12_2:is_blocked() then
+		var_12_0.active = not var_12_0.active
 
-		if DebugScreen.active then
-			input_manager:device_block_service("keyboard", 1, "Debug")
+		if var_12_0.active then
+			arg_12_3:device_block_service("keyboard", 1, "Debug")
 		else
-			input_manager:device_unblock_service("keyboard", 1, "Debug")
+			arg_12_3:device_unblock_service("keyboard", 1, "Debug")
 		end
 	end
 
-	if input_service:get("right_key") and not DebugScreen.active then
-		DebugScreen.active = not DebugScreen.active
+	if arg_12_2:get("right_key") and not var_12_0.active then
+		var_12_0.active = not var_12_0.active
 
-		input_manager:device_block_service("keyboard", 1, "Debug", "debug_screen")
+		arg_12_3:device_block_service("keyboard", 1, "Debug", "debug_screen")
 
-		opened_this_frame = true
+		var_12_2 = true
 	end
 
-	if not DebugScreen.active and DebugScreen.fade_timer == 0 then
-		for shortcut_input, cs_data in pairs(DebugScreen.shortcut_list) do
-			if Keyboard.pressed(Keyboard.button_index(shortcut_input)) then
-				local cs = cs_data.cs
-				local option = cs_data.option
+	if not var_12_0.active and var_12_0.fade_timer == 0 then
+		for iter_12_0, iter_12_1 in pairs(var_12_0.shortcut_list) do
+			if Keyboard.pressed(Keyboard.button_index(iter_12_0)) then
+				local var_12_6 = iter_12_1.cs
+				local var_12_7 = iter_12_1.option
 
-				if option == DebugScreen.shortcut_any then
-					if cs.hot_id == #cs.options then
-						cs.hot_id = 1
+				if var_12_7 == var_12_0.shortcut_any then
+					if var_12_6.hot_id == #var_12_6.options then
+						var_12_6.hot_id = 1
 					else
-						cs.hot_id = cs.hot_id + 1
+						var_12_6.hot_id = var_12_6.hot_id + 1
 					end
 				else
-					local option_id = table.find(cs.options, option)
+					local var_12_8 = table.find(var_12_6.options, var_12_7)
 
-					option_id = math.clamp(option_id or -1, 1, #cs.options)
-					cs.hot_id = option_id
+					var_12_6.hot_id = math.clamp(var_12_8 or -1, 1, #var_12_6.options)
 				end
 
-				if cs.func then
-					exec_func(cs)
+				if var_12_6.func then
+					var_0_7(var_12_6)
 				else
-					update_option(cs, cs.hot_id)
+					var_0_6(var_12_6, var_12_6.hot_id)
 				end
 
-				DebugScreen.active_shortcut_data.time = t + 1
-				DebugScreen.active_shortcut_data.cs = cs
+				var_12_0.active_shortcut_data.time = arg_12_1 + 1
+				var_12_0.active_shortcut_data.cs = var_12_6
 			end
 		end
 
-		if t < DebugScreen.active_shortcut_data.time then
-			local cs = DebugScreen.active_shortcut_data.cs
+		if arg_12_1 < var_12_0.active_shortcut_data.time then
+			local var_12_9 = var_12_0.active_shortcut_data.cs
 
-			Debug.text("Debug Screen: %s = %s", cs.title, tostring(cs.options[cs.hot_id]))
+			Debug.text("Debug Screen: %s = %s", var_12_9.title, tostring(var_12_9.options[var_12_9.hot_id]))
 		end
 
 		return
 	end
 
-	DebugScreen.update_search(input_manager, input_service, gui, t, dt, opened_this_frame)
+	var_12_0.update_search(arg_12_3, arg_12_2, var_12_1, arg_12_1, arg_12_0, var_12_2)
 
-	if DebugScreen.active then
-		DebugScreen.fade_timer = math.min(1, DebugScreen.fade_timer + dt * fade_speed)
+	if var_12_0.active then
+		var_12_0.fade_timer = math.min(1, var_12_0.fade_timer + arg_12_0 * var_0_2)
 	else
-		DebugScreen.fade_timer = math.max(0, DebugScreen.fade_timer - dt * fade_speed)
+		var_12_0.fade_timer = math.max(0, var_12_0.fade_timer - arg_12_0 * var_0_2)
 	end
 
-	local filtered_console_settings = DebugScreen.console_settings
-	local current_hot_cs = DebugScreen.filtered_console_settings[DebugScreen.hot_id]
-	local setting_search_string, option_search_string = DebugScreen.search_string:match("([^.]*).?(.*)")
+	local var_12_10 = var_12_0.console_settings
+	local var_12_11 = var_12_0.filtered_console_settings[var_12_0.hot_id]
+	local var_12_12, var_12_13 = var_12_0.search_string:match("([^.]*).?(.*)")
 
-	if DebugScreen.search_active then
-		if setting_search_string == "*" then
-			filtered_console_settings = {}
+	if var_12_0.search_active then
+		if var_12_12 == "*" then
+			var_12_10 = {}
 
-			for i = 1, #DebugScreen.console_settings do
-				local cs = DebugScreen.console_settings[i]
+			for iter_12_2 = 1, #var_12_0.console_settings do
+				local var_12_14 = var_12_0.console_settings[iter_12_2]
 
-				if cs.selected_id ~= nil then
-					filtered_console_settings[#filtered_console_settings + 1] = cs
+				if var_12_14.selected_id ~= nil then
+					var_12_10[#var_12_10 + 1] = var_12_14
 				end
 			end
-		elseif setting_search_string ~= "" then
-			filtered_console_settings = {}
+		elseif var_12_12 ~= "" then
+			var_12_10 = {}
 
-			local search_string = string.gsub(setting_search_string, "[_ ]", "")
+			local var_12_15 = string.gsub(var_12_12, "[_ ]", "")
 
-			for i = 1, #DebugScreen.console_settings do
-				local cs = DebugScreen.console_settings[i]
-				local current_item = cs.title:lower()
+			for iter_12_3 = 1, #var_12_0.console_settings do
+				local var_12_16 = var_12_0.console_settings[iter_12_3]
+				local var_12_17 = var_12_16.title:lower()
 
-				current_item = string.gsub(current_item, "[_ ]", "")
-
-				if current_item:find(search_string, 1, true) ~= nil then
-					filtered_console_settings[#filtered_console_settings + 1] = cs
+				if string.gsub(var_12_17, "[_ ]", ""):find(var_12_15, 1, true) ~= nil then
+					var_12_10[#var_12_10 + 1] = var_12_16
 				end
 			end
 		end
 	end
 
-	if current_hot_cs ~= filtered_console_settings[DebugScreen.hot_id] then
-		DebugScreen.hot_id = DebugScreen.hot_id or 1
-		DebugScreen.active_id = nil
+	if var_12_11 ~= var_12_10[var_12_0.hot_id] then
+		var_12_0.hot_id = var_12_0.hot_id or 1
+		var_12_0.active_id = nil
 
-		for i = 0, #filtered_console_settings * 0.5 do
-			if filtered_console_settings[DebugScreen.hot_id + i] then
-				DebugScreen.hot_id = DebugScreen.hot_id + i
+		for iter_12_4 = 0, #var_12_10 * 0.5 do
+			if var_12_10[var_12_0.hot_id + iter_12_4] then
+				var_12_0.hot_id = var_12_0.hot_id + iter_12_4
 
 				break
-			elseif filtered_console_settings[DebugScreen.hot_id - i] then
-				DebugScreen.hot_id = DebugScreen.hot_id - i
+			elseif var_12_10[var_12_0.hot_id - iter_12_4] then
+				var_12_0.hot_id = var_12_0.hot_id - iter_12_4
 
 				break
 			end
 		end
 	end
 
-	DebugScreen.filtered_console_settings = filtered_console_settings
+	var_12_0.filtered_console_settings = var_12_10
 
-	local filtered_option_ids = {}
+	local var_12_18 = {}
 
-	if DebugScreen.active_id ~= nil then
-		if DebugScreen.search_active and option_search_string ~= "" then
-			local hot_id = DebugScreen.hot_id
-			local cs_current = filtered_console_settings[hot_id]
-			local search_string = string.gsub(option_search_string, "[_ ]", "")
+	if var_12_0.active_id ~= nil then
+		if var_12_0.search_active and var_12_13 ~= "" then
+			local var_12_19 = var_12_10[var_12_0.hot_id]
+			local var_12_20 = string.gsub(var_12_13, "[_ ]", "")
 
-			for j = 1, #cs_current.options do
-				local option = cs_current.options[j]
-				local option_name = tostring(option)
-				local current_item = option_name:lower()
+			for iter_12_5 = 1, #var_12_19.options do
+				local var_12_21 = var_12_19.options[iter_12_5]
+				local var_12_22 = tostring(var_12_21):lower()
 
-				current_item = string.gsub(current_item, "[_ ]", "")
-
-				if current_item:find(search_string, 1, true) ~= nil then
-					filtered_option_ids[#filtered_option_ids + 1] = j
+				if string.gsub(var_12_22, "[_ ]", ""):find(var_12_20, 1, true) ~= nil then
+					var_12_18[#var_12_18 + 1] = iter_12_5
 				end
 			end
 
-			if not table.contains(filtered_option_ids, cs_current.hot_id) and #filtered_option_ids > 0 then
-				cs_current.hot_id = filtered_option_ids[1]
+			if not table.contains(var_12_18, var_12_19.hot_id) and #var_12_18 > 0 then
+				var_12_19.hot_id = var_12_18[1]
 			end
 		else
-			local hot_id = DebugScreen.hot_id
-			local cs_current = filtered_console_settings[hot_id]
+			local var_12_23 = var_12_10[var_12_0.hot_id]
 
-			for i = 1, #cs_current.options do
-				filtered_option_ids[i] = i
+			for iter_12_6 = 1, #var_12_23.options do
+				var_12_18[iter_12_6] = iter_12_6
 			end
 		end
 	end
 
-	if input_service:get("up_key") and t > DebugScreen.hold_to_move_timer then
-		if DebugScreen.is_holding then
-			local accelerate_factor = DebugScreen.accelerate_factor
+	if arg_12_2:get("up_key") and arg_12_1 > var_12_0.hold_to_move_timer then
+		if var_12_0.is_holding then
+			local var_12_24 = var_12_0.accelerate_factor
 
-			DebugScreen.hold_to_move_timer = t + 0.1 * GLOBAL_TIME_SCALE * accelerate_factor
-			DebugScreen.accelerate_factor = accelerate_factor * 0.95
+			var_12_0.hold_to_move_timer = arg_12_1 + 0.1 * GLOBAL_TIME_SCALE * var_12_24
+			var_12_0.accelerate_factor = var_12_24 * 0.95
 		else
-			DebugScreen.hold_to_move_timer = t + 0.1 * GLOBAL_TIME_SCALE
-			DebugScreen.is_holding = true
-			DebugScreen.accelerate_factor = 1
+			var_12_0.hold_to_move_timer = arg_12_1 + 0.1 * GLOBAL_TIME_SCALE
+			var_12_0.is_holding = true
+			var_12_0.accelerate_factor = 1
 		end
 
-		if DebugScreen.active_id == nil then
-			if DebugScreen.hot_id == 1 then
-				DebugScreen.hot_id = #filtered_console_settings
-			elseif mod_key_down then
-				local hot_id = DebugScreen.hot_id
-				local cs_current = filtered_console_settings[hot_id]
-				local ignore_changed_cs = not cs_current.is_boolean and cs_current.selected_id ~= nil or cs_current.options[cs_current.selected_id]
+		if var_12_0.active_id == nil then
+			if var_12_0.hot_id == 1 then
+				var_12_0.hot_id = #var_12_10
+			elseif var_12_5 then
+				local var_12_25 = var_12_0.hot_id
+				local var_12_26 = var_12_10[var_12_25]
+				local var_12_27 = not var_12_26.is_boolean and var_12_26.selected_id ~= nil or var_12_26.options[var_12_26.selected_id]
 
-				while hot_id > 1 do
-					hot_id = hot_id - 1
+				while var_12_25 > 1 do
+					var_12_25 = var_12_25 - 1
 
-					local cs = filtered_console_settings[hot_id]
-					local cs_value_changed = not cs.is_boolean and cs.selected_id ~= nil or cs.options[cs.selected_id]
+					local var_12_28 = var_12_10[var_12_25]
+					local var_12_29 = not var_12_28.is_boolean and var_12_28.selected_id ~= nil or var_12_28.options[var_12_28.selected_id]
 
-					if cs_value_changed and not ignore_changed_cs then
+					if var_12_29 and not var_12_27 then
 						break
-					elseif not cs_value_changed then
-						ignore_changed_cs = false
+					elseif not var_12_29 then
+						var_12_27 = false
 					end
 
-					if cs.category ~= filtered_console_settings[math.max(1, hot_id - 1)].category then
+					if var_12_28.category ~= var_12_10[math.max(1, var_12_25 - 1)].category then
 						break
 					end
 				end
 
-				DebugScreen.hot_id = hot_id
+				var_12_0.hot_id = var_12_25
 			else
-				DebugScreen.hot_id = DebugScreen.hot_id - 1
+				var_12_0.hot_id = var_12_0.hot_id - 1
 			end
 		else
-			local cs = filtered_console_settings[DebugScreen.active_id]
-			local num_filtered_options = #filtered_option_ids
-			local current_filtered_id = table.find(filtered_option_ids, cs.hot_id)
+			local var_12_30 = var_12_10[var_12_0.active_id]
+			local var_12_31 = #var_12_18
+			local var_12_32 = table.find(var_12_18, var_12_30.hot_id)
 
-			if current_filtered_id then
-				local next_filtered_id = (current_filtered_id + num_filtered_options - 2) % num_filtered_options + 1
-
-				cs.hot_id = filtered_option_ids[next_filtered_id]
+			if var_12_32 then
+				var_12_30.hot_id = var_12_18[(var_12_32 + var_12_31 - 2) % var_12_31 + 1]
 			end
 		end
 	end
 
-	if input_service:get("down_key") and t > DebugScreen.hold_to_move_timer then
-		if DebugScreen.is_holding then
-			local accelerate_factor = DebugScreen.accelerate_factor
+	if arg_12_2:get("down_key") and arg_12_1 > var_12_0.hold_to_move_timer then
+		if var_12_0.is_holding then
+			local var_12_33 = var_12_0.accelerate_factor
 
-			DebugScreen.hold_to_move_timer = t + 0.1 * GLOBAL_TIME_SCALE * accelerate_factor
-			DebugScreen.accelerate_factor = accelerate_factor * 0.95
+			var_12_0.hold_to_move_timer = arg_12_1 + 0.1 * GLOBAL_TIME_SCALE * var_12_33
+			var_12_0.accelerate_factor = var_12_33 * 0.95
 		else
-			DebugScreen.hold_to_move_timer = t + 0.1 * GLOBAL_TIME_SCALE
-			DebugScreen.is_holding = true
-			DebugScreen.accelerate_factor = 1
+			var_12_0.hold_to_move_timer = arg_12_1 + 0.1 * GLOBAL_TIME_SCALE
+			var_12_0.is_holding = true
+			var_12_0.accelerate_factor = 1
 		end
 
-		if DebugScreen.active_id == nil then
-			if DebugScreen.hot_id == #filtered_console_settings then
-				DebugScreen.hot_id = 1
-			elseif mod_key_down then
-				local hot_id = DebugScreen.hot_id
-				local cs_current = filtered_console_settings[hot_id]
-				local ignore_changed_cs = not cs_current.is_boolean and cs_current.selected_id ~= nil or cs_current.options[cs_current.selected_id]
+		if var_12_0.active_id == nil then
+			if var_12_0.hot_id == #var_12_10 then
+				var_12_0.hot_id = 1
+			elseif var_12_5 then
+				local var_12_34 = var_12_0.hot_id
+				local var_12_35 = var_12_10[var_12_34]
+				local var_12_36 = not var_12_35.is_boolean and var_12_35.selected_id ~= nil or var_12_35.options[var_12_35.selected_id]
 
-				while hot_id < #filtered_console_settings do
-					hot_id = hot_id + 1
+				while var_12_34 < #var_12_10 do
+					var_12_34 = var_12_34 + 1
 
-					local cs = filtered_console_settings[hot_id]
-					local cs_value_changed = not cs.is_boolean and cs.selected_id ~= nil or cs.options[cs.selected_id]
+					local var_12_37 = var_12_10[var_12_34]
+					local var_12_38 = not var_12_37.is_boolean and var_12_37.selected_id ~= nil or var_12_37.options[var_12_37.selected_id]
 
-					if cs_value_changed and not ignore_changed_cs then
+					if var_12_38 and not var_12_36 then
 						break
-					elseif not cs_value_changed then
-						ignore_changed_cs = false
+					elseif not var_12_38 then
+						var_12_36 = false
 					end
 
-					if cs.category ~= filtered_console_settings[math.max(1, hot_id - 1)].category then
+					if var_12_37.category ~= var_12_10[math.max(1, var_12_34 - 1)].category then
 						break
 					end
 				end
 
-				DebugScreen.hot_id = hot_id
+				var_12_0.hot_id = var_12_34
 			else
-				DebugScreen.hot_id = DebugScreen.hot_id + 1
+				var_12_0.hot_id = var_12_0.hot_id + 1
 			end
 		else
-			local cs = filtered_console_settings[DebugScreen.active_id]
-			local num_filtered_options = #filtered_option_ids
-			local current_filtered_id = table.find(filtered_option_ids, cs.hot_id)
+			local var_12_39 = var_12_10[var_12_0.active_id]
+			local var_12_40 = #var_12_18
+			local var_12_41 = table.find(var_12_18, var_12_39.hot_id)
 
-			if current_filtered_id then
-				local next_filtered_id = current_filtered_id % num_filtered_options + 1
-
-				cs.hot_id = filtered_option_ids[next_filtered_id]
+			if var_12_41 then
+				var_12_39.hot_id = var_12_18[var_12_41 % var_12_40 + 1]
 			end
 		end
 	end
 
-	if input_service:get("page up") then
-		if DebugScreen.active_id then
-			local cs = filtered_console_settings[DebugScreen.active_id]
-
-			cs.hot_id = 1
+	if arg_12_2:get("page up") then
+		if var_12_0.active_id then
+			var_12_10[var_12_0.active_id].hot_id = 1
 		else
-			DebugScreen.hot_id = 1
+			var_12_0.hot_id = 1
 		end
-	elseif input_service:get("page down") then
-		if DebugScreen.active_id then
-			local cs = filtered_console_settings[DebugScreen.active_id]
-
-			cs.hot_id = #filtered_option_ids
+	elseif arg_12_2:get("page down") then
+		if var_12_0.active_id then
+			var_12_10[var_12_0.active_id].hot_id = #var_12_18
 		else
-			DebugScreen.hot_id = #filtered_console_settings
+			var_12_0.hot_id = #var_12_10
 		end
 	end
 
-	if not input_service:get("down_key") and not input_service:get("up_key") then
-		DebugScreen.is_holding = false
+	if not arg_12_2:get("down_key") and not arg_12_2:get("up_key") then
+		var_12_0.is_holding = false
 	end
 
-	DebugScreen.hot_id = math.clamp(DebugScreen.hot_id, math.min(1, #filtered_console_settings), #filtered_console_settings)
+	var_12_0.hot_id = math.clamp(var_12_0.hot_id, math.min(1, #var_12_10), #var_12_10)
 
-	local offset_lerp = ease_out_quad(DebugScreen.fade_timer, 0, 1, 1)
-	local offset_x = offset_lerp * console_width
-	local _, res_y = RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h
-	local pos_y = res_y - 100
+	local var_12_42 = var_0_4(var_12_0.fade_timer, 0, 1, 1)
+	local var_12_43 = var_12_42 * var_12_4
+	local var_12_44 = RESOLUTION_LOOKUP.res_w
+	local var_12_45 = RESOLUTION_LOOKUP.res_h
+	local var_12_46 = var_12_45 - 100
 
-	if DebugScreen.active_id ~= nil then
-		local cs = filtered_console_settings[DebugScreen.active_id]
-
-		if not cs then
-			DebugScreen.active_id = nil
-		end
+	if var_12_0.active_id ~= nil and not var_12_10[var_12_0.active_id] then
+		var_12_0.active_id = nil
 	end
 
-	local bottom_padding = 200
-	local total_height = 0
-	local progress = 0
+	local var_12_47 = 200
+	local var_12_48 = 0
+	local var_12_49 = 0
 
-	if not table.is_empty(filtered_console_settings) then
-		local last_setting = filtered_console_settings[#filtered_console_settings]
+	if not table.is_empty(var_12_10) then
+		local var_12_50 = var_12_10[#var_12_10]
 
-		total_height = (last_setting.setting_pos or 0) + (last_setting.setting_height or 0)
+		var_12_48 = (var_12_50.setting_pos or 0) + (var_12_50.setting_height or 0)
 
-		local size_until_scroll = res_y * 0.25
-		local size_to_stop_scroll = total_height - res_y * 0.25
-		local current_setting = filtered_console_settings[DebugScreen.hot_id]
+		local var_12_51 = var_12_45 * 0.25
+		local var_12_52 = var_12_48 - var_12_45 * 0.25
+		local var_12_53 = var_12_10[var_12_0.hot_id]
 
-		if current_setting then
-			local current_pos = current_setting.option_pos or current_setting.setting_pos or 0
+		if var_12_53 then
+			local var_12_54 = var_12_53.option_pos or var_12_53.setting_pos or 0
 
-			if size_until_scroll ~= size_to_stop_scroll then
-				progress = math.remap_clamped(size_until_scroll, size_to_stop_scroll, 0, 1, current_pos)
+			if var_12_51 ~= var_12_52 then
+				var_12_49 = math.remap_clamped(var_12_51, var_12_52, 0, 1, var_12_54)
 			end
 		end
 	end
 
-	total_height = total_height + bottom_padding
+	local var_12_55 = var_12_48 + var_12_47
+	local var_12_56 = math.max(0, var_12_55 - var_12_45) * var_12_49
 
-	local wanted_y_offset = math.max(0, total_height - res_y) * progress
+	var_12_0.target_y_offset = math.lerp(var_12_0.target_y_offset, var_12_56, 0.1)
 
-	DebugScreen.target_y_offset = math.lerp(DebugScreen.target_y_offset, wanted_y_offset, 0.1)
-	pos_y = pos_y + DebugScreen.target_y_offset
+	local var_12_57 = var_12_46 + var_12_0.target_y_offset
+	local var_12_58 = var_12_57
 
-	local root_y = pos_y
+	var_0_5 = var_0_5 + arg_12_0 * 10
 
-	indicator_offset = indicator_offset + dt * 10
-
-	if indicator_offset > 10 then
-		indicator_offset = 0
+	if var_0_5 > 10 then
+		var_0_5 = 0
 	end
 
-	local indicator_offset_anim = indicator_offset
+	local var_12_59 = var_0_5
 
-	if indicator_offset_anim > 5 then
-		indicator_offset_anim = 10 - indicator_offset_anim
+	if var_12_59 > 5 then
+		var_12_59 = 10 - var_12_59
 	end
 
-	local scrollbar_size = (total_height == bottom_padding or total_height < res_y) and 0 or res_y * res_y / (total_height - bottom_padding)
-	local scrollbar_pos = res_y * math.remap(0, 1, 0, 1 - scrollbar_size / res_y, progress)
-	local scrollbar_layer = base_layer + 1
+	local var_12_60 = (var_12_55 == var_12_47 or var_12_55 < var_12_45) and 0 or var_12_45 * var_12_45 / (var_12_55 - var_12_47)
+	local var_12_61 = var_12_45 * math.remap(0, 1, 0, 1 - var_12_60 / var_12_45, var_12_49)
+	local var_12_62 = var_0_3 + 1
 
-	Gui.rect(gui, Vector3(0, 0, base_layer), Vector2(offset_x, res_y), Color(offset_lerp * 220, 25, 50, 25))
-	Gui.rect(gui, Vector3(0, res_y - scrollbar_pos - scrollbar_size, scrollbar_layer), Vector2(3, scrollbar_size), Color(offset_lerp * 150, 200, 200, 25))
+	Gui.rect(var_12_1, Vector3(0, 0, var_0_3), Vector2(var_12_43, var_12_45), Color(var_12_42 * 220, 25, 50, 25))
+	Gui.rect(var_12_1, Vector3(0, var_12_45 - var_12_61 - var_12_60, var_12_62), Vector2(3, var_12_60), Color(var_12_42 * 150, 200, 200, 25))
 
-	local hot_anim_t = (math.sin(t / GLOBAL_TIME_SCALE * 10) + 1) * 0.5
-	local white = Color(offset_lerp * 250, 255, 255, 255)
-	local text_color = Color(offset_lerp * 250, 120, 120, 0)
-	local text_color_overridden = Color(offset_lerp * 255, 200, 200, 0)
-	local text_color_hot = Color(offset_lerp * 255, 230 + 25 * hot_anim_t, 230 + 25 * hot_anim_t, 200 * hot_anim_t)
-	local text_color_active = Color(offset_lerp * 255, 100, 255, 100)
-	local text_color_option_default_value = Color(offset_lerp * 255, 50, 150, 50)
-	local text_color_option_overridden = Color(offset_lerp * 255, 100, 255, 100)
-	local text_color_option_hot = Color(offset_lerp * 255, 200, 255, 200)
-	local text_color_description = Color(offset_lerp * 255, 150, 150, 150)
-	local row_highlight_color = Color(offset_lerp * 150, 100, 100, 50)
-	local setting_x = 30
-	local option_x = 50
-	local category_current
-	local category_text_layer = base_layer + 2
-	local base_text_layer = base_layer + 2
-	local row_highlight_layer = base_layer + 1
-	local bitmap_layer = base_layer + 1
+	local var_12_63 = (math.sin(arg_12_1 / GLOBAL_TIME_SCALE * 10) + 1) * 0.5
+	local var_12_64 = Color(var_12_42 * 250, 255, 255, 255)
+	local var_12_65 = Color(var_12_42 * 250, 120, 120, 0)
+	local var_12_66 = Color(var_12_42 * 255, 200, 200, 0)
+	local var_12_67 = Color(var_12_42 * 255, 230 + 25 * var_12_63, 230 + 25 * var_12_63, 200 * var_12_63)
+	local var_12_68 = Color(var_12_42 * 255, 100, 255, 100)
+	local var_12_69 = Color(var_12_42 * 255, 50, 150, 50)
+	local var_12_70 = Color(var_12_42 * 255, 100, 255, 100)
+	local var_12_71 = Color(var_12_42 * 255, 200, 255, 200)
+	local var_12_72 = Color(var_12_42 * 255, 150, 150, 150)
+	local var_12_73 = Color(var_12_42 * 150, 100, 100, 50)
+	local var_12_74 = 30
+	local var_12_75 = 50
+	local var_12_76
+	local var_12_77 = var_0_3 + 2
+	local var_12_78 = var_0_3 + 2
+	local var_12_79 = var_0_3 + 1
+	local var_12_80 = var_0_3 + 1
 
-	for setting_i = 1, #filtered_console_settings do
-		local is_active = setting_i == DebugScreen.active_id
-		local is_hot = setting_i == DebugScreen.hot_id
-		local cs = filtered_console_settings[setting_i]
+	for iter_12_7 = 1, #var_12_10 do
+		local var_12_81 = iter_12_7 == var_12_0.active_id
+		local var_12_82 = iter_12_7 == var_12_0.hot_id
+		local var_12_83 = var_12_10[iter_12_7]
 
-		DebugScreen.reset_setting_size(cs, pos_y, root_y)
+		var_12_0.reset_setting_size(var_12_83, var_12_57, var_12_58)
 
-		local text = cs.title
+		local var_12_84 = var_12_83.title
 
-		if cs.category ~= category_current then
-			pos_y = pos_y - font_size * 0.4
-			category_current = cs.category
+		if var_12_83.category ~= var_12_76 then
+			var_12_57 = var_12_57 - var_12_3 * 0.4
+			var_12_76 = var_12_83.category
 
-			Gui.text(gui, cs.category, font_mtrl, font_size, font, Vector3(10, pos_y, category_text_layer), white)
+			Gui.text(var_12_1, var_12_83.category, var_0_1, var_12_3, var_0_0, Vector3(10, var_12_57, var_12_77), var_12_64)
 
-			pos_y = pos_y - font_size
+			var_12_57 = var_12_57 - var_12_3
 		end
 
-		local current_selected_option_position = Vector3(offset_x - 400, pos_y, base_text_layer)
-		local option_text
+		local var_12_85 = Vector3(var_12_43 - 400, var_12_57, var_12_78)
+		local var_12_86
 
-		if cs.selected_id ~= nil then
-			local options, idx = cs.options, cs.selected_id
-			local val = options[idx]
+		if var_12_83.selected_id ~= nil then
+			local var_12_87 = var_12_83.options
+			local var_12_88 = var_12_83.selected_id
+			local var_12_89 = var_12_87[var_12_88]
 
-			if cs.item_display_func then
-				option_text = string.format("< %s >", cs.item_display_func(val, idx, options))
+			if var_12_83.item_display_func then
+				var_12_86 = string.format("< %s >", var_12_83.item_display_func(var_12_89, var_12_88, var_12_87))
 			else
-				option_text = string.format("< %s >", tostring(val))
+				var_12_86 = string.format("< %s >", tostring(var_12_89))
 			end
 
-			if is_hot then
-				Gui.text(gui, option_text, font_mtrl, font_size, font, current_selected_option_position, text_color_option_hot)
-			elseif not cs.is_boolean or cs.options[cs.selected_id] then
-				Gui.text(gui, option_text, font_mtrl, font_size, font, current_selected_option_position, text_color_option_overridden)
+			if var_12_82 then
+				Gui.text(var_12_1, var_12_86, var_0_1, var_12_3, var_0_0, var_12_85, var_12_71)
+			elseif not var_12_83.is_boolean or var_12_83.options[var_12_83.selected_id] then
+				Gui.text(var_12_1, var_12_86, var_0_1, var_12_3, var_0_0, var_12_85, var_12_70)
 			else
-				Gui.text(gui, option_text, font_mtrl, font_size, font, current_selected_option_position, text_color_option_default_value)
+				Gui.text(var_12_1, var_12_86, var_0_1, var_12_3, var_0_0, var_12_85, var_12_69)
 			end
 		end
 
-		if is_active then
-			Gui.text(gui, ">", font_mtrl, font_size, font, Vector3(10, pos_y, base_text_layer), text_color_active)
-			Gui.text(gui, text, font_mtrl, font_size, font, Vector3(setting_x, pos_y, base_text_layer), text_color_active)
+		if var_12_81 then
+			Gui.text(var_12_1, ">", var_0_1, var_12_3, var_0_0, Vector3(10, var_12_57, var_12_78), var_12_68)
+			Gui.text(var_12_1, var_12_84, var_0_1, var_12_3, var_0_0, Vector3(var_12_74, var_12_57, var_12_78), var_12_68)
 
-			local shortcuts
+			local var_12_90
 
-			for temp_shortcut_input, cs_data in pairs(DebugScreen.shortcut_list) do
-				local temp_cs = cs_data.cs
+			for iter_12_8, iter_12_9 in pairs(var_12_0.shortcut_list) do
+				local var_12_91 = iter_12_9.cs
 
-				if cs == temp_cs or cs == temp_cs.copy then
-					shortcuts = (shortcuts and shortcuts .. ", " or "") .. temp_shortcut_input
+				if var_12_83 == var_12_91 or var_12_83 == var_12_91.copy then
+					var_12_90 = (var_12_90 and var_12_90 .. ", " or "") .. iter_12_8
 				end
 			end
 
-			if shortcuts then
-				Gui.text(gui, "[" .. shortcuts .. "]", font_mtrl, font_size, font, Vector3(offset_x - 100, pos_y, base_text_layer), white)
+			if var_12_90 then
+				Gui.text(var_12_1, "[" .. var_12_90 .. "]", var_0_1, var_12_3, var_0_0, Vector3(var_12_43 - 100, var_12_57, var_12_78), var_12_64)
 			end
 
-			pos_y = DebugScreen.push_setting_size(cs, pos_y, font_size + 2)
+			var_12_57 = var_12_0.push_setting_size(var_12_83, var_12_57, var_12_3 + 2)
 
-			local reuse_global_table = true
-			local description_word_wrapped = Gui.word_wrap(gui, cs.description, font_mtrl, font_size, 500, " ", "", "\n", reuse_global_table)
+			local var_12_92 = true
+			local var_12_93 = Gui.word_wrap(var_12_1, var_12_83.description, var_0_1, var_12_3, 500, " ", "", "\n", var_12_92)
 
-			for j = 1, #description_word_wrapped do
-				local description = description_word_wrapped[j]
+			for iter_12_10 = 1, #var_12_93 do
+				local var_12_94 = var_12_93[iter_12_10]
 
-				Gui.text(gui, description, font_mtrl, font_size, font, Vector3(setting_x, pos_y, base_text_layer), text_color_description)
+				Gui.text(var_12_1, var_12_94, var_0_1, var_12_3, var_0_0, Vector3(var_12_74, var_12_57, var_12_78), var_12_72)
 
-				pos_y = DebugScreen.push_setting_size(cs, pos_y, font_size + 2)
+				var_12_57 = var_12_0.push_setting_size(var_12_83, var_12_57, var_12_3 + 2)
 			end
 
-			for j = 1, #filtered_option_ids do
-				local current_option_index = filtered_option_ids[j]
-				local option = cs.options[current_option_index]
-				local is_hot_sub = current_option_index == cs.hot_id
-				local is_selected_sub = current_option_index == cs.selected_id
+			for iter_12_11 = 1, #var_12_18 do
+				local var_12_95 = var_12_18[iter_12_11]
+				local var_12_96 = var_12_83.options[var_12_95]
+				local var_12_97 = var_12_95 == var_12_83.hot_id
+				local var_12_98 = var_12_95 == var_12_83.selected_id
 
-				for temp_shortcut_input, cs_data in pairs(DebugScreen.shortcut_list) do
-					local temp_cs, temp_option = cs_data.cs, cs_data.option
+				for iter_12_12, iter_12_13 in pairs(var_12_0.shortcut_list) do
+					local var_12_99 = iter_12_13.cs
+					local var_12_100 = iter_12_13.option
 
-					if (cs == temp_cs or cs == temp_cs.copy) and option == temp_option then
-						Gui.text(gui, "[" .. temp_shortcut_input .. "]", font_mtrl, font_size, font, Vector3(offset_x - 100, pos_y, base_text_layer), white)
+					if (var_12_83 == var_12_99 or var_12_83 == var_12_99.copy) and var_12_96 == var_12_100 then
+						Gui.text(var_12_1, "[" .. iter_12_12 .. "]", var_0_1, var_12_3, var_0_0, Vector3(var_12_43 - 100, var_12_57, var_12_78), var_12_64)
 					end
 				end
 
-				local text_sub
+				local var_12_101
 
-				if cs.item_display_func then
-					text_sub = tostring(cs.item_display_func(option, current_option_index, cs.options))
+				if var_12_83.item_display_func then
+					var_12_101 = tostring(var_12_83.item_display_func(var_12_96, var_12_95, var_12_83.options))
 				else
-					text_sub = tostring(option)
+					var_12_101 = tostring(var_12_96)
 				end
 
-				if is_selected_sub then
-					if is_hot_sub then
-						cs.option_pos = math.abs(pos_y - root_y)
+				if var_12_98 then
+					if var_12_97 then
+						var_12_83.option_pos = math.abs(var_12_57 - var_12_58)
 
-						Gui.rect(gui, Vector3(0, pos_y - 5, row_highlight_layer), Vector2(offset_x, 25), row_highlight_color)
-						Gui.text(gui, ">", font_mtrl, font_size, font, Vector3(setting_x + indicator_offset_anim, pos_y, base_text_layer), text_color_hot)
+						Gui.rect(var_12_1, Vector3(0, var_12_57 - 5, var_12_79), Vector2(var_12_43, 25), var_12_73)
+						Gui.text(var_12_1, ">", var_0_1, var_12_3, var_0_0, Vector3(var_12_74 + var_12_59, var_12_57, var_12_78), var_12_67)
 					end
 
-					Gui.text(gui, text_sub, font_mtrl, font_size, font, Vector3(option_x, pos_y, base_text_layer), text_color_active)
-				elseif is_hot_sub then
-					cs.option_pos = math.abs(pos_y - root_y)
+					Gui.text(var_12_1, var_12_101, var_0_1, var_12_3, var_0_0, Vector3(var_12_75, var_12_57, var_12_78), var_12_68)
+				elseif var_12_97 then
+					var_12_83.option_pos = math.abs(var_12_57 - var_12_58)
 
-					if (input_service:get("right_key") or input_service:has("exclusive_right_key") and input_service:get("exclusive_right_key")) and not opened_this_frame then
-						update_option(cs, current_option_index)
+					if (arg_12_2:get("right_key") or arg_12_2:has("exclusive_right_key") and arg_12_2:get("exclusive_right_key")) and not var_12_2 then
+						var_0_6(var_12_83, var_12_95)
 
-						if current_selected_option_position then
-							DebugScreen.text_effects[#DebugScreen.text_effects + 1] = {
+						if var_12_85 then
+							var_12_0.text_effects[#var_12_0.text_effects + 1] = {
 								time = 0,
 								start_position = {
-									option_x,
-									pos_y,
-									base_text_layer,
+									var_12_75,
+									var_12_57,
+									var_12_78
 								},
 								end_position = {
-									current_selected_option_position.x,
-									current_selected_option_position.y,
-									current_selected_option_position.z,
+									var_12_85.x,
+									var_12_85.y,
+									var_12_85.z
 								},
-								text = tostring(option),
+								text = tostring(var_12_96)
 							}
 
-							if cs.close_when_selected then
-								DebugScreen.active = false
-								opened_this_frame = true
+							if var_12_83.close_when_selected then
+								var_12_0.active = false
+								var_12_2 = true
 
-								input_manager:device_unblock_service("keyboard", 1, "Debug")
+								arg_12_3:device_unblock_service("keyboard", 1, "Debug")
 							end
 
-							if cs.clear_when_selected then
-								cs.selected_id = nil
+							if var_12_83.clear_when_selected then
+								var_12_83.selected_id = nil
 							end
 						end
 					end
 
-					Gui.rect(gui, Vector3(0, pos_y - 5, row_highlight_layer), Vector2(offset_x, 25), row_highlight_color)
-					Gui.text(gui, ">", font_mtrl, font_size, font, Vector3(setting_x + indicator_offset_anim, pos_y, base_text_layer), text_color_hot)
-					Gui.text(gui, text_sub, font_mtrl, font_size, font, Vector3(option_x, pos_y, base_text_layer), text_color_hot)
+					Gui.rect(var_12_1, Vector3(0, var_12_57 - 5, var_12_79), Vector2(var_12_43, 25), var_12_73)
+					Gui.text(var_12_1, ">", var_0_1, var_12_3, var_0_0, Vector3(var_12_74 + var_12_59, var_12_57, var_12_78), var_12_67)
+					Gui.text(var_12_1, var_12_101, var_0_1, var_12_3, var_0_0, Vector3(var_12_75, var_12_57, var_12_78), var_12_67)
 				else
-					Gui.text(gui, text_sub, font_mtrl, font_size, font, Vector3(option_x, pos_y, base_text_layer), text_color)
+					Gui.text(var_12_1, var_12_101, var_0_1, var_12_3, var_0_0, Vector3(var_12_75, var_12_57, var_12_78), var_12_65)
 				end
 
-				pos_y = DebugScreen.push_setting_size(cs, pos_y, font_size + 2)
+				var_12_57 = var_12_0.push_setting_size(var_12_83, var_12_57, var_12_3 + 2)
 			end
 
-			if cs.func and (input_service:get("right_key") or input_service:has("exclusive_right_key") and input_service:get("exclusive_right_key")) and not opened_this_frame then
-				exec_func(cs)
+			if var_12_83.func and (arg_12_2:get("right_key") or arg_12_2:has("exclusive_right_key") and arg_12_2:get("exclusive_right_key")) and not var_12_2 then
+				var_0_7(var_12_83)
 
-				if cs.close_when_selected then
-					DebugScreen.active = false
-					opened_this_frame = true
+				if var_12_83.close_when_selected then
+					var_12_0.active = false
+					var_12_2 = true
 
-					input_manager:device_unblock_service("keyboard", 1, "Debug")
+					arg_12_3:device_unblock_service("keyboard", 1, "Debug")
 				end
 
 				Application.save_user_settings()
 			end
 
-			if cs.preset and (input_service:get("right_key") or input_service:has("exclusive_right_key") and input_service:get("exclusive_right_key")) and not opened_this_frame then
-				activate_preset(cs)
+			if var_12_83.preset and (arg_12_2:get("right_key") or arg_12_2:has("exclusive_right_key") and arg_12_2:get("exclusive_right_key")) and not var_12_2 then
+				var_0_8(var_12_83)
 				Application.save_user_settings()
 			end
 
-			if input_service:get("left_key") then
-				DebugScreen.active_id = nil
+			if arg_12_2:get("left_key") then
+				var_12_0.active_id = nil
 			end
 
-			if cs.bitmap then
-				local bitmap_size = Vector2(1, 1) * cs.bitmap_size
+			if var_12_83.bitmap then
+				local var_12_102 = Vector2(1, 1) * var_12_83.bitmap_size
 
-				Gui.bitmap(gui, cs.bitmap, Vector3(offset_x / 2 - cs.bitmap_size / 2, pos_y - cs.bitmap_size, bitmap_layer), bitmap_size, Color(offset_lerp * 250, 255, 255, 255))
+				Gui.bitmap(var_12_1, var_12_83.bitmap, Vector3(var_12_43 / 2 - var_12_83.bitmap_size / 2, var_12_57 - var_12_83.bitmap_size, var_12_80), var_12_102, Color(var_12_42 * 250, 255, 255, 255))
 
-				pos_y = DebugScreen.push_setting_size(cs, pos_y, cs.bitmap_size)
+				var_12_57 = var_12_0.push_setting_size(var_12_83, var_12_57, var_12_83.bitmap_size)
 			end
-		elseif is_hot then
-			local shortcuts
+		elseif var_12_82 then
+			local var_12_103
 
-			for temp_shortcut_input, cs_data in pairs(DebugScreen.shortcut_list) do
-				local temp_cs = cs_data.cs
+			for iter_12_14, iter_12_15 in pairs(var_12_0.shortcut_list) do
+				local var_12_104 = iter_12_15.cs
 
-				if cs == temp_cs or cs == temp_cs.copy then
-					shortcuts = (shortcuts and shortcuts .. ", " or "") .. temp_shortcut_input
+				if var_12_83 == var_12_104 or var_12_83 == var_12_104.copy then
+					var_12_103 = (var_12_103 and var_12_103 .. ", " or "") .. iter_12_14
 				end
 			end
 
-			if shortcuts then
-				Gui.text(gui, "[" .. shortcuts .. "]", font_mtrl, font_size, font, Vector3(offset_x - 100, pos_y, base_text_layer), white)
+			if var_12_103 then
+				Gui.text(var_12_1, "[" .. var_12_103 .. "]", var_0_1, var_12_3, var_0_0, Vector3(var_12_43 - 100, var_12_57, var_12_78), var_12_64)
 			end
 
-			Gui.rect(gui, Vector3(0, pos_y - 5, row_highlight_layer), Vector2(offset_x, 25), row_highlight_color)
-			Gui.text(gui, ">", font_mtrl, font_size, font, Vector3(10 + indicator_offset_anim, pos_y, base_text_layer), text_color_hot)
-			Gui.text(gui, text, font_mtrl, font_size, font, Vector3(setting_x, pos_y, base_text_layer), text_color_hot)
+			Gui.rect(var_12_1, Vector3(0, var_12_57 - 5, var_12_79), Vector2(var_12_43, 25), var_12_73)
+			Gui.text(var_12_1, ">", var_0_1, var_12_3, var_0_0, Vector3(10 + var_12_59, var_12_57, var_12_78), var_12_67)
+			Gui.text(var_12_1, var_12_84, var_0_1, var_12_3, var_0_0, Vector3(var_12_74, var_12_57, var_12_78), var_12_67)
 
-			if input_service:get("left_key") and DebugScreen.active_id == nil then
-				if mod_key_down and #cs.options > 0 then
-					if cs.is_boolean then
-						cs.hot_id = 3
-					elseif cs.hot_id == 1 then
-						cs.hot_id = #cs.options
+			if arg_12_2:get("left_key") and var_12_0.active_id == nil then
+				if var_12_5 and #var_12_83.options > 0 then
+					if var_12_83.is_boolean then
+						var_12_83.hot_id = 3
+					elseif var_12_83.hot_id == 1 then
+						var_12_83.hot_id = #var_12_83.options
 					else
-						cs.hot_id = cs.hot_id - 1
+						var_12_83.hot_id = var_12_83.hot_id - 1
 					end
 
-					update_option(cs, cs.hot_id)
+					var_0_6(var_12_83, var_12_83.hot_id)
 				else
-					DebugScreen.active = false
+					var_12_0.active = false
 
-					input_manager:device_unblock_service("keyboard", 1, "Debug")
+					arg_12_3:device_unblock_service("keyboard", 1, "Debug")
 				end
 			end
 
-			if (input_service:get("right_key") or input_service:has("exclusive_right_key") and input_service:get("exclusive_right_key")) and not opened_this_frame then
-				if cs.load_items_source_func then
-					cs.load_items_source_func(cs.options)
+			if (arg_12_2:get("right_key") or arg_12_2:has("exclusive_right_key") and arg_12_2:get("exclusive_right_key")) and not var_12_2 then
+				if var_12_83.load_items_source_func then
+					var_12_83.load_items_source_func(var_12_83.options)
 				end
 
-				if mod_key_down and #cs.options > 0 then
-					if cs.is_boolean then
-						cs.hot_id = cs.selected_id == 1 and 2 or 1
-					elseif cs.hot_id == #cs.options then
-						cs.hot_id = 1
+				if var_12_5 and #var_12_83.options > 0 then
+					if var_12_83.is_boolean then
+						var_12_83.hot_id = var_12_83.selected_id == 1 and 2 or 1
+					elseif var_12_83.hot_id == #var_12_83.options then
+						var_12_83.hot_id = 1
 					else
-						cs.hot_id = cs.hot_id + 1
+						var_12_83.hot_id = var_12_83.hot_id + 1
 					end
 
-					update_option(cs, cs.hot_id)
+					var_0_6(var_12_83, var_12_83.hot_id)
 				else
-					DebugScreen.active_id = setting_i
+					var_12_0.active_id = iter_12_7
 				end
 			end
 
-			if not DebugScreen.search_active and input_service:get("console_favorite_key") then
-				if cs.category == "Favorites" then
-					cs.copy.copy = nil
+			if not var_12_0.search_active and arg_12_2:get("console_favorite_key") then
+				if var_12_83.category == "Favorites" then
+					var_12_83.copy.copy = nil
 
-					local unfiltered_index = table.find(DebugScreen.console_settings, cs)
+					local var_12_105 = table.find(var_12_0.console_settings, var_12_83)
 
-					table.remove(DebugScreen.console_settings, unfiltered_index)
+					table.remove(var_12_0.console_settings, var_12_105)
 
-					local favorite_index = table.find(DebugScreen.favorites, cs.title)
+					local var_12_106 = table.find(var_12_0.favorites, var_12_83.title)
 
-					if favorite_index then
-						table.remove(DebugScreen.favorites, favorite_index)
-						Development.set_setting("debug_favorites", DebugScreen.favorites)
+					if var_12_106 then
+						table.remove(var_12_0.favorites, var_12_106)
+						Development.set_setting("debug_favorites", var_12_0.favorites)
 						Application.save_user_settings()
 					end
 
 					break
-				elseif not cs.copy then
-					local cs_copy = table.clone(cs)
+				elseif not var_12_83.copy then
+					local var_12_107 = table.clone(var_12_83)
 
-					cs_copy.category = "Favorites"
-					cs.copy = cs_copy
-					cs_copy.copy = cs
+					var_12_107.category = "Favorites"
+					var_12_83.copy = var_12_107
+					var_12_107.copy = var_12_83
 
-					table.insert(DebugScreen.console_settings, 1, cs_copy)
+					table.insert(var_12_0.console_settings, 1, var_12_107)
 
-					DebugScreen.hot_id = DebugScreen.hot_id + 1
-					DebugScreen.target_y_offset = DebugScreen.target_y_offset + font_size
-					DebugScreen.favorites[#DebugScreen.favorites + 1] = cs.title
+					var_12_0.hot_id = var_12_0.hot_id + 1
+					var_12_0.target_y_offset = var_12_0.target_y_offset + var_12_3
+					var_12_0.favorites[#var_12_0.favorites + 1] = var_12_83.title
 
-					Development.set_setting("debug_favorites", DebugScreen.favorites)
+					Development.set_setting("debug_favorites", var_12_0.favorites)
 					Application.save_user_settings()
 
 					break
 				end
 			end
 		else
-			if not cs.is_boolean and cs.selected_id ~= nil or cs.options[cs.selected_id] then
-				Gui.text(gui, text, font_mtrl, font_size, font, Vector3(setting_x, pos_y, base_text_layer), text_color_overridden)
+			if not var_12_83.is_boolean and var_12_83.selected_id ~= nil or var_12_83.options[var_12_83.selected_id] then
+				Gui.text(var_12_1, var_12_84, var_0_1, var_12_3, var_0_0, Vector3(var_12_74, var_12_57, var_12_78), var_12_66)
 			else
-				Gui.text(gui, text, font_mtrl, font_size, font, Vector3(setting_x, pos_y, base_text_layer), text_color)
+				Gui.text(var_12_1, var_12_84, var_0_1, var_12_3, var_0_0, Vector3(var_12_74, var_12_57, var_12_78), var_12_65)
 			end
 
-			local shortcuts
+			local var_12_108
 
-			for temp_shortcut_input, cs_data in pairs(DebugScreen.shortcut_list) do
-				local temp_cs = cs_data.cs
+			for iter_12_16, iter_12_17 in pairs(var_12_0.shortcut_list) do
+				local var_12_109 = iter_12_17.cs
 
-				if cs == temp_cs or cs == temp_cs.copy then
-					shortcuts = (shortcuts and shortcuts .. ", " or "") .. temp_shortcut_input
+				if var_12_83 == var_12_109 or var_12_83 == var_12_109.copy then
+					var_12_108 = (var_12_108 and var_12_108 .. ", " or "") .. iter_12_16
 				end
 			end
 
-			if shortcuts then
-				Gui.text(gui, "[" .. shortcuts .. "]", font_mtrl, font_size, font, Vector3(offset_x - 100, pos_y, base_text_layer), white)
+			if var_12_108 then
+				Gui.text(var_12_1, "[" .. var_12_108 .. "]", var_0_1, var_12_3, var_0_0, Vector3(var_12_43 - 100, var_12_57, var_12_78), var_12_64)
 			end
 		end
 
-		if is_active or is_hot then
-			for numpad_i = 0, 9 do
-				local shortcut_input = "numpad " .. numpad_i
-				local pressed = Keyboard.pressed(Keyboard.button_index(shortcut_input)) or DebugScreen.numpad_presses[numpad_i]
+		if var_12_81 or var_12_82 then
+			for iter_12_18 = 0, 9 do
+				local var_12_110 = "numpad " .. iter_12_18
 
-				if pressed then
-					local remove = false
+				if Keyboard.pressed(Keyboard.button_index(var_12_110)) or var_12_0.numpad_presses[iter_12_18] then
+					local var_12_111 = false
 
-					for temp_shortcut_input, cs_data in pairs(DebugScreen.shortcut_list) do
-						local temp_cs = cs_data.cs
-						local option = cs_data.option
-						local selected_option = is_active and cs.options[cs.hot_id] or DebugScreen.shortcut_any
+					for iter_12_19, iter_12_20 in pairs(var_12_0.shortcut_list) do
+						local var_12_112 = iter_12_20.cs
+						local var_12_113 = iter_12_20.option
+						local var_12_114 = var_12_81 and var_12_83.options[var_12_83.hot_id] or var_12_0.shortcut_any
 
-						if (cs == temp_cs or cs == temp_cs.copy) and option == selected_option then
-							DebugScreen.shortcut_list[temp_shortcut_input] = nil
+						if (var_12_83 == var_12_112 or var_12_83 == var_12_112.copy) and var_12_113 == var_12_114 then
+							var_12_0.shortcut_list[iter_12_19] = nil
 
-							if temp_shortcut_input == shortcut_input then
-								remove = true
+							if iter_12_19 == var_12_110 then
+								var_12_111 = true
 							end
 						end
 					end
 
-					if remove then
+					if var_12_111 then
 						break
 					end
 
-					local shortcut_cs = cs.category == "Favorites" and cs.copy or cs
-					local option = DebugScreen.shortcut_any
+					local var_12_115 = var_12_83.category == "Favorites" and var_12_83.copy or var_12_83
+					local var_12_116 = var_12_0.shortcut_any
 
-					option = is_active and shortcut_cs.options[shortcut_cs.hot_id] or option
-					DebugScreen.shortcut_list[shortcut_input] = {
-						cs = shortcut_cs,
-						option = option,
+					var_12_116 = var_12_81 and var_12_115.options[var_12_115.hot_id] or var_12_116
+					var_12_0.shortcut_list[var_12_110] = {
+						cs = var_12_115,
+						option = var_12_116
 					}
 
-					local shortcuts = {}
+					local var_12_117 = {}
 
-					for temp_shortcut_input, cs_data in pairs(DebugScreen.shortcut_list) do
-						shortcuts[#shortcuts + 1] = temp_shortcut_input
-						shortcuts[#shortcuts + 1] = cs_data.cs.title
-						shortcuts[#shortcuts + 1] = cs_data.option
+					for iter_12_21, iter_12_22 in pairs(var_12_0.shortcut_list) do
+						var_12_117[#var_12_117 + 1] = iter_12_21
+						var_12_117[#var_12_117 + 1] = iter_12_22.cs.title
+						var_12_117[#var_12_117 + 1] = iter_12_22.option
 					end
 
-					Development.set_setting("debug_shortcuts", shortcuts)
+					Development.set_setting("debug_shortcuts", var_12_117)
 					Application.save_user_settings()
 				end
 			end
 		end
 
-		pos_y = DebugScreen.push_setting_size(cs, pos_y, font_size + 2)
+		var_12_57 = var_12_0.push_setting_size(var_12_83, var_12_57, var_12_3 + 2)
 	end
 
-	if DebugScreen.hot_id == 0 and input_service:get("left_key") then
-		DebugScreen.active = false
+	if var_12_0.hot_id == 0 and arg_12_2:get("left_key") then
+		var_12_0.active = false
 
-		input_manager:device_unblock_service("keyboard", 1, "Debug")
+		arg_12_3:device_unblock_service("keyboard", 1, "Debug")
 	end
 
-	local i = 1
-	local text_effects = DebugScreen.text_effects
-	local num_effects = #text_effects
+	local var_12_118 = 1
+	local var_12_119 = var_12_0.text_effects
+	local var_12_120 = #var_12_119
 
-	while i <= num_effects do
-		local effect = text_effects[i]
+	while var_12_118 <= var_12_120 do
+		local var_12_121 = var_12_119[var_12_118]
 
-		effect.time = effect.time + dt
+		var_12_121.time = var_12_121.time + arg_12_0
 
-		if effect.time > 0.5 then
-			text_effects[i] = text_effects[num_effects]
-			text_effects[num_effects] = nil
-			num_effects = num_effects - 1
+		if var_12_121.time > 0.5 then
+			var_12_119[var_12_118] = var_12_119[var_12_120]
+			var_12_119[var_12_120] = nil
+			var_12_120 = var_12_120 - 1
 		else
-			local start_position = Vector3(effect.start_position[1], effect.start_position[2], effect.start_position[3])
-			local end_position = Vector3(effect.end_position[1], effect.end_position[2], effect.end_position[3])
-			local lerp_t = ease_out_quad(effect.time, 0, 1, 0.5)
-			local positon = math.lerp(start_position, end_position, lerp_t)
+			local var_12_122 = Vector3(var_12_121.start_position[1], var_12_121.start_position[2], var_12_121.start_position[3])
+			local var_12_123 = Vector3(var_12_121.end_position[1], var_12_121.end_position[2], var_12_121.end_position[3])
+			local var_12_124 = var_0_4(var_12_121.time, 0, 1, 0.5)
+			local var_12_125 = math.lerp(var_12_122, var_12_123, var_12_124)
 
-			Gui.text(gui, effect.text, font_mtrl, font_size, font, positon, text_color_option_hot)
+			Gui.text(var_12_1, var_12_121.text, var_0_1, var_12_3, var_0_0, var_12_125, var_12_71)
 
-			i = i + 1
+			var_12_118 = var_12_118 + 1
 		end
 	end
 end
 
-DebugScreen.reset_settings = function ()
-	local all_false = true
+function var_0_9.reset_settings()
+	local var_13_0 = true
 
-	for i = 1, #DebugScreen.console_settings do
-		local cs = DebugScreen.console_settings[i]
+	for iter_13_0 = 1, #var_0_9.console_settings do
+		local var_13_1 = var_0_9.console_settings[iter_13_0]
 
-		if cs.is_boolean and cs.selected_id == 1 then
-			all_false = false
+		if var_13_1.is_boolean and var_13_1.selected_id == 1 then
+			var_13_0 = false
 
-			update_option(cs, 2, true, true)
+			var_0_6(var_13_1, 2, true, true)
 		end
 	end
 
-	if all_false then
-		for i = 1, #DebugScreen.console_settings do
-			local cs = DebugScreen.console_settings[i]
+	if var_13_0 then
+		for iter_13_1 = 1, #var_0_9.console_settings do
+			local var_13_2 = var_0_9.console_settings[iter_13_1]
 
-			if cs.is_boolean and cs.selected_id == 2 then
-				update_option(cs, 3, true, true)
+			if var_13_2.is_boolean and var_13_2.selected_id == 2 then
+				var_0_6(var_13_2, 3, true, true)
 			end
 		end
 	end
@@ -1111,175 +1094,176 @@ DebugScreen.reset_settings = function ()
 	Application.save_user_settings()
 end
 
-DebugScreen.set_texture_quality = function (value)
-	Application.set_user_setting("texture_settings", "texture_categories/character_df", value)
-	Application.set_user_setting("texture_settings", "texture_categories/character_gsm", value)
-	Application.set_user_setting("texture_settings", "texture_categories/character_ma", value)
-	Application.set_user_setting("texture_settings", "texture_categories/character_nm", value)
-	Application.set_user_setting("texture_settings", "texture_categories/coat_of_arms", value)
-	Application.set_user_setting("texture_settings", "texture_categories/color_grading", value)
-	Application.set_user_setting("texture_settings", "texture_categories/decals", value)
-	Application.set_user_setting("texture_settings", "texture_categories/detail_textures", value)
-	Application.set_user_setting("texture_settings", "texture_categories/environment_df", value)
-	Application.set_user_setting("texture_settings", "texture_categories/environment_dfa", value)
-	Application.set_user_setting("texture_settings", "texture_categories/environment_gsm", value)
-	Application.set_user_setting("texture_settings", "texture_categories/environment_hm", value)
-	Application.set_user_setting("texture_settings", "texture_categories/environment_ma", value)
-	Application.set_user_setting("texture_settings", "texture_categories/environment_nm", value)
-	Application.set_user_setting("texture_settings", "texture_categories/fx", value)
-	Application.set_user_setting("texture_settings", "texture_categories/gui", value)
-	Application.set_user_setting("texture_settings", "texture_categories/skydome", value)
-	Application.set_user_setting("texture_settings", "texture_categories/weapon_ao", value)
-	Application.set_user_setting("texture_settings", "texture_categories/weapon_df", value)
-	Application.set_user_setting("texture_settings", "texture_categories/weapon_dfo", value)
-	Application.set_user_setting("texture_settings", "texture_categories/weapon_gsm", value)
-	Application.set_user_setting("texture_settings", "texture_categories/weapon_nm", value)
-	Application.set_user_setting("texture_settings", "texture_categories/weapon_scr", value)
+function var_0_9.set_texture_quality(arg_14_0)
+	Application.set_user_setting("texture_settings", "texture_categories/character_df", arg_14_0)
+	Application.set_user_setting("texture_settings", "texture_categories/character_gsm", arg_14_0)
+	Application.set_user_setting("texture_settings", "texture_categories/character_ma", arg_14_0)
+	Application.set_user_setting("texture_settings", "texture_categories/character_nm", arg_14_0)
+	Application.set_user_setting("texture_settings", "texture_categories/coat_of_arms", arg_14_0)
+	Application.set_user_setting("texture_settings", "texture_categories/color_grading", arg_14_0)
+	Application.set_user_setting("texture_settings", "texture_categories/decals", arg_14_0)
+	Application.set_user_setting("texture_settings", "texture_categories/detail_textures", arg_14_0)
+	Application.set_user_setting("texture_settings", "texture_categories/environment_df", arg_14_0)
+	Application.set_user_setting("texture_settings", "texture_categories/environment_dfa", arg_14_0)
+	Application.set_user_setting("texture_settings", "texture_categories/environment_gsm", arg_14_0)
+	Application.set_user_setting("texture_settings", "texture_categories/environment_hm", arg_14_0)
+	Application.set_user_setting("texture_settings", "texture_categories/environment_ma", arg_14_0)
+	Application.set_user_setting("texture_settings", "texture_categories/environment_nm", arg_14_0)
+	Application.set_user_setting("texture_settings", "texture_categories/fx", arg_14_0)
+	Application.set_user_setting("texture_settings", "texture_categories/gui", arg_14_0)
+	Application.set_user_setting("texture_settings", "texture_categories/skydome", arg_14_0)
+	Application.set_user_setting("texture_settings", "texture_categories/weapon_ao", arg_14_0)
+	Application.set_user_setting("texture_settings", "texture_categories/weapon_df", arg_14_0)
+	Application.set_user_setting("texture_settings", "texture_categories/weapon_dfo", arg_14_0)
+	Application.set_user_setting("texture_settings", "texture_categories/weapon_gsm", arg_14_0)
+	Application.set_user_setting("texture_settings", "texture_categories/weapon_nm", arg_14_0)
+	Application.set_user_setting("texture_settings", "texture_categories/weapon_scr", arg_14_0)
 	Application.save_user_settings()
 end
 
-DebugScreen.update_search = function (input_manager, input_service, gui, t, dt, opened_this_frame)
-	local enter_when_opening = opened_this_frame and DebugScreen.search_string ~= ""
-	local toggle_using_backspace = input_service:get("console_search_key") and (DebugScreen.search_string == "" or not DebugScreen.search_active)
-	local exit_due_to_exiting_debugscreen = not DebugScreen.active and DebugScreen.search_active
-	local exit_with_no_search_hits_hack = DebugScreen.search_active and DebugScreen.hot_id == 0 and input_service:get("left_key")
+function var_0_9.update_search(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+	local var_15_0 = arg_15_5 and var_0_9.search_string ~= ""
+	local var_15_1 = arg_15_1:get("console_search_key") and (var_0_9.search_string == "" or not var_0_9.search_active)
+	local var_15_2 = not var_0_9.active and var_0_9.search_active
+	local var_15_3 = var_0_9.search_active and var_0_9.hot_id == 0 and arg_15_1:get("left_key")
 
-	if enter_when_opening or toggle_using_backspace or exit_due_to_exiting_debugscreen or exit_with_no_search_hits_hack then
-		if not DebugScreen.search_active then
-			DebugScreen.unblocked_services_n = input_manager:get_unblocked_services(nil, nil, DebugScreen.unblocked_services)
+	if var_15_0 or var_15_1 or var_15_2 or var_15_3 then
+		if not var_0_9.search_active then
+			var_0_9.unblocked_services_n = arg_15_0:get_unblocked_services(nil, nil, var_0_9.unblocked_services)
 
-			input_manager:device_block_services("keyboard", 1, DebugScreen.unblocked_services, DebugScreen.unblocked_services_n, "debug_screen")
-			input_manager:device_unblock_service("keyboard", 1, "DebugMenu")
+			arg_15_0:device_block_services("keyboard", 1, var_0_9.unblocked_services, var_0_9.unblocked_services_n, "debug_screen")
+			arg_15_0:device_unblock_service("keyboard", 1, "DebugMenu")
 
-			DebugScreen.search_active = true
+			var_0_9.search_active = true
 		else
-			input_manager:device_block_service("keyboard", 1, "DebugMenu")
-			input_manager:device_unblock_services("keyboard", 1, DebugScreen.unblocked_services, DebugScreen.unblocked_services_n)
+			arg_15_0:device_block_service("keyboard", 1, "DebugMenu")
+			arg_15_0:device_unblock_services("keyboard", 1, var_0_9.unblocked_services, var_0_9.unblocked_services_n)
 
-			DebugScreen.search_active = false
+			var_0_9.search_active = false
 		end
 	end
 
-	local search_text_box_layer = base_layer + 3
-	local search_text_layer = base_layer + 4
-	local hot_anim_t = (math.sin(t / GLOBAL_TIME_SCALE * 10) + 1) * 0.5
-	local _, res_y = RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h
-	local search_title_box_pos = Vector3(50, res_y - 60, search_text_box_layer)
-	local search_text_box_pos = Vector3(250, res_y - 60, search_text_box_layer)
-	local search_title_pos = Vector3(60, res_y - 50, search_text_layer)
-	local search_text_pos = Vector3(260, res_y - 50, search_text_layer)
-	local font_size = DebugScreen.font_size
+	local var_15_4 = var_0_3 + 3
+	local var_15_5 = var_0_3 + 4
+	local var_15_6 = (math.sin(arg_15_3 / GLOBAL_TIME_SCALE * 10) + 1) * 0.5
+	local var_15_7 = RESOLUTION_LOOKUP.res_w
+	local var_15_8 = RESOLUTION_LOOKUP.res_h
+	local var_15_9 = Vector3(50, var_15_8 - 60, var_15_4)
+	local var_15_10 = Vector3(250, var_15_8 - 60, var_15_4)
+	local var_15_11 = Vector3(60, var_15_8 - 50, var_15_5)
+	local var_15_12 = Vector3(260, var_15_8 - 50, var_15_5)
+	local var_15_13 = var_0_9.font_size
 
-	DebugScreen.search_text_box_width = DebugScreen.search_text_box_width or 0
+	var_0_9.search_text_box_width = var_0_9.search_text_box_width or 0
 
-	if not DebugScreen.search_active then
-		DebugScreen.search_text_box_width = math.max(0, DebugScreen.search_text_box_width - 2000 * dt)
+	if not var_0_9.search_active then
+		var_0_9.search_text_box_width = math.max(0, var_0_9.search_text_box_width - 2000 * arg_15_4)
 
-		if DebugScreen.hot_id <= 5 then
-			Gui.rect(gui, search_text_box_pos, Vector2(DebugScreen.search_text_box_width, 35), Colors.get_color_with_alpha("dark_olive_green", 100 + math.cos(hot_anim_t) * 25))
-			Gui.rect(gui, search_title_box_pos, Vector2(200, 35), Colors.get_color_with_alpha("orange", 15 + math.cos(hot_anim_t) * 5))
-			Gui.text(gui, "Search (backspace) ", font_mtrl, font_size, font, search_title_pos, Colors.get_color_with_alpha("white", 100 + math.cos(hot_anim_t) * 100))
+		if var_0_9.hot_id <= 5 then
+			Gui.rect(arg_15_2, var_15_10, Vector2(var_0_9.search_text_box_width, 35), Colors.get_color_with_alpha("dark_olive_green", 100 + math.cos(var_15_6) * 25))
+			Gui.rect(arg_15_2, var_15_9, Vector2(200, 35), Colors.get_color_with_alpha("orange", 15 + math.cos(var_15_6) * 5))
+			Gui.text(arg_15_2, "Search (backspace) ", var_0_1, var_15_13, var_0_0, var_15_11, Colors.get_color_with_alpha("white", 100 + math.cos(var_15_6) * 100))
 
-			local info_box_width = 300
-			local select_first_pos = Vector3(DebugScreen.console_width - info_box_width, res_y - font_size, search_text_layer)
+			local var_15_14 = 300
+			local var_15_15 = Vector3(var_0_9.console_width - var_15_14, var_15_8 - var_15_13, var_15_5)
 
-			Gui.text(gui, "Select First (Page up)", font_mtrl, font_size * 0.5, font, select_first_pos, Colors.get_color_with_alpha("white", 100 + math.cos(hot_anim_t) * 100))
+			Gui.text(arg_15_2, "Select First (Page up)", var_0_1, var_15_13 * 0.5, var_0_0, var_15_15, Colors.get_color_with_alpha("white", 100 + math.cos(var_15_6) * 100))
 
-			local select_last_pos = Vector3(DebugScreen.console_width - info_box_width, res_y - font_size * 2, search_text_layer)
+			local var_15_16 = Vector3(var_0_9.console_width - var_15_14, var_15_8 - var_15_13 * 2, var_15_5)
 
-			Gui.text(gui, "Select Last (Page down)", font_mtrl, font_size * 0.5, font, select_last_pos, Colors.get_color_with_alpha("white", 100 + math.cos(hot_anim_t) * 100))
+			Gui.text(arg_15_2, "Select Last (Page down)", var_0_1, var_15_13 * 0.5, var_0_0, var_15_16, Colors.get_color_with_alpha("white", 100 + math.cos(var_15_6) * 100))
 
-			local info_submenu_search_pos = Vector3(DebugScreen.console_width - info_box_width, res_y - font_size * 3, search_text_layer)
+			local var_15_17 = Vector3(var_0_9.console_width - var_15_14, var_15_8 - var_15_13 * 3, var_15_5)
 
-			Gui.text(gui, "Use dot symbol [.] in search box to search submenus.", font_mtrl, font_size * 0.5, font, info_submenu_search_pos, Colors.get_color_with_alpha("white", 100 + math.cos(hot_anim_t) * 100))
+			Gui.text(arg_15_2, "Use dot symbol [.] in search box to search submenus.", var_0_1, var_15_13 * 0.5, var_0_0, var_15_17, Colors.get_color_with_alpha("white", 100 + math.cos(var_15_6) * 100))
 
-			local info_modified_search_pos = Vector3(DebugScreen.console_width - info_box_width, res_y - font_size * 4, search_text_layer)
+			local var_15_18 = Vector3(var_0_9.console_width - var_15_14, var_15_8 - var_15_13 * 4, var_15_5)
 
-			Gui.text(gui, "Use star symbol [*] in search box to filter modified.", font_mtrl, font_size * 0.5, font, info_modified_search_pos, Colors.get_color_with_alpha("white", 100 + math.cos(hot_anim_t) * 100))
+			Gui.text(arg_15_2, "Use star symbol [*] in search box to filter modified.", var_0_1, var_15_13 * 0.5, var_0_0, var_15_18, Colors.get_color_with_alpha("white", 100 + math.cos(var_15_6) * 100))
 		end
 
 		return
 	end
 
-	DebugScreen.search_text_box_width = math.min(400, DebugScreen.search_text_box_width + 2000 * dt)
+	var_0_9.search_text_box_width = math.min(400, var_0_9.search_text_box_width + 2000 * arg_15_4)
 
-	local numpad_was_or_is_pressed = false
+	local var_15_19 = false
 
-	for numpad_i = 0, 9 do
-		local shortcut_input = "numpad " .. tostring(numpad_i)
+	for iter_15_0 = 0, 9 do
+		local var_15_20 = "numpad " .. tostring(iter_15_0)
 
-		numpad_was_or_is_pressed = numpad_was_or_is_pressed or DebugScreen.numpad_presses[numpad_i]
-		DebugScreen.numpad_presses[numpad_i] = Keyboard.pressed(Keyboard.button_index(shortcut_input)) or nil
-		numpad_was_or_is_pressed = numpad_was_or_is_pressed or DebugScreen.numpad_presses[numpad_i]
+		var_15_19 = var_15_19 or var_0_9.numpad_presses[iter_15_0]
+		var_0_9.numpad_presses[iter_15_0] = Keyboard.pressed(Keyboard.button_index(var_15_20)) or nil
+		var_15_19 = var_15_19 or var_0_9.numpad_presses[iter_15_0]
 	end
 
-	if not numpad_was_or_is_pressed then
-		local keystrokes = Keyboard.keystrokes()
+	if not var_15_19 then
+		local var_15_21 = Keyboard.keystrokes()
 
-		for i = 1, #keystrokes do
-			local stroke = keystrokes[i]
+		for iter_15_1 = 1, #var_15_21 do
+			local var_15_22 = var_15_21[iter_15_1]
 
-			if stroke == "\x7F" then
-				DebugScreen.search_string = ""
-				DebugScreen.active_id = nil
-			elseif type(stroke) == "string" then
-				if stroke:find(".", 1, true) == nil and DebugScreen.search_string:find(".", 1, true) == nil then
-					DebugScreen.active_id = nil
+			if var_15_22 == "\x7F" then
+				var_0_9.search_string = ""
+				var_0_9.active_id = nil
+			elseif type(var_15_22) == "string" then
+				if var_15_22:find(".", 1, true) == nil and var_0_9.search_string:find(".", 1, true) == nil then
+					var_0_9.active_id = nil
 				end
 
-				DebugScreen.search_string = DebugScreen.search_string .. string.lower(stroke)
-			elseif stroke == Keyboard.BACKSPACE and #DebugScreen.search_string > 0 then
-				local string_length = string.len(DebugScreen.search_string)
-				local character_index = Utf8.location(DebugScreen.search_string, string_length)
+				var_0_9.search_string = var_0_9.search_string .. string.lower(var_15_22)
+			elseif var_15_22 == Keyboard.BACKSPACE and #var_0_9.search_string > 0 then
+				local var_15_23 = string.len(var_0_9.search_string)
+				local var_15_24 = Utf8.location(var_0_9.search_string, var_15_23)
 
-				DebugScreen.search_string = DebugScreen.search_string:sub(1, character_index - 1)
+				var_0_9.search_string = var_0_9.search_string:sub(1, var_15_24 - 1)
 
-				if DebugScreen.search_string:find(".", 1, true) == nil then
-					DebugScreen.active_id = nil
+				if var_0_9.search_string:find(".", 1, true) == nil then
+					var_0_9.active_id = nil
 				end
 			end
 		end
 	end
 
-	Gui.rect(gui, search_text_box_pos, Vector2(DebugScreen.search_text_box_width, 35), Colors.get_color_with_alpha("dark_olive_green", 225 + math.cos(hot_anim_t) * 25))
-	Gui.rect(gui, search_title_box_pos, Vector2(200, 35), Colors.get_color_with_alpha("olive", 225))
-	Gui.text(gui, "Search: ", font_mtrl, font_size, font, search_title_pos, Colors.get("white"))
-	Gui.text(gui, DebugScreen.search_string, font_mtrl, font_size, font, search_text_pos, Colors.get("yellow"))
+	Gui.rect(arg_15_2, var_15_10, Vector2(var_0_9.search_text_box_width, 35), Colors.get_color_with_alpha("dark_olive_green", 225 + math.cos(var_15_6) * 25))
+	Gui.rect(arg_15_2, var_15_9, Vector2(200, 35), Colors.get_color_with_alpha("olive", 225))
+	Gui.text(arg_15_2, "Search: ", var_0_1, var_15_13, var_0_0, var_15_11, Colors.get("white"))
+	Gui.text(arg_15_2, var_0_9.search_string, var_0_1, var_15_13, var_0_0, var_15_12, Colors.get("yellow"))
 
-	local min, max = Gui.text_extents(gui, DebugScreen.search_string, font_mtrl, font_size)
-	local width = max.x - min.x
+	local var_15_25, var_15_26 = Gui.text_extents(arg_15_2, var_0_9.search_string, var_0_1, var_15_13)
+	local var_15_27 = var_15_26.x - var_15_25.x
 
-	Gui.rect(gui, search_text_pos + Vector3(width + 1, -2, 0), Vector2(10, 20), Colors.get_color_with_alpha("white", -50 + math.cos(hot_anim_t) * 250))
+	Gui.rect(arg_15_2, var_15_12 + Vector3(var_15_27 + 1, -2, 0), Vector2(10, 20), Colors.get_color_with_alpha("white", -50 + math.cos(var_15_6) * 250))
 end
 
-DebugScreen.hash_options = function ()
-	return DebugScreen.settings_hash or 0
+function var_0_9.hash_options()
+	return var_0_9.settings_hash or 0
 end
 
-DebugScreen._propagate_option = function (setting_id, option_index, dont_save)
-	Managers.state.network.network_transmit:send_rpc_server("rpc_propagate_debug_option", DebugScreen.hash_options(), setting_id, option_index, dont_save)
+function var_0_9._propagate_option(arg_17_0, arg_17_1, arg_17_2)
+	Managers.state.network.network_transmit:send_rpc_server("rpc_propagate_debug_option", var_0_9.hash_options(), arg_17_0, arg_17_1, arg_17_2)
 end
 
-DebugScreen.handle_propagated_option = function (option_hash, setting_id, option_index, dont_save)
-	local own_hash = DebugScreen.hash_options()
+function var_0_9.handle_propagated_option(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+	local var_18_0 = var_0_9.hash_options()
 
-	if own_hash ~= option_hash then
-		return string.format("Debug option mismatch (%s ~= %s)", own_hash, option_hash)
+	if var_18_0 ~= arg_18_0 then
+		return string.format("Debug option mismatch (%s ~= %s)", var_18_0, arg_18_0)
 	end
 
-	local _, cs = table.find_func(DebugScreen.console_settings, function (_, cs)
-		return cs.setting_id == setting_id
+	local var_18_1, var_18_2 = table.find_func(var_0_9.console_settings, function(arg_19_0, arg_19_1)
+		return arg_19_1.setting_id == arg_18_1
 	end)
 
-	if not cs then
-		return "Missing debug option at index " .. tostring(setting_id)
+	if not var_18_2 then
+		return "Missing debug option at index " .. tostring(arg_18_1)
 	end
 
-	Debug.sticky_text("[DebugManager] Received propagated debug option '%s' from client", option_index == 0 and cs.title or string.format("%s = %s", cs.title, cs.options[option_index]), "delay", 5)
+	Debug.sticky_text("[DebugManager] Received propagated debug option '%s' from client", arg_18_2 == 0 and var_18_2.title or string.format("%s = %s", var_18_2.title, var_18_2.options[arg_18_2]), "delay", 5)
 
-	if cs.func then
-		exec_func(cs)
+	if var_18_2.func then
+		var_0_7(var_18_2)
 	else
-		update_option(cs, option_index, dont_save)
+		var_0_6(var_18_2, arg_18_2, arg_18_3)
 	end
 end

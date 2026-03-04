@@ -1,131 +1,126 @@
-﻿-- chunkname: @scripts/managers/backend_playfab/backend_interface_deus_playfab.lua
+-- chunkname: @scripts/managers/backend_playfab/backend_interface_deus_playfab.lua
 
 require("scripts/managers/backend_playfab/backend_interface_deus_base")
 
 BackendInterfaceDeusPlayFab = class(BackendInterfaceDeusPlayFab, BackendInterfaceDeusBase)
 
-BackendInterfaceDeusPlayFab.init = function (self, backend_mirror)
-	self._backend_mirror = backend_mirror
-	self._belakor_data = {}
+function BackendInterfaceDeusPlayFab.init(arg_1_0, arg_1_1)
+	arg_1_0._backend_mirror = arg_1_1
+	arg_1_0._belakor_data = {}
 
-	self.super.init(self)
+	arg_1_0.super.init(arg_1_0)
 end
 
-BackendInterfaceDeusPlayFab.get_journey_cycle = function (self)
-	local current_time = Managers.time:time("main")
-	local deus_journey_cycle_data = self._backend_mirror:get_deus_journey_cycle_data()
-	local time_delta = current_time - deus_journey_cycle_data.time_of_update
-	local remaining_time = deus_journey_cycle_data.remaining_time - time_delta
-	local cycle
+function BackendInterfaceDeusPlayFab.get_journey_cycle(arg_2_0)
+	local var_2_0 = Managers.time:time("main")
+	local var_2_1 = arg_2_0._backend_mirror:get_deus_journey_cycle_data()
+	local var_2_2 = var_2_0 - var_2_1.time_of_update
+	local var_2_3 = var_2_1.remaining_time - var_2_2
+	local var_2_4
 
-	if remaining_time < 0 then
-		local time_past_cycle = -remaining_time
-		local span = deus_journey_cycle_data.span
-		local cycle_delta = math.ceil(time_past_cycle / span)
+	if var_2_3 < 0 then
+		local var_2_5 = -var_2_3
+		local var_2_6 = var_2_1.span
+		local var_2_7 = math.ceil(var_2_5 / var_2_6)
 
-		cycle = deus_journey_cycle_data.cycle_count + cycle_delta
-		remaining_time = span - time_past_cycle % span
+		var_2_4 = var_2_1.cycle_count + var_2_7
+		var_2_3 = var_2_6 - var_2_5 % var_2_6
 	else
-		cycle = deus_journey_cycle_data.cycle_count
+		var_2_4 = var_2_1.cycle_count
 	end
 
-	return self:_generate_journey_cycle(current_time, remaining_time, cycle)
+	return arg_2_0:_generate_journey_cycle(var_2_0, var_2_3, var_2_4)
 end
 
-BackendInterfaceDeusPlayFab.has_loaded_belakor_data = function (self)
-	return self._backend_mirror:has_loaded_belakor_data()
+function BackendInterfaceDeusPlayFab.has_loaded_belakor_data(arg_3_0)
+	return arg_3_0._backend_mirror:has_loaded_belakor_data()
 end
 
-BackendInterfaceDeusPlayFab.set_has_loaded_belakor_data = function (self, value)
-	self._backend_mirror:set_has_loaded_belakor_data(value)
+function BackendInterfaceDeusPlayFab.set_has_loaded_belakor_data(arg_4_0, arg_4_1)
+	arg_4_0._backend_mirror:set_has_loaded_belakor_data(arg_4_1)
 end
 
-BackendInterfaceDeusPlayFab.deus_journey_with_belakor = function (self, journey_name)
-	if not journey_name then
+function BackendInterfaceDeusPlayFab.deus_journey_with_belakor(arg_5_0, arg_5_1)
+	if not arg_5_1 then
 		return false
 	end
 
-	if not self._belakor_data or table.is_empty(self._belakor_data) then
-		self:get_belakor_cycle()
+	if not arg_5_0._belakor_data or table.is_empty(arg_5_0._belakor_data) then
+		arg_5_0:get_belakor_cycle()
 	end
 
-	local deus_belakor_cycle_data = self._belakor_data
-
-	return deus_belakor_cycle_data.journey_name == journey_name and true or false
+	return arg_5_0._belakor_data.journey_name == arg_5_1 and true or false
 end
 
-BackendInterfaceDeusPlayFab.get_belakor_cycle = function (self)
-	local current_time = Managers.time:time("main")
-	local deus_belakor_cycle_data = self._backend_mirror:get_deus_belakor_curse_data()
-	local time_delta = current_time - deus_belakor_cycle_data.time_of_update
-	local remaining_time = deus_belakor_cycle_data.remaining_time - time_delta
-	local cycle
+function BackendInterfaceDeusPlayFab.get_belakor_cycle(arg_6_0)
+	local var_6_0 = Managers.time:time("main")
+	local var_6_1 = arg_6_0._backend_mirror:get_deus_belakor_curse_data()
+	local var_6_2 = var_6_0 - var_6_1.time_of_update
+	local var_6_3 = var_6_1.remaining_time - var_6_2
+	local var_6_4
 
-	if remaining_time < 0 then
-		local time_past_cycle = -remaining_time
-		local span = deus_belakor_cycle_data.span
-		local cycle_delta = math.ceil(time_past_cycle / span)
+	if var_6_3 < 0 then
+		local var_6_5 = -var_6_3
+		local var_6_6 = var_6_1.span
+		local var_6_7 = math.ceil(var_6_5 / var_6_6)
 
-		cycle = deus_belakor_cycle_data.cycle_count + cycle_delta
-		remaining_time = span - time_past_cycle % span
+		var_6_4 = var_6_1.cycle_count + var_6_7
+		var_6_3 = var_6_6 - var_6_5 % var_6_6
 	else
-		cycle = deus_belakor_cycle_data.cycle_count
+		var_6_4 = var_6_1.cycle_count
 	end
 
-	return self:_generate_belakor_curse_cycle(current_time, remaining_time, cycle)
+	return arg_6_0:_generate_belakor_curse_cycle(var_6_0, var_6_3, var_6_4)
 end
 
-BackendInterfaceDeusPlayFab._generate_belakor_curse_cycle = function (self, current_time, remaining_time, cycle)
-	local index = cycle % #AvailableJourneyOrder + 1
-	local journey_name = AvailableJourneyOrder[index]
-	local belakor_data = {
-		remaining_time = remaining_time,
-		time_of_update = current_time,
-		journey_name = journey_name,
+function BackendInterfaceDeusPlayFab._generate_belakor_curse_cycle(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	local var_7_0 = arg_7_3 % #AvailableJourneyOrder + 1
+	local var_7_1 = AvailableJourneyOrder[var_7_0]
+	local var_7_2 = {
+		remaining_time = arg_7_2,
+		time_of_update = arg_7_1,
+		journey_name = var_7_1
 	}
 
-	self._belakor_data = belakor_data
+	arg_7_0._belakor_data = var_7_2
 
-	return belakor_data
+	return var_7_2
 end
 
-BackendInterfaceDeusPlayFab.refresh_belakor_cycle = function (self)
-	self._backend_mirror:deus_refresh_belakor_data()
+function BackendInterfaceDeusPlayFab.refresh_belakor_cycle(arg_8_0)
+	arg_8_0._backend_mirror:deus_refresh_belakor_data()
 end
 
-BackendInterfaceDeusPlayFab.get_rolled_over_soft_currency = function (self)
-	return self._backend_mirror:get_deus_rolled_over_soft_currency()
+function BackendInterfaceDeusPlayFab.get_rolled_over_soft_currency(arg_9_0)
+	return arg_9_0._backend_mirror:get_deus_rolled_over_soft_currency()
 end
 
-BackendInterfaceDeusPlayFab.deus_run_started = function (self)
-	local request = {
+function BackendInterfaceDeusPlayFab.deus_run_started(arg_10_0)
+	local var_10_0 = {
 		FunctionName = "deusRunStarted",
-		FunctionParameter = {},
+		FunctionParameter = {}
 	}
-	local backend_mirror = self._backend_mirror
+	local var_10_1 = arg_10_0._backend_mirror
 
-	backend_mirror:predict_deus_run_started()
+	var_10_1:predict_deus_run_started()
 
-	local function cb(result)
-		backend_mirror:handle_deus_result(result)
+	local function var_10_2(arg_11_0)
+		var_10_1:handle_deus_result(arg_11_0)
 	end
 
-	local request_queue = backend_mirror:request_queue()
-
-	request_queue:enqueue(request, cb)
+	var_10_1:request_queue():enqueue(var_10_0, var_10_2)
 end
 
-BackendInterfaceDeusPlayFab.write_player_event = function (self, event_name, data)
-	local request = {
-		EventName = event_name,
-		Body = data,
+function BackendInterfaceDeusPlayFab.write_player_event(arg_12_0, arg_12_1, arg_12_2)
+	local var_12_0 = {
+		EventName = arg_12_1,
+		Body = arg_12_2
 	}
-	local backend_mirror = self._backend_mirror
-	local request_queue = backend_mirror:request_queue()
+	local var_12_1 = arg_12_0._backend_mirror:request_queue()
 
-	local function empty_success_callback(result)
+	local function var_12_2(arg_13_0)
 		return
 	end
 
-	request_queue:enqueue_api_request("WritePlayerEvent", request, empty_success_callback)
+	var_12_1:enqueue_api_request("WritePlayerEvent", var_12_0, var_12_2)
 end

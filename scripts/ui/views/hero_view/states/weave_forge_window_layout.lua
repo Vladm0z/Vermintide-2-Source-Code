@@ -1,70 +1,70 @@
-﻿-- chunkname: @scripts/ui/views/hero_view/states/weave_forge_window_layout.lua
+-- chunkname: @scripts/ui/views/hero_view/states/weave_forge_window_layout.lua
 
-local windows = {
+local var_0_0 = {
 	overview = {
 		alignment_index = 2,
-		class_name = "HeroWindowWeaveForgeOverview",
 		name = "overview",
+		class_name = "HeroWindowWeaveForgeOverview"
 	},
 	weapon_select = {
 		alignment_index = 2,
-		class_name = "HeroWindowWeaveForgeWeapons",
 		name = "weapon_select",
+		class_name = "HeroWindowWeaveForgeWeapons"
 	},
 	properties = {
 		alignment_index = 2,
-		class_name = "HeroWindowWeaveProperties",
 		name = "properties",
+		class_name = "HeroWindowWeaveProperties"
 	},
 	background = {
 		alignment_index = 2,
-		class_name = "HeroWindowWeaveForgeBackground",
 		name = "background",
+		class_name = "HeroWindowWeaveForgeBackground"
 	},
 	panel = {
 		alignment_index = 2,
-		class_name = "HeroWindowWeaveForgePanel",
 		name = "panel",
-	},
+		class_name = "HeroWindowWeaveForgePanel"
+	}
 }
-local window_layouts = {
+local var_0_1 = {
 	{
-		close_on_exit = true,
-		name = "weave_overview",
 		sound_event_enter = "menu_magic_forge_overview_menu",
+		name = "weave_overview",
 		sound_event_exit = "play_gui_equipment_close",
+		close_on_exit = true,
 		windows = {
-			background = 1,
 			overview = 2,
 			panel = 3,
-		},
+			background = 1
+		}
 	},
 	{
-		close_on_exit = false,
-		name = "weave_weapon_select",
 		sound_event_enter = "menu_magic_forge_enter_weapon_switch_menu",
+		name = "weave_weapon_select",
 		sound_event_exit = "play_gui_equipment_close",
+		close_on_exit = false,
 		windows = {
-			background = 1,
-			panel = 3,
 			weapon_select = 2,
-		},
+			panel = 3,
+			background = 1
+		}
 	},
 	{
 		close_on_exit = false,
 		name = "weave_properties",
 		sound_event_exit = "play_gui_equipment_close",
 		windows = {
-			background = 1,
-			panel = 3,
 			properties = 2,
-		},
-	},
+			panel = 3,
+			background = 1
+		}
+	}
 }
-local MAX_ACTIVE_WINDOWS = 5
+local var_0_2 = 5
 
 return {
-	max_active_windows = MAX_ACTIVE_WINDOWS,
-	windows = windows,
-	window_layouts = window_layouts,
+	max_active_windows = var_0_2,
+	windows = var_0_0,
+	window_layouts = var_0_1
 }

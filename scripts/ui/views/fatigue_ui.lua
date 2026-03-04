@@ -1,233 +1,225 @@
-﻿-- chunkname: @scripts/ui/views/fatigue_ui.lua
+-- chunkname: @scripts/ui/views/fatigue_ui.lua
 
-local definitions = local_require("scripts/ui/views/fatigue_ui_definitions")
+local var_0_0 = local_require("scripts/ui/views/fatigue_ui_definitions")
 
 FatigueUI = class(FatigueUI)
 
-FatigueUI.init = function (self, parent, ingame_ui_context)
-	self._parent = parent
-	self.ui_renderer = ingame_ui_context.ui_renderer
-	self.ingame_ui = ingame_ui_context.ingame_ui
-	self.input_manager = ingame_ui_context.input_manager
-	self.local_player = ingame_ui_context.player_manager:local_player()
+function FatigueUI.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0._parent = arg_1_1
+	arg_1_0.ui_renderer = arg_1_2.ui_renderer
+	arg_1_0.ingame_ui = arg_1_2.ingame_ui
+	arg_1_0.input_manager = arg_1_2.input_manager
+	arg_1_0.local_player = arg_1_2.player_manager:local_player()
 
-	self:create_ui_elements()
+	arg_1_0:create_ui_elements()
 end
 
-FatigueUI.create_ui_elements = function (self)
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
+function FatigueUI.create_ui_elements(arg_2_0)
+	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
-	local shields = {}
+	local var_2_0 = {}
 
-	for i = 1, UISettings.max_fatigue_shields do
-		local shield = UIWidget.init(definitions.shield_definition)
-
-		shields[i] = shield
+	for iter_2_0 = 1, UISettings.max_fatigue_shields do
+		var_2_0[iter_2_0] = UIWidget.init(var_0_0.shield_definition)
 	end
 
-	self.active_shields = 0
-	self.shields = shields
+	arg_2_0.active_shields = 0
+	arg_2_0.shields = var_2_0
 end
 
-FatigueUI.destroy = function (self)
+function FatigueUI.destroy(arg_3_0)
 	return
 end
 
-FatigueUI.shield_state = function (self, shield_number, living_shields)
-	local leftover = living_shields - shield_number
+function FatigueUI.shield_state(arg_4_0, arg_4_1, arg_4_2)
+	local var_4_0 = arg_4_2 - arg_4_1
 
-	if leftover >= 0 then
+	if var_4_0 >= 0 then
 		return "state_1"
-	elseif leftover == -0.5 then
+	elseif var_4_0 == -0.5 then
 		return "state_2"
 	else
 		return "state_3"
 	end
 end
 
-FatigueUI.setup_hud = function (self, status_extension)
-	local fatigue_points, max_fatigue_points = status_extension:current_fatigue_points()
+function FatigueUI.setup_hud(arg_5_0, arg_5_1)
+	local var_5_0, var_5_1 = arg_5_1:current_fatigue_points()
+	local var_5_2 = math.clamp(var_5_0, 0, UISettings.max_fatigue_shields * 2)
+	local var_5_3 = math.clamp(var_5_1, 0, UISettings.max_fatigue_shields * 2)
+	local var_5_4 = math.floor(var_5_3 / 2 + 0.5)
+	local var_5_5 = 30
+	local var_5_6 = var_5_5 * (var_5_4 - 1) / 2
+	local var_5_7 = var_5_3 * 0.5 - var_5_2 * 0.5
+	local var_5_8 = arg_5_0.shields
 
-	fatigue_points = math.clamp(fatigue_points, 0, UISettings.max_fatigue_shields * 2)
-	max_fatigue_points = math.clamp(max_fatigue_points, 0, UISettings.max_fatigue_shields * 2)
+	for iter_5_0 = 1, var_5_4 do
+		local var_5_9 = var_5_8[iter_5_0]
+		local var_5_10 = var_5_9.style
+		local var_5_11 = var_5_6 - var_5_5 * (iter_5_0 - 1)
 
-	local active_shields = math.floor(max_fatigue_points / 2 + 0.5)
-	local offset = 30
-	local total_width = offset * (active_shields - 1)
-	local half_width = total_width / 2
-	local living_shields = max_fatigue_points * 0.5 - fatigue_points * 0.5
-	local shields = self.shields
+		var_5_10.offset[1] = var_5_11
+		var_5_10.texture_glow_id.offset[1] = var_5_11
+		var_5_9.state = arg_5_0:shield_state(iter_5_0, var_5_7)
+		var_5_9.content.texture_id = var_5_10.state_textures[var_5_9.state]
 
-	for i = 1, active_shields do
-		local shield = shields[i]
-		local style = shield.style
-		local width_offet = half_width - offset * (i - 1)
-
-		style.offset[1] = width_offet
-		style.texture_glow_id.offset[1] = width_offet
-		shield.state = self:shield_state(i, living_shields)
-		shield.content.texture_id = style.state_textures[shield.state]
-
-		if self.active then
-			style.color[1] = 255
-			style.texture_glow_id.color[1] = 255
+		if arg_5_0.active then
+			var_5_10.color[1] = 255
+			var_5_10.texture_glow_id.color[1] = 255
 		end
 	end
 
-	self.active_shields = active_shields
-	self.current_fatigue = fatigue_points
-	self.max_fatigue_points = max_fatigue_points
+	arg_5_0.active_shields = var_5_4
+	arg_5_0.current_fatigue = var_5_2
+	arg_5_0.max_fatigue_points = var_5_3
 end
 
-FatigueUI.start_fade_in = function (self)
-	local active_shields = self.active_shields
-	local shields = self.shields
+function FatigueUI.start_fade_in(arg_6_0)
+	local var_6_0 = arg_6_0.active_shields
+	local var_6_1 = arg_6_0.shields
 
-	for i = 1, active_shields do
-		local shield = shields[i]
-		local style = shield.style
-		local from = 0
-		local to = 255
+	for iter_6_0 = 1, var_6_0 do
+		local var_6_2 = var_6_1[iter_6_0]
+		local var_6_3 = var_6_2.style
+		local var_6_4 = 0
+		local var_6_5 = 255
 
-		UIWidget.stop_animations(shield)
-		UIWidget.animate(shield, UIAnimation.init(UIAnimation.function_by_time, style.color, 1, from, to, 0.2, math.easeInCubic))
-		UIWidget.animate(shield, UIAnimation.init(UIAnimation.function_by_time, style.texture_glow_id.color, 1, from, to, 0.2, math.easeInCubic))
+		UIWidget.stop_animations(var_6_2)
+		UIWidget.animate(var_6_2, UIAnimation.init(UIAnimation.function_by_time, var_6_3.color, 1, var_6_4, var_6_5, 0.2, math.easeInCubic))
+		UIWidget.animate(var_6_2, UIAnimation.init(UIAnimation.function_by_time, var_6_3.texture_glow_id.color, 1, var_6_4, var_6_5, 0.2, math.easeInCubic))
 	end
 end
 
-FatigueUI.start_fade_out = function (self)
-	local active_shields = self.active_shields
-	local shields = self.shields
+function FatigueUI.start_fade_out(arg_7_0)
+	local var_7_0 = arg_7_0.active_shields
+	local var_7_1 = arg_7_0.shields
 
-	for i = 1, active_shields do
-		local shield = shields[i]
-		local style = shield.style
-		local from = style.color[1]
-		local to = 0
+	for iter_7_0 = 1, var_7_0 do
+		local var_7_2 = var_7_1[iter_7_0]
+		local var_7_3 = var_7_2.style
+		local var_7_4 = var_7_3.color[1]
+		local var_7_5 = 0
 
-		UIWidget.stop_animations(shield)
-		UIWidget.animate(shield, UIAnimation.init(UIAnimation.function_by_time, style.color, 1, from, to, 0.2, math.easeInCubic))
-		UIWidget.animate(shield, UIAnimation.init(UIAnimation.function_by_time, style.texture_glow_id.color, 1, from, to, 0.2, math.easeInCubic))
+		UIWidget.stop_animations(var_7_2)
+		UIWidget.animate(var_7_2, UIAnimation.init(UIAnimation.function_by_time, var_7_3.color, 1, var_7_4, var_7_5, 0.2, math.easeInCubic))
+		UIWidget.animate(var_7_2, UIAnimation.init(UIAnimation.function_by_time, var_7_3.texture_glow_id.color, 1, var_7_4, var_7_5, 0.2, math.easeInCubic))
 	end
 end
 
-local customizer_data = {
-	drag_scenegraph_id = "background_dragger",
+local var_0_1 = {
+	root_scenegraph_id = "background",
 	label = "Stamina",
 	registry_key = "fatigue",
-	root_scenegraph_id = "background",
+	drag_scenegraph_id = "background_dragger"
 }
 
-FatigueUI.update = function (self, dt)
-	local player = self.local_player
-	local player_unit = player.player_unit
+function FatigueUI.update(arg_8_0, arg_8_1)
+	local var_8_0 = arg_8_0.local_player.player_unit
 
-	if not Unit.alive(player_unit) then
+	if not Unit.alive(var_8_0) then
 		return
 	end
 
-	HudCustomizer.run(self.ui_renderer, self.ui_scenegraph, customizer_data)
+	HudCustomizer.run(arg_8_0.ui_renderer, arg_8_0.ui_scenegraph, var_0_1)
 
-	local status_extension = ScriptUnit.extension(player_unit, "status_system")
-	local should_be_active = self:check_active(status_extension)
+	local var_8_1 = ScriptUnit.extension(var_8_0, "status_system")
+	local var_8_2 = arg_8_0:check_active(var_8_1)
 
-	if not self.active and should_be_active then
-		self.active = true
+	if not arg_8_0.active and var_8_2 then
+		arg_8_0.active = true
 
-		self:setup_hud(status_extension)
-		self:start_fade_in()
-	elseif self.active then
-		local fatigue_points, max_fatigue_points = status_extension:current_fatigue_points()
+		arg_8_0:setup_hud(var_8_1)
+		arg_8_0:start_fade_in()
+	elseif arg_8_0.active then
+		local var_8_3, var_8_4 = var_8_1:current_fatigue_points()
 
-		if fatigue_points / max_fatigue_points < 0.6 and not should_be_active then
-			self.active = false
+		if var_8_3 / var_8_4 < 0.6 and not var_8_2 then
+			arg_8_0.active = false
 
-			self:start_fade_out()
+			arg_8_0:start_fade_out()
 		end
 	end
 
-	if self.active then
-		self:update_shields(status_extension, dt)
+	if arg_8_0.active then
+		arg_8_0:update_shields(var_8_1, arg_8_1)
 	end
 
-	local active_shields = self.active_shields
-	local shields = self.shields
+	local var_8_5 = arg_8_0.active_shields
+	local var_8_6 = arg_8_0.shields
 
-	for i = 1, active_shields do
-		local shield = shields[i]
-		local style = shield.style
+	for iter_8_0 = 1, var_8_5 do
+		local var_8_7 = var_8_6[iter_8_0]
+		local var_8_8 = var_8_7.style
 
-		if status_extension.has_bonus_fatigue_active then
-			shield.content.show_glow = false
+		if var_8_1.has_bonus_fatigue_active then
+			var_8_7.content.show_glow = false
 		else
-			shield.content.show_glow = false
+			var_8_7.content.show_glow = false
 		end
 	end
 
-	self:draw(dt)
+	arg_8_0:draw(arg_8_1)
 end
 
-FatigueUI.check_active = function (self, status_extension)
-	local active = status_extension:is_blocking() or status_extension.show_fatigue_gui
-
-	return active
+function FatigueUI.check_active(arg_9_0, arg_9_1)
+	return arg_9_1:is_blocking() or arg_9_1.show_fatigue_gui
 end
 
-FatigueUI.update_shields = function (self, status_extension, dt)
-	local current_fatigue = self.current_fatigue
-	local fatigue_points, max_fatigue_points = status_extension:current_fatigue_points()
+function FatigueUI.update_shields(arg_10_0, arg_10_1, arg_10_2)
+	local var_10_0 = arg_10_0.current_fatigue
+	local var_10_1, var_10_2 = arg_10_1:current_fatigue_points()
 
-	if max_fatigue_points ~= self.max_fatigue_points then
-		self:setup_hud(status_extension)
+	if var_10_2 ~= arg_10_0.max_fatigue_points then
+		arg_10_0:setup_hud(arg_10_1)
 	end
 
-	if fatigue_points == current_fatigue then
+	if var_10_1 == var_10_0 then
 		return
 	end
 
-	local living_shields = max_fatigue_points * 0.5 - fatigue_points * 0.5
-	local active_shields = self.active_shields
-	local shields = self.shields
+	local var_10_3 = var_10_2 * 0.5 - var_10_1 * 0.5
+	local var_10_4 = arg_10_0.active_shields
+	local var_10_5 = arg_10_0.shields
 
-	for i = 1, active_shields do
-		local shield = shields[i]
-		local style = shield.style
-		local current_state = shield.state
-		local new_state = self:shield_state(i, living_shields)
+	for iter_10_0 = 1, var_10_4 do
+		local var_10_6 = var_10_5[iter_10_0]
+		local var_10_7 = var_10_6.style
+		local var_10_8 = var_10_6.state
+		local var_10_9 = arg_10_0:shield_state(iter_10_0, var_10_3)
 
-		if current_state ~= new_state then
-			local state_animations = style.state_animations[current_state]
+		if var_10_8 ~= var_10_9 then
+			local var_10_10 = var_10_7.state_animations[var_10_8]
 
-			if state_animations and state_animations[new_state] then
-				local animation_data = state_animations[new_state]
+			if var_10_10 and var_10_10[var_10_9] then
+				local var_10_11 = var_10_10[var_10_9]
 
-				UIWidget.animate(shield, UIAnimation.init(UIAnimation.picture_sequence, shield.content, "texture_id", animation_data.pictures, animation_data.time))
+				UIWidget.animate(var_10_6, UIAnimation.init(UIAnimation.picture_sequence, var_10_6.content, "texture_id", var_10_11.pictures, var_10_11.time))
 			else
-				shield.content.texture_id = style.state_textures[new_state]
+				var_10_6.content.texture_id = var_10_7.state_textures[var_10_9]
 			end
 		end
 
-		shield.state = new_state
+		var_10_6.state = var_10_9
 	end
 
-	self.current_fatigue = fatigue_points
+	arg_10_0.current_fatigue = var_10_1
 end
 
-FatigueUI.draw = function (self, dt)
-	local ui_renderer = self.ui_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self.input_manager:get_service("ingame_menu")
+function FatigueUI.draw(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_0.ui_renderer
+	local var_11_1 = arg_11_0.ui_scenegraph
+	local var_11_2 = arg_11_0.input_manager:get_service("ingame_menu")
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt)
+	UIRenderer.begin_pass(var_11_0, var_11_1, var_11_2, arg_11_1)
 
-	local shields = self.shields
-	local active_shields = self.active_shields
+	local var_11_3 = arg_11_0.shields
+	local var_11_4 = arg_11_0.active_shields
 
-	for i = 1, active_shields do
-		local shield = shields[i]
+	for iter_11_0 = 1, var_11_4 do
+		local var_11_5 = var_11_3[iter_11_0]
 
-		UIRenderer.draw_widget(ui_renderer, shield)
+		UIRenderer.draw_widget(var_11_0, var_11_5)
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_11_0)
 end

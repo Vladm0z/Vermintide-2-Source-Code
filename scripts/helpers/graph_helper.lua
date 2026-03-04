@@ -1,80 +1,80 @@
-﻿-- chunkname: @scripts/helpers/graph_helper.lua
+-- chunkname: @scripts/helpers/graph_helper.lua
 
 GraphHelper = GraphHelper or {}
 GraphHelper._known_stats = GraphHelper._known_stats or {}
 GraphHelper._known_graphs = GraphHelper._known_graphs or {}
 
-local build = BUILD
-local console_command = Application.console_command
-local record_statistics = Profiler.record_statistics
+local var_0_0 = BUILD
+local var_0_1 = Application.console_command
+local var_0_2 = Profiler.record_statistics
 
-if console_command == nil or build == "release" then
-	function console_command()
+if var_0_1 == nil or var_0_0 == "release" then
+	function var_0_1()
 		return
 	end
 end
 
-if record_statistics == nil or build == "release" then
-	function record_statistics()
+if var_0_2 == nil or var_0_0 == "release" then
+	function var_0_2()
 		return
 	end
 end
 
-GraphHelper.create = function (graph_name, stat_names, stat_names_vector3)
-	if GraphHelper._known_graphs[graph_name] ~= nil then
+function GraphHelper.create(arg_3_0, arg_3_1, arg_3_2)
+	if GraphHelper._known_graphs[arg_3_0] ~= nil then
 		return
 	end
 
-	console_command("graph", "make", graph_name)
+	var_0_1("graph", "make", arg_3_0)
 
-	for i = 1, #(stat_names or {}) do
-		local stat = stat_names[i]
+	for iter_3_0 = 1, #(arg_3_1 or {}) do
+		local var_3_0 = arg_3_1[iter_3_0]
 
-		if GraphHelper._known_stats[stat] == nil then
-			record_statistics(stat, 0)
-			console_command("graph", "add", graph_name, stat)
-			record_statistics(stat, 0)
+		if GraphHelper._known_stats[var_3_0] == nil then
+			var_0_2(var_3_0, 0)
+			var_0_1("graph", "add", arg_3_0, var_3_0)
+			var_0_2(var_3_0, 0)
 
-			GraphHelper._known_stats[stat] = "number"
+			GraphHelper._known_stats[var_3_0] = "number"
 		end
 	end
 
-	for i = 1, #(stat_names_vector3 or {}) do
-		local stat = stat_names_vector3[i]
+	for iter_3_1 = 1, #(arg_3_2 or {}) do
+		local var_3_1 = arg_3_2[iter_3_1]
 
-		if GraphHelper._known_stats[stat] == nil then
-			record_statistics(stat, Vector3.zero())
-			console_command("graph", "add_vector3", graph_name, stat)
-			record_statistics(stat, Vector3.zero())
+		if GraphHelper._known_stats[var_3_1] == nil then
+			var_0_2(var_3_1, Vector3.zero())
+			var_0_1("graph", "add_vector3", arg_3_0, var_3_1)
+			var_0_2(var_3_1, Vector3.zero())
 
-			GraphHelper._known_stats[stat] = "userdata"
+			GraphHelper._known_stats[var_3_1] = "userdata"
 		end
 	end
 
-	console_command("graph", "show", graph_name)
+	var_0_1("graph", "show", arg_3_0)
 end
 
-GraphHelper.show = function (graph_name)
-	console_command("graph", "show", graph_name)
+function GraphHelper.show(arg_4_0)
+	var_0_1("graph", "show", arg_4_0)
 end
 
-GraphHelper.hide = function (graph_name)
-	console_command("graph", "hide", graph_name)
+function GraphHelper.hide(arg_5_0)
+	var_0_1("graph", "hide", arg_5_0)
 end
 
-GraphHelper.set_range = function (graph_name, min, max)
-	console_command("graph", "range", graph_name, tostring(min), tostring(max))
+function GraphHelper.set_range(arg_6_0, arg_6_1, arg_6_2)
+	var_0_1("graph", "range", arg_6_0, tostring(arg_6_1), tostring(arg_6_2))
 end
 
-GraphHelper.update_range = function (graph_name)
-	console_command("graph", "range", graph_name)
+function GraphHelper.update_range(arg_7_0)
+	var_0_1("graph", "range", arg_7_0)
 end
 
-GraphHelper.set_color = function (stat, color)
-	console_command("graph", "color", color)
+function GraphHelper.set_color(arg_8_0, arg_8_1)
+	var_0_1("graph", "color", arg_8_1)
 end
 
-GraphHelper.record_statistics = function (stat, value)
-	assert(GraphHelper._known_stats[stat] == type(value))
-	record_statistics(stat, value)
+function GraphHelper.record_statistics(arg_9_0, arg_9_1)
+	assert(GraphHelper._known_stats[arg_9_0] == type(arg_9_1))
+	var_0_2(arg_9_0, arg_9_1)
 end

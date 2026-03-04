@@ -1,4 +1,4 @@
-﻿-- chunkname: @dialogues/generated/lookup_dwarf_ranger_cog.lua
+-- chunkname: @dialogues/generated/lookup_dwarf_ranger_cog.lua
 
 assert(DialogueLookup[DialogueLookup_n + 1] == nil)
 

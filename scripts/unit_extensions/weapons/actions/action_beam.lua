@@ -1,375 +1,367 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/actions/action_beam.lua
+-- chunkname: @scripts/unit_extensions/weapons/actions/action_beam.lua
 
 ActionBeam = class(ActionBeam, ActionBase)
 
-ActionBeam.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionBeam.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionBeam.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionBeam.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	if ScriptUnit.has_extension(weapon_unit, "ammo_system") then
-		self.ammo_extension = ScriptUnit.extension(weapon_unit, "ammo_system")
+	if ScriptUnit.has_extension(arg_1_7, "ammo_system") then
+		arg_1_0.ammo_extension = ScriptUnit.extension(arg_1_7, "ammo_system")
 	end
 
-	self.inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
-	self.overcharge_extension = ScriptUnit.extension(owner_unit, "overcharge_system")
-	self._rumble_effect_id = false
-	self.unit_id = Managers.state.network.unit_storage:go_id(owner_unit)
+	arg_1_0.inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
+	arg_1_0.overcharge_extension = ScriptUnit.extension(arg_1_4, "overcharge_system")
+	arg_1_0._rumble_effect_id = false
+	arg_1_0.unit_id = Managers.state.network.unit_storage:go_id(arg_1_4)
 end
 
-ActionBeam.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level)
-	ActionBeam.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level)
+function ActionBeam.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	ActionBeam.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
-	self.current_action = new_action
+	arg_2_0.current_action = arg_2_1
 
-	local owner_unit = self.owner_unit
-	local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
-	local status_extension = ScriptUnit.extension(owner_unit, "status_system")
+	local var_2_0 = arg_2_0.owner_unit
+	local var_2_1 = ScriptUnit.extension(var_2_0, "buff_system")
 
-	self.owner_buff_extension = buff_extension
-	self.status_extension = status_extension
-	self.state = "waiting_to_shoot"
-	self.time_to_shoot = t + new_action.fire_time
-	self.current_target = nil
-	self.damage_timer = 0
-	self.overcharge_timer = 0
-	self.ramping_interval = 1
-	self.consecutive_hits = 0
-	self.power_level = power_level
-	self.do_zoom = new_action.do_zoom
-	self.damage_interval = new_action.damage_interval
-	self.charge_damage_profiles = new_action.charge_damage_profiles
-	self.damage_profile = new_action.damage_profile
-	self.charge_level = chain_action_data and chain_action_data.charge_level or 0
-	self.power_level = power_level + power_level * self.charge_level
-	self.damage_interval = self.damage_interval - self.damage_interval / 2 * self.charge_level
+	arg_2_0.status_extension, arg_2_0.owner_buff_extension = ScriptUnit.extension(var_2_0, "status_system"), var_2_1
+	arg_2_0.state = "waiting_to_shoot"
+	arg_2_0.time_to_shoot = arg_2_2 + arg_2_1.fire_time
+	arg_2_0.current_target = nil
+	arg_2_0.damage_timer = 0
+	arg_2_0.overcharge_timer = 0
+	arg_2_0.ramping_interval = 1
+	arg_2_0.consecutive_hits = 0
+	arg_2_0.power_level = arg_2_4
+	arg_2_0.do_zoom = arg_2_1.do_zoom
+	arg_2_0.damage_interval = arg_2_1.damage_interval
+	arg_2_0.charge_damage_profiles = arg_2_1.charge_damage_profiles
+	arg_2_0.damage_profile = arg_2_1.damage_profile
+	arg_2_0.charge_level = arg_2_3 and arg_2_3.charge_level or 0
+	arg_2_0.power_level = arg_2_4 + arg_2_4 * arg_2_0.charge_level
+	arg_2_0.damage_interval = arg_2_0.damage_interval - arg_2_0.damage_interval / 2 * arg_2_0.charge_level
 
-	if self.charge_damage_profiles then
-		for i = 1, #self.charge_damage_profiles do
-			local info = self.charge_damage_profiles[i]
+	if arg_2_0.charge_damage_profiles then
+		for iter_2_0 = 1, #arg_2_0.charge_damage_profiles do
+			local var_2_2 = arg_2_0.charge_damage_profiles[iter_2_0]
 
-			if self.charge_level > info.threshold then
-				self.damage_profile = info.damage_profile
+			if arg_2_0.charge_level > var_2_2.threshold then
+				arg_2_0.damage_profile = var_2_2.damage_profile
 			end
 		end
 	end
 
-	self._is_critical_strike = false
-	self._num_hits = 0
+	arg_2_0._is_critical_strike = false
+	arg_2_0._num_hits = 0
 
-	local beam_effect = new_action.particle_effect_trail
-	local beam_effect_3p = new_action.particle_effect_trail_3p
-	local beam_end_effect = new_action.particle_effect_target
-	local beam_effect_lookup_id = NetworkLookup.effects[beam_effect_3p]
-	local beam_end_effect_lookup_id = NetworkLookup.effects[beam_end_effect]
-	local world = self.world
+	local var_2_3 = arg_2_1.particle_effect_trail
+	local var_2_4 = arg_2_1.particle_effect_trail_3p
+	local var_2_5 = arg_2_1.particle_effect_target
+	local var_2_6 = NetworkLookup.effects[var_2_4]
+	local var_2_7 = NetworkLookup.effects[var_2_5]
+	local var_2_8 = arg_2_0.world
 
-	if not self.owner_player.bot_player then
-		self.beam_effect_id = World.create_particles(world, beam_effect, Vector3.zero())
-		self.beam_effect_length_id = World.find_particles_variable(world, beam_effect, "trail_length")
+	if not arg_2_0.owner_player.bot_player then
+		arg_2_0.beam_effect_id = World.create_particles(var_2_8, var_2_3, Vector3.zero())
+		arg_2_0.beam_effect_length_id = World.find_particles_variable(var_2_8, var_2_3, "trail_length")
 	end
 
-	self.beam_end_effect_id = World.create_particles(world, beam_end_effect, Vector3.zero())
+	arg_2_0.beam_end_effect_id = World.create_particles(var_2_8, var_2_5, Vector3.zero())
 
-	local go_id = self.unit_id
+	local var_2_9 = arg_2_0.unit_id
 
-	if self.is_server or LEVEL_EDITOR_TEST then
-		if self.owner_player.bot_player then
-			self.network_transmit:queue_local_rpc("rpc_start_beam", go_id, beam_effect_lookup_id, beam_end_effect_lookup_id, new_action.range)
+	if arg_2_0.is_server or LEVEL_EDITOR_TEST then
+		if arg_2_0.owner_player.bot_player then
+			arg_2_0.network_transmit:queue_local_rpc("rpc_start_beam", var_2_9, var_2_6, var_2_7, arg_2_1.range)
 		else
-			self.network_transmit:send_rpc_clients("rpc_start_beam", go_id, beam_effect_lookup_id, beam_end_effect_lookup_id, new_action.range)
+			arg_2_0.network_transmit:send_rpc_clients("rpc_start_beam", var_2_9, var_2_6, var_2_7, arg_2_1.range)
 		end
 	else
-		self.network_transmit:send_rpc_server("rpc_start_beam", go_id, beam_effect_lookup_id, beam_end_effect_lookup_id, new_action.range)
+		arg_2_0.network_transmit:send_rpc_server("rpc_start_beam", var_2_9, var_2_6, var_2_7, arg_2_1.range)
 	end
 
-	local overcharge_type = new_action.overcharge_type
+	local var_2_10 = arg_2_1.overcharge_type
 
-	if overcharge_type then
-		local overcharge_amount = PlayerUnitStatusSettings.overcharge_values[overcharge_type]
+	if var_2_10 then
+		local var_2_11 = PlayerUnitStatusSettings.overcharge_values[var_2_10]
 
-		self.overcharge_extension:add_charge(overcharge_amount)
+		arg_2_0.overcharge_extension:add_charge(var_2_11)
 	end
 
-	self.overcharge_target_hit = false
+	arg_2_0.overcharge_target_hit = false
 
-	self:_start_charge_sound()
+	arg_2_0:_start_charge_sound()
 end
 
-ActionBeam._start_charge_sound = function (self)
-	local current_action = self.current_action
-	local owner_unit = self.owner_unit
-	local owner_player = self.owner_player
-	local is_bot = owner_player and owner_player.bot_player
-	local is_local = owner_player and not owner_player.remote
-	local wwise_world = self.wwise_world
+function ActionBeam._start_charge_sound(arg_3_0)
+	local var_3_0 = arg_3_0.current_action
+	local var_3_1 = arg_3_0.owner_unit
+	local var_3_2 = arg_3_0.owner_player
+	local var_3_3 = var_3_2 and var_3_2.bot_player
+	local var_3_4 = var_3_2 and not var_3_2.remote
+	local var_3_5 = arg_3_0.wwise_world
 
-	if is_local and not is_bot then
-		local wwise_playing_id, wwise_source_id = ActionUtils.start_charge_sound(wwise_world, self.weapon_unit, owner_unit, current_action)
+	if var_3_4 and not var_3_3 then
+		local var_3_6, var_3_7 = ActionUtils.start_charge_sound(var_3_5, arg_3_0.weapon_unit, var_3_1, var_3_0)
 
-		self.charging_sound_id = wwise_playing_id
-		self.wwise_source_id = wwise_source_id
+		arg_3_0.charging_sound_id = var_3_6
+		arg_3_0.wwise_source_id = var_3_7
 	end
 
-	ActionUtils.play_husk_sound_event(wwise_world, current_action.charge_sound_husk_name, owner_unit, is_bot)
+	ActionUtils.play_husk_sound_event(var_3_5, var_3_0.charge_sound_husk_name, var_3_1, var_3_3)
 end
 
-ActionBeam._stop_charge_sound = function (self)
-	local current_action = self.current_action
-	local owner_unit = self.owner_unit
-	local owner_player = self.owner_player
-	local is_bot = owner_player and owner_player.bot_player
-	local is_local = owner_player and not owner_player.remote
-	local wwise_world = self.wwise_world
+function ActionBeam._stop_charge_sound(arg_4_0)
+	local var_4_0 = arg_4_0.current_action
+	local var_4_1 = arg_4_0.owner_unit
+	local var_4_2 = arg_4_0.owner_player
+	local var_4_3 = var_4_2 and var_4_2.bot_player
+	local var_4_4 = var_4_2 and not var_4_2.remote
+	local var_4_5 = arg_4_0.wwise_world
 
-	if is_local and not is_bot then
-		ActionUtils.stop_charge_sound(wwise_world, self.charging_sound_id, self.wwise_source_id, current_action)
+	if var_4_4 and not var_4_3 then
+		ActionUtils.stop_charge_sound(var_4_5, arg_4_0.charging_sound_id, arg_4_0.wwise_source_id, var_4_0)
 
-		self.charging_sound_id = nil
-		self.wwise_source_id = nil
+		arg_4_0.charging_sound_id = nil
+		arg_4_0.wwise_source_id = nil
 	end
 
-	ActionUtils.play_husk_sound_event(wwise_world, current_action.charge_sound_husk_stop_event, owner_unit, is_bot)
+	ActionUtils.play_husk_sound_event(var_4_5, var_4_0.charge_sound_husk_stop_event, var_4_1, var_4_3)
 end
 
-local INDEX_POSITION = 1
-local INDEX_ACTOR = 4
+local var_0_0 = 1
+local var_0_1 = 4
 
-ActionBeam.client_owner_post_update = function (self, dt, t, world, can_damage)
-	local owner_unit = self.owner_unit
-	local current_action = self.current_action
-	local is_server = self.is_server
-	local input_extension = ScriptUnit.extension(self.owner_unit, "input_system")
-	local buff_extension = self.owner_buff_extension
-	local status_extension = self.status_extension
+function ActionBeam.client_owner_post_update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	local var_5_0 = arg_5_0.owner_unit
+	local var_5_1 = arg_5_0.current_action
+	local var_5_2 = arg_5_0.is_server
+	local var_5_3 = ScriptUnit.extension(arg_5_0.owner_unit, "input_system")
+	local var_5_4 = arg_5_0.owner_buff_extension
+	local var_5_5 = arg_5_0.status_extension
 
-	if self.do_zoom then
-		if not status_extension:is_zooming() then
-			status_extension:set_zooming(true)
+	if arg_5_0.do_zoom then
+		if not var_5_5:is_zooming() then
+			var_5_5:set_zooming(true)
 		end
 
-		if buff_extension:has_buff_type("increased_zoom") and status_extension:is_zooming() and input_extension:get("action_three") then
-			status_extension:switch_variable_zoom(current_action.buffed_zoom_thresholds)
-		elseif current_action.zoom_thresholds and status_extension:is_zooming() and input_extension:get("action_three") then
-			status_extension:switch_variable_zoom(current_action.zoom_thresholds)
+		if var_5_4:has_buff_type("increased_zoom") and var_5_5:is_zooming() and var_5_3:get("action_three") then
+			var_5_5:switch_variable_zoom(var_5_1.buffed_zoom_thresholds)
+		elseif var_5_1.zoom_thresholds and var_5_5:is_zooming() and var_5_3:get("action_three") then
+			var_5_5:switch_variable_zoom(var_5_1.zoom_thresholds)
 		end
 	end
 
-	if self.state == "waiting_to_shoot" and t >= self.time_to_shoot then
-		self.state = "shooting"
+	if arg_5_0.state == "waiting_to_shoot" and arg_5_2 >= arg_5_0.time_to_shoot then
+		arg_5_0.state = "shooting"
 	end
 
-	self.overcharge_timer = self.overcharge_timer + dt
+	arg_5_0.overcharge_timer = arg_5_0.overcharge_timer + arg_5_1
 
-	if self.overcharge_timer >= current_action.overcharge_interval then
-		local overcharge_amount = PlayerUnitStatusSettings.overcharge_values.charging
+	if arg_5_0.overcharge_timer >= var_5_1.overcharge_interval then
+		local var_5_6 = PlayerUnitStatusSettings.overcharge_values.charging
 
-		self.overcharge_extension:add_charge(overcharge_amount)
+		arg_5_0.overcharge_extension:add_charge(var_5_6)
 
-		self._is_critical_strike = ActionUtils.is_critical_strike(owner_unit, current_action, t)
-		self.overcharge_timer = 0
-		self.overcharge_target_hit = false
+		arg_5_0._is_critical_strike = ActionUtils.is_critical_strike(var_5_0, var_5_1, arg_5_2)
+		arg_5_0.overcharge_timer = 0
+		arg_5_0.overcharge_target_hit = false
 	end
 
-	if self.state == "shooting" then
-		if not Managers.player:owner(self.owner_unit).bot_player and not self._rumble_effect_id then
-			self._rumble_effect_id = Managers.state.controller_features:add_effect("persistent_rumble", {
-				rumble_effect = "reload_start",
+	if arg_5_0.state == "shooting" then
+		if not Managers.player:owner(arg_5_0.owner_unit).bot_player and not arg_5_0._rumble_effect_id then
+			arg_5_0._rumble_effect_id = Managers.state.controller_features:add_effect("persistent_rumble", {
+				rumble_effect = "reload_start"
 			})
 		end
 
-		local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
-		local current_position, current_rotation = first_person_extension:get_projectile_start_position_rotation()
-		local direction = Quaternion.forward(current_rotation)
-		local physics_world = World.get_data(self.world, "physics_world")
-		local range = current_action.range or 30
-		local result = PhysicsWorld.immediate_raycast_actors(physics_world, current_position, direction, range, "static_collision_filter", "filter_player_ray_projectile_static_only", "dynamic_collision_filter", "filter_player_ray_projectile_ai_only", "dynamic_collision_filter", "filter_player_ray_projectile_hitbox_only")
-		local beam_end_position = current_position + direction * range
-		local hit_unit, hit_position
+		local var_5_7 = ScriptUnit.extension(var_5_0, "first_person_system")
+		local var_5_8, var_5_9 = var_5_7:get_projectile_start_position_rotation()
+		local var_5_10 = Quaternion.forward(var_5_9)
+		local var_5_11 = World.get_data(arg_5_0.world, "physics_world")
+		local var_5_12 = var_5_1.range or 30
+		local var_5_13 = PhysicsWorld.immediate_raycast_actors(var_5_11, var_5_8, var_5_10, var_5_12, "static_collision_filter", "filter_player_ray_projectile_static_only", "dynamic_collision_filter", "filter_player_ray_projectile_ai_only", "dynamic_collision_filter", "filter_player_ray_projectile_hitbox_only")
+		local var_5_14 = var_5_8 + var_5_10 * var_5_12
+		local var_5_15
+		local var_5_16
 
-		if result then
-			local difficulty_settings = Managers.state.difficulty:get_difficulty_settings()
-			local owner_player = self.owner_player
-			local allow_friendly_fire = DamageUtils.allow_friendly_fire_ranged(difficulty_settings, owner_player)
+		if var_5_13 then
+			local var_5_17 = Managers.state.difficulty:get_difficulty_settings()
+			local var_5_18 = arg_5_0.owner_player
+			local var_5_19 = DamageUtils.allow_friendly_fire_ranged(var_5_17, var_5_18)
 
-			for _, hit_data in pairs(result) do
-				local potential_hit_position = hit_data[INDEX_POSITION]
-				local hit_actor = hit_data[INDEX_ACTOR]
-				local potential_hit_unit = Actor.unit(hit_actor)
+			for iter_5_0, iter_5_1 in pairs(var_5_13) do
+				local var_5_20 = iter_5_1[var_0_0]
+				local var_5_21 = iter_5_1[var_0_1]
+				local var_5_22 = Actor.unit(var_5_21)
+				local var_5_23, var_5_24 = ActionUtils.redirect_shield_hit(var_5_22, var_5_21)
 
-				potential_hit_unit, hit_actor = ActionUtils.redirect_shield_hit(potential_hit_unit, hit_actor)
+				if var_5_23 ~= var_5_0 then
+					local var_5_25 = Unit.get_data(var_5_23, "breed")
+					local var_5_26
 
-				if potential_hit_unit ~= owner_unit then
-					local breed = Unit.get_data(potential_hit_unit, "breed")
-					local hit_enemy
+					if var_5_25 then
+						local var_5_27 = DamageUtils.is_enemy(var_5_0, var_5_23)
+						local var_5_28 = Actor.node(var_5_24)
+						local var_5_29 = var_5_25.hit_zones_lookup[var_5_28].name
 
-					if breed then
-						local is_enemy = DamageUtils.is_enemy(owner_unit, potential_hit_unit)
-						local node = Actor.node(hit_actor)
-						local hit_zone = breed.hit_zones_lookup[node]
-						local hit_zone_name = hit_zone.name
-
-						hit_enemy = (allow_friendly_fire and breed.is_player or is_enemy) and hit_zone_name ~= "afro"
+						var_5_26 = (var_5_19 and var_5_25.is_player or var_5_27) and var_5_29 ~= "afro"
 					else
-						hit_enemy = true
+						var_5_26 = true
 					end
 
-					if hit_enemy then
-						hit_position = potential_hit_position - direction * 0.15
-						hit_unit = potential_hit_unit
+					if var_5_26 then
+						var_5_16 = var_5_20 - var_5_10 * 0.15
+						var_5_15 = var_5_23
 
 						break
 					end
 				end
 			end
 
-			if hit_position then
-				beam_end_position = hit_position
+			if var_5_16 then
+				var_5_14 = var_5_16
 			end
 
-			if hit_unit then
-				local health_extension = ScriptUnit.has_extension(hit_unit, "health_system")
+			if var_5_15 then
+				local var_5_30 = ScriptUnit.has_extension(var_5_15, "health_system")
 
-				if health_extension then
-					if hit_unit ~= self.current_target then
-						self.ramping_interval = 0.4
-						self.damage_timer = 0
-						self._num_hits = 0
+				if var_5_30 then
+					if var_5_15 ~= arg_5_0.current_target then
+						arg_5_0.ramping_interval = 0.4
+						arg_5_0.damage_timer = 0
+						arg_5_0._num_hits = 0
 					end
 
-					if self.damage_timer >= self.damage_interval * self.ramping_interval then
-						Managers.state.entity:system("ai_system"):alert_enemies_within_range(owner_unit, POSITION_LOOKUP[owner_unit], 5)
+					if arg_5_0.damage_timer >= arg_5_0.damage_interval * arg_5_0.ramping_interval then
+						Managers.state.entity:system("ai_system"):alert_enemies_within_range(var_5_0, POSITION_LOOKUP[var_5_0], 5)
 
-						self.damage_timer = 0
-						self.ramping_interval = math.clamp(self.ramping_interval * 1.4, 0.45, 1.5)
+						arg_5_0.damage_timer = 0
+						arg_5_0.ramping_interval = math.clamp(arg_5_0.ramping_interval * 1.4, 0.45, 1.5)
 					end
 
-					if self.damage_timer == 0 then
-						local is_critical_strike = self._is_critical_strike
-						local hud_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
+					if arg_5_0.damage_timer == 0 then
+						local var_5_31 = arg_5_0._is_critical_strike
+						local var_5_32 = ScriptUnit.has_extension(var_5_0, "hud_system")
 
-						self:_handle_critical_strike(is_critical_strike, buff_extension, hud_extension, first_person_extension, "on_critical_shot", nil)
+						arg_5_0:_handle_critical_strike(var_5_31, var_5_4, var_5_32, var_5_7, "on_critical_shot", nil)
 
-						if health_extension then
-							local damage_profile = self.damage_profile
-							local power_level = self.power_level
+						if var_5_30 then
+							local var_5_33 = arg_5_0.damage_profile
+							local var_5_34 = arg_5_0.power_level * arg_5_0.ramping_interval
 
-							power_level = power_level * self.ramping_interval
-
-							if hit_unit ~= self.current_target then
-								self.consecutive_hits = 0
-								power_level = power_level * 0.5
+							if var_5_15 ~= arg_5_0.current_target then
+								arg_5_0.consecutive_hits = 0
+								var_5_34 = var_5_34 * 0.5
 							else
-								self.consecutive_hits = self.consecutive_hits + 1
+								arg_5_0.consecutive_hits = arg_5_0.consecutive_hits + 1
 							end
 
-							if not self.charge_damage_profiles and self.consecutive_hits < 3 then
-								damage_profile = current_action.initial_damage_profile or current_action.damage_profile or "default"
+							if not arg_5_0.charge_damage_profiles and arg_5_0.consecutive_hits < 3 then
+								var_5_33 = var_5_1.initial_damage_profile or var_5_1.damage_profile or "default"
 							end
 
-							first_person_extension:play_hud_sound_event("staff_beam_hit_enemy", nil, false)
+							var_5_7:play_hud_sound_event("staff_beam_hit_enemy", nil, false)
 
-							local check_buffs = self._num_hits > 1
+							local var_5_35 = arg_5_0._num_hits > 1
 
-							DamageUtils.process_projectile_hit(world, self.item_name, owner_unit, is_server, result, current_action, direction, check_buffs, nil, nil, self._is_critical_strike, power_level, damage_profile)
+							DamageUtils.process_projectile_hit(arg_5_3, arg_5_0.item_name, var_5_0, var_5_2, var_5_13, var_5_1, var_5_10, var_5_35, nil, nil, arg_5_0._is_critical_strike, var_5_34, var_5_33)
 
-							self._num_hits = self._num_hits + 1
+							arg_5_0._num_hits = arg_5_0._num_hits + 1
 
-							if not Managers.player:owner(self.owner_unit).bot_player then
+							if not Managers.player:owner(arg_5_0.owner_unit).bot_player then
 								Managers.state.controller_features:add_effect("rumble", {
-									rumble_effect = "hit_character_light",
+									rumble_effect = "hit_character_light"
 								})
 							end
 
-							if HEALTH_ALIVE[hit_unit] then
-								local overcharge_amount = PlayerUnitStatusSettings.overcharge_values[current_action.overcharge_type]
+							if HEALTH_ALIVE[var_5_15] then
+								local var_5_36 = PlayerUnitStatusSettings.overcharge_values[var_5_1.overcharge_type]
 
-								if is_critical_strike and buff_extension:has_buff_perk("no_overcharge_crit") then
-									overcharge_amount = 0
+								if var_5_31 and var_5_4:has_buff_perk("no_overcharge_crit") then
+									var_5_36 = 0
 								end
 
-								self.overcharge_extension:add_charge(overcharge_amount * self.ramping_interval)
+								arg_5_0.overcharge_extension:add_charge(var_5_36 * arg_5_0.ramping_interval)
 							end
 						end
 					end
 
-					self.damage_timer = self.damage_timer + dt
-					self.current_target = hit_unit
+					arg_5_0.damage_timer = arg_5_0.damage_timer + arg_5_1
+					arg_5_0.current_target = var_5_15
 				end
 			end
 		end
 
-		if self.beam_effect_id then
-			local weapon_unit = self.weapon_unit
-			local weapon_muzzle = current_action.weapon_muzzle or Unit.node(weapon_unit, "fx_muzzle")
-			local end_of_staff_position = Unit.world_position(weapon_unit, weapon_muzzle)
-			local distance = Vector3.distance(end_of_staff_position, beam_end_position)
-			local beam_direction = Vector3.normalize(end_of_staff_position - beam_end_position)
-			local rotation = Quaternion.look(beam_direction)
+		if arg_5_0.beam_effect_id then
+			local var_5_37 = arg_5_0.weapon_unit
+			local var_5_38 = var_5_1.weapon_muzzle or Unit.node(var_5_37, "fx_muzzle")
+			local var_5_39 = Unit.world_position(var_5_37, var_5_38)
+			local var_5_40 = Vector3.distance(var_5_39, var_5_14)
+			local var_5_41 = Vector3.normalize(var_5_39 - var_5_14)
+			local var_5_42 = Quaternion.look(var_5_41)
 
-			World.move_particles(world, self.beam_effect_id, beam_end_position, rotation)
-			World.set_particles_variable(world, self.beam_effect_id, self.beam_effect_length_id, Vector3(0.3, distance, 0))
-			World.move_particles(world, self.beam_end_effect_id, beam_end_position, rotation)
+			World.move_particles(arg_5_3, arg_5_0.beam_effect_id, var_5_14, var_5_42)
+			World.set_particles_variable(arg_5_3, arg_5_0.beam_effect_id, arg_5_0.beam_effect_length_id, Vector3(0.3, var_5_40, 0))
+			World.move_particles(arg_5_3, arg_5_0.beam_end_effect_id, var_5_14, var_5_42)
 		end
 	end
 end
 
-ActionBeam._stop_fx = function (self)
-	local world = self.world
+function ActionBeam._stop_fx(arg_6_0)
+	local var_6_0 = arg_6_0.world
 
-	if self.beam_end_effect_id then
-		World.destroy_particles(world, self.beam_end_effect_id)
+	if arg_6_0.beam_end_effect_id then
+		World.destroy_particles(var_6_0, arg_6_0.beam_end_effect_id)
 
-		self.beam_end_effect_id = nil
+		arg_6_0.beam_end_effect_id = nil
 	end
 
-	if self.beam_effect_id then
-		World.destroy_particles(world, self.beam_effect_id)
+	if arg_6_0.beam_effect_id then
+		World.destroy_particles(var_6_0, arg_6_0.beam_effect_id)
 
-		self.beam_effect_id = nil
+		arg_6_0.beam_effect_id = nil
 	end
 
-	if self._rumble_effect_id then
-		Managers.state.controller_features:stop_effect(self._rumble_effect_id)
+	if arg_6_0._rumble_effect_id then
+		Managers.state.controller_features:stop_effect(arg_6_0._rumble_effect_id)
 
-		self._rumble_effect_id = nil
+		arg_6_0._rumble_effect_id = nil
 	end
 
-	self:_stop_charge_sound()
+	arg_6_0:_stop_charge_sound()
 end
 
-ActionBeam._stop_client_vfx = function (self)
-	local network_manager = Managers.state.network
-	local game = network_manager:game()
+function ActionBeam._stop_client_vfx(arg_7_0)
+	if Managers.state.network:game() then
+		local var_7_0 = arg_7_0.unit_id
 
-	if game then
-		local go_id = self.unit_id
-
-		if self.is_server or LEVEL_EDITOR_TEST then
-			if self.owner_player.bot_player then
-				self.network_transmit:queue_local_rpc("rpc_end_beam", go_id)
+		if arg_7_0.is_server or LEVEL_EDITOR_TEST then
+			if arg_7_0.owner_player.bot_player then
+				arg_7_0.network_transmit:queue_local_rpc("rpc_end_beam", var_7_0)
 			else
-				self.network_transmit:send_rpc_clients("rpc_end_beam", go_id)
+				arg_7_0.network_transmit:send_rpc_clients("rpc_end_beam", var_7_0)
 			end
 		else
-			self.network_transmit:send_rpc_server("rpc_end_beam", go_id)
+			arg_7_0.network_transmit:send_rpc_server("rpc_end_beam", var_7_0)
 		end
 	end
 end
 
-ActionBeam.finish = function (self, reason)
-	if self.do_zoom then
-		self.status_extension:set_zooming(false)
+function ActionBeam.finish(arg_8_0, arg_8_1)
+	if arg_8_0.do_zoom then
+		arg_8_0.status_extension:set_zooming(false)
 	end
 
-	self:_stop_client_vfx()
-	self:_stop_fx()
-	self:_proc_spell_used(self.owner_buff_extension)
+	arg_8_0:_stop_client_vfx()
+	arg_8_0:_stop_fx()
+	arg_8_0:_proc_spell_used(arg_8_0.owner_buff_extension)
 
 	return {
-		beam_consecutive_hits = math.max(self.consecutive_hits - 1, 0),
+		beam_consecutive_hits = math.max(arg_8_0.consecutive_hits - 1, 0)
 	}
 end
 
-ActionBeam.destroy = function (self)
-	self:_stop_client_vfx()
-	self:_stop_fx()
+function ActionBeam.destroy(arg_9_0)
+	arg_9_0:_stop_client_vfx()
+	arg_9_0:_stop_fx()
 end

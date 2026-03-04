@@ -1,43 +1,43 @@
-﻿-- chunkname: @scripts/network/game_server/game_server_finder_lan.lua
+-- chunkname: @scripts/network/game_server/game_server_finder_lan.lua
 
 GameServerFinderLan = class(GameServerFinderLan)
 
-GameServerFinderLan.init = function (self)
+function GameServerFinderLan.init(arg_1_0)
 	return
 end
 
-GameServerFinderLan.destroy = function (self)
+function GameServerFinderLan.destroy(arg_2_0)
 	return
 end
 
-GameServerFinderLan.refresh = function (self)
+function GameServerFinderLan.refresh(arg_3_0)
 	return
 end
 
-GameServerFinderLan.set_search_type = function (self, search_type)
+function GameServerFinderLan.set_search_type(arg_4_0, arg_4_1)
 	return
 end
 
-GameServerFinderLan.add_to_favorites = function (self, ip, connection_port, query_port)
+function GameServerFinderLan.add_to_favorites(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	return
 end
 
-GameServerFinderLan.remove_from_favorites = function (self, ip, connection_port, query_port)
+function GameServerFinderLan.remove_from_favorites(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	return
 end
 
-GameServerFinderLan.add_filter_requirements = function (self, requirements, skip_verify_lobby_data)
+function GameServerFinderLan.add_filter_requirements(arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-GameServerFinderLan.servers = function (self)
+function GameServerFinderLan.servers(arg_8_0)
 	return {}
 end
 
-GameServerFinderLan.is_refreshing = function (self)
+function GameServerFinderLan.is_refreshing(arg_9_0)
 	return false
 end
 
-GameServerFinderLan.update = function (self, dt)
+function GameServerFinderLan.update(arg_10_0, arg_10_1)
 	return
 end

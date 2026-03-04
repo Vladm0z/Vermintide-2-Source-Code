@@ -1,30 +1,30 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/actions/action_interaction.lua
+-- chunkname: @scripts/unit_extensions/weapons/actions/action_interaction.lua
 
 ActionInteraction = class(ActionInteraction, ActionBase)
 
-ActionInteraction.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionInteraction.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionInteraction.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionInteraction.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	self.interactor_extension = ScriptUnit.extension(owner_unit, "interactor_system")
+	arg_1_0.interactor_extension = ScriptUnit.extension(arg_1_4, "interactor_system")
 end
 
-ActionInteraction.client_owner_start_action = function (self, new_action, t)
-	ActionInteraction.super.client_owner_start_action(self, new_action, t)
+function ActionInteraction.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
+	ActionInteraction.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
 
-	self.current_action = new_action
+	arg_2_0.current_action = arg_2_1
 
-	local interaction_type = new_action.interaction_type
+	local var_2_0 = arg_2_1.interaction_type
 
-	self.interactor_extension:start_interaction(new_action.hold_input, nil, interaction_type)
+	arg_2_0.interactor_extension:start_interaction(arg_2_1.hold_input, nil, var_2_0)
 end
 
-ActionInteraction.client_owner_post_update = function (self, dt, t, world, can_damage)
+function ActionInteraction.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	return
 end
 
-ActionInteraction.finish = function (self, reason)
-	local player = Managers.player:unit_owner(self.owner_unit)
-	local position = POSITION_LOOKUP[self.owner_unit]
+function ActionInteraction.finish(arg_4_0, arg_4_1)
+	local var_4_0 = Managers.player:unit_owner(arg_4_0.owner_unit)
+	local var_4_1 = POSITION_LOOKUP[arg_4_0.owner_unit]
 
-	Managers.telemetry_events:player_used_item(player, self.item_name, position)
+	Managers.telemetry_events:player_used_item(var_4_0, arg_4_0.item_name, var_4_1)
 end

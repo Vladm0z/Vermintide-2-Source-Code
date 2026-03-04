@@ -1,11 +1,11 @@
-﻿-- chunkname: @scripts/ui/views/end_screens/none_end_screen_ui_definitions.lua
+-- chunkname: @scripts/ui/views/end_screens/none_end_screen_ui_definitions.lua
 
-local scenegraph = {}
-local widgets = {}
-local animations = {}
+local var_0_0 = {}
+local var_0_1 = {}
+local var_0_2 = {}
 
 return {
-	scenegraph_definition = scenegraph,
-	widget_definitions = widgets,
-	animation_definitions = animations,
+	scenegraph_definition = var_0_0,
+	widget_definitions = var_0_1,
+	animation_definitions = var_0_2
 }

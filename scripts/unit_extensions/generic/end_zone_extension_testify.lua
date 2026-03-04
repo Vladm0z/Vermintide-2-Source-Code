@@ -1,36 +1,34 @@
-﻿-- chunkname: @scripts/unit_extensions/generic/end_zone_extension_testify.lua
+-- chunkname: @scripts/unit_extensions/generic/end_zone_extension_testify.lua
 
-local function zone_name(end_zone_extension)
-	return end_zone_extension._activation_name
+local function var_0_0(arg_1_0)
+	return arg_1_0._activation_name
 end
 
-local function has_end_zone_extension_name(end_zone_name, end_zone_extension)
-	local current_end_zone_name = zone_name(end_zone_extension)
+local function var_0_1(arg_2_0, arg_2_1)
+	local var_2_0 = var_0_0(arg_2_1)
 
-	return end_zone_name and end_zone_name == current_end_zone_name
+	return arg_2_0 and arg_2_0 == var_2_0
 end
 
-local EndZoneExtensionTestify = {
-	is_end_zone_activated = function (end_zone_extension, end_zone_name)
-		if not has_end_zone_extension_name(end_zone_name, end_zone_extension) then
+return {
+	is_end_zone_activated = function(arg_3_0, arg_3_1)
+		if not var_0_1(arg_3_1, arg_3_0) then
 			return Testify.RETRY
 		end
 
-		return end_zone_extension._activated == true
+		return arg_3_0._activated == true
 	end,
-	teleport_player_to_end_zone_position = function (end_zone_extension, end_zone_name)
-		if not has_end_zone_extension_name(end_zone_name, end_zone_extension) then
+	teleport_player_to_end_zone_position = function(arg_4_0, arg_4_1)
+		if not var_0_1(arg_4_1, arg_4_0) then
 			return Testify.RETRY
 		end
 
-		local end_zone_position = Unit.local_position(end_zone_extension._unit, 0)
-		local player_unit = Managers.player:local_player().player_unit
-		local player_mover = Unit.mover(player_unit)
+		local var_4_0 = Unit.local_position(arg_4_0._unit, 0)
+		local var_4_1 = Managers.player:local_player().player_unit
+		local var_4_2 = Unit.mover(var_4_1)
 
-		end_zone_position.z = end_zone_position.z + 1
+		var_4_0.z = var_4_0.z + 1
 
-		Mover.set_position(player_mover, end_zone_position)
-	end,
+		Mover.set_position(var_4_2, var_4_0)
+	end
 }
-
-return EndZoneExtensionTestify

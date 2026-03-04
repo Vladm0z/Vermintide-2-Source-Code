@@ -1,45 +1,45 @@
-﻿-- chunkname: @scripts/imgui/imgui_weapon_debug.lua
+-- chunkname: @scripts/imgui/imgui_weapon_debug.lua
 
 ImguiWeaponDebug = class(ImguiWeaponDebug)
 
-local SHOULD_RELOAD = true
-local min_power_level = 5
-local font = "arial"
-local font_mtrl = "materials/fonts/" .. font
+local var_0_0 = true
+local var_0_1 = 5
+local var_0_2 = "arial"
+local var_0_3 = "materials/fonts/" .. var_0_2
 
-local function gui_shadow_text(gui, string, size, position, color)
-	local font_offset = Vector3(0, 2, 0)
-	local shadow_offset_amount = size * 0.07
-	local font_shadow_offset = Vector3(shadow_offset_amount, -shadow_offset_amount, 0) + font_offset
+local function var_0_4(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	local var_1_0 = Vector3(0, 2, 0)
+	local var_1_1 = arg_1_2 * 0.07
+	local var_1_2 = Vector3(var_1_1, -var_1_1, 0) + var_1_0
 
-	Gui.text(gui, string, font_mtrl, size, font, position + font_shadow_offset, Color(255, 0, 0, 0))
-	Gui.text(gui, string, font_mtrl, size, font, position + font_offset, color)
+	Gui.text(arg_1_0, arg_1_1, var_0_3, arg_1_2, var_0_2, arg_1_3 + var_1_2, Color(255, 0, 0, 0))
+	Gui.text(arg_1_0, arg_1_1, var_0_3, arg_1_2, var_0_2, arg_1_3 + var_1_0, arg_1_4)
 end
 
-ImguiWeaponDebug.init = function (self)
-	self._draw_hit_box = false
-	self._draw_chain_action_data = true
-	self._display_current_action = true
-	self._action_list = {}
-	self._sub_action_list = {}
-	self._selected_action = 1
-	self._selected_sub_action = 1
-	self._unit_names = {}
-	self._units = {}
-	self._selected_unit = -1
-	self._weapon_extensions = {}
-	self._selected_weapon_extenstion_name = ""
-	self._current_unit = nil
-	self._weapon_unit_left = nil
-	self._weapon_unit_right = nil
-	self._current_weapon_extension = nil
-	self._current_inventory_extension = nil
-	self._previous_wield_slot = ""
-	self._current_actions = nil
-	self._damage_power_level = 200
-	self._damage_hit_zone_id = 1
-	self._damage_difficulty_id = 1
-	self._hit_zone_names = {
+function ImguiWeaponDebug.init(arg_2_0)
+	arg_2_0._draw_hit_box = false
+	arg_2_0._draw_chain_action_data = true
+	arg_2_0._display_current_action = true
+	arg_2_0._action_list = {}
+	arg_2_0._sub_action_list = {}
+	arg_2_0._selected_action = 1
+	arg_2_0._selected_sub_action = 1
+	arg_2_0._unit_names = {}
+	arg_2_0._units = {}
+	arg_2_0._selected_unit = -1
+	arg_2_0._weapon_extensions = {}
+	arg_2_0._selected_weapon_extenstion_name = ""
+	arg_2_0._current_unit = nil
+	arg_2_0._weapon_unit_left = nil
+	arg_2_0._weapon_unit_right = nil
+	arg_2_0._current_weapon_extension = nil
+	arg_2_0._current_inventory_extension = nil
+	arg_2_0._previous_wield_slot = ""
+	arg_2_0._current_actions = nil
+	arg_2_0._damage_power_level = 200
+	arg_2_0._damage_hit_zone_id = 1
+	arg_2_0._damage_difficulty_id = 1
+	arg_2_0._hit_zone_names = {
 		"head",
 		"neck",
 		"torso",
@@ -47,92 +47,92 @@ ImguiWeaponDebug.init = function (self)
 		"right_arm",
 		"left_leg",
 		"right_leg",
-		"full",
+		"full"
 	}
-	self._difficulties = table.clone(Difficulties)
-	self._breed_table = {
+	arg_2_0._difficulties = table.clone(Difficulties)
+	arg_2_0._breed_table = {
 		Chaos = CHAOS,
 		Skaven = SKAVEN,
 		Beastmen = BEASTMEN,
 		Elites = ELITES,
-		VS = PlayerBreeds,
+		VS = PlayerBreeds
 	}
-	self._combat_critical = false
-	self._combat_power_boost = false
-	self._combat_use_current_power_level = true
-	self._combat_pop_settings = false
-	self._combat_backstab_multiplier = 1
-	self._combat_stagger_level = 0
-	self._combat_hit_actions = {}
-	self._combat_push_actions = {}
-	self._combat_current_weapon = nil
-	self._combat_current_weapon_name = nil
-	self._attack_armor_modifiers = {}
-	self._armor_modifiers_charge_value = {}
+	arg_2_0._combat_critical = false
+	arg_2_0._combat_power_boost = false
+	arg_2_0._combat_use_current_power_level = true
+	arg_2_0._combat_pop_settings = false
+	arg_2_0._combat_backstab_multiplier = 1
+	arg_2_0._combat_stagger_level = 0
+	arg_2_0._combat_hit_actions = {}
+	arg_2_0._combat_push_actions = {}
+	arg_2_0._combat_current_weapon = nil
+	arg_2_0._combat_current_weapon_name = nil
+	arg_2_0._attack_armor_modifiers = {}
+	arg_2_0._armor_modifiers_charge_value = {}
 
-	self:_refresh_unit_list()
+	arg_2_0:_refresh_unit_list()
 end
 
-ImguiWeaponDebug.update = function (self)
-	if SHOULD_RELOAD then
-		self:init()
+function ImguiWeaponDebug.update(arg_3_0)
+	if var_0_0 then
+		arg_3_0:init()
 
-		SHOULD_RELOAD = false
+		var_0_0 = false
 	end
 
-	local slot_changed = false
+	local var_3_0 = false
 
-	if self._current_inventory_extension then
-		local slot_name = self._current_inventory_extension:get_wielded_slot_name()
+	if arg_3_0._current_inventory_extension then
+		local var_3_1 = arg_3_0._current_inventory_extension:get_wielded_slot_name()
 
-		if self._previous_wield_slot ~= slot_name then
-			self._previous_wield_slot = slot_name
-			slot_changed = true
+		if arg_3_0._previous_wield_slot ~= var_3_1 then
+			arg_3_0._previous_wield_slot = var_3_1
+			var_3_0 = true
 		end
 	end
 
-	if self._current_unit and not Unit.alive(self._current_unit) or self._weapon_unit_left and not Unit.alive(self._weapon_unit_left) or self._weapon_unit_right and not Unit.alive(self._weapon_unit_right) or self._weapon_unit_left == nil and self._weapon_unit_right == nil or slot_changed then
-		self._current_unit = nil
-		self._current_weapon_extension = nil
+	if arg_3_0._current_unit and not Unit.alive(arg_3_0._current_unit) or arg_3_0._weapon_unit_left and not Unit.alive(arg_3_0._weapon_unit_left) or arg_3_0._weapon_unit_right and not Unit.alive(arg_3_0._weapon_unit_right) or arg_3_0._weapon_unit_left == nil and arg_3_0._weapon_unit_right == nil or var_3_0 then
+		arg_3_0._current_unit = nil
+		arg_3_0._current_weapon_extension = nil
 
-		self:_refresh_unit_list()
+		arg_3_0:_refresh_unit_list()
 	end
 
-	local owner_unit = self._current_unit
-	local weapon_extension = self:_get_current_weapon()
+	local var_3_2 = arg_3_0._current_unit
+	local var_3_3 = arg_3_0:_get_current_weapon()
 
-	if owner_unit and weapon_extension and self._current_actions then
-		local action = self:_get_current_action()
+	if var_3_2 and var_3_3 and arg_3_0._current_actions then
+		local var_3_4 = arg_3_0:_get_current_action()
 
-		if action then
-			local current_time_in_action = self._display_current_action and weapon_extension.weapon_system.t - weapon_extension.action_time_started or 0
+		if var_3_4 then
+			local var_3_5 = arg_3_0._display_current_action and var_3_3.weapon_system.t - var_3_3.action_time_started or 0
 
-			if self._draw_chain_action_data and action then
-				self:debug_draw_chain_data(current_time_in_action, action, owner_unit, weapon_extension)
+			if arg_3_0._draw_chain_action_data and var_3_4 then
+				arg_3_0:debug_draw_chain_data(var_3_5, var_3_4, var_3_2, var_3_3)
 			end
 		end
 	end
 end
 
-ImguiWeaponDebug.is_persistent = function (self)
-	return self._draw_chain_action_data or self._draw_hit_box
+function ImguiWeaponDebug.is_persistent(arg_4_0)
+	return arg_4_0._draw_chain_action_data or arg_4_0._draw_hit_box
 end
 
-ImguiWeaponDebug.draw = function (self)
-	local do_close = Imgui.begin_window("Weapon Debug", "menu_bar")
+function ImguiWeaponDebug.draw(arg_5_0)
+	local var_5_0 = Imgui.begin_window("Weapon Debug", "menu_bar")
 
 	if Imgui.begin_menu_bar() then
 		if Imgui.begin_menu("Run Test") then
 			if Imgui.menu_item("Verify Crit Damage") then
-				self:_verify_crits()
+				arg_5_0:_verify_crits()
 			end
 
 			if Imgui.menu_item("Dump Weapon Performace") then
-				self:_dump_weapon_performance()
+				arg_5_0:_dump_weapon_performance()
 			end
 
 			if Imgui.menu_item("Check Missing or Unused Actions") then
-				self:_check_missing_unused_actions()
+				arg_5_0:_check_missing_unused_actions()
 			end
 
 			Imgui.end_menu()
@@ -141,18 +141,18 @@ ImguiWeaponDebug.draw = function (self)
 		Imgui.end_menu_bar()
 	end
 
-	local selected_unit = Imgui.combo("Unit", self._selected_unit, self._unit_names)
+	local var_5_1 = Imgui.combo("Unit", arg_5_0._selected_unit, arg_5_0._unit_names)
 
-	if selected_unit ~= self._selected_unit then
-		self._selected_unit = selected_unit
+	if var_5_1 ~= arg_5_0._selected_unit then
+		arg_5_0._selected_unit = var_5_1
 
-		self:_initialize_unit(self._units[selected_unit])
+		arg_5_0:_initialize_unit(arg_5_0._units[var_5_1])
 	end
 
 	Imgui.same_line()
 
 	if Imgui.button("Refresh") then
-		self:_refresh_unit_list()
+		arg_5_0:_refresh_unit_list()
 	end
 
 	if script_data and script_data.debug_weapons ~= nil then
@@ -161,234 +161,234 @@ ImguiWeaponDebug.draw = function (self)
 		Imgui.same_line()
 	end
 
-	self._draw_chain_action_data = Imgui.checkbox("Draw Action Chain", self._draw_chain_action_data)
+	arg_5_0._draw_chain_action_data = Imgui.checkbox("Draw Action Chain", arg_5_0._draw_chain_action_data)
 
 	Imgui.same_line()
 
-	self._display_current_action = Imgui.checkbox("Use Current Action", self._display_current_action)
+	arg_5_0._display_current_action = Imgui.checkbox("Use Current Action", arg_5_0._display_current_action)
 
-	if not self._display_current_action then
-		self._selected_action = Imgui.combo("Action", self._selected_action, self._action_list)
+	if not arg_5_0._display_current_action then
+		arg_5_0._selected_action = Imgui.combo("Action", arg_5_0._selected_action, arg_5_0._action_list)
 
-		local selected_action_name = self._selected_action > 0 and self._action_list[self._selected_action]
-		local selected_sub_actions = selected_action_name and self._sub_action_list[selected_action_name] or {}
+		local var_5_2 = arg_5_0._selected_action > 0 and arg_5_0._action_list[arg_5_0._selected_action]
+		local var_5_3 = var_5_2 and arg_5_0._sub_action_list[var_5_2] or {}
 
-		self._selected_sub_action = Imgui.combo("Sub Action", self._selected_sub_action, selected_sub_actions)
+		arg_5_0._selected_sub_action = Imgui.combo("Sub Action", arg_5_0._selected_sub_action, var_5_3)
 	end
 
-	local _first_weapon_entry = true
+	local var_5_4 = true
 
-	for name, weapon in pairs(self._weapon_extensions) do
-		if not _first_weapon_entry then
+	for iter_5_0, iter_5_1 in pairs(arg_5_0._weapon_extensions) do
+		if not var_5_4 then
 			Imgui.same_line()
 		end
 
-		if name == "any" then
-			weapon = nil
+		if iter_5_0 == "any" then
+			iter_5_1 = nil
 		end
 
-		if Imgui.radio_button(name, weapon == self._current_weapon_extension) then
-			self._current_weapon_extension = weapon
-			self._selected_weapon_extenstion_name = name
+		if Imgui.radio_button(iter_5_0, iter_5_1 == arg_5_0._current_weapon_extension) then
+			arg_5_0._current_weapon_extension = iter_5_1
+			arg_5_0._selected_weapon_extenstion_name = iter_5_0
 		end
 
-		_first_weapon_entry = false
+		var_5_4 = false
 	end
 
-	self:_draw_basic_info()
-	self:_draw_damage_info()
+	arg_5_0:_draw_basic_info()
+	arg_5_0:_draw_damage_info()
 	Imgui.end_window()
 
-	return do_close
+	return var_5_0
 end
 
-ImguiWeaponDebug._refresh_unit_list = function (self)
-	self._unit_names = {}
-	self._units = {}
-	self._selected_unit = -1
+function ImguiWeaponDebug._refresh_unit_list(arg_6_0)
+	arg_6_0._unit_names = {}
+	arg_6_0._units = {}
+	arg_6_0._selected_unit = -1
 
-	table.insert(self._unit_names, "none")
-	table.insert(self._units, false)
+	table.insert(arg_6_0._unit_names, "none")
+	table.insert(arg_6_0._units, false)
 
-	local player_manager = Managers.player
+	local var_6_0 = Managers.player
 
-	if player_manager then
-		local players = player_manager:human_and_bot_players()
+	if var_6_0 then
+		local var_6_1 = var_6_0:human_and_bot_players()
 
-		for id, player in pairs(players) do
-			if player then
-				local profile_display_name = player:profile_display_name()
+		for iter_6_0, iter_6_1 in pairs(var_6_1) do
+			if iter_6_1 then
+				local var_6_2 = iter_6_1:profile_display_name()
 
-				table.insert(self._unit_names, profile_display_name)
-				table.insert(self._units, player.player_unit)
+				table.insert(arg_6_0._unit_names, var_6_2)
+				table.insert(arg_6_0._units, iter_6_1.player_unit)
 
-				if player.local_player then
-					self._selected_unit = #self._unit_names
+				if iter_6_1.local_player then
+					arg_6_0._selected_unit = #arg_6_0._unit_names
 
-					self:_initialize_unit(player.player_unit)
+					arg_6_0:_initialize_unit(iter_6_1.player_unit)
 				end
 			end
 		end
 	end
 end
 
-ImguiWeaponDebug._initialize_unit = function (self, unit)
-	self._current_unit = unit
-	self._weapon_unit_left = nil
-	self._weapon_unit_right = nil
-	self._weapon_extensions = {}
-	self._current_weapon_extension = nil
-	self._current_inventory_extension = nil
-	self._selected_weapon_extenstion_name = "any"
-	self._action_list = {}
-	self._sub_action_list = {}
-	self._current_actions = {}
-	self._combat_hit_actions = {}
-	self._combat_push_actions = {}
-	self._combat_current_weapon = nil
-	self._combat_current_weapon_name = nil
-	self._attack_armor_modifiers = {}
-	self._armor_modifiers_charge_value = {}
+function ImguiWeaponDebug._initialize_unit(arg_7_0, arg_7_1)
+	arg_7_0._current_unit = arg_7_1
+	arg_7_0._weapon_unit_left = nil
+	arg_7_0._weapon_unit_right = nil
+	arg_7_0._weapon_extensions = {}
+	arg_7_0._current_weapon_extension = nil
+	arg_7_0._current_inventory_extension = nil
+	arg_7_0._selected_weapon_extenstion_name = "any"
+	arg_7_0._action_list = {}
+	arg_7_0._sub_action_list = {}
+	arg_7_0._current_actions = {}
+	arg_7_0._combat_hit_actions = {}
+	arg_7_0._combat_push_actions = {}
+	arg_7_0._combat_current_weapon = nil
+	arg_7_0._combat_current_weapon_name = nil
+	arg_7_0._attack_armor_modifiers = {}
+	arg_7_0._armor_modifiers_charge_value = {}
 
-	if unit then
-		local inventory_extension = ScriptUnit.has_extension(unit, "inventory_system")
+	if arg_7_1 then
+		local var_7_0 = ScriptUnit.has_extension(arg_7_1, "inventory_system")
 
-		self._current_inventory_extension = inventory_extension
+		arg_7_0._current_inventory_extension = var_7_0
 
-		local lh_weapon_unit, rh_weapon_unit = inventory_extension:get_all_weapon_unit()
+		local var_7_1, var_7_2 = var_7_0:get_all_weapon_unit()
 
-		self._weapon_unit_left = lh_weapon_unit
-		self._weapon_unit_right = rh_weapon_unit
+		arg_7_0._weapon_unit_left = var_7_1
+		arg_7_0._weapon_unit_right = var_7_2
 
-		local lh_weapon_extension = Unit.alive(lh_weapon_unit) and ScriptUnit.extension(lh_weapon_unit, "weapon_system")
-		local rh_weapon_extension = Unit.alive(rh_weapon_unit) and ScriptUnit.extension(rh_weapon_unit, "weapon_system")
+		local var_7_3 = Unit.alive(var_7_1) and ScriptUnit.extension(var_7_1, "weapon_system")
+		local var_7_4 = Unit.alive(var_7_2) and ScriptUnit.extension(var_7_2, "weapon_system")
 
-		self._weapon_extensions.left = lh_weapon_extension
-		self._weapon_extensions.right = rh_weapon_extension
-		self._weapon_extensions.any = lh_weapon_extension
+		arg_7_0._weapon_extensions.left = var_7_3
+		arg_7_0._weapon_extensions.right = var_7_4
+		arg_7_0._weapon_extensions.any = var_7_3
 
-		local extension = lh_weapon_extension or rh_weapon_extension
+		local var_7_5 = var_7_3 or var_7_4
 
-		if extension then
-			local weapon = ItemMasterList[extension.item_name]
-			local template = WeaponUtils.get_weapon_template(weapon.template) or WeaponUtils.get_weapon_template(weapon.temporary_template)
-			local armor_modifier_values = {
+		if var_7_5 then
+			local var_7_6 = ItemMasterList[var_7_5.item_name]
+			local var_7_7 = WeaponUtils.get_weapon_template(var_7_6.template) or WeaponUtils.get_weapon_template(var_7_6.temporary_template)
+			local var_7_8 = {
 				0,
 				0,
 				0,
 				0,
 				0,
-				0,
+				0
 			}
-			local mod_count = 0
-			local armor_mod_per_charge = {}
+			local var_7_9 = 0
+			local var_7_10 = {}
 
-			if template then
-				local actions = template.actions
+			if var_7_7 then
+				local var_7_11 = var_7_7.actions
 
-				self._current_actions = actions
-				self._combat_current_weapon = weapon
-				self._combat_current_weapon_name = extension.item_name
+				arg_7_0._current_actions = var_7_11
+				arg_7_0._combat_current_weapon = var_7_6
+				arg_7_0._combat_current_weapon_name = var_7_5.item_name
 
-				for name, action in pairs(actions) do
-					table.insert(self._action_list, name)
+				for iter_7_0, iter_7_1 in pairs(var_7_11) do
+					table.insert(arg_7_0._action_list, iter_7_0)
 
-					if not self._sub_action_list[name] then
-						self._sub_action_list[name] = {}
+					if not arg_7_0._sub_action_list[iter_7_0] then
+						arg_7_0._sub_action_list[iter_7_0] = {}
 					end
 
-					local sub_action_list = self._sub_action_list[name]
+					local var_7_12 = arg_7_0._sub_action_list[iter_7_0]
 
-					for sub_name, sub_action in pairs(action) do
-						table.insert(sub_action_list, sub_name)
+					for iter_7_2, iter_7_3 in pairs(iter_7_1) do
+						table.insert(var_7_12, iter_7_2)
 
-						local left, right = self:_get_damage_profile_for_action(sub_action)
+						local var_7_13, var_7_14 = arg_7_0:_get_damage_profile_for_action(iter_7_3)
 
-						if left or right then
-							self._combat_hit_actions[sub_name] = sub_action
+						if var_7_13 or var_7_14 then
+							arg_7_0._combat_hit_actions[iter_7_2] = iter_7_3
 
-							if left then
-								local charge_value = sub_name .. "_L"
-								local charge_data = armor_mod_per_charge[charge_value] or {
+							if var_7_13 then
+								local var_7_15 = iter_7_2 .. "_L"
+								local var_7_16 = var_7_10[var_7_15] or {
 									count = 0,
-									values = {},
+									values = {}
 								}
-								local perf = ActionUtils.get_damage_profile_performance_scores(left)
+								local var_7_17 = ActionUtils.get_damage_profile_performance_scores(var_7_13)
 
-								for i = 1, #perf do
-									armor_modifier_values[i] = (armor_modifier_values[i] or 0) + perf[i]
-									charge_data.values[i] = (charge_data.values[i] or 0) + perf[i]
+								for iter_7_4 = 1, #var_7_17 do
+									var_7_8[iter_7_4] = (var_7_8[iter_7_4] or 0) + var_7_17[iter_7_4]
+									var_7_16.values[iter_7_4] = (var_7_16.values[iter_7_4] or 0) + var_7_17[iter_7_4]
 								end
 
-								mod_count = mod_count + 1
-								charge_data.count = charge_data.count + 1
-								armor_mod_per_charge[charge_value] = charge_data
+								var_7_9 = var_7_9 + 1
+								var_7_16.count = var_7_16.count + 1
+								var_7_10[var_7_15] = var_7_16
 							end
 
-							if right then
-								local charge_value = sub_name .. "_R"
-								local charge_data = armor_mod_per_charge[charge_value] or {
+							if var_7_14 then
+								local var_7_18 = iter_7_2 .. "_R"
+								local var_7_19 = var_7_10[var_7_18] or {
 									count = 0,
-									values = {},
+									values = {}
 								}
-								local perf = ActionUtils.get_damage_profile_performance_scores(right)
+								local var_7_20 = ActionUtils.get_damage_profile_performance_scores(var_7_14)
 
-								for i = 1, #perf do
-									armor_modifier_values[i] = (armor_modifier_values[i] or 0) + perf[i]
-									charge_data.values[i] = (charge_data.values[i] or 0) + perf[i]
+								for iter_7_5 = 1, #var_7_20 do
+									var_7_8[iter_7_5] = (var_7_8[iter_7_5] or 0) + var_7_20[iter_7_5]
+									var_7_19.values[iter_7_5] = (var_7_19.values[iter_7_5] or 0) + var_7_20[iter_7_5]
 								end
 
-								mod_count = mod_count + 1
-								charge_data.count = charge_data.count + 1
-								armor_mod_per_charge[charge_value] = charge_data
+								var_7_9 = var_7_9 + 1
+								var_7_19.count = var_7_19.count + 1
+								var_7_10[var_7_18] = var_7_19
 							end
 						end
 
-						local inner, outer = ActionUtils.get_push_damage_profile(sub_action)
+						local var_7_21, var_7_22 = ActionUtils.get_push_damage_profile(iter_7_3)
 
-						if inner or outer then
-							self._combat_push_actions[sub_name] = {
-								inner = inner,
-								outer = outer,
+						if var_7_21 or var_7_22 then
+							arg_7_0._combat_push_actions[iter_7_2] = {
+								inner = var_7_21,
+								outer = var_7_22
 							}
 						end
 					end
 
-					table.sort(sub_action_list)
+					table.sort(var_7_12)
 				end
 			end
 
-			table.sort(self._action_list)
+			table.sort(arg_7_0._action_list)
 
-			for i = 1, #armor_modifier_values do
-				armor_modifier_values[i] = mod_count == 0 and 0 or armor_modifier_values[i] / mod_count
+			for iter_7_6 = 1, #var_7_8 do
+				var_7_8[iter_7_6] = var_7_9 == 0 and 0 or var_7_8[iter_7_6] / var_7_9
 			end
 
-			self._attack_armor_modifiers = armor_modifier_values
+			arg_7_0._attack_armor_modifiers = var_7_8
 
-			for charge_type, data in pairs(armor_mod_per_charge) do
-				for i = 1, #data.values do
-					data.values[i] = data.count == 0 and 0 or data.values[i] / data.count
+			for iter_7_7, iter_7_8 in pairs(var_7_10) do
+				for iter_7_9 = 1, #iter_7_8.values do
+					iter_7_8.values[iter_7_9] = iter_7_8.count == 0 and 0 or iter_7_8.values[iter_7_9] / iter_7_8.count
 				end
 
-				self._armor_modifiers_charge_value[charge_type] = data.values
+				arg_7_0._armor_modifiers_charge_value[iter_7_7] = iter_7_8.values
 			end
 		end
 	end
 end
 
-ImguiWeaponDebug._draw_basic_info = function (self)
-	local weapon = self._combat_current_weapon
-	local weapon_name = self._combat_current_weapon_name or "-"
+function ImguiWeaponDebug._draw_basic_info(arg_8_0)
+	local var_8_0 = arg_8_0._combat_current_weapon
+	local var_8_1 = arg_8_0._combat_current_weapon_name or "-"
 
-	if weapon then
+	if var_8_0 then
 		Imgui.separator()
 
 		if Imgui.tree_node("Basic Information") then
-			Imgui.text(string.format("Item Name:     %s", weapon_name))
-			Imgui.text(string.format("Template Name: %s", weapon.template))
-			Imgui.text(string.format("Left Hand:     %s", weapon.left_hand_unit))
-			Imgui.text(string.format("Right Hand:    %s", weapon.right_hand_unit))
+			Imgui.text(string.format("Item Name:     %s", var_8_1))
+			Imgui.text(string.format("Template Name: %s", var_8_0.template))
+			Imgui.text(string.format("Left Hand:     %s", var_8_0.left_hand_unit))
+			Imgui.text(string.format("Right Hand:    %s", var_8_0.right_hand_unit))
 			Imgui.separator()
 			Imgui.columns(3, true)
 			Imgui.text("Damage Profiles")
@@ -399,17 +399,17 @@ ImguiWeaponDebug._draw_basic_info = function (self)
 			Imgui.next_column()
 			Imgui.separator()
 
-			local damage_actions = self._combat_hit_actions
+			local var_8_2 = arg_8_0._combat_hit_actions
 
-			for action_name, sub_action in pairs(damage_actions) do
-				local action_hand = sub_action and sub_action.weapon_action_hand
-				local damage_profile_name_1, damage_profile_name_2 = ActionUtils.get_damage_profile_name(sub_action, action_hand)
+			for iter_8_0, iter_8_1 in pairs(var_8_2) do
+				local var_8_3 = iter_8_1 and iter_8_1.weapon_action_hand
+				local var_8_4, var_8_5 = ActionUtils.get_damage_profile_name(iter_8_1, var_8_3)
 
-				Imgui.text(action_name)
+				Imgui.text(iter_8_0)
 				Imgui.next_column()
-				Imgui.text(tostring(damage_profile_name_1))
+				Imgui.text(tostring(var_8_4))
 				Imgui.next_column()
-				Imgui.text(tostring(damage_profile_name_2))
+				Imgui.text(tostring(var_8_5))
 				Imgui.next_column()
 			end
 
@@ -417,29 +417,29 @@ ImguiWeaponDebug._draw_basic_info = function (self)
 			Imgui.columns(7, true)
 			Imgui.text("category\\armor type")
 
-			for i = 1, 6 do
+			for iter_8_2 = 1, 6 do
 				Imgui.next_column()
-				Imgui.text(tostring(i))
+				Imgui.text(tostring(iter_8_2))
 			end
 
 			Imgui.separator()
 
-			for charge_type, values in pairs(self._armor_modifiers_charge_value) do
+			for iter_8_3, iter_8_4 in pairs(arg_8_0._armor_modifiers_charge_value) do
 				Imgui.next_column()
-				Imgui.text(charge_type)
+				Imgui.text(iter_8_3)
 
-				for i = 1, 6 do
+				for iter_8_5 = 1, 6 do
 					Imgui.next_column()
-					Imgui.text(string.format("%.2f", values[i] or 0))
+					Imgui.text(string.format("%.2f", iter_8_4[iter_8_5] or 0))
 				end
 			end
 
 			Imgui.next_column()
 			Imgui.text("total average")
 
-			for i = 1, 6 do
+			for iter_8_6 = 1, 6 do
 				Imgui.next_column()
-				Imgui.text(string.format("%.2f", self._attack_armor_modifiers[i] or 0))
+				Imgui.text(string.format("%.2f", arg_8_0._attack_armor_modifiers[iter_8_6] or 0))
 			end
 
 			Imgui.columns(1)
@@ -448,113 +448,112 @@ ImguiWeaponDebug._draw_basic_info = function (self)
 	end
 end
 
-ImguiWeaponDebug._draw_damage_info = function (self)
+function ImguiWeaponDebug._draw_damage_info(arg_9_0)
 	Imgui.separator()
 	Imgui.text("Damage Information")
 
-	self._combat_pop_settings = Imgui.checkbox("Pop Combat Settings", self._combat_pop_settings)
+	arg_9_0._combat_pop_settings = Imgui.checkbox("Pop Combat Settings", arg_9_0._combat_pop_settings)
 
-	if self._combat_pop_settings then
+	if arg_9_0._combat_pop_settings then
 		Imgui.begin_window("Combat Settings (Weapon Debug)")
-		self:_update_combat_settings()
+		arg_9_0:_update_combat_settings()
 		Imgui.end_window()
 	else
-		self:_update_combat_settings()
+		arg_9_0:_update_combat_settings()
 	end
 
-	local difficulty_level = self._difficulties[self._damage_difficulty_id]
-	local hit_zone_name = self._hit_zone_names[self._damage_hit_zone_id]
+	local var_9_0 = arg_9_0._difficulties[arg_9_0._damage_difficulty_id]
+	local var_9_1 = arg_9_0._hit_zone_names[arg_9_0._damage_hit_zone_id]
 
-	for breed_table_name, breed_table in pairs(self._breed_table) do
-		if difficulty_level and hit_zone_name and Imgui.tree_node(breed_table_name) then
+	for iter_9_0, iter_9_1 in pairs(arg_9_0._breed_table) do
+		if var_9_0 and var_9_1 and Imgui.tree_node(iter_9_0) then
 			Imgui.separator()
-			self:_draw_faction_combat_info(breed_table, difficulty_level, hit_zone_name, self._damage_power_level, self._combat_stagger_level, self._combat_critical, self._combat_backstab_multiplier, self._combat_power_boost)
+			arg_9_0:_draw_faction_combat_info(iter_9_1, var_9_0, var_9_1, arg_9_0._damage_power_level, arg_9_0._combat_stagger_level, arg_9_0._combat_critical, arg_9_0._combat_backstab_multiplier, arg_9_0._combat_power_boost)
 			Imgui.tree_pop()
 		end
 	end
 end
 
-ImguiWeaponDebug._update_combat_settings = function (self)
-	self._combat_use_current_power_level = Imgui.checkbox("Use Current Power Level", self._combat_use_current_power_level)
+function ImguiWeaponDebug._update_combat_settings(arg_10_0)
+	arg_10_0._combat_use_current_power_level = Imgui.checkbox("Use Current Power Level", arg_10_0._combat_use_current_power_level)
 
-	if self._combat_use_current_power_level then
-		local unit = self._current_unit
-		local career_ext = unit and Unit.alive(unit) and ScriptUnit.extension(unit, "career_system")
-		local power_level = career_ext and career_ext:get_career_power_level() or min_power_level
+	if arg_10_0._combat_use_current_power_level then
+		local var_10_0 = arg_10_0._current_unit
+		local var_10_1 = var_10_0 and Unit.alive(var_10_0) and ScriptUnit.extension(var_10_0, "career_system")
 
-		self._damage_power_level = power_level
+		arg_10_0._damage_power_level = var_10_1 and var_10_1:get_career_power_level() or var_0_1
 	end
 
-	self._damage_power_level = math.max(Imgui.input_float("Power Level", self._damage_power_level), min_power_level)
-	self._damage_difficulty_id = Imgui.combo("Difficulty", self._damage_difficulty_id, self._difficulties)
-	self._damage_hit_zone_id = Imgui.combo("Hit Zone", self._damage_hit_zone_id, self._hit_zone_names)
-	self._combat_backstab_multiplier = Imgui.slider_float("Backstab Mult", self._combat_backstab_multiplier, 1, 2)
-	self._combat_stagger_level = math.floor(Imgui.slider_float("Stagger Level", self._combat_stagger_level, 0, 3))
-	self._combat_critical = Imgui.checkbox("Critical", self._combat_critical)
+	arg_10_0._damage_power_level = math.max(Imgui.input_float("Power Level", arg_10_0._damage_power_level), var_0_1)
+	arg_10_0._damage_difficulty_id = Imgui.combo("Difficulty", arg_10_0._damage_difficulty_id, arg_10_0._difficulties)
+	arg_10_0._damage_hit_zone_id = Imgui.combo("Hit Zone", arg_10_0._damage_hit_zone_id, arg_10_0._hit_zone_names)
+	arg_10_0._combat_backstab_multiplier = Imgui.slider_float("Backstab Mult", arg_10_0._combat_backstab_multiplier, 1, 2)
+	arg_10_0._combat_stagger_level = math.floor(Imgui.slider_float("Stagger Level", arg_10_0._combat_stagger_level, 0, 3))
+	arg_10_0._combat_critical = Imgui.checkbox("Critical", arg_10_0._combat_critical)
 
 	Imgui.same_line()
 
-	self._combat_power_boost = Imgui.checkbox("Power Boost", self._combat_power_boost)
+	arg_10_0._combat_power_boost = Imgui.checkbox("Power Boost", arg_10_0._combat_power_boost)
 
-	for power_type, _ in pairs(POWER_LEVEL_DIFF_RATIO) do
-		local difficulty_level = self._difficulties[self._damage_difficulty_id]
-		local scaled_power_level = ActionUtils.scale_power_levels(self._damage_power_level, power_type, self._current_unit, difficulty_level)
+	for iter_10_0, iter_10_1 in pairs(POWER_LEVEL_DIFF_RATIO) do
+		local var_10_2 = arg_10_0._difficulties[arg_10_0._damage_difficulty_id]
+		local var_10_3 = ActionUtils.scale_power_levels(arg_10_0._damage_power_level, iter_10_0, arg_10_0._current_unit, var_10_2)
 
-		Imgui.text(string.format("Scaled - %-8s: %s", power_type, scaled_power_level))
+		Imgui.text(string.format("Scaled - %-8s: %s", iter_10_0, var_10_3))
 	end
 end
 
-ImguiWeaponDebug._draw_faction_combat_info = function (self, breed_table, difficulty_level, hit_zone_name, power_level, stagger_level, is_critical_strike, backstab_multiplier, has_power_boost)
-	local start_target_index = 1
-	local max_target_index = 8
-	local hit_index_format = string.format("%7s%6s", "%2d", "")
-	local damage_actions = self._combat_hit_actions
-	local push_actions = self._combat_push_actions
-	local target_damage = {}
-	local target_hits = {}
+function ImguiWeaponDebug._draw_faction_combat_info(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8)
+	local var_11_0 = 1
+	local var_11_1 = 8
+	local var_11_2 = string.format("%7s%6s", "%2d", "")
+	local var_11_3 = arg_11_0._combat_hit_actions
+	local var_11_4 = arg_11_0._combat_push_actions
+	local var_11_5 = {}
+	local var_11_6 = {}
 
-	for breed_name, _ in pairs(breed_table) do
+	for iter_11_0, iter_11_1 in pairs(arg_11_1) do
 		Imgui.separator()
 
-		local breed = Breeds[breed_name] or PlayerBreeds[breed_name]
-		local armor_type, _, primary_armor_type, _ = ActionUtils.get_target_armor(hit_zone_name, breed, 1)
-		local node_name = string.format("Breed: %s (Armor: %d / Primary Armor: %d)", breed_name, armor_type or 0, primary_armor_type or 0)
+		local var_11_7 = Breeds[iter_11_0] or PlayerBreeds[iter_11_0]
+		local var_11_8, var_11_9, var_11_10, var_11_11 = ActionUtils.get_target_armor(arg_11_3, var_11_7, 1)
+		local var_11_12 = string.format("Breed: %s (Armor: %d / Primary Armor: %d)", iter_11_0, var_11_8 or 0, var_11_10 or 0)
 
-		if Imgui.tree_node(node_name) then
-			local breed_health = self:get_breed_health(difficulty_level, breed)
-			local stagger_threshold_light, stagger_threshold_medium, stagger_threshold_heavy = self:get_breed_stagger(difficulty_level, breed)
+		if Imgui.tree_node(var_11_12) then
+			local var_11_13 = arg_11_0:get_breed_health(arg_11_2, var_11_7)
+			local var_11_14, var_11_15, var_11_16 = arg_11_0:get_breed_stagger(arg_11_2, var_11_7)
 
-			Imgui.text(string.format("Health: %.2f", breed_health))
-			Imgui.text(string.format("Stagger Thresholds: %.2f / %.2f / %.2f", stagger_threshold_light, stagger_threshold_medium, stagger_threshold_heavy))
+			Imgui.text(string.format("Health: %.2f", var_11_13))
+			Imgui.text(string.format("Stagger Thresholds: %.2f / %.2f / %.2f", var_11_14, var_11_15, var_11_16))
 			Imgui.separator()
 			Imgui.columns(9, true)
 			Imgui.text("Hit Index")
 
-			for i = start_target_index, max_target_index do
+			for iter_11_2 = var_11_0, var_11_1 do
 				Imgui.next_column()
-				Imgui.text(i)
+				Imgui.text(iter_11_2)
 			end
 
 			Imgui.separator()
 
-			for action_name, sub_action in pairs(damage_actions) do
-				table.clear(target_damage)
-				table.clear(target_hits)
+			for iter_11_3, iter_11_4 in pairs(var_11_3) do
+				table.clear(var_11_5)
+				table.clear(var_11_6)
 
-				for i = start_target_index, max_target_index do
-					local damage = self:get_damage(sub_action, power_level, difficulty_level, hit_zone_name, breed, i, stagger_level, is_critical_strike, backstab_multiplier, has_power_boost)
-					local hits_to_kill = damage > 0 and math.ceil(breed_health / damage) or 0
+				for iter_11_5 = var_11_0, var_11_1 do
+					local var_11_17 = arg_11_0:get_damage(iter_11_4, arg_11_4, arg_11_2, arg_11_3, var_11_7, iter_11_5, arg_11_5, arg_11_6, arg_11_7, arg_11_8)
+					local var_11_18 = var_11_17 > 0 and math.ceil(var_11_13 / var_11_17) or 0
 
-					table.insert(target_damage, damage)
-					table.insert(target_hits, hits_to_kill)
+					table.insert(var_11_5, var_11_17)
+					table.insert(var_11_6, var_11_18)
 				end
 
 				Imgui.next_column()
-				Imgui.text(action_name)
+				Imgui.text(iter_11_3)
 
-				for i = 1, #target_damage do
+				for iter_11_6 = 1, #var_11_5 do
 					Imgui.next_column()
-					Imgui.text(string.format("%6.2f - %-3d", target_damage[i], target_hits[i]))
+					Imgui.text(string.format("%6.2f - %-3d", var_11_5[iter_11_6], var_11_6[iter_11_6]))
 				end
 			end
 
@@ -575,39 +574,39 @@ ImguiWeaponDebug._draw_faction_combat_info = function (self, breed_table, diffic
 			Imgui.text("Strength")
 			Imgui.separator()
 
-			for action_name, damage_profiles in pairs(push_actions) do
+			for iter_11_7, iter_11_8 in pairs(var_11_4) do
 				Imgui.next_column()
-				Imgui.text(action_name .. " Inner")
+				Imgui.text(iter_11_7 .. " Inner")
 
-				local inner_damage_profile = DamageProfileTemplates[damage_profiles.inner]
-				local type, duration, distance, value, strength = self:get_ai_stagger(inner_damage_profile, power_level, difficulty_level, hit_zone_name, breed, 1, is_critical_strike, has_power_boost)
-
-				Imgui.next_column()
-				Imgui.text(string.format("%.2f", type))
-				Imgui.next_column()
-				Imgui.text(string.format("%.2f", duration))
-				Imgui.next_column()
-				Imgui.text(string.format("%.2f", distance))
-				Imgui.next_column()
-				Imgui.text(string.format("%.2f", value))
-				Imgui.next_column()
-				Imgui.text(string.format("%.2f", strength))
-
-				local outer_damage_profile = DamageProfileTemplates[damage_profiles.inner]
-				local type, duration, distance, value, strength = self:get_ai_stagger(outer_damage_profile, power_level, difficulty_level, hit_zone_name, breed, 1, is_critical_strike, has_power_boost)
+				local var_11_19 = DamageProfileTemplates[iter_11_8.inner]
+				local var_11_20, var_11_21, var_11_22, var_11_23, var_11_24 = arg_11_0:get_ai_stagger(var_11_19, arg_11_4, arg_11_2, arg_11_3, var_11_7, 1, arg_11_6, arg_11_8)
 
 				Imgui.next_column()
-				Imgui.text(action_name .. " Outer")
+				Imgui.text(string.format("%.2f", var_11_20))
 				Imgui.next_column()
-				Imgui.text(string.format("%.2f", type))
+				Imgui.text(string.format("%.2f", var_11_21))
 				Imgui.next_column()
-				Imgui.text(string.format("%.2f", duration))
+				Imgui.text(string.format("%.2f", var_11_22))
 				Imgui.next_column()
-				Imgui.text(string.format("%.2f", distance))
+				Imgui.text(string.format("%.2f", var_11_23))
 				Imgui.next_column()
-				Imgui.text(string.format("%.2f", value))
+				Imgui.text(string.format("%.2f", var_11_24))
+
+				local var_11_25 = DamageProfileTemplates[iter_11_8.inner]
+				local var_11_26, var_11_27, var_11_28, var_11_29, var_11_30 = arg_11_0:get_ai_stagger(var_11_25, arg_11_4, arg_11_2, arg_11_3, var_11_7, 1, arg_11_6, arg_11_8)
+
 				Imgui.next_column()
-				Imgui.text(string.format("%.2f", strength))
+				Imgui.text(iter_11_7 .. " Outer")
+				Imgui.next_column()
+				Imgui.text(string.format("%.2f", var_11_26))
+				Imgui.next_column()
+				Imgui.text(string.format("%.2f", var_11_27))
+				Imgui.next_column()
+				Imgui.text(string.format("%.2f", var_11_28))
+				Imgui.next_column()
+				Imgui.text(string.format("%.2f", var_11_29))
+				Imgui.next_column()
+				Imgui.text(string.format("%.2f", var_11_30))
 			end
 
 			Imgui.columns(1)
@@ -616,21 +615,21 @@ ImguiWeaponDebug._draw_faction_combat_info = function (self, breed_table, diffic
 	end
 end
 
-ImguiWeaponDebug._get_current_weapon = function (self)
-	if not self._display_current_action then
-		for name, extension in pairs(self._weapon_extensions) do
-			if extension then
-				return extension
+function ImguiWeaponDebug._get_current_weapon(arg_12_0)
+	if not arg_12_0._display_current_action then
+		for iter_12_0, iter_12_1 in pairs(arg_12_0._weapon_extensions) do
+			if iter_12_1 then
+				return iter_12_1
 			end
 		end
 	end
 
-	if self._current_weapon_extension then
-		return self._current_weapon_extension
+	if arg_12_0._current_weapon_extension then
+		return arg_12_0._current_weapon_extension
 	else
-		for name, extension in pairs(self._weapon_extensions) do
-			if extension and extension.current_action_settings then
-				return extension
+		for iter_12_2, iter_12_3 in pairs(arg_12_0._weapon_extensions) do
+			if iter_12_3 and iter_12_3.current_action_settings then
+				return iter_12_3
 			end
 		end
 	end
@@ -638,23 +637,22 @@ ImguiWeaponDebug._get_current_weapon = function (self)
 	return nil
 end
 
-ImguiWeaponDebug._get_current_action = function (self)
-	if not self._display_current_action then
-		local selected_action_name = self._selected_action >= 0 and self._action_list[self._selected_action]
-		local selected_sub_actions = selected_action_name and self._sub_action_list[selected_action_name] or {}
-		local selected_sub_action_name = self._selected_sub_action >= 0 and selected_sub_actions[self._selected_sub_action]
-		local action = selected_action_name and self._current_actions[selected_action_name]
-		local sub_action = action and action[selected_sub_action_name]
+function ImguiWeaponDebug._get_current_action(arg_13_0)
+	if not arg_13_0._display_current_action then
+		local var_13_0 = arg_13_0._selected_action >= 0 and arg_13_0._action_list[arg_13_0._selected_action]
+		local var_13_1 = var_13_0 and arg_13_0._sub_action_list[var_13_0] or {}
+		local var_13_2 = arg_13_0._selected_sub_action >= 0 and var_13_1[arg_13_0._selected_sub_action]
+		local var_13_3 = var_13_0 and arg_13_0._current_actions[var_13_0]
 
-		return sub_action
+		return var_13_3 and var_13_3[var_13_2]
 	end
 
-	if self._current_weapon_extension then
-		return self._current_weapon_extension.current_action_settings
+	if arg_13_0._current_weapon_extension then
+		return arg_13_0._current_weapon_extension.current_action_settings
 	else
-		for name, extension in pairs(self._weapon_extensions) do
-			if extension and extension.current_action_settings then
-				return extension.current_action_settings
+		for iter_13_0, iter_13_1 in pairs(arg_13_0._weapon_extensions) do
+			if iter_13_1 and iter_13_1.current_action_settings then
+				return iter_13_1.current_action_settings
 			end
 		end
 	end
@@ -662,377 +660,351 @@ ImguiWeaponDebug._get_current_action = function (self)
 	return nil
 end
 
-ImguiWeaponDebug.debug_draw_chain_data = function (self, current_time_in_action, action, owner_unit, weapon_extension)
-	local gui = Debug.gui
-	local width_per_second = 150
-	local height = 20
-	local row_height = height + 5
-	local max_action_length = 5
-	local max_size_x = width_per_second * max_action_length
-	local max_size_y = row_height * 7 + 20
-	local input_name_width = 150
-	local seperator_size = 0.25
-	local res_x, res_y = RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h
-	local start_x = res_x / 2 - (max_size_x - input_name_width) / 2
-	local start_y = res_y * 0.25 + max_size_y / 2
-	local small_font_size = 12
-	local font_size = 16
-	local font_color = Color(255, 255, 255, 255)
-	local action_time_scale = ActionUtils.get_action_time_scale(owner_unit, action)
-	local action_length = action.total_time / ActionUtils.get_action_time_scale(owner_unit, action)
-	local action_min_length = weapon_extension:get_scaled_min_hold_time(action)
-	local clamped_action_length = math.min(action_length, max_action_length)
-	local clamped_time_in_action = math.min(current_time_in_action, clamped_action_length)
-	local color = Colors.get_color_with_alpha("black", 150)
-	local pos = Vector3(start_x - input_name_width, start_y - max_size_y, 0)
-	local size = Vector3(max_size_x + input_name_width, max_size_y, 0)
+function ImguiWeaponDebug.debug_draw_chain_data(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+	local var_14_0 = Debug.gui
+	local var_14_1 = 150
+	local var_14_2 = 20
+	local var_14_3 = var_14_2 + 5
+	local var_14_4 = 5
+	local var_14_5 = var_14_1 * var_14_4
+	local var_14_6 = var_14_3 * 7 + 20
+	local var_14_7 = 150
+	local var_14_8 = 0.25
+	local var_14_9 = RESOLUTION_LOOKUP.res_w
+	local var_14_10 = RESOLUTION_LOOKUP.res_h
+	local var_14_11 = var_14_9 / 2 - (var_14_5 - var_14_7) / 2
+	local var_14_12 = var_14_10 * 0.25 + var_14_6 / 2
+	local var_14_13 = 12
+	local var_14_14 = 16
+	local var_14_15 = Color(255, 255, 255, 255)
+	local var_14_16 = ActionUtils.get_action_time_scale(arg_14_3, arg_14_2)
+	local var_14_17 = arg_14_2.total_time / ActionUtils.get_action_time_scale(arg_14_3, arg_14_2)
+	local var_14_18 = arg_14_4:get_scaled_min_hold_time(arg_14_2)
+	local var_14_19 = math.min(var_14_17, var_14_4)
+	local var_14_20 = math.min(arg_14_1, var_14_19)
+	local var_14_21 = Colors.get_color_with_alpha("black", 150)
+	local var_14_22 = Vector3(var_14_11 - var_14_7, var_14_12 - var_14_6, 0)
+	local var_14_23 = Vector3(var_14_5 + var_14_7, var_14_6, 0)
 
-	Gui.rect(gui, pos, size, color)
-	ScriptGUI.hud_line(gui, Vector3(start_x, start_y, 1), Vector3(start_x, start_y - max_size_y, 1), 3, 2, Color(255, 255, 255, 255))
+	Gui.rect(var_14_0, var_14_22, var_14_23, var_14_21)
+	ScriptGUI.hud_line(var_14_0, Vector3(var_14_11, var_14_12, 1), Vector3(var_14_11, var_14_12 - var_14_6, 1), 3, 2, Color(255, 255, 255, 255))
 
-	local action_min_x = start_x + action_min_length * width_per_second
+	local var_14_24 = var_14_11 + var_14_18 * var_14_1
 
-	ScriptGUI.hud_line(gui, Vector3(action_min_x, start_y, 0.5), Vector3(action_min_x, start_y - max_size_y, 0.5), 3, 2, Color(255, 255, 0, 0))
-	gui_shadow_text(gui, string.format("%.2f", action_min_length), small_font_size, Vector3(action_min_x + 5, start_y, 0.5), Color(255, 255, 0, 0))
+	ScriptGUI.hud_line(var_14_0, Vector3(var_14_24, var_14_12, 0.5), Vector3(var_14_24, var_14_12 - var_14_6, 0.5), 3, 2, Color(255, 255, 0, 0))
+	var_0_4(var_14_0, string.format("%.2f", var_14_18), var_14_13, Vector3(var_14_24 + 5, var_14_12, 0.5), Color(255, 255, 0, 0))
 
-	local max_action_end_x = start_x + max_action_length * width_per_second
+	local var_14_25 = var_14_11 + var_14_4 * var_14_1
 
-	ScriptGUI.hud_line(gui, Vector3(max_action_end_x, start_y, 0.5), Vector3(max_action_end_x, start_y - max_size_y, 0.5), 3, 2, Color(255, 255, 255, 255))
+	ScriptGUI.hud_line(var_14_0, Vector3(var_14_25, var_14_12, 0.5), Vector3(var_14_25, var_14_12 - var_14_6, 0.5), 3, 2, Color(255, 255, 255, 255))
 
-	local action_end_x = start_x + clamped_action_length * width_per_second
+	local var_14_26 = var_14_11 + var_14_19 * var_14_1
 
-	ScriptGUI.hud_line(gui, Vector3(action_end_x, start_y, 1), Vector3(action_end_x, start_y - max_size_y, 1), 3, 2, Color(255, 255, 0, 0))
-	gui_shadow_text(gui, string.format("%.2f", action_length), small_font_size, Vector3(action_end_x + 5, start_y, 0.5), Color(255, 255, 0, 0))
+	ScriptGUI.hud_line(var_14_0, Vector3(var_14_26, var_14_12, 1), Vector3(var_14_26, var_14_12 - var_14_6, 1), 3, 2, Color(255, 255, 0, 0))
+	var_0_4(var_14_0, string.format("%.2f", var_14_17), var_14_13, Vector3(var_14_26 + 5, var_14_12, 0.5), Color(255, 255, 0, 0))
 
-	if action.damage_window_start and action.damage_window_end then
-		local damage_window_start = action.damage_window_start
+	if arg_14_2.damage_window_start and arg_14_2.damage_window_end then
+		local var_14_27 = arg_14_2.damage_window_start / var_14_16
+		local var_14_28 = (arg_14_2.damage_window_end or arg_14_2.total_time or math.huge) / var_14_16
+		local var_14_29 = var_14_11 + var_14_27 * var_14_1
+		local var_14_30 = (var_14_28 - var_14_27) * var_14_1
 
-		damage_window_start = damage_window_start / action_time_scale
-
-		local damage_window_end = action.damage_window_end or action.total_time or math.huge
-
-		damage_window_end = damage_window_end / action_time_scale
-
-		local damage_start_x = start_x + damage_window_start * width_per_second
-		local damage_size_x = (damage_window_end - damage_window_start) * width_per_second
-
-		Gui.rect(gui, Vector3(damage_start_x, start_y - max_size_y, 0), Vector3(damage_size_x, max_size_y, 0), Color(128, 255, 0, 0))
+		Gui.rect(var_14_0, Vector3(var_14_29, var_14_12 - var_14_6, 0), Vector3(var_14_30, var_14_6, 0), Color(128, 255, 0, 0))
 	end
 
-	local num_sperators = math.floor(clamped_action_length / seperator_size)
+	local var_14_31 = math.floor(var_14_19 / var_14_8)
 
-	for i = 0, num_sperators do
-		local x = start_x + i * seperator_size * width_per_second
+	for iter_14_0 = 0, var_14_31 do
+		local var_14_32 = var_14_11 + iter_14_0 * var_14_8 * var_14_1
 
-		ScriptGUI.hud_line(gui, Vector3(x, start_y, 0.1), Vector3(x, start_y - max_size_y, 0.1), 3, 2, Color(50, 255, 255, 255))
-		gui_shadow_text(gui, string.format("%.2f", i * seperator_size), small_font_size, Vector3(x, start_y - max_size_y, 0.1), font_color)
+		ScriptGUI.hud_line(var_14_0, Vector3(var_14_32, var_14_12, 0.1), Vector3(var_14_32, var_14_12 - var_14_6, 0.1), 3, 2, Color(50, 255, 255, 255))
+		var_0_4(var_14_0, string.format("%.2f", iter_14_0 * var_14_8), var_14_13, Vector3(var_14_32, var_14_12 - var_14_6, 0.1), var_14_15)
 	end
 
-	local lookup_data = action.lookup_data
+	local var_14_33 = arg_14_2.lookup_data
 
-	if lookup_data then
-		gui_shadow_text(gui, lookup_data.action_name, small_font_size, Vector3(start_x - input_name_width, start_y + 20, 0.1), font_color)
-		gui_shadow_text(gui, lookup_data.sub_action_name, small_font_size, Vector3(start_x - input_name_width, start_y + 5, 0.1), font_color)
+	if var_14_33 then
+		var_0_4(var_14_0, var_14_33.action_name, var_14_13, Vector3(var_14_11 - var_14_7, var_14_12 + 20, 0.1), var_14_15)
+		var_0_4(var_14_0, var_14_33.sub_action_name, var_14_13, Vector3(var_14_11 - var_14_7, var_14_12 + 5, 0.1), var_14_15)
 	end
 
-	local damage_profile_name = action.damage_profile
-	local damage_profile = damage_profile_name and DamageProfileTemplates[damage_profile_name]
+	local var_14_34 = arg_14_2.damage_profile
+	local var_14_35 = var_14_34 and DamageProfileTemplates[var_14_34]
 
-	if damage_profile then
-		local damge_profile_text_x = start_x + max_size_x + 10
-		local damge_profile_text_y = start_y - 15
-		local damge_profile_text_row = 15
-		local default_target_settings = damage_profile.default_target
-		local default_boost_curve_type = default_target_settings and default_target_settings.boost_curve_type
+	if var_14_35 then
+		local var_14_36 = var_14_11 + var_14_5 + 10
+		local var_14_37 = var_14_12 - 15
+		local var_14_38 = 15
+		local var_14_39 = var_14_35.default_target
+		local var_14_40 = var_14_39 and var_14_39.boost_curve_type
 
-		gui_shadow_text(gui, string.format("[damage profile] %s", damage_profile_name), small_font_size, Vector3(damge_profile_text_x, damge_profile_text_y, 0.1), font_color)
+		var_0_4(var_14_0, string.format("[damage profile] %s", var_14_34), var_14_13, Vector3(var_14_36, var_14_37, 0.1), var_14_15)
 
-		if default_target_settings then
-			gui_shadow_text(gui, string.format("[default] %s", tostring(default_boost_curve_type)), small_font_size, Vector3(damge_profile_text_x, damge_profile_text_y - damge_profile_text_row, 0.1), font_color)
+		if var_14_39 then
+			var_0_4(var_14_0, string.format("[default] %s", tostring(var_14_40)), var_14_13, Vector3(var_14_36, var_14_37 - var_14_38, 0.1), var_14_15)
 		end
 
-		local target_settings = damage_profile.targets
+		local var_14_41 = var_14_35.targets
 
-		for i = 1, #target_settings do
-			local target = target_settings[i]
-			local boost_curve_type = target and target.boost_curve_type
+		for iter_14_1 = 1, #var_14_41 do
+			local var_14_42 = var_14_41[iter_14_1]
+			local var_14_43 = var_14_42 and var_14_42.boost_curve_type
 
-			gui_shadow_text(gui, string.format("[%d] %s", i, tostring(boost_curve_type)), small_font_size, Vector3(damge_profile_text_x, damge_profile_text_y - damge_profile_text_row * (i + 1), 0.1), font_color)
+			var_0_4(var_14_0, string.format("[%d] %s", iter_14_1, tostring(var_14_43)), var_14_13, Vector3(var_14_36, var_14_37 - var_14_38 * (iter_14_1 + 1), 0.1), var_14_15)
 		end
 	end
 
-	local allowed_chain_actions = action.allowed_chain_actions
+	local var_14_44 = arg_14_2.allowed_chain_actions
 
-	for i = 1, #allowed_chain_actions do
-		local chain_action = allowed_chain_actions[i]
-		local chain_action_name = tostring(chain_action.action) .. "/" .. tostring(chain_action.sub_action)
-		local input_name = chain_action.auto_chain and "auto_chain" or tostring(chain_action.input)
+	for iter_14_2 = 1, #var_14_44 do
+		local var_14_45 = var_14_44[iter_14_2]
+		local var_14_46 = tostring(var_14_45.action) .. "/" .. tostring(var_14_45.sub_action)
+		local var_14_47 = var_14_45.auto_chain and "auto_chain" or tostring(var_14_45.input)
 
-		if chain_action.hold_allowed then
-			input_name = input_name .. "(hold)"
+		if var_14_45.hold_allowed then
+			var_14_47 = var_14_47 .. "(hold)"
 		end
 
-		local chain_start_time = chain_action.start_time / action_time_scale
-		local chain_end_time = chain_action.end_time and chain_action.end_time / action_time_scale or math.huge
-		local action_color = clamped_time_in_action < chain_start_time and Colors.get("orange") or chain_end_time <= clamped_time_in_action and Colors.get("red") or Colors.get("green")
-		local row_number = i
-		local x = start_x + chain_start_time * width_per_second
-		local y = start_y - row_number * row_height
-		local action_box_pos = Vector3(x, y, 0.1)
-		local clamped_chain_end_time = math.min(chain_end_time, max_action_length)
-		local width = (clamped_chain_end_time - chain_start_time) * width_per_second
-		local action_box_size = Vector3(width, height, 0)
+		local var_14_48 = var_14_45.start_time / var_14_16
+		local var_14_49 = var_14_45.end_time and var_14_45.end_time / var_14_16 or math.huge
+		local var_14_50 = var_14_20 < var_14_48 and Colors.get("orange") or var_14_49 <= var_14_20 and Colors.get("red") or Colors.get("green")
+		local var_14_51 = iter_14_2
+		local var_14_52 = var_14_11 + var_14_48 * var_14_1
+		local var_14_53 = var_14_12 - var_14_51 * var_14_3
+		local var_14_54 = Vector3(var_14_52, var_14_53, 0.1)
+		local var_14_55 = (math.min(var_14_49, var_14_4) - var_14_48) * var_14_1
+		local var_14_56 = Vector3(var_14_55, var_14_2, 0)
 
-		Gui.rect(gui, action_box_pos, action_box_size, action_color)
+		Gui.rect(var_14_0, var_14_54, var_14_56, var_14_50)
 
-		local chain_box_name = chain_action_name .. string.format(" [%.2f - %.2f]", chain_start_time, chain_end_time)
+		local var_14_57 = var_14_46 .. string.format(" [%.2f - %.2f]", var_14_48, var_14_49)
 
-		gui_shadow_text(gui, chain_box_name, font_size, action_box_pos, font_color)
+		var_0_4(var_14_0, var_14_57, var_14_14, var_14_54, var_14_15)
 
-		local action_input_pos = Vector3(start_x - input_name_width, y, 0.1)
+		local var_14_58 = Vector3(var_14_11 - var_14_7, var_14_53, 0.1)
 
-		gui_shadow_text(gui, input_name, font_size, action_input_pos, font_color)
+		var_0_4(var_14_0, var_14_47, var_14_14, var_14_58, var_14_15)
 	end
 
-	local timeline_start_x = start_x + clamped_time_in_action * width_per_second
-	local timeline_start_y = start_y + 10
-	local timeline_end_x = timeline_start_x
-	local timeline_end_y = timeline_start_y - max_size_y - 20
+	local var_14_59 = var_14_11 + var_14_20 * var_14_1
+	local var_14_60 = var_14_12 + 10
+	local var_14_61 = var_14_59
+	local var_14_62 = var_14_60 - var_14_6 - 20
 
-	ScriptGUI.hud_line(gui, Vector3(timeline_start_x, timeline_start_y, 1), Vector3(timeline_end_x, timeline_end_y, 1), 3, 2, Color(255, 255, 255, 255))
-	gui_shadow_text(gui, string.format("%.2f", current_time_in_action), font_size, Vector3(timeline_start_x + 5, timeline_start_y, 1), font_color)
+	ScriptGUI.hud_line(var_14_0, Vector3(var_14_59, var_14_60, 1), Vector3(var_14_61, var_14_62, 1), 3, 2, Color(255, 255, 255, 255))
+	var_0_4(var_14_0, string.format("%.2f", arg_14_1), var_14_14, Vector3(var_14_59 + 5, var_14_60, 1), var_14_15)
 end
 
-ImguiWeaponDebug.get_breed_health = function (self, difficulty_level, breed)
-	local breed_health = 0
-	local difficulty_settings = DifficultySettings[difficulty_level]
+function ImguiWeaponDebug.get_breed_health(arg_15_0, arg_15_1, arg_15_2)
+	local var_15_0 = 0
+	local var_15_1 = DifficultySettings[arg_15_1]
 
-	if difficulty_settings and breed then
-		local breed_health_table = breed.max_health
-		local difficulty_rank = difficulty_settings.rank
+	if var_15_1 and arg_15_2 then
+		local var_15_2 = arg_15_2.max_health
+		local var_15_3 = var_15_1.rank
 
-		breed_health = breed_health_table and breed_health_table[difficulty_rank] or 0
+		var_15_0 = var_15_2 and var_15_2[var_15_3] or 0
 	end
 
-	return breed_health
+	return var_15_0
 end
 
-ImguiWeaponDebug.get_breed_stagger = function (self, difficulty_level, breed)
-	local stagger_threshold_light = 0
-	local stagger_threshold_medium = 0
-	local stagger_threshold_heavy = 0
-	local finesse_hit = false
-	local difficulty_settings = DifficultySettings[difficulty_level]
+function ImguiWeaponDebug.get_breed_stagger(arg_16_0, arg_16_1, arg_16_2)
+	local var_16_0 = 0
+	local var_16_1 = 0
+	local var_16_2 = 0
+	local var_16_3 = false
+	local var_16_4 = DifficultySettings[arg_16_1]
 
-	if difficulty_settings and breed then
-		local difficulty_rank = difficulty_settings.rank
-		local stagger_resistance = breed.diff_stagger_resist and breed.diff_stagger_resist[difficulty_rank] or breed.stagger_resistance or 2
+	if var_16_4 and arg_16_2 then
+		local var_16_5 = var_16_4.rank
+		local var_16_6 = arg_16_2.diff_stagger_resist and arg_16_2.diff_stagger_resist[var_16_5] or arg_16_2.stagger_resistance or 2
 
-		stagger_threshold_light = finesse_hit and 0 or breed.stagger_threshold_light and breed.stagger_threshold_light * stagger_resistance or 0.25 * stagger_resistance
-		stagger_threshold_medium = breed.stagger_threshold_medium and breed.stagger_threshold_medium * stagger_resistance or 1 * stagger_resistance
-		stagger_threshold_heavy = breed.stagger_threshold_heavy and breed.stagger_threshold_heavy * stagger_resistance or 2.5 * stagger_resistance
+		var_16_0 = var_16_3 and 0 or arg_16_2.stagger_threshold_light and arg_16_2.stagger_threshold_light * var_16_6 or 0.25 * var_16_6
+		var_16_1 = arg_16_2.stagger_threshold_medium and arg_16_2.stagger_threshold_medium * var_16_6 or 1 * var_16_6
+		var_16_2 = arg_16_2.stagger_threshold_heavy and arg_16_2.stagger_threshold_heavy * var_16_6 or 2.5 * var_16_6
 	end
 
-	return stagger_threshold_light, stagger_threshold_medium, stagger_threshold_heavy
+	return var_16_0, var_16_1, var_16_2
 end
 
-ImguiWeaponDebug.get_damage = function (self, sub_action, power_level, difficulty_level, hit_zone_name, breed, target_index, stagger_level, is_critical_strike, backstab_multiplier, has_power_boost)
-	local unit = self._current_unit
-	local item = self._combat_current_weapon
+function ImguiWeaponDebug.get_damage(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10)
+	local var_17_0 = arg_17_0._current_unit
+	local var_17_1 = arg_17_0._combat_current_weapon
 
-	if item and unit and sub_action and breed then
-		local action_hand = sub_action.weapon_action_hand
+	if var_17_1 and var_17_0 and arg_17_1 and arg_17_5 then
+		local var_17_2 = arg_17_1.weapon_action_hand
 
-		if action_hand == "both" and self._selected_weapon_extenstion_name ~= "any" then
-			action_hand = self._selected_weapon_extenstion_name
+		if var_17_2 == "both" and arg_17_0._selected_weapon_extenstion_name ~= "any" then
+			var_17_2 = arg_17_0._selected_weapon_extenstion_name
 		end
 
-		local damage_profile_name_left, damage_profile_name_right = ActionUtils.get_damage_profile_name(sub_action, action_hand)
-		local damage_profile_left = damage_profile_name_left and DamageProfileTemplates[damage_profile_name_left]
-		local damage_profile_right = damage_profile_name_right and DamageProfileTemplates[damage_profile_name_right]
-		local difficulty_settings = DifficultySettings[difficulty_level]
+		local var_17_3, var_17_4 = ActionUtils.get_damage_profile_name(arg_17_1, var_17_2)
+		local var_17_5 = var_17_3 and DamageProfileTemplates[var_17_3]
+		local var_17_6 = var_17_4 and DamageProfileTemplates[var_17_4]
+		local var_17_7 = DifficultySettings[arg_17_3]
 
-		if difficulty_settings then
-			local damage_left = 0
-			local damage_right = 0
+		if var_17_7 then
+			local var_17_8 = 0
+			local var_17_9 = 0
 
-			if damage_profile_left then
-				damage_left = self:_calculate_damage(unit, item, damage_profile_left, difficulty_settings, power_level, difficulty_level, hit_zone_name, breed, target_index, stagger_level, is_critical_strike, backstab_multiplier, has_power_boost)
+			if var_17_5 then
+				var_17_8 = arg_17_0:_calculate_damage(var_17_0, var_17_1, var_17_5, var_17_7, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10)
 			end
 
-			if damage_profile_right then
-				damage_right = self:_calculate_damage(unit, item, damage_profile_right, difficulty_settings, power_level, difficulty_level, hit_zone_name, breed, target_index, stagger_level, is_critical_strike, backstab_multiplier, has_power_boost)
+			if var_17_6 then
+				var_17_9 = arg_17_0:_calculate_damage(var_17_0, var_17_1, var_17_6, var_17_7, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10)
 			end
 
-			local damage = damage_left + damage_right
-
-			return damage
+			return var_17_8 + var_17_9
 		end
 	end
 
 	return 0
 end
 
-ImguiWeaponDebug.get_ai_stagger = function (self, damage_profile, power_level, difficulty_level, hit_zone_name, breed, target_index, is_critical_strike, has_power_boost)
-	local unit = self._current_unit
-	local item = self._combat_current_weapon
+function ImguiWeaponDebug.get_ai_stagger(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8)
+	local var_18_0 = arg_18_0._current_unit
+	local var_18_1 = arg_18_0._combat_current_weapon
 
-	if item and unit and damage_profile and breed then
-		return self:_calculate_ai_stagger(unit, item, damage_profile, power_level, difficulty_level, hit_zone_name, breed, target_index, is_critical_strike, has_power_boost)
+	if var_18_1 and var_18_0 and arg_18_1 and arg_18_5 then
+		return arg_18_0:_calculate_ai_stagger(var_18_0, var_18_1, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8)
 	end
 
 	return 0, 0, 0, 0, 0
 end
 
-ImguiWeaponDebug._calculate_damage = function (self, unit, item, damage_profile, difficulty_settings, power_level, difficulty_level, hit_zone_name, breed, target_index, stagger_level, is_critical_strike, backstab_multiplier, has_power_boost)
-	local damage_source = item.name
-	local boost_damage_multiplier
-	local range_scalar_multiplier = 0
+function ImguiWeaponDebug._calculate_damage(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9, arg_19_10, arg_19_11, arg_19_12, arg_19_13)
+	local var_19_0 = arg_19_2.name
+	local var_19_1
+	local var_19_2 = 0
 
-	if damage_profile.no_stagger_damage_reduction_ranged then
-		local stagger_number_override = 1
+	if arg_19_3.no_stagger_damage_reduction_ranged then
+		local var_19_3 = 1
 
-		stagger_level = math.max(stagger_number_override, stagger_level)
+		arg_19_10 = math.max(var_19_3, arg_19_10)
 	end
 
-	local damage = DamageUtils.custom_calculate_damage(unit, damage_source, power_level, damage_profile, target_index, range_scalar_multiplier, is_critical_strike, backstab_multiplier, has_power_boost, boost_damage_multiplier, breed, hit_zone_name, stagger_level, difficulty_level)
+	local var_19_4 = DamageUtils.custom_calculate_damage(arg_19_1, var_19_0, arg_19_5, arg_19_3, arg_19_9, var_19_2, arg_19_11, arg_19_12, arg_19_13, var_19_1, arg_19_8, arg_19_7, arg_19_10, arg_19_6)
 
-	damage = DamageUtils.networkify_damage(damage)
-
-	return damage
+	return (DamageUtils.networkify_damage(var_19_4))
 end
 
-ImguiWeaponDebug._calculate_ai_stagger = function (self, unit, item, damage_profile, power_level, difficulty_level, hit_zone_name, breed, target_index, is_critical_strike, has_power_boost)
-	local blocked = false
-	local damage_source = item.name
-	local range_scalar_multiplier = 0
-	local type, duration, distance, value, strength = DamageUtils.calculate_stagger_player_tooltip(breed, unit, hit_zone_name, power_level, is_critical_strike, damage_profile, target_index, blocked, damage_source, difficulty_level, has_power_boost, range_scalar_multiplier)
+function ImguiWeaponDebug._calculate_ai_stagger(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7, arg_20_8, arg_20_9, arg_20_10)
+	local var_20_0 = false
+	local var_20_1 = arg_20_2.name
+	local var_20_2 = 0
+	local var_20_3, var_20_4, var_20_5, var_20_6, var_20_7 = DamageUtils.calculate_stagger_player_tooltip(arg_20_7, arg_20_1, arg_20_6, arg_20_4, arg_20_9, arg_20_3, arg_20_8, var_20_0, var_20_1, arg_20_5, arg_20_10, var_20_2)
 
-	return type, duration, distance, value, strength
+	return var_20_3, var_20_4, var_20_5, var_20_6, var_20_7
 end
 
-ImguiWeaponDebug._get_damage_profile_for_action = function (self, sub_action)
-	if sub_action then
-		local action_hand = sub_action.weapon_action_hand
+function ImguiWeaponDebug._get_damage_profile_for_action(arg_21_0, arg_21_1)
+	if arg_21_1 then
+		local var_21_0 = arg_21_1.weapon_action_hand
 
-		if action_hand == "both" and self._selected_weapon_extenstion_name ~= "any" then
-			action_hand = self._selected_weapon_extenstion_name
+		if var_21_0 == "both" and arg_21_0._selected_weapon_extenstion_name ~= "any" then
+			var_21_0 = arg_21_0._selected_weapon_extenstion_name
 		end
 
-		return ActionUtils.get_damage_profile_name(sub_action, action_hand)
+		return ActionUtils.get_damage_profile_name(arg_21_1, var_21_0)
 	end
 
 	return nil, nil
 end
 
-ImguiWeaponDebug._verify_crits = function (self)
+function ImguiWeaponDebug._verify_crits(arg_22_0)
 	print("STARTING TEST: verify_crits")
 
-	local unit = self._current_unit
-	local item = ItemMasterList.we_1h_axe
-	local difficulty_level = "normal"
-	local difficulty_settings = DifficultySettings[difficulty_level]
-	local power_level = 300
-	local target_index = 1
-	local stagger_level = 0
-	local backstab_multiplier
-	local dummy_unit_armor = 1
-	local damage_profile_exclusion_list = table.mirror_array_inplace({
-		"tutorial_longbow_charged",
+	local var_22_0 = arg_22_0._current_unit
+	local var_22_1 = ItemMasterList.we_1h_axe
+	local var_22_2 = "normal"
+	local var_22_3 = DifficultySettings[var_22_2]
+	local var_22_4 = 300
+	local var_22_5 = 1
+	local var_22_6 = 0
+	local var_22_7
+	local var_22_8 = 1
+	local var_22_9 = table.mirror_array_inplace({
+		"tutorial_longbow_charged"
 	})
-	local breed_exclusion_list = table.mirror_array_inplace({
+	local var_22_10 = table.mirror_array_inplace({
 		"chaos_raider",
 		"chaos_raider_tutorial",
 		"chaos_dummy_sorcerer",
 		"chaos_dummy_exalted_sorcerer_drachenfels",
 		"skaven_stormfiend",
 		"skaven_stormfiend_demo",
-		"skaven_stormfiend_boss",
+		"skaven_stormfiend_boss"
 	})
-	local hit_zones = {
+	local var_22_11 = {
 		"head",
-		"torso",
+		"torso"
 	}
 
-	for damage_profile_name, damage_profile in pairs(DamageProfileTemplates) do
-		local valid_damage_profile = not string.ends_with(damage_profile_name, "_no_damage") and not damage_profile_exclusion_list[damage_profile_name]
+	for iter_22_0, iter_22_1 in pairs(DamageProfileTemplates) do
+		if not string.ends_with(iter_22_0, "_no_damage") and not var_22_9[iter_22_0] then
+			for iter_22_2, iter_22_3 in pairs(arg_22_0._breed_table) do
+				for iter_22_4, iter_22_5 in pairs(iter_22_3) do
+					if not var_22_10[iter_22_4] then
+						local var_22_12 = Breeds[iter_22_4]
+						local var_22_13 = var_22_11[1]
+						local var_22_14 = false
+						local var_22_15 = false
+						local var_22_16 = arg_22_0:_calculate_damage(var_22_0, var_22_1, iter_22_1, var_22_3, var_22_4, var_22_2, var_22_13, var_22_12, var_22_5, var_22_6, var_22_14, var_22_7, var_22_15)
+						local var_22_17 = true
+						local var_22_18 = false
+						local var_22_19 = arg_22_0:_calculate_damage(var_22_0, var_22_1, iter_22_1, var_22_3, var_22_4, var_22_2, var_22_13, var_22_12, var_22_5, var_22_6, var_22_17, var_22_7, var_22_18)
+						local var_22_20 = false
+						local var_22_21 = true
+						local var_22_22 = arg_22_0:_calculate_damage(var_22_0, var_22_1, iter_22_1, var_22_3, var_22_4, var_22_2, var_22_13, var_22_12, var_22_5, var_22_6, var_22_20, var_22_7, var_22_21)
+						local var_22_23 = true
+						local var_22_24 = true
+						local var_22_25 = arg_22_0:_calculate_damage(var_22_0, var_22_1, iter_22_1, var_22_3, var_22_4, var_22_2, var_22_13, var_22_12, var_22_5, var_22_6, var_22_23, var_22_7, var_22_24)
+						local var_22_26 = var_22_11[2]
+						local var_22_27 = false
+						local var_22_28 = false
+						local var_22_29 = arg_22_0:_calculate_damage(var_22_0, var_22_1, iter_22_1, var_22_3, var_22_4, var_22_2, var_22_26, var_22_12, var_22_5, var_22_6, var_22_27, var_22_7, var_22_28)
+						local var_22_30 = true
+						local var_22_31 = false
+						local var_22_32 = arg_22_0:_calculate_damage(var_22_0, var_22_1, iter_22_1, var_22_3, var_22_4, var_22_2, var_22_26, var_22_12, var_22_5, var_22_6, var_22_30, var_22_7, var_22_31)
+						local var_22_33 = false
+						local var_22_34 = true
+						local var_22_35 = arg_22_0:_calculate_damage(var_22_0, var_22_1, iter_22_1, var_22_3, var_22_4, var_22_2, var_22_26, var_22_12, var_22_5, var_22_6, var_22_33, var_22_7, var_22_34)
+						local var_22_36 = true
+						local var_22_37 = true
+						local var_22_38 = arg_22_0:_calculate_damage(var_22_0, var_22_1, iter_22_1, var_22_3, var_22_4, var_22_2, var_22_26, var_22_12, var_22_5, var_22_6, var_22_36, var_22_7, var_22_37)
+						local var_22_39, var_22_40, var_22_41, var_22_42 = ActionUtils.get_target_armor(var_22_26, var_22_12, var_22_8)
 
-		if valid_damage_profile then
-			for breed_table_name, breed_table in pairs(self._breed_table) do
-				for breed_name, _ in pairs(breed_table) do
-					if not breed_exclusion_list[breed_name] then
-						local breed = Breeds[breed_name]
-						local hit_zone_name = hit_zones[1]
-						local is_critical_strike = false
-						local has_power_boost = false
-						local normal_dmg = self:_calculate_damage(unit, item, damage_profile, difficulty_settings, power_level, difficulty_level, hit_zone_name, breed, target_index, stagger_level, is_critical_strike, backstab_multiplier, has_power_boost)
+						var_22_39 = var_22_39 or 0
+						var_22_41 = var_22_41 or 0
 
-						is_critical_strike = true
-						has_power_boost = false
-
-						local crit_dmg = self:_calculate_damage(unit, item, damage_profile, difficulty_settings, power_level, difficulty_level, hit_zone_name, breed, target_index, stagger_level, is_critical_strike, backstab_multiplier, has_power_boost)
-
-						is_critical_strike = false
-						has_power_boost = true
-
-						local power_dmg = self:_calculate_damage(unit, item, damage_profile, difficulty_settings, power_level, difficulty_level, hit_zone_name, breed, target_index, stagger_level, is_critical_strike, backstab_multiplier, has_power_boost)
-
-						is_critical_strike = true
-						has_power_boost = true
-
-						local power_crit_dmg = self:_calculate_damage(unit, item, damage_profile, difficulty_settings, power_level, difficulty_level, hit_zone_name, breed, target_index, stagger_level, is_critical_strike, backstab_multiplier, has_power_boost)
-
-						hit_zone_name = hit_zones[2]
-
-						local is_critical_strike = false
-						local has_power_boost = false
-						local normal_dmg_torso = self:_calculate_damage(unit, item, damage_profile, difficulty_settings, power_level, difficulty_level, hit_zone_name, breed, target_index, stagger_level, is_critical_strike, backstab_multiplier, has_power_boost)
-
-						is_critical_strike = true
-						has_power_boost = false
-
-						local crit_dmg_torso = self:_calculate_damage(unit, item, damage_profile, difficulty_settings, power_level, difficulty_level, hit_zone_name, breed, target_index, stagger_level, is_critical_strike, backstab_multiplier, has_power_boost)
-
-						is_critical_strike = false
-						has_power_boost = true
-
-						local power_dmg_torso = self:_calculate_damage(unit, item, damage_profile, difficulty_settings, power_level, difficulty_level, hit_zone_name, breed, target_index, stagger_level, is_critical_strike, backstab_multiplier, has_power_boost)
-
-						is_critical_strike = true
-						has_power_boost = true
-
-						local power_crit_dmg_torso = self:_calculate_damage(unit, item, damage_profile, difficulty_settings, power_level, difficulty_level, hit_zone_name, breed, target_index, stagger_level, is_critical_strike, backstab_multiplier, has_power_boost)
-						local armor_type, _, primary_armor_type, _ = ActionUtils.get_target_armor(hit_zone_name, breed, dummy_unit_armor)
-
-						armor_type = armor_type or 0
-						primary_armor_type = primary_armor_type or 0
-
-						if crit_dmg < normal_dmg then
-							print(string.format("%s / %s (%s)(%d/%d) Crit dealt less damage - normal %.2f, crit %.2f", damage_profile_name, breed_name, hit_zone_name, armor_type, primary_armor_type, normal_dmg, crit_dmg))
+						if var_22_19 < var_22_16 then
+							print(string.format("%s / %s (%s)(%d/%d) Crit dealt less damage - normal %.2f, crit %.2f", iter_22_0, iter_22_4, var_22_26, var_22_39, var_22_41, var_22_16, var_22_19))
 						end
 
-						if power_dmg < normal_dmg then
-							print(string.format("%s / %s (%s)(%d/%d) Power boosted attack dealt less damage - normal %.2f, power boosted %.2f", damage_profile_name, breed_name, hit_zone_name, armor_type, primary_armor_type, normal_dmg, power_dmg))
+						if var_22_22 < var_22_16 then
+							print(string.format("%s / %s (%s)(%d/%d) Power boosted attack dealt less damage - normal %.2f, power boosted %.2f", iter_22_0, iter_22_4, var_22_26, var_22_39, var_22_41, var_22_16, var_22_22))
 						end
 
-						if power_crit_dmg < power_dmg then
-							print(string.format("%s / %s (%s)(%d/%d) Power boosted crit attack dealt less damage - power booster %.2f, power boosted crit %.2f", damage_profile_name, breed_name, hit_zone_name, armor_type, primary_armor_type, power_dmg, power_crit_dmg))
+						if var_22_25 < var_22_22 then
+							print(string.format("%s / %s (%s)(%d/%d) Power boosted crit attack dealt less damage - power booster %.2f, power boosted crit %.2f", iter_22_0, iter_22_4, var_22_26, var_22_39, var_22_41, var_22_22, var_22_25))
 						end
 
-						if normal_dmg < normal_dmg_torso then
-							print(string.format("%s / %s (%s)(%d/%d) More dmg on torso than head - NORMAL torso %.2f, head %.2f", damage_profile_name, breed_name, hit_zone_name, armor_type, primary_armor_type, normal_dmg_torso, normal_dmg))
+						if var_22_16 < var_22_29 then
+							print(string.format("%s / %s (%s)(%d/%d) More dmg on torso than head - NORMAL torso %.2f, head %.2f", iter_22_0, iter_22_4, var_22_26, var_22_39, var_22_41, var_22_29, var_22_16))
 						end
 
-						if crit_dmg < crit_dmg_torso then
-							print(string.format("%s / %s (%s)(%d/%d) More dmg on torso than head - CRIT torso %.2f, head %.2f", damage_profile_name, breed_name, hit_zone_name, armor_type, primary_armor_type, crit_dmg_torso, crit_dmg))
+						if var_22_19 < var_22_32 then
+							print(string.format("%s / %s (%s)(%d/%d) More dmg on torso than head - CRIT torso %.2f, head %.2f", iter_22_0, iter_22_4, var_22_26, var_22_39, var_22_41, var_22_32, var_22_19))
 						end
 
-						if power_dmg < power_dmg_torso then
-							print(string.format("%s / %s (%s)(%d/%d) More dmg on torso than head - POWER torso %.2f, head %.2f", damage_profile_name, breed_name, hit_zone_name, armor_type, primary_armor_type, power_dmg_torso, power_dmg))
+						if var_22_22 < var_22_35 then
+							print(string.format("%s / %s (%s)(%d/%d) More dmg on torso than head - POWER torso %.2f, head %.2f", iter_22_0, iter_22_4, var_22_26, var_22_39, var_22_41, var_22_35, var_22_22))
 						end
 
-						if power_crit_dmg < power_crit_dmg_torso then
-							print(string.format("%s / %s (%s)(%d/%d) More dmg on torso than head - POWER CRIT torso %.2f, head %.2f", damage_profile_name, breed_name, hit_zone_name, armor_type, primary_armor_type, power_crit_dmg_torso, power_crit_dmg))
+						if var_22_25 < var_22_38 then
+							print(string.format("%s / %s (%s)(%d/%d) More dmg on torso than head - POWER CRIT torso %.2f, head %.2f", iter_22_0, iter_22_4, var_22_26, var_22_39, var_22_41, var_22_38, var_22_25))
 						end
 					end
 				end
@@ -1043,79 +1015,79 @@ ImguiWeaponDebug._verify_crits = function (self)
 	print("Done!")
 end
 
-ImguiWeaponDebug._dump_weapon_performance = function (self)
-	for weapon_name in pairs(Weapons) do
-		print(weapon_name)
+function ImguiWeaponDebug._dump_weapon_performance(arg_23_0)
+	for iter_23_0 in pairs(Weapons) do
+		print(iter_23_0)
 
-		local template = WeaponUtils.get_weapon_template(weapon_name)
-		local used_actions = WeaponUtils.get_used_actions(template)
+		local var_23_0 = WeaponUtils.get_weapon_template(iter_23_0)
+		local var_23_1 = WeaponUtils.get_used_actions(var_23_0)
 
-		for action_name, action in pairs(used_actions) do
-			local weapon_actions = template.actions[action_name]
+		for iter_23_1, iter_23_2 in pairs(var_23_1) do
+			local var_23_2 = var_23_0.actions[iter_23_1]
 
-			for sub_action_name, _ in pairs(action) do
-				local performance_scores = ActionUtils.get_damage_profile_performance_scores(nil)
-				local left, right = self:_get_damage_profile_for_action(weapon_actions[sub_action_name])
+			for iter_23_3, iter_23_4 in pairs(iter_23_2) do
+				local var_23_3 = ActionUtils.get_damage_profile_performance_scores(nil)
+				local var_23_4, var_23_5 = arg_23_0:_get_damage_profile_for_action(var_23_2[iter_23_3])
 
-				if right then
-					local right_peft = ActionUtils.get_damage_profile_performance_scores(right)
+				if var_23_5 then
+					local var_23_6 = ActionUtils.get_damage_profile_performance_scores(var_23_5)
 
-					for i = 1, #performance_scores do
-						performance_scores[i] = performance_scores[i] + right_peft[i]
+					for iter_23_5 = 1, #var_23_3 do
+						var_23_3[iter_23_5] = var_23_3[iter_23_5] + var_23_6[iter_23_5]
 					end
 				end
 
-				if left then
-					local left_perf = ActionUtils.get_damage_profile_performance_scores(left)
+				if var_23_4 then
+					local var_23_7 = ActionUtils.get_damage_profile_performance_scores(var_23_4)
 
-					for i = 1, #performance_scores do
-						performance_scores[i] = performance_scores[i] + left_perf[i]
+					for iter_23_6 = 1, #var_23_3 do
+						var_23_3[iter_23_6] = var_23_3[iter_23_6] + var_23_7[iter_23_6]
 					end
 				end
 
-				local type_score_text = ""
+				local var_23_8 = ""
 
-				for i = 1, #performance_scores do
-					type_score_text = type_score_text .. string.format("[%i] %.3f ", i, performance_scores[i])
+				for iter_23_7 = 1, #var_23_3 do
+					var_23_8 = var_23_8 .. string.format("[%i] %.3f ", iter_23_7, var_23_3[iter_23_7])
 				end
 
-				print(string.format("%s.%s - %s", action_name, sub_action_name, type_score_text))
+				print(string.format("%s.%s - %s", iter_23_1, iter_23_3, var_23_8))
 			end
 		end
 	end
 end
 
-ImguiWeaponDebug._check_missing_unused_actions = function (self)
-	local ignored_unused_actions = {
+function ImguiWeaponDebug._check_missing_unused_actions(arg_24_0)
+	local var_24_0 = {
 		weapon_reload = {
-			auto_reload_on_empty = true,
+			auto_reload_on_empty = true
 		},
 		action_two = {
-			give_item = true,
-		},
+			give_item = true
+		}
 	}
 
 	print("CHECKING FOR MISSING OR UNUSED ACTIONS")
 
-	for name in pairs(Weapons) do
-		local template = WeaponUtils.get_weapon_template(weapon_name)
-		local used_actions, missing_actions = WeaponUtils.get_used_actions(template)
+	for iter_24_0 in pairs(Weapons) do
+		local var_24_1 = WeaponUtils.get_weapon_template(weapon_name)
+		local var_24_2, var_24_3 = WeaponUtils.get_used_actions(var_24_1)
 
-		for action_name, action in pairs(missing_actions) do
-			for sub_action_name, _ in pairs(action) do
-				print(string.format("Missing referenced action [%s.%s] in template [%s]", action_name, sub_action_name, name))
+		for iter_24_1, iter_24_2 in pairs(var_24_3) do
+			for iter_24_3, iter_24_4 in pairs(iter_24_2) do
+				print(string.format("Missing referenced action [%s.%s] in template [%s]", iter_24_1, iter_24_3, iter_24_0))
 			end
 		end
 
-		for action_name, action in pairs(template.actions) do
-			local current_actions = used_actions[action_name]
+		for iter_24_5, iter_24_6 in pairs(var_24_1.actions) do
+			local var_24_4 = var_24_2[iter_24_5]
 
-			if not current_actions then
-				print(string.format("Unused action [%s] in template [%s]", action_name, name))
+			if not var_24_4 then
+				print(string.format("Unused action [%s] in template [%s]", iter_24_5, iter_24_0))
 			else
-				for sub_action_name, _ in pairs(action) do
-					if (not ignored_unused_actions[action_name] or not ignored_unused_actions[action_name][sub_action_name]) and not current_actions[sub_action_name] then
-						print(string.format("Unused sub-action [%s.%s] in template [%s]", action_name, sub_action_name, name))
+				for iter_24_7, iter_24_8 in pairs(iter_24_6) do
+					if (not var_24_0[iter_24_5] or not var_24_0[iter_24_5][iter_24_7]) and not var_24_4[iter_24_7] then
+						print(string.format("Unused sub-action [%s.%s] in template [%s]", iter_24_5, iter_24_7, iter_24_0))
 					end
 				end
 			end

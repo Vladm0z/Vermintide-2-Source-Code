@@ -1,41 +1,36 @@
-﻿-- chunkname: @scripts/unit_extensions/generic/thrown_unit_husk_extension.lua
+-- chunkname: @scripts/unit_extensions/generic/thrown_unit_husk_extension.lua
 
 ThrownUnitHuskExtension = class(ThrownUnitHuskExtension)
 
-local unit_alive = Unit.alive
-local position_lookup = POSITION_LOOKUP
+local var_0_0 = Unit.alive
+local var_0_1 = POSITION_LOOKUP
 
-ThrownUnitHuskExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	local world = extension_init_context.world
-
-	self.world = world
-	self.game = Managers.state.network:game()
-	self.unit = unit
-
-	local unit_storage = Managers.state.unit_storage
-
-	self.go_id = unit_storage:go_id(unit)
+function ThrownUnitHuskExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0.world = arg_1_1.world
+	arg_1_0.game = Managers.state.network:game()
+	arg_1_0.unit = arg_1_2
+	arg_1_0.go_id = Managers.state.unit_storage:go_id(arg_1_2)
 end
 
-ThrownUnitHuskExtension.extensions_ready = function (self, world, unit)
-	Unit.flow_event(unit, "axe_thrown")
+function ThrownUnitHuskExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+	Unit.flow_event(arg_2_2, "axe_thrown")
 end
 
-ThrownUnitHuskExtension.destroy = function (self)
+function ThrownUnitHuskExtension.destroy(arg_3_0)
 	return
 end
 
-ThrownUnitHuskExtension.update = function (self, unit, input, dt, context, t)
-	local lerp_value = math.min(dt * 20, 1)
-	local current_pos = POSITION_LOOKUP[unit]
-	local wanted_pos = GameSession.game_object_field(self.game, self.go_id, "position")
-	local pos = Vector3.lerp(current_pos, wanted_pos, lerp_value)
+function ThrownUnitHuskExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	local var_4_0 = math.min(arg_4_3 * 20, 1)
+	local var_4_1 = POSITION_LOOKUP[arg_4_1]
+	local var_4_2 = GameSession.game_object_field(arg_4_0.game, arg_4_0.go_id, "position")
+	local var_4_3 = Vector3.lerp(var_4_1, var_4_2, var_4_0)
 
-	Unit.set_local_position(unit, 0, pos)
+	Unit.set_local_position(arg_4_1, 0, var_4_3)
 
-	local current_rot = Unit.local_rotation(unit, 0)
-	local wanted_rot = GameSession.game_object_field(self.game, self.go_id, "rotation")
-	local rot = Quaternion.lerp(current_rot, wanted_rot, lerp_value)
+	local var_4_4 = Unit.local_rotation(arg_4_1, 0)
+	local var_4_5 = GameSession.game_object_field(arg_4_0.game, arg_4_0.go_id, "rotation")
+	local var_4_6 = Quaternion.lerp(var_4_4, var_4_5, var_4_0)
 
-	Unit.set_local_rotation(unit, 0, rot)
+	Unit.set_local_rotation(arg_4_1, 0, var_4_6)
 end

@@ -1,35 +1,35 @@
-﻿-- chunkname: @scripts/managers/play_go/play_go_manager.lua
+-- chunkname: @scripts/managers/play_go/play_go_manager.lua
 
 PlayGoManager = class(PlayGoManager)
 
-PlayGoManager.init = function (self)
+function PlayGoManager.init(arg_1_0)
 	return
 end
 
-PlayGoManager.update = function (self, dt, t)
+function PlayGoManager.update(arg_2_0, arg_2_1, arg_2_2)
 	return
 end
 
-PlayGoManager.installed = function (self)
+function PlayGoManager.installed(arg_3_0)
 	return true
 end
 
-PlayGoManager.total = function (self)
+function PlayGoManager.total(arg_4_0)
 	return 1
 end
 
-PlayGoManager.progress = function (self)
+function PlayGoManager.progress(arg_5_0)
 	return 1
 end
 
-PlayGoManager.progress_percentage = function (self)
+function PlayGoManager.progress_percentage(arg_6_0)
 	return 1
 end
 
-PlayGoManager.set_install_speed = function (self, speed)
+function PlayGoManager.set_install_speed(arg_7_0, arg_7_1)
 	return
 end
 
-PlayGoManager.destroy = function (self)
+function PlayGoManager.destroy(arg_8_0)
 	return
 end

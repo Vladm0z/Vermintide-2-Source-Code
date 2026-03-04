@@ -1,6 +1,6 @@
-﻿-- chunkname: @scripts/managers/achievements/achievements_outline.lua
+-- chunkname: @scripts/managers/achievements/achievements_outline.lua
 
-local heroes = {
+local var_0_0 = {
 	name = "achv_menu_heroes_category_title",
 	present_progression = true,
 	entries = {
@@ -11,12 +11,12 @@ local heroes = {
 		"complete_all_helmgart_levels_all_careers_recruit",
 		"complete_all_helmgart_levels_all_careers_veteran",
 		"complete_all_helmgart_levels_all_careers_champion",
-		"complete_all_helmgart_levels_all_careers_legend",
+		"complete_all_helmgart_levels_all_careers_legend"
 	},
 	categories = {
 		{
-			name = "inventory_name_empire_soldier",
 			sorting = 1,
+			name = "inventory_name_empire_soldier",
 			entries = {
 				"achievement_markus_level_1",
 				"achievement_markus_level_2",
@@ -37,12 +37,12 @@ local heroes = {
 				"complete_all_helmgart_levels_veteran_es_knight",
 				"complete_all_helmgart_levels_champion_es_knight",
 				"complete_all_helmgart_levels_legend_es_knight",
-				"complete_100_missions_champion_es_knight",
-			},
+				"complete_100_missions_champion_es_knight"
+			}
 		},
 		{
-			name = "inventory_name_dwarf_ranger",
 			sorting = 2,
+			name = "inventory_name_dwarf_ranger",
 			entries = {
 				"achievement_bardin_level_1",
 				"achievement_bardin_level_2",
@@ -63,12 +63,12 @@ local heroes = {
 				"complete_all_helmgart_levels_veteran_dr_slayer",
 				"complete_all_helmgart_levels_champion_dr_slayer",
 				"complete_all_helmgart_levels_legend_dr_slayer",
-				"complete_100_missions_champion_dr_slayer",
-			},
+				"complete_100_missions_champion_dr_slayer"
+			}
 		},
 		{
-			name = "inventory_name_wood_elf",
 			sorting = 3,
+			name = "inventory_name_wood_elf",
 			entries = {
 				"achievement_kerillian_level_1",
 				"achievement_kerillian_level_2",
@@ -89,12 +89,12 @@ local heroes = {
 				"complete_all_helmgart_levels_veteran_we_shade",
 				"complete_all_helmgart_levels_champion_we_shade",
 				"complete_all_helmgart_levels_legend_we_shade",
-				"complete_100_missions_champion_we_shade",
-			},
+				"complete_100_missions_champion_we_shade"
+			}
 		},
 		{
-			name = "inventory_name_witch_hunter",
 			sorting = 4,
+			name = "inventory_name_witch_hunter",
 			entries = {
 				"achievement_victor_level_1",
 				"achievement_victor_level_2",
@@ -115,12 +115,12 @@ local heroes = {
 				"complete_all_helmgart_levels_veteran_wh_zealot",
 				"complete_all_helmgart_levels_champion_wh_zealot",
 				"complete_all_helmgart_levels_legend_wh_zealot",
-				"complete_100_missions_champion_wh_zealot",
-			},
+				"complete_100_missions_champion_wh_zealot"
+			}
 		},
 		{
-			name = "inventory_name_bright_wizard",
 			sorting = 5,
+			name = "inventory_name_bright_wizard",
 			entries = {
 				"achievement_sienna_level_1",
 				"achievement_sienna_level_2",
@@ -141,12 +141,12 @@ local heroes = {
 				"complete_all_helmgart_levels_veteran_bw_unchained",
 				"complete_all_helmgart_levels_champion_bw_unchained",
 				"complete_all_helmgart_levels_legend_bw_unchained",
-				"complete_100_missions_champion_bw_unchained",
-			},
-		},
-	},
+				"complete_100_missions_champion_bw_unchained"
+			}
+		}
+	}
 }
-local levels = {
+local var_0_1 = {
 	name = "achv_menu_levels_category_title",
 	present_progression = true,
 	entries = {
@@ -159,12 +159,12 @@ local levels = {
 		"complete_bogenhafen_veteran",
 		"complete_bogenhafen_champion",
 		"complete_bogenhafen_legend",
-		"scorpion_complete_bogenhafen_cataclysm",
+		"scorpion_complete_bogenhafen_cataclysm"
 	},
 	categories = {
 		{
-			name = "achv_menu_levels_helmgart_category_title",
 			sorting = 1,
+			name = "achv_menu_levels_helmgart_category_title",
 			entries = {
 				"complete_tutorial",
 				"complete_act_one",
@@ -212,12 +212,12 @@ local levels = {
 				"warcamp_bodvarr_charge_warriors_cata",
 				"skaven_stronghold_skarrik_kill_skaven_cata",
 				"ussingen_no_event_barrels_cata",
-				"skittergate_deathrattler_rasknitt_timed_cata",
-			},
+				"skittergate_deathrattler_rasknitt_timed_cata"
+			}
 		},
 		{
-			name = "achv_menu_levels_bogenhafen_category_title",
 			sorting = 2,
+			name = "achv_menu_levels_bogenhafen_category_title",
 			entries = {
 				"complete_bogenhafen_slum_recruit",
 				"complete_bogenhafen_slum_veteran",
@@ -237,22 +237,22 @@ local levels = {
 				"bogenhafen_slum_no_ratling_damage",
 				"bogenhafen_slum_no_windows_broken",
 				"bogenhafen_slum_event_speedrun",
-				"bogenhafen_collect_all_cosmetics",
-			},
-		},
-	},
+				"bogenhafen_collect_all_cosmetics"
+			}
+		}
+	}
 }
-local crafting = {
+local var_0_2 = {
 	name = "achv_menu_crafting_category_title",
 	present_progression = true,
 	entries = {
 		"craft_item",
 		"craft_fifty_items",
 		"salvage_item",
-		"salvage_hundred_items",
-	},
+		"salvage_hundred_items"
+	}
 }
-local items = {
+local var_0_3 = {
 	name = "achv_menu_items_category_title",
 	present_progression = true,
 	entries = {
@@ -261,10 +261,10 @@ local items = {
 		"equip_exotic_quality",
 		"equip_all_exotic_quality",
 		"equip_veteran_quality",
-		"equip_all_veteran_quality",
-	},
+		"equip_all_veteran_quality"
+	}
 }
-local deeds = {
+local var_0_4 = {
 	name = "achv_menu_deeds_category_title",
 	present_progression = true,
 	entries = {
@@ -275,10 +275,10 @@ local deeds = {
 		"complete_deeds_5",
 		"complete_deeds_6",
 		"complete_deeds_7",
-		"complete_deeds_8",
-	},
+		"complete_deeds_8"
+	}
 }
-local enemies = {
+local var_0_5 = {
 	name = "achv_menu_enemies_category_title",
 	present_progression = true,
 	entries = {
@@ -311,85 +311,84 @@ local enemies = {
 		"skaven_rat_ogre_2",
 		"skaven_stormfiend_1",
 		"skaven_stormfiend_2",
-		"helmgart_lord_1",
-	},
+		"helmgart_lord_1"
+	}
 }
-local weaves = {
+local var_0_6 = {
 	name = "achv_menu_weaves_category_title",
 	present_progression = false,
 	entries = {},
-	categories = {},
+	categories = {}
 }
-local achievements = {
+local var_0_7 = {
 	name = "achv_menu_achievements_category_title",
 	categories = {
-		levels,
-		heroes,
-		enemies,
-		items,
-		crafting,
-		deeds,
-		weaves,
-	},
+		var_0_1,
+		var_0_0,
+		var_0_5,
+		var_0_3,
+		var_0_2,
+		var_0_4,
+		var_0_6
+	}
 }
 
-DLCUtils.append("achievement_categories", achievements.categories)
+DLCUtils.append("achievement_categories", var_0_7.categories)
 
-for _, dlc in pairs(DLCSettings) do
-	local achievement_outline = dlc.achievement_outline
+for iter_0_0, iter_0_1 in pairs(DLCSettings) do
+	local var_0_8 = iter_0_1.achievement_outline
 
-	if achievement_outline then
-		for category_name, data in pairs(achievement_outline) do
-			local category
+	if var_0_8 then
+		for iter_0_2, iter_0_3 in pairs(var_0_8) do
+			local var_0_9
 
-			if category_name == "levels" then
-				category = levels
-			elseif category_name == "heroes" then
-				category = heroes
-			elseif category_name == "enemies" then
-				category = enemies
-			elseif category_name == "items" then
-				category = items
-			elseif category_name == "crafting" then
-				category = crafting
-			elseif category_name == "deeds" then
-				category = deeds
-			elseif category_name == "weaves" then
-				category = weaves
+			if iter_0_2 == "levels" then
+				var_0_9 = var_0_1
+			elseif iter_0_2 == "heroes" then
+				var_0_9 = var_0_0
+			elseif iter_0_2 == "enemies" then
+				var_0_9 = var_0_5
+			elseif iter_0_2 == "items" then
+				var_0_9 = var_0_3
+			elseif iter_0_2 == "crafting" then
+				var_0_9 = var_0_2
+			elseif iter_0_2 == "deeds" then
+				var_0_9 = var_0_4
+			elseif iter_0_2 == "weaves" then
+				var_0_9 = var_0_6
 			else
-				category = {}
+				var_0_9 = {}
 			end
 
-			if data.entries then
-				if category.entries then
-					table.append(category.entries, data.entries)
+			if iter_0_3.entries then
+				if var_0_9.entries then
+					table.append(var_0_9.entries, iter_0_3.entries)
 				else
-					category.entries = table.clone(data.entries)
+					var_0_9.entries = table.clone(iter_0_3.entries)
 				end
 			end
 
-			local categories = data.categories
+			local var_0_10 = iter_0_3.categories
 
-			if categories then
-				for i = 1, #categories do
-					local sub_category = categories[i]
-					local sub_category_name = sub_category.name
-					local current_categories = category.categories
-					local sub_category_found = false
+			if var_0_10 then
+				for iter_0_4 = 1, #var_0_10 do
+					local var_0_11 = var_0_10[iter_0_4]
+					local var_0_12 = var_0_11.name
+					local var_0_13 = var_0_9.categories
+					local var_0_14 = false
 
-					for j = 1, #current_categories do
-						local current_sub_category = current_categories[j]
-						local current_sub_category_name = current_sub_category.name
+					for iter_0_5 = 1, #var_0_13 do
+						local var_0_15 = var_0_13[iter_0_5]
 
-						if sub_category_name == current_sub_category_name and not sub_category_found then
-							table.append(current_sub_category.entries, sub_category.entries)
+						if var_0_12 == var_0_15.name and not var_0_14 then
+							table.append(var_0_15.entries, var_0_11.entries)
 
-							sub_category_found = true
+							var_0_14 = true
 						end
 					end
 
-					if not sub_category_found then
-						current_categories[#current_categories + 1] = table.clone(sub_category)
+					if not var_0_14 then
+						var_0_13[#var_0_13 + 1] = table.clone(var_0_11)
 					end
 				end
 			end
@@ -397,26 +396,26 @@ for _, dlc in pairs(DLCSettings) do
 	end
 end
 
-for _, category in ipairs(achievements.categories) do
-	local sub_categories = category.categories
+for iter_0_6, iter_0_7 in ipairs(var_0_7.categories) do
+	local var_0_16 = iter_0_7.categories
 
-	if sub_categories then
-		table.sort(sub_categories, function (a, b)
-			return a.sorting < b.sorting
+	if var_0_16 then
+		table.sort(var_0_16, function(arg_1_0, arg_1_1)
+			return arg_1_0.sorting < arg_1_1.sorting
 		end)
 	end
 end
 
-local function assign_category_type(base_category, category_type)
-	base_category.type = category_type
+local function var_0_17(arg_2_0, arg_2_1)
+	arg_2_0.type = arg_2_1
 
-	if base_category.categories then
-		for i, category in ipairs(base_category.categories) do
-			assign_category_type(category, category_type)
+	if arg_2_0.categories then
+		for iter_2_0, iter_2_1 in ipairs(arg_2_0.categories) do
+			var_0_17(iter_2_1, arg_2_1)
 		end
 	end
 end
 
-assign_category_type(achievements, "achievements")
+var_0_17(var_0_7, "achievements")
 
-return achievements
+return var_0_7

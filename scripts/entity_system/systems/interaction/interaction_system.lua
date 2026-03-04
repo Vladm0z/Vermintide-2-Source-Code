@@ -1,119 +1,117 @@
-﻿-- chunkname: @scripts/entity_system/systems/interaction/interaction_system.lua
+-- chunkname: @scripts/entity_system/systems/interaction/interaction_system.lua
 
 require("scripts/unit_extensions/generic/generic_unit_interactor_extension")
 require("scripts/unit_extensions/generic/generic_husk_interactor_extension")
 
 InteractionSystem = class(InteractionSystem, ExtensionSystemBase)
 
-local RPCS = {
+local var_0_0 = {
 	"rpc_interaction_approved",
 	"rpc_interaction_denied",
 	"rpc_interaction_completed",
 	"rpc_interaction_abort",
 	"rpc_sync_interactable_used_state",
-	"rpc_sync_interaction_state",
+	"rpc_sync_interaction_state"
 }
-local extensions = {
+local var_0_1 = {
 	"GenericHuskInteractorExtension",
-	"GenericUnitInteractorExtension",
+	"GenericUnitInteractorExtension"
 }
 
-InteractionSystem.init = function (self, entity_system_creation_context, system_name)
-	InteractionSystem.super.init(self, entity_system_creation_context, system_name, extensions)
+function InteractionSystem.init(arg_1_0, arg_1_1, arg_1_2)
+	InteractionSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
-	local network_event_delegate = entity_system_creation_context.network_event_delegate
+	local var_1_0 = arg_1_1.network_event_delegate
 
-	self.network_event_delegate = network_event_delegate
+	arg_1_0.network_event_delegate = var_1_0
 
-	network_event_delegate:register(self, unpack(RPCS))
+	var_1_0:register(arg_1_0, unpack(var_0_0))
 
-	self.extension_init_context.dice_keeper = entity_system_creation_context.dice_keeper
+	arg_1_0.extension_init_context.dice_keeper = arg_1_1.dice_keeper
 end
 
-InteractionSystem.destroy = function (self)
-	self.network_event_delegate:unregister(self)
+function InteractionSystem.destroy(arg_2_0)
+	arg_2_0.network_event_delegate:unregister(arg_2_0)
 end
 
-InteractionSystem.rpc_interaction_approved = function (self, channel_id, interaction_id, interactor_go_id, interactable_go_id, is_level_unit)
-	local interaction_type = NetworkLookup.interactions[interaction_id]
-	local interactor_unit = self.unit_storage:unit(interactor_go_id)
-	local interactable_unit = self.unit_storage:unit(interactable_go_id)
+function InteractionSystem.rpc_interaction_approved(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	local var_3_0 = NetworkLookup.interactions[arg_3_2]
+	local var_3_1 = arg_3_0.unit_storage:unit(arg_3_3)
+	local var_3_2 = arg_3_0.unit_storage:unit(arg_3_4)
 
-	if is_level_unit then
-		local level = LevelHelper:current_level(self.world)
+	if arg_3_5 then
+		local var_3_3 = LevelHelper:current_level(arg_3_0.world)
 
-		interactable_unit = Level.unit_by_index(level, interactable_go_id)
+		var_3_2 = Level.unit_by_index(var_3_3, arg_3_4)
 
-		fassert(interactable_unit, "Couldn't find level unit to interact with.")
+		fassert(var_3_2, "Couldn't find level unit to interact with.")
 	end
 
-	if not Unit.alive(interactable_unit) or not Unit.alive(interactor_unit) then
+	if not Unit.alive(var_3_2) or not Unit.alive(var_3_1) then
 		return
 	end
 
-	InteractionHelper.printf("rpc_interaction_approved(%s, %s, %s, %s, %s)", channel_id, interaction_type, tostring(interactor_go_id), tostring(interactable_go_id), tostring(is_level_unit))
-	InteractionHelper:request_approved(interaction_type, interactor_unit, interactable_unit)
+	InteractionHelper.printf("rpc_interaction_approved(%s, %s, %s, %s, %s)", arg_3_1, var_3_0, tostring(arg_3_3), tostring(arg_3_4), tostring(arg_3_5))
+	InteractionHelper:request_approved(var_3_0, var_3_1, var_3_2)
 end
 
-InteractionSystem.rpc_interaction_denied = function (self, channel_id, interactor_go_id)
-	InteractionHelper.printf("rpc_interaction_denied(%s, %s)", channel_id, tostring(interactor_go_id))
+function InteractionSystem.rpc_interaction_denied(arg_4_0, arg_4_1, arg_4_2)
+	InteractionHelper.printf("rpc_interaction_denied(%s, %s)", arg_4_1, tostring(arg_4_2))
 
-	local interactor_unit = self.unit_storage:unit(interactor_go_id)
+	local var_4_0 = arg_4_0.unit_storage:unit(arg_4_2)
 
-	if ALIVE[interactor_unit] then
-		InteractionHelper:request_denied(interactor_unit)
+	if ALIVE[var_4_0] then
+		InteractionHelper:request_denied(var_4_0)
 	end
 end
 
-InteractionSystem.rpc_interaction_completed = function (self, channel_id, interactor_go_id, interaction_result)
-	InteractionHelper.printf("rpc_interaction_completed(%s, %s, %s)", channel_id, tostring(interactor_go_id), InteractionResult[interaction_result])
+function InteractionSystem.rpc_interaction_completed(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	InteractionHelper.printf("rpc_interaction_completed(%s, %s, %s)", arg_5_1, tostring(arg_5_2), InteractionResult[arg_5_3])
 
-	local interactor_unit = self.unit_storage:unit(interactor_go_id)
+	local var_5_0 = arg_5_0.unit_storage:unit(arg_5_2)
 
-	if not Unit.alive(interactor_unit) then
+	if not Unit.alive(var_5_0) then
 		return
 	end
 
-	local interactor_extension = ScriptUnit.extension(interactor_unit, "interactor_system")
-	local is_interacting = interactor_extension:is_interacting()
+	local var_5_1 = ScriptUnit.extension(var_5_0, "interactor_system")
 
-	if not is_interacting then
-		InteractionHelper.printf("got rpc_interaction_completed but wasnt interacting (%s, %s, %s)", channel_id, tostring(interactor_go_id), InteractionResult[interaction_result])
+	if not var_5_1:is_interacting() then
+		InteractionHelper.printf("got rpc_interaction_completed but wasnt interacting (%s, %s, %s)", arg_5_1, tostring(arg_5_2), InteractionResult[arg_5_3])
 
 		return
 	end
 
-	local interactable_unit = interactor_extension:interactable_unit()
+	local var_5_2 = var_5_1:interactable_unit()
 
-	InteractionHelper:interaction_completed(interactor_unit, interactable_unit, interaction_result)
+	InteractionHelper:interaction_completed(var_5_0, var_5_2, arg_5_3)
 end
 
-InteractionSystem.rpc_interaction_abort = function (self, channel_id, interactor_go_id)
-	InteractionHelper.printf("rpc_interaction_abort(%s, %s)", channel_id, tostring(interactor_go_id))
-	fassert(self.is_server or LEVEL_EDITOR_TEST, "Error, this should only be run on server!")
+function InteractionSystem.rpc_interaction_abort(arg_6_0, arg_6_1, arg_6_2)
+	InteractionHelper.printf("rpc_interaction_abort(%s, %s)", arg_6_1, tostring(arg_6_2))
+	fassert(arg_6_0.is_server or LEVEL_EDITOR_TEST, "Error, this should only be run on server!")
 
-	local interactor_unit = self.unit_storage:unit(interactor_go_id)
+	local var_6_0 = arg_6_0.unit_storage:unit(arg_6_2)
 
-	InteractionHelper:abort_authoritative(interactor_unit)
+	InteractionHelper:abort_authoritative(var_6_0)
 end
 
-InteractionSystem.rpc_sync_interaction_state = function (self, channel_id, unit_id, state_id, interaction_type_id, interactable_unit_id, start_time, duration, is_level_unit)
-	local unit = self.unit_storage:unit(unit_id)
+function InteractionSystem.rpc_sync_interaction_state(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7, arg_7_8)
+	local var_7_0 = arg_7_0.unit_storage:unit(arg_7_2)
 
-	if not unit then
+	if not var_7_0 then
 		return
 	end
 
-	local state = NetworkLookup.interaction_states[state_id]
-	local interaction_type = NetworkLookup.interactions[interaction_type_id]
-	local interactable_unit = Managers.state.network:game_object_or_level_unit(interactable_unit_id, is_level_unit)
-	local interactor_extension = ScriptUnit.extension(unit, "interactor_system")
+	local var_7_1 = NetworkLookup.interaction_states[arg_7_3]
+	local var_7_2 = NetworkLookup.interactions[arg_7_4]
+	local var_7_3 = Managers.state.network:game_object_or_level_unit(arg_7_5, arg_7_8)
 
-	interactor_extension:set_interaction_context(state, interaction_type, interactable_unit, start_time, duration)
+	ScriptUnit.extension(var_7_0, "interactor_system"):set_interaction_context(var_7_1, var_7_2, var_7_3, arg_7_6, arg_7_7)
 end
 
-InteractionSystem.rpc_sync_interactable_used_state = function (self, channel_id, interactable_unit_id, is_level_object, is_used)
-	local interactable_unit = Managers.state.network:game_object_or_level_unit(interactable_unit_id, is_level_object)
+function InteractionSystem.rpc_sync_interactable_used_state(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	local var_8_0 = Managers.state.network:game_object_or_level_unit(arg_8_2, arg_8_3)
 
-	Unit.set_data(interactable_unit, "interaction_data", "used", is_used)
+	Unit.set_data(var_8_0, "interaction_data", "used", arg_8_4)
 end

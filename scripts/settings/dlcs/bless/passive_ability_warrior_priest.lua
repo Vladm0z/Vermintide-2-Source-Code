@@ -1,170 +1,158 @@
-﻿-- chunkname: @scripts/settings/dlcs/bless/passive_ability_warrior_priest.lua
+-- chunkname: @scripts/settings/dlcs/bless/passive_ability_warrior_priest.lua
 
 PassiveAbilityWarriorPriest = class(PassiveAbilityWarriorPriest)
 
-local resouce_degen_rate = 6
-local unit_animation_set_variable = Unit.animation_set_variable
-local game_session_set_game_object_field = GameSession.set_game_object_field
-local game_session_game_object_field = GameSession.game_object_field
+local var_0_0 = 6
+local var_0_1 = Unit.animation_set_variable
+local var_0_2 = GameSession.set_game_object_field
+local var_0_3 = GameSession.game_object_field
 
-PassiveAbilityWarriorPriest.init = function (self, extension_init_context, unit, extension_init_data, ability_init_data)
-	self._owner_unit = unit
-	self._player = extension_init_data.player
-	self._ability_init_data = ability_init_data
-	self._is_active = false
-	self._not_in_combat = true
-	self._current_resource = 0
-	self._max_resource = 100
-	self._time_to_ooc = 5
-	self._activation_time = 0
-	self.uses_resource = true
-	self._is_local_human = self._player.local_player
-	self._is_local_player = self._is_local_human or self._player.bot_player
-	self._game = Managers.state.network:game()
+function PassiveAbilityWarriorPriest.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	arg_1_0._owner_unit = arg_1_2
+	arg_1_0._player = arg_1_3.player
+	arg_1_0._ability_init_data = arg_1_4
+	arg_1_0._is_active = false
+	arg_1_0._not_in_combat = true
+	arg_1_0._current_resource = 0
+	arg_1_0._max_resource = 100
+	arg_1_0._time_to_ooc = 5
+	arg_1_0._activation_time = 0
+	arg_1_0.uses_resource = true
+	arg_1_0._is_local_human = arg_1_0._player.local_player
+	arg_1_0._is_local_player = arg_1_0._is_local_human or arg_1_0._player.bot_player
+	arg_1_0._game = Managers.state.network:game()
 end
 
-PassiveAbilityWarriorPriest.extensions_ready = function (self, world, unit)
-	self._buff_system = Managers.state.entity:system("buff_system")
-	self._talent_extension = ScriptUnit.has_extension(unit, "talent_system")
-	self._first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
-	self._inventory_extension = ScriptUnit.has_extension(unit, "inventory_system")
+function PassiveAbilityWarriorPriest.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+	arg_2_0._buff_system = Managers.state.entity:system("buff_system")
+	arg_2_0._talent_extension = ScriptUnit.has_extension(arg_2_2, "talent_system")
+	arg_2_0._first_person_extension = ScriptUnit.has_extension(arg_2_2, "first_person_system")
+	arg_2_0._inventory_extension = ScriptUnit.has_extension(arg_2_2, "inventory_system")
 
-	if self._first_person_extension then
-		local fp_unit = self._first_person_extension:get_first_person_unit()
+	if arg_2_0._first_person_extension then
+		arg_2_0._fp_unit = arg_2_0._first_person_extension:get_first_person_unit()
+		arg_2_0._anim_var_3p_id = Unit.animation_find_variable(arg_2_2, "talent_anim_type")
 
-		self._fp_unit = fp_unit
-		self._anim_var_3p_id = Unit.animation_find_variable(unit, "talent_anim_type")
-
-		self:on_talents_changed(unit, self._talent_extension)
+		arg_2_0:on_talents_changed(arg_2_2, arg_2_0._talent_extension)
 	end
 
-	self:_register_events()
+	arg_2_0:_register_events()
 end
 
-PassiveAbilityWarriorPriest.destroy = function (self)
-	self:_unregister_events()
+function PassiveAbilityWarriorPriest.destroy(arg_3_0)
+	arg_3_0:_unregister_events()
 end
 
-PassiveAbilityWarriorPriest._register_events = function (self)
-	Managers.state.event:register(self, "on_player_killed_enemy", "on_player_killed_enemy")
-	Managers.state.event:register(self, "on_hit", "on_hit")
-	Managers.state.event:register(self, "on_weapon_wield", "on_weapon_wield")
-	Managers.state.event:register(self, "level_start_local_player_spawned", "on_level_start_local_player_spawned")
-	Managers.state.event:register(self, "on_talents_changed", "on_talents_changed")
+function PassiveAbilityWarriorPriest._register_events(arg_4_0)
+	Managers.state.event:register(arg_4_0, "on_player_killed_enemy", "on_player_killed_enemy")
+	Managers.state.event:register(arg_4_0, "on_hit", "on_hit")
+	Managers.state.event:register(arg_4_0, "on_weapon_wield", "on_weapon_wield")
+	Managers.state.event:register(arg_4_0, "level_start_local_player_spawned", "on_level_start_local_player_spawned")
+	Managers.state.event:register(arg_4_0, "on_talents_changed", "on_talents_changed")
 end
 
-PassiveAbilityWarriorPriest._unregister_events = function (self)
-	local event_manager = Managers.state.event
-
-	if event_manager then
-		Managers.state.event:unregister("on_player_killed_enemy", self)
-		Managers.state.event:unregister("on_hit", self)
-		Managers.state.event:unregister("on_weapon_wield", self)
-		Managers.state.event:unregister("level_start_local_player_spawned", self)
-		Managers.state.event:unregister("on_talents_changed", self)
+function PassiveAbilityWarriorPriest._unregister_events(arg_5_0)
+	if Managers.state.event then
+		Managers.state.event:unregister("on_player_killed_enemy", arg_5_0)
+		Managers.state.event:unregister("on_hit", arg_5_0)
+		Managers.state.event:unregister("on_weapon_wield", arg_5_0)
+		Managers.state.event:unregister("level_start_local_player_spawned", arg_5_0)
+		Managers.state.event:unregister("on_talents_changed", arg_5_0)
 	end
 end
 
-PassiveAbilityWarriorPriest.update = function (self, dt, t)
-	local game_object_id = self._game_object_id
-	local game = self._game
+function PassiveAbilityWarriorPriest.update(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = arg_6_0._game_object_id
+	local var_6_1 = arg_6_0._game
 
-	if game and game_object_id then
-		if self._is_local_player then
-			local is_active = self._is_active
+	if var_6_1 and var_6_0 then
+		if arg_6_0._is_local_player then
+			local var_6_2 = arg_6_0._is_active
 
-			if self._prev_is_active ~= is_active then
-				self._prev_is_active = is_active
+			if arg_6_0._prev_is_active ~= var_6_2 then
+				arg_6_0._prev_is_active = var_6_2
 
-				game_session_set_game_object_field(game, game_object_id, "fury_active", is_active)
+				var_0_2(var_6_1, var_6_0, "fury_active", var_6_2)
 			end
 		else
-			local prev_is_active = self._is_active
-			local is_active = game_session_game_object_field(game, game_object_id, "fury_active")
+			local var_6_3 = arg_6_0._is_active
+			local var_6_4 = var_0_3(var_6_1, var_6_0, "fury_active")
 
-			if prev_is_active ~= is_active then
-				self._is_active = is_active
+			if var_6_3 ~= var_6_4 then
+				arg_6_0._is_active = var_6_4
 
-				self:_set_fury_glow_enabled(is_active)
+				arg_6_0:_set_fury_glow_enabled(var_6_4)
 			end
 		end
 	end
 
-	if self._is_local_player then
-		if self._is_active or self._not_in_combat then
-			local current_resource = self:degenerate_resource(dt)
-
-			if current_resource <= 0 then
-				self:deactivate_buff()
-			end
+	if arg_6_0._is_local_player then
+		if (arg_6_0._is_active or arg_6_0._not_in_combat) and arg_6_0:degenerate_resource(arg_6_1) <= 0 then
+			arg_6_0:deactivate_buff()
 		end
 
-		self:combat_timer_update(t)
+		arg_6_0:combat_timer_update(arg_6_2)
 	end
 end
 
-PassiveAbilityWarriorPriest.on_player_killed_enemy = function (self, killing_blow, breed_killed, ai_unit)
-	local status_extension = ScriptUnit.has_extension(self._owner_unit, "status_system")
-
-	if status_extension:is_knocked_down() then
+function PassiveAbilityWarriorPriest.on_player_killed_enemy(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	if ScriptUnit.has_extension(arg_7_0._owner_unit, "status_system"):is_knocked_down() then
 		return
 	end
 
-	if not self._is_local_player then
+	if not arg_7_0._is_local_player then
 		return
 	end
 
-	local owner_unit = self._owner_unit
-	local position = POSITION_LOOKUP[owner_unit]
-	local killed_unit_position = POSITION_LOOKUP[ai_unit]
-	local distance_squared = Vector3.distance_squared(position, killed_unit_position)
-	local range = 6
-	local range_squared = range * range
+	local var_7_0 = arg_7_0._owner_unit
+	local var_7_1 = POSITION_LOOKUP[var_7_0]
+	local var_7_2 = POSITION_LOOKUP[arg_7_3]
+	local var_7_3 = Vector3.distance_squared(var_7_1, var_7_2)
+	local var_7_4 = 6
 
-	if range_squared < distance_squared then
+	if var_7_3 > var_7_4 * var_7_4 then
 		return
 	end
 
-	local resource_table = self._ability_init_data.resource_per_breed
-	local resource_to_add = resource_table.on_normal
+	local var_7_5 = arg_7_0._ability_init_data.resource_per_breed
+	local var_7_6 = var_7_5.on_normal
 
-	if breed_killed and breed_killed.elite then
-		resource_to_add = resource_table.on_elite
-	elseif breed_killed and breed_killed.special then
-		resource_to_add = resource_table.on_special
-	elseif breed_killed and breed_killed.boss then
-		resource_to_add = resource_table.on_boss
+	if arg_7_2 and arg_7_2.elite then
+		var_7_6 = var_7_5.on_elite
+	elseif arg_7_2 and arg_7_2.special then
+		var_7_6 = var_7_5.on_special
+	elseif arg_7_2 and arg_7_2.boss then
+		var_7_6 = var_7_5.on_boss
 	end
 
-	if self._is_local_human then
+	if arg_7_0._is_local_human then
 		Managers.state.event:trigger("glow_feedback")
 	end
 
-	self:modify_resource(resource_to_add)
+	arg_7_0:modify_resource(var_7_6)
 end
 
-PassiveAbilityWarriorPriest.on_hit = function (self, hit_unit, attack_type, hit_zone_name, target_number, buff_type, is_critical, unmodified, unit)
-	if self._is_local_player and unit == self._owner_unit then
-		self:set_in_combat()
+function PassiveAbilityWarriorPriest.on_hit(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8)
+	if arg_8_0._is_local_player and arg_8_8 == arg_8_0._owner_unit then
+		arg_8_0:set_in_combat()
 	end
 end
 
-PassiveAbilityWarriorPriest.buff_on_damage_taken = function (self, attacker_unit, damage_amount, damage_type)
-	self:modify_resource(damage_amount)
+function PassiveAbilityWarriorPriest.buff_on_damage_taken(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	arg_9_0:modify_resource(arg_9_2)
 end
 
-PassiveAbilityWarriorPriest.modify_resource = function (self, amount, ignore_difficulty)
-	local has_changed = self._current_resource ~= self._max_resource
+function PassiveAbilityWarriorPriest.modify_resource(arg_10_0, arg_10_1, arg_10_2)
+	local var_10_0 = arg_10_0._current_resource ~= arg_10_0._max_resource
 
-	if amount > 0 then
-		self:set_in_combat()
+	if arg_10_1 > 0 then
+		arg_10_0:set_in_combat()
 
-		local difficulty = not ignore_difficulty and Managers.state.difficulty:get_difficulty()
+		local var_10_1 = not arg_10_2 and Managers.state.difficulty:get_difficulty()
 
-		if difficulty then
-			self._difficulty_rank = DifficultySettings[difficulty].rank - 1
-
-			local difficulty_tweak = {
+		if var_10_1 then
+			arg_10_0._difficulty_rank = DifficultySettings[var_10_1].rank - 1
+			arg_10_1 = arg_10_1 * ({
 				1.5,
 				1.2,
 				1,
@@ -172,209 +160,199 @@ PassiveAbilityWarriorPriest.modify_resource = function (self, amount, ignore_dif
 				1,
 				1,
 				0.7,
-				1.5,
-			}
-
-			amount = amount * difficulty_tweak[self._difficulty_rank]
+				1.5
+			})[arg_10_0._difficulty_rank]
 		end
 	end
 
-	self._current_resource = math.clamp(self._current_resource + amount, 0, self._max_resource)
+	arg_10_0._current_resource = math.clamp(arg_10_0._current_resource + arg_10_1, 0, arg_10_0._max_resource)
 
-	if self._current_resource >= self._max_resource and has_changed then
-		self:activate_buff()
+	if arg_10_0._current_resource >= arg_10_0._max_resource and var_10_0 then
+		arg_10_0:activate_buff()
 	end
 
-	return self._current_resource
+	return arg_10_0._current_resource
 end
 
-PassiveAbilityWarriorPriest.modify_resource_percent = function (self, amount_percent)
-	local amount = self._max_resource * amount_percent
+function PassiveAbilityWarriorPriest.modify_resource_percent(arg_11_0, arg_11_1)
+	local var_11_0 = arg_11_0._max_resource * arg_11_1
 
-	return self:modify_resource(amount, true)
+	return arg_11_0:modify_resource(var_11_0, true)
 end
 
-PassiveAbilityWarriorPriest.get_resource_fraction = function (self)
-	local current_resource = self._current_resource
-	local max_resource = self._max_resource
-
-	return current_resource / max_resource
+function PassiveAbilityWarriorPriest.get_resource_fraction(arg_12_0)
+	return arg_12_0._current_resource / arg_12_0._max_resource
 end
 
-PassiveAbilityWarriorPriest.is_active = function (self)
-	return self._is_active
+function PassiveAbilityWarriorPriest.is_active(arg_13_0)
+	return arg_13_0._is_active
 end
 
-PassiveAbilityWarriorPriest.degenerate_resource = function (self, dt)
-	return self:modify_resource(-resouce_degen_rate * dt)
+function PassiveAbilityWarriorPriest.degenerate_resource(arg_14_0, arg_14_1)
+	return arg_14_0:modify_resource(-var_0_0 * arg_14_1)
 end
 
-PassiveAbilityWarriorPriest.set_in_combat = function (self)
-	self._not_in_combat = false
-
-	local t = Managers.time:time("game")
-
-	self._combat_timer = t + self._time_to_ooc
+function PassiveAbilityWarriorPriest.set_in_combat(arg_15_0)
+	arg_15_0._not_in_combat = false
+	arg_15_0._combat_timer = Managers.time:time("game") + arg_15_0._time_to_ooc
 end
 
-PassiveAbilityWarriorPriest.combat_timer_update = function (self, t)
-	if not self._combat_timer then
-		self._combat_timer = t + self._time_to_ooc
+function PassiveAbilityWarriorPriest.combat_timer_update(arg_16_0, arg_16_1)
+	if not arg_16_0._combat_timer then
+		arg_16_0._combat_timer = arg_16_1 + arg_16_0._time_to_ooc
 	end
 
-	if t > self._combat_timer then
-		self._not_in_combat = true
+	if arg_16_1 > arg_16_0._combat_timer then
+		arg_16_0._not_in_combat = true
 	end
 end
 
-PassiveAbilityWarriorPriest.activate_buff = function (self)
-	if not self._is_active then
-		self._is_active = true
+function PassiveAbilityWarriorPriest.activate_buff(arg_17_0)
+	if not arg_17_0._is_active then
+		arg_17_0._is_active = true
+		arg_17_0._activation_time = Managers.time:time("game")
 
-		local t = Managers.time:time("game")
+		local var_17_0 = arg_17_0._buff_system
+		local var_17_1 = arg_17_0._owner_unit
 
-		self._activation_time = t
+		arg_17_0._buff_id = var_17_0:add_buff_synced(var_17_1, "victor_priest_passive_aftershock", BuffSyncType.LocalAndServer)
 
-		local buff_system = self._buff_system
-		local owner_unit = self._owner_unit
+		Unit.flow_event(var_17_1, "lua_enable_eye_glow")
+		arg_17_0:_set_fury_glow_enabled(true)
 
-		self._buff_id = buff_system:add_buff_synced(owner_unit, "victor_priest_passive_aftershock", BuffSyncType.LocalAndServer)
-
-		Unit.flow_event(owner_unit, "lua_enable_eye_glow")
-		self:_set_fury_glow_enabled(true)
-
-		if self._ability_on_4_1 then
-			ActionCareerWHPriestUtility.cast_spell(owner_unit, owner_unit)
+		if arg_17_0._ability_on_4_1 then
+			ActionCareerWHPriestUtility.cast_spell(var_17_1, var_17_1)
 		end
 
-		if self._is_local_human then
-			self:_play_vo()
+		if arg_17_0._is_local_human then
+			arg_17_0:_play_vo()
 			Managers.state.event:trigger("active_passive_feedback", true)
-			Managers.state.achievement:trigger_event("righteous_fury_start", self._owner_unit, self._is_local_human)
+			Managers.state.achievement:trigger_event("righteous_fury_start", arg_17_0._owner_unit, arg_17_0._is_local_human)
 		end
 	end
 end
 
-PassiveAbilityWarriorPriest.deactivate_buff = function (self)
-	if self._is_active then
-		self._is_active = false
+function PassiveAbilityWarriorPriest.deactivate_buff(arg_18_0)
+	if arg_18_0._is_active then
+		arg_18_0._is_active = false
 
-		local buff_system = self._buff_system
-		local buff_id = self._buff_id
-		local owner_unit = self._owner_unit
+		local var_18_0 = arg_18_0._buff_system
+		local var_18_1 = arg_18_0._buff_id
+		local var_18_2 = arg_18_0._owner_unit
 
-		buff_system:remove_buff_synced(owner_unit, buff_id)
-		Unit.flow_event(owner_unit, "lua_disable_eye_glow")
-		self:_set_fury_glow_enabled(false)
+		var_18_0:remove_buff_synced(var_18_2, var_18_1)
+		Unit.flow_event(var_18_2, "lua_disable_eye_glow")
+		arg_18_0:_set_fury_glow_enabled(false)
 
-		if self._is_local_human then
+		if arg_18_0._is_local_human then
 			Managers.state.event:trigger("active_passive_feedback", false)
-			Managers.state.achievement:trigger_event("righteous_fury_end", self._owner_unit, self._is_local_human)
+			Managers.state.achievement:trigger_event("righteous_fury_end", arg_18_0._owner_unit, arg_18_0._is_local_human)
 		end
 	end
 end
 
-PassiveAbilityWarriorPriest._play_vo = function (self)
-	local owner_unit = self._owner_unit
-	local dialogue_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
-	local event_data = FrameTable.alloc_table()
+function PassiveAbilityWarriorPriest._play_vo(arg_19_0)
+	local var_19_0 = arg_19_0._owner_unit
+	local var_19_1 = ScriptUnit.extension_input(var_19_0, "dialogue_system")
+	local var_19_2 = FrameTable.alloc_table()
 
-	dialogue_input:trigger_networked_dialogue_event("activate_fury", event_data)
+	var_19_1:trigger_networked_dialogue_event("activate_fury", var_19_2)
 end
 
-PassiveAbilityWarriorPriest._set_fury_glow_enabled = function (self, enabled)
-	local flow_event = enabled and "lua_enable_eye_glow" or "lua_disable_eye_glow"
-	local inventory_extension = self._inventory_extension
+function PassiveAbilityWarriorPriest._set_fury_glow_enabled(arg_20_0, arg_20_1)
+	local var_20_0 = arg_20_1 and "lua_enable_eye_glow" or "lua_disable_eye_glow"
+	local var_20_1 = arg_20_0._inventory_extension
 
-	if self._is_local_human then
-		local left_weapon, right_weapon = inventory_extension:get_all_weapon_unit()
+	if arg_20_0._is_local_human then
+		local var_20_2, var_20_3 = var_20_1:get_all_weapon_unit()
 
-		if left_weapon then
-			Unit.flow_event(left_weapon, flow_event)
+		if var_20_2 then
+			Unit.flow_event(var_20_2, var_20_0)
 		end
 
-		if right_weapon then
-			Unit.flow_event(right_weapon, flow_event)
-		end
-	end
-
-	local equipment = inventory_extension:equipment()
-
-	if equipment then
-		local left_weapon_3p, right_weapon_3p = equipment.left_hand_wielded_unit_3p, equipment.right_hand_wielded_unit_3p
-
-		if left_weapon_3p then
-			Unit.flow_event(left_weapon_3p, flow_event)
-		end
-
-		if right_weapon_3p then
-			Unit.flow_event(right_weapon_3p, flow_event)
+		if var_20_3 then
+			Unit.flow_event(var_20_3, var_20_0)
 		end
 	end
 
-	Unit.flow_event(self._owner_unit, flow_event)
+	local var_20_4 = var_20_1:equipment()
+
+	if var_20_4 then
+		local var_20_5 = var_20_4.left_hand_wielded_unit_3p
+		local var_20_6 = var_20_4.right_hand_wielded_unit_3p
+
+		if var_20_5 then
+			Unit.flow_event(var_20_5, var_20_0)
+		end
+
+		if var_20_6 then
+			Unit.flow_event(var_20_6, var_20_0)
+		end
+	end
+
+	Unit.flow_event(arg_20_0._owner_unit, var_20_0)
 end
 
-PassiveAbilityWarriorPriest.on_weapon_wield = function (self, equipment)
-	self:_set_fury_glow_enabled(self._is_active)
+function PassiveAbilityWarriorPriest.on_weapon_wield(arg_21_0, arg_21_1)
+	arg_21_0:_set_fury_glow_enabled(arg_21_0._is_active)
 end
 
-PassiveAbilityWarriorPriest.on_level_start_local_player_spawned = function (self, initial_spawn)
-	if self._is_local_player and not self._game_object_id then
-		self:create_game_object()
+function PassiveAbilityWarriorPriest.on_level_start_local_player_spawned(arg_22_0, arg_22_1)
+	if arg_22_0._is_local_player and not arg_22_0._game_object_id then
+		arg_22_0:create_game_object()
 	end
 end
 
-PassiveAbilityWarriorPriest.on_talents_changed = function (self, unit, talent_extension)
-	if unit ~= self._owner_unit then
+function PassiveAbilityWarriorPriest.on_talents_changed(arg_23_0, arg_23_1, arg_23_2)
+	if arg_23_1 ~= arg_23_0._owner_unit then
 		return
 	end
 
-	local talent_selection = 0
+	local var_23_0 = 0
 
-	if talent_extension then
-		if talent_extension:has_talent("victor_priest_6_1") then
-			talent_selection = 0
-		elseif talent_extension:has_talent("victor_priest_6_2") then
-			talent_selection = 1
-		elseif talent_extension:has_talent("victor_priest_6_3") then
-			talent_selection = 2
+	if arg_23_2 then
+		if arg_23_2:has_talent("victor_priest_6_1") then
+			var_23_0 = 0
+		elseif arg_23_2:has_talent("victor_priest_6_2") then
+			var_23_0 = 1
+		elseif arg_23_2:has_talent("victor_priest_6_3") then
+			var_23_0 = 2
 		end
 	end
 
-	self._ability_on_4_1 = talent_extension:has_talent("victor_priest_4_1_new")
+	arg_23_0._ability_on_4_1 = arg_23_2:has_talent("victor_priest_4_1_new")
 
-	local fp_unit = self._fp_unit
+	local var_23_1 = arg_23_0._fp_unit
 
-	if ALIVE[fp_unit] then
-		self._first_person_extension:animation_set_variable("talent_anim_type", talent_selection)
+	if ALIVE[var_23_1] then
+		arg_23_0._first_person_extension:animation_set_variable("talent_anim_type", var_23_0)
 	end
 
-	local tp_unit = unit
+	local var_23_2 = arg_23_1
 
-	if ALIVE[tp_unit] and self._anim_var_3p_id then
-		unit_animation_set_variable(tp_unit, self._anim_var_3p_id, talent_selection)
+	if ALIVE[var_23_2] and arg_23_0._anim_var_3p_id then
+		var_0_1(var_23_2, arg_23_0._anim_var_3p_id, var_23_0)
 	end
 end
 
-PassiveAbilityWarriorPriest.create_game_object = function (self)
-	local network_manager = Managers.state.network
-	local owner_unit = self._owner_unit
-	local game_object_id = network_manager:unit_game_object_id(owner_unit)
-	local game_object_data_table = {
+function PassiveAbilityWarriorPriest.create_game_object(arg_24_0)
+	local var_24_0 = Managers.state.network
+	local var_24_1 = arg_24_0._owner_unit
+	local var_24_2 = var_24_0:unit_game_object_id(var_24_1)
+	local var_24_3 = {
 		go_type = NetworkLookup.go_types.priest_career_data,
-		unit_game_object_id = game_object_id,
-		fury_active = self._is_active,
+		unit_game_object_id = var_24_2,
+		fury_active = arg_24_0._is_active
 	}
-	local callback = callback(self, "cb_game_session_disconnect")
+	local var_24_4 = callback(arg_24_0, "cb_game_session_disconnect")
 
-	self._game_object_id = network_manager:create_game_object("priest_career_data", game_object_data_table, callback)
+	arg_24_0._game_object_id = var_24_0:create_game_object("priest_career_data", var_24_3, var_24_4)
 end
 
-PassiveAbilityWarriorPriest.set_career_game_object_id = function (self, go_id)
-	self._game_object_id = go_id
+function PassiveAbilityWarriorPriest.set_career_game_object_id(arg_25_0, arg_25_1)
+	arg_25_0._game_object_id = arg_25_1
 end
 
-PassiveAbilityWarriorPriest.cb_game_session_disconnect = function (self)
-	self._game_object_id = nil
+function PassiveAbilityWarriorPriest.cb_game_session_disconnect(arg_26_0)
+	arg_26_0._game_object_id = nil
 end

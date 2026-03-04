@@ -1,361 +1,349 @@
-﻿-- chunkname: @scripts/ui/hud_ui/buff_ui.lua
+-- chunkname: @scripts/ui/hud_ui/buff_ui.lua
 
-local definitions = local_require("scripts/ui/hud_ui/buff_ui_definitions")
-local scenegraph_definition = definitions.scenegraph_definition
-local MAX_BUFF_ROWS = definitions.MAX_BUFF_ROWS
-local MAX_BUFF_COLUMNS = definitions.MAX_BUFF_COLUMNS
-local MAX_NUMBER_OF_BUFFS = definitions.MAX_NUMBER_OF_BUFFS
-local BUFF_SIZE = definitions.BUFF_SIZE
-local BUFF_SPACING = definitions.BUFF_SPACING
+local var_0_0 = local_require("scripts/ui/hud_ui/buff_ui_definitions")
+local var_0_1 = var_0_0.scenegraph_definition
+local var_0_2 = var_0_0.MAX_BUFF_ROWS
+local var_0_3 = var_0_0.MAX_BUFF_COLUMNS
+local var_0_4 = var_0_0.MAX_NUMBER_OF_BUFFS
+local var_0_5 = var_0_0.BUFF_SIZE
+local var_0_6 = var_0_0.BUFF_SPACING
 
-local function BUFF_IS_INFINITE(buff)
-	return not buff.duration or buff.duration == math.huge
+local function var_0_7(arg_1_0)
+	return not arg_1_0.duration or arg_1_0.duration == math.huge
 end
 
-local function BUFF_COMPARATOR_FUNC(a, b)
-	local a_content, b_content = a.content, b.content
-	local a_buff, b_buff = a_content.buff, b_content.buff
+local function var_0_8(arg_2_0, arg_2_1)
+	local var_2_0 = arg_2_0.content
+	local var_2_1 = arg_2_1.content
+	local var_2_2 = var_2_0.buff
+	local var_2_3 = var_2_1.buff
 
-	if BUFF_IS_INFINITE(a_buff) ~= BUFF_IS_INFINITE(b_buff) then
-		return BUFF_IS_INFINITE(b_buff)
+	if var_0_7(var_2_2) ~= var_0_7(var_2_3) then
+		return var_0_7(var_2_3)
 	end
 
-	return b_content.static_start_time < a_content.static_start_time
+	return var_2_1.static_start_time < var_2_0.static_start_time
 end
 
-local function BUFF_END_TIME(buff)
-	return BUFF_IS_INFINITE(buff) and math.huge or buff.start_time + buff.duration
+local function var_0_9(arg_3_0)
+	return var_0_7(arg_3_0) and math.huge or arg_3_0.start_time + arg_3_0.duration
 end
 
 BuffUI = class(BuffUI)
 
-BuffUI.init = function (self, parent, ingame_ui_context)
-	self._ui_renderer = ingame_ui_context.ui_renderer
-	self._player = ingame_ui_context.player
-	self._is_spectator = false
-	self._spectated_player_unit = nil
-	self._render_settings = {
-		alpha_multiplier = 1,
+function BuffUI.init(arg_4_0, arg_4_1, arg_4_2)
+	arg_4_0._ui_renderer = arg_4_2.ui_renderer
+	arg_4_0._player = arg_4_2.player
+	arg_4_0._is_spectator = false
+	arg_4_0._spectated_player_unit = nil
+	arg_4_0._render_settings = {
+		alpha_multiplier = 1
 	}
 
-	self:_create_ui_elements()
-	Managers.state.event:register(self, "on_spectator_target_changed", "on_spectator_target_changed")
-	Managers.state.event:register(self, "on_spectator_target_changed", "on_spectator_target_changed")
-	Managers.state.event:register(self, "on_game_options_changed", "on_game_options_changed")
+	arg_4_0:_create_ui_elements()
+	Managers.state.event:register(arg_4_0, "on_spectator_target_changed", "on_spectator_target_changed")
+	Managers.state.event:register(arg_4_0, "on_spectator_target_changed", "on_spectator_target_changed")
+	Managers.state.event:register(arg_4_0, "on_game_options_changed", "on_game_options_changed")
 end
 
-BuffUI._set_widget_dirty = function (self, widget)
-	widget.element.dirty = true
+function BuffUI._set_widget_dirty(arg_5_0, arg_5_1)
+	arg_5_1.element.dirty = true
 end
 
-BuffUI.on_game_options_changed = function (self)
-	local old_insignia_visibility = self._insignia_visibility
-	local insignia_visibility = Application.user_setting("toggle_versus_level_in_all_game_modes")
-	local mechanism_name = Managers.mechanism:current_mechanism_name()
-	local show_insignia = mechanism_name == "versus" or insignia_visibility
+function BuffUI.on_game_options_changed(arg_6_0)
+	local var_6_0 = arg_6_0._insignia_visibility
+	local var_6_1 = Application.user_setting("toggle_versus_level_in_all_game_modes")
+	local var_6_2 = Managers.mechanism:current_mechanism_name() == "versus" or var_6_1
 
-	if old_insignia_visibility ~= show_insignia then
-		self._ui_scenegraph.pivot_parent.position[1] = show_insignia and UISettings.INSIGNIA_OFFSET or 0
+	if var_6_0 ~= var_6_2 then
+		arg_6_0._ui_scenegraph.pivot_parent.position[1] = var_6_2 and UISettings.INSIGNIA_OFFSET or 0
 
-		for i = 1, #self._active_buff_widgets do
-			self:_set_widget_dirty(self._active_buff_widgets[i])
+		for iter_6_0 = 1, #arg_6_0._active_buff_widgets do
+			arg_6_0:_set_widget_dirty(arg_6_0._active_buff_widgets[iter_6_0])
 		end
 
-		self._dirty = true
-		self._insignia_visibility = show_insignia
+		arg_6_0._dirty = true
+		arg_6_0._insignia_visibility = var_6_2
 	end
 end
 
-BuffUI._create_ui_elements = function (self)
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+function BuffUI._create_ui_elements(arg_7_0)
+	arg_7_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 
-	local buff_widgets = {}
+	local var_7_0 = {}
 
-	for i = 1, MAX_NUMBER_OF_BUFFS do
-		buff_widgets[i] = UIWidget.init(definitions.buff_widget_definition)
+	for iter_7_0 = 1, var_0_4 do
+		var_7_0[iter_7_0] = UIWidget.init(var_0_0.buff_widget_definition)
 	end
 
-	self._unused_buff_widgets = buff_widgets
-	self._active_buff_widgets = {}
-	self._buff_name_to_widget = {}
+	arg_7_0._unused_buff_widgets = var_7_0
+	arg_7_0._active_buff_widgets = {}
+	arg_7_0._buff_name_to_widget = {}
 
-	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
-	self:set_visible(true)
+	UIRenderer.clear_scenegraph_queue(arg_7_0._ui_renderer)
+	arg_7_0:set_visible(true)
 
-	self._dirty = true
-	self._current_career_index = -1
+	arg_7_0._dirty = true
+	arg_7_0._current_career_index = -1
 
-	self:on_game_options_changed()
+	arg_7_0:on_game_options_changed()
 end
 
-BuffUI.on_spectator_target_changed = function (self, spectated_player_unit)
-	self._spectated_player_unit = spectated_player_unit
-	self._is_spectator = true
+function BuffUI.on_spectator_target_changed(arg_8_0, arg_8_1)
+	arg_8_0._spectated_player_unit = arg_8_1
+	arg_8_0._is_spectator = true
 
-	self:set_visible(false)
-	self:set_visible(true)
+	arg_8_0:set_visible(false)
+	arg_8_0:set_visible(true)
 
-	self._dirty = true
-
-	local career_extension = ScriptUnit.extension(spectated_player_unit, "career_system")
-
-	self._current_career_index = career_extension:career_index()
+	arg_8_0._dirty = true
+	arg_8_0._current_career_index = ScriptUnit.extension(arg_8_1, "career_system"):career_index()
 end
 
-BuffUI._sync_buffs = function (self)
-	local active_buff_widgets = self._active_buff_widgets
-	local align_widgets = false
+function BuffUI._sync_buffs(arg_9_0)
+	local var_9_0 = arg_9_0._active_buff_widgets
+	local var_9_1 = false
 
-	for i = 1, #active_buff_widgets do
-		local widget_content = active_buff_widgets[i].content
-
-		widget_content.stack_count = 0
+	for iter_9_0 = 1, #var_9_0 do
+		var_9_0[iter_9_0].content.stack_count = 0
 	end
 
-	local player_unit = self._is_spectator and self._spectated_player_unit or self._player.player_unit
-	local buff_extension = ScriptUnit.has_extension(player_unit, "buff_system")
+	local var_9_2 = arg_9_0._is_spectator and arg_9_0._spectated_player_unit or arg_9_0._player.player_unit
+	local var_9_3 = ScriptUnit.has_extension(var_9_2, "buff_system")
 
-	if buff_extension then
-		local buffs, num_buffs = buff_extension:active_buffs()
+	if var_9_3 then
+		local var_9_4, var_9_5 = var_9_3:active_buffs()
 
-		for i = 1, #buffs do
-			local buff = buffs[i]
-			local icon
+		for iter_9_1 = 1, #var_9_4 do
+			local var_9_6 = var_9_4[iter_9_1]
+			local var_9_7
 
-			if not buff.removed then
-				local template = buff.template
+			if not var_9_6.removed then
+				local var_9_8 = var_9_6.template
 
-				icon = template.icon
+				var_9_7 = var_9_8.icon
 
-				if template.icon_modifier_func then
-					icon = template.icon_modifier_func(player_unit, icon)
+				if var_9_8.icon_modifier_func then
+					var_9_7 = var_9_8.icon_modifier_func(var_9_2, var_9_7)
 				end
 			end
 
-			if icon then
-				local new_widget = self:_add_buff(buff, icon)
-
-				if new_widget then
-					align_widgets = true
-				end
+			if var_9_7 and arg_9_0:_add_buff(var_9_6, var_9_7) then
+				var_9_1 = true
 			end
 		end
 	end
 
-	if align_widgets then
-		table.sort(active_buff_widgets, BUFF_COMPARATOR_FUNC)
+	if var_9_1 then
+		table.sort(var_9_0, var_0_8)
 	end
 
-	local horizontal_spacing = BUFF_SIZE[1] + BUFF_SPACING
-	local vertical_spacing = BUFF_SIZE[2] + BUFF_SPACING
-	local t = Managers.time:time("game")
-	local buff_index = -1
+	local var_9_9 = var_0_5[1] + var_0_6
+	local var_9_10 = var_0_5[2] + var_0_6
+	local var_9_11 = Managers.time:time("game")
+	local var_9_12 = -1
 
-	for i = #active_buff_widgets, 1, -1 do
-		local widget = active_buff_widgets[i]
-		local widget_content = widget.content
+	for iter_9_2 = #var_9_0, 1, -1 do
+		local var_9_13 = var_9_0[iter_9_2]
+		local var_9_14 = var_9_13.content
 
-		if widget_content.stack_count == 0 or widget_content.buff.is_stale then
-			self:_remove_buff(i)
+		if var_9_14.stack_count == 0 or var_9_14.buff.is_stale then
+			arg_9_0:_remove_buff(iter_9_2)
 
-			align_widgets = true
-			widget.element.dirty = true
-			self._dirty = true
+			var_9_1 = true
+			var_9_13.element.dirty = true
+			arg_9_0._dirty = true
 		else
-			local buff = widget_content.buff
+			local var_9_15 = var_9_14.buff
 
-			if not BUFF_IS_INFINITE(buff) then
-				local duration = buff.duration or math.huge
+			if not var_0_7(var_9_15) then
+				local var_9_16 = var_9_15.duration or math.huge
 
-				if duration == 0 then
-					widget_content.progress = 0
+				if var_9_16 == 0 then
+					var_9_14.progress = 0
 				else
-					local end_time = BUFF_END_TIME(buff)
+					local var_9_17 = var_0_9(var_9_15)
 
-					widget_content.progress = 1 - math.clamp((end_time - t) / duration, 0, 1)
+					var_9_14.progress = 1 - math.clamp((var_9_17 - var_9_11) / var_9_16, 0, 1)
 				end
 
-				widget.element.dirty = true
-				self._dirty = true
-			elseif widget_content.stack_count ~= widget_content.last_stack_count then
-				widget_content.last_stack_count = widget_content.stack_count
-				widget_content.progress = buff.template.is_cooldown and 1 or 0
-				widget.element.dirty = true
-				self._dirty = true
+				var_9_13.element.dirty = true
+				arg_9_0._dirty = true
+			elseif var_9_14.stack_count ~= var_9_14.last_stack_count then
+				var_9_14.last_stack_count = var_9_14.stack_count
+				var_9_14.progress = var_9_15.template.is_cooldown and 1 or 0
+				var_9_13.element.dirty = true
+				arg_9_0._dirty = true
 			end
 
-			buff_index = buff_index + 1
+			var_9_12 = var_9_12 + 1
 
-			if align_widgets then
-				local widget_offset = widget.offset
-				local x = buff_index % MAX_BUFF_COLUMNS
-				local y = math.floor(buff_index / MAX_BUFF_COLUMNS)
+			if var_9_1 then
+				local var_9_18 = var_9_13.offset
+				local var_9_19 = var_9_12 % var_0_3
+				local var_9_20 = math.floor(var_9_12 / var_0_3)
 
-				widget_offset[1] = horizontal_spacing * x
-				widget_offset[2] = vertical_spacing * y
-				widget.element.dirty = true
-				self._dirty = true
+				var_9_18[1] = var_9_9 * var_9_19
+				var_9_18[2] = var_9_10 * var_9_20
+				var_9_13.element.dirty = true
+				arg_9_0._dirty = true
 			end
 		end
 	end
 end
 
-local COLOR_BUFF = {
+local var_0_10 = {
 	255,
 	48,
 	255,
-	0,
+	0
 }
-local COLOR_DEBUFF = {
+local var_0_11 = {
 	255,
 	255,
 	30,
-	0,
+	0
 }
 
-BuffUI._add_buff = function (self, buff, icon)
-	local buff_template = buff.template
-	local start_time = buff.start_time
-	local end_time = BUFF_END_TIME(buff)
-	local is_infinite = BUFF_IS_INFINITE(buff)
-	local is_cooldown = buff_template.is_cooldown
-	local buff_name_to_widget = self._buff_name_to_widget
-	local widget = buff_name_to_widget[buff_template.name]
+function BuffUI._add_buff(arg_10_0, arg_10_1, arg_10_2)
+	local var_10_0 = arg_10_1.template
+	local var_10_1 = arg_10_1.start_time
+	local var_10_2 = var_0_9(arg_10_1)
+	local var_10_3 = var_0_7(arg_10_1)
+	local var_10_4 = var_10_0.is_cooldown
+	local var_10_5 = arg_10_0._buff_name_to_widget[var_10_0.name]
 
-	if widget then
-		local widget_content = widget.content
-		local stack_count = widget_content.stack_count + 1
+	if var_10_5 then
+		local var_10_6 = var_10_5.content
 
-		widget_content.stack_count = stack_count
+		var_10_6.stack_count = var_10_6.stack_count + 1
 
-		local current_end_time = BUFF_END_TIME(widget_content.buff)
-
-		if end_time < current_end_time then
-			widget_content.buff = buff
-			widget.style.texture_icon.saturated = is_cooldown
-			widget.style.texture_icon_bg.saturated = is_cooldown and is_infinite
+		if var_10_2 < var_0_9(var_10_6.buff) then
+			var_10_6.buff = arg_10_1
+			var_10_5.style.texture_icon.saturated = var_10_4
+			var_10_5.style.texture_icon_bg.saturated = var_10_4 and var_10_3
 		end
 
 		return false
 	end
 
-	local active_buff_widgets = self._active_buff_widgets
-	local num_active_buffs = #active_buff_widgets
+	local var_10_7 = arg_10_0._active_buff_widgets
+	local var_10_8 = #var_10_7
 
-	if num_active_buffs >= MAX_NUMBER_OF_BUFFS then
+	if var_10_8 >= var_0_4 then
 		return false
 	end
 
-	local widget = table.remove(self._unused_buff_widgets)
-	local widget_content = widget.content
+	local var_10_9 = table.remove(arg_10_0._unused_buff_widgets)
+	local var_10_10 = var_10_9.content
 
-	widget_content.texture_icon = icon
-	widget_content.is_cooldown = is_cooldown
-	widget_content.buff = buff
-	widget_content.name = buff_template.name
-	widget_content.static_start_time = start_time
-	widget_content.stack_count = 1
-	widget_content.progress = is_cooldown and 1 or 0
+	var_10_10.texture_icon = arg_10_2
+	var_10_10.is_cooldown = var_10_4
+	var_10_10.buff = arg_10_1
+	var_10_10.name = var_10_0.name
+	var_10_10.static_start_time = var_10_1
+	var_10_10.stack_count = 1
+	var_10_10.progress = var_10_4 and 1 or 0
 
-	UIRenderer.set_element_visible(self._ui_renderer, widget.element, true)
+	UIRenderer.set_element_visible(arg_10_0._ui_renderer, var_10_9.element, true)
 
-	local widget_style = widget.style
-	local duration_color = buff_template.debuff and COLOR_DEBUFF or COLOR_BUFF
+	local var_10_11 = var_10_9.style
+	local var_10_12 = var_10_0.debuff and var_0_11 or var_0_10
 
-	Colors.copy_to(widget_style.texture_duration.color, duration_color)
+	Colors.copy_to(var_10_11.texture_duration.color, var_10_12)
 
-	widget_style.texture_icon.saturated = is_cooldown
-	widget_style.texture_icon_bg.saturated = is_cooldown and is_infinite
-	self._buff_name_to_widget[buff_template.name] = widget
-	active_buff_widgets[num_active_buffs + 1] = widget
+	var_10_11.texture_icon.saturated = var_10_4
+	var_10_11.texture_icon_bg.saturated = var_10_4 and var_10_3
+	arg_10_0._buff_name_to_widget[var_10_0.name] = var_10_9
+	var_10_7[var_10_8 + 1] = var_10_9
 
 	return true
 end
 
-BuffUI._remove_buff = function (self, index)
-	local widget = table.remove(self._active_buff_widgets, index)
-	local unused_buff_widgets = self._unused_buff_widgets
+function BuffUI._remove_buff(arg_11_0, arg_11_1)
+	local var_11_0 = table.remove(arg_11_0._active_buff_widgets, arg_11_1)
+	local var_11_1 = arg_11_0._unused_buff_widgets
 
-	unused_buff_widgets[#unused_buff_widgets + 1] = widget
-	self._buff_name_to_widget[widget.content.name] = nil
+	var_11_1[#var_11_1 + 1] = var_11_0
+	arg_11_0._buff_name_to_widget[var_11_0.content.name] = nil
 
-	UIRenderer.set_element_visible(self._ui_renderer, widget.element, false)
+	UIRenderer.set_element_visible(arg_11_0._ui_renderer, var_11_0.element, false)
 end
 
-BuffUI.destroy = function (self)
-	self:set_visible(false)
-	Managers.state.event:unregister("on_spectator_target_changed", self)
-	Managers.state.event:unregister("on_game_options_changed", self)
+function BuffUI.destroy(arg_12_0)
+	arg_12_0:set_visible(false)
+	Managers.state.event:unregister("on_spectator_target_changed", arg_12_0)
+	Managers.state.event:unregister("on_game_options_changed", arg_12_0)
 end
 
-BuffUI.set_visible = function (self, visible)
-	self._is_visible = visible
+function BuffUI.set_visible(arg_13_0, arg_13_1)
+	arg_13_0._is_visible = arg_13_1
 
-	local ui_renderer = self._ui_renderer
-	local active_buff_widgets = self._active_buff_widgets
+	local var_13_0 = arg_13_0._ui_renderer
+	local var_13_1 = arg_13_0._active_buff_widgets
 
-	for i = 1, #active_buff_widgets do
-		local widget = active_buff_widgets[i]
+	for iter_13_0 = 1, #var_13_1 do
+		local var_13_2 = var_13_1[iter_13_0]
 
-		UIRenderer.set_element_visible(ui_renderer, widget.element, visible)
+		UIRenderer.set_element_visible(var_13_0, var_13_2.element, arg_13_1)
 	end
 
-	self._dirty = true
+	arg_13_0._dirty = true
 end
 
-local customizer_data = {
-	drag_scenegraph_id = "pivot_dragger",
+local var_0_12 = {
+	root_scenegraph_id = "pivot",
 	label = "Buff bar",
 	registry_key = "buff_ui",
-	root_scenegraph_id = "pivot",
+	drag_scenegraph_id = "pivot_dragger"
 }
 
-BuffUI.update = function (self, dt, t)
-	if HudCustomizer.run(self._ui_renderer, self._ui_scenegraph, customizer_data) then
-		UIUtils.mark_dirty(self._active_buff_widgets)
+function BuffUI.update(arg_14_0, arg_14_1, arg_14_2)
+	if HudCustomizer.run(arg_14_0._ui_renderer, arg_14_0._ui_scenegraph, var_0_12) then
+		UIUtils.mark_dirty(arg_14_0._active_buff_widgets)
 
-		self._dirty = true
+		arg_14_0._dirty = true
 	end
 
-	self:_sync_buffs()
+	arg_14_0:_sync_buffs()
 
 	if RESOLUTION_LOOKUP.modified then
-		UIUtils.mark_dirty(self._active_buff_widgets)
+		UIUtils.mark_dirty(arg_14_0._active_buff_widgets)
 
-		self._dirty = true
+		arg_14_0._dirty = true
 	end
 
-	self:draw(dt)
+	arg_14_0:draw(arg_14_1)
 end
 
-BuffUI.draw = function (self, dt)
-	if not self._is_visible or not self._dirty then
+function BuffUI.draw(arg_15_0, arg_15_1)
+	if not arg_15_0._is_visible or not arg_15_0._dirty then
 		return
 	end
 
-	local ui_renderer = self._ui_renderer
+	local var_15_0 = arg_15_0._ui_renderer
 
-	UIRenderer.begin_pass(ui_renderer, self._ui_scenegraph, FAKE_INPUT_SERVICE, dt, nil, self._render_settings)
+	UIRenderer.begin_pass(var_15_0, arg_15_0._ui_scenegraph, FAKE_INPUT_SERVICE, arg_15_1, nil, arg_15_0._render_settings)
 
-	local active_buff_widgets = self._active_buff_widgets
+	local var_15_1 = arg_15_0._active_buff_widgets
 
-	for i = #active_buff_widgets, 1, -1 do
-		UIRenderer.draw_widget(ui_renderer, active_buff_widgets[i])
+	for iter_15_0 = #var_15_1, 1, -1 do
+		UIRenderer.draw_widget(var_15_0, var_15_1[iter_15_0])
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_15_0)
 
-	self._dirty = false
+	arg_15_0._dirty = false
 end
 
-BuffUI.set_panel_alpha = function (self, alpha)
-	local render_settings = self._render_settings
+function BuffUI.set_panel_alpha(arg_16_0, arg_16_1)
+	local var_16_0 = arg_16_0._render_settings
 
-	if render_settings.alpha_multiplier ~= alpha then
-		render_settings.alpha_multiplier = alpha
+	if var_16_0.alpha_multiplier ~= arg_16_1 then
+		var_16_0.alpha_multiplier = arg_16_1
 
-		UIUtils.mark_dirty(self._active_buff_widgets)
+		UIUtils.mark_dirty(arg_16_0._active_buff_widgets)
 
-		self._dirty = true
+		arg_16_0._dirty = true
 	end
 end

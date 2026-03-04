@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/entity_system/systems/doors/door_system.lua
+-- chunkname: @scripts/entity_system/systems/doors/door_system.lua
 
 require("scripts/unit_extensions/level/door_extension")
 require("scripts/unit_extensions/level/simple_door_extension")
@@ -8,338 +8,330 @@ require("scripts/unit_extensions/level/crawl_space_extension")
 
 DoorSystem = class(DoorSystem, ExtensionSystemBase)
 
-local RPCS = {
+local var_0_0 = {
 	"rpc_sync_door_state",
-	"rpc_sync_boss_door_state",
+	"rpc_sync_boss_door_state"
 }
-local extensions = {
+local var_0_1 = {
 	"DoorExtension",
 	"SimpleDoorExtension",
 	"BossDoorExtension",
 	"BigBoyDestructibleExtension",
-	"CrawlSpaceExtension",
+	"CrawlSpaceExtension"
 }
 
-DoorSystem.init = function (self, entity_system_creation_context, system_name)
-	DoorSystem.super.init(self, entity_system_creation_context, system_name, extensions)
+function DoorSystem.init(arg_1_0, arg_1_1, arg_1_2)
+	DoorSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
-	local network_event_delegate = entity_system_creation_context.network_event_delegate
+	local var_1_0 = arg_1_1.network_event_delegate
 
-	self.network_event_delegate = network_event_delegate
+	arg_1_0.network_event_delegate = var_1_0
 
-	network_event_delegate:register(self, unpack(RPCS))
+	var_1_0:register(arg_1_0, unpack(var_0_0))
 
-	self.unit_extension_data = {}
-	self._broadphase = Broadphase(127, 1.5)
-	self._boss_doors = {}
-	self._active_groups = {}
-	self._crawl_space_tunnels = {}
-	self._crawl_space_spawners = {}
+	arg_1_0.unit_extension_data = {}
+	arg_1_0._broadphase = Broadphase(127, 1.5)
+	arg_1_0._boss_doors = {}
+	arg_1_0._active_groups = {}
+	arg_1_0._crawl_space_tunnels = {}
+	arg_1_0._crawl_space_spawners = {}
 end
 
-DoorSystem.on_add_extension = function (self, world, unit, extension_name, ...)
-	local door_extension = DoorSystem.super.on_add_extension(self, world, unit, extension_name)
+function DoorSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, ...)
+	local var_2_0 = DoorSystem.super.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 
-	self.unit_extension_data[unit] = door_extension
+	arg_2_0.unit_extension_data[arg_2_2] = var_2_0
 
-	local position = Unit.world_position(unit, 0)
+	local var_2_1 = Unit.world_position(arg_2_2, 0)
 
-	if extension_name ~= "CrawlSpaceExtension" then
-		door_extension.__broadphase_id = Broadphase.add(self._broadphase, unit, position, 0.5)
+	if arg_2_3 ~= "CrawlSpaceExtension" then
+		var_2_0.__broadphase_id = Broadphase.add(arg_2_0._broadphase, arg_2_2, var_2_1, 0.5)
 	end
 
-	if extension_name == "BossDoorExtension" then
-		local boss_doors = self._boss_doors
+	if arg_2_3 == "BossDoorExtension" then
+		local var_2_2 = arg_2_0._boss_doors
 
-		for i = 0, 2 do
+		for iter_2_0 = 0, 2 do
 			repeat
-				local map_section = Unit.get_data(unit, "map_sections", i)
+				local var_2_3 = Unit.get_data(arg_2_2, "map_sections", iter_2_0)
 
-				if not map_section or map_section == 0 then
+				if not var_2_3 or var_2_3 == 0 then
 					break
 				end
 
-				if not boss_doors[map_section] then
-					boss_doors[map_section] = {}
+				if not var_2_2[var_2_3] then
+					var_2_2[var_2_3] = {}
 				end
 
-				local boss_doors_in_section = boss_doors[map_section]
+				local var_2_4 = var_2_2[var_2_3]
 
-				boss_doors_in_section[#boss_doors_in_section + 1] = unit
+				var_2_4[#var_2_4 + 1] = arg_2_2
 			until true
 		end
 	end
 
-	if extension_name == "CrawlSpaceExtension" then
-		local crawl_space_id = Unit.get_data(unit, "crawl_space_id")
+	if arg_2_3 == "CrawlSpaceExtension" then
+		local var_2_5 = Unit.get_data(arg_2_2, "crawl_space_id")
 
-		if crawl_space_id == 0 then
-			self._crawl_space_spawners[#self._crawl_space_spawners + 1] = door_extension
-		elseif self._crawl_space_tunnels[crawl_space_id] then
-			door_extension.partner_unit = self._crawl_space_tunnels[crawl_space_id].unit
-			self._crawl_space_tunnels[crawl_space_id].partner_unit = unit
+		if var_2_5 == 0 then
+			arg_2_0._crawl_space_spawners[#arg_2_0._crawl_space_spawners + 1] = var_2_0
+		elseif arg_2_0._crawl_space_tunnels[var_2_5] then
+			var_2_0.partner_unit = arg_2_0._crawl_space_tunnels[var_2_5].unit
+			arg_2_0._crawl_space_tunnels[var_2_5].partner_unit = arg_2_2
 		else
-			self._crawl_space_tunnels[crawl_space_id] = door_extension
+			arg_2_0._crawl_space_tunnels[var_2_5] = var_2_0
 		end
 	end
 
-	return door_extension
+	return var_2_0
 end
 
-DoorSystem.extensions_ready = function (self, world, unit, extension_name)
-	if extension_name == "CrawlSpaceExtension" then
-		self._crawl_spaces_ready = true
+function DoorSystem.extensions_ready(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	if arg_3_3 == "CrawlSpaceExtension" then
+		arg_3_0._crawl_spaces_ready = true
 	end
 end
 
-local sections_to_open = {}
+local var_0_2 = {}
 
-DoorSystem.update = function (self, context, t)
-	DoorSystem.super.update(self, context, t)
+function DoorSystem.update(arg_4_0, arg_4_1, arg_4_2)
+	DoorSystem.super.update(arg_4_0, arg_4_1, arg_4_2)
 
-	if self.is_server then
-		table.clear(sections_to_open)
+	if arg_4_0.is_server then
+		table.clear(var_0_2)
 
-		local active_groups = self._active_groups
-		local ai_group_system = Managers.state.entity:system("ai_group_system")
+		local var_4_0 = arg_4_0._active_groups
+		local var_4_1 = Managers.state.entity:system("ai_group_system")
 
-		for map_section, groups in pairs(active_groups) do
-			local open_map_section = false
+		for iter_4_0, iter_4_1 in pairs(var_4_0) do
+			local var_4_2 = false
 
-			for i = 1, #groups do
-				local data = groups[i]
-				local group_id = data.group_id
-				local active = data.active
-				local group = ai_group_system:get_ai_group(group_id)
+			for iter_4_2 = 1, #iter_4_1 do
+				local var_4_3 = iter_4_1[iter_4_2]
+				local var_4_4 = var_4_3.group_id
+				local var_4_5 = var_4_3.active
+				local var_4_6 = var_4_1:get_ai_group(var_4_4)
 
-				if group and not active then
-					data.active = true
-				elseif active and not group then
-					open_map_section = true
-				elseif active and group then
-					local members = group.members
-					local should_open = true
+				if var_4_6 and not var_4_5 then
+					var_4_3.active = true
+				elseif var_4_5 and not var_4_6 then
+					var_4_2 = true
+				elseif var_4_5 and var_4_6 then
+					local var_4_7 = var_4_6.members
+					local var_4_8 = true
 
-					for unit, extension in pairs(members) do
-						if HEALTH_ALIVE[unit] then
-							local blackboard = BLACKBOARDS[unit]
-							local breed = blackboard.breed
-							local is_boss = breed and breed.boss
+					for iter_4_3, iter_4_4 in pairs(var_4_7) do
+						if HEALTH_ALIVE[iter_4_3] then
+							local var_4_9 = BLACKBOARDS[iter_4_3]
+							local var_4_10 = var_4_9.breed
 
-							if is_boss then
-								local health_extension = ScriptUnit.has_extension(unit, "health_system")
-								local last_damage_taken_t = health_extension:last_damage_t() or t
-								local last_damage_interval = 60
-								local not_damaged = t > last_damage_taken_t + last_damage_interval
-								local navigation_extension = blackboard.navigation_extension
-								local path_found = navigation_extension and navigation_extension:is_following_path()
+							if var_4_10 and var_4_10.boss then
+								local var_4_11 = arg_4_2 > (ScriptUnit.has_extension(iter_4_3, "health_system"):last_damage_t() or arg_4_2) + 60
+								local var_4_12 = var_4_9.navigation_extension
+								local var_4_13 = var_4_12 and var_4_12:is_following_path()
 
-								if not_damaged and not path_found then
-									should_open = true
+								if var_4_11 and not var_4_13 then
+									var_4_8 = true
 								else
-									should_open = false
+									var_4_8 = false
 
 									break
 								end
 							else
-								should_open = false
+								var_4_8 = false
 
 								break
 							end
 						end
 					end
 
-					if should_open then
-						open_map_section = true
+					if var_4_8 then
+						var_4_2 = true
 					end
 				end
 			end
 
-			if open_map_section then
-				sections_to_open[#sections_to_open + 1] = map_section
+			if var_4_2 then
+				var_0_2[#var_0_2 + 1] = iter_4_0
 			end
 		end
 
-		for i = 1, #sections_to_open do
-			local map_section = sections_to_open[i]
+		for iter_4_5 = 1, #var_0_2 do
+			local var_4_14 = var_0_2[iter_4_5]
 
-			self:open_boss_doors(map_section)
+			arg_4_0:open_boss_doors(var_4_14)
 
-			self._active_groups[map_section] = nil
+			arg_4_0._active_groups[var_4_14] = nil
 		end
 	end
 end
 
-DoorSystem.get_doors = function (self, position, radius, result)
-	return Broadphase.query(self._broadphase, position, radius, result)
+function DoorSystem.get_doors(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	return Broadphase.query(arg_5_0._broadphase, arg_5_1, arg_5_2, arg_5_3)
 end
 
-DoorSystem.get_boss_door_units = function (self)
-	local boss_doors = self._boss_doors
-	local boss_door_units = {}
+function DoorSystem.get_boss_door_units(arg_6_0)
+	local var_6_0 = arg_6_0._boss_doors
+	local var_6_1 = {}
 
-	for map_section, map_section_door_units in pairs(boss_doors) do
-		for i = 1, #map_section_door_units do
-			local boss_door_unit = map_section_door_units[i]
+	for iter_6_0, iter_6_1 in pairs(var_6_0) do
+		for iter_6_2 = 1, #iter_6_1 do
+			local var_6_2 = iter_6_1[iter_6_2]
 
-			boss_door_units[#boss_door_units + 1] = boss_door_unit
+			var_6_1[#var_6_1 + 1] = var_6_2
 		end
 	end
 
-	return boss_door_units
+	return var_6_1
 end
 
-DoorSystem.on_remove_extension = function (self, unit, extension_name)
-	DoorSystem.super.on_remove_extension(self, unit, extension_name)
+function DoorSystem.on_remove_extension(arg_7_0, arg_7_1, arg_7_2)
+	DoorSystem.super.on_remove_extension(arg_7_0, arg_7_1, arg_7_2)
 
-	local extension = self.unit_extension_data[unit]
+	local var_7_0 = arg_7_0.unit_extension_data[arg_7_1]
 
-	if extension_name ~= "CrawlSpaceExtension" then
-		Broadphase.remove(self._broadphase, extension.__broadphase_id)
+	if arg_7_2 ~= "CrawlSpaceExtension" then
+		Broadphase.remove(arg_7_0._broadphase, var_7_0.__broadphase_id)
 	end
 
-	self.unit_extension_data[unit] = nil
+	arg_7_0.unit_extension_data[arg_7_1] = nil
 end
 
-DoorSystem.destroy = function (self)
-	self.network_event_delegate:unregister(self)
+function DoorSystem.destroy(arg_8_0)
+	arg_8_0.network_event_delegate:unregister(arg_8_0)
 
-	self.network_event_delegate = nil
-	self.unit_extension_data = nil
-	self._broadphase = nil
+	arg_8_0.network_event_delegate = nil
+	arg_8_0.unit_extension_data = nil
+	arg_8_0._broadphase = nil
 end
 
-DoorSystem.close_boss_doors = function (self, map_section, group_id, breed_name)
-	local boss_doors = self._boss_doors[map_section]
-	local network_manager = Managers.state.network
-	local network_transmit = network_manager.network_transmit
+function DoorSystem.close_boss_doors(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	local var_9_0 = arg_9_0._boss_doors[arg_9_1]
+	local var_9_1 = Managers.state.network.network_transmit
 
-	if boss_doors then
-		for i = 1, #boss_doors do
-			local boss_door_unit = boss_doors[i]
-			local extension = ScriptUnit.extension(boss_door_unit, "door_system")
+	if var_9_0 then
+		for iter_9_0 = 1, #var_9_0 do
+			local var_9_2 = var_9_0[iter_9_0]
 
-			extension:set_door_state("closed", breed_name)
+			ScriptUnit.extension(var_9_2, "door_system"):set_door_state("closed", arg_9_3)
 
-			local level = LevelHelper:current_level(self.world)
-			local level_index = Level.unit_index(level, boss_door_unit)
-			local door_state_id = NetworkLookup.door_states.closed
-			local breed_id = breed_name and NetworkLookup.breeds[breed_name] or NetworkLookup.breeds["n/a"]
+			local var_9_3 = LevelHelper:current_level(arg_9_0.world)
+			local var_9_4 = Level.unit_index(var_9_3, var_9_2)
+			local var_9_5 = NetworkLookup.door_states.closed
+			local var_9_6 = arg_9_3 and NetworkLookup.breeds[arg_9_3] or NetworkLookup.breeds["n/a"]
 
-			network_transmit:send_rpc_clients("rpc_sync_boss_door_state", level_index, door_state_id, breed_id)
+			var_9_1:send_rpc_clients("rpc_sync_boss_door_state", var_9_4, var_9_5, var_9_6)
 		end
 
-		if not self._active_groups[map_section] then
-			self._active_groups[map_section] = {}
+		if not arg_9_0._active_groups[arg_9_1] then
+			arg_9_0._active_groups[arg_9_1] = {}
 		end
 
-		local active_groups_in_section = self._active_groups[map_section]
+		local var_9_7 = arg_9_0._active_groups[arg_9_1]
 
-		active_groups_in_section[#active_groups_in_section + 1] = {
+		var_9_7[#var_9_7 + 1] = {
 			active = false,
-			group_id = group_id,
+			group_id = arg_9_2
 		}
 	end
 end
 
-DoorSystem.open_boss_doors = function (self, map_section)
-	local boss_doors = self._boss_doors[map_section]
-	local network_manager = Managers.state.network
-	local network_transmit = network_manager.network_transmit
+function DoorSystem.open_boss_doors(arg_10_0, arg_10_1)
+	local var_10_0 = arg_10_0._boss_doors[arg_10_1]
+	local var_10_1 = Managers.state.network.network_transmit
 
-	for i = 1, #boss_doors do
-		local boss_door_unit = boss_doors[i]
-		local extension = ScriptUnit.extension(boss_door_unit, "door_system")
+	for iter_10_0 = 1, #var_10_0 do
+		local var_10_2 = var_10_0[iter_10_0]
 
-		extension:set_door_state("open")
+		ScriptUnit.extension(var_10_2, "door_system"):set_door_state("open")
 
-		local level = LevelHelper:current_level(self.world)
-		local level_index = Level.unit_index(level, boss_door_unit)
-		local door_state_id = NetworkLookup.door_states.open
-		local breed_id = NetworkLookup.breeds["n/a"]
+		local var_10_3 = LevelHelper:current_level(arg_10_0.world)
+		local var_10_4 = Level.unit_index(var_10_3, var_10_2)
+		local var_10_5 = NetworkLookup.door_states.open
+		local var_10_6 = NetworkLookup.breeds["n/a"]
 
-		network_transmit:send_rpc_clients("rpc_sync_boss_door_state", level_index, door_state_id, breed_id)
+		var_10_1:send_rpc_clients("rpc_sync_boss_door_state", var_10_4, var_10_5, var_10_6)
 	end
 end
 
-DoorSystem.get_boss_door_units = function (self)
-	local boss_door_units = {}
+function DoorSystem.get_boss_door_units(arg_11_0)
+	local var_11_0 = {}
 
-	for map_section, boss_doors in pairs(self._boss_doors) do
-		for i = 1, #boss_doors do
-			local boss_door_unit = boss_doors[i]
+	for iter_11_0, iter_11_1 in pairs(arg_11_0._boss_doors) do
+		for iter_11_2 = 1, #iter_11_1 do
+			local var_11_1 = iter_11_1[iter_11_2]
 
-			boss_door_units[#boss_door_units + 1] = boss_door_unit
+			var_11_0[#var_11_0 + 1] = var_11_1
 		end
 	end
 
-	return boss_door_units
+	return var_11_0
 end
 
-DoorSystem.get_crawl_space_tunnel_units = function (self, disabled_too)
-	if not self._crawl_spaces_ready then
+function DoorSystem.get_crawl_space_tunnel_units(arg_12_0, arg_12_1)
+	if not arg_12_0._crawl_spaces_ready then
 		return
 	end
 
-	local crawl_space_units = {}
+	local var_12_0 = {}
 
-	for _, crawl_space in pairs(self._crawl_space_tunnels) do
-		local unit = crawl_space.unit
-		local partner_unit = crawl_space.partner_unit
-		local interactable_extension = ScriptUnit.extension(unit, "interactable_system")
-		local interactable_partner_extension = ScriptUnit.has_extension(partner_unit, "interactable_system")
+	for iter_12_0, iter_12_1 in pairs(arg_12_0._crawl_space_tunnels) do
+		local var_12_1 = iter_12_1.unit
+		local var_12_2 = iter_12_1.partner_unit
+		local var_12_3 = ScriptUnit.extension(var_12_1, "interactable_system")
+		local var_12_4 = ScriptUnit.has_extension(var_12_2, "interactable_system")
 
-		if interactable_extension:is_enabled() or disabled_too then
-			crawl_space_units[#crawl_space_units + 1] = unit
+		if var_12_3:is_enabled() or arg_12_1 then
+			var_12_0[#var_12_0 + 1] = var_12_1
 		end
 
-		if partner_unit and (interactable_partner_extension:is_enabled() or disabled_too) then
-			crawl_space_units[#crawl_space_units + 1] = partner_unit
+		if var_12_2 and (var_12_4:is_enabled() or arg_12_1) then
+			var_12_0[#var_12_0 + 1] = var_12_2
 		end
 	end
 
-	return crawl_space_units
+	return var_12_0
 end
 
-DoorSystem.get_crawl_space_spawner_units = function (self)
-	if not self._crawl_spaces_ready then
+function DoorSystem.get_crawl_space_spawner_units(arg_13_0)
+	if not arg_13_0._crawl_spaces_ready then
 		return
 	end
 
-	local crawl_space_units = {}
+	local var_13_0 = {}
 
-	for _, crawl_space in pairs(self._crawl_space_spawners) do
-		crawl_space_units[#crawl_space_units + 1] = crawl_space.unit
+	for iter_13_0, iter_13_1 in pairs(arg_13_0._crawl_space_spawners) do
+		var_13_0[#var_13_0 + 1] = iter_13_1.unit
 	end
 
-	return crawl_space_units
+	return var_13_0
 end
 
-DoorSystem.rpc_sync_door_state = function (self, channel_id, level_object_id, door_state_id)
-	local level = LevelHelper:current_level(self.world)
-	local door_unit = Level.unit_by_index(level, level_object_id)
-	local door_extension = ScriptUnit.has_extension(door_unit, "door_system")
+function DoorSystem.rpc_sync_door_state(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+	local var_14_0 = LevelHelper:current_level(arg_14_0.world)
+	local var_14_1 = Level.unit_by_index(var_14_0, arg_14_2)
+	local var_14_2 = ScriptUnit.has_extension(var_14_1, "door_system")
 
-	if door_extension then
-		local new_state = NetworkLookup.door_states[door_state_id]
+	if var_14_2 then
+		local var_14_3 = NetworkLookup.door_states[arg_14_3]
 
-		door_extension:set_door_state(new_state)
+		var_14_2:set_door_state(var_14_3)
 	else
-		Application.warning(string.format("[DoorSystem:rpc_sync_door_state] The synced level_object_id (%s) doesn't correspond to a unit with a 'door_system' extension. Unit: %s", level_object_id, tostring(door_unit)))
+		Application.warning(string.format("[DoorSystem:rpc_sync_door_state] The synced level_object_id (%s) doesn't correspond to a unit with a 'door_system' extension. Unit: %s", arg_14_2, tostring(var_14_1)))
 	end
 end
 
-DoorSystem.rpc_sync_boss_door_state = function (self, channel_id, level_object_id, door_state_id, breed_id)
-	local level = LevelHelper:current_level(self.world)
-	local door_unit = Level.unit_by_index(level, level_object_id)
-	local door_extension = ScriptUnit.has_extension(door_unit, "door_system")
+function DoorSystem.rpc_sync_boss_door_state(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+	local var_15_0 = LevelHelper:current_level(arg_15_0.world)
+	local var_15_1 = Level.unit_by_index(var_15_0, arg_15_2)
+	local var_15_2 = ScriptUnit.has_extension(var_15_1, "door_system")
 
-	if door_extension then
-		local new_state = NetworkLookup.door_states[door_state_id]
-		local breed_name = NetworkLookup.breeds[breed_id]
+	if var_15_2 then
+		local var_15_3 = NetworkLookup.door_states[arg_15_3]
+		local var_15_4 = NetworkLookup.breeds[arg_15_4]
 
-		door_extension:set_door_state(new_state, breed_name)
+		var_15_2:set_door_state(var_15_3, var_15_4)
 	else
-		Application.warning(string.format("[DoorSystem:rpc_sync_boss_door_state] The synced level_object_id (%s) doesn't correspond to a unit with a 'door_system' extension. Unit: %s", level_object_id, tostring(door_unit)))
+		Application.warning(string.format("[DoorSystem:rpc_sync_boss_door_state] The synced level_object_id (%s) doesn't correspond to a unit with a 'door_system' extension. Unit: %s", arg_15_2, tostring(var_15_1)))
 	end
 end

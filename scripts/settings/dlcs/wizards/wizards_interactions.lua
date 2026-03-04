@@ -1,196 +1,176 @@
-﻿-- chunkname: @scripts/settings/dlcs/wizards/wizards_interactions.lua
+-- chunkname: @scripts/settings/dlcs/wizards/wizards_interactions.lua
 
-local base_trail_light_urn_definition = table.clone(InteractionDefinitions.smartobject)
+local var_0_0 = table.clone(InteractionDefinitions.smartobject)
 
-base_trail_light_urn_definition.config = {
-	activate_block = true,
+var_0_0.config = {
 	allow_rotation_update = false,
-	animation = "interaction_torch",
-	block_other_interactions = true,
-	hold = true,
 	hud_verb = "player_interaction",
-	rotate_toward_interactable = true,
-	show_weapons = true,
+	block_other_interactions = true,
+	activate_block = true,
+	hold = true,
 	swap_to_3p = true,
+	animation = "interaction_torch",
+	rotate_toward_interactable = true,
+	show_weapons = true
 }
-InteractionDefinitions.trail_light_urn = base_trail_light_urn_definition
+InteractionDefinitions.trail_light_urn = var_0_0
 
-base_trail_light_urn_definition.server.start = function (world, interactor_unit, interactable_unit, data, config, t)
-	local duration = Unit.get_data(interactable_unit, "interaction_data", "interaction_length")
+function var_0_0.server.start(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	local var_1_0 = Unit.get_data(arg_1_2, "interaction_data", "interaction_length")
 
-	data.done_time = t + duration
-	data.duration = duration
+	arg_1_3.done_time = arg_1_5 + var_1_0
+	arg_1_3.duration = var_1_0
 end
 
-base_trail_light_urn_definition.client.start = function (world, interactor_unit, interactable_unit, data, config, t)
-	local trail_urn_alignment_extension = ScriptUnit.extension(interactable_unit, "trail_urn_alignment_system")
+function var_0_0.client.start(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	ScriptUnit.extension(arg_2_2, "trail_urn_alignment_system"):on_client_start_interaction(arg_2_1, arg_2_5)
 
-	trail_urn_alignment_extension:on_client_start_interaction(interactor_unit, t)
+	arg_2_3.start_time = arg_2_5
 
-	data.start_time = t
+	local var_2_0 = Unit.get_data(arg_2_2, "interaction_data", "interaction_length")
 
-	local duration = Unit.get_data(interactable_unit, "interaction_data", "interaction_length")
+	arg_2_3.duration = var_2_0
 
-	data.duration = duration
+	local var_2_1 = Unit.get_data(arg_2_2, "interaction_data", "interactor_animation")
+	local var_2_2 = Unit.get_data(arg_2_2, "interaction_data", "interactor_animation_time_variable")
+	local var_2_3 = ScriptUnit.extension(arg_2_1, "inventory_system")
+	local var_2_4 = ScriptUnit.extension(arg_2_1, "career_system")
 
-	local interactor_animation_name = Unit.get_data(interactable_unit, "interaction_data", "interactor_animation")
-	local interactor_animation_time_variable = Unit.get_data(interactable_unit, "interaction_data", "interactor_animation_time_variable")
-	local inventory_extension = ScriptUnit.extension(interactor_unit, "inventory_system")
-	local career_extension = ScriptUnit.extension(interactor_unit, "career_system")
+	CharacterStateHelper.stop_weapon_actions(var_2_3, "interacting")
+	CharacterStateHelper.stop_career_abilities(var_2_4, "interacting")
 
-	CharacterStateHelper.stop_weapon_actions(inventory_extension, "interacting")
-	CharacterStateHelper.stop_career_abilities(career_extension, "interacting")
+	if var_2_1 then
+		local var_2_5 = Unit.animation_find_variable(arg_2_1, var_2_2)
 
-	if interactor_animation_name then
-		local interactor_animation_time_variable = Unit.animation_find_variable(interactor_unit, interactor_animation_time_variable)
+		Unit.animation_set_variable(arg_2_1, var_2_5, var_2_0)
 
-		Unit.animation_set_variable(interactor_unit, interactor_animation_time_variable, duration)
+		local var_2_6 = Unit.get_data(arg_2_2, "interaction_data", "interactor_animation")
 
-		local interactor_animation_name = Unit.get_data(interactable_unit, "interaction_data", "interactor_animation")
-
-		Unit.animation_event(interactor_unit, interactor_animation_name)
+		Unit.animation_event(arg_2_1, var_2_6)
 	end
 
-	Unit.set_data(interactable_unit, "interaction_data", "being_used", true)
+	Unit.set_data(arg_2_2, "interaction_data", "being_used", true)
 end
 
-base_trail_light_urn_definition.server.update = function (world, interactor_unit, interactable_unit, data, config, dt, t)
-	local status_extension = ScriptUnit.extension(interactor_unit, "status_system")
-
-	if status_extension:is_knocked_down() or not HEALTH_ALIVE[interactor_unit] then
+function var_0_0.server.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	if ScriptUnit.extension(arg_3_1, "status_system"):is_knocked_down() or not HEALTH_ALIVE[arg_3_1] then
 		return InteractionResult.FAILURE
 	end
 
-	local trail_urn_alignment_extension = ScriptUnit.extension(interactable_unit, "trail_urn_alignment_system")
+	local var_3_0 = ScriptUnit.extension(arg_3_2, "trail_urn_alignment_system")
 
-	if trail_urn_alignment_extension:is_state_aligned() and trail_urn_alignment_extension:is_unit_pushed_out_off_range(interactor_unit, interactable_unit) then
+	if var_3_0:is_state_aligned() and var_3_0:is_unit_pushed_out_off_range(arg_3_1, arg_3_2) then
 		return InteractionResult.FAILURE
 	end
 
-	if t > data.done_time then
+	if arg_3_6 > arg_3_3.done_time then
 		return InteractionResult.SUCCESS
 	end
 
 	return InteractionResult.ONGOING
 end
 
-base_trail_light_urn_definition.client.update = function (world, interactor_unit, interactable_unit, data, config, dt, t)
-	local trail_urn_alignment_extension = ScriptUnit.extension(interactable_unit, "trail_urn_alignment_system")
-
-	trail_urn_alignment_extension:on_client_move_to_node(interactor_unit, interactable_unit, data.is_husk, t)
+function var_0_0.client.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+	ScriptUnit.extension(arg_4_2, "trail_urn_alignment_system"):on_client_move_to_node(arg_4_1, arg_4_2, arg_4_3.is_husk, arg_4_6)
 end
 
-base_trail_light_urn_definition.server.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
-	if result == InteractionResult.SUCCESS then
-		local interactable_system = ScriptUnit.extension(interactable_unit, "interactable_system")
+function var_0_0.server.stop(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
+	if arg_5_6 == InteractionResult.SUCCESS then
+		local var_5_0 = ScriptUnit.extension(arg_5_2, "interactable_system")
 
-		interactable_system.num_times_successfully_completed = interactable_system.num_times_successfully_completed + 1
+		var_5_0.num_times_successfully_completed = var_5_0.num_times_successfully_completed + 1
 
-		if Unit.get_data(interactable_unit, "interaction_data", "only_once") then
-			Unit.set_data(interactable_unit, "interaction_data", "used", true)
+		if Unit.get_data(arg_5_2, "interaction_data", "only_once") then
+			Unit.set_data(arg_5_2, "interaction_data", "used", true)
 		end
 	end
 
-	Unit.set_data(interactable_unit, "interaction_data", "being_used", false)
+	Unit.set_data(arg_5_2, "interaction_data", "being_used", false)
 end
 
-local function remove_torch(interactor_unit)
-	local inventory_extension = ScriptUnit.extension(interactor_unit, "inventory_system")
+local function var_0_1(arg_6_0)
+	local var_6_0 = ScriptUnit.extension(arg_6_0, "inventory_system")
 
-	inventory_extension:destroy_slot("slot_level_event")
-	inventory_extension:wield_previous_weapon()
+	var_6_0:destroy_slot("slot_level_event")
+	var_6_0:wield_previous_weapon()
 end
 
-base_trail_light_urn_definition.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
-	Unit.animation_event(interactor_unit, "interaction_end")
+function var_0_0.client.stop(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+	Unit.animation_event(arg_7_1, "interaction_end")
 
-	if result == InteractionResult.SUCCESS then
-		if Unit.get_data(interactable_unit, "interaction_data", "only_once") then
-			Unit.set_data(interactable_unit, "interaction_data", "used", true)
+	if arg_7_6 == InteractionResult.SUCCESS then
+		if Unit.get_data(arg_7_2, "interaction_data", "only_once") then
+			Unit.set_data(arg_7_2, "interaction_data", "used", true)
 		end
 
-		if not data.is_husk then
-			remove_torch(interactor_unit)
+		if not arg_7_3.is_husk then
+			var_0_1(arg_7_1)
 		end
 	end
 
-	if not data.is_husk and config.rotate_toward_interactable then
-		local locomotion_extension = ScriptUnit.extension(interactor_unit, "locomotion_system")
+	if not arg_7_3.is_husk and arg_7_4.rotate_toward_interactable then
+		local var_7_0 = ScriptUnit.extension(arg_7_1, "locomotion_system")
 
-		locomotion_extension:enable_script_driven_movement()
-		locomotion_extension:enable_rotation_towards_velocity(true)
+		var_7_0:enable_script_driven_movement()
+		var_7_0:enable_rotation_towards_velocity(true)
 	end
 
-	local trail_urn_alignment_extension = ScriptUnit.extension(interactable_unit, "trail_urn_alignment_system")
-
-	trail_urn_alignment_extension:on_client_stop(result)
-	Unit.set_data(interactable_unit, "interaction_data", "being_used", false)
+	ScriptUnit.extension(arg_7_2, "trail_urn_alignment_system"):on_client_stop(arg_7_6)
+	Unit.set_data(arg_7_2, "interaction_data", "being_used", false)
 end
 
-base_trail_light_urn_definition.server.can_interact = function (interactor_unit, interactable_unit, data, config)
-	local used = Unit.get_data(interactable_unit, "interaction_data", "used")
-	local being_used = Unit.get_data(interactable_unit, "interaction_data", "being_used")
+function var_0_0.server.can_interact(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	local var_8_0 = Unit.get_data(arg_8_1, "interaction_data", "used")
+	local var_8_1 = Unit.get_data(arg_8_1, "interaction_data", "being_used")
 
-	if used or being_used then
-		return not used and not being_used
+	if var_8_0 or var_8_1 then
+		return not var_8_0 and not var_8_1
 	end
 
-	local trail_urn_alignment_extension = ScriptUnit.extension(interactable_unit, "trail_urn_alignment_system")
-
-	if not trail_urn_alignment_extension:can_interact() then
+	if not ScriptUnit.extension(arg_8_1, "trail_urn_alignment_system"):can_interact() then
 		return false
 	end
 
-	local item_name = Unit.get_data(interactable_unit, "interaction_data", "wanted_item") or "shadow_torch"
-	local inventory_extension = ScriptUnit.has_extension(interactor_unit, "inventory_system")
+	local var_8_2 = Unit.get_data(arg_8_1, "interaction_data", "wanted_item") or "shadow_torch"
+	local var_8_3 = ScriptUnit.has_extension(arg_8_0, "inventory_system")
 
-	if not inventory_extension and not inventory_extension:has_inventory_item("slot_level_event", item_name) then
+	if not var_8_3 and not var_8_3:has_inventory_item("slot_level_event", var_8_2) then
 		return false
 	end
 
-	local custom_interaction_check_name = Unit.get_data(interactable_unit, "interaction_data", "custom_interaction_check_name")
+	local var_8_4 = Unit.get_data(arg_8_1, "interaction_data", "custom_interaction_check_name")
 
-	if custom_interaction_check_name then
-		local interaction_custom_check_func = InteractionCustomChecks[custom_interaction_check_name]
-
-		if interaction_custom_check_func and not InteractionCustomChecks[custom_interaction_check_name](interactor_unit, interactable_unit) then
-			return false
-		end
+	if var_8_4 and InteractionCustomChecks[var_8_4] and not InteractionCustomChecks[var_8_4](arg_8_0, arg_8_1) then
+		return false
 	end
 
-	return not used and not being_used
+	return not var_8_0 and not var_8_1
 end
 
-base_trail_light_urn_definition.client.can_interact = function (interactor_unit, interactable_unit, data, config)
-	local trail_urn_alignment_extension = ScriptUnit.extension(interactable_unit, "trail_urn_alignment_system")
-
-	if not trail_urn_alignment_extension:can_interact() then
+function var_0_0.client.can_interact(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	if not ScriptUnit.extension(arg_9_1, "trail_urn_alignment_system"):can_interact() then
 		return false
 	end
 
-	local item_name = Unit.get_data(interactable_unit, "interaction_data", "wanted_item") or "shadow_torch"
-	local inventory_extension = ScriptUnit.has_extension(interactor_unit, "inventory_system")
+	local var_9_0 = Unit.get_data(arg_9_1, "interaction_data", "wanted_item") or "shadow_torch"
+	local var_9_1 = ScriptUnit.has_extension(arg_9_0, "inventory_system")
 
-	if inventory_extension == nil or not inventory_extension:has_inventory_item("slot_level_event", item_name) then
+	if var_9_1 == nil or not var_9_1:has_inventory_item("slot_level_event", var_9_0) then
 		return false
 	end
 
-	local used = Unit.get_data(interactable_unit, "interaction_data", "used")
-	local being_used = Unit.get_data(interactable_unit, "interaction_data", "being_used")
+	local var_9_2 = Unit.get_data(arg_9_1, "interaction_data", "used")
+	local var_9_3 = Unit.get_data(arg_9_1, "interaction_data", "being_used")
 
-	if used or being_used then
-		return not used and not being_used
+	if var_9_2 or var_9_3 then
+		return not var_9_2 and not var_9_3
 	end
 
-	local custom_interaction_check_name = Unit.get_data(interactable_unit, "interaction_data", "custom_interaction_check_name")
+	local var_9_4 = Unit.get_data(arg_9_1, "interaction_data", "custom_interaction_check_name")
 
-	if custom_interaction_check_name then
-		local interaction_custom_check_func = InteractionCustomChecks[custom_interaction_check_name]
-
-		if interaction_custom_check_func and not InteractionCustomChecks[custom_interaction_check_name](interactor_unit, interactable_unit) then
-			return false
-		end
+	if var_9_4 and InteractionCustomChecks[var_9_4] and not InteractionCustomChecks[var_9_4](arg_9_0, arg_9_1) then
+		return false
 	end
 
-	return not used and not being_used
+	return not var_9_2 and not var_9_3
 end

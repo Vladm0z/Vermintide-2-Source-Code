@@ -1,103 +1,103 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_horde_rat_behavior.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_horde_rat_behavior.lua
 
-local ACTIONS = BreedActions.skaven_clan_rat
+local var_0_0 = BreedActions.skaven_clan_rat
 
 BreedBehaviors.horde_rat = {
 	"BTSelector",
 	{
 		"BTSpawningAction",
 		condition = "spawn",
-		name = "spawn",
+		name = "spawn"
 	},
 	{
 		"BTInVortexAction",
 		condition = "in_vortex",
-		name = "in_vortex",
+		name = "in_vortex"
 	},
 	{
 		"BTFallAction",
 		condition = "is_falling",
-		name = "falling",
+		name = "falling"
 	},
 	{
 		"BTStaggerAction",
-		condition = "stagger",
 		name = "stagger",
-		action_data = ACTIONS.stagger,
+		condition = "stagger",
+		action_data = var_0_0.stagger
 	},
 	{
 		"BTBlockedAction",
-		condition = "blocked",
 		name = "blocked",
-		action_data = ACTIONS.blocked,
+		condition = "blocked",
+		action_data = var_0_0.blocked
 	},
 	{
 		"BTSelector",
 		{
 			"BTTeleportAction",
 			condition = "at_teleport_smartobject",
-			name = "teleport",
+			name = "teleport"
 		},
 		{
 			"BTClimbAction",
 			condition = "at_climb_smartobject",
-			name = "climb",
+			name = "climb"
 		},
 		{
 			"BTJumpAcrossAction",
 			condition = "at_jump_smartobject",
-			name = "jump_across",
+			name = "jump_across"
 		},
 		{
 			"BTSmashDoorAction",
-			condition = "at_door_smartobject",
 			name = "smash_door",
-			action_data = ACTIONS.smash_door,
+			condition = "at_door_smartobject",
+			action_data = var_0_0.smash_door
 		},
 		condition = "at_smartobject",
-		name = "smartobject",
+		name = "smartobject"
 	},
 	{
 		"BTUtilityNode",
 		{
 			"BTClanRatFollowAction",
 			name = "follow",
-			action_data = ACTIONS.follow,
+			action_data = var_0_0.follow
 		},
 		{
 			"BTAttackAction",
-			condition = "ask_target_before_attacking",
 			name = "running_attack",
-			action_data = ACTIONS.running_attack,
+			condition = "ask_target_before_attacking",
+			action_data = var_0_0.running_attack
 		},
 		{
 			"BTAttackAction",
-			condition = "ask_target_before_attacking",
 			name = "normal_attack",
-			action_data = ACTIONS.normal_attack,
+			condition = "ask_target_before_attacking",
+			action_data = var_0_0.normal_attack
 		},
 		{
 			"BTCombatShoutAction",
 			name = "combat_shout",
-			action_data = ACTIONS.combat_shout,
+			action_data = var_0_0.combat_shout
 		},
 		condition = "can_see_player",
-		name = "in_combat",
+		name = "in_combat"
 	},
 	{
 		"BTMoveToGoalAction",
-		condition = "has_goal_destination",
 		name = "move_to_goal",
-		action_data = ACTIONS.follow,
+		condition = "has_goal_destination",
+		action_data = var_0_0.follow
 	},
 	{
 		"BTIdleAction",
 		condition = "no_target",
-		name = "idle",
+		name = "idle"
 	},
 	{
 		"BTFallbackIdleAction",
-		name = "fallback_idle",
+		name = "fallback_idle"
 	},
-	name = "horde",
+	name = "horde"
 }

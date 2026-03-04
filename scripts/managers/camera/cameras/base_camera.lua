@@ -1,354 +1,354 @@
-﻿-- chunkname: @scripts/managers/camera/cameras/base_camera.lua
+-- chunkname: @scripts/managers/camera/cameras/base_camera.lua
 
 BaseCamera = class(BaseCamera)
 
-BaseCamera.init = function (self, root_node)
-	self._root_node = root_node
-	self._children = {}
-	self._name = ""
-	self._root_unit = nil
-	self._root_object = nil
-	self._root_position = Vector3Box()
-	self._root_rotation = QuaternionBox()
-	self._position = Vector3Box()
-	self._rotation = QuaternionBox()
-	self._vertical_fov = nil
-	self._near_range = nil
-	self._far_range = nil
-	self._pitch_offset = nil
-	self._active = 0
-	self._active_children = 0
+function BaseCamera.init(arg_1_0, arg_1_1)
+	arg_1_0._root_node = arg_1_1
+	arg_1_0._children = {}
+	arg_1_0._name = ""
+	arg_1_0._root_unit = nil
+	arg_1_0._root_object = nil
+	arg_1_0._root_position = Vector3Box()
+	arg_1_0._root_rotation = QuaternionBox()
+	arg_1_0._position = Vector3Box()
+	arg_1_0._rotation = QuaternionBox()
+	arg_1_0._vertical_fov = nil
+	arg_1_0._near_range = nil
+	arg_1_0._far_range = nil
+	arg_1_0._pitch_offset = nil
+	arg_1_0._active = 0
+	arg_1_0._active_children = 0
 end
 
-BaseCamera.parse_parameters = function (self, camera_settings, parent_node)
-	if camera_settings.name then
-		self._name = camera_settings.name
+function BaseCamera.parse_parameters(arg_2_0, arg_2_1, arg_2_2)
+	if arg_2_1.name then
+		arg_2_0._name = arg_2_1.name
 	end
 
-	local degrees_to_radians = math.pi / 180
+	local var_2_0 = math.pi / 180
 
-	self._fade_to_black = camera_settings.fade_to_black
-	self._vertical_fov = camera_settings.vertical_fov and camera_settings.vertical_fov * degrees_to_radians
-	self._should_apply_fov_multiplier = camera_settings.should_apply_fov_multiplier or parent_node:should_apply_fov_multiplier()
-	self._default_fov = camera_settings.default_fov and camera_settings.default_fov * degrees_to_radians or parent_node:default_fov()
-	self._near_range = camera_settings.near_range or parent_node:near_range()
-	self._far_range = camera_settings.far_range or parent_node:far_range()
-	self._pitch_min = camera_settings.pitch_min and camera_settings.pitch_min * degrees_to_radians or parent_node:pitch_min()
-	self._pitch_max = camera_settings.pitch_max and camera_settings.pitch_max * degrees_to_radians or parent_node:pitch_max()
-	self._pitch_speed = camera_settings.pitch_speed and camera_settings.pitch_speed * degrees_to_radians or parent_node:pitch_speed()
-	self._yaw_speed = camera_settings.yaw_speed and camera_settings.yaw_speed * degrees_to_radians or parent_node:yaw_speed()
-	self._pitch_offset = camera_settings.pitch_offset and camera_settings.pitch_offset * degrees_to_radians or parent_node:pitch_offset()
-	self._safe_position_offset = camera_settings.safe_position_offset or parent_node:safe_position_offset()
-	self._tree_transitions = camera_settings.tree_transitions or parent_node:tree_transitions()
-	self._node_transitions = camera_settings.node_transitions or parent_node:node_transitions()
+	arg_2_0._fade_to_black = arg_2_1.fade_to_black
+	arg_2_0._vertical_fov = arg_2_1.vertical_fov and arg_2_1.vertical_fov * var_2_0
+	arg_2_0._should_apply_fov_multiplier = arg_2_1.should_apply_fov_multiplier or arg_2_2:should_apply_fov_multiplier()
+	arg_2_0._default_fov = arg_2_1.default_fov and arg_2_1.default_fov * var_2_0 or arg_2_2:default_fov()
+	arg_2_0._near_range = arg_2_1.near_range or arg_2_2:near_range()
+	arg_2_0._far_range = arg_2_1.far_range or arg_2_2:far_range()
+	arg_2_0._pitch_min = arg_2_1.pitch_min and arg_2_1.pitch_min * var_2_0 or arg_2_2:pitch_min()
+	arg_2_0._pitch_max = arg_2_1.pitch_max and arg_2_1.pitch_max * var_2_0 or arg_2_2:pitch_max()
+	arg_2_0._pitch_speed = arg_2_1.pitch_speed and arg_2_1.pitch_speed * var_2_0 or arg_2_2:pitch_speed()
+	arg_2_0._yaw_speed = arg_2_1.yaw_speed and arg_2_1.yaw_speed * var_2_0 or arg_2_2:yaw_speed()
+	arg_2_0._pitch_offset = arg_2_1.pitch_offset and arg_2_1.pitch_offset * var_2_0 or arg_2_2:pitch_offset()
+	arg_2_0._safe_position_offset = arg_2_1.safe_position_offset or arg_2_2:safe_position_offset()
+	arg_2_0._tree_transitions = arg_2_1.tree_transitions or arg_2_2:tree_transitions()
+	arg_2_0._node_transitions = arg_2_1.node_transitions or arg_2_2:node_transitions()
 
-	if camera_settings.dof_enabled then
-		self._environment_params = self._environment_params or {}
-		self._environment_params.dof_enabled = camera_settings.dof_enabled
-		self._environment_params.focal_distance = camera_settings.focal_distance
-		self._environment_params.focal_region = camera_settings.focal_region
-		self._environment_params.focal_padding = camera_settings.focal_padding
-		self._environment_params.focal_scale = camera_settings.focal_scale
+	if arg_2_1.dof_enabled then
+		arg_2_0._environment_params = arg_2_0._environment_params or {}
+		arg_2_0._environment_params.dof_enabled = arg_2_1.dof_enabled
+		arg_2_0._environment_params.focal_distance = arg_2_1.focal_distance
+		arg_2_0._environment_params.focal_region = arg_2_1.focal_region
+		arg_2_0._environment_params.focal_padding = arg_2_1.focal_padding
+		arg_2_0._environment_params.focal_scale = arg_2_1.focal_scale
 	end
 
-	self._yaw_origin = camera_settings.yaw_origin and camera_settings.yaw_origin * math.pi / 180
-	self._pitch_origin = camera_settings.pitch_origin and camera_settings.pitch_origin * math.pi / 180
-	self._constraint_function = camera_settings.constraint or parent_node:constraint_function()
+	arg_2_0._yaw_origin = arg_2_1.yaw_origin and arg_2_1.yaw_origin * math.pi / 180
+	arg_2_0._pitch_origin = arg_2_1.pitch_origin and arg_2_1.pitch_origin * math.pi / 180
+	arg_2_0._constraint_function = arg_2_1.constraint or arg_2_2:constraint_function()
 end
 
-BaseCamera.should_apply_fov_multiplier = function (self)
-	return self._should_apply_fov_multiplier
+function BaseCamera.should_apply_fov_multiplier(arg_3_0)
+	return arg_3_0._should_apply_fov_multiplier
 end
 
-BaseCamera.default_fov = function (self)
-	return self._default_fov
+function BaseCamera.default_fov(arg_4_0)
+	return arg_4_0._default_fov
 end
 
-BaseCamera.constraint_function = function (self)
-	return self._constraint_function
+function BaseCamera.constraint_function(arg_5_0)
+	return arg_5_0._constraint_function
 end
 
-BaseCamera.node_transitions = function (self)
-	return self._node_transitions
+function BaseCamera.node_transitions(arg_6_0)
+	return arg_6_0._node_transitions
 end
 
-BaseCamera.tree_transitions = function (self)
-	return self._tree_transitions
+function BaseCamera.tree_transitions(arg_7_0)
+	return arg_7_0._tree_transitions
 end
 
-BaseCamera.safe_position_offset = function (self)
-	return self._safe_position_offset
+function BaseCamera.safe_position_offset(arg_8_0)
+	return arg_8_0._safe_position_offset
 end
 
-BaseCamera.pitch_offset = function (self)
-	return self._pitch_offset
+function BaseCamera.pitch_offset(arg_9_0)
+	return arg_9_0._pitch_offset
 end
 
-BaseCamera.pitch_speed = function (self)
-	return self._pitch_speed
+function BaseCamera.pitch_speed(arg_10_0)
+	return arg_10_0._pitch_speed
 end
 
-BaseCamera.yaw_speed = function (self)
-	return self._yaw_speed
+function BaseCamera.yaw_speed(arg_11_0)
+	return arg_11_0._yaw_speed
 end
 
-BaseCamera.pitch_min = function (self)
-	return self._pitch_min
+function BaseCamera.pitch_min(arg_12_0)
+	return arg_12_0._pitch_min
 end
 
-BaseCamera.pitch_max = function (self)
-	return self._pitch_max
+function BaseCamera.pitch_max(arg_13_0)
+	return arg_13_0._pitch_max
 end
 
-BaseCamera.name = function (self)
-	return self._name
+function BaseCamera.name(arg_14_0)
+	return arg_14_0._name
 end
 
-BaseCamera.pose = function (self)
-	local pose = Matrix4x4.identity()
+function BaseCamera.pose(arg_15_0)
+	local var_15_0 = Matrix4x4.identity()
 
-	Matrix4x4.set_translation(pose, self:position())
-	Matrix4x4.set_rotation(pose, self:rotation())
+	Matrix4x4.set_translation(var_15_0, arg_15_0:position())
+	Matrix4x4.set_rotation(var_15_0, arg_15_0:rotation())
 
-	return pose
+	return var_15_0
 end
 
-BaseCamera.position = function (self)
-	return self._position:unbox()
+function BaseCamera.position(arg_16_0)
+	return arg_16_0._position:unbox()
 end
 
-BaseCamera.rotation = function (self)
-	return self._rotation:unbox()
+function BaseCamera.rotation(arg_17_0)
+	return arg_17_0._rotation:unbox()
 end
 
-BaseCamera.vertical_fov = function (self)
-	return self._vertical_fov or self._parent_node:vertical_fov()
+function BaseCamera.vertical_fov(arg_18_0)
+	return arg_18_0._vertical_fov or arg_18_0._parent_node:vertical_fov()
 end
 
-BaseCamera.fade_to_black = function (self)
-	return self._fade_to_black or self._parent_node:fade_to_black()
+function BaseCamera.fade_to_black(arg_19_0)
+	return arg_19_0._fade_to_black or arg_19_0._parent_node:fade_to_black()
 end
 
-BaseCamera.shading_environment = function (self)
-	return self._environment_params or self._parent_node and self._parent_node:shading_environment()
+function BaseCamera.shading_environment(arg_20_0)
+	return arg_20_0._environment_params or arg_20_0._parent_node and arg_20_0._parent_node:shading_environment()
 end
 
-BaseCamera.near_range = function (self)
-	return self._near_range
+function BaseCamera.near_range(arg_21_0)
+	return arg_21_0._near_range
 end
 
-BaseCamera.far_range = function (self)
-	return self._far_range
+function BaseCamera.far_range(arg_22_0)
+	return arg_22_0._far_range
 end
 
-BaseCamera.dof_enabled = function (self)
-	return self._environment_params.dof_enabled
+function BaseCamera.dof_enabled(arg_23_0)
+	return arg_23_0._environment_params.dof_enabled
 end
 
-BaseCamera.focal_distance = function (self)
-	return self._environment_params.focal_distance
+function BaseCamera.focal_distance(arg_24_0)
+	return arg_24_0._environment_params.focal_distance
 end
 
-BaseCamera.focal_region = function (self)
-	return self._environment_params.focal_region
+function BaseCamera.focal_region(arg_25_0)
+	return arg_25_0._environment_params.focal_region
 end
 
-BaseCamera.focal_padding = function (self)
-	return self._environment_params.focal_padding
+function BaseCamera.focal_padding(arg_26_0)
+	return arg_26_0._environment_params.focal_padding
 end
 
-BaseCamera.focal_scale = function (self)
-	return self._environment_params.focal_scale
+function BaseCamera.focal_scale(arg_27_0)
+	return arg_27_0._environment_params.focal_scale
 end
 
-BaseCamera.parent_node = function (self)
-	return self._parent_node
+function BaseCamera.parent_node(arg_28_0)
+	return arg_28_0._parent_node
 end
 
-BaseCamera.root_node = function (self)
-	return self._root_node
+function BaseCamera.root_node(arg_29_0)
+	return arg_29_0._root_node
 end
 
-BaseCamera.set_parent_node = function (self, parent)
-	self._parent_node = parent
+function BaseCamera.set_parent_node(arg_30_0, arg_30_1)
+	arg_30_0._parent_node = arg_30_1
 end
 
-BaseCamera.add_child_node = function (self, node)
-	self._children[#self._children + 1] = node
+function BaseCamera.add_child_node(arg_31_0, arg_31_1)
+	arg_31_0._children[#arg_31_0._children + 1] = arg_31_1
 
-	node:set_parent_node(self)
+	arg_31_1:set_parent_node(arg_31_0)
 end
 
-BaseCamera.set_active = function (self, active)
-	local old_active = self:active()
+function BaseCamera.set_active(arg_32_0, arg_32_1)
+	local var_32_0 = arg_32_0:active()
 
-	if active then
-		self._active = self._active + 1
+	if arg_32_1 then
+		arg_32_0._active = arg_32_0._active + 1
 	else
-		self._active = self._active - 1
+		arg_32_0._active = arg_32_0._active - 1
 	end
 
-	local new_active = self:active()
+	local var_32_1 = arg_32_0:active()
 
-	if self._parent_node and old_active ~= new_active then
-		self._parent_node:set_active_child(new_active)
+	if arg_32_0._parent_node and var_32_0 ~= var_32_1 then
+		arg_32_0._parent_node:set_active_child(var_32_1)
 	end
 end
 
-BaseCamera.active = function (self)
-	return self._active > 0 or self._active_children > 0
+function BaseCamera.active(arg_33_0)
+	return arg_33_0._active > 0 or arg_33_0._active_children > 0
 end
 
-BaseCamera.set_active_child = function (self, active)
-	local old_active = self:active()
+function BaseCamera.set_active_child(arg_34_0, arg_34_1)
+	local var_34_0 = arg_34_0:active()
 
-	if active then
-		self._active_children = self._active_children + 1
+	if arg_34_1 then
+		arg_34_0._active_children = arg_34_0._active_children + 1
 	else
-		self._active_children = self._active_children - 1
+		arg_34_0._active_children = arg_34_0._active_children - 1
 	end
 
-	local new_active = self:active()
+	local var_34_1 = arg_34_0:active()
 
-	if self._parent_node and old_active ~= new_active then
-		self._parent_node:set_active_child(new_active)
-	end
-end
-
-BaseCamera.set_root_unit = function (self, unit, object_name)
-	self._root_unit = unit
-	object_name = object_name or self._object_name
-	self._root_object = Unit.node(unit, object_name)
-
-	for _, child in ipairs(self._children) do
-		child:set_root_unit(unit, object_name)
+	if arg_34_0._parent_node and var_34_0 ~= var_34_1 then
+		arg_34_0._parent_node:set_active_child(var_34_1)
 	end
 end
 
-BaseCamera.root_unit = function (self)
-	return self._root_unit, self._object_name
-end
+function BaseCamera.set_root_unit(arg_35_0, arg_35_1, arg_35_2)
+	arg_35_0._root_unit = arg_35_1
+	arg_35_2 = arg_35_2 or arg_35_0._object_name
+	arg_35_0._root_object = Unit.node(arg_35_1, arg_35_2)
 
-BaseCamera.set_root_position = function (self, position)
-	self._root_position:store(position)
-
-	for _, child in ipairs(self._children) do
-		child:set_root_position(position)
+	for iter_35_0, iter_35_1 in ipairs(arg_35_0._children) do
+		iter_35_1:set_root_unit(arg_35_1, arg_35_2)
 	end
 end
 
-BaseCamera.set_root_rotation = function (self, rotation)
-	self._root_rotation:store(rotation)
+function BaseCamera.root_unit(arg_36_0)
+	return arg_36_0._root_unit, arg_36_0._object_name
+end
 
-	for _, child in ipairs(self._children) do
-		child:set_root_rotation(rotation)
+function BaseCamera.set_root_position(arg_37_0, arg_37_1)
+	arg_37_0._root_position:store(arg_37_1)
+
+	for iter_37_0, iter_37_1 in ipairs(arg_37_0._children) do
+		iter_37_1:set_root_position(arg_37_1)
 	end
 end
 
-BaseCamera.set_root_vertical_fov = function (self, vertical_fov)
-	self._vertical_fov = vertical_fov
+function BaseCamera.set_root_rotation(arg_38_0, arg_38_1)
+	arg_38_0._root_rotation:store(arg_38_1)
 
-	for _, child in ipairs(self._children) do
-		child:set_root_vertical_fov(vertical_fov)
+	for iter_38_0, iter_38_1 in ipairs(arg_38_0._children) do
+		iter_38_1:set_root_rotation(arg_38_1)
 	end
 end
 
-BaseCamera.set_root_near_range = function (self, near_range)
-	self._near_range = near_range
+function BaseCamera.set_root_vertical_fov(arg_39_0, arg_39_1)
+	arg_39_0._vertical_fov = arg_39_1
 
-	for _, child in ipairs(self._children) do
-		child:set_root_near_range(near_range)
+	for iter_39_0, iter_39_1 in ipairs(arg_39_0._children) do
+		iter_39_1:set_root_vertical_fov(arg_39_1)
 	end
 end
 
-BaseCamera.set_root_far_range = function (self, far_range)
-	self._far_range = far_range
+function BaseCamera.set_root_near_range(arg_40_0, arg_40_1)
+	arg_40_0._near_range = arg_40_1
 
-	for _, child in ipairs(self._children) do
-		child:set_root_far_range(far_range)
+	for iter_40_0, iter_40_1 in ipairs(arg_40_0._children) do
+		iter_40_1:set_root_near_range(arg_40_1)
 	end
 end
 
-BaseCamera.set_root_dof_enabled = function (self, dof_enabled)
-	self._environment_params.dof_enabled = dof_enabled
+function BaseCamera.set_root_far_range(arg_41_0, arg_41_1)
+	arg_41_0._far_range = arg_41_1
 
-	for _, child in ipairs(self._children) do
-		child:set_root_dof_enabled(dof_enabled)
+	for iter_41_0, iter_41_1 in ipairs(arg_41_0._children) do
+		iter_41_1:set_root_far_range(arg_41_1)
 	end
 end
 
-BaseCamera.set_root_focal_distance = function (self, focal_distance)
-	self._environment_params.focal_distance = focal_distance
+function BaseCamera.set_root_dof_enabled(arg_42_0, arg_42_1)
+	arg_42_0._environment_params.dof_enabled = arg_42_1
 
-	for _, child in ipairs(self._children) do
-		child:set_root_focal_distance(focal_distance)
+	for iter_42_0, iter_42_1 in ipairs(arg_42_0._children) do
+		iter_42_1:set_root_dof_enabled(arg_42_1)
 	end
 end
 
-BaseCamera.set_root_focal_region = function (self, focal_region)
-	self._environment_params.focal_region = focal_region
+function BaseCamera.set_root_focal_distance(arg_43_0, arg_43_1)
+	arg_43_0._environment_params.focal_distance = arg_43_1
 
-	for _, child in ipairs(self._children) do
-		child:set_root_focal_region(focal_region)
+	for iter_43_0, iter_43_1 in ipairs(arg_43_0._children) do
+		iter_43_1:set_root_focal_distance(arg_43_1)
 	end
 end
 
-BaseCamera.set_root_focal_padding = function (self, focal_padding)
-	self._environment_params.focal_padding = focal_padding
+function BaseCamera.set_root_focal_region(arg_44_0, arg_44_1)
+	arg_44_0._environment_params.focal_region = arg_44_1
 
-	for _, child in ipairs(self._children) do
-		child:set_root_focal_padding(focal_padding)
+	for iter_44_0, iter_44_1 in ipairs(arg_44_0._children) do
+		iter_44_1:set_root_focal_region(arg_44_1)
 	end
 end
 
-BaseCamera.set_root_focal_scale = function (self, focal_scale)
-	self._environment_params.focal_scale = focal_scale
+function BaseCamera.set_root_focal_padding(arg_45_0, arg_45_1)
+	arg_45_0._environment_params.focal_padding = arg_45_1
 
-	for _, child in ipairs(self._children) do
-		child:set_root_focal_scale(focal_scale)
+	for iter_45_0, iter_45_1 in ipairs(arg_45_0._children) do
+		iter_45_1:set_root_focal_padding(arg_45_1)
 	end
 end
 
-BaseCamera.update = function (self, dt, position, rotation, data)
-	assert(Vector3.is_valid(position), "Trying to set invalid camera position")
-	self._position:store(position)
-	self._rotation:store(rotation)
+function BaseCamera.set_root_focal_scale(arg_46_0, arg_46_1)
+	arg_46_0._environment_params.focal_scale = arg_46_1
+
+	for iter_46_0, iter_46_1 in ipairs(arg_46_0._children) do
+		iter_46_1:set_root_focal_scale(arg_46_1)
+	end
+end
+
+function BaseCamera.update(arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4)
+	assert(Vector3.is_valid(arg_47_2), "Trying to set invalid camera position")
+	arg_47_0._position:store(arg_47_2)
+	arg_47_0._rotation:store(arg_47_3)
 
 	if script_data.camera_debug and Managers.state.debug then
-		self:_debug_draw()
+		arg_47_0:_debug_draw()
 	end
 
-	for _, child in ipairs(self._children) do
-		if child:active() then
-			child:update(dt, position, rotation, data)
+	for iter_47_0, iter_47_1 in ipairs(arg_47_0._children) do
+		if iter_47_1:active() then
+			iter_47_1:update(arg_47_1, arg_47_2, arg_47_3, arg_47_4)
 		end
 	end
 end
 
-BaseCamera.destroy = function (self)
-	for _, child in ipairs(self._children) do
-		child:destroy()
+function BaseCamera.destroy(arg_48_0)
+	for iter_48_0, iter_48_1 in ipairs(arg_48_0._children) do
+		iter_48_1:destroy()
 	end
 
-	self._children = {}
-	self._parent_node = nil
+	arg_48_0._children = {}
+	arg_48_0._parent_node = nil
 end
 
-BaseCamera._debug_draw = function (self)
-	local parent_pos = self._parent_node and self._parent_node:position()
-	local pos = self._position
-	local rot = self._rotation
-	local drawer = Managers.state.debug:drawer({
-		name = "CAMERA_DEBUG_DRAW" .. self:name(),
+function BaseCamera._debug_draw(arg_49_0)
+	local var_49_0 = arg_49_0._parent_node and arg_49_0._parent_node:position()
+	local var_49_1 = arg_49_0._position
+	local var_49_2 = arg_49_0._rotation
+	local var_49_3 = Managers.state.debug:drawer({
+		name = "CAMERA_DEBUG_DRAW" .. arg_49_0:name()
 	})
 
 	if DebugKeyHandler.key_pressed("z", "clear camera debug") then
-		drawer:reset()
+		var_49_3:reset()
 	end
 
-	if parent_pos then
-		drawer:vector(parent_pos, pos:unbox() - parent_pos, Color(70, 255, 255, 255))
+	if var_49_0 then
+		var_49_3:vector(var_49_0, var_49_1:unbox() - var_49_0, Color(70, 255, 255, 255))
 	end
 
-	drawer:quaternion(pos:unbox(), rot:unbox())
+	var_49_3:quaternion(var_49_1:unbox(), var_49_2:unbox())
 end

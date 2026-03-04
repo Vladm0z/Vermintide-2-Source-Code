@@ -1,219 +1,206 @@
-﻿-- chunkname: @foundation/scripts/util/script_unit.lua
+-- chunkname: @foundation/scripts/util/script_unit.lua
 
 ScriptUnit = ScriptUnit or {}
 
-local Entities = rawget(_G, "G_Entities")
+local var_0_0 = rawget(_G, "G_Entities")
 
-if not Entities then
-	Entities = {}
+if not var_0_0 then
+	var_0_0 = {}
 
-	rawset(_G, "G_Entities", Entities)
+	rawset(_G, "G_Entities", var_0_0)
 end
 
-local function reset_entities()
-	Entities = {}
+local function var_0_1()
+	var_0_0 = {}
 
-	rawset(_G, "G_Entities", Entities)
+	rawset(_G, "G_Entities", var_0_0)
 end
 
-local function remove_unit(unit)
-	Entities[unit] = nil
+local function var_0_2(arg_2_0)
+	var_0_0[arg_2_0] = nil
 end
 
-local function local_remove_extension(unit, system_name)
-	local unit_extensions = Entities[unit]
+local function var_0_3(arg_3_0, arg_3_1)
+	local var_3_0 = var_0_0[arg_3_0]
 
-	fassert(unit_extensions)
-	fassert(unit_extensions[system_name], "Tried to remove system %s extension for unit %s", system_name, unit)
+	fassert(var_3_0)
+	fassert(var_3_0[arg_3_1], "Tried to remove system %s extension for unit %s", arg_3_1, arg_3_0)
 
-	unit_extensions[system_name] = nil
+	var_3_0[arg_3_1] = nil
 end
 
-local function set_extension_script(unit, system_name, extension)
-	local unit_extensions = Entities[unit]
+local function var_0_4(arg_4_0, arg_4_1, arg_4_2)
+	local var_4_0 = var_0_0[arg_4_0]
 
-	if not unit_extensions then
-		unit_extensions = {}
-		Entities[unit] = unit_extensions
+	if not var_4_0 then
+		var_4_0 = {}
+		var_0_0[arg_4_0] = var_4_0
 	end
 
-	unit_extensions[system_name] = extension
+	var_4_0[arg_4_1] = arg_4_2
 end
 
-local function local_extension(unit, system_name)
-	local unit_extensions = Entities[unit]
+local function var_0_5(arg_5_0, arg_5_1)
+	local var_5_0 = var_0_0[arg_5_0]
 
-	return unit_extensions and unit_extensions[system_name]
+	return var_5_0 and var_5_0[arg_5_1]
 end
 
-local function local_extension_input(unit, system_name)
-	local unit_extensions = Entities[unit]
+local function var_0_6(arg_6_0, arg_6_1)
+	local var_6_0 = var_0_0[arg_6_0]
 
-	return unit_extensions and unit_extensions[system_name] and unit_extensions[system_name].input
+	return var_6_0 and var_6_0[arg_6_1] and var_6_0[arg_6_1].input
 end
 
-ScriptUnit.extension_input = function (unit, system_name)
-	local extension = local_extension(unit, system_name)
-
-	return extension.input
+function ScriptUnit.extension_input(arg_7_0, arg_7_1)
+	return var_0_5(arg_7_0, arg_7_1).input
 end
 
-ScriptUnit.extension = function (unit, system_name)
-	local unit_extensions = Entities[unit]
-	local extension = unit_extensions and unit_extensions[system_name]
+function ScriptUnit.extension(arg_8_0, arg_8_1)
+	local var_8_0 = var_0_0[arg_8_0]
 
-	return extension
+	return var_8_0 and var_8_0[arg_8_1]
 end
 
-ScriptUnit.extensions = function (unit)
-	return Entities[unit]
+function ScriptUnit.extensions(arg_9_0)
+	return var_0_0[arg_9_0]
 end
 
-ScriptUnit.has_extension = local_extension
+ScriptUnit.has_extension = var_0_5
 
-ScriptUnit.has_extension_input = function (unit, extension_name)
-	local unit_extensions = Entities[unit]
+function ScriptUnit.has_extension_input(arg_10_0, arg_10_1)
+	local var_10_0 = var_0_0[arg_10_0]
 
-	return unit_extensions and unit_extensions[extension_name] and unit_extensions[extension_name].input
+	return var_10_0 and var_10_0[arg_10_1] and var_10_0[arg_10_1].input
 end
 
-ScriptUnit.check_all_units_deleted = function ()
-	if next(Entities) then
+function ScriptUnit.check_all_units_deleted()
+	if next(var_0_0) then
 		print("------------ UNITS THAT HAVENT BEEN DELETED --------------")
 
-		for unit, extensions in pairs(Entities) do
-			local info = unit_alive_info(unit)
+		for iter_11_0, iter_11_1 in pairs(var_0_0) do
+			local var_11_0 = unit_alive_info(iter_11_0)
 
-			print(unit, Unit.alive(unit), info)
+			print(iter_11_0, Unit.alive(iter_11_0), var_11_0)
 		end
 
 		fassert(false, "Some units have not been cleaned up properly!")
 	end
 end
 
-ScriptUnit.set_extension = function (unit, system_name, extension)
-	set_extension_script(unit, system_name, extension)
+function ScriptUnit.set_extension(arg_12_0, arg_12_1, arg_12_2)
+	var_0_4(arg_12_0, arg_12_1, arg_12_2)
 end
 
-ScriptUnit.add_extension = function (extension_init_context, unit, extension_name, extension_alias, extension_init_data, extension_pool_table)
-	local extension_class = rawget(_G, extension_name)
+function ScriptUnit.add_extension(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+	local var_13_0 = rawget(_G, arg_13_2)
 
-	fassert(extension_class, "No class found for extension with name %q", extension_name)
+	fassert(var_13_0, "No class found for extension with name %q", arg_13_2)
 
-	local extension
+	local var_13_1
+	local var_13_2 = var_13_0:new(arg_13_0, arg_13_1, arg_13_4)
 
-	extension = extension_class:new(extension_init_context, unit, extension_init_data)
+	fassert(not ScriptUnit.has_extension(arg_13_1, arg_13_3), "An extension already exists with name %q belonging to unit %s", arg_13_3, arg_13_1)
+	var_0_4(arg_13_1, arg_13_3, var_13_2)
 
-	fassert(not ScriptUnit.has_extension(unit, extension_alias), "An extension already exists with name %q belonging to unit %s", extension_alias, unit)
-	set_extension_script(unit, extension_alias, extension)
-
-	return extension
+	return var_13_2
 end
 
-ScriptUnit.destroy_extension = function (unit, system_name)
-	local extension = ScriptUnit.extension(unit, system_name)
+function ScriptUnit.destroy_extension(arg_14_0, arg_14_1)
+	local var_14_0 = ScriptUnit.extension(arg_14_0, arg_14_1)
 
-	if extension.destroy then
-		extension:destroy()
+	if var_14_0.destroy then
+		var_14_0:destroy()
 	end
 end
 
-ScriptUnit.optimize = function (unit)
-	if Unit.alive(unit) then
-		local disable_shadows = Unit.get_data(unit, "disable_shadows")
+function ScriptUnit.optimize(arg_15_0)
+	if Unit.alive(arg_15_0) then
+		if Unit.get_data(arg_15_0, "disable_shadows") then
+			local var_15_0 = Unit.num_meshes(arg_15_0)
 
-		if disable_shadows then
-			local num_meshes = Unit.num_meshes(unit)
-
-			for i = 0, num_meshes - 1 do
-				Unit.set_mesh_visibility(unit, i, false, "shadow_caster")
+			for iter_15_0 = 0, var_15_0 - 1 do
+				Unit.set_mesh_visibility(arg_15_0, iter_15_0, false, "shadow_caster")
 			end
 		end
 
-		local force_ssm = Unit.get_data(unit, "force_ssm")
+		if Unit.get_data(arg_15_0, "force_ssm") then
+			local var_15_1 = Unit.num_meshes(arg_15_0)
 
-		if force_ssm then
-			local num_meshes = Unit.num_meshes(unit)
-
-			for i = 0, num_meshes - 1 do
-				Unit.set_mesh_ssm_visibility(unit, i, true)
+			for iter_15_1 = 0, var_15_1 - 1 do
+				Unit.set_mesh_ssm_visibility(arg_15_0, iter_15_1, true)
 			end
 		end
 
-		local disable_physics = Unit.get_data(unit, "disable_physics")
+		if Unit.get_data(arg_15_0, "disable_physics") then
+			local var_15_2 = Unit.num_actors(arg_15_0)
 
-		if disable_physics then
-			local num_actors = Unit.num_actors(unit)
-
-			for i = 0, num_actors - 1 do
-				Unit.destroy_actor(unit, i)
+			for iter_15_2 = 0, var_15_2 - 1 do
+				Unit.destroy_actor(arg_15_0, iter_15_2)
 			end
 		end
 	end
 end
 
-ScriptUnit.remove_extension = function (unit, system_name)
-	local_remove_extension(unit, system_name)
+function ScriptUnit.remove_extension(arg_16_0, arg_16_1)
+	var_0_3(arg_16_0, arg_16_1)
 end
 
-ScriptUnit.remove_unit = remove_unit
+ScriptUnit.remove_unit = var_0_2
 
-ScriptUnit.extension_definitions = function (unit)
-	local extensions = {}
-	local i = 0
+function ScriptUnit.extension_definitions(arg_17_0)
+	local var_17_0 = {}
+	local var_17_1 = 0
 
-	while Unit.has_data(unit, "extensions", i) do
-		local class_name = Unit.get_data(unit, "extensions", i)
-
-		i = i + 1
-		extensions[i] = class_name
+	while Unit.has_data(arg_17_0, "extensions", var_17_1) do
+		var_17_0[var_17_1], var_17_1 = Unit.get_data(arg_17_0, "extensions", var_17_1), var_17_1 + 1
 	end
 
-	return extensions, i
+	return var_17_0, var_17_1
 end
 
-ScriptUnit.move_extensions = function (unit, new_unit)
-	Entities[new_unit] = Entities[unit]
-	Entities[unit] = nil
+function ScriptUnit.move_extensions(arg_18_0, arg_18_1)
+	var_0_0[arg_18_1] = var_0_0[arg_18_0]
+	var_0_0[arg_18_0] = nil
 end
 
-ScriptUnit.save_scene_graph = function (unit)
-	local link_table = {}
+function ScriptUnit.save_scene_graph(arg_19_0)
+	local var_19_0 = {}
 
-	for node_index = 0, Unit.num_scene_graph_items(unit) - 1 do
-		local parent_node = Unit.scene_graph_parent(unit, node_index)
-		local local_pose = Matrix4x4Box(Unit.local_pose(unit, node_index))
+	for iter_19_0 = 0, Unit.num_scene_graph_items(arg_19_0) - 1 do
+		local var_19_1 = Unit.scene_graph_parent(arg_19_0, iter_19_0)
+		local var_19_2 = Matrix4x4Box(Unit.local_pose(arg_19_0, iter_19_0))
 
-		link_table[node_index] = {
-			parent = parent_node,
-			local_pose = local_pose,
+		var_19_0[iter_19_0] = {
+			parent = var_19_1,
+			local_pose = var_19_2
 		}
 	end
 
-	return link_table
+	return var_19_0
 end
 
-ScriptUnit.restore_scene_graph = function (unit, link_table)
-	for i, link in ipairs(link_table) do
-		if link.parent then
-			Unit.scene_graph_link(unit, i, link.parent)
-			Unit.set_local_pose(unit, i, link.local_pose:unbox())
+function ScriptUnit.restore_scene_graph(arg_20_0, arg_20_1)
+	for iter_20_0, iter_20_1 in ipairs(arg_20_1) do
+		if iter_20_1.parent then
+			Unit.scene_graph_link(arg_20_0, iter_20_0, iter_20_1.parent)
+			Unit.set_local_pose(arg_20_0, iter_20_0, iter_20_1.local_pose:unbox())
 		end
 	end
 end
 
-ScriptUnit.set_material_variable = function (unit, material_variable, value, include_children)
-	if type(value) == "number" then
-		Unit.set_scalar_for_materials(unit, material_variable, value, include_children)
-	elseif type(value) == "table" then
-		local num_values = #value
+function ScriptUnit.set_material_variable(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+	if type(arg_21_2) == "number" then
+		Unit.set_scalar_for_materials(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+	elseif type(arg_21_2) == "table" then
+		local var_21_0 = #arg_21_2
 
-		if num_values == 2 then
-			Unit.set_vector2_for_materials(unit, material_variable, Vector2(value[1], value[2]), include_children)
-		elseif num_values == 3 then
-			Unit.set_vector3_for_materials(unit, material_variable, Vector3(value[1], value[2], value[3]), include_children)
+		if var_21_0 == 2 then
+			Unit.set_vector2_for_materials(arg_21_0, arg_21_1, Vector2(arg_21_2[1], arg_21_2[2]), arg_21_3)
+		elseif var_21_0 == 3 then
+			Unit.set_vector3_for_materials(arg_21_0, arg_21_1, Vector3(arg_21_2[1], arg_21_2[2], arg_21_2[3]), arg_21_3)
 		else
-			Unit.set_vector4_for_materials(unit, material_variable, Color(value[1], value[2], value[3], value[4]), include_children)
+			Unit.set_vector4_for_materials(arg_21_0, arg_21_1, Color(arg_21_2[1], arg_21_2[2], arg_21_2[3], arg_21_2[4]), arg_21_3)
 		end
 	end
 end

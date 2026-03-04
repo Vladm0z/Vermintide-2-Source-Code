@@ -1,291 +1,286 @@
-﻿-- chunkname: @scripts/unit_extensions/human/ai_player_unit/ai_husk_locomotion_extension.lua
+-- chunkname: @scripts/unit_extensions/human/ai_player_unit/ai_husk_locomotion_extension.lua
 
 require("scripts/helpers/mover_helper")
 
-local ALLOWED_MOVER_MOVE_DISTANCE = 0.5
+local var_0_0 = 0.5
 
 AiHuskLocomotionExtension = class(AiHuskLocomotionExtension)
 
-AiHuskLocomotionExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self._unit = unit
-	self._system_data = extension_init_data.system_data
-	self._game = extension_init_data.game
-	self._go_id = extension_init_data.go_id
+function AiHuskLocomotionExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._unit = arg_1_2
+	arg_1_0._system_data = arg_1_3.system_data
+	arg_1_0._game = arg_1_3.game
+	arg_1_0._go_id = arg_1_3.go_id
 
-	Unit.set_animation_merge_options(unit)
+	Unit.set_animation_merge_options(arg_1_2)
 
-	self._velocity = Vector3Box(0, 0, 0)
-	self.breed = extension_init_data.breed
+	arg_1_0._velocity = Vector3Box(0, 0, 0)
+	arg_1_0.breed = arg_1_3.breed
 
-	local ai_system = Managers.state.entity:system("ai_system")
-	local client_traverse_logic = ai_system:client_traverse_logic()
+	local var_1_0 = Managers.state.entity:system("ai_system")
+	local var_1_1 = var_1_0:client_traverse_logic()
 
-	self._nav_world = ai_system:nav_world()
-	self._world = extension_init_context.world
-	self._traverse_logic = client_traverse_logic
-	self._move_speed_anim_var = Unit.animation_find_variable(unit, "move_speed")
-	self._animation_translation_scale = Vector3Box(1, 1, 1)
-	self._animation_rotation_scale = 1
-	self.is_affected_by_gravity = false
-	self.hit_wall = false
+	arg_1_0._nav_world = var_1_0:nav_world()
+	arg_1_0._world = arg_1_1.world
+	arg_1_0._traverse_logic = var_1_1
+	arg_1_0._move_speed_anim_var = Unit.animation_find_variable(arg_1_2, "move_speed")
+	arg_1_0._animation_translation_scale = Vector3Box(1, 1, 1)
+	arg_1_0._animation_rotation_scale = 1
+	arg_1_0.is_affected_by_gravity = false
+	arg_1_0.hit_wall = false
 
-	local level_settings = LevelHelper:current_level_settings()
-	local flow_event = level_settings.on_spawn_flow_event
+	local var_1_2 = LevelHelper:current_level_settings().on_spawn_flow_event
 
-	if flow_event then
-		Unit.flow_event(unit, flow_event)
+	if var_1_2 then
+		Unit.flow_event(arg_1_2, var_1_2)
 	end
 
-	self.constrain_min = {
+	arg_1_0.constrain_min = {
 		0,
 		0,
-		0,
+		0
 	}
-	self.constrain_max = {
+	arg_1_0.constrain_max = {
 		0,
 		0,
-		0,
+		0
 	}
-	self.last_lerp_position = Vector3Box(Unit.local_position(unit, 0))
-	self.last_lerp_position_offset = Vector3Box()
-	self.accumulated_movement = Vector3Box()
+	arg_1_0.last_lerp_position = Vector3Box(Unit.local_position(arg_1_2, 0))
+	arg_1_0.last_lerp_position_offset = Vector3Box()
+	arg_1_0.accumulated_movement = Vector3Box()
 
-	local has_teleported = GameSession.game_object_field(self._game, self._go_id, "has_teleported")
+	local var_1_3 = GameSession.game_object_field(arg_1_0._game, arg_1_0._go_id, "has_teleported")
 
-	self.has_teleported = has_teleported
-	self._pos_lerp_time = 0
-	self._update_function_name = "update_network_driven"
-	self._mover_state = MoverHelper.create_mover_state()
+	arg_1_0.has_teleported = var_1_3
+	arg_1_0._pos_lerp_time = 0
+	arg_1_0._update_function_name = "update_network_driven"
+	arg_1_0._mover_state = MoverHelper.create_mover_state()
 
-	local collision_actor_name = "c_mover_collision"
-	local has_collision_actor = Unit.actor(unit, collision_actor_name)
+	local var_1_4 = "c_mover_collision"
 
-	if has_collision_actor then
-		self._collision_state = MoverHelper.create_collision_state(unit, "c_mover_collision")
+	if Unit.actor(arg_1_2, var_1_4) then
+		arg_1_0._collision_state = MoverHelper.create_collision_state(arg_1_2, "c_mover_collision")
 	end
 
-	MoverHelper.set_active_mover(unit, self._mover_state, self.breed.default_mover or "mover")
-	self:set_mover_disable_reason("not_constrained_by_mover", true)
+	MoverHelper.set_active_mover(arg_1_2, arg_1_0._mover_state, arg_1_0.breed.default_mover or "mover")
+	arg_1_0:set_mover_disable_reason("not_constrained_by_mover", true)
 
-	self._system_data.all_update_units[unit] = self
-	self._system_data.pure_network_update_units[unit] = self
+	arg_1_0._system_data.all_update_units[arg_1_2] = arg_1_0
+	arg_1_0._system_data.pure_network_update_units[arg_1_2] = arg_1_0
 
-	local unit_template = Managers.state.unit_spawner.unit_template_lut[self.breed.unit_template]
-	local go_type = unit_template and unit_template.go_type
-	local game_object_template = Managers.state.network:game_object_template(go_type)
-	local should_sync_rotation = game_object_template and not game_object_template.syncs_rotation and false
+	local var_1_5 = Managers.state.unit_spawner.unit_template_lut[arg_1_0.breed.unit_template]
+	local var_1_6 = var_1_5 and var_1_5.go_type
+	local var_1_7 = Managers.state.network:game_object_template(var_1_6)
+	local var_1_8 = var_1_7 and not var_1_7.syncs_rotation and false
 
-	self._engine_extension_id = EngineOptimizedExtensions.ai_husk_locomotion_register_extension(unit, self._go_id, has_teleported, client_traverse_logic, should_sync_rotation)
+	arg_1_0._engine_extension_id = EngineOptimizedExtensions.ai_husk_locomotion_register_extension(arg_1_2, arg_1_0._go_id, var_1_3, var_1_1, var_1_8)
 
-	EngineOptimizedExtensions.ai_husk_locomotion_set_is_network_driven(self._engine_extension_id, true)
+	EngineOptimizedExtensions.ai_husk_locomotion_set_is_network_driven(arg_1_0._engine_extension_id, true)
 
-	self.is_network_driven = true
+	arg_1_0.is_network_driven = true
 end
 
-AiHuskLocomotionExtension.destroy = function (self)
-	self:_cleanup()
+function AiHuskLocomotionExtension.destroy(arg_2_0)
+	arg_2_0:_cleanup()
 end
 
-AiHuskLocomotionExtension.freeze = function (self)
-	self:_cleanup()
+function AiHuskLocomotionExtension.freeze(arg_3_0)
+	arg_3_0:_cleanup()
 end
 
-AiHuskLocomotionExtension._cleanup = function (self)
-	local unit = self._unit
+function AiHuskLocomotionExtension._cleanup(arg_4_0)
+	local var_4_0 = arg_4_0._unit
 
-	self._system_data.all_update_units[unit] = nil
-	self._system_data.pure_network_update_units[unit] = nil
-	self._system_data.other_update_units[unit] = nil
+	arg_4_0._system_data.all_update_units[var_4_0] = nil
+	arg_4_0._system_data.pure_network_update_units[var_4_0] = nil
+	arg_4_0._system_data.other_update_units[var_4_0] = nil
 
-	if self._engine_extension_id then
-		EngineOptimizedExtensions.ai_husk_locomotion_unregister_extension(self._engine_extension_id)
+	if arg_4_0._engine_extension_id then
+		EngineOptimizedExtensions.ai_husk_locomotion_unregister_extension(arg_4_0._engine_extension_id)
 
-		self._engine_extension_id = nil
+		arg_4_0._engine_extension_id = nil
 	end
 end
 
-AiHuskLocomotionExtension.unfreeze = function (self)
-	local unit = self._unit
+function AiHuskLocomotionExtension.unfreeze(arg_5_0)
+	local var_5_0 = arg_5_0._unit
 
-	Unit.set_animation_merge_options(unit)
-	self._velocity:store(Vector3(0, 0, 0))
-	self._animation_translation_scale:store(Vector3(1, 1, 1))
+	Unit.set_animation_merge_options(var_5_0)
+	arg_5_0._velocity:store(Vector3(0, 0, 0))
+	arg_5_0._animation_translation_scale:store(Vector3(1, 1, 1))
 
-	self._animation_rotation_scale = 1
-	self.is_affected_by_gravity = false
-	self.hit_wall = false
+	arg_5_0._animation_rotation_scale = 1
+	arg_5_0.is_affected_by_gravity = false
+	arg_5_0.hit_wall = false
 
-	local level_settings = LevelHelper:current_level_settings()
-	local flow_event = level_settings.on_spawn_flow_event
+	local var_5_1 = LevelHelper:current_level_settings().on_spawn_flow_event
 
-	if flow_event then
-		Unit.flow_event(unit, flow_event)
+	if var_5_1 then
+		Unit.flow_event(var_5_0, var_5_1)
 	end
 
-	self.constrain_min = {
+	arg_5_0.constrain_min = {
 		0,
 		0,
-		0,
+		0
 	}
-	self.constrain_max = {
+	arg_5_0.constrain_max = {
 		0,
 		0,
-		0,
+		0
 	}
 
-	self.last_lerp_position:store(Unit.local_position(unit, 0))
-	self.last_lerp_position_offset:store(Vector3(0, 0, 0))
-	self.accumulated_movement:store(Vector3(0, 0, 0))
+	arg_5_0.last_lerp_position:store(Unit.local_position(var_5_0, 0))
+	arg_5_0.last_lerp_position_offset:store(Vector3(0, 0, 0))
+	arg_5_0.accumulated_movement:store(Vector3(0, 0, 0))
 
-	self._pos_lerp_time = 0
-	self._update_function_name = "update_network_driven"
-	self._mover_state = MoverHelper.create_mover_state()
+	arg_5_0._pos_lerp_time = 0
+	arg_5_0._update_function_name = "update_network_driven"
+	arg_5_0._mover_state = MoverHelper.create_mover_state()
 
-	local collision_actor_name = "c_mover_collision"
-	local has_collision_actor = Unit.actor(unit, collision_actor_name)
+	local var_5_2 = "c_mover_collision"
 
-	if has_collision_actor then
-		self._collision_state = MoverHelper.create_collision_state(unit, "c_mover_collision")
+	if Unit.actor(var_5_0, var_5_2) then
+		arg_5_0._collision_state = MoverHelper.create_collision_state(var_5_0, "c_mover_collision")
 	end
 
-	MoverHelper.set_active_mover(unit, self._mover_state, self.breed.default_mover or "mover")
-	self:set_mover_disable_reason("not_constrained_by_mover", true)
+	MoverHelper.set_active_mover(var_5_0, arg_5_0._mover_state, arg_5_0.breed.default_mover or "mover")
+	arg_5_0:set_mover_disable_reason("not_constrained_by_mover", true)
 
-	self._system_data.all_update_units[unit] = self
-	self._system_data.pure_network_update_units[unit] = self
+	arg_5_0._system_data.all_update_units[var_5_0] = arg_5_0
+	arg_5_0._system_data.pure_network_update_units[var_5_0] = arg_5_0
 
-	local unit_template = Managers.state.unit_spawner.unit_template_lut[self.breed.unit_template]
-	local go_type = unit_template and unit_template.go_type
-	local game_object_template = Managers.state.network:game_object_template(go_type)
-	local should_sync_rotation = game_object_template and not game_object_template.syncs_rotation and false
+	local var_5_3 = Managers.state.unit_spawner.unit_template_lut[arg_5_0.breed.unit_template]
+	local var_5_4 = var_5_3 and var_5_3.go_type
+	local var_5_5 = Managers.state.network:game_object_template(var_5_4)
+	local var_5_6 = var_5_5 and not var_5_5.syncs_rotation and false
 
-	self._engine_extension_id = EngineOptimizedExtensions.ai_husk_locomotion_register_extension(unit, self._go_id, self.has_teleported, self._client_traverse_logic, should_sync_rotation)
+	arg_5_0._engine_extension_id = EngineOptimizedExtensions.ai_husk_locomotion_register_extension(var_5_0, arg_5_0._go_id, arg_5_0.has_teleported, arg_5_0._client_traverse_logic, var_5_6)
 
-	EngineOptimizedExtensions.ai_husk_locomotion_set_is_network_driven(self._engine_extension_id, true)
+	EngineOptimizedExtensions.ai_husk_locomotion_set_is_network_driven(arg_5_0._engine_extension_id, true)
 
-	self.is_network_driven = true
+	arg_5_0.is_network_driven = true
 end
 
-AiHuskLocomotionExtension.set_animation_translation_scale = function (self, animation_translation_scale)
-	self._animation_translation_scale = Vector3Box(animation_translation_scale)
+function AiHuskLocomotionExtension.set_animation_translation_scale(arg_6_0, arg_6_1)
+	arg_6_0._animation_translation_scale = Vector3Box(arg_6_1)
 
-	if self._engine_extension_id then
-		EngineOptimizedExtensions.ai_husk_locomotion_set_animation_translation_scale(self._engine_extension_id, animation_translation_scale)
-	end
-end
-
-AiHuskLocomotionExtension.set_animation_rotation_scale = function (self, animation_rotation_scale)
-	self._animation_rotation_scale = animation_rotation_scale
-
-	if self._engine_extension_id then
-		EngineOptimizedExtensions.ai_husk_locomotion_set_animation_rotation_scale(self._engine_extension_id, animation_rotation_scale)
+	if arg_6_0._engine_extension_id then
+		EngineOptimizedExtensions.ai_husk_locomotion_set_animation_translation_scale(arg_6_0._engine_extension_id, arg_6_1)
 	end
 end
 
-AiHuskLocomotionExtension.set_affected_by_gravity = function (self, affected)
-	self.is_affected_by_gravity = affected
+function AiHuskLocomotionExtension.set_animation_rotation_scale(arg_7_0, arg_7_1)
+	arg_7_0._animation_rotation_scale = arg_7_1
 
-	if self._engine_extension_id then
-		EngineOptimizedExtensions.ai_husk_locomotion_set_is_affected_by_gravity(self._engine_extension_id, affected)
+	if arg_7_0._engine_extension_id then
+		EngineOptimizedExtensions.ai_husk_locomotion_set_animation_rotation_scale(arg_7_0._engine_extension_id, arg_7_1)
 	end
 end
 
-AiHuskLocomotionExtension.set_animation_driven = function (self, is_animation_driven, is_affected_by_gravity, has_script_driven_rotation, is_on_transport)
-	if not self._engine_extension_id then
+function AiHuskLocomotionExtension.set_affected_by_gravity(arg_8_0, arg_8_1)
+	arg_8_0.is_affected_by_gravity = arg_8_1
+
+	if arg_8_0._engine_extension_id then
+		EngineOptimizedExtensions.ai_husk_locomotion_set_is_affected_by_gravity(arg_8_0._engine_extension_id, arg_8_1)
+	end
+end
+
+function AiHuskLocomotionExtension.set_animation_driven(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	if not arg_9_0._engine_extension_id then
 		return
 	end
 
-	is_affected_by_gravity = not not is_affected_by_gravity
-	self.is_animation_driven = is_animation_driven
-	self.has_network_driven_rotation = has_script_driven_rotation
-	self.is_affected_by_gravity = is_affected_by_gravity
-	self.hit_wall = false
+	arg_9_2 = not not arg_9_2
+	arg_9_0.is_animation_driven = arg_9_1
+	arg_9_0.has_network_driven_rotation = arg_9_3
+	arg_9_0.is_affected_by_gravity = arg_9_2
+	arg_9_0.hit_wall = false
 
-	local network_driven = not is_on_transport and (not is_animation_driven or not is_affected_by_gravity)
+	local var_9_0 = not arg_9_4 and (not arg_9_1 or not arg_9_2)
 
-	self.is_network_driven = network_driven
+	arg_9_0.is_network_driven = var_9_0
 
-	self:set_mover_disable_reason("not_constrained_by_mover", true)
+	arg_9_0:set_mover_disable_reason("not_constrained_by_mover", true)
 
-	local system_data = self._system_data
+	local var_9_1 = arg_9_0._system_data
 
-	if network_driven then
-		system_data.other_update_units[self._unit] = nil
-		system_data.pure_network_update_units[self._unit] = self
+	if var_9_0 then
+		var_9_1.other_update_units[arg_9_0._unit] = nil
+		var_9_1.pure_network_update_units[arg_9_0._unit] = arg_9_0
 	else
-		system_data.other_update_units[self._unit] = self
-		system_data.pure_network_update_units[self._unit] = nil
+		var_9_1.other_update_units[arg_9_0._unit] = arg_9_0
+		var_9_1.pure_network_update_units[arg_9_0._unit] = nil
 	end
 
-	EngineOptimizedExtensions.ai_husk_locomotion_set_has_network_driven_rotation(self._engine_extension_id, has_script_driven_rotation)
-	EngineOptimizedExtensions.ai_husk_locomotion_set_is_network_driven(self._engine_extension_id, network_driven)
-	EngineOptimizedExtensions.ai_husk_locomotion_set_is_affected_by_gravity(self._engine_extension_id, is_affected_by_gravity)
+	EngineOptimizedExtensions.ai_husk_locomotion_set_has_network_driven_rotation(arg_9_0._engine_extension_id, arg_9_3)
+	EngineOptimizedExtensions.ai_husk_locomotion_set_is_network_driven(arg_9_0._engine_extension_id, var_9_0)
+	EngineOptimizedExtensions.ai_husk_locomotion_set_is_affected_by_gravity(arg_9_0._engine_extension_id, arg_9_2)
 end
 
-AiHuskLocomotionExtension.set_mover_disable_reason = function (self, reason, state)
-	MoverHelper.set_disable_reason(self._unit, self._mover_state, reason, state)
+function AiHuskLocomotionExtension.set_mover_disable_reason(arg_10_0, arg_10_1, arg_10_2)
+	MoverHelper.set_disable_reason(arg_10_0._unit, arg_10_0._mover_state, arg_10_1, arg_10_2)
 end
 
-AiHuskLocomotionExtension.set_constrained = function (self, constrain, min, max)
-	if not self._engine_extension_id then
+function AiHuskLocomotionExtension.set_constrained(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+	if not arg_11_0._engine_extension_id then
 		return
 	end
 
-	self.is_constrained = constrain
+	arg_11_0.is_constrained = arg_11_1
 
-	if constrain then
-		Vector3Aux.box(self.constrain_min, min)
-		Vector3Aux.box(self.constrain_max, max)
+	if arg_11_1 then
+		Vector3Aux.box(arg_11_0.constrain_min, arg_11_2)
+		Vector3Aux.box(arg_11_0.constrain_max, arg_11_3)
 	end
 
-	EngineOptimizedExtensions.ai_husk_locomotion_set_is_constrained(self._engine_extension_id, constrain, min, max)
+	EngineOptimizedExtensions.ai_husk_locomotion_set_is_constrained(arg_11_0._engine_extension_id, arg_11_1, arg_11_2, arg_11_3)
 end
 
-AiHuskLocomotionExtension.teleport_to = function (self, position, rotation, velocity, dontseparate)
-	if not self._engine_extension_id then
+function AiHuskLocomotionExtension.teleport_to(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+	if not arg_12_0._engine_extension_id then
 		return
 	end
 
-	self.hit_wall = false
+	arg_12_0.hit_wall = false
 
-	local unit = self._unit
-	local mover = Unit.mover(unit)
+	local var_12_0 = arg_12_0._unit
+	local var_12_1 = Unit.mover(var_12_0)
 
-	if mover and not dontseparate then
-		local breed = self.breed
-		local mover_move_distance = breed.override_mover_move_distance or ALLOWED_MOVER_MOVE_DISTANCE
+	if var_12_1 and not arg_12_4 then
+		local var_12_2 = arg_12_0.breed.override_mover_move_distance or var_0_0
 
-		Mover.set_position(mover, position)
-		LocomotionUtils.separate_mover_fallbacks(mover, mover_move_distance)
+		Mover.set_position(var_12_1, arg_12_1)
+		LocomotionUtils.separate_mover_fallbacks(var_12_1, var_12_2)
 
-		position = Mover.position(mover)
+		arg_12_1 = Mover.position(var_12_1)
 	end
 
-	velocity = velocity or Vector3.zero()
+	arg_12_3 = arg_12_3 or Vector3.zero()
 
-	Unit.set_local_position(unit, 0, position)
-	Unit.set_local_rotation(unit, 0, rotation)
-	self._velocity:store(velocity)
+	Unit.set_local_position(var_12_0, 0, arg_12_1)
+	Unit.set_local_rotation(var_12_0, 0, arg_12_2)
+	arg_12_0._velocity:store(arg_12_3)
 
-	self._pos_lerp_time = 0
+	arg_12_0._pos_lerp_time = 0
 
-	EngineOptimizedExtensions.ai_husk_locomotion_teleport_to(self._engine_extension_id, position, rotation, velocity)
+	EngineOptimizedExtensions.ai_husk_locomotion_teleport_to(arg_12_0._engine_extension_id, arg_12_1, arg_12_2, arg_12_3)
 end
 
-AiHuskLocomotionExtension.set_collision_disabled = function (self, reason, state)
-	if self._collision_state then
-		MoverHelper.set_collision_disable_reason(self._unit, self._collision_state, reason, state)
+function AiHuskLocomotionExtension.set_collision_disabled(arg_13_0, arg_13_1, arg_13_2)
+	if arg_13_0._collision_state then
+		MoverHelper.set_collision_disable_reason(arg_13_0._unit, arg_13_0._collision_state, arg_13_1, arg_13_2)
 	end
 end
 
-AiHuskLocomotionExtension.current_velocity = function (self)
-	return self._velocity:unbox()
+function AiHuskLocomotionExtension.current_velocity(arg_14_0)
+	return arg_14_0._velocity:unbox()
 end
 
-AiHuskLocomotionExtension.traverse_logic = function (self)
-	return self._traverse_logic
+function AiHuskLocomotionExtension.traverse_logic(arg_15_0)
+	return arg_15_0._traverse_logic
 end
 
-AiHuskLocomotionExtension.hot_join_sync = function (self, sender)
+function AiHuskLocomotionExtension.hot_join_sync(arg_16_0, arg_16_1)
 	assert(false, "ai is never husk on server")
 end

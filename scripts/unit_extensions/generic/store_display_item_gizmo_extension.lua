@@ -1,73 +1,72 @@
-﻿-- chunkname: @scripts/unit_extensions/generic/store_display_item_gizmo_extension.lua
+-- chunkname: @scripts/unit_extensions/generic/store_display_item_gizmo_extension.lua
 
 StoreDisplayItemGizmoExtension = class(StoreDisplayItemGizmoExtension)
 
-StoreDisplayItemGizmoExtension.init = function (self, extension_init_context, unit, extension_init_data)
-	self._gizmo_unit = unit
-	self._world = extension_init_context.world
+function StoreDisplayItemGizmoExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	arg_1_0._gizmo_unit = arg_1_2
+	arg_1_0._world = arg_1_1.world
 
-	local store_display_key = Unit.get_data(unit, "store_display_key")
-	local backend_store = Managers.backend:get_interface("peddler")
-	local store_display_items = backend_store:store_display_items()
-	local item_key = store_display_items and store_display_items[store_display_key]
+	local var_1_0 = Unit.get_data(arg_1_2, "store_display_key")
+	local var_1_1 = Managers.backend:get_interface("peddler"):store_display_items()
+	local var_1_2 = var_1_1 and var_1_1[var_1_0]
 
-	if item_key then
-		self:spawn_prop(item_key)
-	elseif Unit.get_data(unit, "hide_if_empty") then
-		Unit.set_unit_visibility(unit, false)
-		Unit.disable_physics(unit)
+	if var_1_2 then
+		arg_1_0:spawn_prop(var_1_2)
+	elseif Unit.get_data(arg_1_2, "hide_if_empty") then
+		Unit.set_unit_visibility(arg_1_2, false)
+		Unit.disable_physics(arg_1_2)
 	end
 end
 
-StoreDisplayItemGizmoExtension.cb_display_item_loaded = function (self)
-	local unit = self._gizmo_unit
-	local node_name = "ap_hat"
-	local node_index = 0
+function StoreDisplayItemGizmoExtension.cb_display_item_loaded(arg_2_0)
+	local var_2_0 = arg_2_0._gizmo_unit
+	local var_2_1 = "ap_hat"
+	local var_2_2 = 0
 
-	if Unit.has_node(unit, node_name) then
-		node_index = Unit.node(unit, node_name)
+	if Unit.has_node(var_2_0, var_2_1) then
+		var_2_2 = Unit.node(var_2_0, var_2_1)
 	end
 
-	local world = self._world
-	local pose = Unit.world_pose(unit, node_index)
-	local display_unit = World.spawn_unit(world, self._display_unit_name, pose)
+	local var_2_3 = arg_2_0._world
+	local var_2_4 = Unit.world_pose(var_2_0, var_2_2)
+	local var_2_5 = World.spawn_unit(var_2_3, arg_2_0._display_unit_name, var_2_4)
 
-	self._display_unit = display_unit
+	arg_2_0._display_unit = var_2_5
 
-	World.link_unit(world, display_unit, unit, node_index)
+	World.link_unit(var_2_3, var_2_5, var_2_0, var_2_2)
 end
 
-StoreDisplayItemGizmoExtension.spawn_prop = function (self, item_master_list_id)
-	local item_data = ItemMasterList[item_master_list_id]
+function StoreDisplayItemGizmoExtension.spawn_prop(arg_3_0, arg_3_1)
+	local var_3_0 = ItemMasterList[arg_3_1]
 
-	if item_data then
-		local unit_name = item_data.unit
+	if var_3_0 then
+		local var_3_1 = var_3_0.unit
 
-		if not unit_name then
-			unit_name = item_data.left_hand_unit or item_data.right_hand_unit
-			unit_name = unit_name and unit_name .. "_3p"
+		if not var_3_1 then
+			var_3_1 = var_3_0.left_hand_unit or var_3_0.right_hand_unit
+			var_3_1 = var_3_1 and var_3_1 .. "_3p"
 		end
 
-		print("[StoreDisplayItemGizmoExtension] spawn prop", item_master_list_id, unit_name)
+		print("[StoreDisplayItemGizmoExtension] spawn prop", arg_3_1, var_3_1)
 
-		if unit_name then
-			self._display_unit_name = unit_name
+		if var_3_1 then
+			arg_3_0._display_unit_name = var_3_1
 
-			local cb = callback(self, "cb_display_item_loaded", unit_name)
+			local var_3_2 = callback(arg_3_0, "cb_display_item_loaded", var_3_1)
 
-			Managers.package:load(unit_name, "StoreDisplayItemGizmoExtension", cb, true, true)
+			Managers.package:load(var_3_1, "StoreDisplayItemGizmoExtension", var_3_2, true, true)
 		end
 	else
-		print("[StoreDisplayItemGizmoExtension] can't find master_item_id", item_master_list_id)
+		print("[StoreDisplayItemGizmoExtension] can't find master_item_id", arg_3_1)
 	end
 end
 
-StoreDisplayItemGizmoExtension.destroy = function (self)
-	if Unit.alive(self._display_unit) then
-		World.destroy_unit(self._world, self._display_unit)
+function StoreDisplayItemGizmoExtension.destroy(arg_4_0)
+	if Unit.alive(arg_4_0._display_unit) then
+		World.destroy_unit(arg_4_0._world, arg_4_0._display_unit)
 	end
 
-	if self._display_unit_name then
-		Managers.package:unload(self._display_unit_name, "StoreDisplayItemGizmoExtension")
+	if arg_4_0._display_unit_name then
+		Managers.package:unload(arg_4_0._display_unit_name, "StoreDisplayItemGizmoExtension")
 	end
 end

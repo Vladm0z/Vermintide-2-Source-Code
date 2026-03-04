@@ -1,22 +1,22 @@
-﻿-- chunkname: @scripts/managers/backend/statistics_definitions_wizards_part_1.lua
+-- chunkname: @scripts/managers/backend/statistics_definitions_wizards_part_1.lua
 
-local player = StatisticsDefinitions.player
-local database_names = {
+local var_0_0 = StatisticsDefinitions.player
+local var_0_1 = {
 	"trail_cog_strike",
 	"trail_shatterer",
 	"trail_sleigher",
 	"trail_beacons_are_lit",
 	"trail_bonfire_watch_tower",
 	"trail_bonfire_river_path",
-	"trail_bonfire_lookout_point",
+	"trail_bonfire_lookout_point"
 }
 
-for i = 1, #database_names do
-	local name = database_names[i]
+for iter_0_0 = 1, #var_0_1 do
+	local var_0_2 = var_0_1[iter_0_0]
 
-	player[name] = {
-		source = "player_data",
+	var_0_0[var_0_2] = {
 		value = 0,
-		database_name = name,
+		source = "player_data",
+		database_name = var_0_2
 	}
 end

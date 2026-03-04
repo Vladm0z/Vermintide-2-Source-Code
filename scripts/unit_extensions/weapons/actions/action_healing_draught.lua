@@ -1,75 +1,75 @@
-﻿-- chunkname: @scripts/unit_extensions/weapons/actions/action_healing_draught.lua
+-- chunkname: @scripts/unit_extensions/weapons/actions/action_healing_draught.lua
 
 ActionHealingDraught = class(ActionHealingDraught, ActionBase)
 
-ActionHealingDraught.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
-	ActionHealingDraught.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
+function ActionHealingDraught.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionHealingDraught.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	if ScriptUnit.has_extension(weapon_unit, "ammo_system") then
-		self.ammo_extension = ScriptUnit.extension(weapon_unit, "ammo_system")
+	if ScriptUnit.has_extension(arg_1_7, "ammo_system") then
+		arg_1_0.ammo_extension = ScriptUnit.extension(arg_1_7, "ammo_system")
 	end
 end
 
-ActionHealingDraught.client_owner_start_action = function (self, new_action, t)
-	ActionHealingDraught.super.client_owner_start_action(self, new_action, t)
+function ActionHealingDraught.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
+	ActionHealingDraught.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
 
-	self.current_action = new_action
+	arg_2_0.current_action = arg_2_1
 end
 
-ActionHealingDraught.client_owner_post_update = function (self, dt, t, world, can_damage)
+function ActionHealingDraught.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	return
 end
 
-ActionHealingDraught.finish = function (self, reason)
-	if reason == "dead" or reason == "knocked_down" or reason == "weapon_wielded" then
+function ActionHealingDraught.finish(arg_4_0, arg_4_1)
+	if arg_4_1 == "dead" or arg_4_1 == "knocked_down" or arg_4_1 == "weapon_wielded" then
 		return
 	end
 
-	local current_action = self.current_action
-	local owner_unit = self.owner_unit
-	local network_manager = Managers.state.network
-	local network_transmit = network_manager.network_transmit
-	local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
-	local heal_type = "healing_draught"
+	local var_4_0 = arg_4_0.current_action
+	local var_4_1 = arg_4_0.owner_unit
+	local var_4_2 = Managers.state.network
+	local var_4_3 = var_4_2.network_transmit
+	local var_4_4 = ScriptUnit.extension(var_4_1, "buff_system")
+	local var_4_5 = "healing_draught"
 
-	if current_action.dialogue_event then
-		local dialogue_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
-		local event_data = FrameTable.alloc_table()
+	if var_4_0.dialogue_event then
+		local var_4_6 = ScriptUnit.extension_input(var_4_1, "dialogue_system")
+		local var_4_7 = FrameTable.alloc_table()
 
-		dialogue_input:trigger_networked_dialogue_event(current_action.dialogue_event, event_data)
+		var_4_6:trigger_networked_dialogue_event(var_4_0.dialogue_event, var_4_7)
 	end
 
-	if buff_extension:has_buff_perk("no_permanent_health") then
-		heal_type = "healing_draught_temp_health"
+	if var_4_4:has_buff_perk("no_permanent_health") then
+		var_4_5 = "healing_draught_temp_health"
 	end
 
-	local heal_amount = Managers.state.game_mode:setting("healing_draught_heal_amount") or 75
+	local var_4_8 = Managers.state.game_mode:setting("healing_draught_heal_amount") or 75
 
-	if self.is_server or LEVEL_EDITOR_TEST then
-		DamageUtils.heal_network(owner_unit, owner_unit, heal_amount, heal_type)
+	if arg_4_0.is_server or LEVEL_EDITOR_TEST then
+		DamageUtils.heal_network(var_4_1, var_4_1, var_4_8, var_4_5)
 	else
-		local owner_unit_id = network_manager:unit_game_object_id(owner_unit)
-		local heal_type_id = NetworkLookup.heal_types[heal_type]
+		local var_4_9 = var_4_2:unit_game_object_id(var_4_1)
+		local var_4_10 = NetworkLookup.heal_types[var_4_5]
 
-		network_transmit:send_rpc_server("rpc_request_heal", owner_unit_id, heal_amount, heal_type_id)
+		var_4_3:send_rpc_server("rpc_request_heal", var_4_9, var_4_8, var_4_10)
 	end
 
-	local ammo_extension = self.ammo_extension
+	local var_4_11 = arg_4_0.ammo_extension
 
-	if ammo_extension then
-		local ammo_usage = current_action.ammo_usage
-		local _, procced = buff_extension:apply_buffs_to_value(0, "not_consume_medpack")
-		local inventory_extension = ScriptUnit.has_extension(owner_unit, "inventory_system")
+	if var_4_11 then
+		local var_4_12 = var_4_0.ammo_usage
+		local var_4_13, var_4_14 = var_4_4:apply_buffs_to_value(0, "not_consume_medpack")
+		local var_4_15 = ScriptUnit.has_extension(var_4_1, "inventory_system")
 
-		if not procced then
-			ammo_extension:use_ammo(ammo_usage)
+		if not var_4_14 then
+			var_4_11:use_ammo(var_4_12)
 		else
-			inventory_extension:wield_previous_weapon()
+			var_4_15:wield_previous_weapon()
 		end
 	end
 
-	local player = Managers.player:unit_owner(owner_unit)
-	local position = POSITION_LOOKUP[owner_unit]
+	local var_4_16 = Managers.player:unit_owner(var_4_1)
+	local var_4_17 = POSITION_LOOKUP[var_4_1]
 
-	Managers.telemetry_events:player_used_item(player, self.item_name, position)
+	Managers.telemetry_events:player_used_item(var_4_16, arg_4_0.item_name, var_4_17)
 end

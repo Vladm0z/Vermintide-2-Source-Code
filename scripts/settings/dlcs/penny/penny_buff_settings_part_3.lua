@@ -1,61 +1,59 @@
-﻿-- chunkname: @scripts/settings/dlcs/penny/penny_buff_settings_part_3.lua
+-- chunkname: @scripts/settings/dlcs/penny/penny_buff_settings_part_3.lua
 
-local settings = DLCSettings.penny_part_3
-local buff_perks = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local var_0_0 = DLCSettings.penny_part_3
+local var_0_1 = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
 
-settings.buff_templates = {
+var_0_0.buff_templates = {
 	enemy_penny_curse_pulse = {
 		buffs = {
 			{
+				update_func = "enemy_penny_curse_pulse",
 				name = "penny_curse_pulse",
 				radius = 3,
-				tick_rate = 0.5,
-				update_func = "enemy_penny_curse_pulse",
-			},
-		},
+				tick_rate = 0.5
+			}
+		}
 	},
 	enemy_penny_curse = {
 		buffs = {
 			{
-				debuff = true,
 				duration = 5,
-				icon = "troll_vomit_debuff",
-				max_stacks = 50,
 				name = "penny_curse",
+				debuff = true,
+				max_stacks = 50,
+				icon = "troll_vomit_debuff",
 				refresh_durations = true,
 				perks = {
-					buff_perks.slayer_curse,
-				},
-			},
-		},
-	},
+					var_0_1.slayer_curse
+				}
+			}
+		}
+	}
 }
-settings.buff_function_templates = {
-	enemy_penny_curse_pulse = function (unit, buff, params, world)
-		local t = params.t
+var_0_0.buff_function_templates = {
+	enemy_penny_curse_pulse = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+		local var_1_0 = arg_1_2.t
 
-		if Managers.state.network.is_server and HEALTH_ALIVE[unit] and (buff.next_tick == nil or buff.next_tick and t > buff.next_tick) then
-			local buff_system = Managers.state.entity:system("buff_system")
-			local side_manager = Managers.state.side
-			local template = buff.template
-			local tick_rate = template.tick_rate
-			local radius = template.radius
-			local nearby_player_units = FrameTable.alloc_table()
-			local proximity_extension = Managers.state.entity:system("proximity_system")
-			local broadphase = proximity_extension.player_units_broadphase
+		if Managers.state.network.is_server and HEALTH_ALIVE[arg_1_0] and (arg_1_1.next_tick == nil or arg_1_1.next_tick and var_1_0 > arg_1_1.next_tick) then
+			local var_1_1 = Managers.state.entity:system("buff_system")
+			local var_1_2 = Managers.state.side
+			local var_1_3 = arg_1_1.template
+			local var_1_4 = var_1_3.tick_rate
+			local var_1_5 = var_1_3.radius
+			local var_1_6 = FrameTable.alloc_table()
+			local var_1_7 = Managers.state.entity:system("proximity_system").player_units_broadphase
 
-			Broadphase.query(broadphase, POSITION_LOOKUP[unit], radius, nearby_player_units)
+			Broadphase.query(var_1_7, POSITION_LOOKUP[arg_1_0], var_1_5, var_1_6)
 
-			buff.next_tick = t + tick_rate
+			arg_1_1.next_tick = var_1_0 + var_1_4
 
-			for _, player_unit in pairs(nearby_player_units) do
-				local player = Managers.player:owner(player_unit)
-				local is_bot = player and not player:is_player_controlled()
+			for iter_1_0, iter_1_1 in pairs(var_1_6) do
+				local var_1_8 = Managers.player:owner(iter_1_1)
 
-				if not is_bot and side_manager:is_enemy(unit, player_unit) then
-					buff_system:add_buff(player_unit, "enemy_penny_curse", unit, false)
+				if not (var_1_8 and not var_1_8:is_player_controlled()) and var_1_2:is_enemy(arg_1_0, iter_1_1) then
+					var_1_1:add_buff(iter_1_1, "enemy_penny_curse", arg_1_0, false)
 				end
 			end
 		end
-	end,
+	end
 }

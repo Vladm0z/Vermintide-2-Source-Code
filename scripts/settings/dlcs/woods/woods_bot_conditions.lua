@@ -1,73 +1,67 @@
-﻿-- chunkname: @scripts/settings/dlcs/woods/woods_bot_conditions.lua
+-- chunkname: @scripts/settings/dlcs/woods/woods_bot_conditions.lua
 
 BTConditions.can_activate = BTConditions.can_activate or {}
 BTConditions.can_activate_non_combat = BTConditions.can_activate_non_combat or {}
 
 table.merge_recursive(BTConditions.ability_check_categories, {
 	activate_ability = {
-		we_thornsister = true,
-	},
+		we_thornsister = true
+	}
 })
 
-local wall_max_distance_sq = 100
-local wall_prio_distance = 8
-local wall_placement_bias = 1.5
+local var_0_0 = 100
+local var_0_1 = 8
+local var_0_2 = 1.5
 
-BTConditions.can_activate.we_thornsister = function (blackboard)
-	local self_unit = blackboard.unit
-	local talent_extension = ScriptUnit.has_extension(self_unit, "talent_system")
-	local is_smiter_ability = talent_extension and talent_extension:has_talent("kerillian_thorn_sister_debuff_wall")
+function BTConditions.can_activate.we_thornsister(arg_1_0)
+	local var_1_0 = arg_1_0.unit
+	local var_1_1 = ScriptUnit.has_extension(var_1_0, "talent_system")
+	local var_1_2 = var_1_1 and var_1_1:has_talent("kerillian_thorn_sister_debuff_wall")
 
-	if not is_smiter_ability then
-		local threat, num_enemies = Managers.state.conflict:get_threat_value()
+	if not var_1_2 then
+		local var_1_3, var_1_4 = Managers.state.conflict:get_threat_value()
 
-		if num_enemies < 20 then
+		if var_1_4 < 20 then
 			return false
 		end
 	end
 
-	local self_position = POSITION_LOOKUP[self_unit]
-	local target_unit = blackboard.target_unit
-	local target_blackboard = BLACKBOARDS[target_unit]
-	local wall_target
-	local forward_offset = 0
+	local var_1_5 = POSITION_LOOKUP[var_1_0]
+	local var_1_6 = arg_1_0.target_unit
+	local var_1_7 = BLACKBOARDS[var_1_6]
+	local var_1_8
+	local var_1_9 = 0
 
-	if target_unit then
-		local wall_target_distance_sq = Vector3.distance_squared(self_position, POSITION_LOOKUP[target_unit])
+	if var_1_6 then
+		local var_1_10 = Vector3.distance_squared(var_1_5, POSITION_LOOKUP[var_1_6])
 
-		if wall_target_distance_sq <= wall_max_distance_sq and wall_target_distance_sq >= 4 then
-			if is_smiter_ability then
-				local target_breed = target_blackboard and target_blackboard.breed
-				local target_threat_value = target_breed and target_breed.threat_value or 0
+		if var_1_10 <= var_0_0 and var_1_10 >= 4 then
+			if var_1_2 then
+				local var_1_11 = var_1_7 and var_1_7.breed
+				local var_1_12 = var_1_11 and var_1_11.threat_value or 0
 
-				if target_unit == blackboard.priority_target_enemy or target_unit == blackboard.urgent_target_enemy or target_unit == blackboard.opportunity_target_enemy or target_threat_value >= 8 then
-					wall_target = target_unit
+				if var_1_6 == arg_1_0.priority_target_enemy or var_1_6 == arg_1_0.urgent_target_enemy or var_1_6 == arg_1_0.opportunity_target_enemy or var_1_12 >= 8 then
+					var_1_8 = var_1_6
 				end
-			else
-				local proximite_enemies = blackboard.proximite_enemies
-				local num_proximite_enemies = #proximite_enemies
-
-				if num_proximite_enemies >= 10 then
-					wall_target = target_unit
-					forward_offset = -(math.sqrt(wall_target_distance_sq) / wall_placement_bias)
-				end
+			elseif #arg_1_0.proximite_enemies >= 10 then
+				var_1_8 = var_1_6
+				var_1_9 = -(math.sqrt(var_1_10) / var_0_2)
 			end
 		end
 	end
 
-	if wall_target then
-		local wall_target_position = POSITION_LOOKUP[wall_target]
-		local wall_target_direction = Vector3.normalize(wall_target_position - self_position)
-		local check_position = wall_target_position + wall_target_direction * math.max(forward_offset, 0)
-		local nav_world = blackboard.nav_world
-		local navigation_extension = target_blackboard and target_blackboard.navigation_extension
-		local traverse_logic = navigation_extension and navigation_extension:traverse_logic()
-		local success = is_smiter_ability or LocomotionUtils.ray_can_go_on_mesh(nav_world, self_position, check_position, traverse_logic, 1, 1)
+	if var_1_8 then
+		local var_1_13 = POSITION_LOOKUP[var_1_8]
+		local var_1_14 = Vector3.normalize(var_1_13 - var_1_5)
+		local var_1_15 = var_1_13 + var_1_14 * math.max(var_1_9, 0)
+		local var_1_16 = arg_1_0.nav_world
+		local var_1_17 = var_1_7 and var_1_7.navigation_extension
+		local var_1_18 = var_1_17 and var_1_17:traverse_logic()
 
-		if success then
-			local target_pos = wall_target_position + wall_target_direction * forward_offset
+		if var_1_2 or LocomotionUtils.ray_can_go_on_mesh(var_1_16, var_1_5, var_1_15, var_1_18, 1, 1) then
+			local var_1_19 = var_1_13 + var_1_14 * var_1_9
 
-			blackboard.activate_ability_data.aim_position:store(target_pos)
+			arg_1_0.activate_ability_data.aim_position:store(var_1_19)
 
 			return true
 		end

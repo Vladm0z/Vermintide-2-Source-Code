@@ -1,37 +1,31 @@
-﻿-- chunkname: @scripts/settings/terror_events/terror_event_utils.lua
+-- chunkname: @scripts/settings/terror_events/terror_event_utils.lua
 
 require("scripts/settings/grudge_mark_settings")
 
 TerrorEventUtils = {}
 
-TerrorEventUtils.count_event_breed = function (breed_name)
-	return Managers.state.conflict:count_units_by_breed_during_event(breed_name)
+function TerrorEventUtils.count_event_breed(arg_1_0)
+	return Managers.state.conflict:count_units_by_breed_during_event(arg_1_0)
 end
 
-TerrorEventUtils.num_spawned_enemies = function ()
-	local spawned_enemies = Managers.state.conflict:spawned_enemies()
-
-	return #spawned_enemies
+function TerrorEventUtils.num_spawned_enemies()
+	return #Managers.state.conflict:spawned_enemies()
 end
 
-TerrorEventUtils.count_breed = function (breed_name)
-	return Managers.state.conflict:count_units_by_breed(breed_name)
+function TerrorEventUtils.count_breed(arg_3_0)
+	return Managers.state.conflict:count_units_by_breed(arg_3_0)
 end
 
-TerrorEventUtils.num_alive_standards = function ()
-	local alive_standards = Managers.state.conflict:alive_standards()
-
-	return #alive_standards
+function TerrorEventUtils.num_alive_standards()
+	return #Managers.state.conflict:alive_standards()
 end
 
-TerrorEventUtils.spawned_during_event = function ()
+function TerrorEventUtils.spawned_during_event()
 	return Managers.state.conflict:enemies_spawned_during_event()
 end
 
-TerrorEventUtils.num_spawned_enemies_during_event = function ()
-	local spawned_enemies = Managers.state.conflict:enemies_spawned_during_event()
-
-	return spawned_enemies
+function TerrorEventUtils.num_spawned_enemies_during_event()
+	return (Managers.state.conflict:enemies_spawned_during_event())
 end
 
 TerrorEventUtils.NORMAL = 2
@@ -42,164 +36,158 @@ TerrorEventUtils.CATACLYSM = 6
 TerrorEventUtils.CATACLYSM2 = 7
 TerrorEventUtils.CATACLYSM3 = 8
 
-local terror_seed
+local var_0_0
 
-TerrorEventUtils.set_seed = function (seed)
-	terror_seed = seed
+function TerrorEventUtils.set_seed(arg_7_0)
+	var_0_0 = arg_7_0
 end
 
-TerrorEventUtils.random = function (...)
-	local seed, value = Math.next_random(terror_seed or 0, ...)
+function TerrorEventUtils.random(...)
+	local var_8_0, var_8_1 = Math.next_random(var_0_0 or 0, ...)
 
-	terror_seed = seed
+	var_0_0 = var_8_0
 
-	return value
+	return var_8_1
 end
 
-TerrorEventUtils.get_grudge_marked_name = function (breed_name, magic_number, breed_enhancement_attributes)
-	local breed = Breeds[breed_name]
-	local faction = breed.race
-	local name_list = GrudgeMarkedNames[BreedEnhancements] or GrudgeMarkedNames[breed_name] or GrudgeMarkedNames[faction]
+function TerrorEventUtils.get_grudge_marked_name(arg_9_0, arg_9_1, arg_9_2)
+	local var_9_0 = Breeds[arg_9_0].race
+	local var_9_1 = GrudgeMarkedNames[BreedEnhancements] or GrudgeMarkedNames[arg_9_0] or GrudgeMarkedNames[var_9_0]
 
-	if breed_enhancement_attributes then
-		for k, v in pairs(breed_enhancement_attributes) do
-			if GrudgeMarkedNames[k] then
-				name_list = GrudgeMarkedNames[k]
+	if arg_9_2 then
+		for iter_9_0, iter_9_1 in pairs(arg_9_2) do
+			if GrudgeMarkedNames[iter_9_0] then
+				var_9_1 = GrudgeMarkedNames[iter_9_0]
 			end
 		end
 	end
 
-	fassert(name_list, "%s is not a valid breed, or does not have a valid race set in its breed data", breed_name)
+	fassert(var_9_1, "%s is not a valid breed, or does not have a valid race set in its breed data", arg_9_0)
 
-	local index = magic_number % #name_list + 1
-	local name = Localize(name_list[index])
+	local var_9_2 = arg_9_1 % #var_9_1 + 1
 
-	return name
+	return (Localize(var_9_1[var_9_2]))
 end
 
-TerrorEventUtils.apply_breed_enhancements = function (unit, breed, optional_data)
-	local ai_system = Managers.state.entity:system("ai_system")
-	local name_index = optional_data.name_index or TerrorEventUtils.random(16384)
+function TerrorEventUtils.apply_breed_enhancements(arg_10_0, arg_10_1, arg_10_2)
+	local var_10_0 = Managers.state.entity:system("ai_system")
+	local var_10_1 = arg_10_2.name_index or TerrorEventUtils.random(16384)
 
-	ai_system:set_attribute(unit, "name_index", "grudge_marked", name_index)
+	var_10_0:set_attribute(arg_10_0, "name_index", "grudge_marked", var_10_1)
 
-	local buff_system = Managers.state.entity:system("buff_system")
-	local enhancements = optional_data.enhancements
-	local is_illusion = table.find_by_key(enhancements, "name", "intangible_mirror") ~= nil
+	local var_10_2 = Managers.state.entity:system("buff_system")
+	local var_10_3 = arg_10_2.enhancements
+	local var_10_4 = table.find_by_key(var_10_3, "name", "intangible_mirror") ~= nil
 
-	for enchantment_i = 1, #enhancements do
-		local enhancement_data = enhancements[enchantment_i]
+	for iter_10_0 = 1, #var_10_3 do
+		local var_10_5 = var_10_3[iter_10_0]
 
-		if not enhancement_data.no_attribute then
-			ai_system:set_attribute(unit, enhancement_data.name, "breed_enhancements", true)
+		if not var_10_5.no_attribute then
+			var_10_0:set_attribute(arg_10_0, var_10_5.name, "breed_enhancements", true)
 		end
 
-		if not is_illusion or enhancement_data.name == "mirror_base" or enhancement_data.name == "intangible_mirror" then
-			for data_i = 1, #enhancement_data do
-				local buff_name = enhancement_data[data_i]
+		if not var_10_4 or var_10_5.name == "mirror_base" or var_10_5.name == "intangible_mirror" then
+			for iter_10_1 = 1, #var_10_5 do
+				local var_10_6 = var_10_5[iter_10_1]
 
-				buff_system:add_buff(unit, buff_name, unit, true)
+				var_10_2:add_buff(arg_10_0, var_10_6, arg_10_0, true)
 			end
 		end
 	end
 end
 
-TerrorEventUtils.generate_enhanced_breed = function (num_enhancements, breed_name, enhancement_set)
-	enhancement_set = enhancement_set or BossGrudgeMarks
+function TerrorEventUtils.generate_enhanced_breed(arg_11_0, arg_11_1, arg_11_2)
+	arg_11_2 = arg_11_2 or BossGrudgeMarks
 
-	local t = {}
-	local result_list = {
-		BreedEnhancements.base,
+	local var_11_0 = {}
+	local var_11_1 = {
+		BreedEnhancements.base
 	}
 
-	for name, _ in pairs(enhancement_set) do
-		t[#t + 1] = name
+	for iter_11_0, iter_11_1 in pairs(arg_11_2) do
+		var_11_0[#var_11_0 + 1] = iter_11_0
 	end
 
-	local banned_breed_enhancements = BreedEnhancementBannedBreeds[breed_name]
+	local var_11_2 = BreedEnhancementBannedBreeds[arg_11_1]
 
-	if banned_breed_enhancements then
-		for i = #t, 1, -1 do
-			local enhancement_name = t[i]
-
-			if banned_breed_enhancements[enhancement_name] then
-				table.swap_delete(t, i)
+	if var_11_2 then
+		for iter_11_2 = #var_11_0, 1, -1 do
+			if var_11_2[var_11_0[iter_11_2]] then
+				table.swap_delete(var_11_0, iter_11_2)
 			end
 		end
 	end
 
-	for _ = 1, num_enhancements do
-		local index = TerrorEventUtils.random(#t)
+	for iter_11_3 = 1, arg_11_0 do
+		local var_11_3 = TerrorEventUtils.random(#var_11_0)
 
-		if index <= 0 then
+		if var_11_3 <= 0 then
 			break
 		end
 
-		local name = t[index]
-		local enhancement_data = BreedEnhancements[name]
+		local var_11_4 = var_11_0[var_11_3]
+		local var_11_5 = BreedEnhancements[var_11_4]
 
-		table.swap_delete(t, index)
+		table.swap_delete(var_11_0, var_11_3)
 
-		local exclusion_list = BreedEnhancementExclusionList[enhancement_data.name]
+		local var_11_6 = BreedEnhancementExclusionList[var_11_5.name]
 
-		if exclusion_list then
-			for enhancement_i = #t, 1, -1 do
-				local enhancement_name = t[enhancement_i]
-
-				if exclusion_list[enhancement_name] then
-					table.swap_delete(t, enhancement_i)
+		if var_11_6 then
+			for iter_11_4 = #var_11_0, 1, -1 do
+				if var_11_6[var_11_0[iter_11_4]] then
+					table.swap_delete(var_11_0, iter_11_4)
 				end
 			end
 		end
 
-		result_list[#result_list + 1] = enhancement_data
+		var_11_1[#var_11_1 + 1] = var_11_5
 	end
 
-	return result_list
+	return var_11_1
 end
 
-TerrorEventUtils.generate_enhanced_breed_from_set = function (enhancement_set)
-	local list = {}
-	local BreedEnhancements = BreedEnhancements
+function TerrorEventUtils.generate_enhanced_breed_from_set(arg_12_0)
+	local var_12_0 = {}
+	local var_12_1 = BreedEnhancements
 
-	for name, value in pairs(enhancement_set) do
-		if value and BreedEnhancements[name] then
-			local enhancement = BreedEnhancements[name]
+	for iter_12_0, iter_12_1 in pairs(arg_12_0) do
+		if iter_12_1 and var_12_1[iter_12_0] then
+			local var_12_2 = var_12_1[iter_12_0]
 
-			list[#list + 1] = enhancement
+			var_12_0[#var_12_0 + 1] = var_12_2
 		end
 	end
 
-	if #list > 0 then
-		list[#list + 1] = BreedEnhancements.base
+	if #var_12_0 > 0 then
+		var_12_0[#var_12_0 + 1] = var_12_1.base
 
-		return list
+		return var_12_0
 	end
 
 	return nil
 end
 
-TerrorEventUtils.add_enhancements_to_spawn_data = function (optional_data, num_enhancements, breed_name, enhancement_set)
-	if num_enhancements > 0 then
-		optional_data = optional_data or {}
-		optional_data.enhancements = TerrorEventUtils.generate_enhanced_breed(num_enhancements, breed_name, enhancement_set or BossGrudgeMarks)
+function TerrorEventUtils.add_enhancements_to_spawn_data(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	if arg_13_1 > 0 then
+		arg_13_0 = arg_13_0 or {}
+		arg_13_0.enhancements = TerrorEventUtils.generate_enhanced_breed(arg_13_1, arg_13_2, arg_13_3 or BossGrudgeMarks)
 	end
 
-	return optional_data
+	return arg_13_0
 end
 
-TerrorEventUtils.add_enhancements_for_difficulty = function (optional_data, difficulty, breed_name, event, difficulty_tweak, enhancement_set)
-	optional_data = optional_data or {}
+function TerrorEventUtils.add_enhancements_for_difficulty(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+	arg_14_0 = arg_14_0 or {}
 
-	local num_enhancements = DifficultyTweak.converters.closest_tweak_match(difficulty, difficulty_tweak, BREED_ENHANCEMENTS_PER_DIFFICULTY) or 0
+	local var_14_0 = DifficultyTweak.converters.closest_tweak_match(arg_14_1, arg_14_4, BREED_ENHANCEMENTS_PER_DIFFICULTY) or 0
 
-	if num_enhancements > 0 then
-		enhancement_set = enhancement_set or BossGrudgeMarks
+	if var_14_0 > 0 then
+		arg_14_5 = arg_14_5 or BossGrudgeMarks
 
-		return TerrorEventUtils.add_enhancements_to_spawn_data(optional_data, num_enhancements, breed_name, enhancement_set)
+		return TerrorEventUtils.add_enhancements_to_spawn_data(arg_14_0, var_14_0, arg_14_2, arg_14_5)
 	end
 
-	return optional_data
+	return arg_14_0
 end
 
 return TerrorEventUtils

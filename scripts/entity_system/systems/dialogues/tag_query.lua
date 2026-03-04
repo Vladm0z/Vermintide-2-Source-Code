@@ -1,130 +1,130 @@
-﻿-- chunkname: @scripts/entity_system/systems/dialogues/tag_query.lua
+-- chunkname: @scripts/entity_system/systems/dialogues/tag_query.lua
 
 TagQuery = TagQuery or {}
 TagQuery.__index = TagQuery
 
-TagQuery.add = function (self, ...)
-	local n_args = select("#", ...)
+function TagQuery.add(arg_1_0, ...)
+	local var_1_0 = select("#", ...)
 
-	fassert(n_args == math.floor(n_args / 2) * 2, "Uneven amount of args, number of arguments: %d", n_args)
+	fassert(var_1_0 == math.floor(var_1_0 / 2) * 2, "Uneven amount of args, number of arguments: %d", var_1_0)
 
-	local query_context = self.query_context
+	local var_1_1 = arg_1_0.query_context
 
-	for i = 1, n_args, 2 do
-		local key, value = select(i, ...)
+	for iter_1_0 = 1, var_1_0, 2 do
+		local var_1_2, var_1_3 = select(iter_1_0, ...)
 
-		query_context[key] = value
+		var_1_1[var_1_2] = var_1_3
 	end
 
-	fassert(not self.finalized, "Tried to add query after finalized.")
+	fassert(not arg_1_0.finalized, "Tried to add query after finalized.")
 end
 
-TagQuery.get_result = function (self)
-	return self.completed, self.result
+function TagQuery.get_result(arg_2_0)
+	return arg_2_0.completed, arg_2_0.result
 end
 
-TagQuery.finalize = function (self)
-	self.tagquery_database:add_query(self)
+function TagQuery.finalize(arg_3_0)
+	arg_3_0.tagquery_database:add_query(arg_3_0)
 
-	self.finalized = true
+	arg_3_0.finalized = true
 end
 
 TagQuery.OP = TagQuery.OP or {
 	EQ = setmetatable({}, {
-		__tostring = function ()
+		__tostring = function()
 			return "EQ"
-		end,
+		end
 	}),
 	LT = setmetatable({}, {
-		__tostring = function ()
+		__tostring = function()
 			return "LT"
-		end,
+		end
 	}),
 	GT = setmetatable({}, {
-		__tostring = function ()
+		__tostring = function()
 			return "GT"
-		end,
+		end
 	}),
 	LTEQ = setmetatable({}, {
-		__tostring = function ()
+		__tostring = function()
 			return "LTEQ"
-		end,
+		end
 	}),
 	GTEQ = setmetatable({}, {
-		__tostring = function ()
+		__tostring = function()
 			return "GTEQ"
-		end,
+		end
 	}),
 	SUB = setmetatable({}, {
-		__tostring = function ()
+		__tostring = function()
 			return "SUB"
-		end,
+		end
 	}),
 	ADD = setmetatable({}, {
-		__tostring = function ()
+		__tostring = function()
 			return "ADD"
-		end,
+		end
 	}),
 	NEQ = setmetatable({}, {
-		__tostring = function ()
+		__tostring = function()
 			return "NEQ"
-		end,
+		end
 	}),
 	NOT = setmetatable({}, {
-		__tostring = function ()
+		__tostring = function()
 			return "NOT"
-		end,
+		end
 	}),
 	RAND = setmetatable({}, {
-		__tostring = function ()
+		__tostring = function()
 			return "RAND"
-		end,
+		end
 	}),
 	TIMEDIFF = setmetatable({}, {
-		__tostring = function ()
+		__tostring = function()
 			return "TIMEDIFF"
-		end,
+		end
 	}),
 	TIMESET = setmetatable({}, {
-		__tostring = function ()
+		__tostring = function()
 			return "TIMESET"
-		end,
+		end
 	}),
 	NUMSET = setmetatable({}, {
-		__tostring = function ()
+		__tostring = function()
 			return "NUMSET"
-		end,
-	}),
+		end
+	})
 }
 TagQuery.CombiningOP = TagQuery.CombiningOP or {
 	AND_NEXT = setmetatable({}, {
-		__tostring = function ()
+		__tostring = function()
 			return "AND_NEXT"
-		end,
+		end
 	}),
 	OR_NEXT = setmetatable({}, {
-		__tostring = function ()
+		__tostring = function()
 			return "OR_NEXT"
-		end,
-	}),
+		end
+	})
 }
 TagQuery.FilterOP = TagQuery.FilterOP or {
-	EQ = function (a, b)
-		return a == b
+	EQ = function(arg_19_0, arg_19_1)
+		return arg_19_0 == arg_19_1
 	end,
-	NEQ = function (a, b)
-		return a ~= b
+	NEQ = function(arg_20_0, arg_20_1)
+		return arg_20_0 ~= arg_20_1
 	end,
-	LT = function (a, b)
-		return a < b
+	LT = function(arg_21_0, arg_21_1)
+		return arg_21_0 < arg_21_1
 	end,
-	GT = function (a, b)
-		return b < a
+	GT = function(arg_22_0, arg_22_1)
+		return arg_22_1 < arg_22_0
 	end,
-	LTEQ = function (a, b)
-		return a <= b
+	LTEQ = function(arg_23_0, arg_23_1)
+		return arg_23_0 <= arg_23_1
 	end,
-	GTEQ = function (a, b)
-		return b <= a
-	end,
+	GTEQ = function(arg_24_0, arg_24_1)
+		return arg_24_1 <= arg_24_0
+	end
 }

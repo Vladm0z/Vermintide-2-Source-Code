@@ -1,241 +1,239 @@
-﻿-- chunkname: @scripts/ui/views/level_end/level_end_view_wrapper.lua
+-- chunkname: @scripts/ui/views/level_end/level_end_view_wrapper.lua
 
 require("scripts/ui/views/level_end/level_end_view_v2")
 
-local RPCS = {
+local var_0_0 = {
 	"rpc_signal_end_of_level_done",
-	"rpc_notify_lobby_joined",
+	"rpc_notify_lobby_joined"
 }
 
-for _, dlc in pairs(DLCSettings) do
-	local end_view_files = dlc.end_view
+for iter_0_0, iter_0_1 in pairs(DLCSettings) do
+	local var_0_1 = iter_0_1.end_view
 
-	if end_view_files then
-		table.map(end_view_files, require)
+	if var_0_1 then
+		table.map(var_0_1, require)
 	end
 end
 
 LevelEndViewWrapper = class(LevelEndViewWrapper)
 
-LevelEndViewWrapper.init = function (self, level_end_view_context)
-	self._level_end_view_context = level_end_view_context
+function LevelEndViewWrapper.init(arg_1_0, arg_1_1)
+	arg_1_0._level_end_view_context = arg_1_1
 
-	self:_create_input_service()
+	arg_1_0:_create_input_service()
 
-	self._delayed_calls = {}
+	arg_1_0._delayed_calls = {}
 
-	self:_load_level_packages()
+	arg_1_0:_load_level_packages()
 end
 
-LevelEndViewWrapper._load_level_packages = function (self)
-	self._level_packages = self._level_end_view_context.level_end_view_packages or {}
+function LevelEndViewWrapper._load_level_packages(arg_2_0)
+	arg_2_0._level_packages = arg_2_0._level_end_view_context.level_end_view_packages or {}
 
-	local asynchronous = true
-	local prioritize = true
-	local cb = callback(self, "cb_package_loaded")
+	local var_2_0 = true
+	local var_2_1 = true
+	local var_2_2 = callback(arg_2_0, "cb_package_loaded")
 
-	if not table.is_empty(self._level_packages) then
-		for _, package_name in ipairs(self._level_packages) do
-			Managers.package:load(package_name, "end_screen", cb, asynchronous, prioritize)
+	if not table.is_empty(arg_2_0._level_packages) then
+		for iter_2_0, iter_2_1 in ipairs(arg_2_0._level_packages) do
+			Managers.package:load(iter_2_1, "end_screen", var_2_2, var_2_0, var_2_1)
 		end
 	else
-		cb()
+		var_2_2()
 	end
 end
 
-LevelEndViewWrapper.cb_package_loaded = function (self)
-	for _, package_name in ipairs(self._level_packages) do
-		if not Managers.package:has_loaded(package_name, "end_screen") then
+function LevelEndViewWrapper.cb_package_loaded(arg_3_0)
+	for iter_3_0, iter_3_1 in ipairs(arg_3_0._level_packages) do
+		if not Managers.package:has_loaded(iter_3_1, "end_screen") then
 			return
 		end
 	end
 
-	self:_initiate_level_end_view()
+	arg_3_0:_initiate_level_end_view()
 end
 
-LevelEndViewWrapper._unload_level_packages = function (self)
-	for _, package_name in ipairs(self._level_packages) do
-		Managers.package:unload(package_name, "end_screen")
+function LevelEndViewWrapper._unload_level_packages(arg_4_0)
+	for iter_4_0, iter_4_1 in ipairs(arg_4_0._level_packages) do
+		Managers.package:unload(iter_4_1, "end_screen")
 	end
 end
 
-LevelEndViewWrapper.active_input_service = function (self)
-	return self._level_end_view:active_input_service()
+function LevelEndViewWrapper.active_input_service(arg_5_0)
+	return arg_5_0._level_end_view:active_input_service()
 end
 
-LevelEndViewWrapper.enable_chat = function (self)
-	if not self._level_end_view then
+function LevelEndViewWrapper.enable_chat(arg_6_0)
+	if not arg_6_0._level_end_view then
 		return false
 	end
 
-	return self._level_end_view:enable_chat()
+	return arg_6_0._level_end_view:enable_chat()
 end
 
-LevelEndViewWrapper._initiate_level_end_view = function (self)
-	local level_end_view = self._level_end_view_context.level_end_view
+function LevelEndViewWrapper._initiate_level_end_view(arg_7_0)
+	local var_7_0 = arg_7_0._level_end_view_context.level_end_view
 
-	if level_end_view then
-		local class = rawget(_G, level_end_view)
-
-		self._level_end_view = class:new(self._level_end_view_context)
+	if var_7_0 then
+		arg_7_0._level_end_view = rawget(_G, var_7_0):new(arg_7_0._level_end_view_context)
 	else
-		self._level_end_view = LevelEndView:new(self._level_end_view_context)
+		arg_7_0._level_end_view = LevelEndView:new(arg_7_0._level_end_view_context)
 	end
 
-	for i = 1, #self._delayed_calls do
-		local delayed_call = self._delayed_calls[i]
+	for iter_7_0 = 1, #arg_7_0._delayed_calls do
+		local var_7_1 = arg_7_0._delayed_calls[iter_7_0]
 
-		self._level_end_view[delayed_call.func](self._level_end_view, unpack(delayed_call.parameters))
+		arg_7_0._level_end_view[var_7_1.func](arg_7_0._level_end_view, unpack(var_7_1.parameters))
 	end
 
-	table.clear(self._delayed_calls)
+	table.clear(arg_7_0._delayed_calls)
 end
 
-LevelEndViewWrapper._create_input_service = function (self)
-	local input_manager = Managers.input
+function LevelEndViewWrapper._create_input_service(arg_8_0)
+	local var_8_0 = Managers.input
 
-	input_manager:create_input_service("end_of_level", "IngameMenuKeymaps", "EndLevelViewKeymapsFilters")
-	input_manager:map_device_to_service("end_of_level", "keyboard")
-	input_manager:map_device_to_service("end_of_level", "mouse")
-	input_manager:map_device_to_service("end_of_level", "gamepad")
-	input_manager:block_device_except_service("end_of_level", "keyboard", 1)
-	input_manager:block_device_except_service("end_of_level", "mouse", 1)
-	input_manager:block_device_except_service("end_of_level", "gamepad", 1)
+	var_8_0:create_input_service("end_of_level", "IngameMenuKeymaps", "EndLevelViewKeymapsFilters")
+	var_8_0:map_device_to_service("end_of_level", "keyboard")
+	var_8_0:map_device_to_service("end_of_level", "mouse")
+	var_8_0:map_device_to_service("end_of_level", "gamepad")
+	var_8_0:block_device_except_service("end_of_level", "keyboard", 1)
+	var_8_0:block_device_except_service("end_of_level", "mouse", 1)
+	var_8_0:block_device_except_service("end_of_level", "gamepad", 1)
 
-	self._level_end_view_context.input_manager = input_manager
+	arg_8_0._level_end_view_context.input_manager = var_8_0
 end
 
-LevelEndViewWrapper.destroy = function (self)
-	if self._registered_rpcs then
-		self:unregister_rpcs()
+function LevelEndViewWrapper.destroy(arg_9_0)
+	if arg_9_0._registered_rpcs then
+		arg_9_0:unregister_rpcs()
 	end
 
 	if not Managers.chat:chat_is_focused() then
-		local input_manager = Managers.input
+		local var_9_0 = Managers.input
 
-		input_manager:device_unblock_all_services("keyboard")
-		input_manager:device_unblock_all_services("mouse")
-		input_manager:device_unblock_all_services("gamepad")
+		var_9_0:device_unblock_all_services("keyboard")
+		var_9_0:device_unblock_all_services("mouse")
+		var_9_0:device_unblock_all_services("gamepad")
 	end
 
-	if self._level_end_view then
-		self._level_end_view:delete()
+	if arg_9_0._level_end_view then
+		arg_9_0._level_end_view:delete()
 
-		self._level_end_view = nil
+		arg_9_0._level_end_view = nil
 	end
 
-	self._level_end_view_context = nil
+	arg_9_0._level_end_view_context = nil
 
-	self:_unload_level_packages()
+	arg_9_0:_unload_level_packages()
 end
 
-LevelEndViewWrapper.game_state_changed = function (self)
-	self:_create_input_service()
+function LevelEndViewWrapper.game_state_changed(arg_10_0)
+	arg_10_0:_create_input_service()
 
-	local input_manager = Managers.input
+	local var_10_0 = Managers.input
 
-	if self._level_end_view then
-		self._level_end_view:set_input_manager(input_manager)
+	if arg_10_0._level_end_view then
+		arg_10_0._level_end_view:set_input_manager(var_10_0)
 	else
-		self._delayed_calls[#self._delayed_calls + 1] = {
+		arg_10_0._delayed_calls[#arg_10_0._delayed_calls + 1] = {
 			func = "set_input_manager",
 			parameters = {
-				input_manager,
-			},
+				var_10_0
+			}
 		}
 	end
 end
 
-LevelEndViewWrapper.start = function (self, ...)
-	if self._level_end_view then
-		self._level_end_view:start()
+function LevelEndViewWrapper.start(arg_11_0, ...)
+	if arg_11_0._level_end_view then
+		arg_11_0._level_end_view:start()
 	else
-		self._delayed_calls[#self._delayed_calls + 1] = {
+		arg_11_0._delayed_calls[#arg_11_0._delayed_calls + 1] = {
 			func = "start",
 			parameters = {
-				...,
-			},
+				...
+			}
 		}
 	end
 end
 
-LevelEndViewWrapper.done = function (self)
-	if not self._level_end_view then
+function LevelEndViewWrapper.done(arg_12_0)
+	if not arg_12_0._level_end_view then
 		return false
 	end
 
-	return self._level_end_view:done()
+	return arg_12_0._level_end_view:done()
 end
 
-LevelEndViewWrapper.do_retry = function (self)
-	if not self._level_end_view then
+function LevelEndViewWrapper.do_retry(arg_13_0)
+	if not arg_13_0._level_end_view then
 		return
 	end
 
-	return self._level_end_view:do_retry()
+	return arg_13_0._level_end_view:do_retry()
 end
 
-LevelEndViewWrapper.register_rpcs = function (self, network_event_delegate)
-	network_event_delegate:register(self, unpack(RPCS))
+function LevelEndViewWrapper.register_rpcs(arg_14_0, arg_14_1)
+	arg_14_1:register(arg_14_0, unpack(var_0_0))
 
-	self._network_event_delegate = network_event_delegate
-	self._registered_rpcs = true
+	arg_14_0._network_event_delegate = arg_14_1
+	arg_14_0._registered_rpcs = true
 end
 
-LevelEndViewWrapper.unregister_rpcs = function (self)
-	self._network_event_delegate:unregister(self)
+function LevelEndViewWrapper.unregister_rpcs(arg_15_0)
+	arg_15_0._network_event_delegate:unregister(arg_15_0)
 
-	self._network_event_delegate = nil
-	self._registered_rpcs = false
+	arg_15_0._network_event_delegate = nil
+	arg_15_0._registered_rpcs = false
 end
 
-LevelEndViewWrapper.rpc_signal_end_of_level_done = function (self, ...)
-	if self._level_end_view then
-		self._level_end_view:rpc_signal_end_of_level_done(...)
+function LevelEndViewWrapper.rpc_signal_end_of_level_done(arg_16_0, ...)
+	if arg_16_0._level_end_view then
+		arg_16_0._level_end_view:rpc_signal_end_of_level_done(...)
 	else
-		self._delayed_calls[#self._delayed_calls + 1] = {
+		arg_16_0._delayed_calls[#arg_16_0._delayed_calls + 1] = {
 			func = "rpc_signal_end_of_level_done",
 			parameters = {
-				...,
-			},
+				...
+			}
 		}
 	end
 end
 
-LevelEndViewWrapper.rpc_notify_lobby_joined = function (self, ...)
-	if self._level_end_view then
-		self._level_end_view:rpc_notify_lobby_joined(...)
+function LevelEndViewWrapper.rpc_notify_lobby_joined(arg_17_0, ...)
+	if arg_17_0._level_end_view then
+		arg_17_0._level_end_view:rpc_notify_lobby_joined(...)
 	else
-		self._delayed_calls[#self._delayed_calls + 1] = {
+		arg_17_0._delayed_calls[#arg_17_0._delayed_calls + 1] = {
 			func = "rpc_notify_lobby_joined",
 			parameters = {
-				...,
-			},
+				...
+			}
 		}
 	end
 end
 
-LevelEndViewWrapper.left_lobby = function (self, ...)
-	if self._level_end_view then
-		self._level_end_view:left_lobby(...)
+function LevelEndViewWrapper.left_lobby(arg_18_0, ...)
+	if arg_18_0._level_end_view then
+		arg_18_0._level_end_view:left_lobby(...)
 	else
-		self._delayed_calls[#self._delayed_calls + 1] = {
+		arg_18_0._delayed_calls[#arg_18_0._delayed_calls + 1] = {
 			func = "left_lobby",
 			parameters = {
-				...,
-			},
+				...
+			}
 		}
 	end
 end
 
-LevelEndViewWrapper.update = function (self, dt, t)
-	if self._level_end_view then
-		self._level_end_view:update(dt, t)
+function LevelEndViewWrapper.update(arg_19_0, arg_19_1, arg_19_2)
+	if arg_19_0._level_end_view then
+		arg_19_0._level_end_view:update(arg_19_1, arg_19_2)
 	end
 end
 
-LevelEndViewWrapper.post_update = function (self, dt, t)
-	if self._level_end_view then
-		self._level_end_view:post_update(dt, t)
+function LevelEndViewWrapper.post_update(arg_20_0, arg_20_1, arg_20_2)
+	if arg_20_0._level_end_view then
+		arg_20_0._level_end_view:post_update(arg_20_1, arg_20_2)
 	end
 end

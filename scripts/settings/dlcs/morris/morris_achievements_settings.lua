@@ -1,16 +1,16 @@
-﻿-- chunkname: @scripts/settings/dlcs/morris/morris_achievements_settings.lua
+-- chunkname: @scripts/settings/dlcs/morris/morris_achievements_settings.lua
 
-local settings = DLCSettings.morris
+local var_0_0 = DLCSettings.morris
 
-settings.achievement_template_file_names = {
-	"scripts/managers/achievements/achievement_templates_morris",
+var_0_0.achievement_template_file_names = {
+	"scripts/managers/achievements/achievement_templates_morris"
 }
-settings.achievement_outline = {
+var_0_0.achievement_outline = {
 	levels = {
 		categories = {
 			{
-				name = "area_selection_morris_name",
 				sorting = 7,
+				name = "area_selection_morris_name",
 				entries = {
 					"morris_complete_journey_citadel",
 					"morris_complete_journey_dominant_god_khorne",
@@ -31,9 +31,9 @@ settings.achievement_outline = {
 					"morris_complete_journey_citadel_bw_cataclysm",
 					"morris_complete_journey_citadel_es_champion",
 					"morris_complete_journey_citadel_es_legend",
-					"morris_complete_journey_citadel_es_cataclysm",
-				},
-			},
-		},
-	},
+					"morris_complete_journey_citadel_es_cataclysm"
+				}
+			}
+		}
+	}
 }

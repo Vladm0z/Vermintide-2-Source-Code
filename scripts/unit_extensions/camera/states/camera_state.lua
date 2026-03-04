@@ -1,12 +1,12 @@
-﻿-- chunkname: @scripts/unit_extensions/camera/states/camera_state.lua
+-- chunkname: @scripts/unit_extensions/camera/states/camera_state.lua
 
 CameraState = class(CameraState)
 
-CameraState.init = function (self, character_state_init_context, name)
-	self.name = name
-	self.world = character_state_init_context.world
-	self.unit = character_state_init_context.unit
-	self.csm = character_state_init_context.csm
-	self.temp_params = {}
-	self.camera_extension = ScriptUnit.extension(self.unit, "camera_system")
+function CameraState.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0.name = arg_1_2
+	arg_1_0.world = arg_1_1.world
+	arg_1_0.unit = arg_1_1.unit
+	arg_1_0.csm = arg_1_1.csm
+	arg_1_0.temp_params = {}
+	arg_1_0.camera_extension = ScriptUnit.extension(arg_1_0.unit, "camera_system")
 end

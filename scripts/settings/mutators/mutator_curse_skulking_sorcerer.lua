@@ -1,69 +1,65 @@
-﻿-- chunkname: @scripts/settings/mutators/mutator_curse_skulking_sorcerer.lua
+-- chunkname: @scripts/settings/mutators/mutator_curse_skulking_sorcerer.lua
 
-local base_skulking_sorcerer = require("scripts/settings/mutators/mutator_skulking_sorcerer")
-local curse_skulking_sorcerer = table.clone(base_skulking_sorcerer)
-local NORMAL = 2
-local HARD = 3
-local HARDER = 4
-local HARDEST = 5
-local CATACLYSM = 6
-local CATACLYSM_2 = 6
-local CATACLYSM_3 = 7
-local RESPAWN_TIME = {
-	[NORMAL] = 30,
-	[HARD] = 30,
-	[HARDER] = 30,
-	[HARDEST] = 30,
-	[CATACLYSM] = 30,
+local var_0_0 = require("scripts/settings/mutators/mutator_skulking_sorcerer")
+local var_0_1 = table.clone(var_0_0)
+local var_0_2 = 2
+local var_0_3 = 3
+local var_0_4 = 4
+local var_0_5 = 5
+local var_0_6 = 6
+local var_0_7 = 6
+local var_0_8 = 7
+local var_0_9 = {
+	[var_0_2] = 30,
+	[var_0_3] = 30,
+	[var_0_4] = 30,
+	[var_0_5] = 30,
+	[var_0_6] = 30
 }
-local MAX_HEALTH = {
-	[NORMAL] = 20,
-	[HARD] = 30,
-	[HARDER] = 44,
-	[HARDEST] = 66,
-	[CATACLYSM] = 90,
-	[CATACLYSM_2] = 120,
-	[CATACLYSM_3] = 150,
+local var_0_10 = {
+	[var_0_2] = 20,
+	[var_0_3] = 30,
+	[var_0_4] = 44,
+	[var_0_5] = 66,
+	[var_0_6] = 90,
+	[var_0_7] = 120,
+	[var_0_8] = 150
 }
 
-curse_skulking_sorcerer.display_name = "curse_skulking_sorcerer_name"
-curse_skulking_sorcerer.description = "curse_skulking_sorcerer_desc"
-curse_skulking_sorcerer.icon = "deus_curse_nurgle_01"
+var_0_1.display_name = "curse_skulking_sorcerer_name"
+var_0_1.description = "curse_skulking_sorcerer_desc"
+var_0_1.icon = "deus_curse_nurgle_01"
 
-curse_skulking_sorcerer.server_initialize_function = function (context, data)
-	MutatorUtils.store_breed_and_action_settings(context, data)
+function var_0_1.server_initialize_function(arg_1_0, arg_1_1)
+	MutatorUtils.store_breed_and_action_settings(arg_1_0, arg_1_1)
 
-	Breeds.curse_mutator_sorcerer.max_health = MAX_HEALTH
+	Breeds.curse_mutator_sorcerer.max_health = var_0_10
 end
 
-curse_skulking_sorcerer.server_start_function = function (context, data)
-	base_skulking_sorcerer.server_start_function(context, data)
+function var_0_1.server_start_function(arg_2_0, arg_2_1)
+	var_0_0.server_start_function(arg_2_0, arg_2_1)
 
-	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local respawn_time = RESPAWN_TIME[difficulty_rank] or RESPAWN_TIME[NORMAL]
+	local var_2_0 = Managers.state.difficulty:get_difficulty_rank()
+	local var_2_1 = var_0_9[var_2_0] or var_0_9[var_0_2]
 
-	data.respawn_times = {
-		respawn_time,
-		respawn_time + 1,
+	arg_2_1.respawn_times = {
+		var_2_1,
+		var_2_1 + 1
 	}
-	data.breed_name = "curse_mutator_sorcerer"
+	arg_2_1.breed_name = "curse_mutator_sorcerer"
 end
 
-curse_skulking_sorcerer.server_stop_function = function (context, data)
-	MutatorUtils.restore_breed_and_action_settings(context, data)
+function var_0_1.server_stop_function(arg_3_0, arg_3_1)
+	MutatorUtils.restore_breed_and_action_settings(arg_3_0, arg_3_1)
 end
 
-curse_skulking_sorcerer.server_ai_killed_function = function (context, data, killed_unit, killer_unit, death_data)
-	if death_data.breed.name == "curse_mutator_sorcerer" and HEALTH_ALIVE[killer_unit] then
-		local killed_by_player = Managers.player:is_player_unit(killer_unit)
+function var_0_1.server_ai_killed_function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	if arg_4_4.breed.name == "curse_mutator_sorcerer" and HEALTH_ALIVE[arg_4_3] and Managers.player:is_player_unit(arg_4_3) then
+		local var_4_0 = ScriptUnit.extension_input(arg_4_3, "dialogue_system")
+		local var_4_1 = FrameTable.alloc_table()
 
-		if killed_by_player then
-			local dialogue_input = ScriptUnit.extension_input(killer_unit, "dialogue_system")
-			local event_data = FrameTable.alloc_table()
-
-			dialogue_input:trigger_dialogue_event("curse_positive_effect_happened", event_data)
-		end
+		var_4_0:trigger_dialogue_event("curse_positive_effect_happened", var_4_1)
 	end
 end
 
-return curse_skulking_sorcerer
+return var_0_1

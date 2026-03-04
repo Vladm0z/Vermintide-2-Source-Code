@@ -1,621 +1,621 @@
-﻿-- chunkname: @dialogues/generated/enemy_beastmen_vo.lua
+-- chunkname: @dialogues/generated/enemy_beastmen_vo.lua
 
-return function ()
+return function()
 	define_rule({
-		name = "ebb_a_gameplay_running_towards_players",
 		probability = 1,
+		name = "ebb_a_gameplay_running_towards_players",
 		response = "ebb_a_gameplay_running_towards_players",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"running",
+				"running"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"beastmen_bestigor",
+				"beastmen_bestigor"
 			},
 			{
 				"query_context",
 				"distance",
 				OP.GT,
-				5,
+				5
 			},
 			{
 				"faction_memory",
 				"time_since_beastmen_bestigor",
 				OP.TIMEDIFF,
 				OP.GT,
-				2,
-			},
+				2
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_beastmen_bestigor",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ebb_gameplay_bardin_present",
 		probability = 1,
+		name = "ebb_gameplay_bardin_present",
 		response = "ebb_gameplay_bardin_present",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"enemy_target_changed",
+				"enemy_target_changed"
 			},
 			{
 				"query_context",
 				"target_name",
 				OP.EQ,
-				"dwarf_ranger",
+				"dwarf_ranger"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"beastmen_bestigor",
+				"beastmen_bestigor"
 			},
 			{
 				"faction_memory",
 				"time_since_bestigor_targeting",
 				OP.TIMEDIFF,
 				OP.GT,
-				2,
-			},
+				2
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_bestigor_targeting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ebb_gameplay_kerillian_present",
 		probability = 1,
+		name = "ebb_gameplay_kerillian_present",
 		response = "ebb_gameplay_kerillian_present",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"enemy_target_changed",
+				"enemy_target_changed"
 			},
 			{
 				"query_context",
 				"target_name",
 				OP.EQ,
-				"wood_elf",
+				"wood_elf"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"beastmen_bestigor",
+				"beastmen_bestigor"
 			},
 			{
 				"faction_memory",
 				"time_since_bestigor_targeting",
 				OP.TIMEDIFF,
 				OP.GT,
-				2,
-			},
+				2
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_bestigor_targeting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ebb_gameplay_kruber_present",
 		probability = 1,
+		name = "ebb_gameplay_kruber_present",
 		response = "ebb_gameplay_kruber_present",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"enemy_target_changed",
+				"enemy_target_changed"
 			},
 			{
 				"query_context",
 				"target_name",
 				OP.EQ,
-				"empire_soldier",
+				"empire_soldier"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"beastmen_bestigor",
+				"beastmen_bestigor"
 			},
 			{
 				"faction_memory",
 				"time_since_bestigor_targeting",
 				OP.TIMEDIFF,
 				OP.GT,
-				2,
-			},
+				2
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_bestigor_targeting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ebb_gameplay_no_damage_taunt",
 		probability = 1,
+		name = "ebb_gameplay_no_damage_taunt",
 		response = "ebb_gameplay_no_damage_taunt",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"no_damage_taunt_player",
+				"no_damage_taunt_player"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"beastmen_bestigor",
+				"beastmen_bestigor"
 			},
 			{
 				"faction_memory",
 				"time_since_bestigot_taunt",
 				OP.TIMEDIFF,
 				OP.GT,
-				10,
-			},
+				10
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_bestigot_taunt",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ebb_gameplay_saltzpyre_present",
 		probability = 1,
+		name = "ebb_gameplay_saltzpyre_present",
 		response = "ebb_gameplay_saltzpyre_present",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"enemy_target_changed",
+				"enemy_target_changed"
 			},
 			{
 				"query_context",
 				"target_name",
 				OP.EQ,
-				"witch_hunter",
+				"witch_hunter"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"beastmen_bestigor",
+				"beastmen_bestigor"
 			},
 			{
 				"faction_memory",
 				"time_since_bestigor_targeting",
 				OP.TIMEDIFF,
 				OP.GT,
-				2,
-			},
+				2
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_bestigor_targeting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ebb_gameplay_sienna_present",
 		probability = 1,
+		name = "ebb_gameplay_sienna_present",
 		response = "ebb_gameplay_sienna_present",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"enemy_target_changed",
+				"enemy_target_changed"
 			},
 			{
 				"query_context",
 				"target_name",
 				OP.EQ,
-				"bright_wizard",
+				"bright_wizard"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"beastmen_bestigor",
+				"beastmen_bestigor"
 			},
 			{
 				"faction_memory",
 				"time_since_bestigor_targeting",
 				OP.TIMEDIFF,
 				OP.GT,
-				2,
-			},
+				2
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_bestigor_targeting",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ebg_alerted",
 		probability = 1,
+		name = "ebg_alerted",
 		response = "ebg_alerted",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"alerted",
+				"alerted"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"beastmen_gor",
+				"beastmen_gor"
 			},
 			{
 				"faction_memory",
 				"time_since_gor_alerted",
 				OP.TIMEDIFF,
 				OP.GT,
-				2,
-			},
+				2
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_gor_alerted",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ebg_gameplay_dogpile_shouts",
 		probability = 1,
+		name = "ebg_gameplay_dogpile_shouts",
 		response = "ebg_gameplay_dogpile_shouts",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"shouting",
+				"shouting"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"beastmen_gor",
+				"beastmen_gor"
 			},
 			{
 				"faction_memory",
 				"time_since_gor_shout",
 				OP.TIMEDIFF,
 				OP.GT,
-				2,
-			},
+				2
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_gor_shout",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ebg_gameplay_flanking_players",
 		probability = 1,
+		name = "ebg_gameplay_flanking_players",
 		response = "ebg_gameplay_flanking_players",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"flanking",
+				"flanking"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"beastmen_gor",
+				"beastmen_gor"
 			},
 			{
 				"faction_memory",
 				"time_since_gor_flanking",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_gor_flanking",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ebg_gameplay_running_towards_players",
 		probability = 1,
+		name = "ebg_gameplay_running_towards_players",
 		response = "ebg_gameplay_running_towards_players",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"running",
+				"running"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"beastmen_gor",
+				"beastmen_gor"
 			},
 			{
 				"query_context",
 				"distance",
 				OP.GT,
-				6,
+				6
 			},
 			{
 				"faction_memory",
 				"time_since_gor_running",
 				OP.TIMEDIFF,
 				OP.GT,
-				5,
-			},
+				5
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_gor_running",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ebu_gameplay_dogpile_shouts",
 		probability = 1,
+		name = "ebu_gameplay_dogpile_shouts",
 		response = "ebu_gameplay_dogpile_shouts",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"shouting",
+				"shouting"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"beastmen_ungor",
+				"beastmen_ungor"
 			},
 			{
 				"faction_memory",
 				"time_since_beastmen_ungor",
 				OP.TIMEDIFF,
 				OP.GT,
-				2,
-			},
+				2
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_beastmen_ungor",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ebu_gameplay_flanking_players",
 		probability = 1,
+		name = "ebu_gameplay_flanking_players",
 		response = "ebu_gameplay_flanking_players",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"flanking",
+				"flanking"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"beastmen_ungor",
+				"beastmen_ungor"
 			},
 			{
 				"faction_memory",
 				"time_since_ungor_flanking",
 				OP.TIMEDIFF,
 				OP.GT,
-				7,
-			},
+				7
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_ungor_flanking",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
+		response = "ebu_gameplay_ranged_fire_in_group",
 		name = "ebu_gameplay_ranged_fire_in_group",
 		probability = 1,
-		response = "ebu_gameplay_ranged_fire_in_group",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"fire_in_group",
+				"fire_in_group"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"beastmen_ungor",
-			},
-		},
+				"beastmen_ungor"
+			}
+		}
 	})
 	define_rule({
-		name = "ebu_gameplay_running_in_horde",
 		probability = 1,
+		name = "ebu_gameplay_running_in_horde",
 		response = "ebu_gameplay_running_in_horde",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"running",
+				"running"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"beastmen_ungor",
+				"beastmen_ungor"
 			},
 			{
 				"query_context",
 				"distance",
 				OP.GT,
-				10,
+				10
 			},
 			{
 				"query_context",
 				"num_units",
 				OP.GT,
-				3,
+				3
 			},
 			{
 				"faction_memory",
 				"time_since_ungor_running",
 				OP.TIMEDIFF,
 				OP.GT,
-				2,
-			},
+				2
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_ungor_running",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ebu_gameplay_running_towards_players",
 		probability = 1,
+		name = "ebu_gameplay_running_towards_players",
 		response = "ebu_gameplay_running_towards_players",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"running",
+				"running"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"beastmen_ungor",
+				"beastmen_ungor"
 			},
 			{
 				"query_context",
 				"distance",
 				OP.GT,
-				5,
+				5
 			},
 			{
 				"faction_memory",
 				"time_since_ungor_running",
 				OP.TIMEDIFF,
 				OP.GT,
-				2,
-			},
+				2
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_ungor_running",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	define_rule({
-		name = "ebu_gameplay_taunt",
 		probability = 1,
+		name = "ebu_gameplay_taunt",
 		response = "ebu_gameplay_taunt",
 		criterias = {
 			{
 				"query_context",
 				"concept",
 				OP.EQ,
-				"taunt",
+				"taunt"
 			},
 			{
 				"query_context",
 				"source_name",
 				OP.EQ,
-				"beastmen_ungor",
+				"beastmen_ungor"
 			},
 			{
 				"faction_memory",
 				"time_since_beastmen_ungor_taunt",
 				OP.TIMEDIFF,
 				OP.GT,
-				2,
-			},
+				2
+			}
 		},
 		on_done = {
 			{
 				"faction_memory",
 				"time_since_beastmen_ungor_taunt",
-				OP.TIMESET,
-			},
-		},
+				OP.TIMESET
+			}
+		}
 	})
 	add_dialogues({
 		ebb_a_gameplay_running_towards_players = {
-			category = "enemy_basic_prio",
-			database = "enemy_beastmen_vo",
-			dialogue_animations_n = 11,
-			face_animations_n = 11,
 			randomize_indexes_n = 0,
+			face_animations_n = 11,
+			database = "enemy_beastmen_vo",
 			sound_events_n = 11,
+			category = "enemy_basic_prio",
+			dialogue_animations_n = 11,
 			dialogue_animations = {
 				"dialogue_shout",
 				"dialogue_shout",
@@ -627,7 +627,7 @@ return function ()
 				"dialogue_shout",
 				"dialogue_shout",
 				"dialogue_shout",
-				"dialogue_shout",
+				"dialogue_shout"
 			},
 			face_animations = {
 				"face_angry",
@@ -640,7 +640,7 @@ return function ()
 				"face_angry",
 				"face_angry",
 				"face_angry",
-				"face_angry",
+				"face_angry"
 			},
 			localization_strings = {
 				"ebb_a_gameplay_running_towards_players_01",
@@ -653,7 +653,7 @@ return function ()
 				"ebb_a_gameplay_running_towards_players_13",
 				"ebb_a_gameplay_running_towards_players_14",
 				"ebb_a_gameplay_running_towards_players_15",
-				"ebb_a_gameplay_running_towards_players_16",
+				"ebb_a_gameplay_running_towards_players_16"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -667,7 +667,7 @@ return function ()
 				"ebb_a_gameplay_running_towards_players_13",
 				"ebb_a_gameplay_running_towards_players_14",
 				"ebb_a_gameplay_running_towards_players_15",
-				"ebb_a_gameplay_running_towards_players_16",
+				"ebb_a_gameplay_running_towards_players_16"
 			},
 			sound_events_duration = {
 				2.2799999713898,
@@ -680,133 +680,133 @@ return function ()
 				3.6507916450501,
 				2.844687461853,
 				1.9252500534058,
-				3.821249961853,
-			},
+				3.821249961853
+			}
 		},
 		ebb_gameplay_bardin_present = {
-			category = "enemy_high_prio",
-			database = "enemy_beastmen_vo",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "enemy_beastmen_vo",
 			sound_events_n = 4,
+			category = "enemy_high_prio",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_shout",
 				"dialogue_shout",
 				"dialogue_shout",
-				"dialogue_shout",
+				"dialogue_shout"
 			},
 			face_animations = {
 				"face_angry",
 				"face_angry",
 				"face_angry",
-				"face_angry",
+				"face_angry"
 			},
 			localization_strings = {
 				"ebb_gameplay_bardin_present_01",
 				"ebb_gameplay_bardin_present_02",
 				"ebb_gameplay_bardin_present_03",
-				"ebb_gameplay_bardin_present_04",
+				"ebb_gameplay_bardin_present_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"ebb_gameplay_bardin_present_01",
 				"ebb_gameplay_bardin_present_02",
 				"ebb_gameplay_bardin_present_03",
-				"ebb_gameplay_bardin_present_04",
+				"ebb_gameplay_bardin_present_04"
 			},
 			sound_events_duration = {
 				2.8539999723434,
 				2.9165832996368,
 				1.9036145806313,
-				3.3841770887375,
-			},
+				3.3841770887375
+			}
 		},
 		ebb_gameplay_kerillian_present = {
-			category = "enemy_high_prio",
-			database = "enemy_beastmen_vo",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "enemy_beastmen_vo",
 			sound_events_n = 4,
+			category = "enemy_high_prio",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_shout",
 				"dialogue_shout",
 				"dialogue_shout",
-				"dialogue_shout",
+				"dialogue_shout"
 			},
 			face_animations = {
 				"face_angry",
 				"face_angry",
 				"face_angry",
-				"face_angry",
+				"face_angry"
 			},
 			localization_strings = {
 				"ebb_gameplay_kerillian_present_01",
 				"ebb_gameplay_kerillian_present_02",
 				"ebb_gameplay_kerillian_present_03",
-				"ebb_gameplay_kerillian_present_04",
+				"ebb_gameplay_kerillian_present_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"ebb_gameplay_kerillian_present_01",
 				"ebb_gameplay_kerillian_present_02",
 				"ebb_gameplay_kerillian_present_03",
-				"ebb_gameplay_kerillian_present_04",
+				"ebb_gameplay_kerillian_present_04"
 			},
 			sound_events_duration = {
 				1.861968755722,
 				2.6323125362396,
 				2.6676458120346,
-				2.4882603883743,
-			},
+				2.4882603883743
+			}
 		},
 		ebb_gameplay_kruber_present = {
-			category = "enemy_high_prio",
-			database = "enemy_beastmen_vo",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "enemy_beastmen_vo",
 			sound_events_n = 4,
+			category = "enemy_high_prio",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_shout",
 				"dialogue_shout",
 				"dialogue_shout",
-				"dialogue_shout",
+				"dialogue_shout"
 			},
 			face_animations = {
 				"face_angry",
 				"face_angry",
 				"face_angry",
-				"face_angry",
+				"face_angry"
 			},
 			localization_strings = {
 				"ebb_gameplay_kruber_present_01",
 				"ebb_gameplay_kruber_present_02",
 				"ebb_gameplay_kruber_present_03",
-				"ebb_gameplay_kruber_present_04",
+				"ebb_gameplay_kruber_present_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"ebb_gameplay_kruber_present_01",
 				"ebb_gameplay_kruber_present_02",
 				"ebb_gameplay_kruber_present_03",
-				"ebb_gameplay_kruber_present_04",
+				"ebb_gameplay_kruber_present_04"
 			},
 			sound_events_duration = {
 				3.8537603616715,
 				3.7761042118073,
 				3.856166601181,
-				3.729749917984,
-			},
+				3.729749917984
+			}
 		},
 		ebb_gameplay_no_damage_taunt = {
-			category = "enemy_high_prio",
-			database = "enemy_beastmen_vo",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "enemy_beastmen_vo",
 			sound_events_n = 10,
+			category = "enemy_high_prio",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_shout",
 				"dialogue_shout",
@@ -817,7 +817,7 @@ return function ()
 				"dialogue_shout",
 				"dialogue_shout",
 				"dialogue_shout",
-				"dialogue_shout",
+				"dialogue_shout"
 			},
 			face_animations = {
 				"face_angry",
@@ -829,7 +829,7 @@ return function ()
 				"face_angry",
 				"face_angry",
 				"face_angry",
-				"face_angry",
+				"face_angry"
 			},
 			localization_strings = {
 				"ebb_gameplay_no_damage_taunt_01",
@@ -841,7 +841,7 @@ return function ()
 				"ebb_gameplay_no_damage_taunt_07",
 				"ebb_gameplay_no_damage_taunt_08",
 				"ebb_gameplay_no_damage_taunt_09",
-				"ebb_gameplay_no_damage_taunt_10",
+				"ebb_gameplay_no_damage_taunt_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -854,7 +854,7 @@ return function ()
 				"ebb_gameplay_no_damage_taunt_07",
 				"ebb_gameplay_no_damage_taunt_08",
 				"ebb_gameplay_no_damage_taunt_09",
-				"ebb_gameplay_no_damage_taunt_10",
+				"ebb_gameplay_no_damage_taunt_10"
 			},
 			sound_events_duration = {
 				1.6967812180519,
@@ -866,116 +866,116 @@ return function ()
 				1.7265937924385,
 				2.1183958053589,
 				1.9674166440964,
-				2.3748958110809,
-			},
+				2.3748958110809
+			}
 		},
 		ebb_gameplay_saltzpyre_present = {
-			category = "enemy_high_prio",
-			database = "enemy_beastmen_vo",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "enemy_beastmen_vo",
 			sound_events_n = 4,
+			category = "enemy_high_prio",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_shout",
 				"dialogue_shout",
 				"dialogue_shout",
-				"dialogue_shout",
+				"dialogue_shout"
 			},
 			face_animations = {
 				"face_angry",
 				"face_angry",
 				"face_angry",
-				"face_angry",
+				"face_angry"
 			},
 			localization_strings = {
 				"ebb_gameplay_saltzpyre_present_01",
 				"ebb_gameplay_saltzpyre_present_02",
 				"ebb_gameplay_saltzpyre_present_03",
-				"ebb_gameplay_saltzpyre_present_04",
+				"ebb_gameplay_saltzpyre_present_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"ebb_gameplay_saltzpyre_present_01",
 				"ebb_gameplay_saltzpyre_present_02",
 				"ebb_gameplay_saltzpyre_present_03",
-				"ebb_gameplay_saltzpyre_present_04",
+				"ebb_gameplay_saltzpyre_present_04"
 			},
 			sound_events_duration = {
 				3.3451353311539,
 				3.1532292366028,
 				2.6344165802002,
-				3.9670209884644,
-			},
+				3.9670209884644
+			}
 		},
 		ebb_gameplay_sienna_present = {
-			category = "enemy_high_prio",
-			database = "enemy_beastmen_vo",
-			dialogue_animations_n = 4,
-			face_animations_n = 4,
 			randomize_indexes_n = 0,
+			face_animations_n = 4,
+			database = "enemy_beastmen_vo",
 			sound_events_n = 4,
+			category = "enemy_high_prio",
+			dialogue_animations_n = 4,
 			dialogue_animations = {
 				"dialogue_shout",
 				"dialogue_shout",
 				"dialogue_shout",
-				"dialogue_shout",
+				"dialogue_shout"
 			},
 			face_animations = {
 				"face_angry",
 				"face_angry",
 				"face_angry",
-				"face_angry",
+				"face_angry"
 			},
 			localization_strings = {
 				"ebb_gameplay_sienna_present_01",
 				"ebb_gameplay_sienna_present_02",
 				"ebb_gameplay_sienna_present_03",
-				"ebb_gameplay_sienna_present_04",
+				"ebb_gameplay_sienna_present_04"
 			},
 			randomize_indexes = {},
 			sound_events = {
 				"ebb_gameplay_sienna_present_01",
 				"ebb_gameplay_sienna_present_02",
 				"ebb_gameplay_sienna_present_03",
-				"ebb_gameplay_sienna_present_04",
+				"ebb_gameplay_sienna_present_04"
 			},
 			sound_events_duration = {
 				1.8499999642372,
 				3.9008123874664,
 				3.2714270353317,
-				2.5762708187103,
-			},
+				2.5762708187103
+			}
 		},
 		ebg_alerted = {
-			category = "enemy_basic_prio",
-			database = "enemy_beastmen_vo",
-			dialogue_animations_n = 1,
-			face_animations_n = 1,
 			sound_events_n = 1,
+			face_animations_n = 1,
+			database = "enemy_beastmen_vo",
+			category = "enemy_basic_prio",
+			dialogue_animations_n = 1,
 			dialogue_animations = {
-				[1] = "dialogue_shout",
+				[1] = "dialogue_shout"
 			},
 			face_animations = {
-				[1] = "face_angry",
+				[1] = "face_angry"
 			},
 			localization_strings = {
-				[1] = "play_enemy_gor_alerted_general_vce",
+				[1] = "play_enemy_gor_alerted_general_vce"
 			},
 			sound_events = {
-				[1] = "play_enemy_gor_alerted_general_vce",
+				[1] = "play_enemy_gor_alerted_general_vce"
 			},
 			sound_events_duration = {
-				[1] = 1.3909895867109,
-			},
+				[1] = 1.3909895867109
+			}
 		},
 		ebg_gameplay_dogpile_shouts = {
-			category = "enemy_basic_prio",
-			database = "enemy_beastmen_vo",
-			dialogue_animations_n = 20,
-			face_animations_n = 20,
 			randomize_indexes_n = 0,
+			face_animations_n = 20,
+			database = "enemy_beastmen_vo",
 			sound_events_n = 20,
+			category = "enemy_basic_prio",
+			dialogue_animations_n = 20,
 			dialogue_animations = {
 				"dialogue_shout",
 				"dialogue_shout",
@@ -996,7 +996,7 @@ return function ()
 				"dialogue_shout",
 				"dialogue_shout",
 				"dialogue_shout",
-				"dialogue_shout",
+				"dialogue_shout"
 			},
 			face_animations = {
 				"face_angry",
@@ -1018,7 +1018,7 @@ return function ()
 				"face_angry",
 				"face_angry",
 				"face_angry",
-				"face_angry",
+				"face_angry"
 			},
 			localization_strings = {
 				"ebg_gameplay_dogpile_shouts_01",
@@ -1040,7 +1040,7 @@ return function ()
 				"ebg_gameplay_dogpile_shouts_17",
 				"ebg_gameplay_dogpile_shouts_18",
 				"ebg_gameplay_dogpile_shouts_19",
-				"ebg_gameplay_dogpile_shouts_20",
+				"ebg_gameplay_dogpile_shouts_20"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -1063,7 +1063,7 @@ return function ()
 				"ebg_gameplay_dogpile_shouts_17",
 				"ebg_gameplay_dogpile_shouts_18",
 				"ebg_gameplay_dogpile_shouts_19",
-				"ebg_gameplay_dogpile_shouts_20",
+				"ebg_gameplay_dogpile_shouts_20"
 			},
 			sound_events_duration = {
 				1.8359478712082,
@@ -1085,16 +1085,16 @@ return function ()
 				1.7675728797913,
 				2.1309375166893,
 				2.2750313282013,
-				3.1408437490463,
-			},
+				3.1408437490463
+			}
 		},
 		ebg_gameplay_flanking_players = {
-			category = "enemy_basic_prio",
-			database = "enemy_beastmen_vo",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "enemy_beastmen_vo",
 			sound_events_n = 10,
+			category = "enemy_basic_prio",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_shout",
 				"dialogue_shout",
@@ -1105,7 +1105,7 @@ return function ()
 				"dialogue_shout",
 				"dialogue_shout",
 				"dialogue_shout",
-				"dialogue_shout",
+				"dialogue_shout"
 			},
 			face_animations = {
 				"face_angry",
@@ -1117,7 +1117,7 @@ return function ()
 				"face_angry",
 				"face_angry",
 				"face_angry",
-				"face_angry",
+				"face_angry"
 			},
 			localization_strings = {
 				"ebg_gameplay_flanking_players_01",
@@ -1129,7 +1129,7 @@ return function ()
 				"ebg_gameplay_flanking_players_07",
 				"ebg_gameplay_flanking_players_08",
 				"ebg_gameplay_flanking_players_09",
-				"ebg_gameplay_flanking_players_10",
+				"ebg_gameplay_flanking_players_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -1142,7 +1142,7 @@ return function ()
 				"ebg_gameplay_flanking_players_07",
 				"ebg_gameplay_flanking_players_08",
 				"ebg_gameplay_flanking_players_09",
-				"ebg_gameplay_flanking_players_10",
+				"ebg_gameplay_flanking_players_10"
 			},
 			sound_events_duration = {
 				1.0416354238987,
@@ -1154,16 +1154,16 @@ return function ()
 				1.2693125009537,
 				2.1673542261124,
 				1.3396979570389,
-				1.8446978926659,
-			},
+				1.8446978926659
+			}
 		},
 		ebg_gameplay_running_towards_players = {
-			category = "enemy_basic_prio",
-			database = "enemy_beastmen_vo",
-			dialogue_animations_n = 20,
-			face_animations_n = 20,
 			randomize_indexes_n = 0,
+			face_animations_n = 20,
+			database = "enemy_beastmen_vo",
 			sound_events_n = 20,
+			category = "enemy_basic_prio",
+			dialogue_animations_n = 20,
 			dialogue_animations = {
 				"dialogue_shout",
 				"dialogue_shout",
@@ -1184,7 +1184,7 @@ return function ()
 				"dialogue_shout",
 				"dialogue_shout",
 				"dialogue_shout",
-				"dialogue_shout",
+				"dialogue_shout"
 			},
 			face_animations = {
 				"face_angry",
@@ -1206,7 +1206,7 @@ return function ()
 				"face_angry",
 				"face_angry",
 				"face_angry",
-				"face_angry",
+				"face_angry"
 			},
 			localization_strings = {
 				"ebg_gameplay_running_towards_players_01",
@@ -1228,7 +1228,7 @@ return function ()
 				"ebg_gameplay_running_towards_players_17",
 				"ebg_gameplay_running_towards_players_18",
 				"ebg_gameplay_running_towards_players_19",
-				"ebg_gameplay_running_towards_players_20",
+				"ebg_gameplay_running_towards_players_20"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -1251,7 +1251,7 @@ return function ()
 				"ebg_gameplay_running_towards_players_17",
 				"ebg_gameplay_running_towards_players_18",
 				"ebg_gameplay_running_towards_players_19",
-				"ebg_gameplay_running_towards_players_20",
+				"ebg_gameplay_running_towards_players_20"
 			},
 			sound_events_duration = {
 				1.127833366394,
@@ -1273,16 +1273,16 @@ return function ()
 				1.2002500295639,
 				1.2656770944595,
 				1.9808437228203,
-				2.0238645076752,
-			},
+				2.0238645076752
+			}
 		},
 		ebu_gameplay_dogpile_shouts = {
-			category = "enemy_basic_prio",
-			database = "enemy_beastmen_vo",
-			dialogue_animations_n = 20,
-			face_animations_n = 20,
 			randomize_indexes_n = 0,
+			face_animations_n = 20,
+			database = "enemy_beastmen_vo",
 			sound_events_n = 20,
+			category = "enemy_basic_prio",
+			dialogue_animations_n = 20,
 			dialogue_animations = {
 				"dialogue_shout",
 				"dialogue_shout",
@@ -1303,7 +1303,7 @@ return function ()
 				"dialogue_shout",
 				"dialogue_shout",
 				"dialogue_shout",
-				"dialogue_shout",
+				"dialogue_shout"
 			},
 			face_animations = {
 				"face_angry",
@@ -1325,7 +1325,7 @@ return function ()
 				"face_angry",
 				"face_angry",
 				"face_angry",
-				"face_angry",
+				"face_angry"
 			},
 			localization_strings = {
 				"ebu_gameplay_dogpile_shouts_01",
@@ -1347,7 +1347,7 @@ return function ()
 				"ebu_gameplay_dogpile_shouts_17",
 				"ebu_gameplay_dogpile_shouts_18",
 				"ebu_gameplay_dogpile_shouts_19",
-				"ebu_gameplay_dogpile_shouts_20",
+				"ebu_gameplay_dogpile_shouts_20"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -1370,7 +1370,7 @@ return function ()
 				"ebu_gameplay_dogpile_shouts_17",
 				"ebu_gameplay_dogpile_shouts_18",
 				"ebu_gameplay_dogpile_shouts_19",
-				"ebu_gameplay_dogpile_shouts_20",
+				"ebu_gameplay_dogpile_shouts_20"
 			},
 			sound_events_duration = {
 				1.6703180670738,
@@ -1392,16 +1392,16 @@ return function ()
 				1.8180998563766,
 				2.035654604435,
 				2.1590228080749,
-				2.7962787151337,
-			},
+				2.7962787151337
+			}
 		},
 		ebu_gameplay_flanking_players = {
-			category = "enemy_basic_prio",
-			database = "enemy_beastmen_vo",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "enemy_beastmen_vo",
 			sound_events_n = 10,
+			category = "enemy_basic_prio",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_shout",
 				"dialogue_shout",
@@ -1412,7 +1412,7 @@ return function ()
 				"dialogue_shout",
 				"dialogue_shout",
 				"dialogue_shout",
-				"dialogue_shout",
+				"dialogue_shout"
 			},
 			face_animations = {
 				"face_angry",
@@ -1424,7 +1424,7 @@ return function ()
 				"face_angry",
 				"face_angry",
 				"face_angry",
-				"face_angry",
+				"face_angry"
 			},
 			localization_strings = {
 				"ebu_gameplay_flanking_players_01",
@@ -1436,7 +1436,7 @@ return function ()
 				"ebu_gameplay_flanking_players_07",
 				"ebu_gameplay_flanking_players_08",
 				"ebu_gameplay_flanking_players_09",
-				"ebu_gameplay_flanking_players_10",
+				"ebu_gameplay_flanking_players_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -1449,7 +1449,7 @@ return function ()
 				"ebu_gameplay_flanking_players_07",
 				"ebu_gameplay_flanking_players_08",
 				"ebu_gameplay_flanking_players_09",
-				"ebu_gameplay_flanking_players_10",
+				"ebu_gameplay_flanking_players_10"
 			},
 			sound_events_duration = {
 				1.8272392749786,
@@ -1461,16 +1461,16 @@ return function ()
 				1.1858025789261,
 				1.5955548882484,
 				1.2596645355225,
-				2.0751885175705,
-			},
+				2.0751885175705
+			}
 		},
 		ebu_gameplay_ranged_fire_in_group = {
-			category = "enemy_high_prio",
-			database = "enemy_beastmen_vo",
-			dialogue_animations_n = 15,
-			face_animations_n = 15,
 			randomize_indexes_n = 0,
+			face_animations_n = 15,
+			database = "enemy_beastmen_vo",
 			sound_events_n = 15,
+			category = "enemy_high_prio",
+			dialogue_animations_n = 15,
 			dialogue_animations = {
 				"dialogue_shout",
 				"dialogue_shout",
@@ -1486,7 +1486,7 @@ return function ()
 				"dialogue_shout",
 				"dialogue_shout",
 				"dialogue_shout",
-				"dialogue_shout",
+				"dialogue_shout"
 			},
 			face_animations = {
 				"face_angry",
@@ -1503,7 +1503,7 @@ return function ()
 				"face_angry",
 				"face_angry",
 				"face_angry",
-				"face_angry",
+				"face_angry"
 			},
 			localization_strings = {
 				"ebu_gameplay_ranged_fire_in_group_01",
@@ -1520,7 +1520,7 @@ return function ()
 				"ebu_gameplay_ranged_fire_in_group_12",
 				"ebu_gameplay_ranged_fire_in_group_13",
 				"ebu_gameplay_ranged_fire_in_group_14",
-				"ebu_gameplay_ranged_fire_in_group_15",
+				"ebu_gameplay_ranged_fire_in_group_15"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -1538,7 +1538,7 @@ return function ()
 				"ebu_gameplay_ranged_fire_in_group_12",
 				"ebu_gameplay_ranged_fire_in_group_13",
 				"ebu_gameplay_ranged_fire_in_group_14",
-				"ebu_gameplay_ranged_fire_in_group_15",
+				"ebu_gameplay_ranged_fire_in_group_15"
 			},
 			sound_events_duration = {
 				1.6524160504341,
@@ -1555,16 +1555,16 @@ return function ()
 				1.6534699201584,
 				1.7341794371605,
 				0.8113519847393,
-				1.0702348947525,
-			},
+				1.0702348947525
+			}
 		},
 		ebu_gameplay_running_in_horde = {
-			category = "enemy_basic_prio",
-			database = "enemy_beastmen_vo",
-			dialogue_animations_n = 10,
-			face_animations_n = 10,
 			randomize_indexes_n = 0,
+			face_animations_n = 10,
+			database = "enemy_beastmen_vo",
 			sound_events_n = 10,
+			category = "enemy_basic_prio",
+			dialogue_animations_n = 10,
 			dialogue_animations = {
 				"dialogue_shout",
 				"dialogue_shout",
@@ -1575,7 +1575,7 @@ return function ()
 				"dialogue_shout",
 				"dialogue_shout",
 				"dialogue_shout",
-				"dialogue_shout",
+				"dialogue_shout"
 			},
 			face_animations = {
 				"face_angry",
@@ -1587,7 +1587,7 @@ return function ()
 				"face_angry",
 				"face_angry",
 				"face_angry",
-				"face_angry",
+				"face_angry"
 			},
 			localization_strings = {
 				"ebu_gameplay_running_in_horde_01",
@@ -1599,7 +1599,7 @@ return function ()
 				"ebu_gameplay_running_in_horde_07",
 				"ebu_gameplay_running_in_horde_08",
 				"ebu_gameplay_running_in_horde_09",
-				"ebu_gameplay_running_in_horde_10",
+				"ebu_gameplay_running_in_horde_10"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -1612,7 +1612,7 @@ return function ()
 				"ebu_gameplay_running_in_horde_07",
 				"ebu_gameplay_running_in_horde_08",
 				"ebu_gameplay_running_in_horde_09",
-				"ebu_gameplay_running_in_horde_10",
+				"ebu_gameplay_running_in_horde_10"
 			},
 			sound_events_duration = {
 				1.9406037926674,
@@ -1624,16 +1624,16 @@ return function ()
 				2.0040236115456,
 				1.0876842439175,
 				1.5297510623932,
-				2.0015528202057,
-			},
+				2.0015528202057
+			}
 		},
 		ebu_gameplay_running_towards_players = {
-			category = "enemy_basic_prio",
-			database = "enemy_beastmen_vo",
-			dialogue_animations_n = 19,
-			face_animations_n = 19,
 			randomize_indexes_n = 0,
+			face_animations_n = 19,
+			database = "enemy_beastmen_vo",
 			sound_events_n = 19,
+			category = "enemy_basic_prio",
+			dialogue_animations_n = 19,
 			dialogue_animations = {
 				"dialogue_shout",
 				"dialogue_shout",
@@ -1653,7 +1653,7 @@ return function ()
 				"dialogue_shout",
 				"dialogue_shout",
 				"dialogue_shout",
-				"dialogue_shout",
+				"dialogue_shout"
 			},
 			face_animations = {
 				"face_angry",
@@ -1674,7 +1674,7 @@ return function ()
 				"face_angry",
 				"face_angry",
 				"face_angry",
-				"face_angry",
+				"face_angry"
 			},
 			localization_strings = {
 				"ebu_gameplay_running_towards_players_01",
@@ -1695,7 +1695,7 @@ return function ()
 				"ebu_gameplay_running_towards_players_17",
 				"ebu_gameplay_running_towards_players_18",
 				"ebu_gameplay_running_towards_players_19",
-				"ebu_gameplay_running_towards_players_20",
+				"ebu_gameplay_running_towards_players_20"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -1717,7 +1717,7 @@ return function ()
 				"ebu_gameplay_running_towards_players_17",
 				"ebu_gameplay_running_towards_players_18",
 				"ebu_gameplay_running_towards_players_19",
-				"ebu_gameplay_running_towards_players_20",
+				"ebu_gameplay_running_towards_players_20"
 			},
 			sound_events_duration = {
 				1.4143354296684,
@@ -1738,16 +1738,16 @@ return function ()
 				1.1147104501724,
 				1.3324126601219,
 				1.4204701185226,
-				1.3198138475418,
-			},
+				1.3198138475418
+			}
 		},
 		ebu_gameplay_taunt = {
-			category = "enemy_basic_prio",
-			database = "enemy_beastmen_vo",
-			dialogue_animations_n = 20,
-			face_animations_n = 20,
 			randomize_indexes_n = 0,
+			face_animations_n = 20,
+			database = "enemy_beastmen_vo",
 			sound_events_n = 20,
+			category = "enemy_basic_prio",
+			dialogue_animations_n = 20,
 			dialogue_animations = {
 				"dialogue_shout",
 				"dialogue_shout",
@@ -1768,7 +1768,7 @@ return function ()
 				"dialogue_shout",
 				"dialogue_shout",
 				"dialogue_shout",
-				"dialogue_shout",
+				"dialogue_shout"
 			},
 			face_animations = {
 				"face_angry",
@@ -1790,7 +1790,7 @@ return function ()
 				"face_angry",
 				"face_angry",
 				"face_angry",
-				"face_angry",
+				"face_angry"
 			},
 			localization_strings = {
 				"ebu_gameplay_dogpile_shouts_01",
@@ -1812,7 +1812,7 @@ return function ()
 				"ebu_gameplay_dogpile_shouts_17",
 				"ebu_gameplay_dogpile_shouts_18",
 				"ebu_gameplay_dogpile_shouts_19",
-				"ebu_gameplay_dogpile_shouts_20",
+				"ebu_gameplay_dogpile_shouts_20"
 			},
 			randomize_indexes = {},
 			sound_events = {
@@ -1835,7 +1835,7 @@ return function ()
 				"ebu_gameplay_dogpile_shouts_17",
 				"ebu_gameplay_dogpile_shouts_18",
 				"ebu_gameplay_dogpile_shouts_19",
-				"ebu_gameplay_dogpile_shouts_20",
+				"ebu_gameplay_dogpile_shouts_20"
 			},
 			sound_events_duration = {
 				1.6703180670738,
@@ -1857,8 +1857,8 @@ return function ()
 				1.8180998563766,
 				2.035654604435,
 				2.1590228080749,
-				2.7962787151337,
-			},
-		},
+				2.7962787151337
+			}
+		}
 	})
 end

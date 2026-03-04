@@ -1,203 +1,190 @@
-﻿-- chunkname: @scripts/ui/views/level_end/states/end_view_state_score_vs_tabs/end_view_state_score_vs_tab_summary.lua
+-- chunkname: @scripts/ui/views/level_end/states/end_view_state_score_vs_tabs/end_view_state_score_vs_tab_summary.lua
 
 require("scripts/settings/dlcs/carousel/end_screen_award_settings")
 
-local DO_RELOAD = false
+local var_0_0 = false
 
 EndViewStateScoreVSTabSummary = class(EndViewStateScoreVSTabSummary)
 EndViewStateScoreVSTabSummary.NAME = "EndViewStateScoreVSTabSummary"
 
-EndViewStateScoreVSTabSummary.on_enter = function (self, params)
+function EndViewStateScoreVSTabSummary.on_enter(arg_1_0, arg_1_1)
 	print("[EndViewStateVS] Enter Substate EndViewStateScoreVSTabSummary")
 
-	self._params = params
+	arg_1_0._params = arg_1_1
 
-	local context = params.context
+	local var_1_0 = arg_1_1.context
 
-	self._context = context
-	self.ui_renderer = context.ui_renderer
-	self.ui_top_renderer = context.ui_top_renderer
-	self.input_manager = context.input_manager
-	self.render_settings = {
+	arg_1_0._context = var_1_0
+	arg_1_0.ui_renderer = var_1_0.ui_renderer
+	arg_1_0.ui_top_renderer = var_1_0.ui_top_renderer
+	arg_1_0.input_manager = var_1_0.input_manager
+	arg_1_0.render_settings = {
 		alpha_multiplier = 0,
-		snap_pixel_positions = true,
+		snap_pixel_positions = true
 	}
-	self._animations = {}
-	self._ui_animations = {}
+	arg_1_0._animations = {}
+	arg_1_0._ui_animations = {}
 
-	self:create_ui_elements(params)
-	self:_calculate_awards()
-	self:_start_transition_animation("on_enter", "on_enter")
-
-	local parent = self._params.parent
-
-	parent:show_team()
+	arg_1_0:create_ui_elements(arg_1_1)
+	arg_1_0:_calculate_awards()
+	arg_1_0:_start_transition_animation("on_enter", "on_enter")
+	arg_1_0._params.parent:show_team()
 end
 
-EndViewStateScoreVSTabSummary._calculate_awards = function (self)
-	self._awards = {}
+function EndViewStateScoreVSTabSummary._calculate_awards(arg_2_0)
+	arg_2_0._awards = {}
 
-	local players_session_scores = self._context.players_session_score
+	local var_2_0 = arg_2_0._context.players_session_score
 
-	for i = 1, #EndScreenAwardSettings do
-		local award_settings = EndScreenAwardSettings[i]
-		local winner_peer_id = award_settings.evaluate(players_session_scores)
+	for iter_2_0 = 1, #EndScreenAwardSettings do
+		local var_2_1 = EndScreenAwardSettings[iter_2_0]
+		local var_2_2 = var_2_1.evaluate(var_2_0)
 
-		if winner_peer_id then
-			self._awards[winner_peer_id] = self._awards[winner_peer_id] or {}
-			self._awards[winner_peer_id][#self._awards[winner_peer_id] + 1] = award_settings.name
+		if var_2_2 then
+			arg_2_0._awards[var_2_2] = arg_2_0._awards[var_2_2] or {}
+			arg_2_0._awards[var_2_2][#arg_2_0._awards[var_2_2] + 1] = var_2_1.name
 		end
 	end
 
-	local max_awards = 0
+	local var_2_3 = 0
 
-	for peer_id, awards in pairs(self._awards) do
-		local num_awards = #awards
+	for iter_2_1, iter_2_2 in pairs(arg_2_0._awards) do
+		local var_2_4 = #iter_2_2
 
-		if max_awards < num_awards then
-			max_awards = num_awards
+		if var_2_3 < var_2_4 then
+			var_2_3 = var_2_4
 		end
 	end
 
-	local potential_mvp_peer_ids = {}
+	local var_2_5 = {}
 
-	for peer_id, awards in pairs(self._awards) do
-		local num_awards = #awards
-
-		if num_awards == max_awards then
-			potential_mvp_peer_ids[#potential_mvp_peer_ids + 1] = peer_id
+	for iter_2_3, iter_2_4 in pairs(arg_2_0._awards) do
+		if #iter_2_4 == var_2_3 then
+			var_2_5[#var_2_5 + 1] = iter_2_3
 		end
 	end
 
-	local mvp_peer_id
+	local var_2_6
 
-	if not (#potential_mvp_peer_ids > 1) then
-		-- Nothing
+	if not (#var_2_5 > 1) then
+		-- block empty
 	end
 
-	do
-		local my_peer_id = Network.peer_id()
-		local local_player_id = 1
-		local local_player_party_id = self._context.party_composition[PlayerUtils.unique_player_id(my_peer_id, local_player_id)]
-		local opponent_party_id = local_player_party_id == 1 and 2 or 1
-		local game_won = self._context.game_won
-		local winning_party_id = game_won and local_player_party_id or opponent_party_id
-		local party_composition = self._context.party_composition
+	local var_2_7 = Network.peer_id()
+	local var_2_8 = 1
+	local var_2_9 = arg_2_0._context.party_composition[PlayerUtils.unique_player_id(var_2_7, var_2_8)]
+	local var_2_10 = var_2_9 == 1 and 2 or 1
+	local var_2_11 = arg_2_0._context.game_won and var_2_9 or var_2_10
+	local var_2_12 = arg_2_0._context.party_composition
 
-		for _, peer_id in ipairs(potential_mvp_peer_ids) do
-			local party_id = party_composition[PlayerUtils.unique_player_id(peer_id, local_player_id)]
+	for iter_2_5, iter_2_6 in ipairs(var_2_5) do
+		if var_2_12[PlayerUtils.unique_player_id(iter_2_6, var_2_8)] == var_2_11 then
+			var_2_6 = iter_2_6
 
-			if party_id == winning_party_id then
-				mvp_peer_id = peer_id
-
-				break
-			end
+			break
 		end
 	end
 
 	if false then
-		mvp_peer_id = potential_mvp_peer_ids[1]
+		var_2_6 = var_2_5[1]
 	end
 
-	if mvp_peer_id then
-		table.insert(self._awards[mvp_peer_id], 1, "mvp")
+	if var_2_6 then
+		table.insert(arg_2_0._awards[var_2_6], 1, "mvp")
 	end
 
-	table.dump(self._awards, "AWARDS", 2)
+	table.dump(arg_2_0._awards, "AWARDS", 2)
 end
 
-EndViewStateScoreVSTabSummary.on_exit = function (self, params)
+function EndViewStateScoreVSTabSummary.on_exit(arg_3_0, arg_3_1)
 	print("[EndViewStateVS] Exit Substate EndViewStateScoreVSTabSummary")
 
-	self._ui_scenegraph = nil
-	self._widgets = nil
-	self._widgets_by_name = nil
-	self._ui_animator = nil
+	arg_3_0._ui_scenegraph = nil
+	arg_3_0._widgets = nil
+	arg_3_0._widgets_by_name = nil
+	arg_3_0._ui_animator = nil
 
-	local parent = self._params.parent
-
-	parent:hide_team()
+	arg_3_0._params.parent:hide_team()
 end
 
-EndViewStateScoreVSTabSummary.create_ui_elements = function (self, params)
-	local definitions = self:_get_definitions()
-	local widget_definitions = definitions.widget_definitions
-	local summary_entry_widget_definitions = definitions.summary_entry_widgets
-	local scenegraph_definition = definitions.scenegraph_definition
-	local animation_definitions = definitions.animation_definitions
+function EndViewStateScoreVSTabSummary.create_ui_elements(arg_4_0, arg_4_1)
+	local var_4_0 = arg_4_0:_get_definitions()
+	local var_4_1 = var_4_0.widget_definitions
+	local var_4_2 = var_4_0.summary_entry_widgets
+	local var_4_3 = var_4_0.scenegraph_definition
+	local var_4_4 = var_4_0.animation_definitions
 
-	DO_RELOAD = false
-	self._scenegraph_definition = scenegraph_definition
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-	self._widgets, self._widgets_by_name = UIUtils.create_widgets(widget_definitions, {}, {})
+	var_0_0 = false
+	arg_4_0._scenegraph_definition = var_4_3
+	arg_4_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_4_3)
+	arg_4_0._widgets, arg_4_0._widgets_by_name = UIUtils.create_widgets(var_4_1, {}, {})
 
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_4_0.ui_renderer)
 
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
+	arg_4_0._ui_animator = UIAnimator:new(arg_4_0._ui_scenegraph, var_4_4)
 end
 
-EndViewStateScoreVSTabSummary._get_definitions = function (self)
+function EndViewStateScoreVSTabSummary._get_definitions(arg_5_0)
 	return local_require("scripts/ui/views/level_end/states/end_view_state_score_vs_tabs/end_view_state_score_vs_tab_summary_definitions")
 end
 
-EndViewStateScoreVSTabSummary.update = function (self, dt, t)
-	if DO_RELOAD then
-		self:on_enter(self._params)
+function EndViewStateScoreVSTabSummary.update(arg_6_0, arg_6_1, arg_6_2)
+	if var_0_0 then
+		arg_6_0:on_enter(arg_6_0._params)
 	end
 
-	local input_manager = self.input_manager
-	local input_service = input_manager:get_service("end_of_level")
+	local var_6_0 = arg_6_0.input_manager:get_service("end_of_level")
 
-	self:draw(input_service, dt)
-	self._ui_animator:update(dt)
-	self:_update_animations(dt)
+	arg_6_0:draw(var_6_0, arg_6_1)
+	arg_6_0._ui_animator:update(arg_6_1)
+	arg_6_0:_update_animations(arg_6_1)
 end
 
-EndViewStateScoreVSTabSummary.post_update = function (self, dt, t)
+function EndViewStateScoreVSTabSummary.post_update(arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-EndViewStateScoreVSTabSummary._update_animations = function (self, dt)
-	for name, animation in pairs(self._ui_animations) do
-		UIAnimation.update(animation, dt)
+function EndViewStateScoreVSTabSummary._update_animations(arg_8_0, arg_8_1)
+	for iter_8_0, iter_8_1 in pairs(arg_8_0._ui_animations) do
+		UIAnimation.update(iter_8_1, arg_8_1)
 
-		if UIAnimation.completed(animation) then
-			self._ui_animations[name] = nil
+		if UIAnimation.completed(iter_8_1) then
+			arg_8_0._ui_animations[iter_8_0] = nil
 		end
 	end
 
-	local animations = self._animations
-	local ui_animator = self._ui_animator
+	local var_8_0 = arg_8_0._animations
+	local var_8_1 = arg_8_0._ui_animator
 
-	for animation_name, animation_id in pairs(animations) do
-		if ui_animator:is_animation_completed(animation_id) then
-			ui_animator:stop_animation(animation_id)
+	for iter_8_2, iter_8_3 in pairs(var_8_0) do
+		if var_8_1:is_animation_completed(iter_8_3) then
+			var_8_1:stop_animation(iter_8_3)
 
-			animations[animation_name] = nil
+			var_8_0[iter_8_2] = nil
 		end
 	end
 end
 
-EndViewStateScoreVSTabSummary.draw = function (self, input_service, dt)
-	local ui_renderer = self.ui_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local render_settings = self.render_settings
+function EndViewStateScoreVSTabSummary.draw(arg_9_0, arg_9_1, arg_9_2)
+	local var_9_0 = arg_9_0.ui_renderer
+	local var_9_1 = arg_9_0._ui_scenegraph
+	local var_9_2 = arg_9_0.render_settings
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+	UIRenderer.begin_pass(var_9_0, var_9_1, arg_9_1, arg_9_2, nil, var_9_2)
 
-	for _, widget in ipairs(self._widgets) do
-		UIRenderer.draw_widget(ui_renderer, widget)
+	for iter_9_0, iter_9_1 in ipairs(arg_9_0._widgets) do
+		UIRenderer.draw_widget(var_9_0, iter_9_1)
 	end
 
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.end_pass(var_9_0)
 end
 
-EndViewStateScoreVSTabSummary._start_transition_animation = function (self, key, animation_name)
-	local params = {
-		render_settings = self.render_settings,
+function EndViewStateScoreVSTabSummary._start_transition_animation(arg_10_0, arg_10_1, arg_10_2)
+	local var_10_0 = {
+		render_settings = arg_10_0.render_settings
 	}
-	local widgets = {}
-	local anim_id = self._ui_animator:start_animation(animation_name, widgets, self._scenegraph_definition, params)
+	local var_10_1 = {}
+	local var_10_2 = arg_10_0._ui_animator:start_animation(arg_10_2, var_10_1, arg_10_0._scenegraph_definition, var_10_0)
 
-	self._animations[key] = anim_id
+	arg_10_0._animations[arg_10_1] = var_10_2
 end

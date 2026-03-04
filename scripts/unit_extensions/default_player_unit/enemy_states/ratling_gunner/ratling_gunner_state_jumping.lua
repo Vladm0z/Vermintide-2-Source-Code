@@ -1,47 +1,42 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/ratling_gunner/ratling_gunner_state_jumping.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/ratling_gunner/ratling_gunner_state_jumping.lua
 
 RatlingGunnerStateJumping = class(RatlingGunnerStateJumping, EnemyCharacterStateJumping)
 
-RatlingGunnerStateJumping.init = function (self, character_state_init_context)
-	RatlingGunnerStateJumping.super.init(self, character_state_init_context)
+function RatlingGunnerStateJumping.init(arg_1_0, arg_1_1)
+	RatlingGunnerStateJumping.super.init(arg_1_0, arg_1_1)
 
-	self._fire_ability_id = self._career_extension:ability_id("fire")
-	self._reload_ability_id = self._career_extension:ability_id("reload")
+	arg_1_0._fire_ability_id = arg_1_0._career_extension:ability_id("fire")
+	arg_1_0._reload_ability_id = arg_1_0._career_extension:ability_id("reload")
 end
 
-RatlingGunnerStateJumping.update = function (self, unit, input, dt, context, t)
-	local handled = self:common_state_changes()
+function RatlingGunnerStateJumping.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	local var_2_0 = arg_2_0:common_state_changes()
 
-	if handled then
+	if var_2_0 then
 		return
 	end
 
-	local csm = self._csm
-	local career_extension = self._career_extension
+	local var_2_1 = arg_2_0._csm
+	local var_2_2 = arg_2_0._career_extension
 
-	if not handled then
-		CharacterStateHelper.update_weapon_actions(t, unit, self._input_extension, self._inventory_extension, self._health_extension)
+	if not var_2_0 then
+		CharacterStateHelper.update_weapon_actions(arg_2_5, arg_2_1, arg_2_0._input_extension, arg_2_0._inventory_extension, arg_2_0._health_extension)
 	end
 
-	local ghost_mode_extension = self._ghost_mode_extension
-	local in_ghost_mode = ghost_mode_extension:is_in_ghost_mode()
-
-	handled = self:common_movement(in_ghost_mode, dt, unit)
+	local var_2_3 = arg_2_0._ghost_mode_extension:is_in_ghost_mode()
+	local var_2_4 = arg_2_0:common_movement(var_2_3, arg_2_3, arg_2_1)
 end
 
-RatlingGunnerStateJumping.debug_display_ammo = function (self)
-	local unit = self._unit
-	local blackboard = BLACKBOARDS[unit]
-	local data = blackboard.attack_pattern_data or {}
-	local current_ammo = data.current_ammo or self._breed.max_ammo
-	local screen_width = RESOLUTION_LOOKUP.res_w
-	local screen_height = RESOLUTION_LOOKUP.res_h
-	local pos_y = screen_height * 0.85
-	local pos_x = screen_width * 0.87
-	local color = Color(100, 255, 0)
-	local text_pos = Vector3(pos_x, pos_y, 10)
-	local font_size = 40
-	local string_ammo = string.format("Ammo: %2d", current_ammo)
+function RatlingGunnerStateJumping.debug_display_ammo(arg_3_0)
+	local var_3_0 = arg_3_0._unit
+	local var_3_1 = (BLACKBOARDS[var_3_0].attack_pattern_data or {}).current_ammo or arg_3_0._breed.max_ammo
+	local var_3_2 = RESOLUTION_LOOKUP.res_w
+	local var_3_3 = RESOLUTION_LOOKUP.res_h * 0.85
+	local var_3_4 = var_3_2 * 0.87
+	local var_3_5 = Color(100, 255, 0)
+	local var_3_6 = Vector3(var_3_4, var_3_3, 10)
+	local var_3_7 = 40
+	local var_3_8 = string.format("Ammo: %2d", var_3_1)
 
-	Debug.draw_text(string_ammo, text_pos, font_size, color)
+	Debug.draw_text(var_3_8, var_3_6, var_3_7, var_3_5)
 end

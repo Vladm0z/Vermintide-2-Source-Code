@@ -1,235 +1,229 @@
-﻿-- chunkname: @scripts/managers/achievements/achievement_manager.lua
+-- chunkname: @scripts/managers/achievements/achievement_manager.lua
 
 require("scripts/managers/achievements/achievement_templates")
 
-local outline = require("scripts/managers/achievements/achievements_outline")
-local World = rawget(_G, "World")
-local script_data = rawget(_G, "script_data")
-local Color = rawget(_G, "Color")
-local Gui = rawget(_G, "Gui")
-local TIMED_EVENT_TEMPLATE_ID = 1
-local TIMED_EVENT_EVENT_ID = 2
-local TIMED_EVENT_DELAY = 3
-local TIMED_EVENT_DATA = 4
+local var_0_0 = require("scripts/managers/achievements/achievements_outline")
+local var_0_1 = rawget(_G, "World")
+local var_0_2 = rawget(_G, "script_data")
+local var_0_3 = rawget(_G, "Color")
+local var_0_4 = rawget(_G, "Gui")
+local var_0_5 = 1
+local var_0_6 = 2
+local var_0_7 = 3
+local var_0_8 = 4
 
 if IS_CONSOLE then
-	local to_remove = {}
-	local achievements = AchievementTemplates.achievements
-	local outline_categories = outline.categories
+	local var_0_9 = {}
+	local var_0_10 = AchievementTemplates.achievements
+	local var_0_11 = var_0_0.categories
 
-	for idx, category_data in ipairs(outline_categories) do
-		table.clear(to_remove)
+	for iter_0_0, iter_0_1 in ipairs(var_0_11) do
+		table.clear(var_0_9)
 
-		local entries = category_data.entries
+		local var_0_12 = iter_0_1.entries
 
-		for idx, entry in pairs(entries) do
-			if achievements[entry].disable_on_consoles then
-				to_remove[#to_remove + 1] = idx
+		for iter_0_2, iter_0_3 in pairs(var_0_12) do
+			if var_0_10[iter_0_3].disable_on_consoles then
+				var_0_9[#var_0_9 + 1] = iter_0_2
 			end
 		end
 
-		for i = #to_remove, 1, -1 do
-			local idx = to_remove[i]
-			local entry = entries[idx]
+		for iter_0_4 = #var_0_9, 1, -1 do
+			local var_0_13 = var_0_9[iter_0_4]
+			local var_0_14 = var_0_12[var_0_13]
 
-			table.remove(entries, idx)
-			Application.warning(string.format("### [AchievementManager] Stripping %q for consoles", entry))
+			table.remove(var_0_12, var_0_13)
+			Application.warning(string.format("### [AchievementManager] Stripping %q for consoles", var_0_14))
 		end
 	end
 end
 
 AchievementManager = class(AchievementManager)
 
-local ACHIEVEMENT_CHECK_DELAY = 1
+local var_0_15 = 1
 
 AchievementManager.STORE_COMPLETED_LEVEL = false
 
-AchievementManager.init = function (self, world, statistics_db)
-	self.initialized = false
-	self.world = world
-	self._statistics_db = statistics_db
-	self._event_mappings = {}
-	self._template_event_data = {}
-	self._templates = {}
-	self._unlocked_achievements = {}
-	self._unlock_tasks = {}
-	self._available_careers = {}
-	self._achievement_data = {}
-	self._incompleted_achievements = {}
-	self._state_completed_achievements = {}
-	self._timed_events = {}
-	self._canceled_timed_events_n = 0
-	self._canceled_timed_events = {}
-	self._platform_achievements_to_verify = {}
-	self._verify_platform_achievements_data = {}
-
-	local backend_interface_loot = Managers.backend:get_interface("loot")
-
-	self._backend_interface_loot = backend_interface_loot
+function AchievementManager.init(arg_1_0, arg_1_1, arg_1_2)
+	arg_1_0.initialized = false
+	arg_1_0.world = arg_1_1
+	arg_1_0._statistics_db = arg_1_2
+	arg_1_0._event_mappings = {}
+	arg_1_0._template_event_data = {}
+	arg_1_0._templates = {}
+	arg_1_0._unlocked_achievements = {}
+	arg_1_0._unlock_tasks = {}
+	arg_1_0._available_careers = {}
+	arg_1_0._achievement_data = {}
+	arg_1_0._incompleted_achievements = {}
+	arg_1_0._state_completed_achievements = {}
+	arg_1_0._timed_events = {}
+	arg_1_0._canceled_timed_events_n = 0
+	arg_1_0._canceled_timed_events = {}
+	arg_1_0._platform_achievements_to_verify = {}
+	arg_1_0._verify_platform_achievements_data = {}
+	arg_1_0._backend_interface_loot = Managers.backend:get_interface("loot")
 
 	if IS_WINDOWS or IS_LINUX then
 		if rawget(_G, "Steam") and GameSettingsDevelopment.network_mode == "steam" then
-			self.platform = "steam"
+			arg_1_0.platform = "steam"
 		else
-			self.platform = "debug"
+			arg_1_0.platform = "debug"
 		end
 	elseif IS_PS4 then
-		self.platform = "ps4"
+		arg_1_0.platform = "ps4"
 	elseif IS_XB1 then
-		self.platform = "xb1"
+		arg_1_0.platform = "xb1"
 	else
-		self.platform = "debug"
+		arg_1_0.platform = "debug"
 	end
 
-	local event_mappings = self._event_mappings
-	local template_count = 0
+	local var_1_0 = arg_1_0._event_mappings
+	local var_1_1 = 0
 
-	for _, template in pairs(AchievementTemplates.achievements) do
-		if self.platform == "steam" and template.ID_STEAM or IS_PS4 and template.ID_PS4 or IS_XB1 and template.ID_XB1 or self.platform == "debug" then
-			local idx = template_count + 1
+	for iter_1_0, iter_1_1 in pairs(AchievementTemplates.achievements) do
+		if arg_1_0.platform == "steam" and iter_1_1.ID_STEAM or IS_PS4 and iter_1_1.ID_PS4 or IS_XB1 and iter_1_1.ID_XB1 or arg_1_0.platform == "debug" then
+			local var_1_2 = var_1_1 + 1
 
-			self._templates[idx] = template
-			template_count = idx
+			arg_1_0._templates[var_1_2] = iter_1_1
+			var_1_1 = var_1_2
 		end
 
-		local events = template.events
+		local var_1_3 = iter_1_1.events
 
-		if events then
-			for _, event_name in ipairs(events) do
-				self._event_mappings[event_name] = self._event_mappings[event_name] or {}
-				self._event_mappings[event_name][#self._event_mappings[event_name] + 1] = template
-				self._template_event_data[template.id] = {}
+		if var_1_3 then
+			for iter_1_2, iter_1_3 in ipairs(var_1_3) do
+				arg_1_0._event_mappings[iter_1_3] = arg_1_0._event_mappings[iter_1_3] or {}
+				arg_1_0._event_mappings[iter_1_3][#arg_1_0._event_mappings[iter_1_3] + 1] = iter_1_1
+				arg_1_0._template_event_data[iter_1_1.id] = {}
 			end
 		end
 	end
 
-	self._template_count = template_count
-	self._curr_template_idx = 1
-	self._platform_functions = require("scripts/managers/achievements/platform_" .. self.platform)
+	arg_1_0._template_count = var_1_1
+	arg_1_0._curr_template_idx = 1
+	arg_1_0._platform_functions = require("scripts/managers/achievements/platform_" .. arg_1_0.platform)
 
-	assert(self._platform_functions, "Can't load platform functions for platform %s", self.platform)
-	self._platform_functions.init(self)
-	printf("[AchievementManager] Achievements using the %s platform", self.platform)
-	self:event_enable_achievements(true)
+	assert(arg_1_0._platform_functions, "Can't load platform functions for platform %s", arg_1_0.platform)
+	arg_1_0._platform_functions.init(arg_1_0)
+	printf("[AchievementManager] Achievements using the %s platform", arg_1_0.platform)
+	arg_1_0:event_enable_achievements(true)
 
-	if template_count == 0 or script_data.settings.use_beta_mode or Managers.state.game_mode:setting("disable_achievements") then
-		self._enabled = false
+	if var_1_1 == 0 or var_0_2.settings.use_beta_mode or Managers.state.game_mode:setting("disable_achievements") then
+		arg_1_0._enabled = false
 	end
 
-	Managers.state.event:register(self, "event_enable_achievements", "event_enable_achievements")
+	Managers.state.event:register(arg_1_0, "event_enable_achievements", "event_enable_achievements")
 
-	self.initialized = true
+	arg_1_0.initialized = true
 end
 
-AchievementManager.trigger_event = function (self, event_name, ...)
-	if DEDICATED_SERVER or script_data["eac-untrusted"] then
+function AchievementManager.trigger_event(arg_2_0, arg_2_1, ...)
+	if DEDICATED_SERVER or var_0_2["eac-untrusted"] then
 		return
 	end
 
-	local event_mappings = self._event_mappings
-	local template_event_data = self._template_event_data
-	local template_list = event_mappings[event_name]
-	local unlocked_achievements = self._unlocked_achievements
-	local event_data = {
-		...,
+	local var_2_0 = arg_2_0._event_mappings
+	local var_2_1 = arg_2_0._template_event_data
+	local var_2_2 = var_2_0[arg_2_1]
+	local var_2_3 = arg_2_0._unlocked_achievements
+	local var_2_4 = {
+		...
 	}
 
-	if template_list then
-		local local_player = Managers.player:local_player()
+	if var_2_2 then
+		local var_2_5 = Managers.player:local_player()
 
-		if not local_player then
+		if not var_2_5 then
 			return
 		end
 
-		local stats_id = local_player:stats_id()
-		local statistics_db = self._statistics_db
+		local var_2_6 = var_2_5:stats_id()
+		local var_2_7 = arg_2_0._statistics_db
 
-		table.clear(self._available_careers)
+		table.clear(arg_2_0._available_careers)
 
-		local available_careers = self._available_careers
-		local player_manager = Managers.player
-		local human_players = player_manager:human_players()
+		local var_2_8 = arg_2_0._available_careers
+		local var_2_9 = Managers.player
+		local var_2_10 = var_2_9:human_players()
 
-		if human_players then
-			for _, player in pairs(human_players) do
-				local profile_index = player._profile_index
+		if var_2_10 then
+			for iter_2_0, iter_2_1 in pairs(var_2_10) do
+				local var_2_11 = iter_2_1._profile_index
 
-				if not profile_index then
-					local player_unit = player.player_unit
-					local owner_player = player_unit and player_manager:owner(player_unit)
+				if not var_2_11 then
+					local var_2_12 = iter_2_1.player_unit
+					local var_2_13 = var_2_12 and var_2_9:owner(var_2_12)
 
-					profile_index = owner_player and owner_player:profile_index()
+					var_2_11 = var_2_13 and var_2_13:profile_index()
 				end
 
-				if profile_index then
-					local profile = SPProfiles[profile_index]
-					local career = profile and profile.careers[player._career_index]
+				if var_2_11 then
+					local var_2_14 = SPProfiles[var_2_11]
+					local var_2_15 = var_2_14 and var_2_14.careers[iter_2_1._career_index]
 
-					if career then
-						available_careers[career.display_name] = true
+					if var_2_15 then
+						var_2_8[var_2_15.display_name] = true
 					end
 				end
 			end
 		end
 
-		for _, template in ipairs(template_list) do
-			local completed = unlocked_achievements[template.id]
-			local required_career = template.required_career
-			local required_career_in_play = not required_career or available_careers[required_career]
-			local allowed_level = template.allow_in_inn or not global_is_inside_inn
-			local always_run = template.always_run
+		for iter_2_2, iter_2_3 in ipairs(var_2_2) do
+			local var_2_16 = var_2_3[iter_2_3.id]
+			local var_2_17 = iter_2_3.required_career
+			local var_2_18 = not var_2_17 or var_2_8[var_2_17]
+			local var_2_19 = iter_2_3.allow_in_inn or not global_is_inside_inn
+			local var_2_20 = iter_2_3.always_run
 
-			if allowed_level and required_career_in_play and (not completed or always_run) then
-				template.on_event(statistics_db, stats_id, template_event_data[template.id], event_name, event_data)
+			if var_2_19 and var_2_18 and (not var_2_16 or var_2_20) then
+				iter_2_3.on_event(var_2_7, var_2_6, var_2_1[iter_2_3.id], arg_2_1, var_2_4)
 			end
 		end
 	end
 
-	local event_manager = Managers.state.event
+	local var_2_21 = Managers.state.event
 
-	if event_manager then
-		event_manager:trigger("on_achievement_event", event_name, event_data)
+	if var_2_21 then
+		var_2_21:trigger("on_achievement_event", arg_2_1, var_2_4)
 	end
 end
 
-AchievementManager.register_timed_event = function (self, achievement_id, event_name, delay, data)
-	local t = Managers.time:time("game")
-	local handle = {
-		achievement_id,
-		event_name,
-		delay,
-		data,
-		valid = true,
+function AchievementManager.register_timed_event(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local var_3_0 = Managers.time:time("game")
+	local var_3_1 = {
+		arg_3_1,
+		arg_3_2,
+		arg_3_3,
+		arg_3_4,
+		valid = true
 	}
 
-	self._timed_events[handle] = t + (delay or 0)
+	arg_3_0._timed_events[var_3_1] = var_3_0 + (arg_3_3 or 0)
 
-	return handle
+	return var_3_1
 end
 
-AchievementManager.cancel_timed_event = function (self, handle)
-	if self._timed_events[handle] then
-		handle.valid = false
+function AchievementManager.cancel_timed_event(arg_4_0, arg_4_1)
+	if arg_4_0._timed_events[arg_4_1] then
+		arg_4_1.valid = false
 
-		local canceled_n = self._canceled_timed_events_n
+		local var_4_0 = arg_4_0._canceled_timed_events_n + 1
 
-		canceled_n = canceled_n + 1
-		self._canceled_timed_events[canceled_n] = handle
-		self._canceled_timed_events_n = canceled_n
+		arg_4_0._canceled_timed_events[var_4_0] = arg_4_1
+		arg_4_0._canceled_timed_events_n = var_4_0
 	end
 end
 
-AchievementManager.get_registered_timed_event = function (self, handle)
-	return self._timed_events[handle]
+function AchievementManager.get_registered_timed_event(arg_5_0, arg_5_1)
+	return arg_5_0._timed_events[arg_5_1]
 end
 
-AchievementManager.reset_timed_event = function (self, handle)
-	local timed_event = self._timed_events[handle]
+function AchievementManager.reset_timed_event(arg_6_0, arg_6_1)
+	local var_6_0 = arg_6_0._timed_events[arg_6_1]
 
-	if timed_event and handle.valid then
-		local t = Managers.time:time("game")
-
-		timed_event[handle] = t + timed_event[TIMED_EVENT_DELAY]
+	if var_6_0 and arg_6_1.valid then
+		var_6_0[arg_6_1] = Managers.time:time("game") + var_6_0[var_0_7]
 
 		return true
 	end
@@ -237,362 +231,350 @@ AchievementManager.reset_timed_event = function (self, handle)
 	return false
 end
 
-AchievementManager._update_timed_events = function (self, dt, t)
-	local timed_events = self._timed_events
-	local canceled_timed_events = self._canceled_timed_events
+function AchievementManager._update_timed_events(arg_7_0, arg_7_1, arg_7_2)
+	local var_7_0 = arg_7_0._timed_events
+	local var_7_1 = arg_7_0._canceled_timed_events
 
-	for i = 1, self._canceled_timed_events_n do
-		timed_events[canceled_timed_events[i]] = nil
-		canceled_timed_events[i] = nil
+	for iter_7_0 = 1, arg_7_0._canceled_timed_events_n do
+		var_7_0[var_7_1[iter_7_0]] = nil
+		var_7_1[iter_7_0] = nil
 	end
 
-	self._canceled_timed_events_n = 0
+	arg_7_0._canceled_timed_events_n = 0
 
-	local local_player = Managers.player:local_player()
-	local stats_id = local_player:stats_id()
-	local statistics_db = self._statistics_db
+	local var_7_2 = Managers.player:local_player():stats_id()
+	local var_7_3 = arg_7_0._statistics_db
 
-	for handle, event_t in pairs(timed_events) do
-		if event_t <= t then
-			local achievement_id = handle[TIMED_EVENT_TEMPLATE_ID]
-			local event = handle[TIMED_EVENT_EVENT_ID]
-			local event_data = handle[TIMED_EVENT_DATA]
-			local template = AchievementTemplates.achievements[achievement_id]
-			local template_event_data = self._template_event_data[template.id]
+	for iter_7_1, iter_7_2 in pairs(var_7_0) do
+		if iter_7_2 <= arg_7_2 then
+			local var_7_4 = iter_7_1[var_0_5]
+			local var_7_5 = iter_7_1[var_0_6]
+			local var_7_6 = iter_7_1[var_0_8]
+			local var_7_7 = AchievementTemplates.achievements[var_7_4]
+			local var_7_8 = arg_7_0._template_event_data[var_7_7.id]
 
-			template[event](statistics_db, stats_id, template_event_data, event_data)
-			self:cancel_timed_event(handle)
+			var_7_7[var_7_5](var_7_3, var_7_2, var_7_8, var_7_6)
+			arg_7_0:cancel_timed_event(iter_7_1)
 		end
 	end
 end
 
-AchievementManager.destroy = function (self)
-	Managers.state.event:unregister("event_enable_achievements", self)
+function AchievementManager.destroy(arg_8_0)
+	Managers.state.event:unregister("event_enable_achievements", arg_8_0)
 
-	if self.gui then
-		World.destroy_gui(self.world, self.gui)
+	if arg_8_0.gui then
+		var_0_1.destroy_gui(arg_8_0.world, arg_8_0.gui)
 
-		self.gui = nil
+		arg_8_0.gui = nil
 	end
 
-	self._timed_events = nil
+	arg_8_0._timed_events = nil
 end
 
-AchievementManager.event_enable_achievements = function (self, enable)
-	self._enabled = enable
+function AchievementManager.event_enable_achievements(arg_9_0, arg_9_1)
+	arg_9_0._enabled = arg_9_1
 end
 
-AchievementManager.is_enabled = function (self)
-	return self._enabled
+function AchievementManager.is_enabled(arg_10_0)
+	return arg_10_0._enabled
 end
 
-AchievementManager.num_achievement_categories = function (self)
-	return #outline.categories
+function AchievementManager.num_achievement_categories(arg_11_0)
+	return #var_0_0.categories
 end
 
-AchievementManager.update = function (self, dt, t)
-	if not self._enabled or not self:_check_version_number() or not self:_check_initialized_achievements() or not self:_verify_platform_achievements() or script_data["eac-untrusted"] then
+function AchievementManager.update(arg_12_0, arg_12_1, arg_12_2)
+	if not arg_12_0._enabled or not arg_12_0:_check_version_number() or not arg_12_0:_check_initialized_achievements() or not arg_12_0:_verify_platform_achievements() or var_0_2["eac-untrusted"] then
 		return
 	end
 
-	if self._error_timeout then
-		self._error_timeout = self._error_timeout - dt
+	if arg_12_0._error_timeout then
+		arg_12_0._error_timeout = arg_12_0._error_timeout - arg_12_1
 
-		if self._error_timeout < 0 then
-			self._error_timeout = nil
+		if arg_12_0._error_timeout < 0 then
+			arg_12_0._error_timeout = nil
 		end
 
 		return
 	end
 
-	local platform_functions = self._platform_functions
-	local platform_update = platform_functions.update
+	local var_12_0 = arg_12_0._platform_functions
+	local var_12_1 = var_12_0.update
 
-	if platform_update then
-		local wait = platform_update(self)
-
-		if wait then
-			return
-		end
-	end
-
-	local player_manager = Managers.player
-	local player = player_manager:local_player()
-
-	if not player then
+	if var_12_1 and var_12_1(arg_12_0) then
 		return
 	end
 
-	local unlock_tasks = self._unlock_tasks
-	local unlocked_achievements = self._unlocked_achievements
+	local var_12_2 = Managers.player:local_player()
 
-	for template_id, task in pairs(unlock_tasks) do
-		local token = task.token
-		local done, error_msg = platform_functions.unlock_result(token, template_id)
+	if not var_12_2 then
+		return
+	end
 
-		if done then
-			unlock_tasks[template_id] = nil
+	local var_12_3 = arg_12_0._unlock_tasks
+	local var_12_4 = arg_12_0._unlocked_achievements
 
-			if error_msg == nil then
-				if task.achievement_completed then
-					unlocked_achievements[template_id] = true
+	for iter_12_0, iter_12_1 in pairs(var_12_3) do
+		local var_12_5 = iter_12_1.token
+		local var_12_6, var_12_7 = var_12_0.unlock_result(var_12_5, iter_12_0)
+
+		if var_12_6 then
+			var_12_3[iter_12_0] = nil
+
+			if var_12_7 == nil then
+				if iter_12_1.achievement_completed then
+					var_12_4[iter_12_0] = true
 				end
 			else
-				Application.warning("Unlocking achievement with id %s failed due to error message %s", template_id, tostring(error_msg))
+				Application.warning("Unlocking achievement with id %s failed due to error message %s", iter_12_0, tostring(var_12_7))
 
-				self._error_timeout = 5
+				arg_12_0._error_timeout = 5
 
 				return
 			end
 		end
 	end
 
-	if self._console_achievement_check_delay and t < self._console_achievement_check_delay then
-		self:_update_timed_events(dt, t)
+	if arg_12_0._console_achievement_check_delay and arg_12_2 < arg_12_0._console_achievement_check_delay then
+		arg_12_0:_update_timed_events(arg_12_1, arg_12_2)
 
 		return
 	end
 
-	local template_idx = self._curr_template_idx
-	local template = self._templates[template_idx]
-	local template_id = template.id
-	local statistics_db = self._statistics_db
-	local stats_id = player:stats_id()
-	local template_event_data = self._template_event_data
-	local should_process = not unlocked_achievements[template_id] and not unlock_tasks[template_id]
+	local var_12_8 = arg_12_0._curr_template_idx
+	local var_12_9 = arg_12_0._templates[var_12_8]
+	local var_12_10 = var_12_9.id
+	local var_12_11 = arg_12_0._statistics_db
+	local var_12_12 = var_12_2:stats_id()
+	local var_12_13 = arg_12_0._template_event_data
 
-	if should_process then
-		local token, error_msg, achievement_completed
-		local claimed = self._backend_interface_loot:achievement_rewards_claimed(template.id)
+	if not var_12_4[var_12_10] and not var_12_3[var_12_10] then
+		local var_12_14
+		local var_12_15
+		local var_12_16
+		local var_12_17 = arg_12_0._backend_interface_loot:achievement_rewards_claimed(var_12_9.id)
 
-		if platform_functions.set_progress and template.progress then
-			local progress_table = self:_achievement_progress(template.id, claimed)
-			local progress = progress_table[1]
-			local max_progress = progress_table[2]
+		if var_12_0.set_progress and var_12_9.progress then
+			local var_12_18 = arg_12_0:_achievement_progress(var_12_9.id, var_12_17)
+			local var_12_19 = var_12_18[1]
+			local var_12_20 = var_12_18[2]
 
-			token, error_msg, achievement_completed = platform_functions.set_progress(template, progress, max_progress)
+			var_12_14, var_12_15, var_12_16 = var_12_0.set_progress(var_12_9, var_12_19, var_12_20)
 		else
-			achievement_completed = self:_achievement_completed(template.id, claimed)
+			var_12_16 = arg_12_0:_achievement_completed(var_12_9.id, var_12_17)
 
-			if achievement_completed then
-				token, error_msg = platform_functions.unlock(template)
+			if var_12_16 then
+				var_12_14, var_12_15 = var_12_0.unlock(var_12_9)
 			end
 		end
 
-		if token then
+		if var_12_14 then
 			if IS_XB1 then
-				self._console_achievement_check_delay = t + ACHIEVEMENT_CHECK_DELAY
+				arg_12_0._console_achievement_check_delay = arg_12_2 + var_0_15
 			end
 
-			unlock_tasks[template_id] = {
-				token = token,
-				achievement_completed = achievement_completed,
+			var_12_3[var_12_10] = {
+				token = var_12_14,
+				achievement_completed = var_12_16
 			}
-		elseif error_msg then
-			Crashify.print_exception("[AchievementManager]", "ERROR: %s", error_msg)
+		elseif var_12_15 then
+			Crashify.print_exception("[AchievementManager]", "ERROR: %s", var_12_15)
 		end
 	end
 
-	template_idx = template_idx + 1
+	local var_12_21 = var_12_8 + 1
 
-	if template_idx > self._template_count then
-		template_idx = 1
+	if var_12_21 > arg_12_0._template_count then
+		var_12_21 = 1
 	end
 
-	self._curr_template_idx = template_idx
+	arg_12_0._curr_template_idx = var_12_21
 
-	self:_check_for_completed_achievements()
-	self:_update_timed_events(dt, t)
+	arg_12_0:_check_for_completed_achievements()
+	arg_12_0:_update_timed_events(arg_12_1, arg_12_2)
 end
 
-AchievementManager.reset = function (self)
-	self._platform_functions.reset()
+function AchievementManager.reset(arg_13_0)
+	arg_13_0._platform_functions.reset()
 
-	self._unlocked_achievements = {}
-	self._unlock_tasks = {}
+	arg_13_0._unlocked_achievements = {}
+	arg_13_0._unlock_tasks = {}
 end
 
-AchievementManager.outline = function (self)
-	if not self.initialized then
+function AchievementManager.outline(arg_14_0)
+	if not arg_14_0.initialized then
 		return nil, "AchievementManager not initialized"
 	end
 
-	return outline
+	return var_0_0
 end
 
-AchievementManager._search_sub_categories = function (self, categories, in_category_id, result, is_in_sub_category)
-	if not categories then
+function AchievementManager._search_sub_categories(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+	if not arg_15_1 then
 		return
 	end
 
-	local result = result or {}
+	local var_15_0 = arg_15_3 or {}
 
-	for i = 1, #categories do
-		local category = categories[i]
-		local category_id = category.name
+	for iter_15_0 = 1, #arg_15_1 do
+		local var_15_1 = arg_15_1[iter_15_0]
+		local var_15_2 = var_15_1.name
 
-		if is_in_sub_category or category_id == in_category_id then
-			local is_in_sub_category = true
-			local entries = category.entries
+		if arg_15_4 or var_15_2 == arg_15_2 then
+			local var_15_3 = true
+			local var_15_4 = var_15_1.entries
 
-			if entries then
-				table.append(result, entries)
+			if var_15_4 then
+				table.append(var_15_0, var_15_4)
 			end
 
-			self:_search_sub_categories(category.categories, in_category_id, result, is_in_sub_category)
+			arg_15_0:_search_sub_categories(var_15_1.categories, arg_15_2, var_15_0, var_15_3)
 		else
-			self:_search_sub_categories(category.categories, in_category_id, result)
+			arg_15_0:_search_sub_categories(var_15_1.categories, arg_15_2, var_15_0)
 		end
 	end
 
-	return result
+	return var_15_0
 end
 
-AchievementManager.get_entries_from_category = function (self, in_category_id)
-	return self:_search_sub_categories(outline.categories, in_category_id)
+function AchievementManager.get_entries_from_category(arg_16_0, arg_16_1)
+	return arg_16_0:_search_sub_categories(var_0_0.categories, arg_16_1)
 end
 
-AchievementManager.get_data_by_id = function (self, achievement_id)
-	local achievement_data = self._achievement_data[achievement_id]
+function AchievementManager.get_data_by_id(arg_17_0, arg_17_1)
+	local var_17_0 = arg_17_0._achievement_data[arg_17_1]
 
-	fassert(achievement_data, "Have not set up achievement (%s) yet.", achievement_id)
+	fassert(var_17_0, "Have not set up achievement (%s) yet.", arg_17_1)
 
-	return achievement_data
+	return var_17_0
 end
 
-AchievementManager.setup_achievement_data = function (self)
-	if not self._enabled then
+function AchievementManager.setup_achievement_data(arg_18_0)
+	if not arg_18_0._enabled then
 		return
 	end
 
-	if not self.initialized then
+	if not arg_18_0.initialized then
 		return nil, "AchievementManager not initialized"
 	end
 
-	local function setup_achievement_data_from_categories(achievement_manager, categories)
-		for i, category in ipairs(categories) do
-			if category.categories then
-				setup_achievement_data_from_categories(achievement_manager, category.categories)
+	local function var_18_0(arg_19_0, arg_19_1)
+		for iter_19_0, iter_19_1 in ipairs(arg_19_1) do
+			if iter_19_1.categories then
+				var_18_0(arg_19_0, iter_19_1.categories)
 			end
 
-			if category.entries then
-				local skip_commit = true
+			if iter_19_1.entries then
+				local var_19_0 = true
 
-				achievement_manager:setup_achievement_data_from_list(category.entries, skip_commit)
+				arg_19_0:setup_achievement_data_from_list(iter_19_1.entries, var_19_0)
 			end
 		end
 
-		if not table.is_empty(achievement_manager._state_completed_achievements) then
-			local statistics_interface = Managers.backend:get_interface("statistics")
-
-			statistics_interface:save_state_completed_achievements(achievement_manager._state_completed_achievements)
+		if not table.is_empty(arg_19_0._state_completed_achievements) then
+			Managers.backend:get_interface("statistics"):save_state_completed_achievements(arg_19_0._state_completed_achievements)
 			Managers.backend:commit(true)
 		end
 	end
 
-	setup_achievement_data_from_categories(self, outline.categories)
+	var_18_0(arg_18_0, var_0_0.categories)
 end
 
-AchievementManager.setup_achievement_data_from_list = function (self, achievement_ids, skip_commit)
-	if not self._enabled then
+function AchievementManager.setup_achievement_data_from_list(arg_20_0, arg_20_1, arg_20_2)
+	if not arg_20_0._enabled then
 		return
 	end
 
-	local statistics_interface = Managers.backend:get_interface("statistics")
-	local achievement_reward_levels = statistics_interface:get_achievement_reward_levels()
+	local var_20_0 = Managers.backend:get_interface("statistics")
+	local var_20_1 = var_20_0:get_achievement_reward_levels()
 
-	for i, achievement_id in ipairs(achievement_ids) do
-		self:_setup_achievement_data(achievement_id, achievement_reward_levels)
+	for iter_20_0, iter_20_1 in ipairs(arg_20_1) do
+		arg_20_0:_setup_achievement_data(iter_20_1, var_20_1)
 	end
 
-	if not skip_commit and not table.is_empty(self._state_completed_achievements) then
-		statistics_interface:save_state_completed_achievements(self._state_completed_achievements)
+	if not arg_20_2 and not table.is_empty(arg_20_0._state_completed_achievements) then
+		var_20_0:save_state_completed_achievements(arg_20_0._state_completed_achievements)
 		Managers.backend:commit(true)
 
-		self._state_completed_achievements = {}
+		arg_20_0._state_completed_achievements = {}
 	end
 end
 
-AchievementManager.can_claim_achievement_rewards = function (self, achievement_id)
-	if not self._enabled then
+function AchievementManager.can_claim_achievement_rewards(arg_21_0, arg_21_1)
+	if not arg_21_0._enabled then
 		return nil, "AchievementManager not enabled"
 	end
 
-	if not self.initialized then
+	if not arg_21_0.initialized then
 		return nil, "AchievementManager not initialized"
 	end
 
-	local backend_interface_loot = self._backend_interface_loot
-	local can_claim = backend_interface_loot:can_claim_achievement_rewards(achievement_id)
+	local var_21_0 = arg_21_0._backend_interface_loot
 
-	if not can_claim then
+	if not var_21_0:can_claim_achievement_rewards(arg_21_1) then
 		return nil, "Achievement already claimed."
 	end
 
-	if backend_interface_loot:polling_reward() then
+	if var_21_0:polling_reward() then
 		return nil, "Achievement reward polling in progress."
 	end
 
 	return true
 end
 
-AchievementManager.can_claim_all_achievement_rewards = function (self, achievement_ids)
-	if not self._enabled then
+function AchievementManager.can_claim_all_achievement_rewards(arg_22_0, arg_22_1)
+	if not arg_22_0._enabled then
 		return nil, nil, "AchievementManager not enabled"
 	end
 
-	if not self.initialized then
+	if not arg_22_0.initialized then
 		return nil, nil, "AchievementManager not initialized"
 	end
 
-	local backend_interface_loot = self._backend_interface_loot
-	local can_claim, claimable_achievements, failed_achivements = backend_interface_loot:can_claim_all_achievement_rewards(achievement_ids)
+	local var_22_0, var_22_1, var_22_2 = arg_22_0._backend_interface_loot:can_claim_all_achievement_rewards(arg_22_1)
 
-	if can_claim and #failed_achivements > 1 then
-		return claimable_achievements, failed_achivements, "Some of the achievements have already been claimed!"
+	if var_22_0 and #var_22_2 > 1 then
+		return var_22_1, var_22_2, "Some of the achievements have already been claimed!"
 	end
 
-	if not can_claim then
+	if not var_22_0 then
 		return nil, nil, "None of the achievements could be claimed."
 	end
 
-	return claimable_achievements, nil, nil
+	return var_22_1, nil, nil
 end
 
-AchievementManager.claim_reward = function (self, achievement_id)
-	local backend_interface_loot = self._backend_interface_loot
-	local reward_poll_id = backend_interface_loot:generate_reward_loot_id()
+function AchievementManager.claim_reward(arg_23_0, arg_23_1)
+	local var_23_0 = arg_23_0._backend_interface_loot
+	local var_23_1 = var_23_0:generate_reward_loot_id()
 
-	backend_interface_loot:claim_achievement_rewards(achievement_id, reward_poll_id)
+	var_23_0:claim_achievement_rewards(arg_23_1, var_23_1)
 
-	return reward_poll_id
+	return var_23_1
 end
 
-AchievementManager.claim_multiple_rewards = function (self, achievement_ids)
-	local backend_interface_loot = self._backend_interface_loot
-	local reward_poll_id = backend_interface_loot:generate_reward_loot_id()
+function AchievementManager.claim_multiple_rewards(arg_24_0, arg_24_1)
+	local var_24_0 = arg_24_0._backend_interface_loot
+	local var_24_1 = var_24_0:generate_reward_loot_id()
 
-	backend_interface_loot:claim_multiple_achievement_rewards(achievement_ids, reward_poll_id)
+	var_24_0:claim_multiple_achievement_rewards(arg_24_1, var_24_1)
 
-	return reward_poll_id
+	return var_24_1
 end
 
-AchievementManager.polling_reward = function (self)
-	local backend_interface_loot = self._backend_interface_loot
-
-	return backend_interface_loot:polling_reward()
+function AchievementManager.polling_reward(arg_25_0)
+	return arg_25_0._backend_interface_loot:polling_reward()
 end
 
-AchievementManager.has_any_unclaimed_achievement = function (self)
-	local unlock_manager = Managers.unlock
+function AchievementManager.has_any_unclaimed_achievement(arg_26_0)
+	local var_26_0 = Managers.unlock
 
-	for achievement_id, data in pairs(self._achievement_data) do
-		if data.completed and not data.claimed then
-			local required_dlc = data.required_dlc
-			local required_dlc_extra = data.required_dlc_extra
-			local is_unlocked = (not required_dlc or unlock_manager:is_dlc_unlocked(required_dlc)) and (not required_dlc_extra or unlock_manager:is_dlc_unlocked(required_dlc_extra))
+	for iter_26_0, iter_26_1 in pairs(arg_26_0._achievement_data) do
+		if iter_26_1.completed and not iter_26_1.claimed then
+			local var_26_1 = iter_26_1.required_dlc
+			local var_26_2 = iter_26_1.required_dlc_extra
 
-			if is_unlocked then
+			if (not var_26_1 or var_26_0:is_dlc_unlocked(var_26_1)) and (not var_26_2 or var_26_0:is_dlc_unlocked(var_26_2)) then
 				return true
 			end
 		end
@@ -601,416 +583,416 @@ AchievementManager.has_any_unclaimed_achievement = function (self)
 	return false
 end
 
-AchievementManager.evaluate_end_of_level_achievements = function (self, statistics_db, stats_id, level_key, difficulty_key)
-	local evaluations = AchievementTemplates.end_of_level_achievement_evaluations
+function AchievementManager.evaluate_end_of_level_achievements(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+	local var_27_0 = AchievementTemplates.end_of_level_achievement_evaluations
 
-	for _, data in pairs(evaluations) do
-		local levels = data.levels
+	for iter_27_0, iter_27_1 in pairs(var_27_0) do
+		local var_27_1 = iter_27_1.levels
 
-		if not levels or table.contains(levels, level_key) then
-			local evaluation_func = data.evaluation_func
-			local allowed_difficulties = data.allowed_difficulties
+		if not var_27_1 or table.contains(var_27_1, arg_27_3) then
+			local var_27_2 = iter_27_1.evaluation_func
+			local var_27_3 = iter_27_1.allowed_difficulties
 
-			if (not allowed_difficulties or allowed_difficulties[difficulty_key]) and evaluation_func(statistics_db, stats_id) then
-				local stat_to_increment = data.stat_to_increment
+			if (not var_27_3 or var_27_3[arg_27_4]) and var_27_2(arg_27_1, arg_27_2) then
+				local var_27_4 = iter_27_1.stat_to_increment
 
-				statistics_db:increment_stat(stats_id, stat_to_increment)
+				arg_27_1:increment_stat(arg_27_2, var_27_4)
 			end
 		end
 	end
 end
 
-AchievementManager._check_version_number = function (self)
-	if not self._checked_version_number then
-		if not self._version_token then
-			local ok, token = self._platform_functions.check_version_number()
+function AchievementManager._check_version_number(arg_28_0)
+	if not arg_28_0._checked_version_number then
+		if not arg_28_0._version_token then
+			local var_28_0, var_28_1 = arg_28_0._platform_functions.check_version_number()
 
-			if ok then
-				self._checked_version_number = true
+			if var_28_0 then
+				arg_28_0._checked_version_number = true
 			else
-				self._version_token = token
+				arg_28_0._version_token = var_28_1
 			end
 		else
-			local done, error_msg = self._platform_functions.version_result(self._version_token)
+			local var_28_2, var_28_3 = arg_28_0._platform_functions.version_result(arg_28_0._version_token)
 
-			if done then
-				self._version_token = nil
+			if var_28_2 then
+				arg_28_0._version_token = nil
 
-				if error_msg then
+				if var_28_3 then
 					print("[AchievementManager] Couldn't update achievement version number stat")
 				else
-					self._checked_version_number = true
+					arg_28_0._checked_version_number = true
 				end
 			end
 		end
 	end
 
-	return self._checked_version_number
+	return arg_28_0._checked_version_number
 end
 
-AchievementManager._check_initialized_achievements = function (self)
-	if not self._initialized_achievements then
-		self._initialized_achievements = true
+function AchievementManager._check_initialized_achievements(arg_29_0)
+	if not arg_29_0._initialized_achievements then
+		arg_29_0._initialized_achievements = true
 
-		local unlocked, error_msg
+		local var_29_0
+		local var_29_1
 
-		for i = 1, self._template_count do
-			local template = self._templates[i]
-			local unlocked, error_msg = self._platform_functions.is_unlocked(template)
+		for iter_29_0 = 1, arg_29_0._template_count do
+			local var_29_2 = arg_29_0._templates[iter_29_0]
+			local var_29_3, var_29_4 = arg_29_0._platform_functions.is_unlocked(var_29_2)
 
-			if unlocked then
-				self._unlocked_achievements[template.id] = true
-			elseif error_msg then
-				Application.warning(string.format("[AchievementManager] ERROR: %s", error_msg))
+			if var_29_3 then
+				arg_29_0._unlocked_achievements[var_29_2.id] = true
+			elseif var_29_4 then
+				Application.warning(string.format("[AchievementManager] ERROR: %s", var_29_4))
 
-				self._unlocked_achievements[template.id] = true
+				arg_29_0._unlocked_achievements[var_29_2.id] = true
 			end
 		end
 	end
 
-	return self._initialized_achievements
+	return arg_29_0._initialized_achievements
 end
 
-AchievementManager._display_completion_ui = function (self, achievement_id)
-	local parameter = Localize(AchievementTemplates.achievements[achievement_id].name)
-	local message = string.format(Localize("finish_level_to_complete_challenge"), parameter)
-	local pop_chat = true
+function AchievementManager._display_completion_ui(arg_30_0, arg_30_1)
+	local var_30_0 = Localize(AchievementTemplates.achievements[arg_30_1].name)
+	local var_30_1 = string.format(Localize("finish_level_to_complete_challenge"), var_30_0)
+	local var_30_2 = true
 
-	Managers.chat:add_local_system_message(1, message, pop_chat)
+	Managers.chat:add_local_system_message(1, var_30_1, var_30_2)
 end
 
-local function swap_erase_element(list, index, list_length)
-	list[index] = list[list_length]
-	list[list_length] = nil
+local function var_0_16(arg_31_0, arg_31_1, arg_31_2)
+	arg_31_0[arg_31_1] = arg_31_0[arg_31_2]
+	arg_31_0[arg_31_2] = nil
 end
 
-AchievementManager._check_for_completed_achievements = function (self)
-	if self._incompleted_template_count > 0 then
-		local incompleted_template_idx = self._incompleted_template_curr_idx
-		local incompleted_template = self._incompleted_achievements[incompleted_template_idx]
-		local incompleted_template_id = incompleted_template.id
+function AchievementManager._check_for_completed_achievements(arg_32_0)
+	if arg_32_0._incompleted_template_count > 0 then
+		local var_32_0 = arg_32_0._incompleted_template_curr_idx
+		local var_32_1 = arg_32_0._incompleted_achievements[var_32_0]
+		local var_32_2 = var_32_1.id
 
-		fassert(incompleted_template_id, "incompleted_template_id is nil on %s ", incompleted_template.name)
+		fassert(var_32_2, "incompleted_template_id is nil on %s ", var_32_1.name)
 
-		if self:_achievement_completed(incompleted_template_id) then
-			self:_display_completion_ui(incompleted_template_id)
+		if arg_32_0:_achievement_completed(var_32_2) then
+			arg_32_0:_display_completion_ui(var_32_2)
 
 			if AchievementManager.STORE_COMPLETED_LEVEL then
-				self._state_completed_achievements[#self._state_completed_achievements + 1] = incompleted_template_id
+				arg_32_0._state_completed_achievements[#arg_32_0._state_completed_achievements + 1] = var_32_2
 
-				local statistics_interface = Managers.backend:get_interface("statistics")
-
-				statistics_interface:save_state_completed_achievements(self._state_completed_achievements)
+				Managers.backend:get_interface("statistics"):save_state_completed_achievements(arg_32_0._state_completed_achievements)
 			end
 
-			swap_erase_element(self._incompleted_achievements, incompleted_template_idx, self._incompleted_template_count)
+			var_0_16(arg_32_0._incompleted_achievements, var_32_0, arg_32_0._incompleted_template_count)
 
-			self._incompleted_template_count = self._incompleted_template_count - 1
+			arg_32_0._incompleted_template_count = arg_32_0._incompleted_template_count - 1
 		end
 
-		incompleted_template_idx = incompleted_template_idx + 1
+		local var_32_3 = var_32_0 + 1
 
-		if incompleted_template_idx > self._incompleted_template_count then
-			incompleted_template_idx = 1
+		if var_32_3 > arg_32_0._incompleted_template_count then
+			var_32_3 = 1
 		end
 
-		self._incompleted_template_curr_idx = incompleted_template_idx
+		arg_32_0._incompleted_template_curr_idx = var_32_3
 	end
 end
 
-AchievementManager._achievement_completed = function (self, achievement_id, claimed)
-	if claimed then
+function AchievementManager._achievement_completed(arg_33_0, arg_33_1, arg_33_2)
+	if arg_33_2 then
 		return true
 	end
 
-	local achievement_data = AchievementTemplates.achievements[achievement_id]
+	local var_33_0 = AchievementTemplates.achievements[arg_33_1]
 
-	if type(achievement_data.completed) == "boolean" then
-		return achievement_data.completed
-	elseif type(achievement_data.completed) == "function" then
-		local player = Managers.player:local_player()
+	if type(var_33_0.completed) == "boolean" then
+		return var_33_0.completed
+	elseif type(var_33_0.completed) == "function" then
+		local var_33_1 = Managers.player:local_player()
 
-		return achievement_data.completed(self._statistics_db, player:stats_id())
+		return var_33_0.completed(arg_33_0._statistics_db, var_33_1:stats_id())
 	end
 end
 
-AchievementManager._achievement_progress = function (self, achievement_id, claimed)
-	local progress
-	local achievement_data = AchievementTemplates.achievements[achievement_id]
+function AchievementManager._achievement_progress(arg_34_0, arg_34_1, arg_34_2)
+	local var_34_0
+	local var_34_1 = AchievementTemplates.achievements[arg_34_1]
 
-	if type(achievement_data.progress) == "table" then
-		progress = achievement_data.progress
-	elseif type(achievement_data.progress) == "function" then
-		local player = Managers.player:local_player()
-		local stats_id = player:stats_id()
+	if type(var_34_1.progress) == "table" then
+		var_34_0 = var_34_1.progress
+	elseif type(var_34_1.progress) == "function" then
+		local var_34_2 = Managers.player:local_player():stats_id()
 
-		progress = achievement_data.progress(self._statistics_db, stats_id, achievement_data)
+		var_34_0 = var_34_1.progress(arg_34_0._statistics_db, var_34_2, var_34_1)
 	end
 
-	if not progress then
+	if not var_34_0 then
 		return
 	end
 
-	if claimed then
+	if arg_34_2 then
 		return {
-			progress[2],
-			progress[2],
+			var_34_0[2],
+			var_34_0[2]
 		}
 	end
 
-	return progress
+	return var_34_0
 end
 
-AchievementManager.setup_incompleted_achievements = function (self)
-	if not self._enabled then
+function AchievementManager.setup_incompleted_achievements(arg_35_0)
+	if not arg_35_0._enabled then
 		return
 	end
 
-	local template_count = 0
-	local backend_interface_loot = self._backend_interface_loot
+	local var_35_0 = 0
+	local var_35_1 = arg_35_0._backend_interface_loot
 
-	for id, template in pairs(AchievementTemplates.achievements) do
-		local claimed = backend_interface_loot:achievement_rewards_claimed(id)
+	for iter_35_0, iter_35_1 in pairs(AchievementTemplates.achievements) do
+		local var_35_2 = var_35_1:achievement_rewards_claimed(iter_35_0)
 
-		if not self:_achievement_completed(id, claimed) and template.display_completion_ui then
-			local idx = template_count + 1
+		if not arg_35_0:_achievement_completed(iter_35_0, var_35_2) and iter_35_1.display_completion_ui then
+			local var_35_3 = var_35_0 + 1
 
-			self._incompleted_achievements[idx] = template
-			template_count = idx
+			arg_35_0._incompleted_achievements[var_35_3] = iter_35_1
+			var_35_0 = var_35_3
 		end
 	end
 
-	self._incompleted_template_count = template_count
-	self._incompleted_template_curr_idx = 1
+	arg_35_0._incompleted_template_count = var_35_0
+	arg_35_0._incompleted_template_curr_idx = 1
 end
 
-AchievementManager._setup_achievement_data = function (self, achievement_id, achievement_reward_levels)
-	local achievement_data = AchievementTemplates.achievements[achievement_id]
+function AchievementManager._setup_achievement_data(arg_36_0, arg_36_1, arg_36_2)
+	local var_36_0 = AchievementTemplates.achievements[arg_36_1]
 
-	fassert(achievement_data, "Missing achievemnt for [\"%s\"]", achievement_id)
+	fassert(var_36_0, "Missing achievemnt for [\"%s\"]", arg_36_1)
 
-	local name, desc, completed, progress, requirements, claimed, required_dlc, desc_value
-	local player_manager = Managers.player
-	local player = player_manager:local_player()
+	local var_36_1
+	local var_36_2
+	local var_36_3
+	local var_36_4
+	local var_36_5
+	local var_36_6
+	local var_36_7
+	local var_36_8
+	local var_36_9 = Managers.player:local_player()
 
-	if not player then
+	if not var_36_9 then
 		return nil, "Missing player"
 	end
 
-	local stats_id = player:stats_id()
+	local var_36_10 = var_36_9:stats_id()
 
-	if type(achievement_data.name) == "function" then
-		local status, result = pcall(achievement_data.name)
+	if type(var_36_0.name) == "function" then
+		local var_36_11, var_36_12 = pcall(var_36_0.name)
 
-		if status then
-			name = result
+		if var_36_11 then
+			var_36_1 = var_36_12
 		else
-			Application.warning("Failed to evaluate achievement name for %s: %s", achievement_id, result)
+			Application.warning("Failed to evaluate achievement name for %s: %s", arg_36_1, var_36_12)
 
-			name = "<Error>"
+			var_36_1 = "<Error>"
 		end
-	elseif type(achievement_data.name) == "string" then
-		name = Localize(achievement_data.name)
+	elseif type(var_36_0.name) == "string" then
+		var_36_1 = Localize(var_36_0.name)
 	end
 
-	if type(achievement_data.desc) == "function" then
-		local status, result = pcall(achievement_data.desc)
+	if type(var_36_0.desc) == "function" then
+		local var_36_13, var_36_14 = pcall(var_36_0.desc)
 
-		if status then
-			desc = result
+		if var_36_13 then
+			var_36_2 = var_36_14
 		else
-			Application.warning("Failed to evaluate achievement desc for %s: %s", achievement_id, result)
+			Application.warning("Failed to evaluate achievement desc for %s: %s", arg_36_1, var_36_14)
 
-			desc = "<Error>"
+			var_36_2 = "<Error>"
 		end
-	elseif type(achievement_data.desc) == "string" then
-		desc = Localize(achievement_data.desc)
+	elseif type(var_36_0.desc) == "string" then
+		var_36_2 = Localize(var_36_0.desc)
 	end
 
-	local backend_interface_loot = self._backend_interface_loot
+	local var_36_15 = arg_36_0._backend_interface_loot
+	local var_36_16 = var_36_15:achievement_rewards_claimed(arg_36_1)
+	local var_36_17 = arg_36_0:_achievement_completed(arg_36_1, var_36_16)
+	local var_36_18 = arg_36_0:_achievement_progress(arg_36_1, var_36_16)
 
-	claimed = backend_interface_loot:achievement_rewards_claimed(achievement_id)
-	completed = self:_achievement_completed(achievement_id, claimed)
-	progress = self:_achievement_progress(achievement_id, claimed)
+	if var_36_17 or var_36_18 == 100 then
+		local var_36_19 = arg_36_0._platform_functions
 
-	if completed or progress == 100 then
-		local platform_functions = self._platform_functions
-
-		if platform_functions.is_platform_achievement(achievement_data) and not platform_functions.is_unlocked(achievement_data) then
-			self:_add_achievement_to_platform_unlock_verification(achievement_id)
+		if var_36_19.is_platform_achievement(var_36_0) and not var_36_19.is_unlocked(var_36_0) then
+			arg_36_0:_add_achievement_to_platform_unlock_verification(arg_36_1)
 		end
 	end
 
-	if type(achievement_data.requirements) == "table" then
-		requirements = achievement_data.requirements
-	elseif type(achievement_data.requirements) == "function" then
-		requirements = achievement_data.requirements(self._statistics_db, stats_id)
+	if type(var_36_0.requirements) == "table" then
+		var_36_5 = var_36_0.requirements
+	elseif type(var_36_0.requirements) == "function" then
+		var_36_5 = var_36_0.requirements(arg_36_0._statistics_db, var_36_10)
 	end
 
-	if requirements then
-		for i, requirement in ipairs(requirements) do
-			if type(requirement.name) == "string" then
-				requirement.name = Localize(requirement.name)
-			elseif type(requirement.name) == "function" then
-				local status, result = pcall(requirement.name)
+	if var_36_5 then
+		for iter_36_0, iter_36_1 in ipairs(var_36_5) do
+			if type(iter_36_1.name) == "string" then
+				iter_36_1.name = Localize(iter_36_1.name)
+			elseif type(iter_36_1.name) == "function" then
+				local var_36_20, var_36_21 = pcall(iter_36_1.name)
 
-				if status then
-					requirement.name = result
+				if var_36_20 then
+					iter_36_1.name = var_36_21
 				else
-					Application.warning("Failed to evaluate requirement name for %s: %s", achievement_id, result)
+					Application.warning("Failed to evaluate requirement name for %s: %s", arg_36_1, var_36_21)
 
-					requirement.name = "<Error>"
+					iter_36_1.name = "<Error>"
 				end
 			end
 
-			if claimed then
-				requirements[i].completed = true
+			if var_36_16 then
+				var_36_5[iter_36_0].completed = true
 			end
 		end
 	end
 
-	if AchievementManager.STORE_COMPLETED_LEVEL and completed and not claimed and (not achievement_reward_levels or not achievement_reward_levels[achievement_id]) then
-		self._state_completed_achievements[#self._state_completed_achievements + 1] = achievement_id
+	if AchievementManager.STORE_COMPLETED_LEVEL and var_36_17 and not var_36_16 and (not arg_36_2 or not arg_36_2[arg_36_1]) then
+		arg_36_0._state_completed_achievements[#arg_36_0._state_completed_achievements + 1] = arg_36_1
 	end
 
-	local reward = backend_interface_loot:get_achievement_rewards(achievement_id)
-	local achievement_data = {
-		id = achievement_id,
-		name = name,
-		desc = desc,
-		desc_value = desc_value,
-		icon = achievement_data.icon,
-		required_dlc = achievement_data.required_dlc,
-		required_dlc_extra = achievement_data.required_dlc_extra,
-		completed = completed,
-		progress = progress,
-		requirements = requirements,
-		reward = reward,
-		claimed = claimed or false,
+	local var_36_22 = var_36_15:get_achievement_rewards(arg_36_1)
+	local var_36_23 = {
+		id = arg_36_1,
+		name = var_36_1,
+		desc = var_36_2,
+		desc_value = var_36_8,
+		icon = var_36_0.icon,
+		required_dlc = var_36_0.required_dlc,
+		required_dlc_extra = var_36_0.required_dlc_extra,
+		completed = var_36_17,
+		progress = var_36_18,
+		requirements = var_36_5,
+		reward = var_36_22,
+		claimed = var_36_16 or false
 	}
 
-	self._achievement_data[achievement_id] = achievement_data
+	arg_36_0._achievement_data[arg_36_1] = var_36_23
 end
 
-AchievementManager._add_achievement_to_platform_unlock_verification = function (self, achievement_id)
-	local achievement_template = AchievementTemplates.achievements[achievement_id]
+function AchievementManager._add_achievement_to_platform_unlock_verification(arg_37_0, arg_37_1)
+	local var_37_0 = AchievementTemplates.achievements[arg_37_1]
 
-	self._platform_achievements_to_verify[#self._platform_achievements_to_verify + 1] = achievement_template
+	arg_37_0._platform_achievements_to_verify[#arg_37_0._platform_achievements_to_verify + 1] = var_37_0
 end
 
-AchievementManager._verify_platform_achievements = function (self)
-	local platform_functions = self._platform_functions
-	local verify_data = self._verify_platform_achievements_data or {}
+function AchievementManager._verify_platform_achievements(arg_38_0)
+	local var_38_0 = arg_38_0._platform_functions
+	local var_38_1 = arg_38_0._verify_platform_achievements_data or {}
 
-	if verify_data.in_progress then
-		local done = platform_functions.unlock_result(verify_data.token, verify_data.template_id)
-
-		if done then
-			verify_data.in_progress = false
+	if var_38_1.in_progress then
+		if var_38_0.unlock_result(var_38_1.token, var_38_1.template_id) then
+			var_38_1.in_progress = false
 		end
 
 		return
 	end
 
-	local platform_achievements_to_verify = self._platform_achievements_to_verify
-	local current_template = platform_achievements_to_verify[#platform_achievements_to_verify]
+	local var_38_2 = arg_38_0._platform_achievements_to_verify
+	local var_38_3 = var_38_2[#var_38_2]
 
-	if not current_template then
+	if not var_38_3 then
 		return true
 	end
 
-	local verified, token = self._platform_functions.verify_platform_unlocked(current_template)
+	local var_38_4, var_38_5 = arg_38_0._platform_functions.verify_platform_unlocked(var_38_3)
 
-	if not verified then
+	if not var_38_4 then
 		return
 	end
 
-	if token then
-		verify_data.token = token
-		verify_data.template_id = current_template.id
-		verify_data.in_progress = true
+	if var_38_5 then
+		var_38_1.token = var_38_5
+		var_38_1.template_id = var_38_3.id
+		var_38_1.in_progress = true
 	end
 
-	self._platform_achievements_to_verify[#self._platform_achievements_to_verify] = nil
+	arg_38_0._platform_achievements_to_verify[#arg_38_0._platform_achievements_to_verify] = nil
 end
 
-local font_size = 16
-local font = "arial"
-local font_mtrl = "materials/fonts/" .. font
+local var_0_17 = 16
+local var_0_18 = "arial"
+local var_0_19 = "materials/fonts/" .. var_0_18
 
-AchievementManager.debug_draw = function (self)
-	if not script_data.achievement_debug then
+function AchievementManager.debug_draw(arg_39_0)
+	if not var_0_2.achievement_debug then
 		return
 	end
 
-	if not self.gui then
-		self.gui = World.create_screen_gui(self.world, "material", "materials/fonts/gw_fonts", "immediate")
+	if not arg_39_0.gui then
+		arg_39_0.gui = var_0_1.create_screen_gui(arg_39_0.world, "material", "materials/fonts/gw_fonts", "immediate")
 	end
 
-	local gui = self.gui
-	local res_x, res_y = RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h
-	local header_color = Color(250, 255, 255, 100)
-	local bg_color = Color(240, 25, 50, 25)
-	local key_color = Color(250, 255, 120, 0)
-	local description_color = Color(255, 255, 255, 100)
-	local strikethrough_color = Color(100, 255, 255, 0)
-	local start_pos = Vector3(res_x / 2, res_y - 100, 200)
-	local pos = Vector3.copy(start_pos)
-	local header_text = string.format("Achievements v2 [%s]", self.platform)
+	local var_39_0 = arg_39_0.gui
+	local var_39_1 = RESOLUTION_LOOKUP.res_w
+	local var_39_2 = RESOLUTION_LOOKUP.res_h
+	local var_39_3 = var_0_3(250, 255, 255, 100)
+	local var_39_4 = var_0_3(240, 25, 50, 25)
+	local var_39_5 = var_0_3(250, 255, 120, 0)
+	local var_39_6 = var_0_3(255, 255, 255, 100)
+	local var_39_7 = var_0_3(100, 255, 255, 0)
+	local var_39_8 = Vector3(var_39_1 / 2, var_39_2 - 100, 200)
+	local var_39_9 = Vector3.copy(var_39_8)
+	local var_39_10 = string.format("Achievements v2 [%s]", arg_39_0.platform)
 
-	Gui.text(gui, header_text, font_mtrl, font_size, font, pos, header_color)
+	var_0_4.text(var_39_0, var_39_10, var_0_19, var_0_17, var_0_18, var_39_9, var_39_3)
 
-	for i = 1, self._template_count do
-		local template = self._templates[i]
-		local id = template.id
+	for iter_39_0 = 1, arg_39_0._template_count do
+		local var_39_11 = arg_39_0._templates[iter_39_0].id
 
-		pos.y = pos.y - 20
+		var_39_9.y = var_39_9.y - 20
 
-		local color = key_color
+		local var_39_12 = var_39_5
 
-		Gui.text(gui, id, font_mtrl, font_size, font, pos, color)
+		var_0_4.text(var_39_0, var_39_11, var_0_19, var_0_17, var_0_18, var_39_9, var_39_12)
 
-		if self._unlocked_achievements[id] then
-			Gui.rect(gui, pos + Vector3(-10, 2, 0), Vector2(220, 2), strikethrough_color)
-		elseif self._unlock_tasks[id] then
-			Gui.text(gui, "unlocking...", font_mtrl, font_size, font, pos + Vector3(240, 0, 0), description_color)
+		if arg_39_0._unlocked_achievements[var_39_11] then
+			var_0_4.rect(var_39_0, var_39_9 + Vector3(-10, 2, 0), Vector2(220, 2), var_39_7)
+		elseif arg_39_0._unlock_tasks[var_39_11] then
+			var_0_4.text(var_39_0, "unlocking...", var_0_19, var_0_17, var_0_18, var_39_9 + Vector3(240, 0, 0), var_39_6)
 		end
 	end
 
-	Gui.rect(gui, Vector3(start_pos.x - 20, pos.y - 20, 100), Vector2(300, start_pos.y - pos.y + 40), bg_color)
+	var_0_4.rect(var_39_0, Vector3(var_39_8.x - 20, var_39_9.y - 20, 100), Vector2(300, var_39_8.y - var_39_9.y + 40), var_39_4)
 end
 
-AchievementManager.get_challenge_progression = function (self, optional_category)
-	local player = Managers.player:local_player()
-	local stats_id = player:stats_id()
-	local statistics_db = self._statistics_db
-	local achievement_progress = {}
+function AchievementManager.get_challenge_progression(arg_40_0, arg_40_1)
+	local var_40_0 = Managers.player:local_player():stats_id()
+	local var_40_1 = arg_40_0._statistics_db
+	local var_40_2 = {}
 
-	if optional_category then
-		local entries = self:get_entries_from_category(optional_category)
+	if arg_40_1 then
+		local var_40_3 = arg_40_0:get_entries_from_category(arg_40_1)
 
-		for _, achievement_id in ipairs(entries) do
-			local achievement_data = AchievementTemplates.achievements[achievement_id]
+		for iter_40_0, iter_40_1 in ipairs(var_40_3) do
+			local var_40_4 = AchievementTemplates.achievements[iter_40_1]
 
-			if achievement_data and achievement_data.progress then
-				local progress_data = achievement_data.progress(statistics_db, stats_id)
+			if var_40_4 and var_40_4.progress then
+				local var_40_5 = var_40_4.progress(var_40_1, var_40_0)
 
-				achievement_progress[achievement_id] = progress_data[1] / progress_data[2]
-			elseif achievement_data then
-				achievement_progress[achievement_id] = achievement_data.completed(statistics_db, stats_id) and 1 or 0
+				var_40_2[iter_40_1] = var_40_5[1] / var_40_5[2]
+			elseif var_40_4 then
+				var_40_2[iter_40_1] = var_40_4.completed(var_40_1, var_40_0) and 1 or 0
 			end
 		end
 	else
-		for achievement_id, achievement_data in pairs(AchievementTemplates.achievements) do
-			if achievement_data.progress then
-				local progress_data = achievement_data.progress(statistics_db, stats_id)
+		for iter_40_2, iter_40_3 in pairs(AchievementTemplates.achievements) do
+			if iter_40_3.progress then
+				local var_40_6 = iter_40_3.progress(var_40_1, var_40_0)
 
-				achievement_progress[achievement_id] = progress_data[1] / progress_data[2]
-			elseif achievement_data then
-				achievement_progress[achievement_id] = achievement_data.completed(statistics_db, stats_id) and 1 or 0
+				var_40_2[iter_40_2] = var_40_6[1] / var_40_6[2]
+			elseif iter_40_3 then
+				var_40_2[iter_40_2] = iter_40_3.completed(var_40_1, var_40_0) and 1 or 0
 			end
 		end
 	end
 
-	return achievement_progress
+	return var_40_2
 end

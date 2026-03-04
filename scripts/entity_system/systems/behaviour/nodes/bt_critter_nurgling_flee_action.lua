@@ -1,90 +1,88 @@
-﻿-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_critter_nurgling_flee_action.lua
+-- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_critter_nurgling_flee_action.lua
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTCritterNurglingFleeAction = class(BTCritterNurglingFleeAction, BTNode)
 
-BTCritterNurglingFleeAction.init = function (self, ...)
-	BTCritterNurglingFleeAction.super.init(self, ...)
+function BTCritterNurglingFleeAction.init(arg_1_0, ...)
+	BTCritterNurglingFleeAction.super.init(arg_1_0, ...)
 end
 
 BTCritterNurglingFleeAction.name = "BTCritterNurglingFleeAction"
 
-BTCritterNurglingFleeAction.enter = function (self, unit, blackboard, t)
-	blackboard.action = self._tree_node.action_data
+function BTCritterNurglingFleeAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	arg_2_2.action = arg_2_0._tree_node.action_data
 
-	blackboard.navigation_extension:set_max_speed(blackboard.breed.run_speed)
+	arg_2_2.navigation_extension:set_max_speed(arg_2_2.breed.run_speed)
 
-	if blackboard.move_state ~= "idle" then
-		self:start_idle_animation(unit, blackboard)
+	if arg_2_2.move_state ~= "idle" then
+		arg_2_0:start_idle_animation(arg_2_1, arg_2_2)
 
-		blackboard.move_state = "idle"
+		arg_2_2.move_state = "idle"
 	end
 end
 
-BTCritterNurglingFleeAction.leave = function (self, unit, blackboard, t, reason, destroy)
-	local conflict = Managers.state.conflict
+function BTCritterNurglingFleeAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	local var_3_0 = Managers.state.conflict
 
-	if reason == "done" then
-		conflict:destroy_unit(unit, blackboard, reason)
+	if arg_3_4 == "done" then
+		var_3_0:destroy_unit(arg_3_1, arg_3_2, arg_3_4)
 	end
 end
 
-BTCritterNurglingFleeAction.run = function (self, unit, blackboard, t)
-	local action = blackboard.action
-	local navigation_extension = blackboard.navigation_extension
+function BTCritterNurglingFleeAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	local var_4_0 = arg_4_2.action
+	local var_4_1 = arg_4_2.navigation_extension
 
-	if not blackboard.move_pos then
-		local move_pos = self:get_random_move_pos(unit, blackboard, action)
+	if not arg_4_2.move_pos then
+		local var_4_2 = arg_4_0:get_random_move_pos(arg_4_1, arg_4_2, var_4_0)
 
-		blackboard.move_pos = Vector3Box(move_pos)
+		arg_4_2.move_pos = Vector3Box(var_4_2)
 
-		navigation_extension:move_to(move_pos)
+		var_4_1:move_to(var_4_2)
 	end
 
-	if navigation_extension:number_failed_move_attempts() > 0 then
-		blackboard.move_pos = nil
+	if var_4_1:number_failed_move_attempts() > 0 then
+		arg_4_2.move_pos = nil
 
-		if blackboard.move_state ~= "idle" then
-			self:start_idle_animation(unit, blackboard)
+		if arg_4_2.move_state ~= "idle" then
+			arg_4_0:start_idle_animation(arg_4_1, arg_4_2)
 		end
 
 		return "running"
 	end
 
-	if navigation_extension:is_following_path() and blackboard.move_state ~= "moving" then
-		self:start_move_animation(unit, blackboard)
+	if var_4_1:is_following_path() and arg_4_2.move_state ~= "moving" then
+		arg_4_0:start_move_animation(arg_4_1, arg_4_2)
 	end
 
-	if self:has_escaped_players(unit, blackboard, action) then
+	if arg_4_0:has_escaped_players(arg_4_1, arg_4_2, var_4_0) then
 		return "done"
 	end
 
-	if navigation_extension:has_reached_destination() then
-		blackboard.move_pos = nil
+	if var_4_1:has_reached_destination() then
+		arg_4_2.move_pos = nil
 	end
 
 	return "running"
 end
 
-BTCritterNurglingFleeAction.start_idle_animation = function (self, unit, blackboard)
-	Managers.state.network:anim_event(unit, "idle")
+function BTCritterNurglingFleeAction.start_idle_animation(arg_5_0, arg_5_1, arg_5_2)
+	Managers.state.network:anim_event(arg_5_1, "idle")
 
-	blackboard.move_state = "idle"
+	arg_5_2.move_state = "idle"
 end
 
-BTCritterNurglingFleeAction.has_escaped_players = function (self, unit, blackboard, action)
-	local data = action.has_escaped_players
-	local unit_pos = POSITION_LOOKUP[unit]
-	local side = blackboard.side
-	local ENEMY_PLAYER_AND_BOT_UNITS = side.ENEMY_PLAYER_AND_BOT_UNITS
+function BTCritterNurglingFleeAction.has_escaped_players(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	local var_6_0 = arg_6_3.has_escaped_players
+	local var_6_1 = POSITION_LOOKUP[arg_6_1]
+	local var_6_2 = arg_6_2.side.ENEMY_PLAYER_AND_BOT_UNITS
 
-	for i = 1, #ENEMY_PLAYER_AND_BOT_UNITS do
-		local player_unit = ENEMY_PLAYER_AND_BOT_UNITS[i]
-		local player_pos = POSITION_LOOKUP[player_unit]
-		local distance_to_player_sq = Vector3.distance_squared(unit_pos, player_pos)
+	for iter_6_0 = 1, #var_6_2 do
+		local var_6_3 = var_6_2[iter_6_0]
+		local var_6_4 = POSITION_LOOKUP[var_6_3]
 
-		if distance_to_player_sq > data.despawn_distance_sq then
+		if Vector3.distance_squared(var_6_1, var_6_4) > var_6_0.despawn_distance_sq then
 			return true
 		end
 	end
@@ -92,30 +90,27 @@ BTCritterNurglingFleeAction.has_escaped_players = function (self, unit, blackboa
 	return false
 end
 
-BTCritterNurglingFleeAction.get_random_move_pos = function (self, unit, blackboard, action)
-	local nav_world = blackboard.nav_world
-	local start_pos = POSITION_LOOKUP[unit]
-	local data = action.random_point_check
-	local min_dist = data.min_random_point_check_dist
-	local max_dist = data.max_random_point_check_dist
-	local max_tries = data.max_tries
-	local above = data.above
-	local below = data.below
-	local move_pos = LocomotionUtils.new_random_goal(nav_world, blackboard, start_pos, min_dist, max_dist, max_tries, nil, above, below)
+function BTCritterNurglingFleeAction.get_random_move_pos(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	local var_7_0 = arg_7_2.nav_world
+	local var_7_1 = POSITION_LOOKUP[arg_7_1]
+	local var_7_2 = arg_7_3.random_point_check
+	local var_7_3 = var_7_2.min_random_point_check_dist
+	local var_7_4 = var_7_2.max_random_point_check_dist
+	local var_7_5 = var_7_2.max_tries
+	local var_7_6 = var_7_2.above
+	local var_7_7 = var_7_2.below
 
-	move_pos = move_pos or start_pos
-
-	return move_pos
+	return LocomotionUtils.new_random_goal(var_7_0, arg_7_2, var_7_1, var_7_3, var_7_4, var_7_5, nil, var_7_6, var_7_7) or var_7_1
 end
 
-BTCritterNurglingFleeAction.start_move_animation = function (self, unit, blackboard)
-	Managers.state.network:anim_event(unit, "move_fwd")
+function BTCritterNurglingFleeAction.start_move_animation(arg_8_0, arg_8_1, arg_8_2)
+	Managers.state.network:anim_event(arg_8_1, "move_fwd")
 
-	blackboard.move_state = "moving"
+	arg_8_2.move_state = "moving"
 end
 
-BTCritterNurglingFleeAction.start_idle_animation = function (self, unit, blackboard)
-	Managers.state.network:anim_event(unit, "idle")
+function BTCritterNurglingFleeAction.start_idle_animation(arg_9_0, arg_9_1, arg_9_2)
+	Managers.state.network:anim_event(arg_9_1, "idle")
 
-	blackboard.move_state = "idle"
+	arg_9_2.move_state = "idle"
 end

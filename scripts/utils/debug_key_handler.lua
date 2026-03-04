@@ -1,180 +1,178 @@
-﻿-- chunkname: @scripts/utils/debug_key_handler.lua
+-- chunkname: @scripts/utils/debug_key_handler.lua
 
 script_data.debug_key_handler_visible = script_data.debug_key_handler_visible or Development.parameter("debug_key_handler_visible")
 
-local cache_fail = {}
+local var_0_0 = {}
 
-local function cached_fail(key)
-	if cache_fail[key] == nil then
-		cache_fail[key] = key .. "(M)"
+local function var_0_1(arg_1_0)
+	if var_0_0[arg_1_0] == nil then
+		var_0_0[arg_1_0] = arg_1_0 .. "(M)"
 	end
 
-	return cache_fail[key]
+	return var_0_0[arg_1_0]
 end
 
-local mod_cache = {}
+local var_0_2 = {
+	["left shift"] = {},
+	["right shift"] = {},
+	["left ctrl"] = {},
+	["right ctrl"] = {},
+	["left alt"] = {}
+}
 
-mod_cache["left shift"] = {}
-mod_cache["right shift"] = {}
-mod_cache["left ctrl"] = {}
-mod_cache["right ctrl"] = {}
-mod_cache["left alt"] = {}
+local function var_0_3(arg_2_0, arg_2_1, arg_2_2)
+	local var_2_0 = var_0_2[arg_2_1]
 
-local function cached_key_mod(key, key_modifier, missing)
-	local cache = mod_cache[key_modifier]
-
-	if cache[key] == nil then
-		cache[key] = {
-			exist = key_modifier .. "+" .. key,
-			missing = key_modifier .. "(M)+" .. key,
+	if var_2_0[arg_2_0] == nil then
+		var_2_0[arg_2_0] = {
+			exist = arg_2_1 .. "+" .. arg_2_0,
+			missing = arg_2_1 .. "(M)+" .. arg_2_0
 		}
 	end
 
-	return missing and cache[key].missing or cache[key].exist
+	return arg_2_2 and var_2_0[arg_2_0].missing or var_2_0[arg_2_0].exist
 end
 
 DebugKeyHandler = DebugKeyHandler or {
 	num_keys = 0,
-	keys = {},
+	keys = {}
 }
 
-local DebugKeyHandler = DebugKeyHandler
+local var_0_4 = DebugKeyHandler
 
-DebugKeyHandler.setup = function (world, input_manager)
-	DebugKeyHandler.gui = World.create_screen_gui(world, "material", "materials/fonts/gw_fonts", "immediate")
-	DebugKeyHandler.enabled = true
-	DebugKeyHandler.input_manager = input_manager
-	DebugKeyHandler.current_y = 0
+function var_0_4.setup(arg_3_0, arg_3_1)
+	var_0_4.gui = World.create_screen_gui(arg_3_0, "material", "materials/fonts/gw_fonts", "immediate")
+	var_0_4.enabled = true
+	var_0_4.input_manager = arg_3_1
+	var_0_4.current_y = 0
 end
 
-DebugKeyHandler.set_enabled = function (enabled)
-	DebugKeyHandler.enabled = enabled
+function var_0_4.set_enabled(arg_4_0)
+	var_0_4.enabled = arg_4_0
 end
 
-local blocking_modifiers = {
+local var_0_5 = {
 	"left ctrl",
 	"left shift",
 	"right ctrl",
-	"left alt",
+	"left alt"
 }
 
-DebugKeyHandler.key_pressed = function (key, description, category, key_modifier, input_service_name)
-	if not DebugKeyHandler.enabled or IS_LINUX then
+function var_0_4.key_pressed(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	if not var_0_4.enabled or IS_LINUX then
 		return
 	end
 
-	local input_service = DebugKeyHandler.input_manager:get_service(input_service_name or "Debug")
+	local var_5_0 = var_0_4.input_manager:get_service(arg_5_4 or "Debug")
 
-	if not input_service then
+	if not var_5_0 then
 		return
 	end
 
 	if script_data.debug_key_handler_visible then
-		DebugKeyHandler.num_keys = DebugKeyHandler.num_keys + 1
-		category = category or "misc"
+		var_0_4.num_keys = var_0_4.num_keys + 1
+		arg_5_2 = arg_5_2 or "misc"
 
-		local category_keys = DebugKeyHandler.keys[category]
+		local var_5_1 = var_0_4.keys[arg_5_2]
 
-		if category_keys == nil then
-			category_keys = {}
-			DebugKeyHandler.keys[category] = category_keys
+		if var_5_1 == nil then
+			var_5_1 = {}
+			var_0_4.keys[arg_5_2] = var_5_1
 		end
 
-		local key_string = input_service:has(key) and key or cached_fail(key)
+		local var_5_2 = var_5_0:has(arg_5_0) and arg_5_0 or var_0_1(arg_5_0)
 
-		if key_modifier then
-			key_string = input_service:has(key) and cached_key_mod(key, key_modifier) or cached_key_mod(key, key_modifier, true)
+		if arg_5_3 then
+			var_5_2 = var_5_0:has(arg_5_0) and var_0_3(arg_5_0, arg_5_3) or var_0_3(arg_5_0, arg_5_3, true)
 		end
 
-		category_keys[key_string] = description
+		var_5_1[var_5_2] = arg_5_1
 	end
 
-	local modifier_pressed = true
+	local var_5_3 = true
 
-	if key_modifier then
-		modifier_pressed = input_service:get(key_modifier)
+	if arg_5_3 then
+		var_5_3 = var_5_0:get(arg_5_3)
 	else
-		for i = 1, #blocking_modifiers do
-			local blocking_key = blocking_modifiers[i]
+		for iter_5_0 = 1, #var_0_5 do
+			local var_5_4 = var_0_5[iter_5_0]
 
-			if blocking_key ~= key and input_service:get(blocking_key) then
-				modifier_pressed = false
+			if var_5_4 ~= arg_5_0 and var_5_0:get(var_5_4) then
+				var_5_3 = false
 
 				break
 			end
 		end
 	end
 
-	local key_pressed = modifier_pressed and input_service:get(key)
-
-	return key_pressed
+	return var_5_3 and var_5_0:get(arg_5_0)
 end
 
-DebugKeyHandler.frame_clear = function ()
-	DebugKeyHandler.num_keys = 0
+function var_0_4.frame_clear()
+	var_0_4.num_keys = 0
 
-	for category, category_keys in pairs(DebugKeyHandler.keys) do
-		if next(category_keys) == nil then
-			DebugKeyHandler.keys[category] = nil
+	for iter_6_0, iter_6_1 in pairs(var_0_4.keys) do
+		if next(iter_6_1) == nil then
+			var_0_4.keys[iter_6_0] = nil
 		end
 
-		table.clear(category_keys)
+		table.clear(iter_6_1)
 	end
 end
 
-local font_size = 16
-local font = "arial"
-local font_mtrl = "materials/fonts/" .. font
+local var_0_6 = 16
+local var_0_7 = "arial"
+local var_0_8 = "materials/fonts/" .. var_0_7
 
-DebugKeyHandler.render = function ()
+function var_0_4.render()
 	if not script_data.debug_key_handler_visible then
 		return
 	end
 
-	local offset_lerp = 1
+	local var_7_0 = 1
 
-	if not DebugKeyHandler.enabled then
-		offset_lerp = 0.3
+	if not var_0_4.enabled then
+		var_7_0 = 0.3
 	end
 
-	local header_color = Color(offset_lerp * 250, 255, 255, 100)
-	local category_color = Color(offset_lerp * 250, 255, 255, 255)
-	local key_color = Color(offset_lerp * 250, 255, 120, 0)
-	local description_color = Color(offset_lerp * 255, 150, 150, 150)
-	local res_x, res_y = Application.resolution()
-	local gui = DebugKeyHandler.gui
-	local start_y = DebugKeyHandler.current_y
+	local var_7_1 = Color(var_7_0 * 250, 255, 255, 100)
+	local var_7_2 = Color(var_7_0 * 250, 255, 255, 255)
+	local var_7_3 = Color(var_7_0 * 250, 255, 120, 0)
+	local var_7_4 = Color(var_7_0 * 255, 150, 150, 150)
+	local var_7_5, var_7_6 = Application.resolution()
+	local var_7_7 = var_0_4.gui
+	local var_7_8 = var_0_4.current_y
 
-	DebugKeyHandler.current_y = math.lerp(start_y, res_y / 2 + DebugKeyHandler.num_keys * font_size / 2 + table.size(DebugKeyHandler.keys) * font_size / 2, 0.1)
+	var_0_4.current_y = math.lerp(var_7_8, var_7_6 / 2 + var_0_4.num_keys * var_0_6 / 2 + table.size(var_0_4.keys) * var_0_6 / 2, 0.1)
 
-	local pos = Vector3(res_x - 230, start_y, 200)
+	local var_7_9 = Vector3(var_7_5 - 230, var_7_8, 200)
 
-	Gui.text(gui, "Debug keys", font_mtrl, font_size, font, pos, header_color)
+	Gui.text(var_7_7, "Debug keys", var_0_8, var_0_6, var_0_7, var_7_9, var_7_1)
 
-	pos.y = pos.y - font_size * 1.5
+	var_7_9.y = var_7_9.y - var_0_6 * 1.5
 
-	local even = false
+	local var_7_10 = false
 
-	for category, category_keys in pairs(DebugKeyHandler.keys) do
-		local start_y_cat = pos.y
+	for iter_7_0, iter_7_1 in pairs(var_0_4.keys) do
+		local var_7_11 = var_7_9.y
 
-		Gui.text(gui, category, font_mtrl, font_size, font, pos, category_color)
+		Gui.text(var_7_7, iter_7_0, var_0_8, var_0_6, var_0_7, var_7_9, var_7_2)
 
-		pos.y = pos.y - font_size
+		var_7_9.y = var_7_9.y - var_0_6
 
-		for key, description in pairs(category_keys) do
-			Gui.text(gui, key, font_mtrl, font_size, font, pos, key_color)
-			Gui.text(gui, description, font_mtrl, font_size, font, pos + Vector3(80, 0, 0), description_color)
+		for iter_7_2, iter_7_3 in pairs(iter_7_1) do
+			Gui.text(var_7_7, iter_7_2, var_0_8, var_0_6, var_0_7, var_7_9, var_7_3)
+			Gui.text(var_7_7, iter_7_3, var_0_8, var_0_6, var_0_7, var_7_9 + Vector3(80, 0, 0), var_7_4)
 
-			pos.y = pos.y - font_size
+			var_7_9.y = var_7_9.y - var_0_6
 		end
 
-		pos.y = pos.y - font_size / 2
+		var_7_9.y = var_7_9.y - var_0_6 / 2
 	end
 
-	Gui.rect(gui, Vector3(res_x - 250, pos.y + font_size, 100), Vector2(250, start_y - pos.y), Color(offset_lerp * 240, 25, 50, 25))
+	Gui.rect(var_7_7, Vector3(var_7_5 - 250, var_7_9.y + var_0_6, 100), Vector2(250, var_7_8 - var_7_9.y), Color(var_7_0 * 240, 25, 50, 25))
 
-	if not DebugKeyHandler.enabled then
-		Gui.rect(gui, Vector3(res_x - 250, pos.y + font_size, 300), Vector2(250, start_y - pos.y), Color(offset_lerp * 200, 20, 20, 20))
+	if not var_0_4.enabled then
+		Gui.rect(var_7_7, Vector3(var_7_5 - 250, var_7_9.y + var_0_6, 300), Vector2(250, var_7_8 - var_7_9.y), Color(var_7_0 * 200, 20, 20, 20))
 	end
 end

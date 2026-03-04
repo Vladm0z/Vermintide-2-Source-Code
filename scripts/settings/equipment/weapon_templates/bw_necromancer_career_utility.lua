@@ -1,317 +1,314 @@
-﻿-- chunkname: @scripts/settings/equipment/weapon_templates/bw_necromancer_career_utility.lua
+-- chunkname: @scripts/settings/equipment/weapon_templates/bw_necromancer_career_utility.lua
 
-local function _can_command(action_user)
-	local commander_extension = ScriptUnit.extension(action_user, "ai_commander_system")
-
-	return commander_extension:get_controlled_units_count() > 0
+local function var_0_0(arg_1_0)
+	return ScriptUnit.extension(arg_1_0, "ai_commander_system"):get_controlled_units_count() > 0
 end
 
-local function _can_command_stand(action_user)
-	return _can_command(action_user)
+local function var_0_1(arg_2_0)
+	return var_0_0(arg_2_0)
 end
 
-local function _can_attack(action_user)
-	if not _can_command(action_user) then
+local function var_0_2(arg_3_0)
+	if not var_0_0(arg_3_0) then
 		return false
 	end
 
-	local has_calculated_target = ActionCareerBWNecromancerCommandAttack.pre_calculate_target(action_user)
-
-	if not has_calculated_target then
+	if not ActionCareerBWNecromancerCommandAttack.pre_calculate_target(arg_3_0) then
 		return false
 	end
 
 	return true
 end
 
-local function _can_sacrifice(action_user, input_extension)
-	if not _can_command(action_user) then
+local function var_0_3(arg_4_0, arg_4_1)
+	if not var_0_0(arg_4_0) then
 		return false
 	end
 
-	local commander_extension = ScriptUnit.extension(action_user, "ai_commander_system")
-	local any_alive = false
+	local var_4_0 = ScriptUnit.extension(arg_4_0, "ai_commander_system")
+	local var_4_1 = false
 
-	for pet_unit in pairs(commander_extension:get_controlled_units()) do
-		if HEALTH_ALIVE[pet_unit] then
-			any_alive = true
+	for iter_4_0 in pairs(var_4_0:get_controlled_units()) do
+		if HEALTH_ALIVE[iter_4_0] then
+			var_4_1 = true
 
 			break
 		end
 	end
 
-	if not any_alive then
+	if not var_4_1 then
 		return false
 	end
 
-	local talent_extension = ScriptUnit.has_extension(action_user, "talent_system")
+	local var_4_2 = ScriptUnit.has_extension(arg_4_0, "talent_system")
 
-	if talent_extension and talent_extension:has_talent("sienna_necromancer_4_1") then
+	if var_4_2 and var_4_2:has_talent("sienna_necromancer_4_1") then
 		return true
 	end
 
 	return true
 end
 
-local weapon_template = {}
-
-weapon_template.actions = {
-	action_one = {
-		default = {
-			anim_event = "pet_control_target_command",
-			kind = "career_bw_necromancer_command_attack",
-			total_time = 0.2,
-			weapon_action_hand = "left",
-			chain_condition_func = _can_attack,
-			condition_func = _can_attack,
-			allowed_chain_actions = {
-				{
-					action = "action_wield",
-					input = "action_wield",
-					start_time = 0.2,
-					sub_action = "default",
+local var_0_4 = {
+	actions = {
+		action_one = {
+			default = {
+				kind = "career_bw_necromancer_command_attack",
+				weapon_action_hand = "left",
+				anim_event = "pet_control_target_command",
+				total_time = 0.2,
+				chain_condition_func = var_0_2,
+				condition_func = var_0_2,
+				allowed_chain_actions = {
+					{
+						sub_action = "default",
+						start_time = 0.2,
+						action = "action_wield",
+						input = "action_wield"
+					},
+					{
+						sub_action = "default",
+						start_time = 0.2,
+						action = "action_two",
+						input = "action_two_hold"
+					},
+					{
+						sub_action = "default",
+						start_time = 0.2,
+						action = "weapon_reload",
+						input = "weapon_reload"
+					}
+				}
+			},
+			cast_stand = {
+				anim_event = "pet_control_target_command",
+				weapon_action_hand = "left",
+				kind = "career_bw_necromancer_command_stand",
+				total_time = 1,
+				allowed_chain_actions = {
+					{
+						sub_action = "default",
+						start_time = 0.2,
+						action = "action_wield",
+						input = "action_wield"
+					},
+					{
+						sub_action = "default",
+						start_time = 0.3,
+						action = "action_one",
+						input = "action_one"
+					},
+					{
+						sub_action = "default",
+						start_time = 0.3,
+						action = "action_three",
+						input = "action_three"
+					},
+					{
+						sub_action = "default",
+						start_time = 0.5,
+						action = "action_two",
+						release_required = "action_two_hold",
+						input = "action_two"
+					},
+					{
+						sub_action = "default",
+						start_time = 0.2,
+						action = "weapon_reload",
+						input = "weapon_reload"
+					}
 				},
-				{
+				enter_function = function(arg_5_0, arg_5_1)
+					arg_5_1:clear_input_buffer()
+
+					return arg_5_1:reset_release_input()
+				end
+			}
+		},
+		action_two = {
+			default = {
+				kind = "action_selector",
+				weapon_action_hand = "left",
+				conditional_actions = {
+					{
+						sub_action = "command_stand",
+						release_required = "action_two_hold",
+						condition = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+							return var_0_1(arg_6_3)
+						end
+					}
+				},
+				default_action = {
 					action = "action_two",
-					input = "action_two_hold",
-					start_time = 0.2,
-					sub_action = "default",
-				},
-				{
-					action = "weapon_reload",
-					input = "weapon_reload",
-					start_time = 0.2,
-					sub_action = "default",
-				},
+					sub_action = "dummy"
+				}
 			},
-		},
-		cast_stand = {
-			anim_event = "pet_control_target_command",
-			kind = "career_bw_necromancer_command_stand",
-			total_time = 1,
-			weapon_action_hand = "left",
-			allowed_chain_actions = {
-				{
-					action = "action_wield",
-					input = "action_wield",
-					start_time = 0.2,
-					sub_action = "default",
+			command_stand = {
+				weapon_action_hand = "left",
+				anim_end_event = "pet_control_cancel",
+				kind = "career_bw_necromancer_command_stand_targeting",
+				hold_input = "action_two_hold",
+				anim_event = "pet_control_target",
+				minimum_hold_time = 0.3,
+				anim_end_event_condition_func = function(arg_7_0, arg_7_1)
+					return arg_7_1 ~= "new_interupting_action"
+				end,
+				total_time = math.huge,
+				allowed_chain_actions = {
+					{
+						sub_action = "default",
+						start_time = 0,
+						action = "action_wield",
+						input = "action_wield"
+					},
+					{
+						sub_action = "cast_stand",
+						start_time = 0.2,
+						action = "action_one",
+						input = "action_one"
+					},
+					{
+						sub_action = "default",
+						start_time = 0.2,
+						action = "action_three",
+						input = "action_three"
+					},
+					{
+						sub_action = "default",
+						start_time = 0.2,
+						action = "weapon_reload",
+						input = "weapon_reload"
+					}
 				},
-				{
-					action = "action_one",
-					input = "action_one",
-					start_time = 0.3,
-					sub_action = "default",
-				},
-				{
-					action = "action_three",
-					input = "action_three",
-					start_time = 0.3,
-					sub_action = "default",
-				},
-				{
-					action = "action_two",
-					input = "action_two",
-					release_required = "action_two_hold",
-					start_time = 0.5,
-					sub_action = "default",
-				},
-				{
-					action = "weapon_reload",
-					input = "weapon_reload",
-					start_time = 0.2,
-					sub_action = "default",
-				},
-			},
-			enter_function = function (attacker_unit, input_extension)
-				input_extension:clear_input_buffer()
+				enter_function = function(arg_8_0, arg_8_1)
+					local var_8_0 = ScriptUnit.extension(arg_8_0, "ai_commander_system")
+					local var_8_1 = var_8_0:get_controlled_units()
 
-				return input_extension:reset_release_input()
-			end,
-		},
-	},
-	action_two = {
-		default = {
-			kind = "action_selector",
-			weapon_action_hand = "left",
-			conditional_actions = {
-				{
-					release_required = "action_two_hold",
-					sub_action = "command_stand",
-					condition = function (talent_extension, buff_extension, weapon_extension, owner_unit)
-						return _can_command_stand(owner_unit)
-					end,
-				},
-			},
-			default_action = {
-				action = "action_two",
-				sub_action = "dummy",
-			},
-		},
-		command_stand = {
-			anim_end_event = "pet_control_cancel",
-			anim_event = "pet_control_target",
-			hold_input = "action_two_hold",
-			kind = "career_bw_necromancer_command_stand_targeting",
-			minimum_hold_time = 0.3,
-			weapon_action_hand = "left",
-			anim_end_event_condition_func = function (unit, end_reason)
-				return end_reason ~= "new_interupting_action"
-			end,
-			total_time = math.huge,
-			allowed_chain_actions = {
-				{
-					action = "action_wield",
-					input = "action_wield",
-					start_time = 0,
-					sub_action = "default",
-				},
-				{
-					action = "action_one",
-					input = "action_one",
-					start_time = 0.2,
-					sub_action = "cast_stand",
-				},
-				{
-					action = "action_three",
-					input = "action_three",
-					start_time = 0.2,
-					sub_action = "default",
-				},
-				{
-					action = "weapon_reload",
-					input = "weapon_reload",
-					start_time = 0.2,
-					sub_action = "default",
-				},
-			},
-			enter_function = function (attacker_unit, input_extension)
-				local commander_extension = ScriptUnit.extension(attacker_unit, "ai_commander_system")
-				local controlled_units = commander_extension:get_controlled_units()
-
-				for pet_unit in pairs(controlled_units) do
-					if HEALTH_ALIVE[pet_unit] then
-						commander_extension:cancel_current_command(pet_unit, true)
+					for iter_8_0 in pairs(var_8_1) do
+						if HEALTH_ALIVE[iter_8_0] then
+							var_8_0:cancel_current_command(iter_8_0, true)
+						end
 					end
 				end
-			end,
-		},
-		dummy = {
-			kind = "dummy",
-			total_time = 0,
-			weapon_action_hand = "left",
-			allowed_chain_actions = {},
-		},
-	},
-	action_three = {
-		default = {
-			anim_event = "pet_control_target_command_return",
-			anim_event_3p = "pet_control_target_command",
-			kind = "dummy",
-			total_time = 0.7,
-			weapon_action_hand = "left",
-			allowed_chain_actions = {
-				{
-					action = "action_wield",
-					input = "action_wield",
-					start_time = 0.2,
-					sub_action = "default",
-				},
-				{
-					action = "action_one",
-					input = "action_one",
-					start_time = 0.2,
-					sub_action = "default",
-				},
-				{
-					action = "action_two",
-					input = "action_two",
-					release_required = "action_two_hold",
-					start_time = 0.2,
-					sub_action = "default",
-				},
-				{
-					action = "weapon_reload",
-					input = "weapon_reload",
-					start_time = 0.2,
-					sub_action = "default",
-				},
 			},
-			enter_function = function (attacker_unit, input_extension)
-				local commander_extension = ScriptUnit.extension(attacker_unit, "ai_commander_system")
-				local controlled_units = commander_extension:get_controlled_units()
+			dummy = {
+				kind = "dummy",
+				weapon_action_hand = "left",
+				total_time = 0,
+				allowed_chain_actions = {}
+			}
+		},
+		action_three = {
+			default = {
+				anim_event = "pet_control_target_command_return",
+				weapon_action_hand = "left",
+				anim_event_3p = "pet_control_target_command",
+				kind = "dummy",
+				total_time = 0.7,
+				allowed_chain_actions = {
+					{
+						sub_action = "default",
+						start_time = 0.2,
+						action = "action_wield",
+						input = "action_wield"
+					},
+					{
+						sub_action = "default",
+						start_time = 0.2,
+						action = "action_one",
+						input = "action_one"
+					},
+					{
+						sub_action = "default",
+						start_time = 0.2,
+						action = "action_two",
+						release_required = "action_two_hold",
+						input = "action_two"
+					},
+					{
+						sub_action = "default",
+						start_time = 0.2,
+						action = "weapon_reload",
+						input = "weapon_reload"
+					}
+				},
+				enter_function = function(arg_9_0, arg_9_1)
+					local var_9_0 = ScriptUnit.extension(arg_9_0, "ai_commander_system")
+					local var_9_1 = var_9_0:get_controlled_units()
 
-				for pet_unit in pairs(controlled_units) do
-					if HEALTH_ALIVE[pet_unit] then
-						commander_extension:cancel_current_command(pet_unit)
+					for iter_9_0 in pairs(var_9_1) do
+						if HEALTH_ALIVE[iter_9_0] then
+							var_9_0:cancel_current_command(iter_9_0)
+						end
 					end
+
+					arg_9_1:clear_input_buffer()
+
+					return arg_9_1:reset_release_input()
 				end
-
-				input_extension:clear_input_buffer()
-
-				return input_extension:reset_release_input()
-			end,
+			}
 		},
-	},
-	weapon_reload = {
-		default = {
-			anim_event = "pet_control_sacrifice",
-			kind = "career_bw_necromancer_command_vent",
-			total_time = 1,
-			weapon_action_hand = "left",
-			condition_func = _can_sacrifice,
-			chain_condition_func = _can_sacrifice,
-			allowed_chain_actions = {
-				{
-					action = "action_wield",
-					input = "action_wield",
-					start_time = 0.9,
-					sub_action = "default",
-				},
-				{
-					action = "action_two",
-					input = "action_two_hold",
-					start_time = 0.9,
-					sub_action = "default",
-				},
-				{
-					action = "action_one",
-					input = "action_one",
-					start_time = 0.9,
-					sub_action = "default",
-				},
-				{
-					action = "action_three",
-					input = "action_three",
-					start_time = 0.9,
-					sub_action = "default",
-				},
-			},
+		weapon_reload = {
+			default = {
+				anim_event = "pet_control_sacrifice",
+				weapon_action_hand = "left",
+				kind = "career_bw_necromancer_command_vent",
+				total_time = 1,
+				condition_func = var_0_3,
+				chain_condition_func = var_0_3,
+				allowed_chain_actions = {
+					{
+						sub_action = "default",
+						start_time = 0.9,
+						action = "action_wield",
+						input = "action_wield"
+					},
+					{
+						sub_action = "default",
+						start_time = 0.9,
+						action = "action_two",
+						input = "action_two_hold"
+					},
+					{
+						sub_action = "default",
+						start_time = 0.9,
+						action = "action_one",
+						input = "action_one"
+					},
+					{
+						sub_action = "default",
+						start_time = 0.9,
+						action = "action_three",
+						input = "action_three"
+					}
+				}
+			}
 		},
-	},
-	action_inspect = ActionTemplates.action_inspect_left,
-	action_wield = ActionTemplates.wield_left,
+		action_inspect = ActionTemplates.action_inspect_left,
+		action_wield = ActionTemplates.wield_left
+	}
 }
-weapon_template.left_hand_unit = "units/weapons/player/wpn_bw_necromancer_ability/wpn_bw_necromancer_ability"
-weapon_template.left_hand_attachment_node_linking = AttachmentNodeLinking.one_handed_melee_weapon.left
-weapon_template.wield_anim = "to_necro_command_item"
-weapon_template.state_machine = "units/beings/player/first_person_base/state_machines/career/skill_necromancer"
-weapon_template.load_state_machine = false
-weapon_template.display_unit = "units/weapons/weapon_display/display_staff"
-weapon_template.crosshair_style = "default"
-weapon_template.buff_type = "RANGED_ABILITY"
-weapon_template.weapon_type = "RANGED_ABILITY"
-weapon_template.dodge_count = 2
-weapon_template.buffs = {
+
+var_0_4.left_hand_unit = "units/weapons/player/wpn_bw_necromancer_ability/wpn_bw_necromancer_ability"
+var_0_4.left_hand_attachment_node_linking = AttachmentNodeLinking.one_handed_melee_weapon.left
+var_0_4.wield_anim = "to_necro_command_item"
+var_0_4.state_machine = "units/beings/player/first_person_base/state_machines/career/skill_necromancer"
+var_0_4.load_state_machine = false
+var_0_4.display_unit = "units/weapons/weapon_display/display_staff"
+var_0_4.crosshair_style = "default"
+var_0_4.buff_type = "RANGED_ABILITY"
+var_0_4.weapon_type = "RANGED_ABILITY"
+var_0_4.dodge_count = 2
+var_0_4.buffs = {
 	change_dodge_distance = {
-		external_optional_multiplier = 1,
+		external_optional_multiplier = 1
 	},
 	change_dodge_speed = {
-		external_optional_multiplier = 1,
-	},
+		external_optional_multiplier = 1
+	}
 }
-weapon_template.is_command_utility_weapon = true
+var_0_4.is_command_utility_weapon = true
 
 return {
-	bw_necromancer_career_utility_weapon = table.clone(weapon_template),
+	bw_necromancer_career_utility_weapon = table.clone(var_0_4)
 }

@@ -1,323 +1,315 @@
-﻿-- chunkname: @scripts/ui/views/level_end/level_end_view_versus.lua
+-- chunkname: @scripts/ui/views/level_end/level_end_view_versus.lua
 
 require("scripts/settings/dlcs/carousel/end_screen_award_settings")
 
-local definitions = local_require("scripts/ui/views/level_end/level_end_view_versus_definitions")
-local widget_definitions = definitions.widget_definitions
-local scenegraph_definitions = definitions.scenegraph_definitions
-local animation_definitions = definitions.animation_definitions
-local camera_movement_functions = definitions.camera_movement_functions
-local PROFILE_FOV = {
-	vs_chaos_troll = 75,
+local var_0_0 = local_require("scripts/ui/views/level_end/level_end_view_versus_definitions")
+local var_0_1 = var_0_0.widget_definitions
+local var_0_2 = var_0_0.scenegraph_definitions
+local var_0_3 = var_0_0.animation_definitions
+local var_0_4 = var_0_0.camera_movement_functions
+local var_0_5 = {
 	vs_rat_ogre = 75,
+	vs_chaos_troll = 75
 }
-local PROFILE_OFFSET = {
-	vs_rat_ogre = -0.5,
+local var_0_6 = {
+	vs_rat_ogre = -0.5
 }
 
 LevelEndViewVersus = class(LevelEndViewVersus, LevelEndViewBase)
 
-LevelEndViewVersus._setup_pages_victory = function (self, rewards)
-	if not self._is_untrusted then
+function LevelEndViewVersus._setup_pages_victory(arg_1_0, arg_1_1)
+	if not arg_1_0._is_untrusted then
 		return {
-			EndViewStateParadingVS = 1,
 			EndViewStateScoreVS = 2,
+			EndViewStateParadingVS = 1
 		}
 	else
 		return {
-			EndViewStateParadingVS = 1,
 			EndViewStateScoreVS = 2,
+			EndViewStateParadingVS = 1
 		}
 	end
 end
 
-LevelEndViewVersus._setup_pages_defeat = function (self, rewards)
-	if not self._is_untrusted then
+function LevelEndViewVersus._setup_pages_defeat(arg_2_0, arg_2_1)
+	if not arg_2_0._is_untrusted then
 		return {
-			EndViewStateParadingVS = 1,
 			EndViewStateScoreVS = 2,
+			EndViewStateParadingVS = 1
 		}
 	else
 		return {
-			EndViewStateParadingVS = 1,
 			EndViewStateScoreVS = 2,
+			EndViewStateParadingVS = 1
 		}
 	end
 end
 
-local extra_portrait_materials = {}
+local var_0_7 = {}
 
-for _, dlc in pairs(DLCSettings) do
-	local portrait_materials = dlc.portrait_materials
+for iter_0_0, iter_0_1 in pairs(DLCSettings) do
+	local var_0_8 = iter_0_1.portrait_materials
 
-	if portrait_materials then
-		for _, path in ipairs(portrait_materials) do
-			extra_portrait_materials[#extra_portrait_materials + 1] = path
+	if var_0_8 then
+		for iter_0_2, iter_0_3 in ipairs(var_0_8) do
+			var_0_7[#var_0_7 + 1] = iter_0_3
 		end
 	end
 end
 
-local CAMERA_TRANSITION_DELAY = 1
-local CAMERA_FINAL_POSE_DELAY = 4
-local MAX_AWARDS = 5
+local var_0_9 = 1
+local var_0_10 = 4
+local var_0_11 = 5
 
-LevelEndViewVersus.init = function (self, context)
-	self._team_heroes = {}
-	self._team_previewer = nil
-	self._peers_with_score = {}
-	self._parading_done_timer = nil
-	self._camera_movement_functions = table.clone(camera_movement_functions)
+function LevelEndViewVersus.init(arg_3_0, arg_3_1)
+	arg_3_0._team_heroes = {}
+	arg_3_0._team_previewer = nil
+	arg_3_0._peers_with_score = {}
+	arg_3_0._parading_done_timer = nil
+	arg_3_0._camera_movement_functions = table.clone(var_0_4)
 
-	LevelEndViewWeave.super.init(self, context)
+	LevelEndViewWeave.super.init(arg_3_0, arg_3_1)
 
-	self._menu_input_description = MenuInputDescriptionUI:new(nil, self.ui_top_renderer, Managers.input:get_service("end_of_level"), 3, 900, definitions.generic_input_actions.default)
+	arg_3_0._menu_input_description = MenuInputDescriptionUI:new(nil, arg_3_0.ui_top_renderer, Managers.input:get_service("end_of_level"), 3, 900, var_0_0.generic_input_actions.default)
 
-	self._menu_input_description:set_input_description(nil)
-	Managers.state.event:register(self, "set_flow_object_set_enabled", "event_show_flow_object_set")
+	arg_3_0._menu_input_description:set_input_description(nil)
+	Managers.state.event:register(arg_3_0, "set_flow_object_set_enabled", "event_show_flow_object_set")
 	Managers.transition:force_fade_in()
 end
 
-LevelEndViewVersus._calculate_awards = function (self)
-	local awards = {}
-	local players_session_scores = self.context.players_session_score
+function LevelEndViewVersus._calculate_awards(arg_4_0)
+	local var_4_0 = {}
+	local var_4_1 = arg_4_0.context.players_session_score
 
-	for i = 1, #EndScreenAwardSettings do
-		local award_settings = EndScreenAwardSettings[i]
-		local winner_stats_id, amount = award_settings.evaluate(players_session_scores)
+	for iter_4_0 = 1, #EndScreenAwardSettings do
+		local var_4_2 = EndScreenAwardSettings[iter_4_0]
+		local var_4_3, var_4_4 = var_4_2.evaluate(var_4_1)
 
-		if winner_stats_id then
-			awards[winner_stats_id] = awards[winner_stats_id] or {}
-			awards[winner_stats_id][#awards[winner_stats_id] + 1] = {
-				value = 10 - award_settings.prio,
-				header = award_settings.name,
-				sound = award_settings.sound,
-				sub_header = award_settings.sub_header and string.format(award_settings.sub_header, amount),
-				screen_sub_header = award_settings.screen_sub_header,
-				award_material = award_settings.award_material,
-				award_mask_material = award_settings.award_mask_material,
-				award_settings = award_settings,
-				amount = amount,
+		if var_4_3 then
+			var_4_0[var_4_3] = var_4_0[var_4_3] or {}
+			var_4_0[var_4_3][#var_4_0[var_4_3] + 1] = {
+				value = 10 - var_4_2.prio,
+				header = var_4_2.name,
+				sound = var_4_2.sound,
+				sub_header = var_4_2.sub_header and string.format(var_4_2.sub_header, var_4_4),
+				screen_sub_header = var_4_2.screen_sub_header,
+				award_material = var_4_2.award_material,
+				award_mask_material = var_4_2.award_mask_material,
+				award_settings = var_4_2,
+				amount = var_4_4
 			}
 		end
 	end
 
-	table.dump(players_session_scores, "PLAYERS_SESSION_SCORES", 2)
-	self:_calculate_mvp(awards, players_session_scores)
+	table.dump(var_4_1, "PLAYERS_SESSION_SCORES", 2)
+	arg_4_0:_calculate_mvp(var_4_0, var_4_1)
 
-	local sorted_awards = {}
+	local var_4_5 = {}
 
-	for stats_id, awards_data in pairs(awards) do
-		local max_award_value = 0
+	for iter_4_1, iter_4_2 in pairs(var_4_0) do
+		local var_4_6 = 0
 
-		for i = 1, #awards_data do
-			local award_data = awards_data[i]
-			local award_value = award_data.value
+		for iter_4_3 = 1, #iter_4_2 do
+			local var_4_7 = iter_4_2[iter_4_3].value
 
-			max_award_value = max_award_value < award_value and award_value or max_award_value
+			var_4_6 = var_4_6 < var_4_7 and var_4_7 or var_4_6
 		end
 
-		sorted_awards[#sorted_awards + 1] = {
-			stats_id = stats_id,
-			max_award_value = max_award_value,
-			awards = awards_data,
+		var_4_5[#var_4_5 + 1] = {
+			stats_id = iter_4_1,
+			max_award_value = var_4_6,
+			awards = iter_4_2
 		}
 	end
 
-	local function sort_func(a, b)
-		local a_max_award_value = a.max_award_value
-		local b_max_award_value = b.max_award_value
-
-		return b_max_award_value < a_max_award_value
+	local function var_4_8(arg_5_0, arg_5_1)
+		return arg_5_0.max_award_value > arg_5_1.max_award_value
 	end
 
-	table.sort(sorted_awards, sort_func)
+	table.sort(var_4_5, var_4_8)
 
-	self._sorted_awards = sorted_awards
+	arg_4_0._sorted_awards = var_4_5
 
-	self:_save_award_stats()
-	table.dump(self._sorted_awards, "AWARDS", 3)
+	arg_4_0:_save_award_stats()
+	table.dump(arg_4_0._sorted_awards, "AWARDS", 3)
 
-	local scores = {}
+	local var_4_9 = {}
 
-	for stats_id, player_session_score in pairs(players_session_scores) do
-		scores[#scores + 1] = player_session_score
-		scores[#scores].stats_id = stats_id
+	for iter_4_4, iter_4_5 in pairs(var_4_1) do
+		var_4_9[#var_4_9 + 1] = iter_4_5
+		var_4_9[#var_4_9].stats_id = iter_4_4
 	end
 
-	local function sort_func(a, b)
-		return a.stats_id > b.stats_id
+	local function var_4_10(arg_6_0, arg_6_1)
+		return arg_6_0.stats_id > arg_6_1.stats_id
 	end
 
-	table.sort(scores, sort_func)
-	table.dump(scores, "SCORES", 2)
+	table.sort(var_4_9, var_4_10)
+	table.dump(var_4_9, "SCORES", 2)
 end
 
-LevelEndViewVersus._save_award_stats = function (self)
-	local stats_interface = Managers.backend:get_interface("statistics")
-	local stats = stats_interface:get_stats()
-	local statistics_db = StatisticsDatabase:new()
-	local local_player_id = 1
-	local unique_id = PlayerUtils.unique_player_id(Network.peer_id(), local_player_id)
+function LevelEndViewVersus._save_award_stats(arg_7_0)
+	local var_7_0 = Managers.backend:get_interface("statistics")
+	local var_7_1 = var_7_0:get_stats()
+	local var_7_2 = StatisticsDatabase:new()
+	local var_7_3 = 1
+	local var_7_4 = PlayerUtils.unique_player_id(Network.peer_id(), var_7_3)
 
-	statistics_db:register(unique_id, "player", stats)
+	var_7_2:register(var_7_4, "player", var_7_1)
 
-	local awards
+	local var_7_5
 
-	for _, award_data in ipairs(self._sorted_awards) do
-		if award_data.stats_id == unique_id then
-			awards = award_data.awards
+	for iter_7_0, iter_7_1 in ipairs(arg_7_0._sorted_awards) do
+		if iter_7_1.stats_id == var_7_4 then
+			var_7_5 = iter_7_1.awards
 
 			break
 		end
 	end
 
-	if awards then
-		for _, award in ipairs(awards) do
-			local settings = award.award_settings
-			local stat_key = settings.stat_key
+	if var_7_5 then
+		for iter_7_2, iter_7_3 in ipairs(var_7_5) do
+			local var_7_6 = iter_7_3.award_settings.stat_key
 
-			statistics_db:increment_stat(unique_id, stat_key)
+			var_7_2:increment_stat(var_7_4, var_7_6)
 		end
 	end
 
-	stats_interface:save_explicit(unique_id, statistics_db)
+	var_7_0:save_explicit(var_7_4, var_7_2)
 	Managers.backend:commit()
 end
 
-LevelEndViewVersus._calculate_mvp = function (self, awards, player_session_scores)
-	local award_values = {}
-	local local_player_id = 1
-	local max_award_value = 0
+function LevelEndViewVersus._calculate_mvp(arg_8_0, arg_8_1, arg_8_2)
+	local var_8_0 = {}
+	local var_8_1 = 1
+	local var_8_2 = 0
 
-	for stats_id, awards_data in pairs(awards) do
-		award_values[stats_id] = 0
+	for iter_8_0, iter_8_1 in pairs(arg_8_1) do
+		var_8_0[iter_8_0] = 0
 
-		for _, award_data in ipairs(awards_data) do
-			award_values[stats_id] = award_values[stats_id] + award_data.value
+		for iter_8_2, iter_8_3 in ipairs(iter_8_1) do
+			var_8_0[iter_8_0] = var_8_0[iter_8_0] + iter_8_3.value
 		end
 
-		if max_award_value < award_values[stats_id] then
-			max_award_value = award_values[stats_id]
-		end
-	end
-
-	local potential_mvp_stats_ids = {}
-
-	for stats_id, award_value in pairs(award_values) do
-		if award_value == max_award_value then
-			potential_mvp_stats_ids[#potential_mvp_stats_ids + 1] = stats_id
+		if var_8_2 < var_8_0[iter_8_0] then
+			var_8_2 = var_8_0[iter_8_0]
 		end
 	end
 
-	local party_composition = self.context.party_composition
-	local players_session_scores = self.context.players_session_score
-	local mvp_stats_id
+	local var_8_3 = {}
 
-	if #potential_mvp_stats_ids > 1 then
-		local my_peer_id = Network.peer_id()
-		local local_player_party_id = party_composition[PlayerUtils.unique_player_id(my_peer_id, local_player_id)]
-		local opponent_party_id = local_player_party_id == 1 and 2 or 1
-		local game_won = self.context.game_won
-		local winning_party_id = game_won and local_player_party_id or not game_won and opponent_party_id or nil
-		local winning_team_mvp_stats_ids = {}
+	for iter_8_4, iter_8_5 in pairs(var_8_0) do
+		if iter_8_5 == var_8_2 then
+			var_8_3[#var_8_3 + 1] = iter_8_4
+		end
+	end
 
-		for _, stats_id in ipairs(potential_mvp_stats_ids) do
-			local party_id = party_composition[stats_id]
+	local var_8_4 = arg_8_0.context.party_composition
+	local var_8_5 = arg_8_0.context.players_session_score
+	local var_8_6
 
-			if party_id == winning_party_id then
-				winning_team_mvp_stats_ids[#winning_team_mvp_stats_ids + 1] = stats_id
+	if #var_8_3 > 1 then
+		local var_8_7 = Network.peer_id()
+		local var_8_8 = var_8_4[PlayerUtils.unique_player_id(var_8_7, var_8_1)]
+		local var_8_9 = var_8_8 == 1 and 2 or 1
+		local var_8_10 = arg_8_0.context.game_won
+		local var_8_11 = var_8_10 and var_8_8 or not var_8_10 and var_8_9 or nil
+		local var_8_12 = {}
+
+		for iter_8_6, iter_8_7 in ipairs(var_8_3) do
+			if var_8_4[iter_8_7] == var_8_11 then
+				var_8_12[#var_8_12 + 1] = iter_8_7
 			end
 		end
 
-		local tied_mvp_stats_ids = {}
+		local var_8_13 = {}
 
-		if #winning_team_mvp_stats_ids == 1 then
-			mvp_stats_id = winning_team_mvp_stats_ids[1]
-		elseif #winning_team_mvp_stats_ids > 1 then
-			tied_mvp_stats_ids = winning_team_mvp_stats_ids
+		if #var_8_12 == 1 then
+			var_8_6 = var_8_12[1]
+		elseif #var_8_12 > 1 then
+			var_8_13 = var_8_12
 		else
-			tied_mvp_stats_ids = potential_mvp_stats_ids
+			var_8_13 = var_8_3
 		end
 
-		if not table.is_empty(tied_mvp_stats_ids) then
-			local function sort_func(a, b)
-				local a_scores = players_session_scores[a].scores
-				local a_kills = a_scores.damage_dealt_heroes + a_scores.vs_damage_dealt_to_pactsworn or 0
-				local b_scores = players_session_scores[b].scores
-				local b_kills = b_scores.damage_dealt_heroes + b_scores.vs_damage_dealt_to_pactsworn or 0
+		if not table.is_empty(var_8_13) then
+			local function var_8_14(arg_9_0, arg_9_1)
+				local var_9_0 = var_8_5[arg_9_0].scores
+				local var_9_1 = var_9_0.damage_dealt_heroes + var_9_0.vs_damage_dealt_to_pactsworn or 0
+				local var_9_2 = var_8_5[arg_9_1].scores
 
-				return b_kills < a_kills
+				return var_9_1 > (var_9_2.damage_dealt_heroes + var_9_2.vs_damage_dealt_to_pactsworn or 0)
 			end
 
-			table.sort(tied_mvp_stats_ids, sort_func)
+			table.sort(var_8_13, var_8_14)
 
-			mvp_stats_id = tied_mvp_stats_ids[1]
+			var_8_6 = var_8_13[1]
 		end
 	else
-		mvp_stats_id = potential_mvp_stats_ids[1]
+		var_8_6 = var_8_3[1]
 	end
 
-	if mvp_stats_id then
-		table.insert(awards[mvp_stats_id], 1, {
+	if var_8_6 then
+		table.insert(arg_8_1[var_8_6], 1, {
 			award_mask_material = "mvp_award_mask",
-			award_material = "mvp_award",
-			header = "mvp",
 			sound = "Play_vs_hud_eom_parading_mvp",
+			header = "mvp",
 			value = 10,
-			award_settings = EndScreenAwardSettingsLookup.vs_award_mvp,
+			award_material = "mvp_award",
+			award_settings = EndScreenAwardSettingsLookup.vs_award_mvp
 		})
 	else
-		mvp_stats_id = Network.peer_id() .. ":1"
-		awards[mvp_stats_id] = awards[mvp_stats_id] or {}
+		var_8_6 = Network.peer_id() .. ":1"
+		arg_8_1[var_8_6] = arg_8_1[var_8_6] or {}
 
-		table.insert(awards[mvp_stats_id], 1, {
+		table.insert(arg_8_1[var_8_6], 1, {
 			award_mask_material = "mvp_award_mask",
-			award_material = "mvp_award",
-			header = "mvp",
 			sound = "Play_vs_hud_eom_parading_mvp",
+			header = "mvp",
 			value = 10,
-			award_settings = EndScreenAwardSettingsLookup.vs_award_mvp,
+			award_material = "mvp_award",
+			award_settings = EndScreenAwardSettingsLookup.vs_award_mvp
 		})
 	end
 
-	local mvp_player_session_score = player_session_scores[mvp_stats_id] or {}
-	local mvp_peer_id = mvp_player_session_score.peer_id or "DEAD"
-	local total_score = 0
-	local mvp_scores = mvp_player_session_score.scores
+	local var_8_15 = arg_8_2[var_8_6] or {}
+	local var_8_16 = var_8_15.peer_id or "DEAD"
+	local var_8_17 = 0
+	local var_8_18 = var_8_15.scores
 
-	if mvp_scores then
-		for _, score in pairs(mvp_scores) do
-			total_score = total_score + score
+	if var_8_18 then
+		for iter_8_8, iter_8_9 in pairs(var_8_18) do
+			var_8_17 = var_8_17 + iter_8_9
 		end
 	end
 
-	self._random_seed = tonumber(mvp_peer_id, 16) + total_score
+	arg_8_0._random_seed = tonumber(var_8_16, 16) + var_8_17
 end
 
-LevelEndViewVersus.set_input_description = function (self, description_name)
-	local actions = definitions.generic_input_actions[description_name]
+function LevelEndViewVersus.set_input_description(arg_10_0, arg_10_1)
+	local var_10_0 = var_0_0.generic_input_actions[arg_10_1]
 
-	self._menu_input_description:set_input_description(actions)
+	arg_10_0._menu_input_description:set_input_description(var_10_0)
 end
 
-LevelEndViewVersus._setup_pages_untrusted = function (self)
+function LevelEndViewVersus._setup_pages_untrusted(arg_11_0)
 	return {
-		EndViewStateParadingVS = 1,
 		EndViewStateScoreVS = 2,
+		EndViewStateParadingVS = 1
 	}
 end
 
-LevelEndViewVersus.start = function (self)
+function LevelEndViewVersus.start(arg_12_0)
 	print("[LevelEndView] Started LevelEndViewVersus")
-	LevelEndViewVersus.super.start(self)
+	LevelEndViewVersus.super.start(arg_12_0)
 
-	self._start_music_event = "menu_versus_score_screen_amb_loop_start"
-	self._stop_music_event = "menu_versus_score_screen_amb_loop_stop"
-	self._playing_music = nil
+	arg_12_0._start_music_event = "menu_versus_score_screen_amb_loop_start"
+	arg_12_0._stop_music_event = "menu_versus_score_screen_amb_loop_stop"
+	arg_12_0._playing_music = nil
 end
 
-LevelEndViewVersus.create_ui_renderer = function (self, context, world, top_world)
-	local materials = {
+function LevelEndViewVersus.create_ui_renderer(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	local var_13_0 = {
 		"material",
 		"materials/ui/ui_1080p_carousel_atlas",
 		"material",
@@ -337,771 +329,753 @@ LevelEndViewVersus.create_ui_renderer = function (self, context, world, top_worl
 		"material",
 		"materials/ui/ui_1080p_versus_rewards_atlas",
 		"material",
-		"materials/fonts/gw_fonts",
+		"materials/fonts/gw_fonts"
 	}
-	local extra_materials = self.get_extra_materials
+	local var_13_1 = arg_13_0.get_extra_materials
 
-	if extra_materials then
-		for _, extra_material in ipairs(extra_materials) do
-			materials[#materials + 1] = extra_material
+	if var_13_1 then
+		for iter_13_0, iter_13_1 in ipairs(var_13_1) do
+			var_13_0[#var_13_0 + 1] = iter_13_1
 		end
 	end
 
-	for _, extra_portrait_material in ipairs(extra_portrait_materials) do
-		materials[#materials + 1] = "material"
-		materials[#materials + 1] = extra_portrait_material
+	for iter_13_2, iter_13_3 in ipairs(var_0_7) do
+		var_13_0[#var_13_0 + 1] = "material"
+		var_13_0[#var_13_0 + 1] = iter_13_3
 	end
 
-	local ui_renderer = UIRenderer.create(world, unpack(materials))
-	local ui_top_renderer = UIRenderer.create(top_world, unpack(materials))
+	local var_13_2 = UIRenderer.create(arg_13_2, unpack(var_13_0))
+	local var_13_3 = UIRenderer.create(arg_13_3, unpack(var_13_0))
 
-	return ui_renderer, ui_top_renderer
+	return var_13_2, var_13_3
 end
 
-LevelEndViewVersus.update = function (self, dt, t)
-	local dt = self:_handle_input(dt, t)
+function LevelEndViewVersus.update(arg_14_0, arg_14_1, arg_14_2)
+	local var_14_0 = arg_14_0:_handle_input(arg_14_1, arg_14_2)
 
-	LevelEndViewVersus.super.update(self, dt, t)
-	self:_start_music()
-	self:_update_animations(dt, t)
-	self:_update_team_previewer(dt, t)
-	self:_update_fade(dt, t)
-	self:_update_camera_zoom(dt, t)
-	self:_update_award_presentation(dt, t)
-	self:_draw(dt, t)
+	LevelEndViewVersus.super.update(arg_14_0, var_14_0, arg_14_2)
+	arg_14_0:_start_music()
+	arg_14_0:_update_animations(var_14_0, arg_14_2)
+	arg_14_0:_update_team_previewer(var_14_0, arg_14_2)
+	arg_14_0:_update_fade(var_14_0, arg_14_2)
+	arg_14_0:_update_camera_zoom(var_14_0, arg_14_2)
+	arg_14_0:_update_award_presentation(var_14_0, arg_14_2)
+	arg_14_0:_draw(var_14_0, arg_14_2)
 end
 
-LevelEndViewVersus._update_fade = function (self, dt, t)
-	if self._fade_out_triggered then
+function LevelEndViewVersus._update_fade(arg_15_0, arg_15_1, arg_15_2)
+	if arg_15_0._fade_out_triggered then
 		return
 	end
 
-	if not self._team_previewer or not self._team_previewer:loading_done() then
+	if not arg_15_0._team_previewer or not arg_15_0._team_previewer:loading_done() then
 		Managers.transition:force_fade_in()
 	else
 		Managers.transition:fade_out(2)
 
-		self._fade_out_triggered = true
+		arg_15_0._fade_out_triggered = true
 	end
 end
 
-LevelEndViewVersus._update_award_presentation = function (self, dt, t)
-	if not self._fade_out_triggered then
+function LevelEndViewVersus._update_award_presentation(arg_16_0, arg_16_1, arg_16_2)
+	if not arg_16_0._fade_out_triggered then
 		return
 	end
 
-	if self._camera_progress < 1 then
+	if arg_16_0._camera_progress < 1 then
 		return
 	end
 
-	if not self._award_presentation_data then
-		self:_start_award_presentation()
+	if not arg_16_0._award_presentation_data then
+		arg_16_0:_start_award_presentation()
 	end
 
-	local award_presentation_data = self._award_presentation_data
+	local var_16_0 = arg_16_0._award_presentation_data
 
-	if not award_presentation_data then
+	if not var_16_0 then
 		return
 	end
 
-	local start_pos = award_presentation_data.start_pos:unbox()
-	local end_pos = award_presentation_data.end_pos:unbox()
-	local neck_pose = award_presentation_data.neck_pose:unbox()
-	local distance = award_presentation_data.distance
-	local time = award_presentation_data.time
-	local timer = award_presentation_data.timer
-	local progress = 1 - timer / time
-	local progress = math.easeOutCubic(progress)
-	local disable_camera_rotation = award_presentation_data.disable_camera_rotation
-	local translation = Vector3.lerp(start_pos, end_pos, progress)
-	local neck_pos = Matrix4x4.translation(neck_pose)
-	local rotation = Matrix4x4.rotation(neck_pose)
-	local forward = Quaternion.forward(rotation)
+	local var_16_1 = var_16_0.start_pos:unbox()
+	local var_16_2 = var_16_0.end_pos:unbox()
+	local var_16_3 = var_16_0.neck_pose:unbox()
+	local var_16_4 = var_16_0.distance
+	local var_16_5 = var_16_0.time
+	local var_16_6 = var_16_0.timer
+	local var_16_7 = 1 - var_16_6 / var_16_5
+	local var_16_8 = math.easeOutCubic(var_16_7)
+	local var_16_9 = var_16_0.disable_camera_rotation
+	local var_16_10 = Vector3.lerp(var_16_1, var_16_2, var_16_8)
+	local var_16_11 = Matrix4x4.translation(var_16_3)
+	local var_16_12 = Matrix4x4.rotation(var_16_3)
+	local var_16_13 = Quaternion.forward(var_16_12)
 
-	forward[3] = 0
+	var_16_13[3] = 0
 
-	local offset_value = math.sin(math.pi * progress)
+	local var_16_14 = var_16_10 + var_16_13 * math.sin(math.pi * var_16_8) * var_16_4
+	local var_16_15
 
-	translation = translation + forward * offset_value * distance
-
-	local rotation
-
-	if disable_camera_rotation then
-		rotation = Quaternion.look(Vector3(0, -1, 0), Vector3.up())
+	if var_16_9 then
+		var_16_15 = Quaternion.look(Vector3(0, -1, 0), Vector3.up())
 	else
-		rotation = Quaternion.look(neck_pos - translation, Vector3.up())
+		var_16_15 = Quaternion.look(var_16_11 - var_16_14, Vector3.up())
 	end
 
-	local new_camera_pose = Matrix4x4.from_quaternion_position(rotation, translation)
+	local var_16_16 = Matrix4x4.from_quaternion_position(var_16_15, var_16_14)
 
-	self:position_camera(new_camera_pose, self._fov)
+	arg_16_0:position_camera(var_16_16, arg_16_0._fov)
 
-	local hero_previewer = self._hero_previewers[self._current_hero]
-	local character_unit = hero_previewer:get_character_unit()
-	local aim_constraint_anim_var = Unit.animation_find_constraint_target(character_unit, "aim_constraint_target")
+	local var_16_17 = arg_16_0._hero_previewers[arg_16_0._current_hero]:get_character_unit()
+	local var_16_18 = Unit.animation_find_constraint_target(var_16_17, "aim_constraint_target")
 
-	Unit.animation_set_constraint_target(character_unit, aim_constraint_anim_var, translation)
+	Unit.animation_set_constraint_target(var_16_17, var_16_18, var_16_14)
 
-	award_presentation_data.timer = math.max(timer - dt, 0)
+	var_16_0.timer = math.max(var_16_6 - arg_16_1, 0)
 
-	if not award_presentation_data.fade and award_presentation_data.timer <= 0.2 then
+	if not var_16_0.fade and var_16_0.timer <= 0.2 then
 		Managers.transition:fade_in(8)
 
-		award_presentation_data.fade = true
+		var_16_0.fade = true
 	end
 
-	if award_presentation_data.timer == 0 then
-		for _, screen_award_widget in ipairs(self._screen_award_widgets) do
-			screen_award_widget.content.visible = false
+	if var_16_0.timer == 0 then
+		for iter_16_0, iter_16_1 in ipairs(arg_16_0._screen_award_widgets) do
+			iter_16_1.content.visible = false
 		end
 
-		local character_rotation = self._character_rotation
-		local hero_previewer = self._hero_previewers[self._current_hero]
+		local var_16_19 = arg_16_0._character_rotation
 
-		hero_previewer:set_hero_rotation(character_rotation)
-		Unit.animation_set_constraint_target(character_unit, aim_constraint_anim_var, Vector3Aux.unbox(self._character_look_target))
+		arg_16_0._hero_previewers[arg_16_0._current_hero]:set_hero_rotation(var_16_19)
+		Unit.animation_set_constraint_target(var_16_17, var_16_18, Vector3Aux.unbox(arg_16_0._character_look_target))
 
-		self._award_presentation_data = nil
-		self._current_hero = self._current_hero - 1
+		arg_16_0._award_presentation_data = nil
+		arg_16_0._current_hero = arg_16_0._current_hero - 1
 
-		if self._current_hero < 1 then
-			self:_trigger_end_camera()
+		if arg_16_0._current_hero < 1 then
+			arg_16_0:_trigger_end_camera()
 		end
 	end
 end
 
-LevelEndViewVersus._trigger_end_camera = function (self)
-	local camera_pose = self._target_camera_pose:unbox()
+function LevelEndViewVersus._trigger_end_camera(arg_17_0)
+	local var_17_0 = arg_17_0._target_camera_pose:unbox()
 
-	Matrix4x4.set_translation(camera_pose, Matrix4x4.translation(camera_pose) + Matrix4x4.forward(camera_pose) * 2)
+	Matrix4x4.set_translation(var_17_0, Matrix4x4.translation(var_17_0) + Matrix4x4.forward(var_17_0) * 2)
 
-	self._camera_pose = Matrix4x4Box(camera_pose)
-	self._camera_progress = 0
+	arg_17_0._camera_pose = Matrix4x4Box(var_17_0)
+	arg_17_0._camera_progress = 0
 
-	for _, hero_previewer in ipairs(self._hero_previewers) do
-		hero_previewer:_set_character_visibility(true)
+	for iter_17_0, iter_17_1 in ipairs(arg_17_0._hero_previewers) do
+		iter_17_1:_set_character_visibility(true)
 	end
 
-	for _, award_widget in ipairs(self._award_widgets) do
-		award_widget.content.visible = true
+	for iter_17_2, iter_17_3 in ipairs(arg_17_0._award_widgets) do
+		iter_17_3.content.visible = true
 	end
 
 	Managers.transition:force_fade_in()
 	Managers.transition:fade_out(2)
-	self:_start_animation("animate_continue_button", self._widgets_by_name, {
-		cb = callback(self, "set_input_description", "continue_available"),
+	arg_17_0:_start_animation("animate_continue_button", arg_17_0._widgets_by_name, {
+		cb = callback(arg_17_0, "set_input_description", "continue_available")
 	})
 
-	self._skip_camera_fade = true
+	arg_17_0._skip_camera_fade = true
 
-	self:play_sound("Play_vs_hud_eom_parading_team")
+	arg_17_0:play_sound("Play_vs_hud_eom_parading_team")
 end
 
-LevelEndViewVersus._start_award_presentation = function (self)
-	self._current_hero = self._current_hero or #self._hero_previewers
+function LevelEndViewVersus._start_award_presentation(arg_18_0)
+	arg_18_0._current_hero = arg_18_0._current_hero or #arg_18_0._hero_previewers
 
-	local hero_previewer = self._hero_previewers[self._current_hero]
+	local var_18_0 = arg_18_0._hero_previewers[arg_18_0._current_hero]
 
-	if not hero_previewer then
+	if not var_18_0 then
 		return
 	end
 
-	local character_unit = hero_previewer:get_character_unit()
+	local var_18_1 = var_18_0:get_character_unit()
 
-	if not Unit.alive(character_unit) then
+	if not Unit.alive(var_18_1) then
 		return
 	end
 
-	for _, hero_previewer in ipairs(self._hero_previewers) do
-		hero_previewer:_set_character_visibility(false)
+	for iter_18_0, iter_18_1 in ipairs(arg_18_0._hero_previewers) do
+		iter_18_1:_set_character_visibility(false)
 	end
 
-	hero_previewer:_set_character_visibility(true)
+	var_18_0:_set_character_visibility(true)
 
-	for _, screen_award_widget in ipairs(self._screen_award_widgets) do
-		screen_award_widget.content.visible = false
+	for iter_18_2, iter_18_3 in ipairs(arg_18_0._screen_award_widgets) do
+		iter_18_3.content.visible = false
 	end
 
-	self._character_rotation = hero_previewer.character_rotation
-	self._character_look_target = hero_previewer.character_look_target
-	self._fov = table.is_empty(self._team_heroes[self._current_hero].breed) and 55 or nil
+	arg_18_0._character_rotation = var_18_0.character_rotation
+	arg_18_0._character_look_target = var_18_0.character_look_target
+	arg_18_0._fov = table.is_empty(arg_18_0._team_heroes[arg_18_0._current_hero].breed) and 55 or nil
 
-	local current_profile_name = hero_previewer:current_profile_name()
-	local profile = PROFILES_BY_NAME[current_profile_name]
+	local var_18_2 = var_18_0:current_profile_name()
+	local var_18_3 = PROFILES_BY_NAME[var_18_2]
 
-	self._fov = PROFILE_FOV[profile.display_name] or self._fov
+	arg_18_0._fov = var_0_5[var_18_3.display_name] or arg_18_0._fov
 
-	local profile_offset = PROFILE_OFFSET[profile.display_name] or 0
+	local var_18_4 = var_0_6[var_18_3.display_name] or 0
 
-	hero_previewer:set_hero_rotation(0)
+	var_18_0:set_hero_rotation(0)
 
-	local screen_award_widget = self._screen_award_widgets[self._current_hero]
+	local var_18_5 = arg_18_0._screen_award_widgets[arg_18_0._current_hero]
 
-	screen_award_widget.content.visible = true
+	var_18_5.content.visible = true
 
-	local award_data = screen_award_widget.content.award_data
-	local sound_event = award_data.sound_event
+	local var_18_6 = var_18_5.content.award_data
+	local var_18_7 = var_18_6.sound_event
 
-	if sound_event then
-		self:play_sound(sound_event)
+	if var_18_7 then
+		arg_18_0:play_sound(var_18_7)
 	end
 
-	local peer_id = award_data.peer_id
-
-	if peer_id == Network.peer_id() then
-		self:play_sound("Play_vs_hud_eom_parading_you")
+	if var_18_6.peer_id == Network.peer_id() then
+		arg_18_0:play_sound("Play_vs_hud_eom_parading_you")
 	end
 
-	self.render_settings.alpha_multiplier = 1
+	arg_18_0.render_settings.alpha_multiplier = 1
 
-	local node_index = Unit.has_node(character_unit, "j_neck") and Unit.node(character_unit, "j_neck")
+	local var_18_8 = Unit.has_node(var_18_1, "j_neck") and Unit.node(var_18_1, "j_neck")
 
-	if not node_index then
+	if not var_18_8 then
 		return
 	end
 
-	local neck_pose = Unit.world_pose(character_unit, node_index)
-	local node_index = Unit.has_node(character_unit, "j_hips") and Unit.node(character_unit, "j_hips")
+	local var_18_9 = Unit.world_pose(var_18_1, var_18_8)
+	local var_18_10 = Unit.has_node(var_18_1, "j_hips") and Unit.node(var_18_1, "j_hips")
 
-	if not node_index then
+	if not var_18_10 then
 		return
 	end
 
-	local hips_pose = Unit.world_pose(character_unit, node_index)
-	local base_pose = Unit.world_pose(character_unit, 0)
-	local distance = 2
-	local time = 5
-	local right = Vector3(-1, 0, 0)
-	local forward = Matrix4x4.forward(self._camera_pose:unbox())
-	local neck_pos = Matrix4x4.translation(neck_pose) + forward * profile_offset
-	local hips_pos = Matrix4x4.translation(hips_pose) + forward * profile_offset
-	local base_pos = Matrix4x4.translation(base_pose) + forward * profile_offset
-	local random_seed, index
+	local var_18_11 = Unit.world_pose(var_18_1, var_18_10)
+	local var_18_12 = Unit.world_pose(var_18_1, 0)
+	local var_18_13 = 2
+	local var_18_14 = 5
+	local var_18_15 = Vector3(-1, 0, 0)
+	local var_18_16 = Matrix4x4.forward(arg_18_0._camera_pose:unbox())
+	local var_18_17 = Matrix4x4.translation(var_18_9) + var_18_16 * var_18_4
+	local var_18_18 = Matrix4x4.translation(var_18_11) + var_18_16 * var_18_4
+	local var_18_19 = Matrix4x4.translation(var_18_12) + var_18_16 * var_18_4
+	local var_18_20
+	local var_18_21
+	local var_18_22
 
-	random_seed, index = Math.next_random(self._random_seed, 1, #self._camera_movement_functions)
-	self._random_seed = random_seed
+	arg_18_0._random_seed, var_18_22 = Math.next_random(arg_18_0._random_seed, 1, #arg_18_0._camera_movement_functions)
+	arg_18_0._award_presentation_data = arg_18_0._camera_movement_functions[var_18_22].func(var_18_9, var_18_17, var_18_18, var_18_19, var_18_15, var_18_16, var_18_13, var_18_14)
 
-	local movement_data = self._camera_movement_functions[index]
-
-	self._award_presentation_data = movement_data.func(neck_pose, neck_pos, hips_pos, base_pos, right, forward, distance, time)
-
-	table.remove(self._camera_movement_functions, index)
+	table.remove(arg_18_0._camera_movement_functions, var_18_22)
 	Managers.transition:force_fade_in()
 	Managers.transition:fade_out(2)
 end
 
-LevelEndViewVersus._handle_input = function (self, dt, t)
-	local input_manager = self.input_manager
-	local input_service = input_manager:get_service("end_of_level")
+function LevelEndViewVersus._handle_input(arg_19_0, arg_19_1, arg_19_2)
+	local var_19_0 = arg_19_0.input_manager:get_service("end_of_level")
 
-	if input_service:get("confirm_hold") then
-		dt = dt * 5
+	if var_19_0:get("confirm_hold") then
+		arg_19_1 = arg_19_1 * 5
 	end
 
-	local continue_button = self._widgets_by_name.continue_button
+	local var_19_1 = arg_19_0._widgets_by_name.continue_button
 
-	if continue_button.content.visible then
-		local gamepad_active = Managers.input:is_device_active("gamepad")
+	if var_19_1.content.visible then
+		local var_19_2 = Managers.input:is_device_active("gamepad")
 
-		if UIUtils.is_button_pressed(continue_button) or gamepad_active and input_service:get("refresh") or not gamepad_active and input_service:get("confirm_press") then
-			self._parading_done = true
+		if UIUtils.is_button_pressed(var_19_1) or var_19_2 and var_19_0:get("refresh") or not var_19_2 and var_19_0:get("confirm_press") then
+			arg_19_0._parading_done = true
 
-			self:play_sound("play_gui_start_menu_button_click")
-		elseif UIUtils.is_button_hover_enter(continue_button) then
-			self:play_sound("Play_hud_hover")
+			arg_19_0:play_sound("play_gui_start_menu_button_click")
+		elseif UIUtils.is_button_hover_enter(var_19_1) then
+			arg_19_0:play_sound("Play_hud_hover")
 		end
 	end
 
-	return dt
+	return arg_19_1
 end
 
-LevelEndViewVersus.parading_done = function (self, dt, t)
-	return self._parading_done
+function LevelEndViewVersus.parading_done(arg_20_0, arg_20_1, arg_20_2)
+	return arg_20_0._parading_done
 end
 
-LevelEndViewVersus._update_camera_zoom = function (self, dt, t)
-	if not self._fade_out_triggered then
+function LevelEndViewVersus._update_camera_zoom(arg_21_0, arg_21_1, arg_21_2)
+	if not arg_21_0._fade_out_triggered then
 		return
 	end
 
-	local camera_progress = self._camera_progress
+	local var_21_0 = arg_21_0._camera_progress
 
-	if camera_progress >= 1 then
+	if var_21_0 >= 1 then
 		return
 	end
 
-	if self._camera_delay and t < self._camera_delay then
+	if arg_21_0._camera_delay and arg_21_2 < arg_21_0._camera_delay then
 		return
 	end
 
-	local eased_camera_progress = math.easeOutCubic(camera_progress)
-	local new_camera_pose = Matrix4x4.lerp(self._camera_pose:unbox(), self._target_camera_pose:unbox(), eased_camera_progress)
+	local var_21_1 = math.easeOutCubic(var_21_0)
+	local var_21_2 = Matrix4x4.lerp(arg_21_0._camera_pose:unbox(), arg_21_0._target_camera_pose:unbox(), var_21_1)
 
-	self:position_camera(new_camera_pose)
+	arg_21_0:position_camera(var_21_2)
 
-	local speed = 0.5
+	local var_21_3 = 0.5
 
-	self._camera_progress = math.min(camera_progress + dt * speed, 1)
+	arg_21_0._camera_progress = math.min(var_21_0 + arg_21_1 * var_21_3, 1)
 
-	if not self._skip_camera_fade and self._camera_progress >= 0.9 then
+	if not arg_21_0._skip_camera_fade and arg_21_0._camera_progress >= 0.9 then
 		Managers.transition:fade_in(5)
 
-		self._skip_camera_fade = true
+		arg_21_0._skip_camera_fade = true
 	end
 end
 
-LevelEndViewVersus._start_music = function (self)
-	if self._playing_music then
+function LevelEndViewVersus._start_music(arg_22_0)
+	if arg_22_0._playing_music then
 		return
 	end
 
-	self:play_sound(self._start_music_event)
+	arg_22_0:play_sound(arg_22_0._start_music_event)
 
-	self._playing_music = true
+	arg_22_0._playing_music = true
 end
 
-LevelEndViewVersus._update_animations = function (self, dt, t)
-	local ui_animator = self._ui_animator
+function LevelEndViewVersus._update_animations(arg_23_0, arg_23_1, arg_23_2)
+	local var_23_0 = arg_23_0._ui_animator
 
-	ui_animator:update(dt)
+	var_23_0:update(arg_23_1)
 
-	for anim_id, _ in pairs(self._ui_animations) do
-		if ui_animator:is_animation_completed(anim_id) then
-			self._ui_animations[anim_id] = nil
+	for iter_23_0, iter_23_1 in pairs(arg_23_0._ui_animations) do
+		if var_23_0:is_animation_completed(iter_23_0) then
+			arg_23_0._ui_animations[iter_23_0] = nil
 		end
 	end
 
-	local widget = self._widgets_by_name.continue_button
+	local var_23_1 = arg_23_0._widgets_by_name.continue_button
 
-	UIWidgetUtils.animate_default_button(widget, dt)
+	UIWidgetUtils.animate_default_button(var_23_1, arg_23_1)
 end
 
-LevelEndViewVersus._draw = function (self, dt, t)
-	local ui_renderer = self.ui_renderer
-	local ui_scenegraph = self._ui_scenegraph
-	local gamepad_active = Managers.input:is_device_active("gamepad")
-	local input_service = self:input_service()
-	local render_settings = self.render_settings
+function LevelEndViewVersus._draw(arg_24_0, arg_24_1, arg_24_2)
+	local var_24_0 = arg_24_0.ui_renderer
+	local var_24_1 = arg_24_0._ui_scenegraph
+	local var_24_2 = Managers.input:is_device_active("gamepad")
+	local var_24_3 = arg_24_0:input_service()
+	local var_24_4 = arg_24_0.render_settings
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
-	UIRenderer.draw_all_widgets(ui_renderer, self._widgets)
-	UIRenderer.draw_all_widgets(ui_renderer, self._portrait_widgets)
-	UIRenderer.draw_all_widgets(ui_renderer, self._award_widgets)
-	UIRenderer.draw_all_widgets(ui_renderer, self._screen_award_widgets)
-	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.begin_pass(var_24_0, var_24_1, var_24_3, arg_24_1, nil, var_24_4)
+	UIRenderer.draw_all_widgets(var_24_0, arg_24_0._widgets)
+	UIRenderer.draw_all_widgets(var_24_0, arg_24_0._portrait_widgets)
+	UIRenderer.draw_all_widgets(var_24_0, arg_24_0._award_widgets)
+	UIRenderer.draw_all_widgets(var_24_0, arg_24_0._screen_award_widgets)
+	UIRenderer.end_pass(var_24_0)
 
-	if gamepad_active then
-		self._menu_input_description:draw(ui_renderer, dt)
+	if var_24_2 then
+		arg_24_0._menu_input_description:draw(var_24_0, arg_24_1)
 	end
 end
 
-LevelEndViewVersus.set_input_description = function (self, input_desc)
-	self._menu_input_description:set_input_description(definitions.generic_input_actions[input_desc])
+function LevelEndViewVersus.set_input_description(arg_25_0, arg_25_1)
+	arg_25_0._menu_input_description:set_input_description(var_0_0.generic_input_actions[arg_25_1])
 end
 
-LevelEndViewVersus.destroy = function (self, keep_variables)
-	LevelEndViewVersus.super.destroy(self, keep_variables)
-	Managers.state.event:unregister("set_flow_object_set_enabled", self)
+function LevelEndViewVersus.destroy(arg_26_0, arg_26_1)
+	LevelEndViewVersus.super.destroy(arg_26_0, arg_26_1)
+	Managers.state.event:unregister("set_flow_object_set_enabled", arg_26_0)
 
-	self._ui_scenegraph = nil
+	arg_26_0._ui_scenegraph = nil
 end
 
-LevelEndViewVersus.do_retry = function (self)
+function LevelEndViewVersus.do_retry(arg_27_0)
 	return false
 end
 
-LevelEndViewVersus.active_input_service = function (self)
-	return self.input_blocked and FAKE_INPUT_SERVICE or self:input_service()
+function LevelEndViewVersus.active_input_service(arg_28_0)
+	return arg_28_0.input_blocked and FAKE_INPUT_SERVICE or arg_28_0:input_service()
 end
 
-LevelEndViewVersus.setup_pages = function (self, game_won, rewards)
-	local index_by_state_name
+function LevelEndViewVersus.setup_pages(arg_29_0, arg_29_1, arg_29_2)
+	local var_29_0
 
-	if self._is_untrusted then
-		index_by_state_name = self:_setup_pages_untrusted()
-	elseif game_won then
-		index_by_state_name = self:_setup_pages_victory(rewards)
+	if arg_29_0._is_untrusted then
+		var_29_0 = arg_29_0:_setup_pages_untrusted()
+	elseif arg_29_1 then
+		var_29_0 = arg_29_0:_setup_pages_victory(arg_29_2)
 	else
-		index_by_state_name = self:_setup_pages_defeat(rewards)
+		var_29_0 = arg_29_0:_setup_pages_defeat(arg_29_2)
 	end
 
-	return index_by_state_name
+	return var_29_0
 end
 
-LevelEndViewVersus.setup_camera = function (self)
-	local camera_pose = Matrix4x4Box(Matrix4x4.identity())
-	local level_name = "levels/carousel_podium/world"
-	local unit_indices = LevelResource.unit_indices(level_name, "units/hub_elements/cutscene_camera/cutscene_camera")
+function LevelEndViewVersus.setup_camera(arg_30_0)
+	local var_30_0 = Matrix4x4Box(Matrix4x4.identity())
+	local var_30_1 = "levels/carousel_podium/world"
+	local var_30_2 = LevelResource.unit_indices(var_30_1, "units/hub_elements/cutscene_camera/cutscene_camera")
 
-	for _, index in pairs(unit_indices) do
-		local unit_data = LevelResource.unit_data(level_name, index)
-		local name = DynamicData.get(unit_data, "name")
+	for iter_30_0, iter_30_1 in pairs(var_30_2) do
+		local var_30_3 = LevelResource.unit_data(var_30_1, iter_30_1)
+		local var_30_4 = DynamicData.get(var_30_3, "name")
 
-		if name and name == "parading_position_01" then
-			local position = LevelResource.unit_position(level_name, index) + Vector3(0, 1, 0)
-			local rotation = LevelResource.unit_rotation(level_name, index)
-			local pose = Matrix4x4.from_quaternion_position(rotation, position)
+		if var_30_4 and var_30_4 == "parading_position_01" then
+			local var_30_5 = LevelResource.unit_position(var_30_1, iter_30_1) + Vector3(0, 1, 0)
+			local var_30_6 = LevelResource.unit_rotation(var_30_1, iter_30_1)
+			local var_30_7 = Matrix4x4.from_quaternion_position(var_30_6, var_30_5)
 
-			camera_pose = Matrix4x4Box(pose)
+			var_30_0 = Matrix4x4Box(var_30_7)
 
-			print("Found camera: " .. name)
+			print("Found camera: " .. var_30_4)
 
 			break
 		end
 	end
 
-	self._camera_pose = camera_pose
-	self._target_camera_pose = Matrix4x4Box(Matrix4x4.multiply(camera_pose:unbox(), Matrix4x4.from_translation(Vector3(0, -2.75, 0))))
-	self._camera_progress = 0
+	arg_30_0._camera_pose = var_30_0
+	arg_30_0._target_camera_pose = Matrix4x4Box(Matrix4x4.multiply(var_30_0:unbox(), Matrix4x4.from_translation(Vector3(0, -2.75, 0))))
+	arg_30_0._camera_progress = 0
 
-	self:position_camera(self._target_camera_pose:unbox())
+	arg_30_0:position_camera(arg_30_0._target_camera_pose:unbox())
 end
 
-LevelEndViewVersus._destroy_team_previewer = function (self)
-	if self._team_previewer then
-		self._team_previewer:on_exit()
+function LevelEndViewVersus._destroy_team_previewer(arg_31_0)
+	if arg_31_0._team_previewer then
+		arg_31_0._team_previewer:on_exit()
 
-		self._team_previewer = nil
+		arg_31_0._team_previewer = nil
 	end
 end
 
-LevelEndViewVersus._update_team_previewer = function (self, dt, t)
-	local team_previewer = self._team_previewer
+function LevelEndViewVersus._update_team_previewer(arg_32_0, arg_32_1, arg_32_2)
+	local var_32_0 = arg_32_0._team_previewer
 
-	if team_previewer then
-		team_previewer:update(dt, t)
-		team_previewer:post_update(dt, t)
+	if var_32_0 then
+		var_32_0:update(arg_32_1, arg_32_2)
+		var_32_0:post_update(arg_32_1, arg_32_2)
 	end
 end
 
-LevelEndViewVersus.create_ui_elements = function (self)
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definitions)
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
-	self._widgets, self._widgets_by_name = UIUtils.create_widgets(widget_definitions, {}, {})
+function LevelEndViewVersus.create_ui_elements(arg_33_0)
+	arg_33_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
+	arg_33_0._ui_animator = UIAnimator:new(arg_33_0._ui_scenegraph, var_0_3)
+	arg_33_0._widgets, arg_33_0._widgets_by_name = UIUtils.create_widgets(var_0_1, {}, {})
+	arg_33_0._widgets_by_name.continue_button.content.visible = false
+	arg_33_0._ui_animations = {}
+	arg_33_0._portrait_widgets = {}
+	arg_33_0._award_widgets = {}
+	arg_33_0._screen_award_widgets = {}
 
-	local continue_button = self._widgets_by_name.continue_button
-
-	continue_button.content.visible = false
-	self._ui_animations = {}
-	self._portrait_widgets = {}
-	self._award_widgets = {}
-	self._screen_award_widgets = {}
-
-	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(arg_33_0.ui_renderer)
 end
 
-LevelEndViewVersus.hide_team = function (self)
-	if self._team_previewer then
-		self:_destroy_team_previewer()
+function LevelEndViewVersus.hide_team(arg_34_0)
+	if arg_34_0._team_previewer then
+		arg_34_0:_destroy_team_previewer()
 	end
 
-	if not table.is_empty(self._ui_animations) then
-		for anim_id, _ in pairs(self._ui_animations) do
-			self._ui_animator:stop_animation(anim_id)
+	if not table.is_empty(arg_34_0._ui_animations) then
+		for iter_34_0, iter_34_1 in pairs(arg_34_0._ui_animations) do
+			arg_34_0._ui_animator:stop_animation(iter_34_0)
 		end
 
-		table.clear(self._ui_animations)
+		table.clear(arg_34_0._ui_animations)
 	end
 
-	self:_start_animation("hide_awards", self._award_widgets)
+	arg_34_0:_start_animation("hide_awards", arg_34_0._award_widgets)
 end
 
-LevelEndViewVersus.show_team = function (self)
-	if self._team_previewer then
-		self:_destroy_team_previewer()
+function LevelEndViewVersus.show_team(arg_35_0)
+	if arg_35_0._team_previewer then
+		arg_35_0:_destroy_team_previewer()
 	end
 
-	self:_calculate_awards()
+	arg_35_0:_calculate_awards()
 
-	local num_players = self:_setup_team_heroes()
+	local var_35_0 = arg_35_0:_setup_team_heroes()
 
-	self:_setup_team_previewer(num_players)
+	arg_35_0:_setup_team_previewer(var_35_0)
 end
 
-LevelEndViewVersus._start_animation = function (self, animation_name, widgets, data)
-	local params = {
-		render_settings = self.render_settings,
-		data = data,
+function LevelEndViewVersus._start_animation(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+	local var_36_0 = {
+		render_settings = arg_36_0.render_settings,
+		data = arg_36_3
 	}
-	local anim_id = self._ui_animator:start_animation(animation_name, widgets, scenegraph_definitions, params)
+	local var_36_1 = arg_36_0._ui_animator:start_animation(arg_36_1, arg_36_2, var_0_2, var_36_0)
 
-	self._ui_animations[anim_id] = true
+	arg_36_0._ui_animations[var_36_1] = true
 end
 
-LevelEndViewVersus._setup_team_heroes = function (self)
-	local num_party_members = 0
-	local local_player_party_id = self.context.party_composition[PlayerUtils.unique_player_id(Network.peer_id(), 1)]
-	local players_session_scores = self.context.players_session_score
-	local team_heroes = self._team_heroes
-	local players_with_score = self._peers_with_score
+function LevelEndViewVersus._setup_team_heroes(arg_37_0)
+	local var_37_0 = 0
+	local var_37_1 = arg_37_0.context.party_composition[PlayerUtils.unique_player_id(Network.peer_id(), 1)]
+	local var_37_2 = arg_37_0.context.players_session_score
+	local var_37_3 = arg_37_0._team_heroes
+	local var_37_4 = arg_37_0._peers_with_score
 
-	table.clear(team_heroes)
-	table.clear(players_with_score)
+	table.clear(var_37_3)
+	table.clear(var_37_4)
 
-	for i = 1, math.min(#self._sorted_awards, MAX_AWARDS) do
-		local player_awards = self._sorted_awards[i]
-		local player_stats_id = player_awards.stats_id
-		local player_data = players_session_scores[player_stats_id]
-		local peer_id = player_data.peer_id
-		local party_id = self.context.party_composition[player_stats_id]
+	for iter_37_0 = 1, math.min(#arg_37_0._sorted_awards, var_0_11) do
+		local var_37_5 = arg_37_0._sorted_awards[iter_37_0]
+		local var_37_6 = var_37_5.stats_id
+		local var_37_7 = var_37_2[var_37_6]
+		local var_37_8 = var_37_7.peer_id
 
-		if party_id then
-			team_heroes[#team_heroes + 1] = self:get_hero_from_score(player_data, player_awards)
-			num_party_members = num_party_members + 1
+		if arg_37_0.context.party_composition[var_37_6] then
+			var_37_3[#var_37_3 + 1] = arg_37_0:get_hero_from_score(var_37_7, var_37_5)
+			var_37_0 = var_37_0 + 1
 		end
 
-		players_with_score[peer_id] = true
+		var_37_4[var_37_8] = true
 	end
 
-	return num_party_members
+	return var_37_0
 end
 
-local EMPTY_TABLE = {}
+local var_0_12 = {}
 
-LevelEndViewVersus.get_hero_from_score = function (self, player_data, award_data)
-	local profile_index = player_data.profile_index
-	local career_index = player_data.career_index
-	local profile_data = SPProfiles[profile_index]
-	local careers = profile_data.careers
-	local career_settings = careers[career_index]
-	local weapon_pose_weapon, weapon_pose_slot, weapon_pose_anim_event
-	local weapon_pose = player_data.weapon_pose and player_data.weapon_pose.item_name
+function LevelEndViewVersus.get_hero_from_score(arg_38_0, arg_38_1, arg_38_2)
+	local var_38_0 = arg_38_1.profile_index
+	local var_38_1 = arg_38_1.career_index
+	local var_38_2 = SPProfiles[var_38_0].careers[var_38_1]
+	local var_38_3
+	local var_38_4
+	local var_38_5
+	local var_38_6 = arg_38_1.weapon_pose and arg_38_1.weapon_pose.item_name
 
-	if weapon_pose then
-		local item = ItemMasterList[weapon_pose]
+	if var_38_6 then
+		local var_38_7 = ItemMasterList[var_38_6]
 
-		if item then
-			local skin_name = player_data.weapon_pose.skin_name
-			local parent_item_name = item.parent
-			local parent_item = rawget(ItemMasterList, parent_item_name) and ItemMasterList[parent_item_name]
+		if var_38_7 then
+			local var_38_8 = arg_38_1.weapon_pose.skin_name
+			local var_38_9 = var_38_7.parent
+			local var_38_10 = rawget(ItemMasterList, var_38_9) and ItemMasterList[var_38_9]
 
-			if parent_item then
-				weapon_pose_weapon = {
-					item_name = parent_item_name,
-					skin_name = skin_name,
+			if var_38_10 then
+				var_38_3 = {
+					item_name = var_38_9,
+					skin_name = var_38_8
 				}
-				weapon_pose_slot = parent_item.slot_type
-				weapon_pose_anim_event = item.data.anim_event
+				var_38_4 = var_38_10.slot_type
+				var_38_5 = var_38_7.data.anim_event
 			end
 		end
 	end
 
-	local weapon_item_name = player_data.weapon and player_data.weapon.item_name
-	local weapon_item = ItemMasterList[weapon_item_name]
-	local weapon_slot = weapon_item.slot_type
-	local top_award = award_data.awards[1]
-	local award_settings = top_award.award_settings or EMPTY_TABLE
-	local breeds = award_settings.breeds or EMPTY_TABLE
-	local upper_range = #breeds > 0 and #breeds or 1
-	local random_seed, random_number = Math.next_random(self._random_seed, 1, upper_range)
+	local var_38_11 = arg_38_1.weapon and arg_38_1.weapon.item_name
+	local var_38_12 = ItemMasterList[var_38_11].slot_type
+	local var_38_13 = arg_38_2.awards[1].award_settings or var_0_12
+	local var_38_14 = var_38_13.breeds or var_0_12
+	local var_38_15 = #var_38_14 > 0 and #var_38_14 or 1
+	local var_38_16, var_38_17 = Math.next_random(arg_38_0._random_seed, 1, var_38_15)
 
-	self._random_seed = random_seed
+	arg_38_0._random_seed = var_38_16
 
-	local breed = breeds[random_number] or EMPTY_TABLE
-	local breed_name = breed and breed.name
-	local pactsworn_cosmetics = breed and player_data.pactsworn_cosmetics and player_data.pactsworn_cosmetics[breed_name]
-	local breed_gear = pactsworn_cosmetics or breed.default_gear or EMPTY_TABLE
-	local breed_weapon = breed_gear.weapon or breed_gear.slot_melee or breed_gear.slot_ranged
-	local breed_weapon_item = breed_weapon and {
-		item_name = breed_weapon,
+	local var_38_18 = var_38_14[var_38_17] or var_0_12
+	local var_38_19 = var_38_18 and var_38_18.name
+	local var_38_20 = var_38_18 and arg_38_1.pactsworn_cosmetics and arg_38_1.pactsworn_cosmetics[var_38_19] or var_38_18.default_gear or var_0_12
+	local var_38_21 = var_38_20.weapon or var_38_20.slot_melee or var_38_20.slot_ranged
+	local var_38_22 = var_38_21 and {
+		item_name = var_38_21
 	} or nil
-	local breed_weapon_slot = not table.is_empty(breed_gear) and (breed_gear.weapon_slot and breed_gear.weapon_slot == "slot_melee" and "melee" or "ranged" or breed_gear.slot_melee and "melee" or "ranged")
-	local breed_skin = breed_gear.skin or breed_gear.slot_skin
+	local var_38_23 = not table.is_empty(var_38_20) and (var_38_20.weapon_slot and var_38_20.weapon_slot == "slot_melee" and "melee" or "ranged" or var_38_20.slot_melee and "melee" or "ranged")
+	local var_38_24 = var_38_20.skin or var_38_20.slot_skin
 
 	return {
-		stats_id = player_data.stats_id,
-		player_name = player_data.name,
-		peer_id = player_data.peer_id,
-		profile_index = profile_index,
-		career_index = career_index,
-		hero_name = career_settings.profile_name,
-		skin_name = breed_skin or player_data.hero_skin,
-		frame_name = player_data.portrait_frame,
-		player_level = player_data.player_level,
-		award_material = award_settings.award_material or nil,
-		versus_player_level = player_data.versus_player_level,
-		weapon_slot = breed_weapon_slot or weapon_pose_slot or weapon_slot,
-		breed = breed,
-		weapon_pose_anim_event = weapon_pose_anim_event,
-		random_seed = self._random_seed,
+		stats_id = arg_38_1.stats_id,
+		player_name = arg_38_1.name,
+		peer_id = arg_38_1.peer_id,
+		profile_index = var_38_0,
+		career_index = var_38_1,
+		hero_name = var_38_2.profile_name,
+		skin_name = var_38_24 or arg_38_1.hero_skin,
+		frame_name = arg_38_1.portrait_frame,
+		player_level = arg_38_1.player_level,
+		award_material = var_38_13.award_material or nil,
+		versus_player_level = arg_38_1.versus_player_level,
+		weapon_slot = var_38_23 or var_38_4 or var_38_12,
+		breed = var_38_18,
+		weapon_pose_anim_event = var_38_5,
+		random_seed = arg_38_0._random_seed,
 		preview_items = {
-			table.is_empty(breed) and player_data.hat or nil,
-			breed_weapon_item or weapon_pose_weapon or player_data.weapon,
-		},
+			table.is_empty(var_38_18) and arg_38_1.hat or nil,
+			var_38_22 or var_38_3 or arg_38_1.weapon
+		}
 	}
 end
 
-LevelEndViewVersus._gather_hero_locations = function (self, num_players)
-	local locations = {}
-	local hero_locations = {}
-	local level_name = "levels/carousel_podium/world"
-	local unit_indices = LevelResource.unit_indices(level_name, "units/hub_elements/versus_podium_character_spawn")
+function LevelEndViewVersus._gather_hero_locations(arg_39_0, arg_39_1)
+	local var_39_0 = {}
+	local var_39_1 = {}
+	local var_39_2 = "levels/carousel_podium/world"
+	local var_39_3 = LevelResource.unit_indices(var_39_2, "units/hub_elements/versus_podium_character_spawn")
 
-	for _, index in pairs(unit_indices) do
-		local unit_data = LevelResource.unit_data(level_name, index)
-		local name = DynamicData.get(unit_data, "name")
+	for iter_39_0, iter_39_1 in pairs(var_39_3) do
+		local var_39_4 = LevelResource.unit_data(var_39_2, iter_39_1)
+		local var_39_5 = DynamicData.get(var_39_4, "name")
 
-		if name and string.find(name, "ceremony_slot_") then
-			local position = LevelResource.unit_position(level_name, index)
-			local number = tonumber(string.gsub(name, "ceremony_slot_", ""), 10)
+		if var_39_5 and string.find(var_39_5, "ceremony_slot_") then
+			local var_39_6 = LevelResource.unit_position(var_39_2, iter_39_1)
 
-			locations[number] = {
-				position[1],
-				position[2],
-				position[3],
+			var_39_0[tonumber(string.gsub(var_39_5, "ceremony_slot_", ""), 10)] = {
+				var_39_6[1],
+				var_39_6[2],
+				var_39_6[3]
 			}
 		end
 	end
 
-	for i = 1, num_players do
-		hero_locations[i] = locations[i] or {
+	for iter_39_2 = 1, arg_39_1 do
+		var_39_1[iter_39_2] = var_39_0[iter_39_2] or {
 			0,
 			0,
-			0,
+			0
 		}
 	end
 
-	return hero_locations
+	return var_39_1
 end
 
-LevelEndViewVersus._setup_team_previewer = function (self, num_players)
-	if self._team_previewer then
+function LevelEndViewVersus._setup_team_previewer(arg_40_0, arg_40_1)
+	if arg_40_0._team_previewer then
 		return
 	end
 
-	local world, viewport = self:get_viewport_world()
+	local var_40_0, var_40_1 = arg_40_0:get_viewport_world()
 
-	self._team_previewer = TeamPreviewer:new(self.context, world, viewport)
+	arg_40_0._team_previewer = TeamPreviewer:new(arg_40_0.context, var_40_0, var_40_1)
 
-	local team_data = self._team_heroes
-	local hero_locations = self:_gather_hero_locations(num_players)
+	local var_40_2 = arg_40_0._team_heroes
+	local var_40_3 = arg_40_0:_gather_hero_locations(arg_40_1)
 
-	self._team_previewer:setup_team(team_data, hero_locations)
+	arg_40_0._team_previewer:setup_team(var_40_2, var_40_3)
 
-	if table.is_empty(self._portrait_widgets) then
-		self:_create_ceremony_award_widgets(team_data, hero_locations)
+	if table.is_empty(arg_40_0._portrait_widgets) then
+		arg_40_0:_create_ceremony_award_widgets(var_40_2, var_40_3)
 	end
 
-	self._hero_previewers = {}
+	arg_40_0._hero_previewers = {}
 
-	for i = 1, num_players do
-		self._hero_previewers[i] = self._team_previewer:get_hero_previewer(i)
+	for iter_40_0 = 1, arg_40_1 do
+		arg_40_0._hero_previewers[iter_40_0] = arg_40_0._team_previewer:get_hero_previewer(iter_40_0)
 	end
 end
 
-LevelEndViewVersus._create_ceremony_award_widgets = function (self, team_data, hero_locations)
-	local world, viewport = self:get_viewport_world()
-	local camera = ScriptViewport.camera(viewport)
-	local party_composition = self.context.party_composition
-	local my_peer_id = Network.peer_id()
-	local local_player_id = 1
-	local local_player_party_id = party_composition[PlayerUtils.unique_player_id(my_peer_id, local_player_id)]
+function LevelEndViewVersus._create_ceremony_award_widgets(arg_41_0, arg_41_1, arg_41_2)
+	local var_41_0, var_41_1 = arg_41_0:get_viewport_world()
+	local var_41_2 = ScriptViewport.camera(var_41_1)
+	local var_41_3 = arg_41_0.context.party_composition
+	local var_41_4 = Network.peer_id()
+	local var_41_5 = 1
+	local var_41_6 = var_41_3[PlayerUtils.unique_player_id(var_41_4, var_41_5)]
 
-	for i = 1, #team_data do
-		local player_data = team_data[i]
-		local profile_index = player_data.profile_index
-		local career_index = player_data.career_index
-		local world_pos = hero_locations[i]
-		local pos = Camera.world_to_screen(camera, Vector3(world_pos[1], world_pos[2], world_pos[3]))
-
-		pos = UIInverseScaleVectorToResolution(pos, true)
-
-		local party_id = party_composition[player_data.stats_id]
-		local awards = self._sorted_awards[i]
-		local award = awards.awards[1]
-		local award_data = {
-			camera = camera,
-			world_pos = world_pos,
-			player_name = player_data.player_name,
-			level = player_data.versus_player_level or 0,
-			peer_id = player_data.peer_id,
-			is_mvp = award.header == "mvp",
-			header = award.header,
-			sound_event = award.sound,
-			sub_header = award.sub_header or "",
-			amount = award.amount or "",
-			award_material = award.award_material or nil,
-			award_mask_material = award.award_mask_material or nil,
-			screen_sub_header = award.screen_sub_header or "",
-			team_color = party_id == local_player_party_id and Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or Colors.get_color_table_with_alpha("opponent_team_lighter", 255),
-			is_local = party_id == local_player_party_id,
+	for iter_41_0 = 1, #arg_41_1 do
+		local var_41_7 = arg_41_1[iter_41_0]
+		local var_41_8 = var_41_7.profile_index
+		local var_41_9 = var_41_7.career_index
+		local var_41_10 = arg_41_2[iter_41_0]
+		local var_41_11 = Camera.world_to_screen(var_41_2, Vector3(var_41_10[1], var_41_10[2], var_41_10[3]))
+		local var_41_12 = UIInverseScaleVectorToResolution(var_41_11, true)
+		local var_41_13 = var_41_3[var_41_7.stats_id]
+		local var_41_14 = arg_41_0._sorted_awards[iter_41_0].awards[1]
+		local var_41_15 = {
+			camera = var_41_2,
+			world_pos = var_41_10,
+			player_name = var_41_7.player_name,
+			level = var_41_7.versus_player_level or 0,
+			peer_id = var_41_7.peer_id,
+			is_mvp = var_41_14.header == "mvp",
+			header = var_41_14.header,
+			sound_event = var_41_14.sound,
+			sub_header = var_41_14.sub_header or "",
+			amount = var_41_14.amount or "",
+			award_material = var_41_14.award_material or nil,
+			award_mask_material = var_41_14.award_mask_material or nil,
+			screen_sub_header = var_41_14.screen_sub_header or "",
+			team_color = var_41_13 == var_41_6 and Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or Colors.get_color_table_with_alpha("opponent_team_lighter", 255),
+			is_local = var_41_13 == var_41_6
 		}
-		local scenegraph_id = "award_" .. i
-		local award_widget_definition = UIWidgets.create_ceremony_award(scenegraph_id, award_data, {
-			pos[1] - 145,
+		local var_41_16 = "award_" .. iter_41_0
+		local var_41_17 = UIWidgets.create_ceremony_award(var_41_16, var_41_15, {
+			var_41_12[1] - 145,
 			200,
-			0,
+			0
 		})
-		local award_widget = UIWidget.init(award_widget_definition)
-		local scenegraph_id = "screen_award"
-		local screen_award_widget_definition = UIWidgets.create_screen_ceremony_award(scenegraph_id, award_data, {
+		local var_41_18 = UIWidget.init(var_41_17)
+		local var_41_19 = "screen_award"
+		local var_41_20 = UIWidgets.create_screen_ceremony_award(var_41_19, var_41_15, {
 			0,
 			0,
-			0,
-		}, self.ui_renderer)
-		local screen_award_widget = UIWidget.init(screen_award_widget_definition)
-		local award_name = "insignia_" .. i
+			0
+		}, arg_41_0.ui_renderer)
+		local var_41_21 = UIWidget.init(var_41_20)
+		local var_41_22 = "insignia_" .. iter_41_0
 
-		self._widgets_by_name[award_name] = award_widget
-		self._award_widgets[#self._award_widgets + 1] = award_widget
+		arg_41_0._widgets_by_name[var_41_22] = var_41_18
+		arg_41_0._award_widgets[#arg_41_0._award_widgets + 1] = var_41_18
 
-		local screen_award_name = "screen_award_" .. i
+		local var_41_23 = "screen_award_" .. iter_41_0
 
-		self._widgets_by_name[screen_award_name] = screen_award_widget
-		self._screen_award_widgets[#self._screen_award_widgets + 1] = screen_award_widget
-		award_widget.content.visible = false
-		award_widget.content.widget_offset = award_widget.offset
-		screen_award_widget.content.visible = false
+		arg_41_0._widgets_by_name[var_41_23] = var_41_21
+		arg_41_0._screen_award_widgets[#arg_41_0._screen_award_widgets + 1] = var_41_21
+		var_41_18.content.visible = false
+		var_41_18.content.widget_offset = var_41_18.offset
+		var_41_21.content.visible = false
 	end
 end
 
-LevelEndViewVersus.create_world = function (self, context)
-	local world_name = "end_screen"
-	local shading_environment = "environment/ui_store_preview"
-	local layer = 2
-	local flags = self:get_world_flags()
-	local world = Managers.world:create_world(world_name, shading_environment, nil, layer, unpack(flags))
+function LevelEndViewVersus.create_world(arg_42_0, arg_42_1)
+	local var_42_0 = "end_screen"
+	local var_42_1 = "environment/ui_store_preview"
+	local var_42_2 = 2
+	local var_42_3 = arg_42_0:get_world_flags()
+	local var_42_4 = Managers.world:create_world(var_42_0, var_42_1, nil, var_42_2, unpack(var_42_3))
 
-	World.set_data(world, "avoid_blend", true)
+	World.set_data(var_42_4, "avoid_blend", true)
 
-	local top_world = Managers.world:world("top_ingame_view")
+	local var_42_5 = Managers.world:world("top_ingame_view")
 
-	return world, top_world
+	return var_42_4, var_42_5
 end
 
-LevelEndViewVersus.spawn_level = function (self, context, world)
-	local level_name = "levels/carousel_podium/world"
-	local object_sets = {}
-	local position, rotation, shading_callback, mood_setting
-	local time_sliced_spawn = false
-	local level = ScriptWorld.spawn_level(world, level_name, object_sets, position, rotation, shading_callback, mood_setting, time_sliced_spawn)
+function LevelEndViewVersus.spawn_level(arg_43_0, arg_43_1, arg_43_2)
+	local var_43_0 = "levels/carousel_podium/world"
+	local var_43_1 = {}
+	local var_43_2
+	local var_43_3
+	local var_43_4
+	local var_43_5
+	local var_43_6 = false
+	local var_43_7 = ScriptWorld.spawn_level(arg_43_2, var_43_0, var_43_1, var_43_2, var_43_3, var_43_4, var_43_5, var_43_6)
 
-	Level.spawn_background(level)
-	Level.trigger_level_loaded(level)
-	self:_register_object_sets(level, level_name)
-	Level.trigger_event(level, "ceremoni_enabled")
+	Level.spawn_background(var_43_7)
+	Level.trigger_level_loaded(var_43_7)
+	arg_43_0:_register_object_sets(var_43_7, var_43_0)
+	Level.trigger_event(var_43_7, "ceremoni_enabled")
 
-	return level
+	return var_43_7
 end
 
-LevelEndViewVersus.event_show_flow_object_set = function (self, object_set_name, enable)
-	local object_set_name = "flow_" .. object_set_name
+function LevelEndViewVersus.event_show_flow_object_set(arg_44_0, arg_44_1, arg_44_2)
+	local var_44_0 = "flow_" .. arg_44_1
 
-	self:_show_object_set(object_set_name, enable)
+	arg_44_0:_show_object_set(var_44_0, arg_44_2)
 end
 
-LevelEndViewVersus.exit_to_game = function (self)
-	LevelEndViewVersus.super.exit_to_game(self)
-	self:play_sound(self._stop_music_event)
+function LevelEndViewVersus.exit_to_game(arg_45_0)
+	LevelEndViewVersus.super.exit_to_game(arg_45_0)
+	arg_45_0:play_sound(arg_45_0._stop_music_event)
 end
 
-LevelEndViewVersus.activate_back_to_keep_button = function (self)
-	local machine = self._machine
-	local state = self._machine:state()
+function LevelEndViewVersus.activate_back_to_keep_button(arg_46_0)
+	local var_46_0 = arg_46_0._machine
+	local var_46_1 = arg_46_0._machine:state()
 
-	if state.activate_back_to_keep_button then
-		state:activate_back_to_keep_button()
+	if var_46_1.activate_back_to_keep_button then
+		var_46_1:activate_back_to_keep_button()
 	end
 
-	self:set_input_description("continue_available")
+	arg_46_0:set_input_description("continue_available")
 end

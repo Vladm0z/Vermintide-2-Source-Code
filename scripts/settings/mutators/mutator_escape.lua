@@ -1,94 +1,90 @@
-﻿-- chunkname: @scripts/settings/mutators/mutator_escape.lua
+-- chunkname: @scripts/settings/mutators/mutator_escape.lua
 
-local ACTIVE_ENEMIES_TO_SPAWN_HORDE = 10
-local compositions = {
+local var_0_0 = 10
+local var_0_1 = {
 	chaos = {
 		"event_large_chaos",
-		"event_large",
+		"event_large"
 	},
 	beastmen = {
 		"event_large_beastmen",
-		"event_large",
+		"event_large"
 	},
 	skaven = {
-		"event_large",
-	},
+		"event_large"
+	}
 }
 
-local function get_compatible_faction(factions)
-	local faction
+local function var_0_2(arg_1_0)
+	local var_1_0
 
-	for _, possible_faction in ipairs(factions) do
-		if compositions[possible_faction] then
-			faction = possible_faction
+	for iter_1_0, iter_1_1 in ipairs(arg_1_0) do
+		if var_0_1[iter_1_1] then
+			var_1_0 = iter_1_1
 		end
 	end
 
-	return faction
+	return var_1_0
 end
 
-local function get_random_composition_type(faction, seed)
-	local compositions_for_faction = compositions[faction]
-	local index
+local function var_0_3(arg_2_0, arg_2_1)
+	local var_2_0 = var_0_1[arg_2_0]
+	local var_2_1
+	local var_2_2
 
-	seed, index = Math.next_random(seed, 1, #compositions_for_faction)
+	arg_2_1, var_2_2 = Math.next_random(arg_2_1, 1, #var_2_0)
 
-	local composition_name = compositions_for_faction[index]
+	local var_2_3 = var_2_0[var_2_2]
 
-	return seed, composition_name
+	return arg_2_1, var_2_3
 end
 
 return {
 	hide_from_player_ui = true,
-	server_update_function = function (context, data)
-		local conflict_director = Managers.state.conflict
+	server_update_function = function(arg_3_0, arg_3_1)
+		local var_3_0 = Managers.state.conflict
 
-		if not conflict_director then
+		if not var_3_0 then
 			return
 		end
 
-		if not data.setup_done then
-			conflict_director.pacing:disable()
-			conflict_director.pacing:disable_roamers()
+		if not arg_3_1.setup_done then
+			var_3_0.pacing:disable()
+			var_3_0.pacing:disable_roamers()
 
-			data.seed = Managers.mechanism:get_level_seed("mutator")
+			arg_3_1.seed = Managers.mechanism:get_level_seed("mutator")
 
-			local mission_system = Managers.state.entity:system("mission_system")
+			Managers.state.entity:system("mission_system"):request_mission("mutator_escape")
 
-			mission_system:request_mission("mutator_escape")
-
-			data.setup_done = true
+			arg_3_1.setup_done = true
 		end
 
-		local t = Managers.time:time("game")
+		local var_3_1 = Managers.time:time("game")
 
-		if not data.check_at or t > data.check_at then
-			local active_enemies = Managers.state.performance:num_active_enemies()
+		if not arg_3_1.check_at or var_3_1 > arg_3_1.check_at then
+			if Managers.state.performance:num_active_enemies() < var_0_0 then
+				local var_3_2 = ConflictDirectors[var_3_0.current_conflict_settings].factions
+				local var_3_3 = var_3_2 and var_0_2(var_3_2)
 
-			if active_enemies < ACTIVE_ENEMIES_TO_SPAWN_HORDE then
-				local factions = ConflictDirectors[conflict_director.current_conflict_settings].factions
-				local faction = factions and get_compatible_faction(factions)
+				if var_3_3 then
+					local var_3_4 = Managers.state.side:get_side_from_name("dark_pact").side_id
+					local var_3_5
+					local var_3_6
 
-				if faction then
-					local side_manager = Managers.state.side
-					local enemy_side_id = side_manager:get_side_from_name("dark_pact").side_id
-					local composition_type
+					arg_3_1.seed, var_3_6 = var_0_3(var_3_3, arg_3_1.seed)
 
-					data.seed, composition_type = get_random_composition_type(faction, data.seed)
-
-					local extra_data = {
+					local var_3_7 = {
+						start_delay = 0,
 						only_behind = true,
 						silent = true,
-						start_delay = 0,
-						override_composition_type = composition_type,
+						override_composition_type = var_3_6
 					}
-					local horde_spawner = conflict_director.horde_spawner
 
-					horde_spawner:horde("vector", extra_data, enemy_side_id)
+					var_3_0.horde_spawner:horde("vector", var_3_7, var_3_4)
 				end
 			end
 
-			data.check_at = t + 5
+			arg_3_1.check_at = var_3_1 + 5
 		end
-	end,
+	end
 }

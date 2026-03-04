@@ -1,4 +1,4 @@
-﻿-- chunkname: @scripts/settings/equipment/honduras_weapon_templates.lua
+-- chunkname: @scripts/settings/equipment/honduras_weapon_templates.lua
 
 return {
 	"scripts/settings/equipment/weapon_templates/1h_swords",
@@ -67,5 +67,5 @@ return {
 	"scripts/settings/equipment/weapon_templates/torches",
 	"scripts/settings/equipment/weapon_templates/grimoire",
 	"scripts/settings/equipment/weapon_templates/door_sticks",
-	"scripts/settings/equipment/weapon_templates/packmaster_claw",
+	"scripts/settings/equipment/weapon_templates/packmaster_claw"
 }

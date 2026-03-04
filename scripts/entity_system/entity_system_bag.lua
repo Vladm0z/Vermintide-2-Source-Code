@@ -1,83 +1,82 @@
-﻿-- chunkname: @scripts/entity_system/entity_system_bag.lua
+-- chunkname: @scripts/entity_system/entity_system_bag.lua
 
 EntitySystemBag = class()
 
-EntitySystemBag.init = function (self)
-	self.systems = {}
-	self.num_systems = 0
-	self.systems_update = {}
-	self.systems_unsafe_entity_update = {}
-	self.systems_pre_update = {}
-	self.systems_post_update = {}
-	self.systems_physics_async_update = {}
+function EntitySystemBag.init(arg_1_0)
+	arg_1_0.systems = {}
+	arg_1_0.num_systems = 0
+	arg_1_0.systems_update = {}
+	arg_1_0.systems_unsafe_entity_update = {}
+	arg_1_0.systems_pre_update = {}
+	arg_1_0.systems_post_update = {}
+	arg_1_0.systems_physics_async_update = {}
 end
 
-EntitySystemBag.destroy = function (self)
-	local systems = self.systems
+function EntitySystemBag.destroy(arg_2_0)
+	local var_2_0 = arg_2_0.systems
 
-	for i = 1, #systems do
-		local system = systems[i]
+	for iter_2_0 = 1, #var_2_0 do
+		local var_2_1 = var_2_0[iter_2_0]
 
-		system:destroy()
-		table.clear(system)
+		var_2_1:destroy()
+		table.clear(var_2_1)
 	end
 
-	self.systems = nil
-	self.systems_update = nil
-	self.systems_unsafe_entity_update = nil
-	self.systems_pre_update = nil
-	self.systems_post_update = nil
-	self.systems_physics_async_update = nil
+	arg_2_0.systems = nil
+	arg_2_0.systems_update = nil
+	arg_2_0.systems_unsafe_entity_update = nil
+	arg_2_0.systems_pre_update = nil
+	arg_2_0.systems_post_update = nil
+	arg_2_0.systems_physics_async_update = nil
 end
 
-EntitySystemBag.add_system = function (self, system, block_pre_update, block_post_update)
-	self.systems[#self.systems + 1] = system
+function EntitySystemBag.add_system(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	arg_3_0.systems[#arg_3_0.systems + 1] = arg_3_1
 
-	if system.update then
-		self.systems_update[#self.systems_update + 1] = system
+	if arg_3_1.update then
+		arg_3_0.systems_update[#arg_3_0.systems_update + 1] = arg_3_1
 	end
 
-	if system.unsafe_entity_update then
-		self.systems_unsafe_entity_update[#self.systems_unsafe_entity_update + 1] = system
+	if arg_3_1.unsafe_entity_update then
+		arg_3_0.systems_unsafe_entity_update[#arg_3_0.systems_unsafe_entity_update + 1] = arg_3_1
 	end
 
-	if system.pre_update and not block_pre_update then
-		self.systems_pre_update[#self.systems_pre_update + 1] = system
+	if arg_3_1.pre_update and not arg_3_2 then
+		arg_3_0.systems_pre_update[#arg_3_0.systems_pre_update + 1] = arg_3_1
 	end
 
-	if system.post_update and not block_post_update then
-		self.systems_post_update[#self.systems_post_update + 1] = system
+	if arg_3_1.post_update and not arg_3_3 then
+		arg_3_0.systems_post_update[#arg_3_0.systems_post_update + 1] = arg_3_1
 	end
 
-	if system.physics_async_update then
-		self.systems_physics_async_update[#self.systems_physics_async_update + 1] = system
+	if arg_3_1.physics_async_update then
+		arg_3_0.systems_physics_async_update[#arg_3_0.systems_physics_async_update + 1] = arg_3_1
 	end
 end
 
-local list_name_by_function = {
-	physics_async_update = "systems_physics_async_update",
-	post_update = "systems_post_update",
+local var_0_0 = {
 	pre_update = "systems_pre_update",
-	unsafe_entity_update = "systems_unsafe_entity_update",
+	post_update = "systems_post_update",
+	physics_async_update = "systems_physics_async_update",
 	update = "systems_update",
+	unsafe_entity_update = "systems_unsafe_entity_update"
 }
 
-EntitySystemBag.update = function (self, entity_system_update_context, update_function)
-	local update_function_list_name = list_name_by_function[update_function]
-	local update_list = self[update_function_list_name]
-	local t = entity_system_update_context.t
+function EntitySystemBag.update(arg_4_0, arg_4_1, arg_4_2)
+	local var_4_0 = arg_4_0[var_0_0[arg_4_2]]
+	local var_4_1 = arg_4_1.t
 
-	for i = 1, #update_list do
-		local system = update_list[i]
+	for iter_4_0 = 1, #var_4_0 do
+		local var_4_2 = var_4_0[iter_4_0]
 
-		system[update_function](system, entity_system_update_context, t)
+		var_4_2[arg_4_2](var_4_2, arg_4_1, var_4_1)
 	end
 end
 
-EntitySystemBag.hot_join_sync = function (self, peer_id)
-	for i, system in ipairs(self.systems) do
-		if system.hot_join_sync then
-			system:hot_join_sync(peer_id)
+function EntitySystemBag.hot_join_sync(arg_5_0, arg_5_1)
+	for iter_5_0, iter_5_1 in ipairs(arg_5_0.systems) do
+		if iter_5_1.hot_join_sync then
+			iter_5_1:hot_join_sync(arg_5_1)
 		end
 	end
 end

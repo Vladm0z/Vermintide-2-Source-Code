@@ -1,138 +1,135 @@
-﻿-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/packmaster/packmaster_state_equipping.lua
+-- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/packmaster/packmaster_state_equipping.lua
 
 PackmasterStateEquipping = class(PackmasterStateEquipping, EnemyCharacterState)
 
-PackmasterStateEquipping.init = function (self, character_state_init_context)
-	EnemyCharacterState.init(self, character_state_init_context, "packmaster_equipping")
+function PackmasterStateEquipping.init(arg_1_0, arg_1_1)
+	EnemyCharacterState.init(arg_1_0, arg_1_1, "packmaster_equipping")
 
-	self.current_movement_speed_scale = 0
-	self.last_input_direction = Vector3Box(0, 0, 0)
+	arg_1_0.current_movement_speed_scale = 0
+	arg_1_0.last_input_direction = Vector3Box(0, 0, 0)
 end
 
-local position_lookup = POSITION_LOOKUP
+local var_0_0 = POSITION_LOOKUP
 
-PackmasterStateEquipping.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
-	table.clear(self._temp_params)
+function PackmasterStateEquipping.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	table.clear(arg_2_0._temp_params)
 
-	self._unit = unit
-	self._first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
-	self._status_extension = ScriptUnit.extension(unit, "status_system")
-	self._career_extension = ScriptUnit.extension(unit, "career_system")
-	self._buff_extension = ScriptUnit.extension(unit, "buff_system")
-	self._locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
-	self._input_extension = ScriptUnit.has_extension(unit, "input_system")
-	self._inventory_extension = ScriptUnit.extension(unit, "inventory_system")
+	arg_2_0._unit = arg_2_1
+	arg_2_0._first_person_extension = ScriptUnit.has_extension(arg_2_1, "first_person_system")
+	arg_2_0._status_extension = ScriptUnit.extension(arg_2_1, "status_system")
+	arg_2_0._career_extension = ScriptUnit.extension(arg_2_1, "career_system")
+	arg_2_0._buff_extension = ScriptUnit.extension(arg_2_1, "buff_system")
+	arg_2_0._locomotion_extension = ScriptUnit.extension(arg_2_1, "locomotion_system")
+	arg_2_0._input_extension = ScriptUnit.has_extension(arg_2_1, "input_system")
+	arg_2_0._inventory_extension = ScriptUnit.extension(arg_2_1, "inventory_system")
 
-	local breed = Unit.get_data(unit, "breed")
-	local first_person_extension = self._first_person_extension
+	local var_2_0 = Unit.get_data(arg_2_1, "breed")
+	local var_2_1 = arg_2_0._first_person_extension
 
-	CharacterStateHelper.play_animation_event(unit, "equip")
-	CharacterStateHelper.play_animation_event_first_person(first_person_extension, "equip")
+	CharacterStateHelper.play_animation_event(arg_2_1, "equip")
+	CharacterStateHelper.play_animation_event_first_person(var_2_1, "equip")
 
-	self._spawn_weapon_time = t + breed.equip_hook_weapon_spawn_time
-	self._finish_time = t + breed.equip_hook_exit_state_time
+	arg_2_0._spawn_weapon_time = arg_2_5 + var_2_0.equip_hook_weapon_spawn_time
+	arg_2_0._finish_time = arg_2_5 + var_2_0.equip_hook_exit_state_time
 end
 
-PackmasterStateEquipping.update = function (self, unit, input, dt, context, t)
-	local csm = self._csm
-	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local input_extension = self._input_extension
-	local status_extension = self._status_extension
-	local first_person_extension = self._first_person_extension
-	local locomotion_extension = self._locomotion_extension
-	local inventory_extension = self._inventory_extension
-	local health_extension = self._health_extension
+function PackmasterStateEquipping.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	local var_3_0 = arg_3_0._csm
+	local var_3_1 = PlayerUnitMovementSettings.get_movement_settings_table(arg_3_1)
+	local var_3_2 = arg_3_0._input_extension
+	local var_3_3 = arg_3_0._status_extension
+	local var_3_4 = arg_3_0._first_person_extension
+	local var_3_5 = arg_3_0._locomotion_extension
+	local var_3_6 = arg_3_0._inventory_extension
+	local var_3_7 = arg_3_0._health_extension
 
-	if CharacterStateHelper.do_common_state_transitions(status_extension, csm) then
+	if CharacterStateHelper.do_common_state_transitions(var_3_3, var_3_0) then
 		return
 	end
 
-	if CharacterStateHelper.is_using_transport(status_extension) then
-		csm:change_state("using_transport")
-
-		return
-	end
-
-	if CharacterStateHelper.is_pushed(status_extension) then
-		status_extension:set_pushed(false)
-
-		local params = movement_settings_table.stun_settings.pushed
-		local hit_react_type = status_extension:hit_react_type()
-
-		params.hit_react_type = hit_react_type .. "_push"
-
-		csm:change_state("stunned", params)
+	if CharacterStateHelper.is_using_transport(var_3_3) then
+		var_3_0:change_state("using_transport")
 
 		return
 	end
 
-	if CharacterStateHelper.is_block_broken(status_extension) then
-		status_extension:set_block_broken(false)
+	if CharacterStateHelper.is_pushed(var_3_3) then
+		var_3_3:set_pushed(false)
 
-		local params = movement_settings_table.stun_settings.parry_broken
+		local var_3_8 = var_3_1.stun_settings.pushed
 
-		params.hit_react_type = "medium_push"
+		var_3_8.hit_react_type = var_3_3:hit_react_type() .. "_push"
 
-		csm:change_state("stunned", params)
-
-		return
-	end
-
-	local spawn_weapon_time = self._spawn_weapon_time
-
-	if spawn_weapon_time and spawn_weapon_time <= t then
-		CharacterStateHelper.show_inventory_3p(unit, true, true, self._is_server, inventory_extension)
-		first_person_extension:unhide_weapons("catapulted")
-
-		self._spawn_weapon_time = nil
-	end
-
-	local finish_time = self._finish_time
-
-	if finish_time and finish_time <= t then
-		CharacterStateHelper.play_animation_event(unit, "to_armed")
-		CharacterStateHelper.play_animation_event_first_person(first_person_extension, "to_armed")
-		first_person_extension:animation_set_variable("armed", 1)
-		status_extension:set_unarmed(false)
-		csm:change_state("standing")
+		var_3_0:change_state("stunned", var_3_8)
 
 		return
 	end
 
-	local look_sense_override = 1
+	if CharacterStateHelper.is_block_broken(var_3_3) then
+		var_3_3:set_block_broken(false)
 
-	CharacterStateHelper.look(input_extension, self._player.viewport_name, first_person_extension, status_extension, inventory_extension, look_sense_override)
+		local var_3_9 = var_3_1.stun_settings.parry_broken
+
+		var_3_9.hit_react_type = "medium_push"
+
+		var_3_0:change_state("stunned", var_3_9)
+
+		return
+	end
+
+	local var_3_10 = arg_3_0._spawn_weapon_time
+
+	if var_3_10 and var_3_10 <= arg_3_5 then
+		CharacterStateHelper.show_inventory_3p(arg_3_1, true, true, arg_3_0._is_server, var_3_6)
+		var_3_4:unhide_weapons("catapulted")
+
+		arg_3_0._spawn_weapon_time = nil
+	end
+
+	local var_3_11 = arg_3_0._finish_time
+
+	if var_3_11 and var_3_11 <= arg_3_5 then
+		CharacterStateHelper.play_animation_event(arg_3_1, "to_armed")
+		CharacterStateHelper.play_animation_event_first_person(var_3_4, "to_armed")
+		var_3_4:animation_set_variable("armed", 1)
+		var_3_3:set_unarmed(false)
+		var_3_0:change_state("standing")
+
+		return
+	end
+
+	local var_3_12 = 1
+
+	CharacterStateHelper.look(var_3_2, arg_3_0._player.viewport_name, var_3_4, var_3_3, var_3_6, var_3_12)
 end
 
-PackmasterStateEquipping._finish = function (self, target_unit)
-	if not self._locomotion_extension:is_on_ground() then
+function PackmasterStateEquipping._finish(arg_4_0, arg_4_1)
+	if not arg_4_0._locomotion_extension:is_on_ground() then
 		return
 	end
 
-	local unit = self._unit
-	local career_extension = self._career_extension
-	local status_extension = self._status_extension
-	local locomotion_extension = self._locomotion_extension
+	local var_4_0 = arg_4_0._unit
+	local var_4_1 = arg_4_0._career_extension
+	local var_4_2 = arg_4_0._status_extension
+	local var_4_3 = arg_4_0._locomotion_extension
 
-	self:_play_vo()
+	arg_4_0:_play_vo()
 end
 
-PackmasterStateEquipping.on_exit = function (self, unit, input, dt, context, t, next_state)
-	local network_manager = Managers.state.network
-
-	if not network_manager:in_game_session() then
+function PackmasterStateEquipping.on_exit(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
+	if not Managers.state.network:in_game_session() then
 		return
 	end
 
-	local csm = self._csm
-	local status_extension = self._status_extension
-	local locomotion_extension = self._locomotion_extension
+	local var_5_0 = arg_5_0._csm
+	local var_5_1 = arg_5_0._status_extension
+	local var_5_2 = arg_5_0._locomotion_extension
 
-	self._career_extension:start_activated_ability_cooldown(1, 1)
+	arg_5_0._career_extension:start_activated_ability_cooldown(1, 1)
 
-	self._finish_time = nil
+	arg_5_0._finish_time = nil
 end
 
-PackmasterStateEquipping._play_vo = function (self, unit, t)
-	local unit = self._unit
+function PackmasterStateEquipping._play_vo(arg_6_0, arg_6_1, arg_6_2)
+	local var_6_0 = arg_6_0._unit
 end
